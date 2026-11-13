@@ -1970,7 +1970,7 @@ struct Trigger gKolimaTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgKolimaMaybeIfIMeditateHarderIll) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 100, FLAG_KOLIMA_APPLE, FIND_ITEM(ITEM_APPLE) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_KOLIMA_HERB, FIND_ITEM(ITEM_HERB) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 /// Kolima Bridge's triggers: its two ends, the bridge's fall and the villager.
@@ -1980,7 +1980,7 @@ struct Trigger gKolimaBridgeTriggers[] = {
     { TRIGGER_STEP, 10, FLAG_KOLIMA_BRIDGE_LOWERED, EVENT(Kolima_LowerBridge) },
     { TRIGGER_TALK, ACTOR_BRIDGE_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgKolimaForAWhileIThoughtNo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BRIDGE_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgKolimaYouWouldntUnderstandButItsTruly) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 

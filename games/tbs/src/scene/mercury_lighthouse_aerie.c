@@ -2035,7 +2035,7 @@ struct Trigger gMercuryLighthouseAerieTriggers[] = {
      FIND_PSYNERGY_STONE},
     {TRIGGER_STEP, 12, CONDITION_ALWAYS,
      EVENT(MercuryLighthouseAerie_RideLiftDown)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s32 gMercuryLighthouseAerie_PlatformUnderfoot = 0;

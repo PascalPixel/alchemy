@@ -1408,7 +1408,7 @@ struct Trigger gLamakanDesertTriggers[] = {
     { TRIGGER_STEP, 105, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
     { TRIGGER_STEP, 106, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
     { TRIGGER_STEP, 107, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 

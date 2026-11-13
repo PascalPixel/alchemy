@@ -2329,7 +2329,7 @@ struct Trigger gTunnelRuinsGreatStatueTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SOUTHEAST_PILLAR_FROST_TARGET, FLAG_SCENE_TEMP_01, EVENT(TunnelRuins_FreezeSoutheastPillarFrostTarget)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE) | 1 << 28, ACTOR_SOUTHEAST_SINKING_PILLAR, FLAG_SCENE_TEMP_02, EVENT(TunnelRuins_DouseStartsOnSoutheastPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_SOUTHEAST_SINKING_PILLAR, FLAG_SCENE_TEMP_02, EVENT(TunnelRuins_DouseSoutheastPillar)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gTunnelRuinsTriggersOther[] = {
@@ -2401,6 +2401,6 @@ struct Trigger gTunnelRuinsTriggersOther[] = {
         MSGNO(MsgTunnelRuinsVioletShinesSoutheastOfMe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LADY_STATUE_SOUTH, CONDITION_ALWAYS,
         MSGNO(MsgTunnelRuinsVioletPointsSoutheast)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 // clang-format on

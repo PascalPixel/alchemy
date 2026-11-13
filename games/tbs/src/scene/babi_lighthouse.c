@@ -1876,7 +1876,7 @@ struct Trigger gBabiLighthouse_EntryTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LEFT_PILLAR, CONDITION_ALWAYS, EVENT(BabiLighthouse_JumpFromLedge)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_RIGHT_PILLAR, CONDITION_ALWAYS, EVENT(BabiLighthouse_JumpFromLedge)},
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_PLANT, FLAG_GROWTH_PASSAGE_OPEN, EVENT(BabiLighthouse_OpenGrowthPassage)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gBabiLighthouse_LuffTriggers[] = {
@@ -1897,7 +1897,7 @@ struct Trigger gBabiLighthouse_LuffTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT(BabiLighthouse_DropFromWestRoomNorthwestPit)},
     {TRIGGER_TALK, ACTOR_LUFF, CONDITION_ALWAYS, EVENT(BabiLighthouse_StartDjinnBattle)},
     {EXAMINE_TRIGGER(EXAMINE_SILENT), 20, CONDITION_ALWAYS, EVENT(BabiLighthouse_InspectLockedDoor)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gBabiLighthouse_StoneDoorTriggers[] = {
@@ -1939,7 +1939,7 @@ struct Trigger gBabiLighthouse_StoneDoorTriggers[] = {
         EVENT(BabiLighthouse_ShowTruthDoorSwitch)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
         EVENT(BabiLighthouse_HideTruthDoorSwitch)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 // clang-format on
 
@@ -1976,5 +1976,5 @@ struct Trigger gBabiLighthouse_RoadTriggers[] = {
      CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseNowThatIThinkOfIt)},
     {EXAMINE_CHEST_FACING(FACING_EAST), 100, FLAG_BABI_LIGHTHOUSE_LUCKY_PEPPER,
      FIND_ITEM(ITEM_LUCKY_PEPPER)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

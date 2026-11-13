@@ -200,7 +200,7 @@ const struct Trigger gInteriorSealedTriggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_ROCK_ROOMS_BARREL, FLAG_LUNPA_BARREL_VIAL, FIND_ITEM(ITEM_VIAL) },
     { EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_ROCK_ROOMS_FIRST_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLunpaInteriorsFirstOven)) },
     { EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_ROCK_ROOMS_SECOND_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLunpaInteriorsSecondOven)) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 const struct Trigger gInteriorReopenedTriggers[] = {
@@ -268,7 +268,7 @@ const struct Trigger gInteriorReopenedTriggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_ROCK_ROOMS_BARREL, FLAG_LUNPA_BARREL_VIAL, FIND_ITEM(ITEM_VIAL) },
     { EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_ROCK_ROOMS_FIRST_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLunpaInteriorsFirstOven)) },
     { EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_ROCK_ROOMS_SECOND_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLunpaInteriorsSecondOven)) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 
@@ -278,7 +278,7 @@ const struct Trigger gGateToSuhallaTriggers[] = {
      EVENT(RockRooms_TalkToTravelingHealer)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELING_HEALER,
      CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsTravelingPriestThoughts)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 const struct SceneEntrance *Scene_GetEntrances(void) {

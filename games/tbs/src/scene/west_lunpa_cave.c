@@ -1132,7 +1132,7 @@ const struct ActorPlacement gCaveActorPlacements[] = {
 
 /// Unused: an empty trigger table nothing returns.
 const struct Trigger gCaveNoTriggers[] = {
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 const struct Trigger gCaveTriggers[] = {
@@ -1152,6 +1152,6 @@ const struct Trigger gCaveTriggers[] = {
       EVENT(WestLunpaCave_FreezeGatePuddle) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_NORTH_PUDDLE, CONDITION_ALWAYS,
       EVENT(WestLunpaCave_FreezeNorthPuddle) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on

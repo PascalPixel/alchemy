@@ -3552,7 +3552,7 @@ struct Trigger gValePrologue_Triggers[] = {
      EVENT(ValePrologue_SearchBrokenDoor)},
     {EXAMINE_TRIGGER(EXAMINE_SILENT), 19, CONDITION_ALWAYS,
      EVENT(ValePrologue_SearchValuablesChest)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 // The doors' cell animations: two pictures of a door opening, from the map's

@@ -1224,7 +1224,7 @@ struct ActorPlacement gBilibinTreasuryActorPlacements[] = {
 };
 
 struct Trigger gBilibinTriggersOther[] = {
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gBilibinTriggers[] = {
@@ -1289,7 +1289,7 @@ struct Trigger gBilibinTriggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_JAR), 100, FLAG_BILIBIN_HERB, FIND_ITEM(ITEM_HERB) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_BILIBIN_COINS, FIND_COINS(5) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 90, CONDITION_ALWAYS, EVENT(Bilibin_InspectWell) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gBilibinBarricadeTriggers[] = {
@@ -1326,7 +1326,7 @@ struct Trigger gBilibinBarricadeTriggers[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
     { STEP_TRIGGER_WALKING, 12, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_BARRICADE_CRATES, CONDITION_ALWAYS, EVENT(Bilibin_UpdateCratesCells) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gBilibinTreasuryTriggers[] = {
@@ -1341,7 +1341,7 @@ struct Trigger gBilibinTreasuryTriggers[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT(Bilibin_JumpOntoStatueOrCrates) },
     { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT(Bilibin_JumpOntoStatueOrCrates) },
     { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT(Bilibin_JumpOntoStatueOrCrates) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 u16 gBilibin_SanctumDoorSteps[] = {

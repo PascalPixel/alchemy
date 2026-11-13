@@ -1973,5 +1973,5 @@ struct Trigger gBattleArenaTriggers[] = {
      EVENT(BattleArena_PromptToParticipate)},
     {TRIGGER_RAISED, 2, CONDITION_ALWAYS,
      EVENT(BattleArena_ReportDisconnection)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

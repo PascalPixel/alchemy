@@ -172,7 +172,7 @@ struct Trigger gKolimaForestGlade_Triggers[] = {
      EVENT(KolimaForestGlade_PushLog)},
     {PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT, FLAG_KOLIMA_FOREST_NUT_CAUGHT,
      EVENT(KolimaForestGlade_CatchNut)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 // The .bss order follows the first declarations (externs in field.h).

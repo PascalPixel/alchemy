@@ -1560,7 +1560,7 @@ struct ActorPlacement gSolEntrance_ActorPlacements[] = {
 };
 
 struct Trigger gSolSanctumEntrance_FallbackTriggers[] = {
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gSolEntrance_Triggers[] = {
@@ -1569,7 +1569,7 @@ struct Trigger gSolEntrance_Triggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_SOL_ENTRANCE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_DoorTightlyLocked) },
     { TRIGGER_TALK, ACTOR_WARNING_MAN, CONDITION_ALWAYS, MSGNO(MsgValeItIsVeryDangerousToGo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARNING_MAN, CONDITION_ALWAYS, MSGNO(MsgValeIAmAllAloneInThis) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gSolSanctumReliefs_Triggers[] = {
@@ -1592,7 +1592,7 @@ struct Trigger gSolSanctumReliefs_Triggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_CHEST, FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND, FIND_ITEM(ITEM_SMALL_JEWEL) },
     { USE_ITEM(ITEM_SMALL_JEWEL), SOL_SANCTUM_ITEM_OWN_MESSAGE | CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_FIRST_RELIEF, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_SetFirstSmallJewel) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_FIRST_RELIEF, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_InspectFirstMinotaurRelief) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gSolSanctumReliefs_FirstReliefRoomTriggers[] = {
@@ -1617,7 +1617,7 @@ struct Trigger gSolSanctumReliefs_FirstReliefRoomTriggers[] = {
     { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_PushStatue) },
     { STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE_EAST, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_PushStatue) },
     { STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE_WEST, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_PushStatue) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gSolSanctumReliefs_SecondReliefRoomTriggers[] = {
@@ -1646,7 +1646,7 @@ struct Trigger gSolSanctumReliefs_SecondReliefRoomTriggers[] = {
     { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_ROW_STATUE, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_PushStatue) },
     { USE_ITEM(ITEM_SMALL_JEWEL), SOL_SANCTUM_ITEM_OWN_MESSAGE | CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_SECOND_RELIEF, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_SetSecondSmallJewel) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_SECOND_RELIEF, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_InspectSecondMinotaurRelief) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 

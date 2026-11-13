@@ -678,5 +678,5 @@ struct Trigger gIncreaseItemAndLevel_Triggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
      EVENT(IncreaseItemAndLevel_EnableEffectChildMode)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

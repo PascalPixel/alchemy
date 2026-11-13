@@ -579,7 +579,7 @@ struct ActorPlacement gValeEruption_ActorPlacements[] = {
 // clang-format on
 
 struct Trigger gValeEruption_Triggers[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 /// The sanctum's door, two cells wide, opening in two steps.

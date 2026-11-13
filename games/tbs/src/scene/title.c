@@ -411,7 +411,7 @@ struct ActorPlacement gTitleActorPlacements[] = {
 };
 
 struct Trigger gTitleTriggers[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 /// The VRAM cache entry holding the lettering's tiles, which is -1 until

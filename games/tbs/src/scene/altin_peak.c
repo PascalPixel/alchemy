@@ -3098,7 +3098,7 @@ struct ActorPlacement gAltinPeak_WestExitActorPlacements[] = {
 };
 
 struct Trigger gAltinPeak_TriggersOther[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltinPeak_FirstWaterBeastTriggers[] = {
@@ -3108,7 +3108,7 @@ struct Trigger gAltinPeak_FirstWaterBeastTriggers[] = {
     {TRIGGER_TALK, ACTOR_FIRST_WATER_BEAST, CONDITION_ALWAYS, EVENT(AltinPeak_FightFirstWaterBeast)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), PSYNERGY_EVENT_PLAYS_CAST | ACTOR_FIRST_WATER_BEAST, CONDITION_ALWAYS,
         EVENT(AltinPeak_FightFirstWaterBeast)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltinPeak_FirstWaterBeastTriggersDrained[] = {
@@ -3116,13 +3116,13 @@ struct Trigger gAltinPeak_FirstWaterBeastTriggersDrained[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE, FLAG_ALTIN_PEAK_PUDDLE_FROZEN,
         EVENT(AltinPeak_FreezeFirstWaterBeastRoomPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE, FLAG_ALTIN_PEAK_SECOND_PUDDLE_FROZEN, EVENT(AltinPeak_FreezeFirstWaterBeastRoomSecondPuddle)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltinPeak_RailTunnelTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SOUTH_ENTRANCE},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SECOND_WATER_BEAST},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltinPeak_SecondWaterBeastTriggers[] = {
@@ -3136,14 +3136,14 @@ struct Trigger gAltinPeak_SecondWaterBeastTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_SECOND_WATER_BEAST_ROOM_BOULDER, CONDITION_ALWAYS, 0},
     {EXAMINE_TRIGGER(EXAMINE_SILENT), 83, CONDITION_ALWAYS, EVENT(AltinPeak_FlipSecondWaterBeastRoomSwitch)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTIN_PEAK_COOKIE, FIND_ITEM(ITEM_COOKIE)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
     // Unused: two rows past the end marker, which no lookup reaches: a second
     // ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE exit and a chest on
     // trigger 100 holding a Herb under FLAG_ALTIN_PEAK_UNUSED_HERB, the spot
     // where the Cookie chest above already stands.
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTIN_PEAK_UNUSED_HERB, FIND_ITEM(ITEM_HERB)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltinPeak_SouthEntranceTriggers[] = {
@@ -3154,7 +3154,7 @@ struct Trigger gAltinPeak_SouthEntranceTriggers[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_POOL},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_WEST},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_EAST},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltinPeak_ThirdWaterBeastTriggers[] = {
@@ -3169,7 +3169,7 @@ struct Trigger gAltinPeak_ThirdWaterBeastTriggers[] = {
     {EXAMINE_CHEST_FACING(FACING_SOUTHEAST), 100, FLAG_ALTIN_PEAK_DRAGON_SHIELD, FIND_ITEM(ITEM_DRAGON_SHIELD)},
     {EXAMINE_CHEST_FACING(FACING_EAST), 100, FLAG_ALTIN_PEAK_DRAGON_SHIELD, FIND_ITEM(ITEM_DRAGON_SHIELD)},
     {EXAMINE_CHEST_FACING(FACING_NORTHEAST), 100, FLAG_ALTIN_PEAK_DRAGON_SHIELD, FIND_ITEM(ITEM_DRAGON_SHIELD)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltinPeak_PoolTriggers[] = {
@@ -3183,7 +3183,7 @@ struct Trigger gAltinPeak_PoolTriggers[] = {
     {TRIGGER_TALK, ACTOR_CART, CONDITION_ALWAYS, EVENT(AltinPeak_RideCart)},
     {EXAMINE_TRIGGER(EXAMINE_SILENT), 50, CONDITION_ALWAYS, EVENT(AltinPeak_FlipPoolRoomSwitch)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTIN_PEAK_POOL_MIMIC_BEATEN, FIND_MIMIC | 2},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltinPeak_SpritzTriggers[] = {
@@ -3204,7 +3204,7 @@ struct Trigger gAltinPeak_SpritzTriggers[] = {
         EVENT(AltinPeak_FreezeSpritzRoomSecondPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SPRITZ_ROOM_THIRD_PUDDLE, FLAG_ALTIN_PEAK_THIRD_PUDDLE_FROZEN,
         EVENT(AltinPeak_FreezeSpritzRoomThirdPuddle)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 // clang-format on
 
@@ -3222,7 +3222,7 @@ struct Trigger gAltinPeak_JunctionTriggers[] = {
      FIND_ITEM(ITEM_LUCKY_MEDAL)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_JUNCTION_ROOM_BOULDER,
      CONDITION_ALWAYS, 0},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltinPeak_FallingRocksTriggers[] = {
@@ -3238,7 +3238,7 @@ struct Trigger gAltinPeak_FallingRocksTriggers[] = {
      EVENT(AltinPeak_ReadFallingRockSign)},
     {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_WALL,
      FLAG_ALTIN_PEAK_BOULDER_FALLEN, EVENT(AltinPeak_ForceLogOver)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltinPeak_HydrosStatueTriggers[] = {
@@ -3246,7 +3246,7 @@ struct Trigger gAltinPeak_HydrosStatueTriggers[] = {
      EVENT(AltinPeak_StartHydrosBattle)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTIN_PEAK_LIFTING_GEM,
      FIND_ITEM(ITEM_LIFTING_GEM)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltinPeak_WestExitTriggers[] = {
@@ -3263,7 +3263,7 @@ struct Trigger gAltinPeak_WestExitTriggers[] = {
      CONDITION_ALWAYS, 0},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTIN_PEAK_VIAL,
      FIND_ITEM(ITEM_VIAL)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 /// Frames since the statue's last rumble.

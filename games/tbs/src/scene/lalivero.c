@@ -1233,7 +1233,7 @@ struct Trigger gLaliveroTriggers[] = {
     // gLaliveroTriggersAfterLighthouse opens it from any side; the chest and the
     // ground around it are the same on both visits.
     { EXAMINE_CHEST_FACING(FACING_WEST), 102, FLAG_LALIVERO_WARRIORS_HELM, FIND_ITEM(ITEM_WARRIORS_HELM) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gLaliveroTriggersAfterLighthouse[] = {
@@ -1279,6 +1279,6 @@ struct Trigger gLaliveroTriggersAfterLighthouse[] = {
     { EXAMINE_TRIGGER(EXAMINE_JAR), 100, FLAG_LALIVERO_WATER_OF_LIFE, FIND_ITEM(ITEM_WATER_OF_LIFE) },
     { EXAMINE_TRIGGER(EXAMINE_STONE_PILLAR), 101, FLAG_LALIVERO_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_LALIVERO_WARRIORS_HELM, FIND_ITEM(ITEM_WARRIORS_HELM) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on

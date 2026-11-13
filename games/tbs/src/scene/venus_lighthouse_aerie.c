@@ -3440,7 +3440,7 @@ struct Trigger gVenusLighthouseAerieTriggers[] = {
      FLAG_VENUS_AERIE_ON_PLATFORM, EVENT(VenusLighthouseAerie_LandOnPlatform)},
     {TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON,
      CONDITION_ALWAYS, EVENT(VenusLighthouseAerie_ConfrontSaturosAndMenardi)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s32 gVenusLighthouseAerie_BesideParticleScript[] = {

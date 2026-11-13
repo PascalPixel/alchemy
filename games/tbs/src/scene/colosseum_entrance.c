@@ -2475,13 +2475,13 @@ struct ActorPlacement gColosseumEntranceActorPlacementsAfterColosso[] = {
 };
 
 struct Trigger gColosseumEntranceTriggersOther[] = {
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gColosseumTunnelTriggers[] = {
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, COLOSSEUM_TUNNEL_TO_BABI_PALACE },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, COLOSSEUM_TUNNEL_TO_COLOSSEUM },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gColosseumTriggers[] = {
@@ -2501,7 +2501,7 @@ struct Trigger gColosseumTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SPECTATOR_WAITED_A_YEAR, CONDITION_ALWAYS, MSGNO(MsgColossoDidntThinkBattles) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRIAL_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceNoMatterHowGoodAWarrior) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 50, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgXianItIsLocked)) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gColosseumEntranceTriggers[] = {
@@ -2540,7 +2540,7 @@ struct Trigger gColosseumEntranceTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_GUESS_MAN, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceOnceTheTrialsAreOverIts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_GUESS_MAN, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceAllOfTheProfitsFromThe) },
     { TRIGGER_STEP, CELL_BEHAVIOR_COLOSSEUM_ENTRANCE_BEFORE_GATES, FLAG_COLOSSO_OVER, EVENT(ColosseumEntrance_CrowdRecognizesIsaac) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 
@@ -2571,5 +2571,5 @@ struct Trigger gColosseumTriggersFromColosseumAzartMatchWest[] = {
      FLAG_FINALS_LINE_REACHED, EVENT(ColosseumEntrance_FinalsStart)},
     {TRIGGER_STEP, CELL_BEHAVIOR_COLOSSEUM_BEHIND_FINALS_LINE, CONDITION_ALWAYS,
      EVENT(ColosseumEntrance_StepBackFromFinalsLine)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

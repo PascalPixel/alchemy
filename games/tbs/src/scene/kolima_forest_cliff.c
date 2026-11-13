@@ -183,7 +183,7 @@ struct Trigger gKolimaForestCliffTriggers[] = {
      EVENT(KolimaForestCliff_PushLog)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS,
      EVENT(KolimaForest_HopEast)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 // The .bss order follows the first declarations (externs in field.h).

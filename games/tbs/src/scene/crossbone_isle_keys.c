@@ -1619,7 +1619,7 @@ struct ActorPlacement gCrossboneIsleBaneActorPlacements[] = {
 };
 
 struct Trigger gCrossboneIsleKeysTriggersOther[] = {
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gCrossboneIsleKeysRoomTriggers[] = {
@@ -1644,7 +1644,7 @@ struct Trigger gCrossboneIsleKeysRoomTriggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_CROSSBONE_ISLE_KEYS_FAIRY_RING, FIND_ITEM(ITEM_FAIRY_RING) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_CROSSBONE_ISLE_KEYS_COOKIE, FIND_ITEM(ITEM_COOKIE) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 103, FLAG_CROSSBONE_ISLE_KEYS_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gCrossboneIsleStatuesTriggers[] = {
@@ -1668,7 +1668,7 @@ struct Trigger gCrossboneIsleStatuesTriggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_CROSSBONE_ISLE_STATUES_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_CROSSBONE_ISLE_STATUES_STORM_GEAR, FIND_ITEM(ITEM_STORM_GEAR) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 103, FLAG_CROSSBONE_ISLE_STATUES_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 
@@ -1751,7 +1751,7 @@ struct Trigger gCrossboneIsleBaneTriggers[] = {
      FIND_ITEM(ITEM_ELIXIR)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 107, FLAG_CROSSBONE_ISLE_DEMON_AXE,
      FIND_ITEM(ITEM_DEMON_AXE)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 u32 gCrossboneIsleKeys_SlotColumns[] = {

@@ -548,7 +548,7 @@ struct ActorPlacement gMcCoyPalaceGroundsActorPlacements[] = {
 
 /// Unused, as gMcCoyPalaceGroundsNoActorPlacements is.
 struct Trigger gMcCoyPalaceGroundsNoTriggers[] = {
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gMcCoyPalaceGroundsTriggers[] = {
@@ -581,6 +581,6 @@ struct Trigger gMcCoyPalaceGroundsTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBilibinDontLeaveIsaacBeMyMentor) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 90, CONDITION_ALWAYS, EVENT(McCoyPalaceGrounds_SearchWell) },
     { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_FLOATING_NUT, FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT, EVENT(McCoyPalaceGrounds_CatchFloatingNut) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on

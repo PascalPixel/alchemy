@@ -4793,7 +4793,7 @@ struct ActorPlacement gShipRooms_ThirdAttackMonsters[] = {
 struct Trigger gShipRooms_TriggersOther[] = {
     { TRIGGER_EXIT, 3, CONDITION_ALWAYS, SHIP_ROOMS_CRATE_HOLD_TO_TOLBI_SHIP_DECK },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_SHIP_ROOMS_CRATE_HOLD_BARREL, FLAG_TOLBI_SHIP_CRATE_HOLD_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 /// The hold while the ship waits at Kalay, and after it reaches Tolbi.
@@ -4822,7 +4822,7 @@ struct Trigger gShipRooms_HoldTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HOLD_HEALER, FLAG_TOLBI_SHIP_REACHED_TOLBI, MSGNO(MsgTolbiShipInteriorsICantRowButIAm) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HOLD_HEALER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWeMadeItToColossoIn) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_SHIP_ROOMS_HOLD_BARREL, FLAG_TOLBI_SHIP_HOLD_COINS, FIND_COINS(23) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 /// The hold at sea, where talking to a passenger asks them to row.
@@ -4859,7 +4859,7 @@ struct Trigger gShipRooms_HoldTriggersChoosingRowers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SEA_HOLD_SECOND_GUIDE, FLAG_TOLBI_SHIP_ROWER_CHOSEN, MSGNO(MsgTolbiShipInteriorsWeHadEnoughTroubleJustGetting) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SEA_HOLD_SECOND_GUIDE, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsCarefulNowWatchOutDontMake) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_SHIP_ROOMS_HOLD_BARREL, FLAG_TOLBI_SHIP_HOLD_COINS, FIND_COINS(23) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 /// The hold while the ship waits off the island.
@@ -4887,7 +4887,7 @@ struct Trigger gShipRooms_HoldTriggersAtIsland[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SEA_HOLD_SECOND_GUIDE, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsSoAnyoneKnowIfThereAre) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SEA_HOLD_LADY, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsOhhThatsCreepy) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_SHIP_ROOMS_HOLD_BARREL, FLAG_TOLBI_SHIP_HOLD_COINS, FIND_COINS(23) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 /// The captain's quarters, from the wait at Kalay until the ship reaches Tolbi.
@@ -4916,7 +4916,7 @@ struct Trigger gShipRooms_CaptainsQuartersTriggers[] = {
     { TRIGGER_STEP, CELL_BEHAVIOR_SHIP_ROOMS_QUARTERS_CREW, FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY, EVENT(ShipRooms_WatchCrewWonderAtDelay) },
     { USE_ITEM_ON_ACTOR(ITEM_ANCHOR_CHARM), ACTOR_QUARTERS_CAPTAIN, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, EVENT(ShipRooms_ReturnLuckyAnchor) },
     { EXAMINE_TRIGGER(EXAMINE_JAR) | TRIGGER_FLAG_FACING | FACING_NORTH, CELL_BEHAVIOR_SHIP_ROOMS_QUARTERS_JAR, FLAG_TOLBI_SHIP_QUARTERS_NUT, FIND_ITEM(ITEM_NUT) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 /// The captain's quarters while the ship waits off the island.
@@ -4927,7 +4927,7 @@ struct Trigger gShipRooms_CaptainsQuartersTriggersAtIsland[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_QUARTERS_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsImReallySurprisedThatThereIs) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_QUARTERS_KAJA, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsTheWindsDirectionAndTheHigh) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), CELL_BEHAVIOR_SHIP_ROOMS_QUARTERS_JAR, FLAG_TOLBI_SHIP_QUARTERS_NUT, FIND_ITEM(ITEM_NUT) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 /// The captain's quarters once the ship has reached Tolbi.
@@ -4936,7 +4936,7 @@ struct Trigger gShipRooms_CaptainsQuartersTriggersArrived[] = {
     { TRIGGER_TALK, ACTOR_QUARTERS_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWhenTheWatersAreThisDangerous) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_QUARTERS_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsSeeOurShipSurvivedAnAttack) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), CELL_BEHAVIOR_SHIP_ROOMS_QUARTERS_JAR, FLAG_TOLBI_SHIP_QUARTERS_NUT, FIND_ITEM(ITEM_NUT) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gShipRooms_RowingDeckTriggers[] = {
@@ -4973,7 +4973,7 @@ struct Trigger gShipRooms_RowingDeckTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROWING_FIRST_OARSMAN + 6, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsCouldThisBeThatIslandThats) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROWING_FIRST_OARSMAN + 7, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipInteriorsHaHahIfYouWantTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROWING_FIRST_OARSMAN + 7, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsMaybeItsTimeForMeTo) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 /// The rowing deck while monsters are aboard, where talking to one
@@ -5019,7 +5019,7 @@ struct Trigger gShipRooms_RowingDeckTriggersMonstersAboard[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROWING_TICKET_GRUMBLER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsPleaseOhPleaseLetMeMake) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROWING_MUSCLE_ADMIRER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWhyDidSeaMonstersHaveTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROWING_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIdRatherBeEatenByA) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 /// The rowing deck while the Kraken rocks the ship.
@@ -5057,7 +5057,7 @@ struct Trigger gShipRooms_RowingDeckTriggersKrakenAboard[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROWING_TICKET_GRUMBLER, CONDITION_ALWAYS, EVENT(ShipRooms_ReadTicketGrumblerMindAtOars) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROWING_MUSCLE_ADMIRER, CONDITION_ALWAYS, EVENT(ShipRooms_ReadMuscleAdmirerMindAtOars) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROWING_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIWonderIfTheyllMakeUs) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 /// The rowing deck once the ship has reached Tolbi.
@@ -5075,7 +5075,7 @@ struct Trigger gShipRooms_RowingDeckTriggersArrived[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROWING_FIRST_OARSMAN + 5, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIsaacAndHisPalsWereSo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROWING_FIRST_OARSMAN + 6, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIFeelBetterNowIWas) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROWING_FIRST_OARSMAN + 7, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsImInNoRushAnywayThis) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 

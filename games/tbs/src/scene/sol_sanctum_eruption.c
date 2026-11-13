@@ -1990,7 +1990,7 @@ struct ActorPlacement gSolSanctumEruption_ActorPlacements[] = {
 };
 
 struct Trigger gSolSanctumEruption_Triggers[] = {
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 /// Unused: a copy of the Elemental Star room's cell animation

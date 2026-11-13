@@ -2075,7 +2075,7 @@ static void WorldMap_BlockGatewayCaveExit(s32 actorId) {
       gWorldTriggers[i].kind = TRIGGER_STEP;
       gWorldTriggers[i].value = (u32)WorldMap_IodemCallsIsaacBack;
     }
-    if (gWorldTriggers[i].kind == TRIGGERS_END)
+    if (gWorldTriggers[i].kind == TRIGGER_TABLE_END)
       break;
     i++;
   }
@@ -2103,7 +2103,7 @@ static void WorldMap_RestoreGatewayCaveExit(void) {
       gWorldTriggers[i].value = WORLD_MAP_TO_GATEWAY_CAVE;
       break;
     }
-    if (gWorldTriggers[i].kind == TRIGGERS_END)
+    if (gWorldTriggers[i].kind == TRIGGER_TABLE_END)
       break;
     i++;
   }
@@ -3925,7 +3925,7 @@ struct Trigger gWorldTriggers[] = {
     { PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_STORM, IF_FLAG_SET(FLAG_WORLD_MAP_CAUGHT_IN_STORM), EVENT(WorldMap_StartDousingStorm) },
     { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_STORM, IF_FLAG_SET(FLAG_WORLD_MAP_CAUGHT_IN_STORM), EVENT(WorldMap_DouseMapStorm) },
     { TRIGGER_RAISED, RAISED_STORM_TIME_UP, CONDITION_ALWAYS, EVENT(WorldMap_StormDropsParty) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 /// Each passenger's rowing value, the World Map's copy of

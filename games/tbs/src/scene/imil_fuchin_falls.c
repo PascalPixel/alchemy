@@ -2273,14 +2273,14 @@ struct ActorPlacement gImilFuchinFalls_DragonRoomActorPlacements[] = {
 };
 
 struct Trigger gImilFuchinFalls_NoTriggers[] = {
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gImilFuchinFalls_ImilFallsCaveTriggers[] = {
     { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Imil_LeaveFallsCave) },
     { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Imil_MoveAcrossIce) },
     { TRIGGER_TALK, ACTOR_FEVER, CONDITION_ALWAYS, EVENT(Imil_RecruitFever) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gImilFuchinFalls_EntranceTriggers[] = {
@@ -2306,7 +2306,7 @@ struct Trigger gImilFuchinFalls_EntranceTriggers[] = {
     { TRIGGER_EXIT, 28, CONDITION_ALWAYS, FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE_EAST },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 1, CONDITION_ALWAYS, EVENT(FuchinFallsCave_ReadDragonFlameInscription) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_FUCHIN_FALLS_MIMIC_BEATEN, FIND_MIMIC | 1 },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gImilFuchinFalls_ZephyrRoomTriggers[] = {
@@ -2331,7 +2331,7 @@ struct Trigger gImilFuchinFalls_ZephyrRoomTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, FUCHIN_FALLS_CAVE_ZEPHYR_TO_FUCHIN_FALLS_CAVE_DRAGONS_EYE },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, FUCHIN_FALLS_CAVE_ZEPHYR_TO_FUCHIN_FALLS_CAVE_ENTRANCE },
     { TRIGGER_TALK, ACTOR_ZEPHYR, CONDITION_ALWAYS, EVENT(FuchinFallsCave_FightZephyr) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gImilFuchinFalls_DragonsEyeRoomTriggers[] = {
@@ -2381,7 +2381,7 @@ struct Trigger gImilFuchinFalls_DragonsEyeRoomTriggers[] = {
     { TRIGGER_EXIT, 4, CONDITION_ALWAYS, FUCHIN_FALLS_CAVE_DRAGONS_EYE_TO_FUCHIN_FALLS_CAVE_ENTRANCE },
     { TRIGGER_EXIT, 5, CONDITION_ALWAYS, FUCHIN_FALLS_CAVE_DRAGONS_EYE_TO_FUCHIN_FALLS_CAVE_ZEPHYR },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 30, FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND, EVENT(FuchinFallsCave_CollectDragonsEye) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 
@@ -2421,7 +2421,7 @@ struct Trigger gImilFuchinFalls_ArcticBladeRoomTriggers[] = {
      FUCHIN_FALLS_CAVE_ARCTIC_BLADE_TO_FUCHIN_FALLS_CAVE_ENTRANCE},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_FUCHIN_FALLS_ARCTIC_BLADE,
      FIND_ITEM(ITEM_ARCTIC_BLADE)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gImilFuchinFalls_KiRoomTriggers[] = {
@@ -2437,7 +2437,7 @@ struct Trigger gImilFuchinFalls_KiRoomTriggers[] = {
      EVENT(FuchinFallsCave_ReadKiInscription)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND,
      FIND_ITEM(ITEM_ORB_OF_FORCE)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gImilFuchinFalls_DragonRoomTriggers[] = {
@@ -2478,7 +2478,7 @@ struct Trigger gImilFuchinFalls_DragonRoomTriggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
      FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET,
      EVENT(FuchinFallsCave_EndRevealLighting)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s32 gImilFuchinFalls_ShortDustScript[] = {

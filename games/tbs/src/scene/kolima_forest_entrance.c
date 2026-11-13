@@ -1374,7 +1374,7 @@ struct Trigger gKolimaForestEntrance_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
      KOLIMA_FOREST_ENTRANCE_TO_KOLIMA_FOREST_GLADE},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, KOLIMA_FOREST_ENTRANCE_TO_WORLD_MAP},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s32 gKolimaForestEntrance_SparkleScript[] = {

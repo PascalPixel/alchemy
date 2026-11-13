@@ -1407,7 +1407,7 @@ struct ActorPlacement gFileScreen_ActorPlacements[] = {
 };
 
 struct Trigger gFileScreen_Triggers[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 /// Frames since FileScreen_UpdateBlend began; the blend level is half of it.

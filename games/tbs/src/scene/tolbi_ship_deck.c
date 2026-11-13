@@ -3764,7 +3764,7 @@ const struct Trigger gTolbiShipDeckTriggers[] = {
     { TRIGGER_STEP, CELL_BEHAVIOR_TOLBI_SHIP_DECK_BY_CREW, FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY, EVENT(TolbiShipDeck_WatchCrewDecideToSail) },
     { TRIGGER_STEP, CELL_BEHAVIOR_TOLBI_SHIP_DECK_EAST_OF_DOOR, FLAG_TOLBI_SHIP_CREWMAN_CAUGHT, EVENT(TolbiShipDeck_CatchCrewmanFromEast) },
     { TRIGGER_STEP, CELL_BEHAVIOR_TOLBI_SHIP_DECK_WEST_OF_DOOR, FLAG_TOLBI_SHIP_CREWMAN_CAUGHT, EVENT(TolbiShipDeck_CatchCrewmanFromWest) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 const struct Trigger gTolbiShipDeckTriggersAtSea[] = {
@@ -3781,7 +3781,7 @@ const struct Trigger gTolbiShipDeckTriggersAtSea[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SEA_CREW_MEMBER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckAnOarsmanWasInjuredByA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SEA_SEAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckWeHaveNoIdeaWhenThose) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SEA_OURANOS, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckUhnnnWhenILookAtThe) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 const struct Trigger gTolbiShipDeckTriggersArrived[] = {
@@ -3799,7 +3799,7 @@ const struct Trigger gTolbiShipDeckTriggersArrived[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARRIVED_KAJA, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckIWantSeanAndOuranosTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARRIVED_ASKS_ABOUT_COLOSSO, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckImJustGoingToHangOut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARRIVED_CREW_MEMBER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckIWonderWhatHappenedToThat) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 const struct Trigger gTolbiShipDeckTriggersAtIsland[] = {
@@ -3821,7 +3821,7 @@ const struct Trigger gTolbiShipDeckTriggersAtIsland[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SEA_SEAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckThisIslandGivesMeTheCreeps) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SEA_OURANOS, FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED, MSGNO(MsgTolbiShipDeckThatsEnoughBickering) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SEA_OURANOS, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckWhatWeCanDoNowIs) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 

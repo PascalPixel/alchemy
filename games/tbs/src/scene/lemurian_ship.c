@@ -1079,7 +1079,7 @@ struct Trigger gLemurianShipTriggers[] = {
      CONDITION_ALWAYS, EVENT(Ripple_Start)},
     {USE_ITEM(ITEM_BLACK_ORB), 10, CONDITION_ALWAYS,
      EVENT(LemurianShip_RaiseTheShip)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s32 gOrbGlowActive = 0;

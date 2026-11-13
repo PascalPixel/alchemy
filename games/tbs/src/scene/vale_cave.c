@@ -1142,14 +1142,14 @@ struct ActorPlacement gValeCave_LogsActorPlacements[] = {
 };
 
 struct Trigger gValeCave_TriggersOther[] = {
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gValeCave_MouthTriggers[] = {
     { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(ValeCave_LeaveRoom) },
     { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(ValeCave_LeaveRoom) },
     { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(ValeCave_LeaveRoom) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gValeCave_KiteTriggers[] = {
@@ -1191,7 +1191,7 @@ struct Trigger gValeCave_KiteTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_CRATES, FLAG_VALE_CAVE_WEST_CRATES_SUNK, EVENT(ValeCave_MoveWestCratesIntoWater) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_CRATES, FLAG_VALE_CAVE_EAST_CRATES_SUNK, EVENT(ValeCave_MoveEastCratesIntoWater) },
     { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_KITE, CONDITION_ALWAYS, EVENT(ValeCave_HaltKite) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 
@@ -1207,5 +1207,5 @@ struct Trigger gValeCave_LogsTriggers[] = {
      EVENT(ValeCave_PushLogOffLedge)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 22, CONDITION_ALWAYS,
      EVENT(ValeCave_PushLogNorth)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

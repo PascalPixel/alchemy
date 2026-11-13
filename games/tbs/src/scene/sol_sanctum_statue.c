@@ -1962,7 +1962,7 @@ struct Trigger gSolSanctumStatue_Triggers[] = {
      CELL_BEHAVIOR_SOL_SANCTUM_STATUE_CENTER_STATUE,
      FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
      EVENT(SolSanctumStatue_PushCenterStatueNorth)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s32 gSolSanctumStatue_ScrollPhase = 0;

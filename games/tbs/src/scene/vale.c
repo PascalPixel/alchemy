@@ -3787,7 +3787,7 @@ struct Trigger gVale_Triggers[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT(Vale_PushPillar) },
     { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT(Vale_PushPillar) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 24, CONDITION_ALWAYS, EVENT(Vale_SearchTheLockedDoor) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gVale_TriggersAfterLeaving[] = {
@@ -3837,7 +3837,7 @@ struct Trigger gVale_TriggersAfterLeaving[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT(Vale_PushPillar) },
     { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT(Vale_PushPillar) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 24, CONDITION_ALWAYS, EVENT(Vale_SearchTheLockedDoor) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gVale_TriggersAfterKalay[] = {
@@ -3884,7 +3884,7 @@ struct Trigger gVale_TriggersAfterKalay[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT(Vale_PushPillar) },
     { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT(Vale_PushPillar) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 24, CONDITION_ALWAYS, EVENT(Vale_SearchTheLockedDoor) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 

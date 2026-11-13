@@ -1490,8 +1490,7 @@ extern void Resource_DecodeType01__champa_cliff_caves(
 extern void Camera_WorldToScreen__champa_cliff_caves(s32 *position) __asm__(
     "Camera_WorldToScreen");
 
-static __inline__ void Place(struct FlashSprite *a, s32 b, s32 c, u32 d,
-                             s32 e) {
+static __inline__ void Place(void *a, s32 b, s32 c, u32 d, s32 e) {
   /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 4 of 181
    * instructions differ in tla-en. */
   EffectSprite_Init(a, b, c, d, e);
@@ -1579,16 +1578,6 @@ void Func_020029f8(s32 id, s32 mode) {
 #undef BYTE_AT
 #undef WORD_AT
 
-/* VIEW(s2c88): static Place as Place__s2c88; the definition has static
- * __inline__ void Place(struct FlashSprite *a, s32 b, s32 c, u32 d, s32 e); not
- * tried: Place's definition holds a FAKEMATCH tag. */
-static __inline__ void Place__s2c88(struct ChampaCliffCavesSprite *a, s32 b,
-                                    s32 c, u32 d, s32 e) {
-  /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 4 of 78
-   * instructions differ in tla-en. */
-  EffectSprite_Init(a, b, c, d, e);
-}
-
 void Func_02002c88(void) {
   struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuRuntime;
   struct ChampaCliffCavesSprite *sprite;
@@ -1613,7 +1602,7 @@ next:
   work->entryA = entry;
   work->vramA = vram;
   sprite = &work->spriteA;
-  Place__s2c88(sprite, 31, 31, 0xc0000000, vram);
+  Place(sprite, 31, 31, 0xc0000000, vram);
   sprite->fullColor = 1;
   sprite->palette = 0;
   sprite->priority = 2;
@@ -1651,16 +1640,6 @@ struct ChampaCliffCavesWork__s2d34 {
   u8 unk1076[2];
 };
 
-/* VIEW(s2d34): static Place as Place__s2d34; the definition has static
- * __inline__ void Place(struct FlashSprite *a, s32 b, s32 c, u32 d, s32 e); not
- * tried: Place's definition holds a FAKEMATCH tag. */
-static __inline__ void Place__s2d34(struct ChampaCliffCavesSprite *a, s32 b,
-                                    s32 c, u32 d, s32 e) {
-  /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 4 of 78
-   * instructions differ in tla-en. */
-  EffectSprite_Init(a, b, c, d, e);
-}
-
 void Func_02002d34(void) {
   struct ChampaCliffCavesWork__s2d34 *work = Ram_HeapSlots->menuRuntime;
   struct ChampaCliffCavesSprite *sprite;
@@ -1685,7 +1664,7 @@ next:
   work->entryB = entry;
   work->vramB = vram;
   sprite = &work->spriteB;
-  Place__s2d34(sprite, 15, 47, 0xc0008000, vram);
+  Place(sprite, 15, 47, 0xc0008000, vram);
   sprite->fullColor = 1;
   sprite->palette = 1;
   sprite->priority = 1;

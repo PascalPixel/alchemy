@@ -487,13 +487,9 @@ void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 
-/* VIEW(s3164): static Actor_SetPosition as Actor_SetPosition__s3164; the
- * definition has static inline void Actor_SetPosition(s32 actorId, s32 fixed_x,
- * s32 fixed_z); tried with the definition the rest of the object has, it does
- * not compile in tla-ja: games/tla/src/scene/dehkan_plateau/s2698.c:502: too
- * many arguments to function `Actor_SetPosition'. */
-static __inline__ void Actor_SetPosition__s3164(struct Actor *object, s32 x,
-                                                s32 y, s32 z) {
+/// Places an actor and resets its motion (Actor_SetPositionAndResetMotion).
+static __inline__ void Actor_PlaceAndResetMotion(struct Actor *object, s32 x,
+                                                 s32 y, s32 z) {
   Actor_SetPositionAndResetMotion(object, x, y, z);
 }
 
@@ -515,7 +511,7 @@ void Func_02003164(void) {
   if (GameFlag_Get(0x840) != 0) {
     Actor_DisableById(23);
     Map_CopyAttributes(50, 7, 1, 1, 52, 7);
-    Actor_SetPosition__s3164(Actor_GetById(23), 210 << 18, 0, 240 << 15);
+    Actor_PlaceAndResetMotion(Actor_GetById(23), 210 << 18, 0, 240 << 15);
   } else {
     Actor_PlaceBlocks(gData_02003fc0);
   }
@@ -790,16 +786,6 @@ loop:
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Get(flag); }
 
-/* VIEW(s390c): static Actor_SetPosition as Actor_SetPosition__s390c; the
- * definition has static inline void Actor_SetPosition(s32 actorId, s32 fixed_x,
- * s32 fixed_z); tried with the definition the rest of the object has, it does
- * not compile in tla-ja: games/tla/src/scene/dehkan_plateau/s2698.c:794: too
- * many arguments to function `Actor_SetPosition'. */
-static __inline__ void Actor_SetPosition__s390c(struct Actor *object, s32 x,
-                                                s32 y, s32 z) {
-  Actor_SetPositionAndResetMotion(object, x, y, z);
-}
-
 void Func_0200390c(void) {
   struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 entrance;
@@ -811,7 +797,7 @@ void Func_0200390c(void) {
     if (GameFlag_Get(0x871) != 0) {
       Map_CopyAttributes(0, 0, 1, 1, 15, 5);
       if (gData_02004420 != NULL) {
-        Actor_SetPosition__s390c(gData_02004420, 248 << 16, 0, 176 << 15);
+        Actor_PlaceAndResetMotion(gData_02004420, 248 << 16, 0, 176 << 15);
         wait(1);
       }
     }

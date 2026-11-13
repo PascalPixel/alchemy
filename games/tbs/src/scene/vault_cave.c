@@ -660,18 +660,16 @@ static void VaultCave_UseUnderfootFrostPriorities(void) {
   }
 }
 
-/// Restores automatic draw ACTOR_PRIORITY_AUTOMATIC for the same six puddles.
+/// Restores automatic draw priority for the same six puddles.
 static void VaultCave_UseAutomaticFrostPriorities(void) {
-  s32 actorSlot = ACTOR_WEST_UPPER_PUDDLE;
-  s32 remaining = 5;
+  s32 targetIndex;
+  s32 actorSlot;
 
-  do {
-    struct Actor *target = Actor_Get(actorSlot);
-
-    remaining--;
-    target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+  actorSlot = ACTOR_WEST_UPPER_PUDDLE;
+  for (targetIndex = 0; targetIndex < 6; targetIndex++) {
+    Actor_Get(actorSlot)->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     actorSlot++;
-  } while (remaining >= 0);
+  }
 }
 
 /// Moves the third layer of the map grid through its phases, then fades the
@@ -1100,7 +1098,9 @@ s32 Scene_Initialize(void) {
 }
 
 // clang-format off
-const s32 gVaultCave_DirectionSteps[] = {
+// Not const, and placed in read-only data by its section: the pushes read the
+// step again after each call, as a const table is not.
+s32 gVaultCave_DirectionSteps[] __attribute__((section(".rodata"))) = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),

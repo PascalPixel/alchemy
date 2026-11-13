@@ -1553,7 +1553,6 @@ static void ValePlaza_DepartForQuest(void) {
   const s32 *faceActions;
   const s32 *chaseActions;
   const s32 *departureActions;
-  u8 value;
 
   // The village gathers at the gate to see Isaac and Garet off; the camera
   // starts on the two children up the path.
@@ -1912,9 +1911,12 @@ static void ValePlaza_DepartForQuest(void) {
   priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   Event_Wait(80);
   Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= priorityFlags;
-  value = (priorityFlags | actor->priorityFlags);
+  {
+    struct Actor *garet = Actor_GetById(ACTOR_GARET);
+    u8 flags = priorityFlags | garet->priorityFlags;
 
-  actor->priorityFlags = value;
+    garet->priorityFlags = flags;
+  }
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);

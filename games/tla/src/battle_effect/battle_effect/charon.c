@@ -707,9 +707,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           {
             u8 *vram = OBJ_VRAM;
 
-            /* FAKEMATCH(temporary): vram holds the base, then the destination;
-             * as OBJ_VRAM + the slot's offset in the call, 71 of 4354
-             * instructions differ in tla-en. */
+            // vram holds the base, then the destination.
             vram += tileSlots[object->slot].offset;
             Iwram_CopyWords(vram, work->buffer + 0x2400, 0x800);
           }

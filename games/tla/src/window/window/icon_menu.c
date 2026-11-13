@@ -82,13 +82,6 @@ void Graphics_ExpandVramTilesByColorTable(u16 *tiles);
  * found. */
 extern void Link_DrawShiftedTilePair__battle_party_commands(
     u32 address) __asm__("Link_DrawPageArrows");
-/* VIEW(menus): routine Menu_BuildLocalizedPatternTiles as void
- * Menu_BuildLocalizedPatternTiles(void); window/screens has s32
- * Menu_BuildLocalizedPatternTiles(void) {; not tried:
- * Menu_BuildLocalizedPatternTiles's declaration holds a FAKEMATCH tag. */
-void Menu_BuildLocalizedPatternTiles__menus(void) __asm__(
-    "Menu_BuildLocalizedPatternTiles");
-#define Menu_BuildLocalizedPatternTiles Menu_BuildLocalizedPatternTiles__menus
 /* VIEW(battle_party_commands): routine BattleParty_SplitChoosers as s32
  * BattleParty_SplitChoosers(u16 *actors, struct BattleAction **cursor, s32
  * *forcedCount); the definition has s32 BattleParty_ChooseReserve(s32 slot) {
@@ -147,26 +140,12 @@ extern void Text_DrawNumberAtOffset__battle_party_commands(
 extern void Window_SetTilemapEntry__battle_party_commands(
     struct Window *window, s32 entry, s32 x, s32 y,
     s32 flags) __asm__("Window_SetTilemapEntry");
-/* VIEW(menus): routine Window_PutGlyph as void Window_PutGlyph(struct Window
- * *window, s32 character, s32 x, s32 y, s32 mode); window/window has void
- * Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {; not
- * tried: Window_PutGlyph's declaration holds a FAKEMATCH tag. */
-void Window_PutGlyph__menus(struct Window *window, s32 character, s32 x, s32 y,
-                            s32 mode) __asm__("Window_PutGlyph");
-#define Window_PutGlyph Window_PutGlyph__menus
 /* VIEW(menus): routine BattleDjinnMenu_Run as s32 BattleDjinnMenu_Run(s32
  * member, s32 unused); window/screens has s32 BattleDjinnMenu_Run(s32 member)
  * {; not tried: BattleDjinnMenu_Run's declaration holds a FAKEMATCH tag. */
 s32 BattleDjinnMenu_Run__menus(s32 member,
                                s32 unused) __asm__("BattleDjinnMenu_Run");
 #define BattleDjinnMenu_Run BattleDjinnMenu_Run__menus
-/* VIEW(menus): routine Message_ShowAndWait as void *Message_ShowAndWait(s32
- * message, s32 x, s32 y); window/screens has s32 Message_ShowAndWait(s32
- * message, s32 x, s32 y) {; not tried: Message_ShowAndWait's declaration holds
- * a FAKEMATCH tag. */
-void *Message_ShowAndWait__menus(s32 message, s32 x,
-                                 s32 y) __asm__("Message_ShowAndWait");
-#define Message_ShowAndWait Message_ShowAndWait__menus
 /* VIEW(battle_party_commands): routine Item_GetDirectFar as u16
  * *Item_GetDirectFar(s32 item); item.h has struct ItemDefinition
  * *Item_GetDirectFar(s32 item); not tried: Item_GetDirectFar's bound
@@ -1524,16 +1503,6 @@ s32 FileList_SelectAction(void) {
 #else
 #define LABEL_RIGHT 128
 #endif
-
-/* VIEW(menus): routine Window_ClearInteriorTiles as void
- * Window_ClearInteriorTiles(void *window, s32 x, s32 y, s32 right, s32 bottom);
- * window/window has void Window_ClearInteriorTiles(const struct Window *window,
- * u32 left, u32 top, u32 right, u32 bottom) {; not tried:
- * Window_ClearInteriorTiles's declaration holds a FAKEMATCH tag. */
-void Window_ClearInteriorTiles__menus(
-    void *window, s32 x, s32 y, s32 right,
-    s32 bottom) __asm__("Window_ClearInteriorTiles");
-#define Window_ClearInteriorTiles Window_ClearInteriorTiles__menus
 
 /// When the selected mode changes, clears the lower window's label area and
 /// writes the mode's lines of text. The area starts at x 8 and ends at

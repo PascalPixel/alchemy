@@ -290,15 +290,6 @@ Func_080ce458__f0dd054(u32 filter, s32 kind,
  * function `BattleEffect_GetCycledTableWord'. */
 extern u32 BattleEffect_GetCycledTableWord__f0dd054(u32 keys) __asm__(
     "BattleEffect_GetCycledTableWord");
-/* VIEW(mind_read): routine MapGrid_CheckCollisionFar as s32
- * MapGrid_CheckCollisionFar(struct Actor *object, struct Vec3 *position);
- * module/field/field.h has s32 MapGrid_CheckCollisionFar(struct Actor *object,
- * s32 *position); not tried: MapGrid_CheckCollisionFar's bound declaration was
- * not found. */
-s32 MapGrid_CheckCollisionFar__mind_read(
-    struct Actor *object,
-    struct Vec3 *position) __asm__("MapGrid_CheckCollisionFar");
-#define MapGrid_CheckCollisionFar MapGrid_CheckCollisionFar__mind_read
 /* VIEW(mind_read): routine Actor_ApplyRandomChildValues as void
  * Actor_ApplyRandomChildValues(void); field/object/visual_attributes has void
  * Actor_ApplyRandomChildValues(struct Actor *owner) {; tried as the

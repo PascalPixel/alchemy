@@ -43,7 +43,6 @@
 #undef SparkParticle
 #undef ObjectSprite
 #undef Mote
-#undef Actor_StartScriptFar
 
 #include "radial/actor_cells.c"
 #include "radial/step_vector.c"

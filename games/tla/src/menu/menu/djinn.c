@@ -103,9 +103,6 @@ s32 DjinnMenu_Run(void) {
   Ram_HeapSlots->objectSystem->suspended = 0;
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
-  /* FAKEMATCH(wrapper): forwarding through item.c's CopyWords_ inline keeps
-   * each call's own constants; as plain calls, 4 of 201 instructions differ
-   * in tla-en. */
   Iwram_CopyWords((void *)0x06004000, backdrop->tiles, 0x2000);
   Iwram_CopyWords((void *)&BG_PLTT_COLOR(4, 0), backdrop->palette, 128);
   wait(1);
@@ -160,9 +157,7 @@ void DjinnMenu_BuildLists(struct OwnerList *list);
 /// page arrows before each confirmation and adds DjinnMenu_ShowMemberStatus
 /// (step 10) and DjinnMenu_ShowHelp (step 15) as its status and help pages.
 s32 DjinnMenu_RunScreen(void) {
-  /* FAKEMATCH(temporary): one icon local holding the cursor and then each
-     arrow; as a cursor local and plain arrow stores, 109 of 603 instructions
-     differ in tla-en. */
+  // icon holds the cursor, then each arrow in turn.
   struct DjinnMenuWork *menu;
   struct MenuIcon *icon;
   s32 result;
@@ -458,14 +453,8 @@ void Menu_OpenBackdropScreen(void) {
 
   Window_UpdateOrCreate(&menu->listWindow, 0, 5, 30, 15, 2);
   wait(1);
-  /* FAKEMATCH(wrapper): forwarding through item.c's CopyWords_ inline keeps
-   * each call's own constants; as direct calls, 134 of 237 instructions
-   * differ in tla-en. */
   Iwram_CopyWords(backdrop->tiles, BG_CHAR_BLOCK(1), 0x2000);
   Iwram_CopyWords(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0), 128);
-  /* FAKEMATCH(wrapper): forwarding through item.c's FillWords_ inline keeps
-   * each call's own constants; as direct calls, 2 of 237 instructions differ
-   * in tla-en. */
   Iwram_FillWords(BG_CHAR_BLOCK(1), 0x2000, 0x33333333);
   Iwram_FillWords((void *)&BG_PLTT_COLOR(4, 0), 128, 0x55555555);
   Graphics_ExpandVramTilesByColorTableFar(BG_CHAR_BLOCK(1) + 0x1000);

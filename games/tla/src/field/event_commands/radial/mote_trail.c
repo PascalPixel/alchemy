@@ -11,15 +11,6 @@ extern char ResourceId_Runes, ResourceId_Pebbles;
 
 void Field_StartColorTransition(s32 frames, s32 color);
 void Camera_WorldToScreen(s32 *position);
-/* VIEW(psynergy): routine Actor_StartScriptFar as void
- * Actor_StartScriptFar(struct Actor *object, const void *script);
- * field/objdisp.h has void Actor_StartScriptFar(struct Actor *object, const s32
- * *script); tried as the rest of the object declares it, it does not compile in
- * tla-ja: games/tla/src/field/event_commands/radial.c:7151: dereferencing
- * pointer to incomplete type. */
-void Actor_StartScriptFar__psynergy(
-    struct Actor *object, const void *script) __asm__("Actor_StartScriptFar");
-#define Actor_StartScriptFar Actor_StartScriptFar__psynergy
 void Actor_ArmCallback(s32 id, s32 value, s32 flags);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 /* VIEW(f0ea14c): routine SummonTablet_CyclePictures as void

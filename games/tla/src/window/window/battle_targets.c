@@ -108,15 +108,6 @@ Message_CopyExpanded__menus(s32 message, u16 *text,
  * graphics.h has s32 Text_ClearCanvas(void); not tried: Text_ClearCanvas's
  * bound declaration was not found. */
 extern void Vram_ClearWindowBlock__menus(void) __asm__("Text_ClearCanvas");
-/* VIEW(menus): routine Text_DrawWideStringAtOffset as void
- * Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x,
- * s32 y); window/window has void Text_DrawWideStringAtOffset(u16 *text, struct
- * Window *window, s32 x, s32 y) {; not tried: Text_DrawWideStringAtOffset's
- * declaration holds a FAKEMATCH tag. */
-void Text_DrawWideStringAtOffset__menus(
-    u16 *text, struct TargetWindow *window, s32 x,
-    s32 y) __asm__("Text_DrawWideStringAtOffset");
-#define Text_DrawWideStringAtOffset Text_DrawWideStringAtOffset__menus
 
 // The help window's column beside the aimed member, kept on screen.
 #define TARGET_HELP_COLUMN(back, width, last)                                  \

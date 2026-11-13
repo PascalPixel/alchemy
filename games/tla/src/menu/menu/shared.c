@@ -128,14 +128,6 @@ void *Portrait_CreateFar(s32 owner, s32 x, s32 y, struct RenderInput *window,
                          s32 a, s32 b);
 void Unit_UpdateClassFar(s32 owner);
 
-static inline void RestoreUnit(struct BattleUnit *unit,
-                               struct BattleUnit *backup) {
-  /* FAKEMATCH(wrapper): both restores forwarded through an inline, so the size
-     loads after the call's other arguments; as direct Iwram_CopyWords calls, 2
-     of 494 instructions differ in tla-en. */
-  Iwram_CopyWordsEntry(unit, backup, sizeof(struct BattleUnit));
-}
-
 /// Draws the status panel of the Item and Psynergy screens for the party
 /// party member `member` (window at tile 0,5, 13 by 12): the name, up to two
 /// statuses or the level, the party member's portrait, and below them what
@@ -243,7 +235,7 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
     Window_SetTilemapEntryFar((s32)window, 0xf12a, 3, 5, 0);
     value = unit->classIndex + MESSAGE_CLASS_NAME;
     Text_DrawMessageAsTilesFar(value, window, 0, 48);
-    RestoreUnit(unit, backup);
+    Iwram_CopyWords(unit, backup, sizeof(struct BattleUnit));
     Heap_Release(backup);
     break;
   case STATUS_PANEL_EXPERIENCE:
@@ -275,7 +267,7 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
       Inventory_EquipFar(owner, slot);
     Unit_CalculateFar(owner);
     Text_DrawStatComparison(unit, backup, (s32)window);
-    RestoreUnit(unit, backup);
+    Iwram_CopyWords(unit, backup, sizeof(struct BattleUnit));
     Heap_Release(backup);
     break;
   case STATUS_PANEL_LEARN: {
@@ -1141,24 +1133,6 @@ void Window_SetBounds(struct RenderInput *window, s32 x, s32 y, s32 width,
   }
 }
 
-typedef s32 (*CopyFn)(void *, const void *, s32);
-typedef s32 (*FillFn)(void *, s32, u32);
-
-static __inline__ void CopyWords(const void *src, CopyFn copy, void *dst,
-                                 s32 size) {
-  /* FAKEMATCH(wrapper): the copy forwarded through an inline, which keeps the
-   * load in r1 instead of r0; as a direct Iwram_CopyWords call, 6 of 47
-   * instructions differ in tla-en. */
-  copy(dst, src, size);
-}
-
-static __inline__ void FillWords(FillFn fill, void *dst, s32 size, u32 value) {
-  /* FAKEMATCH(wrapper): the fill forwarded through an inline, which keeps the
-   * r3 load and the literal pool's position; as a direct Iwram_FillWords
-   * call, 4 of 47 instructions differ in tla-en. */
-  fill(dst, size, value);
-}
-
 s32 Sound_PlayReturnOne(s32 cue) {
   Sound_PlayFar(cue);
   return 1;
@@ -1173,9 +1147,9 @@ void Menu_UpdateCancelSound(void) {
   frame = gFrameCount;
   if ((frame & 3) == 0) {
     if (frame & 4)
-      CopyWords(gData_08105948, Iwram_CopyWordsEntry, (void *)0x06002540, 32);
+      Iwram_CopyWords((void *)0x06002540, gData_08105948, 32);
     else
-      FillWords(Iwram_FillWordsEntry, (void *)0x06002540, 32, 0x44444444);
+      Iwram_FillWords((void *)0x06002540, 32, 0x44444444);
   }
   input = &gInput;
   mask = 8;

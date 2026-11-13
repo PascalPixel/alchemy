@@ -257,13 +257,6 @@ extern u8 gNameEntry_EndKeyLabel[];
 
 #endif
 
-/* VIEW(screens): routine Portrait_OpenWindow as void Portrait_OpenWindow(s32
- * member, s32 x, s32 y, s32 side); window/window has struct Window
- * *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x, s32 y) {; not
- * tried: Portrait_OpenWindow's declaration holds a FAKEMATCH tag. */
-void Portrait_OpenWindow__screens(s32 member, s32 x, s32 y,
-                                  s32 side) __asm__("Portrait_OpenWindow");
-#define Portrait_OpenWindow Portrait_OpenWindow__screens
 void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
 #define MenuCursor_SetPositionImmediateFar MenuCursor_SetPositionImmediateFar
 

@@ -45,7 +45,6 @@
 #undef SE_CLOAK_END
 #undef CLOAK_FLICKER_PALETTE
 
-#undef MapGrid_CheckCollisionFar
 #undef Actor_ApplyRandomChildValues
 #undef EffectPosition
 #undef EffectWork

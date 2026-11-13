@@ -46,17 +46,10 @@
 #undef Unit_Get
 #undef Ability_Get
 #undef Message_DecodeRawUnbounded
-#undef MenuTitle_Bob
-#undef gKeyState
-#undef MenuCursor_AdvanceFar
-#undef MenuCursor_MoveTowardTargetFar
 #undef Portrait_Create
 #undef MenuSprite
-#undef PartyInventory_AddFar
 #undef CommandIcon_Create
-#undef WindowSprite_Pulse
 #undef EffectPosition
-#undef Math_UnsignedMulHighAdd
 #undef Event_SetDestinationFar
 
 // The screens built on the window system, as The Broken Seal's screens object
@@ -102,13 +95,6 @@ s32 Window_MapTextCanvasTiles__screens() __asm__("Window_MapTextCanvasTiles");
 
 // The screens object's functions its parts call before their definitions.
 struct BobPairObject;
-
-/* VIEW(screens): routine Message_OpenWindow as s32 Message_OpenWindow(s32
- * message, s32 x, s32 y, s32 style); window/window has struct Window
- * *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {. */
-s32 Message_OpenWindow__screens(s32 message, s32 x, s32 y,
-                                s32 style) __asm__("Message_OpenWindow");
-#define Message_OpenWindow Message_OpenWindow__screens
 
 struct CommandRowIcon {
   u8 unk00[4];
@@ -733,13 +719,8 @@ extern u8 Tile_BuildCellPicturesCode[];
 #include "window/battle_item_menu.c"
 #include "window/battle_psynergy_menu.c"
 
-#undef Message_OpenWindow
-#undef Portrait_OpenWindow
 #undef MenuCursor_SetPositionImmediateFar
 #undef Message_Start
-#undef gWindowSprite_BounceScales
-#undef Text_DrawWideStringAtOffset
-#undef Window_PutGlyph
 
 #undef Text_DrawPrefixedNumberAtOffset
 #undef Text_DrawWideStringInWindow
@@ -875,11 +856,6 @@ extern u8 gWorkspace_StatusTitle[];
 extern u8 gWorkspace_PageLabel[];
 extern u8 gWorkspace_RangeDash[];
 
-/* VIEW(menus): routine Portrait_Load as s32 Portrait_Load(s32 portrait, s32
- * slot); window/screens has s32 Portrait_Load(u32 entry, s32 slot) {. */
-s32 Portrait_Load__menus(s32 portrait, s32 slot) __asm__("Portrait_Load");
-#define Portrait_Load Portrait_Load__menus
-
 extern s8 gMenu_SaveSlotActionByPosition[];
 
 extern struct LinkCountdownState *gLinkCountdownWork;
@@ -901,16 +877,4 @@ struct TargetWindow {
 #include "window/debug_flags.c"
 #include "window/pause_menu.c"
 
-#undef Portrait_Load
-#undef Text_DrawWideStringAtOffset
-#undef Menu_BuildLocalizedPatternTiles
-#undef Window_PutGlyph
 #undef BattleDjinnMenu_Run
-#undef Message_ShowAndWait
-#undef Window_ClearInteriorTiles
-#undef Text_DrawNumber
-#undef Icon_BuildItemIconTiles
-#undef Icon_BuildMiscIconTiles
-#undef gPortrait_CharacterMap
-#undef gPortrait_SpriteMap
-#undef Portrait_OpenWindow

@@ -5,14 +5,6 @@
 #include "../window_internal.h"
 #include "module/window/screens.h"
 
-/* VIEW(screens): variable gWindowSprite_BounceScales as const u16
- * gWindowSprite_BounceScales[32]; window/window has u16
- * gWindowSprite_BounceScales[]; not tried: gWindowSprite_BounceScales's
- * declaration holds a FAKEMATCH tag. */
-extern const u16 gWindowSprite_BounceScales__screens[32] __asm__(
-    "gWindowSprite_BounceScales");
-#define gWindowSprite_BounceScales gWindowSprite_BounceScales__screens
-
 struct WindowTiles {
   u8 unk00[3];
   u8 dirty; ///< bits: one per four tile rows, from bit 1

@@ -233,9 +233,6 @@ void Func_02003d44(s32 mode) {
   gData_02006e08 = 0xc00;
   PUSH_PICTURE(0x3a80);
   if (mode == 1) {
-    /* FAKEMATCH(wrapper): Map_SetScreenShake called through Call3; as
-     * MapGrid_SetShake(0x20000, 0x20000, 0x10000), 19 of 593 instructions
-     * differ in tla-en. */
     MapGrid_SetShake(0x20000, 0x20000, 0x10000);
     Event_PlaySound(141);
     gData_02006e08 = 0xd00;

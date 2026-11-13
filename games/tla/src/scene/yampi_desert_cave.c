@@ -975,8 +975,6 @@ s32 Func_02001418(void) {
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room2) {
     if (GameFlag_Test(0x303)) {
-      /* FAKEMATCH(wrapper): the form kept; as a direct call, 2 of 390
-       * instructions differ in tla-en. */
       Actor_SetPosition(8, 138 << 18, 216 << 16);
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, 13);
       MapGrid_CopyCellAttributes(95, 3, 3, 3, 98, 13);
@@ -1009,8 +1007,6 @@ s32 Func_02001418(void) {
     if (GameFlag_Test(0x301))
       Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
     if (GameFlag_Test(0x304)) {
-      /* FAKEMATCH(wrapper): the form kept; as a direct call, 2 of 390
-       * instructions differ in tla-en. */
       Actor_SetPosition(13, 168 << 16, 184 << 16);
       MapGrid_CopyCellAttributes(12, 11, 1, 1, 10, 11);
     } else {
@@ -1023,16 +1019,12 @@ s32 Func_02001418(void) {
 #endif
     }
     if (GameFlag_Test(0x305)) {
-      /* FAKEMATCH(wrapper): the form kept; as a direct call, 2 of 390
-       * instructions differ in tla-en. */
       Actor_SetPosition(12, 154 << 18, 132 << 17);
       MapGrid_CopyCellAttributes(38, 15, 1, 1, 38, 16);
     } else {
       MapGrid_CopyCellAttributes(38, 15, 1, 1, 39, 16);
     }
     if (!GameFlag_Test(65) && !GameFlag_Test(145)) {
-      /* FAKEMATCH(wrapper): the form kept; as ((s32)GameFlag_GetByte(0x278)),
-       * 18 of 390 instructions differ in tla-en. */
       s32 step = FieldGameFlag_GetByte(0x278);
       s32 placed = GameFlag_Test(0x271);
 

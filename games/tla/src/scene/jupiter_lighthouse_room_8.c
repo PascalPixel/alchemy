@@ -256,9 +256,6 @@ void Func_020021f0(void);
 void Func_020021f8(void);
 
 void Func_02000410(void) {
-  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
-   * Value, this file's own); as direct calls, 8 of 216 instructions differ in
-   * tla-en. */
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *linked = actor->watchedObject;

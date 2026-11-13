@@ -746,8 +746,6 @@ void Func_02003284(void) {
   if (GameFlag_Test(0x841) != 0)
     Func_0200172c();
   else
-    /* FAKEMATCH(wrapper): forwarded, so each call builds its own constants; as direct
-     * calls, 8 of 276 instructions differ in tla-en. */
     MapGrid_CopyCellAttributes(38, 32, 1, 1, 38, 33);
   Actor_GetById(14)->priorityFlags &= ~1;
   Actor_GetById(15)->priorityFlags &= ~1;
@@ -769,8 +767,6 @@ void Func_02003284(void) {
   if (GameFlag_Test(0x86e) != 0) {
     s32 angle = 0x4000;
 
-    /* FAKEMATCH(wrapper): forwarded, so the angle loads ahead of the coordinates; as
-     * direct calls, 4 of 276 instructions differ in tla-en. */
     Actor_SetPositionAndFacing(25, 212 << 17, 208 << 15, angle);
   }
   Actor_SetModeById(18, 3);

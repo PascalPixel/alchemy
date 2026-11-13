@@ -228,9 +228,6 @@ s32 Func_02005538(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
 extern s16 gData_02005f38__s3d80[] __asm__("gData_02005f38");
 
 void Func_02004140(void) {
-  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
-   * Value, this file's own); as direct calls, 2 of 304 instructions differ in
-   * tla-en. */
   struct Position probe;
   s32 startBehavior;
   s32 x;
@@ -430,8 +427,6 @@ retry:
     angle = ArcTan2(targetZ - object->z, targetX - object->x);
     angle = (angle + 0x2000) & 0xc000;
   }
-  /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 2
-   * of 347 instructions differ in tla-en. */
   FieldVector_AddPolarOffset(0x100000, angle, position);
   cell = GetMapCellCollision(*layer, p[0], p[2]);
   if (cell == 255 ||
@@ -509,8 +504,6 @@ walk:
   /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
    * position's address; as no asm, 94 of 347 instructions differ in tla-en. */
   __asm__("" : : : SFP_CLOBBER);
-  /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 6
-   * of 347 instructions differ in tla-en. */
   FieldVector_AddPolarOffset(0x100000, angle, position);
   q = position;
   cell = GetMapCellCollision(*layer, q[0], q[2]);

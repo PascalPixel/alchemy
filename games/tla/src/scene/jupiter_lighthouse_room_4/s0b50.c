@@ -100,9 +100,6 @@ s32 Func_02000c28(struct Actor *object) {
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 
 void Func_02000cc8(void) {
-  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
-   * Value, this file's own); as direct calls, 165 of 165 instructions differ in
-   * tla-en. */
   struct Actor *left = Actor_Get(9);
   struct Actor *right = Actor_Get(10);
   struct Actor *rider = Actor_Get(23);

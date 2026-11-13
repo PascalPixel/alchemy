@@ -167,8 +167,6 @@ void Func_020002f8(void) {
   object = Actor_Get(11);
   object->motionFlags = 0;
   object->y = 0x100000;
-  /* FAKEMATCH(wrapper): the call forwarded through Call2; as a direct call,
-   * 4 of 223 instructions differ in tla-en. */
   Actor_SetSpriteRotationById(13, 0x1000);
   Actor_SetAnimation(11, 2);
   Actor_SetAnimation(12, 3);
@@ -182,8 +180,6 @@ void Func_020002f8(void) {
   Animation_ApplyChildValues(Actor_Get(11), 6);
   Animation_ApplyChildValues(Actor_Get(12), 6);
   Animation_ApplyChildValues(Actor_Get(13), 6);
-  /* FAKEMATCH(wrapper): the flag test forwarded through Value1; as a direct
-   * call, 11 of 223 instructions differ in tla-en. */
   if (Event_GetFlag(0x8a7)) {
     /* FAKEMATCH(wrapper): both calls forwarded through Call3; as either one a
      * direct call, 2 of 223 instructions differ in tla-en. */

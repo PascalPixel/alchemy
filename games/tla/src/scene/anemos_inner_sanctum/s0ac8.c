@@ -474,10 +474,6 @@ void Func_02001518(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 10);
   FieldEvent_Wait(30);
   object->motionFlags = 0;
-  /* FAKEMATCH(wrapper): the camera move forwarded through FieldCamera_MoveTo,
-   * so each -1 is built on its own, as in the ROM; as a direct call, the three
-   * share one register, two instructions shorter, 12 of 100 instructions
-   * differ in tla-en. */
   FieldCamera_MoveTo(-1, -1, -1, 0);
   object->speedLimit = 0x20000;
   object->acceleration = 0x800;

@@ -223,8 +223,6 @@ stop:
   object->speedLimit = 0x20000;
   object->update = Func_02000d40;
   FieldActor_SetMoveTarget(object, position[0], position[1], position[2]);
-  /* FAKEMATCH(wrapper): the form kept; as FieldCamera_SetSpeed(0x20000,
-   * 0x4000), 2 of 260 instructions differ in tla-en. */
   FieldCamera_SetSpeed(0x20000, 0x4000);
   FieldCamera_MoveTo(position[0], position[1], position[2], 1);
   Actor_WaitForMove(object);
@@ -259,15 +257,11 @@ hit:
   object->speedLimit = 0x20000;
   object->update = Func_02000d40;
   FieldActor_SetMoveTarget(object, position[0], position[1], position[2]);
-  /* FAKEMATCH(wrapper): the form kept; as FieldCamera_SetSpeed(0x20000,
-   * 0x4000), 2 of 260 instructions differ in tla-en. */
   FieldCamera_SetSpeed(0x20000, 0x4000);
   FieldCamera_MoveTo(position[0], position[1], position[2], 1);
   Actor_WaitForMove(object);
   object->update = NULL;
   Func_02003a6c(object);
-  /* FAKEMATCH(wrapper): the form kept; as Event_SetFlag(0x2f0), 8 of 260
-   * instructions differ in tla-en. */
   Event_SetFlag(0x2f0);
   Func_02000c08(i);
   Event_ClearFlag(0x2f0);

@@ -279,8 +279,6 @@ s32 Func_02000a48(void) {
     } else if (gMainRoutineWork.entrance <= 8) {
       Func_020006cc(gData_02003dd2);
     } else if (gMainRoutineWork.entrance <= 12) {
-      /* FAKEMATCH(wrapper): forwarded inline, so that its stack arguments build
-       * in order; as a direct call, 8 of 187 instructions differ in tla-en. */
       MapGrid_CopyCellAttributes(79, 37, 2, 1, 79, 36);
       Func_020006cc(gData_02003de4);
     } else {

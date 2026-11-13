@@ -84,10 +84,6 @@ void Func_02000120(void) {
     Actor_SetModeById(18, 3);
     Event_ShowMessageAndWait(18, 0);
     gMainRoutineWork.ownerOverride = 1;
-    /* FAKEMATCH(wrapper): the flag test forwarded through event.h's
-     * Event_GetFlag; as a direct GameFlag_Test call, gMainRoutineWork's offsets
-     * take r3 instead of r2, 22 of 89 instructions differ in tla-en (found
-     * by alchemy permute). */
     if (Event_GetFlag(0x9d0)) {
       GameFlag_SetBit(0x8df);
       GameFlag_SetBit(0x9b2);

@@ -395,8 +395,6 @@ void Func_02000838(void) {
 void Func_02000860(void) { Func_02002dc0(gData_02003034); }
 
 void Func_02000870(void) {
-  /* FAKEMATCH(wrapper): Map_SetScreenShake through LemurianShip_SetWork; as a direct
-   * call, 54 of 260 instructions differ in tla-en. */
   struct LemurianShipObject *leader;
   struct LemurianShipObject *helper;
   s32 opened;

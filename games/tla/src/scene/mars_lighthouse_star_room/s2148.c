@@ -573,11 +573,7 @@ void Func_0200274c(struct Actor *actor) {
       actor->acceleration = 0x4000;
       actor->timer = 1;
       Event_PlaySound(145);
-      /* FAKEMATCH(wrapper): forwarded, so each argument builds its own 0x50000;
-       * as a direct call, 6 of 362 instructions differ in tla-en. */
       MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-      /* FAKEMATCH(wrapper): forwarded, so each argument builds its own -1; as a
-       * direct call, 17 of 362 instructions differ in tla-en. */
       MapGrid_SetShake(-1, -1, 0xe666);
       if (actor->watchedObject != NULL)
         ((void (*)(struct Actor *))actor->watchedObject)(actor);
@@ -870,9 +866,6 @@ void Actor_SetAnimationSpeed(struct Actor *actor, s32 speed);
 extern s16 gData_0200483c[];
 
 void Func_02002dc4(void) {
-  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
-   * Value, this file's own); as direct calls, 2 of 304 instructions differ in
-   * tla-en. */
   struct Position probe;
   s32 startBehavior;
   s32 x;
@@ -1081,8 +1074,6 @@ retry:
     angle = ArcTan2(targetZ - object->z, targetX - object->x);
     angle = (angle + 0x2000) & 0xc000;
   }
-  /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 2
-   * of 347 instructions differ in tla-en. */
   FieldVector_AddPolarOffset(0x100000, angle, position);
   cell = GetMapCellCollision(*layer, p[0], p[2]);
   if (cell == 255 ||
@@ -1160,8 +1151,6 @@ walk:
   /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
    * position's address; as no asm, 94 of 347 instructions differ in tla-en. */
   __asm__("" : : : SFP_CLOBBER);
-  /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 6
-   * of 347 instructions differ in tla-en. */
   FieldVector_AddPolarOffset(0x100000, angle, position);
   q = position;
   cell = GetMapCellCollision(*layer, q[0], q[2]);

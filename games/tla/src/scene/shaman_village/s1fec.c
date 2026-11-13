@@ -347,9 +347,6 @@ void Func_0200290c(void) {
   Event_SetMessageId((s32)MsgShamanMissingShamanRod);
   if (PartyInventory_FindOwner(65) == -1)
     goto refuse;
-  /* FAKEMATCH(wrapper): the count read through ListOwners; as a direct
-   * Party_ListActiveOwners call with owner = owners before it, 4 of 119
-   * instructions differ in tla-en. */
   count = FieldParty_ListMembers(owners);
   owner = owners;
   remaining = 8;

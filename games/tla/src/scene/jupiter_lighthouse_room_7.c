@@ -661,10 +661,6 @@ s32 Func_02000fc0(void) {
   Scene_SetArrivalFlags(0);
   Func_02001224(1);
   if (gMainRoutineWork.entrance == 12) {
-    /* FAKEMATCH(wrapper): the placements forwarded through the call layer; as
-     * direct calls to Actor_SetHorizontalPositionWithTerrain, 46 of 149
-     * instructions differ in tla-en, 0xa80000 and the z values shared in saved
-     * registers. */
     Actor_SetPosition(10, PIXELS(168), PIXELS(264));
     Actor_SetPosition(11, PIXELS(200), PIXELS(264));
     Actor_SetPosition(12, PIXELS(232), PIXELS(264));

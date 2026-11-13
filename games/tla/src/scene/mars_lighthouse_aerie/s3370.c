@@ -87,8 +87,6 @@ void Func_02003370(void) {
     break;
   }
   if (spawn) {
-    /* FAKEMATCH(wrapper): the spawn forwarded through Value4; as a direct call,
-     * 2 of 207 instructions differ in tla-en. */
     object = FieldActor_Create(0x2a0, anchor->x, anchor->y - ((Random16Far() * 80 >> 16) << 16) - 0x80000, anchor->z);
     if (object != NULL) {
       u8 zero;

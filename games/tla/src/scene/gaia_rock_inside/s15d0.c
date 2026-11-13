@@ -60,8 +60,6 @@ void Func_020015d0(s32 idA, s32 idB) {
   Camera_MoveWithinMapBounds(((s16 *)&a->x)[1] << 16, ((s16 *)&a->y)[1] << 16,
                              ((s16 *)&a->z)[1] << 16, 1);
   Sound_Play(141);
-  /* FAKEMATCH(wrapper): forwarded, so each argument builds its own 0x20000; as
-   * a direct call, 17 of 402 instructions differ in tla-en. */
   MapGrid_SetShake(0x20000, 0x20000, 0x10000);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
@@ -122,13 +120,9 @@ second:
     Func_02004d9c(spark, 7);
     Actor_SetSingleChildFlags(spark, 0);
     Animation_SetStateFlags(spark, 1);
-    /* FAKEMATCH(wrapper): forwarded for its argument order; as a direct call, 2
-     * of 402 instructions differ in tla-en. */
     FieldVector_AddPolarOffset(spark->unk4c, *angle, &spark->x);
     Func_02004dac(spark, gData_02005234);
     if (i == 3) {
-      /* FAKEMATCH(wrapper): forwarded for its argument order; as a direct call,
-       * 2 of 402 instructions differ in tla-en. */
       Actor_SetSpriteColorById(idB, 0x100);
       b->motionFlags = 0;
       b->acceleration = 0x3333;
@@ -351,8 +345,6 @@ void Func_02001d14(void) {
   level = REG_BLDALPHA;
   Func_02004e5c();
   FieldEvent_ResolvePendingActions(0);
-  /* FAKEMATCH(wrapper): the form kept; as a direct call, 13 of 173
-   * instructions differ in tla-en. */
   MapGrid_SetShake(Q16_ONE * 10, Q16_ONE * 10, Q16_ONE);
   Event_PlaySound(107);
   Func_02004ddc();
@@ -375,8 +367,6 @@ void Func_02001d14(void) {
     FieldEvent_Wait(2);
   }
   Event_SetFlag(0x9ee);
-  /* FAKEMATCH(wrapper): the form kept; as a direct call, 25 of 173
-   * instructions differ in tla-en. */
   MapGrid_SetShake(-1, -1, 0xe666);
   object->x = 0;
   object->z = 0;

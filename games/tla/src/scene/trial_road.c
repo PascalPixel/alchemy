@@ -76,8 +76,6 @@ void Func_02000138(s32 direction) {
     if (state->field16[0] <= 0) {
       if (GameFlag_Test(2559)) {
         if (Func_02000330(0) == 0)
-          /* FAKEMATCH(wrapper): Call3 kept; as a direct call, 2 of 93
-           * instructions differ in tla-en. */
           Actor_WalkByAndWait(gMainRoutineWork.currentOwner, 0, -16);
         return;
       }

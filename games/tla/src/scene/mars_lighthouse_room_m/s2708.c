@@ -378,11 +378,7 @@ void Func_02002ae8(struct Actor *actor) {
       actor->acceleration = 0x4000;
       actor->timer = 1;
       Event_PlaySound(145);
-      /* FAKEMATCH(wrapper): forwarded, so each argument builds its own 0x50000;
-       * as a direct call, 6 of 362 instructions differ in tla-en. */
       MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-      /* FAKEMATCH(wrapper): forwarded, so each argument builds its own -1; as a
-       * direct call, 17 of 362 instructions differ in tla-en. */
       MapGrid_SetShake(-1, -1, 0xe666);
       if (actor->watchedObject != NULL)
         ((void (*)(struct Actor *))actor->watchedObject)(actor);

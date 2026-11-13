@@ -664,8 +664,6 @@ void Func_020010e4(void) {
 
   Func_020031e0();
   Event_ResolvePendingActions(0);
-  /* FAKEMATCH(wrapper): forwarded so 0x10000 is built again for the next
-   * call; as a direct call, 8 of 37 instructions differ in tla-en. */
   PaletteFade_ApplySource(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
   BattleEffect_StartBufferInterpolation(20);
@@ -684,8 +682,6 @@ void Func_02001154(void) {
 
   Func_020031e0();
   Event_ResolvePendingActions(0);
-  /* FAKEMATCH(wrapper): forwarded so 0x10000 is built again for the next
-   * call; as a direct call, 8 of 37 instructions differ in tla-en. */
   PaletteFade_ApplySource(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
   BattleEffect_StartBufferInterpolation(20);
@@ -704,8 +700,6 @@ void Func_020011c4(void) {
 
   Func_020031e0();
   Event_ResolvePendingActions(0);
-  /* FAKEMATCH(wrapper): forwarded so 0x10000 is built again for the next
-   * call; as a direct call, 8 of 37 instructions differ in tla-en. */
   PaletteFade_ApplySource(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
   BattleEffect_StartBufferInterpolation(20);
@@ -724,8 +718,6 @@ void Func_02001234(void) {
 
   Func_020031e0();
   Event_ResolvePendingActions(0);
-  /* FAKEMATCH(wrapper): forwarded so 0x10000 is built again for the next
-   * call; as a direct call, 8 of 37 instructions differ in tla-en. */
   PaletteFade_ApplySource(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
   BattleEffect_StartBufferInterpolation(20);
@@ -793,8 +785,6 @@ void Func_020013a0(void) {
       FieldCamera_MoveTo(PIXELS(224), PIXELS(64), PIXELS(216), 1);
       Func_02003228();
       FieldEvent_Wait(20);
-      /* FAKEMATCH(wrapper): forwarded so 0x10000 is built again for the next
-       * call; as a direct call, 12 of 155 instructions differ in tla-en. */
       PaletteFade_ApplySource(0x10000, 0);
       BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
       BattleEffect_StartBufferInterpolation(20);
@@ -819,14 +809,9 @@ void Func_020013a0(void) {
     Func_020031e0();
     Event_ResolvePendingActions(0);
     FieldCamera_SetSpeed(0x20000, 0x4000);
-    /* FAKEMATCH(wrapper): forwarded so this branch builds its own positions;
-     * as a direct call, 16 of 155 instructions differ in tla-en. */
     FieldCamera_MoveTo(PIXELS(224), PIXELS(64), PIXELS(216), 1);
     Func_02003228();
     FieldEvent_Wait(20);
-    /* FAKEMATCH(wrapper): forwarded so 0x10000 is built again for the next
-     * call, as in the branch above; as a direct call at this site, 22 of 155
-     * instructions differ in tla-en. */
     PaletteFade_ApplySource(0x10000, 0);
     BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
     BattleEffect_StartBufferInterpolation(20);

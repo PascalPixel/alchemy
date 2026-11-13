@@ -186,9 +186,6 @@ void Func_02001084(void);
 void Func_0200108c(void);
 
 void Func_0200036c(void) {
-  /* FAKEMATCH(wrapper): the placements and flags through event.h's inlines,
-   * which build each constant again at each call; as direct calls, which share
-   * 764 and 380 in saved registers, 36 of 76 instructions differ in tla-en. */
   Func_02001084();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetDestination(17, 764, 384);
@@ -410,9 +407,6 @@ extern const u8 gData_020017f8[];
 void Func_02001134(void);
 
 void Func_02000960(void) {
-  /* FAKEMATCH(wrapper): the calls through event.h's inlines keep each call's
-   * own constants and argument order; as direct Actor_SetPositionAndReset calls
-   * for Actor_WalkToAndWait, 42 of 140 instructions differ in tla-en. */
   Func_02001084();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(MsgIsTheWay);
@@ -467,9 +461,6 @@ extern u8 MsgHereTheIntruder[];
 void Func_02000af0(void) {
   s32 owner = gMainRoutineWork.currentOwner;
 
-  /* FAKEMATCH(wrapper): the calls through event.h's inlines, as in
-   * Func_02000960, build each call's constants again in the original's argument
-   * order; as direct calls, 126 of 251 instructions differ in tla-en. */
   Func_02001084();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(23, PIXELS(248), PIXELS(472));

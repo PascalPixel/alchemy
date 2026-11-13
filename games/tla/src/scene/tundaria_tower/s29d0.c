@@ -276,9 +276,6 @@ void Func_02002e00(void) {
 
   Func_02002f40(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
   resource = Resource_FindFreeEntry();
-  /* FAKEMATCH(wrapper): forwarded, so that its constant goes straight to the
-   * argument; as a direct VramCache_Load call, 41 of 83 instructions differ in
-   * tla-en. */
   tile = Vram_Load(resource, sizeof(work->tiles), work);
   work->tileBase = tile;
   work->resource = resource;
@@ -299,9 +296,6 @@ void Func_02002e00(void) {
 
     work->next = zero;
   }
-  /* FAKEMATCH(wrapper): forwarded, so that its constant goes straight to the
-   * argument; as a direct Task_Add call, 6 of 83 instructions differ in tla-en.
-   */
   Task_AddFrame(Func_02002cc0, 0x480);
 }
 

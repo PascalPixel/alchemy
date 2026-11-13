@@ -754,7 +754,7 @@ static s32 BattleArena_SendPartyRecords(void) {
   }
   for (i = 0; i < memberCount; i++) {
     Iwram_CopyWords(heap, Unit_Get(memberIds[i]), size);
-    heap[0x12a] = 2;
+    ((struct Unit *)heap)->side = BATTLE_SIDE_PARTY;
     // As a u8, i - 128 is 128 + i: this party member's unit on the partner's
     // side.
     slotMap[memberIds[i]] = i - 128;
@@ -793,9 +793,9 @@ test:
   wait(2);
   i++;
 next:
-  // Pad to three records with the last copy marked absent (side 0).
+  // Pad to three records with the last copy marked absent (BATTLE_SIDE_NONE).
   if (i <= 2) {
-    heap[0x12a] = tries = 0;
+    ((struct Unit *)heap)->side = tries = 0;
     if ((transferResult = Serial_StartSend(heap, size)) != -1) {
       goto test;
     }

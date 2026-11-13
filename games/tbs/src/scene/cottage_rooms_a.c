@@ -470,7 +470,7 @@ s32 CottageRoomsA_Initialize(void) {
     Weather_StartLightning();
     // UB: the blend's slot is read past gFieldWork, a single pointer.
 #ifdef UBFIX
-    ((struct FieldBlendWork *)gFieldBlendWork[0])->loud = 1;
+    ((struct FieldBlendWork *)gHeapSlots[HEAP_SLOT_FIELD_BLEND])->loud = 1;
 #else
     ((struct FieldBlendWork *)slots[HEAP_SLOT_FIELD_BLEND - HEAP_SLOT_FIELD])
         ->loud = 1;

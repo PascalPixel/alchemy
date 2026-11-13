@@ -19,19 +19,6 @@ struct SceneEncounterRule {
 
 extern const struct SceneEncounterRule gScene_EncounterRules[];
 
-/// The World Map's encounter zone for each encounter region
-/// (gWorldMap_EncounterRules, world_map_encounter_rules.c), ended by region -1.
-/// Read by Encounter_ResolveWorldMapZoneAndBackdrop, first match first.
-typedef struct WorldMapEncounterRule {
-  s16 kind; ///< the World Map cell picture's encounter region; -1 ends the
-            ///< table
-  /// The battle environment, which also picks the battle background (1 to 7,
-  /// BattleBackground_SelectForEnvironment), or -1 for any.
-  s16 behavior;
-  s16 flag; ///< -1, or a flag that turns the rule off once set
-  s16 zone; ///< a row of encounter_zones.c
-} WorldMapEncounterRule;
-
 /// encounter_zones.c defines the zones; the code reads them through struct
 /// EncounterZone or as halfwords (gEncounterZones in battle.h).
 
@@ -102,22 +89,21 @@ void Encounter_SelectMapZones(s32 useRules) {
 /// Field_RequestDjinnBattle on the World Map, which use only the battle
 /// background.
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
-  s32 kind;
-  WorldMapEncounterRule *rule =
-      (WorldMapEncounterRule *)gWorldMap_EncounterRules;
-  s32 behavior = WorldMap_GetBattleEnvironmentFar(pos, &kind);
+  s32 region;
+  const struct WorldMapEncounterRule *rule = gWorldMap_EncounterRules;
+  s32 environment = WorldMap_GetBattleEnvironmentFar(pos, &region);
   s32 zone = 0;
 
-  while (rule->kind != -1) {
-    if (rule->kind == kind &&
-        (rule->behavior == -1 || rule->behavior == behavior) &&
+  while (rule->region != -1) {
+    if (rule->region == region &&
+        (rule->environment == -1 || rule->environment == environment) &&
         (rule->flag == -1 || GameFlag_GetFar(rule->flag) == 0)) {
       zone = rule->zone;
       break;
     }
     rule++;
   }
-  BattleBackground_SelectForEnvironment(behavior);
+  BattleBackground_SelectForEnvironment(environment);
   return zone;
 }
 
@@ -265,14 +251,13 @@ u16 Encounter_GetFormationAtSlot(s32 zone, s32 slot) {
 /// Returns the formation of Djinni battle djinni, which the table gives as
 /// a zone and slot. Called by Field_RequestDjinnBattle.
 s16 Encounter_GetDjinnFormation(s32 djinni) {
-  u16 *zoneAndSlot;
+  const struct DjinniBattle *battle = &gEncounter_DjinnBattles[djinni];
 
-  zoneAndSlot = (u16 *)&gEncounter_AreaEntryTable[djinni * 2];
 #ifdef UBFIX
-  return Encounter_GetFormationAtSlot(zoneAndSlot[0], zoneAndSlot[1]);
+  return Encounter_GetFormationAtSlot(battle->zone, battle->slot);
 #else
   // UB: no return statement; the result of the call is left in r0.
-  Encounter_GetFormationAtSlot(zoneAndSlot[0], zoneAndSlot[1]);
+  Encounter_GetFormationAtSlot(battle->zone, battle->slot);
 #endif
 }
 

@@ -20,7 +20,7 @@ struct Actor *Actor_GetById(u32 objectId);
 void HangingVine_Hang(s32 objectId, s32 grow) {
   struct ChainObject *object;
   struct MapWork *map;
-  struct WorkA4Slot *slot;
+  struct HangingVineSlot *slot;
   struct HangingVineLink *link;
   struct HangingVineLink **tail;
   struct MapCell *cells;
@@ -134,9 +134,9 @@ void HangingVine_Swing(s32 id) {
   struct Actor *anchor = Actor_GetById(id);
   /* FAKEMATCH(wrapper): the slot read through a one-member union, which may
    * alias every store, so its reads stay after the stores before them; as
-   * struct WorkA4Slot *, 12 of 378 instructions differ in tla-en. */
+   * struct HangingVineSlot *, 12 of 378 instructions differ in tla-en. */
   union {
-    struct WorkA4Slot s;
+    struct HangingVineSlot s;
   } *slot;
   struct Unk_080db0b0Sprite *sprite;
   s32 swing;

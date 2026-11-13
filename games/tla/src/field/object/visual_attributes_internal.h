@@ -37,7 +37,7 @@
 #include "system/scene.h"
 #include "field/facing_object.h"
 #include "fixed_math.h"
-#include "worka0.h"
+#include "hanging_vine.h"
 #include "graphics/display_transition.h"
 #include "system/io_reg.h"
 #include "system/io_write.h"

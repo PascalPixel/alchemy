@@ -250,7 +250,7 @@ done:
   return 1;
 }
 
-#include "worka0.h"
+#include "hanging_vine.h"
 
 static inline void TurnToward(struct Actor *object, u16 angle) {
   s16 delta = angle - object->facing;

@@ -26,7 +26,7 @@
 #include "call.h"
 #include "event_work.h"
 #include "system/iwram_call.h"
-#include "worka0.h"
+#include "hanging_vine.h"
 #include "system/frame.h"
 #include "field/event_work.h"
 #include "map.h"
@@ -382,7 +382,7 @@ struct A4SlotValues {
 };
 
 static inline struct A4SlotValues *FindSlot(s32 id) {
-  struct WorkA4 *work = WORK_A4;
+  struct HangingVineWork *work = HANGING_VINE_WORK;
   struct A4SlotValues *found = NULL;
   s32 i;
 

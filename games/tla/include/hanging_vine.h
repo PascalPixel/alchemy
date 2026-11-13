@@ -1,5 +1,5 @@
-#ifndef TLA_WORKA0_H
-#define TLA_WORKA0_H
+#ifndef ALCHEMY_HANGING_VINE_H
+#define ALCHEMY_HANGING_VINE_H
 
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -18,7 +18,7 @@ struct HangingVineLink {
 };
 
 /// One of the eight hanging vines: the actor it hangs from and its swing.
-struct WorkA4Slot {
+struct HangingVineSlot {
   s16 id; ///< the actor the chain hangs from
   u8 unk02[2];
   s32 swing;   ///< the arc's width
@@ -30,12 +30,12 @@ struct WorkA4Slot {
       *root; ///< the first link HangingVine_Hang hangs; NULL if free
 };
 
-struct WorkA4 {
+struct HangingVineWork {
   s32 vramEntry; ///< the links' picture
-  struct WorkA4Slot slots[8];
+  struct HangingVineSlot slots[8];
   struct HangingVineLink links[128];
 };
 
-#define WORK_A4 ((struct WorkA4 *)Ram_HeapSlots->unk84[8])
+#define HANGING_VINE_WORK ((struct HangingVineWork *)Ram_HeapSlots->unk84[8])
 
 #endif

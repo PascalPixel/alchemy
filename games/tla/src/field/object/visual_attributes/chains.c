@@ -1059,15 +1059,15 @@ extern const u8 Data_080f0d07[], Data_080f0d5e[], Data_080f0dbb[];
 /// 372, another for the rest; the second set repeats one picture), loads them
 /// into a VRAM slot and schedules the two per-frame routines HangingVine_Draw
 /// and HangingVine_Update.
-struct WorkA4 *HangingVine_Initialize(s32 kind) {
-  struct WorkA4 *work;
+struct HangingVineWork *HangingVine_Initialize(s32 kind) {
+  struct HangingVineWork *work;
   u8 *pictures;
   s32 size;
 
-  work = HeapSlot_AllocEwram(TILE_EFFECT_SLOT, sizeof(struct WorkA4));
+  work = HeapSlot_AllocEwram(TILE_EFFECT_SLOT, sizeof(struct HangingVineWork));
   size = 4 * PICTURE_SIZE;
   pictures = Heap_Alloc(size);
-  Dma_Fill32(0, work, sizeof(struct WorkA4));
+  Dma_Fill32(0, work, sizeof(struct HangingVineWork));
   work->vramEntry = VramCache_FindFreeEntry();
   if (kind == TILE_EFFECT_KIND_ALT) {
     Decompress_TaggedLz(Data_080f0c1c, pictures);
@@ -1098,7 +1098,7 @@ struct WorkA4 *HangingVine_Initialize(s32 kind) {
 
 /// The vines' first per-frame task: draws each link turned along its vine.
 void HangingVine_Draw(void) {
-  struct WorkA4 *work = WORK_A4;
+  struct HangingVineWork *work = HANGING_VINE_WORK;
   s32 i;
   u32 angle;
   s32 prevX = 0;
@@ -1177,8 +1177,8 @@ struct Actor *Actor_GetById(u32 objectId);
 /// The vines' second per-frame task: sways each active vine's links below
 /// its anchor.
 void HangingVine_Update(void) {
-  struct WorkA4 *work = WORK_A4;
-  struct WorkA4Slot *slot;
+  struct HangingVineWork *work = HANGING_VINE_WORK;
+  struct HangingVineSlot *slot;
   struct Actor *leader;
   s32 x, y, z;
   struct HangingVineLink *link;
@@ -1234,10 +1234,10 @@ void HangingVine_Update(void) {
   }
 }
 
-/// Returns the first of WORK_A4's eight slots with no chain, or NULL.
-struct WorkA4Slot *HangingVine_FindFreeSlot(void) {
-  struct WorkA4 *work = WORK_A4;
-  struct WorkA4Slot *found = NULL;
+/// Returns the first of HANGING_VINE_WORK's eight slots with no chain, or NULL.
+struct HangingVineSlot *HangingVine_FindFreeSlot(void) {
+  struct HangingVineWork *work = HANGING_VINE_WORK;
+  struct HangingVineSlot *found = NULL;
   s32 index;
   /* FAKEMATCH(dead): index set to 0 before the loop sets it again, so its
    * zero is copied from found's register (adds r1, r0, #0); without it, 2 of
@@ -1253,10 +1253,11 @@ struct WorkA4Slot *HangingVine_FindFreeSlot(void) {
   return found;
 }
 
-/// Returns the vine slot among WORK_A4's eight that holds actor id, or NULL.
-struct WorkA4Slot *HangingVine_FindSlot(s32 id) {
-  struct WorkA4 *work = WORK_A4;
-  struct WorkA4Slot *found = NULL;
+/// Returns the vine slot among HANGING_VINE_WORK's eight that holds actor id,
+/// or NULL.
+struct HangingVineSlot *HangingVine_FindSlot(s32 id) {
+  struct HangingVineWork *work = HANGING_VINE_WORK;
+  struct HangingVineSlot *found = NULL;
   s32 index;
   /* FAKEMATCH(dead): index set to 0 before the loop sets it again, so its
    * zero is copied from found's register (adds r1, r5, #0); without it, 2 of
@@ -1274,7 +1275,7 @@ struct WorkA4Slot *HangingVine_FindSlot(s32 id) {
 
 /// Returns the first unused of the vines' 128 links, or NULL.
 struct HangingVineLink *HangingVine_AllocLink(void) {
-  struct WorkA4 *work = WORK_A4;
+  struct HangingVineWork *work = HANGING_VINE_WORK;
   struct HangingVineLink *link = work->links;
   s32 index;
 

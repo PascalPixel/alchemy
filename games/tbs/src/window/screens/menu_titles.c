@@ -4,8 +4,6 @@
 
 #include "../screens_internal.h"
 
-extern const u8 *gMenuTitlePictures[];
-
 /// Decompresses picture `picture` of gMenuTitlePictures, a 64x16
 /// heading (Save, Continue, Copy, Erase, Battle, Link, Pause, Setup) of 512
 /// bytes, into VRAM slot `slot`, through a 1 KB staging block in

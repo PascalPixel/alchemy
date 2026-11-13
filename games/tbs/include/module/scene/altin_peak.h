@@ -67,5 +67,10 @@ extern struct Trigger gAltinPeak_HydrosStatueTriggers[];
 extern struct Trigger gAltinPeak_WestExitTriggers[];
 extern s32 gAltinPeak_RumbleFrames;
 extern u32 gAltinPeak_RollRadii[];
+// The spray's direction (FACING_EAST or FACING_WEST) and origin, and the
+// water's flicker timer.
+extern s32 gAltinPeak_SprayDirection;
+extern s32 gAltinPeak_SprayOrigin[3];
+extern u16 gAltinPeak_FlickerTimer;
 
 #endif

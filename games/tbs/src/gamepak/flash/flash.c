@@ -55,9 +55,6 @@ s32 ReadFlashId(void) {
   return result;
 }
 
-extern const struct FlashSetupInfo *const gFlash_Chips[];
-extern FlashWaitProc gWaitForFlashWrite;
-
 /// Selects matching chip handlers, falling back to the final table entry when
 /// unknown. Returns 0 when the chip's id is one of gFlash_Chips' SST, Atmel,
 /// Macronix and Panasonic entries and 1 when not; either way it installs an
@@ -92,9 +89,6 @@ s32 IdentifyFlash(void) {
   gFlash = &(*chip)->type;
   return missing;
 }
-
-extern volatile u16 gFlashTimerCount;
-extern u16 *gFlashTimerReg;
 
 /// Counts down the active flash timeout and marks its expiration. The timer
 /// interrupt handler SetFlashTimerIntr hands out; it runs about once a

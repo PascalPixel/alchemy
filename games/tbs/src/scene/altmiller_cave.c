@@ -897,9 +897,6 @@ static void AltmillerCave_TurnRock(s32 rock) {
   }
 }
 
-/// Divides the nonnegative random value for wall-fragment scaling.
-s32 Math_DivideUnsigned(s32 value, s32 divisor);
-
 /// The party turns north, toward Babi.
 static __inline__ void AltmillerCave_FacePartyNorth(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);

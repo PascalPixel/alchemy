@@ -44,5 +44,7 @@ extern u16 *gImil_DoorCellSteps[];
 extern s16 gImil_DoorCellPoints[][2];
 extern u16 gImil_CellStepsA[];
 extern u16 gImil_CellStepsB[];
+/// The position (x, y, z) the unused arc and sway effects move around.
+extern s32 gImil_ArcOrigin[];
 
 #endif

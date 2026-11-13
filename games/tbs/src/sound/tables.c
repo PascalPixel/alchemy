@@ -4,52 +4,12 @@
 /// extended commands.
 
 #include "types.h"
+#include "sound/sound.h"
 
-struct MusicPlayerInfo;
-struct MusicPlayerTrack;
-
-typedef void (*SoundFunc)(void);
-typedef void (*MPlayFunc)(struct MusicPlayerInfo *player,
-                          struct MusicPlayerTrack *track);
-
-void ply_fine(void);
-void ply_goto(void);
-void ply_patt(void);
-void ply_pend(void);
-void ply_rept(void);
-void ply_prio(void);
-void ply_tempo(void);
-void ply_keysh(void);
-void ply_voice(void);
-void ply_vol(void);
-void ply_pan(void);
-void ply_bend(void);
-void ply_bendr(void);
-void ply_lfos(void);
-void ply_lfodl(void);
-void ply_mod(void);
-void ply_modt(void);
-void ply_tune(void);
-void ply_port(void);
-void ply_endtie(void);
-void SampleFreqSet(void);
-void TrackStop(void);
-void FadeOutBody(void);
-void TrkVolPitSet(void);
-void RealClearChain(void);
-void SoundMainBTM(void);
-
-void ply_xwave(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
-void ply_xtype(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
-void ply_xatta(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
-void ply_xdeca(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
-void ply_xsust(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
-void ply_xrele(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
-void ply_xiecv(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
-void ply_xiecl(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
-void ply_xleng(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
-void ply_xswee(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
-void ply_xxx();
+/// A jump table entry. The song commands take the music player and the track,
+/// and the driver's helpers at the end take what each needs, so the entry type
+/// leaves its parameters unsaid, as pret's MusicPlayer2000 tables do.
+typedef void (*SoundFunc)();
 
 /// The jump table SoundInit copies into gMPlayJumpTable (MPlayJumpTableCopy,
 /// 36 entries): entries 0 to 29 run song bytes 0xB1 to 0xCE and 30 to 35 are
@@ -186,10 +146,10 @@ const u8 gClockTable[] = {
 /// track (ply_xxx). pret's later library adds ply_xwait and ply_xcmd_0D as 12
 /// and 13; this one stops at 11.
 const MPlayFunc gXcmdTable[] = {
-    (MPlayFunc)ply_xxx,
+    ply_xxx,
     ply_xwave,
     ply_xtype,
-    (MPlayFunc)ply_xxx,
+    ply_xxx,
     ply_xatta,
     ply_xdeca,
     ply_xsust,

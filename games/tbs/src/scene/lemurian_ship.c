@@ -117,8 +117,6 @@ enum {
 #define SET_SHADOW_PRIORITY(actor, level)                                      \
   ((void)(ACTOR_SPRITE(actor)->shadow.priority = (level)))
 
-s32 Math_DivideUnsigned();
-
 const struct SceneEntrance *LemurianShip_GetEntrances(void) {
   return gLemurianShipEntrances;
 }

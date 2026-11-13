@@ -113,6 +113,9 @@ void Import_GameFlagSet(s32 flag);
 /// Advances the game's random number generator and returns 0 to 65535
 /// (Random16).
 s32 Import_RandomNext();
+/// An unsigned division, from the ARM routine in IWRAM that also serves as
+/// __udivsi3 (IwramUnsignedDivide).
+s32 Math_DivideUnsigned(s32 value, s32 divisor);
 /// The remainder of an unsigned division, from the ARM routine in IWRAM that
 /// also serves as __umodsi3 (IwramUnsignedRemainder).
 u32 Math_RemainderUnsigned(u32 dividend, u32 divisor);

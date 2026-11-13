@@ -331,12 +331,6 @@ enum {
 #define EXAMINE_CHEST_FACING(facing)                                           \
   (EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | (facing))
 
-// The spray's direction (FACING_EAST or FACING_WEST) and origin, and the
-// water's flicker timer.
-extern s32 gAltinPeak_SprayDirection;
-extern s32 gAltinPeak_SprayOrigin[3];
-extern u16 gAltinPeak_FlickerTimer;
-
 /// Talking to the Djinni in AltinPeakSpritz starts the battle with Spritz, a
 /// Mercury Djinni.
 static void AltinPeak_TalkToDjinni(void) {

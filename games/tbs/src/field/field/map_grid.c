@@ -167,8 +167,6 @@ static __inline__ void MapGrid_CopyCellPictureToScreen(u32 *cell, u8 *screenMap,
   *(u32 *)(screenTile + 64) = *cellPictureRows;
 }
 
-extern const struct MapResources gMaps[];
-
 /// One background layer's setup in a layout's header: its origin, its
 /// parallax and drift, and where it wraps.
 struct MapLayer {

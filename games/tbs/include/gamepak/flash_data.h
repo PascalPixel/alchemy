@@ -41,6 +41,16 @@ struct FlashSetupInfo {
 
 /// The chip type IdentifyFlash installed.
 extern const struct FlashType *gFlash;
+/// The installed chip's wait (FlashSetupInfo.wait). The credits and the LZ
+/// packer borrow this cell under other types while no flash operation runs.
+extern FlashWaitProc gWaitForFlashWrite;
+/// The chips IdentifyFlash knows, by id, ending with gFlash_ChipDefault.
+extern const struct FlashSetupInfo *const gFlash_Chips[];
+/// Interrupts left before the running flash operation times out
+/// (FlashTimerIntr).
+extern volatile u16 gFlashTimerCount;
+/// The selected timer's counter, REG_TMnCNT_L (SetFlashTimerIntr).
+extern u16 *gFlashTimerReg;
 /// The last entry of gFlash_Chips, taken for a chip not listed: SST's
 /// routines and timings with id 0 (pret's agb_flash calls it DefaultFlash).
 extern const struct FlashSetupInfo gFlash_ChipDefault;

@@ -661,4 +661,7 @@ void Text_DrawNumberInWindow(s32 value, s32 width, struct Window *window, s32 x,
 // PartyStatus_Draw, and PartyStatus_Draw changes (2 of 435 instructions in
 // tbs-en). Split evidence for window|screens.
 
+/// The menus' compressed 64x16 headings, Save to Setup (menu_titles.s).
+extern const u8 *gMenuTitlePictures[];
+
 #endif

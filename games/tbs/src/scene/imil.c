@@ -277,9 +277,6 @@ static void Imil_ArriveFromFallsCave(void);
 static void Imil_MiaSaysFarewellToApprentices(void);
 static void Imil_RunIceSlide(void);
 
-/// The position (x, y, z) the unused arc and sway effects move around.
-extern s32 gImil_ArcOrigin[];
-
 /// A sick person shivers: a quick squash, then a pause.
 ///
 /// The pause is longer for ACTOR_SICK_OLD_MAN, whose work Imil_Initialize

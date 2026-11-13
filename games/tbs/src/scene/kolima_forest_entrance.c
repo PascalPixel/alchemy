@@ -114,6 +114,8 @@ static void KolimaForestEntrance_FaceActorAndWait(s32 actorId, s32 facing,
 static void KolimaForestEntrance_SpawnCurseSparkle(void);
 static void KolimaForestEntrance_FlickerPsynergyFields(void);
 
+// Declared here, after the header's falling-effect globals: the order of
+// first declaration lays out the scene's bss as the ROM has it.
 extern s32 gKolimaForestEntrance_PsynergyFieldHit;
 extern s32 gKolimaForestEntrance_MiaInParty;
 extern s32 gKolimaForestEntrance_SparkleSoundOn;

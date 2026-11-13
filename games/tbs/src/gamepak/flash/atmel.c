@@ -6,8 +6,6 @@
 #include "../../../include/gamepak/flash_data.h"
 #include "../../../include/system/io_reg.h"
 
-extern FlashWaitProc gWaitForFlashWrite;
-
 /// Erases the Atmel chip and waits for completion with its configured timing.
 /// Returns 0, or a chip-erase timeout when byte 0 has not read erased within
 /// the chip-erase time. Atmel's erase-chip routine (gEraseFlashChip); nothing

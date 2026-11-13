@@ -40,5 +40,6 @@ extern s16 gColosso_LetteringWin[];
 extern s16 gColosso_MarkerSlot;
 extern s32 gColosso_OpponentFinishScript[];
 extern s32 gColosso_LeaderFinishScript[];
+extern s32 gColossoParticleCount;
 
 #endif

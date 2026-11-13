@@ -290,8 +290,8 @@ struct CreditsOamEntry {
 
 STATIC_ASSERT(sizeof(struct CreditsOamEntry) == 8);
 
-/// Credits scroll position in pixels, in the low half of a flash work cell.
-extern u16 gWaitForFlashWrite;
+/// Credits scroll position in pixels, in the low half of gWaitForFlashWrite.
+extern u16 gCreditsScrollPosition __asm__("gWaitForFlashWrite");
 
 // ewram.s reserves four bytes for each cell. The credits replace the task table
 // and borrow them while flash operations are inactive: a sprite-buffer pointer,
@@ -974,7 +974,7 @@ const void *gCredits_Lines[] = {
 /// visible sixteen rows onto the tile ring and uploads their sprites. Advances
 /// one pixel every fourth frame until the end-of-text latch stops the scroll.
 void Credits_UpdateTextSprites(void) {
-  u32 frame = gWaitForFlashWrite;
+  u32 frame = gCreditsScrollPosition;
   u32 scrollWithinTile = frame & 7;
   s32 tileIndex =
       (((s16)frame / 8) & (CREDITS_RING_ROWS - 1)) * CREDITS_LINE_TILES;
@@ -997,7 +997,7 @@ void Credits_UpdateTextSprites(void) {
   }
   Dma_Set(SCROLL_OBJECTS, OAM, DMA_COPY_WORDS(OAM_SIZE / 4), REG_DMA3);
   if (CREDITS_END_OF_TEXT == 0 && (gVBlankCount & 3) == 0)
-    gWaitForFlashWrite++;
+    gCreditsScrollPosition++;
 }
 
 /// A frame-pass task added by Credits_InitTextSprites: renders
@@ -1010,9 +1010,9 @@ void Credits_DrawEnteringLine(void) {
   // A line is 8 pixels, so a new one is drawn each time the scroll crosses
   // into the next line, every 32 frames.
   if (CREDITS_END_OF_TEXT == 0) {
-    scrollPosition = gWaitForFlashWrite;
-    if ((s16)gWaitForFlashWrite / 8 != CREDITS_LAST_LINE_POSITION / 8) {
-      lineIndex = (s16)gWaitForFlashWrite / 8;
+    scrollPosition = gCreditsScrollPosition;
+    if ((s16)gCreditsScrollPosition / 8 != CREDITS_LAST_LINE_POSITION / 8) {
+      lineIndex = (s16)gCreditsScrollPosition / 8;
       CREDITS_LAST_LINE_POSITION = scrollPosition;
       CREDITS_END_OF_TEXT = Credits_DrawLine(
           gCredits_Lines[lineIndex],
@@ -1027,8 +1027,8 @@ void Credits_DrawEnteringLine(void) {
 /// clears the tile ring and adds the scrolling and line-rendering tasks. Called
 /// by Credits_Run; the credits keep their state in four borrowed
 /// flash-library cells: the sprite buffer's pointer in gFlashNumRemainingBytes
-/// (SCROLL_OBJECTS), the scroll in gWaitForFlashWrite, the last line drawn in
-/// gFlash (CREDITS_LAST_LINE_POSITION) and the end-of-text latch in
+/// (SCROLL_OBJECTS), the scroll in gCreditsScrollPosition, the last line drawn
+/// in gFlash (CREDITS_LAST_LINE_POSITION) and the end-of-text latch in
 /// gProgramFlashSector (CREDITS_END_OF_TEXT). The 1 KB sprite buffer comes from
 /// the EWRAM bump pool and is never freed; each line buffer is taken from the
 /// pool after it and given back.
@@ -1081,7 +1081,7 @@ void Credits_InitTextSprites(void) {
     *oamWords++ = (192 << 16) | 192;
     *oamWords++ = CREDITS_RING_TILES;
   }
-  gWaitForFlashWrite = 0;
+  gCreditsScrollPosition = 0;
   CREDITS_LAST_LINE_POSITION = 0;
   CREDITS_END_OF_TEXT = 0;
   Task_Add(Credits_UpdateTextSprites, TASK_PASS_VBLANK);

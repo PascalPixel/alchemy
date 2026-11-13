@@ -308,8 +308,6 @@ static inline void InitializeSelectedActor(s32 actorId) {
   Actor_SetSpeed(actorId, 1);
 }
 
-extern s32 gColossoParticleCount;
-
 const struct SceneEntrance *ColosseumNavampaMatch_GetEntrances(void) {
   return gColosseumNavampaMatchEntrances;
 }

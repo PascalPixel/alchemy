@@ -743,7 +743,7 @@ void AlhafranCave_ShakeUnderEoleosPower(void) {
 
 /// Walks a list of three-halfword entries (object id, kind, flag) ended by
 /// 0xffff, clearing each object's collision bit and child flags before passing
-/// the entry to Pillar_ShowState. The twin of overlay 662's Func_02000b54.
+/// the entry to Pillar_ShowState.
 void Pillars_Place(const u16 *list) {
   const u16 *entry;
 

@@ -104,6 +104,17 @@
 /// (MsgFieldPraiseRopeWork)
 #define FLAG_TAVI_RESCUED 0x873
 
+/// Set as Move pushes the small pillar on the Gondowan Cliffs into the water,
+/// where it makes a step.
+#define FLAG_GONDOWAN_CLIFFS_PILLAR_IN_WATER 0x884
+/// Set as Whirlwind blows away the foliage before the cave of Kibombo
+/// warriors.
+#define FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN 0x885
+/// Set as Scoop digs up the geyser in the yellow sand.
+#define FLAG_GONDOWAN_CLIFFS_GEYSER_DUG 0x886
+/// Set as Grind breaks up the rock that blocks the way south.
+#define FLAG_GONDOWAN_CLIFFS_ROCK_GROUND 0x8e6
+
 /// Set once the pillar inside Jupiter Lighthouse's main gates stands on the
 /// button beside them: the gates stay open.
 #define FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED 0xa01

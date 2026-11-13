@@ -1,5 +1,17 @@
 /// @file
-/// The scene code of overlay 0x66b, in ROM order.
+/// The Gondowan Cliffs, west of Alhafra, in two scenes that share this overlay:
+/// the cliffs (SceneId_GondowanCliffs) and the pass a rock blocks until Grind
+/// breaks it (SceneId_GondowanCliffsPass). Kindle, a Mars Djinni, waits at the
+/// end of the cliffs (GondowanCliffs_FightKindle); Frost, Whirlwind, Move and
+/// Scoop each open a way (GondowanCliffs_FreezeFirstPuddle,
+/// GondowanCliffs_BlowAwayFoliage, GondowanCliffs_PushPillarIntoWater,
+/// GondowanCliffs_ScoopUpGeyser); and if the party heads west before helping
+/// Piers recover his Black Orb, Kraden turns them back
+/// (GondowanCliffs_TurnBackToHelpPiers).
+///
+/// The effect spawner and the cliffs' events are in gondowan_cliffs/, which a
+/// shared field effect object links between, and the tables are in
+/// data/gondowan_cliffs.c, which the overlay links after the field's tiles.
 
 #include "shared/tables.h"
 #include "shared/actors.h"
@@ -11,17 +23,17 @@
 #include "event_inline.h"
 #include "module/scene/scene.h"
 
-extern const u8 gData_02001698[];
-extern const u8 gData_02001728[];
+extern const u8 gGondowanCliffs_Entrances[];
+extern const u8 gGondowanCliffs_PassEntrances[];
 
 DEFINE_TILE_SPRITE_RESET(TileSprite_Reset)
 
-void Func_02000058(void) { Field_RequestDjinnBattle(21, 49); }
+void GondowanCliffs_FightKindle(void) { Field_RequestDjinnBattle(21, 49); }
 
 const u8 *Scene_GetEntrances(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov66bRoom2)
-    return gData_02001728;
-  return gData_02001698;
+  if (gMainRoutineWork.scene == (s32)&SceneId_GondowanCliffsPass)
+    return gGondowanCliffs_PassEntrances;
+  return gGondowanCliffs_Entrances;
 }
 
 #include "battle.h"
@@ -38,13 +50,13 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern const u8 gData_0200178c[];
-extern const u8 gData_0200193c[];
+extern const u8 gGondowanCliffs_ActorPlacements[];
+extern const u8 gGondowanCliffs_PassActorPlacements[];
 
 const u8 *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov66bRoom2)
-    return gData_0200193c;
-  return gData_0200178c;
+  if (gMainRoutineWork.scene == (s32)&SceneId_GondowanCliffsPass)
+    return gGondowanCliffs_PassActorPlacements;
+  return gGondowanCliffs_ActorPlacements;
 }
 
 #include "objcmd.h"

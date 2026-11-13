@@ -1,5 +1,5 @@
 /// @file
-/// Scene code of overlay 0x66b, in ROM order.
+/// The Gondowan Cliffs' copy of the effect spawner, FieldEffect_Spawn.
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate

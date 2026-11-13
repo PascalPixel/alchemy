@@ -758,7 +758,7 @@ scan:
   }
   System_Wait(1);
 poll:
-  if (!(gInput.pressed & 2))
+  if (!(gInput.pressed & KEY_B))
     goto scan;
   Event_PlaySound(SE_MENU_CANCEL);
   goto close;
@@ -809,7 +809,7 @@ done:
     Text_DrawMessage(MSGNO(MsgFieldDataTransferWasInterrupted), window, 0, 4);
   interrupted:
     System_Wait(1);
-    if (!(gInput.pressed & 1))
+    if (!(gInput.pressed & KEY_A))
       goto interrupted;
   close:
     Window_Close(window, 2);
@@ -1074,7 +1074,7 @@ s32 Func_02000e44(void) {
       state = 1;
     Func_02000db4(window, drawColumn, drawRow, drawMode, height, 15);
     if (state == 0) {
-      if (gInput.repeat & 16) {
+      if (gInput.repeat & KEY_RIGHT) {
         Sound_Play(SE_MENU_CURSOR_MOVE);
         {
           s32 next = column + 1;
@@ -1085,20 +1085,20 @@ s32 Func_02000e44(void) {
             column = next % (SIDE_COLUMN + 1);
         }
       }
-      if (gInput.repeat & 32) {
+      if (gInput.repeat & KEY_LEFT) {
         Sound_Play(SE_MENU_CURSOR_MOVE);
         if (row == 2)
           column = (column + SIDE_COLUMN - 1) % SIDE_COLUMN;
         else
           column = (column + SIDE_COLUMN) % (SIDE_COLUMN + 1);
       }
-      if (gInput.repeat & 128) {
+      if (gInput.repeat & KEY_DOWN) {
         Sound_Play(SE_MENU_CURSOR_MOVE);
         row = (row + 1) % 4;
         if (column == SIDE_COLUMN && row == 2)
           row = 3;
       }
-      if (gInput.repeat & 64) {
+      if (gInput.repeat & KEY_UP) {
         Sound_Play(SE_MENU_CURSOR_MOVE);
         row = (row + 3) % 4;
         if (column != SIDE_COLUMN)
@@ -1203,7 +1203,7 @@ s32 Func_02000e44(void) {
         }
       }
       if (action != 0 || state == 1) {
-        if (gInput.pressed & 8 || action == 3 || state == 1) {
+        if (gInput.pressed & KEY_START || action == 3 || state == 1) {
           u16 check;
           struct Window *box;
           struct MainRoutineWork *party;
@@ -1222,7 +1222,7 @@ s32 Func_02000e44(void) {
             Sound_Play(SE_MENU_CONFIRM);
           wait_accepted:
             System_Wait(1);
-            if (!(gInput.pressed & 1))
+            if (!(gInput.pressed & KEY_A))
               goto wait_accepted;
             Sound_Play(SE_MENU_CONFIRM);
             MainRoutineWork_InitializeDefaults();
@@ -1252,22 +1252,22 @@ s32 Func_02000e44(void) {
           Text_DrawMessageAsTiles(MSGNO(MsgFieldInvalidPassword), box, 0, 0);
         wait_rejected:
           System_Wait(1);
-          if (!(gInput.pressed & 1) && !(gInput.pressed & 2))
+          if (!(gInput.pressed & KEY_A) && !(gInput.pressed & KEY_B))
             goto wait_rejected;
           Window_Close(box, 2);
           WindowSprite_RedrawSavedRect(window);
           DRAW_TITLE(window)
-        } else if (gInput.repeat & 512 || action == 2) {
+        } else if (gInput.repeat & KEY_L || action == 2) {
           if (cursor > 0) {
             Sound_Play(SE_MENU_CURSOR_MOVE);
             cursor--;
           }
-        } else if (gInput.repeat & 256 || action == 1) {
+        } else if (gInput.repeat & KEY_R || action == 1) {
           if (cursor < length - 1) {
             Sound_Play(SE_MENU_CURSOR_MOVE);
             cursor++;
           }
-        } else if (gInput.pressed & 2) {
+        } else if (gInput.pressed & KEY_B) {
           if (cursor > 0) {
             Sound_Play(SE_MENU_CURSOR_MOVE);
             cursor--;

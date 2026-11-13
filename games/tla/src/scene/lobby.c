@@ -868,10 +868,10 @@ s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
       Text_DrawNumber(choice, 3, window, 0, 0);
       shown = choice;
     }
-    if (gInput.repeat & 0x20) {
+    if (gInput.repeat & KEY_LEFT) {
       choice--;
     }
-    if (gInput.repeat & 0x10) {
+    if (gInput.repeat & KEY_RIGHT) {
       choice++;
     }
     if (choice < 0) {
@@ -976,7 +976,7 @@ void LinkLobby_TakeSongRequest(s32 actor) {
   Event_ShowMessage(actor, 0);
   song = 0;
   all = 0;
-  if ((gInput.held & 0x248) == 0x248)
+  if ((gInput.held & (KEY_START | KEY_UP | KEY_L)) == 0x248)
     all = 1;
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   for (;;) {
@@ -989,9 +989,9 @@ void LinkLobby_TakeSongRequest(s32 actor) {
         shown = song;
       }
       step = 0;
-      if (gInput.repeat & 32)
+      if (gInput.repeat & KEY_LEFT)
         step--;
-      if (gInput.repeat & 16)
+      if (gInput.repeat & KEY_RIGHT)
         step = 1;
       while (step != 0) {
         song += step;
@@ -1005,9 +1005,9 @@ void LinkLobby_TakeSongRequest(s32 actor) {
           goto keys;
       }
     keys:
-      if (gInput.pressed & 1)
+      if (gInput.pressed & KEY_A)
         break;
-      if (gInput.pressed & 2) {
+      if (gInput.pressed & KEY_B) {
         song = -1;
         break;
       }
@@ -1104,7 +1104,7 @@ s32 LinkLobby_LeaveArena(void) {
 s32 LinkLobby_TalkToVisitor(s32 actor) {
   s32 message;
 
-  if (actor == 14 && (gInput.held & 0x300)) {
+  if (actor == 14 && (gInput.held & KEYS_SHOULDERS)) {
     LinkLobby_TakeSongRequest(14);
     return;
   }

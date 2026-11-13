@@ -411,7 +411,7 @@ void YallamInteriors_TalkToSunshine(void) {
                            1);
       Actor_SetDestination(gMainRoutineWork.currentOwner, 488, 408);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-      Actor_FaceDirection(gMainRoutineWork.currentOwner, 0, 0);
+      Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
       Actor_SetDestination(14, 504, 408);
       Actor_WaitForMoveById(14);
       Actor_FaceActor(14, gMainRoutineWork.currentOwner, 0);

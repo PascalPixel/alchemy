@@ -791,7 +791,7 @@ void Settlements_SlideCrateDownFalls(void) {
     Actor_SetDestinationOffset(10, 0, 8);
     FieldActor_WaitForMoveById(10);
     FieldEvent_Wait(10);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x4000, 0);
+    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
     Actor_SetSpeed(10, 0x26666, 0x13333);
     Actor_SetDestinationOffset(10, 0, 80);
     FieldActor_WaitForMoveById(10);

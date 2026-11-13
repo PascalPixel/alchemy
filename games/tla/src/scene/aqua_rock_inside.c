@@ -548,7 +548,7 @@ void Func_020007d4(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xc000, 0);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Func_020007a8();
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldEvent_Wait(60);

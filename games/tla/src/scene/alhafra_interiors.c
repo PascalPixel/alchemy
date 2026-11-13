@@ -98,9 +98,9 @@ void AlhafraInteriors_MeetAlex(void) {
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors31);
   FieldCamera_MoveToActorById(0x1f, 1);
   Actor_WalkToAndWait(4, 452, 335);
-  Actor_FaceDirection(4, 0x8000, 0);
+  Actor_FaceDirection(4, FACING_WEST, 0);
   FieldCamera_WaitForArrival();
-  Actor_FaceDirection(31, 0x2000, 0);
+  Actor_FaceDirection(31, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(0x801f, 0, 0xa);
   FieldActor_StartRepeatedMotion(4, 3);
@@ -119,7 +119,7 @@ void AlhafraInteriors_MeetAlex(void) {
   Actor_SetAnimationAndWait(31, 3);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(0x801f, 0, 0xa);
-  Actor_FaceDirection(31, 0xc000, 0);
+  Actor_FaceDirection(31, FACING_NORTH, 0);
   FieldEvent_Wait(20);
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
@@ -176,12 +176,12 @@ void AlhafraInteriors_GuestsAskForTea(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 152, 328);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xc000, 0);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors07);
-  Actor_FaceDirection(14, 0, 0);
+  Actor_FaceDirection(14, FACING_EAST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(0xe, 0, 0xa);
-  Actor_FaceDirection(15, 0x8000, 0);
+  Actor_FaceDirection(15, FACING_WEST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(15, 3);
   FieldEvent_Wait(10);
@@ -192,7 +192,7 @@ void AlhafraInteriors_GuestsAskForTea(void) {
   FieldEvent_ShowMessageThenWait(0xe, 0, 0xa);
   Actor_RunRepeatedMotion(13, 2);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(13, 0, 0);
+  Actor_FaceDirection(13, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_ShowEmote(0xd, 0x107, 0x1e);
   FieldEvent_ShowMessageThenWait(0xd, 0, 0xa);
@@ -203,7 +203,7 @@ void AlhafraInteriors_GuestsAskForTea(void) {
   FieldEvent_Wait(50);
   Actor_RunRepeatedMotion(13, 2);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(13, 0xb000, 0);
+  Actor_FaceDirection(13, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(0xd, 0, 0xa);
   FieldEvent_Wait(10);
@@ -212,8 +212,8 @@ void AlhafraInteriors_GuestsAskForTea(void) {
   Actor_SetAnimation(15, 4);
   Actor_SetAnimationAndWait(14, 4);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(14, 0x3000, 0);
-  Actor_FaceDirection(15, 0x4000, 0);
+  Actor_FaceDirection(14, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(15, FACING_SOUTH, 0);
   Event_End();
 }
 
@@ -222,7 +222,7 @@ void AlhafraInteriors_TalkToDemandingGuest(s32 a0) {
   Actor_FaceEachOther(a0, gMainRoutineWork.currentOwner, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors08);
   Event_ShowMessage(a0, 0);
-  Actor_FaceDirection(14, 0x3000, 0);
+  Actor_FaceDirection(14, FACING_SOUTH_SOUTHEAST, 0);
 }
 
 /// Mind Read on Alex: he turns to the party and asks them to stop.
@@ -230,7 +230,7 @@ void AlhafraInteriors_ReadAlexsMind(s32 a0, s32 a1) {
   Actor_FaceEachOther(a1, gMainRoutineWork.currentOwner, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors48);
   Event_ShowMessage(a1, 0);
-  Actor_FaceDirection(a1, 0xe000, 0);
+  Actor_FaceDirection(a1, FACING_NORTHEAST, 0);
 }
 
 /// The master of the house tells that the town has started rebuilding, once
@@ -422,13 +422,13 @@ void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
       Actor_SetAnimationAndWait(32, 3);
       FieldEvent_Wait(10);
       FieldEvent_ShowMessageThenWait(0x20, 0, 5);
-      Actor_FaceDirectionAndWait(31, 0xd000);
+      Actor_FaceDirectionAndWait(31, FACING_NORTH_NORTHEAST);
       FieldEvent_Wait(15);
       FieldEvent_ShowMessageThenWait(0x1f, 0, 5);
       Actor_SetAnimationAndWait(32, 3);
       FieldEvent_Wait(10);
       FieldEvent_ShowMessageThenWait(0x20, 0, 5);
-      Actor_FaceDirectionAndWait(31, 0x3000);
+      Actor_FaceDirectionAndWait(31, FACING_SOUTH_SOUTHEAST);
       FieldEvent_Wait(15);
       Actor_SetAnimationAndWait(31, 3);
       FieldEvent_Wait(20);

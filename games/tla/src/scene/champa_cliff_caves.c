@@ -613,7 +613,7 @@ void Func_02000a34(s32 value) {
   Actor_WalkByAndWaitById(gMainRoutineWork.currentOwner, 12, 12);
   Event_Wait(1);
   Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags |= 1;
-  Actor_FaceDirectionById(gMainRoutineWork.currentOwner, 0x2000);
+  Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_SOUTHEAST);
   Event_Wait(10);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
   Event_Wait(20);
@@ -678,10 +678,10 @@ void Func_02000a34(s32 value) {
   Motion_SetVarCbAndRefresh(8, 2);
   Event_Wait(5);
   Call3((void (*)())Event_ShowMessageThenWait, 0x2008, 0, 5);
-  Actor_FaceDirectionById(8, 0x8000);
+  Actor_FaceDirectionById(8, FACING_WEST);
   Event_Wait(10);
   Event_ShowMessageThenWait(0x2008, 0, 5);
-  Actor_FaceDirectionById(8, 0x5000);
+  Actor_FaceDirectionById(8, FACING_SOUTH_SOUTHWEST);
   Event_Wait(10);
   Actor_SetSpritePriority(10, 2);
   Event_End();
@@ -1123,7 +1123,7 @@ void Func_02001868(void) {
   Event_ShowMessageThenWait(11, 0, 0);
   Motion_SetModeAndWaitAnimation(7, 4);
   Event_ShowMessageThenWait(7, 0, 5);
-  Actor_FaceDirectionById(15, 0x5000);
+  Actor_FaceDirectionById(15, FACING_SOUTH_SOUTHWEST);
   Event_Wait(5);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 0x200f, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
@@ -1254,7 +1254,7 @@ void Func_02001868(void) {
   Call2((void (*)())Actor_FaceDirectionById, 8, 0x5000);
   Event_ShowMessageThenWait(8, 0, 5);
   Call3((void (*)())Actor_ArmCallback, 11, 0xb000, 0);
-  Actor_FaceDirectionById(14, 0xd000);
+  Actor_FaceDirectionById(14, FACING_NORTH_NORTHEAST);
   Event_Wait(15);
   Motion_SetModeAndWaitAnimation(8, 4);
   Event_ShowMessageThenWait(8, 0, 5);
@@ -1320,7 +1320,7 @@ void Func_02001868(void) {
   Event_ShowMessageThenWait(11, 0, 5);
   Motion_SetModeAndWaitAnimation(14, 3);
   Event_Wait(10);
-  Actor_FaceDirectionById(14, 0xd000);
+  Actor_FaceDirectionById(14, FACING_NORTH_NORTHEAST);
   Event_Wait(10);
   Event_ShowMessageThenWait(14, 0, 5);
   Actor_ShowEmoteById(8, 0x105, 50);
@@ -1461,7 +1461,7 @@ void Func_02001868(void) {
   Call3((void (*)())Actor_ArmCallback, 7, FACING_SOUTH, 0);
   Actor_ArmCallback(5, FACING_EAST, 0);
   Call3((void (*)())Actor_ArmCallback, 6, FACING_SOUTHEAST, 0);
-  Actor_FaceDirectionById(15, 0x5000);
+  Actor_FaceDirectionById(15, FACING_SOUTH_SOUTHWEST);
   Event_Wait(20);
   Actor_SetSpritePriority(4, 2);
   Actor_GetById(4)->priorityFlags |= 1;

@@ -13,6 +13,7 @@
 #include "../field/field_effect/move.c"
 
 #include "flags.h"
+#include "system/io_reg.h"
 #include "field/field.h"
 #include "types.h"
 #include "system/main_routine_work.h"
@@ -916,11 +917,11 @@ void Func_020011bc(s32 x, s32 z) {
     s32 z = leader->z >> 20;                                                   \
                                                                                \
     if (z == n1) {                                                             \
-      if (x == n2 && (gInput.held & 16) == 0)                                  \
+      if (x == n2 && (gInput.held & KEY_RIGHT) == 0)                           \
         return;                                                                \
-      if (x == n3 && (gInput.held & 32) == 0)                                  \
+      if (x == n3 && (gInput.held & KEY_LEFT) == 0)                            \
         return;                                                                \
-    } else if (x == n4 && z == n5 && (gInput.held & 64) == 0) {                \
+    } else if (x == n4 && z == n5 && (gInput.held & KEY_UP) == 0) {            \
       return;                                                                  \
     }                                                                          \
     Func_020011bc(n6, n7);                                                     \
@@ -937,14 +938,14 @@ DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(Func_02001284, 11, 18, 20, 19, 12, 312,
     s32 z = leader->z >> 20;                                                   \
                                                                                \
     if (x == n1) {                                                             \
-      if (z == n2 && (gInput.held & 128) == 0)                                 \
+      if (z == n2 && (gInput.held & KEY_DOWN) == 0)                            \
         return;                                                                \
-      if (z == n3 && (gInput.held & 64) == 0)                                  \
+      if (z == n3 && (gInput.held & KEY_UP) == 0)                              \
         return;                                                                \
     } else if (z == n4) {                                                      \
-      if (x == n5 && (gInput.held & 16) == 0)                                  \
+      if (x == n5 && (gInput.held & KEY_RIGHT) == 0)                           \
         return;                                                                \
-      if (x == n6 && (gInput.held & 32) == 0)                                  \
+      if (x == n6 && (gInput.held & KEY_LEFT) == 0)                            \
         return;                                                                \
     }                                                                          \
     Func_020011bc(n7, n8);                                                     \
@@ -959,9 +960,9 @@ void Func_02001364(void) {
   s32 z = leader->z >> 20;
 
   if (z == 7) {
-    if (x == 32 && (gInput.held & 16) == 0)
+    if (x == 32 && (gInput.held & KEY_RIGHT) == 0)
       return;
-  } else if (x == 33 && z == 8 && (gInput.held & 64) == 0) {
+  } else if (x == 33 && z == 8 && (gInput.held & KEY_UP) == 0) {
     return;
   }
   Func_020011bc(536, 112);
@@ -973,14 +974,14 @@ void Func_020013bc(void) {
   s32 z = leader->z >> 20;
 
   if (z == 13) {
-    if (x == 5 && (gInput.held & 16) == 0)
+    if (x == 5 && (gInput.held & KEY_RIGHT) == 0)
       return;
-    if (x == 7 && (gInput.held & 32) == 0)
+    if (x == 7 && (gInput.held & KEY_LEFT) == 0)
       return;
   } else if (x == 6) {
-    if (z == 12 && (gInput.held & 128) == 0)
+    if (z == 12 && (gInput.held & KEY_DOWN) == 0)
       return;
-    if (z == 14 && (gInput.held & 64) == 0)
+    if (z == 14 && (gInput.held & KEY_UP) == 0)
       return;
   }
   Func_020011bc(104, 208);
@@ -992,11 +993,11 @@ void Func_02001430(void) {
   s32 z = leader->z >> 20;
 
   if (x == 42) {
-    if (z == 12 && (gInput.held & 128) == 0)
+    if (z == 12 && (gInput.held & KEY_DOWN) == 0)
       return;
-    if (z == 14 && (gInput.held & 64) == 0)
+    if (z == 14 && (gInput.held & KEY_UP) == 0)
       return;
-  } else if (x == 43 && z == 13 && (gInput.held & 16) == 0) {
+  } else if (x == 43 && z == 13 && (gInput.held & KEY_RIGHT) == 0) {
     return;
   }
   Func_020011bc(680, 208);
@@ -1011,9 +1012,9 @@ void Func_02001564(void) {
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
 
-  if (x == 42 && z == 10 && (gInput.held & 64) == 0)
+  if (x == 42 && z == 10 && (gInput.held & KEY_UP) == 0)
     return;
-  if (x == 43 && z == 9 && (gInput.held & 32) == 0)
+  if (x == 43 && z == 9 && (gInput.held & KEY_LEFT) == 0)
     return;
   Func_020011bc(680, 146);
 }
@@ -1040,9 +1041,9 @@ void Func_02001630(void) {
   struct Actor *leader;
   struct EventWork154__gabomba_statue *work;
 
-  if (x == 28 && z == 9 && !(gInput.held & 0x10))
+  if (x == 28 && z == 9 && !(gInput.held & KEY_RIGHT))
     return;
-  if (x == 29 && z == 10 && !(gInput.held & 0x40))
+  if (x == 29 && z == 10 && !(gInput.held & KEY_UP))
     return;
   work = Ram_HeapSlots->eventWork;
   leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1719,10 +1720,10 @@ void GabombaStatue_SeeHowItWorks(void) {
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   FieldCamera_MoveTo(196 << 17, -1, 146 << 17, 1);
   FieldCamera_WaitForArrival();
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0, 0);
-  Actor_FaceDirection(5, 0x8000, 0);
-  Actor_FaceDirection(7, 0, 0);
-  Actor_FaceDirectionAndWait(6, 0x8000);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+  Actor_FaceDirection(5, FACING_WEST, 0);
+  Actor_FaceDirection(7, FACING_EAST, 0);
+  Actor_FaceDirectionAndWait(6, FACING_WEST);
   Actor_SetAnimation(6, 3);
   Event_ShowMessage(0x4006, 0);
   ((void *)Event_OpenMessage(0x6005, 0));
@@ -1733,8 +1734,8 @@ void GabombaStatue_SeeHowItWorks(void) {
     Actor_WalkToAndWait(7, 340, 296);
     Actor_WalkToAndWait(7, 354, 296);
     Actor_WalkToAndWait(7, 364, 308);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xe000, 0);
-    Actor_FaceDirectionAndWait(7, 0x6000);
+    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
+    Actor_FaceDirectionAndWait(7, FACING_SOUTHWEST);
     Event_ShowMessage(0x6007, 0);
     (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
   } else {
@@ -1743,15 +1744,15 @@ void GabombaStatue_SeeHowItWorks(void) {
     Actor_WalkToAndWait(7, 340, 296);
     Actor_WalkToAndWait(7, 354, 296);
     Actor_WalkToAndWait(7, 364, 308);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xe000, 0);
-    Actor_FaceDirectionAndWait(7, 0x6000);
+    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
+    Actor_FaceDirectionAndWait(7, FACING_SOUTHWEST);
     Actor_SetAnimation(7, 3);
     Event_ShowMessage(cue, 0);
   }
-  Actor_FaceDirectionAndWait(23, 0x8000);
+  Actor_FaceDirectionAndWait(23, FACING_WEST);
   Actor_SetAnimationAndWait(23, 4);
   Event_ShowMessage(0x6017, 0);
-  Actor_FaceDirection(7, 0, 0);
+  Actor_FaceDirection(7, FACING_EAST, 0);
   Func_0200578c_ArgsFirst(7, 257, 40);
   Event_ShowMessage(0x6017, 0);
   Actor_SetAnimationAndWait(7, 3);
@@ -1766,29 +1767,29 @@ void GabombaStatue_SeeHowItWorks(void) {
   Event_ShowMessage(0x4007, 0);
   Actor_SetSpeed(6, 0xcccc, 0x6666);
   Actor_WalkToAndWait(6, 440, 296);
-  Actor_FaceDirectionAndWait(6, 0x8000);
+  Actor_FaceDirectionAndWait(6, FACING_WEST);
   Actor_SetAnimationAndWait(6, 3);
   Event_ShowMessage(0x4006, 0);
-  Actor_FaceDirection(7, 0xe000, 0);
+  Actor_FaceDirection(7, FACING_NORTHEAST, 0);
   Func_0200578c_ArgsFirst(7, 261, 0);
-  Actor_FaceDirection(6, 0x2000, 0);
-  Actor_FaceDirection(5, 0xa000, 0);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0, 80);
+  Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(5, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 80);
   Func_0200578c_ArgsFirst(7, 261, 40);
-  Actor_FaceDirectionAndWait(7, 0);
+  Actor_FaceDirectionAndWait(7, FACING_EAST);
   Event_ShowMessage(0x4007, 0);
-  Actor_FaceDirection(5, 0x8000, 0);
-  Actor_FaceDirectionAndWait(6, 0x8000);
+  Actor_FaceDirection(5, FACING_WEST, 0);
+  Actor_FaceDirectionAndWait(6, FACING_WEST);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
   Actor_SetAnimation(23, 3);
   Actor_SetAnimation(5, 3);
   Actor_SetAnimationAndWait(6, 3);
   Actor_SetAnimationAndWait(7, 3);
-  Actor_FaceDirectionAndWait(23, 0xb000);
+  Actor_FaceDirectionAndWait(23, FACING_NORTH_NORTHWEST);
   Event_ShowMessage(23, 0);
   Func_0200578c_ArgsFirst(23, 257, 0);
-  Actor_FaceDirection(23, 0xd000, 20);
-  Actor_FaceDirectionAndWait(23, 0xb000);
+  Actor_FaceDirection(23, FACING_NORTH_NORTHEAST, 20);
+  Actor_FaceDirectionAndWait(23, FACING_NORTH_NORTHWEST);
   Event_ShowMessage(23, 0);
   FieldCamera_SetSpeed(0x4cccc, 0x9999);
   FieldCamera_MoveTo(196 << 17, -1, 176 << 16, 1);
@@ -1802,7 +1803,7 @@ void GabombaStatue_SeeHowItWorks(void) {
   FieldCamera_WaitForArrival();
   Actor_SetAnimation(23, 3);
   Event_ShowMessage(23, 0);
-  Actor_FaceDirectionAndWait(23, 0x8000);
+  Actor_FaceDirectionAndWait(23, FACING_WEST);
   Event_ShowMessage(23, 0);
   Actor_SetSpeed(5, 0x19999, 0xcccc);
   Actor_SetSpeed(6, 0x19999, 0xcccc);

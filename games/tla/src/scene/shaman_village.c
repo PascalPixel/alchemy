@@ -753,7 +753,7 @@ void ShamanVillage_TalkToGuard(void) {
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 246, 292);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 204, 292);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 182, 280);
-    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
     Event_ShowMessage(0x200f, 0);
     Event_SetFlag(FLAG_SCENE_TEMP_00);
     ShamanVillage_ExplainTrialRules();
@@ -776,7 +776,7 @@ void ShamanVillage_TalkToOtherGuard(void) {
     FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(280), 1);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 182, 280);
-    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
     Event_ShowMessage(0x200f, 0);
     Event_SetFlag(FLAG_SCENE_TEMP_00);
     ShamanVillage_ExplainTrialRules();
@@ -1014,7 +1014,7 @@ void ShamanVillage_ExplainTrialRules(void) {
     FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(280), 1);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x13333, 0x9999);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 182, 280);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, 0, 0);
+    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
     Event_PlaySound(MUS_076);
     Actor_FaceDirection(15, FACING_WEST, 0);
     Actor_FaceDirection(16, FACING_WEST, 0);
@@ -1108,7 +1108,7 @@ void ShamanVillage_ChallengeMoapa(void) {
   FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(280), 1);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x1cccc, 0xe666);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 182, 280);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0, 0);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_FaceDirection(16, FACING_WEST, 0);
   Actor_FaceDirection(17, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(15, FACING_WEST);
@@ -1487,9 +1487,9 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_FaceDirectionAndWait(15, FACING_SOUTH);
   Actor_SetAnimation(15, 4);
   Event_ShowMessage(15, 0);
-  Actor_FaceDirection(6, 0, 0);
+  Actor_FaceDirection(6, FACING_EAST, 0);
   Actor_FaceDirection(5, FACING_WEST, 0);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0, 0);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_FaceDirection(7, FACING_WEST, 0);
   FieldActor_ShowEmote(18, 256, 20);
   Actor_Jump(18, 4, 0);
@@ -1541,7 +1541,7 @@ void ShamanVillage_ShowShamansRod(void) {
     DriftScene_SpawnObject(0x7c0000, y, z, 0x2000);
     Event_Wait(30);
     FieldActor_ShowEmote(16, 262, 20);
-    Actor_FaceDirectionAndWait(16, 0);
+    Actor_FaceDirectionAndWait(16, FACING_EAST);
     Event_ShowMessage(16, 0);
     Actor_FaceDirectionAndWait(17, FACING_WEST);
     Actor_SetAnimationAndWait(17, 3);
@@ -1587,16 +1587,16 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_SetPosition(15, 0, 0);
   Actor_SetPosition(17, 0, 0);
   Actor_SetPosition(16, 0, 0);
-  Actor_FaceDirectionAndWait(6, 0);
+  Actor_FaceDirectionAndWait(6, FACING_EAST);
   Event_ShowMessage(6, 0);
   Actor_FaceDirectionAndWait(5, FACING_WEST);
   Event_ShowMessage(0x2005, 0);
   Event_ShowMessage(18, 0);
   Actor_FaceDirectionAndWait(18, FACING_WEST);
   Event_ShowMessage(18, 0);
-  Actor_FaceDirection(7, 0, 0);
-  Actor_FaceDirection(5, 0, 0);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0);
+  Actor_FaceDirection(7, FACING_EAST, 0);
+  Actor_FaceDirection(5, FACING_EAST, 0);
+  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
   Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
   Actor_SetSpeed(6, 0x10000, 0x8000);
   Actor_SetSpeed(5, 0x10000, 0x8000);
@@ -2068,14 +2068,14 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_SetScript(5, gShamanVillage_JennaWatchesShebaScript);
   Actor_SetScript(18, gShamanVillage_KradenWatchesShebaScript);
   Actor_RunScriptAndWait(7, gShamanVillage_PiersWatchesShebaScript);
-  Actor_FaceDirectionAndWait(5, 0);
+  Actor_FaceDirectionAndWait(5, FACING_EAST);
   Event_SetMessageId((s32)MsgShamanCheerForCompanion);
   Event_ShowMessage(5, 0);
   Actor_FaceDirectionAndWait(6, FACING_WEST);
   Actor_SetAnimation(6, 3);
   Event_ShowMessage(0x2006, 0);
   Actor_FaceDirectionAndWait(6, FACING_NORTH);
-  Actor_FaceDirectionAndWait(6, 0);
+  Actor_FaceDirectionAndWait(6, FACING_EAST);
   Actor_SetAnimationAndWait(6, 3);
   Actor_SetSpeed(6, 0x6666, 0x3333);
   Actor_WalkToAndWait(6, 168, 524);
@@ -2114,7 +2114,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_SetAnimation(15, 4);
   Event_ShowMessage(15, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-  Actor_FaceDirection(18, 0, 0);
+  Actor_FaceDirection(18, FACING_EAST, 0);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
    * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(5, 256, 20)
@@ -2159,7 +2159,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_FaceDirectionAndWait(16, FACING_NORTHEAST);
   Actor_SetAnimation(16, 4);
   Event_ShowMessage(0x8010, 0);
-  Actor_FaceDirection(16, 0, 0);
+  Actor_FaceDirection(16, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(17, FACING_WEST);
   Event_Wait(10);
   Actor_SetAnimation(16, 3);
@@ -2174,7 +2174,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_WalkToAndWait(17, 216, 560);
   Actor_SetAnimation(17, 1);
   Actor_FaceDirection(17, FACING_WEST, 0);
-  Actor_FaceDirectionAndWait(16, 0);
+  Actor_FaceDirectionAndWait(16, FACING_EAST);
   Actor_WalkTo(16, 152, 560);
   Actor_WalkToAndWait(17, 184, 560);
   Actor_SetAnimation(16, 1);
@@ -2192,7 +2192,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_SetAnimation(15, 1);
   Actor_SetAnimation(17, 1);
   Actor_SetAnimation(16, 1);
-  Actor_FaceDirectionAndWait(18, 0x3000);
+  Actor_FaceDirectionAndWait(18, FACING_SOUTH_SOUTHEAST);
   Event_ShowMessage(18, 0);
   Actor_FaceDirection(15, FACING_NORTHWEST, 0);
   Actor_FaceDirection(17, FACING_NORTHWEST, 0);
@@ -2207,7 +2207,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   FieldActor_ShowEmote(16, 257, 20);
   FieldActor_ShowEmote(5, 264, 40);
   Event_ShowMessage(5, 0);
-  Actor_FaceDirection(16, 0, 0);
+  Actor_FaceDirection(16, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(17, FACING_WEST);
   Actor_SetAnimationAndWait(7, 3);
   Event_ShowMessage(7, 0);
@@ -2231,7 +2231,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_FaceDirectionAndWait(17, FACING_WEST);
   Actor_Jump(17, 4, 10);
   Event_ShowMessage(17, 0);
-  Actor_FaceDirectionAndWait(16, 0);
+  Actor_FaceDirectionAndWait(16, FACING_EAST);
   Actor_SetAnimationAndWait(16, 3);
   Event_Wait(10);
   Actor_FaceDirectionAndWait(16, FACING_SOUTHEAST);
@@ -2259,8 +2259,8 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_SetAnimation(15, 4);
   Event_OpenMessage(15, 0);
   Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(5, 0, 0);
-  Actor_FaceDirection(18, 0, 0);
+  Actor_FaceDirection(5, FACING_EAST, 0);
+  Actor_FaceDirection(18, FACING_EAST, 0);
   Actor_FaceDirection(7, FACING_NORTHWEST, 0);
   result = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   done = &object->blockMarked;
@@ -2307,8 +2307,8 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_SetPositionAndFacing(16, PIXELS(208), PIXELS(264), angle);
   Actor_SetPositionAndFacing(17, PIXELS(240), PIXELS(264), angle);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
-  Actor_FaceDirection(18, 0, 0);
-  Actor_FaceDirection(5, 0, 0);
+  Actor_FaceDirection(18, FACING_EAST, 0);
+  Actor_FaceDirection(5, FACING_EAST, 0);
   Actor_FaceDirection(7, FACING_NORTHWEST, 0);
   Actor_FaceDirectionAndWait(6, FACING_SOUTHEAST);
   Event_Wait(10);
@@ -2446,7 +2446,7 @@ void ShamanVillage_RestartTrial(void) {
   Actor_FaceDirection(16, angle, 0);
   Actor_FaceDirection(17, angle, 0);
   Actor_FaceDirectionAndWait(15, FACING_WEST);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0, 0);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   FieldCamera_WaitForArrival();
   Event_SetMessageId((s32)MsgShamanMustFinishTrialRoad);
   Event_ShowMessage(0x200f, 0);

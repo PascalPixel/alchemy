@@ -5,6 +5,7 @@
 /// The scene table formats: the scene table, entrances, exits, actor
 /// placements and triggers, as The Broken Seal's scene_tables.h has them.
 
+#include "fixed_math.h"
 #include "types.h"
 #include "system/main_routine_work.h"
 
@@ -18,19 +19,30 @@ struct Scene {
 
 extern const struct Scene gScenes[];
 
+/// The sixteen headings an actor faces, in turns from east, clockwise on the
+/// screen, as The Broken Seal's: the eight between the main ones turn an actor
+/// a little past a main heading, which picks the side its sprite leans to.
 enum Facing {
-  FACING_EAST = 0x0000,
-  FACING_SOUTHEAST = 0x2000,
-  FACING_SOUTH = 0x4000,
-  FACING_SOUTHWEST = 0x6000,
-  FACING_WEST = 0x8000,
-  FACING_NORTHWEST = 0xa000,
-  FACING_NORTH = 0xc000,
-  FACING_NORTHEAST = 0xe000
+  FACING_EAST = 0,
+  FACING_EAST_SOUTHEAST = TRIG_TURN / 16,
+  FACING_SOUTHEAST = TRIG_TURN / 8,
+  FACING_SOUTH_SOUTHEAST = TRIG_TURN * 3 / 16,
+  FACING_SOUTH = TRIG_TURN / 4,
+  FACING_SOUTH_SOUTHWEST = TRIG_TURN * 5 / 16,
+  FACING_SOUTHWEST = TRIG_TURN * 3 / 8,
+  FACING_WEST_SOUTHWEST = TRIG_TURN * 7 / 16,
+  FACING_WEST = TRIG_TURN / 2,
+  FACING_WEST_NORTHWEST = TRIG_TURN * 9 / 16,
+  FACING_NORTHWEST = TRIG_TURN * 5 / 8,
+  FACING_NORTH_NORTHWEST = TRIG_TURN * 11 / 16,
+  FACING_NORTH = TRIG_TURN * 3 / 4,
+  FACING_NORTH_NORTHEAST = TRIG_TURN * 13 / 16,
+  FACING_NORTHEAST = TRIG_TURN * 7 / 8,
+  FACING_EAST_NORTHEAST = TRIG_TURN * 15 / 16
 };
 
 /// A sixteenth of a turn, half the step between two headings.
-enum { FACING_STEP = 0x1000 };
+enum { FACING_STEP = TRIG_TURN / 16 };
 
 enum { SCENE_TABLE_END = -1, CONDITION_ALWAYS = -1 };
 

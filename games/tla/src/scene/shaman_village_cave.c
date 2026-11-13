@@ -314,11 +314,11 @@ void ShamanVillageCave_MeetColossoFans(void) {
   FieldCamera_MoveTo(PIXELS(199), -1, PIXELS(225), 1);
   FieldCamera_WaitForArrival();
   FieldActor_WaitForMoveById(19);
-  Actor_FaceDirection(19, 0x5000, 0);
+  Actor_FaceDirection(19, FACING_SOUTH_SOUTHWEST, 0);
   FieldActor_WaitForMoveById(20);
-  Actor_FaceDirection(20, 0x5000, 0);
+  Actor_FaceDirection(20, FACING_SOUTH_SOUTHWEST, 0);
   FieldActor_WaitForMoveById(21);
-  Actor_FaceDirectionAndWait(21, 0x5000);
+  Actor_FaceDirectionAndWait(21, FACING_SOUTH_SOUTHWEST);
   Actor_RunRepeatedMotion(21, 2);
   FieldEvent_ShowMessageThenWait(21, 0, 5);
   Actor_ShowEmote(18, 258, 30);
@@ -364,8 +364,8 @@ void ShamanVillageCave_MeetColossoFans(void) {
   FieldEvent_Wait(10);
   Actor_ShowEmote(20, 263, 30);
   FieldEvent_ShowMessageThenWait(20, 0, 5);
-  Actor_FaceDirection(20, 0x5000, 0);
-  Actor_FaceDirection(21, 0x5000, 0);
+  Actor_FaceDirection(20, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(21, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirectionAndWait(18, FACING_NORTHEAST);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(18, 4);

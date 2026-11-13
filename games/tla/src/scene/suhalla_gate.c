@@ -232,9 +232,9 @@ void SuhallaGate_ThievesAmbushParty(void) {
   Actor_SetPosition(13, 0x2680000, 0x3900000);
   Actor_WalkToAndWait(13, 0x258, 0x398);
   Actor_SetPosition(15, 0x2680000, 0x3900000);
-  Actor_FaceDirection(13, 0x4000, 0);
+  Actor_FaceDirection(13, FACING_SOUTH, 0);
   Actor_WalkToAndWait(15, 0x278, 0x398);
-  Actor_FaceDirection(15, 0x4000, 0);
+  Actor_FaceDirection(15, FACING_SOUTH, 0);
   Actor_SetPosition(14, 0x2680000, 0x3900000);
   Actor_WalkToAndWait(14, 0x268, 0x398);
   Actor_RunRepeatedMotion(13, 2);

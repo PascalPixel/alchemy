@@ -626,8 +626,8 @@ void Func_02000af4(void) {
   Event_ShowMessageAndWait(15, 0);
   Actor_SetModeById(14, 3);
   Motion_SetModeAndWaitAnimation(15, 3);
-  Actor_FaceDirection(15, 0xd000, 0);
-  Actor_FaceDirectionAndWait(14, 0x3000);
+  Actor_FaceDirection(15, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirectionAndWait(14, FACING_SOUTH_SOUTHEAST);
   Event_End();
 }
 
@@ -1383,7 +1383,7 @@ void Func_02001d50(void) {
   Actor_FaceDirection(5, FACING_NORTHWEST, 0);
   Actor_FaceDirection(6, FACING_NORTHWEST, 0);
   Actor_WalkToAndWaitById(9, 146, 342);
-  Actor_FaceDirectionAndWait(9, 0x5000);
+  Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
   Actor_SetModeById(9, 4);
   Event_ShowMessageAndWait(9, 0);
   Actor_Jump(1, 2, 10);
@@ -1443,7 +1443,7 @@ void Func_02001d50(void) {
   Actor_FaceDirection(1, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   Actor_FaceDirection(7, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(9, 0x3000, 0);
+  Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
   answer = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   owner = gMainRoutineWork.currentOwner;
   if (answer == 0) {
@@ -1457,7 +1457,7 @@ void Func_02001d50(void) {
     Actor_SetModeById(2, 4);
     Event_ShowMessageAndWait(2, 0);
   }
-  Actor_FaceDirectionAndWait(9, 0x5000);
+  Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
   Motion_SetModeAndWaitAnimation(9, 4);
   Event_ShowMessageAndWait(9, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
@@ -1506,7 +1506,7 @@ void Func_02001d50(void) {
   Event_OpenMessage(0x4001, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
   Actor_FaceDirection(5, FACING_SOUTH, 0);
-  Actor_FaceDirection(9, 0x3000, 0);
+  Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
   answer = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   owner = gMainRoutineWork.currentOwner;
   if (answer == 0) {
@@ -1524,7 +1524,7 @@ void Func_02001d50(void) {
   Actor_ArmCallback(0, FACING_EAST, 0);
   Contigo_Jump(0, 265, 20);
   Event_ShowMessageAndWait(0, 0);
-  Actor_FaceDirectionAndWait(9, 0x5000);
+  Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
   Actor_SetModeById(9, 4);
   Event_ShowMessageAndWait(9, 0);
   Actor_FaceDirection(0, FACING_NORTHEAST, 0);
@@ -1622,7 +1622,7 @@ void Func_02001d50(void) {
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   Actor_FaceDirection(7, FACING_SOUTH, 0);
   Actor_FaceDirection(6, FACING_NORTH, 40);
-  Actor_FaceDirectionAndWait(8, 0xd000);
+  Actor_FaceDirectionAndWait(8, FACING_NORTH_NORTHEAST);
   Event_ShowMessageAndWait(8, 0);
   Actor_FaceDirection(0, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(1, FACING_SOUTHEAST, 0);
@@ -1644,7 +1644,7 @@ void Func_02001d50(void) {
   Func_02003e54(object, gData_02006030);
   Event_Wait(80);
   Func_02003f54(object);
-  Actor_FaceDirectionAndWait(8, 0xd000);
+  Actor_FaceDirectionAndWait(8, FACING_NORTH_NORTHEAST);
   Actor_SetModeById(8, 4);
   Event_ShowMessageAndWait(8, 0);
   Actor_SetAttachedEffect(0, 258);
@@ -1721,12 +1721,12 @@ void Func_02001d50(void) {
   FieldMessage_ShowAtActor(5, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
-    Actor_FaceDirectionAndWait(9, 0x3000);
+    Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHEAST);
     Actor_SetModeById(9, 3);
     Event_ShowMessageAndWait(0x1009, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
   } else {
-    Actor_FaceDirectionAndWait(9, 0x3000);
+    Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHEAST);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
     Actor_SetModeById(9, 4);
     Event_ShowMessageAndWait(0x1009, 0);
@@ -1734,7 +1734,7 @@ void Func_02001d50(void) {
   Actor_WalkToAndWait(9, 146, 368);
   Actor_FaceDirection(9, FACING_WEST, 40);
   Actor_ArmCallback(9, FACING_EAST, 40);
-  Actor_FaceDirectionAndWait(9, 0x5000);
+  Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
   Event_ShowMessageAndWait(0x6009, 0);
   Actor_SetModeById(0, 3);
   Actor_SetModeById(1, 3);
@@ -1767,7 +1767,7 @@ void Func_02002e18(void) {
     FieldCamera_MoveWithinMapBounds(PIXELS(160), -1, PIXELS(368), 1);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 158, 394);
-    Actor_FaceDirection(8, 0x5000, 0);
+    Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
     Actor_MoveToObject(2, gMainRoutineWork.currentOwner);
     wait(1);
     Actor_SetSpeed(2, 0xcccc, 0x6666);
@@ -1811,7 +1811,7 @@ void Func_02002e18(void) {
     Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
     Event_ShowMessageAndWait(0, 0);
     Contigo_Jump(8, 256, 0);
-    Actor_FaceDirection(8, 0x3000, 0);
+    Actor_FaceDirection(8, FACING_SOUTH_SOUTHEAST, 0);
     Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
     wait(1);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
@@ -1831,7 +1831,7 @@ void Func_02002e18(void) {
     Contigo_Jump(gMainRoutineWork.currentOwner, 257, 0);
     Contigo_Jump(0, 257, 0);
     Contigo_Jump(2, 257, 40);
-    Actor_FaceDirectionAndWait(8, 0x5000);
+    Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
     Event_ShowMessageAndWait(8, 0);
     Event_ShowMessage(0x8009, 0);
     Actor_FaceDirectionById(8, FACING_EAST);
@@ -1842,25 +1842,25 @@ void Func_02002e18(void) {
     Actor_FaceDirectionAndWait(2, FACING_NORTHEAST);
     Event_ShowMessage(0x1002, 0);
     Contigo_Jump(8, 259, 0);
-    Actor_FaceDirection(8, 0x5000, 20);
+    Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 20);
     Event_ShowMessageAndWait(8, 0);
     Actor_FaceDirection(0, FACING_NORTHEAST, 0);
-    Actor_FaceDirection(9, 0x5000, 40);
+    Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 40);
     Actor_FaceDirection(9, FACING_WEST, 0);
     Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
     Event_ShowMessageAndWait(0, 0);
     Actor_SetAttachedEffect(8, 258);
-    Actor_FaceDirectionAndWait(8, 0x3000);
+    Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHEAST);
     Event_ShowMessage(0x1008, 0);
     Contigo_Jump(gMainRoutineWork.currentOwner, 256, 0);
     Contigo_Jump(0, 256, 0);
     Contigo_Jump(2, 256, 0);
     Contigo_Jump(9, 256, 40);
-    Actor_FaceDirectionAndWait(8, 0x5000);
+    Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
     Actor_SetModeById(8, 4);
     Event_ShowMessageAndWait(8, 0);
     Actor_FaceDirection(0, FACING_NORTHEAST, 0);
-    Actor_FaceDirection(9, 0x5000, 0);
+    Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
     Actor_FaceDirection(2, FACING_NORTHWEST, 0);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 40);
     FieldEffect_SetAttached(0, 258);
@@ -1871,11 +1871,11 @@ void Func_02002e18(void) {
     Actor_FaceDirection(9, FACING_WEST, 0);
     Actor_FaceDirection(2, FACING_NORTHEAST, 0);
     Contigo_Jump(8, 265, 0);
-    Actor_FaceDirection(8, 0x3000, 0);
+    Actor_FaceDirection(8, FACING_SOUTH_SOUTHEAST, 0);
     Event_ShowMessageAndWait(0x1008, 0);
     Motion_SetVarCbAndRefresh(2, 1);
     Event_ShowMessage(0x1002, 0);
-    Actor_FaceDirectionAndWait(8, 0x5000);
+    Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
     Event_ShowMessageAndWait(8, 0);
     Contigo_Jump(9, 261, 20);
     Actor_FaceDirection(0, FACING_NORTHEAST, 0);
@@ -1888,11 +1888,11 @@ void Func_02002e18(void) {
     Event_ShowMessageAndWait(0x8009, 0);
     Event_ShowMessageAndWait(0x1000, 0);
     Contigo_Jump(9, 264, 0);
-    Actor_FaceDirection(9, 0x5000, 20);
+    Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 20);
     Event_ShowMessageAndWait(9, 0);
     Actor_Jump(2, 2, 10);
     Event_ShowMessage(0x1002, 0);
-    Actor_FaceDirectionAndWait(9, 0x5000);
+    Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
     Motion_SetModeAndWaitAnimation(9, 3);
     FieldMessage_ShowAtActor(9, 0);
     Contigo_Jump(2, 257, 0);
@@ -1909,7 +1909,7 @@ void Func_02002e18(void) {
       Actor_SetModeById(2, 4);
       Event_ShowMessageAndWait(0x1002, 0);
     }
-    Actor_FaceDirectionAndWait(9, 0x5000);
+    Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
     Actor_SetModeById(9, 4);
     FieldMessage_ShowAtActor(9, 0);
     Contigo_Jump(0, 257, 0);
@@ -1933,7 +1933,7 @@ void Func_02002e18(void) {
     Event_ShowMessageAndWait(9, 0);
     Actor_SetAttachedEffect(2, 258);
     Event_ShowMessageAndWait(0x1002, 0);
-    Actor_FaceDirectionAndWait(9, 0x5000);
+    Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
     Actor_SetModeById(9, 3);
     Event_ShowMessageAndWait(9, 0);
     Actor_SetModeById(0, 3);
@@ -1943,7 +1943,7 @@ void Func_02002e18(void) {
     Actor_FaceDirectionAndWait(9, FACING_WEST);
     Actor_SetModeById(9, 3);
     Event_ShowMessageAndWait(0x8009, 0);
-    Actor_FaceDirectionAndWait(9, 0x5000);
+    Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
     Contigo_Jump(9, 265, 0);
     Event_ShowMessageAndWait(9, 0);
     Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
@@ -1951,7 +1951,7 @@ void Func_02002e18(void) {
     Actor_SetAttachedEffect(2, 258);
     Actor_FaceDirectionAndWait(2, FACING_NORTHWEST);
     Event_ShowMessageAndWait(2, 0);
-    Actor_FaceDirectionAndWait(8, 0x5000);
+    Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
     Motion_SetModeAndWaitAnimation(8, 3);
     Event_ShowMessageAndWait(8, 0);
     Actor_FaceDirectionAndWait(9, FACING_WEST);

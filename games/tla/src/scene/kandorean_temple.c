@@ -1405,11 +1405,11 @@ void KandoreanTemple_ClimbDownTheWell(void) {
   s32 zero;
 
   if (z == 5) {
-    if (x == 9 && (gInput.held & 16) == 0)
+    if (x == 9 && (gInput.held & KEY_RIGHT) == 0)
       return;
-    if (x == 11 && (gInput.held & 32) == 0)
+    if (x == 11 && (gInput.held & KEY_LEFT) == 0)
       return;
-  } else if (x == 10 && z == 6 && (gInput.held & 64) == 0) {
+  } else if (x == 10 && z == 6 && (gInput.held & KEY_UP) == 0) {
     return;
   }
   Event_Start();
@@ -2552,7 +2552,7 @@ rise13:
   FieldCamera_WaitForArrival();
   Actor_SetSpeed(12, 0xcccc, 0x6666);
   Actor_WalkToAndWait(12, 476, 664);
-  Actor_FaceDirection(12, 0x3000, 0);
+  Actor_FaceDirection(12, FACING_SOUTH_SOUTHEAST, 0);
   Actor_SetModeById(12, 4);
   Event_ShowMessageAndWait(0x100c, 0);
   Actor_WalkToAndWait(12, 474, 664);
@@ -2565,7 +2565,7 @@ rise13:
   wait(1);
   Actor_WalkToAndWait(12, 326, 664);
   Actor_WalkToAndWait(12, 320, 664);
-  Actor_FaceDirection(12, 0x5000, 0);
+  Actor_FaceDirection(12, FACING_SOUTH_SOUTHWEST, 0);
   Event_ShowMessageAndWait(0x200c, 0);
   Camera_SetSpeedParameters(0x4cccc, 0x9999);
   FieldCamera_MoveWithinMapBounds(0x1560000, 0, 0x2b00000, 1);
@@ -2601,7 +2601,7 @@ rise14:
   FieldCamera_MoveWithinMapBounds(0x16c0000, 0x480000, 0x2980000, 1);
   FieldCamera_WaitForArrival();
   Event_ShowMessageAndWait(0x200c, 0);
-  Actor_FaceDirection(12, 0x3000, 10);
+  Actor_FaceDirection(12, FACING_SOUTH_SOUTHEAST, 10);
   Event_ShowMessageAndWait(12, 0);
   FieldCamera_MoveWithinMapBounds(0x1900000, 0, 0x2b00000, 1);
   FieldCamera_WaitForArrival();
@@ -2643,20 +2643,20 @@ fall15:
   Actor_ShowEmoteById(15, 0x103, 20);
   Actor_SetModeById(15, 1);
   Actor_Jump(15, 4, 0);
-  Actor_FaceDirection(15, 0xb000, 20);
+  Actor_FaceDirection(15, FACING_NORTH_NORTHWEST, 20);
   Event_ShowMessageAndWait(0x400f, 0);
   FieldCamera_MoveWithinMapBounds(0x16c0000, 0x480000, 0x2980000, 1);
   FieldCamera_WaitForArrival();
   Actor_ShowEmoteById(12, 0x102, 20);
   Event_ShowMessage(0x800c, 0);
   Event_ShowMessageAndWait(15, 0);
-  Actor_FaceDirection(12, 0xb000, 40);
+  Actor_FaceDirection(12, FACING_NORTH_NORTHWEST, 40);
   Actor_SetModeById(12, 4);
   Event_ShowMessage(0x800c, 0);
   Event_ShowMessageAndWait(15, 0);
   Actor_ShowEmoteById(12, 0x105, 80);
   Event_ShowMessage(0x800c, 0);
-  Actor_FaceDirection(12, 0x3000, 20);
+  Actor_FaceDirection(12, FACING_SOUTH_SOUTHEAST, 20);
   Actor_SetModeById(12, 3);
   Event_ShowMessageAndWait(0x800c, 0);
   Actor_WalkToAndWait(12, 326, 664);
@@ -2787,9 +2787,9 @@ void KandoreanTemple_MeetPoi(void) {
   FieldCamera_MoveTo(-1, -1, -1, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   wait(1);
-  Actor_SetPositionAndFacing(16, 0x1780000, 0x1880000, 0);
-  Actor_SetHorizontalPositionAndAngleWithTerrain(gMainRoutineWork.currentOwner,
-                                                 0x1780000, 0x1980000, 0);
+  Actor_SetPositionAndFacing(16, 0x1780000, 0x1880000, FACING_EAST);
+  Actor_SetHorizontalPositionAndAngleWithTerrain(
+      gMainRoutineWork.currentOwner, 0x1780000, 0x1980000, FACING_EAST);
   {
     s32 angle = 0xb000;
     Actor_SetPositionAndFacing(12, 0x1d80000, 0x1c60000, angle);
@@ -2799,7 +2799,7 @@ void KandoreanTemple_MeetPoi(void) {
   Actor_SetSpeed(12, 0x13333, 0x9999);
   Actor_WalkToAndWait(12, 464, 428);
   Actor_WalkToAndWait(12, 432, 408);
-  Actor_FaceDirection(12, 0x8000, 0);
+  Actor_FaceDirection(12, FACING_WEST, 0);
   FieldEffect_SetAttached(12, 0x102);
   Event_SetMessageId((s32)&MsgKandoreanTemple07);
   Event_ShowMessageAndWait(12, 0);
@@ -2809,10 +2809,10 @@ void KandoreanTemple_MeetPoi(void) {
   Event_ShowMessageAndWait(12, 0);
   Event_ShowMessageAndWait(16, 0);
   Motion_SetVarCbAndRefresh(12, 2);
-  Actor_FaceDirection(12, 0x8000, 20);
+  Actor_FaceDirection(12, FACING_WEST, 20);
   Actor_SetModeById(12, 4);
   Event_ShowMessageAndWait(12, 0);
-  Actor_FaceDirection(16, 0x3000, 10);
+  Actor_FaceDirection(16, FACING_SOUTH_SOUTHEAST, 10);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
   Event_OpenMessage(16, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
@@ -2832,11 +2832,11 @@ void KandoreanTemple_MeetPoi(void) {
   Event_ShowMessageAndWait(12, 0);
   Actor_SetModeById(16, 3);
   Event_ShowMessageThenWait(16, 0, 40);
-  Actor_FaceDirection(12, 0x5000, 40);
+  Actor_FaceDirection(12, FACING_SOUTH_SOUTHWEST, 40);
   Event_ShowMessageAndWait(12, 0);
-  Actor_FaceDirection(16, 0x3000, 0);
+  Actor_FaceDirection(16, FACING_SOUTH_SOUTHEAST, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 40);
-  Actor_FaceDirection(12, 0x8000, 20);
+  Actor_FaceDirection(12, FACING_WEST, 20);
   Actor_SetModeById(12, 3);
   Event_ShowMessageAndWait(12, 0);
   Actor_ArmCallback(16, 0, 0);
@@ -2856,7 +2856,7 @@ void KandoreanTemple_MeetPoi(void) {
   Actor_SetMovementTypeAndWaitById(12, gKandoreanTemple_StudentWalksAwayScript);
   Event_Wait(40);
   KandoreanTemple_CastLash();
-  Actor_FaceDirection(16, 0x3000, 0);
+  Actor_FaceDirection(16, FACING_SOUTH_SOUTHEAST, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xa000, 20);
   Event_OpenMessage(0x5010, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
@@ -2877,7 +2877,7 @@ void KandoreanTemple_MeetPoi(void) {
   Event_ShowMessage(0x5010, 0);
   Actor_SetModeById(12, 3);
   Event_ShowMessage(0x400c, 0);
-  Actor_FaceDirection(16, 0x3000, 0);
+  Actor_FaceDirection(16, FACING_SOUTH_SOUTHEAST, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xa000, 0);
   Event_OpenMessage(0x5010, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
@@ -2903,11 +2903,11 @@ void KandoreanTemple_MeetPoi(void) {
   Actor_WatchAndSetScript(16, 12);
   Actor_WalkToAndWait(12, 488, 416);
   Actor_WalkToAndWait(12, 472, 432);
-  Actor_FaceDirection(12, 0x5000, 0);
+  Actor_FaceDirection(12, FACING_SOUTH_SOUTHWEST, 0);
   Event_ShowMessage(0x400c, 0);
   Event_ShowMessageThenWait(0x1010, 0, 80);
   Actor_ShowEmoteById(12, 0x108, 0);
-  Actor_FaceDirection(12, 0xb000, 20);
+  Actor_FaceDirection(12, FACING_NORTH_NORTHWEST, 20);
   Event_ShowMessage(0x400c, 0);
   Actor_SetModeById(12, 3);
   Event_ShowMessageAndWait(0x400c, 0);
@@ -2945,12 +2945,12 @@ void KandoreanTemple_MeetPoi(void) {
   FieldCamera_MoveWithinMapBounds(0x1980000, 0x100000, 0x1900000, 1);
   Actor_SetSpeed(12, 0xcccc, 0x6666);
   Actor_WalkToAndWait(12, 392, 360);
-  Actor_FaceDirection(12, 0x3000, 0);
+  Actor_FaceDirection(12, FACING_SOUTH_SOUTHEAST, 0);
   Actor_SetSpritePriority(12, 2);
   Actor_Stop(16);
   Actor_Stop(gMainRoutineWork.currentOwner);
   wait(1);
-  Actor_FaceDirection(16, 0x3000, 0);
+  Actor_FaceDirection(16, FACING_SOUTH_SOUTHEAST, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xa000, 10);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
   Motion_SetModeAndWaitAnimation(16, 3);

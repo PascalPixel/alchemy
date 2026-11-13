@@ -646,7 +646,7 @@ void Func_02000ac8(void) {
   Actor_WalkTo(gMainRoutineWork.currentOwner, x, z);
   FieldCamera_MoveTo(x << 16, -1, z << 16, 1);
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
+  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
   actor =
       (FieldActor_Create((u16)type, leader->x, leader->y + 0x80000, leader->z));

@@ -676,7 +676,7 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
   Actor_SetAnimation(13, 10);
   if (!Event_GetFlag(0xa3a)) {
     leader = Actor_Get(gMainRoutineWork.currentOwner);
-    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
     object = gMarsLighthouseStarRoom_MarsStar;
     object->motionFlags = 0;
@@ -814,7 +814,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   FieldEvent_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x2a8, 186);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xc000, 40);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 40);
   Event_PlaySound(MUS_000);
   Event_PlaySound(SE_RUMBLE);
   MapGrid_SetShake(0x20000, 0x20000, 0x10000);
@@ -931,7 +931,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     FieldEvent_Wait(20);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x2a8, 186);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xc000, 80);
+    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 80);
     Actor_ShowEmote(gMainRoutineWork.currentOwner, 0x101, 40);
     object = *slot;
     if (object != 0) {
@@ -958,7 +958,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     object = *slot;
     if (object != 0)
       Actor_Release(object);
-    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
     Scene_PlayMusic();
     Event_End();
     goto L_020093b0;
@@ -991,7 +991,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   FieldEvent_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x2a8, 186);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xc000, 40);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 40);
   Event_PlaySound(MUS_000);
   Event_PlaySound(SE_RUMBLE);
   MapGrid_SetShake(0x20000, 0x20000, 0x10000);
@@ -1056,7 +1056,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   object2 = *slot2;
   if (object2 != 0)
     Actor_Release(object2);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
+  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
   Scene_PlayMusic();
   Event_SetFlag(0xa30);
   Event_SetFlag(0xa9e);

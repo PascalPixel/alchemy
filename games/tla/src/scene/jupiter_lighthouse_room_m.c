@@ -1209,13 +1209,13 @@ void Func_02001ed0(void) {
 
     Actor_SetPositionAndFacing(0x1b, 0x2cd0000, 0xd00000, angle);
   }
-  Actor_SetPositionAndFacing(0x1a, 0x2e10000, 0xc30000, 0x2000);
+  Actor_SetPositionAndFacing(0x1a, 0x2e10000, 0xc30000, FACING_SOUTHEAST);
   {
     s32 angle = 0xa000;
 
     Actor_SetPositionAndFacing(0, 0x2f90000, 0xdb0000, angle);
   }
-  Actor_SetPositionAndFacing(2, 0x2e50000, 0xe80000, 0xa000);
+  Actor_SetPositionAndFacing(2, 0x2e50000, 0xe80000, FACING_NORTHWEST);
   Actor_SetScript(3, (s32)gData_02005548);
   Actor_SetSpriteFlags(Actor_Get(0), 0);
   Actor_SetAnimation(0, 0x27);
@@ -1228,7 +1228,7 @@ void Func_02001ed0(void) {
   Actor_SetAnimation(0x1a, 8);
   FieldEvent_Wait(0x28);
   FieldEvent_ShowMessageThenWait(0x1a, 0, 5);
-  Actor_FaceDirectionAndWait(0x1b, 0);
+  Actor_FaceDirectionAndWait(0x1b, FACING_EAST);
   FieldEvent_Wait(0xa);
   FieldEvent_ShowMessageThenWait(0x1b, 0, 5);
   FieldActor_StartRepeatedMotion(0, 2);
@@ -1236,12 +1236,12 @@ void Func_02001ed0(void) {
   FieldEvent_Wait(5);
   Walk(0x1a, 0x100, 0x1e);
   FieldEvent_ShowMessageThenWait(0x1a, 0, 5);
-  Actor_FaceDirectionAndWait(0x1b, 0xe000);
+  Actor_FaceDirectionAndWait(0x1b, FACING_NORTHEAST);
   FieldEvent_Wait(0xa);
   FieldEvent_ShowMessageThenWait(0x1b, 0, 5);
   Actor_SetAnimation(0x1a, 1);
   FieldEvent_Wait(0x1e);
-  Actor_FaceDirectionAndWait(0x1a, 0x5000);
+  Actor_FaceDirectionAndWait(0x1a, FACING_SOUTH_SOUTHWEST);
   FieldEvent_Wait(0x14);
   ACTOR_SET_MODE_AND_WAIT(0x1a, 3, 0x14);
   FieldEvent_Wait(0xa);
@@ -1254,12 +1254,12 @@ void Func_02001ed0(void) {
   FieldActor_LaunchFromLeader(0x1c, -16, 0x18, 0x2000);
   FieldActor_LaunchFromLeader(5, -16, 0, 0x2000);
   Actor_WalkByAndWait(4, 0x10, 0x18);
-  Actor_FaceDirection(4, 0x4000, 0);
+  Actor_FaceDirection(4, FACING_SOUTH, 0);
   ((struct Actor *)Actor_ShowEmote(0x1c, 0x100, 0x1e));
   FieldEvent_ShowMessageThenWait(0x1c, 0, 5);
-  Actor_FaceDirectionAndWait(0x1c, 0);
+  Actor_FaceDirectionAndWait(0x1c, FACING_EAST);
   FieldEvent_Wait(0xa);
-  Actor_FaceDirection(4, 0x8000, 0);
+  Actor_FaceDirection(4, FACING_WEST, 0);
   FieldEvent_ShowMessageThenWait(0x1c, 0, 0x23);
   Actor_SetAnimation(4, 3);
   ACTOR_SET_MODE_AND_WAIT(0x1c, 3, 0x14);
@@ -1268,8 +1268,8 @@ void Func_02001ed0(void) {
   Actor_WalkTo(0x1c, 0x29b, 0xca);
   Actor_SetScript(4, (s32)gData_02004a6c);
   Actor_SetScript(0x1c, (s32)gData_02004a90);
-  Actor_FaceDirection(0x1a, 0x8000, 0);
-  Actor_FaceDirection(0x1b, 0x8000, 0);
+  Actor_FaceDirection(0x1a, FACING_WEST, 0);
+  Actor_FaceDirection(0x1b, FACING_WEST, 0);
   Walk(6, 0x102, 0x1e);
   FieldEvent_ShowMessageThenWait(6, 0, 5);
   ACTOR_SET_MODE_AND_WAIT(5, 4, 0x21);
@@ -1297,17 +1297,17 @@ void Func_02001ed0(void) {
   FieldEvent_ShowMessageThenWait(0x1a, 0, 5);
   Walk(0x1b, 0x107, 0x1e);
   FieldEvent_ShowMessageThenWait(0x1b, 0, 5);
-  Actor_FaceDirectionAndWait(0x1a, 0xc000);
+  Actor_FaceDirectionAndWait(0x1a, FACING_NORTH);
   FieldEvent_Wait(0xa);
-  Actor_FaceDirectionAndWait(0x1a, 0x8000);
+  Actor_FaceDirectionAndWait(0x1a, FACING_WEST);
   FieldEvent_Wait(0xa);
-  Actor_FaceDirectionAndWait(0x1a, 0x4000);
+  Actor_FaceDirectionAndWait(0x1a, FACING_SOUTH);
   FieldEvent_Wait(0xa);
-  Actor_FaceDirectionAndWait(0x1a, 0x8000);
+  Actor_FaceDirectionAndWait(0x1a, FACING_WEST);
   FieldEvent_Wait(0xa);
-  Actor_FaceDirectionAndWait(0x1a, 0xc000);
+  Actor_FaceDirectionAndWait(0x1a, FACING_NORTH);
   FieldEvent_Wait(0xa);
-  Actor_FaceDirectionAndWait(0x1a, 0x8000);
+  Actor_FaceDirectionAndWait(0x1a, FACING_WEST);
   FieldEvent_ShowMessageThenWait(0x1a, 0, 5);
   ACTOR_SET_MODE_AND_WAIT(0x1b, 4, 0x21);
   FieldEvent_ShowMessageThenWait(0x1b, 0, 5);
@@ -1372,12 +1372,12 @@ void Func_02001ed0(void) {
   Actor_RunRepeatedMotion(0x1a, 2);
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(0x1a, 0, 5);
-  Actor_FaceDirectionAndWait(0x1a, 0x8000);
+  Actor_FaceDirectionAndWait(0x1a, FACING_WEST);
   FieldEvent_Wait(0xa);
   ACTOR_SET_MODE_AND_WAIT(0x1a, 3, 0x14);
   FieldEvent_Wait(0xa);
   FieldEvent_ShowMessageThenWait(0x1a, 0, 5);
-  Actor_FaceDirectionAndWait(0x1b, 0xa000);
+  Actor_FaceDirectionAndWait(0x1b, FACING_NORTHWEST);
   FieldEvent_Wait(0xa);
   FieldEvent_ShowMessageThenWait(0x1b, 0, 5);
   Actor_FaceActor(7, 4, 0);
@@ -1439,7 +1439,7 @@ void Func_02001ed0(void) {
   Walk(5, 0x100, 0);
   ((struct Actor *)Actor_ShowEmote(0x1c, 0x100, 0x1e));
   ((struct Actor *)Actor_ShowEmote(0x1c, 0x109, 0x1e));
-  Actor_FaceDirection(0x1c, 0, 0);
+  Actor_FaceDirection(0x1c, FACING_EAST, 0);
   FieldEvent_ShowMessageThenWait(0x1c, 0, 5);
   ((struct Actor *)Actor_ShowEmote(0x1a, 0x108, 0x1e));
   FieldEvent_ShowMessageThenWait(0x1a, 0, 5);
@@ -1453,7 +1453,7 @@ void Func_02001ed0(void) {
   Actor_FaceActor(6, 0x1a, 0);
   Actor_FaceActor(5, 0x1a, 0);
   ((struct Actor *)Actor_ShowEmote(0x1a, 0x107, 0x1e));
-  Actor_FaceDirection(0x1b, 0, 0);
+  Actor_FaceDirection(0x1b, FACING_EAST, 0);
   FieldEvent_ShowMessageThenWait(0x1b, 0, 5);
   Actor_SetSpeed(7, 0x40000, 0x20000);
   Actor_SetSpeed(0x1b, 0x20000, 0x10000);
@@ -1474,7 +1474,7 @@ void Func_02001ed0(void) {
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(0, 0, 5);
   FieldEvent_Wait(0x28);
-  Actor_FaceDirectionAndWait(4, 0x2000);
+  Actor_FaceDirectionAndWait(4, FACING_SOUTHEAST);
   FieldEvent_Wait(0x14);
   ACTOR_SET_MODE_AND_WAIT(4, 3, 0x14);
   FieldEvent_Wait(0xa);
@@ -1522,11 +1522,11 @@ void Func_02001ed0(void) {
   FieldActor_RefreshSelectorById(4);
   Actor_SetAnimation(4, 1);
   FieldActor_StartRepeatedMotion(7, 2);
-  Actor_FaceDirection(7, 0xc000, 0);
-  Actor_FaceDirection(0x1c, 0xc000, 0);
+  Actor_FaceDirection(7, FACING_NORTH, 0);
+  Actor_FaceDirection(0x1c, FACING_NORTH, 0);
   FieldEvent_ShowMessageThenWait(7, 0, 5);
   EventCamera_FollowActor(6, 1);
-  Actor_FaceDirectionAndWait(4, 0x4000);
+  Actor_FaceDirectionAndWait(4, FACING_SOUTH);
   FieldEvent_Wait(0xa);
   ((struct Actor *)Actor_ShowEmote(4, 0x101, 0x1e));
   ((struct Actor *)Actor_ShowEmote(7, 0x109, 0x1e));
@@ -1534,13 +1534,13 @@ void Func_02001ed0(void) {
   ((struct Actor *)Actor_ShowEmote(4, 0x100, 0x1e));
   ((struct Actor *)Actor_ShowEmote(6, 0x106, 0x1e));
   FieldEvent_ShowMessageThenWait(6, 0, 5);
-  Actor_FaceDirectionAndWait(4, 0x4000);
+  Actor_FaceDirectionAndWait(4, FACING_SOUTH);
   FieldEvent_Wait(0xa);
   ACTOR_SET_MODE_AND_WAIT(5, 3, 0x14);
   FieldEvent_Wait(0xa);
-  Actor_FaceDirection(5, 0xc000, 0);
+  Actor_FaceDirection(5, FACING_NORTH, 0);
   FieldEvent_ShowMessageThenWait(5, 0, 5);
-  Actor_FaceDirectionAndWait(4, 0x4000);
+  Actor_FaceDirectionAndWait(4, FACING_SOUTH);
   FieldEvent_Wait(0xa);
   ACTOR_SET_MODE_AND_WAIT(0x1c, 3, 0x14);
   FieldEvent_Wait(0xa);

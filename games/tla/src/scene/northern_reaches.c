@@ -204,7 +204,7 @@ fire:
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgShipSafeFiringDistance);
   Actor_MoveToAndWait(8, 0x1d0, 216);
-  Actor_FaceDirectionAndWait(8, 0xc000);
+  Actor_FaceDirectionAndWait(8, FACING_NORTH);
   FieldEvent_Wait(5);
   t10 = Actor_Get(11);
   t10->scaleX = v_r5;

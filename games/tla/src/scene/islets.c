@@ -531,7 +531,7 @@ void Func_02000568(void) {
   {                                                                            \
     Actor_SetSpeed(10, 0xcccc, 0x6666);                                        \
     Actor_WalkToAndWait(10, 0x80, 164);                                        \
-    Actor_FaceDirectionById(10, 0x8000);                                       \
+    Actor_FaceDirectionById(10, FACING_WEST);                                  \
     Event_Wait(20);                                                            \
     Actor_SetSpeed(10, 0x19999, 0xcccc);                                       \
     STEP(10, 108, 168);                                                        \
@@ -591,7 +591,7 @@ void Func_020006f4(void) {
         Actor_WatchAndSetScript(10, gMainRoutineWork.currentOwner);
         Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
         Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 98, 168);
-        Actor_FaceDirectionById(gMainRoutineWork.currentOwner, 0xc000);
+        Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_NORTH);
         Actor_Jump(gMainRoutineWork.currentOwner, 4, 10);
         item = FieldActor_Create(489, 0x680000, 0x180000, 0xa00000);
         // Default: the object handed back is set for real in HAND_BACK.
@@ -623,10 +623,10 @@ void Func_020006f4(void) {
       FieldCamera_MoveTo(-1, -1, -1, 0);
       FieldCamera_SetSpeed(0xcccc, 0x1999);
       FieldCamera_MoveTo(0x8c0000, -1, 0xbe0000, 1);
-      Actor_FaceDirection(10, 0x5000, 0);
+      Actor_FaceDirection(10, FACING_SOUTH_SOUTHWEST, 0);
       Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 120, 190);
-      Actor_FaceDirectionById(gMainRoutineWork.currentOwner, 0);
+      Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_EAST);
       STEP(gMainRoutineWork.currentOwner, 132, 190);
       item = FieldActor_Create(489, 0x8c0000, 0, 0xbe0000);
       if (item != 0) {
@@ -650,7 +650,7 @@ void Func_020006f4(void) {
       Actor_SetPositionAndResetMotion(item, 0x680000, 0x180000, 0xa00000);
       Event_Wait(10);
       FieldPsynergy_RestoreMindReadPalette();
-      Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
+      Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
       FieldMessage_Show(noticed + 2, 1);
       (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
       FieldPsynergy_GreyMindReadPalette();
@@ -658,7 +658,7 @@ void Func_020006f4(void) {
       Event_SetMessageId(noticed + 3);
       Event_ShowMessageAndWait(10, 0);
       Actor_Stop(10);
-      Actor_FaceDirectionById(gMainRoutineWork.currentOwner, 0);
+      Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_EAST);
       FieldPsynergy_RestoreMindReadPalette();
       if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner,
                                                 0) == 0) {
@@ -673,11 +673,11 @@ void Func_020006f4(void) {
         Actor_ShowEmoteById(10, 265, 20);
         Event_SetMessageId(noticed + 7);
         Event_ShowMessageAndWait(0x800a, 0);
-        Actor_FaceDirectionById(gMainRoutineWork.currentOwner, 0xc000);
+        Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_NORTH);
         Actor_Jump(gMainRoutineWork.currentOwner, 4, 10);
         if (item != 0)
           Actor_Release(item);
-        Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
+        Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
         Event_SetFlag(FLAG_SCENE_TEMP_01);
       }
     }
@@ -740,17 +740,17 @@ void Func_02000e38(void) {
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
     Actor_SetSpeed(11, 0x19999, 0xcccc);
     if (right) {
-      Actor_FaceDirection(11, 0, 0);
+      Actor_FaceDirection(11, FACING_EAST, 0);
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 296, 856);
-      Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x8000);
+      Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_WEST);
       item = (struct Actor *)Value2((s32 (*)())Func_02000da0, (s32)leader, 454);
       trader->update = Actor_EmitSmoke;
       Actor_RunScriptAndWait(11, gData_020043f8);
       trader->update = 0;
     } else {
-      Actor_FaceDirection(11, 0x8000, 0);
+      Actor_FaceDirection(11, FACING_WEST, 0);
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 264, 856);
-      Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0);
+      Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
       item = (struct Actor *)Value2((s32 (*)())Func_02000da0, (s32)leader, 454);
       trader->update = Actor_EmitSmoke;
       Actor_RunScriptAndWait(11, gData_02004300);
@@ -767,7 +767,7 @@ void Func_02000e38(void) {
         leader->update = hook2;
         Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 296, 840);
         leader->update = 0;
-        Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x8000);
+        Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_WEST);
         leader->update = hook2;
         STEP(gMainRoutineWork.currentOwner, 0x120, 840);
         FieldActor_SetPositionAndResetMotion(item, 0x1180000, 0, 0x3480000);
@@ -781,7 +781,7 @@ void Func_02000e38(void) {
         leader->update = hook2;
         Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 264, 840);
         leader->update = 0;
-        Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0);
+        Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
         leader->update = hook2;
         STEP(gMainRoutineWork.currentOwner, 0x110, 840);
         FieldActor_SetPositionAndResetMotion(item, 0x1180000, 0, 0x3480000);
@@ -808,7 +808,7 @@ void Func_02000e38(void) {
       Actor_Release(gift);
       Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
     }
-    Actor_FaceDirectionAndWait(11, 0xc000);
+    Actor_FaceDirectionAndWait(11, FACING_NORTH);
     Event_SetFlag(0xaa1);
     Event_SetFlag(FLAG_SCENE_TEMP_16);
   } else {
@@ -861,12 +861,12 @@ void Func_0200129c(struct Actor *gift) {
   FieldEvent_SetMessageId(MsgAtLongLast);
   Event_ShowMessage(9, 0);
   Event_ShowMessage(9, 0);
-  Actor_FaceDirectionAndWait(9, 0x5000);
+  Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
   Actor_SetSpeed(9, 0x19999, 0xcccc);
   guide->update = Actor_EmitSmoke;
   Actor_WalkToAndWait(9, 296, 452);
   guide->update = 0;
-  Actor_FaceDirection(9, 0x5000, 0);
+  Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
   gift->speedLimit = 0x19999;
   gift->acceleration = 0xcccc;
   gift->update = Actor_EmitSmoke;
@@ -950,8 +950,8 @@ void Func_020014e0(void) {
       leader->update = (void (*)(void))a;
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 318, 424);
       leader->update = 0;
-      Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x4000, 0);
-      Actor_FaceDirectionAndWait(9, 0xd000);
+      Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
+      Actor_FaceDirectionAndWait(9, FACING_NORTH_NORTHEAST);
       message = MsgOhYouRe;
       Event_SetMessageId(message);
       Event_ShowMessage(9, 0);
@@ -959,14 +959,14 @@ void Func_020014e0(void) {
       answer =
           Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
       if (answer == 0) {
-        Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x8000);
+        Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_WEST);
         Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
         leader->update = (void (*)(void))a;
         STEP(gMainRoutineWork.currentOwner, 302, 424);
         SPAWN(a, b, answer)
         STEP(gMainRoutineWork.currentOwner, 318, 424);
         leader->update = 0;
-        Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x6000, 0);
+        Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHWEST, 0);
         Func_0200129c(a);
       } else {
         FieldPsynergy_GreyMindReadPalette();
@@ -983,22 +983,22 @@ void Func_020014e0(void) {
       a = 0;
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 318, 424);
       leader->update = 0;
-      Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x8000);
+      Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_WEST);
       Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
       leader->update = Actor_EmitSmoke;
       STEP(gMainRoutineWork.currentOwner, 302, 424);
       SPAWN(a, b, 0)
       STEP(gMainRoutineWork.currentOwner, 318, 424);
       leader->update = 0;
-      Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x4000, 0);
+      Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
       Actor_ShowEmoteById(9, 256, 20);
-      Actor_FaceDirectionAndWait(9, 0xb000);
+      Actor_FaceDirectionAndWait(9, FACING_NORTH_NORTHWEST);
       other = Actor_GetById(9);
       other->update = Actor_EmitSmoke;
       FieldActor_Jump(9, 4, 20);
       other->update = 0;
       Event_ShowMessage(9, 0);
-      Actor_FaceDirectionAndWait(9, 0xd000);
+      Actor_FaceDirectionAndWait(9, FACING_NORTH_NORTHEAST);
       Event_ShowMessage(9, 0);
       FieldPsynergy_RestoreMindReadPalette();
       if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
@@ -1008,8 +1008,8 @@ void Func_020014e0(void) {
         FieldPsynergy_GreyMindReadPalette();
         Actor_ShowEmoteById(9, 265, 0);
         Event_ShowMessage(9, 0);
-        Actor_FaceDirection(9, 0x5000, 0);
-        Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x8000);
+        Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
+        Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_WEST);
         leader->update = Actor_EmitSmoke;
         Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 302, 424);
         leader->update = 0;
@@ -1031,7 +1031,7 @@ void Func_020014e0(void) {
       Event_ShowMessage(9, 0);
       ((u8 *)HeapSlot_AllocEwram(88, 664))[0x295] = 99;
       FieldActor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
-      Actor_FaceDirectionAndWait(9, 0x5000);
+      Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
       Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
       FieldActor_Jump(gMainRoutineWork.currentOwner, 6, 0);
       Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 296, 452);
@@ -1062,7 +1062,7 @@ void Func_020014e0(void) {
       FieldPsynergy_GreyMindReadPalette();
     refused:
       Event_ShowMessage(9, 0);
-      Actor_FaceDirectionAndWait(9, 0x5000);
+      Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
     }
   } else {
     Event_SetMessageId(MsgIMSoVeryVery);
@@ -1471,7 +1471,7 @@ void Func_020024c8(void) {
 void Func_020024f0(void) {
   struct Actor *object;
 
-  if (gInput.held & 0x40) {
+  if (gInput.held & KEY_UP) {
     object = Actor_Get(gMainRoutineWork.currentOwner);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -1486,7 +1486,7 @@ void Func_0200253c(void) {
   struct Actor *object;
   u16 *state;
 
-  if (gInput.held & 0x80) {
+  if (gInput.held & KEY_DOWN) {
     state = gSceneState;
     object = Actor_Get(gMainRoutineWork.currentOwner);
     if ((u16)(*state + 0xfff6) > 200) {

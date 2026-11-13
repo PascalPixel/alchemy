@@ -602,7 +602,7 @@ void WorldMap_RefuseToRunAway(void) {
       Actor_FaceDirection(5, west, 0);
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 258);
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, x + 12, besideZ);
-      Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0);
+      Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
       Actor_SetAnimation(5, 4);
       WorldMap_Freeze();
       Event_ShowMessage(5, 0);
@@ -911,9 +911,9 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_WalkBy(20, 0, 16);
     Actor_WalkBy(21, -16, 16);
     Actor_WalkByAndWait(22, 16, 16);
-    Actor_FaceDirection(20, 0x3000, 0);
-    Actor_FaceDirection(21, 0x3000, 0);
-    Actor_FaceDirection(22, 0x3000, 0);
+    Actor_FaceDirection(20, FACING_SOUTH_SOUTHEAST, 0);
+    Actor_FaceDirection(21, FACING_SOUTH_SOUTHEAST, 0);
+    Actor_FaceDirection(22, FACING_SOUTH_SOUTHEAST, 0);
     Actor_ShowEmote(23, 0x100, 30);
     Actor_WaitForMoveById(20);
     Actor_WaitForMoveById(21);
@@ -1002,7 +1002,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
 
       Actor_SetPositionAndFacing(23, 0x27a80000, 0x25c00000, a3);
     }
-    Actor_SetPositionAndFacing(4, 0x27b80000, 0x25b00000, 0xa000);
+    Actor_SetPositionAndFacing(4, 0x27b80000, 0x25b00000, FACING_NORTHWEST);
     EventCamera_FollowActor(4, 0);
     FieldEffect_ScheduleRatioTransition(0x18ccc, 1);
     Actor_SetAnimation(4, 19);
@@ -1071,15 +1071,15 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_RunRepeatedMotion(20, 2);
     Event_Wait(5);
     FieldEvent_ShowMessageThenWait(20, 0, 5);
-    Actor_FaceDirectionAndWait(21, 0);
+    Actor_FaceDirectionAndWait(21, FACING_EAST);
     Event_Wait(10);
     Actor_ShowEmote(21, 0x101, 30);
     FieldEvent_ShowMessageThenWait(21, 0, 5);
-    Actor_FaceDirectionAndWait(20, 0x8000);
+    Actor_FaceDirectionAndWait(20, FACING_WEST);
     Actor_SetAnimationAndWait(20, 3);
     Event_Wait(10);
     FieldEvent_ShowMessageThenWait(20, 0, 5);
-    Actor_FaceDirectionAndWait(22, 0x8000);
+    Actor_FaceDirectionAndWait(22, FACING_WEST);
     Event_Wait(10);
     Actor_ShowEmote(22, 0x101, 30);
     FieldEvent_ShowMessageThenWait(22, 0, 5);
@@ -1099,7 +1099,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_ShowEmote(22, 0x100, 30);
     Event_Wait(40);
     Actor_TurnToFaceEachOther(20, 21, 0);
-    Actor_FaceDirection(22, 0x8000, 0);
+    Actor_FaceDirection(22, FACING_WEST, 0);
     Actor_ShowEmote(22, 0x105, 30);
     Actor_ShowEmote(20, 0x102, 40);
     Actor_FaceDirectionAndWait(20, eastB);
@@ -1116,13 +1116,13 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     }
     Actor_TurnToFaceEachOther(4, 23, 0);
     Event_Wait(40);
-    Actor_FaceDirection(4, 0xc000, 0);
-    Actor_FaceDirection(23, 0xc000, 0);
+    Actor_FaceDirection(4, FACING_NORTH, 0);
+    Actor_FaceDirection(23, FACING_NORTH, 0);
     Actor_ShowEmote(23, 0x109, 30);
     FieldEvent_ShowMessageThenWait(23, 0, 5);
     Actor_RunRepeatedMotion(21, 2);
-    Actor_FaceDirection(21, 0x3000, 0);
-    Actor_FaceDirection(22, 0x5000, 0);
+    Actor_FaceDirection(21, FACING_SOUTH_SOUTHEAST, 0);
+    Actor_FaceDirection(22, FACING_SOUTH_SOUTHWEST, 0);
     Event_Wait(5);
     FieldEvent_ShowMessageThenWait(21, 0, 5);
     Actor_SetAnimationAndWait(22, 4);
@@ -1143,9 +1143,9 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_SetAnimationAndWait(20, 3);
     Event_Wait(10);
     Actor_RunRepeatedMotion(20, 2);
-    Actor_FaceDirection(21, 0x4000, 0);
-    Actor_FaceDirection(22, 0x4000, 0);
-    Actor_FaceDirectionAndWait(20, 0x4000);
+    Actor_FaceDirection(21, FACING_SOUTH, 0);
+    Actor_FaceDirection(22, FACING_SOUTH, 0);
+    Actor_FaceDirectionAndWait(20, FACING_SOUTH);
     Event_Wait(5);
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Actor_WalkBy(20, -32, 0);
@@ -1158,10 +1158,10 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_SetPosition(21, 0, 0);
     Actor_SetPosition(22, 0, 0);
     Event_Wait(10);
-    Actor_FaceDirectionAndWait(20, 0x4000);
+    Actor_FaceDirectionAndWait(20, FACING_SOUTH);
     Event_Wait(10);
-    Actor_FaceDirectionAndWait(23, 0);
-    Actor_FaceDirectionAndWait(4, 0x8000);
+    Actor_FaceDirectionAndWait(23, FACING_EAST);
+    Actor_FaceDirectionAndWait(4, FACING_WEST);
     Actor_SetAnimationAndWait(23, 3);
     Event_Wait(10);
     FieldEvent_ShowMessageThenWait(23, 0, 5);
@@ -1218,8 +1218,8 @@ void WorldMap_DeliverLohoCannon(void) {
   FieldEvent_Wait(40);
   Actor_SetAnimation(16, 3);
   FieldEvent_SetMessageId((s32)MsgYouDonT);
-  Actor_FaceDirection(17, 0xd000, 0);
-  Actor_FaceDirection(18, 0xd000, 0);
+  Actor_FaceDirection(17, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(18, FACING_NORTH_NORTHEAST, 0);
   Event_ShowMessage(16, 0);
   Actor_SetAnimationAndWait(4, 3);
   FieldEvent_Wait(30);
@@ -1275,7 +1275,7 @@ void WorldMap_MeetEcho(void) {
   flag = 0x16e;
   flag = GameFlag_Get(flag);
   if (flag == 0) {
-    if (gInput.held & 64)
+    if (gInput.held & KEY_UP)
       Event_SetFlag(0x175);
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -2346,8 +2346,8 @@ void Func_020048f4(void) {
   s32 screen[3];
   u32 attributes;
 
-  if ((gInput.held & 3) != 0 && Event_GetFlag(FLAG_MENU_OPEN) == 0 &&
-      leader->y > 0x40000) {
+  if ((gInput.held & (KEY_A | KEY_B)) != 0 &&
+      Event_GetFlag(FLAG_MENU_OPEN) == 0 && leader->y > 0x40000) {
     if (--gData_02006e10 <= 0) {
       Party_DrainPp(1);
       gData_02006e10 = 10;

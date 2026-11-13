@@ -267,7 +267,7 @@ void Func_02000700(void) {
   FieldActor_SetMoveTarget(leader, leader->x, leader->y, z + 0xc0000);
   System_Wait(6);
   Event_PlaySound(SE_FLOOR_SWITCH);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x5000, 0);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH_SOUTHWEST, 0);
   leader->motionFlags = 0;
   for (i = 0; i < 14; i++) {
     leader->y += -0x20000;
@@ -786,19 +786,19 @@ void Func_02001560(void) {
     leader->z = (((leader->z >> 19) & ~1) + 1) << 19;
   waiting:
     moved = 0;
-    if (gInput.held & 0x40) {
+    if (gInput.held & KEY_UP) {
       dx = 0;
       dz = 0xfff00000;
       leader->facing = 0xc000;
       moved = 1;
     }
-    if (gInput.held & 0x10) {
+    if (gInput.held & KEY_RIGHT) {
       dx = 0x100000;
       dz = 0;
       leader->facing = dz;
       moved = 1;
     }
-    if (gInput.held & 0x20) {
+    if (gInput.held & KEY_LEFT) {
       dx = 0xfff00000;
       leader->facing = 0x8000;
       dz = 0;

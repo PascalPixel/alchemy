@@ -473,11 +473,12 @@ void Func_02000870(void) {
         s32 two = 2;
         *state = two;
         Event_Wait(20);
-        Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x6000, 20);
+        Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHWEST,
+                            20);
         Actor_Jump(gMainRoutineWork.currentOwner, 4, 0);
         Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
         Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 840, 88);
-        Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x8000);
+        Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_WEST);
         Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 9);
         helper->gravity = 0x10000;
         helper->terrainId = two;

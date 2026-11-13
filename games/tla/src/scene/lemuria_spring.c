@@ -284,12 +284,12 @@ toss:
   wait(5);
   Event_PlaySound(SE_TOLBI_SPRING_TOSS_PROMPT);
   for (;;) {
-    if (gInput.pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       Event_PlaySound(SE_MENU_CONFIRM);
       result = 0;
       break;
     }
-    if (gInput.pressed & 2) {
+    if (gInput.pressed & KEY_B) {
       Event_PlaySound(SE_MENU_CANCEL);
       result = -1;
       break;
@@ -354,12 +354,12 @@ toss:
     wait(5);
     Event_PlaySound(SE_TOLBI_SPRING_TOSS_PROMPT);
     for (;;) {
-      if (gInput.pressed & 1) {
+      if (gInput.pressed & KEY_A) {
         Event_PlaySound(SE_MENU_CONFIRM);
         result = 0;
         break;
       }
-      if (gInput.pressed & 2) {
+      if (gInput.pressed & KEY_B) {
         Event_PlaySound(SE_MENU_CANCEL);
         result = -1;
         break;

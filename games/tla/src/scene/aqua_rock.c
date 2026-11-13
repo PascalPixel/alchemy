@@ -882,7 +882,7 @@ void Func_02001460(void) {
   object->motionFlags = saved;
   object->velocityY = 0x80000;
   Actor_SetSpriteFlags(object, 1);
-  up = gInput.held & 0x40;
+  up = gInput.held & KEY_UP;
   state = &gMainRoutineWork;
   if (up)
     Actor_MoveToAndWaitById(state->currentOwner, 264, 760);

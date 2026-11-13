@@ -24,6 +24,7 @@ void PartyInventory_GiveItem__placements(s32 item, s32 flags) __asm__(
 #define Statue_Sink Statue_Sink__placements
 #define PartyInventory_GiveItem PartyInventory_GiveItem__placements
 #include "types.h"
+#include "system/io_reg.h"
 #include "flags.h"
 #include "system/task.h"
 #include "system/main_routine_work.h"
@@ -863,7 +864,7 @@ loop_3:
   Scene_SetSpeed(21, 0x19999, 0xcccc);
   Actor_MoveToAndWaitById(21, 216, 184);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, angle, 0);
-  Actor_FaceDirectionById(21, 0);
+  Actor_FaceDirectionById(21, FACING_EAST);
   FieldEvent_Wait(20);
   YampiDesert_ScorpionUsesScoop();
   Sound_Play(SE_WHOOSH);
@@ -1350,7 +1351,7 @@ void YampiDesert_SlideLeader(struct Actor *object, s32 dx, s32 dz) {
         if (gInput.held != 0) {
           FIELD32(dust, 68) = Trig_Cos(((Random16() << 3) >> 16) << 14) + dx;
           FIELD32(dust, 76) = Trig_Sin(((Random16() << 3) >> 16) << 14) + dz;
-          if (gInput.held & 2) {
+          if (gInput.held & KEY_B) {
             FIELD32(dust, 68) += dx;
             FIELD32(dust, 76) += dz;
           }
@@ -1370,14 +1371,14 @@ void YampiDesert_SlideLeader(struct Actor *object, s32 dx, s32 dz) {
   }
   if (dx != 0) {
     object->x += dx;
-    if (!(gInput.held & 240)) {
+    if (!(gInput.held & KEYS_DPAD)) {
       s32 z = object->z >> 16;
 
       object->z += ((8 - z % 16) << 16) >> 3;
     }
   } else {
     object->z += dz;
-    if (!(gInput.held & 240)) {
+    if (!(gInput.held & KEYS_DPAD)) {
       s32 x = object->x >> 16;
 
       object->x += ((8 - x % 16) << 16) >> 3;
@@ -1423,25 +1424,25 @@ void YampiDesert_UpdateSandSlide(void) {
     speed = 0;
   switch (here->collisionCode) {
   case 10:
-    if (gInput.held & 64) {
+    if (gInput.held & KEY_UP) {
       YampiDesert_SlideLeader(leader, 0, -speed >> 2);
       return;
     }
     break;
   case 11:
-    if (gInput.held & 128) {
+    if (gInput.held & KEY_DOWN) {
       YampiDesert_SlideLeader(leader, 0, speed >> 2);
       return;
     }
     break;
   case 12:
-    if (gInput.held & 32) {
+    if (gInput.held & KEY_LEFT) {
       YampiDesert_SlideLeader(leader, -speed >> 2, 0);
       return;
     }
     break;
   case 13:
-    if (gInput.held & 16) {
+    if (gInput.held & KEY_RIGHT) {
       YampiDesert_SlideLeader(leader, speed >> 2, 0);
       return;
     }
@@ -1902,7 +1903,7 @@ void YampiDesert_ClimbOut(struct Actor *object, s32 x, s32 z, s32 mode) {
   *flags = zero;
   Actor_SetSpeedParameters(party->currentOwner, 0x10000, 0x8000);
   Actor_WalkToAndWaitById(party->currentOwner, x, z);
-  Actor_FaceDirectionById(party->currentOwner, 0xc000);
+  Actor_FaceDirectionById(party->currentOwner, FACING_NORTH);
   Actor_SetSpriteFlags(Actor_GetById(party->currentOwner), 0);
   Actor_SetModeById(party->currentOwner, 13);
   Actor_SetMoveTarget(object, object->x, object->y - 0xa0000, object->z);
@@ -1924,16 +1925,16 @@ void YampiDesert_ClimbRevealedLadder(void) {
     x = object->x >> 20;
     z = object->z >> 20;
     if (x == 8) {
-      if (z == 31 && !(gInput.held & 0x80))
+      if (z == 31 && !(gInput.held & KEY_DOWN))
         return;
-      if (z == 33 && !(gInput.held & 0x40))
+      if (z == 33 && !(gInput.held & KEY_UP))
         return;
     } else {
       if (z != 32)
         return;
-      if (x == 7 && !(gInput.held & 0x10))
+      if (x == 7 && !(gInput.held & KEY_RIGHT))
         return;
-      if (x == 9 && !(gInput.held & 0x20))
+      if (x == 9 && !(gInput.held & KEY_LEFT))
         return;
     }
     YampiDesert_ClimbOut(object, 136, 516, 5);

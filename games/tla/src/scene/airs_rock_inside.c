@@ -607,19 +607,19 @@ void Func_02000988(void) {
     leader->z = (((leader->z >> 19) & ~1) + 1) << 19;
   waiting:
     moved = 0;
-    if (gInput.held & 0x40) {
+    if (gInput.held & KEY_UP) {
       dx = 0;
       dz = 0xfff00000;
       leader->facing = 0xc000;
       moved = 1;
     }
-    if (gInput.held & 0x10) {
+    if (gInput.held & KEY_RIGHT) {
       dx = 0x100000;
       dz = 0;
       leader->facing = 0;
       moved = 1;
     }
-    if (gInput.held & 0x20) {
+    if (gInput.held & KEY_LEFT) {
       dx = 0xfff00000;
       leader->facing = 0x8000;
       dz = 0;

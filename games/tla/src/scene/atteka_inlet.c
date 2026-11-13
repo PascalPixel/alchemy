@@ -164,9 +164,9 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
     Event_ShowMessage(0x4009, 0);
     Actor_ShowEmoteById(10, 265, 0);
     Event_ShowMessageAndWait(10, 0);
-    Actor_FaceDirection(9, 0x3000, 0);
+    Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
     Event_ShowMessage(0x4009, 0);
-    Actor_FaceDirectionAndWait(10, 0xb000);
+    Actor_FaceDirectionAndWait(10, FACING_NORTH_NORTHWEST);
     Actor_SetModeById(10, 3);
     Event_ShowMessageAndWait(10, 0);
     Actor_ArmCallback(10, FACING_EAST, 0);
@@ -195,10 +195,10 @@ void AttekaInlet_HammaShowsTheWings(void) {
     FieldCamera_MoveTo(PIXELS(520), -1, PIXELS(372), 1);
     FieldCamera_WaitForArrival();
     Actor_ShowEmote(23, 264, 0);
-    Actor_FaceDirection(23, 0x3000, 20);
+    Actor_FaceDirection(23, FACING_SOUTH_SOUTHEAST, 20);
     Event_SetMessageId((s32)MsgIVeBeenWaiting);
     Event_ShowMessageAndWait(23, 0);
-    Actor_FaceDirectionAndWait(23, 0xb000);
+    Actor_FaceDirectionAndWait(23, FACING_NORTH_NORTHWEST);
     Event_ShowMessage(0x2017, 0);
     FieldCamera_GetActor()->motionFlags = 0;
     FieldCamera_SetSpeed(0x4cccc, 0x9999);
@@ -212,7 +212,7 @@ void AttekaInlet_HammaShowsTheWings(void) {
     FieldCamera_MoveWithinMapBounds(PIXELS(520), PIXELS(32), PIXELS(372), 1);
     FieldCamera_WaitForArrival();
     Event_Wait(20);
-    Actor_FaceDirectionAndWait(23, 0x3000);
+    Actor_FaceDirectionAndWait(23, FACING_SOUTH_SOUTHEAST);
     Motion_SetModeAndWaitAnimation(23, 3);
     Event_ShowMessageAndWait(23, 0);
     Actor_ShowEmote(23, 265, 20);
@@ -220,9 +220,9 @@ void AttekaInlet_HammaShowsTheWings(void) {
     Actor_SetModeById(23, 4);
     Event_ShowMessageAndWait(23, 0);
     Event_ShowMessageAndWait(23, 0);
-    Actor_FaceDirectionAndWait(23, 0xb000);
+    Actor_FaceDirectionAndWait(23, FACING_NORTH_NORTHWEST);
     Event_ShowMessageAndWait(0x2017, 0);
-    Actor_FaceDirectionAndWait(23, 0x3000);
+    Actor_FaceDirectionAndWait(23, FACING_SOUTH_SOUTHEAST);
     Event_ShowMessageAndWait(23, 0);
     Motion_SetModeAndWaitAnimation(23, 3);
     Event_ShowMessageAndWait(23, 0);
@@ -240,7 +240,7 @@ void AttekaInlet_HammaShowsTheWings(void) {
     Actor_WalkToAndWaitById(23, 504, 360);
     Event_Wait(1);
     Actor_GetById(23)->actionFlags |= 1;
-    Actor_FaceDirectionById(23, 0x3000);
+    Actor_FaceDirectionById(23, FACING_SOUTH_SOUTHEAST);
     Motion_SetModeAndWaitAnimation(23, 3);
     Event_ShowMessageAndWait(23, 0);
     GameFlag_Set(FLAG_HAMMA_SHOWED_THE_WINGS);
@@ -262,7 +262,7 @@ void AttekaInlet_PiersAsksToSetSail(void) {
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
   Actor_SetSpeed(18, 0xcccc, 0x6666);
   Actor_WalkToAndWaitById(18, 532, 248);
-  Actor_FaceDirectionById(18, 0x3000);
+  Actor_FaceDirectionById(18, FACING_SOUTH_SOUTHEAST);
   Event_SetMessageId(MsgAreWeSetting);
   FieldMessage_ShowAtActor(18, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
@@ -362,14 +362,14 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Event_SetMessageId((s32)MsgHeyWait2);
   Event_ShowMessageAndWait(24, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-  Actor_FaceDirection(23, 0x3000, 0);
+  Actor_FaceDirection(23, FACING_SOUTH_SOUTHEAST, 0);
   FieldCamera_SetSpeed(0x19999, 0x3333);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(PIXELS(512), -1, PIXELS(380), 1);
   Actor_SetSpeed(24, 0x19999, 0xcccc);
   Actor_WalkToAndWait(24, 520, 432);
   Actor_WalkToAndWait(24, 520, 388);
-  Actor_FaceDirection(23, 0x3000, 0);
+  Actor_FaceDirection(23, FACING_SOUTH_SOUTHEAST, 0);
   Event_ShowMessageAndWait(24, 0);
   Actor_ShowEmoteById(23, 256, 10);
   Event_ShowMessageAndWait(23, 0);
@@ -389,7 +389,7 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Event_Wait(1);
   Actor_GetById(24)->actionFlags |= 1;
   Event_Wait(10);
-  Actor_FaceDirection(24, 0xb000, 10);
+  Actor_FaceDirection(24, FACING_NORTH_NORTHWEST, 10);
   Motion_SetModeAndWaitAnimation(24, 3);
   Actor_WalkToAndWait(24, 520, 434);
   FieldCamera_MoveWithinMapBounds(PIXELS(512), -1, PIXELS(348), 1);

@@ -1406,10 +1406,10 @@ void Yallam_ShowSongGame(void) {
   FieldCamera_MoveTo(0x1300000, -1, 0x36e0000, 1);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 296, 872);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0);
+  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
-  Actor_FaceDirection(8, 0xb000, 20);
-  Actor_FaceDirectionAndWait(8, 0xd000);
+  Actor_FaceDirection(8, FACING_NORTH_NORTHWEST, 20);
+  Actor_FaceDirectionAndWait(8, FACING_NORTH_NORTHEAST);
   FieldActor_Jump(8, 2, 10);
   FieldActor_Jump(8, 4, 10);
   Actor_SetAnimationAndWait(8, 3);
@@ -1421,10 +1421,10 @@ void Yallam_ShowSongGame(void) {
   Actor_RunScriptAndWait(11, gYallam_SongGameForm11);
   Actor_SetPosition(5, 0x1280000, 0x3680000);
   System_Wait(1);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xe000, 0);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
   Actor_SetSpeed(5, 0x13333, 0x9999);
   Actor_WalkToAndWait(5, 312, 854);
-  Actor_FaceDirectionAndWait(5, 0x6000);
+  Actor_FaceDirectionAndWait(5, FACING_SOUTHWEST);
   Actor_SetAnimationAndWait(5, 3);
   Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
   Actor_SetAnimation(5, 2);
@@ -1437,16 +1437,16 @@ void Yallam_ShowSongGame(void) {
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 316, 0x380);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 344, 0x390);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0xc000);
+  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
   Event_PlaySound(MUS_017);
-  Actor_FaceDirectionAndWait(8, 0xc000);
+  Actor_FaceDirectionAndWait(8, FACING_NORTH);
   Event_ShowMessage(8, 0);
   EventCamera_FollowActor(8, 1);
   Actor_SetScript(8, gYallam_SongGameStart8);
   Actor_SetScript(10, gYallam_SongGameStart10);
   Actor_RunScriptAndWait(9, gYallam_SongGameStart9);
   Actor_WalkToAndWait(11, 344, 890);
-  Actor_FaceDirectionAndWait(11, 0xc000);
+  Actor_FaceDirectionAndWait(11, FACING_NORTH);
   Yallam_StartRunner(8);
   Yallam_StartRunner(10);
   Yallam_StartRunner(9);
@@ -1495,11 +1495,11 @@ wait3:
   FieldActor_Jump(10, 4, 0);
   FieldActor_Jump(9, 4, 0);
   FieldActor_Jump(11, 4, 40);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xc000, 0);
-  Actor_FaceDirection(8, 0x5000, 0);
-  Actor_FaceDirection(10, 0x5000, 0);
-  Actor_FaceDirection(9, 0x8000, 0);
-  Actor_FaceDirectionAndWait(11, 0x8000);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+  Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(10, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(9, FACING_WEST, 0);
+  Actor_FaceDirectionAndWait(11, FACING_WEST);
   Event_OpenMessage(8, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
       0) {
@@ -1531,9 +1531,9 @@ void Yallam_SingMoonSong(void) {
   object = Actor_Get(8);
   Actor_FaceDirection(8, FACING_WEST, 0);
   Actor_FaceDirection(10, FACING_WEST, 0);
-  Actor_FaceDirection(9, 0xb000, 0);
-  Actor_FaceDirection(11, 0xb000, 0);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0);
+  Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(11, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
   FieldEvent_SetMessageId((s32)&MsgIfYouWant);
   v5 = object;
   Event_ShowMessage(8, 0);
@@ -1581,10 +1581,10 @@ waitFourthVerse:
   v5 = (s32)&gMainRoutineWork;
   v5 = (v5 + 0x214);
   Actor_FaceDirection(FIELD_AT(v5, s32, 0), FACING_SOUTH, 0);
-  Actor_FaceDirection(8, 0xd000, 0);
-  Actor_FaceDirection(10, 0xd000, 0);
-  Actor_FaceDirection(9, 0xd000, 0);
-  Actor_FaceDirectionAndWait(11, 0xd000);
+  Actor_FaceDirection(8, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(10, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(9, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirectionAndWait(11, FACING_NORTH_NORTHEAST);
   Event_OpenMessage(8, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(FIELD_AT(v5, s32, 0), 0) != 0)
     goto declined;
@@ -1609,10 +1609,10 @@ void Yallam_SingSunSong(void) {
 
   t1 = ((s32)Actor_Get(8));
   v6 = t1;
-  Actor_FaceDirection(8, 0x3000, 0);
-  Actor_FaceDirection(10, 0, 0);
-  Actor_FaceDirection(9, 0x3000, 0);
-  Actor_FaceDirection(11, 0x5000, 0);
+  Actor_FaceDirection(8, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(10, FACING_EAST, 0);
+  Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(11, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTHWEST);
   FieldEvent_SetMessageId((s32)&MsgIfYouWantTo);
   v5 = v6;
@@ -1654,7 +1654,7 @@ waitFourthVerse:
   System_Wait(1);
   Event_ShowMessage(8, 0);
   Yallam_PauseSongGame();
-  Actor_FaceDirectionAndWait(8, 0x5000);
+  Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
   t24 = ((s32)Actor_Get(8));
   FIELD_AT(t24, u8, 90) = (254 & FIELD_AT(t24, u8, 90));
   t25 = ((s32)Actor_Get(8));
@@ -1667,7 +1667,7 @@ waitFourthVerse:
   FieldActor_Jump(8, 4, 0);
   FieldActor_SetMoveTarget(v6, v7, 0, v8);
   FieldEvent_Wait(5);
-  Actor_FaceDirectionAndWait(10, 0x5000);
+  Actor_FaceDirectionAndWait(10, FACING_SOUTH_SOUTHWEST);
   t33 = ((s32)Actor_Get(10));
   FIELD_AT(t33, u8, 90) = (254 & FIELD_AT(t33, u8, 90));
   t34 = ((s32)Actor_Get(10));
@@ -1693,7 +1693,7 @@ waitFourthVerse:
   FieldActor_Jump(9, 4, 0);
   FieldActor_SetMoveTarget(v6, v7, 0, v8);
   FieldEvent_Wait(10);
-  Actor_FaceDirectionAndWait(11, 0xb000);
+  Actor_FaceDirectionAndWait(11, FACING_NORTH_NORTHWEST);
   t51 = ((s32)Actor_Get(11));
   v5 = (254 & FIELD_AT(t51, u8, 90));
   FIELD_AT(t51, u8, 90) = v5;
@@ -1720,7 +1720,7 @@ waitFourthVerse:
   t66 = ((s32)Actor_Get(11));
   v5 = (1 | FIELD_AT(t66, u8, 90));
   FIELD_AT(t66, u8, 90) = v5;
-  Actor_FaceDirection(8, 0x5000, 0);
+  Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(10, FACING_WEST, 0);
   Actor_FaceDirection(9, FACING_WEST, 0);
   Actor_FaceDirection(11, FACING_WEST, 20);

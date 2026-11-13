@@ -479,7 +479,7 @@ visited:
   Actor_ShowEmote(10, 0x100, 30);
   FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
   Actor_WalkToAndWait(4, 136, 152);
-  Actor_FaceDirection(4, 0xa000, 0);
+  Actor_FaceDirection(4, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(10, 4);
   FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
@@ -487,14 +487,14 @@ visited:
   FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
   Actor_SetAnimationAndWait(4, 3);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(4, 0x2000, 0);
+  Actor_FaceDirection(4, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   Actor_WalkByAndWait(4, 8, 16);
-  Actor_FaceDirection(4, 0x4000, 0);
+  Actor_FaceDirection(4, FACING_SOUTH, 0);
   Actor_RunRepeatedMotion(10, 2);
   FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
   Actor_ShowEmote(4, 0x100, 30);
-  Actor_FaceDirection(4, 0xa000, 0);
+  Actor_FaceDirection(4, FACING_NORTHWEST, 0);
   FieldEvent_Wait(30);
   Actor_WalkByAndWait(4, -8, -16);
   FieldEvent_Wait(20);
@@ -528,12 +528,12 @@ visited:
   Actor_SetAnimationAndWait(10, 3);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
-  Actor_FaceDirection(10, 0x5000, 0);
+  Actor_FaceDirection(10, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
   FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
   Actor_RunRepeatedMotion(10, 2);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(10, 0x3000, 0);
+  Actor_FaceDirection(10, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
   FieldActor_StartRepeatedMotion(4, 3);
@@ -559,17 +559,17 @@ visited:
   FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
   Actor_WalkToAndWait(10, 89, 92);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(10, 0x8000, 0);
+  Actor_FaceDirection(10, FACING_WEST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
   Actor_RunRepeatedMotion(10, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
-  Actor_FaceDirection(10, 0x2000, 0);
+  Actor_FaceDirection(10, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(10, 4);
   FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
-  Actor_FaceDirection(10, 0x8000, 0);
+  Actor_FaceDirection(10, FACING_WEST, 0);
   FieldEvent_Wait(30);
   Actor_ShowEmote(10, 0x108, 50);
   Actor_SetAnimation(10, 3);
@@ -608,7 +608,7 @@ visited:
     actor->z = pos[2];
     actor->facing = angle + 16384;
     if (i == 128) {
-      Actor_FaceDirection(10, 0x3000, 0);
+      Actor_FaceDirection(10, FACING_SOUTH_SOUTHEAST, 0);
     }
     System_Wait(1);
   }
@@ -618,7 +618,7 @@ visited:
   FieldEvent_Wait(20);
   Actor_SetSpeed(10, 0xcccc, 0x6666);
   Actor_WalkToAndWait(10, 100, 112);
-  Actor_FaceDirection(10, 0, 0);
+  Actor_FaceDirection(10, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_SetSpeed(10, 0x6666, 0x3333);
   Actor_WalkByAndWait(10, 8, 0);
@@ -638,10 +638,10 @@ visited:
     other->actionFlags |= 1;
   }
   FieldEvent_Wait(10);
-  Actor_FaceDirection(10, 0x3000, 0);
+  Actor_FaceDirection(10, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
-  Actor_FaceDirection(10, 0, 0);
+  Actor_FaceDirection(10, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_ShowEmote(10, 0x108, 40);
   Actor_SetAnimation(11, 3);
@@ -667,11 +667,11 @@ visited:
     actor->z = pos[2];
     actor->facing = angle + 16384;
     if (i == 153) {
-      Actor_FaceDirection(10, 0x7000, 0);
+      Actor_FaceDirection(10, FACING_WEST_SOUTHWEST, 0);
     }
     System_Wait(1);
   }
-  Actor_FaceDirection(10, 0xb000, 0);
+  Actor_FaceDirection(10, FACING_NORTH_NORTHWEST, 0);
   actor->facing = 0xd000;
   start[0] = actor->x;
   start[1] = actor->y;
@@ -687,7 +687,7 @@ visited:
   }
   Actor_SetPosition(11, 0, 0);
   FieldEvent_Wait(30);
-  Actor_FaceDirection(10, 0x3000, 0);
+  Actor_FaceDirection(10, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(10, 3);
   FieldEvent_Wait(10);

@@ -2003,9 +2003,9 @@ void Func_02003ac8(void) {
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
 
-  if (x == 42 && z == 23 && (gInput.held & 64) == 0)
+  if (x == 42 && z == 23 && (gInput.held & KEY_UP) == 0)
     return;
-  if (x == 43 && z == 22 && (gInput.held & 32) == 0)
+  if (x == 43 && z == 22 && (gInput.held & KEY_LEFT) == 0)
     return;
   Func_02003a08(680, 352);
 }
@@ -2017,11 +2017,11 @@ void Func_02003ac8(void) {
     s32 z = leader->z >> 20;                                                   \
                                                                                \
     if (z == n1) {                                                             \
-      if (x == n2 && (gInput.held & 16) == 0)                                  \
+      if (x == n2 && (gInput.held & KEY_RIGHT) == 0)                           \
         return;                                                                \
-      if (x == n3 && (gInput.held & 32) == 0)                                  \
+      if (x == n3 && (gInput.held & KEY_LEFT) == 0)                            \
         return;                                                                \
-    } else if (x == n4 && z == n5 && (gInput.held & 64) == 0) {                \
+    } else if (x == n4 && z == n5 && (gInput.held & KEY_UP) == 0) {            \
       return;                                                                  \
     }                                                                          \
     Func_02003a08(n6, n7);                                                     \
@@ -2056,7 +2056,7 @@ test:
   if (i > 159)
     goto done;
   Event_Wait(1);
-  if ((gInput.held & 11) == 0)
+  if ((gInput.held & (KEY_A | KEY_B | KEY_START)) == 0)
     goto next;
 done:
   Task_Remove(Func_02002d64);

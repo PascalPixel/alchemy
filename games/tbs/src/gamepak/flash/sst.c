@@ -195,13 +195,13 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
 /// when the sector at cursor reads erased throughout. Runs from a RAM copy
 /// (ProgramFlashSectorWithEraseRetry).
 s32 CountRemainingErasedFlashBytes(u8 *cursor) {
-  s32 i;
+  s32 remaining;
 
-  for (i = 0; i < gFlash->sector.size; i++) {
+  for (remaining = gFlash->sector.size; remaining != 0; remaining--) {
     if (*cursor++ != FLASH_ERASED_BYTE)
       break;
   }
-  return i;
+  return remaining;
 }
 
 /// Converts a nonzero erased-byte remainder into the flash verification error:

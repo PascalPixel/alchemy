@@ -17,6 +17,7 @@
   "targets": ["GBA"],
   "approach": "Matching decompilation: readable C, assembly and editable assets rebuild each edition byte for byte.",
   "started": "2026-07-16",
+  "x-completed": "2026-10-08",
   "maintainers": [{ "name": "Pascal Pixel", "link": "https://github.com/PascalPixel" }],
   "links": [{ "label": "Documentation", "url": "https://alchemy.pascalpixel.com/tbs" }],
   "tags": ["Japanese", "English", "German", "Spanish", "French", "Italian"],

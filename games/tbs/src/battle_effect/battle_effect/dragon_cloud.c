@@ -16,8 +16,7 @@
 #define DRAGON_CLOUD_EMBERS 40  ///< embers, from DRAGON_CLOUD_FIRST_EMBER
 #define DRAGON_CLOUD_FLASHES 16 ///< flashes, from DRAGON_CLOUD_FIRST_FLASH
 
-/// Draws puff picture number `picture` of sheet on canvas at (x, y) with blit,
-/// sized by the puff tables.
+/// Draws one puff picture sized by the puff tables.
 #define DRAGON_CLOUD_DRAW_PUFF(blit, canvas, sheet, picture, x, y)             \
   blit(canvas,                                                                 \
        &(sheet)[DRAGON_CLOUD_PUFF_PICTURES] +                                  \
@@ -25,9 +24,8 @@
        x, y, gBattleEffect_PuffArcPictureWidths[picture],                      \
        gBattleEffect_PuffArcPictureHeights[picture])
 
-/// A flame leaves the user along a stored path with a fading trail of 19 copies
-/// behind it, then strikes the first target on DRAGON_CLOUD_STRIKE_FRAME and
-/// bursts into embers and flashes.
+/// A flame leaves the user along a stored path with a fading trail behind it,
+/// strikes the first target and bursts into embers and flashes.
 ///
 /// Abilities: Dragon Cloud.
 void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
@@ -56,8 +54,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetB, work->sheet, 1,
                              1);
-  // Make nine darker copies after the trail picture, for trail copies 11 to
-  // 19, each four shades darker than the last.
+  // Darker copies of the trail picture, for the trail's tail.
   for (i = 1; i != 20; i++) {
     for (j = 0; j != DRAGON_CLOUD_TRAIL_PICTURE_BYTES; j++) {
       s32 shade = work->sheet[DRAGON_CLOUD_TRAIL_PICTURE + j];
@@ -79,9 +76,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(work->args->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  // Seed the embers (particles 8 to 47) and flashes (48 to 63) thrown at the
-  // strike, and the eight puffs (0 to 7) on an arc, each starting two frames
-  // after the last.
+  // The embers and flashes thrown at the strike, and the puffs on an arc.
   for (j = 0; j != DRAGON_CLOUD_EMBERS; j++) {
     struct Particle *ember = &work->particles[DRAGON_CLOUD_FIRST_EMBER + j];
 
@@ -130,8 +125,6 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_WHOOSH);
     if (frame == 50)
       Sound_PlayFar(SE_WHOOSH);
-    // 1/256 of a turn a frame, then re-aim the turned camera at the field's
-    // centre at 100% zoom, which also moves the battle background's plane.
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
       if (frame <= 63)
         camera->yaw -= TRIG_TURN / 256;
@@ -148,8 +141,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       DRAGON_CLOUD_DRAW_PUFF(draw[1], canvas, work->sheet, picture, 56,
                              gBattleEffect_PuffArcPictureBiasY[picture] + 60);
     }
-    // The path gives two 16-bit coordinates on frame 18, then a signed byte
-    // step for each axis every frame through frame 58.
+    // The flame flies along its path.
     if (frame >= 18 && frame <= 58) {
       if (frame == 18) {
         x = (path[0] << 8) + (u8)path[1];
@@ -169,7 +161,6 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
         y -= 16;
       }
     }
-    // Shift the trail back by one and draw it.
     for (j = 19; j != 0; j--) {
       if (frame > j + 18 && frame <= j + 83) {
         trail[j].x = trail[j - 1].x;
@@ -185,8 +176,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       }
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
-    // The flame leans with its smoothed vertical motion (drift, -8 to 8): one
-    // of five 24x48 pictures, from rising to falling.
+    // The flame leans as it rises and falls.
     if (frame >= 18 && frame <= DRAGON_CLOUD_STRIKE_FRAME) {
       s32 lift;
 
@@ -217,11 +207,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
                                POSE_DAMAGE, 0, 8);
       BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_HOP);
     }
-    // After the strike the embers rise and fall back under a gravity of 1/8
-    // pixel a frame per frame (px(1) / 8), undamped, until they drop below
-    // the ground.
+    // After the strike the embers rise and fall back.
     if (frame > DRAGON_CLOUD_STRIKE_FRAME) {
-      // Embers are motes sized by depth.
       for (i = 0; i != DRAGON_CLOUD_EMBERS + DRAGON_CLOUD_FLASHES; i++) {
         struct Particle *ember = &work->particles[DRAGON_CLOUD_FIRST_EMBER + i];
 
@@ -234,7 +221,6 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
             position.depth = 160;
           if (position.depth > 799)
             position.depth = 799;
-          // Nearer is larger: 9 pixels at depth 160 or less.
           size = 9 - (position.depth - 160) / 64;
           if (i > 47) {
             if (ember->variant <= 11) {
@@ -259,8 +245,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 8);
     }
-    // The puffs, mirrored, two frames a picture; each starts when its variant
-    // counts up to zero.
+    // The puffs.
     if (frame > 49) {
       for (i = 0; i != DRAGON_CLOUD_PUFFS; i++) {
         struct Particle *puff = &work->particles[i];

@@ -4,12 +4,9 @@
 
 #include "../battle_effect_internal.h"
 
-// The fire pillars stand at random distances on the targets' side and scroll
-// a column of fire up with a flickering flame at its foot. Each erupts with a
-// fountain of 200 sparks and keeps spitting 4 a frame into one pool of 1024
-// in PARTICLES. The sparks move in 24.8 fixed point, with z holding the speed
-// across, and drift upwards; a spark's variant is its remaining life, 0 when
-// idle.
+// The fire pillars stand among the targets and scroll a column of fire up over
+// a flickering flame; each erupts in a fountain of sparks and keeps spitting
+// more.
 
 #define VOLCANO_FRAMES 96
 #define VOLCANO_ERUPTION 200    ///< sparks thrown as a pillar starts
@@ -19,10 +16,8 @@
 #define VOLCANO_FLAME_PICTURE_ODD (34 * 104)
 #define VOLCANO_FLAME_PICTURE_EVEN (VOLCANO_FLAME_PICTURE_ODD + 20 * 37)
 
-/// One, two or four columns of fire (gVolcano_Counts by args->variant) rise
-/// among the targets, at the depths of gVolcano_Depths, starting at
-/// gVolcano_StartFrames; each erupts with a fountain of 200 sparks and keeps
-/// spitting more, and each eruption knocks the targets back.
+/// One, two or four columns of fire rise among the targets, each erupting in a
+/// fountain of sparks and knocking the targets back.
 ///
 /// Abilities: Volcano, Eruption, Pyroclasm, Lava Shower, Molten Bath, Magma
 /// Storm.
@@ -63,7 +58,6 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   for (i = 0; i != VOLCANO_SPARK_POOL; i++)
     PARTICLES[i].variant = 0;
 
-  // The pillars stand 72 to 87 pixels out on the first target's side.
   actor = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   for (i = 0; i != 4; i++) {
     struct Particle *base = &work->particles[i];
@@ -77,7 +71,6 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
       base->x = -x;
   }
 
-  // Trails keep half of each pixel a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != VOLCANO_FRAMES; frame++) {
@@ -101,8 +94,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
         screen.y -= 8;
         if (frame == gVolcano_StartFrames[pillar])
           Sound_PlayFar(SE_CRASH);
-        // From 4 frames after it starts: the column, scrolling up 16
-        // pixels a frame, and a flickering flame at its foot.
+        // The column scrolls up over its flickering flame.
         if (frame >= gVolcano_StartFrames[pillar] + 4) {
           s32 scroll = (frame * 16 + pillar * 25) % 104;
 
@@ -122,8 +114,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
                     screen.y - 24, 20, 37);
           }
         }
-        // Sparks: 200 at the start, living 48 to 55 frames, then 4 a frame from
-        // 16 frames on, living 24 to 31.
+        // Sparks: a fountain at the start, then a few a frame.
         if (frame == gVolcano_StartFrames[pillar] ||
             frame >= gVolcano_StartFrames[pillar] + 16) {
           s32 spawned = 0;

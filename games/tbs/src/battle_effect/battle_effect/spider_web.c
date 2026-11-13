@@ -4,12 +4,6 @@
 
 #include "../battle_effect_internal.h"
 
-// - The swirl swipe (Poison Beat, Spinning Beat) sweeps a swirl across the
-//   first target; its two modes differ in colour, length and how the target
-//   reacts.
-// - The spider web spreads four mirrored quarters of a web over the targets
-//   and fades it in and out.
-
 /// The swirl swipe's modes (BattleEffect_RunSwirlSwipe), each named for the
 /// effect that plays it.
 enum SwirlSwipeMode {
@@ -29,9 +23,7 @@ void BattleEffect_RunPoisonBeat(struct BattleEffectParams *args) {
 void BattleEffect_RunSpinningBeat(struct BattleEffectParams *args) {
   BattleEffect_RunSwirlSwipe(args, SWIRL_SWIPE_SPINNING_BEAT);
 }
-/// A swirl sweeps across the first target from the user's side in six images of
-/// four frames each: the first four from the swirl sheet, the last two from the
-/// tail sheet. The swipe lands on frame 8.
+/// A swirl sweeps across the first target from the user's side.
 void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -70,11 +62,9 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
     Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   }
-  // Trails keep 3/4 a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   actor = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   Projection_ScaledUnit(work->args->targets[0], &position);
-  // Line the canvas up so the swipe crosses the target.
   if (work->args->side == EFFECT_SIDE_ENEMIES)
     REG_BG2X = (16 - position.x) << 8;
   else
@@ -109,8 +99,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
       }
       work->shakeFrames = 8;
     }
-    // Spinning Beat throws the target up at 12 pixels a frame on frame 13, and
-    // shows the damage as it lands on frame 65.
+    // Spinning Beat throws the target into the air.
     if (mode == SWIRL_SWIPE_SPINNING_BEAT) {
       if (frame == 13) {
         actor->velocityY = px(12);
@@ -130,8 +119,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
 
 #define SPIDER_WEB_FRAMES 63
 
-/// A spider web spreads over the targets, drawn as four mirrored 32x32 quarters
-/// around the point between the first and last target.
+/// A spider web spreads over the targets in four mirrored quarters.
 ///
 /// Abilities: Spider Web.
 void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
@@ -151,12 +139,10 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
   Projection_ScaledUnit(work->args->targets[0], &first);
   Projection_ScaledUnit(work->args->targets[work->args->targetCount - 1],
                         &last);
-  // Centre the canvas between the first and last target.
   first.x += (last.x - first.x) / 2;
   REG_BG2X = (64 - first.x) << 8;
   Resource_LoadAndDecompress((s32)&ResourceId_SpiderWebSheet, work->sheet, 1,
                              1);
-  // Redraw from blank each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Sound_PlayFar(SE_CRACK);
   for (frame = 0; frame != SPIDER_WEB_FRAMES; frame++) {
@@ -193,7 +179,6 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
     work->transferPending = 1;
     wait(1);
   }
-  // Finish: the blitter was freed each time it drew.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

@@ -36,7 +36,7 @@ enum {
 #define ERUPTION_FIELD_MOTE_PICTURES 12800
 
 /// A fountain of motes and puffs of smoke bursts up beside the targets and
-/// falls back, hitting the targets one frame apart from frame 6.
+/// falls back, hitting the targets one after another.
 void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -57,8 +57,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
-  // Smoke Bomb's palette is a ramp of greys, two levels to each step of
-  // brightness, 0 to 31; Blast takes the fire streak's.
+  // Smoke Bomb's colours are a ramp of greys; Blast takes the fire streak's.
   if (mode == ERUPTION_SMOKE_BOMB) {
     for (i = 0; i != 64; i++) {
       s32 level = i / 2;
@@ -73,9 +72,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
     variant = work->args->variant;
   }
 
-  // The puffs and the motes start 50 pixels to the side (x -50, or 50 when the
-  // targets are the party) and scatter up, both at up to 4 pixels a frame
-  // across and in depth and 1 to 5 upwards.
+  // The puffs and motes burst up from beside the targets.
   for (i = 0; i != 32; i++) {
     struct Particle *puff = &work->particles[i];
 
@@ -119,8 +116,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
     if (frame == gEruption_Counts[variant][ERUPTION_FIELD_FRAMES] - 48)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
-    // The motes still above the ground, alternating the two mote sets, falling
-    // under a gravity of 1/8 pixel a frame per frame.
+    // The motes fall.
     for (i = 0; i != gEruption_Counts[variant][ERUPTION_FIELD_MOTES]; i++) {
       struct Particle *mote = &PARTICLES[i];
 
@@ -142,8 +138,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
       }
     }
 
-    // The puffs, from frame 3: puff i starts once the frame passes i and
-    // plays seven pictures, 3 frames each, while above the ground.
+    // The puffs.
     if (frame > 2) {
       for (i = 0; i != gEruption_Counts[variant][ERUPTION_FIELD_PUFFS]; i++) {
         struct Particle *puff = &work->particles[i];
@@ -175,8 +170,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
       }
     }
 
-    // The hits, one target a frame from frame 6; Blast's targets also recoil
-    // (KNOCKBACK_LEAP).
+    // The hits, one target a frame; Blast's targets also recoil.
     if (mode == ERUPTION_BLAST) {
       EFFECT_FOR_EACH_TARGET(i, work->args) {
         if (frame == i + 6) {
@@ -223,8 +217,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
   } while (entryIndex != entryCount);
 }
 
-/// Does nothing. BattleEffect_CallDoNothing calls it in a loop, 10000 times for
-/// Annihilation, a busy wait.
+/// Does nothing; BattleEffect_CallDoNothing calls it in a busy wait.
 void BattleEffect_DoNothing(void) {}
 
 #undef ERUPTION_FIELD_MOTE_PICTURES

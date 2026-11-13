@@ -4,8 +4,7 @@
 
 #include "../battle_effect_internal.h"
 
-/// Calls the empty BattleEffect_DoNothing count times, without waiting for a
-/// frame: a busy delay that changes no state.
+/// Calls the empty BattleEffect_DoNothing count times: a busy delay.
 void BattleEffect_CallDoNothing(s32 count) {
   s32 i;
 
@@ -13,16 +12,12 @@ void BattleEffect_CallDoNothing(s32 count) {
     BattleEffect_DoNothing();
 }
 
-// Two of the battle's three entry points, BattleEffect_RunSummon and
-// BattleEffect_RunFromTable; README.md describes all three and the heap
-// blocks they lend an effect. Both size the sheet slot for one set of the
-// ten mote pictures (MOTE_SET_BYTES), where most effects decode
-// ParticleSpritesA; an effect's own pictures go in work->sheet. The shared
-// helpers after them manage the scanline window and the targets' sprites.
+// Two of the battle's three entry points; README.md describes all three and the
+// heap blocks they lend an effect. The shared helpers after them manage the
+// scanline window and the targets' sprites.
 
-/// Runs one of the large battle effects, the ones whose effect word
-/// has bit 15 set: takes the effect's sheet, work and canvas, runs the
-/// effect chosen by its kind to the end, and frees them again.
+/// Runs one of the large battle effects, the summons: takes the effect's sheet,
+/// work and canvas, runs it and frees them again.
 void BattleEffect_RunSummon(struct BattleEffectParams *args) {
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BattleEffectWork));
@@ -76,9 +71,8 @@ void BattleEffect_RunSummon(struct BattleEffectParams *args) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
 }
 
-/// Runs an ordinary battle effect: takes the effect's sheet, work and
-/// canvas, runs the entry of gBattleEffect_Handlers for its kind,
-/// and frees them again.
+/// Runs an ordinary battle effect from gBattleEffect_Handlers, with the sheet,
+/// work and canvas it lends.
 void BattleEffect_RunFromTable(struct BattleEffectParams *args) {
   s32 kind;
   struct BattleEffectWork *work;
@@ -100,8 +94,8 @@ void BattleEffect_RunFromTable(struct BattleEffectParams *args) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
 }
 
-/// Builds window 0's right edge for every scanline and restarts the HBlank
-/// DMA that writes it to WIN0H each line.
+/// Builds window 0's right edge for every line and restarts the DMA that writes
+/// it.
 void BattleEffect_BuildWindowEdgeTable(void) {
   u16 *baseRightEdge;
   u16 *scanlineEdges;
@@ -130,9 +124,7 @@ void BattleEffect_BuildWindowEdgeTable(void) {
   }
 }
 
-/// Shows the battle objects of every unit with HP left on the targets' side:
-/// the enemies (units 128 to 133) when the first target is one, otherwise
-/// the party (units 0 to 7).
+/// Shows the battle objects of every unit with HP left on the targets' side.
 void BattleEffect_SelectLivingTargets(struct BattleEffectParams *args) {
   s16 list[UNIT_MAX];
   s32 count;
@@ -156,10 +148,7 @@ void BattleEffect_SelectLivingTargets(struct BattleEffectParams *args) {
   BattleObject_SpawnObjectsForListFar(list, 0);
 }
 
-/// Shows the BG1 battle background behind a cleared canvas: clears the canvas
-/// buffer and the 16 KiB of VRAM it is copied to, then adds 14/16 of BG1 and
-/// BG2 to all of what lies below them and moves the projection centre down to
-/// line 120.
+/// Shows the battle background behind a cleared canvas.
 void BattleEffect_SetupBlendedDisplay(void) {
   void **slots = &gHeapSlots[HEAP_SLOT_BATTLE];
   u8 *canvas = HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE, HEAP_SLOT_BATTLE_CANVAS);
@@ -168,8 +157,6 @@ void BattleEffect_SetupBlendedDisplay(void) {
 
   REG_DISPCNT = DISPCNT_MODE_1;
   gBgScroll[1].y = 32;
-  // Level 24 is 60% brightness: each level takes 1092 from the 16.16
-  // brightness (BattleBackground_Load).
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, 24);
   Dma_Fill32Cell(fill, 0, canvas, CANVAS_BYTES);
   Dma_Fill32Cell(fill, 0, BG_CHAR_BLOCK(1), CANVAS_BYTES);
@@ -202,7 +189,6 @@ void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,
         s32 partIndex;
 
         for (partIndex = 0; partIndex != group->count; partIndex++) {
-          // Every part but the unit's shadowEntry and animationEntry.
           struct SpriteAnimation *part = group->entries[partIndex];
 
           if (part != NULL &&
@@ -223,8 +209,7 @@ void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,
   }
 }
 
-/// Writes the tiled canvas tilemap for BG2 (priority 1), then closes the
-/// canvas layer again, which fades the background palette back in.
+/// Writes the canvas's tile map for BG2, then closes the canvas layer.
 UNUSED void BattleEffect_InitializeTilemapAndFlushQueue(void) {
   BattleEffect_StartTiledCanvas(1);
   BattleEffect_EndCanvasLayer();

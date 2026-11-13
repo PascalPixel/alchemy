@@ -4,8 +4,6 @@
 
 #include "../battle_effect_internal.h"
 
-// The canvas blitters, and the 48-frame wall effects.
-
 /// The mirrored wall's modes (BattleEffect_RunMirroredWall), each named for the
 /// effect that plays it.
 enum MirroredWallMode {
@@ -15,8 +13,7 @@ enum MirroredWallMode {
                          ///< colours
 };
 
-/// Builds the two usual routines that draw onto the 128x128 canvas, both
-/// clipped on both axes.
+/// Builds the two usual canvas blitters.
 void BattleEffect_FetchRectangleBlitters(s32 flip, BlitterPair out) {
   if (flip == 0) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -55,9 +52,7 @@ void BattleEffect_RunSpasm(struct BattleEffectParams *args) {
 void BattleEffect_RunRecovery(struct BattleEffectParams *args) {
   BattleEffect_RunMirroredWall(args, MIRRORED_WALL_RECOVERY);
 }
-/// Raises a symmetrical wall (the EarthWall images) at the first target's
-/// feet for 48 frames; the target glows and the battle shows the result on
-/// frame 24.
+/// Raises a mirrored wall at the first target's feet while the target glows.
 void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -84,7 +79,6 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
     Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   }
 
-  // Scroll BG2 so the canvas's x 64 is on the target.
   Projection_Unit(work->args->targets[0], &screenPosition);
   if (mode == MIRRORED_WALL_SPASM) {
     REG_BG2PA = Q_8_8(1);
@@ -96,19 +90,14 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
     REG_BG2X = x << 8;
   }
 
-  // The left half as drawn, the right half mirrored, keeping the higher
-  // colour.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
-  // Trails keep half a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  // Recovery sets no shake but still applies BattleCamera_Shake's 16 below,
-  // which does nothing while shakeFrames is 0.
   if (mode == MIRRORED_WALL_RECOVERY) {
     work->shakeFrames = 0;
     Sound_PlayFar(SE_POWER_UP);
@@ -133,8 +122,6 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
     if (frame == 8 && mode == MIRRORED_WALL_SPASM)
       Sound_PlayFar(SE_RECOVERY);
 
-    // Images 0, 1 and 2, four frames each, then 2, 1, 2 and 1, up to frame 27,
-    // standing 8 pixels below the target's feet.
     if (frame <= 31) {
       picture = frame / 4;
       if (picture > 2)

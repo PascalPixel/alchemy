@@ -7,12 +7,9 @@
 #define DJINN_HEAL_SWIRL_FRAMES 98
 #define DJINN_HEAL_SWIRL_MOTES 32 ///< motes swirled in
 
-/// A small Mercury Djinni healing the party: the user glows while motes
-/// swirl round a point that rises from the user to 90 pixels up over the
-/// first target's x (frames 30 to 69); the Djinni appears there on frame 83.
-/// Then, for each target in turn, 8 frames apart, sparkles spiral in on it
-/// with the recovery sound and a glow, while the Djinni sways and finally
-/// flies off. No effect table entry points here, and nothing calls it.
+/// A small Mercury Djinni heals the party: motes swirl up from the user, the
+/// Djinni appears where they gather, and sparkles spiral in on each target in
+/// turn. Nothing reaches it.
 UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -45,8 +42,6 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(work->args->side ^ 1, draw = callbacks);
   actor = GetBattleObjectSlotFar(work->args->user)->actor;
   goal = GetBattleObjectSlotFar(work->args->targets[0])->actor;
-  // The swirl's motes start 20 to 51 pixels up and fly out level at 4 to 12
-  // pixels a frame.
   for (i = 0; i != 64; i++) {
     struct Particle *spark = &PARTICLES[i];
     s32 heading = Random16() & TRIG_ANGLE_MASK;
@@ -77,14 +72,12 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
       position[2] += delta[2];
     }
     Transform_ApplyPosition(position);
-    // The user glows white for the first 24 frames.
     if (frame == 0)
       BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
                                TINT_KEEP, 0);
     if (frame == 24)
       BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_NORMAL, TINT_KEEP,
                                TINT_KEEP, 0);
-    // The swirl.
     for (i = 0; i != DJINN_HEAL_SWIRL_MOTES; i++) {
       struct Particle *spark = &PARTICLES[i];
       if (frame > i && spark->variant == 0) {
@@ -123,8 +116,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
         }
       }
     }
-    // The Djinni appears at the swirl's centre, bobbing 4 pixels up and down
-    // every 64 frames.
+    // The Djinni appears and bobs.
     if (frame > 82) {
       SET_VECTOR(djinniPoint, 0, (Trig_Sin(frame << 10) * 4), 0);
       Projection_Point(djinniPoint, &screen);
@@ -145,8 +137,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   for (frame = 0; frame != work->args->targetCount * 8 + 72; frame++) {
     struct BattleCamera *camera = gBattleCamera;
     EFFECT_VIEW_FROM_CAMERA(camera);
-    // The Djinni sways 40 pixels either way in depth every 32 frames, and
-    // flies up 4 pixels a frame for the last 32.
+    // The Djinni sways, then flies off.
     if (frame >= work->args->targetCount * 8 + 40)
       target[1] += px(4);
     SET_VECTOR(point, target[0], target[1],
@@ -161,8 +152,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(position, object->x.fixed, 160 << 14, object->z.fixed);
       Transform_ApplyPosition(position);
-      // 30 frames into its turn the target hears the recovery sound, and it
-      // glows from 40 to 64.
+      // Each target glows with the recovery sound.
       if (frame == start + 30)
         Sound_PlayFar(SE_RECOVERY);
       if (frame == start + 40)
@@ -218,12 +208,11 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-// Every VBlank turns the camera at least half the delta, so it keeps turning
-// on VBlanks that end no frame of the effect.
+// Every VBlank turns the camera at least half the delta, so it keeps turning on
+// VBlanks that end no frame of the effect.
 // XXX (no evidence): whether that is meant to keep the turn smooth when an
 // effect's frame runs long; the code shows the effect, not the reason.
-/// Turns the battle camera's yaw by work->cameraDelta, or by half of it on a
-/// VBlank the effect has not marked.
+/// Turns the battle camera's yaw by the effect's delta.
 void BattleCamera_ApplyPhasedDelta(void) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);

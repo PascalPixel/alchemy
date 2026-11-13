@@ -4,11 +4,6 @@
 
 #include "../battle_effect_internal.h"
 
-// The lights take 128 slots of PARTICLES per target, and ripple the effect
-// layer throughout through the HBlank DMA of BG2's affine origin.
-
-// Lights that scatter from the user and gather into each target.
-
 /// Sixteen pink lights burst out of the user and are pulled into each target,
 /// with the heavy impact sound.
 ///
@@ -32,12 +27,9 @@ void BattleEffect_RunHaunting(struct BattleEffectParams *args) {
 }
 #define GATHERING_LIGHTS_SLOTS 128 ///< particles reserved for each target
 
-/// For each target in turn, 20 frames apart, lights burst out of the user,
-/// one every 2 frames; from 30 frames into the turn, one more each frame is
-/// pulled towards the middle of the target's body, and goes out when it is
-/// within 32 pixels across and in depth. Each light takes one of three
-/// images. Each target is struck 70 frames after its turn starts, and the
-/// battle shows the damage at frame 80. The effect layer ripples throughout.
+/// For each target in turn, lights burst out of the user and are pulled into
+/// the middle of the target's body, which is struck as they arrive; the effect
+/// layer ripples throughout.
 void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
                                      s32 mode) {
   struct ScreenPoint screenPosition;
@@ -66,8 +58,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(paletteId), 128);
   BattleEffect_FetchRectangleBlitters(work->args->side, draw);
 
-  // The lights start at the top of the user's body and fly off in any
-  // direction at up to 2 pixels a frame.
+  // The lights fly off the user in every direction.
   EFFECT_FREE_PARTICLES(i, PARTICLES, 1024);
   EFFECT_FOR_EACH_TARGET(k, work->args) {
     struct Actor *src = GetBattleObjectSlotFar(work->args->user)->actor;
@@ -85,7 +76,6 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
   }
 
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
-  // Trails keep 3/4 a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_ENEMY_CRY);
 
@@ -103,7 +93,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
 
-    // Ripple the canvas sideways, line by line.
+    // Ripple the canvas line by line.
     row = work->bg2xLines;
     for (i = 0; i != DISPLAY_HEIGHT; i++)
       *row++ = ((16 << 16) - Trig_Sin((frame + i) << 10) * 16) >> 10;
@@ -133,7 +123,6 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
             draw[0](canvas, work->sheet + i % 3 * (20 * 32),
                     screenPosition.x - 10, screenPosition.y - 16, 20, 32);
             Particle_AdvanceWithGravity3D(mote, 62, 0);
-            // The pull: 1/512 of the distance added to the speed each frame.
             if (frame > k * 20 + i + 30) {
               s32 dx = (target->x.fixed - mote->x) >> 9;
               s32 dy = (target->y.fixed + half - mote->y) >> 9;
@@ -153,8 +142,6 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
     EFFECT_END_FRAME(work);
   }
 
-  // Finish: the transfer goes before the blitters and the DMA task
-  // before the layer closes.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);

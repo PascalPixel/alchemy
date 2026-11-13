@@ -6,8 +6,7 @@
 
 #define DRAIN_ICE_SHARDS_PER_TARGET 128
 
-/// Ice shards burst up from each target in turn, 20 frames apart, tinting the
-/// target as they go, and fall away below line 112.
+/// Ice shards burst up from each target in turn, tinting it, and fall away.
 ///
 /// Abilities: Break.
 void BattleEffect_RunBreak(struct BattleEffectParams *args) {
@@ -39,9 +38,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
 
   EFFECT_VIEW_FROM_CAMERA(camera);
 
-  // Setup: scatter the shards around the middle of each body, a narrow
-  // ellipse up to 2 pixels across the half-width canvas and 32 up and down;
-  // each moves up to 1 pixel a frame sideways and jumps up at 2 to 6.
+  // Scatter the shards around the middle of each body.
   EFFECT_FOR_EACH_TARGET(member, work->args) {
     struct Actor *actor;
     s32 offset;
@@ -74,8 +71,6 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  // Target n starts on frame n * 20 with a sound and a 20-frame tint; the last
-  // target's shards get 56 frames to fall.
   for (frame = 0; frame != work->args->targetCount * 20 + 56; frame++) {
     if (frame == 32)
       EFFECT_SHOW_DAMAGE(0);
@@ -88,9 +83,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
         BattleEffect_TintBattler(work->args->targets[member],
                                  SPRITE_COLOR_WHITE, TINT_KEEP, member, 20);
       }
-      // A shard falls with one of four gravities by its index (1/8 to 1/2 pixel
-      // a frame per frame, gDrain_Gravities) and goes out once it falls back
-      // past y = 112.
+      // A shard falls and goes out below the ground.
       if (frame > member * 20) {
         struct Particle *shard;
 
@@ -153,8 +146,7 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
                                              : (s32)&ResourceId_BlastSheet),
                   128);
 
-  // The motes fly out of the centre of each target's body at random speeds
-  // of up to 2 pixels a frame on each axis.
+  // The motes fly out of each target's body.
   EFFECT_FREE_PARTICLES(i, PARTICLES, 8 * DRAIN_MOTES_PER_TARGET);
 
   EFFECT_FOR_EACH_TARGET(member, work->args) {
@@ -175,16 +167,12 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
     }
   }
 
-  // Draw with the maximum blend, and lower every canvas pixel by 4 on each
-  // transfer so the motes leave fading trails.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
   Sound_PlayFar(SE_SWIRL);
 
-  // Frame 0 plays the drain sound; target n bursts on frame n * 20; frame 40
-  // starts the user's glow and frame 64 shows the damage.
   for (frame = 0; frame != work->args->targetCount * 20 + 72; frame++) {
     struct Actor *user;
     s32 halfHeight;
@@ -212,15 +200,12 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
           if (mote->variant >= 0) {
             s32 size = 6;
 
-            // The canvas is shown at double width, so halve x.
             Projection_Point(mote, &screen);
             screen.x >>= 1;
             EFFECT_DRAW_MOTE(draw, canvas, sheet, screen.x, screen.y, size);
             Particle_AdvanceWithGravity3D(mote, 62, 0);
 
-            // 10 frames after it appears (one frame later for each mote), a
-            // mote accelerates towards the user by 1/256 of the distance, and
-            // goes out once it is within 16 pixels horizontally.
+            // After a moment a mote is pulled into the user.
             if (frame > member * 20 + i + 10) {
               s32 dx;
               s32 dy;

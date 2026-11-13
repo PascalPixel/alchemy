@@ -6,8 +6,6 @@
 
 // Shop_DrawCarriedItem reads the unit and writes its icons as bytes; these are
 // the offsets of the unit's inventory and the icon's depth.
-#define SHOP_INVENTORY_OFFSET ((s32)offsetof(struct Unit, inventory))
-#define SHOP_ICON_DEPTH_OFFSET ((s32)offsetof(struct WindowSprite, sentinel))
 
 #define SHOP_STACK_LIMIT 30 ///< maximum quantity accepted by Inventory_AddItem
 
@@ -477,59 +475,33 @@ void Shop_DrawEquipComparison(struct Window *window, s32 unitId, s32 itemId) {
 /// Shows the quantity already carried and the party member's inventory icons.
 /// Called by Shop_SelectBuy for items that are not equipment.
 void Shop_DrawCarriedItem(struct Window *window, s32 unitId, s32 itemId) {
-  // A typed WindowSprite icon store kept the English text extent but changed 76
-  // text bytes; retain the existing byte view of the sprite.
-
-  u8 *unitBytes;
-  s32 x;
-  s32 y;
-  s32 itemIndex;
+  struct Unit *unit = Unit_GetFar(unitId);
+  s32 x = 8;
+  s32 y = 8;
   s32 slot;
-  s32 quantityOffset;
-  s32 firstOffset = SHOP_INVENTORY_OFFSET;
-  s32 itemOffset;
-  s32 nextOffset;
-  u8 *icon;
 
-  unitBytes = (u8 *)Unit_GetFar(unitId);
-  x = 8;
-  y = 8;
-  if (window != 0) {
-    WindowSprite_PrepareForRedrawFar(window);
-    slot = Inventory_FindFar(unitId, itemId);
-    if (slot != -1) {
-      quantityOffset = slot * 2 + SHOP_INVENTORY_OFFSET;
-      MessageArgument_PushFar(
-          (*(u16 *)(unitBytes + quantityOffset) >> INVENTORY_QUANTITY_SHIFT) +
-              1,
-          MESSAGE_ARGUMENT_NUMBER);
-      Text_DrawMessageAsTilesFar(MsgYouHave, window, 0, 0);
-    } else {
-      Text_DrawMessageAsTilesFar(MsgShopNoneInStock, window, 0, 0);
-    }
-    itemIndex = 0;
-    if (*(u16 *)(unitBytes + firstOffset) != 0) {
-      for (;;) {
-        itemOffset = itemIndex * 2 + SHOP_INVENTORY_OFFSET;
-        icon = (u8 *)WindowSprite_CreateLoadedFar(
-            *(u16 *)(unitBytes + itemOffset), 27, window, x, y);
-        icon[SHOP_ICON_DEPTH_OFFSET] = 252;
-        x += 16;
-        if (itemIndex == 4) {
-          x = 8;
-          y += 16;
-        }
-        if (itemIndex == 9) {
-          x = 8;
-          y += 16;
-        }
-        itemIndex++;
-        if (itemIndex >= INVENTORY_SLOTS)
-          break;
-        nextOffset = itemIndex * 2 + SHOP_INVENTORY_OFFSET;
-        if (*(u16 *)(unitBytes + nextOffset) == 0)
-          break;
-      }
+  if (window == 0)
+    return;
+  WindowSprite_PrepareForRedrawFar(window);
+  slot = Inventory_FindFar(unitId, itemId);
+  if (slot != -1) {
+    MessageArgument_PushFar(
+        (unit->inventory[slot] >> INVENTORY_QUANTITY_SHIFT) + 1,
+        MESSAGE_ARGUMENT_NUMBER);
+    Text_DrawMessageAsTilesFar(MsgYouHave, window, 0, 0);
+  } else {
+    Text_DrawMessageAsTilesFar(MsgShopNoneInStock, window, 0, 0);
+  }
+  // The inventory's icons, five to a row.
+  for (slot = 0; slot < INVENTORY_SLOTS && unit->inventory[slot] != 0; slot++) {
+    struct WindowSprite *icon =
+        WindowSprite_CreateLoadedFar(unit->inventory[slot], 27, window, x, y);
+
+    icon->sentinel = 252;
+    x += 16;
+    if (slot == 4 || slot == 9) {
+      x = 8;
+      y += 16;
     }
   }
 }
@@ -818,6 +790,4 @@ s32 Shop_SalePrice(s32 inventoryEntry) {
 
 #undef SHOP_QUANTITY_NUMBER_X
 #undef SHOP_QUANTITY_COIN_LABEL_X
-#undef SHOP_INVENTORY_OFFSET
-#undef SHOP_ICON_DEPTH_OFFSET
 #undef SHOP_STACK_LIMIT

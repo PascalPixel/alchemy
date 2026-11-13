@@ -211,14 +211,6 @@ s32 Party_AdjustCoins(s32 amount) {
   return value;
 }
 
-/// The party's Djinn recovery table as the summon list reads it: a mask of
-/// summons, bit n for summon n.
-struct TradeFlags {
-  /// Bit n set: the party's Djinn meet summon n's requirement, as
-  /// BattleSummon_UpdateAvailability last worked it out.
-  u32 flags;
-};
-
 /// Each adds `amount` to a counter in the main routine's work, kept between
 /// 0 and `max`, and returns the new value. The shops call the two: each
 /// purchase adds its price to the credit, and each Game Ticket given spends
@@ -248,19 +240,18 @@ PARTY_DEFINE_ADJUST(Party_AdjustShopGifts, shopGifts, 28)
 /// start and each turn. `output` needs room for 17 bytes: up to 16 summons
 /// and SUMMON_END.
 s32 Summon_ListLearned(u8 *output) {
-  u8 *source = (u8 *)gSummon_OrderList;
-  u8 *end = (u8 *)gSummon_OrderList + 15;
+  struct DjinnRecoveryTable *table =
+      Djinn_GetRecoveryTable(DJINN_RECOVERY_PARTY);
   s32 count = 0;
+  s32 i;
 
-  do {
-    u8 value = *source++;
-    if ((((struct TradeFlags *)Djinn_GetRecoveryTable(0))->flags &
-         (1 << value)) != 0) {
-      *output++ = value;
-      count++;
-    }
-  } while (source <= end);
-  *output = SUMMON_END;
+  for (i = 0; i < 16; i++) {
+    u8 summonId = gSummon_OrderList[i];
+
+    if (table->summonMask & (1 << summonId))
+      output[count++] = summonId;
+  }
+  output[count] = SUMMON_END;
   return count;
 }
 

@@ -626,28 +626,23 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
 /// rotation.
 static void
 CrossboneIsleSteppingStones_UpdateDampedParticle(struct Actor *actor) {
+  struct FieldEffect *effect = (struct FieldEffect *)actor;
   s32 velocityX;
   s32 velocityY;
   s32 velocityZ;
 
-  ((struct FieldEffect *)actor)->x += ((struct FieldEffect *)actor)->velocity.x;
-  ((struct FieldEffect *)actor)->y += ((struct FieldEffect *)actor)->velocity.y;
-  ((struct FieldEffect *)actor)->z += ((struct FieldEffect *)actor)->velocity.z;
-  velocityX = ((struct FieldEffect *)actor)->velocity.x;
-  velocityY = ((struct FieldEffect *)actor)->velocity.y;
-  velocityZ = ((struct FieldEffect *)actor)->velocity.z;
-  ((struct FieldEffect *)actor)->velocity.x =
-      velocityX - Math_Divide(velocityX, 10);
-  ((struct FieldEffect *)actor)->velocity.y =
-      velocityY - Math_Divide(velocityY, 3);
-  ((struct FieldEffect *)actor)->velocity.z =
-      velocityZ - Math_Divide(velocityZ, 10);
-  ((struct FieldEffect *)actor)->scaleX +=
-      ((struct FieldEffect *)actor)->scaleRateX;
-  ((struct FieldEffect *)actor)->scaleY +=
-      ((struct FieldEffect *)actor)->scaleRateY;
-  ((struct FieldEffect *)actor)->sprite->rotation +=
-      ((struct FieldEffect *)actor)->spin;
+  effect->x += effect->velocity.x;
+  effect->y += effect->velocity.y;
+  effect->z += effect->velocity.z;
+  velocityX = effect->velocity.x;
+  velocityY = effect->velocity.y;
+  velocityZ = effect->velocity.z;
+  effect->velocity.x = velocityX - Math_Divide(velocityX, 10);
+  effect->velocity.y = velocityY - Math_Divide(velocityY, 3);
+  effect->velocity.z = velocityZ - Math_Divide(velocityZ, 10);
+  effect->scaleX += effect->scaleRateX;
+  effect->scaleY += effect->scaleRateY;
+  effect->sprite->rotation += effect->spin;
 }
 
 /// Sets the actor's sprite to the colour mode (enum SpriteColorMode) in

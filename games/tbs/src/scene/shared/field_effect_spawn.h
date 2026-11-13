@@ -13,15 +13,13 @@
 
 /// Integrates linear motion, scale changes and rotation once per effect frame.
 void FieldEffect_UpdateMotionScaleAndSpin(struct Actor *actor) {
-  ((struct FieldEffect *)actor)->x += ((struct FieldEffect *)actor)->velocity.x;
-  ((struct FieldEffect *)actor)->y += ((struct FieldEffect *)actor)->velocity.y;
-  ((struct FieldEffect *)actor)->z += ((struct FieldEffect *)actor)->velocity.z;
-  ((struct FieldEffect *)actor)->scaleX +=
-      ((struct FieldEffect *)actor)->scaleRateX;
-  ((struct FieldEffect *)actor)->scaleY +=
-      ((struct FieldEffect *)actor)->scaleRateY;
-  ((struct FieldEffect *)actor)->sprite->rotation +=
-      ((struct FieldEffect *)actor)->spin;
+  struct FieldEffect *effect = (struct FieldEffect *)actor;
+  effect->x += effect->velocity.x;
+  effect->y += effect->velocity.y;
+  effect->z += effect->velocity.z;
+  effect->scaleX += effect->scaleRateX;
+  effect->scaleY += effect->scaleRateY;
+  effect->sprite->rotation += effect->spin;
 }
 
 // Compile the effect-spawning body once for the resident far-call version

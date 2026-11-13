@@ -244,21 +244,19 @@ static s32 VenusLighthouseAerie_PulseActorScale(struct Actor *actor) {
 /// Moves a particle, damps its horizontal velocity and updates its scale and
 /// spin.
 static void VenusLighthouseAerie_UpdateDriftingParticle(struct Actor *actor) {
-  s32 velocityX = ((struct FieldEffect *)actor)->velocity.x;
+  struct FieldEffect *effect = (struct FieldEffect *)actor;
+  s32 velocityX = effect->velocity.x;
   s32 velocityZ;
 
-  ((struct FieldEffect *)actor)->x += velocityX;
-  ((struct FieldEffect *)actor)->y += ((struct FieldEffect *)actor)->velocity.y;
-  velocityZ = ((struct FieldEffect *)actor)->velocity.z;
-  ((struct FieldEffect *)actor)->z += velocityZ;
-  ((struct FieldEffect *)actor)->velocity.x = velocityX - velocityX / 22;
-  ((struct FieldEffect *)actor)->velocity.z = velocityZ - velocityZ / 20;
-  ((struct FieldEffect *)actor)->scaleX +=
-      ((struct FieldEffect *)actor)->scaleRateX;
-  ((struct FieldEffect *)actor)->scaleY +=
-      ((struct FieldEffect *)actor)->scaleRateY;
-  ((struct FieldEffect *)actor)->sprite->rotation +=
-      ((struct FieldEffect *)actor)->spin;
+  effect->x += velocityX;
+  effect->y += effect->velocity.y;
+  velocityZ = effect->velocity.z;
+  effect->z += velocityZ;
+  effect->velocity.x = velocityX - velocityX / 22;
+  effect->velocity.z = velocityZ - velocityZ / 20;
+  effect->scaleX += effect->scaleRateX;
+  effect->scaleY += effect->scaleRateY;
+  effect->sprite->rotation += effect->spin;
 }
 
 /// Turns the falling actor sprite until its rotation leaves the negative

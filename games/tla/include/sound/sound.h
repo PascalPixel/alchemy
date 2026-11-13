@@ -50,7 +50,7 @@ void ply_mod(struct SoundPlayer *player, struct SoundTrack *track);
 void TrackStop(struct SoundPlayer *player, struct SoundTrack *track);
 void Sound_Mixer(void);
 
-extern u16 gData_02005830;
+extern u16 gCurrentBgm;
 extern u8 gSoundFlags[];
 s32 Sound_GetBgmRestoreDelayFar(void);
 void Sound_WaitForJingle(void);

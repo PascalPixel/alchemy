@@ -70,7 +70,7 @@ void Func_080409a4(void);
 void Func_080409dc(void);
 struct RenderInput *Func_080409f0(void);
 void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
-s32 Sound_LoadPresetParameters(s32 preset);
+s32 Sound_LoadReverbCode(s32 preset);
 
 /// The debug sound test. Four values (music, jingle, sound effect, sound
 /// preset) start from Data_0805ea98; up and down pick one, left and right
@@ -114,7 +114,7 @@ s32 Func_08040a48(void) {
       break;
     if (gInput.pressed & 1) {
       if (cursor == 3)
-        Sound_LoadPresetParameters(test.values[3]);
+        Sound_LoadReverbCode(test.values[3]);
       else
         Sound_PlayFar(test.values[cursor]);
     }

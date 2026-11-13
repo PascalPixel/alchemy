@@ -19,8 +19,8 @@ gData_03001110:
 	.global gBgScroll
 gBgScroll:
 	.space 0x00000018
-	.global gData_03001138
-gData_03001138:
+	.global gSoundVBlankState
+gSoundVBlankState:
 	.space 0x00000004
 	.global gBlendStartLevel
 gBlendStartLevel:
@@ -112,8 +112,8 @@ gDebugPaused:
 	.global gIdleFrameCount
 gIdleFrameCount:
 	.space 0x00000004
-	.global gData_0300121c
-gData_0300121c:
+	.global gVBlankDone
+gVBlankDone:
 	.space 0x00000004
 	.global gTransformStackTop
 gTransformStackTop:

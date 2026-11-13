@@ -46,10 +46,10 @@ Func_02001914:
 	.thumb_func
 Func_0200191c:
 	overlay_veneer Serial_RemoveIrqHandlersFar
-	.global Sound_LoadPresetParameters
+	.global Sound_LoadReverbCode
 	.thumb_func
-Sound_LoadPresetParameters:
-	overlay_veneer Sound_LoadPresetParametersFar
+Sound_LoadReverbCode:
+	overlay_veneer Sound_LoadReverbCodeFar
 	.global Func_0200192c
 	.thumb_func
 Func_0200192c:

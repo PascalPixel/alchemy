@@ -1123,7 +1123,7 @@ s32 Func_02001130(s32 actor) {
 /// and goes back to the File Screen (its entrance FILE_SCREEN_FROM_SANCTUM).
 s32 LinkLobby_LeaveArena(void) {
   Func_0200191c();
-  Sound_LoadPresetParameters(2);
+  Sound_LoadReverbCode(2);
   /* FAKEMATCH(dead): the return in a once-only block, which loads the scene
    * number before the 1; as the plain return, the 1 comes first, 2 of 8
    * instructions differ in tla-en. */
@@ -1282,7 +1282,7 @@ void Func_02001914(void);
 void Func_02001944(void *func, s32 mask);
 void Func_02001994(s32 entry);
 void Func_02001a04(s32 value);
-void Sound_LoadPresetParameters(s32 preset);
+void Sound_LoadReverbCode(s32 preset);
 void LinkLobby_WriteSlotValue(s32 value);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -1320,7 +1320,7 @@ s32 LinkLobby_RunRoundResult(void) {
   gData_020022bc = 0;
   gData_020022b8 = 0;
   ((struct LobbyEventWork__scene_events *)Ram_HeapSlots->eventWork)->startTransition = 0x201;
-  Sound_LoadPresetParameters(2);
+  Sound_LoadReverbCode(2);
   Func_02001414(gMainRoutineWork.linkTallies[6]);
   Map_CopyCells(11, 11, 1, 1, 13, 10);
   LinkLobby_WriteSlotValue(4);

@@ -152,38 +152,38 @@ gObjAffineMatrices:
 	.global gSerialReceiveDest
 gSerialReceiveDest:
 	.space 0x00000230
-	.global gMusicRestoreDelay
-gMusicRestoreDelay:
+	.global gBgmRestoreDelay
+gBgmRestoreDelay:
 	.space 0x00000004
-	.global gData_02005804
-gData_02005804:
+	.global gSound_UnreadByte
+gSound_UnreadByte:
 	.space 0x00000004
-	.global gMusicVolume
-gMusicVolume:
+	.global gBgmVolume
+gBgmVolume:
 	.space 0x00000004
-	.global gData_0200580c
-gData_0200580c:
+	.global gBgmTempoPitchStep
+gBgmTempoPitchStep:
 	.space 0x00000004
-	.global gMusicVolumeStep
-gMusicVolumeStep:
+	.global gBgmVolumeStep
+gBgmVolumeStep:
 	.space 0x00000004
-	.global gData_02005814
-gData_02005814:
+	.global gBgmFadeRequested
+gBgmFadeRequested:
 	.space 0x0000000c
-	.global gData_02005820
-gData_02005820:
+	.global gMusicPlayerLastSound
+gMusicPlayerLastSound:
 	.space 0x00000010
-	.global gData_02005830
-gData_02005830:
+	.global gCurrentBgm
+gCurrentBgm:
 	.space 0x00000004
-	.global gData_02005834
-gData_02005834:
+	.global gBgmTempoPitchTarget
+gBgmTempoPitchTarget:
 	.space 0x00000004
-	.global gMusicVolumeTarget
-gMusicVolumeTarget:
+	.global gBgmVolumeTarget
+gBgmVolumeTarget:
 	.space 0x00000004
-	.global gData_0200583c
-gData_0200583c:
+	.global gBgmTempoPitch
+gBgmTempoPitch:
 	.space 0x00000004
 	.global gSoundCommandMask
 gSoundCommandMask:
@@ -206,32 +206,32 @@ Data_0200688c:
 	.global gSound_CgbNotes
 gSound_CgbNotes:
 	.space 0x00000100
-	.global gSound_Player5
-gSound_Player5:
+	.global gMPlayInfo_SE5
+gMPlayInfo_SE5:
 	.space 0x00000040
-	.global Sound_Player6
-Sound_Player6:
+	.global gMPlayInfo_SE6
+gMPlayInfo_SE6:
 	.space 0x00000040
-	.global gMusicPlayerJingle
-gMusicPlayerJingle:
+	.global gMPlayInfo_Jingle
+gMPlayInfo_Jingle:
 	.space 0x00000040
-	.global Sound_Player7
-Sound_Player7:
+	.global gMPlayInfo_SE7
+gMPlayInfo_SE7:
 	.space 0x00000040
-	.global gMusicPlayerBgm
-gMusicPlayerBgm:
+	.global gMPlayInfo_BGM
+gMPlayInfo_BGM:
 	.space 0x00000040
-	.global Sound_Player2
-Sound_Player2:
+	.global gMPlayInfo_MenuSE
+gMPlayInfo_MenuSE:
 	.space 0x00000040
-	.global Sound_Player4
-Sound_Player4:
+	.global gMPlayInfo_SE4
+gMPlayInfo_SE4:
 	.space 0x00000040
 	.global gSound_WorkBytes
 gSound_WorkBytes:
 	.space 0x00000010
-	.global gSound_Player3
-gSound_Player3:
+	.global gMPlayInfo_ActionSE
+gMPlayInfo_ActionSE:
 	.space 0x00000040
 	.global Sound_Tracks0
 Sound_Tracks0:

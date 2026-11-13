@@ -38,19 +38,14 @@ void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler) {
   }
 }
 
-struct SoundVBlankState {
-  u8 lastVBlank;
-  u8 unk01;
-  u8 unk02;
-  u8 unk03;
-};
-extern volatile struct SoundVBlankState gData_03001138;
+#include "sound_driver_symbols.h"
+
 // volatile: the VBlank handler sets it while System_WaitForFrameInterrupt
 // waits on it, so it is no device.
-extern volatile u16 gData_0300121c;
+extern volatile u16 gVBlankDone;
 extern u32 gVBlankCount;
 extern u8 *gData_03007ff0;
-void Func_081c0088(void);
+void Sound_UpdateBgmRampsFar(void);
 s32 SoundDriver_EnterVBlankUpdate(void);
 void IwramSoundRenderVBlank(s32) __attribute__((long_call));
 
@@ -58,30 +53,30 @@ void System_WaitForFrameInterrupt(void) {
   u32 saved;
   u8 *sound;
 
-  if (gData_03001138.unk02) {
-    gData_0300121c &= ~1;
+  if (gSoundVBlankState.soundTestActive) {
+    gVBlankDone &= ~1;
     for (;;)
-      if (gData_0300121c & 1)
+      if (gVBlankDone & 1)
         return;
   } else {
     IRQ_LOCK(saved);
-    gData_0300121c &= ~1;
-    gData_03001138.lastVBlank = gVBlankCount;
-    gData_03001138.unk03 = 1;
+    gVBlankDone &= ~1;
+    gSoundVBlankState.lastVBlank = gVBlankCount;
+    gSoundVBlankState.updating = 1;
     sound = gData_03007ff0;
     if (sound[4] <= 1)
-      gData_03001138.unk01 = sound[11];
+      gSoundVBlankState.transferCountdown = sound[11];
     else
-      gData_03001138.unk01 = sound[4] - 1;
+      gSoundVBlankState.transferCountdown = sound[4] - 1;
     REG_IME = saved;
-    Func_081c0088();
+    Sound_UpdateBgmRampsFar();
     if (SoundDriver_EnterVBlankUpdate() == 0) {
       void (*render)(s32) = IwramSoundRenderVBlank;
 
       render(8);
     }
-    gData_03001138.unk03 = 0;
-    while (!(gData_0300121c & 1))
+    gSoundVBlankState.updating = 0;
+    while (!(gVBlankDone & 1))
       ;
   }
 }
@@ -416,11 +411,11 @@ void Func_0801399c(void) {
     // address is loaded; as a plain store, 2 of 152 instructions differ in
     // tla-en.
     ((volatile struct InputState *)&gInput)->previousVblankHeld = keys;
-    sound = &gData_03001138;
+    sound = &gSoundVBlankState;
     vblankCount = *count;
-    if (sound->lastVBlank != (u8)vblankCount && sound->unk03 == 0) {
-      sound->unk01 = gData_03007ff0[4];
-      Func_081c0088();
+    if (sound->lastVBlank != (u8)vblankCount && sound->updating == 0) {
+      sound->transferCountdown = gData_03007ff0[4];
+      Sound_UpdateBgmRampsFar();
       if (SoundDriver_EnterVBlankUpdate() == 0) {
         void (*render)(s32) = IwramSoundRenderVBlank;
 
@@ -436,12 +431,12 @@ void Func_0801399c(void) {
   do {
     gFrameVBlanks++;
   } while (0);
-  gData_0300121c = 1;
+  gVBlankDone = 1;
 }
 
 #define SOUND_PRESET_COUNT 5
 
-s32 Sound_LoadPresetParameters(s32 preset) {
+s32 Sound_LoadReverbCode(s32 preset) {
   if ((u32)preset > SOUND_PRESET_COUNT - 1)
     preset = 0;
   return 0;

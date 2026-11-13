@@ -1,5 +1,7 @@
 /// @file
-/// The scene code of overlay 0x68e, in ROM order.
+/// Lemuria's spring: the party drinks from it to restore its HP and PP, and
+/// tosses coins or Lucky Medals into it as in Tolbi's spring game, past the
+/// moving obstacles, for coins or for items.
 
 #include "battle.h"
 #include "io_write.h"
@@ -26,12 +28,13 @@
 #include "text_render.h"
 #include "uiflow.h"
 
-extern struct SpringTossMotion gData_02001760;
-extern struct SpringObstacle gData_020017c0[];
-extern s32 gData_02001824;
-extern s32 gData_02001828;
+extern struct SpringTossMotion gLemuriaSpring_Toss;
+extern struct SpringObstacle gLemuriaSpring_Obstacles[];
+extern s32 gLemuriaSpring_TossDone;
+extern s32 gLemuriaSpring_TossResult;
 void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
-extern s32 gData_02001820;
+extern s32 gLemuriaSpring_TossFrame;
+extern s32 gLemuriaSpring_TossChoice;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -357,9 +360,9 @@ toss:
     result = LemuriaSpring_RunToss(choice);
     if (choice == 0) {
       if (result != 4) {
-        Party_AdjustCoins(gData_0200173c[result]);
+        Party_AdjustCoins(gLemuriaSpring_CoinPrizes[result]);
         Event_PlaySound(91);
-        MessageArgument_Push(gData_0200173c[result], 5);
+        MessageArgument_Push(gLemuriaSpring_CoinPrizes[result], 5);
         Event_SetMessageId((s32)MsgYouWonCoin);
         Event_ShowMessage((s32)minusOne, 0);
       } else {
@@ -370,7 +373,7 @@ toss:
       total = 0;
       if (result == 0 && Event_GetFlag(0x90b) == 0) {
         Event_SetFlag(0x90b);
-        Func_0200049c((s32)minusOne);
+        LemuriaSpring_GivePrize((s32)minusOne);
       } else {
         for (prize = 0; prize < result * 3 + 3; prize++)
           total += (s8)gMainRoutineWork.unk13d[prize];
@@ -382,7 +385,7 @@ toss:
         }
         if (prize == 15)
           prize = 14;
-        Func_0200049c(gData_02001700[prize]);
+        LemuriaSpring_GivePrize(gLemuriaSpring_MedalPrizes[prize]);
         if (WEIGHT(prize) > 1)
           gMainRoutineWork.unk13d[prize] = WEIGHT(prize) / 2;
       }
@@ -397,7 +400,9 @@ end:
 s32 Actor_MoveToObject();
 s32 Func_02001338();
 
-void Func_0200049c(s32 a0) {
+/// The spring's statue opens and gives the prize: an item, or, for the first
+/// medal to land in the middle (flag 0x90b), the special prize actor 29 brings.
+void LemuriaSpring_GivePrize(s32 a0) {
   s32 t52;
 
   Event_Start();
@@ -579,7 +584,7 @@ void LemuriaSpring_UpdateTossSimulation(void) {
   // Unused: gives the stack frame its 12 bytes.
   struct Vector3 spare;
 
-  toss = &gData_02001760;
+  toss = &gLemuriaSpring_Toss;
   index = 3;
   do {
     toss->trail[index].x = toss->trail[index - 1].x;
@@ -598,7 +603,7 @@ void LemuriaSpring_UpdateTossSimulation(void) {
       toss->trail[0].y = 0;
       if (toss->velocity.y != 0) {
         toss->velocity.y = 0;
-        if (gData_020017b0 == 1) {
+        if (gLemuriaSpring_TossChoice == 1) {
           Import_ActorSelectAnimation(Actor_GetById(17), 1);
         } else {
           Import_ActorSelectAnimation(Actor_GetById(12), 1);
@@ -630,7 +635,7 @@ void LemuriaSpring_UpdateTossSimulation(void) {
           toss->velocity.z = 0;
         }
         if (toss->velocity.x == 0 && toss->velocity.z == 0) {
-          if (gData_020017b0 == 1) {
+          if (gLemuriaSpring_TossChoice == 1) {
             Import_ActorSelectAnimation(Actor_GetById(17), 2);
             LemuriaSpring_SetSpriteStorageKind(15, 0);
             LemuriaSpring_SetSpriteStorageKind(14, 0);
@@ -646,17 +651,17 @@ void LemuriaSpring_UpdateTossSimulation(void) {
             s32 deltaZ = (0x470000 - toss->trail[0].z) >> 16;
             s32 distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
 
-            gData_02001824 = 1;
+            gLemuriaSpring_TossDone = 1;
             if (distanceSquared <= 224) {
-              gData_02001828 = 0;
+              gLemuriaSpring_TossResult = 0;
             } else if (distanceSquared <= 624) {
-              gData_02001828 = 1;
+              gLemuriaSpring_TossResult = 1;
             } else if (distanceSquared <= 1088) {
-              gData_02001828 = 2;
+              gLemuriaSpring_TossResult = 2;
             } else if (distanceSquared <= 1680) {
-              gData_02001828 = 3;
+              gLemuriaSpring_TossResult = 3;
             } else {
-              gData_02001828 = 4;
+              gLemuriaSpring_TossResult = 4;
             }
           }
         }
@@ -742,7 +747,7 @@ void LemuriaSpring_UpdateTossSimulation(void) {
 
   index = 0;
   do {
-    obstacle = &gData_020017c0[index];
+    obstacle = &gLemuriaSpring_Obstacles[index];
 
     if (obstacle->reactionFrames > 0) {
       obstacle->reactionFrames = obstacle->reactionFrames - 1;
@@ -885,24 +890,28 @@ void LemuriaSpring_UpdateTossSimulation(void) {
 
     switch (index) {
     case 0:
-      LemuriaSpring_SetActorAppearance(18, &obstacle->position.x, 0,
-                                       gData_02001746[obstacle->speedMode],
-                                       (obstacle->speedMode << 4) + 16);
+      LemuriaSpring_SetActorAppearance(
+          18, &obstacle->position.x, 0,
+          gLemuriaSpring_FrontObstacleAnimations[obstacle->speedMode],
+          (obstacle->speedMode << 4) + 16);
       break;
     case 1:
-      LemuriaSpring_SetActorAppearance(19, &obstacle->position.x, 0,
-                                       gData_02001746[obstacle->speedMode],
-                                       (obstacle->speedMode << 4) + 16);
+      LemuriaSpring_SetActorAppearance(
+          19, &obstacle->position.x, 0,
+          gLemuriaSpring_FrontObstacleAnimations[obstacle->speedMode],
+          (obstacle->speedMode << 4) + 16);
       break;
     case 2:
       LemuriaSpring_SetActorAppearance(
           20, &obstacle->position.x, 0x8000 - obstacle->heading,
-          gData_02001749[obstacle->speedMode], (obstacle->speedMode << 4) + 16);
+          gLemuriaSpring_BackObstacleAnimations[obstacle->speedMode],
+          (obstacle->speedMode << 4) + 16);
       break;
     case 3:
       LemuriaSpring_SetActorAppearance(
           21, &obstacle->position.x, 0xffff - obstacle->heading,
-          gData_02001749[obstacle->speedMode], (obstacle->speedMode << 4) + 16);
+          gLemuriaSpring_BackObstacleAnimations[obstacle->speedMode],
+          (obstacle->speedMode << 4) + 16);
       break;
     }
     index++;
@@ -912,7 +921,7 @@ void LemuriaSpring_UpdateTossSimulation(void) {
   toss->shadow.y = 0;
   toss->shadow.z = toss->trail[0].z;
 
-  if (gData_020017b0 == 1) {
+  if (gLemuriaSpring_TossChoice == 1) {
     LemuriaSpring_SetActorAppearance(17, &toss->trail[0].x, 0, 0, 16);
     LemuriaSpring_SetActorAppearance(16, &toss->shadow.x, 0, 0, 16);
     LemuriaSpring_SetActorAppearance(15, &toss->trail[1].x, 0, 0, 16);
@@ -945,25 +954,28 @@ void LemuriaSpring_UpdateTossSimulation(void) {
 
 #include "task.h"
 
-/* VIEW(ride): variable gData_02001760 as extern struct SpringRide
- * gData_02001760; lemuria_spring has extern struct SpringTossMotion
- * gData_02001760; tried as the rest of the object declares it, it does not
+/* VIEW(ride): variable gLemuriaSpring_Toss as extern struct SpringRide
+ * gLemuriaSpring_Toss; lemuria_spring has extern struct SpringTossMotion
+ * gLemuriaSpring_Toss; tried as the rest of the object declares it, it does not
  * compile in tla-ja: games/tla/src/scene/lemuria_spring.c:958:
- * `gData_02001760__ride' undeclared (first use in this function). */
-extern struct SpringRide gData_02001760__ride __asm__("gData_02001760");
-/* VIEW(ride): variable gData_020017c0 as extern struct SpringObstacle__ride
- * gData_020017c0[]; lemuria_spring has extern struct SpringObstacle
- * gData_020017c0[]; tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/scene/lemuria_spring.c:969:
- * `gData_020017c0__ride' undeclared (first use in this function). */
-extern struct SpringObstacle gData_020017c0__ride[] __asm__("gData_020017c0");
+ * `gLemuriaSpring_Toss__ride' undeclared (first use in this function). */
+extern struct SpringRide
+    gLemuriaSpring_Toss__ride __asm__("gLemuriaSpring_Toss");
+/* VIEW(ride): variable gLemuriaSpring_Obstacles as extern struct
+ * SpringObstacle__ride gLemuriaSpring_Obstacles[]; lemuria_spring has extern
+ * struct SpringObstacle gLemuriaSpring_Obstacles[]; tried as the rest of the
+ * object declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/lemuria_spring.c:969: `gLemuriaSpring_Obstacles__ride'
+ * undeclared (first use in this function). */
+extern struct SpringObstacle
+    gLemuriaSpring_Obstacles__ride[] __asm__("gLemuriaSpring_Obstacles");
 
 void LemuriaSpring_UpdateTossSimulation(void);
 
 /// Places the four actors from their tables, resets the ride and installs
 /// its task.
 void LemuriaSpring_InitializeTossSimulation(void) {
-  struct SpringRide *ride = &gData_02001760__ride;
+  struct SpringRide *ride = &gLemuriaSpring_Toss__ride;
   s32 i = 0;
   u8 *xtbl;
   u16 *htbl;
@@ -971,10 +983,10 @@ void LemuriaSpring_InitializeTossSimulation(void) {
   u8 *ztbl;
   s32 zero;
 
-  htbl = gData_02001754;
-  ztbl = gData_02001750;
-  xtbl = gData_0200174c;
-  rec = gData_020017c0__ride;
+  htbl = gLemuriaSpring_ObstacleHeadings;
+  ztbl = gLemuriaSpring_ObstacleStartZ;
+  xtbl = gLemuriaSpring_ObstacleStartX;
+  rec = gLemuriaSpring_Obstacles__ride;
 
   do {
     zero = 0;
@@ -1016,18 +1028,18 @@ void LemuriaSpring_InitializeTossSimulation(void) {
 s32 LemuriaSpring_RunToss(s32 side) {
   struct SpringRide *ride;
 
-  ride = &gData_02001760__ride;
+  ride = &gLemuriaSpring_Toss__ride;
   ride->trail[0].y = 0;
   ride->trail[1].y = 0;
   ride->trail[2].y = 0;
   ride->trail[3].y = 0;
-  gData_020017b0 = side;
-  gData_02001824 = 0;
+  gLemuriaSpring_TossChoice = side;
+  gLemuriaSpring_TossDone = 0;
   ride->hold = 0xffff;
-  for (gData_02001820 = 0;; gData_02001820++) {
-    if (gData_02001820 == 50)
+  for (gLemuriaSpring_TossFrame = 0;; gLemuriaSpring_TossFrame++) {
+    if (gLemuriaSpring_TossFrame == 50)
       Event_PlaySound(300);
-    if (gData_02001820 == 16) {
+    if (gLemuriaSpring_TossFrame == 16) {
       Actor_SetAnimation(gMainRoutineWork.currentOwner, 39);
       ride->hold = 0;
       ride->velocity.x = 0x14ccc;
@@ -1037,7 +1049,7 @@ s32 LemuriaSpring_RunToss(s32 side) {
       ride->trail[0].y = 0x100000;
       ride->trail[0].z = 0x980000;
       ride->frames = 300;
-      if (gData_020017b0 == 1) {
+      if (gLemuriaSpring_TossChoice == 1) {
         Import_ActorSelectAnimation(Actor_Get(16), 3);
         Import_ActorSelectAnimation(Actor_Get(17), 0);
         LemuriaSpring_SetSpriteStorageKind(15, 1);
@@ -1052,10 +1064,10 @@ s32 LemuriaSpring_RunToss(s32 side) {
       }
     }
     System_Wait(1);
-    if (gData_02001824 == 1)
+    if (gLemuriaSpring_TossDone == 1)
       break;
   }
-  return gData_02001828;
+  return gLemuriaSpring_TossResult;
 }
 
 void LemuriaSpring_DrinkFromSpring(void);
@@ -1118,33 +1130,36 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-u32 gData_02001700[] = {
+/// The items a medal can win, drawn by the weights in gMainRoutineWork.
+u32 gLemuriaSpring_MedalPrizes[] = {
     280, 359, 335, 380, 302, 342,
     387, 372, 320, 395, 364, 341,
     183, 186, 189,
 };
 
-u16 gData_0200173c[] = {
+/// The coins a coin wins by where it lands, the middle first; 0 for a miss.
+u16 gLemuriaSpring_CoinPrizes[] = {
     20, 10, 2, 1, 0,
 };
 
-u8 gData_02001746[] = {
+/// The animations of the spring's two pairs of moving obstacles by their speed.
+u8 gLemuriaSpring_FrontObstacleAnimations[] = {
     0, 1, 9,
 };
 
-u8 gData_02001749[] = {
+u8 gLemuriaSpring_BackObstacleAnimations[] = {
     0, 3, 4,
 };
 
-u8 gData_0200174c[] = {
+u8 gLemuriaSpring_ObstacleStartX[] = {
     80, 160, 80, 72,
 };
 
-u8 gData_02001750[] = {
+u8 gLemuriaSpring_ObstacleStartZ[] = {
     32, 104, 68, 72,
 };
 
-u16 gData_02001754[] = {
+u16 gLemuriaSpring_ObstacleHeadings[] = {
     0, 1, 0, 0x8000,
 };
 // clang-format on

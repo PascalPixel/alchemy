@@ -8,23 +8,23 @@
 
 s32 LemuriaSpring_RunSpringGame(void);
 
-extern u16 gData_0200173c[];
-extern u32 gData_02001700[];
+extern u16 gLemuriaSpring_CoinPrizes[];
+extern u32 gLemuriaSpring_MedalPrizes[];
 
 s32 LemuriaSpring_RunToss();
 
-void Func_0200049c(s32 a0);
+void LemuriaSpring_GivePrize(s32 a0);
 
 s32 Func_02001400();
 
 s32 ItemDisplay_ShowItem();
 
-extern u8 gData_02001746[];
-extern u8 gData_02001749[];
-extern u8 gData_0200174c[];
-extern u8 gData_02001750[];
+extern u8 gLemuriaSpring_FrontObstacleAnimations[];
+extern u8 gLemuriaSpring_BackObstacleAnimations[];
+extern u8 gLemuriaSpring_ObstacleStartX[];
+extern u8 gLemuriaSpring_ObstacleStartZ[];
 
-extern u16 gData_02001754[];
+extern u16 gLemuriaSpring_ObstacleHeadings[];
 
 void LemuriaSpring_SetSpriteStorageKind(s32 actor, s32 active);
 

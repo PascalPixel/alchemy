@@ -23,10 +23,10 @@ void Func_0200258c(void);
 
 void Func_02000440(void);
 
-void Func_02000510(void);
+void VenusLighthouseEntrance_ThievesAttack(void);
 
-void Func_02001a2c(void);
+void VenusLighthouseEntrance_ThiefWaitsForBackup(void);
 
-void Func_02001bb0(void);
+void VenusLighthouseEntrance_PointToMeetingSpot(void);
 
 #endif

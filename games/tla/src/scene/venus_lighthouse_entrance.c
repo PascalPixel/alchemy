@@ -261,7 +261,8 @@ void Func_02000440(void) {
   Event_End();
 }
 
-void Func_02000510(void) {
+/// "There they are! Get 'em!"
+void VenusLighthouseEntrance_ThievesAttack(void) {
   u32 i;
   s32 p10;
   s32 p8;
@@ -930,7 +931,8 @@ void Func_02000510(void) {
   Event_End();
 }
 
-void Func_02001a2c(void) {
+/// "Why do I gotta be the one to wait for backup!?"
+void VenusLighthouseEntrance_ThiefWaitsForBackup(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgWhyDoI);
@@ -975,7 +977,8 @@ void Func_02001a2c(void) {
   Event_End();
 }
 
-void Func_02001bb0(void) {
+/// "Not that way, Jenna! The meeting spot is west of here."
+void VenusLighthouseEntrance_PointToMeetingSpot(void) {
   s32 t7;
 
   Event_Start();
@@ -1517,9 +1520,9 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 9, 0x892, EVENT(Func_02000440)},
-    {TRIGGER_STEP, 10, 0x890, EVENT(Func_02000510)},
-    {TRIGGER_STEP, 11, 0x893, EVENT(Func_02001a2c)},
-    {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(Func_02001bb0)},
+    {TRIGGER_STEP, 10, 0x890, EVENT(VenusLighthouseEntrance_ThievesAttack)},
+    {TRIGGER_STEP, 11, 0x893, EVENT(VenusLighthouseEntrance_ThiefWaitsForBackup)},
+    {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(VenusLighthouseEntrance_PointToMeetingSpot)},
     {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgUggghICan)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(VenusLighthouseEntrance_RunActorSparkBurst)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_020000c8)},

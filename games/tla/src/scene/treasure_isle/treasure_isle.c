@@ -267,7 +267,10 @@ DEFINE_FUNC_02000914(Func_02000a5c, 16, 0x207)
 
 #include "call.h"
 
-void Func_02000a8c(void) {
+/// The guardian of water challenges the party to prove its worth.
+/// "I am the guardian of water. If you would claim my power, you must prove
+/// your worth."
+void TreasureIsle_MeetWaterGuardian(void) {
   s32 t12;
 
   Func_02000fcc();
@@ -766,7 +769,7 @@ struct Trigger gData_02001a5c[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_STEP, 42, 0x9bb, EVENT(Func_02000a8c)},
+    {TRIGGER_STEP, 42, 0x9bb, EVENT(TreasureIsle_MeetWaterGuardian)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02000870)},
     {TRIGGERS_END},
 };

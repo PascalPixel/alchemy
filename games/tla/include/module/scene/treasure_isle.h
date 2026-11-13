@@ -55,7 +55,7 @@ void Func_02000a2c(void);
 
 void Func_02000a5c(void);
 
-void Func_02000a8c(void);
+void TreasureIsle_MeetWaterGuardian(void);
 extern u32 gData_02001074[];
 extern u32 gData_020010b0[];
 extern u32 gData_020010ec[];

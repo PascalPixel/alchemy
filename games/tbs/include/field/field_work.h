@@ -119,7 +119,10 @@ struct FieldWork {
   /// The leader's two-row actor placement table (its row and an end
   /// row), which Actor_ResetForLeader builds through its offset.
   u8 leaderPlacements[48];
-  u8 unusedAfterPlacements[2694]; ///< no code names it
+  u8 unusedAfterPlacements[6]; ///< no code names it
+  /// The palette a field Psynergy's tint fades back to, as a palette fade's
+  /// target (BG half, then sprite half), saved as the tint starts.
+  u16 savedFadeTarget[448 * 3];
   /// Set while a raised or step trigger runs; Event_Start then resets the
   /// effect counter.
   u16 busy;
@@ -171,6 +174,7 @@ STATIC_ASSERT(offsetof(struct FieldWork, unusedBeforeCamera) == 0x1dc);
 STATIC_ASSERT(offsetof(struct FieldWork, speaker) == 0x1f4);
 STATIC_ASSERT(offsetof(struct FieldWork, messageWindow) == 0x1f8);
 STATIC_ASSERT(offsetof(struct FieldWork, sideWindow) == 0x1fc);
+STATIC_ASSERT(offsetof(struct FieldWork, savedFadeTarget) == 0x236);
 STATIC_ASSERT(offsetof(struct FieldWork, busy) == 0xcb6);
 STATIC_ASSERT(offsetof(struct FieldWork, revealActive) == 0xcb8);
 STATIC_ASSERT(offsetof(struct FieldWork, revealFrames) == 0xcba);

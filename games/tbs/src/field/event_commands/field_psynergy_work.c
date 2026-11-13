@@ -244,22 +244,22 @@ void FieldPsynergy_StartCast(void) {
 /// forced by FLAG_PSYNERGY_TINT(0) to (7), over 8 frames. Most field Psynergy
 /// opens with it, and FieldPsynergy_FadeFromCastColor fades back.
 void FieldPsynergy_FadeToCastColor(void) {
-  u8 *field;
+  struct FieldWork *field;
   struct PaletteFade *work;
   s32 no;
 
   // Save the colours the buffer moves toward into the field work, 224
-  // colours of three channels (336 words) a half: the OBJ half at 0x776
-  // and, unless Reveal is active, the BG half at 0x236. While Reveal lasts
+  // colours of three channels a half: the sprite half and, unless Reveal is
+  // active, the BG half. While Reveal lasts
   // the BG target is its grey (reveal.c), and the field's own colours saved
   // before it must stay. Then show the targets at once.
-  // Both blocks are read through gHeapSlots, the spelling this site matched
-  // with; gFieldWork and gPaletteFadeWork are not measured here.
-  field = *(gHeapSlots + HEAP_SLOT_FIELD);
-  work = *(gHeapSlots + HEAP_SLOT_PALETTE_FADE);
-  Dma_Set(&work->target[672], field + 0x776, DMA_COPY_WORDS(336), REG_DMA3);
-  if (((struct FieldWork *)field)->revealActive == 0)
-    Dma_Set(work->target, field + 0x236, DMA_COPY_WORDS(336), REG_DMA3);
+  field = gFieldWork;
+  work = gPaletteFadeWork;
+  Dma_Set(&work->target[672], &field->savedFadeTarget[672], DMA_COPY_WORDS(336),
+          REG_DMA3);
+  if (field->revealActive == 0)
+    Dma_Set(work->target, field->savedFadeTarget, DMA_COPY_WORDS(336),
+            REG_DMA3);
   Dma_Set(work->target, work->current, DMA_COPY_WORDS(sizeof work->current / 4),
           REG_DMA3);
 
@@ -289,13 +289,11 @@ void FieldPsynergy_FadeToCastColor(void) {
 /// frames; while Reveal is active the BG half fades to Reveal's grey
 /// instead (PALETTE_TINT_GRAYSCALE).
 void FieldPsynergy_FadeFromCastColor(void) {
-  s32 savedPalettes;
-  u8 *field;
+  struct FieldWork *field = gFieldWork;
+  s32 savedPalettes = (s32)field->savedFadeTarget;
 
-  field = (u8 *)gFieldWork;
-  savedPalettes = (s32)(field + 0x236);
   PaletteFade_SetTarget(savedPalettes, 2);
-  if (((struct FieldWork *)field)->revealActive != 0) {
+  if (field->revealActive != 0) {
     PaletteFade_SetTarget(PALETTE_TINT_GRAYSCALE, 1);
   } else {
     PaletteFade_SetTarget(savedPalettes, 1);

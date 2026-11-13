@@ -32,19 +32,19 @@ void Func_02004a1c(void);
 
 void Func_02004b18(struct Actor *object, s32 mode);
 
-void Func_020012bc(s32 entrance);
+void WorldMap_FightBanditAndThieves(s32 entrance);
 
-void Func_02001c5c(void);
+void WorldMap_DeliverLohoCannon(void);
 
-void Func_02001e34(void);
+void WorldMap_MeetEcho(void);
 
 void Func_020029a4(void);
 
-void Func_02002ab0(void);
+void WorldMap_DriftNorthOfContinent(void);
 
 void Func_02002e00(void);
 
-void Func_02002e78(void);
+void WorldMap_TakeTheTiller(void);
 void Func_0200310c(void);
 void Func_02003490(void);
 
@@ -60,18 +60,18 @@ void Func_020001c8(void);
 
 void Func_0200022c(void);
 
-void Func_02000458(void);
+void WorldMap_SetUpFlyingShip(void);
 
-void Func_0200050c(void);
+void WorldMap_SetUpShip(void);
 void Func_02000918(void);
 
-void Func_02000994(void);
+void WorldMap_RefuseToRunAway(void);
 
-void Func_02000be0(void);
+void WorldMap_GazeIntoPond(void);
 
 void Func_02000d1c(void);
 
-void Func_02003144(void);
+void WorldMap_TakeOff(void);
 
 extern s32 gData_02006320[];
 extern s32 gData_02006578[];
@@ -99,6 +99,6 @@ void Func_02004c08(s32 value);
 s32 Func_02004c10(void);
 void Func_02004ad0(u32 *oam, s32 priority);
 
-void Func_02002698(void);
+void WorldMap_WatchVenusLighthouseCollapse(void);
 
 #endif

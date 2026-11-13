@@ -206,7 +206,7 @@ u8 *Scene_GetPlacements(void) {
 
 /// The world map's render mode 8 start: with flag 0x147 a blank message is
 /// shown first, the event work's counters are cleared.
-void Func_02000458(void) {
+void WorldMap_SetUpFlyingShip(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 
   gMainRoutineWork.renderMode = 8;
@@ -247,7 +247,7 @@ void Func_02000458(void) {
 /// is the listing's goto loop, which the loop pass leaves alone
 /// (gMainRoutineWork reloaded each pass); its first test reads pp, which still
 /// holds the index's 0.
-void Func_0200050c(void) {
+void WorldMap_SetUpShip(void) {
   s32 count;
   s32 pp;
   s32 i;
@@ -273,7 +273,8 @@ void Func_0200050c(void) {
 
 void Func_02004b48(struct Actor *object);
 
-void Func_02000574(void) {
+/// The leader jumps aboard the ship, actor 8, when close enough.
+void WorldMap_BoardShip(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct Actor *leader;
   struct Actor *ship;
@@ -324,7 +325,8 @@ void Func_02000574(void) {
   FieldEffect_ScheduleRatioTransition(0x10000, 30);
 }
 
-void Func_020006d0(void) {
+/// The leader jumps ashore from the ship, where the shore ahead lets them land.
+void WorldMap_LeaveShip(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *ship = Actor_GetById(8);
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -412,7 +414,7 @@ void Func_02000918(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (gMainRoutineWork.renderMode == 8)
-    Func_0200050c();
+    WorldMap_SetUpShip();
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   gMainRoutineWork.savedX = leader->x;
@@ -437,7 +439,8 @@ static __inline__ void Actor_JoinLeader(s32 actor) {
   Actor_SetPosition(actor, 0, 0);
 }
 
-void Func_02000994(void) {
+/// ★ Named from the game: "We shouldn't run from anymore, ." (MsgWeShouldnT)
+void WorldMap_RefuseToRunAway(void) {
   struct Actor *object;
   s32 x;
   s32 z;
@@ -514,7 +517,8 @@ void Func_02000994(void) {
   }
 }
 
-void Func_02000be0(void) {
+/// ★ Named from the game: " gazed into the pond..." (MsgGazedIntoThe)
+void WorldMap_GazeIntoPond(void) {
   u32 roll = (Random16Far() << 4) >> 16;
 
   Event_Start();
@@ -641,7 +645,7 @@ s32 Scene_Initialize(void) {
   case 73:
   case 74:
     if (GameFlag_Test(0xa76))
-      Func_020012bc(gMainRoutineWork.entrance);
+      WorldMap_FightBanditAndThieves(gMainRoutineWork.entrance);
     break;
   case 77:
     Func_020029a4();
@@ -652,14 +656,14 @@ s32 Scene_Initialize(void) {
   case 59:
     if (!Event_GetFlag(0x90a) && GameFlag_Test(0xa5f) != 0) {
       GameFlag_SetBit(0x90a);
-      Func_02001c5c();
+      WorldMap_DeliverLohoCannon();
     }
     break;
   case 64:
-    Func_02002698();
+    WorldMap_WatchVenusLighthouseCollapse();
     break;
   case 65:
-    Func_02002ab0();
+    WorldMap_DriftNorthOfContinent();
     break;
   case 70:
     Func_02004c00();
@@ -667,14 +671,14 @@ s32 Scene_Initialize(void) {
   case 2:
     if (GameFlag_Test(55) == 0) {
       Actor_SetScript(9, gData_0200632c);
-      Func_02001e34();
+      WorldMap_MeetEcho();
     }
     break;
   case 67:
     Func_02002e00();
     break;
   case 68:
-    Func_02002e78();
+    WorldMap_TakeTheTiller();
     break;
   case 69:
     Func_0200310c();
@@ -715,7 +719,9 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// The djinn tutorial. With flag 0x175 set each message is offset by
 /// MsgDjinnGiveTutorialB less A.
 // As The Broken Seal's WorldMap_ShowDjinnTutorial.
-void Func_020011fc(void) {
+/// ★ Named from the game: "To give your Djinni to someone else, move it like
+/// this." (MsgDjinnGiveTutorialA)
+void WorldMap_ExplainGivingDjinn(void) {
   Func_02004db0();
   FieldEffect_ScheduleRatioTransition(0x10000, 6);
   Func_02004e00();
@@ -759,7 +765,9 @@ void Func_020011fc(void) {
     Actor_FaceDirection(id, a1, 0);                                              \
   } while (0)
 
-void Func_020012bc(s32 entrance) {
+/// The bandit and the thieves from Vault, after a linked game, want Isaac.
+/// ★ Named from the game: "Hey! Wait a minute!" (MsgHeyWaitA)
+void WorldMap_FightBanditAndThieves(s32 entrance) {
   s32 east, west, east74, eastB, westB;
 
   Event_Start();
@@ -1081,7 +1089,9 @@ extern const u8 gData_02004e38[];
 extern const u8 gData_02004e58[];
 extern const u8 gData_02004e88[];
 
-void Func_02001c5c(void) {
+/// ★ Named from the game: "We got the cannon onto your ship with no problems."
+/// (MsgYouDonT)
+void WorldMap_DeliverLohoCannon(void) {
   s32 angle;
 
   Event_Start();
@@ -1147,7 +1157,10 @@ void Func_02001c5c(void) {
 /// A tutorial message: the second set while flag 0x175 is set.
 #define TUTORIAL_MESSAGE(base) TUTORIAL_SET_MESSAGE(Event_GetFlag(0x175), base)
 
-void Func_02001e34(void) {
+/// The first Djinni, Echo, joins south of Daila, however often he is refused.
+/// ★ Named from the game: "The Venus Djinni has become 's pal."
+/// (MsgTheVenusDjinni)
+void WorldMap_MeetEcho(void) {
   struct Actor *djinni;
   struct Actor *leader;
   s32 x;
@@ -1376,7 +1389,7 @@ void Func_02001e34(void) {
   Event_ShowMessageAndWait(9, 0);
   Actor_WalkToAndWait(9, x >> 16, z >> 16);
 tutorial:
-  Func_020011fc();
+  WorldMap_ExplainGivingDjinn();
   Func_02004db0();
   return;
 refused:
@@ -1463,7 +1476,9 @@ void Func_02002640(s32 a, s32 b, s32 dx, s32 dz) {
   WorldMap_SetWindowCellTileAndDraw(a + 16, b, 64, 224);
 }
 
-void Func_02002698(void) {
+/// ★ Named from the game: "They've done it, ! They've lit the beacon!"
+/// (MsgTheyVeDone)
+void WorldMap_WatchVenusLighthouseCollapse(void) {
   Func_02003d44(1);
   FieldEvent_SetMessageId((s32)MsgTheyVeDone);
   Event_ShowMessage(8, 0);
@@ -1608,7 +1623,8 @@ void Func_020029a4(void) {
 
 void Func_020042e0(s32 mode);
 
-void Func_02002ab0(void) {
+/// ★ Named from the game: "We're saved!" (MsgWeReSaved)
+void WorldMap_DriftNorthOfContinent(void) {
   struct Actor *boat = Actor_Get(10);
   struct RescueMap *map = (struct RescueMap *)Ram_HeapSlots->mapWork;
   s32 i;
@@ -1730,7 +1746,8 @@ void Func_02002e00(void) {
   Event_SetDestination((s32)&SceneId_Ov667, 80);
 }
 
-void Func_02002e78(void) {
+/// ★ Named from the game: "Take the tiller, !" (MsgTakeTheTiller)
+void WorldMap_TakeTheTiller(void) {
   s32 scale;
   s32 seen = Event_GetFlag(0x8de);
 
@@ -1814,7 +1831,10 @@ void Func_0200310c(void) {
   FieldEvent_SetExitRequest(66);
 }
 
-void Func_02003144(void) {
+/// The ship's first flight once it has wings (flag 0xa78).
+/// ★ Named from the game: "We did it! The ship took off without a hitch!"
+/// (MsgWeDidIt)
+void WorldMap_TakeOff(void) {
   s32 x, z, i;
 
   if (GameFlag_Test(0x8df) == 0)
@@ -1823,7 +1843,7 @@ void Func_02003144(void) {
   FieldEvent_ResolvePendingActions(0);
   Event_SetFlag(0xa78);
   Actor_MoveToAndWait(8, 0x1bf6, 0x2154);
-  Func_0200050c();
+  WorldMap_SetUpShip();
   x = Actor_Get(8)->x / 0x10000;
   z = Actor_Get(8)->z / 0x10000;
   i = 0;

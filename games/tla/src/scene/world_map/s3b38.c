@@ -61,13 +61,13 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH(wrapper): as in the scene layer of The Broken Seal, forwarding
    * through the inline sets the arguments up in their own order: the native
    * shifts z before it starts the -1, where called directly the -1 starts
-   * first; as direct calls, 6 of 66 instructions of Func_02003ca8 differ in
+   * first; as direct calls, 6 of 66 instructions of WorldMap_JitterTransitionCamera differ in
    * tla-en. */
   FieldCamera_MoveTo(x, y, z, mode);
 }
 
 /// Shakes the camera diagonally by one pixel every three frames.
-DEFINE_FUNC_02001364(Func_02003ca8)
+DEFINE_FUNC_02001364(WorldMap_JitterTransitionCamera)
 
 #include "event_work.h"
 #include "bg_scroll.h"

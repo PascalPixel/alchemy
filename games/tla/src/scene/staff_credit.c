@@ -601,7 +601,7 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
 }
 
 /// Shakes the camera diagonally by one pixel every three frames.
-DEFINE_FUNC_02001364(Func_02001364)
+DEFINE_FUNC_02001364(StaffCredit_JitterTransitionCamera)
 
 #define PUSH_PICTURE(offset)                                                   \
   IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + (offset)), 0x84000140)

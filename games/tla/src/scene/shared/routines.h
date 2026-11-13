@@ -3416,4 +3416,1233 @@
     FieldTask_Remove(call1);                                                   \
   }
 
+/// 1 scenes: gabomba_catacombs.
+#define DEFINE_FUNC_020001E0(name, n1, n2, n3, n4, n5, n6, n7, n8, n9)         \
+  void name(void) {                                                            \
+    struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);       \
+                                                                               \
+    Func_02001274_(n1, n2, 0, n3, 3, 56, n4);                                  \
+    Actor_SetPosition(n5, PIXELS(n6), PIXELS(n7));                             \
+    if (leader->x >> 20 == n8 && leader->z >> 20 == n9) {                      \
+      LEADER_HOP();                                                            \
+      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16,    \
+                                         0);                                   \
+      leader->velocityY = PIXELS(6);                                           \
+      Actor_WaitForMoveById(gMainRoutineWork.currentOwner);                    \
+      Event_End();                                                             \
+    }                                                                          \
+  }
+
+/// 1 scenes: treasure_isle.
+#define DEFINE_FUNC_02000914(name, n1, n2)                                     \
+  void name(void) {                                                            \
+    s32 t0;                                                                    \
+                                                                               \
+    t0 = ((s32)Actor_Get(n1));                                                 \
+    FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9) =                                   \
+        ((-13 & FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9)) | 4);                  \
+    FIELD_AT((t0 + 0x23), u8, 0) = (0xfe & FIELD_AT((t0 + 0x23), u8, 0));      \
+    Event_SetFlag(n2);                                                         \
+  }
+
+/// 2 scenes: mars_lighthouse_aerie, mars_lighthouse_entrance.
+#define DEFINE_FUNC_020001A0(name, call1, call2, n1, call3)                    \
+  void name(void) {                                                            \
+    call1();                                                                   \
+    call2();                                                                   \
+    {                                                                          \
+      u8 *party = (u8 *)&gMainRoutineWork;                                     \
+                                                                               \
+      party[0x2c2] = 2;                                                        \
+    }                                                                          \
+    FieldEvent_SetExitRequest(n1);                                             \
+    FieldEvent_Wait(40);                                                       \
+    call3();                                                                   \
+  }
+
+/// 1 scenes: gabomba_catacombs.
+#define DEFINE_FUNC_020006CC(name, n1, n2, n3, n4, n5, n6)                     \
+  void name(void) {                                                            \
+    struct Actor *object = Actor_GetById(n1);                                  \
+                                                                               \
+    GameFlag_SetBit(n2);                                                       \
+    object->motionFlags = 0;                                                   \
+    object->priorityFlags = 0;                                                 \
+    MapGrid_CopyCellAttributes(n3, n4, 1, 1, n5, n6);                          \
+  }
+
+/// 1 scenes: sea_of_time.
+#define DEFINE_FUNC_02001480(name, n1, n2)                                     \
+  void name(void) {                                                            \
+    struct Actor *object;                                                      \
+                                                                               \
+    Event_Start();                                                             \
+    Event_ResolvePendingActions(0);                                            \
+    object = Actor_GetById(n1);                                                \
+    Func_0200141c(object->x, Actor_GetById(n1)->z, n1);                        \
+    GameFlag_SetBit(n2);                                                       \
+    Func_02001fb4();                                                           \
+  }
+
+/// 1 scenes: kandorean_temple/s2ec4.
+#define DEFINE_FUNC_02003684(name, n1, n2, n3, n4, n5, n6, n7, data1)          \
+  void name(void) {                                                            \
+    struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);       \
+    struct Actor *first = Actor_GetById(n1);                                   \
+    struct Actor *second = Actor_GetById(n2);                                  \
+                                                                               \
+    Event_Start();                                                             \
+    Event_ResolvePendingActions(0);                                            \
+    Func_02005388(162);                                                        \
+    FieldCamera_MoveTo(-1, -1, -1, 0);                                         \
+    wait(1);                                                                   \
+    leader->motionFlags = 0;                                                   \
+    Actor_SetPositionAndResetMotion_(                                          \
+        Actor_GetById(gMainRoutineWork.currentOwner), PIXELS(n3), PIXELS(-20), \
+        PIXELS(n4));                                                           \
+    Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner),   \
+                               0);                                             \
+    Actor_SetPositionAndResetMotion_(Actor_GetById(n1), PIXELS(n3),            \
+                                     PIXELS(-20), PIXELS(n5));                 \
+    Actor_SetPositionAndResetMotion_(Actor_GetById(n2), PIXELS(n3),            \
+                                     PIXELS(-20), PIXELS(n4));                 \
+    Actor_SetSpritePriority(n1, 2);                                            \
+    Actor_SetSpritePriority(n2, 3);                                            \
+    {                                                                          \
+      u8 *flags = &second->priorityFlags;                                      \
+      s32 c = 2 | *flags;                                                      \
+                                                                               \
+      *flags = c;                                                              \
+    }                                                                          \
+    second->scaleY = 0x400;                                                    \
+    Actor_SetModeById(n1, 4);                                                  \
+    Actor_SetModeById(n2, 2);                                                  \
+    ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;            \
+    Event_StartScreenTransition();                                             \
+    Event_WaitTransitionFrames();                                              \
+    /* A goto loop, as in Func_0200393c. */                                    \
+  rise:                                                                        \
+    first->y += PIXELS(4);                                                     \
+    leader->y += PIXELS(4);                                                    \
+    Func_02000cd8(n2, 0x4ccc, 0x4ccc);                                         \
+    wait(1);                                                                   \
+    if (first->y < 0)                                                          \
+      goto rise;                                                               \
+    MapGrid_CopyCellAttributes(0, 0, 1, 1, n6, n7);                            \
+    data1 = 2000;                                                              \
+    ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 516;            \
+    Event_End();                                                               \
+  }
+
+/// 2 scenes: mars_lighthouse_entrance, mars_lighthouse_room_f.
+#define DEFINE_FUNC_02001C74(name, call1, call2, n1, call3, call4)             \
+  void name(s32 *position, s32 speed, s32 mode) {                              \
+    struct Actor *object = call1(366, position[0], position[1], position[2]);  \
+                                                                               \
+    if (object != NULL) {                                                      \
+      object->bounce = 0;                                                      \
+      object->gravity = 0;                                                     \
+      object->unk4c = speed;                                                   \
+      call2(object, n1);                                                       \
+      object->update = call3;                                                  \
+      if (mode)                                                                \
+        object->unk5c[0] = 2;                                                  \
+      call4(object, 2);                                                        \
+    }                                                                          \
+  }
+
+/// 4 scenes: airs_rock_inside/s0038, anemos_inner_sanctum_entrance/spawn,
+/// caverns/object, sea_of_time/object.
+#define DEFINE_FUNC_020000D0_2(name, n1)                                       \
+  struct Actor *name(s32 x, s32 y, s32 z, s32 type) {                          \
+    struct Actor *object = Import_ActorCreate(type, x, y, z);                  \
+                                                                               \
+    if (object != NULL) {                                                      \
+      Scene_SetActorSpritePriority(object, 1);                                 \
+      object->motionFlags = 0;                                                 \
+      object->collisionFlags = 8;                                              \
+      Actor_SetSingleChildFlags(object, 0);                                    \
+      Actor_SetPartAttribute(object, 15);                                      \
+      object->priorityFlags |= n1;                                             \
+      return object;                                                           \
+    }                                                                          \
+    return NULL;                                                               \
+  }
+
+/// 3 scenes: dehkan_plateau, shrine_of_the_sea_god/s1340, yampi_desert.
+#define DEFINE_FUNC_02001F94(name, n1, call1, n2, call2)                       \
+  void name(void) {                                                            \
+    u32 i;                                                                     \
+                                                                               \
+    for (i = 0; i <= n1; i++)                                                  \
+      call1(i + n2);                                                           \
+    call2();                                                                   \
+  }
+
+/// 1 scenes: daila.
+#define DEFINE_FUNC_02000924(name, n1, n2, n3, n4, n5)                         \
+  void name(void) {                                                            \
+    Import_EventStart();                                                       \
+    Event_ResolvePendingActions(0);                                            \
+    MapGrid_CopyCellAttributes(n1, n2, 1, 1, n3, n2);                          \
+    Actor_SetHorizontalPositionWithTerrain(n4, 0, 0);                          \
+    GameFlag_SetBit(n5);                                                       \
+    Import_EventEnd();                                                         \
+  }
+
+/// 1 scenes: islet_cave.
+#define DEFINE_FUNC_02000AEC(name, n1, n2, n3)                                 \
+  void name(void) {                                                            \
+    struct Actor *object0;                                                     \
+    s32 value1;                                                                \
+    struct Actor *object2;                                                     \
+    s32 value3;                                                                \
+    struct Actor *object4;                                                     \
+                                                                               \
+    object0 = Actor_GetById(n1);                                               \
+    value1 = object0->x;                                                       \
+    object2 = Actor_GetById(n1);                                               \
+    value3 = object2->z;                                                       \
+    Func_020009f8(n1, n2, 0);                                                  \
+    wait(2);                                                                   \
+    object4 = Actor_GetById(n1);                                               \
+    Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,      \
+                              (object4->x >> 20), ((value3 >> 20) - 1));       \
+    Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20),                      \
+                              ((value3 >> 20) - 1));                           \
+    GameFlag_ClearBit(n3);                                                     \
+    return;                                                                    \
+  }
+
+/// 1 scenes: islet_cave.
+#define DEFINE_FUNC_02000CF0(name, n1, n2)                                     \
+  void name(void) {                                                            \
+    struct Actor *object0;                                                     \
+    s32 value1;                                                                \
+    struct Actor *object2;                                                     \
+    s32 value3;                                                                \
+    struct Actor *object4;                                                     \
+                                                                               \
+    object0 = Actor_GetById(n1);                                               \
+    value1 = object0->x;                                                       \
+    object2 = Actor_GetById(n1);                                               \
+    value3 = object2->z;                                                       \
+    Func_020009f8(n1, -80, 0);                                                 \
+    wait(2);                                                                   \
+    object4 = Actor_GetById(n1);                                               \
+    Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,      \
+                              (object4->x >> 20), ((value3 >> 20) - 1));       \
+    Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20),                      \
+                              ((value3 >> 20) - 1));                           \
+    GameFlag_ClearBit(n2);                                                     \
+    return;                                                                    \
+  }
+
+/// 2 scenes: jupiter_lighthouse_room_5, mars_lighthouse_aerie.
+#define DEFINE_FUNC_020001A4(name, n1, data1, call1, n2)                       \
+  void name(void) {                                                            \
+    struct Actor *center;                                                      \
+    struct OrbitEffect *effect;                                                \
+    struct FieldSprite *sprite;                                                \
+    s32 angle;                                                                 \
+                                                                               \
+    if (Event_GetFlag(n1) == 0 && gFrameCount % 3 != 0)                        \
+      return;                                                                  \
+    center = Actor_Get(23);                                                    \
+    if (Event_GetFlag(n1) != 0) {                                              \
+      u32 random;                                                              \
+                                                                               \
+      random = Random16Far();                                                  \
+      effect = CreateOrbitEffect(0x2a0, center->x,                             \
+                                 (s32)((u32)(random << 8) >> 16 << 16) +       \
+                                     center->y - 0x1c0000,                     \
+                                 center->z);                                   \
+    } else {                                                                   \
+      u32 random;                                                              \
+                                                                               \
+      random = Random16Far();                                                  \
+      effect = CreateOrbitEffect(0x2a0, center->x,                             \
+                                 (s32)((u32)(random << 6) >> 16 << 16) +       \
+                                     center->y - 0x1c0000,                     \
+                                 center->z);                                   \
+    }                                                                          \
+    if (effect != 0) {                                                         \
+      sprite = effect->sprite;                                                 \
+      Actor_StartScript(effect, data1);                                        \
+      Actor_SetSpriteColor(effect, 1);                                         \
+      effect->motionFlags = 0;                                                 \
+      angle = Random16Far() & 0xffff000;                                       \
+      effect->angle = angle;                                                   \
+      effect->unk66 = 0;                                                       \
+      effect->update = (void (*)(struct OrbitEffect *))call1;                  \
+      effect->radius =                                                         \
+          Math_Sin((u32)(Random16Far() * 0xffff) >> 20) * 24 >> 16;            \
+      sprite->nextFrame = 0;                                                   \
+      sprite->priority = n2;                                                   \
+    }                                                                          \
+  }
+
+/// 5 scenes: mars_lighthouse_entrance, mars_lighthouse_entrance/s2270,
+/// mars_lighthouse_room_f/flash, mars_lighthouse_room_m/s2118,
+/// mars_lighthouse_star_room/ride_handle.
+#define DEFINE_FUNC_020012BC(name, n1, n2, n3)                                 \
+  void name(struct Actor *object) {                                            \
+    switch (gFrameCount & 7) {                                                 \
+    case 0:                                                                    \
+      Animation_ApplyChildValues(object, n1);                                  \
+      break;                                                                   \
+    case n2:                                                                   \
+      Animation_ApplyChildValues(object, n3);                                  \
+      break;                                                                   \
+    }                                                                          \
+  }
+
+/// 1 scenes: shrine_of_the_sea_god/s1340.
+#define DEFINE_FUNC_020027F8(name, n1, n2, n3)                                 \
+  void name(void) {                                                            \
+    Func_0200279c();                                                           \
+    Camera_MoveWithinMapBounds(n1 << 16, 16 << 16, n2 << 16, 1);               \
+    Actor_SetPositionAndReset(14, n1, n2);                                     \
+    Actor_GetById(14)->state = n3;                                             \
+    Func_020027d4();                                                           \
+  }
+
+/// 1 scenes: gabomba_statue.
+#define DEFINE_FUNC_02001728(name, n1, n2)                                     \
+  void name(struct Actor *actor) {                                             \
+    Func_020056b4();                                                           \
+    FieldEvent_ResolvePendingActions(0);                                       \
+    Event_PlaySound(581);                                                      \
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0x19999);           \
+    Actor_MoveToAndWait(gMainRoutineWork.currentOwner, n1, n2);                \
+    Event_End();                                                               \
+  }
+
+/// 1 scenes: shrine_of_the_sea_god/s1340.
+#define DEFINE_FUNC_02002830(name, n1, n2, n3, n4, n5, n6)                     \
+  void name(void) {                                                            \
+    struct ShrineOfTheSeaGodObject *block = Actor_GetById(14);                 \
+    u8 *state;                                                                 \
+    s32 flag;                                                                  \
+                                                                               \
+    Func_0200279c();                                                           \
+    ShrineOfTheSeaGod_CamMove(n1 << 16, 16 << 16, 216 << 16, 1);               \
+    ShrineOfTheSeaGod_ObjWalk(14, n1, 216);                                    \
+    flag = GameFlag_Test(0x207);                                               \
+    state = &block->state;                                                     \
+    if (flag) {                                                                \
+      block->facing = n2;                                                      \
+      ShrineOfTheSeaGod_ObjEmote(14, 258);                                     \
+      Event_Wait(20);                                                          \
+      *state = n3;                                                             \
+      GameFlag_SetBit(0x206);                                                  \
+    } else {                                                                   \
+      Event_Wait(5);                                                           \
+      Camera_MoveWithinMapBounds(n4 << 16, 16 << 16, 216 << 16, 1);            \
+      Sound_Play(153);                                                         \
+      Actor_SetSingleChildFlags(Actor_GetById(14), 0);                         \
+      ShrineOfTheSeaGod_ObjSpeed(14, 0x4cccc, 0x26666);                        \
+      block->speed = 0x80000;                                                  \
+      Actor_SetPositionAndCommit(14, n5, 216);                                 \
+      Actor_SetSingleChildFlags(Actor_GetById(14), 1);                         \
+      Event_Wait(10);                                                          \
+      ShrineOfTheSeaGod_ObjSpeed(14, 0x19999, 0xcccc);                         \
+      ShrineOfTheSeaGod_ObjWalk(14, n4, 216);                                  \
+      *state = n6;                                                             \
+    }                                                                          \
+    Func_020027d4();                                                           \
+  }
+
+/// 1 scenes: gabomba_statue.
+#define DEFINE_FUNC_02001284(name, n1, n2, n3, n4, n5, n6, n7)                 \
+  void name(void) {                                                            \
+    struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
+    s32 x = leader->x >> 20;                                                   \
+    s32 z = leader->z >> 20;                                                   \
+                                                                               \
+    if (z == n1) {                                                             \
+      if (x == n2 && (gInput.held & 16) == 0)                                  \
+        return;                                                                \
+      if (x == n3 && (gInput.held & 32) == 0)                                  \
+        return;                                                                \
+    } else if (x == n4 && z == n5 && (gInput.held & 64) == 0) {                \
+      return;                                                                  \
+    }                                                                          \
+    Func_020011bc(n6, n7);                                                     \
+  }
+
+/// 1 scenes: shrine_of_the_sea_god/s1340.
+#define DEFINE_FUNC_02002B50(name, n1, n2, n3, n4, n5)                         \
+  void name(void) {                                                            \
+    struct ShrineOfTheSeaGodObject *block = Actor_GetById(14);                 \
+    u8 *state;                                                                 \
+    s32 flag;                                                                  \
+                                                                               \
+    Func_0200279c();                                                           \
+    flag = GameFlag_Test(0x207);                                               \
+    state = &block->state;                                                     \
+    if (flag) {                                                                \
+      block->facing = n1;                                                      \
+      ShrineOfTheSeaGod_ObjEmote(14, 258);                                     \
+      Event_Wait(20);                                                          \
+      *state = n2;                                                             \
+      GameFlag_SetBit(0x206);                                                  \
+    } else {                                                                   \
+      Camera_MoveWithinMapBounds(n3 << 16, 16 << 16, 216 << 16, 1);            \
+      Sound_Play(153);                                                         \
+      Actor_SetSingleChildFlags(Actor_GetById(14), 0);                         \
+      ShrineOfTheSeaGod_ObjSpeed(14, 0x4cccc, 0x26666);                        \
+      block->speed = 0x80000;                                                  \
+      Actor_SetPositionAndCommit(14, n4, 216);                                 \
+      Actor_SetSingleChildFlags(Actor_GetById(14), 1);                         \
+      Event_Wait(10);                                                          \
+      ShrineOfTheSeaGod_ObjSpeed(14, 0x19999, 0xcccc);                         \
+      ShrineOfTheSeaGod_ObjWalk(14, n3, 216);                                  \
+      *state = n5;                                                             \
+    }                                                                          \
+    Func_020027d4();                                                           \
+  }
+
+/// 1 scenes: lemurian_ship.
+#define DEFINE_FUNC_02001138(name, n1, n2, n3, n4)                             \
+  void name(void) {                                                            \
+    struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;             \
+    struct LemurianShipObject *object =                                        \
+        ((struct LemurianShipObject *)Actor_GetById(n1));                      \
+    u32 i;                                                                     \
+                                                                               \
+    Event_Start();                                                             \
+    Event_ResolvePendingActions(0);                                            \
+    work->field16a = 0;                                                        \
+    GameFlag_ClearBit(n2);                                                     \
+    GameFlag_ClearBit(n3);                                                     \
+    Event_Wait(20);                                                            \
+    Sound_Play(186);                                                           \
+    for (i = 0; i <= 63; i++) {                                                \
+      object->y += 0x4000;                                                     \
+      wait(1);                                                                 \
+    }                                                                          \
+    Actor_SetSpritePriority(n1, 2);                                            \
+    Map_CopyCellPictureIndicesRect(4, 123, n4, 69, 1, 1);                      \
+    MapGrid_CopyCellAttributes(36, 0, 1, 1, n4, 9);                            \
+    Sound_Play(188);                                                           \
+    MapGrid_CopyCellsTo(7, 124, 31, 64, 3, 2);                                 \
+    GameFlag_ClearBit(0x982);                                                  \
+    Event_Wait(20);                                                            \
+    Event_End();                                                               \
+  }
+
+/// 2 scenes: gondowan_cliffs/s03cc, kibombo_mountains.
+#define DEFINE_FUNC_020000EC(name, n1, n2, n3, n4, n5)                         \
+  void name(void) {                                                            \
+    struct Actor *object = Actor_Get(n1);                                      \
+                                                                               \
+    object->priorityFlags = 0;                                                 \
+    object->motionFlags = 0;                                                   \
+    MapGrid_CopyCellAttributes(n2, n3, 1, 1, n4, n3);                          \
+    Event_SetFlag(n5);                                                         \
+  }
+
+/// 1 scenes: garoh.
+#define DEFINE_FUNC_02000390(name, data1, n1, n2)                              \
+  void name(void) {                                                            \
+    struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;              \
+    const u8 *table = (const u8 *)data1;                                       \
+    u32 i = 0;                                                                 \
+    u16 *dst = &buffers->palette[n1];                                          \
+    s32 blue = 4;                                                              \
+    s32 red = 0;                                                               \
+    volatile u16 *color;                                                       \
+    s32 green;                                                                 \
+                                                                               \
+  loop:                                                                        \
+    color = BG_PLTT + n1 + i;                                                  \
+    green = blue - 2;                                                          \
+    *color = *(const u16 *)(table + blue) << 10 |                              \
+             *(const u16 *)(table + green) << 5 | *(const u16 *)(table + red); \
+    *dst++ = *color;                                                           \
+    i++;                                                                       \
+    blue += 6;                                                                 \
+    red += 6;                                                                  \
+    if (i < n2)                                                                \
+      goto loop;                                                               \
+  }
+
+/// 1 scenes: lemurian_ship.
+#define DEFINE_FUNC_02000BF0(name, n1)                                         \
+  void name(s32 id) {                                                          \
+    Event_Start();                                                             \
+    Event_ResolvePendingActions(0);                                            \
+    Actor_SetAngleToward(id, gMainRoutineWork.currentOwner, 0);                \
+    Actor_StartRepeatedMotion(id, 2);                                          \
+    Actor_SetAttachedEffect(id, 0x102);                                        \
+    Event_Wait(20);                                                            \
+    gMainRoutineWork.battleRule24b = 2;                                        \
+    Field_RequestBattleFromEncounterTable(11, 0);                              \
+    GameFlag_SetBit(id + n1);                                                  \
+  }
+
+/// 1 scenes: islet_cave.
+#define DEFINE_FUNC_02000B4C(name, n1, n2, n3)                                 \
+  void name(void) {                                                            \
+    struct Actor *object0;                                                     \
+    s32 value1;                                                                \
+    struct Actor *object2;                                                     \
+    s32 value3;                                                                \
+    struct Actor *object4;                                                     \
+                                                                               \
+    object0 = Actor_GetById(n1);                                               \
+    value1 = object0->x;                                                       \
+    object2 = Actor_GetById(n1);                                               \
+    value3 = object2->z;                                                       \
+    Func_020009f8(n1, -n2, 0);                                                 \
+    wait(2);                                                                   \
+    object4 = Actor_GetById(n1);                                               \
+    Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,      \
+                              (object4->x >> 20), ((value3 >> 20) - 1));       \
+    Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20),                      \
+                              ((value3 >> 20) - 1));                           \
+    GameFlag_SetBit(n3);                                                       \
+    return;                                                                    \
+  }
+
+/// 1 scenes: islet_cave.
+#define DEFINE_FUNC_02000C8C(name, n1, n2)                                     \
+  void name(void) {                                                            \
+    struct Actor *object0;                                                     \
+    s32 value1;                                                                \
+    struct Actor *object2;                                                     \
+    s32 value3;                                                                \
+    struct Actor *object4;                                                     \
+                                                                               \
+    object0 = Actor_GetById(n1);                                               \
+    value1 = object0->x;                                                       \
+    object2 = Actor_GetById(n1);                                               \
+    value3 = object2->z;                                                       \
+    Func_020009f8(n1, 80, 0);                                                  \
+    wait(2);                                                                   \
+    object4 = Actor_GetById(n1);                                               \
+    Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,      \
+                              (object4->x >> 20), ((value3 >> 20) - 1));       \
+    Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20),                      \
+                              ((value3 >> 20) - 1));                           \
+    GameFlag_SetBit(n2);                                                       \
+    return;                                                                    \
+  }
+
+/// 1 scenes: taopo_swamp.
+#define DEFINE_FUNC_02001684(name, n1, n2)                                     \
+  void name(void) {                                                            \
+    if ((gFrameCount & 7) == 0 && (u32)Random16Far() < 0x4000) {               \
+      s32 offset = Random16Far() << 5;                                         \
+      s32 x = offset + n1;                                                     \
+      s32 z = n2 - offset;                                                     \
+      s32 y = 0xa00000;                                                        \
+      struct Actor *object = FieldActor_Create(0x12d, x, y, z);                \
+      s32 scale = 0x547a;                                                      \
+                                                                               \
+      if (object != NULL) {                                                    \
+        object->scaleX = scale;                                                \
+        object->scaleY = scale;                                                \
+        object->motionFlags = 2;                                               \
+        object->terrainHeight = 0xffc00000;                                    \
+        object->gravity = 0x7333;                                              \
+        Actor_StartScript(object, gData_02002a6c);                             \
+        Actor_SetSingleChildFlags(object, 0);                                  \
+      }                                                                        \
+    }                                                                          \
+  }
+
+/// 1 scenes: airs_rock_inside/s2770.
+#define DEFINE_FUNC_02002980(name, n1)                                         \
+  void name(void) {                                                            \
+    struct Actor *object = Actor_GetById(Party_GetLeaderActor());              \
+    s32 x = object->x >> 20;                                                   \
+    s32 y = object->y >> 20;                                                   \
+    s32 z = object->z >> 20;                                                   \
+    s32 key = (x << 16) + z;                                                   \
+                                                                               \
+    if (key != gData_02006c0c) {                                               \
+      gData_02006c0c = key;                                                    \
+      gData_020073dc = 1;                                                      \
+      gData_020073e0 = 3;                                                      \
+      gData_020073e4 = x;                                                      \
+      gData_020073e8 = z - y + n1;                                             \
+      CopyCells(x, gData_020073e8, 1, 3, 73, 72);                              \
+      CopyCells(72, 72, gData_020073dc, gData_020073e0, gData_020073e4,        \
+                gData_020073e8);                                               \
+    }                                                                          \
+  }
+
+/// 1 scenes: gabomba_statue.
+#define DEFINE_FUNC_020012EC(name, n1, n2, n3, n4, n5, n6, n7, n8)             \
+  void name(void) {                                                            \
+    struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
+    s32 x = leader->x >> 20;                                                   \
+    s32 z = leader->z >> 20;                                                   \
+                                                                               \
+    if (x == n1) {                                                             \
+      if (z == n2 && (gInput.held & 128) == 0)                                 \
+        return;                                                                \
+      if (z == n3 && (gInput.held & 64) == 0)                                  \
+        return;                                                                \
+    } else if (z == n4) {                                                      \
+      if (x == n5 && (gInput.held & 16) == 0)                                  \
+        return;                                                                \
+      if (x == n6 && (gInput.held & 32) == 0)                                  \
+        return;                                                                \
+    }                                                                          \
+    Func_020011bc(n7, n8);                                                     \
+  }
+
+/// 1 scenes: gabomba_statue.
+#define DEFINE_FUNC_02001B38_2(name, n1, n2)                                   \
+  void name(void) {                                                            \
+    u32 i = 0;                                                                 \
+                                                                               \
+  next:                                                                        \
+    {                                                                          \
+      s32 id = i + n1;                                                         \
+      struct Actor *object = Actor_Get(id);                                    \
+                                                                               \
+      Func_02001adc(id);                                                       \
+      object->motionFlags = 0;                                                 \
+      object->y = PIXELS(36);                                                  \
+      i++;                                                                     \
+    }                                                                          \
+    if (i < n2)                                                                \
+      goto next;                                                               \
+    Func_02001b0c();                                                           \
+  }
+
+/// 1 scenes: lemurian_ship_deck.
+#define DEFINE_FUNC_02000188(name, n1, n2)                                     \
+  void name(void) {                                                            \
+    if ((gFrameCount & 7) == 0) {                                              \
+      s16 last = OBJ_PALETTE[n1];                                              \
+      s32 i;                                                                   \
+                                                                               \
+      /* The loop is written with goto so that it carries no loop notes: the   \
+       * bytes */                                                              \
+      /* rebuild the palette base on every pass, and a for or do loop hoists   \
+       * it */                                                                 \
+      /* and steps two pointers (differ 30). */                                \
+      i = n1;                                                                  \
+    loop:                                                                      \
+      OBJ_PALETTE[i] = OBJ_PALETTE[i - 1];                                     \
+      i--;                                                                     \
+      if (i != n2)                                                             \
+        goto loop;                                                             \
+      OBJ_PALETTE[n2] = last;                                                  \
+    }                                                                          \
+  }
+
+/// 1 scenes: mars_lighthouse_entrance.
+#define DEFINE_FUNC_0200085C(name, n1, n2, n3, n4, n5, n6, n7, n8, n9)         \
+  void name(s32 state, s32 frame) {                                            \
+    if (state == 1) {                                                          \
+      Event_PlaySound(0x23e);                                                  \
+      PaletteFade_ApplyTarget(0x10000, 0);                                     \
+      PaletteFade_Interpolate(60);                                             \
+      MapGrid_CopyCellsLayered(n1, n2, 8, n3, n1, n4);                         \
+      MapGrid_CopyCellAttributes(n5, n6, 8, n7, n1, n6);                       \
+      Actor_SetPosition(n8, 0, 0);                                             \
+      Flag_Set(n9);                                                            \
+    }                                                                          \
+    if (frame > 96 && frame < 272 && frame % 30 == 0)                          \
+      Func_02000414(n8);                                                       \
+    if (frame == 276) {                                                        \
+      PaletteFade_ApplyTarget(0x7fff, 0);                                      \
+      PaletteFade_Interpolate(20);                                             \
+    }                                                                          \
+  }
+
+/// 1 scenes: aqua_rock.
+#define DEFINE_FUNC_020010F4(name, n1, n2, n3, n4)                             \
+  void name(s32 unused, s32 id) {                                              \
+    struct Actor *object = Actor_GetById(id);                                  \
+                                                                               \
+    object->priorityFlags = 0;                                                 \
+    object->motionFlags = 0;                                                   \
+    Func_02002960_(n1, n2, 1, 1, n3, n2);                                      \
+    GameFlag_SetBit(n4);                                                       \
+  }
+
+/// 3 scenes: kibombo/s2f34, shrine_of_the_sea_god/s1340, yampi_desert.
+#define DEFINE_FUNC_02002D10(name, n1, call1)                                  \
+  void name(void) {                                                            \
+    if (GameFlag_Test(265)) {                                                  \
+      if (GameFlag_Test(n1) == 0)                                              \
+        call1();                                                               \
+    } else {                                                                   \
+      GameFlag_SetBit(n1);                                                     \
+    }                                                                          \
+  }
+
+/// 1 scenes: kibombo/s2f34.
+#define DEFINE_FUNC_02003B20(name, n1, n2, n3, n4, n5, n6, n7)                 \
+  void name(void) {                                                            \
+    struct KibomboObject *leader =                                             \
+        Actor_GetById(gMainRoutineWork.currentOwner);                          \
+    s32 x = leader->x >> 20;                                                   \
+    s32 z = leader->z >> 20;                                                   \
+                                                                               \
+    if (z == n1) {                                                             \
+      if (x == n2 && (gInput.held & 16) == 0)                                  \
+        return;                                                                \
+      if (x == n3 && (gInput.held & 32) == 0)                                  \
+        return;                                                                \
+    } else if (x == n4 && z == n5 && (gInput.held & 64) == 0) {                \
+      return;                                                                  \
+    }                                                                          \
+    Func_02003a08(n6, n7);                                                     \
+  }
+
+/// 1 scenes: magma_rock/s0ff4.
+#define DEFINE_FUNC_020019E8(name, n1, n2, n3)                                 \
+  void name(s32 mode, s32 cue) {                                               \
+    struct MagmaRockWork *work = Ram_HeapSlots->effectWork;                    \
+    struct MainRoutineWork *party = &gMainRoutineWork;                         \
+                                                                               \
+    {                                                                          \
+      s32 scene = party->scene;                                                \
+                                                                               \
+      if (scene == (s32)&SceneId_Ov691Room1)                                   \
+        work->target = Actor_Get(n1);                                          \
+      else if (scene == (s32)&SceneId_Ov691Room2)                              \
+        work->target = Actor_Get(n2);                                          \
+      Func_020014bc(mode, cue);                                                \
+    }                                                                          \
+    Event_SetFlag(n3);                                                         \
+  }
+
+/// 1 scenes: airs_rock_inside/s2770.
+#define DEFINE_FUNC_020047B0(name, n1)                                         \
+  void name(void) {                                                            \
+    if (GameFlag_Test(0x8d4)) {                                                \
+      Event_Start();                                                           \
+      Event_ResolvePendingActions(0);                                          \
+      FieldMessage_Show(MsgCheckedTheTablet, 1);                               \
+      Event_End();                                                             \
+    } else {                                                                   \
+      Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, n1, 136);       \
+      Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 264, 136);      \
+      Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);       \
+      FieldEvent_Wait(10);                                                     \
+      Func_02004534();                                                         \
+    }                                                                          \
+  }
+
+/// 1 scenes: ankohl_ruins.
+#define DEFINE_FUNC_02001DDC(name, n1, n2, n3, n4, n5)                         \
+  void name(void) {                                                            \
+    if (AnkohlRuins_FlagCheck(n1) == 0) {                                      \
+      Event_SetFlag(n1);                                                       \
+      Event_PlaySound(584);                                                    \
+      Event_Start();                                                           \
+      FieldEvent_ResolvePendingActions(0);                                     \
+      MapGrid_CopyCells(26, 70, 1, 3, n2, n3);                                 \
+      FieldEvent_Wait(20);                                                     \
+      Event_PlaySound(181);                                                    \
+      MapGrid_CopyCells(26, 67, 1, 3, n2, n3);                                 \
+      MapGrid_CopyCellAttributes(n4, n5, 1, 1, n2, n5);                        \
+      Event_End();                                                             \
+    }                                                                          \
+  }
+
+/// 1 scenes: aqua_rock_inside.
+#define DEFINE_FUNC_02001CD8(name, n1)                                         \
+  void name(void) {                                                            \
+    if (Event_GetFlag(0x9ae)) {                                                \
+      Event_Start();                                                           \
+      FieldEvent_ResolvePendingActions(0);                                     \
+      Message_ShowCentered(MsgCheckedTheTabletIt, 1);                          \
+      Event_End();                                                             \
+    } else {                                                                   \
+      Actor_WalkToAndWait(gMainRoutineWork.currentOwner, n1, 184);             \
+      Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 264, 184);            \
+      Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);     \
+      FieldEvent_Wait(10);                                                     \
+      Func_02001a1c();                                                         \
+    }                                                                          \
+  }
+
+/// 2 scenes: islets/scene_tables, izumo_ruins.
+#define DEFINE_FUNC_020011B8(name, n1)                                         \
+  void name(void) {                                                            \
+    struct Actor *object0;                                                     \
+                                                                               \
+    object0 = Actor_Get(gMainRoutineWork.currentOwner);                        \
+    object0->terrainId = n1;                                                   \
+    return;                                                                    \
+  }
+
+/// 3 scenes: jupiter_lighthouse_room_1, jupiter_lighthouse_room_6,
+/// jupiter_lighthouse_room_7.
+#define DEFINE_FUNC_02000160(name, n1, call1, call2)                           \
+  void name(void) {                                                            \
+    if (Event_GetFlag(n1) == 1) {                                              \
+      Event_ClearFlag(n1);                                                     \
+      call1();                                                                 \
+    }                                                                          \
+    call2();                                                                   \
+  }
+
+/// 1 scenes: magma_rock/s0ff4.
+#define DEFINE_FUNC_02001A8C(name, n1, n2)                                     \
+  void name(s32 mode, s32 cue) {                                               \
+    struct MagmaRockWork *work = Ram_HeapSlots->effectWork;                    \
+                                                                               \
+    work->target = Actor_Get(n1);                                              \
+    Func_020014bc(mode, cue);                                                  \
+    Event_SetFlag(n2);                                                         \
+  }
+
+/// 1 scenes: magma_rock_inside.
+#define DEFINE_FUNC_02003348(name, n1)                                         \
+  void name(void) {                                                            \
+    if (Event_GetFlag(0x9fa)) {                                                \
+      Event_Start();                                                           \
+      FieldEvent_ResolvePendingActions(0);                                     \
+      Message_ShowCentered(MsgBlazeTabletInscription, 1);                      \
+      Event_End();                                                             \
+    } else {                                                                   \
+      Actor_WalkToAndWait(gMainRoutineWork.currentOwner, n1, 136);             \
+      Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 264, 136);            \
+      Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);     \
+      FieldEvent_Wait(10);                                                     \
+      Func_020030cc();                                                         \
+    }                                                                          \
+  }
+
+/// 1 scenes: mars_lighthouse_room_f.
+#define DEFINE_FUNC_02000444(name, n1, n2, n3)                                 \
+  void name(s32 state, s32 unused) {                                           \
+    if (state == 1) {                                                          \
+      MapGrid_CopyCells(29, 56, 3, 4, n1, 50);                                 \
+      MapGrid_CopyCellsLayered(93, 56, 3, 4, n2, 50);                          \
+      Event_SetFlag(n3);                                                       \
+    }                                                                          \
+  }
+
+/// 1 scenes: garoh.
+#define DEFINE_FUNC_02000EB0(name, n1, n2, n3, n4)                             \
+  void name(void) {                                                            \
+    struct Actor *object = Actor_Get(n1);                                      \
+    s32 x = object->x >> 20;                                                   \
+    s32 raw;                                                                   \
+    s32 z;                                                                     \
+                                                                               \
+    raw = object->z;                                                           \
+    z = raw >> 20;                                                             \
+    if (!Flag_IsSet(n2) && x == n3 && z == n4) {                               \
+      Func_02000e78(n1, object);                                               \
+      Flag_Set(n2);                                                            \
+    }                                                                          \
+  }
+
+/// 1 scenes: izumo_interiors.
+#define DEFINE_FUNC_02000038_2(name, n1, n2)                                   \
+  s32 name(void) {                                                             \
+    struct Actor *object = Actor_GetById(n1);                                  \
+                                                                               \
+    if ((u32)(object->x - n2) <= 0x80000) {                                    \
+      s32 z = object->z;                                                       \
+                                                                               \
+      if (z >= 0x26c0000) {                                                    \
+        if (z <= 0x2740000)                                                    \
+          return 0;                                                            \
+      }                                                                        \
+    }                                                                          \
+    return 1;                                                                  \
+  }
+
+/// 1 scenes: mars_lighthouse_room_f.
+#define DEFINE_FUNC_02000CF4(name, n1, n2)                                     \
+  void name(s32 unused, s32 id) {                                              \
+    Func_02000c80(id);                                                         \
+    Flag_Set(n1);                                                              \
+    if (Func_020027dc(n2) != 64) {                                             \
+      struct Actor *object = Actor_Get(id);                                    \
+                                                                               \
+      WORD_AT(object, 108) = 0;                                                \
+      Animation_ApplyChildValues(object, 0);                                   \
+      Actor_SetAnimation(id, 6);                                               \
+      Flag_Clear(n1);                                                          \
+      Func_02000cb8(id);                                                       \
+    }                                                                          \
+  }
+
+/// 1 scenes: trial_road/s0218.
+#define DEFINE_FUNC_02000218(name, n1, n2, n3, n4, n5, n6)                     \
+  void name(s32 side, s32 phase) {                                             \
+    if (side == 0) {                                                           \
+      if (phase == 3)                                                          \
+        Func_0802b450(0, 120, 1, 2, n1, phase);                                \
+      MapGrid_CopyCellsLayered(127, 3, 1, 2, n2, 3);                           \
+      MapGrid_CopyCellAttributes(n3, 127, 1, 1, n1, 8);                        \
+    } else {                                                                   \
+      if (phase == 3)                                                          \
+        Func_0802b450(0, 120, 1, 2, n4, phase);                                \
+      MapGrid_CopyCellsLayered(127, 3, 1, 2, n5, 3);                           \
+      MapGrid_CopyCellAttributes(n6, 127, 1, 1, n4, 8);                        \
+    }                                                                          \
+  }
+
+/// 1 scenes: yampi_desert_cave.
+#define DEFINE_FUNC_02000E14(name, n1, id1, n2)                                \
+  void name(s32 arg0) {                                                        \
+    s32 result0;                                                               \
+                                                                               \
+    result0 = Event_GetFlag(n1);                                               \
+    if (result0 != 0)                                                          \
+      goto id1;                                                                \
+    if (arg0 != 3)                                                             \
+      goto id1;                                                                \
+    Actor_SetHorizontalPositionWithTerrain(n2, 0, 0);                          \
+    GameFlag_SetBit(n1);                                                       \
+  id1:                                                                         \
+    return;                                                                    \
+  }
+
+/// 2 scenes: anemos_inner_sanctum/s0ac8, gaia_rock_inside/s1f68.
+#define DEFINE_FUNC_02001644(name, n1)                                         \
+  void name(void) {                                                            \
+    s32 t0;                                                                    \
+                                                                               \
+    t0 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));                      \
+    FIELD_AT((t0 + 0x22), u8, 0) = n1;                                         \
+  }
+
+/// 2 scenes: apojii_islands, aqua_rock.
+#define DEFINE_FUNC_02000780(name, n1)                                         \
+  void name(struct Actor *object) {                                            \
+    if (gFrameCount & 2)                                                       \
+      Animation_ApplyChildValues(object, n1);                                  \
+    else                                                                       \
+      Animation_ApplyChildValues(object, 0);                                   \
+  }
+
+/// 2 scenes: islets/scene_tables, lemurian_ship_deck/s0b84.
+#define DEFINE_FUNC_02000DF8(name, n1, call1, data1)                           \
+  void name(struct Actor *object) {                                            \
+    struct Actor *spawned;                                                     \
+                                                                               \
+    if ((gFrameCount & n1) == 0) {                                             \
+      spawned = FieldActor_Create(14, object->x, object->y, object->z);        \
+      if (spawned != 0) {                                                      \
+        Actor_SetSingleChildFlags(spawned, 0);                                 \
+        call1(spawned, 1);                                                     \
+        Actor_StartScript(spawned, data1);                                     \
+      }                                                                        \
+    }                                                                          \
+  }
+
+/// 3 scenes: jupiter_lighthouse_room_1, jupiter_lighthouse_room_6,
+/// jupiter_lighthouse_room_7.
+#define DEFINE_FUNC_0200013C(name, n1, call1)                                  \
+  void name(void) {                                                            \
+    if (!Event_GetFlag(n1)) {                                                  \
+      Event_SetFlag(n1);                                                       \
+      call1(1);                                                                \
+    }                                                                          \
+  }
+
+/// 1 scenes: kandorean_temple/s2ec4.
+#define DEFINE_FUNC_02000CF8(n1, n2, n3, n4, n5)                               \
+  do {                                                                         \
+    leader->y += -0x6c000;                                                     \
+    statue->y += -0x6c000;                                                     \
+    ride->y += -0x2b333;                                                       \
+    limit = 0x1800;                                                            \
+    Func_02000cf8(n1, 0x30000, limit);                                         \
+    Func_02000cf8(n2, 0x24000, limit);                                         \
+    Func_02000cf8(n3, 0x18000, limit);                                         \
+    Func_02000cf8(n4, 0xc000, limit);                                          \
+    Func_02000cf8(n5, 0, limit);                                               \
+    wait(1);                                                                   \
+  } while (Actor_GetById(n5)->scaleY > limit);
+
+/// 1 scenes: madra_catacombs.
+#define DEFINE_FUNC_02000C94(name, n1)                                         \
+  void name(void) {                                                            \
+    Event_Start();                                                             \
+    Event_ResolvePendingActions(0);                                            \
+    FieldCamera_MoveTo(-1, -1, -1, 0);                                         \
+    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),    \
+                              0);                                              \
+    Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);  \
+    wait(1);                                                                   \
+    Event_StartScreenTransition();                                             \
+    Event_WaitTransitionFrames();                                              \
+    Event_Wait(40);                                                            \
+    Import_EventSetExitRequest(n1);                                            \
+  }
+
+/// 3 scenes: magma_rock, magma_rock/s0ff4, magma_rock_inside.
+#define DEFINE_FUNC_02000DA4(name, n1)                                         \
+  void name(struct Actor *object) {                                            \
+    if (gFrameCount & object->unk5c[7])                                        \
+      Actor_SetSpriteColor(object, n1);                                        \
+    else                                                                       \
+      Actor_SetSpriteColor(object, 0);                                         \
+  }
+
+/// 1 scenes: yampi_desert_cave.
+#define DEFINE_FUNC_02000DAC_2(name, n1)                                       \
+  void name(void) {                                                            \
+    Func_02000898();                                                           \
+    Func_02001958();                                                           \
+    {                                                                          \
+      u8 *party = (u8 *)&gMainRoutineWork;                                     \
+                                                                               \
+      party[0x2c2] = 2;                                                        \
+    }                                                                          \
+    Event_SetDestination((s32)&SceneId_Ov662Room1, n1);                        \
+    Event_Wait(40);                                                            \
+    Func_020008fc();                                                           \
+  }
+
+/// 1 scenes: aqua_rock.
+#define DEFINE_FUNC_0200119C(name, n1, n2)                                     \
+  void name(s32 unused, s32 id) {                                              \
+    struct Actor *object = Actor_GetById(id);                                  \
+    s32 column = object->x >> 20;                                              \
+                                                                               \
+    if (column == 53) {                                                        \
+      wait(30);                                                                \
+      object->z += 0x10000;                                                    \
+      GameFlag_SetBit(n1);                                                     \
+      Map_CopyCellAttributeRect(54, 58, 1, 1, column, n2);                     \
+    }                                                                          \
+  }
+
+/// 1 scenes: kibombo.
+#define DEFINE_FUNC_02002C34(name, n1, n2, n3, n4, call1, n5, n6, n7)          \
+  void name(void) {                                                            \
+    struct KibomboEventWork *work = Ram_HeapSlots->eventWork;                  \
+                                                                               \
+    if (work->field166 == 0 && work->field15a == 0 && work->field15e == 0 &&   \
+        (gFrameCount & 7) == 0) {                                              \
+      Func_02002b18(9, 0, ((Random16Far() * 10) >> 16) - 5);                   \
+      Func_02002b18(n1, 1, ((Random16Far() * n2) >> 16) - n3);                 \
+      Func_02002b18(n4, 2, ((Random16Far() * 4) >> 16) - 2);                   \
+      call1(n5, 3, ((Random16Far() * n6) >> 16) - n7);                         \
+    }                                                                          \
+  }
+
+/// 1 scenes: islet_cave.
+#define DEFINE_FUNC_02000508(name, n1, n2)                                     \
+  void name(void) {                                                            \
+    Func_020000f4();                                                           \
+    Func_02001334();                                                           \
+                                                                               \
+    gMainRoutineWork.unk2c2 = 1;                                               \
+    Event_Wait(40);                                                            \
+    Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,      \
+                                           PIXELS(n1), PIXELS(n2));            \
+    Func_020004ac();                                                           \
+  }
+
+/// 1 scenes: lemurian_ship.
+#define DEFINE_FUNC_02001380(name, n1)                                         \
+  void name(s32 id) {                                                          \
+    struct LemurianShipObject *object =                                        \
+        ((struct LemurianShipObject *)Actor_GetById(id));                      \
+                                                                               \
+    ((struct LemurianShipObject *)Actor_GetById(id))->priorityFlags |= 0x20;   \
+    Actor_SetSpritePriority(id, n1);                                           \
+    object->priorityFlags &= ~2;                                               \
+    object->timer = 1;                                                         \
+  }
+
+/// 1 scenes: shrine_of_the_sea_god/s1340.
+#define DEFINE_FUNC_0200291C(name, n1, n2, n3, n4)                             \
+  void name(void) {                                                            \
+    Func_0200279c();                                                           \
+    Camera_MoveWithinMapBounds(n1 << 16, 16 << 16, n2 << 16, 1);               \
+    ShrineOfTheSeaGod_ObjWalk(14, n3, 248);                                    \
+    ShrineOfTheSeaGod_ObjWalk(14, n1, 248);                                    \
+    Actor_SetPositionAndReset(14, n1, n2);                                     \
+    Actor_GetById(14)->state = n4;                                             \
+    Func_020027d4();                                                           \
+  }
+
+/// 1 scenes: anemos_inner_sanctum/s0ac8.
+#define DEFINE_FUNC_0200178C(name, n1)                                         \
+  void name(void) {                                                            \
+    s32 t0;                                                                    \
+                                                                               \
+    t0 = Func_020030e0();                                                      \
+    if (t0 != 0) {                                                             \
+      FieldEvent_SetExitRequest(n1);                                           \
+    }                                                                          \
+  }
+
+/// 1 scenes: champa_cliff_caves.
+#define DEFINE_FUNC_02000038_3(name, n1)                                       \
+  void name(struct RiseObject *object) {                                       \
+    object->scale += n1;                                                       \
+    if (object->scale >= 0x10000) {                                            \
+      object->scale = 0x10000;                                                 \
+      object->update = 0;                                                      \
+    }                                                                          \
+    object->scaleCopy = object->scale;                                         \
+  }
+
+/// 1 scenes: garoh/s12a8.
+#define DEFINE_FUNC_02001418(name, n1, n2)                                     \
+  void name(s32 actor) {                                                       \
+    BattleEffect_LoadActionEffectResources(144, 1);                            \
+    BattleEffect_SetupObjectPair(actor, 0);                                    \
+    Field_DispatchTypeHandler(n1);                                             \
+    BlendBack(n2, 5, 3, 3, 19, 5);                                             \
+    BattleEffect_StopMainActor();                                              \
+    BattleEffect_CleanupSceneObjects();                                        \
+  }
+
+/// 2 scenes: jupiter_lighthouse_room_1, jupiter_lighthouse_room_7.
+#define DEFINE_FUNC_02000100(name, n1, n2, n3, n4)                             \
+  void name(void) {                                                            \
+    struct Actor *object = Actor_Get(n1);                                      \
+                                                                               \
+    if (!Event_GetFlag(n2) && object->x >> 20 == n3 &&                         \
+        object->z >> 20 == n4) {                                               \
+      Event_SetFlag(n2);                                                       \
+      Func_02000060(1);                                                        \
+    }                                                                          \
+  }
+
+/// 1 scenes: kandorean_temple.
+#define DEFINE_FUNC_02000BF4(name, data1, n1, n2, n3, n4)                      \
+  void name(void) {                                                            \
+    s32 position[3];                                                           \
+                                                                               \
+    if (data1 != 0 && gFrameCount % n1 == 0) {                                 \
+      SET_VECTOR(position, n2, 0, n3);                                         \
+      Func_0200098c(position, n4);                                             \
+    }                                                                          \
+  }
+
+/// 1 scenes: mars_lighthouse_room_m.
+#define DEFINE_FUNC_02001608(name, n1, n2)                                     \
+  void name(void) {                                                            \
+    gData_02003938 = 0;                                                        \
+    gData_02003934 = Func_020016e8(gData_02003928);                            \
+    gData_02003924 = n1;                                                       \
+    gData_02003920 = n2;                                                       \
+    gData_02003918 = 1;                                                        \
+    Task_AddFrame(Func_0200170c, 0x480);                                       \
+  }
+
+/// 1 scenes: sea_of_time.
+#define DEFINE_FUNC_020015CC(name, n1)                                         \
+  void name(void) {                                                            \
+    Event_Start();                                                             \
+    Event_ResolvePendingActions(0);                                            \
+    Import_EventSetExitRequest(n1);                                            \
+    Event_FinishScreenTransition();                                            \
+    Event_WaitTransitionFrames();                                              \
+    Func_02001fb4();                                                           \
+  }
+
+/// 1 scenes: shaman_village/s1fec.
+#define DEFINE_FUNC_020043C8(name, n1, n2)                                     \
+  void name(void) {                                                            \
+    s32 variant = ((struct ShamanVillageObject *)Actor_GetById(                \
+                       gMainRoutineWork.currentOwner))                         \
+                      ->sprite->priority;                                      \
+                                                                               \
+    Actor_SetSpritePriority(n1, variant);                                      \
+    Actor_SetSpritePriority(n2, variant);                                      \
+  }
+
+/// 1 scenes: taopo_swamp.
+#define DEFINE_FUNC_020007BC(name, n1, n2, n3)                                 \
+  void name(s32 a, s32 id) {                                                   \
+    Func_02002840_(n1, n2, 1, 1, n3, n2);                                      \
+    FieldActor_SetSpritePriority(id, 2);                                       \
+    Actor_Get(id)->priorityFlags &= 0xfd;                                      \
+    Func_02002778(0, id);                                                      \
+    Event_SetFlag(0x221);                                                      \
+    Event_ClearFlag(0x222);                                                    \
+  }
+
+/// 1 scenes: trial_road/s15a8.
+#define DEFINE_FUNC_0200163C(name, n1, n2)                                     \
+  void name(void) {                                                            \
+    MapGrid_CopyCells(n1, 30, 1, 1, 10, 11);                                   \
+    Map_CopyCellsRect(n1, 30, 1, 1, 18, 7);                                    \
+    Map_CopyCellsRect(n1, 30, 1, 1, 18, 15);                                   \
+    Map_CopyCellsRect(n2, 30, 1, 1, 74, 11);                                   \
+    Map_CopyCellsRect(n2, 30, 1, 1, 82, 7);                                    \
+    Map_CopyCellsRect(n2, 30, 1, 1, 82, 15);                                   \
+  }
+
+/// 1 scenes: jupiter_lighthouse_room_2.
+#define DEFINE_FUNC_020003F4(name, n1)                                         \
+  void name(void) {                                                            \
+    struct EventWork *event = Ram_HeapSlots->eventWork;                        \
+    u8 *effect = Ram_HeapSlots->effectWork;                                    \
+                                                                               \
+    event->unk16a = n1;                                                        \
+    effect[52] = 1;                                                            \
+  }
+
+/// 1 scenes: magma_rock_inside.
+#define DEFINE_FUNC_02001CA0(name, n1, n2)                                     \
+  void name(s32 a, s32 b) {                                                    \
+    struct Actor **work = Ram_HeapSlots->effectWork;                           \
+                                                                               \
+    work[5] = Actor_Get(n1);                                                   \
+    Func_02001190(a, b);                                                       \
+    Event_SetFlag(n2);                                                         \
+  }
+
+/// 1 scenes: magma_rock_inside.
+#define DEFINE_FUNC_0200217C(name, n1, n2, n3, n4)                             \
+  void name(void) {                                                            \
+    if (!Event_GetFlag(n1)) {                                                  \
+      Actor_SetSpriteColor(Actor_Get(n2), 15);                                 \
+      Actor_SetPosition(n2, PIXELS(n3), PIXELS(n4));                           \
+      Actor_Get(n2)->scaleX = Actor_Get(n2)->scaleY = 0x1000;                  \
+    }                                                                          \
+  }
+
+/// 1 scenes: airs_rock_inside/s2770.
+#define DEFINE_FUNC_02003DD4(name, n1, n2)                                     \
+  void name(void) {                                                            \
+    Map_CopyCellAttributeRect(n1, 17, 1, 1, 8, 19);                            \
+    Map_CopyCellAttributeRect(n1, 17, 1, 1, 24, 19);                           \
+    Call6((void (*)())Map_CopyCellPictureIndicesRect, n2, 17, 72, 19, 1, 2);   \
+    Map_CopyCellPictureIndicesRect(n2, 17, 88, 19, 1, 2);                      \
+  }
+
+/// 1 scenes: jupiter_lighthouse_room_4.
+#define DEFINE_FUNC_020001DC(name, n1, call1)                                  \
+  void name(s32 item) {                                                        \
+    Event_SetFlag(n1);                                                         \
+    Event_PlaySound(134);                                                      \
+    call1();                                                                   \
+    PartyInventory_Remove(item);                                               \
+  }
+
+/// 1 scenes: kibombo/s2f34.
+#define DEFINE_FUNC_020032B0(name, n1)                                         \
+  void name(void) {                                                            \
+    u32 i;                                                                     \
+                                                                               \
+    for (i = 0; i <= 7; i++)                                                   \
+      Actor_SetModeById(i + 18, n1);                                           \
+  }
+
+/// 1 scenes: lemurian_ship.
+#define DEFINE_FUNC_020010D8(name, n1, n2)                                     \
+  void name(void) {                                                            \
+    Sound_Play(106);                                                           \
+    Actor_SetModeById(n1, 2);                                                  \
+    GameFlag_SetBit(n2);                                                       \
+    Func_02000e2c();                                                           \
+  }
+
 #endif

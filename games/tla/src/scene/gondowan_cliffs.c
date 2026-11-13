@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x66b that its scene tables belong to and the routine after it, in ROM order, then its data; the rest of the overlay is in gondowan_cliffs/.
 
+#include "shared/tables.h"
 #include "shared/routines.h"
 #include "types.h"
 #include "ram_buffer.h"
@@ -49,35 +50,11 @@ const u8 *Scene_GetPlacements(void) {
 #include "objcmd.h"
 
 // clang-format off
-u32 gData_02001324[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02001324, 22)
 
-u32 gData_02001360[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02001360, 44)
 
-u32 gData_0200139c[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_0200139c, 126)
 // clang-format on
 
 #include "../field/object/set_sprite_priority.c"

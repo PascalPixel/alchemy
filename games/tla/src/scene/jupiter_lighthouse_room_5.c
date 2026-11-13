@@ -119,46 +119,7 @@ static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
 
 /// Every third frame, or every frame once flag 0x201 is set, starts a particle
 /// circling actor 23 at a random height above it.
-void Func_020001a4(void) {
-  struct Actor *center;
-  struct OrbitEffect *effect;
-  struct FieldSprite *sprite;
-  s32 angle;
-
-  if (Event_GetFlag(0x201) == 0 && gFrameCount % 3 != 0)
-    return;
-  center = Actor_Get(23);
-  if (Event_GetFlag(0x201) != 0) {
-    u32 random;
-
-    random = Random16Far();
-    effect = CreateOrbitEffect(0x2a0, center->x,
-                               (s32)((u32)(random << 8) >> 16 << 16) +
-                                   center->y - 0x1c0000,
-                               center->z);
-  } else {
-    u32 random;
-
-    random = Random16Far();
-    effect = CreateOrbitEffect(0x2a0, center->x,
-                               (s32)((u32)(random << 6) >> 16 << 16) +
-                                   center->y - 0x1c0000,
-                               center->z);
-  }
-  if (effect != 0) {
-    sprite = effect->sprite;
-    Actor_StartScript(effect, gData_02003214);
-    Actor_SetSpriteColor(effect, 1);
-    effect->motionFlags = 0;
-    angle = Random16Far() & 0xffff000;
-    effect->angle = angle;
-    effect->unk66 = 0;
-    effect->update = (void (*)(struct OrbitEffect *))Func_02000148;
-    effect->radius = Math_Sin((u32)(Random16Far() * 0xffff) >> 20) * 24 >> 16;
-    sprite->nextFrame = 0;
-    sprite->priority = 1;
-  }
-}
+DEFINE_FUNC_020001A4(Func_020001a4, 0x201, gData_02003214, Func_02000148, 1)
 
 extern s32 gData_02003274;
 extern s32 gData_02003278;

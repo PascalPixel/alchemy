@@ -335,14 +335,7 @@ void Func_02000784(s32 a, s32 id) {
   Event_SetFlag(0x222);
 }
 
-void Func_020007bc(s32 a, s32 id) {
-  Func_02002840_(28, 8, 1, 1, 26, 8);
-  FieldActor_SetSpritePriority(id, 2);
-  Actor_Get(id)->priorityFlags &= 0xfd;
-  Func_02002778(0, id);
-  Event_SetFlag(0x221);
-  Event_ClearFlag(0x222);
-}
+DEFINE_FUNC_020007BC(Func_020007bc, 28, 8, 26)
 
 void Func_02000810(s32 id) {
   struct Actor *leader;
@@ -390,14 +383,7 @@ void Func_02000920(s32 a, s32 id) {
   }
 }
 
-void Func_0200096c(s32 a, s32 id) {
-  Func_02002840_(23, 27, 1, 1, 25, 27);
-  FieldActor_SetSpritePriority(id, 2);
-  Actor_Get(id)->priorityFlags &= 0xfd;
-  Func_02002778(0, id);
-  Event_SetFlag(0x221);
-  Event_ClearFlag(0x222);
-}
+DEFINE_FUNC_020007BC(Func_0200096c, 23, 27, 25)
 
 void Func_020009c0(s32 id) {
   struct Actor *leader;
@@ -943,47 +929,9 @@ s32 Func_0200166c(struct Actor *object) {
   return 1;
 }
 
-void Func_02001684(void) {
-  if ((gFrameCount & 7) == 0 && (u32)Random16Far() < 0x4000) {
-    s32 offset = Random16Far() << 5;
-    s32 x = offset + 0x1800000;
-    s32 z = 0x1900000 - offset;
-    s32 y = 0xa00000;
-    struct Actor *object = FieldActor_Create(0x12d, x, y, z);
-    s32 scale = 0x547a;
+DEFINE_FUNC_02001684(Func_02001684, 0x1800000, 0x1900000)
 
-    if (object != NULL) {
-      object->scaleX = scale;
-      object->scaleY = scale;
-      object->motionFlags = 2;
-      object->terrainHeight = 0xffc00000;
-      object->gravity = 0x7333;
-      Actor_StartScript(object, gData_02002a6c);
-      Actor_SetSingleChildFlags(object, 0);
-    }
-  }
-}
-
-void Func_020016fc(void) {
-  if ((gFrameCount & 7) == 0 && (u32)Random16Far() < 0x4000) {
-    s32 offset = Random16Far() << 5;
-    s32 x = offset + 0x1a00000;
-    s32 z = 0x1600000 - offset;
-    s32 y = 0xa00000;
-    struct Actor *object = FieldActor_Create(0x12d, x, y, z);
-    s32 scale = 0x547a;
-
-    if (object != NULL) {
-      object->scaleX = scale;
-      object->scaleY = scale;
-      object->motionFlags = 2;
-      object->terrainHeight = 0xffc00000;
-      object->gravity = 0x7333;
-      Actor_StartScript(object, gData_02002a6c);
-      Actor_SetSingleChildFlags(object, 0);
-    }
-  }
-}
+DEFINE_FUNC_02001684(Func_020016fc, 0x1a00000, 0x1600000)
 
 extern const u8 gData_02002a78[], gData_02002ab6[], gData_02002abc[],
     gData_02002aca[], gData_02002ad8[];

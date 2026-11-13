@@ -1,3 +1,4 @@
+#include "../shared/tables.h"
 #include "../shared/routines.h"
 #include "types.h"
 #include "ram_buffer.h"
@@ -106,35 +107,11 @@ void Func_02000094(void);
 void Func_02000124(void);
 
 // clang-format off
-u32 gData_020021c8[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_020021c8, 22)
 
-u32 gData_02002204[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02002204, 44)
 
-u32 gData_02002240[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02002240, 126)
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

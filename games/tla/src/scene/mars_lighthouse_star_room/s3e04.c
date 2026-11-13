@@ -1,3 +1,4 @@
+#include "../shared/tables.h"
 #include "../shared/routines.h"
 #include "types.h"
 #include "system.h"
@@ -224,13 +225,7 @@ s32 gData_020045b8[] = {
     17,
 };
 
-u32 gData_02004744[] = {
-    SC_WAIT(30),
-    SC_SET(SW_HOOK, 0),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-};
+DEFINE_G_DATA_02001540(gData_02004744, 30)
 
 u32 gData_02004774[] = {
     0, 20, 0x80010000, 22, 25, 0,
@@ -255,35 +250,11 @@ s32 gData_0200483c[] = {
     0xffff, -0x8000,
 };
 
-u32 gData_0200485c[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_0200485c, 22)
 
-u32 gData_02004898[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02004898, 44)
 
-u32 gData_020048d4[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_020048d4, 126)
 
 s32 gData_02004910[] = {
     SC_CALL(Func_02000038),

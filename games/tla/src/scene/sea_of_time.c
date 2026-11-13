@@ -853,89 +853,21 @@ void Func_0200141c(s32 x, s32 z, s32 actor) {
   Actor_SetHorizontalPositionWithTerrain(actor, 0, 0);
 }
 
-void Func_02001480(void) {
-  struct Actor *object;
+DEFINE_FUNC_02001480(Func_02001480, 9, 0xa90)
 
-  Event_Start();
-  Event_ResolvePendingActions(0);
-  object = Actor_GetById(9);
-  Func_0200141c(object->x, Actor_GetById(9)->z, 9);
-  GameFlag_SetBit(0xa90);
-  Func_02001fb4();
-}
+DEFINE_FUNC_02001480(Func_020014b4, 10, 0xa91)
 
-void Func_020014b4(void) {
-  struct Actor *object;
+DEFINE_FUNC_02001480(Func_020014ec, 11, 0xa92)
 
-  Event_Start();
-  Event_ResolvePendingActions(0);
-  object = Actor_GetById(10);
-  Func_0200141c(object->x, Actor_GetById(10)->z, 10);
-  GameFlag_SetBit(0xa91);
-  Func_02001fb4();
-}
+DEFINE_FUNC_02001480(Func_02001524, 12, 0xa93)
 
-void Func_020014ec(void) {
-  struct Actor *object;
+DEFINE_FUNC_02001480(Func_0200155c, 13, 0xa94)
 
-  Event_Start();
-  Event_ResolvePendingActions(0);
-  object = Actor_GetById(11);
-  Func_0200141c(object->x, Actor_GetById(11)->z, 11);
-  GameFlag_SetBit(0xa92);
-  Func_02001fb4();
-}
+DEFINE_FUNC_02001480(Func_02001594, 9, 0xa95)
 
-void Func_02001524(void) {
-  struct Actor *object;
+DEFINE_FUNC_020015CC(Func_020015cc, 4)
 
-  Event_Start();
-  Event_ResolvePendingActions(0);
-  object = Actor_GetById(12);
-  Func_0200141c(object->x, Actor_GetById(12)->z, 12);
-  GameFlag_SetBit(0xa93);
-  Func_02001fb4();
-}
-
-void Func_0200155c(void) {
-  struct Actor *object;
-
-  Event_Start();
-  Event_ResolvePendingActions(0);
-  object = Actor_GetById(13);
-  Func_0200141c(object->x, Actor_GetById(13)->z, 13);
-  GameFlag_SetBit(0xa94);
-  Func_02001fb4();
-}
-
-void Func_02001594(void) {
-  struct Actor *object;
-
-  Event_Start();
-  Event_ResolvePendingActions(0);
-  object = Actor_GetById(9);
-  Func_0200141c(object->x, Actor_GetById(9)->z, 9);
-  GameFlag_SetBit(0xa95);
-  Func_02001fb4();
-}
-
-void Func_020015cc(void) {
-  Event_Start();
-  Event_ResolvePendingActions(0);
-  Import_EventSetExitRequest(4);
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-  Func_02001fb4();
-}
-
-void Func_020015ec(void) {
-  Event_Start();
-  Event_ResolvePendingActions(0);
-  Import_EventSetExitRequest(5);
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-  Func_02001fb4();
-}
+DEFINE_FUNC_020015CC(Func_020015ec, 5)
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room1)

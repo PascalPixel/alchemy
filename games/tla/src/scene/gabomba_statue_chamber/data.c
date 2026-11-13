@@ -1,3 +1,4 @@
+#include "../shared/tables.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
@@ -45,15 +46,7 @@ u32 gData_02001fe4[] = {
     80, 0, 3, 17,
 };
 
-u32 gData_0200200c[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(392), 0, PIXELS(148)),
-    SC_SYNC,
-    SC_MOVE(PIXELS(392), 0, PIXELS(236)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_END,
-};
+DEFINE_G_DATA_0200200C(gData_0200200c, 392, 148, 392, 236)
 
 s32 gData_02002048[] = {
     SC_SET(SW_SCALE_X, -0x10000),

@@ -1,3 +1,4 @@
+#include "../shared/routines.h"
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -478,12 +479,7 @@ void Func_02001614(void) {
   }
 }
 
-void Func_02001644(void) {
-  s32 t0;
-
-  t0 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
-  FIELD_AT((t0 + 0x22), u8, 0) = 0;
-}
+DEFINE_FUNC_02001644(Func_02001644, 0)
 
 void Func_02001660(void) {
   Event_Start();
@@ -527,23 +523,9 @@ void Func_020016fc(void) {
 
 s32 Func_020030e0();
 
-void Func_0200178c(void) {
-  s32 t0;
+DEFINE_FUNC_0200178C(Func_0200178c, 0xb)
 
-  t0 = Func_020030e0();
-  if (t0 != 0) {
-    FieldEvent_SetExitRequest(0xb);
-  }
-}
-
-void Func_020017a0(void) {
-  s32 t0;
-
-  t0 = Func_020030e0();
-  if (t0 != 0) {
-    FieldEvent_SetExitRequest(0xc);
-  }
-}
+DEFINE_FUNC_0200178C(Func_020017a0, 0xc)
 
 #include "frame.h"
 

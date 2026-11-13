@@ -1,4 +1,5 @@
 // ---- games/tla/src/scene/lemuria_palace.c ----
+#include "shared/tables.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -1193,12 +1194,8 @@ s16 gData_0200233c[] = {
     4, 54, 2, 2, 6, -1,
 };
 
-s32 gData_02002368[] = {
-    (s32)gData_0200233c,
-    0x170005,
-    (s32)gData_0200233c,
-    0x17001e,
-};
+DEFINE_G_DATA_0200064C(gData_02002368, gData_0200233c, 0x170005, gData_0200233c,
+    0x17001e)
 
 s32 gData_02002378[] = {
     (s32)gData_0200233c,

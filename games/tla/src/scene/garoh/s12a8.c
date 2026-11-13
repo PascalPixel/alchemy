@@ -3,6 +3,8 @@
 
 // ---- games/tla/src/scene/garoh/s12a8.c ----
 
+#include "../shared/routines.h"
+#include "../shared/tables.h"
 #include "types.h"
 #include "field_effect.h"
 #include "actor.h"
@@ -128,23 +130,9 @@ void Func_020013b0(s32 id) {
   FieldEvent_Wait(20);
 }
 
-void Func_02001418(s32 actor) {
-  BattleEffect_LoadActionEffectResources(144, 1);
-  BattleEffect_SetupObjectPair(actor, 0);
-  Field_DispatchTypeHandler(1);
-  BlendBack(44, 5, 3, 3, 19, 5);
-  BattleEffect_StopMainActor();
-  BattleEffect_CleanupSceneObjects();
-}
+DEFINE_FUNC_02001418(Func_02001418, 1, 44)
 
-void Func_02001454(s32 actor) {
-  BattleEffect_LoadActionEffectResources(144, 1);
-  BattleEffect_SetupObjectPair(actor, 0);
-  Field_DispatchTypeHandler(3);
-  BlendBack(39, 5, 3, 3, 19, 5);
-  BattleEffect_StopMainActor();
-  BattleEffect_CleanupSceneObjects();
-}
+DEFINE_FUNC_02001418(Func_02001454, 3, 39)
 
 #define ACTOR_MODE_THEN_WAIT(id, mode, frames)                                 \
   do {                                                                         \
@@ -2458,35 +2446,11 @@ void Func_0200108c(void);
 extern u32 gData_020053d8[];
 
 // clang-format off
-u32 gData_0200539c[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_0200539c, 22)
 
-u32 gData_020053d8[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_020053d8, 44)
 
-u32 gData_02005414[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02005414, 126)
 
 s16 gData_02005450[] = {
     8, 9, 10, 11, -1, 0,

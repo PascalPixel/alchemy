@@ -1,3 +1,4 @@
+#include "../shared/tables.h"
 #include "../shared/routines.h"
 #include "types.h"
 #include "ram_buffer.h"
@@ -105,49 +106,18 @@ void Func_02000054(void);
 void Func_02000094(void);
 
 // clang-format off
-u32 gData_02001fc0[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02001fc0, 22)
 
-u32 gData_02001ffc[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02001ffc, 44)
 
-u32 gData_02002038[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02002038, 126)
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
-u32 gSceneExits[] = {
-    SCENE_EXITS(251),
-    SCENE_EXIT(1, 2, 55),
-    SCENE_EXIT(2, 254, 2),
-    SCENE_EXIT(3, 254, 3),
-    SCENE_EXIT(4, 252, 4),
-    SCENE_EXITS_END,
-};
+DEFINE_G_SCENE_EXITS_2(251, 2, 55, 254, 2, 254, 3, 252, 4)
 
 struct ActorPlacement gActorPlacements[] = {
     {341, CONDITION_ALWAYS, 1, PIXELS(408), 0, PIXELS(360), FACING_SOUTHWEST, 2, 0},

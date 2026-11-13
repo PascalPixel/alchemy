@@ -1,3 +1,4 @@
+#include "../shared/tables.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "version.h"
@@ -132,21 +133,7 @@ struct ActorPlacement gData_02006890[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gData_02006980[] = {
-    SC_SET(SW_STEERING, 0),
-    SC_SET(SW_MOTION, 2),
-    SC_SET(SW_Y, PIXELS(80)),
-    SC_SET(SW_GROUND, PIXELS(80)),
-    SC_SET(SW_SPEED, 0x8000),
-    SC_SET(SW_ACCEL, 0x800),
-    SC_MOVE(PIXELS(216), 0, PIXELS(512)),
-    SC_SYNC,
-    SC_WAIT(20),
-    SC_MOVE(PIXELS(152), 0, PIXELS(512)),
-    SC_SYNC,
-    SC_WAIT(20),
-    SC_LOOP(SC_FOREVER, SC_TOP),
-};
+DEFINE_G_DATA_02004EB8(gData_02006980, 80, 216, 512, 152)
 
 struct ActorPlacement gData_02006a0c[] = {
     {294, CONDITION_ALWAYS, 7, PIXELS(568), 0, PIXELS(144), FACING_SOUTH, 2, 0},

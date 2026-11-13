@@ -31,23 +31,9 @@ void Func_020015d8(void) {
 
 s32 Func_02001638(void) { return 1; }
 
-void Func_0200163c(void) {
-  MapGrid_CopyCells(33, 30, 1, 1, 10, 11);
-  Map_CopyCellsRect(33, 30, 1, 1, 18, 7);
-  Map_CopyCellsRect(33, 30, 1, 1, 18, 15);
-  Map_CopyCellsRect(35, 30, 1, 1, 74, 11);
-  Map_CopyCellsRect(35, 30, 1, 1, 82, 7);
-  Map_CopyCellsRect(35, 30, 1, 1, 82, 15);
-}
+DEFINE_FUNC_0200163C(Func_0200163c, 33, 35)
 
-void Func_020016c8(void) {
-  MapGrid_CopyCells(34, 30, 1, 1, 10, 11);
-  Map_CopyCellsRect(34, 30, 1, 1, 18, 7);
-  Map_CopyCellsRect(34, 30, 1, 1, 18, 15);
-  Map_CopyCellsRect(36, 30, 1, 1, 74, 11);
-  Map_CopyCellsRect(36, 30, 1, 1, 82, 7);
-  Map_CopyCellsRect(36, 30, 1, 1, 82, 15);
-}
+DEFINE_FUNC_0200163C(Func_020016c8, 34, 36)
 
 void Func_02001754(s32 sound) {
   if (GameFlag_Test(0x9ff)) {

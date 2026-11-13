@@ -1136,35 +1136,9 @@ void Func_02001c68(void) {
   }
 }
 
-void Func_02001cd8(void) {
-  if (Event_GetFlag(0x9ae)) {
-    Event_Start();
-    FieldEvent_ResolvePendingActions(0);
-    Message_ShowCentered(MsgCheckedTheTabletIt, 1);
-    Event_End();
-  } else {
-    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 280, 184);
-    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 264, 184);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-    FieldEvent_Wait(10);
-    Func_02001a1c();
-  }
-}
+DEFINE_FUNC_02001CD8(Func_02001cd8, 280)
 
-void Func_02001d40(void) {
-  if (Event_GetFlag(0x9ae)) {
-    Event_Start();
-    FieldEvent_ResolvePendingActions(0);
-    Message_ShowCentered(MsgCheckedTheTabletIt, 1);
-    Event_End();
-  } else {
-    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 248, 184);
-    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 264, 184);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-    FieldEvent_Wait(10);
-    Func_02001a1c();
-  }
-}
+DEFINE_FUNC_02001CD8(Func_02001d40, 248)
 
 extern const u8 gData_02004c70[];
 extern const u8 gData_02004c7c[];

@@ -13,33 +13,9 @@
 #include "module/scene/trial_road.h"
 #include "module/window/window.h"
 
-void Func_02000218(s32 side, s32 phase) {
-  if (side == 0) {
-    if (phase == 3)
-      Func_0802b450(0, 120, 1, 2, 23, phase);
-    MapGrid_CopyCellsLayered(127, 3, 1, 2, 57, 3);
-    MapGrid_CopyCellAttributes(0, 127, 1, 1, 23, 8);
-  } else {
-    if (phase == 3)
-      Func_0802b450(0, 120, 1, 2, 9, phase);
-    MapGrid_CopyCellsLayered(127, 3, 1, 2, 43, 3);
-    MapGrid_CopyCellAttributes(1, 127, 1, 1, 9, 8);
-  }
-}
+DEFINE_FUNC_02000218(Func_02000218, 23, 57, 0, 9, 43, 1)
 
-void Func_020002a4(s32 side, s32 phase) {
-  if (side == 0) {
-    if (phase == 3)
-      Func_0802b450(0, 120, 1, 2, 28, phase);
-    MapGrid_CopyCellsLayered(127, 3, 1, 2, 62, 3);
-    MapGrid_CopyCellAttributes(1, 127, 1, 1, 28, 8);
-  } else {
-    if (phase == 3)
-      Func_0802b450(0, 120, 1, 2, 4, phase);
-    MapGrid_CopyCellsLayered(127, 3, 1, 2, 38, 3);
-    MapGrid_CopyCellAttributes(0, 127, 1, 1, 4, 8);
-  }
-}
+DEFINE_FUNC_02000218(Func_020002a4, 28, 62, 1, 4, 38, 0)
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \

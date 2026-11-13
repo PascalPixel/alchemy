@@ -648,45 +648,15 @@ void Func_02001f68(void) {
   }
 }
 
-void Func_02001f94(void) {
-  u32 i;
+DEFINE_FUNC_02001F94(Func_02001f94, 13, Func_02001f38, 13, Func_02001f68)
 
-  for (i = 0; i <= 13; i++)
-    Func_02001f38(i + 13);
-  Func_02001f68();
-}
+DEFINE_FUNC_02001F94(Func_02001fac, 12, Func_02001f38, 25, Func_02001f68)
 
-void Func_02001fac(void) {
-  u32 i;
+DEFINE_FUNC_02001F94(Func_02001fc4, 9, Func_02001f38, 26, Func_02001f68)
 
-  for (i = 0; i <= 12; i++)
-    Func_02001f38(i + 25);
-  Func_02001f68();
-}
+DEFINE_FUNC_02001F94(Func_02001fdc, 2, Func_02001f38, 8, Func_02001f68)
 
-void Func_02001fc4(void) {
-  u32 i;
-
-  for (i = 0; i <= 9; i++)
-    Func_02001f38(i + 26);
-  Func_02001f68();
-}
-
-void Func_02001fdc(void) {
-  u32 i;
-
-  for (i = 0; i <= 2; i++)
-    Func_02001f38(i + 8);
-  Func_02001f68();
-}
-
-void Func_02001ff4(void) {
-  u32 i;
-
-  for (i = 0; i <= 5; i++)
-    Func_02001f38(i + 10);
-  Func_02001f68();
-}
+DEFINE_FUNC_02001F94(Func_02001ff4, 5, Func_02001f38, 10, Func_02001f68)
 
 void Func_02000e9c(struct Actor *object);
 

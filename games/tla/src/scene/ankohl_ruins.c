@@ -2,6 +2,7 @@
 /// The scene code of overlay 0x686 that its scene tables belong to, in ROM
 /// order; the rest of the overlay is in ankohl_ruins/.
 
+#include "shared/routines.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -955,20 +956,7 @@ void Func_02001d34(void) {
   }
 }
 
-void Func_02001ddc(void) {
-  if (AnkohlRuins_FlagCheck(0x9e2) == 0) {
-    Event_SetFlag(0x9e2);
-    Event_PlaySound(584);
-    Event_Start();
-    FieldEvent_ResolvePendingActions(0);
-    MapGrid_CopyCells(26, 70, 1, 3, 14, 65);
-    FieldEvent_Wait(20);
-    Event_PlaySound(181);
-    MapGrid_CopyCells(26, 67, 1, 3, 14, 65);
-    MapGrid_CopyCellAttributes(15, 5, 1, 1, 14, 5);
-    Event_End();
-  }
-}
+DEFINE_FUNC_02001DDC(Func_02001ddc, 0x9e2, 14, 65, 15, 5)
 
 void Func_02001e54(void) {
   s32 done = AnkohlRuins_FlagCheck(0x203);
@@ -992,20 +980,7 @@ void Func_02001e54(void) {
   }
 }
 
-void Func_02001f04(void) {
-  if (AnkohlRuins_FlagCheck(0x9e3) == 0) {
-    Event_SetFlag(0x9e3);
-    Event_PlaySound(584);
-    Event_Start();
-    FieldEvent_ResolvePendingActions(0);
-    MapGrid_CopyCells(26, 70, 1, 3, 2, 83);
-    FieldEvent_Wait(20);
-    Event_PlaySound(181);
-    MapGrid_CopyCells(26, 67, 1, 3, 2, 83);
-    MapGrid_CopyCellAttributes(1, 23, 1, 1, 2, 23);
-    Event_End();
-  }
-}
+DEFINE_FUNC_02001DDC(Func_02001f04, 0x9e3, 2, 83, 1, 23)
 
 /// Each frame, moves the raft (object 9) down by 0xcccc and carries the leader
 /// and the event work's unk1cc object with it while the leader stands on it;

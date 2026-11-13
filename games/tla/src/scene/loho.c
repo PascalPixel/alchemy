@@ -1,6 +1,7 @@
 /// @file
 /// Overlay 0x6a6's scene: its code, then its tables, in ROM order.
 
+#include "shared/tables.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -885,23 +886,9 @@ u32 gData_0200171c[] = {
     SC_END,
 };
 
-u32 gData_020017a4[] = {
-    SC_SET(SW_SPEED, 0xe666),
-    SC_ARG(2),
-    SC_MOVE(PIXELS(128), 0, PIXELS(144)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_END,
-};
+DEFINE_G_DATA_020017A4(gData_020017a4, 128, 144)
 
-u32 gData_020017d8[] = {
-    SC_SET(SW_SPEED, 0xe666),
-    SC_ARG(2),
-    SC_MOVE(PIXELS(159), 0, PIXELS(128)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_END,
-};
+DEFINE_G_DATA_020017A4(gData_020017d8, 159, 128)
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

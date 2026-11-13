@@ -3,6 +3,7 @@
 
 // ---- games/tla/src/scene/daila_interiors.c ----
 
+#include "shared/tables.h"
 #include "shared/routines.h"
 #include "battle.h"
 #include "field.h"
@@ -637,19 +638,11 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 // clang-format off
-s32 gData_0200116c[] = {
-    11, 0x1010100a, -1, 0x1020200a, -1, 0x1030300a,
-    -1, 0x1040400a, -1, 0x1050500a, -1, 0x1060600a,
-    -1, 0x10703085, -1, 12, 0x1010700a, -1,
-    511,
-};
+DEFINE_G_DATA_0200116C(gData_0200116c, 0x1010100a, 0x1020200a, 0x1030300a,
+    0x1040400a, 0x1050500a, 0x1060600a, 0x1010700a)
 
-s32 gData_020011b8[] = {
-    11, 0x1010100d, -1, 0x1020200d, -1, 0x1030300d,
-    -1, 0x1040400d, -1, 0x1050500d, -1, 0x1060600d,
-    -1, 0x10703085, -1, 12, 0x1010700d, -1,
-    511,
-};
+DEFINE_G_DATA_0200116C(gData_020011b8, 0x1010100d, 0x1020200d, 0x1030300d,
+    0x1040400d, 0x1050500d, 0x1060600d, 0x1010700d)
 
 s32 gData_02001204[] = {
     (s32)0xffff0073,

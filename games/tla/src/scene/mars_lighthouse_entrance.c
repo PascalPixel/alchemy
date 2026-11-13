@@ -243,18 +243,8 @@ void Func_02000590(void) {
   }
 }
 
-void Func_02000648(void) {
-  Func_020046b4();
-  Func_02004dd0();
-  {
-    u8 *party = (u8 *)&gMainRoutineWork;
-
-    party[0x2c2] = 2;
-  }
-  FieldEvent_SetExitRequest(17);
-  FieldEvent_Wait(40);
-  Func_02004718();
-}
+DEFINE_FUNC_020001A0(Func_02000648, Func_020046b4, Func_02004dd0, 17,
+    Func_02004718)
 
 void Func_02000678(s32 state, s32 frame) {
   if (state == 1) {
@@ -314,23 +304,7 @@ void Func_02000808(void) {
   }
 }
 
-void Func_0200085c(s32 state, s32 frame) {
-  if (state == 1) {
-    Event_PlaySound(0x23e);
-    PaletteFade_ApplyTarget(0x10000, 0);
-    PaletteFade_Interpolate(60);
-    MapGrid_CopyCellsLayered(28, 92, 8, 8, 28, 100);
-    MapGrid_CopyCellAttributes(92, 38, 8, 8, 28, 38);
-    Actor_SetPosition(20, 0, 0);
-    Flag_Set(0xa47);
-  }
-  if (frame > 96 && frame < 272 && frame % 30 == 0)
-    Func_02000414(20);
-  if (frame == 276) {
-    PaletteFade_ApplyTarget(0x7fff, 0);
-    PaletteFade_Interpolate(20);
-  }
-}
+DEFINE_FUNC_0200085C(Func_0200085c, 28, 92, 8, 100, 92, 38, 8, 20, 0xa47)
 
 void Func_020008f4(s32 unused, s32 id) {
   if (id == 8) {
@@ -347,18 +321,8 @@ void Func_020008f4(s32 unused, s32 id) {
 
 void Func_02000930(void) { GameFlag_SetBit(0x144); }
 
-void Func_0200093c(void) {
-  Func_020046b4();
-  Func_02004dd0();
-  {
-    u8 *party = (u8 *)&gMainRoutineWork;
-
-    party[0x2c2] = 2;
-  }
-  FieldEvent_SetExitRequest(14);
-  FieldEvent_Wait(40);
-  Func_02004718();
-}
+DEFINE_FUNC_020001A0(Func_0200093c, Func_020046b4, Func_02004dd0, 14,
+    Func_02004718)
 
 /// Sends object id from column 11 to x 152, then from column 10 to x 200,
 /// both at z 792, through Actor_SetMoveTarget.
@@ -440,18 +404,8 @@ void Func_02000a7c(void) {
   Event_End();
 }
 
-void Func_02000af4(void) {
-  Func_020046b4();
-  Func_02004dd0();
-  {
-    u8 *party = (u8 *)&gMainRoutineWork;
-
-    party[0x2c2] = 2;
-  }
-  FieldEvent_SetExitRequest(14);
-  FieldEvent_Wait(40);
-  Func_02004718();
-}
+DEFINE_FUNC_020001A0(Func_02000af4, Func_020046b4, Func_02004dd0, 14,
+    Func_02004718)
 
 void Func_02000b24(void) {
   MapGrid_CopyCells(53, 30, 4, 3, 53, 48);
@@ -463,23 +417,7 @@ void Func_02000b54(void) {
   MapGrid_CopyCellsLayered(117, 45, 4, 3, 117, 48);
 }
 
-void Func_02000b84(s32 state, s32 frame) {
-  if (state == 1) {
-    Event_PlaySound(0x23e);
-    PaletteFade_ApplyTarget(0x10000, 0);
-    PaletteFade_Interpolate(60);
-    MapGrid_CopyCellsLayered(12, 95, 8, 6, 12, 101);
-    MapGrid_CopyCellAttributes(76, 40, 8, 5, 12, 40);
-    Actor_SetPosition(12, 0, 0);
-    Flag_Set(0xa4d);
-  }
-  if (frame > 96 && frame < 272 && frame % 30 == 0)
-    Func_02000414(12);
-  if (frame == 276) {
-    PaletteFade_ApplyTarget(0x7fff, 0);
-    PaletteFade_Interpolate(20);
-  }
-}
+DEFINE_FUNC_0200085C(Func_02000b84, 12, 95, 6, 101, 76, 40, 5, 12, 0xa4d)
 
 void Func_02000c1c(void) {
   MapGrid_CopyCellAttributes(35, 11, 3, 6, 53, 11);
@@ -496,31 +434,11 @@ static inline void MapCopy(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) {
 
 void Func_02000c68(void) { MapCopy(25, 9, 11, 3, 26, 9); }
 
-void Func_02000c84(void) {
-  Func_020046b4();
-  Func_02004dd0();
-  {
-    u8 *party = (u8 *)&gMainRoutineWork;
+DEFINE_FUNC_020001A0(Func_02000c84, Func_020046b4, Func_02004dd0, 12,
+    Func_02004718)
 
-    party[0x2c2] = 2;
-  }
-  FieldEvent_SetExitRequest(12);
-  FieldEvent_Wait(40);
-  Func_02004718();
-}
-
-void Func_02000cb4(void) {
-  Func_020046b4();
-  Func_02004dd0();
-  {
-    u8 *party = (u8 *)&gMainRoutineWork;
-
-    party[0x2c2] = 2;
-  }
-  FieldEvent_SetExitRequest(13);
-  FieldEvent_Wait(40);
-  Func_02004718();
-}
+DEFINE_FUNC_020001A0(Func_02000cb4, Func_020046b4, Func_02004dd0, 13,
+    Func_02004718)
 
 void Func_02000ce4(s32 unused, s32 id) {
   if (id == 8) {
@@ -815,16 +733,7 @@ void Func_02001254(void) {
     gData_020068a0 = 0;
 }
 
-void Func_020012bc(struct Actor *object) {
-  switch (gFrameCount & 7) {
-  case 0:
-    Animation_ApplyChildValues(object, 0);
-    break;
-  case 6:
-    Animation_ApplyChildValues(object, 10);
-    break;
-  }
-}
+DEFINE_FUNC_020012BC(Func_020012bc, 0, 6, 10)
 
 void Func_020012e4(struct Actor *actor) {
   struct Sprite020012e4 *sprite = actor->sprite;
@@ -1263,21 +1172,8 @@ void Func_02001f90(struct Actor *object);
 
 DEFINE_FUNC_02001C44(Func_02001c44, gData_020056a0)
 
-void Func_02001c74(s32 *position, s32 speed, s32 mode) {
-  struct Actor *object =
-      Func_02004bd8_(366, position[0], position[1], position[2]);
-
-  if (object != NULL) {
-    object->bounce = 0;
-    object->gravity = 0;
-    object->unk4c = speed;
-    Func_02001c44(object, 2);
-    object->update = Func_02001ae0;
-    if (mode)
-      object->unk5c[0] = 2;
-    Func_02004bc0(object, 2);
-  }
-}
+DEFINE_FUNC_02001C74(Func_02001c74, Func_02004bd8_, Func_02001c44, 2,
+    Func_02001ae0, Func_02004bc0)
 
 /* VIEW(s1c44): tag struct RideSlot as struct RideSlot__s1c44; ride.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1428: structure has no member named `id'. */
 struct RideSlot__s1c44 {
@@ -1328,21 +1224,8 @@ void Func_02001e1c(struct Actor *object, s32 part) {
 DEFINE_FUNC_02001E60(Func_02001e60, Func_02004bd8_, Func_02001e1c,
     Func_02001ae0, Func_02004bc0)
 
-void Func_02001ea8(s32 *position, s32 speed, s32 mode) {
-  struct Actor *object =
-      Func_02004bd8_(366, position[0], position[1], position[2]);
-
-  if (object != NULL) {
-    object->bounce = 0;
-    object->gravity = 0;
-    object->unk4c = speed;
-    Func_02001e1c(object, 3);
-    object->update = Func_02001cbc;
-    if (mode)
-      object->unk5c[0] = 2;
-    Func_02004bc0(object, 2);
-  }
-}
+DEFINE_FUNC_02001C74(Func_02001ea8, Func_02004bd8_, Func_02001e1c, 3,
+    Func_02001cbc, Func_02004bc0)
 
 DEFINE_FUNC_02001E60(Func_02001ef0, Func_02004bd8_, Func_02001e1c,
     Func_02001cbc, Func_02004bc0)

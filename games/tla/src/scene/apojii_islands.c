@@ -162,12 +162,7 @@ void Func_02000770(struct Actor *object) {
   object->update = 0;
 }
 
-void Func_02000780(struct Actor *object) {
-  if (gFrameCount & 2)
-    Animation_ApplyChildValues(object, 7);
-  else
-    Animation_ApplyChildValues(object, 0);
-}
+DEFINE_FUNC_02000780(Func_02000780, 7)
 
 // ---- games/tla/src/scene/apojii_islands/s07a4.c ----
 #include "scene_tables.h"

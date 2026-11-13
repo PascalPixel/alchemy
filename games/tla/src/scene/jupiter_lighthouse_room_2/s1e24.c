@@ -1,6 +1,7 @@
 /// @file
 /// Scene code of overlay 0x69b, in ROM order, from s1e24's offset up to the next object the overlay links, and the overlay's data.
 
+#include "../shared/tables.h"
 #include "../shared/routines.h"
 #include "types.h"
 #include "ram_buffer.h"
@@ -49,57 +50,18 @@ void Func_02000674(void);
 void Func_02000680(void);
 
 // clang-format off
-u32 gData_020027a8[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_020027a8, 22)
 
-u32 gData_020027e4[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_020027e4, 44)
 
-u32 gData_02002820[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02002820, 126)
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
-u32 gSceneExits[] = {
-    SCENE_EXITS(255),
-    SCENE_EXIT(1, 254, 1),
-    SCENE_EXIT(2, 255, 3),
-    SCENE_EXIT(3, 255, 2),
-    SCENE_EXIT(4, 255, 5),
-    SCENE_EXIT(5, 255, 4),
-    SCENE_EXIT(6, 256, 6),
-    SCENE_EXIT(7, 256, 7),
-    SCENE_EXIT(8, 256, 8),
-    SCENE_EXIT(9, 256, 9),
-    SCENE_EXIT(10, 256, 10),
-    SCENE_EXIT(11, 256, 11),
-    SCENE_EXIT(12, 257, 11),
-    SCENE_EXITS_END,
-};
+DEFINE_G_SCENE_EXITS_3(255, 254, 256, 6, 7, 256, 9, 10, 11, 257)
 
 struct ActorPlacement gActorPlacements[] = {
     {316, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(104), FACING_EAST, 2, 0},

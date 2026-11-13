@@ -104,13 +104,4 @@ DEFINE_FUNC_02001FCC(Func_020024c0)
 
 #include "../../field/field_effect/advance_spin.c"
 
-void Func_02002614(struct Actor *object) {
-  switch (gFrameCount & 7) {
-  case 0:
-    Animation_ApplyChildValues(object, 10);
-    break;
-  case 4:
-    Animation_ApplyChildValues(object, 0);
-    break;
-  }
-}
+DEFINE_FUNC_020012BC(Func_02002614, 10, 4, 0)

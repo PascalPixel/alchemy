@@ -1,3 +1,4 @@
+#include "../shared/tables.h"
 #include "../shared/routines.h"
 #include "mars_lighthouse_room_m.h"
 #include "event_inline.h"
@@ -497,13 +498,7 @@ s32 gData_020032c8[] = {
 };
 
 // clang-format off
-u32 gData_020032d4[] = {
-    SC_WAIT(30),
-    SC_SET(SW_HOOK, 0),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-};
+DEFINE_G_DATA_02001540(gData_020032d4, 30)
 
 u32 gData_02003304[] = {
     0, 20, 0x80010000, 22, 25, 0,

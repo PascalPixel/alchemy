@@ -3,6 +3,7 @@
 
 // ---- games/tla/src/scene/eastern_alhafra_ship.c ----
 
+#include "shared/tables.h"
 #include "shared/routines.h"
 #include "battle.h"
 #include "field.h"
@@ -1505,15 +1506,7 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gSceneExits[] = {
-    SCENE_EXITS(99),
-    SCENE_EXIT_IF(1, 98, 2, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(2, 99, 3, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(3, 99, 2, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(4, 99, 5, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(5, 99, 4, CONDITION_ALWAYS),
-    SCENE_EXITS_END,
-};
+DEFINE_G_SCENE_EXITS(99, 98, 2, 99, 3, 99, 2, 5, 99, 4)
 
 s16 gData_0200345c[] = {
     16, -1, 1, 0, 0, 360, 0, 0,

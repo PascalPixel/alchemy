@@ -1,3 +1,4 @@
+#include "../shared/tables.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "version.h"
@@ -15,35 +16,11 @@ extern u32 gData_0200503c[];
 extern s32 gData_02005078[];
 
 // clang-format off
-u32 gData_02004fc4[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02004fc4, 22)
 
-u32 gData_02005000[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02005000, 44)
 
-u32 gData_0200503c[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_0200503c, 126)
 
 s32 gData_02005078[] = {
     SC_CALL(Func_02000038),
@@ -206,17 +183,7 @@ s32 gData_0200569c[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-u32 gData_020056ec[] = {
-    SC_SET(SW_FACING, FACING_SOUTH),
-    SC_WAIT(20),
-    SC_SET(SW_FACING, FACING_SOUTHWEST),
-    SC_WAIT(20),
-    SC_SET(SW_FACING, FACING_SOUTH),
-    SC_WAIT(20),
-    SC_SET(SW_FACING, FACING_SOUTHEAST),
-    SC_WAIT(20),
-    SC_LOOP(SC_FOREVER, SC_TOP),
-};
+DEFINE_G_DATA_0200218C(gData_020056ec, 20, 20, 20, 20)
 
 u32 gData_02005748[] = {
     SC_ARG(5),
@@ -240,41 +207,13 @@ s32 gData_0200578c[] = {
     SC_END,
 };
 
-u32 gData_020057d0[] = {
-    SC_ARG(2),
-    SC_MOVE_XZ(PIXELS(740), PIXELS(312)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
-    SC_END,
-};
+DEFINE_G_DATA_020057D0(gData_020057d0, 2, 740, 312)
 
-u32 gData_02005800[] = {
-    SC_ARG(2),
-    SC_MOVE_XZ(PIXELS(900), PIXELS(312)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
-    SC_END,
-};
+DEFINE_G_DATA_02005800(gData_02005800, 2, 900)
 
-u32 gData_0200d830[] = {
-    SC_ARG(5),
-    SC_MOVE_XZ(PIXELS(724), PIXELS(312)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
-    SC_END,
-};
+DEFINE_G_DATA_020057D0(gData_0200d830, 5, 724, 312)
 
-u32 gData_02005860[] = {
-    SC_ARG(5),
-    SC_MOVE_XZ(PIXELS(916), PIXELS(312)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
-    SC_END,
-};
+DEFINE_G_DATA_02005800(gData_02005860, 5, 916)
 
 u32 gData_02005890[] = {
     SC_ARG(5),
@@ -300,14 +239,7 @@ u32 gData_020058d8[] = {
     SC_END,
 };
 
-u32 gData_02005920[] = {
-    SC_ARG(5),
-    SC_MOVE_XZ(PIXELS(708), PIXELS(328)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
-    SC_END,
-};
+DEFINE_G_DATA_020057D0(gData_02005920, 5, 708, 328)
 
 s32 gData_02005950[] = {
     SC_ARG(5),

@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x65f that its scene tables belong to, in ROM order; the rest of the overlay is in garoh/.
 
+#include "shared/routines.h"
 #include "garoh/garoh.h"
 #include "event_inline.h"
 #include "map.h"
@@ -86,52 +87,10 @@ extern const u16 gData_020054ee[];
 extern const u16 gData_020054b8[];
 
 // Build BG palette 1 colors 8-15 from the table.
-void Func_02000390(void) {
-  struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
-  const u8 *table = (const u8 *)gData_020054ee;
-  u32 i = 0;
-  u16 *dst = &buffers->palette[24];
-  s32 blue = 4;
-  s32 red = 0;
-  volatile u16 *color;
-  s32 green;
-
-loop:
-  color = BG_PLTT + 24 + i;
-  green = blue - 2;
-  *color = *(const u16 *)(table + blue) << 10 |
-           *(const u16 *)(table + green) << 5 | *(const u16 *)(table + red);
-  *dst++ = *color;
-  i++;
-  blue += 6;
-  red += 6;
-  if (i < 8)
-    goto loop;
-}
+DEFINE_FUNC_02000390(Func_02000390, gData_020054ee, 24, 8)
 
 // Build BG palette 6 colors 1-9 from the table.
-void Func_020003d8(void) {
-  struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
-  const u8 *table = (const u8 *)gData_020054b8;
-  u32 i = 0;
-  u16 *dst = &buffers->palette[97];
-  s32 blue = 4;
-  s32 red = 0;
-  volatile u16 *color;
-  s32 green;
-
-loop:
-  color = BG_PLTT + 97 + i;
-  green = blue - 2;
-  *color = *(const u16 *)(table + blue) << 10 |
-           *(const u16 *)(table + green) << 5 | *(const u16 *)(table + red);
-  *dst++ = *color;
-  i++;
-  blue += 6;
-  red += 6;
-  if (i < 9)
-    goto loop;
-}
+DEFINE_FUNC_02000390(Func_020003d8, gData_020054b8, 97, 9)
 
 s32 Func_02000420(struct Actor *object) {
   Actor_SetSingleChildFlags(object, 0);
@@ -639,33 +598,9 @@ void Func_02000e78(s32 id, struct Actor *object) {
   Func_020012a8(saved);
 }
 
-void Func_02000eb0(void) {
-  struct Actor *object = Actor_Get(8);
-  s32 x = object->x >> 20;
-  s32 raw;
-  s32 z;
+DEFINE_FUNC_02000EB0(Func_02000eb0, 8, 0x201, 10, 29)
 
-  raw = object->z;
-  z = raw >> 20;
-  if (!Flag_IsSet(0x201) && x == 10 && z == 29) {
-    Func_02000e78(8, object);
-    Flag_Set(0x201);
-  }
-}
-
-void Func_02000eec(void) {
-  struct Actor *object = Actor_Get(9);
-  s32 x = object->x >> 20;
-  s32 raw;
-  s32 z;
-
-  raw = object->z;
-  z = raw >> 20;
-  if (!Flag_IsSet(0x202) && x == 15 && z == 28) {
-    Func_02000e78(9, object);
-    Flag_Set(0x202);
-  }
-}
+DEFINE_FUNC_02000EB0(Func_02000eec, 9, 0x202, 15, 28)
 
 void Func_02000f28(void) {
   Actor_Get(10);

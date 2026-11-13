@@ -1,3 +1,4 @@
+#include "../shared/routines.h"
 #include "shaman_village.h"
 #include "event_inline.h"
 #include "scene_tables.h"
@@ -1300,14 +1301,7 @@ void Func_02004394(void) {
   }
 }
 
-void Func_020043c8(void) {
-  s32 variant = ((struct ShamanVillageObject *)Actor_GetById(
-                     gMainRoutineWork.currentOwner))
-                    ->sprite->priority;
-
-  Actor_SetSpritePriority(21, variant);
-  Actor_SetSpritePriority(14, variant);
-}
+DEFINE_FUNC_020043C8(Func_020043c8, 21, 14)
 
 struct IoReg16 {
   u16 value;
@@ -1426,14 +1420,7 @@ void Func_02004534(void) {
   }
 }
 
-void Func_020046bc(void) {
-  s32 variant = ((struct ShamanVillageObject *)Actor_GetById(
-                     gMainRoutineWork.currentOwner))
-                    ->sprite->priority;
-
-  Actor_SetSpritePriority(9, variant);
-  Actor_SetSpritePriority(10, variant);
-}
+DEFINE_FUNC_020043C8(Func_020046bc, 9, 10)
 
 void Func_020046ec(void) {
   struct ShamanVillageEventWork *work = Ram_HeapSlots->eventWork;

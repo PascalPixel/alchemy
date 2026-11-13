@@ -1,3 +1,4 @@
+#include "../shared/tables.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -149,12 +150,7 @@ u32 gData_02003d9c[] = {
     0x808,
 };
 
-s32 gData_02003da8[] = {
-    46,
-    (s32)Func_02000c9c,
-    17,
-    0,
-};
+DEFINE_G_DATA_02003584(gData_02003da8, Func_02000c9c, 17, 0)
 
 u32 gData_02003db8[] = {
     0,

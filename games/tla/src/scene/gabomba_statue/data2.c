@@ -1,3 +1,4 @@
+#include "../shared/tables.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "objcmd.h"
@@ -55,35 +56,11 @@ u32 gData_02005af0[] = {
     0,
 };
 
-u32 gData_02005af4[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(472), 0, PIXELS(184)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_END,
-};
+DEFINE_G_DATA_02002F1C(gData_02005af4, 472, 184)
 
-u32 gData_02005b1c[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(488), 0, PIXELS(176)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(1),
-    SC_SET(SW_FACING, FACING_SOUTH),
-    SC_WAIT(1),
-    SC_END,
-};
+DEFINE_G_DATA_02005B1C(gData_02005b1c, 488)
 
-u32 gData_02005b60[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(456), 0, PIXELS(176)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(1),
-    SC_SET(SW_FACING, FACING_SOUTH),
-    SC_WAIT(1),
-    SC_END,
-};
+DEFINE_G_DATA_02005B1C(gData_02005b60, 456)
 
 u32 gData_02005ba4[] = {
     SC_ARG(2),
@@ -115,33 +92,9 @@ u32 gData_02005c40[] = {
     17,
 };
 
-s32 gData_02005c74[] = {
-    22,
-    35,
-    0xc000,
-    22,
-    36,
-    0xe000,
-    22,
-    40,
-    0,
-    46,
-    (s32)Func_0200028c,
-};
+DEFINE_G_DATA_02005C74(gData_02005c74, 0xe000)
 
-s32 gData_02005ca0[] = {
-    22,
-    35,
-    0xc000,
-    22,
-    36,
-    0xa000,
-    22,
-    40,
-    0,
-    46,
-    (s32)Func_0200028c,
-};
+DEFINE_G_DATA_02005C74(gData_02005ca0, 0xa000)
 
 u32 gData_02005ccc[] = {
     SC_ARG(2),

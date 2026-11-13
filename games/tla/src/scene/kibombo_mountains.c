@@ -53,14 +53,7 @@ const u8 *Scene_GetPlacements(void) {
   return gData_02001294;
 }
 
-void Func_020000ec(void) {
-  struct Actor *object = Actor_Get(11);
-
-  object->priorityFlags = 0;
-  object->motionFlags = 0;
-  MapGrid_CopyCellAttributes(24, 32, 1, 1, 22, 32);
-  Event_SetFlag(0x221);
-}
+DEFINE_FUNC_020000EC(Func_020000ec, 11, 24, 32, 22, 0x221)
 
 void Func_02000124(void) {
   MapGrid_CopyCellAttributes(30, 35, 1, 1, 28, 34);
@@ -182,23 +175,9 @@ void Func_02000428(void) { GameFlag_SetBit(0x882); }
 
 void Func_02000438(void) { Func_0200114c(); }
 
-void Func_02000440(void) {
-  struct Actor *object = Actor_Get(18);
+DEFINE_FUNC_020000EC(Func_02000440, 18, 6, 16, 4, 0x210)
 
-  object->priorityFlags = 0;
-  object->motionFlags = 0;
-  MapGrid_CopyCellAttributes(6, 16, 1, 1, 4, 16);
-  Event_SetFlag(0x210);
-}
-
-void Func_02000478(void) {
-  struct Actor *object = Actor_Get(19);
-
-  object->priorityFlags = 0;
-  object->motionFlags = 0;
-  MapGrid_CopyCellAttributes(8, 30, 1, 1, 10, 30);
-  Event_SetFlag(0x211);
-}
+DEFINE_FUNC_020000EC(Func_02000478, 19, 8, 30, 10, 0x211)
 
 void Func_020004b0(s32 unused, s32 cell) {
   if (cell == 16 || cell == 17)

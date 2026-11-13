@@ -1,6 +1,7 @@
 /// @file
 /// Scene code of overlay 0x66b, in ROM order, from s03cc's offset up to the next object the overlay links.
 
+#include "../shared/routines.h"
 #include "types.h"
 #include "actor.h"
 #include "event_inline.h"
@@ -92,14 +93,7 @@ void Func_020003f8(s32 unk0, s32 id) {
 
 #include "scene_tables.h"
 
-void Func_02000584(void) {
-  struct Actor *object = Actor_Get(12);
-
-  object->priorityFlags = 0;
-  object->motionFlags = 0;
-  MapGrid_CopyCellAttributes(79, 28, 1, 1, 81, 28);
-  Event_SetFlag(0x201);
-}
+DEFINE_FUNC_020000EC(Func_02000584, 12, 79, 28, 81, 0x201)
 
 void Func_020005bc(void) {
   struct Actor *object = Actor_Get(13);

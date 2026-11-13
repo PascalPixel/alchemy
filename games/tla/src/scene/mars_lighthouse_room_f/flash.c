@@ -53,16 +53,7 @@ void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Func_020041ec(void *handle);
 void Func_0200236c(struct Actor *object, s32 unused);
 
-void Func_02002954(struct Actor *object) {
-  switch (gFrameCount & 7) {
-  case 0:
-    Animation_ApplyChildValues(object, 10);
-    break;
-  case 4:
-    Animation_ApplyChildValues(object, 0);
-    break;
-  }
-}
+DEFINE_FUNC_020012BC(Func_02002954, 10, 4, 0)
 
 #include "version.h"
 

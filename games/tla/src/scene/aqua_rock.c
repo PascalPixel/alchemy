@@ -304,19 +304,9 @@ void Func_02000844(void) {
   Task_Add(Func_02000580, TASK_PASS_VBLANK);
 }
 
-void Func_02000b10(struct Actor *object) {
-  if (gFrameCount & 2)
-    Animation_ApplyChildValues(object, 7);
-  else
-    Animation_ApplyChildValues(object, 0);
-}
+DEFINE_FUNC_02000780(Func_02000b10, 7)
 
-void Func_02000b34(struct Actor *object) {
-  if (gFrameCount & 2)
-    Animation_ApplyChildValues(object, 6);
-  else
-    Animation_ApplyChildValues(object, 0);
-}
+DEFINE_FUNC_02000780(Func_02000b34, 6)
 
 void Func_02000b58(struct Actor *object) {
   Animation_ApplyChildValues(object, 0);
@@ -568,56 +558,15 @@ void Func_0200106c(void) {
   Event_End();
 }
 
-void Func_020010f4(s32 unused, s32 id) {
-  struct Actor *object = Actor_GetById(id);
+DEFINE_FUNC_020010F4(Func_020010f4, 42, 32, 44, 0x221)
 
-  object->priorityFlags = 0;
-  object->motionFlags = 0;
-  Func_02002960_(42, 32, 1, 1, 44, 32);
-  GameFlag_SetBit(0x221);
-}
+DEFINE_FUNC_020010F4(Func_0200112c, 48, 32, 46, 0x222)
 
-void Func_0200112c(s32 unused, s32 id) {
-  struct Actor *object = Actor_GetById(id);
+DEFINE_FUNC_020010F4(Func_02001164, 44, 44, 46, 0x223)
 
-  object->priorityFlags = 0;
-  object->motionFlags = 0;
-  Func_02002960_(48, 32, 1, 1, 46, 32);
-  GameFlag_SetBit(0x222);
-}
+DEFINE_FUNC_0200119C(Func_0200119c, 0x951, 52)
 
-void Func_02001164(s32 unused, s32 id) {
-  struct Actor *object = Actor_GetById(id);
-
-  object->priorityFlags = 0;
-  object->motionFlags = 0;
-  Func_02002960_(44, 44, 1, 1, 46, 44);
-  GameFlag_SetBit(0x223);
-}
-
-void Func_0200119c(s32 unused, s32 id) {
-  struct Actor *object = Actor_GetById(id);
-  s32 column = object->x >> 20;
-
-  if (column == 53) {
-    wait(30);
-    object->z += 0x10000;
-    GameFlag_SetBit(0x951);
-    Map_CopyCellAttributeRect(54, 58, 1, 1, column, 52);
-  }
-}
-
-void Func_020011e0(s32 unused, s32 id) {
-  struct Actor *object = Actor_GetById(id);
-  s32 column = object->x >> 20;
-
-  if (column == 53) {
-    wait(30);
-    object->z += 0x10000;
-    GameFlag_SetBit(0x952);
-    Map_CopyCellAttributeRect(54, 58, 1, 1, column, 58);
-  }
-}
+DEFINE_FUNC_0200119C(Func_020011e0, 0x952, 58)
 
 /// Sets flag 0xa69 after four rounds of a random colour value, runs the
 /// blend scripts, then moves the camera to object 15, starts its update and

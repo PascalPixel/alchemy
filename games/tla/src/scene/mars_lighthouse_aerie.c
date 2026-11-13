@@ -1,3 +1,4 @@
+#include "shared/routines.h"
 #include "mars_lighthouse_aerie/mars_lighthouse_aerie.h"
 #include "event_work.h"
 #include "module/scene/mars_lighthouse_aerie.h"
@@ -106,18 +107,8 @@ const struct Trigger *Scene_GetPlacements(void) {
   return (const struct Trigger *)gData_0200626c;
 }
 
-void Func_020001a0(void) {
-  Func_02004fac();
-  Func_020057cc();
-  {
-    u8 *party = (u8 *)&gMainRoutineWork;
-
-    party[0x2c2] = 2;
-  }
-  FieldEvent_SetExitRequest(1);
-  FieldEvent_Wait(40);
-  Func_02005010();
-}
+DEFINE_FUNC_020001A0(Func_020001a0, Func_02004fac, Func_020057cc, 1,
+    Func_02005010)
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
@@ -1689,45 +1680,6 @@ static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
 /// Every third frame, or every frame once flag 0x200 is set, starts a particle
 /// circling actor 23 at a random height above it, as overlay 69e's
 /// Func_020001a4 does under flag 0x201.
-void Func_0200326c(void) {
-  struct Actor *center;
-  struct OrbitEffect *effect;
-  struct FieldSprite *sprite;
-  s32 angle;
-
-  if (Event_GetFlag(0x200) == 0 && gFrameCount % 3 != 0)
-    return;
-  center = Actor_Get(23);
-  if (Event_GetFlag(0x200) != 0) {
-    u32 random;
-
-    random = Random16Far();
-    effect = CreateOrbitEffect(0x2a0, center->x,
-                               (s32)((u32)(random << 8) >> 16 << 16) +
-                                   center->y - 0x1c0000,
-                               center->z);
-  } else {
-    u32 random;
-
-    random = Random16Far();
-    effect = CreateOrbitEffect(0x2a0, center->x,
-                               (s32)((u32)(random << 6) >> 16 << 16) +
-                                   center->y - 0x1c0000,
-                               center->z);
-  }
-  if (effect != 0) {
-    sprite = effect->sprite;
-    Actor_StartScript(effect, gData_02006afc);
-    Actor_SetSpriteColor(effect, 1);
-    effect->motionFlags = 0;
-    angle = Random16Far() & 0xffff000;
-    effect->angle = angle;
-    effect->unk66 = 0;
-    effect->update = (void (*)(struct OrbitEffect *))Func_02003210;
-    effect->radius = Math_Sin((u32)(Random16Far() * 0xffff) >> 20) * 24 >> 16;
-    sprite->nextFrame = 0;
-    sprite->priority = 2;
-  }
-}
+DEFINE_FUNC_020001A4(Func_0200326c, 0x200, gData_02006afc, Func_02003210, 2)
 
 #include "../field/object/park_record.c"

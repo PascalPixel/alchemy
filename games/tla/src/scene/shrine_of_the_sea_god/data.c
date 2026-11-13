@@ -1,3 +1,4 @@
+#include "../shared/tables.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
@@ -238,12 +239,7 @@ struct ActorPlacement gData_02004400[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020045f8[] = {
-    {297, CONDITION_ALWAYS, 1, PIXELS(160), 0, PIXELS(202), FACING_SOUTH, 2, 0},
-    {297, CONDITION_ALWAYS, 1, PIXELS(176), 0, PIXELS(298), FACING_SOUTH, 2, 1},
-    {297, CONDITION_ALWAYS, 1, PIXELS(320), 0, PIXELS(218), FACING_SOUTH, 2, 1},
-    {SCENE_TABLE_END},
-};
+DEFINE_G_DATA_02001330(gData_020045f8, 297, 160, 202, 176, 298, 1, 320, 218)
 
 struct Trigger gData_02004658[] = {
     {TRIGGERS_END},

@@ -1,6 +1,7 @@
 /// @file
 /// Overlay 0x67a's scene: its code, then its tables, in the order the ROM has them.
 
+#include "shared/tables.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -57,15 +58,7 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gSceneExits[] = {
-    SCENE_EXITS(157),
-    SCENE_EXIT_IF(1, 157, 2, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(2, 157, 1, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(3, 155, 3, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(4, 155, 4, CONDITION_ALWAYS),
-    SCENE_EXIT_IF(5, 155, 5, CONDITION_ALWAYS),
-    SCENE_EXITS_END,
-};
+DEFINE_G_SCENE_EXITS(157, 157, 2, 157, 1, 155, 3, 4, 155, 5)
 
 struct ActorPlacement gActorPlacements[] = {
     {307, 0x8e9, (s32)gData_02000090, PIXELS(120), 0, PIXELS(608), FACING_NORTH,

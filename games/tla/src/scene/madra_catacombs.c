@@ -487,31 +487,9 @@ void Func_02000c5c(void) { Func_02000b38(118, 1, 118, 3, 1, 2); }
 
 void Func_02000c78(void) { Func_02000b38(92, 29, 92, 31, 1, 2); }
 
-void Func_02000c94(void) {
-  Event_Start();
-  Event_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
-  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
-  wait(1);
-  Event_StartScreenTransition();
-  Event_WaitTransitionFrames();
-  Event_Wait(40);
-  Import_EventSetExitRequest(3);
-}
+DEFINE_FUNC_02000C94(Func_02000c94, 3)
 
-void Func_02000cf4(void) {
-  Event_Start();
-  Event_ResolvePendingActions(0);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
-  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
-  wait(1);
-  Event_StartScreenTransition();
-  Event_WaitTransitionFrames();
-  Event_Wait(40);
-  Import_EventSetExitRequest(8);
-}
+DEFINE_FUNC_02000C94(Func_02000cf4, 8)
 
 s32 Scene_Initialize(void) {
   ((struct SceneWork *)Ram_HeapSlots->eventWork)->unk1ac = 0x204;

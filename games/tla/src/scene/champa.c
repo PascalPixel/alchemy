@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x682, in ROM order.
 
+#include "shared/tables.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -1532,12 +1533,8 @@ s16 gData_020031e6[] = {
 };
 // clang-format on
 
-s32 gData_020031fc[] = {
-    (s32)gData_020031e6,
-    0x9001d,
-    (s32)gData_020031e4,
-    0,
-};
+DEFINE_G_DATA_0200064C(gData_020031fc, gData_020031e6, 0x9001d, gData_020031e4,
+    0)
 
 s32 gData_0200320c[] = {
     0xc602,

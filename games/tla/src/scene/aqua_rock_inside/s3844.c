@@ -161,12 +161,7 @@ u32 gData_02003fe8[] = {
     17,
 };
 
-s32 gData_02004004[] = {
-    46,
-    (s32)Func_020013bc,
-    38,
-    17,
-};
+DEFINE_G_DATA_02003584(gData_02004004, Func_020013bc, 38, 17)
 
 DEFINE_G_DATA_02004014(gData_02004014, Func_0200147c, Func_02001520,
     Func_0200156c)

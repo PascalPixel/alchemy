@@ -1,6 +1,7 @@
 /// @file
 /// Overlay 0x6b4's scene: its code between field/field_effect/move and field/field_effect/advance_motion, then its tables, in ROM order.
 
+#include "shared/tables.h"
 #include "types.h"
 #include "main_routine_work.h"
 #include "field_sprite.h"
@@ -202,35 +203,11 @@ next:
 }
 
 // clang-format off
-u32 gData_0200159c[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_0200159c, 22)
 
-u32 gData_020015d8[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_020015d8, 44)
 
-u32 gData_02001614[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02001614, 126)
 // clang-format on
 
 s32 gData_02001650[] = {

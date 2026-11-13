@@ -1,6 +1,7 @@
 /// @file
 /// Scene code of overlay 0x69d, in ROM order, from s1a20's offset up to the next object the overlay links, and the overlay's data.
 
+#include "../shared/tables.h"
 #include "../shared/routines.h"
 #include "types.h"
 #include "system.h"
@@ -87,35 +88,11 @@ extern u32 gData_02002384[];
 extern u32 gData_020023c0[];
 
 // clang-format off
-u32 gData_02002384[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02002384, 22)
 
-u32 gData_020023c0[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_020023c0, 44)
 
-u32 gData_020023fc[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_020023fc, 126)
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x659, in ROM order.
 
+#include "shared/tables.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -1084,41 +1085,9 @@ u32 gData_02001f90[] = {
     17,
 };
 
-u32 gData_02001fc4[] = {
-    SC_ARG(2),
-    SC_POSITION(PIXELS(327), 0, PIXELS(71)),
-    SC_SET(SW_FACING, FACING_EAST),
-    SC_MOVE(PIXELS(352), 0, PIXELS(72)),
-    SC_SYNC,
-    SC_MOVE_XZ(PIXELS(373), PIXELS(109)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_SET(SW_FACING, FACING_NORTH),
-    SC_WAIT(10),
-    SC_SET(SW_FACING, FACING_SOUTHWEST),
-    SC_WAIT(10),
-    SC_SET(SW_FACING, FACING_WEST),
-    SC_WAIT(10),
-    SC_END,
-};
+DEFINE_G_DATA_02001FC4(gData_02001fc4, 109)
 
-u32 gData_02002054[] = {
-    SC_ARG(2),
-    SC_POSITION(PIXELS(327), 0, PIXELS(71)),
-    SC_SET(SW_FACING, FACING_EAST),
-    SC_MOVE(PIXELS(352), 0, PIXELS(72)),
-    SC_SYNC,
-    SC_MOVE_XZ(PIXELS(373), PIXELS(97)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_SET(SW_FACING, FACING_NORTH),
-    SC_WAIT(10),
-    SC_SET(SW_FACING, FACING_SOUTHWEST),
-    SC_WAIT(10),
-    SC_SET(SW_FACING, FACING_WEST),
-    SC_WAIT(10),
-    SC_END,
-};
+DEFINE_G_DATA_02001FC4(gData_02002054, 97)
 
 u32 gData_020020e4[] = {
     SC_ARG(2),
@@ -1500,17 +1469,7 @@ struct Trigger gData_0200308c[] = {
     {TRIGGERS_END},
 };
 
-u32 gData_020033c8[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(408), 0, PIXELS(872)),
-    SC_SYNC,
-    SC_MOVE(PIXELS(408), 0, PIXELS(904)),
-    SC_SYNC,
-    SC_MOVE(PIXELS(408), 0, PIXELS(920)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_END,
-};
+DEFINE_G_DATA_020033C8(gData_020033c8, 408, 872, 904, 408, 920)
 
 s32 gData_02003418[] = {
     SC_CALL(Func_020007ac),

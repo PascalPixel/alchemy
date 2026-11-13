@@ -237,29 +237,11 @@ void Func_02000418(void) {
   }
 }
 
-void Func_02000444(s32 state, s32 unused) {
-  if (state == 1) {
-    MapGrid_CopyCells(29, 56, 3, 4, 10, 50);
-    MapGrid_CopyCellsLayered(93, 56, 3, 4, 74, 50);
-    Event_SetFlag(0xa44);
-  }
-}
+DEFINE_FUNC_02000444(Func_02000444, 10, 74, 0xa44)
 
-void Func_02000480(s32 state, s32 unused) {
-  if (state == 1) {
-    MapGrid_CopyCells(29, 56, 3, 4, 18, 50);
-    MapGrid_CopyCellsLayered(93, 56, 3, 4, 82, 50);
-    Event_SetFlag(0xa45);
-  }
-}
+DEFINE_FUNC_02000444(Func_02000480, 18, 82, 0xa45)
 
-void Func_020004bc(s32 state, s32 unused) {
-  if (state == 1) {
-    MapGrid_CopyCells(29, 56, 3, 4, 14, 50);
-    MapGrid_CopyCellsLayered(93, 56, 3, 4, 78, 50);
-    Event_SetFlag(0xa46);
-  }
-}
+DEFINE_FUNC_02000444(Func_020004bc, 14, 78, 0xa46)
 
 void Func_020004f8(void) {
   Event_PlaySound(0x248);
@@ -595,33 +577,9 @@ void Func_02000cb8(s32 id) {
   }
 }
 
-void Func_02000cf4(s32 unused, s32 id) {
-  Func_02000c80(id);
-  Flag_Set(0x220);
-  if (Func_020027dc(2) != 64) {
-    struct Actor *object = Actor_Get(id);
+DEFINE_FUNC_02000CF4(Func_02000cf4, 0x220, 2)
 
-    WORD_AT(object, 108) = 0;
-    Animation_ApplyChildValues(object, 0);
-    Actor_SetAnimation(id, 6);
-    Flag_Clear(0x220);
-    Func_02000cb8(id);
-  }
-}
-
-void Func_02000d38(s32 unused, s32 id) {
-  Func_02000c80(id);
-  Flag_Set(0x221);
-  if (Func_020027dc(0) != 64) {
-    struct Actor *object = Actor_Get(id);
-
-    WORD_AT(object, 108) = 0;
-    Animation_ApplyChildValues(object, 0);
-    Actor_SetAnimation(id, 6);
-    Flag_Clear(0x221);
-    Func_02000cb8(id);
-  }
-}
+DEFINE_FUNC_02000CF4(Func_02000d38, 0x221, 0)
 
 void Func_02000d80(void) {
   Flag_Set(0xa40);
@@ -1320,21 +1278,8 @@ extern const u8 gData_02005d8c[];
 
 DEFINE_FUNC_02001C44(Func_02001f84, gData_02005d8c)
 
-void Func_02001fb4(s32 *position, s32 speed, s32 mode) {
-  struct Actor *object =
-      Func_02005498_(366, position[0], position[1], position[2]);
-
-  if (object != NULL) {
-    object->bounce = 0;
-    object->gravity = 0;
-    object->unk4c = speed;
-    Func_02001f84(object, 2);
-    object->update = Func_02001e20;
-    if (mode)
-      object->unk5c[0] = 2;
-    Func_02005480(object, 2);
-  }
-}
+DEFINE_FUNC_02001C74(Func_02001fb4, Func_02005498_, Func_02001f84, 2,
+    Func_02001e20, Func_02005480)
 
 // ---- games/tla/src/scene/mars_lighthouse_room_f/s1ffc.c ----
 #include "../../../../games/tla/src/scene/mars_lighthouse_entrance/room.h"
@@ -1388,21 +1333,8 @@ void Func_0200215c(struct Actor *object, s32 part) {
 DEFINE_FUNC_02001E60(Func_020021a0, Func_02005498_, Func_0200215c,
     Func_02001e20, Func_02005480)
 
-void Func_020021e8(s32 *position, s32 speed, s32 mode) {
-  struct Actor *object =
-      Func_02005498_(366, position[0], position[1], position[2]);
-
-  if (object != NULL) {
-    object->bounce = 0;
-    object->gravity = 0;
-    object->unk4c = speed;
-    Func_0200215c(object, 3);
-    object->update = Func_02001ffc;
-    if (mode)
-      object->unk5c[0] = 2;
-    Func_02005480(object, 2);
-  }
-}
+DEFINE_FUNC_02001C74(Func_020021e8, Func_02005498_, Func_0200215c, 3,
+    Func_02001ffc, Func_02005480)
 
 DEFINE_FUNC_02001E60(Func_02002230, Func_02005498_, Func_0200215c,
     Func_02001ffc, Func_02005480)

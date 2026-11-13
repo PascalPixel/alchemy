@@ -76,20 +76,9 @@ void Func_02000154(void) {
   }
 }
 
-void Func_02000190(void) {
-  if (!Event_GetFlag(512)) {
-    Event_SetFlag(512);
-    Func_020000b4(1);
-  }
-}
+DEFINE_FUNC_0200013C(Func_02000190, 512, Func_020000b4)
 
-void Func_020001b0(void) {
-  if (Event_GetFlag(512) == 1) {
-    Event_ClearFlag(512);
-    Func_02000108();
-  }
-  Func_02000154();
-}
+DEFINE_FUNC_02000160(Func_020001b0, 512, Func_02000108, Func_02000154)
 
 void Func_020001d0(void) {
   System_Wait(10);

@@ -551,59 +551,13 @@ void Func_02000d84(void) {
     Func_02000458(rect);
 }
 
-void Func_02000dac(void) {
-  Func_02000898();
-  Func_02001958();
-  {
-    u8 *party = (u8 *)&gMainRoutineWork;
+DEFINE_FUNC_02000DAC_2(Func_02000dac, 10)
 
-    party[0x2c2] = 2;
-  }
-  Event_SetDestination((s32)&SceneId_Ov662Room1, 10);
-  Event_Wait(40);
-  Func_020008fc();
-}
+DEFINE_FUNC_02000DAC_2(Func_02000de0, 9)
 
-void Func_02000de0(void) {
-  Func_02000898();
-  Func_02001958();
-  {
-    u8 *party = (u8 *)&gMainRoutineWork;
+DEFINE_FUNC_02000E14(Func_02000e14, 0x300, L_02008e3a, 11)
 
-    party[0x2c2] = 2;
-  }
-  Event_SetDestination((s32)&SceneId_Ov662Room1, 9);
-  Event_Wait(40);
-  Func_020008fc();
-}
-
-void Func_02000e14(s32 arg0) {
-  s32 result0;
-
-  result0 = Event_GetFlag(0x300);
-  if (result0 != 0)
-    goto L_02008e3a;
-  if (arg0 != 3)
-    goto L_02008e3a;
-  Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
-  GameFlag_SetBit(0x300);
-L_02008e3a:
-  return;
-}
-
-void Func_02000e3c(s32 arg0) {
-  s32 result0;
-
-  result0 = Event_GetFlag(0x301);
-  if (result0 != 0)
-    goto L_02008e66;
-  if (arg0 != 3)
-    goto L_02008e66;
-  Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
-  GameFlag_SetBit(0x301);
-L_02008e66:
-  return;
-}
+DEFINE_FUNC_02000E14(Func_02000e3c, 0x301, L_02008e66, 15)
 
 void Func_02000e68(s32 unused, s32 id) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room2) {

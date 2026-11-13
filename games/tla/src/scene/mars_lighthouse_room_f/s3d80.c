@@ -755,33 +755,9 @@ s32 gData_020056c8[] = {
 };
 
 // clang-format off
-u32 gData_020056d4[] = {
-    SC_SET(SW_STEERING, 0),
-    SC_SET(SW_MOTION, 2),
-    SC_SET(SW_SPEED, 0x8000),
-    SC_SET(SW_ACCEL, 0x800),
-    SC_MOVE(PIXELS(680), 0, PIXELS(304)),
-    SC_SYNC,
-    SC_WAIT(20),
-    SC_MOVE(PIXELS(760), 0, PIXELS(304)),
-    SC_SYNC,
-    SC_WAIT(20),
-    SC_LOOP(SC_FOREVER, SC_TOP),
-};
+DEFINE_G_DATA_020056D4(gData_020056d4, 680, 760)
 
-u32 gData_02005748[] = {
-    SC_SET(SW_STEERING, 0),
-    SC_SET(SW_MOTION, 2),
-    SC_SET(SW_SPEED, 0x8000),
-    SC_SET(SW_ACCEL, 0x800),
-    SC_MOVE(PIXELS(584), 0, PIXELS(304)),
-    SC_SYNC,
-    SC_WAIT(20),
-    SC_MOVE(PIXELS(664), 0, PIXELS(304)),
-    SC_SYNC,
-    SC_WAIT(20),
-    SC_LOOP(SC_FOREVER, SC_TOP),
-};
+DEFINE_G_DATA_020056D4(gData_02005748, 584, 664)
 
 u32 gData_020057bc[] = {
     SC_SET(SW_STEERING, 0),
@@ -857,15 +833,7 @@ u32 gData_0200593c[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-u32 gData_02005a3c[] = {
-    SC_SET(SW_STEERING, 0),
-    SC_SET(SW_MOTION, 2),
-    SC_SET(SW_Y, PIXELS(32)),
-    SC_SET(SW_GROUND, PIXELS(32)),
-    SC_SET(SW_SPEED, 0x8000),
-    SC_SET(SW_ACCEL, 0x800),
-    SC_END,
-};
+DEFINE_G_DATA_02004FF0(gData_02005a3c, 2)
 
 u32 gData_02005a88[] = {
     SC_SET(SW_STEERING, 0),
@@ -966,77 +934,16 @@ u16 gData_02005c6e[] = {
     22, 0, 0,
 };
 
-s32 gData_02005c84[] = {
-    46,
-    (s32)Func_02003478,
-    4,
-    0xf80000,
-    0x200000,
-    0x2a00000,
-    1,
-    4,
-    0xf80000,
-    0x160000,
-    0x2a00000,
-    1,
-    4,
-    0xf80000,
-    0x160000,
-    0x2b00000,
-    1,
-    22,
-    37,
-    (s32)Func_020006f4,
-    46,
-    (s32)Func_0200351c,
-    17,
-};
+DEFINE_G_DATA_020054CC(gData_02005c84, Func_02003478, 0xf80000, 0x200000,
+    0x2a00000, 0x160000, 0xf80000, 0x2b00000, Func_020006f4, Func_0200351c)
 
-s32 gData_02005ce0[] = {
-    46,
-    (s32)Func_02003478,
-    4,
-    0xb80000,
-    0x400000,
-    0x2300000,
-    1,
-    4,
-    0xb80000,
-    0x360000,
-    0x2300000,
-    1,
-    4,
-    0xb80000,
-    0x360000,
-    0x2400000,
-    1,
-    22,
-    37,
-    (s32)Func_02000d80,
-    46,
-    (s32)Func_0200351c,
-    17,
-};
+DEFINE_G_DATA_020054CC(gData_02005ce0, Func_02003478, 0xb80000, 0x400000,
+    0x2300000, 0x360000, 0xb80000, 0x2400000, Func_02000d80, Func_0200351c)
 
-s32 gData_02005d3c[] = {
-    SC_CALL(Func_02003478),
-    SC_MOVE(PIXELS(872), PIXELS(32), PIXELS(128)),
-    SC_SYNC,
-    SC_MOVE(PIXELS(872), PIXELS(22), PIXELS(128)),
-    SC_SYNC,
-    SC_MOVE(PIXELS(872), PIXELS(22), PIXELS(144)),
-    SC_SYNC,
-    SC_CALL(Func_0200351c),
-    SC_END,
-};
+DEFINE_G_DATA_0200547C(gData_02005d3c, Func_02003478, 872, 128, 22, 872, 144,
+    Func_0200351c)
 
-u32 gData_02005d8c[] = {
-    SC_WAIT(30),
-    SC_SET(SW_HOOK, 0),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-};
+DEFINE_G_DATA_02001540(gData_02005d8c, 30)
 
 u32 gData_02005dbc[] = {
     0, 20, 0x80010000, 22, 25, 0,
@@ -1050,35 +957,11 @@ u32 gData_02005e00[] = {
     1, 13, 10, 0xc0010000, 38,
 };
 
-u32 gData_02005e44[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02005e44, 22)
 
-u32 gData_02005e80[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02005e80, 44)
 
-u32 gData_02005ebc[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02005ebc, 126)
 
 s32 gData_02005ef8[] = {
     0xffff, -0x8000, (s32)0xe000c000, (s32)0xc000a000, 0x20004000, 0x40006000,

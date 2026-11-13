@@ -1,6 +1,8 @@
 /// @file
 /// Scene code of overlay 0x653, in ROM order, from s2ec4's offset up to the next object the overlay links, and the overlay's data.
 
+#include "../shared/routines.h"
+#include "../shared/tables.h"
 #include "local.h"
 #include "field_effect.h"
 #include "event_work.h"
@@ -110,18 +112,7 @@ do {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
-do {
-  leader->y += -0x6c000;
-  statue->y += -0x6c000;
-  ride->y += -0x2b333;
-  limit = 0x1800;
-  Func_02000cf8(11, 0x30000, limit);
-  Func_02000cf8(13, 0x24000, limit);
-  Func_02000cf8(14, 0x18000, limit);
-  Func_02000cf8(15, 0xc000, limit);
-  Func_02000cf8(16, 0, limit);
-  wait(1);
-} while (Actor_GetById(16)->scaleY > limit);
+DEFINE_FUNC_02000CF8(11, 13, 14, 15, 16)
   gData_02006298 = 0;
   GameFlag_ClearBit(0x20c);
   Sound_Play(390);
@@ -184,18 +175,7 @@ do {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
-do {
-  leader->y += -0x6c000;
-  statue->y += -0x6c000;
-  ride->y += -0x2b333;
-  limit = 0x1800;
-  Func_02000cf8(12, 0x30000, limit);
-  Func_02000cf8(17, 0x24000, limit);
-  Func_02000cf8(18, 0x18000, limit);
-  Func_02000cf8(19, 0xc000, limit);
-  Func_02000cf8(20, 0, limit);
-  wait(1);
-} while (Actor_GetById(20)->scaleY > limit);
+DEFINE_FUNC_02000CF8(12, 17, 18, 19, 20)
   gData_0200629c = 0;
   GameFlag_ClearBit(0x20d);
   Sound_Play(390);
@@ -281,98 +261,12 @@ void Func_02003584(void) {
 }
 
 /// The leader and actor 13 rise into view while actor 15 scales.
-void Func_02003684(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  struct Actor *first = Actor_GetById(13);
-  struct Actor *second = Actor_GetById(15);
-
-  Event_Start();
-  Event_ResolvePendingActions(0);
-  Func_02005388(162);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
-  wait(1);
-  leader->motionFlags = 0;
-  Actor_SetPositionAndResetMotion_(Actor_GetById(gMainRoutineWork.currentOwner),
-                                   PIXELS(440), PIXELS(-20), PIXELS(200));
-  Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner), 0);
-  Actor_SetPositionAndResetMotion_(Actor_GetById(13), PIXELS(440), PIXELS(-20),
-                                   PIXELS(204));
-  Actor_SetPositionAndResetMotion_(Actor_GetById(15), PIXELS(440), PIXELS(-20),
-                                   PIXELS(200));
-  Actor_SetSpritePriority(13, 2);
-  Actor_SetSpritePriority(15, 3);
-  {
-    u8 *flags = &second->priorityFlags;
-    s32 c = 2 | *flags;
-
-    *flags = c;
-  }
-  second->scaleY = 0x400;
-  Actor_SetModeById(13, 4);
-  Actor_SetModeById(15, 2);
-  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
-  Event_StartScreenTransition();
-  Event_WaitTransitionFrames();
-  // A goto loop, as in Func_0200393c.
-rise:
-  first->y += PIXELS(4);
-  leader->y += PIXELS(4);
-  Func_02000cd8(15, 0x4ccc, 0x4ccc);
-  wait(1);
-  if (first->y < 0)
-    goto rise;
-  MapGrid_CopyCellAttributes(0, 0, 1, 1, 27, 12);
-  gData_020062a0 = 2000;
-  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 516;
-  Event_End();
-}
+DEFINE_FUNC_02003684(Func_02003684, 13, 15, 440, 200, 204, 27, 12,
+    gData_020062a0)
 
 /// As Func_02003684, for actors 14 and 16 at another place.
-void Func_020037e0(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  struct Actor *first = Actor_GetById(14);
-  struct Actor *second = Actor_GetById(16);
-
-  Event_Start();
-  Event_ResolvePendingActions(0);
-  Func_02005388(162);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
-  wait(1);
-  leader->motionFlags = 0;
-  Actor_SetPositionAndResetMotion_(Actor_GetById(gMainRoutineWork.currentOwner),
-                                   PIXELS(600), PIXELS(-20), PIXELS(232));
-  Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner), 0);
-  Actor_SetPositionAndResetMotion_(Actor_GetById(14), PIXELS(600), PIXELS(-20),
-                                   PIXELS(236));
-  Actor_SetPositionAndResetMotion_(Actor_GetById(16), PIXELS(600), PIXELS(-20),
-                                   PIXELS(232));
-  Actor_SetSpritePriority(14, 2);
-  Actor_SetSpritePriority(16, 3);
-  {
-    u8 *flags = &second->priorityFlags;
-    s32 c = 2 | *flags;
-
-    *flags = c;
-  }
-  second->scaleY = 0x400;
-  Actor_SetModeById(14, 4);
-  Actor_SetModeById(16, 2);
-  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
-  Event_StartScreenTransition();
-  Event_WaitTransitionFrames();
-  // A goto loop, as in Func_0200393c.
-rise:
-  first->y += PIXELS(4);
-  leader->y += PIXELS(4);
-  Func_02000cd8(16, 0x4ccc, 0x4ccc);
-  wait(1);
-  if (first->y < 0)
-    goto rise;
-  MapGrid_CopyCellAttributes(0, 0, 1, 1, 37, 14);
-  gData_020062a4 = 2000;
-  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 516;
-  Event_End();
-}
+DEFINE_FUNC_02003684(Func_020037e0, 14, 16, 600, 232, 236, 37, 14,
+    gData_020062a4)
 
 /// Actor 13 rises out of view while actor 15 scales, then the scene moves on.
 void Func_0200393c(void) {
@@ -1141,35 +1035,11 @@ void Func_020023e8(void);
 extern u32 gData_02005458[];
 
 // clang-format off
-u32 gData_020053e0[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_020053e0, 22)
 
-u32 gData_0200541c[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_0200541c, 44)
 
-u32 gData_02005458[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02005458, 126)
 
 s32 gData_02005494[] = {
     0,
@@ -1242,16 +1112,7 @@ u32 gData_02005564[] = {
     SC_END,
 };
 
-u32 gData_020055a0[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(440), 0, PIXELS(392)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(1),
-    SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
-    SC_WAIT(1),
-    SC_END,
-};
+DEFINE_G_DATA_02002FCC(gData_020055a0, 440, 392, 1)
 
 u32 gData_020055e4[] = {
     SC_ARG(2),
@@ -1354,18 +1215,7 @@ struct ActorPlacement gData_020057a8[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020057c0[] = {
-    {407, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_SOUTH, 2, 2},
-    {407, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_SOUTH, 2, 3},
-    {407, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_SOUTH, 2, 3},
-    {407, CONDITION_ALWAYS, 1, 4, 0, 0, FACING_SOUTH, 2, 3},
-    {272, CONDITION_ALWAYS, 1, 5, 0, 0, FACING_SOUTH, 2, 2},
-    {351, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {351, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {351, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {351, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {SCENE_TABLE_END},
-};
+DEFINE_G_DATA_020057C0(gData_020057c0, 407, 1, 2, 3, 4, 272, 5, 351)
 
 struct ActorPlacement gData_020058b0[] = {
     {368, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_SOUTH, 2, 2},

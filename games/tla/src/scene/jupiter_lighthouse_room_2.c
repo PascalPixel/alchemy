@@ -205,21 +205,9 @@ spin:
   Event_End();
 }
 
-void Func_020003f4(void) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
-  u8 *effect = Ram_HeapSlots->effectWork;
+DEFINE_FUNC_020003F4(Func_020003f4, 30)
 
-  event->unk16a = 30;
-  effect[52] = 1;
-}
-
-void Func_02000410(void) {
-  struct EventWork *event = Ram_HeapSlots->eventWork;
-  u8 *effect = Ram_HeapSlots->effectWork;
-
-  event->unk16a = 31;
-  effect[52] = 1;
-}
+DEFINE_FUNC_020003F4(Func_02000410, 31)
 
 void Func_0200042c(void) {
   FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x16a), u16, 0) = 0x20;

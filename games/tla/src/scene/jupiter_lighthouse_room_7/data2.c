@@ -1,3 +1,4 @@
+#include "../shared/tables.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "objcmd.h"
@@ -11,35 +12,11 @@ void Func_020009e4(void);
 void Func_02000e20(void);
 
 // clang-format off
-u32 gData_02003110[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02003110, 22)
 
-u32 gData_0200314c[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_0200314c, 44)
 
-u32 gData_02003188[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02003188, 126)
 
 s16 gData_020031c4[] = {
     17, 1, 0xa16, 9, 1, 0xa17, -1, 0,
@@ -50,22 +27,7 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gSceneExits[] = {
-    SCENE_EXITS(260),
-    SCENE_EXIT(1, 262, 1),
-    SCENE_EXIT(2, 260, 3),
-    SCENE_EXIT(3, 260, 2),
-    SCENE_EXIT(4, 260, 5),
-    SCENE_EXIT(5, 260, 4),
-    SCENE_EXIT(6, 260, 7),
-    SCENE_EXIT(7, 260, 6),
-    SCENE_EXIT(8, 263, 8),
-    SCENE_EXIT(9, 260, 10),
-    SCENE_EXIT(10, 260, 9),
-    SCENE_EXIT(11, 260, 12),
-    SCENE_EXIT(12, 260, 11),
-    SCENE_EXITS_END,
-};
+DEFINE_G_SCENE_EXITS_3(260, 262, 260, 7, 6, 263, 10, 9, 12, 260)
 
 struct ActorPlacement gActorPlacements[] = {
     {340, CONDITION_ALWAYS, 1, PIXELS(564), 0, PIXELS(712), FACING_SOUTHWEST, 2, 0},

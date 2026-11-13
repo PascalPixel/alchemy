@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x653 that its scene tables belong to, in ROM order; the rest of the overlay is in kandorean_temple/.
 
+#include "shared/routines.h"
 #include "kandorean_temple/local.h"
 #include "field.h"
 #include "module/scene/kandorean_temple.h"
@@ -475,23 +476,11 @@ void Func_02000bcc(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
-void Func_02000bf4(void) {
-  s32 position[3];
+DEFINE_FUNC_02000BF4(Func_02000bf4, gData_02006298, 9, 0x1280000, 0xb00000,
+    0x20000)
 
-  if (gData_02006298 != 0 && gFrameCount % 9 == 0) {
-    SET_VECTOR(position, 0x1280000, 0, 0xb00000);
-    Func_0200098c(position, 0x20000);
-  }
-}
-
-void Func_02000c34(void) {
-  s32 position[3];
-
-  if (gData_0200629c != 0 && gFrameCount % 5 == 0) {
-    SET_VECTOR(position, 0x1580000, 0, 0xa00000);
-    Func_0200098c(position, 0x40000);
-  }
-}
+DEFINE_FUNC_02000BF4(Func_02000c34, gData_0200629c, 5, 0x1580000, 0xa00000,
+    0x40000)
 
 void Func_02000c74(void) {
   if (gFrameCount % 5 == 0)

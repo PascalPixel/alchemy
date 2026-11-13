@@ -478,9 +478,4 @@ void Func_02000ee4(u16 id, s16 first, s16 side) {
   *flags = 0;
 }
 
-void Func_02000fcc(struct Actor *object) {
-  if (gFrameCount & object->unk5c[7])
-    Actor_SetSpriteColor(object, 10);
-  else
-    Actor_SetSpriteColor(object, 0);
-}
+DEFINE_FUNC_02000DA4(Func_02000fcc, 10)

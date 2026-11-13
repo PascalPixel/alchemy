@@ -3,6 +3,7 @@
 
 // ---- games/tla/src/scene/gabomba_statue/s2394.c ----
 
+#include "../shared/tables.h"
 #include "../shared/routines.h"
 #include "types.h"
 #include "system.h"
@@ -2096,35 +2097,11 @@ void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer) {
 #include "objcmd.h"
 
 // clang-format off
-u32 gData_0200585c[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_0200585c, 22)
 
-u32 gData_02005898[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02005898, 44)
 
-u32 gData_020058d4[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_020058d4, 126)
 
 u32 gData_02005910[] = {
     0x20007, 512, 0x20003, 0x20004, 516, 515,

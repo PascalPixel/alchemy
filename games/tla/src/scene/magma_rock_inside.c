@@ -468,12 +468,7 @@ void Func_02000d1c(struct Actor *object) {
                 &options);
 }
 
-void Func_02000da4(struct Actor *object) {
-  if (gFrameCount & object->unk5c[7])
-    Actor_SetSpriteColor(object, 10);
-  else
-    Actor_SetSpriteColor(object, 0);
-}
+DEFINE_FUNC_02000DA4(Func_02000da4, 10)
 
 // The cell watch's table lookup over (id, cell, value) rows ended by 0xffff:
 // for the row of the cell under the watch, sets the watch's object to the row's
@@ -1160,21 +1155,9 @@ void Func_02001828(void) {
 }
 
 // ---- games/tla/src/scene/magma_rock_inside/s1ca0.c ----
-void Func_02001ca0(s32 a, s32 b) {
-  struct Actor **work = Ram_HeapSlots->effectWork;
+DEFINE_FUNC_02001CA0(Func_02001ca0, 9, 0x350)
 
-  work[5] = Actor_Get(9);
-  Func_02001190(a, b);
-  Event_SetFlag(0x350);
-}
-
-void Func_02001cd0(s32 a, s32 b) {
-  struct Actor **work = Ram_HeapSlots->effectWork;
-
-  work[5] = Actor_Get(11);
-  Func_02001190(a, b);
-  Event_SetFlag(0x351);
-}
+DEFINE_FUNC_02001CA0(Func_02001cd0, 11, 0x351)
 
 
 
@@ -1285,13 +1268,7 @@ void Func_02002128(void) {
   }
 }
 
-void Func_0200217c(void) {
-  if (!Event_GetFlag(0x303)) {
-    Actor_SetSpriteColor(Actor_Get(21), 15);
-    Actor_SetPosition(21, PIXELS(600), PIXELS(312));
-    Actor_Get(21)->scaleX = Actor_Get(21)->scaleY = 0x1000;
-  }
-}
+DEFINE_FUNC_0200217C(Func_0200217c, 0x303, 21, 600, 312)
 
 struct Actor;
 
@@ -1567,13 +1544,7 @@ void Func_020027d4(void) {
   }
 }
 
-void Func_02002868(void) {
-  if (!Event_GetFlag(0x305)) {
-    Actor_SetSpriteColor(Actor_Get(11), 15);
-    Actor_SetPosition(11, PIXELS(136), PIXELS(360));
-    Actor_Get(11)->scaleX = Actor_Get(11)->scaleY = 0x1000;
-  }
-}
+DEFINE_FUNC_0200217C(Func_02002868, 0x305, 11, 136, 360)
 
 struct Actor;
 
@@ -2012,35 +1983,9 @@ void Func_020032d8(void) {
   }
 }
 
-void Func_02003348(void) {
-  if (Event_GetFlag(0x9fa)) {
-    Event_Start();
-    FieldEvent_ResolvePendingActions(0);
-    Message_ShowCentered(MsgBlazeTabletInscription, 1);
-    Event_End();
-  } else {
-    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 280, 136);
-    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 264, 136);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-    FieldEvent_Wait(10);
-    Func_020030cc();
-  }
-}
+DEFINE_FUNC_02003348(Func_02003348, 280)
 
-void Func_020033b0(void) {
-  if (Event_GetFlag(0x9fa)) {
-    Event_Start();
-    FieldEvent_ResolvePendingActions(0);
-    Message_ShowCentered(MsgBlazeTabletInscription, 1);
-    Event_End();
-  } else {
-    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 248, 136);
-    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 264, 136);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-    FieldEvent_Wait(10);
-    Func_020030cc();
-  }
-}
+DEFINE_FUNC_02003348(Func_020033b0, 248)
 
 extern u8 gData_02005f60[];
 extern u8 gData_02005fe4[];

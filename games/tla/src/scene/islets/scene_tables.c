@@ -535,18 +535,7 @@ struct Actor *Func_02000da0(struct Actor *object, s32 value) {
   return spawned;
 }
 
-void Func_02000df8(struct Actor *object) {
-  struct Actor *spawned;
-
-  if ((gFrameCount & 3) == 0) {
-    spawned = FieldActor_Create(14, object->x, object->y, object->z);
-    if (spawned != 0) {
-      Actor_SetSingleChildFlags(spawned, 0);
-      Func_02003de4(spawned, 1);
-      Actor_StartScript(spawned, gData_020044f0);
-    }
-  }
-}
+DEFINE_FUNC_02000DF8(Func_02000df8, 3, Func_02003de4, gData_020044f0)
 
 #include "call.h"
 
@@ -1156,21 +1145,9 @@ void Func_0200208c(void) {
   return;
 }
 
-void Func_020020b4(void) {
-  struct Actor *object0;
+DEFINE_FUNC_020011B8(Func_020020b4, 2)
 
-  object0 = Actor_Get(gMainRoutineWork.currentOwner);
-  object0->terrainId = 2;
-  return;
-}
-
-void Func_020020d0(void) {
-  struct Actor *object0;
-
-  object0 = Actor_Get(gMainRoutineWork.currentOwner);
-  object0->terrainId = 0;
-  return;
-}
+DEFINE_FUNC_020011B8(Func_020020d0, 0)
 
 void Func_020020ec(s32 x, s32 z, s32 layers, s32 value) {
   struct MapWork *map = Ram_HeapSlots->mapWork;

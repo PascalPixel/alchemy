@@ -1,4 +1,5 @@
 // ---- games/tla/src/scene/magma_rock/s0ff4.c ----
+#include "../shared/routines.h"
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -567,63 +568,17 @@ void Func_02001738(struct Actor *object) {
 
 /// In room 1 or 2, targets actor 15 or 14, runs Func_020014bc and sets flag
 /// 0x200.
-void Func_020019e8(s32 mode, s32 cue) {
-  struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
-  struct MainRoutineWork *party = &gMainRoutineWork;
-
-  {
-    s32 scene = party->scene;
-
-    if (scene == (s32)&SceneId_Ov691Room1)
-      work->target = Actor_Get(15);
-    else if (scene == (s32)&SceneId_Ov691Room2)
-      work->target = Actor_Get(14);
-    Func_020014bc(mode, cue);
-  }
-  Event_SetFlag(0x200);
-}
+DEFINE_FUNC_020019E8(Func_020019e8, 15, 14, 0x200)
 
 /// In room 1 or 2, targets actor 16 or 10, runs Func_020014bc and sets flag
 /// 0x201.
-void Func_02001a38(s32 mode, s32 cue) {
-  struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
-  struct MainRoutineWork *party = &gMainRoutineWork;
+DEFINE_FUNC_020019E8(Func_02001a38, 16, 10, 0x201)
 
-  {
-    s32 scene = party->scene;
+DEFINE_FUNC_02001A8C(Func_02001a8c, 17, 0x202)
 
-    if (scene == (s32)&SceneId_Ov691Room1)
-      work->target = Actor_Get(16);
-    else if (scene == (s32)&SceneId_Ov691Room2)
-      work->target = Actor_Get(10);
-    Func_020014bc(mode, cue);
-  }
-  Event_SetFlag(0x201);
-}
+DEFINE_FUNC_02001A8C(Func_02001ac0, 18, 0x203)
 
-void Func_02001a8c(s32 mode, s32 cue) {
-  struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
-
-  work->target = Actor_Get(17);
-  Func_020014bc(mode, cue);
-  Event_SetFlag(0x202);
-}
-
-void Func_02001ac0(s32 mode, s32 cue) {
-  struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
-
-  work->target = Actor_Get(18);
-  Func_020014bc(mode, cue);
-  Event_SetFlag(0x203);
-}
-
-void Func_02001af4(s32 mode, s32 cue) {
-  struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
-
-  work->target = Actor_Get(11);
-  Func_020014bc(mode, cue);
-  Event_SetFlag(0x204);
-}
+DEFINE_FUNC_02001A8C(Func_02001af4, 11, 0x204)
 
 void Func_02001b24(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
@@ -867,12 +822,7 @@ loop:
   Event_SetFlag(0x8dc);
 }
 
-void Func_020020d0(struct Actor *object) {
-  if (gFrameCount & object->unk5c[7])
-    Actor_SetSpriteColor(object, 7);
-  else
-    Actor_SetSpriteColor(object, 0);
-}
+DEFINE_FUNC_02000DA4(Func_020020d0, 7)
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 

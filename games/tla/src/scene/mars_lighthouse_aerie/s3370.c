@@ -1359,45 +1359,15 @@ u32 gData_02005b0c[] = {
 
 DEFINE_G_DATA_02005B54(gData_02005b54)
 
-u32 gData_02005ba8[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(496), 0, PIXELS(328)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_END,
-};
+DEFINE_G_DATA_02002F1C(gData_02005ba8, 496, 328)
 
-u32 gData_02005bd0[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(480), 0, PIXELS(328)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_END,
-};
+DEFINE_G_DATA_02002F1C(gData_02005bd0, 480, 328)
 
-u32 gData_02005bf8[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(488), 0, PIXELS(320)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_END,
-};
+DEFINE_G_DATA_02002F1C(gData_02005bf8, 488, 320)
 
-u32 gData_02005c20[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(528), 0, PIXELS(328)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_END,
-};
+DEFINE_G_DATA_02002F1C(gData_02005c20, 528, 328)
 
-u32 gData_02005c48[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(512), 0, PIXELS(328)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_END,
-};
+DEFINE_G_DATA_02002F1C(gData_02005c48, 512, 328)
 
 s32 gData_02005c70[] = {
     23, 9, -1024, 23, 10, -1024,
@@ -1414,82 +1384,19 @@ u32 gData_02005cac[] = {
     SC_END,
 };
 
-u32 gData_02005ce8[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(500), 0, PIXELS(306)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(10),
-    SC_SET(SW_FACING, FACING_NORTHEAST),
-    SC_WAIT(10),
-    SC_END,
-};
+DEFINE_G_DATA_02002F44(gData_02005ce8, 500, 306)
 
-u32 gData_02005d2c[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(524), 0, PIXELS(306)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(10),
-    SC_SET(SW_FACING, FACING_NORTHWEST),
-    SC_WAIT(10),
-    SC_END,
-};
+DEFINE_G_DATA_02002F88(gData_02005d2c, 524, 306, 10)
 
-u32 gData_02005d70[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(488), 0, PIXELS(320)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(10),
-    SC_SET(SW_FACING, FACING_NORTHEAST),
-    SC_WAIT(10),
-    SC_END,
-};
+DEFINE_G_DATA_02002F44(gData_02005d70, 488, 320)
 
-u32 gData_02005db4[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(472), 0, PIXELS(304)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(10),
-    SC_SET(SW_FACING, FACING_NORTHEAST),
-    SC_WAIT(10),
-    SC_END,
-};
+DEFINE_G_DATA_02002F44(gData_02005db4, 472, 304)
 
-u32 gData_02005df8[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(464), 0, PIXELS(280)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(10),
-    SC_SET(SW_FACING, FACING_EAST),
-    SC_WAIT(10),
-    SC_END,
-};
+DEFINE_G_DATA_02003534(gData_02005df8, 464, 280, 10)
 
-u32 gData_02005e3c[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(538), 0, PIXELS(320)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(10),
-    SC_SET(SW_FACING, FACING_NORTHWEST),
-    SC_WAIT(10),
-    SC_END,
-};
+DEFINE_G_DATA_02002F88(gData_02005e3c, 538, 320, 10)
 
-u32 gData_02005e80[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(552), 0, PIXELS(304)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(10),
-    SC_SET(SW_FACING, FACING_NORTHWEST),
-    SC_WAIT(10),
-    SC_END,
-};
+DEFINE_G_DATA_02002F88(gData_02005e80, 552, 304, 10)
 
 DEFINE_G_DATA_02005EC4(gData_02005ec4)
 
@@ -1505,45 +1412,15 @@ u32 gData_02005f50[] = {
     39, 1, 22, 39, 1, 17,
 };
 
-u32 gData_02005f98[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(486), 0, PIXELS(286)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(10),
-    SC_SET(SW_FACING, FACING_NORTHWEST),
-    SC_WAIT(10),
-    SC_END,
-};
+DEFINE_G_DATA_02002F88(gData_02005f98, 486, 286, 10)
 
-u32 gData_02005fdc[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(504), 0, PIXELS(300)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_END,
-};
+DEFINE_G_DATA_02002F1C(gData_02005fdc, 504, 300)
 
-u32 gData_02006004[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(528), 0, PIXELS(292)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_END,
-};
+DEFINE_G_DATA_02002F1C(gData_02006004, 528, 292)
 
 DEFINE_G_DATA_02005EC4(gData_0200602c)
 
-u32 gData_02006070[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(548), 0, PIXELS(292)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(10),
-    SC_SET(SW_FACING, FACING_NORTHWEST),
-    SC_WAIT(10),
-    SC_END,
-};
+DEFINE_G_DATA_02002F88(gData_02006070, 548, 292, 10)
 
 s32 gData_020060b4[] = {
     SC_ADD(SW_SCALE_X, 0x1000),
@@ -1556,12 +1433,7 @@ s32 gData_020060b4[] = {
     SC_END,
 };
 
-s32 gData_020060fc[] = {
-    SC_ADD(SW_SCALE_X, -896),
-    SC_WAIT(1),
-    SC_LOOP(160, SC_TOP),
-    SC_END,
-};
+DEFINE_G_DATA_02002F94(gData_020060fc, 896, 160)
 
 u32 gData_02006120[] = {
     23, 6, 0x40000, 0, 1, 13,
@@ -1596,14 +1468,7 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gSceneExits[] = {
-    SCENE_EXITS(297),
-    SCENE_EXIT(1, 287, 1),
-    SCENE_EXIT(2, 297, 3),
-    SCENE_EXIT(3, 309, 2),
-    SCENE_EXIT(4, 272, 20),
-    SCENE_EXITS_END,
-};
+DEFINE_G_SCENE_EXITS_2(297, 287, 1, 297, 3, 309, 2, 272, 20)
 
 s16 gData_0200626c[] = {
     489, -1, 1, 0, 0, 0, 0, 0,

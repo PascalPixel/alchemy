@@ -95,44 +95,10 @@ void Func_02002898(void) {
 
 /// When the controlled object steps onto a new cell, saves the 1 by 3 cells
 /// below it at (73, 72) and stamps the cells kept at (72, 72) in their place.
-void Func_02002980(void) {
-  struct Actor *object = Actor_GetById(Party_GetLeaderActor());
-  s32 x = object->x >> 20;
-  s32 y = object->y >> 20;
-  s32 z = object->z >> 20;
-  s32 key = (x << 16) + z;
-
-  if (key != gData_02006c0c) {
-    gData_02006c0c = key;
-    gData_020073dc = 1;
-    gData_020073e0 = 3;
-    gData_020073e4 = x;
-    gData_020073e8 = z - y + 64;
-    CopyCells(x, gData_020073e8, 1, 3, 73, 72);
-    CopyCells(72, 72, gData_020073dc, gData_020073e0, gData_020073e4,
-              gData_020073e8);
-  }
-}
+DEFINE_FUNC_02002980(Func_02002980, 64)
 
 /// As Func_02002980, one row nearer.
-void Func_02002a14(void) {
-  struct Actor *object = Actor_GetById(Party_GetLeaderActor());
-  s32 x = object->x >> 20;
-  s32 y = object->y >> 20;
-  s32 z = object->z >> 20;
-  s32 key = (x << 16) + z;
-
-  if (key != gData_02006c0c) {
-    gData_02006c0c = key;
-    gData_020073dc = 1;
-    gData_020073e0 = 3;
-    gData_020073e4 = x;
-    gData_020073e8 = z - y + 63;
-    CopyCells(x, gData_020073e8, 1, 3, 73, 72);
-    CopyCells(72, 72, gData_020073dc, gData_020073e0, gData_020073e4,
-              gData_020073e8);
-  }
-}
+DEFINE_FUNC_02002980(Func_02002a14, 63)
 
 #include "system/field_effect.h"
 #include "system/vector3.h"
@@ -847,19 +813,9 @@ void Func_02003d40(void) {
 
 extern const u8 gData_02006084[];
 
-void Func_02003dd4(void) {
-  Map_CopyCellAttributeRect(26, 17, 1, 1, 8, 19);
-  Map_CopyCellAttributeRect(26, 17, 1, 1, 24, 19);
-  Call6((void (*)())Map_CopyCellPictureIndicesRect, 90, 17, 72, 19, 1, 2);
-  Map_CopyCellPictureIndicesRect(90, 17, 88, 19, 1, 2);
-}
+DEFINE_FUNC_02003DD4(Func_02003dd4, 26, 90)
 
-void Func_02003e28(void) {
-  Map_CopyCellAttributeRect(25, 17, 1, 1, 8, 19);
-  Map_CopyCellAttributeRect(25, 17, 1, 1, 24, 19);
-  Call6((void (*)())Map_CopyCellPictureIndicesRect, 89, 17, 72, 19, 1, 2);
-  Map_CopyCellPictureIndicesRect(89, 17, 88, 19, 1, 2);
-}
+DEFINE_FUNC_02003DD4(Func_02003e28, 25, 89)
 
 void Func_02003e7c(struct Actor *source) {
   struct Actor *object = (struct Actor *)Value4(
@@ -1201,35 +1157,9 @@ void Func_02004740(void) {
   }
 }
 
-void Func_020047b0(void) {
-  if (GameFlag_Test(0x8d4)) {
-    Event_Start();
-    Event_ResolvePendingActions(0);
-    FieldMessage_Show(MsgCheckedTheTablet, 1);
-    Event_End();
-  } else {
-    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 280, 136);
-    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 264, 136);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-    FieldEvent_Wait(10);
-    Func_02004534();
-  }
-}
+DEFINE_FUNC_020047B0(Func_020047b0, 280)
 
-void Func_02004818(void) {
-  if (GameFlag_Test(0x8d4)) {
-    Event_Start();
-    Event_ResolvePendingActions(0);
-    FieldMessage_Show(MsgCheckedTheTablet, 1);
-    Event_End();
-  } else {
-    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 248, 136);
-    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 264, 136);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-    FieldEvent_Wait(10);
-    Func_02004534();
-  }
-}
+DEFINE_FUNC_020047B0(Func_02004818, 248)
 
 void Func_02004880(void) {}
 

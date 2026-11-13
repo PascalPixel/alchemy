@@ -37,35 +37,11 @@ void Func_02000064(void);
 void Func_020002b8(void);
 
 // clang-format off
-u32 gData_02002ebc[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02002ebc, 22)
 
-u32 gData_02002ef8[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02002ef8, 44)
 
-u32 gData_02002f34[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02002f34, 126)
 
 u32 gData_02002f70[] = {
     SC_ADD(SW_SCALE_X, 0x1000),
@@ -74,12 +50,7 @@ u32 gData_02002f70[] = {
     SC_END,
 };
 
-s32 gData_02002f94[] = {
-    SC_ADD(SW_SCALE_X, -960),
-    SC_WAIT(1),
-    SC_LOOP(140, SC_TOP),
-    SC_END,
-};
+DEFINE_G_DATA_02002F94(gData_02002f94, 960, 140)
 
 s16 gData_02002fb8[] = {
     17, 18, 19, -1,

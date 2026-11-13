@@ -1,3 +1,4 @@
+#include "../shared/tables.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
@@ -79,30 +80,7 @@ u32 gData_020012ac[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-u32 gData_02001334[] = {
-    SC_SET(SW_SPEED, 0x8000),
-    SC_SET(SW_ACCEL, 0x1999),
-    SC_SET(SW_COLLISION, 129),
-    SC_ARG(2),
-    SC_MOVE(PIXELS(856), 0, PIXELS(584)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(3),
-    SC_SET(SW_FACING, FACING_SOUTHEAST + FACING_STEP),
-    SC_WAIT(30),
-    SC_ARG(4),
-    SC_WAIT(90),
-    SC_ARG(2),
-    SC_MOVE(PIXELS(792), 0, PIXELS(584)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(3),
-    SC_SET(SW_FACING, FACING_SOUTH),
-    SC_WAIT(30),
-    SC_ARG(4),
-    SC_WAIT(90),
-    SC_LOOP(SC_FOREVER, SC_TOP),
-};
+DEFINE_G_DATA_02001334(gData_02001334, 856, 584, 792)
 
 s32 gData_02001404[] = {
     SC_CALL(Func_02000058),
@@ -173,55 +151,9 @@ struct ActorPlacement gData_020015f0[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gData_02001728[] = {
-    SC_SET(SW_SPEED, 0x8000),
-    SC_SET(SW_ACCEL, 0x1999),
-    SC_SET(SW_COLLISION, 129),
-    SC_ARG(2),
-    SC_MOVE(PIXELS(184), 0, PIXELS(296)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(3),
-    SC_SET(SW_FACING, FACING_SOUTHEAST + FACING_STEP),
-    SC_WAIT(30),
-    SC_ARG(4),
-    SC_WAIT(90),
-    SC_ARG(2),
-    SC_MOVE(PIXELS(248), 0, PIXELS(296)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(3),
-    SC_SET(SW_FACING, FACING_SOUTH),
-    SC_WAIT(30),
-    SC_ARG(4),
-    SC_WAIT(90),
-    SC_LOOP(SC_FOREVER, SC_TOP),
-};
+DEFINE_G_DATA_02001334(gData_02001728, 184, 296, 248)
 
-u32 gData_020017f8[] = {
-    SC_SET(SW_SPEED, 0x8000),
-    SC_SET(SW_ACCEL, 0x1999),
-    SC_SET(SW_COLLISION, 129),
-    SC_ARG(2),
-    SC_MOVE(PIXELS(248), 0, PIXELS(448)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(3),
-    SC_SET(SW_FACING, FACING_SOUTHEAST + FACING_STEP),
-    SC_WAIT(30),
-    SC_ARG(4),
-    SC_WAIT(90),
-    SC_ARG(2),
-    SC_MOVE(PIXELS(264), 0, PIXELS(448)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(3),
-    SC_SET(SW_FACING, FACING_SOUTH),
-    SC_WAIT(30),
-    SC_ARG(4),
-    SC_WAIT(90),
-    SC_LOOP(SC_FOREVER, SC_TOP),
-};
+DEFINE_G_DATA_02001334(gData_020017f8, 248, 448, 264)
 
 struct ActorPlacement gData_020018c8[] = {
     {407, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(200), FACING_NORTH, 2, 0},

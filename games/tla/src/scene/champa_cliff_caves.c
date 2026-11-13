@@ -4,6 +4,7 @@
 
 // ---- games/tla/src/scene/champa_cliff_caves.c ----
 
+#include "shared/routines.h"
 #include "event_inline.h"
 #include "champa_cliff_caves/scene.h"
 #include "event.h"
@@ -19,14 +20,7 @@
 #include "scene_call.h"
 #include "system.h"
 
-void Func_02000038(struct RiseObject *object) {
-  object->scale += 0x1000;
-  if (object->scale >= 0x10000) {
-    object->scale = 0x10000;
-    object->update = 0;
-  }
-  object->scaleCopy = object->scale;
-}
+DEFINE_FUNC_02000038_3(Func_02000038, 0x1000)
 
 #include "battle.h"
 #include "field.h"
@@ -703,14 +697,7 @@ chosen:
   }
 }
 
-void Func_02001138(struct RiseObject *object) {
-  object->scale += 0xc00;
-  if (object->scale >= 0x10000) {
-    object->scale = 0x10000;
-    object->update = 0;
-  }
-  object->scaleCopy = object->scale;
-}
+DEFINE_FUNC_02000038_3(Func_02001138, 0xc00)
 
 #include "flag_call.h"
 

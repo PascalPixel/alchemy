@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x68b, in ROM order.
 
+#include "shared/tables.h"
 #include "shared/routines.h"
 #include "types.h"
 #include "iwram_call.h"
@@ -1079,37 +1080,9 @@ void Func_02001b3c(void) { Func_02001d6c(); }
 extern s16 gData_020021b0[];
 
 // clang-format off
-u32 gData_02001d84[] = {
-    SC_ARG(2),
-    SC_SET(SW_SPEED, 0x10000),
-    SC_SET(SW_ACCEL, 0x10000),
-    SC_LABEL(1),
-    SC_MOVE(PIXELS(40), 0, PIXELS(952)),
-    SC_SYNC,
-    SC_MOVE(PIXELS(40), 0, PIXELS(904)),
-    SC_SYNC,
-    SC_MOVE(PIXELS(88), 0, PIXELS(904)),
-    SC_SYNC,
-    SC_MOVE(PIXELS(88), 0, PIXELS(952)),
-    SC_SYNC,
-    SC_LOOP(SC_FOREVER, SC_TO(1)),
-};
+DEFINE_G_DATA_02001D84(gData_02001d84, 40, 952, 904, 88)
 
-u32 gData_02001e04[] = {
-    SC_ARG(2),
-    SC_SET(SW_SPEED, 0x10000),
-    SC_SET(SW_ACCEL, 0x10000),
-    SC_LABEL(1),
-    SC_MOVE(PIXELS(88), 0, PIXELS(904)),
-    SC_SYNC,
-    SC_MOVE(PIXELS(88), 0, PIXELS(952)),
-    SC_SYNC,
-    SC_MOVE(PIXELS(40), 0, PIXELS(952)),
-    SC_SYNC,
-    SC_MOVE(PIXELS(40), 0, PIXELS(904)),
-    SC_SYNC,
-    SC_LOOP(SC_FOREVER, SC_TO(1)),
-};
+DEFINE_G_DATA_02001D84(gData_02001e04, 88, 904, 952, 40)
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 460, 0, 550, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

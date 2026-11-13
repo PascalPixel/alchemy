@@ -1,4 +1,5 @@
 // ---- games/tla/src/scene/lemurian_ship/scene_tables.c ----
+#include "shared/routines.h"
 #include "shared/tables.h"
 #include "battle.h"
 #include "field.h"
@@ -475,41 +476,11 @@ void Func_02000af4(void) {
   }
 }
 
-void Func_02000bf0(s32 id) {
-  Event_Start();
-  Event_ResolvePendingActions(0);
-  Actor_SetAngleToward(id, gMainRoutineWork.currentOwner, 0);
-  Actor_StartRepeatedMotion(id, 2);
-  Actor_SetAttachedEffect(id, 0x102);
-  Event_Wait(20);
-  gMainRoutineWork.battleRule24b = 2;
-  Field_RequestBattleFromEncounterTable(11, 0);
-  GameFlag_SetBit(id + 0x2f8);
-}
+DEFINE_FUNC_02000BF0(Func_02000bf0, 0x2f8)
 
-void Func_02000c50(s32 id) {
-  Event_Start();
-  Event_ResolvePendingActions(0);
-  Actor_SetAngleToward(id, gMainRoutineWork.currentOwner, 0);
-  Actor_StartRepeatedMotion(id, 2);
-  Actor_SetAttachedEffect(id, 0x102);
-  Event_Wait(20);
-  gMainRoutineWork.battleRule24b = 2;
-  Field_RequestBattleFromEncounterTable(11, 0);
-  GameFlag_SetBit(id + 0x2f9);
-}
+DEFINE_FUNC_02000BF0(Func_02000c50, 0x2f9)
 
-void Func_02000cb0(s32 id) {
-  Event_Start();
-  Event_ResolvePendingActions(0);
-  Actor_SetAngleToward(id, gMainRoutineWork.currentOwner, 0);
-  Actor_StartRepeatedMotion(id, 2);
-  Actor_SetAttachedEffect(id, 0x102);
-  Event_Wait(20);
-  gMainRoutineWork.battleRule24b = 2;
-  Field_RequestBattleFromEncounterTable(11, 0);
-  GameFlag_SetBit(id + 0x2ff);
-}
+DEFINE_FUNC_02000BF0(Func_02000cb0, 0x2ff)
 
 void Func_02000d10(s32 id) {
   struct LemurianShipObject *object =
@@ -656,19 +627,9 @@ void Func_020010cc(void) {
   Func_02000e2c();
 }
 
-void Func_020010d8(void) {
-  Sound_Play(106);
-  Actor_SetModeById(8, 2);
-  GameFlag_SetBit(0x204);
-  Func_02000e2c();
-}
+DEFINE_FUNC_020010D8(Func_020010d8, 8, 0x204)
 
-void Func_020010f8(void) {
-  Sound_Play(106);
-  Actor_SetModeById(9, 2);
-  GameFlag_SetBit(0x205);
-  Func_02000e2c();
-}
+DEFINE_FUNC_020010D8(Func_020010f8, 9, 0x205)
 
 void Func_02001118(void) {
   Actor_SetPartAttribute(((struct LemurianShipObject *)Actor_GetById(10)), 0);
@@ -678,59 +639,9 @@ void Func_02001128(void) {
   Actor_SetPartAttribute(((struct LemurianShipObject *)Actor_GetById(11)), 0);
 }
 
-void Func_02001138(void) {
-  struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
-  struct LemurianShipObject *object =
-      ((struct LemurianShipObject *)Actor_GetById(8));
-  u32 i;
+DEFINE_FUNC_02001138(Func_02001138, 8, 0x202, 0x204, 35)
 
-  Event_Start();
-  Event_ResolvePendingActions(0);
-  work->field16a = 0;
-  GameFlag_ClearBit(0x202);
-  GameFlag_ClearBit(0x204);
-  Event_Wait(20);
-  Sound_Play(186);
-  for (i = 0; i <= 63; i++) {
-    object->y += 0x4000;
-    wait(1);
-  }
-  Actor_SetSpritePriority(8, 2);
-  Map_CopyCellPictureIndicesRect(4, 123, 35, 69, 1, 1);
-  MapGrid_CopyCellAttributes(36, 0, 1, 1, 35, 9);
-  Sound_Play(188);
-  MapGrid_CopyCellsTo(7, 124, 31, 64, 3, 2);
-  GameFlag_ClearBit(0x982);
-  Event_Wait(20);
-  Event_End();
-}
-
-void Func_020011f4(void) {
-  struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
-  struct LemurianShipObject *object =
-      ((struct LemurianShipObject *)Actor_GetById(9));
-  u32 i;
-
-  Event_Start();
-  Event_ResolvePendingActions(0);
-  work->field16a = 0;
-  GameFlag_ClearBit(0x203);
-  GameFlag_ClearBit(0x205);
-  Event_Wait(20);
-  Sound_Play(186);
-  for (i = 0; i <= 63; i++) {
-    object->y += 0x4000;
-    wait(1);
-  }
-  Actor_SetSpritePriority(9, 2);
-  Map_CopyCellPictureIndicesRect(4, 123, 29, 69, 1, 1);
-  MapGrid_CopyCellAttributes(36, 0, 1, 1, 29, 9);
-  Sound_Play(188);
-  MapGrid_CopyCellsTo(7, 124, 31, 64, 3, 2);
-  GameFlag_ClearBit(0x982);
-  Event_Wait(20);
-  Event_End();
-}
+DEFINE_FUNC_02001138(Func_020011f4, 9, 0x203, 0x205, 29)
 
 /// Places the leader and object 64 304 pixels back along z (Actor_SetHorizontalPositionWithTerrain),
 /// lets the camera follow the leader, starts a blend and sets flag 0x9e4.
@@ -763,27 +674,11 @@ void Func_02001368(void) {
   Event_End();
 }
 
-void Func_02001380(s32 id) {
-  struct LemurianShipObject *object =
-      ((struct LemurianShipObject *)Actor_GetById(id));
-
-  ((struct LemurianShipObject *)Actor_GetById(id))->priorityFlags |= 0x20;
-  Actor_SetSpritePriority(id, 1);
-  object->priorityFlags &= ~2;
-  object->timer = 1;
-}
+DEFINE_FUNC_02001380(Func_02001380, 1)
 
 // From patch 1; in the Japanese release actors 10 and 11 also use action 1.
 #if TLA_PATCH_1
-void Func_020013b8(s32 id) {
-  struct LemurianShipObject *object =
-      ((struct LemurianShipObject *)Actor_GetById(id));
-
-  ((struct LemurianShipObject *)Actor_GetById(id))->priorityFlags |= 0x20;
-  Actor_SetSpritePriority(id, 2);
-  object->priorityFlags &= ~2;
-  object->timer = 1;
-}
+DEFINE_FUNC_02001380(Func_020013b8, 2)
 #endif
 
 void Func_020013f0(void) {
@@ -1584,46 +1479,13 @@ s32 gData_02002e9c[] = {
     SC_END,
 };
 
-u32 gData_02002f1c[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(808), 0, PIXELS(168)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_END,
-};
+DEFINE_G_DATA_02002F1C(gData_02002f1c, 808, 168)
 
-u32 gData_02002f44[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(784), 0, PIXELS(196)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(10),
-    SC_SET(SW_FACING, FACING_NORTHEAST),
-    SC_WAIT(10),
-    SC_END,
-};
+DEFINE_G_DATA_02002F44(gData_02002f44, 784, 196)
 
-u32 gData_02002f88[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(832), 0, PIXELS(196)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(10),
-    SC_SET(SW_FACING, FACING_NORTHWEST),
-    SC_WAIT(10),
-    SC_END,
-};
+DEFINE_G_DATA_02002F88(gData_02002f88, 832, 196, 10)
 
-u32 gData_02002fcc[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(792), 0, PIXELS(216)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(10),
-    SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
-    SC_WAIT(10),
-    SC_END,
-};
+DEFINE_G_DATA_02002FCC(gData_02002fcc, 792, 216, 10)
 
 s16 gData_02003010[] = {
     8, -1,
@@ -1749,13 +1611,7 @@ struct ActorPlacement gData_02003380[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02003398[] = {
-    {248, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(424), FACING_SOUTH, 0, 0},
-    {248, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(536), FACING_SOUTH, 0, 0},
-    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
-    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
-    {SCENE_TABLE_END},
-};
+DEFINE_G_DATA_02003398(gData_02003398, 248, 104, 424, 0, 104, 536, 1)
 
 struct ActorPlacement gData_0200b410[] = {
     {287, CONDITION_ALWAYS, 1, PIXELS(760), 0, PIXELS(120), FACING_SOUTH, 0, 0},
@@ -1809,21 +1665,9 @@ struct ActorPlacement gData_02003710[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020037d0[] = {
-    {314, CONDITION_ALWAYS, 1, PIXELS(584), 0, PIXELS(168), FACING_SOUTH, 2, 0},
-    {314, CONDITION_ALWAYS, 1, PIXELS(472), 0, PIXELS(152), FACING_SOUTH, 2, 0},
-    {290, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {290, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {SCENE_TABLE_END},
-};
+DEFINE_G_DATA_02003398(gData_020037d0, 314, 584, 168, 2, 472, 152, 7)
 
-struct ActorPlacement gData_02003848[] = {
-    {7, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {6, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {5, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {SCENE_TABLE_END},
-};
+DEFINE_G_DATA_02003690(gData_02003848, 7, 0, 0, 6, 5, 0, 56, 0)
 
 s16 gData_020038c0[] = {
     0, 126, 1, 2, 2, 1, 126, 1,

@@ -3,6 +3,7 @@
 
 // ---- games/tla/src/scene/gabomba_statue.c ----
 
+#include "shared/routines.h"
 #include "field/field.h"
 
 #include "types.h"
@@ -905,40 +906,9 @@ void Func_020011bc(s32 x, s32 z) {
   FieldEvent_SetExitRequest(work->exit);
 }
 
-void Func_02001284(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x = leader->x >> 20;
-  s32 z = leader->z >> 20;
+DEFINE_FUNC_02001284(Func_02001284, 11, 18, 20, 19, 12, 312, 180)
 
-  if (z == 11) {
-    if (x == 18 && (gInput.held & 16) == 0)
-      return;
-    if (x == 20 && (gInput.held & 32) == 0)
-      return;
-  } else if (x == 19 && z == 12 && (gInput.held & 64) == 0) {
-    return;
-  }
-  Func_020011bc(312, 180);
-}
-
-void Func_020012ec(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x = leader->x >> 20;
-  s32 z = leader->z >> 20;
-
-  if (x == 29) {
-    if (z == 11 && (gInput.held & 128) == 0)
-      return;
-    if (z == 13 && (gInput.held & 64) == 0)
-      return;
-  } else if (z == 12) {
-    if (x == 28 && (gInput.held & 16) == 0)
-      return;
-    if (x == 30 && (gInput.held & 32) == 0)
-      return;
-  }
-  Func_020011bc(472, 196);
-}
+DEFINE_FUNC_020012EC(Func_020012ec, 29, 11, 13, 12, 28, 30, 472, 196)
 
 void Func_02001364(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -989,37 +959,9 @@ void Func_02001430(void) {
   Func_020011bc(680, 208);
 }
 
-void Func_02001498(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x = leader->x >> 20;
-  s32 z = leader->z >> 20;
+DEFINE_FUNC_02001284(Func_02001498, 7, 23, 25, 24, 8, 392, 112)
 
-  if (z == 7) {
-    if (x == 23 && (gInput.held & 16) == 0)
-      return;
-    if (x == 25 && (gInput.held & 32) == 0)
-      return;
-  } else if (x == 24 && z == 8 && (gInput.held & 64) == 0) {
-    return;
-  }
-  Func_020011bc(392, 112);
-}
-
-void Func_02001500(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x = leader->x >> 20;
-  s32 z = leader->z >> 20;
-
-  if (z == 9) {
-    if (x == 5 && (gInput.held & 16) == 0)
-      return;
-    if (x == 7 && (gInput.held & 32) == 0)
-      return;
-  } else if (x == 6 && z == 10 && (gInput.held & 64) == 0) {
-    return;
-  }
-  Func_020011bc(104, 146);
-}
+DEFINE_FUNC_02001284(Func_02001500, 9, 5, 7, 6, 10, 104, 146)
 
 void Func_02001564(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1033,24 +975,7 @@ void Func_02001564(void) {
   Func_020011bc(680, 146);
 }
 
-void Func_020015b8(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x = leader->x >> 20;
-  s32 z = leader->z >> 20;
-
-  if (x == 27) {
-    if (z == 17 && (gInput.held & 128) == 0)
-      return;
-    if (z == 19 && (gInput.held & 64) == 0)
-      return;
-  } else if (z == 18) {
-    if (x == 26 && (gInput.held & 16) == 0)
-      return;
-    if (x == 28 && (gInput.held & 32) == 0)
-      return;
-  }
-  Func_020011bc(440, 288);
-}
+DEFINE_FUNC_020012EC(Func_020015b8, 27, 17, 19, 18, 26, 28, 440, 288)
 
 /* VIEW(gabomba_statue): tag struct EventWork154 as struct EventWork154__gabomba_statue; module/scene/scene.h has another definition; tried with the definition the rest of the object has, its members read exit as returnEntrance, it does not compile in tla-ja: games/tla/src/scene/gabomba_statue.c:905: structure has no member named `returnEntrance'. */
 struct EventWork154__gabomba_statue {
@@ -1090,14 +1015,7 @@ void Func_02001630(void) {
   FieldEvent_SetExitRequest(work->exit);
 }
 
-void Func_02001728(struct Actor *actor) {
-  Func_020056b4();
-  FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(581);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0x19999);
-  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 152, 424);
-  Event_End();
-}
+DEFINE_FUNC_02001728(Func_02001728, 152, 424)
 
 void Func_0200176c(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1122,41 +1040,13 @@ void Func_0200176c(void) {
   Event_End();
 }
 
-void Func_020017dc(struct Actor *actor) {
-  Func_020056b4();
-  FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(581);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0x19999);
-  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 376, 200);
-  Event_End();
-}
+DEFINE_FUNC_02001728(Func_020017dc, 376, 200)
 
-void Func_02001820(struct Actor *actor) {
-  Func_020056b4();
-  FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(581);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0x19999);
-  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 376, 136);
-  Event_End();
-}
+DEFINE_FUNC_02001728(Func_02001820, 376, 136)
 
-void Func_02001864(struct Actor *actor) {
-  Func_020056b4();
-  FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(581);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0x19999);
-  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 440, 248);
-  Event_End();
-}
+DEFINE_FUNC_02001728(Func_02001864, 440, 248)
 
-void Func_020018a8(struct Actor *actor) {
-  Func_020056b4();
-  FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(581);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0x19999);
-  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 440, 184);
-  Event_End();
-}
+DEFINE_FUNC_02001728(Func_020018a8, 440, 184)
 
 void Func_020018ec(s32 show) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov671Room1)
@@ -1261,41 +1151,9 @@ void Func_02001b0c(void) {
     Event_SetFlag(512);
   }
 }
-void Func_02001b38(void) {
-  u32 i = 0;
+DEFINE_FUNC_02001B38_2(Func_02001b38, 8, 1)
 
-next:
-  {
-    s32 id = i + 8;
-    struct Actor *object = Actor_Get(id);
-
-    Func_02001adc(id);
-    object->motionFlags = 0;
-    object->y = PIXELS(36);
-    i++;
-  }
-  if (i < 1)
-    goto next;
-  Func_02001b0c();
-}
-
-void Func_02001b68(void) {
-  u32 i = 0;
-
-next:
-  {
-    s32 id = i + 29;
-    struct Actor *object = Actor_Get(id);
-
-    Func_02001adc(id);
-    object->motionFlags = 0;
-    object->y = PIXELS(36);
-    i++;
-  }
-  if (i < 2)
-    goto next;
-  Func_02001b0c();
-}
+DEFINE_FUNC_02001B38_2(Func_02001b68, 29, 2)
 void Func_02001b98(void) {
   s32 value = 16;
   s32 open = 0;

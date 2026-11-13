@@ -4,6 +4,7 @@
 
 // ---- games/tla/src/scene/gaia_rock_inside/s1f68.c ----
 
+#include "../shared/routines.h"
 #include "types.h"
 #include "main_routine_work.h"
 #include "actor_view.h"
@@ -21,19 +22,9 @@
 
 #include "event_inline.h"
 
-void Func_02001f68(void) {
-  s32 t0;
+DEFINE_FUNC_02001644(Func_02001f68, 2)
 
-  t0 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
-  FIELD_AT((t0 + 0x22), u8, 0) = 2;
-}
-
-void Func_02001f84(void) {
-  s32 t0;
-
-  t0 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
-  FIELD_AT((t0 + 0x22), u8, 0) = 0;
-}
+DEFINE_FUNC_02001644(Func_02001f84, 0)
 
 #include "ram_buffer.h"
 

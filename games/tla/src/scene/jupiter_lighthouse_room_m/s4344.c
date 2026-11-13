@@ -1,6 +1,7 @@
 /// @file
 /// Scene code of overlay 0x6a3, in ROM order, from s4344's offset up to the next object the overlay links, and the overlay's data.
 
+#include "../shared/tables.h"
 #include "../shared/routines.h"
 #include "types.h"
 #include "system.h"
@@ -94,33 +95,9 @@ u32 gData_02004a90[] = {
     SC_END,
 };
 
-u32 gData_02004ab4[] = {
-    SC_SYNC,
-    SC_MOVE_XZ(PIXELS(699), PIXELS(170)),
-    SC_SYNC,
-    SC_WAIT(1),
-    SC_SET(SW_FACING, FACING_SOUTHEAST),
-    SC_ARG(1),
-    SC_END,
-};
+DEFINE_G_DATA_02004AB4(gData_02004ab4, 699)
 
-u32 gData_02004ae8[] = {
-    SC_SYNC,
-    SC_MOVE_XZ(PIXELS(679), PIXELS(170)),
-    SC_SYNC,
-    SC_WAIT(1),
-    SC_SET(SW_FACING, FACING_SOUTHEAST),
-    SC_ARG(1),
-    SC_END,
-};
+DEFINE_G_DATA_02004AB4(gData_02004ae8, 679)
 
-u32 gData_02004b1c[] = {
-    SC_SYNC,
-    SC_MOVE_XZ(PIXELS(659), PIXELS(170)),
-    SC_SYNC,
-    SC_WAIT(1),
-    SC_SET(SW_FACING, FACING_SOUTHEAST),
-    SC_ARG(1),
-    SC_END,
-};
+DEFINE_G_DATA_02004AB4(gData_02004b1c, 659)
 // clang-format on

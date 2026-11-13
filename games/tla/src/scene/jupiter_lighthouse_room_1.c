@@ -58,29 +58,11 @@ void Func_020000ec(void) {
   MapGrid_CopyCellAttributes(23, 22, 2, 1, 15, 39);
 }
 
-void Func_02000178(void) {
-  struct Actor *object = Actor_Get(10);
+DEFINE_FUNC_02000100(Func_02000178, 10, 0xa01, 17, 33)
 
-  if (!Event_GetFlag(0xa01) && object->x >> 20 == 17 && object->z >> 20 == 33) {
-    Event_SetFlag(0xa01);
-    Func_02000060(1);
-  }
-}
+DEFINE_FUNC_0200013C(Func_020001b4, 0x200, Func_02000060)
 
-void Func_020001b4(void) {
-  if (!Event_GetFlag(0x200)) {
-    Event_SetFlag(0x200);
-    Func_02000060(1);
-  }
-}
-
-void Func_020001d4(void) {
-  if (Event_GetFlag(0x200) == 1) {
-    Event_ClearFlag(0x200);
-    Func_020000ec();
-  }
-  Func_02000178();
-}
+DEFINE_FUNC_02000160(Func_020001d4, 0x200, Func_020000ec, Func_02000178)
 
 void Func_020001f4(void) {
   System_Wait(10);

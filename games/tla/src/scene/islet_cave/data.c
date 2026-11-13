@@ -1,3 +1,4 @@
+#include "../shared/tables.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "objcmd.h"
@@ -25,13 +26,7 @@ s16 gData_02001388[] = {
     5, 21, 31, 31, 31, -1,
 };
 
-u16 gData_020013b4[] = {
-    14, 9, 10, 11, 12, 13, 13, 14,
-    9, 10, 11, 12, 12, 13, 14, 9,
-    10, 11, 11, 12, 13, 14, 9, 10,
-    10, 11, 12, 13, 14, 9, 9, 10,
-    11, 12, 13, 14,
-};
+DEFINE_G_DATA_020013B4(gData_020013b4, 14, 9, 10, 11, 12, 13)
 
 u32 gData_020013fc[] = {
     SC_SET(SW_SCALE_Y, 0x14ccc),

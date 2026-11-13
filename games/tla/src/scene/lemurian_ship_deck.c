@@ -1,6 +1,7 @@
 /// @file
 /// The scene code of overlay 0x657 that its scene tables belong to, in ROM order; the rest of the overlay is in lemurian_ship_deck/.
 
+#include "shared/routines.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -108,41 +109,9 @@ void Func_02000168(void) {
 
 #define OBJ_PALETTE ((volatile u16 *)&BG_PLTT_COLOR(11, 0))
 
-void Func_02000188(void) {
-  if ((gFrameCount & 7) == 0) {
-    s16 last = OBJ_PALETTE[15];
-    s32 i;
+DEFINE_FUNC_02000188(Func_02000188, 15, 12)
 
-    // The loop is written with goto so that it carries no loop notes: the bytes
-    // rebuild the palette base on every pass, and a for or do loop hoists it
-    // and steps two pointers (differ 30).
-    i = 15;
-  loop:
-    OBJ_PALETTE[i] = OBJ_PALETTE[i - 1];
-    i--;
-    if (i != 12)
-      goto loop;
-    OBJ_PALETTE[12] = last;
-  }
-}
-
-void Func_020001cc(void) {
-  if ((gFrameCount & 7) == 0) {
-    s16 last = OBJ_PALETTE[9];
-    s32 i;
-
-    // The loop is written with goto so that it carries no loop notes: the bytes
-    // rebuild the palette base on every pass, and a for or do loop hoists it
-    // and steps two pointers (differ 30).
-    i = 9;
-  loop:
-    OBJ_PALETTE[i] = OBJ_PALETTE[i - 1];
-    i--;
-    if (i != 4)
-      goto loop;
-    OBJ_PALETTE[4] = last;
-  }
-}
+DEFINE_FUNC_02000188(Func_020001cc, 9, 4)
 
 void Func_02001f34(s32 a);
 

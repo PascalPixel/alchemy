@@ -1,6 +1,7 @@
 /// @file
 /// Overlay 0x65c's scene: its code, then its tables, in the order the ROM has them.
 
+#include "shared/tables.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -125,12 +126,7 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gSceneExits[] = {
-    SCENE_EXITS(54),
-    SCENE_EXIT_IF(1, 2, 12, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(2, 2, 13, EXIT_FLAG_NONE),
-    SCENE_EXITS_END,
-};
+DEFINE_G_SCENE_EXITS_5(54, 12, 2, 13)
 
 struct ActorPlacement gActorPlacements[] = {
     {192, 0x8ff, 1, PIXELS(200), 0, PIXELS(226), FACING_EAST, 1, 0},

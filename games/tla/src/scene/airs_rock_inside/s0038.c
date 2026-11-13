@@ -76,17 +76,4 @@ DEFINE_FUNC_02000128(Func_02000128, Func_02005f64, Func_02005d5c)
 
 #include "../../field/object/prepare_object.c"
 
-struct Actor *Func_02000268(s32 x, s32 y, s32 z, s32 type) {
-  struct Actor *object = Import_ActorCreate(type, x, y, z);
-
-  if (object != NULL) {
-    Scene_SetActorSpritePriority(object, 1);
-    object->motionFlags = 0;
-    object->collisionFlags = 8;
-    Actor_SetSingleChildFlags(object, 0);
-    Actor_SetPartAttribute(object, 15);
-    object->priorityFlags |= 0x22;
-    return object;
-  }
-  return NULL;
-}
+DEFINE_FUNC_020000D0_2(Func_02000268, 0x22)

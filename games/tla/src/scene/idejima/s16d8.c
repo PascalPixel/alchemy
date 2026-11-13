@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x650, in ROM order, from s16d8's offset up to the
 /// next object the overlay links, and the overlay's data.
 
+#include "../shared/tables.h"
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -775,25 +776,9 @@ void Func_02002fd4(void) {
 void Func_02000640(void);
 
 // clang-format off
-u32 gData_02003330[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(216), 0, PIXELS(172)),
-    SC_SYNC,
-    SC_MOVE(PIXELS(264), 0, PIXELS(164)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_END,
-};
+DEFINE_G_DATA_0200200C(gData_02003330, 216, 172, 264, 164)
 
-u32 gData_0200336c[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(216), 0, PIXELS(182)),
-    SC_SYNC,
-    SC_MOVE(PIXELS(242), 0, PIXELS(164)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_END,
-};
+DEFINE_G_DATA_0200200C(gData_0200336c, 216, 182, 242, 164)
 
 u32 gData_020033a8[] = {
     SC_ARG(2),
@@ -831,54 +816,15 @@ u32 gData_0200346c[] = {
     0, 1, 22, 35, 1, 17,
 };
 
-u32 gData_020034e4[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(420), 0, PIXELS(200)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_END,
-};
+DEFINE_G_DATA_02002F1C(gData_020034e4, 420, 200)
 
-u32 gData_0200350c[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(408), 0, PIXELS(232)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_END,
-};
+DEFINE_G_DATA_02002F1C(gData_0200350c, 408, 232)
 
-u32 gData_02003534[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(424), 0, PIXELS(200)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(1),
-    SC_SET(SW_FACING, FACING_EAST),
-    SC_WAIT(1),
-    SC_END,
-};
+DEFINE_G_DATA_02003534(gData_02003534, 424, 200, 1)
 
-u32 gData_02003578[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(408), 0, PIXELS(228)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(1),
-    SC_SET(SW_FACING, FACING_EAST),
-    SC_WAIT(1),
-    SC_END,
-};
+DEFINE_G_DATA_02003534(gData_02003578, 408, 228, 1)
 
-u32 gData_020035bc[] = {
-    SC_ARG(2),
-    SC_MOVE(PIXELS(400), 0, PIXELS(214)),
-    SC_SYNC,
-    SC_ARG(1),
-    SC_WAIT(1),
-    SC_SET(SW_FACING, FACING_EAST),
-    SC_WAIT(1),
-    SC_END,
-};
+DEFINE_G_DATA_02003534(gData_020035bc, 400, 214, 1)
 
 u32 gData_02003600[] = {
     39, 2, 4, 0x19c0000, 0, 0xf80000,

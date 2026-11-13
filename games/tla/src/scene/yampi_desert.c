@@ -1231,14 +1231,7 @@ void Func_02002ca0(void) {
 
 DEFINE_FUNC_02001F38(Func_02002ce0, Func_020040f8)
 
-void Func_02002d10(void) {
-  if (GameFlag_Test(265)) {
-    if (GameFlag_Test(0x20d) == 0)
-      Func_0200163c();
-  } else {
-    GameFlag_SetBit(0x20d);
-  }
-}
+DEFINE_FUNC_02002D10(Func_02002d10, 0x20d, Func_0200163c)
 
 void Func_02002d40(void) {
   Func_02002ce0(11);
@@ -1246,13 +1239,7 @@ void Func_02002d40(void) {
   Func_02002d10();
 }
 
-void Func_02002d54(void) {
-  u32 i;
-
-  for (i = 0; i <= 6; i++)
-    Func_02002ce0(i + 9);
-  Func_02002d10();
-}
+DEFINE_FUNC_02001F94(Func_02002d54, 6, Func_02002ce0, 9, Func_02002d10)
 
 void Func_02002d6c(struct Actor *object, s32 x, s32 z, s32 mode) {
   struct MainRoutineWork *party;

@@ -46,35 +46,11 @@ extern u32 gData_02005528[];
 extern u32 gData_02005a30[];
 
 // clang-format off
-u32 gData_0200501c[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_0200501c, 22)
 
-u32 gData_02005058[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02005058, 44)
 
-u32 gData_02005094[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02005094, 126)
 
 u32 gData_020050d0[] = {
     0, 230, 22, 38, 0, 3,
@@ -86,27 +62,9 @@ u32 gData_020050f4[] = {
     0, 1, 38,
 };
 
-s32 gData_02005118[] = {
-    SC_MOVE_BY(0, 0, PIXELS(2)),
-    SC_SYNC,
-    SC_MOVE_BY(0, 0, PIXELS(-4)),
-    SC_SYNC,
-    SC_MOVE_BY(0, 0, PIXELS(2)),
-    SC_SYNC,
-    SC_WAIT(2),
-    SC_LOOP(SC_FOREVER, SC_TOP),
-};
+DEFINE_G_DATA_02005118(gData_02005118, 2, 4)
 
-s32 gData_02005168[] = {
-    SC_MOVE_BY(0, 0, PIXELS(4)),
-    SC_SYNC,
-    SC_MOVE_BY(0, 0, PIXELS(-8)),
-    SC_SYNC,
-    SC_MOVE_BY(0, 0, PIXELS(4)),
-    SC_SYNC,
-    SC_WAIT(2),
-    SC_LOOP(SC_FOREVER, SC_TOP),
-};
+DEFINE_G_DATA_02005118(gData_02005168, 4, 8)
 
 u32 gData_020051b8[] = {
     SC_MOVE(PIXELS(744), 0, PIXELS(432)),
@@ -136,35 +94,13 @@ s32 gData_02005234[] = {
 DEFINE_G_DATA_02005244(gData_02005244, Func_0200142c, Func_020014d0,
     Func_0200151c)
 
-u32 gData_02005264[] = {
-    SC_MOVE_BY(0, PIXELS(24), 0),
-    SC_SYNC,
-    SC_SET(SW_MOTION, 4),
-    SC_END,
-};
+DEFINE_G_DATA_02005264(gData_02005264, 24)
 
-u32 gData_02005288[] = {
-    SC_MOVE_BY(0, PIXELS(16), 0),
-    SC_SYNC,
-    SC_SET(SW_MOTION, 4),
-    SC_END,
-};
+DEFINE_G_DATA_02005264(gData_02005288, 16)
 
-s32 gData_020052ac[] = {
-    SC_SET(SW_MOTION, 0),
-    SC_MOVE_BY(0, PIXELS(-24), 0),
-    SC_SYNC,
-    SC_SET(SW_MOTION, 0),
-    SC_END,
-};
+DEFINE_G_DATA_020052AC(gData_020052ac, 24, 0)
 
-s32 gData_020052dc[] = {
-    SC_SET(SW_MOTION, 0),
-    SC_MOVE_BY(0, PIXELS(-16), 0),
-    SC_SYNC,
-    SC_SET(SW_MOTION, 3),
-    SC_END,
-};
+DEFINE_G_DATA_020052AC(gData_020052dc, 16, 3)
 
 u16 gData_0200530c[] = {
     0, 0, 113, 47, 115, 47, 115, 45,
@@ -333,31 +269,9 @@ s32 gData_02005610[] = {
     SC_END,
 };
 
-s32 gData_020056c4[] = {
-    SC_SET(SW_SPEED, 0x20000),
-    SC_MOVE(PIXELS(424), 0, PIXELS(344)),
-    SC_SET(SW_VELOCITY_Y, PIXELS(8)),
-    SC_SYNC,
-    SC_CALL(Func_020007f4),
-    SC_WAIT(2),
-    SC_POSITION(0, 0, 0),
-    SC_LABEL(1),
-    SC_WAIT(1),
-    SC_LOOP(SC_FOREVER, SC_TO(1)),
-};
+DEFINE_G_DATA_020056C4(gData_020056c4, 424, 344)
 
-s32 gData_02005728[] = {
-    SC_SET(SW_SPEED, 0x20000),
-    SC_MOVE(PIXELS(512), 0, PIXELS(384)),
-    SC_SET(SW_VELOCITY_Y, PIXELS(8)),
-    SC_SYNC,
-    SC_CALL(Func_020007f4),
-    SC_WAIT(2),
-    SC_POSITION(0, 0, 0),
-    SC_LABEL(1),
-    SC_WAIT(1),
-    SC_LOOP(SC_FOREVER, SC_TO(1)),
-};
+DEFINE_G_DATA_020056C4(gData_02005728, 512, 384)
 
 s32 gData_0200578c[] = {
     SC_SET(SW_SPEED, 0x10000),
@@ -451,18 +365,7 @@ struct ActorPlacement gData_02005afc[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02005b8c[] = {
-    {320, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {320, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {320, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {320, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {320, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {320, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {320, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {320, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {320, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {SCENE_TABLE_END},
-};
+DEFINE_G_DATA_020057C0(gData_02005b8c, 320, 0, 0, 0, 0, 320, 0, 320)
 
 struct ActorPlacement gData_02005c7c[] = {
     {388, CONDITION_ALWAYS, 1, PIXELS(400), 0, PIXELS(368), FACING_SOUTH, 2, 0},

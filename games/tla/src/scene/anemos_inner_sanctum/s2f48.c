@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x6b0, in ROM order, from s2f48's offset to the end of
 /// its code, then the overlay's data.
 
+#include "../shared/tables.h"
 #include "../shared/routines.h"
 #include "types.h"
 #include "system.h"
@@ -129,12 +130,7 @@ u32 gData_02003574[] = {
     0, 20, 38, 17,
 };
 
-s32 gData_02003584[] = {
-    46,
-    (s32)Func_02000660,
-    38,
-    17,
-};
+DEFINE_G_DATA_02003584(gData_02003584, Func_02000660, 38, 17)
 
 u32 gData_02003594[] = {
     0x80010000, 23, 9, 0xffffe667, 23, 10,
@@ -248,13 +244,7 @@ s16 gData_02003888[] = {
     5, 21, 31, 31, 31, -1,
 };
 
-u16 gData_020038b4[] = {
-    94, 89, 90, 91, 92, 93, 93, 94,
-    89, 90, 91, 92, 92, 93, 94, 89,
-    90, 91, 91, 92, 93, 94, 89, 90,
-    90, 91, 92, 93, 94, 89, 89, 90,
-    91, 92, 93, 94,
-};
+DEFINE_G_DATA_020013B4(gData_020038b4, 94, 89, 90, 91, 92, 93)
 
 s32 gData_020038fc[] = {
     46,
@@ -383,32 +373,8 @@ u32 gData_02003bc8[] = {
     0xffff, 0, 0, 0, 0, 0,
 };
 
-s32 gData_02003c88[] = {
-    (s32)0xffff01b0,
-    (s32)gData_020038fc,
-    3,
-    0,
-    0,
-    0x202c000,
-    (s32)0xffff0110,
-    7,
-    4,
-    0,
-    0,
-    0x202c000,
-    (s32)0xffff0110,
-    7,
-    5,
-    0,
-    0,
-    0x202c000,
-    0xffff,
-    0,
-    0,
-    0,
-    0,
-    0,
-};
+DEFINE_G_DATA_02003C88(gData_02003c88, 0xffff01b0, gData_020038fc, 3, 0x202c000,
+    7, 4, 0xffff0110, 5, 0x202c000)
 
 s32 gData_02003ce8[] = {
     (s32)0xffff01af,

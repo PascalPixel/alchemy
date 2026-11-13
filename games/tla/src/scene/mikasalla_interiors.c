@@ -1,6 +1,7 @@
 /// @file
 /// Overlay 0x65e's scene: its code, then its tables, in the order the ROM has them.
 
+#include "shared/tables.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -268,51 +269,9 @@ L_02008582:
 #include "objcmd.h"
 
 // clang-format off
-u32 gData_02000654[] = {
-    SC_SET(SW_COLLISION, 129),
-    SC_SET(SW_ACCEL, 0x1999),
-    SC_SET(SW_SPEED, 0x4ccc),
-    SC_LABEL(1),
-    SC_ARG(2),
-    SC_MOVE(PIXELS(600), 0, PIXELS(88)),
-    SC_SYNC,
-    SC_WAIT(20),
-    SC_ARG(1),
-    SC_SET(SW_FACING, FACING_EAST),
-    SC_WAIT(20),
-    SC_ARG(2),
-    SC_MOVE(PIXELS(616), 0, PIXELS(104)),
-    SC_SYNC,
-    SC_WAIT(20),
-    SC_ARG(1),
-    SC_SET(SW_FACING, FACING_EAST),
-    SC_WAIT(20),
-    SC_LOOP(SC_FOREVER, SC_TO(1)),
-    SC_END,
-};
+DEFINE_G_DATA_02000654(gData_02000654, 600, 616)
 
-u32 gData_0200070c[] = {
-    SC_SET(SW_COLLISION, 129),
-    SC_SET(SW_ACCEL, 0x1999),
-    SC_SET(SW_SPEED, 0x4ccc),
-    SC_LABEL(1),
-    SC_ARG(2),
-    SC_MOVE(PIXELS(360), 0, PIXELS(88)),
-    SC_SYNC,
-    SC_WAIT(20),
-    SC_ARG(1),
-    SC_SET(SW_FACING, FACING_EAST),
-    SC_WAIT(20),
-    SC_ARG(2),
-    SC_MOVE(PIXELS(376), 0, PIXELS(104)),
-    SC_SYNC,
-    SC_WAIT(20),
-    SC_ARG(1),
-    SC_SET(SW_FACING, FACING_EAST),
-    SC_WAIT(20),
-    SC_LOOP(SC_FOREVER, SC_TO(1)),
-    SC_END,
-};
+DEFINE_G_DATA_02000654(gData_0200070c, 360, 376)
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

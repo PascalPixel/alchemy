@@ -257,27 +257,9 @@ void Func_020004ac(void) {
   work->screenEffect = effect;
 }
 
-void Func_02000508(void) {
-  Func_020000f4();
-  Func_02001334();
+DEFINE_FUNC_02000508(Func_02000508, 232, 136)
 
-  gMainRoutineWork.unk2c2 = 1;
-  Event_Wait(40);
-  Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
-                                         PIXELS(232), PIXELS(136));
-  Func_020004ac();
-}
-
-void Func_02000544(void) {
-  Func_020000f4();
-  Func_02001334();
-
-  gMainRoutineWork.unk2c2 = 1;
-  Event_Wait(40);
-  Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
-                                         PIXELS(240), PIXELS(480));
-  Func_020004ac();
-}
+DEFINE_FUNC_02000508(Func_02000544, 240, 480)
 
 void Func_02000580(s32 scale) {
   u16 *source = Ram_HeapSlots->block32;
@@ -541,47 +523,9 @@ void Func_020009f8(s32 actorId, s32 dx, s32 dz) {
   Event_End();
 }
 
-void Func_02000aec(void) {
-  struct Actor *object0;
-  s32 value1;
-  struct Actor *object2;
-  s32 value3;
-  struct Actor *object4;
+DEFINE_FUNC_02000AEC(Func_02000aec, 8, 32, 0x280)
 
-  object0 = Actor_GetById(8);
-  value1 = object0->x;
-  object2 = Actor_GetById(8);
-  value3 = object2->z;
-  Func_020009f8(8, 32, 0);
-  wait(2);
-  object4 = Actor_GetById(8);
-  Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,
-                            (object4->x >> 20), ((value3 >> 20) - 1));
-  Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
-  GameFlag_ClearBit(0x280);
-  return;
-}
-
-void Func_02000b4c(void) {
-  struct Actor *object0;
-  s32 value1;
-  struct Actor *object2;
-  s32 value3;
-  struct Actor *object4;
-
-  object0 = Actor_GetById(8);
-  value1 = object0->x;
-  object2 = Actor_GetById(8);
-  value3 = object2->z;
-  Func_020009f8(8, -32, 0);
-  wait(2);
-  object4 = Actor_GetById(8);
-  Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,
-                            (object4->x >> 20), ((value3 >> 20) - 1));
-  Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
-  GameFlag_SetBit(0x280);
-  return;
-}
+DEFINE_FUNC_02000B4C(Func_02000b4c, 8, 32, 0x280)
 
 void Func_02000bb0(void) {
   struct Actor *object0;
@@ -627,173 +571,21 @@ void Func_02000c1c(void) {
   return;
 }
 
-void Func_02000c8c(void) {
-  struct Actor *object0;
-  s32 value1;
-  struct Actor *object2;
-  s32 value3;
-  struct Actor *object4;
+DEFINE_FUNC_02000C8C(Func_02000c8c, 10, 0x282)
 
-  object0 = Actor_GetById(10);
-  value1 = object0->x;
-  object2 = Actor_GetById(10);
-  value3 = object2->z;
-  Func_020009f8(10, 80, 0);
-  wait(2);
-  object4 = Actor_GetById(10);
-  Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,
-                            (object4->x >> 20), ((value3 >> 20) - 1));
-  Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
-  GameFlag_SetBit(0x282);
-  return;
-}
+DEFINE_FUNC_02000CF0(Func_02000cf0, 10, 0x282)
 
-void Func_02000cf0(void) {
-  struct Actor *object0;
-  s32 value1;
-  struct Actor *object2;
-  s32 value3;
-  struct Actor *object4;
+DEFINE_FUNC_02000AEC(Func_02000d54, 11, 80, 0x283)
 
-  object0 = Actor_GetById(10);
-  value1 = object0->x;
-  object2 = Actor_GetById(10);
-  value3 = object2->z;
-  Func_020009f8(10, -80, 0);
-  wait(2);
-  object4 = Actor_GetById(10);
-  Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,
-                            (object4->x >> 20), ((value3 >> 20) - 1));
-  Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
-  GameFlag_ClearBit(0x282);
-  return;
-}
+DEFINE_FUNC_02000CF0(Func_02000db8, 11, 0x283)
 
-void Func_02000d54(void) {
-  struct Actor *object0;
-  s32 value1;
-  struct Actor *object2;
-  s32 value3;
-  struct Actor *object4;
+DEFINE_FUNC_02000C8C(Func_02000e1c, 12, 0x284)
 
-  object0 = Actor_GetById(11);
-  value1 = object0->x;
-  object2 = Actor_GetById(11);
-  value3 = object2->z;
-  Func_020009f8(11, 80, 0);
-  wait(2);
-  object4 = Actor_GetById(11);
-  Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,
-                            (object4->x >> 20), ((value3 >> 20) - 1));
-  Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
-  GameFlag_ClearBit(0x283);
-  return;
-}
+DEFINE_FUNC_02000CF0(Func_02000e7c, 12, 0x284)
 
-void Func_02000db8(void) {
-  struct Actor *object0;
-  s32 value1;
-  struct Actor *object2;
-  s32 value3;
-  struct Actor *object4;
+DEFINE_FUNC_02000AEC(Func_02000ee0, 13, 80, 0x285)
 
-  object0 = Actor_GetById(11);
-  value1 = object0->x;
-  object2 = Actor_GetById(11);
-  value3 = object2->z;
-  Func_020009f8(11, -80, 0);
-  wait(2);
-  object4 = Actor_GetById(11);
-  Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,
-                            (object4->x >> 20), ((value3 >> 20) - 1));
-  Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
-  GameFlag_ClearBit(0x283);
-  return;
-}
-
-void Func_02000e1c(void) {
-  struct Actor *object0;
-  s32 value1;
-  struct Actor *object2;
-  s32 value3;
-  struct Actor *object4;
-
-  object0 = Actor_GetById(12);
-  value1 = object0->x;
-  object2 = Actor_GetById(12);
-  value3 = object2->z;
-  Func_020009f8(12, 80, 0);
-  wait(2);
-  object4 = Actor_GetById(12);
-  Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,
-                            (object4->x >> 20), ((value3 >> 20) - 1));
-  Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
-  GameFlag_SetBit(0x284);
-  return;
-}
-
-void Func_02000e7c(void) {
-  struct Actor *object0;
-  s32 value1;
-  struct Actor *object2;
-  s32 value3;
-  struct Actor *object4;
-
-  object0 = Actor_GetById(12);
-  value1 = object0->x;
-  object2 = Actor_GetById(12);
-  value3 = object2->z;
-  Func_020009f8(12, -80, 0);
-  wait(2);
-  object4 = Actor_GetById(12);
-  Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,
-                            (object4->x >> 20), ((value3 >> 20) - 1));
-  Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
-  GameFlag_ClearBit(0x284);
-  return;
-}
-
-void Func_02000ee0(void) {
-  struct Actor *object0;
-  s32 value1;
-  struct Actor *object2;
-  s32 value3;
-  struct Actor *object4;
-
-  object0 = Actor_GetById(13);
-  value1 = object0->x;
-  object2 = Actor_GetById(13);
-  value3 = object2->z;
-  Func_020009f8(13, 80, 0);
-  wait(2);
-  object4 = Actor_GetById(13);
-  Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,
-                            (object4->x >> 20), ((value3 >> 20) - 1));
-  Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
-  GameFlag_ClearBit(0x285);
-  return;
-}
-
-void Func_02000f44(void) {
-  struct Actor *object0;
-  s32 value1;
-  struct Actor *object2;
-  s32 value3;
-  struct Actor *object4;
-
-  object0 = Actor_GetById(13);
-  value1 = object0->x;
-  object2 = Actor_GetById(13);
-  value3 = object2->z;
-  Func_020009f8(13, -80, 0);
-  wait(2);
-  object4 = Actor_GetById(13);
-  Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,
-                            (object4->x >> 20), ((value3 >> 20) - 1));
-  Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
-  GameFlag_SetBit(0x285);
-  return;
-}
+DEFINE_FUNC_02000B4C(Func_02000f44, 13, 80, 0x285)
 
 void Func_02000fa8(void) {
   struct Actor *object0;

@@ -2,6 +2,8 @@
 /// The scene code of overlay 0x67f that its scene tables belong to, in ROM
 /// order, and the overlay's data; the rest of the overlay is in izumo_ruins/.
 
+#include "shared/routines.h"
+#include "shared/tables.h"
 #include "izumo_ruins/izumo_ruins.h"
 #include "battle.h"
 #include "field.h"
@@ -177,13 +179,7 @@ L_020091b2:
   return;
 }
 
-void Func_020011b8(void) {
-  struct Actor *object0;
-
-  object0 = Actor_Get(gMainRoutineWork.currentOwner);
-  object0->terrainId = 0;
-  return;
-}
+DEFINE_FUNC_020011B8(Func_020011b8, 0)
 
 /// Outside the first room, sets the high byte of map cell (50, 13) on layer 2
 /// to 0xff; then starts the room's effect.
@@ -267,51 +263,15 @@ s32 Scene_PrepareMap(void) { return 0; }
 #include "objcmd.h"
 
 // clang-format off
-u32 gData_02001540[] = {
-    SC_WAIT(33),
-    SC_SET(SW_HOOK, 0),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-};
+DEFINE_G_DATA_02001540(gData_02001540, 33)
 
-u32 gData_02001570[] = {
-    SC_WAIT(44),
-    SC_SET(SW_HOOK, 0),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-};
+DEFINE_G_DATA_02001540(gData_02001570, 44)
 
-u32 gData_020015a0[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_020015a0, 22)
 
-u32 gData_020015dc[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_020015dc, 44)
 
-u32 gData_02001618[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02001618, 126)
 
 s16 gData_02001654[] = {
     13, -1,

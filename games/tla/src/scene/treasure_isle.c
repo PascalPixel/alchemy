@@ -1,4 +1,5 @@
 // ---- games/tla/src/scene/treasure_isle/scene_tables.c ----
+#include "shared/tables.h"
 #include "shared/routines.h"
 #include "battle.h"
 #include "field.h"
@@ -257,85 +258,21 @@ void Func_02000880(s32 unused, s32 frame, s32 id) {
   }
 }
 
-void Func_02000914(void) {
-  s32 t0;
+DEFINE_FUNC_02000914(Func_02000914, 9, 0x200)
 
-  t0 = ((s32)Actor_Get(9));
-  FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9) =
-      ((-13 & FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9)) | 4);
-  FIELD_AT((t0 + 0x23), u8, 0) = (0xfe & FIELD_AT((t0 + 0x23), u8, 0));
-  Event_SetFlag(0x200);
-}
+DEFINE_FUNC_02000914(Func_02000940, 10, 0x201)
 
-void Func_02000940(void) {
-  s32 t0;
+DEFINE_FUNC_02000914(Func_02000970, 11, 0x202)
 
-  t0 = ((s32)Actor_Get(10));
-  FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9) =
-      ((-13 & FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9)) | 4);
-  FIELD_AT((t0 + 0x23), u8, 0) = (0xfe & FIELD_AT((t0 + 0x23), u8, 0));
-  Event_SetFlag(0x201);
-}
+DEFINE_FUNC_02000914(Func_020009a0, 12, 0x203)
 
-void Func_02000970(void) {
-  s32 t0;
+DEFINE_FUNC_02000914(Func_020009d0, 13, 0x204)
 
-  t0 = ((s32)Actor_Get(11));
-  FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9) =
-      ((-13 & FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9)) | 4);
-  FIELD_AT((t0 + 0x23), u8, 0) = (0xfe & FIELD_AT((t0 + 0x23), u8, 0));
-  Event_SetFlag(0x202);
-}
+DEFINE_FUNC_02000914(Func_020009fc, 14, 0x205)
 
-void Func_020009a0(void) {
-  s32 t0;
+DEFINE_FUNC_02000914(Func_02000a2c, 15, 0x206)
 
-  t0 = ((s32)Actor_Get(12));
-  FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9) =
-      ((-13 & FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9)) | 4);
-  FIELD_AT((t0 + 0x23), u8, 0) = (0xfe & FIELD_AT((t0 + 0x23), u8, 0));
-  Event_SetFlag(0x203);
-}
-
-void Func_020009d0(void) {
-  s32 t0;
-
-  t0 = ((s32)Actor_Get(13));
-  FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9) =
-      ((-13 & FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9)) | 4);
-  FIELD_AT((t0 + 0x23), u8, 0) = (0xfe & FIELD_AT((t0 + 0x23), u8, 0));
-  Event_SetFlag(0x204);
-}
-
-void Func_020009fc(void) {
-  s32 t0;
-
-  t0 = ((s32)Actor_Get(14));
-  FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9) =
-      ((-13 & FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9)) | 4);
-  FIELD_AT((t0 + 0x23), u8, 0) = (0xfe & FIELD_AT((t0 + 0x23), u8, 0));
-  Event_SetFlag(0x205);
-}
-
-void Func_02000a2c(void) {
-  s32 t0;
-
-  t0 = ((s32)Actor_Get(15));
-  FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9) =
-      ((-13 & FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9)) | 4);
-  FIELD_AT((t0 + 0x23), u8, 0) = (0xfe & FIELD_AT((t0 + 0x23), u8, 0));
-  Event_SetFlag(0x206);
-}
-
-void Func_02000a5c(void) {
-  s32 t0;
-
-  t0 = ((s32)Actor_Get(16));
-  FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9) =
-      ((-13 & FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9)) | 4);
-  FIELD_AT((t0 + 0x23), u8, 0) = (0xfe & FIELD_AT((t0 + 0x23), u8, 0));
-  Event_SetFlag(0x207);
-}
+DEFINE_FUNC_02000914(Func_02000a5c, 16, 0x207)
 
 #include "call.h"
 
@@ -619,12 +556,7 @@ u32 gData_0200131c[] = {
     39, 1, 0, 1, 17,
 };
 
-struct ActorPlacement gData_02001330[] = {
-    {272, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(440), FACING_SOUTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(344), 0, PIXELS(440), FACING_SOUTH, 2, 0},
-    {272, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(344), FACING_SOUTH, 2, 0},
-    {SCENE_TABLE_END},
-};
+DEFINE_G_DATA_02001330(gData_02001330, 272, 280, 440, 344, 440, 0, 424, 344)
 
 struct ActorPlacement gData_02001390[] = {
     {407, CONDITION_ALWAYS, (s32)gData_0200131c, PIXELS(600), 0, PIXELS(616),

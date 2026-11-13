@@ -267,35 +267,11 @@ void Func_02001af4(void);
 void Func_020020f8(void);
 
 // clang-format off
-u32 gData_02003c5c[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02003c5c, 22)
 
-u32 gData_02003c98[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02003c98, 44)
 
-u32 gData_02003cd4[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_02003cd4, 126)
 
 DEFINE_G_DATA_0200198C(gData_02003d10)
 
@@ -358,21 +334,9 @@ s16 gData_02003e02[] = {
     9, 50, -1, -1, 0,
 };
 
-u32 gData_02003e0c[] = {
-    SC_WAIT(33),
-    SC_SET(SW_HOOK, 0),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-};
+DEFINE_G_DATA_02001540(gData_02003e0c, 33)
 
-u32 gData_02003e3c[] = {
-    SC_WAIT(44),
-    SC_SET(SW_HOOK, 0),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-};
+DEFINE_G_DATA_02001540(gData_02003e3c, 44)
 
 s32 gData_02003e6c[] = {
     (s32)gData_02003c5c,

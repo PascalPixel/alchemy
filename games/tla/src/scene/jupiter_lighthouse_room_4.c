@@ -96,19 +96,9 @@ void Func_020001ac(void) {
   MapGrid_CopyCellAttributes(40, 9, 1, 1, 40, 20);
 }
 
-void Func_020001dc(s32 item) {
-  Event_SetFlag(0xa07);
-  Event_PlaySound(134);
-  Func_0200017c();
-  PartyInventory_Remove(item);
-}
+DEFINE_FUNC_020001DC(Func_020001dc, 0xa07, Func_0200017c)
 
-void Func_020001fc(s32 item) {
-  Event_SetFlag(0xa08);
-  Event_PlaySound(134);
-  Func_020001ac();
-  PartyInventory_Remove(item);
-}
+DEFINE_FUNC_020001DC(Func_020001fc, 0xa08, Func_020001ac)
 
 void Func_0200021c(void) {
   ((struct EventWorkLock *)Ram_HeapSlots->eventWork)->locked = 1;

@@ -1,6 +1,8 @@
 /// @file
 /// Scene code of overlay 0x657, in ROM order, from s0b84's offset up to the next object the overlay links, and the overlay's data.
 
+#include "../shared/routines.h"
+#include "../shared/tables.h"
 #include "types.h"
 #include "system.h"
 #include "main_routine_work.h"
@@ -841,18 +843,7 @@ void Func_020014c0(void) {
   Event_End();
 }
 
-void Func_02001d60(struct Actor *object) {
-  struct Actor *spawned;
-
-  if ((gFrameCount & 7) == 0) {
-    spawned = FieldActor_Create(14, object->x, object->y, object->z);
-    if (spawned != 0) {
-      Actor_SetSingleChildFlags(spawned, 0);
-      Func_02001efc(spawned, 1);
-      Actor_StartScript(spawned, gData_02002498);
-    }
-  }
-}
+DEFINE_FUNC_02000DF8(Func_02001d60, 7, Func_02001efc, gData_02002498)
 
 static __inline__ void Func_020020b4_(s32 id, s32 a, s32 b, s32 c) {
   /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
@@ -924,17 +915,7 @@ u32 gData_02002120[] = {
     SC_END,
 };
 
-u32 gData_0200218c[] = {
-    SC_SET(SW_FACING, FACING_SOUTH),
-    SC_WAIT(30),
-    SC_SET(SW_FACING, FACING_SOUTHWEST),
-    SC_WAIT(50),
-    SC_SET(SW_FACING, FACING_SOUTH),
-    SC_WAIT(10),
-    SC_SET(SW_FACING, FACING_SOUTHEAST),
-    SC_WAIT(70),
-    SC_LOOP(SC_FOREVER, SC_TOP),
-};
+DEFINE_G_DATA_0200218C(gData_0200218c, 30, 50, 10, 70)
 
 u32 gData_020021e8[] = {
     SC_SET(SW_FACING, FACING_EAST),

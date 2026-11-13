@@ -1,6 +1,8 @@
 /// @file
 /// Overlay 0x673's scene: its code, then its tables, in the order the ROM has them.
 
+#include "shared/routines.h"
+#include "shared/tables.h"
 #include "gabomba_catacombs/local.h"
 
 #include "event_inline.h"
@@ -57,33 +59,9 @@ void Func_020001b0(void) {
 
 void Func_020001d4(void) { Import_EventSetExitRequest(5); }
 
-void Func_020001e0(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+DEFINE_FUNC_020001E0(Func_020001e0, 7, 22, 3, 58, 8, 136, 376, 8, 23)
 
-  Func_02001274_(7, 22, 0, 3, 3, 56, 58);
-  Actor_SetPosition(8, PIXELS(136), PIXELS(376));
-  if (leader->x >> 20 == 8 && leader->z >> 20 == 23) {
-    LEADER_HOP();
-    Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
-    leader->velocityY = PIXELS(6);
-    Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-    Event_End();
-  }
-}
-
-void Func_02000260(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-
-  Func_02001274_(5, 13, 0, 5, 3, 56, 52);
-  Actor_SetPosition(9, PIXELS(136), PIXELS(248));
-  if (leader->x >> 20 == 8 && leader->z >> 20 == 15) {
-    LEADER_HOP();
-    Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
-    leader->velocityY = PIXELS(6);
-    Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-    Event_End();
-  }
-}
+DEFINE_FUNC_020001E0(Func_02000260, 5, 13, 5, 52, 9, 136, 248, 8, 15)
 
 void Func_020002e0(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -101,61 +79,13 @@ void Func_020002e0(void) {
   }
 }
 
-void Func_02000364(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+DEFINE_FUNC_020001E0(Func_02000364, 5, 13, 5, 52, 11, 136, 280, 8, 17)
 
-  Func_02001274_(5, 13, 0, 5, 3, 56, 52);
-  Actor_SetPosition(11, PIXELS(136), PIXELS(280));
-  if (leader->x >> 20 == 8 && leader->z >> 20 == 17) {
-    LEADER_HOP();
-    Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
-    leader->velocityY = PIXELS(6);
-    Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-    Event_End();
-  }
-}
+DEFINE_FUNC_020001E0(Func_020003e4, 5, 13, 5, 52, 12, 104, 280, 6, 17)
 
-void Func_020003e4(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+DEFINE_FUNC_020001E0(Func_02000464, 5, 13, 5, 52, 13, 88, 264, 5, 16)
 
-  Func_02001274_(5, 13, 0, 5, 3, 56, 52);
-  Actor_SetPosition(12, PIXELS(104), PIXELS(280));
-  if (leader->x >> 20 == 6 && leader->z >> 20 == 17) {
-    LEADER_HOP();
-    Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
-    leader->velocityY = PIXELS(6);
-    Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-    Event_End();
-  }
-}
-
-void Func_02000464(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-
-  Func_02001274_(5, 13, 0, 5, 3, 56, 52);
-  Actor_SetPosition(13, PIXELS(88), PIXELS(264));
-  if (leader->x >> 20 == 5 && leader->z >> 20 == 16) {
-    LEADER_HOP();
-    Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
-    leader->velocityY = PIXELS(6);
-    Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-    Event_End();
-  }
-}
-
-void Func_020004e4(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-
-  Func_02001274_(5, 13, 0, 5, 3, 56, 52);
-  Actor_SetPosition(14, PIXELS(104), PIXELS(248));
-  if (leader->x >> 20 == 6 && leader->z >> 20 == 15) {
-    LEADER_HOP();
-    Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
-    leader->velocityY = PIXELS(6);
-    Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-    Event_End();
-  }
-}
+DEFINE_FUNC_020001E0(Func_020004e4, 5, 13, 5, 52, 14, 104, 248, 6, 15)
 
 void Func_02000564(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -195,77 +125,21 @@ void Func_0200069c(void) {
   Map_CopyCellAttributeRect(2, 5, 1, 1, 7, 14);
 }
 
-void Func_020006cc(void) {
-  struct Actor *object = Actor_GetById(8);
+DEFINE_FUNC_020006CC(Func_020006cc, 8, 0x200, 6, 23, 8, 23)
 
-  GameFlag_SetBit(0x200);
-  object->motionFlags = 0;
-  object->priorityFlags = 0;
-  MapGrid_CopyCellAttributes(6, 23, 1, 1, 8, 23);
-}
+DEFINE_FUNC_020006CC(Func_02000704, 9, 0x201, 0, 4, 8, 15)
 
-void Func_02000704(void) {
-  struct Actor *object = Actor_GetById(9);
+DEFINE_FUNC_020006CC(Func_02000740, 10, 0x202, 0, 4, 9, 16)
 
-  GameFlag_SetBit(0x201);
-  object->motionFlags = 0;
-  object->priorityFlags = 0;
-  MapGrid_CopyCellAttributes(0, 4, 1, 1, 8, 15);
-}
+DEFINE_FUNC_020006CC(Func_0200077c, 11, 0x203, 0, 4, 8, 17)
 
-void Func_02000740(void) {
-  struct Actor *object = Actor_GetById(10);
+DEFINE_FUNC_020006CC(Func_020007b8, 12, 0x204, 0, 4, 6, 17)
 
-  GameFlag_SetBit(0x202);
-  object->motionFlags = 0;
-  object->priorityFlags = 0;
-  MapGrid_CopyCellAttributes(0, 4, 1, 1, 9, 16);
-}
+DEFINE_FUNC_020006CC(Func_020007f0, 13, 0x205, 0, 4, 5, 16)
 
-void Func_0200077c(void) {
-  struct Actor *object = Actor_GetById(11);
+DEFINE_FUNC_020006CC(Func_0200082c, 14, 0x206, 0, 4, 6, 15)
 
-  GameFlag_SetBit(0x203);
-  object->motionFlags = 0;
-  object->priorityFlags = 0;
-  MapGrid_CopyCellAttributes(0, 4, 1, 1, 8, 17);
-}
-
-void Func_020007b8(void) {
-  struct Actor *object = Actor_GetById(12);
-
-  GameFlag_SetBit(0x204);
-  object->motionFlags = 0;
-  object->priorityFlags = 0;
-  MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 17);
-}
-
-void Func_020007f0(void) {
-  struct Actor *object = Actor_GetById(13);
-
-  GameFlag_SetBit(0x205);
-  object->motionFlags = 0;
-  object->priorityFlags = 0;
-  MapGrid_CopyCellAttributes(0, 4, 1, 1, 5, 16);
-}
-
-void Func_0200082c(void) {
-  struct Actor *object = Actor_GetById(14);
-
-  GameFlag_SetBit(0x206);
-  object->motionFlags = 0;
-  object->priorityFlags = 0;
-  MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 15);
-}
-
-void Func_02000868(void) {
-  struct Actor *object = Actor_GetById(8);
-
-  GameFlag_SetBit(0x200);
-  object->motionFlags = 0;
-  object->priorityFlags = 0;
-  MapGrid_CopyCellAttributes(15, 18, 1, 1, 17, 18);
-}
+DEFINE_FUNC_020006CC(Func_02000868, 8, 0x200, 15, 18, 17, 18)
 
 void Func_020008a0(struct Actor *object, s32 dz) {
   struct GabombaCatacombsFollower *follower;
@@ -562,15 +436,7 @@ u32 gData_0200128c[] = {
     0, 15, 3, 0, 1, 38,
 };
 
-u32 gData_020012a4[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_FREE,
-    SC_END,
-};
+DEFINE_G_DATA_020012A4(gData_020012a4, 44)
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -616,16 +482,7 @@ struct ActorPlacement gData_020013a8[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020013d8[] = {
-    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
-    {SCENE_TABLE_END},
-};
+DEFINE_G_DATA_020013D8(gData_020013d8, 290, 0, 0, 0, 290, 0, 0, 0, 0)
 
 struct ActorPlacement gData_02001498[] = {
     {375, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(152), FACING_SOUTH, 2, 0},

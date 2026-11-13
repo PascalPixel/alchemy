@@ -1,6 +1,16 @@
 /// @file
-/// The scene code of overlay 0x693, in ROM order.
+/// Atteka Inlet, where the party's ship lies on the southern continent, in two
+/// scenes that share this overlay: the harbour with the ship
+/// (SceneId_Ov693Room1) and the shore beside it (SceneId_Ov693Room2). Piers
+/// asks whether to set sail (AttekaInlet_AskPiersToSetSail). After Jupiter
+/// Lighthouse the shipwrights stop the party to see their handiwork fly
+/// (AttekaInlet_ShipwrightsStopTheParty), Hamma shows the ship's new wings
+/// (AttekaInlet_HammaShowsTheWings), and in a game linked with The Broken Seal
+/// a messenger brings Master Hammet's gift
+/// (AttekaInlet_HammetsMessengerArrives). Cyclone clears the shore's bushes and
+/// uncovers Geode, a Venus Djinni (AttekaInlet_CycloneUncoversGeode).
 
+#include "flags.h"
 #include "shared/tables.h"
 #include "battle.h"
 #include "field.h"
@@ -21,10 +31,28 @@
 #include "field_event.h"
 #include "field_sprite.h"
 #include "event_work.h"
-#include "module/scene/atteka_inlet.h"
 #include "module/scene/scene.h"
 
-void Func_02000038(void) {
+// The inlet's own story, which no other scene reads.
+#define FLAG_SHIPWRIGHTS_STOPPED_PARTY                                         \
+  0x9b0 ///< "We worked really hard on that ship"
+#define FLAG_HAMMA_SHOWED_THE_WINGS 0x9b1 ///< Hamma showed the ship's wings
+#define FLAG_SET_OUT_WITH_WINGS 0x9b2 ///< the party set out on the winged ship
+#define FLAG_HAMMETS_GIFT_DELIVERED 0x9ad ///< Master Hammet's messenger came
+
+extern struct ActorPlacement gAttekaInlet_ActorPlacements[];
+extern u32 gAttekaInlet_HarbourActorPlacements[];
+extern struct ActorPlacement gAttekaInlet_HarbourActorPlacementsOnceWinged[];
+extern u32 gAttekaInlet_HarbourActorPlacementsOnceFlown[];
+extern struct ActorPlacement gAttekaInlet_ShoreActorPlacementsOnceWinged[];
+extern struct ActorPlacement gAttekaInlet_ShoreActorPlacements[];
+extern struct Trigger gAttekaInlet_Triggers[];
+extern struct Trigger gAttekaInlet_ShoreTriggers[];
+void AttekaInlet_HammetsMessengerArrives(void);
+void AttekaInlet_SetUpTheHarbour(void);
+void AttekaInlet_SetUpTheShore(void);
+
+void AttekaInlet_GeodeJoins(void) {
   Djinn_JoinParty(14, 0, 15);
   GameFlag_ClearBit(0x300);
 }
@@ -39,36 +67,36 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov693Room1) {
-    if (GameFlag_Test(0x9b2))
-      return gData_0200147c;
+    if (GameFlag_Test(FLAG_SET_OUT_WITH_WINGS))
+      return gAttekaInlet_HarbourActorPlacementsOnceFlown;
     if (GameFlag_Test(0x9d0))
-      return gData_020012cc;
-    return gData_020011ac;
+      return gAttekaInlet_HarbourActorPlacementsOnceWinged;
+    return gAttekaInlet_HarbourActorPlacements;
   }
   if (scene == (s32)&SceneId_Ov693Room2) {
     if (GameFlag_Test(0x9d0))
-      return gData_0200159c;
-    return gData_0200165c;
+      return gAttekaInlet_ShoreActorPlacementsOnceWinged;
+    return gAttekaInlet_ShoreActorPlacements;
   }
-  return gData_02001194;
+  return gAttekaInlet_ActorPlacements;
 }
 
-extern struct Trigger gData_02001728[];
+extern struct Trigger gAttekaInlet_HarbourTriggers[];
 
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov693Room1)
-    return gData_02001728;
+    return gAttekaInlet_HarbourTriggers;
   if (scene == (s32)&SceneId_Ov693Room2)
-    return gData_020018f0;
-  return gData_0200171c;
+    return gAttekaInlet_ShoreTriggers;
+  return gAttekaInlet_Triggers;
 }
 
 /// Object 18 asks whether to set out: a yes sets the owner override and, once
-/// flag 0x9d0 is set, flags 0x8df and 0x9b2; a no counts the refusal and
-/// object 18 walks back to the party leader.
-void Func_02000120(void) {
+/// flag 0x9d0 is set, flags FLAG_SHIP_FLIES and FLAG_SET_OUT_WITH_WINGS; a no
+/// counts the refusal and object 18 walks back to the party leader.
+void AttekaInlet_AskPiersToSetSail(void) {
   struct Actor *object;
 
   Event_Start();
@@ -80,8 +108,8 @@ void Func_02000120(void) {
     Event_ShowMessageAndWait(18, 0);
     gMainRoutineWork.ownerOverride = 1;
     if (Event_GetFlag(0x9d0)) {
-      GameFlag_SetBit(0x8df);
-      GameFlag_SetBit(0x9b2);
+      GameFlag_SetBit(FLAG_SHIP_FLIES);
+      GameFlag_SetBit(FLAG_SET_OUT_WITH_WINGS);
     }
     Import_EventSetExitRequest(4);
   } else {
@@ -100,11 +128,11 @@ void Func_02000120(void) {
   }
 }
 
-/// Once flag 0x9d0 is set and while flag 0x9b2 is clear, objects 9 and 10 are
-/// placed, jump in and talk, four cells of the map change and flag 0x9b0 is
-/// set.
-void Func_02000208(void) {
-  if (GameFlag_Test(0x9d0) && !GameFlag_Test(0x9b2)) {
+/// Once flag 0x9d0 is set and while flag FLAG_SET_OUT_WITH_WINGS is clear,
+/// objects 9 and 10 are placed, jump in and talk, four cells of the map change
+/// and flag FLAG_SHIPWRIGHTS_STOPPED_PARTY is set.
+void AttekaInlet_ShipwrightsStopTheParty(void) {
+  if (GameFlag_Test(0x9d0) && !GameFlag_Test(FLAG_SET_OUT_WITH_WINGS)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldCamera_MoveWithinMapBounds(96 << 16, -1, 308 << 16, 1);
@@ -150,14 +178,15 @@ void Func_02000208(void) {
     Map_CopyCellAttributeRect(1, 16, 1, 1, 4, 19);
     Map_CopyCellAttributeRect(1, 16, 1, 1, 4, 20);
     Map_CopyCellAttributeRect(1, 16, 1, 1, 4, 21);
-    GameFlag_SetBit(0x9b0);
+    GameFlag_SetBit(FLAG_SHIPWRIGHTS_STOPPED_PARTY);
     Event_End();
   }
 }
 
 /// Once flag 0x9d0 is set, the camera pans over object 23, who greets the
-/// party, turns, talks and walks to its place; flag 0x9b1 is set.
-void Func_020003e4(void) {
+/// party, turns, talks and walks to its place; flag FLAG_HAMMA_SHOWED_THE_WINGS
+/// is set.
+void AttekaInlet_HammaShowsTheWings(void) {
   if (GameFlag_Test(0x9d0)) {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -214,7 +243,7 @@ void Func_020003e4(void) {
     Actor_FaceDirectionById(23, 0x3000);
     Motion_SetModeAndWaitAnimation(23, 3);
     Event_ShowMessageAndWait(23, 0);
-    GameFlag_SetBit(0x9b1);
+    GameFlag_SetBit(FLAG_HAMMA_SHOWED_THE_WINGS);
     Event_End();
   }
 }
@@ -222,8 +251,8 @@ void Func_020003e4(void) {
 void Actor_MoveToObject(s32 id, s32 target);
 
 /// Object 18 comes to the party leader and asks whether to set out, as in
-/// Func_02000120; after a no the leader steps back.
-void Func_02000640(void) {
+/// AttekaInlet_AskPiersToSetSail; after a no the leader steps back.
+void AttekaInlet_PiersAsksToSetSail(void) {
   struct Actor *object;
 
   Event_Start();
@@ -241,8 +270,8 @@ void Func_02000640(void) {
     Event_ShowMessageAndWait(18, 0);
     gMainRoutineWork.ownerOverride = 1;
     if (Event_GetFlag(0x9d0)) {
-      GameFlag_SetBit(0x8df);
-      GameFlag_SetBit(0x9b2);
+      GameFlag_SetBit(FLAG_SHIP_FLIES);
+      GameFlag_SetBit(FLAG_SET_OUT_WITH_WINGS);
     }
     Import_EventSetExitRequest(4);
   } else {
@@ -272,12 +301,13 @@ static inline void MapCopy(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
   Func_02001120(srcX, srcY, width, height, destX, destY, layer);
 }
 
-void Func_0200077c(void) {
-  if (GameFlag_Test(0x820) && GameFlag_Test(0x9b1) && !GameFlag_Test(0x9ad))
-    Func_0200097c();
+void AttekaInlet_CheckForHammetsMessenger(void) {
+  if (GameFlag_Test(0x820) && GameFlag_Test(FLAG_HAMMA_SHOWED_THE_WINGS) &&
+      !GameFlag_Test(FLAG_HAMMETS_GIFT_DELIVERED))
+    AttekaInlet_HammetsMessengerArrives();
 }
 
-void Func_020007ac(void) {
+void AttekaInlet_CycloneUncoversGeode(void) {
   struct Actor *object;
   s32 moved;
 
@@ -302,27 +332,27 @@ void Func_020007ac(void) {
   }
 }
 
-void Func_0200085c(void) { MapCopy(9, 23, 1, 1, 4, 10, 0); }
+void AttekaInlet_CycloneFirstBush(void) { MapCopy(9, 23, 1, 1, 4, 10, 0); }
 
-void Func_0200087c(void) { MapCopy(9, 23, 1, 1, 6, 9, 0); }
+void AttekaInlet_CycloneSecondBush(void) { MapCopy(9, 23, 1, 1, 6, 9, 0); }
 
-void Func_0200089c(void) { MapCopy(9, 23, 1, 1, 6, 6, 0); }
+void AttekaInlet_CycloneThirdBush(void) { MapCopy(9, 23, 1, 1, 6, 6, 0); }
 
-void Func_020008bc(void) { MapCopy(12, 5, 1, 1, 12, 6, 0); }
+void AttekaInlet_CycloneFourthBush(void) { MapCopy(12, 5, 1, 1, 12, 6, 0); }
 
-void Func_020008dc(void) { MapCopy(9, 23, 1, 1, 13, 7, 0); }
+void AttekaInlet_CycloneFifthBush(void) { MapCopy(9, 23, 1, 1, 13, 7, 0); }
 
-void Func_020008fc(void) { MapCopy(9, 23, 1, 1, 14, 6, 0); }
+void AttekaInlet_CycloneSixthBush(void) { MapCopy(9, 23, 1, 1, 14, 6, 0); }
 
-void Func_0200091c(void) { MapCopy(9, 23, 1, 1, 21, 6, 0); }
+void AttekaInlet_CycloneSeventhBush(void) { MapCopy(9, 23, 1, 1, 21, 6, 0); }
 
-void Func_0200093c(void) { MapCopy(9, 23, 1, 1, 22, 6, 0); }
+void AttekaInlet_CycloneEighthBush(void) { MapCopy(9, 23, 1, 1, 22, 6, 0); }
 
-void Func_0200095c(void) { MapCopy(9, 23, 1, 1, 23, 7, 0); }
+void AttekaInlet_CycloneNinthBush(void) { MapCopy(9, 23, 1, 1, 23, 7, 0); }
 
 /// Object 24 calls out to the party, jumps down to it and talks with object
-/// 23; flag 0x9ad is set.
-void Func_0200097c(void) {
+/// 23; flag FLAG_HAMMETS_GIFT_DELIVERED is set.
+void AttekaInlet_HammetsMessengerArrives(void) {
   s32 angle;
 
   Event_Start();
@@ -376,11 +406,11 @@ void Func_0200097c(void) {
   Motion_SetModeAndWaitAnimation(23, 3);
   Actor_ShowEmoteById(23, 264, 0);
   Event_ShowMessageAndWait(23, 0);
-  GameFlag_SetBit(0x9ad);
+  GameFlag_SetBit(FLAG_HAMMETS_GIFT_DELIVERED);
   Event_End();
 }
 
-void Func_02000bb8(void) {
+void AttekaInlet_ShareLeadersPriority(void) {
   s32 variant =
       ((struct FieldSprite *)Actor_GetById(gMainRoutineWork.currentOwner)
            ->sprite)
@@ -391,7 +421,7 @@ void Func_02000bb8(void) {
   Actor_SetSpritePriority(10, variant);
 }
 
-void Func_02000bf0(void) {
+void AttekaInlet_ShareLeadersPriorityWithRock(void) {
   Actor_SetSpritePriority(
       13, ((struct FieldSprite *)Actor_GetById(gMainRoutineWork.currentOwner)
                ->sprite)
@@ -399,7 +429,7 @@ void Func_02000bf0(void) {
 }
 
 /// Rotates palette colours 5-9 and 13-15 by one entry every eight frames.
-void Func_02000c14(void) {
+void AttekaInlet_RotateWaterColors(void) {
   if ((*Ram_FrameCount & 7) == 0) {
     volatile u16 *palette;
     s16 saved;
@@ -454,9 +484,9 @@ s32 Scene_Initialize(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov693Room1)
-    Func_02000dc4();
+    AttekaInlet_SetUpTheHarbour();
   else if (scene == (s32)&SceneId_Ov693Room2)
-    Func_02000ed0();
+    AttekaInlet_SetUpTheShore();
   return 0;
 }
 
@@ -476,33 +506,33 @@ s32 Scene_PrepareMap(void) {
 static __inline__ void Task_Add_(void (*func)(void), s32 priority) {
   /* FAKEMATCH(wrapper): the call forwarded through an inline, which keeps each
    * call's own constants, as The Broken Seal's scene layer does; as direct
-   * calls to Task_Add, 28 of 107 instructions of Func_02000dc4 differ in
-   * tla-en. */
+   * calls to Task_Add, 28 of 107 instructions of AttekaInlet_SetUpTheHarbour
+   * differ in tla-en. */
   Task_Add(func, priority);
 }
 
-void Func_02000dc4(void) {
+void AttekaInlet_SetUpTheHarbour(void) {
   struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapWork;
   struct MainRoutineWork *party;
 
   GameFlag_SetBit(0x9b4);
-  if (!GameFlag_Test(0x9ad))
+  if (!GameFlag_Test(FLAG_HAMMETS_GIFT_DELIVERED))
     Actor_SetHorizontalPositionWithTerrain(65, 0, 0);
   map->mode = 1;
   party = &gMainRoutineWork;
   Actor_GetById(party->currentOwner)->priorityFlags |= 32;
-  Task_Add_(Func_02000c14, 0x480);
-  Task_Add_(Func_02000bb8, 0x480);
+  Task_Add_(AttekaInlet_RotateWaterColors, 0x480);
+  Task_Add_(AttekaInlet_ShareLeadersPriority, 0x480);
   Actor_SetSpriteFlags(Actor_GetById(17), 0);
   *((u8 *)Actor_GetById(17) + 85) = 0;
-  if (GameFlag_Test(0x9b2)) {
+  if (GameFlag_Test(FLAG_SET_OUT_WITH_WINGS)) {
     Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(21, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(22, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
   } else {
-    if (GameFlag_Test(0x9b1)) {
+    if (GameFlag_Test(FLAG_HAMMA_SHOWED_THE_WINGS)) {
       s32 speed = 0xc0;
 
       Actor_SetPositionAndFacing(23, PIXELS(504), PIXELS(360), speed << 6);
@@ -514,14 +544,14 @@ void Func_02000dc4(void) {
   }
 }
 
-void Func_02000ed0(void) {
+void AttekaInlet_SetUpTheShore(void) {
   if (gMainRoutineWork.entrance == 3)
     GameFlag_ClearBit(0x12f);
-  if (GameFlag_Test(0x9b2)) {
+  if (GameFlag_Test(FLAG_SET_OUT_WITH_WINGS)) {
     Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
-  } else if (GameFlag_Test(0x9b0)) {
+  } else if (GameFlag_Test(FLAG_SHIPWRIGHTS_STOPPED_PARTY)) {
     Actor_SetPositionAndFacing(9, 70 << 16, 308 << 16, FACING_EAST);
     Actor_SetPositionAndFacing(10, 80 << 16, 316 << 16, FACING_EAST);
     Map_CopyCellAttributeRect(1, 16, 1, 1, 3, 19);
@@ -535,7 +565,7 @@ void Func_02000ed0(void) {
   {
     s32 priority = 0x480;
 
-    Task_Add(Func_02000bf0, priority);
+    Task_Add(AttekaInlet_ShareLeadersPriorityWithRock, priority);
   }
 }
 
@@ -552,14 +582,15 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_02001194[] = {
+struct ActorPlacement gAttekaInlet_ActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_020011AC(gData_020011ac, 0x980000, 0x1280000, 0x500000, 0x1300000,
-                       0xd00000, 0x1180000, 1, 0xb80000, 0xe00000, 0x14000)
+DEFINE_G_DATA_020011AC(gAttekaInlet_HarbourActorPlacements, 0x980000, 0x1280000,
+                       0x500000, 0x1300000, 0xd00000, 0x1180000, 1, 0xb80000,
+                       0xe00000, 0x14000)
 
-struct ActorPlacement gData_020012cc[] = {
+struct ActorPlacement gAttekaInlet_HarbourActorPlacementsOnceWinged[] = {
     {333, CONDITION_ALWAYS, 7, PIXELS(88), 0, PIXELS(376), FACING_SOUTH, 2, 0},
     {333, CONDITION_ALWAYS, 7, PIXELS(216), 0, PIXELS(328), FACING_SOUTH, 2, 1},
     {333, CONDITION_ALWAYS, 7, PIXELS(168), 0, PIXELS(184), FACING_SOUTH, 2, 1},
@@ -583,10 +614,11 @@ struct ActorPlacement gData_020012cc[] = {
     {SCENE_TABLE_END},
 };
 
-DEFINE_G_DATA_020011AC(gData_0200147c, 0xa20000, 0x12c0000, 0x6f0000, 0x1470000,
-                       0, 0, 3, 0xcc0000, 0xcc0000, 0x4000)
+DEFINE_G_DATA_020011AC(gAttekaInlet_HarbourActorPlacementsOnceFlown, 0xa20000,
+                       0x12c0000, 0x6f0000, 0x1470000, 0, 0, 3, 0xcc0000,
+                       0xcc0000, 0x4000)
 
-struct ActorPlacement gData_0200159c[] = {
+struct ActorPlacement gAttekaInlet_ShoreActorPlacementsOnceWinged[] = {
     {116, CONDITION_ALWAYS, 3, PIXELS(264), 0, PIXELS(352), FACING_WEST, 0, 0},
     {79, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
     {79, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
@@ -598,7 +630,7 @@ struct ActorPlacement gData_0200159c[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_0200165c[] = {
+struct ActorPlacement gAttekaInlet_ShoreActorPlacements[] = {
     {116, CONDITION_ALWAYS, 3, 0, 0, 0, FACING_WEST, 0, 0},
     {79, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
     {79, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
@@ -609,40 +641,45 @@ struct ActorPlacement gData_0200165c[] = {
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_0200171c[] = {
+struct Trigger gAttekaInlet_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02001728[] = {
+struct Trigger gAttekaInlet_HarbourTriggers[] = {
     {0xc602, 1, CONDITION_ALWAYS, EVENT(AttekaInlet_OpenDoorAndEnter)},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_STEP, 10, 0x9b1, EVENT(Func_020003e4)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_02000120)},
-    {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Func_02000640)},
-    {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(Func_0200077c)},
+    {TRIGGER_STEP, 10, FLAG_HAMMA_SHOWED_THE_WINGS,
+     EVENT(AttekaInlet_HammaShowsTheWings)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(AttekaInlet_AskPiersToSetSail)},
+    {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(AttekaInlet_PiersAsksToSetSail)},
+    {TRIGGER_STEP, 12, CONDITION_ALWAYS,
+     EVENT(AttekaInlet_CheckForHammetsMessenger)},
     {TRIGGER_TALK, 13, 0x9d0, MSGNO(MsgWeVeMade)},
-    {TRIGGER_TALK, 13, 0x9b2, MSGNO(MsgHammaReturnedTo)},
+    {TRIGGER_TALK, 13, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgHammaReturnedTo)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgIVeBeenWatching)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x9d0, MSGNO(MsgWeFirstHeard)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x9b2, MSGNO(MsgWeVeBeen)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, FLAG_SET_OUT_WITH_WINGS,
+     MSGNO(MsgWeVeBeen)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
      MSGNO(MsgWheneverILook)},
     {TRIGGER_TALK, 14, 0x9d0, MSGNO(MsgWeMustBe)},
-    {TRIGGER_TALK, 14, 0x9b2, MSGNO(MsgWasYourBoat)},
+    {TRIGGER_TALK, 14, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgWasYourBoat)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgIWonderWhat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x9d0, MSGNO(MsgTheseWingsAre)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x9b2, MSGNO(MsgWhoBuiltThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, FLAG_SET_OUT_WITH_WINGS,
+     MSGNO(MsgWhoBuiltThe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
      MSGNO(MsgIWishI)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgWeBroughtThese)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
      MSGNO(MsgIDoubtAnyone)},
     {TRIGGER_TALK, 16, 0x9d0, MSGNO(MsgIWonderIfThese)},
-    {TRIGGER_TALK, 16, 0x9b2, MSGNO(MsgAMassiveRock)},
+    {TRIGGER_TALK, 16, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgAMassiveRock)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgYouReGoingNorth)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x9d0, MSGNO(MsgItSKind)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x9b2, MSGNO(MsgIfThatBoat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, FLAG_SET_OUT_WITH_WINGS,
+     MSGNO(MsgIfThatBoat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
      MSGNO(MsgIVeDecided)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgItSAlmost)},
@@ -663,18 +700,20 @@ struct Trigger gData_02001728[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020018f0[] = {
+struct Trigger gAttekaInlet_ShoreTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0xc401, 3, CONDITION_ALWAYS, 3},
     {0xc401, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_STEP, 10, 0x9b0, EVENT(Func_02000208)},
-    {0x400, 14, CONDITION_ALWAYS, EVENT(Func_02000038)},
-    {TRIGGER_TALK, 8, 0x9b2, MSGNO(MsgEveryoneSWaiting)},
+    {TRIGGER_STEP, 10, FLAG_SHIPWRIGHTS_STOPPED_PARTY,
+     EVENT(AttekaInlet_ShipwrightsStopTheParty)},
+    {0x400, 14, CONDITION_ALWAYS, EVENT(AttekaInlet_GeodeJoins)},
+    {TRIGGER_TALK, 8, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgEveryoneSWaiting)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAllOfOur)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x9b2, MSGNO(MsgHammaIsThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_SET_OUT_WITH_WINGS,
+     MSGNO(MsgHammaIsThe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgEveryoneInContigo)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTheVillagersAre)},
@@ -688,24 +727,24 @@ struct Trigger gData_020018f0[] = {
      MSGNO(MsgWeCanT)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 13, CONDITION_ALWAYS, 0},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 20,
-     CONDITION_ALWAYS, EVENT(Func_020007ac)},
+     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneUncoversGeode)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 21,
-     CONDITION_ALWAYS, EVENT(Func_0200085c)},
+     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneFirstBush)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 22,
-     CONDITION_ALWAYS, EVENT(Func_0200087c)},
+     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneSecondBush)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 23,
-     CONDITION_ALWAYS, EVENT(Func_0200089c)},
+     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneThirdBush)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 24,
-     CONDITION_ALWAYS, EVENT(Func_020008bc)},
+     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneFourthBush)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 25,
-     CONDITION_ALWAYS, EVENT(Func_020008dc)},
+     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneFifthBush)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 26,
-     CONDITION_ALWAYS, EVENT(Func_020008fc)},
+     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneSixthBush)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 27,
-     CONDITION_ALWAYS, EVENT(Func_0200091c)},
+     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneSeventhBush)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 28,
-     CONDITION_ALWAYS, EVENT(Func_0200093c)},
+     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneEighthBush)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 29,
-     CONDITION_ALWAYS, EVENT(Func_0200095c)},
+     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneNinthBush)},
     {TRIGGER_TABLE_END},
 };

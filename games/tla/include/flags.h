@@ -119,6 +119,12 @@
 /// button beside them: the gates stay open.
 #define FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED 0xa01
 
+/// Set as the party sets out on the ship Hamma gave wings to at Atteka Inlet:
+/// from then on the ship flies, with no encounters at sea.
+/// ★ Named from the game: "Now that you have been given wings..."
+/// (MsgIVeBeenWaiting)
+#define FLAG_SHIP_FLIES 0x8df
+
 /// Set once the pillar on the floor below Jupiter Lighthouse's aerie stands on
 /// the button by its door: the door stays open, a shortcut.
 #define FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED 0xa19

@@ -93,7 +93,6 @@ struct TransitionShape;
 struct UiBobPairOutput;
 struct Message;
 struct UiScaleSprite;
-struct Window;
 struct Vec2;
 struct OptionMenuWork;
 

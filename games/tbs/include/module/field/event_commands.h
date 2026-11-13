@@ -92,9 +92,6 @@ void Event_LeaveFor(u16 sceneId, u16 entrance);
 void Scene_QueueMusic(s32 soundId);
 void Scene_PlayQueuedMusic(void);
 
-struct Actor;
-struct Actor;
-
 struct Actor *Actor_GetById(s32 actorId);
 void Actor_SetSpeedParameters(u32 actorId, s32 speedLimit, s32 acceleration);
 

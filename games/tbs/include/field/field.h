@@ -35,9 +35,7 @@ struct AbilityListEntry;
 struct BattleEffectParams;
 struct Unit;
 struct BurstParticle;
-struct ScreenPoint;
 struct Particle;
-struct Actor;
 struct FieldPosition;
 struct MercuryLighthouseLights;
 struct MapActor;
@@ -52,7 +50,6 @@ struct ActorPlacement;
 struct SceneExitRegion;
 struct SparklePicture;
 struct Swirl;
-struct Actor;
 
 /// The Colosso opponent's path player, at the start of gSceneLocalState: the
 /// path in ColossoRaceWork is played back or recorded by

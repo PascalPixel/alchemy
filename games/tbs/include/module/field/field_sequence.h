@@ -11,11 +11,9 @@ struct ActorDouseView;
 struct TriggerView;
 struct FieldParticle;
 struct Vector3;
-struct Actor;
 struct OrbitEffect;
 struct ActorPlacement;
 struct Window;
-struct Actor;
 
 /// The exit request whose destination is already in gMainRoutineWork.next
 /// and .entrance, so that Scene_TakeExit leaves them as they are. Random

@@ -35,7 +35,6 @@ struct ScreenPoint;
 struct FieldParticle;
 struct Vector3;
 struct EnemyDefinition;
-struct Actor;
 struct FieldPosition;
 struct BattleEffectObject;
 struct ItemDefinition;

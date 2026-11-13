@@ -8,8 +8,7 @@
 #define HAIL_DJINNI_PICTURE 26048    ///< the small Mercury Djinni
 
 /// After a Mercury Djinni enters, ice chips burst out of the first target and
-/// waves of water rise along the bottom of the screen; the canvas fades out
-/// over the last 16 frames.
+/// waves of water rise along the bottom of the screen.
 ///
 /// Abilities: Hail.
 void BattleEffect_RunHail(struct BattleEffectParams *args) {
@@ -36,12 +35,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Projection_Unit(work->args->targets[0], &origin);
 
-  // The chips burst up from 8 pixels above the first target's projected
-  // position (8 below the point Projection_Unit gives), within
-  // 8 pixels of its x, in the upper half turn of directions, eight times as
-  // fast up as across (up to 10 pixels a frame up, 1.25 across); z picks
-  // each chip's picture, a new one every 128, and velocityZ turns it.
-  // variant is set but never read.
+  // The chips burst up from just above the first target.
   for (i = 0; i != 64; i++) {
     s32 angle;
     s32 speed;
@@ -58,11 +52,10 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
   }
 
   for (frame = 0; frame != 64; frame++) {
-    // Fade out over the last 16 frames.
     if (frame > 47)
       REG_BLDALPHA = BLEND_ALPHA(64 - frame, 16);
-    // The chips and the Djinni load on frame 1, so on frame 0 the prelude
-    // draws whatever the sheet holds at HAIL_DJINNI_PICTURE.
+    // The chips and the Djinni load on frame 1, so on frame 0 the prelude draws
+    // whatever the sheet holds.
     if (frame == 1) {
       Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet,
                                  work->sheet + HAIL_CHIP_PICTURES, 1, 1);
@@ -70,7 +63,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
                                  work->sheet + HAIL_DJINNI_PICTURE, 1, 0);
     }
 
-    // Prelude: the small Djinni circles, drawn twice on the first 4 frames.
+    // The small Djinni circles.
     if (work->args->prelude == 1) {
       s32 orbit;
       s32 x;
@@ -87,7 +80,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
         draw[1](canvas, work->sheet + HAIL_DJINNI_PICTURE, x, y, 20, 40);
     }
 
-    // The chips, four more each frame from frame 4, odd ones mirrored.
+    // The chips fly up, odd ones mirrored.
     for (i = 0, chip = PARTICLES; i != 64; i++, chip++) {
       if (frame >= i / 4 + 4) {
         s32 picture;
@@ -116,8 +109,6 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
       }
     }
 
-    // The first target is hit, and the screen shakes for 8 frames (shakeFrames
-    // takes the frame number).
     if (frame == 8) {
       work->shakeFrames = frame;
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -126,9 +117,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
       BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_LAUNCH);
     }
 
-    // Waves rise along the bottom, 4 pixels a frame up to 32, drifting
-    // away from the user a pixel every 4 frames: five 32-pixel waves, the
-    // row wrapping every 32 pixels.
+    // Waves rise along the bottom, drifting away from the user.
     rise = frame * 4;
     if (rise > 32)
       rise = 32;
@@ -152,10 +141,8 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
 /// The small Venus Djinni in the portal sheet.
 #define GROUND_DJINNI_PICTURE 26048
 
-/// After a Venus Djinni enters, six glowing portals leave the user one every
-/// 2 frames, crackling, swirl, and close in on the first target, each striking
-/// it as it arrives. They glow in the Djinni's yellow until the background
-/// palette, from frame 17, steps to the portal sheet's violet.
+/// After a Venus Djinni enters, six glowing portals leave the user, swirl and
+/// close in on the first target, each striking it as it arrives.
 ///
 /// Abilities: Ground.
 void BattleEffect_RunGround(struct BattleEffectParams *args) {
@@ -194,9 +181,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   user = GetBattleObjectSlotFar(work->args->user)->actor;
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
-  // The portals leave the user 66 pixels up, fanning out towards the middle of
-  // the field, portal i at 2.5 i pixels a frame across, up to 1 up or down and
-  // up to 4 in depth.
+  // The portals fan out from above the user.
   for (i = 0; i != 8; i++) {
     struct Particle *portal = &work->particles[i];
 
@@ -211,8 +196,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   for (frame = 0; frame != 96; frame++) {
     if (frame > 16)
       BattleEffect_StepPaletteToResource((s32)&ResourceId_PortalSheet);
-    // Prelude: the Djinni circles above the user and from frame 17 rises 2
-    // pixels a frame.
+    // The Djinni circles above the user, then rises away.
     if (work->args->prelude == 1) {
       s32 angle = frame << 11;
       s32 x = (((-Trig_Sin(angle) * 4)) >> 16) + screenX / 2 - 10;
@@ -233,9 +217,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       draw[0](canvas, work->sheet + GROUND_DJINNI_PICTURE, x, y, 20, 40);
     }
-    // Every 2 frames each crackle takes a random picture (velocityX, pictures
-    // 3 to 8) and flip (velocityY: gHail_CrackleFlips, bit 2 across, bit 3
-    // down).
+    // Crackles flicker round each portal.
     if ((frame & 1) == 0) {
       for (i = 0; i != 32; i++) {
         struct Particle *crackle = &work->particles[32 + i];
@@ -245,7 +227,6 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
       }
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
-    // The portals, one more every 2 frames.
     for (i = 0; i != 6; i++) {
       struct Particle *portal = &work->particles[i];
 
@@ -259,8 +240,6 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
           x = position.x - 12;
           y = position.y - 24;
           draw[0](canvas, work->sheet, x, y, 24, 48);
-          // The portal's white core flickers between pictures 1 and 2 every
-          // 2 frames.
           if ((frame & 3) <= 1)
             draw[0](canvas, work->sheet + gHail_PortalPictures[1],
                     x + gHail_PortalX[1], y + gHail_PortalY[1],
@@ -269,7 +248,6 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
             draw[0](canvas, work->sheet + gHail_PortalPictures[2],
                     x + gHail_PortalX[2], y + gHail_PortalY[2],
                     gHail_PortalWidths[2], gHail_PortalHeights[2]);
-          // The four crackles.
           for (j = 0; j != 4; j++) {
             struct Particle *crackle = &work->particles[32 + i * 4 + j];
             s32 crackleX;
@@ -298,9 +276,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
           portal->y += portal->velocityY;
           portal->z += portal->velocityZ;
         }
-        // After 16 frames the portal homes in on a point 20 pixels above the
-        // target, 1/256 of the distance a frame, damped to 60/64 until 85
-        // frames after it set out; it strikes once below that height.
+        // The portal homes in on the target and strikes it.
         if (frame > i * 2 + 16) {
           portal->velocityX += (target->x.fixed - portal->x) >> 8;
           portal->velocityY += (px(20) - portal->y) >> 8;
@@ -325,10 +301,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Shakes the battle view while gBattleEffectWork's shakeFrames lasts, moving
-/// BG1 and the projection centre by a random offset; once the shake runs
-/// out, BG1 returns to its saved position and the centre to (120, 120). It
-/// takes two random numbers each shaking frame, x first.
+/// Shakes the battle view while the effect's shake lasts.
 void BattleCamera_Shake(s32 rangeX, u32 rangeY) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 

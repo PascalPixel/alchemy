@@ -97,10 +97,10 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6ACRoom6)
-    return gData_02003508;
+    return gMarsLighthouseRoomM_Room6Placements;
   if (scene == (s32)&SceneId_Ov6ACRoom1)
-    return gData_02003598;
-  return gData_020034f0;
+    return gMarsLighthouseRoomM_Room1Placements;
+  return gMarsLighthouseRoomM_Placements;
 }
 
 #include "iwram_call.h"
@@ -413,13 +413,13 @@ const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6ACRoom6)
-    return gData_020036c8;
+    return gMarsLighthouseRoomM_Room6Triggers;
   if (scene == (s32)&SceneId_Ov6ACRoom1)
-    return gData_02003708;
+    return gMarsLighthouseRoomM_Room1Triggers;
   if (scene == (s32)&SceneId_Ov6ACRoom2 || scene == (s32)&SceneId_Ov6ACRoom3 ||
       scene == (s32)&SceneId_Ov6ACRoom4 || scene == (s32)&SceneId_Ov6ACRoom5)
-    return gData_02003858;
-  return gData_020036b8;
+    return gMarsLighthouseRoomM_Room5Triggers;
+  return gMarsLighthouseRoomM_Triggers;
 }
 
 // ---- games/tla/src/scene/mars_lighthouse_room_m/s0b64.c ----
@@ -614,7 +614,9 @@ s32 Scene_PrepareMap(void) {
 
 #include "version.h"
 
-void Func_020010e4(void) {
+/// ★ Named from the game: "Mankind... With the power of wisdom, they ruled the
+/// earth." (MsgMankindWithThe)
+void MarsLighthouseRoomM_ReadEarthInscription(void) {
   u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 15);
 
   Event_Start();
@@ -625,14 +627,16 @@ void Func_020010e4(void) {
   wait(20);
   *color = 0x7fff;
   wait(1);
-  Func_0803ce64((s32)MsgMankindWithThe, 0, 0);
+  FieldMessage_ShowCentered((s32)MsgMankindWithThe, 0, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   BattleEffect_StartBufferInterpolation(20);
   wait(20);
   Event_End();
 }
 
-void Func_02001154(void) {
+/// ★ Named from the game: "Fish... With cold courage, they ruled the water."
+/// (MsgFishWithCold)
+void MarsLighthouseRoomM_ReadWaterInscription(void) {
   u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 15);
 
   Event_Start();
@@ -643,14 +647,16 @@ void Func_02001154(void) {
   wait(20);
   *color = 0x7fff;
   wait(1);
-  Func_0803ce64((s32)MsgFishWithCold, 0, 0);
+  FieldMessage_ShowCentered((s32)MsgFishWithCold, 0, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   BattleEffect_StartBufferInterpolation(20);
   wait(20);
   Event_End();
 }
 
-void Func_020011c4(void) {
+/// ★ Named from the game: "Dragons... Burning with might, they ruled the
+/// fires." (MsgDragonsBurningWith)
+void MarsLighthouseRoomM_ReadFireInscription(void) {
   u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 15);
 
   Event_Start();
@@ -661,14 +667,16 @@ void Func_020011c4(void) {
   wait(20);
   *color = 0x7fff;
   wait(1);
-  Func_0803ce64((s32)MsgDragonsBurningWith, 0, 0);
+  FieldMessage_ShowCentered((s32)MsgDragonsBurningWith, 0, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   BattleEffect_StartBufferInterpolation(20);
   wait(20);
   Event_End();
 }
 
-void Func_02001234(void) {
+/// ★ Named from the game: "Bird... On the wings of truth, they ruled the
+/// winds." (MsgBirdOnThe)
+void MarsLighthouseRoomM_ReadWindInscription(void) {
   u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 15);
 
   Event_Start();
@@ -679,7 +687,7 @@ void Func_02001234(void) {
   wait(20);
   *color = 0x7fff;
   wait(1);
-  Func_0803ce64((s32)MsgBirdOnThe, 0, 0);
+  FieldMessage_ShowCentered((s32)MsgBirdOnThe, 0, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   BattleEffect_StartBufferInterpolation(20);
   wait(20);
@@ -714,7 +722,7 @@ void Func_02001324(s32 x, s32 z, s32 c, s32 d, s32 e, s32 f) {
   s32 px;
   s32 pz;
 
-  Sound_Play(144);
+  Event_PlaySound(144);
   Func_020012a4(x, z + 12, 1);
   for (i = 0; i < 3; i++) {
     px = x + ((u32)(Random16Far() * 12) >> 16) - 6;
@@ -722,14 +730,14 @@ void Func_02001324(s32 x, s32 z, s32 c, s32 d, s32 e, s32 f) {
     Func_020012a4(px, pz, 0);
   }
   wait(4);
-  Map_CopyCellPictureIndicesRect(c, d, e + 64, f, 1, 1);
+  MapGrid_CopyCellsTo(c, d, e + 64, f, 1, 1);
 }
 
 /// No one holding item 222: MsgIfYouDo, once (flag 0xa2f). Someone holding it
 /// (and flag 0xa30 set, from patch 1): MsgYouWhoHold and the
 /// message after it, the camera moves on and Func_0200080c runs, then flag
-/// 0xa2e is set. Each opens as Func_020010e4 does.
-void Func_020013a0(void) {
+/// 0xa2e is set. Each opens as MarsLighthouseRoomM_ReadEarthInscription does.
+void MarsLighthouseRoomM_HearDragonStatue(void) {
   if (PartyInventory_FindMember(222) == -1) {
     if (!Event_GetFlag(0xa2f)) {
       u16 *color = (volatile u16 *)&OBJ_PLTT_COLOR(0, 15);
@@ -746,7 +754,7 @@ void Func_020013a0(void) {
       wait(20);
       *color = 0x7fff;
       wait(1);
-      Func_0803ce64((s32)MsgIfYouDo, 0, 4);
+      FieldMessage_ShowCentered((s32)MsgIfYouDo, 0, 4);
       BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
       BattleEffect_StartBufferInterpolation(20);
       wait(20);
@@ -773,13 +781,13 @@ void Func_020013a0(void) {
     wait(20);
     *color = 0x7fff;
     wait(1);
-    Func_0803ce64((s32)MsgYouWhoHold, 0, 4);
+    FieldMessage_ShowCentered((s32)MsgYouWhoHold, 0, 4);
     wait(10);
-    Func_0803ce64((s32)MsgYouWhoHold + 1, 0, 3);
+    FieldMessage_ShowCentered((s32)MsgYouWhoHold + 1, 0, 3);
     FieldCamera_MoveTo(PIXELS(224), PIXELS(88), PIXELS(216), 1);
     Func_02003228();
     FieldEvent_Wait(20);
-    Sound_Play(560);
+    Event_PlaySound(560);
     Func_0200080c();
     FieldEvent_Wait(20);
     BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
@@ -824,7 +832,7 @@ extern u16 gData_02004cf0[];
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Func_02003130(void *handle);
 void Func_020024e4(void);
-s32 Func_02002708(void);
+s32 MarsLighthouseRoomM_SlideOnIce(void);
 void Func_02002e6c(struct Actor *self);
 
 void Func_02003118(struct Actor *object, s32 value);
@@ -860,19 +868,13 @@ struct MarsLighthouseRoomMEventWork1ac {
 
 void Func_020017b4(void);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Func_02003248_(s32 a, s32 b) {
-  BattleEffect_ApplyColorToTargetBuffer(a, b);
-}
-
 void Func_0200183c(void) {
   struct MarsLighthouseRoomMEventWork1ac *work = Ram_HeapSlots->eventWork;
   s32 saved;
 
   saved = work->value1ac;
   PaletteFade_ApplyTarget(0x202108, 1);
-  Func_02003248_(0x10000, 2);
+  PaletteFade_ApplyTarget(0x10000, 2);
   ((struct MarsLighthouseRoomMEventWork1ac *)Ram_HeapSlots->eventWork)->value1ac = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

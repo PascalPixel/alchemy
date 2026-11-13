@@ -6,22 +6,22 @@
 
 #include "types.h"
 
-s32 Func_02002708(s32 hole);
+s32 Vent_IsActive(s32 hole);
 
 void Func_02002114();
 
-void Func_02000118(void);
+void TaopoSwamp_GrowVine(void);
 
 void Func_02000334(void);
 
-void Func_020003c4(void);
+void TaopoSwamp_StartMadPlantBattle(void);
 
-void Func_02000d2c(void);
+void TaopoSwamp_TremorPillar(void);
 
-void Func_02002144(void);
+void TaopoSwamp_SinkInMud(void);
 
-void Func_020022ac(void);
+void TaopoSwamp_RiseOnBubble(void);
 
-void Func_02002334(void);
+void TaopoSwamp_StepOnFirmGround(void);
 
 #endif

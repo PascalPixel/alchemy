@@ -65,8 +65,8 @@ DEFINE_ACTOR_BLINK(Func_02002954, 10, 4, 0)
 #include "vector3.h"
 #include "fixed_math.h"
 
-/* VIEW(flash): routine Func_020054f8 as s32 Func_020054f8(struct Actor *actor); module/scene/mars_lighthouse_room_f.h has s32 Func_020054f8(struct Actor *object, s32 *position); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/flash.c:132: too few arguments to function `Func_020054f8'. */
-extern s32 Func_020054f8__flash(struct Actor *actor) __asm__("Func_020054f8");
+/* VIEW(flash): routine MapGrid_CheckCollision as s32 MapGrid_CheckCollision(struct Actor *actor); module/scene/mars_lighthouse_room_f.h has s32 MapGrid_CheckCollision(struct Actor *object, s32 *position); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/flash.c:132: too few arguments to function `MapGrid_CheckCollision'. */
+extern s32 Func_020054f8__flash(struct Actor *actor) __asm__("MapGrid_CheckCollision");
 
 #if TLA_PATCH_1
 void Func_0200297c(void) {
@@ -228,7 +228,9 @@ void Func_02002b88(void) {
 
 void ScreenTransition_Start(s32 mode, s32 frames);
 
-s32 Func_02002ba0(void) {
+/// Stepping onto ice (cell behavior 90, as Imil's ice slide is in The Broken
+/// Seal): the leader slides until the ice stops.
+s32 MarsLighthouseRoomF_SlideOnIce(void) {
   /* FAKEMATCH(signature): declared returning s32 with no return; as void, 2
    * of 138 instructions differ in tla-en. */
   struct EventWork *event = Ram_HeapSlots->eventWork;
@@ -288,7 +290,7 @@ s32 Func_02002ba0(void) {
   ride->active = 0;
 }
 
-DEFINE_RIDE_IF_ACTIVE(Func_02002ce0, Func_02002ba0)
+DEFINE_RIDE_IF_ACTIVE(MarsLighthouseRoomF_ContinueSlide, MarsLighthouseRoomF_SlideOnIce)
 
 s32 Func_02002cfc(void) {
   return ((struct RideWork *)(gData_020023c4 + 0x188))->active;

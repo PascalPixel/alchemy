@@ -166,9 +166,9 @@ Camera_FollowActor:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02000af0
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02000af0:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Event_SetDestination
 	.thumb_func
@@ -210,9 +210,9 @@ Actor_OffsetPositionAndReset:
 	.thumb_func
 Func_02000b40:
 	overlay_veneer Func_080c87c0
-	.global Func_02000b48
+	.global EffectSprite_DrawAtWorldPosition
 	.thumb_func
-Func_02000b48:
+EffectSprite_DrawAtWorldPosition:
 	overlay_veneer Func_080c87d0
 	.global BattleEffect_StepVector3
 	.thumb_func

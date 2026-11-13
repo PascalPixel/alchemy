@@ -43,7 +43,7 @@ void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 s32 Math_Cosine(s32 angle);
 void Func_02001fb4(void);
-void Func_02001ffc(void);
+void FieldCamera_WaitForArrival(void);
 
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,

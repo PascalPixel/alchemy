@@ -13,9 +13,9 @@
 extern s32 gData_02001d8c[];
 
 void Func_02001b2c(struct StagedActor *object, s32 mode);
-s32 Func_02001b64(struct StagedActor *object, struct FieldPosition *position);
+s32 MapGrid_CheckCollision(struct StagedActor *object, struct FieldPosition *position);
 
-DEFINE_BLOCK_PUSH_ONTO(Func_0200038c, gData_02001d8c, Func_02001b64,
+DEFINE_BLOCK_PUSH_ONTO(Func_0200038c, gData_02001d8c, MapGrid_CheckCollision,
     Func_02001b2c)
 
 #include "../field/map/cell_fill_byte.c"

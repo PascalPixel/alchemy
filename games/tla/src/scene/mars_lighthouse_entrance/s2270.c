@@ -34,7 +34,7 @@ void Func_02002270(void) {
 void Func_020022c4(void) {
   struct RideWork *work = RIDE_WORK;
 
-  Func_02004be0(work->handle);
+  Actor_Release(work->handle);
   work->handle = NULL;
 }
 

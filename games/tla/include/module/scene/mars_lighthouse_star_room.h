@@ -41,11 +41,11 @@ void Func_020001e8(void);
 
 void Func_020005b0(void);
 
-void Func_02000ba4(void);
+void MarsLighthouseStarRoom_HoldWarmHand(void);
 
-void Func_02000bd8(void);
+void MarsLighthouseStarRoom_TakeMarsStar(void);
 
-void Func_02000e80(void);
+void MarsLighthouseStarRoom_UseMarsStar(void);
 
 void Func_0200007c(void);
 

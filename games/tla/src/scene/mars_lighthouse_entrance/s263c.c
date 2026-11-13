@@ -32,7 +32,7 @@ struct Work020023c4 {
 
 void Func_020024c0();
 void Func_02004bc0(struct Actor *actor, s32 a);
-s32 Func_02004c38(struct Actor *actor, struct Vector3 *position);
+s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
 void Animation_ApplyChildValues(struct Actor *actor, s32 a);
 void Func_02002614(void);
 extern u8 gData_020023c4[];
@@ -42,7 +42,7 @@ extern u8 gData_020023c4[];
 #define SHARED_F02002148_ID3 Func_02002614
 #define SHARED_F02002148_ID4 Func_02004bc0
 #define SHARED_F02002148_ID5 Func_02004c18
-#define SHARED_F02002148_ID6 Func_02004c38
+#define SHARED_F02002148_ID6 MapGrid_CheckCollision
 #define SHARED_F02002148_ID7 Func_02004c78
 #include "../shared/func_02002148.c"
 #undef SHARED_F02002148_NAME
@@ -55,7 +55,7 @@ extern u8 gData_020023c4[];
 
 #include "../mars_lighthouse_entrance.h"
 
-void Func_02002848(void) {
+void MarsLighthouseEntrance_ContinueSlide(void) {
   if (RIDE_WORK->active)
     Func_0200263c();
 }
@@ -98,7 +98,9 @@ struct RideState {
   struct RideCar *car;
 };
 
-int Func_02002860(void) {
+/// Stepping onto ice (cell behavior 90, as Imil's ice slide is in The Broken
+/// Seal): the leader slides until the ice stops.
+int MarsLighthouseEntrance_SlideOnIce(void) {
   struct RideEvent *event = Ram_HeapSlots->eventWork;
   struct RideState *ride;
   struct Actor *leader;
@@ -156,7 +158,7 @@ int Func_02002860(void) {
 
 s32 Func_020029a0(void) {
   if (RIDE_WORK->active) {
-    Func_02002860();
+    MarsLighthouseEntrance_SlideOnIce();
     return 1;
   }
   return 0;
@@ -313,14 +315,14 @@ extern const u8 gData_02005528[];
 extern const u8 gData_02005578[];
 extern const u8 gData_020055d4[];
 extern const u8 gData_02005644[];
-extern const u8 gData_0200610c[];
-extern const u8 gData_02006118[];
-extern const u8 gData_0200613c[];
-extern const u8 gData_02006250[];
-extern const u8 gData_020063b8[];
-extern const u8 gData_020064fc[];
-extern const u8 gData_02006628[];
-extern const u8 gData_02006778[];
+extern const u8 gMarsLighthouseEntrance_Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room1Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room2Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room3Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room4Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room5Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room6Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room7Triggers[];
 extern s16 gData_02006868;
 extern s16 gData_020068a0;
 extern u16 gData_020068a2;

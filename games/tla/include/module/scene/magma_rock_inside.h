@@ -93,7 +93,7 @@ void Func_020021c0(void);
 
 void Func_02002318(void);
 
-void Func_02002364(void);
+void MagmaRockInside_ExamineEmberStone(void);
 
 void Func_0200257c(void);
 

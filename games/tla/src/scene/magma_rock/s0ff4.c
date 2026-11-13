@@ -150,9 +150,9 @@ s32 Func_020005a0(s32 *a, s32 *b);
 // game declares.
 void Func_02000c08(u16 index);
 void Func_02000d40(void);
-void Func_02003a6c(struct Actor *object);
+void Actor_Release(struct Actor *object);
 s32 Func_02003af4(void);
-void Func_02003b6c(void);
+void FieldCamera_WaitForArrival(void);
 
 s32 Func_020011e4(struct Actor *source) {
   s32 position[3];
@@ -214,7 +214,7 @@ stop:
   FieldCamera_MoveTo(position[0], position[1], position[2], 1);
   Actor_WaitForMove(object);
   object->update = NULL;
-  Func_02003a6c(object);
+  Actor_Release(object);
   for (i = 0; i != 16; i++) {
     parity = gFrameCount & 1;
 
@@ -235,7 +235,7 @@ stop:
   }
   System_Wait(24);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_02003b6c();
+  FieldCamera_WaitForArrival();
   System_Wait(10);
   return Func_02003af4();
 
@@ -248,12 +248,12 @@ hit:
   FieldCamera_MoveTo(position[0], position[1], position[2], 1);
   Actor_WaitForMove(object);
   object->update = NULL;
-  Func_02003a6c(object);
+  Actor_Release(object);
   Event_SetFlag(0x2f0);
   Func_02000c08(i);
   Event_ClearFlag(0x2f0);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  Func_02003b6c();
+  FieldCamera_WaitForArrival();
   System_Wait(10);
   return Func_02003af4();
 }
@@ -326,7 +326,7 @@ union Position {
 
 #define PART_Y(part) (((union Position *)&(part)->y)->word)
 
-void Func_02003a6c(struct Actor *part);
+void Actor_Release(struct Actor *part);
 
 /// One of the four parts Func_02001738 builds: rises and falls with its owner's
 /// action counter.
@@ -342,7 +342,7 @@ void Func_02001528(struct Actor *part) {
     PART_Y(part) = owner->y + (BYTE_AT(part, 98) << 20) + 0x200000;
     PART_Y(part) -= (owner->timer << 19) - (332 << 19);
   } else if (BYTE_AT(part, 98) * 2 + 333 < owner->timer) {
-    Func_02003a6c(part);
+    Actor_Release(part);
   }
 }
 
@@ -451,7 +451,7 @@ void Func_02001738(struct Actor *object) {
 
   if ((gFrameCount & 15) == 0)
     Func_02003c4c(object, 136);
-  Actor_SetPartAttribute(object, 10);
+  Actor_SetSpriteColor(object, 10);
   if (object->timer <= 31) {
     u32 phase = gFrameCount & 3;
 
@@ -504,7 +504,7 @@ void Func_02001738(struct Actor *object) {
       part->unk5c[6] = 3 - i;
       part->watchedObject = object;
       part->update = Func_02001528;
-      Actor_SetPartAttribute(part, 3);
+      Actor_SetSpriteColor(part, 3);
     }
     {
       struct Actor *part = parts[0];
@@ -520,7 +520,7 @@ void Func_02001738(struct Actor *object) {
       part->unk5c[6] = 3;
       part->watchedObject = object;
       part->update = Func_02001528;
-      Actor_SetPartAttribute(part, 3);
+      Actor_SetSpriteColor(part, 3);
     }
     id = 0;
     if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room1) {
@@ -546,7 +546,7 @@ void Func_02001738(struct Actor *object) {
     fifthPart->update = Func_020015e4;
     object->timer++;
   } else if (object->timer > 364) {
-    Actor_SetPartAttribute(object, 0);
+    Actor_SetSpriteColor(object, 0);
     object->update = NULL;
   }
   // screenStatus read unsigned: as work->screenStatus, 39 of 294 instructions
@@ -644,7 +644,7 @@ void Func_02001be0(void) {
 void Actor_SetActionById(s32 id, s32 action);
 /* VIEW(s1c00): routine Func_080d452c as void Func_080d452c(s32 a, s32 b); event.h has s32 Func_080d452c(s32 actorId, s32 pan); tried as the definition's void Func_080d452c(s32 id, s32 use_setter), it does not compile in tla-ja: games/tla/src/scene/magma_rock/s0ff4.c:672: conflicting types for `Func_080d452c'. */
 extern void Func_080d452c__s1c00(s32 a, s32 b) __asm__("Func_080d452c");
-void Func_02003b6c(void);
+void FieldCamera_WaitForArrival(void);
 
 void Func_02001c00(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -657,10 +657,10 @@ void Func_02001c00(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  GameFlag_SetBit(0x260);
-  Sound_Play(133);
-  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 6);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 10);
+  Event_SetFlag(0x260);
+  Event_PlaySound(133);
+  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 6);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 10);
   Actor_SetActionById(gMainRoutineWork.currentOwner, 32);
   opt = &options;
   opt->kind = 1;
@@ -682,7 +682,7 @@ first:
   i++;
   if (i != 8)
     goto first;
-  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
   gMainRoutineWork.renderMode = 0;
   leader->motionFlags = 3;
   leader->gravity = 0xcccc;
@@ -704,18 +704,18 @@ second:
     if (i != 0)
       goto second;
   }
-  Sound_Play(188);
+  Event_PlaySound(188);
   Actor_SetSingleChildFlags(leader, 1);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
-  Call3((void (*)())Map_SetScreenShake, 0x50000, 0x80000, 0x10000);
-  Call3((void (*)())Map_SetScreenShake, -1, -1, 0xe666);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
+  MapGrid_SetShake(0x50000, 0x80000, 0x10000);
+  MapGrid_SetShake(-1, -1, 0xe666);
   Map_WaitForShakeToSettle();
   Func_080d452c__s1c00(gMainRoutineWork.currentOwner, 1);
-  Func_02003b6c();
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 4);
-  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  FieldCamera_WaitForArrival();
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 4);
+  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_WaitForAnimationChange(gMainRoutineWork.currentOwner);
-  GameFlag_ClearBit(0x260);
+  Event_ClearFlag(0x260);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
   Func_02003af4();
@@ -881,12 +881,12 @@ void Func_020020f8(s32 mode, s32 cue) {
     Func_02003998();
 }
 
-extern const u8 gData_0200460c[];
+extern const u8 gMagmaRock_Triggers[];
 extern const u8 gData_02004720[];
 extern const u8 gData_020047e0[];
 extern const u8 gData_0200487c[];
 extern const u8 gData_02004930[];
-extern const u8 gData_02004a5c[];
+extern const u8 gMagmaRock_Room3Triggers[];
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
@@ -899,7 +899,7 @@ const struct Trigger *Scene_GetEvents(void) {
     return (const struct Trigger *)gData_02004930;
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room3)
-    return (const struct Trigger *)gData_02004a5c;
-  return (const struct Trigger *)gData_0200460c;
+    return (const struct Trigger *)gMagmaRock_Room3Triggers;
+  return (const struct Trigger *)gMagmaRock_Triggers;
 }
 #undef BYTE_AT

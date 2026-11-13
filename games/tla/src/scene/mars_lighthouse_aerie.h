@@ -24,7 +24,7 @@ extern u8 MsgUhhhhnnnICan[];
 extern u8 MsgKoffKoffYou[];
 extern u8 MsgUnnnnIAm[];
 extern u8 MsgIUnderstandYour[];
-extern s16 gData_0200626c[];
+extern s16 gMarsLighthouseAerie_Placements[];
 extern struct ActorPlacement gData_0200644c[];
 extern s16 gData_020066bc[];
 extern u32 gData_02006b64;
@@ -46,11 +46,5 @@ struct MarsLighthouseAerieParty {
 };
 
 s32 Func_0200508c(u16 *list);
-
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static inline void MarsLighthouseAerie_ObjTurn(s32 id, s32 angle) {
-  Actor_ArmCallbackAndRefresh(id, angle);
-}
 
 #endif

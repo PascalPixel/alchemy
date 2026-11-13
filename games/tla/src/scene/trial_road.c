@@ -22,11 +22,11 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern const u8 gData_0200646c[];
-extern const u8 gData_02006ea4[];
-extern const u8 gData_02006ed4[];
-extern const u8 gData_02006f04[];
-extern const u8 *const gData_02007024[];
+extern const u8 gTrialRoad_Placements[];
+extern const u8 gTrialRoad_Room3Placements[];
+extern const u8 gTrialRoad_Room4Placements[];
+extern const u8 gTrialRoad_Room2Placements[];
+extern const u8 *const gTrialRoad_Room1Placements[];
 
 s32 Func_02000058(struct Actor *object) {
   s32 height = Map_GetTerrainHeight(0, object->x, object->z) + 0x20000;
@@ -43,14 +43,14 @@ const u8 *Scene_GetPlacements(void) {
   s32 pattern = gTrialRoadState->pattern;
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room1)
-    return gData_02007024[pattern & 7];
+    return gTrialRoad_Room1Placements[pattern & 7];
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room3)
-    return gData_02006ea4;
+    return gTrialRoad_Room3Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room4)
-    return gData_02006ed4;
+    return gTrialRoad_Room4Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room2)
-    return gData_02006f04;
-  return gData_0200646c;
+    return gTrialRoad_Room2Placements;
+  return gTrialRoad_Placements;
 }
 
 s32 Func_020000fc(s32 fallback) {
@@ -60,7 +60,7 @@ s32 Func_020000fc(s32 fallback) {
     return 1;
   if (state->field1a > state->field1c)
     return 0;
-  if (GameFlag_Test(0x284))
+  if (Event_GetFlag(0x284))
     return 0;
   if (state->field14 != 0)
     return 1;
@@ -69,7 +69,7 @@ s32 Func_020000fc(s32 fallback) {
 
 #include "event_inline.h"
 
-s32 Func_02000330(s32 value);
+s32 TrialRoad_OfferToGiveUp(s32 value);
 
 void Func_02000138(s32 direction) {
   struct TrialRoadState *state = gTrialRoadState;
@@ -77,8 +77,8 @@ void Func_02000138(s32 direction) {
 
   if ((u32)(direction - 1) <= 1) {
     if (state->field16[0] <= 0) {
-      if (GameFlag_Test(2559)) {
-        if (Func_02000330(0) == 0)
+      if (Event_GetFlag(2559)) {
+        if (TrialRoad_OfferToGiveUp(0) == 0)
           Actor_WalkByAndWait(gMainRoutineWork.currentOwner, 0, -16);
         return;
       }
@@ -87,19 +87,19 @@ void Func_02000138(s32 direction) {
       state->field16[0]--;
       Import_EventSetExitRequest(direction);
     }
-    Sound_Play(123);
+    Event_PlaySound(123);
   }
   if ((u32)(direction - 3) <= 1) {
     state->field16[0]++;
     if (state->field16[0] > 3) {
-      if (GameFlag_Test(2559) && Func_020000fc(0) == 0)
-        GameFlag_SetBit(901);
-      Sound_Play(128);
+      if (Event_GetFlag(2559) && Func_020000fc(0) == 0)
+        Event_SetFlag(901);
+      Event_PlaySound(128);
       ObjectEffect_StartContextEffect26();
       Import_EventSetExitRequest(direction + 4);
     } else {
       Import_EventSetExitRequest(direction);
-      Sound_Play(123);
+      Event_PlaySound(123);
     }
     if (state->field16[0] > state->field1a)
       state->field1a = state->field16[0];

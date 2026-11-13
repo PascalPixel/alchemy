@@ -1,5 +1,9 @@
 /// @file
-/// The scene code of overlay 0x65c, in ROM order.
+/// The Osenia Cliffs, across the Madra Drawbridge, where the wreck of a Champa
+/// ship lies on the shore and three people from Madra look it over.
+///
+/// Four rope posts make two ropes. The first is tied as the scene starts; the
+/// party ties the second with Lash (OseniaCliffs_LashRope).
 
 #include "shared/tables.h"
 #include "battle.h"
@@ -19,6 +23,29 @@
 #include "module/scene/osenia_cliffs.h"
 #include "module/scene/scene.h"
 
+/// Set once the party has lashed the second rope, which stays tied for the
+/// visit.
+#define FLAG_ROPE_LASHED 0x203
+
+/// The actors, numbering the rows of gActorPlacements.
+enum OseniaCliffsActorId {
+  /// ★ Named from the game: "This is a Champa boat... You can see their mark
+  /// on the flag there." (MsgMadraChampaBoat)
+  ACTOR_VILLAGER_CHAMPA_BOAT = ACTOR_FIRST_PLACED,
+  /// ★ Named from the game: "Wait, if this is the Champa ship, then that must
+  /// mean Piers isn't a Champa!" (MsgMadraSailorNotChampa)
+  ACTOR_VILLAGER_NOT_CHAMPA,
+  /// ★ Named from the game: "Look at all the damage... That wave must have
+  /// been gigantic..." (MsgMadraWaveDamage)
+  ACTOR_VILLAGER_WAVE_DAMAGE,
+  /// The posts of the first rope, tied as the scene starts.
+  ACTOR_FIRST_ROPE_POST,
+  ACTOR_SECOND_ROPE_POST,
+  /// The posts of the rope the party ties with Lash.
+  ACTOR_THIRD_ROPE_POST,
+  ACTOR_FOURTH_ROPE_POST
+};
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
@@ -31,7 +58,9 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 void Func_020001a0(s32 a, s32 b, s32 c);
 
-void Func_02000054(void) {
+/// The party lashes the second rope, from post ACTOR_THIRD_ROPE_POST to
+/// ACTOR_FOURTH_ROPE_POST, and it stays tied for the rest of the visit.
+void OseniaCliffs_LashRope(void) {
   s32 a1 = 13;
   s32 a2 = 14;
 
@@ -40,7 +69,7 @@ void Func_02000054(void) {
    * Func_020001a0(1, 13, 14), 2 of 10 instructions differ in tla-en. */
   asm volatile("" : "+l"(a1), "+l"(a2));
   Func_020001a0(1, a1, a2);
-  GameFlag_SetBit(0x203);
+  Event_SetFlag(FLAG_ROPE_LASHED);
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
@@ -51,9 +80,9 @@ s32 Scene_Initialize(void) {
   struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapWork;
 
   map->mode = 1;
-  gData_020001b0[0] = 0;
+  gOseniaCliffs_PaletteCycleStep[0] = 0;
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 256;
-  Task_Add(Func_020000fc, 0x480);
+  Task_Add(OseniaCliffs_CyclePalette, 0x480);
   {
     u8 *flags =
         (u8 *)((void *)Actor_GetById(gMainRoutineWork.currentOwner)) + 35;
@@ -77,8 +106,8 @@ s32 Scene_Initialize(void) {
     asm volatile("" : "+l"(a2), "+l"(a1));
     Func_02000198(0, a1, a2);
   }
-  Actor_SetModeById(12, 4);
-  Actor_SetModeById(11, 4);
+  Actor_SetAnimation(ACTOR_SECOND_ROPE_POST, 4);
+  Actor_SetAnimation(ACTOR_FIRST_ROPE_POST, 4);
   {
     s32 flag = 0x104;
     s32 a0;
@@ -97,14 +126,14 @@ s32 Scene_Initialize(void) {
 /// The palette cycle Scene_Initialize schedules: every 16 frames it copies four
 /// of the eight colours at 0x05000180, starting one further each time, to the
 /// colours at 0x050000c2.
-void Func_020000fc(void) {
+void OseniaCliffs_CyclePalette(void) {
   if ((gFrameCount & 15) == 0) {
     volatile u16 *colors;
     s32 i;
 
-    if (gData_020001b0[0] == 8)
-      gData_020001b0[0] = 0;
-    i = gData_020001b0[0]++;
+    if (gOseniaCliffs_PaletteCycleStep[0] == 8)
+      gOseniaCliffs_PaletteCycleStep[0] = 0;
+    i = gOseniaCliffs_PaletteCycleStep[0]++;
     colors = (u16 *)0x05000180;
     *(u16 *)0x050000c2 = colors[i];
     *(u16 *)0x050000c4 = colors[(i + 1) & 7];
@@ -117,7 +146,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 #include "text/msg_ids.h"
 
-u32 gData_020001b0[] = {
+u32 gOseniaCliffs_PaletteCycleStep[] = {
     0,
 };
 
@@ -142,12 +171,12 @@ struct ActorPlacement gActorPlacements[] = {
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgMadraChampaBoat)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMadraSailorNotChampa)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgMadraWaveDamage)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMadraCannotEscapeBySea)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMadraBriggsNewShip)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgMadraPirateAttackParties)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 13, 0x203, EVENT(Func_02000054)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_CHAMPA_BOAT, CONDITION_ALWAYS, MSGNO(MsgMadraChampaBoat)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_NOT_CHAMPA, CONDITION_ALWAYS, MSGNO(MsgMadraSailorNotChampa)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_WAVE_DAMAGE, CONDITION_ALWAYS, MSGNO(MsgMadraWaveDamage)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_CHAMPA_BOAT, CONDITION_ALWAYS, MSGNO(MsgMadraCannotEscapeBySea)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_NOT_CHAMPA, CONDITION_ALWAYS, MSGNO(MsgMadraBriggsNewShip)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WAVE_DAMAGE, CONDITION_ALWAYS, MSGNO(MsgMadraPirateAttackParties)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_THIRD_ROPE_POST, FLAG_ROPE_LASHED, EVENT(OseniaCliffs_LashRope)},
     {TRIGGERS_END},
 };

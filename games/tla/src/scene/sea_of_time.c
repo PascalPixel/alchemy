@@ -76,7 +76,7 @@ extern const u8 gData_020021e4__sea_of_time[] __asm__("gData_020021e4");
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room2)
-    return (const struct ActorPlacement *)gData_02002214;
+    return (const struct ActorPlacement *)gSeaOfTime_Room2Placements;
   return (const struct ActorPlacement *)gData_020021e4__sea_of_time;
 }
 
@@ -221,7 +221,7 @@ void Func_0200054c(void) {
   phase &= frame;
   if (phase == 0) {
     if ((frame & 10) == 0)
-      Sound_Play(0x255);
+      Event_PlaySound(0x255);
     spark.priority = 2;
     spark.palette = 7;
     spark.startScaleX = 0xcccc;
@@ -480,8 +480,8 @@ s32 Func_02000c94(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  GameFlag_SetBit(0x200);
-  Sound_Play(0x22d);
+  Event_SetFlag(0x200);
+  Event_PlaySound(0x22d);
   do {
     wait(10);
     changed = 0;
@@ -676,7 +676,7 @@ void Func_02001068(void) {
   Event_ResolvePendingActions(0);
   if (!Event_GetFlag(0x8dd)) {
     Import_EventSetExitRequest(4);
-    GameFlag_SetBit(0x8dd);
+    Event_SetFlag(0x8dd);
   } else {
     Import_EventSetExitRequest(1);
   }
@@ -722,7 +722,7 @@ void Func_02001108(void) {
   Actor_WalkTo(8, 352, 264);
   Camera_SetSpeedParameters(0x10000, 0x2000);
   Camera_MoveWithinMapBounds(352 << 16, -1, 196 << 16, 1);
-  Func_02001ffc();
+  FieldCamera_WaitForArrival();
   Actor_WaitForMoveById(8);
   Sound_Play(78);
   Sound_Play(556);
@@ -850,7 +850,7 @@ void Func_0200141c(s32 x, s32 z, s32 actor) {
   Func_02000388(1, cx, cz - 1, 0);
   Func_02000388(1, cx - 1, cz, 0);
   Func_02000388(1, cx, cz, 0);
-  Actor_SetHorizontalPositionWithTerrain(actor, 0, 0);
+  Actor_SetPosition(actor, 0, 0);
 }
 
 /// 6 copies: sea_of_time, sea_of_time, sea_of_time, sea_of_time, sea_of_time,
@@ -896,10 +896,10 @@ DEFINE_FUNC_020015CC(Func_020015ec, 5)
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room1)
-    return gData_020022d0;
+    return gSeaOfTime_Room1Triggers;
   if (gMainRoutineWork.entrance <= 4)
     return gData_0200242c;
-  return gData_0200251c;
+  return gSeaOfTime_Triggers;
 }
 
 #include "map.h"
@@ -1004,7 +1004,7 @@ void Func_02001650(void) {
 
 void Func_020018a8(s32 x, s32 z, s32 actor) {
   Actor_GetById(actor)->collisionFlags |= 16;
-  Actor_SetHorizontalPositionWithTerrain(actor, (x << 19) + 0x80000,
+  Actor_SetPosition(actor, (x << 19) + 0x80000,
                                          (z << 19) + 0x80000);
   x >>= 1;
   z >>= 1;
@@ -1020,12 +1020,12 @@ void Func_02001928(s32 x, s32 z, s32 actor) {
   s32 pz;
   s32 i;
 
-  Camera_SetSpeedParameters(0x60000, 0xc000);
+  FieldCamera_SetSpeed(0x60000, 0xc000);
   px = (x << 19) + 0x80000;
   pz = (z << 19) + 0x80000;
   FieldCamera_MoveTo(px, -1, pz, 1);
-  Func_02001ffc();
-  Sound_Play(144);
+  FieldCamera_WaitForArrival();
+  Event_PlaySound(144);
   MapGrid_SetShake(0, 0x100000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
   spark.startScaleX = 0x13333;
@@ -1056,8 +1056,8 @@ void Func_02001a14(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sound_Play(0);
-  Map_CopyCellPictureIndicesRect(49, 70, 19, 73, 6, 6);
+  Event_PlaySound(0);
+  MapGrid_CopyCellsTo(49, 70, 19, 73, 6, 6);
   actor = FieldActor_Create(159, 0x15c0000, 0, 0xb80000);
   actor->update = (void (*)(void))Func_020010a8;
   FieldCamera_MoveTo(0x1600000, -1, 0xc40000, 0);
@@ -1071,15 +1071,15 @@ void Func_02001a14(void) {
   Func_02001928(47, 27, 12);
   Func_02001928(59, 19, 13);
   Map_WaitForShakeToSettle();
-  Camera_MoveWithinMapBounds(0x1600000, -1, 0xc40000, 1);
-  Func_02001ffc();
-  GameFlag_SetBit(0x200);
+  FieldCamera_MoveTo(0x1600000, -1, 0xc40000, 1);
+  FieldCamera_WaitForArrival();
+  Event_SetFlag(0x200);
   ((struct EventWork687 *)Ram_HeapSlots->eventWork)->unk16a = 200;
-  Sound_Play(0x212);
+  Event_PlaySound(0x212);
   Event_Wait(40);
   for (i = 0; i != 360; i++) {
     if ((i & 31) == 0)
-      Sound_Play(164);
+      Event_PlaySound(164);
     if (i < 120) {
       if (i & 15)
         continue;
@@ -1121,8 +1121,8 @@ void Func_02001a14(void) {
                   &burst);
     wait(1);
   }
-  Func_02001f64(actor);
-  Sound_Play(0x22d);
+  Actor_Release(actor);
+  Event_PlaySound(0x22d);
   do {
     wait(10);
     changed = 0;
@@ -1162,7 +1162,7 @@ void Func_02001a14(void) {
   } while (changed);
   Task_RemoveFar(Func_02001650);
   Party_PlaySavedMusic();
-  GameFlag_SetBit(0x940);
+  Event_SetFlag(0x940);
   Func_02001fb4();
 }
 
@@ -1315,7 +1315,7 @@ struct ActorPlacement gData_020021e4[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002214[] = {
+struct ActorPlacement gSeaOfTime_Room2Placements[] = {
     {8, CONDITION_ALWAYS, (s32)gData_02002154, PIXELS(120), 0, PIXELS(280),
      FACING_NORTH, 2, 0},
     {424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH, 2, 0},
@@ -1346,7 +1346,7 @@ volatile u32 gData_020022c8 = 0;
 
 u32 gData_020022cc = 0;
 
-struct Trigger gData_020022d0[] = {
+struct Trigger gSeaOfTime_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 49, CONDITION_ALWAYS, EVENT(Func_02001068)},
@@ -1401,7 +1401,7 @@ struct Trigger gData_0200242c[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_0200251c[] = {
+struct Trigger gSeaOfTime_Triggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_020015cc)},
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_020015ec)},
     {TRIGGER_STEP, 45, CONDITION_ALWAYS, EVENT(Func_02000818)},

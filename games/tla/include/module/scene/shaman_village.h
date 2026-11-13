@@ -57,7 +57,7 @@ extern char ResourceId_LetteringBanner;
 
 void Func_0200479c(const void *source, void *destination);
 
-void Func_02003b24(void);
+void ShamanVillage_CastWhirlwindOnSand(void);
 extern u32 gData_02004f3c[];
 extern u32 gData_02004f80[];
 
@@ -66,45 +66,45 @@ extern u32 gData_02004fc4[];
 extern u32 gData_02005008[];
 extern u32 gData_0200504c[];
 extern u32 gData_020050bc[];
-void Func_02004060(void);
-void Func_020041b8(void);
-void Func_020043f8(void);
+void ShamanVillage_SetUpVillage(void);
+void ShamanVillage_SetUpRoom3(void);
+void ShamanVillage_SetUpRoom2(void);
 
-void Func_02004534(void);
+void ShamanVillage_SetUpRoom4(void);
 
-void Func_020046ec(void);
+void ShamanVillage_SetUpRoom6(void);
 
-void Func_020048ac(s32 mode);
+void Party_RestoreHpPp(s32 mode);
 
-void Func_02000d68(void);
+void ShamanVillage_TalkToGuard(void);
 
-void Func_02000ef8(void);
+void ShamanVillage_TellOutsidersToLeave(void);
 
-void Func_02000f2c(void);
+void ShamanVillage_WarnOfMoapasPower(void);
 
-void Func_02000f60(void);
+void ShamanVillage_SendToMoapa(void);
 
-void Func_020010c8(void);
+void ShamanVillage_TalkToPriest(void);
 
-void Func_02001118(void);
+void ShamanVillage_AskAboutOtherSide(void);
 
-void Func_0200113c(void);
+void ShamanVillage_TalkToMoapa(void);
 
-void Func_020011c0(void);
+void ShamanVillage_TalkToShopkeeper(void);
 
-void Func_0200122c(void);
+void ShamanVillage_TellFortune(void);
 
-void Func_02001644(void);
+void ShamanVillage_OfferToGiveUp(void);
 
-void Func_02001764(void);
-void Func_02001880(void);
+void ShamanVillage_ChallengeMoapa(void);
+void ShamanVillage_TakeLeftPath(void);
 
-void Func_02001aa4(void);
+void ShamanVillage_TakeRightPath(void);
 
-void Func_02001cc8(void);
+void ShamanVillage_DropPillar(void);
 
-void Func_02001d3c(void);
+void ShamanVillage_MeetMoapa(void);
 
-void Func_02000fc4(void);
+void ShamanVillage_TalkToInnkeeper(void);
 
 #endif

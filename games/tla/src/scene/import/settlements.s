@@ -78,9 +78,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_02002000
+	.global Actor_Release
 	.thumb_func
-Func_02002000:
+Actor_Release:
 	overlay_veneer Actor_Destroy
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -230,9 +230,9 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_02002130
+	.global BattleEffect_StartEffectObject22
 	.thumb_func
-Func_02002130:
+BattleEffect_StartEffectObject22:
 	overlay_veneer Func_080c83e0
 	.global ObjectTable_Get
 	.thumb_func
@@ -258,9 +258,9 @@ Func_080d7788:
 	.thumb_func
 Actor_CommitPositionAndActivate:
 	overlay_veneer Actor_CommitPositionAndActivateFar
-	.global Func_02002168
+	.global Scene_QueueMusic
 	.thumb_func
-Func_02002168:
+Scene_QueueMusic:
 	overlay_veneer Func_080c8688
 	.global Func_02002170
 	.thumb_func

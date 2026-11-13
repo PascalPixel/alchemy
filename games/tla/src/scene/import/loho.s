@@ -214,9 +214,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_020013c8
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_020013c8:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Import_EventSetExitRequest
 	.thumb_func
@@ -266,17 +266,17 @@ Party_GetLeaderActor:
 	.thumb_func
 Func_080d3b28:
 	overlay_veneer Func_080c8860
-	.global Func_02001430
+	.global Shop_Run
 	.thumb_func
-Func_02001430:
+Shop_Run:
 	overlay_veneer Func_08108008
-	.global Func_02001438
+	.global Sanctum_Run
 	.thumb_func
-Func_02001438:
+Sanctum_Run:
 	overlay_veneer Func_08108010
-	.global Func_02001440
+	.global Inn_CheckIn
 	.thumb_func
-Func_02001440:
+Inn_CheckIn:
 	overlay_veneer Func_08108018
 	.global Sound_Play
 	.thumb_func

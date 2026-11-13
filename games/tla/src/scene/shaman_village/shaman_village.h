@@ -64,17 +64,17 @@ struct ShamanVillageEventWork {
 };
 
 void Event_End(void);
-void Func_02004a74(s32 shop, s32 keeper);
-void Func_02004a7c(s32 keeper);
-void Func_02004a84(s32 shop, s32 keeper);
+void Shop_Run(s32 shop, s32 keeper);
+void Sanctum_Run(s32 keeper);
+void Inn_CheckIn(s32 shop, s32 keeper);
 void Import_ActorSetMode(struct ShamanVillageObject *object, s32 mode);
-void Func_0200481c(struct ShamanVillageObject *object);
+void Actor_Release(struct ShamanVillageObject *object);
 void Actor_SetSingleChildFlags(struct ShamanVillageObject *object, u32 value);
 void Animation_SetStateFlags(struct ShamanVillageObject *object, s32 flags);
 void Field_DispatchTypeHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_020049f4(void);
+void FieldCamera_WaitForArrival(void);
 
 void Func_02004a44(void);
 void Func_02004a4c(s32 a, s32 b, s32 c, s32 d);
@@ -87,7 +87,7 @@ void BattleEffect_EndArcEffect(void);
 void BattleEffect_WaitForArcGroups(void);
 void BattleEffect_SetObjectUpdateMode(struct ShamanVillageObject *object, s32 value);
 void Party_PlaySavedMusic(void);
-void Func_020048b4(void);
+void InventorySnapshot_Save(void);
 
 #define SHAMAN_VILLAGE_EMOTE(actor, emote, frames)                             \
   {                                                                            \
@@ -100,7 +100,7 @@ void Func_020048b4(void);
     /* a once-only block, and barriers that hold r0 (each empty */             \
     /* asm adds four bytes to the pool estimate and moves the */               \
     /* literal pool of a long scene). As an unpinned local, 111 */             \
-    /* of 711 instructions differ in tla-en (Func_02002068). */                \
+    /* of 711 instructions differ in tla-en (ShamanVillage_ShowShamansRod). */                \
     register s32 emote_ __asm__("r1") = (emote);                               \
     s32 frames_ = (frames);                                                    \
     Func_080d47b4((actor), emote_, frames_);                                   \
@@ -108,21 +108,21 @@ void Func_020048b4(void);
 
 // ---- this overlay
 
-void Func_0200057c(void);
-void Func_020011f8(void);
-void Func_02002f20(s32 a, s32 b);
-void Func_02002fb0(s32 a);
-void Func_02003b6c(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f);
-s32 Func_02000f94(void);
-void Func_02001380(void);
-void Func_0200289c(void);
-void Func_0200290c(void);
-void Func_02003040(void);
+void ShamanVillage_BlowAwaySand(void);
+void ShamanVillage_HopFortuneTeller(void);
+void ShamanVillage_StartLettering(s32 a, s32 b);
+void ShamanVillage_LoadLettering(s32 a);
+void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f);
+s32 ShamanVillage_IsFacingCounter(void);
+void ShamanVillage_ExplainTrialRules(void);
+void ShamanVillage_StepBackFromTrial(void);
+void ShamanVillage_CheckTrialEntry(void);
+void ShamanVillage_CountDownToStart(void);
 
-extern s32 gData_02004c08[];
-extern s32 gData_020050f8[];
-extern struct SceneEntrance gData_02005284[];
-extern struct SceneEntrance gData_020052b4[];
-extern struct SceneEntrance gData_02005314[];
+extern s32 gShamanVillage_EnterDoorScript[];
+extern s32 gShamanVillage_HopFortuneTellerScript[];
+extern struct SceneEntrance gShamanVillage_Entrances[];
+extern struct SceneEntrance gShamanVillage_Room5Entrances[];
+extern struct SceneEntrance gShamanVillage_Room6Entrances[];
 
 #endif

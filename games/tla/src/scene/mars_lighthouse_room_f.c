@@ -34,11 +34,11 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "mars_lighthouse_room_f.h"
 
-extern const u8 gData_02006518[];
-extern const u8 gData_02006530[];
-extern const u8 gData_02006710[];
-extern const u8 gData_02006890[];
-extern const u8 gData_02006a0c[];
+extern const u8 gMarsLighthouseRoomF_Placements[];
+extern const u8 gMarsLighthouseRoomF_Room4Placements[];
+extern const u8 gMarsLighthouseRoomF_Room1Placements[];
+extern const u8 gMarsLighthouseRoomF_Room3Placements[];
+extern const u8 gMarsLighthouseRoomF_Room2Placements[];
 
 s32 Func_0200004c(struct Actor *object) {
   Actor_SetSingleChildFlags(object, 0);
@@ -47,14 +47,14 @@ s32 Func_0200004c(struct Actor *object) {
 
 const u8 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom4)
-    return gData_02006530;
+    return gMarsLighthouseRoomF_Room4Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom2)
-    return gData_02006a0c;
+    return gMarsLighthouseRoomF_Room2Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom1)
-    return gData_02006710;
+    return gMarsLighthouseRoomF_Room1Placements;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom3)
-    return gData_02006890;
-  return gData_02006518;
+    return gMarsLighthouseRoomF_Room3Placements;
+  return gMarsLighthouseRoomF_Placements;
 }
 
 void Func_020000bc(void) {
@@ -87,7 +87,7 @@ void Func_020000d0(void) {
       }
     }
   }
-  if (Func_020055f8(gMainRoutineWork.currentOwner) != -1)
+  if (Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner) != -1)
     Func_02005688();
 }
 
@@ -106,13 +106,13 @@ void Func_02000170(void) {
   position[0] = object->x;
   position[1] = (object->y + 0x40000) & 0xfff80000;
   position[2] = object->z;
-  Vector_AddPolar(0x100000, angle, position);
+  FieldVector_AddPolarOffset(0x100000, angle, position);
   object = Func_02005680(position, 1);
   if (object != NULL) {
     position[0] = object->x;
     position[1] = object->y;
     position[2] = object->z;
-    Vector_AddPolar(0x100000, angle, position);
+    FieldVector_AddPolarOffset(0x100000, angle, position);
     if (Func_02005680(position, 1) != NULL)
       return;
   }
@@ -195,7 +195,7 @@ void Func_020002ec(void) {
 
   MapGrid_CopyCellAttributes(53, 72, 1, 1, 38, 72);
   MapGrid_CopyCellAttributes(53, 72, 1, 1, 43, 72);
-  Func_020054e8_(53, 8, 1, 1, 47, 8);
+  MapGrid_CopyCellAttributes(53, 8, 1, 1, 47, 8);
   for (id = 10; id <= 12; id++) {
     object = Actor_Get(id);
     x = object->x >> 20;
@@ -333,19 +333,19 @@ void Func_02000670(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0x20000, 0x4000);
-  Camera_SetBounds(PIXELS(248), -1, PIXELS(712), 1);
-  Func_020055e0();
+  FieldCamera_MoveTo(PIXELS(248), -1, PIXELS(712), 1);
+  FieldCamera_WaitForArrival();
   System_Wait(20);
   FieldCamera_SetSpeed(0x50000, 0xa000);
   FieldCamera_MoveTo(PIXELS(248), -1, PIXELS(872), 1);
-  Func_020055e0();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(120);
   Event_End();
 }
 
 void Func_020006f4(s32 burst) {
   if (!Flag_IsSet(0xa46)) {
-    Func_020054e0_(29, 60, 3, 4, 14, 50);
+    MapGrid_CopyCells(29, 60, 3, 4, 14, 50);
     MapGrid_CopyCellsLayered(93, 60, 3, 4, 78, 50);
     if (burst && !Flag_IsSet(0xa43))
       Func_0200055c(14);
@@ -409,15 +409,15 @@ void Func_020008a0(s32 unused, s32 id) {
 }
 
 void Func_020008bc(void) {
-  Func_020054e0_(17, 24, 3, 1, 17, 13);
-  Func_020054e8_(20, 24, 1, 1, 18, 77);
-  Func_020054e0_(62, 20, 1, 2, 54, 20);
+  MapGrid_CopyCells(17, 24, 3, 1, 17, 13);
+  MapGrid_CopyCellAttributes(20, 24, 1, 1, 18, 77);
+  MapGrid_CopyCells(62, 20, 1, 2, 54, 20);
 }
 
 void Func_02000900(void) {
-  Func_020054e0_(17, 25, 3, 1, 17, 13);
-  Func_020054e8_(20, 25, 1, 1, 18, 77);
-  Func_020054e0_(62, 22, 1, 2, 54, 20);
+  MapGrid_CopyCells(17, 25, 3, 1, 17, 13);
+  MapGrid_CopyCellAttributes(20, 25, 1, 1, 18, 77);
+  MapGrid_CopyCells(62, 22, 1, 2, 54, 20);
 }
 
 void Func_02000944(void) {
@@ -494,7 +494,7 @@ void Func_02000ad8(void) {
   FieldEvent_Wait(60);
   FieldCamera_SetSpeed(0x30000, 0x6000);
   FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(744), 1);
-  Func_020055e0();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(60);
   Event_End();
 }
@@ -555,12 +555,12 @@ void Func_02000b40(void) {
   }
 }
 
-extern const u8 gData_02006b8c[];
-extern const u8 gData_02006b98[];
-extern const u8 gData_02006d78[];
-extern const u8 gData_02006e38[];
-extern const u8 gData_02006f64[];
-void Func_02002ce0(void);
+extern const u8 gMarsLighthouseRoomF_Triggers[];
+extern const u8 gMarsLighthouseRoomF_Room4Triggers[];
+extern const u8 gMarsLighthouseRoomF_Room1Triggers[];
+extern const u8 gMarsLighthouseRoomF_Room3Triggers[];
+extern const u8 gMarsLighthouseRoomF_Room2Triggers[];
+void MarsLighthouseRoomF_ContinueSlide(void);
 void Func_020043ec(void);
 
 void Func_02000c80(s32 id) {
@@ -626,19 +626,19 @@ void Func_02000d80(void) {
 
 void Func_02000df8(void) {
   Func_020043ec();
-  Func_02002ce0();
+  MarsLighthouseRoomF_ContinueSlide();
 }
 
 const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom4)
-    return gData_02006b98;
+    return gMarsLighthouseRoomF_Room4Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom2)
-    return gData_02006f64;
+    return gMarsLighthouseRoomF_Room2Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom1)
-    return gData_02006d78;
+    return gMarsLighthouseRoomF_Room1Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom3)
-    return gData_02006e38;
-  return gData_02006b8c;
+    return gMarsLighthouseRoomF_Room3Triggers;
+  return gMarsLighthouseRoomF_Triggers;
 }
 
 void Func_02000e68(void) {
@@ -685,9 +685,9 @@ s32 Scene_Initialize(void) {
     if (entrance - 1 <= 1U) {
       Func_02002624(gData_02005bf0, gData_02005bf6, Func_02000514, 88);
       if (Flag_IsSet(0xa42))
-        Func_02005598_(10, 0, 0);
+        Actor_SetPosition(10, 0, 0);
       else
-        Func_02005598_(9, 0, 0);
+        Actor_SetPosition(9, 0, 0);
       if (Flag_IsSet(0xa43))
         Func_020006f4(0);
       if (Flag_IsSet(0xa44))
@@ -715,23 +715,23 @@ s32 Scene_Initialize(void) {
       Flag_Set(0x351);
       Event_Start();
       Event_ResolvePendingActions(0);
-      Camera_SetBounds(-1, -1, -1, 0);
-      Func_02005598_(work->currentOwner, 0, 0);
-      Func_02005598_(17, 0, 0);
+      FieldCamera_MoveTo(-1, -1, -1, 0);
+      Actor_SetPosition(work->currentOwner, 0, 0);
+      Actor_SetPosition(17, 0, 0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       Event_Wait(30);
-      Func_02005598_(18, 0, 0);
-      Func_02005598_(17, 0x1080000, 0x2080000);
-      Sound_Play(136);
+      Actor_SetPosition(18, 0, 0);
+      Actor_SetPosition(17, 0x1080000, 0x2080000);
+      Event_PlaySound(136);
       Event_Wait(60);
       Flag_Set(0x109);
       return ((s32 (*)())Import_EventSetExitRequest)(3);
     }
     if (Flag_IsSet(0x350)) {
-      Func_02005598_(8, 0x2580000, 0x900000);
-      Func_02005598_(9, 0x2200000, 0xd00000);
-      Func_02005598_(10, 0x2200000, 0xf00000);
+      Actor_SetPosition(8, 0x2580000, 0x900000);
+      Actor_SetPosition(9, 0x2200000, 0xd00000);
+      Actor_SetPosition(10, 0x2200000, 0xf00000);
       Flag_Set(0x220);
       Flag_Set(0x221);
     }
@@ -755,9 +755,9 @@ s32 Scene_Initialize(void) {
       Func_02000c80(12);
     Func_020009ec();
     if (Flag_IsSet(0x350))
-      Func_02005598_(18, 0, 0);
+      Actor_SetPosition(18, 0, 0);
     else
-      Func_02005598_(17, 0, 0);
+      Actor_SetPosition(17, 0, 0);
     if (Flag_IsSet(0xa40))
       Func_02000d80();
     Task_Add(Func_02000e68, 0x480);
@@ -769,13 +769,13 @@ s32 Scene_Initialize(void) {
     Func_020053bc(2);
     Func_0200538c(11, 6);
     if (Flag_IsSet(0x358)) {
-      Func_020054f0_(71, 24, 7, 1, 71, 5);
-      Func_020054e8_(7, 24, 7, 1, 7, 7);
-      Func_020054e8_(7, 88, 7, 1, 7, 71);
-      Func_02005598_(11, 0, 0);
+      MapGrid_CopyCellsLayered(71, 24, 7, 1, 71, 5);
+      MapGrid_CopyCellAttributes(7, 24, 7, 1, 7, 7);
+      MapGrid_CopyCellAttributes(7, 88, 7, 1, 7, 71);
+      Actor_SetPosition(11, 0, 0);
     }
     if (Flag_IsSet(0xa37))
-      Func_02005598_(12, 0x780000, 0x1280000);
+      Actor_SetPosition(12, 0x780000, 0x1280000);
     if (entrance - 14 <= 1U) {
       Func_02002624(gData_02005c2c, gData_02005c32, Func_02001490, 88);
       Func_020027cc(0, 1);
@@ -810,13 +810,13 @@ s32 Scene_Initialize(void) {
     }
     if (!Flag_IsSet(0x109)) {
       if (entrance == 15)
-        Func_02005598_(23, 0x2980000, 0x2c80000);
+        Actor_SetPosition(23, 0x2980000, 0x2c80000);
       if (entrance == 11)
-        Func_02005598_(17, 0x2180000, 0x2280000);
+        Actor_SetPosition(17, 0x2180000, 0x2280000);
     }
     Actor_GetById(16)->motionFlags = 0;
     if (Flag_IsSet(0xa38)) {
-      Func_02005598_(16, 0x3280000, 0x1380000);
+      Actor_SetPosition(16, 0x3280000, 0x1380000);
       Actor_GetById(16)->y = 0;
       Actor_GetById(16)->terrainHeight = 0;
     }
@@ -874,22 +874,7 @@ DEFINE_PALETTE_CYCLE_STEP(Func_020014e8, gData_0200703c, gData_02007040,
 #include "ram_buffer.h"
 #include "field_event.h"
 
-void Func_020015a4(s32 mode) {
-  gData_02007040 = 1;
-  if (mode != 2) {
-    Iwram_CopyWordsEntry(gData_02007068, (void *)&BG_PLTT_COLOR(12, 0), 32);
-    Iwram_CopyWordsEntry(gData_02007088, (void *)&BG_PLTT_COLOR(13, 0), 32);
-  }
-  if (GameFlag_Test(0xa00) || mode == 1) {
-    s32 zero = 0;
-
-    gData_0200703c = zero;
-    Task_Add(Func_020014e8, 1152);
-  } else {
-    Dma_Set(gData_0200708c, (void *)&BG_PLTT_COLOR(12, 2), DMA_COPY_WORDS(2),
-            REG_DMA3);
-  }
-}
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(Func_020015a4, gData_02007040, gData_02007068, gData_02007088, gData_0200703c, Func_020014e8, gData_0200708c)
 
 #include "event_inline.h"
 
@@ -1038,10 +1023,10 @@ void Func_02001bcc(void) {
   struct PositionedActor *actor23 = Actor_GetById(23);
   struct FieldSprite *sprite = actor23->animation;
 
-  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 24, 0x2000000, 0xf80000);
-  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 23, 0x2000000, 0xf80000);
-  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 9, 0x1d80000, 0x1000000);
-  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 10, 0x2280000, 0x1000000);
+  Actor_SetPosition(24, 0x2000000, 0xf80000);
+  Actor_SetPosition(23, 0x2000000, 0xf80000);
+  Actor_SetPosition(9, 0x1d80000, 0x1000000);
+  Actor_SetPosition(10, 0x2280000, 0x1000000);
   Actor_GetById(24)->scaleX = 0;
   actor23->motionFlags = 0;
   actor23->y.fixed = actor23->terrainHeight;
@@ -1049,7 +1034,7 @@ void Func_02001bcc(void) {
   actor9->y.fixed = actor9->terrainHeight;
   actor10->motionFlags = 0;
   actor10->y.fixed = actor10->terrainHeight;
-  if (GameFlag_Test(0xa0a)) {
+  if (Event_GetFlag(0xa0a)) {
     actor9->y.fixed += 0x66640;
     {
       s32 step = 0x1eb80;
@@ -1061,7 +1046,7 @@ void Func_02001bcc(void) {
     Animation_ApplyChildValues(Actor_GetById(9), 4);
     Animation_ApplyChildValues(Actor_GetById(11), 4);
   }
-  if (Value1((s32 (*)())GameFlag_Test, 0xa0b)) {
+  if (Event_GetFlag(0xa0b)) {
     actor10->y.fixed += 0x66640;
     {
       s32 step = 0x1eb80;
@@ -1073,7 +1058,7 @@ void Func_02001bcc(void) {
     Animation_ApplyChildValues(Actor_GetById(10), 4);
     Animation_ApplyChildValues(Actor_GetById(12), 4);
   }
-  if (GameFlag_Test(0xa0a) && GameFlag_Test(0xa0b)) {
+  if (Event_GetFlag(0xa0a) && Event_GetFlag(0xa0b)) {
     actor9->y.fixed += 0x199900;
     actor10->y.fixed += 0x199900;
     {
@@ -1099,7 +1084,7 @@ DEFINE_ACTOR_IS_BESIDE(Func_02001dc0)
 #define Camera_SetBounds Camera_SetBounds__s1e20
 #include "shared/mars_lighthouse_entrance_room.h"
 #undef Camera_SetBounds
-/* VIEW(s1e20): static Camera_SetBounds as Camera_SetBounds__s1e20; room.h has static inline void Camera_SetBounds(s32 x, s32 y, s32 z, s32 use_setter) { Camera_MoveWithinMapBounds(x, y, z, use_setter); }; not tried: Camera_SetBounds__s1e20 was not found. */
+/* VIEW(s1e20): static Camera_SetBounds as Camera_SetBounds__s1e20; room.h has static inline void FieldCamera_MoveTo(s32 x, s32 y, s32 z, s32 use_setter) { Camera_MoveWithinMapBounds(x, y, z, use_setter); }; not tried: Camera_SetBounds__s1e20 was not found. */
 #undef SceneWork
 /* VIEW(s1e20): tag struct SceneWork as struct SceneWork__s1e20; room.h has another definition; not tried: struct SceneWork__s1e20 was not found. */
 #undef MapLayer
@@ -1124,70 +1109,7 @@ struct RideWork {
   u16 direction;
 };
 
-void Func_02001e20(struct Actor *object) {
-  struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
-  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
-  struct EventWork *event = Ram_HeapSlots->eventWork;
-  s32 dx = object->bounce;
-  s32 dz;
-  s32 i;
-  s32 direction;
-  s32 id;
-
-  object->x += dx;
-  object->y += object->gravity;
-  dz = object->unk4c;
-  object->z += dz;
-  object->bounce = dx - dx / 18;
-  object->unk4c = dz - dz / 16;
-  object->scaleX += object->speedLimit;
-  object->scaleY += object->acceleration;
-  ((struct SpriteParts *)object->sprite)->unk12 += object->timer;
-  if (actor->y == actor->terrainHeight && Func_02001d5c(object, actor) &&
-      gMainRoutineWork.renderMode == 0) {
-    if (object->unk4c != 0) {
-      work->value68 = 0;
-      {
-        u16 *cell = &work->direction;
-
-        if (object->unk4c > 0) {
-          direction = 1;
-          *cell = direction;
-        } else {
-          direction = 0xffff;
-          *cell = direction;
-        }
-      }
-    }
-    object->priorityFlags = 2;
-    {
-      s32 speed = object->unk4c;
-
-      object->unk4c = 0;
-      object->z -= speed;
-      object->gravity += speed >> 2;
-    }
-    work->landed = 1;
-    event->exit = work->value0a;
-  }
-  for (i = 0; i < 4 && (id = work->slots[i].id) != 0; i++) {
-    actor = Actor_Get(id);
-
-    if (actor->y == actor->terrainHeight && Func_02001dc0(object, actor)) {
-      if (work->slots[i].blocked == 0) {
-        s32 speed;
-
-        object->priorityFlags = 2;
-        speed = object->unk4c;
-        object->unk4c = 0;
-        object->z -= speed;
-        object->gravity += speed >> 2;
-      } else {
-        work->blocked = 1;
-      }
-    }
-  }
-}
+DEFINE_RIDE_UPDATE_CARRIED(Func_02001e20, RideWork, Func_02001d5c, Func_02001dc0)
 
 extern const u8 gData_02005d8c[];
 
@@ -1362,7 +1284,7 @@ void Func_0200236c(struct Actor *object, s32 unused);
 void Func_02002604(void) {
   struct RideWork__s25b0 *work = (struct RideWork__s25b0 *)(gData_020023c4 + 0x188);
 
-  Func_020054a0(work->handle);
+  Actor_Release(work->handle);
   work->handle = NULL;
 }
 

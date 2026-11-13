@@ -168,7 +168,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
     return gData_02004b2c;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov6a8Room2)
-    return gData_02004c4c;
+    return gProx_Room2Placements;
   if (scene == (s32)&SceneId_Ov6a8Room3) {
     if (Event_GetFlag(0xa3d))
       return gData_02004f04;
@@ -188,7 +188,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
     return gData_02005444;
   }
   if (scene == (s32)&SceneId_Ov6a8Room6)
-    return gData_0200551c;
+    return gProx_Room6Placements;
   return gData_02004b14__prox;
 }
 
@@ -210,23 +210,24 @@ const u8 *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6a8Room1)
-    return gData_02005558;
+    return gProx_Room1Triggers;
   if (scene == (s32)&SceneId_Ov6a8Room2)
-    return gData_02005588;
+    return gProx_Room2Triggers;
   if (scene == (s32)&SceneId_Ov6a8Room3)
-    return gData_020057f8;
+    return gProx_Room3Triggers;
   if (scene == (s32)&SceneId_Ov6a8Room4)
     return gData_02005a20__prox;
   if (scene == (s32)&SceneId_Ov6a8Room5)
-    return gData_02005da4;
+    return gProx_Room5Triggers;
   if (scene == (s32)&SceneId_Ov6a8Room6)
-    return gData_02005eac;
-  return gData_0200554c;
+    return gProx_Room6Triggers;
+  return gProx_Triggers;
 }
 
 s32 Func_0200446c();
 
-void Func_02000620(void) {
+/// ★ Named from the game: ", you like igloos, right?" (MsgProx33)
+void Prox_AskAboutIgloos(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgProx33);
@@ -236,13 +237,15 @@ void Func_02000620(void) {
 
 DEFINE_LEADER_IS_FACING_NORTH(Func_02000644)
 
-void Func_02000674(void) {
+/// ★ Named from the game: ", your parents have gone away... They were very
+/// worried about you." (MsgProx56)
+void Prox_TalkAboutParents(void) {
   s32 t0;
   s32 t4;
 
   t0 = Func_02000644();
   if (t0 != 0) {
-    Func_02004634(0xe, 0x16);
+    Inn_CheckIn(0xe, 0x16);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -257,15 +260,17 @@ void Func_02000674(void) {
   }
 }
 
-s32 Func_02004624();
+s32 Shop_Run();
 
-void Func_020006c4(void) {
+/// ★ Named from the game: "You go away for a little while, and you come back a
+/// strong and mighty warrior!" (MsgProx53)
+void Prox_PraiseReturnedWarrior(void) {
   s32 t0;
   s32 t4;
 
   t0 = Func_02000644();
   if (t0 != 0) {
-    Func_02004624(0x1f, 0xa);
+    Shop_Run(0x1f, 0xa);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -280,15 +285,17 @@ void Func_020006c4(void) {
   }
 }
 
-s32 Func_0200462c();
+s32 Sanctum_Run();
 
-void Func_02000714(void) {
+/// ★ Named from the game: "Now that the lighthouse has been lit, I fear for
+/// what will happen to Weyard." (MsgProx139)
+void Prox_FearForWeyard(void) {
   s32 t0;
   s32 t4;
 
   t0 = Func_02000644();
   if (t0 != 0) {
-    Func_0200462c(8);
+    Sanctum_Run(8);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -312,7 +319,9 @@ struct TalkActor {
   u8 unk63; ///< Func_020002d8 reads it
 };
 
-void Func_02000764(void) {
+/// ★ Named from the game: "Weeee! What fun! Now that it's stopped snowing, we
+/// can go outside and play." (MsgProx113)
+void Prox_TalkToPlayingChild(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct TalkActor *object = ((struct TalkActor *)Actor_Get(16));
   s16 angle = object->angle;
@@ -333,7 +342,8 @@ void Func_02000764(void) {
   Func_0200446c();
 }
 
-void Func_020007f4(void) {
+/// ★ Named from the game: "I miss running around outside." (MsgProx114)
+void Prox_TalkToRestlessChild(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct TalkActor *object = ((struct TalkActor *)Actor_Get(17));
   s16 angle = object->angle;
@@ -354,7 +364,9 @@ void Func_020007f4(void) {
   Func_0200446c();
 }
 
-void Func_02000884(void) {
+/// ★ Named from the game: "If I'm going to be a great warrior, like , I'm gonna
+/// have to train hard." (MsgProx115)
+void Prox_TalkToTrainingChild(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct TalkActor *object = ((struct TalkActor *)Actor_Get(18));
   s16 angle = object->angle;
@@ -375,7 +387,8 @@ void Func_02000884(void) {
   Func_0200446c();
 }
 
-void Func_02000914(void) {
+/// ★ Named from the game: "They're not here..." (MsgProx47)
+void Prox_SearchForParents(void) {
   s32 t0;
   s32 t8;
 
@@ -430,14 +443,16 @@ void Func_02000914(void) {
   }
 }
 
-void Func_0200457c(void);
+void FieldCamera_WaitForArrival(void);
 
-void Func_02000ad8(void) {
+/// ★ Named from the game: "We can't wait for Agatio and his men any longer..."
+/// (MsgProx62)
+void Prox_DecideToGoToLighthouse(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0x4cccc, 0x9999);
   FieldCamera_MoveTo(PIXELS(160), -1, PIXELS(160), 1);
-  Func_0200457c();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
   Actor_RunRepeatedMotion(0xa, 1);
   Actor_FaceDirectionAndWait(10, 0xb000);
@@ -513,7 +528,8 @@ void Func_02000ad8(void) {
 s32 Actor_MoveToObject();
 extern u32 gData_020049c4[];
 
-void Func_02000dac(void) {
+/// ★ Named from the game: "You... , it's you..." (MsgProx75)
+void Prox_MeetPuelle(void) {
   u32 i;
   s32 result;
   s32 owner;
@@ -659,7 +675,7 @@ test_wait:
   Actor_SetAnimation(11, 4);
   Event_ShowMessage(11, 0);
   Actor_FaceDirectionAndWait(0, FACING_WEST);
-  Prox_MessageOpen(0xa000, 0);
+  Event_OpenMessage(0xa000, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, 0, 0);
   result = FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   owner = gMainRoutineWork.currentOwner;
@@ -816,7 +832,7 @@ struct RisingObject {
   s32 life;
 };
 
-void Func_020043e4(struct RisingObject *object);
+void Actor_Release(struct RisingObject *object);
 
 void Func_0200181c(struct RisingObject *object) {
   object->x += object->drift << 8;
@@ -825,7 +841,7 @@ void Func_0200181c(struct RisingObject *object) {
   object->scaleY += 0x51e;
   object->drift += 2;
   if (--object->life == 0)
-    Func_020043e4(object);
+    Actor_Release(object);
 }
 
 void Func_02001860(s32 a0, s32 a1, s32 a2) {
@@ -875,7 +891,7 @@ struct EventWork154 {
   s16 returnEntrance;
 };
 
-void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
+void Prox_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
   struct Actor *object;
   s32 cell;
@@ -900,7 +916,7 @@ void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     object->facing = 0xc000;
   }
   Actor_SetScript(gMainRoutineWork.currentOwner,
-                                          gData_020046f8);
+                                          gProx_EnterDoorScript);
   System_Wait(12);
   Event_PlaySound(123);
   Event_FinishScreenTransition();
@@ -908,21 +924,21 @@ void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   FieldEvent_SetExitRequest(work->returnEntrance);
 }
 
-void Func_02001a9c(void) { Func_020019a4(0x30, 0x27, 0x39, 0x1a, 1, 2); }
+void Func_02001a9c(void) { Prox_EnterDoor(0x30, 0x27, 0x39, 0x1a, 1, 2); }
 
-void Func_02001ab8(void) { Func_020019a4(0x31, 0x27, 0x41, 0x18, 1, 2); }
+void Func_02001ab8(void) { Prox_EnterDoor(0x31, 0x27, 0x41, 0x18, 1, 2); }
 
-void Func_02001ad4(void) { Func_020019a4(0x32, 0x27, 0x38, 0x13, 1, 2); }
+void Func_02001ad4(void) { Prox_EnterDoor(0x32, 0x27, 0x38, 0x13, 1, 2); }
 
-void Func_02001af0(void) { Func_020019a4(0x33, 0x27, 0x3d, 0xd, 1, 2); }
+void Func_02001af0(void) { Prox_EnterDoor(0x33, 0x27, 0x3d, 0xd, 1, 2); }
 
-void Func_02001b0c(void) { Func_020019a4(0x33, 0x27, 0x50, 0x10, 1, 2); }
+void Func_02001b0c(void) { Prox_EnterDoor(0x33, 0x27, 0x50, 0x10, 1, 2); }
 
-void Func_02001b28(void) { Call6(Func_020019a4, 0x34, 0x27, 0x32, 9, 2, 2); }
+void Func_02001b28(void) { Call6(Prox_EnterDoor, 0x34, 0x27, 0x32, 9, 2, 2); }
 
-void Func_02001b44(void) { Func_020019a4(0x57, 2, 0x50, 7, 1, 2); }
+void Func_02001b44(void) { Prox_EnterDoor(0x57, 2, 0x50, 7, 1, 2); }
 
-void Func_02001b60(void) { Func_020019a4(0x59, 0, 0x4d, 0x10, 1, 2); }
+void Func_02001b60(void) { Prox_EnterDoor(0x59, 0, 0x4d, 0x10, 1, 2); }
 
 void Func_02001b7c(void) {
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
@@ -998,10 +1014,11 @@ void Func_02001c24(s32 a0) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_0200457c(void);
+void FieldCamera_WaitForArrival(void);
 s32 Func_0200446c();
 
-void Func_02001cf0(void) {
+/// ★ Named from the game: "Thank you, . And you, too, and Kraden." (MsgProx80)
+void Prox_GiveThanksForBeacon(void) {
   s32 t83;
   s32 t144;
   s32 t159;
@@ -1035,7 +1052,7 @@ void Func_02001cf0(void) {
   Event_WaitTransitionFrames();
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(448), 1);
-  Func_0200457c();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   FieldEvent_SetMessageId((s32)MsgProx80);
   Event_ShowMessage(26, 0);
@@ -1166,7 +1183,7 @@ void Func_02001cf0(void) {
   Actor_FaceDirectionAndWait(27, 0x5000);
   Event_ShowMessage(0x401b, 0);
   Actor_FaceDirectionAndWait(0, 0);
-  Prox_MessageOpen(0x4000, 0);
+  Event_OpenMessage(0x4000, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   t144 = FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   if (t144 == 0) {
@@ -1191,7 +1208,7 @@ void Func_02001cf0(void) {
   t159 = ((s32)FieldCamera_GetActor());
   FIELD_AT((t159 + 0x55), u8, 0) = 0;
   FieldCamera_MoveTo(PIXELS(158), -1, PIXELS(432), 1);
-  Func_0200457c();
+  FieldCamera_WaitForArrival();
   FieldActor_Jump(17, 4, 10);
   Event_ShowMessage(17, 0);
   FieldCamera_SetSpeed(0x13333, 0x2666);
@@ -1264,21 +1281,17 @@ struct EventWork1ac {
 };
 
 void Actor_SetWideSprite(s32 id, s32 wide);
-void Func_0200440c(s32 layer);
-void Func_02004414(u32 layer);
+void Map_ClearLayerEntryFlag(s32 layer);
+void Map_SetLayerEntryFlag(u32 layer);
 void Func_020045dc(s32 a);
 void Func_0200461c(s32 a);
-
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Test(flag); }
 
 s32 Scene_Initialize(void) {
   s32 scene;
 
-  if (Flag_Test(0xa3d)) {
-    GameFlag_SetBit(0x17c);
-    GameFlag_SetBit(0x144);
+  if (Event_GetFlag(0xa3d)) {
+    Event_SetFlag(0x17c);
+    Event_SetFlag(0x144);
   }
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov6a8Room4) {
@@ -1301,31 +1314,31 @@ s32 Scene_Initialize(void) {
     *effect = value;
     Func_020045dc(skip);
   } else {
-    if (!GameFlag_Test(0xa3d))
-      GameFlag_SetBit(0x201);
-    if (GameFlag_Test(0x201)) {
+    if (!Event_GetFlag(0xa3d))
+      Event_SetFlag(0x201);
+    if (Event_GetFlag(0x201)) {
       Func_0200461c(1);
     } else {
       REG_BLDALPHA = 0xc08;
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
       Task_Add(Func_020018e0, 0x480);
-      Func_02004414(0);
-      Func_02004414(1);
-      Func_0200440c(2);
-      Func_0200440c(3);
-      Func_0200440c(4);
-      Func_0200440c(5);
-      Func_0200440c(6);
+      Map_SetLayerEntryFlag(0);
+      Map_SetLayerEntryFlag(1);
+      Map_ClearLayerEntryFlag(2);
+      Map_ClearLayerEntryFlag(3);
+      Map_ClearLayerEntryFlag(4);
+      Map_ClearLayerEntryFlag(5);
+      Map_ClearLayerEntryFlag(6);
     }
     scene = gMainRoutineWork.scene;
     if (scene == (s32)&SceneId_Ov6a8Room2) {
-      if (!GameFlag_Test(0x300))
+      if (!Event_GetFlag(0x300))
         Actor_SetWideSprite(64, 1);
       Func_020027e4();
     } else if (scene == (s32)&SceneId_Ov6a8Room3) {
       Func_02002878();
     }
-    if (GameFlag_Test(0x201)) {
+    if (Event_GetFlag(0x201)) {
       BattleEffect_ApplyColorToTargetBuffer(0x10004, 1);
       BattleEffect_StartBufferInterpolation(16);
       wait(16);
@@ -1440,7 +1453,7 @@ void Func_020029c8(void) {
   if (gMainRoutineWork.entrance == 0x14) {
     t2 = Event_GetFlag(0x9c5);
     if (t2 == 0) {
-      Func_02001cf0();
+      Prox_GiveThanksForBeacon();
     }
   }
 }
@@ -1491,7 +1504,9 @@ extern u8 gData_020060fc__s1cf0[] __asm__("gData_020060fc");
 /* VIEW(s1cf0): variable gData_02006268 as extern u8 gData_02006268[]; the definition has u32 gData_02006268[] = { 39, 2, 4, 0x980000, 0, 0x15c0000, 1, 39, 1, 0, 1, 3, 0, 1, 17, }; tried as the definition's extern s16 gData_02006268[], it does not compile in tla-ja: games/tla/src/scene/prox.c:3179: conflicting types for `gData_02006268'. */
 extern u8 gData_02006268__s1cf0[] __asm__("gData_02006268");
 
-void Func_02002a8c(void) {
+/// ★ Named from the game: "What took you so long? Mom and Dad are tired of
+/// waiting for you..." (MsgProx153)
+void Prox_SayFarewell(void) {
   u32 i;
 
   if (Event_GetFlag(0x9c5) != 0) {
@@ -1504,7 +1519,7 @@ void Func_02002a8c(void) {
     Event_ShowMessage(5, 0);
     FieldCamera_SetSpeed(0x33333, 0x6666);
     FieldCamera_MoveTo(PIXELS(144), -1, PIXELS(228), 1);
-    Func_0200457c();
+    FieldCamera_WaitForArrival();
     FieldActor_ShowEmote(10, 0x108, 0);
     Event_ShowMessage(0x200a, 0);
     Event_PlaySound(37);
@@ -1582,7 +1597,7 @@ void Func_02002a8c(void) {
     Event_ShowMessage(0x200b, 0);
     Actor_FaceDirectionAndWait(0, 0);
     Actor_SetAnimation(0, 3);
-    Prox_MessageOpen(0x8000, 0);
+    Event_OpenMessage(0x8000, 0);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
@@ -1663,7 +1678,7 @@ void Func_02002a8c(void) {
     Actor_FaceDirection(5, FACING_NORTHWEST, 0);
     Actor_FaceDirection(1, FACING_NORTH, 0);
     Actor_ShowEmote(11, 0x108, 40);
-    Prox_MessageOpen(0xa00b, 0);
+    Event_OpenMessage(0xa00b, 0);
     Actor_FaceDirection(0, 0, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
@@ -1701,7 +1716,7 @@ void Func_02002a8c(void) {
     Event_ShowMessage(0, 0);
     Actor_FaceDirectionAndWait(11, 0xb000);
     Actor_ShowEmote(11, 0x103, 0);
-    Prox_MessageOpen(0xa00b, 0);
+    Event_OpenMessage(0xa00b, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
       Actor_SetAnimationAndWait(11, 4);
@@ -1766,7 +1781,7 @@ void Func_02002a8c(void) {
     Actor_FaceDirectionAndWait(11, 0xb000);
     Event_ShowMessage(0, 0);
     Actor_ShowEmote(11, 0x109, 40);
-    Prox_MessageOpen(0xa00b, 0);
+    Event_OpenMessage(0xa00b, 0);
     Actor_FaceDirection(0, 0, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
@@ -1827,11 +1842,11 @@ void Func_02002a8c(void) {
     Actor_SetAnimation(11, 9);
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 0x21);
     Actor_SetAnimation(0, 0x28);
-    Func_02004414(2);
-    Func_02004414(3);
-    Func_02004414(4);
-    Func_02004414(5);
-    Func_02004414(6);
+    Map_SetLayerEntryFlag(2);
+    Map_SetLayerEntryFlag(3);
+    Map_SetLayerEntryFlag(4);
+    Map_SetLayerEntryFlag(5);
+    Map_SetLayerEntryFlag(6);
     Event_PlaySound(78);
     FieldEvent_Wait(40);
     PaletteFade_ApplyTarget(0x10009, 0);
@@ -1862,18 +1877,14 @@ extern const s16 gData_02004740__s1cf0[] __asm__("gData_02004740");
 
 DEFINE_ACTOR_STEER_BY_PAD(Func_0200385c, gData_02004740__s1cf0, Func_020043c4)
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static inline void FlagSet(s32 flag) { GameFlag_SetBit(flag); }
-
 void Func_020038e8(void) {
   void *work = Ram_HeapSlots->eventWork;
 
   if (FIELD_AT(work, s16, 0xca2) != 0) {
-    FlagSet(0x106);
+    Event_SetFlag(0x106);
     Leader_StopMoving();
     Event_ResolveAllPendingActions();
-    GameFlag_ClearBit(0x106);
+    Event_ClearFlag(0x106);
   }
 }
 #undef FIELD_AT
@@ -1952,10 +1963,10 @@ struct ParticleWork {
   u16 tile;
 };
 
-void Func_0200460c(struct ParticleSprite *sprite, struct Particle *particle);
+void EffectSprite_DrawAtWorldPosition(struct ParticleSprite *sprite, struct Particle *particle);
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-DEFINE_PARTICLES_UPDATE_FALLING(Func_02004114, Func_0200460c)
+DEFINE_PARTICLES_UPDATE_FALLING(Func_02004114, EffectSprite_DrawAtWorldPosition)
 
 /// One falling rock: where it is, how it moves and how long it has fallen.
 struct Rock {
@@ -2018,12 +2029,6 @@ struct RockSprite__s4254 {
 void Func_02004604(struct RockSprite__s4254 *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 
-static __inline__ void StartTask(void (*func)(void), s32 priority) {
-  /* FAKEMATCH(wrapper): Task_Add forwarded inline; as a direct call, 6 of 83
-   * instructions differ in tla-en. */
-  Task_Add(func, priority);
-}
-
 void Func_02004254(void) {
   struct RockWork *work = HeapSlot_AllocFar(220, sizeof(struct RockWork));
   s32 entry;
@@ -2052,7 +2057,7 @@ void Func_02004254(void) {
 
     work->next = zero;
   }
-  StartTask(Func_02004114, 0x480);
+  FieldTask_AddFrame(Func_02004114, 0x480);
 }
 
 struct SparkWork {
@@ -2071,9 +2076,9 @@ void Func_02004310(void) {
 #include "text/msg_ids.h"
 
 void Func_02000280(void);
-void Func_02000620(void);
-void Func_02000674(void);
-void Func_020007f4(void);
+void Prox_AskAboutIgloos(void);
+void Prox_TalkAboutParents(void);
+void Prox_TalkToRestlessChild(void);
 
 extern u32 gData_020046bc[];
 
@@ -2096,7 +2101,7 @@ u32 gData_020046bc[] = {
     1, 38, 17,
 };
 
-s32 gData_020046f8[] = {
+s32 gProx_EnterDoorScript[] = {
     22, 26, 0, 23, 7, -0x8000,
     23, 9, -1024, 23, 10, -1024,
     0, 1, 13, 24, 0, 17,
@@ -2219,7 +2224,7 @@ s16 gData_02004b2c[] = {
     0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-u32 gData_02004c4c[] = {
+u32 gProx_Room2Placements[] = {
     0xffff00af, 1, 0xf80000, 0, 0x1c80000, 0x33000,
     0xffff00ac, 1, 0xd80000, 0, 0x1500000, 0x15000,
     0xffff00ae, 3, 0x700000, 0, 0xf80000, 0,
@@ -2354,23 +2359,23 @@ u32 gData_020054a4[] = {
     0xffff, 0, 0, 0, 0, 0,
 };
 
-u32 gData_0200551c[] = {
+u32 gProx_Room6Placements[] = {
     0xffff00c9, 1, 0xb00000, 0, 0x3090000, 0x15000,
     0xffff, 0, 0, 0, 0, 0,
 };
 
-struct Trigger gData_0200554c[] = {
+struct Trigger gProx_Triggers[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02005558[] = {
+struct Trigger gProx_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 10, 0x9cc, EVENT(Func_02002a8c)},
+    {TRIGGER_STEP, 10, 0x9cc, EVENT(Prox_SayFarewell)},
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02005588[] = {
+struct Trigger gProx_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_02001a9c)},
     {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_02001ab8)},
@@ -2414,18 +2419,18 @@ struct Trigger gData_02005588[] = {
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgProx88)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0xa3d, MSGNO(MsgProx16)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgProx96)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_02000764)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT(Func_02000764)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_020007f4)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT(Func_020007f4)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_02000884)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT(Func_02000884)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Prox_TalkToPlayingChild)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT(Prox_TalkToPlayingChild)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Prox_TalkToRestlessChild)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT(Prox_TalkToRestlessChild)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Prox_TalkToTrainingChild)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT(Prox_TalkToTrainingChild)},
     {0x50008805, 100, 0x300, EVENT(Func_02000588)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 19, CONDITION_ALWAYS, 0},
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020057f8[] = {
+struct Trigger gProx_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2436,9 +2441,9 @@ struct Trigger gData_020057f8[] = {
     {0x8805, 255, CONDITION_ALWAYS, EVENT(Func_02001800)},
     {0x50008805, 8, CONDITION_ALWAYS, EVENT(Func_02001770)},
     {TRIGGER_RAISED, 200, 0xa3d, EVENT(Func_02000280)},
-    {TRIGGER_STEP, 11, 0x9c0, EVENT(Func_02000914)},
-    {TRIGGER_STEP, 12, 0x9c1, EVENT(Func_02000ad8)},
-    {TRIGGER_STEP, 13, 0x9c2, EVENT(Func_02000dac)},
+    {TRIGGER_STEP, 11, 0x9c0, EVENT(Prox_SearchForParents)},
+    {TRIGGER_STEP, 12, 0x9c1, EVENT(Prox_DecideToGoToLighthouse)},
+    {TRIGGER_STEP, 13, 0x9c2, EVENT(Prox_MeetPuelle)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgProx48)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgProx50)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgProx49)},
@@ -2513,7 +2518,7 @@ struct Trigger gData_02005a20[] = {
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgProx110)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0xa3d, MSGNO(MsgProx32)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgProx112)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_02000620)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Prox_AskAboutIgloos)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgProx37)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgProx34)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgProx38)},
@@ -2537,7 +2542,7 @@ struct Trigger gData_02005a20[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgProx126)},
     {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgProx122)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgProx127)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_02000674)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Prox_TalkAboutParents)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, 0xa3d, MSGNO(MsgProx58)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgProx137)},
     {TRIGGER_TALK, 23, 0xa3d, MSGNO(MsgProx57)},
@@ -2552,7 +2557,7 @@ struct Trigger gData_02005a20[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02005da4[] = {
+struct Trigger gProx_Room5Triggers[] = {
     {0xca02, 6, CONDITION_ALWAYS, EVENT(Func_02001b7c)},
     {0xca02, 7, CONDITION_ALWAYS, EVENT(Func_02001b7c)},
     {0xca02, 8, CONDITION_ALWAYS, EVENT(Func_02001b7c)},
@@ -2565,7 +2570,7 @@ struct Trigger gData_02005da4[] = {
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgProx131)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0xa3d, MSGNO(MsgProx54)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgProx133)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_020006c4)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Prox_PraiseReturnedWarrior)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0xa3d, MSGNO(MsgProx55)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgProx134)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgProx125)},
@@ -2577,9 +2582,9 @@ struct Trigger gData_02005da4[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02005eac[] = {
+struct Trigger gProx_Room6Triggers[] = {
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000714)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Prox_FearForWeyard)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0xa3d, MSGNO(MsgProx61)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgProx140)},
     {TRIGGERS_END},

@@ -19,11 +19,11 @@ void Func_0200363c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
-  Camera_MoveWithinMapBounds(x, y, z, mode);
+  FieldCamera_MoveTo(x, y, z, mode);
 }
 
 static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
-  Map_SetScreenShake(a, b, c);
+  MapGrid_SetShake(a, b, c);
 }
 
 DEFINE_TELEPORTER_DROP_IN(Func_02003e04, Func_0200363c)
@@ -44,16 +44,16 @@ DEFINE_TELEPORTER_PLACE_ARRIVAL(Func_0200404c, gData_02004cf4, Func_02003e04)
 #include "objcmd.h"
 
 void Func_02000038(void);
-void Func_0200024c(void);
-void Func_02000e50(void);
-void Func_0200236c(void);
+void MarsLighthouseStarRoom_BurstIce(void);
+void MarsLighthouseStarRoom_ExamineStatue(void);
+void MarsLighthouseStarRoom_SlideOnIce(void);
 void Func_02002c44(void);
 void Func_02002ce8(void);
 
 extern s32 gData_02004910[];
 
 // clang-format off
-u32 gData_02004474[] = {
+u32 gMarsLighthouseStarRoom_ScatterIceChipsScript[] = {
     0, 40, 0x80010000, 22, 25, 0,
     0, 1, 22, 25, 1, 0,
     1, 13, 10, 0xc0010000, 38,
@@ -335,18 +335,18 @@ struct Trigger gSceneEvents[] = {
     {33, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {TRIGGER_STEP, 90, 0x1a4b, EVENT(Func_0200236c)},
+    {TRIGGER_STEP, 90, 0x1a4b, EVENT(MarsLighthouseStarRoom_SlideOnIce)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(Func_02000060)},
     {0x60009a15, 9, CONDITION_ALWAYS, EVENT(Func_02000074)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 9, CONDITION_ALWAYS, (u32)(Func_0200007c)},
     {TRIGGER_RAISED, 20, CONDITION_ALWAYS, EVENT(Func_020005b0)},
-    {0x50009705, 20, 0x1233, EVENT(Func_0200024c)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_02000ba4)},
+    {0x50009705, 20, 0x1233, EVENT(MarsLighthouseStarRoom_BurstIce)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(MarsLighthouseStarRoom_HoldWarmHand)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgMarsStar05)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_02000bd8)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(MarsLighthouseStarRoom_TakeMarsStar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgMarsStar04)},
-    {TRIGGER_EXAMINE, 21, CONDITION_ALWAYS, EVENT(Func_02000e50)},
-    {0xde04, 1045, CONDITION_ALWAYS, EVENT(Func_02000e80)},
+    {TRIGGER_EXAMINE, 21, CONDITION_ALWAYS, EVENT(MarsLighthouseStarRoom_ExamineStatue)},
+    {0xde04, 1045, CONDITION_ALWAYS, EVENT(MarsLighthouseStarRoom_UseMarsStar)},
     {TRIGGERS_END},
 };
 

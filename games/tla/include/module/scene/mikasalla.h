@@ -7,13 +7,13 @@
 #include "types.h"
 #include "scene_tables.h"
 
-extern s16 gData_02000794[];
-extern struct ActorPlacement gData_02000fa0[];
-extern struct ActorPlacement gData_020010c0[];
+extern s16 gMikasalla_TunnelRegions[];
+extern struct ActorPlacement gMikasalla_VillagePlacements[];
+extern struct ActorPlacement gMikasalla_TunnelPlacements[];
 
-extern struct Trigger gData_020012ac[];
+extern struct Trigger gMikasalla_TunnelTriggers[];
 
-extern struct Trigger gData_020010d8[];
+extern struct Trigger gMikasalla_VillageTriggers[];
 extern s16 gData_020006f8[];
 extern s16 gData_0200070e[];
 extern s16 gData_02000724[];

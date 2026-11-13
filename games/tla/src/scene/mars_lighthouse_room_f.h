@@ -54,8 +54,8 @@ s32 Func_020027dc(s32 index);
 s32 Func_02004a8c(struct PushTarget *target);
 void Func_02004d10(struct PushTarget target);
 void Actor_StartScript(struct Actor *object, const void *script);
-void Func_020055e0(void);
-s32 Func_020055f8(s32 id);
+void FieldCamera_WaitForArrival(void);
+s32 Field_FindNearbyTalkTarget(s32 id);
 void Func_02005600(void);
 void ObjectTable_Snapshot(void);
 struct Actor *Func_02005680(s32 *position, s32 mode);
@@ -71,38 +71,9 @@ void Func_020003b4(void);
 void Func_0200055c(s32 id);
 void Func_02001448(void);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static inline void Func_020054e0_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
-                                  s32 a5) {
-  Map_CopyCellsRect(a0, a1, a2, a3, a4, a5);
-}
-
-static inline void Func_020054e8_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
-                                  s32 a5) {
-  Map_CopyCellAttributeRect(a0, a1, a2, a3, a4, a5);
-}
-
-static inline void Func_020054f0_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
-                                  s32 a5) {
-  Func_0802b450(a0, a1, a2, a3, a4, a5);
-}
-
-static inline void Func_02005598_(s32 id, s32 x, s32 z) {
-  Actor_SetHorizontalPositionWithTerrain(id, x, z);
-}
-
 static inline struct Actor *Func_02005498_(s32 kind, s32 x, s32 y,
                                                    s32 z) {
   return Import_ActorCreate(kind, x, y, z);
-}
-
-static inline void Vector_AddPolar(s32 length, s32 angle, s32 *position) {
-  Vector_AddPolarOffsetFar(length, angle, position);
-}
-
-static inline void Camera_SetBounds(s32 x, s32 y, s32 z, s32 use_setter) {
-  Camera_MoveWithinMapBounds(x, y, z, use_setter);
 }
 
 #endif

@@ -6,17 +6,17 @@
 
 #include "types.h"
 
-void Func_0200031c(void);
+void LemuriaInteriors_PiersVisitsUncle(void);
 
 extern s16 gSceneRegions[];
 extern u32 gData_02002dec[];
 
-void Func_020028f4();
+void FieldCamera_WaitForArrival();
 
-void Func_02000154(s32 arg0);
+void LemuriaInteriors_AskFromBeyondSeaOfTime(s32 arg0);
 
-void Func_020001ec(s32 arg0, s32 arg1);
+void LemuriaInteriors_ScoffAtMindRead(s32 arg0, s32 arg1);
 
-void Func_02000a5c(s32 a0, s32 a1, s32 a2);
+void LemuriaInteriors_LeavePiersToMourn(s32 a0, s32 a1, s32 a2);
 
 #endif

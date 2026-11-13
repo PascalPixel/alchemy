@@ -35,7 +35,7 @@ s32 Func_02000038(s32 arg0) {
 
 void Event_Start();
 void Event_End();
-void Func_02000af0();
+void FieldCamera_WaitForArrival();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -47,14 +47,19 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-void Func_02000064(void) {
+/// Draws the ice wall gone: its pictures and its cells, as the Magma Ball
+/// leaves it and on every later visit (flag 0x90e).
+void NorthernReaches_ClearIceWall(void) {
   MapGrid_CopyCellsLayered(47, 9, 9, 4, 25, 9);
   MapGrid_CopyCellsLayered(47, 69, 9, 10, 25, 69);
   MapGrid_CopyCellAttributes(111, 8, 9, 5, 89, 8);
   return;
 }
 
-void Func_020000a8(void) {
+/// The first time the ship nears the ice wall, once a visit, the crew calls
+/// Kraden to see it.
+/// "Kraden, come look at this... There's a huge ice wall blocking our path..."
+void NorthernReaches_SightIceWall(void) {
   s32 result0;
   struct Actor *object1;
 
@@ -76,7 +81,8 @@ L_02008100:
   return;
 }
 
-void Func_02000108(void) {
+/// The crew gathers at the bow to talk the ice wall over, once (flag 0x90c).
+void NorthernReaches_DiscussIceWall(void) {
   s32 result0;
   struct Actor *object1;
 
@@ -92,7 +98,7 @@ void Func_02000108(void) {
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(5, 0, 5);
   FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(176), 1);
-  Func_02000af0();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(5);
   Actor_SetPosition(11, PIXELS(408), PIXELS(288));
   Actor_SetPosition(5, PIXELS(408), PIXELS(288));
@@ -116,7 +122,11 @@ L_020081d2:
        ->v)
 s32 Animation_ApplyChildValues();
 
-void Func_020001d8(void) {
+/// At a safe distance the crew asks Felix to fire the Magma Ball at the ice
+/// wall; if he is ready the ship backs off, fires, and the wall shatters (flag
+/// 0x90e).
+/// "We should be safe if we fire from this distance."
+void NorthernReaches_FireMagmaBall(void) {
   s32 from[3];
   s32 to[3];
   s32 v_r5, v_r8, v_r6, v_r7, v_r10, t0, t1, t2, t3, t10;
@@ -212,7 +222,7 @@ L_020083da:
   if (v_r5 >= 0)
     goto L_020083da;
   FieldCamera_MoveTo(0x1d80000, -1, 0xb00000, 1);
-  Func_02000af0();
+  FieldCamera_WaitForArrival();
   FieldActor_WaitForMoveById(9);
   Event_PlaySound(145);
   t59 = FIELD_AT(v_r6, s32, 8);
@@ -224,7 +234,7 @@ L_020083da:
   to[0] = 0x1900000;
   to[1] = 0;
   to[2] = 0x500000;
-  Func_020006b0((s32)from, to, Func_02000064);
+  NorthernReaches_ShatterIceWall((s32)from, to, NorthernReaches_ClearIceWall);
   FieldEvent_Wait(20);
   Actor_SetPosition(10, 0, 0);
   Actor_SetPosition(9, 0, 0);
@@ -318,15 +328,17 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.entrance == 3)
-    Func_02000064();
+    NorthernReaches_ClearIceWall();
   if (Event_GetFlag(0x90e))
-    Func_02000064();
+    NorthernReaches_ClearIceWall();
   return 0;
 }
 
 void BattleEffect_StepVector3(struct Particle6a7 *particle, s32 a, s32 b);
 
-void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
+/// The Magma Ball's flight and the wall's ice shards
+/// (ResourceId_FieldEffectIceShard); `callback` draws the wall gone.
+void NorthernReaches_ShatterIceWall(s32 unused, s32 *position, void (*callback)(void)) {
   struct Work6a7 *work;
   struct Particle6a7 *particle;
   struct Sprite6a7 *sprite;
@@ -386,18 +398,18 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
           (volatile u32 *)0x40000d4);
   for (frame = 0; frame <= 149; frame++) {
     if ((frame & 31) == 0) {
-      Sound_Play(145);
+      Event_PlaySound(145);
     }
     if (frame == 60) {
       BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
       BattleEffect_StartBufferInterpolation(90);
-      Sound_Play(141);
+      Event_PlaySound(141);
     }
     if (frame == 105) {
       callback();
       flying = 1;
       MapGrid_SetShake(0x60000, 0x60000, 0x10000);
-      Sound_Play(228);
+      Event_PlaySound(228);
     }
     if (frame == 130) {
       flying = 1;
@@ -407,7 +419,7 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
       flySprite = work->sprites;
       for (i = 53; i >= 0; i--) {
         if (particle->age < 60) {
-          Func_02000b48(flySprite, particle);
+          EffectSprite_DrawAtWorldPosition(flySprite, particle);
           BattleEffect_StepVector3(particle, 63, -0x3000);
           particle->age++;
         }
@@ -473,8 +485,8 @@ struct ActorPlacement gActorPlacements[] = {
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_STEP, 20, 0x190a, EVENT(Func_02000108)},
-    {TRIGGER_STEP, 21, 0x190a, EVENT(Func_020001d8)},
-    {TRIGGER_STEP, 22, 0x90a, EVENT(Func_020000a8)},
+    {TRIGGER_STEP, 20, 0x190a, EVENT(NorthernReaches_DiscussIceWall)},
+    {TRIGGER_STEP, 21, 0x190a, EVENT(NorthernReaches_FireMagmaBall)},
+    {TRIGGER_STEP, 22, 0x90a, EVENT(NorthernReaches_SightIceWall)},
     {TRIGGERS_END},
 };

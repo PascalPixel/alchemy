@@ -11,7 +11,7 @@ struct Vector3;
 
 void Func_020024e4(void);
 
-s32 Func_02002708(void);
+s32 MarsLighthouseRoomM_SlideOnIce(void);
 void Func_02002e6c(struct Actor *self);
 
 void Func_02001608(void);
@@ -45,13 +45,13 @@ void Func_020002fc(void);
 
 void Func_02000abc(void);
 
-void Func_020010e4(void);
-void Func_02001154(void);
-void Func_020011c4(void);
+void MarsLighthouseRoomM_ReadEarthInscription(void);
+void MarsLighthouseRoomM_ReadWaterInscription(void);
+void MarsLighthouseRoomM_ReadFireInscription(void);
 
-void Func_02001234(void);
+void MarsLighthouseRoomM_ReadWindInscription(void);
 
-void Func_020013a0(void);
+void MarsLighthouseRoomM_HearDragonStatue(void);
 
 extern s32 gData_020032c8[];
 

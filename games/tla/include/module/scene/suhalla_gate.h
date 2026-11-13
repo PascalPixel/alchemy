@@ -7,14 +7,14 @@
 #include "types.h"
 #include "scene_tables.h"
 
-extern struct SceneEntrance gData_02000cd8[];
-extern struct SceneEntrance gData_02000d98[];
-extern struct SceneEntrance gData_02000e40[];
-extern struct ActorPlacement gData_02000f10[];
-extern struct ActorPlacement gData_02000f58[];
-extern struct ActorPlacement gData_02001048[];
-extern struct Trigger gData_02001078[];
-extern struct Trigger gData_020010e4[];
-extern struct Trigger gData_02001180[];
+extern struct SceneEntrance gSuhallaGate_Entrances[];
+extern struct SceneEntrance gSuhallaGate_Room2Entrances[];
+extern struct SceneEntrance gSuhallaGate_Room3Entrances[];
+extern struct ActorPlacement gSuhallaGate_Placements[];
+extern struct ActorPlacement gSuhallaGate_Room2Placements[];
+extern struct ActorPlacement gSuhallaGate_Room1Placements[];
+extern struct Trigger gSuhallaGate_Triggers[];
+extern struct Trigger gSuhallaGate_Room2Triggers[];
+extern struct Trigger gSuhallaGate_Room3Triggers[];
 
 #endif

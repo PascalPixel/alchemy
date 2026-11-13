@@ -15,10 +15,6 @@
 void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-static __inline__ void Func_02004c50_(s32 a, s32 b, s32 c) {
-  Map_SetScreenShake(a, b, c);
-}
-
 void Func_020042f8(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct EffectOptions options;
@@ -63,8 +59,8 @@ next:
   Event_PlaySound(188);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
-  Func_02004c50_(0x50000, 0x50000, 0x10000);
-  Func_02004c50_(-1, -1, 0xe666);
+  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
+  MapGrid_SetShake(-1, -1, 0xe666);
   MapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
@@ -124,19 +120,13 @@ DEFINE_PALETTE_CYCLE_FADE(Func_020047b8, gData_02006884, gData_0200e888,
     Data_02006894, gData_02006898, Data_02006880, gData_0200689c,
     gData_0200e88c, gData_0200687c, gData_02006890)
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Func_02004d58_(s32 a, s32 b) {
-  BattleEffect_ApplyColorToTargetBuffer(a, b);
-}
-
 void Func_020048e8(void) {
   struct MarsLighthouseEntranceEventWork *work = Ram_HeapSlots->eventWork;
   s32 saved;
 
   saved = work->value1ac;
   PaletteFade_ApplyTarget(0x202108, 1);
-  Func_02004d58_(0x10000, 2);
+  PaletteFade_ApplyTarget(0x10000, 2);
   ((struct MarsLighthouseEntranceEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -607,18 +597,18 @@ u32 gData_02005ae8[] = {
     39, 7, 17,
 };
 
-struct ActorPlacement gData_02005af4[] = {
+struct ActorPlacement gMarsLighthouseEntrance_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02005b0c[] = {
+struct ActorPlacement gMarsLighthouseEntrance_Room1Placements[] = {
     {413, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(280), FACING_EAST, 2, 0},
     {413, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(280), FACING_WEST, 2, 0},
     {SCENE_TABLE_END},
 };
 // clang-format on
 
-struct ActorPlacement gData_02005b54[] = {
+struct ActorPlacement gMarsLighthouseEntrance_Room2Placements[] = {
     {406, CONDITION_ALWAYS, (s32)gData_02005ae8, 0, 0, 0, FACING_SOUTH, 2, 0},
     {406, CONDITION_ALWAYS, (s32)gData_02005ae8, PIXELS(136), 0, PIXELS(424),
      FACING_SOUTH, 2, 0},
@@ -633,12 +623,12 @@ struct ActorPlacement gData_02005b54[] = {
 
 void Func_02000044(void);
 void Func_02000050(void);
-void Func_0200051c(void);
+void MarsLighthouseEntrance_GrindIce(void);
 void Func_02000648(void);
-void Func_02000678(void);
+void MarsLighthouseEntrance_BurstIceSheet(void);
 void Func_02000718(void);
 void Func_0200085c(void);
-void Func_020008f4(void);
+void MarsLighthouseEntrance_PushStatueIntoFlames(void);
 void Func_0200096c(void);
 void Func_02000b84(void);
 void Func_02000ce4(void);
@@ -647,7 +637,7 @@ void Func_0200112c(void);
 void Func_02001138(void);
 
 // clang-format off
-struct ActorPlacement gData_02005bcc[] = {
+struct ActorPlacement gMarsLighthouseEntrance_Room3Placements[] = {
     {413, CONDITION_ALWAYS, 1, PIXELS(56), 0, PIXELS(120), FACING_SOUTH, 2, 0},
     {414, CONDITION_ALWAYS, (s32)gData_02004de8, PIXELS(104), 0, PIXELS(112), FACING_SOUTH, 2, 0},
     {414, CONDITION_ALWAYS, (s32)gData_02004e50, PIXELS(280), 0, PIXELS(112), FACING_SOUTH, 2, 0},
@@ -668,7 +658,7 @@ struct ActorPlacement gData_02005bcc[] = {
 // clang-format on
 
 // clang-format off
-struct ActorPlacement gData_02005d4c[] = {
+struct ActorPlacement gMarsLighthouseEntrance_Room4Placements[] = {
     {414, CONDITION_ALWAYS, (s32)gData_02004eb8, PIXELS(840), 0, PIXELS(528), FACING_SOUTH, 2, 0},
     {419, CONDITION_ALWAYS, (s32)gData_0200591c, PIXELS(872), 0, PIXELS(568), FACING_SOUTH, 2, 0},
     {413, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(792), FACING_EAST, 2, 0},
@@ -688,7 +678,7 @@ struct ActorPlacement gData_02005d4c[] = {
 // clang-format on
 
 // clang-format off
-struct ActorPlacement gData_02005eb4[] = {
+struct ActorPlacement gMarsLighthouseEntrance_Room5Placements[] = {
     {418, CONDITION_ALWAYS, (s32)gData_0200591c, PIXELS(72), 0, PIXELS(632), FACING_SOUTH, 2, 0},
     {419, CONDITION_ALWAYS, (s32)gData_0200591c, PIXELS(72), 0, PIXELS(680), FACING_SOUTH, 2, 0},
     {418, CONDITION_ALWAYS, (s32)gData_0200591c, PIXELS(904), 0, PIXELS(120), FACING_SOUTH, 2, 0},
@@ -701,7 +691,7 @@ struct ActorPlacement gData_02005eb4[] = {
 // clang-format on
 
 // clang-format off
-struct ActorPlacement gData_02005f74[] = {
+struct ActorPlacement gMarsLighthouseEntrance_Room6Placements[] = {
     {413, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(696), FACING_SOUTH, 2, 0},
     {414, CONDITION_ALWAYS, (s32)gData_02004f44, PIXELS(120), 0, PIXELS(688), FACING_SOUTH, 2, 0},
     {419, CONDITION_ALWAYS, (s32)gData_0200591c, PIXELS(88), 0, PIXELS(728), FACING_SOUTH, 2, 0},
@@ -720,24 +710,24 @@ struct ActorPlacement gData_02005f74[] = {
 // clang-format on
 
 // clang-format off
-struct ActorPlacement gData_020060c4[] = {
+struct ActorPlacement gMarsLighthouseEntrance_Room7Placements[] = {
     {413, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(152), FACING_EAST, 2, 0},
     {413, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(152), FACING_WEST, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_0200610c[] = {
+struct Trigger gMarsLighthouseEntrance_Triggers[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02006118[] = {
+struct Trigger gMarsLighthouseEntrance_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGERS_END},
 };
 // clang-format on
 
-struct Trigger gData_0200613c[] = {
+struct Trigger gMarsLighthouseEntrance_Room2Triggers[] = {
     {0x31, 1, CONDITION_ALWAYS, 1},
     {0x21, 2, CONDITION_ALWAYS, 2},
     {0x51, 3, CONDITION_ALWAYS, 3},
@@ -756,14 +746,14 @@ struct Trigger gData_0200613c[] = {
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {0x8400, 11, CONDITION_ALWAYS, EVENT(Func_02000044)},
     {0xc400, 11, CONDITION_ALWAYS, EVENT(Func_02000044)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8, 0x200, EVENT(Func_0200040c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 9, 0x201, EVENT(Func_0200040c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 10, 0xa3e, EVENT(Func_0200051c)},
-    {TRIGGER_TALK, 10, 0xa3e, EVENT(Func_02000564)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8, 0x200, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 9, 0x201, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 10, 0xa3e, EVENT(MarsLighthouseEntrance_GrindIce)},
+    {TRIGGER_TALK, 10, 0xa3e, EVENT(MarsLighthouseEntrance_CheckIce)},
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02006250[] = {
+struct Trigger gMarsLighthouseEntrance_Room3Triggers[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0x51, 3, CONDITION_ALWAYS, 3},
@@ -781,13 +771,13 @@ struct Trigger gData_02006250[] = {
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {0x31, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_STEP, 88, CONDITION_ALWAYS, EVENT(Func_0200263c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 16, 0x202, EVENT(Func_0200040c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 17, 0x203, EVENT(Func_0200040c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 16, 0x202, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 17, 0x203, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
     {0x9c05, 17, CONDITION_ALWAYS, EVENT(Func_02000648)},
-    {0x9c05, 18, CONDITION_ALWAYS, EVENT(Func_02000590)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0xa4f, EVENT(Func_020008f4)},
-    {9, 0, CONDITION_ALWAYS, EVENT(Func_020008f4)},
-    {0x50009705, 80, 0x1230, EVENT(Func_02000678)},
+    {0x9c05, 18, CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_Teleport)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0xa4f, EVENT(MarsLighthouseEntrance_PushStatueIntoFlames)},
+    {9, 0, CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_PushStatueIntoFlames)},
+    {0x50009705, 80, 0x1230, EVENT(MarsLighthouseEntrance_BurstIceSheet)},
     {0x50009705, 81, 0x1231, EVENT(Func_0200085c)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 15, CONDITION_ALWAYS, 0},
     {0x60009a15, 13, CONDITION_ALWAYS, EVENT(Func_02000710)},
@@ -796,7 +786,7 @@ struct Trigger gData_02006250[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020063b8[] = {
+struct Trigger gMarsLighthouseEntrance_Room4Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -813,20 +803,20 @@ struct Trigger gData_020063b8[] = {
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {0x21, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Func_020032b8)},
-    {TRIGGER_STEP, 90, CONDITION_ALWAYS, EVENT(Func_02002860)},
+    {TRIGGER_STEP, 90, CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_SlideOnIce)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_02000050)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_ACTS), 10, CONDITION_ALWAYS, EVENT(Func_0200096c)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, 0},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 12, 0x204, EVENT(Func_0200040c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 13, 0x205, EVENT(Func_0200040c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 14, 0x206, EVENT(Func_0200040c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 15, 0x207, EVENT(Func_0200040c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 16, 0x208, EVENT(Func_0200040c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 12, 0x204, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 13, 0x205, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 14, 0x206, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 15, 0x207, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 16, 0x208, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
     {0x9c05, 14, CONDITION_ALWAYS, EVENT(Func_0200093c)},
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020064fc[] = {
+struct Trigger gMarsLighthouseEntrance_Room5Triggers[] = {
     {0x51, 1, CONDITION_ALWAYS, 1},
     {0x51, 2, CONDITION_ALWAYS, 2},
     {0x51, 3, CONDITION_ALWAYS, 3},
@@ -854,7 +844,7 @@ struct Trigger gData_020064fc[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02006628[] = {
+struct Trigger gMarsLighthouseEntrance_Room6Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0x51, 3, CONDITION_ALWAYS, 3},
@@ -871,21 +861,21 @@ struct Trigger gData_02006628[] = {
     {TRIGGER_STEP, 16, CONDITION_ALWAYS, EVENT(Func_02000e3c)},
     {TRIGGER_STEP, 35, 0x234, EVENT(Func_02000fa4)},
     {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Func_02000fd4)},
-    {TRIGGER_STEP, 90, CONDITION_ALWAYS, EVENT(Func_02002860)},
+    {TRIGGER_STEP, 90, CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_SlideOnIce)},
     {TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(Func_020029a0)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 13, 0x210, EVENT(Func_0200040c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 14, 0x211, EVENT(Func_0200040c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 15, 0x212, EVENT(Func_0200040c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 16, 0x213, EVENT(Func_0200040c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 17, 0x214, EVENT(Func_0200040c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 18, 0x215, EVENT(Func_0200040c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 13, 0x210, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 14, 0x211, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 15, 0x212, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 16, 0x213, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 17, 0x214, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 18, 0x215, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
     {0x9c05, 12, CONDITION_ALWAYS, EVENT(Func_02000c84)},
     {0x9c05, 13, CONDITION_ALWAYS, EVENT(Func_02000cb4)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0xa4e, EVENT(Func_02000ce4)},
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02006778[] = {
+struct Trigger gMarsLighthouseEntrance_Room7Triggers[] = {
     {0x51, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0x51, 3, CONDITION_ALWAYS, 3},

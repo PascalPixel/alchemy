@@ -43,7 +43,7 @@ void Func_020046e8(s32 spread) {
           285, (i << 17) + leader->x - 0x80000, y - 0x20000, leader->z);
     }
     if (effect != 0) {
-      frame = Func_02004e98(effect->sprite, frame);
+      frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
       Actor_SetSingleChildFlags(effect, 0);
@@ -82,7 +82,7 @@ void Func_0200481c(void) {
     effect = (struct FieldEffect *)FieldActor_Create(285, leader->x, leader->y,
                                                      leader->z);
     if (effect != 0) {
-      frame = Func_02004e98(effect->sprite, frame);
+      frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
       Actor_SetSingleChildFlags(effect, 0);
@@ -109,10 +109,10 @@ void Func_0200481c(void) {
 #include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
 #include "map.h"
 
-s32 Func_02004d20(s32 layer, s32 x, s32 z);
+s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 s32 Func_02004ef0(s32 layer, s32 shape, s32 height);
 
-DEFINE_ACTOR_SET_CELL_SHAPE(Func_02004934, Func_02004d20, Func_02004ef0)
+DEFINE_ACTOR_SET_CELL_SHAPE(Func_02004934, MapGrid_GetTerrainKind, Func_02004ef0)
 
 #include "../magma_rock_inside.h"
 
@@ -124,7 +124,7 @@ void Func_020049c0(s32 a, s32 b) {
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-DEFINE_PARTICLES_UPDATE_FALLING(Func_020049d8, Func_02004f18)
+DEFINE_PARTICLES_UPDATE_FALLING(Func_020049d8, EffectSprite_DrawAtWorldPosition)
 
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
 /// ring that next walks round.
@@ -143,12 +143,6 @@ DEFINE_ROCKS_SPAWN(Func_02004a5c)
 
 // ---- games/tla/src/scene/magma_rock_inside/s4b18.c ----
 #include "system/task.h"
-
-static __inline__ void StartTask(void (*func)(void), s32 priority) {
-  /* FAKEMATCH(wrapper): Task_Add forwarded inline; as a direct call, 6 of 83
-   * instructions differ in tla-en. */
-  Task_Add(func, priority);
-}
 
 void Func_02004b18(void) {
   struct RockWork *work = HeapSlot_AllocFar(220, sizeof(struct RockWork));
@@ -178,7 +172,7 @@ void Func_02004b18(void) {
 
     work->next = zero;
   }
-  StartTask(Func_020049d8, 0x480);
+  FieldTask_AddFrame(Func_020049d8, 0x480);
 }
 
 void Func_02004bd4(void) {
@@ -418,12 +412,12 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_02005840[] = {
+struct ActorPlacement gMagmaRockInside_Placements[] = {
     {319, CONDITION_ALWAYS, 7, 1, 0, 0, FACING_NORTH, 2, 2},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02005870[] = {
+struct ActorPlacement gMagmaRockInside_Room2Placements[] = {
     {377, CONDITION_ALWAYS, 7, 1, 0, 0, FACING_WEST, 2, 2},
     {334, CONDITION_ALWAYS, 7, 2, 0, 0, FACING_NORTH, 2, 2},
     {334, CONDITION_ALWAYS, 7, 3, 0, 0, FACING_NORTH, 2, 3},
@@ -437,7 +431,7 @@ struct ActorPlacement gData_02005870[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02005978[] = {
+struct ActorPlacement gMagmaRockInside_Room3Placements[] = {
     {377, CONDITION_ALWAYS, 7, 1, 0, 0, FACING_WEST, 2, 2},
     {489, CONDITION_ALWAYS, 7, 2, 0, 0, FACING_NORTH, 2, 2},
     {319, CONDITION_ALWAYS, 7, 3, 0, 0, FACING_NORTH, 2, 2},
@@ -449,7 +443,7 @@ struct ActorPlacement gData_02005978[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02005a50[] = {
+struct ActorPlacement gMagmaRockInside_Room4Placements[] = {
     {377, CONDITION_ALWAYS, 7, 1, 0, 0, FACING_EAST, 2, 2},
     {404, 0x350, 1, 2, 0, 0, FACING_NORTH, 2, 2},
     {319, CONDITION_ALWAYS, 7, 3, 0, 0, FACING_NORTH, 2, 2},
@@ -472,7 +466,7 @@ struct ActorPlacement gData_02005a50[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02005c30[] = {
+struct ActorPlacement gMagmaRockInside_Room5Placements[] = {
     {489, CONDITION_ALWAYS, 7, 1, 0, 0, FACING_NORTH, 2, 2},
     {489, CONDITION_ALWAYS, 7, 2, 0, 0, FACING_NORTH, 2, 2},
     {373, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(392), FACING_SOUTH, 2, 0},
@@ -480,7 +474,7 @@ struct ActorPlacement gData_02005c30[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02005ca8[] = {
+struct ActorPlacement gMagmaRockInside_Room6Placements[] = {
     {319, CONDITION_ALWAYS, 7, 1, 0, 0, FACING_NORTH, 2, 2},
     {312, CONDITION_ALWAYS, 7, 2, 0, 0, FACING_NORTH, 2, 2},
     {319, CONDITION_ALWAYS, 7, 3, 0, 0, FACING_NORTH, 2, 2},
@@ -489,7 +483,7 @@ struct ActorPlacement gData_02005ca8[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02005d38[] = {
+struct ActorPlacement gMagmaRockInside_Room7Placements[] = {
     {312, CONDITION_ALWAYS, 7, 1, 0, 0, FACING_NORTH, 2, 2},
     {312, CONDITION_ALWAYS, 7, 2, 0, 0, FACING_NORTH, 2, 3},
     {312, CONDITION_ALWAYS, 7, 3, 0, 0, FACING_NORTH, 2, 3},
@@ -509,7 +503,7 @@ struct ActorPlacement gData_02005d38[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02005ed0[] = {
+struct ActorPlacement gMagmaRockInside_Room8Placements[] = {
     {323, CONDITION_ALWAYS, 7, 1, 0, 0, FACING_SOUTH, 2, 2},
     {312, CONDITION_ALWAYS, 7, 2, 0, 0, FACING_NORTH, 2, 2},
     {365, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_NORTH, 2, 2},
@@ -519,7 +513,7 @@ struct ActorPlacement gData_02005ed0[] = {
 };
 // clang-format on
 
-struct Trigger gData_02005f60[] = {
+struct Trigger gMagmaRockInside_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -533,7 +527,7 @@ struct Trigger gData_02005f60[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02005fe4[] = {
+struct Trigger gMagmaRockInside_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -554,7 +548,7 @@ struct Trigger gData_02005fe4[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020060bc[] = {
+struct Trigger gMagmaRockInside_Room3Triggers[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -579,7 +573,7 @@ struct Trigger gData_020060bc[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020061c4[] = {
+struct Trigger gMagmaRockInside_Room4Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -622,7 +616,7 @@ struct Trigger gData_020061c4[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020063a4[] = {
+struct Trigger gMagmaRockInside_Room5Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -640,7 +634,7 @@ struct Trigger gData_020063a4[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02006458[] = {
+struct Trigger gMagmaRockInside_Room6Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -670,7 +664,7 @@ struct Trigger gData_02006458[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_0200659c[] = {
+struct Trigger gMagmaRockInside_Room7Triggers[] = {
     {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_020023e8)},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -683,7 +677,7 @@ struct Trigger gData_0200659c[] = {
     {0x21, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_STEP, 30, 0x9f8, EVENT(Func_02001d64)},
-    {TRIGGER_EXAMINE, 31, 0x9f9, EVENT(Func_02002364)},
+    {TRIGGER_EXAMINE, 31, 0x9f9, EVENT(MagmaRockInside_ExamineEmberStone)},
     {8, 0, CONDITION_ALWAYS, EVENT(Func_0200099c)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02000a30)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 23, 0x9f7, EVENT(Func_0200099c)},
@@ -706,7 +700,7 @@ struct Trigger gData_0200659c[] = {
 
 s32 gData_02006710 = -1;
 
-struct Trigger gData_02006714[] = {
+struct Trigger gMagmaRockInside_Room8Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(Func_0200257c)},
     {TRIGGER_STEP, 81, CONDITION_ALWAYS, EVENT(Func_02002610)},

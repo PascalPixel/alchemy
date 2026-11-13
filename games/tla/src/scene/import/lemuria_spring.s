@@ -94,9 +94,9 @@ PartyInventory_Remove:
 	.thumb_func
 Party_AdjustCoins:
 	overlay_veneer Party_AdjustCoinsFar
-	.global Func_02001358
+	.global Party_RestoreHpPp
 	.thumb_func
-Func_02001358:
+Party_RestoreHpPp:
 	overlay_veneer Func_080ad208
 	.global PartyInventory_CountItem
 	.thumb_func
@@ -106,9 +106,9 @@ PartyInventory_CountItem:
 	.thumb_func
 PartyInventory_CountFreeSlots:
 	overlay_veneer PartyInventory_CountFreeSlotsFar
-	.global Func_02001370
+	.global Class_GetSeries
 	.thumb_func
-Func_02001370:
+Class_GetSeries:
 	overlay_veneer Func_080ad2f8
 	.global Event_Wait
 	.thumb_func
@@ -170,9 +170,9 @@ Actor_ArmCallback:
 	.thumb_func
 Event_StartScreenTransition:
 	overlay_veneer Event_StartScreenTransitionFar
-	.global Func_020013f0
+	.global BattleEffect_StartEffectObject22
 	.thumb_func
-Func_020013f0:
+BattleEffect_StartEffectObject22:
 	overlay_veneer Func_080c83e0
 	.global Event_ResolvePendingActions
 	.thumb_func

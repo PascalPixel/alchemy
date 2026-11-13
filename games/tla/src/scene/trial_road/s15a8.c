@@ -25,7 +25,7 @@ void Func_020015b8(void) { Func_02005a50_(68, 6, 1, 21, 13, 64, 64); }
 
 void Func_020015d8(void) {
   Func_02005a50_(68, 6, 1, 21, 13, 64, 64);
-  if (!GameFlag_Test(0x9b9)) {
+  if (!Event_GetFlag(0x9b9)) {
     Func_02005a60(249, 72, 152);
     ((struct MainRoutineWork254 *)&gMainRoutineWork)->value = 0x19b9;
     gMainRoutineWork.battleRule24b = 2;
@@ -51,31 +51,31 @@ DEFINE_FUNC_0200163C(Func_0200163c, 33, 35)
 DEFINE_FUNC_0200163C(Func_020016c8, 34, 36)
 
 void Func_02001754(s32 sound) {
-  if (GameFlag_Test(0x9ff)) {
+  if (Event_GetFlag(0x9ff)) {
     if (gTrialRoadState->mirrored == 0) {
       MapGrid_CopyCellsLayered(26, 79, 1, 2, 13, 79);
       MapGrid_CopyCellAttributes(78, 18, 1, 1, 77, 18);
     } else {
-      Func_0802b450(26, 79, 1, 2, 18, 79);
-      Map_CopyCellAttributeRect(81, 18, 1, 1, 82, 18);
+      MapGrid_CopyCellsLayered(26, 79, 1, 2, 18, 79);
+      MapGrid_CopyCellAttributes(81, 18, 1, 1, 82, 18);
     }
     if (sound)
-      Sound_Play(138);
+      Event_PlaySound(138);
   }
-  GameFlag_SetBit(0x283);
+  Event_SetFlag(0x283);
 }
 
 void Func_020017e0(void) {
   struct MainRoutineWork *party;
-  s32 count = GameFlag_Test(0x381);
+  s32 count = Event_GetFlag(0x381);
 
-  count += GameFlag_Test(0x382);
-  count += GameFlag_Test(0x383);
-  count += GameFlag_Test(0x384);
-  if (GameFlag_Test(0x385))
-    Func_02002dec();
+  count += Event_GetFlag(0x382);
+  count += Event_GetFlag(0x383);
+  count += Event_GetFlag(0x384);
+  if (Event_GetFlag(0x385))
+    TrialRoad_ReachPeakFirst();
   else
-    Func_0200322c();
+    TrialRoad_ReachPeakSecond();
   party = &gMainRoutineWork;
   party->battleRule24b = 2;
   do {
@@ -91,7 +91,7 @@ void Func_0200185c(s32 a, s32 id) {
   struct Actor *object = Actor_GetById(id);
 
   if (object->x >> 20 == 8) {
-    GameFlag_SetBit(0x9fc);
+    Event_SetFlag(0x9fc);
     object->motionFlags = 0;
     object->y -= 0x10000;
   }
@@ -101,31 +101,31 @@ void Func_0200185c(s32 a, s32 id) {
 #include "dma.h"
 #include "io_reg.h"
 
-extern const u8 gData_02007044[];
-extern const u8 gData_02007cf8[];
-extern const u8 gData_02007d40[];
-extern const u8 gData_02007d94[];
-extern const u8 *const gData_02007e00[];
+extern const u8 gTrialRoad_Triggers[];
+extern const u8 gTrialRoad_Room3Triggers[];
+extern const u8 gTrialRoad_Room4Triggers[];
+extern const u8 gTrialRoad_Room2Triggers[];
+extern const u8 *const gTrialRoad_Room1Triggers[];
 
 const u8 *Scene_GetEvents(void) {
   s32 pattern = gTrialRoadState->pattern;
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room1)
-    return gData_02007e00[pattern & 7];
+    return gTrialRoad_Room1Triggers[pattern & 7];
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room3)
-    return gData_02007cf8;
+    return gTrialRoad_Room3Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room4)
-    return gData_02007d40;
+    return gTrialRoad_Room4Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room2)
-    return gData_02007d94;
-  return gData_02007044;
+    return gTrialRoad_Room2Triggers;
+  return gTrialRoad_Triggers;
 }
 
 void Func_02001904(void) {
-  if (!GameFlag_Test(0x307))
+  if (!Event_GetFlag(0x307))
     OBJECT_BYTE(Actor_GetById(17), 98) = 1;
   else
-    Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
+    Actor_SetPosition(20, 0, 0);
   Func_020006b4(15);
   Func_020006b4(16);
   Func_020006b4(17);
@@ -155,33 +155,33 @@ void Func_02001974(void) {
   OBJECT_BYTE(Actor_GetById(18), 98) = 1;
   OBJECT_BYTE(Actor_GetById(19), 98) = 1;
   OBJECT_BYTE(Actor_GetById(20), 98) = 1;
-  if (!GameFlag_Test(0x214))
-    Actor_SetModeById(17, 5);
+  if (!Event_GetFlag(0x214))
+    Actor_SetAnimation(17, 5);
   else
     Func_0200070c(17, -16);
-  if (!GameFlag_Test(0x215))
-    Actor_SetModeById(18, 5);
+  if (!Event_GetFlag(0x215))
+    Actor_SetAnimation(18, 5);
   else
     Func_0200070c(18, -16);
-  if (!GameFlag_Test(0x216))
-    Actor_SetModeById(19, 5);
+  if (!Event_GetFlag(0x216))
+    Actor_SetAnimation(19, 5);
   else
     Func_0200070c(19, -16);
-  if (!GameFlag_Test(0x217))
-    Actor_SetModeById(20, 5);
+  if (!Event_GetFlag(0x217))
+    Actor_SetAnimation(20, 5);
   else
     Func_0200070c(20, -16);
 }
 
 void Func_02001a70(void) {
-  if (!GameFlag_Test(0x327))
+  if (!Event_GetFlag(0x327))
     OBJECT_BYTE(Actor_GetById(15), 98) = 1;
   else
-    Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
-  if (!GameFlag_Test(0x328))
+    Actor_SetPosition(20, 0, 0);
+  if (!Event_GetFlag(0x328))
     OBJECT_BYTE(Actor_GetById(16), 98) = 1;
   else
-    Actor_SetHorizontalPositionWithTerrain(21, 0, 0);
+    Actor_SetPosition(21, 0, 0);
   Func_020006b4(15);
   Func_020006b4(16);
   Func_020006b4(17);
@@ -199,10 +199,10 @@ void Func_02001afc(void) {
   OBJECT_BYTE(Actor_GetById(19), 98) = 1;
   OBJECT_BYTE(Actor_GetById(20), 98) = 1;
   OBJECT_BYTE(Actor_GetById(21), 98) = 1;
-  if (!GameFlag_Test(0x339))
+  if (!Event_GetFlag(0x339))
     OBJECT_BYTE(Actor_GetById(16), 98) = 1;
   else
-    Actor_SetHorizontalPositionWithTerrain(22, 0, 0);
+    Actor_SetPosition(22, 0, 0);
   Func_020006b4(15);
   Func_020006b4(16);
   Func_020006b4(17);
@@ -213,14 +213,14 @@ void Func_02001afc(void) {
   Func_0200062c(15);
   Func_0200062c(16);
   Func_0200062c(17);
-  if (!GameFlag_Test(0x335)) {
+  if (!Event_GetFlag(0x335)) {
     Func_0200095c(18);
     Func_02000924(19);
   } else {
     Func_0200095c(19);
     Func_02000924(18);
   }
-  if (!GameFlag_Test(0x337)) {
+  if (!Event_GetFlag(0x337)) {
     Func_0200095c(20);
     Func_02000924(21);
   } else {
@@ -235,8 +235,8 @@ void Func_02001bdc(void) { Func_020042f0(gData_02007734); }
 /// their collision flags; then runs Func_02000d70, and Func_020006b4 and
 /// Func_0200062c for object 15.
 void Func_02001bec(void) {
-  Map_CopyCellAttributeRect(11, 22, 11, 8, 11, 64);
-  Map_CopyCellAttributeRect(79, 22, 11, 8, 79, 64);
+  MapGrid_CopyCellAttributes(11, 22, 11, 8, 11, 64);
+  MapGrid_CopyCellAttributes(79, 22, 11, 8, 79, 64);
   OBJECT_BYTE(Actor_GetById(16), 98) = 1;
   OBJECT_BYTE(Actor_GetById(17), 98) = 1;
   OBJECT_BYTE(Actor_GetById(18), 98) = 1;
@@ -286,16 +286,16 @@ void Func_02001c6c(void) {
   mover->unk06 = 240;
   mover->unk08 = 120;
   mover->unk0a = 150;
-  if (!GameFlag_Test(0x363))
-    Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
+  if (!Event_GetFlag(0x363))
+    Actor_SetPosition(16, 0, 0);
   else
     Func_0200078c(16);
-  if (!GameFlag_Test(0x364))
-    Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
+  if (!Event_GetFlag(0x364))
+    Actor_SetPosition(17, 0, 0);
   else
     Func_0200078c(17);
-  if (!GameFlag_Test(0x365))
-    Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
+  if (!Event_GetFlag(0x365))
+    Actor_SetPosition(18, 0, 0);
   else
     Func_0200078c(18);
   ((struct MapWorkByte23 *)Ram_HeapSlots->mapWork)->bits2 = 1;
@@ -306,10 +306,10 @@ void Func_02001c6c(void) {
 void Func_02001d8c(void) {
   Func_02005a08();
   Func_02005a10(0, 15, 16);
-  if (!GameFlag_Test(0x374))
+  if (!Event_GetFlag(0x374))
     MapGrid_CopyCellAttributes(18, 21, 1, 1, 19, 21);
   else
-    Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
+    Actor_SetPosition(17, 0, 0);
 }
 
 void Func_02001dd0(void) {}
@@ -323,7 +323,7 @@ void Func_02001dd4(void) {
   s32 far;
   s32 y;
 
-  if (GameFlag_Test(648))
+  if (Event_GetFlag(648))
     return;
   dx = (leader->x - partner->x) >> 16;
   dz = (leader->z - partner->z) >> 16;
@@ -336,18 +336,18 @@ void Func_02001dd4(void) {
                         (248 - dz) << 16);
   if (far > 15)
     return;
-  Sound_Play(146);
-  Sound_Play(122);
+  Event_PlaySound(146);
+  Event_PlaySound(122);
   partner->speedLimit = 0x20000;
   partner->acceleration = 0x20000;
   partner->motionFlags = 2;
   partner->terrainHeight = 0;
   partner->collisionFlags = 1;
   partner->velocityY = 0xa0000;
-  Actor_SetMovementTypeById(8, gData_02005b44);
+  Actor_SetScript(8, gData_02005b44);
   y = partner->y;
   Actor_SetMoveTarget(partner, 344 << 16, y, 264 << 16);
-  GameFlag_SetBit(648);
+  Event_SetFlag(648);
 }
 
 extern s32 gData_02007e24;
@@ -356,9 +356,9 @@ extern s32 gData_02007e24;
 /// 0x88000 with motion 5, after it grounds it with motion 3; then schedules
 /// Func_02001dd4.
 void Func_02001eb0(void) {
-  if (!GameFlag_Test(123)) {
+  if (!Event_GetFlag(123)) {
     struct Actor *object = Actor_GetById(8);
-    s32 started = GameFlag_Test(0x288);
+    s32 started = Event_GetFlag(0x288);
     u8 *flags = &object->motionFlags;
 
     if (!started) {
@@ -418,7 +418,9 @@ void Func_02001fc4(s32 mode) {
 
 void Func_02002db0(void);
 
-void Func_0200200c(void) {
+/// The mountain's peak: after the battle, the victory or the defeat; on
+/// arrival, Moapa and his knights wait.
+void TrialRoad_SetUpPeak(void) {
   s32 t7, t8, t10, t13, t16, p3;
 
   if (FIELD_AT(&gMainRoutineWork, s16, 482) != 4) {
@@ -426,38 +428,38 @@ void Func_0200200c(void) {
     goto L_0200a02e;
   }
   Func_02005868();
-  Func_020034b4();
+  TrialRoad_BeatMoapa();
   Import_EventSetExitRequest(4);
   goto L_0200a07c;
 L_0200a02e:
   if (p3 != 5)
     goto L_0200a042;
   Func_02005868();
-  Func_020037c8();
+  TrialRoad_LoseToMoapa();
   Import_EventSetExitRequest(5);
   goto L_0200a07c;
 L_0200a042:
-  t7 = GameFlag_Test(0x9ff);
+  t7 = Event_GetFlag(0x9ff);
   if (t7 == 0)
     goto L_0200a07c;
-  t8 = GameFlag_Test(0x283);
+  t8 = Event_GetFlag(0x283);
   if (t8 == 0)
     goto L_0200a064;
   Func_02001754(0);
 L_0200a064:
-  t10 = GameFlag_Test(0x385);
+  t10 = Event_GetFlag(0x385);
   if (t10 == 0)
     goto L_0200a078;
   Func_02002db0();
   goto L_0200a07c;
 L_0200a078:
-  Func_02002db4();
+  TrialRoad_PlaceMoapaAtPeak();
 L_0200a07c:
   t13 = ((s32)Actor_GetById(gMainRoutineWork.currentOwner));
   FIELD_AT(t13, u8, 35) = (64 | FIELD_AT(t13, u8, 35));
   Func_02001fc4(1);
   Func_020006b4(10);
-  t16 = GameFlag_Test(0x9fc);
+  t16 = Event_GetFlag(0x9fc);
   if (t16 == 0)
     goto L_0200a0bc;
   Actor_SetPosition(10, PIXELS(136), PIXELS(328));
@@ -476,11 +478,11 @@ s32 Scene_Initialize(void) {
     return 0;
   if (scene == (s32)&SceneId_Ov697Room1) {
     if (entrance <= 7) {
-      GameFlag_SetBit(324);
+      Event_SetFlag(324);
       Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
       gData_02005b64__s1fc4[pattern & 7]();
     } else if (entrance == 55) {
-      Func_02003900();
+      TrialRoad_ShowTraps();
     }
   }
   if (scene == (s32)&SceneId_Ov697Room3)
@@ -488,8 +490,8 @@ s32 Scene_Initialize(void) {
   if (scene == (s32)&SceneId_Ov697Room4)
     Func_02001eb0();
   if (scene == (s32)&SceneId_Ov697Room2) {
-    GameFlag_SetBit(324);
-    Func_0200200c();
+    Event_SetFlag(324);
+    TrialRoad_SetUpPeak();
   }
   return 0;
 }
@@ -654,7 +656,7 @@ s32 Scene_PrepareMap(void) {
         value = 0;
         for (n = 0; n <= 13; n++)
           value += unit[n];
-        Func_02002c30(value);
+        TrialRoad_DealStageOrder(value);
         GameFlag_SetBit(896);
       }
       state->mirrored = (entrance - 1) & 1;
@@ -674,7 +676,7 @@ s32 Scene_PrepareMap(void) {
         value = 0;
         for (n = 0; n <= 13; n++)
           value += unit[n];
-        Func_02002c30(value);
+        TrialRoad_DealStageOrder(value);
         GameFlag_SetBit(896);
       }
       {
@@ -706,7 +708,7 @@ s32 Scene_PrepareMap(void) {
       value = 0;
       for (n = 0; n <= 13; n++)
         value += unit[n];
-      Func_02002c30(value);
+      TrialRoad_DealStageOrder(value);
       state->mirrored = 0;
       state->field16[0] = 0;
       state->field16[1] = 0;
@@ -869,7 +871,7 @@ extern const s8 gData_02005be0__s1fc4[4] __asm__("gData_02005be0");
 /// eight slots at the start of the stage state, again until both the even and
 /// the odd slots hold at least one of the four values in gData_02005be0; the
 /// random state is restored after.
-void Func_02002c30(u32 seed) {
+void TrialRoad_DealStageOrder(u32 seed) {
   s16 *order = (s16 *)gTrialRoadState;
   u32 saved = gRandomState;
   s32 counts[2];
@@ -908,48 +910,54 @@ s32 Func_02002ce8(s32 side) {
   return state->field16[side & 1];
 }
 
-s32 Func_02002cfc(void) { return gTrialRoadState->mirrored; }
+s32 TrialRoad_IsMirrored(void) { return gTrialRoadState->mirrored; }
 
-s32 Func_02002d08(s32 x) {
-  if (Func_02002cfc())
+/// A pixel x on the mirrored road, the right path's, when the leader took it.
+s32 TrialRoad_MirrorX(s32 x) {
+  if (TrialRoad_IsMirrored())
     return 512 - x;
   return x;
 }
 
-s32 Func_02002d20(s32 x) {
-  if (Func_02002cfc())
+/// A cell x, in pixels, on the mirrored road when the leader took it.
+s32 TrialRoad_MirrorCellX(s32 x) {
+  if (TrialRoad_IsMirrored())
     return (64 - x) << 3;
   return x << 3;
 }
 
-s32 Func_02002d38(s32 x) {
-  if (Func_02002cfc())
+s32 TrialRoad_MirrorOffset(s32 x) {
+  if (TrialRoad_IsMirrored())
     return -x << 3;
   return x << 3;
 }
 
-s32 Func_02002d50(s32 angle) {
-  if (Func_02002cfc())
+s32 TrialRoad_MirrorAngle(s32 angle) {
+  if (TrialRoad_IsMirrored())
     return (0x8000 - angle) & 0xffff;
   return angle & 0xffff;
 }
 
-void Func_02002d78(s32 id, s32 x, s32 z, s32 angle) {
-  Actor_SetHorizontalPositionAndAngleWithTerrain(
-      id, Func_02002d08(x) << 16, z << 16, (u16)Func_02002d50(angle));
+/// Places an actor at a pixel position and facing, mirrored when the leader
+/// took the right path.
+void TrialRoad_PlaceActor(s32 id, s32 x, s32 z, s32 angle) {
+  Actor_SetPositionAndFacing(
+      id, TrialRoad_MirrorX(x) << 16, z << 16, (u16)TrialRoad_MirrorAngle(angle));
 }
 
 void Func_02002db0(void) {}
 
-void Func_02002db4(void) {
-  Func_02002d78(8, 288, 264, 0x8000);
-  Func_02002d78(13, 296, 248, 0x8000);
-  Func_02002d78(14, 296, 280, 0x8000);
+void TrialRoad_PlaceMoapaAtPeak(void) {
+  TrialRoad_PlaceActor(8, 288, 264, 0x8000);
+  TrialRoad_PlaceActor(13, 296, 248, 0x8000);
+  TrialRoad_PlaceActor(14, 296, 280, 0x8000);
 }
 
 void Actor_MoveToObject(s32 actor, s32 value);
 
-void Func_02002dec(void) {
+/// ★ Named from the game: "You were quite swift! You may prove a challenge
+/// yet!" (MsgTrialRoadSwiftChallenge)
+void TrialRoad_ReachPeakFirst(void) {
   struct Actor *object;
 
   Event_Start();
@@ -963,30 +971,30 @@ void Func_02002dec(void) {
   Actor_SetSpeed(5, 0x10000, 0x8000);
   Actor_SetSpeed(6, 0x10000, 0x8000);
   Actor_SetSpeed(7, 0x10000, 0x8000);
-  Actor_ResetAndSetPositionInMode2(4, Func_02002d20(28), 272);
-  Actor_WalkTo(7, Func_02002d20(28), 256);
-  Actor_ResetAndSetPositionInMode2(5, Func_02002d20(27), 248);
-  Actor_WalkTo(6, Func_02002d20(27), 280);
+  Actor_WalkTo(4, TrialRoad_MirrorCellX(28), 272);
+  Actor_WalkTo(7, TrialRoad_MirrorCellX(28), 256);
+  Actor_WalkTo(5, TrialRoad_MirrorCellX(27), 248);
+  Actor_WalkTo(6, TrialRoad_MirrorCellX(27), 280);
   Actor_WaitForMoveById(4);
-  Actor_ArmCallback(4, Func_02002d50(0), 0);
+  Actor_FaceDirection(4, TrialRoad_MirrorAngle(0), 0);
   Actor_WaitForMoveById(7);
-  Actor_ArmCallback(7, Func_02002d50(0), 0);
+  Actor_FaceDirection(7, TrialRoad_MirrorAngle(0), 0);
   Actor_WaitForMoveById(5);
-  Actor_ArmCallback(5, Func_02002d50(0), 0);
+  Actor_FaceDirection(5, TrialRoad_MirrorAngle(0), 0);
   Actor_WaitForMoveById(6);
-  Actor_ArmCallback(6, Func_02002d50(0), 0);
+  Actor_FaceDirection(6, TrialRoad_MirrorAngle(0), 0);
   Func_02005980();
   wait(20);
-  Sound_Play(138);
+  Event_PlaySound(138);
   wait(20);
-  Func_02002d78(8, 344, 296, 0xc000);
+  TrialRoad_PlaceActor(8, 344, 296, 0xc000);
   object = Actor_GetById(8);
   object->speedLimit = 0x10000;
   object->acceleration = 0x8000;
   object->motionFlags = 0;
   Actor_SetMoveTarget(object, object->x, object->y + 0x580000, object->z);
   Func_020057c8(object, 2);
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   Func_020057c8(object, 1);
   object->motionFlags = 2;
   object->terrainHeight = 0x800000;
@@ -994,104 +1002,46 @@ void Func_02002dec(void) {
   object->speedLimit = 0x30000;
   object->acceleration = 0x20000;
   Actor_SetMoveTarget(object, object->x, object->y, object->z - 0x100000);
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   wait(12);
   object->speedLimit = 0x10000;
   object->acceleration = 0x8000;
-  FieldActor_SetMoveTarget(object, Func_02002d20(41) << 16, object->y,
+  FieldActor_SetMoveTarget(object, TrialRoad_MirrorCellX(41) << 16, object->y,
                            264 << 16);
-  Script_WaitForEventTimeout(object);
+  Actor_WaitForMove(object);
   wait(6);
-  Sound_Play(152);
+  Event_PlaySound(152);
   object->velocityY = 0x60000;
   object->speedLimit = 0x30000;
   object->acceleration = 0x20000;
-  Actor_SetMoveTarget(object, Func_02002d20(37) << 16, object->y, 264 << 16);
-  Script_WaitForEventTimeout(object);
+  Actor_SetMoveTarget(object, TrialRoad_MirrorCellX(37) << 16, object->y, 264 << 16);
+  Actor_WaitForMove(object);
   wait(6);
   Actor_MoveToObject(13, 8);
   Actor_MoveToObject(14, 8);
-  Actor_SetSpeedParameters(8, 0x10000, 0x8000);
-  Actor_SetSpeedParameters(13, 0x10000, 0x8000);
-  Actor_SetSpeedParameters(14, 0x10000, 0x8000);
-  Actor_ResetAndSetPositionInMode2(8, Func_02002d20(36), 264);
-  Actor_ResetAndSetPositionInMode2(13, Func_02002d20(37), 248);
-  Actor_ResetAndSetPositionInMode2(14, Func_02002d20(37), 280);
+  Actor_SetSpeed(8, 0x10000, 0x8000);
+  Actor_SetSpeed(13, 0x10000, 0x8000);
+  Actor_SetSpeed(14, 0x10000, 0x8000);
+  Actor_WalkTo(8, TrialRoad_MirrorCellX(36), 264);
+  Actor_WalkTo(13, TrialRoad_MirrorCellX(37), 248);
+  Actor_WalkTo(14, TrialRoad_MirrorCellX(37), 280);
   Actor_WaitForMoveById(8);
-  Actor_ArmCallback(8, Func_02002d50(0x8000), 0);
+  Actor_FaceDirection(8, TrialRoad_MirrorAngle(0x8000), 0);
   Actor_WaitForMoveById(13);
-  Actor_ArmCallback(13, Func_02002d50(0x8000), 0);
+  Actor_FaceDirection(13, TrialRoad_MirrorAngle(0x8000), 0);
   Actor_WaitForMoveById(14);
-  Actor_ArmCallback(14, Func_02002d50(0x8000), 0);
+  Actor_FaceDirection(14, TrialRoad_MirrorAngle(0x8000), 0);
   Event_SetMessageId((s32)MsgTrialRoadSwiftChallenge);
-  Func_080d47b4(8, 256, 10);
-  Event_ShowMessageAndWait(8, 0);
-  Motion_SetModeAndWaitAnimation(8, 3);
-  Event_ShowMessageAndWait(8, 0);
-  Motion_SetVarCbAndRefresh(8, 2);
-  Event_ShowMessageAndWait(8, 0);
-  Actor_SetModeById(4, 3);
-  Actor_SetModeById(5, 3);
-  Actor_SetModeById(6, 3);
-  Actor_SetModeById(7, 3);
-  Event_Wait(15);
-  Actor_SetSpeedParameters(4, 0x20000, 0x10000);
-  Actor_SetSpeed(5, 0x1e666, 0xf333);
-  Actor_SetSpeed(6, 0x1b333, 0xd999);
-  Actor_SetSpeed(7, 0x1cccc, 0xe666);
-  Actor_SetSpeedParameters(8, 0x20000, 0x10000);
-  Actor_SetSpeed(13, 0x1e666, 0xf333);
-  Actor_SetSpeedParameters(14, 0x1b333, 0xd999);
-  Actor_OffsetPositionAndReset(4, Func_02002d38(3), 0);
-  Actor_OffsetPositionAndReset(8, Func_02002d38(-3), 0);
-  wait(1);
-  Actor_OffsetPositionAndReset(5, Func_02002d38(3), 0);
-  Actor_OffsetPositionAndReset(13, Func_02002d38(-3), 0);
-  wait(1);
-  Actor_OffsetPositionAndReset(7, Func_02002d38(3), 0);
-  Actor_OffsetPositionAndReset(14, Func_02002d38(-3), 0);
-  wait(1);
-  Actor_OffsetPositionAndReset(6, Func_02002d38(3), 0);
-  wait(1);
-  Event_Wait(6);
-}
-
-void Func_0200322c(void) {
-  Event_Start();
-  Event_ResolvePendingActions(0);
-  FieldCamera_SetSpeed(0x20000, 0x4000);
-  Camera_MoveWithinMapBounds(PIXELS(256), -1, PIXELS(264), 1);
-  Actor_MoveToObject(5, 4);
-  Actor_MoveToObject(6, 4);
-  Actor_MoveToObject(7, 4);
-  Actor_SetSpeed(4, 0x10000, 0x8000);
-  Actor_SetSpeed(5, 0x10000, 0x8000);
-  Actor_SetSpeed(6, 0x10000, 0x8000);
-  Actor_SetSpeed(7, 0x10000, 0x8000);
-  Actor_ResetAndSetPositionInMode2(4, Func_02002d20(28), 272);
-  Actor_WalkTo(7, Func_02002d20(28), 256);
-  Actor_ResetAndSetPositionInMode2(5, Func_02002d20(27), 248);
-  Actor_ResetAndSetPositionInMode2(6, Func_02002d20(27), 280);
-  Actor_WaitForMoveById(4);
-  Actor_ArmCallback(4, Func_02002d50(0), 0);
-  Actor_WaitForMoveById(7);
-  Actor_ArmCallback(7, Func_02002d50(0), 0);
-  Actor_WaitForMoveById(5);
-  Actor_ArmCallback(5, Func_02002d50(0), 0);
-  Actor_WaitForMoveById(6);
-  Actor_ArmCallback(6, Func_02002d50(0), 0);
-  Func_02005980();
-  Event_SetMessageId((s32)MsgTrialRoadSlowArrival);
-  Func_080d47b4(8, 256, 10);
-  Event_ShowMessageAndWait(8, 0);
-  Motion_SetModeAndWaitAnimation(8, 3);
-  Event_ShowMessageAndWait(8, 0);
-  Motion_SetVarCbAndRefresh(8, 2);
-  Event_ShowMessageAndWait(8, 0);
-  Actor_SetModeById(4, 3);
-  Actor_SetModeById(5, 3);
-  Actor_SetModeById(6, 3);
-  Actor_SetModeById(7, 3);
+  FieldActor_ShowEmote(8, 256, 10);
+  Event_ShowMessage(8, 0);
+  Actor_SetAnimationAndWait(8, 3);
+  Event_ShowMessage(8, 0);
+  Actor_RunRepeatedMotion(8, 2);
+  Event_ShowMessage(8, 0);
+  Actor_SetAnimation(4, 3);
+  Actor_SetAnimation(5, 3);
+  Actor_SetAnimation(6, 3);
+  Actor_SetAnimation(7, 3);
   Event_Wait(15);
   Actor_SetSpeed(4, 0x20000, 0x10000);
   Actor_SetSpeed(5, 0x1e666, 0xf333);
@@ -1099,38 +1049,100 @@ void Func_0200322c(void) {
   Actor_SetSpeed(7, 0x1cccc, 0xe666);
   Actor_SetSpeed(8, 0x20000, 0x10000);
   Actor_SetSpeed(13, 0x1e666, 0xf333);
-  Actor_SetSpeedParameters(14, 0x1b333, 0xd999);
-  Actor_OffsetPositionAndReset(4, Func_02002d38(3), 0);
-  Actor_OffsetPositionAndReset(8, Func_02002d38(-3), 0);
+  Actor_SetSpeed(14, 0x1b333, 0xd999);
+  Actor_WalkBy(4, TrialRoad_MirrorOffset(3), 0);
+  Actor_WalkBy(8, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
-  Actor_OffsetPositionAndReset(5, Func_02002d38(3), 0);
-  Actor_OffsetPositionAndReset(13, Func_02002d38(-3), 0);
+  Actor_WalkBy(5, TrialRoad_MirrorOffset(3), 0);
+  Actor_WalkBy(13, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
-  Actor_OffsetPositionAndReset(7, Func_02002d38(3), 0);
-  Actor_OffsetPositionAndReset(14, Func_02002d38(-3), 0);
+  Actor_WalkBy(7, TrialRoad_MirrorOffset(3), 0);
+  Actor_WalkBy(14, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
-  Actor_OffsetPositionAndReset(6, Func_02002d38(3), 0);
+  Actor_WalkBy(6, TrialRoad_MirrorOffset(3), 0);
+  wait(1);
+  Event_Wait(6);
+}
+
+/// ★ Named from the game: "You may have been slow, but you made it through
+/// Trial Road to the mountain's peak!" (MsgTrialRoadSlowArrival)
+void TrialRoad_ReachPeakSecond(void) {
+  Event_Start();
+  Event_ResolvePendingActions(0);
+  FieldCamera_SetSpeed(0x20000, 0x4000);
+  FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(264), 1);
+  Actor_MoveToObject(5, 4);
+  Actor_MoveToObject(6, 4);
+  Actor_MoveToObject(7, 4);
+  Actor_SetSpeed(4, 0x10000, 0x8000);
+  Actor_SetSpeed(5, 0x10000, 0x8000);
+  Actor_SetSpeed(6, 0x10000, 0x8000);
+  Actor_SetSpeed(7, 0x10000, 0x8000);
+  Actor_WalkTo(4, TrialRoad_MirrorCellX(28), 272);
+  Actor_WalkTo(7, TrialRoad_MirrorCellX(28), 256);
+  Actor_WalkTo(5, TrialRoad_MirrorCellX(27), 248);
+  Actor_WalkTo(6, TrialRoad_MirrorCellX(27), 280);
+  Actor_WaitForMoveById(4);
+  Actor_FaceDirection(4, TrialRoad_MirrorAngle(0), 0);
+  Actor_WaitForMoveById(7);
+  Actor_FaceDirection(7, TrialRoad_MirrorAngle(0), 0);
+  Actor_WaitForMoveById(5);
+  Actor_FaceDirection(5, TrialRoad_MirrorAngle(0), 0);
+  Actor_WaitForMoveById(6);
+  Actor_FaceDirection(6, TrialRoad_MirrorAngle(0), 0);
+  Func_02005980();
+  Event_SetMessageId((s32)MsgTrialRoadSlowArrival);
+  FieldActor_ShowEmote(8, 256, 10);
+  Event_ShowMessage(8, 0);
+  Actor_SetAnimationAndWait(8, 3);
+  Event_ShowMessage(8, 0);
+  Actor_RunRepeatedMotion(8, 2);
+  Event_ShowMessage(8, 0);
+  Actor_SetAnimation(4, 3);
+  Actor_SetAnimation(5, 3);
+  Actor_SetAnimation(6, 3);
+  Actor_SetAnimation(7, 3);
+  Event_Wait(15);
+  Actor_SetSpeed(4, 0x20000, 0x10000);
+  Actor_SetSpeed(5, 0x1e666, 0xf333);
+  Actor_SetSpeed(6, 0x1b333, 0xd999);
+  Actor_SetSpeed(7, 0x1cccc, 0xe666);
+  Actor_SetSpeed(8, 0x20000, 0x10000);
+  Actor_SetSpeed(13, 0x1e666, 0xf333);
+  Actor_SetSpeed(14, 0x1b333, 0xd999);
+  Actor_WalkBy(4, TrialRoad_MirrorOffset(3), 0);
+  Actor_WalkBy(8, TrialRoad_MirrorOffset(-3), 0);
+  wait(1);
+  Actor_WalkBy(5, TrialRoad_MirrorOffset(3), 0);
+  Actor_WalkBy(13, TrialRoad_MirrorOffset(-3), 0);
+  wait(1);
+  Actor_WalkBy(7, TrialRoad_MirrorOffset(3), 0);
+  Actor_WalkBy(14, TrialRoad_MirrorOffset(-3), 0);
+  wait(1);
+  Actor_WalkBy(6, TrialRoad_MirrorOffset(3), 0);
   wait(1);
   Event_Wait(6);
 }
 
 void PartyInventory_Discard(s32 cue);
 
-void Func_020034b4(void) {
+/// ★ Named from the game: "All right, all right. You've proven your strength,
+/// and you are heroes indeed." (MsgTrialRoadHeroesProven)
+void TrialRoad_BeatMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Func_02002d78(4, 248, 272, 0);
-  Func_02002d78(7, 224, 248, 0);
-  Func_02002d78(5, 232, 264, 0);
-  Func_02002d78(6, 224, 280, 0);
-  Func_02002d78(9, 248, 256, 0);
-  Func_02002d78(8, 272, 264, 0x4000);
-  Func_02002d78(13, 288, 248, 0x4000);
-  Func_02002d78(14, 288, 280, 0x4000);
-  Actor_SetModeById(8, 6);
-  Actor_SetModeById(13, 6);
-  Actor_SetModeById(14, 6);
+  TrialRoad_PlaceActor(4, 248, 272, 0);
+  TrialRoad_PlaceActor(7, 224, 248, 0);
+  TrialRoad_PlaceActor(5, 232, 264, 0);
+  TrialRoad_PlaceActor(6, 224, 280, 0);
+  TrialRoad_PlaceActor(9, 248, 256, 0);
+  TrialRoad_PlaceActor(8, 272, 264, 0x4000);
+  TrialRoad_PlaceActor(13, 288, 248, 0x4000);
+  TrialRoad_PlaceActor(14, 288, 280, 0x4000);
+  Actor_SetAnimation(8, 6);
+  Actor_SetAnimation(13, 6);
+  Actor_SetAnimation(14, 6);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(30);
@@ -1139,87 +1151,89 @@ void Func_020034b4(void) {
   wait(4);
   Actor_StartRepeatedMotion(14, 2);
   wait(10);
-  Motion_SetVarCbAndRefresh(8, 2);
-  Event_ShowMessageAndWait(8, 0);
-  Actor_SetModeById(8, 7);
+  Actor_RunRepeatedMotion(8, 2);
+  Event_ShowMessage(8, 0);
+  Actor_SetAnimation(8, 7);
   Event_Wait(15);
-  Actor_SetModeById(13, 7);
+  Actor_SetAnimation(13, 7);
   Event_Wait(10);
-  Actor_SetModeById(14, 7);
+  Actor_SetAnimation(14, 7);
   Event_Wait(5);
-  Actor_SetModeById(8, 1);
+  Actor_SetAnimation(8, 1);
   Event_Wait(15);
-  Actor_ArmCallback(8, Func_02002d50(0x8000), 0);
-  Actor_SetModeById(13, 1);
+  Actor_FaceDirection(8, TrialRoad_MirrorAngle(0x8000), 0);
+  Actor_SetAnimation(13, 1);
   Event_Wait(10);
-  Actor_ArmCallback(13, Func_02002d50(0x8000), 0);
-  Actor_SetModeById(14, 1);
+  Actor_FaceDirection(13, TrialRoad_MirrorAngle(0x8000), 0);
+  Actor_SetAnimation(14, 1);
   Event_Wait(5);
-  Actor_ArmCallback(14, Func_02002d50(0x8000), 0);
+  Actor_FaceDirection(14, TrialRoad_MirrorAngle(0x8000), 0);
   Event_Wait(20);
-  Motion_SetModeAndWaitAnimation(8, 3);
-  Event_ShowMessageAndWait(8, 0);
-  Actor_SetSpeedParameters(8, 0x10000, 0x8000);
-  Actor_ResetAndSetPositionInMode2(8, Func_02002d20(32), 264);
-  Actor_TurnToFaceEachOther(9, 7, 0);
-  Actor_TurnToFaceEachOther(5, 6, 0);
+  Actor_SetAnimationAndWait(8, 3);
+  Event_ShowMessage(8, 0);
+  Actor_SetSpeed(8, 0x10000, 0x8000);
+  Actor_WalkTo(8, TrialRoad_MirrorCellX(32), 264);
+  Actor_FaceEachOther(9, 7, 0);
+  Actor_FaceEachOther(5, 6, 0);
   Actor_WaitForMoveById(8);
-  Actor_SetAngleToward(9, 4, 0);
-  Actor_SetAngleToward(7, 4, 0);
-  Actor_SetAngleToward(6, 4, 0);
-  Actor_SetAngleToward(5, 4, 0);
+  Actor_FaceActor(9, 4, 0);
+  Actor_FaceActor(7, 4, 0);
+  Actor_FaceActor(6, 4, 0);
+  Actor_FaceActor(5, 4, 0);
   Event_Wait(20);
   PartyInventory_Discard(65);
-  PartyInventory_GiveItem(215, 0);
-  Actor_SetAngleToward(4, 8, 0);
+  Party_GiveItem(215, 0);
+  Actor_FaceActor(4, 8, 0);
   OBJECT_BYTE(Actor_GetById(8), 0x5a) &= ~1;
-  Actor_SetPositionAndReset(8, Func_02002d20(35), 264);
+  Actor_WalkToAndWait(8, TrialRoad_MirrorCellX(35), 264);
   Event_Wait(1);
   /* FAKEMATCH(signature): the byte typed as a whole-byte bit-field, as in
    * overlay 685; as a plain byte, which stores in the order of a store that
    * aliases what follows, 4 of 304 instructions differ in tla-en. */
   ((struct ActorSolid *)Actor_GetById(8))->solid |= 1;
   Event_Wait(20);
-  Func_080d47b4(8, 261, 10);
-  Event_ShowMessageAndWait(8, 0);
-  Actor_ArmCallbackAndRefresh(8, Func_02002d50(0));
-  Actor_SetAngleToward(13, 8, 0);
-  Actor_SetAngleToward(14, 8, 0);
-  Motion_SetModeAndWaitAnimation(8, 3);
-  Event_ShowMessageAndWait(8, 0);
-  Actor_SetModeById(13, 3);
+  FieldActor_ShowEmote(8, 261, 10);
+  Event_ShowMessage(8, 0);
+  Actor_FaceDirectionAndWait(8, TrialRoad_MirrorAngle(0));
+  Actor_FaceActor(13, 8, 0);
+  Actor_FaceActor(14, 8, 0);
+  Actor_SetAnimationAndWait(8, 3);
+  Event_ShowMessage(8, 0);
+  Actor_SetAnimation(13, 3);
   wait(3);
-  Motion_SetModeAndWaitAnimation(14, 3);
-  Actor_SetAngleToward(4, 9, 0);
-  Actor_SetAngleToward(7, 9, 0);
-  Actor_SetAngleToward(5, 9, 0);
-  Actor_SetAngleToward(6, 9, 0);
-  Event_ShowMessageAndWait(9, 0);
-  Actor_SetModeById(4, 3);
+  Actor_SetAnimationAndWait(14, 3);
+  Actor_FaceActor(4, 9, 0);
+  Actor_FaceActor(7, 9, 0);
+  Actor_FaceActor(5, 9, 0);
+  Actor_FaceActor(6, 9, 0);
+  Event_ShowMessage(9, 0);
+  Actor_SetAnimation(4, 3);
   wait(2);
-  Actor_SetModeById(6, 3);
-  Actor_SetModeById(7, 3);
+  Actor_SetAnimation(6, 3);
+  Actor_SetAnimation(7, 3);
   wait(1);
-  Actor_SetModeById(5, 3);
+  Actor_SetAnimation(5, 3);
   wait(30);
 }
 
-void Func_020037c8(void) {
+/// ★ Named from the game: "You've lost. Now leave Shaman village."
+/// (MsgTrialRoadLeaveVillage)
+void TrialRoad_LoseToMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Func_02002d78(8, 264, 264, 0x8000);
-  Func_02002d78(13, 280, 248, 0x8000);
-  Func_02002d78(14, 280, 280, 0x8000);
-  Func_02002d78(4, 240, 276, 0);
-  Func_02002d78(7, 216, 254, 0);
-  Func_02002d78(5, 232, 244, 0);
-  Func_02002d78(6, 224, 296, 0);
-  Actor_SetModeById(4, 38);
-  Actor_SetModeById(5, 19);
-  Actor_SetModeById(6, 19);
-  Actor_SetModeById(7, 19);
-  Func_080d3928(7, 0x4000);
+  TrialRoad_PlaceActor(8, 264, 264, 0x8000);
+  TrialRoad_PlaceActor(13, 280, 248, 0x8000);
+  TrialRoad_PlaceActor(14, 280, 280, 0x8000);
+  TrialRoad_PlaceActor(4, 240, 276, 0);
+  TrialRoad_PlaceActor(7, 216, 254, 0);
+  TrialRoad_PlaceActor(5, 232, 244, 0);
+  TrialRoad_PlaceActor(6, 224, 296, 0);
+  Actor_SetAnimation(4, 38);
+  Actor_SetAnimation(5, 19);
+  Actor_SetAnimation(6, 19);
+  Actor_SetAnimation(7, 19);
+  Actor_SetSpriteRotationById(7, 0x4000);
   Actor_SetSingleChildFlags(Actor_GetById(4), 0);
   Actor_SetSingleChildFlags(Actor_GetById(5), 0);
   Actor_SetSingleChildFlags(Actor_GetById(6), 0);
@@ -1228,8 +1242,8 @@ void Func_020037c8(void) {
   Event_WaitTransitionFrames();
   Event_Wait(30);
   Event_SetMessageId((s32)MsgTrialRoadLeaveVillage);
-  Motion_SetModeAndWaitAnimation(8, 3);
-  Event_ShowMessageAndWait(8, 0);
+  Actor_SetAnimationAndWait(8, 3);
+  Event_ShowMessage(8, 0);
   Actor_StartRepeatedMotion(4, 2);
   wait(1);
   Actor_StartRepeatedMotion(6, 2);
@@ -1244,14 +1258,9 @@ void Func_020037c8(void) {
 /* VIEW(s1fc4): variable gData_02005dc8 as extern const u8 gData_02005dc8[]; the definition has u32 gData_02005dc8[] = { 22, 15, 0x18000, 22, 16, 0x10000, 39, 5, 4, 0xd80000, 0, 0xa80000, 1, 4, 0xe80000, 0, 0x980000, 1, 4, 0xe80000, 0, ...; tried as the definition's extern s16 gData_02005dc8[], which the object already declares, it does not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:1370: `gData_02005dc8' undeclared (first use in this function). */
 extern const u8 gData_02005dc8__s1fc4[] __asm__("gData_02005dc8");
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 actor, s32 dx,
-                                                           s32 dz) {
-  Actor_OffsetPositionAndResetMotion(actor, dx, dz);
-}
-
-void Func_02003900(void) {
+/// ★ Named from the game: "The room is filled with traps and snares. Use the
+/// power of Contigo to avoid them." (MsgTrialRoadTrapInstructions)
+void TrialRoad_ShowTraps(void) {
   s32 i;
 
   Event_Start();
@@ -1296,7 +1305,7 @@ void Func_02003900(void) {
   Event_Wait(20);
   Actor_SetSpeed(13, 0x20000, 0x10000);
   Actor_SetModeById(13, 5);
-  Actor_OffsetPositionAndResetMotion_(13, 0, -40);
+  Actor_SetDestinationOffset(13, 0, -40);
   Actor_WaitForMoveById(13);
   Sound_Play(103);
   MapGrid_SetShake(0x20000, 0x40000, 0x10000);
@@ -1328,7 +1337,7 @@ void Func_02003900(void) {
   Actor_SetModeById(9, 5);
   Event_Wait(20);
   Sound_Play(138);
-  Func_0802b450(127, 3, 1, 2, 48, 3);
+  MapGrid_CopyCellsLayered(127, 3, 1, 2, 48, 3);
   Map_CopyCellAttributeRect(0, 127, 1, 1, 14, 8);
   Event_Wait(20);
   Actor_SetMovementTypeById(13, gData_02005dc8__s1fc4);
@@ -1363,7 +1372,7 @@ void Func_02003900(void) {
   Actor_SetModeById(12, 5);
   Event_Wait(20);
   Sound_Play(138);
-  Func_0802b450(127, 3, 1, 2, 53, 3);
+  MapGrid_CopyCellsLayered(127, 3, 1, 2, 53, 3);
   Map_CopyCellAttributeRect(0, 127, 1, 1, 19, 8);
   Event_Wait(30);
   Actor_ArmCallback(14, FACING_NORTHWEST, 0);
@@ -1627,7 +1636,7 @@ void Func_02004188(s32 a, s32 b) {
       (struct TrialRoadGauge *)(gData_020023c4 + 0x188);
   void *buffer;
 
-  if (!GameFlag_Test(0x109))
+  if (!Event_GetFlag(0x109))
     Iwram_ClearWords(gauge, 0x1c8);
   buffer = Pool_Alloc(0x800);
   Func_02005770(gField_Tiles64D, buffer);
@@ -1674,7 +1683,7 @@ struct RideEntry *Func_02004224(s32 slot, s32 id, s32 timer, s32 low,
 
   Actor_GetById(id);
   Actor_SetSingleChildFlags(object, 0);
-  if (!GameFlag_Test(0x109)) {
+  if (!Event_GetFlag(0x109)) {
     if (high < low) {
       s32 swap = low;
 
@@ -1715,57 +1724,7 @@ struct RideEntry *Func_02004224(s32 slot, s32 id, s32 timer, s32 low,
 /// other marks its cell, writes a shape for its height into the shape grid, and
 /// takes mode 0 when its first flag is set. Then the leader is lifted onto the
 /// ground if it stands below it.
-void Func_020042f0(const u16 *table) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct Actor *object;
-  s32 id;
-  s32 flag;
-  s32 nextFlag;
-  struct MapCell *cells;
-  u8 *shapes;
-  struct MapCell *cell;
-  s32 index;
-  struct Actor *leader;
-  s32 ground;
-
-  if (*table == 0xffff)
-    goto done;
-next:
-  id = table[0];
-  object = Actor_GetById(id);
-  flag = table[1];
-  nextFlag = flag + 1;
-  cells = map->layers[object->terrainId].cells;
-  shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
-  if (GameFlag_Test(nextFlag)) {
-    Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
-  } else {
-    s32 shape;
-    u8 *slot;
-    s32 height;
-
-    index = Func_02005a18(object);
-    cell = &cells[index];
-    slot = shapes + index;
-    shape = Func_02005848(object->terrainId, object->x, object->z);
-    height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
-    Func_02005958(id);
-    cell->attributeB = 128;
-    *slot = Func_02005a20(object->terrainId, shape, (height >> 19) + 4);
-    if (GameFlag_Test(flag))
-      Func_020057c8(object, 0);
-  }
-  table += 2;
-  if (*table != 0xffff)
-    goto next;
-done:
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  ground = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
-  if (leader->y < ground) {
-    leader->terrainHeight = ground;
-    leader->y = ground;
-  }
-}
+DEFINE_PILLARS_RESTORE_RAISED(Func_020042f0, Func_02005a18, Func_02005848, Func_02005958, Func_02005a20, Func_020057c8)
 
 DEFINE_TRAPS_CHECK(Func_02004418, Func_020059c0, Func_02005a28, Func_020057c8,
     Func_02004a94, Func_02004d6c, Func_02004bc8)
@@ -1783,8 +1742,8 @@ void Func_020045ac(const void *data, s32 id) {
     {
       flag = entry->flag;
       Event_Start();
-      if (!GameFlag_Test(flag + 1)) {
-        Sound_Play(185);
+      if (!Event_GetFlag(flag + 1)) {
+        Event_PlaySound(185);
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_02004a94(0);
         wait(8);
@@ -1796,11 +1755,11 @@ void Func_020045ac(const void *data, s32 id) {
         wait(8);
         Actor_SetPositionAndResetMotion(object, 0, 0, 0);
         wait(2);
-        Sound_Play(188);
+        Event_PlaySound(188);
         Func_02004bc8();
         wait(20);
-        GameFlag_SetBit(flag);
-        GameFlag_SetBit(flag + 1);
+        Event_SetFlag(flag);
+        Event_SetFlag(flag + 1);
       }
       Event_End();
       break;
@@ -1818,65 +1777,7 @@ void Actor_MoveToObject(s32 id, s32 owner);
 /// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
 /// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
 /// it copy actor 9's visual attributes.
-void Func_020046a4(u16 *list) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct Actor *object;
-  s32 id;
-  s32 flag;
-  s32 nextFlag;
-  struct MapCell *cells;
-  u8 *shapes;
-  struct MapCell *cell;
-  s32 index;
-  u8 *grid = gMapShapeGrid; // the shape grid, read once
-
-  Actor_MoveToObject(8, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(10, gMainRoutineWork.currentOwner);
-  wait(1);
-  Func_0200468c(8);
-  Func_0200468c(9);
-  Func_0200468c(10);
-  Actor_SetModeById(9, 0);
-  wait(1);
-  Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
-  wait(1);
-  if (*list == 0xffff)
-    goto done;
-next:
-  id = list[0];
-  object = Actor_GetById(id);
-  flag = list[1];
-  nextFlag = flag + 1;
-  cells = map->layers[object->terrainId].cells;
-  shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
-  object->unk5c[0] = 3;
-  if (GameFlag_Test(nextFlag)) {
-    Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
-  } else {
-    s32 shape;
-    u8 *slot;
-    s32 height;
-
-    index = Func_02005a18(object);
-    cell = &cells[index];
-    slot = shapes + index;
-    shape = Func_02005848(object->terrainId, object->x, object->z);
-    height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
-    Func_02005958(id);
-    cell->attributeB = 128;
-    *slot = Func_02005a20(object->terrainId, shape, (height >> 19) + 4);
-    if (GameFlag_Test(flag))
-      ObjectVisual_CopyAttributes(id, 9);
-  }
-  list += 2;
-  if (*list != 0xffff)
-    goto next;
-done:
-  wait(10);
-}
+DEFINE_PILLARS_RESTORE(Func_020046a4, Func_0200468c, Func_02005a18, Func_02005848, Func_02005958, Func_02005a20)
 
 void Func_0200480c(struct Actor *object, struct Actor *target) {
   Actor_SetPositionAndResetMotion(object, target->x, target->y, target->z);
@@ -2516,7 +2417,7 @@ void Func_02005688(s32 a) {
   u8 *work = Ram_HeapSlots->unkec[0];
   struct TrialRoadControl *control = (struct TrialRoadControl *)gSceneState;
 
-  if (GameFlag_Test(0x109) == 0) {
+  if (Event_GetFlag(0x109) == 0) {
     /* FAKEMATCH(temporary): a local reads the work value before the three
      * stores; as the value stored directly, 4 of 24 instructions differ in
      * tla-en. */

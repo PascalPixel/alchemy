@@ -24,27 +24,27 @@ void Func_02003c28(void);
 void Func_02003c68(s32 id, s32 x, s32 z);
 void Func_02003c78(s32 id, s32 target);
 void Func_02003df8(s32 cue);
-extern struct SceneEntrance gData_020013d0[];
-extern struct SceneEntrance gData_02001400[];
+extern struct SceneEntrance gMadraCatacombs_Entrances[];
+extern struct SceneEntrance gMadraCatacombs_Room4Entrances[];
 
-extern struct SceneEntrance gData_02001430[];
+extern struct SceneEntrance gMadraCatacombs_Room5Entrances[];
 
 extern s16 gData_020014a8[];
 
-extern struct ActorPlacement gData_0200159c[];
+extern struct ActorPlacement gMadraCatacombs_Placements[];
 
-extern struct ActorPlacement gData_020015b4[];
+extern struct ActorPlacement gMadraCatacombs_Room1Placements[];
 
-extern struct ActorPlacement gData_0200165c[];
+extern struct ActorPlacement gMadraCatacombs_Room3Placements[];
 
-extern struct ActorPlacement gData_020016bc[];
-extern struct ActorPlacement gData_020016ec[];
-extern struct Trigger gData_02001920[];
-extern struct Trigger gData_020019f8[];
-extern struct Trigger gData_02001a1c[];
-extern struct Trigger gData_02001aac[];
-extern struct Trigger gData_02001b54[];
-extern struct Trigger gData_02001bcc[];
+extern struct ActorPlacement gMadraCatacombs_Room5Placements[];
+extern struct ActorPlacement gMadraCatacombs_Room6Placements[];
+extern struct Trigger gMadraCatacombs_Room1Triggers[];
+extern struct Trigger gMadraCatacombs_Room2Triggers[];
+extern struct Trigger gMadraCatacombs_Room3Triggers[];
+extern struct Trigger gMadraCatacombs_Room4Triggers[];
+extern struct Trigger gMadraCatacombs_Room5Triggers[];
+extern struct Trigger gMadraCatacombs_Room6Triggers[];
 
 void Func_02000dcc(void);
 
@@ -65,7 +65,7 @@ extern s32 gData_0200121c[];
 
 void Func_0200115c(s32 id);
 
-s32 Func_02001184(s32 owner);
+s32 Field_FindNearbyTalkTarget(s32 owner);
 
 s32 Func_020011fc(void);
 

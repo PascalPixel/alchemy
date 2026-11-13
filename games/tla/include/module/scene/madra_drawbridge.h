@@ -7,6 +7,6 @@
 
 #include "types.h"
 
-void Func_02000338(void);
+void FieldCamera_WaitForArrival(void);
 
 #endif

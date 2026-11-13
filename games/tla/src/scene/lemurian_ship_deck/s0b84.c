@@ -24,19 +24,11 @@
 #include "module/scene/scene.h"
 
 void Func_020001cc(void);
-void Func_020006e4(void);
-
-static __inline__ void AddTask(void (*func)(void), s32 priority) {
-  /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
-   * scene layer, so the arguments are set up in their own order and each call
-   * keeps its constants; as a direct call, the costly constant is built first
-   * or shared, 22 of 34 instructions of Func_02000b84 differ in tla-en. */
-  Task_Add(func, priority);
-}
+void LemurianShipDeck_HoldOnToTiller(void);
 
 /// The scene run from entrance 10: the crew takes its places on deck and the
 /// leader is asked to take the tiller; it ends by setting flag 0x8de.
-void Func_020002cc(void) {
+void LemurianShipDeck_TakeTheTiller(void) {
   s32 angle;
   s32 turn;
 
@@ -71,7 +63,7 @@ void Func_020002cc(void) {
   Task_AddFrame(Func_02000288, 0x480);
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   FieldCamera_MoveTo(PIXELS(542), PIXELS(44), PIXELS(396), 1);
-  Func_0200206c();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(80);
   Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
   FieldEvent_SetMessageId((s32)MsgTakeTheTiller);
@@ -152,20 +144,20 @@ void Func_020002cc(void) {
 static inline void RunToActor4(s32 id) {
   struct Actor *target;
 
-  Actor_SetSpeedParameters(id, 0x13333, 0x9999);
-  Actor_SetModeById(id, 2);
+  Actor_SetSpeed(id, 0x13333, 0x9999);
+  Actor_SetAnimation(id, 2);
   target = Actor_GetById(4);
   if (target != NULL)
-    Actor_ResetAndSetPosition(id, ((s16 *)&target->x)[1],
+    Actor_SetDestination(id, ((s16 *)&target->x)[1],
                               ((s16 *)&target->z)[1]);
   Actor_WaitForMoveById(id);
-  Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
+  Actor_SetPosition(id, 0, 0);
 }
 
 /// The scene run from entrance 20: the camera frames actors 4 to 9 around the
 /// spot, two callbacks start the bobbing, and after the exchange of looks and
 /// emotes the four actors run to actor 4.
-void Func_020006e4(void) {
+void LemurianShipDeck_HoldOnToTiller(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -283,12 +275,12 @@ void Func_020006e4(void) {
 
 void Func_02000b84(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
-  AddTask(Func_02000188, 0x480);
-  AddTask(Func_020001cc, 0x480);
+  FieldTask_AddFrame(Func_02000188, 0x480);
+  FieldTask_AddFrame(Func_020001cc, 0x480);
   if (gMainRoutineWork.entrance == 10)
-    Func_020002cc();
+    LemurianShipDeck_TakeTheTiller();
   if (gMainRoutineWork.entrance == 20)
-    Func_020006e4();
+    LemurianShipDeck_HoldOnToTiller();
 }
 
 s32 Scene_Initialize(void) {
@@ -319,15 +311,11 @@ s32 Scene_Initialize(void) {
     Actor_Get(party->currentOwner)->priorityFlags |= 0x20;
     Actor_SetAnimation(8, 1);
     Func_020020c4(gData_020020dc);
-    /* FAKEMATCH(wrapper): the call forwarded through AddTask above, as in ☀️'s
-     * scene layer, so the arguments are set up in their own order and each
-     * call keeps its constants; as direct calls, the costly constant is built
-     * first or shared, 18 of 62 instructions differ in tla-en. */
-    AddTask(Func_02000188, 0x480);
+    FieldTask_AddFrame(Func_02000188, 0x480);
     if (party->entrance == 99)
       Func_02000210();
     else
-      AddTask(Func_020001cc, 0x480);
+      FieldTask_AddFrame(Func_020001cc, 0x480);
   }
   return 0;
 }
@@ -343,7 +331,7 @@ s32 Scene_PrepareMap(void) {
 
 /// Unless flag 0x8ff is set: the crew sights the ship from the deck and the
 /// leader is asked about it. Either way flag 0x980 is set.
-void Func_02000ce0(void) {
+void LemurianShipDeck_SightMenardisShip(void) {
   s32 answer;
   s32 owner;
 
@@ -370,15 +358,15 @@ void Func_02000ce0(void) {
   Event_ShowMessage(9, 0);
   FieldCamera_SetSpeed(0x4cccc, 0x9999);
   FieldCamera_MoveTo(PIXELS(200), -1, PIXELS(344), 1);
-  Func_0200206c();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   FieldCamera_SetSpeed(0x13333, 0x2666);
   FieldCamera_MoveTo(PIXELS(600), -1, PIXELS(344), 1);
-  Func_0200206c();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
   FieldCamera_SetSpeed(0x66666, 0xcccc);
   FieldCamera_MoveTo(PIXELS(264), -1, PIXELS(128), 1);
-  Func_0200206c();
+  FieldCamera_WaitForArrival();
   Actor_SetAnimationAndWait(5, 4);
   Event_ShowMessage(0x2005, 0);
   Actor_FaceDirectionAndWait(6, FACING_EAST);
@@ -452,7 +440,9 @@ void Func_02001064(void) { Func_020020cc(gData_020020dc); }
 
 void Actor_MoveToObject(s32 id, s32 target);
 
-void Func_02001074(void) {
+/// ★ Named from the game: "Well, there's no point in hanging around here all
+/// day." (MsgWellThereS)
+void LemurianShipDeck_LeaveToFindCrew(void) {
   struct Actor *object;
 
   if (Event_GetFlag(0x212))
@@ -511,7 +501,9 @@ void Func_02001188(void) {
 }
 
 
-struct Actor *Func_02001210(void) {
+/// The Black Crystal (item 242's icon) as an actor on the deck.
+/// ★ Named from the game: "Black Crystal" (item 242's name)
+struct Actor *LemurianShipDeck_CreateBlackCrystal(void) {
   struct Actor *object = (struct Actor *)Import_ActorCreate(0x1e9, 0x1680000, 0x400000, 0x1a80000);
   u8 *buffer = 0;
   struct FieldSprite *sprite;
@@ -535,7 +527,7 @@ struct Actor *Func_02001210(void) {
 
 /// Once flag 7 is set, and only until flag 0x985 is: a scene of actor 7 and the
 /// leader, which ends by setting flags 0x201 and 0x985.
-void Func_0200128c(void) {
+void LemurianShipDeck_ReturnToShip(void) {
   struct Actor *handle;
   void (*func)(void);
   struct Actor *object;
@@ -562,12 +554,12 @@ void Func_0200128c(void) {
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
   Event_ShowMessage(7, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-  Actor_SetScript(gMainRoutineWork.currentOwner, gData_02002120);
+  Actor_SetScript(gMainRoutineWork.currentOwner, gLemurianShipDeck_ReturnToShipScript);
   Actor_SetSpeed(7, 0xcccc, 0x6666);
   Actor_WalkToAndWait(7, 360, 424);
   Actor_FaceDirectionAndWait(7, FACING_NORTH);
   Event_PlaySound(182);
-  handle = Func_02001210();
+  handle = LemurianShipDeck_CreateBlackCrystal();
   FieldEvent_Wait(20);
   Event_PlaySound(220);
   func = Func_02001188;
@@ -585,7 +577,7 @@ void Func_0200128c(void) {
   Event_SetFlag(0x201);
   FieldTask_Remove(func);
   if (handle != 0)
-    Call1((void (*)())Func_02001f14, handle);
+    Call1((void (*)())Actor_Release, handle);
   FieldEvent_Wait(20);
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(20);
@@ -606,8 +598,8 @@ void Func_0200128c(void) {
 
 /// Once flag 0x8ff is set, and only until flag 0x989 is: the crew talks
 /// over the ship, the leader answers two prompts, and everyone leaves by
-/// script gData_020020e4; it sets flag 0x981.
-void Func_020014c0(void) {
+/// script gLemurianShipDeck_ReachPiersShipScript; it sets flag 0x981.
+void LemurianShipDeck_ReachPiersShip(void) {
   if (Event_GetFlag(0x8ff) == 0)
     return;
   if (Event_GetFlag(0x989) != 0)
@@ -817,10 +809,10 @@ void Func_020014c0(void) {
   Actor_SetSpeed(9, 0x13333, 0x9999);
   Actor_SetSpeed(6, 0x13333, 0x9999);
   Actor_SetSpeed(7, 0x13333, 0x9999);
-  Actor_SetScript(5, gData_020020e4);
-  Actor_SetScript(9, gData_020020e4);
-  Actor_SetScript(6, gData_020020e4);
-  Actor_RunScriptAndWait(7, gData_020020e4);
+  Actor_SetScript(5, gLemurianShipDeck_ReachPiersShipScript);
+  Actor_SetScript(9, gLemurianShipDeck_ReachPiersShipScript);
+  Actor_SetScript(6, gLemurianShipDeck_ReachPiersShipScript);
+  Actor_RunScriptAndWait(7, gLemurianShipDeck_ReachPiersShipScript);
   FieldEvent_Wait(20);
   Event_SetFlag(0x981);
   Event_End();
@@ -828,7 +820,9 @@ void Func_020014c0(void) {
 
 DEFINE_ACTOR_EMIT_SMOKE(Func_02001d60, 7, Func_02001efc, gData_02002498)
 
-void Func_02001da0(void) {
+/// ★ Named from the game: "Then let's waste no time! We should set out for
+/// Madra at once!" (MsgThenLetS)
+void LemurianShipDeck_SetOutForMadra(void) {
   if (Event_GetFlag(7)) {
     struct Actor *object;
 
@@ -869,13 +863,13 @@ s16 gData_020020dc[] = {
     8, 512, -1, 0,
 };
 
-u32 gData_020020e4[] = {
+u32 gLemurianShipDeck_ReachPiersShipScript[] = {
     39, 2, 4, 0x1070000, 0, 0xb00000,
     1, 39, 1, 0, 1, 3,
     0, 1, 17,
 };
 
-u32 gData_02002120[] = {
+u32 gLemurianShipDeck_ReturnToShipScript[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(368), 0, PIXELS(448)),
     SC_SYNC,
@@ -929,7 +923,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_020022cc[] = {
+struct ActorPlacement gLemurianShipDeck_Placements[] = {
     {290, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(312), FACING_SOUTH, 2, 0},
     {56, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
     {5, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
@@ -938,7 +932,7 @@ struct ActorPlacement gData_020022cc[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_0200235c[] = {
+struct ActorPlacement gLemurianShipDeck_Room1Placements[] = {
     {290, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
     {56, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
     {5, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
@@ -947,19 +941,19 @@ struct ActorPlacement gData_0200235c[] = {
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_020023ec[] = {
+struct Trigger gLemurianShipDeck_Triggers[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020023f8[] = {
+struct Trigger gLemurianShipDeck_Room2Triggers[] = {
     {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_02000078)},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 10, 0x980, EVENT(Func_02000ce0)},
-    {TRIGGER_STEP, 11, 0x981, EVENT(Func_020014c0)},
-    {TRIGGER_STEP, 12, 0x989, EVENT(Func_02001da0)},
-    {TRIGGER_STEP, 1, 0x985, EVENT(Func_0200128c)},
-    {TRIGGER_EXAMINE, 14, 0x985, EVENT(Func_02000168)},
-    {TRIGGER_STEP, 15, 0x985, EVENT(Func_02001074)},
+    {TRIGGER_STEP, 10, 0x980, EVENT(LemurianShipDeck_SightMenardisShip)},
+    {TRIGGER_STEP, 11, 0x981, EVENT(LemurianShipDeck_ReachPiersShip)},
+    {TRIGGER_STEP, 12, 0x989, EVENT(LemurianShipDeck_SetOutForMadra)},
+    {TRIGGER_STEP, 1, 0x985, EVENT(LemurianShipDeck_ReturnToShip)},
+    {TRIGGER_EXAMINE, 14, 0x985, EVENT(LemurianShipDeck_TryHeldDoor)},
+    {TRIGGER_STEP, 15, 0x985, EVENT(LemurianShipDeck_LeaveToFindCrew)},
     {TRIGGER_STEP, 16, 0x985, EVENT(Func_02001178)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, 0x200, EVENT(Func_02001064)},
     {TRIGGERS_END},

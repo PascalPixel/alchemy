@@ -31,7 +31,8 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 #include "text/msg_ids.h"
 #include "event_inline.h"
 
-s32 Func_02000054(void) {
+/// "The items that one carries are filled with one's hopes and desires."
+s32 NaribweInteriors_MindReadFortuneTeller(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgTheItemsThat);
@@ -40,7 +41,7 @@ s32 Func_02000054(void) {
   return 0;
 }
 
-s32 Func_0200007c(void) {
+s32 NaribweInteriors_MindReadFortuneTellerOnReturn(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgItemsPlacedBefore);
@@ -54,15 +55,15 @@ s32 Func_0200007c(void) {
 
 const struct Trigger *Scene_GetEvents(void) {
   if (Event_GetFlag(0x8ff))
-    return gData_020014c0;
-  return gData_02001370;
+    return gNaribweInteriors_TriggersOnReturn;
+  return gNaribweInteriors_Triggers;
 }
 
-void Func_020000c4(s32 actor) {
+void NaribweInteriors_RecommendFortuneTeller(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Func_02001190(14, actor);
+    Shop_Run(14, actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -72,11 +73,11 @@ void Func_020000c4(s32 actor) {
   }
 }
 
-void Func_02000124(s32 actor) {
+void NaribweInteriors_RecommendFortuneTellerOnReturn(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Func_02001190(14, actor);
+    Shop_Run(14, actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -86,11 +87,11 @@ void Func_02000124(s32 actor) {
   }
 }
 
-void Func_02000184(s32 actor) {
+void NaribweInteriors_SendToFortuneTeller(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Func_02001190(15, actor);
+    Shop_Run(15, actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -100,11 +101,11 @@ void Func_02000184(s32 actor) {
   }
 }
 
-void Func_020001e4(s32 actor) {
+void NaribweInteriors_SendToFortuneTellerOnReturn(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Func_02001190(15, actor);
+    Shop_Run(15, actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -114,11 +115,12 @@ void Func_020001e4(s32 actor) {
   }
 }
 
-void Func_02000244(s32 actor) {
+/// "Our cooking is famous all across Gondowan."
+void NaribweInteriors_TalkAboutCooking(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Func_02001198(5, actor);
+    Inn_CheckIn(5, actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -128,11 +130,11 @@ void Func_02000244(s32 actor) {
   }
 }
 
-void Func_020002a4(s32 actor) {
+void NaribweInteriors_TalkAboutTravelers(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Func_02001198(5, actor);
+    Inn_CheckIn(5, actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -142,7 +144,9 @@ void Func_020002a4(s32 actor) {
   }
 }
 
-void Func_02000304(void) {
+/// The fortune-teller offers a reading for 20 coins.
+/// "I am a teller of fortunes. Would you have a reading?"
+void NaribweInteriors_TalkToFortuneTeller(void) {
   u8 *message;
 
   Event_Start();
@@ -155,7 +159,7 @@ void Func_02000304(void) {
     Event_OpenMessage(10, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
       if ((u32)gMainRoutineWork.coins > 19) {
-        Func_02000390();
+        NaribweInteriors_ReadFortune();
         Event_End();
       } else {
         FieldEvent_SetMessageId((s32)(message + 4));
@@ -173,14 +177,17 @@ void Func_02000304(void) {
 #include "version.h"
 
 void *Unit_Get(s32 owner);
-void Func_020007b4(void);
+void NaribweInteriors_ReadShiningItem(void);
 
 /// Object 10 steps to (x, 96) without turning, then dances (mode 5).
 #define DANCE_TO(x)                                                            \
   (Actor_Get(10)->actionFlags &= ~1, Actor_WalkTo(10, x, 96),              \
    Actor_SetAnimation(10, 5))
 
-void Func_02000390(void) {
+/// The reading: the party sets one of a member's items on the table and the
+/// fortune-teller reads it by its kind, a prong of the Trident and the Trident
+/// itself on their own, then takes his 20 coins.
+void NaribweInteriors_ReadFortune(void) {
   s32 slot, unit;
   struct UnitData *unitData;
   const u8 *message, *refuse, *info;
@@ -289,7 +296,7 @@ read:
   item = unitData->items[slot] & 0x1ff;
 #endif
   if ((u16)(item - 0x1b7) <= 2) {
-    Func_02000920();
+    NaribweInteriors_ReadProng();
   } else if ((u16)item == 326) {
     FieldEvent_SetMessageId(message + 29);
     Event_ShowMessage(10, 0);
@@ -304,13 +311,13 @@ read:
     rawKind = info[2];
     kind = rawKind;
     if (kind == 6)
-      Func_020007b4();
+      NaribweInteriors_ReadShiningItem();
     else if (kind == 1)
-      Func_02000760();
+      NaribweInteriors_ReadWeapon();
     else if ((u8)((u8)rawKind - 2) <= 3)
-      Func_02000838();
+      NaribweInteriors_ReadArmor();
     else
-      Func_02000878();
+      NaribweInteriors_ReadOtherItem();
   }
   Actor_SetPosition(18, 0, 0);
   Party_AdjustCoins(-20);
@@ -321,9 +328,11 @@ s32 Func_0200097c(void);
 s32 Func_020009a4(void);
 s32 Func_020009f8(void);
 s32 Func_02000a7c(void);
-u8 *Func_02000c04(void);
+u8 *NaribweInteriors_GetDjinniHint(void);
 
-void Func_02000760(void) {
+/// A weapon: the foe that lies beyond it.
+/// "Beyond the weapon you set down lies a terrible foe."
+void NaribweInteriors_ReadWeapon(void) {
   u8 *message = MsgBeyondTheWeapon;
 
   FieldEvent_SetMessageId((s32)message);
@@ -344,7 +353,9 @@ void Func_02000760(void) {
   }
 }
 
-void Func_020007b4(void) {
+/// An item of kind 6: a power shining beyond it, and where the story goes next.
+/// "I feel a shining power glowing beyond the item before me."
+void NaribweInteriors_ReadShiningItem(void) {
   u8 *message = MsgIFeelA;
 
   FieldEvent_SetMessageId((s32)message);
@@ -377,8 +388,11 @@ void Func_020007b4(void) {
   }
 }
 
-void Func_02000838(void) {
-  s32 message = Func_02000c04();
+/// A piece of armor, kinds 2 to 5: no future, and where an unfound Djinni
+/// waits.
+/// "In the item you have placed before me, I can see nothing of the future..."
+void NaribweInteriors_ReadArmor(void) {
+  s32 message = NaribweInteriors_GetDjinniHint();
 
   if (message == (s32)MsgInTheItem) {
     FieldEvent_SetMessageId(message);
@@ -391,7 +405,9 @@ void Func_02000838(void) {
   }
 }
 
-void Func_02000878(void) {
+/// Any other item: the path the party should follow.
+/// "Beyond the item before me, I see a path for you to follow."
+void NaribweInteriors_ReadOtherItem(void) {
   FieldEvent_SetMessageId((s32)MsgBeyondTheItem);
   Event_ShowMessage(10, 0);
   switch (Func_020009f8()) {
@@ -422,7 +438,10 @@ void Func_02000878(void) {
   }
 }
 
-void Func_02000920(void) {
+/// A prong of the Trident: the foe it holds power over.
+/// "The object you have placed before me wields a mighty power over a terrible
+/// foe."
+void NaribweInteriors_ReadProng(void) {
   u8 *message = MsgTheObjectYou;
 
   FieldEvent_SetMessageId((s32)message);
@@ -570,7 +589,9 @@ s32 Func_02000ba0(s32 limit, s32 group, s32 *out) {
 
 #include "call.h"
 
-u8 *Func_02000c04(void) {
+/// The message telling where an unfound Djinni waits, or MsgInTheItem when none
+/// is left to find.
+u8 *NaribweInteriors_GetDjinniHint(void) {
   s32 *hints = (s32 *)Value2((s32 (*)())HeapSlot_AllocEwram, 252, 320);
   s32 limits[4];
   s32 count = 0;
@@ -811,7 +832,7 @@ struct ActorPlacement gActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct Trigger gData_02001370[] = {
+struct Trigger gNaribweInteriors_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -824,11 +845,11 @@ struct Trigger gData_02001370[] = {
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgIfYouDesire)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgMyFatherIs)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgByPaintingOur)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_020000c4)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_02000184)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(NaribweInteriors_RecommendFortuneTeller)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(NaribweInteriors_SendToFortuneTeller)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgIfYouLike)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_02000244)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_02000304)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(NaribweInteriors_TalkAboutCooking)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(NaribweInteriors_TalkToFortuneTeller)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTheFortuneTellerIn)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgAsLongAs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTheItemsThat)},
@@ -838,11 +859,11 @@ struct Trigger gData_02001370[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgWheneverIGetMy)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgTheRiverIs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgOurSpicesAre)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT(NaribweInteriors_MindReadFortuneTeller)},
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020014c0[] = {
+struct Trigger gNaribweInteriors_TriggersOnReturn[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -855,11 +876,11 @@ struct Trigger gData_020014c0[] = {
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgIfYouDesire)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgIfTroubleResides)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgReadingFortunesIn)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_02000124)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_020001e4)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(NaribweInteriors_RecommendFortuneTellerOnReturn)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(NaribweInteriors_SendToFortuneTellerOnReturn)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgIfIsTraveling)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_020002a4)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_02000304)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(NaribweInteriors_TalkAboutTravelers)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(NaribweInteriors_TalkToFortuneTeller)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgThePowerOf)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTheFortuneTellerSaid)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgItemsPlacedBefore)},
@@ -869,6 +890,6 @@ struct Trigger gData_020014c0[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgILikeOffering)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgHePaidMe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgWhyWouldTravel)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT(Func_0200007c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT(NaribweInteriors_MindReadFortuneTellerOnReturn)},
     {TRIGGERS_END},
 };

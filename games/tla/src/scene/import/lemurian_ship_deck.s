@@ -62,9 +62,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_02001f14
+	.global Actor_Release
 	.thumb_func
-Func_02001f14:
+Actor_Release:
 	overlay_veneer Actor_Destroy
 	.global Map_CenterOnFollowedPoint
 	.thumb_func
@@ -78,9 +78,9 @@ Actor_SetMoveTarget:
 	.thumb_func
 Map_CopyCellPictureIndicesRect:
 	overlay_veneer Map_CopyCellPictureIndicesRectFar
-	.global Func_02001f34
+	.global Map_ClearLayerEntryFlag
 	.thumb_func
-Func_02001f34:
+Map_ClearLayerEntryFlag:
 	overlay_veneer Func_08020198
 	.global Actor_SetSingleChildFlags
 	.thumb_func
@@ -234,9 +234,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_0200206c
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_0200206c:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Func_080d4568
 	.thumb_func

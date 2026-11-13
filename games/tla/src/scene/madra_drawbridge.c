@@ -1,5 +1,11 @@
 /// @file
-/// The scene code of overlay 0x65b, in ROM order.
+/// The Madra Drawbridge, east of Madra, where two guards keep the way into
+/// Osenia shut until Madra's elder gives the party permission.
+///
+/// The first time the party steps onto the bridge (MadraDrawbridge_BlockBridge)
+/// the guards close ranks across it and send the party back for the elder's
+/// permission. Once flag 0x913 is set they greet the party instead
+/// (MadraDrawbridge_GreetPermittedParty) and step aside.
 
 #include "battle.h"
 #include "field.h"
@@ -19,6 +25,23 @@
 #include "event_work.h"
 #include "module/scene/madra_drawbridge.h"
 
+/// Set once the guards have closed ranks on this visit.
+#define FLAG_GUARDS_BLOCKED_BRIDGE 0x200
+/// Set once the guards have told the party to fetch the elder's permission.
+#define FLAG_GUARDS_ASKED_FOR_PERMISSION 0x301
+
+/// The two guards, numbering the rows of gActorPlacements.
+enum MadraDrawbridgeActorId {
+  /// The guard on the east side of the bridge.
+  /// ★ Named from the game: "If you wanna cross here, you'll need permission
+  /// from the town elder!" (MsgMadraNeedEldersPermission)
+  ACTOR_EAST_GUARD = ACTOR_FIRST_PLACED,
+  /// The guard on the west side of the bridge.
+  /// ★ Named from the game: "But try to cross illegally, and we'll throw you
+  /// in the hoosegow with Mr. Bluehair!" (MsgMadraCanCrossWithPermission)
+  ACTOR_WEST_GUARD
+};
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
@@ -29,70 +52,77 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-void Func_02000054(void) {
+/// The east guard asks whether the party is bound for Osenia, and without the
+/// elder's permission sends it back to town for a permit.
+/// "You goin' to Osenia?"
+void MadraDrawbridge_AskGoingToOsenia(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgMadraGoingToOsenia);
-  FieldMessage_ShowAtActor(8, 0);
+  Event_OpenMessage(ACTOR_EAST_GUARD, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
-    Motion_SetModeAndWaitAnimation(8, 3);
-    Event_ShowMessageThenWait(8, 0, 2);
+    Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, 3);
+    Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 2);
   } else {
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
-    Event_ShowMessageThenWait(8, 0, 2);
+    Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 2);
   }
   Event_End();
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-void Func_020000c8(void) {
-  if (Event_GetFlag(0x200) == 0) {
+/// The guards close ranks across the bridge as the party steps onto it, once a
+/// visit, and the first time they ask for the elder's permission.
+void MadraDrawbridge_BlockBridge(void) {
+  if (Event_GetFlag(FLAG_GUARDS_BLOCKED_BRIDGE) == 0) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    if (Event_GetFlag(0x301) == 0) {
-      Camera_SetSpeedParameters(0x18000, 0x3000);
-      Camera_MoveWithinMapBounds(PIXELS(164), -1, PIXELS(260), 1);
+    if (Event_GetFlag(FLAG_GUARDS_ASKED_FOR_PERMISSION) == 0) {
+      FieldCamera_SetSpeed(0x18000, 0x3000);
+      FieldCamera_MoveTo(PIXELS(164), -1, PIXELS(260), 1);
       Actor_WalkTo(gMainRoutineWork.currentOwner, 158, 316);
     }
-    Actor_GetById(8)->actionFlags &= ~1;
-    Actor_GetById(9)->actionFlags &= ~1;
-    Actor_ResetAndSetPositionInMode2(9, 148, 252);
-    Actor_SetPositionAndReset(8, 170, 252);
-    Actor_WaitForMoveById(9);
-    Actor_GetById(8)->actionFlags |= 1;
-    Actor_GetById(9)->actionFlags |= 1;
-    Actor_FaceDirection(8, FACING_SOUTH, 0);
-    Actor_ArmCallback(9, FACING_SOUTH, 0);
+    Actor_GetById(ACTOR_EAST_GUARD)->actionFlags &= ~1;
+    Actor_GetById(ACTOR_WEST_GUARD)->actionFlags &= ~1;
+    Actor_WalkTo(ACTOR_WEST_GUARD, 148, 252);
+    Actor_WalkToAndWait(ACTOR_EAST_GUARD, 170, 252);
+    Actor_WaitForMoveById(ACTOR_WEST_GUARD);
+    Actor_GetById(ACTOR_EAST_GUARD)->actionFlags |= 1;
+    Actor_GetById(ACTOR_WEST_GUARD)->actionFlags |= 1;
+    Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTH, 0);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-    GameFlag_SetBit(0x200);
-    Func_02000338();
+    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+    Event_SetFlag(FLAG_GUARDS_BLOCKED_BRIDGE);
+    FieldCamera_WaitForArrival();
     MapGrid_CopyCellAttributes(11, 9, 4, 1, 8, 14);
-    if (Event_GetFlag(0x301) == 0) {
+    if (Event_GetFlag(FLAG_GUARDS_ASKED_FOR_PERMISSION) == 0) {
       Event_SetMessageId((s32)MsgMadraNeedEldersPermission);
       Event_Wait(10);
-      Motion_SetVarCbAndRefresh(8, 1);
-      Event_ShowMessageThenWait(8, 0, 5);
-      Motion_SetModeAndWaitAnimation(9, 3);
-      Event_ShowMessageAndWait(9, 0);
-      GameFlag_SetBit(0x301);
+      Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 1);
+      Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 5);
+      Actor_SetAnimationAndWait(ACTOR_WEST_GUARD, 3);
+      Event_ShowMessage(ACTOR_WEST_GUARD, 0);
+      Event_SetFlag(FLAG_GUARDS_ASKED_FOR_PERMISSION);
       Event_End();
     }
   }
 }
 
-void Func_02000224(void) {
+/// With the elder's permission, the guards let the party through.
+/// "Yeah, we heard about you already."
+void MadraDrawbridge_GreetPermittedParty(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgMadraHeardAboutYou);
-  Camera_MoveWithinMapBounds(PIXELS(164), -1, PIXELS(260), 1);
-  Func_02000338();
-  Motion_SetModeAndWaitAnimation(8, 3);
-  Event_ShowMessageAndWait(8, 0);
-  Motion_SetModeAndWaitAnimation(9, 3);
-  Event_ShowMessageAndWait(9, 0);
-  GameFlag_SetBit(0x916);
+  FieldCamera_MoveTo(PIXELS(164), -1, PIXELS(260), 1);
+  FieldCamera_WaitForArrival();
+  Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, 3);
+  Event_ShowMessage(ACTOR_EAST_GUARD, 0);
+  Actor_SetAnimationAndWait(ACTOR_WEST_GUARD, 3);
+  Event_ShowMessage(ACTOR_WEST_GUARD, 0);
+  Event_SetFlag(0x916);
   Event_End();
 }
 
@@ -124,15 +154,15 @@ struct ActorPlacement gActorPlacements[] = {
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 10, 0x913, EVENT(Func_020000c8)},
-    {TRIGGER_STEP, 10, 0x916, EVENT(Func_02000224)},
-    {TRIGGER_TALK, 8, 0x913, EVENT(Func_02000054)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgMadraMikasallaVillage)},
-    {TRIGGER_TALK, 9, 0x913, MSGNO(MsgMadraCanCrossWithPermission)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMadraAvoidYampiDesert)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x913, MSGNO(MsgMadraForTheirSafety)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMadraWouldNeedBoat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x913, MSGNO(MsgMadraElderReturn)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMadraRatherStayHome)},
+    {TRIGGER_STEP, 10, 0x913, EVENT(MadraDrawbridge_BlockBridge)},
+    {TRIGGER_STEP, 10, 0x916, EVENT(MadraDrawbridge_GreetPermittedParty)},
+    {TRIGGER_TALK, ACTOR_EAST_GUARD, 0x913, EVENT(MadraDrawbridge_AskGoingToOsenia)},
+    {TRIGGER_TALK, ACTOR_EAST_GUARD, CONDITION_ALWAYS, MSGNO(MsgMadraMikasallaVillage)},
+    {TRIGGER_TALK, ACTOR_WEST_GUARD, 0x913, MSGNO(MsgMadraCanCrossWithPermission)},
+    {TRIGGER_TALK, ACTOR_WEST_GUARD, CONDITION_ALWAYS, MSGNO(MsgMadraAvoidYampiDesert)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, 0x913, MSGNO(MsgMadraForTheirSafety)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, CONDITION_ALWAYS, MSGNO(MsgMadraWouldNeedBoat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_GUARD, 0x913, MSGNO(MsgMadraElderReturn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_GUARD, CONDITION_ALWAYS, MSGNO(MsgMadraRatherStayHome)},
     {TRIGGERS_END},
 };

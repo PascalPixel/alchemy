@@ -6,8 +6,10 @@
 
 #include "types.h"
 
-void Func_02000a80(s32 actor);
+void Forge_Run(s32 actor);
 
-void Func_02000a88(s32 value);
+void Forge_SetItem(s32 value);
+
+void BattleEffect_StartEffectObject22(s32 item, s32 mode);
 
 #endif

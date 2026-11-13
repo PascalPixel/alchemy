@@ -53,7 +53,7 @@ struct TitleSprite__title {
 extern struct TitleSprite__title gData_020006f0[];
 
 s32 Func_020005d4(void);
-void Func_0200062c(s32 value);
+void Title_ShowSplashScreen(s32 value);
 void Func_02000634(s32 value);
 
 /// Runs the title by entrance: at entrance 10 the title is revealed and waits
@@ -62,56 +62,42 @@ void Func_02000634(s32 value);
 // ☀️'s Title_Run with ⚓️'s entrances.
 s32 Title_Run(void) {
   s32 frames;
-  s32 limit;
 
   if (gMainRoutineWork.entrance == 10) {
     Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
-    Sound_Play(75);
-    Func_0200031c(0);
+    Event_PlaySound(75);
+    Title_RevealScreen(0);
     wait(120);
-    // Goto loops: the native reloads gInput's address on every pass,
-    // which loop.c hoists out of a for loop.
-    frames = 0;
-    goto test;
-  next:
-    frames++;
-  test:
-    limit = 3599;
-    /* FAKEMATCH(barrier): the bound goes through an empty asm, so 3599 is
-     * compared with bgt; as frames > 3599, which combine canonicalizes to 3600
-     * with bge, 19 of 155 instructions differ in tla-en. */
-    __asm__("" : "+l"(limit));
-    if (frames > limit)
-      goto out;
-    wait(1);
-    if (gInput.pressed == 0)
-      goto next;
-  out:
+    for (frames = 0; frames <= 3599; frames++) {
+      wait(1);
+      if (gInput.pressed != 0)
+        break;
+    }
     Event_SetDestination((s32)&SceneId_Title, 2);
     return 0;
   }
   if (gMainRoutineWork.entrance == 8) {
-    Sound_Play(68);
+    Event_PlaySound(68);
     Func_0200061c(1);
-    Sound_Play(78);
+    Event_PlaySound(78);
     Fade_ToBlack(60);
     Fade_Wait();
     Event_Wait(240);
-    Sound_Play(0);
+    Event_PlaySound(0);
     Event_SetDestination((s32)&SceneId_Title, 2);
     return 0;
   }
   Resource_ReservedNoOp((s32)&ResourceId_FarCall00B);
   if (gMainRoutineWork.entrance == 1) {
     for (;;) {
-      Sound_Play(0);
-      Func_0200062c(0);
+      Event_PlaySound(0);
+      Title_ShowSplashScreen(0);
       Func_02000634(0);
       if (Func_020005d4() > 0) {
-        Sound_Play(40);
+        Event_PlaySound(40);
         Func_0200063c(1);
         if (Func_02000624(1) == 0) {
-          Sound_Play(78);
+          Event_PlaySound(78);
           Fade_ToBlack(30);
           Fade_Wait();
           /* FAKEMATCH(dead): an empty once-only block keeps the counter's zero
@@ -137,25 +123,25 @@ s32 Title_Run(void) {
     Event_SetDestination((s32)&SceneId_Ov64a, 1);
   } else {
     if (gMainRoutineWork.entrance == 2) {
-      Sound_Play(40);
+      Event_PlaySound(40);
       Func_0200063c(0);
-      Func_0803f9c0(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
+      WindowColor_Apply(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
       Party_SetLeaderJenna();
       Event_SetDestination((s32)&SceneId_VenusLighthouse, 99);
     }
     if (gMainRoutineWork.entrance == 3) {
-      Sound_Play(75);
+      Event_PlaySound(75);
       Func_02000624(0);
-      Func_0803f9c0(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
+      WindowColor_Apply(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
       Party_SetLeaderFelix();
       Event_SetDestination((s32)&SceneId_Ov650, 13);
     }
   }
-  Sound_Play(78);
+  Event_PlaySound(78);
   Fade_ToBlack(30);
   Fade_Wait();
   Event_Wait(60);
-  Sound_Play(0);
+  Event_PlaySound(0);
   return 0;
 }
 
@@ -224,7 +210,7 @@ void Func_02000278(void) {
 
 /// The title screen appears: the logo and its sprite row are loaded, the
 /// blend fades the logo in over 17 steps and the screen transition opens.
-void Func_0200031c(void) {
+void Title_RevealScreen(void) {
   s32 i;
 
   Title_LoadBackground();

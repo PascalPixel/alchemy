@@ -118,9 +118,9 @@ Event_ResolvePendingActions:
 	.thumb_func
 Func_080dc978:
 	overlay_veneer Func_080c84e8
-	.global Func_02000608
+	.global BattleEffect_FinishSceneAndReleaseHeapBlock
 	.thumb_func
-Func_02000608:
+BattleEffect_FinishSceneAndReleaseHeapBlock:
 	overlay_veneer Func_080c84f0
 	.global Sound_Play
 	.thumb_func

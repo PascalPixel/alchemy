@@ -58,9 +58,9 @@ Actor_SetSpritePriorityDirect:
 	.thumb_func
 FieldMessage_Show:
 	overlay_veneer FieldMessage_ShowFar
-	.global Func_02001bb4
+	.global Party_RestoreHpPp
 	.thumb_func
-Func_02001bb4:
+Party_RestoreHpPp:
 	overlay_veneer Func_080ad208
 	.global Party_FindOwnerWithAction
 	.thumb_func
@@ -194,9 +194,9 @@ Camera_FollowActor:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02001cc4
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02001cc4:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Event_SetDestination
 	.thumb_func
@@ -266,9 +266,9 @@ Func_02001d44:
 	.thumb_func
 Func_02001d4c:
 	overlay_veneer Func_080c8780
-	.global Func_02001d54
+	.global BattleEffect_GetObjectPriority
 	.thumb_func
-Func_02001d54:
+BattleEffect_GetObjectPriority:
 	overlay_veneer Func_080c87e8
 	.global Func_02001d5c
 	.thumb_func

@@ -9,7 +9,7 @@ void Func_02000e68(void);
 void Func_02000f10(void);
 void Func_020011b4(void);
 void Func_02001238(void);
-void Func_0200130c(void);
+void YampiDesertCave_MeetGuardianOfFire(void);
 void Func_020013c8(void);
 
 // clang-format off
@@ -89,7 +89,7 @@ u32 gData_02001b48[] = {
     22, 26, 0, 17,
 };
 
-struct ActorPlacement gData_02001b58[] = {
+struct ActorPlacement gYampiDesertCave_Placements[] = {
     {331, CONDITION_ALWAYS, 7, PIXELS(888), 0, PIXELS(336), FACING_SOUTH, 2, 0},
     {332, CONDITION_ALWAYS, 7, PIXELS(832), 0, PIXELS(312), FACING_SOUTH, 2, 0},
     {332, CONDITION_ALWAYS, 7, PIXELS(912), 0, PIXELS(168), FACING_SOUTH, 2, 0},
@@ -98,14 +98,14 @@ struct ActorPlacement gData_02001b58[] = {
 };
 // clang-format on
 
-struct ActorPlacement gData_02001bd0[] = {
+struct ActorPlacement gYampiDesertCave_Room2Placements[] = {
     {272, CONDITION_ALWAYS, (s32)gData_02001b48, PIXELS(552), 0, PIXELS(200),
      FACING_SOUTH, 2, 0},
     {177, 0x9cd, 1, PIXELS(200), 0, PIXELS(152), FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02001c18[] = {
+struct ActorPlacement gYampiDesertCave_Room3Placements[] = {
     {331, CONDITION_ALWAYS, 7, PIXELS(712), 0, PIXELS(752), FACING_SOUTH, 2, 0},
     {332, CONDITION_ALWAYS, 7, PIXELS(752), 0, PIXELS(744), FACING_SOUTH, 2, 0},
     {331, CONDITION_ALWAYS, 7, PIXELS(728), 0, PIXELS(784), FACING_SOUTH, 2, 0},
@@ -127,7 +127,7 @@ u32 gData_02001d20[] = {
     0xffff0206,
 };
 
-struct Trigger gData_02001d28[] = {
+struct Trigger gYampiDesertCave_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {49, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -147,16 +147,15 @@ struct Trigger gData_02001d28[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02001ddc[] = {
+struct Trigger gYampiDesertCave_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {49, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {33, 17, CONDITION_ALWAYS, 17},
-    {TRIGGER_STEP, 52, 0x9cd, EVENT(Func_0200130c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8,
-     0x303, EVENT(Func_02000e68)},
+    {TRIGGER_STEP, 52, 0x9cd, EVENT(YampiDesertCave_MeetGuardianOfFire)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x303, EVENT(Func_02000e68)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x303, EVENT(Func_02000f10)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0,
      CONDITION_ALWAYS, EVENT(Func_02001040)},
@@ -166,7 +165,7 @@ struct Trigger gData_02001ddc[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02001e78[] = {
+struct Trigger gYampiDesertCave_Room3Triggers[] = {
     {33, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},

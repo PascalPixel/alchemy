@@ -56,14 +56,14 @@ struct HeapWords {
   s32 eventWord;
 };
 
-void Func_02004e20(void);
+void MarsLighthouseAerie_TalkToCoughingParent(void);
 
-void Func_02001f10(void);
+void MarsLighthouseAerie_FindWhoTheDragonWas(void);
 
-void Func_020029ac(void);
+void MarsLighthouseAerie_UrgeOnToBeacon(void);
 
-void Func_02003658(void);
-void Func_02003ff4(void);
+void MarsLighthouseAerie_LightBeacon(void);
+void MarsLighthouseAerie_WatchGoldenSunRise(void);
 void Func_020054e4(struct Actor *object);
 
 void Func_02003210(struct Actor *self);
@@ -83,7 +83,7 @@ void Func_0200326c(void);
 extern s32 gData_020060b4[];
 extern u32 gData_02006120[];
 extern u32 gData_02006150[];
-extern s32 gData_020061d4[];
+extern s32 gMarsLighthouseAerie_WatchGoldenSunRiseScript[];
 
 extern u16 *Data_02006ce4;
 extern u16 *Data_02006ce8;
@@ -100,13 +100,13 @@ void Func_020057a4(struct SparkleSprite__s53e4 *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 
 void Func_02005268(struct Actor *object);
-void Func_02004bc4(void);
-void Func_02004c2c(void);
-void Func_02004c94(void);
+void MarsLighthouseAerie_HoldBackFromParents(void);
+void MarsLighthouseAerie_HoldBackFromParentsAgain(void);
+void MarsLighthouseAerie_OfferToCastMarsStar(void);
 void Func_02004d14(void);
-void Func_02004da0(void);
-void Func_02004df0(void);
-void Func_02004e50(void);
+void MarsLighthouseAerie_TalkToConsoler(void);
+void MarsLighthouseAerie_TalkToBlindedParent(void);
+void MarsLighthouseAerie_TalkToGladParent(void);
 void Func_02004ecc(void);
 void Func_02004ee4(void);
 

@@ -118,9 +118,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_020041ec
+	.global Actor_Release
 	.thumb_func
-Func_020041ec:
+Actor_Release:
 	overlay_veneer Actor_Destroy
 	.global Actor_SetPositionAndResetMotion
 	.thumb_func
@@ -166,9 +166,9 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 Func_0802b450:
 	overlay_veneer Func_080201f0
-	.global Func_0200424c
+	.global MapGrid_CheckCollision
 	.thumb_func
-Func_0200424c:
+MapGrid_CheckCollision:
 	overlay_veneer Func_08020210
 	.global Actor_SetSingleChildFlags
 	.thumb_func
@@ -362,9 +362,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_020043d4
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_020043d4:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Func_080d4568
 	.thumb_func

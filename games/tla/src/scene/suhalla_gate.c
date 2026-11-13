@@ -11,11 +11,11 @@
 extern u32 gSceneExits[];
 
 void Actor_SetActionCallback(struct Actor *object, s32 a);
-void Func_02000800(void);
+void SuhallaGate_AfterThievesBattle(void);
 void Func_02000a90(s32 id, s32 a);
 void Func_02000a98(s32 id, s32 a, s32 b);
 void Event_End(void);
-void Func_02000a30(void);
+void FieldCamera_WaitForArrival(void);
 void Func_020005e8(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -35,10 +35,10 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_SuhallaGate2)
-    return gData_02000d98;
+    return gSuhallaGate_Room2Entrances;
   if (scene == (s32)&SceneId_SuhallaGate3)
-    return gData_02000e40;
-  return gData_02000cd8;
+    return gSuhallaGate_Room3Entrances;
+  return gSuhallaGate_Entrances;
 }
 
 #include "battle.h"
@@ -59,20 +59,20 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_SuhallaGate2)
-    return gData_02000f58;
+    return gSuhallaGate_Room2Placements;
   if (scene == (s32)&SceneId_SuhallaGate1)
-    return gData_02001048;
-  return gData_02000f10;
+    return gSuhallaGate_Room1Placements;
+  return gSuhallaGate_Placements;
 }
 
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_SuhallaGate2)
-    return gData_020010e4;
+    return gSuhallaGate_Room2Triggers;
   if (scene == (s32)&SceneId_SuhallaGate3)
-    return gData_02001180;
-  return gData_02001078;
+    return gSuhallaGate_Room3Triggers;
+  return gSuhallaGate_Triggers;
 }
 
 #include "event_inline.h"
@@ -81,8 +81,8 @@ const struct Trigger *Scene_GetEvents(void) {
 
 void Func_02000110(void) {
   if (gMainRoutineWork.entrance == 99)
-    GameFlag_SetBit(0x894);
-  if (GameFlag_Test(0x894)) {
+    Event_SetFlag(0x894);
+  if (Event_GetFlag(0x894)) {
     Actor_SetPosition(8, PIXELS(456), PIXELS(312));
     Func_02000a98(8, 0x4000, 0);
     Actor_SetActionCallback(Actor_GetById(8), 8);
@@ -92,11 +92,11 @@ void Func_02000110(void) {
 void Func_02000168(void) {
   MapGrid_CopyCellAttributes(108, 38, 1, 1, 102, 56);
   if (gMainRoutineWork.entrance == 99)
-    GameFlag_SetBit(0x895);
-  if (GameFlag_Test(0x895)) {
+    Event_SetFlag(0x895);
+  if (Event_GetFlag(0x895)) {
     Actor_SetPosition(13, PIXELS(590), PIXELS(920));
     Actor_SetPosition(14, PIXELS(624), PIXELS(939));
-    Actor_SetHorizontalPositionWithTerrain(15, PIXELS(632), PIXELS(920));
+    Actor_SetPosition(15, PIXELS(632), PIXELS(920));
     Actor_GetById(13)->facing = 0x4000;
     Func_02000a90(13, 0x6000);
     Actor_GetById(14)->facing = 0;
@@ -107,16 +107,16 @@ void Func_02000168(void) {
     Actor_GetById(14)->collisionFlags = 1;
     Actor_GetById(15)->collisionFlags = 1;
   }
-  Actor_SetModeById(8, 4);
-  Actor_SetModeById(9, 4);
-  Actor_SetModeById(10, 3);
-  Actor_SetModeById(11, 4);
-  Actor_SetModeById(12, 3);
+  Actor_SetAnimation(8, 4);
+  Actor_SetAnimation(9, 4);
+  Actor_SetAnimation(10, 3);
+  Actor_SetAnimation(11, 4);
+  Actor_SetAnimation(12, 3);
 }
 
 void Func_02000264(void) {
-  if (GameFlag_Test(0x109) == 0 && gMainRoutineWork.entrance == 99)
-    Func_02000800();
+  if (Event_GetFlag(0x109) == 0 && gMainRoutineWork.entrance == 99)
+    SuhallaGate_AfterThievesBattle();
 }
 
 s32 Scene_Initialize(void) {
@@ -137,20 +137,20 @@ s32 Scene_Initialize(void) {
 
 void Func_020002e0(void) {
   MapGrid_CopyCellAttributes(108, 38, 1, 1, 102, 56);
-  GameFlag_SetBit(0x8de);
+  Event_SetFlag(0x8de);
 }
 
-void Func_02000308(void) {
+void SuhallaGate_EnterHouse(void) {
   s32 value = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154);
 
   Actor_GetById(0)->motionFlags = 0;
-  Sound_Play(158);
-  Map_CopyCellPictureIndicesRect(66, 36, 71, 8, 2, 2);
+  Event_PlaySound(158);
+  MapGrid_CopyCellsTo(66, 36, 71, 8, 2, 2);
   wait(4);
-  Map_CopyCellPictureIndicesRect(68, 36, 71, 8, 2, 2);
+  MapGrid_CopyCellsTo(68, 36, 71, 8, 2, 2);
   wait(4);
   Actor_CenterAndWalk(0, 3, -16);
-  Sound_Play(123);
+  Event_PlaySound(123);
   Import_EventSetExitRequest(value);
 }
 
@@ -158,7 +158,7 @@ void Func_02000378(void) {
   s32 value = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154);
 
   gMainRoutineWork.currentOwner = 4;
-  Sound_Play(123);
+  Event_PlaySound(123);
   Import_EventSetExitRequest(value);
 }
 
@@ -167,15 +167,15 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// Places the leader and the camera after a message, runs actor 8's motions
 /// and sends the party to Suhalla Gate 1, entrance 99. The message is
 /// "Waahhh".
-void Func_020003ac(void) {
+void SuhallaGate_ThievesSpotParty(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWaahhhItS);
-  Actor_ResetAndSetPositionInMode2(gMainRoutineWork.currentOwner, 472, 320);
-  Camera_MoveWithinMapBounds(PIXELS(456), -1, PIXELS(280), 1);
-  Func_02000a30();
+  Actor_WalkTo(gMainRoutineWork.currentOwner, 472, 320);
+  FieldCamera_MoveTo(PIXELS(456), -1, PIXELS(280), 1);
+  FieldCamera_WaitForArrival();
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
   Event_Wait(10);
   Actor_Jump(8, 6, 20);
   Event_Wait(20);
@@ -184,10 +184,10 @@ void Func_020003ac(void) {
     s32 x = 256;
     s32 z = 50;
 
-    Func_080d47b4(8, x, z);
+    FieldActor_ShowEmote(8, x, z);
   }
   Event_ShowMessageThenWait(8, 0, 10);
-  Motion_SetModeAndWaitAnimation(8, 3);
+  Actor_SetAnimationAndWait(8, 3);
   Event_Wait(30);
   Event_ShowMessageThenWait(8, 0, 10);
   Actor_WalkToAndWait(8, 456, 312);
@@ -200,7 +200,8 @@ void Func_020003ac(void) {
 
 #include "actor.h"
 
-void Func_02000494(void) {
+/// "Ha! That was a good idea, waiting here for 'em!"
+void SuhallaGate_ThievesAmbushParty(void) {
   struct MainRoutineWork *work;
   s32 *owner;
 
@@ -247,7 +248,7 @@ void Func_020005e8(void) {
   Actor_Jump(8, 4, 0);
   owner = Actor_GetById(gMainRoutineWork.currentOwner);
   if (owner != NULL)
-    Actor_ResetAndSetPosition(8, *(s16 *)((u8 *)owner + 10),
+    Actor_SetDestination(8, *(s16 *)((u8 *)owner + 10),
                                      *(s16 *)((u8 *)owner + 18));
   Event_Wait(20);
   Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate3, 99);
@@ -260,16 +261,16 @@ void Func_020005e8(void) {
 void Func_02000650(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetHorizontalPositionWithTerrain(8, PIXELS(472), PIXELS(480));
+  Actor_SetPosition(8, PIXELS(472), PIXELS(480));
   Event_Wait(16);
-  Actor_SetAngleToward(gMainRoutineWork.currentOwner, 8, 0);
-  Func_080d47b4(gMainRoutineWork.currentOwner, 0x100, 0);
+  Actor_FaceActor(gMainRoutineWork.currentOwner, 8, 0);
+  FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 0x100, 0);
   Camera_FollowActor(8, 1);
-  Func_02000a30();
+  FieldCamera_WaitForArrival();
   Actor_Jump(8, 4, 0);
   Event_Wait(16);
   Actor_Jump(8, 4, 0);
-  Actor_SetPositionAndCommit(8, 480, 472);
+  Actor_MoveToAndWait(8, 480, 472);
   Event_Wait(30);
   Actor_Jump(8, 2, 0);
   Actor_MoveToAndWait(8, 496, 464);
@@ -285,21 +286,21 @@ void Func_0200071c(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetHorizontalPositionWithTerrain(8, PIXELS(472), PIXELS(480));
+  Actor_SetPosition(8, PIXELS(472), PIXELS(480));
   Event_Wait(16);
-  Actor_SetAngleToward(gMainRoutineWork.currentOwner, 8, 0);
+  Actor_FaceActor(gMainRoutineWork.currentOwner, 8, 0);
   x = 0x100;
   z = 0;
-  Func_080d47b4(gMainRoutineWork.currentOwner, x, z);
+  FieldActor_ShowEmote(gMainRoutineWork.currentOwner, x, z);
   Event_Wait(16);
   Actor_WalkTo(gMainRoutineWork.currentOwner, 488, 440);
   Event_Wait(16);
   Camera_FollowActor(8, 1);
-  Func_02000a30();
+  FieldCamera_WaitForArrival();
   Actor_Jump(8, 4, 0);
   Event_Wait(16);
   Actor_Jump(8, 4, 0);
-  Actor_SetPositionAndCommit(8, 488, 480);
+  Actor_MoveToAndWait(8, 488, 480);
   Event_Wait(30);
   Actor_Jump(8, 2, 0);
   Actor_MoveToAndWait(8, 504, 472);
@@ -310,37 +311,39 @@ void Func_0200071c(void) {
   Func_020005e8();
 }
 
-void Func_02000800(void) {
+/// "My! That was invigorating! He wasn't too strong..."
+void SuhallaGate_AfterThievesBattle(void) {
   struct Actor *leader;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgMyThatWas);
   Actor_SetPosition(9, PIXELS(512), PIXELS(432));
-  Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, PIXELS(528), PIXELS(432));
+  Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(528), PIXELS(432));
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_ShowMessageThenWait(9, 0, 10);
-  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
   Event_Wait(30);
-  Motion_SetVarCbAndRefresh(9, 2);
+  Actor_RunRepeatedMotion(9, 2);
   Event_Wait(20);
   Event_ShowMessageThenWait(9, 0, 10);
-  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
   Event_Wait(30);
-  GameFlag_SetBit(0x896);
-  Actor_SetModeById(9, 2);
+  Event_SetFlag(0x896);
+  Actor_SetAnimation(9, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader)
-    Actor_ResetAndSetPosition(9, ((s16 *)&leader->x)[1],
+    Actor_SetDestination(9, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(9);
-  Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+  Actor_SetPosition(9, 0, 0);
   Event_Wait(10);
   Event_End();
 }
 
-void Func_020008cc(void) {
+/// "Not that way, Jenna! The meeting spot is down this way."
+void SuhallaGate_PointToMeetingSpot(void) {
   struct Actor *leader;
 
   Event_Start();
@@ -349,15 +352,15 @@ void Func_020008cc(void) {
   Actor_LaunchFromLeader(16, -16, 0, 0);
   Actor_WaitForMoveById(16);
   Event_ShowMessageThenWait(0x1010, 0, 10);
-  Actor_SetModeById(16, 2);
+  Actor_SetAnimation(16, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader)
-    Actor_ResetAndSetPosition(16, ((s16 *)&leader->x)[1],
+    Actor_SetDestination(16, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(16);
-  Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
+  Actor_SetPosition(16, 0, 0);
   Event_Wait(10);
-  Actor_CommitPositionAndActivate(gMainRoutineWork.currentOwner, 16, 0);
+  Actor_WalkByAndWait(gMainRoutineWork.currentOwner, 16, 0);
   Event_End();
 }
 
@@ -389,7 +392,7 @@ s32 gData_02000aa8[] = {
     0xffff, (s32)0xc0010000,
 };
 
-struct SceneEntrance gData_02000cd8[] = {
+struct SceneEntrance gSuhallaGate_Entrances[] = {
     {0, CONDITION_ALWAYS, 152, 0, 504, FACING_SOUTH, 0, 32, 32, 272, 544, 0},
     {1, CONDITION_ALWAYS, 152, 0, 520, FACING_NORTH, 0, 32, 32, 272, 544, 0},
     {2, CONDITION_ALWAYS, 248, 0, 280, FACING_WEST, 0, 32, 32, 272, 544, 0},
@@ -400,7 +403,7 @@ struct SceneEntrance gData_02000cd8[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gData_02000d98[] = {
+struct SceneEntrance gSuhallaGate_Room2Entrances[] = {
     {1, CONDITION_ALWAYS, 40, 0, 304, FACING_EAST, 0, 16, 32, 416, 480, 0},
     {2, CONDITION_ALWAYS, 392, 0, 368, FACING_WEST, 0, 16, 32, 416, 480, 0},
     {3, CONDITION_ALWAYS, 40, 0, 912, FACING_EAST, 0, 16, 608, 720, 1008, 0},
@@ -410,7 +413,7 @@ struct SceneEntrance gData_02000d98[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gData_02000e40[] = {
+struct SceneEntrance gSuhallaGate_Room3Entrances[] = {
     {1, CONDITION_ALWAYS, 72, 0, 264, FACING_NORTH, 0, 24, 24, 280, 256, 0},
     {2, CONDITION_ALWAYS, 184, 0, 168, FACING_SOUTH, 0, 24, 24, 280, 256, 0},
     {3, CONDITION_ALWAYS, 280, 0, 344, FACING_SOUTH, 0, 208, 288, 704, 640, 0},
@@ -438,13 +441,13 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_02000f10[] = {
+struct ActorPlacement gSuhallaGate_Placements[] = {
     {247, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 0, 0},
     {56, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTHEAST, 2, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02000f58[] = {
+struct ActorPlacement gSuhallaGate_Room2Placements[] = {
     {299, CONDITION_ALWAYS, 7, PIXELS(264), 0, PIXELS(400), 0x5000, 2, 0},
     {299, CONDITION_ALWAYS, 7, PIXELS(280), 0, PIXELS(368), 0x5000, 2, 0},
     {299, CONDITION_ALWAYS, 7, PIXELS(472), 0, PIXELS(912), 0x5000, 2, 0},
@@ -460,33 +463,33 @@ struct ActorPlacement gData_02000f58[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02001048[] = {
+struct ActorPlacement gSuhallaGate_Room1Placements[] = {
     {93, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(264), FACING_SOUTHEAST, 2,
      0},
     {SCENE_TABLE_END},
 };
 // clang-format on
 
-struct Trigger gData_02001078[] = {
+struct Trigger gSuhallaGate_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_02000308)},
-    {TRIGGER_STEP, 20, 0x894, EVENT(Func_020003ac)},
-    {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(Func_020008cc)},
+    {0xc602, 3, CONDITION_ALWAYS, EVENT(SuhallaGate_EnterHouse)},
+    {TRIGGER_STEP, 20, 0x894, EVENT(SuhallaGate_ThievesSpotParty)},
+    {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(SuhallaGate_PointToMeetingSpot)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgOoooogMaybeI)},
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020010e4[] = {
+struct Trigger gSuhallaGate_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_STEP, 5, 0x895, EVENT(Func_02000494)},
+    {TRIGGER_STEP, 5, 0x895, EVENT(SuhallaGate_ThievesAmbushParty)},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Func_020008cc)},
+    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(SuhallaGate_PointToMeetingSpot)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgMaybeIShould)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAllRightSo)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgOhManThere)},
@@ -495,7 +498,7 @@ struct Trigger gData_020010e4[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02001180[] = {
+struct Trigger gSuhallaGate_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {49, 2, CONDITION_ALWAYS, 2},
     {33, 3, CONDITION_ALWAYS, 3},

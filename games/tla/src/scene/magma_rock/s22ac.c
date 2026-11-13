@@ -135,7 +135,7 @@ static inline void AttachPart(struct Actor *part, struct Actor *anchor,
   BYTE_AT(part, 98) = order;
   part->watchedObject = anchor;
   part->update = Func_02001528;
-  Actor_SetPartAttribute(part, 3);
+  Actor_SetSpriteColor(part, 3);
 }
 
 static inline void BuildParts(struct Actor *anchor) {
@@ -189,8 +189,7 @@ s32 Scene_Initialize(void) {
   s32 *owner, *leader;
   s16 *entrance;
   struct Actor *actor;
-  /* FAKEMATCH(temporary): one local for a table, a step and a size; as one
-   * local each, 92 of 732 instructions differ in tla-en. */
+  // other serves in turn as a table, a step and a size.
   s32 other, rise;
   s32 offset;
   s32 value1, value2, value3, value4;
@@ -427,10 +426,10 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 extern u8 gMapShapeGrid[];
 
-s32 Func_02003adc(s32 layer, s32 x, s32 z);
+s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 u8 Func_02003c24(s32 layer, s32 shape, s32 height);
 
-DEFINE_PILLARS_RESTORE_RAISED(Func_02002d08, Func_02003c04, Func_02003adc, Func_02003b3c,
+DEFINE_PILLARS_RESTORE_RAISED(Func_02002d08, Func_02003c04, MapGrid_GetTerrainKind, Func_02003b3c,
     Func_02003c24, Func_02003a54)
 
 void Func_020035e0(void);
@@ -462,21 +461,21 @@ body:
       s32 flag = list[1];
 
       Event_Start();
-      if (!GameFlag_Test(flag)) {
-        Sound_Play(125);
-        Actor_SetPartAttribute(Actor_GetById(id), 7);
+      if (!Event_GetFlag(flag)) {
+        Event_PlaySound(125);
+        Actor_SetSpriteColor(Actor_GetById(id), 7);
         wait(2);
         Func_02003a54(target, 0);
-        Actor_SetPartAttribute(Actor_GetById(id), 0);
+        Actor_SetSpriteColor(Actor_GetById(id), 0);
         wait(2);
-        Actor_SetPartAttribute(Actor_GetById(id), 7);
+        Actor_SetSpriteColor(Actor_GetById(id), 7);
         wait(4);
-        Actor_SetPartAttribute(Actor_GetById(id), 0);
+        Actor_SetSpriteColor(Actor_GetById(id), 0);
         Func_020034ac(0);
-        GameFlag_SetBit(flag);
-      } else if (!GameFlag_Test(flag + 1)) {
+        Event_SetFlag(flag);
+      } else if (!Event_GetFlag(flag + 1)) {
         leader->motionFlags = 0;
-        Sound_Play(185);
+        Event_PlaySound(185);
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_020034ac(0);
         wait(8);
@@ -492,10 +491,10 @@ body:
         wait(5);
         Actor_SetPositionAndResetMotion(target, 0, 0, 0);
         wait(2);
-        Sound_Play(188);
+        Event_PlaySound(188);
         Func_020035e0();
         wait(20);
-        GameFlag_SetBit(flag + 1);
+        Event_SetFlag(flag + 1);
       }
     }
     Func_02003af4();
@@ -561,7 +560,7 @@ void Actor_MoveToObject(s32 id, s32 owner);
 /// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
 /// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
 /// it copy actor 9's visual attributes.
-DEFINE_PILLARS_RESTORE(Func_020030bc, Func_020030a4, Func_02003c04, Func_02003adc,
+DEFINE_PILLARS_RESTORE(Func_020030bc, Func_020030a4, Func_02003c04, MapGrid_GetTerrainKind,
     Func_02003b3c, Func_02003c24)
 
 void Func_02003224(struct Actor *object, struct Actor *source) {
@@ -603,25 +602,25 @@ body:
       s32 flag = list[1];
 
       Event_Start();
-      if (!GameFlag_Test(flag)) {
+      if (!Event_GetFlag(flag)) {
         Func_02003a54(actor8, 1);
         Func_02003224(actor8, target);
         wait(1);
-        Sound_Play(125);
-        Actor_SetPartAttribute(Actor_GetById(8), 7);
+        Event_PlaySound(125);
+        Actor_SetSpriteColor(Actor_GetById(8), 7);
         wait(2);
         Func_02003a54(actor8, 0);
         ObjectVisual_CopyAttributes(id, 9);
-        Actor_SetPartAttribute(Actor_GetById(8), 0);
+        Actor_SetSpriteColor(Actor_GetById(8), 0);
         wait(2);
-        Actor_SetPartAttribute(Actor_GetById(8), 7);
+        Actor_SetSpriteColor(Actor_GetById(8), 7);
         wait(4);
-        Actor_SetPartAttribute(Actor_GetById(8), 0);
+        Actor_SetSpriteColor(Actor_GetById(8), 0);
         Func_020034ac(0);
         Func_02003224(target, actor8);
         wait(1);
-        GameFlag_SetBit(flag);
-      } else if (!GameFlag_Test(flag + 1)) {
+        Event_SetFlag(flag);
+      } else if (!Event_GetFlag(flag + 1)) {
         u8 *flags;
 
         Func_02003a54(actor8, 0);
@@ -629,7 +628,7 @@ body:
         wait(1);
         flags = &leader->motionFlags;
         *flags = 0;
-        Sound_Play(185);
+        Event_PlaySound(185);
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_020034ac(0);
         wait(8);
@@ -645,10 +644,10 @@ body:
         wait(5);
         Actor_SetPositionAndResetMotion(actor8, 0, 0, 0);
         wait(2);
-        Sound_Play(188);
+        Event_PlaySound(188);
         Func_020035e0();
         wait(20);
-        GameFlag_SetBit(flag + 1);
+        Event_SetFlag(flag + 1);
       }
       Func_02003af4();
       return;

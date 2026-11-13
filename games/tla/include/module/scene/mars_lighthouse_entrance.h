@@ -121,11 +121,11 @@ void Func_02000c1c(void);
 
 void Func_02000c68(void);
 
-void Func_0200040c(void);
+void MarsLighthouseEntrance_StartPoundIceCone(void);
 
-void Func_02000564(void);
+void MarsLighthouseEntrance_CheckIce(void);
 
-void Func_02000590(void);
+void MarsLighthouseEntrance_Teleport(void);
 
 void Func_02000710(void);
 
@@ -153,7 +153,7 @@ void Func_02000fa4(void);
 
 void Func_02000fd4(void);
 
-int Func_02002860(void);
+int MarsLighthouseEntrance_SlideOnIce(void);
 void Func_020032b8(void);
 
 void Func_02003284(void);

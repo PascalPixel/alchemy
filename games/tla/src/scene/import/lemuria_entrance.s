@@ -34,9 +34,9 @@ Message_OpenWindow:
 	.thumb_func
 Message_AllTyped:
 	overlay_veneer Message_AllTypedFar
-	.global Func_0200053c
+	.global Portrait_OpenWindow
 	.thumb_func
-Func_0200053c:
+Portrait_OpenWindow:
 	overlay_veneer Func_080380f8
 	.global Text_GetMessageSize
 	.thumb_func

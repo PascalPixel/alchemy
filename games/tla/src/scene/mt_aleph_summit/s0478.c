@@ -76,7 +76,7 @@ struct EventWorkView__s0478 {
 void Func_020002a4(u16 *colors, u16 *target, s32 count);
 void Func_0200032c(u16 *colors, s32 count, s32 delta);
 void Func_02000394(void);
-void Func_02001564(s32 a, s32 b);
+void Field_StartColorTransition(s32 a, s32 b);
 
 s32 Scene_Initialize(void) {
   u8 *block;
@@ -113,9 +113,9 @@ s32 Scene_Initialize(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     FieldCamera_MoveTo(0x1000000, -1, 0x13e0000, 1);
-    Func_0200152c();
+    FieldCamera_WaitForArrival();
     FieldCamera_MoveTo(0x13c0000, -1, 0x13e0000, 1);
-    Func_0200152c();
+    FieldCamera_WaitForArrival();
     i = 0;
   L1:
     if (i == 3) {
@@ -267,7 +267,7 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(8, 1);
     FieldCamera_MoveTo(0x1000000, -1, 0x800000, 1);
     FieldCamera_SetSpeed(0x10000, 0x2000);
-    Func_0200152c();
+    FieldCamera_WaitForArrival();
     Actor_SetSpeed(8, 0x4ccc, 0x2666);
     Actor_WalkToAndWait(8, 248, 128);
     Actor_RunRepeatedMotion(8, 2);
@@ -338,7 +338,7 @@ s32 Scene_Initialize(void) {
     BattleEffect_StartArcEffect();
     BattleEffect_SetObjectUpdateMode((s32)Actor_Get(8), 2);
     Event_PlaySound(178);
-    Func_02001564(8, 0x4084);
+    Field_StartColorTransition(8, 0x4084);
     FieldEvent_Wait(20);
     Actor_SetAnimation(9, 3);
     Actor_SetSpeed(9, 0x1999, 0xccc);
@@ -388,7 +388,7 @@ s32 Scene_Initialize(void) {
     MapGrid_SetShake(0, 0, 0);
     Actor_RunRepeatedMotion(8, 2);
     Field_StartPaletteTransition(1);
-    Func_02001564(8, 0x1110);
+    Field_StartColorTransition(8, 0x1110);
     FieldEvent_Wait(20);
     Actor_SetSpeed(8, 0x80000, 0x40000);
     Func_02000478(128, 8);

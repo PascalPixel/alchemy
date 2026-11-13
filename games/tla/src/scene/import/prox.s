@@ -86,9 +86,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_020043e4
+	.global Actor_Release
 	.thumb_func
-Func_020043e4:
+Actor_Release:
 	overlay_veneer Actor_Destroy
 	.global Actor_SetPositionAndResetMotion
 	.thumb_func
@@ -106,13 +106,13 @@ Script_WaitForEventTimeout:
 	.thumb_func
 Map_CopyCellPictureIndicesRect:
 	overlay_veneer Map_CopyCellPictureIndicesRectFar
-	.global Func_0200440c
+	.global Map_ClearLayerEntryFlag
 	.thumb_func
-Func_0200440c:
+Map_ClearLayerEntryFlag:
 	overlay_veneer Func_08020198
-	.global Func_02004414
+	.global Map_SetLayerEntryFlag
 	.thumb_func
-Func_02004414:
+Map_SetLayerEntryFlag:
 	overlay_veneer Func_080201a0
 	.global Map_GetTerrainHeight
 	.thumb_func
@@ -290,9 +290,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_0200457c
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_0200457c:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Func_080d4568
 	.thumb_func
@@ -362,9 +362,9 @@ Actor_WatchAndSetScript:
 	.thumb_func
 Func_02004604:
 	overlay_veneer Func_080c87c0
-	.global Func_0200460c
+	.global EffectSprite_DrawAtWorldPosition
 	.thumb_func
-Func_0200460c:
+EffectSprite_DrawAtWorldPosition:
 	overlay_veneer Func_080c87d0
 	.global BattleEffect_StepVector3
 	.thumb_func
@@ -374,17 +374,17 @@ BattleEffect_StepVector3:
 	.thumb_func
 Func_0200461c:
 	overlay_veneer Func_080c8918
-	.global Func_02004624
+	.global Shop_Run
 	.thumb_func
-Func_02004624:
+Shop_Run:
 	overlay_veneer Func_08108008
-	.global Func_0200462c
+	.global Sanctum_Run
 	.thumb_func
-Func_0200462c:
+Sanctum_Run:
 	overlay_veneer Func_08108010
-	.global Func_02004634
+	.global Inn_CheckIn
 	.thumb_func
-Func_02004634:
+Inn_CheckIn:
 	overlay_veneer Func_08108018
 	.global Sound_Play
 	.thumb_func

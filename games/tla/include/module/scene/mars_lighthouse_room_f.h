@@ -106,7 +106,7 @@ void Func_02000ad8(void);
 
 void Func_02000b40(void);
 
-s32 Func_02002ba0(void);
+s32 MarsLighthouseRoomF_SlideOnIce(void);
 
 void Func_02004140(void);
 
@@ -131,7 +131,7 @@ void Func_02004080(struct Actor *object);
 void Func_02004a44(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value);
 struct Actor *Func_02004bf4(s32 *direction, s32 *slot, s32 *kind);
 
-s32 Func_020054f8(struct Actor *object, s32 *position);
+s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
 
 void Func_02004fc0(struct Actor *object);
 
@@ -142,9 +142,11 @@ extern struct LightOam Data_0200f510[];
 extern s16 gData_020075d0;
 extern s16 gData_020075d2;
 
-s32 Func_02005698(struct Actor *actor);
+s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 void Func_02005440(struct LightOam *oam, s32 depth);
 
 void Func_02000d80(void);
+
+void Actor_Release(void *handle);
 
 #endif

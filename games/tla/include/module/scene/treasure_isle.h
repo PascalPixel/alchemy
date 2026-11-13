@@ -10,13 +10,13 @@
 
 struct TreasureIsleCell;
 
-extern struct ActorPlacement gData_02001330[];
+extern struct ActorPlacement gTreasureIsle_Placements[];
 
-extern struct ActorPlacement gData_02001390[];
+extern struct ActorPlacement gTreasureIsle_Room2Placements[];
 
-extern struct ActorPlacement gData_02001480[];
-extern struct ActorPlacement gData_02001504[];
-extern struct ActorPlacement gData_0200169c[];
+extern struct ActorPlacement gTreasureIsle_Room3Placements[];
+extern struct ActorPlacement gTreasureIsle_Room4Placements[];
+extern struct ActorPlacement gTreasureIsle_Room5Placements[];
 extern u32 gData_02001128[];
 
 // Import stubs: Event_Start and Event_End, and the pending
@@ -25,10 +25,10 @@ void Func_02000fcc(void);
 
 extern struct TreasureIsleCell gData_0200117c[];
 extern struct TreasureIsleCell gData_020011cc[];
-extern struct Trigger gData_02001780[];
-extern struct Trigger gData_0200184c[];
-extern s32 gData_020018f4[];
-extern struct Trigger gData_02001a5c[];
+extern struct Trigger gTreasureIsle_Room2Triggers[];
+extern struct Trigger gTreasureIsle_Room3Triggers[];
+extern s32 gTreasureIsle_Room4Triggers[];
+extern struct Trigger gTreasureIsle_Room5Triggers[];
 
 void Func_020003fc(struct TreasureIsleCell *cells, s16 index);
 
@@ -55,7 +55,7 @@ void Func_02000a2c(void);
 
 void Func_02000a5c(void);
 
-void Func_02000a8c(void);
+void TreasureIsle_MeetWaterGuardian(void);
 extern u32 gData_02001074[];
 extern u32 gData_020010b0[];
 extern u32 gData_020010ec[];
@@ -64,6 +64,6 @@ extern u32 gData_020014e0[];
 
 void Func_020005ac(void);
 
-void Func_02001014(void);
+void FieldCamera_WaitForArrival(void);
 
 #endif

@@ -98,13 +98,13 @@ Func_020005d4:
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_020005e4
+	.global Shop_Run
 	.thumb_func
-Func_020005e4:
+Shop_Run:
 	overlay_veneer Func_08108008
-	.global Func_020005ec
+	.global Sanctum_Run
 	.thumb_func
-Func_020005ec:
+Sanctum_Run:
 	overlay_veneer Func_08108010
 	.global Sound_Play
 	.thumb_func

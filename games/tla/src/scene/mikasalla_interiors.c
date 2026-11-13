@@ -30,14 +30,15 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65ERoom2)
-    return (const struct ActorPlacement *)gData_02000960;
-  return (const struct ActorPlacement *)gData_02000840;
+    return (const struct ActorPlacement *)gMikasallaInteriors_SanctumPlacements;
+  return (const struct ActorPlacement *)gMikasallaInteriors_InnPlacements;
 }
 
 void Event_Start();
 void Event_End();
 
-s32 Func_02000078(void) {
+/// "I wonder if there are werewolves beyond those in Garoh..."
+s32 MikasallaInteriors_MindReadWerewolfWonder(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriors18);
@@ -46,7 +47,9 @@ s32 Func_02000078(void) {
   return 0;
 }
 
-s32 Func_020000a0(void) {
+/// "Whenever visitors come out, the islanders start to complain about their
+/// lives."
+s32 MikasallaInteriors_MindReadIslanderComplaints(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriors32);
@@ -57,54 +60,52 @@ s32 Func_020000a0(void) {
 
 const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65ERoom2)
-    return (const struct Trigger *)gData_02000bac;
-  return (const struct Trigger *)gData_02000a20;
+    return (const struct Trigger *)gMikasallaInteriors_SanctumTriggers;
+  return (const struct Trigger *)gMikasallaInteriors_InnTriggers;
 }
 
-void Func_02000644();
+void Sanctum_Run();
 
-void Func_020000f4(void) {
-  s32 result0;
-  s32 result1;
-
+/// "Hey, mister! Are you an explorer?"
+void MikasallaInteriors_AskAreYouExplorer(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriors03);
   Event_OpenMessage(10, 0);
-  result0 = FieldParty_GetLeaderActor();
-  result1 = FieldEvent_AskYesNoWithActorAnimation(result0, 0);
-  if (result1 != 0)
-    goto L_0200812c;
-  FieldEvent_Wait(10);
-  FieldEvent_SetMessageId(((s32)MsgMikasallaInteriors03 + 1));
-  goto L_02008138;
-L_0200812c:
-  FieldEvent_Wait(20);
-  FieldEvent_SetMessageId(((s32)MsgMikasallaInteriors03 + 2));
-L_02008138:
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
+    FieldEvent_Wait(10);
+    FieldEvent_SetMessageId((s32)MsgMikasallaInteriors03 + 1);
+  } else {
+    FieldEvent_Wait(20);
+    FieldEvent_SetMessageId((s32)MsgMikasallaInteriors03 + 2);
+  }
   Event_ShowMessage(10, 0);
   Event_End();
-  return;
 }
 
-void Func_0200014c(s32 actor) {
+/// Mikasalla's merchant sells across the counter (stock row 13), and otherwise
+/// says the shop now sells armor too.
+void MikasallaInteriors_TalkToMerchant(s32 actor) {
   u16 facing;
 
   facing = (Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
   if (facing == 0xc000) {
-    Func_0200063c(13, actor);
+    Shop_Run(13, actor);
   } else {
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors11);
     Event_ShowMessage(actor, 0);
   }
 }
 
-void Func_0200019c(s32 actor) {
+/// Mikasalla's innkeeper takes the party in across the counter (inn 4), and
+/// otherwise bids it rest.
+/// "You've come a long way, friends. Stay a while, and rest your feet."
+void MikasallaInteriors_TalkToInnkeeper(s32 actor) {
   u16 facing;
 
   facing = (Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
   if (facing == 0xc000) {
-    Func_0200064c(4, actor);
+    Inn_CheckIn(4, actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -114,12 +115,15 @@ void Func_0200019c(s32 actor) {
   }
 }
 
-void Func_020001fc(s32 actor) {
+/// A sanctum's healer heals across the counter, and otherwise asks whether the
+/// party has been to Garoh.
+/// "Have you been to Garoh?"
+void MikasallaInteriors_AskBeenToGaroh(s32 actor) {
   u16 facing;
 
   facing = (Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
   if (facing == 0xc000) {
-    Func_02000644(actor);
+    Sanctum_Run(actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -138,12 +142,14 @@ void Func_020001fc(s32 actor) {
   }
 }
 
-void Func_02000288(s32 actor) {
+/// A sanctum's healer heals across the counter, and otherwise talks of the
+/// island.
+void MikasallaInteriors_TalkAboutIslandLife(s32 actor) {
   u16 facing;
 
   facing = (Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
   if (facing == 0xc000) {
-    Func_02000644(actor);
+    Sanctum_Run(actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -153,12 +159,14 @@ void Func_02000288(s32 actor) {
   }
 }
 
-void Func_020002e4(s32 actor) {
+/// A sanctum's healer heals across the counter, and otherwise talks of the
+/// far-off shores.
+void MikasallaInteriors_TalkAboutFarShores(s32 actor) {
   u16 facing;
 
   facing = (Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
   if (facing == 0xc000) {
-    Func_02000644(actor);
+    Sanctum_Run(actor);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -207,36 +215,33 @@ void Func_02000454(void) {
   return;
 }
 
-void Func_020004dc(void);
+void MikasallaInteriors_MeetGalahad(void);
 
-void Func_02000470(void) {
+/// Galahad, in the inn in a linked game, tells of Isaac's enemies once he has
+/// met the party.
+void MikasallaInteriors_TalkToGalahad(void) {
   if (Event_GetFlag(0xa39)) {
     FieldEvent_SetMessageId(Event_GetFlag(0x340) ? (s32)MsgMikasallaInteriors20
                                             : (s32)MsgMikasallaInteriors21);
     Event_ShowMessage(18, 0);
   } else {
-    Func_020004dc();
+    MikasallaInteriors_MeetGalahad();
   }
 }
 
-void Func_020004b0(void) {
-  s32 result0;
-
-  result0 = Event_GetFlag(0xa39);
-  if (result0 != 0)
-    goto L_020084c6;
-  Func_020004dc();
-  goto L_020084d4;
-L_020084c6:
-  FieldEvent_SetMessageId((s32)MsgMikasallaInteriors22);
-  Event_ShowMessage(18, 0);
-L_020084d4:
-  return;
+void MikasallaInteriors_MindReadGalahad(void) {
+  if (!Event_GetFlag(0xa39)) {
+    MikasallaInteriors_MeetGalahad();
+  } else {
+    FieldEvent_SetMessageId((s32)MsgMikasallaInteriors22);
+    Event_ShowMessage(18, 0);
+  }
 }
 
-void Func_020004dc(void) {
-  s32 result0;
-
+/// Galahad introduces himself, asks whether the party knows Isaac, and warns
+/// that the three gladiators Isaac beat are seeking revenge (flags 0xa39 and
+/// 0x341; 0x340 if the party says it knows him).
+void MikasallaInteriors_MeetGalahad(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriors19);
@@ -249,21 +254,17 @@ void Func_020004dc(void) {
   Event_ShowMessage(18, 0);
   Actor_ShowEmote(18, 0x108, 60);
   Event_OpenMessage(18, 0);
-  result0 =
-      FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
-  if (result0 != 0)
-    goto L_02008568;
-  Event_ShowMessage(18, 0);
-  Event_SetFlag(0x340);
-  goto L_02008582;
-L_02008568:
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
-  Event_ShowMessage(18, 0);
-L_02008582:
+  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
+      0) {
+    Event_ShowMessage(18, 0);
+    Event_SetFlag(0x340);
+  } else {
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
+    Event_ShowMessage(18, 0);
+  }
   Event_SetFlag(0xa39);
   Event_SetFlag(0x341);
   Event_End();
-  return;
 }
 
 #include "objcmd.h"
@@ -292,7 +293,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_02000840[] = {
+struct ActorPlacement gMikasallaInteriors_InnPlacements[] = {
     {71, CONDITION_ALWAYS, 1, PIXELS(552), 0, PIXELS(152), FACING_EAST, 1, 0},
     {72, CONDITION_ALWAYS, (s32)gData_02000654, PIXELS(616), 0, PIXELS(104), FACING_EAST, 1, 0},
     {77, CONDITION_ALWAYS, 1, PIXELS(632), 0, PIXELS(136), FACING_NORTH, 3, 0},
@@ -307,7 +308,7 @@ struct ActorPlacement gData_02000840[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02000960[] = {
+struct ActorPlacement gMikasallaInteriors_SanctumPlacements[] = {
     {201, CONDITION_ALWAYS, 1, PIXELS(176), 0, PIXELS(147), FACING_SOUTH, 1, 0},
     {201, CONDITION_ALWAYS, 1, PIXELS(448), 0, PIXELS(466), FACING_SOUTH, 1, 0},
     {71, CONDITION_ALWAYS, 1, PIXELS(472), 0, PIXELS(520), FACING_NORTH, 1, 0},
@@ -320,7 +321,7 @@ struct ActorPlacement gData_02000960[] = {
 // clang-format on
 
 // clang-format off
-struct Trigger gData_02000a20[] = {
+struct Trigger gMikasallaInteriors_InnTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -329,15 +330,15 @@ struct Trigger gData_02000a20[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors01)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors02)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_020000f4)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(MikasallaInteriors_AskAreYouExplorer)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors07)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors08)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_0200014c)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(MikasallaInteriors_TalkToMerchant)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors13)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_0200019c)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(MikasallaInteriors_TalkToInnkeeper)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors23)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors24)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_02000470)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(MikasallaInteriors_TalkToGalahad)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors04)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors05)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors06)},
@@ -348,7 +349,7 @@ struct Trigger gData_02000a20[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors16)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors25)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors26)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT(Func_020004b0)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT(MikasallaInteriors_MindReadGalahad)},
     {0x173, 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMikasallaInteriors35))},
     {0x173, 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMikasallaInteriors36))},
     {0x173, 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMikasallaInteriors37))},
@@ -357,25 +358,25 @@ struct Trigger gData_02000a20[] = {
 };
 // clang-format on
 
-struct Trigger gData_02000bac[] = {
+struct Trigger gMikasallaInteriors_SanctumTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_020001fc)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02000288)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(MikasallaInteriors_AskBeenToGaroh)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(MikasallaInteriors_TalkAboutIslandLife)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors30)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors31)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_020002e4)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_020001fc)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(MikasallaInteriors_TalkAboutFarShores)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(MikasallaInteriors_AskBeenToGaroh)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors18)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors32)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors33)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors34)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors28)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT(Func_02000078)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT(Func_020000a0)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT(MikasallaInteriors_MindReadWerewolfWonder)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT(MikasallaInteriors_MindReadIslanderComplaints)},
     {TRIGGERS_END},
 };

@@ -106,7 +106,7 @@ const struct Trigger *Scene_GetPlacements(void) {
     return (const struct Trigger *)gData_0200644c;
   if ((u16)(gMainRoutineWork.entrance - 3) <= 2)
     return (const struct Trigger *)gData_020066bc;
-  return (const struct Trigger *)gData_0200626c;
+  return (const struct Trigger *)gMarsLighthouseAerie_Placements;
 }
 
 DEFINE_SCENE_LEAVE_BY_EXIT(Func_020001a0, Func_02004fac, Func_020057cc, 1,
@@ -181,7 +181,7 @@ s32 Scene_Initialize(void) {
 
     REG_BLDALPHA = alpha;
     REG_BLDCNT = 0x3f10;
-    Func_02003ff4();
+    MarsLighthouseAerie_WatchGoldenSunRise();
   } else if (gMainRoutineWork.entrance == 4) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -200,16 +200,16 @@ s32 Scene_Initialize(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     FieldEvent_Wait(40);
-    Func_02003658();
+    MarsLighthouseAerie_LightBeacon();
     Event_End();
   } else if (gMainRoutineWork.entrance == 3) {
     Actor_SetAnimation(20, 8);
     Actor_SetAnimation(21, 8);
     Actor_SetAnimation(22, 7);
     if (Event_GetFlag(0xa3d) == 0)
-      Func_020029ac();
+      MarsLighthouseAerie_UrgeOnToBeacon();
   } else if (gMainRoutineWork.entrance == 2) {
-    Func_02001f10();
+    MarsLighthouseAerie_FindWhoTheDragonWas();
   }
   return 0;
 }
@@ -327,7 +327,10 @@ extern u8 gData_02005e3c[];
 extern u8 gData_02005e80[];
 extern u8 gData_02005ec4[];
 
-void Func_0200065c(void) {
+/// The party reaches the beacon in the storm, and the voice calls them
+/// betrayers before the Doom Dragon's battle.
+/// ★ Named from the game: "Betrayers, you have arrived!" (MsgBetrayersYouHave)
+void MarsLighthouseAerie_FaceDoomDragon(void) {
   u8 *unk85;
   u16 *dispcnt;
   struct MainRoutineWork *work;
@@ -1103,11 +1106,8 @@ extern u8 gData_02006004[];
 extern u8 gData_0200602c[];
 extern u8 gData_02006070[];
 
-static __inline__ void W_Func_02005714(s32 a0, s32 a1, s32 a2) {
-  Func_080d47b4(a0, a1, a2);
-}
-
-void Func_02001f10(void) {
+/// ★ Named from the game: "...Who are they?" (MsgWhoAreThey)
+void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   s32 lastArg, spill;
   s32 owner, actor, owner2, t1;
   s32 t2, t16, t34;
@@ -1277,9 +1277,7 @@ L_0200a47a:
   Event_ShowMessage(21, 0);
   FieldActor_SetSpritePriority(20, 2);
   FieldActor_SetSpritePriority(22, 2);
-  /* FAKEMATCH(wrapper): this call through W_Func_02005714; as Actor_ShowEmote(20,
-   * 0x100, 0), 103 of 1038 instructions differ in tla-en (as Call3, 2). */
-  W_Func_02005714(20, 0x100, 0);
+  FieldActor_ShowEmote(20, 0x100, 0);
   Actor_SetSpeed(20, 0x19999, 0xcccc);
   Actor_WalkToAndWait(20, 0x1ea, 0x128);
   Actor_FaceDirection(21, 0xe000, 20);
@@ -1407,10 +1405,6 @@ L_0200a47a:
 
 #include "event_work.h"
 
-static __inline__ void Func_02005714_(s32 actor, s32 a, s32 b) {
-  Func_080d47b4(actor, a, b);
-}
-
 void Func_0200298c(s32 id) {
   struct Actor *object = Actor_Get(id);
 
@@ -1421,7 +1415,7 @@ void Func_0200298c(s32 id) {
 
 /// The scene that opens with MsgWhatSTheMatter; either answer to its prompt
 /// steps the event's message number.
-void Func_020029ac(void) {
+void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -1444,14 +1438,14 @@ void Func_020029ac(void) {
   Actor_FaceDirectionAndWait(2, FACING_NORTHWEST);
   Event_ShowMessage(0x8002, 0);
   Actor_FaceDirection(3, FACING_SOUTHEAST, 20);
-  Func_02005714_(3, 0x109, 0x14);
+  FieldActor_ShowEmote(3, 0x109, 0x14);
   Event_ShowMessage(0x1003, 0);
   Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
   Actor_SetAnimationAndWait(7, 4);
   Event_ShowMessage(0x2007, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(5, FACING_NORTHEAST);
-  Func_02005714_(5, 0x107, 0);
+  FieldActor_ShowEmote(5, 0x107, 0);
   FieldActor_Jump(5, 2, 0xa);
   FieldActor_Jump(5, 4, 0xa);
   Event_ShowMessage(0x8005, 0);
@@ -1464,7 +1458,7 @@ void Func_020029ac(void) {
   Event_ShowMessage(0x8005, 0);
   Actor_SetAnimation(7, 4);
   Event_ShowMessage(0x2007, 0);
-  Func_02005714_(5, 0x109, 0x14);
+  FieldActor_ShowEmote(5, 0x109, 0x14);
   FieldEvent_ShowMessageThenWait(0x8005, 0, 0x28);
   Event_ShowMessage(0x2006, 0);
   Actor_FaceDirectionAndWait(5, FACING_EAST);
@@ -1475,7 +1469,7 @@ void Func_020029ac(void) {
   Actor_MoveToAndWait(5, 460, 288);
   Actor_SetAnimation(5, 0x16);
   Event_ShowMessage(5, 0);
-  Func_02005714_(0x13, 0x109, 0);
+  FieldActor_ShowEmote(0x13, 0x109, 0);
   Event_PlaySound(0x4e);
   FieldCamera_SetSpeed(0x3333, 0x666);
   FieldCamera_MoveTo(PIXELS(512), -1, PIXELS(320), 1);
@@ -1524,7 +1518,7 @@ void Func_020029ac(void) {
   Func_02005734();
   Actor_FaceDirection(6, FACING_SOUTH, 40);
   Actor_FaceDirectionAndWait(6, FACING_WEST);
-  Func_02005714_(6, 0x103, 0x14);
+  FieldActor_ShowEmote(6, 0x103, 0x14);
   Actor_FaceDirectionAndWait(6, FACING_SOUTHWEST);
   FieldActor_Jump(6, 4, 0xa);
   Event_ShowMessage(0x6006, 0);
@@ -1555,7 +1549,7 @@ void Func_020029ac(void) {
     FieldActor_ShowEmote(actor, second, third);
   }
   Actor_FaceDirectionAndWait(0, FACING_EAST);
-  Func_02005714_(0, 0x109, 0x14);
+  FieldActor_ShowEmote(0, 0x109, 0x14);
   Event_ShowMessage(0x9000, 0);
   Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
   {
@@ -1578,10 +1572,10 @@ void Func_020029ac(void) {
   Actor_SetAnimation(1, 3);
   Event_ShowMessage(1, 0);
   Actor_FaceDirection(6, FACING_NORTHEAST, 0);
-  Func_02005714_(6, 0x109, 0x28);
+  FieldActor_ShowEmote(6, 0x109, 0x28);
   Event_ShowMessage(6, 0);
   Actor_FaceDirection(2, FACING_WEST, 0);
-  Func_02005714_(2, 0x105, 0x28);
+  FieldActor_ShowEmote(2, 0x105, 0x28);
   Event_ShowMessage(0x8002, 0);
   Actor_SetAnimation(7, 3);
   Event_ShowMessage(7, 0);

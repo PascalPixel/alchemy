@@ -114,9 +114,9 @@ Actor_ArmCallback:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_02000a40
+	.global BattleEffect_StartEffectObject22
 	.thumb_func
-Func_02000a40:
+BattleEffect_StartEffectObject22:
 	overlay_veneer Func_080c83e0
 	.global Func_02000a48
 	.thumb_func
@@ -134,27 +134,27 @@ Party_GetLeaderActor:
 	.thumb_func
 Func_02000a60:
 	overlay_veneer Func_080c87b0
-	.global Func_02000a68
+	.global Shop_Run
 	.thumb_func
-Func_02000a68:
+Shop_Run:
 	overlay_veneer Func_08108008
-	.global Func_02000a70
+	.global Sanctum_Run
 	.thumb_func
-Func_02000a70:
+Sanctum_Run:
 	overlay_veneer Func_08108010
-	.global Func_02000a78
+	.global Inn_CheckIn
 	.thumb_func
-Func_02000a78:
+Inn_CheckIn:
 	overlay_veneer Func_08108018
-	.global Func_02000a80
+	.global Forge_Run
 	.thumb_func
-Func_02000a80:
+Forge_Run:
 	overlay_veneer Func_08108020
-	.global Func_02000a88
+	.global Forge_SetItem
 	.thumb_func
-Func_02000a88:
+Forge_SetItem:
 	overlay_veneer Func_08108098
-	.global Func_02000a90
+	.global Forge_GetItem
 	.thumb_func
-Func_02000a90:
+Forge_GetItem:
 	overlay_veneer Func_081080a0

@@ -6,9 +6,9 @@
 
 #include "types.h"
 
-void Func_02001d14(void);
+void Yallam_SingMoonSong(void);
 
-void Func_02001ec0(void);
+void Yallam_SingSunSong(void);
 void Func_020023c8(void);
 
 void Func_02000328(void);
@@ -19,9 +19,9 @@ void Func_0200041c(void);
 
 void Func_020004cc(void);
 
-void Func_02000544(void);
+void Yallam_OfferYeppSong(void);
 
-void Func_02000614(void);
+void Yallam_TalkAboutSongGame(void);
 
 void Func_020022f8(void);
 

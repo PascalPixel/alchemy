@@ -78,9 +78,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_02002874
+	.global Actor_Release
 	.thumb_func
-Func_02002874:
+Actor_Release:
 	overlay_veneer Actor_Destroy
 	.global Actor_SetPositionAndResetMotion
 	.thumb_func
@@ -102,9 +102,9 @@ Map_SetScreenShake:
 	.thumb_func
 Party_RemoveMember:
 	overlay_veneer Party_RemoveMemberFar
-	.global Func_020028a4
+	.global Party_RestoreHpPp
 	.thumb_func
-Func_020028a4:
+Party_RestoreHpPp:
 	overlay_veneer Func_080ad208
 	.global Event_Wait
 	.thumb_func
@@ -218,13 +218,13 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_0200298c
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_0200298c:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
-	.global Func_02002994
+	.global FieldCamera_MoveToActorById
 	.thumb_func
-Func_02002994:
+FieldCamera_MoveToActorById:
 	overlay_veneer Func_080c8248
 	.global Func_0200299c
 	.thumb_func
@@ -286,25 +286,25 @@ Func_02002a04:
 	.thumb_func
 Func_02002a0c:
 	overlay_veneer Func_080c87c0
-	.global Func_02002a14
+	.global EffectSprite_DrawAtWorldPosition
 	.thumb_func
-Func_02002a14:
+EffectSprite_DrawAtWorldPosition:
 	overlay_veneer Func_080c87d0
 	.global BattleEffect_StepVector3
 	.thumb_func
 BattleEffect_StepVector3:
 	overlay_veneer BattleEffect_StepVector3Far
-	.global Func_02002a24
+	.global BattleEffect_GetObjectPriority
 	.thumb_func
-Func_02002a24:
+BattleEffect_GetObjectPriority:
 	overlay_veneer Func_080c87e8
-	.global Func_02002a2c
+	.global BattleEffect_GetObjectDepth
 	.thumb_func
-Func_02002a2c:
+BattleEffect_GetObjectDepth:
 	overlay_veneer Func_080c87f0
-	.global Func_02002a34
+	.global Field_StartColorTransition
 	.thumb_func
-Func_02002a34:
+Field_StartColorTransition:
 	overlay_veneer Func_080c87f8
 	.global Field_StartPaletteTransition
 	.thumb_func

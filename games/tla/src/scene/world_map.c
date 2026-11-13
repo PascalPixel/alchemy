@@ -206,7 +206,7 @@ u8 *Scene_GetPlacements(void) {
 
 /// The world map's render mode 8 start: with flag 0x147 a blank message is
 /// shown first, the event work's counters are cleared.
-void Func_02000458(void) {
+void WorldMap_SetUpFlyingShip(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 
   gMainRoutineWork.renderMode = 8;
@@ -247,7 +247,7 @@ void Func_02000458(void) {
 /// is the listing's goto loop, which the loop pass leaves alone
 /// (gMainRoutineWork reloaded each pass); its first test reads pp, which still
 /// holds the index's 0.
-void Func_0200050c(void) {
+void WorldMap_SetUpShip(void) {
   s32 count;
   s32 pp;
   s32 i;
@@ -273,7 +273,8 @@ void Func_0200050c(void) {
 
 void Func_02004b48(struct Actor *object);
 
-void Func_02000574(void) {
+/// The leader jumps aboard the ship, actor 8, when close enough.
+void WorldMap_BoardShip(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct Actor *leader;
   struct Actor *ship;
@@ -324,7 +325,8 @@ void Func_02000574(void) {
   FieldEffect_ScheduleRatioTransition(0x10000, 30);
 }
 
-void Func_020006d0(void) {
+/// The leader jumps ashore from the ship, where the shore ahead lets them land.
+void WorldMap_LeaveShip(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *ship = Actor_GetById(8);
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -412,7 +414,7 @@ void Func_02000918(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (gMainRoutineWork.renderMode == 8)
-    Func_0200050c();
+    WorldMap_SetUpShip();
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   gMainRoutineWork.savedX = leader->x;
@@ -428,16 +430,17 @@ void Func_02000918(void) {
 static __inline__ void Actor_JoinLeader(s32 actor) {
   struct Actor *leader;
 
-  Actor_SetModeById(actor, 2);
+  Actor_SetAnimation(actor, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_ResetAndSetPosition(actor, ((s16 *)&leader->x)[1],
+    Actor_SetDestination(actor, ((s16 *)&leader->x)[1],
                               ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(actor);
-  Actor_SetHorizontalPositionWithTerrain(actor, 0, 0);
+  Actor_SetPosition(actor, 0, 0);
 }
 
-void Func_02000994(void) {
+/// ★ Named from the game: "We shouldn't run from anymore, ." (MsgWeShouldnT)
+void WorldMap_RefuseToRunAway(void) {
   struct Actor *object;
   s32 x;
   s32 z;
@@ -514,7 +517,8 @@ void Func_02000994(void) {
   }
 }
 
-void Func_02000be0(void) {
+/// ★ Named from the game: " gazed into the pond..." (MsgGazedIntoThe)
+void WorldMap_GazeIntoPond(void) {
   u32 roll = (Random16Far() << 4) >> 16;
 
   Event_Start();
@@ -615,7 +619,7 @@ s32 Scene_Initialize(void) {
     ship->unk66 = 0;
   }
   if (gMainRoutineWork.ownerOverride != 0)
-    Func_080d46a4(0x10000, 1);
+    FieldEffect_ScheduleRatioTransition(0x10000, 1);
   GameFlag_SetBit(0x144);
   work = Ram_HeapSlots->eventWork;
   work->screenEffect = 0x400;
@@ -641,7 +645,7 @@ s32 Scene_Initialize(void) {
   case 73:
   case 74:
     if (GameFlag_Test(0xa76))
-      Func_020012bc(gMainRoutineWork.entrance);
+      WorldMap_FightBanditAndThieves(gMainRoutineWork.entrance);
     break;
   case 77:
     Func_020029a4();
@@ -652,14 +656,14 @@ s32 Scene_Initialize(void) {
   case 59:
     if (!Event_GetFlag(0x90a) && GameFlag_Test(0xa5f) != 0) {
       GameFlag_SetBit(0x90a);
-      Func_02001c5c();
+      WorldMap_DeliverLohoCannon();
     }
     break;
   case 64:
-    Func_02002698();
+    WorldMap_WatchVenusLighthouseCollapse();
     break;
   case 65:
-    Func_02002ab0();
+    WorldMap_DriftNorthOfContinent();
     break;
   case 70:
     Func_02004c00();
@@ -667,14 +671,14 @@ s32 Scene_Initialize(void) {
   case 2:
     if (GameFlag_Test(55) == 0) {
       Actor_SetScript(9, gData_0200632c);
-      Func_02001e34();
+      WorldMap_MeetEcho();
     }
     break;
   case 67:
     Func_02002e00();
     break;
   case 68:
-    Func_02002e78();
+    WorldMap_TakeTheTiller();
     break;
   case 69:
     Func_0200310c();
@@ -715,7 +719,9 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// The djinn tutorial. With flag 0x175 set each message is offset by
 /// MsgDjinnGiveTutorialB less A.
 // As The Broken Seal's WorldMap_ShowDjinnTutorial.
-void Func_020011fc(void) {
+/// ★ Named from the game: "To give your Djinni to someone else, move it like
+/// this." (MsgDjinnGiveTutorialA)
+void WorldMap_ExplainGivingDjinn(void) {
   Func_02004db0();
   FieldEffect_ScheduleRatioTransition(0x10000, 6);
   Func_02004e00();
@@ -756,10 +762,12 @@ void Func_020011fc(void) {
     s32 a1 = west;                                                             \
                                                                                \
     asm volatile("" : "+l"(a1));                                               \
-    Actor_ArmCallback(id, a1, 0);                                              \
+    Actor_FaceDirection(id, a1, 0);                                              \
   } while (0)
 
-void Func_020012bc(s32 entrance) {
+/// The bandit and the thieves from Vault, after a linked game, want Isaac.
+/// ★ Named from the game: "Hey! Wait a minute!" (MsgHeyWaitA)
+void WorldMap_FightBanditAndThieves(s32 entrance) {
   s32 east, west, east74, eastB, westB;
 
   Event_Start();
@@ -773,7 +781,7 @@ void Func_020012bc(s32 entrance) {
     Event_SetMessageId((s32)MsgHeyWaitA);
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Func_02004db0();
-    Func_080d46a4(0x18ccc, 16);
+    FieldEffect_ScheduleRatioTransition(0x18ccc, 16);
     Actor_ShowEmote(4, 0x102, 30);
     Actor_WalkByAndWait(4, 0, 32);
     Actor_FaceDirection(4, west, 0);
@@ -897,7 +905,7 @@ void Func_020012bc(s32 entrance) {
     }
     Actor_SetPositionAndFacing(4, 0x27b80000, 0x25b00000, 0xa000);
     FieldCamera_FollowActor(4, 0);
-    Func_080d46a4(0x18ccc, 1);
+    FieldEffect_ScheduleRatioTransition(0x18ccc, 1);
     Actor_SetAnimation(4, 19);
     Actor_SetSingleChildFlags(Actor_Get(4), 0);
     Event_StartScreenTransition();
@@ -947,7 +955,7 @@ void Func_020012bc(s32 entrance) {
     Actor_SetPositionAndFacing(23, 0x27b00000, 0x25d00000, westB);
     Actor_SetPositionAndFacing(4, 0x27c00000, 0x25d00000, westB);
     FieldCamera_FollowActor(4, 0);
-    Func_080d46a4(0x18000, 1);
+    FieldEffect_ScheduleRatioTransition(0x18000, 1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Func_02004da8();
@@ -1072,7 +1080,7 @@ void Func_020012bc(s32 entrance) {
     Actor_WaitForMoveById(23);
     Actor_SetPosition(23, 0, 0);
     Func_02004db0();
-    Func_080d46a4(0x10000, 15);
+    FieldEffect_ScheduleRatioTransition(0x10000, 15);
     Event_End();
   }
 }
@@ -1081,23 +1089,9 @@ extern const u8 gData_02004e38[];
 extern const u8 gData_02004e58[];
 extern const u8 gData_02004e88[];
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Actor_SetSpeedParameters_(s32 actor, s32 speed,
-                                                        s32 acceleration) {
-  Actor_SetSpeedParameters(actor, speed, acceleration);
-}
-
-static __inline__ void Actor_ArmCallback_(s32 actor, s32 angle,
-                                                 s32 frames) {
-  Actor_ArmCallback(actor, angle, frames);
-}
-
-static __inline__ void Func_02004c90_(s32 actor, s32 x, s32 z, s32 angle) {
-  Actor_SetHorizontalPositionAndAngleWithTerrain(actor, x, z, angle);
-}
-
-void Func_02001c5c(void) {
+/// ★ Named from the game: "We got the cannon onto your ship with no problems."
+/// (MsgYouDonT)
+void WorldMap_DeliverLohoCannon(void) {
   s32 angle;
 
   Event_Start();
@@ -1110,13 +1104,13 @@ void Func_02001c5c(void) {
    * forwarded call builds it again; as 0xe000 in each call, 25 of 168
    * instructions differ in tla-en. */
   angle = 0xe000;
-  Func_02004c90_(16, PIXELS(8913), PIXELS(5853), angle);
-  Func_02004c90_(17, PIXELS(8929), PIXELS(5869), angle);
-  Func_02004c90_(18, PIXELS(8929), PIXELS(5885), angle);
+  Actor_SetPositionAndFacing(16, PIXELS(8913), PIXELS(5853), angle);
+  Actor_SetPositionAndFacing(17, PIXELS(8929), PIXELS(5869), angle);
+  Actor_SetPositionAndFacing(18, PIXELS(8929), PIXELS(5885), angle);
   Event_StartScreenTransition();
-  Actor_SetSpeedParameters_(16, 0x3333, 0x1999);
-  Actor_SetSpeedParameters_(17, 0x3333, 0x1999);
-  Actor_SetSpeedParameters_(18, 0x3333, 0x1999);
+  Actor_SetSpeed(16, 0x3333, 0x1999);
+  Actor_SetSpeed(17, 0x3333, 0x1999);
+  Actor_SetSpeed(18, 0x3333, 0x1999);
   Actor_WalkBy(16, 10, 0);
   Actor_WalkBy(17, 10, 0);
   Actor_WalkBy(18, 10, 0);
@@ -1128,8 +1122,8 @@ void Func_02001c5c(void) {
   FieldEvent_Wait(40);
   Actor_SetAnimation(16, 3);
   FieldEvent_SetMessageId((s32)MsgYouDonT);
-  Actor_ArmCallback_(17, 0xd000, 0);
-  Actor_ArmCallback_(18, 0xd000, 0);
+  Actor_FaceDirection(17, 0xd000, 0);
+  Actor_FaceDirection(18, 0xd000, 0);
   Event_ShowMessage(16, 0);
   Actor_SetAnimationAndWait(4, 3);
   FieldEvent_Wait(30);
@@ -1138,9 +1132,9 @@ void Func_02001c5c(void) {
   Actor_SetAnimation(4, 3);
   FieldEvent_Wait(60);
   FieldActor_WatchAndSetScript(4, 18);
-  Actor_SetSpeedParameters_(16, 0x6666, 0x3333);
-  Actor_SetSpeedParameters_(17, 0x6666, 0x3333);
-  Actor_SetSpeedParameters_(18, 0x6666, 0x3333);
+  Actor_SetSpeed(16, 0x6666, 0x3333);
+  Actor_SetSpeed(17, 0x6666, 0x3333);
+  Actor_SetSpeed(18, 0x6666, 0x3333);
   Actor_SetScript(16, gData_02004e38);
   FieldEvent_Wait(40);
   Actor_SetScript(17, gData_02004e58);
@@ -1154,14 +1148,6 @@ void Func_02001c5c(void) {
   Event_End();
 }
 
-static inline void SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
-  Actor_SetMoveTarget(object, x, y, z);
-}
-
-static inline void ShowEmote(s32 id, s32 animation, s32 frames) {
-  Func_080d47b4(id, animation, frames);
-}
-
 /// A tutorial message: the second set (from MsgDjinnGiveTutorialB) when
 /// secondSet is 1.
 #define TUTORIAL_SET_MESSAGE(secondSet, base)                                  \
@@ -1171,7 +1157,10 @@ static inline void ShowEmote(s32 id, s32 animation, s32 frames) {
 /// A tutorial message: the second set while flag 0x175 is set.
 #define TUTORIAL_MESSAGE(base) TUTORIAL_SET_MESSAGE(Event_GetFlag(0x175), base)
 
-void Func_02001e34(void) {
+/// The first Djinni, Echo, joins south of Daila, however often he is refused.
+/// ★ Named from the game: "The Venus Djinni has become 's pal."
+/// (MsgTheVenusDjinni)
+void WorldMap_MeetEcho(void) {
   struct Actor *djinni;
   struct Actor *leader;
   s32 x;
@@ -1222,7 +1211,7 @@ void Func_02001e34(void) {
     Func_02004da8();
     Actor_SetAngleToward(owner, 9, 0);
     Event_Wait(10);
-    ShowEmote(owner, 0x101, 60);
+    FieldActor_ShowEmote(owner, 0x101, 60);
     {
       s32 one = 1;
       *(u16 *)&djinni->unk66 = one;
@@ -1234,7 +1223,7 @@ void Func_02001e34(void) {
     i = 15;
     Event_ShowMessageAndWait(9, 0);
     Func_02004db0();
-    Func_080d46a4(0x13333, 6);
+    FieldEffect_ScheduleRatioTransition(0x13333, 6);
     Func_02004e00();
     Func_02004da8();
     djinni->motionFlags = 2;
@@ -1247,7 +1236,7 @@ void Func_02001e34(void) {
      * so sched2 takes the two stores of 0 before the copy of the motionFlags
      * address into sl; as no asm, 2 of 714 instructions differ in tla-en. */
     asm("" : "+m"(*djinni));
-    SetMoveTarget(djinni, 0x27880000, 0, 0x20a40000);
+    FieldActor_SetMoveTarget(djinni, 0x27880000, 0, 0x20a40000);
     while (i >= 0) {
       djinni->scaleX += 0x800;
       djinni->scaleY += 0x800;
@@ -1277,22 +1266,22 @@ void Func_02001e34(void) {
       Event_SetMessageId(TUTORIAL_MESSAGE(MsgSeeYouKnow));
       Event_ShowMessageAndWait(9, 0);
     }
-    ShowEmote(owner, 0x100, 30);
+    FieldActor_ShowEmote(owner, 0x100, 30);
     Actor_Jump(9, 2, 20);
     Actor_Jump(9, 2, 20);
     Event_SetMessageId(TUTORIAL_MESSAGE(MsgEvenIKnow));
     i = 15;
     Event_ShowMessageAndWait(9, 0);
-    ShowEmote(owner, 0x102, 30);
+    FieldActor_ShowEmote(owner, 0x102, 30);
     Event_ShowMessageAndWait(9, 0);
-    ShowEmote(owner, 0x100, 30);
+    FieldActor_ShowEmote(owner, 0x100, 30);
     Event_ShowMessageAndWait(9, 0);
     Motion_SetVarCbAndRefresh(owner, 2);
     Event_ShowMessageAndWait(9, 0);
     Actor_Jump(9, 2, 30);
     Event_ShowMessageAndWait(9, 0);
     djinni->motionFlags = 0;
-    SetMoveTarget(djinni, x, 0x100000, z);
+    FieldActor_SetMoveTarget(djinni, x, 0x100000, z);
     while (i >= 0) {
       *(u16 *)&djinni->facing += 0x1000;
       wait(1);
@@ -1365,7 +1354,7 @@ void Func_02001e34(void) {
   Event_WaitTransitionFrames();
   Actor_MoveToObject(9, owner);
   djinni->velocityY = 0xa0000;
-  SetMoveTarget(djinni, x, 0, z);
+  FieldActor_SetMoveTarget(djinni, x, 0, z);
   Event_Wait(30);
   Func_02004da8();
   Actor_SetAngleToward(9, owner, 0);
@@ -1383,7 +1372,7 @@ void Func_02001e34(void) {
   Event_ClearFlag(0x171);
   Func_02004e28();
   Event_SetMessageId(TUTORIAL_MESSAGE(MsgSoWeGo));
-  SetMoveTarget(djinni, 0x27880000, 0, 0x20a40000);
+  FieldActor_SetMoveTarget(djinni, 0x27880000, 0, 0x20a40000);
   Event_Wait(30);
   Event_ShowMessageAndWait(9, 0);
   Actor_SetAngleToward(9, owner, 0);
@@ -1400,7 +1389,7 @@ void Func_02001e34(void) {
   Event_ShowMessageAndWait(9, 0);
   Actor_WalkToAndWait(9, x >> 16, z >> 16);
 tutorial:
-  Func_020011fc();
+  WorldMap_ExplainGivingDjinn();
   Func_02004db0();
   return;
 refused:
@@ -1467,7 +1456,7 @@ static __inline__ void PosSet(s32 id, s32 x, s32 z) {
    * call or a forwarding inline, id and dz take each other's register; as
    * Actor_SetHorizontalPositionWithTerrain called directly, 8 of 18
    * instructions differ in tla-en. */
-  Actor_SetHorizontalPositionWithTerrain(id, x << 16, z << 16);
+  Actor_SetPosition(id, x << 16, z << 16);
 }
 
 void Func_02002618(s32 id, s32 dx, s32 dz) {
@@ -1487,43 +1476,31 @@ void Func_02002640(s32 a, s32 b, s32 dx, s32 dz) {
   WorldMap_SetWindowCellTileAndDraw(a + 16, b, 64, 224);
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Camera_MoveWithinMapBounds_(s32 a, s32 b, s32 c, s32 d) {
-  Camera_MoveWithinMapBounds(a, b, c, d);
-}
-
-static __inline__ void Func_02004b78_(s32 a, s32 b, s32 c) {
-  Map_SetScreenShake(a, b, c);
-}
-
-static __inline__ void Func_02004d78_(s32 a, s32 b) {
-  BattleEffect_ApplyColorToTargetBuffer(a, b);
-}
-
-void Func_02002698(void) {
+/// ★ Named from the game: "They've done it, ! They've lit the beacon!"
+/// (MsgTheyVeDone)
+void WorldMap_WatchVenusLighthouseCollapse(void) {
   Func_02003d44(1);
   FieldEvent_SetMessageId((s32)MsgTheyVeDone);
   Event_ShowMessage(8, 0);
-  Func_02004b78_(0x40000, 0x40000, 0x10000);
+  MapGrid_SetShake(0x40000, 0x40000, 0x10000);
   FieldEvent_Wait(30);
   Event_ShowMessage(5, 0);
   Func_02004db0();
   Event_PlaySound(145);
   PaletteFade_ApplySource(0x7fff, 0);
-  Func_02004d78_(0x10000, 0);
+  PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(60);
   Task_AddFrame(Func_02002594, TASK_PASS_VBLANK);
-  Func_02004b78_(0x50000, 0x50000, 0x10000);
+  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   FieldEvent_Wait(30);
-  Func_02004b78_(0x70000, 0x60000, 0x10000);
+  MapGrid_SetShake(0x70000, 0x60000, 0x10000);
   FieldEvent_Wait(30);
   Func_02004da8();
-  Func_02004b78_(0x30000, 0x30000, 0x10000);
+  MapGrid_SetShake(0x30000, 0x30000, 0x10000);
   Event_ShowMessage(9, 0);
   Func_02004db0();
-  Func_02004b78_(0x70000, 0x70000, 0x10000);
-  Camera_MoveWithinMapBounds_(PIXELS(1988), -1, PIXELS(7553), 1);
+  MapGrid_SetShake(0x70000, 0x70000, 0x10000);
+  FieldCamera_MoveTo(PIXELS(1988), -1, PIXELS(7553), 1);
   FieldEffect_ScheduleRatioTransition(0x9999, 60);
   Func_02004d30();
   FieldEvent_Wait(30);
@@ -1542,14 +1519,14 @@ void Func_02002698(void) {
   System_Wait(4);
   Func_02002640(64, 128, 32, 0);
   System_Wait(4);
-  Camera_MoveWithinMapBounds_(PIXELS(2052), -1, PIXELS(7553), 1);
+  FieldCamera_MoveTo(PIXELS(2052), -1, PIXELS(7553), 1);
   Func_02004d30();
   Func_02004da8();
-  Func_02004b78_(0x30000, 0x30000, 0x10000);
+  MapGrid_SetShake(0x30000, 0x30000, 0x10000);
   Event_ShowMessage(9, 0);
   Event_ShowMessage(5, 0);
   Func_02004db0();
-  Func_02004b78_(0x30000, 0x30000, 0x10000);
+  MapGrid_SetShake(0x30000, 0x30000, 0x10000);
   Func_02002640(96, 128, 32, 0);
   System_Wait(20);
   Func_02002640(0, 160, 32, 0);
@@ -1626,7 +1603,7 @@ void Func_020029a4(void) {
   Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner),
                                      0);
   Actor_SetSingleChildFlags(Actor_Get(8), 0);
-  Actor_SetSpeedParameters_(8, 0x6666, 0x3333);
+  Actor_SetSpeed(8, 0x6666, 0x3333);
   actor->timer = 0;
   Actor_SetScript(8, gData_02004eb8);
   Task_AddFrame(Func_020028cc, TASK_PASS_VBLANK);
@@ -1646,7 +1623,8 @@ void Func_020029a4(void) {
 
 void Func_020042e0(s32 mode);
 
-void Func_02002ab0(void) {
+/// ★ Named from the game: "We're saved!" (MsgWeReSaved)
+void WorldMap_DriftNorthOfContinent(void) {
   struct Actor *boat = Actor_Get(10);
   struct RescueMap *map = (struct RescueMap *)Ram_HeapSlots->mapWork;
   s32 i;
@@ -1740,12 +1718,6 @@ void Func_02002ab0(void) {
 
 #include "scene_ids.h"
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Func_02004d08_(s32 actor, s32 value, s32 frames) {
-  Func_080d47b4(actor, value, frames);
-}
-
 /// The leader is hidden and released, the screen fades and the camera moves;
 /// once a key is held the scene changes to SceneId_Ov667.
 void Func_02002e00(void) {
@@ -1762,7 +1734,7 @@ void Func_02002e00(void) {
      * in tla-en. */
     register s32 mode asm("r3") = 1;
 
-    Camera_MoveWithinMapBounds(11890 << 16, -1, 10090 << 16, mode);
+    FieldCamera_MoveTo(11890 << 16, -1, 10090 << 16, mode);
   }
   // Entered at its test: as a while loop the test is copied ahead of it and
   // gInput hoisted (differ 17).
@@ -1774,7 +1746,8 @@ void Func_02002e00(void) {
   Event_SetDestination((s32)&SceneId_Ov667, 80);
 }
 
-void Func_02002e78(void) {
+/// ★ Named from the game: "Take the tiller, !" (MsgTakeTheTiller)
+void WorldMap_TakeTheTiller(void) {
   s32 scale;
   s32 seen = Event_GetFlag(0x8de);
 
@@ -1809,17 +1782,17 @@ void Func_02002e78(void) {
       ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
       FieldEvent_ShowMessageThenWait(9, 0, 10);
     }
-    Func_02004d08_(8, 256, 30);
+    FieldActor_ShowEmote(8, 256, 30);
     FieldEvent_ShowMessageThenWait(7, 0, 10);
     FieldEvent_ShowMessageThenWait(9, 0, 10);
-    Func_02004d08_(8, 257, 30);
+    FieldActor_ShowEmote(8, 257, 30);
     FieldEvent_ShowMessageThenWait(6, 0, 10);
     FieldEvent_ShowMessageThenWait(9, 0, 10);
     Actor_ShowEmote(8, 256, 30);
     FieldEvent_ShowMessageThenWait(5, 0, 10);
     FieldEvent_ShowMessageThenWait(9, 0, 10);
     FieldEvent_ShowMessageThenWait(6, 0, 10);
-    Func_02004d08_(8, 264, 30);
+    FieldActor_ShowEmote(8, 264, 30);
     FieldEvent_ShowMessageThenWait(5, 0, 10);
     Actor_ShowEmote(8, 258, 30);
     FieldEvent_ShowMessageThenWait(6, 0, 10);
@@ -1858,7 +1831,10 @@ void Func_0200310c(void) {
   FieldEvent_SetExitRequest(66);
 }
 
-void Func_02003144(void) {
+/// The ship's first flight once it has wings (flag 0xa78).
+/// ★ Named from the game: "We did it! The ship took off without a hitch!"
+/// (MsgWeDidIt)
+void WorldMap_TakeOff(void) {
   s32 x, z, i;
 
   if (GameFlag_Test(0x8df) == 0)
@@ -1867,7 +1843,7 @@ void Func_02003144(void) {
   FieldEvent_ResolvePendingActions(0);
   Event_SetFlag(0xa78);
   Actor_MoveToAndWait(8, 0x1bf6, 0x2154);
-  Func_0200050c();
+  WorldMap_SetUpShip();
   x = Actor_Get(8)->x / 0x10000;
   z = Actor_Get(8)->z / 0x10000;
   i = 0;
@@ -1989,13 +1965,6 @@ void Func_0200343c(struct Actor *parent) {
   }
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Actor_SetPositionAndCommit_(s32 actor, s32 x,
-                                                          s32 z) {
-  Actor_SetPositionAndCommit(actor, x, z);
-}
-
 void Func_02003490(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2014,8 +1983,8 @@ void Func_02003490(void) {
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14387, 8828);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14331, 8888);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14284, 8904);
-  Actor_SetPositionAndCommit_(gMainRoutineWork.currentOwner, 14255, 8870);
-  Actor_SetPositionAndCommit_(gMainRoutineWork.currentOwner, 14255, 8831);
+  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14255, 8870);
+  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14255, 8831);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14255, 8772);
   FieldEffect_ScheduleRatioTransition(0x14000, 120);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14275, 8736);

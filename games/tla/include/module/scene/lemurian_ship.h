@@ -8,11 +8,11 @@
 #include "module/scene/scene.h"
 #include "scene_tables.h"
 
-extern s32 gData_02003054[];
-extern u32 gData_02003084[];
+extern s32 gLemurianShip_Entrances[];
+extern u32 gLemurianShip_Room1Entrances[];
 extern u32 gData_02003234[];
 extern u32 gData_02003254[];
-extern struct ActorPlacement gData_02003380[];
+extern struct ActorPlacement gLemurianShip_Placements[];
 extern struct ActorPlacement gData_02003398[];
 
 extern struct ActorPlacement gData_0200b410[];
@@ -23,7 +23,7 @@ extern struct ActorPlacement gData_02003848[];
 extern struct LemurianShipWarp gData_02003904[];
 extern struct LemurianShipWarp gData_0200397c[];
 extern s32 gData_02002de8[];
-extern struct Trigger gData_020039c4[];
+extern struct Trigger gLemurianShip_Triggers[];
 extern struct Trigger gData_020039d0[];
 extern struct Trigger gData_02003a84[];
 extern struct Trigger gData_02003ae4[];

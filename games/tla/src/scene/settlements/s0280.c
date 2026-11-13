@@ -53,15 +53,15 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "io_reg.h"
 #include "version.h"
 
-extern u8 gData_020024ac[];
+extern u8 gSettlements_Placements[];
 extern u8 gData_020024dc[];
-extern u8 gData_02002524[];
-extern u8 gData_02002554[];
-extern u8 gData_020025cc[];
-extern u8 gData_02002614[];
-extern u8 gData_020027ac[];
-extern u8 gData_020027dc[];
-extern u8 gData_02002854[];
+extern u8 gSettlements_Room2Placements[];
+extern u8 gSettlements_Room4Placements[];
+extern u8 gSettlements_Room5Placements[];
+extern u8 gSettlements_Room9Placements[];
+extern u8 gSettlements_Room10Placements[];
+extern u8 gSettlements_Room7Placements[];
+extern u8 gSettlements_Room8Placements[];
 
 u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -69,20 +69,20 @@ u8 *Scene_GetPlacements(void) {
   if (scene == (s32)&SceneId_Ov690Room1)
     return gData_020024dc;
   if (scene == (s32)&SceneId_Ov690Room2)
-    return gData_02002524;
+    return gSettlements_Room2Placements;
   if (scene == (s32)&SceneId_Ov690Room4)
-    return gData_02002554;
+    return gSettlements_Room4Placements;
   if (scene == (s32)&SceneId_Ov690Room5)
-    return gData_020025cc;
+    return gSettlements_Room5Placements;
   if (scene == (s32)&SceneId_Ov690Room7)
-    return gData_020027dc;
+    return gSettlements_Room7Placements;
   if (scene == (s32)&SceneId_Ov690Room8)
-    return gData_02002854;
+    return gSettlements_Room8Placements;
   if (scene == (s32)&SceneId_Ov690Room9)
-    return gData_02002614;
+    return gSettlements_Room9Placements;
   if (scene == (s32)&SceneId_Ov690Room10)
-    return gData_020027ac;
-  return gData_020024ac;
+    return gSettlements_Room10Placements;
+  return gSettlements_Placements;
 }
 
 void Func_02000404(void) {
@@ -92,13 +92,15 @@ void Func_02000404(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(11, 0, 0);
   Event_SetFlag(0xf5d);
-  Func_02002130(193, 3);
+  BattleEffect_StartEffectObject22(193, 3);
   mode = 0;
   Party_GiveItem(193, mode);
   Event_End();
 }
 
-void Func_0200043c(s32 actor) {
+/// ★ Named from the game: "Don't tell me, you're here to solve the riddle of
+/// the rock!" (MsgSettlements01)
+void Settlements_WarnOfRiddleOfRock(s32 actor) {
   s32 msg = (s32)MsgSettlements01;
 
   FieldEvent_SetMessageId(msg);
@@ -123,7 +125,7 @@ void Func_020004a8(void) {
 
   if (x == 5 && z == 17) {
     FieldActor_Jump(gMainRoutineWork.currentOwner, 2, 0);
-    SetPosCommit(gMainRoutineWork.currentOwner, 88, 296);
+    Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 88, 296);
   }
   Func_020021a0(5, 70, 9, 7, 5, 43, 1);
   MapGrid_CopyCellsTo(4, 25, 5, 17, 1, 1);
@@ -137,7 +139,7 @@ void Func_0200052c(void) {
   Actor_FaceDirection(4, FACING_NORTH, 0);
   FieldEvent_Wait(10);
   Actor_Get(4)->actionFlags &= 0xfe;
-  CopyCells(96, 14, 72, 14, 2, 1);
+  MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
   Actor_SetDestinationOffset(4, 0, 4);
   FieldActor_WaitForMoveById(4);
   Actor_SetSingleChildFlags(Actor_Get(4), 0);
@@ -152,83 +154,63 @@ void Func_0200052c(void) {
 }
 
 void Func_020005cc(void) {
-  s32 id;
-
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_WalkByAndWait(4, 0, -14);
-  id = 4;
-  Actor_WalkByAndWait(id, 16, 0);
+  Actor_WalkByAndWait(4, 16, 0);
   Func_0200052c();
 }
 
 void Func_020005f4(void) {
-  s32 id, x, z;
-
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_WalkByAndWait(4, -2, -6);
-  x = 14;
-  z = 8;
-  id = 4;
-  /* FAKEMATCH(barrier): the empty asm on the actor id, which then comes
-   * between the distances and their negation; as Actor_WalkByAndWait(4, -x,
-   * -z), 2 of 18 instructions differ in tla-en. */
-  __asm__ volatile("" : "+r"(id));
-  Actor_WalkByAndWait(id, -x, -z);
+  Actor_WalkByAndWait(4, -14, -8);
   Func_0200052c();
 }
 
 void Func_02000624(void) {
-  s32 id, a;
-
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  a = 192;
-  id = 4;
-  /* FAKEMATCH(barrier): the empty asm on the actor id, which then comes
-   * between the angle byte and its shift; as Actor_FaceDirection(4, a << 8,
-   * 0), 2 of 11 instructions differ in tla-en. */
-  __asm__ volatile("" : "+r"(id));
-  Actor_FaceDirection(id, a << 8, 0);
+  Actor_FaceDirection(4, 192 << 8, 0);
   Func_0200052c();
 }
 
 void Func_02000644(void) {
-  CopyCells2(0, 3, 1, 1, 3, 15);
+  MapGrid_CopyCellAttributes(0, 3, 1, 1, 3, 15);
   Event_SetFlag(0x230);
 }
 
-extern u8 gData_0200289c[];
-extern u8 gData_020028f0[];
-extern u8 gData_02002974[];
-extern u8 gData_020029a4[];
-extern u8 gData_02002a70[];
-extern u8 gData_02002ad0[];
-extern u8 gData_02002b3c[];
-extern u8 gData_02002b90[];
-extern u8 gData_02002c2c[];
+extern u8 gSettlements_Triggers[];
+extern u8 gSettlements_Room1Triggers[];
+extern u8 gSettlements_Room2Triggers[];
+extern u8 gSettlements_Room4Triggers[];
+extern u8 gSettlements_Room5Triggers[];
+extern u8 gSettlements_Room7Triggers[];
+extern u8 gSettlements_Room8Triggers[];
+extern u8 gSettlements_Room9Triggers[];
+extern u8 gSettlements_Room10Triggers[];
 
 u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov690Room1)
-    return gData_020028f0;
+    return gSettlements_Room1Triggers;
   if (scene == (s32)&SceneId_Ov690Room2)
-    return gData_02002974;
+    return gSettlements_Room2Triggers;
   if (scene == (s32)&SceneId_Ov690Room4)
-    return gData_020029a4;
+    return gSettlements_Room4Triggers;
   if (scene == (s32)&SceneId_Ov690Room5)
-    return gData_02002a70;
+    return gSettlements_Room5Triggers;
   if (scene == (s32)&SceneId_Ov690Room7)
-    return gData_02002ad0;
+    return gSettlements_Room7Triggers;
   if (scene == (s32)&SceneId_Ov690Room8)
-    return gData_02002b3c;
+    return gSettlements_Room8Triggers;
   if (scene == (s32)&SceneId_Ov690Room9)
-    return gData_02002b90;
+    return gSettlements_Room9Triggers;
   if (scene == (s32)&SceneId_Ov690Room10)
-    return gData_02002c2c;
-  return gData_0200289c;
+    return gSettlements_Room10Triggers;
+  return gSettlements_Triggers;
 }
 
 void Func_02000714(struct Actor *object) {
@@ -243,7 +225,7 @@ void Func_02000714(struct Actor *object) {
   object->scaleY += step;
   object->timer += 2;
   if (--*(s32 *)&object->watchedObject == 0)
-    Func_02002000(object);
+    Actor_Release(object);
 }
 
 void Func_02000758(s32 x, s32 y, s32 z) {
@@ -355,12 +337,6 @@ extern const u8 gData_02002272[];
 
 void Func_02000e04(void);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Place(s32 id, s32 x, s32 z) {
-  Actor_SetHorizontalPositionWithTerrain(id, x, z);
-}
-
 s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x100;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room7)
@@ -368,31 +344,31 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room9) {
     Func_02002140(0);
     Func_02002188(gData_0200226c);
-    if (GameFlag_Test(0x206))
-      Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
+    if (Event_GetFlag(0x206))
+      Actor_SetPosition(10, 0, 0);
     Actor_GetById(10)->priorityFlags |= 2;
-    Actor_SetModeById(18, 2);
-    Actor_SetModeById(19, 2);
-    Actor_SetModeById(21, 2);
-    if (GameFlag_Test(0x205))
-      Actor_SetModeById(10, 2);
+    Actor_SetAnimation(18, 2);
+    Actor_SetAnimation(19, 2);
+    Actor_SetAnimation(21, 2);
+    if (Event_GetFlag(0x205))
+      Actor_SetAnimation(10, 2);
     Func_02000e04();
 #if TLA_PATCH_1
-    if (GameFlag_Test(0x204)) {
-      Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
-      Place(21, PIXELS(184), PIXELS(184));
+    if (Event_GetFlag(0x204)) {
+      Actor_SetPosition(9, 0, 0);
+      Actor_SetPosition(21, PIXELS(184), PIXELS(184));
       Actor_GetById(21)->motionFlags = 0;
-      CopyCells2(9, 11, 1, 1, 11, 12);
+      MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
     }
 #endif
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room4) {
-    if (GameFlag_Test(0x230)) {
-      CopyCells2(0, 3, 1, 1, 3, 15);
-      Actor_SetModeById(9, 4);
+    if (Event_GetFlag(0x230)) {
+      MapGrid_CopyCellAttributes(0, 3, 1, 1, 3, 15);
+      Actor_SetAnimation(9, 4);
     }
-    if (GameFlag_Test(0x109) && Flag_Test(0x220)) {
-      GameFlag_ClearBit(0x220);
+    if (Event_GetFlag(0x109) && Event_GetFlag(0x220)) {
+      Event_ClearFlag(0x220);
       Func_0200125c();
     }
     Func_02002188(gData_02002272);
@@ -406,28 +382,28 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room9) {
-    if (Flag_Test(0x205)) {
-      CopyCells2(9, 11, 1, 1, 11, 12);
-      Map_CopyCellPictureIndicesRect(12, 32, 11, 15, 1, 1);
-      Map_CopyCellPictureIndicesRect(77, 15, 75, 15, 1, 1);
+    if (Event_GetFlag(0x205)) {
+      MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
+      MapGrid_CopyCellsTo(12, 32, 11, 15, 1, 1);
+      MapGrid_CopyCellsTo(77, 15, 75, 15, 1, 1);
     }
 #if !TLA_PATCH_1
-    if (GameFlag_Test(0x205))
-      Map_CopyCellAttributeRect(9, 11, 1, 1, 11, 11);
+    if (Event_GetFlag(0x205))
+      MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 11);
 #else
-    if (GameFlag_Test(0x204)) {
-      Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
-      Place(21, PIXELS(184), PIXELS(184));
+    if (Event_GetFlag(0x204)) {
+      Actor_SetPosition(9, 0, 0);
+      Actor_SetPosition(21, PIXELS(184), PIXELS(184));
       Actor_GetById(21)->motionFlags = 0;
-      CopyCells2(9, 11, 1, 1, 11, 12);
+      MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
     }
 #endif
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room1) {
-    if (GameFlag_Test(0xa60)) {
-      Map_CopyCellPictureIndicesRect(5, 46, 5, 47, 1, 1);
-      Map_CopyCellPictureIndicesRect(4, 25, 5, 17, 1, 1);
-      CopyCells2(4, 25, 1, 1, 5, 17);
+    if (Event_GetFlag(0xa60)) {
+      MapGrid_CopyCellsTo(5, 46, 5, 47, 1, 1);
+      MapGrid_CopyCellsTo(4, 25, 5, 17, 1, 1);
+      MapGrid_CopyCellAttributes(4, 25, 1, 1, 5, 17);
     }
   }
   return 0;
@@ -464,9 +440,9 @@ loop:
   if (i <= 63)
     goto loop;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room4)
-    CopyCells(33, 30, 23, 14, 1, 2);
+    MapGrid_CopyCellsTo(33, 30, 23, 14, 1, 2);
   else
-    CopyCells(27, 29, 40, 16, 1, 2);
+    MapGrid_CopyCellsTo(27, 29, 40, 16, 1, 2);
   Event_PlaySound(158);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
@@ -536,7 +512,7 @@ void Func_02000d14(void) {
 void Func_02000e04(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 514;
   FieldTask_AddFrame(Func_02000d14, 0x480);
-  Func_02002168(170);
+  Scene_QueueMusic(170);
   Func_02000ed0();
 }
 
@@ -577,19 +553,19 @@ void Func_02000f2c(void) {
   s32 row = object->z >> 20;
   s32 i;
 
-  if (!GameFlag_Test(0x204) && column == 11 && row == 12) {
+  if (!Event_GetFlag(0x204) && column == 11 && row == 12) {
     object->motionFlags = 0;
     for (i = 10; i > 0; i--) {
       object->y -= 0x20000;
       Event_Wait(1);
     }
     Func_0200156c(9);
-    Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
-    Place(21, PIXELS(184), PIXELS(184));
+    Actor_SetPosition(9, 0, 0);
+    Actor_SetPosition(21, PIXELS(184), PIXELS(184));
     Actor_GetById(21)->motionFlags = 0;
     Actor_GetById(21)->y -= 0x400000;
-    CopyCells2(9, 11, 1, 1, 11, 12);
-    GameFlag_SetBit(0x204);
+    MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
+    Event_SetFlag(0x204);
   }
 }
 
@@ -645,13 +621,13 @@ void Func_02000fd0(void) {
       Event_SetFlag(0x205);
     }
     Event_End();
-  } else if (!Flag_Test(0x207) && column == 16 && row == 12) {
+  } else if (!Event_GetFlag(0x207) && column == 16 && row == 12) {
     MapGrid_CopyCellAttributes(17, 12, 1, 1, column, row);
     flags = &object->motionFlags;
     *flags = 3;
     FieldEvent_Wait(30);
     *flags = 0;
-    Flag_Set(0x207);
+    Event_SetFlag(0x207);
     Event_End();
   }
 }
@@ -684,16 +660,16 @@ void Func_0200122c(void) {
 }
 
 void Func_0200125c(void) {
-  if (!Event_GetFlag(0x221) && !Flag_Test(0x220)) {
+  if (!Event_GetFlag(0x221) && !Event_GetFlag(0x220)) {
     MapGrid_CopyCellAttributes(11, 73, 10, 10, 64, 50);
     MapGrid_CopyCellAttributes(42, 73, 10, 10, 64, 60);
-    CopyCells2(42, 11, 10, 4, 11, 75);
+    MapGrid_CopyCellAttributes(42, 11, 10, 4, 11, 75);
     Event_SetFlag(0x220);
   }
 }
 
 void Func_020012c0(void) {
-  if (Flag_Test(0x220)) {
+  if (Event_GetFlag(0x220)) {
     MapGrid_CopyCellAttributes(64, 50, 10, 10, 11, 73);
     MapGrid_CopyCellAttributes(64, 60, 10, 10, 42, 73);
     Event_ClearFlag(0x220);
@@ -749,9 +725,9 @@ void Func_0200138c(void) {
     SINK(32);
     Func_02001620(10);
     FieldEvent_Wait(20);
-  } else if (!Flag_Test(0x205) && column == 16 && row == 15) {
+  } else if (!Event_GetFlag(0x205) && column == 16 && row == 15) {
     object->motionFlags = 0;
-    Flag_Set(0x205);
+    Event_SetFlag(0x205);
     Event_SetFlag(0x221);
     SINK(48);
     Func_02001620(10);
@@ -795,11 +771,11 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz, s32 flags,
                    struct SettlementsSpawn *spawn);
 
 void Func_0200156c(s32 id) {
-  /* FAKEMATCH(dead): an unused local that only sizes the frame: its twelve
-   * bytes are the gap the native stack frame keeps above the spawn record,
-   * where Func_02001620 holds its velocity; without it, 4 of 41
-   * instructions differ in tla-en. */
-  struct SettlementsVector velocity;
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches: of the 68 bytes it reserves (sub sp, #68), no instruction
+   * addresses the 12 at sp+56 to sp+67, where Func_02001620 keeps its
+   * velocity; as without it, 4 of 41 instructions differ in tla-en. */
+  UNUSED struct SettlementsVector velocity;
   struct SettlementsSpawn spawn;
   struct Actor *object = Actor_Get(id);
 

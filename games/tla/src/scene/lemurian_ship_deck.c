@@ -29,15 +29,15 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern const u8 gData_020022cc[];
-extern const u8 gData_0200235c[];
+extern const u8 gLemurianShipDeck_Placements[];
+extern const u8 gLemurianShipDeck_Room1Placements[];
 
 const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov657Room1)
-    return gData_0200235c;
-  return gData_020022cc;
+    return gLemurianShipDeck_Room1Placements;
+  return gLemurianShipDeck_Placements;
 }
 
 void Func_02000078(void) {
@@ -79,18 +79,20 @@ void Func_02000078(void) {
   }
 }
 
-extern const u8 gData_020023ec[];
-extern const u8 gData_020023f8[];
+extern const u8 gLemurianShipDeck_Triggers[];
+extern const u8 gLemurianShipDeck_Room2Triggers[];
 
 const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov657Room2)
-    return gData_020023f8;
-  return gData_020023ec;
+    return gLemurianShipDeck_Room2Triggers;
+  return gLemurianShipDeck_Triggers;
 }
 
-void Func_02000168(void) {
+/// ★ Named from the game: "The door is held closed by a powerful force."
+/// (MsgTheDoorIsHeld)
+void LemurianShipDeck_TryHeldDoor(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered(MsgTheDoorIsHeld, 1);
@@ -125,7 +127,7 @@ DEFINE_FUNC_02000188(Func_02000188, 15, 12)
 
 DEFINE_FUNC_02000188(Func_020001cc, 9, 4)
 
-void Func_02001f34(s32 a);
+void Map_ClearLayerEntryFlag(s32 a);
 
 void Func_02000210(void) {
   Event_Start();
@@ -134,10 +136,10 @@ void Func_02000210(void) {
   FieldTask_AddFrame(Func_020001cc, 0x480);
   Event_WaitTransitionFrames();
   FieldEvent_Wait(60);
-  Func_02001f34(13);
+  Map_ClearLayerEntryFlag(13);
   FieldEvent_Wait(60);
   FieldEvent_Wait(60);
-  Func_02001f34(14);
+  Map_ClearLayerEntryFlag(14);
   Event_End();
 }
 

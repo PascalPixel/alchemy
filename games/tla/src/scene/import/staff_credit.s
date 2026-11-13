@@ -114,9 +114,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_02001fd4
+	.global Actor_Release
 	.thumb_func
-Func_02001fd4:
+Actor_Release:
 	overlay_veneer Actor_Destroy
 	.global Map_UpdateCurrentTileBlock
 	.thumb_func
@@ -210,9 +210,9 @@ Event_ResolvePendingActions:
 	.thumb_func
 Func_080d46a4:
 	overlay_veneer Func_080c8638
-	.global Func_02002094
+	.global FlagEntries_GetTable
 	.thumb_func
-Func_02002094:
+FlagEntries_GetTable:
 	overlay_veneer Func_080c86f0
 	.global Party_GetLeaderActor
 	.thumb_func

@@ -37,7 +37,7 @@ void Func_020034ac(s32 spread) {
           285, (i << 17) + leader->x - 0x80000, y - 0x20000, leader->z);
     }
     if (effect != 0) {
-      frame = Func_02003bd4(effect->sprite, frame);
+      frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
       Actor_SetSingleChildFlags(effect, 0);
@@ -80,7 +80,7 @@ void Func_020035e0(void) {
     effect = (struct FieldEffect *)FieldActor_Create(285, leader->x, leader->y,
                                                       leader->z);
     if (effect != 0) {
-      state = Func_02003bd4(effect->sprite, state);
+      state = Sprite_ShareVramCacheEntry(effect->sprite, state);
       zero = 0;
       effect->motionFlags = zero;
       effect->collisionFlags = zero;
@@ -106,11 +106,11 @@ void Func_020035e0(void) {
 
 extern u8 gMapShapeGrid[];
 
-s32 Func_02003adc(s32 terrainId, s32 x, s32 z);
+s32 MapGrid_GetTerrainKind(s32 terrainId, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Func_02003c24(s32 terrainId, s32 value, s32 height);
 
-DEFINE_ACTOR_SET_CELL_SHAPE_AT(Func_020036f8, Func_02003adc, Func_02003c24)
+DEFINE_ACTOR_SET_CELL_SHAPE_AT(Func_020036f8, MapGrid_GetTerrainKind, Func_02003c24)
 
 void Func_02002e30(const u8 *data);
 
@@ -134,7 +134,7 @@ struct ParticleWork {
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-DEFINE_PARTICLES_UPDATE_FALLING(Func_0200379c, Func_02003c3c)
+DEFINE_PARTICLES_UPDATE_FALLING(Func_0200379c, EffectSprite_DrawAtWorldPosition)
 
 void Func_02003820(s32 x, s32 y, s32 z, s32 count) {
   struct EntryWork *work;
@@ -403,7 +403,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_0200403c[] = {
+struct ActorPlacement gMagmaRock_Placements[] = {
     {272, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_NORTH, 2, 2},
     {377, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_SOUTH, 2, 2},
     {272, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_NORTH, 2, 2},
@@ -477,14 +477,14 @@ struct ActorPlacement gData_020044a4[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020045c4[] = {
+struct ActorPlacement gMagmaRock_Room3Placements[] = {
     {384, CONDITION_ALWAYS, 7, 1, 0, 0, FACING_NORTH, 2, 2},
     {377, CONDITION_ALWAYS, 7, 2, 0, 0, FACING_WEST, 2, 2},
     {SCENE_TABLE_END},
 };
 // clang-format on
 
-struct Trigger gData_0200460c[] = {
+struct Trigger gMagmaRock_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0xca02, 2, 0x2f8, EVENT(Func_02001b44)},
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_02001b24)},
@@ -591,7 +591,7 @@ struct Trigger gData_02004930[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02004a5c[] = {
+struct Trigger gMagmaRock_Room3Triggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {0x80009705, 50, CONDITION_ALWAYS, EVENT(Func_02001ba4)},
     {0x50009705, 50, 0x2f0, EVENT(Func_02001110)},

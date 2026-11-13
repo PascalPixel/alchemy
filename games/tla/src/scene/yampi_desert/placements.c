@@ -47,57 +47,57 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "main_routine_work.h"
 #include "map.h"
 
-extern const u8 gData_020049c4[];
-extern const u8 gData_020049dc[];
+extern const u8 gYampiDesert_Placements[];
+extern const u8 gYampiDesert_Room1Placements[];
 extern const u8 gData_02004a84[];
 extern const u8 gData_02004b44[];
-extern const u8 gData_02004c04[];
-extern const u8 gData_02004d3c[];
-extern const u8 gData_02004e44[];
-extern const u8 gData_02004fdc[];
-extern const u8 gData_0200506c[];
-extern const u8 gData_020050b4[];
+extern const u8 gYampiDesert_Room3Placements[];
+extern const u8 gYampiDesert_Room4Placements[];
+extern const u8 gYampiDesert_Room5Placements[];
+extern const u8 gYampiDesert_Room8Placements[];
+extern const u8 gYampiDesert_Room10Placements[];
+extern const u8 gYampiDesert_Room12Placements[];
 
 const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov661Room1)
-    return gData_020049dc;
+    return gYampiDesert_Room1Placements;
   if (scene == (s32)&SceneId_Ov661Room2) {
     if (GameFlag_Test(0x8f0))
       return gData_02004b44;
     return gData_02004a84;
   }
   if (scene == (s32)&SceneId_Ov661Room3)
-    return gData_02004c04;
+    return gYampiDesert_Room3Placements;
   if (scene == (s32)&SceneId_Ov661Room4)
-    return gData_02004d3c;
+    return gYampiDesert_Room4Placements;
   if (scene == (s32)&SceneId_Ov661Room5)
-    return gData_02004e44;
+    return gYampiDesert_Room5Placements;
   if (scene == (s32)&SceneId_Ov661Room8)
-    return gData_02004fdc;
+    return gYampiDesert_Room8Placements;
   if (scene == (s32)&SceneId_Ov661Room10)
-    return gData_0200506c;
+    return gYampiDesert_Room10Placements;
   if (scene == (s32)&SceneId_Ov661Room12)
-    return gData_020050b4;
-  return gData_020049c4;
+    return gYampiDesert_Room12Placements;
+  return gYampiDesert_Placements;
 }
 
 void Func_020003b8(s32 a) { Scene_Call4178(a, 64, 0x302); }
 
-extern const u8 gData_0200518c[];
-extern const u8 gData_02005198[];
-extern const u8 gData_0200521c[];
-extern const u8 gData_020053fc[];
-extern const u8 gData_020054e0[];
-extern const u8 gData_02005594[];
-extern const u8 gData_02005630[];
-extern const u8 gData_02005678[];
-extern const u8 gData_020056b4[];
-extern const u8 gData_02005750[];
-extern const u8 gData_0200578c[];
-extern const u8 gData_020057bc[];
-extern const u8 gData_020057e0[];
+extern const u8 gYampiDesert_Triggers[];
+extern const u8 gYampiDesert_Room1Triggers[];
+extern const u8 gYampiDesert_Room2Triggers[];
+extern const u8 gYampiDesert_Room3Triggers[];
+extern const u8 gYampiDesert_Room4Triggers[];
+extern const u8 gYampiDesert_Room5Triggers[];
+extern const u8 gYampiDesert_Room6Triggers[];
+extern const u8 gYampiDesert_Room7Triggers[];
+extern const u8 gYampiDesert_Room8Triggers[];
+extern const u8 gYampiDesert_Room9Triggers[];
+extern const u8 gYampiDesert_Room10Triggers[];
+extern const u8 gYampiDesert_Room11Triggers[];
+extern const u8 gYampiDesert_Room12Triggers[];
 
 /// Returns the current room's table.
 // As ☀️'s Scene_GetEntrances picks one.
@@ -105,37 +105,39 @@ const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov661Room1)
-    return gData_02005198;
+    return gYampiDesert_Room1Triggers;
   if (scene == (s32)&SceneId_Ov661Room2)
-    return gData_0200521c;
+    return gYampiDesert_Room2Triggers;
   if (scene == (s32)&SceneId_Ov661Room3)
-    return gData_020053fc;
+    return gYampiDesert_Room3Triggers;
   if (scene == (s32)&SceneId_Ov661Room4)
-    return gData_020054e0;
+    return gYampiDesert_Room4Triggers;
   if (scene == (s32)&SceneId_Ov661Room5)
-    return gData_02005594;
+    return gYampiDesert_Room5Triggers;
   if (scene == (s32)&SceneId_Ov661Room6)
-    return gData_02005630;
+    return gYampiDesert_Room6Triggers;
   if (scene == (s32)&SceneId_Ov661Room7)
-    return gData_02005678;
+    return gYampiDesert_Room7Triggers;
   if (scene == (s32)&SceneId_Ov661Room8)
-    return gData_020056b4;
+    return gYampiDesert_Room8Triggers;
   if (scene == (s32)&SceneId_Ov661Room9)
-    return gData_02005750;
+    return gYampiDesert_Room9Triggers;
   if (scene == (s32)&SceneId_Ov661Room10)
-    return gData_0200578c;
+    return gYampiDesert_Room10Triggers;
   if (scene == (s32)&SceneId_Ov661Room11)
-    return gData_020057bc;
+    return gYampiDesert_Room11Triggers;
   if (scene == (s32)&SceneId_Ov661Room12)
-    return gData_020057e0;
-  return gData_0200518c;
+    return gYampiDesert_Room12Triggers;
+  return gYampiDesert_Triggers;
 }
 
-void Func_020004bc(void) {
+/// ★ Named from the game: "We followed the pirates here from Madra... Are you
+/// going to Alhafra, too?" (MsgWeFollowedThe)
+void YampiDesert_TalkToTraveler(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWeFollowedThe);
-  Func_020040d8(8, 0);
+  Event_AskYesNoAndShowResponse(8, 0);
   Event_End();
 }
 
@@ -153,7 +155,9 @@ void Func_020004e0(void) {
   Event_ShowMessageAndWait(13, 0);
 }
 
-void Func_02000550(void) {
+/// ★ Named from the game: "As you can see, the elder is quite insistent on
+/// finding a way through." (MsgAsYouCan)
+void YampiDesert_TalkToElderAboutWay(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (!Scene_FlagTest(0x88f))
@@ -165,7 +169,9 @@ void Func_02000550(void) {
   Event_End();
 }
 
-void Func_020005a8(void) {
+/// ★ Named from the game: "This is where my son must prove himself as mayor..."
+/// (MsgThisIsWhere)
+void YampiDesert_TalkToElder(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (!Scene_FlagTest(0x88f))
@@ -177,7 +183,9 @@ void Func_020005a8(void) {
   Event_End();
 }
 
-void Func_02000600(void) {
+/// ★ Named from the game: "North: Alhafra South: Air's Rock Warning: Beyond
+/// this point, there is no route back." (MsgNorthAlhafraSouth)
+void YampiDesert_ReadSignpost(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgNorthAlhafraSouth, 1);
@@ -227,7 +235,7 @@ void Func_020006ac(void) {
       u8 *shapes =
           (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
       s32 index = Func_020041e0(object);
-      s32 shape = Func_02004020(layer, object->x, object->z);
+      s32 shape = MapGrid_GetTerrainKind(layer, object->x, object->z);
       s32 height = Map_GetTerrainHeight(layer, object->x, object->z);
 
       cells += index;
@@ -272,7 +280,7 @@ next:
       /* FAKEMATCH(pin): the index in r10; as a plain local, 32 of 130 instructions
        * differ in tla-en. */
       register s32 index asm("r10") = Func_020041e0(object);
-      s32 shape = Func_02004020(layer, object->x, object->z);
+      s32 shape = MapGrid_GetTerrainKind(layer, object->x, object->z);
       s32 height = Map_GetTerrainHeight(layer, object->x, object->z);
       struct MapCell *cell = cells + index;
 
@@ -337,7 +345,7 @@ void Func_0200095c(u16 *list) {
   }
 }
 
-void Func_02000994(void) {
+void YampiDesert_CastSand(void) {
   s16 scene;
 
   Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 2;

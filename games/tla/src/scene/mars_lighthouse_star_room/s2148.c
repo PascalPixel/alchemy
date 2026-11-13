@@ -30,7 +30,7 @@ struct Work020023c4 {
   s16 unk6a;
 };
 
-s32 Func_0200424c(struct Actor *actor, struct Vector3 *position);
+s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
 s32 Func_0200428c(s32 *from, s32 radius, struct Vector3 *to, s32 radius2);
 void Animation_ApplyChildValues(struct Actor *actor, s32 a);
 void Func_02002120(void);
@@ -41,7 +41,7 @@ extern u8 gData_020023c4[];
 #define SHARED_F02002148_ID3 Func_02002120
 #define SHARED_F02002148_ID4 Func_020041cc
 #define SHARED_F02002148_ID5 Func_0200422c
-#define SHARED_F02002148_ID6 Func_0200424c
+#define SHARED_F02002148_ID6 MapGrid_CheckCollision
 #define SHARED_F02002148_ID7 Func_0200428c
 #include "../shared/func_02002148.c"
 #undef SHARED_F02002148_NAME
@@ -137,7 +137,9 @@ struct RideState {
   struct RideCar *car;
 };
 
-s32 Func_0200236c(void) {
+/// Stepping onto ice (cell behavior 90, as Imil's ice slide is in The Broken
+/// Seal): the leader slides until the ice stops.
+s32 MarsLighthouseStarRoom_SlideOnIce(void) {
   struct RideEvent *event = Ram_HeapSlots->eventWork;
   struct RideState *ride;
   struct Actor *leader;
@@ -197,9 +199,9 @@ s32 Func_0200236c(void) {
 
 extern u16 gData_02004cf0[];
 
-DEFINE_RIDE_IF_ACTIVE(Func_020024ac, Func_0200236c)
+DEFINE_RIDE_IF_ACTIVE(MarsLighthouseStarRoom_ContinueSlide, MarsLighthouseStarRoom_SlideOnIce)
 
-s32 Func_020024c8(void) {
+s32 MarsLighthouseStarRoom_IsSliding(void) {
   return ((struct RideWork *)(gData_020023c4 + 0x188))->active;
 }
 
@@ -311,45 +313,7 @@ extern const u8 gData_020047b8[];
 
 /// Throws two sparks (object kind 325) from (x, y, z), each upward at about
 /// speed plus 0x14000 with a random spread, at a random angle and size.
-void Func_02002658(s32 x, s32 y, s32 z, s32 speed) {
-  s32 i;
-
-  i = 1;
-next:
-  {
-    struct Actor *object = FieldActor_Create(325, x, y, z);
-
-    if (object != NULL) {
-      s32 angle;
-      s32 rise;
-      s32 radius;
-      u32 size;
-      s32 scale;
-
-      rise = speed + ((u32)Random16Far() >> 4) - ((u32)Random16Far() >> 4);
-      angle = 0x4000 + rise;
-      radius = Random16Far() * 8;
-      size = Random16Far();
-      Actor_StartScript(object, gData_020047b8);
-      Actor_SetSingleChildFlags(object, 0);
-      /* FAKEMATCH(temporary): the scale is taken before the velocity stores, as
-       * in the native; as object->scaleX = (size >> 1) + 0x4000, 14 of 98
-       * instructions differ in tla-en. */
-      scale = (size >> 1) + 0x4000;
-      object->velocityY = rise + 0x14000;
-      object->velocityZ = Iwram_MulQ16(radius, Math_Cosine(angle));
-      object->velocityX = Iwram_MulQ16(radius, Math_Sin(angle));
-      object->acceleration = 0;
-      object->gravity = 0x547a;
-      object->scaleX = scale;
-      object->scaleY = object->scaleX;
-      object->bounce = 0x8000;
-      Animation_ApplyChildValues(object, 1);
-    }
-  }
-  if (--i >= 0)
-    goto next;
-}
+DEFINE_EMBERS_SPAWN(Func_02002658, gData_020047b8)
 
 void Func_02002738(struct Actor *object) {
   object->movementState = Event_GetFlag(260);

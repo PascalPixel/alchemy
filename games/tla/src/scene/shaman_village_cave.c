@@ -57,13 +57,6 @@ void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 
 void Func_02000098(s32 id);
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Func_02001060_(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                      s32 f) {
-  Map_CopyCellAttributeRect(a, b, c, d, e, f);
-}
-
 void Func_02000098(s32 id) {
   struct Actor *object = Actor_Get(id);
   s32 frames = 60;
@@ -80,7 +73,7 @@ void Func_02000098(s32 id) {
   object->motionFlags = 0;
 }
 
-void Func_020000d4(void) { Func_02001060_(99, 10, 4, 3, 99, 18); }
+void Func_020000d4(void) { MapGrid_CopyCellAttributes(99, 10, 4, 3, 99, 18); }
 
 void Func_020000f0(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
@@ -92,7 +85,7 @@ void Func_020000f0(s32 unused, s32 id) {
     Func_02000098(id);
     MapGrid_CopyCellAttributes(40, 19, 1, 1, x, 19);
   }
-  Func_02001060_(99, 6, 4, 3, 99, 18);
+  MapGrid_CopyCellAttributes(99, 6, 4, 3, 99, 18);
 }
 
 void Func_02000148(void) {
@@ -101,10 +94,10 @@ void Func_02000148(void) {
   Event_SetFlag(0x302);
   object->motionFlags = 0;
   object->priorityFlags = 0;
-  Func_02001060_(8, 42, 1, 1, 6, 42);
+  MapGrid_CopyCellAttributes(8, 42, 1, 1, 6, 42);
 }
 
-void Func_02001188();
+void FieldCamera_MoveToActorById();
 
 /// Pushes Shaman Village cave's object 17 away from the leader, unless the two
 /// stand on opposite sides of the boundary between 8-pixel columns 36 and 37.
@@ -139,7 +132,7 @@ void Func_02000184(void) {
     FieldActor_Jump(17, 4, 20);
     Actor_SetDestinationOffset(17, 0, 32);
     FieldActor_WaitForMoveById(17);
-    Func_02001188(17, 1);
+    FieldCamera_MoveToActorById(17, 1);
     FieldActor_StartRepeatedMotion(17, 2);
     Actor_FaceDirection(17, FACING_WEST, 0);
     Actor_SetDestinationOffset(17, -8, 0);
@@ -253,7 +246,10 @@ void Func_02000404(void) {
 #include "edition.h"
 #include "version.h"
 
-void Func_02000430(void) {
+/// The fighters from Colosso, after a linked game, find the party and challenge
+/// it.
+/// ★ Named from the game: "I found !" (MsgIFound2)
+void ShamanVillageCave_MeetColossoFans(void) {
   s32 angle;
 
   if (Event_GetFlag(0x821) == 0)
@@ -284,7 +280,7 @@ void Func_02000430(void) {
   Actor_ShowEmote(18, 256, 0);
   Actor_ShowEmote(4, 256, 40);
   FieldCamera_MoveTo(PIXELS(199), -1, PIXELS(177), 1);
-  Func_02001180();
+  FieldCamera_WaitForArrival();
   angle = 0x4000;
   Actor_SetPositionAndFacing(19, PIXELS(199), PIXELS(130), angle);
   Actor_WalkTo(19, 231, 199);
@@ -295,7 +291,7 @@ void Func_02000430(void) {
   Actor_SetPositionAndFacing(21, PIXELS(199), PIXELS(130), angle);
   Actor_WalkTo(21, 204, 191);
   FieldCamera_MoveTo(PIXELS(199), -1, PIXELS(225), 1);
-  Func_02001180();
+  FieldCamera_WaitForArrival();
   FieldActor_WaitForMoveById(19);
   Actor_FaceDirection(19, 0x5000, 0);
   FieldActor_WaitForMoveById(20);
@@ -397,7 +393,9 @@ void Event_SetDestination();
     } *)Ram_HeapSlots->eventWork)                                              \
        ->message)
 
-void Func_0200087c(void) {
+/// ★ Named from the game: "Hey, these guys aren't very strong at all!"
+/// (MsgHeyTheseGuys)
+void ShamanVillageCave_LoseToColossoFans(void) {
   s32 angle = 0xa000;
 
   Event_Start();
@@ -452,7 +450,8 @@ void Func_0200087c(void) {
       ->value = 0;
 }
 
-void Func_02000a24(void) {
+/// ★ Named from the game: "These guys were phenomenal!" (MsgTheseGuysWere)
+void ShamanVillageCave_BeatColossoFans(void) {
   s16 *target;
   s32 angle = 0xe000;
 
@@ -578,12 +577,6 @@ next:
   Event_End();
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void ShamanVillageCave_ObjPlace(s32 id, s32 x, s32 z) {
-  Actor_SetHorizontalPositionWithTerrain(id, x, z);
-}
-
 s32 Scene_Initialize(void) {
   struct Actor *object;
 
@@ -602,7 +595,7 @@ s32 Scene_Initialize(void) {
     object->x = 0x2680000;
     object->y = 0;
     Actor_SetSingleChildFlags(object, 0);
-    Func_02001060_(40, 19, 1, 1, 38, 19);
+    MapGrid_CopyCellAttributes(40, 19, 1, 1, 38, 19);
   }
   Actor_SetSingleChildFlags(Actor_Get(16), 0);
   Actor_SetAnimation(16, 1);
@@ -613,10 +606,10 @@ s32 Scene_Initialize(void) {
     object->motionFlags = 0;
     object->priorityFlags = 0;
     object->y = 0;
-    Func_02001060_(8, 42, 1, 1, 6, 42);
+    MapGrid_CopyCellAttributes(8, 42, 1, 1, 6, 42);
   }
   if (Event_GetFlag(518))
-    ShamanVillageCave_ObjPlace(17, PIXELS(328), PIXELS(792));
+    Actor_SetPosition(17, PIXELS(328), PIXELS(792));
   Actor_SetSpriteColor(Actor_Get(19), 1);
   Actor_SetSpriteColor(Actor_Get(20), 0);
   Actor_SetSpriteColor(Actor_Get(21), 2);
@@ -625,10 +618,10 @@ s32 Scene_Initialize(void) {
       Event_GetFlag(0xa71)) {
     Func_020003cc();
     if (!Event_GetFlag(265) && gMainRoutineWork.entrance == 20) {
-      Func_02000a24();
+      ShamanVillageCave_BeatColossoFans();
     } else if (!Event_GetFlag(265) && gMainRoutineWork.entrance == 21) {
       Event_SetFlag(0xa71);
-      Func_0200087c();
+      ShamanVillageCave_LoseToColossoFans();
     }
   }
   if (Event_GetFlag(0xa73))
@@ -726,7 +719,7 @@ struct Trigger gSceneEvents[] = {
     {0x8602, 42, 0x201, EVENT(Func_02001038)},
     {0x602, 43, 0x202, EVENT(Func_02001038)},
     {0x8602, 44, 0x202, EVENT(Func_02001038)},
-    {TRIGGER_STEP, 100, 0xa70, EVENT(Func_02000430)},
+    {TRIGGER_STEP, 100, 0xa70, EVENT(ShamanVillageCave_MeetColossoFans)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_0200030c)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_0200083c)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Func_0200083c)},

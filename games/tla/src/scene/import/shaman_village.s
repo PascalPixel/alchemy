@@ -118,9 +118,9 @@ Import_ActorSetScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_0200481c
+	.global Actor_Release
 	.thumb_func
-Func_0200481c:
+Actor_Release:
 	overlay_veneer Actor_Destroy
 	.global Actor_SetPositionAndResetMotion
 	.thumb_func
@@ -190,13 +190,13 @@ PartyInventory_FindMember:
 	.thumb_func
 Party_ListMembers:
 	overlay_veneer Party_ListMembersFar
-	.global Func_020048ac
+	.global Party_RestoreHpPp
 	.thumb_func
-Func_020048ac:
+Party_RestoreHpPp:
 	overlay_veneer Func_080ad208
-	.global Func_020048b4
+	.global InventorySnapshot_Save
 	.thumb_func
-Func_020048b4:
+InventorySnapshot_Save:
 	overlay_veneer Func_080ad2d8
 	.global Event_Wait
 	.thumb_func
@@ -354,9 +354,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_020049f4
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_020049f4:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Func_080d4568
 	.thumb_func
@@ -418,21 +418,21 @@ BattleEffect_WaitForArcGroups:
 	.thumb_func
 BattleEffect_SetObjectUpdateMode:
 	overlay_veneer BattleEffect_SetObjectUpdateModeFar
-	.global Func_02004a74
+	.global Shop_Run
 	.thumb_func
-Func_02004a74:
+Shop_Run:
 	overlay_veneer Func_08108008
-	.global Func_02004a7c
+	.global Sanctum_Run
 	.thumb_func
-Func_02004a7c:
+Sanctum_Run:
 	overlay_veneer Func_08108010
-	.global Func_02004a84
+	.global Inn_CheckIn
 	.thumb_func
-Func_02004a84:
+Inn_CheckIn:
 	overlay_veneer Func_08108018
-	.global Func_02004a8c
+	.global Inn_QuoteRoomPrice
 	.thumb_func
-Func_02004a8c:
+Inn_QuoteRoomPrice:
 	overlay_veneer Func_08108028
 	.global Inn_PlaySleep
 	.thumb_func

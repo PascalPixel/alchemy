@@ -8,23 +8,23 @@
 #include "scene_tables.h"
 
 extern s16 gData_02004b2c[];
-extern u32 gData_02004c4c[];
+extern u32 gProx_Room2Placements[];
 extern s16 gData_02004d9c[];
 extern s32 gData_02004f04[];
 extern u32 gData_02005444[];
 extern u32 gData_020054a4[];
-extern u32 gData_0200551c[];
-extern struct Trigger gData_0200554c[];
-extern struct Trigger gData_02005558[];
-extern struct Trigger gData_02005588[];
-extern struct Trigger gData_020057f8[];
-extern struct Trigger gData_02005da4[];
-extern struct Trigger gData_02005eac[];
+extern u32 gProx_Room6Placements[];
+extern struct Trigger gProx_Triggers[];
+extern struct Trigger gProx_Room1Triggers[];
+extern struct Trigger gProx_Room2Triggers[];
+extern struct Trigger gProx_Room3Triggers[];
+extern struct Trigger gProx_Room5Triggers[];
+extern struct Trigger gProx_Room6Triggers[];
 
 extern u32 gData_02004980[];
 
 extern u32 gData_02004a08[];
-extern s32 gData_020046f8[];
+extern s32 gProx_EnterDoorScript[];
 
 void Func_020027e4(void);
 
@@ -50,18 +50,18 @@ void Func_02004114(void);
 
 void Func_02000290(void);
 
-void Func_020006c4(void);
+void Prox_PraiseReturnedWarrior(void);
 
-void Func_02000714(void);
-void Func_02000764(void);
+void Prox_FearForWeyard(void);
+void Prox_TalkToPlayingChild(void);
 
-void Func_02000884(void);
+void Prox_TalkToTrainingChild(void);
 
-void Func_02000914(void);
+void Prox_SearchForParents(void);
 
-void Func_02000ad8(void);
+void Prox_DecideToGoToLighthouse(void);
 
-void Func_02000dac(void);
+void Prox_MeetPuelle(void);
 
 void Func_020015d0(void);
 
@@ -81,7 +81,7 @@ void Func_02001b28(void);
 
 void Func_02001b60(void);
 void Func_02001b7c(void);
-void Func_02002a8c(void);
+void Prox_SayFarewell(void);
 void Func_0200391c(void);
 extern u32 gData_02004644[];
 extern u32 gData_02004680[];

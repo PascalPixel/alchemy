@@ -54,9 +54,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Func_080200c0
-	.global Func_02001f64
+	.global Actor_Release
 	.thumb_func
-Func_02001f64:
+Actor_Release:
 	overlay_veneer Actor_Destroy
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -130,9 +130,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02001ffc
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02001ffc:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Import_EventSetExitRequest
 	.thumb_func

@@ -50,9 +50,9 @@ Serial_RemoveIrqHandlers:
 	.thumb_func
 Sound_LoadReverbCode:
 	overlay_veneer Sound_LoadReverbCodeFar
-	.global Func_0200192c
+	.global Serial_StartSend
 	.thumb_func
-Func_0200192c:
+Serial_StartSend:
 	overlay_veneer Func_08000380
 	.global Serial_StartReceive
 	.thumb_func
@@ -98,13 +98,13 @@ Map_CenterOnFollowedPoint:
 	.thumb_func
 Map_CopyCellPictureIndicesRect:
 	overlay_veneer Map_CopyCellPictureIndicesRectFar
-	.global Func_0200198c
+	.global Map_ClearLayerEntryFlag
 	.thumb_func
-Func_0200198c:
+Map_ClearLayerEntryFlag:
 	overlay_veneer Func_08020198
-	.global Func_02001994
+	.global Map_SetLayerEntryFlag
 	.thumb_func
-Func_02001994:
+Map_SetLayerEntryFlag:
 	overlay_veneer Func_080201a0
 	.global Map_CopyCellAttributeRect
 	.thumb_func
@@ -158,9 +158,9 @@ Djinn_GetRecoveryTable:
 	.thumb_func
 Party_CountMembers:
 	overlay_veneer Party_CountMembersFar
-	.global Func_02001a04
+	.global Party_RestoreHpPp
 	.thumb_func
-Func_02001a04:
+Party_RestoreHpPp:
 	overlay_veneer Func_080ad208
 	.global Event_Wait
 	.thumb_func
@@ -250,9 +250,9 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02001abc
+	.global Sanctum_Run
 	.thumb_func
-Func_02001abc:
+Sanctum_Run:
 	overlay_veneer Func_08108010
 	.global DjinnRecovery_CountDownTwenty
 	.thumb_func

@@ -6,10 +6,11 @@
 
 #include "types.h"
 
-void Func_020001b0(void);
+void MercuryLighthouse_HearVoices(void);
 
-extern s32 gData_02000618[];
+extern s32 gMercuryLighthouse_MoteScript[];
+extern u32 gMercuryLighthouse_MoteFrames;
 
-void Func_02000608(void);
+void BattleEffect_FinishSceneAndReleaseHeapBlock(void);
 
 #endif

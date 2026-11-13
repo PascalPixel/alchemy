@@ -11,7 +11,7 @@ extern s32 gData_02002378[];
 
 void Func_020002b4(void);
 
-void Func_02002114();
+void Field_StartColorTransition();
 
 extern s16 gData_0200233c[];
 

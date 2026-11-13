@@ -35,14 +35,14 @@ const u8 *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6afRoom2)
-    return gData_02001390;
+    return gTreasureIsle_Room2Placements;
   if (scene == (s32)&SceneId_Ov6afRoom3)
-    return gData_02001480;
+    return gTreasureIsle_Room3Placements;
   if (scene == (s32)&SceneId_Ov6afRoom4)
-    return gData_02001504;
+    return gTreasureIsle_Room4Placements;
   if (scene == (s32)&SceneId_Ov6afRoom5)
-    return gData_0200169c;
-  return gData_02001330;
+    return gTreasureIsle_Room5Placements;
+  return gTreasureIsle_Placements;
 }
 
 #include "ram_buffer.h"
@@ -77,7 +77,7 @@ void Func_0200043c(struct TreasureIsleCell *cells, s16 index) {
   // As &cells[index], the sum takes its operands the other way round.
   cell = (struct TreasureIsleCell *)((index << 4) + (s32)cells);
   FieldCamera_MoveTo((cell->x << 20) + 0x80000, -1, (cell->z << 20) + 0x80000, 1);
-  Func_02001014();
+  FieldCamera_WaitForArrival();
   MapGrid_SetShake(0, 0x100000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
   Event_PlaySound(567);
@@ -282,7 +282,10 @@ DEFINE_FUNC_02000914(Func_02000a5c, 16, 0x207)
 
 #include "call.h"
 
-void Func_02000a8c(void) {
+/// The guardian of water challenges the party to prove its worth.
+/// "I am the guardian of water. If you would claim my power, you must prove
+/// your worth."
+void TreasureIsle_MeetWaterGuardian(void) {
   s32 t12;
 
   Func_02000fcc();
@@ -314,13 +317,13 @@ const u8 *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6afRoom2)
-    return gData_02001780;
+    return gTreasureIsle_Room2Triggers;
   if (scene == (s32)&SceneId_Ov6afRoom3)
-    return gData_0200184c;
+    return gTreasureIsle_Room3Triggers;
   if (scene == (s32)&SceneId_Ov6afRoom4)
-    return gData_020018f4;
+    return gTreasureIsle_Room4Triggers;
   if (scene == (s32)&SceneId_Ov6afRoom5)
-    return gData_02001a5c;
+    return gTreasureIsle_Room5Triggers;
   return gData_020016e4__scene_tables;
 }
 
@@ -559,9 +562,9 @@ u32 gData_0200131c[] = {
     39, 1, 0, 1, 17,
 };
 
-DEFINE_G_DATA_02001330(gData_02001330, 272, 280, 440, 344, 440, 0, 424, 344)
+DEFINE_G_DATA_02001330(gTreasureIsle_Placements, 272, 280, 440, 344, 440, 0, 424, 344)
 
-struct ActorPlacement gData_02001390[] = {
+struct ActorPlacement gTreasureIsle_Room2Placements[] = {
     {407, CONDITION_ALWAYS, (s32)gData_0200131c, PIXELS(600), 0, PIXELS(616),
      FACING_SOUTH, 2, 0},
     {407, CONDITION_ALWAYS, (s32)gData_0200131c, PIXELS(680), 0, PIXELS(616),
@@ -576,7 +579,7 @@ struct ActorPlacement gData_02001390[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02001480[] = {
+struct ActorPlacement gTreasureIsle_Room3Placements[] = {
     {407, CONDITION_ALWAYS, (s32)gData_0200131c, PIXELS(824), 0, PIXELS(232),
      FACING_SOUTH, 2, 0},
     {407, CONDITION_ALWAYS, (s32)gData_0200131c, PIXELS(824), 0, PIXELS(360),
@@ -590,7 +593,7 @@ u32 gData_020014e0[] = {
     0, 1, 17,
 };
 
-struct ActorPlacement gData_02001504[] = {
+struct ActorPlacement gTreasureIsle_Room4Placements[] = {
     {272, CONDITION_ALWAYS, 1, PIXELS(728), 0, PIXELS(600), FACING_SOUTH, 2, 0},
     {329, CONDITION_ALWAYS, (s32)gData_020014e0, PIXELS(328), 0, PIXELS(328),
      FACING_NORTH, 2, 0},
@@ -624,7 +627,7 @@ struct ActorPlacement gData_02001504[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_0200169c[] = {
+struct ActorPlacement gTreasureIsle_Room5Placements[] = {
     {169, 0x9bb, 1, PIXELS(792), 0, PIXELS(136), FACING_SOUTH, 0, 0},
     {243, 0x43, 1, PIXELS(200), 0, PIXELS(136), FACING_SOUTH, 0, 0},
     {SCENE_TABLE_END},
@@ -647,7 +650,7 @@ struct Trigger gData_020016e4[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02001780[] = {
+struct Trigger gTreasureIsle_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -667,7 +670,7 @@ struct Trigger gData_02001780[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_0200184c[] = {
+struct Trigger gTreasureIsle_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -684,7 +687,7 @@ struct Trigger gData_0200184c[] = {
     {TRIGGERS_END},
 };
 
-s32 gData_020018f4[] = {
+s32 gTreasureIsle_Room4Triggers[] = {
     33,
     (s32)0xffff0001,
     1,
@@ -777,11 +780,11 @@ s32 gData_020018f4[] = {
     0,
 };
 
-struct Trigger gData_02001a5c[] = {
+struct Trigger gTreasureIsle_Room5Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_STEP, 42, 0x9bb, EVENT(Func_02000a8c)},
+    {TRIGGER_STEP, 42, 0x9bb, EVENT(TreasureIsle_MeetWaterGuardian)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02000870)},
     {TRIGGERS_END},
 };

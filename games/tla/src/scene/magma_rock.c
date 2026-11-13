@@ -22,10 +22,10 @@ DEFINE_POSITION_FLAT_DISTANCE(Func_020005a0)
 extern u8 gMapShapeGrid[];
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 Func_02003adc(s32 layer, s32 x, s32 z);
+s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 s32 Func_02003c24(s32 layer, s32 shape, s32 height);
 
-DEFINE_MAP_CELL_SET_SHAPE(Func_020005cc, Func_02003adc, Func_02003c24)
+DEFINE_MAP_CELL_SET_SHAPE(Func_020005cc, MapGrid_GetTerrainKind, Func_02003c24)
 
 #include "../field/map/cell_get.c"
 
@@ -48,36 +48,7 @@ DEFINE_ACTORS_RAISE_CELLS(Func_02000668, Func_020005cc)
 // For each id of a list ended by 0xffff: clears the object's mark and, on a
 // cell with attribute bit 6, blocks the cells ahead of and behind it and sets
 // the mark.
-void Func_020006cc(u16 *ids) {
-  struct Actor *object;
-  u8 *blocked;
-  struct MapWork *map;
-  struct MapCell **cells;
-  struct MapCell *cell;
-  s32 x, z;
-
-  while (*ids != 0xffff) {
-    object = Actor_Get(*ids);
-    blocked = (u8 *)object + 0x63;
-    *blocked = 0;
-    if (MapCell_GetAttributes(0, object->x >> 20, object->z >> 20) & 0x40) {
-      map = Ram_HeapSlots->mapWork;
-      if (map == NULL)
-        return;
-      cells = &map->layers[2].cells;
-      z = (object->z - object->y) >> 20;
-      x = object->x >> 20;
-      cell = *cells;
-      cell += x + ((z + 1) << 7);
-      cell->collisionCode = 255;
-      cell = *cells;
-      cell += x + ((z - 1) << 7);
-      cell->collisionCode = 255;
-      *blocked = 1;
-    }
-    ids++;
-  }
-}
+DEFINE_BLOCKS_MARK_CELLS(Func_020006cc, MapCell_GetAttributes)
 
 // Clears the object's mark and the cells ahead of and behind it that the mark
 // blocked.
@@ -156,12 +127,12 @@ const struct SceneEntrance *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern const u8 gData_0200403c[];
+extern const u8 gMagmaRock_Placements[];
 extern const u8 gData_020041a4[];
 extern const u8 gData_0200427c[];
 extern const u8 gData_020043e4[];
 extern const u8 gData_020044a4[];
-extern const u8 gData_020045c4[];
+extern const u8 gMagmaRock_Room3Placements[];
 
 const struct Trigger *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
@@ -174,8 +145,8 @@ const struct Trigger *Scene_GetPlacements(void) {
     return (const struct Trigger *)gData_020044a4;
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room3)
-    return (const struct Trigger *)gData_020045c4;
-  return (const struct Trigger *)gData_0200403c;
+    return (const struct Trigger *)gMagmaRock_Room3Placements;
+  return (const struct Trigger *)gMagmaRock_Placements;
 }
 
 void Func_02003c14(s16 *table);

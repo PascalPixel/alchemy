@@ -49,10 +49,10 @@ struct RideWork {
 };
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-void Func_020041ec(struct Actor *object);
-void Func_0200236c(void);
+void Actor_Release(struct Actor *object);
+void MarsLighthouseStarRoom_SlideOnIce(void);
 
-DEFINE_RIDE_RELEASE_HANDLE(Func_02001dd0, Func_020041ec)
+DEFINE_RIDE_RELEASE_HANDLE(Func_02001dd0, Actor_Release)
 
 void Func_02001de4(s16 value) {
   ((struct RideWork *)(gData_020023c4 + 0x188))->value0e = value;

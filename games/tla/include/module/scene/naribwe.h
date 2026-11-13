@@ -7,17 +7,17 @@
 #include "types.h"
 
 void Func_02000088(void);
-void Func_020000d8(void);
+void Naribwe_AskAboutKibomboExpedition(void);
 
-void Func_02000140(void);
+void Naribwe_AskWhereFrom(void);
 
-void Func_020001a8(void);
+void Naribwe_AskGoingToKibombo(void);
 
-void Func_02000368(void);
+void Naribwe_EnterDoor(void);
 
-void Func_02000400(void);
+void Naribwe_BlowAwayIvy(void);
 
-void Func_02000448(void);
+void Naribwe_RevealStone(void);
 
 extern u32 gData_02000604[];
 extern u32 gData_02000610[];

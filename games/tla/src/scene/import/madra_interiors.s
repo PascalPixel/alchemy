@@ -174,9 +174,9 @@ Camera_FollowActor:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02001e68
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02001e68:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Event_StartScreenTransition
 	.thumb_func
@@ -250,13 +250,13 @@ Func_080d3928:
 	.thumb_func
 Func_02001ef8:
 	overlay_veneer Func_080c8930
-	.global Func_02001f00
+	.global Sanctum_Run
 	.thumb_func
-Func_02001f00:
+Sanctum_Run:
 	overlay_veneer Func_08108010
-	.global Func_02001f08
+	.global Inn_CheckIn
 	.thumb_func
-Func_02001f08:
+Inn_CheckIn:
 	overlay_veneer Func_08108018
 	.global Sound_Play
 	.thumb_func

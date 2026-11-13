@@ -6,32 +6,35 @@
 
 #include "types.h"
 
-extern const u8 gData_02002d38[];
+extern struct ActorPlacement gMadra_Placements[];
+extern struct ActorPlacement gMadra_PlacementsOnReturn[];
 
-void Func_02002c88(s32 a, s32 b);
+void Shop_Run(s32 a, s32 b);
 
-void Func_02000f80(void);
+void Madra_GrantPassageToOsenia(void);
 
-void Func_020019d8(void);
-extern const u8 gData_02003358[];
-extern const u8 gData_0200367c[];
-extern const u8 gData_0200394c[];
+void Madra_MeetKarst(void);
+extern struct Trigger gMadra_TriggersBeforeRaid[];
+extern struct Trigger gMadra_TriggersAfterRaid[];
+extern struct Trigger gMadra_TriggersOnReturn[];
 
-void Func_02000404(void);
+void Madra_AskComingThroughHole(void);
 
-void Func_02000490(void);
-void Func_02000320(void);
+void Madra_AskComingThroughSealedHole(void);
+void Madra_MindReadKarst(void);
 
-void Func_0200036c(void);
+void Madra_KarstCallsForMenardi(void);
 
-void Func_020005b8(void);
+void Madra_WorkerBlocksSealedHole(void);
 
-void Func_02000894(void);
+void Madra_AskAboutBriggs(void);
 
-void Func_02000968(void);
+void Madra_MindReadBriggsFan(void);
 
-void Func_02000ac4(void);
+void Madra_InspectPartyAtGate(void);
 extern s16 gData_020032f0[];
 extern s16 gData_020032fc[];
+
+void FieldCamera_WaitForArrival(void);
 
 #endif

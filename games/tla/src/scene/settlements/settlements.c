@@ -89,7 +89,7 @@ void Func_0200173c(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   if (work->actionCounter != 0) {
-    Flag_Set(0x106);
+    Event_SetFlag(0x106);
     Leader_StopMoving();
     Event_ResolveAllPendingActions();
     Event_ClearFlag(0x106);

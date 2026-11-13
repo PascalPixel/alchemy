@@ -23,7 +23,7 @@ s32 Func_0200012c();
 s32 Map_GetTerrainHeight();
 void Scene_SetActorSpritePriority();
 
-void Func_020001f8(struct Actor *object) {
+void MarsLighthouseEntrance_SetIceConeCells(struct Actor *object) {
   s32 t1, t2, t3, t4, v10, v6, v7, v8, v9;
   struct Actor *v5;
   u8 *v11;
@@ -64,7 +64,9 @@ L_02008282:
 
 void Func_02004bc0();
 
-void Func_020002bc(u16 *table) {
+/// Each row: an ice cone's actor, its first animation and the flag set once
+/// Pound has flattened it.
+void MarsLighthouseEntrance_PlaceIceCones(u16 *table) {
   u16 *row;
   struct FieldActor *object;
   s16 flag;
@@ -83,7 +85,7 @@ loop:
   object->motionFlags = 0;
   object->collisionFlags &= 0xfe;
   object->timer = flag;
-  Func_020001f8(object);
+  MarsLighthouseEntrance_SetIceConeCells(object);
   row += 3;
   if (row[0] != 0xffff)
     goto loop;
@@ -97,9 +99,9 @@ void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 /// While index is at most 7, spawns effect type 0x117 index steps below the
 /// object the effect work names and shrinks the object a little; mode 1
-/// restores its size, sets its flag, hands it to Func_020001f8 and clears its
+/// restores its size, sets its flag, hands it to MarsLighthouseEntrance_SetIceConeCells and clears its
 /// position.
-void Func_02000338(s32 mode, s32 index) {
+void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index) {
   struct EffectHolder *holder = Ram_HeapSlots->effectWork;
   struct Actor *object = Actor_Get(holder->objectId);
 
@@ -119,16 +121,16 @@ void Func_02000338(s32 mode, s32 index) {
   if (mode == 1) {
     object->scaleY = 0x10000;
     Event_SetFlag(object->timer);
-    Func_020001f8(Actor_Get(holder->objectId));
+    MarsLighthouseEntrance_SetIceConeCells(Actor_Get(holder->objectId));
     object->x = object->y = object->z = 0;
   }
 }
 
 // ---- games/tla/src/scene/mars_lighthouse_entrance.c ----
-/* VIEW(mars_lighthouse_entrance): routine Func_02000338 as void Func_02000338(void); the definition has void Func_02000338(s32 mode, s32 index); tried as the definition's void Func_02000338(struct Actor *object), it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:123: conflicting types for `Func_02000338'. */
-extern void Func_02000338__mars_lighthouse_entrance(void) __asm__("Func_02000338");
+/* VIEW(mars_lighthouse_entrance): routine MarsLighthouseEntrance_PoundIceCone as void MarsLighthouseEntrance_PoundIceCone(void); the definition has void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index); tried as the definition's void MarsLighthouseEntrance_PoundIceCone(struct Actor *object), it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:123: conflicting types for `MarsLighthouseEntrance_PoundIceCone'. */
+extern void Func_02000338__mars_lighthouse_entrance(void) __asm__("MarsLighthouseEntrance_PoundIceCone");
 
-void Func_0200040c(void) { Func_02000338__mars_lighthouse_entrance(); }
+void MarsLighthouseEntrance_StartPoundIceCone(void) { Func_02000338__mars_lighthouse_entrance(); }
 
 #include "iwram_call.h"
 
@@ -175,16 +177,18 @@ next:
     goto next;
 }
 
-extern const u8 gData_02005af4[];
-extern const u8 gData_02005b0c[];
-extern const u8 gData_02005b54[];
-extern const u8 gData_02005bcc[];
-extern const u8 gData_02005d4c[];
-extern const u8 gData_02005eb4[];
-extern const u8 gData_02005f74[];
-extern const u8 gData_020060c4[];
+extern const u8 gMarsLighthouseEntrance_Placements[];
+extern const u8 gMarsLighthouseEntrance_Room1Placements[];
+extern const u8 gMarsLighthouseEntrance_Room2Placements[];
+extern const u8 gMarsLighthouseEntrance_Room3Placements[];
+extern const u8 gMarsLighthouseEntrance_Room4Placements[];
+extern const u8 gMarsLighthouseEntrance_Room5Placements[];
+extern const u8 gMarsLighthouseEntrance_Room6Placements[];
+extern const u8 gMarsLighthouseEntrance_Room7Placements[];
 
-void Func_0200051c(void) {
+/// Grind on the ice at the dead end, actor 10: the crack runs to the ice sheet
+/// a floor below.
+void MarsLighthouseEntrance_GrindIce(void) {
   s32 x;
   s32 count;
 
@@ -207,7 +211,8 @@ step:
 
 #include "ram_buffer.h"
 
-void Func_02000564(void) {
+/// ★ Named from the game: " checked the ice." (MsgCheckedTheIce)
+void MarsLighthouseEntrance_CheckIce(void) {
   FieldMessage_Show((s32)MsgCheckedTheIce, 1);
   FieldMessage_Show((s32)MsgCheckedTheIce + 1, 1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->unk15a = 1;
@@ -215,7 +220,9 @@ void Func_02000564(void) {
 
 #include "scene_tables.h"
 
-void Func_02000590(void) {
+/// Teleport on the circle: the first time the camera follows the leader across;
+/// after, the leader leaves at once.
+void MarsLighthouseEntrance_Teleport(void) {
   if (!Flag_IsSet(0xa36)) {
     Func_020046b4();
     Event_Start();
@@ -225,7 +232,7 @@ void Func_02000590(void) {
     Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
     Func_02004cd8_(gMainRoutineWork.currentOwner, PIXELS(688), PIXELS(360));
     FieldCamera_MoveTo(PIXELS(688), -1, PIXELS(360), 1);
-    Func_02004d20();
+    FieldCamera_WaitForArrival();
     Func_02004dc8();
     FieldEvent_Wait(40);
     Func_02004718();
@@ -250,7 +257,9 @@ void Func_02000590(void) {
 DEFINE_SCENE_LEAVE_BY_EXIT(Func_02000648, Func_020046b4, Func_02004dd0, 17,
     Func_02004718)
 
-void Func_02000678(s32 state, s32 frame) {
+/// Burst on the cracked ice sheet, actor 18: a flash, the sheet gone, chips
+/// flying (flag 0xa3f).
+void MarsLighthouseEntrance_BurstIceSheet(s32 state, s32 frame) {
   if (state == 1) {
     Event_PlaySound(0x23e);
     PaletteFade_ApplyTarget(0x10000, 0);
@@ -278,11 +287,11 @@ void Func_02000718(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0x10000, 0x2000);
   Camera_SetBounds(PIXELS(168), 0, PIXELS(664), 1);
-  Func_02004d20();
+  FieldCamera_WaitForArrival();
   System_Wait(10);
   FieldCamera_SetSpeed(0x40000, 0x8000);
   Camera_SetBounds(PIXELS(472), 0, PIXELS(664), 1);
-  Func_02004d20();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(90);
   Event_End();
 }
@@ -331,7 +340,9 @@ void Func_02000808(void) {
 
 DEFINE_FUNC_0200085C(Func_0200085c, 28, 92, 8, 100, 92, 38, 8, 20, 0xa47)
 
-void Func_020008f4(s32 unused, s32 id) {
+/// Move on the statue, actor 8, to cell x 20: it blocks the last flame thrower
+/// (flag 0xa4f).
+void MarsLighthouseEntrance_PushStatueIntoFlames(s32 unused, s32 id) {
   if (id == 8) {
     struct Actor *object = Actor_Get(8);
 
@@ -394,7 +405,7 @@ void Func_020009e8(void) {
   Flag_Clear(0x104);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Func_02004d20();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(120);
   Event_End();
 }
@@ -421,10 +432,10 @@ void Func_02000a7c(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0x10000, 0x2000);
   Camera_SetBounds(PIXELS(872), -1, PIXELS(168), 1);
-  Func_02004d20();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
   FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(264), 1);
-  Func_02004d20();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(120);
   Event_End();
 }
@@ -451,13 +462,7 @@ void Func_02000c1c(void) {
   Flag_Set(0xa49);
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static inline void MapCopy(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) {
-  Map_CopyCellAttributeRect(a0, a1, a2, a3, a4, a5);
-}
-
-void Func_02000c68(void) { MapCopy(25, 9, 11, 3, 26, 9); }
+void Func_02000c68(void) { MapGrid_CopyCellAttributes(25, 9, 11, 3, 26, 9); }
 
 DEFINE_SCENE_LEAVE_BY_EXIT(Func_02000c84, Func_020046b4, Func_02004dd0, 12,
     Func_02004718)
@@ -611,14 +616,14 @@ extern const u8 gData_02005528[];
 extern const u8 gData_02005578[];
 extern const u8 gData_020055d4[];
 extern const u8 gData_02005644[];
-extern const u8 gData_0200610c[];
-extern const u8 gData_02006118[];
-extern const u8 gData_0200613c[];
-extern const u8 gData_02006250[];
-extern const u8 gData_020063b8[];
-extern const u8 gData_020064fc[];
-extern const u8 gData_02006628[];
-extern const u8 gData_02006778[];
+extern const u8 gMarsLighthouseEntrance_Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room1Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room2Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room3Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room4Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room5Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room6Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room7Triggers[];
 extern s16 gData_02006868;
 
 void Func_02002c2c(void);
@@ -712,20 +717,20 @@ void Func_02001138(void) {
 
 const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom1)
-    return gData_02006118;
+    return gMarsLighthouseEntrance_Room1Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom2)
-    return gData_0200613c;
+    return gMarsLighthouseEntrance_Room2Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom3)
-    return gData_02006250;
+    return gMarsLighthouseEntrance_Room3Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom4)
-    return gData_020063b8;
+    return gMarsLighthouseEntrance_Room4Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom5)
-    return gData_020064fc;
+    return gMarsLighthouseEntrance_Room5Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom6)
-    return gData_02006628;
+    return gMarsLighthouseEntrance_Room6Triggers;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom7)
-    return gData_02006778;
-  return gData_0200610c;
+    return gMarsLighthouseEntrance_Room7Triggers;
+  return gMarsLighthouseEntrance_Triggers;
 }
 
 #include "../mars_lighthouse_entrance.h"
@@ -782,14 +787,14 @@ extern const u8 gData_02005528[];
 extern const u8 gData_02005578[];
 extern const u8 gData_020055d4[];
 extern const u8 gData_02005644[];
-extern const u8 gData_0200610c[];
-extern const u8 gData_02006118[];
-extern const u8 gData_0200613c[];
-extern const u8 gData_02006250[];
-extern const u8 gData_020063b8[];
-extern const u8 gData_020064fc[];
-extern const u8 gData_02006628[];
-extern const u8 gData_02006778[];
+extern const u8 gMarsLighthouseEntrance_Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room1Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room2Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room3Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room4Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room5Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room6Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room7Triggers[];
 extern s16 gData_02006868;
 
 void Func_02002c2c(void);
@@ -877,7 +882,7 @@ L_020093dc:
   MapGrid_CopyCellsLayered(35, 41, 24, 10, 3, 53);
   MapGrid_CopyCellsLayered(35, 105, 24, 10, 3, 117);
 L_02009420:
-  Call1((void (*)())Func_020002bc, (s32)gData_020053d8);
+  Call1((void (*)())MarsLighthouseEntrance_PlaceIceCones, (s32)gData_020053d8);
   t12 = Event_GetFlag(0xa3e);
   if (t12 != 0)
     goto L_02009436;
@@ -893,7 +898,7 @@ L_02009454:
   Call1((void (*)())Func_02004d88, 0);
   Call4((void (*)())Func_020022e4, (s32)gData_020053e6, (s32)gData_020053f8, 0,
         88);
-  Call1((void (*)())Func_020002bc, (s32)gData_020053fe);
+  Call1((void (*)())MarsLighthouseEntrance_PlaceIceCones, (s32)gData_020053fe);
   t17 = Event_GetFlag(0xa3f);
   if (t17 == 0)
     goto L_020094ae;
@@ -994,7 +999,7 @@ L_02009694:
         (s32)Func_020019a4, 88);
   Call2((void (*)())Func_0200248c, 0, 1);
 L_020096a8:
-  Call1((void (*)())Func_020002bc, (s32)gData_02005418);
+  Call1((void (*)())MarsLighthouseEntrance_PlaceIceCones, (s32)gData_02005418);
   goto L_020098be;
 L_020096b0:
   if (v_r8 != (s32)&SceneId_Ov6aaRoom5)
@@ -1063,7 +1068,7 @@ L_020097fa:
   t93 = (s32)Actor_Get(11);
   FIELD_AT(t93, s32, 108) = (s32)Func_020012bc;
   Func_020022d8(1);
-  Call1((void (*)())Func_020002bc, (s32)gData_02005454);
+  Call1((void (*)())MarsLighthouseEntrance_PlaceIceCones, (s32)gData_02005454);
   t96 = (s32)Actor_Get(20);
   t97 = (s32)Actor_Get(13);
   FIELD_AT(t97, s32, 108) = (s32)Func_02001344;
@@ -1121,14 +1126,14 @@ extern const u8 gData_02005528[];
 extern const u8 gData_02005578[];
 extern const u8 gData_020055d4[];
 extern const u8 gData_02005644[];
-extern const u8 gData_0200610c[];
-extern const u8 gData_02006118[];
-extern const u8 gData_0200613c[];
-extern const u8 gData_02006250[];
-extern const u8 gData_020063b8[];
-extern const u8 gData_020064fc[];
-extern const u8 gData_02006628[];
-extern const u8 gData_02006778[];
+extern const u8 gMarsLighthouseEntrance_Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room1Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room2Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room3Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room4Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room5Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room6Triggers[];
+extern const u8 gMarsLighthouseEntrance_Room7Triggers[];
 extern s16 gData_02006868;
 
 /* VIEW(s1930): routine Func_02002f4c as s32 Func_02002f4c(s32 id, s32 a1, s32 a2, s32 a3, const void *script); s1344 has void Func_02002f4c(s32 id, s32 a1, s32 a2, s32 a3, const void *script); tried as the definition's void Func_02002f4c(s32 id, s32 target, s32 kind, s32 a3, const void *script), Func_0200196c moves: 1 of 11 instructions, Func_02001988 moves: 1 of 11 instructions, Func_020019a4 moves: 1 of 12 instructions, 3 more in tla-ja. */
@@ -1230,18 +1235,7 @@ void Func_02001f90(struct Actor *object);
 
 /// Stops the object and sets its sprite part, then restarts its script at
 /// gData_020056a0. Overlays 6ab, 6ac and 6ad have the same function.
-void Func_02001e1c(struct Actor *object, s32 part) {
-  s32 zero = 0;
-
-  object->motionFlags = zero;
-  object->collisionFlags = zero;
-  ((struct SpriteParts *)object->sprite)->part = part;
-  Actor_SetSingleChildFlags(object, 0);
-  Actor_StartScript(object, gData_020056a0);
-  object->timer = zero;
-  object->speedLimit = zero;
-  object->acceleration = zero;
-}
+DEFINE_ACTOR_SETUP_SCRIPTED_PART(Func_02001e1c, gData_020056a0)
 
 DEFINE_RIDE_SPAWN_BACK(Func_02001e60, Func_02004bd8_, Func_02001e1c,
     Func_02001ae0, Func_02004bc0)

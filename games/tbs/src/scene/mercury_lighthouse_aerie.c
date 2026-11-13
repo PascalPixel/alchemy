@@ -107,38 +107,22 @@
 enum MercuryLighthouseAerieActorId {
   /// Flickers between two sizes and sheds sparks while in view
   /// (MercuryLighthouseAerie_FlickerBeacon).
-  /// ★ Named from what the player sees: the swirling blue ball of light the
-  /// lit beacon shows, blue_orb.png (its render)
   ACTOR_BEACON = ACTOR_FIRST_PLACED,
   /// A statue, drawn as the lighthouse's statues all are, standing on the lift.
   /// It rides up and down with it.
-  /// ★ Named from the game: "checked the stone statue..." (MsgCheckedGround)
   ACTOR_LIFT_STATUE,
   /// Four more statues flank the beacon, two on each side of it. The two east
   /// of it, ACTOR_FIRST_BEACON_STATUE + 2 and + 3, are drawn mirrored.
-  /// ★ Named from the game: "checked the stone statue..." (MsgCheckedGround)
   ACTOR_FIRST_BEACON_STATUE,
   /// Six of them.
-  /// ★ Named from what the player sees: round white platforms at the foot of
-  /// the aerie's side ledges (its render)
   ACTOR_FIRST_PLATFORM = ACTOR_FIRST_PLACED + 6,
   /// The two platforms that stand on the lift and go up and down with it.
-  /// ★ Named from what the player sees: round white platforms below the lift's
-  /// statue (its render)
   ACTOR_FIRST_LIFT_PLATFORM = ACTOR_FIRST_PLATFORM + 3,
-  /// ★ Named from what the player sees: round white platforms below the lift's
-  /// statue (its render)
   ACTOR_SECOND_LIFT_PLATFORM,
-  /// ★ Named from the game: "Kraden!" (MsgMercuryLighthouseAlreadyLit)
   ACTOR_KRADEN = ACTOR_FIRST_PLACED + 12,
-  /// ★ Named from the game: "Felix" (MsgCharacterName)
   ACTOR_FELIX,
-  /// ★ Named from the game: "Oh, Saturos..." (MsgMercuryLighthouseAlreadyLit)
   ACTOR_SATUROS,
-  /// ★ Named from the game: "Menardi... Wait!"
-  /// (MsgMercuryLighthouseAlreadyLit)
   ACTOR_MENARDI,
-  /// ★ Named from the game: "Alex!" (MsgMercuryGot)
   ACTOR_ALEX
 };
 
@@ -153,23 +137,14 @@ enum MercuryLighthouseAerieAnimation {
 /// Scene flags, kept while the party stays on the aerie.
 enum {
   /// The leader stands on a platform, which has dipped under the weight.
-  /// ★ Named from what the player sees: the round platforms floating in the
-  /// sky beside the aerie, which bob under the leader (its render)
   FLAG_ON_PLATFORM = FLAG_SCENE_TEMP_50,
-  /// ★ Named from what the player sees: the lift rising to the aerie with a
-  /// statue on it (its render)
   FLAG_LIFT_UP = FLAG_SCENE_TEMP_51,
   /// Set on every arrival but the first, because Jenna, Kraden, Felix and
   /// Menardi are placed only before it.
-  /// ★ Named from the game: "leave our hostages"
-  /// (MsgMercuryLighthouseAlreadyLit)
   FLAG_HOSTAGES_GONE = FLAG_SCENE_TEMP_53
 };
 
-enum {
-  /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
-  FLAG_PSYNERGY_STONE = FLAG_AREA_TEMP_50
-};
+enum { FLAG_PSYNERGY_STONE = FLAG_AREA_TEMP_50 };
 
 static void MercuryLighthouseAerie_PartyArrives(void);
 static void MercuryLighthouseAerie_SettlePlatforms(void);

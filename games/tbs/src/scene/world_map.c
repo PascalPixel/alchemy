@@ -146,31 +146,21 @@
 #include "shared/walk_into_leader.h"
 
 /// The falling rock of Hammet's caravan event has landed and shattered.
-/// ★ Named from the game: "being smashed by falling rocks here"
-/// (MsgWorldMapWeCantStayAnotherMinute)
 #define FLAG_WORLD_MAP_FALLING_ROCK_LANDED FLAG_SCENE_TEMP_00
 /// Iodem has handed Isaac the Black Orb and waits for it to be used on the
 /// wreck off Gateway Cave.
-/// ★ Named from the game: "Black Orb" (MsgItemName)
 #define FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER FLAG_SCENE_TEMP_34
 /// The scene's ordinary actor placements (gWorldMapActorPlacements)
 /// are in use rather than an event's.
-/// ★ Named from its area name: World Map
 #define FLAG_WORLD_MAP_ORDINARY_ACTORS FLAG_SCENE_TEMP_35
 /// The storm holds the party up in the air, where Douse can bring it down.
-/// ★ Named from what the player sees: a white whirlwind spinning on the map
-/// near Crossbone Isle, drawn as the Suhalla Desert's sandstorms (its render)
 #define FLAG_WORLD_MAP_CAUGHT_IN_STORM FLAG_SCENE_TEMP_F0
 /// The storm is done with, or put away while the Tolbi-bound Ship lies off the
 /// island, and catches no one.
-/// ★ Named from what the player sees: a white whirlwind spinning on the map
-/// near Crossbone Isle, drawn as the Suhalla Desert's sandstorms (its render)
 #define FLAG_WORLD_MAP_STORM_GONE FLAG_SCENE_TEMP_F1
 /// The first flag of a byte counting the frames the storm keeps the party in
 /// the air. The byte is read and written with FieldGameFlag_GetByte and
 /// FieldGameFlag_SetByte.
-/// ★ Named from what the player sees: a white whirlwind spinning on the map
-/// near Crossbone Isle, drawn as the Suhalla Desert's sandstorms (its render)
 #define FLAG_WORLD_MAP_STORM_FRAMES_LEFT FLAG_SCENE_TEMP_F8
 
 static s32 WorldMap_AlignToMap(struct Actor *actor);
@@ -216,109 +206,64 @@ enum { CONTACT_LAST_ACTOR = 65, STEP_TRIGGER_AREA_BASE = 100 };
 enum WorldMapActorId {
   /// The Venus Djinni: Flint, circling his spot until the party meets him,
   /// and later Vine.
-  /// ★ Named from the game: "The Venus Djinni" (MsgVenusDjinnJoined)
   ACTOR_VENUS_DJINNI = ACTOR_FIRST_PLACED,
   /// The Mars Djinni Corona.
-  /// ★ Named from the game: "Corona" (MsgDjinnName)
   ACTOR_CORONA,
   /// The Mercury Djinni Hail.
-  /// ★ Named from the game: "Hail" (MsgDjinnName)
   ACTOR_HAIL,
   /// Vale, whose exit leads to the town gate (SceneId_ValePlaza).
-  /// ★ Named from the game: "Why's everyone hanging around the town gate?"
-  /// (MsgValeWhysEveryoneHanging)
   ACTOR_TO_VALE_PLAZA,
-  /// ★ Named from its area name: Vault
   ACTOR_TO_VAULT,
-  /// ★ Named from its area name: Altin
   ACTOR_TO_ALTIN,
-  /// ★ Named from its area name: Suhalla
   ACTOR_TO_SUHALLA,
-  /// ★ Named from its area name: Lunpa
   ACTOR_TO_LUNPA,
-  /// ★ Named from its area name: Kalay Docks
   ACTOR_TO_KALAY_DOCKS,
-  /// ★ Named from its area name: Tolbi Docks
   ACTOR_TO_TOLBI_DOCKS,
-  /// ★ Named from its area name: Imil
   ACTOR_TO_IMIL,
-  /// ★ Named from its area name: Kolima
   ACTOR_TO_KOLIMA,
-  /// ★ Named from its area name: Xian
   ACTOR_TO_XIAN,
-  /// ★ Named from its area name: Lama Temple
   ACTOR_TO_LAMA_TEMPLE,
-  /// ★ Named from its area name: Fuchin Temple
   ACTOR_TO_FUCHIN_TEMPLE,
-  /// ★ Named from its area name: Bilibin
   ACTOR_TO_BILIBIN,
-  /// ★ Named from its area name: Kalay
   ACTOR_TO_KALAY,
-  /// ★ Named from its area name: Lalivero
   ACTOR_TO_LALIVERO,
-  /// ★ Named from its area name: Tolbi
   ACTOR_TO_TOLBI,
-  /// ★ Named from its area name: Mercury Lighthouse
   ACTOR_TO_MERCURY_LIGHTHOUSE,
   /// After two pictures no event answers: a mountain north of Vale
   /// (SPRITE_WORLD_MAP_MOUNTAIN) and Venus Lighthouse, which is entered by
   /// the cells around it.
-  /// ★ Named from its area name: Bilibin Barricade
   ACTOR_TO_BILIBIN_BARRICADE = ACTOR_TO_MERCURY_LIGHTHOUSE + 3,
-  /// ★ Named from its area name: Road to Babi Lighthouse
   ACTOR_TO_ROAD_TO_BABI_LIGHTHOUSE,
-  /// ★ Named from its area name: Goma Cave Entrance
   ACTOR_TO_GOMA_CAVE_ENTRANCE,
   /// Goma Cave's way out, where a wooden bridge crosses the river
   /// (SceneId_GomaCaveBridge).
-  /// ★ Named from its area name: Goma Cave
   ACTOR_TO_GOMA_CAVE_BRIDGE,
-  /// ★ Named from its area name: Altmiller Cave
   ACTOR_TO_ALTMILLER_CAVE,
-  /// ★ Named from its area name: Gondowan Cave
   ACTOR_TO_GONDOWAN_CAVE_NORTH,
-  /// ★ Named from its area name: Gondowan Cave
   ACTOR_TO_GONDOWAN_CAVE_SOUTH,
   /// The way into Mogall Forest where the Killer Ape waits
   /// (SceneId_MogallForestKillerApe).
-  /// ★ Named from the game: "Killer Ape" (MsgEnemyName)
   ACTOR_TO_MOGALL_FOREST_KILLER_APE,
-  /// ★ Named from its area name: Gateway Cave
   ACTOR_TO_GATEWAY_CAVE,
-  /// ★ Named from its area name: Bilibin Cave Entrance
   ACTOR_TO_BILIBIN_CAVE_ENTRANCE,
-  /// ★ Named from its area name: Bilibin Cave
   ACTOR_TO_BILIBIN_CAVE,
-  /// ★ Named from its area name: West Lunpa Cave
   ACTOR_TO_WEST_LUNPA_CAVE,
-  /// ★ Named from its area name: Altin Peak
   ACTOR_TO_ALTIN_PEAK,
-  /// ★ Named from its area name: Lamakan Desert
   ACTOR_TO_LAMAKAN_DESERT_CAVE,
-  /// ★ Named from its area name: Kolima Forest
   ACTOR_TO_KOLIMA_FOREST,
   /// The way into Mogall Forest by its broken sign (SceneId_MogallForestSign).
-  /// ★ Named from the game: "The broken sign reads:"
-  /// (MsgMogallForestBrokenSign)
   ACTOR_TO_MOGALL_FOREST_SIGN,
-  /// ★ Named from its area name: Kalay Tunnel Entrance
   ACTOR_TO_KALAY_TUNNEL_ENTRANCE,
   /// After three signposts (SPRITE_SIGNPOST). Unused: they stand at
   /// the map's origin, out of the player's reach, and no code moves them.
-  /// ★ Named from its area name: Kolima Bridge
   ACTOR_TO_KOLIMA_BRIDGE = ACTOR_TO_KALAY_TUNNEL_ENTRANCE + 4,
-  /// ★ Named from its area name: Gondowan Passage
   ACTOR_TO_GONDOWAN_PASSAGE,
   /// The Tolbi-bound Ship at anchor off Crossbone Isle, after the wreck of
   /// Babi's ship (SPRITE_SHIPWRECK), which stands off Gateway Cave.
-  /// ★ Named from its area name: Tolbi-bound Ship
   ACTOR_TOLBI_SHIP = ACTOR_TO_GONDOWAN_PASSAGE + 2,
   /// The storm that lifts the party, as the Suhalla Desert's do.
-  /// ★ Named from what the player sees: a white whirlwind spinning on the map,
-  /// drawn as the Suhalla Desert's sandstorms, sandstorm.png (its render)
   ACTOR_STORM,
   /// Placed by the coast once he has handed over the Black Orb.
-  /// ★ Named from the game: "Iodem, Iodem!" (MsgTolbiIodemIodem)
   ACTOR_IODEM
 };
 
@@ -366,17 +311,11 @@ enum { FALLING_ROCK_ANIMATION_TUMBLE = 2, FALLING_ROCK_ANIMATION_SHATTER = 3 };
 /// Garet's row takes his own actor id.
 enum WorldMapCaravanActorId {
   /// Hammet, in his sprite, as ACTOR_HAMMET is out of West Lunpa Cave.
-  /// ★ Named from the game: "Master Hammet!"
-  /// (MsgWorldMapWeCantStayAnotherMinute)
   ACTOR_CARAVAN_HAMMET = ACTOR_FIRST_PLACED,
   /// One of Hammet's men, bald and bare-chested. "Master Hammet! This is
   /// terrible! The bridge has been destroyed..."
-  /// ★ Named from the game: "Master Hammet! This is terrible!"
-  /// (MsgWorldMapWeCantStayAnotherMinute)
   ACTOR_CARAVAN_MAN,
   /// The caravan's four wagons, in the sprite of Bunza's wagon.
-  /// ★ Named from what the player sees: four covered wagons, each drawn by a
-  /// horse (its render)
   ACTOR_CARAVAN_FIRST_WAGON,
   /// A blank actor (SPRITE_BLANK) that the falling rock is held above as
   /// it drops (WorldMap_UpdateFallingRock). It grows from a tenth of its size
@@ -384,8 +323,6 @@ enum WorldMapCaravanActorId {
   ACTOR_INVISIBLE_ROCK_GUIDE = ACTOR_CARAVAN_FIRST_WAGON + 4,
   /// Drawn as the rocks in sol_sanctum_eruption.c. It lands by the caravan
   /// and shatters.
-  /// ★ Named from the game: "being smashed by falling rocks here"
-  /// (MsgWorldMapWeCantStayAnotherMinute)
   ACTOR_FALLING_ROCK
 };
 
@@ -396,29 +333,19 @@ enum WorldMapCaravanActorId {
 /// (WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_FIRST_ATTACK to
 /// WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI and
 /// WORLD_MAP_FROM_SHIP_ROOMS).
-enum {
-  /// ★ Named from its area name: Tolbi-bound Ship
-  ACTOR_CROSSING_SHIP = ACTOR_FIRST_PLACED
-};
+enum { ACTOR_CROSSING_SHIP = ACTOR_FIRST_PLACED };
 
 /// Bunza's wagon at Kalay
 /// (gWorldMapActorPlacementsFromKalayTunnelEntranceSouth), after Kalay's
 /// and the Kalay Tunnel Entrance's area actors.
-enum {
-  /// ★ Named from the game: "go back to Kalay in my wagon." (MsgLunpaBunza)
-  ACTOR_KALAY_WAGON = ACTOR_FIRST_PLACED + 2
-};
+enum { ACTOR_KALAY_WAGON = ACTOR_FIRST_PLACED + 2 };
 
 /// The one actor of gWorldMapActorPlacementsFromClear, before the ending.
 ///
 /// It is the island Jenna and Kraden are adrift on ("How long will this
 /// island continue to drift?"). It drifts east trailing a wake
 /// (WorldMap_SpawnIslandWake) until the map leads into their event.
-enum {
-  /// ★ Named from what the player sees: an island of green hills around a
-  /// mountain, drifting on the sea, world_map_island.png (its render)
-  ACTOR_DRIFTING_ISLAND = ACTOR_FIRST_PLACED
-};
+enum { ACTOR_DRIFTING_ISLAND = ACTOR_FIRST_PLACED };
 
 /// The ending's actors
 /// (gWorldMapActorPlacementsJennaAndKradenAdrift), numbered from
@@ -426,17 +353,13 @@ enum {
 /// actor ids.
 enum WorldMapEndingActorId {
   /// Kraden, adrift with Jenna.
-  /// ★ Named from the game: "Oh, Kraden... How long will this island continue
-  /// to drift?" (MsgWorldMapKradenHowLongWillIsland)
   ACTOR_KRADEN = ACTOR_FIRST_PLACED,
   /// Alex, who comes to show them that Felix and Sheba are alive. "There is
   /// something I wish to show you."
-  /// ★ Named from the game: "Alex!" (MsgMercuryGot)
   ACTOR_ALEX,
   /// Felix, in his sprite as at Mercury Lighthouse (SPRITE_FELIX,
   /// mercury_lighthouse_aerie.c), shown with Sheba as Jenna and Kraden call
   /// their names.
-  /// ★ Named from the game: "Felix" (MsgCharacterName)
   ACTOR_FELIX
 };
 
@@ -1021,12 +944,8 @@ s32 WorldMap_Initialize(void) {
 /// Lunpa Cave's area actors.
 enum {
   /// Bunza's wagon.
-  /// ★ Named from the game: "go back to Kalay in my wagon." (MsgLunpaBunza)
   ACTOR_WAGON = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "Then what should we do, Bunza?" (MsgLunpaBunza)
   ACTOR_BUNZA = ACTOR_FIRST_PLACED + 3,
-  /// ★ Named from the game: "Master Hammet!"
-  /// (MsgWorldMapWeCantStayAnotherMinute)
   ACTOR_HAMMET
 };
 

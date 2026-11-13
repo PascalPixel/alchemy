@@ -79,30 +79,20 @@
 enum McCoyPalaceGroundsActorId {
   /// A worker with a pickaxe by the new palace, drawn in front. "The lumber I
   /// ordered from Kolima disappeared..."
-  /// ★ Named from the game: "We'd still be working if we hadn't tried building
-  /// using the holy tree." (MsgBilibinWedStillBeWorkingIfWe)
   ACTOR_WEST_WORKER = ACTOR_FIRST_PLACED,
   /// The worker with a pickaxe who wanders by the new palace. "Have you seen
   /// the barricade we built on..."
-  /// ★ Named from the game: "Have you seen the barricade we built on the road
-  /// to Kolima?" (MsgBilibinHaveYouSeenBarricadeWe)
   ACTOR_NORTH_WORKER,
   /// A woman with curly purple hair in a pink dress. "Hmph! My palace is not
   /// finished!"
-  /// ★ Named from the game: "Lady McCoy" (MsgDebugGlyphName)
   ACTOR_LADY_MCCOY,
   /// The soldier in a spiked helmet at the gate who goes in ahead of the party.
   /// "Lord McCoy is so upset about this curse that he can't even eat."
-  /// ★ Named from what the player sees: the western of the two soldiers with
-  /// spears at the palace door (its render)
   ACTOR_WEST_GUARD,
   /// "The lord will only meet with brave..."
-  /// ★ Named from what the player sees: the eastern of the two soldiers with
-  /// spears at the palace door (its render)
   ACTOR_EAST_GUARD,
   /// The Nut over the grounds, gone once Catch has taken it
   /// (FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT).
-  /// ★ Named from the game: "Nut" (MsgItemName)
   ACTOR_FLOATING_NUT
 };
 
@@ -110,17 +100,13 @@ enum McCoyPalaceGroundsActorId {
 enum {
   /// The palace gate stands open (McCoyPalaceGrounds_OpenGate), until the scene
   /// is left.
-  /// ★ Named from its area name: McCoy's Palace
   FLAG_GATE_OPEN = FLAG_SCENE_TEMP_00,
   /// The east guard has scolded the party for keeping McCoy waiting.
-  /// ★ Named from the game: "Where were you?" (MsgBilibinWhere)
   FLAG_GUARD_SCOLDED = FLAG_SCENE_TEMP_01,
   /// Set by Bilibin (bilibin.c) while the guards have let the party in but it
   /// has not yet entered the palace.
   /// The grounds are in another area than Bilibin, so entering them clears it
   /// before the guard can read it.
-  /// ★ Named from the game: "The master can be quite cranky. Hurry along,
-  /// now!" (MsgBilibinMasterQuiteCranky)
   FLAG_KEEPING_MCCOY_WAITING = FLAG_AREA_TEMP_04
 };
 

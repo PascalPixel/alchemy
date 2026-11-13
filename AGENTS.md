@@ -41,7 +41,6 @@ Marks left by the reconstruction, whose rules are in the devtools' `AGENTS.md`; 
 - `// BUG:` and `BUGFIX`, `// UB:` and `UBFIX`: the original's bug or undefined behaviour, kept, with its fix behind the option (S3).
 - `VIEW(<part>)`: a part of a joined object that sees a name otherwise than the rest; unfinished.
 - `XXX:`: an open question at the code, with the evidence that would settle it (H4).
-- `★ Named from ...`: the evidence a name was taken from (H3).
 
 ## Legal
 

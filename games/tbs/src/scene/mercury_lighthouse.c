@@ -180,48 +180,29 @@ static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem);
 /// MercuryLighthouseLower: Mia, the statue that blocks her and the pipe pieces
 /// that join the channels.
 enum MercuryLighthouseLowerActorId {
-  /// ★ Named from the game: "But this statue is blocking my way..."
-  /// (MsgImilSomebodyHere)
   ACTOR_STATUE_BLOCKING_MIA = ACTOR_FIRST_PLACED,
   /// Move pushes the pipe pieces (SPRITE_PIPE_WEST_EAST for the first two,
   /// SPRITE_PIPE_NORTH_SOUTH for the third) along until each joins its
   /// channel's pipes.
-  /// ★ Named from what the player sees: a stone pipe section lying west to
-  /// east, pipe_west_east.png (its render)
   ACTOR_FIRST_PIPE,
-  /// ★ Named from what the player sees: a stone pipe section lying west to
-  /// east, pipe_west_east.png (its render)
   ACTOR_SECOND_PIPE,
-  /// ★ Named from what the player sees: a stone pipe section lying north to
-  /// south, pipe_north_south.png (its render)
   ACTOR_THIRD_PIPE,
   /// The rim of the fixed pipe the third section joins.
   /// It is SPRITE_PIPE_END, one still frame, 59 pixels south of where
   /// ACTOR_THIRD_PIPE comes to rest. Pushing it does nothing, and nothing else
   /// moves it.
-  /// ★ Named from what the player sees: the rim at the top of an upright pipe
-  /// in pipe_end.png (its render)
   ACTOR_PIPE_END
 };
 
 /// MercuryLighthouseMiddle: the stair and fountain pipes, the statue for the
 /// gate's floor switch and Sleet, a Mercury Djinni.
 enum MercuryLighthouseMiddleActorId {
-  /// ★ Named from what the player sees: a stone pipe section lying north to
-  /// south, pipe_north_south.png (its render)
   ACTOR_STAIR_PIPE = ACTOR_FIRST_PLACED,
   /// It stands 59 pixels south of where ACTOR_STAIR_PIPE rests once the stairs
   /// are raised. Nothing moves it.
-  /// ★ Named from what the player sees: the rim at the top of an upright pipe
-  /// in pipe_end.png (its render)
   ACTOR_STAIR_PIPE_END,
-  /// ★ Named from what the player sees: a stone pipe section lying west to
-  /// east, pipe_west_east.png (its render)
   ACTOR_FOUNTAIN_PIPE,
-  /// ★ Named from what the player sees: a blue statue of a woman holding a jar
-  /// (its render)
   ACTOR_GATE_STATUE,
-  /// ★ Named from the game: "Sleet" (MsgDjinnName)
   ACTOR_SLEET
 };
 
@@ -231,35 +212,19 @@ enum MercuryLighthouseMiddleActorId {
 enum MercuryLighthouseUpperActorId {
   /// The statue of ACTOR_SLIDING_STATUE once it has fallen to the floor
   /// below.
-  /// ★ Named from what the player sees: the blue statue ACTOR_SLIDING_STATUE
-  /// shows above, before it falls (its render)
   ACTOR_FALLEN_STATUE = ACTOR_FIRST_PLACED,
   /// At rest beside a jet of water. Its first slide takes it under the jet.
   /// When the door switch pipe stops at column 48, it slides over the floor to
   /// the square hole in the floor at (840,744) and falls through it. That hole
   /// is a cell whose ground lies below the floor's.
-  /// ★ Named from what the player sees: a blue statue beside a jet of water
-  /// (its render)
   ACTOR_SLIDING_STATUE,
-  /// ★ Named from what the player sees: a stone pipe section lying west to
-  /// east, pipe_west_east.png (its render)
   ACTOR_DOOR_ROOM_PIPE,
-  /// ★ Named from what the player sees: a stone pipe section lying north to
-  /// south, pipe_north_south.png (its render)
   ACTOR_DOOR_SWITCH_PIPE,
   /// Three in a row south of the stone doors' pipes. Nothing moves them.
-  /// ★ Named from what the player sees: the rim at the top of an upright pipe
-  /// in pipe_end.png (its render)
   ACTOR_FIRST_DOOR_PIPE_END,
   /// Five in a row along the north wall.
-  /// ★ Named from what the player sees: stone statues of a robed figure (its
-  /// render)
   ACTOR_FIRST_ROW_STATUE = ACTOR_FIRST_DOOR_PIPE_END + 3,
-  /// ★ Named from what the player sees: a stone statue of a robed figure (its
-  /// render)
   ACTOR_LAST_ROW_STATUE = ACTOR_FIRST_ROW_STATUE + 4,
-  /// ★ Named from what the player sees: a stone statue of a robed figure
-  /// before a gap in the floor (its render)
   ACTOR_GAP_STATUE
 };
 
@@ -270,102 +235,64 @@ enum MercuryLighthouseExteriorActorId {
   /// A pair of statues either side of the way in from the World Map
   /// (MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP). The east one is drawn
   /// mirrored.
-  /// ★ Named from what the player sees: blue statues either side of the way in
-  /// (its render)
   ACTOR_WEST_APPROACH_STATUE = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: blue statues either side of the way in
-  /// (its render)
   ACTOR_EAST_APPROACH_STATUE,
-  /// ★ Named from the game: "checked the stone statue..." (MsgCheckedGround)
   ACTOR_DOOR_STATUE,
-  /// ★ Named from the game: "used Ply." (MsgMercuryDidThat)
   ACTOR_PLY_TARGET,
-  /// ★ Named from what the player sees: a blue statue beside the waterfall (its
-  /// render)
   ACTOR_WATERFALL_STATUE,
-  /// ★ Named from what the player sees: the blue statue that stands on the lift
-  /// in the Lighthouse Aerie (its render)
   ACTOR_LIFT_STATUE,
   /// The first of four people at the Fountain of Healing once Saturos is
   /// beaten. In order they are a young man, a woman with fair hair, an old man
   /// with a cane and an old woman.
-  /// ★ Named from what the player sees: people gathered round the fountain
-  /// (its render)
   ACTOR_FIRST_VISITOR
 };
 
 /// Puzzle states kept until the party leaves the lighthouse.
 enum {
-  /// ★ Named from its area name: Mercury Lighthouse
   FLAG_STAIRS_RAISED = FLAG_AREA_TEMP_02,
-  /// ★ Named from the game: "peered into the fountain..." (MsgCheckedGround)
   FLAG_FOUNTAIN_RUNNING = FLAG_AREA_TEMP_06,
-  /// ★ Named from the game: "peered into the fountain..." (MsgCheckedGround)
   FLAG_FOUNTAIN_SHOWN =
       FLAG_AREA_TEMP_07, ///< the camera has shown it start once
   /// MercuryLighthouseLower's first pipe piece has been pushed into place,
   /// joining the water pipes. With all three joined the water carries the party
   /// down.
-  /// ★ Named from what the player sees: a pipe piece pushed along until it
-  /// joins the pipes and water sprays through (its render)
   FLAG_PIPE_1_JOINED = FLAG_AREA_TEMP_10,
-  /// ★ Named from what the player sees: the second pipe piece joining the
-  /// pipes (its render)
   FLAG_PIPE_2_JOINED = FLAG_AREA_TEMP_11,
-  /// ★ Named from what the player sees: the third pipe piece joining the pipes
-  /// (its render)
   FLAG_PIPE_3_JOINED = FLAG_AREA_TEMP_12,
   /// Unused: cleared with the three, but nothing sets or tests it.
-  /// ★ Named from what the player sees: a stone pipe section (its render)
   FLAG_UNUSED_PIPE_4_JOINED = FLAG_AREA_TEMP_13,
-  /// ★ Named from what the player sees: a stone pipe section (its render)
   FLAG_DOOR_ROOM_PIPE_PUSHED = FLAG_AREA_TEMP_18,
   /// Where the door switch pipe rests. Each column opens a different stone door
   /// (MercuryLighthouse_PushStoneDoorPipes). At column 47 it opens
   /// STONE_DOOR_NORTH, along the sliding statue's row.
-  /// ★ Named from what the player sees: a stone pipe section (its render)
   FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR = FLAG_AREA_TEMP_19,
   /// At column 48 it opens STONE_DOOR_SOUTH, where the statue slides out and
   /// falls.
-  /// ★ Named from what the player sees: a stone pipe section (its render)
   FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR = FLAG_AREA_TEMP_1A,
   /// At column 53 it leaves every door shut. With none of the three set it
   /// opens STONE_DOOR_WEST.
-  /// ★ Named from what the player sees: a stone pipe section (its render)
   FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS = FLAG_AREA_TEMP_1B,
   /// Two flags per statue of MercuryLighthouseUpper's row along the north wall,
   /// one for each column it can rest at, then the last statue's.
-  /// ★ Named from what the player sees: a row of statues along the wall, each
-  /// pushed aside with Move (its render)
   FLAG_FIRST_ROW_STATUE = FLAG_AREA_TEMP_30,
-  /// ★ Named from what the player sees: the last statue of the row (its render)
   FLAG_LAST_ROW_STATUE_WEST = FLAG_AREA_TEMP_38,
-  /// ★ Named from what the player sees: the last statue of the row (its render)
   FLAG_LAST_ROW_STATUE_EAST = FLAG_AREA_TEMP_39,
   /// The statue at the way in from MercuryLighthouseExterior has been moved
   /// west for good.
-  /// ★ Named from what the player sees: a stone statue of a robed figure
-  /// against the wall (its render)
   FLAG_PASSAGE_STATUE_MOVED = FLAG_AREA_TEMP_48
 };
 
 /// Scene flags, kept while the party stays in the scene.
 enum {
   /// The Empty Bottle has been filled at the Fountain of Healing this visit.
-  /// ★ Named from the game: "Hermes' Water" (MsgItemName)
   FLAG_HERMES_WATER_TAKEN = FLAG_SCENE_TEMP_00,
-  /// ★ Named from what the player sees: the floor switch before the gate,
-  /// which sinks under what stands on it (its render)
   FLAG_LEADER_ON_FLOOR_SWITCH = FLAG_SCENE_TEMP_56
 };
 
 /// The chests: a Sleep Bomb, a Psy Crystal and a Nut.
 enum {
-  /// ★ Named from the game: "Sleep Bomb" (MsgItemName)
   FLAG_CHEST_SLEEP_BOMB = 0xf64,
-  /// ★ Named from the game: "Psy Crystal" (MsgItemName)
   FLAG_CHEST_PSY_CRYSTAL = 0xf66,
-  /// ★ Named from the game: "Nut" (MsgItemName)
   FLAG_CHEST_NUT = 0xf67
 };
 

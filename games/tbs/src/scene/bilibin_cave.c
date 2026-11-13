@@ -108,22 +108,14 @@
 
 /// In Bilibin Cave's ice room, a movable torch has melted the third puddle's
 /// ice pillar.
-/// ★ Named from what the player sees: a tall pillar of ice beside the lit
-/// torches in the cave's east passage (its render)
 #define FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED FLAG_AREA_TEMP_02
 /// In Bilibin Cave's ice room, the third torch stands beside the third puddle's
 /// ice pillar.
-/// ★ Named from what the player sees: golden torches burning on their stands
-/// near a pillar of ice (its render)
 #define FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR FLAG_AREA_TEMP_03
 /// In Bilibin Cave's ice room, the fourth torch stands beside the third
 /// puddle's ice pillar.
-/// ★ Named from what the player sees: golden torches burning on their stands
-/// near a pillar of ice (its render)
 #define FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR FLAG_AREA_TEMP_04
 /// At the Bilibin Cave Entrance, Growth has grown the sprout into a vine.
-/// ★ Named from what the player sees: a green sprout at the foot of the cliff,
-/// which Growth grows into a vine up it (its render)
 #define FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN FLAG_AREA_TEMP_05
 
 // BilibinCave_Initialize calls one of these for the scene being entered.
@@ -135,8 +127,6 @@ static void BilibinCave_EmptyActorSetupHook(s32 actorId);
 /// Actors of the Bilibin Cave Entrance (SceneId_BilibinCaveEntrance).
 enum {
   /// The sprout Growth grows into a vine.
-  /// ★ Named from what the player sees: a green sprout, SPRITE_SPROUT (its
-  /// render)
   ACTOR_SPROUT = 8
 };
 
@@ -145,16 +135,10 @@ enum {
 enum {
   /// A torch west of the fire. It is cold (TORCH_ANIMATION_UNLIT) where its
   /// twin burns.
-  /// ★ Named from what the player sees: a golden torch on its stand, its bowl
-  /// grey with ash, places/bilibin-cave-rapier/map-5.png (its render)
   ACTOR_RAPIER_ROOM_WEST_TORCH = 8,
   /// A fire between two torches, which Douse puts out.
-  /// ★ Named from what the player sees: a flickering flame, SPRITE_FIRE (its
-  /// render)
   ACTOR_RAPIER_ROOM_FIRE = 9,
   /// A torch east of the fire.
-  /// ★ Named from what the player sees: a golden torch burning on its stand
-  /// (its render)
   ACTOR_RAPIER_ROOM_EAST_TORCH = 10
 };
 
@@ -162,44 +146,26 @@ enum {
 /// gBilibinCaveIceActorPlacements.
 enum {
   /// A fire beside the first puddle, which Douse puts out.
-  /// ★ Named from what the player sees: a flickering flame, SPRITE_FIRE (its
-  /// render)
   ACTOR_ICE_ROOM_FIRE = 8,
   /// Six torches, 9 to 14. The second stands beside ACTOR_SECOND_PUDDLE.
-  /// ★ Named from what the player sees: a golden torch burning on its stand
-  /// (its render)
   ACTOR_FIRST_TORCH = 9,
   /// The third torch, moved by Move or pushed.
-  /// ★ Named from what the player sees: a golden torch burning on its stand
-  /// (its render)
   ACTOR_THIRD_TORCH = 11,
   /// The fourth torch, moved by Move or pushed.
-  /// ★ Named from what the player sees: a golden torch burning on its stand
-  /// (its render)
   ACTOR_FOURTH_TORCH = 12,
   /// A puddle beside ACTOR_ICE_ROOM_FIRE. It freezes into a pillar the party
   /// walks over once the fire is out.
-  /// ★ Named from what the player sees: a puddle of water, SPRITE_PUDDLE (its
-  /// render)
   ACTOR_FIRST_PUDDLE = 15,
   /// A puddle beside a torch that stays put, so it never stays frozen.
-  /// ★ Named from what the player sees: a puddle of water, SPRITE_PUDDLE (its
-  /// render)
   ACTOR_SECOND_PUDDLE = 16,
   /// A puddle frozen into an ice pillar, melted while a torch stands on cell
   /// (35, 23).
-  /// ★ Named from what the player sees: a puddle of water, SPRITE_PUDDLE (its
-  /// render)
   ACTOR_THIRD_PUDDLE = 17,
   /// Five ice pillars, 18 to 22 (PUDDLE_ANIMATION_PILLAR). Nothing acts on
   /// them.
-  /// ★ Named from what the player sees: tall pillars of pale blue ice (its
-  /// render)
   ACTOR_FIRST_ICE_PILLAR = 18,
   /// Four pieces of ice, 23 to 26, held at the second step of freezing
   /// (PUDDLE_ANIMATION_LOW_ICE). Nothing acts on them.
-  /// ★ Named from what the player sees: low, jagged lumps of pale blue ice
-  /// (its render)
   ACTOR_FIRST_LOW_ICE = 23
 };
 

@@ -11,14 +11,10 @@ struct Actor;
 /// lights answer.
 enum MercuryLighthousePoolBehavior {
   /// The pool's heart, which gives the leader lights.
-  /// ★ Named from what the player sees: the heart at the pool's centre (its
-  /// render)
   CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART = 11,
   /// Out in the water, where ripples spread from the leader.
-  /// ★ Named from what the player sees: the open water of the pool (its render)
   CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER = 21,
   /// The pool's rim, which takes the leader's lights.
-  /// ★ Named from what the player sees: the rim of the pool (its render)
   CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM = 31
 };
 

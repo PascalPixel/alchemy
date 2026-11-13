@@ -91,54 +91,22 @@
 ///
 /// They are the first relief room's west and east statues, then the row of six
 /// in the second relief room. Both clear means the start.
-/// ★ Named from what the player sees: the stone statues of the first relief
-/// room, two of which Move pushes a cell aside (its render)
 #define FLAG_SOL_SANCTUM_EAST_STATUE_AT_EAST FLAG_AREA_TEMP_00
-/// ★ Named from what the player sees: the first relief room's east statue,
-/// pushed a cell west (its render)
 #define FLAG_SOL_SANCTUM_EAST_STATUE_AT_WEST FLAG_AREA_TEMP_01
-/// ★ Named from what the player sees: the first relief room's west statue,
-/// pushed a cell east (its render)
 #define FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST FLAG_AREA_TEMP_02
-/// ★ Named from what the player sees: the first relief room's west statue,
-/// pushed a cell west (its render)
 #define FLAG_SOL_SANCTUM_WEST_STATUE_AT_WEST FLAG_AREA_TEMP_03
 /// The second relief room's row of six statues, each two flags as above.
-/// ★ Named from the game: "More statues..."
-/// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_EAST FLAG_AREA_TEMP_10
-/// ★ Named from the game: "More statues..."
-/// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_WEST FLAG_AREA_TEMP_11
-/// ★ Named from the game: "More statues..."
-/// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_EAST FLAG_AREA_TEMP_12
-/// ★ Named from the game: "More statues..."
-/// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_WEST FLAG_AREA_TEMP_13
-/// ★ Named from the game: "More statues..."
-/// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_EAST FLAG_AREA_TEMP_14
-/// ★ Named from the game: "More statues..."
-/// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_WEST FLAG_AREA_TEMP_15
-/// ★ Named from the game: "More statues..."
-/// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_EAST FLAG_AREA_TEMP_16
-/// ★ Named from the game: "More statues..."
-/// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_WEST FLAG_AREA_TEMP_17
-/// ★ Named from the game: "More statues..."
-/// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_EAST FLAG_AREA_TEMP_18
-/// ★ Named from the game: "More statues..."
-/// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_WEST FLAG_AREA_TEMP_19
-/// ★ Named from the game: "More statues..."
-/// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_EAST FLAG_AREA_TEMP_1A
-/// ★ Named from the game: "More statues..."
-/// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_WEST FLAG_AREA_TEMP_1B
 
 // Scene flags, cleared on every ordinary arrival:
@@ -158,22 +126,14 @@
 ///
 /// Behaviors 1 to 16 in both scenes are the exits, in the exit table's order.
 enum SolEntranceCellBehavior {
-  /// ★ Named from what the player sees: the door that slides open as the
-  /// leader walks into it (SolSanctumEntrance_OpenDoorAndEnter)
   CELL_BEHAVIOR_SOL_ENTRANCE_DOOR = 2,
-  /// ★ Named from the game: "The door is tightly locked."
-  /// (MsgFieldDoorTightlyLocked)
   CELL_BEHAVIOR_SOL_ENTRANCE_LOCKED_DOOR = 10
 };
 
 /// The cell behaviors of the cells the relief rooms' coord, bg and
 /// item triggers answer.
 enum SolSanctumReliefsCellBehavior {
-  /// ★ Named from the game: "It's a relief of a minotaur."
-  /// (MsgSolSanctumMinotaurReliefOneEye)
   CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_FIRST_RELIEF = 20,
-  /// ★ Named from the game: "It's a relief of a minotaur."
-  /// (MsgSolSanctumMinotaurReliefOneEye)
   CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_SECOND_RELIEF = 21,
   /// The first relief room's statues, pushed from any side.
   CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE = 22,
@@ -183,7 +143,6 @@ enum SolSanctumReliefsCellBehavior {
   CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_ROW_STATUE = 24,
   /// The first relief room's statues, pushed west only.
   CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE_WEST = 25,
-  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_CHEST = 100
 };
 
@@ -590,8 +549,6 @@ static void SolSanctumEntrance_RowStatue6Moved(void) {
 
 /// The party has entered the second relief room, which turns off Move on the
 /// first relief room's statues.
-/// ★ Named from the game: "It's a relief of a minotaur."
-/// (MsgSolSanctumMinotaurReliefOneEye)
 #define FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM FLAG_SCENE_TEMP_34
 
 /// Sol Sanctum, the two relief rooms: walking into a statue's cell pushes it

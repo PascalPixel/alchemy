@@ -83,66 +83,34 @@
 /// ACTOR_FIRST_PLACED and named by what they say on the party's return.
 enum {
   /// A young man whose precious stone, he says, a cat ate.
-  /// ★ Named from the game: "I kept worrying that they would take my gem."
-  /// (MsgVaultICanSleepWellNowThat)
   ACTOR_GEM_OWNER = ACTOR_FIRST_PLACED,
   /// A woman with fair hair.
-  /// ★ Named from the game: "My husband says my cat ate the treasure"
-  /// (MsgVaultMyHusbandSaysMyCatAte)
   ACTOR_GEM_OWNERS_WIFE,
   /// A burly grey-haired man in the boy's house.
-  /// ★ Named from the game: "The prisoners said they wanted to break out of
-  /// jail before Colosso began." (MsgVaultThePrisonersSaidTheyWantedTo)
   ACTOR_VILLAGER_HEARD_PRISONERS,
   /// A small boy.
-  /// ★ Named from the game: "Daddy hasn't been paying attention"
-  /// (MsgVaultDaddyHasntBeenPayingAttentionSince)
   ACTOR_BOY,
   /// An old man with a cane who would like to see Colosso once more.
-  /// ★ Named from the game: "Whenever my wife used to go to Tolbi for Colosso"
-  /// (MsgVaultWheneverMyWifeUsedToGo)
   ACTOR_COLOSSO_HUSBAND,
   /// An old woman.
-  /// ★ Named from the game: "Lately, my husband's been going on and on about
-  /// Colosso." (MsgVaultLatelyMyHusbandsBeenGoingOn)
   ACTOR_COLOSSO_WIFE,
   /// A small boy in the mayor's house.
-  /// ★ Named from the game: "Those thieves! You go to all that trouble catching
-  /// them, and then we let them get away." (MsgVaultThoseThievesYouGoToAll)
   ACTOR_BOY_ON_THE_THIEVES_ESCAPE,
   /// A little girl in the mayor's house.
-  /// ★ Named from the game: "I hear that a big festival is about to start in
-  /// some faraway town." (MsgVaultIHearThatABigFestival)
   ACTOR_GIRL_CURIOUS_ABOUT_THE_FESTIVAL,
   /// The mayor, an old man with white hair.
-  /// ★ Named from the game: "My husband, the mayor"
-  /// (MsgVaultMyHusbandTheMayorCantBelieve)
   ACTOR_MAYOR,
   /// A woman in a green dress.
-  /// ★ Named from the game: "My husband, the mayor, can't believe anyone from
-  /// Vault could be the thief." (MsgVaultMyHusbandTheMayorCantBelieve)
   ACTOR_MAYORS_WIFE,
   /// The girl at the inn, as the Bone's description calls her, a young woman
   /// with fair hair.
-  /// ★ Named from the game: "A bone from the girl at the inn"
-  /// (MsgItemPlainName)
   ACTOR_GIRL_AT_THE_INN,
-  /// ★ Named from the game: "I'm sorry I've only got these cheap weapons to
-  /// sell right now." (MsgVaultAllOurBestWeaponsWereStolen)
   ACTOR_VAULT_WEAPON_MERCHANT,
-  /// ★ Named from the game: "I wonder if they left us alone because we don't
-  /// carry any valuable armor?" (MsgVaultIWonderIfTheyLeftUs)
   ACTOR_VAULT_ARMOR_MERCHANT,
-  /// ★ Named from the game: "Why keep the store open if we don't have any
-  /// customers?" (MsgVaultWhyKeepTheStoreOpenIf)
   ACTOR_VAULT_ITEM_MERCHANT,
   /// A man with dark hair behind the inn's counter.
-  /// ★ Named from the game: "Won't anyone come stay the night here?"
-  /// (MsgVaultWontAnyoneComeStayTheNight)
   ACTOR_VAULT_INNKEEPER,
   /// A woman in an apron, upstairs at the inn.
-  /// ★ Named from the game: "I did some cooking, so now I've got all these
-  /// useless bones." (MsgVaultDidSomeCookingNowIve)
   ACTOR_COOK
 };
 
@@ -155,8 +123,6 @@ enum {
 };
 
 /// Set once the mayor has told Isaac the thieves escaped from jail.
-/// ★ Named from the game: "You've come back to Vault!"
-/// (MsgVaultIsaacYouveComeBackVault)
 enum { FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK = FLAG_AREA_TEMP_00 };
 
 #include "shared/vault_bone_proximity_flag.h"

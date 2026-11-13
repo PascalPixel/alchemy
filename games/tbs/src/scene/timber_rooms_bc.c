@@ -103,84 +103,56 @@ enum TimberRoomsBCActorId {
   /// TIMBER_ROOMS_B_FROM_LALIVERO_WEST.
   ///
   /// He says "Of course I have seen Sheba's power... It's incredible!"
-  /// ★ Named from the game: "Of course I have seen"
-  /// (MsgLaliveroInteriorsOfCourseIHaveSeenActor)
   ACTOR_VILLAGER_SAW_SHEBAS_POWER = ACTOR_FIRST_PLACED,
   /// A woman with fair hair, in the same house.
   ///
   /// She says "There are some who do not believe Sheba has any powers...
   /// Doubting Sheba? That is foolish!"
-  /// ★ Named from the game: "That is foolish!"
-  /// (MsgLaliveroInteriorsThereAreSomeWhoDoNot)
   ACTOR_WOMAN_DEFENDING_SHEBA,
   /// A man in a white turban, in the house at
   /// TIMBER_ROOMS_B_FROM_LALIVERO_SOUTHEAST.
   ///
   /// He says "Could Faran have tricked us all?"
-  /// ★ Named from the game: "Could Faran have tricked us all?"
-  /// (MsgLaliveroInteriorsCouldFaranHaveTrickedUsAll)
   ACTOR_VILLAGER_DOUBTING_FARAN,
   /// A woman in a green dress, in the same house.
   ///
   /// She says "If Sheba can't use her powers in a time like this, they're
   /// useless!"
-  /// ★ Named from the game: "use her powers in a time like this, they're
-  /// useless!" (MsgLaliveroInteriorsIfActorCantUseHerPowers)
   ACTOR_WOMAN_DOUBTING_SHEBA,
   /// An old man with a cane, upstairs in the item shop at
   /// TIMBER_ROOMS_B_FROM_LALIVERO_NORTH.
   ///
   /// He says "Sheba came flying to the ruins like a shooting star."
-  /// ★ Named from the game: "came flying to the ruins like a shooting star."
-  /// (MsgLaliveroInteriorsActorCameFlyingToTheRuins)
   ACTOR_OLD_MAN_SHOOTING_STAR,
   /// An old woman, in the same room.
   ///
   /// She says "Even Sheba couldn't have escaped six of them..."
-  /// ★ Named from the game: "couldn't have escaped six of them..."
-  /// (MsgLaliveroInteriorsEvenActorCouldntHaveEscapedSix)
   ACTOR_OLD_WOMAN_SIX_OF_THEM,
   /// A bald, muscular man, in the house at
   /// TIMBER_ROOMS_B_FROM_LALIVERO_NORTHWEST.
   ///
   /// He says "They say a man named Iodem is coming from Tolbi. I guess he
   /// plans to make us do even more work!"
-  /// ★ Named from the game: "I guess he plans to make us do even more work!"
-  /// (MsgLaliveroInteriorsTheySayAManNamedIodem)
   ACTOR_WORKER,
   /// A bald, muscular man lying asleep upstairs in that house.
   ///
   /// He says "No one's called me, so maybe I'll take a nap..." After Venus
   /// Lighthouse, Mind Read hears "I'm worried that we won't get paid now that
   /// the construction has ended."
-  /// ★ Named from the game: "No one's called me, so maybe I'll take a nap..."
-  /// (MsgLaliveroInteriorsNoOnesCalledMeSoMaybe)
   ACTOR_NAPPING_WORKER,
   /// A strongman, in the house at TIMBER_ROOMS_B_FROM_LALIVERO_NORTHWEST.
   ///
   /// He says "Sheba said the cave at the ruins leads to the southeast."
-  /// ★ Named from the game: "said the cave at the ruins leads to the
-  /// southeast." (MsgLaliveroInteriorsActorSaidTheCaveAtThe)
   ACTOR_STRONGMAN_RUINS_CAVE,
   /// A strongman who walks about the room upstairs in that house.
   ///
   /// He says "The ruins that form the lighthouse foundation are riddled with
   /// caves."
-  /// ★ Named from the game: "The ruins that form the lighthouse foundation are
-  /// riddled with caves." (MsgLaliveroInteriorsTheRuinsThatFormTheLighthouse)
   ACTOR_STRONGMAN_RUINS_RIDDLE,
-  /// ★ Named from what the player sees: the man behind the counter of the
-  /// shop hung with swords and shields (its render)
   ACTOR_WEAPON_MERCHANT,
-  /// ★ Named from what the player sees: the second man behind the counter of
-  /// the shop hung with swords and shields (its render)
   ACTOR_ARMOR_MERCHANT,
-  /// ★ Named from what the player sees: the young woman with a ponytail behind
-  /// the counter of the shop stacked with barrels and jars (its render)
   ACTOR_ITEM_MERCHANT,
   /// The Sanctum's healer.
-  /// ★ Named from what the player sees: the bearded man behind the Sanctum's
-  /// counter (its render)
   ACTOR_HEALER,
 
   // Faran's house and the inn (TimberRoomsC).
@@ -188,45 +160,30 @@ enum TimberRoomsBCActorId {
   ///
   /// She says "We received Sheba from the sky and raised her lovingly... I
   /// know Faran will rescue that child."
-  /// ★ Named from the game: "His wife seems very calm, considering."
-  /// (MsgLaliveroInteriorsHisWifeSeemsVeryCalmConsidering)
   ACTOR_FARANS_WIFE = ACTOR_FIRST_PLACED,
   /// Faran's son, a small boy with fair hair, younger than Sheba.
   ///
   /// He says "I just know that Father will save my elder sister, Sheba."
-  /// ★ Named from the game: "I just know that Father will save my elder sister"
-  /// (MsgLaliveroInteriorsIJustKnowThatFatherWill)
   ACTOR_FARANS_SON,
   /// A young woman with long brown hair, worried for Sheba.
   ///
   /// She says "His wife seems very calm, considering." Mind Read hears "When
   /// someone like Sheba is kidnapped, it worries us all!"
-  /// ★ Named from the game: "Deep down, she must be worried about"
-  /// (MsgLaliveroInteriorsHisWifeSeemsVeryCalmConsidering)
   ACTOR_WORRIED_YOUNG_WOMAN,
   /// Placed off the map before Venus Lighthouse.
-  /// ★ Named from the game: "Faran followed"
-  /// (MsgLaliveroFaranFollowedActorImSureHell)
   ACTOR_FARAN,
   /// Placed off the map before Venus Lighthouse.
-  /// ★ Named from the game: "Iodem of Tolbi"
-  /// (MsgLaliveroIodemOfTolbiDoesntSeemToo)
   ACTOR_IODEM,
   /// A man with dark hair.
-  /// ★ Named from the game: "Welcome to our inn." (MsgInnWelcome)
   ACTOR_INNKEEPER,
   /// A woman in a pink dress and a white apron who works about the inn, too
   /// worried about Sheba to keep her mind on it.
-  /// ★ Named from the game: "Working like this keeps my mind occupied."
-  /// (MsgLaliveroInteriorsWorkingLikeThisKeepsMyMind)
   ACTOR_INN_WORKER,
   /// A young man with brown hair in a purple shirt who walks about the hall
   /// upstairs in the inn.
   ///
   /// After Venus Lighthouse he says "Fishing is so difficult nowadays because
   /// the ocean is so rough. We have little to cook when we can't fish."
-  /// ★ Named from the game: "We have little to cook when we can't fish."
-  /// (MsgLaliveroInteriorsFishingIsSoDifficultNowadaysBecause)
   ACTOR_COOK
 };
 
@@ -240,7 +197,6 @@ enum { ANIM_WORKER_LIE_ASLEEP = 6 };
 ///
 /// It is the area temp flag FLAG_AREA_TEMP_00, which lasts until the party
 /// enters another area.
-/// ★ Named from the game: "Oh, I'm sorry..." (MsgLaliveroImSorry)
 enum { FLAG_LALIVERO_INN_WORKER_APOLOGIZED = FLAG_AREA_TEMP_00 };
 
 /// TimberRoomsC: the inn worker sighs between chores.

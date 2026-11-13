@@ -61,25 +61,15 @@ struct ClassAbility {
 /// children, and 202, "Flame User", to Jenna), and 12 class 0, "NPC", an
 /// enemy's (CLASS_NONE).
 enum ClassSeries {
-  /// ★ Named from the game: "Squire" (MsgClassName)
   CLASS_SERIES_SQUIRE = 1,
-  /// ★ Named from the game: "Guard" (MsgClassName)
   CLASS_SERIES_GUARD,
-  /// ★ Named from the game: "Swordsman" (MsgClassName)
   CLASS_SERIES_SWORDSMAN,
-  /// ★ Named from the game: "Brute" (MsgClassName)
   CLASS_SERIES_BRUTE,
-  /// ★ Named from the game: "Apprentice" (MsgClassName)
   CLASS_SERIES_APPRENTICE,
-  /// ★ Named from the game: "Water Seer" (MsgClassName)
   CLASS_SERIES_WATER_SEER,
-  /// ★ Named from the game: "Wind Seer" (MsgClassName)
   CLASS_SERIES_WIND_SEER,
-  /// ★ Named from the game: "Seer" (MsgClassName)
   CLASS_SERIES_SEER,
-  /// ★ Named from the game: "Pilgrim" (MsgClassName)
   CLASS_SERIES_PILGRIM,
-  /// ★ Named from the game: "Hermit" (MsgClassName)
   CLASS_SERIES_HERMIT
 };
 

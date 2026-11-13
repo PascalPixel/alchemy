@@ -77,70 +77,34 @@ enum {
 /// Their notes quote what they say once the curse is lifted.
 enum KolimaRoomActorId {
   /// An old man with a cane.
-  /// ★ Named from the game: "I heard that traveling warriors from the Goma
-  /// Range saved the village."
-  /// (MsgKolimaInteriorsIHeardThatTravelingWarriorsFrom)
   ACTOR_OLD_MAN_HEARD_OF_WARRIORS = ACTOR_FIRST_PLACED,
   /// An old woman.
-  /// ★ Named from the game: "Big, strong warriors with great beards freed
-  /// Kolima from the curse."
-  /// (MsgKolimaInteriorsBigStrongWarriorsWithGreatBeards)
   ACTOR_OLD_WOMAN_BEARDED_WARRIORS,
   /// The father with a secret, a burly grey-haired man: "You saved Kolima? Wow!
   /// That makes me want to tell you a secret!" His thoughts: "It's hidden deep
   /// in the forest, but I can't tell him that!"
-  /// ★ Named from the game: "That makes me want to tell you a secret!"
-  /// (MsgKolimaInteriorsYouSavedKolimaWowThatMakes)
   ACTOR_FATHER_WITH_A_SECRET,
   /// His wife, a woman in a green dress.
-  /// ★ Named from the game: "My husband seems to be keeping a secret from me."
-  /// (MsgKolimaInteriorsMyHusbandSeemsToBeKeeping)
   ACTOR_WIFE_KEPT_FROM_THE_SECRET,
   /// Their son, a small boy with fair hair.
-  /// ★ Named from the game: "Daddy told me his secret."
-  /// (MsgKolimaInteriorsDaddyToldMeHisSecret)
   ACTOR_CHILD_TOLD_THE_SECRET,
   /// A strongman, stocky and muscular.
-  /// ★ Named from the game: "I'm never going to use an axe again."
-  /// (MsgKolimaInteriorsImNeverGoingToUseAn)
   ACTOR_LUMBERJACK_FATHER,
   /// His daughter, a woman with long fair hair.
-  /// ★ Named from the game: "Dad, will you please go back to being a
-  /// lumberjack?" (MsgKolimaInteriorsDadWillYouPleaseGoBack)
   ACTOR_LUMBERJACKS_DAUGHTER,
   /// His son, a small boy with fair hair.
-  /// ★ Named from the game: "Dad! How are we going to eat if you don't work?"
-  /// (MsgKolimaInteriorsDadHowAreWeGoingTo)
   ACTOR_LUMBERJACKS_HUNGRY_SON,
-  /// ★ Named from the game: "I used to carve weapons out of wood."
-  /// (MsgKolimaInteriorsIUsedToCarveWeaponsOut)
   ACTOR_WEAPON_MERCHANT,
-  /// ★ Named from the game: "Ask me anything about armor."
-  /// (MsgArmorShopWelcome)
   ACTOR_ARMOR_MERCHANT,
-  /// ★ Named from the game: "Welcome! We have just the gear you need."
-  /// (MsgItemShopWelcome)
   ACTOR_ITEM_MERCHANT,
-  /// ★ Named from the game: "Welcome to our inn." (MsgInnWelcome)
   ACTOR_INNKEEPER,
   /// A woman in a pink dress and an apron.
-  /// ★ Named from the game: "With no more work here, Kolima can go back to
-  /// being a quiet little village."
-  /// (MsgKolimaInteriorsWithNoMoreWorkHereKolima)
   ACTOR_VILLAGER_QUIET_VILLAGE,
   /// A strongman, stocky and muscular.
-  /// ★ Named from the game: "I've been a lumberjack for years"
-  /// (MsgKolimaInteriorsIveBeenALumberjackForYears)
   ACTOR_LUMBERJACK_FROM_IMIL,
   /// A man carrying a pack.
-  /// ★ Named from the game: "I'm only a merchant, but I got turned into a
-  /// tree just for staying here." (MsgKolimaInteriorsImOnlyAMerchantButI)
   ACTOR_MERCHANT_GUEST,
-  /// ★ Named from the game: "I need to help evacuate the other villagers."
-  /// (MsgValeKyleAbleStop)
   ACTOR_FIRST_VILLAGER = ACTOR_OLD_MAN_HEARD_OF_WARRIORS,
-  /// ★ Named from the game: "I need to help evacuate the other villagers."
-  /// (MsgValeKyleAbleStop)
   ACTOR_LAST_VILLAGER = ACTOR_MERCHANT_GUEST
 };
 

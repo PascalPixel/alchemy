@@ -129,43 +129,25 @@
 
 // The floor switches have slid the walls aside.
 /// The second floor's pink floor switch has slid the wall beside it aside.
-/// ★ Named from what the player sees: the pink floor switch on the second
-/// floor and the stone wall it moves (its render)
 #define FLAG_VENUS_LIGHTHOUSE_WALL_MOVED FLAG_AREA_TEMP_00
-/// ★ Named from what the player sees: the pink floor switch on the west side
-/// of the fourth floor (its render)
 #define FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED FLAG_AREA_TEMP_06
-/// ★ Named from what the player sees: the floor switch on the east side of
-/// the fourth floor (its render)
 #define FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED FLAG_AREA_TEMP_07
 // The gates the sunken pillars opened: one pillar, three pillars (and which of
 // two sets of sockets they sank into) and the pillar room's four.
 /// The light from the second floor's lady statue has opened the gate at the
 /// end of its track.
-/// ★ Named from what the player sees: the glowing arch at the end of the gold
-/// track on the second floor (its render)
 #define FLAG_VENUS_LIGHTHOUSE_GATE_OPEN FLAG_AREA_TEMP_01
 /// The pillars stand in every socket of gVenusThirdFloorSockets but the
 /// southeast one.
-/// ★ Named from what the player sees: the square sockets in the third floor
-/// that the pillars sink into (its render)
 #define FLAG_VENUS_LIGHTHOUSE_SOUTHEAST_SOCKET_EMPTY FLAG_AREA_TEMP_02
 /// The pillars stand in every socket of gVenusThirdFloorSockets but the
 /// northwest one.
-/// ★ Named from what the player sees: the square sockets in the third floor
-/// that the pillars sink into (its render)
 #define FLAG_VENUS_LIGHTHOUSE_NORTHWEST_SOCKET_EMPTY FLAG_AREA_TEMP_03
-/// ★ Named from what the player sees: the gate the gold track leads to in the
-/// third floor's room of three pillars and four sockets (its render)
 #define FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN FLAG_AREA_TEMP_04
-/// ★ Named from what the player sees: the glowing arch over the fourth floor's
-/// room of gold track and four pillars (its render)
 #define FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN FLAG_AREA_TEMP_08
 /// The first floor's Psynergy Stone, taken until the party leaves the climb.
-/// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
 #define FLAG_VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE FLAG_AREA_TEMP_50
 /// The fourth floor's Psynergy Stone, as the first floor's.
-/// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
 #define FLAG_VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE FLAG_AREA_TEMP_51
 
 /// The cell behaviors the floors' events answer, by floor. A number means
@@ -175,33 +157,24 @@
 /// rows name it by that exit. They name the sparkling passages the same way,
 /// which leave by their own number (VenusLighthouse_EnterSparklingPassage).
 enum VenusLighthouseCellBehavior {
-  /// ★ Named from the game: "The door is tightly locked."
-  /// (MsgFieldDoorTightlyLocked)
   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_LOCKED_DOOR =
       25, ///< a locked door, from the second floor up
   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_DRIFT_SOUTH =
       30, ///< a floor that carries the party south
   /// A floor's chest.
-  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_CHEST = 100,
   /// A floor's Psynergy Stone.
-  /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_PSYNERGY_STONE = 110,
   // VenusLighthouseGroundFloor
   /// The first of the six reliefs, whose words VenusLighthouse_ReadRelief shows
   /// in their order.
-  /// ★ Named from the game: "There are words carved into the relief"
-  /// (MsgVenusThereWordsCarvedIntoRelief)
   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FIRST_RELIEF = 35,
-  /// ★ Named from the game: "The statue speaks"
-  /// (MsgVenusStatueSpeaksIsaacSoulYe)
   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_GREAT_STATUE = 41,
   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_LEDGE =
       45, ///< where the leader jumps down until the switch is held
   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FLOOR_SWITCH = 46,
   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_WALL_PILLAR =
       50, ///< walking into ACTOR_WALL_PILLAR
-  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_SECOND_CHEST = 101,
   // VenusLighthouseFirstFloor
   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_HOLE = 35,
@@ -284,33 +257,20 @@ enum VenusLighthouseEntryActorId {
   /// A soldier by the entrance: "Venus Lighthouse was... attacked by
   /// strange... wanderers...", and he flickers and is gone
   /// (VenusLighthouse_HearOfTheAttack).
-  /// ★ Named from the game: "attacked by strange... wanderers..."
-  /// (MsgFieldVenusLighthouseWasAttackedBy)
   ACTOR_SOLDIER_TELLING_OF_THE_ATTACK = ACTOR_FIRST_PLACED,
   /// "Iodem, be happy. The entrance to Venus Lighthouse is open..."
-  /// ★ Named from the game: "The entrance to Venus Lighthouse is open"
-  /// (MsgVenusLighthouseIodemBeHappyTheEntranceTo)
   ACTOR_SCHOLAR_LIGHTHOUSE_OPEN,
   /// "Ohhh! How could they attack mere scholars? Those barbarians!"
-  /// ★ Named from the game: "Those barbarians!"
-  /// (MsgVenusLighthouseOhhhHowCouldTheyAttackMere)
   ACTOR_SCHOLAR_BARBARIANS,
   /// "I've waited so long to see what it's like inside Venus Lighthouse,
   /// but..." (VenusLighthouse_TalkToWaitingScholar)
-  /// ★ Named from the game: "I've waited so long" (MsgVenusIveWaitedLongSeeIts)
   ACTOR_WAITING_SCHOLAR,
   /// "How... How did they open the door to Venus Lighthouse?"
-  /// ★ Named from the game: "How did they open the door to Venus Lighthouse?"
-  /// (MsgVenusLighthouseHowHowDidTheyOpenThe)
   ACTOR_SOLDIER_OPENED_DOOR,
   /// "They are already... headed for Babi Lighthouse..."
-  /// ★ Named from the game: "headed for Babi Lighthouse..."
-  /// (MsgVenusLighthouseTheyAreAlreadyHeadedForBabi)
   ACTOR_SOLDIER_HEADED_FOR_BABI,
   /// "Babi's soldiers are all Colosso victors... How could anyone beat all of
   /// us?" His thoughts: "Was it Kraden?"
-  /// ★ Named from the game: "Babi's soldiers are all Colosso victors..."
-  /// (MsgVenusLighthouseBabisSoldiersAreAllColossoVictors)
   ACTOR_SOLDIER_COLOSSO_VICTORS
 };
 
@@ -318,27 +278,17 @@ enum VenusLighthouseEntryActorId {
 /// gVenusLighthouseGroundFloorActorPlacements after Garet's.
 enum VenusLighthouseGroundFloorActorId {
   /// "Kraden told them to stop, but they attacked anyway."
-  /// ★ Named from the game: "Kraden told them to stop, but they attacked
-  /// anyway." (MsgVenusLighthouseKradenToldThemToStopBut)
   ACTOR_SCHOLAR_ATTACKED_ANYWAY = ACTOR_FIRST_PLACED,
   /// "Kraden went inside, but then came back and said this isn't the
   /// entrance."
-  /// ★ Named from the game: "said this isn't the entrance."
-  /// (MsgVenusLighthouseKradenWentInsideButThenCame)
   ACTOR_SCHOLAR_NOT_THE_ENTRANCE,
   /// VenusLighthouse_TalkToScholarByDoor.
-  /// ★ Named from the game: "I thought I'd explore after the door opened."
-  /// (MsgVenusThoughtIdExploreAfterDoor)
   ACTOR_DOOR_SCHOLAR,
   /// The pillar Move pushes to the wall and Carry sets down beyond it
   /// (VenusLighthouse_MovePillarTowardWall).
-  /// ★ Named from what the player sees: a grey pillar carved with spirals, two
-  /// cell pictures tall, short of the wall (its render)
   ACTOR_WALL_PILLAR = ACTOR_FIRST_PLACED + 4,
   /// The lady statue Move pushes onto the floor switch (SPRITE_LADY_STATUE)
   /// (VenusLighthouse_MovePillarOntoSwitch).
-  /// ★ Named from what the player sees: a white statue of a robed woman beside
-  /// a floor switch (its render)
   ACTOR_FLOOR_SWITCH_STATUE
 };
 
@@ -347,13 +297,9 @@ enum VenusLighthouseGroundFloorActorId {
 enum VenusLighthouseFirstFloorActorId {
   /// The three pillars, SPRITE_CAPPED_PILLAR, that Move or a push shifts, the
   /// nearer drawn in front (VenusLighthouse_MoveCappedPillar).
-  /// ★ Named from what the player sees: grey pillars with white tops, one alone
-  /// and two side by side (its render)
   ACTOR_FIRST_CAPPED_PILLAR = ACTOR_FIRST_PLACED,
   /// The two pillars by the gap, carried across it or dropped into it
   /// (VenusLighthouse_CarryPillarAcrossGap).
-  /// ★ Named from what the player sees: two grey pillars carved with spirals
-  /// beside the gap (its render)
   ACTOR_FIRST_CARRY_PILLAR = ACTOR_FIRST_CAPPED_PILLAR + 3
 };
 
@@ -362,19 +308,13 @@ enum VenusLighthouseFirstFloorActorId {
 enum VenusLighthouseSecondFloorActorId {
   /// A lady statue, as ACTOR_FLOOR_SWITCH_STATUE is, where
   /// ACTOR_GATE_SPARKLE sets out for the gate.
-  /// ★ Named from what the player sees: a white statue of a robed woman beside
-  /// the gate (its render)
   ACTOR_GATE_STATUE = ACTOR_FIRST_PLACED,
   /// The pillar before the gate, which sinks into its socket
   /// (VenusLighthouse_MoveGatePillar).
-  /// ★ Named from what the player sees: a grey pillar carved with spirals on
-  /// the track before the gate (its render)
   ACTOR_GATE_PILLAR,
   /// SPRITE_PARTICLE, the kind of actor VenusLighthouse_CreateLight makes.
   /// Once the pillar sinks it travels gVenusSecondFloorLightToGate to the gate,
   /// which opens, and stays there shedding particles.
-  /// ★ Named from what the player sees: a small sparkle that rises by the
-  /// gate as the pillar sinks (its render)
   ACTOR_GATE_SPARKLE
 };
 
@@ -383,18 +323,12 @@ enum VenusLighthouseSecondFloorActorId {
 enum VenusLighthouseThirdFloorActorId {
   /// A lady statue (SPRITE_LADY_STATUE), where the two gate effects set out
   /// once all three switch pillars have sunk.
-  /// ★ Named from what the player sees: a white statue of a robed woman at the
-  /// end of the gold track (its render)
   ACTOR_SWITCH_STATUE = ACTOR_FIRST_PLACED,
   /// The three pillars that sink into free sockets
   /// (VenusLighthouse_MoveSwitchPillar).
-  /// ★ Named from what the player sees: three grey pillars carved with spirals
-  /// on the gold track (its render)
   ACTOR_FIRST_SWITCH_PILLAR,
   /// SPRITE_PARTICLE, as ACTOR_GATE_SPARKLE, placed where the gate effects
   /// end once the gate is open.
-  /// ★ Named from what the player sees: a sparkle, as on the second floor,
-  /// where a gate has opened (its render)
   ACTOR_SWITCH_GATE_SPARKLE = ACTOR_FIRST_SWITCH_PILLAR + 3
 };
 
@@ -404,38 +338,24 @@ enum VenusLighthouseFourthFloorActorId {
   /// The two platforms, SPRITE_BALANCE_PLATFORM, that rise or sink to the
   /// weight of the floating pillars set down on them
   /// (VenusLighthouse_LowerFloatingPillars).
-  /// ★ Named from what the player sees: a white platform on a carved grey base,
-  /// the west of two (its render)
   ACTOR_BALANCE_WEST = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: a white platform on a carved grey base,
-  /// the east of two (its render)
   ACTOR_BALANCE_EAST,
   /// The four floating pillars Carry sets down
   /// (VenusLighthouse_CarryFloatingPillar).
-  /// ★ Named from what the player sees: four grey pillars carved with spirals,
-  /// three in a row above the platforms (its render)
   ACTOR_FIRST_FLOATING_PILLAR,
   /// A lady statue (SPRITE_LADY_STATUE), where the first gate effect sets out
   /// once all four socket pillars have sunk. The camera goes to it first.
-  /// ★ Named from what the player sees: a white statue of a robed woman at the
-  /// foot of the gold track (its render)
   ACTOR_SOCKET_STATUE = ACTOR_FIRST_FLOATING_PILLAR + 4,
   /// The four pillars of the pillar room (VenusLighthouse_MoveSocketPillar).
-  /// ★ Named from what the player sees: four grey pillars carved with spirals
-  /// on the gold track (its render)
   ACTOR_FIRST_SOCKET_PILLAR,
   /// SPRITE_PARTICLE, as ACTOR_GATE_SPARKLE, placed where the gate effects
   /// end once the gate is open.
-  /// ★ Named from what the player sees: a sparkle, as on the second floor,
-  /// where a gate has opened (its render)
   ACTOR_SOCKET_GATE_SPARKLE = ACTOR_FIRST_SOCKET_PILLAR + 4,
   /// The platform, SPRITE_FLOATING_PLATFORM as the floating platforms of
   /// Mercury Lighthouse's aerie. It dips as the leader lands on it at
   /// VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PSYNERGY_STONE_RISING
   /// and then carries him up to the Lighthouse Aerie
   /// (VenusLighthouse_RaiseLeaderWithSpray).
-  /// ★ Named from what the player sees: a round white platform in a pit of its
-  /// own (its render)
   ACTOR_RISING_PLATFORM
 };
 
@@ -865,7 +785,6 @@ static void VenusLighthouse_LandWithRadialDust(void) {
 
 /// In VenusLighthouseGroundFloor, the leader stands on the floor switch and
 /// holds it down.
-/// ★ Named from its area name: Venus Lighthouse
 #define FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH FLAG_SCENE_TEMP_01
 
 // A light's update routine: every four frames a shrinking particle around it,

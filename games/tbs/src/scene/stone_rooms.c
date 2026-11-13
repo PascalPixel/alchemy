@@ -25,8 +25,6 @@
 ///   this way clears FLAG_SHOW_AREA_NAME, so no area name is shown. The room
 ///   uses the thieves' tables, so its chests and exit sit in the same
 ///   trigger table as the thieves' talk and the Vault door.
-///   ★ Named from what the player sees: a
-///   hidden stone room of six chests behind barred windows (its render)
 
 #include "main_routine_work.h"
 #include "module/scene/stone_rooms.h"
@@ -56,17 +54,11 @@
 enum StoneRoomsCellBehavior {
   CELL_BEHAVIOR_VAULT_JAIL_DOOR = 1,
   CELL_BEHAVIOR_LUNPA_HIDDEN_ROOM_DOOR = 2,
-  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   CELL_BEHAVIOR_LUNPA_HIDDEN_ROOM_CHEST_WATER_OF_LIFE = 100,
-  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   CELL_BEHAVIOR_LUNPA_HIDDEN_ROOM_CHEST_SMOKE_BOMB,
-  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   CELL_BEHAVIOR_LUNPA_HIDDEN_ROOM_CHEST_LUCKY_MEDAL,
-  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   CELL_BEHAVIOR_LUNPA_HIDDEN_ROOM_CHEST_ANTIDOTE,
-  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   CELL_BEHAVIOR_LUNPA_HIDDEN_ROOM_CHEST_COINS,
-  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   CELL_BEHAVIOR_LUNPA_HIDDEN_ROOM_CHEST_ELIXIR
 };
 
@@ -78,20 +70,12 @@ enum StoneRoomsCellBehavior {
 enum JailActorId {
   /// The thieves' leader (SPRITE_MAN_WITH_LONG_DARK_HAIR), in the middle of the
   /// cell.
-  /// ★ Named from the game: "Shut yer yaps!"
-  /// (MsgVaultThiefLeaderSilencesThieves)
   ACTOR_THIEF_LEADER = ACTOR_FIRST_PLACED,
   /// The thief on the left (SPRITE_PERSON_IN_PURPLE).
-  /// ★ Named from the game: "If only we had escaped to the cave northeast of
-  /// Goma Range." (MsgVaultLeftThiefRegretsEscape)
   ACTOR_LEFT_THIEF,
   /// The thief on the right (SPRITE_PERSON_IN_PURPLE).
-  /// ★ Named from the game: "Blast! I knew we should have skipped town sooner."
-  /// (MsgVaultRightThiefRegretsStaying)
   ACTOR_RIGHT_THIEF,
   /// The lone prisoner after the thieves have broken out (SPRITE_STRONGMAN).
-  /// ★ Named from the game: "I hit somebody, so they put me in here."
-  /// (MsgVaultPrisonerRegretsFight)
   ACTOR_PRISONER = ACTOR_FIRST_PLACED
 };
 

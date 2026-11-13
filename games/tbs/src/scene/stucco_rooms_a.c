@@ -64,124 +64,74 @@
 enum StuccoRoomsAActorId {
   // Kalay's houses
   /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR).
-  /// ★ Named from the game: "I'm shocked to hear the righteous thieves of
-  /// Lunpa have gone bad." (MsgKalayInteriorsImShockedToHearTheRighteous)
   ACTOR_YOUNG_MAN_ON_LUNPA_GONE_BAD = ACTOR_FIRST_PLACED,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR).
-  /// ★ Named from the game: "Lunpa was a kind thief."
-  /// (MsgKalayInteriorsLunpaWasAKindThiefHis)
   ACTOR_WOMAN_SAYING_LUNPA_WAS_KIND,
   /// A burly grey-haired man (SPRITE_BURLY_MAN_WITH_GREY_HAIR).
-  /// ★ Named from the game: "Somehow, the north has become the center of
-  /// much attention lately." (MsgKalayInteriorsSomehowTheNorthHasBecomeThe)
   ACTOR_MAN_ON_THE_NORTH,
   /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS), who says the
   /// soldiers took the merchant to Lord Hammet's Palace.
-  /// ★ Named from the game: "A merchant from Vault had been saying many
-  /// things about the north..." (MsgKalayInteriorsAMerchantFromVaultHadBeen)
   ACTOR_WOMAN_ON_THE_VAULT_MERCHANT,
   /// The worried father's son, drawn with the bald man in red's frames
   /// (sprite 126, bald_man_in_red.png's picture), who may not go to Vault.
-  /// ★ Named from the game: "I'm an adult, now. I don't want my father
-  /// ordering me around..." (MsgKalayInteriorsImAnAdultNowIDont)
   ACTOR_WORRIED_FATHERS_SON,
   /// An old man with a cane (SPRITE_OLD_MAN_WITH_CANE).
-  /// ★ Named from the game: "I do not want my son to face any danger."
-  /// (MsgKalayInteriorsIDoNotWantMySon)
   ACTOR_WORRIED_FATHER,
   /// Drawn with the young man in green's frames (sprite 127,
   /// young_man_in_green.png's
   /// picture), whose mother's thoughts call him a merchant.
-  /// ★ Named from the game: "I feel like I am living with a merchant...
-  /// Actually, he is one!" (MsgKalayInteriorsMySonIsVeryTightWith)
   ACTOR_MERCHANT,
   /// The merchant's mother, an old woman (SPRITE_OLD_WOMAN).
-  /// ★ Named from the game: "My son received his knack for business from Lord
-  /// Hammet." (MsgKalayInteriorsMySonReceivedHisKnackFor)
   ACTOR_MERCHANTS_MOTHER,
   /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), gone once
   /// the tour has left.
-  /// ★ Named from the game: "Do you know about the continent south of
-  /// Tolbi?" (MsgKalayDoKnowAboutContinentSouth)
   ACTOR_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR), about to join the
   /// tour, and gone with it.
-  /// ★ Named from the game: "I better get ready! The Colosso Tour is about
-  /// to leave!" (MsgKalayInteriorsIBetterGetReadyTheColosso)
   ACTOR_WOMAN_BOUND_FOR_THE_TOUR,
   /// Two men in white turbans (SPRITE_MAN_IN_WHITE_TURBAN) who fled Lalivero,
   /// in Gondowan.
-  /// ★ Named from the game: "We lived in Lalivero"
-  /// (MsgKalayInteriorsWeFledFromGondowanToThe)
   ACTOR_MAN_FROM_LALIVERO,
-  /// ★ Named from the game: "Lalivero, where I'm from, is the largest village
-  /// in Gondowan." (MsgKalayInteriorsLaliveroWhereImFromIsThe)
   ACTOR_SECOND_MAN_FROM_LALIVERO,
   // Kalay's inn: all but the innkeeper, his wife and ACTOR_INN_GUEST are gone
   // once the tour has left.
   /// A man with dark hair (SPRITE_MAN_WITH_DARK_HAIR).
-  /// ★ Named from the game: "Our inn feels so empty"
-  /// (MsgKalayOurInnFeelsEmptyNow)
   ACTOR_INNKEEPER = ACTOR_FIRST_PLACED,
   /// The innkeeper's wife, a woman in a pink apron
   /// (SPRITE_WOMAN_IN_PINK_APRON), who says once the tour has left that even
   /// their chef went with it.
-  /// ★ Named from the game: "Even if my husband wanted to go on the Colosso
-  /// tour" (MsgKalayInteriorsEvenIfMyHusbandWantedTo)
   ACTOR_INNKEEPERS_WIFE,
   /// A chef (SPRITE_CHEF).
-  /// ★ Named from the game: "I've signed on for a tour group going to
-  /// Tolbi." (MsgKalayInteriorsIveSignedOnForATour)
   ACTOR_FIRST_TOURIST,
   /// A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN), who talks of the
   /// Colosso gladiators.
   ///
   /// Like the other guests the tour takes, she is named by what Kalay's
   /// people say of the inn's guests.
-  /// ★ Named from the game: "The guests at the inn are tourists on their way
-  /// to see Colosso." (MsgKalayInnFestivalTourists)
   ACTOR_SECOND_TOURIST,
   /// The tour's guides, men carrying packs (SPRITE_MAN_CARRYING_A_PACK), in
   /// the inn's dining room.
-  /// ★ Named from the game: "Please finish eating if you are taking the tour!"
-  /// (MsgKalayPleaseFinishEatingIfTaking)
   ACTOR_TOUR_GUIDE,
-  /// ★ Named from the game: "I'm exhausted from preparing this tour."
-  /// (MsgKalayInteriorsImExhaustedFromPreparingThisTour)
   ACTOR_SECOND_TOUR_GUIDE,
   /// A bald, muscular man (SPRITE_BALD_MUSCULAR_MAN), who expects Lord Hammet
   /// in Tolbi.
-  /// ★ Named from the game: "The guests at the inn are tourists on their way
-  /// to see Colosso." (MsgKalayInnFestivalTourists)
   ACTOR_THIRD_TOURIST,
   /// An old man with a cane (SPRITE_OLD_MAN_WITH_CANE), who would have
   /// entered Colosso if he were younger.
-  /// ★ Named from the game: "The guests at the inn are tourists on their way
-  /// to see Colosso." (MsgKalayInnFestivalTourists)
   ACTOR_FOURTH_TOURIST,
   /// An old woman (SPRITE_OLD_WOMAN), who stays once the tour has left.
-  /// ★ Named from the game: "Many of the guests here seem to be heading to
-  /// Tolbi." (MsgKalayInteriorsManyOfTheGuestsHereSeem)
   ACTOR_INN_GUEST,
   /// A woman with a sword (SPRITE_PERSON_WITH_SWORD).
-  /// ★ Named from the game: "I'm going to sign up for Colosso as soon as I
-  /// arrive in Tolbi." (MsgKalayInteriorsImGoingToSignUpFor)
   ACTOR_WARRIOR_SIGNING_UP_FOR_COLOSSO,
   /// The warriors bound for Colosso, Ouranos and Sean.
   ///
   /// They are young men with red and with blue hair
   /// (SPRITE_YOUNG_MAN_WITH_RED_HAIR and SPRITE_YOUNG_MAN_WITH_BLUE_HAIR, as
   /// in ship_rooms.c), named by what each says of the other.
-  /// ★ Named from the game: "Then, Ouranos and I will fight each other"
-  /// (MsgKalayInteriorsWereSoStrongMakingTheFinals)
   ACTOR_OURANOS,
-  /// ★ Named from the game: "I have power, and Sean has speed."
-  /// (MsgKalayInteriorsIHavePowerAndSeanHas)
   ACTOR_SEAN,
   // The Kalay Sanctum
   /// A man in a tall hat (SPRITE_MAN_IN_TALL_HAT).
-  /// ★ Named from the game: "Then I call upon my healing powers."
-  /// (MsgReviveDonation)
   ACTOR_HEALER = ACTOR_FIRST_PLACED
 };
 

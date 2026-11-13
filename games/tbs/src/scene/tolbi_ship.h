@@ -10,16 +10,10 @@
 // The voyage's area flags, cleared when the party enters another area.
 
 /// A passenger chosen to row follows the party to the rowing deck.
-/// ★ Named from the game: "Looks like you've been chosen to help row"
-/// (MsgTolbiShipLooksLikeYouveBeenChosen)
 #define FLAG_TOLBI_SHIP_ROWER_CHOSEN FLAG_AREA_TEMP_00
 /// The hold's stairs are barred while monsters are on the rowing deck.
-/// ★ Named from the game: "Monsters belowdecks!"
-/// (MsgTolbiShipMonstersBelowdecks)
 #define FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS FLAG_AREA_TEMP_01
 /// The Kraken is on deck, and the deck shakes until it is defeated.
-/// ★ Named from the game: "there's a huge sea monster on the ship!"
-/// (MsgTolbiShipWonderWhatsWrongShipShouldnt)
 #define FLAG_TOLBI_SHIP_KRAKEN_ON_DECK FLAG_AREA_TEMP_02
 
 /// A speaker, which is the actor with the speaker bits for where its message

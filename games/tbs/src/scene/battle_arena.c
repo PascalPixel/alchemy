@@ -49,53 +49,34 @@
 
 /// The attendant has asked the player to take part. Every 300th call of
 /// BattleArena_PromptToParticipate clears it so she asks again.
-/// ★ Named from the game: "Would you like to apply?" (MsgLobbyPleaseSpeakWhen)
 #define FLAG_BATTLE_ARENA_ATTENDANT_ASKED FLAG_SCENE_TEMP_00
 /// The linked partner has asked for a battle. Its signature matches and it
 /// stands asked or in the circle.
-/// ★ Named from the game: "Your opponent has asked for a battle. Do you
-/// accept?" (MsgLobbyPleaseSpeakWhen)
 #define FLAG_BATTLE_ARENA_PARTNER_ASKED FLAG_SCENE_TEMP_01
 /// The player has agreed to a battle.
-/// ★ Named from the game: "When you finish your preparations, please step into
-/// the circle!" (MsgLobbyPleaseSpeakWhen)
 #define FLAG_BATTLE_ARENA_PLAYER_AGREED FLAG_SCENE_TEMP_02
 /// The party is on its way into the battle.
-/// ★ Named from the game: "Good luck!" (MsgLobbyGoodLuck)
 #define FLAG_BATTLE_ARENA_ENTERING_BATTLE FLAG_SCENE_TEMP_03
 /// ACTOR_PARTY_ORDER_VISITOR has given the linked finals' limit of three
 /// allies, so the next talk explains how to change the party's order.
-/// ★ Named from the game: "You can change the order of your party in the status
-/// screen." (MsgLobbyChangeOrderParty)
 #define FLAG_BATTLE_ARENA_PARTY_ORDER_NEXT FLAG_SCENE_TEMP_04
 /// The link was lost and the attendant has yet to say so.
-/// ★ Named from the game: "The link was disconnected."
-/// (MsgLobbyLinkDisconnected)
 #define FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED FLAG_SCENE_TEMP_05
 /// The first of eight flags, one per character from Isaac, each set while that
 /// character is in the battle party (BattleArena_Initialize).
 #define FLAG_BATTLE_ARENA_IN_PARTY_FIRST FLAG_SCENE_TEMP_F0
 /// The attendant has explained the Battle Arena once. Talking to her again
 /// offers to apply.
-/// ★ Named from the game: "Please speak to me when you want to fight in a
-/// battle." (MsgLobbyPleaseSpeakWhen)
 #define FLAG_BATTLE_ARENA_ATTENDANT_EXPLAINED FLAG_AREA_TEMP_00
 /// This console is the link's child (multiplayer id 1), which receives the
 /// parties first.
-/// ★ Named from the game: "Test your skills in Linked Battles and Monster
-/// Battles!" (MsgFieldWelcomeToBattleArenaWherePeople)
 #define FLAG_BATTLE_ARENA_LINK_CHILD FLAG_AREA_TEMP_02
 /// The link is up. Both consoles were heard (LOBBY_LINK_READY_MASK).
-/// ★ Named from the game: "Your opponent has arrived!"
-/// (MsgLobbyOpponentArrived)
 #define FLAG_BATTLE_ARENA_LINK_UP FLAG_AREA_TEMP_03
 /// A linked battle has ended since the leader last walked south of z 224, so
 /// the party and the visitors speak of it.
-/// ★ Named from the game: "Battle results were saved."
-/// (MsgLobbyBattleResultsSaved)
 #define FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED FLAG_AREA_TEMP_04
 /// The last linked battle was won.
-/// ★ Named from the game: "Yeah! We won!" (MsgLobbyWonToldCountOn)
 #define FLAG_BATTLE_ARENA_LINK_BATTLE_WON FLAG_AREA_TEMP_05
 
 // Link transfers use three unit records followed by one recovery-table record.
@@ -143,61 +124,28 @@
 enum BattleArenaActorId {
   /// The attendant, who arranges every battle. ACTOR_GREETER calls her the girl
   /// at the counter.
-  /// ★ Named from the game: "Please speak to me when you want to fight in a
-  /// battle." (MsgLobbyPleaseSpeakWhen)
   ACTOR_ATTENDANT = ACTOR_FIRST_PLACED,
   /// Reports the linked battles won, and answers for ACTOR_DEBUG_HELPER.
-  /// ★ Named from the game: "I will tell you your total wins when you finish
-  /// the linked finals." (MsgLobbyTellTotalWins)
   ACTOR_LINKED_WINS_TELLER,
   /// Opens a Sanctum's services (BattleArena_OpenSanctum). The sprite is
   /// SPRITE_MAN_IN_TALL_HAT, the healer of every Sanctum in sanctum.c.
-  /// ★ Named from the game: "Healer" (MsgDebugGlyphName)
   ACTOR_HEALER,
-  /// ★ Named from the game: "Welcome to Battle Arena, where people craving
-  /// battle meet!" (MsgFieldWelcomeToBattleArenaWherePeople)
   ACTOR_GREETER,
-  /// ★ Named from the game: "I am a traveling warrior. I came here to become
-  /// stronger..." (MsgLobbyTravelingWarrior)
   ACTOR_TRAVELING_WARRIOR,
-  /// ★ Named from the game: "Up to three allies can fight in Linked Battle
-  /// finals." (MsgLobbyThreeAlliesFight)
   ACTOR_FINALS_VISITOR,
-  /// ★ Named from the game: "Is this the Battle Arena the old man spoke of?"
-  /// (MsgLobbyBattleArenaOld)
   ACTOR_OLD_MANS_ARENA_VISITOR,
   /// Loads a debug parameter set (BattleArena_ChooseDebugParameterSet).
-  /// ★ Named from the game: "Choose your parameters here."
-  /// (MsgLobbyChooseParameters)
   ACTOR_DEBUG_HELPER,
   /// Explains the linked finals' limit of three allies, then the party order.
-  /// ★ Named from the game: "You can change the order of your party in the
-  /// status screen." (MsgLobbyChangeOrderParty)
   ACTOR_PARTY_ORDER_VISITOR,
-  /// ★ Named from the game: "In the linked finals, you can't delay after your
-  /// opponent selects a move." (MsgFieldInTheLinkedFinalsYouCant)
   ACTOR_COMMAND_TIME_VISITOR,
-  /// ★ Named from the game: "To use Summon quickly, Djinn must be on standby."
-  /// (MsgFieldToUseSummonQuicklyDjinnMust)
   ACTOR_SUMMON_VISITOR,
-  /// ★ Named from the game: "Do you put Djinn on standby before a battle, or
-  /// do you set them?" (MsgFieldDoYouPutDjinnOnStandby)
   ACTOR_SET_DJINN_VISITOR,
-  /// ★ Named from the game: "Remove Djinn you rarely use so you can summon
-  /// quickly." (MsgFieldRemoveDjinnYouRarelyUseSo)
   ACTOR_STANDBY_DJINN_VISITOR,
-  /// ★ Named from the game: "Monster Battle rules say you all must fight as a
-  /// team against a monster." (MsgFieldMonsterBattleRulesSayYouAll)
   ACTOR_MONSTER_RULES_VISITOR,
   /// Reports the most Monster Battles won in a row.
-  /// ★ Named from the game: "I'll be counting your victories!"
-  /// (MsgLobbyCantWaitSee)
   ACTOR_MONSTER_WINS_TELLER,
-  /// ★ Named from the game: "All the warriors are impressive, so I get edgy
-  /// before battles begin." (MsgFieldAllTheWarriorsAreImpressiveSo)
   ACTOR_EDGY_VISITOR,
-  /// ★ Named from the game: "I could enter, but I'd just get hurt if I did..."
-  /// (MsgFieldICouldEnterButIdJust)
   ACTOR_WARY_VISITOR
 };
 

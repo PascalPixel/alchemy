@@ -159,84 +159,56 @@ enum TolbiShipDeckActorId {
   /// There is one each from 1 (the oar left still) to 4 (fastest), drawn under
   /// the deck. Each oar at the sides copies the frames of its seat's stroke
   /// (TolbiShipDeck_SwingOar). At rest the first stands in for the first oar.
-  /// ★ Named from what the player sees: an oar dipping into the water (its
-  /// render)
   ACTOR_FIRST_STROKE_OAR = ACTOR_FIRST_PLACED,
   /// The eight oars at the ship's sides (SPRITE_OAR).
   ///
   /// There are four at x 132, then four at x 300, which are drawn mirrored.
   /// The rowing deck's map shows them out while the ship is rowed
   /// (https://alchemy.pascalpixel.com/places/tolbi-ship-deck_tolbi-ship-rowing/map-0.png).
-  /// ★ Named from what the player sees: an oar dipping into the water (its
-  /// render)
   ACTOR_FIRST_OAR = ACTOR_FIRST_STROKE_OAR + 4,
 
   // At Kalay: gTolbiShipDeckActorPlacements, then
   // gTolbiShipDeckActorPlacementsWaiting.
   /// The crewman, a man in a blue bandana (SPRITE_MAN_IN_BLUE_BANDANA), who
   /// hid the captain's anchor charm on the mast and denies everything.
-  /// ★ Named from the game: "I didn't do anything..."
-  /// (MsgTolbiShipDidntDoAnything)
   ACTOR_KALAY_CREWMAN = ACTOR_FIRST_OAR + 8,
   /// One of the crew, a man in a yellow bandana (SPRITE_MAN_IN_YELLOW_BANDANA),
   /// who answers the tour guide beside him.
   ///
   /// When the ship leaves he calls "Preparations... Ready!"
   /// (MsgTolbiShipPreparationsReady).
-  /// ★ Named from the game: "I told you, we're leaving soon. We'll set sail
-  /// when our replacement arrives!" (MsgTolbiShipToldWereLeavingSoonSet)
   ACTOR_KALAY_CREW_MEMBER,
   /// The captain, an old man with a white beard in green
   /// (SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN).
-  /// ★ Named from the game: "Now we can set sail. Right, Captain?"
-  /// (MsgTolbiShipItsMyLuckyAnchor)
   ACTOR_KALAY_CAPTAIN,
   /// Kaja, a bald man with a beard (SPRITE_KAJA).
-  /// ★ Named from the game: "Say, Kaja, how are the oarsmen doing?"
-  /// (MsgTolbiShipWonderCouldHaveHappened)
   ACTOR_KALAY_KAJA,
   /// The tour group's guide, a man carrying a pack (SPRITE_MAN_CARRYING_A_PACK)
   /// as on the Tolbi Docks.
   ///
   /// Mind Read hears "I just hope we don't have to refund their money at the
   /// end of the trip."
-  /// ★ Named from the game: "I'm the tour group's guide!"
-  /// (MsgTolbiShipInteriorsNobodyWouldChooseMeAfterAll)
   ACTOR_KALAY_TOUR_GUIDE,
   /// Three of the tour group's passengers, named by what they say first.
   ///
   /// This one is a chef (SPRITE_CHEF).
-  /// ★ Named from the game: "I wonder what's going on. We've been waiting an
-  /// awfully long time." (MsgTolbiShipDeckIWonderWhatsGoingOnWeve)
   ACTOR_KALAY_PASSENGER_WAITING_LONG,
   /// A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN).
-  /// ★ Named from the game: "I wonder if I'm the only one here who's going to
-  /// Tolbi to see Colosso..." (MsgTolbiShipDeckIWonderIfImTheOnly)
   ACTOR_KALAY_PASSENGER_SEEING_COLOSSO,
   /// A bald, muscular man (SPRITE_BALD_MUSCULAR_MAN).
-  /// ★ Named from the game: "The Karagol is like a humongous lake, surrounded
-  /// by land." (MsgTolbiShipDeckTheKaragolIsLikeAHumongous)
   ACTOR_KALAY_PASSENGER_KARAGOL,
 
   // At sea: gTolbiShipDeck_CrewActorPlacements after the oars, then each
   // event's own rows.
-  /// ★ Named from the game: "Say, Kaja, how are the oarsmen doing?"
-  /// (MsgTolbiShipWonderCouldHaveHappened)
   ACTOR_SEA_KAJA = ACTOR_FIRST_OAR + 8,
   /// Ouranos, a young man with red hair (SPRITE_YOUNG_MAN_WITH_RED_HAIR).
-  /// ★ Named from the game: "You know, my friend Ouranos here is scared of
-  /// ships." (MsgTolbiShipIfWeArentGoingSet)
   ACTOR_SEA_OURANOS,
   /// Sean, a young man with blue hair (SPRITE_YOUNG_MAN_WITH_BLUE_HAIR).
-  /// ★ Named from the game: "Well, it's just like Sean said."
-  /// (MsgTolbiShipItsMyLuckyAnchor)
   ACTOR_SEA_SEAN,
   /// With ACTOR_KALAY_CREW_MEMBER's sprite.
   ///
   /// At anchor, Mind Read hears "I want to be a sailor like Kaja". On later
   /// departures he calls "Preparations... Ready!"
-  /// ★ Named from the game: "I have a job to do. I can't row!"
-  /// (MsgTolbiShipDeckYouMustFeelAwfullyImportantOrdering)
   ACTOR_SEA_CREW_MEMBER,
   /// The first attack's three monsters, all of one sprite.
   ///
@@ -244,52 +216,37 @@ enum TolbiShipDeckActorId {
   /// (gTolbiShipDeck_MonstersBoardActorPlacements). They leap aboard and go
   /// below by the first door, where gShipRooms_FirstAttackMonsters places
   /// them.
-  /// ★ Named from what the player sees: a jellyfish monster
-  /// (SPRITE_JELLYFISH_MONSTER) leaping onto the deck from the sea (its
-  /// render)
   ACTOR_SEA_FIRST_ATTACK_MONSTER,
   /// Four monsters of one sprite that hover by the deck.
   ///
   /// They belong to TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK
   /// (gTolbiShipDeck_SecondAttackActorPlacements). The first two dive at Sean
   /// and the others at Ouranos.
-  /// ★ Named from what the player sees: a pink winged monster
-  /// (SPRITE_PINK_WINGED_MONSTER) hovering by the rail (its render)
   ACTOR_SEA_FIRST_HOVERING_MONSTER = ACTOR_SEA_CREW_MEMBER + 1,
   /// Then the second attack's three come aboard and go below.
   ///
   /// Two are of the hovering monsters' sprite and one other, as
   /// gShipRooms_SecondAttackMonsters places them.
-  /// ★ Named from what the player sees: two pink winged monsters and a lizard
-  /// monster (SPRITE_LIZARD_MONSTER) coming aboard (its render)
   ACTOR_SEA_SECOND_ATTACK_MONSTER = ACTOR_SEA_FIRST_HOVERING_MONSTER + 4,
   /// The splash that swells for 24 frames at the rail where the last of them
   /// leaps aboard out of the sea (SPRITE_SPLASH).
-  /// ★ Named from what the player sees: a spray of water at the rail (its
-  /// render)
   ACTOR_SEA_SPLASH = ACTOR_SEA_SECOND_ATTACK_MONSTER + 3,
   /// Four monsters with the first attack's sprite, that leap at Sean, the
   /// first two, and at Ouranos.
   ///
   /// They belong to TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK
   /// (gTolbiShipDeck_ThirdAttackActorPlacements).
-  /// ★ Named from what the player sees: a jellyfish monster leaping at Sean
-  /// across the deck (its render)
   ACTOR_SEA_FIRST_LEAPING_MONSTER = ACTOR_SEA_CREW_MEMBER + 1,
   /// Then the third attack's three, which go below.
   ///
   /// Two have the first attack's sprite and one other, as
   /// gShipRooms_ThirdAttackMonsters places them. The last drops onto the deck.
-  /// ★ Named from what the player sees: two jellyfish monsters and a blue
-  /// winged monster (SPRITE_BLUE_WINGED_MONSTER) going below (its render)
   ACTOR_SEA_THIRD_ATTACK_MONSTER = ACTOR_SEA_FIRST_LEAPING_MONSTER + 4,
   /// The falling monster's shadow, standing in for its own while it drops.
   ///
   /// A blank sprite (SPRITE_BLANK) draws only its shadow, which grows from a
   /// tenth of its size where the monster will land. It goes the moment the
   /// monster lands and its own shadow is switched on.
-  /// ★ Named from what the player sees: a shadow on the deck growing where the
-  /// falling monster will land (its render)
   ACTOR_SEA_FALLING_MONSTER_SHADOW = ACTOR_SEA_THIRD_ATTACK_MONSTER + 3,
   /// The Kraken, which the party charges.
   ///
@@ -297,8 +254,6 @@ enum TolbiShipDeckActorId {
   /// (gTolbiShipDeck_KrakenActorPlacements, after Garet, Ivan and Mia in
   /// their own slots). At anchor the same rows place it only for it to be
   /// released at once.
-  /// ★ Named from the game: "You did good against that Kraken."
-  /// (MsgTolbiShipThankIsaacDidGoodAgainst)
   ACTOR_SEA_KRAKEN = ACTOR_SEA_CREW_MEMBER + 1,
   /// An invisible actor (SPRITE_BLANK) the camera follows across the
   /// deck.
@@ -308,24 +263,16 @@ enum TolbiShipDeckActorId {
   ///
   /// Kaja says "Tell our tourists they can enjoy a nice, long break after we
   /// arrive."
-  /// ★ Named from the game: "The passengers are going stir crazy!"
-  /// (MsgTolbiShipHowWasIsaacDidExplore)
   ACTOR_TOUR_GUIDE_AT_ANCHOR,
 
   // At Tolbi: gTolbiShipDeckActorPlacementsArrived.
-  /// ★ Named from the game: "You lookin' for Sean and Ouranos?"
-  /// (MsgTolbiShipDeckYouLookinForSeanAndOuranos)
   ACTOR_ARRIVED_KAJA = ACTOR_FIRST_OAR + 8,
   /// A man in a blue bandana (SPRITE_MAN_IN_BLUE_BANDANA).
   ///
   /// Mind Read hears "I'm just going to hang out in Tolbi and enjoy myself for
   /// a while."
-  /// ★ Named from the game: "Are you headed for Colosso, too?"
-  /// (MsgTolbiShipHeadedColosso)
   ACTOR_ARRIVED_ASKS_ABOUT_COLOSSO,
   /// With ACTOR_KALAY_CREW_MEMBER's sprite.
-  /// ★ Named from the game: "This group that came on our last voyage pulled
-  /// some strange stunts." (MsgTolbiShipDeckThisGroupThatCameOnOur)
   ACTOR_ARRIVED_CREW_MEMBER,
   /// The first of the nine passengers who could promise to row.
   ///
@@ -335,8 +282,6 @@ enum TolbiShipDeckActorId {
   /// chef, the young woman in green, the bald, muscular man, the woman with a
   /// sword, the young man with brown hair, the woman with fair hair and an old
   /// man with a cane (SPRITE_OLD_MAN_WITH_CANE).
-  /// ★ Named from the game: "I'm the tour group's guide!"
-  /// (MsgTolbiShipInteriorsNobodyWouldChooseMeAfterAll)
   ACTOR_ARRIVED_FIRST_PASSENGER,
   /// An invisible actor (SPRITE_BLANK) the camera follows as the rowers
   /// come up.
@@ -362,12 +307,8 @@ enum TolbiShipDeckCellBehavior {
 #include "shared/actor_pulse.h"
 
 /// The door to the passengers' hold has been drawn open this visit.
-/// ★ Named from the game: "I saw some warriors in among the passengers
-/// belowdecks." (MsgTolbiTolbiShipThenTheyAreDangerous)
 #define FLAG_TOLBI_SHIP_DECK_PASSENGER_HOLD_DOOR_OPEN FLAG_SCENE_TEMP_71
 /// The door to the captain's quarters has been drawn open this visit.
-/// ★ Named from the game: "Where else? To the captain's quarters, of course."
-/// (MsgTolbiShipIfWeArentGoingSet)
 #define FLAG_TOLBI_SHIP_DECK_CAPTAINS_QUARTERS_DOOR_OPEN FLAG_SCENE_TEMP_72
 
 /// An actor script call that shows the actor's sprite.

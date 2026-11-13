@@ -15,8 +15,6 @@
 
 /// The cells under Vault's rope bridge have the deck's ground, so the leader is
 /// on the bridge; kept through a battle.
-/// ★ Named from what the player sees: a wooden bridge with rope rails between
-/// two ledges, a path running under it (its render)
 #define FLAG_VAULT_ON_BRIDGE FLAG_SCENE_TEMP_00
 
 /// Gives the cells under the bridge the deck's ground, from a copy kept

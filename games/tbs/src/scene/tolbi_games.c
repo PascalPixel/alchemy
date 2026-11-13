@@ -83,7 +83,6 @@
 #include "shared/colosso_story_flags.h"
 
 /// The spring has risen and faded into view this visit.
-/// ★ Named from its area name: Tolbi Spring
 #define FLAG_TOLBI_SPRING_RISEN FLAG_SCENE_TEMP_00
 
 /// The party's coins as Lucky Dice starts, kept in gSceneLocalState so the
@@ -114,54 +113,32 @@ enum SpringTossKind { SPRING_TOSS_COIN, SPRING_TOSS_MEDAL };
 enum TolbiSpringGameRoomActorId {
   /// A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN), who runs Lucky
   /// Wheels (TolbiSpring_TalkToWheelsAttendant).
-  /// ★ Named from the game: "Step right up and try your hand at lucky wheels!"
-  /// (MsgTolbiStepRightTry)
   ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT = ACTOR_FIRST_PLACED,
   /// A young man with fair hair (SPRITE_YOUNG_MAN_WITH_FAIR_HAIR), who runs
   /// Lucky Dice (TolbiSpring_OfferLuckyDice).
-  /// ★ Named from the game: "Hey, buddy, wanna try yer luck at the dice?"
-  /// (MsgTolbiBuddyWannaTry)
   ACTOR_TOLBI_SPRING_DICE_ATTENDANT,
   /// Beside the Lucky Dice attendant, in his sprite.
   ///
   /// He is likely a second attendant, because the Colosso's attendants wear
   /// the same sprite.
-  /// ★ Named from the game: "Read the sign if ya don't know the rules."
-  /// (MsgTolbiSpringReadTheSignIfYaDont)
   ACTOR_TOLBI_SPRING_DICE_RULES_ATTENDANT,
   /// A Lucky Dice player, a burly grey-haired man
   /// (SPRITE_BURLY_MAN_WITH_GREY_HAIR).
-  /// ★ Named from the game: "Is this yer first time to play Lucky Dice?"
-  /// (MsgTolbiYerFirstTime)
   ACTOR_TOLBI_SPRING_DICE_PLAYER_FIRST_TIME,
   /// An old man with a cane (SPRITE_OLD_MAN_WITH_CANE).
-  /// ★ Named from the game: "Getting triple digits is real tough!"
-  /// (MsgTolbiSpringWhoaGettingTripleDigitsIsReal)
   ACTOR_TOLBI_SPRING_DICE_PLAYER_TRIPLE_DIGITS,
   /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS).
-  /// ★ Named from the game: "I don't want to stop playing Lucky Dice"
-  /// (MsgTolbiSpringIDontWantToStopPlaying)
   ACTOR_TOLBI_SPRING_DICE_PLAYER_OUT_OF_COINS,
   /// The Lucky Wheels prize sign the layout draws, read through an
   /// actor with a blank sprite (TolbiSpring_ReadLuckyWheelsPrizes).
-  /// ★ Named from the game: "Lucky Wheels Prizes"
-  /// (MsgTolbiLuckyWheelsPrizesPrizesDetermined)
   ACTOR_TOLBI_SPRING_WHEELS_PRIZE_SIGN,
   /// The Lucky Wheels rules sign, read the same way
   /// (TolbiSpring_ReadLuckyWheelsRules).
-  /// ★ Named from the game: "Lucky Wheels Rules"
-  /// (MsgTolbiLuckyWheelsRulesPullLever)
   ACTOR_TOLBI_SPRING_WHEELS_RULES_SIGN,
-  /// ★ Named from the game: "Throw the dice on the table"
-  /// (MsgTolbiSpringLuckyDiceThrowTheDiceOn)
   ACTOR_TOLBI_SPRING_DICE_RULES_SIGN,
   /// A soldier, gone after Colosso, drawn with the long-haired fighter's
   /// sprite (SPRITE_PERSON_WITH_SWORD).
-  /// ★ Named from the game: "poor soldiers like us"
-  /// (MsgTolbiSpringTheresNoWayPoorSoldiersLike)
   ACTOR_TOLBI_SPRING_SOLDIER,
-  /// ★ Named from the game: "If two numbers match on either"
-  /// (MsgTolbiSpringLuckyDiceIfTwoNumbersMatch)
   ACTOR_TOLBI_SPRING_DICE_PAIRS_SIGN
 };
 
@@ -171,55 +148,32 @@ enum TolbiSpringGameRoomActorId {
 /// The toss draws the coin or the medal with its shadow and three trailing
 /// copies, which TOLBI_SPRING_COIN_TRAIL and TOLBI_SPRING_MEDAL_TRAIL number.
 enum TolbiSpringActorId {
-  /// ★ Named from what the player sees: the tossed coin's shadow, drawn at
-  /// ground level below it as it flies (its render)
   ACTOR_TOLBI_SPRING_COIN_SHADOW = ACTOR_FIRST_PLACED + 3,
   /// The coin the party tosses (SPRITE_SPRING_COIN).
-  /// ★ Named from the game: "Face away from Tolbi Spring and toss a coin into
-  /// it." (MsgTolbiFaceAwayTolbi)
   ACTOR_TOLBI_SPRING_COIN,
-  /// ★ Named from what the player sees: the tossed Lucky Medal's shadow,
-  /// drawn at ground level below it as it flies (its render)
   ACTOR_TOLBI_SPRING_MEDAL_SHADOW = ACTOR_TOLBI_SPRING_COIN + 4,
   /// The Lucky Medal the party tosses (SPRITE_SPRING_LUCKY_MEDAL).
-  /// ★ Named from the game: "If you toss a Lucky Medal"
-  /// (MsgTolbiTossLuckyMedal)
   ACTOR_TOLBI_SPRING_MEDAL,
   /// The four obstacles that move in the spring during a toss, in the order
   /// of sObstacles.
   ///
   /// They are two crabs (SPRITE_CRAB), then two turtles (SPRITE_TURTLE).
-  /// ★ Named from what the player sees: two crabs and two turtles moving in
-  /// the spring's water in the way of the toss (its render)
   ACTOR_TOLBI_SPRING_FIRST_OBSTACLE,
   /// A sign east of the spring (SPRITE_SIGNPOST).
-  /// ★ Named from the game: "If you toss a Lucky Medal"
-  /// (MsgTolbiTossLuckyMedal)
   ACTOR_TOLBI_SPRING_MEDAL_SIGN = ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 4,
   /// A sign west of the spring, in the same sprite.
-  /// ★ Named from the game: "Face away from Tolbi Spring and toss a coin into
-  /// it." (MsgTolbiFaceAwayTolbi)
   ACTOR_TOLBI_SPRING_COIN_SIGN,
   /// The tufts of grass at the foot of each sign.
   ///
   /// They are the signs' sprite in its second frame, mirrored and drawn
   /// underfoot (TolbiSpring_Initialize).
-  /// ★ Named from what the player sees: a tuft of grass at the foot of each
-  /// sign (its render)
   ACTOR_TOLBI_SPRING_EAST_SIGN_GRASS,
-  /// ★ Named from what the player sees: a tuft of grass at the foot of the
-  /// west sign (its render)
   ACTOR_TOLBI_SPRING_WEST_SIGN_GRASS,
   /// A visitor, a man carrying a pack (SPRITE_MAN_CARRYING_A_PACK).
-  /// ★ Named from the game: "Tolbi Spring has mysterious powers."
-  /// (MsgTolbiSpringTolbiSpringHasMysteriousPowersStand)
   ACTOR_TOLBI_SPRING_VISITOR_MYSTERIOUS_POWERS,
   /// A man carrying a pack (SPRITE_MAN_CARRYING_A_PACK) who asks for a medal.
-  /// ★ Named from the game: "Do you have a Lucky Medal?" (MsgTolbiLuckyMedal)
   ACTOR_TOLBI_SPRING_MEDAL_SEEKER,
   /// A visitor, a woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR).
-  /// ★ Named from the game: "Too bad I only have one Lucky Medal."
-  /// (MsgTolbiSpringTooBadIOnlyHaveOne)
   ACTOR_TOLBI_SPRING_VISITOR_ONE_MEDAL
 };
 

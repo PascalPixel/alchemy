@@ -153,62 +153,33 @@ static void Bilibin_UpdateTreasuryStatueCells(void);
 enum BilibinActorId {
   /// Ivy drawn half as tall again at the west edge, where the way into the
   /// Treasury runs. Its Whirlwind row runs nothing.
-  /// ★ Named from what the player sees: leafy ivy against the cliff at the
-  /// village's west edge, the sprite of the ivy Whirlwind blows away (its
-  /// render)
   ACTOR_IVY = ACTOR_FIRST_PLACED,
   /// The man turned into a tree at the village entrance, drawn as a tree.
-  /// ★ Named from the game: "It's a tree, but it almost looks like... a man?"
-  /// (MsgBilibinItsTreeButAlmostLooks)
   ACTOR_TREE_MAN,
   /// A young man with brown hair.
-  /// ★ Named from the game: "Welcome to Bilibin! Please, just ignore that
-  /// strange tree out front!" (MsgBilibinWelcomeToBilibinPleaseJustIgnore)
   ACTOR_YOUNG_MAN_WELCOME,
   /// A woman with fair hair.
-  /// ★ Named from the game: "I hear a large group crossed over Goma Range,
-  /// heading toward Imil." (MsgBilibinIHearALargeGroupCrossed)
   ACTOR_VILLAGER_GROUP_TO_IMIL,
   /// A burly grey-haired man (Bilibin_AskAboutEntranceTree).
-  /// ★ Named from the game: "Did you see the tree at the entrance?"
-  /// (MsgBilibinDidSeeTreeAtEntrance)
   ACTOR_VILLAGER_ASKS_ABOUT_TREE,
   /// A woman in a green dress.
-  /// ★ Named from the game: "Lord McCoy has been quite frightened"
-  /// (MsgBilibinLordMccoyHasBeenQuiteFrightened)
   ACTOR_VILLAGER_MCCOY_FRIGHTENED,
   /// An old man with a cane (Bilibin_AskAboutSoutheastRoute).
-  /// ★ Named from the game: "Have you tried heading southeast from here?"
-  /// (MsgBilibinHaveTriedHeadingSoutheastFrom)
   ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST,
   /// An old woman.
-  /// ★ Named from the game: "The road to Kolima is blocked now"
-  /// (MsgBilibinTheRoadToKolimaIsBlocked)
   ACTOR_OLD_WOMAN_ROAD_BLOCKED,
   /// A small boy.
-  /// ★ Named from the game: "Ever since that man turned into a tree"
-  /// (MsgBilibinEverSinceThatManTurnedInto)
   ACTOR_BOY_SCARED_OF_ENTRANCE,
   /// A little girl.
-  /// ★ Named from the game: "Is it true that a mountain exploded"
-  /// (MsgBilibinIsItTrueThatAMountain)
   ACTOR_GIRL_RED_SKY,
   /// A strongman, stocky and muscular.
-  /// ★ Named from the game: "There's a tower at the tip of Imil"
-  /// (MsgBilibinTheresATowerAtTheTip)
   ACTOR_STRONGMAN_IMIL_TOWER,
   /// A man with a pickaxe.
-  /// ★ Named from the game: "all sorts of strange creatures lurk in every
-  /// forest and mountain!" (MsgBilibinSomethingChangedInTheEruptionNow)
   ACTOR_VILLAGER_STRANGE_CREATURES,
   /// A statue that slides a cell under Move or a push.
-  /// ★ Named from what the player sees: a golden statue of a figure in a long
-  /// robe, SPRITE_GOLDEN_STATUE (its render)
   ACTOR_VILLAGE_STATUE,
   /// The same man once the curse is lifted, a stocky, muscular man with black
   /// hair.
-  /// ★ Named from the game: "I was turned into a tree for a while..."
-  /// (MsgBilibinWasTurnedIntoTreeFor)
   ACTOR_FORMER_TREE_MAN
 };
 
@@ -216,43 +187,27 @@ enum BilibinActorId {
 /// actor placements from ACTOR_FIRST_PLACED.
 enum BilibinBarricadeActorId {
   /// A stack of crates that slides a cell under Move or a push.
-  /// ★ Named from what the player sees: a stack of two wooden crates,
-  /// SPRITE_CRATES (its render)
   ACTOR_BARRICADE_CRATES = ACTOR_FIRST_PLACED,
   /// The bottom of the three trees.
-  /// ★ Named from the game: "They're... so heavy..."
-  /// (MsgBilibinTheyreSoHeavy)
   ACTOR_BOTTOM_TREE,
   /// The tree 32 pixels up, which the travelers from Imil push down onto its
   /// side by the river.
-  /// ★ Named from the game: "There is a tree that looks like a person."
-  /// (MsgBilibinThereTreeLooksLikePerson)
   ACTOR_MIDDLE_TREE,
   /// Jill as a tree, the top of the three.
-  /// ★ Named from the game: "AHHHH! Please! Anyone! Please help!"
-  /// (MsgBilibinAhhhhPleaseAnyonePleaseHelp)
   ACTOR_JILL_TREE,
   /// Jill's two friends, once the curse is lifted, east and west of her. They
   /// are two boys with brown hair. With her they were the "Gang of Three".
-  /// ★ Named from the game: "It was awful luck, being turned into"
-  /// (MsgBilibinItWasAwfulLuckBeingTurned)
   ACTOR_GANG_MEMBER_EAST,
-  /// ★ Named from the game: "I heard we were once called the Gang of Three."
-  /// (MsgBilibinIHeardWeWereOnceCalled)
   ACTOR_GANG_MEMBER_WEST,
   /// Jill herself, once the curse is lifted, drawn as the woman with long fair
   /// hair the villages use (SPRITE_WOMAN_WITH_FAIR_HAIR), though the text calls
   /// the three children.
-  /// ★ Named from the game: "Jill, are these the people who saved you?"
-  /// (MsgBilibinYoureGuy)
   ACTOR_JILL,
   /// Unused: a blank actor (SPRITE_BLANK_32) placed at the map's origin. No
   /// code or trigger addresses it, so it never shows or answers anything.
   ACTOR_INVISIBLE_AT_ORIGIN,
   /// The invisible actor (SPRITE_BLANK) that stands where the middle tree lies
   /// pushed down and answers for it.
-  /// ★ Named from the game: "Oh, it looks like she is okay."
-  /// (MsgBilibinOhItLooksLikeSheIs)
   ACTOR_FALLEN_TREE_STAND_IN
 };
 
@@ -260,11 +215,8 @@ enum BilibinBarricadeActorId {
 /// actor placements from ACTOR_FIRST_PLACED.
 enum BilibinTreasuryActorId {
   /// A statue that slides along one column under Move or a push.
-  /// ★ Named from what the player sees: a golden statue of a figure in a long
-  /// robe, SPRITE_GOLDEN_STATUE (its render)
   ACTOR_TREASURY_STATUE = ACTOR_FIRST_PLACED,
   /// Gust, a Jupiter Djinni, placed until he has joined.
-  /// ★ Named from the game: "Gust" (MsgDjinnName)
   ACTOR_GUST
 };
 
@@ -279,14 +231,10 @@ struct BilibinRippleTimer gBilibin_RippleTimer;
 
 /// The party has looked once at the tree at Bilibin's entrance, so a second
 /// look says it looks like a living person.
-/// ★ Named from the game: "It's a tree, but it almost looks like... a man?"
-/// (MsgBilibinItsTreeButAlmostLooks)
 #define FLAG_BILIBIN_TREE_EXAMINED FLAG_AREA_TEMP_01
 /// McCoy's gate guards have let the party in but it has not yet entered the
 /// palace. The garden guard who reads it is in another area, so it is cleared
 /// before he can.
-/// ★ Named from the game: "The master can be quite cranky. Hurry along, now!"
-/// (MsgBilibinMasterQuiteCranky)
 #define FLAG_BILIBIN_KEEPING_MCCOY_WAITING FLAG_AREA_TEMP_04
 
 const struct SceneEntrance *Bilibin_GetEntrances(void) {

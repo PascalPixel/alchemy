@@ -116,79 +116,42 @@ static void Kolima_RestoreBridgeState(void);
 /// the curse is lifted.
 enum KolimaActorId {
   /// A young man with brown hair.
-  /// ★ Named from the game: "This is Kolima, village of lumberjacks!"
-  /// (MsgKolimaThisIsKolimaVillageOfLumberjacks)
   ACTOR_YOUNG_MAN_VILLAGE_OF_LUMBERJACKS = ACTOR_FIRST_PLACED,
   /// A woman with fair hair, whose mind Ivan reads in
   /// Kolima_WitnessForestCurse.
-  /// ★ Named from the game: "We rely on the forests so much, and yet we hurt
-  /// the sacred tree..." (MsgKolimaWeRelyOnTheForestsSo)
   ACTOR_VILLAGER_RELYING_ON_FORESTS,
   /// A burly grey-haired man.
-  /// ★ Named from the game: "You know, being a tree gives you a lot of time to
-  /// think." (MsgKolimaYouKnowBeingATreeGives)
   ACTOR_VILLAGER_TIME_TO_THINK,
   /// A woman in a green dress.
-  /// ★ Named from the game: "I turned into a tree right when the sparkles fell
-  /// from the sky." (MsgKolimaITurnedIntoATreeRight)
   ACTOR_VILLAGER_SPARKLES_FELL,
   /// An old man with a cane.
-  /// ★ Named from the game: "Don't blame the villagers for being tempted by
-  /// McCoy's money..." (MsgKolimaDontBlameTheVillagersForBeing)
   ACTOR_OLD_MAN_MCCOYS_MONEY,
   /// An old woman.
-  /// ★ Named from the game: "Who would try to use the holy tree to build a
-  /// palace, anyway?" (MsgKolimaWhoWouldTryToUseThe)
   ACTOR_OLD_WOMAN_HOLY_TREE_PALACE,
   /// A small boy with fair hair.
-  /// ★ Named from the game: "I didn't mind being a tree... Water never tasted
-  /// so good!" (MsgKolimaIDidntMindBeingATree)
   ACTOR_BOY_DID_NOT_MIND_BEING_A_TREE,
   /// A little girl with pigtails.
-  /// ★ Named from the game: "Yawn... Trees are so... sleepy..."
-  /// (MsgKolimaYawnTreesAreSoSleepy)
   ACTOR_GIRL_SLEEPY_TREES,
   /// A man with a white beard in a tall hat and a long robe. He opens the
   /// Sanctum's services across his counter (Sanctum_Run).
-  /// ★ Named from the game: "Maybe if I meditate harder, I'll turn back into a
-  /// man..." (MsgKolimaMaybeIfIMeditateHarderIll)
   ACTOR_HEALER,
   /// Tret's wrathful side, unseen while the curse falls.
-  /// ★ Named from the game: "Tret was once a kindly forest king."
-  /// (MsgKolimaWatchOutItsHappeningAgain)
   ACTOR_TRET,
   /// Unseen while the curse falls.
-  /// ★ Named from the game: "We are not the only ones who will die, Laurel."
-  /// (MsgKolimaWatchOutItsHappeningAgain)
   ACTOR_LAUREL,
   /// The fields of Psynergy that rise over the party while the curse falls
   /// ("You know what those fields were?"), each set where its character stands
   /// in Kolima_WitnessForestCurse. Mia's is set only with her in the party.
-  /// ★ Named from the game: "You know what those fields were?"
-  /// (MsgKolimaKnowThoseFieldsWere)
   ACTOR_LEADER_PSYNERGY_FIELD,
-  /// ★ Named from the game: "You know what those fields were?"
-  /// (MsgKolimaKnowThoseFieldsWere)
   ACTOR_IVAN_PSYNERGY_FIELD,
-  /// ★ Named from the game: "You know what those fields were?"
-  /// (MsgKolimaKnowThoseFieldsWere)
   ACTOR_MIA_PSYNERGY_FIELD,
-  /// ★ Named from the game: "You know what those fields were?"
-  /// (MsgKolimaKnowThoseFieldsWere)
   ACTOR_GARET_PSYNERGY_FIELD,
   /// The four sparkles on the ground while the curse lasts
   /// (gKolima_EntryActions).
-  /// ★ Named from the game: "I turned into a tree right when the sparkles
-  /// fell from the sky." (MsgKolimaITurnedIntoATreeRight)
   ACTOR_FIRST_SPARKLE,
   /// Granite, a Venus Djinni, placed until it has joined.
-  /// ★ Named from the game: "Granite" (MsgDjinnName)
   ACTOR_GRANITE = ACTOR_FIRST_SPARKLE + 4,
-  /// ★ Named from the game: "I need to help evacuate the other villagers."
-  /// (MsgValeKyleAbleStop)
   ACTOR_FIRST_VILLAGER = ACTOR_YOUNG_MAN_VILLAGE_OF_LUMBERJACKS,
-  /// ★ Named from the game: "I need to help evacuate the other villagers."
-  /// (MsgValeKyleAbleStop)
   ACTOR_LAST_VILLAGER = ACTOR_HEALER
 };
 
@@ -197,12 +160,8 @@ enum KolimaActorId {
 /// villager as a man and as a tree, in the same place.
 enum KolimaBridgeActorId {
   /// A burly grey-haired man.
-  /// ★ Named from the game: "For a while, I thought no one would ever cross
-  /// this bridge again." (MsgKolimaForAWhileIThoughtNo)
   ACTOR_BRIDGE_VILLAGER = ACTOR_FIRST_PLACED,
   /// The same villager as a tree, while the curse lasts.
-  /// ★ Named from the game: "For a while, I thought no one would ever cross
-  /// this bridge again." (MsgKolimaForAWhileIThoughtNo)
   ACTOR_BRIDGE_VILLAGER_AS_TREE
 };
 

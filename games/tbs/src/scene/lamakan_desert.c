@@ -128,31 +128,17 @@ enum LamakanDesertCellBehavior {
 
 enum {
   /// FLAG_SCENE_TEMP_00: a bath, a pit or the Manticore is under way.
-  /// ★ Named from its area name: Lamakan Desert
   FLAG_DESERT_EVENT_RUNNING = FLAG_SCENE_TEMP_00,
   /// FLAG_SCENE_TEMP_01: Reveal shows the pits.
-  /// ★ Named from the game: "Reveal" (MsgAbilityName)
   FLAG_SECRETS_REVEALED = FLAG_SCENE_TEMP_01,
   /// The heat gauge has passed a quarter, where the first complaints come.
-  /// ★ Named from the game: "This desert is much hotter than I ever imagined"
-  /// (MsgMountainNorthAltinMineWestLama)
   FLAG_HEAT_QUARTER = FLAG_AREA_TEMP_00,
-  /// ★ Named from the game: "I can't keep my cool when it's this hot"
-  /// (MsgMountainNorthAltinMineWestLama)
   FLAG_HEAT_HALF = FLAG_AREA_TEMP_01,
-  /// ★ Named from the game: "I can't stand another minute of this!"
-  /// (MsgMountainNorthAltinMineWestLama)
   FLAG_HEAT_THREE_QUARTERS = FLAG_AREA_TEMP_02,
   /// Who has complained since the gauge last passed a mark: one per party
   /// member, in the order of their actors.
-  /// ★ Named from the game: "My feet are burning!"
-  /// (MsgMountainNorthAltinMineWestLama)
   FLAG_GARET_COMPLAINED = FLAG_AREA_TEMP_03,
-  /// ★ Named from the game: "Just walking around here saps every ounce of my
-  /// strength." (MsgMountainNorthAltinMineWestLama)
   FLAG_IVAN_COMPLAINED = FLAG_AREA_TEMP_04,
-  /// ★ Named from the game: "My clothes are drenched in sweat!"
-  /// (MsgMountainNorthAltinMineWestLama)
   FLAG_MIA_COMPLAINED = FLAG_AREA_TEMP_05
 };
 
@@ -163,26 +149,18 @@ enum {
 enum {
   /// The Manticore, until FLAG_LAMAKAN_MANTICORE_BEATEN. Talking to it starts
   /// its battle.
-  /// ★ Named from the game: "Manticore" (MsgEnemyName)
   ACTOR_MANTICORE = ACTOR_FIRST_PLACED,
   /// The first of the Ant Lions' pits Reveal shows, up to ACTOR_LAST_PIT.
-  /// ★ Named from what the player sees: a pit in the sand, shown under
-  /// Reveal, that pulls the leader down to an Ant Lion (its render)
   ACTOR_FIRST_PIT = ACTOR_MANTICORE + 1,
-  /// ★ Named from what the player sees: the last of the pits in the sand,
-  /// shown under Reveal (its render)
   ACTOR_LAST_PIT = ACTOR_FIRST_PIT + 3,
   /// Smog, a Jupiter Djinni.
-  /// ★ Named from the game: "Smog" (MsgDjinnName)
   ACTOR_SMOG = ACTOR_LAST_PIT + 1
 };
 
 /// The desert's two Psynergy Stones, area temp flags. Each is back once the
 /// party has left Lamakan Desert.
 enum {
-  /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
   FLAG_LAMAKAN_DESERT_FIRST_PSYNERGY_STONE = FLAG_AREA_TEMP_50,
-  /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
   FLAG_LAMAKAN_DESERT_SECOND_PSYNERGY_STONE = FLAG_AREA_TEMP_51
 };
 

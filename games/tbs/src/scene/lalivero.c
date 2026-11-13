@@ -79,76 +79,46 @@ enum LaliveroActorId {
   /// Tolbi's soldiers, lying beaten in the street on the first visit. "Uhhnn...
   /// We were taken by surprise..." Later, "Ha ha! I thought they had done me in
   /// for sure, but I'm all better now."
-  /// ★ Named from what the player sees: a soldier in a helmet lying in the
-  /// street (its render)
   ACTOR_WEST_SOLDIER = ACTOR_FIRST_PLACED,
   /// "They were terrible! We were no match..."
-  /// ★ Named from what the player sees: a second soldier lying in the street
-  /// (its render)
   ACTOR_EAST_SOLDIER,
   /// A young man with brown hair who sobs for Sheba (gLalivero_CryingScript).
   /// "Ohh... They took Sheba and headed for the ruins."
-  /// ★ Named from the game: "Ohh... They took"
-  /// (MsgLaliveroOhhTheyTookShebaHeaded)
   ACTOR_VILLAGER_THEY_TOOK_SHEBA,
   /// A woman with fair hair. "Sheba is our only hope. If something happens to
   /// her, Lalivero is finished." Later she asks whether the party is leaving
   /// Lalivero.
-  /// ★ Named from the game: "is our only hope."
-  /// (MsgLaliveroActorIsOurOnlyHopeIf)
   ACTOR_WOMAN_OUR_ONLY_HOPE,
   /// A man in a white turban. "This all happened because Tolbi took Sheba away
   /// from us..."
-  /// ★ Named from the game: "This all happened because Tolbi took"
-  /// (MsgLaliveroThisAllHappenedBecauseTolbiTook)
   ACTOR_VILLAGER_BLAMING_TOLBI,
   /// A woman in a green dress. "Faran followed Sheba. I'm sure he'll rescue
   /// her."
-  /// ★ Named from the game: "I'm sure he'll rescue her."
-  /// (MsgLaliveroFaranFollowedActorImSureHell)
   ACTOR_WOMAN_TRUSTING_FARAN,
   /// An old man with a cane.
-  /// ★ Named from the game: "The rumbling at the ruins must have been a
-  /// warning..." (MsgLaliveroTheRumblingAtTheRuinsMust)
   ACTOR_OLD_MAN_RUMBLING_WARNING,
   /// An old woman.
-  /// ★ Named from the game: "There was an earthquake at the ruins before this
-  /// happened." (MsgLaliveroThereWasAnEarthquakeAtThe)
   ACTOR_OLD_WOMAN_EARLIER_EARTHQUAKE,
   /// A small boy with fair hair. "If I were bigger, I would have saved Sheba
   /// myself!"
-  /// ★ Named from the game: "If I were bigger, I would have saved"
-  /// (MsgLaliveroIfIWereBiggerIWould)
   ACTOR_BOY_IF_I_WERE_BIGGER,
   /// A little girl with orange pigtails. "I bet Sheba can use her powers to
   /// escape them."
-  /// ★ Named from the game: "can use her powers to escape them."
-  /// (MsgLaliveroIBetActorCanUseHer)
   ACTOR_GIRL_SHEBAS_POWERS,
   /// A soldier who keeps the door to Babi's ship. "Babi's most precious
   /// belonging is kept here. No one may enter!"
-  /// ★ Named from the game: "Babi's most precious belonging is kept here. No
-  /// one may enter!" (MsgLaliveroBabisMostPreciousBelongingIsKept)
   ACTOR_WHARF_GUARD,
   /// Three plants, SPRITE_SPROUT, the sprout Growth grows at Alpine Crossing
   /// and Suhalla Gate. Here they stand in animation 3, block nothing and no
   /// trigger answers them.
-  /// ★ Named from what the player sees: a tall green vine climbing a wall, as a
-  /// sprout looks after Growth (its render)
   ACTOR_FIRST_PLANT,
   /// Placed off the map until needed.
-  /// ★ Named from the game: "Iodem of Tolbi"
-  /// (MsgLaliveroIodemOfTolbiDoesntSeemToo)
   ACTOR_IODEM = ACTOR_FIRST_PLACED + 14,
   /// Torch, a Mars Djinni, placed until it joins.
-  /// ★ Named from the game: "Torch" (MsgDjinnName)
   ACTOR_TORCH,
   /// Placed after Venus Lighthouse. "No trespassing. Danger beyond this point."
-  /// ★ Named from the game: "No trespassing. Danger beyond this point."
-  /// (MsgLaliveroNoTrespassingDangerBeyondThisPoint)
   ACTOR_NORTH_EXIT_SIGN,
   /// The orb Iodem holds out, drawn from its item icon.
-  /// ★ Named from the game: "Black Orb" (MsgItemName)
   ACTOR_BLACK_ORB
 };
 

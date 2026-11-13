@@ -70,8 +70,6 @@ enum TimberRoomsAActorId {
   ///
   /// She says "My father loves people so much, he can't help but aid anyone
   /// in trouble."
-  /// ★ Named from the game: "I guess I'm just my father's child!"
-  /// (MsgSuhallaInteriorsWhenISeePeopleInTrouble)
   ACTOR_FATHERS_DAUGHTER = ACTOR_FIRST_PLACED,
   /// The man who aids anyone in trouble, a man with brown hair
   /// (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), in whose house the wounded soldiers
@@ -79,65 +77,42 @@ enum TimberRoomsAActorId {
   ///
   /// He says "Let me know if you have any problems. I'll do anything I can to
   /// help."
-  /// ★ Named from the game: "I want to help people so badly, I can't sit idly
-  /// by!" (MsgSuhallaInteriorsIWantToHelpPeopleSo)
   ACTOR_FATHER_WHO_WANTS_TO_HELP,
   /// A bent old man with a cane (SPRITE_OLD_MAN_WITH_CANE).
   ///
   /// After the audience he says "Do not approach the large cyclones in the
   /// middle of the Suhalla."
-  /// ★ Named from the game: "Tolbi probably ignores small villages like
-  /// Suhalla" (MsgSuhallaInteriorsTolbiProbablyIgnoresSmallVillagesLike)
   ACTOR_OLD_MAN_IGNORED_BY_TOLBI,
   /// In the old woman's sprite (SPRITE_OLD_WOMAN, as in vale_plaza.c).
   ///
   /// She says "If you head east across Suhalla, Lalivero is so close you can
   /// see it across the Nol River..." After the audience she half remembers a
   /// saying about the death storms.
-  /// ★ Named from what the player sees: a white-haired old woman in a dark
-  /// dress (its render)
   ACTOR_OLD_WOMAN,
   /// A young woman with a brown ponytail (SPRITE_WOMAN_WITH_PONYTAIL).
-  /// ★ Named from the game: "Ours is the only store in Suhalla."
-  /// (MsgSuhallaOursOnlyStore)
   ACTOR_MERCHANT,
   /// A man with dark hair (SPRITE_MAN_WITH_DARK_HAIR), who opens the inn across
   /// its counter (TimberRoomsA_TalkToInnkeeper).
-  /// ★ Named from the game: "Innkeeper" (MsgDebugGlyphName)
   ACTOR_INNKEEPER,
   /// A woman at the inn, with red-brown hair in a white apron
   /// (SPRITE_WOMAN_IN_PINK_APRON), the sprite of Kalay's innkeeper's wife.
-  /// ★ Named from the game: "I wonder if any customers can get through those
-  /// sandstorms..." (MsgSuhallaInteriorsIWonderIfAnyCustomersCan)
   ACTOR_INN_WOMAN,
   /// Travelers the sandstorms blew back, out of sight until the audience.
   ///
   /// They are two stocky strong men (SPRITE_STRONGMAN). This one says "We went
   /// into the Suhalla to go build the lighthouse, but the storms caught us."
-  /// ★ Named from the game: "We went into the Suhalla to go build the
-  /// lighthouse" (MsgSuhallaInteriorsWeWentIntoTheSuhallaTo)
   ACTOR_LIGHTHOUSE_WORKER,
   /// "The sandstorms are so bad, we've given up trying to reach Babi
   /// Lighthouse."
-  /// ★ Named from the game: "We went into the Suhalla to go build the
-  /// lighthouse" (MsgSuhallaInteriorsWeWentIntoTheSuhallaTo)
   ACTOR_SECOND_LIGHTHOUSE_WORKER,
   /// A stout man with brown hair (SPRITE_STOUT_MAN).
-  /// ★ Named from the game: "I set out for Babi Lighthouse to open a business
-  /// there, but then I was blown back here again!" (MsgSuhallaSupposeFolkBlown)
   ACTOR_STRANDED_TRAVELER,
   /// A bearded man in a long robe (SPRITE_BEARDED_MAN_IN_LONG_ROBE), who keeps
   /// Suhalla Sanctum (TimberRoomsA_TalkToHealer).
-  /// ★ Named from the game: "Healer" (MsgDebugGlyphName)
   ACTOR_HEALER,
-  /// ★ Named from the game: "Iodem..." (MsgSuhallaIodem)
   ACTOR_IODEM,
   /// The wounded soldiers, lying in the beds of a house after Babi's audience.
-  /// ★ Named from the game: "These old soldiers must rest until their wounds
-  /// heal." (MsgSuhallaInteriorsTheseOldSoldiersMustRestUntil)
   ACTOR_SOLDIER_SOUTH,
-  /// ★ Named from the game: "These old soldiers must rest until their wounds
-  /// heal." (MsgSuhallaInteriorsTheseOldSoldiersMustRestUntil)
   ACTOR_SOLDIER_NORTH
 };
 

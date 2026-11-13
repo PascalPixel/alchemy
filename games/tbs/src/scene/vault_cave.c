@@ -120,16 +120,12 @@ static void VaultCave_SpawnPuffs(struct Actor *source);
 /// The cell behaviors of the cells the events answer.
 enum VaultCaveCellBehavior {
   /// The switch SceneId_VaultCavePassage flips.
-  /// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
   CELL_BEHAVIOR_VAULT_CAVE_SWITCH = 20,
   /// The cells of SceneId_VaultCaveMouth's northern pillar, pushed.
   CELL_BEHAVIOR_VAULT_CAVE_NORTHERN_PILLAR = 50,
   /// The cells of SceneId_VaultCaveVambrace's southern pillar, pushed.
   CELL_BEHAVIOR_VAULT_CAVE_SOUTHERN_PILLAR = 60,
-  /// ★ Named from the game: "The door is tightly locked."
-  /// (MsgFieldDoorTightlyLocked)
   CELL_BEHAVIOR_VAULT_CAVE_LOCKED_DOOR = 99,
-  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   CELL_BEHAVIOR_VAULT_CAVE_CHEST = 100
 };
 
@@ -138,31 +134,16 @@ enum VaultCaveCellBehavior {
 /// read by index as well.
 enum {
   /// The upper western puddle, the first of the six.
-  /// ★ Named from what the player sees: six puddles of water in the floor of
-  /// the puddle room, under the falling drops (its render)
   FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN = FLAG_SCENE_TEMP_00,
-  /// ★ Named from what the player sees: the western puddle of the lower row
-  /// (its render)
   FLAG_VAULT_CAVE_WEST_LOWER_PUDDLE_FROZEN = FLAG_SCENE_TEMP_01,
-  /// ★ Named from what the player sees: the lower row's puddle just east of
-  /// the western one (its render)
   FLAG_VAULT_CAVE_INNER_WEST_LOWER_PUDDLE_FROZEN = FLAG_SCENE_TEMP_02,
-  /// ★ Named from what the player sees: the eastern puddle of the upper row
-  /// (its render)
   FLAG_VAULT_CAVE_EAST_UPPER_PUDDLE_FROZEN = FLAG_SCENE_TEMP_03,
-  /// ★ Named from what the player sees: the eastern puddle of the lower row
-  /// (its render)
   FLAG_VAULT_CAVE_EAST_LOWER_PUDDLE_FROZEN = FLAG_SCENE_TEMP_04,
-  /// ★ Named from what the player sees: the easternmost puddle, between the
-  /// rows (its render)
   FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN = FLAG_SCENE_TEMP_05,
   /// A water drop struck the northern pillar before it reached its switch. The
   /// drop's cell matched the pillar's (VaultCave_ResetFallingActorAtActorCell).
-  /// ★ Named from what the player sees: the pillar the leader pushes toward
-  /// its switch in the northern room of SceneId_VaultCaveMouth (its render)
   FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK = FLAG_SCENE_TEMP_07,
   /// Whirlwind has blown the ivy away.
-  /// ★ Named from the game: "Whirlwind" (MsgAbilityName)
   FLAG_VAULT_CAVE_IVY_BLOWN_AWAY = FLAG_AREA_TEMP_00
 };
 
@@ -179,47 +160,26 @@ enum VaultCaveVambraceActorId {
   /// southern switch. It is drawn underfoot when the party arrives by
   /// VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTH or
   /// VAULT_CAVE_VAMBRACE_SOUTH_FROM_FROST_ROOM.
-  /// ★ Named from what the player sees: a pink stone pillar with a flame
-  /// burning on top (its render)
   ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH = ACTOR_FIRST_PLACED,
   /// Pushed or Moved onto the southern switch, map cell (15, 54).
-  /// ★ Named from what the player sees: the western of the room's two pink
-  /// flame pillars, four cells from the switch marked with a flame, joined to
-  /// it by a dotted track (its render)
   ACTOR_SOUTHERN_PILLAR,
   /// The first of six water drops that fall at random, one every 64 frames
   /// (VaultCave_UpdateFrostControlledFallingActors). VaultCave_SpawnPuffs also
   /// uses their sprite for the puffs where one lands.
-  /// ★ Named from what the player sees: blue drops of water above the puddles
-  /// (its render)
   ACTOR_FIRST_WATER_DROP,
   /// The six puddles under the water drops, in their order and in the order of
   /// their flags (FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN to
   /// FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN). They are drawn as the puddle that
   /// Frost freezes into an ice pillar in bilibin_cave.c. Frozen, a puddle stops
   /// a water drop 32 pixels up.
-  /// ★ Named from what the player sees: six blue puddles on the cave floor,
-  /// each under a drop of water (its render)
   ACTOR_WEST_UPPER_PUDDLE = ACTOR_FIRST_WATER_DROP + 6,
-  /// ★ Named from what the player sees: the western puddle of the lower row
-  /// (its render)
   ACTOR_WEST_LOWER_PUDDLE,
-  /// ★ Named from what the player sees: the lower row's puddle just east of it
-  /// (its render)
   ACTOR_INNER_WEST_LOWER_PUDDLE,
-  /// ★ Named from what the player sees: the eastern puddle of the upper row
-  /// (its render)
   ACTOR_EAST_UPPER_PUDDLE,
-  /// ★ Named from what the player sees: the eastern puddle of the lower row
-  /// (its render)
   ACTOR_EAST_LOWER_PUDDLE,
-  /// ★ Named from what the player sees: the easternmost puddle, between the
-  /// rows (its render)
   ACTOR_FAR_EAST_PUDDLE,
   /// Ivy (SPRITE_IVY), as in bilibin.c, drawn half as tall again. It is placed
   /// until Whirlwind blows it away (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY).
-  /// ★ Named from what the player sees: leafy green ivy against the cave
-  /// wall (its render)
   ACTOR_IVY
 };
 
@@ -228,22 +188,14 @@ enum VaultCaveVambraceActorId {
 /// 12).
 enum VaultCaveMouthActorId {
   /// A pillar two cells east of the northern switch.
-  /// ★ Named from what the player sees: a pink stone pillar with a flame
-  /// burning on top (its render)
   ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH = ACTOR_FIRST_PLACED,
   /// A pillar two cells south of the northern switch, which Move leaves where
   /// it is (VaultCave_IgnoreMove).
-  /// ★ Named from what the player sees: a pink stone pillar, its flame out
-  /// (its render)
   ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH,
   /// Pushed or Moved onto the northern switch.
-  /// ★ Named from what the player sees: a pink stone pillar with a flame
-  /// burning on top (its render)
   ACTOR_NORTHERN_PILLAR,
   /// The first of four water drops, in the same sprite, that fall on a fixed
   /// schedule (VaultCave_UpdateTimedFallingActors).
-  /// ★ Named from what the player sees: blue drops of water on the cave floor
-  /// (its render)
   ACTOR_FIRST_TIMED_WATER_DROP
 };
 

@@ -5,7 +5,6 @@
 #include "../battle_effect_internal.h"
 
 /// Who breathes the dragon's fire (BattleEffect_RunDragonFire).
-/// ★ Named from what the player sees: Tiamat's fire (its render)
 enum DragonFireMode {
   DRAGON_FIRE_TIAMAT,       ///< Tiamat lands beside the targets and breathes
                             ///< the fire, then bursts away

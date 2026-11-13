@@ -83,8 +83,6 @@
 
 /// Saturos's group has started to leave, and the embers fall without their
 /// sound.
-/// ★ Named from the game: "Please...can we go now?"
-/// (MsgSolSanctumKradenCouldThatBeThe)
 #define FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING FLAG_SCENE_TEMP_46
 
 static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId);
@@ -122,18 +120,13 @@ enum SolSanctumEruptionCorner {
 };
 
 enum {
-  /// ★ Named from the game: "Could that be . . . the Wise One?!?"
-  /// (MsgSolSanctumKradenCouldThatBeThe)
   ACTOR_WISE_ONE = ACTOR_ALEX + 1,
   /// The sixteen crystals thrown out in a ring.
-  /// ★ Named from what the player sees: a blue crystal that bursts into
-  /// sparkles (its render)
   ACTOR_FIRST_CRYSTAL = ACTOR_WISE_ONE + 1,
   CRYSTAL_COUNT = 16
 };
 
 /// The star the Wise One has the leader take out, lifted above him.
-/// ★ Named from its area name: Elemental Star Room
 enum { ACTOR_ELEMENTAL_STAR = 22 };
 
 #define ELEMENTAL_ARC_SCALE_X_DECREASE 7372

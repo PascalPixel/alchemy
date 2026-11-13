@@ -100,37 +100,20 @@
 /// Iodem, the strongman who saw the kidnappers go through, a grey-haired man, a
 /// young man and Faran.
 enum {
-  /// ★ Named from what the player sees: the left half of a dark stone door
-  /// (its render)
   ACTOR_LEFT_DOOR = 8,
-  /// ★ Named from what the player sees: the right half of the stone door (its
-  /// render)
   ACTOR_RIGHT_DOOR = 9,
-  /// ★ Named from the game: "I will trust Iodem once more..."
-  /// (MsgBabiLighthouseIfYouCanOpenThisDoor)
   ACTOR_IODEM = 10,
   /// A strongman.
-  /// ★ Named from the game: "When I saw them, they had already gone through to
-  /// the other side." (MsgBabiLighthouseWhenISawThemTheyHad)
   ACTOR_WITNESS = 11,
   /// A burly grey-haired man with his arms folded.
-  /// ★ Named from the game: "There is no way this door will open."
-  /// (MsgBabiLighthouseIAmSorryButNotEven)
   ACTOR_DOUBTING_THE_DOOR = 12,
   /// A young man with brown hair in a purple shirt.
-  /// ★ Named from the game: "her life may be in danger..."
-  /// (MsgBabiLighthouseThisIsAllAHugeWaste)
   ACTOR_WORRIED_FOR_SHEBA = 13,
-  /// ★ Named from the game: "There were strange folk going to the ruins...
-  /// Faran followed them." (MsgBabiLighthouseThereWereStrangeFolkGoingTo)
   ACTOR_FARAN = 14
 };
 
 /// BabiLighthouseLuff's Djinni, Luff.
-enum {
-  /// ★ Named from the game: "Luff" (MsgDjinnName)
-  ACTOR_LUFF = 8
-};
+enum { ACTOR_LUFF = 8 };
 
 /// The Entry (BabiLighthouseEntry): the two pillars on the ledges, the plant
 /// for Growth and the four the kidnappers knocked down on their way in.
@@ -141,30 +124,16 @@ enum {
 /// The pillars have the sprite of the pillars Move or a push shifts in Venus
 /// Lighthouse.
 enum {
-  /// ★ Named from what the player sees: a grey stone pillar with a pale cap
-  /// in a white rim, on the left ledge (its render)
   ACTOR_LEFT_PILLAR = 8,
-  /// ★ Named from what the player sees: the same capped pillar on the right
-  /// ledge (its render)
   ACTOR_RIGHT_PILLAR = 9,
-  /// ★ Named from what the player sees: a small green plant, SPRITE_SPROUT (its
-  /// render)
   ACTOR_PLANT = 10,
   /// A soldier lying on the ground.
-  /// ★ Named from the game: "We were absolutely no match for them."
-  /// (MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely)
   ACTOR_FALLEN_SOLDIER_NO_MATCH = 11,
   /// A strongman in a red top lying on the ground.
-  /// ★ Named from the game: "Only two of those six ever attacked anyone..."
-  /// (MsgBabiLighthouseOnlyTwoOfThoseSixEver)
   ACTOR_FALLEN_STRONGMAN_ONLY_TWO = 12,
   /// A soldier lying on the ground.
-  /// ★ Named from the game: "They just kicked us out of their way"
-  /// (MsgBabiLighthouseTheyJustKickedUsOutOf)
   ACTOR_FALLEN_SOLDIER_KICKED_ASIDE = 13,
   /// A bald, muscular man lying on the ground.
-  /// ★ Named from the game: "That's why the ground is scorched."
-  /// (MsgBabiLighthouseTheySetFireToEverythingThats)
   ACTOR_FALLEN_MAN_SCORCHED_GROUND = 14
 };
 
@@ -176,33 +145,20 @@ enum {
 /// takes across a gap in Venus Lighthouse.
 enum {
   /// A bald, muscular man.
-  /// ★ Named from the game: "Do we get today off?"
-  /// (MsgBabiLighthouseWeHaventBeenOrderedToStart)
   ACTOR_WORKER_DAY_OFF = 8,
   /// A strongman in a red top.
-  /// ★ Named from the game: "There were strange folk going to the ruins..."
-  /// (MsgBabiLighthouseThereWereStrangeFolkGoingTo)
   ACTOR_WORKER_STRANGE_FOLK = 9,
   /// A man with a pickaxe.
-  /// ★ Named from the game: "It's odd that Babi would build a lighthouse in a
-  /// place like this." (MsgBabiLighthouseItsOddThatBabiWouldBuild)
   ACTOR_WORKER_ODD_PLACE = 10,
   /// A man with a pickaxe.
-  /// ★ Named from the game: "Cutting these stones and stacking them on the
-  /// ruins isn't easy." (MsgBabiLighthouseCuttingTheseStonesAndStackingThem)
   ACTOR_WORKER_CUTTING_STONES = 11,
-  /// ★ Named from what the player sees: a short grey stone pillar carved with a
-  /// spiral (its render)
   ACTOR_ROAD_PILLAR = 12
 };
 
 enum {
   /// Growth has grown the Entry's sprout into a vine.
-  /// ★ Named from the game: "Growth" (MsgAbilityName)
   FLAG_GROWTH_PASSAGE_OPEN = FLAG_AREA_TEMP_00,
   /// The party is on the far side of BabiLighthouseStoneDoor's stone door.
-  /// ★ Named from the game: "Yes, they opened the stone door and entered!"
-  /// (MsgBabiYoureSureTheyWentThrough)
   FLAG_BEYOND_DOOR = FLAG_AREA_TEMP_01
 };
 
@@ -211,9 +167,6 @@ enum {
 /// It is a crate drawn solid black (SPRITE_COLOR_BLACK) and translucent in
 /// front of the actors. It shows the background through the leader where they
 /// overlap, so that he vanishes below the edge as he drops over it.
-/// ★ Named from what the player sees: the leader's body hidden as he drops
-/// into
-/// a pit, and shown when the mask is left out (its render)
 enum { PIT_MASK = SPRITE_CRATE };
 
 /// A chest searched while facing the given way.

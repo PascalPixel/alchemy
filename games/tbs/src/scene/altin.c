@@ -104,65 +104,37 @@
 enum AltinVillageActorId {
   /// A bald, bare-chested strong man (SPRITE_BALD_MUSCULAR_MAN). His event is
   /// Altin_AskAboutFirstVisit.
-  /// ★ Named from the game: "Is this your first time to visit Altin?"
-  /// (MsgAltinYourFirstTimeVisitAltin)
   ACTOR_GREETING_STRONGMAN = ACTOR_FIRST_PLACED,
   /// A stocky strong man flexing his arms (SPRITE_STRONGMAN). His event is
   /// Altin_AskAboutHydros.
-  /// ★ Named from the game: "How can those creatures spit up so much water?"
-  /// (MsgAltinHowCanThoseCreaturesSpitUp)
   ACTOR_CURIOUS_STRONGMAN,
   /// A woman with fair hair in a white apron (SPRITE_WOMAN_WITH_FAIR_HAIR).
-  /// ★ Named from the game: "My house is totally coated in monster spit."
-  /// (MsgAltinHowHorribleMyHouseIsTotally)
   ACTOR_WOMAN_COATED_HOUSE,
   /// A burly grey-haired man (SPRITE_BURLY_MAN_WITH_GREY_HAIR), who wanders.
-  /// ★ Named from the game: "Even the mine is submerged."
-  /// (MsgAltinEvenTheMineIsSubmergedNo)
   ACTOR_MAN_SUBMERGED_MINE,
   /// A bent old man with a cane (SPRITE_OLD_MAN_WITH_CANE).
-  /// ★ Named from the game: "If we could just destroy the monsters"
-  /// (MsgAltinIfWeCouldJustDestroyThe)
   ACTOR_OLD_MAN_DESTROY_MONSTERS,
   /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS).
-  /// ★ Named from the game: "Altin always used to run short on water."
-  /// (MsgAltinAltinAlwaysUsedToRunShort)
   ACTOR_WOMAN_WATER_LUCK,
   /// An old woman with white hair (SPRITE_OLD_WOMAN). Her event is
   /// Altin_TalkToThirstyOldWoman.
-  /// ★ Named from the game: "We can't drink the water the monsters spew!"
-  /// (MsgAltinWeCantDrinkWaterMonsters)
   ACTOR_THIRSTY_OLD_WOMAN,
   /// Three villagers come back as the water recedes, one with each drop
   /// (Altin_ApplyWaterLevel). They are this man with brown hair
   /// (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), then a strong man and an old man.
-  /// ★ Named from the game: "The waters around here have subsided..."
-  /// (MsgAltinTheWatersAroundHereHaveSubsided)
   ACTOR_MAN_WATERS_SUBSIDED,
   /// A bald, bare-chested strong man (SPRITE_BALD_MUSCULAR_MAN).
-  /// ★ Named from the game: "The water beasts looked exactly like Altin's
-  /// guardian statues..." (MsgAltinTheWaterBeastsLookedExactlyLike)
   ACTOR_STRONGMAN_GUARDIAN_STATUES,
   /// A bent old man with a cane (SPRITE_OLD_MAN_WITH_CANE), who wanders.
-  /// ★ Named from the game: "The waters have flushed out tons of rock from the
-  /// mine." (MsgAltinTheWatersHaveFlushedOutTons)
   ACTOR_OLD_MAN_ROCK_FLUSHED_OUT,
   /// The beast spitting water at the houses until FLAG_ALTIN_WATER_BEAST_LEFT.
-  /// ★ Named from the game: "Are you the ones who defeated the water beasts?"
-  /// (MsgAltinOnesWhoDefeatedWaterBeasts)
   ACTOR_WATER_BEAST,
   /// SPRITE_STONE_STATUE, which Move pushes to column 22
   /// (Altin_CheckPillarMoved).
-  /// ★ Named from what the player sees: a grey stone statue on a pedestal
-  /// above the north path (its render)
   ACTOR_STONE_STATUE,
   /// The armor and item merchants, waiting outside while their shops are
   /// under water.
-  /// ★ Named from the game: "My store is submerged... I want to sell armor,
-  /// but there's no way." (MsgAltinMyStoreSubmergedWantSell)
   ACTOR_FLOODED_ARMOR_MERCHANT,
-  /// ★ Named from the game: "Oh, no! What will I do if all my merchandise is
-  /// soaked?" (MsgAltinWillDoIfMyMerchandise)
   ACTOR_FLOODED_ITEM_MERCHANT,
   /// Three crates placed with SPRITE_CRATE. Altin_ApplyWaterLevel hides them
   /// (SPRITE_COLOR_HIDDEN) but leaves them solid, as placed actors are.
@@ -170,14 +142,8 @@ enum AltinVillageActorId {
   /// They are invisible blocks. One is at the top of the ladder on the east
   /// cliff, and two are on the rails below the doorway into the mine (the
   /// drained village's render with them drawn).
-  /// ★ Named from the game: "Strange... I don't remember all these crates being
-  /// up here before!" (MsgVaultVaultCutFree)
   ACTOR_FIRST_CRATE,
-  /// ★ Named from the game: "Strange... I don't remember all these crates being
-  /// up here before!" (MsgVaultVaultCutFree)
   ACTOR_SECOND_CRATE,
-  /// ★ Named from the game: "Strange... I don't remember all these crates being
-  /// up here before!" (MsgVaultVaultCutFree)
   ACTOR_THIRD_CRATE
 };
 
@@ -187,21 +153,13 @@ enum AltinHouseActorId {
   /// The family sheltering in the inn's Room One until the first drop. They are
   /// this man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR) and a woman
   /// with fair hair.
-  /// ★ Named from the game: "The guests in Room One moved back home when the
-  /// waters receded." (MsgAltinTheGuestsInRoomOneMoved)
   ACTOR_ROOM_ONE_GUEST = ACTOR_FIRST_PLACED,
   /// A woman with fair hair in a white apron (SPRITE_WOMAN_WITH_FAIR_HAIR).
-  /// ★ Named from the game: "The guests in Room One moved back home when the
-  /// waters receded." (MsgAltinTheGuestsInRoomOneMoved)
   ACTOR_ROOM_ONE_SECOND_GUEST,
   /// The family in Room Two, until the second drop. They are this bent old man
   /// with a cane (SPRITE_OLD_MAN_WITH_CANE) and an old woman.
-  /// ★ Named from the game: "The guests in Room Two also went home after the
-  /// waters receded." (MsgAltinTheGuestsInRoomTwoAlso)
   ACTOR_ROOM_TWO_GUEST,
   /// An old woman with white hair (SPRITE_OLD_WOMAN).
-  /// ★ Named from the game: "The guests in Room Two also went home after the
-  /// waters receded." (MsgAltinTheGuestsInRoomTwoAlso)
   ACTOR_ROOM_TWO_SECOND_GUEST,
   /// A man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR).
   ///
@@ -209,54 +167,29 @@ enum AltinHouseActorId {
   /// Pop", who have been acting weird since the ruins were found. His thoughts
   /// won't give up a spot at the end of the mine's easternmost passage, and
   /// hers say "My husband's sense for finding treasure has never failed."
-  /// ★ Named from the game: "I didn't want to leave my hometown..."
-  /// (MsgAltinIDidntWantToLeaveMy)
   ACTOR_MAN_BACK_IN_HIS_HOMETOWN,
   /// A woman with fair hair in a white apron (SPRITE_WOMAN_WITH_FAIR_HAIR).
-  /// ★ Named from the game: "There's no place like home."
-  /// (MsgAltinIHeardSomeoneKilledTheWater)
   ACTOR_WOMAN_NO_PLACE_LIKE_HOME,
   /// A little girl with orange pigtails (SPRITE_GIRL_WITH_PIGTAILS). Her event
   /// is CottageRoomsD_AskAboutMonsters.
-  /// ★ Named from the game: "Here, let me thank you with...a kiss!"
-  /// (MsgAltinDefeatedThoseMonstersDidnt)
   ACTOR_KISSING_GIRL,
-  /// ★ Named from the game: "Cripes... Is this how my weapon shop ends?"
-  /// (MsgAltinCripesIsThisHowMyWeapon)
   ACTOR_WEAPON_MERCHANT,
-  /// ★ Named from the game: "Oh, no! What will I do if all my merchandise is
-  /// soaked?" (MsgAltinWillDoIfMyMerchandise)
   ACTOR_ITEM_MERCHANT,
-  /// ★ Named from the game: "It's great that I can sell armor out of my shop
-  /// again." (MsgAltinItsGreatCanSellArmor)
   ACTOR_ARMOR_MERCHANT,
   /// Opens the inn (CottageRoomsD_TalkToInnkeeper).
-  /// ★ Named from the game: "Innkeeper" (MsgDebugGlyphName)
   ACTOR_INNKEEPER,
   /// A woman with red-brown hair in a white apron (SPRITE_WOMAN_IN_PINK_APRON).
-  /// ★ Named from the game: "return Altin to its former glory."
-  /// (MsgAltinIdGiveAnythingForSomeoneTo)
   ACTOR_WOMAN_FORMER_GLORY,
-  /// ★ Named from the game: "I came from Xian. I cook good food."
-  /// (MsgAltinICameFromXianICook)
   ACTOR_COOK,
   /// A man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR) in the inn,
   /// telling of its guests going home as the water drops.
-  /// ★ Named from the game: "None of us can go home until the water
-  /// subsides." (MsgAltinNoneOfUsCanGoHome)
   ACTOR_MAN_WAITING_TO_GO_HOME
 };
 
 /// The village's water level, set on entry from the mine's drain flags.
 enum {
-  /// ★ Named from the game: "The guests in Room One moved back home when the
-  /// waters receded." (MsgAltinTheGuestsInRoomOneMoved)
   FLAG_ALTIN_WATER_DROPPED_ONCE = FLAG_SCENE_TEMP_40,
-  /// ★ Named from the game: "The guests in Room Two also went home after the
-  /// waters receded." (MsgAltinTheGuestsInRoomTwoAlso)
   FLAG_ALTIN_WATER_DROPPED_TWICE = FLAG_SCENE_TEMP_41,
-  /// ★ Named from the game: "Thank goodness the water has receded."
-  /// (MsgAltinThankGoodnessWaterHasReceded)
   FLAG_ALTIN_WATER_DRAINED = FLAG_SCENE_TEMP_42
 };
 

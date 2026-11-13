@@ -113,31 +113,17 @@ enum StarRoomActorId {
   /// shadow is turned off while he floats above the platform. That is Isaac and
   /// Kraden in SolSanctumElementalStarRoom_EnterStarRoom, and Felix in
   /// SolSanctumElementalStarRoom_DemandElementalStars.
-  /// ★ Named from what the player sees: the shadow that grows on the platform
-  /// as Isaac comes in (its render)
   ACTOR_PLATFORM_SHADOW = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "What's wrong, Kraden?" (MsgSolSanctumWrongKraden)
   ACTOR_KRADEN,
-  /// ★ Named from the game: "But, Saturos, there's still a chance they might
-  /// survive." (MsgSolSanctumKradenCouldThatBeThe)
   ACTOR_SATUROS,
-  /// ★ Named from the game: "Menardi!" (MsgSolSanctumKradenCouldThatBeThe)
   ACTOR_MENARDI,
   /// Felix in his mask, until SolSanctumElementalStarRoom_UnmaskFelix.
-  /// ★ Named from the game: "Felix" (MsgCharacterName)
   ACTOR_FELIX_MASKED,
-  /// ★ Named from the game: "Felix" (MsgCharacterName)
   ACTOR_FELIX,
-  /// ★ Named from the game: "Oh, Alex... You're late!"
-  /// (MsgSolSanctumPermitRelieveElemental)
   ACTOR_ALEX,
   /// The first of the ten lights that float about the room, all one sprite
   /// (SolSanctum_StartFloatingLights).
-  /// ★ Named from what the player sees: small blue-green lights floating in
-  /// the dark (its render)
   ACTOR_FIRST_FLOATING_LIGHT,
-  /// ★ Named from what the player sees: small blue-green lights floating in
-  /// the dark (its render)
   ACTOR_LAST_FLOATING_LIGHT = ACTOR_FIRST_FLOATING_LIGHT + 9
 };
 

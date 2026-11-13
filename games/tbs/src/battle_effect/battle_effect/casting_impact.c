@@ -136,7 +136,6 @@ enum CastingImpact {
 /// leaves. Both swordsman pictures are drawn 80 by 104, but the second starts
 /// 96 rows after the first, so the first's last 8 rows are the second's first
 /// 8; the crescent follows a whole 80 by 104 after the second.
-/// ★ Named from what the player sees: the swordsman's stroke (its render)
 #define ASURA_SHEET_SWUNG (80 * 96)
 #define ASURA_SHEET_CRESCENT (ASURA_SHEET_SWUNG + 80 * 104)
 

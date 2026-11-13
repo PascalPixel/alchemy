@@ -103,14 +103,8 @@
 /// Barricade in bilibin.c, then two logs, as in Kolima Forest. None of them
 /// moves.
 enum ValeCaveMouthActorId {
-  /// ★ Named from what the player sees: three wooden crates stacked by the
-  /// cave's mouth (its render)
   ACTOR_VALE_CAVE_MOUTH_FIRST_CRATES = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: two logs lying west to east beside the
-  /// crates (its render)
   ACTOR_VALE_CAVE_MOUTH_FIRST_LOG = ACTOR_FIRST_PLACED + 3,
-  /// ★ Named from what the player sees: two logs lying west to east beside the
-  /// crates (its render)
   ACTOR_VALE_CAVE_MOUTH_SECOND_LOG
 };
 
@@ -118,34 +112,19 @@ enum ValeCaveMouthActorId {
 /// from ACTOR_FIRST_PLACED.
 enum ValeCaveKiteActorId {
   /// Kite, a Jupiter Djinni, placed until it joins (FLAG_KITE).
-  /// ★ Named from the game: "Kite" (MsgDjinnName)
   ACTOR_KITE = ACTOR_FIRST_PLACED,
   /// The two stacks of crates in the riding log's part, which sink into the
   /// water. The western sinks under Move, the eastern under Move or a push.
-  /// ★ Named from what the player sees: a stack of wooden crates beside the
-  /// water (its render)
   ACTOR_WEST_CRATES,
-  /// ★ Named from what the player sees: a stack of wooden crates beside the
-  /// water (its render)
   ACTOR_EAST_CRATES,
   /// The log the leader rides along its part's passage, from one end to the
   /// other. It is drawn as the north-south log of Colosso's Lumber Water
   /// Crossing Area (colosseum_azart_match.c).
-  /// ★ Named from what the player sees: a yellow log floating in the water (its
-  /// render)
   ACTOR_RIDING_LOG,
   /// Two stacks of crates and two logs that stand in the first part.
-  /// ★ Named from what the player sees: two stacks of wooden crates by the
-  /// room's east door (its render)
   ACTOR_FIRST_STANDING_CRATES,
-  /// ★ Named from what the player sees: two stacks of wooden crates by the
-  /// room's east door (its render)
   ACTOR_SECOND_STANDING_CRATES,
-  /// ★ Named from what the player sees: two logs lying west to east beside the
-  /// crates (its render)
   ACTOR_FIRST_STANDING_LOG,
-  /// ★ Named from what the player sees: two logs lying west to east beside the
-  /// crates (its render)
   ACTOR_SECOND_STANDING_LOG
 };
 
@@ -156,15 +135,9 @@ enum ValeCaveKiteActorId {
 /// pushed, and lie as in Kolima Forest.
 enum ValeCaveLogsActorId {
   /// Lying north to south, pushed off the ledge.
-  /// ★ Named from what the player sees: a log lying north to south west of the
-  /// water (its render)
   ACTOR_WEST_LOG = ACTOR_FIRST_PLACED + 1,
-  /// ★ Named from what the player sees: a log lying north to south east of the
-  /// water (its render)
   ACTOR_EAST_LOG, ///< lying north to south, pushed along the ledge until it
                   ///< falls
-  /// ★ Named from what the player sees: a log lying west to east south of the
-  /// water (its render)
   ACTOR_SOUTH_LOG ///< lying west to east, pushed north
 };
 
@@ -173,36 +146,26 @@ enum ValeCaveLogsActorId {
 enum ValeCaveCellBehavior { CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE = 45 };
 
 /// The flag of Kite, set once it is caught.
-/// ★ Named from the game: "Kite" (MsgDjinnName)
 #define FLAG_KITE (FLAG_DJINNI(DJINNI_KITE))
 
 // The cave's scene flags: each room reuses them for its own puzzle, so the
 // second room's two have one name in the riding log's part and another in
 // Kite's.
 /// The riding log's part: the western crates have sunk into the water.
-/// ★ Named from what the player sees: stacks of wooden crates at the edge of
-/// the cave's water (its render)
 #define FLAG_VALE_CAVE_WEST_CRATES_SUNK FLAG_SCENE_TEMP_00
 /// The riding log's part: the eastern crates have sunk into the water.
-/// ★ Named from what the player sees: stacks of wooden crates at the edge of
-/// the cave's water (its render)
 #define FLAG_VALE_CAVE_EAST_CRATES_SUNK FLAG_SCENE_TEMP_01
 /// Kite's part: Kite has run off once (ValeCave_KiteRunsOff).
-/// ★ Named from the game: "Kite" (MsgDjinnName)
 #define FLAG_VALE_CAVE_KITE_RAN_OFF FLAG_SCENE_TEMP_00
 /// Kite's part: Kite has run behind the ledge
 /// (ValeCave_KiteRunsBehindLedge).
-/// ★ Named from the game: "Kite" (MsgDjinnName)
 #define FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE FLAG_SCENE_TEMP_01
 
 // The cave's area flags. The second and third rooms are one area,
 // so these last while the party goes between them; the first room is another.
 /// The riding log of the second room is at the eastern end of its passage.
-/// ★ Named from what the player sees: the log floating in the water of the
-/// second room, which carries the leader along its passage (its render)
 #define FLAG_VALE_CAVE_RIDING_LOG_EAST FLAG_AREA_TEMP_01
 /// Kite has run behind the ledge and keeps to its far side.
-/// ★ Named from the game: "Kite" (MsgDjinnName)
 #define FLAG_VALE_CAVE_KITE_BEHIND_LEDGE FLAG_AREA_TEMP_02
 
 static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row);
@@ -213,27 +176,15 @@ static void ValeCave_ApplyEntryState(void);
 #include "shared/staged_actor.h"
 
 /// In the third room, the western log has been pushed off the ledge.
-/// ★ Named from what the player sees: two logs lying north to south on the
-/// ledges either side of the water, and a third lying west to east south of it
-/// (its render)
 #define FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE FLAG_SCENE_TEMP_02
 /// In the third room, the eastern log has been pushed along the ledge and over
 /// its edge.
-/// ★ Named from what the player sees: two logs lying north to south on the
-/// ledges either side of the water, and a third lying west to east south of it
-/// (its render)
 #define FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE FLAG_SCENE_TEMP_03
 /// In the third room, the southern log has been pushed north and stopped on the
 /// northern row.
-/// ★ Named from what the player sees: two logs lying north to south on the
-/// ledges either side of the water, and a third lying west to east south of it
-/// (its render)
 #define FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW FLAG_SCENE_TEMP_04
 /// In the third room, the southern log has been pushed north and stopped on the
 /// southern row (row 20).
-/// ★ Named from what the player sees: two logs lying north to south on the
-/// ledges either side of the water, and a third lying west to east south of it
-/// (its render)
 #define FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW FLAG_SCENE_TEMP_05
 
 /// In Vale Cave's second room, talking to Kite once Halt has stopped it has

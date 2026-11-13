@@ -120,8 +120,6 @@ enum TolbiShipMastActorId {
   /// on deck, ACTOR_QUARTERS_CREWMAN below), in the same sprite. Mind Read on
   /// him at Kalay hears "I was the one who hid the anchor"
   /// (MsgTolbiShipHiddenAnchorDiscovered).
-  /// ★ Named from the game: "No, no, I'm the lookout."
-  /// (MsgTolbiShipLookoutCannotRow)
   ACTOR_LOOKOUT = ACTOR_FIRST_PLACED
 };
 
@@ -135,13 +133,10 @@ enum TolbiShipMastFirstAttackActorId {
   ///
   /// It turns, swells for 10 frames and shrinks for 24
   /// (gTolbiShipMast_FollowCameraActions) where the monsters then appear.
-  /// ★ Named from what the player sees: a white four-pointed sparkle
-  /// (its render)
   ACTOR_SPARKLE = ACTOR_LOOKOUT + 1,
   /// The first of three monsters, all with the sprite of the first attack's
   /// monsters below decks (gShipRooms_FirstAttackMonsters). They grow from half
   /// size as they close in.
-  /// ★ Named from the game: "Monsters sighted!" (MsgTolbiShipAvast)
   ACTOR_FIRST_SIGHTED_MONSTER
 };
 
@@ -158,25 +153,18 @@ enum TolbiShipMastEnsembleActorId {
   ///
   /// One swoops at the lookout at the second attack. They scatter as the third
   /// attack's monster comes, and they fly off just before "Land ho!".
-  /// ★ Named from what the player sees: a white bird beating its wings (its
-  /// render)
   ACTOR_FIRST_BIRD = ACTOR_LOOKOUT + 1,
   /// Sean, by the sprite he has in the hold (ACTOR_HOLD_SEAN, ship_rooms.c) and
   /// on deck (ACTOR_SEA_SEAN, tolbi_ship_deck.c). He cries "Monsters!" at the
   /// second attack.
-  /// ★ Named from the game: "That'll be me, Ouranos, and Sean on deck"
-  /// (MsgTolbiShipOurReplacementNeverArrivedBut)
   ACTOR_SEAN = ACTOR_FIRST_BIRD + 7,
   /// The sprite of the third attack's monster below decks
   /// (gShipRooms_ThirdAttackMonsters). It drops in beside the lookout.
-  /// ★ Named from what the player sees: a blue winged monster (its render)
   ACTOR_LANDING_MONSTER,
   /// The landing monster's shadow. A blank sprite (SPRITE_BLANK) draws only its
   /// shadow, which grows from a tenth of its size where ACTOR_LANDING_MONSTER
   /// drops, then follows the monster away. tolbi_ship_deck.c's
   /// ACTOR_SEA_FALLING_MONSTER_SHADOW does the same.
-  /// ★ Named from what the player sees: a black shadow that grows on the
-  /// crow's nest where the monster lands (its render)
   ACTOR_LANDING_MONSTER_SHADOW
 };
 
@@ -185,8 +173,6 @@ enum TolbiShipMastCellBehavior {
   CELL_BEHAVIOR_TOLBI_SHIP_MAST_LADDER =
       10, ///< the top of the ladder down to the deck
   /// Where the crewman hid the captain's anchor charm.
-  /// ★ Named from the game: "I hid it on top of the mast."
-  /// (MsgTolbiShipInteriorsIWaitedTooLongIllGet)
   CELL_BEHAVIOR_TOLBI_SHIP_MAST_ANCHOR_CHARM = 11
 };
 

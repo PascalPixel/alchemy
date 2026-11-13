@@ -191,86 +191,52 @@ static void Vale_CycleActorPalette(struct Actor *actor);
 enum ValeActorId {
   /// An old woman. "Mt. Aleph looks beautiful today. It's so peaceful." After
   /// the party has left, "Vale is saved thanks to the Wise One!"
-  /// ★ Named from the game: "Mt. Aleph looks beautiful today."
-  /// (MsgValeMtAlephLooksBeautifulTodayIts)
   ACTOR_OLD_WOMAN_ADMIRING_MT_ALEPH = ACTOR_FIRST_PLACED,
   /// A woman in a green dress. "Vale stays pristine because of Mt. Aleph's
   /// purity."
-  /// ★ Named from the game: "Vale stays pristine because of Mt. Aleph's
-  /// purity." (MsgValeValeStaysPristineBecauseOfMt)
   ACTOR_WOMAN_ON_ALEPHS_PURITY,
   /// A little girl with orange pigtails. "I'm jealous of you, Garet, because
   /// your grandpa's the mayor." (Vale_TalkAboutTheMayorAndTremors)
-  /// ★ Named from the game: "I'm jealous of you,"
-  /// (MsgValeYourGrandpaIsTheMayor)
   ACTOR_GIRL_JEALOUS_OF_GARET,
   /// A young man with brown hair. "This place looks just like it did three
   /// years ago... after the storm..."
-  /// ★ Named from the game: "This place looks just like it did three years
-  /// ago... after the storm..." (MsgValeThisPlaceLooksJustLikeIt)
   ACTOR_YOUNG_MAN_REMEMBERING_THE_STORM,
   /// A strongman by the river. "Isaac, watch out! Don't get too close to the
   /// river!"
-  /// ★ Named from the game: "Don't get too close to the river!"
-  /// (MsgValeIsaacWatchOutDontGetToo)
   ACTOR_STRONGMAN_BY_THE_RIVER,
   /// A burly grey-haired man. "Vale must remain hidden. Psynergy's secrets
   /// mustn't fall into the wrong hands."
-  /// ★ Named from the game: "Vale must remain hidden."
-  /// (MsgValeValeMustRemainHiddenPsynergysSecrets)
   ACTOR_MAN_KEEPING_VALE_HIDDEN,
   /// A woman with fair hair who stands by the way out to Kraden's cottage. "Do
   /// you need to go past here?", then "You mustn't go beyond Kraden's cottage."
   /// (Vale_WarnAboutGoingBeyondKradensCottage)
-  /// ★ Named from the game: "You mustn't go beyond Kraden's cottage."
-  /// (MsgValeDontGoBeyondKradensCottage)
   ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN,
   /// The three puppies, small white dogs, removed once the party has met
   /// Saturos and Menardi. "Rrruff! Rrrruff!"
-  /// ★ Named from what the player sees: small white dogs with brown ears (its
-  /// render)
   ACTOR_FIRST_PUPPY,
   /// A young woman with an orange ponytail. "Garet, you make me so mad
   /// sometimes!" (Vale_ArgueWithGaretsSister) Garet calls her "Sis" back from
   /// Kalay.
-  /// ★ Named from the game: "Your sister's really mad!"
-  /// (MsgValeYoureInTroubleNowGaretYour)
   ACTOR_GARETS_SISTER = ACTOR_FIRST_PUPPY + 3,
   /// "You're in trouble now, Garet... Your sister's really mad!" After the
   /// party has left, "Please take care of my brother, Isaac."
-  /// ★ Named from the game: "Please take care of my brother"
-  /// (MsgValePleaseTakeCareOfMyBrother), said by a small boy with orange hair
-  /// in a green shirt and shorts (its render)
   ACTOR_GARETS_BROTHER,
   /// SPRITE_STONE_PILLAR, as Goma Cave's pillars. It is pushed
   /// (Vale_PushPillar) or moved with Move. Its column is kept in
   /// FLAG_VALE_PILLAR_IN_WEST_COLUMN, _IN_MIDDLE_COLUMN and _IN_EAST_COLUMN
   /// (Vale_MovePillarBelowCliff).
-  /// ★ Named from what the player sees: a stone pillar of brown rock standing
-  /// below the cliff north of the village (its render)
   ACTOR_PILLAR,
-  /// ★ Named from the game: "your mother, Dora, has been crying"
-  /// (MsgValeDoraHasBeenCrying)
   ACTOR_DORA, ///< Isaac's mother
   /// A man with long brown hair and a beard in a long robe. He jumps out to
   /// warn Isaac off the sacred peak, then keeps watching him
   /// (Vale_WarnAgainstSneakingUpMtAleph). "Mt. Aleph is a sacred peak. It is
   /// forbidden to climb it!"
-  /// ★ Named from the game: "Mt. Aleph is a sacred peak."
-  /// (MsgValeMtAlephIsASacredPeak)
   ACTOR_MAN_GUARDING_MT_ALEPH,
   /// The boards on the roof, SPRITE_ROOF_BOARDS, which Isaac moves into place
   /// with Psynergy at the roof's end (Vale_RoofMended).
-  /// ★ Named from what the player sees: a short plank of yellow wood,
-  /// roof_boards.png (its render)
   ACTOR_FIRST_BOARD,
-  /// ★ Named from what the player sees: a short plank of yellow wood,
-  /// roof_boards.png (its render)
   ACTOR_SECOND_BOARD,
-  /// ★ Named from what the player sees: a short plank of yellow wood,
-  /// roof_boards.png (its render)
   ACTOR_THIRD_BOARD,
-  /// ★ Named from the game: "Nut" (MsgItemName), the item Catch takes
   ACTOR_NUT ///< the Nut for Catch, until FLAG_VALE_NUT_CAUGHT is set
 };
 
@@ -279,20 +245,15 @@ enum ValeActorId {
 enum ValeAfterKalayActorId {
   /// Garet's sister. "Ah! It's been a while... You're back?"
   /// (Vale_GaretMeetsHisSister)
-  /// ★ Named from the game: "Thanks, Sis." (MsgValeAh), Garet answering her
   ACTOR_GARETS_SISTER_AFTER_KALAY = ACTOR_FIRST_PLACED,
   /// "I will do my best to show everyone that I am strong enough to protect
   /// our family and Vale." (Vale_GaretAsksToProtectFamily)
-  /// ★ Named from the game: "Please take care of my brother"
-  /// (MsgValePleaseTakeCareOfMyBrother)
   ACTOR_GARETS_BROTHER_AFTER_KALAY,
   /// The young man of ACTOR_YOUNG_MAN_REMEMBERING_THE_STORM. "Is Jenna back
   /// yet?" (Vale_AskWhetherJennaHasReturned)
-  /// ★ Named from the game: "Is back yet?" (MsgValeIsJennaBackYet)
   ACTOR_YOUNG_MAN_ASKING_FOR_JENNA,
   /// The strongman of ACTOR_STRONGMAN_BY_THE_RIVER. "I still remember when
   /// Felix and I used to play here...*Sniff*"
-  /// ★ Named from the game: "I still remember when" (MsgValeIUsedToPlayHere)
   ACTOR_STRONGMAN_REMEMBERING_FELIX,
   /// Three sprites of water, CrossboneIsleFloodgate's water sprite
   /// SPRITE_SPLASH. Only Vale_UnusedWaterBurstsByTheRiver shows them. During a
@@ -302,33 +263,20 @@ enum ValeAfterKalayActorId {
   ///
   /// The row after them places the woman with fair hair of
   /// ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN at the origin, and nothing names her.
-  /// ★ Named from what the player sees: a spout of white water spraying up,
-  /// splash.png (its render)
   ACTOR_FIRST_WATER,
   /// An old woman. "Mt. Aleph's eruption was so powerful, it caused the
   /// continent to crack!"
-  /// ★ Named from the game: "Mt. Aleph's eruption was so powerful"
-  /// (MsgValeMtAlephsEruptionWasSoPowerful)
   ACTOR_OLD_WOMAN_ON_THE_ERUPTION = ACTOR_FIRST_WATER + 4,
   /// A woman in a green dress. "Aghh! I felt another one!"
   /// (Vale_ReactToAnotherTremor)
-  /// ★ Named from the game: "Aghh! I felt another one!"
-  /// (MsgValeIFeltAnotherOne)
   ACTOR_WOMAN_FEELING_TREMORS,
   /// A little girl with orange pigtails. "They say the danger is gone, even
   /// though the earthquakes continue..."
-  /// ★ Named from the game: "They say the danger is gone, even though the
-  /// earthquakes continue..." (MsgValeTheySayTheDangerIsGone)
   ACTOR_GIRL_DOUBTING_SAFETY,
   /// A burly grey-haired man. "I wonder why we haven't seen any travelers since
   /// the eruption..." (Vale_AskAboutTheLackOfTravelers)
-  /// ★ Named from the game: "I wonder why we haven't seen any travelers
-  /// since the eruption..." (MsgValeNoTravelersSinceTheEruption)
   ACTOR_MAN_MISSING_TRAVELERS,
-  /// ★ Named from the game: "Nut" (MsgItemName)
   ACTOR_NUT_AFTER_KALAY,
-  /// ★ Named from what the player sees: a stone pillar of brown rock standing
-  /// below the cliff north of the village (its render)
   ACTOR_PILLAR_AFTER_KALAY ///< the pillar of ACTOR_PILLAR
 };
 
@@ -337,30 +285,16 @@ enum ValeAfterKalayActorId {
 /// ids.
 enum ValeOpeningActorId {
   /// A woman in a green dress who meets Jenna on her way.
-  /// ★ Named from what the player sees: a woman with brown hair in a green
-  /// dress and a white apron (its render)
   ACTOR_OPENING_WOMAN = ACTOR_FIRST_PLACED,
   /// The pillar of ACTOR_PILLAR, which Garet trains his Psynergy on.
-  /// ★ Named from what the player sees: a stone pillar of brown rock standing
-  /// below the cliff north of the village (its render)
   ACTOR_OPENING_PILLAR,
-  /// ★ Named from the game: "your mother, Dora, has been crying"
-  /// (MsgValeDoraHasBeenCrying)
   ACTOR_OPENING_DORA, ///< calls up to Isaac on the roof
   /// The boards on the roof, as ACTOR_FIRST_BOARD.
-  /// ★ Named from what the player sees: a short plank of yellow wood,
-  /// roof_boards.png (its render)
   ACTOR_OPENING_FIRST_BOARD,
-  /// ★ Named from what the player sees: a short plank of yellow wood,
-  /// roof_boards.png (its render)
   ACTOR_OPENING_SECOND_BOARD,
-  /// ★ Named from what the player sees: a short plank of yellow wood,
-  /// roof_boards.png (its render)
   ACTOR_OPENING_THIRD_BOARD,
   /// SPRITE_MOVE_HAND, the hand of Move (event_commands/catch.c). It pushes the
   /// pillar for Garet, shedding sparkles.
-  /// ★ Named from what the player sees: a large open hand,
-  /// move_hand.png (its render)
   ACTOR_OPENING_MOVE_HAND
 };
 
@@ -380,13 +314,9 @@ enum ValeAnimation {
 
 /// The roof of Isaac's house has just been mended. For the rest of the visit
 /// Dora frets about the hole Garet left.
-/// ★ Named from the game: "But what am I going to do about this hole?"
-/// (MsgValeIToldGaretItWas)
 #define FLAG_VALE_ROOF_JUST_MENDED FLAG_SCENE_TEMP_02
 /// The leader has climbed the ladder onto the roof of Isaac's house, whose
 /// cells are changed so it can be walked.
-/// ★ Named from the game: "Haven't you finished mending the roof yet?"
-/// (MsgValeRepairCaption)
 #define FLAG_VALE_ON_ROOF FLAG_SCENE_TEMP_04
 /// The leader is on the rope bridge over the river.
 ///
@@ -394,43 +324,29 @@ enum ValeAnimation {
 /// behaviors. Its two middle rows are walkable at the deck's height, and its
 /// rails are walls. Stepping off puts back the river's, walled water between
 /// open banks.
-/// ★ Named from what the player sees: a wooden bridge with rope rails over the
-/// river, above the waterfall (its render)
 #define FLAG_VALE_ON_BRIDGE FLAG_SCENE_TEMP_10
 /// The man guarding Mt. Aleph is paused while a menu is open.
-/// ★ Named from the game: "Mt. Aleph is a sacred peak."
-/// (MsgValeMtAlephIsASacredPeak)
 #define FLAG_VALE_MT_ALEPH_GUARD_PAUSED FLAG_SCENE_TEMP_41
 /// Back from Kalay, Garet has met his sister.
-/// ★ Named from the game: "Ah!" (MsgValeAh)
 #define FLAG_VALE_GARET_MET_SISTER FLAG_AREA_TEMP_03
 /// Back from Kalay, Garet has asked his brother to protect the family while he
 /// is gone.
-/// ★ Named from the game: "you must protect the family while I'm gone."
-/// (MsgValeEverProtectFamily)
 #define FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY FLAG_AREA_TEMP_04
 /// Unused: the water has burst up by the river and the strongman has remembered
 /// Felix (Vale_UnusedWaterBurstsByTheRiver, which nothing reaches).
-/// ★ Named from the game: "I still remember when" (MsgValeIUsedToPlayHere)
 #define FLAG_VALE_UNUSED_WATER_BURST_SEEN FLAG_AREA_TEMP_05
 /// Back from Kalay, the burly man has asked about the lack of travellers since
 /// the eruption.
-/// ★ Named from the game: "I wonder why we haven't seen any travelers since
-/// the eruption..." (MsgValeNoTravelersSinceTheEruption)
 #define FLAG_VALE_ASKED_ABOUT_TRAVELERS FLAG_AREA_TEMP_07
 /// Vale_RoofMended has played, in which Dora praises the roof and sends
 /// the three off to Mt. Aleph.
-/// ★ Named from the game: "Good job" (MsgValeGoodJob)
 #define FLAG_VALE_ROOF_MENDED_EVENT_PLAYED FLAG_AREA_TEMP_08
 /// The stone pillar below the cliff stands in its west column.
-/// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
 #define FLAG_VALE_PILLAR_IN_WEST_COLUMN FLAG_AREA_TEMP_14
 /// The stone pillar below the cliff stands in its middle column, where it
 /// starts.
-/// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
 #define FLAG_VALE_PILLAR_IN_MIDDLE_COLUMN FLAG_AREA_TEMP_15
 /// The stone pillar below the cliff stands in its east column.
-/// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
 #define FLAG_VALE_PILLAR_IN_EAST_COLUMN FLAG_AREA_TEMP_16
 
 const struct SceneEntrance *Vale_GetEntrances(void) { return gVale_Entrances; }

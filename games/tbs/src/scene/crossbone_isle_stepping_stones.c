@@ -105,71 +105,44 @@ enum CrossboneIsleSteppingStonesActorId {
   /// The pillars of CrossboneIsleSteppingStones (four, SPRITE_STONE_PILLAR),
   /// CrossboneIsleIcePillars (five) and CrossboneIsleStackedPillars (four,
   /// SPRITE_SPIRAL_PILLAR), the only actors those rooms place.
-  /// ★ Named from what the player sees: tan stone pillars over the pit,
-  /// pillars of ice on the spikes, and grey carved pillars stacked two high
-  /// (its render)
   ACTOR_FIRST_PILLAR = ACTOR_FIRST_PLACED,
   /// The logs, SPRITE_LOG_NORTH_SOUTH and SPRITE_LOG_WEST_EAST as Kolima
   /// Forest's. There are eight in CrossboneIsleFloodgate, where the seven
   /// after the first float on the raised water, and two in
   /// CrossboneIsleDragonStatue.
-  /// ★ Named from what the player sees: logs lying on the cave floor (its
-  /// render)
   ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
   /// CrossboneIsleDragonStatue's boulder for Move, SPRITE_TURNING_ROCK, which
   /// sinks into place at column 16.
-  /// ★ Named from what the player sees: a round grey boulder below the logs
-  /// (its render)
   ACTOR_SINKING_BOULDER = ACTOR_FIRST_LOG + 2,
   /// CrossboneIsleDragonStatue's three puddles, SPRITE_PUDDLE, which Frost
   /// freezes into pillars of ice.
-  /// ★ Named from what the player sees: a small blue puddle on the west ledge
-  /// (its render)
   ACTOR_FIRST_PUDDLE,
-  /// ★ Named from what the player sees: a small blue puddle on the middle
-  /// ledge (its render)
   ACTOR_SECOND_PUDDLE,
-  /// ★ Named from what the player sees: the puddle by the dragon statue,
-  /// drawn frozen around its pillar (its render)
   ACTOR_THIRD_PUDDLE,
   /// The pillar in CrossboneIsleDragonStatue's third puddle,
   /// SPRITE_WHITE_PLATFORM, which rises 32 pixels as Frost freezes the puddle.
-  /// ★ Named from what the player sees: a narrow dark pillar standing in the
-  /// third puddle (its render)
   ACTOR_RISING_PILLAR,
   /// CrossboneIsleFloodgate's water, SPRITE_SPLASH, raised behind the closed
   /// floodgate.
-  /// ★ Named from what the player sees: the stream's green water, which the
-  /// closed floodgate backs up (its render)
   ACTOR_WATER = ACTOR_FIRST_LOG + 8
 };
 
 /// CrossboneIsleFloodgate: the water has been raised.
-/// ★ Named from what the player sees: the stream's water risen behind the
-/// closed floodgate, floating the logs higher (its render)
 #define FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED FLAG_SCENE_TEMP_00
 /// CrossboneIsleStackedPillars: the first pillar has another pushed on top of
 /// it, so Move and Carry leave it be. The four pillars' flags follow from this
 /// one.
-/// ★ Named from what the player sees: two stacks of two grey stone pillars
-/// among the ladders and cliffs (its render)
 #define FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER         \
   FLAG_SCENE_TEMP_00
 /// CrossboneIsleDragonStatue: the first puddle is frozen. The second's and
 /// third's flags follow from this one.
-/// ★ Named from what the player sees: three small blue puddles on the cave
-/// floor (its render)
 #define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
 /// CrossboneIsleDragonStatue: the leader stood on the third puddle when Frost
 /// began, so it stays unfrozen.
-/// ★ Named from what the player sees: the third puddle, by the dragon statue,
-/// with a narrow dark pillar standing in it (its render)
 #define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_LEADER_ON_THIRD_PUDDLE               \
   FLAG_SCENE_TEMP_03
 /// CrossboneIsleDragonStatue: the boulder Move pushes has sunk into place at
 /// column 16.
-/// ★ Named from what the player sees: a round grey boulder below the two logs
-/// (its render)
 #define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_BOULDER_SUNK FLAG_SCENE_TEMP_04
 
 /// A copied map cell, also read in the two flag pairs the pillar redraw keeps.

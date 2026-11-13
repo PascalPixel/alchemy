@@ -67,22 +67,15 @@
 /// rows from ACTOR_FIRST_PLACED.
 enum {
   /// A short log that slides between x 72 and x 104.
-  /// ★ Named from what the player sees: a log lying north to south (its
-  /// render)
   ACTOR_SHORT_LOG = ACTOR_FIRST_PLACED,
   /// The water at the floodgate, which bursts as it opens and churns as it
   /// closes.
-  /// ★ Named from what the player sees: white and pale blue spray,
-  /// SPRITE_SPLASH (its render)
   ACTOR_FLOODGATE_SPRAY,
-  /// ★ Named from the game: "Do not touch Floodgate Switch!"
-  /// (MsgKolimaDoNotTouchFloodgate)
   ACTOR_SIGN
 };
 
 /// The cell behavior of the Floodgate Switch's cell, which a search flips.
 enum KolimaForestFloodgateCellBehavior {
-  /// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
   CELL_BEHAVIOR_KOLIMA_FOREST_FLOODGATE_SWITCH = 9
 };
 

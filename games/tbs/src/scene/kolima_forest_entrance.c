@@ -69,40 +69,20 @@
 /// ACTOR_FIRST_PLACED.
 enum {
   /// The three logs. The last is the one that can reach the river.
-  /// ★ Named from what the player sees: a log lying north to south (its
-  /// render)
   ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: a log lying north to south (its
-  /// render)
   ACTOR_RIVER_LOG = ACTOR_FIRST_LOG + 2,
   /// Tret's wrathful side, unseen while the curse falls.
-  /// ★ Named from the game: "Tret was once a kindly forest king."
-  /// (MsgKolimaWatchOutItsHappeningAgain)
   ACTOR_TRET,
   /// Unseen while the curse falls.
-  /// ★ Named from the game: "We are not the only ones who will die, Laurel."
-  /// (MsgKolimaWatchOutItsHappeningAgain)
   ACTOR_LAUREL,
   /// The fields of Psynergy, one over each party member. Mia's only with Mia.
-  /// ★ Named from the game: "You know what those fields were?"
-  /// (MsgKolimaKnowThoseFieldsWere)
   ACTOR_LEADER_PSYNERGY_FIELD,
-  /// ★ Named from the game: "You know what those fields were?"
-  /// (MsgKolimaKnowThoseFieldsWere)
   ACTOR_IVAN_PSYNERGY_FIELD,
-  /// ★ Named from the game: "You know what those fields were?"
-  /// (MsgKolimaKnowThoseFieldsWere)
   ACTOR_MIA_PSYNERGY_FIELD,
-  /// ★ Named from the game: "You know what those fields were?"
-  /// (MsgKolimaKnowThoseFieldsWere)
   ACTOR_GARET_PSYNERGY_FIELD,
   /// The sparkles of Tret's glamour on the ground, gone once the curse is
   /// lifted.
-  /// ★ Named from the game: "I turned into a tree right when the sparkles
-  /// fell from the sky." (MsgKolimaITurnedIntoATreeRight)
   ACTOR_FIRST_GROUND_SPARKLE,
-  /// ★ Named from the game: "I turned into a tree right when the sparkles fell
-  /// from the sky." (MsgKolimaITurnedIntoATreeRight)
   ACTOR_LAST_GROUND_SPARKLE = ACTOR_FIRST_GROUND_SPARKLE + 4
 };
 
@@ -117,8 +97,6 @@ static void KolimaForestEntrance_FlickerPsynergyFields(void);
 
 /// The river log has tipped into the river and floats there as ground the party
 /// can cross.
-/// ★ Named from what the player sees: a log lying north to south beside the
-/// river (its render)
 #define FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER FLAG_SCENE_TEMP_00
 
 /// The end of a field's growing: if a sparkle has burst on a field, the field

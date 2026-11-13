@@ -166,94 +166,53 @@
 /// (gKalay_TourGroupActorPlacements).
 enum KalayTownActorId {
   /// The two soldiers of Kalay at the town's entrance from the World Map.
-  /// ★ Named from the game: "Welcome to Kalay! You may enter, so long as you
-  /// do not disrupt the peace." (MsgKalayWelcomeInPeace)
   ACTOR_WELCOMING_SOLDIER = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "We soldiers protect the peace in Kalay with our
-  /// lives." (MsgKalaySoldiersProtectPeace)
   ACTOR_SOLDIER_PROTECTING_THE_PEACE,
   /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR).
-  /// ★ Named from the game: "Lord Hammet, the founder of Kalay, is a great
-  /// merchant." (MsgKalayHammetGenerousMerchant)
   ACTOR_YOUNG_MAN_ON_HAMMET_THE_MERCHANT,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR).
-  /// ★ Named from the game: "Lord Hammet is still out with his caravans on
-  /// business." (MsgKalayHammetOnJourney)
   ACTOR_WOMAN_ON_HAMMETS_CARAVANS,
   /// A burly grey-haired man (SPRITE_BURLY_MAN_WITH_GREY_HAIR).
-  /// ★ Named from the game: "Thankfully, it has been rebuilt since then."
-  /// (MsgKalayNorthernBridgeRebuilt)
   ACTOR_MAN_ON_THE_REBUILT_BRIDGE,
   /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS).
-  /// ★ Named from the game: "I heard a rumor that there's trouble in Lamakan
-  /// Desert." (MsgKalayLamakanTrouble)
   ACTOR_WOMAN_ON_LAMAKAN_DESERT,
   /// The tourist the guides are missing, an old man with a cane
   /// (SPRITE_OLD_MAN_WITH_CANE), who stands in town until then and takes his
   /// place again after.
-  /// ★ Named from the game: "Uh-oh... We're short one person... Now where
-  /// could he be?" (MsgKalayShortOnePerson)
   ACTOR_LATE_TOURIST,
   /// An old woman (SPRITE_OLD_WOMAN). "The guests at the inn are tourists on
   /// their way to see Colosso."
-  /// ★ Named from the game: "I should have saved my money. Then I'd be on
-  /// that tour, too." (MsgKalayWishSavedForFestival)
   ACTOR_WOULD_BE_TOURIST,
   /// A small boy with fair hair (SPRITE_BOY_WITH_FAIR_HAIR). "I hear Colosso
   /// is incredible. I'd love to see such a huge carnival."
-  /// ★ Named from the game: "Maybe when I'm older, I'll even get to go fight
-  /// in Colosso!" (MsgKalayChildFestivalDream)
   ACTOR_BOY_DREAMING_OF_COLOSSO,
   /// A little girl with pigtails (SPRITE_GIRL_WITH_PIGTAILS).
-  /// ★ Named from the game: "I think it was called Mt. Aleph."
-  /// (MsgKalayTraderTownNews)
   ACTOR_GIRL_ON_MT_ALEPH,
   /// A strongman (SPRITE_STRONGMAN).
-  /// ★ Named from the game: "Lord Hammet's knack for business is the reason
-  /// Kalay has flourished." (MsgKalayHammetBusinessSkill)
   ACTOR_STRONGMAN_ON_HAMMETS_KNACK,
   /// A bald, muscular man (SPRITE_BALD_MUSCULAR_MAN) who came to Kalay from
   /// Tolbi, afraid of Babi (Kalay_TalkAboutLeavingHome).
-  /// ★ Named from the game: "I came to Kalay because I didn't like Tolbi..."
-  /// (MsgKalayCameKalayBecauseDidntLike)
   ACTOR_MAN_WHO_LEFT_TOLBI,
   /// The Colosso tour's guides, men carrying packs
   /// (SPRITE_MAN_CARRYING_A_PACK), who stand in town and lead the tour off
   /// when it leaves.
-  /// ★ Named from the game: "Are we all listening? Let's stop right here."
-  /// (MsgKalayOkListeningLets)
   ACTOR_HEAD_GUIDE,
-  /// ★ Named from the game: "We're just checking to make sure no one is
-  /// missing!" (MsgKalayWhyWeStoppingAtPlace)
   ACTOR_SECOND_GUIDE,
-  /// ★ Named from the game: "These weapons are good, but they're not the best
-  /// Kalay makes." (MsgKalayLordHammetSellsHisBest)
   ACTOR_WEAPON_MERCHANT,
-  /// ★ Named from the game: "Ask me anything about armor."
-  /// (MsgArmorShopWelcome)
   ACTOR_ARMOR_MERCHANT,
-  /// ★ Named from the game: "Welcome! We have just the gear you need."
-  /// (MsgItemShopWelcome)
   ACTOR_ITEM_MERCHANT,
   /// The statue (with the Kalay Tunnel's sprite) that Move pushes aside from
   /// the way down into the Kalay Tunnel.
-  /// ★ Named from what the player sees: a stone statue on a pedestal at the
-  /// town's north edge (its render)
   ACTOR_TOWN_STATUE,
   /// Circles in the air until Catch pulls it in.
-  /// ★ Named from the game: "Nut" (MsgItemName)
   ACTOR_TOWN_NUT,
   /// The tour group, ACTOR_FIRST_TOURIST and the six after it, then
   /// ACTOR_OURANOS. In row order they are a chef (SPRITE_CHEF), a young woman
   /// in green, a young man with brown hair, a woman with fair hair, a woman
   /// with a sword, a bald, muscular man, a young man with blue hair, and
   /// Ouranos, a young man with red hair.
-  /// ★ Named from the game: "Why are we stopping at a place like this?"
-  /// (MsgKalayWhyWeStoppingAtPlace)
   ACTOR_FIRST_TOURIST,
   /// The tourist the one beside him calls Ouranos.
-  /// ★ Named from the game: "It's just a shame a man like you can't ride on a
-  /// boat, Ouranos." (MsgKalayDecideEnteringColosso)
   ACTOR_OURANOS = ACTOR_FIRST_TOURIST + 7
 };
 
@@ -263,11 +222,7 @@ enum KalayTownActorId {
 enum KalayPalaceActorId {
   /// The soldiers of Kalay before the palace door. "This is Lord Hammet's
   /// palace. The lord is away."
-  /// ★ Named from what the player sees: two soldiers of Kalay standing
-  /// guard at the palace door (its render)
   ACTOR_PALACE_GUARD = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: the second soldier at the palace
-  /// door (its render)
   ACTOR_SECOND_PALACE_GUARD
 };
 
@@ -277,19 +232,12 @@ enum KalayPalaceActorId {
 enum KalayTunnelEntranceActorId {
   /// A soldier of Kalay who keeps the passage closed by Hammet and Layana's
   /// command.
-  /// ★ Named from the game: "Do you want to go to the cave up ahead?"
-  /// (MsgKalayDoWantGoCaveUp)
   ACTOR_TUNNEL_GUARD = ACTOR_FIRST_PLACED,
   /// A covered wagon drawn by a horse (large_wagon.png).
-  /// ★ Named from the game: "Bunza's wagon" (MsgLunpaGaretAsksIfNotRiding)
   ACTOR_WAGON,
-  /// ★ Named from the game: "We've arrived, Hammet."
-  /// (MsgKalayWeveArrivedHammet)
   ACTOR_HAMMET,
-  /// ★ Named from the game: "Is that you, Bunza?" (MsgLunpaMoment)
   ACTOR_BUNZA,
   /// Floats here until Catch takes it.
-  /// ★ Named from the game: "Nut" (MsgItemName)
   ACTOR_TUNNEL_ENTRANCE_NUT
 };
 
@@ -297,27 +245,18 @@ enum KalayTunnelEntranceActorId {
 /// gKalay_TunnelActorPlacements.
 enum KalayTunnelActorId {
   /// The statues that open the two passages.
-  /// ★ Named from what the player sees: two stone statues on pedestals that
-  /// Move slides west (its render)
   ACTOR_FIRST_STATUE = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: the second stone statue, east of the
-  /// first (its render)
   ACTOR_SECOND_STATUE,
   // XXX (no evidence): whether he is Bunza; he has the sprite of the man
   // Kalay's arrival calls Bunza ("Well then, Bunza, ..."), but none of his
   // three lines names him, and no line spoken while he stands here does.
   /// A man drawn with SPRITE_BUNZA who waits here once FLAG_KALAY_TUNNEL_OPEN
   /// is set.
-  /// ★ Named from the game: "Layana was very hard on all of you, wasn't she?"
-  /// (MsgKalayLayanaWasVeryHardOn)
   ACTOR_WAITING_MAN,
   /// The sprite of the puddle that Frost freezes into an ice pillar in
   /// bilibin_cave.c.
-  /// ★ Named from what the player sees: a puddle of water, SPRITE_PUDDLE
-  /// (its render)
   ACTOR_PUDDLE,
   /// A Mars Djinni.
-  /// ★ Named from the game: "Scorch" (MsgDjinnName)
   ACTOR_SCORCH
 };
 
@@ -326,18 +265,12 @@ enum KalayTunnelActorId {
 /// scenes.
 enum KalayTunnelFlag {
   /// The fade overlay follows the leader.
-  /// ★ Named from its area name: Kalay Tunnel
   FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER = FLAG_SCENE_TEMP_00,
-  /// ★ Named from its area name: Kalay Tunnel
   FLAG_TUNNEL_PUDDLE_FROZEN = FLAG_SCENE_TEMP_01,
   /// Each statue's particles have started their sound.
-  /// ★ Named from its area name: Kalay Tunnel
   FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED = FLAG_SCENE_TEMP_02,
-  /// ★ Named from its area name: Kalay Tunnel
   FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED = FLAG_SCENE_TEMP_03,
-  /// ★ Named from its area name: Kalay Tunnel
   FLAG_TUNNEL_FIRST_PASSAGE_OPEN = FLAG_AREA_TEMP_02,
-  /// ★ Named from its area name: Kalay Tunnel
   FLAG_TUNNEL_SECOND_PASSAGE_OPEN = FLAG_AREA_TEMP_03
 };
 
@@ -403,8 +336,6 @@ static s32 Kalay_UpdateTouristFidget(struct Actor *actor) {
 
 /// The party has heard in Lunpa that Hammet is held there, or he is already
 /// free. It changes what Layana says.
-/// ★ Named from the game: "you sneaked into Lunpa? That's far too dangerous!"
-/// (MsgKalayIsaacSneakedIntoLunpaThats)
 #define FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA FLAG_AREA_TEMP_21
 
 const struct SceneEntrance *Kalay_GetEntrances(void) {

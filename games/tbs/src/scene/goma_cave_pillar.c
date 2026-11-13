@@ -92,16 +92,10 @@
 // FLAG_AREA_TEMP_LAST when the party enters another area, and other areas use
 // the numbers for their own.
 /// The stump has been pushed over into the room below.
-/// ★ Named from what the player sees: a tree stump standing on a ledge (its
-/// render)
 #define FLAG_GOMA_CAVE_STUMP_FELL FLAG_AREA_TEMP_00
 /// The east stone pillar has sunk into its place.
-/// ★ Named from what the player sees: a stone pillar on the room's east side
-/// (its render)
 #define FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE FLAG_AREA_TEMP_01
 /// The west stone pillar stands one step east of its start.
-/// ★ Named from what the player sees: a stone pillar at the head of the room's
-/// west passage (its render)
 #define FLAG_GOMA_CAVE_WEST_PILLAR_MOVED FLAG_AREA_TEMP_02
 
 enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
@@ -110,14 +104,10 @@ enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 /// gGomaCavePillar_ActorPlacements.
 enum GomaCavePillarActorId {
   /// Slides between two places.
-  /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
   ACTOR_WEST_PILLAR = ACTOR_FIRST_PLACED,
   /// Pushed over the edge into the room below.
-  /// ★ Named from the game: "You want to move the stump, right?"
-  /// (MsgGomaNoUsePsynergy)
   ACTOR_STUMP,
   /// Sinks into the floor in its place.
-  /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
   ACTOR_EAST_PILLAR,
   /// Hides the stump where it drops behind the floor in front of the ledge.
   ///
@@ -130,12 +120,9 @@ enum GomaCavePillarActorId {
   /// goes back there once the stump has fallen.
   ACTOR_MASK_FOR_STUMP,
   /// Forge, a Mars Djinni, until it joins the party.
-  /// ★ Named from the game: "Forge" (MsgDjinnName)
   ACTOR_FORGE,
   /// The man who fought Forge and lost it, a man with golden-brown hair in
   /// orange and red.
-  /// ★ Named from the game: "Did you see something strange over there? I
-  /// fought it, but it fled." (MsgVaultDidYouSeeSomethingStrangeOver)
   ACTOR_WITNESS
 };
 

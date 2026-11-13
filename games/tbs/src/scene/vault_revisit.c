@@ -78,57 +78,32 @@
 /// gVaultRevisit_ActorPlacements' rows from ACTOR_FIRST_PLACED.
 enum VaultRevisitActorId {
   /// vault.c's welcoming young man, who recognizes the party.
-  /// ★ Named from the game: "You've returned to Vault!"
-  /// (MsgVaultWarriorsWhoCaptured)
   ACTOR_WELCOMING_YOUNG_MAN = ACTOR_FIRST_PLACED,
   /// A woman with fair hair who brings the news from Kalay.
-  /// ★ Named from the game: "You've probably already heard, but the bridge to
-  /// Kalay has been fixed." (MsgVaultYouveProbablyAlreadyHeardButThe)
   ACTOR_WOMAN_ON_THE_FIXED_BRIDGE,
   /// A burly grey-haired man who worries about Hammet.
-  /// ★ Named from the game: "I wonder what happened to Hammet when he went to
-  /// Lunpa..." (MsgVaultIWonderWhatHappenedToHammet)
   ACTOR_VILLAGER_WONDERING_ABOUT_HAMMET,
   /// A woman.
-  /// ★ Named from the game: "There have been rumors of thieves from Lunpa
-  /// running wild" (MsgVaultRumorsThievesLunpa)
   ACTOR_WOMAN_ON_LUNPAS_THIEVES,
   /// An old man with a cane who has talked with the mayor.
-  /// ★ Named from the game: "I was just talking about you with our mayor"
-  /// (MsgVaultTalkingMayorStrong)
   ACTOR_MAYORS_VISITOR,
   /// An old woman.
-  /// ★ Named from the game: "If the volcano stays calm and the southern bridge
-  /// stays fixed, we won't have any worries at all." (MsgVaultVolcanoStaysCalm)
   ACTOR_OLD_WOMAN_ON_THE_VOLCANO,
   /// vault.c's two children, walking round the well again. The boy greets the
   /// party. "Hey, it's that warrior guy!"
-  /// ★ Named from what the player sees: a blond boy walking round the well
-  /// (its render)
   ACTOR_BOY_ROUND_THE_WELL,
   /// Speaks of the grown-ups. "Grown-ups always get so scared"
-  /// ★ Named from what the player sees: a girl with orange hair walking round
-  /// the well (its render)
   ACTOR_GIRL_ROUND_THE_WELL,
   /// vault.c's strongman on watch. "Did you guys check out the jail?"
-  /// ★ Named from the game: "Nobody's stealing anything on my watch!"
-  /// (MsgVaultNobodysStealingAnything)
   ACTOR_STRONGMAN_ON_WATCH,
   /// A bearded man in a long robe who takes the thieves' escape calmly.
-  /// ★ Named from the game: "The thieves escaped, but I think it's all right.
-  /// It's all part of a divine plan." (MsgVaultTheThievesEscapedButIThink)
   ACTOR_VILLAGER_DIVINE_PLAN,
-  /// ★ Named from what the player sees: a white dog sitting among the graves
-  /// (its render)
   ACTOR_VAULT_DOG,
   /// vault.c's young man fixing the roof, standing where he did there, his work
   /// done.
-  /// ★ Named from the game: "There, you see? The roof repairs are all
-  /// finished." (MsgVaultThereYouSeeTheRoofRepairs)
   ACTOR_YOUNG_MAN_FIXING_THE_ROOF,
   /// Sap, a Venus Djinni, hiding until the bell calls it. The row before it,
   /// SPRITE_IVY placed at 0, 0, is never referred to.
-  /// ★ Named from the game: "Sap" (MsgDjinnName)
   ACTOR_SAP = ACTOR_FIRST_PLACED + 13
 };
 
@@ -138,20 +113,10 @@ enum { VAULT_PROXIMITY_REACTION_PAUSED = 2 };
 /// party stays in Vault's scenes. A Mind Read before someone has spoken plays
 /// the conversation first.
 enum {
-  /// ★ Named from the game: "Hey, it's that warrior guy!"
-  /// (MsgVaultWarriorGuy)
   FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED = FLAG_AREA_TEMP_00,
-  /// ★ Named from the game: "You're the warriors who captured the thieves"
-  /// (MsgVaultWarriorsWhoCaptured)
   FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY = FLAG_AREA_TEMP_05,
-  /// ★ Named from the game: "You're all really strong"
-  /// (MsgVaultTalkingMayorStrong)
   FLAG_VAULT_REVISIT_PARTY_PRAISED = FLAG_AREA_TEMP_06,
-  /// ★ Named from the game: "I'm so glad you came back to Vault!"
-  /// (MsgVaultWarriorGuy)
   FLAG_VAULT_REVISIT_BOY_ROUND_THE_WELL_SPOKE = FLAG_AREA_TEMP_07,
-  /// ★ Named from the game: "did you guys check out the jail?"
-  /// (MsgVaultGuysCheckJail)
   FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL = FLAG_AREA_TEMP_08
 };
 

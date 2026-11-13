@@ -95,21 +95,14 @@
 #include "shared/walk_into_leader.h"
 
 /// Both beams have opened the hole in the floor before the centre statue.
-/// ★ Named from what the player sees: the statue holding a bowl at the head of
-/// the hall, where the beams from the statues beside it meet on the floor
-/// before it (its render)
 #define FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN FLAG_SCENE_TEMP_07
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for
 // their own.
 /// Set once Kraden has found the hole and explained the disarmed trap.
-/// ★ Named from the game: "So the statue puzzle was the trap..."
-/// (MsgSolSanctumKradenYouFoundIt)
 #define FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED FLAG_AREA_TEMP_0A
 /// Set once Kraden has explained the statue puzzle's trap.
-/// ★ Named from the game: "But if you just move one statue, you'll be caught
-/// in the sanctum's trap." (MsgSolSanctumWait)
 #define FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED FLAG_AREA_TEMP_0B
 
 // The third patch draws the back row of drifting sprites 6 pixels below the
@@ -209,40 +202,19 @@ STATIC_ASSERT(offsetof(struct SealOpening, unused) == 0xc4);
 /// Of the statues, four are pushed onto seals and two shine beams at the
 /// centre. The other two never move.
 enum SolSanctumStatueActorId {
-  /// ★ Named from the game: "What's wrong, Kraden?" (MsgSolSanctumWrongKraden)
   ACTOR_KRADEN = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "So the statue puzzle was the trap..."
-  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_NORTHWEST_STATUE,
-  /// ★ Named from the game: "two beams of light shot out from them"
-  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_LEFT_BEAM_STATUE,
-  /// ★ Named from the game: "So the statue puzzle was the trap..."
-  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_NORTHEAST_STATUE,
-  /// ★ Named from the game: "two beams of light shot out from them"
-  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_RIGHT_BEAM_STATUE,
-  /// ★ Named from the game: "So the statue puzzle was the trap..."
-  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_SOUTHWEST_STATUE,
   /// South of the left beam statue, and moved by no event.
-  /// ★ Named from the game: "So the statue puzzle was the trap..."
-  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_LEFT_STILL_STATUE,
-  /// ★ Named from the game: "So the statue puzzle was the trap..."
-  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_SOUTHEAST_STATUE,
   /// South of the right beam statue, and moved by no event.
-  /// ★ Named from the game: "So the statue puzzle was the trap..."
-  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_RIGHT_STILL_STATUE,
-  /// ★ Named from the game: "and that other statue was here to... disarm the
-  /// trap." (MsgSolSanctumKradenYouFoundIt)
   ACTOR_CENTER_STATUE,
   /// Stands in the hole in the floor once the centre statue has dropped in.
-  /// ★ Named from the game: "And dropped the statue into it after that."
-  /// (MsgSolSanctumKradenYouFoundIt)
   ACTOR_MOVED_CENTER_STATUE
 };
 

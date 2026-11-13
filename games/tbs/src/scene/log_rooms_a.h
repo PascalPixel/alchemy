@@ -31,16 +31,10 @@ enum LogRoomsACellBehavior {
   /// thieves are jailed.
   CELL_BEHAVIOR_LOG_ROOMS_A_INN_BARREL = 41,
   CELL_BEHAVIOR_LOG_ROOMS_A_JAR = 100,
-  /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)
   CELL_BEHAVIOR_LOG_ROOMS_A_FIRST_BARREL = 101,
-  /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)
   CELL_BEHAVIOR_LOG_ROOMS_A_SECOND_BARREL = 102,
   CELL_BEHAVIOR_LOG_ROOMS_A_WOODEN_BOX = 103,
-  /// ★ Named from the game: "History of Vault, Vol 1."
-  /// (MsgVaultTheresABookEntitledHistoryOf)
   CELL_BEHAVIOR_LOG_ROOMS_A_HISTORY_BOOKCASE = 200,
-  /// ★ Named from the game: "Gems of Angara."
-  /// (MsgVaultTheresABookEntitledGemsOf)
   CELL_BEHAVIOR_LOG_ROOMS_A_GEMS_BOOKCASE = 201
 };
 

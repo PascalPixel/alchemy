@@ -124,11 +124,8 @@ enum StormNightActorId {
   /// restored at the Psynergy Stone (vale_plaza.c). After the Boulder has
   /// passed he tries to go for help and cannot. "I... I'll go!", then "It's no
   /// use. I can't move..."
-  /// ★ Named from the game: "I'll go!" (MsgValeIllGo)
   ACTOR_EXHAUSTED_STRONGMAN = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "Dora, hurry!" (MsgValeDoraHurryBoulder)
   ACTOR_DORA,
-  /// ★ Named from the game: "Let me help you, Kyle!" (MsgValeKyleAbleStop)
   ACTOR_KYLE,
   /// Eight huge rocks that Isaac "can't even budge". ACTOR_FIRST_ROCK to
   /// ACTOR_FIRST_ROCK + 3 fall across the paths (ValePrologue_FirstRockFalls
@@ -136,39 +133,27 @@ enum StormNightActorId {
   /// ACTOR_FIRST_ROCK + 4 and + 5 already lie there. ACTOR_FIRST_ROCK + 6
   /// and + 7 lie there only once the Boulder has passed down the river
   /// (ValePrologue_ShowBoulderSweepingDownriver).
-  /// ★ Named from the game: "can't even budge" (MsgValeRockCannotBeMoved)
   ACTOR_FIRST_ROCK,
-  /// ★ Named from the game: "The Mt. Aleph Boulder is going to fall!"
-  /// (MsgValeWake)
   ACTOR_BOULDER = ACTOR_FIRST_PLACED + 11, ///< drawn at twice its size
   /// A stout man who runs out of his house and shoves Isaac. "Huh? Isaac?"
-  /// ★ Named from the game: "Sorry to shove you like that." (MsgValeHuh)
   ACTOR_SHOVING_MAN,
   /// The things Garet struggles to save. "If a rock hits me now, I'll lose
   /// both my chest and my life."
-  /// ★ Named from the game: "both my chest and my life" (MsgValeRockHitsLose)
   ACTOR_GARETS_CHEST,
-  /// ★ Named from the game: "Garet (child)" (MsgDebugGlyphName)
   ACTOR_GARET_CHILD,
-  /// ★ Named from the game: "Felix (child)" (MsgDebugGlyphName)
   ACTOR_FELIX_CHILD, ///< in the river
   /// Jenna's father, a man with brown hair in a green shirt. Jenna calls him
   /// and her mother "Mom! Dad!". "Hang on, Felix! Help is on the way!"
-  /// ★ Named from the game: "Mom! Dad!" (MsgValeMomDadBack)
   ACTOR_JENNAS_FATHER,
   /// Jenna's mother, a woman with pink hair in a white apron. "Don't let go,
   /// Felix!"
-  /// ★ Named from the game: "Mom! Dad!" (MsgValeMomDadBack)
   ACTOR_JENNAS_MOTHER,
-  /// ★ Named from the game: "Oh no! My brother!" (MsgValeNoBrother)
   ACTOR_JENNA_CHILD,
   /// The Boulder's shadow (SPRITE_BLANK_LARGE, a black blob). It is drawn on
   /// alternate frames under the Boulder as it comes down the river, swelling
   /// and shrinking with its bounds (ValePrologue_UpdateBoulderShadow). During
   /// the frozen flashes it is twice its size
   /// (ValePrologue_FlickerBoulderShadow).
-  /// ★ Named from what the player sees: a flickering black shadow under the
-  /// Boulder, ValePrologue_BoulderSweepsThemAway.gif (its render)
   ACTOR_BOULDER_SHADOW,
   // The elders holding back the Boulder with their Psynergy ("Go aid the
   // elders!", vale_plaza.c), from gValePrologue_BoulderWatchers, which
@@ -179,29 +164,21 @@ enum StormNightActorId {
   /// The invisible actor on ACTOR_ELDER_EAST's spot that speaks for that elder,
   /// the elders' first and third lines. "Ahhh! The Boulder! It's falling!",
   /// then "If our Psynergy runs out, Vale will be destroyed!"
-  /// ★ Named from the game: "It's falling!" (MsgValeTheBoulderIsFalling)
   ACTOR_ELDER_EAST_STAND_IN,
   /// The westernmost elder, drawn with the sprite of the young man with brown
   /// hair (as is ACTOR_ELDER_FAR_EAST), tells the boys to run. "Hurry, boys!
   /// Run!!! It's just a little farther!"
-  /// ★ Named from the game: "Hurry, boys!" (MsgValeTheBoulderIsFalling)
   ACTOR_ELDER_FAR_WEST,
   /// The easternmost elder, the same sprite drawn mirrored. "We have to hold on
   /// until the villagers are safe!"
-  /// ★ Named from the game: "hold on until the villagers are safe"
-  /// (MsgValeTheBoulderIsFalling)
   ACTOR_ELDER_FAR_EAST,
   /// The invisible actor on ACTOR_ELDER_WEST's spot that speaks for that elder,
   /// the elders' second line. "It's too heavy! We can't hold it for long!"
-  /// ★ Named from the game: "We can't hold it for long"
-  /// (MsgValeTheBoulderIsFalling)
   ACTOR_ELDER_WEST_STAND_IN,
   /// The elders between the two are men with long brown hair and beards in
   /// long robes.
-  /// ★ Named from the game: "Go aid the elders!" (MsgValeGoAidElders)
   ACTOR_ELDER_EAST, ///< east of ACTOR_ELDER_WEST, and drawn as that elder
                     ///< is
-  /// ★ Named from the game: "Go aid the elders!" (MsgValeGoAidElders)
   ACTOR_ELDER_WEST
 };
 
@@ -236,28 +213,16 @@ enum StormNightAnimation {
 /// Vale's area flags this scene keeps while the party is in Vale.
 enum StormNightAreaFlag {
   /// The strongman at the river tried to go for help and could not.
-  /// ★ Named from the game: "I'll go!" (MsgValeIllGo)
   FLAG_VALE_STORM_STRONGMAN_TRIED_TO_GO = 0x305,
   /// Garet has said once that they cannot get around a fallen rock.
-  /// ★ Named from the game: "We can't get around this rock!"
-  /// (MsgValeCantGetAroundThisRock)
   FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH = 0x30c,
   /// Kyle has greeted Isaac at the river.
-  /// ★ Named from the game: "Oh," (MsgValeOh)
   FLAG_VALE_STORM_KYLE_GREETED_ISAAC = 0x30d,
   /// The party has passed each rock's spot since coming to Vale, so its event
   /// does not play again.
-  /// ★ Named from the game: "We can't get around this rock!"
-  /// (MsgValeCantGetAroundThisRock)
   FLAG_VALE_STORM_FIRST_ROCK_PASSED = FLAG_AREA_TEMP_10,
-  /// ★ Named from the game: "We can't get around this rock!"
-  /// (MsgValeCantGetAroundThisRock)
   FLAG_VALE_STORM_SECOND_ROCK_PASSED = FLAG_AREA_TEMP_11,
-  /// ★ Named from the game: "We can't get around this rock!"
-  /// (MsgValeCantGetAroundThisRock)
   FLAG_VALE_STORM_THIRD_ROCK_PASSED = FLAG_AREA_TEMP_12,
-  /// ★ Named from the game: "We can't get around this rock!"
-  /// (MsgValeCantGetAroundThisRock)
   FLAG_VALE_STORM_FOURTH_ROCK_PASSED = FLAG_AREA_TEMP_13
 };
 
@@ -291,19 +256,14 @@ static s32 ValePrologue_RerollHeadingOnCountdown(struct Actor *actor) {
 
 /// The door of Isaac's house, from which Dora and Isaac came out into the
 /// storm, stands open.
-/// ★ Named from the game: "This old house will fall apart if you stay much
-/// longer." (MsgValeAsStubbornAsYourFather)
 #define FLAG_VALE_ISAACS_DOOR_OPEN FLAG_SCENE_TEMP_05
 /// The stout man has run out of his door and shoved Isaac, leaving the door
 /// open.
-/// ★ Named from the game: "Oh... Sorry to shove you like that." (MsgValeHuh)
 #define FLAG_VALE_SHOVING_MANS_DOOR_OPEN FLAG_SCENE_TEMP_06
 /// The leader is on the rope bridge over the river. While it is set, the
 /// bridge's cells take the deck's shapes and cell behaviors, its two middle
 /// rows walkable at the deck's height and its rails walls. Stepping off puts
 /// back the river's, walled water between open banks.
-/// ★ Named from what the player sees: a wooden bridge with rope rails over the
-/// river, above the waterfall (its render)
 #define FLAG_VALE_ON_BRIDGE FLAG_SCENE_TEMP_10
 
 /// Returns where the party appears.

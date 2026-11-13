@@ -113,19 +113,12 @@
 enum {
   /// Babi's second sheet, SPRITE_INVISIBLE_BABI. It is the old man with long
   /// pink hair and a cane, standing unseen in the cave.
-  /// ★ Named from the game: "Wrapped in Psynergetic light... Who could it
-  /// be?" (MsgAltmillerSee)
   ACTOR_INVISIBLE_BABI = 8,
   /// SPRITE_BABI, the same old man once seen.
-  /// ★ Named from the game: "Babi!" (MsgAltmillerBabi)
   ACTOR_BABI = 9,
   /// Their sprite is a helmeted soldier carrying a torch
   /// (SPRITE_SOLDIER_WITH_TORCH).
-  /// ★ Named from what the player sees: a soldier from Tolbi, sent to find
-  /// Babi (its render)
   ACTOR_FIRST_SOLDIER = 10,
-  /// ★ Named from what the player sees: a second soldier from Tolbi (its
-  /// render)
   ACTOR_SECOND_SOLDIER = 11
 };
 
@@ -133,57 +126,26 @@ enum {
 /// columns the party pushes. AltmillerCaveSquall then places a puddle, a pillar
 /// for Move and Squall, a Jupiter Djinni.
 enum {
-  /// ★ Named from what the player sees: white stone columns lying across the
-  /// floor, in the way (its render)
   ACTOR_FIRST_OBSTACLE = 8,
-  /// ★ Named from what the player sees: a small blue puddle in the middle of
-  /// the floor (its render)
   ACTOR_SQUALL_ROOM_PUDDLE = 11,
-  /// ★ Named from what the player sees: a brown stone pillar by the room's
-  /// east wall (its render)
   ACTOR_SQUALL_ROOM_PILLAR = 12,
-  /// ★ Named from the game: "Squall" (MsgDjinnName)
   ACTOR_SQUALL = 13
 };
 
 /// AltmillerCaveDraught: the five coloured lights and the five rocks, each in
 /// Babi's order, the rocks left to right.
 enum {
-  /// ★ Named from the game: "There will be five colors: blue, green, white,
-  /// yellow, and red." (MsgAltmillerDontTrustAnyone)
   ACTOR_FIRST_LIGHT = 11,
-  /// ★ Named from the game: "The blue light corresponds to the rock farthest
-  /// to the left." (MsgAltmillerDontTrustAnyone)
   ACTOR_BLUE_LIGHT = ACTOR_FIRST_LIGHT,
-  /// ★ Named from the game: "There will be five colors: blue, green, white,
-  /// yellow, and red." (MsgAltmillerDontTrustAnyone)
   ACTOR_GREEN_LIGHT,
-  /// ★ Named from the game: "There will be five colors: blue, green, white,
-  /// yellow, and red." (MsgAltmillerDontTrustAnyone)
   ACTOR_WHITE_LIGHT,
-  /// ★ Named from the game: "There will be five colors: blue, green, white,
-  /// yellow, and red." (MsgAltmillerDontTrustAnyone)
   ACTOR_YELLOW_LIGHT,
-  /// ★ Named from the game: "There will be five colors: blue, green, white,
-  /// yellow, and red." (MsgAltmillerDontTrustAnyone)
   ACTOR_RED_LIGHT,
-  /// ★ Named from the game: "Turn the five rocks in accordance with those
-  /// colors." (MsgAltmillerDontTrustAnyone)
   ACTOR_FIRST_ROCK,
-  /// ★ Named from the game: "The blue light corresponds to the rock farthest
-  /// to the left." (MsgAltmillerDontTrustAnyone)
   ACTOR_BLUE_ROCK = ACTOR_FIRST_ROCK,
-  /// ★ Named from the game: "In order, the other rocks are green, white,
-  /// yellow, and red." (MsgAltmillerDontTrustAnyone)
   ACTOR_GREEN_ROCK,
-  /// ★ Named from the game: "In order, the other rocks are green, white,
-  /// yellow, and red." (MsgAltmillerDontTrustAnyone)
   ACTOR_WHITE_ROCK,
-  /// ★ Named from the game: "In order, the other rocks are green, white,
-  /// yellow, and red." (MsgAltmillerDontTrustAnyone)
   ACTOR_YELLOW_ROCK,
-  /// ★ Named from the game: "In order, the other rocks are green, white,
-  /// yellow, and red." (MsgAltmillerDontTrustAnyone)
   ACTOR_RED_ROCK
 };
 
@@ -204,18 +166,12 @@ enum {
 enum {
   /// The cave is dark. It is set on entry everywhere but AltmillerCaveSquall
   /// and AltmillerCaveDraught.
-  /// ★ Named from what the player sees: the cave dark but for a small circle of
-  /// light around the party (its render)
   FLAG_ALTMILLER_CAVE_DARK = FLAG_SCENE_TEMP_00,
   /// AltmillerCaveEntrance darkens by steps as the party walks in.
-  /// ★ Named from its area name: Altmiller Cave
   FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS = FLAG_SCENE_TEMP_01,
   /// Frost has frozen AltmillerCaveSquall's puddle.
-  /// ★ Named from what the player sees: a small puddle of water in the middle
-  /// of the room (its render)
   FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN = FLAG_SCENE_TEMP_11,
   /// AltmillerCaveSquall's pillar stands where Move opens the passage.
-  /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
   FLAG_ALTMILLER_CAVE_PILLAR_IN_PLACE = FLAG_SCENE_TEMP_12
 };
 

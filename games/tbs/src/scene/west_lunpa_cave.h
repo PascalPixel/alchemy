@@ -12,9 +12,7 @@
 enum WestLunpaCaveCellBehavior {
   CELL_BEHAVIOR_WEST_LUNPA_CAVE_WORLD_MAP_PASSAGE = 1,
   CELL_BEHAVIOR_WEST_LUNPA_CAVE_LUNPA_PASSAGE = 2,
-  /// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
   CELL_BEHAVIOR_WEST_LUNPA_CAVE_LOWERING_SWITCH = 3,
-  /// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
   CELL_BEHAVIOR_WEST_LUNPA_CAVE_RAISING_SWITCH = 4,
   CELL_BEHAVIOR_WEST_LUNPA_CAVE_BUNZA_HIDING_PLACE = 10
 };
@@ -22,22 +20,11 @@ enum WestLunpaCaveCellBehavior {
 enum CaveActorId {
   /// Placed at (0, 0, 0), outside the cave's camera bounds, so the player
   /// never sees it (WestLunpaCave_UnusedFreezePuddle).
-  /// ★ Named from what the player sees: SPRITE_PUDDLE, the small blue puddle
-  /// the cave's other three show, map-1.png (its render)
   ACTOR_UNUSED_PUDDLE = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: a small blue puddle in the cave's
-  /// southwest end (its render)
   ACTOR_SOUTH_PUDDLE,
-  /// ★ Named from what the player sees: a small blue puddle at the foot of the
-  /// gate (its render)
   ACTOR_GATE_PUDDLE,
-  /// ★ Named from what the player sees: a small blue puddle in the cave's
-  /// north passage (its render)
   ACTOR_NORTH_PUDDLE,
-  /// ★ Named from the game: "Then what should we do, Bunza?" (MsgLunpaBunza)
   ACTOR_BUNZA,
-  /// ★ Named from the game: "So, Dodonpa never had any intention of releasing
-  /// Hammet?" (MsgLunpaDodonpaNeverIntention)
   ACTOR_HAMMET
 };
 

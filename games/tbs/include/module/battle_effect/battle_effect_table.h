@@ -8,7 +8,6 @@
 // The two kinds of target strike (gTargetStrike_Styles).
 #define STRIKE_KIND_SLASH 0 ///< sideways slashes
 /// Rows of fangs above and below the target that close on it.
-/// ★ Named from the game: "Poisonous Bite" (MsgAbilityName)
 #define STRIKE_KIND_BITE 1
 
 // A target strike style's extras.

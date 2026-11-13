@@ -148,72 +148,36 @@ typedef void (*MapTask)(void);
 /// Area.
 enum {
   /// Azart, racing Isaac to the arena.
-  /// ★ Named from the game: "The name's Azart."
-  /// (MsgColosseumImRatedAsSecondBest)
   ACTOR_OPPONENT = 8,
   /// The Rock Challenge's three rocks, stone pillars the party moves to clear
   /// a path.
-  /// ★ Named from the game: "Moving such a huge rock must be a real workout."
-  /// (MsgColossoRiverMovingSuchAHugeRockMust)
   ACTOR_ROCK_A = 9,
-  /// ★ Named from the game: "Moving such a huge rock must be a real workout."
-  /// (MsgColossoRiverMovingSuchAHugeRockMust)
   ACTOR_ROCK_B = 10,
-  /// ★ Named from the game: "Moving such a huge rock must be a real workout."
-  /// (MsgColossoRiverMovingSuchAHugeRockMust)
   ACTOR_ROCK_C = 11,
   /// Pushed west to let water into the Pipeworks. A pipe section, drawn as
   /// mercury_lighthouse.c's ACTOR_THIRD_PIPE.
-  /// ★ Named from the game: "See the water pipes?"
-  /// (MsgColossoAreaCalledPipeworks)
   ACTOR_PIPEWORKS_PIPE = 12,
   /// The Pipeworks' two pipes, which rise and sink against each other as
   /// water fills one, like scales.
-  /// ★ Named from the game: "See the water pipes?"
-  /// (MsgColossoAreaCalledPipeworks)
   ACTOR_PIPE_WEST = 13,
-  /// ★ Named from the game: "See the water pipes?"
-  /// (MsgColossoAreaCalledPipeworks)
   ACTOR_PIPE_EAST = 14,
   /// The plant Growth grows into a vine before the Broken Bridge.
-  /// ★ Named from what the player sees: a small sprout (SPRITE_SPROUT) on the
-  /// ground before the Broken Bridge (its render)
   ACTOR_GROWTH_PLANT = 15,
   /// A young man with fair hair who works the Broken Bridge.
-  /// ★ Named from the game: "The operator of the bridge will also cheer for
-  /// you in this stage." (MsgColossoOperatorBridgeWillAlsoCheer)
   ACTOR_BRIDGE_OPERATOR = 16,
   /// The Lumber Water Crossing Area's two floating logs.
-  /// ★ Named from the game: "The logs are the key to clearing this stage."
-  /// (MsgColossoLogsKeyClearingStage)
   ACTOR_LOG_NORTH_SOUTH = 17,
-  /// ★ Named from the game: "The logs are the key to clearing this stage."
-  /// (MsgColossoLogsKeyClearingStage)
   ACTOR_LOG_EAST_WEST = 18,
   /// A soldier who explains the finals.
-  /// ★ Named from the game: "Ask the attendants for explanations of the
-  /// stages." (MsgColossoAskAttendantsForExplanationsStages)
   ACTOR_GUIDE = 19,
   /// The stages' attendants, young men with fair hair in white tunics.
-  /// ★ Named from the game: "They call this the Rock Challenge."
-  /// (MsgColossoCallRockChallenge)
   ACTOR_ROCK_ATTENDANT = 20,
-  /// ★ Named from the game: "This area is called the Pipeworks."
-  /// (MsgColossoAreaCalledPipeworks)
   ACTOR_PIPEWORKS_ATTENDANT = 21,
-  /// ★ Named from the game: "They call this the Broken Bridge."
-  /// (MsgColossoTheyCallBrokenBridge)
   ACTOR_BRIDGE_ATTENDANT = 22,
-  /// ★ Named from the game: "This place is normally called the Lumber Water
-  /// Crossing Area." (MsgColossoPlaceNormallyCalledLumberWater)
   ACTOR_LUMBER_ATTENDANT = 23,
   /// The arena's prizes, drawn as item icons at two blank actors
   /// (Colosso_ShowItemIcon).
-  /// ★ Named from what the player sees: the Iron Shield's icon at the arena's
-  /// finish, taken by whoever reaches it first (its render)
   ACTOR_PRIZE_A = 24,
-  /// ★ Named from what the player sees: the Padded Gloves' icon at the arena's
-  /// finish, taken by whoever reaches it second (its render)
   ACTOR_PRIZE_B = 25
 };
 
@@ -222,22 +186,13 @@ enum {
 ///
 /// ColosseumAzartMatch_Initialize restores them.
 enum {
-  /// ★ Named from the game: "See the water pipes?"
-  /// (MsgColossoAreaCalledPipeworks)
   FLAG_PIPES_MOVED =
       FLAG_AREA_TEMP_01, ///< the Pipeworks' pipes, as water filled them
-  /// ★ Named from the game: "This area is called the Pipeworks."
-  /// (MsgColossoAreaCalledPipeworks)
   FLAG_PIPEWORKS_PIPE_PUSHED = FLAG_AREA_TEMP_02,
-  /// ★ Named from the game: "Growth" (MsgAbilityName)
   FLAG_PLANT_GROWN = FLAG_AREA_TEMP_03, ///< by Growth, before the Broken Bridge
   /// The byte of flags that keeps the Rock Challenge's second rock's column.
-  /// ★ Named from the game: "They call this the Rock Challenge."
-  /// (MsgColossoCallRockChallenge)
   FLAG_SECOND_ROCK_COLUMN = FLAG_AREA_TEMP_10,
   /// Someone has reached the arena (Colosso_TakePrize).
-  /// ★ Named from the game: "You must get through several stages before you
-  /// reach the arena." (MsgColossoWarriorsEnterFinalsWithoutAny)
   FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11
 };
 
@@ -1273,11 +1228,8 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
 #include "shared/colosso_occupant.h"
 
 /// Closes the arena's step trigger. Nothing in the game sets it.
-/// ★ Named from the game: "This is the battle arena. After getting here, the
-/// warriors do battle." (MsgColossoWarriorsEnterFinalsWithoutAny)
 #define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_SCENE_TEMP_10
 /// The chest holding an Oil Drop has been opened.
-/// ★ Named from the game: "Oil Drop" (MsgItemName)
 #define FLAG_COLOSSEUM_AZART_MATCH_OIL_DROP_CHEST_OPENED FLAG_AREA_TEMP_09
 
 #include "shared/colosso_lettering_tables.h"

@@ -161,25 +161,15 @@ static void Colosso_PushActorAhead(void);
 /// elsewhere.
 enum ColosseumSatrageMatchActorId {
   /// Satrage, racing Isaac to the arena.
-  /// ★ Named from the game: "My name is Satrage."
-  /// (MsgColosseumWhoHaveComeQuestionMe)
   ACTOR_OPPONENT = ACTOR_FIRST_PLACED,
   /// The Board Walk's two stone pillars, on which Move does nothing.
-  /// ★ Named from what the player sees: a stone pillar at the Board Walk's
-  /// west end (its render)
   ACTOR_BOARD_WALK_WEST_PILLAR,
-  /// ★ Named from what the player sees: a stone pillar at the Board Walk's
-  /// east end (its render)
   ACTOR_BOARD_WALK_EAST_PILLAR,
   /// The stone pillar by The Wall, pushed or moved with Move.
-  /// ★ Named from what the player sees: a stone pillar on the ground by The
-  /// Wall (its render)
   ACTOR_WALL_PILLAR,
   /// The Mini-Maze's three stone pillars, pushed or moved with Move.
   /// ColosseumSatrageMatch_Initialize stands them west to east, at columns 73,
   /// 76 and 79, until they have been moved.
-  /// ★ Named from what the player sees: three stone pillars in a row in the
-  /// Mini-Maze (its render)
   ACTOR_MINI_MAZE_FIRST_PILLAR,
   /// The Board Walk's two logs, the western and the eastern, in the room of its
   /// stone pillars
@@ -187,89 +177,45 @@ enum ColosseumSatrageMatchActorId {
   /// A third, ACTOR_ROLLING_LOG_CENTER, is placed at (0, 0) and never moved
   /// there. ColosseumSatrageMatch_UnusedRollCenterLogNorth, its South twin and
   /// its row in the collision rebuild remain for it.
-  /// ★ Named from the game: "Roll those logs to open a path and follow it to
-  /// the next stage." (MsgColossoPlaceCalledBoard)
   ACTOR_ROLLING_LOG_WEST = ACTOR_MINI_MAZE_FIRST_PILLAR + 3,
-  /// ★ Named from the game: "Roll those logs to open a path and follow it to
-  /// the next stage." (MsgColossoPlaceCalledBoard)
   ACTOR_ROLLING_LOG_EAST,
-  /// ★ Named from the game: "The logs here are positioned to block your path."
-  /// (MsgColossoPlaceCalledBoard)
   ACTOR_ROLLING_LOG_CENTER,
   /// The log Force strikes to knock ACTOR_FALLING_LOG down.
-  /// ★ Named from what the player sees: a log (falling_log.png) above the Board
-  /// Walk, which Force strikes (its render)
   ACTOR_FORCE_TARGET,
   /// The plant Growth grows up The Wall.
-  /// ★ Named from what the player sees: a small sprout (SPRITE_SPROUT) at the
-  /// foot of The Wall (its render)
   ACTOR_GROWTH_PLANT,
   /// The Log-Rolling Stage's two puddles, which Frost freezes. They are drawn
   /// as the puddle Frost freezes in Lunpa (lunpa.h's SPRITE_PUDDLE).
-  /// ★ Named from what the player sees: a small puddle of water on the
-  /// Log-Rolling Stage, the western of two (its render)
   ACTOR_PUDDLE_WEST,
-  /// ★ Named from what the player sees: a small puddle of water on the
-  /// Log-Rolling Stage, the eastern of two (its render)
   ACTOR_PUDDLE_EAST,
   /// The shifting floor stage's four lifts, from west to east, which the
   /// lifts' operator runs.
-  /// ★ Named from the game: "The operator of the lifts will cheer for you
-  /// here." (MsgColossoOperatorLiftsWillCheerFor)
   ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT,
-  /// ★ Named from the game: "The operator of the lifts will cheer for you
-  /// here." (MsgColossoOperatorLiftsWillCheerFor)
   ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT =
           ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT +
       3,
   /// Four platforms in the lifts' sprite laid across the water channel at the
   /// Board Walk's south edge, drawn underfoot. Nothing but
   /// ColosseumSatrageMatch_Initialize touches them.
-  /// ★ Named from what the player sees: four white platforms across a water
-  /// channel (its render)
   ACTOR_BOARD_WALK_FIRST_PLATFORM,
   /// Knocked down onto the Board Walk by Force on ACTOR_FORCE_TARGET.
-  /// ★ Named from what the player sees: a log (falling_log.png) that spins down
-  /// onto the Board Walk when Force strikes (its render)
   ACTOR_FALLING_LOG = ACTOR_BOARD_WALK_FIRST_PLATFORM + 4,
   /// A young man with fair hair who works the shifting floor stage's lifts.
-  /// ★ Named from the game: "The operator of the lifts will cheer for you
-  /// here." (MsgColossoOperatorLiftsWillCheerFor)
   ACTOR_LIFT_OPERATOR,
   /// The Log-Rolling Stage's two logs.
-  /// ★ Named from the game: "Ride the logs across the water to get to the
-  /// other side." (MsgColossoLogRollingStage)
   ACTOR_RIDING_LOG_NORTH,
-  /// ★ Named from the game: "Ride the logs across the water to get to the
-  /// other side." (MsgColossoLogRollingStage)
   ACTOR_RIDING_LOG_SOUTH,
   /// A soldier who greets the party at the second finals match.
-  /// ★ Named from the game: "This is the site of the second finals match."
-  /// (MsgColossoSiteSecondFinals)
   ACTOR_GUIDE,
   /// The stages' attendants, young men with fair hair in white tunics.
-  /// ★ Named from the game: "This stage is dubbed the Mini-Maze."
-  /// (MsgColossoStageDubbedMini)
   ACTOR_MINI_MAZE_ATTENDANT,
-  /// ★ Named from the game: "This is the shifting floor stage."
-  /// (MsgColossoShiftingFloorStage)
   ACTOR_SHIFTING_FLOOR_ATTENDANT,
-  /// ★ Named from the game: "Ride the logs across the water to get to the
-  /// other side." (MsgColossoLogRollingStage)
   ACTOR_LOG_ROLLING_ATTENDANT,
-  /// ★ Named from the game: "The fans just call this The Wall."
-  /// (MsgColossoFansJustCallWall)
   ACTOR_WALL_ATTENDANT,
-  /// ★ Named from the game: "This place is called the Board Walk."
-  /// (MsgColossoPlaceCalledBoard)
   ACTOR_BOARD_WALK_ATTENDANT,
   /// The arena's prizes, drawn as item icons at two blank actors
   /// (Colosso_ShowItemIcon).
-  /// ★ Named from what the player sees: the Chain Mail's icon at the arena's
-  /// finish, taken by whoever reaches it first (its render)
   ACTOR_PRIZE_A,
-  /// ★ Named from what the player sees: the Cotton Shirt's icon at the
-  /// arena's finish, taken by whoever reaches it second (its render)
   ACTOR_PRIZE_B
 };
 
@@ -278,36 +224,20 @@ enum ColosseumSatrageMatchActorId {
 ///
 /// ColosseumSatrageMatch_Initialize restores them.
 enum {
-  /// ★ Named from the game: "This place is called the Board Walk."
-  /// (MsgColossoPlaceCalledBoard)
   FLAG_OBSTACLE_KNOCKED_DOWN =
-      FLAG_AREA_TEMP_30, ///< by Force, on the Board Walk
-  /// ★ Named from the game: "Bestows Frost when equipped" (MsgItemPlainName)
+      FLAG_AREA_TEMP_30,                       ///< by Force, on the Board Walk
   FLAG_WEST_TARGET_FROZEN = FLAG_AREA_TEMP_31, ///< by Frost
-  /// ★ Named from the game: "Bestows Frost when equipped" (MsgItemPlainName)
   FLAG_EAST_TARGET_FROZEN = FLAG_AREA_TEMP_32, ///< by Frost
-  /// ★ Named from the game: "Growth" (MsgAbilityName)
-  FLAG_PLANT_GROWN = FLAG_AREA_TEMP_33, ///< by Growth, up The Wall
-  /// ★ Named from the game: "Halt" (MsgAbilityName)
+  FLAG_PLANT_GROWN = FLAG_AREA_TEMP_33,        ///< by Growth, up The Wall
   FLAG_LIFTS_HALTED = FLAG_AREA_TEMP_34, ///< by Halt on ACTOR_LIFT_OPERATOR
   /// The stone pillar by The Wall stands at column 36.
-  /// ★ Named from the game: "The fans just call this The Wall."
-  /// (MsgColossoFansJustCallWall)
   FLAG_WALL_PILLAR_MOVED = FLAG_AREA_TEMP_35,
   /// The bytes of flags that keep the Mini-Maze's three pillars' columns.
-  /// ★ Named from the game: "This stage is dubbed the Mini-Maze."
-  /// (MsgColossoStageDubbedMini)
   FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN = FLAG_AREA_TEMP_40,
-  /// ★ Named from the game: "This stage is dubbed the Mini-Maze."
-  /// (MsgColossoStageDubbedMini)
   FLAG_MINI_MAZE_SECOND_PILLAR_COLUMN = FLAG_AREA_TEMP_48,
-  /// ★ Named from the game: "This stage is dubbed the Mini-Maze."
-  /// (MsgColossoStageDubbedMini)
   FLAG_MINI_MAZE_THIRD_PILLAR_COLUMN = FLAG_AREA_TEMP_50,
   /// Someone has reached the arena
   /// (Colosso_TakePrize).
-  /// ★ Named from the game: "You must get through several stages before you
-  /// reach the arena." (MsgColossoWarriorsEnterFinalsWithoutAny)
   FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11
 };
 
@@ -1622,11 +1552,8 @@ static void ColosseumSatrageMatch_StartOpponentPath(s32 pathResource) {
 #include "shared/colosso_occupant.h"
 
 /// Closes the arena's step trigger. Nothing in the game sets it.
-/// ★ Named from the game: "This is the battle arena. After getting here, the
-/// warriors do battle." (MsgColossoWarriorsEnterFinalsWithoutAny)
 #define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_SCENE_TEMP_10
 /// The chest holding a Smoke Bomb has been opened.
-/// ★ Named from the game: "Smoke Bomb" (MsgItemName)
 #define FLAG_COLOSSEUM_SATRAGE_MATCH_SMOKE_BOMB_CHEST_OPENED FLAG_AREA_TEMP_39
 
 const u8 gColosseumSatrageMatch_RollLogScript[] = {2, 2, 3, 3};

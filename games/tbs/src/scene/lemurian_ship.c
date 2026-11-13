@@ -89,11 +89,7 @@ static void Curtain_Start(void);
 
 enum {
   /// The gangway, in two pieces (SPRITE_GANGWAY): its northern half.
-  /// ★ Named from what the player sees: the northern half of the gangway
-  /// between the wharf and the ship (its render)
   ACTOR_GANGWAY_NORTH = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: the southern half of the gangway
-  /// between the wharf and the ship (its render)
   ACTOR_GANGWAY_SOUTH
 };
 
@@ -172,8 +168,6 @@ static void ShipGlow_CyclePalette(void) {
 
 /// The water drop's burst into a ring of spray (water_drop.png), beyond enum
 /// ActorAnimation.
-/// ★ Named from what the player sees: drops bursting into rings of spray as
-/// the ship rises (LemurianShip_RaiseTheShip's render)
 enum { ANIM_DROP_BURST = 1 };
 
 /// A drop of spray rises and wobbles for its timer, then bursts into a ring

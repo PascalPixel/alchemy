@@ -129,36 +129,21 @@ enum ValeKradensCottageActorId {
   /// boulder stays where it is, and no message follows, since the row answers
   /// the cast (render probe kraden-lift, by day and after the party has left
   /// Vale).
-  /// ★ Named from the game: "did you lift the boulder?"
-  /// (MsgMountainIsaacDidLiftBoulder), said of the same sprite
   ACTOR_FENCE_BOULDER = ACTOR_FIRST_PLACED,
   /// The west rock. "It's a huge rock that Isaac's strength can't even budge."
-  /// ★ Named from the game: "It's a huge rock" (MsgValeRockCannotBeMoved)
   ACTOR_WEST_ROCK,
-  /// ★ Named from the game: "It's a huge rock" (MsgValeRockCannotBeMoved)
   ACTOR_EAST_ROCK,
   /// A young man with brown hair who lies by the broken fence on the stormy
   /// night. "Rockslide...destroyed fence... Monsters everywhere..."
-  /// ★ Named from the game: "Rockslide...destroyed fence..."
-  /// (MsgValeRockslideDestroyedFence)
   ACTOR_ROCKSLIDE_SURVIVOR,
   /// A small boy with fair hair, by day, younger than Isaac. "Do you hear those
   /// awful growls coming from the other side of this fence?"
-  /// ★ Named from the game: "I can't stop wondering what lies beyond this
-  /// fence." (MsgValeWonderBeyondFence)
   ACTOR_BOY_BY_THE_FENCE,
-  /// ★ Named from the game: "from you, Kraden?" (MsgValeKradenOhIsaac)
   ACTOR_KRADEN,
-  /// ★ Named from the game: "Saturos and Menardi were their names"
-  /// (MsgValeKradenOhIsaac)
   ACTOR_SATUROS,
-  /// ★ Named from the game: "Saturos and Menardi were their names"
-  /// (MsgValeKradenOhIsaac)
   ACTOR_MENARDI,
   /// A woman with fair hair, after Kalay. "You must have so many memories of
   /// this cottage, don't you?"
-  /// ★ Named from the game: "You must have so many memories of this cottage"
-  /// (MsgValeMemoriesOfThisCottage)
   ACTOR_COTTAGE_VISITOR
 };
 
@@ -166,8 +151,6 @@ enum ValeKradensCottageActorId {
 
 /// The front door of Kraden's cottage stands open since Kraden set off. So
 /// walking in (cell behavior 3, the exit into the cottage) skips its opening.
-/// ★ Named from what the player sees: the arched wooden door of Kraden's
-/// thatched cottage (its render)
 #define FLAG_VALE_KRADENS_DOOR_OPEN FLAG_SCENE_TEMP_42
 
 const struct SceneEntrance *ValeKradensCottage_GetEntrances(void) {

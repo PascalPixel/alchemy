@@ -119,7 +119,6 @@
 
 /// Plus the party member (0 to 3) who carried the Shaman's Rod when it was
 /// handed over before the aerie's first battle. A defeat gives it back.
-/// ★ Named from the game: "Shaman's Rod" (MsgItemName)
 #define FLAG_SHAMANS_ROD_HOLDER FLAG_AREA_TEMP_45
 
 /// Area flags that choose the aerie's field music after each battle.
@@ -133,9 +132,7 @@
 /// area, keep their Psynergy Stones in the same two flags, which no one goes
 /// back down to see.
 enum {
-  /// ★ Named from its area name: Lighthouse Aerie
   FLAG_AERIE_FIRST_BATTLE_BEGUN = FLAG_AREA_TEMP_50,
-  /// ★ Named from its area name: Lighthouse Aerie
   FLAG_AERIE_SECOND_BATTLE_BEGUN = FLAG_AREA_TEMP_51
 };
 
@@ -294,22 +291,14 @@ const struct ActorPlacement *VenusLighthouseAerie_GetActorPlacements(void) {
 #include "shared/actor_nearest.h"
 
 /// Saturos and Menardi slide together as they fuse.
-/// ★ Named from the game: "Fusion Dragon" (MsgEnemyName)
 #define FLAG_VENUS_AERIE_FUSION_SLIDING FLAG_SCENE_TEMP_34
 /// Saturos and Menardi grow as they fuse.
-/// ★ Named from the game: "Fusion Dragon" (MsgEnemyName)
 #define FLAG_VENUS_AERIE_FUSION_GROWING FLAG_SCENE_TEMP_35
 /// The beacon has erupted, and its particles rise higher.
-/// ★ Named from the game: "At long last, the time has come to light Venus
-/// Lighthouse's beacon." (MsgVenusLongLastTime)
 #define FLAG_VENUS_AERIE_BEACON_ERUPTED FLAG_SCENE_TEMP_36
 /// The beacon's light has lifted the party and flashed white.
-/// ★ Named from the game: "At long last, the time has come to light Venus
-/// Lighthouse's beacon." (MsgVenusLongLastTime)
 #define FLAG_VENUS_AERIE_PARTY_LIFTED FLAG_SCENE_TEMP_37
 /// The leader stands on one of the floating platforms.
-/// ★ Named from what the player sees: round pale blue platforms floating in the
-/// air between the lighthouse and the towers beside it (its render)
 #define FLAG_VENUS_AERIE_ON_PLATFORM FLAG_SCENE_TEMP_50
 
 /// Walking off the edge of a platform makes the leader jump across, if the

@@ -272,7 +272,6 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// notes give the sizes the draws use. In Condemn's render a hooded skeleton
 /// swings its scythe in a white flash:
 /// https://alchemy.pascalpixel.com/abilities/condemn.gif
-/// ★ Named from what the player sees: the Grim Reaper's swing (its render)
 enum ReaperSheetPicture {
   /// 57x98
   REAPER_SHEET_RAISED = 0,
@@ -362,15 +361,11 @@ enum CanvasWipeFill {
 /// The summons' sprite formations (BattleEffect_PlaceFormationObjects and
 /// BattleEffect_RunImpactBurst), each named for the summon that keeps it.
 enum SummonFormation {
-  /// ★ Named from the game: "Thor" (MsgDjinnName)
-  SUMMON_FORMATION_THOR, ///< nine in a 3x3 grid at 32-pixel spacing
-  /// ★ Named from the game: "Nereid" (MsgDjinnName)
+  SUMMON_FORMATION_THOR,   ///< nine in a 3x3 grid at 32-pixel spacing
   SUMMON_FORMATION_NEREID, ///< twelve in rows of 1, 3, 4 and 4, from 16 left
                            ///< and 32 up
-  /// ★ Named from the game: "Cybele" (MsgDjinnName)
   SUMMON_FORMATION_CYBELE, ///< eight in rows of 3, 2 and 3, from 16 right
-  /// ★ Named from the game: "Tiamat" (MsgDjinnName)
-  SUMMON_FORMATION_TIAMAT ///< eight drawn at 1.25 times their size
+  SUMMON_FORMATION_TIAMAT  ///< eight drawn at 1.25 times their size
 };
 
 /// The axis a swirling spark, mote or star turns about, which its index & 3

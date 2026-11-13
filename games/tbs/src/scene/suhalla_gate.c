@@ -82,7 +82,6 @@
 ///
 /// It is an area flag, so the stone is back once the party returns from
 /// another area.
-/// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
 #define FLAG_GATEWAY_CAVE_PSYNERGY_STONE FLAG_AREA_TEMP_50
 
 #if TBS_PATCH_3
@@ -98,21 +97,14 @@
 enum SuhallaGateCheckpointActorId {
   /// The two of Babi's soldiers who keep the passage north, standing before
   /// Babi's audience and lying wounded after it.
-  /// ★ Named from the game: "Only those with travel papers may pass through."
-  /// (MsgSuhallaTravelPapersRequired)
   ACTOR_WEST_GUARD = ACTOR_FIRST_PLACED,
   /// Asks whether the party wants to go to Babi Lighthouse.
-  /// ★ Named from the game: "Only those with travel papers may pass through."
-  /// (MsgSuhallaTravelPapersRequired)
   ACTOR_EAST_GUARD,
   /// After Babi's audience, the soldier east of the gate who tells of the
   /// attack on Venus Lighthouse and vanishes.
-  /// ★ Named from what the player sees: a wounded soldier lying east of the
-  /// gate, who flickers and vanishes (its render)
   ACTOR_VANISHING_SOLDIER,
   /// After Babi's audience, out of sight until SuhallaGate_IodemQuestionsGuards
   /// brings him out of the party.
-  /// ★ Named from the game: "Iodem..." (MsgSuhallaIodem)
   ACTOR_IODEM
 };
 
@@ -121,11 +113,8 @@ enum SuhallaGateCheckpointActorId {
 enum SuhallaGateDewActorId {
   /// Five sprouts (SPRITE_SPROUT, the sprout Growth grows in Suhalla), each
   /// drawn in the frame Scene_Initialize gives it.
-  /// ★ Named from what the player sees: small green sprouts on the grassy
-  /// ledges (its render)
   ACTOR_FIRST_SPROUT = ACTOR_FIRST_PLACED,
   /// A Mercury Djinni.
-  /// ★ Named from the game: "Dew" (MsgDjinnName)
   ACTOR_DEW = ACTOR_FIRST_SPROUT + 5
 };
 

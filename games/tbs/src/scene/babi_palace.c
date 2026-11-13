@@ -118,60 +118,37 @@ enum BabiPalaceActorId {
   ///
   /// He asks "Did you run into any of Babi's soldiers in Town?", and if not,
   /// says "Hmph! I told them to search every nook and cranny of this town..."
-  /// ★ Named from the game: "Did you run into any of Babi's soldiers in Town?"
-  /// (MsgTolbiRunBabisSoldiers)
   ACTOR_ASKING_ABOUT_BABIS_SOLDIERS = ACTOR_FIRST_PLACED,
   /// The attendant, a woman with fair hair, whose number is the same after
   /// Colosso: "No one's going to sleep in this big bedroom until the next
   /// Colosso!"
-  /// ★ Named from the game: "We have just enough extra beds in this room for
-  /// everybody." (MsgTolbiWeHaveJustEnoughExtra)
   ACTOR_BED_ATTENDANT,
   /// A warrior in a golden helmet. "So, did you guys get injured, too?"
   /// Thoughts: "I hurt my back during my training, and now I can't move at
   /// all."
-  /// ★ Named from the game: "I hurt my back during my training"
-  /// (MsgBabiPalaceIGetSoAngrySeeingAll)
   ACTOR_INJURED_WARRIOR,
   /// A warrior in a golden helmet. "I can't fight because of a little
   /// indigestion? That's pathetic!"
-  /// ★ Named from the game: "Maybe I shouldn't have eaten quite so much
-  /// yesterday..." (MsgBabiPalaceMaybeIShouldntHaveEatenQuite)
   ACTOR_WARRIOR_WITH_INDIGESTION,
   /// A young man with brown hair in a purple shirt. "If you're entering
   /// Colosso, hurry along to the colosseum." Thoughts: "Warriors are not
   /// allowed to stay in the palace if they don't enter Colosso!"
-  /// ★ Named from the game: "If you're entering Colosso, hurry along to the
-  /// colosseum." (MsgBabiPalaceIfYoureEnteringColossoHurryAlong)
   ACTOR_HURRYING_WARRIORS_ALONG,
   /// Four of Babi's soldiers, in one room. The first says "Only warriors who
   /// fight well in Colosso's finals can become soldiers here."
-  /// ★ Named from the game: "Only warriors who fight well in Colosso's finals
-  /// can become soldiers here." (MsgBabiPalaceOnlyWarriorsWhoFightWellIn)
   ACTOR_FIRST_PALACE_SOLDIER,
   /// An old man with a cane beside Babi's bed. "It looks like Lord Babi didn't
   /// use his bed this morning."
-  /// ★ Named from what the player sees: an old man with a cane beside Babi's
-  /// bed (its render)
   ACTOR_BY_BABIS_BED = ACTOR_FIRST_PALACE_SOLDIER + 4,
   /// An old man with a cane. "Sheba has been staying as Lord Babi's guest for
   /// some time." Thoughts: "It is heartbreaking to see her tears and hear her
   /// pleas to be released."
-  /// ★ Named from the game: "It is heartbreaking to see her tears"
-  /// (MsgBabiPalaceActorWasTakenHostageToForce)
   ACTOR_SORRY_FOR_SHEBA,
   /// In Sheba's room, in SPRITE_OLD_WOMAN, as in vale_plaza.c. Thoughts: "Sheba
   /// is not permitted to leave this room."
-  /// ★ Named from what the player sees: a white-haired old woman in Sheba's
-  /// room (its render)
   ACTOR_OLD_WOMAN_IN_SHEBAS_ROOM,
-  /// ★ Named from the game: "Iodem, Iodem!" (MsgTolbiIodemIodem)
   ACTOR_IODEM,
-  /// ★ Named from what the player sees: a soldier in a helmet with a spear,
-  /// SPRITE_SOLDIER (its render)
   ACTOR_FIRST_SOLDIER,
-  /// ★ Named from what the player sees: the second soldier, SPRITE_SOLDIER
-  /// (its render)
   ACTOR_SECOND_SOLDIER
 };
 
@@ -180,27 +157,17 @@ enum BabiPalaceActorId {
 enum BabiPalaceFinalsActorId {
   /// The same resident as ACTOR_HURRYING_WARRIORS_ALONG: "What are you doing?
   /// Hurry over to the colosseum!"
-  /// ★ Named from the game: "Hurry over to the colosseum!"
-  /// (MsgBabiPalaceWhatAreYouDoingHurryOver)
   ACTOR_FINALS_HURRYING_WARRIORS_ALONG = ACTOR_FIRST_PLACED + 1,
   /// The same attendant, a number later.
-  /// ★ Named from the game: "Would you like to sleep right now?"
-  /// (MsgTolbiCameRestBefore)
   ACTOR_FINALS_ATTENDANT,
   /// The same resident as ACTOR_BY_BABIS_BED: "Babi has returned and the
   /// finals are set to begin!"
-  /// ★ Named from the game: "Babi has returned and the finals are set to
-  /// begin!" (MsgBabiPalaceBabiHasReturnedAndTheFinals)
   ACTOR_FINALS_BY_BABIS_BED,
   /// The same resident as ACTOR_SORRY_FOR_SHEBA: "What's going on? Sheba is
   /// looking much happier."
-  /// ★ Named from the game: "I wonder what happened to make that girl smile."
-  /// (MsgBabiPalaceWhatsGoingOnActorIsLooking)
   ACTOR_FINALS_SORRY_FOR_SHEBA,
   /// The same woman as ACTOR_OLD_WOMAN_IN_SHEBAS_ROOM: "The soldiers came to
   /// see Sheba. She's been in a great mood ever since."
-  /// ★ Named from the game: "She's been in a great mood ever since."
-  /// (MsgBabiPalaceTheSoldiersCameToSeeActor)
   ACTOR_FINALS_OLD_WOMAN_IN_SHEBAS_ROOM
 };
 
@@ -209,60 +176,33 @@ enum BabiPalaceFinalsActorId {
 /// numbers.
 enum BabiPalaceAfterColossoActorId {
   /// One of Babi's soldiers.
-  /// ★ Named from the game: "We're relieved everything went so well."
-  /// (MsgBabiPalaceBabiWasFoundSafeAndSound)
   ACTOR_RELIEVED_SOLDIER = ACTOR_FIRST_PLACED + 2,
   /// The same resident as ACTOR_HURRYING_WARRIORS_ALONG: "So, you're all from
   /// the eastern shores of the Karagol Sea, huh?"
-  /// ★ Named from the game: "So, you're all from the eastern shores of the
-  /// Karagol Sea, huh?" (MsgTolbiEasternShoresKaragol)
   ACTOR_ASKING_ABOUT_THE_EASTERN_SHORES,
   /// One of Babi's soldiers.
-  /// ★ Named from the game: "Now that Colosso is over, I'm going to Gondowan to
-  /// build Babi Lighthouse!" (MsgBabiPalaceNowThatColossoIsOverIm)
   ACTOR_GONDOWAN_BOUND_SOLDIER,
   /// "The southern continent is a dangerous place... you'll know why I prefer
   /// Angara."
-  /// ★ Named from the game: "you'll know why I prefer Angara."
-  /// (MsgBabiPalaceTheSouthernContinentIsADangerous)
   ACTOR_SOLDIER_PREFERRING_ANGARA,
-  /// ★ Named from the game: "Babi's face is very pale"
-  /// (MsgBabiPalaceBabisFaceIsVeryPaleLike)
   ACTOR_BABI,
   /// The same resident as ACTOR_BY_BABIS_BED: "Babi's face is very pale,
   /// like that of a dead man."
-  /// ★ Named from the game: "Babi's face is very pale"
-  /// (MsgBabiPalaceBabisFaceIsVeryPaleLike)
   ACTOR_AFTER_COLOSSO_BY_BABIS_BED,
-  /// ★ Named from the game: "You found the Cloak Ball."
-  /// (MsgTolbiFoundCloakBall)
   ACTOR_CLOAK_BALL,
   /// The same resident as ACTOR_SORRY_FOR_SHEBA: "The girl from Lalivero is
   /// no longer here."
-  /// ★ Named from the game: "The girl from Lalivero is no longer here."
-  /// (MsgBabiPalaceTheGirlFromLaliveroIsNo)
   ACTOR_AFTER_COLOSSO_SORRY_FOR_SHEBA,
   /// The same woman as ACTOR_OLD_WOMAN_IN_SHEBAS_ROOM: "I am surprised Sheba
   /// was allowed to return to Lalivero like that."
-  /// ★ Named from the game: "At least she won't be homesick any longer."
-  /// (MsgBabiPalaceIAmSurprisedActorWasAllowed)
   ACTOR_AFTER_COLOSSO_OLD_WOMAN_IN_SHEBAS_ROOM
 };
 
 /// The two guards outside the palace (BabiPalaceEntrance).
-enum {
-  /// ★ Named from the game: "Normally, no one's allowed into Babi's Palace"
-  /// (MsgBabiPalaceNormallyNoOnesAllowedIntoBabis)
-  ACTOR_FIRST_GUARD = 8,
-  /// ★ Named from the game: "Some of the rooms in the palace are available
-  /// to Colosso entrants." (MsgBabiPalaceSomeOfTheRoomsInThe)
-  ACTOR_SECOND_GUARD = 9
-};
+enum { ACTOR_FIRST_GUARD = 8, ACTOR_SECOND_GUARD = 9 };
 
 /// The attendant has led the party to the beds. Talking again sends the
 /// attendant back.
-/// ★ Named from the game: "We have just enough extra beds in this room for
-/// everybody." (MsgTolbiWeHaveJustEnoughExtra)
 enum { FLAG_BABI_PALACE_ATTENDANT_SHOWED_BEDS = FLAG_SCENE_TEMP_00 };
 
 /// The palace map's tileset animations that open its doors, for
@@ -299,7 +239,6 @@ enum BabiPalaceCellBehavior {
   CELL_BEHAVIOR_BABI_PALACE_BEDS =
       70, ///< the big bedroom's four beds, searched to sleep
   /// The well outside the palace.
-  /// ★ Named from the game: "peered into the well" (MsgFieldPeeredWell)
   CELL_BEHAVIOR_BABI_PALACE_WELL = 90
 };
 

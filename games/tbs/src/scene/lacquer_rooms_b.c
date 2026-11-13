@@ -61,48 +61,25 @@
 /// talk of before Xian hears of Hsu.
 enum LacquerRoomsBActorId {
   /// A man with a topknot, in the room at LACQUER_ROOMS_B_HOUSE.
-  /// ★ Named from the game: "The mulberry harvest is over. Now there is much
-  /// food for the caterpillars!" (MsgXianInteriorsTheMulberryHarvestIsOverNow)
   ACTOR_MAN_ON_THE_MULBERRY_HARVEST = ACTOR_FIRST_PLACED,
   /// A woman in a green apron, in the same room.
-  /// ★ Named from the game: "Farm work is very hard."
-  /// (MsgXianInteriorsFarmWorkIsVeryHardWarriors)
   ACTOR_FARM_WORKER,
   /// A young man, in the room at LACQUER_ROOMS_B_HOUSE_NORTH.
-  /// ★ Named from the game: "Xian silk is sent on Silk Road to Tolbi."
-  /// (MsgXianInteriorsXianSilkIsSentOnSilk)
   ACTOR_YOUNG_MAN_ON_SILK_ROAD,
   /// A young woman who walks about the same room.
-  /// ★ Named from the game: "Silk Road ends in Tolbi. It is a big, big town."
-  /// (MsgXianInteriorsSilkRoadEndsInTolbiIt)
   ACTOR_WOMAN_ON_TOLBI,
   /// An old man, in the room at LACQUER_ROOMS_B_FROM_XIAN_EAST.
-  /// ★ Named from the game: "Follow Silk Road. When you see the mountain fork,
-  /// go north." (MsgXianInteriorsFollowSilkRoadWhenYouSee)
   ACTOR_OLD_MAN_ON_THE_ALTIN_ROAD,
   /// An old woman with a cane, in the same room.
-  /// ★ Named from the game: "There is a mine in Altin. There is lots of steel
-  /// and lots of gems." (MsgXianInteriorsThereIsAMineInAltin)
   ACTOR_OLD_WOMAN_ON_THE_ALTIN_MINE,
-  /// ★ Named from the game: "it is not strange to sell weapons in Xian."
-  /// (MsgXianXianHasMartialArtsBut)
   ACTOR_XIAN_WEAPON_MERCHANT,
-  /// ★ Named from the game: "We should sell armor to kung fu masters, as
-  /// well." (MsgXianInteriorsWeShouldSellArmorToKung)
   ACTOR_XIAN_ARMOR_MERCHANT,
-  /// ★ Named from the game: "Use my goods to recover your strength."
-  /// (MsgXianInteriorsYouLoseStrengthInHeatUse)
   ACTOR_XIAN_ITEM_MERCHANT,
-  /// ★ Named from the game: "Welcome to our inn." (MsgInnWelcome)
   ACTOR_XIAN_INNKEEPER,
   /// A woman in an apron who walks about the inn's second room.
-  /// ★ Named from the game: "Normally, many merchants come to the village, but
-  /// they have not come yet." (MsgXianInteriorsNormallyManyMerchantsComeToThe)
   ACTOR_WOMAN_AWAITING_MERCHANTS,
   /// A man in a cook's cap, in the inn's room at LACQUER_ROOMS_B_INN_SOUTH,
   /// with the innkeeper.
-  /// ★ Named from the game: "All the people who came to eat are from Xian."
-  /// (MsgXianInteriorsAllThePeopleWhoCameTo)
   ACTOR_COOK
 };
 
@@ -118,17 +95,7 @@ enum {
 /// Xian has heard of Hsu. Its dialogue shows them: Master Feh says Feizhi's
 /// prediction came true, Feizhi welcomes the party, and Hsu was injured on his
 /// way from Lama Temple.
-enum {
-  /// ★ Named from the game: "You warriors should visit Master Feh's school."
-  /// (MsgXianYouWarriorsShouldVisitMasterFehs)
-  ACTOR_FEH = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "Feizhi's prediction came true."
-  /// (MsgXianInteriorsFeizhisPredictionCameTrueNowI)
-  ACTOR_FEIZHI,
-  /// ★ Named from the game: "Hsu was trapped under the rocks"
-  /// (MsgXianInteriorsHsuWasTrappedUnderTheRocks)
-  ACTOR_HSU
-};
+enum { ACTOR_FEH = ACTOR_FIRST_PLACED, ACTOR_FEIZHI, ACTOR_HSU };
 
 /// Hsu on his back with his arms at his sides, as he lies in the bed in the
 /// room behind the school (hsu.png's frame 36; the room's render).

@@ -113,59 +113,32 @@
 /// patches of ivy for Whirlwind, two pillars that sink into the floor, and two
 /// hidden targets for Frost, both placed with the first sinking pillar.
 enum {
-  /// ★ Named from what the player sees: one of a pair of grey pillars with gold
-  /// tops, side by side (its render)
   ACTOR_FIRST_PILLAR_A = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: the other pillar of the first pair (its
-  /// render)
   ACTOR_FIRST_PILLAR_B,
-  /// ★ Named from what the player sees: one of the second pair of grey pillars
-  /// with gold tops (its render)
   ACTOR_SECOND_PILLAR_A,
-  /// ★ Named from what the player sees: the other pillar of the second pair
-  /// (its render)
   ACTOR_SECOND_PILLAR_B,
   /// Three small stone pillars with white tops (SPRITE_SMALL_PILLAR, the size
   /// of the sinking pillars). The leader pushes them by walking into them
   /// (TunnelRuins_PushSmallPillars) or shifts them with Move. This one stands
   /// south of the ivy's ledge.
-  /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
   ACTOR_SMALL_PILLAR_A,
   /// Beside ACTOR_SMALL_PILLAR_A.
-  /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
   ACTOR_SMALL_PILLAR_B,
   /// Behind ivy A, out of sight until Whirlwind clears the ivy.
-  /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
   ACTOR_SMALL_PILLAR_C,
   /// Ivy on the ledge above the small pillars. It is drawn with SPRITE_IVY, the
   /// sprite of the ivy that traps the stump at Goma Cave's entrance.
-  /// ★ Named from the game: "It looks like it's trapped in the ivy."
-  /// (MsgGomaNoUsePsynergy)
   ACTOR_IVY_A,
   /// Ivy beside ACTOR_IVY_A.
-  /// ★ Named from the game: "It looks like it's trapped in the ivy."
-  /// (MsgGomaNoUsePsynergy)
   ACTOR_IVY_B,
   /// Ivy in an arched niche to the east.
-  /// ★ Named from the game: "It looks like it's trapped in the ivy."
-  /// (MsgGomaNoUsePsynergy)
   ACTOR_IVY_C,
-  /// ★ Named from what the player sees: a grey pillar on an orange base, its
-  /// white-rimmed top full of blue water, in the north-west of its room (its
-  /// render)
   ACTOR_NORTHWEST_SINKING_PILLAR,
-  /// ★ Named from what the player sees: a second grey pillar on an orange base,
-  /// a dark grating under its white rim until Douse fills it with water, in the
-  /// south-east of the room (its render)
   ACTOR_SOUTHEAST_SINKING_PILLAR,
   /// Frost's target on the north-west pillar. It is SPRITE_PUDDLE in
   /// SPRITE_COLOR_HIDDEN, which moves onto the pillar when it sinks.
-  /// ★ Named from what the player sees: nothing on the sunken pillar until
-  /// Frost raises a pillar of ice there (its render)
   ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
   /// The same hidden target for the south-east pillar.
-  /// ★ Named from what the player sees: nothing on the sunken pillar until
-  /// Frost raises a pillar of ice there (its render)
   ACTOR_SOUTHEAST_PILLAR_FROST_TARGET
 };
 
@@ -176,61 +149,29 @@ enum {
 /// vanish under Reveal, two pillars to push in the east, and five coloured
 /// statues of a woman to Move before the door.
 enum {
-  /// ★ Named from what the player sees: a grey pillar on an orange base, a
-  /// dark grating under its white rim (its render)
   ACTOR_DOUSE_PILLAR = ACTOR_FIRST_PLACED,
   /// Frost's target on the Douse pillar. It is SPRITE_PUDDLE in
   /// SPRITE_COLOR_HIDDEN, held 32 pixels below the soaked pillar.
-  /// ★ Named from what the player sees: nothing until Frost raises a pillar of
-  /// ice from it (its render)
   ACTOR_DOUSE_PILLAR_FROST_TARGET,
-  /// ★ Named from what the player sees: a white platform on a carved grey base,
-  /// the west of two below the carved stones (its render)
   ACTOR_BALANCE_WEST,
-  /// ★ Named from what the player sees: the east white platform on its carved
-  /// grey base (its render)
   ACTOR_BALANCE_EAST,
-  /// ★ Named from what the player sees: a grey stone carved with spirals, the
-  /// west of three in a row (its render)
   ACTOR_WEST_CARRY_STONE,
-  /// ★ Named from what the player sees: the middle grey stone carved with
-  /// spirals (its render)
   ACTOR_MIDDLE_CARRY_STONE,
-  /// ★ Named from what the player sees: the east grey stone carved with spirals
-  /// (its render)
   ACTOR_EAST_CARRY_STONE,
-  /// ★ Named from what the player sees: a white statue standing over a chest in
-  /// the west (its render)
   ACTOR_WEST_VANISHING_STATUE,
-  /// ★ Named from what the player sees: a white statue standing over a chest in
-  /// the east (its render)
   ACTOR_EAST_VANISHING_STATUE,
-  /// ★ Named from what the player sees: one of a pair of grey pillars with pale
-  /// caps in white rims, in the east (its render)
   ACTOR_EAST_PILLAR_A,
-  /// ★ Named from what the player sees: the other pillar of the east pair (its
-  /// render)
   ACTOR_EAST_PILLAR_B,
   /// The game's text calls it violet: "Violet shines southeast of me."
   /// (MsgTunnelRuinsVioletShinesSoutheastOfMe), the south-east statue's line.
-  /// ★ Named from what the player sees: a violet statue of a robed woman,
-  /// north-west of the five (its render)
   ACTOR_LADY_STATUE_NORTHWEST,
-  /// ★ Named from what the player sees: a green statue of a robed woman,
-  /// north-east of the five (its render)
   ACTOR_LADY_STATUE_NORTHEAST,
-  /// ★ Named from what the player sees: a blue statue of a robed woman,
-  /// south-west of the five (its render)
   ACTOR_LADY_STATUE_SOUTHWEST,
   /// The game's text calls it red: "Red shines northwest of me."
   /// (MsgTunnelRuinsRedShinesNorthwestOfMe), the north-west statue's line.
-  /// ★ Named from what the player sees: a pink statue of a robed woman,
-  /// south-east of the five (its render)
   ACTOR_LADY_STATUE_SOUTHEAST,
   /// The game's text calls it yellow: "Yellow shines northeast of me."
   /// (MsgTunnelRuinsYellowShinesNortheastOfMe), the north-east statue's line.
-  /// ★ Named from what the player sees: a gold statue of a robed woman, the
-  /// southmost of the five (its render)
   ACTOR_LADY_STATUE_SOUTH
 };
 
@@ -509,13 +450,9 @@ static void TunnelRuins_HopDownStep(void) {
 
 /// In TunnelRuinsLadyStatues, Douse has soaked the pillar, and its Frost target
 /// follows it.
-/// ★ Named from what the player sees: a grey pillar on an orange base, a dark
-/// grating under its white rim, which Douse soaks (its render)
 #define FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED FLAG_SCENE_TEMP_03
 /// In TunnelRuinsLadyStatues, Frost has raised a pillar of ice from the soaked
 /// pillar's hidden target, 32 pixels below the pillar.
-/// ★ Named from what the player sees: a pillar of ice rising where Frost is
-/// cast (its render)
 #define FLAG_TUNNEL_RUINS_DOUSE_FROST_TARGET_FROZEN FLAG_SCENE_TEMP_04
 
 /// The entrances of TunnelRuinsGreatStatue, TunnelRuinsLadyStatues, or

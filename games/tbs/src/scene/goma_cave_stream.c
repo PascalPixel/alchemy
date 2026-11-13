@@ -68,8 +68,6 @@
 /// rows from ACTOR_FIRST_PLACED.
 enum GomaCaveStreamActorId {
   /// The stump Move pushes, as Garet calls the one at the Goma Cave Entrance.
-  /// ★ Named from the game: "It's no use. Our Psynergy isn't strong enough to
-  /// free that stump." (MsgGomaNoUsePsynergy)
   ACTOR_STUMP = ACTOR_FIRST_PLACED
 };
 

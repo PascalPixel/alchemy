@@ -109,122 +109,64 @@
 enum MogallForestSignActorId {
   /// A log lying north to south at (488, 464), pushed as the river log is but
   /// with nothing happening where it stops.
-  /// ★ Named from what the player sees: a fallen tree trunk lying in the
-  /// grass (its render)
   ACTOR_FIRST_AREA_LOG = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: a fallen tree trunk lying in the
-  /// grass (its render)
   ACTOR_FIRST_AREA_RIVER_LOG,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   ACTOR_FIRST_AREA_NORTH_APE,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   ACTOR_FIRST_AREA_ATTACKING_APE,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   ACTOR_FIRST_AREA_EAST_APE,
-  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
-  /// (its render)
   ACTOR_FIRST_AREA_NORTH_APE_STUMP,
-  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
-  /// (its render)
   ACTOR_FIRST_AREA_ATTACKING_APE_STUMP,
-  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
-  /// (its render)
   ACTOR_FIRST_AREA_EAST_APE_STUMP,
   /// A Nut floating over the river, caught with Catch.
-  /// ★ Named from the game: "Nut" (MsgItemName)
   ACTOR_NUT
 };
 
 /// Actors of the second area (SceneId_MogallForestQuartz), numbered in
 /// the order of gMogallForestQuartz_ActorPlacements.
 enum MogallForestQuartzActorId {
-  /// ★ Named from what the player sees: a fallen tree trunk lying in the
-  /// grass (its render)
   ACTOR_SECOND_AREA_LOG = ACTOR_FIRST_PLACED,
   /// A log lying west to east at (592, 456), south of ACTOR_SECOND_AREA_LOG,
   /// pushed with nothing happening where it stops.
-  /// ★ Named from what the player sees: a fallen tree trunk lying in the
-  /// grass (its render)
   ACTOR_SECOND_AREA_SOUTH_LOG,
-  /// ★ Named from what the player sees: a fallen tree trunk lying in the
-  /// grass (its render)
   ACTOR_SECOND_AREA_RIVER_LOG,
   /// A rock moved with Move.
   ///
   /// It is drawn as the rocks of Altmiller Cave's color puzzle
   /// (MsgAltmillerRotatedRock), drawn plain as those are while Reveal is off.
-  /// ★ Named from what the player sees: a small grey rock in the grass (its
-  /// render)
   ACTOR_SECOND_AREA_ROCK,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   ACTOR_SECOND_AREA_NORTH_APE,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   ACTOR_SECOND_AREA_EAST_APE,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   ACTOR_SECOND_AREA_SOUTH_APE,
-  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
-  /// (its render)
   ACTOR_SECOND_AREA_NORTH_APE_STUMP,
-  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
-  /// (its render)
   ACTOR_SECOND_AREA_EAST_APE_STUMP,
-  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
-  /// (its render)
   ACTOR_SECOND_AREA_SOUTH_APE_STUMP,
   /// Quartz, a Venus Djinni, placed until the party has it.
-  /// ★ Named from the game: "Quartz" (MsgDjinnName)
   ACTOR_SECOND_AREA_QUARTZ
 };
 
 /// Actors of the third area (SceneId_MogallForestKillerApe), numbered in
 /// the order of gMogallForestKillerApe_ActorPlacements.
 enum MogallForestKillerApeActorId {
-  /// ★ Named from what the player sees: a fallen tree trunk lying in the
-  /// grass (its render)
   ACTOR_THIRD_AREA_LOG = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: a fallen tree trunk lying in the
-  /// grass (its render)
   ACTOR_THIRD_AREA_NORTH_RIVER_LOG,
   /// A log lying north to south at (552, 480), west of the two river logs,
   /// pushed with nothing happening where it stops.
-  /// ★ Named from what the player sees: a fallen tree trunk lying in the
-  /// grass (its render)
   ACTOR_THIRD_AREA_WEST_LOG,
-  /// ★ Named from what the player sees: a fallen tree trunk lying in the
-  /// grass (its render)
   ACTOR_THIRD_AREA_SOUTH_RIVER_LOG,
   /// A log lying west to east at (544, 536), south of
   /// ACTOR_THIRD_AREA_WEST_LOG, pushed with nothing happening where it stops.
-  /// ★ Named from what the player sees: a fallen tree trunk lying in the
-  /// grass (its render)
   ACTOR_THIRD_AREA_SOUTHWEST_LOG,
   /// Two rocks moved with Move, as in the second area.
-  /// ★ Named from what the player sees: a small grey rock in the grass
-  /// (its render)
   ACTOR_THIRD_AREA_NORTH_ROCK,
-  /// ★ Named from what the player sees: a small grey rock in the grass
-  /// (its render)
   ACTOR_THIRD_AREA_SOUTH_ROCK,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   ACTOR_THIRD_AREA_ATTACKING_APE,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   ACTOR_THIRD_AREA_MIDDLE_APE,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   ACTOR_THIRD_AREA_WEST_APE,
   /// Also the Killer Ape and its guide.
-  /// ★ Named from the game: "Killer Ape" (MsgEnemyName)
   ACTOR_THIRD_AREA_EAST_APE,
-  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
-  /// (its render)
   ACTOR_THIRD_AREA_ATTACKING_APE_STUMP,
-  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
-  /// (its render)
   ACTOR_THIRD_AREA_MIDDLE_APE_STUMP,
-  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
-  /// (its render)
   ACTOR_THIRD_AREA_WEST_APE_STUMP,
-  /// ★ Named from what the player sees: a hollow purple stump an ape hides in
-  /// (its render)
   ACTOR_THIRD_AREA_EAST_APE_STUMP
 };
 
@@ -242,55 +184,29 @@ enum MogallForestLogAnimation {
 /// There is one for each ape once it has come out (or, for two, moved on to a
 /// second hiding place) and one for each rolled log.
 enum {
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_FIRST_AREA_NORTH_APE_OUT = FLAG_AREA_TEMP_00,
   /// The ape that leaps at the leader instead of pointing the way.
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_FIRST_AREA_ATTACKING_APE_OUT,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_FIRST_AREA_EAST_APE_OUT,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_SECOND_AREA_NORTH_APE_OUT,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_SECOND_AREA_EAST_APE_OUT,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_MOVED,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_OUT,
   /// The ape that leaps at the leader instead of pointing the way.
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_THIRD_AREA_ATTACKING_APE_OUT,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_THIRD_AREA_MIDDLE_APE_OUT,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_THIRD_AREA_WEST_APE_OUT,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_MOVED,
-  /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT,
-  /// ★ Named from what the player sees: a log pushed over the grass rolls into
-  /// the river and lies along the channel, a stepping place across (its render)
   FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED = FLAG_AREA_TEMP_10,
-  /// ★ Named from what the player sees: the second area's log rolled into the
-  /// river (its render)
   FLAG_MOGALL_FOREST_SECOND_AREA_LOG_ROLLED,
-  /// ★ Named from what the player sees: the third area's north log rolled into
-  /// the river (its render)
   FLAG_MOGALL_FOREST_THIRD_AREA_NORTH_LOG_ROLLED,
-  /// ★ Named from what the player sees: the third area's south log rolled
-  /// into the river (its render)
   FLAG_MOGALL_FOREST_THIRD_AREA_SOUTH_LOG_ROLLED,
-  /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
   FLAG_MOGALL_FOREST_PSYNERGY_STONE = FLAG_AREA_TEMP_50
 };
 
 /// Scene flag, kept while the party stays in the area.
-enum {
-  /// ★ Named from what the player sees: the third area's south rock, beside
-  /// the north river log, moved with Move to the ring south of it, where it
-  /// sinks and stays (its render)
-  FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED = FLAG_SCENE_TEMP_14
-};
+enum { FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED = FLAG_SCENE_TEMP_14 };
 
 // The third area's east ape: in the first patch it is placed only until it
 // has come out, and from the first patch on the hiding place that shares its

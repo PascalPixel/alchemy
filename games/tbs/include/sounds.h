@@ -42,10 +42,8 @@ enum SoundId {
   /// (SerialTest_Run).
   MUS_PALACE,
   /// Field music of the Tret Tree and of Altin.
-  /// ★ Named from its area name: Tret Tree
   MUS_TRET_TREE,
   /// Field music of Fuchin Temple, Xian and Lama Temple.
-  /// ★ Named from its area name: Fuchin Temple
   MUS_FUCHIN_TEMPLE,
   /// Field music of Kalay, the Kalay docks and the Tolbi docks.
   MUS_KALAY,
@@ -59,7 +57,6 @@ enum SoundId {
   /// group leaves Kalay, and in Lucky Dice and Lucky Wheels.
   MUS_DJINN_LESSON,
   /// Field music of Tolbi before the Colosso; afterwards Tolbi plays MUS_TOWN.
-  /// ★ Named from its area name: Tolbi
   MUS_TOLBI,
   MUS_011,
   MUS_012,
@@ -74,7 +71,6 @@ enum SoundId {
   /// a sound with no tracks: silence
   MUS_SILENCE,
   /// Field music of Sol Sanctum until the eruption (FLAG_SOL_SANCTUM_ERUPTED).
-  /// ★ Named from its area name: Sol Sanctum
   MUS_SOL_SANCTUM,
   /// Field music of Kolima Forest, Mogall Forest, and of the Tret Tree once
   /// FLAG_TRET_DEFEATED is set; it also plays as Kolima is cursed, as Kraden
@@ -98,7 +94,6 @@ enum SoundId {
   MUS_DESERT,
   /// Field music of Suhalla, and of Imil once Saturos is beaten at Mercury
   /// Lighthouse (FLAG_SATUROS_BEATEN_AT_MERCURY).
-  /// ★ Named from its area name: Suhalla
   MUS_SUHALLA,
   /// Field music of Mercury Lighthouse and the Venus Lighthouse entry.
   MUS_MERCURY_LIGHTHOUSE,
@@ -138,7 +133,6 @@ enum SoundId {
   /// and the Kalay Tunnel entrance; it also plays after Flint is met.
   MUS_WORLD_MAP,
   /// Field music of Venus Lighthouse, but for its entry and its aerie.
-  /// ★ Named from its area name: Venus Lighthouse
   MUS_VENUS_LIGHTHOUSE,
   MUS_044,
   MUS_045,
@@ -159,8 +153,6 @@ enum SoundId {
   /// the Storm and Tempest Lizards, and the monsters guarding Crossbone Isle's
   /// floors; it also plays as Dodonpa pulls the lever that springs the trap in
   /// the Lunpa Fortress.
-  /// ★ Named from what the player sees: the battles with Tret, the Kraken and
-  /// the Manticore (its render)
   MUS_BOSS_BATTLE,
   /// Battle music gEncounter_BattleMusic gives Saturos and Menardi's first
   /// battle at Venus Lighthouse's aerie (ENCOUNTER_ZONE_SCRIPTED, slot 1) and
@@ -169,7 +161,6 @@ enum SoundId {
   /// Battle music of the Fusion Dragon, the aerie's second battle
   /// (ENCOUNTER_ZONE_SCRIPTED, slot 0); it also plays as Saturos and Menardi
   /// fuse at Venus Lighthouse's aerie.
-  /// ★ Named from the game: "Fusion Dragon" (MsgEnemyName)
   MUS_FUSION_DRAGON_BATTLE,
   /// Plays as the boulder chases the party down Altin Peak, and after a link
   /// battle's own music (Battle_Run).
@@ -202,22 +193,16 @@ enum SoundId {
   MUS_ERUPTION,
   /// The Title's music as the intro holds the title, without its prompt, after
   /// the prologue and before Vale three years later (Title_Run).
-  /// ★ Named from what the player sees: the title shown between the prologue
-  /// and Vale three years later (its render)
   MUS_TITLE_AFTER_PROLOGUE,
   MUS_065,
   MUS_066,
   /// The ending's music: the Lemurian ship sailing away (LemurianShip_SetSail)
   /// and the staff credits that follow (Title_Run).
-  /// ★ Named from what the player sees: the Lemurian ship sailing off and the
-  /// staff credits (its render)
   MUS_ENDING,
   MUS_068,
   MUS_069,
   /// The title intro's music at power-on, when a save file exists, with its
   /// "Press Start" prompt (Title_Run).
-  /// ★ Named from what the player sees: the Title and its "Press Start" prompt
-  /// (its render)
   MUS_TITLE,
   /// A row of the song table that holds the empty song (dummy_song_header), so
   /// nothing plays; only the debug battle message viewer starts it, to silence
@@ -232,14 +217,10 @@ enum SoundId {
   MUS_FILE_SCREEN,
   /// The music of the Golden Sun logo shown after Jenna and Kraden's closing
   /// event on the world map, until a key is pressed (Title_Run's entrance 10).
-  /// ★ Named from what the player sees: the Golden Sun logo after the ending's
-  /// last event (its render)
   MUS_ENDING_LOGO,
   /// Battle music gEncounter_BattleMusic gives the battles that end the Colosso
   /// finals' matches (ENCOUNTER_ZONE_COLOSSO); Battle_Run plays it after
   /// MUS_SATUROS_BATTLE for a battle with no music of its own.
-  /// ★ Named from what the player sees: the battle that ends a Colosso match
-  /// (its render)
   MUS_COLOSSO_BATTLE,
   MUS_077,
   MUS_078,
@@ -258,8 +239,6 @@ enum SoundId {
   MUS_TREASURE_FOUND,
   /// The jingle of Cure Poison, used from the menu or bought at a Sanctum, and
   /// of Ply's field effect on its target.
-  /// ★ Named from what the player sees: Cure Poison and Ply curing their target
-  /// (its render)
   MUS_CURE,
   /// The jingle as a save is written, or a link battle's results are saved.
   MUS_SAVED,
@@ -281,19 +260,13 @@ enum SoundId {
   /// under 5,000 coins, and one level from the debug level editor; also an item
   /// or Psynergy used from the menu whose effect has no jingle of its own, such
   /// as the stat items (Ability_PlayUseAnimation).
-  /// ★ Named from what the player sees: the least of the three prizes in Lucky
-  /// Dice and Tolbi Spring (its render)
   MUS_JINGLE_SMALL,
   /// The middle prize jingle: three pairs in Lucky Dice, a Tolbi Spring prize
   /// of 5,000 coins or more, and a cleared Colosseum trial.
-  /// ★ Named from what the player sees: the middle of the three prizes in Lucky
-  /// Dice and Tolbi Spring (its render)
   MUS_JINGLE_MEDIUM,
   /// The largest prize jingle: four of a kind in Lucky Dice, a Lucky Wheels
   /// win, a Tolbi Spring prize over 19,999 coins, and five levels from the
   /// debug level editor.
-  /// ★ Named from what the player sees: the greatest of the three prizes in
-  /// Lucky Dice and Tolbi Spring, and a Lucky Wheels win (its render)
   MUS_JINGLE_LARGE,
   MUS_094,
   MUS_095,
@@ -306,8 +279,6 @@ enum SoundId {
   /// An item bought in a shop, artifacts included.
   SE_SHOP_PURCHASE,
   /// An item sold to a shop (Shop_SellItem).
-  /// ★ Named from what the player sees: an item sold at a shop's counter (its
-  /// render)
   SE_SHOP_SELL,
   /// A cursed item equipped from the menu or in a shop; it also plays as Hydros
   /// is beaten on Altin Peak, and in the lobbed-shell battle effects.
@@ -344,15 +315,10 @@ enum SoundId {
   /// thing that won't move.
   SE_MENU_ERROR,
   /// Ice forming: Frost on the field, and the Ice and Frost battle effects.
-  /// ★ Named from what the player sees: the ice of Frost and of Ice, Ice Horn
-  /// and Ice Missile (its render)
   SE_ICE,
   /// Tolbi Spring: the Toss prompt appearing, before each toss.
-  /// ★ Named from the game: "Toss" (MsgTolbiToss)
   SE_TOLBI_SPRING_TOSS_PROMPT,
   /// The Remove command in the item menu (ItemMenu_ChooseCommand).
-  /// ★ Named from what the player sees: the item menu's Remove command (its
-  /// render)
   SE_ITEM_REMOVE,
   /// Footsteps at the Mercury Lighthouse entrance, and the leader spraying sand
   /// in Lamakan Desert.
@@ -413,7 +379,6 @@ enum SoundId {
   /// effects.
   SE_WHOOSH,
   /// Plays in the Kirin summon only, 46 frames after its shake begins.
-  /// ★ Named from what the player sees: the Kirin summon (its render)
   SE_KIRIN,
   /// An item breaking, and a lifted, pushed or caught thing shattering; also
   /// the Bolt and Ray battle effects, rumbling at Sol Sanctum's entrance, and
@@ -421,7 +386,6 @@ enum SoundId {
   SE_ITEM_BREAK,
   /// A Djinni set in the Djinn menu, and a Djinni recovering to Set as the
   /// party walks (Field_UpdateWalking).
-  /// ★ Named from what the player sees: a Djinni returning to Set (its render)
   SE_DJINNI_SET,
   /// A Djinni spinning up as it joins or is caught, before it leaps or shrinks
   /// away (Djinn_RunJupiterJoinEffect, Djinn_RunMarsJoinEffect,
@@ -536,13 +500,9 @@ enum SoundId {
   /// Thunder: lightning on the field (Weather_UpdateLightning), the flash in
   /// Sol Sanctum's Luna room as the event opens on Kraden, the flash of a Lucky
   /// Wheels win, and the Jupiter battle effect.
-  /// ★ Named from what the player sees: lightning flashing over the stormy
-  /// night (its render)
   SE_THUNDER,
   /// The louder thunderclap lightning on the field plays in place of SE_THUNDER
   /// (struct FieldBlendWork's loud).
-  /// ★ Named from what the player sees: lightning flashing over the stormy
-  /// night (its render)
   SE_THUNDER_LOUD,
   /// The lowest of three rising notes, one for each bounce of a Djinni
   /// beginning to join or be caught, before SE_NOTE_MID and SE_NOTE_HIGH
@@ -570,8 +530,6 @@ enum SoundId {
   SE_BOOM,
   /// A gem set into its socket as a way opens: the Dragon's Eye in Fuchin Falls
   /// Cave's dragon and the Small Jewels at Sol Sanctum's entrance.
-  /// ★ Named from what the player sees: the leader setting the small gem into
-  /// the empty socket, and the dragon lit by its eye (its render)
   SE_GEM_SET,
   /// Altin Peak's statue waking and the boulder chase, Crossbone Isle's doors
   /// opening, and the jewels set at Sol Sanctum's entrance.
@@ -582,8 +540,6 @@ enum SoundId {
   /// torch walked into in Bilibin, Bilibin Cave, Goma Cave, Kalay, Sol Sanctum,
   /// the Tunnel Ruins, Venus Lighthouse and Altin Peak, and the scenes' pushed
   /// actors (PushedActor_AdvancePair).
-  /// ★ Named from what the player sees: the leader pushing a statue or pillar
-  /// ahead (its render)
   SE_PUSH,
   /// Sol Sanctum lighting up as its statues are placed: a seal opening
   /// (SolSanctumStatue_OpenSeal), and the left and right beams shining on the
@@ -654,8 +610,6 @@ enum SoundId {
   /// A pushed log or pillar coming to rest, after SE_STOP_ACTION_SE cuts
   /// SE_HEAVY_MOVE: the Colosso matches, Kolima Forest's floodgate, Vale Cave,
   /// and the scenes' pushed actors (Actor_MoveAndRedraw).
-  /// ★ Named from what the player sees: a pushed log or pillar stopping (its
-  /// render)
   SE_HEAVY_STOP,
   /// The elemental arcs rising in the eruption, and the Tolbi-bound ship
   /// casting off. It sounds like bright chimes rising in three steps over high
@@ -685,8 +639,6 @@ enum SoundId {
   SE_RISE_WITH_SPARKS,
   SE_222,
   /// The lifts of Mercury Lighthouse and its aerie, as they carry the party.
-  /// ★ Named from what the player sees: the party riding Mercury Lighthouse's
-  /// lifts (its render)
   SE_LIFT,
   SE_224,
   SE_225,
@@ -695,23 +647,17 @@ enum SoundId {
   SE_LOG_PUSH,
   /// A tree toppling in Fuchin Temple, and the obstacle Force knocks down over
   /// the Colosso's Board Walk.
-  /// ★ Named from what the player sees: a tree or obstacle falling over (its
-  /// render)
   SE_TOPPLE,
   /// Arriving and leaving through Mercury Lighthouse's passages, Venus
   /// Lighthouse's sparkling passage, and Xian's water carrier.
   SE_SPARKLING_PASSAGE,
   /// A splash as Altin's water beasts hop and land, in Altin and on Altin Peak.
-  /// ★ Named from what the player sees: the water beasts landing in the water
-  /// (its render)
   SE_SPLASH,
   /// Altin Peak's pools emptied, a water switch flipped at Crossbone Isle and
   /// Kolima Forest's floodgate, and Kalay's tunnel.
   SE_WATER_DRAIN,
   /// The water level changing at Crossbone Isle and at Kolima Forest's
   /// floodgate.
-  /// ★ Named from what the player sees: the water rising and falling (its
-  /// render)
   SE_WATER_LEVEL,
   /// The water rising or draining at Crossbone Isle and Kolima Forest's
   /// floodgate, and Altin Peak's cart stopping. It sounds like a quick crunch:
@@ -726,20 +672,15 @@ enum SoundId {
   SE_235,
   /// Each of the countdown's 3, 2 and 1 before a Colosso round, before
   /// SE_COLOSSO_GO.
-  /// ★ Named from what the player sees: the Colosso's 3, 2, 1 lettering (its
-  /// render)
   SE_COLOSSO_COUNTDOWN,
   /// The Go! that starts a Colosso round, after SE_COLOSSO_COUNTDOWN's three.
-  /// ★ Named from what the player sees: the Colosso's Go! lettering (its
-  /// render)
   SE_COLOSSO_GO,
   /// A thing pushed one cell: the Colosso matches and Vault Cave's pillar.
   SE_PUSH_STEP,
   /// A pushed log, pillar or wall moving, on player 3 until SE_STOP_ACTION_SE
   /// cuts it: the Colosso, Kolima Forest's floodgate, Vale Cave, Venus
   /// Lighthouse's sliding walls and the scenes' pushed actors; SE_HEAVY_STOP
-  /// follows. ★ Named from what the player sees: a log rolling or a pillar or
-  /// wall sliding (its render)
+  /// follows.
   SE_HEAVY_MOVE,
   /// A log pushed over: Kolima Forest, Mogall Forest, Vale Cave, the Colosso,
   /// Crossbone Isle, and monsters attacking the Tolbi-bound ship.
@@ -748,14 +689,11 @@ enum SoundId {
   /// fades it: the logs floated across Fuchin Falls Cave, the riding log in
   /// Vale Cave, the leader sinking in Mercury Lighthouse's pool and bathing in
   /// a Lamakan Desert oasis.
-  /// ★ Named from what the player sees: logs floating and the leader in water
-  /// (its render)
   SE_WATER_MOVE,
   SE_242,
   SE_243,
   /// Suhalla Desert's sandstorms rising, and the sandstorm catching the party
   /// on the world map.
-  /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   SE_SANDSTORM,
   SE_245,
   /// A spring searched, Retreat, the curse dust at Kolima, Tret restored,
@@ -770,8 +708,6 @@ enum SoundId {
   SE_250,
   SE_251,
   /// A Colosso warrior fading in (Colosso_FadeInWarrior).
-  /// ★ Named from what the player sees: a Colosso warrior appearing (its
-  /// render)
   SE_COLOSSO_WARRIOR_APPEAR,
   SE_253,
   SE_254,
@@ -851,27 +787,18 @@ enum SoundId {
   /// (TolbiSpring_RunToss).
   SE_TOLBI_SPRING_TOSS,
   /// Tolbi Spring: a tossed coin meeting one of the moving obstacles.
-  /// ★ Named from what the player sees: the coin striking an obstacle in the
-  /// spring (its render)
   SE_TOLBI_SPRING_OBSTACLE_HIT,
   /// Lucky Dice: the dice thrown with A.
-  /// ★ Named from what the player sees: the Lucky Dice thrown (its render)
   SE_LUCKY_DICE_THROW,
   /// Lucky Dice: each of the four numbers revealed, five frames apart.
-  /// ★ Named from what the player sees: the Lucky Dice numbers shown (its
-  /// render)
   SE_LUCKY_DICE_NUMBER,
   /// Lucky Wheels: the wheels starting to spin.
-  /// ★ Named from what the player sees: the Lucky Wheels spinning (its render)
   SE_LUCKY_WHEELS_SPIN,
   /// Lucky Wheels: a wheel held or released.
-  /// ★ Named from what the player sees: a Lucky Wheels wheel held (its render)
   SE_LUCKY_WHEELS_HOLD,
   /// Lucky Wheels: 16 frames after the wheels start, as the stop prompt shows.
   SE_LUCKY_WHEELS_STOP_PROMPT,
   /// Lucky Wheels: a wheel stopped.
-  /// ★ Named from what the player sees: a Lucky Wheels wheel stopping (its
-  /// render)
   SE_LUCKY_WHEELS_STOP,
   /// Plays on player 3 as the Wise One appears in the Sanctum, as the
   /// eruption's materialization tint fades in, and as the leader rises on Venus
@@ -879,8 +806,6 @@ enum SoundId {
   SE_MATERIALIZE,
   /// The Venus Star bouncing three times as Saturos throws it into the beacon
   /// at Venus Lighthouse's aerie.
-  /// ★ Named from what the player sees: the Venus Star bouncing on the aerie
-  /// (its render)
   SE_STAR_BOUNCE,
   SE_310,
   SE_311

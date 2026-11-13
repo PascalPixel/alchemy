@@ -117,53 +117,35 @@ static void ColosseumEntrance_InitializeContestants(void);
 enum ColosseumEntranceActorId {
   /// A young man with brown hair in a purple shirt who talks of the heats.
   /// "They're holding the preliminary Colosso heats right now."
-  /// ★ Named from the game: "They're holding the preliminary Colosso heats
-  /// right now." (MsgColosseumEntranceTheyreHoldingThePreliminaryColossoHeats)
   ACTOR_VILLAGER_PRELIMINARY_HEATS = ACTOR_FIRST_PLACED,
   /// A woman with fair hair who cannot get into the packed colosseum. "Sigh...
   /// The colosseum is packed with people. I'll never get in there."
-  /// ★ Named from the game: "I'll never get in there."
-  /// (MsgColosseumEntranceSighTheColosseumIsPackedWith)
   ACTOR_WOMAN_CANNOT_GET_IN,
   /// A burly grey-haired man who asks whether the party hopes to get in
   /// (ColosseumEntrance_DiscussSeating). "Are you hoping to get in to see
   /// Colosso now?"
-  /// ★ Named from the game: "Are you hoping to get in to see Colosso now?"
-  /// (MsgColosseumHopingGetInSeeColosso)
   ACTOR_VILLAGER_SEATING,
   /// A woman in a green dress who talks of winning at the Lucky Guess. "If you
   /// hit it big in the Lucky Guess, you can win a pretty penny."
-  /// ★ Named from the game: "you can win a pretty penny."
-  /// (MsgColosseumEntranceIfYouHitItBigIn)
   ACTOR_WOMAN_PRETTY_PENNY,
   /// An old man with a cane who has bet on the Lucky Guess for years. "I've
   /// been betting on the Lucky Guess for many years, but I've never won."
-  /// ★ Named from the game: "I've been betting on the Lucky Guess for many
-  /// years" (MsgColosseumEntranceIveBeenBettingOnTheLucky)
   ACTOR_OLD_MAN_BETTING_FOR_YEARS,
   /// An old woman who walks about before the finals day. "Colosso's Lucky Guess
   /// makes the battles in the colosseum better." On the finals day, "I want to
   /// watch the finals from a good spot, but it costs too much!"
-  /// ★ Named from the game: "I want to watch the finals from a good spot"
-  /// (MsgColosseumWantWatchFinalsFromGood)
   ACTOR_OLD_WOMAN_GOOD_SPOT,
   /// A strongman, one of the scalpers. During the trials he bets. "I want to
   /// win big, so I put it all on a warrior no one else has picked." On the
   /// finals day he is busy with a customer, and Mind Read hears "I'm going to
   /// be in trouble if I get stuck with any unsold seats..."
-  /// ★ Named from the game: "I'm going to be in trouble if I get stuck with any
-  /// unsold seats..." (MsgColosseumEntranceImGoingToBeInTrouble)
   ACTOR_SCALPER,
   /// The Lucky Guess man, in a green cap and carrying a pack. "Do you know what
   /// the Lucky Guess is?"
-  /// ★ Named from the game: "Do you know what the Lucky Guess is?"
-  /// (MsgColosseumDoKnowLuckyGuess)
   ACTOR_LUCKY_GUESS_MAN = ACTOR_FIRST_PLACED + 8,
   /// The four soldiers at the gates on the finals day (SPRITE_SOLDIER, as in
   /// the waiting room), gColosseumEntranceActorPlacementsFinalsDay only. The
   /// first greets Isaac ("Hey, you're Isaac!") and leads the party in.
-  /// ★ Named from what the player sees: a soldier in a helmet with a spear,
-  /// SPRITE_SOLDIER (its render)
   ACTOR_FIRST_GATE_SOLDIER
 };
 
@@ -171,35 +153,22 @@ enum ColosseumEntranceActorId {
 /// gColosseumStandsActorPlacements.
 enum ColosseumStandsActorId {
   /// A torch (SPRITE_TORCH).
-  /// ★ Named from what the player sees: a torch on its stand (its render)
   ACTOR_STANDS_WEST_TORCH = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: the other torch on its stand (its
-  /// render)
   ACTOR_STANDS_EAST_TORCH,
   /// A young man with brown hair in a purple shirt who cheers on a small
   /// warrior. "Go for it! That's it! I'm cheering for you, little guy!"
-  /// ★ Named from the game: "I'm cheering for you, little guy!"
-  /// (MsgColosseumEntranceGoForItThatsItIm)
   ACTOR_SPECTATOR_CHEERING = ACTOR_FIRST_PLACED + 5,
   /// A woman with fair hair, excited by the trials. "Watching the trials makes
   /// me really excited. The battles are incredible!"
-  /// ★ Named from the game: "Watching the trials makes me really excited."
-  /// (MsgColosseumEntranceWatchingTheTrialsMakesMeReally)
   ACTOR_SPECTATOR_EXCITED,
   /// A burly grey-haired man, taken with the warriors. "Watching such proud,
   /// skilled warriors in battle is so enchanting."
-  /// ★ Named from the game: "Watching such proud, skilled warriors in battle is
-  /// so enchanting." (MsgColosseumEntranceWatchingSuchProudSkilledWarriorsIn)
   ACTOR_SPECTATOR_ENCHANTED,
   /// A woman in a green dress who has waited a year for Colosso. "I've waited a
   /// whole year to see Colosso. I can't wait for the finals!"
-  /// ★ Named from the game: "I've waited a whole year to see Colosso."
-  /// (MsgColosseumEntranceIveWaitedAWholeYearTo)
   ACTOR_SPECTATOR_WAITED_A_YEAR,
   /// The attendant by the trials, a bald, muscular man, who shows the party two
   /// warriors' trials.
-  /// ★ Named from the game: "That warrior cleared this trial"
-  /// (MsgColosseumHavePerfectTechniquesLikeThose)
   ACTOR_TRIAL_ATTENDANT
 };
 
@@ -207,36 +176,24 @@ enum ColosseumStandsActorId {
 /// gColosseumTrialGroundsActorPlacements.
 enum ColosseumTrialActorId {
   /// Six torches (SPRITE_TORCH) around the trial.
-  /// ★ Named from what the player sees: six lit torches on stands around the
-  /// trial ground (its render)
   ACTOR_GROUNDS_FIRST_TORCH = ACTOR_FIRST_PLACED,
   /// Five warriors, 14 to 18, in the finalists' sprite
   /// (SPRITE_WARRIOR_IN_GOLDEN_HELMET). Two of them take the trials the party
   /// is shown.
-  /// ★ Named from the game: "That warrior failed his trial"
-  /// (MsgColosseumHaveMakeThroughCountlessMatches)
   ACTOR_FIRST_TRIAL_WARRIOR = ACTOR_FIRST_PLACED + 6,
   /// The warrior the party first watches, of whom the attendant then says
   /// "That warrior failed his trial, so he's disqualified here."
-  /// ★ Named from the game: "That warrior failed his trial"
-  /// (MsgColosseumHaveMakeThroughCountlessMatches)
   ACTOR_FAILING_WARRIOR = ACTOR_FIRST_TRIAL_WARRIOR + 2,
   /// The warrior the party watches second, of whom the attendant then says
   /// "That warrior cleared this trial, but I doubt he'll make the finals."
-  /// ★ Named from the game: "That warrior cleared this trial"
-  /// (MsgColosseumHavePerfectTechniquesLikeThose)
   ACTOR_CLEARING_WARRIOR,
   /// Two young men with fair hair (SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, drawn
   /// mirrored) who judge the trial with flags. They raise a red flag when the
   /// warrior fails and a white one when he clears it (enum
   /// FlagBearerAnimation). No text names them.
-  /// ★ Named from what the player sees: two young men with fair hair in white
-  /// tunics beside the trial, who raise a flag at its end (its render)
   ACTOR_FIRST_FLAG_BEARER = ACTOR_FIRST_PLACED + 11,
   /// A capped pillar (SPRITE_CAPPED_PILLAR) the clearing warrior heaves up and
   /// drops.
-  /// ★ Named from what the player sees: a stone pillar with a yellow cap in
-  /// a white rim (its render)
   ACTOR_TRIAL_PILLAR = ACTOR_FIRST_PLACED + 13
 };
 
@@ -253,12 +210,8 @@ enum FlagBearerAnimation {
 /// Isaac after his wins and lead him through the passages. Isaac's companions
 /// take their own actor slots.
 enum ColosseumSoldierActorId {
-  /// ★ Named from what the player sees: soldiers in helmets with spears
-  /// (its render)
   ACTOR_FIRST_SOLDIER = ACTOR_FIRST_PLACED,
   /// The last, who leads Isaac on to each finals stage.
-  /// ★ Named from what the player sees: a soldier in a helmet with a spear
-  /// (its render)
   ACTOR_ESCORTING_SOLDIER = ACTOR_FIRST_PLACED + 3
 };
 
@@ -270,44 +223,22 @@ enum ColosseumSoldierActorId {
 /// they introduce themselves.
 enum ColosseumWaitingRoomActorId {
   /// Asks whether Isaac is ready for the finals.
-  /// ★ Named from what the player sees: a soldier in a helmet with a spear
-  /// (its render)
   ACTOR_FINALS_SOLDIER = ACTOR_FIRST_PLACED,
   /// Will not let Isaac leave. "You cannot leave until the finals are over."
-  /// ★ Named from what the player sees: a soldier in a helmet with a spear
-  /// (its render)
   ACTOR_EXIT_SOLDIER,
   /// Has waited long for the finals. "I feel we've been waiting forever for
   /// the finals to begin."
-  /// ★ Named from what the player sees: a soldier in a helmet with a spear
-  /// (its render)
   ACTOR_WAITING_SOLDIER,
   /// Tells of the gong. "When the gong sounds, the finals will begin."
-  /// ★ Named from the game: "When the gong sounds, the finals will begin."
-  /// (MsgColosseumEntranceWhenTheGongSoundsTheFinals)
   ACTOR_GONG_SOLDIER,
   /// The highest-ranked.
-  /// ★ Named from the game: "I am Morgan."
-  /// (MsgColosseumEntranceIAmMorganIAmThe)
   ACTOR_MORGAN,
   /// The second-best.
-  /// ★ Named from the game: "The name's Azart."
-  /// (MsgColosseumImRatedAsSecondBest)
   ACTOR_AZART,
-  /// ★ Named from the game: "I'm Galahad, the third-seeded fighter."
-  /// (MsgColosseumWaahDontFrightenMe)
   ACTOR_GALAHAD,
-  /// ★ Named from the game: "My name is Satrage."
-  /// (MsgColosseumWhoHaveComeQuestionMe)
   ACTOR_SATRAGE,
-  /// ★ Named from the game: "Dekka must win the finals."
-  /// (MsgColosseumDekkaMustWinFinalsDekka)
   ACTOR_DEKKA,
-  /// ★ Named from the game: "I am Navampa of Gondowan"
-  /// (MsgColosseumAmNavampaGondowanSixthRanked)
   ACTOR_NAVAMPA,
-  /// ★ Named from the game: "I'm Buford, the seventh seed."
-  /// (MsgColosseumImBufordSeventhSeed)
   ACTOR_BUFORD
 };
 
@@ -330,22 +261,14 @@ enum ColosseumCellBehavior {
 enum {
   /// The Lucky Guess man has refused Isaac as a finalist
   /// (ColosseumEntrance_OfferLuckyGuess).
-  /// ★ Named from the game: "Colosso's Lucky Guess makes the battles in the
-  /// colosseum better." (MsgColosseumColossosLuckyGuessMakesBattles)
   FLAG_LUCKY_GUESS_REFUSED_ISAAC = FLAG_AREA_TEMP_C0,
   /// Navampa has explained that Dekka will not answer
   /// (ColosseumEntrance_TalkToDekka).
-  /// ★ Named from the game: "Dekka must win the finals."
-  /// (MsgColosseumDekkaMustWinFinalsDekka)
   FLAG_NAVAMPA_SPOKE_FOR_DEKKA = FLAG_AREA_TEMP_C1,
   /// The leader has crossed the cells behind the finals line, so stepping onto
   /// it asks whether Isaac is ready.
-  /// ★ Named from the game: "If you win there, you advance to the finals."
-  /// (MsgTolbiTheTrialsAreStartingAtThe)
   FLAG_FINALS_LINE_ARMED = FLAG_SCENE_TEMP_34,
   /// The leader has stepped onto the line since. Its step trigger is off.
-  /// ★ Named from the game: "If you win there, you advance to the finals."
-  /// (MsgTolbiTheTrialsAreStartingAtThe)
   FLAG_FINALS_LINE_REACHED = FLAG_SCENE_TEMP_35
 };
 

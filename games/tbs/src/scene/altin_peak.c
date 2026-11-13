@@ -140,13 +140,9 @@
 // The rooms' floor switches, each set once flipped from its first position;
 // they are area temp flags, kept until the party leaves the mine.
 
-/// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
 #define FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH FLAG_AREA_TEMP_23
-/// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
 #define FLAG_ALTIN_PEAK_THIRD_WATER_BEAST_ROOM_SWITCH FLAG_AREA_TEMP_25
-/// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
 #define FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH FLAG_AREA_TEMP_26
-/// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
 #define FLAG_ALTIN_PEAK_SPRITZ_ROOM_SWITCH FLAG_AREA_TEMP_27
 
 static void AltinPeak_RunBoulderChase(s32 boulderDelay);
@@ -182,63 +178,33 @@ enum { ENTRANCE_AFTER_BATTLE = 99 };
 ///
 /// AltinPeakSecondWaterBeast, AltinPeakThirdWaterBeast, AltinPeakPool and
 /// AltinPeakSpritz place the mine cart the party rides first.
-enum {
-  /// ★ Named from what the player sees: a wooden mine cart on the rails (its
-  /// render)
-  ACTOR_CART = ACTOR_FIRST_PLACED
-};
+enum { ACTOR_CART = ACTOR_FIRST_PLACED };
 
 /// AltinPeakFirstWaterBeast: a puddle that appears with the first drain, a
 /// second puddle and the water beast.
 enum {
-  /// ★ Named from what the player sees: a small blue puddle on the floor west
-  /// of the beast's ledge, once the water has drained (its render)
   ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: a small blue puddle on the ledge north
-  /// of the beast (its render)
   ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE,
   /// Its battle names it a Living Statue.
-  /// ★ Named from the game: "Are you the ones who defeated the water beasts?"
-  /// (MsgAltinOnesWhoDefeatedWaterBeasts)
   ACTOR_FIRST_WATER_BEAST
 };
 
 enum {
-  /// ★ Named from the game: "Are you the ones who defeated the water beasts?"
-  /// (MsgAltinOnesWhoDefeatedWaterBeasts)
   ACTOR_SECOND_WATER_BEAST = ACTOR_CART + 1,
-  /// ★ Named from what the player sees: a round brown boulder by the chest in
-  /// the room's east end (its render)
   ACTOR_SECOND_WATER_BEAST_ROOM_BOULDER
 };
 
 enum {
-  /// ★ Named from what the player sees: a small blue puddle on the floor (its
-  /// render)
   ACTOR_THIRD_WATER_BEAST_ROOM_PUDDLE = ACTOR_CART + 1,
-  /// ★ Named from the game: "Are you the ones who defeated the water beasts?"
-  /// (MsgAltinOnesWhoDefeatedWaterBeasts)
   ACTOR_THIRD_WATER_BEAST
 };
 
-enum {
-  /// ★ Named from what the player sees: a small blue puddle on the floor (its
-  /// render)
-  ACTOR_POOL_ROOM_PUDDLE = ACTOR_CART + 1
-};
+enum { ACTOR_POOL_ROOM_PUDDLE = ACTOR_CART + 1 };
 
 enum {
-  /// ★ Named from what the player sees: a small blue puddle beside the stone
-  /// pillar (its render)
   ACTOR_SPRITZ_ROOM_PUDDLE = ACTOR_CART + 1,
-  /// ★ Named from what the player sees: a stone pillar standing in the room's
-  /// south (its render)
   ACTOR_SPRITZ_ROOM_PILLAR,
-  /// ★ Named from what the player sees: a small blue puddle in the room's
-  /// north (its render)
   ACTOR_SPRITZ_ROOM_SECOND_PUDDLE,
-  /// ★ Named from what the player sees: a small blue puddle by the rails (its
-  /// render)
   ACTOR_SPRITZ_ROOM_THIRD_PUDDLE,
   /// Unused: a round boulder at (520, 632), outside both of the room's camera
   /// boxes, so the player never sees it, and no trigger names it.
@@ -246,58 +212,33 @@ enum {
   /// The boxes are gAltinPeak_SpritzEntrances'. One ends at z 568, the one
   /// below it at x 384. The boulder stands almost where AltinPeakJunction
   /// places its own boulder, (536, 636).
-  /// ★ Named from the game: "Mother, look!! A boulder blocking the road!!"
-  /// (MsgGomaNoUsePsynergy)
   ACTOR_UNUSED_SPRITZ_ROOM_BOULDER,
   /// The Mercury Djinni, placed until it has joined.
-  /// ★ Named from the game: "Spritz" (MsgDjinnName)
   ACTOR_SPRITZ = 14
 };
 
-enum {
-  /// ★ Named from what the player sees: a round brown boulder (its render)
-  ACTOR_JUNCTION_ROOM_BOULDER = ACTOR_FIRST_PLACED
-};
+enum { ACTOR_JUNCTION_ROOM_BOULDER = ACTOR_FIRST_PLACED };
 
 /// AltinPeakFallingRocks: the boulder that falls and its shadow, the log that
 /// topples as it comes down, the actor Force is cast on, and the sign.
 enum {
-  /// ★ Named from what the player sees: its sprite, a grey boulder (its
-  /// render)
   ACTOR_FALLING_BOULDER = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: its sprite, a dark shadow (its render)
   ACTOR_BOULDER_SHADOW,
   /// SPRITE_LOG_NORTH_SOUTH.
-  /// ★ Named from what the player sees: a log standing on end beside the sign
-  /// at the dead end, lying on its side after the rockfall (its render)
   ACTOR_STANDING_LOG,
   /// SPRITE_BLANK, at the dead end's wall.
-  /// ★ Named from the game: "Do not strike the wall!"
-  /// (MsgAltinWatchFallingRocks)
   ACTOR_WALL,
   /// The falling-rock sign, drawn with the sprite of Lalivero's sign and the
   /// Kolima Forest floodgate's (SPRITE_SIGNPOST). It is read by searching cell
   /// behavior 12 (AltinPeak_ReadFallingRockSign).
-  /// ★ Named from the game: "Watch for falling rocks!"
-  /// (MsgAltinWatchFallingRocks)
   ACTOR_FALLING_ROCK_SIGN
 };
 
 /// AltinPeakHydrosStatue: the guardian statue and its shadow.
-enum {
-  /// ★ Named from the game: "Could the guardian statues have turned into the
-  /// monsters?" (MsgAltinTheWaterBeastsLookedExactlyLike)
-  ACTOR_STATUE = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: its sprite, a dark shadow (its render)
-  ACTOR_STATUE_SHADOW
-};
+enum { ACTOR_STATUE = ACTOR_FIRST_PLACED, ACTOR_STATUE_SHADOW };
 
 enum {
-  /// ★ Named from what the player sees: a round brown boulder by the mine's
-  /// west exit (its render)
   ACTOR_WEST_EXIT_ROOM_BOULDER = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: a stone pillar south of the boulder
-  /// (its render)
   ACTOR_WEST_EXIT_ROOM_PILLAR
 };
 
@@ -305,21 +246,13 @@ enum {
 /// kept within one visit to a room, across its battles.
 enum {
   /// Frost has frozen the room's first puddle.
-  /// ★ Named from what the player sees: a small puddle of water on the mine's
-  /// floor (its render)
   FLAG_ALTIN_PEAK_PUDDLE_FROZEN = FLAG_SCENE_TEMP_00,
   /// Frost has frozen AltinPeakFirstWaterBeast's second puddle or
   /// AltinPeakSpritz's second.
-  /// ★ Named from what the player sees: a small puddle of water on the mine's
-  /// floor (its render)
   FLAG_ALTIN_PEAK_SECOND_PUDDLE_FROZEN = FLAG_SCENE_TEMP_01,
   /// Frost has frozen AltinPeakSpritz's third puddle.
-  /// ★ Named from what the player sees: a small puddle of water on the mine's
-  /// floor (its render)
   FLAG_ALTIN_PEAK_THIRD_PUDDLE_FROZEN = FLAG_SCENE_TEMP_04,
   /// Garet has come out to look at AltinPeakFallingRocks's falling-rock sign.
-  /// ★ Named from the game: "Watch for falling rocks!"
-  /// (MsgAltinWatchFallingRocks)
   FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS = FLAG_SCENE_TEMP_05
 };
 

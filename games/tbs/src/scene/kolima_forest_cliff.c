@@ -49,10 +49,7 @@
 /// gKolimaForestCliffActorPlacements.
 enum {
   /// The three logs. The third is the one that can reach the river.
-  /// ★ Named from what the player sees: a log lying west to east (its render)
   ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: a log lying north to south (its
-  /// render)
   ACTOR_RIVER_LOG = ACTOR_FIRST_LOG + 2
 };
 
@@ -60,8 +57,6 @@ enum {
 
 /// The river log has tipped into the river and floats there as ground the party
 /// can cross.
-/// ★ Named from what the player sees: a log lying north to south beside the
-/// river that winds through the clearing (its render)
 #define FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER FLAG_SCENE_TEMP_01
 
 const struct SceneEntrance *KolimaForestCliff_GetEntrances(void) {

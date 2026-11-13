@@ -146,106 +146,51 @@ typedef void (*MapTaskEntry)(void);
 /// log-rolling area calls the ones there stones.
 enum {
   /// Navampa, racing Isaac to the arena.
-  /// ★ Named from the game: "I am Navampa of Gondowan"
-  /// (MsgColosseumAmNavampaGondowanSixthRanked)
   ACTOR_OPPONENT = 8,
   /// The puddle Frost freezes on the Scales of Justice's eastern ledge.
-  /// ★ Named from what the player sees: a small puddle of water
-  /// (SPRITE_PUDDLE) on the eastern ledge of the Scales of Justice (its
-  /// render)
   ACTOR_PUDDLE = 9,
   /// The Scales of Justice's two ledges.
-  /// ★ Named from the game: "There are two ledges that actually form a
-  /// scale." (MsgColossoStageCalledScales)
   ACTOR_SCALES_WEST_LEDGE = 10,
-  /// ★ Named from the game: "There are two ledges that actually form a
-  /// scale." (MsgColossoStageCalledScales)
   ACTOR_SCALES_EAST_LEDGE = 11,
-  /// ★ Named from what the player sees: a stone pillar west of the Scales of
-  /// Justice, which Move sets on the western ledge to hold it down (its
-  /// render)
   ACTOR_SCALES_WEIGHT = 12,
-  /// ★ Named from what the player sees: a stone pillar on the
-  /// Stepping-Stone Stage that Move shifts along its row (its render)
   ACTOR_STONE = 13,
   /// East of the Wall Wedge's pistons, by the operator. Move on it needs
   /// nothing more (ColosseumNavampaMatch_IgnoreMove).
-  /// ★ Named from what the player sees: a stone pillar east of the Wall
-  /// Wedge's pistons (its render)
   ACTOR_ROCK = 14,
   /// The log-rolling area's three stones. Each settles where Move drops it
   /// (ColosseumNavampaMatch_SettleStones, FLAG_FIRST_LOG_AREA_STONE_SETTLED and
   /// the two after it).
-  /// ★ Named from the game: "You can get through quickly by moving the logs
-  /// and stones." (MsgColossoAnotherLogRollingArea)
   ACTOR_LOG_AREA_STONE_A = 15,
-  /// ★ Named from the game: "You can get through quickly by moving the logs
-  /// and stones." (MsgColossoAnotherLogRollingArea)
   ACTOR_LOG_AREA_STONE_B = 16,
-  /// ★ Named from the game: "You can get through quickly by moving the logs
-  /// and stones." (MsgColossoAnotherLogRollingArea)
   ACTOR_LOG_AREA_STONE_C = 17,
   /// The Wall Wedge's five pistons, west to east. Each is drawn by two
   /// actors, ACTOR_FIRST_PISTON + n and ACTOR_FIRST_PISTON + PISTON_COUNT
   /// + n.
-  /// ★ Named from the game: "The pistons move back and forth."
-  /// (MsgColossoPlaceCalledWall)
   ACTOR_FIRST_PISTON = 18,
-  /// ★ Named from the game: "The pistons move back and forth."
-  /// (MsgColossoPlaceCalledWall)
   ACTOR_LAST_PISTON = 22,
   /// A young man with fair hair who works the Wall Wedge.
-  /// ★ Named from the game: "The operator of the walls will cheer for you on
-  /// this stage." (MsgColossoOperatorWallsCheer)
   ACTOR_WALL_OPERATOR = 28,
   /// The plant Growth grows into a shortcut.
-  /// ★ Named from what the player sees: a small sprout (SPRITE_SPROUT) on the
-  /// ground past the Wall Wedge (its render)
   ACTOR_GROWTH_PLANT = 29,
   /// The log Force knocks off the Moving Sidewalk Stage's conveyor belt.
-  /// ★ Named from what the player sees: a log (standing_log.png) at the
-  /// conveyor
-  /// belt of the Moving Sidewalk Stage (its render)
   ACTOR_SIDEWALK_LOG = 30,
   /// The log-rolling area's long log.
-  /// ★ Named from the game: "To get across the tank, you'll need to roll the
-  /// logs." (MsgColossoAnotherLogRollingArea)
   ACTOR_LONG_LOG = 31,
   /// A soldier who explains the third finals match.
-  /// ★ Named from the game: "This is the site of the third finals match."
-  /// (MsgColossoSiteThirdFinals)
   ACTOR_GUIDE = 32,
   /// The stages' attendants, young men with fair hair in white tunics.
-  /// ★ Named from the game: "This stage is called the Scales of Justice."
-  /// (MsgColossoStageCalledScales)
   ACTOR_SCALES_ATTENDANT = 33,
-  /// ★ Named from the game: "You can reach the next stage by jumping from
-  /// stone to stone." (MsgColossoSteppingStoneStage)
   ACTOR_STEPPING_STONE_ATTENDANT = 34,
-  /// ★ Named from the game: "This place is called the Wall Wedge."
-  /// (MsgColossoPlaceCalledWall)
   ACTOR_WALL_WEDGE_ATTENDANT = 35,
-  /// ★ Named from the game: "This sheer wall has a bumpy surface."
-  /// (MsgColossoPlaceNormallyCalledFreeClimb)
   ACTOR_FREE_CLIMB_ATTENDANT = 36,
-  /// ★ Named from the game: "This is called the Moving Sidewalk Stage."
-  /// (MsgColossoCalledMovingSidewalkStage)
   ACTOR_MOVING_SIDEWALK_ATTENDANT = 37,
-  /// ★ Named from the game: "This is another log-rolling area."
-  /// (MsgColossoAnotherLogRollingArea)
   ACTOR_LOG_ROLLING_ATTENDANT = 38,
   /// The arena's prizes, drawn as item icons at two blank actors
   /// (Colosso_ShowItemIcon).
-  /// ★ Named from what the player sees: the Claymore's icon at the arena's
-  /// finish, taken by whoever reaches it first (its render)
   ACTOR_PRIZE_A = 39,
-  /// ★ Named from what the player sees: the Hunter's Sword's icon at the
-  /// arena's finish, taken by whoever reaches it second (its render)
   ACTOR_PRIZE_B = 40,
   /// The first of the three particles that rise from the sleeping Isaac after
   /// the last match (ColosseumNavampaMatch_SpawnPeriodicParticle).
-  /// ★ Named from what the player sees: a "z" (letter_z.png) rising from Isaac
-  /// as he sleeps (its render)
   ACTOR_FIRST_SLEEP_PARTICLE = 41
 };
 
@@ -254,45 +199,26 @@ enum {
 ///
 /// ColosseumNavampaMatch_Initialize restores the stages from them.
 enum {
-  /// ★ Named from the game: "Growth" (MsgAbilityName)
   FLAG_PLANT_GROWN = FLAG_AREA_TEMP_60, ///< by Growth, into a shortcut
-  /// ★ Named from the game: "This place is called the Wall Wedge."
-  /// (MsgColossoPlaceCalledWall)
   FLAG_WALL_WEDGE_HALTED =
-      FLAG_AREA_TEMP_61, ///< by Halt on ACTOR_WALL_OPERATOR
-  /// ★ Named from the game: "This stage is called the Scales of Justice."
-  /// (MsgColossoStageCalledScales)
+      FLAG_AREA_TEMP_61,                  ///< by Halt on ACTOR_WALL_OPERATOR
   FLAG_SCALES_FROZEN = FLAG_AREA_TEMP_62, ///< by Frost on ACTOR_PUDDLE
   /// By Force on ACTOR_SIDEWALK_LOG. The belt carries no one any more.
-  /// ★ Named from the game: "This is called the Moving Sidewalk Stage."
-  /// (MsgColossoCalledMovingSidewalkStage)
   FLAG_SIDEWALK_LOG_KNOCKED_OFF = FLAG_AREA_TEMP_63,
   /// Someone stands on the western ledge, which has sunk
   /// (ColosseumNavampaMatch_StepOnScales).
-  /// ★ Named from the game: "This stage is called the Scales of Justice."
-  /// (MsgColossoStageCalledScales)
   FLAG_ON_SCALES = FLAG_AREA_TEMP_67,
-  /// ★ Named from the game: "This stage is called the Scales of Justice."
-  /// (MsgColossoStageCalledScales)
   FLAG_WEIGHT_ON_SCALES =
       FLAG_AREA_TEMP_68, ///< ACTOR_SCALES_WEIGHT is on the western ledge
-  /// ★ Named from the game: "To get across the tank, you'll need to roll the
-  /// logs." (MsgColossoAnotherLogRollingArea)
   FLAG_LONG_LOG_IN_PLACE =
       FLAG_AREA_TEMP_69, ///< at the east end
                          ///< (ColosseumNavampaMatch_RollLongLog)
   /// The byte of flags that keeps ACTOR_STONE's column.
-  /// ★ Named from the game: "You can get through quickly by moving the logs and
-  /// stones." (MsgColossoAnotherLogRollingArea)
   FLAG_STONE_COLUMN = FLAG_AREA_TEMP_70,
   /// Someone has reached the arena
   /// (Colosso_TakePrize).
-  /// ★ Named from the game: "You must get through several stages before you
-  /// reach the arena." (MsgColossoWarriorsEnterFinalsWithoutAny)
   FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11,
   /// ACTOR_LOG_AREA_STONE_A has settled. The next two flags are B's and C's.
-  /// ★ Named from the game: "You can get through quickly by moving the logs and
-  /// stones." (MsgColossoAnotherLogRollingArea)
   FLAG_FIRST_LOG_AREA_STONE_SETTLED = FLAG_SCENE_TEMP_14
 };
 
@@ -2005,17 +1931,12 @@ static void ColosseumNavampaMatch_TalkToLogRollingAttendant(s32 actorId) {
 #include "shared/colosso_occupant.h"
 
 /// Closes the arena's step trigger. Nothing in the game sets it.
-/// ★ Named from the game: "This is the battle arena. After getting here, the
-/// warriors do battle." (MsgColossoWarriorsEnterFinalsWithoutAny)
 #define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_SCENE_TEMP_10
 /// The chest holding a Smoke Bomb has been opened.
-/// ★ Named from the game: "Smoke Bomb" (MsgItemName)
 #define FLAG_COLOSSEUM_NAVAMPA_MATCH_SMOKE_BOMB_CHEST_OPENED FLAG_AREA_TEMP_6A
 /// The chest holding a Nut has been opened.
-/// ★ Named from the game: "Nut" (MsgItemName)
 #define FLAG_COLOSSEUM_NAVAMPA_MATCH_NUT_CHEST_OPENED FLAG_AREA_TEMP_6B
 /// The chest holding a Sleep Bomb has been opened.
-/// ★ Named from the game: "Sleep Bomb" (MsgItemName)
 #define FLAG_COLOSSEUM_NAVAMPA_MATCH_SLEEP_BOMB_CHEST_OPENED FLAG_AREA_TEMP_6C
 
 /// The Moving Sidewalk Stage's log where Force has knocked it off the belt,

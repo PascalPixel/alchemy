@@ -93,66 +93,36 @@ enum { VAULT_DRIFT_RATE = px(1) / 10 };
 /// The townspeople, named by what they say.
 enum {
   /// A young man.
-  /// ★ Named from the game: "Welcome to Vault, the town at the heart of
-  /// Angara." (MsgVaultWelcomeToVaultTheTownAt)
   ACTOR_WELCOMING_YOUNG_MAN = 8,
   /// A woman with fair hair who asks about the eruption.
-  /// ★ Named from the game: "Wasn't the eruption of Mt. Aleph incredible?"
-  /// (MsgVaultWasntEruptionMtAlephIncredible)
   ACTOR_ERUPTION_WITNESS = 9,
   /// A woman.
-  /// ★ Named from the game: "No man should steal from another during the
-  /// panic of an eruption." (MsgVaultManShouldStealFromAnother)
   ACTOR_WOMAN_ON_STEALING = 11,
   /// A burly grey-haired man.
-  /// ★ Named from the game: "Master Hammet, a wealthy landowner and merchant
-  /// from Kalay, had his precious rod stolen from him."
-  /// (MsgVaultMasterHammetAWealthyLandownerAnd)
   ACTOR_VILLAGER_ON_HAMMET = 10,
   /// An old man with a cane.
-  /// ★ Named from the game: "Master Hammet's servant can't return to Kalay
-  /// until he recovers the rod." (MsgVaultMasterHammetsServantCantReturnTo)
   ACTOR_OLD_MAN_ON_HAMMETS_SERVANT = 12,
   /// An old woman.
-  /// ★ Named from the game: "Those travelers left in a big hurry."
-  /// (MsgVaultThoseTravelersLeftInBig)
   ACTOR_OLD_WOMAN_ON_THE_TRAVELERS = 13,
   /// The two children who walk round the well, half a circle apart
   /// (gVault_BoyRoundTheWellRoute, gVault_GirlRoundTheWellRoute).
-  /// ★ Named from what the player sees: a blond boy walking round the well
-  /// (its render)
   ACTOR_BOY_ROUND_THE_WELL = 14,
-  /// ★ Named from what the player sees: a girl with orange hair walking round
-  /// the well (its render)
   ACTOR_GIRL_ROUND_THE_WELL = 15,
   /// A stocky, muscular man.
-  /// ★ Named from the game: "Nobody's stealing anything on my watch!"
-  /// (MsgVaultNobodysStealingAnything)
   ACTOR_STRONGMAN_ON_WATCH = 16,
   /// One of the three thieves, drawn with long purple hair as in the loft,
   /// standing outside until the party confronts them
   /// (FLAG_VAULT_THIEVES_ATTACKED).
-  /// ★ Named from the game: "Are you accusing us of stealing Hammet's treasured
-  /// Shaman's Rod?" (MsgVaultAccusingUsStealingHammetsTreasured)
   ACTOR_THIEF_IN_TOWN = 17,
   /// A bearded man in a long robe.
-  /// ★ Named from the game: "I was just about to leave this town behind me when
-  /// the volcano erupted." (MsgVaultIWasJustAboutToLeave)
   ACTOR_STRANDED_TRAVELER = 18,
-  /// ★ Named from what the player sees: a white dog sitting among the graves
-  /// (its render)
   ACTOR_VAULT_DOG = 19,
   /// A young man who fixes the roof himself, and is later found tied up in the
   /// inn's loft.
-  /// ★ Named from the game: "Why pay for a carpenter when I can just hammer it
-  /// a bit myself?" (MsgVaultFixTheRoofWhyPayFor)
   ACTOR_YOUNG_MAN_FIXING_THE_ROOF = 20,
   /// A woman who walks about looking for ACTOR_YOUNG_MAN_FIXING_THE_ROOF.
-  /// ★ Named from the game: "He should be fixing the roof now, but I can't
-  /// find him anywhere..." (MsgVaultFixingRoofCant)
   ACTOR_WOMAN_WANTING_THE_ROOF_FIXED = 21,
   /// Sap, a Venus Djinni, hiding until the bell calls it.
-  /// ★ Named from the game: "Sap" (MsgDjinnName)
   ACTOR_SAP = 23
 };
 

@@ -131,79 +131,41 @@ enum LogRoomsARaisedTrigger {
 /// Garet's and Ivan's rows take their own slots.
 enum {
   /// A young man, to whose house a sparkling rock was blown from the volcano.
-  /// ★ Named from the game: "I kept worrying that they would take my gem."
-  /// (MsgVaultICanSleepWellNowThat)
   ACTOR_GEM_OWNER = 8,
   /// A woman with fair hair.
-  /// ★ Named from the game: "My husband says my cat ate the treasure"
-  /// (MsgVaultMyHusbandSaysMyCatAte)
   ACTOR_GEM_OWNERS_WIFE = 9,
   /// A burly grey-haired man who distrusts the man next door. "My neighbor
   /// creeps me out."
-  /// ★ Named from the game: "Maybe my neighbor is the thief..."
-  /// (MsgVaultHeyMaybeMyNeighborIsThe)
   ACTOR_VILLAGER_SUSPECTING_THE_NEIGHBOR = 10,
   /// A small boy who asks about travel.
-  /// ★ Named from the game: "Hey, mister! Is it fun to see strange new places?"
-  /// (MsgVaultMisterFunSeeStrangeNew)
   ACTOR_BOY_ASKING_ABOUT_TRAVEL = 11,
   /// An old man with a cane who wonders what was stolen.
-  /// ★ Named from the game: "Is it just me, or am I missing something?"
-  /// (MsgVaultJustMeOrAmMissing)
   ACTOR_GRANDPA = 12,
   /// An old woman, who says Grandpa keeps wondering if anything was stolen.
-  /// ★ Named from the game: "You never bought me anything worth stealing!"
-  /// (MsgVaultYouNeverBoughtMeAnythingWorth)
   ACTOR_GRANDPAS_WIFE = 13,
   /// A small boy. "I could help Ivan if I were just a little older."
-  /// ★ Named from the game: "if I were just a little older."
-  /// (MsgVaultICouldHelpIvanIfI)
   ACTOR_BOY_WISHING_TO_BE_OLDER = 14,
   /// A little girl who tells the party Ivan's secret once it helps him.
-  /// ★ Named from the game: "I'll tell you a secret..."
-  /// (MsgVaultSinceYoureHelpingIvanIllTell)
   ACTOR_GIRL_TELLING_A_SECRET = 15,
   /// Ivan's host, an old man with white hair.
-  /// ★ Named from the game: "My husband, the mayor, can't believe anyone from
-  /// Vault could be the thief." (MsgVaultMyHusbandTheMayorCantBelieve)
   ACTOR_MAYOR = 16,
   /// A woman in a green dress.
-  /// ★ Named from the game: "My husband, the mayor, can't believe anyone from
-  /// Vault could be the thief." (MsgVaultMyHusbandTheMayorCantBelieve)
   ACTOR_MAYORS_WIFE = 17,
   /// The girl at the inn, as the Bone's description calls her, a young woman
   /// with fair hair. "I have a lot of leftover bones from dinner."
-  /// ★ Named from the game: "A bone from the girl at the inn"
-  /// (MsgItemPlainName)
   ACTOR_GIRL_AT_THE_INN = 18,
-  /// ★ Named from the game: "I'm sorry I've only got these cheap weapons to
-  /// sell right now." (MsgVaultAllOurBestWeaponsWereStolen)
   ACTOR_WEAPON_MERCHANT = 19,
-  /// ★ Named from the game: "I wonder if they left us alone because we don't
-  /// carry any valuable armor?" (MsgVaultIWonderIfTheyLeftUs)
   ACTOR_ARMOR_MERCHANT = 20,
-  /// ★ Named from what the player sees: the shopkeeper behind a counter of
-  /// jars and sacks (its render)
   ACTOR_ITEM_MERCHANT = 21,
   /// A burly grey-haired man who works at the inn.
-  /// ★ Named from the game: "The guests upstairs weren't in their room during
-  /// the eruption." (MsgVaultTheGuestsUpstairsWerentInTheir)
   ACTOR_INN_STAFF = 22,
   /// A woman in an apron behind the inn's counter.
-  /// ★ Named from the game: "Everyone thinks our guests are the thieves"
-  /// (MsgVaultEveryoneThinksOurGuestsThieves)
   ACTOR_INNKEEPER = 23,
   /// The two guests at the inn the town suspects: the thieves' leader and one
   /// of his men.
-  /// ★ Named from the game: "Everyone thinks our guests are the thieves"
-  /// (MsgVaultEveryoneThinksOurGuestsThieves)
   ACTOR_SUSPECTED_LEADER = 24,
-  /// ★ Named from the game: "You're a terrible person if you start accusing
-  /// people for no good reason." (MsgVaultWeHaventDoneAnythingYoureA)
   ACTOR_SUSPECTED_THIEF = 25,
   /// Pushed aside to open a passage.
-  /// ★ Named from what the player sees: a large wooden crate in the room below
-  /// the loft (its render)
   ACTOR_CRATE = 26
 };
 
@@ -212,7 +174,6 @@ enum {
 enum {
   /// Set while the two suspects run from the party, until the party steps
   /// aside to talk it over.
-  /// ★ Named from the game: "Don't let him near me!" (MsgVaultWant)
   FLAG_SUSPECTS_FLEEING = FLAG_AREA_TEMP_00
 };
 
@@ -221,7 +182,6 @@ enum {
 // something else in the guests' room:
 /// The party is cornering the two suspects in the guests' room, so talking to
 /// Ivan or the suspects does nothing.
-/// ★ Named from the game: "Uh-oh! I'm surrounded!" (MsgVaultImSurrounded)
 #define FLAG_VAULT_CORNERING_SUSPECTS FLAG_SCENE_TEMP_50
 
 /// The inn's loft (LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM and the two after the
@@ -230,47 +190,23 @@ enum {
 enum {
   /// vault.c's ACTOR_YOUNG_MAN_FIXING_THE_ROOF, tied up while fixing the
   /// roof.
-  /// ★ Named from the game: "When I came to, I was all tied up."
-  /// (MsgVaultVaultCutFree)
   ACTOR_TIED_UP_VILLAGER = 8,
-  /// ★ Named from the game: "Mayor... Isn't that your family's urn?"
-  /// (MsgVaultYouIsaacRightWontForget)
   ACTOR_LOFT_MAYOR = 9,
   /// Speaks first and bargains for all three ("See, we're not so bad. How
   /// about it? Will you let us go?").
-  /// ★ Named from the game: "Looks like we've been found out!"
-  /// (MsgVaultVaultCutFree)
   ACTOR_THIEF_LEADER = 10,
-  /// ★ Named from the game: "These are the thieves, Mayor..."
-  /// (MsgVaultSeeThatsHappened)
   ACTOR_FIRST_THIEF = 11,
-  /// ★ Named from the game: "These are the thieves, Mayor..."
-  /// (MsgVaultSeeThatsHappened)
   ACTOR_SECOND_THIEF = 12,
   /// A strongman who comes up with the mayor and helps tie the thieves up.
-  /// ★ Named from the game: "What should we do with them?"
-  /// (MsgVaultSeeThatsHappened)
   ACTOR_LOFT_ESCORT = 13,
   /// A strongman who comes up with the mayor and opens the chests.
-  /// ★ Named from the game: "Mayor, we found another chest over here"
-  /// (MsgVaultYouIsaacRightWontForget)
   ACTOR_STRONGMAN_OPENING_THE_CHESTS = 14,
-  /// ★ Named from the game: "but the chest was empty."
-  /// (MsgVaultButChestWasEmpty)
   ACTOR_FIRST_CHEST = 15,
-  /// ★ Named from the game: "but the chest was empty."
-  /// (MsgVaultButChestWasEmpty)
   ACTOR_SECOND_CHEST = 16,
-  /// ★ Named from the game: "but the chest was empty."
-  /// (MsgVaultButChestWasEmpty)
   ACTOR_THIRD_CHEST = 17,
   /// Rises from the first chest.
-  /// ★ Named from the game: "Found the mayor's precious urn."
-  /// (MsgVaultYouIsaacRightWontForget)
   ACTOR_FOUND_URN = 18,
   /// Rises from the second chest, stolen from the Sanctum.
-  /// ★ Named from the game: "Found a gold statue."
-  /// (MsgVaultYouIsaacRightWontForget)
   ACTOR_FOUND_STATUE = 19
 };
 

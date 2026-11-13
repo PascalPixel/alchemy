@@ -92,78 +92,48 @@ enum CottageRoomsAActorId {
   /// Garet's grandfather, the mayor, an old man with white hair and a cane
   /// ("your grandpa's the mayor", vale.c). "Isaac, please take care of my
   /// grandson, Garet."
-  /// ★ Named from the game: "please take care of my grandson"
-  /// (MsgValeIsaacPleaseTakeCareOfMy)
   ACTOR_GARETS_GRANDFATHER = ACTOR_FIRST_PLACED,
   /// Garet's grandmother, an old woman with white hair. "Grandma! What's the
   /// matter? Are you choking?"
-  /// ★ Named from the game: "Are you choking" (MsgValeHey2)
   ACTOR_GARETS_GRANDMOTHER,
   /// Garet's father, a man with brown hair in a teal shirt.
   /// "I'm proud of you, Garet. My own son...on such an important quest!"
-  /// ★ Named from the game: "My own son" (MsgValeImProudOfYouGaretMy)
   ACTOR_GARETS_FATHER,
   /// Garet's mother, a woman with orange hair under a green headscarf. "As
   /// mothers, Dora and I will always worry about you."
-  /// ★ Named from the game: "he is my son" (MsgValeIAmConcernedForGaretBut)
   ACTOR_GARETS_MOTHER,
   /// Jenna's grandfather, a bent old man with a white beard and a cane. "My
   /// granddaughter, Jenna, is finally happy again..."
-  /// ★ Named from the game: "My granddaughter,"
-  /// (MsgValeMyGranddaughterJennaIsFinallyHappy)
   ACTOR_JENNAS_GRANDFATHER,
   /// Jenna's grandmother, an old woman with white hair. "Please return my
   /// precious granddaughter, Jenna, to me." Once Jenna is taken,
   /// ACTOR_WOMAN_ON_THE_SPITTING_IMAGE says she "grew sick with despair", and
   /// she lies in bed.
-  /// ★ Named from the game: "Please return my precious granddaughter"
-  /// (MsgValePleaseReturnMyPreciousGranddaughterJenna)
   ACTOR_JENNAS_GRANDMOTHER,
   /// A woman in a green dress in Jenna's grandparents' house. "Jenna is the
   /// spitting image of her mother, whom we lost that day..."
-  /// ★ Named from the game: "is the spitting image of her mother"
-  /// (MsgValeJennaIsTheSpittingImageOf)
   ACTOR_WOMAN_ON_THE_SPITTING_IMAGE,
   /// A burly grey-haired man. "So Kraden came to Vale to study Mt. Aleph,
   /// right?"
-  /// ★ Named from the game: "It's because Kraden was studying Alchemy..."
-  /// (MsgValeItsBecauseKradenWasStudyingAlchemy)
   ACTOR_MAN_ON_KRADENS_STUDIES,
   /// A woman in a green dress. "If there are visitors in town, we can't use our
   /// Psynergy."
-  /// ★ Named from the game: "If there are visitors in town, we can't use our
-  /// Psynergy." (MsgValeIfThereAreVisitorsInTown)
   ACTOR_WOMAN_ON_VISITORS_IN_TOWN,
   /// A young man with brown hair. "Do you ever dream of seeing the world
   /// outside the village?"
-  /// ★ Named from the game: "Do you ever dream of seeing the world outside
-  /// the village?" (MsgValeDoYouEverDreamOfSeeing)
   ACTOR_YOUNG_MAN_DREAMING_OF_LEAVING,
   /// A woman with fair hair. "Few people outside of Vale possess the power of
   /// Psynergy. That's why we need permission to leave the village..."
-  /// ★ Named from the game: "we need permission to leave the village"
-  /// (MsgValeFewPeopleOutsideOfValePossess)
   ACTOR_WOMAN_ON_PERMISSION_TO_LEAVE,
   /// A strongman. "I hear old man Kraden's got some visitors. Let's go use our
   /// Psynergy to scare 'em!"
-  /// ★ Named from the game: "Let's go use our"
-  /// (MsgValeLetsScareKradensVisitors)
   ACTOR_STRONGMAN_SCARING_VISITORS,
-  /// ★ Named from what the player sees: a young woman with a brown ponytail
-  /// who opens the item shop across its counter, beneath the shelves of jars
-  /// (its render)
   ACTOR_ITEM_MERCHANT,
   /// A bald man in a red tunic.
-  /// ★ Named from the game: "Good weapons aren't just sharp."
-  /// (MsgValeGoodWeaponsDrawOutStrength)
   ACTOR_WEAPON_MERCHANT,
   /// A young man with brown hair in a green shirt.
-  /// ★ Named from the game: "Good armor isn't just sturdy."
-  /// (MsgValeGoodArmorDrawsOutStrength)
   ACTOR_ARMOR_MERCHANT,
   /// Three letters Z that drift up from Garet's grandfather as he sleeps.
-  /// ★ Named from what the player sees: a white letter Z,
-  /// letter_z.png (its render)
   ACTOR_FIRST_SLEEP_Z
 };
 

@@ -110,16 +110,12 @@
 /// Each storm stays away once doused.
 enum {
   /// The first scene's storms, five from this one.
-  /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED = FLAG_AREA_TEMP_01,
   /// The second scene's storms, five from this one.
-  /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED = FLAG_AREA_TEMP_11,
   /// A storm has risen, so the sand haze stays faded in.
-  /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN = FLAG_AREA_TEMP_40,
   /// The Psynergy Stone has been found, an area flag.
-  /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
   FLAG_SUHALLA_DESERT_PSYNERGY_STONE = FLAG_AREA_TEMP_51
 };
 
@@ -129,25 +125,17 @@ enum {
 /// The third scene places none.
 enum {
   /// The storms, five in each scene.
-  /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   ACTOR_FIRST_SANDSTORM = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   ACTOR_FOURTH_SANDSTORM = ACTOR_FIRST_SANDSTORM + 3,
-  /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   ACTOR_LAST_SANDSTORM = ACTOR_FIRST_SANDSTORM + 4,
   /// In the second scene the last storm gives chase.
-  /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   ACTOR_CHASING_SANDSTORM = ACTOR_LAST_SANDSTORM,
   /// Iodem, who steps out of the party to talk and then rejoins it.
-  /// ★ Named from the game: "Iodem..." (MsgSuhallaIodem)
   ACTOR_IODEM,
   /// In the second scene, seen only while Reveal lasts, drawn as Goma Cave's
   /// stone pillars.
-  /// ★ Named from what the player sees: its sprite, SPRITE_STONE_PILLAR, a
-  /// stone pillar (its render)
   ACTOR_REVEALED_PILLAR,
   /// In the second scene, the Mars Djinni.
-  /// ★ Named from the game: "Flash" (MsgDjinnName)
   ACTOR_FLASH
 };
 
@@ -191,50 +179,26 @@ static u16 sSuhallaDesertSavedColor;
 /// The first sandstorm (ACTOR_FIRST_SANDSTORM) has risen on this visit.
 ///
 /// The four flags after it are the next four sandstorms'.
-/// ★ Named from the game: "The sandstorms suddenly increased... I hope no one
-/// gets caught in one and gets injured."
-/// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
 #define FLAG_SUHALLA_DESERT_FIRST_SANDSTORM_RISEN FLAG_SCENE_TEMP_06
 /// The second sandstorm has risen on this visit.
-/// ★ Named from the game: "The sandstorms suddenly increased... I hope no one
-/// gets caught in one and gets injured."
-/// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
 #define FLAG_SUHALLA_DESERT_SECOND_SANDSTORM_RISEN FLAG_SCENE_TEMP_07
 /// The third sandstorm has risen on this visit.
-/// ★ Named from the game: "The sandstorms suddenly increased... I hope no one
-/// gets caught in one and gets injured."
-/// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
 #define FLAG_SUHALLA_DESERT_THIRD_SANDSTORM_RISEN FLAG_SCENE_TEMP_08
 /// The fourth sandstorm (ACTOR_FOURTH_SANDSTORM) has risen on this visit.
-/// ★ Named from the game: "The sandstorms suddenly increased... I hope no one
-/// gets caught in one and gets injured."
-/// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
 #define FLAG_SUHALLA_DESERT_FOURTH_SANDSTORM_RISEN FLAG_SCENE_TEMP_09
 /// The fifth sandstorm (ACTOR_LAST_SANDSTORM) has risen on this visit.
-/// ★ Named from the game: "The sandstorms suddenly increased... I hope no one
-/// gets caught in one and gets injured."
-/// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
 #define FLAG_SUHALLA_DESERT_FIFTH_SANDSTORM_RISEN FLAG_SCENE_TEMP_0A
 /// In SuhallaDesertSouth, the sandstorm that gives chase has set off after the
 /// leader.
-/// ★ Named from the game: "The sandstorms suddenly increased... I hope no one
-/// gets caught in one and gets injured."
-/// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
 #define FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_SET_OFF FLAG_SCENE_TEMP_0E
 /// A sandstorm has caught the leader and lifts the party, and Douse can put it
 /// out.
-/// ★ Named from the game: "For some reason, anyone who gets caught in a
-/// sandstorm winds up here." (MsgSuhallaInteriorsForSomeReasonAnyoneWhoGets)
 #define FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM FLAG_SCENE_TEMP_0F
 /// A byte flag that holds the frames left before the sandstorm that caught
 /// the leader carries the party away.
-/// ★ Named from the game: "For some reason, anyone who gets caught in a
-/// sandstorm winds up here." (MsgSuhallaInteriorsForSomeReasonAnyoneWhoGets)
 #define FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT FLAG_SCENE_TEMP_10
 /// A byte flag that holds the actor id of the sandstorm that caught the
 /// leader.
-/// ★ Named from the game: "For some reason, anyone who gets caught in a
-/// sandstorm winds up here." (MsgSuhallaInteriorsForSomeReasonAnyoneWhoGets)
 #define FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM FLAG_SCENE_TEMP_18
 
 /// In SuhallaDesertSouth, talking to Flash, a Mars Djinni, starts its battle.

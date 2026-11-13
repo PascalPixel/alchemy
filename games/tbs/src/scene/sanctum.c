@@ -105,8 +105,6 @@
 
 /// After the quest is refused, the Great Healer has warned that stepping
 /// outside the village is final.
-/// ★ Named from the game: "Once you step outside the village, you cannot take
-/// back your decision." (MsgSanctumOnceStepOutsideVillageCannot)
 #define FLAG_SANCTUM_WARNED_BEFORE_LEAVING FLAG_SCENE_TEMP_00
 /// The party is starting again from the Great Healer after refusing the quest,
 /// so the account of Sol Sanctum is skipped.
@@ -127,8 +125,6 @@ enum SanctumActorId {
   ///
   /// He is the Great Healer in Vale Sanctum, and the place's own healer
   /// elsewhere.
-  /// ★ Named from the game: "What is it, Great Healer?"
-  /// (MsgSanctumWeHadIdeaTrueSanctum)
   ACTOR_HEALER = ACTOR_FIRST_PLACED,
   // Vale Sanctum (gSanctum_ValeActorPlacements, and
   // gSanctum_QuestActorPlacements at the
@@ -139,32 +135,20 @@ enum SanctumActorId {
   /// Mind Read hears a villager in cottage_rooms_a.c call the Sanctum's people
   /// so: "The healers are supposed to guard Sol Sanctum." Before the quest:
   /// "Our Psynergy was given to us by the sacred power of Mt. Aleph."
-  /// ★ Named from the game: "The healers are supposed to guard"
-  /// (MsgValeTheHealersAreSupposedToGuard)
   ACTOR_WEST_HEALER,
   /// The eastern one. "Psynergy is a power that should only be used for
   /// good... Never for evil!"
-  /// ★ Named from the game: "should only be used for"
-  /// (MsgSanctumPsynergyIsAPowerThatShould)
   ACTOR_EAST_HEALER,
   // The quest (gSanctum_QuestActorPlacements).
   /// Isaac's mother, a woman with fair hair tied up.
-  /// ★ Named from the game: "Please, call me Dora."
-  /// (MsgValeAsStubbornAsYourFather)
   ACTOR_DORA,
   /// The Mayor, Garet's grandfather, an old man with white hair and a cane.
   ///
   /// The Great Healer calls him so: "That is all, Mayor."
-  /// ★ Named from the game: "That is all, Mayor"
-  /// (MsgSanctumAcceptIsaacCantMean)
   ACTOR_GARETS_GRANDFATHER,
   /// Appears to the Great Healer.
-  /// ★ Named from the game: "It must be the Wise One, guardian of the Elemental
-  /// Stars." (MsgSanctumWeHadIdeaTrueSanctum)
   ACTOR_WISE_ONE,
   /// A copy of the Great Healer for its afterimages.
-  /// ★ Named from what the player sees: a red-tinted copy of the Great Healer
-  /// beside him while his Psynergy shows, healer-afterimages.gif (its render)
   ACTOR_HEALER_AFTERIMAGE,
   // Vault Sanctum and Bilibin Sanctum
   // (gSanctum_VaultBilibinActorPlacements).
@@ -174,15 +158,11 @@ enum SanctumActorId {
   /// beard in a long robe). He speaks of the healer as someone else and of "our
   /// teachings" and "our meditations". In Vault: "I wonder if we'll ever see
   /// our stolen gold statue again..."
-  /// ★ Named from the game: "stolen gold statue"
-  /// (MsgSanctumWonderIfEverSeeOur)
   ACTOR_SANCTUM_MEMBER = ACTOR_FIRST_PLACED + 1,
   /// Vault Sanctum's gold statue, placed off the map until the thieves are
   /// jailed (FLAG_VAULT_THIEVES_JAILED).
   ///
   /// Its sprite is that of the one a chest gives back in log_rooms_a.c.
-  /// ★ Named from the game: "our stolen gold statue"
-  /// (MsgSanctumWonderIfEverSeeOur)
   ACTOR_GOLD_STATUE
 };
 

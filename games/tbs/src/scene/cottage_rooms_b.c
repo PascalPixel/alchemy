@@ -26,21 +26,15 @@
 ///   (COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_NORTH and
 ///   COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG, from
 ///   ValeKradensCottage).
-///   ★ Named from what the player sees: Kraden's study, its walls lined with
-///   bookcases around a great pot (its render)
 /// - Vale's inn: the innkeeper's counter on the ground floor
 ///   (COTTAGE_ROOMS_B_FROM_VALE_PLAZA_WEST, from ValePlaza's
 ///   VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTH) and the guest room upstairs
 ///   (COTTAGE_ROOMS_B_VALE_INN_FROM_GROUND_FLOOR).
 /// - Vale's forge, where the young smith works beside his mother
 ///   (COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHWEST).
-///   ★ Named from what the player sees: a forge with its furnace and anvil
-///   (its render)
 /// - A second forge room, stocked with sacks and crates beneath weapons and a
 ///   shield on its wall. Its doorway in ValePlaza opens only once the party
 ///   is back from Kalay (COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHEAST).
-///   ★ Named from what the player sees: a forge room of sacks and crates with
-///   weapons and a shield on its wall (its render)
 /// - Babi's Palace, in Tolbi: the room of Babi's scholars
 ///   (COTTAGE_ROOMS_B_FROM_BABI_PALACE).
 ///
@@ -158,8 +152,6 @@ static void CottageRoomsB_DemonstrateCatch(void);
 
 /// Back from Kalay, Dora has got out of her sickbed on this visit to show Isaac
 /// she is well.
-/// ★ Named from the game: "Are you telling me you were surprised to see me in
-/// bed?" (MsgValeWhoToldIll)
 #define FLAG_VALE_DORA_OUT_OF_BED FLAG_SCENE_TEMP_03
 
 /// Vale's placed actors, numbered by the rows of
@@ -169,61 +161,42 @@ static void CottageRoomsB_DemonstrateCatch(void);
 /// inn's, and differ after them (CottageRoomsBAfterKalayActorId).
 enum CottageRoomsBActorId {
   /// Isaac's mother, a woman with fair hair tied up. "Isaac, wake up!"
-  /// ★ Named from the game: "your mother, Dora, has been crying"
-  /// (MsgValeDoraHasBeenCrying)
   ACTOR_DORA = ACTOR_FIRST_PLACED,
   /// Isaac's father, a man with fair hair (SPRITE_KYLE, Kyle in
   /// vale_prologue.c). "Isaac, Dora, hurry! The Boulder could fall at any
   /// second!"
-  /// ★ Named from the game: "Kyle, watch out!"
-  /// (MsgValeKyleWatchOutTheBoulderThe)
   ACTOR_KYLE,
   /// SPRITE_FLAME_AND_SMOKE, whose frames are a flame and wisps of smoke. It is
   /// placed outside the house only for CottageRoomsB_HurryToThePlaza. There it
   /// shakes, then flares up as its animation turns from flame to smoke, and
   /// rises 18 pixels as it shrinks away.
-  /// ★ Named from what the player sees: a small flame, then wisps of smoke,
-  /// flame_and_smoke.png (its render)
   ACTOR_FLAME_AND_SMOKE,
   /// A young man with brown hair who lost his father in the storm and means to
   /// be a smith. "My father also died in that storm three years ago." Once the
   /// party has left, "By then, I'll surely be a fine smith."
-  /// ★ Named from the game: "My father also died in that storm three years
-  /// ago." (MsgValeMyFatherAlsoDiedInThat)
   ACTOR_YOUNG_SMITH,
   /// ACTOR_YOUNG_SMITH's mother, a woman in a long blue dress. "My son is
   /// still young, so I don't make him work too long."
-  /// ★ Named from the game: "My son is still young"
-  /// (MsgValeMySonIsStillYoungSo)
   ACTOR_YOUNG_SMITHS_MOTHER,
   /// A woman with red-brown hair in a pink dress and a white apron.
-  /// ★ Named from the game: "Is it the innkeeper?" (MsgValeCoughCoughWho)
   ACTOR_INNKEEPER,
   /// A young man with brown hair who walks about the inn. "One of the men from
   /// that group staying here wore a mask over his face."
-  /// ★ Named from the game: "wore a mask over his face"
-  /// (MsgValeOneOfTheMenFromThat)
   ACTOR_YOUNG_MAN_SAW_MASK,
   /// A woman with fair hair at the inn. "Two of those three guests staying with
   /// us have gone out." Mind Read later hears "I found his wallet when I was
   /// cleaning the room..."
-  /// ★ Named from the game: "We're a small hotel, and we get few guests"
-  /// (MsgValeWereASmallHotelAndWe)
   ACTOR_INN_WORKER,
   /// Masked Felix (SPRITE_FELIX_MASKED, sol_sanctum_eruption.h), in a room of
   /// the inn before the party leaves Vale. "Hey... Boy... Do you have business
   /// with me?"
-  /// ★ Named from the game: "That masked man..." (MsgValeTheMaskedManWasFelix)
   ACTOR_MASKED_MAN,
   /// SPRITE_TUNIC, set beside Isaac's bed on the stormy night. Catch reaches it
   /// and Isaac puts it on (FLAG_ISAAC_WEARS_TUNIC). Dora says "Don't go out
   /// without your tunic!"
-  /// ★ Named from the game: "Don't go out without your tunic!"
-  /// (MsgValeComeOnHurry)
   ACTOR_TUNIC,
   /// Kraden's sprite (SPRITE_KRADEN, as in Sol Sanctum's events), seen only
   /// from COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG.
-  /// ★ Named from the game: "from you, Kraden?" (MsgValeKradenOhIsaac)
   ACTOR_KRADEN
 };
 
@@ -233,7 +206,6 @@ enum CottageRoomsBAfterKalayActorId {
   /// A burly grey-haired man at the inn. "Well if it isn't Isaac! You've grown
   /// so much, I almost didn't recognize you!" Mind Read hears of Dora's
   /// illness.
-  /// ★ Named from the game: "You've grown so much" (MsgValeYouveGrownSoMuch)
   ACTOR_MAN_ISAAC_HAS_GROWN = ACTOR_FIRST_PLACED + 8,
   // XXX (no evidence): what the next was meant to do; nothing the player can
   // do shows a use.
@@ -251,42 +223,30 @@ enum CottageRoomsBBabiScholarActorId {
   /// An old scholar with a white beard in a blue cap, who tells of the ruins
   /// where Babi Lighthouse stands. "Originally, there were ancient ruins at the
   /// site of Babi Lighthouse."
-  /// ★ Named from the game: "Babi makes his scholars perform all sorts of
-  /// research." (MsgBabiBabiMakesHisScholarsPerformAll)
   ACTOR_SCHOLAR_ANCIENT_RUINS = ACTOR_FIRST_PLACED,
   /// A scholar with glasses in a blue cap, whose experiments fail. "No matter
   /// how many times I run the experiment, I never get the results I want!"
   /// After the finals he asks whether the party knows Kraden.
-  /// ★ Named from the game: "No matter how many times I run the experiment"
-  /// (MsgBabiNoMatterHowManyTimesI)
   ACTOR_SCHOLAR_EXPERIMENT,
   /// An old scholar with a white beard in a blue cap, who tells of Alchemy
   /// sealed away. "It is said that long ago, the power of Alchemy was sealed
   /// away."
-  /// ★ Named from the game: "the power of Alchemy was sealed away."
-  /// (MsgBabiItIsSaidThatLongAgo)
   ACTOR_SCHOLAR_SEALED_ALCHEMY,
   /// A scholar with glasses in a blue cap, who tells of the Venus Ruins.
   /// "Originally, the ancient Venus Ruins lay buried under Babi Lighthouse."
-  /// ★ Named from the game: "Originally, the ancient Venus Ruins lay buried"
-  /// (MsgBabiOriginallyTheAncientVenusRuinsLay)
   ACTOR_SCHOLAR_VENUS_RUINS,
   /// An old man with a cane who walks about the room. "Babi makes his scholars
   /// perform all sorts of research. I wonder where Babi's favorite scholar,
   /// Kraden, is now?"
-  /// ★ Named from the game: "Babi makes his scholars perform all sorts of
-  /// research." (MsgBabiBabiMakesHisScholarsPerformAll)
   ACTOR_OLD_MAN_ON_BABIS_RESEARCH
 };
 
 /// Vale's area flags this scene keeps while the party is in Vale.
 enum CottageRoomsBAreaFlag {
   /// Back from Kalay, the innkeeper welcomed Isaac home.
-  /// ★ Named from the game: "You came back, huh?" (MsgValeCameBack2)
   FLAG_VALE_INNKEEPER_WELCOMED_ISAAC = FLAG_AREA_TEMP_00,
   /// Back from Kalay, ACTOR_MAN_ISAAC_HAS_GROWN remarked how much Isaac
   /// has grown.
-  /// ★ Named from the game: "You've grown so much" (MsgValeYouveGrownSoMuch)
   FLAG_VALE_MAN_SAW_ISAAC_GROWN = FLAG_AREA_TEMP_01
 };
 

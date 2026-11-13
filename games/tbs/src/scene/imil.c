@@ -135,19 +135,12 @@
 /// and gImil_TownActorPlacementsCured's, from ACTOR_FIRST_PLACED.
 enum ImilVillageActorId {
   /// A young man, shivering and sneezing.
-  /// ★ Named from the game: "Brrrrr... Ah-choo!!! I'm freezing!"
-  /// (MsgImilBrrrrrChooImFreezingMia)
   ACTOR_FREEZING_YOUNG_MAN = ACTOR_FIRST_PLACED,
   /// A small boy.
-  /// ★ Named from the game: "Hi! Are you new in Imil?" (MsgImilHiNewInImil)
   ACTOR_GREETING_BOY,
   /// A strongman counting his exercises in the snow. "One, two, three, four..."
-  /// ★ Named from the game: "You have to keep in shape if you don't want to
-  /// get sick!" (MsgImilPeopleGetSickBecauseTheyStay)
   ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
   /// Move pushes it.
-  /// ★ Named from what the player sees: a snowman with a red cap and a green
-  /// scarf by the frozen pond (its render)
   ACTOR_SNOWMAN
 };
 
@@ -157,59 +150,32 @@ enum ImilVillageActorId {
 /// The rows of Garet, Ivan and Mia take those characters' own slots.
 enum IceRoomsActorId {
   /// The old couple's house.
-  /// ★ Named from the game: "Have you visited the old couple who live near the
-  /// entrance of town?" (MsgImilHaveVisitedOldCoupleWho)
   ACTOR_OLD_WOMAN = ACTOR_FIRST_PLACED,
-  /// ★ Named from the game: "Have you visited the old couple who live near the
-  /// entrance of town?" (MsgImilHaveVisitedOldCoupleWho)
   ACTOR_OLD_MAN,
   /// An unseen actor on the old man's bed. Once Mia has healed him, talking
   /// or Mind Read here reaches him.
-  /// ★ Named from what the player sees: the bed in the old couple's house
-  /// (its render)
   ACTOR_OLD_MANS_BED,
   /// An old man who shivers while the epidemic lasts.
-  /// ★ Named from the game: "The epidemic has hit almost everyone in Imil.
-  /// I'm sick, too." (MsgImilCoughTheEpidemicHasHitAlmost)
   ACTOR_SICK_OLD_MAN,
   /// An old man.
-  /// ★ Named from the game: "Do you want weapons?" (MsgImilDoWantWeapons)
   ACTOR_WEAPON_MERCHANT,
   /// An old man.
-  /// ★ Named from the game: "Ask me anything about armor."
-  /// (MsgArmorShopWelcome)
   ACTOR_ARMOR_MERCHANT,
   /// A little girl who minds the shop while her mother is sick.
-  /// ★ Named from the game: "please talk to my daughter."
-  /// (MsgImilIfYouWantToBuyAnything)
-  /// ★ Named from the game: "Mom's sick, but I can get you whatever you
-  /// need..." (MsgMercuryMomsSickGetWhatever)
   ACTOR_ITEM_MERCHANTS_DAUGHTER,
   /// A woman.
-  /// ★ Named from the game: "If you want to buy anything, please talk to my
-  /// daughter." (MsgImilIfYouWantToBuyAnything)
   ACTOR_ITEM_MERCHANT,
-  /// ★ Named from what the player sees: the man behind the counter of the room
-  /// whose attendant says it is the inn (its render)
   ACTOR_INNKEEPER,
   /// A woman who waits on the inn's guests.
-  /// ★ Named from the game: "We'll wait on you hand and foot, so please stay a
-  /// while!" (MsgImilWereTheOnlyInnThatStays)
   ACTOR_INN_ATTENDANT,
   /// A young man who keeps the restaurant and offers its menu.
-  /// ★ Named from the game: "Do you want to see the restaurant menu?"
-  /// (MsgImilDoWantSeeRestaurantMenu)
   ACTOR_RESTAURANT_OWNER,
   /// Mia's apprentices, a small boy who keeps the Sanctum and a little girl
   /// ("I will be a kind girl", MsgImilIWillBeAKindGirl).
   ///
   /// Her farewell names them together without saying which is which, so each
   /// takes the English name of the boy's or the girl's gender.
-  /// ★ Named from the game: "OK, I'll leave the village in your hands, Megan,
-  /// Justin..." (MsgImilMia)
   ACTOR_JUSTIN,
-  /// ★ Named from the game: "OK, I'll leave the village in your hands, Megan,
-  /// Justin..." (MsgImilMia)
   ACTOR_MEGAN,
   /// Invisible in the old couple's house.
   ///
@@ -227,13 +193,9 @@ enum IceRoomsActorId {
 enum ImilTownFlag {
   /// Whether the leader leaves footprints in the snow, from where he stands
   /// (Imil_UpdateFootprints). The one set says which he last did.
-  /// ★ Named from its area name: Imil
   FLAG_IMIL_NO_FOOTPRINTS = FLAG_SCENE_TEMP_00,
-  /// ★ Named from its area name: Imil
   FLAG_IMIL_FOOTPRINTS = FLAG_SCENE_TEMP_01,
   /// Move has pushed the snowman to its place, for the rest of the visit.
-  /// ★ Named from what the player sees: a snowman in a red hat and green scarf
-  /// (its render)
   FLAG_IMIL_SNOWMAN_MOVED = FLAG_SCENE_TEMP_03
 };
 

@@ -91,26 +91,18 @@
 
 /// The rooms of Sol and Luna show their plain colours (PALETTE_TINT_NONE), so a
 /// return after a battle keeps them.
-/// ★ Named from the game: "But a room for Luna and one for Sol?"
-/// (MsgSolSanctumRoomLunaOne)
 #define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED FLAG_SCENE_TEMP_00
 /// The rooms of Sol and Luna show SOL_SANCTUM_BLUE_TINT, so a return after a
 /// battle keeps it.
-/// ★ Named from the game: "But a room for Luna and one for Sol?"
-/// (MsgSolSanctumRoomLunaOne)
 #define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED FLAG_SCENE_TEMP_01
 /// The rooms of Sol and Luna show SOL_SANCTUM_WARM_TINT, so a return after a
 /// battle keeps it.
-/// ★ Named from the game: "But a room for Luna and one for Sol?"
-/// (MsgSolSanctumRoomLunaOne)
 #define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED FLAG_SCENE_TEMP_02
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for
 // their own.
 /// Set once Isaac and Garet's arrival after the Wise One's rescue has played.
-/// ★ Named from the game: "Did that floating eye thing save us?"
-/// (MsgSolSanctumFloatingEyeThing)
 #define FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN FLAG_AREA_TEMP_09
 
 /// The blue tint the rooms fade to (PaletteTint's TINT form).
@@ -157,7 +149,6 @@ enum SolSanctumLunaSolRoomsCellBehavior {
       19, ///< turns the backdrop black
   /// The symbol on the floor, searched to open the way up.
   CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_FLOOR_SYMBOL = 20,
-  /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
   CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_CHEST = 100
 };
 

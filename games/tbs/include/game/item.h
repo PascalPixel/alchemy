@@ -118,7 +118,6 @@ enum EquipEffectKind {
   EQUIP_EFFECT_ADD_UNLEASH_CHANCE, ///< percent added to the weapon's unleash
   /// Summed by Unit_Calculate into equipBonus[1]; no item of item_table.c has
   /// it, the item menu draws no line for it, and nothing reads the total.
-  /// ★ Named from the game: "Counterstrike rate" (MsgEquipEffectName)
   EQUIP_EFFECT_ADD_COUNTERSTRIKE_RATE,
   /// "The curse can be removed": sets CURSE_REMOVABLE, which lifts
   /// CURSE_BOUND.

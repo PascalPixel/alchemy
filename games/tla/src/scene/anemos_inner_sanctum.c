@@ -1235,11 +1235,11 @@ void Func_02001b88(void) {
   FieldEvent_ResolvePendingActions(0);
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0x10003, 1);
-  PaletteFade_Interpolate(0x3c);
+  PaletteFade_Interpolate(60);
   FieldEvent_Wait(60);
   FieldMessage_ShowCentered((s32)MsgSummonInheritedEarthDarkness, 0, 6);
   PaletteFade_ApplyTarget(0x10000, 0);
-  PaletteFade_Interpolate(0x3c);
+  PaletteFade_Interpolate(60);
   FieldEvent_Wait(60);
   Event_SetFlag(0xa8c);
   Event_End();
@@ -1590,7 +1590,7 @@ L_0200a4a2:
   CrackedTiles_Find(35, 0x280, 0x380, 18, 68);
   if ((Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) != 0)
     goto L_0200a6e6;
-  CrackedTile_PlaceLanding(36, -0x24, v_r7);
+  CrackedTile_PlaceLanding(36, -36, v_r7);
   goto L_0200a6e6;
 L_0200a4f4:
   if ((u32)((v_r3 - 4) << 16) > (u32)0x10000)

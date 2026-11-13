@@ -218,7 +218,7 @@ void Func_02000184(void) {
                   EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(9, FACING_NORTH_NORTHEAST, 0x50);
+  Actor_FaceDirection(9, FACING_NORTH_NORTHEAST, 80);
   Func_02000100();
   Event_Wait(20);
   Func_02000100();
@@ -368,7 +368,7 @@ void Func_02000184(void) {
   Event_Wait(40);
   BattleEffect_ApplyColorToTargetBuffer(0, 0);
   PaletteFade_StartInterpolation(60);
-  wait(0x40);
+  wait(64);
   *(s32 *)(EVENT_WORK + 0x1ac) = 513;
   *(s32 *)(EVENT_WORK + 0x1b4) = 10;
   Event_FinishScreenTransition();
@@ -851,7 +851,7 @@ void Func_02001710(void) {
   Actor_FaceDirection(11, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(6, facing, 0);
   Actor_SetSpeed(12, 0.8);
-  Actor_WalkToAndWait(12, 0x188, 168);
+  Actor_WalkToAndWait(12, 392, 168);
   Event_PlaySound(SE_HIDDEN_PASSAGE_OPEN);
   Func_02000f00();
   FieldEvent_Wait(40);
@@ -863,12 +863,12 @@ void Func_02001710(void) {
   }
   Func_02001064();
   Actor_SetSpeed(8, 0.4);
-  Actor_MoveToAndWait(8, 0x1a8, 152);
+  Actor_MoveToAndWait(8, 424, 152);
   Actor_FaceDirectionAndWait(12, FACING_SOUTH_SOUTHWEST);
   FieldEvent_SetMessageId((s32)MsgIMightBe);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 12, 0);
   Actor_SetAnimationAndWait(12, 3);
-  Actor_WalkToAndWait(12, 0x188, 140);
+  Actor_WalkToAndWait(12, 392, 140);
   System_Wait(1);
   Actor_SetPosition(12, 0, 0);
   System_Wait(1);

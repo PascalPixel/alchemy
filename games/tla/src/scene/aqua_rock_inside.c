@@ -531,7 +531,7 @@ void Func_020007a8(void) {
   struct Actor *object;
   struct FieldSpriteFlags *sprite;
 
-  FieldActor_ShowItemIconById(10, 0x1c8);
+  FieldActor_ShowItemIconById(10, 456);
   object = Actor_Get(20);
   sprite = object->sprite;
   sprite->flag0 = 1;
@@ -632,7 +632,7 @@ void AquaRockInside_CheckColumn(void) {
   if (!seen) {
     Message_ShowCentered(message, 1);
     Message_ShowCentered(message + 1, 1);
-    if (FieldPartyInventory_FindMember(0x1c8) != -1)
+    if (FieldPartyInventory_FindMember(456) != -1)
       ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->value15a = 1;
   } else {
     Message_ShowCentered(message, 1);

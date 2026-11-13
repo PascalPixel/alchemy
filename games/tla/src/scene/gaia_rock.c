@@ -231,7 +231,7 @@ void Func_02000314(void) {
 
   Message_ShowCentered(MsgCheckedTheAltar, 1);
   if (object != NULL && object->x != 0) {
-    Scene_TalkToActor(0x1040);
+    Scene_TalkToActor(4160);
   } else if (Event_GetFlag(0xf74) == 0) {
     struct EventWork *work = Ram_HeapSlots->eventWork;
 

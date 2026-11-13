@@ -203,7 +203,7 @@ fire:
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgShipSafeFiringDistance);
-  Actor_MoveToAndWait(8, 0x1d0, 216);
+  Actor_MoveToAndWait(8, 464, 216);
   Actor_FaceDirectionAndWait(8, FACING_NORTH);
   FieldEvent_Wait(5);
   t10 = Actor_Get(11);
@@ -263,7 +263,7 @@ ready:
   v_r6->scaleY = 0x8000;
   Actor_SetSpeed(9, 2);
   Actor_SetPosition(9, 464, 216);
-  Actor_WalkTo(9, 0x1d0, 144);
+  Actor_WalkTo(9, 464, 144);
   v_r5 = 15;
 growBall:
   t52 = v_r6->scaleX;
@@ -302,9 +302,9 @@ growBall:
   FieldEvent_ShowMessageThenWait(11, 0, 5);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 6, 0, 5);
   Actor_SetSpeed(8, 0.8);
-  Actor_MoveToAndWait(8, 0x1d0, 176);
+  Actor_MoveToAndWait(8, 464, 176);
   EventCamera_FollowActor(8, 1);
-  Actor_MoveToAndWait(8, 0x1d0, 152);
+  Actor_MoveToAndWait(8, 464, 152);
   Actor_SetSpeed(8, 0.6);
   t79 = v_r7->scaleY;
   v_r7->scaleY = (t79 - 0x1000);
@@ -474,7 +474,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
       for (i = 53; i >= 0; i--) {
         if (particle->age < 60) {
           EffectSprite_DrawAtWorldPosition(flySprite, particle);
-          BattleEffect_StepVector3(particle, 63, -0x3000);
+          BattleEffect_StepVector3(particle, 63, -12288);
           particle->age++;
         }
         flySprite++;

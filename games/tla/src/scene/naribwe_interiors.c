@@ -280,7 +280,7 @@ read:
   FieldEvent_Wait(30);
   DANCE_TO(680);
   FieldActor_Jump(10, 4, 90);
-  DANCE_TO(0x2a0);
+  DANCE_TO(672);
   FieldActor_Jump(10, 4, 30);
   FieldActor_Jump(10, 4, 30);
   Actor_SetAnimation(10, 5);

@@ -200,7 +200,7 @@ s32 Func_02000290(void) {
 /// for.
 void Func_020002f0(void) {
   /* FAKEMATCH(wrapper): every call forwarded through the call layer. */
-  MapGrid_CopyCellsLayered(0x5e, 0x3c, 9, 8, 0x5e, 0xa);
+  MapGrid_CopyCellsLayered(94, 60, 9, 8, 94, 10);
   Call4((void (*)())MapGrid_SetCellHeight, 0x2300000, 0xf00000, 0, -2);
   Call4((void (*)())MapGrid_SetCellHeight, 0x1f00000, 0x1000000, 0, -2);
   Call4((void (*)())MapGrid_SetCellHeight, 0x2100000, 0xa00000, 0, -2);
@@ -214,33 +214,33 @@ void Func_020002f0(void) {
   if (Event_GetFlag(0xa14) || Event_GetFlag(0xa15))
     MapGrid_SetCellHeight(0x2100000, 0xa00000, 0, 0);
   if (Event_GetFlag(0xa10)) {
-    MapGrid_CopyCellsLayered(0x60, 0x38, 7, 2, 0x60, 0xf);
-    MapGrid_CopyCellsLayered(0x6f, 0x33, 1, 1, 0x63, 0xf);
+    MapGrid_CopyCellsLayered(96, 56, 7, 2, 96, 15);
+    MapGrid_CopyCellsLayered(111, 51, 1, 1, 99, 15);
     if (Event_GetFlag(0xa13)) {
-      MapGrid_CopyCellsLayered(0x69, 0x33, 1, 3, 0x5f, 0xe);
+      MapGrid_CopyCellsLayered(105, 51, 1, 3, 95, 14);
       FieldMapGrid_SetCellBehavior(0x1f00000, 0xe00000, 2, 0xec);
     }
     if (Event_GetFlag(0xa15))
-      MapGrid_CopyCellsLayered(0x6f, 0x35, 1, 1, 0x61, 0xa);
+      MapGrid_CopyCellsLayered(111, 53, 1, 1, 97, 10);
   } else if (Event_GetFlag(0xa11)) {
-    MapGrid_CopyCellsLayered(0x62, 0x33, 5, 1, 0x62, 0xa);
-    MapGrid_CopyCellsLayered(0x63, 0x34, 4, 5, 0x63, 0xb);
+    MapGrid_CopyCellsLayered(98, 51, 5, 1, 98, 10);
+    MapGrid_CopyCellsLayered(99, 52, 4, 5, 99, 11);
     FieldMapGrid_SetCellBehavior(0x2600000, 0xa00000, 2, 0xec);
     if (Event_GetFlag(0xa12))
-      MapGrid_CopyCellsLayered(0x6a, 0x35, 1, 1, 0x5f, 0x10);
+      MapGrid_CopyCellsLayered(106, 53, 1, 1, 95, 16);
     if (Event_GetFlag(0xa14)) {
-      MapGrid_CopyCellsLayered(0x6d, 0x33, 3, 1, 0x5f, 0xa);
+      MapGrid_CopyCellsLayered(109, 51, 3, 1, 95, 10);
       FieldMapGrid_SetCellBehavior(0x1f00000, 0xa00000, 2, 0xec);
     }
   } else {
     if (Event_GetFlag(0xa12))
-      MapGrid_CopyCellsLayered(0x6a, 0x35, 1, 1, 0x5f, 0x10);
+      MapGrid_CopyCellsLayered(106, 53, 1, 1, 95, 16);
     if (Event_GetFlag(0xa13))
-      MapGrid_CopyCellsLayered(0x6b, 0x35, 1, 1, 0x5f, 0x10);
+      MapGrid_CopyCellsLayered(107, 53, 1, 1, 95, 16);
     if (Event_GetFlag(0xa14))
-      MapGrid_CopyCellsLayered(0x6f, 0x34, 1, 1, 0x61, 0xa);
+      MapGrid_CopyCellsLayered(111, 52, 1, 1, 97, 10);
     if (Event_GetFlag(0xa15))
-      MapGrid_CopyCellsLayered(0x6f, 0x35, 1, 1, 0x61, 0xa);
+      MapGrid_CopyCellsLayered(111, 53, 1, 1, 97, 10);
   }
 }
 

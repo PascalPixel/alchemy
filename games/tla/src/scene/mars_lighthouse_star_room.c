@@ -814,7 +814,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   }
   FieldEvent_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x2a8, 186);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 680, 186);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 40);
   Event_PlaySound(MUS_000);
   Event_PlaySound(SE_RUMBLE);
@@ -876,14 +876,14 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   FieldEvent_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
   Actor_Get(gMainRoutineWork.currentOwner)->actionFlags &= 0xfe;
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x29e, 170);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 670, 170);
   FieldEvent_Wait(1);
   Actor_Get(gMainRoutineWork.currentOwner)->actionFlags |= 1;
   object = *slot;
   if (object != 0)
     Actor_Release(object);
   Actor_Get(gMainRoutineWork.currentOwner)->actionFlags &= 0xfe;
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x2a8, 186);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 680, 186);
   FieldEvent_Wait(1);
   Actor_Get(gMainRoutineWork.currentOwner)->actionFlags |= 1;
   Scene_PlayMusic();
@@ -932,7 +932,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     }
     FieldEvent_Wait(20);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
-    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x2a8, 186);
+    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 680, 186);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 80);
     Actor_ShowEmote(gMainRoutineWork.currentOwner,
                     EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
@@ -955,7 +955,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     FieldEvent_Wait(20);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
     Actor_Get(gMainRoutineWork.currentOwner)->actionFlags &= 0xfe;
-    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x29e, 170);
+    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 670, 170);
     FieldEvent_Wait(1);
     Actor_Get(gMainRoutineWork.currentOwner)->actionFlags |= 1;
     object = *slot;
@@ -993,7 +993,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   }
   FieldEvent_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x2a8, 186);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 680, 186);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 40);
   Event_PlaySound(MUS_000);
   Event_PlaySound(SE_RUMBLE);
@@ -1054,7 +1054,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   FieldEvent_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
   Actor_Get(gMainRoutineWork.currentOwner)->actionFlags &= 0xfe;
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x29e, 170);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 670, 170);
   FieldEvent_Wait(1);
   Actor_Get(gMainRoutineWork.currentOwner)->actionFlags |= 1;
   object2 = *slot2;

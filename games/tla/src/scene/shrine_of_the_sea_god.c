@@ -367,7 +367,7 @@ void ShrineOfTheSeaGod_StartleCompanion(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_Stop(11);
-  ShrineOfTheSeaGod_Jump(11, 0x100, 20);
+  ShrineOfTheSeaGod_Jump(11, 256, 20);
   Actor_FaceActorById(11, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgFieldStartledCompanion);
   Event_ShowMessageAndWait(11, 0);
@@ -1561,7 +1561,7 @@ void Func_020026f8(void) {
     off = 0;
     FieldCamera_GetActor()->motionFlags = off;
     FieldCamera_MoveWithinMapBounds(320 << 16, -1, 300 << 16, 1);
-    ShrineOfTheSeaGod_Jump(14, 0x100, 40);
+    ShrineOfTheSeaGod_Jump(14, 256, 40);
     ShrineOfTheSeaGod_ObjSpeed(14, 0x13333, 0x9999);
     ShrineOfTheSeaGod_ObjWalk(14, 345, 296);
     ShrineOfTheSeaGod_ObjWalk(14, 392, 296);

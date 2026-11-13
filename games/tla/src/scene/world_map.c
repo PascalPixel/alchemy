@@ -694,7 +694,7 @@ void Func_02000d4c(void) {
   u8 *animation;
   s32 a, id;
 
-  FieldActor_ShowItemIconById(19, 0x198);
+  FieldActor_ShowItemIconById(19, 408);
   object = Actor_Get(19);
   animation = object->sprite;
   animation[17] |= 1;
@@ -1579,7 +1579,7 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   WorldMap_ReloadPendingAreaGraphics();
   MapGrid_SetShake(7, 7, 1);
   FieldCamera_MoveTo(1988, CAMERA_KEEP, 7553, 1);
-  FieldEffect_ScheduleRatioTransition(0x9999, 60);
+  FieldEffect_ScheduleRatioTransition(39321, 60);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(30);
   WorldMap_Freeze();
@@ -1670,7 +1670,7 @@ void Func_020029a4(void) {
   FieldEvent_Wait(60);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldEffect_ScheduleRatioTransition(0x9999, 1);
+  FieldEffect_ScheduleRatioTransition(39321, 1);
   actor->scaleX = 0x13333;
   actor->scaleY = 0x13333;
   EventCamera_FollowActor(8, 1);
@@ -1753,7 +1753,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   Event_ShowMessage(8, 0);
   MapGrid_SetShake(1, 2, 1);
   WorldMap_ReloadPendingAreaGraphics();
-  FieldEffect_ScheduleRatioTransition(0x9999, 1);
+  FieldEffect_ScheduleRatioTransition(39321, 1);
   map->unk11e = 0;
   map->unk11c = 0xe000;
   System_Wait(1);
@@ -1780,7 +1780,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   Actor_SetAttachedEffect(8, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Event_ShowMessage(8, 0);
   Actor_SetSpeed(8, 1);
-  Actor_WalkTo(8, 0xe18, 0x1e0f);
+  Actor_WalkTo(8, 3608, 7695);
   Event_PlaySound(SE_163);
   Func_020042e0(0);
   FieldEvent_SetExitRequest(65);
@@ -1902,7 +1902,7 @@ void WorldMap_TakeOff(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_SetFlag(0xa78);
-  Actor_MoveToAndWait(8, 0x1bf6, 0x2154);
+  Actor_MoveToAndWait(8, 7158, 8532);
   WorldMap_SetUpShip();
   x = Actor_Get(8)->x / 0x10000;
   z = Actor_Get(8)->z / 0x10000;
@@ -2034,7 +2034,7 @@ void Func_02003490(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->acceleration = 0x2000;
   Actor_Get(gMainRoutineWork.currentOwner)->speedLimit = 0x20000;
   System_Wait(5);
-  FieldEffect_ScheduleRatioTransition(0xc000, 60);
+  FieldEffect_ScheduleRatioTransition(49152, 60);
   Event_StartScreenTransition();
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14537, 8577);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14465, 8662);

@@ -1236,7 +1236,7 @@ s32 Scene_Initialize(void) {
     gDecodeFillByte = 93;
   } else if (scene == (s32)&SceneId_Ov678Room3) {
     if (!Event_GetFlag(FLAG_AREA_TEMP_00))
-      Actor_SetWideSprite(0x40, 1);
+      Actor_SetWideSprite(64, 1);
     if (!Event_GetFlag(FLAG_AREA_TEMP_01))
       Actor_SetWideSprite(65, 1);
   } else if (scene == (s32)&SceneId_Ov678Room4) {
@@ -1384,7 +1384,7 @@ s32 Scene_Initialize(void) {
     else
       Actor_SetAnimation(9, 0);
     if (!Event_GetFlag(FLAG_AREA_TEMP_48))
-      Actor_SetWideSprite(0x40, 0);
+      Actor_SetWideSprite(64, 0);
     entrance = gMainRoutineWork.entrance;
     if ((u32)(entrance - 2) <= 1) {
       if (Event_GetFlag(FLAG_AREA_TEMP_40))
@@ -1438,7 +1438,7 @@ s32 Scene_Initialize(void) {
   } else if (scene == (s32)&SceneId_Ov678Room3) {
     *effect = 516;
     if (!Event_GetFlag(FLAG_AREA_TEMP_00))
-      Actor_SetWideSprite(0x40, 1);
+      Actor_SetWideSprite(64, 1);
     if (!Event_GetFlag(FLAG_AREA_TEMP_01))
       Actor_SetWideSprite(65, 1);
   } else if (scene == (s32)&SceneId_Ov678Room4) {
@@ -1590,7 +1590,7 @@ s32 Scene_Initialize(void) {
     else
       Actor_SetAnimation(9, 0);
     if (!Event_GetFlag(FLAG_AREA_TEMP_48))
-      Actor_SetWideSprite(0x40, 0);
+      Actor_SetWideSprite(64, 0);
     entrance = gMainRoutineWork.entrance;
     if ((u32)(entrance - 2) <= 1) {
       if (Event_GetFlag(FLAG_AREA_TEMP_40))

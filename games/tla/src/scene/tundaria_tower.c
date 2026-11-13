@@ -871,7 +871,7 @@ s32 Scene_Initialize(void) {
         object->motionFlags = 0;
         object->terrainHeight = PIXELS(8);
         object->y = PIXELS(8);
-        Actor_SetItemIcon(object, 0x1b9);
+        Actor_SetItemIcon(object, 441);
         if (GameFlag_Get(0x944)) {
           MapGrid_CopyCellsTo(31, 85, 20, 85, 3, 4);
           MapGrid_CopyCellAttributes(11, 22, 3, 2, 20, 22);

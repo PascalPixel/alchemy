@@ -2109,7 +2109,7 @@ void Func_02003878(void) {
   Actor_FaceDirection(10, FACING_SOUTH, 0);
   FieldEvent_ShowMessageThenWait(10, 0, 0);
   Actor_SetSpeed(4, 0.8);
-  Actor_WalkToAndWait(4, 0x140, 224);
+  Actor_WalkToAndWait(4, 320, 224);
   FieldActor_LaunchFromLeader(9, -16, 0, 0xc000);
   FieldActor_LaunchFromLeader(5, 16, 0, 0xc000);
   FieldActor_LaunchFromLeader(6, 32, 0, 0xc000);

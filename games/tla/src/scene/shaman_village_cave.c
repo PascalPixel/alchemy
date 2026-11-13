@@ -262,7 +262,7 @@ void ShamanVillageCave_PlaceGladiators(void) {
 void ShamanVillageCave_PlaceGoldenShirt(void) {
   s32 angle;
 
-  FieldActor_ShowItemIconById(22, 0x190);
+  FieldActor_ShowItemIconById(22, 400);
   angle = 0xc000;
   Actor_SetPositionAndFacing(22, PIXELS(212), PIXELS(199), angle);
   Event_SetFlag(0xa73);

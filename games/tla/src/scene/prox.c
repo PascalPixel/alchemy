@@ -425,7 +425,7 @@ void Prox_AskAboutIgloos(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgProx33);
-  Event_AskYesNo(0xf, 0);
+  Event_AskYesNo(15, 0);
   Func_0200446c();
 }
 
@@ -568,7 +568,7 @@ void Prox_SearchForParents(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Event_PlaySound(SE_DOOR_OPEN);
-    MapGrid_CopyCellsTo(0x59, 0, 0x4d, 0x10, 1, 2);
+    MapGrid_CopyCellsTo(89, 0, 77, 16, 1, 2);
     Event_SetFlag(FLAG_SCENE_TEMP_00);
     FieldEvent_Wait(10);
     {
@@ -622,30 +622,26 @@ void Prox_DecideToGoToLighthouse(void) {
   FieldCamera_MoveTo(160, CAMERA_KEEP, 160, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
-  Actor_RunRepeatedMotion(0xa, 1);
+  Actor_RunRepeatedMotion(10, 1);
   Actor_FaceDirectionAndWait(10, FACING_NORTH_NORTHWEST);
   FieldEvent_SetMessageId((s32)MsgProx62);
   Event_ShowMessage(10, 0);
-  Actor_SetAttachedEffect(0xc, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(0xd, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(0xe, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(0xf, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(0x10,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(0x11,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(12, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(13, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(14, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(15, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(16, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(17, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Actor_FaceDirectionAndWait(10, FACING_SOUTH_SOUTHWEST);
   Event_ShowMessage(10, 0);
   Event_ShowMessage(10, 0);
-  Actor_SetAttachedEffect(0xc, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(0xd, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(0xe, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(0xf, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(0x10,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(0x11,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(12, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(13, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(14, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(15, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(16, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(17, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Actor_SetAnimation(12, 4);
   Event_ShowMessage(12, 0);
@@ -674,7 +670,7 @@ void Prox_DecideToGoToLighthouse(void) {
   Actor_FaceDirectionAndWait(10, FACING_WEST);
   Actor_SetAnimation(11, 4);
   Event_ShowMessage(11, 0);
-  Actor_SetAttachedEffect(0xa, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(10, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirection(12, FACING_WEST, 0);
   Actor_FaceDirection(13, FACING_EAST, 0);
   Actor_FaceDirection(14, FACING_WEST, 0);
@@ -798,7 +794,7 @@ test_wait:
     if (gInput.held == 0)
       goto next_wait;
   }
-  Actor_RunRepeatedMotion(0xc, 1);
+  Actor_RunRepeatedMotion(12, 1);
   Event_ShowMessage(12, 0);
   Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirectionAndWait(0, FACING_SOUTHEAST);
@@ -901,7 +897,7 @@ test_wait:
   Actor_RunScriptAndWait(18, (s32)gData_02004a08);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 160, 154);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
-  Actor_RunRepeatedMotion(0xa, 1);
+  Actor_RunRepeatedMotion(10, 1);
   Event_ShowMessage(10, 0);
   Actor_ShowEmote(gMainRoutineWork.currentOwner,
                   EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -935,7 +931,7 @@ void Func_020015d0(void) {
   FieldActor_SetSpritePriority(20, 3);
   object = Actor_Get(gMainRoutineWork.currentOwner);
   object->actionFlags &= 0xfe;
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x198, 0x146);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 408, 326);
   FieldEvent_Wait(1);
   object = Actor_Get(gMainRoutineWork.currentOwner);
   object->actionFlags |= 1;
@@ -945,7 +941,7 @@ void Func_020015d0(void) {
   object->y += 0x20000;
   object = Actor_Get(20);
   object->actionFlags &= 0xfe;
-  Actor_WalkToAndWait(20, 0x198, 0xc8);
+  Actor_WalkToAndWait(20, 408, 200);
   FieldEvent_Wait(1);
   object = Actor_Get(20);
   object->actionFlags |= 1;
@@ -963,9 +959,9 @@ void Func_020015d0(void) {
   FieldActor_SetSpritePriority(20, 2);
   object = Actor_Get(20);
   object->priorityFlags |= 1;
-  MapGrid_CopyCellsTo(0x48, 3, 0x45, 3, 3, 3);
-  MapGrid_CopyCellsTo(0x30, 0x24, 0x45, 8, 3, 2);
-  MapGrid_CopyCellAttributes(0x48, 0xd, 1, 3, 0x46, 0x14);
+  MapGrid_CopyCellsTo(72, 3, 69, 3, 3, 3);
+  MapGrid_CopyCellsTo(48, 36, 69, 8, 3, 2);
+  MapGrid_CopyCellAttributes(72, 13, 1, 3, 70, 20);
   Event_SetFlag(0xa2d);
   Func_0200446c();
 }
@@ -988,9 +984,9 @@ void Func_02001770(void) {
   }
 }
 
-void Func_020017e4(void) { MapGrid_CopyCellAttributes(0x19, 2, 1, 1, 0x19, 9); }
+void Func_020017e4(void) { MapGrid_CopyCellAttributes(25, 2, 1, 1, 25, 9); }
 
-void Func_02001800(void) { MapGrid_CopyCellAttributes(0x19, 3, 1, 1, 0x19, 9); }
+void Func_02001800(void) { MapGrid_CopyCellAttributes(25, 3, 1, 1, 25, 9); }
 
 struct RisingObject {
   u8 unk00[8];
@@ -1192,7 +1188,7 @@ void Prox_GiveThanksForBeacon(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  FieldActor_Stop(0x14);
+  FieldActor_Stop(20);
   System_Wait(1);
   Actor_SetPosition(gMainRoutineWork.currentOwner, 184, 484);
   /* FAKEMATCH(temporary): the three facings held in locals set before their
@@ -1230,8 +1226,7 @@ void Prox_GiveThanksForBeacon(void) {
   Actor_FaceDirection(0, FACING_NORTH, 0);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
   Event_ShowMessage(0, 0);
-  Actor_SetAttachedEffect(0x19,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(25, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Event_ShowMessage(25, 0);
   Actor_SetAnimation(27, 4);
@@ -1251,16 +1246,14 @@ void Prox_GiveThanksForBeacon(void) {
   Actor_SetAnimation(26, 4);
   Event_ShowMessage(26, 0);
   Event_ShowMessage(0, 0);
-  Actor_SetAttachedEffect(0x13,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(19, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 19, 0);
   Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
   Actor_SetAnimationAndWait(0, 3);
   Event_ShowMessage(0, 0);
   Actor_FaceDirection(26, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_SetAttachedEffect(0x1a,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(26, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Event_ShowMessage(26, 0);
   Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
@@ -1278,7 +1271,7 @@ void Prox_GiveThanksForBeacon(void) {
   Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   Event_ShowMessage(25, 0);
   Actor_SetAnimation(26, 4);
-  FieldEvent_ShowMessageThenWait(0x1a, 0, 0x14);
+  FieldEvent_ShowMessageThenWait(26, 0, 20);
   Actor_FaceDirectionAndWait(0, FACING_EAST);
   Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | 0, 0);
@@ -1308,8 +1301,7 @@ void Prox_GiveThanksForBeacon(void) {
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
   Actor_SetAnimationAndWait(0, 3);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 0, 0);
-  Actor_SetAttachedEffect(0x1a,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(26, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Event_ShowMessage(26, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
@@ -1341,10 +1333,9 @@ void Prox_GiveThanksForBeacon(void) {
   Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Event_ShowMessage(27, 0);
   Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
-  FieldEvent_ShowMessageThenWait(0x1a, 0, 0x14);
+  FieldEvent_ShowMessageThenWait(26, 0, 20);
   Event_ShowMessage(5, 0);
-  Actor_SetAttachedEffect(0x1b,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(27, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Actor_FaceDirection(0, FACING_SOUTH, 0);
   Actor_FaceDirectionAndWait(27, FACING_SOUTH_SOUTHWEST);
@@ -1383,7 +1374,7 @@ void Prox_GiveThanksForBeacon(void) {
   FieldCamera_MoveTo(172, CAMERA_KEEP, 520, 1);
   FieldActor_WatchAndSetScript(0, 0x11);
   FieldActor_WatchAndSetScript(gMainRoutineWork.currentOwner, 0x11);
-  FieldActor_WatchAndSetScript(0x1b, 0x11);
+  FieldActor_WatchAndSetScript(27, 0x11);
   Actor_SetSpeed(17, 1.6);
   Actor_WalkToAndWait(17, 140, 478);
   Actor_WalkToAndWait(17, 150, 540);
@@ -1391,7 +1382,7 @@ void Prox_GiveThanksForBeacon(void) {
   Actor_WalkToAndWait(17, 190, 640);
   FieldActor_Stop(0);
   FieldActor_Stop(gMainRoutineWork.currentOwner);
-  FieldActor_Stop(0x1b);
+  FieldActor_Stop(27);
   System_Wait(1);
   Actor_SetPosition(17, 0, 0);
   FieldEvent_Wait(10);
@@ -1533,9 +1524,9 @@ void Func_020027e4(void) {
 
   if (Event_GetFlag(0xa3d)) {
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-      Func_0200279c(0x10, 0x218, 0x168, 0);
-      Func_0200279c(0x11, 0x218, 0x1a8, 1);
-      Func_0200279c(0x12, 0x244, 0x1a4, 2);
+      Func_0200279c(0x10, 536, 360, 0);
+      Func_0200279c(0x11, 536, 424, 1);
+      Func_0200279c(0x12, 580, 420, 2);
       System_Wait(1);
       Actor_SetScript(16, (s32)gData_020047ac);
       Actor_SetScript(17, (s32)gData_02004848);
@@ -1557,7 +1548,7 @@ void Prox_InitializeRoom3(void) {
       Actor_SetPosition(8, 0, 0);
     }
     if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
-      MapGrid_CopyCellsTo(0x59, 0, 0x4d, 0x10, 1, 2);
+      MapGrid_CopyCellsTo(89, 0, 77, 16, 1, 2);
     }
     if (Event_GetFlag(0x9c1)) {
       object = Actor_Get(10);
@@ -1566,15 +1557,15 @@ void Prox_InitializeRoom3(void) {
     }
   }
   if (Event_GetFlag(0xa3d)) {
-    MapGrid_CopyCellsTo(0x48, 3, 0x45, 3, 3, 3);
-    MapGrid_CopyCellsTo(0x30, 0x24, 0x45, 8, 3, 2);
-    MapGrid_CopyCellAttributes(0x48, 0xd, 1, 3, 0x46, 0x14);
+    MapGrid_CopyCellsTo(72, 3, 69, 3, 3, 3);
+    MapGrid_CopyCellsTo(48, 36, 69, 8, 3, 2);
+    MapGrid_CopyCellAttributes(72, 13, 1, 3, 70, 20);
     Actor_SetPosition(20, 0, 0);
   } else {
     if (Event_GetFlag(0xa2d)) {
-      MapGrid_CopyCellsTo(0x48, 3, 0x45, 3, 3, 3);
-      MapGrid_CopyCellsTo(0x30, 0x24, 0x45, 8, 3, 2);
-      MapGrid_CopyCellAttributes(0x48, 0xd, 1, 3, 0x46, 0x14);
+      MapGrid_CopyCellsTo(72, 3, 69, 3, 3, 3);
+      MapGrid_CopyCellsTo(48, 36, 69, 8, 3, 2);
+      MapGrid_CopyCellAttributes(72, 13, 1, 3, 70, 20);
       if (!Event_GetFlag(0x40)) {
         Actor_SetPosition(20, 0, 0);
       }
@@ -1696,9 +1687,9 @@ void Prox_SayFarewell(void) {
     Event_ShowMessage(2, 0);
     Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
     Actor_FaceDirectionAndWait(0, FACING_EAST);
-    FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 0, 0, 0xa);
+    FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 0, 0, 10);
     Actor_FaceDirection(8, FACING_SOUTH_SOUTHEAST, 20);
-    FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 0x14);
+    FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 20);
     if (Event_GetFlag(0x824) != 0) {
       Actor_FaceDirectionAndWait(0, FACING_SOUTH);
       Actor_SetAnimation(0, 4);
@@ -1838,7 +1829,7 @@ void Prox_SayFarewell(void) {
     Actor_SetAnimationAndWait(11, 4);
     Event_ShowMessage(11, 0);
     FieldActor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-    FieldEvent_ShowMessageThenWait(1, 0, 0x14);
+    FieldEvent_ShowMessageThenWait(1, 0, 20);
     Actor_SetAnimation(11, 3);
     Event_ShowMessage(11, 0);
     Actor_FaceDirection(0, FACING_EAST, 0);
@@ -1928,7 +1919,7 @@ void Prox_SayFarewell(void) {
     Actor_FaceDirectionAndWait(0, FACING_SOUTHEAST);
     Actor_SetAnimation(11, 4);
     FieldEvent_ShowMessageThenWait(
-        SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0, 0x14);
+        SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0, 20);
     Event_ShowMessage(0, 0);
     FieldEvent_Wait(20);
     Actor_SetAnimationAndWait(11, 3);
@@ -1984,7 +1975,7 @@ void Prox_SayFarewell(void) {
     Event_PlaySound(SOUND_FADE_OUT_BGM);
     FieldEvent_Wait(40);
     PaletteFade_ApplyTarget(0x10009, 0);
-    PaletteFade_Interpolate(0x78);
+    PaletteFade_Interpolate(120);
     System_Wait(120);
     // Waits up to 120 frames, or until a key is held.
     i = 0;
@@ -1998,7 +1989,7 @@ void Prox_SayFarewell(void) {
         goto next_wait;
     }
     PaletteFade_ApplyTarget(0, 0);
-    PaletteFade_Interpolate(0x10);
+    PaletteFade_Interpolate(16);
     System_Wait(16);
     Event_SetFlag(0x9cc);
     FieldEvent_SetExitRequest(3);

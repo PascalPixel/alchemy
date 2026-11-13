@@ -458,7 +458,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_SetSpeed(20, 1);
   FieldEvent_SetMessageId((s32)MsgYouHereTo);
   FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);
-  Actor_WalkToAndWait(4, 0x320, 0x120);
+  Actor_WalkToAndWait(4, 800, 288);
   Actor_FaceDirection(4, FACING_WEST, 0);
   FieldCamera_MoveTo(744, CAMERA_KEEP, 264, 1);
   FieldCamera_WaitForArrival();

@@ -464,7 +464,7 @@ void Func_02000568(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (FieldPartyInventory_FindMember(0x1c4) == -1) {
+  if (FieldPartyInventory_FindMember(452) == -1) {
     if (Event_GetFlag(0xaa4)) {
       FieldActor_WatchAndSetScript(10, gMainRoutineWork.currentOwner);
       FieldEvent_SetMessageId((s32)MsgWhatDoYou);
@@ -492,7 +492,7 @@ void Func_02000568(void) {
     spawned = FieldActor_Create(0x1e9, leader->x, 0x980000, leader->z);
     if (spawned != 0) {
       Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
-      FieldActor_SetItemIcon(spawned, 0x1c5);
+      FieldActor_SetItemIcon(spawned, 453);
       Actor_SetSpriteFlags(spawned, 0);
       spawned->motionFlags = 0;
     }
@@ -500,7 +500,7 @@ void Func_02000568(void) {
     FieldPsynergy_RestoreMindReadPalette();
     Message_ShowCentered((s32)MsgOhMyThat + 1, 1);
     PartyInventory_Remove(0x1c4);
-    Party_GiveItem(0x1c5, 0);
+    Party_GiveItem(453, 0);
     FieldPsynergy_GreyMindReadPalette();
     if (spawned != 0) {
       Actor_Release(spawned);
@@ -530,7 +530,7 @@ void Func_02000568(void) {
 #define HAND_BACK(leader, given, off)                                          \
   {                                                                            \
     Actor_SetSpeed(10, 0.8);                                                   \
-    Actor_WalkToAndWait(10, 0x80, 164);                                        \
+    Actor_WalkToAndWait(10, 128, 164);                                         \
     Actor_FaceDirectionById(10, FACING_WEST);                                  \
     Event_Wait(20);                                                            \
     Actor_SetSpeed(10, 1.6);                                                   \
@@ -769,7 +769,7 @@ void Func_02000e38(void) {
         leader->update = 0;
         Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_WEST);
         leader->update = hook2;
-        STEP(gMainRoutineWork.currentOwner, 0x120, 840);
+        STEP(gMainRoutineWork.currentOwner, 288, 840);
         FieldActor_SetPositionAndResetMotion(item, 0x1180000, 0, 0x3480000);
         STEP(gMainRoutineWork.currentOwner, 296, 840);
         leader->update = 0;
@@ -783,7 +783,7 @@ void Func_02000e38(void) {
         leader->update = 0;
         Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
         leader->update = hook2;
-        STEP(gMainRoutineWork.currentOwner, 0x110, 840);
+        STEP(gMainRoutineWork.currentOwner, 272, 840);
         FieldActor_SetPositionAndResetMotion(item, 0x1180000, 0, 0x3480000);
         STEP(gMainRoutineWork.currentOwner, 264, 840);
         leader->update = 0;
@@ -1252,12 +1252,12 @@ void Func_02001db0(void) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   item = Actor_GetById(20);
   item->motionFlags = 0;
-  FieldActor_SetItemIcon(item, 0x1c4);
+  FieldActor_SetItemIcon(item, 452);
   FieldActor_SetPositionAndResetMotion(item, leader->x, leader->y + PIXELS(24),
                                        leader->z);
   FieldEvent_Wait(20);
   FieldPsynergy_RestoreMindReadPalette();
-  Party_GiveItem(0x1c4, 0);
+  Party_GiveItem(452, 0);
   FieldPsynergy_GreyMindReadPalette();
   Actor_SetPosition(20, 0, 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);

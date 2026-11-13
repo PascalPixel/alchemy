@@ -855,7 +855,7 @@ void YampiDesertCave_MeetGuardianOfFire(void) {
     FIELD_AT(&gMainRoutineWork, u8, 0x24b) = 2;
   } while (0);
   FIELD_AT(&gMainRoutineWork, u16, 0x1f6) = (s32)&SceneId_Ov664Room4;
-  Field_RequestBattleFromEncounterTable(0x67, 1);
+  Field_RequestBattleFromEncounterTable(103, 1);
 }
 
 void YampiDesertCave_ScoopTreasure(s32 a) {

@@ -529,7 +529,7 @@ void Func_020009d0(struct OrbitEffect *effect) {
 
 void Func_02000a80(void) {
   if ((gFrameCount & 7) == 0) {
-    struct Actor *object = Actor_Spawn(308, 0x02c20000, 0xcccc, 0x740000);
+    struct Actor *object = Actor_Spawn(308, 0x02c20000, 52428, 0x740000);
 
     if (object != NULL) {
       Actor_SetSpriteFlags(object, 0);
@@ -1216,7 +1216,7 @@ void Func_02001abc(void) {
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
     GameFlag_Set(0x9e5);
     wait(1);
-    Event_LeaveFor(0x1fd, 0);
+    Event_LeaveFor(509, 0);
     Event_SetAfterBattleDestination((s32)&SceneId_Ov694Room3, 19);
   } else {
     ((struct ContigoEventCount *)Ram_HeapSlots->eventWork)->refusals++;
@@ -1248,7 +1248,7 @@ void Func_02001b84(void) {
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
     GameFlag_Set(0x9e5);
     wait(1);
-    Event_LeaveFor(0x1fb, 0);
+    Event_LeaveFor(507, 0);
     Event_SetAfterBattleDestination((s32)&SceneId_Ov694Room3, 18);
   } else {
     ((struct ContigoEventCount *)Ram_HeapSlots->eventWork)->refusals++;

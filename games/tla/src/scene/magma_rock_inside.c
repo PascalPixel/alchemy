@@ -1630,12 +1630,12 @@ void MagmaRockInside_StepOnMarker(void) {
   cell >>= 8;
   if (cell != 1 && cell != 7) {
     MagmaRockInside_StampStepCell();
-    MagmaRockInside_OpenFlamePassage(0x108, row * 8 + 10);
+    MagmaRockInside_OpenFlamePassage(264, row * 8 + 10);
     if (!Event_GetFlag(FLAG_SCENE_TEMP_00))
       Event_SetFlag(FLAG_SCENE_TEMP_00);
     Event_SetFlag(*(s16 *)work + 312);
   } else if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
-    MagmaRockInside_OpenFlamePassage(0x108, row * 8 + 10);
+    MagmaRockInside_OpenFlamePassage(264, row * 8 + 10);
   }
 }
 

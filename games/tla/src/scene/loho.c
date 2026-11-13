@@ -169,16 +169,16 @@ approach:
     goto turned;
   if (i == 0)
     goto fromEast;
-  Actor_WalkToAndWait(4, 0x1d7, 0x15a);
+  Actor_WalkToAndWait(4, 471, 346);
   goto turned;
 fromEast:
-  Actor_WalkToAndWait(4, 0x1fa, 0x15a);
+  Actor_WalkToAndWait(4, 506, 346);
 turned:
   if (i == 0)
     goto fromNorth;
   goto fromSouth;
 fromNorth:
-  Actor_WalkToAndWait(4, 0x1fa, 0x175);
+  Actor_WalkToAndWait(4, 506, 373);
   goto inPlace;
 start:
   i = 0;
@@ -203,7 +203,7 @@ placed:
 inPlace:
   FieldCamera_MoveTo(488, CAMERA_KEEP, 372, 1);
   Event_SetFlag(0xa5f);
-  Actor_MoveToAndWait(4, 0x1e7, 0x179);
+  Actor_MoveToAndWait(4, 487, 377);
   Actor_FaceDirectionAndWait(4, FACING_NORTH);
   Event_Wait(30);
   Event_PlaySound(SE_SPIN);
@@ -220,12 +220,12 @@ inPlace:
   Actor_FaceDirectionAndWait(4, FACING_NORTH);
   Event_Wait(30);
   Event_PlaySound(SE_CLATTER);
-  FieldActor_ShowItemIconById(21, 0x1cc);
+  FieldActor_ShowItemIconById(21, 460);
   Actor_SetPosition(21, 488, 330);
   Actor_SetDestinationOffset(20, 0, 8);
   Actor_SetSpeed(21, 3);
   MapGrid_SetShake(2, 2, 1);
-  Actor_SetDestination(21, 0x1e8, 0x12c);
+  Actor_SetDestination(21, 488, 300);
   FieldCamera_MoveTo(488, CAMERA_KEEP, 308, 1);
   Actor_WaitForMoveById(21);
   Actor_SetPosition(21, 0, 0);
@@ -439,7 +439,7 @@ askCannon:
   FIELD_AT(t189, u16, 452) = (t190 + 1);
   goto crewLeaves;
 fromSouth:
-  Actor_WalkToAndWait(4, 0x1d7, 0x175);
+  Actor_WalkToAndWait(4, 471, 373);
   goto inPlace;
 answeredNo:
   Actor_SetAnimation(18, 4);
@@ -466,8 +466,8 @@ crewLeaves:
   Actor_SetAnimation(16, 3);
   Event_Wait(60);
   FieldActor_WatchAndSetScript(4, 16);
-  Actor_WalkTo(18, 0x1f8, 0x172);
-  Actor_WalkTo(17, 0x1f8, 0x160);
+  Actor_WalkTo(18, 504, 370);
+  Actor_WalkTo(17, 504, 352);
   Actor_SetScript(16, (s32)gLoho_FirstMinerReturns);
   Actor_WaitForMoveById(17);
   Actor_WaitForMoveById(18);
@@ -488,14 +488,14 @@ crewLeaves:
   Event_Wait(30);
   t233 = Actor_GetById(16);
   t233->actionFlags &= 254;
-  Actor_WalkBy(18, -0x28, -0x14);
-  Actor_WalkBy(17, -0x28, -0x14);
-  Actor_WalkBy(16, -0x28, -0x14);
-  Actor_WalkByAndWait(20, -0x28, -0x14);
-  Actor_WalkBy(18, -0x8a, 0);
-  Actor_WalkBy(17, -0x8a, 0);
-  Actor_WalkBy(16, -0x8a, 0);
-  Actor_WalkByAndWait(20, -0x8a, 0);
+  Actor_WalkBy(18, -40, -20);
+  Actor_WalkBy(17, -40, -20);
+  Actor_WalkBy(16, -40, -20);
+  Actor_WalkByAndWait(20, -40, -20);
+  Actor_WalkBy(18, -138, 0);
+  Actor_WalkBy(17, -138, 0);
+  Actor_WalkBy(16, -138, 0);
+  Actor_WalkByAndWait(20, -138, 0);
   Actor_SetPosition(16, 0, 0);
   Actor_SetPosition(18, 0, 0);
   Actor_SetPosition(17, 0, 0);

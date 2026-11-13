@@ -435,7 +435,7 @@ void Func_0200020c(s32 stage) {
     WorldMap_ReloadPendingAreaGraphics();
     Camera_MoveWithinMapBounds_(gData_02003d48[stage][0] << 16,
                                 gData_02003d48[stage][1] << 16, 1);
-    FieldEffect_ScheduleRatioTransition(0xb333, 60);
+    FieldEffect_ScheduleRatioTransition(45875, 60);
     for (frame = 0; frame != 124;) {
       map->yaw += 0xffe0;
       if (frame == 60) {

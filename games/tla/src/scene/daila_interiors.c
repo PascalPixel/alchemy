@@ -143,7 +143,7 @@ void DailaInteriors_EmptyHook(void) {}
 
 /// Unused: the practising man shouts and jumps to the other of his two spots.
 UNUSED void DailaInteriors_PracticeShout(s32 unused, s32 actor) {
-  Daila_Jump(actor, 0x100, 50);
+  Daila_Jump(actor, 256, 50);
   Actor_Jump(actor, 6, 15);
   Actor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);

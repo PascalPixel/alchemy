@@ -1557,48 +1557,48 @@ s32 Scene_Initialize(void) {
       Leader_Lift(0x580000);
     }
     if (GameFlag_Get(0x850)) {
-      MapGrid_CopyCellsTo(0x40, 0, 113, 11, 3, 3);
-      MapGrid_CopyCellAttributes(0x40, 0, 3, 2, 113, 12);
-      MapGrid_CopyCellAttributes(0x40, 0, 3, 2, 49, 12);
+      MapGrid_CopyCellsTo(64, 0, 113, 11, 3, 3);
+      MapGrid_CopyCellAttributes(64, 0, 3, 2, 113, 12);
+      MapGrid_CopyCellAttributes(64, 0, 3, 2, 49, 12);
     }
     if (GameFlag_Get(0x851)) {
-      MapGrid_CopyCellsTo(0x40, 0, 70, 39, 1, 4);
-      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 70, 40);
-      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 6, 40);
+      MapGrid_CopyCellsTo(64, 0, 70, 39, 1, 4);
+      MapGrid_CopyCellAttributes(64, 0, 1, 3, 70, 40);
+      MapGrid_CopyCellAttributes(64, 0, 1, 3, 6, 40);
     }
     if (GameFlag_Get(0x852)) {
-      MapGrid_CopyCellsTo(0x40, 0, 103, 38, 1, 4);
-      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 103, 39);
-      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 39, 39);
+      MapGrid_CopyCellsTo(64, 0, 103, 38, 1, 4);
+      MapGrid_CopyCellAttributes(64, 0, 1, 3, 103, 39);
+      MapGrid_CopyCellAttributes(64, 0, 1, 3, 39, 39);
     }
     if (GameFlag_Get(0x853)) {
-      MapGrid_CopyCellsTo(0x40, 0, 87, 43, 1, 4);
-      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 87, 44);
-      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 23, 44);
+      MapGrid_CopyCellsTo(64, 0, 87, 43, 1, 4);
+      MapGrid_CopyCellAttributes(64, 0, 1, 3, 87, 44);
+      MapGrid_CopyCellAttributes(64, 0, 1, 3, 23, 44);
     }
     if (GameFlag_Get(0x854)) {
-      MapGrid_CopyCellsTo(0x40, 0, 70, 52, 1, 4);
-      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 70, 52);
-      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 6, 53);
+      MapGrid_CopyCellsTo(64, 0, 70, 52, 1, 4);
+      MapGrid_CopyCellAttributes(64, 0, 1, 3, 70, 52);
+      MapGrid_CopyCellAttributes(64, 0, 1, 3, 6, 53);
     }
     if (GameFlag_Get(0x855)) {
-      MapGrid_CopyCellsTo(0x40, 0, 79, 49, 3, 3);
-      MapGrid_CopyCellAttributes(0x40, 0, 3, 2, 79, 50);
-      MapGrid_CopyCellAttributes(0x40, 0, 3, 2, 15, 50);
+      MapGrid_CopyCellsTo(64, 0, 79, 49, 3, 3);
+      MapGrid_CopyCellAttributes(64, 0, 3, 2, 79, 50);
+      MapGrid_CopyCellAttributes(64, 0, 3, 2, 15, 50);
     }
     if (GameFlag_Get(0x856)) {
-      MapGrid_CopyCellsTo(0x40, 0, 103, 0x30, 1, 4);
-      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 103, 49);
-      MapGrid_CopyCellAttributes(0x40, 0, 1, 3, 39, 49);
+      MapGrid_CopyCellsTo(64, 0, 103, 48, 1, 4);
+      MapGrid_CopyCellAttributes(64, 0, 1, 3, 103, 49);
+      MapGrid_CopyCellAttributes(64, 0, 1, 3, 39, 49);
     }
     if (GameFlag_Get(0x857)) {
-      MapGrid_CopyCellsTo(0x40, 0, 111, 52, 3, 3);
-      MapGrid_CopyCellAttributes(0x40, 0, 3, 2, 111, 53);
-      MapGrid_CopyCellAttributes(0x40, 0, 3, 2, 47, 53);
+      MapGrid_CopyCellsTo(64, 0, 111, 52, 3, 3);
+      MapGrid_CopyCellAttributes(64, 0, 3, 2, 111, 53);
+      MapGrid_CopyCellAttributes(64, 0, 3, 2, 47, 53);
     }
     if (GameFlag_Get(0x858)) {
       MapGrid_CopyCellsTo(68, 0, 79, 0, 11, 10);
-      MapGrid_CopyCellAttributes(38, 9, 1, 1, 0x10, 9);
+      MapGrid_CopyCellAttributes(38, 9, 1, 1, 16, 9);
       MapGrid_CopyCellAttributes(38, 9, 1, 1, 24, 9);
       Actor_SetSpriteColor(Actor_GetById(8), 6);
     }
@@ -1636,7 +1636,7 @@ s32 Scene_Initialize(void) {
       if (GameFlag_Get(0x861))
         Actor_SetPosition(15, 344, 776);
       if (GameFlag_Get(0x862))
-        Actor_SetPosition(0x10, 632, 792);
+        Actor_SetPosition(16, 632, 792);
       Actor_PlaceBlocks(gData_02003d94);
       Blocks_MarkCells(gData_02003d94);
       FlagBlock_PlaceAll(gData_02003e4c);

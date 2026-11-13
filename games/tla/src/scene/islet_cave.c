@@ -674,11 +674,11 @@ void Func_020010ac(void) {
   Event_Wait(20);
   PaletteFade_ApplySource(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
-  PaletteFade_StartInterpolation(0x3c);
+  PaletteFade_StartInterpolation(60);
   Event_Wait(60);
   EventMessage_ShowCentered((s32)MsgSummonGuardianOfWind, 0, 2);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  PaletteFade_StartInterpolation(0x3c);
+  PaletteFade_StartInterpolation(60);
   Event_Wait(60);
   object = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object != 0) {

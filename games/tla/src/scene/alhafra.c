@@ -192,17 +192,16 @@ void Alhafra_FreezePuddle(s32 a0, s32 a1) {
 
 void Alhafra_SailorToldToWork(void) {
   Event_SetMessageId((s32)MsgAlhafra50);
-  FieldEvent_ShowMessageThenWait(0x18, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(24, 0, 10);
   Actor_ArmCallback(19, -256, 0);
   Event_Wait(10);
-  Actor_ShowEmoteById(0x13, EMOTE_IN_FRONT | EMOTE_SCOWL, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x13, 0, 0xa);
+  Actor_ShowEmoteById(19, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  FieldEvent_ShowMessageThenWait(19, 0, 10);
   FieldActor_StartRepeatedMotion(24, 3);
-  FieldEffect_SetAttached(0x18,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldEffect_SetAttached(24, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Actor_FaceDirection(19, FACING_WEST, 0);
-  FieldEvent_ShowMessageThenWait(0x18, 0, 0);
+  FieldEvent_ShowMessageThenWait(24, 0, 0);
 }
 
 void Alhafra_GiveBreadToHungryBoy(void) {
@@ -214,8 +213,8 @@ void Alhafra_GiveBreadToHungryBoy(void) {
   Event_Wait(10);
   Actor_FaceActorById(ACTOR_HUNGRY_BOY, gMainRoutineWork.currentOwner, 0);
   Event_Wait(10);
-  Event_ShowMessageThenWait(ACTOR_HUNGRY_BOY, 0, 0xa);
-  Event_ShowMessageThenWait(-1, 0, 0xa);
+  Event_ShowMessageThenWait(ACTOR_HUNGRY_BOY, 0, 10);
+  Event_ShowMessageThenWait(-1, 0, 10);
   Actor_SetModeById(ACTOR_HUNGRY_BOY, 1);
   Actor_Jump(ACTOR_HUNGRY_BOY, 6, 15);
   Actor_Jump(ACTOR_HUNGRY_BOY, 6, 23);
@@ -264,7 +263,7 @@ void Alhafra_FindGoldCoins(void) {
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(29, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(29, 0, 10);
   Actor_FaceDirection(28, FACING_EAST, 0);
   Actor_FaceDirection(31, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(30, FACING_SOUTHWEST, 0);
@@ -276,29 +275,29 @@ void Alhafra_FindGoldCoins(void) {
   Event_Wait(50);
   FieldActor_Jump(28, 6, 15);
   FieldActor_Jump(28, 6, 23);
-  FieldEvent_ShowMessageThenWait(0x1c, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(28, 0, 10);
   Actor_ArmCallback(29, 0x8000, 0);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(29, 3);
   Event_Wait(20);
-  Actor_ShowEmoteById(0x1e, EMOTE_IN_FRONT | EMOTE_SMILE, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x1e, 0, 0xa);
-  Actor_ShowEmoteById(0x1d, EMOTE_IN_FRONT | EMOTE_WINCE, 0x28);
+  Actor_ShowEmoteById(30, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  FieldEvent_ShowMessageThenWait(30, 0, 10);
+  Actor_ShowEmoteById(29, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Actor_FaceDirection(29, FACING_SOUTH, 0);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(29, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(29, 0, 10);
   Motion_SetVarCbAndRefresh(30, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1e, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(30, 0, 10);
   Actor_ArmCallback(29, 0, 0);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(29, 3);
   Event_Wait(20);
   FieldActor_Jump(31, 6, 15);
   FieldActor_Jump(31, 6, 23);
-  FieldEvent_ShowMessageThenWait(0x1f, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(31, 0, 10);
   Actor_FaceDirection(30, FACING_EAST, 0);
   Motion_SetModeAndWaitAnimation(30, 3);
   Event_Wait(20);
@@ -508,7 +507,7 @@ void Alhafra_MadransArrive(s32 a0) {
   }
   Actor_SetPosition(31, 408, 872);
   Actor_SetPosition(32, 392, 888);
-  Event_ShowMessageThenWait(0x1f, 0, 0xa);
+  Event_ShowMessageThenWait(31, 0, 10);
   if (a0 == 0x14) {
     Actor_FaceDirection(4, FACING_SOUTH, 0);
   } else {
@@ -536,7 +535,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_FaceDirection(31, FACING_EAST, 0);
   Actor_SetPosition(33, 392, 872);
   Actor_SetPosition(35, 408, 872);
-  FieldEvent_ShowMessageThenWait(0x21, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(33, 0, 10);
   Actor_FaceDirection(31, FACING_SOUTH, 0);
   Actor_FaceDirection(32, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(20);
@@ -547,7 +546,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(31, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1f, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(31, 0, 10);
   Actor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_FaceDirection(33, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(40);
@@ -555,7 +554,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(20);
   Actor_FaceDirection(33, FACING_NORTH, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x21, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(33, 0, 10);
   Actor_FaceDirection(31, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(32, FACING_NORTHEAST, 0);
   Event_Wait(20);
@@ -570,7 +569,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_SetSpritePriority(35, 3);
   Event_Wait(20);
   Actor_SetPosition(34, 400, 872);
-  FieldEvent_ShowMessageThenWait(0x22, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(34, 0, 10);
   Actor_FaceDirection(31, FACING_SOUTH, 0);
   Actor_FaceDirection(32, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(33, FACING_SOUTH, 0);
@@ -581,7 +580,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(90);
   Motion_SetVarCbAndRefresh(34, 2);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x22, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(34, 0, 10);
   Actor_WalkByAndWaitById(34, 0, -16);
   Event_Wait(1);
   Actor_SetModeById(34, 5);
@@ -613,7 +612,7 @@ void Alhafra_MadransArrive(s32 a0) {
   FieldActor_Jump(30, 6, 15);
   FieldActor_Jump(30, 6, 23);
   Actor_SetAnimation(34, 1);
-  FieldEvent_ShowMessageThenWait(0x1e, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(30, 0, 10);
   Actor_SetMovementTypeById(29, (s32)gAlhafra_OfficialStepsBackScript);
   Event_Wait(20);
   Actor_WalkByAndWait(30, 0, -32);
@@ -621,26 +620,26 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(30, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1e, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(30, 0, 10);
   Actor_SetAnimationAndWait(29, 4);
-  FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
-  Actor_ShowEmote(0x1e, EMOTE_IN_FRONT | EMOTE_WINCE, 0x1e);
+  FieldEvent_ShowMessageThenWait(29, 0, 10);
+  Actor_ShowEmote(30, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_ArmCallback(30, 0, 0);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(29, 2);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(29, 0, 10);
   Actor_SetAnimation(29, 5);
   Actor_WalkByAndWait(30, 64, 0);
   Actor_FaceDirection(29, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(30, FACING_NORTHEAST, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 30, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 30, 0, 10);
   Actor_SetModeById(29, 1);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(29, 3);
   Event_Wait(10);
-  Event_ShowMessageThenWait(0x1d, 0, 0xa);
+  Event_ShowMessageThenWait(29, 0, 10);
   Actor_Stop(31);
   Actor_Stop(32);
   Actor_Stop(33);
@@ -657,7 +656,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_SetMovementTypeById(14, (s32)gAlhafra_PasserbyWalksOffScript);
   FieldActor_Jump(31, 6, 15);
   FieldActor_Jump(31, 6, 23);
-  Event_ShowMessageThenWait(0x1f, 0, 0xa);
+  Event_ShowMessageThenWait(31, 0, 10);
   Event_Wait(10);
   Actor_ArmCallback(32, 0xc000, 0);
   Event_Wait(20);
@@ -669,13 +668,13 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(20);
   Actor_ArmCallback(32, 0x1000, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x20, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(32, 0, 10);
   Actor_SetModeById(29, 1);
   Event_Wait(10);
-  Actor_ShowEmoteById(0x1d, EMOTE_IN_FRONT | EMOTE_SCOWL, 0x1e);
+  Actor_ShowEmoteById(29, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Actor_FaceDirection(29, FACING_WEST, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(29, 0, 10);
   EventCamera_FollowActor(29, 1);
   FieldCamera_WaitForArrival();
   Actor_WalkToAndWait(29, 488, 808);
@@ -692,7 +691,7 @@ void Alhafra_MadransArrive(s32 a0) {
   FieldCamera_MoveTo(648, CAMERA_KEEP, 536, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(29, 0, 10);
   FieldCamera_MoveTo(440, CAMERA_KEEP, 808, 1);
   FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(1);
@@ -703,61 +702,60 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_ArmCallback(33, 0xd000, 0);
   Event_Wait(30);
   FieldActor_StartRepeatedMotion(33, 3);
-  FieldEffect_SetAttached(0x21,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldEffect_SetAttached(33, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(50);
   Actor_FaceDirection(33, FACING_WEST, 0);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(33, 3);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x21, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(33, 0, 10);
   Motion_SetVarCbAndRefresh(29, 2);
   Event_Wait(20);
   Actor_ArmCallback(29, 0, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 29, 0, 0xa);
-  Actor_ShowEmoteById(0x22, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0x28);
-  FieldEvent_ShowMessageThenWait(0x22, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 29, 0, 10);
+  Actor_ShowEmoteById(34, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  FieldEvent_ShowMessageThenWait(34, 0, 10);
   Actor_FaceDirection(29, FACING_WEST, 0);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(29, 3);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(29, 0, 10);
   Motion_SetVarCbAndRefresh(30, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1e, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(30, 0, 10);
   Actor_FaceDirection(31, FACING_SOUTH_SOUTHWEST, 0);
   Actor_ArmCallback(32, 0xe000, 0);
   Event_Wait(30);
   FieldActor_Jump(31, 6, 15);
   FieldActor_Jump(31, 6, 23);
-  FieldEvent_ShowMessageThenWait(0x1f, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(31, 0, 10);
   Motion_SetModeAndWaitAnimation(32, 3);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x20, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(32, 0, 10);
   Motion_SetVarCbAndRefresh(29, 2);
   Event_Wait(10);
   Actor_FaceDirection(31, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(32, FACING_SOUTHEAST, 0);
-  FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(29, 0, 10);
   Motion_SetModeAndWaitAnimation(30, 3);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1e, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(30, 0, 10);
   Actor_SetPosition(17, 408, 696);
   Actor_WalkToAndWait(17, 408, 760);
   Actor_WalkToAndWait(17, 448, 792);
   Actor_WalkToAndWait(17, 448, 808);
   Actor_WalkByAndWait(30, 8, 0);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 30, 0, 0xa);
-  Actor_ShowEmoteById(0x11, EMOTE_IN_FRONT | EMOTE_QUESTION, 0x32);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 30, 0, 10);
+  Actor_ShowEmoteById(17, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Actor_FaceDirection(17, FACING_WEST, 0);
   Event_Wait(20);
-  Actor_ShowEmoteById(0x1e, EMOTE_IN_FRONT | EMOTE_SMILE, 0x1e);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 30, 0, 0xa);
+  Actor_ShowEmoteById(30, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 30, 0, 10);
   Motion_SetVarCbAndRefresh(17, 2);
   Event_Wait(10);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->waitMode = 0;
-  FieldEvent_ShowMessageThenWait(0x11, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(17, 0, 10);
   Motion_SetModeAndWaitAnimation(30, 3);
   Event_Wait(20);
   Actor_SetSpeed(29, 0.5);
@@ -840,7 +838,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(50);
   FieldCamera_MoveTo(248, CAMERA_KEEP, 664, 1);
   FieldCamera_WaitForArrival();
-  FieldEvent_ShowMessageThenWait(0x11, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(17, 0, 10);
   Actor_ArmCallback(17, 0x3000, 0);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(17, 3);
@@ -909,16 +907,16 @@ void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 168, 736);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   }
-  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_WINCE, 0x1e);
-  FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 0xa);
+  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_LOOKOUT, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_LOOKOUT, 4);
-  FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_LOOKOUT, 2);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
   if (a0 != 1) {
   } else {
     Actor_WalkByAndWaitById(ACTOR_LOOKOUT, -8, 0);
@@ -932,21 +930,21 @@ void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
     Event_Wait(1);
     Actor_GetById(ACTOR_LOOKOUT)->actionFlags |= 1;
     Event_Wait(10);
-    Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 0xa);
+    Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
     Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     Event_OpenMessage(ACTOR_LOOKOUT, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
       Event_Wait(30);
       Motion_SetVarCbAndRefresh(ACTOR_LOOKOUT, 2);
       Event_Wait(20);
-      Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 0xa);
+      Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
       ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
           (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
     } else {
       Event_Wait(30);
       ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
           (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
-      Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 0xa);
+      Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
     }
     Actor_GetById(4)->actionFlags &= 0xfe;
     Actor_WalkToAndWait(4, 152, 752);
@@ -959,7 +957,7 @@ void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
     Actor_ArmCallback(ACTOR_LOOKOUT, 0xe000, 0);
     Event_Wait(70);
     Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
-    Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 0xa);
+    Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
   }
   Actor_WalkToAndWait(ACTOR_LOOKOUT, 184, 728);
   Actor_WalkByAndWait(ACTOR_LOOKOUT, 0, -110);

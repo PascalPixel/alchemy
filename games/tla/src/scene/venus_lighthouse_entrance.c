@@ -213,7 +213,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(22, 40, 248);
     t37 = ((s32)Actor_Get(22));
     FIELD_AT(t37, u16, 6) = 0x4000;
-    Actor_FallOverWithAnimationById(0x16, 0x4000, 0);
+    Actor_FallOverWithAnimationById(22, 0x4000, 0);
     FieldActor_SetSpritePriority(22, 3);
     Actor_SetActionCallback(Actor_Get(22), 8);
   }
@@ -320,7 +320,7 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   Actor_SetSpeed(12, 1);
   Actor_SetSpeed(13, 1);
   FieldEvent_ShowMessageThenWait(12, 0, 0);
-  Actor_WalkToAndWait(5, 0x178, 0x118);
+  Actor_WalkToAndWait(5, 376, 280);
   FieldEvent_Wait(10);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(5, FACING_SOUTHWEST, 0);
@@ -331,7 +331,7 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   FieldEvent_Wait(30);
   Actor_RunRepeatedMotion(5, 2);
   FieldEvent_Wait(20);
-  Actor_WalkTo(5, 0x178, 0x168);
+  Actor_WalkTo(5, 376, 360);
   FieldEvent_Wait(30);
   FieldCamera_MoveTo(376, CAMERA_KEEP, 424, 1);
   FieldCamera_WaitForArrival();
@@ -696,9 +696,9 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   Actor_SetDestinationOffset(19, -24, 24);
   Actor_SetDestinationOffset(18, -24, 24);
   FieldActor_WaitForMoveById(18);
-  Actor_SetDestination(20, 224, 0x1e0);
-  Actor_SetDestination(19, 224, 0x1e0);
-  Actor_MoveToAndWait(18, 224, 0x1e0);
+  Actor_SetDestination(20, 224, 480);
+  Actor_SetDestination(19, 224, 480);
+  Actor_MoveToAndWait(18, 224, 480);
   rec = (s32)((u8 *)Actor_GetById(20));
   ((struct SparkRecord *)rec)->update = v5;
   rec = (s32)((u8 *)Actor_GetById(19));
@@ -778,7 +778,7 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
     ((struct SparkRecord *)rec)->update = callback;
     Actor_SetAnimation(next, 10);
   }
-  Actor_MoveToAndWait(17, 224, 0x1d8);
+  Actor_MoveToAndWait(17, 224, 472);
   FieldEvent_Wait(30);
   ((struct SparkRecord *)rec)->update = v5;
   Actor_SetPosition(20, 0, 0);
@@ -829,7 +829,7 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   FieldActor_SetSpritePriority(14, 3);
   Actor_SetSpeed(14, 2);
   *(u8 *)(((u8 *)Actor_GetById(14)) + 90) &= 254;
-  Actor_WalkToAndWait(14, 0x1c8, 0x1a8);
+  Actor_WalkToAndWait(14, 456, 424);
   FieldEvent_Wait(1);
   /* FAKEMATCH(dead): an empty once-only block ends CSE's block. */
   do {
@@ -848,7 +848,7 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   Actor_FaceDirection(8, FACING_SOUTHEAST, 0);
   Actor_SetSpeed(15, 1);
   *(u8 *)(((u8 *)Actor_GetById(15)) + 90) &= 254;
-  Actor_WalkToAndWait(15, 0x1c8, 0x1b8);
+  Actor_WalkToAndWait(15, 456, 440);
   FieldEvent_Wait(1);
   *(u8 *)(((u8 *)Actor_GetById(15)) + 90) |= 1;
   FieldEvent_Wait(10);
@@ -867,14 +867,14 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   Actor_SetSpeed(14, 0.5);
   Actor_SetSpeed(15, 0.5);
   *(u8 *)(((u8 *)Actor_GetById(14)) + 90) &= 254;
-  Actor_WalkToAndWait(14, 0x1e8, 0x1a8);
+  Actor_WalkToAndWait(14, 488, 424);
   FieldEvent_Wait(1);
   *(u8 *)(((u8 *)Actor_GetById(14)) + 90) |= 1;
   *(u8 *)(((u8 *)Actor_GetById(15)) + 90) &= 254;
-  Actor_WalkToAndWait(15, 0x1e8, 0x1b8);
+  Actor_WalkToAndWait(15, 488, 440);
   FieldEvent_Wait(1);
   *(u8 *)(((u8 *)Actor_GetById(15)) + 90) |= 1;
-  Actor_WalkToAndWait(9, 0x1c8, 0x1b0);
+  Actor_WalkToAndWait(9, 456, 432);
   Actor_FaceDirection(9, FACING_EAST, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(9, 3);
@@ -886,12 +886,12 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   Actor_SetAttachedEffect(15, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
   *(u8 *)(((u8 *)Actor_GetById(14)) + 90) &= 254;
-  Actor_WalkToAndWait(14, 0x1f8, 0x1a8);
+  Actor_WalkToAndWait(14, 504, 424);
   FieldEvent_Wait(1);
   *(u8 *)(((u8 *)Actor_GetById(14)) + 90) |= 1;
   Actor_SetPosition(14, 0, 0);
   *(u8 *)(((u8 *)Actor_GetById(15)) + 90) &= 254;
-  Actor_WalkToAndWait(15, 0x1f8, 0x1b8);
+  Actor_WalkToAndWait(15, 504, 440);
   FieldEvent_Wait(1);
   {
     u8 *flags = ((u8 *)Actor_GetById(15)) + 90;
@@ -979,7 +979,7 @@ void VenusLighthouseEntrance_ThiefWaitsForBackup(void) {
   Actor_WalkToAndWait(5, 72, 266);
   Actor_FaceDirection(5, FACING_WEST, 0);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(22, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(22, 0, 10);
   FieldActor_SetAnimation(22, 1);
   FieldEvent_Wait(10);
   Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
@@ -996,23 +996,23 @@ void VenusLighthouseEntrance_ThiefWaitsForBackup(void) {
   Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   Actor_FaceDirection(22, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(22, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(22, 0, 10);
   FieldActor_SetAnimationAndWait(22, 3);
   FieldEvent_Wait(20);
   Actor_SetSpeed(22, 1);
-  Actor_WalkByAndWait(22, 0x10, 0);
+  Actor_WalkByAndWait(22, 16, 0);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(22, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(22, 0, 10);
   Actor_SetSpeed(22, 2);
   FieldActor_Jump(22, 6, 15);
   FieldActor_Jump(22, 6, 25);
   FieldActor_Jump(22, 6, 0);
-  Actor_WalkBy(22, 0x1a, 0);
+  Actor_WalkBy(22, 26, 0);
   FieldEvent_Wait(8);
   Actor_SetAnimation(22, 1);
   FieldEvent_SetAfterBattleDestination((s32)&SceneId_VenusLighthouseEntrance,
-                                       0x63);
-  Event_SetDefeatDestination((s32)&SceneId_VenusLighthouseEntrance, 0x62);
+                                       99);
+  Event_SetDefeatDestination((s32)&SceneId_VenusLighthouseEntrance, 98);
   gMainRoutineWork.battleRule24b = 2;
   Call2(Field_RequestBattleFromEncounterTable, 9, 0);
   Event_End();
@@ -1025,9 +1025,9 @@ void VenusLighthouseEntrance_PointToMeetingSpot(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgNotThatWayThe);
-  FieldActor_LaunchFromLeader(8, 0x10, 0, 0x8000);
+  FieldActor_LaunchFromLeader(8, 16, 0, 0x8000);
   FieldActor_WaitForMoveById(8);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 10);
   Actor_SetAnimation(8, 2);
   object = Actor_Get(5);
   if (object != 0) {
@@ -1062,15 +1062,15 @@ void VenusLighthouseEntrance_WakeUp(void) {
   FieldEvent_Wait(20);
   FieldEvent_SetMessageId((s32)MsgAreAreYou);
   Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  FieldEvent_ShowMessageThenWait(8, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(8, 0, 10);
   Actor_RunRepeatedMotion(5, 2);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(9, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(9, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(9, 0, 10);
   Actor_RunRepeatedMotion(8, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(8, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(8, 0, 10);
   Actor_RunRepeatedMotion(5, 2);
   FieldEvent_Wait(30);
   Actor_SetPosition(5, 376, 164);
@@ -1087,24 +1087,24 @@ void VenusLighthouseEntrance_WakeUp(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirection(9, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(9, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(9, 0, 10);
   FieldEvent_Wait(10);
   Actor_FaceDirection(8, FACING_EAST, 0);
   Actor_FaceDirection(5, FACING_EAST_NORTHEAST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(8, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(8, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(8, 0, 10);
   Actor_SetAnimationAndWait(9, 4);
-  FieldEvent_ShowMessageThenWait(9, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(9, 0, 10);
   Actor_SetSpeed(9, 0.8);
-  Actor_WalkByAndWait(9, 0, 0x10);
+  Actor_WalkByAndWait(9, 0, 16);
   Actor_FaceDirection(9, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(9, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(9, 0, 10);
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(9, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(9, 0, 10);
   Actor_SetAnimationAndWait(9, 3);
   FieldEvent_Wait(20);
   Actor_SetAnimation(5, 3);
@@ -1112,17 +1112,17 @@ void VenusLighthouseEntrance_WakeUp(void) {
   FieldEvent_Wait(20);
   FieldActor_WatchAndSetScript(5, 9);
   Actor_SetSpeed(9, 0.8);
-  Actor_WalkBy(9, 0, 0x78);
+  Actor_WalkBy(9, 0, 120);
   FieldEvent_Wait(40);
   Actor_SetSpeed(8, 0.8);
-  Actor_WalkByAndWait(8, 0x18, 0);
-  Actor_WalkByAndWait(8, 0, 0x14);
+  Actor_WalkByAndWait(8, 24, 0);
+  Actor_WalkByAndWait(8, 0, 20);
   Actor_FaceDirection(5, FACING_SOUTH_SOUTHEAST, 0);
   FieldActor_WaitForMoveById(9);
   Actor_SetPosition(9, 0, 0);
   FieldEvent_Wait(10);
   Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
-  FieldEvent_ShowMessageThenWait(8, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(8, 0, 10);
   Actor_SetAnimationAndWait(5, 3);
   FieldEvent_Wait(30);
   Actor_RunRepeatedMotion(8, 2);
@@ -1130,7 +1130,7 @@ void VenusLighthouseEntrance_WakeUp(void) {
   FieldActor_Jump(8, 4, 0);
   Actor_FaceDirection(8, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(8, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(8, 0, 10);
   Actor_FaceDirection(5, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(5, 3);

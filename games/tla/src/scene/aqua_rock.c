@@ -1092,7 +1092,7 @@ s32 Scene_Initialize(void) {
     }
     if (GameFlag_Get(0xa6b)) {
       Call6(Map_CopyCellAttributeRect, 62, 41, 1, 2, 33, 41);
-      MapGrid_CopyCellPictureCellsRect(116, 95, 3, 13, 0x60, 0x20);
+      MapGrid_CopyCellPictureCellsRect(116, 95, 3, 13, 96, 32);
       Call6(MapGrid_CopyCellPictureCellsRect, 122, 95, 3, 13, 0x20, 0x60);
       Func_02001f60(12);
     }
@@ -1146,7 +1146,7 @@ s32 Scene_Initialize(void) {
         Actor_GetById(15)->update = Actor_EmitWaterDrop;
         Map_CopyCellAttributeRect(15, 48, 1, 1, 16, 48);
         Map_CopyCellAttributeRect(17, 50, 1, 1, 16, 50);
-        MapGrid_CopyCellPictureCellsRect(0x40, 68, 5, 13, 14, 94);
+        MapGrid_CopyCellPictureCellsRect(64, 68, 5, 13, 14, 94);
         Map_CopyCellAttributeRect(64, 68, 5, 8, 14, 34);
       }
     }

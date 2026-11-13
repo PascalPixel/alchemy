@@ -147,7 +147,7 @@ DEFINE_MAP_CELL_SWAP(TreasureIsle_SwapCells)
 
 // Draws a spiky rock risen at its cell, blocks the cell and sets its flag.
 void TreasureIsle_SetSpikyRock(struct TreasureIsleCell *cells, s16 index) {
-  MapGrid_CopyCellsLayered(0, 0x64, 3, 4, cells[index].x + 0x3f,
+  MapGrid_CopyCellsLayered(0, 100, 3, 4, cells[index].x + 0x3f,
                            cells[index].z - 2);
   MapGrid_CopyCellAttributes(1, 0, 1, 1, cells[index].x, cells[index].z);
   Event_SetFlag(cells[index].flag);
@@ -380,11 +380,11 @@ void TreasureIsle_MeetWaterGuardian(void) {
   FieldEvent_Wait(20);
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0x10003, 1);
-  PaletteFade_Interpolate(0x3c);
+  PaletteFade_Interpolate(60);
   FieldEvent_Wait(60);
   FieldMessage_ShowCentered((s32)MsgIAmTheGuardian, 0, 6);
   PaletteFade_ApplyTarget(0x10000, 0);
-  PaletteFade_Interpolate(0x3c);
+  PaletteFade_Interpolate(60);
   FieldEvent_Wait(60);
   t12 = Actor_Get(gMainRoutineWork.currentOwner);
   if (t12 != 0) {

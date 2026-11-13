@@ -1437,8 +1437,8 @@ void Yallam_ShowSongGame(void) {
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 316, 0x380);
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 344, 0x390);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 316, 896);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 344, 912);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
   Event_PlaySound(MUS_017);
   Actor_FaceDirectionAndWait(8, FACING_NORTH);
@@ -1665,7 +1665,7 @@ waitFourthVerse:
   v7 = FIELD_AT(v6, s32, 8);
   Actor_SetSpeed(8, 2.4);
   FieldActor_Jump(8, 6, 0);
-  Actor_MoveToAndWait(8, 200, 0x29e);
+  Actor_MoveToAndWait(8, 200, 670);
   FieldActor_Jump(8, 4, 0);
   FieldActor_SetMoveTargetFixed(v6, v7, 0, v8);
   FieldEvent_Wait(5);
@@ -1678,7 +1678,7 @@ waitFourthVerse:
   v7 = FIELD_AT(v6, s32, 8);
   Actor_SetSpeed(10, 2.4);
   FieldActor_Jump(10, 6, 0);
-  Actor_MoveToAndWait(10, 200, 0x29e);
+  Actor_MoveToAndWait(10, 200, 670);
   FieldActor_Jump(10, 4, 0);
   FieldActor_SetMoveTargetFixed(v6, v7, 0, v8);
   FieldEvent_Wait(5);
@@ -1691,7 +1691,7 @@ waitFourthVerse:
   v7 = FIELD_AT(v6, s32, 8);
   Actor_SetSpeed(9, 2.4);
   FieldActor_Jump(9, 6, 0);
-  Actor_MoveToAndWait(9, 200, 0x29e);
+  Actor_MoveToAndWait(9, 200, 670);
   FieldActor_Jump(9, 4, 0);
   FieldActor_SetMoveTargetFixed(v6, v7, 0, v8);
   FieldEvent_Wait(10);
@@ -1705,7 +1705,7 @@ waitFourthVerse:
   v7 = FIELD_AT(v6, s32, 8);
   Actor_SetSpeed(11, 2.4);
   FieldActor_Jump(11, 6, 0);
-  Actor_MoveToAndWait(11, 200, 0x29e);
+  Actor_MoveToAndWait(11, 200, 670);
   FieldActor_Jump(11, 4, 0);
   FieldActor_SetMoveTargetFixed(v6, v7, 0, v8);
   FieldActor_WaitForMoveById(11);

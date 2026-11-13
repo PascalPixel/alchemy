@@ -303,7 +303,7 @@ void Func_0200094c(void) {
     }
     Sound_Play(SE_623);
   }
-  Func_020008a0(leader, 0xd999);
+  Func_020008a0(leader, 55705);
 }
 
 s32 Func_020009bc(struct Actor *object) {
@@ -320,7 +320,7 @@ void Actor_MoveToObject(s32 actor, s32 target);
 
 void Func_020009d4(void) {
   struct Actor *follower = Actor_GetById(9);
-  struct Actor *statue = Actor_GetById(0x40);
+  struct Actor *statue = Actor_GetById(64);
   u8 *work = (u8 *)Ram_HeapSlots->eventWork;
   struct Actor *glow, *leader;
   s32 speed;
@@ -339,7 +339,7 @@ void Func_020009d4(void) {
   Event_SetMessageId((s32)MsgByReachingThis);
   work += 0x1c4;
   TALK();
-  Actor_SetPosition(0x40, 168, 152);
+  Actor_SetPosition(64, 168, 152);
   statue->motionFlags = 6;
   statue->terrainHeight += 0x100000;
   Sound_Play(SE_SHIMMER);
@@ -427,7 +427,7 @@ void Func_02000d90(void) {
   struct Actor *object = Actor_GetById(64);
 
   if (object != NULL && object->x != 0)
-    Scene_TalkToActor(0x1040);
+    Scene_TalkToActor(4160);
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -506,13 +506,13 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_01))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 8, 15);
     if (GameFlag_Get(FLAG_SCENE_TEMP_02))
-      MapGrid_CopyCellAttributes(0, 4, 1, 1, 9, 0x10);
+      MapGrid_CopyCellAttributes(0, 4, 1, 1, 9, 16);
     if (GameFlag_Get(FLAG_SCENE_TEMP_03))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 8, 17);
     if (GameFlag_Get(FLAG_SCENE_TEMP_04))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 17);
     if (GameFlag_Get(FLAG_SCENE_TEMP_05))
-      MapGrid_CopyCellAttributes(0, 4, 1, 1, 5, 0x10);
+      MapGrid_CopyCellAttributes(0, 4, 1, 1, 5, 16);
     if (GameFlag_Get(FLAG_SCENE_TEMP_06))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 15);
   }
@@ -522,8 +522,8 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room4 &&
       GameFlag_Get(0x9ce) && !GameFlag_Get(0xf93) &&
       !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-    statue = Actor_GetById(0x40);
-    Actor_SetPosition(0x40, 168, 152);
+    statue = Actor_GetById(64);
+    Actor_SetPosition(64, 168, 152);
     statue->motionFlags = 6;
     statue->terrainHeight += 0x100000;
   }

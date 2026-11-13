@@ -2286,12 +2286,12 @@ void Func_02003cac(void) {
   cell >>= 8;
   if (cell != 1 && cell != 7) {
     Func_02002790();
-    Func_02003b7c(0x108, row * 8 + 10);
+    Func_02003b7c(264, row * 8 + 10);
     if (!Value1((s32 (*)())GameFlag_Get, 0x200))
       GameFlag_Set(FLAG_SCENE_TEMP_00);
     GameFlag_Set(*(s16 *)work + 312);
   } else if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
-    Func_02003b7c(0x108, row * 8 + 10);
+    Func_02003b7c(264, row * 8 + 10);
   }
 }
 

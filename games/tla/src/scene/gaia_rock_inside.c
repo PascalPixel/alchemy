@@ -455,7 +455,7 @@ extern u32 gData_0200559c[];
 
 s32 Func_020006f8(void) {
   Actor_StartScript(((s32)Actor_Get(9)), (s32)gData_0200559c);
-  Actor_SetAttachedEffect(0xa, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(10, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   return 0;
 }
 
@@ -466,7 +466,7 @@ s32 Func_02000718(void) {
   Actor_StartScript(object, (s32)gData_020055c0);
   object->x = 0x1d80000;
   Actor_SetAnimationSpeed(object, 0x10);
-  Actor_SetAttachedEffect(0xa, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(10, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   return 0;
 }
 
@@ -476,7 +476,7 @@ s32 Func_02000748(void) {
   t0 = ((s32)Actor_Get(9));
   Actor_StartScript(t0, (s32)gData_02005610);
   Actor_SetAnimationSpeed(t0, 0);
-  Actor_SetAttachedEffect(0xa, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(10, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   return 0;
 }
 
@@ -789,7 +789,7 @@ void GaiaRockInside_SusaSaysMoveAside(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgGaiaRockInside05);
-  Event_ShowMessage(0xa, 0);
+  Event_ShowMessage(10, 0);
   Event_End();
 }
 
@@ -951,10 +951,10 @@ void GaiaRockInside_ReadSusasMind(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  t2 = FieldPartyInventory_FindMember(0x1c3);
+  t2 = FieldPartyInventory_FindMember(451);
   if (t2 != -1) {
     FieldEvent_SetMessageId((s32)MsgGaiaRockInside07);
-    Event_ShowMessage(0xa, 0);
+    Event_ShowMessage(10, 0);
   } else {
     object = Actor_Get(9);
     if (object->script == (s32)gData_02005610) {
@@ -962,7 +962,7 @@ void GaiaRockInside_ReadSusasMind(void) {
     }
     Func_02000f00();
     FieldEvent_SetMessageId((s32)MsgGaiaRockInside04);
-    Event_ShowMessage(0xa, 0);
+    Event_ShowMessage(10, 0);
     Func_02000fac();
   }
   Event_End();
@@ -1222,12 +1222,12 @@ s32 GaiaRockInside_ReadSandTablet(void) {
   Actor_ShowEmote(gMainRoutineWork.currentOwner,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   if (leader->z >> 19 <= 39) {
-    Actor_WalkTo(gMainRoutineWork.currentOwner, 0x1b8, 0x148);
+    Actor_WalkTo(gMainRoutineWork.currentOwner, 440, 328);
     FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
   }
   Actor_MoveToObject(11, gMainRoutineWork.currentOwner);
-  Actor_WalkTo(gMainRoutineWork.currentOwner, 0x1d6, 0x162);
-  Actor_WalkTo(11, 0x1be, 0x162);
+  Actor_WalkTo(gMainRoutineWork.currentOwner, 470, 354);
+  Actor_WalkTo(11, 446, 354);
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
   FieldActor_WaitForMoveById(11);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
@@ -1244,7 +1244,7 @@ s32 GaiaRockInside_ReadSandTablet(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_FaceDirection(11, FACING_NORTH, 0);
   FieldEvent_Wait(10);
-  Actor_WalkTo(gMainRoutineWork.currentOwner, 0x1d2, 0x156);
+  Actor_WalkTo(gMainRoutineWork.currentOwner, 466, 342);
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Message_ShowCentered(message + 2, 1);
   MapGrid_SetShake(5, 7, 1);
@@ -1419,7 +1419,7 @@ void GaiaRockInside_ChallengeSerpent(void) {
     } while (0);
     scene = (s32)&SceneId_Ov681Room1;
     FieldEvent_SetAfterBattleDestination(scene, 10);
-    if (FieldPartyInventory_FindMember(0x1c3) != -1) {
+    if (FieldPartyInventory_FindMember(451) != -1) {
       if (count == 0)
         Event_SetDefeatDestination(scene, 12);
     } else {
@@ -1451,7 +1451,7 @@ void Func_02001fa0(void) {
   object->y = -1966080;
   object->terrainHeight = -2097152;
   Event_ClearFlag(FLAG_NOTHING_HAPPENS);
-  Scene_TalkToActor(0x1042);
+  Scene_TalkToActor(4162);
 }
 
 // Examines the altar.
@@ -1873,11 +1873,11 @@ s32 Func_02002974(void) {
   }
 }
 
-void Func_02002a14(void) { Func_02004af0(0xb, 0x303); }
+void Func_02002a14(void) { Func_02004af0(11, 0x303); }
 
-void Func_02002a24(void) { Func_02004af0(0xc, 0x304); }
+void Func_02002a24(void) { Func_02004af0(12, 0x304); }
 
-void Func_02002a34(void) { Func_02004af0(0xd, 0x305); }
+void Func_02002a34(void) { Func_02004af0(13, 0x305); }
 
 extern char SceneId_Ov681Room5;
 extern struct Trigger gGaiaRockInside_Triggers[];

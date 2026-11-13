@@ -571,7 +571,7 @@ s32 Scene_Initialize(void) {
     Actor_FaceDirection(8, FACING_NORTHWEST, 0);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     ACTOR(8)->actionFlags &= ~1;
-    Actor_WalkTo(8, 0x100, 136);
+    Actor_WalkTo(8, 256, 136);
     Actor_SetSpeed(8, 0.6);
     FieldEvent_Wait(20);
     Actor_SetAnimation(8, 1);
@@ -652,7 +652,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpeed(8, 8);
     MtAlephSummit_ScatterDustRing(128, 8);
     ACTOR(8)->actionFlags &= ~1;
-    Actor_WalkTo(8, 0x118, 160);
+    Actor_WalkTo(8, 280, 160);
     Actor_SetAnimation(8, 17);
     Event_PlaySound(SE_HEAVY_IMPACT);
     FieldEvent_Wait(2);
@@ -689,7 +689,7 @@ s32 Scene_Initialize(void) {
     i++;
     if (i != 5)
       goto L13;
-    MtAlephSummit_ScatterDustRing(0x100, 16);
+    MtAlephSummit_ScatterDustRing(256, 16);
     Actor_SetAnimation(8, 17);
     Event_PlaySound(SE_CRASH);
     MapGrid_SetShake(16, 16, 1);
@@ -778,7 +778,7 @@ s32 Scene_Initialize(void) {
     Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
     PaletteFade_ApplyTarget(0, 0);
     PaletteFade_Interpolate(120);
-    System_Wait(0x12c);
+    System_Wait(300);
     Event_SetDestination((s32)&SceneId_Ov6b3, 1);
   } else {
     ((struct EventWorkView__s0478 *)Ram_HeapSlots->eventWork)->unk1ac = 0;

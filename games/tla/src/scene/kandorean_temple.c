@@ -481,7 +481,7 @@ void KandoreanTemple_PushThroughTheSteam(void) {
       Actor_StartScript(steam, gKandoreanTemple_StreamPuffScript);
     }
   }
-  KandoreanTemple_PushNorth(leader, 0xd999);
+  KandoreanTemple_PushNorth(leader, 55705);
 }
 
 /* VIEW(kandorean_temple): tag struct EventWork1cc as struct
@@ -855,7 +855,7 @@ void KandoreanTemple_RunLeftVent(void) {
         KandoreanTemple_GrowColumn(11, 0x20000, limit);
         KandoreanTemple_GrowColumn(13, 0x18000, limit);
         KandoreanTemple_GrowColumn(14, 0x10000, limit);
-        KandoreanTemple_GrowColumn(15, 0x8000, limit);
+        KandoreanTemple_GrowColumn(15, 32768, limit);
         KandoreanTemple_GrowColumn(16, 0, limit);
       } else if (t < 600) {
         if (GameFlag_Get(FLAG_SCENE_TEMP_08) && *timer == 400) {
@@ -880,7 +880,7 @@ void KandoreanTemple_RunLeftVent(void) {
         KandoreanTemple_ShrinkColumn(11, 0x30000, limit);
         KandoreanTemple_ShrinkColumn(13, 0x24000, limit);
         KandoreanTemple_ShrinkColumn(14, 0x18000, limit);
-        KandoreanTemple_ShrinkColumn(15, 0xc000, limit);
+        KandoreanTemple_ShrinkColumn(15, 49152, limit);
         KandoreanTemple_ShrinkColumn(16, 0, limit);
         if (Actor_GetById(16)->scaleY <= limit)
           *timer = timerEnd;
@@ -890,7 +890,7 @@ void KandoreanTemple_RunLeftVent(void) {
         statue->y += 0x27999;
         limit = 0x1000;
         KandoreanTemple_GrowColumn(11, 0x10000, limit);
-        KandoreanTemple_GrowColumn(13, 0x8000, limit);
+        KandoreanTemple_GrowColumn(13, 32768, limit);
         KandoreanTemple_GrowColumn(14, 0, limit);
       } else if (t < 600) {
         phase = &gKandoreanTemple_LeftBobPhase;
@@ -909,7 +909,7 @@ void KandoreanTemple_RunLeftVent(void) {
         statue->y += -0x3b666;
         limit = 0x1800;
         KandoreanTemple_ShrinkColumn(11, 0x18000, limit);
-        KandoreanTemple_ShrinkColumn(13, 0xc000, limit);
+        KandoreanTemple_ShrinkColumn(13, 49152, limit);
         KandoreanTemple_ShrinkColumn(14, 0, limit);
         if (Actor_GetById(14)->scaleY <= limit)
           *timer = timerEnd;
@@ -994,7 +994,7 @@ void KandoreanTemple_RunRightVent(void) {
           KandoreanTemple_GrowColumn(12, 0x20000, limit);
           KandoreanTemple_GrowColumn(17, 0x18000, limit);
           KandoreanTemple_GrowColumn(18, 0x10000, limit);
-          KandoreanTemple_GrowColumn(19, 0x8000, limit);
+          KandoreanTemple_GrowColumn(19, 32768, limit);
           KandoreanTemple_GrowColumn(20, 0, limit);
         } else if (t < 600) {
           if (GameFlag_Get(FLAG_SCENE_TEMP_09) && *timer == 400) {
@@ -1017,7 +1017,7 @@ void KandoreanTemple_RunRightVent(void) {
           KandoreanTemple_ShrinkColumn(12, 0x30000, limit);
           KandoreanTemple_ShrinkColumn(17, 0x24000, limit);
           KandoreanTemple_ShrinkColumn(18, 0x18000, limit);
-          KandoreanTemple_ShrinkColumn(19, 0xc000, limit);
+          KandoreanTemple_ShrinkColumn(19, 49152, limit);
           KandoreanTemple_ShrinkColumn(20, 0, limit);
           if (Actor_GetById(20)->scaleY <= limit)
             *timer = last;
@@ -1027,7 +1027,7 @@ void KandoreanTemple_RunRightVent(void) {
           statue->y += 0x27999;
           limit = 0x1000;
           KandoreanTemple_GrowColumn(12, 0x10000, limit);
-          KandoreanTemple_GrowColumn(17, 0x8000, limit);
+          KandoreanTemple_GrowColumn(17, 32768, limit);
           KandoreanTemple_GrowColumn(18, 0, limit);
         } else if (t < 600) {
           phase = &gKandoreanTemple_RightBobPhase;
@@ -1044,7 +1044,7 @@ void KandoreanTemple_RunRightVent(void) {
           statue->y += -0x3b666;
           limit = 0x1800;
           KandoreanTemple_ShrinkColumn(12, 0x18000, limit);
-          KandoreanTemple_ShrinkColumn(17, 0xc000, limit);
+          KandoreanTemple_ShrinkColumn(17, 49152, limit);
           KandoreanTemple_ShrinkColumn(18, 0, limit);
           if (Actor_GetById(18)->scaleY <= limit)
             *timer = last;
@@ -1106,7 +1106,7 @@ void KandoreanTemple_RunWestLift(void) {
     Actor_SetModeById(15, 2);
   } else if ((u32)(*timer - 301) <= 1698) {
     lift->y += PIXELS(4);
-    KandoreanTemple_GrowColumn(15, 0x4ccc, 0x4ccc);
+    KandoreanTemple_GrowColumn(15, 19660, 0x4ccc);
     if (*(long *)&lift->y > -0x50000)
       Actor_SetSpritePriority(13, 2);
     if (lift->y >= 0) {
@@ -1130,7 +1130,7 @@ void KandoreanTemple_RunWestLift(void) {
     }
   } else {
     lift->y += PIXELS(-4);
-    KandoreanTemple_ShrinkColumn(15, 0x4ccc, 0x4ccc);
+    KandoreanTemple_ShrinkColumn(15, 19660, 0x4ccc);
     // y read as long, as above.
     if (*(long *)&lift->y < -0x50000)
       Actor_SetSpritePriority(13, 3);
@@ -1167,7 +1167,7 @@ void KandoreanTemple_RunEastLift(void) {
     Actor_SetModeById(16, 2);
   } else if ((u32)(*timer - 301) <= 1698) {
     lift->y += PIXELS(4);
-    KandoreanTemple_GrowColumn(16, 0x4ccc, 0x4ccc);
+    KandoreanTemple_GrowColumn(16, 19660, 0x4ccc);
     if (*(long *)&lift->y > -0x50000)
       Actor_SetSpritePriority(14, 2);
     if (lift->y >= 0) {
@@ -1191,7 +1191,7 @@ void KandoreanTemple_RunEastLift(void) {
     }
   } else {
     lift->y += PIXELS(-4);
-    KandoreanTemple_ShrinkColumn(16, 0x4ccc, 0x4ccc);
+    KandoreanTemple_ShrinkColumn(16, 19660, 0x4ccc);
     // y read as long, as above.
     if (*(long *)&lift->y < -0x50000)
       Actor_SetSpritePriority(14, 3);
@@ -2059,7 +2059,7 @@ void KandoreanTemple_RiseOnLeftVent(void) {
     KandoreanTemple_GrowColumn(11, 0x20000, limit);
     KandoreanTemple_GrowColumn(13, 0x18000, limit);
     KandoreanTemple_GrowColumn(14, 0x10000, limit);
-    KandoreanTemple_GrowColumn(15, 0x8000, limit);
+    KandoreanTemple_GrowColumn(15, 32768, limit);
     KandoreanTemple_GrowColumn(16, 0, limit);
     next = i;
     next++;
@@ -2080,7 +2080,7 @@ void KandoreanTemple_RiseOnLeftVent(void) {
     KandoreanTemple_ShrinkColumn(n1, 0x30000, limit);                          \
     KandoreanTemple_ShrinkColumn(n2, 0x24000, limit);                          \
     KandoreanTemple_ShrinkColumn(n3, 0x18000, limit);                          \
-    KandoreanTemple_ShrinkColumn(n4, 0xc000, limit);                           \
+    KandoreanTemple_ShrinkColumn(n4, 49152, limit);                            \
     KandoreanTemple_ShrinkColumn(n5, 0, limit);                                \
     wait(1);                                                                   \
   } while (Actor_GetById(n5)->scaleY > limit);
@@ -2136,7 +2136,7 @@ void KandoreanTemple_RiseOnRightVent(void) {
     KandoreanTemple_GrowColumn(12, 0x20000, limit);
     KandoreanTemple_GrowColumn(17, 0x18000, limit);
     KandoreanTemple_GrowColumn(18, 0x10000, limit);
-    KandoreanTemple_GrowColumn(19, 0x8000, limit);
+    KandoreanTemple_GrowColumn(19, 32768, limit);
     KandoreanTemple_GrowColumn(20, 0, limit);
     next = i;
     next++;
@@ -2273,7 +2273,7 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
   rise:                                                                        \
     first->y += PIXELS(4);                                                     \
     leader->y += PIXELS(4);                                                    \
-    KandoreanTemple_GrowColumn(n2, 0x4ccc, 0x4ccc);                            \
+    KandoreanTemple_GrowColumn(n2, 19660, 0x4ccc);                             \
     wait(1);                                                                   \
     if (first->y < 0)                                                          \
       goto rise;                                                               \
@@ -2298,7 +2298,7 @@ void KandoreanTemple_RideWestLiftUp(void) {
   Event_ResolvePendingActions(0);
 rise:
   object->y -= PIXELS(4);
-  KandoreanTemple_ShrinkColumn(15, 0x4ccc, 0x4ccc);
+  KandoreanTemple_ShrinkColumn(15, 19660, 0x4ccc);
   wait(1);
   if (object->y > -0x140000)
     goto rise;
@@ -2317,7 +2317,7 @@ void KandoreanTemple_RideEastLiftUp(void) {
   Event_ResolvePendingActions(0);
 rise:
   object->y -= PIXELS(4);
-  KandoreanTemple_ShrinkColumn(16, 0x4ccc, 0x4ccc);
+  KandoreanTemple_ShrinkColumn(16, 19660, 0x4ccc);
   wait(1);
   if (object->y > -0x140000)
     goto rise;
@@ -2591,10 +2591,10 @@ rise14:
   i++;
   if (i <= 63)
     goto rise14;
-  KandoreanTemple_Sway(object, 64, 0x1000);
-  KandoreanTemple_Sway(object, 128, -0x1000);
-  KandoreanTemple_Sway(object, 128, 0x1000);
-  KandoreanTemple_Sway(object, 64, -0x1000);
+  KandoreanTemple_Sway(object, 64, 4096);
+  KandoreanTemple_Sway(object, 128, -4096);
+  KandoreanTemple_Sway(object, 128, 4096);
+  KandoreanTemple_Sway(object, 64, -4096);
   Event_Wait(20);
   Actor_SetAttachedEffect(14,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);

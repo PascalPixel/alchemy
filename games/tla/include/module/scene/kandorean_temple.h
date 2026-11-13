@@ -17,76 +17,76 @@ struct MapWork17 {
   u8 mode : 2;
 };
 
-extern u32 gData_020056c0[];
-extern struct ActorPlacement gData_02005b20[];
-extern struct ActorPlacement gData_02005be0[];
-extern s16 gData_02005de4[];
-void Func_020037e0(void);
-void Func_02005028(void);
+extern u32 gKandoreanTemple_Room5Regions[];
+extern struct ActorPlacement gKandoreanTemple_GatePlacements[];
+extern struct ActorPlacement gKandoreanTemple_PoisHallPlacements[];
+extern s16 gKandoreanTemple_Room2Events[];
+void KandoreanTemple_ArriveOnEastLift(void);
+void KandoreanTemple_LowerTheLadder(void);
 
-void Func_02000d64(void);
+void KandoreanTemple_StartLeftVent(void);
 
-void Func_02003e8c(void);
-void Func_020044d4(void);
-void Func_020046d8(void);
-void Func_0200482c(void);
-void Func_02004fb4(void);
-extern u32 gData_02005564[];
-extern u32 gData_020055a0[];
-extern u32 gData_020055e4[];
+void KandoreanTemple_TestTheStudents(void);
+void KandoreanTemple_PraiseTheLevitator(void);
+void KandoreanTemple_FindTheRopeOnTheFloor(void);
+void KandoreanTemple_MeetPoi(void);
+void KandoreanTemple_CreateLashPebble(void);
+extern u32 gKandoreanTemple_PoiWalksOutScript[];
+extern u32 gKandoreanTemple_StudentWalksAsideScript[];
+extern u32 gKandoreanTemple_StudentWalksAwayScript[];
 
-void Func_02000bcc(void);
-void Func_020004a8(void);
+void KandoreanTemple_CastLash(void);
+void KandoreanTemple_KradenSuspectsTheWall(void);
 
-void Func_02000710(void);
+void KandoreanTemple_PushThroughTheSteam(void);
 
-void Func_02001d00(void);
+void KandoreanTemple_ReadPoisSign(void);
 
-void Func_02001d20(void);
+void KandoreanTemple_TryTheLockedDoor(void);
 
-void Func_02001e0c(void);
+void KandoreanTemple_AskWhoPassedTheTest(void);
 
-void Func_02001e30(void);
+void KandoreanTemple_ReadTheGateStudent(void);
 
-void Func_02001e44(void);
-void Func_02001e58(void);
+void KandoreanTemple_ReadTheGuard(void);
+void KandoreanTemple_ClimbDownTheWell(void);
 
-void Func_02001f7c(void);
+void KandoreanTemple_DropThroughTheTrapdoor(void);
 
-void Func_02002014(void);
-void Func_020020c8(void);
-void Func_020020d8(void);
-void Func_02002154(void);
-void Func_020021b8(void);
-void Func_020021dc(void);
+void KandoreanTemple_SlipIntoTheCrack(void);
+void KandoreanTemple_StartMovingBlock(void);
+void KandoreanTemple_FinishMovingBlock(void);
+void KandoreanTemple_FinishMovingPillar(void);
+void KandoreanTemple_StartMovingPot(void);
+void KandoreanTemple_FinishMovingPot(void);
 
-void Func_02002248(void);
+void KandoreanTemple_TouchTheHotFloor(void);
 
-void Func_020022c0(void);
-void Func_02002314(void);
-void Func_02002674(void);
-void Func_0200269c(void);
-void Func_020026cc(void);
-void Func_020027b4(void);
-void Func_020027d4(void);
-void Func_020027f4(void);
-void Func_02002814(void);
+void KandoreanTemple_OpenTheWellPassage(void);
+void KandoreanTemple_FindTheHiddenPassage(void);
+void KandoreanTemple_StepBehindThePole(void);
+void KandoreanTemple_StepOutFromThePole(void);
+void KandoreanTemple_FightChestbeaters(void);
+void KandoreanTemple_CycloneFirstPatch(void);
+void KandoreanTemple_CycloneSecondPatch(void);
+void KandoreanTemple_CycloneThirdPatch(void);
+void KandoreanTemple_CycloneFourthPatch(void);
 
-void Func_02002834(void);
+void KandoreanTemple_CycloneFifthPatch(void);
 
-extern u32 gData_020053e0[];
+extern u32 gFieldEffect_SmallSpawnScript[];
 
-extern u32 gData_0200541c[];
+extern u32 gFieldEffect_MediumSpawnScript[];
 
-extern s32 gData_02005634[];
-extern s32 gData_0200564c[];
-extern s32 gData_02005664[];
+extern s32 gKandoreanTemple_LevitateHighScript[];
+extern s32 gKandoreanTemple_LevitateLowScript[];
+extern s32 gKandoreanTemple_StandStillScript[];
 
-void Func_02003684(void);
+void KandoreanTemple_ArriveOnWestLift(void);
 
-extern s32 gData_020062a0;
-extern u16 gData_020062a8;
-extern u16 gData_020062aa;
+extern s32 gKandoreanTemple_LeftTimer;
+extern u16 gKandoreanTemple_LeftBobPhase;
+extern u16 gKandoreanTemple_RightBobPhase;
 void Func_02005398(void);
 void Func_020053b8(const void *data);
 

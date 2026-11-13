@@ -170,9 +170,9 @@ SECTIONS
         "*/games/tla/src/scene/kandorean_temple.o"(.text)
         "*/games/tla/src/scene/kandorean_temple/kandorean_temple.o"(.text)
         "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/kandorean_temple/s2ec4.o"(.text)
+        "*/games/tla/src/scene/kandorean_temple/events.o"(.text)
         "*/games/tla/src/scene/import/kandorean_temple.o"(.text)
-        "*/games/tla/src/scene/kandorean_temple/s2ec4.o"(.data)
+        "*/games/tla/src/scene/kandorean_temple/events.o"(.data)
     }
     .bss :
     {

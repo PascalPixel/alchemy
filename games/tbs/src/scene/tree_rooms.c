@@ -893,7 +893,7 @@ s32 TreeRooms_EnterRoom(void) {
   GameFlag_Set(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_COCOON_TORN);
   wait(1);
   TreeRooms_ApplyPostBattleState(0);
-  work = gFieldWork;
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   entrance = gMainRoutineWork.entrance;
@@ -954,8 +954,9 @@ static void TretPalette_UpdateMapTint(void) {
   struct FieldWork *work;
   struct PaletteFade *paletteWork;
 
-  work = gFieldWork;
-  paletteWork = gPaletteFadeWork;
+  // Both heap slots are read from one address.
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
+  paletteWork = HEAP_SLOT_BLOCK(HEAP_SLOT_PALETTE_FADE);
   sourceColors = paletteWork->palette;
   if (work->psynergy != 0)
     return;

@@ -1430,18 +1430,19 @@ const struct Trigger *TunnelRuins_GetTriggers(void) {
 /// TunnelRuins_PushFirstPillars.
 static void TunnelRuins_UpdateFirstPillarCells(void) {
   s32 row;
-  s32 column;
+  s32 columnA;
+  s32 columnB;
 
   MapGrid_CopyCellAttributes(73, 38, 5, 5, 9, 38);
   Actor_SwapPositionsByDepth(ACTOR_FIRST_PILLAR_B, ACTOR_FIRST_PILLAR_A);
 
-  column = FIELD_CELL(Actor_Get(ACTOR_FIRST_PILLAR_A)->x.fixed);
+  columnA = FIELD_CELL(Actor_Get(ACTOR_FIRST_PILLAR_A)->x.fixed);
   row = FIELD_CELL(Actor_Get(ACTOR_FIRST_PILLAR_A)->z.fixed);
-  MapGrid_CopyCellAttributes(2, 36, 1, 1, column, row);
+  MapGrid_CopyCellAttributes(2, 36, 1, 1, columnA, row);
 
-  column = FIELD_CELL(Actor_Get(ACTOR_FIRST_PILLAR_B)->x.fixed);
+  columnB = FIELD_CELL(Actor_Get(ACTOR_FIRST_PILLAR_B)->x.fixed);
   row = FIELD_CELL(Actor_Get(ACTOR_FIRST_PILLAR_B)->z.fixed);
-  MapGrid_CopyCellAttributes(2, 36, 1, 1, column, row);
+  MapGrid_CopyCellAttributes(2, 36, 1, 1, columnB, row);
 }
 
 /// After the second pillars move, does the same for their room.
@@ -1450,18 +1451,19 @@ static void TunnelRuins_UpdateFirstPillarCells(void) {
 /// TunnelRuins_PushSecondPillars.
 static void TunnelRuins_UpdateSecondPillarCells(void) {
   s32 row;
-  s32 column;
+  s32 columnA;
+  s32 columnB;
 
   MapGrid_CopyCellAttributes(93, 30, 6, 5, 29, 30);
   Actor_SwapPositionsByDepth(ACTOR_SECOND_PILLAR_B, ACTOR_SECOND_PILLAR_A);
 
-  column = FIELD_CELL(Actor_Get(ACTOR_SECOND_PILLAR_A)->x.fixed);
+  columnA = FIELD_CELL(Actor_Get(ACTOR_SECOND_PILLAR_A)->x.fixed);
   row = FIELD_CELL(Actor_Get(ACTOR_SECOND_PILLAR_A)->z.fixed);
-  MapGrid_CopyCellAttributes(2, 36, 1, 1, column, row);
+  MapGrid_CopyCellAttributes(2, 36, 1, 1, columnA, row);
 
-  column = FIELD_CELL(Actor_Get(ACTOR_SECOND_PILLAR_B)->x.fixed);
+  columnB = FIELD_CELL(Actor_Get(ACTOR_SECOND_PILLAR_B)->x.fixed);
   row = FIELD_CELL(Actor_Get(ACTOR_SECOND_PILLAR_B)->z.fixed);
-  MapGrid_CopyCellAttributes(2, 36, 1, 1, column, row);
+  MapGrid_CopyCellAttributes(2, 36, 1, 1, columnB, row);
 }
 
 /// After the small pillars move, redraws their room's cells and marks the cells

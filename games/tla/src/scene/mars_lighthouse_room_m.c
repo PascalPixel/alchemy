@@ -787,7 +787,7 @@ s32 Scene_PrepareMap(void) {
 
     TileMap_ConvertBuffer(
         gMainRoutineWork.map +
-            ((s32)&SceneId_Ov6ACRoom3Second - (s32)&SceneId_Ov6a8Room2),
+            ((s32)&SceneId_Ov6ACRoom3Second - (s32)&SceneId_Prox2),
         0x5000000);
   }
   return 0;

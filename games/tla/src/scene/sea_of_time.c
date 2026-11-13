@@ -192,7 +192,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 extern struct ActorPlacement gSeaOfTime_Placements[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_SeaOfTime2)
     return gSeaOfTime_Room2Placements;
   return gSeaOfTime_Placements;
 }
@@ -929,7 +929,7 @@ next:
   Actor_SelectAnimation(object, 1);
   Event_Wait(40);
   gMainRoutineWork.battleRule24b = 2;
-  Event_SetAfterBattleDestination((s32)&SceneId_Ov687Room2, 4);
+  Event_SetAfterBattleDestination((s32)&SceneId_SeaOfTime2, 4);
   Field_RequestBattleFromEncounterTable(12, 6);
   Event_End();
 }
@@ -984,7 +984,7 @@ DEFINE_LEAVE_BY_EXIT(SeaOfTime_LeaveByExit4, 4)
 DEFINE_LEAVE_BY_EXIT(SeaOfTime_LeaveByExit5, 5)
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_SeaOfTime1)
     return gSeaOfTime_Room1Triggers;
   if (gMainRoutineWork.entrance <= 4)
     return gSeaOfTime_EntranceTriggers;
@@ -1260,7 +1260,7 @@ void SeaOfTime_Open(void) {
 // frame callback.
 s32 Scene_Initialize(void) {
   ((struct SeaOfTimeEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 256;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_SeaOfTime1) {
     gSeaOfTime_WaveStartFrame = gFrameCount;
     gSeaOfTime_WaveState = 1;
     Dma_Set((const void *)0x05000062, gSeaOfTime_SavedColors.colors, 0x8000000e,
@@ -1281,7 +1281,7 @@ s32 Scene_Initialize(void) {
       } while (i != 14);
       Task_Add(SeaOfTime_TrackWaves, 0x480);
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room2) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_SeaOfTime2) {
     gSeaOfTime_WaveStartFrame = gFrameCount;
     gSeaOfTime_WaveState = 0;
     if (gMainRoutineWork.entrance <= 4) {

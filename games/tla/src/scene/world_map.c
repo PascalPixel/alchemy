@@ -1787,7 +1787,7 @@ void WorldMap_DriftNorthOfContinent(void) {
 }
 
 /// The leader is hidden and released, the screen fades and the camera moves;
-/// once a key is held the scene changes to SceneId_Ov667.
+/// once a key is held the scene changes to SceneId_AlhafraManor.
 void Func_02002e00(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->scaleX = 0;
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
@@ -1807,7 +1807,7 @@ void Func_02002e00(void) {
     wait(1);
   wait:;
   } while (gInput.held == 0);
-  Event_SetDestination((s32)&SceneId_Ov667, 80);
+  Event_SetDestination((s32)&SceneId_AlhafraManor, 80);
 }
 
 void WorldMap_TakeTheTiller(void) {

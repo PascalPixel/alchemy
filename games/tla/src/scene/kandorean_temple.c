@@ -4,7 +4,7 @@
 #include "../field/field_effect/move.c"
 /// @file
 /// The Kandorean Temple of Master Poi, south-west of Daila, in nine rooms that
-/// share this overlay (SceneId_Ov653Room1 to SceneId_Ov653Room9).
+/// share this overlay (SceneId_KandoreanTemple1 to SceneId_KandoreanTemple9).
 ///
 /// Its gate is shut for the meditation (KandoreanTemple_StartGate): Kraden
 /// spots a suspicious wall and the party finds a hidden way in through a cave
@@ -83,15 +83,15 @@ void KandoreanTemple_StartRoom6(void);
 void KandoreanTemple_StartFogRoom(void);
 void KandoreanTemple_StartGate(void);
 void KandoreanTemple_StartPoisHall(void);
-extern char SceneId_Ov653Room1;
-extern char SceneId_Ov653Room2;
-extern char SceneId_Ov653Room3;
-extern char SceneId_Ov653Room4;
-extern char SceneId_Ov653Room5;
-extern char SceneId_Ov653Room6;
-extern char SceneId_Ov653Room7;
-extern char SceneId_Ov653Room8;
-extern char SceneId_Ov653Room9;
+extern char SceneId_KandoreanTemple1;
+extern char SceneId_KandoreanTemple2;
+extern char SceneId_KandoreanTemple3;
+extern char SceneId_KandoreanTemple4;
+extern char SceneId_KandoreanTemple5;
+extern char SceneId_KandoreanTemple6;
+extern char SceneId_KandoreanTemple7;
+extern char SceneId_KandoreanTemple8;
+extern char SceneId_KandoreanTemple9;
 void KandoreanTemple_ShrinkColumn(s32 id, s32 dy, s32 scale);
 void Scene_QueueMusic(s32 a);
 void Rope_Initialize(void);
@@ -314,9 +314,9 @@ extern u32 gKandoreanTemple_ChestbeaterRoomRegions[];
 u32 *Scene_GetRegions(void) {
   s32 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov653Room3)
+  if (scene == (s32)&SceneId_KandoreanTemple3)
     return gKandoreanTemple_ChestbeaterRoomRegions;
-  if (scene == (s32)&SceneId_Ov653Room5)
+  if (scene == (s32)&SceneId_KandoreanTemple5)
     return gKandoreanTemple_Room5Regions;
   return 0;
 }
@@ -332,15 +332,15 @@ extern struct ActorPlacement gKandoreanTemple_FogRoomPlacements[];
 void *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov653Room1)
+  if (scene == (s32)&SceneId_KandoreanTemple1)
     return gKandoreanTemple_LiftRoomPlacements;
-  if (scene == (s32)&SceneId_Ov653Room3)
+  if (scene == (s32)&SceneId_KandoreanTemple3)
     return gKandoreanTemple_ChestbeaterRoomPlacements;
-  if (scene == (s32)&SceneId_Ov653Room4)
+  if (scene == (s32)&SceneId_KandoreanTemple4)
     return gKandoreanTemple_VentRoomPlacements;
-  if (scene == (s32)&SceneId_Ov653Room7)
+  if (scene == (s32)&SceneId_KandoreanTemple7)
     return gKandoreanTemple_FogRoomPlacements;
-  if (scene == (s32)&SceneId_Ov653Room8) {
+  if (scene == (s32)&SceneId_KandoreanTemple8) {
     if (GameFlag_Get(0x849)) {
       gKandoreanTemple_GatePlacements[3].talkFacing = 0;
       gKandoreanTemple_GatePlacements[4].talkFacing = 0;
@@ -348,7 +348,7 @@ void *Scene_GetPlacements(void) {
     }
     return gKandoreanTemple_GatePlacements;
   }
-  if (scene == (s32)&SceneId_Ov653Room9) {
+  if (scene == (s32)&SceneId_KandoreanTemple9) {
     if (GameFlag_Get(0x849)) {
       gKandoreanTemple_PoisHallPlacements[5].talkFacing = 3;
       gKandoreanTemple_PoisHallPlacements[6].x = 0x1700000;
@@ -404,23 +404,23 @@ extern struct Trigger gKandoreanTemple_PoisHallEvents[];
 void *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov653Room1)
+  if (scene == (s32)&SceneId_KandoreanTemple1)
     return gKandoreanTemple_LiftRoomEvents;
-  if (scene == (s32)&SceneId_Ov653Room2)
+  if (scene == (s32)&SceneId_KandoreanTemple2)
     return gKandoreanTemple_Room2Events;
-  if (scene == (s32)&SceneId_Ov653Room3)
+  if (scene == (s32)&SceneId_KandoreanTemple3)
     return gKandoreanTemple_ChestbeaterRoomEvents;
-  if (scene == (s32)&SceneId_Ov653Room4)
+  if (scene == (s32)&SceneId_KandoreanTemple4)
     return gKandoreanTemple_VentRoomEvents;
-  if (scene == (s32)&SceneId_Ov653Room5)
+  if (scene == (s32)&SceneId_KandoreanTemple5)
     return gKandoreanTemple_Room5Events;
-  if (scene == (s32)&SceneId_Ov653Room6)
+  if (scene == (s32)&SceneId_KandoreanTemple6)
     return gKandoreanTemple_Room6Events;
-  if (scene == (s32)&SceneId_Ov653Room7)
+  if (scene == (s32)&SceneId_KandoreanTemple7)
     return gKandoreanTemple_FogRoomEvents;
-  if (scene == (s32)&SceneId_Ov653Room8)
+  if (scene == (s32)&SceneId_KandoreanTemple8)
     return gKandoreanTemple_GateEvents;
-  if (scene == (s32)&SceneId_Ov653Room9)
+  if (scene == (s32)&SceneId_KandoreanTemple9)
     return gKandoreanTemple_PoisHallEvents;
   return gKandoreanTemple_Events;
 }
@@ -1708,7 +1708,7 @@ void KandoreanTemple_FightChestbeaters(void) {
   do {
   } while (0);
   gMainRoutineWork.battleRule24b = 2;
-  Event_SetAfterBattleDestination((s32)&SceneId_Ov653Room3, 3);
+  Event_SetAfterBattleDestination((s32)&SceneId_KandoreanTemple3, 3);
   Field_RequestBattleFromEncounterTable(9, 4);
   Event_End();
 }
@@ -1738,23 +1738,23 @@ s32 Scene_Initialize(void) {
 
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x204;
   scene = gMainRoutineWork.scene;
-  if (scene == (s32)&SceneId_Ov653Room1)
+  if (scene == (s32)&SceneId_KandoreanTemple1)
     KandoreanTemple_StartLiftRoom();
-  else if (scene == (s32)&SceneId_Ov653Room2)
+  else if (scene == (s32)&SceneId_KandoreanTemple2)
     KandoreanTemple_StartRoom2();
-  else if (scene == (s32)&SceneId_Ov653Room3)
+  else if (scene == (s32)&SceneId_KandoreanTemple3)
     KandoreanTemple_StartChestbeaterRoom();
-  else if (scene == (s32)&SceneId_Ov653Room4)
+  else if (scene == (s32)&SceneId_KandoreanTemple4)
     KandoreanTemple_StartVentRoom();
-  else if (scene == (s32)&SceneId_Ov653Room5)
+  else if (scene == (s32)&SceneId_KandoreanTemple5)
     KandoreanTemple_StartRoom5();
-  else if (scene == (s32)&SceneId_Ov653Room6)
+  else if (scene == (s32)&SceneId_KandoreanTemple6)
     KandoreanTemple_StartRoom6();
-  else if (scene == (s32)&SceneId_Ov653Room7)
+  else if (scene == (s32)&SceneId_KandoreanTemple7)
     KandoreanTemple_StartFogRoom();
-  else if (scene == (s32)&SceneId_Ov653Room8)
+  else if (scene == (s32)&SceneId_KandoreanTemple8)
     KandoreanTemple_StartGate();
-  else if (scene == (s32)&SceneId_Ov653Room9)
+  else if (scene == (s32)&SceneId_KandoreanTemple9)
     KandoreanTemple_StartPoisHall();
   return 0;
 }

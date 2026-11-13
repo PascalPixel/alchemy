@@ -1186,16 +1186,16 @@ extern u8 gField_CachedTilesC[];
 
 // The scene's setup: places its actors, then plays what the entrance it was
 // reached by calls for.
-extern char SceneId_Ov688;
+extern char SceneId_LemuriaEntrance;
 
 extern char SceneId_Ov6A6Room2;
 
-extern char SceneId_Ov65aRoom1;
-extern char SceneId_Ov65aRoom2;
-extern char SceneId_Ov65aRoom3;
-extern char SceneId_Ov65aRoom4;
-extern char SceneId_Ov65aRoom5;
-extern char SceneId_Ov65aRoom6;
+extern char SceneId_MadraCatacombs1;
+extern char SceneId_MadraCatacombs2;
+extern char SceneId_MadraCatacombs3;
+extern char SceneId_MadraCatacombs4;
+extern char SceneId_MadraCatacombs5;
+extern char SceneId_MadraCatacombs6;
 
 void Func_02001e80(s32 value);
 
@@ -1203,13 +1203,13 @@ void Func_02001e80(s32 value);
 
 extern char SceneId_Ov6ACRoom3;
 
-extern char SceneId_Ov6aaRoom1;
-extern char SceneId_Ov6aaRoom2;
-extern char SceneId_Ov6aaRoom3;
-extern char SceneId_Ov6aaRoom4;
-extern char SceneId_Ov6aaRoom5;
-extern char SceneId_Ov6aaRoom6;
-extern char SceneId_Ov6aaRoom7;
+extern char SceneId_MarsLighthouseEntrance1;
+extern char SceneId_MarsLighthouseEntrance2;
+extern char SceneId_MarsLighthouseEntrance3;
+extern char SceneId_MarsLighthouseEntrance4;
+extern char SceneId_MarsLighthouseEntrance5;
+extern char SceneId_MarsLighthouseEntrance6;
+extern char SceneId_MarsLighthouseEntrance7;
 
 extern char SceneId_Ov6adRoom1;
 extern char SceneId_Ov6adRoom2;
@@ -1236,13 +1236,13 @@ extern char SceneId_SuhallaGate2;
 extern char SceneId_SuhallaGate3;
 extern char SceneId_SuhallaGate1;
 
-extern char SceneId_Ov650;
+extern char SceneId_Idejima;
 extern char ResourceId_FarCall00B;
 
-extern char SceneId_Ov676Room1;
-extern char SceneId_Ov676Room2;
+extern char SceneId_Yallam1;
+extern char SceneId_Yallam2;
 
-extern char SceneId_Ov664Room4;
+extern char SceneId_AirsRockInside4;
 
 struct SparkSprite__jupiter_lighthouse_room_5;
 struct Vector3;

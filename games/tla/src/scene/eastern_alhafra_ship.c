@@ -437,7 +437,7 @@ void EasternAlhafraShip_MayorArrives(void) {
   Actor_WalkBy(8, 0, -16);
   Actor_WalkByById(9, 0, -16);
   Event_Wait(10);
-  Event_SetAfterBattleDestination((s32)&SceneId_Ov669, 99);
+  Event_SetAfterBattleDestination((s32)&SceneId_EasternAlhafraShip, 99);
 
   gMainRoutineWork.battleRule24b = 2;
   Field_RequestBattleFromEncounterTable(10, 1);

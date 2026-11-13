@@ -503,7 +503,7 @@ s32 Scene_Initialize(void) {
     } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov65FRoom3) {
       Func_02000e00();
       if (Event_GetFlag(0x919)) {
-        gMainRoutineWork.savedScene = (s32)&SceneId_Ov660Room3;
+        gMainRoutineWork.savedScene = (s32)&SceneId_GarohInteriors3;
         gMainRoutineWork.savedEntrance = 2;
       }
     }

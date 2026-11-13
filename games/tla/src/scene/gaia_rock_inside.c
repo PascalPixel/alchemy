@@ -170,9 +170,9 @@ extern u32 gData_020050f4[];
 extern s32 gData_020056c4[];
 extern s32 gData_02005728[];
 
-extern char SceneId_Ov681Room2;
-extern char SceneId_Ov681Room3;
-extern char SceneId_Ov681Room4;
+extern char SceneId_GaiaRockInside2;
+extern char SceneId_GaiaRockInside3;
+extern char SceneId_GaiaRockInside4;
 
 extern struct ActorPlacement gGaiaRockInside_Placements[];
 extern struct ActorPlacement gGaiaRockInside_LairPlacements[];
@@ -200,7 +200,7 @@ void Func_02000fac(void);
 
 void Actor_Release(struct Actor *object);
 
-extern char SceneId_Ov681Room1;
+extern char SceneId_GaiaRockInside1;
 
 s32 Scene_TalkToActor();
 
@@ -258,14 +258,14 @@ extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 
-extern char SceneId_Ov681Room5;
+extern char SceneId_GaiaRockInside5;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 extern u32 gData_02005458[];
 
 const u8 *Scene_GetRegions(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRockInside5)
     return gData_02005458;
   return 0;
 }
@@ -590,13 +590,13 @@ extern s32 gData_02005e28[];
 
 // Return the table for the current room.
 const void *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRockInside2)
     return gGaiaRockInside_Room2Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRockInside3)
     return gGaiaRockInside_Room3Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRockInside4)
     return gGaiaRockInside_Room4Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRockInside5)
     return gGaiaRockInside_Room5Placements;
   if (gMainRoutineWork.entrance > 8)
     return gGaiaRockInside_LairPlacements;
@@ -1417,7 +1417,7 @@ void GaiaRockInside_ChallengeSerpent(void) {
      */
     do {
     } while (0);
-    scene = (s32)&SceneId_Ov681Room1;
+    scene = (s32)&SceneId_GaiaRockInside1;
     FieldEvent_SetAfterBattleDestination(scene, 10);
     if (FieldPartyInventory_FindMember(451) != -1) {
       if (count == 0)
@@ -1879,7 +1879,7 @@ void Func_02002a24(void) { Func_02004af0(12, 0x304); }
 
 void Func_02002a34(void) { Func_02004af0(13, 0x305); }
 
-extern char SceneId_Ov681Room5;
+extern char SceneId_GaiaRockInside5;
 extern struct Trigger gGaiaRockInside_Triggers[];
 extern struct Trigger gGaiaRockInside_LairTriggers[];
 extern struct Trigger gData_02005fcc[];
@@ -1890,13 +1890,13 @@ extern struct Trigger gGaiaRockInside_Room5Triggers[];
 
 // Returns the current room's table.
 const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRockInside2)
     return gGaiaRockInside_Room2Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRockInside3)
     return gGaiaRockInside_Room3Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRockInside4)
     return gGaiaRockInside_Room4Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRockInside5)
     return gGaiaRockInside_Room5Triggers;
   if (gMainRoutineWork.entrance == 9)
     return gGaiaRockInside_LairTriggers;
@@ -2196,7 +2196,7 @@ s32 Scene_Initialize(void) {
   work = &gMainRoutineWork;
   ((struct GaiaRockInsideSceneWork *)Ram_HeapSlots->eventWork)->screenEffect =
       516;
-  if (work->scene == (s32)&SceneId_Ov681Room1) {
+  if (work->scene == (s32)&SceneId_GaiaRockInside1) {
     early = &work->entrance;
     if (work->entrance > 8) {
       C2(Actor_SetSpriteFlags, Actor_GetById(8), 0);
@@ -2681,7 +2681,7 @@ s32 Scene_Initialize(void) {
       C2(WorldMap_SetReturnLeavingScene, room->scene, *entrance);
       Event_End();
     }
-  } else if (work->scene == (s32)&SceneId_Ov681Room2) {
+  } else if (work->scene == (s32)&SceneId_GaiaRockInside2) {
     s32 mask = 32;
     s32 low;
     s32 high;
@@ -2711,10 +2711,10 @@ s32 Scene_Initialize(void) {
     if ((s8)high != 0)
       C3(Actor_SetHorizontalPositionWithTerrain, 11,
          gData_0200530c[(s8)high][0] << 19, gData_0200530c[(s8)high][1] << 19);
-  } else if (work->scene == (s32)&SceneId_Ov681Room4) {
+  } else if (work->scene == (s32)&SceneId_GaiaRockInside4) {
     if (Test(0xa63))
       C1(Func_02002cb4, 1);
-  } else if (work->scene == (s32)&SceneId_Ov681Room3) {
+  } else if (work->scene == (s32)&SceneId_GaiaRockInside3) {
     struct Actor *object;
     struct Actor *other;
 
@@ -2788,7 +2788,7 @@ s32 Scene_Initialize(void) {
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0, 0);
     if (!Test(0x109) && gMainRoutineWork.entrance == 3)
       Func_0200042c();
-  } else if (work->scene == (s32)&SceneId_Ov681Room5) {
+  } else if (work->scene == (s32)&SceneId_GaiaRockInside5) {
     C2(HangingVine_Place, 10, 1);
     C2(Func_02002ac8, 8, 9);
     if (work->entrance == 1 || work->entrance == 3 || work->entrance == 5)
@@ -2854,11 +2854,11 @@ struct GaiaRockInsideSceneWork {
   s32 screenEffect;
 };
 
-extern char SceneId_Ov681Room1;
-extern char SceneId_Ov681Room2;
-extern char SceneId_Ov681Room3;
-extern char SceneId_Ov681Room4;
-extern char SceneId_Ov681Room5;
+extern char SceneId_GaiaRockInside1;
+extern char SceneId_GaiaRockInside2;
+extern char SceneId_GaiaRockInside3;
+extern char SceneId_GaiaRockInside4;
+extern char SceneId_GaiaRockInside5;
 extern u32 gData_02005360[];
 extern u32 gData_0200539c[];
 extern u32 gData_020053d8[];
@@ -2900,7 +2900,7 @@ s32 Scene_Initialize(void) {
   work = &gMainRoutineWork;
   ((struct GaiaRockInsideSceneWork *)Ram_HeapSlots->eventWork)->screenEffect =
       516;
-  if (work->scene == (s32)&SceneId_Ov681Room1) {
+  if (work->scene == (s32)&SceneId_GaiaRockInside1) {
     early = &work->entrance;
     if (work->entrance > 8) {
       C2(Actor_SetSpriteFlags, Actor_GetById(8), 0);
@@ -3386,7 +3386,7 @@ s32 Scene_Initialize(void) {
       C2(Event_SetDestination, (s16)room->savedScene, (s16)room->savedEntrance);
       Event_End();
     }
-  } else if (work->scene == (s32)&SceneId_Ov681Room2) {
+  } else if (work->scene == (s32)&SceneId_GaiaRockInside2) {
     s32 mask = 32;
     s32 low;
     s32 high;
@@ -3416,10 +3416,10 @@ s32 Scene_Initialize(void) {
     if ((s8)high != 0)
       C3(Actor_SetHorizontalPositionWithTerrain, 11,
          gData_0200530c[(s8)high][0] << 19, gData_0200530c[(s8)high][1] << 19);
-  } else if (work->scene == (s32)&SceneId_Ov681Room4) {
+  } else if (work->scene == (s32)&SceneId_GaiaRockInside4) {
     if (Test(0xa63))
       C1(Func_02002cb4, 1);
-  } else if (work->scene == (s32)&SceneId_Ov681Room3) {
+  } else if (work->scene == (s32)&SceneId_GaiaRockInside3) {
     struct Actor *object;
     struct Actor *other;
 
@@ -3491,7 +3491,7 @@ s32 Scene_Initialize(void) {
     }
     if (!Test(0x9c4))
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0, 0);
-  } else if (work->scene == (s32)&SceneId_Ov681Room5) {
+  } else if (work->scene == (s32)&SceneId_GaiaRockInside5) {
     C2(HangingVine_Place, 10, 1);
     C2(Func_02002ac8, 8, 9);
     if (work->entrance == 1 || work->entrance == 3 || work->entrance == 5)
@@ -3556,7 +3556,7 @@ void Func_02000a60__s2cb4(void) __asm__("Func_02000a60");
 #define Func_02000a60 Func_02000a60__s2cb4
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRockInside1) {
     u8 *map = (u8 *)Ram_HeapSlots->mapWork;
 
     if (gMainRoutineWork.entrance <= 4) {
@@ -3626,7 +3626,7 @@ s32 Scene_PrepareMap(void) {
       Iwram_CopyWords(Ram_MapCollision + 0x1e00, gData_020053e4, 24);
       BlendScript_Start((u16 *)(Ram_MapCollision + 0x1e00));
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room2) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRockInside2) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:
@@ -3647,7 +3647,7 @@ s32 Scene_PrepareMap(void) {
       Func_02004274(101);
       break;
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room5) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRockInside5) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 3:

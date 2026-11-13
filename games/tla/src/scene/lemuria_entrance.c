@@ -140,7 +140,7 @@ s32 Scene_Initialize(void) {
   Actor_SetSpriteFlags(Actor_Get(18), 0);
   if (gMainRoutineWork.entrance == 90) {
     gMainRoutineWork.ownerOverride = 1;
-    Event_SetDestination((s32)&SceneId_Ov688, 1);
+    Event_SetDestination((s32)&SceneId_LemuriaEntrance, 1);
   }
   if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5) {
     gMainRoutineWork.currentOwner = 8;

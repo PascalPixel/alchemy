@@ -407,11 +407,11 @@ extern struct ActorPlacement gContigo_Placements[];
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov694Room1)
+  if (scene == (s32)&SceneId_Contigo1)
     return gContigo_Room1Placements;
-  if (scene == (s32)&SceneId_Ov694Room4)
+  if (scene == (s32)&SceneId_Contigo4)
     return gContigo_Room4Placements;
-  if (scene == (s32)&SceneId_Ov694Room2) {
+  if (scene == (s32)&SceneId_Contigo2) {
     if (gMainRoutineWork.entrance == 4) {
       if (GameFlag_Get(0x9b2) != 0)
         return gContigo_Room2Placements;
@@ -420,7 +420,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
     }
     return gData_02005018;
   }
-  if (scene == (s32)&SceneId_Ov694Room3)
+  if (scene == (s32)&SceneId_Contigo3)
     return gContigo_Room3Placements;
   return gContigo_Placements;
 }
@@ -432,16 +432,16 @@ extern struct Trigger gContigo_Room3Triggers[];
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov694Room1)
+  if (scene == (s32)&SceneId_Contigo1)
     return gContigo_Room1Triggers;
-  if (scene == (s32)&SceneId_Ov694Room4)
+  if (scene == (s32)&SceneId_Contigo4)
     return gContigo_Room4Triggers;
-  if (scene == (s32)&SceneId_Ov694Room2) {
+  if (scene == (s32)&SceneId_Contigo2) {
     if (gMainRoutineWork.entrance == 4)
       return gData_02005e70;
     return gContigo_Room2Triggers;
   }
-  if (scene == (s32)&SceneId_Ov694Room3)
+  if (scene == (s32)&SceneId_Contigo3)
     return gContigo_Room3Triggers;
   return gContigo_Triggers;
 }
@@ -1158,7 +1158,7 @@ void Func_02001938(s32 spoken) {
   GameFlag_Set(0x9e5);
   wait(1);
   Event_LeaveFor(508, 0);
-  Event_SetAfterBattleDestination((s32)&SceneId_Ov694Room3, 20);
+  Event_SetAfterBattleDestination((s32)&SceneId_Contigo3, 20);
 }
 
 struct ContigoTopicState {
@@ -1217,7 +1217,7 @@ void Func_02001abc(void) {
     GameFlag_Set(0x9e5);
     wait(1);
     Event_LeaveFor(509, 0);
-    Event_SetAfterBattleDestination((s32)&SceneId_Ov694Room3, 19);
+    Event_SetAfterBattleDestination((s32)&SceneId_Contigo3, 19);
   } else {
     ((struct ContigoEventCount *)Ram_HeapSlots->eventWork)->refusals++;
     Event_ShowMessageAndWait(14, 0);
@@ -1249,7 +1249,7 @@ void Func_02001b84(void) {
     GameFlag_Set(0x9e5);
     wait(1);
     Event_LeaveFor(507, 0);
-    Event_SetAfterBattleDestination((s32)&SceneId_Ov694Room3, 18);
+    Event_SetAfterBattleDestination((s32)&SceneId_Contigo3, 18);
   } else {
     ((struct ContigoEventCount *)Ram_HeapSlots->eventWork)->refusals++;
     Event_ShowMessageAndWait(8, 0);
@@ -1981,13 +1981,13 @@ struct SpriteAttributes {
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov694Room1)
+  if (scene == (s32)&SceneId_Contigo1)
     Contigo_InitializeRoom1();
-  else if (scene == (s32)&SceneId_Ov694Room4)
+  else if (scene == (s32)&SceneId_Contigo4)
     Contigo_InitializeRoom4();
-  else if (scene == (s32)&SceneId_Ov694Room2)
+  else if (scene == (s32)&SceneId_Contigo2)
     Contigo_InitializeRoom2();
-  else if (scene == (s32)&SceneId_Ov694Room3)
+  else if (scene == (s32)&SceneId_Contigo3)
     Contigo_InitializeRoom3();
   return 0;
 }

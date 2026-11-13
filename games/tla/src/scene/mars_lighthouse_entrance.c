@@ -147,19 +147,19 @@ s32 Func_02000070(void) {
 }
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance1)
     return gMarsLighthouseEntrance_Room1Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance2)
     return gMarsLighthouseEntrance_Room2Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance3)
     return gMarsLighthouseEntrance_Room3Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance4)
     return gMarsLighthouseEntrance_Room4Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance5)
     return gMarsLighthouseEntrance_Room5Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom6)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance6)
     return gMarsLighthouseEntrance_Room6Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom7)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance7)
     return gMarsLighthouseEntrance_Room7Placements;
   return gMarsLighthouseEntrance_Placements;
 }
@@ -843,19 +843,19 @@ void Func_02001138(void) {
 }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance1)
     return gMarsLighthouseEntrance_Room1Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance2)
     return gMarsLighthouseEntrance_Room2Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance3)
     return gMarsLighthouseEntrance_Room3Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance4)
     return gMarsLighthouseEntrance_Room4Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance5)
     return gMarsLighthouseEntrance_Room5Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom6)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance6)
     return gMarsLighthouseEntrance_Room6Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom7)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance7)
     return gMarsLighthouseEntrance_Room7Triggers;
   return gMarsLighthouseEntrance_Triggers;
 }
@@ -958,9 +958,9 @@ s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Event_SetFlag(FLAG_MARS_LIGHTHOUSE_LIT);
   Func_02002270();
-  if (scene == (s32)&SceneId_Ov6aaRoom1) {
+  if (scene == (s32)&SceneId_MarsLighthouseEntrance1) {
     Call1((void (*)())Weather_StartRain, 1);
-  } else if (scene == (s32)&SceneId_Ov6aaRoom2) {
+  } else if (scene == (s32)&SceneId_MarsLighthouseEntrance2) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
 #if !TLA_PATCH_1
     FieldActor_SetSpritePriority(11, 3);
@@ -974,7 +974,7 @@ s32 Scene_Initialize(void) {
           (s32)gData_020053d8);
     if (Event_GetFlag(0xa3e))
       MapGrid_CopyCellsLayered(50, 125, 3, 3, 39, 85);
-  } else if (scene == (s32)&SceneId_Ov6aaRoom3) {
+  } else if (scene == (s32)&SceneId_MarsLighthouseEntrance3) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
     Call4((void (*)())Beam_Start, (s32)gData_020053e6, (s32)gData_020053f8, 0,
           88);
@@ -1036,7 +1036,7 @@ s32 Scene_Initialize(void) {
       FieldEvent_SetExitRequest(20);
       Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
     }
-  } else if (scene == (s32)&SceneId_Ov6aaRoom4) {
+  } else if (scene == (s32)&SceneId_MarsLighthouseEntrance4) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
     if (entrance == 10 || entrance == 1) {
       Call4((void (*)())Beam_Start, (s32)gData_0200540c, (s32)gData_02005412,
@@ -1045,7 +1045,7 @@ s32 Scene_Initialize(void) {
     }
     Call1((void (*)())MarsLighthouseEntrance_PlaceIceCones,
           (s32)gData_02005418);
-  } else if (scene == (s32)&SceneId_Ov6aaRoom5) {
+  } else if (scene == (s32)&SceneId_MarsLighthouseEntrance5) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
     Actor_Get(12)->priorityFlags |= 2;
     if (Event_GetFlag(0xa4d)) {
@@ -1059,7 +1059,7 @@ s32 Scene_Initialize(void) {
     }
     if (Event_GetFlag(0xa49))
       Func_02000c1c();
-  } else if (scene == (s32)&SceneId_Ov6aaRoom6) {
+  } else if (scene == (s32)&SceneId_MarsLighthouseEntrance6) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
     if (entrance == 2 || entrance == 4 || entrance == 6 || entrance == 13) {
       Call4((void (*)())Beam_Start, (s32)gData_02005438, (s32)gData_0200543e,
@@ -1100,10 +1100,10 @@ s32 Scene_Initialize(void) {
     Actor_Get(9)->priorityFlags |= 2;
     if (Event_GetFlag(0xa4e))
       Actor_SetPosition(8, 88, 696);
-  } else if (scene == (s32)&SceneId_Ov6aaRoom7) {
+  } else if (scene == (s32)&SceneId_MarsLighthouseEntrance7) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
   }
-  if (scene == (s32)&SceneId_Ov6aaRoom6 && entrance == 13)
+  if (scene == (s32)&SceneId_MarsLighthouseEntrance6 && entrance == 13)
     Event_ClearFlag(0x104);
   Call4((void (*)())Palette_SetColorsFade, (s32)gData_0200586c,
         (s32)gData_0200587c, (s32)gData_020058a8, (s32)gData_020058d4);
@@ -1135,8 +1135,8 @@ void Func_02002c2c(void);
 
 s32 Scene_PrepareMap(void) {
   if (Flag_IsSet(0xa30))
-    TileMap_ConvertBuffer(gMainRoutineWork.map + ((s32)&SceneId_Ov6ACRoom3 -
-                                                  (s32)&SceneId_Ov6a8Room2),
+    TileMap_ConvertBuffer(gMainRoutineWork.map +
+                              ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Prox2),
                           0x5000000);
   return 0;
 }
@@ -1721,13 +1721,13 @@ DEFINE_ACTOR_ROLL_AND_CRUMBLE(Actor_RollAndCrumble, Work020023c4__s2860,
 #undef ABS
 
 extern char SceneId_Ov6ACRoom3;
-extern char SceneId_Ov6aaRoom1;
-extern char SceneId_Ov6aaRoom2;
-extern char SceneId_Ov6aaRoom3;
-extern char SceneId_Ov6aaRoom4;
-extern char SceneId_Ov6aaRoom5;
-extern char SceneId_Ov6aaRoom6;
-extern char SceneId_Ov6aaRoom7;
+extern char SceneId_MarsLighthouseEntrance1;
+extern char SceneId_MarsLighthouseEntrance2;
+extern char SceneId_MarsLighthouseEntrance3;
+extern char SceneId_MarsLighthouseEntrance4;
+extern char SceneId_MarsLighthouseEntrance5;
+extern char SceneId_MarsLighthouseEntrance6;
+extern char SceneId_MarsLighthouseEntrance7;
 extern struct Trigger gMarsLighthouseEntrance_Room1Triggers[];
 extern struct Trigger gMarsLighthouseEntrance_Room2Triggers[];
 extern struct Trigger gMarsLighthouseEntrance_Room3Triggers[];

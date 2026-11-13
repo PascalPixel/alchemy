@@ -292,8 +292,8 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.entrance == 1 && Event_GetFlag(0xa3d) == 0)
     Weather_StartRain(1);
-  TileMap_ConvertBuffer(gMainRoutineWork.map + ((s32)&SceneId_Ov6ACRoom3 -
-                                                (s32)&SceneId_Ov6a8Room2),
+  TileMap_ConvertBuffer(gMainRoutineWork.map +
+                            ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Prox2),
                         0x5000000);
   return 0;
 }
@@ -1149,7 +1149,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldActor_Jump(19, 4, 10);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 19, 0);
   FIELD_AT(work, u8, 0x24b) = 2;
-  FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov6aeRoom1, 2);
+  FieldEvent_SetAfterBattleDestination((s32)&SceneId_MarsLighthouseAerie1, 2);
   Call2(Field_RequestBattleFromEncounterTable, 102, 1);
   return;
 }

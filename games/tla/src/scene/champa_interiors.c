@@ -1,7 +1,7 @@
 /// @file
 /// The houses of Champa, the village of Briggs's people on the cliffs of the
-/// Eastern Sea, as SceneId_Ov683, with the inn and the artifact shop; the
-/// same scene entered from the islets at entrances 8 and 9 is a house on an
+/// Eastern Sea, as SceneId_ChampaInteriors, with the inn and the artifact shop;
+/// the same scene entered from the islets at entrances 8 and 9 is a house on an
 /// islet.
 ///
 /// Until Briggs sails from Alhafra in the boat he bought
@@ -67,7 +67,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 void Shop_Run(s32 a, s32 b);
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov683 &&
+  if (gMainRoutineWork.scene == (s32)&SceneId_ChampaInteriors &&
       (u16)(gMainRoutineWork.entrance - 8) <= 1)
     return gChampaInteriors_IsletHouseActorPlacements;
   return gChampaInteriors_ActorPlacements;
@@ -80,7 +80,7 @@ void ChampaInteriors_OpenArtifactShop(s32 actor) { Shop_Run(25, actor); }
 void ChampaInteriors_OpenInn(s32 actor) { Inn_CheckIn(10, actor); }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov683 &&
+  if (gMainRoutineWork.scene == (s32)&SceneId_ChampaInteriors &&
       (u16)(gMainRoutineWork.entrance - 8) <= 1)
     return gChampaInteriors_IsletHouseTriggers;
   if (GameFlag_Get(FLAG_BRIGGS_SAILED_FROM_ALHAFRA))
@@ -97,7 +97,7 @@ s32 Scene_Initialize(void) {
 #endif
 
   *effect = value;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov683 &&
+  if (gMainRoutineWork.scene == (s32)&SceneId_ChampaInteriors &&
       (u16)(gMainRoutineWork.entrance - 8) <= 1)
     Scene_FadeInAndClearFlag();
   return 0;

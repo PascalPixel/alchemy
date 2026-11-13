@@ -212,17 +212,17 @@ struct SettlementsSpawn {
   void *update;
 };
 
-extern char SceneId_Ov690Room1;
-extern char SceneId_Ov690Room2;
-extern char SceneId_Ov690Room4;
-extern char SceneId_Ov690Room7;
-extern char SceneId_Ov690Room8;
-extern char SceneId_Ov690Room9;
-extern char SceneId_Ov690Room10;
+extern char SceneId_Settlements1;
+extern char SceneId_Settlements2;
+extern char SceneId_Settlements4;
+extern char SceneId_Settlements7;
+extern char SceneId_Settlements8;
+extern char SceneId_Settlements9;
+extern char SceneId_Settlements10;
 
 void Rope_Initialize(void);
 
-extern char SceneId_Ov690Room6;
+extern char SceneId_Settlements6;
 
 void Settlements_StepOntoWall(void);
 
@@ -256,10 +256,10 @@ u32 *Scene_GetRegions(void) {
   s32 scene = gMainRoutineWork.scene;
   u32 *placements;
 
-  if (scene == (s32)&SceneId_Ov690Room5)
+  if (scene == (s32)&SceneId_Settlements5)
     return gSettlements_Room5Regions;
   placements = 0;
-  if (scene == (s32)&SceneId_Ov690Room3)
+  if (scene == (s32)&SceneId_Settlements3)
     placements = gSettlements_Room3Regions;
   return placements;
 }
@@ -279,21 +279,21 @@ extern struct ActorPlacement gSettlements_Room8Placements[];
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov690Room1)
+  if (scene == (s32)&SceneId_Settlements1)
     return gSettlements_Room1Placements;
-  if (scene == (s32)&SceneId_Ov690Room2)
+  if (scene == (s32)&SceneId_Settlements2)
     return gSettlements_Room2Placements;
-  if (scene == (s32)&SceneId_Ov690Room4)
+  if (scene == (s32)&SceneId_Settlements4)
     return gSettlements_Room4Placements;
-  if (scene == (s32)&SceneId_Ov690Room5)
+  if (scene == (s32)&SceneId_Settlements5)
     return gSettlements_Room5Placements;
-  if (scene == (s32)&SceneId_Ov690Room7)
+  if (scene == (s32)&SceneId_Settlements7)
     return gSettlements_Room7Placements;
-  if (scene == (s32)&SceneId_Ov690Room8)
+  if (scene == (s32)&SceneId_Settlements8)
     return gSettlements_Room8Placements;
-  if (scene == (s32)&SceneId_Ov690Room9)
+  if (scene == (s32)&SceneId_Settlements9)
     return gSettlements_Room9Placements;
-  if (scene == (s32)&SceneId_Ov690Room10)
+  if (scene == (s32)&SceneId_Settlements10)
     return gSettlements_Room10Placements;
   return gSettlements_Placements;
 }
@@ -405,21 +405,21 @@ extern struct Trigger gSettlements_Room10Triggers[];
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov690Room1)
+  if (scene == (s32)&SceneId_Settlements1)
     return gSettlements_Room1Triggers;
-  if (scene == (s32)&SceneId_Ov690Room2)
+  if (scene == (s32)&SceneId_Settlements2)
     return gSettlements_Room2Triggers;
-  if (scene == (s32)&SceneId_Ov690Room4)
+  if (scene == (s32)&SceneId_Settlements4)
     return gSettlements_Room4Triggers;
-  if (scene == (s32)&SceneId_Ov690Room5)
+  if (scene == (s32)&SceneId_Settlements5)
     return gSettlements_Room5Triggers;
-  if (scene == (s32)&SceneId_Ov690Room7)
+  if (scene == (s32)&SceneId_Settlements7)
     return gSettlements_Room7Triggers;
-  if (scene == (s32)&SceneId_Ov690Room8)
+  if (scene == (s32)&SceneId_Settlements8)
     return gSettlements_Room8Triggers;
-  if (scene == (s32)&SceneId_Ov690Room9)
+  if (scene == (s32)&SceneId_Settlements9)
     return gSettlements_Room9Triggers;
-  if (scene == (s32)&SceneId_Ov690Room10)
+  if (scene == (s32)&SceneId_Settlements10)
     return gSettlements_Room10Triggers;
   return gSettlements_Triggers;
 }
@@ -550,9 +550,9 @@ void Settlements_StartWaterfall(void);
 
 s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x100;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room7)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Settlements7)
     Settlements_SetUpKaltIsland();
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room9) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Settlements9) {
     FieldEffect_StartBlankOverlay(0);
     Actor_PlaceBlocks(gSettlements_FallsObjects);
     if (Event_GetFlag(FLAG_SCENE_TEMP_06))
@@ -573,7 +573,7 @@ s32 Scene_Initialize(void) {
     }
 #endif
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room4) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Settlements4) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_30)) {
       MapGrid_CopyCellAttributes(0, 3, 1, 1, 3, 15);
       Actor_SetAnimation(9, 4);
@@ -585,15 +585,15 @@ s32 Scene_Initialize(void) {
     }
     Actor_PlaceBlocks(gSettlements_WallCrate);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Settlements3)
     FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room6)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Settlements6)
     FieldEffect_StartBlankOverlay(0);
   return 0;
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room9) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Settlements9) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_05)) {
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
       MapGrid_CopyCellsTo(12, 32, 11, 15, 1, 1);
@@ -611,7 +611,7 @@ s32 Scene_PrepareMap(void) {
     }
 #endif
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Settlements1) {
     if (Event_GetFlag(0xa60)) {
       MapGrid_CopyCellsTo(5, 46, 5, 47, 1, 1);
       MapGrid_CopyCellsTo(4, 25, 5, 17, 1, 1);
@@ -643,7 +643,7 @@ loop:
   i++;
   if (i <= 63)
     goto loop;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Settlements4)
     MapGrid_CopyCellsTo(33, 30, 23, 14, 1, 2);
   else
     MapGrid_CopyCellsTo(27, 29, 40, 16, 1, 2);

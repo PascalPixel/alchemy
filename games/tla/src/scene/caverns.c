@@ -22,10 +22,10 @@ struct CavernsMapWork {
   struct CavernsMapLayer layers[3];
 };
 
-extern char SceneId_Ov6a9Room1;
-extern char SceneId_Ov6a9Room2;
-extern char SceneId_Ov6a9Room3;
-extern char SceneId_Ov6a9Room4;
+extern char SceneId_Caverns1;
+extern char SceneId_Caverns2;
+extern char SceneId_Caverns3;
+extern char SceneId_Caverns4;
 extern u8 gMapCellBuffer[];
 extern s16 gData_02001220[];
 extern s16 gData_02001264[];
@@ -104,7 +104,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 const s16 *Scene_GetRegions(void) {
   const s16 *result = NULL;
 
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6a9Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Caverns2)
     result = gData_02001264;
   return result;
 }
@@ -114,9 +114,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov6a9Room1)
+  if (scene == (s32)&SceneId_Caverns1)
     return gCaverns_Room1Placements;
-  if (scene == (s32)&SceneId_Ov6a9Room4)
+  if (scene == (s32)&SceneId_Caverns4)
     return gCaverns_Room4Placements;
   return gCaverns_Placements;
 }
@@ -421,20 +421,20 @@ void Func_0200087c(void) {
 const struct Trigger *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov6a9Room1)
+  if (scene == (s32)&SceneId_Caverns1)
     return gCaverns_Room1Triggers;
-  if (scene == (s32)&SceneId_Ov6a9Room3)
+  if (scene == (s32)&SceneId_Caverns3)
     return gCaverns_Room3Triggers;
-  if (scene == (s32)&SceneId_Ov6a9Room4)
+  if (scene == (s32)&SceneId_Caverns4)
     return gCaverns_Room4Triggers;
   return gCaverns_Triggers;
 }
 
 s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6a9Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Caverns1)
     Func_02000ba8();
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6a9Room4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Caverns4)
     Caverns_InitializeRoom4();
   return 0;
 }
@@ -442,11 +442,11 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   s32 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov6a9Room2)
+  if (scene == (s32)&SceneId_Caverns2)
     Func_02000d10();
-  else if (scene == (s32)&SceneId_Ov6a9Room3)
+  else if (scene == (s32)&SceneId_Caverns3)
     Func_02000ea0();
-  else if (scene == (s32)&SceneId_Ov6a9Room4)
+  else if (scene == (s32)&SceneId_Caverns4)
     Func_02000f50();
   return 0;
 }

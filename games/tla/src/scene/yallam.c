@@ -214,10 +214,10 @@ extern struct ActorPlacement gYallam_Room2Placements[];
 extern struct ActorPlacement gYallam_SongGamePlacements[];
 
 const u8 *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room1 &&
+  if (gMainRoutineWork.scene == (s32)&SceneId_Yallam1 &&
       gMainRoutineWork.entrance == 15)
     return gYallam_SongGamePlacements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Yallam2)
     return gYallam_Room2Placements;
   return gYallam_Placements;
 }
@@ -325,10 +325,10 @@ extern struct Trigger gYallam_RoomTwoTriggers[];
 extern struct Trigger gYallam_EntranceFifteenTriggers[];
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room1 &&
+  if (gMainRoutineWork.scene == (s32)&SceneId_Yallam1 &&
       gMainRoutineWork.entrance == 15)
     return gYallam_EntranceFifteenTriggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Yallam2)
     return gYallam_RoomTwoTriggers;
   return gYallam_Triggers;
 }
@@ -1742,7 +1742,7 @@ void Yallam_PlaceFallenPillar(void) {
 }
 
 s32 Scene_Initialize(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Yallam1) {
     if (gMainRoutineWork.entrance == 15)
       Yallam_StartWatchers();
     else
@@ -1752,7 +1752,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room1 &&
+  if (gMainRoutineWork.scene == (s32)&SceneId_Yallam1 &&
       Event_GetFlag(FLAG_AREA_TEMP_00))
     MapGrid_CopyCellAttributes(8, 12, 1, 1, 10, 12);
   return 0;

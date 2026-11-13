@@ -28,9 +28,9 @@ extern s16 gData_0200312c[];
 u8 *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov656Room1)
+  if (scene == (s32)&SceneId_LemurianShip1)
     return gLemurianShip_Room1Entrances;
-  if (scene == (s32)&SceneId_Ov656Room2)
+  if (scene == (s32)&SceneId_LemurianShip2)
     return gData_0200312c;
   return gLemurianShip_Entrances;
 }
@@ -38,9 +38,9 @@ u8 *Scene_GetEntrances(void) {
 u8 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov656Room1)
+  if (scene == (s32)&SceneId_LemurianShip1)
     return gData_02003234;
-  if (scene == (s32)&SceneId_Ov656Room2)
+  if (scene == (s32)&SceneId_LemurianShip2)
     return gData_02003254;
   return 0;
 }
@@ -117,7 +117,7 @@ extern struct ActorPlacement gData_02003560[];
 extern struct ActorPlacement gData_02003590[];
 
 struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov656Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_LemurianShip1) {
     switch (gMainRoutineWork.entrance) {
     case 3:
     case 4:
@@ -137,7 +137,7 @@ struct ActorPlacement *Scene_GetPlacements(void) {
     case 30:
       return gData_02003590;
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov656Room2) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_LemurianShip2) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:
@@ -290,7 +290,7 @@ extern struct Trigger gData_02003d9c[];
 extern struct Trigger gData_02003dfc[];
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov656Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_LemurianShip1) {
     switch (gMainRoutineWork.entrance) {
     case 3:
     case 4:
@@ -312,7 +312,7 @@ const struct Trigger *Scene_GetEvents(void) {
     default:
       return gData_020039d0;
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov656Room2) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_LemurianShip2) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:
@@ -590,7 +590,7 @@ void Func_02000d44(void) {
   Actor_RunScriptAndWait(8, gData_02002e9c);
 
   gMainRoutineWork.battleRule24b = 2;
-  Event_SetAfterBattleDestination((s32)&SceneId_Ov656Room2, 15);
+  Event_SetAfterBattleDestination((s32)&SceneId_LemurianShip2, 15);
   Field_RequestBattleFromEncounterTable(11, 1);
   Event_SetFlag(FLAG_AREA_TEMP_0F);
 }
@@ -1044,7 +1044,7 @@ s32 Scene_Initialize(void) {
       0x209;
   if (Event_GetFlag(0x9b4))
     Event_SetFlag(FLAG_RETREAT_BLOCKED);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov656Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_LemurianShip1) {
     switch (gMainRoutineWork.entrance) {
     case 3:
     case 4:
@@ -1073,7 +1073,7 @@ s32 Scene_Initialize(void) {
       Func_02002498();
       break;
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov656Room2) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_LemurianShip2) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:

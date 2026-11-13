@@ -141,7 +141,7 @@ s32 Scene_Initialize(void) {
     if (gMainRoutineWork.entrance == 4)
       Actor_ArriveInRing(gMainRoutineWork.currentOwner);
   }
-  gMainRoutineWork.savedScene = (s32)&SceneId_Ov694Room2;
+  gMainRoutineWork.savedScene = (s32)&SceneId_Contigo2;
   gMainRoutineWork.savedEntrance = 6;
   return 0;
 }

@@ -144,7 +144,7 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   work->savedShakeX = map->shakeX;
   work->savedShakeY = map->shakeY;
   work->savedShakeDecay = map->shakeDecay;
-  if (gMainRoutineWork.map == (s32)&SceneId_Ov673Room5)
+  if (gMainRoutineWork.map == (s32)&SceneId_GabombaCatacombs5)
     work->lit = 1;
   if (gMainRoutineWork.map == (s32)&SceneId_Ov68fRoom1)
     *((u8 *)work + 0x41) = 1;

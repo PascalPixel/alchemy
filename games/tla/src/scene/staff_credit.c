@@ -461,7 +461,8 @@ void WorldMap_StartPlacedActors(void);
 
 /// Chooses where the credits go next by the entrance they were entered from:
 /// entrances 0 to 5 run resource FarCall00A with 2 to 7 and continue, 2 to 6
-/// after Func_0200020c's stage 0 to 4; entrance 6 leaves for SceneId_Ov6b4.
+/// after Func_0200020c's stage 0 to 4; entrance 6 leaves for
+/// SceneId_MtAlephSummit.
 s32 Scene_Initialize(void) {
   struct EventWork *work;
 
@@ -477,7 +478,7 @@ s32 Scene_Initialize(void) {
   case 0:
     Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
     Func_020020ac(2);
-    Event_SetDestination((s32)&SceneId_Ov6b4, 2);
+    Event_SetDestination((s32)&SceneId_MtAlephSummit, 2);
     break;
   case 1:
     Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
@@ -510,7 +511,7 @@ s32 Scene_Initialize(void) {
     break;
   case 6:
     Func_0200020c(4);
-    Event_SetDestination((s32)&SceneId_Ov6b4, 3);
+    Event_SetDestination((s32)&SceneId_MtAlephSummit, 3);
     break;
   }
   return 0;

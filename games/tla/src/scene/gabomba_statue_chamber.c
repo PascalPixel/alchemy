@@ -51,7 +51,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 u8 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov672Room1)
+  if (scene == (s32)&SceneId_GabombaStatueChamber1)
     return gData_0200a08c;
   return 0;
 }
@@ -61,9 +61,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov672Room1)
+  if (scene == (s32)&SceneId_GabombaStatueChamber1)
     return gData_020020f8;
-  if (scene == (s32)&SceneId_Ov672Room3)
+  if (scene == (s32)&SceneId_GabombaStatueChamber3)
     return gData_020021e8;
   return gData_02002458;
 }
@@ -71,11 +71,11 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov672Room1)
+  if (scene == (s32)&SceneId_GabombaStatueChamber1)
     return gData_02002470;
-  if (scene == (s32)&SceneId_Ov672Room2)
+  if (scene == (s32)&SceneId_GabombaStatueChamber2)
     return gData_020024a0;
-  if (scene == (s32)&SceneId_Ov672Room3)
+  if (scene == (s32)&SceneId_GabombaStatueChamber3)
     return gData_020024dc;
   return gData_02002530;
 }
@@ -929,11 +929,11 @@ s32 Scene_Initialize(void) {
   ((struct GabombaStatueChamberObject *)Actor_GetById(Party_GetLeaderActor()))
       ->priorityFlags |= 0x20;
   scene = gMainRoutineWork.scene;
-  if (scene == (s32)&SceneId_Ov672Room1)
+  if (scene == (s32)&SceneId_GabombaStatueChamber1)
     GabombaStatueChamber_InitializeRoom1();
-  else if (scene == (s32)&SceneId_Ov672Room2)
+  else if (scene == (s32)&SceneId_GabombaStatueChamber2)
     GabombaStatueChamber_InitializeRoom2();
-  else if (scene == (s32)&SceneId_Ov672Room3)
+  else if (scene == (s32)&SceneId_GabombaStatueChamber3)
     GabombaStatueChamber_InitializeRoom3();
   return 0;
 }
@@ -1036,7 +1036,7 @@ void GabombaStatueChamber_InitializeRoom3(void) {
       gMainRoutineWork.retreatEntrance = 1;
     } else if (GameFlag_Get(0xa28)) {
       /* FAKEMATCH(temporary): the scene id through a local. */
-      scene = &SceneId_Ov672Room1;
+      scene = &SceneId_GabombaStatueChamber1;
       gMainRoutineWork.retreatScene = (s32)scene;
       gMainRoutineWork.retreatEntrance = 3;
     }

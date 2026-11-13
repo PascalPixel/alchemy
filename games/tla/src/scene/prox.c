@@ -359,18 +359,18 @@ extern struct ActorPlacement gData_0200521c__prox[] __asm__("gData_0200521c");
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov6a8Room1 && Event_GetFlag(0x9c5) &&
+  if (scene == (s32)&SceneId_Prox1 && Event_GetFlag(0x9c5) &&
       !Event_GetFlag(0x9cc))
     return gData_02004b2c;
   scene = gMainRoutineWork.scene;
-  if (scene == (s32)&SceneId_Ov6a8Room2)
+  if (scene == (s32)&SceneId_Prox2)
     return gProx_Room2Placements;
-  if (scene == (s32)&SceneId_Ov6a8Room3) {
+  if (scene == (s32)&SceneId_Prox3) {
     if (Event_GetFlag(0xa3d))
       return gData_02004f04;
     return gProx_Room3Placements;
   }
-  if (scene == (s32)&SceneId_Ov6a8Room4) {
+  if (scene == (s32)&SceneId_Prox4) {
     if (Event_GetFlag(0xa3d)) {
       gData_0200521c__prox[1].talkFacing = 3;
       gData_0200521c__prox[4].talkFacing = 3;
@@ -378,12 +378,12 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
     }
     return gData_0200506c;
   }
-  if (scene == (s32)&SceneId_Ov6a8Room5) {
+  if (scene == (s32)&SceneId_Prox5) {
     if (Event_GetFlag(0xa3d))
       return gData_020054a4;
     return gProx_Room5Placements;
   }
-  if (scene == (s32)&SceneId_Ov6a8Room6)
+  if (scene == (s32)&SceneId_Prox6)
     return gProx_Room6Placements;
   return gData_02004b14;
 }
@@ -404,17 +404,17 @@ extern struct Trigger gData_02005a20[];
 const u8 *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov6a8Room1)
+  if (scene == (s32)&SceneId_Prox1)
     return gProx_Room1Triggers;
-  if (scene == (s32)&SceneId_Ov6a8Room2)
+  if (scene == (s32)&SceneId_Prox2)
     return gProx_Room2Triggers;
-  if (scene == (s32)&SceneId_Ov6a8Room3)
+  if (scene == (s32)&SceneId_Prox3)
     return gProx_Room3Triggers;
-  if (scene == (s32)&SceneId_Ov6a8Room4)
+  if (scene == (s32)&SceneId_Prox4)
     return gData_02005a20;
-  if (scene == (s32)&SceneId_Ov6a8Room5)
+  if (scene == (s32)&SceneId_Prox5)
     return gProx_Room5Triggers;
-  if (scene == (s32)&SceneId_Ov6a8Room6)
+  if (scene == (s32)&SceneId_Prox6)
     return gProx_Room6Triggers;
   return gProx_Triggers;
 }
@@ -1038,7 +1038,7 @@ void Func_02001860(s32 a0, s32 a1, s32 a2) {
 void Func_020018e0(void) {
   s32 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov6a8Room2) {
+  if (scene == (s32)&SceneId_Prox2) {
     if ((gFrameCount & 63) == 0)
       Func_02001860(536 << 16, 40 << 16, 232 << 16);
     if (((gFrameCount + 60) & 63) == 0)
@@ -1049,7 +1049,7 @@ void Func_020018e0(void) {
     }
     if (((gFrameCount + 40) & 63) == 0)
       Func_02001860(336 << 16, 42 << 16, 362 << 16);
-  } else if (scene == (s32)&SceneId_Ov6a8Room3) {
+  } else if (scene == (s32)&SceneId_Prox3) {
     if ((gFrameCount & 63) == 0)
       Func_02001860(568 << 16, 104 << 16, 296 << 16);
   }
@@ -1451,13 +1451,13 @@ s32 Scene_Initialize(void) {
     Event_SetFlag(FLAG_RETREAT_BLOCKED);
   }
   scene = gMainRoutineWork.scene;
-  if (scene == (s32)&SceneId_Ov6a8Room4) {
+  if (scene == (s32)&SceneId_Prox4) {
     ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
     Func_020029c8();
-  } else if (scene == (s32)&SceneId_Ov6a8Room5) {
+  } else if (scene == (s32)&SceneId_Prox5) {
     ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
     Func_02002a38();
-  } else if (scene == (s32)&SceneId_Ov6a8Room6) {
+  } else if (scene == (s32)&SceneId_Prox6) {
     s32 *effect =
         &((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect;
     /* FAKEMATCH(pin): the call's argument pinned to the r0 it is passed in. */
@@ -1485,11 +1485,11 @@ s32 Scene_Initialize(void) {
       Map_ClearLayerEntryFlag(6);
     }
     scene = gMainRoutineWork.scene;
-    if (scene == (s32)&SceneId_Ov6a8Room2) {
+    if (scene == (s32)&SceneId_Prox2) {
       if (!Event_GetFlag(FLAG_AREA_TEMP_00))
         Actor_SetWideSprite(64, 1);
       Func_020027e4();
-    } else if (scene == (s32)&SceneId_Ov6a8Room3) {
+    } else if (scene == (s32)&SceneId_Prox3) {
       Prox_InitializeRoom3();
     }
     if (Event_GetFlag(FLAG_SCENE_TEMP_01)) {

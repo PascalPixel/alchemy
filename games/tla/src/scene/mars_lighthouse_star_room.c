@@ -279,7 +279,7 @@ void CrackedTile_DropIn(void);
 void Map_CenterOnFollowedPoint(void);
 void FieldEffect_StartBlankOverlay(s32 a);
 extern struct Actor *gMarsLighthouseStarRoom_MarsStar;
-extern char SceneId_Ov6abRoom1;
+extern char SceneId_MarsLighthouseStarRoom1;
 
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -290,7 +290,7 @@ s32 Scene_Initialize(void) {
   Event_SetFlag(FLAG_MARS_LIGHTHOUSE_LIT);
   Func_02001d7c();
   Func_02001df0(0, 0, 0, 88);
-  if (scene == (s32)&SceneId_Ov6abRoom1) {
+  if (scene == (s32)&SceneId_MarsLighthouseStarRoom1) {
     FieldEffect_StartBlankOverlay(0);
     if (Event_GetFlag(0xa30)) {
       MapGrid_CopyCellAttributes(65, 65, 9, 21, 38, 24);
@@ -367,8 +367,8 @@ void TileMap_ConvertBuffer(s32 scene, s32 a1);
 
 s32 Scene_PrepareMap(void) {
   if (Event_GetFlag(0xa30))
-    TileMap_ConvertBuffer(gMainRoutineWork.map + ((s32)&SceneId_Ov6ACRoom3 -
-                                                  (s32)&SceneId_Ov6a8Room2),
+    TileMap_ConvertBuffer(gMainRoutineWork.map +
+                              ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Prox2),
                           0x5000000);
   if (gMainRoutineWork.entrance == 20)
     Event_SetFlag(0xa4b);
@@ -377,7 +377,7 @@ s32 Scene_PrepareMap(void) {
 
 void Event_Start(void);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
-extern char SceneId_Ov66c;
+extern char SceneId_GondowanCliffsHideout;
 
 void Func_020005b0(void) {
   Event_Start();
@@ -414,8 +414,9 @@ void Func_020005b0(void) {
   Actor_SetAnimation(12, 4);
   FieldEvent_Wait(60);
   gMainRoutineWork.battleRule24b = 2;
-  FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov6abRoom1, 20);
-  gMainRoutineWork.battleBackground = (s32)&SceneId_Ov66c;
+  FieldEvent_SetAfterBattleDestination((s32)&SceneId_MarsLighthouseStarRoom1,
+                                       20);
+  gMainRoutineWork.battleBackground = (s32)&SceneId_GondowanCliffsHideout;
   Field_RequestBattleFromEncounterTable(102, 0);
 }
 
@@ -772,7 +773,7 @@ void MarsLighthouseStarRoom_ExamineStatue(void) {
 }
 
 extern char SceneId_Ov6ACRoom3;
-extern char SceneId_Ov66d;
+extern char SceneId_Naribwe;
 
 void Scene_PlayMusic(void);
 void Func_02001424(void);
@@ -846,8 +847,8 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   MapGrid_CopyCellsLayered(65, 65, 9, 21, 38, 24);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 38, 87);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 102, 23);
-  TileMap_ConvertBuffer(gMainRoutineWork.map + ((s32)&SceneId_Ov6ACRoom3 -
-                                                (s32)&SceneId_Ov6a8Room2),
+  TileMap_ConvertBuffer(gMainRoutineWork.map +
+                            ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Prox2),
                         screen);
   zero = 0;
   *screen = zero;
@@ -888,7 +889,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->actionFlags |= 1;
   Scene_PlayMusic();
   Event_SetFlag(0xa30);
-  gMainRoutineWork.battleBackground = (s32)&SceneId_Ov66d;
+  gMainRoutineWork.battleBackground = (s32)&SceneId_Naribwe;
   Event_End();
 }
 
@@ -1025,8 +1026,8 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   MapGrid_CopyCellsLayered(65, 65, 9, 21, 38, 24);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 38, 87);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 102, 23);
-  TileMap_ConvertBuffer(gMainRoutineWork.map + ((s32)&SceneId_Ov6ACRoom3 -
-                                                (s32)&SceneId_Ov6a8Room2),
+  TileMap_ConvertBuffer(gMainRoutineWork.map +
+                            ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Prox2),
                         screen);
   *screen = 0;
   PaletteFade_ApplyTarget(0x10000, 0);
@@ -1064,7 +1065,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   Scene_PlayMusic();
   Event_SetFlag(0xa30);
   Event_SetFlag(0xa9e);
-  gMainRoutineWork.battleBackground = (s32)&SceneId_Ov66d;
+  gMainRoutineWork.battleBackground = (s32)&SceneId_Naribwe;
   Event_End();
 L_020093b0:
   return;

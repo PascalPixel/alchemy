@@ -1275,7 +1275,7 @@ void Func_02001c60(void) {
 
     party->value = 2;
   }
-  Event_SetDestination((s32)&SceneId_Ov694Room1, 99);
+  Event_SetDestination((s32)&SceneId_Contigo1, 99);
   FieldEvent_Wait(40);
   Func_02000158();
 }

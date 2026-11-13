@@ -119,9 +119,9 @@ extern u32 gData_0200307c[];
 extern u32 gData_0200309c[];
 
 const struct ActorPlacement *Scene_GetRegions(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins5)
     return (const struct ActorPlacement *)gData_0200307c;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room8)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins8)
     return (const struct ActorPlacement *)gData_0200309c;
   return 0;
 }
@@ -235,19 +235,19 @@ extern struct ActorPlacement gAnkohlRuins_Room6Placements[];
 extern struct ActorPlacement gAnkohlRuins_Room8Placements[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins1)
     return gAnkohlRuins_Room1Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins2)
     return gAnkohlRuins_Room2Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins3)
     return gAnkohlRuins_Room3Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins4)
     return gAnkohlRuins_Room4Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins5)
     return gAnkohlRuins_Room5Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room6)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins6)
     return gAnkohlRuins_Room6Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room8)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins8)
     return gAnkohlRuins_Room8Placements;
   return gAnkohlRuins_Placements;
 }
@@ -264,13 +264,13 @@ void Func_020006b4(void) {
 // them (rooms 1, 3, 4 and 5); in room 5 the object with id 9 also copies the
 // rows that flag 0x205 opens (always, in Japanese).
 void Func_020006d0(s32 unused, s32 id) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins1) {
     if (id == 8) {
       AnkohlRuins_Call2dfc(4, 68, 1, 1, 4, 69);
       AnkohlRuins_Call2dfc(3, 68, 1, 1, 3, 70);
     }
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room4) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins4) {
     if (id == 19) {
       AnkohlRuins_Call2dfc(35, 72, 1, 1, 38, 72);
       AnkohlRuins_Call2dfc(36, 72, 1, 1, 37, 73);
@@ -280,13 +280,13 @@ void Func_020006d0(s32 unused, s32 id) {
     if (id == 18)
       AnkohlRuins_Call2dfc(39, 93, 1, 1, 40, 93);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room3) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins3) {
     if (id == 8) {
       AnkohlRuins_Call2dfc(32, 69, 1, 1, 32, 70);
       AnkohlRuins_Call2dfc(33, 69, 1, 1, 33, 71);
     }
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room5) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins5) {
     if (id == 8) {
       MapGrid_CopyCellAttributes(17, 85, 1, 1, 17, 83);
       AnkohlRuins_Call2dfc(19, 84, 1, 1, 18, 82);
@@ -307,7 +307,7 @@ void Func_020006d0(s32 unused, s32 id) {
 void Func_02000850(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  if (id == 8 && gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1) {
+  if (id == 8 && gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins1) {
     if (object->x >> 20 == 4) {
       AnkohlRuins_Call2dfc(4, 68, 1, 1, 2, 69);
       Event_SetFlag(0x9c6);
@@ -315,7 +315,7 @@ void Func_02000850(s32 unused, s32 id) {
     AnkohlRuins_Call2dfc(3, 68, 1, 1, 4, 69);
     AnkohlRuins_Call2dfc(3, 69, 1, 1, 3, 70);
   }
-  if (id == 8 && gMainRoutineWork.scene == (s32)&SceneId_Ov686Room3) {
+  if (id == 8 && gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins3) {
     MapGrid_CopyCellAttributes(32, 71, 1, 1, 33, 71);
     AnkohlRuins_Call2dfc(31, 70, 1, 1, 32, 70);
     if (object->x >> 20 == 32) {
@@ -323,7 +323,7 @@ void Func_02000850(s32 unused, s32 id) {
       Event_SetFlag(0x9c7);
     }
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room4) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins4) {
     if (id == 8) {
       AnkohlRuins_Call2dfc(3, 114, 1, 1, 3, 113);
       if (object->x >> 20 == 2)
@@ -343,7 +343,7 @@ void Func_02000850(s32 unused, s32 id) {
       }
     }
   }
-  if (id == 8 && gMainRoutineWork.scene == (s32)&SceneId_Ov686Room5) {
+  if (id == 8 && gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins5) {
     MapGrid_CopyCellAttributes(16, 83, 1, 1, 17, 83);
     MapGrid_CopyCellAttributes(19, 82, 1, 1, 18, 82);
     MapGrid_CopyCellAttributes(19, 82, 1, 1, 19, 83);
@@ -652,11 +652,11 @@ void Func_0200124c(s32 a, s32 id) {
 }
 
 void Func_02001264(s32 a, s32 id) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins1)
     Event_SetFlag(id + 0x97f);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins2)
     Event_SetFlag(id + 0x995);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins4)
     Event_SetFlag(id + 0x996);
 }
 
@@ -1214,19 +1214,19 @@ void Func_02002318(void) { GameFlag_Set(FLAG_SCENE_TEMP_05); }
 void Func_02002328(void) { GameFlag_Clear(FLAG_SCENE_TEMP_05); }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins1)
     return gAnkohlRuins_Room1Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins2)
     return gAnkohlRuins_Room2Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins3)
     return gAnkohlRuins_Room3Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins4)
     return gAnkohlRuins_Room4Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins5)
     return gAnkohlRuins_Room5Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room6)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins6)
     return gAnkohlRuins_Room6Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room8)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins8)
     return gAnkohlRuins_Room8Triggers;
   return gAnkohlRuins_Triggers;
 }
@@ -1294,7 +1294,7 @@ s32 Scene_Initialize(s32 a0) {
   s32 scene = work->scene;
   struct Actor *object;
 
-  if (scene == (s32)&SceneId_Ov686Room1) {
+  if (scene == (s32)&SceneId_AnkohlRuins1) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
     if (GameFlag_Get(0x9d2))
       Actor_SetPosition(10, 0, 0);
@@ -1342,7 +1342,7 @@ s32 Scene_Initialize(s32 a0) {
       Actor_SetPosition(8, 72, 88);
       MapGrid_CopyCellAttributes(4, 68, 1, 1, 2, 69);
     }
-  } else if (scene == (s32)&SceneId_Ov686Room2) {
+  } else if (scene == (s32)&SceneId_AnkohlRuins2) {
     if (GameFlag_Get(0x99e))
       Actor_SetPosition(9, 0, 0);
     if (GameFlag_Get(0x99f))
@@ -1361,7 +1361,7 @@ s32 Scene_Initialize(s32 a0) {
       if (work->entrance == 6 || work->entrance == 17 || work->entrance == 15)
         Event_PlaySound(SE_575);
     }
-  } else if (scene == (s32)&SceneId_Ov686Room3) {
+  } else if (scene == (s32)&SceneId_AnkohlRuins3) {
     if (GameFlag_Get(0x9c7)) {
       Actor_SetPosition(8, 520, 104);
       MapGrid_CopyCellAttributes(32, 69, 1, 1, 33, 69);
@@ -1377,7 +1377,7 @@ s32 Scene_Initialize(s32 a0) {
       MapGrid_CopyCellAttributes(14, 87, 1, 1, 14, 88);
       MapGrid_CopyCellAttributes(41, 48, 3, 2, width, 41);
     }
-  } else if (scene == (s32)&SceneId_Ov686Room4) {
+  } else if (scene == (s32)&SceneId_AnkohlRuins4) {
     if (GameFlag_Get(0x9a1))
       Actor_SetPosition(11, 0, 0);
     if (GameFlag_Get(0x9a2))
@@ -1459,7 +1459,7 @@ s32 Scene_Initialize(s32 a0) {
     }
     if ((u16)(gMainRoutineWork.entrance - 13) <= 3)
       goto task;
-  } else if (scene == (s32)&SceneId_Ov686Room5) {
+  } else if (scene == (s32)&SceneId_AnkohlRuins5) {
     if (GameFlag_Get(0x9db))
       Actor_SetPosition(9, 0, 0);
     if (GameFlag_Get(0x9cb)) {
@@ -1471,7 +1471,7 @@ s32 Scene_Initialize(s32 a0) {
     task:
       Task_AddFrame(Func_020010f4, 0x480);
     }
-  } else if (scene == (s32)&SceneId_Ov686Room6) {
+  } else if (scene == (s32)&SceneId_AnkohlRuins6) {
     s16 *entrance = &work->entrance;
 
     if (work->entrance <= 4)
@@ -1532,7 +1532,7 @@ s32 Scene_Initialize(s32 a0) {
       FieldEvent_Wait(1);
       Map_CenterOnFollowedPoint();
     }
-  } else if (scene == (s32)&SceneId_Ov686Room8) {
+  } else if (scene == (s32)&SceneId_AnkohlRuins8) {
     object = Actor_GetById(64);
     if (object != NULL) {
       object->motionFlags = 0;
@@ -1567,7 +1567,7 @@ s32 Scene_Initialize(s32 a0) {
   s32 scene = work->scene;
   struct Actor *object;
 
-  if (scene == (s32)&SceneId_Ov686Room1) {
+  if (scene == (s32)&SceneId_AnkohlRuins1) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
     if (GameFlag_Get(0x9d2))
       Actor_SetPosition(10, 0, 0);
@@ -1615,7 +1615,7 @@ s32 Scene_Initialize(s32 a0) {
       Actor_SetPosition(8, 72, 88);
       MapGrid_CopyCellAttributes(4, 68, 1, 1, 2, 69);
     }
-  } else if (scene == (s32)&SceneId_Ov686Room2) {
+  } else if (scene == (s32)&SceneId_AnkohlRuins2) {
     if (GameFlag_Get(0x99e))
       Actor_SetPosition(9, 0, 0);
     if (GameFlag_Get(0x99f))
@@ -1634,7 +1634,7 @@ s32 Scene_Initialize(s32 a0) {
       if (work->entrance == 6 || work->entrance == 17 || work->entrance == 15)
         Event_PlaySound(SE_575);
     }
-  } else if (scene == (s32)&SceneId_Ov686Room3) {
+  } else if (scene == (s32)&SceneId_AnkohlRuins3) {
     if (GameFlag_Get(0x9c7)) {
       Actor_SetPosition(8, 520, 104);
       MapGrid_CopyCellAttributes(32, 69, 1, 1, 33, 69);
@@ -1650,7 +1650,7 @@ s32 Scene_Initialize(s32 a0) {
       MapGrid_CopyCellAttributes(14, 87, 1, 1, 14, 88);
       MapGrid_CopyCellAttributes(41, 48, 3, 2, width, 41);
     }
-  } else if (scene == (s32)&SceneId_Ov686Room4) {
+  } else if (scene == (s32)&SceneId_AnkohlRuins4) {
     if (GameFlag_Get(0x9a1))
       Actor_SetPosition(11, 0, 0);
     if (GameFlag_Get(0x9a2))
@@ -1725,7 +1725,7 @@ s32 Scene_Initialize(s32 a0) {
     }
     if ((u16)(gMainRoutineWork.entrance - 13) <= 3)
       goto task;
-  } else if (scene == (s32)&SceneId_Ov686Room5) {
+  } else if (scene == (s32)&SceneId_AnkohlRuins5) {
     if (GameFlag_Get(0x9db))
       Actor_SetPosition(9, 0, 0);
     if (GameFlag_Get(0x9cb)) {
@@ -1737,7 +1737,7 @@ s32 Scene_Initialize(s32 a0) {
     task:
       Task_AddFrame(Func_020010f4, 0x480);
     }
-  } else if (scene == (s32)&SceneId_Ov686Room6) {
+  } else if (scene == (s32)&SceneId_AnkohlRuins6) {
     s16 *entrance = &work->entrance;
 
     if (work->entrance <= 4)
@@ -1798,7 +1798,7 @@ s32 Scene_Initialize(s32 a0) {
       FieldEvent_Wait(1);
       Map_CenterOnFollowedPoint();
     }
-  } else if (scene == (s32)&SceneId_Ov686Room8) {
+  } else if (scene == (s32)&SceneId_AnkohlRuins8) {
     object = Actor_GetById(64);
     if (object != NULL) {
       object->motionFlags = 0;

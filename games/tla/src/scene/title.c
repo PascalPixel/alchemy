@@ -155,7 +155,7 @@ s32 Title_Run(void) {
       FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                              gMainRoutineWork.paletteGlow[1]);
       Party_SetLeaderFelix();
-      Event_SetDestination((s32)&SceneId_Ov650, 13);
+      Event_SetDestination((s32)&SceneId_Idejima, 13);
     }
   }
   Event_PlaySound(SOUND_FADE_OUT_BGM);

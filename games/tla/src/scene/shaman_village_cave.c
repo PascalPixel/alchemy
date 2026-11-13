@@ -382,8 +382,8 @@ void ShamanVillageCave_MeetColossoFans(void) {
   do {
     gMainRoutineWork.battleRule24b = 2;
   } while (0);
-  FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov695, 20);
-  Event_SetDefeatDestination((s32)&SceneId_Ov695, 21);
+  FieldEvent_SetAfterBattleDestination((s32)&SceneId_ShamanVillageCave, 20);
+  Event_SetDefeatDestination((s32)&SceneId_ShamanVillageCave, 21);
   Field_RequestBattleFromEncounterTable(102, 2);
 }
 
@@ -400,8 +400,8 @@ void ShamanVillageCave_FightGladiators(void) {
     do {
     } while (0);
   }
-  FieldEvent_SetAfterBattleDestination((s32)&SceneId_Ov695, 20);
-  Event_SetDefeatDestination((s32)&SceneId_Ov695, 21);
+  FieldEvent_SetAfterBattleDestination((s32)&SceneId_ShamanVillageCave, 20);
+  Event_SetDefeatDestination((s32)&SceneId_ShamanVillageCave, 21);
   Field_RequestBattleFromEncounterTable(102, 2);
 }
 

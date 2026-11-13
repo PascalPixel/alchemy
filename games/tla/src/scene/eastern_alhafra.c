@@ -1282,7 +1282,8 @@ void Func_02001cb0(void) {
 }
 
 /// Only once flag 0x8a7 is set: the scene that opens with MsgIStillJust, which
-/// sets flag 0x905 and ends by sending the party to SceneId_Ov667, entrance 81.
+/// sets flag 0x905 and ends by sending the party to SceneId_AlhafraManor,
+/// entrance 81.
 void Func_02002048(void) {
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) == 0)
     return;
@@ -1541,13 +1542,13 @@ void Func_02002048(void) {
   }
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Call2((void (*)())Event_SetDestination, (s32)&SceneId_Ov667, 81);
+  Call2((void (*)())Event_SetDestination, (s32)&SceneId_AlhafraManor, 81);
   Event_End();
 }
 
 /// Only once flag 0x8a7 is set: the scene that opens with MsgBriggs2, which
 /// sets flags FLAG_ALHAFRA_SHIP_GONE and FLAG_BRIGGS_SAILED_FROM_ALHAFRA and
-/// ends by sending the party to SceneId_Ov668Room1, entrance 99.
+/// ends by sending the party to SceneId_EasternAlhafra1, entrance 99.
 void Func_02002a08(void) {
   struct MapWork *map;
   s32 i;
@@ -1790,7 +1791,7 @@ scroll:
   FieldEvent_Wait(30);
   Event_End();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  Event_SetDestination((s32)&SceneId_Ov668Room1, 99);
+  Event_SetDestination((s32)&SceneId_EasternAlhafra1, 99);
 }
 
 /// The scene that opens with MsgWhatYouLet; either answer to each of its two

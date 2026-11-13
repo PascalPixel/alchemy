@@ -109,9 +109,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov677Room1)
+  if (scene == (s32)&SceneId_YallamInteriors1)
     return gYallamInteriors_Room1Placements;
-  if (scene == (s32)&SceneId_Ov677Room2)
+  if (scene == (s32)&SceneId_YallamInteriors2)
     return gYallamInteriors_Room2Placements;
   return gYallamInteriors_Placements;
 }
@@ -213,9 +213,9 @@ s32 YallamInteriors_MindReadItemMerchant(void) {
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov677Room1)
+  if (scene == (s32)&SceneId_YallamInteriors1)
     return gYallamInteriors_Room1Triggers;
-  if (scene == (s32)&SceneId_Ov677Room2)
+  if (scene == (s32)&SceneId_YallamInteriors2)
     return gYallamInteriors_Room2Triggers;
   return gYallamInteriors_Triggers;
 }
@@ -510,7 +510,7 @@ s32 Scene_Initialize(void) {
 
     scene = party->scene;
   }
-  if (scene == (s32)&SceneId_Ov677Room1) {
+  if (scene == (s32)&SceneId_YallamInteriors1) {
     if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
       Actor_SetPosition(14, 600, 360);
       Actor_SetPosition(16, 632, 346);
@@ -525,7 +525,7 @@ s32 Scene_Initialize(void) {
                          0);
     Actor_SetSpritePriority(11, 2);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov677Room2) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_YallamInteriors2) {
     FieldEffect_StartBlankOverlay(0);
     Actor_SetSpritePriority(12, 2);
     ((struct YallamInteriorsObject *)Actor_GetById(12))->collisionFlags |= 4;

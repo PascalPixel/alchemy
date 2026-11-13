@@ -1084,9 +1084,9 @@ s32 Scene_PrepareMap(void) {
 
   party = &gMainRoutineWork;
   if (Event_GetFlag(flag))
-    TileMap_ConvertBuffer(
-        party->map + ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),
-        0x5000000);
+    TileMap_ConvertBuffer(party->map +
+                              ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Prox2),
+                          0x5000000);
   return 0;
 }
 

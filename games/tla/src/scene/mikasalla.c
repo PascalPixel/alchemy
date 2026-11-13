@@ -1,7 +1,7 @@
 /// @file
 /// Mikasalla, the village in the far south of Osenia, and the tunnels under
-/// it, in two scenes that share this overlay (SceneId_Ov65dRoom1, the village,
-/// and SceneId_Ov65dRoom2, the tunnels).
+/// it, in two scenes that share this overlay (SceneId_Mikasalla1, the village,
+/// and SceneId_Mikasalla2, the tunnels).
 ///
 /// Scoop digs up a ladder by the sheep (Mikasalla_DigUpLadder); the tunnels
 /// lead to the inn's back yard, where Spark the Mars Djinni joins the party
@@ -62,7 +62,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 s16 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov65dRoom2)
+  if (scene == (s32)&SceneId_Mikasalla2)
     return gMikasalla_TunnelRegions;
   return 0;
 }
@@ -72,7 +72,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov65dRoom1)
+  if (scene == (s32)&SceneId_Mikasalla1)
     return gMikasalla_VillagePlacements;
   return gMikasalla_TunnelPlacements;
 }
@@ -141,7 +141,7 @@ void Mikasalla_MeetSpark(void) { Djinn_JoinParty(ACTOR_SPARK, 2, 8); }
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov65dRoom2)
+  if (scene == (s32)&SceneId_Mikasalla2)
     return gMikasalla_TunnelTriggers;
   return gMikasalla_VillageTriggers;
 }
@@ -215,7 +215,7 @@ s32 Scene_PrepareMap(void) {
   } while (0);
   object->priorityFlags = flags;
   Actor_GetById(party->currentOwner)->priorityFlags |= 0x20;
-  if (party->scene == (s32)&SceneId_Ov65dRoom2) {
+  if (party->scene == (s32)&SceneId_Mikasalla2) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
       Map_SetLayerEntryFlag(0);
       Map_SetLayerEntryFlag(1);
@@ -243,7 +243,7 @@ void Mikasalla_ClimbDownLadder(void) {
   s32 exit;
   s32 drop;
 
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65dRoom1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Mikasalla1) {
     exit = 12;
     drop = 17;
   } else {

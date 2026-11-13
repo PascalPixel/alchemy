@@ -162,9 +162,9 @@ extern struct Trigger gMadraCatacombs_Triggers[];
 void MadraCatacombs_SetUpRoomBelowBookshelf(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs4)
     return gMadraCatacombs_Room4Entrances;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs5)
     return gMadraCatacombs_Room5Entrances;
   return gMadraCatacombs_Entrances;
 }
@@ -172,7 +172,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 const s16 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov65aRoom2)
+  if (scene == (s32)&SceneId_MadraCatacombs2)
     return gMadraCatacombs_LadderRoomRegions;
   return 0;
 }
@@ -180,29 +180,29 @@ const s16 *Scene_GetRegions(void) {
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs1)
     return gMadraCatacombs_Room1Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs3)
     return gMadraCatacombs_Room3Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs5)
     return gMadraCatacombs_Room5Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom6)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs6)
     return gMadraCatacombs_Room6Placements;
   return gMadraCatacombs_Placements;
 }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs1)
     return gMadraCatacombs_Room1Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs2)
     return gMadraCatacombs_Room2Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs3)
     return gMadraCatacombs_Room3Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs4)
     return gMadraCatacombs_Room4Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs5)
     return gMadraCatacombs_Room5Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom6)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs6)
     return gMadraCatacombs_Room6Triggers;
   return gMadraCatacombs_Triggers;
 }
@@ -566,15 +566,15 @@ DEFINE_LEAVE_BLOCKED_WAY(MadraCatacombs_LeaveBlockedTunnel, 8)
 
 s32 Scene_Initialize(void) {
   ((struct SceneWork *)Ram_HeapSlots->eventWork)->unk1ac = 0x204;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs1)
     MadraCatacombs_SetUpVillage();
-  else if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom3)
+  else if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs3)
     MadraCatacombs_SetUpChampaTunnel();
-  else if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom4)
+  else if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs4)
     MadraCatacombs_SetUpRoomBelowBookshelf();
-  else if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom5)
+  else if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs5)
     MadraCatacombs_SetUpBookshelfRoom();
-  else if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom6)
+  else if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs6)
     MadraCatacombs_SetUpTabletRoom();
   return 0;
 }

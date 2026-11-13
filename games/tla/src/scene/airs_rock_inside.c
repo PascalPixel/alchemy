@@ -30,15 +30,15 @@ struct AirsRockInsideMapWork {
   struct AirsRockInsideMapLayer layers[3];
 };
 
-extern char SceneId_Ov664Room1;
-extern char SceneId_Ov664Room2;
-extern char SceneId_Ov664Room3;
-extern char SceneId_Ov664Room5;
-extern char SceneId_Ov664Room6;
-extern char SceneId_Ov664Room7;
-extern char SceneId_Ov664Room8;
-extern char SceneId_Ov664Room9;
-extern char SceneId_Ov664Room10;
+extern char SceneId_AirsRockInside1;
+extern char SceneId_AirsRockInside2;
+extern char SceneId_AirsRockInside3;
+extern char SceneId_AirsRockInside5;
+extern char SceneId_AirsRockInside6;
+extern char SceneId_AirsRockInside7;
+extern char SceneId_AirsRockInside8;
+extern char SceneId_AirsRockInside9;
+extern char SceneId_AirsRockInside10;
 extern u8 gMapCellBuffer[];
 
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
@@ -588,7 +588,7 @@ void Func_02000988(void) {
     wait(1);
   }
   Sound_Play(SE_288);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room1 &&
+  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside1 &&
       leader->x >> 19 == 39) {
     Event_SetExitRequest(16);
     Event_End();
@@ -1020,14 +1020,14 @@ void Func_02001458(struct Actor *object) {
     object->speedLimit = -object->speedLimit >> 1;
     object->z = leader->z - 0x80000;
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room3) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside3) {
     other = Actor_GetById(8);
     if (Position_FlatDistance(&other->x, pos) <= 8) {
       object->speedLimit = -object->speedLimit >> 1;
       object->unk4c = 0;
       object->z = other->z - 0x80000;
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room8) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside8) {
     for (i = 0; i != 3; i++) {
       struct Actor *other2 = Actor_GetById(i + 12);
 #define other other2
@@ -1081,7 +1081,7 @@ void Func_02001690(void) {
   if ((frame & 6) != 0)
     return;
   scene = gMainRoutineWork.scene;
-  if (scene == (s32)&SceneId_Ov664Room3) {
+  if (scene == (s32)&SceneId_AirsRockInside3) {
     s32 x;
 
     if ((frame & 1) && !GameFlag_Get(0x89b))
@@ -1089,7 +1089,7 @@ void Func_02001690(void) {
     else
       x = 0x1180000;
     Func_0200160c(x, 0, 0x2680000);
-  } else if (scene == (s32)&SceneId_Ov664Room8) {
+  } else if (scene == (s32)&SceneId_AirsRockInside8) {
     if (frame & 1) {
       if (Actor_GetById(gMainRoutineWork.currentOwner)->z >> 19 > 41) {
         if (Actor_GetById(gMainRoutineWork.currentOwner)->x >> 19 <= 44)
@@ -1263,16 +1263,16 @@ void Func_02001828(void) {
   }
   carried = 0;
   while (Actor_HasArrived(gust) == 0) {
-    if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room6) {
+    if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside6) {
       object = Actor_GetById(8);
       if (gust->x >> 19 == object->x >> 19 && carried == 0)
         PICK_UP(object, 0x270025);
-    } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room8) {
+    } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside8) {
       object = Actor_GetById(9);
       if (gust->x >> 20 == object->x >> 20 &&
           gust->z >> 20 == object->z >> 20 && carried == 0)
         PICK_UP(object, 0x290069);
-    } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room9) {
+    } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside9) {
       object = Actor_GetById(10);
       if (gust->x >> 20 == object->x >> 20 &&
           gust->z >> 20 == object->z >> 20 && carried == 0)
@@ -1302,11 +1302,11 @@ void Func_02001828(void) {
     object->priorityFlags &= ~6;
     Actor_SetSpriteFlags(object, 1);
     Scene_SetActorSpritePriority(object, 2);
-    if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room6) {
+    if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside6) {
       object->terrainHeight = 0xffe00000;
       Call6(Map_CopyCellAttributeRect, 19, 16, 1, 1, 19, 18);
       GameFlag_Set(0x89f);
-    } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room8) {
+    } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside8) {
       Call6(Map_CopyCellAttributeRect, 19, 38, 1, 1, 20, 38);
       OverlayObject_WaitUntilIdle(object);
       wait(1);
@@ -1315,7 +1315,7 @@ void Func_02001828(void) {
       object->terrainHeight = 0;
       object->y = 0;
       MapGrid_SetCellHeight(0x1400000, 0x3400000, 0, 4);
-    } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room9) {
+    } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside9) {
       OverlayObject_WaitUntilIdle(object);
       wait(1);
       OverlayObject_WaitUntilIdle(object);
@@ -1359,7 +1359,7 @@ void Func_02001828(void) {
                           EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY, &dust);
       }
       if ((gFrameCount & 3) == 0) {
-        if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room4) {
+        if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside4) {
           GameFlag_Set(FLAG_AREA_TEMP_00);
           cell.x = (gust->x >> 20) + 64;
           cell.z = gust->z >> 20;
@@ -1367,7 +1367,7 @@ void Func_02001828(void) {
           MapGrid_CopyCellPictureIndicesRect(21, 88, 24, 89, 1, 2);
           Map_CopyCellAttributeRect(23, 92, 2, 1, 23, 89);
           Map_CopyCellAttributeRect(18, 33, 2, 1, 23, 25);
-        } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room7) {
+        } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside7) {
           cell.x = gust->x >> 20;
           cell.z = ((gust->z - gust->y) >> 20) + 64;
           if (hit == 0) {
@@ -1382,7 +1382,7 @@ void Func_02001828(void) {
             Call6(Map_CopyCellAttributeRect, 38, 98, 1, 1, 38, 99);
             Call6(Map_CopyCellAttributeRect, 38, 35, 1, 1, 38, 37);
           }
-        } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room9) {
+        } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside9) {
           GameFlag_Set(FLAG_AREA_TEMP_06);
           cell.x = gust->x >> 20;
           Call6(MapGrid_CopyCellPictureIndicesRect, 15, 80, cell.x, 77, 1, 3);
@@ -1408,7 +1408,7 @@ shrink:
     FieldEvent_Wait(1);
   }
   Actor_Release(gust);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room4) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside4) {
     if (hit == 5) {
       SHAKE();
       Call6(MapGrid_CopyCellPictureIndicesRect, 79, 0x40, 29, 85, 5, 7);
@@ -1430,7 +1430,7 @@ shrink:
       Call6(Map_CopyCellAttributeRect, 0x30, 88, 1, 1, 31, 89);
       GameFlag_Clear(FLAG_AREA_TEMP_01);
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room6) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside6) {
     if (hit == 5) {
       SHAKE();
       Call6(MapGrid_CopyCellPictureIndicesRect, 79, 0x40, 0x20, 79, 5, 7);
@@ -1494,7 +1494,7 @@ extern struct ActorPlacement gData_02006238[];
 extern s16 gData_02006268[];
 
 const u8 *Scene_GetEntrances(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside1)
     return gData_02006268;
   return gData_02006238;
 }
@@ -1504,23 +1504,23 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside1)
     return gAirsRockInside_Room1Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside2)
     return gAirsRockInside_Room2Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside3)
     return gAirsRockInside_Room3Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside4)
     return gAirsRockInside_Room4Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside5)
     return gAirsRockInside_Room5Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room6)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside6)
     return gAirsRockInside_Room6Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room7)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside7)
     return gAirsRockInside_Room7Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room8)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside8)
     return gAirsRockInside_Room8Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room9)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside9)
     return gAirsRockInside_Room9Placements;
   return gAirsRockInside_Placements;
 }
@@ -1544,7 +1544,7 @@ void Func_020026c0(void) {
   gData_02006c0c = -1;
   CopyCells(73, 72, gData_020073dc, gData_020073e0, gData_020073e4,
             gData_020073e8);
-  if (gMainRoutineWork.scene != (s32)&SceneId_Ov664Room5)
+  if (gMainRoutineWork.scene != (s32)&SceneId_AirsRockInside5)
     return;
   work = Ram_HeapSlots->eventWork;
   value = Func_02000690(2, x, z) >> 8;
@@ -1580,14 +1580,15 @@ void Func_02002790(void) {
   gData_020073dc = 1;
   gData_020073e0 = 2;
   scene = gMainRoutineWork.scene;
-  if (scene == (s32)&SceneId_Ov664Room1 || scene == (s32)&SceneId_Ov664Room2 ||
-      scene == (s32)&SceneId_Ov664Room3) {
+  if (scene == (s32)&SceneId_AirsRockInside1 ||
+      scene == (s32)&SceneId_AirsRockInside2 ||
+      scene == (s32)&SceneId_AirsRockInside3) {
     gData_020073e4 = x;
     gData_020073e8 = z - y + 64;
-  } else if (scene == (s32)&SceneId_Ov664Room5 ||
-             scene == (s32)&SceneId_Ov664Room6 ||
-             scene == (s32)&SceneId_Ov664Room7 ||
-             scene == (s32)&SceneId_Ov664Room9) {
+  } else if (scene == (s32)&SceneId_AirsRockInside5 ||
+             scene == (s32)&SceneId_AirsRockInside6 ||
+             scene == (s32)&SceneId_AirsRockInside7 ||
+             scene == (s32)&SceneId_AirsRockInside9) {
     gData_020073e4 = x + 64;
     gData_020073e8 = z - y;
   }
@@ -1611,11 +1612,12 @@ void Func_02002898(void) {
   gData_020073dc = 1;
   gData_020073e0 = 2;
   scene = gMainRoutineWork.scene;
-  if (scene == (s32)&SceneId_Ov664Room1 || scene == (s32)&SceneId_Ov664Room2) {
+  if (scene == (s32)&SceneId_AirsRockInside1 ||
+      scene == (s32)&SceneId_AirsRockInside2) {
     gData_020073e4 = x;
     gData_020073e8 = z - y + 64;
-  } else if (scene == (s32)&SceneId_Ov664Room5 ||
-             scene == (s32)&SceneId_Ov664Room6) {
+  } else if (scene == (s32)&SceneId_AirsRockInside5 ||
+             scene == (s32)&SceneId_AirsRockInside6) {
     gData_020073e4 = x + 64;
     gData_020073e8 = z - y;
   }
@@ -1938,21 +1940,21 @@ static inline void ClearLayer2Shape(s32 x, s32 z) {
 void Func_02003254(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov664Room1) {
+  if (scene == (s32)&SceneId_AirsRockInside1) {
     Actor_LiftTargetBlock(gData_02006050);
-  } else if (scene == (s32)&SceneId_Ov664Room2) {
+  } else if (scene == (s32)&SceneId_AirsRockInside2) {
     Actor_LiftTargetBlock(gData_02006054);
-  } else if (scene == (s32)&SceneId_Ov664Room3) {
+  } else if (scene == (s32)&SceneId_AirsRockInside3) {
     Actor_LiftTargetBlock(gData_0200605a);
-  } else if (scene == (s32)&SceneId_Ov664Room4) {
+  } else if (scene == (s32)&SceneId_AirsRockInside4) {
     Actor_LiftTargetBlock(gData_02006064);
-  } else if (scene == (s32)&SceneId_Ov664Room7) {
+  } else if (scene == (s32)&SceneId_AirsRockInside7) {
     ClearLayer2Shape(0x2600000, 0x1500000);
     MapGrid_SetCellHeight(0x2700000, 0x1500000, 2, 0);
     Actor_LiftTargetBlock(gData_02006068);
-  } else if (scene == (s32)&SceneId_Ov664Room8) {
+  } else if (scene == (s32)&SceneId_AirsRockInside8) {
     Actor_LiftTargetBlock(gData_02006072);
-  } else if (scene == (s32)&SceneId_Ov664Room9) {
+  } else if (scene == (s32)&SceneId_AirsRockInside9) {
     Actor_GetById(10)->timer = 0;
     Actor_LiftTargetBlock(gData_0200607e);
   }
@@ -1985,25 +1987,25 @@ void Func_0200332c(void) {
   }
   x = pushed->x >> 19;
   z = pushed->z >> 19;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside1) {
     if (x == 103 && z == 41)
       GameFlag_Set(0xa8e);
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room2) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside2) {
     if (x == 13 && z == 49)
       GameFlag_Set(0x898);
     else if (x == 41 && z == 49)
       GameFlag_Set(0x897);
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room3) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside3) {
     if (x == 33 && z == 79)
       GameFlag_Set(0x89b);
     else if (x == 77 && z == 71)
       GameFlag_Set(0x89c);
     else if (x == 59 && z == 65)
       GameFlag_Set(0x89d);
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room4) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside4) {
     if (x == 81 && z == 37)
       GameFlag_Set(0x89e);
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room7) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside7) {
     Call4((void (*)())MapGrid_SetCellHeight, 0x2600000, 0x1500000, 2, -4);
     Call4((void (*)())MapGrid_SetCellHeight, 0x2700000, 0x1500000, 2, -4);
     if (x == 43 && z == 87)
@@ -2020,7 +2022,7 @@ void Func_0200332c(void) {
       else
         ((u8 *)Actor_GetById(14))[99] = 0;
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room8) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside8) {
     if (x == 35 && z == 59)
       GameFlag_Set(0x8d1);
     if (x == 45 && z == 105)
@@ -2039,7 +2041,7 @@ void Func_0200332c(void) {
       GameFlag_Clear(FLAG_SCENE_TEMP_02);
     Func_0200062c(2, Actor_GetById(8)->x >> 20, Actor_GetById(8)->z >> 20, 0);
     Func_0200062c(2, Actor_GetById(9)->x >> 20, Actor_GetById(9)->z >> 20, 0);
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room9) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside9) {
     if (x == 45 && z == 33)
       GameFlag_Set(0x8d3);
     Func_0200062c(2, Actor_GetById(10)->x >> 20, Actor_GetById(10)->z >> 20, 0);
@@ -2859,25 +2861,25 @@ void AirsRockInside_CheckPsynergyStone(void) {
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov664Room1)
+  if (scene == (s32)&SceneId_AirsRockInside1)
     return gAirsRockInside_Room1Triggers;
-  if (scene == (s32)&SceneId_Ov664Room2)
+  if (scene == (s32)&SceneId_AirsRockInside2)
     return gAirsRockInside_Room2Triggers;
-  if (scene == (s32)&SceneId_Ov664Room3)
+  if (scene == (s32)&SceneId_AirsRockInside3)
     return gAirsRockInside_Room3Triggers;
-  if (scene == (s32)&SceneId_Ov664Room4)
+  if (scene == (s32)&SceneId_AirsRockInside4)
     return gAirsRockInside_Room4Triggers;
-  if (scene == (s32)&SceneId_Ov664Room5)
+  if (scene == (s32)&SceneId_AirsRockInside5)
     return gAirsRockInside_Room5Triggers;
-  if (scene == (s32)&SceneId_Ov664Room6)
+  if (scene == (s32)&SceneId_AirsRockInside6)
     return gAirsRockInside_Room6Triggers;
-  if (scene == (s32)&SceneId_Ov664Room7)
+  if (scene == (s32)&SceneId_AirsRockInside7)
     return gAirsRockInside_Room7Triggers;
-  if (scene == (s32)&SceneId_Ov664Room8)
+  if (scene == (s32)&SceneId_AirsRockInside8)
     return gAirsRockInside_Room8Triggers;
-  if (scene == (s32)&SceneId_Ov664Room9)
+  if (scene == (s32)&SceneId_AirsRockInside9)
     return gAirsRockInside_Room9Triggers;
-  if (scene == (s32)&SceneId_Ov664Room10)
+  if (scene == (s32)&SceneId_AirsRockInside10)
     return gAirsRockInside_Room10Triggers;
   return gAirsRockInside_Room2Triggers;
 }
@@ -3118,7 +3120,7 @@ s32 Scene_Initialize(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   GameFlag_Set(FLAG_AREA_TEMP_00);
   GameFlag_Set(0x89f);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside1) {
     Func_02002770();
     // The Japanese release arrives here whatever flag 265 says.
     if (gMainRoutineWork.entrance == 16 &&
@@ -3166,7 +3168,7 @@ s32 Scene_Initialize(void) {
     if (gMainRoutineWork.entrance == 11 &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
       Func_0200505c();
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room2) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside2) {
     REG_BLDALPHA = 0x1008;
     REG_BLDCNT = 0x3f10;
     Func_02002770();
@@ -3188,7 +3190,7 @@ s32 Scene_Initialize(void) {
     if (gMainRoutineWork.entrance == 3 &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
       Func_02004cc8();
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room3) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside3) {
     Func_02002770();
     Scene_QueueMusic(SE_245);
     REG_BLDALPHA = 0xc08;
@@ -3219,7 +3221,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_GetById(9), 0);
     Actor_SetSpriteFlags(Actor_GetById(10), 0);
     Actor_SetSpriteFlags(Actor_GetById(13), 0);
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room4) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside4) {
     Tightrope_Initialize();
     Tightrope_Place(0, 11, 12);
     Tightrope_Place(1, 13, 14);
@@ -3248,7 +3250,7 @@ s32 Scene_Initialize(void) {
       Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(648),
             PIXELS(296));
     Actor_PlaceBlocks(gData_02006064);
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room5) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside5) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     Func_02002770();
     i = 0;
@@ -3266,7 +3268,7 @@ s32 Scene_Initialize(void) {
     Actor_GetById(8)->terrainHeight = PIXELS(16);
     object->y = PIXELS(16);
     Actor_SetActionCallback(Actor_GetById(8), 9);
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room6) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside6) {
     Func_02002770();
     Tightrope_Initialize();
     Tightrope_Place(0, 11, 12);
@@ -3294,7 +3296,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(8)->terrainHeight = 0xffe00000;
       Call6(Map_CopyCellAttributeRect, 19, 16, 1, 1, 19, 18);
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room7) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside7) {
     Func_02002770();
     one = 1;
     ((u8 *)Actor_GetById(12))[98] = one;
@@ -3320,7 +3322,7 @@ s32 Scene_Initialize(void) {
       Call6(Map_CopyCellAttributeRect, 38, 98, 1, 1, 38, 99);
       Call6(Map_CopyCellAttributeRect, 38, 35, 1, 1, 38, 37);
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room8) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside8) {
     Scene_QueueMusic(SE_245);
     REG_BLDALPHA = 0xc08;
     REG_BLDCNT = 0x3f10;
@@ -3345,7 +3347,7 @@ s32 Scene_Initialize(void) {
     else
       Func_02001084(Actor_GetById(11), 8, 0);
     Actor_SetSpriteFlags(Actor_GetById(11), 0);
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room9) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside9) {
     Func_02002770();
     if (GameFlag_Get(0x8d3))
       Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(360),
@@ -3368,7 +3370,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside1)
     Func_02004f3c();
   return 0;
 }

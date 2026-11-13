@@ -94,9 +94,9 @@ extern struct ActorPlacement gKibomboMountains_Room2Placements[];
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov66fRoom1)
+  if (scene == (s32)&SceneId_KibomboMountains1)
     return gKibomboMountains_Room1Placements;
-  if (scene == (s32)&SceneId_Ov66fRoom2)
+  if (scene == (s32)&SceneId_KibomboMountains2)
     return gKibomboMountains_Room2Placements;
   return gKibomboMountains_Placements;
 }
@@ -290,11 +290,11 @@ extern s16 gKibomboMountains_Room3Triggers[];
 const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov66fRoom1)
+  if (scene == (s32)&SceneId_KibomboMountains1)
     return gKibomboMountains_Room1Triggers;
-  if (scene == (s32)&SceneId_Ov66fRoom2)
+  if (scene == (s32)&SceneId_KibomboMountains2)
     return gKibomboMountains_Room2Triggers;
-  if (scene == (s32)&SceneId_Ov66fRoom3)
+  if (scene == (s32)&SceneId_KibomboMountains3)
     return gKibomboMountains_Room3Triggers;
   return gKibomboMountains_Triggers;
 }
@@ -318,7 +318,7 @@ s32 Scene_Initialize(void) {
       EVENT_WORK_VALUE;
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 0x20;
   scene = gMainRoutineWork.scene;
-  if (scene == (s32)&SceneId_Ov66fRoom1) {
+  if (scene == (s32)&SceneId_KibomboMountains1) {
     Actor_SetSpritePriority(18, 1);
     Actor_SetSpritePriority(19, 1);
     Actor_SetSpriteFlags(Actor_GetById(19), 0);
@@ -356,7 +356,7 @@ s32 Scene_Initialize(void) {
       Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
     else
       Actor_GetById(13)->scaleY = 0x14000;
-  } else if (scene == (s32)&SceneId_Ov66fRoom2) {
+  } else if (scene == (s32)&SceneId_KibomboMountains2) {
     Actor_SetSpritePriority(8, 1);
     Actor_SetSpritePriority(9, 1);
     Rope_Initialize();
@@ -523,7 +523,7 @@ void Func_02000af0(void) {
 
 void Func_02000d80(void) {
   s32 moved = Event_GetFlag(FLAG_AREA_TEMP_00);
-  s32 scene = (s32)&SceneId_Ov66fRoom2;
+  s32 scene = (s32)&SceneId_KibomboMountains2;
 
   if (moved)
     Event_SetDestination(scene, 9);

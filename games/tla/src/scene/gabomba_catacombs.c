@@ -39,11 +39,11 @@ void FieldItem_JumpToLeader(s32 a, s32 b, s32 c);
 
 extern u32 gData_0200128c[];
 
-extern char SceneId_Ov673Room1;
-extern char SceneId_Ov673Room2;
-extern char SceneId_Ov673Room3;
-extern char SceneId_Ov673Room4;
-extern char SceneId_Ov673Room5;
+extern char SceneId_GabombaCatacombs1;
+extern char SceneId_GabombaCatacombs2;
+extern char SceneId_GabombaCatacombs3;
+extern char SceneId_GabombaCatacombs4;
+extern char SceneId_GabombaCatacombs5;
 
 static __inline__ void Func_02001274_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
@@ -433,7 +433,7 @@ void Func_02000d90(void) {
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs1)
     return (const struct SceneRegion *)gData_02001310;
   return 0;
 }
@@ -443,29 +443,29 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 extern struct Trigger gGabombaCatacombs_Triggers[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs1)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room1Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs2)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room2Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs3)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room3Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs4)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room4Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs5)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room5Placements;
   return (const struct ActorPlacement *)gGabombaCatacombs_Placements;
 }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs1)
     return gGabombaCatacombs_Room1Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs2)
     return gGabombaCatacombs_Room2Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs3)
     return gGabombaCatacombs_Room3Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs4)
     return gGabombaCatacombs_Room4Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs5)
     return gGabombaCatacombs_Room5Triggers;
   return gGabombaCatacombs_Triggers;
 }
@@ -476,7 +476,7 @@ const struct Trigger *Scene_GetEvents(void) {
 #define CATACOMBS_SCREEN_EFFECT 516
 #endif
 
-extern char SceneId_Ov671Room7, SceneId_Ov672Room1;
+extern char SceneId_Ov671Room7, SceneId_GabombaStatueChamber1;
 void FieldEffect_StartBlankOverlay(s32 a);
 
 s32 Scene_Initialize(void) {
@@ -486,21 +486,21 @@ s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect =
       CATACOMBS_SCREEN_EFFECT;
   FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room1 &&
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs1 &&
       (entrance = gMainRoutineWork.entrance) == 1) {
     if (GameFlag_Get(0xa27)) {
       gMainRoutineWork.retreatScene = (s32)&SceneId_Ov671Room7;
       gMainRoutineWork.retreatEntrance = entrance;
     } else if (GameFlag_Get(0xa28)) {
-      gMainRoutineWork.retreatScene = (s32)&SceneId_Ov672Room1;
+      gMainRoutineWork.retreatScene = (s32)&SceneId_GabombaStatueChamber1;
       gMainRoutineWork.retreatEntrance = 3;
     }
   }
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
-      gMainRoutineWork.scene == (s32)&SceneId_Ov673Room2 &&
+      gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs2 &&
       gMainRoutineWork.entrance > 2)
     Actor_DepartInRing(gMainRoutineWork.currentOwner);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room3) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs3) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_00))
       MapGrid_CopyCellAttributes(6, 23, 1, 1, 8, 23);
     if (GameFlag_Get(FLAG_SCENE_TEMP_01))
@@ -516,10 +516,10 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_06))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 15);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room5 &&
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs5 &&
       GameFlag_Get(FLAG_SCENE_TEMP_00))
     MapGrid_CopyCellAttributes(15, 18, 1, 1, 17, 18);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room4 &&
+  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs4 &&
       GameFlag_Get(0x9ce) && !GameFlag_Get(0xf93) &&
       !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     statue = Actor_GetById(64);

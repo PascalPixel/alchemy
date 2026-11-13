@@ -207,7 +207,7 @@ void MainRoutine_Run(s32 mode) {
     gMainRoutineWork.scene = (s32)&SceneId_Ov64a;
     gMainRoutineWork.entrance = 1;
   } else if (gDebugMode && mode == 3) {
-    gMainRoutineWork.scene = (s32)&SceneId_Ov6b4;
+    gMainRoutineWork.scene = (s32)&SceneId_MtAlephSummit;
     gMainRoutineWork.entrance = 1;
   } else if (gDebugMode && mode == 4) {
     gMainRoutineWork.scene = (s32)&SceneId_Title;

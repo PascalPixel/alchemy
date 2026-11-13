@@ -154,11 +154,11 @@ extern struct Trigger gIslets_Room3Triggers[];
 extern struct Trigger gIslets_Room4Triggers[];
 extern struct Trigger gIslets_Room5Triggers[];
 extern u16 gSceneState[];
-extern char SceneId_Ov674Room1;
-extern char SceneId_Ov674Room2;
-extern char SceneId_Ov674Room3;
-extern char SceneId_Ov674Room4;
-extern char SceneId_Ov674Room5;
+extern char SceneId_Islets1;
+extern char SceneId_Islets2;
+extern char SceneId_Islets3;
+extern char SceneId_Islets4;
+extern char SceneId_Islets5;
 
 void Islets_InitializeRoom1(void);
 void Islets_InitializeRoom2(void);
@@ -230,15 +230,15 @@ void FieldPsynergy_StopMindReadWave(void);
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov674Room1)
+  if (scene == (s32)&SceneId_Islets1)
     return gIslets_Room1Placements;
-  if (scene == (s32)&SceneId_Ov674Room2)
+  if (scene == (s32)&SceneId_Islets2)
     return gIslets_Room2Placements;
-  if (scene == (s32)&SceneId_Ov674Room3)
+  if (scene == (s32)&SceneId_Islets3)
     return gIslets_Room3Placements;
-  if (scene == (s32)&SceneId_Ov674Room4)
+  if (scene == (s32)&SceneId_Islets4)
     return gIslets_Room4Placements;
-  if (scene == (s32)&SceneId_Ov674Room5) {
+  if (scene == (s32)&SceneId_Islets5) {
     if (Event_GetFlag(0xaa5))
       gIslets_Room5Placements[1].talkFacing = 1;
     return gIslets_Room5Placements;
@@ -274,15 +274,15 @@ void Func_020000d8(void) {
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov674Room1)
+  if (scene == (s32)&SceneId_Islets1)
     return gIslets_Room1Triggers;
-  if (scene == (s32)&SceneId_Ov674Room2)
+  if (scene == (s32)&SceneId_Islets2)
     return gIslets_Room2Triggers;
-  if (scene == (s32)&SceneId_Ov674Room3)
+  if (scene == (s32)&SceneId_Islets3)
     return gIslets_Room3Triggers;
-  if (scene == (s32)&SceneId_Ov674Room4)
+  if (scene == (s32)&SceneId_Islets4)
     return gIslets_Room4Triggers;
-  if (scene == (s32)&SceneId_Ov674Room5)
+  if (scene == (s32)&SceneId_Islets5)
     return gIslets_Room5Triggers;
   return gIslets_Triggers;
 }
@@ -1727,15 +1727,15 @@ s32 Scene_Initialize(void) {
 
   work->field1ac = 0x100;
   scene = gMainRoutineWork.scene;
-  if (scene == (s32)&SceneId_Ov674Room1)
+  if (scene == (s32)&SceneId_Islets1)
     Islets_InitializeRoom1();
-  else if (scene == (s32)&SceneId_Ov674Room2)
+  else if (scene == (s32)&SceneId_Islets2)
     Islets_InitializeRoom2();
-  else if (scene == (s32)&SceneId_Ov674Room3)
+  else if (scene == (s32)&SceneId_Islets3)
     Islets_InitializeRoom3();
-  else if (scene == (s32)&SceneId_Ov674Room4)
+  else if (scene == (s32)&SceneId_Islets4)
     Islets_InitializeRoom4();
-  else if (scene == (s32)&SceneId_Ov674Room5)
+  else if (scene == (s32)&SceneId_Islets5)
     Islets_InitializeRoom5();
   return 0;
 }

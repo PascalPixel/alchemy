@@ -252,7 +252,7 @@ s32 Scene_Initialize(void) {
       wait(1);
     check:;
     } while (gInput.held == 0);
-    Event_SetDestination((s32)&SceneId_Ov667, 80);
+    Event_SetDestination((s32)&SceneId_AlhafraManor, 80);
   }
   return 0;
 }

@@ -141,9 +141,9 @@ extern s16 gData_02003f44[];
 s16 *Scene_GetRegions(void) {
   s32 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov663Room1)
+  if (scene == (s32)&SceneId_AirsRock1)
     return gData_02003e84;
-  if (scene == (s32)&SceneId_Ov663Room2)
+  if (scene == (s32)&SceneId_AirsRock2)
     return gData_02003ec4;
   return gData_02003f44;
 }
@@ -153,9 +153,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov663Room1)
+  if (scene == (s32)&SceneId_AirsRock1)
     return gAirsRock_Room1Placements;
-  if (scene == (s32)&SceneId_Ov663Room2)
+  if (scene == (s32)&SceneId_AirsRock2)
     return gAirsRock_Room2Placements;
   return gAirsRock_Placements;
 }
@@ -286,9 +286,9 @@ void Func_02000700(void) {
 const struct Trigger *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov663Room1)
+  if (scene == (s32)&SceneId_AirsRock1)
     return gAirsRock_Room1Triggers;
-  if (scene == (s32)&SceneId_Ov663Room2)
+  if (scene == (s32)&SceneId_AirsRock2)
     return gAirsRock_Room2Triggers;
   return gAirsRock_Triggers;
 }
@@ -1546,10 +1546,10 @@ s32 Scene_Initialize(void) {
   volatile struct DmaRegisters *dma;
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 516;
-  gMainRoutineWork.retreatScene = (s32)&SceneId_Ov663Room1;
+  gMainRoutineWork.retreatScene = (s32)&SceneId_AirsRock1;
   gMainRoutineWork.retreatEntrance = 1;
   LEADER()->priorityFlags |= 32;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov663Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRock1) {
     switch (gMainRoutineWork.entrance) {
     case 2:
     case 3:
@@ -1603,7 +1603,7 @@ s32 Scene_Initialize(void) {
       Actor_SetSpriteColor(Actor_GetById(8), 6);
     }
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov663Room2) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRock2) {
     switch (gMainRoutineWork.entrance) {
     case 3:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
@@ -1670,7 +1670,7 @@ s32 Scene_Initialize(void) {
       break;
     }
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov663Room3) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRock3) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:

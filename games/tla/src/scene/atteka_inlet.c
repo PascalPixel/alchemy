@@ -1,7 +1,7 @@
 /// @file
 /// Atteka Inlet, where the party's ship lies on the southern continent, in two
 /// scenes that share this overlay: the harbour with the ship
-/// (SceneId_Ov693Room1) and the shore beside it (SceneId_Ov693Room2). Piers
+/// (SceneId_AttekaInlet1) and the shore beside it (SceneId_AttekaInlet2). Piers
 /// asks whether to set sail (AttekaInlet_AskPiersToSetSail). After Jupiter
 /// Lighthouse the shipwrights stop the party to see their handiwork fly
 /// (AttekaInlet_ShipwrightsStopTheParty), Hamma shows the ship's new wings
@@ -66,14 +66,14 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov693Room1) {
+  if (scene == (s32)&SceneId_AttekaInlet1) {
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
       return gAttekaInlet_HarbourActorPlacementsOnceFlown;
     if (GameFlag_Get(0x9d0))
       return gAttekaInlet_HarbourActorPlacementsOnceWinged;
     return gAttekaInlet_HarbourActorPlacements;
   }
-  if (scene == (s32)&SceneId_Ov693Room2) {
+  if (scene == (s32)&SceneId_AttekaInlet2) {
     if (GameFlag_Get(0x9d0))
       return gAttekaInlet_ShoreActorPlacementsOnceWinged;
     return gAttekaInlet_ShoreActorPlacements;
@@ -86,9 +86,9 @@ extern struct Trigger gAttekaInlet_HarbourTriggers[];
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov693Room1)
+  if (scene == (s32)&SceneId_AttekaInlet1)
     return gAttekaInlet_HarbourTriggers;
-  if (scene == (s32)&SceneId_Ov693Room2)
+  if (scene == (s32)&SceneId_AttekaInlet2)
     return gAttekaInlet_ShoreTriggers;
   return gAttekaInlet_Triggers;
 }
@@ -482,9 +482,9 @@ void AttekaInlet_OpenDoorAndEnter(void) {
 s32 Scene_Initialize(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov693Room1)
+  if (scene == (s32)&SceneId_AttekaInlet1)
     AttekaInlet_SetUpTheHarbour();
-  else if (scene == (s32)&SceneId_Ov693Room2)
+  else if (scene == (s32)&SceneId_AttekaInlet2)
     AttekaInlet_SetUpTheShore();
   return 0;
 }
@@ -492,7 +492,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_Ov693Room1 && GameFlag_Get(0x9d0)) {
+  if (scene == (s32)&SceneId_AttekaInlet1 && GameFlag_Get(0x9d0)) {
     MapGrid_CopyCellPictureIndicesRect(54, 47, 4, 15, 10, 4);
     MapGrid_CopyCellPictureIndicesRect(54, 38, 73, 7, 10, 4);
     MapGrid_CopyCellPictureIndicesRect(54, 43, 21, 55, 10, 3);

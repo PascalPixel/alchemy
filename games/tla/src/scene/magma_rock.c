@@ -194,9 +194,9 @@ extern s16 gMagmaRock_Room2Regions[];
 extern s16 gMagmaRock_Room3Regions[];
 
 const struct SceneEntrance *Scene_GetRegions(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MagmaRock2)
     return (const struct SceneEntrance *)gMagmaRock_Room2Regions;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MagmaRock3)
     return (const struct SceneEntrance *)gMagmaRock_Room3Regions;
   return (const struct SceneEntrance *)gMagmaRock_Regions;
 }
@@ -211,7 +211,7 @@ extern struct ActorPlacement gMagmaRock_Room2TopPlacements[];
 extern struct ActorPlacement gMagmaRock_Room3Placements[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_MagmaRock2) {
     if (gMainRoutineWork.entrance <= 3)
       return gMagmaRock_Room2LowerPlacements;
     if (gMainRoutineWork.entrance <= 8)
@@ -220,7 +220,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
       return gMagmaRock_Room2UpperPlacements;
     return gMagmaRock_Room2TopPlacements;
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MagmaRock3)
     return gMagmaRock_Room3Placements;
   return gMagmaRock_Placements;
 }
@@ -231,11 +231,11 @@ void MagmaRock_UnblockMovedPillar(void) {
   u8 *event = Ram_HeapSlots->eventWork;
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
 
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_MagmaRock1) {
     MapGrid_CopyCellAttributes(98, 18, 4, 3, 78, 21);
     MapGrid_CopyCellAttributes(98, 24, 4, 3, 78, 24);
     Actor_LiftTargetBlock(gMagmaRock_Room1Pillars);
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_MagmaRock2) {
     if (gMainRoutineWork.entrance <= 3) {
       Actor_LiftTargetBlock(gMagmaRock_Room2LowerPillars);
     } else if (gMainRoutineWork.entrance <= 7) {
@@ -268,11 +268,11 @@ s32 MagmaRock_BlockMovedPillar(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_PlaceMovedBlock();
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_MagmaRock1) {
     MapGrid_CopyCellAttributes(98, 21, 4, 3, 78, 21);
     MapGrid_CopyCellAttributes(98, 27, 4, 3, 78, 24);
     Blocks_MarkCells(gMagmaRock_Room1Pillars);
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_MagmaRock2) {
     if (gMainRoutineWork.entrance <= 3) {
       Blocks_MarkCells(gMagmaRock_Room2LowerPillars);
     } else if (gMainRoutineWork.entrance <= 8) {
@@ -288,12 +288,12 @@ s32 MagmaRock_BlockMovedPillar(void) {
   }
   x = leader->x >> 20;
   z = leader->z >> 20;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_MagmaRock1) {
     if (x == 15 && z == 25)
       Event_SetFlag(0x8d6);
     else if (x == 16 && z == 22)
       Event_SetFlag(0x8d5);
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_MagmaRock2) {
     if (gMainRoutineWork.entrance <= 3) {
       if (x == 27 && z == 33)
         Event_SetFlag(0x8d7);
@@ -609,7 +609,7 @@ void MagmaRock_TargetStatue(s32 mode) {
   s16 *table = gMagmaRock_Room1Statues;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-  if (party->scene == (s32)&SceneId_Ov691Room2) {
+  if (party->scene == (s32)&SceneId_MagmaRock2) {
     if (party->entrance <= 3)
       table = gMagmaRock_Room2LowerStatues;
     else if (party->entrance <= 8)
@@ -618,7 +618,7 @@ void MagmaRock_TargetStatue(s32 mode) {
       table = gMagmaRock_Room2UpperStatues;
     else
       table = gMagmaRock_Room2TopStatues;
-  } else if (party->scene == (s32)&SceneId_Ov691Room3) {
+  } else if (party->scene == (s32)&SceneId_MagmaRock3) {
     table = gMagmaRock_Room3Statues;
   }
   if (mode == 2) {
@@ -1028,10 +1028,10 @@ void MagmaRock_BurnStatue(struct Actor *object) {
       FieldActor_SetSpriteColor(part, 3);
     }
     id = 0;
-    if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room1) {
+    if (gMainRoutineWork.scene == (s32)&SceneId_MagmaRock1) {
       id = MagmaRock_LookUpCellStatue(object->x, object->z,
                                       gMagmaRock_Room1Statues);
-    } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
+    } else if (gMainRoutineWork.scene == (s32)&SceneId_MagmaRock2) {
       s16 entrance = gMainRoutineWork.entrance;
       s32 x = object->x;
       s32 z = object->z;
@@ -1070,9 +1070,9 @@ void MagmaRock_BurnStatue(struct Actor *object) {
     {                                                                          \
       s32 scene = party->scene;                                                \
                                                                                \
-      if (scene == (s32)&SceneId_Ov691Room1)                                   \
+      if (scene == (s32)&SceneId_MagmaRock1)                                   \
         work->target = Actor_Get(n1);                                          \
-      else if (scene == (s32)&SceneId_Ov691Room2)                              \
+      else if (scene == (s32)&SceneId_MagmaRock2)                              \
         work->target = Actor_Get(n2);                                          \
       MagmaRock_BurstStatue(mode, cue);                                        \
     }                                                                          \
@@ -1385,7 +1385,7 @@ extern struct Trigger gMagmaRock_Room2TopTriggers[];
 extern struct Trigger gMagmaRock_Room3Triggers[];
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_MagmaRock2) {
     if (gMainRoutineWork.entrance <= 3)
       return gMagmaRock_Room2LowerTriggers;
     if (gMainRoutineWork.entrance <= 8)
@@ -1394,7 +1394,7 @@ const struct Trigger *Scene_GetEvents(void) {
       return gMagmaRock_Room2UpperTriggers;
     return gMagmaRock_Room2TopTriggers;
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MagmaRock3)
     return gMagmaRock_Room3Triggers;
   return gMagmaRock_Triggers;
 }
@@ -1612,11 +1612,11 @@ s32 Scene_Initialize(void) {
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   work = &gMainRoutineWork;
-  work->retreatScene = (s32)&SceneId_Ov691Room1;
+  work->retreatScene = (s32)&SceneId_MagmaRock1;
   work->retreatEntrance = 1;
   scene = work->scene;
   zero = 0;
-  if (scene == (s32)&SceneId_Ov691Room1) {
+  if (scene == (s32)&SceneId_MagmaRock1) {
     value1 = 32;
     Actor_GetById(work->currentOwner)->priorityFlags |= value1;
     Actor_GetById(8)->priorityFlags |= value1;
@@ -1650,7 +1650,7 @@ s32 Scene_Initialize(void) {
       goto move;
     }
     goto settle;
-  } else if (scene == (s32)&SceneId_Ov691Room2) {
+  } else if (scene == (s32)&SceneId_MagmaRock2) {
     owner = &work->currentOwner;
     Actor_GetById(*owner)->priorityFlags |= 32;
     entrance = &work->entrance;
@@ -1808,7 +1808,7 @@ s32 Scene_Initialize(void) {
     settle:
       MagmaRock_LandLeader();
     }
-  } else if (scene == (s32)&SceneId_Ov691Room3) {
+  } else if (scene == (s32)&SceneId_MagmaRock3) {
     if (Event_GetFlag(0x8dc)) {
       Actor_SetPosition(8, 0, 0);
       value3 = 42;

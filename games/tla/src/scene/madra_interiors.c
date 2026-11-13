@@ -75,7 +75,7 @@ void MadraInteriors_InterrogatePiers(void);
 #include "text/msg_ids.h"
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MadraInteriors2)
     return gMadraInteriors_SecondRoomsPlacements;
   if (gMainRoutineWork.entrance == 20)
     return gMadraInteriors_JailPlacements;
@@ -294,7 +294,7 @@ void MadraInteriors_TalkToIllMan(void) {
 }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_MadraInteriors2)
     return gMadraInteriors_SecondRoomsTriggers;
   if (gMainRoutineWork.entrance == 20)
     return gMadraInteriors_JailTriggers;
@@ -360,7 +360,7 @@ s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_MadraInteriors1) {
     event = Ram_HeapSlots->eventWork;
     FIELD_AT(event, u16, 0xd4c) = 3;
     if (!Event_GetFlag(0x821)) {
@@ -377,7 +377,7 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.entrance == 20)
     MadraInteriors_SetUpJail();
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room2) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_MadraInteriors2) {
     if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
       Actor_SetPosition(10, 0, 0);
     } else {

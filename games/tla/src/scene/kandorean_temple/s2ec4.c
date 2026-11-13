@@ -3,7 +3,7 @@
 
 #include "../shared/routines.h"
 #include "../shared/tables.h"
-#include "../shared/kandorean_temple.h"
+#include "../kandorean_temple.h"
 #include "field_effect.h"
 #include "event_work.h"
 #include "event_inline.h"

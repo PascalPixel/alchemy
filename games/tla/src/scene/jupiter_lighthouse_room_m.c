@@ -15,7 +15,7 @@
 #include "main_routine_work.h"
 #include "field_event.h"
 #include "event_inline.h"
-#include "shared/jupiter_lighthouse_room_m.h"
+#include "jupiter_lighthouse_room_m.h"
 #include "io_reg.h"
 #include "dma.h"
 #include "io_write.h"

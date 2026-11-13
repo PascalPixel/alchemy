@@ -2,7 +2,7 @@
 /// Scene code of overlay 0x692, in ROM order.
 
 #include "../shared/routines.h"
-#include "../shared/magma_rock_inside.h"
+#include "../magma_rock_inside.h"
 #include "io_reg.h"
 #include "call.h"
 #include "event_work.h"

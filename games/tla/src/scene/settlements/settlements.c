@@ -6,7 +6,7 @@
 #include "field_effect.h"
 #include "actor.h"
 #include "event_inline.h"
-#include "../shared/settlements.h"
+#include "../settlements.h"
 #include "field.h"
 #include "module/field/field.h"
 #include "module/field/field_effect.h"

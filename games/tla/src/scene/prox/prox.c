@@ -23,7 +23,7 @@
 #include "scene_tables.h"
 #include "scene_ids.h"
 #include "call.h"
-#include "../shared/prox.h"
+#include "../prox.h"
 #include "input.h"
 #include "frame.h"
 #include "heap_release.h"

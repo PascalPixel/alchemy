@@ -2,7 +2,7 @@
 /// Scene code of overlay 0x654, in ROM order.
 
 #include "../shared/routines.h"
-#include "../shared/shrine_of_the_sea_god.h"
+#include "../shrine_of_the_sea_god.h"
 #include "system.h"
 #include "macros.h"
 #include "call.h"

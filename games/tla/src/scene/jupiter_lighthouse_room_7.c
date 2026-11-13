@@ -42,7 +42,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-#include "shared/jupiter_lighthouse_room_7.h"
+#include "jupiter_lighthouse_room_7.h"
 #include "main_routine_work.h"
 #include "call.h"
 

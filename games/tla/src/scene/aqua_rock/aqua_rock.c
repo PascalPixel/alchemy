@@ -23,7 +23,7 @@
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-#include "../shared/aqua_rock.h"
+#include "../aqua_rock.h"
 
 const u8 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;

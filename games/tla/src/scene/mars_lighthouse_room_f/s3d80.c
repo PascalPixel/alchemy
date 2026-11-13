@@ -30,7 +30,7 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
 
 DEFINE_FUNC_02001E24(Func_02003d80, Func_020035b8)
 
-#include "../shared/mars_lighthouse_room_f_room.h"
+#include "../mars_lighthouse_room_f.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02003b78(struct WarpWork *work, struct WarpEntry *entry);

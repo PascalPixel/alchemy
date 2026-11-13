@@ -86,7 +86,7 @@ void Func_02000074(void) { Func_020014f4(); }
 
 void Func_0200007c(void) {}
 
-#include "shared/mars_lighthouse_star_room.h"
+#include "mars_lighthouse_star_room.h"
 #include "iwram_call.h"
 
 extern const u8 gData_02004474[];

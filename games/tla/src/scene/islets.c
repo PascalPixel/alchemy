@@ -21,7 +21,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "text/msg_ids.h"
-#include "shared/islets.h"
+#include "islets.h"
 
 #include "event_inline.h"
 

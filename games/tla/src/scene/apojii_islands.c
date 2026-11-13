@@ -6,6 +6,6 @@
 
 #include "../field/object/prepare_object.c"
 
-#include "shared/apojii_islands.h"
+#include "apojii_islands.h"
 
 DEFINE_FUNC_020000D0_93()

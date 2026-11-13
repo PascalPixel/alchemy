@@ -12,7 +12,7 @@
 #include "system/vector3.h"
 #include "call.h"
 #include "field.h"
-#include "../shared/airs_rock_inside.h"
+#include "../airs_rock_inside.h"
 #include "event_work.h"
 #include "flag_call.h"
 #include "module/field/field_effect.h"
@@ -348,7 +348,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "../shared/airs_rock_inside.h"
+#include "../airs_rock_inside.h"
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room1)

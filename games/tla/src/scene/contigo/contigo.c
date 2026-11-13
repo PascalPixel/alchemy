@@ -23,7 +23,7 @@ extern void Func_02003e54__contigo(struct ContigoObject *object, const void *eff
 struct ContigoObject;
 extern void Func_02003f54__contigo(struct ContigoObject *object) __asm__("Func_02003f54");
 #define Func_02003f54 Func_02003f54__contigo
-#include "../shared/contigo.h"
+#include "../contigo.h"
 #undef Func_02003f54
 #undef Func_02003e54
 #include "iwram_call.h"

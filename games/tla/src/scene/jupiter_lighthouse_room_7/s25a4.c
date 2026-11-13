@@ -10,7 +10,7 @@
 #include "event_inline.h"
 #include "field.h"
 #include "event_work.h"
-#include "../shared/jupiter_lighthouse_room_7.h"
+#include "../jupiter_lighthouse_room_7.h"
 
 struct CellTargetEntry;
 

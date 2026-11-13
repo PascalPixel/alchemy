@@ -4,7 +4,7 @@
 // ---- games/tla/src/scene/airs_rock_inside/s2770.c ----
 
 #include "../shared/routines.h"
-#include "../shared/airs_rock_inside.h"
+#include "../airs_rock_inside.h"
 #include "system.h"
 #include "task.h"
 #include "event_work.h"

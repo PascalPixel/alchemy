@@ -18,7 +18,7 @@
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-#include "../shared/caverns.h"
+#include "../caverns.h"
 
 const s16 *Scene_GetRegions(void) {
   const s16 *result = NULL;

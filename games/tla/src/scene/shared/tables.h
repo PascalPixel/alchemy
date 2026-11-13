@@ -5,17 +5,17 @@
 #ifndef ALCHEMY_SCENE_SHARED_TABLES_H
 #define ALCHEMY_SCENE_SHARED_TABLES_H
 
-/// 8 scenes: islets/data, jupiter_lighthouse_room_3/s1f50,
-/// jupiter_lighthouse_room_8/s1dc8, magma_rock/s34ac, magma_rock_inside/s46e8,
-/// mars_lighthouse_room_f/s3d80, venus_lighthouse/floor,
-/// yampi_desert_cave/data.
+/// 8 copies: data/islets, data/yampi_desert_cave,
+/// jupiter_lighthouse_room_3/s1f50, jupiter_lighthouse_room_8/s1dc8,
+/// magma_rock/s34ac, magma_rock_inside/s46e8, mars_lighthouse_room_f/s3d80,
+/// venus_lighthouse/floor.
 #define DEFINE_G_DATA_0200198C(name)                                           \
   s16 name[] = {                                                               \
       0, 16,  0, 16,  0, 16,  16,  0, 16,  0, 16,  0, 16,  0, 0, -16,          \
       0, -16, 0, -16, 0, -16, -16, 0, -16, 0, -16, 0, -16, 0, 0, 16,           \
   };
 
-/// 2 scenes: gaia_rock, gaia_rock_inside/s4d00.
+/// 2 copies: gaia_rock, gaia_rock_inside/s4d00.
 #define DEFINE_G_DATA_020016CC(name)                                           \
   s32 name[] = {                                                               \
       SC_ADD(SW_SCALE_X, 0x8000),                                              \
@@ -59,7 +59,7 @@
       SC_END,                                                                  \
   };
 
-/// 1 scenes: naribwe/data.
+/// 2 copies: data/naribwe, data/naribwe.
 #define DEFINE_G_DATA_020006CC(name)                                           \
   struct ActorPlacement name[] = {                                             \
       {365, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(246), FACING_SOUTH, 0, \
@@ -105,7 +105,7 @@
       {SCENE_TABLE_END},                                                       \
   };
 
-/// 1 scenes: izumo.
+/// 2 copies: izumo, izumo.
 #define DEFINE_G_DATA_02000E14(name)                                           \
   u32 name[] = {                                                               \
       SC_SET(SW_COLLISION, 129),                                               \
@@ -136,7 +136,7 @@
       SC_END,                                                                  \
   };
 
-/// 1 scenes: izumo.
+/// 2 copies: izumo, izumo.
 #define DEFINE_G_DATA_02000F14(name)                                           \
   u32 name[] = {                                                               \
       SC_SET(SW_COLLISION, 129),                                               \
@@ -167,7 +167,7 @@
       SC_END,                                                                  \
   };
 
-/// 4 scenes: islets/data, kibombo/s2f34, lemurian_ship, madra_catacombs.
+/// 4 copies: data/islets, kibombo/s2f34, lemurian_ship, madra_catacombs.
 #define DEFINE_G_DATA_0200121C(name)                                           \
   s32 name[] = {                                                               \
       SC_SET(SW_MOTION, 0),                                                    \
@@ -179,7 +179,7 @@
       SC_END,                                                                  \
   };
 
-/// 2 scenes: apojii_islands, aqua_rock/data2.
+/// 2 copies: apojii_islands/apojii_islands, data/aqua_rock.
 #define DEFINE_G_DATA_02001F18(name)                                           \
   s16 name[] = {                                                               \
       -8,  -12,  20,  0,   1,    -8,  -12,  20,  0,    1,   -8,   -12,         \
@@ -196,7 +196,7 @@
       -85, 0,    -90, 0,   -95,  0,   -100, 0,   -110, 0,   -120, 0,           \
   };
 
-/// 2 scenes: jupiter_lighthouse_room_5/s2450, mars_lighthouse_aerie/s3370.
+/// 2 copies: jupiter_lighthouse_room_5/s2450, mars_lighthouse_aerie/s3370.
 #define DEFINE_G_DATA_02003214(name)                                           \
   u32 name[] = {                                                               \
       SC_SET(SW_SCALE_X, 0xcccc),                                              \
@@ -211,8 +211,7 @@
       SC_FREE,                                                                 \
   };
 
-/// 2 scenes: jupiter_lighthouse_aerie_beacon/data2,
-/// mars_lighthouse_aerie/s3370.
+/// 2 copies: data/jupiter_lighthouse_aerie_beacon, mars_lighthouse_aerie/s3370.
 #define DEFINE_G_DATA_02005B54(name)                                           \
   s32 name[] = {                                                               \
       SC_LABEL(1),                                                             \
@@ -226,13 +225,13 @@
       SC_LOOP(SC_FOREVER, SC_TOP),                                             \
   };
 
-/// 2 scenes: airs_rock_inside/s505c, aqua_rock_inside/s3844.
+/// 2 copies: airs_rock_inside/s505c, aqua_rock_inside/s3844.
 #define DEFINE_G_DATA_02004014(name, call1, call2, call3)                      \
   s32 name[] = {                                                               \
       46, (s32)call1, 46, (s32)call2, 46, (s32)call3, 38, 17,                  \
   };
 
-/// 1 scenes: mars_lighthouse_aerie/s3370.
+/// 2 copies: mars_lighthouse_aerie/s3370, mars_lighthouse_aerie/s3370.
 #define DEFINE_G_DATA_02005EC4(name)                                           \
   u32 name[] =                                                                 \
       {                                                                        \
@@ -242,13 +241,13 @@
           SC_WAIT(10), SC_END,                                                 \
   };
 
-/// 2 scenes: gaia_rock_inside/s4d00, magma_rock_inside/s46e8.
+/// 2 copies: gaia_rock_inside/s4d00, magma_rock_inside/s46e8.
 #define DEFINE_G_DATA_02005244(name, call1, call2, call3)                      \
   s32 name[] = {                                                               \
       SC_CALL(call1), SC_CALL(call2), SC_CALL(call3), SC_FREE, SC_END,         \
   };
 
-/// 2 scenes: gaia_rock_inside/s4d00, magma_rock_inside/s46e8.
+/// 2 copies: gaia_rock_inside/s4d00, magma_rock_inside/s46e8.
 #define DEFINE_G_DATA_02005218(name)                                           \
   u32 name[] = {                                                               \
       SC_MOVE_BY(0, PIXELS(160), 0),                                           \
@@ -257,7 +256,7 @@
       SC_END,                                                                  \
   };
 
-/// 2 scenes: settlements/s1d30, tundaria_tower/s29d0.
+/// 2 copies: settlements/s1d30, tundaria_tower/s29d0.
 #define DEFINE_G_DATA_02002276(name)                                           \
   s16 name[] = {                                                               \
       -1,     0,      0x8000, -1,     0xc000, 0xe000, 0xa000, 0xc000,          \
@@ -266,17 +265,39 @@
       0x4000, -1,     -1,     0x4000, -1,     0,      0x8000, -1,              \
   };
 
-/// 27 scenes: gabomba_catacombs, gabomba_statue/s2394, gaia_rock_inside/s4d00,
-/// garoh/s12a8, gondowan_cliffs, izumo_ruins, jupiter_lighthouse_aerie/s2640,
-/// jupiter_lighthouse_aerie_beacon/data2, jupiter_lighthouse_basement/s185c,
-/// jupiter_lighthouse_entrance/s1674, jupiter_lighthouse_room_1/s1704,
-/// jupiter_lighthouse_room_2/s1e24, jupiter_lighthouse_room_3/data2,
+/// 78 copies: data/jupiter_lighthouse_aerie_beacon,
+/// data/jupiter_lighthouse_aerie_beacon, data/jupiter_lighthouse_room_3,
+/// data/jupiter_lighthouse_room_3, data/jupiter_lighthouse_room_3,
+/// data/jupiter_lighthouse_room_7, data/jupiter_lighthouse_room_7,
+/// data/jupiter_lighthouse_room_7, data/jupiter_lighthouse_room_8,
+/// data/jupiter_lighthouse_room_8, data/jupiter_lighthouse_room_8,
+/// data/jupiter_lighthouse_room_m, data/jupiter_lighthouse_room_m,
+/// data/jupiter_lighthouse_room_m, gabomba_catacombs, gabomba_statue/s2394,
+/// gabomba_statue/s2394, gabomba_statue/s2394, gaia_rock_inside/s4d00,
+/// gaia_rock_inside/s4d00, gaia_rock_inside/s4d00, garoh/s12a8, garoh/s12a8,
+/// garoh/s12a8, gondowan_cliffs, gondowan_cliffs, gondowan_cliffs, izumo_ruins,
+/// izumo_ruins, izumo_ruins, jupiter_lighthouse_aerie/s2640,
+/// jupiter_lighthouse_aerie/s2640, jupiter_lighthouse_aerie/s2640,
+/// jupiter_lighthouse_basement/s185c, jupiter_lighthouse_basement/s185c,
+/// jupiter_lighthouse_basement/s185c, jupiter_lighthouse_entrance/s1674,
+/// jupiter_lighthouse_entrance/s1674, jupiter_lighthouse_entrance/s1674,
+/// jupiter_lighthouse_room_1/s1704, jupiter_lighthouse_room_1/s1704,
+/// jupiter_lighthouse_room_1/s1704, jupiter_lighthouse_room_2/s1e24,
+/// jupiter_lighthouse_room_2/s1e24, jupiter_lighthouse_room_2/s1e24,
+/// jupiter_lighthouse_room_4/s1a20, jupiter_lighthouse_room_4/s1a20,
 /// jupiter_lighthouse_room_4/s1a20, jupiter_lighthouse_room_5/s2450,
-/// jupiter_lighthouse_room_6/s1724, jupiter_lighthouse_room_7/data2,
-/// jupiter_lighthouse_room_8/data2, jupiter_lighthouse_room_9/s17e0,
-/// jupiter_lighthouse_room_m/data2, kandorean_temple/s2ec4, magma_rock/s34ac,
-/// magma_rock_inside/s46e8, mars_lighthouse_entrance/s42f8,
-/// mars_lighthouse_room_f/s3d80, mars_lighthouse_star_room/s3e04,
+/// jupiter_lighthouse_room_5/s2450, jupiter_lighthouse_room_5/s2450,
+/// jupiter_lighthouse_room_6/s1724, jupiter_lighthouse_room_6/s1724,
+/// jupiter_lighthouse_room_6/s1724, jupiter_lighthouse_room_9/s17e0,
+/// jupiter_lighthouse_room_9/s17e0, jupiter_lighthouse_room_9/s17e0,
+/// kandorean_temple/s2ec4, kandorean_temple/s2ec4, kandorean_temple/s2ec4,
+/// magma_rock/s34ac, magma_rock/s34ac, magma_rock/s34ac,
+/// magma_rock_inside/s46e8, magma_rock_inside/s46e8, magma_rock_inside/s46e8,
+/// mars_lighthouse_entrance/s42f8, mars_lighthouse_entrance/s42f8,
+/// mars_lighthouse_entrance/s42f8, mars_lighthouse_room_f/s3d80,
+/// mars_lighthouse_room_f/s3d80, mars_lighthouse_room_f/s3d80,
+/// mars_lighthouse_star_room/s3e04, mars_lighthouse_star_room/s3e04,
+/// mars_lighthouse_star_room/s3e04, mt_aleph_summit, mt_aleph_summit,
 /// mt_aleph_summit.
 #define DEFINE_G_DATA_020012A4(name, n1)                                       \
   u32 name[] = {                                                               \
@@ -286,7 +307,7 @@
       SC_END,                                                                  \
   };
 
-/// 1 scenes: izumo_interiors.
+/// 2 copies: izumo_interiors, izumo_interiors.
 #define DEFINE_G_DATA_02002324(name, call1, n1, n2, n3, n4)                    \
   s32 name[] = {                                                               \
       22,                                                                      \
@@ -406,7 +427,9 @@
       -1,                                                                      \
   };
 
-/// 2 scenes: mars_lighthouse_entrance/s42f8, mars_lighthouse_room_f/s3d80.
+/// 5 copies: mars_lighthouse_entrance/s42f8, mars_lighthouse_entrance/s42f8,
+/// mars_lighthouse_entrance/s42f8, mars_lighthouse_room_f/s3d80,
+/// mars_lighthouse_room_f/s3d80.
 #define DEFINE_G_DATA_020054CC(name, call1, n1, n2, n3, n4, n5, n6, call2,     \
                                call3)                                          \
   s32 name[] = {                                                               \
@@ -414,7 +437,7 @@
       4,  n5,         n4, n6, 1,  22, 37, (s32)call2, 46, (s32)call3, 17,      \
   };
 
-/// 1 scenes: mikasalla.
+/// 2 copies: mikasalla, mikasalla.
 #define DEFINE_G_DATA_02000850(name, n1, n2, n3, n4)                           \
   s32 name[] = {                                                               \
       SC_SET(SW_COLLISION, 129),                                               \
@@ -509,8 +532,11 @@
       SC_END,                                                                  \
   };
 
-/// 5 scenes: gabomba_statue/data2, idejima/s16d8, kibombo/s2f34, lemurian_ship,
-/// mars_lighthouse_aerie/s3370.
+/// 13 copies: data/gabomba_statue, idejima/s16d8, idejima/s16d8, kibombo/s2f34,
+/// kibombo/s2f34, lemurian_ship, mars_lighthouse_aerie/s3370,
+/// mars_lighthouse_aerie/s3370, mars_lighthouse_aerie/s3370,
+/// mars_lighthouse_aerie/s3370, mars_lighthouse_aerie/s3370,
+/// mars_lighthouse_aerie/s3370, mars_lighthouse_aerie/s3370.
 #define DEFINE_G_DATA_02002F1C(name, n1, n2)                                   \
   u32 name[] =                                                                 \
       {                                                                        \
@@ -518,7 +544,10 @@
           SC_END,                                                              \
   };
 
-/// 3 scenes: kibombo/s2f34, lemurian_ship, mars_lighthouse_aerie/s3370.
+/// 9 copies: kibombo/s2f34, kibombo/s2f34, kibombo/s2f34, lemurian_ship,
+/// mars_lighthouse_aerie/s3370, mars_lighthouse_aerie/s3370,
+/// mars_lighthouse_aerie/s3370, mars_lighthouse_aerie/s3370,
+/// mars_lighthouse_aerie/s3370.
 #define DEFINE_G_DATA_02002F88(name, n1, n2, n3)                               \
   u32 name[] =                                                                 \
       {                                                                        \
@@ -528,14 +557,18 @@
           SC_WAIT(n3), SC_END,                                                 \
   };
 
-/// 3 scenes: idejima/s16d8, kibombo/s2f34, mars_lighthouse_aerie/s3370.
+/// 8 copies: idejima/s16d8, idejima/s16d8, idejima/s16d8, kibombo/s2f34,
+/// kibombo/s2f34, kibombo/s2f34, kibombo/s2f34, mars_lighthouse_aerie/s3370.
 #define DEFINE_G_DATA_02003534(name, n1, n2, n3)                               \
   u32 name[] = {                                                               \
       SC_ARG(2),   SC_MOVE(PIXELS(n1), 0, PIXELS(n2)), SC_SYNC,     SC_ARG(1), \
       SC_WAIT(n3), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(n3), SC_END,    \
   };
 
-/// 1 scenes: magma_rock_inside/s46e8.
+/// 9 copies: magma_rock_inside/s46e8, magma_rock_inside/s46e8,
+/// magma_rock_inside/s46e8, magma_rock_inside/s46e8, magma_rock_inside/s46e8,
+/// magma_rock_inside/s46e8, magma_rock_inside/s46e8, magma_rock_inside/s46e8,
+/// magma_rock_inside/s46e8.
 #define DEFINE_G_DATA_02005074(name, n1, n2, n3, n4, n5, n6, n7, n8)           \
   s16 name[] = {                                                               \
       4, 0,  0, n1, 0, 16, 0, n2, 1,  0,  4,  0,  0, n3, 0,  16,               \
@@ -543,7 +576,8 @@
       0, n7, 0, 16, 0, n8, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                \
   };
 
-/// 7 scenes: izumo_ruins, magma_rock/s34ac, magma_rock_inside/s46e8,
+/// 10 copies: izumo_ruins, izumo_ruins, magma_rock/s34ac, magma_rock/s34ac,
+/// magma_rock_inside/s46e8, magma_rock_inside/s46e8,
 /// mars_lighthouse_entrance/s42f8, mars_lighthouse_room_f/s3d80,
 /// mars_lighthouse_room_m/s2708, mars_lighthouse_star_room/s3e04.
 #define DEFINE_G_DATA_02001540(name, n1)                                       \
@@ -552,7 +586,8 @@
       SC_FREE,                                                                 \
   };
 
-/// 1 scenes: kibombo_mountains/data.
+/// 3 copies: data/kibombo_mountains, data/kibombo_mountains,
+/// data/kibombo_mountains.
 #define DEFINE_G_DATA_02001334(name, n1, n2, n3)                               \
   u32 name[] = {                                                               \
       SC_SET(SW_SPEED, 0x8000),                                                \
@@ -579,7 +614,8 @@
       SC_LOOP(SC_FOREVER, SC_TOP),                                             \
   };
 
-/// 1 scenes: jupiter_lighthouse_aerie_beacon/data2.
+/// 2 copies: data/jupiter_lighthouse_aerie_beacon,
+/// data/jupiter_lighthouse_aerie_beacon.
 #define DEFINE_G_DATA_02006088(name, n1, n2, n3, n4, n5)                       \
   s32 name[] = {                                                               \
       SC_ARG(2),                                                               \
@@ -620,7 +656,8 @@
       SC_END,                                                                  \
   };
 
-/// 2 scenes: lemurian_ship, mars_lighthouse_aerie/s3370.
+/// 4 copies: lemurian_ship, mars_lighthouse_aerie/s3370,
+/// mars_lighthouse_aerie/s3370, mars_lighthouse_aerie/s3370.
 #define DEFINE_G_DATA_02002F44(name, n1, n2)                                   \
   u32 name[] =                                                                 \
       {                                                                        \
@@ -630,7 +667,7 @@
           SC_WAIT(10), SC_END,                                                 \
   };
 
-/// 1 scenes: izumo.
+/// 2 copies: izumo, izumo.
 #define DEFINE_G_DATA_02001014(name, n1)                                       \
   u32 name[] = {                                                               \
       SC_SET(SW_COLLISION, 129),                                               \
@@ -661,7 +698,7 @@
       SC_END,                                                                  \
   };
 
-/// 2 scenes: contigo, yallam/data.
+/// 4 copies: contigo/contigo, contigo/contigo, data/yallam, data/yallam.
 #define DEFINE_G_DATA_02002634(name, n1, n2, n3, n4, n5, n6, n7, n8, n9)       \
   u32 name[] = {                                                               \
       39, 2,  22, 15, 0x10000, 22, 16, 0x6666, 4,  n1, 0,  n2,     1,  4,      \
@@ -669,15 +706,15 @@
       4,  n8, 0,  n7, 1,       4,  n9, 0,      n5, 1,  13, 0xffff, 0,          \
   };
 
-/// 2 scenes: airs_rock_inside/s505c, anemos_inner_sanctum/s2f48.
+/// 2 copies: airs_rock_inside/s505c, anemos_inner_sanctum/s2f48.
 #define DEFINE_G_DATA_02003C88(name, n1, data1, n2, n3, n4, n5, n6, n7, n8)    \
   s32 name[] = {                                                               \
       (s32)n1, (s32)data1, n2, 0, 0, n3, (s32)0xffff0110, n4, n5, 0, 0, n3,    \
       (s32)n6, n4,         n7, 0, 0, n8, 0xffff,          0,  0,  0, 0, 0,     \
   };
 
-/// 5 scenes: airs_rock_inside/s505c, anemos_inner_sanctum/s2f48,
-/// aqua_rock_inside/s3844, staff_credit/data2, world_map/data2.
+/// 5 copies: airs_rock_inside/s505c, anemos_inner_sanctum/s2f48,
+/// aqua_rock_inside/s3844, data/staff_credit, data/world_map.
 #define DEFINE_G_DATA_02003584(name, call1, n1, n2)                            \
   s32 name[] = {                                                               \
       46,                                                                      \
@@ -686,7 +723,7 @@
       n2,                                                                      \
   };
 
-/// 2 scenes: islets/data, madra_interiors.
+/// 3 copies: data/islets, data/islets, madra_interiors.
 #define DEFINE_G_DATA_020033C8(name, n1, n2, n3, n4, n5)                       \
   u32 name[] = {                                                               \
       SC_ARG(2), SC_MOVE(PIXELS(n1), 0, PIXELS(n2)),                           \
@@ -696,7 +733,8 @@
       SC_END,                                                                  \
   };
 
-/// 2 scenes: mars_lighthouse_entrance/s42f8, mars_lighthouse_room_f/s3d80.
+/// 3 copies: mars_lighthouse_entrance/s42f8, mars_lighthouse_entrance/s42f8,
+/// mars_lighthouse_room_f/s3d80.
 #define DEFINE_G_DATA_0200547C(name, call1, n1, n2, n3, n4, n5, call2)         \
   s32 name[] = {                                                               \
       SC_CALL(call1), SC_MOVE(PIXELS(n1), PIXELS(32), PIXELS(n2)),             \
@@ -706,7 +744,7 @@
       SC_END,                                                                  \
   };
 
-/// 1 scenes: mikasalla_interiors.
+/// 2 copies: mikasalla_interiors, mikasalla_interiors.
 #define DEFINE_G_DATA_02000654(name, n1, n2)                                   \
   u32 name[] = {                                                               \
       SC_SET(SW_COLLISION, 129),                                               \
@@ -731,15 +769,16 @@
       SC_END,                                                                  \
   };
 
-/// 4 scenes: anemos_inner_sanctum/s2f48, contigo, islet_cave/data,
-/// yampi_desert_cave/data.
+/// 4 copies: anemos_inner_sanctum/s2f48, contigo/contigo, data/islet_cave,
+/// data/yampi_desert_cave.
 #define DEFINE_G_DATA_020013B4(name, n1, n2, n3, n4, n5, n6)                   \
   u16 name[] = {                                                               \
       n1, n2, n3, n4, n5, n6, n6, n1, n2, n3, n4, n5, n5, n6, n1, n2, n3, n4,  \
       n4, n5, n6, n1, n2, n3, n3, n4, n5, n6, n1, n2, n2, n3, n4, n5, n6, n1,  \
   };
 
-/// 2 scenes: gaia_rock_inside/s4d00, magma_rock_inside/s46e8.
+/// 4 copies: gaia_rock_inside/s4d00, gaia_rock_inside/s4d00,
+/// magma_rock_inside/s46e8, magma_rock_inside/s46e8.
 #define DEFINE_G_DATA_020052AC(name, n1, n2)                                   \
   s32 name[] = {                                                               \
       SC_SET(SW_MOTION, 0),                                                    \
@@ -749,7 +788,7 @@
       SC_END,                                                                  \
   };
 
-/// 3 scenes: kandorean_temple/s2ec4, kibombo/s2f34, lemurian_ship.
+/// 3 copies: kandorean_temple/s2ec4, kibombo/s2f34, lemurian_ship.
 #define DEFINE_G_DATA_02002FCC(name, n1, n2, n3)                               \
   u32 name[] = {                                                               \
       SC_ARG(2),   SC_MOVE(PIXELS(n1), 0, PIXELS(n2)),                         \
@@ -758,7 +797,7 @@
       SC_WAIT(n3), SC_END,                                                     \
   };
 
-/// 3 scenes: anemos_inner_sanctum_entrance/data2, apojii_islands_cave,
+/// 3 copies: anemos_inner_sanctum_entrance/data2, apojii_islands_cave,
 /// eastern_alhafra_ship.
 #define DEFINE_G_SCENE_EXITS(n1, n2, n3, n4, n5, n6, n7, n8, n9, n10)          \
   u32 gSceneExits[] = {                                                        \
@@ -771,7 +810,7 @@
       SCENE_EXITS_END,                                                         \
   };
 
-/// 4 scenes: champa, islets/data, lemuria_palace, naribwe/data.
+/// 4 copies: champa, data/islets, data/naribwe, lemuria_palace.
 #define DEFINE_G_DATA_0200064C(name, data1, n1, data2, n2)                     \
   s32 name[] = {                                                               \
       (s32)data1,                                                              \
@@ -780,7 +819,7 @@
       n2,                                                                      \
   };
 
-/// 2 scenes: gabomba_statue_chamber/data, idejima/s16d8.
+/// 3 copies: data/gabomba_statue_chamber, idejima/s16d8, idejima/s16d8.
 #define DEFINE_G_DATA_0200200C(name, n1, n2, n3, n4)                           \
   u32 name[] = {                                                               \
       SC_ARG(2), SC_MOVE(PIXELS(n1), 0, PIXELS(n2)),                           \
@@ -789,7 +828,8 @@
       SC_END,                                                                  \
   };
 
-/// 2 scenes: gaia_rock_inside/s4d00, magma_rock_inside/s46e8.
+/// 4 copies: gaia_rock_inside/s4d00, gaia_rock_inside/s4d00,
+/// magma_rock_inside/s46e8, magma_rock_inside/s46e8.
 #define DEFINE_G_DATA_02005264(name, n1)                                       \
   u32 name[] = {                                                               \
       SC_MOVE_BY(0, PIXELS(n1), 0),                                            \
@@ -798,7 +838,8 @@
       SC_END,                                                                  \
   };
 
-/// 1 scenes: jupiter_lighthouse_room_m/s4344.
+/// 3 copies: jupiter_lighthouse_room_m/s4344, jupiter_lighthouse_room_m/s4344,
+/// jupiter_lighthouse_room_m/s4344.
 #define DEFINE_G_DATA_02004AB4(name, n1)                                       \
   u32 name[] = {                                                               \
       SC_SYNC,    SC_MOVE_XZ(PIXELS(n1), PIXELS(170)), SC_SYNC,                \
@@ -806,7 +847,7 @@
       SC_END,                                                                  \
   };
 
-/// 1 scenes: prox.
+/// 3 copies: prox/prox, prox/prox, prox/prox.
 #define DEFINE_G_DATA_020047AC(name, n1, n2, n3, n4, n5, n6, n7, n8)           \
   u32 name[] = {                                                               \
       39, 2,  22, 15, 0x10000, 22, 16, 0x6666, 39, 2,  4,  n1,     0,          \
@@ -814,7 +855,7 @@
       0,  n6, 1,  39, 2,       4,  n7, 0,      n8, 1,  13, 0xffff, 0,          \
   };
 
-/// 1 scenes: madra_interiors.
+/// 2 copies: madra_interiors, madra_interiors.
 #define DEFINE_G_DATA_02001FC4(name, n1)                                       \
   u32 name[] = {                                                               \
       SC_ARG(2),                                                               \
@@ -834,14 +875,14 @@
       SC_END,                                                                  \
   };
 
-/// 1 scenes: alhafra/data.
+/// 3 copies: data/alhafra, data/alhafra, data/alhafra.
 #define DEFINE_G_DATA_020034CC(name, n1, n2, n3, n4, n5, n6, n7, n8, n9)       \
   u32 name[] = {                                                               \
       39, 2,  4, n1, 0, n2, 1,        4, n3, 0, n4, 1, 4,  n5, 0,      n6, 1,  \
       4,  n7, 0, n8, 1, 4,  0xf80000, 0, n9, 1, 39, 1, 22, 3,  0xd000, 17,     \
   };
 
-/// 3 scenes: jupiter_lighthouse_aerie/s2640, jupiter_lighthouse_entrance/s1674,
+/// 3 copies: jupiter_lighthouse_aerie/s2640, jupiter_lighthouse_entrance/s1674,
 /// mars_lighthouse_aerie/s3370.
 #define DEFINE_G_SCENE_EXITS_2(n1, n2, n3, n4, n5, n6, n7, n8, n9)             \
   u32 gSceneExits[] = {                                                        \
@@ -849,7 +890,7 @@
       SCENE_EXIT(3, n6, n7), SCENE_EXIT(4, n8, n9), SCENE_EXITS_END,           \
   };
 
-/// 2 scenes: jupiter_lighthouse_room_2/s1e24, jupiter_lighthouse_room_7/data2.
+/// 2 copies: data/jupiter_lighthouse_room_7, jupiter_lighthouse_room_2/s1e24.
 #define DEFINE_G_SCENE_EXITS_3(n1, n2, n3, n4, n5, n6, n7, n8, n9, n10)        \
   u32 gSceneExits[] = {                                                        \
       SCENE_EXITS(n1),         SCENE_EXIT(1, n2, 1),   SCENE_EXIT(2, n1, 3),   \
@@ -859,7 +900,8 @@
       SCENE_EXIT(12, n10, 11), SCENE_EXITS_END,                                \
   };
 
-/// 1 scenes: jupiter_lighthouse_room_m/data2.
+/// 3 copies: data/jupiter_lighthouse_room_m, data/jupiter_lighthouse_room_m,
+/// data/jupiter_lighthouse_room_m.
 #define DEFINE_G_DATA_020057D0(name, n1, n2, n3)                               \
   u32 name[] = {                                                               \
       SC_ARG(n1),                                                              \
@@ -870,7 +912,7 @@
       SC_END,                                                                  \
   };
 
-/// 1 scenes: lemuria.
+/// 2 copies: lemuria, lemuria.
 #define DEFINE_G_DATA_02001D84(name, n1, n2, n3, n4)                           \
   u32 name[] = {                                                               \
       SC_ARG(2),                                                               \
@@ -888,7 +930,7 @@
       SC_LOOP(SC_FOREVER, SC_TO(1)),                                           \
   };
 
-/// 2 scenes: mars_lighthouse_entrance/s42f8, mars_lighthouse_room_f/data2.
+/// 2 copies: data/mars_lighthouse_room_f, mars_lighthouse_entrance/s42f8.
 #define DEFINE_G_DATA_02004EB8(name, n1, n2, n3, n4)                           \
   u32 name[] = {                                                               \
       SC_SET(SW_STEERING, 0),                                                  \
@@ -906,13 +948,13 @@
       SC_LOOP(SC_FOREVER, SC_TOP),                                             \
   };
 
-/// 1 scenes: gabomba_statue/data2.
+/// 2 copies: data/gabomba_statue, data/gabomba_statue.
 #define DEFINE_G_DATA_02005C74(name, n1)                                       \
   s32 name[] = {                                                               \
       22, 35, 0xc000, 22, 36, n1, 22, 40, 0, 46, (s32)Func_0200028c,           \
   };
 
-/// 1 scenes: mars_lighthouse_room_f/s3d80.
+/// 2 copies: mars_lighthouse_room_f/s3d80, mars_lighthouse_room_f/s3d80.
 #define DEFINE_G_DATA_020056D4(name, n1, n2)                                   \
   u32 name[] = {                                                               \
       SC_SET(SW_STEERING, 0),                                                  \
@@ -928,7 +970,7 @@
       SC_LOOP(SC_FOREVER, SC_TOP),                                             \
   };
 
-/// 1 scenes: gaia_rock_inside/s4d00.
+/// 2 copies: gaia_rock_inside/s4d00, gaia_rock_inside/s4d00.
 #define DEFINE_G_DATA_020056C4(name, n1, n2)                                   \
   s32 name[] = {                                                               \
       SC_SET(SW_SPEED, 0x20000),                                               \
@@ -943,7 +985,7 @@
       SC_LOOP(SC_FOREVER, SC_TO(1)),                                           \
   };
 
-/// 2 scenes: gaia_rock_inside/s4d00, kandorean_temple/s2ec4.
+/// 2 copies: gaia_rock_inside/s4d00, kandorean_temple/s2ec4.
 #define DEFINE_G_DATA_020057C0(name, n1, n2, n3, n4, n5, n6, n7, n8)           \
   struct ActorPlacement name[] = {                                             \
       {n1, CONDITION_ALWAYS, 1, n2, 0, 0, FACING_SOUTH, 2, n3},                \
@@ -958,7 +1000,7 @@
       {SCENE_TABLE_END},                                                       \
   };
 
-/// 1 scenes: magma_rock_inside/s46e8.
+/// 2 copies: magma_rock_inside/s46e8, magma_rock_inside/s46e8.
 #define DEFINE_G_DATA_020050D4(name, n1, n2, n3, n4, n5, n6, n7, n8)           \
   u32 name[] = {                                                               \
       SC_MOVE(PIXELS(n1), PIXELS(16), PIXELS(n2)),                             \
@@ -973,7 +1015,7 @@
       SC_END,                                                                  \
   };
 
-/// 1 scenes: mars_lighthouse_entrance/s42f8.
+/// 2 copies: mars_lighthouse_entrance/s42f8, mars_lighthouse_entrance/s42f8.
 #define DEFINE_G_DATA_02004DE8(name, n1, n2)                                   \
   u32 name[] = {                                                               \
       SC_SET(SW_STEERING, 0),                                                  \
@@ -988,7 +1030,7 @@
       SC_LOOP(SC_FOREVER, SC_TOP),                                             \
   };
 
-/// 2 scenes: jupiter_lighthouse_room_m/data2, lemurian_ship_deck/s0b84.
+/// 2 copies: data/jupiter_lighthouse_room_m, lemurian_ship_deck/s0b84.
 #define DEFINE_G_DATA_0200218C(name, n1, n2, n3, n4)                           \
   u32 name[] = {                                                               \
       SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(n1),                        \
@@ -998,7 +1040,7 @@
       SC_LOOP(SC_FOREVER, SC_TOP),                                             \
   };
 
-/// 2 scenes: naribwe/data, naribwe_interiors.
+/// 2 copies: data/naribwe, naribwe_interiors.
 #define DEFINE_G_SCENE_EXITS_4(n1, n2, n3, n4, n5)                             \
   u32 gSceneExits[] = {                                                        \
       SCENE_EXITS(n1),                                                         \
@@ -1012,7 +1054,7 @@
       SCENE_EXITS_END,                                                         \
   };
 
-/// 2 scenes: gabomba_catacombs, tundaria_tower/s29d0.
+/// 2 copies: gabomba_catacombs, tundaria_tower/s29d0.
 #define DEFINE_G_DATA_020013D8(name, n1, n2, n3, n4, n5, n6, n7, n8, n9)       \
   struct ActorPlacement name[] = {                                             \
       {n1, CONDITION_ALWAYS, 1, n2, 0, 0, FACING_SOUTH, 2, n3},                \
@@ -1025,14 +1067,14 @@
       {SCENE_TABLE_END},                                                       \
   };
 
-/// 1 scenes: gabomba_statue/data2.
+/// 2 copies: data/gabomba_statue, data/gabomba_statue.
 #define DEFINE_G_DATA_02005B1C(name, n1)                                       \
   u32 name[] = {                                                               \
       SC_ARG(2),  SC_MOVE(PIXELS(n1), 0, PIXELS(176)), SC_SYNC,    SC_ARG(1),  \
       SC_WAIT(1), SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(1), SC_END,     \
   };
 
-/// 1 scenes: gaia_rock_inside/s4d00.
+/// 2 copies: gaia_rock_inside/s4d00, gaia_rock_inside/s4d00.
 #define DEFINE_G_DATA_02005118(name, n1, n2)                                   \
   s32 name[] = {                                                               \
       SC_MOVE_BY(0, 0, PIXELS(n1)),                                            \
@@ -1045,7 +1087,7 @@
       SC_LOOP(SC_FOREVER, SC_TOP),                                             \
   };
 
-/// 1 scenes: islets/data.
+/// 2 copies: data/islets, data/islets.
 #define DEFINE_G_DATA_02004508(name, n1, n2, n3, n4)                           \
   u32 name[] = {                                                               \
       SC_MOVE(PIXELS(248), 0, PIXELS(n1)),                                     \
@@ -1058,7 +1100,7 @@
       SC_END,                                                                  \
   };
 
-/// 2 scenes: mars_lighthouse_entrance/s42f8, mars_lighthouse_room_f/s3d80.
+/// 2 copies: mars_lighthouse_entrance/s42f8, mars_lighthouse_room_f/s3d80.
 #define DEFINE_G_DATA_02004FF0(name, n1)                                       \
   u32 name[] = {                                                               \
       SC_SET(SW_STEERING, 0),                                                  \
@@ -1070,7 +1112,7 @@
       SC_END,                                                                  \
   };
 
-/// 1 scenes: jupiter_lighthouse_room_m/data2.
+/// 2 copies: data/jupiter_lighthouse_room_m, data/jupiter_lighthouse_room_m.
 #define DEFINE_G_DATA_02005800(name, n1, n2)                                   \
   u32 name[] = {                                                               \
       SC_ARG(n1),                                                              \
@@ -1081,7 +1123,7 @@
       SC_END,                                                                  \
   };
 
-/// 1 scenes: loho.
+/// 2 copies: loho, loho.
 #define DEFINE_G_DATA_020017A4(name, n1, n2)                                   \
   u32 name[] = {                                                               \
       SC_SET(SW_SPEED, 0xe666),                                                \
@@ -1092,7 +1134,7 @@
       SC_END,                                                                  \
   };
 
-/// 1 scenes: lemurian_ship.
+/// 2 copies: lemurian_ship, lemurian_ship.
 #define DEFINE_G_DATA_02003398(name, n1, n2, n3, n4, n5, n6, n7)               \
   struct ActorPlacement name[] = {                                             \
       {n1, CONDITION_ALWAYS, 1, PIXELS(n2), 0, PIXELS(n3), FACING_SOUTH, n4,   \
@@ -1104,7 +1146,7 @@
       {SCENE_TABLE_END},                                                       \
   };
 
-/// 2 scenes: lemurian_ship, tundaria_tower/s29d0.
+/// 2 copies: lemurian_ship, tundaria_tower/s29d0.
 #define DEFINE_G_DATA_02003690(name, n1, n2, n3, n4, n5, n6, n7, n8)           \
   struct ActorPlacement name[] = {                                             \
       {n1, CONDITION_ALWAYS, 1, n2, 0, 0, FACING_SOUTH, 2, n3},                \
@@ -1114,14 +1156,14 @@
       {SCENE_TABLE_END},                                                       \
   };
 
-/// 1 scenes: daila_interiors.
+/// 2 copies: daila_interiors, daila_interiors.
 #define DEFINE_G_DATA_0200116C(name, n1, n2, n3, n4, n5, n6, n7)               \
   s32 name[] = {                                                               \
       11, n1, -1, n2,         -1, n3, -1, n4, -1,  n5,                         \
       -1, n6, -1, 0x10703085, -1, 12, n7, -1, 511,                             \
   };
 
-/// 2 scenes: jupiter_lighthouse_room_5/s2450, mars_lighthouse_aerie/s3370.
+/// 2 copies: jupiter_lighthouse_room_5/s2450, mars_lighthouse_aerie/s3370.
 #define DEFINE_G_DATA_02002F94(name, n1, n2)                                   \
   s32 name[] = {                                                               \
       SC_ADD(SW_SCALE_X, -n1),                                                 \
@@ -1130,7 +1172,7 @@
       SC_END,                                                                  \
   };
 
-/// 2 scenes: northern_reaches, osenia_cliffs.
+/// 2 copies: northern_reaches, osenia_cliffs.
 #define DEFINE_G_SCENE_EXITS_5(n1, n2, n3, n4)                                 \
   u32 gSceneExits[] = {                                                        \
       SCENE_EXITS(n1),                                                         \
@@ -1139,7 +1181,7 @@
       SCENE_EXITS_END,                                                         \
   };
 
-/// 2 scenes: shrine_of_the_sea_god/data, treasure_isle.
+/// 2 copies: data/shrine_of_the_sea_god, treasure_isle/treasure_isle.
 #define DEFINE_G_DATA_02001330(name, n1, n2, n3, n4, n5, n6, n7, n8)           \
   struct ActorPlacement name[] = {                                             \
       {n1, CONDITION_ALWAYS, 1, PIXELS(n2), 0, PIXELS(n3), FACING_SOUTH, 2,    \
@@ -1151,7 +1193,7 @@
       {SCENE_TABLE_END},                                                       \
   };
 
-/// 1 scenes: alhafra/data.
+/// 3 copies: data/alhafra, data/alhafra, data/alhafra.
 #define DEFINE_G_DATA_02003434(name, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10)  \
   u32 name[] = {                                                               \
       39,        2, 4,  n1, 0,   n2, 1,  4,         n3, 0, n4,     1,  4,      \
@@ -1159,7 +1201,7 @@
       1,         4, n9, 0,  n10, 1,  39, 1,         22, 3, 0xd000, 17,         \
   };
 
-/// 1 scenes: atteka_inlet.
+/// 2 copies: atteka_inlet, atteka_inlet.
 #define DEFINE_G_DATA_020011AC(name, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10)  \
   u32 name[] = {                                                               \
       0xffff014d, 7,  0x580000,  0, 0x1780000, 0x24000,                        \
@@ -1176,7 +1218,7 @@
       0xffff,     0,  0,         0, 0,         0,                              \
   };
 
-/// 2 scenes: jupiter_lighthouse_room_5/s2450, jupiter_lighthouse_room_m/data2.
+/// 2 copies: data/jupiter_lighthouse_room_m, jupiter_lighthouse_room_5/s2450.
 #define DEFINE_G_SCENE_EXITS_6(n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11,   \
                                n12)                                            \
   u32 gSceneExits[] = {                                                        \

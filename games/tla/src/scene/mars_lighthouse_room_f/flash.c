@@ -223,7 +223,7 @@ void Func_02002b88(void) {
     Func_0200297c();
 }
 
-#include "../shared/mars_lighthouse_room_f_room.h"
+#include "../mars_lighthouse_room_f.h"
 #include "event_work.h"
 
 void ScreenTransition_Start(s32 mode, s32 frames);

@@ -2,7 +2,7 @@
 /// The scene code of overlay 0x6ae, in ROM order.
 
 #include "shared/routines.h"
-#include "shared/mars_lighthouse_aerie.h"
+#include "mars_lighthouse_aerie.h"
 #include "event_work.h"
 #include "module/scene/mars_lighthouse_aerie.h"
 #include "module/scene/scene.h"

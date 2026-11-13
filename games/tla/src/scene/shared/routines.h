@@ -5,7 +5,7 @@
 #ifndef ALCHEMY_SCENE_SHARED_ROUTINES_H
 #define ALCHEMY_SCENE_SHARED_ROUTINES_H
 
-/// 12 scenes: anemos_inner_sanctum/move, jupiter_lighthouse_aerie/s1e78,
+/// 12 copies: anemos_inner_sanctum/move, jupiter_lighthouse_aerie/s1e78,
 /// jupiter_lighthouse_aerie_beacon/s4ec8, jupiter_lighthouse_room_4/s1258,
 /// jupiter_lighthouse_room_5/s1c88, jupiter_lighthouse_room_6/s0f5c,
 /// jupiter_lighthouse_room_7/s1f74, jupiter_lighthouse_room_8/s1600,
@@ -118,7 +118,7 @@
     return table->count;                                                       \
   }
 
-/// 14 scenes: jupiter_lighthouse_aerie/s17a8,
+/// 14 copies: jupiter_lighthouse_aerie/s17a8,
 /// jupiter_lighthouse_aerie_beacon/s44cc, jupiter_lighthouse_entrance/dist,
 /// jupiter_lighthouse_room_1/s0674, jupiter_lighthouse_room_2/s0d94,
 /// jupiter_lighthouse_room_3/s1300, jupiter_lighthouse_room_4/s0b50,
@@ -199,7 +199,7 @@
     }                                                                          \
   }
 
-/// 12 scenes: jupiter_lighthouse_aerie, jupiter_lighthouse_basement/s098c,
+/// 12 copies: jupiter_lighthouse_aerie, jupiter_lighthouse_basement/s098c,
 /// jupiter_lighthouse_entrance/dist, jupiter_lighthouse_room_1/s0674,
 /// jupiter_lighthouse_room_2/s0d94, jupiter_lighthouse_room_3/s07b0,
 /// jupiter_lighthouse_room_5, jupiter_lighthouse_room_6/s0854,
@@ -266,7 +266,7 @@
     }                                                                          \
   }
 
-/// 16 scenes: anemos_inner_sanctum/s2f48, jupiter_lighthouse_aerie/s2640,
+/// 16 copies: anemos_inner_sanctum/s2f48, jupiter_lighthouse_aerie/s2640,
 /// jupiter_lighthouse_aerie_beacon/s539c, jupiter_lighthouse_basement/s185c,
 /// jupiter_lighthouse_entrance/s1674, jupiter_lighthouse_room_1/s1704,
 /// jupiter_lighthouse_room_2/s1e24, jupiter_lighthouse_room_3/s1f50,
@@ -303,7 +303,7 @@
     return 0;                                                                  \
   }
 
-/// 5 scenes: jupiter_lighthouse_room_4, jupiter_lighthouse_room_5,
+/// 5 copies: jupiter_lighthouse_room_4, jupiter_lighthouse_room_5,
 /// jupiter_lighthouse_room_6, jupiter_lighthouse_room_8,
 /// jupiter_lighthouse_room_9.
 #define DEFINE_FUNC_02000410(name)                                             \
@@ -379,7 +379,7 @@
     Event_End();                                                               \
   }
 
-/// 6 scenes: jupiter_lighthouse_aerie/s2640, jupiter_lighthouse_room_2/s1e24,
+/// 6 copies: jupiter_lighthouse_aerie/s2640, jupiter_lighthouse_room_2/s1e24,
 /// jupiter_lighthouse_room_3/s1f50, jupiter_lighthouse_room_m/s4344,
 /// mars_lighthouse_room_f/s3d80, mars_lighthouse_star_room/s3e04.
 #define DEFINE_FUNC_02001E24(name, call1)                                      \
@@ -437,7 +437,7 @@
     Event_End();                                                               \
   }
 
-/// 15 scenes: jupiter_lighthouse_aerie/s1e78,
+/// 15 copies: jupiter_lighthouse_aerie/s1e78,
 /// jupiter_lighthouse_aerie_beacon/s4ec8, jupiter_lighthouse_entrance/s0eac,
 /// jupiter_lighthouse_room_1/s0f3c, jupiter_lighthouse_room_2/s165c,
 /// jupiter_lighthouse_room_3/s1a7c, jupiter_lighthouse_room_5/s1c88,
@@ -464,7 +464,7 @@
     FieldCamera_GetActor()->y -= 0x80000;                                      \
   }
 
-/// 5 scenes: jupiter_lighthouse_basement, jupiter_lighthouse_entrance,
+/// 5 copies: jupiter_lighthouse_basement, jupiter_lighthouse_entrance,
 /// jupiter_lighthouse_room_1, jupiter_lighthouse_room_2,
 /// jupiter_lighthouse_room_3.
 #define DEFINE_FUNC_020003CC(name)                                             \
@@ -528,7 +528,7 @@
     Event_End();                                                               \
   }
 
-/// 9 scenes: jupiter_lighthouse_aerie, jupiter_lighthouse_basement/s098c,
+/// 9 copies: jupiter_lighthouse_aerie, jupiter_lighthouse_basement/s098c,
 /// jupiter_lighthouse_room_1/s0674, jupiter_lighthouse_room_2/s0d94,
 /// jupiter_lighthouse_room_3/s07b0, jupiter_lighthouse_room_4/s0b50,
 /// jupiter_lighthouse_room_6/s0854, jupiter_lighthouse_room_7/s16d4,
@@ -563,7 +563,7 @@
     return object;                                                             \
   }
 
-/// 11 scenes: anemos_inner_sanctum/s2f48,
+/// 11 copies: anemos_inner_sanctum/s2f48,
 /// jupiter_lighthouse_aerie_beacon/s539c, jupiter_lighthouse_basement/s185c,
 /// jupiter_lighthouse_entrance/s1674, jupiter_lighthouse_room_1/s1704,
 /// jupiter_lighthouse_room_2/s1e24, jupiter_lighthouse_room_3/s1f50,
@@ -593,7 +593,7 @@
     }                                                                          \
   }
 
-/// 5 scenes: jupiter_lighthouse_room_4/s1a20, jupiter_lighthouse_room_5/s2450,
+/// 5 copies: jupiter_lighthouse_room_4/s1a20, jupiter_lighthouse_room_5/s2450,
 /// jupiter_lighthouse_room_6/s1724, jupiter_lighthouse_room_8/s1dc8,
 /// jupiter_lighthouse_room_9/s17e0.
 #define DEFINE_FUNC_02001724(name, call1)                                      \
@@ -651,7 +651,7 @@
     Event_End();                                                               \
   }
 
-/// 7 scenes: jupiter_lighthouse_basement/s16c4,
+/// 7 copies: jupiter_lighthouse_basement/s16c4,
 /// jupiter_lighthouse_room_1/s156c, jupiter_lighthouse_room_2/s1c8c,
 /// jupiter_lighthouse_room_4/s1888, jupiter_lighthouse_room_5/s22b8,
 /// jupiter_lighthouse_room_6/s158c, jupiter_lighthouse_room_7/s25a4.
@@ -690,7 +690,7 @@
     Event_WaitTransitionFrames();                                              \
   }
 
-/// 16 scenes: anemos_inner_sanctum_entrance, jupiter_lighthouse_aerie/s17a8,
+/// 16 copies: anemos_inner_sanctum_entrance, jupiter_lighthouse_aerie/s17a8,
 /// jupiter_lighthouse_aerie_beacon/s44cc, jupiter_lighthouse_basement/s098c,
 /// jupiter_lighthouse_entrance/dist, jupiter_lighthouse_room_1/s0674,
 /// jupiter_lighthouse_room_2/s0d94, jupiter_lighthouse_room_3/s1300,
@@ -713,7 +713,7 @@
     data5 = -1;                                                                \
   }
 
-/// 14 scenes: jupiter_lighthouse_aerie, jupiter_lighthouse_aerie_beacon/s0198,
+/// 14 copies: jupiter_lighthouse_aerie, jupiter_lighthouse_aerie_beacon/s0198,
 /// jupiter_lighthouse_basement, jupiter_lighthouse_entrance,
 /// jupiter_lighthouse_room_1, jupiter_lighthouse_room_2,
 /// jupiter_lighthouse_room_3, jupiter_lighthouse_room_4,
@@ -736,7 +736,7 @@
     call2(object->x, object->z, 0, 128);                                       \
   }
 
-/// 15 scenes: jupiter_lighthouse_aerie/s17a8,
+/// 15 copies: jupiter_lighthouse_aerie/s17a8,
 /// jupiter_lighthouse_aerie_beacon/s44cc, jupiter_lighthouse_basement/s098c,
 /// jupiter_lighthouse_entrance/dist, jupiter_lighthouse_room_1/s0674,
 /// jupiter_lighthouse_room_2/s0d94, jupiter_lighthouse_room_3/s1300,
@@ -759,7 +759,7 @@
     data5 = -1;                                                                \
   }
 
-/// 15 scenes: jupiter_lighthouse_aerie/s17a8,
+/// 15 copies: jupiter_lighthouse_aerie/s17a8,
 /// jupiter_lighthouse_aerie_beacon/s44cc, jupiter_lighthouse_basement/s098c,
 /// jupiter_lighthouse_entrance/dist, jupiter_lighthouse_room_1/s0674,
 /// jupiter_lighthouse_room_2/s0d94, jupiter_lighthouse_room_3/s1300,
@@ -782,7 +782,7 @@
     data5 = -1;                                                                \
   }
 
-/// 12 scenes: jupiter_lighthouse_aerie_beacon/s0198,
+/// 12 copies: jupiter_lighthouse_aerie_beacon/s0198,
 /// jupiter_lighthouse_basement, jupiter_lighthouse_entrance,
 /// jupiter_lighthouse_room_1, jupiter_lighthouse_room_2,
 /// jupiter_lighthouse_room_4, jupiter_lighthouse_room_5,
@@ -805,7 +805,7 @@
     }                                                                          \
   }
 
-/// 4 scenes: eastern_alhafra/s4004, jupiter_lighthouse_room_3/s0dcc,
+/// 4 copies: eastern_alhafra/s4004, jupiter_lighthouse_room_3/s0dcc,
 /// jupiter_lighthouse_room_8/s0c44, mars_lighthouse_room_f/s3d80.
 #define DEFINE_FUNC_02000DAC(name, data1, data2, data3)                        \
   struct Actor *name(s32 *direction, s32 *slot, s32 *kind) {                   \
@@ -856,8 +856,8 @@
     return NULL;                                                               \
   }
 
-/// 3 scenes: mars_lighthouse_entrance, mars_lighthouse_room_m,
-/// mars_lighthouse_star_room.
+/// 3 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
+/// mars_lighthouse_room_m, mars_lighthouse_star_room.
 #define DEFINE_FUNC_020015EC(name, id1, call1, call2)                          \
   void name(struct Actor *object) {                                            \
     struct id1 *work = (struct id1 *)(gData_020023c4 + 0x188);                 \
@@ -924,7 +924,7 @@
     }                                                                          \
   }
 
-/// 11 scenes: jupiter_lighthouse_aerie/s17a8,
+/// 11 copies: jupiter_lighthouse_aerie/s17a8,
 /// jupiter_lighthouse_basement/s098c, jupiter_lighthouse_entrance/dist,
 /// jupiter_lighthouse_room_1/s0674, jupiter_lighthouse_room_3/s1300,
 /// jupiter_lighthouse_room_4/s0b50, jupiter_lighthouse_room_5/s1650,
@@ -944,7 +944,7 @@
     }                                                                          \
   }
 
-/// 7 scenes: jupiter_lighthouse_room_2/s0d94, jupiter_lighthouse_room_3/s07b0,
+/// 7 copies: jupiter_lighthouse_room_2/s0d94, jupiter_lighthouse_room_3/s07b0,
 /// jupiter_lighthouse_room_6/s0854, jupiter_lighthouse_room_7/s16d4,
 /// jupiter_lighthouse_room_8/s07e8, jupiter_lighthouse_room_9/s0910,
 /// jupiter_lighthouse_room_m/s3474.
@@ -970,14 +970,15 @@
     return 0;                                                                  \
   }
 
-/// 19 scenes: airs_rock, airs_rock_inside, jupiter_lighthouse_aerie,
-/// jupiter_lighthouse_aerie_beacon/s0198, jupiter_lighthouse_basement,
-/// jupiter_lighthouse_entrance/dist, jupiter_lighthouse_room_1,
-/// jupiter_lighthouse_room_2, jupiter_lighthouse_room_4,
-/// jupiter_lighthouse_room_5, jupiter_lighthouse_room_6,
-/// jupiter_lighthouse_room_7, jupiter_lighthouse_room_8,
-/// jupiter_lighthouse_room_9, jupiter_lighthouse_room_m, magma_rock,
-/// magma_rock_inside, mars_lighthouse_room_f, sea_of_time.
+/// 19 copies: airs_rock/airs_rock, airs_rock_inside/airs_rock_inside,
+/// jupiter_lighthouse_aerie, jupiter_lighthouse_aerie_beacon/s0198,
+/// jupiter_lighthouse_basement, jupiter_lighthouse_entrance/dist,
+/// jupiter_lighthouse_room_1, jupiter_lighthouse_room_2,
+/// jupiter_lighthouse_room_4, jupiter_lighthouse_room_5,
+/// jupiter_lighthouse_room_6, jupiter_lighthouse_room_7,
+/// jupiter_lighthouse_room_8, jupiter_lighthouse_room_9,
+/// jupiter_lighthouse_room_m, magma_rock, magma_rock_inside/magma_rock_inside,
+/// mars_lighthouse_room_f, sea_of_time.
 #define DEFINE_FUNC_020003D0(name)                                             \
   s32 name(s32 *a, s32 *b) {                                                   \
     s32 dx = (a[0] - b[0]) >> 16;                                              \
@@ -986,7 +987,7 @@
     return Iwram_Sqrt(dx * dx + dz * dz);                                      \
   }
 
-/// 3 scenes: mars_lighthouse_entrance/s2270, mars_lighthouse_room_f,
+/// 3 copies: mars_lighthouse_entrance/s2270, mars_lighthouse_room_f,
 /// mars_lighthouse_room_m/s2118.
 #define DEFINE_FUNC_0200218C(name, call1)                                      \
   void name(u16 *targets, u16 *stops, s32 a2, s32 a3) {                        \
@@ -1044,8 +1045,8 @@
     Task_AddFrame(call1, 0x480);                                               \
   }
 
-/// 3 scenes: mars_lighthouse_entrance, mars_lighthouse_room_f,
-/// mars_lighthouse_room_m.
+/// 3 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
+/// mars_lighthouse_room_f, mars_lighthouse_room_m.
 #define DEFINE_FUNC_02001B64(name, id1, call1, call2)                          \
   void name(struct Actor *object) {                                            \
     struct id1 *work = (struct id1 *)(gData_020023c4 + 0x188);                 \
@@ -1101,7 +1102,7 @@
     }                                                                          \
   }
 
-/// 4 scenes: airs_rock_inside/s0038, tundaria_tower/events_f, yampi_desert,
+/// 4 copies: airs_rock_inside, tundaria_tower/events_f, yampi_desert,
 /// yampi_desert_cave.
 #define DEFINE_FUNC_02000128(name, call1, call2)                               \
   void name(s32 id, u32 kind, s32 flag, s32 layer) {                           \
@@ -1139,7 +1140,7 @@
     }                                                                          \
   }
 
-/// 4 scenes: eastern_alhafra/s44c4, izumo_ruins/s0038,
+/// 4 copies: eastern_alhafra/s44c4, izumo_ruins/s0038,
 /// jupiter_lighthouse_room_7/s16d4, mars_lighthouse_entrance/s42f8.
 #define DEFINE_FUNC_02000128__S00A4(name, call1, call2)                        \
   void name(s32 id, u32 kind, s32 flag, s32 layer) {                           \
@@ -1177,7 +1178,7 @@
     }                                                                          \
   }
 
-/// 4 scenes: jupiter_lighthouse_aerie/s24a8, jupiter_lighthouse_room_8/s1c30,
+/// 4 copies: jupiter_lighthouse_aerie/s24a8, jupiter_lighthouse_room_8/s1c30,
 /// jupiter_lighthouse_room_9/s1648, jupiter_lighthouse_room_m/s41ac.
 #define DEFINE_FUNC_02001648(name, id1, call1)                                 \
   void name(struct id1 *table, struct CellTargetEntry *entry) {                \
@@ -1214,7 +1215,7 @@
     Event_WaitTransitionFrames();                                              \
   }
 
-/// 4 scenes: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s328c,
+/// 4 copies: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s328c,
 /// mars_lighthouse_room_m/s2708, mars_lighthouse_star_room/s2148.
 #define DEFINE_FUNC_02002B98(name, call1)                                      \
   s32 name(struct Actor *object) {                                             \
@@ -1251,7 +1252,7 @@
     return 1;                                                                  \
   }
 
-/// 4 scenes: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s328c,
+/// 4 copies: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s328c,
 /// mars_lighthouse_room_m/s2708, mars_lighthouse_star_room/s2148.
 #define DEFINE_FUNC_02002C44(name, call1)                                      \
   s32 name(struct Actor *object) {                                             \
@@ -1285,7 +1286,7 @@
     return 1;                                                                  \
   }
 
-/// 2 scenes: islets/s3410, mars_lighthouse_room_f/s3d80.
+/// 2 copies: islets/s3410, mars_lighthouse_room_f/s3d80.
 #define DEFINE_FUNC_02003A5C(name, data1, call1, call2, call3, data2)          \
   void name(struct PushTarget target) {                                        \
     u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;          \
@@ -1371,7 +1372,7 @@
     Event_NoOp();                                                              \
   }
 
-/// 2 scenes: jupiter_lighthouse_room_3/s0dcc, jupiter_lighthouse_room_8/s0c44.
+/// 2 copies: jupiter_lighthouse_room_3/s0dcc, jupiter_lighthouse_room_8/s0c44.
 #define DEFINE_FUNC_02000EC8(name, data1, call1, call2, data2)                 \
   void name(struct PushTarget target) {                                        \
     u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;          \
@@ -1457,7 +1458,7 @@
     Event_NoOp();                                                              \
   }
 
-/// 4 scenes: mars_lighthouse_entrance/s2270, mars_lighthouse_room_f/ride,
+/// 4 copies: mars_lighthouse_entrance/s2270, mars_lighthouse_room_f/ride,
 /// mars_lighthouse_room_m/s2118, mars_lighthouse_star_room/ride_handle.
 #define DEFINE_FUNC_02001FCC(name)                                             \
   void name(void) {                                                            \
@@ -1489,7 +1490,7 @@
     }                                                                          \
   }
 
-/// 4 scenes: jupiter_lighthouse_aerie_beacon/s44cc,
+/// 4 copies: jupiter_lighthouse_aerie_beacon/s44cc,
 /// jupiter_lighthouse_entrance/dist, jupiter_lighthouse_room_9/s0910,
 /// jupiter_lighthouse_room_m/s3474.
 #define DEFINE_FUNC_020007A4(name, call1, call2, call3)                        \
@@ -1521,7 +1522,8 @@
     return object;                                                             \
   }
 
-/// 4 scenes: eastern_alhafra, magma_rock/s34ac, magma_rock_inside/s46e8, prox.
+/// 4 copies: eastern_alhafra, magma_rock/s34ac, magma_rock_inside/s46e8,
+/// prox/prox.
 #define DEFINE_FUNC_0200379C(name, call1)                                      \
   void name(void) {                                                            \
     struct ParticleWork *work = Ram_HeapSlots->menuRuntime;                    \
@@ -1550,8 +1552,8 @@
       goto next;                                                               \
   }
 
-/// 4 scenes: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s3d80,
-/// mars_lighthouse_star_room/s2148, prox.
+/// 4 copies: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s3d80,
+/// mars_lighthouse_star_room/s2148, prox/prox.
 #define DEFINE_FUNC_02002D04(name, data1, call1)                               \
   void name(struct Actor *object) {                                            \
     s32 angle;                                                                 \
@@ -1580,7 +1582,7 @@
     Actor_SetAnimationSpeed(object, 48);                                       \
   }
 
-/// 2 scenes: magma_rock_inside/s3678, trial_road/s15a8.
+/// 2 copies: magma_rock_inside/s3678, trial_road/s15a8.
 #define DEFINE_FUNC_0200406C(name, call1, call2, call3, call4, call5, call6)   \
   void name(const u16 *table) {                                                \
     struct Actor *leader;                                                      \
@@ -1655,7 +1657,7 @@
       goto next;                                                               \
   }
 
-/// 2 scenes: jupiter_lighthouse_room_7, jupiter_lighthouse_room_m.
+/// 2 copies: jupiter_lighthouse_room_7, jupiter_lighthouse_room_m.
 #define DEFINE_FUNC_020012FC(name)                                             \
   void name(void) {                                                            \
     struct EventWork *work = Ram_HeapSlots->eventWork;                         \
@@ -1729,7 +1731,7 @@
     Event_End();                                                               \
   }
 
-/// 4 scenes: jupiter_lighthouse_room_5/s2450, jupiter_lighthouse_room_6/s1724,
+/// 4 copies: jupiter_lighthouse_room_5/s2450, jupiter_lighthouse_room_6/s1724,
 /// jupiter_lighthouse_room_8/s1dc8, jupiter_lighthouse_room_9/s17e0.
 #define DEFINE_FUNC_0200196C(name, data1, call1)                               \
   void name(s32 x, s32 z, s32 effect) {                                        \
@@ -1755,7 +1757,7 @@
     }                                                                          \
   }
 
-/// 3 scenes: mars_lighthouse_entrance/s263c, mars_lighthouse_room_m/s2708,
+/// 3 copies: mars_lighthouse_entrance/s263c, mars_lighthouse_room_m/s2708,
 /// mars_lighthouse_star_room/s2148.
 #define DEFINE_FUNC_02002AD0(name, call1)                                      \
   void name(struct Actor *self) {                                              \
@@ -1790,7 +1792,7 @@
     Event_PlaySound(104);                                                      \
   }
 
-/// 2 scenes: magma_rock/s22ac, magma_rock_inside/s3678.
+/// 2 copies: magma_rock/s22ac, magma_rock_inside/s3678.
 #define DEFINE_FUNC_020030BC(name, call1, call2, call3, call4, call5)          \
   void name(u16 *list) {                                                       \
     struct MapWork *map = Ram_HeapSlots->mapWork;                              \
@@ -1852,8 +1854,8 @@
     System_Wait(10);                                                           \
   }
 
-/// 3 scenes: mars_lighthouse_entrance, mars_lighthouse_room_f,
-/// mars_lighthouse_star_room.
+/// 3 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
+/// mars_lighthouse_room_f, mars_lighthouse_star_room.
 #define DEFINE_FUNC_02001A9C(name, call1)                                      \
   void name(struct Actor *object) {                                            \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
@@ -1882,7 +1884,7 @@
     }                                                                          \
   }
 
-/// 2 scenes: magma_rock/s22ac, magma_rock_inside/s3678.
+/// 2 copies: magma_rock/s22ac, magma_rock_inside/s3678.
 #define DEFINE_FUNC_02002D08(name, call1, call2, call3, call4, call5)          \
   void name(const u16 *table) {                                                \
     struct MapWork *map = Ram_HeapSlots->mapWork;                              \
@@ -1936,9 +1938,8 @@
     }                                                                          \
   }
 
-/// 6 scenes: anemos_inner_sanctum/s0038, islet_cave,
-/// mars_lighthouse_aerie/s3370, mars_lighthouse_entrance/s42f8,
-/// mars_lighthouse_room_m, yampi_desert_cave.
+/// 6 copies: anemos_inner_sanctum, islet_cave, mars_lighthouse_aerie/s3370,
+/// mars_lighthouse_entrance/s42f8, mars_lighthouse_room_m, yampi_desert_cave.
 #define DEFINE_FUNC_020001D4(name)                                             \
   s32 name(u16 *list) {                                                        \
     s32 count = 0;                                                             \
@@ -1951,7 +1952,7 @@
     return count;                                                              \
   }
 
-/// 2 scenes: apojii_islands, aqua_rock.
+/// 2 copies: apojii_islands/apojii_islands, aqua_rock/aqua_rock.
 #define DEFINE_FUNC_02001940(name, data1)                                      \
   void name(void) {                                                            \
     struct MapWork *view = Ram_HeapSlots->mapWork;                             \
@@ -2004,8 +2005,7 @@
     }                                                                          \
   }
 
-/// 4 scenes: airs_rock/s00d0, gaia_rock_inside/s00d0, gondowan_cliffs,
-/// treasure_isle/s00d0.
+/// 4 copies: airs_rock, gaia_rock_inside, gondowan_cliffs, treasure_isle.
 #define DEFINE_FUNC_020000D0(name)                                             \
   struct Actor *name(s32 a0, s32 a1, s32 a2, s32 a3) {                         \
     struct Actor *t0;                                                          \
@@ -2023,7 +2023,9 @@
     return 0;                                                                  \
   }
 
-/// 2 scenes: mars_lighthouse_entrance, mars_lighthouse_room_f.
+/// 4 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
+/// mars_lighthouse_entrance/mars_lighthouse_entrance, mars_lighthouse_room_f,
+/// mars_lighthouse_room_f.
 #define DEFINE_FUNC_02001E60(name, call1, call2, call3, call4)                 \
   void name(s32 *position, s32 speed, s32 mode) {                              \
     struct Actor *object = call1(366, position[0], position[1], position[2]);  \
@@ -2040,7 +2042,8 @@
     }                                                                          \
   }
 
-/// 3 scenes: apojii_islands, aqua_rock, aqua_rock_inside.
+/// 3 copies: apojii_islands/apojii_islands, aqua_rock/aqua_rock,
+/// aqua_rock_inside/aqua_rock_inside.
 #define DEFINE_FUNC_02001140(name, data1)                                      \
   void name(struct Actor *object) {                                            \
     s32 phase = gFrameCount & 15;                                              \
@@ -2065,7 +2068,8 @@
     }                                                                          \
   }
 
-/// 3 scenes: apojii_islands, aqua_rock, aqua_rock_inside.
+/// 3 copies: apojii_islands/apojii_islands, aqua_rock/aqua_rock,
+/// aqua_rock_inside/aqua_rock_inside.
 #define DEFINE_FUNC_020013D8(name)                                             \
   s32 name(struct Actor *object) {                                             \
     s32 params[10];                                                            \
@@ -2090,7 +2094,7 @@
     return 0;                                                                  \
   }
 
-/// 2 scenes: dehkan_plateau/s0bc0, madra_catacombs.
+/// 2 copies: dehkan_plateau/s0bc0, madra_catacombs.
 #define DEFINE_FUNC_02000038(name, call1, call2, call3)                        \
   void name(u16 *list) {                                                       \
     struct MapWork *map = Ram_HeapSlots->mapWork;                              \
@@ -2136,7 +2140,7 @@
     }                                                                          \
   }
 
-/// 4 scenes: dehkan_plateau/s0bc0, magma_rock_inside/s46e8, trial_road/s15a8,
+/// 4 copies: dehkan_plateau/s0bc0, magma_rock_inside/s46e8, trial_road/s15a8,
 /// tundaria_tower/s29d0.
 #define DEFINE_FUNC_02000BC0(name, call1, call2)                               \
   void name(s32 level, s32 layer, s32 owner) {                                 \
@@ -2154,7 +2158,7 @@
     *shape = call2(object->terrainId, value, height);                          \
   }
 
-/// 3 scenes: jupiter_lighthouse_aerie_beacon/s44cc,
+/// 3 copies: jupiter_lighthouse_aerie_beacon/s44cc,
 /// jupiter_lighthouse_room_1/s0674, mars_lighthouse_room_f.
 #define DEFINE_FUNC_0200090C(name, call1)                                      \
   s32 name(struct Actor *object) {                                             \
@@ -2177,7 +2181,8 @@
     return 0;                                                                  \
   }
 
-/// 3 scenes: airs_rock_inside/s2770, aqua_rock_inside, gaia_rock_inside/s07f4.
+/// 3 copies: airs_rock_inside/s2770, aqua_rock_inside/aqua_rock_inside,
+/// gaia_rock_inside/s07f4.
 #define DEFINE_FUNC_02001548(name, call1)                                      \
   void name(struct Actor *object) {                                            \
     s32 phase = gFrameCount & 7;                                               \
@@ -2198,7 +2203,8 @@
     }                                                                          \
   }
 
-/// 3 scenes: magma_rock_inside, mars_lighthouse_entrance/calls, treasure_isle.
+/// 3 copies: magma_rock_inside/magma_rock_inside, mars_lighthouse_entrance,
+/// treasure_isle/treasure_isle.
 #define DEFINE_FUNC_02000168(name)                                             \
   s32 name(u32 layer, s32 x, s32 y, s32 value) {                               \
     struct MapWork *map = Ram_HeapSlots->mapWork;                              \
@@ -2218,7 +2224,7 @@
     return old;                                                                \
   }
 
-/// 2 scenes: apojii_islands, aqua_rock_inside.
+/// 2 copies: apojii_islands/apojii_islands, aqua_rock_inside/aqua_rock_inside.
 #define DEFINE_FUNC_02001500(name, call1)                                      \
   void name(void) {                                                            \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
@@ -2253,7 +2259,7 @@
     }                                                                          \
   }
 
-/// 3 scenes: gondowan_cliffs, staff_credit, world_map.
+/// 5 copies: gondowan_cliffs, staff_credit, world_map, world_map, world_map.
 #define DEFINE_FUNC_02000038_58(name)                                          \
   s32 name(struct Actor *object) {                                             \
     u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapWork + 286);                   \
@@ -2264,7 +2270,7 @@
     return 1;                                                                  \
   }
 
-/// 2 scenes: airs_rock, magma_rock_inside.
+/// 2 copies: airs_rock/airs_rock, magma_rock_inside/magma_rock_inside.
 #define DEFINE_FUNC_020003E8(name, call1)                                      \
   void name(u16 *ids) {                                                        \
     struct Actor *object;                                                      \
@@ -2297,7 +2303,7 @@
     }                                                                          \
   }
 
-/// 2 scenes: staff_credit, world_map/s3b38.
+/// 4 copies: staff_credit, staff_credit, world_map/s3b38, world_map/s3b38.
 #define DEFINE_FUNC_020011F4(name, call1)                                      \
   void name(struct Actor *object) {                                            \
     if ((gFrameCount & 2) != 0) {                                              \
@@ -2310,7 +2316,7 @@
     }                                                                          \
   }
 
-/// 2 scenes: eastern_alhafra/s44c4, mars_lighthouse_room_f/s3d80.
+/// 2 copies: eastern_alhafra/s44c4, mars_lighthouse_room_f/s3d80.
 #define DEFINE_FUNC_02004774(name, call1, data1, call2)                        \
   void name(struct Actor *object) {                                            \
     s32 position[3];                                                           \
@@ -2343,7 +2349,7 @@
                                            object->z);                         \
   }
 
-/// 2 scenes: apojii_islands, aqua_rock_inside.
+/// 2 copies: apojii_islands/apojii_islands, aqua_rock_inside/aqua_rock_inside.
 #define DEFINE_FUNC_02001338(name, call1, call2)                               \
   void name(s32 entrance) {                                                    \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
@@ -2373,7 +2379,7 @@
     FieldEvent_SetExitRequest(entrance);                                       \
   }
 
-/// 2 scenes: eastern_alhafra/s44c4, gabomba_statue/s2394.
+/// 2 copies: eastern_alhafra/s44c4, gabomba_statue/s2394.
 #define DEFINE_FUNC_02004868(name, call1)                                      \
   void name(u16 *list, s32 mode, s32 count) {                                  \
     struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;          \
@@ -2403,7 +2409,7 @@
     }                                                                          \
   }
 
-/// 2 scenes: jupiter_lighthouse_room_5, lemuria_interiors/s12dc.
+/// 2 copies: jupiter_lighthouse_room_5, lemuria_interiors/s12dc.
 #define DEFINE_FUNC_020000C8(name)                                             \
   void name(struct Actor *object) {                                            \
     struct AnimatedSprite *sprite = (struct AnimatedSprite *)object->sprite;   \
@@ -2433,7 +2439,7 @@
     object->timer++;                                                           \
   }
 
-/// 2 scenes: jupiter_lighthouse_room_7/s16d4, mars_lighthouse_entrance/s42f8.
+/// 2 copies: jupiter_lighthouse_room_7/s16d4, mars_lighthouse_entrance/s42f8.
 #define DEFINE_FUNC_020019DC(name, call1)                                      \
   void name(const u16 *list) {                                                 \
     const u16 *spec;                                                           \
@@ -2463,7 +2469,7 @@
     } while (first != ((limit << 8) + 0xff));                                  \
   }
 
-/// 2 scenes: yampi_desert, yampi_desert_cave.
+/// 2 copies: yampi_desert, yampi_desert_cave.
 #define DEFINE_FUNC_02000BC0_69(name, call1)                                   \
   void name(u16 *list, s32 mode, s32 count) {                                  \
     struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;          \
@@ -2493,7 +2499,8 @@
     }                                                                          \
   }
 
-/// 3 scenes: airs_rock_inside/s2770, aqua_rock_inside, gaia_rock_inside/s07f4.
+/// 3 copies: airs_rock_inside/s2770, aqua_rock_inside/aqua_rock_inside,
+/// gaia_rock_inside/s07f4.
 #define DEFINE_FUNC_020014D0(name)                                             \
   s32 name(struct Actor *object) {                                             \
     struct Actor *target = object->watchedObject;                              \
@@ -2508,7 +2515,7 @@
     return 0;                                                                  \
   }
 
-/// 2 scenes: staff_credit, world_map/s3b38.
+/// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_FUNC_02001364(name)                                             \
   void name(void) {                                                            \
     struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);           \
@@ -2535,7 +2542,7 @@
     }                                                                          \
   }
 
-/// 2 scenes: magma_rock, magma_rock_inside.
+/// 2 copies: magma_rock, magma_rock_inside/magma_rock_inside.
 #define DEFINE_FUNC_0200074C(name)                                             \
   void name(struct Object0200074c *object) {                                   \
     struct MapWork *map;                                                       \
@@ -2561,7 +2568,7 @@
     object->marked = 0;                                                        \
   }
 
-/// 2 scenes: apojii_islands, aqua_rock_inside.
+/// 2 copies: apojii_islands/apojii_islands, aqua_rock_inside/aqua_rock_inside.
 #define DEFINE_FUNC_02001464(name, call1)                                      \
   void name(s32 entrance) {                                                    \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
@@ -2585,7 +2592,7 @@
     Event_End();                                                               \
   }
 
-/// 3 scenes: contigo, lemuria, magma_rock_inside/s033c.
+/// 3 copies: contigo/contigo, lemuria, magma_rock_inside/s033c.
 #define DEFINE_FUNC_02000038_75(name)                                          \
   s32 name(s32 *a, s32 *b) {                                                   \
     s32 dx = (*a++ - *b++) >> 16;                                              \
@@ -2598,7 +2605,7 @@
     return Iwram_Sqrt(dxsq + dysq + dzsq);                                     \
   }
 
-/// 2 scenes: eastern_alhafra_ship, lemuria_interiors/s12dc.
+/// 2 copies: eastern_alhafra_ship, lemuria_interiors/s12dc.
 #define DEFINE_FUNC_02000438(name, call1)                                      \
   void name(s32 id) {                                                          \
     struct Actor *object = Actor_GetById(id);                                  \
@@ -2617,7 +2624,7 @@
     Event_Wait(15);                                                            \
   }
 
-/// 2 scenes: contigo, lemuria.
+/// 2 copies: contigo/contigo, lemuria.
 #define DEFINE_FUNC_02000070(name, call1)                                      \
   s32 name(struct Actor *self, struct Actor *other, s32 range) {               \
     s32 result = 0;                                                            \
@@ -2639,7 +2646,7 @@
     return result;                                                             \
   }
 
-/// 2 scenes: staff_credit, world_map/s3b38.
+/// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_FUNC_02001A34(name, call1)                                      \
   void name(struct Actor *object) {                                            \
     struct Actor *parent = object->watchedObject;                              \
@@ -2661,7 +2668,7 @@
     object->z = parent->z + (rise - scale) * 5 + 0x80000;                      \
   }
 
-/// 2 scenes: staff_credit, world_map/s3b38.
+/// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_FUNC_02001A80(name, call1)                                      \
   void name(struct Actor *object) {                                            \
     struct Actor *parent = object->watchedObject;                              \
@@ -2683,7 +2690,8 @@
     object->z = parent->z - (rise - scale) * 5 + 0x100000;                     \
   }
 
-/// 3 scenes: airs_rock_inside/s2770, aqua_rock_inside, gaia_rock_inside/s07f4.
+/// 3 copies: airs_rock_inside/s2770, aqua_rock_inside/aqua_rock_inside,
+/// gaia_rock_inside/s07f4.
 #define DEFINE_FUNC_0200151C(name)                                             \
   s32 name(struct Actor *object) {                                             \
     u8 left;                                                                   \
@@ -2695,7 +2703,8 @@
     return left != 0;                                                          \
   }
 
-/// 2 scenes: aqua_rock_inside, magma_rock_inside.
+/// 2 copies: aqua_rock_inside/aqua_rock_inside,
+/// magma_rock_inside/magma_rock_inside.
 #define DEFINE_FUNC_0200147C(name)                                             \
   s32 name(struct Orbit *object) {                                             \
     s32 z;                                                                     \
@@ -2716,8 +2725,8 @@
     return 1;                                                                  \
   }
 
-/// 4 scenes: dehkan_plateau, kibombo/s2f34, shrine_of_the_sea_god/s1340,
-/// yampi_desert.
+/// 4 copies: dehkan_plateau/dehkan_plateau, kibombo/s2f34,
+/// shrine_of_the_sea_god/s1340, yampi_desert.
 #define DEFINE_FUNC_02001F38(name, call1)                                      \
   void name(s32 id) {                                                          \
     call1(id);                                                                 \
@@ -2726,7 +2735,7 @@
     Actor_GetById(id)->priorityFlags |= 2;                                     \
   }
 
-/// 3 scenes: jupiter_lighthouse_aerie_beacon/s44cc,
+/// 3 copies: jupiter_lighthouse_aerie_beacon/s44cc,
 /// jupiter_lighthouse_room_6/s0854, jupiter_lighthouse_room_7/s16d4.
 #define DEFINE_FUNC_02000EA0(name, data1, data2)                               \
   void name(s32 id, s32 value) {                                               \
@@ -2739,7 +2748,7 @@
     }                                                                          \
   }
 
-/// 4 scenes: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s328c,
+/// 4 copies: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s328c,
 /// mars_lighthouse_room_m/s2708, mars_lighthouse_star_room/s2148.
 #define DEFINE_FUNC_02002CE8(name, call1)                                      \
   s32 name(struct Actor *object) {                                             \
@@ -2749,7 +2758,7 @@
     return 0;                                                                  \
   }
 
-/// 3 scenes: mars_lighthouse_room_f/ride, mars_lighthouse_room_m/s2118,
+/// 3 copies: mars_lighthouse_room_f/ride, mars_lighthouse_room_m/s2118,
 /// mars_lighthouse_star_room/ride_handle.
 #define DEFINE_FUNC_02001F50(name)                                             \
   s32 name(s32 limit) {                                                        \
@@ -2762,7 +2771,7 @@
     return work->counter;                                                      \
   }
 
-/// 2 scenes: aqua_rock_inside/s3844, taopo_swamp.
+/// 2 copies: aqua_rock_inside/s3844, taopo_swamp.
 #define DEFINE_FUNC_020025D4(name, call1)                                      \
   void name(void) {                                                            \
     struct VentWork *work = VENT_WORK;                                         \
@@ -2782,7 +2791,7 @@
     }                                                                          \
   }
 
-/// 2 scenes: airs_rock, magma_rock/s22ac.
+/// 2 copies: airs_rock/airs_rock, magma_rock/s22ac.
 #define DEFINE_FUNC_0200244C(name)                                             \
   void name(s32 height) {                                                      \
     struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);           \
@@ -2801,7 +2810,8 @@
     }                                                                          \
   }
 
-/// 2 scenes: mars_lighthouse_entrance, mars_lighthouse_room_f.
+/// 2 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
+/// mars_lighthouse_room_f.
 #define DEFINE_FUNC_0200206C(name, call1, call2, call3)                        \
   void name(s32 *position, s32 speed) {                                        \
     struct Actor *object =                                                     \
@@ -2820,7 +2830,7 @@
     }                                                                          \
   }
 
-/// 2 scenes: izumo_ruins/s0974, magma_rock/s34ac.
+/// 2 copies: izumo_ruins/s0974, magma_rock/s34ac.
 #define DEFINE_FUNC_02000BC0_89(name, call1, call2)                            \
   void name(s32 heightOffset, s32 layer, s32 id) {                             \
     struct Actor *actor = Actor_Get(id);                                       \
@@ -2838,7 +2848,7 @@
     *shapes = call2(actor->terrainId, value, height);                          \
   }
 
-/// 2 scenes: kibombo_mountains, settlements/s0280.
+/// 2 copies: kibombo_mountains, settlements/s0280.
 #define DEFINE_FUNC_02000058(name)                                             \
   s32 name(struct Actor *object) {                                             \
     s32 step = object->riseCounter & 63;                                       \
@@ -2856,7 +2866,7 @@
     return -1;                                                                 \
   }
 
-/// 2 scenes: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s328c.
+/// 2 copies: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s328c.
 #define DEFINE_FUNC_02002F4C(name, call1, call2)                               \
   void name(s32 id, s32 target, s32 kind, s32 a3, const void *script) {        \
     struct Actor *source = Actor_Get(id);                                      \
@@ -2875,7 +2885,7 @@
     object->update = call2;                                                    \
   }
 
-/// 2 scenes: staff_credit, world_map/s3b38.
+/// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_FUNC_020012AC(name, call1, call2)                               \
   void name(void) {                                                            \
     struct Actor *object = Actor_Get(FieldParty_GetLeaderActor());             \
@@ -2893,7 +2903,7 @@
     call1(object, 2);                                                          \
   }
 
-/// 2 scenes: apojii_islands/object, aqua_rock_inside/s00d0.
+/// 2 copies: apojii_islands, aqua_rock_inside.
 #define DEFINE_FUNC_020000D0_93()                                              \
   struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 kind) {                 \
     struct Actor *object = FieldActor_Create(kind, x, y, z);                   \
@@ -2910,7 +2920,7 @@
     return 0;                                                                  \
   }
 
-/// 2 scenes: kibombo_mountains, taopo_swamp.
+/// 2 copies: kibombo_mountains, taopo_swamp.
 #define DEFINE_FUNC_0200015C(name)                                             \
   void name(s32 id) {                                                          \
     s32 n = 60;                                                                \
@@ -2927,7 +2937,7 @@
     object->motionFlags = 0;                                                   \
   }
 
-/// 3 scenes: mars_lighthouse_room_f/flash, mars_lighthouse_room_m/s2708,
+/// 3 copies: mars_lighthouse_room_f/flash, mars_lighthouse_room_m/s2708,
 /// mars_lighthouse_star_room/s2148.
 #define DEFINE_FUNC_020024AC(name, call1)                                      \
   s32 name(void) {                                                             \
@@ -2938,7 +2948,7 @@
     return 0;                                                                  \
   }
 
-/// 3 scenes: mars_lighthouse_room_f/ride, mars_lighthouse_room_m/s2118,
+/// 3 copies: mars_lighthouse_room_f/ride, mars_lighthouse_room_m/s2118,
 /// mars_lighthouse_star_room/ride_handle.
 #define DEFINE_FUNC_02001F78(name)                                             \
   void name(s32 index, s32 value) {                                            \
@@ -2949,7 +2959,7 @@
     entry->b = value & 0xf0;                                                   \
   }
 
-/// 1 scenes: mars_lighthouse_star_room.
+/// 2 copies: mars_lighthouse_star_room, mars_lighthouse_star_room.
 #define DEFINE_FUNC_0200196C_97(name, call1)                                   \
   void name(s32 *position, s32 speed, s32 flag) {                              \
     struct Actor *object =                                                     \
@@ -2967,7 +2977,7 @@
     }                                                                          \
   }
 
-/// 2 scenes: aqua_rock_inside/s3844, taopo_swamp.
+/// 2 copies: aqua_rock_inside/s3844, taopo_swamp.
 #define DEFINE_FUNC_020024F8(name, call1, data1)                               \
   void name(struct Actor *object, s32 priority) {                              \
     object->motionFlags = 0;                                                   \
@@ -2983,7 +2993,7 @@
     object->acceleration = 0;                                                  \
   }
 
-/// 2 scenes: magma_rock_inside, mars_lighthouse_entrance/calls.
+/// 2 copies: magma_rock_inside/magma_rock_inside, mars_lighthouse_entrance.
 #define DEFINE_FUNC_0200012C(name)                                             \
   s32 name(u32 layer, s32 x, s32 y) {                                          \
     struct MapWork *map = Ram_HeapSlots->mapWork;                              \
@@ -2999,7 +3009,7 @@
     return (cell->collisionCode << 8) | cell->attributeB;                      \
   }
 
-/// 2 scenes: apojii_islands, aqua_rock_inside.
+/// 2 copies: apojii_islands/apojii_islands, aqua_rock_inside/aqua_rock_inside.
 #define DEFINE_FUNC_02001308(name, call1)                                      \
   void name(s32 id) {                                                          \
     struct Actor *object = Actor_Get(id);                                      \
@@ -3014,7 +3024,7 @@
     }                                                                          \
   }
 
-/// 2 scenes: daila, daila_interiors.
+/// 2 copies: daila, daila_interiors.
 #define DEFINE_FUNC_02000704(name, call1, data1)                               \
   void name(void) {                                                            \
     u8 *event = Ram_HeapSlots->eventWork;                                      \
@@ -3029,7 +3039,7 @@
     object->priorityFlags = flags;                                             \
   }
 
-/// 2 scenes: dehkan_plateau, yampi_desert.
+/// 2 copies: dehkan_plateau/dehkan_plateau, yampi_desert.
 #define DEFINE_FUNC_02001514(name)                                             \
   void name(s32 show, s32 first, u32 count) {                                  \
     u32 i;                                                                     \
@@ -3044,7 +3054,7 @@
     }                                                                          \
   }
 
-/// 2 scenes: magma_rock, magma_rock_inside.
+/// 2 copies: magma_rock, magma_rock_inside/magma_rock_inside.
 #define DEFINE_FUNC_02000668(name, call1)                                      \
   void name(u16 *list) {                                                       \
     for (; *list != 0xffff; list += 3) {                                       \
@@ -3060,7 +3070,7 @@
     }                                                                          \
   }
 
-/// 3 scenes: mars_lighthouse_room_f/ride, mars_lighthouse_room_m/s2118,
+/// 3 copies: mars_lighthouse_room_f/ride, mars_lighthouse_room_m/s2118,
 /// mars_lighthouse_star_room/ride_handle.
 #define DEFINE_FUNC_02001FB8(name)                                             \
   void name(u32 index, s32 value) {                                            \
@@ -3070,7 +3080,7 @@
       work->slots[index].value = value;                                        \
   }
 
-/// 2 scenes: staff_credit, world_map/s3b38.
+/// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_FUNC_02001274(name, call1, call2)                               \
   void name(struct Actor *object, s32 mode) {                                  \
     if (mode == 0) {                                                           \
@@ -3085,7 +3095,7 @@
     }                                                                          \
   }
 
-/// 2 scenes: dehkan_plateau, madra_catacombs.
+/// 2 copies: dehkan_plateau/dehkan_plateau, madra_catacombs.
 #define DEFINE_FUNC_020004A4(name)                                             \
   void name(struct Actor *object) {                                            \
     u8 *flags = &object->motionFlags;                                          \
@@ -3099,7 +3109,8 @@
     *flags = 0;                                                                \
   }
 
-/// 2 scenes: mars_lighthouse_entrance, mars_lighthouse_room_f.
+/// 2 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
+/// mars_lighthouse_room_f.
 #define DEFINE_FUNC_0200202C(name, call1, data1)                               \
   void name(struct Actor *object, s32 unused) {                                \
     object->motionFlags = 0;                                                   \
@@ -3113,7 +3124,7 @@
     object->acceleration = 0;                                                  \
   }
 
-/// 2 scenes: mars_lighthouse_room_m, mars_lighthouse_star_room.
+/// 2 copies: mars_lighthouse_room_m, mars_lighthouse_star_room.
 #define DEFINE_FUNC_02001B38(name, call1, data1)                               \
   void name(struct Actor *object) {                                            \
     object->motionFlags = 0;                                                   \
@@ -3127,7 +3138,7 @@
     object->acceleration = 0;                                                  \
   }
 
-/// 2 scenes: contigo, kibombo.
+/// 2 copies: contigo/contigo, kibombo.
 #define DEFINE_FUNC_020002E8(name)                                             \
   s32 name(void) {                                                             \
     u16 turn;                                                                  \
@@ -3140,7 +3151,7 @@
     return facing;                                                             \
   }
 
-/// 2 scenes: dehkan_plateau, madra_catacombs.
+/// 2 copies: dehkan_plateau/dehkan_plateau, madra_catacombs.
 #define DEFINE_FUNC_020008F4(name, call1, call2, call3, data1, call4, call5)   \
   void name(void) {                                                            \
     struct Actor *object;                                                      \
@@ -3153,7 +3164,7 @@
     }                                                                          \
   }
 
-/// 2 scenes: islets/scene_tables, prox.
+/// 2 copies: islets, prox/prox.
 #define DEFINE_FUNC_020003DC(name)                                             \
   s32 name(void) {                                                             \
     u16 turn;                                                                  \
@@ -3166,7 +3177,7 @@
     return facing;                                                             \
   }
 
-/// 2 scenes: magma_rock, magma_rock_inside.
+/// 2 copies: magma_rock, magma_rock_inside/magma_rock_inside.
 #define DEFINE_FUNC_020005CC(name, call1, call2)                               \
   s32 name(s32 layer, s32 x, s32 z, s32 height) {                              \
     struct MapWork *map = Ram_HeapSlots->mapWork;                              \
@@ -3179,7 +3190,8 @@
     return 0;                                                                  \
   }
 
-/// 2 scenes: mars_lighthouse_entrance, mars_lighthouse_room_f.
+/// 2 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
+/// mars_lighthouse_room_f.
 #define DEFINE_FUNC_02001A80_117(name)                                         \
   s32 name(struct Actor *a, struct Actor *b) {                                 \
     s32 dy;                                                                    \
@@ -3192,7 +3204,8 @@
     return 0;                                                                  \
   }
 
-/// 2 scenes: mars_lighthouse_entrance, mars_lighthouse_room_f.
+/// 2 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
+/// mars_lighthouse_room_f.
 #define DEFINE_FUNC_02001F38_118(name)                                         \
   s32 name(struct Actor *a, struct Actor *b) {                                 \
     s32 dy;                                                                    \
@@ -3205,7 +3218,7 @@
     return 0;                                                                  \
   }
 
-/// 2 scenes: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s3d80.
+/// 2 copies: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s3d80.
 #define DEFINE_FUNC_02003284(name)                                             \
   void name(void) {                                                            \
     u8 *event = Ram_HeapSlots->eventWork;                                      \
@@ -3218,7 +3231,7 @@
     }                                                                          \
   }
 
-/// 2 scenes: aqua_rock_inside/s3844, taopo_swamp.
+/// 2 copies: aqua_rock_inside/s3844, taopo_swamp.
 #define DEFINE_FUNC_0200273C(name)                                             \
   s32 name(s32 limit) {                                                        \
     struct VentWork *work = VENT_WORK;                                         \
@@ -3230,7 +3243,8 @@
     return work->counter;                                                      \
   }
 
-/// 2 scenes: mars_lighthouse_entrance, mars_lighthouse_star_room.
+/// 2 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
+/// mars_lighthouse_star_room.
 #define DEFINE_FUNC_020002D4(name)                                             \
   void name(s32 id) {                                                          \
     struct Actor *object = Actor_Get(id);                                      \
@@ -3242,7 +3256,8 @@
     }                                                                          \
   }
 
-/// 2 scenes: mars_lighthouse_entrance, mars_lighthouse_room_f.
+/// 2 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
+/// mars_lighthouse_room_f.
 #define DEFINE_FUNC_02001C44(name, data1)                                      \
   void name(struct Actor *object, s32 unused) {                                \
     object->motionFlags = 0;                                                   \
@@ -3254,7 +3269,7 @@
     object->acceleration = 0;                                                  \
   }
 
-/// 2 scenes: mars_lighthouse_room_m, mars_lighthouse_star_room.
+/// 2 copies: mars_lighthouse_room_m, mars_lighthouse_star_room.
 #define DEFINE_FUNC_02001750(name, data1)                                      \
   void name(struct Actor *object) {                                            \
     object->motionFlags = 0;                                                   \
@@ -3266,7 +3281,7 @@
     object->acceleration = 0;                                                  \
   }
 
-/// 2 scenes: staff_credit, world_map/s3b38.
+/// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_FUNC_0200122C(name, data1, data2, call1)                        \
   void name(struct Actor *object) {                                            \
     if (gFrameCount & 1) {                                                     \
@@ -3278,7 +3293,7 @@
     }                                                                          \
   }
 
-/// 1 scenes: trial_road/s0218.
+/// 2 copies: trial_road/s0218, trial_road/s0218.
 #define DEFINE_FUNC_02000728(name, call1)                                      \
   void name(s32 a, s32 id) {                                                   \
     struct MainRoutineWork *party = &gMainRoutineWork;                         \
@@ -3290,7 +3305,7 @@
       call1(id);                                                               \
   }
 
-/// 2 scenes: apojii_islands, settlements/s0280.
+/// 2 copies: apojii_islands/apojii_islands, settlements/s0280.
 #define DEFINE_FUNC_02000E90(name, data1, data2, data3)                        \
   void name(void) {                                                            \
     struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[2];               \
@@ -3301,7 +3316,7 @@
     data3 = (s16)(layer->x >> 16) - (gFrameCount >> 2);                        \
   }
 
-/// 2 scenes: staff_credit, world_map/s3b38.
+/// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_FUNC_020019D4(name, call1)                                      \
   void name(struct Actor *object) {                                            \
     u32 frame = gFrameCount;                                                   \
@@ -3312,7 +3327,7 @@
       call1(object);                                                           \
   }
 
-/// 2 scenes: staff_credit, world_map/s3b38.
+/// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_FUNC_02001E58(name, data1, data2, data3, data4, call1)          \
   void name(void) {                                                            \
     Resource_DecodeType01(gWorldMapPackedTilesC, data1);                       \
@@ -3323,7 +3338,7 @@
     Task_AddFrame(call1, TASK_PASS_VBLANK - 10);                               \
   }
 
-/// 2 scenes: apojii_islands, settlements/s0280.
+/// 2 copies: apojii_islands/apojii_islands, settlements/s0280.
 #define DEFINE_FUNC_02000ED0(name, call1, call2)                               \
   void name(void) {                                                            \
     s32 priority;                                                              \
@@ -3333,7 +3348,7 @@
     FieldTask_AddFrame(call2, priority);                                       \
   }
 
-/// 1 scenes: yampi_desert/placements.
+/// 2 copies: yampi_desert/placements, yampi_desert/placements.
 #define DEFINE_FUNC_02000648(name, data1)                                      \
   void name(s32 a, s32 b) {                                                    \
     Func_0200388c(data1, a, b);                                                \
@@ -3343,7 +3358,7 @@
     }                                                                          \
   }
 
-/// 2 scenes: airs_rock, airs_rock_inside.
+/// 2 copies: airs_rock/airs_rock, airs_rock_inside/airs_rock_inside.
 #define DEFINE_FUNC_02000D18(name)                                             \
   s32 name(s32 *a, s32 *b) {                                                   \
     s32 dx = (*a++ - *b++) >> 16;                                              \
@@ -3352,7 +3367,7 @@
     return Iwram_Sqrt(dx * dx + dy * dy);                                      \
   }
 
-/// 2 scenes: aqua_rock_inside/s3844, taopo_swamp.
+/// 2 copies: aqua_rock_inside/s3844, taopo_swamp.
 #define DEFINE_FUNC_02002778(name)                                             \
   void name(s32 i, s32 id) {                                                   \
     struct VentWork *work = VENT_WORK;                                         \
@@ -3361,7 +3376,7 @@
       work->ids[i] = id;                                                       \
   }
 
-/// 2 scenes: champa_interiors, daila_interiors.
+/// 2 copies: champa_interiors, daila_interiors.
 #define DEFINE_FUNC_0200014C(name)                                             \
   void name(void) {                                                            \
     struct EventWork *work = Ram_HeapSlots->eventWork;                         \
@@ -3370,7 +3385,7 @@
     GameFlag_ClearBit(0x12f);                                                  \
   }
 
-/// 2 scenes: contigo, shaman_village/s00b8.
+/// 2 copies: contigo/contigo, shaman_village/s00b8.
 #define DEFINE_FUNC_0200098C(name)                                             \
   void name(void) {                                                            \
     Event_Start();                                                             \
@@ -3379,7 +3394,8 @@
     Event_End();                                                               \
   }
 
-/// 2 scenes: mars_lighthouse_entrance, mars_lighthouse_room_f.
+/// 2 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
+/// mars_lighthouse_room_f.
 #define DEFINE_FUNC_02001A1C(name)                                             \
   s32 name(struct Actor *a, struct Actor *b) {                                 \
     if (ABS(a->x - b->x) < 0x80000 && ABS(a->y - b->y) < 0x80000 &&            \
@@ -3388,7 +3404,7 @@
     return 0;                                                                  \
   }
 
-/// 2 scenes: mars_lighthouse_room_m/s2118,
+/// 2 copies: mars_lighthouse_room_m/s2118,
 /// mars_lighthouse_star_room/ride_handle.
 #define DEFINE_FUNC_02001DD0(name, call1)                                      \
   void name(void) {                                                            \
@@ -3398,7 +3414,7 @@
     work->handle = NULL;                                                       \
   }
 
-/// 2 scenes: staff_credit, world_map/s3b38.
+/// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_FUNC_02001A0C(name)                                             \
   void name(struct Actor *object) {                                            \
     u32 frame = gFrameCount;                                                   \
@@ -3407,7 +3423,7 @@
       Animation_ApplyChildValues(object, (frame >> 1) % 6);                    \
   }
 
-/// 2 scenes: staff_credit, world_map/s3b38.
+/// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_FUNC_02001EB8(name, data1, data2, data3, call1)                 \
   void name(void) {                                                            \
     Resource_DecodeType01(gWorldMapPackedTilesC, data1);                       \
@@ -3416,7 +3432,8 @@
     FieldTask_Remove(call1);                                                   \
   }
 
-/// 1 scenes: gabomba_catacombs.
+/// 6 copies: gabomba_catacombs, gabomba_catacombs, gabomba_catacombs,
+/// gabomba_catacombs, gabomba_catacombs, gabomba_catacombs.
 #define DEFINE_FUNC_020001E0(name, n1, n2, n3, n4, n5, n6, n7, n8, n9)         \
   void name(void) {                                                            \
     struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);       \
@@ -3433,7 +3450,10 @@
     }                                                                          \
   }
 
-/// 1 scenes: treasure_isle.
+/// 8 copies: treasure_isle/treasure_isle, treasure_isle/treasure_isle,
+/// treasure_isle/treasure_isle, treasure_isle/treasure_isle,
+/// treasure_isle/treasure_isle, treasure_isle/treasure_isle,
+/// treasure_isle/treasure_isle, treasure_isle/treasure_isle.
 #define DEFINE_FUNC_02000914(name, n1, n2)                                     \
   void name(void) {                                                            \
     s32 t0;                                                                    \
@@ -3445,7 +3465,12 @@
     Event_SetFlag(n2);                                                         \
   }
 
-/// 2 scenes: mars_lighthouse_aerie, mars_lighthouse_entrance.
+/// 6 copies: mars_lighthouse_aerie,
+/// mars_lighthouse_entrance/mars_lighthouse_entrance,
+/// mars_lighthouse_entrance/mars_lighthouse_entrance,
+/// mars_lighthouse_entrance/mars_lighthouse_entrance,
+/// mars_lighthouse_entrance/mars_lighthouse_entrance,
+/// mars_lighthouse_entrance/mars_lighthouse_entrance.
 #define DEFINE_FUNC_020001A0(name, call1, call2, n1, call3)                    \
   void name(void) {                                                            \
     call1();                                                                   \
@@ -3460,7 +3485,9 @@
     call3();                                                                   \
   }
 
-/// 1 scenes: gabomba_catacombs.
+/// 8 copies: gabomba_catacombs, gabomba_catacombs, gabomba_catacombs,
+/// gabomba_catacombs, gabomba_catacombs, gabomba_catacombs, gabomba_catacombs,
+/// gabomba_catacombs.
 #define DEFINE_FUNC_020006CC(name, n1, n2, n3, n4, n5, n6)                     \
   void name(void) {                                                            \
     struct Actor *object = Actor_GetById(n1);                                  \
@@ -3471,7 +3498,8 @@
     MapGrid_CopyCellAttributes(n3, n4, 1, 1, n5, n6);                          \
   }
 
-/// 1 scenes: sea_of_time.
+/// 6 copies: sea_of_time, sea_of_time, sea_of_time, sea_of_time, sea_of_time,
+/// sea_of_time.
 #define DEFINE_FUNC_02001480(name, n1, n2)                                     \
   void name(void) {                                                            \
     struct Actor *object;                                                      \
@@ -3484,7 +3512,7 @@
     Func_02001fb4();                                                           \
   }
 
-/// 1 scenes: kandorean_temple/s2ec4.
+/// 2 copies: kandorean_temple/s2ec4, kandorean_temple/s2ec4.
 #define DEFINE_FUNC_02003684(name, n1, n2, n3, n4, n5, n6, n7, data1)          \
   void name(void) {                                                            \
     struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);       \
@@ -3534,7 +3562,9 @@
     Event_End();                                                               \
   }
 
-/// 2 scenes: mars_lighthouse_entrance, mars_lighthouse_room_f.
+/// 4 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
+/// mars_lighthouse_entrance/mars_lighthouse_entrance, mars_lighthouse_room_f,
+/// mars_lighthouse_room_f.
 #define DEFINE_FUNC_02001C74(name, call1, call2, n1, call3, call4)             \
   void name(s32 *position, s32 speed, s32 mode) {                              \
     struct Actor *object = call1(366, position[0], position[1], position[2]);  \
@@ -3551,8 +3581,8 @@
     }                                                                          \
   }
 
-/// 4 scenes: airs_rock_inside/s0038, anemos_inner_sanctum_entrance/spawn,
-/// caverns/object, sea_of_time/object.
+/// 4 copies: airs_rock_inside, anemos_inner_sanctum_entrance/spawn, caverns,
+/// sea_of_time/object.
 #define DEFINE_FUNC_020000D0_2(name, n1)                                       \
   struct Actor *name(s32 x, s32 y, s32 z, s32 type) {                          \
     struct Actor *object = Import_ActorCreate(type, x, y, z);                  \
@@ -3569,7 +3599,9 @@
     return NULL;                                                               \
   }
 
-/// 3 scenes: dehkan_plateau, shrine_of_the_sea_god/s1340, yampi_desert.
+/// 7 copies: dehkan_plateau/dehkan_plateau, dehkan_plateau/dehkan_plateau,
+/// dehkan_plateau/dehkan_plateau, dehkan_plateau/dehkan_plateau,
+/// dehkan_plateau/dehkan_plateau, shrine_of_the_sea_god/s1340, yampi_desert.
 #define DEFINE_FUNC_02001F94(name, n1, call1, n2, call2)                       \
   void name(void) {                                                            \
     u32 i;                                                                     \
@@ -3579,7 +3611,7 @@
     call2();                                                                   \
   }
 
-/// 1 scenes: daila.
+/// 6 copies: daila, daila, daila, daila, daila, daila.
 #define DEFINE_FUNC_02000924(name, n1, n2, n3, n4, n5)                         \
   void name(void) {                                                            \
     Import_EventStart();                                                       \
@@ -3590,7 +3622,7 @@
     Import_EventEnd();                                                         \
   }
 
-/// 1 scenes: islet_cave.
+/// 3 copies: islet_cave, islet_cave, islet_cave.
 #define DEFINE_FUNC_02000AEC(name, n1, n2, n3)                                 \
   void name(void) {                                                            \
     struct Actor *object0;                                                     \
@@ -3614,7 +3646,7 @@
     return;                                                                    \
   }
 
-/// 1 scenes: islet_cave.
+/// 3 copies: islet_cave, islet_cave, islet_cave.
 #define DEFINE_FUNC_02000CF0(name, n1, n2)                                     \
   void name(void) {                                                            \
     struct Actor *object0;                                                     \
@@ -3638,7 +3670,7 @@
     return;                                                                    \
   }
 
-/// 2 scenes: jupiter_lighthouse_room_5, mars_lighthouse_aerie.
+/// 2 copies: jupiter_lighthouse_room_5, mars_lighthouse_aerie.
 #define DEFINE_FUNC_020001A4(name, n1, data1, call1, n2)                       \
   void name(void) {                                                            \
     struct Actor *center;                                                      \
@@ -3682,9 +3714,9 @@
     }                                                                          \
   }
 
-/// 5 scenes: mars_lighthouse_entrance, mars_lighthouse_entrance/s2270,
-/// mars_lighthouse_room_f/flash, mars_lighthouse_room_m/s2118,
-/// mars_lighthouse_star_room/ride_handle.
+/// 5 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
+/// mars_lighthouse_entrance/s2270, mars_lighthouse_room_f/flash,
+/// mars_lighthouse_room_m/s2118, mars_lighthouse_star_room/ride_handle.
 #define DEFINE_FUNC_020012BC(name, n1, n2, n3)                                 \
   void name(struct Actor *object) {                                            \
     switch (gFrameCount & 7) {                                                 \
@@ -3697,7 +3729,9 @@
     }                                                                          \
   }
 
-/// 1 scenes: shrine_of_the_sea_god/s1340.
+/// 6 copies: shrine_of_the_sea_god/s1340, shrine_of_the_sea_god/s1340,
+/// shrine_of_the_sea_god/s1340, shrine_of_the_sea_god/s1340,
+/// shrine_of_the_sea_god/s1340, shrine_of_the_sea_god/s1340.
 #define DEFINE_FUNC_020027F8(name, n1, n2, n3)                                 \
   void name(void) {                                                            \
     Func_0200279c();                                                           \
@@ -3707,7 +3741,8 @@
     Func_020027d4();                                                           \
   }
 
-/// 1 scenes: gabomba_statue.
+/// 5 copies: gabomba_statue, gabomba_statue, gabomba_statue, gabomba_statue,
+/// gabomba_statue.
 #define DEFINE_FUNC_02001728(name, n1, n2)                                     \
   void name(struct Actor *actor) {                                             \
     Func_020056b4();                                                           \
@@ -3718,7 +3753,7 @@
     Event_End();                                                               \
   }
 
-/// 1 scenes: shrine_of_the_sea_god/s1340.
+/// 2 copies: shrine_of_the_sea_god/s1340, shrine_of_the_sea_god/s1340.
 #define DEFINE_FUNC_02002830(name, n1, n2, n3, n4, n5, n6)                     \
   void name(void) {                                                            \
     struct ShrineOfTheSeaGodObject *block = Actor_GetById(14);                 \
@@ -3753,7 +3788,7 @@
     Func_020027d4();                                                           \
   }
 
-/// 1 scenes: gabomba_statue.
+/// 3 copies: gabomba_statue, gabomba_statue, gabomba_statue.
 #define DEFINE_FUNC_02001284(name, n1, n2, n3, n4, n5, n6, n7)                 \
   void name(void) {                                                            \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
@@ -3771,7 +3806,7 @@
     Func_020011bc(n6, n7);                                                     \
   }
 
-/// 1 scenes: shrine_of_the_sea_god/s1340.
+/// 2 copies: shrine_of_the_sea_god/s1340, shrine_of_the_sea_god/s1340.
 #define DEFINE_FUNC_02002B50(name, n1, n2, n3, n4, n5)                         \
   void name(void) {                                                            \
     struct ShrineOfTheSeaGodObject *block = Actor_GetById(14);                 \
@@ -3803,7 +3838,7 @@
     Func_020027d4();                                                           \
   }
 
-/// 1 scenes: lemurian_ship.
+/// 2 copies: lemurian_ship, lemurian_ship.
 #define DEFINE_FUNC_02001138(name, n1, n2, n3, n4)                             \
   void name(void) {                                                            \
     struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;             \
@@ -3832,7 +3867,8 @@
     Event_End();                                                               \
   }
 
-/// 2 scenes: gondowan_cliffs/s03cc, kibombo_mountains.
+/// 4 copies: gondowan_cliffs/s03cc, kibombo_mountains, kibombo_mountains,
+/// kibombo_mountains.
 #define DEFINE_FUNC_020000EC(name, n1, n2, n3, n4, n5)                         \
   void name(void) {                                                            \
     struct Actor *object = Actor_Get(n1);                                      \
@@ -3843,7 +3879,7 @@
     Event_SetFlag(n5);                                                         \
   }
 
-/// 1 scenes: garoh.
+/// 2 copies: garoh/garoh, garoh/garoh.
 #define DEFINE_FUNC_02000390(name, data1, n1, n2)                              \
   void name(void) {                                                            \
     struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;              \
@@ -3868,7 +3904,7 @@
       goto loop;                                                               \
   }
 
-/// 1 scenes: lemurian_ship.
+/// 3 copies: lemurian_ship, lemurian_ship, lemurian_ship.
 #define DEFINE_FUNC_02000BF0(name, n1)                                         \
   void name(s32 id) {                                                          \
     Event_Start();                                                             \
@@ -3882,7 +3918,7 @@
     GameFlag_SetBit(id + n1);                                                  \
   }
 
-/// 1 scenes: islet_cave.
+/// 2 copies: islet_cave, islet_cave.
 #define DEFINE_FUNC_02000B4C(name, n1, n2, n3)                                 \
   void name(void) {                                                            \
     struct Actor *object0;                                                     \
@@ -3906,7 +3942,7 @@
     return;                                                                    \
   }
 
-/// 1 scenes: islet_cave.
+/// 2 copies: islet_cave, islet_cave.
 #define DEFINE_FUNC_02000C8C(name, n1, n2)                                     \
   void name(void) {                                                            \
     struct Actor *object0;                                                     \
@@ -3930,7 +3966,7 @@
     return;                                                                    \
   }
 
-/// 1 scenes: taopo_swamp.
+/// 2 copies: taopo_swamp, taopo_swamp.
 #define DEFINE_FUNC_02001684(name, n1, n2)                                     \
   void name(void) {                                                            \
     if ((gFrameCount & 7) == 0 && (u32)Random16Far() < 0x4000) {               \
@@ -3953,7 +3989,7 @@
     }                                                                          \
   }
 
-/// 1 scenes: airs_rock_inside/s2770.
+/// 2 copies: airs_rock_inside/s2770, airs_rock_inside/s2770.
 #define DEFINE_FUNC_02002980(name, n1)                                         \
   void name(void) {                                                            \
     struct Actor *object = Actor_GetById(Party_GetLeaderActor());              \
@@ -3974,7 +4010,7 @@
     }                                                                          \
   }
 
-/// 1 scenes: gabomba_statue.
+/// 2 copies: gabomba_statue, gabomba_statue.
 #define DEFINE_FUNC_020012EC(name, n1, n2, n3, n4, n5, n6, n7, n8)             \
   void name(void) {                                                            \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
@@ -3995,7 +4031,7 @@
     Func_020011bc(n7, n8);                                                     \
   }
 
-/// 1 scenes: gabomba_statue.
+/// 2 copies: gabomba_statue, gabomba_statue.
 #define DEFINE_FUNC_02001B38_2(name, n1, n2)                                   \
   void name(void) {                                                            \
     u32 i = 0;                                                                 \
@@ -4015,7 +4051,7 @@
     Func_02001b0c();                                                           \
   }
 
-/// 1 scenes: lemurian_ship_deck.
+/// 2 copies: lemurian_ship_deck, lemurian_ship_deck.
 #define DEFINE_FUNC_02000188(name, n1, n2)                                     \
   void name(void) {                                                            \
     if ((gFrameCount & 7) == 0) {                                              \
@@ -4037,7 +4073,8 @@
     }                                                                          \
   }
 
-/// 1 scenes: mars_lighthouse_entrance.
+/// 2 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
+/// mars_lighthouse_entrance/mars_lighthouse_entrance.
 #define DEFINE_FUNC_0200085C(name, n1, n2, n3, n4, n5, n6, n7, n8, n9)         \
   void name(s32 state, s32 frame) {                                            \
     if (state == 1) {                                                          \
@@ -4057,7 +4094,7 @@
     }                                                                          \
   }
 
-/// 1 scenes: aqua_rock.
+/// 3 copies: aqua_rock/aqua_rock, aqua_rock/aqua_rock, aqua_rock/aqua_rock.
 #define DEFINE_FUNC_020010F4(name, n1, n2, n3, n4)                             \
   void name(s32 unused, s32 id) {                                              \
     struct Actor *object = Actor_GetById(id);                                  \
@@ -4068,7 +4105,7 @@
     GameFlag_SetBit(n4);                                                       \
   }
 
-/// 3 scenes: kibombo/s2f34, shrine_of_the_sea_god/s1340, yampi_desert.
+/// 3 copies: kibombo/s2f34, shrine_of_the_sea_god/s1340, yampi_desert.
 #define DEFINE_FUNC_02002D10(name, n1, call1)                                  \
   void name(void) {                                                            \
     if (GameFlag_Test(265)) {                                                  \
@@ -4079,7 +4116,7 @@
     }                                                                          \
   }
 
-/// 1 scenes: kibombo/s2f34.
+/// 2 copies: kibombo/s2f34, kibombo/s2f34.
 #define DEFINE_FUNC_02003B20(name, n1, n2, n3, n4, n5, n6, n7)                 \
   void name(void) {                                                            \
     struct KibomboObject *leader =                                             \
@@ -4098,7 +4135,7 @@
     Func_02003a08(n6, n7);                                                     \
   }
 
-/// 1 scenes: magma_rock/s0ff4.
+/// 2 copies: magma_rock/s0ff4, magma_rock/s0ff4.
 #define DEFINE_FUNC_020019E8(name, n1, n2, n3)                                 \
   void name(s32 mode, s32 cue) {                                               \
     struct MagmaRockWork *work = Ram_HeapSlots->effectWork;                    \
@@ -4116,7 +4153,7 @@
     Event_SetFlag(n3);                                                         \
   }
 
-/// 1 scenes: airs_rock_inside/s2770.
+/// 2 copies: airs_rock_inside/s2770, airs_rock_inside/s2770.
 #define DEFINE_FUNC_020047B0(name, n1)                                         \
   void name(void) {                                                            \
     if (GameFlag_Test(0x8d4)) {                                                \
@@ -4133,7 +4170,7 @@
     }                                                                          \
   }
 
-/// 1 scenes: ankohl_ruins.
+/// 2 copies: ankohl_ruins, ankohl_ruins.
 #define DEFINE_FUNC_02001DDC(name, n1, n2, n3, n4, n5)                         \
   void name(void) {                                                            \
     if (AnkohlRuins_FlagCheck(n1) == 0) {                                      \
@@ -4150,7 +4187,8 @@
     }                                                                          \
   }
 
-/// 1 scenes: aqua_rock_inside.
+/// 2 copies: aqua_rock_inside/aqua_rock_inside,
+/// aqua_rock_inside/aqua_rock_inside.
 #define DEFINE_FUNC_02001CD8(name, n1)                                         \
   void name(void) {                                                            \
     if (Event_GetFlag(0x9ae)) {                                                \
@@ -4167,7 +4205,7 @@
     }                                                                          \
   }
 
-/// 2 scenes: islets/scene_tables, izumo_ruins.
+/// 3 copies: islets, islets, izumo_ruins.
 #define DEFINE_FUNC_020011B8(name, n1)                                         \
   void name(void) {                                                            \
     struct Actor *object0;                                                     \
@@ -4177,7 +4215,7 @@
     return;                                                                    \
   }
 
-/// 3 scenes: jupiter_lighthouse_room_1, jupiter_lighthouse_room_6,
+/// 3 copies: jupiter_lighthouse_room_1, jupiter_lighthouse_room_6,
 /// jupiter_lighthouse_room_7.
 #define DEFINE_FUNC_02000160(name, n1, call1, call2)                           \
   void name(void) {                                                            \
@@ -4188,7 +4226,7 @@
     call2();                                                                   \
   }
 
-/// 1 scenes: magma_rock/s0ff4.
+/// 3 copies: magma_rock/s0ff4, magma_rock/s0ff4, magma_rock/s0ff4.
 #define DEFINE_FUNC_02001A8C(name, n1, n2)                                     \
   void name(s32 mode, s32 cue) {                                               \
     struct MagmaRockWork *work = Ram_HeapSlots->effectWork;                    \
@@ -4198,7 +4236,8 @@
     Event_SetFlag(n2);                                                         \
   }
 
-/// 1 scenes: magma_rock_inside.
+/// 2 copies: magma_rock_inside/magma_rock_inside,
+/// magma_rock_inside/magma_rock_inside.
 #define DEFINE_FUNC_02003348(name, n1)                                         \
   void name(void) {                                                            \
     if (Event_GetFlag(0x9fa)) {                                                \
@@ -4215,7 +4254,8 @@
     }                                                                          \
   }
 
-/// 1 scenes: mars_lighthouse_room_f.
+/// 3 copies: mars_lighthouse_room_f, mars_lighthouse_room_f,
+/// mars_lighthouse_room_f.
 #define DEFINE_FUNC_02000444(name, n1, n2, n3)                                 \
   void name(s32 state, s32 unused) {                                           \
     if (state == 1) {                                                          \
@@ -4225,7 +4265,7 @@
     }                                                                          \
   }
 
-/// 1 scenes: garoh.
+/// 2 copies: garoh/garoh, garoh/garoh.
 #define DEFINE_FUNC_02000EB0(name, n1, n2, n3, n4)                             \
   void name(void) {                                                            \
     struct Actor *object = Actor_Get(n1);                                      \
@@ -4241,7 +4281,7 @@
     }                                                                          \
   }
 
-/// 1 scenes: izumo_interiors.
+/// 2 copies: izumo_interiors, izumo_interiors.
 #define DEFINE_FUNC_02000038_2(name, n1, n2)                                   \
   s32 name(void) {                                                             \
     struct Actor *object = Actor_GetById(n1);                                  \
@@ -4257,7 +4297,7 @@
     return 1;                                                                  \
   }
 
-/// 1 scenes: mars_lighthouse_room_f.
+/// 2 copies: mars_lighthouse_room_f, mars_lighthouse_room_f.
 #define DEFINE_FUNC_02000CF4(name, n1, n2)                                     \
   void name(s32 unused, s32 id) {                                              \
     Func_02000c80(id);                                                         \
@@ -4273,7 +4313,7 @@
     }                                                                          \
   }
 
-/// 1 scenes: trial_road/s0218.
+/// 2 copies: trial_road/s0218, trial_road/s0218.
 #define DEFINE_FUNC_02000218(name, n1, n2, n3, n4, n5, n6)                     \
   void name(s32 side, s32 phase) {                                             \
     if (side == 0) {                                                           \
@@ -4289,7 +4329,7 @@
     }                                                                          \
   }
 
-/// 1 scenes: yampi_desert_cave.
+/// 2 copies: yampi_desert_cave, yampi_desert_cave.
 #define DEFINE_FUNC_02000E14(name, n1, id1, n2)                                \
   void name(s32 arg0) {                                                        \
     s32 result0;                                                               \
@@ -4305,7 +4345,8 @@
     return;                                                                    \
   }
 
-/// 2 scenes: anemos_inner_sanctum/s0ac8, gaia_rock_inside/s1f68.
+/// 3 copies: anemos_inner_sanctum/s0ac8, gaia_rock_inside/s1f68,
+/// gaia_rock_inside/s1f68.
 #define DEFINE_FUNC_02001644(name, n1)                                         \
   void name(void) {                                                            \
     s32 t0;                                                                    \
@@ -4314,7 +4355,8 @@
     FIELD_AT((t0 + 0x22), u8, 0) = n1;                                         \
   }
 
-/// 2 scenes: apojii_islands, aqua_rock.
+/// 3 copies: apojii_islands/apojii_islands, aqua_rock/aqua_rock,
+/// aqua_rock/aqua_rock.
 #define DEFINE_FUNC_02000780(name, n1)                                         \
   void name(struct Actor *object) {                                            \
     if (gFrameCount & 2)                                                       \
@@ -4323,7 +4365,7 @@
       Animation_ApplyChildValues(object, 0);                                   \
   }
 
-/// 2 scenes: islets/scene_tables, lemurian_ship_deck/s0b84.
+/// 2 copies: islets, lemurian_ship_deck/s0b84.
 #define DEFINE_FUNC_02000DF8(name, n1, call1, data1)                           \
   void name(struct Actor *object) {                                            \
     struct Actor *spawned;                                                     \
@@ -4338,7 +4380,7 @@
     }                                                                          \
   }
 
-/// 3 scenes: jupiter_lighthouse_room_1, jupiter_lighthouse_room_6,
+/// 3 copies: jupiter_lighthouse_room_1, jupiter_lighthouse_room_6,
 /// jupiter_lighthouse_room_7.
 #define DEFINE_FUNC_0200013C(name, n1, call1)                                  \
   void name(void) {                                                            \
@@ -4348,7 +4390,7 @@
     }                                                                          \
   }
 
-/// 1 scenes: kandorean_temple/s2ec4.
+/// 2 copies: kandorean_temple/s2ec4, kandorean_temple/s2ec4.
 #define DEFINE_FUNC_02000CF8(n1, n2, n3, n4, n5)                               \
   do {                                                                         \
     leader->y += -0x6c000;                                                     \
@@ -4363,7 +4405,7 @@
     wait(1);                                                                   \
   } while (Actor_GetById(n5)->scaleY > limit);
 
-/// 1 scenes: madra_catacombs.
+/// 2 copies: madra_catacombs, madra_catacombs.
 #define DEFINE_FUNC_02000C94(name, n1)                                         \
   void name(void) {                                                            \
     Event_Start();                                                             \
@@ -4379,7 +4421,7 @@
     Import_EventSetExitRequest(n1);                                            \
   }
 
-/// 3 scenes: magma_rock, magma_rock/s0ff4, magma_rock_inside.
+/// 3 copies: magma_rock, magma_rock/s0ff4, magma_rock_inside/magma_rock_inside.
 #define DEFINE_FUNC_02000DA4(name, n1)                                         \
   void name(struct Actor *object) {                                            \
     if (gFrameCount & object->unk5c[7])                                        \
@@ -4388,7 +4430,7 @@
       Actor_SetSpriteColor(object, 0);                                         \
   }
 
-/// 1 scenes: yampi_desert_cave.
+/// 2 copies: yampi_desert_cave, yampi_desert_cave.
 #define DEFINE_FUNC_02000DAC_2(name, n1)                                       \
   void name(void) {                                                            \
     Func_02000898();                                                           \
@@ -4403,7 +4445,7 @@
     Func_020008fc();                                                           \
   }
 
-/// 1 scenes: aqua_rock.
+/// 2 copies: aqua_rock/aqua_rock, aqua_rock/aqua_rock.
 #define DEFINE_FUNC_0200119C(name, n1, n2)                                     \
   void name(s32 unused, s32 id) {                                              \
     struct Actor *object = Actor_GetById(id);                                  \
@@ -4417,7 +4459,7 @@
     }                                                                          \
   }
 
-/// 1 scenes: kibombo.
+/// 2 copies: kibombo, kibombo.
 #define DEFINE_FUNC_02002C34(name, n1, n2, n3, n4, call1, n5, n6, n7)          \
   void name(void) {                                                            \
     struct KibomboEventWork *work = Ram_HeapSlots->eventWork;                  \
@@ -4431,7 +4473,7 @@
     }                                                                          \
   }
 
-/// 1 scenes: islet_cave.
+/// 2 copies: islet_cave, islet_cave.
 #define DEFINE_FUNC_02000508(name, n1, n2)                                     \
   void name(void) {                                                            \
     Func_020000f4();                                                           \
@@ -4444,7 +4486,7 @@
     Func_020004ac();                                                           \
   }
 
-/// 1 scenes: lemurian_ship.
+/// 2 copies: lemurian_ship, lemurian_ship.
 #define DEFINE_FUNC_02001380(name, n1)                                         \
   void name(s32 id) {                                                          \
     struct LemurianShipObject *object =                                        \
@@ -4456,7 +4498,7 @@
     object->timer = 1;                                                         \
   }
 
-/// 1 scenes: shrine_of_the_sea_god/s1340.
+/// 2 copies: shrine_of_the_sea_god/s1340, shrine_of_the_sea_god/s1340.
 #define DEFINE_FUNC_0200291C(name, n1, n2, n3, n4)                             \
   void name(void) {                                                            \
     Func_0200279c();                                                           \
@@ -4468,7 +4510,7 @@
     Func_020027d4();                                                           \
   }
 
-/// 1 scenes: anemos_inner_sanctum/s0ac8.
+/// 2 copies: anemos_inner_sanctum/s0ac8, anemos_inner_sanctum/s0ac8.
 #define DEFINE_FUNC_0200178C(name, n1)                                         \
   void name(void) {                                                            \
     s32 t0;                                                                    \
@@ -4479,7 +4521,7 @@
     }                                                                          \
   }
 
-/// 1 scenes: champa_cliff_caves.
+/// 2 copies: champa_cliff_caves, champa_cliff_caves.
 #define DEFINE_FUNC_02000038_3(name, n1)                                       \
   void name(struct RiseObject *object) {                                       \
     object->scale += n1;                                                       \
@@ -4490,7 +4532,7 @@
     object->scaleCopy = object->scale;                                         \
   }
 
-/// 1 scenes: garoh/s12a8.
+/// 2 copies: garoh/s12a8, garoh/s12a8.
 #define DEFINE_FUNC_02001418(name, n1, n2)                                     \
   void name(s32 actor) {                                                       \
     BattleEffect_LoadActionEffectResources(144, 1);                            \
@@ -4501,7 +4543,7 @@
     BattleEffect_CleanupSceneObjects();                                        \
   }
 
-/// 2 scenes: jupiter_lighthouse_room_1, jupiter_lighthouse_room_7.
+/// 2 copies: jupiter_lighthouse_room_1, jupiter_lighthouse_room_7.
 #define DEFINE_FUNC_02000100(name, n1, n2, n3, n4)                             \
   void name(void) {                                                            \
     struct Actor *object = Actor_Get(n1);                                      \
@@ -4513,7 +4555,8 @@
     }                                                                          \
   }
 
-/// 1 scenes: kandorean_temple.
+/// 2 copies: kandorean_temple/kandorean_temple,
+/// kandorean_temple/kandorean_temple.
 #define DEFINE_FUNC_02000BF4(name, data1, n1, n2, n3, n4)                      \
   void name(void) {                                                            \
     s32 position[3];                                                           \
@@ -4524,7 +4567,7 @@
     }                                                                          \
   }
 
-/// 1 scenes: mars_lighthouse_room_m.
+/// 2 copies: mars_lighthouse_room_m, mars_lighthouse_room_m.
 #define DEFINE_FUNC_02001608(name, n1, n2)                                     \
   void name(void) {                                                            \
     gData_02003938 = 0;                                                        \
@@ -4535,7 +4578,7 @@
     Task_AddFrame(Func_0200170c, 0x480);                                       \
   }
 
-/// 1 scenes: sea_of_time.
+/// 2 copies: sea_of_time, sea_of_time.
 #define DEFINE_FUNC_020015CC(name, n1)                                         \
   void name(void) {                                                            \
     Event_Start();                                                             \
@@ -4546,7 +4589,7 @@
     Func_02001fb4();                                                           \
   }
 
-/// 1 scenes: shaman_village/s1fec.
+/// 2 copies: shaman_village/s1fec, shaman_village/s1fec.
 #define DEFINE_FUNC_020043C8(name, n1, n2)                                     \
   void name(void) {                                                            \
     s32 variant = ((struct ShamanVillageObject *)Actor_GetById(                \
@@ -4557,7 +4600,7 @@
     Actor_SetSpritePriority(n2, variant);                                      \
   }
 
-/// 1 scenes: taopo_swamp.
+/// 2 copies: taopo_swamp, taopo_swamp.
 #define DEFINE_FUNC_020007BC(name, n1, n2, n3)                                 \
   void name(s32 a, s32 id) {                                                   \
     Func_02002840_(n1, n2, 1, 1, n3, n2);                                      \
@@ -4568,7 +4611,7 @@
     Event_ClearFlag(0x222);                                                    \
   }
 
-/// 1 scenes: trial_road/s15a8.
+/// 2 copies: trial_road/s15a8, trial_road/s15a8.
 #define DEFINE_FUNC_0200163C(name, n1, n2)                                     \
   void name(void) {                                                            \
     MapGrid_CopyCells(n1, 30, 1, 1, 10, 11);                                   \
@@ -4579,7 +4622,7 @@
     Map_CopyCellsRect(n2, 30, 1, 1, 82, 15);                                   \
   }
 
-/// 1 scenes: jupiter_lighthouse_room_2.
+/// 2 copies: jupiter_lighthouse_room_2, jupiter_lighthouse_room_2.
 #define DEFINE_FUNC_020003F4(name, n1)                                         \
   void name(void) {                                                            \
     struct EventWork *event = Ram_HeapSlots->eventWork;                        \
@@ -4589,7 +4632,8 @@
     effect[52] = 1;                                                            \
   }
 
-/// 1 scenes: magma_rock_inside.
+/// 2 copies: magma_rock_inside/magma_rock_inside,
+/// magma_rock_inside/magma_rock_inside.
 #define DEFINE_FUNC_02001CA0(name, n1, n2)                                     \
   void name(s32 a, s32 b) {                                                    \
     struct Actor **work = Ram_HeapSlots->effectWork;                           \
@@ -4599,7 +4643,8 @@
     Event_SetFlag(n2);                                                         \
   }
 
-/// 1 scenes: magma_rock_inside.
+/// 2 copies: magma_rock_inside/magma_rock_inside,
+/// magma_rock_inside/magma_rock_inside.
 #define DEFINE_FUNC_0200217C(name, n1, n2, n3, n4)                             \
   void name(void) {                                                            \
     if (!Event_GetFlag(n1)) {                                                  \
@@ -4609,7 +4654,7 @@
     }                                                                          \
   }
 
-/// 1 scenes: airs_rock_inside/s2770.
+/// 2 copies: airs_rock_inside/s2770, airs_rock_inside/s2770.
 #define DEFINE_FUNC_02003DD4(name, n1, n2)                                     \
   void name(void) {                                                            \
     Map_CopyCellAttributeRect(n1, 17, 1, 1, 8, 19);                            \
@@ -4618,7 +4663,7 @@
     Map_CopyCellPictureIndicesRect(n2, 17, 88, 19, 1, 2);                      \
   }
 
-/// 1 scenes: jupiter_lighthouse_room_4.
+/// 2 copies: jupiter_lighthouse_room_4, jupiter_lighthouse_room_4.
 #define DEFINE_FUNC_020001DC(name, n1, call1)                                  \
   void name(s32 item) {                                                        \
     Event_SetFlag(n1);                                                         \
@@ -4627,7 +4672,7 @@
     PartyInventory_Remove(item);                                               \
   }
 
-/// 1 scenes: kibombo/s2f34.
+/// 2 copies: kibombo/s2f34, kibombo/s2f34.
 #define DEFINE_FUNC_020032B0(name, n1)                                         \
   void name(void) {                                                            \
     u32 i;                                                                     \
@@ -4636,7 +4681,7 @@
       Actor_SetModeById(i + 18, n1);                                           \
   }
 
-/// 1 scenes: lemurian_ship.
+/// 2 copies: lemurian_ship, lemurian_ship.
 #define DEFINE_FUNC_020010D8(name, n1, n2)                                     \
   void name(void) {                                                            \
     Sound_Play(106);                                                           \
@@ -4645,7 +4690,7 @@
     Func_02000e2c();                                                           \
   }
 
-/// 5 scenes: jupiter_lighthouse_basement/s1094,
+/// 5 copies: jupiter_lighthouse_basement/s1094,
 /// jupiter_lighthouse_entrance/s0eac, jupiter_lighthouse_room_1/s0f3c,
 /// jupiter_lighthouse_room_2/s165c, jupiter_lighthouse_room_3/s1a7c.
 #define DEFINE_FUNC_020011A0(name, data1, call1)                               \
@@ -4776,7 +4821,7 @@
     return table->count;                                                       \
   }
 
-/// 7 scenes: jupiter_lighthouse_room_4, jupiter_lighthouse_room_6,
+/// 7 copies: jupiter_lighthouse_room_4, jupiter_lighthouse_room_6,
 /// jupiter_lighthouse_room_7, jupiter_lighthouse_room_8,
 /// jupiter_lighthouse_room_9, jupiter_lighthouse_room_m,
 /// mars_lighthouse_room_f.
@@ -4860,8 +4905,8 @@
     }                                                                          \
   }
 
-/// 4 scenes: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s3d80,
-/// mars_lighthouse_star_room/s2148, prox.
+/// 4 copies: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s3d80,
+/// mars_lighthouse_star_room/s2148, prox/prox.
 #define DEFINE_FUNC_02002DC4(name, call1, data1, call2, call3, call4)          \
   void name(void) {                                                            \
     struct Position probe;                                                     \
@@ -5004,8 +5049,8 @@
     call2(actor, 1);                                                           \
   }
 
-/// 4 scenes: mars_lighthouse_entrance/s3884, mars_lighthouse_room_f/s3d80,
-/// mars_lighthouse_star_room/set_data, prox.
+/// 4 copies: mars_lighthouse_entrance/s3884, mars_lighthouse_room_f/s3d80,
+/// mars_lighthouse_star_room/set_data, prox/prox.
 #define DEFINE_FUNC_02003390(name, call1, call2, call3, call4)                 \
   void name(void) {                                                            \
     struct Position probe;                                                     \
@@ -5148,7 +5193,7 @@
     call2(actor, 1);                                                           \
   }
 
-/// 18 scenes: anemos_inner_sanctum/move, jupiter_lighthouse_aerie/s1e78,
+/// 18 copies: anemos_inner_sanctum/move, jupiter_lighthouse_aerie/s1e78,
 /// jupiter_lighthouse_aerie_beacon/s4ec8, jupiter_lighthouse_basement/s1094,
 /// jupiter_lighthouse_entrance/s0eac, jupiter_lighthouse_room_1/s0f3c,
 /// jupiter_lighthouse_room_2/s165c, jupiter_lighthouse_room_3/s1a7c,
@@ -5178,7 +5223,7 @@
     FieldEvent_Wait(12);                                                       \
   }
 
-/// 5 scenes: jupiter_lighthouse_basement, jupiter_lighthouse_entrance/dist,
+/// 5 copies: jupiter_lighthouse_basement, jupiter_lighthouse_entrance/dist,
 /// jupiter_lighthouse_room_1/s0674, jupiter_lighthouse_room_2/s0d94,
 /// jupiter_lighthouse_room_3/s07b0.
 #define DEFINE_FUNC_020005E4(name, call1, call2, data1, data2)                 \
@@ -5254,8 +5299,8 @@
     data2 = 0;                                                                 \
   }
 
-/// 4 scenes: mars_lighthouse_entrance, mars_lighthouse_room_f,
-/// mars_lighthouse_room_m, mars_lighthouse_star_room.
+/// 4 copies: mars_lighthouse_entrance/mars_lighthouse_entrance,
+/// mars_lighthouse_room_f, mars_lighthouse_room_m, mars_lighthouse_star_room.
 #define DEFINE_FUNC_02001BF8(name, call1, call2, call3, call4, call5)          \
   void name(void) {                                                            \
     s32 saved[2];                                                              \
@@ -5346,7 +5391,7 @@
     }                                                                          \
   }
 
-/// 3 scenes: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/flash,
+/// 3 copies: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/flash,
 /// mars_lighthouse_star_room/s2148.
 #define DEFINE_FUNC_0200274C(name, id1, call1, call2, call3)                   \
   void name(struct Actor *actor) {                                             \
@@ -5478,7 +5523,7 @@
     }                                                                          \
   }
 
-/// 3 scenes: jupiter_lighthouse_basement/s185c,
+/// 3 copies: jupiter_lighthouse_basement/s185c,
 /// jupiter_lighthouse_entrance/s1674, jupiter_lighthouse_room_1/s1704.
 #define DEFINE_FUNC_02001674(name, call1)                                      \
   void name(void) {                                                            \
@@ -5550,7 +5595,7 @@
     Event_End();                                                               \
   }
 
-/// 3 scenes: jupiter_lighthouse_room_3/s0dcc, jupiter_lighthouse_room_8/s0c44,
+/// 3 copies: jupiter_lighthouse_room_3/s0dcc, jupiter_lighthouse_room_8/s0c44,
 /// mars_lighthouse_room_f/s3d80.
 #define DEFINE_FUNC_02000C44(name, call1, data1, data2, call2)                 \
   s32 name(struct PushTarget *target) {                                        \
@@ -5611,7 +5656,7 @@
     return 0;                                                                  \
   }
 
-/// 2 scenes: staff_credit, world_map/s3b38.
+/// 2 copies: staff_credit, world_map/s3b38.
 #define DEFINE_FUNC_02001BE0(name, data1, data2, data3, data4)                 \
   void name(s32 progress) {                                                    \
     s32 level = ((progress * 30 + 0x8000) >> 16) + 1;                          \
@@ -5707,7 +5752,7 @@
     Vram_Load(data4, 0x100, data2);                                            \
   }
 
-/// 2 scenes: magma_rock_inside, venus_lighthouse.
+/// 2 copies: magma_rock_inside/magma_rock_inside, venus_lighthouse.
 #define DEFINE_FUNC_0200038C(name, data1, call1, call2)                        \
   void name(void) {                                                            \
     struct FieldPosition dst;                                                  \
@@ -5788,7 +5833,7 @@
     call2(lead, 1);                                                            \
   }
 
-/// 3 scenes: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/flash,
+/// 3 copies: mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/flash,
 /// mars_lighthouse_room_m/s2708.
 #define DEFINE_FUNC_020029F4(name, data1)                                      \
   void name(s32 x, s32 y, s32 z, s32 speed) {                                  \
@@ -5831,7 +5876,7 @@
       goto next;                                                               \
   }
 
-/// 3 scenes: eastern_alhafra, magma_rock_inside/s46e8, prox.
+/// 3 copies: eastern_alhafra, magma_rock_inside/s46e8, prox/prox.
 #define DEFINE_FUNC_02003F48(name)                                             \
   void name(s32 x, s32 y, s32 z, s32 count) {                                  \
     struct RockWork *work;                                                     \
@@ -5872,7 +5917,7 @@
     }                                                                          \
   }
 
-/// 3 scenes: contigo/s0038, islet_cave, yampi_desert_cave.
+/// 3 copies: contigo, islet_cave, yampi_desert_cave.
 #define DEFINE_FUNC_02000038_4(name, data1, data2, data3, data4, call1)        \
   void name(u16 *slots, u16 *colours, u16 *a, u16 *b) {                        \
     u8 *saved = Ram_HeapSlots->block32;                                        \
@@ -5910,7 +5955,7 @@
       call1();                                                                 \
   }
 
-/// 3 scenes: mars_lighthouse_aerie/s3370, mars_lighthouse_entrance/s42f8,
+/// 3 copies: mars_lighthouse_aerie/s3370, mars_lighthouse_entrance/s42f8,
 /// mars_lighthouse_room_m.
 #define DEFINE_FUNC_0200154C(name, data1, data2, data3, data4, call1)          \
   void name(u16 *slots, u16 *colours, u16 *a, u16 *b) {                        \
@@ -5949,7 +5994,8 @@
       call1();                                                                 \
   }
 
-/// 1 scenes: dehkan_plateau.
+/// 3 copies: dehkan_plateau/dehkan_plateau, dehkan_plateau/dehkan_plateau,
+/// dehkan_plateau/dehkan_plateau.
 #define DEFINE_FUNC_02001820(name, data1, n1, data2)                           \
   void name(void) {                                                            \
     const u16 *cell = &data1[0].present;                                       \
@@ -5983,8 +6029,9 @@
       Func_02001804();                                                         \
   }
 
-/// 3 scenes: anemos_inner_sanctum/s0038, mars_lighthouse_aerie/s3370,
-/// mars_lighthouse_entrance/s42f8.
+/// 6 copies: anemos_inner_sanctum, anemos_inner_sanctum,
+/// mars_lighthouse_aerie/s3370, mars_lighthouse_aerie/s3370,
+/// mars_lighthouse_entrance/s42f8, mars_lighthouse_entrance/s42f8.
 #define DEFINE_FUNC_020000F4(name, data1, data2, call1, data3, data4, n1,      \
                              data5, n2, data6, call2)                          \
   void name(void) {                                                            \
@@ -5996,7 +6043,8 @@
     Task_AddFrame(call2, TASK_PASS_VBLANK);                                    \
   }
 
-/// 3 scenes: contigo/s0038, islet_cave, yampi_desert_cave.
+/// 6 copies: contigo, contigo, islet_cave, islet_cave, yampi_desert_cave,
+/// yampi_desert_cave.
 #define DEFINE_FUNC_020000F4_2(name, data1, data2, call1, data3, data4, n1,    \
                                data5, n2, data6, call2)                        \
   void name(void) {                                                            \
@@ -6008,7 +6056,8 @@
     Task_Add(call2, TASK_PASS_VBLANK);                                         \
   }
 
-/// 1 scenes: apojii_islands.
+/// 3 copies: apojii_islands/apojii_islands, apojii_islands/apojii_islands,
+/// apojii_islands/apojii_islands.
 #define DEFINE_FUNC_02000A68(name, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10)    \
   void name(void) {                                                            \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
@@ -6028,7 +6077,7 @@
     }                                                                          \
   }
 
-/// 1 scenes: dehkan_plateau/s2698.
+/// 2 copies: dehkan_plateau/s2698, dehkan_plateau/s2698.
 #define DEFINE_FUNC_0200353C(name, n1, n2, n3, n4, n5, n6)                     \
   void name(void) {                                                            \
     /* FAKEMATCH(pin): flag in r5, which leaves r6 to the entry; as a plain    \
@@ -6065,7 +6114,7 @@
     }                                                                          \
   }
 
-/// 2 scenes: dehkan_plateau/s0bc0, madra_catacombs.
+/// 2 copies: dehkan_plateau/s0bc0, madra_catacombs.
 #define DEFINE_FUNC_02000270(name, call1, call2, call3)                        \
   void name(void) {                                                            \
     struct Actor *held = HELD_OBJECT(Ram_HeapSlots->eventWork);                \
@@ -6102,7 +6151,7 @@
     ((struct MapCell *)cells)->attributeB |= 64;                               \
   }
 
-/// 1 scenes: gabomba_statue_chamber.
+/// 2 copies: gabomba_statue_chamber, gabomba_statue_chamber.
 #define DEFINE_FUNC_02000F00(name, n1)                                         \
   void name(void) {                                                            \
     struct GabombaStatueChamberObject *leader =                                \
@@ -6136,7 +6185,7 @@
     }                                                                          \
   }
 
-/// 2 scenes: aqua_rock_inside, gaia_rock_inside/s07f4.
+/// 2 copies: aqua_rock_inside/aqua_rock_inside, gaia_rock_inside/s07f4.
 #define DEFINE_FUNC_0200136C(name, call1)                                      \
   s32 name(struct Orbiter *orbiter) {                                          \
     struct Actor *anchor = orbiter->anchor;                                    \
@@ -6167,7 +6216,7 @@
     return 1;                                                                  \
   }
 
-/// 1 scenes: taopo_swamp.
+/// 2 copies: taopo_swamp, taopo_swamp.
 #define DEFINE_FUNC_02001424(name, call1, n1, call2)                           \
   void name(void) {                                                            \
     s32 timer = Func_02002730();                                               \
@@ -6196,7 +6245,7 @@
     Func_0200273c(480);                                                        \
   }
 
-/// 2 scenes: jupiter_lighthouse_aerie, jupiter_lighthouse_room_3.
+/// 2 copies: jupiter_lighthouse_aerie, jupiter_lighthouse_room_3.
 #define DEFINE_FUNC_020004C0(name, data1, data2, data3, data4, call1, data5)   \
   void name(s32 mode) {                                                        \
     data1 = 1;                                                                 \
@@ -6218,7 +6267,7 @@
     }                                                                          \
   }
 
-/// 2 scenes: madra, mikasalla.
+/// 2 copies: madra, mikasalla.
 #define DEFINE_FUNC_02000544(name, call1)                                      \
   void name(void) {                                                            \
     s32 id, a;                                                                 \
@@ -6235,7 +6284,7 @@
     call1();                                                                   \
   }
 
-/// 1 scenes: loho.
+/// 2 copies: loho, loho.
 #define DEFINE_FUNC_02000C64(name, n1, n2)                                     \
   void name(s32 id) {                                                          \
     s32 value = 768;                                                           \
@@ -6248,7 +6297,7 @@
     Actor_ReturnHome(id, kind, value + n2);                                    \
   }
 
-/// 2 scenes: jupiter_lighthouse_room_6, jupiter_lighthouse_room_7.
+/// 2 copies: jupiter_lighthouse_room_6, jupiter_lighthouse_room_7.
 #define DEFINE_FUNC_02000060(name, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10,    \
                              n11)                                              \
   void name(s32 mode) {                                                        \
@@ -6261,7 +6310,7 @@
     MapGrid_CopyCellAttributes(n8, n9, n3, 1, n10, n11);                       \
   }
 
-/// 2 scenes: jupiter_lighthouse_room_6, jupiter_lighthouse_room_7.
+/// 2 copies: jupiter_lighthouse_room_6, jupiter_lighthouse_room_7.
 #define DEFINE_FUNC_020000B4(name, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10)    \
   void name(void) {                                                            \
     Event_PlaySound(134);                                                      \
@@ -6271,7 +6320,7 @@
     MapGrid_CopyCellAttributes(n7, n8, n3, 1, n9, n10);                        \
   }
 
-/// 9 scenes: jupiter_lighthouse_aerie_beacon/s0198, jupiter_lighthouse_room_4,
+/// 9 copies: jupiter_lighthouse_aerie_beacon/s0198, jupiter_lighthouse_room_4,
 /// jupiter_lighthouse_room_5, jupiter_lighthouse_room_6,
 /// jupiter_lighthouse_room_7, jupiter_lighthouse_room_8,
 /// jupiter_lighthouse_room_9, jupiter_lighthouse_room_m,
@@ -6316,7 +6365,7 @@
     data1++;                                                                   \
   }
 
-/// 6 scenes: jupiter_lighthouse_basement, jupiter_lighthouse_entrance,
+/// 6 copies: jupiter_lighthouse_basement, jupiter_lighthouse_entrance,
 /// jupiter_lighthouse_room_1, jupiter_lighthouse_room_2,
 /// jupiter_lighthouse_room_3, trial_road/s15a8.
 #define DEFINE_FUNC_02000238(name, data1, data2, data3, n1)                    \
@@ -6356,7 +6405,7 @@
     data1++;                                                                   \
   }
 
-/// 4 scenes: anemos_inner_sanctum/s0038, mars_lighthouse_aerie/s3370,
+/// 4 copies: anemos_inner_sanctum, mars_lighthouse_aerie/s3370,
 /// mars_lighthouse_entrance/s42f8, mars_lighthouse_room_m.
 #define DEFINE_FUNC_020001F8(name, data1, data2, data3, data4, data5, data6,   \
                              data7, data8, data9)                              \
@@ -6410,7 +6459,7 @@
       data6 = 0;                                                               \
   }
 
-/// 2 scenes: jupiter_lighthouse_aerie_beacon/s4ec8,
+/// 2 copies: jupiter_lighthouse_aerie_beacon/s4ec8,
 /// jupiter_lighthouse_room_3/s1a7c.
 #define DEFINE_FUNC_02001DB8(name, call1)                                      \
   void name(struct PushEvent *event) {                                         \
@@ -6470,7 +6519,7 @@
     Event_WaitTransitionFrames();                                              \
   }
 
-/// 2 scenes: mars_lighthouse_room_f/s35b8, mars_lighthouse_star_room/s3804.
+/// 2 copies: mars_lighthouse_room_f/s35b8, mars_lighthouse_star_room/s3804.
 #define DEFINE_FUNC_02003BE8(name, call1)                                      \
   void name(struct PushEvent *event) {                                         \
     struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);           \
@@ -6528,7 +6577,7 @@
     Event_WaitTransitionFrames();                                              \
   }
 
-/// 3 scenes: mars_lighthouse_room_f, mars_lighthouse_room_m,
+/// 3 copies: mars_lighthouse_room_f, mars_lighthouse_room_m,
 /// mars_lighthouse_star_room.
 #define DEFINE_FUNC_02001928(name, data1)                                      \
   void name(struct Actor *object, s32 part) {                                  \

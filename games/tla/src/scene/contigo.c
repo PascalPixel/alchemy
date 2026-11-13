@@ -8,7 +8,7 @@
 #include "dma.h"
 #include "io_reg.h"
 #include "event_inline.h"
-#include "shared/contigo.h"
+#include "contigo.h"
 #include "task.h"
 #include "actor.h"
 #include "module/scene/contigo.h"

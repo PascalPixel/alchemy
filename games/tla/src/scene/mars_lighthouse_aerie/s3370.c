@@ -117,7 +117,7 @@ void Func_02003370(void) {
     FieldTask_Remove(Func_02003370);
 }
 
-#include "../shared/mars_lighthouse_aerie.h"
+#include "../mars_lighthouse_aerie.h"
 #include "scene_tables.h"
 
 void Func_020035ec(s32 id) {

@@ -95,7 +95,7 @@ void Func_02003b7c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "ram_buffer.h"
 #include "actor.h"
 #include "iwram_call.h"
-#include "../shared/jupiter_lighthouse_room_m.h"
+#include "../jupiter_lighthouse_room_m.h"
 #include "scene_tables.h"
 #include "cell_target.h"
 

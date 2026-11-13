@@ -2,7 +2,7 @@
 /// Scene code of overlay 0x653, in ROM order.
 
 #include "../shared/routines.h"
-#include "../shared/kandorean_temple.h"
+#include "../kandorean_temple.h"
 #include "field.h"
 #include "module/scene/kandorean_temple.h"
 #include "module/scene/scene.h"

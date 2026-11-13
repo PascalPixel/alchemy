@@ -53,7 +53,7 @@ extern u8 gData_020023c4[];
 #undef SHARED_F02002148_ID6
 #undef SHARED_F02002148_ID7
 
-#include "../shared/mars_lighthouse_entrance_ride.h"
+#include "../mars_lighthouse_entrance.h"
 
 void Func_02002848(void) {
   if (RIDE_WORK->active)

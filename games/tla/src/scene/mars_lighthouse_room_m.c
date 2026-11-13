@@ -89,7 +89,7 @@ void Func_02000058(s32 id, s32 value) {
   Func_02003118(object, value);
 }
 
-#include "shared/mars_lighthouse_room_m.h"
+#include "mars_lighthouse_room_m.h"
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;

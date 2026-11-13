@@ -5,7 +5,7 @@
 
 #include "../shared/routines.h"
 #include "../shared/tables.h"
-#include "../shared/kibombo.h"
+#include "../kibombo.h"
 #include "event_work.h"
 #include "module/field/event_commands.h"
 #include "module/scene/kibombo.h"

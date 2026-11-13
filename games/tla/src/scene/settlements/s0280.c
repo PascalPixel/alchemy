@@ -2,7 +2,7 @@
 /// Scene code of overlay 0x690, in ROM order.
 
 #include "../shared/routines.h"
-#include "../shared/settlements.h"
+#include "../settlements.h"
 #include "field_event.h"
 #include "field.h"
 #include "module/scene/settlements.h"

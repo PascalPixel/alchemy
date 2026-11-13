@@ -7,7 +7,7 @@
 #include "frame.h"
 #include "actor.h"
 #include "event_inline.h"
-#include "../shared/mars_lighthouse_star_room.h"
+#include "../mars_lighthouse_star_room.h"
 #include "module/field/field.h"
 #include "module/scene/mars_lighthouse_star_room.h"
 #include "module/scene/scene.h"

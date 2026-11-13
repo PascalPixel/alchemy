@@ -3,7 +3,7 @@
 
 #include "../shared/tables.h"
 #include "../shared/routines.h"
-#include "../shared/mars_lighthouse_room_m.h"
+#include "../mars_lighthouse_room_m.h"
 #include "event_inline.h"
 #include "display_transition.h"
 #include "item_icon.h"

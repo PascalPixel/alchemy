@@ -706,7 +706,7 @@ const u8 *Scene_GetEvents(void) {
   return gData_0200610c;
 }
 
-#include "../shared/mars_lighthouse_entrance_ride.h"
+#include "../mars_lighthouse_entrance.h"
 
 DEFINE_FUNC_020002D4(Func_02001234)
 #undef SET_SPRITE_WINDOW_LAYERS

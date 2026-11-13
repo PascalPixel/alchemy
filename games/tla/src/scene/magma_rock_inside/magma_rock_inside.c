@@ -52,7 +52,7 @@ s32 Func_02000538(u32 layer, u32 x, u32 y, u32 width, u32 height, s32 value) {
 }
 
 // ---- games/tla/src/scene/magma_rock_inside/s0594.c ----
-#include "../shared/magma_rock_inside.h"
+#include "../magma_rock_inside.h"
 
 void Func_02000594(void) { Func_080d2b4c(15, 56); }
 

@@ -29,7 +29,7 @@ void Func_02002270(void) {
   animation->flag11 = 1;
 }
 
-#include "../shared/mars_lighthouse_entrance_ride.h"
+#include "../mars_lighthouse_entrance.h"
 
 void Func_020022c4(void) {
   struct RideWork *work = RIDE_WORK;

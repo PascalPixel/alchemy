@@ -4,7 +4,7 @@
 // ---- games/tla/src/scene/kibombo/s0038.c ----
 
 #include "shared/routines.h"
-#include "shared/kibombo.h"
+#include "kibombo.h"
 #include "event_work.h"
 #include "gamepak/far_call/system.h"
 #include "module/field/event_commands.h"

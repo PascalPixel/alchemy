@@ -28,7 +28,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-#include "shared/mars_lighthouse_room_f_room.h"
+#include "mars_lighthouse_room_f.h"
 
 extern const u8 gData_02006518[];
 extern const u8 gData_02006530[];

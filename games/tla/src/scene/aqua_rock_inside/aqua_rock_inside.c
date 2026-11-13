@@ -4,7 +4,7 @@
 // ---- games/tla/src/scene/aqua_rock_inside.c ----
 
 #include "../shared/routines.h"
-#include "../shared/aqua_rock_inside.h"
+#include "../aqua_rock_inside.h"
 #include "field.h"
 #include "module/field/map.h"
 #include "module/scene/aqua_rock_inside.h"

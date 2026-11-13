@@ -5,7 +5,7 @@
 
 #include "../field/object/prepare_object.c"
 
-#include "shared/magma_rock_inside.h"
+#include "magma_rock_inside.h"
 
 struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 kind) {
   struct Actor *object = FieldActor_Create(kind, x, y, z);

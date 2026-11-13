@@ -3,7 +3,7 @@
 
 #include "../shared/routines.h"
 #include "../shared/tables.h"
-#include "../shared/aqua_rock_inside.h"
+#include "../aqua_rock_inside.h"
 #include "types.h"
 #include "iwram_call.h"
 #include "system/io_reg.h"

@@ -2,7 +2,7 @@
 /// Scene code of overlay 0x6ac, in ROM order.
 
 #include "../shared/routines.h"
-#include "../shared/mars_lighthouse_room_m.h"
+#include "../mars_lighthouse_room_m.h"
 #include "event_inline.h"
 #include "module/field/field.h"
 #include "module/scene/dehkan_plateau.h"

@@ -6,6 +6,6 @@
 
 #include "../field/object/prepare_object.c"
 
-#include "shared/aqua_rock_inside.h"
+#include "aqua_rock_inside.h"
 
 DEFINE_FUNC_020000D0_93()

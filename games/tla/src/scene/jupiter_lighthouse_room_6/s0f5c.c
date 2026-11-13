@@ -9,7 +9,7 @@
 #include "heap_release.h"
 #include "item_icon.h"
 #include "module/scene/scene.h"
-#include "../shared/jupiter_lighthouse_room_6.h"
+#include "../jupiter_lighthouse_room_6.h"
 
 extern const s32 *gData_020023d8[];
 

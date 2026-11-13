@@ -9,7 +9,7 @@
 #include "field_effect.h"
 #include "actor.h"
 #include "event_inline.h"
-#include "../shared/garoh.h"
+#include "../garoh.h"
 #include "field_sprite.h"
 #include "field.h"
 #include "module/field/event_commands.h"

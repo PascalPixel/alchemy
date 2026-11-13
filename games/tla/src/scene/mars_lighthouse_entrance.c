@@ -2,7 +2,7 @@
 /// The scene code of overlay 0x6aa, in ROM order.
 
 #include "shared/routines.h"
-#include "shared/mars_lighthouse_entrance_ride.h"
+#include "mars_lighthouse_entrance.h"
 #include "event_inline.h"
 #include "field.h"
 #include "module/scene/mars_lighthouse_entrance.h"

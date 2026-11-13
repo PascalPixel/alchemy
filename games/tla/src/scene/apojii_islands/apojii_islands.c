@@ -5,7 +5,7 @@
 
 #include "../shared/routines.h"
 #include "../shared/tables.h"
-#include "../shared/apojii_islands.h"
+#include "../apojii_islands.h"
 #include "types.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"

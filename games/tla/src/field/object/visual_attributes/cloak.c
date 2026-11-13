@@ -444,7 +444,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     position.x = target->x;
     position.y = target->y + 0x100000;
     position.z = target->z;
-    Vector_AddPolarOffset(0x20000, angle, &position);
+    Vector_AddPolarOffset(px(2), angle, &position);
     Actor_SetMoveTargetFar(anchors[0], position.x + 0x100000, position.y,
                            position.z);
     Actor_SetMoveTargetFar(anchors[1], position.x - 0x100000, position.y,
@@ -454,7 +454,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     position.x = target->x;
     position.y = target->ground;
     position.z = target->z;
-    Vector_AddPolarOffset(0x100000, angle, &position);
+    Vector_AddPolarOffset(px(16), angle, &position);
     i = ActorScript_CheckOverlapFar(target, &position);
     // Both tests jump into the blocked path, which keeps it ahead of the drop
     if (i != 0)

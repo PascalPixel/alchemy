@@ -71,7 +71,7 @@ void ParticleBurst_Update(void) {
       position[0] = particle->x;
       position[1] = particle->y;
       position[2] = particle->z;
-      Vector_AddPolarOffset(0x300000, particle->heading, position);
+      Vector_AddPolarOffset(px(48), particle->heading, position);
       Camera_WorldToScreen(position);
       sprite->x = position[0];
       sprite->y = position[2];
@@ -701,8 +701,8 @@ void Blaze_UpdateSpray(void) {
       pos[0] = particle->x;
       pos[1] = particle->y - (Random16() << 2);
       pos[2] = particle->z;
-      Vector_AddPolarOffset(0xa0000, work->angle + TRIG_TURN / 2, pos);
-      Vector_AddPolarOffset(0xc0000, Random16(), pos);
+      Vector_AddPolarOffset(px(10), work->angle + TRIG_TURN / 2, pos);
+      Vector_AddPolarOffset(px(12), Random16(), pos);
       puff = &work->puffMotion[i];
       puff->x = pos[0];
       puff->y = pos[1];

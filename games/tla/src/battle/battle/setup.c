@@ -58,7 +58,7 @@ void BattleCamera_Update(void) {
   Iwram_TransformVector(&eyeOffset.x, (s32 *)camera);
 
   if (transition->flag == 0) {
-    BattleCamera_SetRange(0x780000, 0x780000, 0, 0, 0x10000);
+    BattleCamera_SetRange(px(120), px(120), 0, 0, Q16_ONE);
   }
 }
 

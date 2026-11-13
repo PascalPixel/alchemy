@@ -342,7 +342,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       angle = (u32)angle >> 16;
       positions->height = 0;
       positions->y = centerY << 16;
-      Vector_AddPolarOffset(0x380000, (u16)angle, &positions->x);
+      Vector_AddPolarOffset(px(56), (u16)angle, &positions->x);
       positions++;
       angle = (s16)(angle + 0x2aaa);
     }
@@ -359,7 +359,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       angle = (u32)angle >> 16;
       positions->height = 0;
       positions->y = centerY << 16;
-      Vector_AddPolarOffset(0x380000, (u16)angle, &positions->x);
+      Vector_AddPolarOffset(px(56), (u16)angle, &positions->x);
       positions++;
       angle = (s16)(angle + TRIG_TURN / 8);
     }
@@ -374,7 +374,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       angle = (u32)angle >> 16;
       positions->height = 0;
       positions->y = centerY << 16;
-      Vector_AddPolarOffset(0x380000, (u16)angle, &positions->x);
+      Vector_AddPolarOffset(px(56), (u16)angle, &positions->x);
       positions++;
       angle = (s16)(angle + 0x1999);
     }
@@ -390,13 +390,13 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       pair[i * 2].y = centerY << 16;
       angle <<= 16;
       angle = (u32)angle >> 16;
-      Vector_AddPolarOffset(0x280000, angle, &positions[0].x);
+      Vector_AddPolarOffset(px(40), angle, &positions[0].x);
       pair[i * 2 + 1].x = centerX << 16;
       {
         s32 *point = &positions[1].x;
         pair[i * 2 + 1].height = 0;
         pair[i * 2 + 1].y = centerY << 16;
-        Vector_AddPolarOffset(0x280000, (u16)angle, point);
+        Vector_AddPolarOffset(px(40), (u16)angle, point);
       }
       angle = (angle + TRIG_TURN / 2) << 16;
       i++;
@@ -412,7 +412,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       positions->x = centerX << 16;
       positions->height = 0;
       positions->y = centerY << 16;
-      Vector_AddPolarOffset(0x380000, (u16)angle, &positions->x);
+      Vector_AddPolarOffset(px(56), (u16)angle, &positions->x);
       positions++;
       angle = (s16)(angle + TRIG_TURN / 4);
     }

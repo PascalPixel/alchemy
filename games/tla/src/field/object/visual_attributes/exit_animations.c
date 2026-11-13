@@ -108,8 +108,8 @@ void Exit_PrepareActorAnimation(s32 id, s32 side) {
   object->z = (object->z & 0xFFF00000) + 0x100000;
   object->velocityX = zero;
   object->velocityZ = zero;
-  object->targetX = 0x80000000;
-  object->targetZ = 0x80000000;
+  object->targetX = TARGET_UNSET;
+  object->targetZ = TARGET_UNSET;
   Actor_SelectAnimationFar(object, mode);
   wait(18);
 }

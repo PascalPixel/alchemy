@@ -83,9 +83,9 @@ void Actor_ResetTargetsAndVelocity(u32 objectId) {
   if (object != NULL) {
     object->actionFlags = (u8)(object->actionFlags | 1);
     Actor_StartIdleFar(object);
-    object->targetX = 0x80000000;
-    object->targetY = 0x80000000;
-    object->targetZ = 0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     SET_VELOCITY(object, 0, 0, 0);
     object->unk56 = 0;
   }

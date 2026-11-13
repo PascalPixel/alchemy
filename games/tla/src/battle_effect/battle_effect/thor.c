@@ -179,7 +179,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       if (sinkFrame > 22) {
         sinkFrame = 20;
       }
-      SET_VECTOR(position, 0, -sinkFrame << 17, 0x2000000);
+      SET_VECTOR(position, 0, -sinkFrame << 17, px(512));
       size = (sinkFrame >> 2) + 2;
       if (size > 8) {
         size = 8;
@@ -198,7 +198,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       }
       SceneTransform_ApplyScale(scale);
     } else {
-      SET_VECTOR(position, 0, 0, 0x1000000);
+      SET_VECTOR(position, 0, 0, px(256));
       SceneTransform_ApplyPosition(position);
       Transform_ApplyPitch(-TRIG_TURN / 16);
       Transform_ApplyRoll(frame << 8);

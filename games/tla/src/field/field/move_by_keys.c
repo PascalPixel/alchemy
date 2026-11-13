@@ -63,7 +63,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
     position.x = 0;
     position.y = 0;
     position.z = 0;
-    Vector_AddPolarOffset(0x80000, angle, &position);
+    Vector_AddPolarOffset(px(8), angle, &position);
     position.x += object->x;
     deltaZ = position.z;
     if (deltaZ < 0)
@@ -107,9 +107,9 @@ s32 Actor_MoveByKeys(struct Actor *object) {
   }
   Actor_SelectAnimation(object, animation);
   if (collisionFlags != 0) {
-    object->targetX = 0x80000000;
-    object->targetY = 0x80000000;
-    object->targetZ = 0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     object->velocityX = 0;
     object->velocityY = 0;
     object->velocityZ = 0;
@@ -156,7 +156,7 @@ s32 Actor_CrossRope(struct Actor *object) {
     position.x = 0;
     position.y = 0;
     position.z = 0;
-    Vector_AddPolarOffset(0x80000, angle, &position);
+    Vector_AddPolarOffset(px(8), angle, &position);
     position.x += object->x;
     position.y = object->y - position.z;
     position.z = object->z;
@@ -230,9 +230,9 @@ done:
   Actor_SelectAnimation(object, 29);
   Actor_SetAnimationSpeed(object, value);
   if (collisionFlags != 0) {
-    object->targetX = 0x80000000;
-    object->targetY = 0x80000000;
-    object->targetZ = 0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     object->velocityX = 0;
     object->velocityY = 0;
     object->velocityZ = 0;
@@ -287,7 +287,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
     position.x = object->x;
     position.y = object->y;
     position.z = object->z;
-    Vector_AddPolarOffset(0x80000, angle, &position);
+    Vector_AddPolarOffset(px(8), angle, &position);
     tightrope = *(struct TightropeWork **)&Ram_HeapSlots->unk84[7];
     point = tightrope->nodes;
     best = NULL;
@@ -347,9 +347,9 @@ s32 Actor_CrossTightrope(struct Actor *object) {
   Actor_SetAnimationSpeed(object, 8);
   sprite->unk00[23] = 4;
   if (collisionFlags != 0) {
-    object->targetX = 0x80000000;
-    object->targetY = 0x80000000;
-    object->targetZ = 0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     object->velocityX = 0;
     object->velocityY = 0;
     object->velocityZ = 0;

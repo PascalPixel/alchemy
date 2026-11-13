@@ -18,6 +18,7 @@
 #include "graphics/resource.h"
 #include <system/affine.h>
 #include "system/sprite_metadata.h"
+#include "actor.h"
 #include "actor_view.h"
 #include "module/field/field.h"
 #include "battle/battle.h"

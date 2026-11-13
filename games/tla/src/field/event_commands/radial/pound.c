@@ -202,7 +202,7 @@ void FieldPsynergy_Pound(void) {
     pos[0] = scene->x;
     pos[1] = scene->y;
     pos[2] = scene->z;
-    Vector_AddPolarOffset(0x40000, angle, pos);
+    Vector_AddPolarOffset(px(4), angle, pos);
     Camera_WorldToScreen(pos);
     particle->x = pos[0];
     particle->y = pos[2];

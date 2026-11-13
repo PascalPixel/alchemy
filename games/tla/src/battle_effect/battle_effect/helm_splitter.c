@@ -85,7 +85,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
   sparks = work->particles;
 
   // The caster dashes at the target.
-  BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16, 0x70000);
+  BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16, px(7));
 
   for (frame = 0; frame != 70; frame++) {
     // Frames 8-23: the swirl grows, one cell every second frame.

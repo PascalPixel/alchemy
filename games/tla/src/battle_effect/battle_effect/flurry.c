@@ -166,8 +166,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
 
   // The caster closes in; variant 12 lunges further and waits.
   if (variant == 12) {
-    BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 8,
-                                   0x60000);
+    BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 8, px(6));
     wait(7);
   } else {
     BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 4, 0);

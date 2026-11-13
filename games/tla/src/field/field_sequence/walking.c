@@ -69,7 +69,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
-  Vector_AddPolarOffset(0x100000, object->facing, position);
+  Vector_AddPolarOffset(px(16), object->facing, position);
   if (block->mode == 3) {
     s32 x, z;
 
@@ -222,7 +222,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
 
   if ((gPartyStep.renderMode <= 1 || gPartyStep.renderMode == 6 ||
        gPartyStep.renderMode == 7) &&
-      leader != NULL && leader->targetX != (s32)0x80000000) {
+      leader != NULL && leader->targetX != TARGET_UNSET) {
     zone = 0;
     speed = leader->speedLimit;
     if (GameFlag_Get(0x167))

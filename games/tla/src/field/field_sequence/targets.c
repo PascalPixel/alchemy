@@ -232,7 +232,7 @@ s32 Leader_CanPushObjectAhead(void) {
   half = 128;
   position[1] = (owner->y + (half << 11)) & 0xfff80000;
   position[2] = owner->z;
-  Vector_AddPolarOffset(0x100000, angle, position);
+  Vector_AddPolarOffset(px(16), angle, position);
   target = Actor_FindAtCell(position, 1);
   if (target == 0)
     return 0;
@@ -246,7 +246,7 @@ s32 Leader_CanPushObjectAhead(void) {
   position[0] = target->x;
   position[1] = target->y;
   position[2] = target->z;
-  Vector_AddPolarOffset(0x100000, angle, position);
+  Vector_AddPolarOffset(px(16), angle, position);
   hit = Actor_FindAtCell(position, 1);
   if (hit != 0 && (hit->collisionFlags & 1))
     return 0;
@@ -283,12 +283,12 @@ void Leader_PushObjectAhead(void) {
   position[0] = owner->x;
   position[1] = (owner->y + 0x40000) & 0xfff80000;
   position[2] = owner->z;
-  Vector_AddPolarOffset(0x100000, angle, position);
+  Vector_AddPolarOffset(px(16), angle, position);
   target = Actor_FindAtCell(position, 1);
   position[0] = target->x;
   position[1] = target->y;
   position[2] = target->z;
-  Vector_AddPolarOffset(0x100000, angle, position);
+  Vector_AddPolarOffset(px(16), angle, position);
   terrain = target->terrainId;
   target->terrainId = 2;
   result = MapGrid_CheckCollisionFar(target, position);

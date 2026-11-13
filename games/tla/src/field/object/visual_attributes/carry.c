@@ -39,7 +39,7 @@ void FieldPsynergy_Carry(void) {
   for (n = 0; n < 2; n++) {
     obj = *walk++;
     if (obj != 0)
-      Actor_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->facing);
+      Actor_SetTargetPositionFromMagnitudeAngle(obj, px(24), obj->facing);
   }
 
   Actor_WaitForMoveFar(pair[0]);

@@ -79,17 +79,17 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
     position.x = object->x;
     position.y = object->y;
     position.z = object->z;
-    Vector_AddPolarOffset(0x80000, direction, &position);
+    Vector_AddPolarOffset(px(8), direction, &position);
     if (gDebugMode == 0 ||
         ((gInput.held & KEY_L) == 0 && GameFlag_Get(0x163) == 0)) {
       leftPosition.x = object->x;
       leftPosition.y = object->y;
       leftPosition.z = object->z;
-      Vector_AddPolarOffset(0x80000, direction + 0x1555, &leftPosition);
+      Vector_AddPolarOffset(px(8), direction + 0x1555, &leftPosition);
       rightPosition.x = object->x;
       rightPosition.y = object->y;
       rightPosition.z = object->z;
-      Vector_AddPolarOffset(0x80000, direction - 0x1555, &rightPosition);
+      Vector_AddPolarOffset(px(8), direction - 0x1555, &rightPosition);
       if ((WorldMap_IsWalkable(object, &position) |
            WorldMap_IsWalkable(object, &leftPosition) |
            WorldMap_IsWalkable(object, &rightPosition)) != 0) {
@@ -104,15 +104,15 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
           position.x = object->x;
           position.y = object->y;
           position.z = object->z;
-          Vector_AddPolarOffset(0x80000, direction, &position);
+          Vector_AddPolarOffset(px(8), direction, &position);
           leftPosition.x = object->x;
           leftPosition.y = object->y;
           leftPosition.z = object->z;
-          Vector_AddPolarOffset(0x80000, direction + 0x1555, &leftPosition);
+          Vector_AddPolarOffset(px(8), direction + 0x1555, &leftPosition);
           rightPosition.x = object->x;
           rightPosition.y = object->y;
           rightPosition.z = object->z;
-          Vector_AddPolarOffset(0x80000, direction - 0x1555, &rightPosition);
+          Vector_AddPolarOffset(px(8), direction - 0x1555, &rightPosition);
           if ((WorldMap_IsWalkable(object, &position) |
                WorldMap_IsWalkable(object, &leftPosition) |
                WorldMap_IsWalkable(object, &rightPosition)) != 0)
@@ -139,9 +139,9 @@ update_object:
     Actor_SelectAnimation(object, movementAnimation);
 
   if (collision != 0) {
-    object->targetX = 0x80000000;
-    object->targetY = 0x80000000;
-    object->targetZ = 0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     object->velocityX = 0;
     object->velocityZ = 0;
     if ((collision & 3) != 0) {
@@ -295,7 +295,7 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
   position.x = object->x;
   position.y = object->y;
   position.z = object->z;
-  Vector_AddPolarOffset(0x130000, (u16)angle, &position);
+  Vector_AddPolarOffset(px(19), (u16)angle, &position);
   if (object->priorityFlags & 0x40) {
     onObject = 0;
     other = (struct Actor *)Ram_HeapSlots->scriptObjects;
@@ -334,24 +334,23 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset(0x130000, (u16)angle + TRIG_TURN / 16, &testPosition);
+    Vector_AddPolarOffset(px(19), (u16)angle + TRIG_TURN / 16, &testPosition);
     if (!MapGrid_CheckCollision(object, &testPosition)) {
       testPosition.x = object->x;
       testPosition.y = object->y;
       testPosition.z = object->z;
-      Vector_AddPolarOffset(0x130000, (u16)angle - TRIG_TURN / 16,
-                            &testPosition);
+      Vector_AddPolarOffset(px(19), (u16)angle - TRIG_TURN / 16, &testPosition);
       if (!MapGrid_CheckCollision(object, &testPosition)) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset(0x130000, (u16)angle + TRIG_TURN / 8,
+        Vector_AddPolarOffset(px(19), (u16)angle + TRIG_TURN / 8,
                               &testPosition);
         if (!MapGrid_CheckCollision(object, &testPosition)) {
           testPosition.x = object->x;
           testPosition.y = object->y;
           testPosition.z = object->z;
-          Vector_AddPolarOffset(0x130000, (u16)angle - TRIG_TURN / 8,
+          Vector_AddPolarOffset(px(19), (u16)angle - TRIG_TURN / 8,
                                 &testPosition);
           if (!MapGrid_CheckCollision(object, &testPosition)) {
             heading = angle;
@@ -377,35 +376,31 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
     position.x = object->x;
     position.y = object->y;
     position.z = object->z;
-    Vector_AddPolarOffset(0x130000, (u16)heading, &position);
+    Vector_AddPolarOffset(px(19), (u16)heading, &position);
     if (MapGrid_CheckCollision(object, &position))
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset(0x130000, (u16)heading + TRIG_TURN / 16,
-                          &testPosition);
+    Vector_AddPolarOffset(px(19), (u16)heading + TRIG_TURN / 16, &testPosition);
     if (MapGrid_CheckCollision(object, &testPosition))
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset(0x130000, (u16)heading - TRIG_TURN / 16,
-                          &testPosition);
+    Vector_AddPolarOffset(px(19), (u16)heading - TRIG_TURN / 16, &testPosition);
     if (MapGrid_CheckCollision(object, &testPosition))
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset(0x130000, (u16)heading + TRIG_TURN / 8,
-                          &testPosition);
+    Vector_AddPolarOffset(px(19), (u16)heading + TRIG_TURN / 8, &testPosition);
     if (MapGrid_CheckCollision(object, &testPosition))
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset(0x130000, (u16)heading - TRIG_TURN / 8,
-                          &testPosition);
+    Vector_AddPolarOffset(px(19), (u16)heading - TRIG_TURN / 8, &testPosition);
     if (!MapGrid_CheckCollision(object, &testPosition))
       goto push_objects;
   }
@@ -418,7 +413,7 @@ push_objects:
   contact.x = object->x;
   contact.y = object->y;
   contact.z = object->z;
-  Vector_AddPolarOffset(0xf0000, (u16)heading, &contact);
+  Vector_AddPolarOffset(px(15), (u16)heading, &contact);
   other = (struct Actor *)Ram_HeapSlots->scriptObjects;
   for (angleIndex = 63; angleIndex >= 0; angleIndex--, other++) {
     s32 radius;
@@ -439,30 +434,30 @@ push_objects:
       testPosition.y = other->y;
       testPosition.z = other->z;
       heading = direction;
-      Vector_AddPolarOffset(0x4000, direction, &testPosition);
+      Vector_AddPolarOffset(px(1) / 4, direction, &testPosition);
       if (!ActorScript_CheckOverlap(other, &testPosition.x)) {
         testPosition.x = other->x;
         testPosition.y = other->y;
         testPosition.z = other->z;
-        Vector_AddPolarOffset(0x150000, direction, &testPosition);
+        Vector_AddPolarOffset(px(21), direction, &testPosition);
         if (!MapGrid_CheckCollision(other, &testPosition)) {
           testPosition.x = other->x;
           testPosition.y = other->y;
           testPosition.z = other->z;
-          Vector_AddPolarOffset(0x150000, direction + 0x1000, &testPosition);
+          Vector_AddPolarOffset(px(21), direction + 0x1000, &testPosition);
           // The same probe is tested twice.
           if (!MapGrid_CheckCollision(other, &testPosition) &&
               !MapGrid_CheckCollision(other, &testPosition)) {
             testPosition.x = other->x;
             testPosition.y = other->y;
             testPosition.z = other->z;
-            Vector_AddPolarOffset(0x150000, direction - 0x1000, &testPosition);
+            Vector_AddPolarOffset(px(21), direction - 0x1000, &testPosition);
             if (!MapGrid_CheckCollision(other, &testPosition)) {
-              Vector_AddPolarOffset(0x4000, direction,
+              Vector_AddPolarOffset(px(1) / 4, direction,
                                     (struct FieldPosition *)&other->x);
-              other->targetX = 0x80000000;
-              other->targetY = 0x80000000;
-              other->targetZ = 0x80000000;
+              other->targetX = TARGET_UNSET;
+              other->targetY = TARGET_UNSET;
+              other->targetZ = TARGET_UNSET;
               pushed |= 1;
               continue;
             }
@@ -497,9 +492,9 @@ counted:
   }
 
   if (collision != 0) {
-    object->targetX = 0x80000000;
-    object->targetY = 0x80000000;
-    object->targetZ = 0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     object->velocityX = 0;
     object->velocityZ = 0;
     if (collision & 3) {
@@ -628,28 +623,28 @@ s32 Actor_SailOnWorldMap(struct Actor *object) {
     position.x = object->x;
     position.y = object->y;
     position.z = object->z;
-    Vector_AddPolarOffset(0x80000, direction, &position);
+    Vector_AddPolarOffset(px(8), direction, &position);
     if (gDebugMode == 0 || (gInput.held & KEY_L) == 0) {
       if (WorldMap_IsSailable(object, &position) == 0) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset(0x80000, direction + 0x1000, &testPosition);
+        Vector_AddPolarOffset(px(8), direction + 0x1000, &testPosition);
         if (WorldMap_IsSailable(object, &testPosition) == 0) {
           testPosition.x = object->x;
           testPosition.y = object->y;
           testPosition.z = object->z;
-          Vector_AddPolarOffset(0x80000, direction - 0x1000, &testPosition);
+          Vector_AddPolarOffset(px(8), direction - 0x1000, &testPosition);
           if (WorldMap_IsSailable(object, &testPosition) == 0) {
             testPosition.x = object->x;
             testPosition.y = object->y;
             testPosition.z = object->z;
-            Vector_AddPolarOffset(0x80000, direction + 0x2000, &testPosition);
+            Vector_AddPolarOffset(px(8), direction + 0x2000, &testPosition);
             if (WorldMap_IsSailable(object, &testPosition) == 0) {
               testPosition.x = object->x;
               testPosition.y = object->y;
               testPosition.z = object->z;
-              Vector_AddPolarOffset(0x80000, direction - 0x2000, &testPosition);
+              Vector_AddPolarOffset(px(8), direction - 0x2000, &testPosition);
               if (WorldMap_IsSailable(object, &testPosition) == 0)
                 goto update_object;
             }
@@ -667,31 +662,31 @@ s32 Actor_SailOnWorldMap(struct Actor *object) {
         position.x = object->x;
         position.y = object->y;
         position.z = object->z;
-        Vector_AddPolarOffset(0x80000, direction, &position);
+        Vector_AddPolarOffset(px(8), direction, &position);
         if (WorldMap_IsSailable(object, &position) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset(0x80000, direction + 0x1000, &testPosition);
+        Vector_AddPolarOffset(px(8), direction + 0x1000, &testPosition);
         if (WorldMap_IsSailable(object, &testPosition) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset(0x80000, direction - 0x1000, &testPosition);
+        Vector_AddPolarOffset(px(8), direction - 0x1000, &testPosition);
         if (WorldMap_IsSailable(object, &testPosition) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset(0x80000, direction + 0x2000, &testPosition);
+        Vector_AddPolarOffset(px(8), direction + 0x2000, &testPosition);
         if (WorldMap_IsSailable(object, &testPosition) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset(0x80000, direction - 0x2000, &testPosition);
+        Vector_AddPolarOffset(px(8), direction - 0x2000, &testPosition);
         if (WorldMap_IsSailable(object, &testPosition) != 0)
           continue;
         angle = (s16)direction;
@@ -729,9 +724,9 @@ update_object:
   }
 
   if (collision != 0) {
-    object->targetX = 0x80000000;
-    object->targetY = 0x80000000;
-    object->targetZ = 0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     object->velocityX = 0;
     object->velocityZ = 0;
     if ((collision & 3) != 0) {
@@ -889,29 +884,29 @@ s32 Actor_FlyOnWorldMap(struct Actor *object) {
   position.x = object->x;
   position.y = object->y;
   position.z = object->z;
-  Vector_AddPolarOffset(0x80000, direction, &position);
+  Vector_AddPolarOffset(px(8), direction, &position);
   if (gDebugMode != 0 && (gInput.held & KEY_L) != 0)
     goto update_object;
   if (WorldMap_IsFlyable(object, &position) == 0) {
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset(0x80000, direction + 0x1000, &testPosition);
+    Vector_AddPolarOffset(px(8), direction + 0x1000, &testPosition);
     if (WorldMap_IsFlyable(object, &testPosition) == 0) {
       testPosition.x = object->x;
       testPosition.y = object->y;
       testPosition.z = object->z;
-      Vector_AddPolarOffset(0x80000, direction - 0x1000, &testPosition);
+      Vector_AddPolarOffset(px(8), direction - 0x1000, &testPosition);
       if (WorldMap_IsFlyable(object, &testPosition) == 0) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset(0x80000, direction + 0x2000, &testPosition);
+        Vector_AddPolarOffset(px(8), direction + 0x2000, &testPosition);
         if (WorldMap_IsFlyable(object, &testPosition) == 0) {
           testPosition.x = object->x;
           testPosition.y = object->y;
           testPosition.z = object->z;
-          Vector_AddPolarOffset(0x80000, direction - 0x2000, &testPosition);
+          Vector_AddPolarOffset(px(8), direction - 0x2000, &testPosition);
           if (WorldMap_IsFlyable(object, &testPosition) == 0)
             goto check_objects;
         }
@@ -929,31 +924,31 @@ s32 Actor_FlyOnWorldMap(struct Actor *object) {
     position.x = object->x;
     position.y = object->y;
     position.z = object->z;
-    Vector_AddPolarOffset(0x80000, direction, &position);
+    Vector_AddPolarOffset(px(8), direction, &position);
     if (WorldMap_IsFlyable(object, &position) != 0)
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset(0x80000, direction + 0x1000, &testPosition);
+    Vector_AddPolarOffset(px(8), direction + 0x1000, &testPosition);
     if (WorldMap_IsFlyable(object, &testPosition) != 0)
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset(0x80000, direction - 0x1000, &testPosition);
+    Vector_AddPolarOffset(px(8), direction - 0x1000, &testPosition);
     if (WorldMap_IsFlyable(object, &testPosition) != 0)
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset(0x80000, direction + 0x2000, &testPosition);
+    Vector_AddPolarOffset(px(8), direction + 0x2000, &testPosition);
     if (WorldMap_IsFlyable(object, &testPosition) != 0)
       continue;
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset(0x80000, direction - 0x2000, &testPosition);
+    Vector_AddPolarOffset(px(8), direction - 0x2000, &testPosition);
     if (WorldMap_IsFlyable(object, &testPosition) != 0)
       continue;
     angle = (s16)direction;
@@ -988,9 +983,9 @@ update_object:
     Actor_SelectAnimation(object, 2);
 
   if (collision != 0) {
-    object->targetX = 0x80000000;
-    object->targetY = 0x80000000;
-    object->targetZ = 0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     object->velocityX = 0;
     object->velocityZ = 0;
     if ((collision & 3) != 0) {

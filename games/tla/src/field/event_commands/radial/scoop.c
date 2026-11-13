@@ -294,7 +294,7 @@ void FieldPsynergy_Scoop(void) {
     scene->x = (caster->x & 0xfff00000) + 0x80000;
     scene->y = caster->y;
     scene->z = (caster->z & 0xfff00000) + 0x80000;
-    Vector_AddPolarOffset(0x100000, scene->facing, &scene->x);
+    Vector_AddPolarOffset(px(16), scene->facing, &scene->x);
   }
   FieldPsynergy_FadeToCastColor();
   object = Actor_Spawn(353, 0, 0, 0);
@@ -397,7 +397,7 @@ void FieldPsynergy_Scoop(void) {
       particle->x = scene->x;
       particle->y = scene->y;
       particle->z = scene->z;
-      Vector_AddPolarOffset(0x20000, Random16(), &particle->x);
+      Vector_AddPolarOffset(px(2), Random16(), &particle->x);
       particle->velocityX = 0;
       particle->velocityY = 0;
       particle->velocityZ = 0;
@@ -425,11 +425,11 @@ void FieldPsynergy_Scoop(void) {
       particle->x = scene->x;
       particle->y = scene->y;
       particle->z = scene->z;
-      Vector_AddPolarOffset(0x20000, Random16(), &particle->x);
+      Vector_AddPolarOffset(px(2), Random16(), &particle->x);
       particle->velocityX = 0;
       particle->velocityY = 0;
       particle->velocityZ = 0;
-      Vector_AddPolarOffset(0x10000, Random16(), &particle->velocityX);
+      Vector_AddPolarOffset(px(1), Random16(), &particle->velocityX);
       particle->timer = -i;
     }
   } else if (work->mode == 3) {
@@ -1061,7 +1061,7 @@ void FieldPsynergy_Parch(void) {
   pos[0] = caster->x;
   pos[1] = caster->y;
   pos[2] = caster->z;
-  Vector_AddPolarOffset(0x200000, scene->facing, pos);
+  Vector_AddPolarOffset(px(32), scene->facing, pos);
 
   i = 0;
   kind = 290;
@@ -1444,7 +1444,7 @@ void FieldPsynergy_UpdateUnnamed28(void) {
   pos[1] = actor->y + 0x100000;
   pos[2] = actor->z;
   if (work->unk2985 != 0)
-    Vector_AddPolarOffset(0x20000, -(event->count << 11), pos);
+    Vector_AddPolarOffset(px(2), -(event->count << 11), pos);
   Camera_WorldToScreen(pos);
   x = pos[0] >> 16;
   gBgScroll[0].x = 64 - x;
@@ -1491,7 +1491,7 @@ void FieldPsynergy_UpdateUnnamed28(void) {
         pos[2] = timer;
         pos[1] = timer;
         pos[0] = timer;
-        Vector_AddPolarOffset(0x360000, sprite->angle + TRIG_TURN / 8, pos);
+        Vector_AddPolarOffset(px(54), sprite->angle + TRIG_TURN / 8, pos);
         entry->x = pos[0];
         entry->y = pos[1] + 0x100000;
         entry->z = pos[2];

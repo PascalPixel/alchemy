@@ -134,7 +134,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
   djinni->speedLimit = 0x4ccc;
   djinni->acceleration = 0x4ccc;
-  Actor_SetTargetPositionFromMagnitudeAngle(djinni, 0x100000,
+  Actor_SetTargetPositionFromMagnitudeAngle(djinni, px(16),
                                             dir + TRIG_TURN / 2);
   Sound_PlayFar(LEAP_SOUND);
   Actor_Jump(djinniId, 6, 5);
@@ -148,9 +148,9 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   djinni->velocityX = 0;
   djinni->velocityZ = 0;
   djinni->velocityY = 0;
-  djinni->targetX = 0x80000000;
-  djinni->targetZ = 0x80000000;
-  djinni->targetY = 0x80000000;
+  djinni->targetX = TARGET_UNSET;
+  djinni->targetZ = TARGET_UNSET;
+  djinni->targetY = TARGET_UNSET;
   Actor_SelectAnimationFar(djinni, 0);
   ((struct AnimationObject *)djinni->sprite)->image.priority = 2;
 #if TLA_PATCH_1

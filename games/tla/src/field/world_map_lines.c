@@ -7,6 +7,7 @@
 /// travels with it.
 
 #include "types.h"
+#include "fixed_math.h"
 #include "system/mul_q16.h"
 #include "system/frame.h"
 
@@ -100,8 +101,8 @@ void Transform_UpdateVertices(struct Vector3__world_map_lines *eye,
       angle = (u16)Transform_CallInThumb(x, y);
     }
   }
-  originX = MulQ16(target->x, 0x8000);
-  originZ = MulQ16(target->z, 0x8000);
+  originX = MulQ16(target->x, Q16_ONE / 2);
+  originZ = MulQ16(target->z, Q16_ONE / 2);
   if (angle != gScanlineAngle) {
     gScanlineAngle = angle;
     sinYaw = table->sin.target(angle);

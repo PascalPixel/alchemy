@@ -495,7 +495,7 @@ void FieldPsynergy_Catch(void) {
     target.x = mainObject->x;
     target.y = mainObject->y + 0x200000;
     target.z = mainObject->z;
-    Vector_AddPolarOffset(0x200000, scene->angle, &target.x);
+    Vector_AddPolarOffset(px(32), scene->angle, &target.x);
   } else {
     target.x = scene->x;
     target.y = scene->y + 0x200000;
@@ -537,8 +537,7 @@ void FieldPsynergy_Catch(void) {
   Actor_SelectAnimationFar(object, 5);
   Sound_PlayFar(SE_WATER);
   if (secondary != 0)
-    Actor_SetPositionAndResetMotionFar(secondary, -0x90000, secondary->y,
-                                       -0x90000);
+    Actor_SetPositionAndResetMotionFar(secondary, -px(9), secondary->y, -px(9));
   wait(20);
   for (index = 0; index < 13; index++) {
     object->y += 0x18000;
@@ -757,7 +756,7 @@ void FieldPsynergy_Lash(void) {
       particle->x = object->x;
       particle->y = object->y;
       particle->z = object->z;
-      Vector_AddPolarOffset(0xc0000, Random16(), particle);
+      Vector_AddPolarOffset(px(12), Random16(), particle);
       particle->timer = -1;
       sprite++;
       particle++;
@@ -1376,7 +1375,7 @@ again:
     if (work->timer == 56) {
       motion = &work->arrowMotion;
       pos[0] = pos[1] = pos[2] = 0;
-      Vector_AddPolarOffset(0x50000, scene->angle, pos);
+      Vector_AddPolarOffset(px(5), scene->angle, pos);
       motion->velocityX = pos[0];
       motion->velocityY = pos[1];
       motion->velocityZ = pos[2];
@@ -1437,7 +1436,7 @@ again:
     }
     motion = &work->arrowMotion;
     pos[0] = pos[1] = pos[2] = 0;
-    Vector_AddPolarOffset(0x20000, scene->angle, pos);
+    Vector_AddPolarOffset(px(2), scene->angle, pos);
     motion->velocityX = pos[0];
     motion->velocityY = pos[1];
     motion->velocityZ = pos[2];
@@ -1589,7 +1588,7 @@ again:
   pos[0] = motion->x;
   pos[1] = motion->y;
   pos[2] = motion->z;
-  Vector_AddPolarOffset(-0x240000, scene->angle, pos);
+  Vector_AddPolarOffset(-px(36), scene->angle, pos);
   Camera_WorldToScreen(pos);
   canvas->x = (s16)(pos[0] >> 16);
   canvas->y = (s16)(pos[2] >> 16);
@@ -1650,7 +1649,7 @@ void FieldPsynergy_Unnamed29(void) {
   pos[0] = scene->mainObject->x;
   pos[2] = scene->mainObject->z;
   motion = &work->bowMotion;
-  Vector_AddPolarOffset(0x80000, scene->angle, pos);
+  Vector_AddPolarOffset(px(8), scene->angle, pos);
   motion->x = pos[0];
   motion->y = 0x100000;
   motion->z = pos[2];
@@ -1672,7 +1671,7 @@ void FieldPsynergy_Unnamed29(void) {
   pos[0] = scene->mainObject->x;
   pos[2] = scene->mainObject->z;
   motion = &work->arrowMotion;
-  Vector_AddPolarOffset(0x120000, scene->angle, pos);
+  Vector_AddPolarOffset(px(18), scene->angle, pos);
   motion->x = pos[0];
   motion->y = 0x100000;
   motion->z = pos[2];
@@ -1692,7 +1691,7 @@ void FieldPsynergy_Unnamed29(void) {
   work->target[0] = scene->mainObject->x;
   work->target[1] = scene->mainObject->y;
   work->target[2] = scene->mainObject->z;
-  Vector_AddPolarOffset(0x500000, scene->angle, work->target);
+  Vector_AddPolarOffset(px(80), scene->angle, work->target);
 
   palette = (u16 *)&OBJ_PLTT_COLOR(14, 0);
   for (i = 0; i < 16; i++) {

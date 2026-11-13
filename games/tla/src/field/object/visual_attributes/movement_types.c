@@ -347,13 +347,13 @@ again:
   position[0] = (leader->x & 0xfff00000) + 0x80000;
   position[1] = leader->y;
   position[2] = (leader->z & 0xfff00000) + 0x80000;
-  Vector_AddPolarOffset(0x100000, angle, position);
+  Vector_AddPolarOffset(px(16), angle, position);
   if (MapGrid_CheckCollisionFar(leader, position) == 1)
     return -1;
   position[0] = (leader->x & 0xfff00000) + 0x80000;
   position[1] = leader->y;
   position[2] = (leader->z & 0xfff00000) + 0x80000;
-  Vector_AddPolarOffset(0x200000, angle, position);
+  Vector_AddPolarOffset(px(32), angle, position);
   canJump = 0;
   if (MapGrid_BlocksJump(leader, position) == 0 &&
       MapGrid_CheckCollisionFar(leader, position) == 0)
@@ -776,7 +776,7 @@ s32 Leader_StepOffRope(void) {
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;
-  Vector_AddPolarOffset(0x100000, angle, position);
+  Vector_AddPolarOffset(px(16), angle, position);
   leader->terrainHeight = leader->y - 0x80000;
   if (MapGrid_GetCellAttributeLowNibbleFar(leader->terrainId, position[0],
                                            position[2]) ||
@@ -881,7 +881,7 @@ s32 Leader_StepOffTightrope(void) {
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;
-  Vector_AddPolarOffset(0x100000, angle, position);
+  Vector_AddPolarOffset(px(16), angle, position);
   leader->terrainHeight = leader->y - 0x80000;
   if (MapGrid_GetCellAttributeLowNibbleFar(leader->terrainId, position[0],
                                            position[2]) ||

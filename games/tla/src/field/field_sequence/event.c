@@ -36,8 +36,8 @@ void Leader_StopMoving(void) {
   struct Actor *object = ObjectTable_Get(Party_GetLeaderActor());
   object->speedLimit = Q16_ONE;
   object->acceleration = px(1) / 2;
-  object->targetX = 0x80000000;
-  object->targetZ = 0x80000000;
+  object->targetX = TARGET_UNSET;
+  object->targetZ = TARGET_UNSET;
   object->velocityX = 0;
   object->velocityZ = 0;
   if (gMainRoutineWork.renderMode == 2)

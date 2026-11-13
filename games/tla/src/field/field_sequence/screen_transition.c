@@ -75,9 +75,9 @@ void Leader_StepAwayFromNearbyActor(void) {
         leader->x = other->x;
         leader->z = other->z;
         Vector_AddPolarOffset__f0cf050(0x140000, ArcTan2(dz, dx), &leader->x);
-        leader->targetX = 0x80000000;
-        leader->targetY = 0x80000000;
-        leader->targetZ = 0x80000000;
+        leader->targetX = TARGET_UNSET;
+        leader->targetY = TARGET_UNSET;
+        leader->targetZ = TARGET_UNSET;
         break;
       }
   }
@@ -162,7 +162,7 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
   position[1] = picture->y;
   position[2] = picture->z;
   if (actor == Party_GetLeaderActor()) {
-    Vector_AddPolarOffset(0x100000, picture->facing, position);
+    Vector_AddPolarOffset(px(16), picture->facing, position);
     position[0] = (position[0] & 0xfff00000) + 0x80000;
     position[2] = (position[2] & 0xfff00000) + 0x80000;
   }

@@ -543,7 +543,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
     {
       s32 *position = probePosition.coordinates;
 
-      Vector_AddPolarOffset(0x100000, leader->angle, position);
+      Vector_AddPolarOffset(px(16), leader->angle, position);
     }
     if ((s8)workBytes[0x18a] == 3) {
       s32 x, z;

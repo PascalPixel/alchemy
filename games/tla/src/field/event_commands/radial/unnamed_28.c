@@ -167,7 +167,7 @@ void FieldPsynergy_Unnamed28(void) {
           mote->x = caster->x;
           mote->y = caster->y + 0x100000;
           mote->z = caster->z;
-          Vector_AddPolarOffset(0x370000, heading, &mote->x);
+          Vector_AddPolarOffset(px(55), heading, &mote->x);
           Vector_AddPolarOffset(Random16() * 6, Random16(), &mote->x);
         }
         if ((u32)mote->timer <= 15) {
@@ -239,7 +239,7 @@ void FieldPsynergy_Unnamed28(void) {
         place[1] = scene->mainObject->y + 0x100000;
         place[2] = scene->mainObject->z;
         Camera_WorldToScreen(place);
-        Vector_AddPolarOffset(0x400000, heading, place);
+        Vector_AddPolarOffset(px(64), heading, place);
         mote->x = place[0];
         mote->y = place[2];
         mote->timer = -i;
@@ -435,22 +435,22 @@ void ViewMove_Start(s32 direction) {
 #if TLA_PATCH_1
   if (*(s32 *)map->unk0fc != 0) {
     if (direction & VIEW_MOVE_X) {
-      MapGrid_SetScreenShakeFar(0x30000, 0, 0x10000);
+      MapGrid_SetScreenShakeFar(px(3), 0, Q16_ONE);
       return;
     }
     if (direction & VIEW_MOVE_Z) {
-      MapGrid_SetScreenShakeFar(0, 0x30000, 0x10000);
+      MapGrid_SetScreenShakeFar(0, px(3), Q16_ONE);
       return;
     }
   }
 #endif
   if (event->controlMode == 3) {
     if (direction & VIEW_MOVE_X) {
-      MapGrid_SetScreenShakeFar(0x30000, 0, 0x10000);
+      MapGrid_SetScreenShakeFar(px(3), 0, Q16_ONE);
       return;
     }
     if (direction & VIEW_MOVE_Z) {
-      MapGrid_SetScreenShakeFar(0, 0x30000, 0x10000);
+      MapGrid_SetScreenShakeFar(0, px(3), Q16_ONE);
       return;
     }
   }

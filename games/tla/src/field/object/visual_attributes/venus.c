@@ -40,7 +40,7 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
   Sound_PlayFar(SE_HIGH_JUMP);
   Actor_Jump(arg, 8, 22);
   Sound_PlayFar(SE_SPIN);
-  MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
+  MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, Q16_ONE);
   djinni->callback = (void *)FieldEffect_ShrinkActorAndDestroyFast;
   Actor_SelectAnimationFar((struct Actor *)djinni, 3);
   wait(90);
@@ -48,7 +48,7 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
   wait(20);
   Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.currentOwner), 28);
   wait(30);
-  MapGrid_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
+  MapGrid_SetScreenShakeFar(0x19999, 0x19999, Q16_ONE);
 
   position[0] = djinni->x;
   position[1] = djinni->y;
@@ -126,7 +126,7 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
     djinni->gravity = px(5);
     djinni->baseY = djinni->y;
     djinni->speed = Random16() + 0x16666;
-    Actor_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000, Random16());
+    Actor_SetTargetPositionFromMagnitudeAngle(djinni, px(32), Random16());
     Actor_SetSpriteColorModeFar(djinni, 11);
     djinni->lifetime = 8;
     Actor_StartScriptFar((struct Actor *)djinni,
@@ -186,7 +186,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
     if (FieldParticle_HasPendingTarget(effect) == 0) {
       position.x = effect->x;
       position.z = effect->z;
-      Vector_AddPolarOffset(0xc0000, Random16(), &position);
+      Vector_AddPolarOffset(px(12), Random16(), &position);
       effect->targetX = position.x;
       effect->targetZ = position.z;
       effect->stopAtTarget = 0;

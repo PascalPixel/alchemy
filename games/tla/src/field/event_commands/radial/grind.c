@@ -114,7 +114,7 @@ void FieldPsynergy_GrindOnTarget(void) {
     scene->x = caster->x;
     scene->z = caster->z + 0x80000;
     scene->y = caster->y;
-    Vector_AddPolarOffset(0x200000, scene->facing, &scene->x);
+    Vector_AddPolarOffset(px(32), scene->facing, &scene->x);
   }
   isWaterObject = 0;
   if (Actor_GetSpriteIdFar(child) == 424) {

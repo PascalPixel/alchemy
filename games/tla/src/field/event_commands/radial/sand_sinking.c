@@ -130,9 +130,9 @@ void Sand_SpawnGrain(struct EffectSprite__f0e446c *sprite,
   position[2] = mainObject->z;
   if (high) {
     position[1] = y + 0x20000;
-    Vector_AddPolarOffset(0x20000, Random16(), position);
+    Vector_AddPolarOffset(px(2), Random16(), position);
   } else {
-    Vector_AddPolarOffset(0x40000, Random16(), position);
+    Vector_AddPolarOffset(px(4), Random16(), position);
   }
   particle->x = position[0];
   particle->y = position[1];

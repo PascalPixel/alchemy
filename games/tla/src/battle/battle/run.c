@@ -64,8 +64,8 @@ void BattleCamera_Create(void) {
       HeapSlot_AllocEwram(48, sizeof(struct BattleCamera));
   s32 *focus = camera->pos;
 
-  SET_VECTOR(focus, 0, 0x400000, 0);
-  SET_VECTOR(camera->eye, 0, 0xb40000, 0x400000);
+  SET_VECTOR(focus, 0, px(64), 0);
+  SET_VECTOR(camera->eye, 0, px(180), px(64));
   camera->yaw = 0x2800;
   camera->pitch = 0x5000;
   camera->distance = 0x1000000;
@@ -291,7 +291,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   BattleObject_Put();
   BattleBackground_Init();
   BattleBackground_Load(1, battle->background, 0);
-  BattleCamera_SetRange(0xa00000, 0x500000, 0, 0, 0x20000);
+  BattleCamera_SetRange(px(160), px(80), 0, 0, Q16_ONE * 2);
   BattleCamera_SetView(0, 0, 0, 190);
   Party_ReservedNoOp5B14(1);
   *(volatile u16 *)0x04000050 = 0;

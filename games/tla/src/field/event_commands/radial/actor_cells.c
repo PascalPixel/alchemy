@@ -181,14 +181,14 @@ struct Actor *Leader_FindActorAhead(void) {
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;
-  Vector_AddPolarOffset(0x100000, angle << 12, position);
+  Vector_AddPolarOffset(px(16), angle << 12, position);
   found = Actor_FindAtCell(position, 1);
   if (found != NULL)
     return found;
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;
-  Vector_AddPolarOffset(0x200000, angle << 12, position);
+  Vector_AddPolarOffset(px(32), angle << 12, position);
   found = Actor_FindAtCell(position, 1);
   if (found != NULL)
     return found;

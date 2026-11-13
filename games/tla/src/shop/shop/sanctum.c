@@ -451,11 +451,11 @@ void Sanctum_UpdateBurstSparkle(struct Effect_080b2f4c *effect) {
   if (state == 0) {
     position.x = effect->sourceX;
     position.z = effect->sourceZ;
-    Vector_AddPolarOffset(0x280000, Random16(), &position);
+    Vector_AddPolarOffset(px(40), Random16(), &position);
     FieldParticle_SetPositionFar(effect, position.x, position.z);
     position.x = effect->sourceX;
     position.z = effect->sourceZ;
-    Vector_AddPolarOffset(0x40000, Random16(), &position);
+    Vector_AddPolarOffset(px(4), Random16(), &position);
     effect->x = position.x;
     effect->z = position.z;
     effect->velocity = px(2);

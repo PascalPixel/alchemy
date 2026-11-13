@@ -212,7 +212,7 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
     scene->x = user->x;
     scene->z = user->z;
     scene->y = user->y;
-    Vector_AddPolarOffset(0x100000, scene->angle, &scene->x);
+    Vector_AddPolarOffset(px(16), scene->angle, &scene->x);
   }
 }
 

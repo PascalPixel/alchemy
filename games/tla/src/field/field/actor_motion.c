@@ -80,8 +80,6 @@ typedef s32 (*MotionCommand)(struct MotionObject *object);
 extern const MotionCommand gData_0802f204[];
 extern const s32 gActorScript_CycleTable[];
 
-#define TARGET_UNSET ((s32)0x80000000)
-
 /// A whole-pixel distance squared.
 static __inline__ s32 Object_Square(s32 value) { return value * value; }
 
@@ -467,9 +465,9 @@ void Actor_MoveWithCarriers(void) {
 /// x, y, z: 16.16 fixed-point position.
 void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z) {
   obj->z = z;
-  obj->targetX = 0x80000000; // No destination.
-  obj->targetY = 0x80000000;
-  obj->targetZ = 0x80000000;
+  obj->targetX = TARGET_UNSET; // No destination.
+  obj->targetY = TARGET_UNSET;
+  obj->targetZ = TARGET_UNSET;
   obj->x = x;
   obj->y = y;
   SET_VELOCITY(obj, 0, 0, 0);
@@ -550,5 +548,4 @@ void ObjectList_CollectActive(u8 *object, u8 **out) {
   } while (object != end);
   *out = NULL;
 }
-#undef TARGET_UNSET
 #undef WORD_AT

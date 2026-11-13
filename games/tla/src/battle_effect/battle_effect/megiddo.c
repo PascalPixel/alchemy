@@ -169,7 +169,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   transformed = Data_02011000;
   strip = Data_02012000;
   sheet2 = gData_02014000;
-  BattleMotion_ApproachTargetFar(effect->actor, effect->actor, 150, 0x50000);
+  BattleMotion_ApproachTargetFar(effect->actor, effect->actor, 150, px(5));
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);

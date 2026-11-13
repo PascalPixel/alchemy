@@ -639,7 +639,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // The caster closes in on the target.
-  BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 8, 0x40000);
+  BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 8, px(4));
 
   for (frame = 0; frame != 32; frame++) {
     if (frame == 0)

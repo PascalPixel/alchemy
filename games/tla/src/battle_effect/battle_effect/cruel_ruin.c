@@ -1497,7 +1497,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             if (i == 0) {
               Transform_ApplyRoll(-0xbe8);
             } else {
-              Transform_ApplyRoll(-0x400);
+              Transform_ApplyRoll(-(TRIG_TURN / 64));
             }
             Render_TransformVertices(cells, verts, 66);
             Render_DrawModelList(model);

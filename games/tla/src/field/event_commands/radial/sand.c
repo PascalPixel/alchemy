@@ -315,7 +315,7 @@ void FieldPsynergy_UpdateBurst(void) {
       if (work->timer == 0)
         Sound_PlayFar(SE_CLATTER);
       if ((work->timer & 7) == 0) {
-        MapGrid_SetScreenShakeFar(0x30000, 0x30000, 0xe666);
+        MapGrid_SetScreenShakeFar(px(3), px(3), 0xe666);
         work->newBursts = 1;
         work->shake = 2;
       }
@@ -327,7 +327,7 @@ void FieldPsynergy_UpdateBurst(void) {
       if ((work->timer & 15) == 0)
         Sound_PlayFar(SE_CLATTER);
       if ((work->timer & 7) == 0) {
-        MapGrid_SetScreenShakeFar(0x30000, 0x30000, 0xe666);
+        MapGrid_SetScreenShakeFar(px(3), px(3), 0xe666);
         work->newBursts = 1;
         work->shake = 2;
       }
@@ -344,7 +344,7 @@ void FieldPsynergy_UpdateBurst(void) {
       if (work->timer == 4)
         work->newBursts = 10;
       if (work->timer == 0) {
-        MapGrid_SetScreenShakeFar(0xc0000, 0xc0000, 0xe666);
+        MapGrid_SetScreenShakeFar(px(12), px(12), 0xe666);
         Sound_PlayFar(SE_CRASH);
         if (work->timer == 0)
           work->shake = 3;
@@ -434,7 +434,7 @@ void FieldPsynergy_UpdateBurst(void) {
       if (work->timer == 0) {
         work->paletteMode = 2;
         if (work->timer == 0) {
-          MapGrid_SetScreenShakeFar(0x30000, 0x30000, 0xe666);
+          MapGrid_SetScreenShakeFar(px(3), px(3), 0xe666);
           work->newBursts = 1;
           Sound_PlayFar(SE_CLATTER);
         }

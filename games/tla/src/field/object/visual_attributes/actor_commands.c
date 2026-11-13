@@ -14,9 +14,9 @@ void Actor_ResetTargetAndSetMode1(u32 objectId) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
-    object->targetX = 0x80000000;
-    object->targetY = 0x80000000;
-    object->targetZ = 0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     Actor_StartIdleFar(object);
     Actor_SelectAnimationFar(object, 1);
   }
@@ -121,7 +121,7 @@ void Actor_FallOverById(u32 id, u32 angle) {
     position[2] = object->z;
     MapGrid_SetCellBehaviorAtFar(object->terrainId, position[0], position[2],
                                  255);
-    Vector_AddPolarOffset(0x100000, angle, position);
+    Vector_AddPolarOffset(px(16), angle, position);
     MapGrid_SetCellBehaviorAtFar(object->terrainId, position[0], position[2],
                                  255);
     switch (angle) {
@@ -163,7 +163,7 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
   position[2] = object->z;
   MapGrid_SetCellBehaviorAtFar(object->terrainId, position[0], position[2],
                                255);
-  Vector_AddPolarOffset(0x100000, angle, position);
+  Vector_AddPolarOffset(px(16), angle, position);
   MapGrid_SetCellBehaviorAtFar(object->terrainId, position[0], position[2],
                                255);
   switch (angle) {

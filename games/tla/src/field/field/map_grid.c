@@ -63,7 +63,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
   groundHere = MapGrid_GetTerrainHeight(*terrainId, cellX, cellZ);
   groundAhead = MapGrid_GetTerrainHeight(*terrainId, cellX, cellZ + 0xfff00000);
   if (actor->timer != 0) {
-    if (actor->targetX != 0x80000000)
+    if (actor->targetX != TARGET_UNSET)
       goto done;
     actor->timer = 0;
     actor->terrainHeight = groundHere;
@@ -102,14 +102,14 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
       position.x = actor->x;
       position.y = 0;
       position.z = 0;
-      Vector_AddPolarOffset(0x80000, (u16)angle, &position);
+      Vector_AddPolarOffset(px(8), (u16)angle, &position);
       position.y = actor->y - position.z;
       position.z = actor->z;
       Actor_SelectAnimation(actor, 3);
       testPosition.x = actor->x;
       testPosition.y = 0;
       testPosition.z = 0;
-      Vector_AddPolarOffset(0x80000, (u16)angle, &testPosition);
+      Vector_AddPolarOffset(px(8), (u16)angle, &testPosition);
       testPosition.y = actor->y - testPosition.z;
       testPosition.z = actor->z;
       if (MapGrid_CheckCollision(actor, &testPosition))
@@ -117,8 +117,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
       testPosition.x = actor->x;
       testPosition.y = 0;
       testPosition.z = 0;
-      Vector_AddPolarOffset(0x80000, (u16)angle + TRIG_TURN / 16,
-                            &testPosition);
+      Vector_AddPolarOffset(px(8), (u16)angle + TRIG_TURN / 16, &testPosition);
       testPosition.y = actor->y - testPosition.z;
       testPosition.z = actor->z;
       if (MapGrid_CheckCollision(actor, &testPosition))
@@ -126,8 +125,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
       testPosition.x = actor->x;
       testPosition.y = 0;
       testPosition.z = 0;
-      Vector_AddPolarOffset(0x80000, (u16)angle - TRIG_TURN / 16,
-                            &testPosition);
+      Vector_AddPolarOffset(px(8), (u16)angle - TRIG_TURN / 16, &testPosition);
       testPosition.y = actor->y - testPosition.z;
       testPosition.z = actor->z;
       if (MapGrid_CheckCollision(actor, &testPosition))
@@ -135,7 +133,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
       testPosition.x = actor->x;
       testPosition.y = 0;
       testPosition.z = 0;
-      Vector_AddPolarOffset(0x80000, (u16)angle + TRIG_TURN / 8, &testPosition);
+      Vector_AddPolarOffset(px(8), (u16)angle + TRIG_TURN / 8, &testPosition);
       testPosition.y = actor->y - testPosition.z;
       testPosition.z = actor->z;
       if (MapGrid_CheckCollision(actor, &testPosition))
@@ -143,7 +141,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
       testPosition.x = actor->x;
       testPosition.y = 0;
       testPosition.z = 0;
-      Vector_AddPolarOffset(0x80000, (u16)angle - TRIG_TURN / 8, &testPosition);
+      Vector_AddPolarOffset(px(8), (u16)angle - TRIG_TURN / 8, &testPosition);
       testPosition.y = actor->y - testPosition.z;
       testPosition.z = actor->z;
       if (!MapGrid_CheckCollision(actor, &testPosition))
@@ -156,9 +154,9 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     }
   climb_moved:
     if (collision != 0) {
-      actor->targetX = 0x80000000;
-      actor->targetY = 0x80000000;
-      actor->targetZ = 0x80000000;
+      actor->targetX = TARGET_UNSET;
+      actor->targetY = TARGET_UNSET;
+      actor->targetZ = TARGET_UNSET;
       actor->velocityX = 0;
       actor->velocityZ = 0;
     } else {
@@ -216,7 +214,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
   position.x = actor->x;
   position.y = actor->y;
   position.z = actor->z;
-  Vector_AddPolarOffset(0x80000, (u16)angle, &position);
+  Vector_AddPolarOffset(px(8), (u16)angle, &position);
   if (gDebugMode != 0 && (gInput.held & KEY_L)) {
     heading = (s16)angle;
     goto counted;
@@ -225,24 +223,22 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     testPosition.x = actor->x;
     testPosition.y = actor->y;
     testPosition.z = actor->z;
-    Vector_AddPolarOffset(0x80000, (u16)angle + TRIG_TURN / 16, &testPosition);
+    Vector_AddPolarOffset(px(8), (u16)angle + TRIG_TURN / 16, &testPosition);
     if (!MapGrid_CheckCollision(actor, &testPosition)) {
       testPosition.x = actor->x;
       testPosition.y = actor->y;
       testPosition.z = actor->z;
-      Vector_AddPolarOffset(0x80000, (u16)angle - TRIG_TURN / 16,
-                            &testPosition);
+      Vector_AddPolarOffset(px(8), (u16)angle - TRIG_TURN / 16, &testPosition);
       if (!MapGrid_CheckCollision(actor, &testPosition)) {
         testPosition.x = actor->x;
         testPosition.y = actor->y;
         testPosition.z = actor->z;
-        Vector_AddPolarOffset(0x80000, (u16)angle + TRIG_TURN / 8,
-                              &testPosition);
+        Vector_AddPolarOffset(px(8), (u16)angle + TRIG_TURN / 8, &testPosition);
         if (!MapGrid_CheckCollision(actor, &testPosition)) {
           testPosition.x = actor->x;
           testPosition.y = actor->y;
           testPosition.z = actor->z;
-          Vector_AddPolarOffset(0x80000, (u16)angle - TRIG_TURN / 8,
+          Vector_AddPolarOffset(px(8), (u16)angle - TRIG_TURN / 8,
                                 &testPosition);
           if (!MapGrid_CheckCollision(actor, &testPosition)) {
             heading = (s16)angle;
@@ -267,33 +263,31 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     position.x = actor->x;
     position.y = actor->y;
     position.z = actor->z;
-    Vector_AddPolarOffset(0x80000, (u16)heading, &position);
+    Vector_AddPolarOffset(px(8), (u16)heading, &position);
     if (MapGrid_CheckCollision(actor, &position))
       continue;
     testPosition.x = actor->x;
     testPosition.y = actor->y;
     testPosition.z = actor->z;
-    Vector_AddPolarOffset(0x80000, (u16)heading + TRIG_TURN / 16,
-                          &testPosition);
+    Vector_AddPolarOffset(px(8), (u16)heading + TRIG_TURN / 16, &testPosition);
     if (MapGrid_CheckCollision(actor, &testPosition))
       continue;
     testPosition.x = actor->x;
     testPosition.y = actor->y;
     testPosition.z = actor->z;
-    Vector_AddPolarOffset(0x80000, (u16)heading - TRIG_TURN / 16,
-                          &testPosition);
+    Vector_AddPolarOffset(px(8), (u16)heading - TRIG_TURN / 16, &testPosition);
     if (MapGrid_CheckCollision(actor, &testPosition))
       continue;
     testPosition.x = actor->x;
     testPosition.y = actor->y;
     testPosition.z = actor->z;
-    Vector_AddPolarOffset(0x80000, (u16)heading + TRIG_TURN / 8, &testPosition);
+    Vector_AddPolarOffset(px(8), (u16)heading + TRIG_TURN / 8, &testPosition);
     if (MapGrid_CheckCollision(actor, &testPosition))
       continue;
     testPosition.x = actor->x;
     testPosition.y = actor->y;
     testPosition.z = actor->z;
-    Vector_AddPolarOffset(0x80000, (u16)heading - TRIG_TURN / 8, &testPosition);
+    Vector_AddPolarOffset(px(8), (u16)heading - TRIG_TURN / 8, &testPosition);
     if (!MapGrid_CheckCollision(actor, &testPosition))
       goto counted;
   }
@@ -350,9 +344,9 @@ counted:
   }
   Actor_SelectAnimation(actor, 1);
   if (collision != 0) {
-    actor->targetX = 0x80000000;
-    actor->targetY = 0x80000000;
-    actor->targetZ = 0x80000000;
+    actor->targetX = TARGET_UNSET;
+    actor->targetY = TARGET_UNSET;
+    actor->targetZ = TARGET_UNSET;
     actor->velocityX = 0;
     actor->velocityZ = 0;
     if (collision & 3) {
@@ -461,12 +455,12 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
     position.x = object->x;
     position.y = object->y;
     position.z = object->z;
-    Vector_AddPolarOffset(0x80000, direction, &position);
+    Vector_AddPolarOffset(px(8), direction, &position);
     if (gDebugMode == 0 || (gInput.held & KEY_L) == 0) {
       leftPosition.x = object->x;
       leftPosition.y = object->y;
       leftPosition.z = object->z;
-      Vector_AddPolarOffset(0x80000, direction + 0x1555, &leftPosition);
+      Vector_AddPolarOffset(px(8), direction + 0x1555, &leftPosition);
       rightPosition.x = object->x;
       /* FAKEMATCH(temporary): y read into its own local before the block. */
       y = object->y;
@@ -475,7 +469,7 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
         rightPosition.y = y;
       } while (0);
       rightPosition.z = object->z;
-      Vector_AddPolarOffset(0x80000, direction - 0x1555, &rightPosition);
+      Vector_AddPolarOffset(px(8), direction - 0x1555, &rightPosition);
       if ((WorldMap_IsWalkable(object, &position) |
            WorldMap_IsWalkable(object, &leftPosition) |
            WorldMap_IsWalkable(object, &rightPosition)) != 0) {
@@ -490,15 +484,15 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
           position.x = object->x;
           position.y = object->y;
           position.z = object->z;
-          Vector_AddPolarOffset(0x80000, direction, &position);
+          Vector_AddPolarOffset(px(8), direction, &position);
           leftPosition.x = object->x;
           leftPosition.y = object->y;
           leftPosition.z = object->z;
-          Vector_AddPolarOffset(0x80000, direction + 0x1555, &leftPosition);
+          Vector_AddPolarOffset(px(8), direction + 0x1555, &leftPosition);
           rightPosition.x = object->x;
           rightPosition.y = object->y;
           rightPosition.z = object->z;
-          Vector_AddPolarOffset(0x80000, direction - 0x1555, &rightPosition);
+          Vector_AddPolarOffset(px(8), direction - 0x1555, &rightPosition);
           if ((WorldMap_IsWalkable(object, &position) |
                WorldMap_IsWalkable(object, &leftPosition) |
                WorldMap_IsWalkable(object, &rightPosition)) != 0)
@@ -523,9 +517,9 @@ update_object:
   Actor_SelectAnimation(object, 1);
 
   if (collision != 0) {
-    object->targetX = 0x80000000;
-    object->targetY = 0x80000000;
-    object->targetZ = 0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     object->velocityX = 0;
     object->velocityZ = 0;
     if ((collision & 3) != 0) {

@@ -12,8 +12,6 @@
 #include "module/tla.h"
 #include "system/scene.h"
 
-#define TARGET_UNSET ((s32)0x80000000)
-
 /* VIEW(f02493c): tag struct MotionObject as struct MotionObject__f02493c;
  * resource_slot.c has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
@@ -207,9 +205,9 @@ s32 Script_WaitForArrival(struct ScriptInterpreter *interpreter) {
 
   if (object->delay > 59) {
     object->delay = 0;
-    object->targetX = 0x80000000;
-    object->targetY = 0x80000000;
-    object->targetZ = 0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     object->unk56 = 0;
     interpreter->cursor++;
     return 1;
@@ -430,7 +428,6 @@ struct Actor *ActorScript_FindOverlappingEntry(struct Actor *object,
   }
   return NULL;
 }
-#undef TARGET_UNSET
 
 #include "field/actor_script_view.h"
 
@@ -528,7 +525,6 @@ s32 ActorScript_ApplyLocalOffsetPosition(struct Actor *object) {
   return 1;
 }
 
-#define TARGET_UNSET ((s32)0x80000000)
 #define DISTANCE(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
 s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
@@ -875,7 +871,7 @@ s32 ActorScript_WanderNearHome(struct ActorScriptView *object) {
       candidatePosition.x = object->x;
       candidatePosition.y = object->y;
       candidatePosition.z = object->z;
-      Vector_AddPolarOffset(0x80000, heading, &candidatePosition);
+      Vector_AddPolarOffset(px(8), heading, &candidatePosition);
       if (ActorScript_CheckOverlap((struct ScriptObjectEntry *)object,
                                    (s32 *)&candidatePosition) != 0)
         goto roam;
@@ -941,7 +937,7 @@ back:
     candidatePosition.x = object->x;
     candidatePosition.y = object->y;
     candidatePosition.z = object->z;
-    Vector_AddPolarOffset(0x80000, heading, &candidatePosition);
+    Vector_AddPolarOffset(px(8), heading, &candidatePosition);
     if (ActorScript_CheckOverlap((struct ScriptObjectEntry *)object,
                                  (s32 *)&candidatePosition) != 0)
       goto back;
@@ -1677,7 +1673,7 @@ s32 Actor_UpdateHoverControl(struct Actor *object) {
     position.x = object->x;
     position.y = object->y;
     position.z = object->z;
-    Vector_AddPolarOffset(0x80000, (u16)angle, &position);
+    Vector_AddPolarOffset(px(8), (u16)angle, &position);
     if (gDebugMode != 0 && (gInput.held & KEY_L)) {
       heading = angle;
     } else {
@@ -1685,25 +1681,25 @@ s32 Actor_UpdateHoverControl(struct Actor *object) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset(0x80000, (u16)angle + TRIG_TURN / 16,
+        Vector_AddPolarOffset(px(8), (u16)angle + TRIG_TURN / 16,
                               &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0) {
           testPosition.x = object->x;
           testPosition.y = object->y;
           testPosition.z = object->z;
-          Vector_AddPolarOffset(0x80000, (u16)angle - TRIG_TURN / 16,
+          Vector_AddPolarOffset(px(8), (u16)angle - TRIG_TURN / 16,
                                 &testPosition);
           if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0) {
             testPosition.x = object->x;
             testPosition.y = object->y;
             testPosition.z = object->z;
-            Vector_AddPolarOffset(0x80000, (u16)angle + TRIG_TURN / 8,
+            Vector_AddPolarOffset(px(8), (u16)angle + TRIG_TURN / 8,
                                   &testPosition);
             if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0) {
               testPosition.x = object->x;
               testPosition.y = object->y;
               testPosition.z = object->z;
-              Vector_AddPolarOffset(0x80000, (u16)angle - TRIG_TURN / 8,
+              Vector_AddPolarOffset(px(8), (u16)angle - TRIG_TURN / 8,
                                     &testPosition);
               if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0) {
                 heading = angle;
@@ -1726,34 +1722,34 @@ s32 Actor_UpdateHoverControl(struct Actor *object) {
         position.x = object->x;
         position.y = object->y;
         position.z = object->z;
-        Vector_AddPolarOffset(0x80000, (u16)heading, &position);
+        Vector_AddPolarOffset(px(8), (u16)heading, &position);
         if (MapGrid_CheckCollisionAbove(object, &position) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset(0x80000, (u16)heading + TRIG_TURN / 16,
+        Vector_AddPolarOffset(px(8), (u16)heading + TRIG_TURN / 16,
                               &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset(0x80000, (u16)heading - TRIG_TURN / 16,
+        Vector_AddPolarOffset(px(8), (u16)heading - TRIG_TURN / 16,
                               &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset(0x80000, (u16)heading + TRIG_TURN / 8,
+        Vector_AddPolarOffset(px(8), (u16)heading + TRIG_TURN / 8,
                               &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) != 0)
           continue;
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset(0x80000, (u16)heading - TRIG_TURN / 8,
+        Vector_AddPolarOffset(px(8), (u16)heading - TRIG_TURN / 8,
                               &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0)
           goto check_objects;
@@ -1767,7 +1763,7 @@ s32 Actor_UpdateHoverControl(struct Actor *object) {
       contact.x = object->x;
       contact.y = object->y;
       contact.z = object->z;
-      Vector_AddPolarOffset(0x40000, (u16)heading, &contact);
+      Vector_AddPolarOffset(px(4), (u16)heading, &contact);
       other = Ram_HeapSlots->scriptObjects;
       for (angleIndex = 63; angleIndex >= 0; angleIndex -= 1, other++) {
         s32 radius;
@@ -1807,9 +1803,9 @@ s32 Actor_UpdateHoverControl(struct Actor *object) {
   }
 
   if (collision != 0) {
-    object->targetX = 0x80000000;
-    object->targetY = 0x80000000;
-    object->targetZ = 0x80000000;
+    object->targetX = TARGET_UNSET;
+    object->targetY = TARGET_UNSET;
+    object->targetZ = TARGET_UNSET;
     if (collision & 3) {
       s32 difference;
 
@@ -1847,5 +1843,4 @@ s32 Actor_UpdateHoverControl(struct Actor *object) {
   }
   return 1;
 }
-#undef TARGET_UNSET
 #undef DISTANCE

@@ -505,7 +505,7 @@ next_state:
     position.x = effect->originX;
     position.z = effect->originZ;
     angle = Random16();
-    Vector_AddPolarOffset(0x1e0000, (u16)angle, &position);
+    Vector_AddPolarOffset(px(30), (u16)angle, &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->acceleration = px(4);
@@ -939,7 +939,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
       pos[0] = user->x;
       pos[1] = user->y + 0xa0000;
       pos[2] = user->z;
-      Vector_AddPolarOffset(0xa0000, *(u16 *)&work->angle, pos);
+      Vector_AddPolarOffset(px(10), *(u16 *)&work->angle, pos);
     }
 
     obj = Actor_Spawn(672, pos[0], pos[1], pos[2]);
@@ -967,7 +967,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
       p[1] = work->y;
       p[2] = work->z;
       if (*(u16 *)&work->angle == TRIG_TURN * 3 / 4)
-        Vector_AddPolarOffset(0xe0000, *(u16 *)&work->angle, p);
+        Vector_AddPolarOffset(px(14), *(u16 *)&work->angle, p);
       dist = Random16() * 6 + 0x40000;
       Vector_AddPolarOffset(dist, Random16(), p);
       Actor_SetMoveTargetFar(obj, p[0], p[1], p[2]);
@@ -1016,7 +1016,7 @@ void FieldPsynergy_LiftOnTarget(void) {
   for (index = 0; index < 2; index++) {
     void *anchor = anchors[index];
     if (anchor != 0)
-      Actor_SetTargetPositionFromMagnitudeAngle(anchor, 0xe0000,
+      Actor_SetTargetPositionFromMagnitudeAngle(anchor, px(14),
                                                 *(u16 *)((u8 *)anchor + 6));
   }
 
@@ -1064,7 +1064,7 @@ void FieldPsynergy_Lift(void) {
   for (n = 0; n < 2; n++) {
     obj = *walk++;
     if (obj != 0)
-      Actor_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->facing);
+      Actor_SetTargetPositionFromMagnitudeAngle(obj, px(24), obj->facing);
   }
 
   Actor_WaitForMoveFar(pair[0]);
@@ -1152,7 +1152,7 @@ again:
   if (state == 0) {
     value.x = effect->sourceX;
     value.z = effect->sourceZ;
-    Vector_AddPolarOffset(0x190000, (u16)Random16(), &value);
+    Vector_AddPolarOffset(px(25), (u16)Random16(), &value);
     effect->x = value.x;
     effect->z = value.z;
     effect->velocityZ = px(3);
@@ -1176,9 +1176,9 @@ again:
     value.x = target->x;
     value.y = target->y + 0x100000;
     value.z = target->z;
-    Vector_AddPolarOffset(0x80000, work->angle, &value);
+    Vector_AddPolarOffset(px(8), work->angle, &value);
     Camera_WorldToScreen(&value);
-    Vector_AddPolarOffset(0x40000, Random16(), &value);
+    Vector_AddPolarOffset(px(4), Random16(), &value);
     effect->x = value.x;
     effect->z = value.z;
     effect->scale = 0x800;
@@ -1284,7 +1284,7 @@ void FieldPsynergy_Force(void) {
   pos.x = source->x;
   pos.y = source->y + 0x100000;
   pos.z = source->z;
-  Vector_AddPolarOffset(0x80000, scene->angle, &pos);
+  Vector_AddPolarOffset(px(8), scene->angle, &pos);
   object = Actor_Spawn(278, pos.x, pos.y, pos.z);
   if (object == NULL) {
     FieldPsynergy_FadeFromCastColor();
@@ -1332,7 +1332,7 @@ void FieldPsynergy_Force(void) {
     pos.x = source->x;
     pos.y = source->y + 0x100000;
     pos.z = source->z;
-    Vector_AddPolarOffset(0x380000, scene->angle, &pos);
+    Vector_AddPolarOffset(px(56), scene->angle, &pos);
   } else {
     pos.x = scene->x;
     pos.y = scene->y + 0x100000;
@@ -1358,7 +1358,7 @@ void FieldPsynergy_Force(void) {
     pos.x = target->x;
     pos.y = target->y;
     pos.z = target->z;
-    Vector_AddPolarOffset(0x100000, scene->angle, &pos);
+    Vector_AddPolarOffset(px(16), scene->angle, &pos);
     if (MapGrid_CheckCollisionFar(target, &pos) == 0 &&
         ActorScript_CheckOverlapFar(target, &pos) == 0) {
       target->acceleration = px(1);
@@ -1703,7 +1703,7 @@ void FieldPsynergy_Ply(void) {
     target->speedLimit = px(5);
     target->acceleration = 0x6666;
     target->actionFlags = 0;
-    Actor_SetTargetPositionFromMagnitudeAngle(target, 0xc00000, 0xe800);
+    Actor_SetTargetPositionFromMagnitudeAngle(target, px(192), 0xe800);
     Actor_WaitForMoveFar(target);
     Actor_ReleaseFar(target);
   }

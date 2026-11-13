@@ -413,9 +413,6 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(1);
-  /* FAKEMATCH(temporary): the water mesh's address in a local; as
-   * gData_02014000 at the grid and at the model, 286 of 902 instructions differ
-   * in tla-en. */
   mesh = gData_02014000;
   if (mode == 0) {
     REG_BLDALPHA = 0xc10;

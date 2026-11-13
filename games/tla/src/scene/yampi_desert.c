@@ -1013,9 +1013,6 @@ void Func_02002318(void) {
   struct Actor **followed;
 
   Scene_TaskAdd(Func_02002180, 0x480);
-  /* FAKEMATCH(temporary): a pointer to gData_0200480c, taken here, loads its
-   * address before the call that fetches actor 17, as in the native; as the
-   * global named at each use, 2 of 66 instructions differ in tla-en. */
   followed = &gData_0200480c;
   object = Actor_GetById(17);
   object->priorityFlags |= 2;
@@ -1116,10 +1113,6 @@ void Func_020026a0(void) {
   struct Actor **followed;
 
   Scene_TaskAdd(Func_02002180, 0x480);
-  /* FAKEMATCH(temporary): a pointer to gData_0200480c, taken here, loads its
-   * address before the call that fetches actor 22, as in the native and in
-   * Func_02002318; as the global named at each use, 2 of 74 instructions
-   * differ in tla-en. */
   followed = &gData_0200480c;
   object = Actor_GetById(22);
   object->priorityFlags |= 2;
@@ -1231,9 +1224,6 @@ void Func_02002b84(void) {
   struct Actor **followed;
   s32 angle;
 
-  /* FAKEMATCH(temporary): a pointer to gData_0200480c, taken here, loads its
-   * address before the call that fetches actor 22, as in the native; as the
-   * global named at each use, 2 of 89 instructions differ in tla-en. */
   followed = &gData_0200480c;
   object = Actor_GetById(22);
   object->priorityFlags |= 2;

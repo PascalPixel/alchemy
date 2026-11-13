@@ -149,10 +149,6 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
   REG_WIN1V = 0x1088;
   BattleEffect_LoadBlitter(
       SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-  /* FAKEMATCH(temporary): the blitter in a local, read before the transfer mode
-   * is set and tested below; as blit[0] read from the heap slot after
-   * work->transferValue and tested, 33 of 1122 instructions differ in tla-en.
-   */
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 2;
   work->transferValue = 50;

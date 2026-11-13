@@ -27,8 +27,6 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
     index = Enemy_GetDefinition(record)[42];
     if (index > 47)
       index = 0;
-    /* FAKEMATCH(temporary): the table in its own variable; as
-     * &gData_080c6684[index], 6 of 58 instructions differ in tla-en. */
     table = gData_080c6684;
     preset = &table[index];
     for (i = 0; i <= 3; i++)

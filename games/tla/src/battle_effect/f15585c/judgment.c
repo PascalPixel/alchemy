@@ -36,9 +36,6 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   transition = Ram_HeapSlots->transitionWork;
   sprites = Ram_HeapSlots->unk64[0];
-  /* FAKEMATCH(temporary): the cell buffer's address in a local; as
-   * Ram_MapCellBuffer at the first tile copies and the first queue, 2 of
-   * 2680 instructions differ in tla-en. */
   cells = Ram_MapCellBuffer;
   BattleEffect_StartCanvasLayer(0x2000);
   REG_BG2PA = 0x100;
@@ -535,10 +532,6 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       } else {
         sheet = work->sheet + 0x4240;
       }
-      /* FAKEMATCH(temporary): a pointer to the routine's slot, set here after
-       * the sheet is chosen and before the first blitter is loaded; as
-       * Ram_HeapSlots->unkb8[1] at each draw, 990 of 2680 instructions differ
-       * in tla-en. */
       slot = (DrawRectangle *)&Ram_HeapSlots->unkb8[1];
       DRAW_ALT_THROUGH(slot, 19, sheet, 36, top - 24, 24, 24);
       DRAW_ALT_THROUGH(slot, 23, sheet, 59, top - 24, 24, 24);

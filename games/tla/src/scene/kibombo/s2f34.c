@@ -918,9 +918,6 @@ void Func_02004294(void) {
     goto test;
     do {
       Kibombo_ObjArm(17, FACING_NORTH + FACING_STEP, 0);
-      /* FAKEMATCH(temporary): the slot's address reloaded each pass, as the
-       * native does; as gData_02007950->y, 4 of 151 instructions differ in
-       * tla-en. */
       slot = &gData_02007950;
       (*slot)->y += 0xffffc000;
       wait(1);

@@ -382,9 +382,6 @@ void Func_02001820(void) {
         cell = &gData_02004066[i].x;
         x = *cell++;
         y = *cell++;
-        /* FAKEMATCH(temporary): the destination table through a local set here,
-         * which loads its first halfword before the 1 is built; as
-         * gData_02003fd2[0], 2 of 56 instructions differ in tla-en. */
         dest = gData_02003fd2;
         Map_CopyCellPictureIndicesRect(dest[0], dest[1], x, y, 1, 1);
       }
@@ -417,9 +414,6 @@ void Func_020018a8(void) {
         cell = &gData_0200410e[i].x;
         x = *cell++;
         y = *cell++;
-        /* FAKEMATCH(temporary): the destination table through a local set here,
-         * which loads its first halfword before the 1 is built; as
-         * gData_02003fda[0], 2 of 56 instructions differ in tla-en. */
         dest = gData_02003fda;
         Map_CopyCellPictureIndicesRect(dest[0], dest[1], x, y, 1, 1);
       }
@@ -452,9 +446,6 @@ void Func_02001930(void) {
         cell = &gData_0200416e[i].x;
         x = *cell++;
         y = *cell++;
-        /* FAKEMATCH(temporary): the destination table through a local set here,
-         * which loads its first halfword before the 1 is built; as
-         * gData_02003fe2[0], 2 of 56 instructions differ in tla-en. */
         dest = gData_02003fe2;
         Map_CopyCellPictureIndicesRect(dest[0], dest[1], x, y, 1, 1);
       }

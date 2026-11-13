@@ -708,9 +708,6 @@ L_0200b762:
   Task_AddFrame((s32)Func_02001ac0, 0x480);
 L_0200b78e:
   t46 = Func_02003604();
-  /* FAKEMATCH(temporary): the table's address in a local set after the call,
-   * which makes it the load's base register; as ((u8 *)gData_02005d8c)'s address
-   * added in place, 2 of 211 instructions differ in tla-en. */
   table = ((u8 *)gData_02005d8c);
   Func_020048a4(19, 11, *(s32 *)(table + (t46 << 2)), 16);
   Actor_SetAnimation(15, 5);

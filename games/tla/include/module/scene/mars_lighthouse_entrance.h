@@ -87,8 +87,6 @@ void Func_02001ef0();
 
 void Actor_RollAndCrumble(struct Actor *actor);
 
-s32 Func_02004c78(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
-
 extern struct CellTarget Data_020068b4;
 
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);

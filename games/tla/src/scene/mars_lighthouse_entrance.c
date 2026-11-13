@@ -226,7 +226,7 @@ L_02008282:
   MapGrid_SetCellHeight((v9 << 20), (v10 << 20), *v11, v7);
 }
 
-void Func_02004bc0();
+void Actor_SelectAnimation();
 
 /// Each row: an ice cone's actor, its first animation and the flag set once
 /// Pound has flattened it.
@@ -245,7 +245,7 @@ loop:
   flag = row[2];
 
   Actor_SetSpriteFlags(object, 0);
-  Func_02004bc0(object, (u16)animation + Event_GetFlag((u16)flag));
+  Actor_SelectAnimation(object, (u16)animation + Event_GetFlag((u16)flag));
   object->motionFlags = 0;
   object->collisionFlags &= 0xfe;
   object->timer = flag;
@@ -704,7 +704,7 @@ void Func_02000e3c(s32 arg) {
 
     FieldActor_ShowEmote(gMainRoutineWork.currentOwner, value, 0);
   }
-  Func_02004bc0(actor, 27);
+  Actor_SelectAnimation(actor, 27);
   Actor_SetAnimationSpeed(actor, 48);
   System_Wait(30);
   actor->facing = FACING_SOUTH;
@@ -793,7 +793,7 @@ void Func_02000fe0(const struct MapCell *cell) {
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   leader->update = 0;
   FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 0x100, 0);
-  Func_02004bc0(leader, 27);
+  Actor_SelectAnimation(leader, 27);
   Actor_SetAnimationSpeed(leader, 48);
   System_Wait(30);
   leader->facing = FACING_SOUTH;
@@ -1218,7 +1218,7 @@ void Ride_UpdateDrift(struct Actor *object);
 DEFINE_ACTOR_RESET_SCRIPTED_FOR(Actor_ResetScriptedFor, gData_020056a0)
 
 DEFINE_RIDE_SPAWN_FRONT(Func_02001c74, Func_02004bd8_, Actor_ResetScriptedFor,
-                        2, Ride_UpdateCarried, Func_02004bc0)
+                        2, Ride_UpdateCarried, Actor_SelectAnimation)
 
 /* VIEW(s1c44): tag struct RideSlot as struct RideSlot__s1c44; ride.h has
  * another definition; tried with the definition the rest of the object has, it
@@ -1264,19 +1264,19 @@ void Ride_UpdateDrift(struct Actor *object);
 DEFINE_ACTOR_SETUP_SCRIPTED_PART(Actor_SetupScriptedPart, gData_020056a0)
 
 DEFINE_RIDE_SPAWN_BACK(Func_02001e60, Func_02004bd8_, Actor_SetupScriptedPart,
-                       Ride_UpdateCarried, Func_02004bc0)
+                       Ride_UpdateCarried, Actor_SelectAnimation)
 
 DEFINE_RIDE_SPAWN_FRONT(Func_02001ea8, Func_02004bd8_, Actor_SetupScriptedPart,
-                        3, Ride_UpdateLanding, Func_02004bc0)
+                        3, Ride_UpdateLanding, Actor_SelectAnimation)
 
 DEFINE_RIDE_SPAWN_BACK(Func_02001ef0, Func_02004bd8_, Actor_SetupScriptedPart,
-                       Ride_UpdateLanding, Func_02004bc0)
+                       Ride_UpdateLanding, Actor_SelectAnimation)
 
 DEFINE_ACTOR_IS_ABOVE(Actor_IsAbove)
 
 DEFINE_RIDE_UPDATE_DRIFT(Ride_UpdateDrift, Actor_IsAbove)
 
-DEFINE_ACTOR_SETUP_SCRIPTED_FOR(Actor_SetupScriptedFor, Func_02004bc0,
+DEFINE_ACTOR_SETUP_SCRIPTED_FOR(Actor_SetupScriptedFor, Actor_SelectAnimation,
                                 gData_020056a0)
 
 DEFINE_RIDE_SPAWN_SPARK(Ride_SpawnSpark, Func_02004bd8_, Actor_SetupScriptedFor,
@@ -1357,7 +1357,7 @@ void Func_02002270(void) {
     Iwram_ClearWordsEntry(work, 116);
   object = (struct Actor *)FieldActor_Create(365, 1, 0, 0);
   object->unk5c[0] = 2;
-  Func_02004bc0(object, 1);
+  Actor_SelectAnimation(object, 1);
   animation = object->sprite;
   work->handle = object;
   work->value0c = animation->value10;
@@ -1454,7 +1454,7 @@ DEFINE_ACTOR_BLINK(Func_02002614, 10, 4, 0)
 #undef Unit_Get
 #undef Func_0200246c
 void Party_TakeFallDamage();
-void Func_02004bc0(struct Actor *actor, s32 a);
+void Actor_SelectAnimation(struct Actor *actor, s32 a);
 s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
 /* VIEW(s263c): routine Func_02002614 as void Func_02002614(void);
@@ -1478,10 +1478,10 @@ extern u8 gInventorySnapshot[];
 #define KNOCK_BACK Leader_KnockBack
 #define KNOCK_BACK_TAKE_DAMAGE Party_TakeFallDamage
 #define KNOCK_BACK_BLINK Func_02002614
-#define KNOCK_BACK_SET_ANIMATION Func_02004bc0
+#define KNOCK_BACK_SET_ANIMATION Actor_SelectAnimation
 #define KNOCK_BACK_CELL_ATTRIBUTE MapGrid_GetCellAttributeLowNibbleOrBump
 #define KNOCK_BACK_CHECK_COLLISION MapGrid_CheckCollision
-#define KNOCK_BACK_SPHERES_OVERLAP Func_02004c78
+#define KNOCK_BACK_SPHERES_OVERLAP Field_CheckSpheresOverlap
 #include "shared/leader_knock_back.c"
 #undef KNOCK_BACK
 #undef KNOCK_BACK_TAKE_DAMAGE
@@ -1569,7 +1569,7 @@ int MarsLighthouseEntrance_SlideOnIce(void) {
   Flag_Clear(0x106);
   leader->update = Func_02002614;
   leader->facing = 0x4000;
-  Func_02004bc0(leader, 49);
+  Actor_SelectAnimation(leader, 49);
   while (ride->car->stopped == 0) {
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x, leader->z) != 7) {
       leader->x += ride->car->stepX;
@@ -1753,7 +1753,7 @@ extern u16 gData_020068a2;
 
 void TileMap_ConvertBuffer(s32 scene, s32 a1);
 
-DEFINE_ACTOR_ATTACH(Actor_Attach, Func_02004bc0, Func_02002c2c)
+DEFINE_ACTOR_ATTACH(Actor_Attach, Actor_SelectAnimation, Func_02002c2c)
 
 /// Sets up the actor whose id self keeps in byte 0x62: places it 32 pixels out
 /// from self, 12 pixels up, along self's angle (unk66), faces it that way,
@@ -1764,39 +1764,40 @@ DEFINE_ACTOR_LAUNCH_AHEAD(Actor_LaunchAhead, Actor_RollAndCrumble)
 
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
 
-DEFINE_ACTOR_POP_UP_SLOW(Actor_PopUpSlow, Func_02004bc0)
+DEFINE_ACTOR_POP_UP_SLOW(Actor_PopUpSlow, Actor_SelectAnimation)
 
-DEFINE_ACTOR_POP_UP(Actor_PopUp, Func_02004bc0)
+DEFINE_ACTOR_POP_UP(Actor_PopUp, Actor_SelectAnimation)
 
 DEFINE_ACTOR_PARK(Actor_Park, Actor_LaunchAhead)
 
 extern s16 gData_02005758[];
 
-DEFINE_ACTOR_STEER_BY_PAD(Actor_SteerByPad, gData_02005758, Func_02004bc0)
+DEFINE_ACTOR_STEER_BY_PAD(Actor_SteerByPad, gData_02005758,
+                          Actor_SelectAnimation)
 
 DEFINE_LEADER_STOP_IF_PENDING(Leader_StopIfPending)
 
-void Func_02004bc0(struct Actor *actor, s32 mode);
+void Actor_SelectAnimation(struct Actor *actor, s32 mode);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 extern s16 gData_02005798[];
 
 DEFINE_LEADER_SLIDE_ON_ICE(Leader_SlideOnIce, Leader_StopIfPending,
-                           gData_02005798, Func_02004bc0, Actor_SteerByPad,
-                           Func_02004c78)
+                           gData_02005798, Actor_SelectAnimation,
+                           Actor_SteerByPad, Field_CheckSpheresOverlap)
 
 extern volatile s16 gMarsLighthouseEntrance_SlideStopped;
 void Actor_SteerByPad(struct Actor *object);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_02004bc0(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 #define SLIDE_FROM_EDGE Leader_SlideOnIceFromEdge
 #define SLIDE_STOPPED gMarsLighthouseEntrance_SlideStopped
 #define SLIDE_STOP_LEADER Leader_StopIfPending
 #define SLIDE_ANGLES gData_02005798
-#define SLIDE_SET_ANIMATION Func_02004bc0
+#define SLIDE_SET_ANIMATION Actor_SelectAnimation
 #define SLIDE_HAS_ARRIVED Actor_HasArrived
 #define SLIDE_KEEP_SLIDING Actor_SteerByPad
-#define SLIDE_SPHERES_OVERLAP Func_02004c78
+#define SLIDE_SPHERES_OVERLAP Field_CheckSpheresOverlap
 #include "shared/slide_on_ice_from_edge.c"
 #undef SLIDE_FROM_EDGE
 #undef SLIDE_STOPPED
@@ -1813,7 +1814,8 @@ void Leader_SetSlideStopped(s32 value) {
 
 #undef Func_02002614
 DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Leader_StopIfPending,
-                                 Func_02004bc0, Actor_SteerByPad, Func_02004c78)
+                                 Actor_SelectAnimation, Actor_SteerByPad,
+                                 Field_CheckSpheresOverlap)
 
 #include "../field/object/set_sprite_priority_b.c"
 
@@ -1910,7 +1912,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Func_02004bc0(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect,
                     gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
@@ -1953,7 +1955,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Func_02004bc0(effect, 1);
+    Actor_SelectAnimation(effect, 1);
     Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
@@ -2211,7 +2213,8 @@ void Func_020049dc(u16 *list, s32 mode, s32 count) {
   } while (*list != 0xffff);
 }
 
-DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex, Func_02004bc0)
+DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
+                           Actor_SelectAnimation)
 
 // clang-format off
 DEFINE_G_DATA_02004DE8(gData_02004de8, 200, 104)

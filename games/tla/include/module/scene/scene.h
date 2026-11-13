@@ -1201,8 +1201,6 @@ void Func_02001e80(s32 value);
 
 // The cell stampers keep their last cell and the block they copy.
 
-void Func_02004c98(struct Actor *object, s32 a);
-
 extern char SceneId_Ov6ACRoom3;
 
 extern char SceneId_Ov6aaRoom1;
@@ -1213,14 +1211,10 @@ extern char SceneId_Ov6aaRoom5;
 extern char SceneId_Ov6aaRoom6;
 extern char SceneId_Ov6aaRoom7;
 
-void Func_02004bc0(struct Actor *object, s32 value);
-
 extern char SceneId_Ov6adRoom1;
 extern char SceneId_Ov6adRoom2;
 extern char SceneId_Ov6adRoom3;
 extern char SceneId_Ov6adRoom4;
-
-void Func_02005480(struct Actor *object, s32 mode);
 
 extern char SceneId_Ov6ACRoom6;
 extern char SceneId_Ov6ACRoom1;

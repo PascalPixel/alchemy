@@ -154,7 +154,6 @@ void Func_02003a30(void);
 void DehkanPlateau_HideRoom6Actors(void);
 
 void Func_02003de8(void);
-void Func_02003ba0(struct Actor *object, s32 mode);
 s32 Func_02003db0(struct Actor *object);
 extern s32 gDehkanPlateau_CrackX;
 

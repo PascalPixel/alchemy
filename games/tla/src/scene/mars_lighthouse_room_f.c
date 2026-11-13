@@ -84,7 +84,7 @@ void Field_TryJumpForward(void);
 void ObjectTable_Snapshot(void);
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 void Leader_PushObjectAhead(void);
-void Func_02005480(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_SetBlendMode(struct Actor *object, u32 value);
 s32 Trig_Cos(s32 angle);
 
@@ -1231,7 +1231,7 @@ struct GustObject *Func_02001a54(struct GustObject *source) {
   position.z = source->z + Iwram_MulQ16(0x80000, Math_Sin(source->angle));
   object = (struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                   position.z);
-  Func_02005480(object, 2);
+  Actor_SelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
@@ -1353,7 +1353,7 @@ extern u32 gData_02005d8c[];
 DEFINE_ACTOR_RESET_SCRIPTED_FOR(Actor_ResetScriptedFor, gData_02005d8c)
 
 DEFINE_RIDE_SPAWN_FRONT(Func_02001fb4, Func_02005498_, Actor_ResetScriptedFor,
-                        2, Ride_UpdateCarried, Func_02005480)
+                        2, Ride_UpdateCarried, Actor_SelectAnimation)
 
 struct RideDirection {
   u16 unk00;
@@ -1390,19 +1390,19 @@ void Ride_UpdateDrift(struct Actor *object);
 DEFINE_ACTOR_SETUP_SCRIPTED_PART(Actor_SetupScriptedPart, gData_02005d8c)
 
 DEFINE_RIDE_SPAWN_BACK(Func_020021a0, Func_02005498_, Actor_SetupScriptedPart,
-                       Ride_UpdateCarried, Func_02005480)
+                       Ride_UpdateCarried, Actor_SelectAnimation)
 
 DEFINE_RIDE_SPAWN_FRONT(Func_020021e8, Func_02005498_, Actor_SetupScriptedPart,
-                        3, Ride_UpdateLanding, Func_02005480)
+                        3, Ride_UpdateLanding, Actor_SelectAnimation)
 
 DEFINE_RIDE_SPAWN_BACK(Func_02002230, Func_02005498_, Actor_SetupScriptedPart,
-                       Ride_UpdateLanding, Func_02005480)
+                       Ride_UpdateLanding, Actor_SelectAnimation)
 
 DEFINE_ACTOR_IS_ABOVE(Actor_IsAbove)
 
 DEFINE_RIDE_UPDATE_DRIFT(Ride_UpdateDrift, Actor_IsAbove)
 
-DEFINE_ACTOR_SETUP_SCRIPTED_FOR(Actor_SetupScriptedFor, Func_02005480,
+DEFINE_ACTOR_SETUP_SCRIPTED_FOR(Actor_SetupScriptedFor, Actor_SelectAnimation,
                                 gData_02005d8c)
 
 DEFINE_RIDE_SPAWN_SPARK(Ride_SpawnSpark, Func_02005498_, Actor_SetupScriptedFor,
@@ -1481,7 +1481,7 @@ void Func_020025b0(void) {
     Iwram_ClearWordsEntry(work, 116);
   object = (struct Actor *)FieldActor_Create(365, 1, 0, 0);
   object->unk5c[0] = 2;
-  Func_02005480(object, 1);
+  Actor_SelectAnimation(object, 1);
   animation = object->sprite;
   work->handle = object;
   work->value0c = animation->value10;
@@ -1707,7 +1707,7 @@ s32 Func_0200297c(void) {
     FieldEvent_ResolvePendingActions(0);
     actor->update = Actor_Blink;
     actor->facing = TRIG_TURN / 4;
-    Func_02005480(actor, 49);
+    Actor_SelectAnimation(actor, 49);
     for (;;) {
       if (MapGrid_GetCellAttributeLowNibbleOrBump(actor->terrainId, actor->x,
                                                   actor->z) == 7) {
@@ -1869,7 +1869,7 @@ s32 MarsLighthouseRoomF_SlideOnIce(void) {
   Flag_Clear(0x106);
   leader->update = (void (*)(void))Actor_Blink;
   leader->facing = 0x4000;
-  Func_02005480(leader, 49);
+  Actor_SelectAnimation(leader, 49);
   while (ride->unk6c->timer == 0) {
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x, leader->z) != 7) {
       leader->x += ((s32 *)ride->unk6c->unk70)[0];
@@ -2051,7 +2051,7 @@ DEFINE_ACTOR_ROLL_AND_CRUMBLE(Actor_RollAndCrumble, Work020023c4__s2f80,
 #undef RideWork
 void Func_02002f6c(struct Actor *object);
 
-DEFINE_ACTOR_ATTACH(Actor_Attach, Func_02005480, Func_02002f6c)
+DEFINE_ACTOR_ATTACH(Actor_Attach, Actor_SelectAnimation, Func_02002f6c)
 
 #include "field/event_inline.h"
 
@@ -2096,9 +2096,9 @@ void Func_02003304(struct Actor *self) {
 
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
 
-DEFINE_ACTOR_POP_UP_SLOW(Actor_PopUpSlow, Func_02005480)
+DEFINE_ACTOR_POP_UP_SLOW(Actor_PopUpSlow, Actor_SelectAnimation)
 
-DEFINE_ACTOR_POP_UP(Actor_PopUp, Func_02005480)
+DEFINE_ACTOR_POP_UP(Actor_PopUp, Actor_SelectAnimation)
 
 /* VIEW(s328c): tag struct RideSlot as struct RideSlot__s328c;
  * scene/mars_lighthouse_room_f has another definition; tried with the
@@ -2185,7 +2185,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Func_02005480(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect,
                     gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
@@ -2228,7 +2228,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Func_02005480(effect, 1);
+    Actor_SelectAnimation(effect, 1);
     Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
@@ -2349,7 +2349,8 @@ void Func_02003fc8(s32 dx, s32 dz, s32 value) {
 
 extern s16 gData_02005ef8[];
 
-DEFINE_ACTOR_STEER_BY_PAD(Actor_SteerByPad, gData_02005ef8, Func_02005480)
+DEFINE_ACTOR_STEER_BY_PAD(Actor_SteerByPad, gData_02005ef8,
+                          Actor_SelectAnimation)
 
 DEFINE_LEADER_STOP_IF_PENDING(Leader_StopIfPending)
 
@@ -2357,14 +2358,14 @@ DEFINE_LEADER_STOP_IF_PENDING(Leader_StopIfPending)
 extern s16 gData_02005f38[];
 
 DEFINE_LEADER_SLIDE_ON_ICE(Leader_SlideOnIce, Leader_StopIfPending,
-                           gData_02005f38, Func_02005480, Actor_SteerByPad,
-                           Import_FieldCheckSpheresOverlap)
+                           gData_02005f38, Actor_SelectAnimation,
+                           Actor_SteerByPad, Import_FieldCheckSpheresOverlap)
 
 #define SLIDE_FROM_EDGE Leader_SlideOnIceFromEdge
 #define SLIDE_STOPPED gMarsLighthouseRoomF_SlideStopped
 #define SLIDE_STOP_LEADER Leader_StopIfPending
 #define SLIDE_ANGLES gData_02005f38
-#define SLIDE_SET_ANIMATION Func_02005480
+#define SLIDE_SET_ANIMATION Actor_SelectAnimation
 #define SLIDE_HAS_ARRIVED Actor_HasArrived
 #define SLIDE_KEEP_SLIDING Actor_SteerByPad
 #define SLIDE_SPHERES_OVERLAP Import_FieldCheckSpheresOverlap
@@ -2383,7 +2384,7 @@ void Leader_SetSlideStopped(s32 value) {
 }
 
 DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Leader_StopIfPending,
-                                 Func_02005480, Actor_SteerByPad,
+                                 Actor_SelectAnimation, Actor_SteerByPad,
                                  Import_FieldCheckSpheresOverlap)
 
 extern u16 gData_02005f58[];
@@ -2471,7 +2472,8 @@ DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gData_02005f58,
 #undef PIXELS
 
 DEFINE_PUSH_TARGET_PUSH(PushTarget_Push, gData_02005f64, Func_02004a44,
-                        Actor_StopAtPushTarget, Func_02005480, gData_02005f7c)
+                        Actor_StopAtPushTarget, Actor_SelectAnimation,
+                        gData_02005f7c)
 
 DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Actor_StopAtPushTarget, Actor_FindAtCell,
                                  gData_02005f58, MapGrid_CheckCollision)

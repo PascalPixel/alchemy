@@ -75,8 +75,6 @@ extern u32 Data_02006b68;
 
 extern s32 gData_02006180[];
 
-void Func_02005794();
-
 void Orbs_SpawnRising(void);
 
 extern s32 gData_020060b4[];
@@ -93,9 +91,6 @@ void Func_020051e0(void);
 void Func_020057ac(struct SparkleSprite *sprite);
 
 extern s32 gData_020057e4[];
-
-void Func_020057a4(struct SparkleSprite__s53e4 *sprite, s32 width, s32 height,
-                   u32 attributes, s32 tile);
 
 void Func_02005268(struct Actor *object);
 void MarsLighthouseAerie_HoldBackFromParents(void);

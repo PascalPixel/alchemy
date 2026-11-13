@@ -128,26 +128,26 @@ void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer) {
     object->priorityFlags = bits;
     switch (mode) {
     case 0:
-      Func_02003ba0(object, 2);
+      Actor_SelectAnimation(object, 2);
       break;
     case 1:
-      Func_02003ba0(object, 4);
+      Actor_SelectAnimation(object, 4);
       break;
     case 2:
-      Func_02003ba0(object, 6);
+      Actor_SelectAnimation(object, 6);
       break;
     }
   } else {
     cell->collisionCode = 255;
     switch (mode) {
     case 0:
-      Func_02003ba0(object, 1);
+      Actor_SelectAnimation(object, 1);
       break;
     case 1:
-      Func_02003ba0(object, 3);
+      Actor_SelectAnimation(object, 3);
       break;
     case 2:
-      Func_02003ba0(object, 5);
+      Actor_SelectAnimation(object, 5);
       break;
     }
   }
@@ -185,7 +185,7 @@ void CrumblingPillars_Place(const void *data) {
         *shapeCell = MapCollision_FindOrAddTag(object->terrainId, shape,
                                                (terrainHeight >> 19) + 4);
         if (GameFlag_Get(flag))
-          Func_02003ba0(object, 0);
+          Actor_SelectAnimation(object, 0);
       }
       list += 2;
     } while (list[0] != 0xffff);
@@ -227,7 +227,7 @@ void CrumblingPillars_Step(u16 *list) {
         Sound_Play(125);
         Actor_SetSpriteColor(Actor_GetById(id), 7);
         wait(2);
-        Func_02003ba0(target, 0);
+        Actor_SelectAnimation(target, 0);
         Actor_SetSpriteColor(Actor_GetById(id), 0);
         wait(2);
         Actor_SetSpriteColor(Actor_GetById(id), 7);
@@ -245,7 +245,7 @@ void CrumblingPillars_Step(u16 *list) {
           MapGrid_SetShake(0x10000, 0x40000, 0x10000);
           Rubble_Spray(0);
           wait(8);
-          Func_02003ba0(target, 2);
+          Actor_SelectAnimation(target, 2);
           Leader_SetCellShapeAt(-2, target->terrainId);
           Rubble_Spray(1);
           wait(16);
@@ -294,7 +294,7 @@ loop:
     MapGrid_SetShake(0x10000, 0x40000, 0x10000);
     Rubble_Spray(0);
     wait(8);
-    Func_02003ba0(object, 2);
+    Actor_SelectAnimation(object, 2);
     Actor_SetCellShape(-4, object->terrainId, id);
     Rubble_Spray(1);
     wait(16);
@@ -421,13 +421,13 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
       flag = list[1];
       Event_Start();
       if (GameFlag_Get(flag) == 0) {
-        Func_02003ba0(helper, 1);
+        Actor_SelectAnimation(helper, 1);
         Actor_TakePlaceOf(helper, target);
         wait(1);
         Sound_Play(125);
         Actor_SetSpriteColor(Actor_GetById(8), 7);
         wait(2);
-        Func_02003ba0(helper, 0);
+        Actor_SelectAnimation(helper, 0);
         Actor_CopyGraphics(id, 9);
         Actor_SetSpriteColor(Actor_GetById(8), 0);
         wait(2);
@@ -443,7 +443,7 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
         s32 result = GameFlag_Get(done);
 
         if (result == 0) {
-          Func_02003ba0(helper, 0);
+          Actor_SelectAnimation(helper, 0);
           Actor_TakePlaceOf(helper, target);
           wait(1);
           leader->motionFlags = result;
@@ -451,7 +451,7 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
           MapGrid_SetShake(0x10000, 0x40000, 0x10000);
           Rubble_Spray(0);
           wait(8);
-          Func_02003ba0(helper, 2);
+          Actor_SelectAnimation(helper, 2);
           Leader_SetCellShapeAt(-2, target->terrainId);
           Rubble_Spray(1);
           wait(16);
@@ -506,7 +506,7 @@ void Rubble_Spray(s32 spread) {
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags(effect, 0);
-      Func_02003ba0(effect, 2);
+      Actor_SelectAnimation(effect, 2);
       Actor_StartScript(effect, gData_02003e00);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
@@ -549,7 +549,7 @@ void Rubble_Burst(void) {
       object->motionFlags = 0;
       object->collisionFlags = 0;
       Actor_SetSpriteFlags(object, 0);
-      Func_02003ba0(object, 2);
+      Actor_SelectAnimation(object, 2);
       Actor_StartScript(object, gData_02003e30);
       effect->velocityX = Trig_Cos(i << 12);
       effect->velocityY = 0;
@@ -638,7 +638,7 @@ DEFINE_HELD_ACTOR_RAISE_CELL(HeldActor_RaiseCell, MapGrid_GetTerrainKind,
 // @file
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
-#define EFFECT_SET_MODE Func_02003ba0
+#define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect/spawn.c"
@@ -1558,7 +1558,7 @@ void DehkanPlateau_CrumblePillar(s32 id, s32 center, s32 flag) {
       object->motionFlags = 0;
       object->collisionFlags = 0;
       Actor_SetSpriteFlags(object, 0);
-      Func_02003ba0(object, 2);
+      Actor_SelectAnimation(object, 2);
       Actor_StartScript(object, gDehkanPlateau_DustScript);
       object->scaleX = 0xb333;
       object->scaleY = 0xb333;

@@ -168,7 +168,7 @@ void IsletCave_FightSerac(void) {
   return;
 }
 
-s32 Func_020003c8(s32 arg0) {
+s32 IsletCave_ClearScriptedActorSpriteFlags(s32 arg0) {
   Actor_SetSpriteFlags(arg0, 0);
   return 0;
 }
@@ -739,7 +739,7 @@ s32 gData_02001418[] = {
     SC_ADD(SW_Y, PIXELS(-4)),
     SC_SET(SW_SCALE_X, 0xcccc),
     SC_SET(SW_SCALE_Y, 0xcccc),
-    SC_CALL(Func_020003c8),
+    SC_CALL(IsletCave_ClearScriptedActorSpriteFlags),
     SC_END,
 };
 

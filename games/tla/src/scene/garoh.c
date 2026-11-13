@@ -153,7 +153,7 @@ DEFINE_GAROH_LOAD_PALETTE(Func_02000390, gData_020054ee, 24, 8)
 // Build BG palette 6 colors 1-9 from the table.
 DEFINE_GAROH_LOAD_PALETTE(Func_020003d8, gData_020054b8, 97, 9)
 
-s32 Func_02000420(struct Actor *object) {
+s32 Garoh_ClearScriptedActorSpriteFlags(struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);
   return 0;
 }
@@ -2913,7 +2913,7 @@ s32 gData_0200552c[] = {
     SC_ADD(SW_X, PIXELS(6)),
     SC_SET(SW_SCALE_X, 0xcccc),
     SC_SET(SW_SCALE_Y, 0xcccc),
-    SC_CALL(Func_02000420),
+    SC_CALL(Garoh_ClearScriptedActorSpriteFlags),
     SC_END,
 };
 

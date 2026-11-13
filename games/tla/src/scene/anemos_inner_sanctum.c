@@ -332,7 +332,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-s32 Func_02000654(s32 a0) {
+s32 AnemosInnerSanctum_ClearScriptedActorSpriteFlags(s32 a0) {
   Actor_SetSpriteFlags(a0, 0);
   return 0;
 }
@@ -2117,7 +2117,7 @@ DEFINE_G_DATA_020013B4(gData_020038b4, 94, 89, 90, 91, 92, 93)
 
 s32 gData_020038fc[] = {
     46,
-    (s32)Func_02000654,
+    (s32)AnemosInnerSanctum_ClearScriptedActorSpriteFlags,
     17,
 };
 

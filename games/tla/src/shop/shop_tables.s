@@ -1,4 +1,28 @@
 	.section .rodata
+@ A copy of The Broken Seal's sSelectorTileOffsets
+	.global gShop_SelectorOffsets
+gShop_SelectorOffsets:
+	.2byte 0x00, 0x01, 0x02, 0x03
+	.2byte 0x20, 0x21, 0x22, 0x23
+	.2byte 0x40, 0x41, 0x42, 0x43
+	.2byte 0x60, 0x61, 0x62, 0x63
+	.2byte 0x80, 0x81, 0x82, 0x83
+	.2byte 0xa0, 0xa1, 0xa2, 0xa3
+	.2byte 0xc0, 0xc1, 0xc2, 0xc3
+	.2byte 0xe0, 0xe1
+@ Where each digit of a price is drawn in its sprite, ones first
+	.global gShop_GlyphRowOffsets
+gShop_GlyphRowOffsets:
+	.2byte 0xc0, 0x90, 0x80, 0x50, 0x40
+@ A copy of The Broken Seal's sSpecialItemPrices
+	.global Data_0810c38e
+Data_0810c38e:
+	.2byte 300, 300, 300, 300, 300
+	.2byte 500, 500, 500, 500, 500
+	.2byte 1000, 1000, 1000, 1000, 1000
+	.2byte 2000, 2000, 2000, 2000, 2000
+	.2byte 4000, 4000, 4000, 4000, 4000
+	.2byte 8000, 8000, 8000, 8000, 8000
 @ Gift items (same as The Broken Seal's gShop_GiftItemIds).
 	.global Data_0810c3ca
 Data_0810c3ca:

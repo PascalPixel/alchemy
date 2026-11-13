@@ -85,15 +85,11 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 
 #include "../field/field_effect/move.c"
 
-#undef gGondowanCliffs_PassActorPlacements
-#undef gGondowanCliffs_ActorPlacements
-#undef gGondowanCliffs_PassEntrances
 #undef gGondowanCliffs_Entrances
-#undef gGondowanCliffs_PassActorPlacements
-#undef gGondowanCliffs_ActorPlacements
 #undef gGondowanCliffs_PassEntrances
-#undef gGondowanCliffs_Entrances
-// ---- scene/gondowan_cliffs/effect_spawn.c ----
+#undef gGondowanCliffs_ActorPlacements
+#undef gGondowanCliffs_PassActorPlacements
+// ---- from scene/gondowan_cliffs/effect_spawn.c ----
 // @file
 // The Gondowan Cliffs' events and set-up, and the geysers Scoop digs up out of
 // the yellow sand: each rises and falls on its timer, carrying the leader up
@@ -731,9 +727,6 @@ struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
   return entry;
 }
 
-#undef gGondowanCliffs_MapRects
-#undef gGondowanCliffs_Triggers
-#undef gGondowanCliffs_PassTriggers
 #undef EFFECT_SPAWN
 #undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
@@ -744,10 +737,10 @@ struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
 #undef FLAG_SECOND_PUDDLE_FROZEN
 #undef PIXELS
 #define PIXELS(value) ((value) << 16)
-#undef gGondowanCliffs_MapRects
-#undef gGondowanCliffs_Triggers
 #undef gGondowanCliffs_PassTriggers
-// ---- scene/data/gondowan_cliffs.c ----
+#undef gGondowanCliffs_Triggers
+#undef gGondowanCliffs_MapRects
+// ---- from scene/data/gondowan_cliffs.c ----
 
 #include "macros.h"
 // @file
@@ -894,10 +887,10 @@ LATE_DATA s32 gGondowanCliffs_MapRects[] = {
     0x2000200, 0x3600400, 0x600, 0x1601000, -1, -1,
 };
 // clang-format on
-#undef gFieldEffect_LongScript
-#undef gFieldEffect_MediumScript
-#undef gFieldEffect_ShortScript
-#undef GondowanCliffs_GrindTheRock
-#undef GondowanCliffs_ScoopUpGeyser
-#undef GondowanCliffs_PushPillarIntoWater
 #undef TileSprite_Reset
+#undef GondowanCliffs_PushPillarIntoWater
+#undef GondowanCliffs_ScoopUpGeyser
+#undef GondowanCliffs_GrindTheRock
+#undef gFieldEffect_ShortScript
+#undef gFieldEffect_MediumScript
+#undef gFieldEffect_LongScript

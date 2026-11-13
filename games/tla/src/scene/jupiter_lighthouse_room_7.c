@@ -737,15 +737,6 @@ DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
                         Position_FlatDistance, gWhirlwindEndScript,
                         gWhirlwindRiding)
 
-#undef gWhirlwindEndScript
-#undef gPaletteCycleFrame
-#undef gPaletteCyclePausesInEvents
-#undef gData_020031c4
-#undef FIELD_AT
-#undef gWhirlwindEndScript
-#undef gPaletteCycleFrame
-#undef gPaletteCyclePausesInEvents
-#undef gData_020031c4
 // ---- scene/jupiter_lighthouse_room_7/s16d4.c ----
 
 /// Scene code of overlay 0x6a0, in ROM order.
@@ -867,9 +858,13 @@ void LightSprites_SetPriority(u16 value) {
 
 #include "../field/field_effect/move.c"
 
+#undef FIELD_AT
+#undef gData_020031c4
+#undef gPaletteCyclePausesInEvents
+#undef gPaletteCycleFrame
+#undef gWhirlwindEndScript
 #undef FieldEffect_Spawn
-#undef FieldEffect_Spawn
-// ---- scene/jupiter_lighthouse_room_7/s1f74.c ----
+// ---- from scene/jupiter_lighthouse_room_7/s1f74.c ----
 // @file
 // Scene code of overlay 0x6a0, in ROM order.
 
@@ -985,13 +980,6 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 // one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
-#undef Actor_StartScript
-#undef Actor_SelectAnimation
-#undef CELL_TABLE
-#undef CELL_SPRITE_DRAW
-#undef CELL_PUSH_SLOT_ENTRY
-#undef Actor_StartScript
-#undef Actor_SelectAnimation
 // ---- scene/jupiter_lighthouse_room_7/s25a4.c ----
 
 // Scene code of overlay 0x6a0, in ROM order.
@@ -1026,7 +1014,12 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall__s25a4, CellTarget__s25a4,
 
 #include "../field/field_effect/advance_motion.c"
 
-// ---- scene/jupiter_lighthouse_room_7/s273c.c ----
+#undef CELL_TABLE
+#undef CELL_SPRITE_DRAW
+#undef CELL_PUSH_SLOT_ENTRY
+#undef Actor_SelectAnimation
+#undef Actor_StartScript
+// ---- from scene/jupiter_lighthouse_room_7/s273c.c ----
 // @file
 // Scene code of overlay 0x6a0, in ROM order.
 
@@ -1125,7 +1118,8 @@ DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
 #include "scene_tables.h"
 
 // clang-format off
-s16 gData_02002c64[] = {
+/* VIEW(s273c): variable gData_02002c64 as this part defines it; a header the joined file includes has another. */
+s16 gData_02002c64__s273c[] __asm__("gData_02002c64") = {
     8, 16, 10, 16, 11, 16, 12, 16,
     14, 16, 15, 16, 10, 18, 12, 18,
     13, 18, 8, 20, 10, 20, 13, 20,
@@ -1133,11 +1127,9 @@ s16 gData_02002c64[] = {
 };
 // clang-format on
 
-#undef FieldEffect_Spawn
 #undef CrackedTile_Fall
 #undef FieldEffect_Spawn
-#undef CrackedTile_Fall
-// ---- scene/data/jupiter_lighthouse_room_7.c ----
+// ---- from scene/data/jupiter_lighthouse_room_7.c ----
 
 #include "macros.h"
 #include "shared/tables.h"
@@ -1257,6 +1249,6 @@ LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_MediumScript,
     gFieldEffect_LongScript,
 };
-#undef Func_020009e4
-#undef Func_020007a4
 #undef Func_02000778
+#undef Func_020007a4
+#undef Func_020009e4

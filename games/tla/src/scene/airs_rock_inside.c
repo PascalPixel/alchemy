@@ -81,7 +81,7 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
 
 #include "../field/field_effect/move.c"
 
-// ---- scene/airs_rock_inside/airs_rock_inside.c ----
+// ---- from scene/airs_rock_inside/airs_rock_inside.c ----
 // @file
 // Scene code of overlay 0x664, in ROM order.
 
@@ -93,12 +93,6 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect/spawn.c"
 
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
-#undef EFFECT_SET_MODE
-#undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
-#undef EFFECT_SPRITE_PRIORITY
 // ---- scene/airs_rock_inside/airs_rock_inside.c ----
 
 // Scene code of overlay 0x664, in ROM order.
@@ -116,7 +110,9 @@ extern struct ActorPlacement gData_0200675c[];
 extern struct ActorPlacement gData_020068f4[];
 extern struct ActorPlacement gData_020069e4[];
 extern struct ActorPlacement gData_02006aec[];
-extern u32 gData_02006bac[];
+/* VIEW(first): variable gData_02006bac as this part declared it; the joined file has another. */
+extern u32 gData_02006bac__first[] __asm__("gData_02006bac");
+#define gData_02006bac gData_02006bac__first
 
 void TilesetAnim_SuspendAll(void);
 void TilesetAnim_ResumeAll(void);
@@ -1400,18 +1396,6 @@ void Func_020026c0(void) {
   }
 }
 
-#undef gData_02006268
-#undef gData_020061cc
-#undef gData_02006194
-#undef gData_020061ac
-#undef other
-#undef TARGET
-#undef PICK_UP
-#undef SHAKE
-#undef gData_02006268
-#undef gData_020061cc
-#undef gData_02006194
-#undef gData_020061ac
 // ---- scene/airs_rock_inside/s2770.c ----
 
 // Scene code of overlay 0x664, in ROM order.
@@ -2940,30 +2924,36 @@ void Func_02004f3c(void) {
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef gData_020073d8
-#undef gData_02006158
-#undef gData_02006128
-#undef gData_02006104
-#undef gData_02006094
-#undef gData_020060e0
-#undef gData_02006084
-#undef gData_020060c0
-#undef gData_020060b0
 #undef EVENT_WORK
 #undef DEFINE_AIRS_ROCK_INSIDE_SET_DOORS
 #undef FIELD_AT
 #undef DEFINE_AIRS_ROCK_INSIDE_READ_TABLET
-#undef gData_020073d8
-#undef gData_02006158
-#undef gData_02006128
-#undef gData_02006104
-#undef gData_02006094
-#undef gData_020060e0
-#undef gData_02006084
-#undef gData_020060c0
-#undef gData_020060b0
 #undef DEFINE_AIRS_ROCK_INSIDE_TRACK_LEADER_CELL
-// ---- scene/airs_rock_inside/s505c.c ----
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
+#undef EFFECT_SPRITE_PRIORITY
+#undef other
+#undef TARGET
+#undef PICK_UP
+#undef SHAKE
+#undef gData_02006bac
+#undef gData_020061ac
+#undef gData_02006194
+#undef gData_020061cc
+#undef gData_02006268
+#undef gData_02006084
+#undef gData_020060e0
+#undef gData_02006094
+#undef gData_020060b0
+#undef gData_02006104
+#undef gData_020060c0
+#undef gData_02006128
+#undef gData_02006158
+#undef gData_020073d8
+// ---- from scene/airs_rock_inside/s505c.c ----
 // @file
 // Scene code of overlay 0x664, in ROM order.
 
@@ -3653,12 +3643,10 @@ struct ActorPlacement gData_02006aec[] = {
     {SCENE_TABLE_END},
 };
 
-/* VIEW(s505c): routine gData_02006bac as this part declared it; the joined file has another. */
-DEFINE_G_DATA_02003C88(gData_02006bac__s505c, 0xffff0145, gData_020061f8, 1, 0x2024000,
+DEFINE_G_DATA_02003C88(gData_02006bac, 0xffff0145, gData_020061f8, 1, 0x2024000,
                        1, 2, 0xffff0179, 3, 0x2020000)
 
-s32 gData_02006c0c = -1 __asm__("gData_02006bac");
-#define gData_02006bac gData_02006bac__s505c
+s32 gData_02006c0c = -1;
 
 struct Trigger gData_02006c10[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
@@ -3859,13 +3847,12 @@ struct Trigger gData_020073a8[] = {
 s32 gData_020073d8[] = {
     -1,
 };
-#undef gData_02006bac
-#undef Actor_StepToWatched
-#undef Actor_AimAtWatched
-#undef Orbit_Update
-#undef Func_02003ed4
-#undef Func_0200062c
-#undef Func_02001420
-#undef Func_02001084
-#undef Actor_SetHorizontalPositionWithTerrain
 #undef gData_0200621c
+#undef Actor_SetHorizontalPositionWithTerrain
+#undef Func_02001084
+#undef Func_02001420
+#undef Func_0200062c
+#undef Func_02003ed4
+#undef Orbit_Update
+#undef Actor_AimAtWatched
+#undef Actor_StepToWatched

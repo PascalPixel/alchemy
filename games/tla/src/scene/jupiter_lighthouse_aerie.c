@@ -764,9 +764,6 @@ void Func_02001080(void) {
 }
 #undef LERP
 
-#undef LERP
-#undef gData_0200331c
-#undef gData_0200331c
 // ---- scene/jupiter_lighthouse_aerie/s17a8.c ----
 
 /// Scene code of overlay 0x6a4, in ROM order.
@@ -948,7 +945,9 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 #include "../field/field_effect/move.c"
 
-// ---- scene/jupiter_lighthouse_aerie/s1e78.c ----
+#undef LERP
+#undef gData_0200331c
+// ---- from scene/jupiter_lighthouse_aerie/s1e78.c ----
 // @file
 // Scene code of overlay 0x6a4, in ROM order.
 
@@ -1070,11 +1069,6 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 // one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
-#undef Actor_StartScript
-#undef CELL_TABLE
-#undef CELL_SPRITE_DRAW
-#undef CELL_PUSH_SLOT_ENTRY
-#undef Actor_StartScript
 // ---- scene/jupiter_lighthouse_aerie/s24a8.c ----
 
 // Scene code of overlay 0x6a4, in ROM order.
@@ -1109,7 +1103,11 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall__s24a8, CellTarget__s24a8,
 
 #include "../field/field_effect/advance_motion.c"
 
-// ---- scene/jupiter_lighthouse_aerie/s2640.c ----
+#undef CELL_TABLE
+#undef CELL_SPRITE_DRAW
+#undef CELL_PUSH_SLOT_ENTRY
+#undef Actor_StartScript
+// ---- from scene/jupiter_lighthouse_aerie/s2640.c ----
 // @file
 // Scene code of overlay 0x6a4, in ROM order.
 
@@ -1246,6 +1244,6 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_MediumScript,
     gFieldEffect_LongScript,
 };
-#undef Func_0200032c
-#undef Func_02000314
 #undef CrackedTile_Fall
+#undef Func_02000314
+#undef Func_0200032c

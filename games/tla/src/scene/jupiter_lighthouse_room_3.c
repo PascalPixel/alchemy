@@ -492,11 +492,6 @@ DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
 
 #include "../field/field_effect/move.c"
 
-#undef Oam_AddSpriteAtDepthClamped
-#undef FieldEffect_Spawn
-#undef gWhirlwindEndScript
-#undef gPaletteCyclePausesInEvents
-#undef gPaletteCycleFrame
 #undef FLAG_LOG_OFF_LEDGE
 #undef FLAG_LEFT_PILLAR_IN_GAP
 #undef FLAG_RIGHT_PILLAR_IN_GAP
@@ -504,12 +499,12 @@ DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 #undef PIXELS
 #define PIXELS(value) ((value) << 16)
-#undef Oam_AddSpriteAtDepthClamped
-#undef FieldEffect_Spawn
-#undef gWhirlwindEndScript
-#undef gPaletteCyclePausesInEvents
 #undef gPaletteCycleFrame
-// ---- scene/jupiter_lighthouse_room_3/cracked_tiles.c ----
+#undef gPaletteCyclePausesInEvents
+#undef gWhirlwindEndScript
+#undef FieldEffect_Spawn
+#undef Oam_AddSpriteAtDepthClamped
+// ---- from scene/jupiter_lighthouse_room_3/cracked_tiles.c ----
 // @file
 // The room of gaps and logs in Jupiter Lighthouse: its copy of the effect
 // spawner, and the cracked tiles, found, cracked and fallen through.
@@ -637,14 +632,12 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef Actor_StartScript
-#undef Actor_SelectAnimation
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-#undef Actor_StartScript
 #undef Actor_SelectAnimation
-// ---- scene/jupiter_lighthouse_room_3/cracked_tile_steps.c ----
+#undef Actor_StartScript
+// ---- from scene/jupiter_lighthouse_room_3/cracked_tile_steps.c ----
 // @file
 // The room of gaps and logs in Jupiter Lighthouse: the cracked tiles' steps
 // and the fall to the floor below.
@@ -697,8 +690,7 @@ DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
                                   CrackedTile_DropIn)
 
 #undef FieldEffect_Spawn
-#undef FieldEffect_Spawn
-// ---- scene/data/jupiter_lighthouse_room_3.c ----
+// ---- from scene/data/jupiter_lighthouse_room_3.c ----
 
 #include "macros.h"
 // @file

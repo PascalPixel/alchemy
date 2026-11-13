@@ -2019,25 +2019,6 @@ void Func_02003490(void) {
 DEFINE_TILE_SPRITE_RESET(Func_020035e0)
 
 #undef Actor_SetSpriteColorMode
-#undef gData_02006bc8
-#undef gData_0200632c
-#undef gData_02006790
-#undef gData_02006700
-#undef gData_02006598
-#undef gData_02006500
-#undef gData_02006338
-#undef WORLD_MAP_TRY_ENCOUNTER
-#undef ARM_WEST
-#undef TUTORIAL_SET_MESSAGE
-#undef TUTORIAL_MESSAGE
-#undef Actor_SetSpriteColorMode
-#undef gData_02006bc8
-#undef gData_0200632c
-#undef gData_02006790
-#undef gData_02006700
-#undef gData_02006598
-#undef gData_02006500
-#undef gData_02006338
 // ---- scene/world_map/s3600.c ----
 
 /* VIEW(s3600): variable gData_02006c08 as struct Actor *gData_02006c08[];
@@ -2066,7 +2047,6 @@ extern struct Actor *gData_02006c08__s3600[] __asm__("gData_02006c08");
 
 #undef gData_02006c08
 
-#undef gData_02006c08
 // ---- scene/world_map/cell_index.c ----
 
 /// Scene code of overlay 0x64b, in ROM order.
@@ -2520,12 +2500,24 @@ u32 gData_02004fc8[] = {
 
 #undef Animation_ApplyChildArgument
 #undef Func_02003418
-#undef gData_02006be4
 #undef PUSH_PICTURE
+#undef WORLD_MAP_TRY_ENCOUNTER
+#undef ARM_WEST
+#undef TUTORIAL_SET_MESSAGE
+#undef TUTORIAL_MESSAGE
+#undef Actor_SetSpriteColorMode
+#undef gData_02006338
+#undef gData_02006500
+#undef gData_02006598
+#undef gData_02006700
+#undef gData_02006790
+#undef gData_0200632c
+#undef gData_02006bc8
+#undef gData_02006c08
+#undef gData_02006be4
 #undef Animation_ApplyChildArgument
 #undef Func_02003418
-#undef gData_02006be4
-// ---- scene/data/world_map.c ----
+// ---- from scene/data/world_map.c ----
 
 #include "macros.h"
 #include "shared/tables.h"
@@ -2944,12 +2936,12 @@ LATE_DATA DEFINE_G_DATA_02003584(gData_02006bd4, Func_020035e0, 17, 0)
 LATE_DATA u32 gData_02006be4[] = {
     0,
 };
-#undef StoryActor_Initialize
-#undef Func_020035e0
-#undef Func_02000db0
-#undef Func_02000da4
-#undef Func_02000d98
-#undef Func_020003b4
-#undef Func_020003a8
-#undef Func_02000388
 #undef TileSprite_Reset
+#undef Func_02000388
+#undef Func_020003a8
+#undef Func_020003b4
+#undef Func_02000d98
+#undef Func_02000da4
+#undef Func_02000db0
+#undef Func_020035e0
+#undef StoryActor_Initialize

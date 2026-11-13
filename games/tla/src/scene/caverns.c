@@ -12,7 +12,7 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
 
 #include "../field/field_effect/move.c"
 
-// ---- scene/caverns/caverns.c ----
+// ---- from scene/caverns/caverns.c ----
 // @file
 // Scene code of overlay 0x6a9, in ROM order.
 

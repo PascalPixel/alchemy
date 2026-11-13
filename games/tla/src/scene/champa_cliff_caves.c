@@ -2035,29 +2035,21 @@ u32 gData_02003634[] = {
 #undef FIELD_AT
 
 #undef FIELD_AT
-#undef gData_02003d18
-#undef gData_02003c84
-#undef gData_020039cc
-#undef gData_02003d10
 #undef DEFINE_CHAMPA_CLIFF_CAVES_GROW
-#undef gData_02003d18
-#undef gData_02003c84
-#undef gData_020039cc
-#undef gData_02003d10
-#undef gData_020042d4
-#undef gData_0200432c
-#undef gData_02004254
-#undef gData_020041e8
 #undef FIELD_AT
 #undef PALETTE
 #undef BYTE_AT
 #undef WORD_AT
-#undef gData_020042d4
-#undef gData_0200432c
-#undef gData_02004254
-#undef gData_020041e8
 #undef FIELD_AT
-// ---- scene/data/champa_cliff_caves.c ----
+#undef gData_02003d10
+#undef gData_020039cc
+#undef gData_02003c84
+#undef gData_02003d18
+#undef gData_020041e8
+#undef gData_02004254
+#undef gData_0200432c
+#undef gData_020042d4
+// ---- from scene/data/champa_cliff_caves.c ----
 
 #include "macros.h"
 #include "types.h"
@@ -2573,9 +2565,9 @@ LATE_DATA u32 gData_0200432c[] = {
     0xe60000,  1, 39, 1,         0, 1,         17,
 };
 // clang-format on
-#undef Func_02000f48
-#undef Func_02000464
-#undef Func_0200038c
-#undef Func_02000350
-#undef Func_02000304
 #undef Func_020001f4
+#undef Func_02000304
+#undef Func_02000350
+#undef Func_0200038c
+#undef Func_02000464
+#undef Func_02000f48

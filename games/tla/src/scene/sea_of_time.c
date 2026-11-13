@@ -9,7 +9,7 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 34)
 
 #include "../field/field_effect/move.c"
 
-// ---- scene/sea_of_time.c ----
+// ---- from scene/sea_of_time.c ----
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -18,12 +18,6 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 34)
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect/spawn.c"
 
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
-#undef EFFECT_SET_MODE
-#undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
-#undef EFFECT_SPRITE_PRIORITY
 // ---- scene/sea_of_time.c ----
 
 // The Sea of Time, east of Lemuria: currents and swirls that carry the ship
@@ -1471,3 +1465,9 @@ struct Trigger gSeaOfTime_Triggers[] = {
 s16 gSeaOfTime_RedPulseStep[] = {
     1,
 };
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
+#undef EFFECT_SPRITE_PRIORITY

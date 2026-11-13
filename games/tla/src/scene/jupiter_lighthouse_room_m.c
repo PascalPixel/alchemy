@@ -1712,30 +1712,6 @@ DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
 
 #undef Whirlwind_SpawnUpper
 #undef Actor_EmitRisingSparks
-#undef gWhirlwindEndScript
-#undef gPaletteCycleFrame
-#undef gPaletteCyclePausesInEvents
-#undef gData_02005950
-#undef gData_0200578c
-#undef gData_0200569c
-#undef gData_02005644
-#undef gData_020055ec
-#undef gData_0200558c
-#undef WORD_AT
-#undef PLACE
-#undef EVENT_WORK
-#undef ACTOR_SET_MODE_AND_WAIT
-#undef Whirlwind_SpawnUpper
-#undef Actor_EmitRisingSparks
-#undef gWhirlwindEndScript
-#undef gPaletteCycleFrame
-#undef gPaletteCyclePausesInEvents
-#undef gData_02005950
-#undef gData_0200578c
-#undef gData_0200569c
-#undef gData_02005644
-#undef gData_020055ec
-#undef gData_0200558c
 // ---- scene/jupiter_lighthouse_room_m/s3474.c ----
 
 /// Scene code of overlay 0x6a3, in ROM order.
@@ -1802,9 +1778,23 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 #include "../field/field_effect/move.c"
 
+#undef WORD_AT
+#undef PLACE
+#undef EVENT_WORK
+#undef ACTOR_SET_MODE_AND_WAIT
+#undef Whirlwind_SpawnUpper
+#undef Actor_EmitRisingSparks
+#undef gData_0200558c
+#undef gData_020055ec
+#undef gData_02005644
+#undef gData_0200569c
+#undef gData_0200578c
+#undef gData_02005950
+#undef gPaletteCyclePausesInEvents
+#undef gPaletteCycleFrame
+#undef gWhirlwindEndScript
 #undef FieldEffect_Spawn
-#undef FieldEffect_Spawn
-// ---- scene/jupiter_lighthouse_room_m/s3b7c.c ----
+// ---- from scene/jupiter_lighthouse_room_m/s3b7c.c ----
 // @file
 // Scene code of overlay 0x6a3, in ROM order.
 
@@ -1919,11 +1909,6 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 // one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
-#undef Actor_StartScript
-#undef CELL_TABLE
-#undef CELL_SPRITE_DRAW
-#undef CELL_PUSH_SLOT_ENTRY
-#undef Actor_StartScript
 // ---- scene/jupiter_lighthouse_room_m/s41ac.c ----
 
 // Scene code of overlay 0x6a3, in ROM order.
@@ -1970,8 +1955,12 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s41ac,
 
 #include "../field/field_effect/advance_motion.c"
 
+#undef CELL_TABLE
+#undef CELL_SPRITE_DRAW
+#undef CELL_PUSH_SLOT_ENTRY
+#undef Actor_StartScript
 #undef CrackedTile_Fall
-// ---- scene/jupiter_lighthouse_room_m/s4344.c ----
+// ---- from scene/jupiter_lighthouse_room_m/s4344.c ----
 // @file
 // Scene code of overlay 0x6a3, in ROM order.
 
@@ -2081,8 +2070,7 @@ DEFINE_G_DATA_02004AB4(gData_02004b1c, 659)
 // clang-format on
 
 #undef FieldEffect_Spawn
-#undef FieldEffect_Spawn
-// ---- scene/data/jupiter_lighthouse_room_m.c ----
+// ---- from scene/data/jupiter_lighthouse_room_m.c ----
 
 #include "macros.h"
 #include "shared/tables.h"
@@ -2383,9 +2371,9 @@ LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_MediumScript,
     gFieldEffect_LongScript,
 };
-#undef Func_02000b38
-#undef Func_02000ad0
-#undef Func_02000970
-#undef Func_020003b8
-#undef Func_0200039c
 #undef Func_02000038
+#undef Func_0200039c
+#undef Func_020003b8
+#undef Func_02000970
+#undef Func_02000ad0
+#undef Func_02000b38

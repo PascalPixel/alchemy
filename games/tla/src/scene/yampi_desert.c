@@ -477,67 +477,40 @@ void YampiDesert_WatchScorpionStop(void) {
 
 #include "../field/field_effect/advance_motion_priority.c"
 
-#undef gYampiDesert_Room12Triggers
-#undef gYampiDesert_Room11Triggers
-#undef gYampiDesert_Room10Triggers
-#undef gYampiDesert_Room9Triggers
-#undef gYampiDesert_Room8Triggers
-#undef gYampiDesert_Room7Triggers
-#undef gYampiDesert_Room6Triggers
-#undef gYampiDesert_Room5Triggers
-#undef gYampiDesert_Room4Triggers
-#undef gYampiDesert_Room3Triggers
-#undef gYampiDesert_Room2Triggers
-#undef gYampiDesert_Room1Triggers
-#undef gYampiDesert_Triggers
-#undef gYampiDesert_Room12Placements
-#undef gYampiDesert_Room10Placements
-#undef gYampiDesert_Room8Placements
-#undef gYampiDesert_Room5Placements
-#undef gYampiDesert_Room4Placements
-#undef gYampiDesert_Room3Placements
-#undef gYampiDesert_Room2PlacementsAfterMeeting
-#undef gYampiDesert_Room2Placements
-#undef gYampiDesert_Room1Placements
-#undef gYampiDesert_Placements
-#undef gYampiDesert_Room11Regions
-#undef gYampiDesert_Room10Regions
-#undef gYampiDesert_Room11Entrances
-#undef gYampiDesert_Entrances
 #undef EFFECT_SPAWN
 #undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 #undef DEFINE_POUND_STAKE_STOPPING_SCORPION
-#undef gYampiDesert_Room12Triggers
-#undef gYampiDesert_Room11Triggers
-#undef gYampiDesert_Room10Triggers
-#undef gYampiDesert_Room9Triggers
-#undef gYampiDesert_Room8Triggers
-#undef gYampiDesert_Room7Triggers
-#undef gYampiDesert_Room6Triggers
-#undef gYampiDesert_Room5Triggers
-#undef gYampiDesert_Room4Triggers
-#undef gYampiDesert_Room3Triggers
-#undef gYampiDesert_Room2Triggers
-#undef gYampiDesert_Room1Triggers
-#undef gYampiDesert_Triggers
-#undef gYampiDesert_Room12Placements
-#undef gYampiDesert_Room10Placements
-#undef gYampiDesert_Room8Placements
-#undef gYampiDesert_Room5Placements
-#undef gYampiDesert_Room4Placements
-#undef gYampiDesert_Room3Placements
-#undef gYampiDesert_Room2PlacementsAfterMeeting
-#undef gYampiDesert_Room2Placements
-#undef gYampiDesert_Room1Placements
-#undef gYampiDesert_Placements
-#undef gYampiDesert_Room11Regions
-#undef gYampiDesert_Room10Regions
-#undef gYampiDesert_Room11Entrances
 #undef gYampiDesert_Entrances
-// ---- scene/yampi_desert.c ----
+#undef gYampiDesert_Room11Entrances
+#undef gYampiDesert_Room10Regions
+#undef gYampiDesert_Room11Regions
+#undef gYampiDesert_Placements
+#undef gYampiDesert_Room1Placements
+#undef gYampiDesert_Room2Placements
+#undef gYampiDesert_Room2PlacementsAfterMeeting
+#undef gYampiDesert_Room3Placements
+#undef gYampiDesert_Room4Placements
+#undef gYampiDesert_Room5Placements
+#undef gYampiDesert_Room8Placements
+#undef gYampiDesert_Room10Placements
+#undef gYampiDesert_Room12Placements
+#undef gYampiDesert_Triggers
+#undef gYampiDesert_Room1Triggers
+#undef gYampiDesert_Room2Triggers
+#undef gYampiDesert_Room3Triggers
+#undef gYampiDesert_Room4Triggers
+#undef gYampiDesert_Room5Triggers
+#undef gYampiDesert_Room6Triggers
+#undef gYampiDesert_Room7Triggers
+#undef gYampiDesert_Room8Triggers
+#undef gYampiDesert_Room9Triggers
+#undef gYampiDesert_Room10Triggers
+#undef gYampiDesert_Room11Triggers
+#undef gYampiDesert_Room12Triggers
+// ---- from scene/yampi_desert.c ----
 // @file
 // The Yampi Desert, between Osenia's south and Alhafra: twelve rooms of sand.
 // Pound sinks its wooden stakes and Sand lets the party slip under them; a
@@ -2555,16 +2528,6 @@ u32 gYampiDesert_SlideDust[] = {
 };
 // clang-format on
 
-#undef gYampiDesert_LastTravelersFollow
-#undef gYampiDesert_TravelersFollow
-#undef gYampiDesert_FinderRunsAhead
-#undef Actor_SetMovementTypeAndWaitById
-#undef Actor_SetMovementTypeById
-#undef Motion_SetModeAndWaitAnimation
-#undef Actor_Jump
-#undef FieldCamera_GetActor
-#undef Actor_ShowEmoteById
-#undef Statue_Sink
 #undef OBJ
 #undef MOVE_LEADER_TO
 #undef FIELD32
@@ -2574,16 +2537,17 @@ u32 gYampiDesert_SlideDust[] = {
 #undef ARRIVE_OR
 #undef MAIN_ROUTINE_WORK_U16
 #undef PIXELS__s3910
-#undef gYampiDesert_LastTravelersFollow
-#undef gYampiDesert_TravelersFollow
-#undef gYampiDesert_FinderRunsAhead
-#undef Actor_SetMovementTypeAndWaitById
-#undef Actor_SetMovementTypeById
-#undef Motion_SetModeAndWaitAnimation
-#undef Actor_Jump
-#undef FieldCamera_GetActor
 #undef Actor_ShowEmoteById
-// ---- scene/yampi_desert/data2.c ----
+#undef FieldCamera_GetActor
+#undef Statue_Sink
+#undef Actor_Jump
+#undef Motion_SetModeAndWaitAnimation
+#undef Actor_SetMovementTypeById
+#undef Actor_SetMovementTypeAndWaitById
+#undef gYampiDesert_FinderRunsAhead
+#undef gYampiDesert_TravelersFollow
+#undef gYampiDesert_LastTravelersFollow
+// ---- from scene/yampi_desert/data2.c ----
 
 #include "macros.h"
 // @file
@@ -2680,13 +2644,15 @@ LATE_DATA u32 gYampiDesert_LastTravelersFollow[] = {
     1, 17,
 };
 
-LATE_DATA s16 gYampiDesert_Room1Stakes[] = {
+/* VIEW(data2): variable gYampiDesert_Room1Stakes as this part defines it; a header the joined file includes has another. */
+LATE_DATA s16 gYampiDesert_Room1Stakes__data2[] __asm__("gYampiDesert_Room1Stakes") = {
     8, 0, 512, 9, 0, 513, 10, 0,
     514, 11, 0, 515, 12, 0, 516, 13,
     0, 517, -1,
 };
 
-LATE_DATA s16 gYampiDesert_Room3Stakes[] = {
+/* VIEW(data2): variable gYampiDesert_Room3Stakes as this part defines it; a header the joined file includes has another. */
+LATE_DATA s16 gYampiDesert_Room3Stakes__data2[] __asm__("gYampiDesert_Room3Stakes") = {
     8, 0, 512, 9, 0, 513, 10, 0,
     514, 11, 0, 515, 12, 0, 516, 13,
     0, 517, 14, 0, 518, 15, 0, 519,
@@ -2694,25 +2660,30 @@ LATE_DATA s16 gYampiDesert_Room3Stakes[] = {
     522, -1,
 };
 
-LATE_DATA s16 gYampiDesert_Room4Stakes[] = {
+/* VIEW(data2): variable gYampiDesert_Room4Stakes as this part defines it; a header the joined file includes has another. */
+LATE_DATA s16 gYampiDesert_Room4Stakes__data2[] __asm__("gYampiDesert_Room4Stakes") = {
     8, 0, 512, 9, 0, 513, 10, 0,
     514, 11, 0, 515, -1,
 };
 
-LATE_DATA s16 gYampiDesert_Room5Stakes[] = {
+/* VIEW(data2): variable gYampiDesert_Room5Stakes as this part defines it; a header the joined file includes has another. */
+LATE_DATA s16 gYampiDesert_Room5Stakes__data2[] __asm__("gYampiDesert_Room5Stakes") = {
     8, 0, 512, 9, 0, 513, 10, 0,
     514, -1,
 };
 
-LATE_DATA s32 gYampiDesert_Room12Stakes[] = {
+/* VIEW(data2): variable gYampiDesert_Room12Stakes as this part defines it; a header the joined file includes has another. */
+LATE_DATA s32 gYampiDesert_Room12Stakes__data2[] __asm__("gYampiDesert_Room12Stakes") = {
     8, -0xfe00,
 };
 
-LATE_DATA u32 gYampiDesert_RaisedEvent[] = {
+/* VIEW(data2): variable gYampiDesert_RaisedEvent as this part defines it; a header the joined file includes has another. */
+LATE_DATA u32 gYampiDesert_RaisedEvent__data2[] __asm__("gYampiDesert_RaisedEvent") = {
     0,
 };
 
-LATE_DATA u32 gYampiDesert_SandRipple[] = {
+/* VIEW(data2): variable gYampiDesert_SandRipple as this part defines it; a header the joined file includes has another. */
+LATE_DATA u32 gYampiDesert_SandRipple__data2[] __asm__("gYampiDesert_SandRipple") = {
     0,
 };
 
@@ -3090,15 +3061,15 @@ LATE_DATA u32 gYampiDesert_SandCloudDrifts[] = {
     1, 38,
 };
 // clang-format on
-#undef gFieldEffect_LongScript
-#undef gFieldEffect_MediumScript
-#undef gFieldEffect_ShortScript
-#undef YampiDesert_SeeTravelersAbove
-#undef YampiDesert_ScoopLadderPit
-#undef YampiDesert_ScoopCenterPit
-#undef YampiDesert_PoundRoom5Stake
-#undef YampiDesert_PoundRoom12Stake
-#undef YampiDesert_PoundRoom4Stake
-#undef YampiDesert_PoundRoom3Stake
-#undef YampiDesert_PoundRoom1Stake
 #undef YampiDesert_ScoopTreasurePit
+#undef YampiDesert_PoundRoom1Stake
+#undef YampiDesert_PoundRoom3Stake
+#undef YampiDesert_PoundRoom4Stake
+#undef YampiDesert_PoundRoom12Stake
+#undef YampiDesert_PoundRoom5Stake
+#undef YampiDesert_ScoopCenterPit
+#undef YampiDesert_ScoopLadderPit
+#undef YampiDesert_SeeTravelersAbove
+#undef gFieldEffect_ShortScript
+#undef gFieldEffect_MediumScript
+#undef gFieldEffect_LongScript

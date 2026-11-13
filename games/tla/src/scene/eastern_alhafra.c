@@ -2141,21 +2141,6 @@ struct RockWork {
 /// thrown up and out along it.
 DEFINE_ROCKS_SPAWN(Rocks_Spawn)
 
-#undef gData_02005290
-#undef gData_02004fe4
-#undef gData_02004dbc
-#undef gData_02004d0c
-#undef gData_02005290
-#undef gData_02004fe4
-#undef gData_02004dbc
-#undef gData_02004d0c
-#undef gData_020056d4
-#undef gData_020054f0
-#undef EVENT_WORK
-#undef OBJECT
-#undef FIELD_AT
-#undef gData_020056d4
-#undef gData_020054f0
 // ---- scene/eastern_alhafra/s4004.c ----
 
 /// Scene code of overlay 0x668, in ROM order.
@@ -2353,12 +2338,6 @@ s32 Func_02004240(struct PushState *push) {
 DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gPushKinds,
                               gPushDirectionSteps, gPushFootprints)
 
-#undef gPushDirectionSteps
-#undef gPushFootprints
-#undef PIXELS
-#define PIXELS(value) ((value) << 16)
-#undef gPushDirectionSteps
-#undef gPushFootprints
 // ---- scene/eastern_alhafra/s44c4.c ----
 
 /// Scene code of overlay 0x668, in ROM order.
@@ -2512,7 +2491,20 @@ DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
                            Actor_SelectAnimation)
 
 #undef ABS
-// ---- scene/data/eastern_alhafra.c ----
+#undef EVENT_WORK
+#undef OBJECT
+#undef FIELD_AT
+#undef PIXELS
+#define PIXELS(value) ((value) << 16)
+#undef gData_02004d0c
+#undef gData_02004dbc
+#undef gData_02004fe4
+#undef gData_02005290
+#undef gData_020054f0
+#undef gData_020056d4
+#undef gPushFootprints
+#undef gPushDirectionSteps
+// ---- from scene/data/eastern_alhafra.c ----
 #include "types.h"
 #include "flags.h"
 #include "scene_tables.h"
@@ -2773,11 +2765,11 @@ s32 gData_02005670[] = {
 u32 gData_020056d4[] = {
     38,
 };
-#undef Func_02000940
-#undef Func_020006ec
-#undef Func_0200042c
-#undef Func_02000394
-#undef Func_02000200
-#undef Func_02000190
-#undef Func_020000c8
 #undef Func_0200006c
+#undef Func_020000c8
+#undef Func_02000190
+#undef Func_02000200
+#undef Func_02000394
+#undef Func_0200042c
+#undef Func_020006ec
+#undef Func_02000940

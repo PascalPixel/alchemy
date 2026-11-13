@@ -364,12 +364,10 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 #include "../field/field_effect/move.c"
 
-#undef Oam_AddSpriteAtDepthClamped
-#undef FieldEffect_Spawn
 #undef FLAG_DOOR_BUTTON_HELD
-#undef Oam_AddSpriteAtDepthClamped
 #undef FieldEffect_Spawn
-// ---- scene/jupiter_lighthouse_room_6/cracked_tiles.c ----
+#undef Oam_AddSpriteAtDepthClamped
+// ---- from scene/jupiter_lighthouse_room_6/cracked_tiles.c ----
 // @file
 // The hall below Jupiter Lighthouse's aerie: its copy of the effect spawner,
 // and the cracked tiles, found, cracked and fallen through.
@@ -513,14 +511,12 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s158c,
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef CrackedTiles_Find
-#undef Actor_StartScript
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-#undef CrackedTiles_Find
 #undef Actor_StartScript
-// ---- scene/jupiter_lighthouse_room_6/cracked_tile_steps.c ----
+#undef CrackedTiles_Find
+// ---- from scene/jupiter_lighthouse_room_6/cracked_tile_steps.c ----
 // @file
 // The hall below Jupiter Lighthouse's aerie: the cracked tiles' steps and
 // landings.
@@ -568,6 +564,6 @@ DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step__cracked_tile_steps, gCrackedTiles, 
 DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
                                   CrackedTile_DropIn)
 #define CrackedTiles_Step CrackedTiles_Step__cracked_tile_steps
-#undef CrackedTiles_Step
-#undef CrackedTile_Fall
 #undef FieldEffect_Spawn
+#undef CrackedTile_Fall
+#undef CrackedTiles_Step

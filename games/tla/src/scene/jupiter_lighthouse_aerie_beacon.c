@@ -76,7 +76,7 @@ void Func_020000ec(struct Actor *self) {
 #include "../field/object/step_angle.c"
 
 #undef BYTE_AT
-// ---- scene/jupiter_lighthouse_aerie_beacon/s0198.c ----
+// ---- from scene/jupiter_lighthouse_aerie_beacon/s0198.c ----
 // @file
 // Scene code of overlay 0x6a5, in ROM order.
 
@@ -2567,44 +2567,6 @@ void Whirlwind_Update(struct Object6a5 *object) {
   Data_02006a28 = 0;
 }
 
-#undef gData_020069fc
-#undef gPaletteCycleFrame
-#undef gPaletteCyclePausesInEvents
-#undef gData_02005a20
-#undef gData_020069dc
-#undef gData_02005a1c
-#undef gData_02005a14
-#undef gData_02005a0c
-#undef gData_020059fc
-#undef gData_02005ff8
-#undef gData_02005ff0
-#undef gData_02006338
-#undef Func_02000090
-#undef gData_020068b0
-#undef Func_020000ec
-#undef gData_020069fc
-#undef gPaletteCycleFrame
-#undef gPaletteCyclePausesInEvents
-#undef gData_02005a20
-#undef gData_020069dc
-#undef gData_02005a1c
-#undef gData_02005a14
-#undef gData_02005a0c
-#undef gData_020059fc
-#undef gData_02005ff8
-#undef gData_02005ff0
-#undef gData_02006338
-#undef Func_02000090
-#undef gData_020068b0
-#undef Func_020000ec
-#undef gData_020061e0
-#undef gData_02006088
-#undef BYTE_AT
-#undef FIELD_AT
-#undef ACTOR_SET_MODE_AND_WAIT
-#undef SET_MODE_AND_WAIT
-#undef gData_020061e0
-#undef gData_02006088
 // ---- scene/jupiter_lighthouse_aerie_beacon/s44cc.c ----
 
 // Scene code of overlay 0x6a5, in ROM order.
@@ -2728,11 +2690,30 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 #include "../field/field_effect/move.c"
 
-#undef Oam_AddSpriteAtDepthClamped
+#undef BYTE_AT
+#undef FIELD_AT
+#undef ACTOR_SET_MODE_AND_WAIT
+#undef SET_MODE_AND_WAIT
+#undef Func_020000ec
+#undef gData_020068b0
+#undef Func_02000090
+#undef gData_02006338
+#undef gData_02005ff0
+#undef gData_02005ff8
+#undef gData_02006088
+#undef gData_020061e0
+#undef gData_020059fc
+#undef gData_02005a0c
+#undef gData_02005a14
+#undef gData_02005a1c
+#undef gData_020069dc
+#undef gData_02005a20
+#undef gPaletteCyclePausesInEvents
+#undef gPaletteCycleFrame
+#undef gData_020069fc
 #undef FieldEffect_Spawn
 #undef Oam_AddSpriteAtDepthClamped
-#undef FieldEffect_Spawn
-// ---- scene/jupiter_lighthouse_aerie_beacon/s4bd4.c ----
+// ---- from scene/jupiter_lighthouse_aerie_beacon/s4bd4.c ----
 // @file
 // Scene code of overlay 0x6a5, in ROM order.
 
@@ -2854,12 +2835,11 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef Actor_StartScript
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 #undef Actor_StartScript
-// ---- scene/jupiter_lighthouse_aerie_beacon/s539c.c ----
+// ---- from scene/jupiter_lighthouse_aerie_beacon/s539c.c ----
 // @file
 // Scene code of overlay 0x6a5, in ROM order.
 
@@ -2979,11 +2959,9 @@ u32 gData_02005a20[] = {
     64,
 };
 
-#undef CrackedTile_FallEvent
 #undef FieldEffect_Spawn
 #undef CrackedTile_FallEvent
-#undef FieldEffect_Spawn
-// ---- scene/data/jupiter_lighthouse_aerie_beacon.c ----
+// ---- from scene/data/jupiter_lighthouse_aerie_beacon.c ----
 
 #include "macros.h"
 #include "shared/tables.h"
@@ -3213,5 +3191,5 @@ LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_MediumScript,
     gData_02005f10,
 };
-#undef Func_02000050
 #undef Func_02000038
+#undef Func_02000050

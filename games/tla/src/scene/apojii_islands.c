@@ -12,7 +12,7 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 
 #include "../field/field_effect/move.c"
 
-// ---- scene/apojii_islands/apojii_islands.c ----
+// ---- from scene/apojii_islands/apojii_islands.c ----
 // @file
 // Scene code of overlay 0x679, in ROM order.
 
@@ -24,12 +24,6 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect/spawn.c"
 
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
-#undef EFFECT_SET_MODE
-#undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
-#undef EFFECT_SPRITE_PRIORITY
 // ---- scene/apojii_islands/apojii_islands.c ----
 
 // Scene code of overlay 0x679, in ROM order.
@@ -1139,3 +1133,9 @@ struct Trigger gData_0200280c[] = {
 #undef COPY_PICTURE
 #undef UNK_02002044_VALUE
 #undef DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
+#undef EFFECT_SPRITE_PRIORITY

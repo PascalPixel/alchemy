@@ -428,23 +428,17 @@ DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
 
 #include "../field/field_effect/move.c"
 
-#undef Oam_AddSpriteAtDepthClamped
-#undef FieldEffect_Spawn
-#undef gWhirlwindEndScript
-#undef gPaletteCycleFrame
-#undef gPaletteCyclePausesInEvents
-#undef CrackedTiles_Find
 #undef ABS
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 #undef PIXELS
 #define PIXELS(value) ((value) << 16)
-#undef Oam_AddSpriteAtDepthClamped
-#undef FieldEffect_Spawn
-#undef gWhirlwindEndScript
-#undef gPaletteCycleFrame
-#undef gPaletteCyclePausesInEvents
 #undef CrackedTiles_Find
-// ---- scene/jupiter_lighthouse_room_8/cracked_tiles.c ----
+#undef gPaletteCyclePausesInEvents
+#undef gPaletteCycleFrame
+#undef gWhirlwindEndScript
+#undef FieldEffect_Spawn
+#undef Oam_AddSpriteAtDepthClamped
+// ---- from scene/jupiter_lighthouse_room_8/cracked_tiles.c ----
 // @file
 // The first room of Jupiter Lighthouse's left tower: its copy of the effect
 // spawner, and the cracked tiles, found, cracked and fallen through.
@@ -592,12 +586,11 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1c30,
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef Actor_StartScript
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 #undef Actor_StartScript
-// ---- scene/jupiter_lighthouse_room_8/cracked_tile_steps.c ----
+// ---- from scene/jupiter_lighthouse_room_8/cracked_tile_steps.c ----
 // @file
 // The first room of Jupiter Lighthouse's left tower: the cracked tiles' steps
 // and the fall to the floor below.
@@ -642,11 +635,9 @@ DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
 DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
                                   CrackedTile_DropIn)
 
-#undef CrackedTile_Fall
 #undef FieldEffect_Spawn
 #undef CrackedTile_Fall
-#undef FieldEffect_Spawn
-// ---- scene/data/jupiter_lighthouse_room_8.c ----
+// ---- from scene/data/jupiter_lighthouse_room_8.c ----
 
 #include "macros.h"
 // @file

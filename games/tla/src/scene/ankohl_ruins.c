@@ -22,7 +22,7 @@ struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 type) {
 
 #include "../field/field_effect/move.c"
 
-// ---- scene/ankohl_ruins.c ----
+// ---- from scene/ankohl_ruins.c ----
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -31,12 +31,6 @@ struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 type) {
 #define EFFECT_SPRITE_PRIORITY
 #include "../../games/tla/src/field/field_effect/spawn.c"
 
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
-#undef EFFECT_SET_MODE
-#undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
-#undef EFFECT_SPRITE_PRIORITY
 // ---- scene/ankohl_ruins.c ----
 
 // The scene code of overlay 0x686 that its scene tables belong to, in ROM
@@ -1270,7 +1264,6 @@ void Func_020023d0(struct Actor *object) {
   }
 }
 
-#undef DEFINE_ANKOHL_RUINS_OPEN_ONCE
 // ---- scene/ankohl_ruins/s2438.c ----
 
 #include "flags.h"
@@ -2349,3 +2342,10 @@ struct Trigger gData_02003f4c[] = {
 struct Trigger gData_02004018[] = {
     {TRIGGER_TABLE_END},
 };
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
+#undef EFFECT_SPRITE_PRIORITY
+#undef DEFINE_ANKOHL_RUINS_OPEN_ONCE

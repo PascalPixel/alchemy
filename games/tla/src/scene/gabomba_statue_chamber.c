@@ -1047,24 +1047,17 @@ void Func_02001c44(void) {
 }
 #undef EVENT_WORK
 
-#undef gData_02001f4c
-#undef gData_02001f18
-#undef gData_02001fe4
-#undef gData_02001f9c
-#undef gData_02001f78
-#undef gData_02002058
-#undef gData_0200200c
 #undef EVENT_WORK
 #undef OBJECT
 #undef DEFINE_GABOMBA_STATUE_CHAMBER_SHOW_ITEM
-#undef gData_02001f4c
-#undef gData_02001f18
-#undef gData_02001fe4
-#undef gData_02001f9c
-#undef gData_02001f78
 #undef gData_02002058
+#undef gData_02001f78
+#undef gData_02001f9c
+#undef gData_02001fe4
 #undef gData_0200200c
-// ---- scene/data/gabomba_statue_chamber.c ----
+#undef gData_02001f18
+#undef gData_02001f4c
+// ---- from scene/data/gabomba_statue_chamber.c ----
 #include "shared/tables.h"
 #include "types.h"
 #include "scene_tables.h"
@@ -1129,7 +1122,8 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gData_0200a08c[] = {
+/* VIEW(data): variable gData_0200a08c as this part defines it; a header the joined file includes has another. */
+u32 gData_0200a08c__data[] __asm__("gData_0200a08c") = {
     0x1001d0, 0x1e00090, 0xa00020, 0x2ffff, 0xffff, 0,
     0, 0,
 };
@@ -1151,7 +1145,8 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gData_020020f8[] = {
+/* VIEW(data): variable gData_020020f8 as this part defines it; a header the joined file includes has another. */
+struct ActorPlacement gData_020020f8__data[] __asm__("gData_020020f8") = {
     {375, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(152), FACING_SOUTH, 2, 0},
     {361, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(256), FACING_EAST, 2, 0},
     {361, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(256), FACING_EAST, 2, 1},
@@ -1164,7 +1159,8 @@ struct ActorPlacement gData_020020f8[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_020021e8[] = {
+/* VIEW(data): variable gData_020021e8 as this part defines it; a header the joined file includes has another. */
+struct ActorPlacement gData_020021e8__data[] __asm__("gData_020021e8") = {
     {375, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(88), FACING_SOUTH, 2, 0},
     {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
     {26, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(136), FACING_NORTH + FACING_STEP, 2, 0},
@@ -1193,19 +1189,22 @@ struct ActorPlacement gData_020021e8[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002458[] = {
+/* VIEW(data): variable gData_02002458 as this part defines it; a header the joined file includes has another. */
+struct ActorPlacement gData_02002458__data[] __asm__("gData_02002458") = {
     {SCENE_TABLE_END},
 };
 // clang-format on
 
-struct Trigger gData_02002470[] = {
+/* VIEW(data): variable gData_02002470 as this part defines it; a header the joined file includes has another. */
+struct Trigger gData_02002470__data[] __asm__("gData_02002470") = {
     {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_02000b60)},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020024a0[] = {
+/* VIEW(data): variable gData_020024a0 as this part defines it; a header the joined file includes has another. */
+struct Trigger gData_020024a0__data[] __asm__("gData_020024a0") = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 3, 0x206, EVENT(Func_02000d3c)},
@@ -1213,7 +1212,8 @@ struct Trigger gData_020024a0[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_020024dc[] = {
+/* VIEW(data): variable gData_020024dc as this part defines it; a header the joined file includes has another. */
+struct Trigger gData_020024dc__data[] __asm__("gData_020024dc") = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x202, 2, CONDITION_ALWAYS, EVENT(Func_02000b70)},
     {TRIGGER_STEP, 10, 0x8fe, EVENT(Func_02000e60)},
@@ -1224,6 +1224,7 @@ struct Trigger gData_020024dc[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02002530[] = {
+/* VIEW(data): variable gData_02002530 as this part defines it; a header the joined file includes has another. */
+struct Trigger gData_02002530__data[] __asm__("gData_02002530") = {
     {TRIGGER_TABLE_END},
 };

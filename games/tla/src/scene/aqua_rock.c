@@ -24,7 +24,7 @@ struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 kind) {
 
 #include "../field/field_effect/move.c"
 
-// ---- scene/aqua_rock/aqua_rock.c ----
+// ---- from scene/aqua_rock/aqua_rock.c ----
 // @file
 // Scene code of overlay 0x67b, in ROM order.
 
@@ -38,12 +38,6 @@ struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 kind) {
 
 #undef EFFECT_SPAWN
 
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
-#undef EFFECT_SET_MODE
-#undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
-#undef EFFECT_SPRITE_PRIORITY
 // ---- scene/aqua_rock/aqua_rock.c ----
 
 // Scene code of overlay 0x67b, in ROM order.
@@ -1560,18 +1554,20 @@ u32 gWaterDropScript[] = {
 };
 // clang-format on
 
-#undef gData_02003210
-#undef gData_0200320c
-#undef gData_02003208
-#undef gData_02003204
 #undef UNK02003450_SET
 #undef DEFINE_AQUA_ROCK_SET_MOVED
 #undef DEFINE_AQUA_ROCK_DROP_AT_COLUMN
-#undef gData_02003210
-#undef gData_0200320c
-#undef gData_02003208
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
+#undef EFFECT_SPRITE_PRIORITY
 #undef gData_02003204
-// ---- scene/data/aqua_rock.c ----
+#undef gData_02003208
+#undef gData_0200320c
+#undef gData_02003210
+// ---- from scene/data/aqua_rock.c ----
 
 #include "macros.h"
 #include "shared/tables.h"
@@ -1640,13 +1636,15 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA s16 gData_02002e30[] = {
+/* VIEW(data): variable gData_02002e30 as this part defines it; a header the joined file includes has another. */
+LATE_DATA s16 gData_02002e30__data[] __asm__("gData_02002e30") = {
     176, 424, 544, 192, 440, 560, -1, 2,
     272, 424, 544, 288, 440, 560, -1, 3,
     -1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-LATE_DATA s16 gData_02002e60[] = {
+/* VIEW(data): variable gData_02002e60 as this part defines it; a header the joined file includes has another. */
+LATE_DATA s16 gData_02002e60__data[] __asm__("gData_02002e60") = {
     48, -56, 960, 64, -40, 976, -1, 2,
     144, -56, 960, 160, -40, 976, -1, 3,
     236, -108, 956, 260, -84, 980, -1, 7,
@@ -1672,11 +1670,13 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-LATE_DATA struct ActorPlacement gData_02002eec[] = {
+/* VIEW(data): variable gData_02002eec as this part defines it; a header the joined file includes has another. */
+LATE_DATA struct ActorPlacement gData_02002eec__data[] __asm__("gData_02002eec") = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_02002f04[] = {
+/* VIEW(data): variable gData_02002f04 as this part defines it; a header the joined file includes has another. */
+LATE_DATA struct ActorPlacement gData_02002f04__data[] __asm__("gData_02002f04") = {
     {380, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(551), FACING_SOUTH, 2, 0},
     {380, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(551), FACING_SOUTH, 2, 0},
     {380, CONDITION_ALWAYS, 1, PIXELS(648), 0, PIXELS(615), FACING_SOUTH, 2, 0},
@@ -1702,7 +1702,8 @@ LATE_DATA struct ActorPlacement gData_02002f04[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_0200312c[] = {
+/* VIEW(data): variable gData_0200312c as this part defines it; a header the joined file includes has another. */
+LATE_DATA struct ActorPlacement gData_0200312c__data[] __asm__("gData_0200312c") = {
     {383, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(584), FACING_SOUTH, 2, 0},
     {290, CONDITION_ALWAYS, 1, PIXELS(712), 0, PIXELS(520), FACING_SOUTH, 2, 0},
     {290, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(520), FACING_SOUTH, 2, 0},
@@ -1730,11 +1731,13 @@ LATE_DATA u32 gData_02003210[] = {
     0,
 };
 
-LATE_DATA struct Trigger gData_02003214[] = {
+/* VIEW(data): variable gData_02003214 as this part defines it; a header the joined file includes has another. */
+LATE_DATA struct Trigger gData_02003214__data[] __asm__("gData_02003214") = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_02003220[] = {
+/* VIEW(data): variable gData_02003220 as this part defines it; a header the joined file includes has another. */
+LATE_DATA struct Trigger gData_02003220__data[] __asm__("gData_02003220") = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0xc402, 4, CONDITION_ALWAYS, EVENT(Func_020020bc)},
     {TRIGGER_STEP, 30, 0x320, EVENT(Func_02000f8c)},
@@ -1752,7 +1755,8 @@ LATE_DATA struct Trigger gData_02003220[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gData_020032d4[] = {
+/* VIEW(data): variable gData_020032d4 as this part defines it; a header the joined file includes has another. */
+LATE_DATA struct Trigger gData_020032d4__data[] __asm__("gData_020032d4") = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_02001f90)},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1769,18 +1773,18 @@ LATE_DATA struct Trigger gData_020032d4[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0xa69, EVENT(Func_02001224)},
     {TRIGGER_TABLE_END},
 };
-#undef gData_02002bb4
-#undef gData_02002b2c
-#undef gData_02002af0
-#undef gData_02002ab4
-#undef gData_02002a78
-#undef Func_020020bc
-#undef Func_02001f90
-#undef Func_02001224
-#undef Func_020011e0
-#undef Func_0200119c
-#undef Func_02001164
-#undef Func_0200112c
-#undef Func_020010f4
-#undef Func_02000cd8
 #undef Func_02000b68
+#undef Func_02000cd8
+#undef Func_020010f4
+#undef Func_0200112c
+#undef Func_02001164
+#undef Func_0200119c
+#undef Func_020011e0
+#undef Func_02001224
+#undef Func_02001f90
+#undef Func_020020bc
+#undef gData_02002a78
+#undef gData_02002ab4
+#undef gData_02002af0
+#undef gData_02002b2c
+#undef gData_02002bb4

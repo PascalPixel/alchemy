@@ -14,7 +14,7 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 
 #include "../field/field_effect/move.c"
 
-// ---- scene/airs_rock/airs_rock.c ----
+// ---- from scene/airs_rock/airs_rock.c ----
 // @file
 // Scene code of overlay 0x663, in ROM order.
 
@@ -77,12 +77,6 @@ s32 Func_02000384(u32 layer, s32 x, s32 y, s32 value) {
 
 #undef EFFECT_SET_SCRIPT
 
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
-#undef EFFECT_SET_MODE
-#undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
-#undef EFFECT_SPRITE_PRIORITY
 // ---- scene/airs_rock/airs_rock.c ----
 
 // Scene code of overlay 0x663, in ROM order.
@@ -1880,11 +1874,6 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-#undef gData_02004698
-#undef gData_02003dfc
-#undef gData_02003dcc
-#undef gData_02003de0
-#undef gData_02004674
 #undef FIELD_AT
 #undef WORD_AT
 #undef WAVE_SCROLL
@@ -1893,12 +1882,18 @@ s32 Scene_PrepareMap(void) {
 #undef BEAM
 #undef SWAY
 #undef HANG
-#undef gData_02004698
-#undef gData_02003dfc
-#undef gData_02003dcc
-#undef gData_02003de0
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
+#undef EFFECT_SPRITE_PRIORITY
 #undef gData_02004674
-// ---- scene/data/airs_rock.c ----
+#undef gData_02003de0
+#undef gData_02003dcc
+#undef gData_02003dfc
+#undef gData_02004698
+// ---- from scene/data/airs_rock.c ----
 #include "types.h"
 #include "scene_tables.h"
 #include "module/scene/airs_rock.h"

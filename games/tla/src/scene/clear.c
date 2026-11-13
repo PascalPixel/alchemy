@@ -1921,12 +1921,6 @@ s16 gData_020024fe = 0;
 
 s16 gData_02002500 = 0;
 
-#undef gData_0200270c
-#undef gData_020026f0
-#undef gData_02002700
-#undef gData_020026c0
-#undef gData_020026b0
-#undef gData_020026a0
 #undef FIELD_AT
 #undef PARTY_WORD
 #undef MAP_CELL_BACKUP
@@ -1951,13 +1945,13 @@ s16 gData_02002500 = 0;
 #undef CURSOR_ON_SIDE_COLUMN
 #undef DRAW_TITLE
 #undef WORD
-#undef gData_0200270c
-#undef gData_020026f0
-#undef gData_02002700
-#undef gData_020026c0
-#undef gData_020026b0
 #undef gData_020026a0
-// ---- scene/data/clear.c ----
+#undef gData_020026b0
+#undef gData_020026c0
+#undef gData_02002700
+#undef gData_020026f0
+#undef gData_0200270c
+// ---- from scene/data/clear.c ----
 
 #include "macros.h"
 #include "types.h"

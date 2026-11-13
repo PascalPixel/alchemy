@@ -1545,19 +1545,6 @@ void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef gData_0200e88c
-#undef Func_020043a4
-#undef Statue_Sink
-#undef gData_02006e78
-#undef gData_02006db8
-#undef gData_02006d1c
-#undef gData_02006c80
-#undef gData_02006bd8
-#undef gData_02006b6c
-#undef gData_02006b54
-#undef gData_02006e9c
-#undef gData_02006b38
-#undef gData_02005d7c
 #undef DIFF_WITHIN
 #undef DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD
 #undef DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR
@@ -1565,56 +1552,39 @@ void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
 #undef DEFINE_GABOMBA_STATUE_RAISE_ACTORS
 #undef MARK
 #undef REG_BLDALPHA
-#undef gData_0200e88c
-#undef Func_020043a4
-#undef Statue_Sink
-#undef gData_02006e78
-#undef gData_02006db8
-#undef gData_02006d1c
-#undef gData_02006c80
-#undef gData_02006bd8
-#undef gData_02006b6c
-#undef gData_02006b54
-#undef gData_02006e9c
-#undef gData_02006b38
-#undef gData_02005d7c
-#undef gData_02006a90
-#undef gData_02006898
-#undef gData_020067e4
-#undef gData_020064cc
-#undef gData_02006244
-#undef gData_02006004
-#undef gData_02005fd4
-#undef gData_02006b20
-#undef Func_02004380
-#undef gData_02005940
-#undef gData_02005af0
-#undef gData_02005eec
-#undef gData_02005ecc
-#undef gData_02005e8c
-#undef gData_02005e4c
-#undef gData_02005e2c
-#undef gData_02005dfc
 #undef REG_BLDALPHA
 #undef OBJECT_BYTE
-#undef gData_02006a90
-#undef gData_02006898
-#undef gData_020067e4
-#undef gData_020064cc
-#undef gData_02006244
-#undef gData_02006004
-#undef gData_02005fd4
-#undef gData_02006b20
-#undef Func_02004380
-#undef gData_02005940
-#undef gData_02005af0
-#undef gData_02005eec
-#undef gData_02005ecc
-#undef gData_02005e8c
-#undef gData_02005e4c
-#undef gData_02005e2c
 #undef gData_02005dfc
-// ---- scene/gabomba_statue/s2394.c ----
+#undef gData_02005e2c
+#undef gData_02005e4c
+#undef gData_02005e8c
+#undef gData_02005ecc
+#undef gData_02005eec
+#undef gData_02005af0
+#undef gData_02005940
+#undef Func_02004380
+#undef gData_02006b20
+#undef gData_02005fd4
+#undef gData_02006004
+#undef gData_02006244
+#undef gData_020064cc
+#undef gData_020067e4
+#undef gData_02006898
+#undef gData_02006a90
+#undef gData_02006b38
+#undef gData_02006e9c
+#undef gData_02006b54
+#undef gData_02006b6c
+#undef gData_02006bd8
+#undef gData_02006c80
+#undef gData_02006d1c
+#undef gData_02006db8
+#undef gData_02006e78
+#undef gData_02005d7c
+#undef Statue_Sink
+#undef Func_020043a4
+#undef gData_0200e88c
+// ---- from scene/gabomba_statue/s2394.c ----
 // @file
 // Scene code of overlay 0x671, in ROM order.
 
@@ -3742,26 +3712,17 @@ u32 gData_02005944[] = {
     38,
 };
 
-#undef gData_02006ea8
-#undef gData_02005ad4
-#undef gData_02005ac8
-#undef gData_02005ac0
-#undef gData_02005d7c
-#undef FieldEffect_Spawn
 #undef FIELD_AT
-#undef gData_02006ea8
-#undef gData_02005ad4
-#undef gData_02005ac8
-#undef gData_02005ac0
-#undef gData_02005d7c
 #undef FieldEffect_Spawn
-#undef Actor_StartScript
-#undef gData_02006f38
+#undef gData_02005d7c
+#undef gData_02005ac0
+#undef gData_02005ac8
+#undef gData_02005ad4
+#undef gData_02006ea8
 #undef gData_02006ec0
-#undef Actor_StartScript
 #undef gData_02006f38
-#undef gData_02006ec0
-// ---- scene/data/gabomba_statue.c ----
+#undef Actor_StartScript
+// ---- from scene/data/gabomba_statue.c ----
 
 #include "macros.h"
 #include "shared/tables.h"
@@ -4348,19 +4309,19 @@ LATE_DATA s32 gData_02006f38[] = {
     SC_END,
 };
 // clang-format on
-#undef gFieldEffect_LongScript
-#undef gFieldEffect_MediumScript
-#undef gFieldEffect_ShortScript
-#undef Func_020043ec
-#undef Func_02001a6c
-#undef Func_02001990
-#undef Func_020018a8
-#undef Func_02001864
-#undef Func_02001820
-#undef Func_020017dc
-#undef Func_02001728
-#undef Func_02000cf0
-#undef Func_0200047c
-#undef Func_02000408
-#undef Func_02000364
 #undef Func_0200028c
+#undef Func_02000364
+#undef Func_02000408
+#undef Func_0200047c
+#undef Func_02000cf0
+#undef Func_02001728
+#undef Func_020017dc
+#undef Func_02001820
+#undef Func_02001864
+#undef Func_020018a8
+#undef Func_02001990
+#undef Func_02001a6c
+#undef Func_020043ec
+#undef gFieldEffect_ShortScript
+#undef gFieldEffect_MediumScript
+#undef gFieldEffect_LongScript

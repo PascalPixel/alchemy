@@ -576,14 +576,12 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 #include "../field/field_effect/move.c"
 
-#undef Oam_AddSpriteAtDepthClamped
-#undef FieldEffect_Spawn
 #undef FLAG_RED_DOOR_OPENED
 #undef FLAG_BLUE_DOOR_OPENED
 #undef FLAG_BRIDGE_BLOCK_RAISED
-#undef Oam_AddSpriteAtDepthClamped
 #undef FieldEffect_Spawn
-// ---- scene/jupiter_lighthouse_room_4/cracked_tiles.c ----
+#undef Oam_AddSpriteAtDepthClamped
+// ---- from scene/jupiter_lighthouse_room_4/cracked_tiles.c ----
 // @file
 // The room of grey blocks and locked doors in Jupiter Lighthouse: its copy of
 // the effect spawner, and the cracked tiles, found, cracked and fallen
@@ -750,12 +748,11 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1888,
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef Actor_StartScript
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 #undef Actor_StartScript
-// ---- scene/jupiter_lighthouse_room_4/cracked_tile_steps.c ----
+// ---- from scene/jupiter_lighthouse_room_4/cracked_tile_steps.c ----
 // @file
 // The room of grey blocks and locked doors in Jupiter Lighthouse: the cracked
 // tiles' steps and the fall to the floor below.
@@ -846,5 +843,5 @@ void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 value) {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = value;
   }
 }
-#undef CrackedTile_Fall
 #undef FieldEffect_Spawn
+#undef CrackedTile_Fall

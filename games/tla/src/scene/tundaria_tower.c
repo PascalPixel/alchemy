@@ -698,31 +698,16 @@ void Func_020010d4(struct Actor *object) {
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef gData_02003370
-#undef gData_020037c8
-#undef gData_02003660
-#undef gData_02003648
-#undef gData_02003618
-#undef gData_020033f0
 #undef gData_020033d0
-#undef gData_02003708
-#undef gData_02003690
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
-#undef EFFECT_SET_MODE
-#undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
-#undef FIELD_AT
-#undef gData_02003370
-#undef gData_020037c8
-#undef gData_02003660
-#undef gData_02003648
-#undef gData_02003618
 #undef gData_020033f0
-#undef gData_020033d0
-#undef gData_02003708
+#undef gData_02003618
+#undef gData_02003648
+#undef gData_02003660
 #undef gData_02003690
-// ---- scene/tundaria_tower/events_f.c ----
+#undef gData_02003708
+#undef gData_020037c8
+#undef gData_02003370
+// ---- from scene/tundaria_tower/events_f.c ----
 // ---- games/tla/src/scene/tundaria_tower/s11e0.c ----
 #include "types.h"
 #include "system.h"
@@ -2012,7 +1997,6 @@ void Func_02002764(const u16 *table) {
 
 #include "../field/field_effect/advance_motion_priority.c"
 
-#undef BYTE_AT
 // ---- scene/tundaria_tower/s29d0.c ----
 
 #include "shared/effects.h"
@@ -2585,4 +2569,11 @@ struct Trigger gData_02003c90[] = {
      EVENT(Func_02000fb8)},
     {TRIGGER_TABLE_END},
 };
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
+#undef FIELD_AT
+#undef BYTE_AT
 #undef Func_02000c64

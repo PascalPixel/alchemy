@@ -888,16 +888,6 @@ u32 gData_02002eac[] = {
 };
 // clang-format on
 
-#undef gData_02003db8
-#undef gData_02003d9c
-#undef gData_02003d8e
-#undef gData_02003d88
-#undef gData_02003d84
-#undef gData_02003d70
-#undef gData_02003d5c
-#undef gData_02003d48
-#undef gData_02003d34
-#undef gData_02003d20
 #undef Func_02003600
 #undef Func_02003654
 #undef Func_02004e30
@@ -917,17 +907,17 @@ u32 gData_02002eac[] = {
 #undef gData_02004f90
 #undef gData_02004f9c
 #undef PUSH_PICTURE
-#undef gData_02003db8
-#undef gData_02003d9c
-#undef gData_02003d8e
-#undef gData_02003d88
-#undef gData_02003d84
-#undef gData_02003d70
-#undef gData_02003d5c
-#undef gData_02003d48
-#undef gData_02003d34
 #undef gData_02003d20
-// ---- scene/data/staff_credit.c ----
+#undef gData_02003d34
+#undef gData_02003d48
+#undef gData_02003d5c
+#undef gData_02003d70
+#undef gData_02003d84
+#undef gData_02003d88
+#undef gData_02003d8e
+#undef gData_02003d9c
+#undef gData_02003db8
+// ---- from scene/data/staff_credit.c ----
 
 #include "macros.h"
 #include "shared/tables.h"

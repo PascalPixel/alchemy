@@ -480,11 +480,6 @@ DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Whirlwind_CarryLeaderLower)
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-#undef gPaletteCycleFrame
-#undef gPaletteCyclePausesInEvents
-#undef DEFINE_JUPITER_LIGHTHOUSE_ROOM_2_SET_STATE
-#undef gPaletteCycleFrame
-#undef gPaletteCyclePausesInEvents
 // ---- scene/jupiter_lighthouse_room_2/s0d94.c ----
 
 /// Scene code of overlay 0x69b, in ROM order.
@@ -586,13 +581,13 @@ void Func_020015d0(s32 a0) { gLightSpritePriority = a0; }
 
 #include "../field/field_effect/move.c"
 
-#undef Oam_AddSpriteAtDepthClamped
-#undef FieldEffect_Spawn
+#undef DEFINE_JUPITER_LIGHTHOUSE_ROOM_2_SET_STATE
+#undef gPaletteCyclePausesInEvents
+#undef gPaletteCycleFrame
 #undef gWhirlwindEndScript
-#undef Oam_AddSpriteAtDepthClamped
 #undef FieldEffect_Spawn
-#undef gWhirlwindEndScript
-// ---- scene/jupiter_lighthouse_room_2/s165c.c ----
+#undef Oam_AddSpriteAtDepthClamped
+// ---- from scene/jupiter_lighthouse_room_2/s165c.c ----
 // @file
 // Scene code of overlay 0x69b, in ROM order.
 
@@ -707,11 +702,6 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 // one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
-#undef Actor_StartScript
-#undef CELL_TABLE
-#undef CELL_SPRITE_DRAW
-#undef CELL_PUSH_SLOT_ENTRY
-#undef Actor_StartScript
 // ---- scene/jupiter_lighthouse_room_2/s1c8c.c ----
 
 // Scene code of overlay 0x69b, in ROM order.
@@ -745,7 +735,11 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1c8c,
 
 #include "../field/field_effect/advance_motion.c"
 
-// ---- scene/jupiter_lighthouse_room_2/s1e24.c ----
+#undef CELL_TABLE
+#undef CELL_SPRITE_DRAW
+#undef CELL_PUSH_SLOT_ENTRY
+#undef Actor_StartScript
+// ---- from scene/jupiter_lighthouse_room_2/s1e24.c ----
 // @file
 // Scene code of overlay 0x69b, in ROM order.
 
@@ -891,10 +885,10 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_MediumScript,
     gFieldEffect_LongScript,
 };
-#undef Func_02000680
-#undef Func_02000674
-#undef Func_02000500
-#undef Func_020004d0
-#undef Func_02000230
-#undef Func_020000d0
 #undef FieldEffect_Spawn
+#undef Func_020000d0
+#undef Func_02000230
+#undef Func_020004d0
+#undef Func_02000500
+#undef Func_02000674
+#undef Func_02000680

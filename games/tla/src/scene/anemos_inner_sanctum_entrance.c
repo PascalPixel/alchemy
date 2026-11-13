@@ -12,7 +12,7 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
 
 #include "../field/field_effect/move.c"
 
-// ---- scene/anemos_inner_sanctum_entrance.c ----
+// ---- from scene/anemos_inner_sanctum_entrance.c ----
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -21,12 +21,6 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect/spawn.c"
 
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
-#undef EFFECT_SET_MODE
-#undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
-#undef EFFECT_SPRITE_PRIORITY
 // ---- scene/anemos_inner_sanctum_entrance.c ----
 
 // ---- games/tla/src/scene/anemos_inner_sanctum_entrance/hide.c ----
@@ -512,7 +506,13 @@ s8 gData_02000eec[] = {
     12, 14, 9, 11, 13, 10,
 };
 
-// ---- scene/anemos_inner_sanctum_entrance/data2.c ----
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
+#undef EFFECT_SPRITE_PRIORITY
+// ---- from scene/anemos_inner_sanctum_entrance/data2.c ----
 
 #include "macros.h"
 #include "shared/tables.h"
@@ -625,9 +625,9 @@ LATE_DATA struct Trigger gData_02001c28[] = {
      IF_FLAG_SET(0x200), EVENT(Func_02000588)},
     {TRIGGER_TABLE_END},
 };
-#undef gData_02000de4
-#undef gData_02000da8
-#undef gData_02000d6c
-#undef Func_02000534
-#undef Func_020004e4
 #undef Func_0200033c
+#undef Func_020004e4
+#undef Func_02000534
+#undef gData_02000d6c
+#undef gData_02000da8
+#undef gData_02000de4

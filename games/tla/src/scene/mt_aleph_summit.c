@@ -255,7 +255,7 @@ struct Trigger gSceneEvents[] = {
 
 #include "../field/field_effect/advance_motion.c"
 
-// ---- scene/mt_aleph_summit/s0478.c ----
+// ---- from scene/mt_aleph_summit/s0478.c ----
 // @file
 // The summit's events: the Golden Sun's formation and what follows it.
 

@@ -324,8 +324,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
 #include "../field/field_effect/move.c"
 
 #undef Oam_AddSpriteAtDepthClamped
-#undef Oam_AddSpriteAtDepthClamped
-// ---- scene/jupiter_lighthouse_entrance/cracked_tiles.c ----
+// ---- from scene/jupiter_lighthouse_entrance/cracked_tiles.c ----
 // @file
 // The grounds before Jupiter Lighthouse's gates: its copy of the effect
 // spawner, and the cracked tiles, found, cracked and fallen through.
@@ -504,12 +503,11 @@ void CrackedTile_Fall(struct CellTarget__s14dc *table,
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef Actor_StartScript
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 #undef Actor_StartScript
-// ---- scene/jupiter_lighthouse_entrance/cracked_tile_steps.c ----
+// ---- from scene/jupiter_lighthouse_entrance/cracked_tile_steps.c ----
 // @file
 // The grounds before Jupiter Lighthouse's gates: the cracked tiles' steps and
 // landings.

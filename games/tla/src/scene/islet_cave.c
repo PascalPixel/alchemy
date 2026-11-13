@@ -683,32 +683,21 @@ void Func_0200115c(void) {
   }
 }
 
-#undef gData_02001454
-#undef gData_02001388
-#undef gData_020019ec
-#undef gData_020019b0
-#undef gData_02001914
-#undef gData_02001788
-#undef gData_02001740
-#undef gData_02001668
-#undef gData_02001548
-#undef gData_0200135c
-#undef gData_0200134c
 #undef DEFINE_ISLET_CAVE_ARRIVE_AT
 #undef DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS
 #undef FIELD_AT
-#undef gData_02001454
-#undef gData_02001388
-#undef gData_020019ec
-#undef gData_020019b0
-#undef gData_02001914
-#undef gData_02001788
-#undef gData_02001740
-#undef gData_02001668
 #undef gData_02001548
-#undef gData_0200135c
+#undef gData_02001668
+#undef gData_02001740
+#undef gData_02001788
+#undef gData_02001914
+#undef gData_020019b0
+#undef gData_020019ec
 #undef gData_0200134c
-// ---- scene/data/islet_cave.c ----
+#undef gData_0200135c
+#undef gData_02001388
+#undef gData_02001454
+// ---- from scene/data/islet_cave.c ----
 #include "shared/tables.h"
 #include "types.h"
 #include "scene_tables.h"
@@ -898,5 +887,5 @@ s32 gData_020019ec[] = {
     (s32)gData_020019d4, 0x40060, (s32)gData_020019d4, 0x4006b,
     (s32)gData_020019d4, 0x40076,
 };
-#undef Func_020003d4
 #undef Func_020003c8
+#undef Func_020003d4

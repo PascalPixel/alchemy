@@ -12,7 +12,7 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 
 #include "../field/field_effect/move.c"
 
-// ---- scene/aqua_rock_inside/aqua_rock_inside.c ----
+// ---- from scene/aqua_rock_inside/aqua_rock_inside.c ----
 // @file
 // Scene code of overlay 0x67c, in ROM order.
 
@@ -24,12 +24,6 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 #define EFFECT_SPRITE_PRIORITY
 #include "../../../../games/tla/src/field/field_effect/spawn.c"
 
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
-#undef EFFECT_SET_MODE
-#undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
-#undef EFFECT_SPRITE_PRIORITY
 // ---- scene/aqua_rock_inside/aqua_rock_inside.c ----
 
 // Scene code of overlay 0x67c, in ROM order.
@@ -2240,60 +2234,6 @@ s32 Func_020036b8(s32 first, s32 target) {
 
 #undef gData_02004004
 #undef gData_02004014
-#undef gData_0200534c
-#undef gData_020052f8
-#undef gData_02005268
-#undef gData_020051fc
-#undef gData_020051b4
-#undef gData_0200507c
-#undef gData_02004fb0
-#undef gData_02004ed8
-#undef gData_02004e48
-#undef gData_02004d88
-#undef gData_02004c7c
-#undef gData_02004c70
-#undef FIELD_AT
-#undef DEFINE_AQUA_ROCK_INSIDE_READ_TABLET
-#undef BG1_SET_PRIORITY_1
-#undef LAYER_S32
-#undef gData_02004004
-#undef gData_02004014
-#undef gData_0200534c
-#undef gData_020052f8
-#undef gData_02005268
-#undef gData_020051fc
-#undef gData_020051b4
-#undef gData_0200507c
-#undef gData_02004fb0
-#undef gData_02004ed8
-#undef gData_02004e48
-#undef gData_02004d88
-#undef gData_02004c7c
-#undef gData_02004c70
-#undef gData_02004b98
-#undef gData_02004a48
-#undef gData_02004a00
-#undef gData_020049e8
-#undef gData_02004910
-#undef gData_020048c8
-#undef gData_02004808
-#undef gData_020047a8
-#undef gData_02004748
-#undef gData_020046a0
-#undef gData_02004688
-#undef gData_02003fb8
-#undef gData_02004b98
-#undef gData_02004a48
-#undef gData_02004a00
-#undef gData_020049e8
-#undef gData_02004910
-#undef gData_020048c8
-#undef gData_02004808
-#undef gData_020047a8
-#undef gData_02004748
-#undef gData_020046a0
-#undef gData_02004688
-#undef BYTE_AT
 // ---- scene/aqua_rock_inside/s3844.c ----
 
 // Scene code of overlay 0x67c, in ROM order.
@@ -2538,9 +2478,46 @@ u32 gWaterDropScript[] = {
 #undef Orbiter_Spiral
 #undef VENT_TOUCHING
 #undef VENT_BOUNCE
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
+#undef EFFECT_SPRITE_PRIORITY
+#undef FIELD_AT
+#undef DEFINE_AQUA_ROCK_INSIDE_READ_TABLET
+#undef BG1_SET_PRIORITY_1
+#undef LAYER_S32
+#undef BYTE_AT
+#undef gData_02004688
+#undef gData_020046a0
+#undef gData_02004748
+#undef gData_020047a8
+#undef gData_02004808
+#undef gData_020048c8
+#undef gData_02004910
+#undef gData_020049e8
+#undef gData_02004a00
+#undef gData_02004a48
+#undef gData_02004b98
+#undef gData_02003fb8
+#undef gData_02004004
+#undef gData_02004014
+#undef gData_02004c70
+#undef gData_02004c7c
+#undef gData_02004d88
+#undef gData_02004e48
+#undef gData_02004ed8
+#undef gData_02004fb0
+#undef gData_0200507c
+#undef gData_020051b4
+#undef gData_020051fc
+#undef gData_02005268
+#undef gData_020052f8
+#undef gData_0200534c
 #undef Func_02003ab0
 #undef Orbiter_Spiral
-// ---- scene/data/aqua_rock_inside.c ----
+// ---- from scene/data/aqua_rock_inside.c ----
 
 #include "macros.h"
 #include "types.h"
@@ -2603,7 +2580,8 @@ extern u8 gData_02003f7c__data[] __asm__("gData_02003f7c");
 #define gData_02003f7c gData_02003f7c__data
 
 // clang-format off
-LATE_DATA u32 gData_020044c8[] = {
+/* VIEW(data): variable gData_020044c8 as this part defines it; a header the joined file includes has another. */
+LATE_DATA u32 gData_020044c8__data[] __asm__("gData_020044c8") = {
     0, 44, 22, 38, 0, 2,
     0, 0, 0, 0, 1, 38,
 };
@@ -2832,7 +2810,8 @@ LATE_DATA struct Trigger gData_02004c7c[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA u32 gData_02004d84[] = {
+/* VIEW(data): variable gData_02004d84 as this part defines it; a header the joined file includes has another. */
+LATE_DATA u32 gData_02004d84__data[] __asm__("gData_02004d84") = {
     256,
 };
 
@@ -2989,19 +2968,19 @@ LATE_DATA u32 gData_0200534c[] = {
     0x8080008, 0x8ff0108,
 };
 // clang-format on
-#undef gData_02003f7c
-#undef gData_02003f40
-#undef gData_02003f04
-#undef Leader_SinkAway
-#undef Func_020011d4
-#undef Func_02001138
-#undef Func_0200101c
-#undef Func_02000ecc
-#undef Func_02000e18
-#undef Func_02000cc8
-#undef Func_02000c28
-#undef Func_02000958
-#undef Func_02000644
-#undef Func_02000574
-#undef Func_020004bc
 #undef Func_0200042c
+#undef Func_020004bc
+#undef Func_02000574
+#undef Func_02000644
+#undef Func_02000958
+#undef Func_02000c28
+#undef Func_02000cc8
+#undef Func_02000e18
+#undef Func_02000ecc
+#undef Func_0200101c
+#undef Func_02001138
+#undef Func_020011d4
+#undef Leader_SinkAway
+#undef gData_02003f04
+#undef gData_02003f40
+#undef gData_02003f7c

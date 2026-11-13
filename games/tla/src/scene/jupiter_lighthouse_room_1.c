@@ -317,12 +317,10 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 #include "../field/field_effect/move.c"
 
-#undef FieldEffect_Spawn
-#undef Oam_AddSpriteAtDepthClamped
 #undef FLAG_GATES_BUTTON_HELD
-#undef FieldEffect_Spawn
 #undef Oam_AddSpriteAtDepthClamped
-// ---- scene/jupiter_lighthouse_room_1/cracked_tiles.c ----
+#undef FieldEffect_Spawn
+// ---- from scene/jupiter_lighthouse_room_1/cracked_tiles.c ----
 // @file
 // Jupiter Lighthouse's ground floor: its copy of the effect spawner, and the
 // cracked tiles, found, cracked and fallen through.
@@ -466,14 +464,12 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s156c,
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef Actor_StartScript
-#undef Actor_SelectAnimation
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-#undef Actor_StartScript
 #undef Actor_SelectAnimation
-// ---- scene/jupiter_lighthouse_room_1/cracked_tile_steps.c ----
+#undef Actor_StartScript
+// ---- from scene/jupiter_lighthouse_room_1/cracked_tile_steps.c ----
 // @file
 // Jupiter Lighthouse's ground floor: the cracked tiles' steps and landings.
 

@@ -89,7 +89,7 @@ void Func_02000328(void) {
 
 #include "../field/field_effect/move.c"
 
-// ---- scene/contigo/contigo.c ----
+// ---- from scene/contigo/contigo.c ----
 // @file
 // Scene code of overlay 0x694, in ROM order.
 
@@ -2962,9 +2962,6 @@ struct Trigger gData_02005ed0[] = {
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Func_0200102c)},
     {TRIGGER_TABLE_END},
 };
-#undef Palette_SetColors
-#undef Func_02003f54
-#undef Func_02003e54
 #undef BYTE_AT
 #undef MSG_COINS_WON
 #undef MSG_COINS_LOST
@@ -2973,4 +2970,6 @@ struct Trigger gData_02005ed0[] = {
 #undef MSG_FIRST_PRIZE
 #undef MSG_NEXT_PRIZE
 #undef MSG_COME_AGAIN
+#undef Func_02003e54
+#undef Func_02003f54
 #undef Palette_SetColors

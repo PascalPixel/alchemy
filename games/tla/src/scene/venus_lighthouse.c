@@ -55,7 +55,7 @@ struct Actor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z,
 
 #undef Actor_SetSpriteFlags
 #undef Actor_SetSpriteColor
-// ---- scene/venus_lighthouse.c ----
+// ---- from scene/venus_lighthouse.c ----
 #include "types.h"
 #include "main_routine_work.h"
 #include "field_sprite.h"
@@ -244,8 +244,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 #undef FieldActor_SetSpriteColor
 
-#undef FieldActor_SetSpriteColor
-#undef Actor_SetSpriteFlags
 // ---- scene/venus_lighthouse/floor.c ----
 
 // The Venus Lighthouse's floor events and data: Felix moving the statue and
@@ -1283,3 +1281,5 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 #undef Actor_SetSpriteColor
+#undef FieldActor_SetSpriteColor
+#undef Actor_SetSpriteFlags

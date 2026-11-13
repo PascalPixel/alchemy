@@ -1336,11 +1336,10 @@ u32 gLemuriaPalace_GlowColors[] = {
 #undef BLEND_SET_ALPHA
 #undef FIELD_AT
 
-#undef gLemuriaPalace_MapCrossfade
 #undef BLEND_SET_ALPHA
 #undef FIELD_AT
 #undef gLemuriaPalace_MapCrossfade
-// ---- scene/data/lemuria_palace.c ----
+// ---- from scene/data/lemuria_palace.c ----
 
 #include "macros.h"
 #include "types.h"

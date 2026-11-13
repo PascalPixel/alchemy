@@ -1002,36 +1002,24 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-#undef gYampiDesertCave_MarkColorsDim
-#undef gYampiDesertCave_MarkColorsLit
-#undef gYampiDesertCave_MarkPaletteSlots
-#undef gYampiDesertCave_RipplePath
-#undef gYampiDesertCave_Room3Triggers
-#undef gYampiDesertCave_Room2Triggers
-#undef gYampiDesertCave_Triggers
-#undef gYampiDesertCave_Room3Stakes
-#undef gYampiDesertCave_Room3Placements
-#undef gYampiDesertCave_Room2Placements
-#undef gYampiDesertCave_Placements
-#undef gYampiDesertCave_LogFootprints
 #undef PIXELS
 #define PIXELS(value) ((value) << 16)
 #undef DEFINE_TELEPORT_FROM_MARK
 #undef DEFINE_BURST_PILLAR
 #undef FIELD_AT
-#undef gYampiDesertCave_MarkColorsDim
-#undef gYampiDesertCave_MarkColorsLit
-#undef gYampiDesertCave_MarkPaletteSlots
-#undef gYampiDesertCave_RipplePath
-#undef gYampiDesertCave_Room3Triggers
-#undef gYampiDesertCave_Room2Triggers
-#undef gYampiDesertCave_Triggers
-#undef gYampiDesertCave_Room3Stakes
-#undef gYampiDesertCave_Room3Placements
-#undef gYampiDesertCave_Room2Placements
-#undef gYampiDesertCave_Placements
 #undef gYampiDesertCave_LogFootprints
-// ---- scene/data/yampi_desert_cave.c ----
+#undef gYampiDesertCave_Placements
+#undef gYampiDesertCave_Room2Placements
+#undef gYampiDesertCave_Room3Placements
+#undef gYampiDesertCave_Room3Stakes
+#undef gYampiDesertCave_Triggers
+#undef gYampiDesertCave_Room2Triggers
+#undef gYampiDesertCave_Room3Triggers
+#undef gYampiDesertCave_RipplePath
+#undef gYampiDesertCave_MarkPaletteSlots
+#undef gYampiDesertCave_MarkColorsLit
+#undef gYampiDesertCave_MarkColorsDim
+// ---- from scene/data/yampi_desert_cave.c ----
 #include "shared/tables.h"
 #include "types.h"
 #include "scene_tables.h"
@@ -1258,10 +1246,10 @@ struct Trigger gYampiDesertCave_Room3Triggers[] = {
      IF_FLAG_SET(0x270), EVENT(YampiDesertCave_ScoopDjinni)},
     {TRIGGER_TABLE_END},
 };
-#undef YampiDesertCave_ScoopTreasure
-#undef YampiDesertCave_ScoopDjinni
-#undef YampiDesertCave_PoundStake
-#undef YampiDesertCave_FinishMovingPillar
-#undef YampiDesertCave_StartMovingPillar
-#undef YampiDesertCave_BurstRoom3Pillar
 #undef YampiDesertCave_BurstRoom1Pillar
+#undef YampiDesertCave_BurstRoom3Pillar
+#undef YampiDesertCave_StartMovingPillar
+#undef YampiDesertCave_FinishMovingPillar
+#undef YampiDesertCave_PoundStake
+#undef YampiDesertCave_ScoopDjinni
+#undef YampiDesertCave_ScoopTreasure

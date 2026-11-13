@@ -397,7 +397,7 @@ test:
 
 #include "../field/field_effect/advance_motion_priority.c"
 
-// ---- scene/izumo_ruins/rubble.c ----
+// ---- from scene/izumo_ruins/rubble.c ----
 // @file
 // The Izumo Ruins' rubble, sprayed and burst from the leader as a pillar
 // crumbles (Rubble_Spray, Rubble_Burst).
@@ -528,13 +528,10 @@ void Leader_SetCellShapeAt(s32 a, s32 b) {
 
 #include "../field/field_effect/move.c"
 
-#undef Actor_StartScript
-#undef gIzumoRuins_RubbleBurstScript
 #undef gIzumoRuins_RubbleSprayScript
 #undef Actor_StartScript
 #undef gIzumoRuins_RubbleBurstScript
-#undef gIzumoRuins_RubbleSprayScript
-// ---- scene/izumo_ruins.c ----
+// ---- from scene/izumo_ruins.c ----
 // @file
 // The Izumo Ruins, under the stone circle of Izumo, in two rooms that share
 // this overlay (SceneId_IzumoRuinsFirstRoom, SceneId_IzumoRuinsSecondRoom).

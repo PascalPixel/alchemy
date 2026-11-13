@@ -798,23 +798,6 @@ void Func_020011c8(void) {
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef gData_02005450
-#undef gData_0200632c
-#undef gData_02006278
-#undef gData_020061d0
-#undef gData_020060d4
-#undef gData_02005f78
-#undef gData_02005e34
-#undef gData_02005e10
-#undef gData_02005de0
-#undef gData_02005c1c
-#undef gData_02005b5c
-#undef gData_02005a54
-#undef gData_020059dc
-#undef gData_020056f4
-#undef gData_020056dc
-#undef gData_020054b8
-#undef gData_020054ee
 #undef EFFECT_SPAWN
 #undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
@@ -822,24 +805,24 @@ void Func_020011c8(void) {
 #undef EFFECT_SCRIPTS
 #undef DEFINE_GAROH_LOAD_PALETTE
 #undef DEFINE_GAROH_TRIGGER_AT_CELL
-#undef gData_02005450
-#undef gData_0200632c
-#undef gData_02006278
-#undef gData_020061d0
-#undef gData_020060d4
-#undef gData_02005f78
-#undef gData_02005e34
-#undef gData_02005e10
-#undef gData_02005de0
-#undef gData_02005c1c
-#undef gData_02005b5c
-#undef gData_02005a54
-#undef gData_020059dc
-#undef gData_020056f4
-#undef gData_020056dc
-#undef gData_020054b8
 #undef gData_020054ee
-// ---- scene/garoh/s12a8.c ----
+#undef gData_020054b8
+#undef gData_020056dc
+#undef gData_020056f4
+#undef gData_020059dc
+#undef gData_02005a54
+#undef gData_02005b5c
+#undef gData_02005c1c
+#undef gData_02005de0
+#undef gData_02005e10
+#undef gData_02005e34
+#undef gData_02005f78
+#undef gData_020060d4
+#undef gData_020061d0
+#undef gData_02006278
+#undef gData_0200632c
+#undef gData_02005450
+// ---- from scene/garoh/s12a8.c ----
 // @file
 // Scene code of overlay 0x65f, in ROM order.
 
@@ -3534,10 +3517,10 @@ u32 gData_02006330[] = {
 #undef ACTOR_MODE_THEN_WAIT
 #undef FOLLOW_LEADER
 #undef FIELD_AT
-#undef Func_0200108c
-#undef Func_02000698
-#undef Func_02000664
-#undef Func_02000618
-#undef Func_020005cc
-#undef Func_02000580
 #undef Func_02000420
+#undef Func_02000580
+#undef Func_020005cc
+#undef Func_02000618
+#undef Func_02000664
+#undef Func_02000698
+#undef Func_0200108c

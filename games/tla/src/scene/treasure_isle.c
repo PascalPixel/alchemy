@@ -14,7 +14,7 @@ DEFINE_SCENE_CREATE_ACTOR(TreasureIsle_CreateActor)
 
 #include "../field/field_effect/move.c"
 
-// ---- scene/treasure_isle/treasure_isle.c ----
+// ---- from scene/treasure_isle/treasure_isle.c ----
 // @file
 // Treasure Isle's copy of the field effect spawner.
 
@@ -28,12 +28,6 @@ DEFINE_SCENE_CREATE_ACTOR(TreasureIsle_CreateActor)
 
 #undef EFFECT_SPAWN
 
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
-#undef EFFECT_SET_MODE
-#undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
-#undef EFFECT_SPRITE_PRIORITY
 // ---- scene/treasure_isle/treasure_isle.c ----
 
 // Treasure Isle, the dungeon in the north-east of the world: buttons that
@@ -861,3 +855,9 @@ s32 gTreasureIsle_ColorCycleFrame[] = {
 };
 #undef FIELD_AT
 #undef RUSTY_SWORD_MESSAGE
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
+#undef EFFECT_SPRITE_PRIORITY

@@ -26,7 +26,7 @@ struct Actor *MagmaRock_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
 
 #include "../field/field_effect/move.c"
 
-// ---- scene/magma_rock.c ----
+// ---- from scene/magma_rock.c ----
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -41,12 +41,6 @@ struct Actor *MagmaRock_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
 
 #undef EFFECT_SPAWN
 
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
-#undef EFFECT_SET_MODE
-#undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
-#undef EFFECT_SPRITE_PRIORITY
 // ---- scene/magma_rock/s03b4.c ----
 
 #include "shared/push.h"
@@ -542,29 +536,6 @@ void MagmaRock_PlaceVolley(u16 id, s16 first, s16 side) {
 
 DEFINE_ACTOR_FLASH_COLOR(MagmaRock_FlashStatue, 10)
 
-#undef gMagmaRock_FlameEmberScript
-#undef gMagmaRock_Room3Placements
-#undef gMagmaRock_Room2TopPlacements
-#undef gMagmaRock_Room2UpperPlacements
-#undef gMagmaRock_Room2MiddlePlacements
-#undef gMagmaRock_Room2LowerPlacements
-#undef gMagmaRock_Placements
-#undef gMagmaRock_Room3Regions
-#undef gMagmaRock_Room2Regions
-#undef gMagmaRock_Regions
-#undef TLA_MAGMA_ROCK_H
-#undef BYTE_AT
-#undef HALF_AT
-#undef gMagmaRock_FlameEmberScript
-#undef gMagmaRock_Room3Placements
-#undef gMagmaRock_Room2TopPlacements
-#undef gMagmaRock_Room2UpperPlacements
-#undef gMagmaRock_Room2MiddlePlacements
-#undef gMagmaRock_Room2LowerPlacements
-#undef gMagmaRock_Placements
-#undef gMagmaRock_Room3Regions
-#undef gMagmaRock_Room2Regions
-#undef gMagmaRock_Regions
 // ---- scene/magma_rock/s0ff4.c ----
 
 // Magma Rock's statues: the magma they fire, the flame columns that lift the
@@ -1531,31 +1502,43 @@ const struct Trigger *Scene_GetEvents(void) {
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef gMagmaRock_Room3Triggers
-#undef gMagmaRock_Room2TopTriggers
-#undef gMagmaRock_Room2UpperTriggers
-#undef gMagmaRock_Room2MiddleTriggers
-#undef gMagmaRock_Room2LowerTriggers
-#undef gMagmaRock_Triggers
-#undef MagmaRock_StepOnCrumblingPillar
 #undef BYTE_AT
 #undef PART_Y
 #undef EFFECT_Y
 #undef DEFINE_MAGMA_ROCK_BURST_COLUMN
 #undef DEFINE_MAGMA_ROCK_BURST_STATUE_COLUMN
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
+#undef EFFECT_SPRITE_PRIORITY
+#undef TLA_MAGMA_ROCK_H
+#undef BYTE_AT
+#undef HALF_AT
+#undef gMagmaRock_Regions
+#undef gMagmaRock_Room2Regions
+#undef gMagmaRock_Room3Regions
+#undef gMagmaRock_Placements
+#undef gMagmaRock_Room2LowerPlacements
+#undef gMagmaRock_Room2MiddlePlacements
+#undef gMagmaRock_Room2UpperPlacements
+#undef gMagmaRock_Room2TopPlacements
+#undef gMagmaRock_Room3Placements
+#undef gMagmaRock_FlameEmberScript
 #undef MagmaRockEventWork
 #undef MagmaRock_PlayBurst
+#undef Position
 #undef MagmaRockEffectConfig
 #undef MagmaRock_SetCellShape
-#undef Blocks_MarkCells
-#undef gMagmaRock_Room3Triggers
-#undef gMagmaRock_Room2TopTriggers
-#undef gMagmaRock_Room2UpperTriggers
-#undef gMagmaRock_Room2MiddleTriggers
-#undef gMagmaRock_Room2LowerTriggers
-#undef gMagmaRock_Triggers
 #undef MagmaRock_StepOnCrumblingPillar
-// ---- scene/magma_rock/s22ac.c ----
+#undef gMagmaRock_Triggers
+#undef gMagmaRock_Room2LowerTriggers
+#undef gMagmaRock_Room2MiddleTriggers
+#undef gMagmaRock_Room2UpperTriggers
+#undef gMagmaRock_Room2TopTriggers
+#undef gMagmaRock_Room3Triggers
+// ---- from scene/magma_rock/s22ac.c ----
 // @file
 // Magma Rock's rooms set up, the leader launched and landed, and the
 // crumbling pillars and traps.
@@ -2239,21 +2222,6 @@ test:
 
 #include "../field/field_effect/advance_motion_priority.c"
 
-#undef MapCollision_FindOrAddTag
-#undef Blocks_MarkCells
-#undef MagmaRock_RaiseActorCells
-#undef MagmaRock_RaiseFlamePart
-#undef MagmaRock_RaiseFlameTop
-#undef FieldEffect_Spawn
-#undef Func_02003af4
-#undef BYTE_AT
-#undef MapCollision_FindOrAddTag
-#undef Blocks_MarkCells
-#undef MagmaRock_RaiseActorCells
-#undef MagmaRock_RaiseFlamePart
-#undef MagmaRock_RaiseFlameTop
-#undef FieldEffect_Spawn
-#undef Func_02003af4
 // ---- scene/magma_rock/s34ac.c ----
 
 // Magma Rock's rubble and falling rocks, and its tables.
@@ -2933,12 +2901,20 @@ struct Trigger gMagmaRock_Room3Triggers[] = {
      CONDITION_ALWAYS, EVENT(MagmaRock_FireStatue)},
     {TRIGGER_TABLE_END},
 };
-#undef MagmaRock_BlastOpenWall
-#undef MagmaRock_BurstColumn5
-#undef MagmaRock_BurstColumn4
-#undef MagmaRock_BurstColumn3
-#undef MagmaRock_BurstColumn2
-#undef MagmaRock_BurstColumn1
-#undef MagmaRock_TargetStatue
-#undef MagmaRock_BlockMovedPillar
+#undef BYTE_AT
+#undef Func_02003af4
+#undef FieldEffect_Spawn
+#undef MagmaRock_RaiseFlameTop
+#undef MagmaRock_RaiseFlamePart
+#undef MagmaRock_RaiseActorCells
+#undef Blocks_MarkCells
+#undef MapCollision_FindOrAddTag
 #undef EffectSprite_Init
+#undef MagmaRock_BlockMovedPillar
+#undef MagmaRock_TargetStatue
+#undef MagmaRock_BurstColumn1
+#undef MagmaRock_BurstColumn2
+#undef MagmaRock_BurstColumn3
+#undef MagmaRock_BurstColumn4
+#undef MagmaRock_BurstColumn5
+#undef MagmaRock_BlastOpenWall

@@ -270,17 +270,6 @@ DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, MapGrid_GetCellBehavior,
                               Position_FlatDistance, gWhirlwindEndScript,
                               Data_020023ac)
 
-#undef gWhirlwindEndScript
-#undef gPaletteCycleFrame
-#undef gPaletteCyclePausesInEvents
-#undef gData_0200236c
-#undef gData_020022e8
-#undef OBJECT_BYTE
-#undef gWhirlwindEndScript
-#undef gPaletteCycleFrame
-#undef gPaletteCyclePausesInEvents
-#undef gData_0200236c
-#undef gData_020022e8
 // ---- scene/jupiter_lighthouse_basement/s098c.c ----
 
 /// Scene code of overlay 0x699, in ROM order.
@@ -440,9 +429,14 @@ void Func_02001008(s32 value) { gData_020024f6 = value; }
 
 #include "../field/field_effect/move.c"
 
+#undef OBJECT_BYTE
+#undef gData_020022e8
+#undef gData_0200236c
+#undef gPaletteCyclePausesInEvents
+#undef gPaletteCycleFrame
+#undef gWhirlwindEndScript
 #undef Oam_AddSpriteAtDepthClamped
-#undef Oam_AddSpriteAtDepthClamped
-// ---- scene/jupiter_lighthouse_basement/s1094.c ----
+// ---- from scene/jupiter_lighthouse_basement/s1094.c ----
 // @file
 // Scene code of overlay 0x699, in ROM order.
 
@@ -588,12 +582,6 @@ void Leader_CenterInCell(void) {
 // one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
-#undef Actor_StartScript
-#undef CELL_TABLE
-#undef CELL_SPRITE_DRAW
-#undef CELL_PUSH_SLOT_ENTRY
-#undef OBJECT_BYTE
-#undef Actor_StartScript
 // ---- scene/jupiter_lighthouse_basement/s16c4.c ----
 
 // Scene code of overlay 0x699, in ROM order.
@@ -625,7 +613,12 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s16c4,
 
 #include "../field/field_effect/advance_motion.c"
 
-// ---- scene/jupiter_lighthouse_basement/s185c.c ----
+#undef CELL_TABLE
+#undef CELL_SPRITE_DRAW
+#undef CELL_PUSH_SLOT_ENTRY
+#undef OBJECT_BYTE
+#undef Actor_StartScript
+// ---- from scene/jupiter_lighthouse_basement/s185c.c ----
 // @file
 // Scene code of overlay 0x699, in ROM order.
 

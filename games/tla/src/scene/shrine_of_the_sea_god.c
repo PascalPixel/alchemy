@@ -12,11 +12,6 @@
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect/spawn.c"
 
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
-#undef EFFECT_SET_MODE
-#undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
 // ---- scene/shrine_of_the_sea_god/shrine_of_the_sea_god.c ----
 
 /// Scene code of overlay 0x654, in ROM order.
@@ -814,59 +809,40 @@ void Func_020012b4(void) {
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef gShrineOfTheSeaGod_Room9Triggers
-#undef gShrineOfTheSeaGod_Room8Triggers
-#undef gShrineOfTheSeaGod_Room7Triggers
-#undef gShrineOfTheSeaGod_Room6Triggers
-#undef gShrineOfTheSeaGod_Room5Triggers
-#undef gShrineOfTheSeaGod_Room4Triggers
-#undef gShrineOfTheSeaGod_Room3Triggers
-#undef gShrineOfTheSeaGod_Room2Triggers
-#undef gShrineOfTheSeaGod_Room1Triggers
-#undef gShrineOfTheSeaGod_Triggers
-#undef gShrineOfTheSeaGod_Room7Placements
-#undef gShrineOfTheSeaGod_Room6Placements
-#undef gShrineOfTheSeaGod_Room5Placements
-#undef gShrineOfTheSeaGod_Room4Placements
-#undef gShrineOfTheSeaGod_Room3Placements
-#undef gShrineOfTheSeaGod_Room2Placements
-#undef gShrineOfTheSeaGod_Room1Placements
-#undef gShrineOfTheSeaGod_Placements
-#undef gData_02003e44
-#undef gData_02003e14
-#undef gData_02003df4
-#undef gData_02003cbc
-#undef gData_02003c10
-#undef gShrineOfTheSeaGod_Room8Placements
 #undef Actor_SetPositionAndResetMotion
 #define Actor_SetPositionAndResetMotion                                        \
   Actor_SetPositionAndResetMotion__shrine_header
 #undef Actor_SetSpriteFlags
-#undef gShrineOfTheSeaGod_Room9Triggers
-#undef gShrineOfTheSeaGod_Room8Triggers
-#undef gShrineOfTheSeaGod_Room7Triggers
-#undef gShrineOfTheSeaGod_Room6Triggers
-#undef gShrineOfTheSeaGod_Room5Triggers
-#undef gShrineOfTheSeaGod_Room4Triggers
-#undef gShrineOfTheSeaGod_Room3Triggers
-#undef gShrineOfTheSeaGod_Room2Triggers
-#undef gShrineOfTheSeaGod_Room1Triggers
-#undef gShrineOfTheSeaGod_Triggers
-#undef gShrineOfTheSeaGod_Room7Placements
-#undef gShrineOfTheSeaGod_Room6Placements
-#undef gShrineOfTheSeaGod_Room5Placements
-#undef gShrineOfTheSeaGod_Room4Placements
-#undef gShrineOfTheSeaGod_Room3Placements
-#undef gShrineOfTheSeaGod_Room2Placements
-#undef gShrineOfTheSeaGod_Room1Placements
-#undef gShrineOfTheSeaGod_Placements
-#undef gData_02003e44
-#undef gData_02003e14
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
 #undef gData_02003df4
-#undef gData_02003cbc
-#undef gData_02003c10
+#undef gData_02003e14
+#undef gData_02003e44
+#undef gShrineOfTheSeaGod_Placements
+#undef gShrineOfTheSeaGod_Room1Placements
+#undef gShrineOfTheSeaGod_Room2Placements
+#undef gShrineOfTheSeaGod_Room3Placements
+#undef gShrineOfTheSeaGod_Room4Placements
+#undef gShrineOfTheSeaGod_Room5Placements
+#undef gShrineOfTheSeaGod_Room6Placements
+#undef gShrineOfTheSeaGod_Room7Placements
 #undef gShrineOfTheSeaGod_Room8Placements
-// ---- scene/shrine_of_the_sea_god/s1340.c ----
+#undef gShrineOfTheSeaGod_Triggers
+#undef gShrineOfTheSeaGod_Room1Triggers
+#undef gShrineOfTheSeaGod_Room2Triggers
+#undef gShrineOfTheSeaGod_Room3Triggers
+#undef gShrineOfTheSeaGod_Room4Triggers
+#undef gShrineOfTheSeaGod_Room5Triggers
+#undef gShrineOfTheSeaGod_Room6Triggers
+#undef gShrineOfTheSeaGod_Room7Triggers
+#undef gShrineOfTheSeaGod_Room8Triggers
+#undef gShrineOfTheSeaGod_Room9Triggers
+#undef gData_02003c10
+#undef gData_02003cbc
+// ---- from scene/shrine_of_the_sea_god/s1340.c ----
 // @file
 // Scene code of overlay 0x654, in ROM order.
 
@@ -2112,21 +2088,16 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-#undef Actor_SetSpriteColor
-#undef gData_02003c10
-#undef gData_02003cbc
-#undef gData_02003cc0
-#undef gData_02003c58
 #undef DEFINE_FUNC_020027F8
 #undef DEFINE_FUNC_02002830
 #undef DEFINE_FUNC_0200291C
 #undef DEFINE_FUNC_02002B50
-#undef Actor_SetSpriteColor
-#undef gData_02003c10
-#undef gData_02003cbc
-#undef gData_02003cc0
 #undef gData_02003c58
-// ---- scene/data/shrine_of_the_sea_god.c ----
+#undef gData_02003cc0
+#undef gData_02003cbc
+#undef gData_02003c10
+#undef Actor_SetSpriteColor
+// ---- from scene/data/shrine_of_the_sea_god.c ----
 #include "shared/tables.h"
 #include "types.h"
 #include "scene_tables.h"

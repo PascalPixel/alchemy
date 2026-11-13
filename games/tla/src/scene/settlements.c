@@ -846,57 +846,35 @@ void Settlements_SplashCrate(s32 id) {
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef gSettlements_SmokeScript
-#undef gSettlements_CrateDropScript
-#undef gSettlements_WaterColorFrame
-#undef gSettlements_WallCrate
-#undef gSettlements_Room10Triggers
-#undef gSettlements_Room9Triggers
-#undef gSettlements_Room8Triggers
-#undef gSettlements_Room7Triggers
-#undef gSettlements_Room5Triggers
-#undef gSettlements_Room4Triggers
-#undef gSettlements_Room2Triggers
-#undef gSettlements_Room1Triggers
-#undef gSettlements_Triggers
-#undef gSettlements_Room8Placements
-#undef gSettlements_Room7Placements
-#undef gSettlements_Room10Placements
-#undef gSettlements_Room9Placements
-#undef gSettlements_Room5Placements
-#undef gSettlements_Room4Placements
-#undef gSettlements_Room2Placements
-#undef gSettlements_Room1Placements
-#undef gSettlements_Placements
 #undef EFFECT_SPAWN
 #undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 #undef SINK
-#undef gSettlements_SmokeScript
-#undef gSettlements_CrateDropScript
-#undef gSettlements_WaterColorFrame
-#undef gSettlements_WallCrate
-#undef gSettlements_Room10Triggers
-#undef gSettlements_Room9Triggers
-#undef gSettlements_Room8Triggers
-#undef gSettlements_Room7Triggers
-#undef gSettlements_Room5Triggers
-#undef gSettlements_Room4Triggers
-#undef gSettlements_Room2Triggers
-#undef gSettlements_Room1Triggers
-#undef gSettlements_Triggers
-#undef gSettlements_Room8Placements
-#undef gSettlements_Room7Placements
-#undef gSettlements_Room10Placements
-#undef gSettlements_Room9Placements
-#undef gSettlements_Room5Placements
-#undef gSettlements_Room4Placements
-#undef gSettlements_Room2Placements
-#undef gSettlements_Room1Placements
 #undef gSettlements_Placements
-// ---- scene/settlements/settlements.c ----
+#undef gSettlements_Room1Placements
+#undef gSettlements_Room2Placements
+#undef gSettlements_Room4Placements
+#undef gSettlements_Room5Placements
+#undef gSettlements_Room9Placements
+#undef gSettlements_Room10Placements
+#undef gSettlements_Room7Placements
+#undef gSettlements_Room8Placements
+#undef gSettlements_Triggers
+#undef gSettlements_Room1Triggers
+#undef gSettlements_Room2Triggers
+#undef gSettlements_Room4Triggers
+#undef gSettlements_Room5Triggers
+#undef gSettlements_Room7Triggers
+#undef gSettlements_Room8Triggers
+#undef gSettlements_Room9Triggers
+#undef gSettlements_Room10Triggers
+#undef gSettlements_WallCrate
+#undef gSettlements_WaterColorFrame
+#undef gSettlements_CrateDropScript
+#undef gSettlements_SmokeScript
+// ---- from scene/settlements/settlements.c ----
 // @file
 // The settlements' events, continued; settlements.c says which places these
 // are.
@@ -1135,7 +1113,6 @@ end:
   Actor_SelectAnimation(object, 1);
 }
 
-#undef gSettlements_SlideAngles
 #undef gSettlements_SlideAngles
 // ---- scene/settlements/s1a1c.c ----
 
@@ -1973,6 +1950,7 @@ struct Trigger gSettlements_Room10Triggers[] = {
 s32 gSettlements_WaterColorFrame[] = {
     -1,
 };
-#undef Settlements_WarnOfRiddleOfRock
-#undef Actor_Bob
+#undef gSettlements_SlideAngles
 #undef Settlements_ClearSpriteFlags
+#undef Actor_Bob
+#undef Settlements_WarnOfRiddleOfRock

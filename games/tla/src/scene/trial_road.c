@@ -125,16 +125,6 @@ void TrialRoad_TakeStairs(s32 direction) {
   }
 }
 
-#undef gTrialRoad_Room1Placements
-#undef gTrialRoad_Room2Placements
-#undef gTrialRoad_Room4Placements
-#undef gTrialRoad_Room3Placements
-#undef gTrialRoad_Placements
-#undef gTrialRoad_Room1Placements
-#undef gTrialRoad_Room2Placements
-#undef gTrialRoad_Room4Placements
-#undef gTrialRoad_Room3Placements
-#undef gTrialRoad_Placements
 // ---- scene/trial_road/s0218.c ----
 
 /// Trial Road's stage puzzles: the stairs, chests and doors, and the pillars,
@@ -911,14 +901,17 @@ void TrialRoad_RevealVine(void) {
 
 #include "../field/field_effect/move.c"
 
-#undef gTrialRoad_PoundPartners
-#undef gTrialRoad_PillarTopScript
 #undef DEFINE_TRIAL_ROAD_OPEN_DOOR
 #undef FIELD_AT
 #undef DEFINE_TRIAL_ROAD_ON_FOOT
-#undef gTrialRoad_PoundPartners
+#undef gTrialRoad_Placements
+#undef gTrialRoad_Room3Placements
+#undef gTrialRoad_Room4Placements
+#undef gTrialRoad_Room2Placements
+#undef gTrialRoad_Room1Placements
 #undef gTrialRoad_PillarTopScript
-// ---- scene/trial_road/s129c.c ----
+#undef gTrialRoad_PoundPartners
+// ---- from scene/trial_road/s129c.c ----
 // @file
 // Trial Road's effect spawner and the sand stage's stream.
 
@@ -3576,35 +3569,23 @@ u32 gTrialRoad_RightKnightLeavesScript[] = {
 // clang-format on
 #undef MARKER
 
-#undef TrialRoad_FollowPillar
-#undef TrialRoad_SettleOnGround
-#undef gTrialRoad_HexDigits
-#undef gTrialRoad_DustScript
-#undef gTrialRoad_RubbleScript
-#undef gTrialRoad_PaletteCycleFrame
-#undef gTrialRoad_PaletteCycleRunning
-#undef gTrialRoad_Room1Triggers
-#undef gTrialRoad_Room2Triggers
-#undef gTrialRoad_Room4Triggers
-#undef gTrialRoad_Room3Triggers
-#undef gTrialRoad_Triggers
 #undef DEFINE_TRIAL_ROAD_SET_POOL_TILES
 #undef FIELD_AT
 #undef SET_LAYER
 #undef MARKER
-#undef TrialRoad_FollowPillar
-#undef TrialRoad_SettleOnGround
-#undef gTrialRoad_HexDigits
-#undef gTrialRoad_DustScript
-#undef gTrialRoad_RubbleScript
-#undef gTrialRoad_PaletteCycleFrame
-#undef gTrialRoad_PaletteCycleRunning
-#undef gTrialRoad_Room1Triggers
-#undef gTrialRoad_Room2Triggers
-#undef gTrialRoad_Room4Triggers
-#undef gTrialRoad_Room3Triggers
 #undef gTrialRoad_Triggers
-// ---- scene/data/trial_road.c ----
+#undef gTrialRoad_Room3Triggers
+#undef gTrialRoad_Room4Triggers
+#undef gTrialRoad_Room2Triggers
+#undef gTrialRoad_Room1Triggers
+#undef gTrialRoad_PaletteCycleRunning
+#undef gTrialRoad_PaletteCycleFrame
+#undef gTrialRoad_RubbleScript
+#undef gTrialRoad_DustScript
+#undef gTrialRoad_HexDigits
+#undef TrialRoad_SettleOnGround
+#undef TrialRoad_FollowPillar
+// ---- from scene/data/trial_road.c ----
 
 #include "macros.h"
 #include "types.h"
@@ -3622,7 +3603,7 @@ LATE_DATA u32 gTrialRoad_DustScript[] = {
 };
 // clang-format on
 
-// ---- scene/data/trial_road_2.c ----
+// ---- from scene/data/trial_road_2.c ----
 
 #include "macros.h"
 #include "types.h"
@@ -4295,27 +4276,27 @@ LAST_DATA s32 gTrialRoad_PaletteCycleFrame[] = {
 LAST_DATA u32 gTrialRoad_PaletteCycleRunning[] = {
     1,
 };
-#undef gFieldEffect_LongScript
-#undef gFieldEffect_MediumScript
-#undef gFieldEffect_ShortScript
-#undef gTrialRoad_SettleScript
-#undef TrialRoad_SetSummitPillar
-#undef TrialRoad_UncoverSpout18
-#undef TrialRoad_UncoverSpout17
-#undef TrialRoad_UncoverSpout16
-#undef TrialRoad_CrumblePillar16
-#undef TrialRoad_CrumblePillar15
-#undef TrialRoad_PoundPillar21
-#undef TrialRoad_PoundPillar20
-#undef TrialRoad_PoundPillar19
-#undef TrialRoad_PoundPillar18
-#undef TrialRoad_BlowBushOffPillar
-#undef TrialRoad_FreezePuddle
-#undef TrialRoad_MeltIceBesideTorch
-#undef TrialRoad_UnblockTorch
-#undef TrialRoad_BlockMovedPillar
-#undef TrialRoad_UnblockMovedPillar
-#undef TrialRoad_ExamineChest
-#undef TrialRoad_PutItemInChest
-#undef TrialRoad_OfferToGiveUp
 #undef TrialRoad_TakeStairs
+#undef TrialRoad_OfferToGiveUp
+#undef TrialRoad_PutItemInChest
+#undef TrialRoad_ExamineChest
+#undef TrialRoad_UnblockMovedPillar
+#undef TrialRoad_BlockMovedPillar
+#undef TrialRoad_UnblockTorch
+#undef TrialRoad_MeltIceBesideTorch
+#undef TrialRoad_FreezePuddle
+#undef TrialRoad_BlowBushOffPillar
+#undef TrialRoad_PoundPillar18
+#undef TrialRoad_PoundPillar19
+#undef TrialRoad_PoundPillar20
+#undef TrialRoad_PoundPillar21
+#undef TrialRoad_CrumblePillar15
+#undef TrialRoad_CrumblePillar16
+#undef TrialRoad_UncoverSpout16
+#undef TrialRoad_UncoverSpout17
+#undef TrialRoad_UncoverSpout18
+#undef TrialRoad_SetSummitPillar
+#undef gTrialRoad_SettleScript
+#undef gFieldEffect_ShortScript
+#undef gFieldEffect_MediumScript
+#undef gFieldEffect_LongScript

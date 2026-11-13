@@ -806,25 +806,6 @@ void Func_02001538(void) {
   }
 }
 
-#undef FieldEffect_Spawn
-#undef gPaletteCyclePausesInEvents
-#undef gData_02002f70
-#undef gData_02003278
-#undef gData_02003274
-#undef gData_02002fb8
-#undef gData_02002f94
-#undef EVENT_WORK
-#undef FieldEffect_Spawn
-#undef gPaletteCyclePausesInEvents
-#undef gData_02002f70
-#undef gData_02003278
-#undef gData_02003274
-#undef gData_02002fb8
-#undef gData_02002f94
-#undef gData_020033e0
-#undef gPaletteCycleFrame
-#undef gData_020033e0
-#undef gPaletteCycleFrame
 // ---- scene/jupiter_lighthouse_room_5/s1650.c ----
 
 /// Scene code of overlay 0x69e, in ROM order.
@@ -991,9 +972,18 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 #include "../field/field_effect/move.c"
 
+#undef EVENT_WORK
+#undef gData_02002fb8
+#undef gData_02003274
+#undef gData_02003278
+#undef gData_02002f70
+#undef gData_02002f94
+#undef gPaletteCyclePausesInEvents
+#undef FieldEffect_Spawn
+#undef gPaletteCycleFrame
+#undef gData_020033e0
 #undef Oam_AddSpriteAtDepthClamped
-#undef Oam_AddSpriteAtDepthClamped
-// ---- scene/jupiter_lighthouse_room_5/s1c88.c ----
+// ---- from scene/jupiter_lighthouse_room_5/s1c88.c ----
 // @file
 // Scene code of overlay 0x69e, in ROM order.
 
@@ -1110,11 +1100,6 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 // one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
-#undef Actor_StartScript
-#undef CELL_TABLE
-#undef CELL_SPRITE_DRAW
-#undef CELL_PUSH_SLOT_ENTRY
-#undef Actor_StartScript
 // ---- scene/jupiter_lighthouse_room_5/s22b8.c ----
 
 // Scene code of overlay 0x69e, in ROM order.
@@ -1145,7 +1130,11 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s22b8,
 
 #include "../field/field_effect/advance_motion.c"
 
-// ---- scene/jupiter_lighthouse_room_5/s2450.c ----
+#undef CELL_TABLE
+#undef CELL_SPRITE_DRAW
+#undef CELL_PUSH_SLOT_ENTRY
+#undef Actor_StartScript
+// ---- from scene/jupiter_lighthouse_room_5/s2450.c ----
 // @file
 // Scene code of overlay 0x69e, in ROM order.
 
@@ -1303,6 +1292,6 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_MediumScript,
     gFieldEffect_LongScript,
 };
-#undef Func_02000064
-#undef CrackedTile_Fall
 #undef FieldEffect_Spawn
+#undef CrackedTile_Fall
+#undef Func_02000064

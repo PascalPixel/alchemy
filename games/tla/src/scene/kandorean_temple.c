@@ -27,11 +27,6 @@
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect/spawn.c"
 
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
-#undef EFFECT_SET_MODE
-#undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
 // ---- scene/kandorean_temple/kandorean_temple.c ----
 
 /// The Kandorean Temple's rooms: their tables' getters, the steam, vents and
@@ -1811,37 +1806,28 @@ L_0200ae24:
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef gKandoreanTemple_PoisHallEvents
-#undef gKandoreanTemple_GateEvents
-#undef gKandoreanTemple_FogRoomEvents
-#undef gKandoreanTemple_Room6Events
-#undef gKandoreanTemple_Room5Events
-#undef gKandoreanTemple_VentRoomEvents
-#undef gKandoreanTemple_ChestbeaterRoomEvents
-#undef gKandoreanTemple_LiftRoomEvents
-#undef gKandoreanTemple_Events
-#undef gKandoreanTemple_FogRoomPlacements
-#undef gKandoreanTemple_VentRoomPlacements
-#undef gKandoreanTemple_ChestbeaterRoomPlacements
-#undef gKandoreanTemple_Placements
-#undef gKandoreanTemple_LiftRoomPlacements
 #undef DEFINE_KANDOREAN_TEMPLE_VENT
 #undef BOB
-#undef gKandoreanTemple_PoisHallEvents
-#undef gKandoreanTemple_GateEvents
-#undef gKandoreanTemple_FogRoomEvents
-#undef gKandoreanTemple_Room6Events
-#undef gKandoreanTemple_Room5Events
-#undef gKandoreanTemple_VentRoomEvents
-#undef gKandoreanTemple_ChestbeaterRoomEvents
-#undef gKandoreanTemple_LiftRoomEvents
-#undef gKandoreanTemple_Events
-#undef gKandoreanTemple_FogRoomPlacements
-#undef gKandoreanTemple_VentRoomPlacements
-#undef gKandoreanTemple_ChestbeaterRoomPlacements
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
 #undef gKandoreanTemple_Placements
 #undef gKandoreanTemple_LiftRoomPlacements
-// ---- scene/kandorean_temple/events.c ----
+#undef gKandoreanTemple_ChestbeaterRoomPlacements
+#undef gKandoreanTemple_VentRoomPlacements
+#undef gKandoreanTemple_FogRoomPlacements
+#undef gKandoreanTemple_Events
+#undef gKandoreanTemple_LiftRoomEvents
+#undef gKandoreanTemple_ChestbeaterRoomEvents
+#undef gKandoreanTemple_VentRoomEvents
+#undef gKandoreanTemple_Room5Events
+#undef gKandoreanTemple_Room6Events
+#undef gKandoreanTemple_FogRoomEvents
+#undef gKandoreanTemple_GateEvents
+#undef gKandoreanTemple_PoisHallEvents
+// ---- from scene/kandorean_temple/events.c ----
 // @file
 // The Kandorean Temple's events, from the vents' rides to Poi's test, and its
 // tables.
@@ -3348,7 +3334,7 @@ struct Trigger gKandoreanTemple_PoisHallEvents[] = {
     {TRIGGER_TABLE_END},
 };
 // clang-format on
-#undef KandoreanTemple_PlaceLevitatingStudent
-#undef KandoreanTemple_LevitateStudentBob
-#undef KandoreanTemple_MeditateRestlessly
 #undef KandoreanTemple_CountDownSteam
+#undef KandoreanTemple_MeditateRestlessly
+#undef KandoreanTemple_LevitateStudentBob
+#undef KandoreanTemple_PlaceLevitatingStudent

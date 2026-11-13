@@ -1502,34 +1502,6 @@ void Func_02001d7c(void) {
 #undef MarsLighthouseStarRoom_SlideOnIce
 #undef Func_02002a58
 
-#undef gData_020045b8
-#undef gData_020044b8
-#undef gData_020049dc
-#undef gData_020049a0
-#undef gData_02004958
-#undef gData_0200491c
-#undef gMarsLighthouseStarRoom_ScatterIceChipsScript
-#undef gData_020047fc
-#undef gData_02004744
-#undef gData_02004744
-#undef MarsLighthouseStarRoom_SlideOnIce
-#undef TLA_MARS_LIGHTHOUSE_STAR_ROOM_H
-#undef DIFF
-#undef FIELD_AT
-#undef DEFINE_FUNC_0200196C_97
-#undef ABS
-#undef IWRAM
-#undef Func_02001df0
-#undef Func_02002a58
-#undef gData_020045b8
-#undef gData_020044b8
-#undef gData_020049dc
-#undef gData_020049a0
-#undef gData_02004958
-#undef gData_0200491c
-#undef gMarsLighthouseStarRoom_ScatterIceChipsScript
-#undef gData_020047fc
-#undef gData_02004744
 // ---- scene/mars_lighthouse_star_room/ride_handle.c ----
 
 /// Scene code of overlay 0x6ab, in ROM order.
@@ -1728,8 +1700,6 @@ DEFINE_ACTOR_BLINK(Func_02002120, 10, 4, 0)
 
 #undef Unit_Get
 #undef MarsLighthouseStarRoom_SlideOnIce
-#undef MarsLighthouseStarRoom_SlideOnIce
-#undef Unit_Get
 // ---- scene/mars_lighthouse_star_room/s2148.c ----
 
 /// Scene code of overlay 0x6ab, in ROM order.
@@ -2160,31 +2130,6 @@ Func_0200428c__s3070(s32 *a, s32 aRadius, s32 *b,
 #undef SHARED_F02003070_ID8
 
 #undef Position
-#undef gData_0200483c
-#undef gData_020047b8
-#undef gData_02004774
-#undef gData_0200483c
-#undef SHARED_F02002148_NAME
-#undef SHARED_F02002148_ID2
-#undef SHARED_F02002148_ID3
-#undef SHARED_F02002148_ID4
-#undef SHARED_F02002148_ID5
-#undef SHARED_F02002148_ID6
-#undef SHARED_F02002148_ID7
-#undef WORK
-#undef ABS
-#undef SHARED_F02003070_NAME
-#undef SHARED_F02003070_ID2
-#undef SHARED_F02003070_ID3
-#undef SHARED_F02003070_ID4
-#undef SHARED_F02003070_ID5
-#undef SHARED_F02003070_ID6
-#undef SHARED_F02003070_ID7
-#undef SHARED_F02003070_ID8
-#undef Position
-#undef gData_0200483c
-#undef gData_020047b8
-#undef gData_02004774
 // ---- scene/mars_lighthouse_star_room/set_data.c ----
 
 /// Scene code of overlay 0x6ab, in ROM order.
@@ -2235,9 +2180,49 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003390, Func_02002d90,
 
 #include "../field/field_effect/move.c"
 
-#undef MarsLighthouseStarRoom_SlideOnIce
+#undef TLA_MARS_LIGHTHOUSE_STAR_ROOM_H
+#undef DIFF
+#undef FIELD_AT
+#undef DEFINE_FUNC_0200196C_97
+#undef ABS
+#undef IWRAM
+#undef SHARED_F02002148_NAME
+#undef SHARED_F02002148_ID2
+#undef SHARED_F02002148_ID3
+#undef SHARED_F02002148_ID4
+#undef SHARED_F02002148_ID5
+#undef SHARED_F02002148_ID6
+#undef SHARED_F02002148_ID7
+#undef WORK
+#undef ABS
+#undef SHARED_F02003070_NAME
+#undef SHARED_F02003070_ID2
+#undef SHARED_F02003070_ID3
+#undef SHARED_F02003070_ID4
+#undef SHARED_F02003070_ID5
+#undef SHARED_F02003070_ID6
+#undef SHARED_F02003070_ID7
+#undef SHARED_F02003070_ID8
+#undef gData_020047fc
+#undef gMarsLighthouseStarRoom_ScatterIceChipsScript
+#undef Func_02001df0
+#undef gData_0200491c
+#undef gData_02004958
+#undef gData_020049a0
+#undef gData_020049dc
+#undef gData_020044b8
+#undef gData_020045b8
+#undef Func_02002a58
+#undef gData_02004744
+#undef gData_02004744
+#undef Unit_Get
+#undef gData_02004774
+#undef gData_020047b8
 #undef Position
-// ---- scene/mars_lighthouse_star_room/s363c.c ----
+#undef gData_0200483c
+#undef gData_0200483c
+#undef Position
+// ---- from scene/mars_lighthouse_star_room/s363c.c ----
 // @file
 // Scene code of overlay 0x6ab, in ROM order.
 
@@ -2363,14 +2348,12 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef gData_02004ce0
-#undef Actor_StartScript
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-#undef gData_02004ce0
 #undef Actor_StartScript
-// ---- scene/mars_lighthouse_star_room/s3e04.c ----
+#undef gData_02004ce0
+// ---- from scene/mars_lighthouse_star_room/s3e04.c ----
 // @file
 // Scene code of overlay 0x6ab, in ROM order.
 
@@ -2751,10 +2734,10 @@ s32 gData_02004ce0[] = {
     (s32)gData_02004898,
     (s32)gData_020048d4,
 };
-#undef Func_02002ce8
-#undef Func_02002c44
-#undef MarsLighthouseStarRoom_SlideOnIce
-#undef MarsLighthouseStarRoom_BurstIce
-#undef Func_02000038
-#undef CrackedTile_FallEvent
 #undef Func_0200363c
+#undef CrackedTile_FallEvent
+#undef Func_02000038
+#undef MarsLighthouseStarRoom_BurstIce
+#undef MarsLighthouseStarRoom_SlideOnIce
+#undef Func_02002c44
+#undef Func_02002ce8

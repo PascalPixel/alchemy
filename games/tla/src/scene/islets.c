@@ -2130,36 +2130,6 @@ void Func_0200329c(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-#undef gData_02004274
-#undef gData_02004004
-#undef gData_02004300
-#undef gData_020043f8
-#undef gSmokeScript
-#undef gData_02004554
-#undef gData_02004508
-#undef gData_020045f0
-#undef gData_020045a4
-#undef gData_020046bc
-#undef gData_02004028
-#undef TLA_ISLETS_H
-#undef STEP
-#undef HAND_BACK
-#undef ISLETS_GIFT_TRANSITION
-#undef STORED_AT_1AC
-#undef SPAWN
-#undef EVENT_WORK
-#undef OBJECT
-#undef gData_02004274
-#undef gData_02004004
-#undef gData_02004300
-#undef gData_020043f8
-#undef gSmokeScript
-#undef gData_02004554
-#undef gData_02004508
-#undef gData_020045f0
-#undef gData_020045a4
-#undef gData_020046bc
-#undef gData_02004028
 // ---- scene/islets/s3410.c ----
 
 /// Scene code of overlay 0x674, in ROM order.
@@ -2511,12 +2481,6 @@ DEFINE_PUSH_TARGET_PUSH(PushTarget_Push, gPushFootprints, Func_02003790,
                         Actor_StopAtPushTarget, Actor_SelectAnimation,
                         gPushLeaderSteps)
 
-#undef gPushFootprints
-#undef gPaletteWork
-#undef EVENT_S16
-#undef HI
-#undef ABS
-#undef gPushFootprints
 // ---- scene/islets/s3d0c.c ----
 
 /// Scene code of overlay 0x674, in ROM order.
@@ -2553,7 +2517,31 @@ void Actor_StopAtPushTarget(struct Actor *object) {
                                          object->z);
 }
 
-// ---- scene/data/islets.c ----
+#undef TLA_ISLETS_H
+#undef STEP
+#undef HAND_BACK
+#undef ISLETS_GIFT_TRANSITION
+#undef STORED_AT_1AC
+#undef SPAWN
+#undef EVENT_WORK
+#undef OBJECT
+#undef gPaletteWork
+#undef EVENT_S16
+#undef HI
+#undef ABS
+#undef gSmokeScript
+#undef gData_02004028
+#undef gData_020046bc
+#undef gData_020043f8
+#undef gData_02004300
+#undef gData_02004004
+#undef gData_020045a4
+#undef gData_020045f0
+#undef gData_02004508
+#undef gData_02004554
+#undef gData_02004274
+#undef gPushFootprints
+// ---- from scene/data/islets.c ----
 #include "shared/tables.h"
 #include "types.h"
 #include "scene_tables.h"

@@ -310,37 +310,22 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-#undef MsgNaribwe45
-#undef MsgNaribwe23
-#undef MsgNaribwe43
-#undef MsgNaribwe21
-#undef MsgNaribwe09
-#undef MsgNaribwe08
-#undef MsgNaribwe07
-#undef MsgNaribwe03
-#undef MsgNaribwe02
-#undef gNaribwe_TriggersOnReturn
-#undef gNaribwe_Triggers
-#undef gNaribwe_Entrance10Placements
-#undef gNaribwe_Doors
-#undef gNaribwe_PlacementsOnReturn
 #undef gNaribwe_Placements
-#undef MsgNaribwe45
-#undef MsgNaribwe23
-#undef MsgNaribwe43
-#undef MsgNaribwe21
-#undef MsgNaribwe09
-#undef MsgNaribwe08
-#undef MsgNaribwe07
-#undef MsgNaribwe03
-#undef MsgNaribwe02
-#undef gNaribwe_TriggersOnReturn
-#undef gNaribwe_Triggers
 #undef gNaribwe_Entrance10Placements
-#undef gNaribwe_Doors
 #undef gNaribwe_PlacementsOnReturn
-#undef gNaribwe_Placements
-// ---- scene/data/naribwe.c ----
+#undef gNaribwe_Triggers
+#undef gNaribwe_TriggersOnReturn
+#undef gNaribwe_Doors
+#undef MsgNaribwe02
+#undef MsgNaribwe03
+#undef MsgNaribwe07
+#undef MsgNaribwe08
+#undef MsgNaribwe09
+#undef MsgNaribwe21
+#undef MsgNaribwe43
+#undef MsgNaribwe23
+#undef MsgNaribwe45
+// ---- from scene/data/naribwe.c ----
 // @file
 // Naribwe's data: its scripts, door, placements and triggers.
 
@@ -568,7 +553,7 @@ struct Trigger gNaribwe_TriggersOnReturn[] = {
      CONDITION_ALWAYS, EVENT(Naribwe_HideStone)},
     {TRIGGER_TABLE_END},
 };
-#undef Naribwe_TalkToPilgrimOnReturn
-#undef Naribwe_TalkToPilgrim
-#undef Naribwe_PraiseFortuneTellerOnReturn
 #undef Naribwe_PraiseFortuneTeller
+#undef Naribwe_PraiseFortuneTellerOnReturn
+#undef Naribwe_TalkToPilgrim
+#undef Naribwe_TalkToPilgrimOnReturn

@@ -599,24 +599,16 @@ void Func_02000ff4(void) {
     Func_02000e28(10);
 }
 
-#undef gData_02001db4
-#undef gData_02001c58
-#undef gData_02001ae4
-#undef gData_02001ad8
-#undef gData_02001404
-#undef gData_020018c8
-#undef gData_020015f0
-#undef gData_02001294
 #undef EVENT_WORK_VALUE
-#undef gData_02001db4
-#undef gData_02001c58
-#undef gData_02001ae4
-#undef gData_02001ad8
-#undef gData_02001404
-#undef gData_020018c8
-#undef gData_020015f0
 #undef gData_02001294
-// ---- scene/data/kibombo_mountains.c ----
+#undef gData_020015f0
+#undef gData_020018c8
+#undef gData_02001404
+#undef gData_02001ad8
+#undef gData_02001ae4
+#undef gData_02001c58
+#undef gData_02001db4
+// ---- from scene/data/kibombo_mountains.c ----
 #include "shared/tables.h"
 #include "types.h"
 #include "scene_tables.h"
@@ -885,8 +877,8 @@ s16 gData_02001db4[] = {
     3, 0, -1, -1, 0, 0, 0, 0,
 };
 // clang-format on
-#undef Func_0200051c
-#undef Func_020004b0
-#undef Func_020001a0
-#undef Func_02000190
 #undef Actor_Bob
+#undef Func_02000190
+#undef Func_020001a0
+#undef Func_020004b0
+#undef Func_0200051c

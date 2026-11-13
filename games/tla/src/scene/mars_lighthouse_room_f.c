@@ -1390,80 +1390,6 @@ void Func_02002618(s16 value) {
 DEFINE_BEAM_START(Func_02002624, Func_0200242c)
 
 #undef MarsLighthouseRoomF_ContinueSlide
-#undef gData_02007044
-#undef gData_0200703c
-#undef gData_02007040
-#undef gData_02005c6e
-#undef gData_02005c60
-#undef gData_02005c5a
-#undef gData_02005c4c
-#undef gData_02005c46
-#undef gData_02005c38
-#undef gData_02005c32
-#undef gData_02005c2c
-#undef gData_02005c26
-#undef gData_02005c14
-#undef gData_02005c0e
-#undef gData_02005bfc
-#undef gData_02005bf6
-#undef gData_02005bf0
-#undef gMarsLighthouseRoomF_Room2Triggers
-#undef gMarsLighthouseRoomF_Room3Triggers
-#undef gMarsLighthouseRoomF_Room1Triggers
-#undef gMarsLighthouseRoomF_Room4Triggers
-#undef gMarsLighthouseRoomF_Triggers
-#undef gData_02005bac
-#undef gData_02005b68
-#undef gMarsLighthouseRoomF_Room2Placements
-#undef gMarsLighthouseRoomF_Room3Placements
-#undef gMarsLighthouseRoomF_Room1Placements
-#undef gMarsLighthouseRoomF_Room4Placements
-#undef gMarsLighthouseRoomF_Placements
-#undef gData_02005d8c
-#undef gData_02005d3c
-#undef gData_02005ce0
-#undef gData_02005c84
-#undef DEFINE_FUNC_02000444
-#undef MarsLighthouseRoomF_ContinueSlide
-#undef DEFINE_FUNC_02000CF4
-#undef ABS
-#undef Camera_SetBounds
-#undef SceneWork
-#undef MapLayer
-#undef IWRAM
-#undef gData_02007044
-#undef gData_0200703c
-#undef gData_02007040
-#undef gData_02005c6e
-#undef gData_02005c60
-#undef gData_02005c5a
-#undef gData_02005c4c
-#undef gData_02005c46
-#undef gData_02005c38
-#undef gData_02005c32
-#undef gData_02005c2c
-#undef gData_02005c26
-#undef gData_02005c14
-#undef gData_02005c0e
-#undef gData_02005bfc
-#undef gData_02005bf6
-#undef gData_02005bf0
-#undef gMarsLighthouseRoomF_Room2Triggers
-#undef gMarsLighthouseRoomF_Room3Triggers
-#undef gMarsLighthouseRoomF_Room1Triggers
-#undef gMarsLighthouseRoomF_Room4Triggers
-#undef gMarsLighthouseRoomF_Triggers
-#undef gData_02005bac
-#undef gData_02005b68
-#undef gMarsLighthouseRoomF_Room2Placements
-#undef gMarsLighthouseRoomF_Room3Placements
-#undef gMarsLighthouseRoomF_Room1Placements
-#undef gMarsLighthouseRoomF_Room4Placements
-#undef gMarsLighthouseRoomF_Placements
-#undef gData_02005d8c
-#undef gData_02005d3c
-#undef gData_02005ce0
-#undef gData_02005c84
 // ---- scene/mars_lighthouse_room_f/ride.c ----
 
 /// Scene code of overlay 0x6ad, in ROM order.
@@ -1555,11 +1481,6 @@ DEFINE_PARTY_TAKE_FALL_DAMAGE(Func_02002800)
 #undef RideWork
 #undef Func_020027ac
 
-#undef Unit_Get
-#undef RideSlot
-#undef RideWork
-#undef Func_020027ac
-#undef Unit_Get
 // ---- scene/mars_lighthouse_room_f/flash.c ----
 
 /// Scene code of overlay 0x6ad, in ROM order.
@@ -2000,16 +1921,6 @@ DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_02002f80, Work020023c4__s2f80,
 
 #undef RideSlot
 #undef RideWork
-#undef gData_02005e00
-#undef gData_02005dbc
-#undef position
-#undef WORK
-#undef MapLayer
-#undef ABS
-#undef RideSlot
-#undef RideWork
-#undef gData_02005e00
-#undef gData_02005dbc
 // ---- scene/mars_lighthouse_room_f/s328c.c ----
 
 /// Scene code of overlay 0x6ad, in ROM order.
@@ -2122,9 +2033,61 @@ DEFINE_ACTOR_PARK(Func_0200351c, Func_02003304)
 #undef RideWork
 #include "../field/field_effect/move.c"
 
+#undef DEFINE_FUNC_02000444
+#undef DEFINE_FUNC_02000CF4
+#undef ABS
+#undef IWRAM
+#undef position
+#undef WORK
+#undef ABS
+#undef gMarsLighthouseRoomF_Placements
+#undef gMarsLighthouseRoomF_Room4Placements
+#undef gMarsLighthouseRoomF_Room1Placements
+#undef gMarsLighthouseRoomF_Room3Placements
+#undef gMarsLighthouseRoomF_Room2Placements
+#undef gData_02005b68
+#undef gData_02005bac
+#undef gMarsLighthouseRoomF_Triggers
+#undef gMarsLighthouseRoomF_Room4Triggers
+#undef gMarsLighthouseRoomF_Room1Triggers
+#undef gMarsLighthouseRoomF_Room3Triggers
+#undef gMarsLighthouseRoomF_Room2Triggers
+#undef gData_02005bf0
+#undef gData_02005bf6
+#undef gData_02005bfc
+#undef gData_02005c0e
+#undef gData_02005c14
+#undef gData_02005c26
+#undef gData_02005c2c
+#undef gData_02005c32
+#undef gData_02005c38
+#undef gData_02005c46
+#undef gData_02005c4c
+#undef gData_02005c5a
+#undef gData_02005c60
+#undef gData_02005c6e
+#undef gData_02005c84
+#undef gData_02005ce0
+#undef gData_02005d3c
+#undef gData_02007040
+#undef gData_0200703c
+#undef gData_02007044
+#undef MapLayer
+#undef SceneWork
+#undef Camera_SetBounds
+#undef gData_02005d8c
 #undef RideSlot
 #undef RideWork
-// ---- scene/mars_lighthouse_room_f/s35b8.c ----
+#undef Func_020027ac
+#undef Unit_Get
+#undef RideSlot
+#undef RideWork
+#undef gData_02005dbc
+#undef gData_02005e00
+#undef MapLayer
+#undef RideSlot
+#undef RideWork
+// ---- from scene/mars_lighthouse_room_f/s35b8.c ----
 // @file
 // Scene code of overlay 0x6ad, in ROM order.
 
@@ -2244,12 +2207,11 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef gData_02007058
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 #undef gData_02007058
-// ---- scene/mars_lighthouse_room_f/s3d80.c ----
+// ---- from scene/mars_lighthouse_room_f/s3d80.c ----
 // @file
 // Scene code of overlay 0x6ad, in ROM order.
 
@@ -2821,12 +2783,6 @@ u32 gData_02005f64[] = {
 DEFINE_PUSH_LEADER_STEPS(gData_02005f7c)
 // clang-format on
 
-#undef Func_0200351c
-#undef Func_02003478
-#undef Func_020006f4
-#undef Func_0200004c
-#undef CrackedTile_FallEvent
-#undef CrackedTile_Crack
 #undef SHARED_F02003070_NAME
 #undef SHARED_F02003070_ID2
 #undef SHARED_F02003070_ID3
@@ -2838,14 +2794,14 @@ DEFINE_PUSH_LEADER_STEPS(gData_02005f7c)
 #undef ABS
 #undef PIXELS
 #define PIXELS(value) ((value) << 16)
-#undef MapLayer
-#undef Func_0200351c
-#undef Func_02003478
-#undef Func_020006f4
-#undef Func_0200004c
-#undef CrackedTile_FallEvent
 #undef CrackedTile_Crack
-// ---- scene/data/mars_lighthouse_room_f.c ----
+#undef CrackedTile_FallEvent
+#undef MapLayer
+#undef Func_0200004c
+#undef Func_020006f4
+#undef Func_02003478
+#undef Func_0200351c
+// ---- from scene/data/mars_lighthouse_room_f.c ----
 
 #include "macros.h"
 #include "shared/tables.h"
@@ -3185,27 +3141,27 @@ LATE_DATA s32 gData_02007058[] = {
     (s32)gData_02005e80,
     (s32)gData_02005ebc,
 };
-#undef gData_02005ebc
-#undef gData_02005e80
-#undef gData_02005e44
-#undef gData_02005a88
-#undef gData_02005a3c
-#undef gData_0200593c
-#undef gData_02005890
-#undef gData_020057bc
-#undef gData_02005748
-#undef gData_020056d4
-#undef gData_020056c8
-#undef MarsLighthouseRoomF_ContinueSlide
-#undef Func_02000d38
-#undef Func_02000cf4
-#undef Func_020008a0
-#undef Func_020007f0
-#undef Func_020004bc
-#undef Func_02000480
-#undef Func_02000444
-#undef Func_020002b8
-#undef Func_02000280
-#undef Func_0200025c
-#undef Func_02000248
 #undef Func_020001f4
+#undef Func_02000248
+#undef Func_0200025c
+#undef Func_02000280
+#undef Func_020002b8
+#undef Func_02000444
+#undef Func_02000480
+#undef Func_020004bc
+#undef Func_020007f0
+#undef Func_020008a0
+#undef Func_02000cf4
+#undef Func_02000d38
+#undef MarsLighthouseRoomF_ContinueSlide
+#undef gData_020056c8
+#undef gData_020056d4
+#undef gData_02005748
+#undef gData_020057bc
+#undef gData_02005890
+#undef gData_0200593c
+#undef gData_02005a3c
+#undef gData_02005a88
+#undef gData_02005e44
+#undef gData_02005e80
+#undef gData_02005ebc

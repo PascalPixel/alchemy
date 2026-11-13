@@ -119,10 +119,9 @@ void Func_02000328(void) {
 
 #include "../field/field_effect/move.c"
 
-#undef Func_020017b4
 #undef BG_PLTT_SET_RGB
 #undef Func_020017b4
-// ---- scene/anemos_inner_sanctum/scene_tables.c ----
+// ---- from scene/anemos_inner_sanctum/scene_tables.c ----
 // @file
 // Scene code of overlay 0x6b0, in ROM order.
 
@@ -294,11 +293,6 @@ s32 Func_02000794(struct Actor *object) {
 
 #include "../field/object/wait_until_idle.c"
 
-#undef gData_02003674
-#undef gData_02003840
-#undef BYTE_AT
-#undef gData_02003674
-#undef gData_02003840
 // ---- scene/anemos_inner_sanctum/scene_tables.c ----
 
 // Scene code of overlay 0x6b0, in ROM order.
@@ -436,11 +430,6 @@ void Func_02000a78(s32 a0, s32 a1, s16 a2) {
   Actor_SetSpriteFlags(t0, 0);
 }
 
-#undef gData_02003684
-#undef gData_02003c88
-#undef BYTE_AT
-#undef gData_02003684
-#undef gData_02003c88
 // ---- scene/anemos_inner_sanctum/s0ac8.c ----
 
 // Scene code of overlay 0x6b0, in ROM order.
@@ -1057,27 +1046,6 @@ void Func_020017b4(struct Actor *self) {
 #undef Func_020009b8
 #undef Func_02000a78
 
-#undef gData_02003594
-#undef gData_02003574
-#undef gData_020036f6
-#undef gData_020036ea
-#undef gData_020036e4
-#undef gData_020036fc
-#undef gData_02003620
-#undef gData_020035cc
-#undef FIELD_AT
-#undef DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF
-#undef Func_0200088c
-#undef Func_020009b8
-#undef Func_02000a78
-#undef gData_02003594
-#undef gData_02003574
-#undef gData_020036f6
-#undef gData_020036ea
-#undef gData_020036e4
-#undef gData_020036fc
-#undef gData_02003620
-#undef gData_020035cc
 // ---- scene/anemos_inner_sanctum/s1938.c ----
 
 // Scene code of overlay 0x6b0, in ROM order.
@@ -1702,21 +1670,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 #include "../field/object/set_sprite_priority_b.c"
 
-#undef gData_02003888
-#undef gData_0200385c
-#undef gData_0200384c
-#undef Func_02000038
-#undef gData_02004410
-#undef gData_020043e4
-#undef gData_020038b4
-#undef FIELD_AT
-#undef gData_02003888
-#undef gData_0200385c
-#undef gData_0200384c
-#undef Func_02000038
-#undef gData_02004410
-#undef gData_020043e4
-#undef gData_020038b4
 // ---- scene/anemos_inner_sanctum/move.c ----
 
 // Scene code of overlay 0x6b0, in ROM order.
@@ -1855,11 +1808,6 @@ void Leader_CenterInCell(void) {
 // one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
-#undef gData_02004428
-#undef CELL_TABLE
-#undef CELL_SPRITE_DRAW
-#undef CELL_PUSH_SLOT_ENTRY
-#undef gData_02004428
 // ---- scene/anemos_inner_sanctum/s2db0.c ----
 
 // Scene code of overlay 0x6b0, in ROM order.
@@ -1920,7 +1868,38 @@ void CrackedTile_Fall(struct PushEvent *event) {
 
 #include "../field/field_effect/advance_motion.c"
 
-// ---- scene/anemos_inner_sanctum/s2f48.c ----
+#undef BYTE_AT
+#undef BYTE_AT
+#undef FIELD_AT
+#undef DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF
+#undef FIELD_AT
+#undef CELL_TABLE
+#undef CELL_SPRITE_DRAW
+#undef CELL_PUSH_SLOT_ENTRY
+#undef gData_02003840
+#undef gData_02003674
+#undef gData_02003c88
+#undef gData_02003684
+#undef Func_0200088c
+#undef Func_020009b8
+#undef Func_02000a78
+#undef gData_020035cc
+#undef gData_02003620
+#undef gData_020036fc
+#undef gData_020036e4
+#undef gData_020036ea
+#undef gData_020036f6
+#undef gData_02003574
+#undef gData_02003594
+#undef gData_020043e4
+#undef gData_02004410
+#undef Func_02000038
+#undef gData_0200384c
+#undef gData_0200385c
+#undef gData_02003888
+#undef gData_020038b4
+#undef gData_02004428
+// ---- from scene/anemos_inner_sanctum/s2f48.c ----
 // @file
 // Scene code of overlay 0x6b0, in ROM order.
 
@@ -2477,10 +2456,10 @@ s32 gData_02004428[] = {
     (s32)gData_020037c8,
     (s32)gData_02003804,
 };
-#undef Func_02000794
-#undef Func_020006f8
-#undef Func_02000660
-#undef Func_02000654
-#undef CrackedTile_PlaceLanding
-#undef CrackedTile_Fall
 #undef FieldEffect_SpawnLocal
+#undef CrackedTile_Fall
+#undef Func_02000654
+#undef Func_02000660
+#undef Func_020006f8
+#undef Func_02000794
+#undef CrackedTile_PlaceLanding

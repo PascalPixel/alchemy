@@ -13,8 +13,8 @@ A table gives every ability two numbers: which effect to play, and a
 variant saying how strongly. Quake, Earthquake and Quake Sphere all name
 the Quake effect, at variants 0, 1 and 2. The handler reads its variant and
 looks up its own timings and counts. That is why abilities that come in
-threes look like one idea growing. In The Lost Age that table is still a
-TSV file in the battle folder, `actflags.tsv`, packed by the build.
+threes look like one idea growing. In The Lost Age that table is still
+assembly rows in the battle folder's `battle_tables.s`.
 
 A summon's row carries a mark that sends it another way. The Lost Age has
 29 summons to The Broken Seal's 16, and the 13 it adds all take Djinn of

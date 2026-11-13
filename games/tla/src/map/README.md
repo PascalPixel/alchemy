@@ -1,26 +1,28 @@
 # Maps
 
 A map is the ground a place is drawn on and walked over. Each is a folder
-here, such as `map_008/` for Daila, and the heart of it is a few text
-grids you can open, one per thing a cell says, gathered by `grid.tsv`.
+here, such as `map_008/` for Daila, and the heart of it is a text grid
+you can open, `map.txt`, one cell per square.
 
 ## Cells
 
 A map is a grid of [cells](../../glossary.md#cell), 16 pixels square, 128
-by 128 of them. Each cell says four things, and each has a grid of its own:
+by 128 of them. Each cell says four things. The first three are written
+together in `map.txt`, as `picture:behavior:flags`, and the fourth has a
+grid of its own:
 
-- **What is drawn.** `grid_cell_picture.tsv` names a
+- **What is drawn.** The picture names a
   [cell picture](../../glossary.md#cell-picture), four tiles two by two,
   from the map's own list in `cell_pictures.tsv`. It is written in hex, and
   its top digit holds the cell's layer and drawing priority, which is how
   Felix goes behind a roof by walking, with no code involved.
-- **What standing there does.** `grid_collision.tsv` holds the
+- **What standing there does.** The behavior is the
   [cell behavior](../../glossary.md#cell-behavior). Zero is plain ground.
   A few numbers mean the same everywhere: 255 is a wall, and 242 to 247
   are a jar, a barrel or the like to search. The numbers from 1 to 230 mean
   whatever the scene's trigger table says
   ([Scenes](../scene/README.md#which-triggers-a-cell-starts)).
-- **What else is true of it.** `grid_shape.tsv` is a byte of flags: water
+- **What else is true of it.** The flags are a byte: water
   to wade through, a ledge to hop down, a ladder to climb, the second of
   the scene's two battle zones.
 - **How the ground is shaped.** `shape_grid.tsv` picks a shape from
@@ -32,7 +34,7 @@ by 128 of them. Each cell says four things, and each has a grid of its own:
 
 On screen a town is three layers, one over another. In the file they lie
 side by side in the same grid, each in a block of its own. The map's
-`map.s` opens with a header and one `map_layer` line for each layer, which
+`map.inc` opens with a header and one `map_layer` line for each layer, which
 says where it begins.
 
 A layer can also drift by itself and scroll at its own rate, and the same
@@ -41,7 +43,7 @@ line says by how much.
 ## Chests and Psynergy Stones
 
 A chest is not painted into the map, or every scene sharing the map would
-have it. The map only lists numbered points, in `scene_points.tsv`. The
+have it. The map only lists numbered points, in `scene.tsv`. The
 scene item table in [the field's folder](../field/README.md) gives each
 scene its treasure: what kind it is, which point it stands on, the flag
 that says it has been opened, and what is inside. When a scene starts, the
@@ -89,14 +91,13 @@ and the tiles come too, unless they are already there.
 
 ## Where the files are
 
-Each `map_NNN/` folder holds `map.s`, which puts the map together, and
-its grids and tables: `grid.tsv` and the grids it gathers,
-`cell_pictures.tsv`, `shape_grid.tsv`, `shapes.tsv`, `animation.tsv` and
-`blend.tsv` where it has them. The scene's part is `scene.tsv` and the
-tables it gathers: where the party comes in (`scene_entrances.tsv`), the
-points, the bounds, and the patches, rectangles of
-cells copied over others once a flag is set. Where the Japanese edition's
-map differs, its own file sits beside it, such as `grid_ja.tsv`. `world/`
-is the World Map's ground, and `default/` holds the cells the World Map
-starts from and a few other tables. The code that reads them is in
+Each `map_NNN/` folder holds `map.inc`, which puts the map together and
+which [`maps.s`](maps.s) includes in the Game Pak's order, and its grids
+and tables: `map.txt`, `cell_pictures.tsv`, `shape_grid.tsv`,
+`shapes.tsv`, `animation.tsv` and `blend.tsv` where it has them. The
+scene's part is `scene.tsv`, three tables one after another: the points,
+where the party comes in, and the camera's bounds. Where the Japanese
+edition's map differs, its own file sits beside it, such as `map_ja.txt`.
+`world/` is the World Map's ground, and `default/` holds the cells the
+World Map starts from and a few other tables. The code that reads them is in
 [Field code](../field/README.md).

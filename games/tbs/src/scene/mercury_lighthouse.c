@@ -1535,7 +1535,6 @@ static void MercuryLighthouse_MiaDiscussesBlockedEntrance(void) {
 
 /// The door's light brightens to white as it opens.
 static void MercuryLighthouse_FadePaletteToWhite(void) {
-  // Palette RAM is hardware, read through a volatile pointer.
   volatile u16 *palette;
   u32 colorIndex;
   u32 whiteColors;
@@ -1547,9 +1546,9 @@ static void MercuryLighthouse_FadePaletteToWhite(void) {
     palette = &BG_PLTT_COLOR(2, 8);
     whiteColors = 0;
     for (colorIndex = 0; colorIndex <= 7; colorIndex++) {
-      red = *palette & 31;
-      green = (*palette >> 5) & 31;
-      blue = (*palette >> 10) & 31;
+      red = RGB_RED(*palette);
+      green = RGB_GREEN(*palette);
+      blue = RGB_BLUE(*palette);
       if (red == 31 && green == 31 && blue == 31) {
         whiteColors++;
       } else {
@@ -1559,7 +1558,7 @@ static void MercuryLighthouse_FadePaletteToWhite(void) {
           green++;
         if (blue <= 30)
           blue++;
-        *palette = (blue << 10) | (green << 5) | red;
+        *palette = RGB(red, green, blue);
       }
       palette++;
     }
@@ -1756,16 +1755,16 @@ static void MercuryLighthouse_FadePaletteToBlack(void) {
     palette = &BG_PLTT_COLOR(6, 1);
     blackColors = 0;
     for (colorIndex = 0; colorIndex <= 6; colorIndex++) {
-      red = *palette & 31;
-      green = (*palette >> 5) & 31;
-      blue = (*palette >> 10) & 31;
+      red = RGB_RED(*palette);
+      green = RGB_GREEN(*palette);
+      blue = RGB_BLUE(*palette);
       if (red > 0)
         red--;
       if (green > 0)
         green--;
       if (blue > 0)
         blue--;
-      *palette = (blue << 10) | (green << 5) | red;
+      *palette = RGB(red, green, blue);
       if (*palette == 0)
         blackColors++;
       palette++;

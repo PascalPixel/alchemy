@@ -390,8 +390,8 @@ void FieldEffect_SpawnRevealMarkers(void) {
   // 0xff; the same list as MapGridMarkers's markers in treasure_spots.c.
   markerData = *(u8 **)(((u8 *)gMapGridWork[0]) + 16);
   actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  leaderColumn = actor->x.fixed >> 20;
-  leaderRow = actor->z.fixed >> 20;
+  leaderColumn = FIELD_CELL(actor->x.fixed);
+  leaderRow = FIELD_CELL(actor->z.fixed);
   if (markerData != 0) {
     while (column = *markerData++, row = *markerData++,
            column != 0xff || row != 0xff) {

@@ -430,7 +430,7 @@ static s32 TunnelRuins_FrostTargetFollowsPillar(struct Actor *updated) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   if (leader->y.fixed > -px(48) &&
-      (Actor_Get(ACTOR_DOUSE_PILLAR)->z.fixed >> 20) == 10) {
+      (FIELD_CELL(Actor_Get(ACTOR_DOUSE_PILLAR)->z.fixed)) == 10) {
     frostTarget->x.fixed = Actor_Get(ACTOR_DOUSE_PILLAR)->x.fixed;
     frostTarget->y.fixed = -px(32);
     frostTarget->z.fixed = Actor_Get(ACTOR_DOUSE_PILLAR)->z.fixed;
@@ -732,7 +732,8 @@ static void TunnelRuins_BlowAwayIvyC(void) {
 static void TunnelRuins_HopWestBySmallPillars(void) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
-  if ((actor->x.fixed >> 20) != 32 || (actor->z.fixed >> 20) != 50) {
+  if ((FIELD_CELL(actor->x.fixed)) != 32 ||
+      (FIELD_CELL(actor->z.fixed)) != 50) {
     TunnelRuins_HopWest();
   }
 }
@@ -743,7 +744,8 @@ static void TunnelRuins_HopWestBySmallPillars(void) {
 static void TunnelRuins_HopNorthBySmallPillars(void) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
-  if ((actor->x.fixed >> 20) != 30 || (actor->z.fixed >> 20) != 52) {
+  if ((FIELD_CELL(actor->x.fixed)) != 30 ||
+      (FIELD_CELL(actor->z.fixed)) != 52) {
     TunnelRuins_HopNorth();
   }
 }
@@ -777,7 +779,7 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
 
   Event_Start();
   actor = Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR);
-  if ((actor->x.fixed >> 20) == 46) {
+  if ((FIELD_CELL(actor->x.fixed)) == 46) {
     Event_Wait(30);
     overlay = Actor_Prepare(744, 0, 184, SPRITE_CAPPED_PILLAR);
     // The pillar sinks a pixel every three frames, raising dust around it.
@@ -862,7 +864,7 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
 
   Event_Start();
   actor = Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR);
-  if ((actor->x.fixed >> 20) == 48) {
+  if ((FIELD_CELL(actor->x.fixed)) == 48) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_02) != 0) {
       Event_Wait(30);
       overlay = Actor_Prepare(770, 0, 274, SPRITE_CRATE);
@@ -1035,7 +1037,7 @@ static void TunnelRuins_FreezeDousePillarFrostTarget(void) {
   GameFlag_Set(FLAG_TUNNEL_RUINS_DOUSE_FROST_TARGET_FROZEN);
 
   column = Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->x.fixed;
-  row = Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->z.fixed >> 20;
+  row = FIELD_CELL(Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->z.fixed);
   MapGrid_CopyCellAttributes(26, 8, 1, 1, column >> 20, row);
 
   actor = Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET);
@@ -1100,8 +1102,8 @@ static void TunnelRuins_SettleBalance(s32 frames) {
     if (Actor_Get(i + ACTOR_BALANCE_WEST)->y.fixed / Q16_ONE < 0 &&
         Actor_Get(i + ACTOR_BALANCE_WEST)->y.fixed / Q16_ONE > -30) {
       MapGrid_CopyCellAttributeRect(
-          4, 9, 1, 1, Actor_Get(i + ACTOR_BALANCE_WEST)->x.fixed >> 20,
-          Actor_Get(i + ACTOR_BALANCE_WEST)->z.fixed >> 20);
+          4, 9, 1, 1, FIELD_CELL(Actor_Get(i + ACTOR_BALANCE_WEST)->x.fixed),
+          FIELD_CELL(Actor_Get(i + ACTOR_BALANCE_WEST)->z.fixed));
     }
   }
   Event_Wait(frames);
@@ -1119,11 +1121,11 @@ static void TunnelRuins_DropStoneOnStack(s32 actorId) {
     if (candidateId == actorId)
       continue;
 
-    if ((Actor_Get(candidateId)->x.fixed >> 20) !=
-        (Actor_Get(actorId)->x.fixed >> 20))
+    if ((FIELD_CELL(Actor_Get(candidateId)->x.fixed)) !=
+        (FIELD_CELL(Actor_Get(actorId)->x.fixed)))
       continue;
-    if ((Actor_Get(candidateId)->z.fixed >> 20) !=
-        (Actor_Get(actorId)->z.fixed >> 20))
+    if ((FIELD_CELL(Actor_Get(candidateId)->z.fixed)) !=
+        (FIELD_CELL(Actor_Get(actorId)->z.fixed)))
       continue;
 
     if (highestHeight > Actor_Get(candidateId)->y.fixed + px(16))
@@ -1173,7 +1175,7 @@ static void TunnelRuins_SetStoneOnBalance(void) {
       GameFlag_Set(i + FLAG_SCENE_TEMP_00);
       break;
     }
-    if ((Actor_Get(i + ACTOR_WEST_CARRY_STONE)->z.fixed >> 20) == 9 &&
+    if ((FIELD_CELL(Actor_Get(i + ACTOR_WEST_CARRY_STONE)->z.fixed)) == 9 &&
         GameFlag_Get(i + FLAG_SCENE_TEMP_00) == 0) {
       Actor_Get(i + ACTOR_WEST_CARRY_STONE)->groundHeight = 0;
       Actor_Get(i + ACTOR_WEST_CARRY_STONE)->velocityY = 0;
@@ -1220,7 +1222,8 @@ static void TunnelRuins_SetStoneOnBalance(void) {
       FieldCamera_MoveTo(168, 8, 184, 1);
       FieldCamera_WaitForMove();
       TunnelRuins_DropStoneOnStack(settledIndex + ACTOR_WEST_CARRY_STONE);
-      if ((Actor_Get(settledIndex + ACTOR_WEST_CARRY_STONE)->x.fixed >> 20) ==
+      if ((FIELD_CELL(
+              Actor_Get(settledIndex + ACTOR_WEST_CARRY_STONE)->x.fixed)) ==
           8) {
         Actor_Get(ACTOR_BALANCE_WEST)->timer++;
         (Actor_Get(ACTOR_BALANCE_EAST)->timer)--;
@@ -1262,13 +1265,13 @@ static void TunnelRuins_PushActor(void) {
 static void TunnelRuins_MoveEastPillar(void) {
   Event_Start();
 
-  if ((Actor_Get(ACTOR_EAST_PILLAR_A)->x.fixed >> 20) == 45) {
+  if ((FIELD_CELL(Actor_Get(ACTOR_EAST_PILLAR_A)->x.fixed)) == 45) {
     GameFlag_Set(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST);
   } else {
     GameFlag_Clear(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST);
   }
 
-  if ((Actor_Get(ACTOR_EAST_PILLAR_B)->x.fixed >> 20) == 46) {
+  if ((FIELD_CELL(Actor_Get(ACTOR_EAST_PILLAR_B)->x.fixed)) == 46) {
     GameFlag_Set(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST);
   } else {
     GameFlag_Clear(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST);
@@ -1366,37 +1369,37 @@ static void TunnelRuins_MoveLadyStatue(void) {
   MapGrid_CopyCellAttributes(20, 56, 1, 1, column, row);
   // Count the statues on their marks.
   actor = Actor_Get(ACTOR_LADY_STATUE_NORTHWEST);
-  if ((actor->x.fixed >> 20) == 25) {
+  if ((FIELD_CELL(actor->x.fixed)) == 25) {
     actor = Actor_Get(ACTOR_LADY_STATUE_NORTHWEST);
-    if ((actor->z.fixed >> 20) == 49) {
+    if ((FIELD_CELL(actor->z.fixed)) == 49) {
       correctPositions = 1;
     }
   }
   actor = Actor_Get(ACTOR_LADY_STATUE_NORTHEAST);
-  if ((actor->x.fixed >> 20) == 23) {
+  if ((FIELD_CELL(actor->x.fixed)) == 23) {
     actor = Actor_Get(ACTOR_LADY_STATUE_NORTHEAST);
-    if ((actor->z.fixed >> 20) == 49) {
+    if ((FIELD_CELL(actor->z.fixed)) == 49) {
       correctPositions = (correctPositions + 1);
     }
   }
   actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST);
-  if ((actor->x.fixed >> 20) == 25) {
+  if ((FIELD_CELL(actor->x.fixed)) == 25) {
     actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST);
-    if ((actor->z.fixed >> 20) == 47) {
+    if ((FIELD_CELL(actor->z.fixed)) == 47) {
       correctPositions = (correctPositions + 1);
     }
   }
   actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST);
-  if ((actor->x.fixed >> 20) == 23) {
+  if ((FIELD_CELL(actor->x.fixed)) == 23) {
     actor = Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST);
-    if ((actor->z.fixed >> 20) == 47) {
+    if ((FIELD_CELL(actor->z.fixed)) == 47) {
       correctPositions = (correctPositions + 1);
     }
   }
   actor = Actor_Get(ACTOR_LADY_STATUE_SOUTH);
-  if ((actor->x.fixed >> 20) == 24) {
+  if ((FIELD_CELL(actor->x.fixed)) == 24) {
     actor = Actor_Get(ACTOR_LADY_STATUE_SOUTH);
-    if ((actor->z.fixed >> 20) == 48) {
+    if ((FIELD_CELL(actor->z.fixed)) == 48) {
       correctPositions = (correctPositions + 1);
     }
   }
@@ -1490,14 +1493,14 @@ static void TunnelRuins_UpdateFirstPillarCells(void) {
   Actor_SwapPositionsByDepth(ACTOR_FIRST_PILLAR_B, ACTOR_FIRST_PILLAR_A);
 
   {
-    s32 column = Actor_Get(ACTOR_FIRST_PILLAR_A)->x.fixed >> 20;
-    row = Actor_Get(ACTOR_FIRST_PILLAR_A)->z.fixed >> 20;
+    s32 column = FIELD_CELL(Actor_Get(ACTOR_FIRST_PILLAR_A)->x.fixed);
+    row = FIELD_CELL(Actor_Get(ACTOR_FIRST_PILLAR_A)->z.fixed);
     MapGrid_CopyCellAttributes(2, 36, 1, 1, column, row);
   }
 
   {
-    s32 column = Actor_Get(ACTOR_FIRST_PILLAR_B)->x.fixed >> 20;
-    row = Actor_Get(ACTOR_FIRST_PILLAR_B)->z.fixed >> 20;
+    s32 column = FIELD_CELL(Actor_Get(ACTOR_FIRST_PILLAR_B)->x.fixed);
+    row = FIELD_CELL(Actor_Get(ACTOR_FIRST_PILLAR_B)->z.fixed);
     MapGrid_CopyCellAttributes(2, 36, 1, 1, column, row);
   }
 }
@@ -1515,14 +1518,14 @@ static void TunnelRuins_UpdateSecondPillarCells(void) {
   Actor_SwapPositionsByDepth(ACTOR_SECOND_PILLAR_B, ACTOR_SECOND_PILLAR_A);
 
   {
-    s32 column = Actor_Get(ACTOR_SECOND_PILLAR_A)->x.fixed >> 20;
-    row = Actor_Get(ACTOR_SECOND_PILLAR_A)->z.fixed >> 20;
+    s32 column = FIELD_CELL(Actor_Get(ACTOR_SECOND_PILLAR_A)->x.fixed);
+    row = FIELD_CELL(Actor_Get(ACTOR_SECOND_PILLAR_A)->z.fixed);
     MapGrid_CopyCellAttributes(2, 36, 1, 1, column, row);
   }
 
   {
-    s32 column = Actor_Get(ACTOR_SECOND_PILLAR_B)->x.fixed >> 20;
-    row = Actor_Get(ACTOR_SECOND_PILLAR_B)->z.fixed >> 20;
+    s32 column = FIELD_CELL(Actor_Get(ACTOR_SECOND_PILLAR_B)->x.fixed);
+    row = FIELD_CELL(Actor_Get(ACTOR_SECOND_PILLAR_B)->z.fixed);
     MapGrid_CopyCellAttributes(2, 36, 1, 1, column, row);
   }
 }
@@ -1543,28 +1546,33 @@ static void TunnelRuins_UpdateSmallPillarCells(void) {
   column = actor->x.fixed;
   actor = Actor_Get(ACTOR_SMALL_PILLAR_A);
   column >>= 20;
-  MapGrid_CopyCellAttributes(22, 52, 1, 1, column, (actor->z.fixed >> 20));
+  MapGrid_CopyCellAttributes(22, 52, 1, 1, column,
+                             (FIELD_CELL(actor->z.fixed)));
   actor = Actor_Get(ACTOR_SMALL_PILLAR_B);
   column = actor->x.fixed;
   actor = Actor_Get(ACTOR_SMALL_PILLAR_B);
   column >>= 20;
-  MapGrid_CopyCellAttributes(22, 52, 1, 1, column, (actor->z.fixed >> 20));
+  MapGrid_CopyCellAttributes(22, 52, 1, 1, column,
+                             (FIELD_CELL(actor->z.fixed)));
   actor = Actor_Get(ACTOR_SMALL_PILLAR_C);
   column = actor->x.fixed;
   actor = Actor_Get(ACTOR_SMALL_PILLAR_C);
   column >>= 20;
-  MapGrid_CopyCellAttributes(22, 52, 1, 1, column, (actor->z.fixed >> 20));
+  MapGrid_CopyCellAttributes(22, 52, 1, 1, column,
+                             (FIELD_CELL(actor->z.fixed)));
 }
 
 /// Redraws the east pillars' row and marks the cells they stand on.
 static void TunnelRuins_MarkPushPillarCells(void) {
   MapGrid_CopyCellAttributes(108, 19, 4, 1, 44, 19);
   PushedActor_FillGridAttributeRectangle(
-      0, Actor_Get(ACTOR_EAST_PILLAR_A)->x.fixed >> 20,
-      Actor_Get(ACTOR_EAST_PILLAR_A)->z.fixed >> 20, 1, 1, CELL_BEHAVIOR_WALL);
+      0, FIELD_CELL(Actor_Get(ACTOR_EAST_PILLAR_A)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_EAST_PILLAR_A)->z.fixed), 1, 1,
+      CELL_BEHAVIOR_WALL);
   PushedActor_FillGridAttributeRectangle(
-      0, Actor_Get(ACTOR_EAST_PILLAR_B)->x.fixed >> 20,
-      Actor_Get(ACTOR_EAST_PILLAR_B)->z.fixed >> 20, 1, 1, CELL_BEHAVIOR_WALL);
+      0, FIELD_CELL(Actor_Get(ACTOR_EAST_PILLAR_B)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_EAST_PILLAR_B)->z.fixed), 1, 1,
+      CELL_BEHAVIOR_WALL);
 }
 
 /// On entering a room, restores the puzzle as it was left, and the path the
@@ -1758,8 +1766,8 @@ s32 TunnelRuins_Initialize(void) {
                          PUDDLE_ANIMATION_PILLAR);
       MapGrid_CopyCellAttributeRect(
           26, 8, 1, 1,
-          Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->x.fixed >> 20,
-          Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->z.fixed >> 20);
+          FIELD_CELL(Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->x.fixed),
+          FIELD_CELL(Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->z.fixed));
       Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->update =
           UPDATE_BY_RELATIVE_DEPTH;
       Actor_Get(ACTOR_DOUSE_PILLAR)->update = UPDATE_BY_RELATIVE_DEPTH;
@@ -1868,20 +1876,24 @@ s32 TunnelRuins_Initialize(void) {
       Actor_SetAnimation(ACTOR_LADY_STATUE_NORTHWEST, 2);
       Actor_SetAnimation(ACTOR_LADY_STATUE_SOUTH, 2);
       MapGrid_CopyCellAttributeRect(
-          20, 56, 1, 1, Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->x.fixed >> 20,
-          Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->z.fixed >> 20);
+          20, 56, 1, 1,
+          FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->x.fixed),
+          FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->z.fixed));
       MapGrid_CopyCellAttributeRect(
-          20, 56, 1, 1, Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->x.fixed >> 20,
-          Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->z.fixed >> 20);
+          20, 56, 1, 1,
+          FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->x.fixed),
+          FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->z.fixed));
       MapGrid_CopyCellAttributeRect(
-          20, 56, 1, 1, Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->x.fixed >> 20,
-          Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->z.fixed >> 20);
+          20, 56, 1, 1,
+          FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->x.fixed),
+          FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->z.fixed));
       MapGrid_CopyCellAttributeRect(
-          20, 56, 1, 1, Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->x.fixed >> 20,
-          Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->z.fixed >> 20);
+          20, 56, 1, 1,
+          FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->x.fixed),
+          FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->z.fixed));
       MapGrid_CopyCellAttributeRect(
-          20, 56, 1, 1, Actor_Get(ACTOR_LADY_STATUE_SOUTH)->x.fixed >> 20,
-          Actor_Get(ACTOR_LADY_STATUE_SOUTH)->z.fixed >> 20);
+          20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTH)->x.fixed),
+          FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTH)->z.fixed));
       break;
     case TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST:
       MapGrid_CopyCellAttributes(49, 43, 1, 1, 49, 107);

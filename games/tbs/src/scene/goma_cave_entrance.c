@@ -517,7 +517,7 @@ static void GomaCaveEntrance_MoveStump(void) {
   struct Actor *stump;
 
   Event_Start();
-  column = Actor_Get(ACTOR_STUMP)->x.fixed >> 20;
+  column = FIELD_CELL(Actor_Get(ACTOR_STUMP)->x.fixed);
   if (column == 11) {
     GomaCaveEntrance_LeapStump(ACTOR_STUMP);
     stump = Actor_Get(ACTOR_STUMP);

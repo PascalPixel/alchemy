@@ -191,7 +191,8 @@ static void KolimaForestEntrance_PushLog(void) {
 
   if (PushedActor_FindClearPosition(&res)) {
     Actor_MoveAndRedraw(res);
-    if (res.actorSlot == ACTOR_RIVER_LOG && (res.position.x >> 20) == 20) {
+    if (res.actorSlot == ACTOR_RIVER_LOG &&
+        (FIELD_CELL(res.position.x)) == 20) {
       struct Actor *actor;
 
       Actor_SetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_ROLL_WEST);

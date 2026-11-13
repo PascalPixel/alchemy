@@ -487,7 +487,7 @@ static void SolSanctumEntrance_WestStatueMoved(void) {
   if (statue == NULL) {
     return;
   }
-  column = statue->x.fixed >> 20;
+  column = FIELD_CELL(statue->x.fixed);
   SolSanctumEntrance_RecordStatueColumn(
       column, FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST, 93, 95);
 }
@@ -503,7 +503,7 @@ static void SolSanctumEntrance_EastStatueMoved(void) {
   if (statue == NULL) {
     return;
   }
-  column = statue->x.fixed >> 20;
+  column = FIELD_CELL(statue->x.fixed);
   Event_ClearFlag(FLAG_SOL_SANCTUM_EAST_STATUE_AT_EAST);
   Event_ClearFlag(FLAG_SOL_SANCTUM_EAST_STATUE_AT_WEST);
   if (column == 115) {
@@ -525,7 +525,7 @@ static void SolSanctumEntrance_RowStatue1Moved(void) {
   if (statue == NULL) {
     return;
   }
-  column = statue->x.fixed >> 20;
+  column = FIELD_CELL(statue->x.fixed);
   SolSanctumEntrance_RecordStatueColumn(
       column, FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_EAST, 99, 101);
   SolSanctumEntrance_RestoreRowStatueCells(0);
@@ -540,7 +540,7 @@ static void SolSanctumEntrance_RowStatue2Moved(void) {
   if (statue == NULL) {
     return;
   }
-  column = statue->x.fixed >> 20;
+  column = FIELD_CELL(statue->x.fixed);
   SolSanctumEntrance_RecordStatueColumn(
       column, FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_EAST, 103, 105);
   SolSanctumEntrance_RestoreRowStatueCells(0);
@@ -555,7 +555,7 @@ static void SolSanctumEntrance_RowStatue3Moved(void) {
   if (statue == NULL) {
     return;
   }
-  column = statue->x.fixed >> 20;
+  column = FIELD_CELL(statue->x.fixed);
   SolSanctumEntrance_RecordStatueColumn(
       column, FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_EAST, 107, 109);
   SolSanctumEntrance_RestoreRowStatueCells(0);
@@ -570,7 +570,7 @@ static void SolSanctumEntrance_RowStatue4Moved(void) {
   if (statue == NULL) {
     return;
   }
-  column = statue->x.fixed >> 20;
+  column = FIELD_CELL(statue->x.fixed);
   SolSanctumEntrance_RecordStatueColumn(
       column, FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_EAST, 111, 113);
   SolSanctumEntrance_RestoreRowStatueCells(0);
@@ -585,7 +585,7 @@ static void SolSanctumEntrance_RowStatue5Moved(void) {
   if (statue == NULL) {
     return;
   }
-  column = statue->x.fixed >> 20;
+  column = FIELD_CELL(statue->x.fixed);
   SolSanctumEntrance_RecordStatueColumn(
       column, FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_EAST, 115, 117);
   SolSanctumEntrance_RestoreRowStatueCells(0);
@@ -599,7 +599,7 @@ static void SolSanctumEntrance_RowStatue6Moved(void) {
 
   if (statue == NULL)
     return;
-  column = statue->x.fixed >> 20;
+  column = FIELD_CELL(statue->x.fixed);
   SolSanctumEntrance_RecordStatueColumn(
       column, FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_EAST, 119, 121);
   SolSanctumEntrance_RestoreRowStatueCells(0);

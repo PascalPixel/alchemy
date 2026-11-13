@@ -311,8 +311,8 @@ static struct Actor *VaultCave_FindCollidableActorAtCell(s32 column, s32 row) {
   for (actorSlot = ACTOR_FIRST_PLACED; actorSlot <= 65; actorSlot++) {
     struct Actor *actor = work->actors[actorSlot];
 
-    if (actor != NULL && column == (actor->x.fixed >> 20) &&
-        row == (actor->z.fixed >> 20) && actor->collisionFlags != 0) {
+    if (actor != NULL && column == (FIELD_CELL(actor->x.fixed)) &&
+        row == (FIELD_CELL(actor->z.fixed)) && actor->collisionFlags != 0) {
       return actor;
     }
   }

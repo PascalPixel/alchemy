@@ -3309,7 +3309,7 @@ static void Vale_MovePillarBelowCliff(void) {
   Event_ClearFlag(FLAG_VALE_PILLAR_IN_WEST_COLUMN);
   Event_ClearFlag(FLAG_VALE_PILLAR_IN_MIDDLE_COLUMN);
   Event_ClearFlag(FLAG_VALE_PILLAR_IN_EAST_COLUMN);
-  column = actor->x.fixed >> 20;
+  column = FIELD_CELL(actor->x.fixed);
   if (column == 22) {
     MapGrid_CopyCellAttributes(17, 1, 1, 1, column, 36);
     GameFlag_Set(FLAG_VALE_PILLAR_IN_WEST_COLUMN);

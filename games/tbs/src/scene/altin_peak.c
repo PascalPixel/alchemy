@@ -552,7 +552,7 @@ static void AltinPeak_SettleSpritzRoomPillar(void) {
     s32 column;
 
     MapGrid_CopyCellAttributes(24, 27, 2, 1, 24, 26);
-    column = pillar->x.fixed >> 20;
+    column = FIELD_CELL(pillar->x.fixed);
     if (column == 25) {
       MapGrid_CopyCellAttributes(0, 0, 1, 1, column, 26);
     } else {

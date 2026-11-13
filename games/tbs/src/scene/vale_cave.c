@@ -377,7 +377,7 @@ static void ValeCave_MoveWestCratesIntoWater(void) {
   struct Actor *rightEffect;
 
   Event_Start();
-  if (Actor_Get(ACTOR_WEST_CRATES)->x.fixed >> 20 == 23) {
+  if (FIELD_CELL(Actor_Get(ACTOR_WEST_CRATES)->x.fixed) == 23) {
     // Move the leader aside before the crates start sinking.
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 360, 664);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 10);
@@ -421,7 +421,7 @@ static void ValeCave_MoveEastCratesIntoWater(void) {
   struct Actor *rightEffect;
 
   Event_Start();
-  if (Actor_Get(ACTOR_EAST_CRATES)->x.fixed >> 20 == 27) {
+  if (FIELD_CELL(Actor_Get(ACTOR_EAST_CRATES)->x.fixed) == 27) {
     leftEffect = Actor_PrepareFixed(
         Actor_Get(ACTOR_EAST_CRATES)->x.fixed - px(8), 0,
         Actor_Get(ACTOR_EAST_CRATES)->z.fixed + px(52), SPRITE_CRATES);
@@ -645,7 +645,7 @@ static void ValeCave_PushLogOverEdge(void) {
   if (PushedActor_FindClearPosition(&probe) != 0) {
     Actor_MoveAndRedraw(probe);
     // At the ledge's edge (column 17) the log slides west and drops.
-    if ((probe.position.x >> 20) == 17) {
+    if ((FIELD_CELL(probe.position.x)) == 17) {
       Actor_SetAnimation(probe.actorSlot, 3);
       stationaryMotion = 0;
       Actor_Get(probe.actorSlot)->motionFlags = stationaryMotion;
@@ -667,12 +667,14 @@ static void ValeCave_PushLogOverEdge(void) {
       }
       // The cells it held on the ledge, and its landing, become open floor.
       clearedRows = 4;
-      PushedActor_FillGridAttributeRectangle(0, (probe.position.x >> 20),
-                                             ((probe.position.z >> 20) - 2), 1,
-                                             clearedRows, stationaryMotion);
-      PushedActor_FillGridAttributeRectangle(2, (probe.position.x >> 20),
-                                             ((probe.position.z >> 20) - 2), 1,
-                                             clearedRows, stationaryMotion);
+      PushedActor_FillGridAttributeRectangle(
+          0, (FIELD_CELL(probe.position.x)),
+          ((FIELD_CELL(probe.position.z)) - 2), 1, clearedRows,
+          stationaryMotion);
+      PushedActor_FillGridAttributeRectangle(
+          2, (FIELD_CELL(probe.position.x)),
+          ((FIELD_CELL(probe.position.z)) - 2), 1, clearedRows,
+          stationaryMotion);
       PushedActor_FillGridAttributeRectangle(2, 16, 18, 1, 2, stationaryMotion);
       PushedActor_FillGridAttributeRectangle(0, 16, 16, 1, clearedRows,
                                              stationaryMotion);
@@ -753,10 +755,11 @@ static void ValeCave_PushLogNorth(void) {
       s32 emptyAttributes = 0;
 
       slidingLog->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-      PushedActor_FillGridAttributeRectangle(
-          0, 13, (probe.position.z >> 20) - 1, 4, clearedRows, emptyAttributes);
+      PushedActor_FillGridAttributeRectangle(0, 13,
+                                             (FIELD_CELL(probe.position.z)) - 1,
+                                             4, clearedRows, emptyAttributes);
     }
-    if ((probe.position.z >> 20) == 20) {
+    if ((FIELD_CELL(probe.position.z)) == 20) {
       GameFlag_Set(FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW);
     } else {
       GameFlag_Set(FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW);

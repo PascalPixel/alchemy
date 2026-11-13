@@ -378,8 +378,9 @@ static void BabiLighthouse_JumpFromLedge(void) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Event_Start();
-  if (((leader->x.fixed >> 20) == 6 || (leader->x.fixed >> 20) == 18) &&
-      (leader->z.fixed >> 20) == 20) {
+  if (((FIELD_CELL(leader->x.fixed)) == 6 ||
+       (FIELD_CELL(leader->x.fixed)) == 18) &&
+      (FIELD_CELL(leader->z.fixed)) == 20) {
     leader->targetX = ACTOR_NO_TARGET;
     leader->targetZ = ACTOR_NO_TARGET;
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
@@ -417,17 +418,17 @@ static void BabiLighthouse_PushLedgePillar(void) {
 static void BabiLighthouse_PushLedgePillarOrClimbDown(void) {
   struct Actor *pillar = Actor_Get(ACTOR_RIGHT_PILLAR);
 
-  if ((Actor_Get(ACTOR_PARTY_LEADER)->x.fixed >> 20) <= 12) {
+  if ((FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed)) <= 12) {
     pillar = Actor_Get(ACTOR_LEFT_PILLAR);
-    if ((pillar->x.fixed >> 20) == 6) {
-      if ((pillar->z.fixed >> 20) == 20) {
+    if ((FIELD_CELL(pillar->x.fixed)) == 6) {
+      if ((FIELD_CELL(pillar->z.fixed)) == 20) {
         BabiLighthouse_PushLedgePillar();
         return;
       }
     }
   } else {
-    if ((pillar->x.fixed >> 20) == 18) {
-      if ((pillar->z.fixed >> 20) == 20) {
+    if ((FIELD_CELL(pillar->x.fixed)) == 18) {
+      if ((FIELD_CELL(pillar->z.fixed)) == 20) {
         BabiLighthouse_PushLedgePillar();
         return;
       }
@@ -1222,10 +1223,10 @@ static void BabiLighthouse_LandCarriedPillarInDust(void) {
 /// cell at (20, 12) it settles at a height of 48 pixels.
 static void BabiLighthouse_UpdateMovedPillar(void) {
   struct Actor *pillar = Actor_Get(ACTOR_ROAD_PILLAR);
-  s32 column = pillar->x.fixed >> 20;
+  s32 column = FIELD_CELL(pillar->x.fixed);
 
   if (column == 20) {
-    s32 row = pillar->z.fixed >> 20;
+    s32 row = FIELD_CELL(pillar->z.fixed);
 
     if (row == 12) {
       pillar->motionFlags = ACTOR_FALLS;
@@ -1329,13 +1330,15 @@ static void BabiLighthouse_RedrawLedgePillarCells(void) {
   MapGrid_CopyCellAttributes(69, 19, 3, 3, 5, 19);
   MapGrid_CopyCellAttributes(69, 19, 3, 3, 17, 19);
   {
-    s32 column = leftPillar->x.fixed >> 20, row = leftPillar->z.fixed >> 20;
+    s32 column = FIELD_CELL(leftPillar->x.fixed),
+        row = FIELD_CELL(leftPillar->z.fixed);
 
     MapGrid_CopyCellAttributes(3, 3, 1, 1, column, row);
   }
   {
     struct Actor *rightPillar = Actor_Get(ACTOR_RIGHT_PILLAR);
-    s32 column = rightPillar->x.fixed >> 20, row = rightPillar->z.fixed >> 20;
+    s32 column = FIELD_CELL(rightPillar->x.fixed),
+        row = FIELD_CELL(rightPillar->z.fixed);
 
     MapGrid_CopyCellAttributes(3, 3, 1, 1, column, row);
   }
@@ -1402,9 +1405,9 @@ s32 BabiLighthouse_SetupMap(void) {
   // The road: the moved pillar's cell behavior where it stands.
   if (sceneId == (s32)&SceneId_RoadToBabiLighthouse) {
     placedActor = Actor_Get(ACTOR_ROAD_PILLAR);
-    x = placedActor->x.fixed >> 20;
+    x = FIELD_CELL(placedActor->x.fixed);
     if (x == 20) {
-      z = placedActor->z.fixed >> 20;
+      z = FIELD_CELL(placedActor->z.fixed);
       if (z == 12) {
         MapGrid_CopyCellAttributes(38, 12, 1, 1, x, z);
       }

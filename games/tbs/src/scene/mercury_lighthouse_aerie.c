@@ -1759,8 +1759,8 @@ static void MercuryLighthouseAerie_FindLiftRiders(s32 *out, s32 y) {
     struct Actor *actor = work->actors[slot];
 
     if (actor != 0) {
-      s32 cell = actor->x.fixed >> 20;
-      s32 row = actor->z.fixed >> 20;
+      s32 cell = FIELD_CELL(actor->x.fixed);
+      s32 row = FIELD_CELL(actor->z.fixed);
 
       if (cell >= 4 && cell <= 8 && y + 8 <= row && row < y + 11)
         *out++ = slot;

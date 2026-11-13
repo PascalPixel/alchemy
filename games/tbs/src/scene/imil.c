@@ -1394,10 +1394,10 @@ static void Imil_PlaceMovedSnowman(void) {
 #if TBS_PATCH_3
   struct Actor *actor = Actor_Get(ACTOR_SNOWMAN);
 
-  a = actor->x.fixed >> 20;
+  a = FIELD_CELL(actor->x.fixed);
   if (a != 15)
     return;
-  b = actor->z.fixed >> 20;
+  b = FIELD_CELL(actor->z.fixed);
   if (b != 7)
     return;
   Import_GameFlagSet(FLAG_IMIL_SNOWMAN_MOVED);

@@ -539,7 +539,7 @@ static void AltmillerCave_StartRetreat(void) {
 static void AltmillerCave_UpdateMovedObstacle(void) {
   struct Actor *actor = Actor_Get(ACTOR_SQUALL_ROOM_PILLAR);
 
-  if (actor->x.fixed >> 20 == 30 && actor->z.fixed >> 20 == 20) {
+  if (FIELD_CELL(actor->x.fixed) == 30 && FIELD_CELL(actor->z.fixed) == 20) {
     actor->motionFlags = ACTOR_FALLS;
     actor->groundHeight = 0;
     actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;

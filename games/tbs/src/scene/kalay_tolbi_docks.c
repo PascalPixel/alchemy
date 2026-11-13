@@ -840,8 +840,8 @@ static void KalayTolbiDocks_UpdateCrateCells(void) {
   s32 firstCratesColumn;
   s32 secondCratesColumn;
 
-  firstCratesColumn = Actor_Get(ACTOR_FIRST_CRATES)->x.fixed >> 20;
-  secondCratesColumn = Actor_Get(ACTOR_SECOND_CRATES)->x.fixed >> 20;
+  firstCratesColumn = FIELD_CELL(Actor_Get(ACTOR_FIRST_CRATES)->x.fixed);
+  secondCratesColumn = FIELD_CELL(Actor_Get(ACTOR_SECOND_CRATES)->x.fixed);
 
   MapGrid_CopyCellAttributes(5, 12, 5, 1, 5, 11);
   MapGrid_CopyCellAttributes(1, 0, 1, 1, secondCratesColumn, 11);

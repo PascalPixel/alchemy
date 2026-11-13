@@ -123,9 +123,9 @@ void ActorSystem_PlaceSprites(void) {
           screenTop < px(224)) {
         // The cell under the actor: x and z >> 20 are 16-pixel cells, and a
         // row holds 128 of them.
-        tile = &(
-            (struct ActorCameraTile *)grid->layers[actor->layer]
-                .cells)[(actor->x.fixed >> 20) + ((actor->z.fixed >> 20) << 7)];
+        tile = &((struct ActorCameraTile *)grid->layers[actor->layer]
+                     .cells)[(FIELD_CELL(actor->x.fixed)) +
+                             ((FIELD_CELL(actor->z.fixed)) << 7)];
         if (actor->priorityFlags & ACTOR_PRIORITY_AUTOMATIC) {
           priority = tile->priority;
           if (priority != 0) {

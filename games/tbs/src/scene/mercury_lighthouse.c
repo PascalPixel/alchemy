@@ -397,7 +397,7 @@ static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
   struct FadeOverlayWork *effectWork =
       *(struct FadeOverlayWork **)Ram_ActorEffectWork;
 
-  if (leader->layer == 0 && leader->z.fixed >> 20 > 12 &&
+  if (leader->layer == 0 && FIELD_CELL(leader->z.fixed) > 12 &&
       leader->z.fixed >> 20 <= 18)
     effectWork->actor = NULL;
   else
@@ -565,7 +565,7 @@ static void MercuryLighthouse_PushChannelPipes(void) {
     // Each pipe controls one channel; restore the connected water tiles too.
     switch ((u32)probe.actorSlot) {
     case ACTOR_FIRST_PIPE:
-      if (probe.position.z >> 20 == 8) {
+      if (FIELD_CELL(probe.position.z) == 8) {
         Actor_MoveAndRedraw(probe);
         Event_Wait(20);
         MapGrid_CopyCellsTo(119, 9, 109, 11, 1, 1);
@@ -583,7 +583,7 @@ static void MercuryLighthouse_PushChannelPipes(void) {
       }
       break;
     case ACTOR_SECOND_PIPE:
-      if (probe.position.z >> 20 == 12) {
+      if (FIELD_CELL(probe.position.z) == 12) {
         Actor_MoveAndRedraw(probe);
         Event_Wait(10);
         if (Event_GetFlag(FLAG_PIPE_1_JOINED)) {
@@ -954,7 +954,7 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
         GameFlag_Clear(FLAG_STAIRS_RAISED);
       }
     } else if (pillarId == ACTOR_FOUNTAIN_PIPE) {
-      if ((probe.position.z >> 20) == 40) {
+      if ((FIELD_CELL(probe.position.z)) == 40) {
         Actor_MoveAndRedraw(probe);
         if (Event_GetFlag(FLAG_FOUNTAIN_SHOWN) == 0) {
           FieldCamera_SetSpeed(1.5);
@@ -967,7 +967,7 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
           MercuryLighthouse_OpenFountainWithSpray(5);
         }
         GameFlag_Set(FLAG_FOUNTAIN_RUNNING);
-      } else if ((probe.position.z >> 20) == 42) {
+      } else if ((FIELD_CELL(probe.position.z)) == 42) {
         probe.callback = MercuryLighthouse_StopFountainSpray;
         Actor_MoveAndRedraw(probe);
         MercuryLighthouse_RestoreFountainTiles(5);
@@ -1270,16 +1270,16 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
     switch (probe.actorSlot) {
     case ACTOR_DOOR_ROOM_PIPE:
       Actor_MoveAndRedraw(probe);
-      if (probe.position.z >> 20 == DOOR_ROOM_PIPE_PUSHED_ROW)
+      if (FIELD_CELL(probe.position.z) == DOOR_ROOM_PIPE_PUSHED_ROW)
         GameFlag_Set(FLAG_DOOR_ROOM_PIPE_PUSHED);
       else
         GameFlag_Clear(FLAG_DOOR_ROOM_PIPE_PUSHED);
       break;
     case ACTOR_DOOR_SWITCH_PIPE:
       // Close the previous opening before revealing the new door edge.
-      startColumn = Actor_Get(ACTOR_DOOR_SWITCH_PIPE)->x.fixed >> 20;
+      startColumn = FIELD_CELL(Actor_Get(ACTOR_DOOR_SWITCH_PIPE)->x.fixed);
       Actor_MoveAndRedraw(probe);
-      destinationColumn = probe.position.x >> 20;
+      destinationColumn = FIELD_CELL(probe.position.x);
       if (destinationColumn == DOOR_SWITCH_PIPE_NORTH_DOOR_COLUMN) {
         GameFlag_Set(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
         GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
@@ -2587,7 +2587,7 @@ s32 MercuryLighthouse_Initialize(void) {
 #if TBS_PATCH_2
       if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_NORTH);
-        if (Actor_Get(ACTOR_SLIDING_STATUE)->z.fixed >> 20 == 44)
+        if (FIELD_CELL(Actor_Get(ACTOR_SLIDING_STATUE)->z.fixed) == 44)
           Task_AddFrame(MercuryLighthouse_SprayAboveStatue, TASK_PASS_FRAME);
       } else if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
@@ -2624,7 +2624,7 @@ s32 MercuryLighthouse_Initialize(void) {
       MercuryLighthouse_CloseStoneDoor(STONE_DOOR_WEST);
       if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_NORTH);
-        if (Actor_Get(ACTOR_SLIDING_STATUE)->z.fixed >> 20 == 44)
+        if (FIELD_CELL(Actor_Get(ACTOR_SLIDING_STATUE)->z.fixed) == 44)
           Task_AddFrame(MercuryLighthouse_SprayAboveStatue, TASK_PASS_FRAME);
       } else if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);

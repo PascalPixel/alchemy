@@ -199,9 +199,9 @@ static void Colosso_TakePlaceForMatch(void) {
   // Each supporter has one saved map cell in the group's byte flags.
   flagBase = COLOSSO_CHEER_SLOT(supporterId);
   FieldGameFlag_SetByte(flagBase + COLOSSO_CHEER_COLUMN,
-                        supporter->x.fixed >> 20);
+                        FIELD_CELL(supporter->x.fixed));
   {
-    s32 cellRow = supporter->z.fixed >> 20;
+    s32 cellRow = FIELD_CELL(supporter->z.fixed);
 
     FieldGameFlag_SetByte(flagBase + COLOSSO_CHEER_ROW, cellRow);
   }
@@ -252,9 +252,9 @@ void Colosso_AskDoneCheering(s32 id) {
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     FieldGameFlag_SetByte(COLOSSO_CHEER_SLOT(slot) + COLOSSO_CHEER_COLUMN,
-                          actor->x.fixed >> 20);
+                          FIELD_CELL(actor->x.fixed));
     FieldGameFlag_SetByte(COLOSSO_CHEER_SLOT(slot) + COLOSSO_CHEER_ROW,
-                          actor->z.fixed >> 20);
+                          FIELD_CELL(actor->z.fixed));
     slot++;
     if (slot > MIA) {
       Import_EventSetExitRequest(COLOSSO_SOLO_TO_RACE);
@@ -487,10 +487,10 @@ L_main:
   Party_RemoveMember(friendId);
   GameFlag_Set(stage + COLOSSO_STAGE_CHEERED);
   actor = Actor_GetById(friendId);
-  column = actor->x.fixed >> 20;
+  column = FIELD_CELL(actor->x.fixed);
   FieldGameFlag_SetByte(COLOSSO_CHEER_SLOT(friendId) + COLOSSO_CHEER_COLUMN,
                         column);
-  row = actor->z.fixed >> 20;
+  row = FIELD_CELL(actor->z.fixed);
   FieldGameFlag_SetByte(COLOSSO_CHEER_SLOT(friendId) + COLOSSO_CHEER_ROW, row);
 }
 

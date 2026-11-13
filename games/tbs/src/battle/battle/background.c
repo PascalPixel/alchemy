@@ -169,8 +169,21 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
 
   RamCode_LoadSlot(HEAP_SLOT_RAM_CODE_TEMP, BitDecoder_DecodeImage,
                    BitDecoder_Size);
-  ((BitDecoder)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_TEMP))(backgroundData + 256,
-                                                         BG_CHAR_BLOCK(2));
+  {
+    u32 offset = 256;
+    void *vram;
+
+    /* FAKEMATCH(dead): two updates that cancel, under a test that emits
+     * nothing, end a CSE block so the VRAM address loads before the data's
+     * add; without them, 4 of 103 instructions differ in tbs-en. */
+    if (battle) {
+      offset++;
+      offset--;
+    }
+    vram = BG_CHAR_BLOCK(2);
+    ((BitDecoder)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_TEMP))(
+        backgroundData + offset, vram);
+  }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_TEMP);
   palette = battle->palette;
   Dma_Set(backgroundData, palette, DMA_COPY_WORDS(64), REG_DMA3);

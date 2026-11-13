@@ -812,11 +812,26 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       s32 hpMax;
       s32 newHp;
       s32 restored;
+#ifndef UBFIX
+      u16 *stat;
+#endif
 
+      // UB: a pointer walks from hp down past it to hpMax, reading each stat
+      // twice, unsigned and signed, as the ROM does; the member reads behind
+      // UBFIX share one load each.
+#ifdef UBFIX
       oldHp = (u16)target->hp;
       newHp = target->hp;
       maxHpBits = (u16)target->hpMax;
       hpMax = target->hpMax;
+#else
+      stat = (u16 *)&target->hp;
+      oldHp = *stat--;
+      newHp = *(s16 *)(stat + 1);
+      stat--;
+      maxHpBits = *stat--;
+      hpMax = *(s16 *)(stat + 1);
+#endif
       if (ability->effect == ABILITY_EFFECT_HEAL_HP_60)
         newHp += hpMax * 60 / 100;
       else

@@ -141,9 +141,14 @@ UNREAD_RESULT LinkBattle_SendParty(void) {
     // The Djinn recovery list, its units renumbered for the opponent.
     size = LINK_PARTY_OFFER_BYTES;
     Heap_Release(buffer);
-    buffer = Heap_AllocEwram(size);
-    Iwram_CopyWords(buffer, Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY),
-                    size);
+    buffer = (u8 *)Heap_AllocEwram(size);
+    /* FAKEMATCH(dead): the copy in a once-only block keeps the list pointer's
+     * copy ahead of the count's load; as the plain call, 2 of 152 instructions
+     * differ in tbs-en. */
+    do {
+      Iwram_CopyWords(buffer, Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY),
+                      size);
+    } while (0);
     list = &((struct DjinnRecoveryTable *)buffer)->list;
     for (j = 0; j < list->count; j++)
       list->entries[j].unitId = battle->opponentSlots[list->entries[j].unitId];

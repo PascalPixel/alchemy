@@ -64,7 +64,8 @@ _Golden Sun_, its characters, music, art and original code were made by Camelot 
 Thank you to:
 
 - [pret](https://github.com/pret), whose decompilations set the standard Alchemy measures itself against, and whose [agbcc](https://github.com/pret/agbcc) builds the games’ sound and save code.
-- [GBATEK](https://problemkaputt.de/gbatek.htm), Martin Korth’s hardware reference, from which The Lost Age’s `-mtune=gba` tune and Alchemy’s hardware names come.
-- Coaltergeist, Karathan and Tarpman, whose earlier public work identified the compiler and flags behind The Broken Seal.
-- [Simon Lindholm](https://github.com/simonlindholm/decomp-permuter), for decomp-permuter, which Alchemy Devtools reimplements in Rust.
+- [GBATEK](https://problemkaputt.de/gbatek.htm), nocash’s hardware reference, from which The Lost Age’s `-mtune=gba` tune and Alchemy’s hardware names come.
+- [Coaltergeist](https://github.com/Coaltergeist), [Karathan](https://github.com/SBird1337) and [Tarpman](https://github.com/tarpman), whose earlier public work identified the compiler and flags behind The Broken Seal.
+- Telago, whose GameFAQs walkthroughs of [The Broken Seal](https://gamefaqs.gamespot.com/gba/468548-golden-sun/faqs/39216) and [The Lost Age](https://gamefaqs.gamespot.com/gba/561356-golden-sun-the-lost-age/faqs/44287) say what the player sees in every place, which is where many of Alchemy’s names come from.
+- [simonlindholm](https://github.com/simonlindholm), for [decomp-permuter](https://github.com/simonlindholm/decomp-permuter), which Alchemy Devtools reimplements in Rust.
 - Everyone at [r/GoldenSun](https://www.reddit.com/r/GoldenSun/) who cheered Alchemy on and builds with it.

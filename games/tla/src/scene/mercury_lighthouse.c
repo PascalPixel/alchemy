@@ -78,8 +78,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-/* VIEW(mercury_lighthouse): routine Func_02000540 as void Func_02000540(struct Actor *object, s32 mode); module/scene/apojii_islands.h has void Func_02000540(void). */
-extern void Func_02000540__mercury_lighthouse(struct Actor *object, s32 mode) __asm__("Func_02000540");
 void Actor_StartScript(struct Actor *object, const void *script);
 
 void Func_020000f4(void) {
@@ -110,7 +108,7 @@ void Func_020000f4(void) {
       object->priorityFlags &= ~1;
       sprite->priority = 2;
       Actor_StartScript(object, gData_02000618);
-      Func_02000540__mercury_lighthouse(object, 1);
+      Func_02000540(object, 1);
     }
   }
   gData_020007e4++;

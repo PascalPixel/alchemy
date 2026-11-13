@@ -149,41 +149,25 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(prox): variable gData_02004b14 as extern struct ActorPlacement gData_02004b14[]; the definition has u32 gData_02004b14[] = { 0xffff, 0, 0, 0, 0, 0, }; tried as the definition's extern struct Trigger gData_02004b14[], it does not compile in tla-ja: games/tla/src/scene/prox.c:2825: conflicting types for `gData_02004b14'. */
+/* VIEW(prox): variable gData_02004b14 as extern struct ActorPlacement gData_02004b14[]; the definition has u32 gData_02004b14[] = { 0xffff, 0, 0, 0, 0, 0, }; tried as the definition's extern struct Trigger gData_02004b14[], it does not compile in tla-ja: games/tla/src/scene/prox.c:2784: conflicting types for `gData_02004b14'. */
 extern struct ActorPlacement gData_02004b14__prox[] __asm__("gData_02004b14");
-/* VIEW(prox): variable gData_02004b2c as extern struct ActorPlacement gData_02004b2c[]; the definition has s16 gData_02004b2c[] = { 6, - 1, 1, 0, 0, 88, 0, 0, 0, 248, 0xc000, 2, 7, - 1, 1, 0, 0, 104, 0, 0, 0, 248, 0xc000, 2, 62, - 1, 1, 0, 0, 120,.... */
-extern struct ActorPlacement gData_02004b2c__prox[] __asm__("gData_02004b2c");
-/* VIEW(prox): variable gData_02004c4c as extern struct ActorPlacement gData_02004c4c[]; the definition has u32 gData_02004c4c[] = { 0xffff00af, 1, 0xf80000, 0, 0x1c80000, 0x33000, 0xffff00ac, 1, 0xd80000, 0, 0x1500000, 0x15000, 0xffff00ae, 3, 0x70.... */
-extern struct ActorPlacement gData_02004c4c__prox[] __asm__("gData_02004c4c");
-/* VIEW(prox): variable gData_02004d9c as extern struct ActorPlacement gData_02004d9c[]; the definition has s16 gData_02004d9c[] = { 175, - 1, 1, 0, 0, 540, 0, 0, 0, 388, 0xb000, 3, 172, - 1, 1, 0, 0, 568, 0, 0, 0, 388, 0xb000, 1, 44, - 1, 1, 0, 0,.... */
-extern struct ActorPlacement gData_02004d9c__prox[] __asm__("gData_02004d9c");
-/* VIEW(prox): variable gData_02004f04 as extern struct ActorPlacement gData_02004f04[]; the definition has s32 gData_02004f04[] = { (s32) 0xffff00af, 1, 0, 0, 0, 0x2b000, (s32) 0xffff00ac, 1, 0, 0, 0, 0x2b000, (s32) 0xffff002c, 1, 0, 0, 0, 0x25000.... */
-extern struct ActorPlacement gData_02004f04__prox[] __asm__("gData_02004f04");
-/* VIEW(prox): variable gData_0200506c as extern struct ActorPlacement gData_0200506c[]; the definition has u32 gData_0200506c[] = { 0xffff00af, 1, 0x580000, 0, 0xc00000, 0x8000, 0xffff00ac, 1, 0x800000, 0, 0x6a0000, 0x1b000, 0xffff00b2, 1, 0x98000.... */
-extern struct ActorPlacement gData_0200506c__prox[] __asm__("gData_0200506c");
 extern u32 gData_0200506c[];
-/* VIEW(prox): variable gData_0200521c as extern struct ActorPlacement gData_0200521c[]; the definition has s16 gData_0200521c[] = { 175, - 1, 3, 0, 0, 104, 0, 0, 0, 196, 0x8000, 0, 172, - 1, 1, 0, 0, 128, 0, 0, 0, 106, 0xb000, 1, 178, - 1, 1, 0, 0...; tried as the definition's extern s16 gData_0200521c[], it does not compile in tla-ja: games/tla/src/scene/prox.c:174: request for member `talkFacing' in something not a structure or union. */
+/* VIEW(prox): variable gData_0200521c as extern struct ActorPlacement gData_0200521c[]; the definition has s16 gData_0200521c[] = { 175, - 1, 3, 0, 0, 104, 0, 0, 0, 196, 0x8000, 0, 172, - 1, 1, 0, 0, 128, 0, 0, 0, 106, 0xb000, 1, 178, - 1, 1, 0, 0...; tried as the definition's extern s16 gData_0200521c[], it does not compile in tla-ja: games/tla/src/scene/prox.c:179: request for member `talkFacing' in something not a structure or union. */
 extern struct ActorPlacement gData_0200521c__prox[] __asm__("gData_0200521c");
-/* VIEW(prox): variable gData_02005444 as extern struct ActorPlacement gData_02005444[]; the definition has u32 gData_02005444[] = { 0xffff00ae, 1, 0x2740000, 0, 0xc80000, 0x15000, 0xffff00ae, 1, 0x1740000, 0, 0x3280000, 0x3b000, 0xffff00b0, 1, 0x1.... */
-extern struct ActorPlacement gData_02005444__prox[] __asm__("gData_02005444");
-/* VIEW(prox): variable gData_020054a4 as extern struct ActorPlacement gData_020054a4[]; the definition has u32 gData_020054a4[] = { 0xffff00ae, 3, 0x29a0000, 0, 0x7c0000, 0x15000, 0xffff00ae, 1, 0x1740000, 0, 0x3280000, 0x3b000, 0xffff00b0, 1, 0x1.... */
-extern struct ActorPlacement gData_020054a4__prox[] __asm__("gData_020054a4");
-/* VIEW(prox): variable gData_0200551c as extern struct ActorPlacement gData_0200551c[]; the definition has u32 gData_0200551c[] = { 0xffff00c9, 1, 0xb00000, 0, 0x3090000, 0x15000, 0xffff, 0, 0, 0, 0, 0, }. */
-extern struct ActorPlacement gData_0200551c__prox[] __asm__("gData_0200551c");
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6a8Room1 && Event_GetFlag(0x9c5) &&
       !Event_GetFlag(0x9cc))
-    return gData_02004b2c__prox;
+    return gData_02004b2c;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov6a8Room2)
-    return gData_02004c4c__prox;
+    return gData_02004c4c;
   if (scene == (s32)&SceneId_Ov6a8Room3) {
     if (Event_GetFlag(0xa3d))
-      return gData_02004f04__prox;
-    return gData_02004d9c__prox;
+      return gData_02004f04;
+    return gData_02004d9c;
   }
   if (scene == (s32)&SceneId_Ov6a8Room4) {
     if (Event_GetFlag(0xa3d)) {
@@ -191,15 +175,15 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
       gData_0200521c__prox[4].talkFacing = 3;
       return gData_0200521c__prox;
     }
-    return gData_0200506c__prox;
+    return gData_0200506c;
   }
   if (scene == (s32)&SceneId_Ov6a8Room5) {
     if (Event_GetFlag(0xa3d))
-      return gData_020054a4__prox;
-    return gData_02005444__prox;
+      return gData_020054a4;
+    return gData_02005444;
   }
   if (scene == (s32)&SceneId_Ov6a8Room6)
-    return gData_0200551c__prox;
+    return gData_0200551c;
   return gData_02004b14__prox;
 }
 
@@ -214,37 +198,25 @@ s32 Actor_ReturnHome();
 
 void Func_02000588(s32 a0) { Call3(Actor_ReturnHome, a0, 0x40, 0x300); }
 
-/* VIEW(prox): variable gData_0200554c as extern const u8 gData_0200554c[]; the definition has struct Trigger gData_0200554c[] = { { TRIGGERS_END }, }. */
-extern const u8 gData_0200554c__prox[] __asm__("gData_0200554c");
-/* VIEW(prox): variable gData_02005558 as extern const u8 gData_02005558[]; the definition has struct Trigger gData_02005558[] = { { 1, 1, CONDITION_ALWAYS, 1 }, { 1, 2, CONDITION_ALWAYS, 2 }, { 2, 10, 0x9cc, EVENT(Func_02002a8c) }, { .... */
-extern const u8 gData_02005558__prox[] __asm__("gData_02005558");
-/* VIEW(prox): variable gData_02005588 as extern const u8 gData_02005588[]; the definition has struct Trigger gData_02005588[] = { { 1, 1, CONDITION_ALWAYS, 1 }, { 0xc602, 2, CONDITION_ALWAYS, EVENT(Func_02001a9c) }, { 0xc602, 3, CONDI.... */
-extern const u8 gData_02005588__prox[] __asm__("gData_02005588");
-/* VIEW(prox): variable gData_020057f8 as extern const u8 gData_020057f8[]; the definition has struct Trigger gData_020057f8[] = { { 1, 1, CONDITION_ALWAYS, 1 }, { 1, 2, CONDITION_ALWAYS, 2 }, { 1, 3, CONDITION_ALWAYS, 3 }, { 0xc602, 4.... */
-extern const u8 gData_020057f8__prox[] __asm__("gData_020057f8");
-/* VIEW(prox): variable gData_02005a20 as extern const u8 gData_02005a20[]; the definition has struct Trigger gData_02005a20[] = { { 1, 1, CONDITION_ALWAYS, 1 }, { 1, 2, CONDITION_ALWAYS, 2 }, { 1, 3, CONDITION_ALWAYS, 3 }, { 1, 4, CON...; tried as the definition's extern u32 gData_02005a20[], it does not compile in tla-ja: games/tla/src/scene/prox.c:3105: conflicting types for `gData_02005a20'. */
+/* VIEW(prox): variable gData_02005a20 as extern const u8 gData_02005a20[]; the definition has struct Trigger gData_02005a20[] = { { 1, 1, CONDITION_ALWAYS, 1 }, { 1, 2, CONDITION_ALWAYS, 2 }, { 1, 3, CONDITION_ALWAYS, 3 }, { 1, 4, CON...; tried as the definition's extern u32 gData_02005a20[], it does not compile in tla-ja: games/tla/src/scene/prox.c:3040: conflicting types for `gData_02005a20'. */
 extern const u8 gData_02005a20__prox[] __asm__("gData_02005a20");
-/* VIEW(prox): variable gData_02005da4 as extern const u8 gData_02005da4[]; the definition has struct Trigger gData_02005da4[] = { { 0xca02, 6, CONDITION_ALWAYS, EVENT(Func_02001b7c) }, { 0xca02, 7, CONDITION_ALWAYS, EVENT(Func_02001b7.... */
-extern const u8 gData_02005da4__prox[] __asm__("gData_02005da4");
-/* VIEW(prox): variable gData_02005eac as extern const u8 gData_02005eac[]; the definition has struct Trigger gData_02005eac[] = { { 1, 7, CONDITION_ALWAYS, 7 }, { 0, 8, CONDITION_ALWAYS, EVENT(Func_02000714) }, { 0x8d15, 8, 0xa3d, MSG.... */
-extern const u8 gData_02005eac__prox[] __asm__("gData_02005eac");
 
 const u8 *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6a8Room1)
-    return gData_02005558__prox;
+    return gData_02005558;
   if (scene == (s32)&SceneId_Ov6a8Room2)
-    return gData_02005588__prox;
+    return gData_02005588;
   if (scene == (s32)&SceneId_Ov6a8Room3)
-    return gData_020057f8__prox;
+    return gData_020057f8;
   if (scene == (s32)&SceneId_Ov6a8Room4)
     return gData_02005a20__prox;
   if (scene == (s32)&SceneId_Ov6a8Room5)
-    return gData_02005da4__prox;
+    return gData_02005da4;
   if (scene == (s32)&SceneId_Ov6a8Room6)
-    return gData_02005eac__prox;
-  return gData_0200554c__prox;
+    return gData_02005eac;
+  return gData_0200554c;
 }
 
 s32 Func_0200446c();
@@ -269,8 +241,6 @@ s32 Func_02000644(void) {
   return facing;
 }
 
-/* VIEW(prox): routine Func_02004634 as s32 Func_02004634(); module/scene/world_map.h has void Func_02004634(struct Actor *object). */
-extern s32 Func_02004634__prox() __asm__("Func_02004634");
 extern u8 MsgProx135[];
 extern u8 MsgProx56[];
 
@@ -280,7 +250,7 @@ void Func_02000674(void) {
 
   t0 = Func_02000644();
   if (t0 != 0) {
-    Func_02004634__prox(0xe, 0x16);
+    Func_02004634(0xe, 0x16);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -1399,15 +1369,13 @@ struct Walker {
   void (*update)(void);
 };
 
-/* VIEW(s1cf0): routine Func_020003bc as void Func_020003bc(void); the definition has s32 Func_020003bc(struct Actor *actor). */
-extern void Func_020003bc__s1cf0(void) __asm__("Func_020003bc");
 
 void Func_0200279c(s32 actor, s32 x, s32 z, s32 frames) {
   struct Walker *object = ((struct Walker *)Actor_Get(actor));
 
   object->frames = frames;
   object->arrived = 0;
-  object->update = Func_020003bc__s1cf0;
+  object->update = Func_020003bc;
   Actor_SetPosition(actor, x << 16, z << 16);
 }
 
@@ -1538,15 +1506,15 @@ void Func_02002a38(void) {
 }
 
 s32 Actor_MoveToObject();
-/* VIEW(s1cf0): variable gData_02005ee8 as extern u8 gData_02005ee8[]; the definition has u32 gData_02005ee8[] = { 39, 2, 4, 0x780000, 0, 0xc40000, 1, 39, 1, 0, 10, 22, 3, 0x4000, 0, 10, 17, }; tried as the definition's extern struct Trigger gData_02005ee8[], it does not compile in tla-ja: games/tla/src/scene/prox.c:3216: conflicting types for `gData_02005ee8'. */
+/* VIEW(s1cf0): variable gData_02005ee8 as extern u8 gData_02005ee8[]; the definition has u32 gData_02005ee8[] = { 39, 2, 4, 0x780000, 0, 0xc40000, 1, 39, 1, 0, 10, 22, 3, 0x4000, 0, 10, 17, }; tried as the definition's extern struct Trigger gData_02005ee8[], it does not compile in tla-ja: games/tla/src/scene/prox.c:3143: conflicting types for `gData_02005ee8'. */
 extern u8 gData_02005ee8__s1cf0[] __asm__("gData_02005ee8");
-/* VIEW(s1cf0): variable gData_02006038 as extern u8 gData_02006038[]; the definition has u32 gData_02006038[] = { 39, 2, 4, 0x980000, 0, 0xf80000, 1, 4, 0x980000, 0, 0x15c0000, 1, 39, 1, 0, 1, 3, 0, 1, 17, }; tried as the definition's extern struct Trigger gData_02006038[], it does not compile in tla-ja: games/tla/src/scene/prox.c:3247: conflicting types for `gData_02006038'. */
+/* VIEW(s1cf0): variable gData_02006038 as extern u8 gData_02006038[]; the definition has u32 gData_02006038[] = { 39, 2, 4, 0x980000, 0, 0xf80000, 1, 4, 0x980000, 0, 0x15c0000, 1, 39, 1, 0, 1, 3, 0, 1, 17, }; tried as the definition's extern struct Trigger gData_02006038[], it does not compile in tla-ja: games/tla/src/scene/prox.c:3174: conflicting types for `gData_02006038'. */
 extern u8 gData_02006038__s1cf0[] __asm__("gData_02006038");
-/* VIEW(s1cf0): variable gData_02006088 as extern u8 gData_02006088[]; the definition has u32 gData_02006088[] = { 39, 2, 4, 0x980000, 0, 0xf80000, 1, 4, 0x980000, 0, 0x1100000, 1, 39, 1, 0, 1, 17, }; tried as the definition's extern s32 gData_02006088[], it does not compile in tla-ja: games/tla/src/scene/prox.c:3254: conflicting types for `gData_02006088'. */
+/* VIEW(s1cf0): variable gData_02006088 as extern u8 gData_02006088[]; the definition has u32 gData_02006088[] = { 39, 2, 4, 0x980000, 0, 0xf80000, 1, 4, 0x980000, 0, 0x1100000, 1, 39, 1, 0, 1, 17, }; tried as the definition's extern s32 gData_02006088[], it does not compile in tla-ja: games/tla/src/scene/prox.c:3181: conflicting types for `gData_02006088'. */
 extern u8 gData_02006088__s1cf0[] __asm__("gData_02006088");
-/* VIEW(s1cf0): variable gData_020060fc as extern u8 gData_020060fc[]; the definition has u32 gData_020060fc[] = { 39, 2, 4, 0x780000, 0, 0xdc0000, 1, 39, 1, 0, 10, 22, 3, 0x2000, 0, 5, 22, 3, 0, 0, 20, 22, 3, 0xe000, 0, 5, 22, 3,...; tried as the definition's extern s32 gData_020060fc[], it does not compile in tla-ja: games/tla/src/scene/prox.c:3265: conflicting types for `gData_020060fc'. */
+/* VIEW(s1cf0): variable gData_020060fc as extern u8 gData_020060fc[]; the definition has u32 gData_020060fc[] = { 39, 2, 4, 0x780000, 0, 0xdc0000, 1, 39, 1, 0, 10, 22, 3, 0x2000, 0, 5, 22, 3, 0, 0, 20, 22, 3, 0xe000, 0, 5, 22, 3,...; tried as the definition's extern s32 gData_020060fc[], it does not compile in tla-ja: games/tla/src/scene/prox.c:3192: conflicting types for `gData_020060fc'. */
 extern u8 gData_020060fc__s1cf0[] __asm__("gData_020060fc");
-/* VIEW(s1cf0): variable gData_02006268 as extern u8 gData_02006268[]; the definition has u32 gData_02006268[] = { 39, 2, 4, 0x980000, 0, 0x15c0000, 1, 39, 1, 0, 1, 3, 0, 1, 17, }; tried as the definition's extern s16 gData_02006268[], it does not compile in tla-ja: games/tla/src/scene/prox.c:3294: conflicting types for `gData_02006268'. */
+/* VIEW(s1cf0): variable gData_02006268 as extern u8 gData_02006268[]; the definition has u32 gData_02006268[] = { 39, 2, 4, 0x980000, 0, 0x15c0000, 1, 39, 1, 0, 1, 3, 0, 1, 17, }; tried as the definition's extern s16 gData_02006268[], it does not compile in tla-ja: games/tla/src/scene/prox.c:3221: conflicting types for `gData_02006268'. */
 extern u8 gData_02006268__s1cf0[] __asm__("gData_02006268");
 extern u8 MsgProx153[];
 
@@ -1977,12 +1945,12 @@ struct Position {
   s32 z;
 };
 
-/* VIEW(s391c): routine Func_0200385c as void Func_0200385c(void); the definition has void Func_0200385c(struct Actor *object); tried as the definition's void Func_0200385c(struct Actor *object), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/prox.c:2070: `Func_0200385c__s391c' undeclared (first use in this function). */
+/* VIEW(s391c): routine Func_0200385c as void Func_0200385c(void); the definition has void Func_0200385c(struct Actor *object); tried as the definition's void Func_0200385c(struct Actor *object), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/prox.c:2026: `Func_0200385c__s391c' undeclared (first use in this function). */
 extern void Func_0200385c__s391c(void) __asm__("Func_0200385c");
 void Func_020043c4(struct Actor *actor, s32 mode);
 s32 Func_02004454(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
 s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
-/* VIEW(s391c): variable gData_02004780 as extern s16 gData_02004780[]; the definition has s32 gData_02004780[] = { 0xffff, - 0x8000, 0xc000, (s32) 0xc0008000, 0x4000, 0x40008000, 0xffff, - 0x8000, }; tried as the definition's extern s32 gData_02004780[], it does not compile in tla-ja: games/tla/src/scene/prox.c:2042: `gData_02004780__s391c' undeclared (first use in this function). */
+/* VIEW(s391c): variable gData_02004780 as extern s16 gData_02004780[]; the definition has s32 gData_02004780[] = { 0xffff, - 0x8000, 0xc000, (s32) 0xc0008000, 0x4000, 0x40008000, 0xffff, - 0x8000, }; tried as the definition's extern s32 gData_02004780[], it does not compile in tla-ja: games/tla/src/scene/prox.c:1998: `gData_02004780__s391c' undeclared (first use in this function). */
 extern s16 gData_02004780__s391c[] __asm__("gData_02004780");
 
 void Func_0200391c(void) {
@@ -2547,13 +2515,8 @@ void Func_02004198(s32 x, s32 y, s32 z, s32 count) {
 
 extern char ResourceId_FallingRock;
 
-/* VIEW(s4254): tag struct Rock as struct Rock__s4254; prox.c has another definition. */
-struct Rock__s4254 {
-  u8 unk00[24];
-  s32 timer;
-};
 
-/* VIEW(s4254): tag struct RockSprite as struct RockSprite__s4254; prox.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/prox.c:2610: structure has no member named `unk05_5'. */
+/* VIEW(s4254): tag struct RockSprite as struct RockSprite__s4254; prox.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/prox.c:2560: structure has no member named `unk05_5'. */
 struct RockSprite__s4254 {
   u8 unk00[5];
   u8 unk05_0 : 5;
@@ -2568,20 +2531,7 @@ struct RockSprite__s4254 {
   u8 unk20[8];
 };
 
-/* VIEW(s4254): tag struct RockWork as struct RockWork__s4254; prox.c has another definition. */
-struct RockWork__s4254 {
-  u8 tiles[0x500];
-  struct Rock__s4254 rocks[64];
-  struct RockSprite__s4254 sprites[64];
-  s16 next;
-  u16 tileBase;
-  u16 resource;
-};
 
-/* VIEW(prox): routine HeapSlot_AllocFar as struct RockWork__s4254 *HeapSlot_AllocFar(s32 slot, s32 size); gamepak/far_call/system.h has void *HeapSlot_AllocFar(s32 slot, s32 size). */
-extern struct RockWork__s4254 *HeapSlot_AllocFar__prox(s32 slot, s32 size) __asm__("HeapSlot_AllocFar");
-/* VIEW(prox): routine Resource_DecodeType01 as void Resource_DecodeType01(void *entry, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
-extern void Resource_DecodeType01__prox(void *entry, void *destination) __asm__("Resource_DecodeType01");
 void Func_02004604(struct RockSprite__s4254 *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 
@@ -2592,14 +2542,14 @@ static __inline__ void StartTask(void (*func)(void), s32 priority) {
 }
 
 void Func_02004254(void) {
-  struct RockWork__s4254 *work = HeapSlot_AllocFar__prox(220, sizeof(struct RockWork__s4254));
+  struct RockWork *work = HeapSlot_AllocFar(220, sizeof(struct RockWork));
   s32 entry;
   s32 tile;
   s32 i;
-  struct Rock__s4254 *rock;
+  struct Rock *rock;
   struct RockSprite__s4254 *sprite;
 
-  Resource_DecodeType01__prox(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
   entry = Resource_FindFreeEntry();
   tile = Vram_Load(entry, 0x500, work);
   work->tileBase = tile;

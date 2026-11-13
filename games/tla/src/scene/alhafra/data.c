@@ -12,8 +12,7 @@ void Func_020001f0(void);
 void Func_02000248(void);
 void Func_0200026c(void);
 void Func_020002f8(void);
-/* VIEW(data): routine Func_02000398 as void Func_02000398(void); module/scene/alhafra.h has void Func_02000398(s32 a). */
-extern void Func_02000398__data(void) __asm__("Func_02000398");
+void Func_02000398(s32 id);
 void Func_0200047c(void);
 void Func_0200066c(void);
 void Func_02000aa0(void);
@@ -677,7 +676,7 @@ s32 gData_02002ad0[] = {
     MSGNO(MsgAlhafra64),
     0,
     (s32)0xffff001b,
-    (s32)Func_02000398__data,
+    (s32)Func_02000398,
     0x8d15,
     (s32)0xffff0019,
     MSGNO(MsgAlhafra66),

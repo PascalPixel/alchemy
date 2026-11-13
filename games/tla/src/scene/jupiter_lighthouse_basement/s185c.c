@@ -10,9 +10,6 @@
 #include "module/scene/jupiter_lighthouse_basement.h"
 #include "module/scene/scene.h"
 
-/* VIEW(s185c): routine Func_02001094 as void Func_02001094(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct EffectOptions *options); module/scene/jupiter_lighthouse_basement.h has void Func_02001094(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct EffectOptions *options). */
-extern void Func_02001094__s185c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags, struct EffectOptions *options) __asm__("Func_02001094");
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, y, z, mode);
@@ -69,7 +66,7 @@ loop:
       velocity[0] += velocity[0] >> 1;
       velocity[0] += (Random16Far() * 0xc000 >> 16) - 0x6000;
       velocity[2] += (Random16Far() * 0x6000 >> 16) - 0x3000;
-      Func_02001094__s185c(actor->x, actor->y, actor->z, velocity[0], velocity[1],
+      Func_02001094(actor->x, actor->y, actor->z, velocity[0], velocity[1],
                     velocity[2], 0x1090001, &options);
     }
     i++;

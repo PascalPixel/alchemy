@@ -1072,7 +1072,7 @@ void Event_Start(void);
 void Event_End(void);
 void Event_SetMessageId(s32 message);
 void Event_ShowMessageAndWait(s32 actor, s32 flags);
-/* VIEW(talk): routine Func_080d47b4 as void Func_080d47b4(s32 actor, s32 animation, s32 flags); event.h has s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames); tried as the definition's struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags, s32 state), it does not compile in tla-ja: games/tla/src/scene/lobby.c:1069: conflicting types for `Func_080d47b4'. */
+/* VIEW(talk): routine Func_080d47b4 as void Func_080d47b4(s32 actor, s32 animation, s32 flags); event.h has s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames); tried as the definition's struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags, s32 state), it does not compile in tla-ja: games/tla/src/scene/lobby.c:1075: conflicting types for `Func_080d47b4'. */
 extern void Func_080d47b4__talk(s32 actor, s32 animation, s32 flags) __asm__("Func_080d47b4");
 s32 Func_02001a84(s32 scene, s32 entrance);
 void Event_ResolvePendingActions(s32 skip);
@@ -1263,7 +1263,7 @@ next:
 }
 
 
-/* VIEW(scene_events): tag struct LobbyEventWork as struct LobbyEventWork__scene_events; lobby.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/lobby.c:1307: structure has no member named `startTransition'. */
+/* VIEW(scene_events): tag struct LobbyEventWork as struct LobbyEventWork__scene_events; lobby.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/lobby.c:1315: structure has no member named `startTransition'. */
 struct LobbyEventWork__scene_events {
   u8 unk000[0x16a];
   s16 raisedTrigger;

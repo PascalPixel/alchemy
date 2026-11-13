@@ -10,8 +10,7 @@
 #include "module/scene/scene.h"
 
 void Actor_StartScript(struct KibomboObject *object, const void *script);
-/* VIEW(s2f34): routine Effect_AdvanceMotion as void Effect_AdvanceMotion(struct KibomboObject *object); module/field/field_effect.h has void Effect_AdvanceMotion(union FieldObject *object). */
-extern void Effect_AdvanceMotion__s2f34(struct KibomboObject *object) __asm__("Effect_AdvanceMotion");
+void Effect_AdvanceMotion(union FieldObject *object);
 extern u32 gData_02005ca4[];
 
 void Func_02002f34(void) {
@@ -36,7 +35,7 @@ void Func_02002f34(void) {
       object->field64 = 0;
       *(s32 *)&object->unk2c[4] = 0;
       *(s32 *)&object->unk2c[8] = 0;
-      object->update = Effect_AdvanceMotion__s2f34;
+      object->update = Effect_AdvanceMotion;
     }
   }
 }
@@ -272,8 +271,6 @@ extern struct Actor *Func_080d4568__s3308(void) __asm__("Func_080d4568");
 extern s32 Task_Add__s3308(TaskFunc func, s32 order) __asm__("Task_Add");
 
 s32 Resource_ResetEntry(u32 slot);
-/* VIEW(s3308): routine Func_02005a3c as void Func_02005a3c(struct Actor *object); kibombo.h has void Func_02005a3c(struct KibomboObject *object). */
-extern void Func_02005a3c__s3308(struct Actor *object) __asm__("Func_02005a3c");
 
 union Whirl {
   struct Actor actor;
@@ -375,7 +372,7 @@ void Func_02003308(struct Actor *actor) {
   case 7:
     Resource_ResetEntry(
         ((struct FieldSprite *)object->actor.sprite)->vramBlock);
-    Func_02005a3c__s3308(&object->actor);
+    Func_02005a3c(&object->actor);
     break;
   }
 }
@@ -384,8 +381,6 @@ void Func_02003308(struct Actor *actor) {
 // Scene code of overlay 0x670, in ROM order, from s3504's offset up to the next object the overlay links.
 
 s32 Func_02005c44(struct FieldSprite *sprite, s32 previous);
-/* VIEW(s3504): routine Func_02003308 as void Func_02003308(struct KibomboObject *object); the definition has void Func_02003308(struct Actor *actor). */
-extern void Func_02003308__s3504(struct KibomboObject *object) __asm__("Func_02003308");
 
 void Func_02003504(void) {
   struct KibomboObject *center = Actor_GetById(17);
@@ -425,7 +420,7 @@ void Func_02003504(void) {
       spark->targetX = center->x;
       spark->targetY = center->y + 0x180000;
       spark->targetZ = center->z;
-      spark->update = Func_02003308__s3504;
+      spark->update = Func_02003308;
     }
     angle += 0x160000;
     i++;
@@ -1389,7 +1384,7 @@ void Func_02005114(void) {
 // ---- games/tla/src/scene/kibombo/s516c.c ----
 // Kibombo's setup.
 #include "main_routine_work.h"
-/* VIEW(s516c): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct Actor *object, u32 flags); kibombo.h has void Actor_SetSingleChildFlags(struct KibomboObject *object, u32 value); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/include/field/field.h:25: conflicting types for `Actor_SetSingleChildFlags'. */
+/* VIEW(s516c): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct Actor *object, u32 flags); kibombo.h has void Actor_SetSingleChildFlags(struct KibomboObject *object, u32 value); tried as the 19 declarations' void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags), it does not compile in tla-ja: games/tla/include/field/field.h:25: conflicting types for `Actor_SetSingleChildFlags'. */
 struct Actor;
 extern void Actor_SetSingleChildFlags__s516c(struct Actor *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
 #define Actor_SetSingleChildFlags Actor_SetSingleChildFlags__s516c

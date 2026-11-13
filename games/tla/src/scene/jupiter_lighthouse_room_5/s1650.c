@@ -67,10 +67,8 @@ void Func_02001650(s32 count) {
 #include "actor.h"
 #include "main_routine_work.h"
 
-/* VIEW(s1650): routine Func_020029f0 as s32 Func_020029f0(struct Actor *object); module/scene/scene.h has void Func_020029f0(struct FieldEffect *effect, s32 mode). */
+/* VIEW(s1650): routine Func_020029f0 as s32 Func_020029f0(struct Actor *object); module/scene/scene.h has void Func_020029f0(struct FieldEffect *effect, s32 mode); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5/s1650.c:100: too few arguments to function `Func_020029f0'. */
 extern s32 Func_020029f0__s1650(struct Actor *object) __asm__("Func_020029f0");
-/* VIEW(s1650): routine Func_020029f8 as s32 Func_020029f8(struct Actor *object); module/scene/champa_cliff_caves.h has void Func_020029f8(s32 id, s32 mode). */
-extern s32 Func_020029f8__s1650(struct Actor *object) __asm__("Func_020029f8");
 
 void Func_02001718(const s32 *from, const s32 *to) {
   struct SparkWork *work = HeapSlot_AllocFar(220, sizeof(struct SparkWork));
@@ -105,7 +103,7 @@ void Func_02001718(const s32 *from, const s32 *to) {
        u16 v;
        s32 w;
      } *)&sprite->depth)
-        ->v = Func_020029f8__s1650(leader) - 1;
+        ->v = Func_020029f8(leader) - 1;
     spark->age = -1;
   }
   {

@@ -241,10 +241,8 @@ void Func_020024bc(struct Actor *object) {
 #include "fixed_math.h"
 
 s32 Func_02003168(s32 terrain, s32 x, s32 z);
-/* VIEW(s2118): routine Func_02003180 as s32 Func_02003180(struct Actor *actor, struct Vector3 *position); module/scene/scene.h has s32 Func_02003180(s32 layer, s32 shape, s32 height). */
+/* VIEW(s2118): routine Func_02003180 as s32 Func_02003180(struct Actor *actor, struct Vector3 *position); module/scene/scene.h has s32 Func_02003180(s32 layer, s32 shape, s32 height); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_m/s2118.c:294: too few arguments to function `Func_02003180'. */
 extern s32 Func_02003180__s2118(struct Actor *actor, struct Vector3 *position) __asm__("Func_02003180");
-/* VIEW(s2118): routine Actor_JumpDownLedge as void Actor_JumpDownLedge(); module/field/event_commands.h has void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle). */
-extern void Actor_JumpDownLedge__s2118() __asm__("Actor_JumpDownLedge");
 
 void Func_020024e4(void) {
   struct MainRoutineWork *main = &gMainRoutineWork;
@@ -330,7 +328,7 @@ void Func_020024e4(void) {
           break;
         if (result < 0) {
           actor->facing = TRIG_TURN / 4;
-          Actor_JumpDownLedge__s2118(gMainRoutineWork.currentOwner, 6, -1);
+          Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, -1);
           break;
         }
 #if TLA_PATCH_1

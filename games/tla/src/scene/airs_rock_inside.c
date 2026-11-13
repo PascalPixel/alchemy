@@ -853,8 +853,6 @@ void Func_020017f4(struct Actor *object) {
   SET_POSITION(object, target->x, target->y + (128 << 12), target->z);
 }
 
-/* VIEW(airs_rock_inside): variable gData_02005fd8 as const u8 gData_02005fd8[]; module/scene/airs_rock_inside.h has u32 gData_02005fd8[]. */
-extern const u8 gData_02005fd8__airs_rock_inside[] __asm__("gData_02005fd8");
 void Func_02002bd0(void);
 void Camera_SetSpeedParameters(s32 a, s32 b);
 void Map_SetScreenShake(s32 a, s32 b, s32 c);
@@ -933,7 +931,7 @@ void Func_02001828(void) {
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
       Func_02005d5c(spark, 7);
-      Actor_StartScript(spark, gData_02005fd8__airs_rock_inside);
+      Actor_StartScript(spark, gData_02005fd8);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetPartAttribute(spark, 2);
       spark->update = Func_02002bd0;

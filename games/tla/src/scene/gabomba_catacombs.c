@@ -327,8 +327,6 @@ s32 Func_020009bc(struct Actor *object) {
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Actor_MoveToObject(s32 actor, s32 target);
-/* VIEW(gabomba_catacombs): routine Party_PlaySavedMusic as s32 Party_PlaySavedMusic(void); module/system/system.h has void Party_PlaySavedMusic(void). */
-extern s32 Party_PlaySavedMusic__gabomba_catacombs(void) __asm__("Party_PlaySavedMusic");
 void Func_02001214(s32 actor, s32 a);
 
 #define TALK()                                                                 \
@@ -430,7 +428,7 @@ void Func_020009d4(void) {
   Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
   Actor_WaitForMoveById(9);
   GameFlag_SetBit(0x9ce);
-  Party_PlaySavedMusic__gabomba_catacombs();
+  Party_PlaySavedMusic();
   PaletteFade_ApplyTarget(speed, 0);
   BattleEffect_StartBufferInterpolation(60);
   Func_02001214(gMainRoutineWork.currentOwner, 1);

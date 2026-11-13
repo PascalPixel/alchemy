@@ -39,7 +39,7 @@ void *Scene_GetPlacements(void) {
 #include "mikasalla/local.h"
 #include "event_inline.h"
 
-/* VIEW(mikasalla): tag struct WarpEntry as struct WarpEntry__mikasalla; module/scene/scene.h has another definition. */
+/* VIEW(mikasalla): tag struct WarpEntry as struct WarpEntry__mikasalla; module/scene/scene.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mikasalla.c:67: invalid use of undefined type `struct WarpEntry'. */
 struct WarpEntry__mikasalla {
   s32 map;
   u16 x;

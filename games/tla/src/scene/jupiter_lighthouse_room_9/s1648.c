@@ -10,7 +10,7 @@
 
 struct CellTargetEntry;
 
-/* VIEW(s1648): tag struct CellTarget as struct CellTarget__s1648; cell_target.h has another definition. */
+/* VIEW(s1648): tag struct CellTarget as struct CellTarget__s1648; cell_target.h has another definition; tried with the definition the rest of the object has, Func_02001648 moves: 2 of 131 instructions in tla-ja. */
 struct CellTarget__s1648 {
   s16 firstFlag;
   s16 flagByte;

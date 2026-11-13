@@ -25,12 +25,10 @@ void Effect_MoveLocal(union FieldObject *object) {
 #include "field_sprite.h"
 #include "event_inline.h"
 
-/* VIEW(move): routine Func_020032e0 as void Func_020032e0(struct FieldEffect *effect, s32 mode); module/scene/kibombo.h has void Func_020032e0(void). */
-extern void Func_020032e0__move(struct FieldEffect *effect, s32 mode) __asm__("Func_020032e0");
+void Func_020032e0(struct Actor *, s32);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gData_02004428[];
-/* VIEW(move): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, u32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
-extern void Actor_SetSingleChildFlags__move(struct FieldEffect *effect, u32 flags) __asm__("Actor_SetSingleChildFlags");
+void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 extern void Actor_SetSpritePriorityB(struct FieldEffect *effect, s32 priority);
 void Func_02002780(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -50,10 +48,10 @@ void Func_02002780(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Func_020032e0__move(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Func_020032e0(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect, gData_02004428[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSingleChildFlags__move(effect, 0);
+  Actor_SetSingleChildFlags(effect, 0);
   effect->update = Effect_MoveLocal;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
@@ -92,7 +90,7 @@ void Func_02002780(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Func_020032e0__move(effect, 1);
+    Func_020032e0(effect, 1);
     Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)

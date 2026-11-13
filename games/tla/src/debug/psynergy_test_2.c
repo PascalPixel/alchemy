@@ -159,25 +159,11 @@ struct Spark {
   s32 timer;
 };
 
-/* VIEW(psynergy_test_2): tag struct SparkSprite as struct SparkSprite__psynergy_test_2; module/tla.h has another definition. */
-struct SparkSprite__psynergy_test_2 {
-  u8 unk00[5];
-  u8 unk05_0 : 5;
-  u8 unk05_5 : 1;
-  u8 unk05_6 : 2;
-  u8 unk06[2];
-  u32 tile : 10;
-  u32 unk08_10 : 2;
-  u32 unk08_12 : 4;
-  u8 unk0a[0x14];
-  u16 unk1e;
-  u8 unk20[8];
-};
 
 struct SparkWork {
   u8 unk0000[0x500];
   struct Spark sparks[64];
-  struct SparkSprite__psynergy_test_2 sprites[64];
+  struct SparkSprite sprites[64];
   s16 next;
   u16 tileBase;
   s16 resource;
@@ -215,23 +201,16 @@ void Func_020001e0(s32 x, s32 y, s32 z, s32 count) {
 
 #include "system/task.h"
 
-/* VIEW(psynergy_test_2): tag struct Rock as struct Rock__psynergy_test_2; module/tla.h has another definition. */
-struct Rock__psynergy_test_2 {
-  u8 unk00[24];
-  s32 timer;
-};
 
 struct RockWork {
   u8 tiles[0x500];
-  struct Rock__psynergy_test_2 rocks[64];
+  struct Rock rocks[64];
   struct RockSprite sprites[64];
   s16 next;
   u16 tileBase;
   u16 resource;
 };
 
-/* VIEW(psynergy_test_2): routine HeapSlot_AllocFar as struct RockWork *HeapSlot_AllocFar(s32 slot, s32 size); gamepak/far_call/system.h has void *HeapSlot_AllocFar(s32 slot, s32 size). */
-extern struct RockWork *HeapSlot_AllocFar__psynergy_test_2(s32 slot, s32 size) __asm__("HeapSlot_AllocFar");
 void Func_020005f0(struct RockSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 
@@ -242,11 +221,11 @@ static __inline__ void StartTask(void (*func)(void), s32 priority) {
 }
 
 void Func_0200029c(void) {
-  struct RockWork *work = HeapSlot_AllocFar__psynergy_test_2(220, sizeof(struct RockWork));
+  struct RockWork *work = HeapSlot_AllocFar(220, sizeof(struct RockWork));
   s32 entry;
   s32 tile;
   s32 i;
-  struct Rock__psynergy_test_2 *rock;
+  struct Rock *rock;
   struct RockSprite *sprite;
 
   Func_02000560(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);

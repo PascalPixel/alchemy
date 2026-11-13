@@ -369,8 +369,7 @@ void Func_020045e4(struct Actor *object) {
   object->z = parent->z - (rise - scale) * 5 + 0x100000;
 }
 
-/* VIEW(s3b38): routine Animation_ApplyChildArgument as void Animation_ApplyChildArgument(void *sprite, s32 argument); actor_view.h has s32 Animation_ApplyChildArgument(struct ActorSpriteView *, s32). */
-extern void Animation_ApplyChildArgument__s3b38(void *sprite, s32 argument) __asm__("Animation_ApplyChildArgument");
+s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags);
 
 void Func_02004634(struct Actor *parent) {
   struct Actor *pair[2];
@@ -390,7 +389,7 @@ void Func_02004634(struct Actor *parent) {
       child->timer = 0;
       child->watchedObject = parent;
       if (sprite != NULL) {
-        Animation_ApplyChildArgument__s3b38(sprite, 0);
+        Animation_ApplyChildArgument(sprite, 0);
         sprite->nextFrame = 0;
         Resource_ResetEntry(sprite->vramBlock);
         sprite->vramBlock = work->vramBlock;
@@ -427,11 +426,11 @@ void Func_02004634(struct Actor *parent) {
 #include "task.h"
 #include "input.h"
 
-/* VIEW(s3b38): variable gData_02006e0c as s16 gData_02006e0c; module/scene/scene.h has u8 gData_02006e0c[]. */
+/* VIEW(s3b38): variable gData_02006e0c as s16 gData_02006e0c; module/scene/scene.h has u8 gData_02006e0c[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/world_map/s3b38.c:447: `gData_02006e0c' has an incomplete type. */
 extern s16 gData_02006e0c__s3b38 __asm__("gData_02006e0c");
-/* VIEW(s3b38): variable gData_02006e0e as s16 gData_02006e0e; module/scene/scene.h has u8 gData_02006e0e[]. */
+/* VIEW(s3b38): variable gData_02006e0e as s16 gData_02006e0e; module/scene/scene.h has u8 gData_02006e0e[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/world_map/s3b38.c:535: array subscript is not an integer. */
 extern s16 gData_02006e0e__s3b38 __asm__("gData_02006e0e");
-/* VIEW(s3b38): variable gData_02006f20 as u8 gData_02006f20[][32]; module/scene/scene.h has u8 gData_02006f20[]. */
+/* VIEW(s3b38): variable gData_02006f20 as u8 gData_02006f20[][32]; module/scene/scene.h has u8 gData_02006f20[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/world_map/s3b38.c:492: subscripted value is neither array nor pointer. */
 extern u8 gData_02006f20__s3b38[][32] __asm__("gData_02006f20");
 
 void Func_02004744(s32 progress) {
@@ -528,8 +527,6 @@ done:
   Vram_Load(gData_02006e0e__s3b38, 0x100, Data_02006e20);
 }
 
-/* VIEW(s3b38): routine Render_ProjectPoint as void Render_ProjectPoint(s32 *position, s32 *screen); field.h has s32 Render_ProjectPoint(const void *point, s32 *screen). */
-extern void Render_ProjectPoint__s3b38(s32 *position, s32 *screen) __asm__("Render_ProjectPoint");
 
 // The world map cursor: counts down while A or B is held, redraws the gauge and
 // queues its sprite over the leader.
@@ -548,7 +545,7 @@ void Func_020048f4(void) {
   }
   Func_02004744(Func_02004c10());
   attributes = 0x80004000;
-  Call2((void (*)())Render_ProjectPoint__s3b38, (s32)(&leader->x), (s32)(screen));
+  Call2((void (*)())Render_ProjectPoint, (s32)(&leader->x), (s32)(screen));
   {
     s32 x = screen[0] - 16;
     s32 y = screen[1] - 32;

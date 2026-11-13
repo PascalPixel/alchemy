@@ -25,8 +25,6 @@ struct Position {
   s32 z;
 };
 
-/* VIEW(set_data): routine Func_02002d04 as void Func_02002d04(void); module/scene/mars_lighthouse_star_room.h has void Func_02002d04(struct Actor *object). */
-extern void Func_02002d04__set_data(void) __asm__("Func_02002d04");
 
 void Func_02003390(void) {
   struct Position probe;
@@ -94,7 +92,7 @@ top:
   actor->timer = zero;
   Func_020041cc(actor, 2);
   Actor_SetAnimationSpeed(actor, 48);
-  actor->update = Func_02002d04__set_data;
+  actor->update = Func_02002d04;
   /* FAKEMATCH(barrier): the empty asm clobbering sfp and reading nextBehavior
    * twice; as no asm, 18 of 246 instructions differ in tla-en. */
   asm("" : : "r"(nextBehavior), "r"(nextBehavior) : SFP_CLOBBER);

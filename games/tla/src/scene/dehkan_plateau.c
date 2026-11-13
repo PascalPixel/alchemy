@@ -50,8 +50,6 @@ void Func_02001804(void);
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
-/* VIEW(dehkan_plateau): routine Func_02003d40 as void Func_02003d40(struct Actor *object, s32 mode); module/scene/airs_rock_inside.h has void Func_02003d40(void). */
-extern void Func_02003d40__dehkan_plateau(struct Actor *object, s32 mode) __asm__("Func_02003d40");
 
 void Func_0200118c(void) {
   GameFlag_SetBit(0x209);
@@ -470,15 +468,9 @@ void Func_020019b8(void) {
   }
 }
 
-/* VIEW(dehkan_plateau): routine ObjectVisual_CopyAttributes as void ObjectVisual_CopyAttributes(s32 id, s32 value); module/field/object.h has void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId). */
-extern void ObjectVisual_CopyAttributes__dehkan_plateau(s32 id, s32 value) __asm__("ObjectVisual_CopyAttributes");
 void Func_020006ec(struct Actor *object, struct Actor *other);
 void Actor_StartScript(struct Actor *object, const void *script);
 void Actor_MoveToObject(s32 id, s32 target);
-/* VIEW(dehkan_plateau): routine Func_02003d80 as s32 Func_02003d80(void *sprite, s32 frame); module/scene/mars_lighthouse_room_f.h has void Func_02003d80(void). */
-extern s32 Func_02003d80__dehkan_plateau(void *sprite, s32 frame) __asm__("Func_02003d80");
-/* VIEW(dehkan_plateau): routine Effect_AdvanceMotionAtLeaderPriority as void Effect_AdvanceMotionAtLeaderPriority(struct Actor *object); module/field/field_effect.h has void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object). */
-extern void Effect_AdvanceMotionAtLeaderPriority__dehkan_plateau(struct Actor *object) __asm__("Effect_AdvanceMotionAtLeaderPriority");
 
 extern struct Actor *gData_02004420;
 extern s32 gData_02005678;
@@ -837,7 +829,7 @@ void Func_02001804(void);
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
-/* VIEW(events_g): routine Actor_SetHorizontalPositionAndAngleWithTerrain as void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 id, s32 x, s32 z, s16 angle); event.h has void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x, s32 z, s32 angle); tried as the definition's void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x, s32 z, s16 angle), it does not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:936: conflicting types for `Actor_SetHorizontalPositionAndAngleWithTerrain'. */
+/* VIEW(events_g): routine Actor_SetHorizontalPositionAndAngleWithTerrain as void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 id, s32 x, s32 z, s16 angle); event.h has void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x, s32 z, s32 angle); tried as the definition's void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x, s32 z, s16 angle), it does not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:832: conflicting types for `Actor_SetHorizontalPositionAndAngleWithTerrain'. */
 extern void Actor_SetHorizontalPositionAndAngleWithTerrain__events_g(u32 id, s32 x, s32 z, s16 angle) __asm__("Actor_SetHorizontalPositionAndAngleWithTerrain");
 s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
 struct Actor *Func_080d4568(void);

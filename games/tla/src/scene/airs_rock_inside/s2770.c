@@ -246,16 +246,8 @@ void Func_02002cc0(struct Actor *object) {
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
-/* VIEW(s2770): variable gData_02005fd8 as const u8 gData_02005fd8[]; module/scene/airs_rock_inside.h has u32 gData_02005fd8[]. */
-extern const u8 gData_02005fd8__s2770[] __asm__("gData_02005fd8");
-/* VIEW(s2770): routine Resource_DecodeType01 as void Resource_DecodeType01(void *resource, void *dest); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
-extern void Resource_DecodeType01__s2770(void *resource, void *dest) __asm__("Resource_DecodeType01");
 void Sound_Play(s32 cue);
 struct Actor *Actor_GetById(u32 objectId);
-/* VIEW(s2cf0): routine Func_02002cc0 as void Func_02002cc0(void); the definition has void Func_02002cc0(struct Actor *object). */
-extern void Func_02002cc0__s2cf0(void) __asm__("Func_02002cc0");
-/* VIEW(s2cf0): routine Func_02002c40 as void Func_02002c40(void); the definition has void Func_02002c40(struct Actor *object). */
-extern void Func_02002c40__s2cf0(void) __asm__("Func_02002c40");
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Actor_StartScript(struct Actor *object, const u8 *script);
 void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
@@ -290,13 +282,13 @@ void Func_02002cf0(void) {
 
     REG_BG0CNT = control;
   } while (0);
-  Resource_DecodeType01__s2770(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
                 buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 0x800);
   buffer = Heap_Alloc(0x80);
-  Resource_DecodeType01__s2770(Resource_GetTableEntry((s32)&ResourceId_LightningMap), buffer);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningMap), buffer);
   i = 0;
   cell = buffer;
 mask:
@@ -318,7 +310,7 @@ row:
   Sound_Play(246);
   ((u8 *)Actor_GetById(11))[98] = 9;
   ((u8 *)Actor_GetById(11))[99] = 1;
-  Actor_GetById(11)->update = Func_02002cc0__s2cf0;
+  Actor_GetById(11)->update = Func_02002cc0;
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
       spark = Import_ActorCreate(0x2a0, Actor_GetById(11)->x,
@@ -340,10 +332,10 @@ row:
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
       Func_02005d5c(spark, 7);
-      Actor_StartScript(spark, gData_02005fd8__s2770);
+      Actor_StartScript(spark, gData_02005fd8);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetPartAttribute(spark, 2);
-      spark->update = Func_02002c40__s2cf0;
+      spark->update = Func_02002c40;
     }
     FieldEvent_Wait(1);
   }
@@ -603,13 +595,13 @@ void Func_02003654(void) {
 
     REG_BG0CNT = control;
   } while (0);
-  Resource_DecodeType01__s2770(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
                 buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 0x800);
   buffer = Heap_Alloc(0x80);
-  Resource_DecodeType01__s2770(Resource_GetTableEntry((s32)&ResourceId_LightningMap), buffer);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningMap), buffer);
   i = 0;
   cell = buffer;
 mask:
@@ -631,7 +623,7 @@ row:
   Sound_Play(246);
   ((u8 *)Actor_GetById(10))[98] = 9;
   ((u8 *)Actor_GetById(10))[99] = 1;
-  Actor_GetById(10)->update = Func_02002cc0__s2cf0;
+  Actor_GetById(10)->update = Func_02002cc0;
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
       spark = Import_ActorCreate(0x2a0, Actor_GetById(10)->x,
@@ -653,10 +645,10 @@ row:
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
       Func_02005d5c(spark, 7);
-      Actor_StartScript(spark, gData_02005fd8__s2770);
+      Actor_StartScript(spark, gData_02005fd8);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetPartAttribute(spark, 2);
-      spark->update = Func_02002c40__s2cf0;
+      spark->update = Func_02002c40;
     }
     FieldEvent_Wait(1);
   }
@@ -1147,10 +1139,6 @@ void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 
 s32 Actor_MoveToObject();
 s32 Actor_SetHorizontalPositionWithTerrain();
-/* VIEW(s2770): routine Func_02005dd4 as s32 Func_02005dd4(); module/scene/airs_rock_inside.h has void Func_02005dd4(void). */
-extern s32 Func_02005dd4__s2770() __asm__("Func_02005dd4");
-/* VIEW(s2770): routine Party_LearnAbility as s32 Party_LearnAbility(); module/field/event_commands.h has void Party_LearnAbility(s32 unit, s32 ability). */
-extern s32 Party_LearnAbility__s2770() __asm__("Party_LearnAbility");
 void Actor_TurnToFaceEachOther(s32 actorId, s32 other, s32 frames);
 void Actor_WaitForMoveById(s32 actorId);
 void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
@@ -1210,9 +1198,9 @@ void Func_02004534(void) {
     /* FAKEMATCH(wrapper): the call through Call0's pointer, which negates the
      * two -1s before it in this order; as a direct call, 2 of 202 instructions
      * differ in tla-en. */
-    Call0(Func_02005dd4__s2770);
+    Call0(Func_02005dd4);
     Call2(Func_02004138, 8, 6);
-    Party_LearnAbility__s2770(6, 0x90);
+    Party_LearnAbility(6, 0x90);
     GameFlag_SetBit(0x8d4);
     Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, 6, 0);
     FieldEvent_Wait(10);

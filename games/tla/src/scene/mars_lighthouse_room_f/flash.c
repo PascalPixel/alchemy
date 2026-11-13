@@ -70,10 +70,8 @@ void Func_02002954(struct Actor *object) {
 #include "vector3.h"
 #include "fixed_math.h"
 
-/* VIEW(flash): routine Func_020054f8 as s32 Func_020054f8(struct Actor *actor); module/scene/mars_lighthouse_room_f.h has s32 Func_020054f8(struct Actor *object, s32 *position). */
+/* VIEW(flash): routine Func_020054f8 as s32 Func_020054f8(struct Actor *actor); module/scene/mars_lighthouse_room_f.h has s32 Func_020054f8(struct Actor *object, s32 *position); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/flash.c:134: too few arguments to function `Func_020054f8'. */
 extern s32 Func_020054f8__flash(struct Actor *actor) __asm__("Func_020054f8");
-/* VIEW(flash): routine Func_02005538 as s32 Func_02005538(s32 *from, s32 radius, struct Vector3 *to, s32 radius2); module/scene/mars_lighthouse_room_f.h has s32 Func_02005538(s32 *a, s32 radiusA, struct Position *b, s32 radiusB). */
-extern s32 Func_02005538__flash(s32 *from, s32 radius, struct Vector3 *to, s32 radius2) __asm__("Func_02005538");
 
 #if TLA_PATCH_1
 void Func_0200297c(void) {
@@ -172,7 +170,7 @@ s32 Func_0200297c(void) {
           /* FAKEMATCH(wrapper): Func_02005538 forwarded through Value4; as a
            * direct call, 110 of 236 instructions differ in tla-en. */
           if (other->script != 0 && (*flags & 1) && other != actor &&
-              Value4((s32 (*)())Func_02005538__flash, (s32)&other->x, radius,
+              Value4((s32 (*)())Func_02005538, (s32)&other->x, radius,
                      (s32)&position, other->radius - 2) >= 0) {
             System_Wait(1);
             goto done;
@@ -470,7 +468,7 @@ void Func_02002f6c(struct Actor *object) {
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-/* VIEW(s2f80): tag struct Work020023c4 as struct Work020023c4__s2f80; flash.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/flash.c:602: structure has no member named `unk6c'. */
+/* VIEW(s2f80): tag struct Work020023c4 as struct Work020023c4__s2f80; flash.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/flash.c:591: structure has no member named `unk6c'. */
 struct Work020023c4__s2f80 {
   u8 unk00[4];
   u16 unk04;

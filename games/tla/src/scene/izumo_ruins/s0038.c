@@ -63,7 +63,7 @@ L_0200809c:
 #include "map.h"
 #include "../trial_road/trial_road.h"
 
-/* VIEW(s00a4): routine Func_02000128 as void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer); s0038 has s32 Func_02000128(); tried as the definition's void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer), it does not compile in tla-ja: games/tla/src/scene/izumo_ruins/s0038.c:69: conflicting types for `Func_02000128'. */
+/* VIEW(s00a4): routine Func_02000128 as void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer); s0038 has s32 Func_02000128(); tried as the definition's void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/izumo_ruins/s0038.c:102: conflicting types for `Func_02000128'. */
 extern void Func_02000128__s00a4(s32 id, u32 kind, s32 flag, s32 layer) __asm__("Func_02000128");
 
 // Finds the current target's table row and shrinks it.

@@ -262,7 +262,7 @@ void Func_02000710(void) {
   Func_02000778(leader, 0xd999);
 }
 
-/* VIEW(kandorean_temple): tag struct EventWork1cc as struct EventWork1cc__kandorean_temple; module/tla.h has another definition. */
+/* VIEW(kandorean_temple): tag struct EventWork1cc as struct EventWork1cc__kandorean_temple; module/tla.h has another definition; tried with the definition the rest of the object has, its members read focus as object, it does not compile in tla-ja: games/tla/src/scene/kandorean_temple.c:268: dereferencing pointer to incomplete type. */
 struct EventWork1cc__kandorean_temple {
   u8 unk000[0x1cc];
   struct Actor *focus;
@@ -1084,7 +1084,7 @@ void Func_02001b50(void) {
   GameFlag_ClearBit(0x17d);
 }
 
-/* VIEW(kandorean_temple): tag struct MapCell as struct MapCell__kandorean_temple; map.h has another definition. */
+/* VIEW(kandorean_temple): tag struct MapCell as struct MapCell__kandorean_temple; map.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/kandorean_temple.c:1106: arithmetic on pointer to an incomplete type. */
 struct MapCell__kandorean_temple {
   u8 unk0[2];
   u8 unk2;

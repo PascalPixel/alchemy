@@ -69,12 +69,9 @@ void Func_02000118(void) {
 }
 
 extern u8 gData_02002ae8[];
-/* VIEW(taopo_swamp): routine Animation_ApplyChildArgument as void Animation_ApplyChildArgument(void *sprite, s32 argument); actor_view.h has s32 Animation_ApplyChildArgument(struct ActorSpriteView *, s32). */
-extern void Animation_ApplyChildArgument__taopo_swamp(void *sprite, s32 argument) __asm__("Animation_ApplyChildArgument");
-/* VIEW(taopo_swamp): routine Animation_ApplyChildValuesToRecord as void Animation_ApplyChildValuesToRecord(void *sprite, s32 value); actor_view.h has void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *, u32). */
-extern void Animation_ApplyChildValuesToRecord__taopo_swamp(void *sprite, s32 value) __asm__("Animation_ApplyChildValuesToRecord");
-/* VIEW(taopo_swamp): routine Animation_ApplyChildValue as void Animation_ApplyChildValue(void *sprite, s32 value); actor_view.h has void Animation_ApplyChildValue(struct ActorSpriteView *, s32). */
-extern void Animation_ApplyChildValue__taopo_swamp(void *sprite, s32 value) __asm__("Animation_ApplyChildValue");
+s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags);
+void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *record, u32 value);
+void Animation_ApplyChildValue(struct ChildGroup *group, s32 value);
 
 // When actor id stands at x 12, inside an event: the actor drops in place, then
 // for 25 frames throws splashes, then two sparks, and sets flag 0x8e5.
@@ -112,11 +109,11 @@ do {
         Actor_StartScript(splash, gData_02002ae8);
         splash->motionFlags = 0;
         if (splashSprite != 0) {
-          ((s32 (*)())Animation_ApplyChildArgument__taopo_swamp)(splashSprite, 1);
+          ((s32 (*)())Animation_ApplyChildArgument)(splashSprite, 1);
           splashSprite->nextFrame = k;
           splashSprite->priority = sprite->priority;
-          Animation_ApplyChildValuesToRecord__taopo_swamp(splashSprite, 13);
-          Animation_ApplyChildValue__taopo_swamp(splashSprite, 8);
+          Animation_ApplyChildValuesToRecord(splashSprite, 13);
+          Animation_ApplyChildValue(splashSprite, 8);
         }
       }
     }
@@ -139,7 +136,7 @@ do {
       }
       spark->terrainId = 1;
       if (sparkSprite != 0) {
-        Animation_ApplyChildArgument__taopo_swamp(sparkSprite, 2);
+        Animation_ApplyChildArgument(sparkSprite, 2);
         sparkSprite->nextFrame = zero;
         sparkSprite->priority = 2;
       }
@@ -1507,7 +1504,7 @@ void Func_02002120(void) {
 }
 
 // volatile: the VBlank handler sets the held keys, as gKeysHeld in The Broken Seal.
-/* VIEW(taopo_swamp): variable gInput as volatile u32 gInput; input.h has struct InputState gInput. */
+/* VIEW(taopo_swamp): variable gInput as volatile u32 gInput; input.h has struct InputState gInput; tried as the 3 declarations' extern u32 gInput, Func_02002144 moves: 5 of 159 instructions in tla-ja. */
 extern volatile u32 gInput__taopo_swamp __asm__("gInput");
 
 void Func_02002144(void) {
@@ -1548,7 +1545,7 @@ void Func_02002144(void) {
       spark->motionFlags = 0;
       spark->terrainId = 1;
       if (sparkSprite != 0) {
-        Animation_ApplyChildArgument__taopo_swamp(sparkSprite, 2);
+        Animation_ApplyChildArgument(sparkSprite, 2);
         sparkSprite->nextFrame = 0;
         sparkSprite->priority = 2;
       }

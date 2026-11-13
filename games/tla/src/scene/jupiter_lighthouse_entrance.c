@@ -77,8 +77,6 @@ void Func_02000184(void) { Import_EventSetExitRequest(4); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-/* VIEW(jupiter_lighthouse_entrance): routine Func_02001b3c as s32 Func_02001b3c(); module/scene/lemuria.h has void Func_02001b3c(void). */
-extern s32 Func_02001b3c__jupiter_lighthouse_entrance() __asm__("Func_02001b3c");
 
 s32 Scene_Initialize(void) {
   s32 clear;
@@ -87,7 +85,7 @@ s32 Scene_Initialize(void) {
   clear = Event_GetFlag(0x109);
   if (clear == 0) {
     if (gMainRoutineWork.entrance == 4)
-      Func_02001b3c__jupiter_lighthouse_entrance(gMainRoutineWork.currentOwner);
+      Func_02001b3c(gMainRoutineWork.currentOwner);
   }
   gMainRoutineWork.savedScene = (s32)&SceneId_Ov694Room2;
   gMainRoutineWork.savedEntrance = 6;

@@ -320,8 +320,7 @@ struct SparkleWork;
 void Func_020053e4(struct Actor *object, struct SparkleWork *work);
 s32 ObjectTable_DestroyById();
 s32 Actor_MoveToObject();
-/* VIEW(mars_lighthouse_aerie): routine Field_RequestBattleFromEncounterTable as s32 Field_RequestBattleFromEncounterTable(); module/field/event_commands.h has void Field_RequestBattleFromEncounterTable(s32 row, s32 column). */
-extern s32 Field_RequestBattleFromEncounterTable__mars_lighthouse_aerie() __asm__("Field_RequestBattleFromEncounterTable");
+void Field_RequestBattleFromEncounterTable(s32 row, s32 column);
 extern u8 gData_02005ba8[];
 extern u8 gData_02005bd0[];
 extern u8 gData_02005bf8[];
@@ -1087,7 +1086,7 @@ L_02009638:
   Event_ShowMessage(0x2013, 0);
   FIELD_AT(work, u8, 0x24b) = 2;
   Event_SetAfterBattleDestination((s32)&SceneId_Ov6aeRoom1, 2);
-  Call2(Field_RequestBattleFromEncounterTable__mars_lighthouse_aerie, 102, 1);
+  Call2(Field_RequestBattleFromEncounterTable, 102, 1);
   return;
 }
 
@@ -1424,8 +1423,6 @@ L_0200a47a:
 
 #include "event_work.h"
 
-/* VIEW(mars_lighthouse_aerie): routine Party_RemoveMemberRestored as void Party_RemoveMemberRestored(); module/field/event_commands.h has void Party_RemoveMemberRestored(s32 owner). */
-extern void Party_RemoveMemberRestored__mars_lighthouse_aerie() __asm__("Party_RemoveMemberRestored");
 
 static __inline__ void Func_02005714_(s32 actor, s32 a, s32 b) {
   Func_080d47b4(actor, a, b);
@@ -1630,13 +1627,13 @@ void Func_020029ac(void) {
   Event_SetFlag(0x202);
   MapGrid_CopyCellAttributes(0x27, 0x28, 0x12, 0x10, 0x17, 0xa);
   Func_020055fc(1);
-  Party_RemoveMemberRestored__mars_lighthouse_aerie(7);
-  Party_RemoveMemberRestored__mars_lighthouse_aerie(5);
-  Party_RemoveMemberRestored__mars_lighthouse_aerie(6);
-  Party_RemoveMemberRestored__mars_lighthouse_aerie(0);
-  Party_RemoveMemberRestored__mars_lighthouse_aerie(3);
-  Party_RemoveMemberRestored__mars_lighthouse_aerie(2);
-  Party_RemoveMemberRestored__mars_lighthouse_aerie(1);
+  Party_RemoveMemberRestored(7);
+  Party_RemoveMemberRestored(5);
+  Party_RemoveMemberRestored(6);
+  Party_RemoveMemberRestored(0);
+  Party_RemoveMemberRestored(3);
+  Party_RemoveMemberRestored(2);
+  Party_RemoveMemberRestored(1);
   Actor_Get(20)->collisionFlags |= 8;
   Actor_Get(21)->collisionFlags |= 8;
   Actor_SetSpriteColor(Actor_Get(28), 0xf);

@@ -15,7 +15,7 @@ struct Work {
   u16 room;
 };
 
-/* VIEW(s0ac8): tag struct Vector3 as struct Vector3__s0ac8; vector3.h has another definition. */
+/* VIEW(s0ac8): tag struct Vector3 as struct Vector3__s0ac8; vector3.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum/s0ac8.c:52: storage size of `from' isn't known. */
 struct Vector3__s0ac8 {
   s32 x;
   s32 y;
@@ -26,12 +26,7 @@ void Func_0200088c();
 void Func_020009b8();
 void Func_02000a78();
 void Actor_StartScript();
-/* VIEW(s0ac8): routine Func_020032f8 as void Func_020032f8(); module/scene/anemos_inner_sanctum.h has void Func_020032f8(struct Actor *object). */
-extern void Func_020032f8__s0ac8() __asm__("Func_020032f8");
-/* VIEW(s0ac8): routine DisplayBlend_DisableRunScript as void DisplayBlend_DisableRunScript(); module/field/map.h has void DisplayBlend_DisableRunScript(void). */
-extern void DisplayBlend_DisableRunScript__s0ac8() __asm__("DisplayBlend_DisableRunScript");
-/* VIEW(s0ac8): routine DisplayBlend_EnableRunScript as void DisplayBlend_EnableRunScript(); module/field/map.h has void DisplayBlend_EnableRunScript(void). */
-extern void DisplayBlend_EnableRunScript__s0ac8() __asm__("DisplayBlend_EnableRunScript");
+void DisplayBlend_DisableRunScript(void);
 extern u8 gData_020035cc[];
 extern u8 gData_02003620[];
 extern s32 gData_020036fc[][2];
@@ -134,7 +129,7 @@ void Func_02000ac8(void) {
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_Interpolate(60);
-  DisplayBlend_EnableRunScript__s0ac8();
+  DisplayBlend_EnableRunScript();
   alpha = alpha & 255;
   REG_BLDALPHA = 0x1000;
   t0 = x >> 4;
@@ -151,7 +146,7 @@ void Func_02000ac8(void) {
     if (i != alpha)
       goto fadeIn;
   }
-  DisplayBlend_DisableRunScript__s0ac8();
+  DisplayBlend_DisableRunScript();
   Event_PlaySound(246);
   FieldEvent_Wait(48);
 
@@ -184,7 +179,7 @@ void Func_02000ac8(void) {
   if (count != 18) {
     FieldEvent_Wait(96);
     Actor_StartScript(actor, gData_02003620);
-    DisplayBlend_EnableRunScript__s0ac8();
+    DisplayBlend_EnableRunScript();
     alpha = REG_BLDALPHA & 255;
     PaletteFade_ApplyTarget(0x10000, 1);
     PaletteFade_Interpolate(60);
@@ -202,7 +197,7 @@ void Func_02000ac8(void) {
           (leader->z + (gData_020036fc[slot][1] << 16)) >> 20, 1, 1);
     }
     MapGrid_CopyCellsTo(64, 0, column + 63, row - 3, 3, 5);
-    DisplayBlend_DisableRunScript__s0ac8();
+    DisplayBlend_DisableRunScript();
     Event_WaitTransitionFrames();
   } else {
     Event_SetFlag((s16)work->room + 0xa55);
@@ -244,7 +239,7 @@ void Func_02000ac8(void) {
     }
   }
 
-  Func_020032f8__s0ac8(actor);
+  Func_020032f8(actor);
   Event_SetFlag(0x200);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02003430();
@@ -365,8 +360,7 @@ void Func_02001160(void) {
 
 extern const s32 gData_02003574[];
 
-/* VIEW(s0ac8): routine Func_020032e0 as void Func_020032e0(struct Actor *object, s32 value); module/scene/kibombo.h has void Func_020032e0(void). */
-extern void Func_020032e0__s0ac8(struct Actor *object, s32 value) __asm__("Func_020032e0");
+void Func_020032e0(struct Actor *, s32);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 static __inline__ struct Actor *Create(s32 type, s32 x, s32 y, s32 z) {
@@ -401,7 +395,7 @@ void Func_02001398(void) {
   object->scaleY = 0x16000;
   object->scaleX = 0x16000;
   Scene_SetActorSpritePriority(object, 2);
-  Func_020032e0__s0ac8(object, 3);
+  Func_020032e0(object, 3);
   Actor_SetSingleChildFlags(object, 0);
   Actor_StartScript(object, gData_02003574);
   Event_SetFlag(work->exit + 0x1ce);
@@ -590,7 +584,7 @@ void Func_020017b4(struct Actor *self) {
     dust->motionFlags = 0;
     Actor_SetSpriteColor(dust, ((u8 *)self)[0x62]);
     Scene_SetActorSpritePriority(dust, 2);
-    Func_020032e0__s0ac8(dust, 1);
+    Func_020032e0(dust, 1);
     Actor_SetSingleChildFlags(dust, 0);
     Actor_StartScript(dust, gData_02003594);
     self->unk4c = leader->x;

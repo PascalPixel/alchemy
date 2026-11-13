@@ -409,8 +409,6 @@ void Func_02000a5c(void) {
   Import_EventEnd();
 }
 
-/* VIEW(daila): routine Func_02000d50 as void Func_02000d50(s16 *data); module/scene/yampi_desert.h has void Func_02000d50(void). */
-extern void Func_02000d50__daila(s16 *data) __asm__("Func_02000d50");
 void Actor_SetWideSprite(s32 actor, s32 flag);
 
 void Func_02000a9c(void) {
@@ -431,7 +429,7 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila1)
     Func_02000d68(12, 0);
   else if (gMainRoutineWork.scene == (s32)&SceneId_Daila2)
-    Func_02000d50__daila(gData_02000d80);
+    Func_02000d50(gData_02000d80);
   Actor_SetSpritePriority(21, 1);
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila2 &&
       GameFlag_Test(0x300) == 0)

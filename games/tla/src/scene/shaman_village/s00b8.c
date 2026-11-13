@@ -11,10 +11,8 @@
 
 extern const s32 *gData_02004c50[];
 
-/* VIEW(s00b8): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); shaman_village.h has void Actor_SetSingleChildFlags(struct ShamanVillageObject *object, u32 value); tried as the rest of the object declares it, Func_020000b8 moves: 1 of 207 instructions in tla-ja. */
+/* VIEW(s00b8): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); shaman_village.h has void Actor_SetSingleChildFlags(struct ShamanVillageObject *object, u32 value); tried as the 19 declarations' void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags), it does not compile in tla-ja: games/tla/src/scene/shaman_village/shaman_village.h:73: conflicting types for `Actor_SetSingleChildFlags'. */
 extern void Actor_SetSingleChildFlags__s00b8(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
-/* VIEW(s00b8): routine Scene_SetActorSpritePriority as void Scene_SetActorSpritePriority(struct FieldEffect *effect, s32 priority); field.h has void Scene_SetActorSpritePriority(struct Actor *object, s32 priority). */
-extern void Scene_SetActorSpritePriority__s00b8(struct FieldEffect *effect, s32 priority) __asm__("Scene_SetActorSpritePriority");
 
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -41,7 +39,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
-  Scene_SetActorSpritePriority__s00b8(effect,
+  Scene_SetActorSpritePriority(effect,
                                ((struct FieldSprite *)party->sprite)->priority);
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
@@ -53,7 +51,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     Actor_SetPartAttribute(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
     effect->priorityFlags &= ~1;
-    Scene_SetActorSpritePriority__s00b8(effect, options->priority);
+    Scene_SetActorSpritePriority(effect, options->priority);
   }
   if ((flags & EFFECT_USE_START_SCALE) != 0) {
     effect->scaleX = options->startScaleX;
@@ -108,7 +106,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 
 // ---- games/tla/src/scene/shaman_village/scene_tables.c ----
 #include "battle.h"
-/* VIEW(scene_tables): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct Actor *object, u32 flags); shaman_village.h has void Actor_SetSingleChildFlags(struct ShamanVillageObject *object, u32 value); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/include/field/field.h:25: conflicting types for `Actor_SetSingleChildFlags'. */
+/* VIEW(scene_tables): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct Actor *object, u32 flags); shaman_village.h has void Actor_SetSingleChildFlags(struct ShamanVillageObject *object, u32 value); tried as the 19 declarations' void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags), it does not compile in tla-ja: games/tla/include/field/field.h:25: conflicting types for `Actor_SetSingleChildFlags'. */
 struct Actor;
 extern void Actor_SetSingleChildFlags__scene_tables(struct Actor *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
 #define Actor_SetSingleChildFlags Actor_SetSingleChildFlags__scene_tables
@@ -247,8 +245,6 @@ void Effect_CircleAndBlink(struct Actor *object) {
 #undef WORD_AT
 
 // ---- games/tla/src/scene/shaman_village/s0508.c ----
-/* VIEW(s0508): routine Scene_SetActorSpritePriority as void Scene_SetActorSpritePriority(struct ShamanVillageObject *object, s32 priority); field.h has void Scene_SetActorSpritePriority(struct Actor *object, s32 priority). */
-extern void Scene_SetActorSpritePriority__s0508(struct ShamanVillageObject *object, s32 priority) __asm__("Scene_SetActorSpritePriority");
 
 /// Swings an object about x = 168: left of it the object speeds up rightward
 /// and grows, right of it leftward and shrinks. It takes sprite priority 1
@@ -265,9 +261,9 @@ void Func_02000508(struct ShamanVillageObject *object) {
     object->scaleY = object->scaleX -= 0x51e;
   }
   if (object->field44 > 0)
-    Scene_SetActorSpritePriority__s0508(object, 1);
+    Scene_SetActorSpritePriority(object, 1);
   else
-    Scene_SetActorSpritePriority__s0508(object, 2);
+    Scene_SetActorSpritePriority(object, 2);
   object->sprite->rotation += 0x1800;
 }
 
@@ -280,19 +276,11 @@ void Func_02000508(struct ShamanVillageObject *object) {
 
 extern const s32 gData_02004ae0[];
 
-/* VIEW(s00b8): routine Func_0200479c as void Func_0200479c(void *resource, void *destination); module/scene/shaman_village.h has void Func_0200479c(const void *source, void *destination). */
-extern void Func_0200479c__s00b8(void *resource, void *destination) __asm__("Func_0200479c");
-/* VIEW(s057c): routine Effect_CircleAndBlink as void Effect_CircleAndBlink(void); the definition has void Effect_CircleAndBlink(struct Actor *object). */
-extern void Effect_CircleAndBlink__s057c(void) __asm__("Effect_CircleAndBlink");
 void Func_020049f4(void);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-/* VIEW(s057c): routine Func_02000458 as void Func_02000458(void); the definition has void Func_02000458(struct ShamanVillageObject *object). */
-extern void Func_02000458__s057c(void) __asm__("Func_02000458");
 void Func_02000420(void);
-/* VIEW(s057c): routine Func_02000508 as void Func_02000508(union FieldObject *object); the definition has void Func_02000508(struct ShamanVillageObject *object). */
-extern void Func_02000508__s057c(union FieldObject *object) __asm__("Func_02000508");
 
 #define OBJ14_BYTE(offset) (((u8 *)Actor_GetById(14))[offset])
 
@@ -305,7 +293,7 @@ void Func_0200057c(void) {
 
   buffer = Heap_Alloc(0x680);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
-  Func_0200479c__s00b8(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
+  Func_0200479c(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
                 buffer);
   Dma_Set(buffer, (void *)0x0600e800, 0x840000d0, REG_DMA3);
   Dma_Set(buffer + 0x1a0, (void *)0x0600ec00, 0x840000d0, REG_DMA3);
@@ -321,7 +309,7 @@ void Func_0200057c(void) {
   REG_BG0CNT |= 1;
   Dma_Fill16(16, (void *)0x06002000, 0x500);
   buffer = Heap_Alloc(576);
-  Func_0200479c__s00b8(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
+  Func_0200479c(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
   i = 0;
   cell = buffer;
 mask:
@@ -345,7 +333,7 @@ row:
   Sound_Play(246);
   OBJ14_BYTE(98) = 9;
   OBJ14_BYTE(99) = 1;
-  Actor_GetById(14)->update = Func_02000458__s057c;
+  Actor_GetById(14)->update = Func_02000458;
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
       spark = (struct Actor *)Import_ActorCreate(0x2a0, Actor_GetById(14)->x,
@@ -363,7 +351,7 @@ row:
       Import_ActorSetScript((struct Actor *)spark, gData_02004ae0);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetPartAttribute(spark, 2);
-      spark->update = Effect_CircleAndBlink__s057c;
+      spark->update = Effect_CircleAndBlink;
     }
     Event_Wait(1);
   }
@@ -432,7 +420,7 @@ frame:
     s32 *v = velocity;
 
     options.priority = 1;
-    options.update = Func_02000508__s057c;
+    options.update = Func_02000508;
     v[0] = 0;
     v[2] = -0x20000;
     v[1] = 0;
@@ -672,10 +660,8 @@ s32 Func_02000f94(void) {
 }
 
 u32 Func_02004a8c(s32 shop);
-/* VIEW(s00b8): routine Inn_PlaySleep as void Inn_PlaySleep(u32 price); module/shop/shop.h has void Inn_PlaySleep(s32 price). */
-extern void Inn_PlaySleep__s00b8(u32 price) __asm__("Inn_PlaySleep");
-/* VIEW(s00b8): routine MessageArgument_Push as void MessageArgument_Push(u32 value, s32 digits); module/window/window.h has void MessageArgument_Push(u32 value, u32 kind). */
-extern void MessageArgument_Push__s00b8(u32 value, s32 digits) __asm__("MessageArgument_Push");
+void Inn_PlaySleep(s32 roomPrice);
+void MessageArgument_Push(u32 value, u32 kind);
 
 void Func_02000fc4(void) {
   if (GameFlag_Test(0x9fe)) {
@@ -697,8 +683,8 @@ void Func_02000fc4(void) {
       Actor_SetModeById(13, 5);
       Event_Wait(30);
       Event_SetMessageId((s32)MsgShamanInnPaymentPrompt);
-      MessageArgument_Push__s00b8(price, 5);
-      MessageArgument_Push__s00b8(price, 5);
+      MessageArgument_Push(price, 5);
+      MessageArgument_Push(price, 5);
       FieldMessage_ShowAtActor(12, 0);
       if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
           0) {
@@ -710,7 +696,7 @@ void Func_02000fc4(void) {
           Event_SetMessageId((s32)MsgShamanInnPaymentPrompt + 3);
           Event_ShowMessageAndWait(12, 0);
         } else {
-          Inn_PlaySleep__s00b8(price);
+          Inn_PlaySleep(price);
         }
       }
       Actor_SetModeById(13, 6);

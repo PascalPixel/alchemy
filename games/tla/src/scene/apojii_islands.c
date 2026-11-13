@@ -35,25 +35,17 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(apojii_islands): variable gData_02002200 as extern const u8 gData_02002200[]; the definition has u32 gData_02002200[] = { 0xffff, 0, 0, 0, 0, 0, }. */
-extern const u8 gData_02002200__apojii_islands[] __asm__("gData_02002200");
-/* VIEW(apojii_islands): variable gData_02002218 as extern const u8 gData_02002218[]; the definition has u32 gData_02002218[] = { 0xffff0073, 1, 0x380000, 0, 0xa80000, 0x1a000, 0xffff0074, 1, 0x1c80000, 0, 0x580000, 0x3e000, 0xffff0072, 1, 0x238.... */
-extern const u8 gData_02002218__apojii_islands[] __asm__("gData_02002218");
-/* VIEW(apojii_islands): variable gData_02002320 as extern const u8 gData_02002320[]; the definition has s32 gData_02002320[] = { (s32) 0xffff0074, 1, 0x980000, 0, 0x980000, 0x10000, (s32) 0xffff0088, 1, 0x780000, 0, 0x680000, 0x22000, (s32) 0xf.... */
-extern const u8 gData_02002320__apojii_islands[] __asm__("gData_02002320");
-/* VIEW(apojii_islands): variable gData_02002458 as extern const u8 gData_02002458[]; the definition has u32 gData_02002458[] = { 0xffff0197, 1, 0x1080000, 0, 0x1180000, 0x2c000, 0xffff0197, 1, 0xd80000, 0, 0x1180000, 0x2c000, 0x7700f6, 1, 0x178.... */
-extern const u8 gData_02002458__apojii_islands[] __asm__("gData_02002458");
 
 const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov679Room1)
-    return gData_02002218__apojii_islands;
+    return gData_02002218;
   if (scene == (s32)&SceneId_Ov679Room3)
-    return gData_02002320__apojii_islands;
+    return gData_02002320;
   if (scene == (s32)&SceneId_Ov679Room2)
-    return gData_02002458__apojii_islands;
-  return gData_02002200__apojii_islands;
+    return gData_02002458;
+  return gData_02002200;
 }
 
 void Func_020003b0(void) {
@@ -64,7 +56,7 @@ void Func_020003cc(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->terrainId = 0;
 }
 
-/* VIEW(apojii_islands): variable gData_020024c4 as extern s32 gData_020024c4; the definition has s32 gData_020024c4[] = { - 1, }; tried as the definition's extern s32 gData_020024c4[], it does not compile in tla-ja: games/tla/src/scene/apojii_islands.c:67: `gData_020024c4' has an incomplete type. */
+/* VIEW(apojii_islands): variable gData_020024c4 as extern s32 gData_020024c4; the definition has s32 gData_020024c4[] = { - 1, }; tried as the definition's extern s32 gData_020024c4[], it does not compile in tla-ja: games/tla/src/scene/apojii_islands.c:76: `gData_020024c4' has an incomplete type. */
 extern s32 gData_020024c4__apojii_islands __asm__("gData_020024c4");
 extern u16 Data_02002958[], Data_02002978[], gData_02002998[], gData_020029b8[];
 
@@ -98,7 +90,7 @@ void Func_020003e8(void) {
   gData_020024c4__apojii_islands++;
 }
 
-/* VIEW(apojii_islands): variable gData_020024c8 as extern s32 gData_020024c8; the definition has s32 gData_020024c8[] = { - 1, }; tried as the definition's extern s32 gData_020024c8[], it does not compile in tla-ja: games/tla/src/scene/apojii_islands.c:101: `gData_020024c8' has an incomplete type. */
+/* VIEW(apojii_islands): variable gData_020024c8 as extern s32 gData_020024c8; the definition has s32 gData_020024c8[] = { - 1, }; tried as the definition's extern s32 gData_020024c8[], it does not compile in tla-ja: games/tla/src/scene/apojii_islands.c:110: `gData_020024c8' has an incomplete type. */
 extern s32 gData_020024c8__apojii_islands __asm__("gData_020024c8");
 extern u16 Data_020029d8[], Data_020029f8[], Data_02002a18[], Data_02002a38[];
 
@@ -181,8 +173,6 @@ void Func_02000780(struct Actor *object) {
 #include "task.h"
 
 struct Actor *Actor_GetById(u32 objectId);
-/* VIEW(s07a4): routine Func_02000780 as void Func_02000780(void); the definition has void Func_02000780(struct Actor *object). */
-extern void Func_02000780__s07a4(void) __asm__("Func_02000780");
 /* VIEW(s07a4): routine Random16Far as u16 Random16Far(void); system.h has u32 Random16Far(void); tried as the rest of the object declares it, Func_020007a4 moves: 1 of 188 instructions in tla-ja. */
 extern u16 Random16Far__s07a4(void) __asm__("Random16Far");
 /* VIEW(s07a4): routine BattleEffect_ApplyColorToTargetBuffer as s32 BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b); event.h has void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode); tried as the definition's void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode), which the object already declares, Func_020007a4 moves: 1 of 188 instructions in tla-ja. */
@@ -209,7 +199,7 @@ void Func_020007a4(s32 unused, s32 id) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  actor->update = Func_02000780__s07a4;
+  actor->update = Func_02000780;
   Sound_Play(78);
   wait(30);
   Sound_Play(21);
@@ -405,25 +395,17 @@ s32 Func_02000d20(void) {
 
 void Func_02000d74(void) { Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 1, 5); }
 
-/* VIEW(events_d): variable gData_020024b8 as extern const u8 gData_020024b8[]; the definition has s32 gData_020024b8[] = { - 1, 0, 0, }. */
-extern const u8 gData_020024b8__events_d[] __asm__("gData_020024b8");
-/* VIEW(events_d): variable gData_020024d0 as extern const u8 gData_020024d0[]; the definition has s32 gData_020024d0[] = { 1, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 1, (s32) 0xffff0003, 3, 2, (s32) 0xffff0004, (s32) Func_02000c38, 2.... */
-extern const u8 gData_020024d0__events_d[] __asm__("gData_020024d0");
-/* VIEW(events_d): variable gData_02002698 as extern const u8 gData_02002698[]; the definition has s32 gData_02002698[] = { 1, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 1, (s32) 0xffff0003, 3, 1, (s32) 0xffff0004, 4, 1, (s32) 0xffff0005.... */
-extern const u8 gData_02002698__events_d[] __asm__("gData_02002698");
-/* VIEW(events_d): variable gData_0200280c as extern const u8 gData_0200280c[]; the definition has s32 gData_0200280c[] = { 1, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 2, (s32) 0xffff0003, (s32) Func_02001464, 2, (s32) 0xffff0004, (s32.... */
-extern const u8 gData_0200280c__events_d[] __asm__("gData_0200280c");
 
 const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov679Room1)
-    return gData_020024d0__events_d;
+    return gData_020024d0;
   if (scene == (s32)&SceneId_Ov679Room3)
-    return gData_02002698__events_d;
+    return gData_02002698;
   if (scene == (s32)&SceneId_Ov679Room2)
-    return gData_0200280c__events_d;
-  return gData_020024b8__events_d;
+    return gData_0200280c;
+  return gData_020024b8;
 }
 
 void Func_02000de0(s32 actor) {
@@ -507,13 +489,6 @@ void Func_02000f98(void) {
   FieldTask_AddFrame(Func_02000f58, priority);
 }
 
-/* VIEW(apojii_islands): tag struct MapBits as struct MapBits__apojii_islands; module/scene/scene.h has another definition. */
-struct MapBits__apojii_islands {
-  u8 unk00[23];
-  u8 low : 2;
-  u8 mode : 2;
-  u8 high : 4;
-};
 
 /// The overlay's entry: sets the map mode and screen effect 0x202, then starts
 /// each room's own setup.
@@ -522,7 +497,7 @@ s32 Scene_Initialize(void) {
   s16 scene;
   struct MainRoutineWork *party;
 
-  ((struct MapBits__apojii_islands *)Ram_HeapSlots->mapWork)->mode = 1;
+  ((struct MapBits *)Ram_HeapSlots->mapWork)->mode = 1;
   effect = &((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect;
   *effect = 0x202;
   party = &gMainRoutineWork;

@@ -290,10 +290,6 @@ void Func_02001e68();
 void BattleEffect_LoadActionEffectResources();
 void BattleEffect_SetupObjectPair();
 void BattleEffect_StopMainActor();
-/* VIEW(madra_interiors): routine BattleEffect_CleanupSceneObjects as void BattleEffect_CleanupSceneObjects(); module/field/event_commands.h has void BattleEffect_CleanupSceneObjects(void). */
-extern void BattleEffect_CleanupSceneObjects__madra_interiors() __asm__("BattleEffect_CleanupSceneObjects");
-/* VIEW(madra_interiors): routine EventObject_Initialize as void EventObject_Initialize(); module/scene/scene.h has void EventObject_Initialize(void). */
-extern void EventObject_Initialize__madra_interiors() __asm__("EventObject_Initialize");
 
 /// The rooms' setup: the leader's sprite priority, the two rooms' actors and
 /// the sprite of actor 10, by the story flags.
@@ -462,7 +458,7 @@ void Func_020007dc(void) {
   Actor_WalkByAndWait(7, 0, 16);
   BattleEffect_LoadActionEffectResources(24, 1);
   BattleEffect_SetupObjectPair(7, 8);
-  EventObject_Initialize__madra_interiors();
+  EventObject_Initialize();
   Actor_ShowEmote(9, 0x101, 30);
   Actor_FaceActor(9, 7, 0);
   Actor_FaceActor(10, 7, 0);
@@ -471,7 +467,7 @@ void Func_020007dc(void) {
   Actor_SetScript(9, gData_0200349c);
   Field_DispatchTypeHandler(1);
   BattleEffect_StopMainActor();
-  BattleEffect_CleanupSceneObjects__madra_interiors();
+  BattleEffect_CleanupSceneObjects();
   FieldEvent_ShowMessageThenWait(11, 0, 10);
   FieldActor_Stop(9);
   object3 = Actor_Get(9);
@@ -639,15 +635,13 @@ void Func_02000f0c(void) {
 void Func_02000fe0(void) {
   BattleEffect_LoadActionEffectResources(24, 1);
   BattleEffect_SetupObjectPair(7, 8);
-  EventObject_Initialize__madra_interiors();
+  EventObject_Initialize();
   Field_DispatchTypeHandler(1);
   BattleEffect_StopMainActor();
-  BattleEffect_CleanupSceneObjects__madra_interiors();
+  BattleEffect_CleanupSceneObjects();
   return;
 }
 
-/* VIEW(madra_interiors): routine PartyInventory_Remove as void PartyInventory_Remove(); module/game/game.h has s32 PartyInventory_Remove(s32 item_id). */
-extern void PartyInventory_Remove__madra_interiors() __asm__("PartyInventory_Remove");
 extern u32 gData_02001f18[];
 extern u32 gData_02001f4c[];
 
@@ -656,7 +650,7 @@ void Func_02001008(void) {
 
   Event_SetFlag(0x98a);
   Event_SetFlag(0x310);
-  PartyInventory_Remove__madra_interiors(0x1c0);
+  PartyInventory_Remove(0x1c0);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSpeed(11, 0x6666, 0x3333);

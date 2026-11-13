@@ -537,8 +537,6 @@ void Func_02000ef0(struct Actor *object) {
 // ---- games/tla/src/scene/gabomba_statue_chamber/s0f00.c ----
 // Scene code of overlay 0x672, in ROM order, from s0f00's offset up to the next object the overlay links.
 
-/* VIEW(s0f00): variable gData_02002058 as extern struct GabombaStatueChamberObject *gData_02002058; gabomba_statue_chamber has extern struct Actor *gData_02002058. */
-extern struct GabombaStatueChamberObject *gData_02002058__s0f00 __asm__("gData_02002058");
 
 void Func_02000f00(void) {
   struct GabombaStatueChamberObject *leader =
@@ -551,7 +549,7 @@ void Func_02000f00(void) {
   s32 zero = 0;
   struct GabombaStatueChamberObject *object;
 
-  if ((gData_02002058__s0f00 = object =
+  if ((gData_02002058 = object =
            ((struct GabombaStatueChamberObject *)Import_ActorCreate(
                489, x, 0x120000, z))) != NULL) {
     struct FieldSprite *sprite = object->sprite;
@@ -583,7 +581,7 @@ void Func_02000f88(void) {
   s32 zero = 0;
   struct GabombaStatueChamberObject *object;
 
-  if ((gData_02002058__s0f00 = object =
+  if ((gData_02002058 = object =
            ((struct GabombaStatueChamberObject *)Import_ActorCreate(
                489, x, 0x120000, z))) != NULL) {
     struct FieldSprite *sprite = object->sprite;
@@ -814,8 +812,6 @@ void Func_020010d4(void) {
   Import_EventSetExitRequest(2);
 }
 
-/* VIEW(gabomba_statue_chamber): routine Func_02001f08 as s32 Func_02001f08(); module/scene/trial_road.h has void Func_02001f08(void). */
-extern s32 Func_02001f08__gabomba_statue_chamber() __asm__("Func_02001f08");
 extern u8 gData_02001f4c[];
 
 void Func_02001710(void) {
@@ -903,7 +899,7 @@ void Func_02001710(void) {
     ((struct GroupWork *)heap->eventWork)->unk1c4++;
     Actor_FaceDirectionAndWait(7, angleC);
     Event_ShowMessage(0x4007, 0);
-    Func_02001f08__gabomba_statue_chamber();
+    Func_02001f08();
   }
   Actor_FaceDirection(6, 0x8000, 0);
   Actor_SetAttachedEffect(6, 0x102);

@@ -92,17 +92,12 @@ void Func_02000094(s32 unused, s32 id) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-/* VIEW(jupiter_lighthouse_room_8): tag struct JupiterLighthouseRoom8EventWork as struct JupiterLighthouseRoom8EventWork__jupiter_lighthouse_room_8; module/scene/scene.h has another definition. */
-struct JupiterLighthouseRoom8EventWork__jupiter_lighthouse_room_8 {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
-};
 
 void Func_02000af0(s32 id);
 void Func_020018f4(s32 a, s32 b, s32 c, s32 d, s32 e);
 
 s32 Scene_Initialize(void) {
-  ((struct JupiterLighthouseRoom8EventWork__jupiter_lighthouse_room_8 *)Ram_HeapSlots->eventWork)->screenEffect =
+  ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)->screenEffect =
       0x204;
   Actor_Get(8)->scaleX = 0xc000;
   Actor_Get(8)->scaleY = 0xc000;
@@ -315,8 +310,6 @@ s32 Func_020005fc(s32 *a, s32 *b) {
 extern const s32 gData_02002a8c[];
 
 s32 Func_020022b8(s32 x, s32 z, s32 layer);
-/* VIEW(jupiter_lighthouse_room_8): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
-extern void Camera_WorldToScreen__jupiter_lighthouse_room_8(s32 *position) __asm__("Camera_WorldToScreen");
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_02000628(struct Actor *self) {
@@ -344,7 +337,7 @@ void Func_02000628(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Camera_WorldToScreen__jupiter_lighthouse_room_8(position);
+    Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;

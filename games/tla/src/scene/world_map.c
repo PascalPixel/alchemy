@@ -97,8 +97,6 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-/* VIEW(world_map): routine Resource_DecodeType01 as void Resource_DecodeType01(const u8 *a, u8 *b); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
-extern void Resource_DecodeType01__world_map(const u8 *a, u8 *b) __asm__("Resource_DecodeType01");
 u32 __umodsi3(u32 a, u32 b);
 
 s32 Func_020002a4(struct Actor *object) {
@@ -200,8 +198,6 @@ extern u8 gData_02006700[];
 extern u8 gData_02006790[];
 
 void Func_02003bf0(void);
-/* VIEW(world_map): routine MessageArgument_Push as void MessageArgument_Push(s32 a, s32 b); module/window/window.h has void MessageArgument_Push(u32 value, u32 kind). */
-extern void MessageArgument_Push__world_map(s32 a, s32 b) __asm__("MessageArgument_Push");
 
 u8 *Scene_GetPlacements(void) {
   switch (gMainRoutineWork.entrance) {
@@ -227,7 +223,7 @@ void Func_02000458(void) {
   gMainRoutineWork.renderMode = 8;
   if (Event_GetFlag(0x147)) {
     Func_02004da8();
-    MessageArgument_Push__world_map(153, 4);
+    MessageArgument_Push(153, 4);
     Message_ShowCentered((s32)MsgBlank2, 4);
   }
   if (Actor_Get(FieldParty_GetLeaderActor()) != NULL)
@@ -257,8 +253,6 @@ void Func_02000458(void) {
   }
 }
 
-/* VIEW(world_map): routine Unit_AddPp as s32 Unit_AddPp(); module/game/game.h has s16 Unit_AddPp(s32 owner, s32 delta). */
-extern s32 Unit_AddPp__world_map() __asm__("Unit_AddPp");
 
 /// Sets render mode 7, clears object 8's child flags, then adds up the PP of
 /// the active party; when it is 0, the current owner gets 1 PP back. The loop
@@ -286,7 +280,7 @@ void Func_0200050c(void) {
       goto loop;
   }
   if (pp == 0)
-    Unit_AddPp__world_map(gMainRoutineWork.currentOwner, 1);
+    Unit_AddPp(gMainRoutineWork.currentOwner, 1);
 }
 
 void Func_02004b48(struct Actor *object);
@@ -342,22 +336,18 @@ void Func_02000574(void) {
   FieldEffect_ScheduleRatioTransition(0x10000, 30);
 }
 
-/* VIEW(world_map): variable gMapBlocks as u8 gMapBlocks[]; module/tla.h has u32 gMapBlocks[]. */
-extern u8 gMapBlocks__world_map[] __asm__("gMapBlocks");
 
-/* VIEW(world_map): routine GetWorldMapCollision as s32 GetWorldMapCollision(s32 *position); map.h has s32 GetWorldMapCollision(struct WorldPosition *position). */
-extern s32 GetWorldMapCollision__world_map(s32 *position) __asm__("GetWorldMapCollision");
 
 void Func_020006d0(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *ship = Actor_GetById(8);
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  s32 cell = GetWorldMapCollision__world_map(&ship->x);
+  s32 cell = GetWorldMapCollision(&ship->x);
   s32 position[3];
   s32 shore = 0;
   s32 blocked;
   u8 *block;
-  u8 *blocks = gMapBlocks__world_map;
+  u8 *blocks = gMapBlocks;
   u8 flags;
 
   position[0] = ship->x;
@@ -1190,10 +1180,8 @@ void Func_02001c5c(void) {
   Event_End();
 }
 
-/* VIEW(world_map): routine Party_RemoveMember as void Party_RemoveMember(s32 owner); module/game/game.h has s32 Party_RemoveMember(s32 owner). */
-extern void Party_RemoveMember__world_map(s32 owner) __asm__("Party_RemoveMember");
-/* VIEW(world_map): routine Party_AddMember as void Party_AddMember(s32 owner); module/game/game.h has s32 Party_AddMember(s32 owner). */
-extern void Party_AddMember__world_map(s32 owner) __asm__("Party_AddMember");
+s32 Party_RemoveMember(s32 value);
+s32 Party_AddMember(s32 value);
 static inline void SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
   Actor_SetMoveTarget(object, x, y, z);
 }
@@ -1241,17 +1229,17 @@ void Func_02001e34(void) {
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Party_RemoveMember__world_map(0);
-    Party_RemoveMember__world_map(1);
-    Party_RemoveMember__world_map(2);
-    Party_RemoveMember__world_map(3);
-    Party_RemoveMember__world_map(4);
-    Party_RemoveMember__world_map(5);
-    Party_RemoveMember__world_map(6);
-    Party_RemoveMember__world_map(7);
-    Party_AddMember__world_map(4);
-    Party_AddMember__world_map(5);
-    Party_AddMember__world_map(6);
+    Party_RemoveMember(0);
+    Party_RemoveMember(1);
+    Party_RemoveMember(2);
+    Party_RemoveMember(3);
+    Party_RemoveMember(4);
+    Party_RemoveMember(5);
+    Party_RemoveMember(6);
+    Party_RemoveMember(7);
+    Party_AddMember(4);
+    Party_AddMember(5);
+    Party_AddMember(6);
     owner = gMainRoutineWork.currentOwner;
     Func_02004bf8(1);
     Event_SetFlag(0x16e);
@@ -1385,7 +1373,7 @@ void Func_02001e34(void) {
     Event_SetMessageId(TUTORIAL_MESSAGE(MsgIMSo));
     Event_ShowMessageAndWait(9, 0);
   joined:
-    MessageArgument_Push__world_map(0x133, 4);
+    MessageArgument_Push(0x133, 4);
     Sound_Play(81);
     FieldMessage_Show(TUTORIAL_MESSAGE(MsgTheVenusDjinni), 3);
     Event_SetMessageId(TUTORIAL_MESSAGE(MsgTheVenusDjinni + 1));

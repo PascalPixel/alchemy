@@ -244,8 +244,6 @@ void Func_020027cc(void) {
 extern const u8 gData_02005d7c[];
 extern u32 gData_02005d8c[];
 void *Unit_Get(s32 owner);
-/* VIEW(s2394): routine Func_020053bc as void Func_020053bc(const u8 *data); the definition has void Func_020053bc(const u16 *entry). */
-extern void Func_020053bc__s2394(const u8 *data) __asm__("Func_020053bc");
 
 void Func_02002a64(void) {
   s32 speed;
@@ -569,7 +567,7 @@ void Func_020034f4(void) {
     Actor_SetScript(28, gData_02005944);
     MapGrid_CopyCellAttributes(33, 24, 3, 3, 27, 29);
   }
-  Func_020053bc__s2394(gData_02005d7c);
+  Func_020053bc(gData_02005d7c);
   if (!Event_GetFlag(0x8ce) || !Event_GetFlag(0x8cf))
     Actor_Get(26)->y = PIXELS(16);
   Func_02005824();
@@ -613,8 +611,6 @@ s32 Func_02003604(void) {
    } *)(base))                                                                 \
        ->v)
 void Func_02001ac0();
-/* VIEW(s2394): routine Func_02002074 as void Func_02002074(); module/scene/gabomba_statue.h has void Func_02002074(void). */
-extern void Func_02002074__s2394() __asm__("Func_02002074");
 
 void Func_02003634(void) {
   s32 t1, t4, t6, t8, t10, t12, t14, t16, t18, t20, t22, t24, t26, t27, t29,
@@ -623,7 +619,7 @@ void Func_02003634(void) {
 
   t1 = ((s32)Actor_Get(10));
   Actor_SetSpriteColor(t1, 3);
-  Task_AddFrame((s32)Func_02002074__s2394, 0x480);
+  Task_AddFrame((s32)Func_02002074, 0x480);
   t4 = ((s32)Actor_Get(11));
   Actor_SetSpriteColor(t4, 11);
   t6 = ((s32)Actor_Get(12));
@@ -761,8 +757,6 @@ struct SceneState {
 };
 
 extern struct SceneState gSceneState;
-/* VIEW(s2394): variable gField_CachedTilesA as const u8 gField_CachedTilesA[]; module/scene/scene.h has u8 gField_CachedTilesA[]. */
-extern const u8 gField_CachedTilesA__s2394[] __asm__("gField_CachedTilesA");
 
 void Func_02003868(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
@@ -781,7 +775,7 @@ void Func_020038ac(void) {
   void *buffer = Mem_Alloc(0xc00);
   s32 handle;
 
-  Func_020055cc(gField_CachedTilesA__s2394, buffer);
+  Func_020055cc(gField_CachedTilesA, buffer);
   handle = Resource_FindFreeEntry();
   VramCache_Load(handle, 0xc00, buffer);
   state->tileEntry = handle;
@@ -1721,7 +1715,7 @@ done:
 // ---- games/tla/src/scene/gabomba_statue/s4d48.c ----
 // Scene code of overlay 0x671, in ROM order, from s4d48's offset up to the next object the overlay links.
 
-/* VIEW(s4d48): routine Func_02004938 as void Func_02004938(); the parts before it has another declaration; tried as the definition's void Func_02004938(struct Actor *ball, s32 step), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/gabomba_statue/s2394.c:1848: too many arguments to function `Func_02004938'. */
+/* VIEW(s4d48): routine Func_02004938 as void Func_02004938(); the parts before it has another declaration; tried as the definition's void Func_02004938(struct Actor *ball, s32 step), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/gabomba_statue/s2394.c:1769: too many arguments to function `Func_02004938'. */
 extern void Func_02004938__s4d48() __asm__("Func_02004938");
 
 s32 Func_02004d48(s32 first, s32 check) {
@@ -2034,11 +2028,6 @@ void Func_020053ac(void) {
   ((struct ClockWork *)(gData_020023c4 + 0x288))->timer = 3600;
 }
 
-/* VIEW(s2394): tag struct EffectWork as struct EffectWork__s2394; module/tla.h has another definition. */
-struct EffectWork__s2394 {
-  u8 unk00[26];
-  s16 target;
-};
 
 // Layer switch table: three words (id, mode, flag), terminated by 0xffff.
 void Func_020053bc(const u16 *entry) {

@@ -12,8 +12,7 @@
 #include "module/field/object.h"
 #include "module/tla.h"
 
-/* VIEW(f02c58c): variable gWorldMapWork as u8 gWorldMapWork[]; world_map.h has struct WorldMapWork gWorldMapWork. */
-extern u8 gWorldMapWork__f02c58c[] __asm__("gWorldMapWork");
+extern u8 gWorldMapWork[];
 
 void Func_0802c58c(void) {
   struct MapTileWindow *window = (struct MapTileWindow *)Ram_HeapSlots->mapWork;
@@ -128,7 +127,7 @@ void Func_0802c58c(void) {
     Resource_DecodeType01(Resource_GetTableEntry(resources[7]), gData_02028000);
     break;
   case 1:
-    Resource_DecodeType01(Resource_GetTableEntry(resources[8]), gWorldMapWork__f02c58c);
+    Resource_DecodeType01(Resource_GetTableEntry(resources[8]), gWorldMapWork);
     break;
   }
   window->reloadSteps--;
@@ -224,7 +223,7 @@ s32 Func_0802c9c8(void) {
   Resource_DecodeType01(Resource_GetTableEntry(resources[5]), gData_0203c000);
   Resource_DecodeType01(Resource_GetTableEntry(resources[6]), gData_0203e000);
   Resource_DecodeType01(Resource_GetTableEntry(resources[7]), gData_02028000);
-  Resource_DecodeType01(Resource_GetTableEntry(resources[8]), gWorldMapWork__f02c58c);
+  Resource_DecodeType01(Resource_GetTableEntry(resources[8]), gWorldMapWork);
   gData_030011f8 = Map_ShowBg1FromBuffer;
   state->windowTop = 0;
   state->windowBottom = 159;
@@ -1116,7 +1115,7 @@ s32 MapGrid_IsWallAt(s32 *position) {
   return (cell[2] != 255) - 1;
 }
 
-/* VIEW(f02c58c): variable gMapBlocks as struct WorldMapBlock gMapBlocks[]; module/tla.h has u32 gMapBlocks[]. */
+/* VIEW(f02c58c): variable gMapBlocks as struct WorldMapBlock gMapBlocks[]; module/tla.h has u32 gMapBlocks[]; tried as the 2 declarations' extern u8 gMapBlocks[], it does not compile in tla-ja: games/tla/src/field/map/f02c58c.c:1118: conflicting types for `gMapBlocks'. */
 extern struct WorldMapBlock gMapBlocks__f02c58c[] __asm__("gMapBlocks");
 
 /// Reads byte 2 of the world map block under position: blocks are 32 pixels

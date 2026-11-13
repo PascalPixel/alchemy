@@ -79,22 +79,11 @@ void Func_02000178(void) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-/* VIEW(loho): routine Resource_DecodeType01 as s32 Resource_DecodeType01(); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
-extern s32 Resource_DecodeType01__loho() __asm__("Resource_DecodeType01");
-/* VIEW(loho): routine Fade_ToWhite as s32 Fade_ToWhite(); module/system/system.h has void Fade_ToWhite(s32 vblanks). */
-extern s32 Fade_ToWhite__loho() __asm__("Fade_ToWhite");
-/* VIEW(loho): routine Fade_FromWhite as s32 Fade_FromWhite(); module/system/system.h has void Fade_FromWhite(s32 vblanks). */
-extern s32 Fade_FromWhite__loho() __asm__("Fade_FromWhite");
 
 void Func_020013c8();
 
-/* VIEW(loho): routine Resource_FindFreeEntry as s32 Resource_FindFreeEntry(); item_icon.h has s32 Resource_FindFreeEntry(void). */
-extern s32 Resource_FindFreeEntry__loho() __asm__("Resource_FindFreeEntry");
-/* VIEW(loho): routine Resource_GetTableEntry as s32 Resource_GetTableEntry(); resource.h has void *Resource_GetTableEntry(s32 resourceId). */
-extern s32 Resource_GetTableEntry__loho() __asm__("Resource_GetTableEntry");
+void *Resource_GetTableEntry(s32 index);
 
-/* VIEW(loho): variable Field_Palette685 as u8 Field_Palette685[]; module/scene/scene.h has const u16 Field_Palette685[]. */
-extern u8 Field_Palette685__loho[] __asm__("Field_Palette685");
 
 static __inline__ void W_Func_020013a8(s32 a0, s32 a1, s32 a2) {
   /* FAKEMATCH(wrapper): W_Func_020013a8 forwarded inline; as direct calls to
@@ -185,9 +174,9 @@ L_0200821e:
   MapGrid_SetShake(0x70000, 0x70000, 0x10000);
   table = (struct Unk16 *)Heap_AllocEwram(0x600);
   p = (struct Unk16 *)Heap_Alloc(0x1000);
-  t38 = Resource_GetTableEntry__loho((s32)&ResourceId_FieldEffectExplosion);
-  Resource_DecodeType01__loho(t38, p);
-  entry = Resource_FindFreeEntry__loho();
+  t38 = Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion);
+  Resource_DecodeType01(t38, p);
+  entry = Resource_FindFreeEntry();
   tiles = VramCache_Load(entry, 0x400, p);
   Heap_Release(p);
   p = (struct Unk16 *)&table->unk_0c;
@@ -198,7 +187,7 @@ L_0200838c:
   p = (struct Unk16 *)((s32)p + 16);
   if (i >= 0)
     goto L_0200838c;
-  Dma_Set((const void *)(s32)Field_Palette685__loho, (void *)0x50003e0, 0x80000010,
+  Dma_Set((const void *)(s32)Field_Palette685, (void *)0x50003e0, 0x80000010,
           (volatile u32 *)0x40000d4);
   i = 0;
   /* FAKEMATCH(dead): this test that never passes, with its edge into the loop,
@@ -215,7 +204,7 @@ L_020083b6:
 L_020083c4:
   if (i != 30)
     goto L_020083d4;
-  Fade_ToWhite__loho(90);
+  Fade_ToWhite(90);
   Sound_Play(141);
 L_020083d4:
   p = table;
@@ -261,7 +250,7 @@ L_02008474:
   MapGrid_SetShake(0, 0, 0x10000);
   Sound_Play(0x186);
   Event_Wait(180);
-  Fade_FromWhite__loho(120);
+  Fade_FromWhite(120);
   Event_SetMessageId((s32)MsgLoho28);
   Event_Wait(120);
   Actor_RunRepeatedMotion(18, 2);
@@ -548,13 +537,11 @@ void Func_02000d40(void) {
   Func_02001440(13, count);
 }
 
-/* VIEW(loho): routine Func_02001430 as void Func_02001430(s32 a, s32 b); module/scene/gabomba_statue.h has void Func_02001430(void). */
-extern void Func_02001430__loho(s32 a, s32 b) __asm__("Func_02001430");
 
 void Func_02000d4c(void) {
   Actor_GetById(gMainRoutineWork.currentOwner);
   if (GameFlag_Test(800)) {
-    Func_02001430__loho(30, 8);
+    Func_02001430(30, 8);
   } else {
     if (GameFlag_Test(0xa5f))
       Event_SetMessageId((s32)MsgLoho51);
@@ -595,11 +582,6 @@ void Func_02000e3c(void) {
   Actor_SetMovementTypeById(8, gData_0200171c);
 }
 
-/* VIEW(loho): tag struct EventWork154 as struct EventWork154__loho; module/scene/scene.h has another definition. */
-struct EventWork154__loho {
-  u8 unk000[0x154];
-  s16 value;
-};
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -631,7 +613,7 @@ loop:
   i++;
   if ((u32)i <= 63)
     goto loop;
-  work = (u8 *)&((struct EventWork154__loho *)work)->value;
+  work = (u8 *)&((struct EventWork154 *)work)->returnEntrance;
   Sound_Play(158);
   Func_020012a0_(gData_02001f14.data, gData_02001f14.a, gData_02001f14.b);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
@@ -650,7 +632,7 @@ loop:
 
 void Func_02000eec(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
-  struct EventWork154__loho *work = Ram_HeapSlots->eventWork;
+  struct EventWork154 *work = Ram_HeapSlots->eventWork;
 
   /* FAKEMATCH(dead): an empty once-only block, so gMainRoutineWork loads
    * before the event work; as no block, one row is reordered, 2 of 31
@@ -661,7 +643,7 @@ void Func_02000eec(void) {
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Sound_Play(123);
   Offset_(gMainRoutineWork.currentOwner, 0, -4);
-  Import_EventSetExitRequest(work->value);
+  Import_EventSetExitRequest(work->returnEntrance);
 }
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -672,7 +654,7 @@ static __inline__ void Func_020012a8_(s32 srcX, s32 srcY, s32 width, s32 height,
 }
 
 void Func_02000f38(void) {
-  s32 value = ((struct EventWork154__loho *)Ram_HeapSlots->eventWork)->value;
+  s32 value = ((struct EventWork154 *)Ram_HeapSlots->eventWork)->returnEntrance;
 
   if (value == 2)
     Func_02001348_(8, PIXELS(144), PIXELS(224));

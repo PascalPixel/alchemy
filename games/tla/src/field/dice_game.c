@@ -34,8 +34,6 @@
 #include "task.h"
 #include "transform.h"
 
-/* VIEW(dice_game): routine SceneTransform_ApplyPosition as void SceneTransform_ApplyPosition(void *position); module/system/system.h has void SceneTransform_ApplyPosition(const s32 *pos). */
-extern void SceneTransform_ApplyPosition__dice_game(void *position) __asm__("SceneTransform_ApplyPosition");
 
 s32 Func_081b83c4_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
@@ -63,7 +61,7 @@ void Camera_ResetSceneDefaultsB(void) {
   state->unk18 = 0;
 
   Render_ResetTransformState();
-  SceneTransform_ApplyPosition__dice_game(&state->pos[0]);
+  SceneTransform_ApplyPosition(&state->pos[0]);
   SceneTransform_ApplyYaw((s16)state->yaw);
   SceneTransform_ApplyPitch((s16)state->pitch);
 
@@ -387,8 +385,6 @@ extern char ResourceId_FarCall00C, ResourceId_SlotsDomePicture,
     ResourceId_SlotsGreenDigits, ResourceId_SlotsDoubleUpBanner,
     ResourceId_SlotsCashOutBanner;
 
-/* VIEW(dice_game): routine WindowSprite_PrepareForRedrawFar as void WindowSprite_PrepareForRedrawFar(struct RenderInput *window); gamepak/far_call/window.h has void WindowSprite_PrepareForRedrawFar(void *window). */
-extern void WindowSprite_PrepareForRedrawFar__dice_game(struct RenderInput *window) __asm__("WindowSprite_PrepareForRedrawFar");
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
@@ -736,7 +732,7 @@ void Func_081b83c4(void) {
         if (message != -1) {
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_ITALIAN
-          WindowSprite_PrepareForRedrawFar__dice_game(sprites->helpWindow);
+          WindowSprite_PrepareForRedrawFar(sprites->helpWindow);
 #endif
           Text_DrawMessageAsTilesFar(message, sprites->helpWindow, 0, 0);
           Text_DrawMessageAsTilesFar((s32)&MsgDiceGameChoose,

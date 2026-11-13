@@ -165,8 +165,7 @@ L_0200825a:
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-/* VIEW(lemuria_interiors): routine Party_RemoveMember as void Party_RemoveMember(); module/game/game.h has s32 Party_RemoveMember(s32 owner). */
-extern void Party_RemoveMember__lemuria_interiors() __asm__("Party_RemoveMember");
+s32 Party_RemoveMember(s32 value);
 
 s32 Scene_Initialize(void) {
   struct Actor *object;
@@ -206,7 +205,7 @@ void Func_0200031c(void) {
   struct Actor *object3;
 
   GameFlag_SetBit(0x965);
-  Party_RemoveMember__lemuria_interiors(7);
+  Party_RemoveMember(7);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLemuriaInteriors07);
@@ -670,7 +669,7 @@ L_02008a86:
 
 #include "field_event.h"
 
-/* VIEW(lemuria_interiors): routine Func_020027f4 as void Func_020027f4(struct Actor *object, s32 mode); module/scene/kandorean_temple.h has void Func_020027f4(void). */
+/* VIEW(lemuria_interiors): routine Func_020027f4 as void Func_020027f4(struct Actor *object, s32 mode); module/scene/kandorean_temple.h has void Func_020027f4(void); tried as the definition's void Func_020027f4(void), which the object already declares, Func_0200128c moves: 1 of 32 instructions in tla-ja. */
 extern void Func_020027f4__lemuria_interiors(struct Actor *object, s32 mode) __asm__("Func_020027f4");
 void Actor_StartScript(struct Actor *object, const void *script);
 

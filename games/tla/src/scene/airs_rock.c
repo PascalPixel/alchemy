@@ -311,10 +311,8 @@ void Func_0200092c(struct Actor *object) {
 #include "system/vector3.h"
 
 extern s16 gData_02004674[][4];
-/* VIEW(airs_rock): variable gData_02003d1c as const u8 gData_02003d1c[]; module/scene/airs_rock.h has u32 gData_02003d1c[]. */
-extern const u8 gData_02003d1c__airs_rock[] __asm__("gData_02003d1c");
 void Actor_StartScript(struct Actor *object, const u8 *script);
-/* VIEW(airs_rock): routine Func_02003ba8 as s32 Func_02003ba8(struct Actor *object); module/scene/scene.h has void Func_02003ba8(struct Actor *object, const void *script). */
+/* VIEW(airs_rock): routine Func_02003ba8 as s32 Func_02003ba8(struct Actor *object); module/scene/scene.h has void Func_02003ba8(struct Actor *object, const void *script); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/airs_rock.c:411: too few arguments to function `Func_02003ba8'. */
 extern s32 Func_02003ba8__airs_rock(struct Actor *object) __asm__("Func_02003ba8");
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -369,7 +367,7 @@ void Func_0200095c(void) {
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
       Func_02003b28(spark, 7);
-      Actor_StartScript(spark, gData_02003d1c__airs_rock);
+      Actor_StartScript(spark, gData_02003d1c);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetPartAttribute(spark, 2);
       spark->update = Func_02000840;
@@ -543,8 +541,6 @@ struct SpriteParts {
   u8 unk09Low : 2;
   u8 part : 2;
 };
-/* VIEW(airs_rock): routine Resource_DecodeType01 as void Resource_DecodeType01(void *resource, void *dest); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
-extern void Resource_DecodeType01__airs_rock(void *resource, void *dest) __asm__("Resource_DecodeType01");
 
 void Func_02001010(void) {
   struct MainRoutineWork *work;
@@ -557,7 +553,7 @@ void Func_02001010(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   REG_DISPCNT &= ~0x100;
-  Resource_DecodeType01__airs_rock(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
                 buffer);
   Dma_Set(buffer, (void *)0x600e800, 0x840000d0, (volatile u32 *)0x040000d4);
   Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, 0x840000d0,
@@ -574,7 +570,7 @@ void Func_02001010(void) {
   REG_BG1CNT |= 2;
   Dma_Fill16(0x10, (void *)0x6002000, 0x500);
   buffer = Heap_Alloc(0x240);
-  Resource_DecodeType01__airs_rock(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
   i = 0;
   cell = buffer;
 offset:
@@ -614,7 +610,7 @@ row:
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
       Func_02003b28(spark, 7);
-      Actor_StartScript(spark, gData_02003d1c__airs_rock);
+      Actor_StartScript(spark, gData_02003d1c);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
       spark->update = Func_020008ac;
@@ -1007,7 +1003,7 @@ void Func_02001ca4(void) {
   Func_02000468(work->valueCbc);
 }
 
-/* VIEW(airs_rock): routine Func_02003cc0 as void Func_02003cc0(void); module/scene/scene.h has void Func_02003cc0(s32 id). */
+/* VIEW(airs_rock): routine Func_02003cc0 as void Func_02003cc0(void); module/scene/scene.h has void Func_02003cc0(s32 id); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/airs_rock.c:1014: too few arguments to function `Func_02003cc0'. */
 extern void Func_02003cc0__airs_rock(void) __asm__("Func_02003cc0");
 
 void Func_02001cc8(void) {
@@ -1130,13 +1126,13 @@ void Func_02001f7c(void) {
 
     REG_BG0CNT = control;
   } while (0);
-  Resource_DecodeType01__airs_rock(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
                 buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 0x800);
   buffer = Heap_Alloc(0x80);
-  Resource_DecodeType01__airs_rock(Resource_GetTableEntry((s32)&ResourceId_LightningMap), buffer);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningMap), buffer);
   i = 0;
   cell = buffer;
 mask:
@@ -1180,7 +1176,7 @@ row:
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
       Func_02003b28(spark, 7);
-      Actor_StartScript(spark, gData_02003d1c__airs_rock);
+      Actor_StartScript(spark, gData_02003d1c);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
       spark->update = Func_020008ac;
@@ -1357,7 +1353,7 @@ void Func_020026b8(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   REG_DISPCNT &= ~0x100;
-  Resource_DecodeType01__airs_rock(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
                 buffer);
   Dma_Set(buffer, (void *)0x600e800, 0x840000d0, (volatile u32 *)0x040000d4);
   Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, 0x840000d0,
@@ -1374,7 +1370,7 @@ void Func_020026b8(void) {
     Dma_Fill16(0x10, (void *)0x6002000, 0x500);
   } while (0);
   buffer = Heap_Alloc(0x240);
-  Resource_DecodeType01__airs_rock(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
   cell = buffer;
   for (i = 0; i != 0x120; i++) {
     *cell += 0xff40;
@@ -1411,7 +1407,7 @@ void Func_020026b8(void) {
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
       Func_02003b28(spark, 7);
-      Actor_StartScript(spark, gData_02003d1c__airs_rock);
+      Actor_StartScript(spark, gData_02003d1c);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
       spark->update = Func_020008ac;

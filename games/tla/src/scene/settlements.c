@@ -93,7 +93,7 @@ void Func_0200173c(void) {
   }
 }
 
-/* VIEW(s173c): routine Func_020016b0 as void Func_020016b0(void); the definition has void Func_020016b0(struct Actor *object); tried as the definition's void Func_020016b0(void), it does not compile in tla-ja: games/tla/src/scene/settlements.c:98: conflicting types for `Func_020016b0'. */
+/* VIEW(s173c): routine Func_020016b0 as void Func_020016b0(void); the definition has void Func_020016b0(struct Actor *object); tried as the definition's void Func_020016b0(void), it does not compile in tla-ja: games/tla/src/scene/settlements.c:96: conflicting types for `Func_020016b0'. */
 extern void Func_020016b0__s173c(void) __asm__("Func_020016b0");
 
 void Func_02001770(void) {

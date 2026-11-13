@@ -775,8 +775,6 @@ void Func_020011b4(s32 a, s32 b) {
 
 extern const s16 gData_020019cc[];
 
-/* VIEW(yampi_desert_cave): routine GameFlag_SetByte as void GameFlag_SetByte(s32 flag, s32 value); game_flags.h has u32 GameFlag_SetByte(u32 flag, u8 value). */
-extern void GameFlag_SetByte__yampi_desert_cave(s32 flag, s32 value) __asm__("GameFlag_SetByte");
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -794,7 +792,7 @@ void Func_020011e0(void) {
     Actor_SetHorizontalPositionWithTerrain(16, column << 19, row << 19);
     if (GameFlag_Test(0x104) == 0)
       step++;
-    GameFlag_SetByte__yampi_desert_cave(0x278, step);
+    GameFlag_SetByte(0x278, step);
   }
 }
 
@@ -1008,7 +1006,7 @@ s32 Scene_Initialize(void) {
                                                gData_020019cc[step + 1] << 19);
       } else {
         if (GameFlag_Test(0x109))
-          GameFlag_SetByte__yampi_desert_cave(0x278, 0);
+          GameFlag_SetByte(0x278, 0);
         Task_Add(Func_020011e0, 0x480);
         GameFlag_SetBit(0x270);
         Actor_SetSpritePriority(16, 3);

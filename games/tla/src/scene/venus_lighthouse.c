@@ -9,12 +9,8 @@
 #include "module/scene/scene.h"
 #include "scene.h"
 
-/* VIEW(venus_lighthouse): variable gData_02001d8c as s32 gData_02001d8c[]; module/scene/venus_lighthouse.h has s16 gData_02001d8c[]. */
-extern s32 gData_02001d8c__venus_lighthouse[] __asm__("gData_02001d8c");
+extern s32 gData_02001d8c[];
 
-/* VIEW(venus_lighthouse): routine Actor_FindInCell as struct StagedActor *Actor_FindInCell(struct FieldPosition *position, struct StagedActor *self); module/scene/magma_rock.h has struct Actor *Actor_FindInCell(s32 *position, struct Actor *self). */
-extern struct StagedActor *Actor_FindInCell__venus_lighthouse(struct FieldPosition *position,
-                                     struct StagedActor *self) __asm__("Actor_FindInCell");
 void Func_02001b2c(struct StagedActor *object, s32 mode);
 s32 Func_02001b64(struct StagedActor *object, struct FieldPosition *position);
 
@@ -29,33 +25,33 @@ void Func_0200038c(void) {
 
   lead = (struct StagedActor *)Actor_GetById(gMainRoutineWork.currentOwner);
   dir = lead->facing >> 12;
-  step = gData_02001d8c__venus_lighthouse[dir];
+  step = gData_02001d8c[dir];
   dst.x = lead->x.fixed + (step & 0xffff0000);
   dst.y = lead->y.fixed;
   step <<= 16;
   dst.z = lead->z.fixed + step;
-  next = Actor_FindInCell__venus_lighthouse(&dst, lead);
+  next = Actor_FindInCell(&dst, lead);
   if (next == 0)
     return;
 
-  step = gData_02001d8c__venus_lighthouse[dir];
+  step = gData_02001d8c[dir];
   dst.x = next->x.fixed + (step & 0xffff0000);
   dst.y = next->y.fixed;
   step <<= 16;
   dst.z = next->z.fixed + step;
-  blocker = Actor_FindInCell__venus_lighthouse(&dst, next);
+  blocker = Actor_FindInCell(&dst, next);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
     return;
 
   dst.x = next->x.fixed;
   dst.y = next->y.fixed + 0x100000;
   dst.z = next->z.fixed;
-  blocker = Actor_FindInCell__venus_lighthouse(&dst, next);
+  blocker = Actor_FindInCell(&dst, next);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
     return;
 
   next->transitionMode = 2;
-  step = gData_02001d8c__venus_lighthouse[dir];
+  step = gData_02001d8c[dir];
   dst.x = next->x.fixed + (step & 0xffff0000);
   dst.y = next->y.fixed;
   step <<= 16;

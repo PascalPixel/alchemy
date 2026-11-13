@@ -41,8 +41,6 @@
 #include "text/msg_ids.h"
 #include "transform.h"
 
-/* VIEW(lucky_dice): routine SceneTransform_ApplyPosition as void SceneTransform_ApplyPosition(void *position); module/system/system.h has void SceneTransform_ApplyPosition(const s32 *pos). */
-extern void SceneTransform_ApplyPosition__lucky_dice(void *position) __asm__("SceneTransform_ApplyPosition");
 
 s32 LuckyDice_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
@@ -71,7 +69,7 @@ void Camera_ResetSceneDefaults(void) {
   state->unk18 = 0;
 
   Render_ResetTransformState();
-  SceneTransform_ApplyPosition__lucky_dice(&state->pos[0]);
+  SceneTransform_ApplyPosition(&state->pos[0]);
   SceneTransform_ApplyYaw((s16)state->yaw);
   SceneTransform_ApplyPitch((s16)state->pitch);
 
@@ -230,10 +228,6 @@ s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
 #define DICE_RESULT_LABEL_CENTER_X 632
 #endif
 
-/* VIEW(lucky_dice): tag struct DiceWork as struct DiceWork__lucky_dice; module/field/field.h has another definition. */
-struct DiceWork__lucky_dice {
-  struct DiceParticle particles[2];
-};
 
 struct RenderInput;
 
@@ -257,7 +251,7 @@ void LuckyDice_Run(void) {
   s32 drawOrder[2];
   s32 matchedNumbers[2];
   u16 *spritePalette;
-  struct DiceWork__lucky_dice *diceWork;
+  struct DiceWork *diceWork;
   // The OAM shadow it builds is struct DiceOam, whose words are volatile as
   // The Broken Seal's struct OamWords; as plain u32 members, 1595 of 2055
   // instructions differ in tla-en.

@@ -12,8 +12,7 @@
 #include "module/scene/scene.h"
 #include "module/scene/shrine_of_the_sea_god.h"
 
-/* VIEW(s1340): variable gData_02004a18 as s32 gData_02004a18[3]; module/scene/jupiter_lighthouse_room_m.h has u32 gData_02004a18[]. */
-extern s32 gData_02004a18__s1340[3] __asm__("gData_02004a18");
+extern u32 gData_02004a18[];
 
 void Func_02001340(struct ShrineOfTheSeaGodObject *object,
                    struct ShrineOfTheSeaGodObject *other) {
@@ -43,9 +42,9 @@ void Func_02001340(struct ShrineOfTheSeaGodObject *object,
   }
   other->y += 0x10000;
   wait(20);
-  gData_02004a18__s1340[0] = other->x - object->x;
-  gData_02004a18__s1340[1] = other->y - object->y;
-  gData_02004a18__s1340[2] = other->z - object->z;
+  gData_02004a18[0] = other->x - object->x;
+  gData_02004a18[1] = other->y - object->y;
+  gData_02004a18[2] = other->z - object->z;
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
 }
@@ -53,7 +52,7 @@ void Func_02001340(struct ShrineOfTheSeaGodObject *object,
 void Func_0200142c(struct ShrineOfTheSeaGodObject *object) {
   struct ShrineOfTheSeaGodObject *leader =
       Actor_GetById(gMainRoutineWork.currentOwner);
-  s32 *offset = gData_02004a18__s1340;
+  s32 *offset = gData_02004a18;
 
   SET_POSITION(object, leader->x + offset[0], leader->y + offset[1],
                leader->z + offset[2]);
@@ -79,8 +78,7 @@ struct EffectOptions {
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-/* VIEW(s1340): routine Effect_AdvanceMotion as void Effect_AdvanceMotion(void *object); module/field/field_effect.h has void Effect_AdvanceMotion(union FieldObject *object). */
-extern void Effect_AdvanceMotion__s1340(void *object) __asm__("Effect_AdvanceMotion");
+void Effect_AdvanceMotion(union FieldObject *object);
 void Map_SetScreenShake(s32 a, s32 b, s32 c);
 void Map_WaitForShakeToSettle(void);
 s32 Math_Sine(s32 angle);
@@ -112,7 +110,7 @@ void Func_02001474(void) {
   Sound_Play(227);
   Call3((void (*)())Map_SetScreenShake, 0x10000, 0x20000, 0x10000);
   options.palette = 7;
-  options.update = Effect_AdvanceMotion__s1340;
+  options.update = Effect_AdvanceMotion;
   options.startScaleX = 0xa3d7;
   options.startScaleY = 0xa3d7;
   for (i = 0; i <= 16;) {

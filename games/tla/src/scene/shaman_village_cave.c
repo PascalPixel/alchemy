@@ -191,8 +191,7 @@ void Func_02000384(void) {
 
 #include "call.h"
 
-/* VIEW(shaman_village_cave): routine Func_02001098 as void Func_02001098(); module/scene/garoh.h has void Func_02001098(void). */
-extern void Func_02001098__shaman_village_cave() __asm__("Func_02001098");
+void Func_02001098(void);
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
@@ -201,7 +200,7 @@ void Func_0200039c(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  result0 = Value3((s32 (*)())Func_02001098__shaman_village_cave, 22, 0x190, -1);
+  result0 = Value3((s32 (*)())Func_02001098, 22, 0x190, -1);
   if (result0 != 0)
     goto L_020083c4;
   Event_ClearFlag(0xa73);
@@ -370,8 +369,6 @@ void Func_0200083c(void) {
 }
 
 void Event_SetDestination();
-/* VIEW(shaman_village_cave): routine Message_CloseFinishedWindows as void Message_CloseFinishedWindows(); module/window/window.h has void Message_CloseFinishedWindows(void). */
-extern void Message_CloseFinishedWindows__shaman_village_cave() __asm__("Message_CloseFinishedWindows");
 
 #define EVENT_MESSAGE                                                          \
   (((struct {                                                                  \
@@ -408,11 +405,11 @@ void Func_0200087c(void) {
   Actor_ShowEmote(19, 263, 30);
   Event_OpenMessage(19, 0);
   if (FieldYesNo_Ask(1) == 0) {
-    Message_CloseFinishedWindows__shaman_village_cave();
+    Message_CloseFinishedWindows();
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     EVENT_MESSAGE++;
   } else {
-    Message_CloseFinishedWindows__shaman_village_cave();
+    Message_CloseFinishedWindows();
     EVENT_MESSAGE++;
     FieldEvent_ShowMessageThenWait(20, 0, 5);
   }

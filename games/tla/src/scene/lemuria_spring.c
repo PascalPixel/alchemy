@@ -101,8 +101,6 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 #include "main_routine_work.h"
 
-/* VIEW(lemuria_spring): routine Event_StartScreenTransition as s32 Event_StartScreenTransition(); event_work.h has void Event_StartScreenTransition(void). */
-extern s32 Event_StartScreenTransition__lemuria_spring() __asm__("Event_StartScreenTransition");
 void Func_020010f4(void);
 
 /// Starts the scene: sets the colour blend, puts objects 24 and 25 in mode 2
@@ -133,7 +131,7 @@ s32 Scene_Initialize(void) {
   FIELD_AT((t3 + 0x23), u8, 0) = 2;
   t4 = (s32)Actor_Get(0x19);
   FIELD_AT((t4 + 0x23), u8, 0) = 2;
-  Event_StartScreenTransition__lemuria_spring();
+  Event_StartScreenTransition();
   if (gMainRoutineWork.entrance == 1) {
     Func_020010f4();
     t7 = Event_GetFlag(0x200);
@@ -155,25 +153,11 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 // The Japanese catalog does not name these yet.
 extern u8 MsgWhatWillYou[], MsgCoins2[], MsgToss2[], MsgYouWonCoin[];
-/* VIEW(lemuria_spring): routine PartyInventory_CountItem as s32 PartyInventory_CountItem(); module/game/game.h has s32 PartyInventory_CountItem(s32 itemId). */
-extern s32 PartyInventory_CountItem__lemuria_spring() __asm__("PartyInventory_CountItem");
-/* VIEW(lemuria_spring): routine Window_Create as struct Window *Window_Create(); module/window/window.h has struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style). */
-extern struct Window *Window_Create__lemuria_spring() __asm__("Window_Create");
-/* VIEW(lemuria_spring): routine Text_DrawMessageAsTiles as void Text_DrawMessageAsTiles(); text_render.h has void Text_DrawMessageAsTiles(s32 character, struct RenderInput *work, u32 offsetX, u32 offsetY). */
-extern void Text_DrawMessageAsTiles__lemuria_spring() __asm__("Text_DrawMessageAsTiles");
-/* VIEW(lemuria_spring): routine Text_DrawNumberInWindow as void Text_DrawNumberInWindow(); module/window/window.h has void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y). */
-extern void Text_DrawNumberInWindow__lemuria_spring() __asm__("Text_DrawNumberInWindow");
+struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs);
+void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position, u32 offsetX, u32 offsetY);
+void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y);
 s32 Menu_SelectCoinsOrMedals();
-/* VIEW(lemuria_spring): routine Window_Close as void Window_Close(); uiflow.h has void Window_Close(struct Window *window, s32 release). */
-extern void Window_Close__lemuria_spring() __asm__("Window_Close");
-/* VIEW(lemuria_spring): routine Message_CloseFinishedWindows as void Message_CloseFinishedWindows(); module/window/window.h has void Message_CloseFinishedWindows(void). */
-extern void Message_CloseFinishedWindows__lemuria_spring() __asm__("Message_CloseFinishedWindows");
-/* VIEW(lemuria_spring): routine PartyInventory_CountFreeSlots as s32 PartyInventory_CountFreeSlots(); module/game/game.h has s32 PartyInventory_CountFreeSlots(void). */
-extern s32 PartyInventory_CountFreeSlots__lemuria_spring() __asm__("PartyInventory_CountFreeSlots");
-/* VIEW(lemuria_spring): routine PartyInventory_Remove as s32 PartyInventory_Remove(); module/game/game.h has s32 PartyInventory_Remove(s32 item_id). */
-extern s32 PartyInventory_Remove__lemuria_spring() __asm__("PartyInventory_Remove");
-/* VIEW(lemuria_spring): routine MessageArgument_Push as void MessageArgument_Push(); module/window/window.h has void MessageArgument_Push(u32 value, u32 kind). */
-extern void MessageArgument_Push__lemuria_spring() __asm__("MessageArgument_Push");
+void Window_Close(struct Window *work, s32 release);
 
 // French draws the count window two tiles wider, its numbers 16 pixels further
 // right; Japanese draws them 16 pixels further left, each followed by its
@@ -228,21 +212,21 @@ s32 Func_020001e4(void) {
   Event_ResolvePendingActions(0);
 prompt:
   coins = gMainRoutineWork.coins;
-  medals = PartyInventory_CountItem__lemuria_spring(229);
+  medals = PartyInventory_CountItem(229);
   message = (s32)MsgWhatWillYou;
   Event_SetMessageId(message);
   /* FAKEMATCH(wrapper): forwarded, so the -1 is built after movs r1, #0; as a
    * direct call, 144 of 286 instructions differ in tla-en. */
   Event_OpenMessage(-1, 0);
-  window = Window_Create__lemuria_spring(0, 0, COUNT_WINDOW_WIDTH, 4, 2);
+  window = Window_Create(0, 0, COUNT_WINDOW_WIDTH, 4, 2);
   result = (s32)MsgCoins2;
-  Text_DrawMessageAsTiles__lemuria_spring(result, window, 0, 0);
-  Text_DrawNumberInWindow__lemuria_spring(coins, 6, window, COUNT_NUMBER_X, 0);
-  Text_DrawMessageAsTiles__lemuria_spring(result + 1, window, 0, 8);
-  Text_DrawNumberInWindow__lemuria_spring(medals, 6, window, COUNT_NUMBER_X, 8);
+  Text_DrawMessageAsTiles(result, window, 0, 0);
+  Text_DrawNumberInWindow(coins, 6, window, COUNT_NUMBER_X, 0);
+  Text_DrawMessageAsTiles(result + 1, window, 0, 8);
+  Text_DrawNumberInWindow(medals, 6, window, COUNT_NUMBER_X, 8);
   choice = Menu_SelectCoinsOrMedals(choice);
-  Window_Close__lemuria_spring(window, 2);
-  Message_CloseFinishedWindows__lemuria_spring();
+  Window_Close(window, 2);
+  Message_CloseFinishedWindows();
   if (choice == -1)
     goto end;
   if (choice == 0) {
@@ -261,17 +245,17 @@ prompt:
   wait(1);
   goto prompt;
 full:
-  if (PartyInventory_CountFreeSlots__lemuria_spring() == 0) {
+  if (PartyInventory_CountFreeSlots() == 0) {
     Event_SetMessageId(message + 4);
     FieldMessage_ShowAtActor(minusOne, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) != 0)
       goto end;
   }
 toss:
-  window = Window_Create__lemuria_spring(TOSS_WINDOW_X, 15, TOSS_WINDOW_WIDTH, 4, 2);
+  window = Window_Create(TOSS_WINDOW_X, 15, TOSS_WINDOW_WIDTH, 4, 2);
   result = (s32)MsgToss2;
-  Text_DrawMessageAsTiles__lemuria_spring(result, window, 0, 0);
-  Text_DrawMessageAsTiles__lemuria_spring(result + 1, window, 0, 8);
+  Text_DrawMessageAsTiles(result, window, 0, 0);
+  Text_DrawMessageAsTiles(result + 1, window, 0, 8);
   wait(5);
   Sound_Play(116);
   for (;;) {
@@ -287,7 +271,7 @@ toss:
     }
     wait(1);
   }
-  Window_Close__lemuria_spring(window, 2);
+  Window_Close(window, 2);
 #else
   // The Japanese release keeps The Broken Seal's Japanese layout: a real loop
   // around the prompt and the toss, a counter word after each count, and the
@@ -298,23 +282,23 @@ toss:
   Event_ResolvePendingActions(0);
   for (;;) {
     coins = gMainRoutineWork.coins;
-    medals = PartyInventory_CountItem__lemuria_spring(229);
+    medals = PartyInventory_CountItem(229);
     message = (s32)MsgWhatWillYou;
     Event_SetMessageId(message);
     /* FAKEMATCH(wrapper): forwarded, so the -1 is built after movs r1, #0; as
      * a direct call, 38 of 300 instructions differ in tla-ja. */
     Event_OpenMessage(-1, 0);
-    window = Window_Create__lemuria_spring(0, 0, COUNT_WINDOW_WIDTH, 4, 2);
+    window = Window_Create(0, 0, COUNT_WINDOW_WIDTH, 4, 2);
     text = (s32)MsgCoins2;
-    Text_DrawMessageAsTiles__lemuria_spring(text, window, 0, 0);
-    Text_DrawNumberInWindow__lemuria_spring(coins, 6, window, COUNT_NUMBER_X, 0);
-    Text_DrawMessageAsTiles__lemuria_spring(text + 2, window, 104, 0);
-    Text_DrawMessageAsTiles__lemuria_spring(text + 1, window, 0, 8);
-    Text_DrawNumberInWindow__lemuria_spring(medals, 6, window, COUNT_NUMBER_X, 8);
-    Text_DrawMessageAsTiles__lemuria_spring(text + 2, window, 104, 8);
+    Text_DrawMessageAsTiles(text, window, 0, 0);
+    Text_DrawNumberInWindow(coins, 6, window, COUNT_NUMBER_X, 0);
+    Text_DrawMessageAsTiles(text + 2, window, 104, 0);
+    Text_DrawMessageAsTiles(text + 1, window, 0, 8);
+    Text_DrawNumberInWindow(medals, 6, window, COUNT_NUMBER_X, 8);
+    Text_DrawMessageAsTiles(text + 2, window, 104, 8);
     choice = Menu_SelectCoinsOrMedals(choice);
-    Window_Close__lemuria_spring(window, 2);
-    Message_CloseFinishedWindows__lemuria_spring();
+    Window_Close(window, 2);
+    Message_CloseFinishedWindows();
     if (choice == -1)
       goto end;
     if (choice == 0) {
@@ -332,18 +316,18 @@ toss:
         wait(1);
         continue;
       }
-      PartyInventory_Remove__lemuria_spring(229);
-      if (PartyInventory_CountFreeSlots__lemuria_spring() == 0) {
+      PartyInventory_Remove(229);
+      if (PartyInventory_CountFreeSlots() == 0) {
         Event_SetMessageId(message + 4);
         FieldMessage_ShowAtActor(-1, 0);
         if (Event_AskYesNoWithActorAnimation(0, 0) != 0)
           goto end;
       }
     }
-    window = Window_Create__lemuria_spring(TOSS_WINDOW_X, 15, TOSS_WINDOW_WIDTH, 4, 2);
+    window = Window_Create(TOSS_WINDOW_X, 15, TOSS_WINDOW_WIDTH, 4, 2);
     result = (s32)MsgToss2;
-    Text_DrawMessageAsTiles__lemuria_spring(result, window, 0, 0);
-    Text_DrawMessageAsTiles__lemuria_spring(result + 1, window, 0, 8);
+    Text_DrawMessageAsTiles(result, window, 0, 0);
+    Text_DrawMessageAsTiles(result + 1, window, 0, 8);
     wait(5);
     Sound_Play(116);
     for (;;) {
@@ -359,7 +343,7 @@ toss:
       }
       wait(1);
     }
-    Window_Close__lemuria_spring(window, 2);
+    Window_Close(window, 2);
     break;
   }
 #endif
@@ -368,7 +352,7 @@ toss:
     if (choice == 0) {
       Party_AdjustCoins(minusOne);
     } else if (choice == 1) {
-      PartyInventory_Remove__lemuria_spring(229);
+      PartyInventory_Remove(229);
     }
 #endif
     result = Func_02001184(choice);
@@ -376,7 +360,7 @@ toss:
       if (result != 4) {
         Party_AdjustCoins(gData_0200173c[result]);
         Sound_Play(91);
-        MessageArgument_Push__lemuria_spring(gData_0200173c[result], 5);
+        MessageArgument_Push(gData_0200173c[result], 5);
         Event_SetMessageId((s32)MsgYouWonCoin);
         Event_ShowMessageAndWait((s32)minusOne, 0);
       } else {
@@ -965,9 +949,9 @@ void Func_02000904(void) {
 // ---- games/tla/src/scene/lemuria_spring/ride.c ----
 #include "task.h"
 
-/* VIEW(ride): variable gData_02001760 as extern struct SpringRide gData_02001760; lemuria_spring has extern struct SpringTossMotion gData_02001760; tried as the one declaration extern struct SpringRide gData_02001760, it does not compile in tla-ja: games/tla/src/scene/lemuria_spring.c:1014: conflicting types for `gData_02001760'. */
+/* VIEW(ride): variable gData_02001760 as extern struct SpringRide gData_02001760; lemuria_spring has extern struct SpringTossMotion gData_02001760; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_spring.c:960: `gData_02001760__ride' undeclared (first use in this function). */
 extern struct SpringRide gData_02001760__ride __asm__("gData_02001760");
-/* VIEW(ride): variable gData_020017c0 as extern struct SpringObstacle__ride gData_020017c0[]; lemuria_spring has extern struct SpringObstacle gData_020017c0[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_spring.c:1042: `gData_020017c0__ride' undeclared (first use in this function). */
+/* VIEW(ride): variable gData_020017c0 as extern struct SpringObstacle__ride gData_020017c0[]; lemuria_spring has extern struct SpringObstacle gData_020017c0[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_spring.c:971: `gData_020017c0__ride' undeclared (first use in this function). */
 extern struct SpringObstacle gData_020017c0__ride[] __asm__("gData_020017c0");
 
 void Func_02000904(void);

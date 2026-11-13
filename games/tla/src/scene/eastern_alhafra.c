@@ -117,12 +117,12 @@ extern u8 gData_02005290[];
 void Func_0200112c(void);
 s32 Func_02004240(struct DoorPlan *);
 void Func_020044c4(struct DoorPlan);
-/* VIEW(eastern_alhafra): routine Func_02004a0c as s32 Func_02004a0c(); module/scene/scene.h has void Func_02004a0c(struct Actor *object, s32 mode). */
+/* VIEW(eastern_alhafra): routine Func_02004a0c as s32 Func_02004a0c(); module/scene/scene.h has void Func_02004a0c(struct Actor *object, s32 mode); tried as the rest of the object declares it, Func_02001b9c moves: 1 of 35 instructions in tla-ja. */
 extern s32 Func_02004a0c__eastern_alhafra() __asm__("Func_02004a0c");
 s32 Party_FindOwnerWithAction();
 void Event_Start();
 void Event_End();
-/* VIEW(eastern_alhafra): routine Func_02004bb4 as s32 Func_02004bb4(); module/scene/airs_rock_inside.h has void Func_02004bb4(void). */
+/* VIEW(eastern_alhafra): routine Func_02004bb4 as s32 Func_02004bb4(); module/scene/airs_rock_inside.h has void Func_02004bb4(void); tried as the definition's void Func_02004bb4(void), which the object already declares, Func_020006ec moves: 1 of 25 instructions in tla-ja. */
 extern s32 Func_02004bb4__eastern_alhafra() __asm__("Func_02004bb4");
 
 void Func_02000200(s32 mode, s32 id) {
@@ -242,9 +242,7 @@ void Func_0200042c(s32 mode, s32 id) {
 #include "field/field.h"
 
 void Func_0200112c(void);
-/* VIEW(s0514): routine Func_02004240 as s32 Func_02004240(struct Unk_02004240 *); eastern_alhafra has s32 Func_02004240(struct DoorPlan *). */
-extern s32 Func_02004240__s0514(struct Unk_02004240 *) __asm__("Func_02004240");
-/* VIEW(s0514): routine Func_020044c4 as void Func_020044c4(struct Unk_02004240); eastern_alhafra has void Func_020044c4(struct DoorPlan); tried as the definition's void Func_020044c4(struct PushTarget target), it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:265: conflicting types for `Func_020044c4'. */
+/* VIEW(s0514): routine Func_020044c4 as void Func_020044c4(struct Unk_02004240); eastern_alhafra has void Func_020044c4(struct DoorPlan); tried as the definition's void Func_020044c4(struct PushTarget target), it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:245: conflicting types for `Func_020044c4'. */
 extern void Func_020044c4__s0514(struct Unk_02004240) __asm__("Func_020044c4");
 void Func_02004868(void *, s32, s32);
 s32 Func_02004a7c();
@@ -265,7 +263,7 @@ void Func_02000514(void) {
       (Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
   if (actor16 != NULL && Event_GetFlag(0x8a4) == 0)
     Func_080dbdd4(actor16->x, actor16->z, 2, 255);
-  if (Func_02004240__s0514(&unk) != 0) {
+  if (Func_02004240(&unk) != 0) {
     if (Event_GetFlag(0x8a4) == 0 || facing == 0xc000) {
       Func_020044c4__s0514(unk);
     } else {
@@ -304,8 +302,6 @@ void Func_02000514(void) {
     Func_080dbdd4(actor16->x, actor16->z, 2, 0);
 }
 
-/* VIEW(s0514): variable gData_02005290 as extern struct DoorStep gData_02005290[]; eastern_alhafra has extern u8 gData_02005290[]. */
-extern struct DoorStep gData_02005290__s0514[] __asm__("gData_02005290");
 
 void Func_02000394(s32, s32);
 void Func_0200042c(s32, s32);
@@ -399,7 +395,7 @@ void Func_020008cc(struct DoorStep *step, s32 countdown, s32 unused) {
 }
 
 void Func_02000940(s32 countdown) {
-  Func_020008cc(gData_02005290__s0514, countdown, 0);
+  Func_020008cc(gData_02005290, countdown, 0);
 }
 
 void Func_02000954(void) {}
@@ -491,10 +487,10 @@ void Func_02000af8(void) {
 #define OBJECT(id) (Actor_Get((id)))
 
 void Func_020040ec();
-/* VIEW(eastern_alhafra): routine Func_02004c2c as void Func_02004c2c(); module/scene/mars_lighthouse_aerie.h has void Func_02004c2c(void). */
+/* VIEW(eastern_alhafra): routine Func_02004c2c as void Func_02004c2c(); module/scene/mars_lighthouse_aerie.h has void Func_02004c2c(void); tried as the definition's void Func_02004c2c(void), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:573: too many arguments to function `Func_02004c2c'. */
 extern void Func_02004c2c__eastern_alhafra() __asm__("Func_02004c2c");
 void Func_020047fc();
-/* VIEW(eastern_alhafra): routine Func_02004c94 as void Func_02004c94(); module/scene/mars_lighthouse_aerie.h has void Func_02004c94(void). */
+/* VIEW(eastern_alhafra): routine Func_02004c94 as void Func_02004c94(); module/scene/mars_lighthouse_aerie.h has void Func_02004c94(void); tried as the definition's void Func_02004c94(void), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:595: too many arguments to function `Func_02004c94'. */
 extern void Func_02004c94__eastern_alhafra() __asm__("Func_02004c94");
 
 s32 Scene_Initialize(void) {
@@ -1085,8 +1081,7 @@ L_02009b74:
 extern const u8 gData_020056d4[];
 
 void Actor_StartScript(struct SpawnObject *object, const void *script);
-/* VIEW(eastern_alhafra): routine Actor_SetSpritePriorityDirect as void Actor_SetSpritePriorityDirect(struct SpawnObject *object, s32 priority); actor_view.h has void Actor_SetSpritePriorityDirect(struct Actor *, s32). */
-extern void Actor_SetSpritePriorityDirect__eastern_alhafra(struct SpawnObject *object, s32 priority) __asm__("Actor_SetSpritePriorityDirect");
+void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority);
 
 /// Spawns object type 0x1e8 at x, y, z with its sprite turned to value and
 /// its timer set.
@@ -1099,7 +1094,7 @@ void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer) {
     sprite = object->sprite;
     Func_02004a0c__eastern_alhafra(object, 1);
     Actor_StartScript(object, gData_020056d4);
-    Actor_SetSpritePriorityDirect__eastern_alhafra(object, 1);
+    Actor_SetSpritePriorityDirect(object, 1);
     object->motionFlags = 0;
     {
       /* FAKEMATCH(signature): the timer copied into an s64 local, so it loads
@@ -2131,26 +2126,13 @@ next:
     goto next;
 }
 
-/// A falling rock's sprite.
-/* VIEW(eastern_alhafra): tag struct RockSprite as struct RockSprite__eastern_alhafra; module/tla.h has another definition. */
-struct RockSprite__eastern_alhafra {
-  u8 unk00[5];
-  u8 unk05;
-  u8 unk06[2];
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[0x14];
-  u16 unk1e;
-  u8 unk20[8];
-};
 
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
 /// ring that next walks round.
 struct RockWork {
   u8 tiles[0x500];
   struct Rock rocks[64];
-  struct RockSprite__eastern_alhafra sprites[64];
+  struct RockSprite sprites[64];
   s16 next;
   u16 tileBase;
   s16 resource;

@@ -22,16 +22,10 @@
 #include "module/window/window.h"
 #include "text/msg_ids.h"
 
-/* VIEW(lemuria_entrance): tag struct EventWork1c4 as struct EventWork1c4__lemuria_entrance; module/scene/scene.h has another definition. */
-struct EventWork1c4__lemuria_entrance {
-  u8 unk000[0x1c4];
-  s16 message;
-};
 
 void Text_GetMessageSize(s32 id, s32 *a, s32 *b, s32 *c, s32 *d);
 void Message_OpenWindow(s32 id, s32 x, s32 y, u32 flags);
-/* VIEW(lemuria_entrance): routine Window_Close as void Window_Close(s32 work, s32 mode); uiflow.h has void Window_Close(struct Window *window, s32 release). */
-extern void Window_Close__lemuria_entrance(s32 work, s32 mode) __asm__("Window_Close");
+void Window_Close(struct Window *work, s32 release);
 s32 Func_0200053c(s32 a, s32 b, s32 c, s32 d);
 
 s32 Func_02000038(struct Actor *object) {
@@ -154,14 +148,14 @@ s32 Scene_PrepareMap(void) { return 0; }
 void Func_02000310(s32 kind, s32 frames) {
   // This routine's own view of the event work. A union: the read of width
   // keeps its place after this store.
-  struct EventWork1c4__lemuria_entrance {
+  struct EventWork1c4 {
     u8 unk000[0x1c4];
     union {
       s16 message;
       s32 word;
     } u;
   };
-  struct EventWork1c4__lemuria_entrance *work = Ram_HeapSlots->eventWork;
+  struct EventWork1c4 *work = Ram_HeapSlots->eventWork;
   s32 b;
   s32 a;
   s32 height;
@@ -192,7 +186,7 @@ void Func_02000310(s32 kind, s32 frames) {
   while (Message_AllTyped() == 0)
     System_Wait(1);
   FieldEvent_Wait(frames);
-  Window_Close__lemuria_entrance(x, 2);
+  Window_Close(x, 2);
   Message_CloseFinishedWindows();
 }
 

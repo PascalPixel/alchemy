@@ -34,13 +34,11 @@
 #include "module/window/window.h"
 
 void Func_02000e04(s32);
-/* VIEW(psynergy_test): routine Func_02000df4 as void Func_02000df4(s32, s32); module/tla.h has s32 Func_02000df4(s32 *member, s32 *slot). */
+/* VIEW(psynergy_test): routine Func_02000df4 as void Func_02000df4(s32, s32); module/tla.h has s32 Func_02000df4(s32 *member, s32 *slot); tried as the rest of the object declares it, Func_020000a4 moves: 2 of 67 instructions in tla-ja. */
 extern void Func_02000df4__psynergy_test(s32, s32) __asm__("Func_02000df4");
 void Func_02000f1c(s32, s32);
 void Func_02000ecc(s32, s32, s32, s32, s32, s32, s32);
 void Message_OpenWindow(s32, s32, s32, s32);
-/* VIEW(psynergy_test): routine Unit_AddPp as s32 Unit_AddPp(s32, s32); module/game/game.h has s16 Unit_AddPp(s32 owner, s32 delta). */
-extern s32 Unit_AddPp__psynergy_test(s32, s32) __asm__("Unit_AddPp");
 
 #define INPUT_HELD (*(volatile u32 *)&gInput.held)
 
@@ -172,9 +170,9 @@ void Func_0200026c(void) {
   Unit_AddHpBy(4, -100);
   FieldUnit_AddHp(5, -100);
   FieldUnit_AddHp(6, -33);
-  Unit_AddPp__psynergy_test(4, -50);
-  Unit_AddPp__psynergy_test(5, -40);
-  Unit_AddPp__psynergy_test(6, -35);
+  Unit_AddPp(4, -50);
+  Unit_AddPp(5, -40);
+  Unit_AddPp(6, -35);
   state = Unit_Get(4);
   state[0x131] = 1;
   state += 0x140;
@@ -333,11 +331,9 @@ void Func_02000624(void) {
 
 void Func_02000650(void) { Func_02000eb4((s32)&SceneId_Ov6b8Room1, 8); }
 
-/* VIEW(psynergy_test): variable gData_020017b0 as u8 gData_020017b0[]; module/tla.h has s32 gData_020017b0. */
+/* VIEW(psynergy_test): variable gData_020017b0 as u8 gData_020017b0[]; module/tla.h has s32 gData_020017b0; tried as the rest of the object declares it, Func_02000748 moves: 2 of 22 instructions in tla-ja. */
 extern u8 gData_020017b0__psynergy_test[] __asm__("gData_020017b0");
 
-/* VIEW(psynergy_test): routine Func_02000c4c as void Func_02000c4c(struct Actor *, void *); the definition has void Func_02000c4c(struct Actor *object, struct SparkleWork *work). */
-extern void Func_02000c4c__psynergy_test(struct Actor *, void *) __asm__("Func_02000c4c");
 
 void Func_02000660(void) {
   Func_02000f14(249, 40, 168);
@@ -383,8 +379,8 @@ void Func_02000740(void) {}
 void Func_02000744(void) {}
 
 void Func_02000748(s32 actor) {
-  Func_02000c4c__psynergy_test(Actor_Get(actor), gData_02001860);
-  Func_02000c4c__psynergy_test(Actor_Get(gMainRoutineWork.currentOwner), gData_020017b0__psynergy_test);
+  Func_02000c4c(Actor_Get(actor), gData_02001860);
+  Func_02000c4c(Actor_Get(gMainRoutineWork.currentOwner), gData_020017b0__psynergy_test);
   System_Wait(100);
   Func_02000d4c(Actor_Get(actor));
   Func_02000d4c(Actor_Get(gMainRoutineWork.currentOwner));
@@ -764,7 +760,7 @@ struct Trigger gSceneEvents[] = {
 // ---- games/tla/src/debug/psynergy_test/s0c4c.c ----
 // Overlay 0x6b8's code from Func_02000c4c on, in ROM order.
 
-/* VIEW(s0c4c): tag struct SparkleSprite as struct SparkleSprite__s0c4c; psynergy_test.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/debug/psynergy_test.c:855: structure has no member named `flag'. */
+/* VIEW(s0c4c): tag struct SparkleSprite as struct SparkleSprite__s0c4c; psynergy_test.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/debug/psynergy_test.c:806: structure has no member named `flag'. */
 struct SparkleSprite__s0c4c {
   u8 unk00[5];
   u8 attr5Low : 5;
@@ -778,7 +774,7 @@ struct SparkleSprite__s0c4c {
   u8 unk0a[0x1e];
 };
 
-/* VIEW(s0c4c): tag struct SparkleWork as struct SparkleWork__s0c4c; psynergy_test.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/debug/psynergy_test.c:845: incompatible types in assignment. */
+/* VIEW(s0c4c): tag struct SparkleWork as struct SparkleWork__s0c4c; psynergy_test.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/debug/psynergy_test.c:796: incompatible types in assignment. */
 struct SparkleWork__s0c4c {
   struct SparkleSprite__s0c4c sprites[4];
   u16 unka0;
@@ -788,13 +784,9 @@ struct SparkleWork__s0c4c {
   struct Actor *object;
 };
 
-/* VIEW(psynergy_test): variable gResourceTableEntries as struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has struct VramBlockCacheEntry gResourceTableEntries[]. */
-extern struct ResourceTableEntry gResourceTableEntries__psynergy_test[] __asm__("gResourceTableEntries");
 
 void Func_02000ee4(struct SparkleSprite__s0c4c *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
-/* VIEW(s0c4c): routine Func_02000ad0 as void Func_02000ad0(void); the definition has void Func_02000ad0(struct Actor *object). */
-extern void Func_02000ad0__s0c4c(void) __asm__("Func_02000ad0");
 
 void Func_02000c4c(struct Actor *object, struct SparkleWork__s0c4c *work) {
   struct SparkleSprite__s0c4c *sprite;
@@ -811,8 +803,8 @@ void Func_02000c4c(struct Actor *object, struct SparkleWork__s0c4c *work) {
   work->object = object;
   ((u8 *)object)[0x62] = 0;
   ((u8 *)object)[0x63] = 0;
-  object->update = Func_02000ad0__s0c4c;
-  tile = gResourceTableEntries__psynergy_test[work->vramEntry].offset >> 5;
+  object->update = Func_02000ad0;
+  tile = gResourceTableEntries[work->vramEntry].offset >> 5;
   object->watchedObject = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
     col = 1;

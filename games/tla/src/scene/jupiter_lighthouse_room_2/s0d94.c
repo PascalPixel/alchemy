@@ -26,8 +26,6 @@
 
 extern const s32 gData_02002b3c[];
 
-/* VIEW(s0d94): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
-extern void Camera_WorldToScreen__s0d94(s32 *position) __asm__("Camera_WorldToScreen");
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_02000d94(struct Actor *self) {
@@ -51,7 +49,7 @@ void Func_02000d94(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Camera_WorldToScreen__s0d94(position);
+    Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;
@@ -100,10 +98,7 @@ stop:
   Data_02002b94 = 0;
 }
 
-/* VIEW(s0d94): routine Func_020021b4 as void Func_020021b4(struct GustObject *object, s32 mode); module/scene/dehkan_plateau.h has void Func_020021b4(void). */
-extern void Func_020021b4__s0d94(struct GustObject *object, s32 mode) __asm__("Func_020021b4");
-/* VIEW(s0d94): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct GustObject *object, u32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
-extern void Actor_SetSingleChildFlags__s0d94(struct GustObject *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
+void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 
 void Func_0200165c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
@@ -120,8 +115,8 @@ struct GustObject *Func_02000f54(struct GustObject *source) {
                                   Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                    position.z));
-  Func_020021b4__s0d94(object, 2);
-  Actor_SetSingleChildFlags__s0d94(object, 0);
+  Func_020021b4(object, 2);
+  Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->angle = source->angle;
@@ -292,8 +287,6 @@ void Func_0200125c(void) {
   }
 }
 
-/* VIEW(s0d94): routine Resource_DecodeType01 as void Resource_DecodeType01(const void *source, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
-extern void Resource_DecodeType01__s0d94(const void *source, void *destination) __asm__("Resource_DecodeType01");
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -303,7 +296,7 @@ void Func_02001418(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
   Iwram_ClearWords(gData_02002bdc, 64);
-  Resource_DecodeType01__s0d94(gField_CachedTilesA, buffer);
+  Resource_DecodeType01(gField_CachedTilesA, buffer);
   gData_02002bd8 = Resource_FindFreeEntry();
   VramCache_Load(gData_02002bd8, 0xc00, buffer);
   Heap_Release(buffer);
@@ -317,7 +310,7 @@ void Func_02001498(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
   Iwram_ClearWords(gData_02002bdc, 64);
-  Resource_DecodeType01__s0d94(gField_CachedTilesB, buffer);
+  Resource_DecodeType01(gField_CachedTilesB, buffer);
   gData_02002bd8 = Resource_FindFreeEntry();
   Vram_Load(gData_02002bd8, 0x800, buffer);
   Heap_Release(buffer);
@@ -331,7 +324,7 @@ void Func_02001518(void) {
   u8 *buffer = BumpAlloc(0x800);
 
   Iwram_ClearWords(gData_02002bdc, 64);
-  Resource_DecodeType01__s0d94(gField_CachedTilesC, buffer);
+  Resource_DecodeType01(gField_CachedTilesC, buffer);
   gData_02002bd8 = Resource_FindFreeEntry();
   Vram_Load(gData_02002bd8, 0x800, buffer);
   Heap_Release(buffer);

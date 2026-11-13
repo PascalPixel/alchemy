@@ -10,10 +10,7 @@
 #include "module/scene/jupiter_lighthouse_basement.h"
 #include "module/scene/scene.h"
 
-/* VIEW(s098c): routine Func_02001bec as void Func_02001bec(struct GustObject *object, s32 mode); module/scene/jupiter_lighthouse_basement.h has void Func_02001bec(struct FieldEffect *effect, s32 mode). */
-extern void Func_02001bec__s098c(struct GustObject *object, s32 mode) __asm__("Func_02001bec");
-/* VIEW(s098c): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct GustObject *object, u32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
-extern void Actor_SetSingleChildFlags__s098c(struct GustObject *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
+void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Func_020007cc(struct GustObject *object);
 
 struct GustObject *Func_0200098c(struct GustObject *source) {
@@ -28,8 +25,8 @@ struct GustObject *Func_0200098c(struct GustObject *source) {
                                   Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                    position.z));
-  Func_02001bec__s098c(object, 2);
-  Actor_SetSingleChildFlags__s098c(object, 0);
+  Func_02001bec(object, 2);
+  Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->angle = source->angle;
@@ -138,8 +135,6 @@ void Func_02000b04(void) {
 
 extern s16 gData_020024f4;
 
-/* VIEW(s098c): routine Func_02001d24 as s32 Func_02001d24(struct Actor *actor); module/scene/shrine_of_the_sea_god.h has void Func_02001d24(void). */
-extern s32 Func_02001d24__s098c(struct Actor *actor) __asm__("Func_02001d24");
 void Func_02001bc4(struct LightOam *oam, s32 depth);
 
 void Func_02000c94(void) {
@@ -183,7 +178,7 @@ void Func_02000c94(void) {
         *word++ = oy | (ox << 16) | 0x40002000;
         *word = (tile + frame * 8) | 0x800;
         if (gData_020024f6 == -1)
-          oam->priority = Func_02001d24__s098c(actor);
+          oam->priority = Func_02001d24(actor);
         else
           oam->priority = gData_020024f6;
         Func_02001bc4(oam, depth);
@@ -204,7 +199,7 @@ void Func_02000c94(void) {
         *word++ = oy | (ox << 16) | 0xc000a000;
         *word = (tile + frame * 8) | 0x800;
         if (gData_020024f6 == -1)
-          oam->priority = Func_02001d24__s098c(actor);
+          oam->priority = Func_02001d24(actor);
         else
           oam->priority = gData_020024f6;
         Func_02001bc4(oam, depth);
@@ -214,8 +209,6 @@ void Func_02000c94(void) {
   }
 }
 
-/* VIEW(s098c): routine Resource_DecodeType01 as void Resource_DecodeType01(const void *source, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
-extern void Resource_DecodeType01__s098c(const void *source, void *destination) __asm__("Resource_DecodeType01");
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -225,7 +218,7 @@ void Func_02000e50(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
   Iwram_ClearWords(gData_020023f4, 64);
-  Resource_DecodeType01__s098c(gField_CachedTilesA, buffer);
+  Resource_DecodeType01(gField_CachedTilesA, buffer);
   gData_020023f0 = Resource_FindFreeEntry();
   VramCache_Load(gData_020023f0, 0xc00, buffer);
   Heap_Release(buffer);
@@ -239,7 +232,7 @@ void Func_02000ed0(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
   Iwram_ClearWords(gData_020023f4, 64);
-  Resource_DecodeType01__s098c(gField_CachedTilesB, buffer);
+  Resource_DecodeType01(gField_CachedTilesB, buffer);
   gData_020023f0 = Resource_FindFreeEntry();
   Vram_Load(gData_020023f0, 0x800, buffer);
   Heap_Release(buffer);
@@ -253,7 +246,7 @@ void Func_02000f50(void) {
   u8 *buffer = BumpAlloc(0x800);
 
   Iwram_ClearWords(gData_020023f4, 64);
-  Resource_DecodeType01__s098c(gField_CachedTilesC, buffer);
+  Resource_DecodeType01(gField_CachedTilesC, buffer);
   gData_020023f0 = Resource_FindFreeEntry();
   Vram_Load(gData_020023f0, 0x800, buffer);
   Heap_Release(buffer);

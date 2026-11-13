@@ -33,7 +33,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
-/* VIEW(daila_interiors): variable gData_0200116c as extern const u8 gData_0200116c[]; the definition has s32 gData_0200116c[] = { 11, 0x1010100a, - 1, 0x1020200a, - 1, 0x1030300a, - 1, 0x1040400a, - 1, 0x1050500a, - 1, 0x1060600a, - 1, 0x1070308...; tried as the definition's extern s16 gData_0200116c[], it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:709: conflicting types for `gData_0200116c'. */
+/* VIEW(daila_interiors): variable gData_0200116c as extern const u8 gData_0200116c[]; the definition has s32 gData_0200116c[] = { 11, 0x1010100a, - 1, 0x1020200a, - 1, 0x1030300a, - 1, 0x1040400a, - 1, 0x1050500a, - 1, 0x1060600a, - 1, 0x1070308...; tried as the definition's extern s16 gData_0200116c[], it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:658: conflicting types for `gData_0200116c'. */
 extern const u8 gData_0200116c__daila_interiors[] __asm__("gData_0200116c");
 
 const void *Scene_GetExits(void) {
@@ -109,7 +109,7 @@ void DailaInteriors_StartLeaderEvent(void) {
   Import_ActorSetSpritePriority(gMainRoutineWork.currentOwner, 1);
 }
 
-/* VIEW(daila_interiors): variable gData_020016e4 as extern const u8 gData_020016e4[]; the definition has s32 gData_020016e4[] = { 1, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 1, (s32) 0xffff0003, 3, 1, (s32) 0xffff0004, 4, 1, (s32) 0xffff0005...; tried as the definition's extern s16 gData_020016e4[], it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:1010: conflicting types for `gData_020016e4'. */
+/* VIEW(daila_interiors): variable gData_020016e4 as extern const u8 gData_020016e4[]; the definition has s32 gData_020016e4[] = { 1, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 1, (s32) 0xffff0003, 3, 1, (s32) 0xffff0004, 4, 1, (s32) 0xffff0005...; tried as the definition's extern s16 gData_020016e4[], it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:959: conflicting types for `gData_020016e4'. */
 extern const u8 gData_020016e4__daila_interiors[] __asm__("gData_020016e4");
 
 const struct Trigger *Scene_GetEvents(void) {
@@ -129,7 +129,7 @@ const struct Trigger *Scene_GetEvents(void) {
 
 struct DailaActor *Actor_GetById(s32 id);
 
-/* VIEW(daila_interiors): routine Func_02000dec as void Func_02000dec(s32 slot, s32 actor); module/tla.h has void *Func_02000dec(s32, s32, s32, s32). */
+/* VIEW(daila_interiors): routine Func_02000dec as void Func_02000dec(s32 slot, s32 actor); module/tla.h has void *Func_02000dec(s32, s32, s32, s32); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:165: too few arguments to function `Func_02000dec'. */
 extern void Func_02000dec__daila_interiors(s32 slot, s32 actor) __asm__("Func_02000dec");
 
 void Func_02000270(s32 actor) {
@@ -341,7 +341,7 @@ void Func_02000704(void) {
 
 #include "item.h"
 
-/* VIEW(item): tag struct DailaActor as struct DailaActor__item; daila_interiors.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:373: structure has no member named `unk48'. */
+/* VIEW(item): tag struct DailaActor as struct DailaActor__item; daila_interiors.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:359: structure has no member named `unk48'. */
 struct DailaActor__item {
   u8 unk00[0xc];
   s32 y;
@@ -360,12 +360,10 @@ struct DailaActor__item {
   s32 unk6c;
 };
 
-/* VIEW(item): routine Actor_GetById as struct DailaActor__item *Actor_GetById(s32 id); daila_interiors has struct DailaActor *Actor_GetById(s32 id); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:389: structure has no member named `unk48'. */
+/* VIEW(item): routine Actor_GetById as struct DailaActor__item *Actor_GetById(s32 id); daila_interiors has struct DailaActor *Actor_GetById(s32 id); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:375: structure has no member named `unk48'. */
 extern struct DailaActor__item *Actor_GetById__item(s32 id) __asm__("Actor_GetById");
 void Func_02000da4(struct DailaActor__item *object, s32 mode);
 void Sound_Play(s32 cue);
-/* VIEW(daila_interiors): routine MessageArgument_Push as void MessageArgument_Push(s32 value, s32 slot); module/window/window.h has void MessageArgument_Push(u32 value, u32 kind). */
-extern void MessageArgument_Push__daila_interiors(s32 value, s32 slot) __asm__("MessageArgument_Push");
 void Func_02000c9c(struct DailaActor__item *object);
 
 void Func_02000730(void) {
@@ -383,7 +381,7 @@ void Func_02000730(void) {
   if (PartyInventory_FindRoom(item) >= 0) {
     Func_02000da4(Actor_GetById__item(9), 3);
     Sound_Play(83);
-    MessageArgument_Push__daila_interiors(item, 2);
+    MessageArgument_Push(item, 2);
     FieldMessage_Show((s32)MsgItemReceived, 1);
     PartyInventory_Add(item);
     Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
@@ -418,8 +416,6 @@ void Func_02000730(void) {
 struct ItemDefinition *Func_02000ce4(s32 item);
 void FieldMessage_Show(s32 msg, s32 mode);
 void *Unit_Get(s32 owner);
-/* VIEW(daila_interiors): routine Inventory_Discard as void Inventory_Discard(s32 member, s32 slot); inventory.h has s32 Inventory_Discard(s32 owner, s32 slot). */
-extern void Inventory_Discard__daila_interiors(s32 member, s32 slot) __asm__("Inventory_Discard");
 
 s32 Func_02000878(s32 item, s32 unused) {
   struct DailaEventWork *work;
@@ -435,7 +431,7 @@ s32 Func_02000878(s32 item, s32 unused) {
   saved = work->message;
   owner = PartyInventory_Add(item);
   if (owner == -1) {
-    MessageArgument_Push__daila_interiors(item, 2);
+    MessageArgument_Push(item, 2);
     FieldMessage_Show((s32)MsgItemReceived, 1);
     FieldMessage_Show((s32)MsgItemCannotCarry, 1);
   retry:
@@ -443,17 +439,17 @@ s32 Func_02000878(s32 item, s32 unused) {
     result = Func_02000df4(&member, &slot);
     if (result == -1) {
       if (Func_02000ce4(item)->flags & 8) {
-        MessageArgument_Push__daila_interiors(item, 2);
+        MessageArgument_Push(item, 2);
         FieldMessage_Show((s32)MsgItemDropPrompt + 4, 1);
         goto retry;
       }
-      MessageArgument_Push__daila_interiors(item, 2);
+      MessageArgument_Push(item, 2);
       FieldMessage_Show((s32)MsgItemDropPrompt + 1, 5);
       result = Func_02000dbc(1);
       Message_CloseFinishedWindows();
       if (result != 0)
         goto retry;
-      MessageArgument_Push__daila_interiors(item, 2);
+      MessageArgument_Push(item, 2);
       FieldMessage_Show((s32)MsgItemDropPrompt + 2, 1);
       work->message = saved;
       return owner;
@@ -461,23 +457,23 @@ s32 Func_02000878(s32 item, s32 unused) {
       Unit_Get(member);
       count = Inventory_GetQuantity(member, slot);
       if (Inventory_CountItem(member, item) > 29) {
-        MessageArgument_Push__daila_interiors(member, 1);
-        MessageArgument_Push__daila_interiors(item, 2);
+        MessageArgument_Push(member, 1);
+        MessageArgument_Push(item, 2);
         FieldMessage_Show((s32)MsgItemDropPrompt + 7, 1);
         goto retry;
       }
       for (i = 0; i < count; i++)
-        Inventory_Discard__daila_interiors(member, slot);
+        Inventory_Discard(member, slot);
       Unit_RefreshPsynergy(member);
       Unit_Calculate(member);
       owner = PartyInventory_Add(item);
       Sound_Play(83);
       if (owner == gMainRoutineWork.currentOwner) {
-        MessageArgument_Push__daila_interiors(item, 2);
+        MessageArgument_Push(item, 2);
         FieldMessage_Show((s32)MsgItemReceived, 3);
       } else {
-        MessageArgument_Push__daila_interiors(item, 2);
-        MessageArgument_Push__daila_interiors(owner, 1);
+        MessageArgument_Push(item, 2);
+        MessageArgument_Push(owner, 1);
         FieldMessage_Show((s32)MsgItemGiven, 3);
       }
       work->message = saved;
@@ -485,11 +481,11 @@ s32 Func_02000878(s32 item, s32 unused) {
     }
   } else {
     Sound_Play(83);
-    MessageArgument_Push__daila_interiors(item, 2);
+    MessageArgument_Push(item, 2);
     FieldMessage_Show((s32)MsgItemReceived, 3);
     if (owner != gMainRoutineWork.currentOwner) {
-      MessageArgument_Push__daila_interiors(item, 2);
-      MessageArgument_Push__daila_interiors(owner, 1);
+      MessageArgument_Push(item, 2);
+      MessageArgument_Push(owner, 1);
       FieldMessage_Show((s32)MsgItemReceived + 1, 1);
     }
     work->message = saved;
@@ -502,16 +498,16 @@ s32 Func_02000878(s32 item, s32 unused) {
 
 void Func_02000ca4(s32 mode);
 
-/* VIEW(arrival): variable gData_02000e04 as extern s16 gData_02000e04[]; daila_interiors has extern const u8 gData_02000e04[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:609: `gData_02000e04__arrival' undeclared (first use in this function). */
+/* VIEW(arrival): variable gData_02000e04 as extern s16 gData_02000e04[]; daila_interiors has extern const u8 gData_02000e04[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:560: `gData_02000e04__arrival' undeclared (first use in this function). */
 extern s16 gData_02000e04__arrival[] __asm__("gData_02000e04");
 
-/* VIEW(arrival): routine Actor_GetById as struct DailaStartActor *Actor_GetById(s32 id); item has struct DailaActor__item *Actor_GetById(s32 id); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:579: invalid type argument of `->'. */
+/* VIEW(arrival): routine Actor_GetById as struct DailaStartActor *Actor_GetById(s32 id); item has struct DailaActor__item *Actor_GetById(s32 id); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:534: invalid type argument of `->'. */
 extern struct DailaStartActor *Actor_GetById__arrival(s32 id) __asm__("Actor_GetById");
-/* VIEW(arrival): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct DailaStartActor *object, s32 value); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags); tried as the rest of the object declares it, DailaInteriors_Start moves: 5 of 174 instructions in tla-ja. */
+/* VIEW(arrival): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct DailaStartActor *object, s32 value); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags); tried as the 19 declarations' void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags), it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:506: conflicting types for `Actor_SetSingleChildFlags'. */
 extern void Actor_SetSingleChildFlags__arrival(struct DailaStartActor *object,
                                         s32 value) __asm__("Actor_SetSingleChildFlags");
 void Func_02000cbc(struct DailaStartActor *object, s32 item);
-/* VIEW(daila_interiors): routine Func_02000dc4 as void Func_02000dc4(const void *script); module/scene/atteka_inlet.h has void Func_02000dc4(void). */
+/* VIEW(daila_interiors): routine Func_02000dc4 as void Func_02000dc4(const void *script); module/scene/atteka_inlet.h has void Func_02000dc4(void); tried as the definition's void Func_02000dc4(void), which the object already declares, DailaInteriors_Start moves: 1 of 174 instructions in tla-ja. */
 extern void Func_02000dc4__daila_interiors(const void *script) __asm__("Func_02000dc4");
 
 s32 DailaInteriors_Start(void) {

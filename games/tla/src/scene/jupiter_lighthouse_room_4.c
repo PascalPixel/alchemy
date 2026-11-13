@@ -37,8 +37,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-/* VIEW(jupiter_lighthouse_room_4): routine PartyInventory_Remove as void PartyInventory_Remove(); module/game/game.h has s32 PartyInventory_Remove(s32 item_id). */
-extern void PartyInventory_Remove__jupiter_lighthouse_room_4() __asm__("PartyInventory_Remove");
 
 static inline void SetCollisionCode(s32 x, s32 z, s32 layer, s32 value) {
   /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
@@ -101,14 +99,14 @@ void Func_020001dc(s32 item) {
   Event_SetFlag(0xa07);
   Event_PlaySound(134);
   Func_0200017c();
-  PartyInventory_Remove__jupiter_lighthouse_room_4(item);
+  PartyInventory_Remove(item);
 }
 
 void Func_020001fc(s32 item) {
   Event_SetFlag(0xa08);
   Event_PlaySound(134);
   Func_020001ac();
-  PartyInventory_Remove__jupiter_lighthouse_room_4(item);
+  PartyInventory_Remove(item);
 }
 
 void Func_0200021c(void) {
@@ -118,8 +116,6 @@ void Func_0200021c(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-/* VIEW(jupiter_lighthouse_room_4): routine Func_02001da8 as void Func_02001da8(struct Actor *object, s32 mode); module/scene/airs_rock.h has void Func_02001da8(void). */
-extern void Func_02001da8__jupiter_lighthouse_room_4(struct Actor *object, s32 mode) __asm__("Func_02001da8");
 
 /// A particle's step, Jupiter Lighthouse room 2's Func_02000720 with other
 /// numbers: it circles at its angle (action) around x 232 and rises with its
@@ -135,9 +131,9 @@ void Func_02000244(struct Actor *object) {
                    (232 << 16),
                (height * 3 << 16) - (120 << 16), 130 << 18);
   if ((s16)object->unk66 == 1)
-    Func_02001da8__jupiter_lighthouse_room_4(object, 7);
+    Func_02001da8(object, 7);
   if ((s16)object->unk66 == 38)
-    Func_02001da8__jupiter_lighthouse_room_4(object, 2);
+    Func_02001da8(object, 2);
   if (object->y > 0)
     object->unk66 = 0xffff;
   if (Math_Sin(angle) < 0)
@@ -412,8 +408,6 @@ s32 Func_02000964(s32 *a, s32 *b) {
 extern const s32 gData_020026f8[];
 
 s32 Func_02001ee8(s32 x, s32 z, s32 layer);
-/* VIEW(jupiter_lighthouse_room_4): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
-extern void Camera_WorldToScreen__jupiter_lighthouse_room_4(s32 *position) __asm__("Camera_WorldToScreen");
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_02000990(struct Actor *self) {
@@ -441,7 +435,7 @@ void Func_02000990(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Camera_WorldToScreen__jupiter_lighthouse_room_4(position);
+    Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;

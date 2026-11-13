@@ -383,8 +383,6 @@ struct SparkWork {
 #define SPARK_LIFE 50
 #define PHASE_DONE 999
 
-/* VIEW(step_vector): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
-extern void Camera_WorldToScreen__step_vector(s32 *position) __asm__("Camera_WorldToScreen");
 
 /// An object vanishes in a whirl of sparks: 64 sprites of picture 0x1ea circle
 /// out from it, each spark rising and closing in for 50 frames. Ten frames in
@@ -474,7 +472,7 @@ void Func_080eb960(s32 objectId) {
             sprite->depth = depth + 2;
           else
             sprite->depth = depth - 2;
-          Camera_WorldToScreen__step_vector(pos);
+          Camera_WorldToScreen(pos);
           drawn->x = pos[0];
           drawn->y = pos[2];
           drawn->oam.index = tiles + (spark->age & 3) * 2;

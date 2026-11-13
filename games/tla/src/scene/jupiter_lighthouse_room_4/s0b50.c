@@ -19,10 +19,7 @@
 #include "module/scene/jupiter_lighthouse_room_4.h"
 #include "module/scene/scene.h"
 
-/* VIEW(s0b50): routine Func_02001da8 as void Func_02001da8(struct GustObject *object, s32 mode); module/scene/airs_rock.h has void Func_02001da8(void). */
-extern void Func_02001da8__s0b50(struct GustObject *object, s32 mode) __asm__("Func_02001da8");
-/* VIEW(s0b50): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct GustObject *object, u32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
-extern void Actor_SetSingleChildFlags__s0b50(struct GustObject *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
+void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Func_02000990(struct GustObject *object);
 void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
@@ -39,8 +36,8 @@ struct GustObject *Func_02000b50(struct GustObject *source) {
                                   Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                     position.z));
-  Func_02001da8__s0b50(object, 2);
-  Actor_SetSingleChildFlags__s0b50(object, 0);
+  Func_02001da8(object, 2);
+  Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->angle = source->angle;
@@ -123,7 +120,7 @@ void Func_02000cc8(void) {
   }
 }
 
-/* VIEW(s0b50): variable gData_02002760 as struct Actor *gData_02002760[]; module/scene/alhafra.h has s16 gData_02002760[]. */
+/* VIEW(s0b50): variable gData_02002760 as struct Actor *gData_02002760[]; module/scene/alhafra.h has s16 gData_02002760[]; tried as the definition's extern s16 gData_02002760[], which the object already declares, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_4/s0b50.c:143: `gData_02002760' undeclared (first use in this function). */
 extern struct Actor *gData_02002760__s0b50[] __asm__("gData_02002760");
 
 s32 Func_02001ee0(struct Actor *actor);
@@ -203,8 +200,6 @@ void Func_02000e58(void) {
   }
 }
 
-/* VIEW(s0b50): routine Resource_DecodeType01 as void Resource_DecodeType01(const void *source, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
-extern void Resource_DecodeType01__s0b50(const void *source, void *destination) __asm__("Resource_DecodeType01");
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -214,7 +209,7 @@ void Func_02001014(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
   Iwram_ClearWords(gData_02002760__s0b50, 64);
-  Resource_DecodeType01__s0b50(gField_CachedTilesA, buffer);
+  Resource_DecodeType01(gField_CachedTilesA, buffer);
   gData_0200275c = Resource_FindFreeEntry();
   VramCache_Load(gData_0200275c, 0xc00, buffer);
   Heap_Release(buffer);
@@ -228,7 +223,7 @@ void Func_02001094(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
   Iwram_ClearWords(gData_02002760__s0b50, 64);
-  Resource_DecodeType01__s0b50(gField_CachedTilesB, buffer);
+  Resource_DecodeType01(gField_CachedTilesB, buffer);
   gData_0200275c = Resource_FindFreeEntry();
   Vram_Load(gData_0200275c, 0x800, buffer);
   Heap_Release(buffer);
@@ -242,7 +237,7 @@ void Func_02001114(void) {
   u8 *buffer = BumpAlloc(0x800);
 
   Iwram_ClearWords(gData_02002760__s0b50, 64);
-  Resource_DecodeType01__s0b50(gField_CachedTilesC, buffer);
+  Resource_DecodeType01(gField_CachedTilesC, buffer);
   gData_0200275c = Resource_FindFreeEntry();
   Vram_Load(gData_0200275c, 0x800, buffer);
   Heap_Release(buffer);

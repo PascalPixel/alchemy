@@ -73,8 +73,7 @@ next:
 #include "event_inline.h"
 #include "cell_target.h"
 
-/* VIEW(s42f8): routine GameFlag_SetByte as void GameFlag_SetByte(s32 flag, s32 value); game_flags.h has u32 GameFlag_SetByte(u32 flag, u8 value). */
-extern void GameFlag_SetByte__s42f8(s32 flag, s32 value) __asm__("GameFlag_SetByte");
+void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02004160(struct CellTarget *work,
                    struct CellTargetEntry *entry);
 
@@ -98,8 +97,8 @@ s32 Func_02004490(void) {
         break;
       work->current = i;
       Func_02004160(work, entry);
-      GameFlag_SetByte__s42f8(work->flagByte, x);
-      GameFlag_SetByte__s42f8(work->flagByte + 8, z);
+      GameFlag_SetByte(work->flagByte, x);
+      GameFlag_SetByte(work->flagByte + 8, z);
       return 1;
     }
   }
@@ -115,8 +114,8 @@ void Func_02004540(s32 x, s32 z, s32 effect) {
   if (dx != 0 || dz != 0) {
     struct Actor *marker;
 
-    GameFlag_SetByte__s42f8(Data_020068b4.flagByte, 0);
-    GameFlag_SetByte__s42f8(Data_020068b4.flagByte + 8, 0);
+    GameFlag_SetByte(Data_020068b4.flagByte, 0);
+    GameFlag_SetByte(Data_020068b4.flagByte + 8, 0);
     leader->x = ((dx + x) << 20) + 0x80000;
     leader->z = ((dz + z) << 20) + 0x80000;
     marker = work->marker;
@@ -1003,8 +1002,6 @@ void Func_02000ce4(void);
 void Func_02000e3c(void);
 void Func_0200112c(void);
 void Func_02001138(void);
-/* VIEW(s42f8): routine Func_020029a0 as void Func_020029a0(void); module/scene/mars_lighthouse_entrance.h has s32 Func_020029a0(void). */
-extern void Func_020029a0__s42f8(void) __asm__("Func_020029a0");
 
 // clang-format off
 struct ActorPlacement gData_02005bcc[] = {
@@ -1232,7 +1229,7 @@ struct Trigger gData_02006628[] = {
     {TRIGGER_STEP, 35, 0x234, EVENT(Func_02000fa4)},
     {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Func_02000fd4)},
     {TRIGGER_STEP, 90, CONDITION_ALWAYS, EVENT(Func_02002860)},
-    {TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(Func_020029a0__s42f8)},
+    {TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(Func_020029a0)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 13, 0x210, EVENT(Func_0200040c)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 14, 0x211, EVENT(Func_0200040c)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 15, 0x212, EVENT(Func_0200040c)},

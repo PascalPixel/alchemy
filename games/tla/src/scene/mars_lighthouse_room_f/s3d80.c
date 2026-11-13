@@ -79,8 +79,7 @@ void Func_02003d80(void) {
 
 #include "room.h"
 
-/* VIEW(s3d80): routine GameFlag_SetByte as void GameFlag_SetByte(s32 flag, s32 value); game_flags.h has u32 GameFlag_SetByte(u32 flag, u8 value). */
-extern void GameFlag_SetByte__s3d80(s32 flag, s32 value) __asm__("GameFlag_SetByte");
+void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02003b78(struct WarpWork *work, struct WarpEntry *entry);
 void Func_02003be8(struct WarpWork *work, struct WarpEntry *entry);
 
@@ -107,8 +106,8 @@ top:
       goto end;
     work->current = index;
     Func_02003be8(work, entry);
-    GameFlag_SetByte__s3d80(work->positionFlag, x);
-    GameFlag_SetByte__s3d80(work->positionFlag + 8, z);
+    GameFlag_SetByte(work->positionFlag, x);
+    GameFlag_SetByte(work->positionFlag + 8, z);
     return 1;
   }
   index++;
@@ -129,8 +128,8 @@ void Func_02003fc8(s32 dx, s32 dz, s32 value) {
   if (x != 0 || z != 0) {
     struct Actor *other;
 
-    GameFlag_SetByte__s3d80(work->positionFlag, 0);
-    GameFlag_SetByte__s3d80(work->positionFlag + 8, 0);
+    GameFlag_SetByte(work->positionFlag, 0);
+    GameFlag_SetByte(work->positionFlag + 8, 0);
     object->x = ((x + dx) << 20) + 0x80000;
     object->z = ((z + dz) << 20) + 0x80000;
     other = *(struct Actor **)(event + 460);
@@ -144,7 +143,7 @@ void Func_02003fc8(s32 dx, s32 dz, s32 value) {
 
 #include "input.h"
 
-/* VIEW(s3d80): variable gData_02005ef8 as extern const s16 gData_02005ef8[]; the definition has s32 gData_02005ef8[] = { 0xffff, - 0x8000, (s32) 0xe000c000, (s32) 0xc000a000, 0x20004000, 0x40006000, 0xffff, - 0x8000, }; tried as the definition's extern struct Trigger gData_02005ef8[], it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:185: invalid use of undefined type `struct Trigger'. */
+/* VIEW(s3d80): variable gData_02005ef8 as extern const s16 gData_02005ef8[]; the definition has s32 gData_02005ef8[] = { 0xffff, - 0x8000, (s32) 0xe000c000, (s32) 0xc000a000, 0x20004000, 0x40006000, 0xffff, - 0x8000, }; tried as the definition's extern struct Trigger gData_02005ef8[], it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:160: incompatible types in assignment. */
 extern const s16 gData_02005ef8__s3d80[] __asm__("gData_02005ef8");
 
 void Func_02004080(struct Actor *object) {
@@ -196,7 +195,7 @@ struct Position {
   s32 z;
 };
 
-/* VIEW(s3d80): variable gData_02005f38 as extern s16 gData_02005f38[]; the definition has s32 gData_02005f38[] = { 0xffff, - 0x8000, 0xc000, (s32) 0xc0008000, 0x4000, 0x40008000, 0xffff, - 0x8000, }; tried as the definition's extern s32 gData_02005f38[], it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:275: `gData_02005f38__s3d80' undeclared (first use in this function). */
+/* VIEW(s3d80): variable gData_02005f38 as extern s16 gData_02005f38[]; the definition has s32 gData_02005f38[] = { 0xffff, - 0x8000, 0xc000, (s32) 0xc0008000, 0x4000, 0x40008000, 0xffff, - 0x8000, }; tried as the definition's extern s32 gData_02005f38[], it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:243: `gData_02005f38__s3d80' undeclared (first use in this function). */
 extern s16 gData_02005f38__s3d80[] __asm__("gData_02005f38");
 
 void Func_02004140(void) {
@@ -637,7 +636,7 @@ done:
 #include "field_sprite.h"
 
 extern u16 gData_02005f58[];
-/* VIEW(s4700): variable gData_02005f64 as extern s8 gData_02005f64[][4]; the definition has u32 gData_02005f64[] = { 0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8, }; tried as the definition's extern u32 gData_02005f64[], it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:714: subscripted value is neither array nor pointer. */
+/* VIEW(s4700): variable gData_02005f64 as extern s8 gData_02005f64[][4]; the definition has u32 gData_02005f64[] = { 0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8, }; tried as the definition's extern u32 gData_02005f64[], it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:668: subscripted value is neither array nor pointer. */
 extern s8 gData_02005f64__s4700[][4] __asm__("gData_02005f64");
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
@@ -1031,8 +1030,6 @@ void Func_02005048(void) {
 #include "iwram_call.h"
 #include "task.h"
 
-/* VIEW(s3d80): routine Resource_DecodeType01 as void Resource_DecodeType01(const void *source, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
-extern void Resource_DecodeType01__s3d80(const void *source, void *destination) __asm__("Resource_DecodeType01");
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -1042,7 +1039,7 @@ void Func_02005204(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
   Iwram_ClearWords(gData_020074d0, 64);
-  Resource_DecodeType01__s3d80(gField_CachedTilesA, buffer);
+  Resource_DecodeType01(gField_CachedTilesA, buffer);
   gData_020074cc = Resource_FindFreeEntry();
   VramCache_Load(gData_020074cc, 0xc00, buffer);
   Heap_Release(buffer);
@@ -1056,7 +1053,7 @@ void Func_02005284(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
   Iwram_ClearWords(gData_020074d0, 64);
-  Resource_DecodeType01__s3d80(gField_CachedTilesB, buffer);
+  Resource_DecodeType01(gField_CachedTilesB, buffer);
   gData_020074cc = Resource_FindFreeEntry();
   Vram_Load(gData_020074cc, 0x800, buffer);
   Heap_Release(buffer);
@@ -1070,7 +1067,7 @@ void Func_02005304(void) {
   u8 *buffer = BumpAlloc(0x800);
 
   Iwram_ClearWords(gData_020074d0, 64);
-  Resource_DecodeType01__s3d80(gField_CachedTilesC, buffer);
+  Resource_DecodeType01(gField_CachedTilesC, buffer);
   gData_020074cc = Resource_FindFreeEntry();
   Vram_Load(gData_020074cc, 0x800, buffer);
   Heap_Release(buffer);

@@ -11,8 +11,6 @@
 #include "module/field/event_commands.h"
 
 struct Actor *Actor_GetById(u32 objectId);
-/* VIEW(f0ebf94): routine Window_CreateFar as void *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 mode); gamepak/far_call/window.h has struct RenderInput *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 mode). */
-extern void *Window_CreateFar__f0ebf94(s32 x, s32 y, s32 width, s32 height, s32 mode) __asm__("Window_CreateFar");
 
 void Func_080ebf94(void) {
   u32 *markerTiles;
@@ -83,7 +81,7 @@ void Func_080ebf94(void) {
   Ram_WorldMapCursorStart[1] = work->z;
   work->windowSlot = Resource_LoadFixedBlockBIntoFreeSlotFar();
   tile = gResourceTableEntries[work->windowSlot].offset;
-  work->window = Window_CreateFar__f0ebf94(0, 0, 0, 0, 2);
+  work->window = Window_CreateFar(0, 0, 0, 0, 2);
   work->shown = -1;
   work->speed = 0x10000;
   cursorAttributes = 0x40000000;
@@ -106,13 +104,11 @@ void Func_080ebf94(void) {
 #include "sound.h"
 #include "system.h"
 
-/* VIEW(f0ebf94): routine Window_CloseFar as void Window_CloseFar(u32 arg0, u32 arg1); gamepak/far_call/window.h has void Window_CloseFar(struct RenderInput *window, s32 mode). */
-extern void Window_CloseFar__f0ebf94(u32 arg0, u32 arg1) __asm__("Window_CloseFar");
 
 void BattleEffect_CleanupResourcesAndWindow(void) {
   Resource_ResetEntry(gWorldMapWork.vramBlock);
   Resource_ResetEntry(gWorldMapWork.windowSlot);
-  Window_CloseFar__f0ebf94((u32)gWorldMapWork.window, 2);
+  Window_CloseFar((u32)gWorldMapWork.window, 2);
 }
 
 #include "actor.h"

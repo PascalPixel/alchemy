@@ -81,14 +81,6 @@ void Func_02000128(s32 arg0) {
 
 void Event_Start();
 void Event_End();
-/* VIEW(eastern_alhafra_ship): routine BattleEffect_StartArcEffect as void BattleEffect_StartArcEffect(); module/field/event_commands.h has void BattleEffect_StartArcEffect(void). */
-extern void BattleEffect_StartArcEffect__eastern_alhafra_ship() __asm__("BattleEffect_StartArcEffect");
-/* VIEW(eastern_alhafra_ship): routine BattleEffect_EndArcEffect as void BattleEffect_EndArcEffect(); module/field/event_commands.h has void BattleEffect_EndArcEffect(void). */
-extern void BattleEffect_EndArcEffect__eastern_alhafra_ship() __asm__("BattleEffect_EndArcEffect");
-/* VIEW(eastern_alhafra_ship): routine BattleEffect_WaitForArcGroups as void BattleEffect_WaitForArcGroups(); module/field/event_commands.h has void BattleEffect_WaitForArcGroups(void). */
-extern void BattleEffect_WaitForArcGroups__eastern_alhafra_ship() __asm__("BattleEffect_WaitForArcGroups");
-/* VIEW(eastern_alhafra_ship): routine BattleEffect_SetObjectUpdateMode as void BattleEffect_SetObjectUpdateMode(); module/field/event_commands.h has void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode). */
-extern void BattleEffect_SetObjectUpdateMode__eastern_alhafra_ship() __asm__("BattleEffect_SetObjectUpdateMode");
 
 void Func_0200013c(s32 id) {
   struct Actor *object = Actor_GetById(12);
@@ -100,8 +92,8 @@ void Func_0200013c(s32 id) {
   Event_SetMessageId((s32)MsgGooGooGa);
   Event_ShowMessageAndWait(11, 0);
   Func_02003268(8, 0x1210);
-  BattleEffect_StartArcEffect__eastern_alhafra_ship();
-  BattleEffect_SetObjectUpdateMode__eastern_alhafra_ship((s32)Actor_GetById(id), 2);
+  BattleEffect_StartArcEffect();
+  BattleEffect_SetObjectUpdateMode((s32)Actor_GetById(id), 2);
   Sound_Play(201);
   Event_Wait(30);
   flags = &object->motionFlags;
@@ -111,9 +103,9 @@ void Func_0200013c(s32 id) {
     Event_Wait(1);
   }
   Event_Wait(70);
-  BattleEffect_SetObjectUpdateMode__eastern_alhafra_ship((s32)Actor_GetById(id), 0);
-  BattleEffect_WaitForArcGroups__eastern_alhafra_ship();
-  BattleEffect_EndArcEffect__eastern_alhafra_ship();
+  BattleEffect_SetObjectUpdateMode((s32)Actor_GetById(id), 0);
+  BattleEffect_WaitForArcGroups();
+  BattleEffect_EndArcEffect();
   Field_StartPaletteTransition(8);
   *flags = 3;
   object->gravity = 0x8000;
@@ -190,7 +182,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/* VIEW(eastern_alhafra_ship): variable gData_02003720 as extern const u8 gData_02003720[]; the definition has u32 gData_02003720[] = { 38, }; tried as the definition's extern u32 gData_02003720[], it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra_ship.c:223: `gData_02003720__eastern_alhafra_ship' undeclared (first use in this function). */
+/* VIEW(eastern_alhafra_ship): variable gData_02003720 as extern const u8 gData_02003720[]; the definition has u32 gData_02003720[] = { 38, }; tried as the definition's extern u32 gData_02003720[], it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra_ship.c:198: `gData_02003720__eastern_alhafra_ship' undeclared (first use in this function). */
 extern const u8 gData_02003720__eastern_alhafra_ship[] __asm__("gData_02003720");
 
 void Func_02003100(struct Actor020003e8 *object, s32 mode);
@@ -219,7 +211,7 @@ void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
 // ---- games/tla/src/scene/eastern_alhafra_ship/s0438.c ----
 // Scene code of overlay 0x669, in ROM order, from s0438's offset up to the next object the overlay links, and the overlay's data.
 
-/* VIEW(s0438): routine Func_020003e8 as s32 Func_020003e8(s32 x, s32 y, s32 z, s32 rotation, s32 timer); the definition has void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth); tried as the definition's void Func_020003e8(u16 *ids), it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra_ship.c:240: conflicting types for `Func_020003e8'. */
+/* VIEW(s0438): routine Func_020003e8 as s32 Func_020003e8(s32 x, s32 y, s32 z, s32 rotation, s32 timer); the definition has void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth); tried as the definition's void Func_020003e8(u16 *ids), it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra_ship.c:214: conflicting types for `Func_020003e8'. */
 extern s32 Func_020003e8__s0438(s32 x, s32 y, s32 z, s32 rotation, s32 timer) __asm__("Func_020003e8");
 
 void Func_02000438(s32 id) {
@@ -250,8 +242,7 @@ void Event_End();
 #include "map.h"
 #include "scene_ids.h"
 
-/* VIEW(eastern_alhafra_ship): routine Field_RequestBattleFromEncounterTable as void Field_RequestBattleFromEncounterTable(); module/field/event_commands.h has void Field_RequestBattleFromEncounterTable(s32 row, s32 column). */
-extern void Field_RequestBattleFromEncounterTable__eastern_alhafra_ship() __asm__("Field_RequestBattleFromEncounterTable");
+void Field_RequestBattleFromEncounterTable(s32 row, s32 column);
 
 void Func_020004f4(void) {
   struct MapWork *map;
@@ -458,7 +449,7 @@ void Func_020004f4(void) {
   Party_SetFields1eeAnd1f0((s32)&SceneId_Ov669, 99);
 
   gMainRoutineWork.battleRule24b = 2;
-  Field_RequestBattleFromEncounterTable__eastern_alhafra_ship(10, 1);
+  Field_RequestBattleFromEncounterTable(10, 1);
   Event_End();
 }
 

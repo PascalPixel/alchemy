@@ -70,8 +70,7 @@ void IncreaseItemAndLevel_ShowName(s32 actorId) {
   Event_End();
 }
 
-/* VIEW(level): routine MessageArgument_Push as void MessageArgument_Push(s32 value, s32 kind); module/window/window.h has void MessageArgument_Push(u32 value, u32 kind). */
-extern void MessageArgument_Push__level(s32 value, s32 kind) __asm__("MessageArgument_Push");
+void MessageArgument_Push(u32 value, u32 kind);
 
 /// Shows a party member's name when they are talked to in a room of names:
 /// Isaac's for ISAAC, and so on, with the character as the message's actor
@@ -80,7 +79,7 @@ void IncreaseItemAndLevel_ShowCharacterName(s32 character) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId(character + (s32)MsgIsaac2);
-  MessageArgument_Push__level(character, 1);
+  MessageArgument_Push(character, 1);
   Event_ShowMessageAndWait(character, 0);
   // XXX: why Garet's name is followed by a message from Isaac; the room's
   // render, talking to Garet, would settle it.
@@ -115,20 +114,11 @@ void IncreaseItemAndLevel_AdjustPartyLevels(s32 amount) {
     IncreaseItemAndLevel_AdjustOwnerLevel(ownerIds[i], amount);
 }
 
-/* VIEW(level): routine Window_Create as void *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style); module/window/window.h has struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style). */
-extern void *Window_Create__level(s32 x, s32 y, s32 width, s32 height, s32 style) __asm__("Window_Create");
-/* VIEW(level): routine Text_DrawMessage as void Text_DrawMessage(s32 msg, void *window, s32 x, s32 y); module/window/window.h has void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3). */
-extern void Text_DrawMessage__level(s32 msg, void *window, s32 x, s32 y) __asm__("Text_DrawMessage");
-/* VIEW(level): routine WindowSprite_RedrawSavedRect as void WindowSprite_RedrawSavedRect(void *window); module/window/window.h has void WindowSprite_RedrawSavedRect(struct Window *window). */
-extern void WindowSprite_RedrawSavedRect__level(void *window) __asm__("WindowSprite_RedrawSavedRect");
-/* VIEW(level): routine Text_DrawStringAtOffset as void Text_DrawStringAtOffset(const u8 *text, void *window, s32 x, s32 y); text_render.h has void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX, s32 offsetY). */
-extern void Text_DrawStringAtOffset__level(const u8 *text, void *window, s32 x, s32 y) __asm__("Text_DrawStringAtOffset");
-/* VIEW(level): routine Text_DrawStringInWindow as void Text_DrawStringInWindow(const u8 *text, void *window, s32 x, s32 y); module/window/window.h has void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y). */
-extern void Text_DrawStringInWindow__level(const u8 *text, void *window, s32 x, s32 y) __asm__("Text_DrawStringInWindow");
-/* VIEW(level): routine Text_DrawNumberInWindow as void Text_DrawNumberInWindow(s32 value, s32 digits, void *window, s32 x, s32 y); module/window/window.h has void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y). */
-extern void Text_DrawNumberInWindow__level(s32 value, s32 digits, void *window, s32 x, s32 y) __asm__("Text_DrawNumberInWindow");
-/* VIEW(level): routine Window_Close as void Window_Close(void *window, s32 mode); uiflow.h has void Window_Close(struct Window *window, s32 release). */
-extern void Window_Close__level(void *window, s32 mode) __asm__("Window_Close");
+struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs);
+void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX, s32 offsetY);
+void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y);
+void Window_Close(struct Window *work, s32 release);
 
 /// The pressed keys under a mask, for the last test of a group: the next
 /// test loads gInput's address again.
@@ -150,22 +140,22 @@ void IncreaseItemAndLevel_RunLevelEditor(void) {
   s32 messageId;
 
   unit = Unit_Get(gMainRoutineWork.currentOwner);
-  window = Window_Create__level(0, 0, 30, 9, 2);
+  window = Window_Create(0, 0, 30, 9, 2);
 
   messageId = (s32)MsgRaiseEveryoneS;
-  Text_DrawMessage__level(messageId, window, 0, 0);
-  Text_DrawMessage__level(messageId + 1, window, 0, 16);
+  Text_DrawMessage(messageId, window, 0, 0);
+  Text_DrawMessage(messageId + 1, window, 0, 16);
   messageId += 2;
   redraw = 1;
-  Text_DrawMessage__level(messageId, window, 0, 32);
+  Text_DrawMessage(messageId, window, 0, 32);
 
   for (;;) {
     if (redraw != 0) {
-      WindowSprite_RedrawSavedRect__level(window);
-      Text_DrawStringAtOffset__level(unit->name, window, 0, 48);
-      Text_DrawStringInWindow__level(gIncreaseItemAndLevel_LvLabel, window, 48, 48);
+      WindowSprite_RedrawSavedRect(window);
+      Text_DrawStringAtOffset(unit->name, window, 0, 48);
+      Text_DrawStringInWindow(gIncreaseItemAndLevel_LvLabel, window, 48, 48);
       redraw = 0;
-      Text_DrawNumberInWindow__level(unit->level, 0, window, 72, 48);
+      Text_DrawNumberInWindow(unit->level, 0, window, 72, 48);
     }
 
     if ((gInput.pressed & KEY_START) != 0 ||
@@ -183,9 +173,9 @@ void IncreaseItemAndLevel_RunLevelEditor(void) {
 
     if ((gInput.pressed & KEY_B) != 0) {
       Sound_Play(113);
-      WindowSprite_RedrawSavedRect__level(window);
+      WindowSprite_RedrawSavedRect(window);
       wait(1);
-      Window_Close__level(window, 1);
+      Window_Close(window, 1);
 
       Unit_Calculate(ISAAC);
       Unit_Calculate(GARET);
@@ -203,10 +193,8 @@ void IncreaseItemAndLevel_RunLevelEditor(void) {
 #define BROWSER_PAGE_STEP 30 ///< R and L move thirty.
 #define ITEM_ID_MASK 0x1ff
 
-/* VIEW(level): routine Text_DrawNumberAtOffset as void Text_DrawNumberAtOffset(s32 value, s32 format, void *window, s32 x, s32 y); text_render.h has void Text_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *work, s32 offsetX, s32 offsetY). */
-extern void Text_DrawNumberAtOffset__level(s32 value, s32 format, void *window, s32 x, s32 y) __asm__("Text_DrawNumberAtOffset");
-/* VIEW(level): routine Text_DrawMessageAsTiles as void Text_DrawMessageAsTiles(s32 character, void *window, s32 x, s32 y); text_render.h has void Text_DrawMessageAsTiles(s32 character, struct RenderInput *work, u32 offsetX, u32 offsetY). */
-extern void Text_DrawMessageAsTiles__level(s32 character, void *window, s32 x, s32 y) __asm__("Text_DrawMessageAsTiles");
+void Text_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *work, s32 x, s32 y);
+void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position, u32 offsetX, u32 offsetY);
 void ItemMenu_DrawItemDetails(void *window, s32 item);
 
 /// Browses nonempty item definitions and gives the selected item to the party,
@@ -228,11 +216,11 @@ void IncreaseItemAndLevel_SelectItem(void) {
   Sound_Play(112);
   selectedItemId = 1;
   redraw = 1;
-  window = Window_Create__level(0, 0, 30, 7, 2);
+  window = Window_Create(0, 0, 30, 7, 2);
 #if LANGUAGE < LANGUAGE_GERMAN
-  details = Window_Create__level(0, 8, 13, 10, 2);
+  details = Window_Create(0, 8, 13, 10, 2);
 #else
-  details = Window_Create__level(0, 9, 18, 10, 2);
+  details = Window_Create(0, 9, 18, 10, 2);
 #endif
   // Lend the highlight palette (BG palette 14) to the item icons, as The
   // Broken Seal's: sprite palette 0 into it, then the window background colour
@@ -247,22 +235,22 @@ void IncreaseItemAndLevel_SelectItem(void) {
       redraw = 0;
       // Wrap the number into 0 to 511 (a step back from 0 is 511).
       selectedItemId = (selectedItemId + ITEM_COUNT) % entryCount;
-      WindowSprite_RedrawSavedRect__level(window);
+      WindowSprite_RedrawSavedRect(window);
       WindowSprite_ClearList(window);
-      Text_DrawStringInWindow__level(gIncreaseItemAndLevel_ItemPrompt, window, 0, 0);
-      Text_DrawNumberAtOffset__level(selectedItemId, 0, window, 80, 0);
+      Text_DrawStringInWindow(gIncreaseItemAndLevel_ItemPrompt, window, 0, 0);
+      Text_DrawNumberAtOffset(selectedItemId, 0, window, 80, 0);
       if (PartyInventory_HasSpace()) {
-        Text_DrawStringInWindow__level(gIncreaseItemAndLevel_ItemHelp, window, 0, 32);
+        Text_DrawStringInWindow(gIncreaseItemAndLevel_ItemHelp, window, 0, 32);
         messageOrDefinitionId = selectedItemId & ITEM_ID_MASK;
         Item_GetDirect(messageOrDefinitionId);
-        Text_DrawMessageAsTiles__level(messageOrDefinitionId + (s32)MsgItemName,
+        Text_DrawMessageAsTiles(messageOrDefinitionId + (s32)MsgItemName,
                                    window, 120, 0);
-        Text_DrawMessage__level(messageOrDefinitionId + (s32)MsgItemPlainName, window,
+        Text_DrawMessage(messageOrDefinitionId + (s32)MsgItemPlainName, window,
                          0, 16);
-        WindowSprite_RedrawSavedRect__level(details);
+        WindowSprite_RedrawSavedRect(details);
         ItemMenu_DrawItemDetails(details, selectedItemId);
       } else {
-        Text_DrawStringInWindow__level(gIncreaseItemAndLevel_ItemFull, window, 0, 32);
+        Text_DrawStringInWindow(gIncreaseItemAndLevel_ItemFull, window, 0, 32);
       }
     }
     if (Input_PressedFenced(KEY_A)) {
@@ -334,10 +322,10 @@ void IncreaseItemAndLevel_SelectItem(void) {
     seekDirection = 0;
     wait(1);
   }
-  WindowSprite_RedrawSavedRect__level(window);
+  WindowSprite_RedrawSavedRect(window);
   wait(1);
-  Window_Close__level(window, 1);
-  Window_Close__level(details, 1);
+  Window_Close(window, 1);
+  Window_Close(details, 1);
 }
 
 char gIncreaseItemAndLevel_LvLabel[4] = "Lv";

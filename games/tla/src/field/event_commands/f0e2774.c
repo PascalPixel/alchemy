@@ -7,13 +7,13 @@
 #include "module/system/system.h"
 #include "module/tla.h"
 
-/* VIEW(f0e2774): tag struct MapCell as struct MapCell__f0e2774; map.h has another definition. */
+/* VIEW(f0e2774): tag struct MapCell as struct MapCell__f0e2774; map.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2774.c:57: dereferencing pointer to incomplete type. */
 struct MapCell__f0e2774 {
   u8 unk00[2];
   u8 unk02;
 };
 
-/* VIEW(f0e2774): variable gData_02001000 as struct TouchCopies gData_02001000; module/tla.h has s8 gData_02001000[]. */
+/* VIEW(f0e2774): variable gData_02001000 as struct TouchCopies gData_02001000; module/tla.h has s8 gData_02001000[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2774.c:61: request for member `count' in something not a structure or union. */
 extern struct TouchCopies gData_02001000__f0e2774 __asm__("gData_02001000");
 
 struct Actor *Actor_GetById(u32 objectId);
@@ -77,11 +77,6 @@ void Func_080e2774(s32 x, s32 z, s16 layerIndex, s16 width, s16 height, s32 toX,
 #include "fixed_math.h"
 #include "actor_view.h"
 
-/* VIEW(f0e2774): routine FacingObject_TurnPairToFaceEachOther as void FacingObject_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second); field.h has void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first, struct FacingObject *second). */
-extern void FacingObject_TurnPairToFaceEachOther__f0e2774(struct Actor *first,
-                                          struct Actor *second) __asm__("FacingObject_TurnPairToFaceEachOther");
-/* VIEW(f0e2774): routine Actor_StartRepeatedMotion as void Actor_StartRepeatedMotion(s32 actor, s32 variant); event.h has void Actor_StartRepeatedMotion(u32 objectId, s32 variant). */
-extern void Actor_StartRepeatedMotion__f0e2774(s32 actor, s32 variant) __asm__("Actor_StartRepeatedMotion");
 
 void Func_080e28d4(s32 sprite, s32 x, s32 z) {
   s32 ownerId = Party_GetLeaderActor();
@@ -105,10 +100,10 @@ void Func_080e28d4(s32 sprite, s32 x, s32 z) {
   } while (object->scaleX <= 0xffff);
   object->scaleY = object->scaleX = 0x10000;
   Actor_SetMode(owner, 1);
-  FacingObject_TurnPairToFaceEachOther__f0e2774(object, owner);
+  FacingObject_TurnPairToFaceEachOther(object, owner);
   owner->timer = owner->facing;
   Event_Wait(10);
-  Actor_StartRepeatedMotion__f0e2774(ownerId, 3);
+  Actor_StartRepeatedMotion(ownerId, 3);
   FieldEffect_SetAttached(ownerId, 258);
   Event_Wait(32);
   object->gravity = 0x10000;

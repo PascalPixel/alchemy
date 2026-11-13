@@ -267,15 +267,13 @@ void Func_02000640(void) {
   }
 }
 
-/* VIEW(atteka_inlet): routine Func_02001120 as void Func_02001120(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY, s32 layer); module/scene/yampi_desert_cave.h has void Func_02001120(void). */
-extern void Func_02001120__atteka_inlet(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY, s32 layer) __asm__("Func_02001120");
+void Func_02001120(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY, s32 layer);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void MapCopy(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                            s32 destY, s32 layer) {
-  Func_02001120__atteka_inlet(srcX, srcY, width, height, destX, destY, layer);
+  Func_02001120(srcX, srcY, width, height, destX, destY, layer);
 }
 
 void Func_0200077c(void) {

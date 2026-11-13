@@ -41,10 +41,8 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 extern u8 gData_02002fb8[];
-/* VIEW(jupiter_lighthouse_room_5): routine Func_020029d0 as void Func_020029d0(); module/scene/tundaria_tower.h has void Func_020029d0(s32 spread). */
-extern void Func_020029d0__jupiter_lighthouse_room_5() __asm__("Func_020029d0");
 
-void Func_02000054(void) { Func_020029d0__jupiter_lighthouse_room_5(gData_02002fb8); }
+void Func_02000054(void) { Func_020029d0(gData_02002fb8); }
 
 void Func_02000e04(s32 id);
 
@@ -71,17 +69,9 @@ void Func_02000064(s32 unused, s32 id) {
 u32 __umodsi3();
 void Animation_ApplyChildValues();
 
-/* VIEW(jupiter_lighthouse_room_5): tag struct AnimatedSprite as struct AnimatedSprite__jupiter_lighthouse_room_5; module/tla.h has another definition. */
-struct AnimatedSprite__jupiter_lighthouse_room_5 {
-  u8 unk00[0x19];
-  u8 picture;
-  u8 nextPicture;
-  u8 unk1b[0xd];
-  struct SpritePictures *pictures;
-};
 
 void Func_020000c8(struct Actor *object) {
-  struct AnimatedSprite__jupiter_lighthouse_room_5 *sprite = (struct AnimatedSprite__jupiter_lighthouse_room_5 *)object->sprite;
+  struct AnimatedSprite *sprite = (struct AnimatedSprite *)object->sprite;
   struct SpritePictures *pictures = sprite->pictures;
 
   switch (object->timer & 3) {
@@ -115,7 +105,7 @@ void Func_02000120(struct Actor *object) {
     Animation_ApplyChildValues(object, (frameCount >> 1) % 6);
 }
 
-/* VIEW(jupiter_lighthouse_room_5): routine Math_Cosine as s32 Math_Cosine(u32 angle); module/scene/scene.h has s32 Math_Cosine(s32 angle). */
+/* VIEW(jupiter_lighthouse_room_5): routine Math_Cosine as s32 Math_Cosine(u32 angle); module/scene/scene.h has s32 Math_Cosine(s32 angle); tried as the rest of the object declares it, Func_02001070 moves: 1 of 195 instructions, Func_02001230 moves: 1 of 90 instructions in tla-ja. */
 extern s32 Math_Cosine__jupiter_lighthouse_room_5(u32 angle) __asm__("Math_Cosine");
 
 /// Circles the object around actor 23, as overlay 6a5's Func_02000090 circles
@@ -420,7 +410,7 @@ void Func_02000734(void) {
   Actor_SetSingleChildFlags(((struct SparkActor *)Actor_Get(22)), 1);
 }
 
-/* VIEW(jupiter_lighthouse_room_5): routine BattleEffect_SetObjectUpdateMode as void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 value); jupiter_lighthouse_aerie.h has void BattleEffect_SetObjectUpdateMode(void). */
+/* VIEW(jupiter_lighthouse_room_5): routine BattleEffect_SetObjectUpdateMode as void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 value); jupiter_lighthouse_aerie.h has void BattleEffect_SetObjectUpdateMode(void); not tried: BattleEffect_SetObjectUpdateMode's bound declaration was not found. */
 extern void Func_02002a18__jupiter_lighthouse_room_5(struct Actor *object, s32 value) __asm__("BattleEffect_SetObjectUpdateMode");
 
 void Func_02000810(s32 actor, s32 target) {
@@ -758,13 +748,12 @@ s32 Func_02001044(s32 *a, s32 *b) {
 }
 
 extern const s32 gData_020033e0[];
-/* VIEW(jupiter_lighthouse_room_5): variable gData_02003400 as s32 gData_02003400; module/scene/idejima.h has u32 gData_02003400[]. */
-extern s32 gData_02003400__jupiter_lighthouse_room_5 __asm__("gData_02003400");
+extern s32 gData_02003400;
 
 s32 Func_02002a20(s32 x, s32 z, s32 layer);
-/* VIEW(jupiter_lighthouse_room_5): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
+/* VIEW(jupiter_lighthouse_room_5): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position); tried as the definition's void Camera_WorldToScreen(struct EffectVector *position), which the object already declares, Func_02001538 moves: 1 of 131 instructions in tla-ja. */
 extern void Camera_WorldToScreen__jupiter_lighthouse_room_5(s32 *position) __asm__("Camera_WorldToScreen");
-/* VIEW(s0cb8): routine Actor_StartScript as void Actor_StartScript(struct Actor *object, const s32 *script); jupiter_lighthouse_room_5 has void Actor_StartScript(struct OrbitEffect *object, const void *script). */
+/* VIEW(s0cb8): routine Actor_StartScript as void Actor_StartScript(struct Actor *object, const s32 *script); jupiter_lighthouse_room_5 has void Actor_StartScript(struct OrbitEffect *object, const void *script); not tried: Actor_StartScript's bound declaration was not found. */
 extern void Func_02002820__s0cb8(struct Actor *object, const s32 *script) __asm__("Actor_StartScript");
 
 void Func_02001070(struct Actor *self) {
@@ -842,7 +831,7 @@ stop:
     self->update = zero;
     Func_02002820__s0cb8(self, gData_020033e0);
     Event_PlaySound(228);
-    gData_02003400__jupiter_lighthouse_room_5 = zero;
+    gData_02003400 = zero;
   }
 }
 
@@ -853,15 +842,6 @@ stop:
 #include "field_effect.h"
 #include "field_coordinate.h"
 
-/* VIEW(jupiter_lighthouse_room_5): routine Func_02002810 as void Func_02002810(struct GustObject *object, s32 mode); module/scene/scene.h has void Func_02002810(struct FieldEffect *effect, s32 mode). */
-extern void Func_02002810__jupiter_lighthouse_room_5(struct GustObject *object, s32 mode) __asm__("Func_02002810");
-/* VIEW(s1230): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct GustObject *object, u32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
-extern void Actor_SetSingleChildFlags__s1230(struct GustObject *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
-/* VIEW(s1230): routine Func_02001070 as void Func_02001070(struct GustObject *object); the definition has void Func_02001070(struct Actor *self). */
-extern void Func_02001070__s1230(struct GustObject *object) __asm__("Func_02001070");
-/* VIEW(s1230): routine Func_02001c88 as void Func_02001c88(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct EffectOptions *options); jupiter_lighthouse_room_5 has void Func_02001c88(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 a5, s32 a6, struct EffectParams *params). */
-extern void Func_02001c88__s1230(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags, struct EffectOptions *options) __asm__("Func_02001c88");
 
 struct GustObject *Func_02001230(struct GustObject *source) {
   struct Vector3 position;
@@ -875,19 +855,19 @@ struct GustObject *Func_02001230(struct GustObject *source) {
                                   Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                     position.z));
-  Func_02002810__jupiter_lighthouse_room_5(object, 2);
-  Actor_SetSingleChildFlags__s1230(object, 0);
+  Func_02002810(object, 2);
+  Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->angle = source->angle;
   object->unk64 = 0;
   object->unk62 = 0;
   object->unk63 = 0;
-  object->update = Func_02001070__s1230;
+  object->update = Func_02001070;
   object->unk30 = 0x18000;
   options.priority = 1;
   options.palette = 7;
-  Func_02001c88__s1230(position.x, source->y, position.z - 0x60000, 0, 0, 0, 0x30000,
+  Func_02001c88(position.x, source->y, position.z - 0x60000, 0, 0, 0, 0x30000,
                 &options);
   return object;
 }
@@ -906,7 +886,7 @@ s32 Func_02001308(struct Actor *object) {
   x = object->x + (((s32)((u32)(Random16Far() * 9) >> 16) - 4) << 16);
   y = object->y + ((32 - (s32)((u32)(Random16Far() * 20) >> 16)) << 16);
   speed = (((s32)((u32)(Random16Far() * 5) >> 16) << 16) + 0x50000) / 10;
-  Func_02001c88__s1230(x, y, object->z, 0, speed, phase,
+  Func_02001c88(x, y, object->z, 0, speed, phase,
                 EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                     EFFECT_USE_START_SCALE,
                 &options);
@@ -914,8 +894,6 @@ done:
   return 0;
 }
 
-/* VIEW(s1230): routine Animation_ApplyChildValues as void Animation_ApplyChildValues(struct PositionedActor *object, s32 value); jupiter_lighthouse_aerie.h has void Animation_ApplyChildValues(struct Actor *object, s32 value). */
-extern void Animation_ApplyChildValues__s1230(struct PositionedActor *object, s32 value) __asm__("Animation_ApplyChildValues");
 
 void Func_020013a8(void) {
   struct PositionedActor *actor9 = ((struct PositionedActor *)Actor_Get(9));
@@ -945,8 +923,8 @@ void Func_020013a8(void) {
     }
     actor23->x.fixed -= 0x28f40;
     sprite->rotation += 0x800;
-    Animation_ApplyChildValues__s1230(((struct PositionedActor *)Actor_Get(9)), 4);
-    Animation_ApplyChildValues__s1230(((struct PositionedActor *)Actor_Get(11)),
+    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(9)), 4);
+    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(11)),
                                4);
   }
   if (Event_GetFlag(0xa0b)) {
@@ -958,9 +936,9 @@ void Func_020013a8(void) {
     }
     actor23->x.fixed += 0x28f40;
     sprite->rotation -= 0x800;
-    Animation_ApplyChildValues__s1230(((struct PositionedActor *)Actor_Get(10)),
+    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(10)),
                                4);
-    Animation_ApplyChildValues__s1230(((struct PositionedActor *)Actor_Get(12)),
+    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(12)),
                                4);
   }
   if (Event_GetFlag(0xa0a) && Event_GetFlag(0xa0b)) {
@@ -985,7 +963,7 @@ struct Spark {
   s32 age;
 };
 
-/* VIEW(jupiter_lighthouse_room_5): tag struct SparkSprite as struct SparkSprite__jupiter_lighthouse_room_5; module/tla.h has another definition. */
+/* VIEW(jupiter_lighthouse_room_5): tag struct SparkSprite as struct SparkSprite__jupiter_lighthouse_room_5; module/tla.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:1004: structure has no member named `x'. */
 struct SparkSprite__jupiter_lighthouse_room_5 {
   u8 unk00[0x0c];
   s32 x;
@@ -993,7 +971,7 @@ struct SparkSprite__jupiter_lighthouse_room_5 {
   u8 unk14[0x14];
 };
 
-/* VIEW(s1230): tag struct SparkWork as struct SparkWork__s1230; jupiter_lighthouse_room_5.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:1105: structure has no member named `sparks'. */
+/* VIEW(s1230): tag struct SparkWork as struct SparkWork__s1230; jupiter_lighthouse_room_5.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:979: structure has no member named `sparks'. */
 struct SparkWork__s1230 {
   u8 unk0000[0x400];
   struct Spark sparks[96];

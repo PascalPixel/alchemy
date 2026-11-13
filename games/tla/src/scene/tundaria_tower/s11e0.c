@@ -17,8 +17,7 @@
 #include "module/tla.h"
 #include "tundaria_tower.h"
 
-/* VIEW(s11e0): routine Effect_AdvanceMotion as void Effect_AdvanceMotion(struct FieldEffect *effect); module/field/field_effect.h has void Effect_AdvanceMotion(union FieldObject *object). */
-extern void Effect_AdvanceMotion__s11e0(struct FieldEffect *effect) __asm__("Effect_AdvanceMotion");
+void Effect_AdvanceMotion(union FieldObject *object);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
@@ -49,7 +48,7 @@ void Func_020011e0(void) {
   leader->motionFlags = 3;
   Event_Wait(24);
   options.palette = 7;
-  options.update = (void *)Effect_AdvanceMotion__s11e0;
+  options.update = (void *)Effect_AdvanceMotion;
   options.startScaleX = 0xcccc;
   options.startScaleY = 0xcccc;
   i = 0;
@@ -279,7 +278,7 @@ void Func_02001868(void) {
   }
 }
 
-/* VIEW(events_e): routine Func_020017dc as void Func_020017dc(void); the definition has void Func_020017dc(struct Actor *object); tried as the definition's void Func_020017dc(struct Actor *actor), it does not compile in tla-ja: games/tla/src/scene/tundaria_tower/s11e0.c:374: `Func_020017dc__events_e' undeclared (first use in this function). */
+/* VIEW(events_e): routine Func_020017dc as void Func_020017dc(void); the definition has void Func_020017dc(struct Actor *object); tried as the definition's void Func_020017dc(struct Actor *actor), it does not compile in tla-ja: games/tla/src/scene/tundaria_tower/s11e0.c:355: `Func_020017dc__events_e' undeclared (first use in this function). */
 extern void Func_020017dc__events_e(void) __asm__("Func_020017dc");
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Func_02002f80(struct Actor *object, s32 mode);

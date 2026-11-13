@@ -7,8 +7,6 @@
 #include "module/scene/shaman_village.h"
 #include "task.h"
 
-/* VIEW(s1fec): routine HeapSlot_AllocFar as u8 *HeapSlot_AllocFar(s32 slot, s32 size); gamepak/far_call/system.h has void *HeapSlot_AllocFar(s32 slot, s32 size). */
-extern u8 *HeapSlot_AllocFar__s1fec(s32 slot, s32 size) __asm__("HeapSlot_AllocFar");
 
 struct ShamanVillageObject *Func_02001fec(void) {
   struct ShamanVillageObject *object =
@@ -28,7 +26,7 @@ struct ShamanVillageObject *Func_02001fec(void) {
     object->field5c = 1;
     sprite->nextFrame = 0;
     sprite->unk1b[0] = 0;
-    buffer = HeapSlot_AllocFar__s1fec(68, 0x608);
+    buffer = HeapSlot_AllocFar(68, 0x608);
     Icon_DrawItem(65);
     VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
     HeapSlot_Release(68);
@@ -701,8 +699,6 @@ void Func_02003040(void) {
   Sound_Play(76);
 }
 
-/* VIEW(s1fec): routine Actor_WaitForAnimationChange as void Actor_WaitForAnimationChange(s32 actor); actor.h has void Actor_WaitForAnimationChange(u32). */
-extern void Actor_WaitForAnimationChange__s1fec(s32 actor) __asm__("Actor_WaitForAnimationChange");
 
 void Func_020030bc(void) {
   u8 *work = Ram_HeapSlots->effectWork;
@@ -946,11 +942,11 @@ void Func_020030bc(void) {
   done = &object->unk63;
   owner = gMainRoutineWork.currentOwner;
   if (result == 0) {
-    Actor_WaitForAnimationChange__s1fec(owner);
+    Actor_WaitForAnimationChange(owner);
     Motion_SetModeAndWaitAnimation(15, 4);
     Event_ShowMessageAndWait(15, 0);
   } else {
-    Actor_WaitForAnimationChange__s1fec(owner);
+    Actor_WaitForAnimationChange(owner);
     Motion_SetModeAndWaitAnimation(15, 4);
     EVENT_WORK->field1c4++;
     Event_ShowMessageAndWait(15, 0);

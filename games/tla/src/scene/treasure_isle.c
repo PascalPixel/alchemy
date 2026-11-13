@@ -24,29 +24,19 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "main_routine_work.h"
 #include "scene_ids.h"
 
-/* VIEW(scene_tables): variable gData_02001330 as extern const u8 gData_02001330[]; the definition has struct ActorPlacement gData_02001330[] = { { 272, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(440), FACING_SOUTH, 2, 0 }, { 272, CONDITION_A.... */
-extern const u8 gData_02001330__scene_tables[] __asm__("gData_02001330");
-/* VIEW(scene_tables): variable gData_02001390 as extern const u8 gData_02001390[]; the definition has struct ActorPlacement gData_02001390[] = { { 407, CONDITION_ALWAYS, (s32) gData_0200131c, PIXELS(600), 0, PIXELS(616), FACING_SOUTH, 2, 0 },.... */
-extern const u8 gData_02001390__scene_tables[] __asm__("gData_02001390");
-/* VIEW(scene_tables): variable gData_02001480 as extern const u8 gData_02001480[]; the definition has struct ActorPlacement gData_02001480[] = { { 407, CONDITION_ALWAYS, (s32) gData_0200131c, PIXELS(824), 0, PIXELS(232), FACING_SOUTH, 2, 0 },.... */
-extern const u8 gData_02001480__scene_tables[] __asm__("gData_02001480");
-/* VIEW(scene_tables): variable gData_02001504 as extern const u8 gData_02001504[]; the definition has struct ActorPlacement gData_02001504[] = { { 272, CONDITION_ALWAYS, 1, PIXELS(728), 0, PIXELS(600), FACING_SOUTH, 2, 0 }, { 329, CONDITION_A.... */
-extern const u8 gData_02001504__scene_tables[] __asm__("gData_02001504");
-/* VIEW(scene_tables): variable gData_0200169c as extern const u8 gData_0200169c[]; the definition has struct ActorPlacement gData_0200169c[] = { { 169, 0x9bb, 1, PIXELS(792), 0, PIXELS(136), FACING_SOUTH, 0, 0 }, { 243, 0x43, 1, PIXELS(200), .... */
-extern const u8 gData_0200169c__scene_tables[] __asm__("gData_0200169c");
 
 const u8 *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6afRoom2)
-    return gData_02001390__scene_tables;
+    return gData_02001390;
   if (scene == (s32)&SceneId_Ov6afRoom3)
-    return gData_02001480__scene_tables;
+    return gData_02001480;
   if (scene == (s32)&SceneId_Ov6afRoom4)
-    return gData_02001504__scene_tables;
+    return gData_02001504;
   if (scene == (s32)&SceneId_Ov6afRoom5)
-    return gData_0200169c__scene_tables;
-  return gData_02001330__scene_tables;
+    return gData_0200169c;
+  return gData_02001330;
 }
 
 #include "ram_buffer.h"
@@ -362,8 +352,7 @@ void Func_02000a5c(void) {
 }
 
 #include "call.h"
-/* VIEW(treasure_isle): routine Field_RequestBattleFromEncounterTable as s32 Field_RequestBattleFromEncounterTable(); module/field/event_commands.h has void Field_RequestBattleFromEncounterTable(s32 row, s32 column). */
-extern s32 Field_RequestBattleFromEncounterTable__treasure_isle() __asm__("Field_RequestBattleFromEncounterTable");
+void Field_RequestBattleFromEncounterTable(s32 row, s32 column);
 extern u8 MsgIAmTheGuardian[];
 
 void Func_02000a8c(void) {
@@ -388,38 +377,30 @@ void Func_02000a8c(void) {
   FieldEvent_Wait(20);
   gMainRoutineWork.pendingDjinnEvent = 0x19bb;
   gMainRoutineWork.battleRule24b = 2;
-  Call2(Field_RequestBattleFromEncounterTable__treasure_isle, 0x67, 0);
+  Call2(Field_RequestBattleFromEncounterTable, 0x67, 0);
 }
 
-/* VIEW(scene_tables): variable gData_020016e4 as extern const u8 gData_020016e4[]; the definition has struct Trigger gData_020016e4[] = { { 1, 1, CONDITION_ALWAYS, 1 }, { 1, 2, CONDITION_ALWAYS, 2 }, { 1, 3, CONDITION_ALWAYS, 3 }, { 1, 4, CON...; tried as the definition's extern s16 gData_020016e4[], it does not compile in tla-ja: games/tla/src/scene/treasure_isle.c:791: conflicting types for `gData_020016e4'. */
+/* VIEW(scene_tables): variable gData_020016e4 as extern const u8 gData_020016e4[]; the definition has struct Trigger gData_020016e4[] = { { 1, 1, CONDITION_ALWAYS, 1 }, { 1, 2, CONDITION_ALWAYS, 2 }, { 1, 3, CONDITION_ALWAYS, 3 }, { 1, 4, CON...; tried as the definition's extern s16 gData_020016e4[], it does not compile in tla-ja: games/tla/src/scene/treasure_isle.c:723: conflicting types for `gData_020016e4'. */
 extern const u8 gData_020016e4__scene_tables[] __asm__("gData_020016e4");
-/* VIEW(scene_tables): variable gData_02001780 as extern const u8 gData_02001780[]; the definition has struct Trigger gData_02001780[] = { { 1, 1, CONDITION_ALWAYS, 1 }, { 1, 2, CONDITION_ALWAYS, 2 }, { 1, 3, CONDITION_ALWAYS, 3 }, { 1, 4, CON.... */
-extern const u8 gData_02001780__scene_tables[] __asm__("gData_02001780");
-/* VIEW(scene_tables): variable gData_0200184c as extern const u8 gData_0200184c[]; the definition has struct Trigger gData_0200184c[] = { { 1, 1, CONDITION_ALWAYS, 1 }, { 1, 2, CONDITION_ALWAYS, 2 }, { 1, 3, CONDITION_ALWAYS, 3 }, { 1, 4, CON.... */
-extern const u8 gData_0200184c__scene_tables[] __asm__("gData_0200184c");
-/* VIEW(scene_tables): variable gData_020018f4 as extern const u8 gData_020018f4[]; the definition has s32 gData_020018f4[] = { 33, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 1, (s32) 0xffff0003, 3, 1, (s32) 0xffff0004, 4, 1, (s32) 0xffff000.... */
-extern const u8 gData_020018f4__scene_tables[] __asm__("gData_020018f4");
-/* VIEW(scene_tables): variable gData_02001a5c as extern const u8 gData_02001a5c[]; the definition has struct Trigger gData_02001a5c[] = { { 1, 1, CONDITION_ALWAYS, 1 }, { 1, 2, CONDITION_ALWAYS, 2 }, { 1, 3, CONDITION_ALWAYS, 3 }, { 2, 42, 0x.... */
-extern const u8 gData_02001a5c__scene_tables[] __asm__("gData_02001a5c");
 
 const u8 *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6afRoom2)
-    return gData_02001780__scene_tables;
+    return gData_02001780;
   if (scene == (s32)&SceneId_Ov6afRoom3)
-    return gData_0200184c__scene_tables;
+    return gData_0200184c;
   if (scene == (s32)&SceneId_Ov6afRoom4)
-    return gData_020018f4__scene_tables;
+    return gData_020018f4;
   if (scene == (s32)&SceneId_Ov6afRoom5)
-    return gData_02001a5c__scene_tables;
+    return gData_02001a5c;
   return gData_020016e4__scene_tables;
 }
 
 #include "iwram_call.h"
 #include "io_write_queue.h"
 
-/* VIEW(scene_tables): variable gData_02001aa4 as extern s32 gData_02001aa4; the definition has s32 gData_02001aa4[] = { - 1, }; tried as the definition's extern s32 gData_02001aa4[], it does not compile in tla-ja: games/tla/src/scene/treasure_isle.c:462: `gData_02001aa4' has an incomplete type. */
+/* VIEW(scene_tables): variable gData_02001aa4 as extern s32 gData_02001aa4; the definition has s32 gData_02001aa4[] = { - 1, }; tried as the definition's extern s32 gData_02001aa4[], it does not compile in tla-ja: games/tla/src/scene/treasure_isle.c:422: `gData_02001aa4' has an incomplete type. */
 extern s32 gData_02001aa4__scene_tables __asm__("gData_02001aa4");
 extern volatile u16 gData_02001ac8[];
 
@@ -462,7 +443,7 @@ void Func_02000ba0(void) {
 #include "actor.h"
 #include "task.h"
 
-/* VIEW(s0cf4): tag struct TreasureIsleEventWork as struct TreasureIsleEventWork__s0cf4; treasure_isle.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/treasure_isle.c:513: structure has no member named `route'. */
+/* VIEW(s0cf4): tag struct TreasureIsleEventWork as struct TreasureIsleEventWork__s0cf4; treasure_isle.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/treasure_isle.c:454: structure has no member named `route'. */
 struct TreasureIsleEventWork__s0cf4 {
   u8 unk000[0x1ac];
   s32 route;

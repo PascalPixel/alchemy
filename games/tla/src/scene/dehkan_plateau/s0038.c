@@ -299,16 +299,12 @@ void Func_02001804(void);
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
-/* VIEW(s0038): routine Func_02003d40 as void Func_02003d40(struct Actor *object, s32 mode); module/scene/airs_rock_inside.h has void Func_02003d40(void). */
-extern void Func_02003d40__s0038(struct Actor *object, s32 mode) __asm__("Func_02003d40");
 
 void Func_0200056c(s32 id) {
   Actor_GetById(id)->unk5c[0] = 3;
   Func_02003cc0(id);
 }
 
-/* VIEW(s0038): routine ObjectVisual_CopyAttributes as void ObjectVisual_CopyAttributes(s32 id, s32 value); module/field/object.h has void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId). */
-extern void ObjectVisual_CopyAttributes__s0038(s32 id, s32 value) __asm__("ObjectVisual_CopyAttributes");
 void Actor_MoveToObject(s32 id, s32 target);
 
 /// Places actors 8 to 10 at the leader, then walks a list of (actor, flag)
@@ -361,7 +357,7 @@ void Func_02000584(u16 *list) {
       cell->attributeB = 128;
       *slot = Func_02003dd0(actor->terrainId, shape, (ground >> 19) + 4);
       if (GameFlag_Test(flag))
-        ObjectVisual_CopyAttributes__s0038(id, 9);
+        ObjectVisual_CopyAttributes(id, 9);
     }
     list += 2;
   }
@@ -374,8 +370,6 @@ void Func_020006ec(struct Actor *object, struct Actor *target) {
 }
 
 void Actor_StartScript(struct Actor *object, const void *script);
-/* VIEW(s0038): routine Func_02003d80 as s32 Func_02003d80(void *sprite, s32 frame); module/scene/mars_lighthouse_room_f.h has void Func_02003d80(void). */
-extern s32 Func_02003d80__s0038(void *sprite, s32 frame) __asm__("Func_02003d80");
 
 void Func_02000708(u16 *list) {
   struct Actor *leader;
@@ -412,7 +406,7 @@ next:
       Actor_SetPartAttribute(Actor_GetById(8), 7);
       wait(2);
       Func_02003ba0(helper, 0);
-      ObjectVisual_CopyAttributes__s0038(id, 9);
+      ObjectVisual_CopyAttributes(id, 9);
       Actor_SetPartAttribute(Actor_GetById(8), 0);
       wait(2);
       Actor_SetPartAttribute(Actor_GetById(8), 7);

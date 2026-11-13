@@ -45,7 +45,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-/* VIEW(title): tag struct TitleSprite as struct TitleSprite__title; module/tla.h has another definition. */
+/* VIEW(title): tag struct TitleSprite as struct TitleSprite__title; module/tla.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/title.c:192: invalid use of undefined type `struct TitleSprite'. */
 struct TitleSprite__title {
   u32 attr[3];
 };

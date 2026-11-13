@@ -112,8 +112,6 @@ void Func_020044c4(struct PushTarget target) {
   Event_NoOp();
 }
 
-/* VIEW(s44c4): routine Func_02004a64 as s32 Func_02004a64(struct Actor *object, s32 *position); module/scene/eastern_alhafra.h has s32 Func_02004a64(struct Actor *actor, struct Vector3 *cell). */
-extern s32 Func_02004a64__s44c4(struct Actor *object, s32 *position) __asm__("Func_02004a64");
 
 void Func_02004774(struct Actor *object) {
   s32 position[3];
@@ -141,7 +139,7 @@ void Func_02004774(struct Actor *object) {
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
-  if (Func_02004a64__s44c4(object, position) > 0)
+  if (Func_02004a64(object, position) > 0)
     FieldActor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
 }
 

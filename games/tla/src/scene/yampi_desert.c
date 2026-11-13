@@ -18,7 +18,7 @@
 #include "module/tla.h"
 #include "resource.h"
 #include "text/msg_ids.h"
-/* VIEW(s0b84): routine Func_0200388c as void Func_0200388c(const void *script, s32 a, s32 b); the definition has void Func_0200388c(u16 *list, s32 mode, s32 count); tried as the definition's void Func_0200388c(u16 *list, s32 mode, s32 count), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/yampi_desert.c:1757: conflicting types for `Func_0200388c'. */
+/* VIEW(s0b84): routine Func_0200388c as void Func_0200388c(const void *script, s32 a, s32 b); the definition has void Func_0200388c(u16 *list, s32 mode, s32 count); tried as the definition's void Func_0200388c(u16 *list, s32 mode, s32 count), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/yampi_desert.c:1701: conflicting types for `Func_0200388c'. */
 extern void Func_0200388c__s0b84(const void *script, s32 a, s32 b) __asm__("Func_0200388c");
 #define Func_0200388c Func_0200388c__s0b84
 #include "yampi_desert/scene.h"
@@ -136,7 +136,7 @@ void Func_02000e78(void) {
   Event_End();
 }
 
-/* VIEW(yampi_desert): routine Func_02003fc0 as struct Actor *Func_02003fc0(s32 kind, s32 x, s32 y, s32 z); module/scene/gabomba_statue.h has s32 Func_02003fc0(s32 x0, s32 z0, s32 x1, s32 z1, s32 a, s32 b, s32 c, s32 d). */
+/* VIEW(yampi_desert): routine Func_02003fc0 as struct Actor *Func_02003fc0(s32 kind, s32 x, s32 y, s32 z); module/scene/gabomba_statue.h has s32 Func_02003fc0(s32 x0, s32 z0, s32 x1, s32 z1, s32 a, s32 b, s32 c, s32 d); tried as the definition's s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction, s32 last, s32 bit), it does not compile in tla-ja: games/tla/src/scene/yampi_desert.c:156: too few arguments to function `Func_02003fc0'. */
 extern struct Actor *Func_02003fc0__yampi_desert(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_02003fc0");
 void Actor_StartScript(struct Actor *object, const void *script);
 
@@ -578,8 +578,6 @@ void Func_02001690(s32 p0) {
   Event_End();
 }
 
-/* VIEW(yampi_desert): routine HeapSlot_AllocFar as u8 *HeapSlot_AllocFar(s32 slot, s32 size); gamepak/far_call/system.h has void *HeapSlot_AllocFar(s32 slot, s32 size). */
-extern u8 *HeapSlot_AllocFar__yampi_desert(s32 slot, s32 size) __asm__("HeapSlot_AllocFar");
 
 struct Actor *Func_02001b70(void) {
   struct Actor *object =
@@ -613,7 +611,7 @@ struct Actor *Func_02001b70(void) {
     object->unk5c[0] = 1;
     visual->value1a = 0;
     visual->value1b = 0;
-    buffer = HeapSlot_AllocFar__yampi_desert(68, 0x608);
+    buffer = HeapSlot_AllocFar(68, 0x608);
     Func_02004030(209);
     VramCache_Load(visual->tileSlot, 128, buffer + 0x400);
     HeapSlot_Release(68);
@@ -674,8 +672,6 @@ void Func_02001c5c(void) {
 
 struct Actor *Actor_GetById(u32 objectId);
 void Actor_StartScript(struct Actor *object, const void *script);
-/* VIEW(s1cc4): routine Effect_AdvanceMotionAtLeaderPriority as void Effect_AdvanceMotionAtLeaderPriority(void); s0b84 has void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object). */
-extern void Effect_AdvanceMotionAtLeaderPriority__s1cc4(void) __asm__("Effect_AdvanceMotionAtLeaderPriority");
 s32 Math_Sine(s32 angle);
 
 void Func_02001cc4(struct Actor *object, s32 dx, s32 dz) {
@@ -721,7 +717,7 @@ void Func_02001cc4(struct Actor *object, s32 dx, s32 dz) {
         dust->timer = ((Random16Far() << 9) >> 16) - 256;
         dust->speedLimit = 0;
         dust->acceleration = 0;
-        dust->update = Effect_AdvanceMotionAtLeaderPriority__s1cc4;
+        dust->update = Effect_AdvanceMotionAtLeaderPriority;
       }
     }
   }
@@ -1878,8 +1874,6 @@ void Func_020039b8(void) {
   }
 }
 
-/* VIEW(yampi_desert): variable gResourceTableEntries as struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has struct VramBlockCacheEntry gResourceTableEntries[]. */
-extern struct ResourceTableEntry gResourceTableEntries__yampi_desert[] __asm__("gResourceTableEntries");
 
 // Draws the rising platforms' columns as sprites, one 16-pixel piece per step
 // of height and a bobbing top, up to 80 of them, each an OAM entry queued by
@@ -1888,7 +1882,7 @@ void Func_02003b80(void) {
   struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
   struct RideEntry *entry = work->entries;
   s32 i;
-  u32 tile = gResourceTableEntries__yampi_desert[work->entry].offset >> 5;
+  u32 tile = gResourceTableEntries[work->entry].offset >> 5;
   s32 frame;
   u32 *oam = work->block;
   s32 count = 0;
@@ -1964,8 +1958,6 @@ void Func_02003b80(void) {
   }
 }
 
-/* VIEW(yampi_desert): routine Resource_DecodeType01 as void Resource_DecodeType01(const void *source, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
-extern void Resource_DecodeType01__yampi_desert(const void *source, void *destination) __asm__("Resource_DecodeType01");
 
 void Func_02003da0(s32 unused, s32 value) {
   struct YampiDesertRideWork *work =
@@ -1975,7 +1967,7 @@ void Func_02003da0(s32 unused, s32 value) {
   if (!GameFlag_Test(0x109))
     Call2((void (*)())Iwram_ClearWordsEntry, (s32)work, 456);
   buffer = (void *)Value1((s32 (*)())Heap_AllocEwram, 0x800);
-  Resource_DecodeType01__yampi_desert(gField_Tiles64D, buffer);
+  Resource_DecodeType01(gField_Tiles64D, buffer);
   work->entry = Resource_FindFreeEntry();
   VramCache_Load(work->entry, 0x800, buffer);
   Heap_Release(buffer);

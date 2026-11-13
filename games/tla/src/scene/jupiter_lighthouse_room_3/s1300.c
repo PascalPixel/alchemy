@@ -15,8 +15,6 @@
 #include "module/scene/jupiter_lighthouse_room_3.h"
 #include "module/scene/scene.h"
 
-/* VIEW(s1300): variable gData_02002478 as const u16 gData_02002478[]; module/scene/jupiter_lighthouse_room_3.h has u16 gData_02002478[]. */
-extern const u16 gData_02002478__s1300[] __asm__("gData_02002478");
 
 struct Actor *Func_02002438(s32 *position, s32 mode);
 
@@ -41,7 +39,7 @@ void Func_02001300(struct Actor *object) {
     i = 0;
   next:
     if (*((struct ObjectAnimationState *)other->sprite)->value28 ==
-        gData_02002478__s1300[i])
+        gData_02002478[i])
       return;
     i++;
     if (i < 6)
@@ -133,8 +131,6 @@ void Func_02001388(void) {
   }
 }
 
-/* VIEW(s1300): routine Resource_DecodeType01 as void Resource_DecodeType01(const void *source, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
-extern void Resource_DecodeType01__s1300(const void *source, void *destination) __asm__("Resource_DecodeType01");
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -144,7 +140,7 @@ void Func_02001544(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
   Iwram_ClearWords(gData_02002d30, 64);
-  Resource_DecodeType01__s1300(gField_CachedTilesA, buffer);
+  Resource_DecodeType01(gField_CachedTilesA, buffer);
   gData_02002d2c = Resource_FindFreeEntry();
   VramCache_Load(gData_02002d2c, 0xc00, buffer);
   Heap_Release(buffer);
@@ -158,7 +154,7 @@ void Func_020015c4(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
   Iwram_ClearWords(gData_02002d30, 64);
-  Resource_DecodeType01__s1300(gField_CachedTilesB, buffer);
+  Resource_DecodeType01(gField_CachedTilesB, buffer);
   gData_02002d2c = Resource_FindFreeEntry();
   Vram_Load(gData_02002d2c, 0x800, buffer);
   Heap_Release(buffer);
@@ -172,7 +168,7 @@ void Func_02001644(void) {
   u8 *buffer = BumpAlloc(0x800);
 
   Iwram_ClearWords(gData_02002d30, 64);
-  Resource_DecodeType01__s1300(gField_CachedTilesC, buffer);
+  Resource_DecodeType01(gField_CachedTilesC, buffer);
   gData_02002d2c = Resource_FindFreeEntry();
   Vram_Load(gData_02002d2c, 0x800, buffer);
   Heap_Release(buffer);

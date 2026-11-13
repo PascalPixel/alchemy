@@ -212,8 +212,6 @@ void Func_020002f8(void) {
 
 void Func_02001520(s32 value);
 void Func_02001568(void);
-/* VIEW(alhafran_cave): routine Func_020015e0 as void Func_020015e0(s32 value); module/scene/dehkan_plateau.h has void Func_020015e0(void). */
-extern void Func_020015e0__alhafran_cave(s32 value) __asm__("Func_020015e0");
 void Func_020015e8(const void *data, s32 a, s32 b, s32 c);
 
 /// The rooms' setup: sprite priorities, the scene callback, actors 12 to 14,
@@ -230,7 +228,7 @@ void Func_0200051c(void) {
   Actor_Get(8)->priorityFlags |= 32;
   Func_02001520(0);
   data = gData_02001be0;
-  Func_020015e0__alhafran_cave(0);
+  Func_020015e0(0);
   Call4((void (*)())Func_020015e8, (s32)data, 8, 15, 0x40000000);
   FieldTask_AddFrame(Func_02000258, 0x480);
   if ((u16)(gMainRoutineWork.entrance - 8) <= 1) {

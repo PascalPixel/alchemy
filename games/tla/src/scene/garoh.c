@@ -572,15 +572,13 @@ void Func_02000be4(void) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(garoh): routine Func_02005364 as void Func_02005364(); module/scene/gabomba_statue.h has void Func_02005364(void). */
-extern void Func_02005364__garoh() __asm__("Func_02005364");
 
 void Func_02000d30(void) {
   s32 t4;
 
   Task_AddFrame(Func_02000a68, 0x480);
   Func_0200535c();
-  Func_02005364__garoh(0, 10, 11);
+  Func_02005364(0, 10, 11);
   t4 = Event_GetFlag(0x310);
   if (t4 == 0)
     goto L_02008da6;

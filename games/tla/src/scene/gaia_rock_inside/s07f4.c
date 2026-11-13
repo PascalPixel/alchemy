@@ -20,10 +20,9 @@
 
 void Func_02004d9c(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const s32 *script);
-/* VIEW(s07f4): routine Effect_AdvanceMotionAtLeaderPriority as void Effect_AdvanceMotionAtLeaderPriority(void); module/field/field_effect.h has void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object). */
-extern void Effect_AdvanceMotionAtLeaderPriority__s07f4(void) __asm__("Effect_AdvanceMotionAtLeaderPriority");
+void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 
-/* VIEW(s07f4): tag struct DustSprite as struct DustSprite__s07f4; module/scene/scene.h has another definition. */
+/* VIEW(s07f4): tag struct DustSprite as struct DustSprite__s07f4; module/scene/scene.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s07f4.c:43: structure has no member named `layer'. */
 struct DustSprite__s07f4 {
   u8 unk00[9];
   u8 unused09 : 2;
@@ -54,7 +53,7 @@ s32 Func_020007f4(void) {
         dust->timer = ((Random16Far() << 9) >> 16) - 0x100;
         dust->speedLimit = 0;
         dust->acceleration = 0;
-        dust->update = Effect_AdvanceMotionAtLeaderPriority__s07f4;
+        dust->update = Effect_AdvanceMotionAtLeaderPriority;
       }
     }
   } while (--i >= 0);
@@ -126,8 +125,6 @@ extern s32 gData_02005ee4;
 extern s32 gData_02005e28[];
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-/* VIEW(s07f4): routine Func_02004904 as u32 Func_02004904(void); module/scene/gaia_rock_inside.h has s32 Func_02004904(void). */
-extern u32 Func_02004904__s07f4(void) __asm__("Func_02004904");
 
 /// Return the table for the current room.
 const void *Scene_GetPlacements(void) {
@@ -177,7 +174,7 @@ void Func_02000af8(s32 unused, u32 id) {
   u32 direction;
   s32 *state;
 
-  direction = Func_02004904__s07f4();
+  direction = Func_02004904();
   state = (s32 *)(gData_020023c4 + 0x288);
   object->collisionFlags = 0;
   Func_02004d9c(object, ((direction & 0xc000) >> 14) + 2);
@@ -266,8 +263,6 @@ void Func_02000cf8(void) { Func_02004ff4_(18, 17, 0, 3, 3, 31, 0); }
 
 extern const struct CellPoint gData_020051d8[12];
 
-/* VIEW(s07f4): routine OverlayObject_PrepareObject as void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type); module/field/object.h has struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type). */
-extern void *OverlayObject_PrepareObject__s07f4(s32 x, s32 y, s32 z, s32 type) __asm__("OverlayObject_PrepareObject");
 
 void Func_02000d18(void) {
   struct Actor *guard;
@@ -310,10 +305,10 @@ void Func_02000d18(void) {
     MapGrid_CopyCellAttributes(49, destY, 8, 8, destX, destY);
   }
   FieldEvent_Wait(30);
-  OverlayObject_PrepareObject__s07f4(175 << 18, 0, 0x1d40000, 286);
-  OverlayObject_PrepareObject__s07f4(175 << 18, 0, 0x1ea0000, 286);
-  OverlayObject_PrepareObject__s07f4(181 << 18, 0, 0x1d40000, 286);
-  OverlayObject_PrepareObject__s07f4(181 << 18, 0, 0x1ea0000, 286);
+  OverlayObject_PrepareObject(175 << 18, 0, 0x1d40000, 286);
+  OverlayObject_PrepareObject(175 << 18, 0, 0x1ea0000, 286);
+  OverlayObject_PrepareObject(181 << 18, 0, 0x1d40000, 286);
+  OverlayObject_PrepareObject(181 << 18, 0, 0x1ea0000, 286);
   Event_PlaySound(204);
   guard->motionFlags = 3;
   ((struct BoulderSprite *)guard->sprite)->layer = 3;
@@ -397,7 +392,7 @@ void Func_02000fac(void) {
 #include "text/msg_ids.h"
 
 extern s32 gData_0200559c[];
-/* VIEW(s1048): variable gData_0200646c as extern s32 gData_0200646c[]; s07f4 has extern struct Actor gData_0200646c; tried as the definition's extern struct ActorPlacement gData_0200646c[], it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s07f4.c:449: conflicting types for `gData_0200646c'. */
+/* VIEW(s1048): variable gData_0200646c as extern s32 gData_0200646c[]; s07f4 has extern struct Actor gData_0200646c; tried as the definition's extern struct ActorPlacement gData_0200646c[], it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s07f4.c:395: conflicting types for `gData_0200646c'. */
 extern s32 gData_0200646c__s1048[] __asm__("gData_0200646c");
 
 /// Object 10 turns to the leader, talks and walks to its place while the camera
@@ -510,13 +505,7 @@ void Func_020012ac(void) {
   Func_02004e64();
 }
 
-/* VIEW(s12ac): routine Scene_SetActorSpritePriority as s32 Scene_SetActorSpritePriority(); field.h has void Scene_SetActorSpritePriority(struct Actor *object, s32 priority). */
-extern s32 Scene_SetActorSpritePriority__s12ac() __asm__("Scene_SetActorSpritePriority");
-/* VIEW(s12ac): routine Func_02004d9c as s32 Func_02004d9c(); s07f4 has void Func_02004d9c(struct Actor *object, s32 mode). */
-extern s32 Func_02004d9c__s12ac() __asm__("Func_02004d9c");
-/* VIEW(s12ac): routine Animation_SetStateFlags as s32 Animation_SetStateFlags(); field.h has void Animation_SetStateFlags(struct Actor *object, u32 value). */
-extern s32 Animation_SetStateFlags__s12ac() __asm__("Animation_SetStateFlags");
-/* VIEW(s12ac): routine Actor_StartScript as s32 Actor_StartScript(); s07f4 has void Actor_StartScript(struct Actor *object, const s32 *script). */
+/* VIEW(s12ac): routine Actor_StartScript as s32 Actor_StartScript(); s07f4 has void Actor_StartScript(struct Actor *object, const s32 *script); not tried: Actor_StartScript's bound declaration was not found. */
 extern s32 Func_02004dac__s12ac() __asm__("Actor_StartScript");
 extern u8 gData_02005208[];
 
@@ -529,10 +518,10 @@ void Func_02001314(s32 a0) {
   FIELD_AT(t0, s32, 24) = 0x6666;
   FIELD_AT((t0 + 0x55), u8, 0) = 0;
   Actor_SetSpriteColor(t0, 2);
-  Scene_SetActorSpritePriority__s12ac(t0, 1);
-  Func_02004d9c__s12ac(t0, 1);
+  Scene_SetActorSpritePriority(t0, 1);
+  Func_02004d9c(t0, 1);
   Actor_SetSingleChildFlags(t0, 0);
-  Animation_SetStateFlags__s12ac(t0, 1);
+  Animation_SetStateFlags(t0, 1);
   Func_02004dac__s12ac(t0, (s32)gData_02005208);
 }
 #undef FIELD_AT
@@ -543,8 +532,6 @@ void Func_02001314(s32 a0) {
 #include "frame.h"
 #include "system/field_effect.h"
 
-/* VIEW(s136c): routine Func_02001314 as void Func_02001314(struct Orbiter *orbiter); the definition has void Func_02001314(s32 a0). */
-extern void Func_02001314__s136c(struct Orbiter *orbiter) __asm__("Func_02001314");
 
 // Steps an orbiting object around its anchor: turns it by half its speed, puts
 // it on the anchor (raised 8 pixels) and pushes it out by its radius; when its
@@ -569,14 +556,14 @@ s32 Func_0200136c(struct Orbiter *orbiter) {
     return 0;
   if (orbiter->radius == 0x20000)
     return 1;
-  Func_02001314__s136c(orbiter);
+  Func_02001314(orbiter);
   orbiter->radius -= 0x40000;
   orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
   orbiter->x = anchor->x;
   orbiter->y = anchor->y + 0x80000;
   orbiter->z = anchor->z;
   FieldVector_AddPolarOffset(orbiter->radius, *angle, &orbiter->x);
-  Func_02001314__s136c(orbiter);
+  Func_02001314(orbiter);
   orbiter->radius -= 0x40000;
   return 1;
 }

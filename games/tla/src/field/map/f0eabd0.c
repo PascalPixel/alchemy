@@ -193,7 +193,7 @@ struct Actor *Func_080eaeb4(void) {
 
 #include "fixed_math.h"
 
-/* VIEW(f0eabd0): tag struct EventWork as struct EventWork__f0eabd0; event_work.h has another definition. */
+/* VIEW(f0eabd0): tag struct EventWork as struct EventWork__f0eabd0; event_work.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/map/f0eabd0.c:202: dereferencing pointer to incomplete type. */
 struct EventWork__f0eabd0 {
   u8 unk00[20];
   struct Actor *objects[64];
@@ -354,8 +354,6 @@ struct ScreenSprite {
   u8 unk14[0x14];
 };
 
-/* VIEW(f0eabd0): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
-extern void Camera_WorldToScreen__f0eabd0(s32 *position) __asm__("Camera_WorldToScreen");
 
 /// Places sprite at the screen position of world position and draws it.
 void EffectSprite_DrawAtWorldPosition(struct ScreenSprite *sprite,
@@ -370,7 +368,7 @@ void EffectSprite_DrawAtWorldPosition(struct ScreenSprite *sprite,
     arg = p;
     p[1] = position[1];
     p[2] = position[2];
-    Camera_WorldToScreen__f0eabd0(arg);
+    Camera_WorldToScreen(arg);
     sprite->x = screen[0];
     sprite->y = screen[2];
     Func_080eb01c(sprite);

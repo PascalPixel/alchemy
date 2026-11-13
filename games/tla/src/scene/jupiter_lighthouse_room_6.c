@@ -31,8 +31,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 extern s32 gData_020023c0;
-/* VIEW(jupiter_lighthouse_room_6): variable gData_0200242c as struct Actor *gData_0200242c[]; module/scene/sea_of_time.h has struct Trigger gData_0200242c[]. */
-extern struct Actor *gData_0200242c__jupiter_lighthouse_room_6[] __asm__("gData_0200242c");
 s32 Func_020018bc(s32 value);
 void Func_02000108(void);
 void Func_020003a4(s32 value);
@@ -302,10 +300,6 @@ s32 Func_02000668(s32 *a, s32 *b) {
 
 extern const s32 gData_0200a3c4[];
 
-/* VIEW(jupiter_lighthouse_room_6): routine Func_02001bdc as s32 Func_02001bdc(s32 x, s32 z, s32 layer); module/scene/trial_road.h has void Func_02001bdc(void). */
-extern s32 Func_02001bdc__jupiter_lighthouse_room_6(s32 x, s32 z, s32 layer) __asm__("Func_02001bdc");
-/* VIEW(jupiter_lighthouse_room_6): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
-extern void Camera_WorldToScreen__jupiter_lighthouse_room_6(s32 *position) __asm__("Camera_WorldToScreen");
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_02000694(struct Actor *self) {
@@ -329,11 +323,11 @@ void Func_02000694(struct Actor *self) {
     u32 a = from[9] & 12;
     to[9] = (s8)((to[9] & ~12) | a);
   }
-  if (Func_02001bdc__jupiter_lighthouse_room_6(self->x, self->z, 2) != 255) {
+  if (Func_02001bdc(self->x, self->z, 2) != 255) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Camera_WorldToScreen__jupiter_lighthouse_room_6(position);
+    Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;

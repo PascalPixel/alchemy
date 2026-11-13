@@ -19,10 +19,7 @@
 #include "module/scene/jupiter_lighthouse_room_m.h"
 #include "module/scene/scene.h"
 
-/* VIEW(s3474): routine Func_020046f4 as void Func_020046f4(struct GustObject *object, s32 mode); module/scene/jupiter_lighthouse_room_m.h has void Func_020046f4(struct FieldEffect *effect, s32 mode). */
-extern void Func_020046f4__s3474(struct GustObject *object, s32 mode) __asm__("Func_020046f4");
-/* VIEW(s3474): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct GustObject *object, u32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
-extern void Actor_SetSingleChildFlags__s3474(struct GustObject *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
+void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Func_020032b4(struct GustObject *object);
 void Func_02003b7c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
@@ -38,8 +35,8 @@ struct GustObject *Func_02003474(struct GustObject *source) {
   position.z = source->z + Iwram_MulQ16(0x80000, Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                     position.z));
-  Func_020046f4__s3474(object, 2);
-  Actor_SetSingleChildFlags__s3474(object, 0);
+  Func_020046f4(object, 2);
+  Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->angle = source->angle;
@@ -136,8 +133,7 @@ void Func_020035ec(void) {
   }
 }
 
-/* VIEW(s3474): variable gData_02005b84 as s16 gData_02005b84; module/scene/trial_road.h has u32 gData_02005b84[]. */
-extern s16 gData_02005b84__s3474 __asm__("gData_02005b84");
+extern s16 gData_02005b84;
 
 void Func_020046ac(struct LightOam *oam, s32 depth);
 
@@ -167,7 +163,7 @@ void Func_0200377c(void) {
       z = actor->z - viewZ - viewY;
       oy = z - y;
       depth = ((y + z) >> 16) + 58;
-      big = gData_02005b84__s3474;
+      big = gData_02005b84;
       if (big == 0) {
         s32 x, sy;
         frame = actor->timer;
@@ -215,8 +211,6 @@ void Func_0200377c(void) {
   }
 }
 
-/* VIEW(s3474): routine Resource_DecodeType01 as void Resource_DecodeType01(const void *source, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
-extern void Resource_DecodeType01__s3474(const void *source, void *destination) __asm__("Resource_DecodeType01");
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -226,13 +220,13 @@ void Func_02003938(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
   Iwram_ClearWords(gData_02005a84, 64);
-  Resource_DecodeType01__s3474(gField_CachedTilesA, buffer);
+  Resource_DecodeType01(gField_CachedTilesA, buffer);
   gData_02005a80 = Resource_FindFreeEntry();
   VramCache_Load(gData_02005a80, 0xc00, buffer);
   Heap_Release(buffer);
   Task_Add(Func_0200377c, TASK_PASS_VBLANK);
   gData_02005a82 = 0;
-  gData_02005b84__s3474 = 0;
+  gData_02005b84 = 0;
   gData_02005b86 = -1;
 }
 
@@ -240,13 +234,13 @@ void Func_020039b8(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
   Iwram_ClearWords(gData_02005a84, 64);
-  Resource_DecodeType01__s3474(gField_CachedTilesB, buffer);
+  Resource_DecodeType01(gField_CachedTilesB, buffer);
   gData_02005a80 = Resource_FindFreeEntry();
   Vram_Load(gData_02005a80, 0x800, buffer);
   Heap_Release(buffer);
   Task_AddFrame(Func_0200377c, TASK_PASS_VBLANK);
   gData_02005a82 = 0;
-  gData_02005b84__s3474 = 0;
+  gData_02005b84 = 0;
   gData_02005b86 = -1;
 }
 
@@ -254,13 +248,13 @@ void Func_02003a38(void) {
   u8 *buffer = BumpAlloc(0x800);
 
   Iwram_ClearWords(gData_02005a84, 64);
-  Resource_DecodeType01__s3474(gField_CachedTilesC, buffer);
+  Resource_DecodeType01(gField_CachedTilesC, buffer);
   gData_02005a80 = Resource_FindFreeEntry();
   Vram_Load(gData_02005a80, 0x800, buffer);
   Heap_Release(buffer);
   Task_AddFrame(Func_0200377c, TASK_PASS_VBLANK);
   gData_02005a82 = 0;
-  gData_02005b84__s3474 = 1;
+  gData_02005b84 = 1;
   gData_02005b86 = -1;
 }
 

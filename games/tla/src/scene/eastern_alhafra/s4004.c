@@ -10,23 +10,16 @@
 #include "module/tla.h"
 #include "resource.h"
 
-/* VIEW(s4004): tag struct Rock as struct Rock__s4004; module/tla.h has another definition. */
-struct Rock__s4004 {
-  u8 unk00[24];
-  s32 timer;
-};
 
 struct RockWork {
   u8 tiles[0x500];
-  struct Rock__s4004 rocks[64];
+  struct Rock rocks[64];
   struct RockSprite sprites[64];
   s16 next;
   u16 tileBase;
   u16 resource;
 };
 
-/* VIEW(s4004): routine HeapSlot_AllocFar as struct RockWork *HeapSlot_AllocFar(s32 slot, s32 size); gamepak/far_call/system.h has void *HeapSlot_AllocFar(s32 slot, s32 size). */
-extern struct RockWork *HeapSlot_AllocFar__s4004(s32 slot, s32 size) __asm__("HeapSlot_AllocFar");
 
 static __inline__ void StartTask(void (*func)(void), s32 priority) {
   /* FAKEMATCH(wrapper): Task_Add forwarded inline; as a direct call, 6 of 83
@@ -35,11 +28,11 @@ static __inline__ void StartTask(void (*func)(void), s32 priority) {
 }
 
 void Func_02004004(void) {
-  struct RockWork *work = HeapSlot_AllocFar__s4004(220, sizeof(struct RockWork));
+  struct RockWork *work = HeapSlot_AllocFar(220, sizeof(struct RockWork));
   s32 entry;
   s32 tile;
   s32 i;
-  struct Rock__s4004 *rock;
+  struct Rock *rock;
   struct RockSprite *sprite;
 
   Func_020049d4(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);

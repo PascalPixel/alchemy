@@ -75,7 +75,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(sea_of_time): variable gData_020021e4 as extern const u8 gData_020021e4[]; the definition has struct ActorPlacement gData_020021e4[] = { { 8, CONDITION_ALWAYS, (s32) gData_02002154, PIXELS(120), 0, PIXELS(280), FACING_NORTH, 2, 0 }, {...; tried as the definition's extern struct WarpTarget gData_020021e4, it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:80: cannot convert to a pointer type. */
+/* VIEW(sea_of_time): variable gData_020021e4 as extern const u8 gData_020021e4[]; the definition has struct ActorPlacement gData_020021e4[] = { { 8, CONDITION_ALWAYS, (s32) gData_02002154, PIXELS(120), 0, PIXELS(280), FACING_NORTH, 2, 0 }, {...; tried as the definition's extern struct WarpTarget gData_020021e4, it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:83: cannot convert to a pointer type. */
 extern const u8 gData_020021e4__sea_of_time[] __asm__("gData_020021e4");
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
@@ -357,15 +357,13 @@ void Func_02000818(void) {
 #include "main_routine_work.h"
 #include "text/msg_ids.h"
 
-/* VIEW(sea_of_time): variable gData_020022c4 as extern u32 gData_020022c4; the definition has u32 gData_020022c4[] = { 0, }. */
-extern u32 gData_020022c4__sea_of_time __asm__("gData_020022c4");
-/* VIEW(sea_of_time): variable gData_020022be as extern u16 gData_020022be; the definition has u16 gData_020022be[] = { 0, }; tried as the definition's extern u16 gData_020022be[], it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:407: `gData_020022be' has an incomplete type. */
+/* VIEW(sea_of_time): variable gData_020022be as extern u16 gData_020022be; the definition has u16 gData_020022be[] = { 0, }; tried as the definition's extern u16 gData_020022be[], it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:388: `gData_020022be' has an incomplete type. */
 extern u16 gData_020022be__sea_of_time __asm__("gData_020022be");
-/* VIEW(sea_of_time): variable gData_020022c0 as extern s16 gData_020022c0; the definition has u32 gData_020022c0[] = { 0, }; tried as the definition's extern u32 gData_020022c0[], it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:408: `gData_020022c0' has an incomplete type. */
+/* VIEW(sea_of_time): variable gData_020022c0 as extern s16 gData_020022c0; the definition has u32 gData_020022c0[] = { 0, }; tried as the definition's extern u32 gData_020022c0[], it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:389: `gData_020022c0' has an incomplete type. */
 extern s16 gData_020022c0__sea_of_time __asm__("gData_020022c0");
-/* VIEW(sea_of_time): variable gData_020022bc as extern u16 gData_020022bc; the definition has u16 gData_020022bc[] = { 0, }; tried as the definition's extern u16 gData_020022bc[], it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:443: `gData_020022bc' has an incomplete type. */
+/* VIEW(sea_of_time): variable gData_020022bc as extern u16 gData_020022bc; the definition has u16 gData_020022bc[] = { 0, }; tried as the definition's extern u16 gData_020022bc[], it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:424: `gData_020022bc' has an incomplete type. */
 extern u16 gData_020022bc__sea_of_time __asm__("gData_020022bc");
-/* VIEW(sea_of_time): variable gData_02002118 as extern struct Spots gData_02002118; the definition has u16 gData_02002118[] = { 0, 672, 0, 704, 0, 896, 0, 320, 0, 512, 0, 192, 0, 320, 0, 416, 0, 320, 0, 832, 0, 96, 0, 160, }; tried as the definition's extern u16 gData_02002118[], it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:447: invalid initializer. */
+/* VIEW(sea_of_time): variable gData_02002118 as extern struct Spots gData_02002118; the definition has u16 gData_02002118[] = { 0, 672, 0, 704, 0, 896, 0, 320, 0, 512, 0, 192, 0, 320, 0, 416, 0, 320, 0, 832, 0, 96, 0, 160, }; tried as the definition's extern u16 gData_02002118[], it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:428: invalid initializer. */
 extern struct Spots gData_02002118__sea_of_time __asm__("gData_02002118");
 /* VIEW(sea_of_time): variable gData_02002110 as extern u8 gData_02002110[]; the definition has u32 gData_02002110[] = { 0x18101810, 0x1810, }; tried as the definition's extern u32 gData_02002110[], Func_02000a80 moves: 5 of 188 instructions in tla-ja. */
 extern u8 gData_02002110__sea_of_time[] __asm__("gData_02002110");
@@ -385,7 +383,7 @@ void Func_02000a80(void) {
 
   index = (Func_0200034c(0, actor->x >> 20, actor->z >> 20) >> 8) - 1;
   frame = &gFrameCount;
-  stamp = &gData_020022c4__sea_of_time;
+  stamp = &gData_020022c4;
 
   if (*frame - *stamp > 50) {
     gData_020022be__sea_of_time = 0;
@@ -472,7 +470,7 @@ void Func_02000c50(void) {
 #include "system/io_reg.h"
 
 extern u32 gData_020022cc;
-/* VIEW(s0c94): routine Func_02001fb4 as s32 Func_02001fb4(void); sea_of_time.h has void Func_02001fb4(void); tried as the definition's void Func_02001fb4(s32 *position, s32 speed, s32 mode), it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:494: conflicting types for `Func_02001fb4'. */
+/* VIEW(s0c94): routine Func_02001fb4 as s32 Func_02001fb4(void); sea_of_time.h has void Func_02001fb4(void); tried as the definition's void Func_02001fb4(s32 *position, s32 speed, s32 mode), it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:473: conflicting types for `Func_02001fb4'. */
 extern s32 Func_02001fb4__s0c94(void) __asm__("Func_02001fb4");
 
 /// Fades BG palette 3's entries 1 to 13 toward RGB(11, 6, 23), one unit per
@@ -1092,8 +1090,6 @@ void Func_02001928(s32 x, s32 z, s32 actor) {
   Event_Wait(20);
 }
 
-/* VIEW(sea_of_time): routine Party_PlaySavedMusic as void Party_PlaySavedMusic(); module/system/system.h has void Party_PlaySavedMusic(void). */
-extern void Party_PlaySavedMusic__sea_of_time() __asm__("Party_PlaySavedMusic");
 /// The Sea of Time's opening: places the camera and the first effects, showers
 /// sparks for 360 frames and larger effects for 16, then fades BG palette 3 to
 /// RGB(11, 6, 23).
@@ -1218,7 +1214,7 @@ void Func_02001a14(void) {
     gData_020022cc += gFrameCount & 1;
   } while (changed);
   Task_RemoveFar(Func_02001650);
-  Party_PlaySavedMusic__sea_of_time();
+  Party_PlaySavedMusic();
   GameFlag_SetBit(0x940);
   Func_02001fb4();
 }

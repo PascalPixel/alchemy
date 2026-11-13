@@ -12,8 +12,6 @@
 #include "module/tla.h"
 #include "system.h"
 
-/* VIEW(s3370): variable gData_02006180 as extern const u8 gData_02006180[]; the definition has s32 gData_02006180[] = { 22, 9, 0xcccc, 22, 10, 0xcccc, 39, 1, (s32) 0x80010000, 23, 6, - 0x10000, 0, 1, 13, 16, (s32) 0xc0010000, 3, 0, 1, .... */
-extern const u8 gData_02006180__s3370[] __asm__("gData_02006180");
 extern s32 gData_02005b54[];
 
 void Actor_StartScript(struct Actor *object, const u8 *script);
@@ -81,7 +79,7 @@ void Func_02003370(void) {
       s32 mask;
 
       sprite = object->sprite;
-      Actor_StartScript(object, gData_02006180__s3370);
+      Actor_StartScript(object, gData_02006180);
       Actor_SetSpriteColor(object, 1);
       object->motionFlags = 0;
       {
@@ -140,12 +138,6 @@ void Func_02003648(s32 id) { Actor_GetById(id)->motionFlags = 3; }
 struct Actor;
 void Func_02000610(s32 id);
 void Func_02000640(s32 id);
-/* VIEW(s3370): routine PartyInventory_Remove as s32 PartyInventory_Remove(); module/game/game.h has s32 PartyInventory_Remove(s32 item_id). */
-extern s32 PartyInventory_Remove__s3370() __asm__("PartyInventory_Remove");
-/* VIEW(s3370): routine HeapSlot_AllocFar as s32 HeapSlot_AllocFar(); gamepak/far_call/system.h has void *HeapSlot_AllocFar(s32 slot, s32 size). */
-extern s32 HeapSlot_AllocFar__s3370() __asm__("HeapSlot_AllocFar");
-/* VIEW(s3370): routine HeapSlot_Release as s32 HeapSlot_Release(); heap_release.h has void HeapSlot_Release(s32 slot). */
-extern s32 HeapSlot_Release__s3370() __asm__("HeapSlot_Release");
 extern u8 MsgTheBeaconIs[];
 extern s32 gData_020060fc[];
 
@@ -191,7 +183,7 @@ void Func_02003658(void) {
   Actor_FaceDirectionAndWait((OWNER), 0xc000);
   Actor_RunRepeatedMotion((OWNER), 2);
   FieldEvent_Wait(20);
-  PartyInventory_Remove__s3370(222);
+  PartyInventory_Remove(222);
   anchor = (s32)Actor_Get(4);
   y = A(anchor)->y;
   x = A(anchor)->x;
@@ -215,11 +207,11 @@ void Func_02003658(void) {
   A(object)->speedLimit = 0x6666;
   A(object)->acceleration = 0xccc;
   A(object)->gravity = 0x8000;
-  block = HeapSlot_AllocFar__s3370(68, 0x608);
+  block = HeapSlot_AllocFar(68, 0x608);
   Item_LoadIcon(247);
   tiles = (block + 0x400);
   Vram_Load(sprite->vramBlock, 128, tiles);
-  HeapSlot_Release__s3370(68);
+  HeapSlot_Release(68);
   A(object)->motionFlags = zero;
   FieldActor_SetMoveTarget(object, 0x2000000, 0x800000, 0x1180000);
   Actor_WaitForMove(object);
@@ -450,8 +442,6 @@ L_0200bcea:
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-/* VIEW(s3370): routine Map_CenterOnFollowedPoint as s32 Map_CenterOnFollowedPoint(); module/scene/scene.h has void Map_CenterOnFollowedPoint(void). */
-extern s32 Map_CenterOnFollowedPoint__s3370() __asm__("Map_CenterOnFollowedPoint");
 void Func_020004a4(void);
 extern u8 MsgWhatCouldHe[];
 
@@ -508,7 +498,7 @@ void Func_02003ff4(void) {
   t21 = FieldCamera_GetActor();
   ((struct Actor *)t21)->motionFlags = 0;
   FieldCamera_MoveTo(0x2000000, 0x600000, 0x1200000, 0);
-  Map_CenterOnFollowedPoint__s3370();
+  Map_CenterOnFollowedPoint();
   System_Wait(1);
   t25 = (s32)Ram_HeapSlots->eventWork;
   FIELD_AT(t25, s32, 428) = 0x201;
@@ -1154,11 +1144,6 @@ void Func_020050b0(void) {
     gData_02006cf0 = 0;
 }
 
-/* VIEW(s3370): tag struct MarsLighthouseAerieEventWork as struct MarsLighthouseAerieEventWork__s3370; module/scene/scene.h has another definition. */
-struct MarsLighthouseAerieEventWork__s3370 {
-  u8 unk000[0x1ac];
-  s32 value1ac;
-};
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -1167,13 +1152,13 @@ static __inline__ void Func_0200575c_(s32 a, s32 b) {
 }
 
 void Func_020051e0(void) {
-  struct MarsLighthouseAerieEventWork__s3370 *work = Ram_HeapSlots->eventWork;
+  struct MarsLighthouseAerieEventWork *work = Ram_HeapSlots->eventWork;
   s32 saved;
 
-  saved = work->value1ac;
+  saved = work->screenEffect;
   PaletteFade_ApplyTarget(0x202108, 1);
   Func_0200575c_(0x10000, 2);
-  ((struct MarsLighthouseAerieEventWork__s3370 *)Ram_HeapSlots->eventWork)->value1ac = 0x100;
+  ((struct MarsLighthouseAerieEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_02005030();
@@ -1188,14 +1173,12 @@ void Func_020051e0(void) {
 
     party->unk2c2 = 0;
   }
-  work->value1ac = saved;
+  work->screenEffect = saved;
 }
 
 #include "system/vector3.h"
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-/* VIEW(s3370): routine Camera_WorldToScreen as void Camera_WorldToScreen(struct Vector3 *v); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
-extern void Camera_WorldToScreen__s3370(struct Vector3 *v) __asm__("Camera_WorldToScreen");
 
 void Func_02005268(struct Actor *object) {
   struct Vector3 position;
@@ -1232,7 +1215,7 @@ void Func_02005268(struct Actor *object) {
         p->x = object->x;
         p->y = object->y + (work->unka0[i] << 16);
         p->z = object->z;
-        Camera_WorldToScreen__s3370(p);
+        Camera_WorldToScreen(p);
         x = p->x;
         j = 0;
         z = p->z;
@@ -1261,7 +1244,7 @@ void Func_02005268(struct Actor *object) {
 #undef A
 #undef FIELD_AT
 
-/* VIEW(s53e4): tag struct SparkleSprite as struct SparkleSprite__s53e4; s3370.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie/s3370.c:1422: structure has no member named `flag'. */
+/* VIEW(s53e4): tag struct SparkleSprite as struct SparkleSprite__s53e4; s3370.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie/s3370.c:1288: structure has no member named `flag'. */
 struct SparkleSprite__s53e4 {
   u8 unk00[5];
   u8 attr5Low : 5;
@@ -1275,7 +1258,7 @@ struct SparkleSprite__s53e4 {
   u8 unk0a[0x1e];
 };
 
-/* VIEW(s53e4): tag struct SparkleWork as struct SparkleWork__s53e4; s3370.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie/s3370.c:1412: incompatible types in assignment. */
+/* VIEW(s53e4): tag struct SparkleWork as struct SparkleWork__s53e4; s3370.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie/s3370.c:1278: incompatible types in assignment. */
 struct SparkleWork__s53e4 {
   struct SparkleSprite__s53e4 sprites[4];
   u16 unka0;
@@ -1285,10 +1268,8 @@ struct SparkleWork__s53e4 {
   struct Actor *object;
 };
 
-/* VIEW(s3370): variable gResourceTableEntries as struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has struct VramBlockCacheEntry gResourceTableEntries[]. */
-extern struct ResourceTableEntry gResourceTableEntries__s3370[] __asm__("gResourceTableEntries");
 
-/* VIEW(s3370): routine Func_020057b4 as s32 Func_020057b4(struct Actor *object); module/scene/scene.h has void Func_020057b4(void). */
+/* VIEW(s3370): routine Func_020057b4 as s32 Func_020057b4(struct Actor *object); module/scene/scene.h has void Func_020057b4(void); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie/s3370.c:1299: too many arguments to function `Func_020057b4'. */
 extern s32 Func_020057b4__s3370(struct Actor *object) __asm__("Func_020057b4");
 
 void Func_020053e4(struct Actor *object, struct SparkleWork__s53e4 *work) {
@@ -1307,7 +1288,7 @@ void Func_020053e4(struct Actor *object, struct SparkleWork__s53e4 *work) {
   ((u8 *)object)[0x62] = 0;
   ((u8 *)object)[0x63] = 0;
   object->update = Func_02005268;
-  tile = gResourceTableEntries__s3370[work->vramEntry].offset >> 5;
+  tile = gResourceTableEntries[work->vramEntry].offset >> 5;
   object->watchedObject = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
     col = 1;

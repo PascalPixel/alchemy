@@ -52,22 +52,14 @@ void Func_02001804(void);
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
-/* VIEW(s0bc0): routine Func_02003d40 as void Func_02003d40(struct Actor *object, s32 mode); module/scene/airs_rock_inside.h has void Func_02003d40(void). */
-extern void Func_02003d40__s0bc0(struct Actor *object, s32 mode) __asm__("Func_02003d40");
 
 void Func_02000c4c(s32 a, s32 b) {
   Func_02000bc0(a, b, gMainRoutineWork.currentOwner);
 }
 
-/* VIEW(s0bc0): routine ObjectVisual_CopyAttributes as void ObjectVisual_CopyAttributes(s32 id, s32 value); module/field/object.h has void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId). */
-extern void ObjectVisual_CopyAttributes__s0bc0(s32 id, s32 value) __asm__("ObjectVisual_CopyAttributes");
 void Func_020006ec(struct Actor *object, struct Actor *other);
 void Actor_StartScript(struct Actor *object, const void *script);
 void Actor_MoveToObject(s32 id, s32 target);
-/* VIEW(s0bc0): routine Func_02003d80 as s32 Func_02003d80(void *sprite, s32 frame); module/scene/mars_lighthouse_room_f.h has void Func_02003d80(void). */
-extern s32 Func_02003d80__s0bc0(void *sprite, s32 frame) __asm__("Func_02003d80");
-/* VIEW(s0bc0): routine Effect_AdvanceMotionAtLeaderPriority as void Effect_AdvanceMotionAtLeaderPriority(struct Actor *object); module/field/field_effect.h has void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object). */
-extern void Effect_AdvanceMotionAtLeaderPriority__s0bc0(struct Actor *object) __asm__("Effect_AdvanceMotionAtLeaderPriority");
 
 // Raises each listed actor's cells: the shape grid and the cell flags under it,
 // then lifts the leader if the new terrain is above the leader.

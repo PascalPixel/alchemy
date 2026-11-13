@@ -121,8 +121,7 @@ void Func_02000428(void) {
   Event_End();
 }
 
-/* VIEW(s0218): routine MessageArgument_Push as void MessageArgument_Push(s32 value, s32 slot); module/window/window.h has void MessageArgument_Push(u32 value, u32 kind). */
-extern void MessageArgument_Push__s0218(s32 value, s32 slot) __asm__("MessageArgument_Push");
+void MessageArgument_Push(u32 value, u32 kind);
 
 /// Puts an item in the chest: "{protagonist} put {actor}'s {item} in the
 /// chest." (MsgTrialRoadStoredItem) with sound 125 while the chest object
@@ -136,8 +135,8 @@ void Func_020004f4(s32 item, s32 owner, s32 slot) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  MessageArgument_Push__s0218(owner, 1);
-  MessageArgument_Push__s0218(item, 2);
+  MessageArgument_Push(owner, 1);
+  MessageArgument_Push(item, 2);
   FieldMessage_Show((s32)&MsgTrialRoadStoredItem, 1);
   Sound_Play(125);
   Motion_SetModeAndWaitAnimation(kind, 5);
@@ -154,7 +153,7 @@ void Func_020004f4(s32 item, s32 owner, s32 slot) {
   Event_End();
 }
 
-/* VIEW(s0218): tag struct EventWork15a as struct EventWork15a__s0218; module/tla.h has another definition. */
+/* VIEW(s0218): tag struct EventWork15a as struct EventWork15a__s0218; module/tla.h has another definition; tried with the definition the rest of the object has, its members read value as flag, it does not compile in tla-ja: games/tla/src/scene/trial_road/s0218.c:172: dereferencing pointer to incomplete type. */
 struct EventWork15a__s0218 {
   u8 unk000[0x15a];
   u16 value;

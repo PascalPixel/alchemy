@@ -17,8 +17,6 @@
 #include "module/scene/scene.h"
 #include "module/tla.h"
 
-/* VIEW(madra_catacombs): routine Func_020010ec as s32 Func_020010ec(s32 layer, s32 x, s32 z); module/scene/aqua_rock_inside.h has void Func_020010ec(void). */
-extern s32 Func_020010ec__madra_catacombs(s32 layer, s32 x, s32 z) __asm__("Func_020010ec");
 s32 Func_020011d4(struct Actor *object);
 
 // Raises each listed actor's cells: the shape grid and the cell flags under it,
@@ -31,7 +29,7 @@ void Func_02000038(u16 *list) {
   while (((struct ListedActor *)list)->id != 0xffff) {
     struct Actor *object = Actor_GetById(*list);
     u8 *layer = &object->terrainId;
-    s32 shape = Func_020010ec__madra_catacombs(*layer, object->x, object->z);
+    s32 shape = Func_020010ec(*layer, object->x, object->z);
     s32 level = Map_GetTerrainHeight(*layer, object->x, object->z);
     s32 index;
     u8 *cells;
@@ -97,7 +95,7 @@ void Func_0200014c(u16 *list) {
       u8 *cell = (u8 *)Ram_HeapSlots->mapWork->layers[*layer].cells;
       u8 *shape =
           grid + ((struct MapCell *)cell - (struct MapCell *)Ram_MapCellBuffer);
-      s32 kind = Func_020010ec__madra_catacombs(*layer, held->x, held->z);
+      s32 kind = Func_020010ec(*layer, held->x, held->z);
       s32 height = Map_GetTerrainHeight(*layer, held->x, held->z);
       s32 index = Func_020011d4(held);
       s32 result = Func_020011f4(*layer, kind, (height >> 19) - 4);
@@ -119,14 +117,8 @@ void Func_0200014c(u16 *list) {
   }
 }
 
-/* VIEW(madra_catacombs): routine ObjectVisual_CopyAttributes as void ObjectVisual_CopyAttributes(s32 id, s32 value); module/field/object.h has void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId). */
-extern void ObjectVisual_CopyAttributes__madra_catacombs(s32 id, s32 value) __asm__("ObjectVisual_CopyAttributes");
 void Func_020006ec(struct Actor *object, struct Actor *other);
 void Func_02003c00(s32 a, s32 b, s32 c);
-/* VIEW(madra_catacombs): routine Func_02003d80 as s32 Func_02003d80(void *sprite, s32 frame); module/scene/mars_lighthouse_room_f.h has void Func_02003d80(void). */
-extern s32 Func_02003d80__madra_catacombs(void *sprite, s32 frame) __asm__("Func_02003d80");
-/* VIEW(madra_catacombs): routine Effect_AdvanceMotionAtLeaderPriority as void Effect_AdvanceMotionAtLeaderPriority(struct Actor *object); module/field/field_effect.h has void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object). */
-extern void Effect_AdvanceMotionAtLeaderPriority__madra_catacombs(struct Actor *object) __asm__("Effect_AdvanceMotionAtLeaderPriority");
 
 // One-field view: the shape store is memory of its own to sched2, which sinks
 // it past the cell read; a plain store keeps its order.
@@ -147,7 +139,7 @@ void Func_02000270(void) {
   cells = (u8 *)Ram_HeapSlots->mapWork->layers[*layer].cells;
   shapes = Ram_MapShapeGrid +
            (((struct MapCell *)cells) - (struct MapCell *)Ram_MapCellBuffer);
-  shape = Func_020010ec__madra_catacombs(*layer, held->x, held->z);
+  shape = Func_020010ec(*layer, held->x, held->z);
   level = Map_GetTerrainHeight(*layer, held->x, held->z);
   index = Func_020011d4(held);
   level >>= 19;
@@ -284,8 +276,6 @@ void Func_0200052c(void) {
 
 void Func_02000558(void) { Func_020011cc(gData_020013c4); }
 
-/* VIEW(madra_catacombs): routine PartyInventory_Remove as void PartyInventory_Remove(s32 item); module/game/game.h has s32 PartyInventory_Remove(s32 item_id). */
-extern void PartyInventory_Remove__madra_catacombs(s32 item) __asm__("PartyInventory_Remove");
 void Func_02001174(void);
 void Func_02000958(void);
 
@@ -339,7 +329,7 @@ void Func_02000568(void) {
   Actor_SetMovementTypeById(15, gData_020012f4);
   Event_Wait(80);
   Func_02000958();
-  PartyInventory_Remove__madra_catacombs(459);
+  PartyInventory_Remove(459);
   GameFlag_SetBit(0x8c9);
   Event_End();
 }
@@ -354,9 +344,9 @@ extern u8 MsgFieldEyesOfTruth[];
 void Actor_MoveToObject(s32 id, s32 value);
 void Func_020011b4(void);
 void Func_020011bc(s32 a, s32 b, s32 c, s32 d);
-/* VIEW(madra_catacombs): routine Func_020011c4 as void Func_020011c4(const void *data); module/scene/mars_lighthouse_room_m.h has void Func_020011c4(void). */
+/* VIEW(madra_catacombs): routine Func_020011c4 as void Func_020011c4(const void *data); module/scene/mars_lighthouse_room_m.h has void Func_020011c4(void); tried as the definition's void Func_020011c4(void), which the object already declares, Func_02000dcc moves: 1 of 142 instructions in tla-ja. */
 extern void Func_020011c4__madra_catacombs(const void *data) __asm__("Func_020011c4");
-/* VIEW(madra_catacombs): routine Func_020011dc as void Func_020011dc(const void *data); module/scene/trial_road.h has void Func_020011dc(void). */
+/* VIEW(madra_catacombs): routine Func_020011dc as void Func_020011dc(const void *data); module/scene/trial_road.h has void Func_020011dc(void); tried as the definition's void Func_020011dc(void), which the object already declares, Func_02000dcc moves: 1 of 142 instructions in tla-ja. */
 extern void Func_020011dc__madra_catacombs(const void *data) __asm__("Func_020011dc");
 void Func_020008d0(struct Actor *object);
 void Func_02000cf4(void);
@@ -438,16 +428,11 @@ void Func_020008f4(void) {
 
 void Func_0200092c(void) { Func_0200014c(gData_020013ca); }
 
-/* VIEW(madra_catacombs): tag struct EventWorkCbc as struct EventWorkCbc__madra_catacombs; module/scene/scene.h has another definition. */
-struct EventWorkCbc__madra_catacombs {
-  u8 unk000[0xcbc];
-  void *active;
-};
 
 void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 void Func_0200093c(void) {
-  struct EventWorkCbc__madra_catacombs *work = Ram_HeapSlots->eventWork;
+  struct EventWorkCbc *work = Ram_HeapSlots->eventWork;
 
   if (work->active != 0)
     Func_020008d0(work->active);

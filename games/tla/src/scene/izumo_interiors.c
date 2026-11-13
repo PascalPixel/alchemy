@@ -994,16 +994,6 @@ void Func_02001d8c(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
-/* VIEW(izumo_interiors): routine BattleEffect_StartArcEffect as void BattleEffect_StartArcEffect(); module/field/event_commands.h has void BattleEffect_StartArcEffect(void). */
-extern void BattleEffect_StartArcEffect__izumo_interiors() __asm__("BattleEffect_StartArcEffect");
-/* VIEW(izumo_interiors): routine BattleEffect_EndArcEffect as void BattleEffect_EndArcEffect(); module/field/event_commands.h has void BattleEffect_EndArcEffect(void). */
-extern void BattleEffect_EndArcEffect__izumo_interiors() __asm__("BattleEffect_EndArcEffect");
-/* VIEW(izumo_interiors): routine BattleEffect_WaitForArcGroups as void BattleEffect_WaitForArcGroups(); module/field/event_commands.h has void BattleEffect_WaitForArcGroups(void). */
-extern void BattleEffect_WaitForArcGroups__izumo_interiors() __asm__("BattleEffect_WaitForArcGroups");
-/* VIEW(izumo_interiors): routine BattleEffect_SetObjectUpdateMode as void BattleEffect_SetObjectUpdateMode(); module/field/event_commands.h has void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode). */
-extern void BattleEffect_SetObjectUpdateMode__izumo_interiors() __asm__("BattleEffect_SetObjectUpdateMode");
-/* VIEW(izumo_interiors): routine PartyInventory_Remove as void PartyInventory_Remove(); module/game/game.h has s32 PartyInventory_Remove(s32 item_id). */
-extern void PartyInventory_Remove__izumo_interiors() __asm__("PartyInventory_Remove");
 
 void Func_02001dd0(void) {
   s32 t9, t21, t31;
@@ -1032,9 +1022,9 @@ L_02009e48:
   Actor_ShowEmote(15, 0x105, 120);
   Func_080d47b4(15, 0x106, 60);
   Event_ShowMessageAndWait(15, 0);
-  BattleEffect_StartArcEffect__izumo_interiors();
+  BattleEffect_StartArcEffect();
   t21 = ((s32)Actor_GetById(15));
-  BattleEffect_SetObjectUpdateMode__izumo_interiors(t21, 2);
+  BattleEffect_SetObjectUpdateMode(t21, 2);
   Sound_Play(201);
   Event_Wait(60);
   Actor_SetPosition(24, PIXELS(144), PIXELS(520));
@@ -1044,9 +1034,9 @@ L_02009e48:
   Actor_ArmCallback(24, FACING_SOUTH, 0);
   Event_Wait(60);
   t31 = ((s32)Actor_GetById(15));
-  BattleEffect_SetObjectUpdateMode__izumo_interiors(t31, 0);
-  BattleEffect_WaitForArcGroups__izumo_interiors();
-  BattleEffect_EndArcEffect__izumo_interiors();
+  BattleEffect_SetObjectUpdateMode(t31, 0);
+  BattleEffect_WaitForArcGroups();
+  BattleEffect_EndArcEffect();
   Event_Wait(30);
   Event_Wait(30);
   Actor_SetAngleToward(15, 24, 0);
@@ -1080,7 +1070,7 @@ L_02009e48:
   Event_ShowMessageAndWait(15, 0);
   Event_Wait(60);
   GameFlag_SetBit(0x92c);
-  PartyInventory_Remove__izumo_interiors(0x1c3);
+  PartyInventory_Remove(0x1c3);
   Event_End();
 }
 

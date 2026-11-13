@@ -321,8 +321,6 @@ s32 Scene_PrepareMap(void) {
 void Func_02000830(void) { Func_020019f4(); }
 
 void Actor_MoveToObject();
-/* VIEW(ancient_lemuria): routine Message_CloseFinishedWindows as void Message_CloseFinishedWindows(); module/window/window.h has void Message_CloseFinishedWindows(void). */
-extern void Message_CloseFinishedWindows__ancient_lemuria() __asm__("Message_CloseFinishedWindows");
 
 void Func_02000838(void) {
   struct Actor *leader;
@@ -436,7 +434,7 @@ void Func_02000838(void) {
   FieldMessage_ShowAtActor(9, 0);
   Event_Wait(20);
   Event_ShowMessageThenWait(0x800a, 0, 0);
-  Message_CloseFinishedWindows__ancient_lemuria();
+  Message_CloseFinishedWindows();
   Event_Wait(10);
   Actor_ShowEmote(7, 0x108, 40);
   Actor_WalkByAndWait(9, -8, 8);

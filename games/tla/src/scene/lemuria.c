@@ -61,8 +61,7 @@ s32 Func_02000070(struct Actor *self, struct Actor *other, s32 range) {
 }
 
 s32 Func_02001d54(struct Actor *object);
-/* VIEW(lemuria): routine Func_02001b7c as void Func_02001b7c(struct Actor *object, s32 mode); module/scene/prox.h has void Func_02001b7c(void). */
-extern void Func_02001b7c__lemuria(struct Actor *object, s32 mode) __asm__("Func_02001b7c");
+void Func_02001b7c(struct Actor *object, s32 mode);
 
 s32 Func_020000e8(struct Actor *self) {
   u8 *event = Ram_HeapSlots->eventWork;
@@ -90,11 +89,11 @@ s32 Func_020000e8(struct Actor *self) {
     goto near;
 far:
   *state = 0;
-  Func_02001b7c__lemuria(self, 2);
+  Func_02001b7c(self, 2);
   return 0;
 near:
   *state = 1;
-  Func_02001b7c__lemuria(self, 1);
+  Func_02001b7c(self, 1);
   return 0;
 }
 
@@ -107,8 +106,6 @@ struct WarpTarget {
 void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void Func_02001d44(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 s32 Func_02001d5c(s32 x, s32 z, s32 layer);
-/* VIEW(lemuria): routine Func_02001d64 as void Func_02001d64(s32 x, s32 z, s32 layer, s32 value); module/scene/magma_rock_inside.h has void Func_02001d64(void). */
-extern void Func_02001d64__lemuria(s32 x, s32 z, s32 layer, s32 value) __asm__("Func_02001d64");
 
 extern struct WarpTarget gData_020021bc;
 extern struct WarpTarget gData_020021c4;
@@ -330,8 +327,8 @@ void Func_02000560(void) {
    * its shift comes late, 2 of 33 instructions differ in tla-en. */
   old = z;
   z = 0x4080000;
-  Func_02001d64__lemuria(x, old, 0, value | 64);
-  Func_02001d64__lemuria(x, z, 0, Func_02001d5c(x, z, 0) | 64);
+  Func_02001d64(x, old, 0, value | 64);
+  Func_02001d64(x, z, 0, Func_02001d5c(x, z, 0) | 64);
 }
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -601,8 +598,6 @@ void Func_02000bbc(void) {
 }
 
 void Func_02001cfc();
-/* VIEW(lemuria): routine Func_02001d24 as void Func_02001d24(); module/scene/shrine_of_the_sea_god.h has void Func_02001d24(void). */
-extern void Func_02001d24__lemuria() __asm__("Func_02001d24");
 void Func_02001d4c();
 void Actor_SetWideSprite();
 
@@ -666,7 +661,7 @@ L_02008cf8:
   Actor_SetPosition(7, PIXELS(56), PIXELS(1016));
   Actor_SetAnimation(7, 9);
 L_02008d2a:
-  Func_02001d24__lemuria();
+  Func_02001d24();
   Func_02001d3c(0, 0x962, 8, 9);
   t32 = Actor_Get(8);
   FIELD_AT(t32, u8, 35) = (FIELD_AT(t32, u8, 35) | 32);

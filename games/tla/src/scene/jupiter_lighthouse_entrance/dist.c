@@ -30,8 +30,6 @@ extern const s32 gData_0200219c[];
 extern s32 gData_020021bc;
 
 s32 Func_02001b2c(s32 x, s32 z, s32 layer);
-/* VIEW(dist): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
-extern void Camera_WorldToScreen__dist(s32 *position) __asm__("Camera_WorldToScreen");
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_020005e4(struct Actor *self) {
@@ -55,7 +53,7 @@ void Func_020005e4(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Camera_WorldToScreen__dist(position);
+    Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;
@@ -104,10 +102,7 @@ stop:
   gData_020021bc = 0;
 }
 
-/* VIEW(dist): routine Func_020019fc as void Func_020019fc(struct GustObject *object, s32 mode); module/scene/jupiter_lighthouse_entrance.h has void Func_020019fc(struct FieldEffect *effect, s32 mode). */
-extern void Func_020019fc__dist(struct GustObject *object, s32 mode) __asm__("Func_020019fc");
-/* VIEW(dist): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct GustObject *object, u32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
-extern void Actor_SetSingleChildFlags__dist(struct GustObject *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
+void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 
 struct GustObject *Func_020007a4(struct GustObject *source) {
   struct Vector3 position;
@@ -120,8 +115,8 @@ struct GustObject *Func_020007a4(struct GustObject *source) {
   position.z = source->z + Iwram_MulQ16(0x80000, Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                     position.z));
-  Func_020019fc__dist(object, 2);
-  Actor_SetSingleChildFlags__dist(object, 0);
+  Func_020019fc(object, 2);
+  Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->angle = source->angle;
@@ -137,25 +132,17 @@ struct GustObject *Func_020007a4(struct GustObject *source) {
   return object;
 }
 
-/* VIEW(dist): tag struct SceneEffectParams as struct SceneEffectParams__dist; module/scene/scene.h has another definition. */
-struct SceneEffectParams__dist {
-  s32 unk00;
-  s32 mode;
-  s32 color1;
-  s32 color2;
-  u8 unk10[0x18];
-};
 
 s32 Func_0200087c(struct SceneEffectSource *object) {
-  struct SceneEffectParams__dist params;
+  struct SceneEffectParams params;
   s32 phase, x, y, speed;
 
   phase = gFrameCount & 7;
   if (phase == 0) {
-    params.unk00 = 3;
-    params.color1 = 0xb333;
-    params.color2 = 0xb333;
-    params.mode = 14;
+    params.priority = 3;
+    params.startScaleX = 0xb333;
+    params.startScaleY = 0xb333;
+    params.palette = 14;
     x = object->x + (((s32)((u32)(Random16Far() * 9) >> 16) - 4) << 16);
     y = object->y + ((32 - (s32)((u32)(Random16Far() * 20) >> 16)) << 16);
     speed = ((((s32)((u32)(Random16Far() * 5) >> 16)) << 16) + 0x50000) / 10;
@@ -232,13 +219,10 @@ void Func_0200091c(void) {
 #include "map.h"
 #include "vram_tab.h"
 
-/* VIEW(dist): variable gData_02002200 as s16 gData_02002200; module/scene/apojii_islands.h has u32 gData_02002200[]. */
+/* VIEW(dist): variable gData_02002200 as s16 gData_02002200; module/scene/apojii_islands.h has u32 gData_02002200[]; tried as the definition's extern u32 gData_02002200[], which the object already declares, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_entrance/dist.c:237: `gData_02002200' undeclared (first use in this function). */
 extern s16 gData_02002200__dist __asm__("gData_02002200");
-/* VIEW(dist): variable gData_02002204 as struct Actor *gData_02002204[]; module/scene/jupiter_lighthouse_basement.h has u32 gData_02002204[]. */
-extern struct Actor *gData_02002204__dist[] __asm__("gData_02002204");
+extern u32 gData_02002204[];
 
-/* VIEW(dist): routine Func_02001b24 as s32 Func_02001b24(struct Actor *actor); module/scene/magma_rock.h has void Func_02001b24(void). */
-extern s32 Func_02001b24__dist(struct Actor *actor) __asm__("Func_02001b24");
 void Func_020019d4(struct LightOam *oam, s32 depth);
 
 void Func_02000aac(void) {
@@ -254,7 +238,7 @@ void Func_02000aac(void) {
   oam = Data_02002244;
 
   for (i = 0; i < gData_02002202; i++) {
-    struct Actor *actor = gData_02002204__dist[i];
+    struct Actor *actor = gData_02002204[i];
     if (actor != 0 && actor->x != 0) {
       s32 big, ox, y, z, oy, depth;
       s32 frame;
@@ -281,7 +265,7 @@ void Func_02000aac(void) {
         *word++ = oy | (ox << 16) | 0x40002000;
         *word = (tile + frame * 8) | 0x800;
         if (gData_02002306 == -1)
-          oam->priority = Func_02001b24__dist(actor);
+          oam->priority = Func_02001b24(actor);
         else
           oam->priority = gData_02002306;
         Func_020019d4(oam, depth);
@@ -302,7 +286,7 @@ void Func_02000aac(void) {
         *word++ = oy | (ox << 16) | 0xc000a000;
         *word = (tile + frame * 8) | 0x800;
         if (gData_02002306 == -1)
-          oam->priority = Func_02001b24__dist(actor);
+          oam->priority = Func_02001b24(actor);
         else
           oam->priority = gData_02002306;
         Func_020019d4(oam, depth);
@@ -312,8 +296,6 @@ void Func_02000aac(void) {
   }
 }
 
-/* VIEW(dist): routine Resource_DecodeType01 as void Resource_DecodeType01(const void *source, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
-extern void Resource_DecodeType01__dist(const void *source, void *destination) __asm__("Resource_DecodeType01");
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -322,8 +304,8 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 void Func_02000c68(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
-  Iwram_ClearWords(gData_02002204__dist, 64);
-  Resource_DecodeType01__dist(gField_CachedTilesA, buffer);
+  Iwram_ClearWords(gData_02002204, 64);
+  Resource_DecodeType01(gField_CachedTilesA, buffer);
   gData_02002200__dist = Resource_FindFreeEntry();
   VramCache_Load(gData_02002200__dist, 0xc00, buffer);
   Heap_Release(buffer);
@@ -336,8 +318,8 @@ void Func_02000c68(void) {
 void Func_02000ce8(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
-  Iwram_ClearWords(gData_02002204__dist, 64);
-  Resource_DecodeType01__dist(gField_CachedTilesB, buffer);
+  Iwram_ClearWords(gData_02002204, 64);
+  Resource_DecodeType01(gField_CachedTilesB, buffer);
   gData_02002200__dist = Resource_FindFreeEntry();
   Vram_Load(gData_02002200__dist, 0x800, buffer);
   Heap_Release(buffer);
@@ -350,8 +332,8 @@ void Func_02000ce8(void) {
 void Func_02000d68(void) {
   u8 *buffer = BumpAlloc(0x800);
 
-  Iwram_ClearWords(gData_02002204__dist, 64);
-  Resource_DecodeType01__dist(gField_CachedTilesC, buffer);
+  Iwram_ClearWords(gData_02002204, 64);
+  Resource_DecodeType01(gField_CachedTilesC, buffer);
   gData_02002200__dist = Resource_FindFreeEntry();
   Vram_Load(gData_02002200__dist, 0x800, buffer);
   Heap_Release(buffer);
@@ -369,7 +351,7 @@ void Func_02000df0(s32 id, s32 value) {
 
     object->timer = value;
     count = &gData_02002202;
-    gData_02002204__dist[*count] = object;
+    gData_02002204[*count] = object;
     (*count)++;
   }
 }

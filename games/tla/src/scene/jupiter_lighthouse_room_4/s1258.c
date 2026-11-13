@@ -14,14 +14,9 @@
 
 extern const s32 *gData_0200270c[];
 
-/* VIEW(s1258): routine Func_02001da8 as void Func_02001da8(struct FieldEffect *effect, s32 mode); module/scene/airs_rock.h has void Func_02001da8(void). */
-extern void Func_02001da8__s1258(struct FieldEffect *effect, s32 mode) __asm__("Func_02001da8");
+void Func_02001da8(struct Actor *object, s32 mode);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-/* VIEW(s1258): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, u32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
-extern void Actor_SetSingleChildFlags__s1258(struct FieldEffect *effect, u32 flags) __asm__("Actor_SetSingleChildFlags");
-/* VIEW(s1258): routine Scene_SetActorSpritePriority as void Scene_SetActorSpritePriority(struct FieldEffect *effect, s32 priority); field.h has void Scene_SetActorSpritePriority(struct Actor *object, s32 priority). */
-extern void Scene_SetActorSpritePriority__s1258(struct FieldEffect *effect,
-                                         s32 priority) __asm__("Scene_SetActorSpritePriority");
+void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 
 void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -41,15 +36,15 @@ void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Func_02001da8__s1258(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Func_02001da8(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect, gData_0200270c[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSingleChildFlags__s1258(effect, 0);
+  Actor_SetSingleChildFlags(effect, 0);
   effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
-  Scene_SetActorSpritePriority__s1258(effect, party->sprite->priority);
+  Scene_SetActorSpritePriority(effect, party->sprite->priority);
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
   effect->spin = 0;
@@ -60,7 +55,7 @@ void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     Actor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
     effect->priorityFlags &= ~1;
-    Scene_SetActorSpritePriority__s1258(effect, options->priority);
+    Scene_SetActorSpritePriority(effect, options->priority);
   }
   start = flags & EFFECT_USE_START_SCALE;
   if (start != 0) {
@@ -83,7 +78,7 @@ void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Func_02001da8__s1258(effect, 1);
+    Func_02001da8(effect, 1);
     Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)

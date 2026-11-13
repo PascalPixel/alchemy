@@ -525,8 +525,6 @@ void Func_02001188(void) {
   }
 }
 
-/* VIEW(s0b84): routine HeapSlot_AllocFar as u8 *HeapSlot_AllocFar(s32 slot, s32 size); gamepak/far_call/system.h has void *HeapSlot_AllocFar(s32 slot, s32 size). */
-extern u8 *HeapSlot_AllocFar__s0b84(s32 slot, s32 size) __asm__("HeapSlot_AllocFar");
 
 struct Actor *Func_02001210(void) {
   struct Actor *object = (struct Actor *)Import_ActorCreate(0x1e9, 0x1680000, 0x400000, 0x1a80000);
@@ -543,7 +541,7 @@ struct Actor *Func_02001210(void) {
   object->unk5c[0] = 1;
   sprite->nextFrame = 0;
   sprite->unk1b[0] = 0;
-  buffer = HeapSlot_AllocFar__s0b84(68, 0x608);
+  buffer = HeapSlot_AllocFar(68, 0x608);
   Icon_DrawItem(242);
   VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
   HeapSlot_Release(68);

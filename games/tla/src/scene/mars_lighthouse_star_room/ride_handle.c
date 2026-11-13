@@ -62,7 +62,7 @@ void Func_02001de4(s16 value) {
 #include "io_reg.h"
 #include "field.h"
 
-/* VIEW(ride_handle): tag struct MarsLighthouseBeam as struct MarsLighthouseBeam__ride_handle; module/scene/scene.h has another definition. */
+/* VIEW(ride_handle): tag struct MarsLighthouseBeam as struct MarsLighthouseBeam__ride_handle; module/scene/scene.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room/ride_handle.c:135: structure has no member named `stopCount'. */
 struct MarsLighthouseBeam__ride_handle {
   u8 unk00[10];
   u16 unk0a;

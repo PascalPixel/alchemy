@@ -42,7 +42,7 @@ const u8 *Scene_GetPlacements(void) {
   return gData_02002d38;
 }
 
-/* VIEW(madra): variable gData_02003308 as extern struct MadraPlacement gData_02003308[]; the definition has s32 gData_02003308[] = { (s32) gData_020032fc, 0x30014, (s32) gData_020032f0, 0x17000d, (s32) gData_020032f0, 0x110011, (s32) gData_020032f0...; tried as the definition's extern s32 gData_02003308[], it does not compile in tla-ja: games/tla/src/scene/madra.c:77: request for member `x' in something not a structure or union. */
+/* VIEW(madra): variable gData_02003308 as extern struct MadraPlacement gData_02003308[]; the definition has s32 gData_02003308[] = { (s32) gData_020032fc, 0x30014, (s32) gData_020032f0, 0x17000d, (s32) gData_020032f0, 0x110011, (s32) gData_020032f0...; tried as the definition's extern s32 gData_02003308[], it does not compile in tla-ja: games/tla/src/scene/madra.c:70: request for member `x' in something not a structure or union. */
 extern struct MadraPlacement gData_02003308__madra[] __asm__("gData_02003308");
 
 void Func_0200006c(void) {
@@ -194,7 +194,7 @@ void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Map_PlayMapEdit(const void *data, s32 a, s32 b);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 y, s32 z);
-/* VIEW(events_b): routine Func_080d47b4 as void Func_080d47b4(s32 id, s32 a, s32 b); event.h has s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames); tried as the definition's struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags, s32 state), it does not compile in tla-ja: games/tla/src/scene/madra.c:235: conflicting types for `Func_080d47b4'. */
+/* VIEW(events_b): routine Func_080d47b4 as void Func_080d47b4(s32 id, s32 a, s32 b); event.h has s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames); tried as the definition's struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags, s32 state), it does not compile in tla-ja: games/tla/src/scene/madra.c:197: conflicting types for `Func_080d47b4'. */
 extern void Func_080d47b4__events_b(s32 id, s32 a, s32 b) __asm__("Func_080d47b4");
 
 extern const u8 gData_02002ff0[];
@@ -209,7 +209,7 @@ extern u8 MsgMyBoyfriendShin[];
 extern u8 MsgAllMyInjuries[];
 extern u8 MsgMySisterWas[];
 extern u8 MsgIfYouDon[];
-/* VIEW(events_b): variable MsgUsingPsynergyOn as extern u8 MsgUsingPsynergyOn; msg_ids.h has extern u8 MsgUsingPsynergyOn[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:281: `MsgUsingPsynergyOn__events_b' undeclared (first use in this function). */
+/* VIEW(events_b): variable MsgUsingPsynergyOn as extern u8 MsgUsingPsynergyOn; msg_ids.h has extern u8 MsgUsingPsynergyOn[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:232: `MsgUsingPsynergyOn__events_b' undeclared (first use in this function). */
 extern u8 MsgUsingPsynergyOn__events_b __asm__("MsgUsingPsynergyOn");
 extern u8 MsgWhereCouldMenardi[];
 extern u8 MsgEveryoneHereIn[];
@@ -604,42 +604,19 @@ void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
-/* VIEW(s0ac4): routine Event_SetMessageId as void Event_SetMessageId(const u8 *message); event_work.h has void Event_SetMessageId(s32 message). */
-extern void Event_SetMessageId__s0ac4(const u8 *message) __asm__("Event_SetMessageId");
-/* VIEW(s0ac4): routine Func_080d47b4 as struct Actor *Func_080d47b4(s32 id, s32 emote, s32 frames); event.h has s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames). */
-extern struct Actor *Func_080d47b4__s0ac4(s32 id, s32 emote, s32 frames) __asm__("Func_080d47b4");
 void Actor_Jump(s32 id, s32 a, s32 b);
 void Actor_LaunchFromLeader(s32 id, s32 a, s32 b, s32 c);
-/* VIEW(s0ac4): routine Map_PlayMapEdit as s32 Map_PlayMapEdit(const void *edit, s32 a, s32 b); events_b has void Map_PlayMapEdit(const void *data, s32 a, s32 b); tried as the definition's void Map_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY), it does not compile in tla-ja: games/tla/src/scene/madra.c:695: conflicting types for `Map_PlayMapEdit'. */
+/* VIEW(s0ac4): routine Map_PlayMapEdit as s32 Map_PlayMapEdit(const void *edit, s32 a, s32 b); events_b has void Map_PlayMapEdit(const void *data, s32 a, s32 b); tried as the definition's void Map_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY), it does not compile in tla-ja: games/tla/src/scene/madra.c:609: conflicting types for `Map_PlayMapEdit'. */
 extern s32 Map_PlayMapEdit__s0ac4(const void *edit, s32 a, s32 b) __asm__("Map_PlayMapEdit");
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);
-/* VIEW(madra): routine MessageArgument_Push as void MessageArgument_Push(s32 item, s32 a); module/window/window.h has void MessageArgument_Push(u32 value, u32 kind). */
-extern void MessageArgument_Push__madra(s32 item, s32 a) __asm__("MessageArgument_Push");
+void MessageArgument_Push(u32 value, u32 kind);
 void Func_02002c50(s32 item, s32 a);
 s32 PartyInventory_GiveItem(s32 item, s32 count);
 void FieldMessage_Show(s32 message, s32 position);
 void Camera_FollowActor(s32 id, s32 mode);
 void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 
-/* VIEW(s0ac4): variable MsgYouThereHold as extern const u8 MsgYouThereHold[]; msg_ids.h has extern u8 MsgYouThereHold[]. */
-extern const u8 MsgYouThereHold__s0ac4[] __asm__("MsgYouThereHold");
-/* VIEW(s0ac4): variable MsgHasEscaped2 as extern const u8 MsgHasEscaped2[]; msg_ids.h has extern u8 MsgHasEscaped2[]. */
-extern const u8 MsgHasEscaped2__s0ac4[] __asm__("MsgHasEscaped2");
-/* VIEW(s0ac4): variable MsgHeyYouLot as extern const u8 MsgHeyYouLot[]; msg_ids.h has extern u8 MsgHeyYouLot[]. */
-extern const u8 MsgHeyYouLot__s0ac4[] __asm__("MsgHeyYouLot");
-/* VIEW(s0ac4): variable MsgItWasThem as extern const u8 MsgItWasThem[]; msg_ids.h has extern u8 MsgItWasThem[]. */
-extern const u8 MsgItWasThem__s0ac4[] __asm__("MsgItWasThem");
-/* VIEW(s0ac4): variable MsgWasAnythingStolen as extern const u8 MsgWasAnythingStolen[]; msg_ids.h has extern u8 MsgWasAnythingStolen[]. */
-extern const u8 MsgWasAnythingStolen__s0ac4[] __asm__("MsgWasAnythingStolen");
-/* VIEW(s0ac4): variable MsgWait3 as extern const u8 MsgWait3[]; msg_ids.h has extern u8 MsgWait3[]. */
-extern const u8 MsgWait3__s0ac4[] __asm__("MsgWait3");
-/* VIEW(s0ac4): variable MsgTheMayorTried as extern const u8 MsgTheMayorTried[]; msg_ids.h has extern u8 MsgTheMayorTried[]. */
-extern const u8 MsgTheMayorTried__s0ac4[] __asm__("MsgTheMayorTried");
-/* VIEW(s0ac4): variable MsgICanTBelieveIt as extern const u8 MsgICanTBelieveIt[]; msg_ids.h has extern u8 MsgICanTBelieveIt[]. */
-extern const u8 MsgICanTBelieveIt__s0ac4[] __asm__("MsgICanTBelieveIt");
-/* VIEW(s0ac4): variable MsgWhoIsThis as extern const u8 MsgWhoIsThis[]; msg_ids.h has extern u8 MsgWhoIsThis[]. */
-extern const u8 MsgWhoIsThis__s0ac4[] __asm__("MsgWhoIsThis");
 
 static __inline__ void CommitPos(s32 id, s32 x, s32 z) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
@@ -677,7 +654,7 @@ static __inline__ struct Actor *Emote(s32 id, s32 emote, s32 frames) {
    * constants, as ☀️'s scene layer does; as direct calls, 8 of 475 instructions
    * of Func_02000ac4 differ in tla-en, 25 of 549 of Func_02000f80 and 27 of 490
    * of Func_020014fc. */
-  return Func_080d47b4__s0ac4(id, emote, frames);
+  return Func_080d47b4(id, emote, frames);
 }
 
 static __inline__ void LaunchFromFocused(s32 id, s32 a, s32 b, s32 c) {
@@ -702,7 +679,7 @@ void Func_02000ac4(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId__s0ac4(MsgYouThereHold__s0ac4);
+  Event_SetMessageId(MsgYouThereHold);
   Event_ShowMessageThenWait(24, 0, 2);
   CamBounds(238 << 17, -1, 210 << 17, 1);
   Actor_WalkBy(25, 3, 8);
@@ -844,7 +821,7 @@ void Func_02000f80(void) {
   Event_StartScreenTransition();
   Actor_SetPosition(33, PIXELS(172), PIXELS(332));
   Actor_SetHorizontalPositionWithTerrain(34, PIXELS(172), PIXELS(324));
-  Event_SetMessageId__s0ac4(MsgHasEscaped2__s0ac4);
+  Event_SetMessageId(MsgHasEscaped2);
   Event_WaitTransitionFrames();
   Event_ShowMessageThenWait(33, 0, 10);
   Actor_WalkTo(33, 156, 372);
@@ -908,7 +885,7 @@ void Func_02000f80(void) {
   Motion_SetModeAndWaitAnimation(34, 3);
   Event_Wait(20);
   Event_ShowMessageThenWait(34, 0, 10);
-  Func_080d47b4__s0ac4(33, 258, 30);
+  Func_080d47b4(33, 258, 30);
   Event_ShowMessageThenWait(33, 0, 10);
   Actor_FaceDirection(33, FACING_NORTH, 0);
   Actor_ArmCallback(34, FACING_NORTH, 0);
@@ -922,7 +899,7 @@ void Func_02000f80(void) {
   Event_Wait(20);
   Actor_ArmCallback(33, FACING_WEST, 0);
   Event_Wait(20);
-  Func_080d47b4__s0ac4(33, 257, 30);
+  Func_080d47b4(33, 257, 30);
   Event_ShowMessageThenWait(33, 0, 10);
   Event_ShowMessageThenWait(33, 0, 10);
   Motion_SetVarCbAndRefresh(34, 2);
@@ -937,12 +914,12 @@ void Func_02000f80(void) {
   Actor_SetAngleToward(33, 4, 0);
   Event_Wait(30);
   Event_ShowMessageThenWait(33, 0, 10);
-  Func_080d47b4__s0ac4(4, 261, 30);
+  Func_080d47b4(4, 261, 30);
   Motion_SetVarCbAndRefresh(34, 2);
   Event_Wait(20);
   Event_ShowMessageThenWait(34, 0, 10);
   Event_Wait(20);
-  Func_080d47b4__s0ac4(33, 262, 30);
+  Func_080d47b4(33, 262, 30);
   FieldMessage_ShowAtActor(33, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_ShowMessageThenWait(33, 0, 10);
@@ -959,7 +936,7 @@ void Func_02000f80(void) {
   Motion_SetVarCbAndRefresh(33, 2);
   Event_Wait(20);
   Event_ShowMessageThenWait(33, 0, 10);
-  Func_080d47b4__s0ac4(34, 258, 30);
+  Func_080d47b4(34, 258, 30);
   Motion_SetModeAndWaitAnimation(33, 3);
   Event_Wait(20);
   Event_ShowMessageThenWait(33, 0, 10);
@@ -998,7 +975,7 @@ void Func_020014fc(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId__s0ac4(MsgHeyYouLot__s0ac4);
+  Event_SetMessageId(MsgHeyYouLot);
   Event_ShowMessageThenWait(24, 0, 2);
   Camera_MoveWithinMapBounds(PIXELS(476), -1, PIXELS(400), 1);
   CommitPos(24, -3, 8);
@@ -1016,21 +993,21 @@ void Func_020014fc(void) {
   Actor_ArmCallback(4, FACING_EAST, 0);
   Actor_ArmCallback(32, FACING_WEST, 0);
   Event_Wait(20);
-  Func_080d47b4__s0ac4(32, 0x101, 30);
+  Func_080d47b4(32, 0x101, 30);
   Event_ShowMessageAndWait(32, 0);
   Motion_SetModeAndWaitAnimation(4, 4);
   ArmCallbackAndRefresh(24, FACING_SOUTH + FACING_STEP);
   Motion_SetModeAndWaitAnimation(24, 4);
   Event_ShowMessageThenWait(24, 0, 10);
   Actor_FaceDirection(32, FACING_NORTH + FACING_STEP, 0);
-  Func_080d47b4__s0ac4(32, 0x103, 0);
+  Func_080d47b4(32, 0x103, 0);
   Actor_Jump(32, 6, 15);
   Actor_Jump(32, 6, 23);
   Event_ShowMessageAndWait(32, 0);
   Emote(4, 0x100, 30);
   Actor_SetAngleToward(4, 24, 0);
   Event_Wait(20);
-  Func_080d47b4__s0ac4(32, 0x100, 30);
+  Func_080d47b4(32, 0x100, 30);
   ArmCallbackAndRefresh(32, FACING_NORTH + FACING_STEP);
   Event_ShowMessageAndWait(32, 0);
   ArmCallbackAndRefresh(25, FACING_SOUTHEAST);
@@ -1054,13 +1031,13 @@ void Func_020014fc(void) {
   Event_Wait(20);
   ArmCallbackAndRefresh(32, FACING_NORTHWEST + FACING_STEP);
   Event_ShowMessageAndWait(32, 0);
-  Func_080d47b4__s0ac4(25, 0x102, 30);
+  Func_080d47b4(25, 0x102, 30);
   Event_ShowMessageThenWait(25, 0, 10);
   Motion_SetVarCbAndRefresh(24, 2);
   Event_Wait(20);
   Event_ShowMessageThenWait(24, 0, 10);
   if (GameFlag_Test(0x98f)) {
-    Event_SetMessageId__s0ac4(MsgItWasThem__s0ac4);
+    Event_SetMessageId(MsgItWasThem);
     Actor_ArmCallback(32, FACING_WEST, 0);
     Event_Wait(20);
     FieldMessage_ShowAtActor(32, 0);
@@ -1077,7 +1054,7 @@ void Func_020014fc(void) {
       Event_ShowMessageAndWait(32, 0);
     }
   }
-  Event_SetMessageId__s0ac4(MsgWasAnythingStolen__s0ac4);
+  Event_SetMessageId(MsgWasAnythingStolen);
   Actor_FaceDirection(32, FACING_NORTH + FACING_STEP, 0);
   Actor_ArmCallback(4, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(20);
@@ -1088,13 +1065,13 @@ void Func_020014fc(void) {
   Event_Wait(20);
   Actor_FaceDirection(32, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(4, FACING_NORTHWEST + FACING_STEP, 0);
-  Func_080d47b4__s0ac4(25, 0x102, 30);
+  Func_080d47b4(25, 0x102, 30);
   Motion_SetModeAndWaitAnimation(25, 4);
   Event_Wait(10);
   Actor_FaceDirection(25, FACING_SOUTHEAST, 0);
   Event_ShowMessageThenWait(25, 0, 10);
   Emote(32, 0x101, 0);
-  Func_080d47b4__s0ac4(4, 0x101, 30);
+  Func_080d47b4(4, 0x101, 30);
   Event_ShowMessageAndWait(32, 0);
   ArmCallbackAndRefresh(24, FACING_SOUTH + FACING_STEP);
   Motion_SetModeAndWaitAnimation(24, 4);
@@ -1130,7 +1107,7 @@ void Func_020014fc(void) {
   Event_End();
 }
 
-/* VIEW(s0ac4): variable gData_02003308 as extern const struct CellPictureCopyEntry gData_02003308[]; madra has extern struct MadraPlacement gData_02003308[]; tried as the definition's extern s32 gData_02003308[], it does not compile in tla-ja: games/tla/src/scene/madra.c:1293: request for member `steps' in something not a structure or union. */
+/* VIEW(s0ac4): variable gData_02003308 as extern const struct CellPictureCopyEntry gData_02003308[]; madra has extern struct MadraPlacement gData_02003308[]; tried as the definition's extern s32 gData_02003308[], it does not compile in tla-ja: games/tla/src/scene/madra.c:1172: request for member `steps' in something not a structure or union. */
 extern const struct CellPictureCopyEntry gData_02003308__s0ac4[] __asm__("gData_02003308");
 
 // The macro's do-while starts each mode change's own scheduling region; as
@@ -1159,7 +1136,7 @@ void Func_020019d8(void) {
   Event_StartScreenTransition();
   if (GameFlag_Test(0x825) || GameFlag_Test(0x826))
     GameFlag_SetBit(0xa76);
-  Event_SetMessageId__s0ac4(MsgWait3__s0ac4);
+  Event_SetMessageId(MsgWait3);
   Event_ShowMessageThenWait(34, 0, 0);
   SetPos(4, 150, 280);
   Actor_OffsetPositionAndReset(4, 16, 0);
@@ -1219,7 +1196,7 @@ void Func_020019d8(void) {
   Event_Wait(20);
   Event_Wait(20);
   Event_ShowMessageThenWait(34, 0, 0);
-  Func_080d47b4__s0ac4(6, 0x102, 30);
+  Func_080d47b4(6, 0x102, 30);
   Actor_SetAngleToward(6, 5, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(6, 0);
@@ -1229,7 +1206,7 @@ void Func_020019d8(void) {
   Event_Wait(33);
   Event_Wait(20);
   Event_ShowMessageAndWait(5, 0);
-  Func_080d47b4__s0ac4(34, 0x100, 30);
+  Func_080d47b4(34, 0x100, 30);
   Event_Wait(20);
   Event_ShowMessageThenWait(34, 0, 0);
   Actor_CommitPositionAndActivate(34, 16, 8);
@@ -1243,13 +1220,13 @@ void Func_020019d8(void) {
   } else {
     s32 count = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4) + 1;
 
-    Event_SetMessageId__s0ac4(MsgTheMayorTried__s0ac4);
-    MessageArgument_Push__madra(210, 2);
+    Event_SetMessageId(MsgTheMayorTried);
+    MessageArgument_Push(210, 2);
     FieldMessage_Show((*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++, 5);
     Motion_SetVarCbAndRefresh(34, 2);
     Event_ShowMessageAndWait(34, 0);
     Actor_CommitPositionAndActivate(34, 16, 0);
-    MessageArgument_Push__madra(210, 2);
+    MessageArgument_Push(210, 2);
     FieldMessage_Show((*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++, 5);
     CommitPos(34, -16, 0);
     ArmCallbackAndRefresh(34, FACING_SOUTH);
@@ -1258,7 +1235,7 @@ void Func_020019d8(void) {
   }
   CommitPos(34, -16, -8);
   ArmCallbackAndRefresh(34, FACING_SOUTH);
-  Func_080d47b4__s0ac4(34, 0x105, 30);
+  Func_080d47b4(34, 0x105, 30);
   Event_ShowMessageThenWait(34, 0, 0);
   SET_MODE(34, 3);
   Event_Wait(20);
@@ -1286,7 +1263,7 @@ void Func_020019d8(void) {
   Emote(5, 0x101, 0);
   Emote(7, 0x101, 0);
   Emote(6, 0x101, 0);
-  Func_080d47b4__s0ac4(32, 0x101, 30);
+  Func_080d47b4(32, 0x101, 30);
   Actor_SetAngleToward(4, 33, 0);
   Actor_SetAngleToward(7, 33, 0);
   Actor_SetAngleToward(6, 33, 0);
@@ -1320,16 +1297,16 @@ void Func_020019d8(void) {
   Actor_SetAngleToward(6, 5, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(6, 0);
-  Func_080d47b4__s0ac4(5, 0x100, 30);
+  Func_080d47b4(5, 0x100, 30);
   Event_ShowMessageAndWait(5, 0);
-  Func_080d47b4__s0ac4(33, 0x107, 30);
+  Func_080d47b4(33, 0x107, 30);
   Event_ShowMessageAndWait(33, 0);
   Actor_SetAngleToward(33, 4, 0);
   Event_Wait(20);
   FieldMessage_ShowAtActor(33, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
     Event_ShowMessageAndWait(33, 0);
-    Func_080d47b4__s0ac4(4, 0x102, 30);
+    Func_080d47b4(4, 0x102, 30);
     Event_Wait(40);
     SET_MODE(33, 3);
     Event_Wait(20);
@@ -1344,10 +1321,10 @@ void Func_020019d8(void) {
     SET_MODE(6, 4);
     Event_Wait(33);
     Event_Wait(20);
-    Func_080d47b4__s0ac4(33, 0x109, 30);
+    Func_080d47b4(33, 0x109, 30);
     Event_ShowMessageAndWait(33, 0);
   } else {
-    Event_SetMessageId__s0ac4(MsgICanTBelieveIt__s0ac4);
+    Event_SetMessageId(MsgICanTBelieveIt);
     Event_ShowMessageAndWait(33, 0);
     Actor_TurnToFaceEachOther(6, 5, 0);
     Event_Wait(40);
@@ -1358,10 +1335,10 @@ void Func_020019d8(void) {
     SET_MODE(6, 4);
     Event_Wait(33);
     Event_Wait(20);
-    Func_080d47b4__s0ac4(6, 0x109, 30);
+    Func_080d47b4(6, 0x109, 30);
     Event_ShowMessageAndWait(33, 0);
   }
-  Event_SetMessageId__s0ac4(MsgWhoIsThis__s0ac4);
+  Event_SetMessageId(MsgWhoIsThis);
   Motion_SetVarCbAndRefresh(33, 2);
   Event_Wait(20);
   Event_ShowMessageAndWait(33, 0);
@@ -1379,14 +1356,14 @@ void Func_020019d8(void) {
   Emote(4, 0x109, 0);
   Emote(5, 0x109, 0);
   Emote(6, 0x109, 0);
-  Func_080d47b4__s0ac4(32, 0x109, 30);
+  Func_080d47b4(32, 0x109, 30);
   Event_Wait(60);
-  Func_080d47b4__s0ac4(33, 0x106, 30);
+  Func_080d47b4(33, 0x106, 30);
   Event_ShowMessageThenWait(33, 0, 0);
   Emote(4, 0x102, 0);
   Emote(5, 0x102, 0);
   Emote(6, 0x102, 0);
-  Func_080d47b4__s0ac4(32, 0x102, 30);
+  Func_080d47b4(32, 0x102, 30);
   SET_MODE(33, 3);
   Event_Wait(20);
   Event_Wait(20);
@@ -1429,8 +1406,8 @@ void Func_020019d8(void) {
   Emote(7, 0x100, 0);
   Emote(5, 0x100, 0);
   Emote(6, 0x100, 0);
-  Func_080d47b4__s0ac4(4, 0x100, 30);
-  Func_080d47b4__s0ac4(33, 0x101, 30);
+  Func_080d47b4(4, 0x100, 30);
+  Func_080d47b4(33, 0x101, 30);
   Event_ShowMessageAndWait(33, 0);
   Actor_ArmCallbackAndRefresh(33, FACING_EAST);
   Event_Wait(20);
@@ -1450,11 +1427,11 @@ void Func_020019d8(void) {
   Event_Wait(20);
   FieldMessage_ShowAtActor(33, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
-    Func_080d47b4__s0ac4(33, 0x108, 30);
+    Func_080d47b4(33, 0x108, 30);
     Event_ShowMessageThenWait(33, 0, 0);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
   } else {
-    Func_080d47b4__s0ac4(33, 0x103, 30);
+    Func_080d47b4(33, 0x103, 30);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     Event_ShowMessageThenWait(33, 0, 0);
   }
@@ -1481,7 +1458,7 @@ void Func_020019d8(void) {
   Actor_SetHorizontalPositionWithTerrain(33, 0, 0);
   Party_PlaySavedMusic();
   Camera_FollowActor(4, 1);
-  Func_080d47b4__s0ac4(6, 0x102, 30);
+  Func_080d47b4(6, 0x102, 30);
   Event_ShowMessageAndWait(6, 0);
   SET_MODE(5, 3);
   Event_Wait(20);
@@ -1507,7 +1484,7 @@ void Func_020019d8(void) {
   Actor_FaceDirection(32, FACING_SOUTH, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(32, 0);
-  Func_080d47b4__s0ac4(7, 0x101, 20);
+  Func_080d47b4(7, 0x101, 20);
   Actor_SetAngleToward(7, 32, 0);
   Actor_SetAngleToward(4, 32, 0);
   Actor_SetAngleToward(6, 32, 0);
@@ -1533,7 +1510,7 @@ void Func_020019d8(void) {
   Event_ShowMessageAndWait(32, 0);
   Actor_SetPartAttribute(Actor_GetById(5), 0);
   Event_Wait(20);
-  Func_080d47b4__s0ac4(5, 0x100, 30);
+  Func_080d47b4(5, 0x100, 30);
   Actor_SetAngleToward(5, 32, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(5, 0);
@@ -1569,7 +1546,7 @@ void Func_020019d8(void) {
   SET_MODE(5, 3);
   Event_Wait(20);
   Event_Wait(20);
-  Func_080d47b4__s0ac4(32, 0x108, 30);
+  Func_080d47b4(32, 0x108, 30);
   Event_ShowMessageAndWait(32, 0);
   SET_MODE(6, 3);
   SET_MODE(7, 3);
@@ -1636,15 +1613,15 @@ void Func_020019d8(void) {
 // ---- games/tla/src/scene/madra/events_d.c ----
 #include "text/msg_ids.h"
 
-/* VIEW(events_d): variable gData_02002d38 as extern s16 gData_02002d38[]; s051c has extern const u8 gData_02002d38[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:1888: conflicting types for `gData_02002d38'. */
+/* VIEW(events_d): variable gData_02002d38 as extern s16 gData_02002d38[]; s051c has extern const u8 gData_02002d38[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:1727: conflicting types for `gData_02002d38'. */
 extern s16 gData_02002d38__events_d[] __asm__("gData_02002d38");
-/* VIEW(events_d): variable gData_02002ff0 as extern struct ActorPlacement gData_02002ff0[]; s051c has extern const u8 gData_02002ff0[]; tried as the definition's extern u32 gData_02002ff0[], it does not compile in tla-ja: games/tla/src/scene/madra.c:1768: conflicting types for `gData_02002ff0'. */
+/* VIEW(events_d): variable gData_02002ff0 as extern struct ActorPlacement gData_02002ff0[]; s051c has extern const u8 gData_02002ff0[]; tried as the definition's extern u32 gData_02002ff0[], it does not compile in tla-ja: games/tla/src/scene/madra.c:1618: conflicting types for `gData_02002ff0'. */
 extern struct ActorPlacement gData_02002ff0__events_d[] __asm__("gData_02002ff0");
-/* VIEW(events_d): variable gData_02003358 as extern struct Trigger gData_02003358[]; s051c has extern const u8 gData_02003358[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:1987: conflicting types for `gData_02003358'. */
+/* VIEW(events_d): variable gData_02003358 as extern struct Trigger gData_02003358[]; s051c has extern const u8 gData_02003358[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:1826: conflicting types for `gData_02003358'. */
 extern struct Trigger gData_02003358__events_d[] __asm__("gData_02003358");
-/* VIEW(events_d): variable gData_0200367c as extern struct Trigger gData_0200367c[]; s051c has extern const u8 gData_0200367c[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:2057: conflicting types for `gData_0200367c'. */
+/* VIEW(events_d): variable gData_0200367c as extern struct Trigger gData_0200367c[]; s051c has extern const u8 gData_0200367c[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:1896: conflicting types for `gData_0200367c'. */
 extern struct Trigger gData_0200367c__events_d[] __asm__("gData_0200367c");
-/* VIEW(events_d): variable gData_0200394c as extern struct Trigger gData_0200394c[]; s051c has extern const u8 gData_0200394c[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:2120: conflicting types for `gData_0200394c'. */
+/* VIEW(events_d): variable gData_0200394c as extern struct Trigger gData_0200394c[]; s051c has extern const u8 gData_0200394c[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:1959: conflicting types for `gData_0200394c'. */
 extern struct Trigger gData_0200394c__events_d[] __asm__("gData_0200394c");
 
 // The scene's own event inlines: a habit of the whole game written once, as

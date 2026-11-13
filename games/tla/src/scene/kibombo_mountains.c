@@ -106,8 +106,6 @@ void Func_02000190(s32 unused, s32 id) {
 
 extern const u8 gData_02001404[];
 
-/* VIEW(kibombo_mountains): routine Actor_ResetTargetsAndVelocity as void Actor_ResetTargetsAndVelocity(s32 actor); module/field/field.h has void Actor_ResetTargetsAndVelocity(u32 objectId). */
-extern void Actor_ResetTargetsAndVelocity__kibombo_mountains(s32 actor) __asm__("Actor_ResetTargetsAndVelocity");
 void Actor_StartScript(struct Actor *object, const u8 *script);
 void Func_0200104c(struct Actor *object);
 
@@ -167,7 +165,7 @@ void Func_020001a0(s32 unused, s32 id) {
         Event_SetFlag(0x200);
       } else {
         Call3((void (*)())Iwram_CopyWords, (s32)&saved, (s32)other, 128);
-        Actor_ResetTargetsAndVelocity__kibombo_mountains(9);
+        Actor_ResetTargetsAndVelocity(9);
         FieldActor_Jump(9, 4, 0);
         FieldEvent_Wait(30);
         Actor_ShowEmote(9, 257, 0);
@@ -400,8 +398,6 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/* VIEW(kibombo_mountains): variable gData_020017f8 as const u8 gData_020017f8[]; module/scene/kibombo_mountains.h has u32 gData_020017f8[]. */
-extern const u8 gData_020017f8__kibombo_mountains[] __asm__("gData_020017f8");
 
 void Func_02000960(void) {
   /* FAKEMATCH(wrapper): the calls through event.h's inlines keep each call's
@@ -414,7 +410,7 @@ void Func_02000960(void) {
   Event_ShowMessage(27, 0);
   FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(392), 1);
   Func_02001134();
-  Actor_ResetTargetsAndVelocity__kibombo_mountains(11);
+  Actor_ResetTargetsAndVelocity(11);
   Actor_FaceActor(11, 27, 0);
   Actor_WalkToAndWait(27, 264, 312);
   Actor_WalkToAndWait(27, 256, 400);
@@ -443,7 +439,7 @@ void Func_02000960(void) {
   Actor_RunRepeatedMotion(11, 2);
   FieldEvent_Wait(60);
   Actor_SetPosition(27, 0, 0);
-  Actor_SetScript(11, gData_020017f8__kibombo_mountains);
+  Actor_SetScript(11, gData_020017f8);
   Event_End();
   Event_SetFlag(0x880);
 }
@@ -547,7 +543,7 @@ void Func_02000da8(s32 id) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_ResetTargetsAndVelocity__kibombo_mountains(id);
+  Actor_ResetTargetsAndVelocity(id);
   Actor_ShowEmote(id, 0x100, 30);
   Actor_FaceActor(id, owner, 20);
   FieldEvent_SetMessageId(MsgGuardsAnIntruder);

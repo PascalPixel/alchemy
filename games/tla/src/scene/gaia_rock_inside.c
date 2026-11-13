@@ -59,7 +59,7 @@ void Func_0200036c(void) {
 
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
-/* VIEW(gaia_rock_inside): routine Func_02004e64 as s32 Func_02004e64(void); module/scene/scene.h has void Func_02004e64(void). */
+/* VIEW(gaia_rock_inside): routine Func_02004e64 as s32 Func_02004e64(void); module/scene/scene.h has void Func_02004e64(void); tried as the rest of the object declares it, it does not compile in tla-en: games/tla/src/scene/gaia_rock_inside.c:131: void value not ignored as it ought to be. */
 extern s32 Func_02004e64__gaia_rock_inside(void) __asm__("Func_02004e64");
 
 // The Japanese edition has no form of this function here.
@@ -144,15 +144,13 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
        ->v)
 
 s32 Func_02004d9c();
-/* VIEW(gaia_rock_inside): routine Actor_SetAnimationSpeed as s32 Actor_SetAnimationSpeed(); module/field/field.h has void Actor_SetAnimationSpeed(struct Actor *object, s32 value). */
-extern s32 Actor_SetAnimationSpeed__gaia_rock_inside() __asm__("Actor_SetAnimationSpeed");
 
 s32 Func_020005dc(void) {
   s32 t0;
 
   t0 = ((s32)Actor_Get(9));
   Func_02004d9c(t0, 3);
-  Actor_SetAnimationSpeed__gaia_rock_inside(t0, 0);
+  Actor_SetAnimationSpeed(t0, 0);
   return 0;
 }
 
@@ -233,29 +231,27 @@ s32 Func_020006f8(void) {
   return 0;
 }
 
-/* VIEW(gaia_rock_inside): variable gData_020055c0 as u8 gData_020055c0[]; module/scene/gaia_rock_inside.h has s32 gData_020055c0[]. */
-extern u8 gData_020055c0__gaia_rock_inside[] __asm__("gData_020055c0");
+extern s32 gData_020055c0[];
 
 s32 Func_02000718(void) {
   s32 t0;
 
   t0 = ((s32)Actor_Get(9));
-  Actor_StartScript(t0, (s32)gData_020055c0__gaia_rock_inside);
+  Actor_StartScript(t0, (s32)gData_020055c0);
   FIELD_AT(t0, s32, 8) = 0x1d80000;
-  Actor_SetAnimationSpeed__gaia_rock_inside(t0, 0x10);
+  Actor_SetAnimationSpeed(t0, 0x10);
   Actor_SetAttachedEffect(0xa, 0x102);
   return 0;
 }
 
-/* VIEW(gaia_rock_inside): variable gData_02005610 as u8 gData_02005610[]; module/scene/gaia_rock_inside.h has s32 gData_02005610[]. */
-extern u8 gData_02005610__gaia_rock_inside[] __asm__("gData_02005610");
+extern s32 gData_02005610[];
 
 s32 Func_02000748(void) {
   s32 t0;
 
   t0 = ((s32)Actor_Get(9));
-  Actor_StartScript(t0, (s32)gData_02005610__gaia_rock_inside);
-  Actor_SetAnimationSpeed__gaia_rock_inside(t0, 0);
+  Actor_StartScript(t0, (s32)gData_02005610);
+  Actor_SetAnimationSpeed(t0, 0);
   Actor_SetAttachedEffect(0xa, 0x102);
   return 0;
 }

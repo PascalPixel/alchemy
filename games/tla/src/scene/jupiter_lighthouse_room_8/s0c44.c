@@ -26,13 +26,11 @@ struct PushTarget {
 extern s8 gData_020022dc[][4];
 extern s32 gData_020022f4[];
 
-/* VIEW(s0c44): routine Func_020021b8 as s32 Func_020021b8(struct Actor *object, s32 *position); module/scene/kandorean_temple.h has void Func_020021b8(void). */
-extern s32 Func_020021b8__s0c44(struct Actor *object, s32 *position) __asm__("Func_020021b8");
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 static inline s32 Func_020021b8_(struct Actor *object, s32 *position) {
-  return Func_020021b8__s0c44(object, position);
+  return Func_020021b8(object, position);
 }
 
 /// Finds the object the leader is pushing and steps its footprint, one cell
@@ -152,8 +150,6 @@ inner:
   return NULL;
 }
 
-/* VIEW(s0c44): routine Func_02002160 as void Func_02002160(struct Actor *object, s32 mode); module/scene/jupiter_lighthouse_room_8.h has void Func_02002160(struct FieldEffect *effect, s32 mode). */
-extern void Func_02002160__s0c44(struct Actor *object, s32 mode) __asm__("Func_02002160");
 void Func_02001178(void);
 
 void Func_02000ec8(struct PushTarget target) {
@@ -198,9 +194,9 @@ void Func_02000ec8(struct PushTarget target) {
   Actor_Get(gMainRoutineWork.currentOwner)->update = Func_02001178;
   System_Wait(4);
   if ((u32)(direction - 6) <= 7)
-    Func_02002160__s0c44(object, 3);
+    Func_02002160(object, 3);
   else
-    Func_02002160__s0c44(object, 2);
+    Func_02002160(object, 2);
   Event_PlaySound(239);
   Actor_SetSpeed(target.id, 0x8000, 0x1999);
   FieldActor_SetMoveTarget(object, target.x, target.y, target.z);
@@ -221,7 +217,7 @@ void Func_02000ec8(struct PushTarget target) {
   Event_PlaySound(298);
   Event_PlaySound(213);
   FieldActor_SetPositionAndResetMotion(object, target.x, object->y, target.z);
-  Func_02002160__s0c44(object, 1);
+  Func_02002160(object, 1);
   target.x = target.x + (gData_020022dc[footprint][0] << 16);
   target.z = target.z + (gData_020022dc[footprint][1] << 16);
   target.x >>= 20;

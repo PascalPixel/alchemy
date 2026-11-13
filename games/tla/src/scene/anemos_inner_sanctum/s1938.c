@@ -191,7 +191,7 @@ void Func_02001c60(void) {
 
 #include "scene_ids.h"
 
-/* VIEW(s1938): tag struct EventWork154 as struct EventWork154__s1938; module/scene/scene.h has another definition. */
+/* VIEW(s1938): tag struct EventWork154 as struct EventWork154__s1938; module/scene/scene.h has another definition; tried with the definition the rest of the object has, its members read value as returnEntrance, it does not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum/s1938.c:185: structure has no member named `returnEntrance'. */
 struct EventWork154__s1938 {
   u8 unk000[0x154];
   s16 value;
@@ -295,8 +295,7 @@ s32 Func_02000038();
 s32 Func_02000a78();
 s32 Func_02002a74();
 s32 Func_02003190();
-/* VIEW(s1938): routine Func_02003490 as s32 Func_02003490(); module/scene/world_map.h has void Func_02003490(void). */
-extern s32 Func_02003490__s1938() __asm__("Func_02003490");
+void Func_02003490(void);
 extern u8 gData_020036e4[];
 extern u8 gData_020036ea[];
 extern u8 gData_020036f6[];
@@ -362,7 +361,7 @@ s32 Scene_Initialize(void) {
   if ((Event_GetFlag(0xa81)) != 0) {
     Actor_SetPosition(10, 0x1b80000, 0x2f80000);
   }
-  Call1((void (*)())Func_02003490__s1938, (s32)gData_020036e4);
+  Call1((void (*)())Func_02003490, (s32)gData_020036e4);
   FIELD_AT(((s32)Actor_Get((FIELD_AT(v_r6, s32, 532)))), u8, 35) |= 64;
   FIELD_AT(((s32)Actor_Get(9)), u8, 85) = 0;
   FIELD_AT(((s32)Actor_Get(9)), u8, 35) |= 128;
@@ -446,7 +445,7 @@ L_0200a1b4:
 L_0200a2b8:
   Actor_SetPosition(12, 0x2d80000, 0x1d80000);
 L_0200a2c6:
-  Call1((void (*)())Func_02003490__s1938, (s32)gData_020036ea);
+  Call1((void (*)())Func_02003490, (s32)gData_020036ea);
   goto L_0200a6e6;
 L_0200a2ce:
   if (v_r1 != (s32)&SceneId_Ov6B0Room4)
@@ -454,7 +453,7 @@ L_0200a2ce:
   if ((Event_GetFlag(0xa86)) != 0) {
     Actor_SetPosition(9, 0x1080000, 0x1680000);
   }
-  Call1((void (*)())Func_02003490__s1938, (s32)gData_020036f6);
+  Call1((void (*)())Func_02003490, (s32)gData_020036f6);
   v_r3 = (FIELD_AT(v_r6, u16, 482));
   v_r2 = (FIELD_AT(v_r6, s16, 482));
   if (v_r2 != 1)

@@ -450,8 +450,6 @@ void Func_02002718(void) {
 }
 
 extern const s16 gData_0200530c[][2];
-/* VIEW(s1f68): routine GameFlag_SetByte as s32 GameFlag_SetByte(s32 flag, s32 value); game_flags.h has u32 GameFlag_SetByte(u32 flag, u8 value). */
-extern s32 GameFlag_SetByte__s1f68(s32 flag, s32 value) __asm__("GameFlag_SetByte");
 
 /// Records which of eleven listed cells persons 10 and 11 stand on, as the two
 /// halves of the byte flag 0x210.
@@ -474,7 +472,7 @@ s32 Func_02002974(void) {
   }
   {
     u32 high = secondIndex << 28;
-    return GameFlag_SetByte__s1f68(0x210, (s32)((firstIndex << 24) | high) >> 24);
+    return GameFlag_SetByte(0x210, (s32)((firstIndex << 24) | high) >> 24);
   }
 }
 
@@ -521,10 +519,8 @@ const u8 *Scene_GetEvents(void) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(s2ac8): routine Actor_GetById as s32 Actor_GetById(); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s1f68.c:539: too few arguments to function `Actor_GetById'. */
+/* VIEW(s2ac8): routine Actor_GetById as s32 Actor_GetById(); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s1f68.c:530: too few arguments to function `Actor_GetById'. */
 extern s32 Actor_GetById__s2ac8() __asm__("Actor_GetById");
-/* VIEW(s1f68): routine ResourceMetadata_Register as s32 ResourceMetadata_Register(); actor_view.h has s32 ResourceMetadata_Register(struct ActorSpriteView *, s32). */
-extern s32 ResourceMetadata_Register__s1f68() __asm__("ResourceMetadata_Register");
 s32 Func_02004d9c();
 
 void Func_02002ac8(s32 a0, s32 a1) {
@@ -534,7 +530,7 @@ void Func_02002ac8(s32 a0, s32 a1) {
   t0 = Actor_GetById__s2ac8();
   Actor_SetAngleToward(a0, a1, 0);
   if (t0 != 0) {
-    t2 = ResourceMetadata_Register__s1f68(FIELD_AT(t0, s32, 80), 0x185);
+    t2 = ResourceMetadata_Register(FIELD_AT(t0, s32, 80), 0x185);
     FIELD_AT(t2, u8, 5) = 0;
     FIELD_AT(t2, u8, 6) = 0;
     Func_02004d9c(t0, 0);
@@ -566,7 +562,7 @@ void Func_02002b04(u32 id, s8 mode) {
        ->v)
 
 #include "call.h"
-/* VIEW(s2b58): routine Actor_GetById as s32 Actor_GetById(); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s1f68.c:581: too few arguments to function `Actor_GetById'. */
+/* VIEW(s2b58): routine Actor_GetById as s32 Actor_GetById(); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s1f68.c:572: too few arguments to function `Actor_GetById'. */
 extern s32 Actor_GetById__s2b58() __asm__("Actor_GetById");
 void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 

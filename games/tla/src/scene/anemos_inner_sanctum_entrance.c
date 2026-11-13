@@ -155,8 +155,6 @@ void Func_02000534(s32 a) {
 #include "version.h"
 
 void Func_02000388(void);
-/* VIEW(s0588): routine Func_020004b4 as void Func_020004b4(void); the definition has void Func_020004b4(struct Actor *object). */
-extern void Func_020004b4__s0588(void) __asm__("Func_020004b4");
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Script_WaitForEventTimeout(struct Actor *actor);
 
@@ -202,7 +200,7 @@ next:
     object->speedLimit = 0x20000;
     Actor_SetSingleChildFlags(object, 1);
     Actor_SetMoveTarget(object, object->x, 0xfff80000, object->z);
-    object->update = Func_020004b4__s0588;
+    object->update = Func_020004b4;
     Sound_Play(152);
     wait((Random16Far() * 4 >> 16) + 3);
   }
@@ -322,13 +320,11 @@ s32 Scene_PrepareMap(void) { return 0; }
 #include "frame.h"
 
 extern struct LightOam gData_02001d20[];
-/* VIEW(s0588): variable gData_02001de2 as extern s16 gData_02001de2; hide has extern u16 gData_02001de2; tried as the one declaration extern s16 gData_02001de2, it does not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum_entrance.c:355: conflicting types for `gData_02001de2'. */
+/* VIEW(s0588): variable gData_02001de2 as extern s16 gData_02001de2; hide has extern u16 gData_02001de2; tried as the rest of the object declares it, Func_02000858 moves: 149 of 260 instructions, Func_02000a98 moves: 0 of 36 instructions, Func_02000b18 moves: 0 of 39 instructions in tla-ja. */
 extern s16 gData_02001de2__s0588 __asm__("gData_02001de2");
-/* VIEW(s0588): variable gData_02001de4 as extern s16 gData_02001de4; hide has extern u16 gData_02001de4; tried as the one declaration extern s16 gData_02001de4, it does not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum_entrance.c:357: conflicting types for `gData_02001de4'. */
+/* VIEW(s0588): variable gData_02001de4 as extern s16 gData_02001de4; hide has extern u16 gData_02001de4; tried as the rest of the object declares it, Func_02000858 moves: 2 of 260 instructions in tla-ja. */
 extern s16 gData_02001de4__s0588 __asm__("gData_02001de4");
 
-/* VIEW(anemos_inner_sanctum_entrance): routine Func_02000c3c as void Func_02000c3c(struct LightOam *oam, s32 depth); module/scene/settlements.h has void Func_02000c3c(void). */
-extern void Func_02000c3c__anemos_inner_sanctum_entrance(struct LightOam *oam, s32 depth) __asm__("Func_02000c3c");
 
 void Func_02000858(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -374,7 +370,7 @@ void Func_02000858(void) {
           oam->priority = Func_02000d5c(actor);
         else
           oam->priority = gData_02001de2__s0588;
-        Func_02000c3c__anemos_inner_sanctum_entrance(oam, depth);
+        Func_02000c3c(oam, depth);
         oam++;
       } else {
         s32 frame = actor->timer;
@@ -394,7 +390,7 @@ void Func_02000858(void) {
           oam->priority = Func_02000d5c(actor);
         else
           oam->priority = gData_02001de2__s0588;
-        Func_02000c3c__anemos_inner_sanctum_entrance(oam, depth);
+        Func_02000c3c(oam, depth);
         oam++;
       }
     }
@@ -404,8 +400,6 @@ void Func_02000858(void) {
 #include "iwram_call.h"
 #include "task.h"
 
-/* VIEW(anemos_inner_sanctum_entrance): routine Resource_DecodeType01 as void Resource_DecodeType01(const void *source, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
-extern void Resource_DecodeType01__anemos_inner_sanctum_entrance(const void *source, void *destination) __asm__("Resource_DecodeType01");
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -415,7 +409,7 @@ void Func_02000a98(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
   Iwram_ClearWords(gData_02001ce0, 64);
-  Resource_DecodeType01__anemos_inner_sanctum_entrance(gField_CachedTilesA, buffer);
+  Resource_DecodeType01(gField_CachedTilesA, buffer);
   gData_02001cdc = Resource_FindFreeEntry();
   VramCache_Load(gData_02001cdc, 0xc00, buffer);
   Heap_Release(buffer);
@@ -429,7 +423,7 @@ void Func_02000b18(void) {
   u8 *buffer = BumpAlloc(0x1800);
 
   Iwram_ClearWords(gData_02001ce0, 64);
-  Resource_DecodeType01__anemos_inner_sanctum_entrance(gField_CachedTilesD, buffer);
+  Resource_DecodeType01(gField_CachedTilesD, buffer);
   gData_02001cdc = Resource_FindFreeEntry();
   VramCache_Load(gData_02001cdc, 0x1800, buffer);
   Heap_Release(buffer);

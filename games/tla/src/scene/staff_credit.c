@@ -143,8 +143,7 @@ extern u8 gData_02003d84[];
 extern u8 gData_02003d88[];
 extern u16 gData_02003d8e[];
 extern s8 gData_02003d9c[][2];
-/* VIEW(staff_credit): variable gData_0200215c as u8 gData_0200215c[]; module/scene/venus_lighthouse.h has s32 gData_0200215c[]. */
-extern u8 gData_0200215c__staff_credit[] __asm__("gData_0200215c");
+extern s32 gData_0200215c[];
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, -1, z, mode);
@@ -254,7 +253,7 @@ void Func_0200020c(s32 stage) {
         gBgScroll[0].x = 8;
         gBgScroll[0].y = frame;
         IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)Data_0200213c, 0x80000010);
-        IO_WRITE_QUEUE_PUSH(0x050001e0, (u32)gData_0200215c__staff_credit, 0x80000010);
+        IO_WRITE_QUEUE_PUSH(0x050001e0, (u32)gData_0200215c, 0x80000010);
       } else {
         gBgScroll[0].x = gData_02003d9c[stage][0];
         gBgScroll[0].y = gData_02003d9c[stage][1];
@@ -869,11 +868,6 @@ void Func_02001a80(struct Actor *object) {
 #include "call.h"
 #include "task.h"
 
-/* VIEW(staff_credit): tag struct LinkedDetail as struct LinkedDetail__staff_credit; module/scene/scene.h has another definition. */
-struct LinkedDetail__staff_credit {
-  u8 unk00[22];
-  u8 unk16;
-};
 
 void Func_02001ad0(struct Actor *parent) {
   struct Actor *pair[2];
@@ -907,7 +901,7 @@ void Func_02001ad0(struct Actor *parent) {
         sprite->fullColor = 0;
         sprite->shape = 1;
         ((struct LinkedSpriteView *)sprite)->size = 2;
-        ((struct LinkedDetail__staff_credit *)sprite->record)->unk16 = 0;
+        ((struct LinkedDetail *)sprite->record)->field16 = 0;
       }
     }
   }
@@ -1025,12 +1019,9 @@ done:
   Vram_Load(gData_02003fc6, 0x100, gData_02003fd8);
 }
 
-/* VIEW(staff_credit): variable gInput as u32 gInput; input.h has struct InputState gInput. */
-extern u32 gInput__staff_credit __asm__("gInput");
+extern u32 gInput;
 extern s16 gData_02003fc8;
 
-/* VIEW(staff_credit): routine Func_02002014 as s32 Func_02002014(void); module/scene/kandorean_temple.h has void Func_02002014(void). */
-extern s32 Func_02002014__staff_credit(void) __asm__("Func_02002014");
 
 // The same cursor as the world map's, in this overlay: counts down while A or B
 // is held, redraws the gauge and queues its sprite over the leader.
@@ -1041,13 +1032,13 @@ void Func_02001d90(void) {
   s32 screen[3];
   u32 attributes;
 
-  if ((gInput__staff_credit & 3) != 0 && Event_GetFlag(0x106) == 0 && leader->y > 0x40000) {
+  if ((gInput & 3) != 0 && Event_GetFlag(0x106) == 0 && leader->y > 0x40000) {
     if (--gData_02003fc8 <= 0) {
       Func_0200200c(1);
       gData_02003fc8 = 10;
     }
   }
-  Func_02001be0(Func_02002014__staff_credit());
+  Func_02001be0(Func_02002014());
   attributes = 0x80004000;
   Call2((void (*)())Render_ProjectPoint, (s32)(&leader->x), (s32)(screen));
   {

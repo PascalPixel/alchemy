@@ -447,8 +447,6 @@ struct Orbiter__find_near *Func_02000624(struct Orbiter__find_near *origin, s32 
 
 
 void Func_020057d4(struct Actor *object);
-/* VIEW(find_near): routine Func_02005624 as void Func_02005624(struct Actor *object, s32 mode); gabomba_statue has extern void Func_02005624(struct FieldEffect *effect, s32 mode). */
-extern void Func_02005624__find_near(struct Actor *object, s32 mode) __asm__("Func_02005624");
 
 void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity) {
   u8 *flags = &object->motionFlags;
@@ -456,10 +454,10 @@ void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity) {
 
   Func_020057d4(object);
   saved = *flags;
-  Func_02005624__find_near(object, 6);
+  Func_02005624(object, 6);
   System_Wait(6);
   Event_PlaySound(152);
-  Func_02005624__find_near(object, 7);
+  Func_02005624(object, 7);
   object->speedLimit = 0x30000;
   object->acceleration = 0x20000;
   object->velocityY = velocity;
@@ -468,7 +466,7 @@ void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity) {
   FieldActor_SetMoveTarget(object, object->x + dx, object->y, object->z + dz);
   Actor_WaitForMove(object);
   *flags = saved;
-  Func_02005624__find_near(object, 6);
+  Func_02005624(object, 6);
   Actor_SetSingleChildFlags(object, 1);
   System_Wait(3);
 }
@@ -599,7 +597,7 @@ void Func_02000978(void) {
 }
 
 
-/* VIEW(find_near): routine Func_020056b4 as void Func_020056b4(void); gabomba_statue has void Func_020056b4(struct Actor *object); tried as the 3 declarations' void Func_020056b4(void), it does not compile in tla-ja: games/tla/src/scene/gabomba_statue.c:600: conflicting types for `Func_020056b4'. */
+/* VIEW(find_near): routine Func_020056b4 as void Func_020056b4(void); gabomba_statue has void Func_020056b4(struct Actor *object); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/gabomba_statue.c:606: too few arguments to function `Func_020056b4'. */
 extern void Func_020056b4__find_near(void) __asm__("Func_020056b4");
 void Event_FinishScreenTransition(void);
 
@@ -1281,11 +1279,6 @@ struct FieldPart {
   s16 kind;
 };
 
-/* VIEW(find_near): tag struct FieldAnimation as struct FieldAnimation__find_near; gabomba_statue.c has another definition. */
-struct FieldAnimation__find_near {
-  u8 unk00[40];
-  struct FieldPart *part;
-};
 
 void Func_020043a4(s32 value);
 s32 Func_020053a0(void);
@@ -1304,7 +1297,7 @@ void Func_02001a8c(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_Wait(20);
   Event_PlaySound(214);
-  Func_02005624__find_near(object, 5);
+  Func_02005624(object, 5);
   object->scaleY = 0x10000;
   Event_End();
 }
@@ -1380,7 +1373,7 @@ next:
     struct Actor *object = Actor_Get(i);
 
     if (object != NULL && object->animationKind == 1) {
-      struct FieldPart *part = ((struct FieldAnimation__find_near *)object->sprite)->part;
+      struct FieldPart *part = ((struct FieldAnimation *)object->sprite)->part;
 
       if (part != NULL) {
         switch (part->kind) {
@@ -1531,7 +1524,7 @@ void Func_020020b0(s32 id, s32 direction, s32 value) {
   struct Actor *object = Actor_Get(id);
   void *animation = object->sprite;
 
-  Func_02005624__find_near(object, gData_02005940[(direction + 1) & 3]);
+  Func_02005624(object, gData_02005940[(direction + 1) & 3]);
   object->unk5c[0] = 2;
   Func_0200561c(animation, value);
 }
@@ -1588,7 +1581,7 @@ void Func_020020f0(s32 direction) {
 
 extern const u8 gData_0200e88c[];
 
-/* VIEW(find_near): routine Actor_StartScript as void Actor_StartScript(struct Orbiter__find_near *object, const u8 *script); gabomba_statue has extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script). */
+/* VIEW(find_near): routine Actor_StartScript as void Actor_StartScript(struct Orbiter__find_near *object, const u8 *script); gabomba_statue has extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script); not tried: Actor_StartScript's bound declaration was not found. */
 extern void Func_02005634__find_near(struct Orbiter__find_near *object, const u8 *script) __asm__("Actor_StartScript");
 void Animation_ApplyChildValues(struct Orbiter__find_near *object, s32 value);
 
@@ -1596,7 +1589,7 @@ void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
   struct Orbiter__find_near *object = ((struct Orbiter__find_near *)Actor_Get(slot));
   struct Orbiter__find_near *target = ((struct Orbiter__find_near *)Actor_Get(targetId));
 
-  Func_02005624__find_near(object, 0);
+  Func_02005624(object, 0);
   Func_02005634__find_near(object, gData_0200e88c);
   Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;

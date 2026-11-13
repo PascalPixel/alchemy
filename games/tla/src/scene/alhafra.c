@@ -186,7 +186,7 @@ void Func_02000260(void) { FieldActor_SetSpritePriority(25, 3); }
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(alhafra): routine Func_02001d2c as s32 Func_02001d2c(); module/scene/scene.h has s32 Func_02001d2c(s32 x, s32 z, s32 layer). */
+/* VIEW(alhafra): routine Func_02001d2c as s32 Func_02001d2c(); module/scene/scene.h has s32 Func_02001d2c(s32 x, s32 z, s32 layer); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/alhafra.c:194: too few arguments to function `Func_02001d2c'. */
 extern s32 Func_02001d2c__alhafra() __asm__("Func_02001d2c");
 extern u8 gData_02001d54[];
 
@@ -228,12 +228,10 @@ void Func_02000288(void) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(alhafra): routine PartyInventory_Remove as void PartyInventory_Remove(s32 a); module/game/game.h has s32 PartyInventory_Remove(s32 item_id). */
-extern void PartyInventory_Remove__alhafra(s32 a) __asm__("PartyInventory_Remove");
 
 void Func_020002f8(void) {
   GameFlag_SetBit(0x8b5);
-  PartyInventory_Remove__alhafra(0x1c9);
+  PartyInventory_Remove(0x1c9);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAlhafra69);
@@ -290,7 +288,7 @@ void Func_02000398(s32 id) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(alhafra): routine Func_02001ccc as void Func_02001ccc(void); module/scene/scene.h has void Func_02001ccc(s32 actor, s32 value). */
+/* VIEW(alhafra): routine Func_02001ccc as void Func_02001ccc(void); module/scene/scene.h has void Func_02001ccc(s32 actor, s32 value); tried as the rest of the object declares it, Func_0200047c moves: 3 of 189 instructions, Func_02000aa0 moves: 11 of 1456 instructions in tla-ja. */
 extern void Func_02001ccc__alhafra(void) __asm__("Func_02001ccc");
 
 void Func_0200047c(void) {
@@ -434,8 +432,6 @@ const u8 *Scene_GetEvents(void) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(alhafra): routine Func_02001d24 as void Func_02001d24(); module/scene/shrine_of_the_sea_god.h has void Func_02001d24(void). */
-extern void Func_02001d24__alhafra() __asm__("Func_02001d24");
 
 s32 Scene_Initialize(void) {
   s32 t1, t2, t3, t4, t9, t10, t11, t23, t24, t25, t37, t39, t41, t44, t50, t51,
@@ -530,7 +526,7 @@ L_020089c8:
     goto L_020089e0;
   Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
 L_020089e0:
-  Func_02001d24__alhafra((s32)&gData_02001d54);
+  Func_02001d24((s32)&gData_02001d54);
   t56 = ((s32)Actor_GetById(26));
   Actor_SetActionCallback(t56, 9);
   t58 = ((s32)Actor_GetById(27));

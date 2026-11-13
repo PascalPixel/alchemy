@@ -43,13 +43,10 @@ struct Spark {
 
 extern const u8 gData_02005264[], gData_02005218[], gData_02005234[],
     gData_02005288[], gData_02005244[], gData_020052ac[], gData_020052dc[];
-/* VIEW(s15d0): routine Scene_SetActorSpritePriority as void Scene_SetActorSpritePriority(void *object, s32 priority); field.h has void Scene_SetActorSpritePriority(struct Actor *object, s32 priority). */
-extern void Scene_SetActorSpritePriority__s15d0(void *object, s32 priority) __asm__("Scene_SetActorSpritePriority");
+void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Func_02004d9c(void *object, s32 mode);
-/* VIEW(s15d0): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(void *object, u32 value); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
-extern void Actor_SetSingleChildFlags__s15d0(void *object, u32 value) __asm__("Actor_SetSingleChildFlags");
-/* VIEW(s15d0): routine Animation_SetStateFlags as void Animation_SetStateFlags(void *object, s32 flags); field.h has void Animation_SetStateFlags(struct Actor *object, u32 value). */
-extern void Animation_SetStateFlags__s15d0(void *object, s32 flags) __asm__("Animation_SetStateFlags");
+void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+void Animation_SetStateFlags(struct Actor *object, u32 value);
 void Actor_StartScript(void *object, const u8 *script);
 void Func_02001548(void);
 
@@ -94,10 +91,10 @@ first:
     spark->acceleration = 0x3333;
     spark->motionFlags = 0;
     Actor_SetPartAttribute(spark, 2);
-    Scene_SetActorSpritePriority__s15d0(spark, 1);
+    Scene_SetActorSpritePriority(spark, 1);
     Func_02004d9c(spark, 7);
-    Actor_SetSingleChildFlags__s15d0(spark, 0);
-    Animation_SetStateFlags__s15d0(spark, 1);
+    Actor_SetSingleChildFlags(spark, 0);
+    Animation_SetStateFlags(spark, 1);
     Actor_StartScript(spark, gData_02005218);
     REG_BLDALPHA = 0x1004;
     wait(2);
@@ -126,10 +123,10 @@ second:
     spark->watchedObject = b;
     spark->unk62 = (16 - i) * 8 + 15;
     Actor_SetPartAttribute(spark, 2);
-    Scene_SetActorSpritePriority__s15d0(spark, 1);
+    Scene_SetActorSpritePriority(spark, 1);
     Func_02004d9c(spark, 7);
-    Actor_SetSingleChildFlags__s15d0(spark, 0);
-    Animation_SetStateFlags__s15d0(spark, 1);
+    Actor_SetSingleChildFlags(spark, 0);
+    Animation_SetStateFlags(spark, 1);
     /* FAKEMATCH(wrapper): forwarded for its argument order; as a direct call, 2
      * of 402 instructions differ in tla-en. */
     FieldVector_AddPolarOffset(spark->unk4c, *angle, &spark->x);
@@ -171,8 +168,8 @@ third:
     spark->priorityFlags = 1;
     Actor_SetPartAttribute(spark, 2);
     Func_02004d9c(spark, 7);
-    Actor_SetSingleChildFlags__s15d0(spark, 0);
-    Animation_SetStateFlags__s15d0(spark, 1);
+    Actor_SetSingleChildFlags(spark, 0);
+    Animation_SetStateFlags(spark, 1);
     Actor_StartScript(spark, gData_02005244);
   }
   i += 2;
@@ -202,7 +199,7 @@ third:
 void Actor_MoveToObject(s32 id, s32 target);
 void DisplayBlend_EnableRunScript(void);
 void DisplayBlend_DisableRunScript(void);
-/* VIEW(s15d0): routine Func_02004e64 as s32 Func_02004e64(void); module/scene/scene.h has void Func_02004e64(void). */
+/* VIEW(s15d0): routine Func_02004e64 as s32 Func_02004e64(void); module/scene/scene.h has void Func_02004e64(void); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s15d0.c:279: void value not ignored as it ought to be. */
 extern s32 Func_02004e64__s15d0(void) __asm__("Func_02004e64");
 
 /// The party meets person 11 on the ledge: they talk, the ground shakes, the
@@ -401,8 +398,6 @@ void Func_02001d14(void) {
 // as u16 the scene symbol loads through ldrh and the pools break up.
 #include "text/msg_ids.h"
 
-/* VIEW(s15d0): routine Field_RequestBattleFromEncounterTable as s32 Field_RequestBattleFromEncounterTable(s32 entrance, s32 count); module/field/event_commands.h has void Field_RequestBattleFromEncounterTable(s32 row, s32 column). */
-extern s32 Field_RequestBattleFromEncounterTable__s15d0(s32 entrance, s32 count) __asm__("Field_RequestBattleFromEncounterTable");
 
 void Func_02001ebc(void) {
   s32 count;
@@ -433,6 +428,6 @@ void Func_02001ebc(void) {
     } else {
       Event_SetDefeatDestination(scene, 11);
     }
-    Field_RequestBattleFromEncounterTable__s15d0(12, count);
+    Field_RequestBattleFromEncounterTable(12, count);
   }
 }

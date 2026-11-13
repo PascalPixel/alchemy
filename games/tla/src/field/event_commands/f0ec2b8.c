@@ -13,7 +13,7 @@ struct WorldMapPlace {
 };
 
 // The world map screen's work, laid out as field/world_map.h has it.
-/* VIEW(f0ec2b8): tag struct WorldMapWork as struct WorldMapWork__f0ec2b8; world_map.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:45: dereferencing pointer to incomplete type. */
+/* VIEW(f0ec2b8): tag struct WorldMapWork as struct WorldMapWork__f0ec2b8; world_map.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:47: dereferencing pointer to incomplete type. */
 struct WorldMapWork__f0ec2b8 {
   u16 vramBlock;
   u16 windowSlot;
@@ -25,8 +25,6 @@ struct WorldMapWork__f0ec2b8 {
 };
 
 s32 Party_GetLeaderActor(void);
-/* VIEW(f0ec2b8): routine FlagEntries_GetTable as struct WorldMapPlace *FlagEntries_GetTable(void); world_map.h has const struct FlagEntry *FlagEntries_GetTable(void). */
-extern struct WorldMapPlace *FlagEntries_GetTable__f0ec2b8(void) __asm__("FlagEntries_GetTable");
 const struct FlagEntry *FlagEntries_GetTable(void);
 u32 Func_080ec298(struct WorldMapPlace *place);
 s32 GameFlag_Test(s32 flag);
@@ -51,7 +49,7 @@ void Func_080ec2b8(s32 *screenX, s32 *screenY, s32 step) {
   struct WorldMapWork__f0ec2b8 *work = Ram_WorldMapWork;
 
   Party_GetLeaderActor();
-  places = FlagEntries_GetTable__f0ec2b8();
+  places = FlagEntries_GetTable();
   bestDistance = 0x4000000;
   best = -1;
   cursorX = work->x >> 16;
@@ -173,7 +171,7 @@ struct WorldMapMarker {
   u8 unk0a[2];
 };
 
-/* VIEW(f0ec4d4): tag struct WorldMapWork as struct WorldMapWork__f0ec4d4; f0ec2b8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:272: dereferencing pointer to incomplete type. */
+/* VIEW(f0ec4d4): tag struct WorldMapWork as struct WorldMapWork__f0ec4d4; f0ec2b8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:274: dereferencing pointer to incomplete type. */
 struct WorldMapWork__f0ec4d4 {
   u16 vramBlock;
   u16 windowSlot;
@@ -190,7 +188,7 @@ struct WorldMapWork__f0ec4d4 {
   s32 scrollZ;
 };
 
-/* VIEW(f0ec4d4): tag struct WorldMapPlace as struct WorldMapPlace__f0ec4d4; f0ec2b8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:352: structure has no member named `name'. */
+/* VIEW(f0ec4d4): tag struct WorldMapPlace as struct WorldMapPlace__f0ec4d4; f0ec2b8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:354: structure has no member named `name'. */
 struct WorldMapPlace__f0ec4d4 {
   u8 flag;
   u8 value;
@@ -234,14 +232,10 @@ struct WorldMapAliasedHalfword {
 extern struct WorldMapMarker Data_0202a620;
 
 s32 Party_GetLeaderActor(void);
-/* VIEW(f0ec4d4): routine FlagEntries_GetTable as struct WorldMapPlace__f0ec4d4 *FlagEntries_GetTable(void); f0ec2b8 has struct WorldMapPlace *FlagEntries_GetTable(void). */
-extern struct WorldMapPlace__f0ec4d4 *FlagEntries_GetTable__f0ec4d4(void) __asm__("FlagEntries_GetTable");
 const struct FlagEntry *FlagEntries_GetTable(void);
 s32 FixedSqrt(s32 value);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 void Func_080ec1d0(s32 *screenX, s32 *screenY);
-/* VIEW(f0ec4d4): routine Func_080ec298 as u32 Func_080ec298(struct WorldMapPlace__f0ec4d4 *place); f0ec2b8 has u32 Func_080ec298(struct WorldMapPlace *place). */
-extern u32 Func_080ec298__f0ec4d4(struct WorldMapPlace__f0ec4d4 *place) __asm__("Func_080ec298");
 s32 GameFlag_Test(s32 flag);
 void Func_080140d8(void *entry, s32 slot);
 s32 ArcTan2(s32 y, s32 x);
@@ -297,7 +291,7 @@ void Func_080ec4d4(void) {
   nearestDistance = 64;
   nearestX = 0;
   nearestY = 0;
-  places = FlagEntries_GetTable__f0ec4d4();
+  places = FlagEntries_GetTable();
   scrollX = work->scrollX & 0xffff0000;
   scrollY = work->scrollZ & 0xffff0000;
   blend = Data_080f1100[(gFrameCount >> 1) & 31];
@@ -370,7 +364,7 @@ void Func_080ec4d4(void) {
       name = place->name;
       entrance = place->nameEntrance;
       flag = place->flag + 0x180;
-      tile = Func_080ec298__f0ec4d4(place);
+      tile = Func_080ec298(place);
       if (tile == 0)
         continue;
       if (tile == 15) {

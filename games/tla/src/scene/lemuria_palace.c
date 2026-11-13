@@ -24,12 +24,8 @@
 #include "module/scene/lemuria_palace.h"
 #include "module/scene/scene.h"
 
-/* VIEW(lemuria_palace): routine Event_FinishScreenTransition as void Event_FinishScreenTransition(); event_work.h has void Event_FinishScreenTransition(void). */
-extern void Event_FinishScreenTransition__lemuria_palace() __asm__("Event_FinishScreenTransition");
-/* VIEW(lemuria_palace): routine Event_WaitTransitionFrames as void Event_WaitTransitionFrames(); event_work.h has void Event_WaitTransitionFrames(void). */
-extern void Event_WaitTransitionFrames__lemuria_palace() __asm__("Event_WaitTransitionFrames");
 void Event_Start();
-/* VIEW(lemuria_palace): routine Event_End as void Event_End(); event_work.h has void Event_End(void). */
+/* VIEW(lemuria_palace): routine Event_End as void Event_End(); event_work.h has void Event_End(void); not tried: Event_End's bound declaration was not found. */
 extern void Event_End__lemuria_palace() __asm__("Event_End");
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -53,23 +49,19 @@ void Func_02000054(struct DoorStep *step, s32 countdown, s32 unused) {
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
   FieldEvent_Wait(10);
   FieldEvent_SetExitRequest(countdown);
-  Event_FinishScreenTransition__lemuria_palace();
-  Event_WaitTransitionFrames__lemuria_palace();
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
   Event_End__lemuria_palace();
 }
 
-/* VIEW(lemuria_palace): variable gData_02002368 as extern u8 gData_02002368[]; the definition has s32 gData_02002368[] = { (s32) gData_0200233c, 0x170005, (s32) gData_0200233c, 0x17001e, }. */
-extern u8 gData_02002368__lemuria_palace[] __asm__("gData_02002368");
-/* VIEW(lemuria_palace): variable gData_02002378 as extern u8 gData_02002378[]; the definition has s32 gData_02002378[] = { (s32) gData_0200233c, 0x40038, }. */
-extern u8 gData_02002378__lemuria_palace[] __asm__("gData_02002378");
 
 void Func_020000c8(s32 kind) {
-  const u8 *data = gData_02002368__lemuria_palace;
+  const u8 *data = gData_02002368;
 
   if (kind == 3)
     data += 8;
   if (kind == 16)
-    data = gData_02002378__lemuria_palace;
+    data = gData_02002378;
   Func_02000054(data, kind, 0);
 }
 
@@ -136,8 +128,6 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/* VIEW(lemuria_palace): routine Func_02001f9c as void Func_02001f9c(struct Actor *object); module/scene/scene.h has s32 Func_02001f9c(struct Actor *actor). */
-extern void Func_02001f9c__lemuria_palace(struct Actor *object) __asm__("Func_02001f9c");
 
 void Func_020001d8(void) {
   struct Actor *object = Actor_Get(13);
@@ -162,17 +152,15 @@ void Func_020001d8(void) {
   FieldActor_SetMoveTarget(second, first->x + PIXELS(8), first->y - PIXELS(4),
                       first->z);
   Actor_WaitForMove(first);
-  Func_02001f9c__lemuria_palace(first);
+  Func_02001f9c(first);
   Actor_WaitForMove(second);
-  Func_02001f9c__lemuria_palace(second);
+  Func_02001f9c(second);
   FieldEvent_Wait(30);
 }
 
 extern u8 gData_0200308c[];
 extern u8 gData_02002fe8[];
 s32 __modsi3();
-/* VIEW(lemuria_palace): routine Camera_WorldToScreen as s32 Camera_WorldToScreen(); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
-extern s32 Camera_WorldToScreen__lemuria_palace() __asm__("Camera_WorldToScreen");
 
 void Func_020002b4(void) {
   struct Vector3 position;
@@ -227,7 +215,7 @@ void Func_020002b4(void) {
   position.x = 0x3400000;
   position.y = 0;
   position.z = 0x1c00000;
-  Camera_WorldToScreen__lemuria_palace(&position);
+  Camera_WorldToScreen(&position);
   if (*(s32 *)Data_02003090 != 0) {
     ((struct Actor *)Data_02003060)->y = position.x;
     ((struct Actor *)Data_02003060)->z = position.z;
@@ -245,23 +233,20 @@ void Func_020002b4(void) {
 #include "call.h"
 #include "system/io_write.h"
 
-/* VIEW(lemuria_palace): variable gData_02003020 as s32 gData_02003020; module/scene/jupiter_lighthouse_aerie.h has u32 gData_02003020[]. */
-extern s32 gData_02003020__lemuria_palace __asm__("gData_02003020");
-/* VIEW(s03a0): variable Data_02003060 as extern struct Unk_020003a0Sprite Data_02003060; lemuria_palace has extern u8 Data_02003060[]; tried as the one declaration extern struct Unk_020003a0Sprite Data_02003060, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:275: conflicting types for `Data_02003060'. */
+extern s32 gData_02003020;
+/* VIEW(s03a0): variable Data_02003060 as extern struct Unk_020003a0Sprite Data_02003060; lemuria_palace has extern u8 Data_02003060[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:268: request for member `unk1e' in something not a structure or union. */
 extern struct Unk_020003a0Sprite Data_02003060__s03a0 __asm__("Data_02003060");
-/* VIEW(s03a0): variable Data_02003030 as extern struct Unk_020003a0Sprite Data_02003030; lemuria_palace has extern u8 Data_02003030[]; tried as the one declaration extern struct Unk_020003a0Sprite Data_02003030, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:277: conflicting types for `Data_02003030'. */
+/* VIEW(s03a0): variable Data_02003030 as extern struct Unk_020003a0Sprite Data_02003030; lemuria_palace has extern u8 Data_02003030[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:279: request for member `unk1e' in something not a structure or union. */
 extern struct Unk_020003a0Sprite Data_02003030__s03a0 __asm__("Data_02003030");
-/* VIEW(s03a0): variable Data_02003090 as extern s32 Data_02003090; lemuria_palace has extern u8 Data_02003090[]; tried as the one declaration extern s32 Data_02003090, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:279: conflicting types for `Data_02003090'. */
+/* VIEW(s03a0): variable Data_02003090 as extern s32 Data_02003090; lemuria_palace has extern u8 Data_02003090[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:284: `Data_02003090' has an incomplete type. */
 extern s32 Data_02003090__s03a0 __asm__("Data_02003090");
-/* VIEW(s03a0): variable Data_02003024 as extern s32 Data_02003024; lemuria_palace has extern u8 Data_02003024[]; tried as the one declaration extern s32 Data_02003024, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:281: conflicting types for `Data_02003024'. */
+/* VIEW(s03a0): variable Data_02003024 as extern s32 Data_02003024; lemuria_palace has extern u8 Data_02003024[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:285: `Data_02003024' has an incomplete type. */
 extern s32 Data_02003024__s03a0 __asm__("Data_02003024");
-/* VIEW(s03a0): variable Data_02003098 as extern s32 Data_02003098; lemuria_palace has extern u8 Data_02003098[]; tried as the one declaration extern s32 Data_02003098, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:283: conflicting types for `Data_02003098'. */
+/* VIEW(s03a0): variable Data_02003098 as extern s32 Data_02003098; lemuria_palace has extern u8 Data_02003098[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:286: `Data_02003098' has an incomplete type. */
 extern s32 Data_02003098__s03a0 __asm__("Data_02003098");
-/* VIEW(s03a0): variable gData_0200308c as extern u8 gData_0200308c; lemuria_palace has extern u8 gData_0200308c[]; tried as the definition's extern struct Trigger gData_0200308c[], which the object already declares, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:330: `gData_0200308c' has an incomplete type. */
+/* VIEW(s03a0): variable gData_0200308c as extern u8 gData_0200308c; lemuria_palace has extern u8 gData_0200308c[]; tried as the definition's extern struct Trigger gData_0200308c[], which the object already declares, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:287: `gData_0200308c' has an incomplete type. */
 extern u8 gData_0200308c__s03a0 __asm__("gData_0200308c");
 
-/* VIEW(lemuria_palace): routine Resource_DecodeType01 as void Resource_DecodeType01(const u8 *source, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
-extern void Resource_DecodeType01__lemuria_palace(const u8 *source, void *destination) __asm__("Resource_DecodeType01");
 
 void Func_020003a0(void) {
   /* FAKEMATCH(wrapper): forwarded, so that its 0x1000 goes straight to r0; as a
@@ -274,18 +259,18 @@ void Func_020003a0(void) {
 
   Io_Write16(0x3f40, &REG_BLDCNT);
   Io_Write16(0x1000, &REG_BLDALPHA);
-  Resource_DecodeType01__lemuria_palace(Data_02002620, buffer);
-  firstSlot = &gData_02003020__lemuria_palace;
+  Resource_DecodeType01(Data_02002620, buffer);
+  firstSlot = &gData_02003020;
   *firstSlot = Resource_FindFreeEntry();
   firstTile = &Data_02003088;
-  *firstTile = Vram_Load(gData_02003020__lemuria_palace, 0x1000, buffer);
+  *firstTile = Vram_Load(gData_02003020, 0x1000, buffer);
   Func_02002104(&Data_02003060__s03a0, 0, 0, 0xc0000000, Data_02003088);
   Data_02003060__s03a0.unk1e = 1;
   Data_02003060__s03a0.priority = 2;
   Data_02003060__s03a0.shape = 1;
   Data_02003060__s03a0.blend = 1;
   Data_02003060__s03a0.palette = 0;
-  Resource_DecodeType01__lemuria_palace(Data_02002af8, buffer);
+  Resource_DecodeType01(Data_02002af8, buffer);
   secondSlot = &gData_02003094;
   *secondSlot = Resource_FindFreeEntry();
   secondTile = &Data_02003058;
@@ -306,7 +291,7 @@ void Func_020003a0(void) {
 
 void Func_020004e8(void) {
   FieldTask_Remove(Func_020002b4);
-  Resource_ResetEntry(gData_02003020__lemuria_palace);
+  Resource_ResetEntry(gData_02003020);
   Resource_ResetEntry(gData_02003094);
 }
 
@@ -366,13 +351,12 @@ loop:
        ->v)
 
 void Event_Start();
-/* VIEW(s03a0): routine Event_End as s32 Event_End(); lemuria_palace has void Event_End(); tried as the definition's void Event_End(void), it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:442: void value not ignored as it ought to be. */
+/* VIEW(s03a0): routine Event_End as s32 Event_End(); lemuria_palace has void Event_End(); not tried: Event_End's bound declaration was not found. */
 extern s32 Func_02001fd4__s03a0() __asm__("Event_End");
-/* VIEW(lemuria_palace): routine Party_AddMember as s32 Party_AddMember(); module/game/game.h has s32 Party_AddMember(s32 owner). */
-extern s32 Party_AddMember__lemuria_palace() __asm__("Party_AddMember");
-/* VIEW(lemuria_palace): routine Func_020020ac as void Func_020020ac(); module/scene/scene.h has void Func_020020ac(s32 value). */
+s32 Party_AddMember(s32 value);
+/* VIEW(lemuria_palace): routine Func_020020ac as void Func_020020ac(); module/scene/scene.h has void Func_020020ac(s32 value); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:414: too few arguments to function `Func_020020ac'. */
 extern void Func_020020ac__lemuria_palace() __asm__("Func_020020ac");
-/* VIEW(s03a0): routine Func_020001d8 as s32 Func_020001d8(); the definition has void Func_020001d8(void); tried as the definition's void Func_020001d8(struct Actor *object), it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:406: conflicting types for `Func_020001d8'. */
+/* VIEW(s03a0): routine Func_020001d8 as s32 Func_020001d8(); the definition has void Func_020001d8(void); tried as the definition's void Func_020001d8(struct Actor *object), it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:359: conflicting types for `Func_020001d8'. */
 extern s32 Func_020001d8__s03a0() __asm__("Func_020001d8");
 s32 __modsi3();
 void Field_StartPaletteTransition();
@@ -419,7 +403,7 @@ L_0200863c:
   Actor_WatchAndSetScript(16, FIELD_AT(r5_1, s32, 0));
   GameFlag_SetBit(0x96a);
   GameFlag_SetBit(0x96b);
-  Party_AddMember__lemuria_palace(7);
+  Party_AddMember(7);
   v3 = Actor_GetById(64);
   v3->scaleY = r7_1;
   Actor_ArmCallback(14, FACING_EAST, 0);

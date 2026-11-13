@@ -15,8 +15,7 @@ void Func_02000cc8(void);
 void Func_02000e18(void);
 void Func_02000ecc(void);
 void Func_0200101c(void);
-/* VIEW(data2): routine Func_0200107c as void Func_0200107c(void); module/scene/aqua_rock_inside.h has void Func_0200107c(s32 a, s32 b). */
-extern void Func_0200107c__data2(void) __asm__("Func_0200107c");
+void Func_0200107c(s32 unused, s32 id);
 void Func_02001138(void);
 void Func_020011d4(void);
 void Func_02001a1c(void);
@@ -575,13 +574,13 @@ s32 gData_0200507c[] = {
     (s32)Func_02001060,
     0x8c15,
     (s32)0xffff000a,
-    (s32)Func_0200107c__data2,
+    (s32)Func_0200107c,
     0x8c15,
     (s32)0xffff000b,
-    (s32)Func_0200107c__data2,
+    (s32)Func_0200107c,
     9,
     -0x10000,
-    (s32)Func_0200107c__data2,
+    (s32)Func_0200107c,
     -1,
     0,
     0,

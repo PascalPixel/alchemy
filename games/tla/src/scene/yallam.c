@@ -7,14 +7,9 @@
 #include "module/scene/scene.h"
 #include "module/scene/yallam.h"
 
-/* VIEW(yallam): tag struct TileSprite as struct TileSprite__yallam; module/scene/scene.h has another definition. */
-struct TileSprite__yallam {
-  u8 unk00[18];
-  u16 tile;
-};
 
 s32 Func_02000038(struct Actor *object) {
-  struct TileSprite__yallam *sprite = object->sprite;
+  struct TileSprite *sprite = object->sprite;
 
   sprite->tile = 0x8000;
   return 0;
@@ -1685,7 +1680,7 @@ void Func_020022f8(void) {
   s32 step;
   s32 i;
   struct Actor *object = Actor_Get(9);
-  struct TileSprite__yallam *sprite = object->sprite;
+  struct TileSprite *sprite = object->sprite;
 
   Event_SetFlag(0x300);
   object->acceleration = 0x18000;

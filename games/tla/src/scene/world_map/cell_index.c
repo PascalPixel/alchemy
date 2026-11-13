@@ -15,8 +15,6 @@
 #include "module/scene/world_map.h"
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-/* VIEW(cell_index): routine Resource_DecodeType01 as void Resource_DecodeType01(const u8 *a, u8 *b); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
-extern void Resource_DecodeType01__cell_index(const u8 *a, u8 *b) __asm__("Resource_DecodeType01");
 u32 __umodsi3(u32 a, u32 b);
 
 s32 Func_02003988(s32 x, s32 z) { return x / 0x100000 + (z / 0x100000) * 128; }

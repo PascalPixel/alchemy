@@ -62,8 +62,6 @@ void Func_020000b4(void) {
 #include "ram_buffer.h"
 #include "event_work.h"
 
-/* VIEW(jupiter_lighthouse_room_2): routine Func_020021b4 as void Func_020021b4(struct Actor *object, s32 a); module/scene/dehkan_plateau.h has void Func_020021b4(void). */
-extern void Func_020021b4__jupiter_lighthouse_room_2(struct Actor *object, s32 a) __asm__("Func_020021b4");
 
 void Func_020000d0(s32 kind) {
   s32 owner = gMainRoutineWork.currentOwner;
@@ -97,7 +95,7 @@ void Func_020000d0(s32 kind) {
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
   effect = Actor_Spawn(280, leader->x, leader->y, leader->z);
-  Func_020021b4__jupiter_lighthouse_room_2(effect, 2);
+  Func_020021b4(effect, 2);
   effect->scaleX = 0x18000;
   effect->scaleY = 0x10000;
   ((struct FieldSprite *)effect->sprite)->priority = 1;
@@ -109,7 +107,7 @@ void Func_020000d0(s32 kind) {
     effect->z = leader->z;
     System_Wait(1);
   }
-  Func_020021b4__jupiter_lighthouse_room_2(effect, 6);
+  Func_020021b4(effect, 6);
   i = 14;
   do {
     leader->facing += 0x2000;
@@ -154,7 +152,7 @@ void Func_02000230(s32 kind) {
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
   effect = Actor_Spawn(280, leader->x, leader->y, leader->z);
-  Func_020021b4__jupiter_lighthouse_room_2(effect, 2);
+  Func_020021b4(effect, 2);
   effect->scaleX = 0x18000;
   effect->scaleY = 0x10000;
   ((struct FieldSprite *)effect->sprite)->priority = 1;
@@ -182,7 +180,7 @@ void Func_02000230(s32 kind) {
   }
   effect->scaleX = 0x18000;
   effect->scaleY = 0x10000;
-  Func_020021b4__jupiter_lighthouse_room_2(effect, 6);
+  Func_020021b4(effect, 6);
   leader->scaleX = 0x6000;
   leader->scaleY = 0x6000;
   i = 19;
@@ -365,7 +363,7 @@ void Func_02000720(struct Actor *object) {
                (height * 3 << 16) + 0x80000, 170 << 18);
   // Read signed, as the phase is above; the field is declared unsigned.
   if ((s16)object->unk66 == 0)
-    Func_020021b4__jupiter_lighthouse_room_2(object, 7);
+    Func_020021b4(object, 7);
   if (object->y > 170 << 17)
     object->unk66 = 0xffff;
   if (Math_Sin(angle) < 0)
@@ -511,7 +509,7 @@ void Func_02000aa4(s32 mode) {
 }
 
 void Func_0200223c();
-/* VIEW(jupiter_lighthouse_room_2): routine Func_0200230c as void Func_0200230c(); module/scene/scene.h has void Func_0200230c(s32 actor). */
+/* VIEW(jupiter_lighthouse_room_2): routine Func_0200230c as void Func_0200230c(); module/scene/scene.h has void Func_0200230c(s32 actor); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_2.c:525: too many arguments to function `Func_0200230c'. */
 extern void Func_0200230c__jupiter_lighthouse_room_2() __asm__("Func_0200230c");
 
 void Func_02000b28(s32 id) {

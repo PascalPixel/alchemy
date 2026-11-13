@@ -57,14 +57,13 @@ void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b) {
 
 #include "task.h"
 
-/* VIEW(islet_cave): variable gData_02001a1c as u16 gData_02001a1c; module/scene/madra_catacombs.h has struct Trigger gData_02001a1c[]. */
-extern u16 gData_02001a1c__islet_cave __asm__("gData_02001a1c");
+extern u16 gData_02001a1c;
 
 void Func_020000f4(void) {
   gData_02001a34 = 0;
   gData_02001a30 = Func_020001d4(gData_02001a24);
   gData_02001a20 = 15;
-  gData_02001a1c__islet_cave = 16;
+  gData_02001a1c = 16;
   gData_02001a14 = 1;
   Task_Add(Func_020001f8, TASK_PASS_VBLANK);
 }
@@ -78,7 +77,7 @@ void Func_02000178(void) {
   gData_02001a34 = 0;
   gData_02001a30 = Func_020001d4(gData_02001a24);
   gData_02001a20 = 2;
-  gData_02001a1c__islet_cave = 2;
+  gData_02001a1c = 2;
   gData_02001a14 = 1;
   Task_Add(Func_020001f8, TASK_PASS_VBLANK);
 }
@@ -102,10 +101,10 @@ void Func_020001f8(void) {
   int red, green, blue;
 
   step = 0;
-  if (gData_02001a1c__islet_cave != 0) {
-    if (--gData_02001a1c__islet_cave == 0) {
+  if (gData_02001a1c != 0) {
+    if (--gData_02001a1c == 0) {
       step = 1;
-      gData_02001a1c__islet_cave = gData_02001a20;
+      gData_02001a1c = gData_02001a20;
       if (gData_02001a20 > 2)
         gData_02001a20--;
     }
@@ -504,7 +503,7 @@ void Func_020009ec(void) {
   return;
 }
 
-/* VIEW(islet_cave): tag struct FieldActor as struct FieldActor__islet_cave; field_event.h has another definition. */
+/* VIEW(islet_cave): tag struct FieldActor as struct FieldActor__islet_cave; field_event.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/islet_cave.c:519: dereferencing pointer to incomplete type. */
 struct FieldActor__islet_cave {
   u8 unk00[8];
   s32 x;
@@ -870,7 +869,7 @@ void Func_02001034(void) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(islet_cave): routine Field_RequestBattleFromEncounterTable as s32 Field_RequestBattleFromEncounterTable(); module/field/event_commands.h has void Field_RequestBattleFromEncounterTable(s32 row, s32 column). */
+/* VIEW(islet_cave): routine Field_RequestBattleFromEncounterTable as s32 Field_RequestBattleFromEncounterTable(); module/field/event_commands.h has void Field_RequestBattleFromEncounterTable(s32 row, s32 column); tried as the definition's void Field_RequestBattleFromEncounterTable(s32 row, s32 column), which the object already declares, Func_020010ac moves: 1 of 64 instructions in tla-ja. */
 extern s32 Field_RequestBattleFromEncounterTable__islet_cave() __asm__("Field_RequestBattleFromEncounterTable");
 
 void Func_020010ac(void) {

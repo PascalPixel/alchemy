@@ -180,15 +180,10 @@ void Func_0802dd70(s32 pitchSlope, s32 *position, struct ScanlineRow *row) {
 #include "module/system/system.h"
 
 extern u32 gMapCellBuffer[];
-/* VIEW(terrain): variable gResource_Data012 as u8 gResource_Data012[]; module/field/field.h has struct AnimationMetadata gResource_Data012[]. */
-extern u8 gResource_Data012__terrain[] __asm__("gResource_Data012");
 
-/* VIEW(terrain): routine Resource_GetMetadataRecordFar as struct ViewerMetadata *Resource_GetMetadataRecordFar(s32 id); sprite_metadata.h has struct AnimationMetadata *Resource_GetMetadataRecordFar(u32 number); tried as the definition's struct AnimationMetadata *Resource_GetMetadataRecordFar(u32 id), it does not compile in tla-ja: games/tla/src/field/map/terrain.c:285: dereferencing pointer to incomplete type. */
-extern struct ViewerMetadata *Resource_GetMetadataRecordFar__terrain(s32 id) __asm__("Resource_GetMetadataRecordFar");
-/* VIEW(terrain): routine ResourceObject_Create as struct ViewerSprite *ResourceObject_Create(s32 id); resource.h has struct ResourceObject *ResourceObject_Create(s32 resource). */
-extern struct ViewerSprite *ResourceObject_Create__terrain(s32 id) __asm__("ResourceObject_Create");
-/* VIEW(terrain): routine ResourceMetadata_Register as s32 ResourceMetadata_Register(struct ViewerSprite *sprite, s32 id); actor_view.h has s32 ResourceMetadata_Register(struct ActorSpriteView *, s32). */
-extern s32 ResourceMetadata_Register__terrain(struct ViewerSprite *sprite, s32 id) __asm__("ResourceMetadata_Register");
+struct AnimationMetadata *Resource_GetMetadataRecordFar(u32 id);
+struct ResourceObject *ResourceObject_Create(s32 id);
+s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id);
 struct SpritePlacement;
 
 // The native reads the held keys afresh at each test.
@@ -240,19 +235,19 @@ restart:
   VramCache_Reset();
   Func_080230e0(2);
   ResourceSlot_Load(0, gMapCellBuffer, layers[0].spriteId, 0);
-  if (Resource_GetMetadataRecordFar__terrain(layers[0].spriteId)->drawKind == 20)
+  if (Resource_GetMetadataRecordFar(layers[0].spriteId)->drawKind == 20)
     ResourceSlot_Load(1, Data_02018000, layers[0].spriteId + 1, 0);
   for (i = 0; i < 10; i++) {
     struct ViewerSprite *sprite;
     s32 part = 0;
 
-    if (Resource_GetMetadataRecordFar__terrain(layers[0].spriteId)->drawKind == 20 &&
+    if (Resource_GetMetadataRecordFar(layers[0].spriteId)->drawKind == 20 &&
         (i & 1))
       part = 1;
-    sprite = ResourceObject_Create__terrain(layers[0].spriteId + part + (part << 12));
-    ResourceMetadata_Register__terrain(sprite, layers[1].spriteId);
-    ResourceMetadata_Register__terrain(sprite, layers[2].spriteId);
-    ResourceMetadata_Register__terrain(sprite, layers[3].spriteId);
+    sprite = ResourceObject_Create(layers[0].spriteId + part + (part << 12));
+    ResourceMetadata_Register(sprite, layers[1].spriteId);
+    ResourceMetadata_Register(sprite, layers[2].spriteId);
+    ResourceMetadata_Register(sprite, layers[3].spriteId);
     sprite->flags = shadowsEnabled;
   }
   for (i = 0; i < 4; i++) {
@@ -431,7 +426,7 @@ next:
     }
     if (gInput.repeat & 4) {
       Task_ResetAll();
-      System_ReturnZero((s32)&ResourceId_Data012, gResource_Data012__terrain);
+      System_ReturnZero((s32)&ResourceId_Data012, gResource_Data012);
       goto restart;
     }
     if (gInput.pressed & 2) {
@@ -500,8 +495,6 @@ s32 Func_0802e444(s32 value, s32 delta) {
 #include "sprite.h"
 #include "render_placement.h"
 
-/* VIEW(terrain): variable gVBlankCount as s32 gVBlankCount; frame.h has u32 gVBlankCount. */
-extern s32 gVBlankCount__terrain __asm__("gVBlankCount");
 
 /// Lays out the sprite viewer's ring around pixel (x, z): one position per
 /// facing of the first sprite's facing kind (6, 8, 10 or 4, or two opposite
@@ -518,7 +511,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY, struct SpritePlacemen
   angle = 0;
   kind = ((struct ProbeObjects *)Ram_HeapSlots->unk0c[1])->shape->kind;
   if ((gInput.held & 2) != 0)
-    angle = (s16)(gVBlankCount__terrain << 8);
+    angle = (s16)(gVBlankCount << 8);
   switch ((u32)kind) {
   case 3:
     for (i = 0; i < 6; i++) {

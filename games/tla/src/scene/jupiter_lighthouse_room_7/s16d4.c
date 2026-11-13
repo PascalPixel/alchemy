@@ -20,8 +20,7 @@
 #include "module/scene/scene.h"
 
 void Func_02002ad4(struct GustObject *object, s32 mode);
-/* VIEW(s16d4): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct GustObject *object, u32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
-extern void Actor_SetSingleChildFlags__s16d4(struct GustObject *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
+void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Func_02001514(struct GustObject *object);
 void Func_02001f74(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
@@ -39,7 +38,7 @@ struct GustObject *Func_020016d4(struct GustObject *source) {
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                     position.z));
   Func_02002ad4(object, 2);
-  Actor_SetSingleChildFlags__s16d4(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->angle = source->angle;
@@ -156,7 +155,7 @@ void Func_020019dc(const u16 *list) {
     mode = spec[1];
     flag = spec[2];
     object->collisionFlags &= 0xfe;
-    Actor_SetSingleChildFlags__s16d4(object, 0);
+    Actor_SetSingleChildFlags(object, 0);
     Func_02001acc(id, (u16)mode, (u16)flag, object->terrainId);
     limit = 0xff;
     spec += 3;
@@ -236,8 +235,7 @@ void Func_02001acc(s32 id, u32 kind, s32 flag, s32 layer) {
   }
 }
 
-/* VIEW(s16d4): variable gData_02003600 as struct Actor *gData_02003600[]; module/scene/idejima.h has u32 gData_02003600[]. */
-extern struct Actor *gData_02003600__s16d4[] __asm__("gData_02003600");
+extern u32 gData_02003600[];
 extern s16 gData_02003702;
 
 s32 Func_02002c2c(struct Actor *actor);
@@ -258,7 +256,7 @@ void Func_02001b74(void) {
   oam = Data_02003640;
 
   for (i = 0; i < gData_020035fe; i++) {
-    struct Actor *actor = gData_02003600__s16d4[i];
+    struct Actor *actor = gData_02003600[i];
     if (actor != 0 && actor->x != 0) {
       s32 big, ox, y, z, oy, depth;
       s32 frame;
@@ -316,8 +314,6 @@ void Func_02001b74(void) {
   }
 }
 
-/* VIEW(s16d4): routine Resource_DecodeType01 as void Resource_DecodeType01(const void *source, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
-extern void Resource_DecodeType01__s16d4(const void *source, void *destination) __asm__("Resource_DecodeType01");
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -326,8 +322,8 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 void Func_02001d30(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
-  Iwram_ClearWords(gData_02003600__s16d4, 64);
-  Resource_DecodeType01__s16d4(gField_CachedTilesA, buffer);
+  Iwram_ClearWords(gData_02003600, 64);
+  Resource_DecodeType01(gField_CachedTilesA, buffer);
   gData_020035fc = Resource_FindFreeEntry();
   VramCache_Load(gData_020035fc, 0xc00, buffer);
   Heap_Release(buffer);
@@ -340,8 +336,8 @@ void Func_02001d30(void) {
 void Func_02001db0(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
-  Iwram_ClearWords(gData_02003600__s16d4, 64);
-  Resource_DecodeType01__s16d4(gField_CachedTilesB, buffer);
+  Iwram_ClearWords(gData_02003600, 64);
+  Resource_DecodeType01(gField_CachedTilesB, buffer);
   gData_020035fc = Resource_FindFreeEntry();
   Vram_Load(gData_020035fc, 0x800, buffer);
   Heap_Release(buffer);
@@ -354,8 +350,8 @@ void Func_02001db0(void) {
 void Func_02001e30(void) {
   u8 *buffer = BumpAlloc(0x800);
 
-  Iwram_ClearWords(gData_02003600__s16d4, 64);
-  Resource_DecodeType01__s16d4(gField_CachedTilesC, buffer);
+  Iwram_ClearWords(gData_02003600, 64);
+  Resource_DecodeType01(gField_CachedTilesC, buffer);
   gData_020035fc = Resource_FindFreeEntry();
   Vram_Load(gData_020035fc, 0x800, buffer);
   Heap_Release(buffer);
@@ -373,7 +369,7 @@ void Func_02001eb8(s32 id, s32 value) {
 
   if (object != NULL) {
     object->timer = value;
-    gData_02003600__s16d4[gData_020035fe] = object;
+    gData_02003600[gData_020035fe] = object;
     gData_020035fe++;
   }
 }

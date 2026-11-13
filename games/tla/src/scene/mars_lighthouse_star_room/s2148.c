@@ -27,8 +27,6 @@ struct Work020023c4 {
 };
 
 s32 Func_0200424c(struct Actor *actor, struct Vector3 *position);
-/* VIEW(s2148): routine Actor_JumpDownLedge as void Actor_JumpDownLedge(); module/field/event_commands.h has void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle). */
-extern void Actor_JumpDownLedge__s2148() __asm__("Actor_JumpDownLedge");
 s32 Func_0200428c(s32 *from, s32 radius, struct Vector3 *to, s32 radius2);
 void Animation_ApplyChildValues(struct Actor *actor, s32 a);
 void Func_02002120(void);
@@ -118,7 +116,7 @@ void Func_02002148(void) {
           break;
         if (result < 0) {
           actor->facing = TRIG_TURN / 4;
-          Actor_JumpDownLedge__s2148(gMainRoutineWork.currentOwner, 6, -1);
+          Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, -1);
           break;
         }
 #if TLA_PATCH_1
@@ -503,7 +501,7 @@ void Func_02002738(struct Actor *object) {
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-/* VIEW(s236c): tag struct Work020023c4 as struct Work020023c4__s236c; s2148.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room/s2148.c:628: structure has no member named `unk6c'. */
+/* VIEW(s236c): tag struct Work020023c4 as struct Work020023c4__s236c; s2148.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room/s2148.c:619: structure has no member named `unk6c'. */
 struct Work020023c4__s236c {
   u8 unk00[4];
   u16 unk04;
@@ -651,8 +649,6 @@ void Func_0200274c(struct Actor *actor) {
 #undef ABS
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s2a58.c ----
-/* VIEW(s2a58): routine Func_02002738 as void Func_02002738(void); the definition has void Func_02002738(struct Actor *object). */
-extern void Func_02002738__s2a58(void) __asm__("Func_02002738");
 
 void Func_02002a58(s32 sourceId, s32 id, s32 kind, s32 value,
                    const void *script) {
@@ -668,7 +664,7 @@ void Func_02002a58(s32 sourceId, s32 id, s32 kind, s32 value,
   object->timer = 0;
   *(s16 *)((u8 *)object + 0x66) = value;
   *(u8 *)((u8 *)object + 0x62) = kind;
-  object->update = Func_02002738__s2a58;
+  object->update = Func_02002738;
 }
 
 #include "field_sprite.h"
@@ -842,10 +838,6 @@ struct Position {
   s32 z;
 };
 
-/* VIEW(s2dc4): routine Func_02002d04 as void Func_02002d04(void); the definition has void Func_02002d04(struct Actor *object). */
-extern void Func_02002d04__s2dc4(void) __asm__("Func_02002d04");
-/* VIEW(s2dc4): routine Func_0200428c as s32 Func_0200428c(s32 *a, s32 radiusA, struct Position *b, s32 radiusB); s2148 has s32 Func_0200428c(s32 *from, s32 radius, struct Vector3 *to, s32 radius2). */
-extern s32 Func_0200428c__s2dc4(s32 *a, s32 radiusA, struct Position *b, s32 radiusB) __asm__("Func_0200428c");
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 extern s16 gData_0200483c[];
 
@@ -921,7 +913,7 @@ top:
   Func_020041cc(actor, 2);
   Actor_SetAnimationSpeed(actor, 48);
   Actor_WaitForMove(actor);
-  actor->update = Func_02002d04__s2dc4;
+  actor->update = Func_02002d04;
   goto test;
 body:
   if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > PIXELS(8)) {
@@ -939,7 +931,7 @@ body:
           : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),
             "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor)
           : SFP_CLOBBER, "r4");
-      if (Func_0200428c__s2dc4(&other->x, radius, &probe, other->radius - 2) >= 0) {
+      if (Func_0200428c(&other->x, radius, &probe, other->radius - 2) >= 0) {
         goto stop;
       }
     }
@@ -989,12 +981,12 @@ done:
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s3070.c ----
 #include "input.h"
 
-/* VIEW(s3070): variable gData_02004cf0 as extern volatile s16 gData_02004cf0; s2a58 has extern u16 gData_02004cf0[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room/s2148.c:1044: `gData_02004cf0__s3070' undeclared (first use in this function). */
+/* VIEW(s3070): variable gData_02004cf0 as extern volatile s16 gData_02004cf0; s2a58 has extern u16 gData_02004cf0[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room/s2148.c:1014: `gData_02004cf0__s3070' undeclared (first use in this function). */
 extern volatile s16 gData_02004cf0__s3070 __asm__("gData_02004cf0");
 extern s16 gData_0200483c[];
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Func_02004284(struct Actor *object);
-/* VIEW(s3070): routine Func_0200428c as s32 Func_0200428c(s32 *a, s32 aRadius, s32 *b, s32 bRadius); s2dc4 has s32 Func_0200428c(s32 *a, s32 radiusA, struct Position *b, s32 radiusB); tried as the one declaration s32 Func_0200428c(s32 *a, s32 aRadius, s32 *b, s32 bRadius), it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room/s2148.c:1019: conflicting types for `Func_0200428c'. */
+/* VIEW(s3070): routine Func_0200428c as s32 Func_0200428c(s32 *a, s32 aRadius, s32 *b, s32 bRadius); s2dc4 has s32 Func_0200428c(s32 *a, s32 radiusA, struct Position *b, s32 radiusB); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room/s2148.c:1093: `Func_0200428c__s3070' undeclared (first use in this function). */
 extern s32 Func_0200428c__s3070(s32 *a, s32 aRadius, s32 *b, s32 bRadius) __asm__("Func_0200428c");
 
 void Func_02003070(void) {

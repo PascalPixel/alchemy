@@ -10,7 +10,7 @@
 
 struct CellTargetEntry;
 
-/* VIEW(s41ac): tag struct CellTarget as struct CellTarget__s41ac; cell_target.h has another definition. */
+/* VIEW(s41ac): tag struct CellTarget as struct CellTarget__s41ac; cell_target.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_m/s41ac.c:18: dereferencing pointer to incomplete type. */
 struct CellTarget__s41ac {
   s16 firstFlag;
   s16 flagByte;

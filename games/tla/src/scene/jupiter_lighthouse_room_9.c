@@ -344,8 +344,6 @@ s32 Func_02000724(s32 *a, s32 *b) {
 extern const s32 gData_020025f8[];
 
 s32 Func_02001c88(s32 x, s32 z, s32 layer);
-/* VIEW(jupiter_lighthouse_room_9): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
-extern void Camera_WorldToScreen__jupiter_lighthouse_room_9(s32 *position) __asm__("Camera_WorldToScreen");
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Func_02000750(struct Actor *self) {
@@ -373,7 +371,7 @@ void Func_02000750(struct Actor *self) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;
-    Camera_WorldToScreen__jupiter_lighthouse_room_9(position);
+    Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
       goto stop;

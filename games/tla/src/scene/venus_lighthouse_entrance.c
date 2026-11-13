@@ -26,10 +26,6 @@
 #include "resource.h"
 #include "scene_ids.h"
 
-/* VIEW(venus_lighthouse_entrance): routine Func_020023a4 as void Func_020023a4(void *object); the definition has void Func_020023a4(s32 id). */
-extern void Func_020023a4__venus_lighthouse_entrance(void *object) __asm__("Func_020023a4");
-/* VIEW(venus_lighthouse_entrance): routine Func_02002a34 as void Func_02002a34(s32 a, s32 b); module/scene/gaia_rock_inside.h has void Func_02002a34(void). */
-extern void Func_02002a34__venus_lighthouse_entrance(s32 a, s32 b) __asm__("Func_02002a34");
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -42,11 +38,11 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void VenusLighthouseEntrance_RunActorSparkBurst(void *object) {
-  Func_02002a34__venus_lighthouse_entrance(8, 0x4084);
+  Func_02002a34(8, 0x4084);
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode(Actor_Get(5), 2);
   FieldEvent_Wait(20);
-  Func_020023a4__venus_lighthouse_entrance(object);
+  Func_020023a4(object);
   BattleEffect_SetObjectUpdateMode(Actor_Get(5), 0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
@@ -107,8 +103,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 void Func_0200030c(void);
 void Func_02001c30(void);
-/* VIEW(venus_lighthouse_entrance): routine Party_RemoveMember as s32 Party_RemoveMember(); module/game/game.h has s32 Party_RemoveMember(s32 owner). */
-extern s32 Party_RemoveMember__venus_lighthouse_entrance() __asm__("Party_RemoveMember");
+s32 Party_RemoveMember(s32 value);
 
 s32 Scene_Initialize(void) {
   s32 t37;
@@ -165,9 +160,9 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.entrance == 0x5a) {
     gMainRoutineWork.currentOwner = 5;
-    Party_RemoveMember__venus_lighthouse_entrance(4);
-    Party_RemoveMember__venus_lighthouse_entrance(6);
-    Party_RemoveMember__venus_lighthouse_entrance(7);
+    Party_RemoveMember(4);
+    Party_RemoveMember(6);
+    Party_RemoveMember(7);
     Func_0200299c((s32)&SceneId_VenusLighthouseEntrance, 1);
   }
   t33 = Event_GetFlag(0x893);
@@ -189,10 +184,6 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/* VIEW(venus_lighthouse_entrance): routine Event_StartScreenTransition as s32 Event_StartScreenTransition(); event_work.h has void Event_StartScreenTransition(void). */
-extern s32 Event_StartScreenTransition__venus_lighthouse_entrance() __asm__("Event_StartScreenTransition");
-/* VIEW(venus_lighthouse_entrance): routine Event_WaitTransitionFrames as s32 Event_WaitTransitionFrames(); event_work.h has void Event_WaitTransitionFrames(void). */
-extern s32 Event_WaitTransitionFrames__venus_lighthouse_entrance() __asm__("Event_WaitTransitionFrames");
 s32 Actor_StartScript();
 void Func_0200298c(void);
 
@@ -219,8 +210,8 @@ void Func_0200030c(void) {
                                        PIXELS(152));
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   FieldCamera_MoveTo(PIXELS(376), -1, PIXELS(248), 0);
-  Event_StartScreenTransition__venus_lighthouse_entrance();
-  Event_WaitTransitionFrames__venus_lighthouse_entrance();
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
   t9 = ((s32)Actor_Get(10));
   Actor_SetAnimation(10, 4);
   Event_PlaySound(165);
@@ -239,7 +230,7 @@ void Func_0200030c(void) {
   Func_0200298c();
 }
 
-/* VIEW(venus_lighthouse_entrance): variable gData_02003040 as extern u8 gData_02003040[]; the definition has u32 gData_02003040[] = { 1, 0, 1, 38, }; tried as the definition's extern s32 gData_02003040[], it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1656: conflicting types for `gData_02003040'. */
+/* VIEW(venus_lighthouse_entrance): variable gData_02003040 as extern u8 gData_02003040[]; the definition has u32 gData_02003040[] = { 1, 0, 1, 38, }; tried as the definition's extern s32 gData_02003040[], it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1556: conflicting types for `gData_02003040'. */
 extern u8 gData_02003040__venus_lighthouse_entrance[] __asm__("gData_02003040");
 
 void Func_02000440(void) {
@@ -549,11 +540,11 @@ void Func_02000510(void) {
   BattleEffect_SetObjectUpdateMode((s32)record, 2);
   Event_PlaySound(178);
   FieldEvent_Wait(20);
-  Func_02002a34__venus_lighthouse_entrance(8, 0x4084);
+  Func_02002a34(8, 0x4084);
   FieldEvent_Wait(60);
   Event_PlaySound(0x186);
   FieldActor_SetSpritePriority(12, 0);
-  Func_020023a4__venus_lighthouse_entrance(12);
+  Func_020023a4(12);
   Actor_ShowEmote(17, 0x100, 0);
   Actor_ShowEmote(18, 0x100, 0);
   Actor_ShowEmote(19, 0x100, 0);
@@ -562,7 +553,7 @@ void Func_02000510(void) {
   Actor_ShowEmote(14, 0x100, 0);
   Actor_ShowEmote(15, 0x100, 50);
   FieldActor_SetSpritePriority(13, 1);
-  Func_020023a4__venus_lighthouse_entrance(13);
+  Func_020023a4(13);
   FieldEvent_Wait(30);
   record = ((u8 *)Actor_GetById(9));
   BattleEffect_SetObjectUpdateMode((s32)record, 0);
@@ -941,8 +932,6 @@ void Func_02000510(void) {
   Event_End();
 }
 
-/* VIEW(venus_lighthouse_entrance): routine Field_RequestBattleFromEncounterTable as s32 Field_RequestBattleFromEncounterTable(); module/field/event_commands.h has void Field_RequestBattleFromEncounterTable(s32 row, s32 column). */
-extern s32 Field_RequestBattleFromEncounterTable__venus_lighthouse_entrance() __asm__("Field_RequestBattleFromEncounterTable");
 extern u8 MsgWhyDoI[];
 
 void Func_02001a2c(void) {
@@ -986,7 +975,7 @@ void Func_02001a2c(void) {
   Event_SetAfterBattleDestination((s32)&SceneId_VenusLighthouseEntrance, 0x63);
   Event_SetDefeatDestination((s32)&SceneId_VenusLighthouseEntrance, 0x62);
   gMainRoutineWork.battleRule24b = 2;
-  Call2(Field_RequestBattleFromEncounterTable__venus_lighthouse_entrance, 9, 0);
+  Call2(Field_RequestBattleFromEncounterTable, 9, 0);
   Event_End();
 }
 
@@ -1033,8 +1022,8 @@ void Func_02001c30(void) {
   Actor_SetSingleChildFlags(((s32)Actor_Get(5)), 0);
   Func_02002994(5, 0);
   FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1b4), s32, 0) = 0x3c;
-  Event_StartScreenTransition__venus_lighthouse_entrance();
-  Event_WaitTransitionFrames__venus_lighthouse_entrance();
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
   FieldEvent_Wait(20);
   FieldEvent_SetMessageId((s32)MsgAreAreYou);
   Actor_ShowEmote(8, 0x102, 40);
@@ -1285,11 +1274,7 @@ void Func_02001fd0(void) {
 // ---- games/tla/src/scene/venus_lighthouse_entrance/s23a4.c ----
 // Scene code of overlay 0x64d, in ROM order, from s23a4's offset up to the next object the overlay links.
 
-/* VIEW(venus_lighthouse_entrance): variable gField_Tiles64D as u8 gField_Tiles64D[]; module/scene/scene.h has const u8 gField_Tiles64D[]. */
-extern u8 gField_Tiles64D__venus_lighthouse_entrance[] __asm__("gField_Tiles64D");
 
-/* VIEW(venus_lighthouse_entrance): routine Func_02002a24 as s32 Func_02002a24(struct Actor *actor); module/scene/gaia_rock_inside.h has void Func_02002a24(void). */
-extern s32 Func_02002a24__venus_lighthouse_entrance(struct Actor *actor) __asm__("Func_02002a24");
 s32 Func_02002a2c(struct Actor *actor);
 
 void Func_020023a4(s32 id) {
@@ -1306,7 +1291,7 @@ void Func_020023a4(s32 id) {
   work->x = actor->x;
   work->y = actor->y;
   work->z = actor->z + 0x20000;
-  Func_02002824(gField_Tiles64D__venus_lighthouse_entrance, work);
+  Func_02002824(gField_Tiles64D, work);
   resource = Resource_FindFreeEntry();
   tile = Vram_Load(resource, 0x800, work);
   work->tile = tile;
@@ -1316,7 +1301,7 @@ void Func_020023a4(s32 id) {
   for (i = 15; i >= 0;) {
     Func_02002a0c(sprite, 8, 8, 0x40000000, tile);
     sprite->unk1e = Func_02002a2c(actor) - 2;
-    sprite->priority = Func_02002a24__venus_lighthouse_entrance(actor);
+    sprite->priority = Func_02002a24(actor);
     sprite->fullColor = 1;
     sprite->palette = 0;
     state->frame = -1;
@@ -1352,8 +1337,6 @@ void Func_020023a4(s32 id) {
   HeapSlot_Release(220);
 }
 
-/* VIEW(s23a4): routine Func_02002a14 as void Func_02002a14(struct Unk_0200258cSprite *sprite, struct Unk_0200258cState *state); venus_lighthouse_entrance has void Func_02002a14(struct GlowSprite *sprite, struct GlowState *state). */
-extern void Func_02002a14__s23a4(struct Unk_0200258cSprite *sprite, struct Unk_0200258cState *state) __asm__("Func_02002a14");
 void BattleEffect_StepVector3(struct Unk_0200258cState *state, s32 a, s32 b);
 
 void Func_0200258c(void) {
@@ -1367,14 +1350,14 @@ void Func_0200258c(void) {
     value = state->frame;
     if ((u32)value < 16) {
       sprite->tile = work->unk2182 + ((value >> 1) & 7) * 8;
-      Func_02002a14__s23a4(sprite, state);
+      Func_02002a14(sprite, state);
       BattleEffect_StepVector3(state, 64, 0);
       state->frame++;
     }
   }
 }
 
-/* VIEW(venus_lighthouse_entrance): tag struct SparkSprite as struct SparkSprite__venus_lighthouse_entrance; module/tla.h has another definition. */
+/* VIEW(venus_lighthouse_entrance): tag struct SparkSprite as struct SparkSprite__venus_lighthouse_entrance; module/tla.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1377: structure has no member named `unk1e'. */
 struct SparkSprite__venus_lighthouse_entrance {
   u8 unk00[8];
   u16 tile : 10;
@@ -1400,7 +1383,7 @@ void Func_0200260c(struct Actor *source, s32 x, s32 y, s32 z) {
   struct SparkSprite__venus_lighthouse_entrance *sprite = &work->sprites[*next];
   struct SparkState *state = &work->states[*next];
 
-  sprite->priority = Func_02002a24__venus_lighthouse_entrance(source);
+  sprite->priority = Func_02002a24(source);
   sprite->unk1e = Func_02002a2c(source);
   state->frame = 0;
   state->x = x;
@@ -1417,7 +1400,7 @@ void Func_0200260c(struct Actor *source, s32 x, s32 y, s32 z) {
 
 // ---- games/tla/src/scene/venus_lighthouse_entrance/s26f4.c ----
 
-/* VIEW(s26f4): tag struct SparkSprite as struct SparkSprite__s26f4; venus_lighthouse_entrance.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1534: structure has no member named `fullColor'. */
+/* VIEW(s26f4): tag struct SparkSprite as struct SparkSprite__s26f4; venus_lighthouse_entrance.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1436: structure has no member named `unk1e'. */
 struct SparkSprite__s26f4 {
   u8 unk00[4];
   u16 attr0 : 13;
@@ -1432,7 +1415,7 @@ struct SparkSprite__s26f4 {
   u8 unk20[8];
 };
 
-/* VIEW(s26f4): tag struct SparkWork as struct SparkWork__s26f4; venus_lighthouse_entrance.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1534: structure has no member named `resource'. */
+/* VIEW(s26f4): tag struct SparkWork as struct SparkWork__s26f4; venus_lighthouse_entrance.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1433: structure has no member named `resource'. */
 struct SparkWork__s26f4 {
   u8 unk0000[0x800];
   struct SparkState states[96];
@@ -1442,9 +1425,6 @@ struct SparkWork__s26f4 {
   u16 resource;
 };
 
-/* VIEW(s26f4): routine Func_02002a0c as void Func_02002a0c(struct SparkSprite__s26f4 *sprite, s32 width, s32 height, s32 attr, s32 tile); s23a4 has void Func_02002a0c(struct GlowSprite *sprite, s32 width, s32 height, s32 attr, s32 tile). */
-extern void Func_02002a0c__s26f4(struct SparkSprite__s26f4 *sprite, s32 width, s32 height, s32 attr,
-                   s32 tile) __asm__("Func_02002a0c");
 
 void Func_020026f4(void) {
   struct SparkWork__s26f4 *work = HeapSlot_AllocFar(220, 0x2188);
@@ -1460,7 +1440,7 @@ void Func_020026f4(void) {
   state = work->states;
   sprite = work->sprites;
   for (i = 95; i >= 0; i--) {
-    Func_02002a0c__s26f4(sprite, 8, 8, 0x40000000, tileBase);
+    Func_02002a0c(sprite, 8, 8, 0x40000000, tileBase);
     sprite->fullColor = 1;
     sprite->palette = 0;
     sprite->priority = 0;
@@ -1477,7 +1457,7 @@ void Func_020026f4(void) {
 #include "resource.h"
 #include "heap_release.h"
 
-/* VIEW(sparks): tag struct SparkWork as struct SparkWork__sparks; venus_lighthouse_entrance.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1571: structure has no member named `resource'. */
+/* VIEW(sparks): tag struct SparkWork as struct SparkWork__sparks; venus_lighthouse_entrance.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1465: structure has no member named `resource'. */
 struct SparkWork__sparks {
   u8 unk0000[0x2102];
   u16 tileBase;

@@ -13,14 +13,9 @@
 #include "module/scene/scene.h"
 #include "module/tla.h"
 
-/* VIEW(s03cc): tag struct TileSprite as struct TileSprite__s03cc; module/scene/scene.h has another definition. */
-struct TileSprite__s03cc {
-  u8 unk00[18];
-  u16 tile;
-};
 
 void Func_020003cc(struct Actor *object) {
-  struct TileSprite__s03cc *sprite = object->sprite;
+  struct TileSprite *sprite = object->sprite;
 
   sprite->tile -= 0x800;
 }
@@ -187,8 +182,7 @@ const u8 *Scene_GetEvents(void) {
 #include "frame.h"
 #include "io_reg.h"
 
-/* VIEW(s03cc): variable gData_02001ae0 as u16 gData_02001ae0[]; module/scene/loho.h has struct Trigger gData_02001ae0[]. */
-extern u16 gData_02001ae0__s03cc[] __asm__("gData_02001ae0");
+extern u16 gData_02001ae0[];
 
 void Func_02000738(void) {
   u16 *color = (u16 *)&BG_PLTT_COLOR(0, 12);
@@ -199,7 +193,7 @@ void Func_02000738(void) {
     u32 index = 3;
 
     index &= phase;
-    *color++ = gData_02001ae0__s03cc[index];
+    *color++ = gData_02001ae0[index];
     phase++;
   }
 }
@@ -215,7 +209,7 @@ void Func_02000768(void) {
   }
   Func_020012fc();
   Value3((s32 (*)())Func_02001304, 0, 9, 10);
-  Value3((s32 (*)())Iwram_CopyWordsEntry, (s32)gData_02001ae0__s03cc, 0x05000018, 8);
+  Value3((s32 (*)())Iwram_CopyWordsEntry, (s32)gData_02001ae0, 0x05000018, 8);
   Task_AddFrame(Func_02000738, 0x480);
 }
 
@@ -349,7 +343,7 @@ s32 Scene_Initialize(void) {
   } else {
     Actor_GetById(15)->collisionFlags |= 16;
   }
-  Iwram_CopyWords(((u8 *)gData_02001ae0__s03cc), (void *)&BG_PLTT_COLOR(0, 12), 8);
+  Iwram_CopyWords(((u8 *)gData_02001ae0), (void *)&BG_PLTT_COLOR(0, 12), 8);
   Task_AddFrame(Func_02000738, 0x480);
   ((struct MapLayerBits *)Ram_HeapSlots->mapWork)->priority = 1;
 done:
@@ -473,7 +467,7 @@ void Func_02000be4(void) {
 
 #include "graphics/vram_tab.h"
 
-/* VIEW(s03cc): tag struct SwingWork as struct SwingWork__s03cc; module/tla.h has another definition. */
+/* VIEW(s03cc): tag struct SwingWork as struct SwingWork__s03cc; module/tla.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/gondowan_cliffs/s03cc.c:479: structure has no member named `actors'. */
 struct SwingWork__s03cc {
   s16 entry;
   s16 value;
@@ -567,8 +561,6 @@ void Func_02000dac(void) {
   }
 }
 
-/* VIEW(s03cc): routine Resource_DecodeType01 as void Resource_DecodeType01(const void *source, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
-extern void Resource_DecodeType01__s03cc(const void *source, void *destination) __asm__("Resource_DecodeType01");
 
 void Func_02000fcc(s32 unused, s32 value) {
   struct GondowanCliffsWork *work =
@@ -578,7 +570,7 @@ void Func_02000fcc(s32 unused, s32 value) {
   if (!Event_GetFlag(0x109))
     Call2((void (*)())Iwram_ClearWordsEntry, (s32)work, 456);
   buffer = (void *)Value1((s32 (*)())Heap_AllocEwram, 0x800);
-  Resource_DecodeType01__s03cc(gField_Tiles64D, buffer);
+  Resource_DecodeType01(gField_Tiles64D, buffer);
   work->entry = Resource_FindFreeEntry();
   Vram_Load(work->entry, 0x800, buffer);
   Heap_Release(buffer);

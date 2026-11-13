@@ -63,11 +63,8 @@ struct Work {
   u16 unk66;
 };
 
-/* VIEW(scene_tables): routine ArcTan2 as s32 ArcTan2(); module/system/system.h has s32 ArcTan2(s32 x, s32 y). */
-extern s32 ArcTan2__scene_tables() __asm__("ArcTan2");
 void Func_020006f8();
-/* VIEW(scene_tables): routine Func_020032e0 as void Func_020032e0(struct Actor *object, s32 mode); module/scene/kibombo.h has void Func_020032e0(void). */
-extern void Func_020032e0__scene_tables(struct Actor *object, s32 mode) __asm__("Func_020032e0");
+void Func_020032e0(struct Actor *, s32);
 void Actor_StartScript();
 extern u8 gData_02003684[];
 
@@ -78,7 +75,7 @@ void Func_0200088c(struct Vector3 *from, struct Vector3 *to, s16 part) {
   actor = ((struct Work *)FieldActor_Create(0x2a0, from->x, from->y, from->z));
   x = (from->x - to->x) >> 16;
   z = (from->z - to->z) >> 16;
-  actor->unk64 = ArcTan2__scene_tables(from->z - to->z, from->x - to->x);
+  actor->unk64 = ArcTan2(from->z - to->z, from->x - to->x);
   actor->unk66 = (((Random16Far() & 2) - 1) * (Random16Far() & 15)) << 8;
   actor->unk62 = part;
   actor->unk55 = 0;
@@ -92,7 +89,7 @@ void Func_0200088c(struct Vector3 *from, struct Vector3 *to, s16 part) {
   Animation_SetStateFlags(actor, 1);
   Actor_SetSpriteColor(actor, (u16)part);
   Scene_SetActorSpritePriority(actor, 2);
-  Func_020032e0__scene_tables(actor, 7);
+  Func_020032e0(actor, 7);
   Actor_SetSingleChildFlags(actor, 0);
   FieldVector_AddPolarOffset(actor->unk4c, actor->unk64, &actor->position);
   Actor_StartScript(actor, gData_02003684);
@@ -132,7 +129,7 @@ void Func_020009b8(s32 x, s32 y, s16 part, s16 a3) {
     Animation_SetStateFlags(object, 1);
     Actor_SetSpriteColor(object, (u16)part);
     Scene_SetActorSpritePriority(object, 2);
-    Func_020032e0__scene_tables(object, 7);
+    Func_020032e0(object, 7);
     Actor_SetSingleChildFlags(object, 0);
     Actor_StartScript(object, gData_02003584);
     i += 2;
@@ -146,6 +143,6 @@ void Func_02000a78(s32 a0, s32 a1, s16 a2) {
   t0->motionFlags = 4;
   Actor_SetSpriteColor(t0, (u16)a2);
   Scene_SetActorSpritePriority(t0, 2);
-  Func_020032e0__scene_tables(t0, 7);
+  Func_020032e0(t0, 7);
   Actor_SetSingleChildFlags(t0, 0);
 }

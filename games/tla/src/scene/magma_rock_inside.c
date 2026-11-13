@@ -17,11 +17,6 @@
 
 extern s32 gData_02004fec[];
 
-/* VIEW(magma_rock_inside): routine Actor_FindInCell as struct StagedActor *Actor_FindInCell(struct FieldPosition *position, struct StagedActor *self); module/scene/magma_rock.h has struct Actor *Actor_FindInCell(s32 *position, struct Actor *self). */
-extern struct StagedActor *Actor_FindInCell__magma_rock_inside(struct FieldPosition *position,
-                                     struct StagedActor *self) __asm__("Actor_FindInCell");
-/* VIEW(s03b4): routine Func_02004c98 as void Func_02004c98(struct StagedActor *object, s32 mode); local.h has void Func_02004c98(struct Actor *object, s32 a). */
-extern void Func_02004c98__s03b4(struct StagedActor *object, s32 mode) __asm__("Func_02004c98");
 
 void Func_020003b4(void) {
   struct FieldPosition dst;
@@ -39,7 +34,7 @@ void Func_020003b4(void) {
   dst.y = lead->y.fixed;
   step <<= 16;
   dst.z = lead->z.fixed + step;
-  next = Actor_FindInCell__magma_rock_inside(&dst, lead);
+  next = Actor_FindInCell(&dst, lead);
   if (next == 0)
     return;
 
@@ -48,14 +43,14 @@ void Func_020003b4(void) {
   dst.y = next->y.fixed;
   step <<= 16;
   dst.z = next->z.fixed + step;
-  blocker = Actor_FindInCell__magma_rock_inside(&dst, next);
+  blocker = Actor_FindInCell(&dst, next);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
     return;
 
   dst.x = next->x.fixed;
   dst.y = next->y.fixed + 0x100000;
   dst.z = next->z.fixed;
-  blocker = Actor_FindInCell__magma_rock_inside(&dst, next);
+  blocker = Actor_FindInCell(&dst, next);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
     return;
 
@@ -71,7 +66,7 @@ void Func_020003b4(void) {
   if (next->transitionBusy != 0)
     return;
 
-  Func_02004c98__s03b4(lead, 8);
+  Func_02004c98(lead, 8);
   rate = 0x3333;
   System_Wait(15);
   Event_PlaySound(185);
@@ -99,7 +94,7 @@ void Func_020003b4(void) {
   lead->velocityZ = 0;
   lead->x.fixed = lead->x.part.pixel << 16;
   lead->z.fixed = lead->z.part.pixel << 16;
-  Func_02004c98__s03b4(lead, 1);
+  Func_02004c98(lead, 1);
 }
 
 #include "ram_buffer.h"
@@ -290,7 +285,7 @@ void Func_020007ac(struct Actor *object) {
 void Func_02004c98();
 void Actor_StartScript();
 s32 GameFlag_Test();
-/* VIEW(s0800): routine Actor_GetById as s32 Actor_GetById(); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/magma_rock_inside.c:336: too few arguments to function `Actor_GetById'. */
+/* VIEW(s0800): routine Actor_GetById as s32 Actor_GetById(); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/magma_rock_inside.c:294: too few arguments to function `Actor_GetById'. */
 extern s32 Actor_GetById__s0800() __asm__("Actor_GetById");
 
 void Func_02000800(s32 a0, s32 a1, s32 a2) {
@@ -380,8 +375,6 @@ extern u8 gData_02005ed0[];
 
 extern s16 gData_02005528[];
 
-/* VIEW(magma_rock_inside): routine Func_0200075c as void Func_0200075c(s32 value); the definition has void Func_0200075c(struct Object0200074c *object). */
-extern void Func_0200075c__magma_rock_inside(s32 value) __asm__("Func_0200075c");
 
 u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -421,7 +414,7 @@ void Func_0200099c(void) {
     Func_02004ee0(gData_02005528);
   else if (scene == (s32)&SceneId_Ov692Room7)
     Func_02004ee0(gData_0200552e);
-  Func_0200075c__magma_rock_inside(*(s32 *)(work + 0xcbc));
+  Func_0200075c(*(s32 *)(work + 0xcbc));
 }
 
 #include "io_reg.h"
@@ -533,8 +526,6 @@ void Func_02000a30(void) {
 #include "field_effect.h"
 
 s32 Func_02004e80(void);
-/* VIEW(magma_rock_inside): routine BattleEffect_CleanupSceneObjects as s32 BattleEffect_CleanupSceneObjects(void); module/field/event_commands.h has void BattleEffect_CleanupSceneObjects(void). */
-extern s32 BattleEffect_CleanupSceneObjects__magma_rock_inside(void) __asm__("BattleEffect_CleanupSceneObjects");
 
 void Func_02000ce4(s16 value) {
   struct MainRoutineWork *party;
@@ -544,7 +535,7 @@ void Func_02000ce4(s16 value) {
   Func_02004e78(party->currentOwner, value);
   Field_DispatchTypeHandler(1);
   Func_02004e80();
-  BattleEffect_CleanupSceneObjects__magma_rock_inside();
+  BattleEffect_CleanupSceneObjects();
 }
 
 extern const s32 gData_0200502c[];
@@ -840,8 +831,6 @@ void Func_02001190(s32 mode, s32 cue) {
     Func_02004c98(work->target, 3);
 }
 
-/* VIEW(s0e20): routine Actor_FindInCell as struct Actor *Actor_FindInCell(s32 *position, struct Actor *self); s03b4 has struct StagedActor *Actor_FindInCell(struct FieldPosition *position, struct StagedActor *self). */
-extern struct Actor *Actor_FindInCell__s0e20(s32 *position, struct Actor *self) __asm__("Actor_FindInCell");
 
 void Func_020011fc(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -856,7 +845,7 @@ void Func_020011fc(void) {
   position[1] = leader->y - 0x100000;
   position[2] = (leader->z & 0xfff00000) + 0x80000;
   FieldVector_AddPolarOffset(0x200000, angle, position);
-  target = Actor_FindInCell__s0e20(position, leader);
+  target = Actor_FindInCell(position, leader);
   if (target == 0)
     return;
   Event_Start();
@@ -1290,12 +1279,7 @@ void Func_02001cd0(s32 a, s32 b) {
   Event_SetFlag(0x351);
 }
 
-/* VIEW(s1ca0): variable gData_0200502c as extern const u8 gData_0200502c[]; s0e20 has extern const s32 gData_0200502c[]. */
-extern const u8 gData_0200502c__s1ca0[] __asm__("gData_0200502c");
 
-/* VIEW(s1ca0): routine Func_0200015c as void Func_0200015c(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 d, struct EffectConfig *config); s0e20 has void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct EffectOptions *options). */
-extern void Func_0200015c__s1ca0(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 d,
-                   struct EffectConfig *config) __asm__("Func_0200015c");
 
 void Func_02001d04(struct Actor *object) {
   if (++object->timer > 64)
@@ -1306,8 +1290,8 @@ void Func_02001d04(struct Actor *object) {
     config.id = 403;
     config.kind = 2;
     config.variant = 10;
-    config.data = gData_0200502c__s1ca0;
-    Func_0200015c__s1ca0(object->x, object->y, object->z, 0, 0x1000, 0, 0x330000,
+    config.data = gData_0200502c;
+    Func_0200015c(object->x, object->y, object->z, 0, 0x1000, 0, 0x330000,
                   &config);
   }
 }
@@ -1315,8 +1299,6 @@ void Func_02001d04(struct Actor *object) {
 // ---- games/tla/src/scene/magma_rock_inside/s1d64.c ----
 extern const s32 gData_02005050[];
 
-/* VIEW(s1d64): routine Func_02001d04 as void Func_02001d04(void); the definition has void Func_02001d04(struct Actor *object). */
-extern void Func_02001d04__s1d64(void) __asm__("Func_02001d04");
 
 static __inline__ void Arrive(s32 id, s32 x, s32 z) {
   Actor_SetHorizontalPositionWithTerrain(id, 194 << 18, 248 << 16);
@@ -1324,7 +1306,7 @@ static __inline__ void Arrive(s32 id, s32 x, s32 z) {
   Actor_GetById(id)->velocityY = 0xc0000;
   Actor_GetById(id)->gravity = 0x8000;
   Actor_GetById(id)->timer = 0;
-  Actor_GetById(id)->update = Func_02001d04__s1d64;
+  Actor_GetById(id)->update = Func_02001d04;
 }
 
 void Func_02001d64(void) {
@@ -1377,7 +1359,7 @@ loop:
     Actor_GetById(12)->velocityY = 0xd0000;
     Actor_GetById(12)->gravity = 0x8000;
     Actor_GetById(12)->timer = 0;
-    Actor_GetById(12)->update = Func_02001d04__s1d64;
+    Actor_GetById(12)->update = Func_02001d04;
     MapGrid_SetShake(-1, -1, 0xe666);
   }
   wait(3);
@@ -1773,7 +1755,7 @@ void Func_02002a14(struct Actor *source) {
   Actor_StartScript(object, gData_02005534);
 }
 
-/* VIEW(magma_rock_inside): tag struct Orbiter as struct Orbiter__magma_rock_inside; module/scene/scene.h has another definition. */
+/* VIEW(magma_rock_inside): tag struct Orbiter as struct Orbiter__magma_rock_inside; module/scene/scene.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/magma_rock_inside.c:1762: structure has no member named `parent'. */
 struct Orbiter__magma_rock_inside {
   u8 unk00[8];
   s32 x;
@@ -2065,8 +2047,6 @@ column:
 #define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
 
 s32 Actor_MoveToObject();
-/* VIEW(magma_rock_inside): routine Party_LearnAbility as s32 Party_LearnAbility(); module/field/event_commands.h has void Party_LearnAbility(s32 unit, s32 ability). */
-extern s32 Party_LearnAbility__magma_rock_inside() __asm__("Party_LearnAbility");
 
 /// Reading the Blaze tablet shows its inscription; the first time (flag 0x9fa
 /// clear) the scene with actor 5 follows.
@@ -2116,7 +2096,7 @@ void Func_020030cc(void) {
     MapGrid_SetShake(-1, -1, 0xe666);
     MapGrid_WaitForShakeToSettle();
     Call2(Func_02002cd0, 8, 5);
-    Party_LearnAbility__magma_rock_inside(5, 0x9a);
+    Party_LearnAbility(5, 0x9a);
     Event_SetFlag(0x9fa);
     Actor_FaceEachOther(gMainRoutineWork.currentOwner, 5, 0);
     FieldEvent_Wait(10);
@@ -2234,8 +2214,6 @@ void Func_020034f0(void) {
   }
 }
 
-/* VIEW(s1d64): routine Func_02000800 as void Func_02000800(s32 id, s16 *script, s32 flag); the definition has void Func_02000800(s32 a0, s32 a1, s32 a2). */
-extern void Func_02000800__s1d64(s32 id, s16 *script, s32 flag) __asm__("Func_02000800");
 
 void Func_02003548(void) {
   // Event_SetFlag, event.h's command, keeps 0x302 from being shared with the
@@ -2245,14 +2223,14 @@ void Func_02003548(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room4) {
     s16 *script = gData_0200525c;
 
-    Func_02000800__s1d64(15, script, 0x302);
-    Func_02000800__s1d64(16, gData_0200525c, 0x302);
-    Func_02000800__s1d64(17, gData_020052bc, 0x302);
-    Func_02000800__s1d64(18, gData_020052bc, 0x302);
-    Func_02000800__s1d64(19, gData_0200531c, 0x302);
-    Func_02000800__s1d64(20, gData_0200531c, 0x302);
-    Func_02000800__s1d64(21, gData_0200537c, 0x302);
-    Func_02000800__s1d64(22, gData_0200537c, 0x302);
+    Func_02000800(15, script, 0x302);
+    Func_02000800(16, gData_0200525c, 0x302);
+    Func_02000800(17, gData_020052bc, 0x302);
+    Func_02000800(18, gData_020052bc, 0x302);
+    Func_02000800(19, gData_0200531c, 0x302);
+    Func_02000800(20, gData_0200531c, 0x302);
+    Func_02000800(21, gData_0200537c, 0x302);
+    Func_02000800(22, gData_0200537c, 0x302);
     if (Actor_Get(16)->step == 0) {
       Actor_Get(16)->step = 10;
       Actor_Get(18)->step = 10;

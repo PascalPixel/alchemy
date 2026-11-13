@@ -19,10 +19,7 @@
 #include "module/scene/jupiter_lighthouse_aerie_beacon.h"
 #include "module/scene/scene.h"
 
-/* VIEW(s44cc): routine Func_02005754 as void Func_02005754(struct GustObject *object, s32 mode); module/scene/jupiter_lighthouse_aerie_beacon.h has void Func_02005754(struct FieldEffect *effect, s32 mode). */
-extern void Func_02005754__s44cc(struct GustObject *object, s32 mode) __asm__("Func_02005754");
-/* VIEW(s44cc): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct GustObject *object, u32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
-extern void Actor_SetSingleChildFlags__s44cc(struct GustObject *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
+void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Func_0200430c(struct GustObject *object);
 void Func_02004bd4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
@@ -38,8 +35,8 @@ struct GustObject *Func_020044cc(struct GustObject *source) {
   position.z = source->z + Iwram_MulQ16(0x80000, Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                     position.z));
-  Func_02005754__s44cc(object, 2);
-  Actor_SetSingleChildFlags__s44cc(object, 0);
+  Func_02005754(object, 2);
+  Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->angle = source->angle;
@@ -126,7 +123,7 @@ void Func_02004644(void) {
   }
 }
 
-/* VIEW(s44cc): variable gData_02006b70 as s16 gData_02006b70; module/scene/scene.h has u8 gData_02006b70[]. */
+/* VIEW(s44cc): variable gData_02006b70 as s16 gData_02006b70; module/scene/scene.h has u8 gData_02006b70[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s44cc.c:220: `gData_02006b70' has an incomplete type. */
 extern s16 gData_02006b70__s44cc __asm__("gData_02006b70");
 
 void Func_0200571c(struct LightOam *oam, s32 depth);
@@ -205,8 +202,6 @@ void Func_020047d4(void) {
   }
 }
 
-/* VIEW(s44cc): routine Resource_DecodeType01 as void Resource_DecodeType01(const void *source, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
-extern void Resource_DecodeType01__s44cc(const void *source, void *destination) __asm__("Resource_DecodeType01");
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -216,7 +211,7 @@ void Func_02004990(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
   Iwram_ClearWords(gData_02006a70, 64);
-  Resource_DecodeType01__s44cc(gField_CachedTilesA, buffer);
+  Resource_DecodeType01(gField_CachedTilesA, buffer);
   gData_02006a6c = Resource_FindFreeEntry();
   VramCache_Load(gData_02006a6c, 0xc00, buffer);
   Heap_Release(buffer);
@@ -230,7 +225,7 @@ void Func_02004a10(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
   Iwram_ClearWords(gData_02006a70, 64);
-  Resource_DecodeType01__s44cc(gField_CachedTilesB, buffer);
+  Resource_DecodeType01(gField_CachedTilesB, buffer);
   gData_02006a6c = Resource_FindFreeEntry();
   Vram_Load(gData_02006a6c, 0x800, buffer);
   Heap_Release(buffer);
@@ -244,7 +239,7 @@ void Func_02004a90(void) {
   u8 *buffer = BumpAlloc(0x800);
 
   Iwram_ClearWords(gData_02006a70, 64);
-  Resource_DecodeType01__s44cc(gField_CachedTilesC, buffer);
+  Resource_DecodeType01(gField_CachedTilesC, buffer);
   gData_02006a6c = Resource_FindFreeEntry();
   Vram_Load(gData_02006a6c, 0x800, buffer);
   Heap_Release(buffer);

@@ -13,28 +13,12 @@ extern const u8 gData_020050d4[];
 extern const u8 gData_02005134[];
 extern const u8 gData_0200519c[];
 extern const u8 gData_020051fc[];
-/* VIEW(s3678): variable gData_0200525c as const u8 gData_0200525c[]; module/scene/magma_rock_inside.h has s16 gData_0200525c[]. */
-extern const u8 gData_0200525c__s3678[] __asm__("gData_0200525c");
-/* VIEW(s3678): variable gData_020052bc as const u8 gData_020052bc[]; module/scene/magma_rock_inside.h has s16 gData_020052bc[]. */
-extern const u8 gData_020052bc__s3678[] __asm__("gData_020052bc");
-/* VIEW(s3678): variable gData_0200531c as const u8 gData_0200531c[]; module/scene/magma_rock_inside.h has s16 gData_0200531c[]. */
-extern const u8 gData_0200531c__s3678[] __asm__("gData_0200531c");
-/* VIEW(s3678): variable gData_0200537c as const u8 gData_0200537c[]; module/scene/magma_rock_inside.h has s16 gData_0200537c[]. */
-extern const u8 gData_0200537c__s3678[] __asm__("gData_0200537c");
 extern const u8 gData_020053dc[];
 extern const u8 gData_0200543c[];
 extern const u8 gData_0200549c[];
-/* VIEW(s3678): variable gData_020054fc as const u8 gData_020054fc[]; module/scene/magma_rock_inside.h has s16 gData_020054fc[]. */
-extern const u8 gData_020054fc__s3678[] __asm__("gData_020054fc");
 extern u16 gData_02005500[];
-/* VIEW(s3678): variable gData_02005508 as const u8 gData_02005508[]; module/scene/magma_rock_inside.h has s16 gData_02005508[]. */
-extern const u8 gData_02005508__s3678[] __asm__("gData_02005508");
 extern u16 gData_0200550c[];
-/* VIEW(s3678): variable gData_02005520 as const u8 gData_02005520[]; module/scene/magma_rock_inside.h has s16 gData_02005520[]. */
-extern const u8 gData_02005520__s3678[] __asm__("gData_02005520");
 extern const u8 gData_02005528[];
-/* VIEW(s3678): variable gData_0200552e as const u8 gData_0200552e[]; module/scene/magma_rock_inside.h has s16 gData_0200552e[]. */
-extern const u8 gData_0200552e__s3678[] __asm__("gData_0200552e");
 
 void Func_02000800(s32 id, const u8 *script, s32 flag);
 void Func_02004ed8(const u8 *table);
@@ -88,7 +72,7 @@ s32 Scene_Initialize(void) {
     } while (++j != 6);
     if (GameFlag_Test(2544))
       Actor_GetById(15)->z = 132 << 17;
-    Func_02004ed8(gData_020054fc__s3678);
+    Func_02004ed8(gData_020054fc);
     Func_02000880(gData_02005500);
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
     Raise(16);
@@ -100,7 +84,7 @@ s32 Scene_Initialize(void) {
     Func_02004e60(0);
     if (GameFlag_Test(2545))
       Actor_GetById(11)->z = 166 << 18;
-    Func_02004ed8(gData_02005508__s3678);
+    Func_02004ed8(gData_02005508);
     Func_02004ec0();
     Func_02004ec8(0, 13, 14);
     Func_02000880(gData_02005500);
@@ -138,7 +122,7 @@ s32 Scene_Initialize(void) {
         Actor_GetById(24)->x = 172 << 17;
       if (GameFlag_Test(2548))
         Actor_GetById(25)->x = 172 << 17;
-      Func_02004ed8(gData_02005520__s3678);
+      Func_02004ed8(gData_02005520);
       Lower(26, 0);
       Actor_GetById(15)->unk5c[0] = 3;
       Actor_GetById(16)->unk5c[0] = 3;
@@ -148,14 +132,14 @@ s32 Scene_Initialize(void) {
       Actor_GetById(20)->unk5c[0] = 3;
       Actor_GetById(21)->unk5c[0] = 3;
       Actor_GetById(22)->unk5c[0] = 3;
-      Func_02000800(15, gData_0200525c__s3678, 770);
-      Func_02000800(16, gData_0200525c__s3678, 770);
-      Func_02000800(17, gData_020052bc__s3678, 770);
-      Func_02000800(18, gData_020052bc__s3678, 770);
-      Func_02000800(19, gData_0200531c__s3678, 770);
-      Func_02000800(20, gData_0200531c__s3678, 770);
-      Func_02000800(21, gData_0200537c__s3678, 770);
-      Func_02000800(22, gData_0200537c__s3678, 770);
+      Func_02000800(15, gData_0200525c, 770);
+      Func_02000800(16, gData_0200525c, 770);
+      Func_02000800(17, gData_020052bc, 770);
+      Func_02000800(18, gData_020052bc, 770);
+      Func_02000800(19, gData_0200531c, 770);
+      Func_02000800(20, gData_0200531c, 770);
+      Func_02000800(21, gData_0200537c, 770);
+      Func_02000800(22, gData_0200537c, 770);
       if (GameFlag_Test(770))
         Func_02003548();
       else
@@ -216,7 +200,7 @@ s32 Scene_Initialize(void) {
       Actor_SetModeById(23, 4);
       Actor_SetPosition(23, 174 << 18, 162 << 18);
     }
-    Func_02004ed8(gData_0200552e__s3678);
+    Func_02004ed8(gData_0200552e);
     Func_02004e60(0);
     if (!Event_GetFlag(771))
       Actor_SetPosition(21, 0, 0);

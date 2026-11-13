@@ -15,13 +15,7 @@
 #include "module/scene/jupiter_lighthouse_room_8.h"
 #include "module/scene/scene.h"
 
-/* VIEW(s1178): variable gData_020022d0 as const u16 gData_020022d0[]; module/scene/jupiter_lighthouse_room_8.h has u16 gData_020022d0[]. */
-extern const u16 gData_020022d0__s1178[] __asm__("gData_020022d0");
 
-/* VIEW(s1178): routine Func_020021b8 as s32 Func_020021b8(struct Actor *object, struct IsletsVector *position); module/scene/kandorean_temple.h has void Func_020021b8(void). */
-extern s32 Func_020021b8__s1178(struct Actor *object, struct IsletsVector *position) __asm__("Func_020021b8");
-/* VIEW(s1178): routine Func_020022a8 as struct Actor *Func_020022a8(struct IsletsVector *position, s32 mode); module/scene/ankohl_ruins.h has void Func_020022a8(void). */
-extern struct Actor *Func_020022a8__s1178(struct IsletsVector *position, s32 mode) __asm__("Func_020022a8");
 
 void Func_02001178(struct Actor *object) {
   struct IsletsVector position;
@@ -34,12 +28,12 @@ void Func_02001178(struct Actor *object) {
   position.y = object->y;
   position.z = object->z;
   FieldVector_AddPolarOffset(0x100000, angle, &position);
-  hit = Func_020022a8__s1178(&position, 1);
+  hit = Func_020022a8(&position, 1);
   if (hit != 0) {
     i = 0;
   next:
     if (*((struct ObjectAnimationState *)hit->sprite)->value28 ==
-        gData_020022d0__s1178[i])
+        gData_020022d0[i])
       return;
     i++;
     if (i <= 5)
@@ -49,7 +43,7 @@ void Func_02001178(struct Actor *object) {
   position.x = object->x;
   position.y = object->y;
   position.z = object->z;
-  if (Func_020021b8__s1178(object, &position) > 0)
+  if (Func_020021b8(object, &position) > 0)
     FieldActor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
 }
 
@@ -133,8 +127,6 @@ void Func_02001200(void) {
   }
 }
 
-/* VIEW(s1178): routine Resource_DecodeType01 as void Resource_DecodeType01(const void *source, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
-extern void Resource_DecodeType01__s1178(const void *source, void *destination) __asm__("Resource_DecodeType01");
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -144,7 +136,7 @@ void Func_020013bc(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
   Iwram_ClearWords(gData_02002af4, 64);
-  Resource_DecodeType01__s1178(gField_CachedTilesA, buffer);
+  Resource_DecodeType01(gField_CachedTilesA, buffer);
   gData_02002af0 = Resource_FindFreeEntry();
   VramCache_Load(gData_02002af0, 0xc00, buffer);
   Heap_Release(buffer);
@@ -158,7 +150,7 @@ void Func_0200143c(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
   Iwram_ClearWords(gData_02002af4, 64);
-  Resource_DecodeType01__s1178(gField_CachedTilesB, buffer);
+  Resource_DecodeType01(gField_CachedTilesB, buffer);
   gData_02002af0 = Resource_FindFreeEntry();
   Vram_Load(gData_02002af0, 0x800, buffer);
   Heap_Release(buffer);
@@ -172,7 +164,7 @@ void Func_020014bc(void) {
   u8 *buffer = BumpAlloc(0x800);
 
   Iwram_ClearWords(gData_02002af4, 64);
-  Resource_DecodeType01__s1178(gField_CachedTilesC, buffer);
+  Resource_DecodeType01(gField_CachedTilesC, buffer);
   gData_02002af0 = Resource_FindFreeEntry();
   Vram_Load(gData_02002af0, 0x800, buffer);
   Heap_Release(buffer);

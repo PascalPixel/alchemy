@@ -328,10 +328,6 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/* VIEW(northern_reaches): routine Resource_DecodeType01 as s32 *Resource_DecodeType01(void *resource, void *to); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
-extern s32 *Resource_DecodeType01__northern_reaches(void *resource, void *to) __asm__("Resource_DecodeType01");
-/* VIEW(northern_reaches): routine Func_02000b40 as void Func_02000b40(struct Sprite6a7 *sprite, s32 a, s32 b, s32 c, s32 tile); module/scene/mars_lighthouse_room_f.h has void Func_02000b40(void). */
-extern void Func_02000b40__northern_reaches(struct Sprite6a7 *sprite, s32 a, s32 b, s32 c, s32 tile) __asm__("Func_02000b40");
 void BattleEffect_StepVector3(struct Particle6a7 *particle, s32 a, s32 b);
 
 void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
@@ -349,7 +345,7 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
 
   work = HeapSlot_AllocFar(220, 0x1e58);
   flying = 0;
-  Resource_DecodeType01__northern_reaches(Resource_GetTableEntry((s32)&ResourceId_FieldEffectIceShard),
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_FieldEffectIceShard),
                 work);
   entry = Resource_FindFreeEntry();
   tiles = VramCache_Load(entry, 0x500, work);
@@ -357,7 +353,7 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
   particle = work->particles;
   sprite = work->sprites;
   for (; i <= 53; i++) {
-    Func_02000b40__northern_reaches(sprite, 0, 0, 0x40000000, (i & 3) * 8 + tiles);
+    Func_02000b40(sprite, 0, 0, 0x40000000, (i & 3) * 8 + tiles);
     zero = 0;
     sprite->unk_1e = 250;
     sprite->oam.priority = zero;
@@ -380,7 +376,7 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
    * buffer; as Heap_Alloc(0x1000), 19 of 323 instructions differ in tbs-en. */
   sheet = (void *)0x1000;
   sheet = Heap_Alloc((s32)sheet);
-  Resource_DecodeType01__northern_reaches(Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion),
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion),
                 sheet);
   sparkEntry = Resource_FindFreeEntry();
   sparkTiles = VramCache_Load(sparkEntry, 0x400, sheet);

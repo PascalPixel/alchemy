@@ -16,14 +16,9 @@
 #include "particle.h"
 #include "resource.h"
 
-/* VIEW(s46e8): variable gData_02005638 as extern const s32 gData_02005638[]; the definition has u32 gData_02005638[] = { SC_WAIT(33), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1), SC_FREE, }. */
-extern const s32 gData_02005638__s46e8[] __asm__("gData_02005638");
 
-/* VIEW(s46e8): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
-extern void Actor_SetSingleChildFlags__s46e8(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
-/* VIEW(s46e8): routine Func_02004c98 as void Func_02004c98(struct FieldEffect *effect, s32 mode); local.h has void Func_02004c98(struct Actor *object, s32 a). */
-extern void Func_02004c98__s46e8(struct FieldEffect *effect, s32 mode) __asm__("Func_02004c98");
-/* VIEW(s46e8): routine Actor_StartScript as void Actor_StartScript(struct FieldEffect *effect, const s32 *script); local.h has void Actor_StartScript(struct Actor *object, const void *data). */
+void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+/* VIEW(s46e8): routine Actor_StartScript as void Actor_StartScript(struct FieldEffect *effect, const s32 *script); local.h has void Actor_StartScript(struct Actor *object, const void *data); not tried: Actor_StartScript's bound declaration was not found. */
 extern void Func_02004ca0__s46e8(struct FieldEffect *effect, const s32 *script) __asm__("Actor_StartScript");
 void Actor_StartScript(struct Actor *object, const void *data);
 
@@ -46,9 +41,9 @@ void Func_020046e8(s32 spread) {
       frame = Func_02004e98(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSingleChildFlags__s46e8(effect, 0);
-      Func_02004c98__s46e8(effect, 2);
-      Func_02004ca0__s46e8(effect, gData_02005638__s46e8);
+      Actor_SetSingleChildFlags(effect, 0);
+      Func_02004c98(effect, 2);
+      Func_02004ca0__s46e8(effect, gData_02005638);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
       if (spread != 0) {
@@ -68,8 +63,6 @@ void Func_020046e8(s32 spread) {
   } while (i <= 7);
 }
 
-/* VIEW(s46e8): variable gData_02005668 as extern const s32 gData_02005668[]; the definition has u32 gData_02005668[] = { SC_WAIT(44), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1), SC_FREE, }. */
-extern const s32 gData_02005668__s46e8[] __asm__("gData_02005668");
 
 void Func_0200481c(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -88,9 +81,9 @@ void Func_0200481c(void) {
       frame = Func_02004e98(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSingleChildFlags__s46e8(effect, 0);
-      Func_02004c98__s46e8(effect, 2);
-      Func_02004ca0__s46e8(effect, gData_02005668__s46e8);
+      Actor_SetSingleChildFlags(effect, 0);
+      Func_02004c98(effect, 2);
+      Func_02004ca0__s46e8(effect, gData_02005668);
       effect->velocity.x = Math_Cosine(i << 12);
       effect->velocity.y = 0;
       effect->velocity.z = Math_Sin(i << 12);
@@ -166,26 +159,13 @@ next:
     goto next;
 }
 
-/// A falling rock's sprite.
-/* VIEW(s46e8): tag struct RockSprite as struct RockSprite__s46e8; module/tla.h has another definition. */
-struct RockSprite__s46e8 {
-  u8 unk00[5];
-  u8 unk05;
-  u8 unk06[2];
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[0x14];
-  u16 unk1e;
-  u8 unk20[8];
-};
 
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
 /// ring that next walks round.
 struct RockWork {
   u8 tiles[0x500];
   struct Rock rocks[64];
-  struct RockSprite__s46e8 sprites[64];
+  struct RockSprite sprites[64];
   s16 next;
   u16 tileBase;
   s16 resource;
@@ -234,39 +214,9 @@ void Func_02004a5c(s32 x, s32 y, s32 z, s32 count) {
 // ---- games/tla/src/scene/magma_rock_inside/s4b18.c ----
 #include "system/task.h"
 
-/* VIEW(s4b18): tag struct Rock as struct Rock__s4b18; s46e8.c has another definition. */
-struct Rock__s4b18 {
-  u8 unk00[24];
-  s32 timer;
-};
 
-/* VIEW(s4b18): tag struct RockSprite as struct RockSprite__s4b18; s46e8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/magma_rock_inside/s46e8.c:295: structure has no member named `unk05_5'. */
-struct RockSprite__s4b18 {
-  u8 unk00[5];
-  u8 unk05_0 : 5;
-  u8 unk05_5 : 1;
-  u8 unk05_6 : 2;
-  u8 unk06[3];
-  u8 unk09_0 : 2;
-  u8 priority : 2;
-  u8 palette : 4;
-  u8 unk0a[20];
-  u16 unk1e;
-  u8 unk20[8];
-};
 
-/* VIEW(s4b18): tag struct RockWork as struct RockWork__s4b18; s46e8.c has another definition. */
-struct RockWork__s4b18 {
-  u8 tiles[0x500];
-  struct Rock__s4b18 rocks[64];
-  struct RockSprite__s4b18 sprites[64];
-  s16 next;
-  u16 tileBase;
-  u16 resource;
-};
 
-/* VIEW(s46e8): routine HeapSlot_AllocFar as struct RockWork__s4b18 *HeapSlot_AllocFar(s32 slot, s32 size); gamepak/far_call/system.h has void *HeapSlot_AllocFar(s32 slot, s32 size). */
-extern struct RockWork__s4b18 *HeapSlot_AllocFar__s46e8(s32 slot, s32 size) __asm__("HeapSlot_AllocFar");
 
 static __inline__ void StartTask(void (*func)(void), s32 priority) {
   /* FAKEMATCH(wrapper): Task_Add forwarded inline; as a direct call, 6 of 83
@@ -275,12 +225,12 @@ static __inline__ void StartTask(void (*func)(void), s32 priority) {
 }
 
 void Func_02004b18(void) {
-  struct RockWork__s4b18 *work = HeapSlot_AllocFar__s46e8(220, sizeof(struct RockWork__s4b18));
+  struct RockWork *work = HeapSlot_AllocFar(220, sizeof(struct RockWork));
   s32 entry;
   s32 tile;
   s32 i;
-  struct Rock__s4b18 *rock;
-  struct RockSprite__s4b18 *sprite;
+  struct Rock *rock;
+  struct RockSprite *sprite;
 
   Func_02004c58(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
   entry = Resource_FindFreeEntry();

@@ -167,7 +167,6 @@ static void ImilFuchinFalls_PrepareRoom(void);
 static void ImilFuchinFalls_RebuildLogRoom(void);
 static void ImilFuchinFalls_HopBy(s32 dx, s32 dz);
 static void ImilFuchinFalls_PlaceDragonsEye(void);
-static void Imil_SlideActorAcrossIce(void);
 
 s32 gImilFuchinFalls_TrackLeader;
 

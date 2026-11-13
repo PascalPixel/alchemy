@@ -69,7 +69,6 @@
 #define LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES 80
 #endif
 
-static void Ripple_Stop(void);
 static void Curtain_Start(void);
 
 enum {

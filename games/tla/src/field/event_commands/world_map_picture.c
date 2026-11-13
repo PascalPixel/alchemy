@@ -802,7 +802,7 @@ void wait(s32 frames);
 void WorldPicture_Initialize(void);
 void WorldPicture_UpdateMarkers(void);
 void WorldPicture_StepToPlace(s32 *screenX, s32 *screenY, s32 step);
-void Func_080ca368(s32 scene, s32 entrance);
+void WorldMap_SetReturnForScene(s32 scene, s32 entrance);
 void WorldPicture_Release(void);
 void WorldMap_LoadAreaGraphicsFar(void);
 
@@ -1004,7 +1004,7 @@ s32 WorldPicture_Show(s32 mode) {
         place += world->shown;
         routine->unk2be = (s32)&SceneId_WorldMap;
         choice->flag = place->flag;
-        Func_080ca368(place->scene, place->entrance);
+        WorldMap_SetReturnForScene(place->scene, place->entrance);
         goto done;
       }
       if (input->repeat & 2) {

@@ -33,7 +33,7 @@ FieldEffect_RingOrb:
 @ Two quarters of a ring, 64x64 each, one under the other: 128 background
 @ tiles of 256 colours, drawn in colours 243 to 255. FieldPsynergy_Unnamed28 unpacks
 @ them and copies all 8,192 bytes to background tiles 0 to 127. Its
-@ callback Func_080e807c writes sixteen colours it computes to background
+@ callback FieldPsynergy_UpdateUnnamed28 writes sixteen colours it computes to background
 @ and OBJ palette 15 each frame, from a counter that starts at 0: the picture
 @ carries the colours of the first frame, and black for the 240 it does not
 @ use.
@@ -115,7 +115,7 @@ FieldEffect_SparkleFade:
 @ Four pictures of one 16x16 sprite of 16 colours, 512 bytes. FieldPsynergy_Unnamed28
 @ unpacks them, loads them as one block of OBJ video memory and makes 32
 @ sprites of them, each with the 256-colour bit cleared and OBJ palette 15.
-@ Its callback Func_080e807c steps every sprite through the four pictures, four
+@ Its callback FieldPsynergy_UpdateUnnamed28 steps every sprite through the four pictures, four
 @ frames a picture, and each frame writes sixteen colours it computes to OBJ
 @ palette 15. The game stores no palette for this sheet: r1ed.png carries the
 @ first row of the shared OBJ palette, which the 256-colour sheets of this

@@ -50,13 +50,13 @@ gData_080f0ef8:
 gBattleEffect_RandomChildValues:
 	.byte 0, 0, 1, 2, 3, 4, 5, 6
 
-@ Read by Func_080e1678: eight offsets in 16.16 fixed point
+@ Read by FieldPsynergy_UpdateUnnamed29: eight offsets in 16.16 fixed point
 	.global Data_080f0f34
 Data_080f0f34:
 	.4byte 0x1000, 0, -0x1000, -0x2000
 	.4byte -0x3000, -0x2000, -0x1000, 0
 
-@ Read by Func_080e1678: four values in 16.16 fixed point
+@ Read by FieldPsynergy_UpdateUnnamed29: four values in 16.16 fixed point
 	.global Data_080f0f54
 Data_080f0f54:
 	.4byte 0xd000, 0x9000, 0x5000, 0x3000

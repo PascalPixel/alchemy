@@ -1442,7 +1442,9 @@ struct Unk_080e807cEvent {
   s16 count;
 };
 
-void Func_080e807c(void) {
+/// Task of field Psynergy 28 (its name is question marks): its motes and
+/// colours each frame.
+void FieldPsynergy_UpdateUnnamed28(void) {
   struct Unk_080e807cWork *work = Ram_HeapSlots->battleFxWork[0];
   struct Unk_080e807cEvent *event = Ram_HeapSlots->eventWork;
   struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);

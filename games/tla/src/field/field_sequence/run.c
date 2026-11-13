@@ -285,7 +285,8 @@ s32 FieldSequence_Run(void) {
               party->scene = restartScene;
               restartEntrance = party->savedEntrance;
               *entrance = restartEntrance;
-              Func_080ca3f4((s16)restartScene, (s16)restartEntrance);
+              WorldMap_SetReturnLeavingScene((s16)restartScene,
+                                             (s16)restartEntrance);
             }
             result = 999;
             WorldMap_ReloadPendingAreaGraphics();

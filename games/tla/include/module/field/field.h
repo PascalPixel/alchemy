@@ -1244,6 +1244,6 @@ void Actor_SetFirstSpriteAnimation(struct Actor *object, s32 index);
 
 void Scene_ChooseMusic(void);
 void WorldMap_MarkPlaceVisited(s32 id, s32 variant);
-void Func_080ca3f4(s32 scene, s32 entrance);
+void WorldMap_SetReturnLeavingScene(s32 scene, s32 entrance);
 
 #endif

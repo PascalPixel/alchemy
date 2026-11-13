@@ -677,7 +677,8 @@ void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
                                       struct ScatterParticle *p);
 void Rope_GetEndNodePosition(s32 target, struct Vector3 *position);
 
-void Func_080e0618(void) {
+/// Task of the Lash: its scattering particles along the rope.
+void FieldPsynergy_UpdateLash(void) {
   struct ScatterWork *work =
       (struct ScatterWork *)Ram_HeapSlots->battleFxWork[0];
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
@@ -892,7 +893,7 @@ void FieldPsynergy_Lash(void) {
       work->next = 0;
       work->spawnCount = 1;
       work->hit = 0;
-      Task_Add(Func_080e0618, 0x480);
+      Task_Add(FieldPsynergy_UpdateLash, 0x480);
       while (work->phase != 999) {
         if (work->flash == 1) {
           Sound_PlayFar(0x200);
@@ -902,7 +903,7 @@ void FieldPsynergy_Lash(void) {
         }
         wait(1);
       }
-      Task_Remove(Func_080e0618);
+      Task_Remove(FieldPsynergy_UpdateLash);
     }
     VramCache_FreeEntry(slotA);
     VramCache_FreeEntry(slotB);
@@ -1513,7 +1514,9 @@ Vector_AddPolarOffset__f0e150c(s32 distance, s32 angle,
 
 #define BOW_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 
-void Func_080e1678(void) {
+/// Task of field Psynergy 29 (its name is question marks): the bow and the
+/// flaming arrow.
+void FieldPsynergy_UpdateUnnamed29(void) {
   struct BowScene *scene = Ram_HeapSlots->effectWork;
   struct BowWork *work = (struct BowWork *)Ram_HeapSlots->battleFxWork[0];
   struct CanvasSpriteWork *canvas = Ram_HeapSlots->unkec[1];
@@ -1901,10 +1904,10 @@ void FieldPsynergy_Unnamed29(void) {
   work->result = -1;
   work->phase = 0;
   work->timer = 0;
-  Task_Add(Func_080e1678, TASK_PASS_VBLANK);
+  Task_Add(FieldPsynergy_UpdateUnnamed29, TASK_PASS_VBLANK);
   while (work->phase != 999)
     wait(1);
-  Task_Remove(Func_080e1678);
+  Task_Remove(FieldPsynergy_UpdateUnnamed29);
   if (work->done != 0 && work->result != -1)
     event[0xd30] = work->result;
   VramCache_FreeEntry(arrowSlot);

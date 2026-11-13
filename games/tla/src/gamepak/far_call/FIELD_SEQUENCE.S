@@ -320,8 +320,8 @@ Func_080c88e8:
 	export Weather_StopRainFar, Weather_StopRain
 	export Func_080c8928, SummonTablet_PlayRunes
 	export Func_080c8930, Func_080d2d70
-	export Func_080c8938, Func_080ca368
-	export Func_080c8940, Func_080ca3f4
+	export WorldMap_SetReturnForSceneFar, WorldMap_SetReturnForScene
+	export Func_080c8940, WorldMap_SetReturnLeavingScene
 	export Func_080c8948, FieldItem_JumpToLeader
 	export ScreenTransition_IsScanlineActiveFar, ScreenTransition_IsScanlineActive
 	export Party_CheckItemLimitFar, Party_CheckItemLimit

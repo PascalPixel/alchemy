@@ -40,7 +40,7 @@ struct RingEvent {
 extern char ResourceId_StarSparkleFade, ResourceId_RingArcs, ResourceId_Data1ED;
 
 void Camera_WorldToScreen(s32 *position);
-void Func_080e807c(void);
+void FieldPsynergy_UpdateUnnamed28(void);
 /* VIEW(f0e82cc): routine Canvas_PlotPolarPixel as void Canvas_PlotPolarPixel(u8
  * *canvas, s32 radius, s32 angle, s32 color); the definition has void
  * Canvas_PlotPolarPixel(s32 unused, s32 radius, s32 angle, s32 color). */
@@ -150,7 +150,7 @@ void FieldPsynergy_Unnamed28(void) {
     event->unkcad = 1;
     event->timer = 999;
     off = 0;
-    Task_Add(Func_080e807c, 0x480);
+    Task_Add(FieldPsynergy_UpdateUnnamed28, 0x480);
     wait(1);
     work->cycling = off;
     phase = 0;
@@ -261,7 +261,7 @@ void FieldPsynergy_Unnamed28(void) {
   event->up = 1;
   event->unkcad = 1;
   event->timer = 600;
-  Task_Add(Func_080e807c, 0x480);
+  Task_Add(FieldPsynergy_UpdateUnnamed28, 0x480);
 }
 
 // One mote: a position and a velocity (BattleEffect_IntegrateVector3's vector)
@@ -300,13 +300,12 @@ struct Actor *Actor_GetById(u32 objectId);
 void Window_LoadGraphics(void);
 extern char ResourceId_SparkleFade;
 
-/// The burst of 64 sparkles that Func_080e807c's effect ends with: once the
-/// event work asks for it, it plays sound 167, fills the tiles at 0x06002000,
-/// reloads the window graphics, loads
-/// the sparkle picture (FieldEffect_SparkleFade) and scatters the sparkles
-/// around the current owner, starting a quarter of them a frame later than
-/// the last, then moves and animates them for 40 frames before releasing the
-/// effect.
+/// The burst of 64 sparkles that FieldPsynergy_UpdateUnnamed28's effect ends
+/// with: once the event work asks for it, it plays sound 167, fills the tiles
+/// at 0x06002000, reloads the window graphics, loads the sparkle picture
+/// (FieldEffect_SparkleFade) and scatters the sparkles around the current
+/// owner, starting a quarter of them a frame later than the last, then moves
+/// and animates them for 40 frames before releasing the effect.
 void FieldPsynergy_EndUnnamed28(void) {
   struct BurstWork__f0e82cc *work = Ram_HeapSlots->battleFxWork[0];
   struct BurstEvent *event = Ram_HeapSlots->eventWork;
@@ -324,7 +323,7 @@ void FieldPsynergy_EndUnnamed28(void) {
   event->pending = 0;
   event->unkcad = 0;
   event->unkcae = 0;
-  Task_Remove(Func_080e807c);
+  Task_Remove(FieldPsynergy_UpdateUnnamed28);
   wait(1);
   // A once-only block: its end holds the order around it (as plain
   // statements, 6 of 226 differ in tla-en).

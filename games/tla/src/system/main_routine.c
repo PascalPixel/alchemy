@@ -124,7 +124,7 @@ void Scene_TakeExit(s32 exitKind) {
 }
 
 /// The Broken Seal's Scene_ReturnFromSequence, without the childhood healing,
-/// ending a defeat with Func_080ca3f4.
+/// ending a defeat with WorldMap_SetReturnLeavingScene.
 void Scene_ReturnFromSequence(s32 result) {
   struct BattleUnit *unit;
   s16 scene;
@@ -152,7 +152,8 @@ void Scene_ReturnFromSequence(s32 result) {
       gMainRoutineWork.scene = gMainRoutineWork.savedScene;
       gMainRoutineWork.entrance = gMainRoutineWork.savedEntrance;
     }
-    Func_080ca3f4(gMainRoutineWork.scene, gMainRoutineWork.entrance);
+    WorldMap_SetReturnLeavingScene(gMainRoutineWork.scene,
+                                   gMainRoutineWork.entrance);
   } else {
     scene = gMainRoutineWork.pair1ee[0];
     entrance = gMainRoutineWork.pair1ee[1];

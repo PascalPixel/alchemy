@@ -302,7 +302,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
               if (MapGrid_CheckCollision(actor, &testPosition) ==
                   COLLISION_NONE) {
                 heading = angle;
-                goto push_objects;
+                goto push_actors;
               }
             }
           }
@@ -354,7 +354,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
         Vector_AddPolarOffset(px(8), (u16)heading - TRIG_TURN / 8,
                               &testPosition);
         if (MapGrid_CheckCollision(actor, &testPosition) == COLLISION_NONE)
-          goto push_objects;
+          goto push_actors;
       }
       // Nothing passed: the step is the actor's own position.
       position.x = actor->x.fixed;
@@ -362,7 +362,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
       position.z = actor->z.fixed;
       collision |= PLAYER_STEP_BLOCKED_BY_MAP;
 
-    push_objects:
+    push_actors:
       // Push the movable actors (ACTOR_PUSHABLE) just ahead 4 pixels
       // further, when they have room; any other solid actor there blocks the
       // step (bit 1 of collision). Pushing slows the player down.
@@ -651,7 +651,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *actor) {
                                     direction - TRIG_TURN / 8, &testPosition);
               if (WorldMap_IsWalkable(
                       (s32)actor, (struct WorldPosition *)&testPosition) == 0)
-                goto update_object;
+                goto update_actor;
             }
           }
         }
@@ -707,7 +707,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *actor) {
                                 (struct WorldPosition *)&testPosition) != 0)
           continue;
         angle = (s16)direction;
-        goto update_object;
+        goto update_actor;
       }
       collision |= PLAYER_STEP_BLOCKED_BY_MAP;
 
@@ -757,7 +757,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *actor) {
                    (s32)actor, (struct WorldPosition *)&rightPosition)) != 0)
             continue;
           angle = (s16)direction;
-          goto update_object;
+          goto update_actor;
         }
         collision |= PLAYER_STEP_BLOCKED_BY_MAP;
       }
@@ -765,7 +765,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *actor) {
     }
   }
 
-update_object:
+update_actor:
   if (gFieldWork != NULL) {
     if ((collision & PLAYER_STEP_BLOCKED) != 0)
       gFieldWork->blockedSteps++;

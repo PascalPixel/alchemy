@@ -1013,27 +1013,24 @@ s32 Scene_Initialize(void) {
   Event_SetFlag(FLAG_MARS_LIGHTHOUSE_LIT);
   Func_02002270();
   if (scene == (s32)&SceneId_MarsLighthouseEntrance1) {
-    Call1((void (*)())Weather_StartRain, 1);
+    Weather_StartRain(1);
   } else if (scene == (s32)&SceneId_MarsLighthouseEntrance2) {
-    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
+    FieldEffect_StartBlankOverlay(0);
 #if !TLA_PATCH_1
     FieldActor_SetSpritePriority(11, 3);
 #endif
-    Call1((void (*)())Actor_Freeze, 10);
+    Actor_Freeze(10);
     if (Event_GetFlag(0xa30)) {
       MapGrid_CopyCellsLayered(35, 41, 24, 10, 3, 53);
       MapGrid_CopyCellsLayered(35, 105, 24, 10, 3, 117);
     }
-    Call1((void (*)())MarsLighthouseEntrance_PlaceIceCones,
-          (s32)gData_020053d8);
+    MarsLighthouseEntrance_PlaceIceCones((s32)gData_020053d8);
     if (Event_GetFlag(0xa3e))
       MapGrid_CopyCellsLayered(50, 125, 3, 3, 39, 85);
   } else if (scene == (s32)&SceneId_MarsLighthouseEntrance3) {
-    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
-    Call4((void (*)())Beam_Start, (s32)gData_020053e6, (s32)gData_020053f8, 0,
-          88);
-    Call1((void (*)())MarsLighthouseEntrance_PlaceIceCones,
-          (s32)gData_020053fe);
+    FieldEffect_StartBlankOverlay(0);
+    Beam_Start((s32)gData_020053e6, (s32)gData_020053f8, 0, 88);
+    MarsLighthouseEntrance_PlaceIceCones((s32)gData_020053fe);
     if (Event_GetFlag(0xa3f)) {
       MapGrid_CopyCellsLayered(47, 94, 10, 6, 47, 100);
       MapGrid_CopyCellAttributes(110, 40, 12, 4, 46, 40);
@@ -1080,7 +1077,7 @@ s32 Scene_Initialize(void) {
       Event_PlaySound(SE_573);
       i = 2;
       do {
-        Call1((void (*)())Func_02000414, 18);
+        Func_02000414(18);
         System_Wait(1);
         i--;
       } while (i >= 0);
@@ -1091,16 +1088,15 @@ s32 Scene_Initialize(void) {
       Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
     }
   } else if (scene == (s32)&SceneId_MarsLighthouseEntrance4) {
-    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
+    FieldEffect_StartBlankOverlay(0);
     if (entrance == 10 || entrance == 1) {
-      Call4((void (*)())Beam_Start, (s32)gData_0200540c, (s32)gData_02005412,
-            (s32)Func_020019a4, 88);
-      Call2((void (*)())Func_0200248c, 0, 1);
+      Beam_Start((s32)gData_0200540c, (s32)gData_02005412, (s32)Func_020019a4,
+                 88);
+      Func_0200248c(0, 1);
     }
-    Call1((void (*)())MarsLighthouseEntrance_PlaceIceCones,
-          (s32)gData_02005418);
+    MarsLighthouseEntrance_PlaceIceCones((s32)gData_02005418);
   } else if (scene == (s32)&SceneId_MarsLighthouseEntrance5) {
-    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
+    FieldEffect_StartBlankOverlay(0);
     Actor_Get(12)->priorityFlags |= 2;
     if (Event_GetFlag(0xa4d)) {
       MapGrid_CopyCellsLayered(12, 95, 8, 6, 12, 101);
@@ -1114,18 +1110,18 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(0xa49))
       Func_02000c1c();
   } else if (scene == (s32)&SceneId_MarsLighthouseEntrance6) {
-    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
+    FieldEffect_StartBlankOverlay(0);
     if (entrance == 2 || entrance == 4 || entrance == 6 || entrance == 13) {
-      Call4((void (*)())Beam_Start, (s32)gData_02005438, (s32)gData_0200543e,
-            (s32)Func_0200196c, 88);
-      Call2((void (*)())Func_0200248c, 0, 1);
+      Beam_Start((s32)gData_02005438, (s32)gData_0200543e, (s32)Func_0200196c,
+                 88);
+      Func_0200248c(0, 1);
     }
     if ((u32)(entrance - 7) <= 1 || entrance == 11) {
       struct Actor *target;
 
-      Call4((void (*)())Beam_Start, (s32)gData_02005448, (s32)gData_0200544e,
-            (s32)Func_02001988, 88);
-      Call2((void (*)())Func_0200248c, 0, 1);
+      Beam_Start((s32)gData_02005448, (s32)gData_0200544e, (s32)Func_02001988,
+                 88);
+      Func_0200248c(0, 1);
       if (entrance == 11) {
         Actor_SetScript(11, gData_02005314);
         Func_0200246c(0, 3);
@@ -1135,8 +1131,7 @@ s32 Scene_Initialize(void) {
       Task_AddFrame(Func_02001378, 0x480);
       Actor_Get(11)->update = (void (*)(void))Func_020012bc;
       Func_020022d8(1);
-      Call1((void (*)())MarsLighthouseEntrance_PlaceIceCones,
-            (s32)gData_02005454);
+      MarsLighthouseEntrance_PlaceIceCones((s32)gData_02005454);
       target = Actor_Get(20);
       Actor_Get(13)->update = (void (*)(void))Func_02001344;
       Actor_Get(14)->update = (void (*)(void))Func_02001344;
@@ -1155,12 +1150,12 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(0xa4e))
       Actor_SetPosition(8, 88, 696);
   } else if (scene == (s32)&SceneId_MarsLighthouseEntrance7) {
-    Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
+    FieldEffect_StartBlankOverlay(0);
   }
   if (scene == (s32)&SceneId_MarsLighthouseEntrance6 && entrance == 13)
     Event_ClearFlag(0x104);
-  Call4((void (*)())Palette_SetColorsFade, (s32)gData_0200586c,
-        (s32)gData_0200587c, (s32)gData_020058a8, (s32)gData_020058d4);
+  Palette_SetColorsFade((s32)gData_0200586c, (s32)gData_0200587c,
+                        (s32)gData_020058a8, (s32)gData_020058d4);
   return 0;
 }
 

@@ -1539,7 +1539,7 @@ void Func_02002048(void) {
   }
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Call2((void (*)())Event_SetDestination, (s32)&SceneId_AlhafraManor, 81);
+  Event_SetDestination((s32)&SceneId_AlhafraManor, 81);
   Event_End();
 }
 

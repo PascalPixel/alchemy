@@ -743,7 +743,7 @@ void LemurianShipDeck_ReturnToShip(void) {
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Call2((void (*)())Actor_MoveToObject, 7, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
   System_Wait(1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_SetSpeed(7, 1.6);
@@ -783,7 +783,7 @@ void LemurianShipDeck_ReturnToShip(void) {
   Event_SetFlag(FLAG_SCENE_TEMP_01);
   FieldTask_Remove(func);
   if (handle != 0)
-    Call1((void (*)())Actor_Release, handle);
+    Actor_Release(handle);
   FieldEvent_Wait(20);
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(20);

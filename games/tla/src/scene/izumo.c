@@ -875,6 +875,7 @@ struct Trigger gIzumo_TriggersOnceTheSerpentIsSlain[] = {
     {TRIGGER_TABLE_END},
 };
 
-u16 gData_02001e0c[] = {
+/// Unused: a halfword nothing reads.
+u16 gIzumo_UnusedHalfword[] = {
     1,
 };

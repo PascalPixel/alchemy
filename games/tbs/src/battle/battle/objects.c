@@ -367,7 +367,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
   // Release the sprites of the places no listed unit holds.
   for (unitIndex = 0; unitIndex < UNIT_MAX; unitIndex++) {
     if (!BattlePlacement_ContainsId(unitIds, unitIndex)) {
-      releasedUnitId = unitIndex + FIRST_ENEMY_UNIT - 8;
+      releasedUnitId = unitIndex + FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
       if (unitIndex <= ALLY_MAX)
         releasedUnitId = unitIndex;
       ReleaseBattleObjectRecords(releasedUnitId);
@@ -491,9 +491,10 @@ struct BattleObject *BattleObject_Get(s32 unitId) {
   struct BattleWork *battle = gBattleWork;
   struct BattleObject *battleObjects = battle->objects;
   s32 placementIndex;
-  // Enemy unit ids 128 to 133 index placement 8 to 13.
+  // Enemy unit ids from FIRST_ENEMY_UNIT index the places from
+  // PARTY_UNIT_COUNT.
   if (unitId > ALLY_MAX) {
-    unitId -= FIRST_ENEMY_UNIT - 8;
+    unitId -= FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
   }
   placementIndex = unitId;
   if (battle->objectIndex[placementIndex] == BATTLE_OBJECT_NONE) {
@@ -573,7 +574,7 @@ void *BattleObject_DestroyAll(void) {
 
   placementIndex = 0;
   do {
-    unitId = placementIndex + FIRST_ENEMY_UNIT - 8;
+    unitId = placementIndex + FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
     if (placementIndex <= ALLY_MAX) {
       unitId = placementIndex;
     }

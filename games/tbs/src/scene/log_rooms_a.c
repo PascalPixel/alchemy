@@ -11,7 +11,7 @@
 /// room with a crate. Behind the crate a way climbs to the inn's loft.
 ///
 /// The loft has actor placements and events of its own
-/// (LogRoomsA_GetActorPlacements and _GetTriggers).
+/// (Scene_GetActorPlacements and Scene_GetTriggers).
 /// FLAG_VAULT_THIEVES_JAILED chooses the other rooms' tables.
 ///
 /// The story flags drive the rooms in order:

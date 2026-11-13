@@ -156,7 +156,7 @@ enum LaliveroActorId {
 enum LaliveroCellBehavior { CELL_BEHAVIOR_LALIVERO_SANCTUM_GATE = 6 };
 
 /// A cell of the wall along the town's south edge (CELL_BEHAVIOR_WALL), whose
-/// attributes Lalivero_SetupMap copies onto cells the party may not cross.
+/// attributes Lalivero_Initialize copies onto cells the party may not cross.
 enum { WALL_CELL_X = 20, WALL_CELL_Y = 23 };
 
 /// A chest searched while facing the given way.

@@ -7,7 +7,7 @@
 /// The getters pick each scene's tables by gMainRoutineWork.next, and three
 /// story flags choose among them. FLAG_TOLBI_SHIP_REACHED_TOLBI says whether
 /// the ship has made its crossing (set on the World Map,
-/// WorldMap_CompleteTransfer). FLAG_KALAY_COLOSSO_TOUR_LEFT says whether the
+/// WorldMap_SailIntoTolbi). FLAG_KALAY_COLOSSO_TOUR_LEFT says whether the
 /// Colosso Tour's group has left Kalay. FLAG_COLOSSO_OVER says whether the
 /// Colosso finals have been fought.
 ///

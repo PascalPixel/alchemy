@@ -8,7 +8,7 @@
 /// (the bytes of the odd columns win).
 ///
 /// Called by BattleEffect_RunRushingStrike and once by
-/// BattleEffect_RunCastingImpact (through CastingImpact_PackRows), both to
+/// BattleEffect_RunCastingImpact, both to
 /// squeeze the yellow orb's 40-pixel-wide sheet into six 20x48 pictures. Writes
 /// only dst.
 ///

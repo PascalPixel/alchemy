@@ -100,7 +100,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
 /// Starts the leader's animation for leaving through an exit: centres it on
 /// its cell, at the cell's south edge, stops it and plays animation over 18
 /// frames. The leader's sprite gains a second part (metadata 27) for it.
-/// Called by the two Exit_StartContextEffect functions below.
+/// Called by Exit_StartStairsUp and Exit_StartStairsDown below.
 void Exit_PrepareAnimation(s32 animation) {
   u32 zero;
   u8 param;

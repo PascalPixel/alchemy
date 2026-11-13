@@ -16,39 +16,39 @@ struct MapMode {
   } __attribute__((packed)) bits;
 };
 
-extern u32 gData_0200218c[];
+extern u32 gLemurianShipDeck_FirstCrewLooksAround[];
 
-extern u32 gData_020021e8[];
+extern u32 gLemurianShipDeck_SecondCrewLooksAround[];
 
-extern u32 gData_0200221c[];
+extern u32 gLemurianShipDeck_ThirdCrewLooksAround[];
 
-void Func_02000188(void);
+void LemurianShipDeck_RotateColors12To15(void);
 
-void Func_02000258(void);
+void LemurianShipDeck_ScrollWaves(void);
 
-void Func_02000288(void);
+void LemurianShipDeck_BobDeck(void);
 
 void LemurianShipDeck_TakeTheTiller(void);
 
 void FieldCamera_WaitForArrival(void);
 
-extern s16 gData_020020dc[];
+extern s16 gLemurianShipDeck_Puddles[];
 
 void Func_020020c4(const void *data);
 
-void Func_02000210(void);
+void LemurianShipDeck_ShowArrival(void);
 
 void Func_020020cc(const void *data);
 
-extern u32 gData_0200247c[];
+extern u32 gLemurianShipDeck_SparkleFades[];
 extern u32 gLemurianShipDeck_ReturnToShipScript[];
 
 void Actor_Release(struct Actor *object);
 
 extern u32 gLemurianShipDeck_ReachPiersShipScript[];
-extern u32 gData_02002498[];
+extern u32 gLemurianShipDeck_SmokePuff[];
 
-void Func_02000078(void);
+void LemurianShipDeck_EnterCabin(void);
 
 void LemurianShipDeck_TryHeldDoor(void);
 

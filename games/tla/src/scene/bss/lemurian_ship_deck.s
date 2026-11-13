@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
 	.section .bss,"aw",%nobits
-	.global gData_020024b0
-gData_020024b0:
+	.global gLemurianShipDeck_BobPhase
+gLemurianShipDeck_BobPhase:
 	.space 0x00000004
-	.global gData_020024b4
-gData_020024b4:
+	.global gLemurianShipDeck_WaveScroll
+gLemurianShipDeck_WaveScroll:

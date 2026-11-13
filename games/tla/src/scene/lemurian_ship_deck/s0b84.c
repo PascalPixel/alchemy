@@ -1,5 +1,5 @@
 /// @file
-/// Scene code of overlay 0x657, in ROM order.
+/// The deck's events and data, linked apart from lemurian_ship_deck.c.
 
 #include "../shared/effects.h"
 #include "../shared/tables.h"
@@ -23,10 +23,10 @@
 #include "module/scene/lemurian_ship_deck.h"
 #include "module/scene/scene.h"
 
-extern s32 gData_020024b4;
-extern s32 gData_020024b0;
+extern s32 gLemurianShipDeck_WaveScroll;
+extern s32 gLemurianShipDeck_BobPhase;
 
-void Func_020001cc(void);
+void LemurianShipDeck_RotateColors4To9(void);
 void LemurianShipDeck_HoldOnToTiller(void);
 
 /// The scene run from entrance 10: the crew takes its places on deck and the
@@ -56,14 +56,14 @@ void LemurianShipDeck_TakeTheTiller(void) {
   Actor_SetPositionAndFacing(5, PIXELS(546), PIXELS(440), angle);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
-  Actor_SetScript(5, gData_0200218c);
-  Actor_SetScript(6, gData_020021e8);
-  Actor_SetScript(9, gData_0200221c);
+  Actor_SetScript(5, gLemurianShipDeck_FirstCrewLooksAround);
+  Actor_SetScript(6, gLemurianShipDeck_SecondCrewLooksAround);
+  Actor_SetScript(9, gLemurianShipDeck_ThirdCrewLooksAround);
   Event_StartScreenTransition();
-  gData_020024b4 = 0;
-  Task_AddFrame(Func_02000258, 0x480);
-  gData_020024b0 = 0;
-  Task_AddFrame(Func_02000288, 0x480);
+  gLemurianShipDeck_WaveScroll = 0;
+  Task_AddFrame(LemurianShipDeck_ScrollWaves, 0x480);
+  gLemurianShipDeck_BobPhase = 0;
+  Task_AddFrame(LemurianShipDeck_BobDeck, 0x480);
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   FieldCamera_MoveTo(PIXELS(542), PIXELS(44), PIXELS(396), 1);
   FieldCamera_WaitForArrival();
@@ -189,10 +189,10 @@ void LemurianShipDeck_HoldOnToTiller(void) {
   System_Wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  gData_020024b4 = 0;
-  Task_AddFrame(Func_02000258, 0x480);
-  gData_020024b0 = 0;
-  Task_AddFrame(Func_02000288, 0x480);
+  gLemurianShipDeck_WaveScroll = 0;
+  Task_AddFrame(LemurianShipDeck_ScrollWaves, 0x480);
+  gLemurianShipDeck_BobPhase = 0;
+  Task_AddFrame(LemurianShipDeck_BobDeck, 0x480);
   Actor_ShowEmote(6, 0x102, 30);
   Actor_FaceDirectionAndWait(6, FACING_SOUTH);
   FieldEvent_Wait(10);
@@ -276,10 +276,12 @@ void LemurianShipDeck_HoldOnToTiller(void) {
   FieldEvent_SetExitRequest(1);
 }
 
-void Func_02000b84(void) {
+/// Room1, the deck at the tiller: the colour rotations, and the tiller scenes
+/// of entrances 10 and 20.
+void LemurianShipDeck_SetUpTillerDeck(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
-  FieldTask_AddFrame(Func_02000188, 0x480);
-  FieldTask_AddFrame(Func_020001cc, 0x480);
+  FieldTask_AddFrame(LemurianShipDeck_RotateColors12To15, 0x480);
+  FieldTask_AddFrame(LemurianShipDeck_RotateColors4To9, 0x480);
   if (gMainRoutineWork.entrance == 10)
     LemurianShipDeck_TakeTheTiller();
   if (gMainRoutineWork.entrance == 20)
@@ -303,7 +305,7 @@ s32 Scene_Initialize(void) {
   party = &gMainRoutineWork;
   map->bits = bits;
   if (party->scene == (s32)&SceneId_Ov657Room1) {
-    Func_02000b84();
+    LemurianShipDeck_SetUpTillerDeck();
   } else {
     *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
     /* FAKEMATCH(dead): an empty once-only block, which ends the scheduling
@@ -313,12 +315,12 @@ s32 Scene_Initialize(void) {
     } while (0);
     Actor_Get(party->currentOwner)->priorityFlags |= 0x20;
     Actor_SetAnimation(8, 1);
-    Func_020020c4(gData_020020dc);
-    FieldTask_AddFrame(Func_02000188, 0x480);
+    Func_020020c4(gLemurianShipDeck_Puddles);
+    FieldTask_AddFrame(LemurianShipDeck_RotateColors12To15, 0x480);
     if (party->entrance == 99)
-      Func_02000210();
+      LemurianShipDeck_ShowArrival();
     else
-      FieldTask_AddFrame(Func_020001cc, 0x480);
+      FieldTask_AddFrame(LemurianShipDeck_RotateColors4To9, 0x480);
   }
   return 0;
 }
@@ -437,7 +439,10 @@ void LemurianShipDeck_SightMenardisShip(void) {
   Event_SetFlag(0x980);
 }
 
-void Func_02001064(void) { Func_020020cc(gData_020020dc); }
+/// Frost freezes the deck's puddle (flag 0x200).
+void LemurianShipDeck_FreezePuddle(void) {
+  Func_020020cc(gLemurianShipDeck_Puddles);
+}
 
 void Actor_MoveToObject(s32 id, s32 target);
 
@@ -478,12 +483,16 @@ void LemurianShipDeck_LeaveToFindCrew(void) {
   }
 }
 
-void Func_02001178(void) { GameFlag_ClearBit(0x212); }
+/// Stepping back off the gangway clears flag 0x212, so the crew is sought
+/// again.
+void LemurianShipDeck_ResetCrewSearch(void) { GameFlag_ClearBit(0x212); }
 
 void Actor_SelectAnimation(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const void *data);
 
-void Func_02001188(void) {
+/// A task: a sparkle rises from around the Black Crystal toward the ship's
+/// core.
+void LemurianShipDeck_EmitSparkle(void) {
   s32 position[3];
   struct Actor *object;
 
@@ -497,7 +506,7 @@ void Func_02001188(void) {
     Actor_SetSpriteFlags(object, 0);
     Actor_SelectAnimation(object, 0);
     FieldActor_SetMoveTarget(object, PIXELS(360), PIXELS(64), PIXELS(424));
-    Actor_StartScript(object, gData_0200247c);
+    Actor_StartScript(object, gLemurianShipDeck_SparkleFades);
   }
 }
 
@@ -564,7 +573,7 @@ void LemurianShipDeck_ReturnToShip(void) {
   handle = LemurianShipDeck_CreateBlackCrystal();
   FieldEvent_Wait(20);
   Event_PlaySound(220);
-  func = Func_02001188;
+  func = LemurianShipDeck_EmitSparkle;
   Task_Add(func, TASK_PASS_VBLANK);
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_Interpolate(20);
@@ -821,7 +830,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
 }
 
 DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 7, Actor_SelectAnimation,
-                        gData_02002498)
+                        gLemurianShipDeck_SmokePuff)
 
 /// ★ Named from the game: "Then let's waste no time! We should set out for
 /// Madra at once!" (MsgThenLetS)
@@ -862,7 +871,7 @@ void LemurianShipDeck_SetOutForMadra(void) {
 #include "objcmd.h"
 
 // clang-format off
-s16 gData_020020dc[] = {
+s16 gLemurianShipDeck_Puddles[] = {
     8, 512, -1, 0,
 };
 
@@ -887,9 +896,9 @@ u32 gLemurianShipDeck_ReturnToShipScript[] = {
     SC_END,
 };
 
-DEFINE_G_DATA_0200218C(gData_0200218c, 30, 50, 10, 70)
+DEFINE_G_DATA_0200218C(gLemurianShipDeck_FirstCrewLooksAround, 30, 50, 10, 70)
 
-u32 gData_020021e8[] = {
+u32 gLemurianShipDeck_SecondCrewLooksAround[] = {
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(50),
     SC_SET(SW_FACING, FACING_SOUTHEAST),
@@ -897,7 +906,7 @@ u32 gData_020021e8[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-u32 gData_0200221c[] = {
+u32 gLemurianShipDeck_ThirdCrewLooksAround[] = {
     SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
     SC_WAIT(70),
     SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
@@ -949,7 +958,7 @@ struct Trigger gLemurianShipDeck_Triggers[] = {
 };
 
 struct Trigger gLemurianShipDeck_Room2Triggers[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_02000078)},
+    {0xc602, 1, CONDITION_ALWAYS, EVENT(LemurianShipDeck_EnterCabin)},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 10, 0x980, EVENT(LemurianShipDeck_SightMenardisShip)},
     {TRIGGER_STEP, 11, 0x981, EVENT(LemurianShipDeck_ReachPiersShip)},
@@ -957,17 +966,17 @@ struct Trigger gLemurianShipDeck_Room2Triggers[] = {
     {TRIGGER_STEP, 1, 0x985, EVENT(LemurianShipDeck_ReturnToShip)},
     {TRIGGER_EXAMINE, 14, 0x985, EVENT(LemurianShipDeck_TryHeldDoor)},
     {TRIGGER_STEP, 15, 0x985, EVENT(LemurianShipDeck_LeaveToFindCrew)},
-    {TRIGGER_STEP, 16, 0x985, EVENT(Func_02001178)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, 0x200, EVENT(Func_02001064)},
+    {TRIGGER_STEP, 16, 0x985, EVENT(LemurianShipDeck_ResetCrewSearch)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, 0x200, EVENT(LemurianShipDeck_FreezePuddle)},
     {TRIGGER_TABLE_END},
 };
 
-u32 gData_0200247c[] = {
+u32 gLemurianShipDeck_SparkleFades[] = {
     0, 10, 1, 3, 0, 1,
     38,
 };
 
-u32 gData_02002498[] = {
+u32 gLemurianShipDeck_SmokePuff[] = {
     0, 15, 3, 0, 1, 38,
 };
 // clang-format on

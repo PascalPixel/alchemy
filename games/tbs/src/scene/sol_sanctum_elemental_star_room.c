@@ -591,6 +591,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   struct Actor *felix;
   struct Actor *shadow;
   s32 i;
+  struct Sprite *sprite;
 
   Sound_Play(MUS_OMINOUS);
   Actor_SetAnimation(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
@@ -618,7 +619,8 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 10);
   felix = Actor_Get(ACTOR_FELIX_MASKED);
   shadow = Actor_Get(ACTOR_PLATFORM_SHADOW);
-  felix->sprite->flags = 0;
+  sprite = felix->sprite;
+  sprite->flags = 0;
   felix->scaleX = Q16_ONE / 10;
   felix->scaleY = Q16_ONE / 10;
   shadow->scaleX = Q16_ONE / 10;
@@ -657,7 +659,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   }
   felix->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Event_Wait(30);
-  felix->sprite->flags = 1;
+  sprite->flags = SPRITE_FLAG_SHADOW;
   Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 0, 0);
   Actor_SetSpritePriority(ACTOR_FELIX_MASKED, 1);
   {
@@ -1479,6 +1481,7 @@ SolSanctumElementalStarRoom_ShowPedestal(s32 cameraX, s32 cameraZ, s32 actorX,
 static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   u16 i;
   struct Actor *rising;
+  struct Sprite *sprite;
   struct Actor *shadow;
   struct Actor *leader;
 
@@ -1492,7 +1495,8 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   shadow->scaleX = Q16_ONE / 10;
   shadow->scaleY = Q16_ONE / 10;
   rising = Actor_Get(ACTOR_PARTY_LEADER);
-  rising->sprite->flags = 0;
+  sprite = rising->sprite;
+  sprite->flags = 0;
   rising->scaleX = Q16_ONE / 10;
   rising->scaleY = Q16_ONE / 10;
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_BLINK);
@@ -1530,7 +1534,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   // Finish Isaac's arrival and let the companions inspect the room.
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
-  rising->sprite->flags = SPRITE_FLAG_SHADOW;
+  sprite->flags = SPRITE_FLAG_SHADOW;
   Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 0, 0);
   FieldCamera_WaitForMove();
   Event_Wait(20);
@@ -1611,7 +1615,8 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 60);
   // Materialize Kraden after the companions have explored the chamber.
   rising = Actor_Get(ACTOR_KRADEN);
-  rising->sprite->flags = 0;
+  sprite = rising->sprite;
+  sprite->flags = 0;
   rising->scaleX = Q16_ONE / 10;
   rising->scaleY = Q16_ONE / 10;
   shadow->scaleX = Q16_ONE / 10;
@@ -1655,7 +1660,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_SetSpritePriority(ACTOR_KRADEN, 1);
   Actor_Get(ACTOR_KRADEN)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpriteColorById(ACTOR_KRADEN, SPRITE_COLOR_NORMAL);
-  rising->sprite->flags = SPRITE_FLAG_SHADOW;
+  sprite->flags = SPRITE_FLAG_SHADOW;
   Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 0, 0);
   Event_Wait(30);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);

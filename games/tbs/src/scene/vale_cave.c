@@ -577,11 +577,12 @@ static void ValeCave_KiteRunsBehindLedge(void) {
 /// is caught, once FLAG_VALE_CAVE_KITE_BEHIND_LEDGE is set. Each behavior sends
 /// Kite to its row of gValeCave_WalkTargets at the leader's speed.
 static void ValeCave_KiteKeepsAway(void) {
+  struct FieldWork *field = gFieldWork;
   s32 route;
 
   if (GameFlag_Get(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) != 0 &&
       gMainRoutineWork.haltedActor != ACTOR_KITE) {
-    route = gFieldWork->stepTrigger - CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE;
+    route = field->stepTrigger - CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE;
     Actor_Get(ACTOR_KITE)->speedLimit =
         Actor_Get(ACTOR_PARTY_LEADER)->speedLimit;
     Actor_Get(ACTOR_KITE)->acceleration =

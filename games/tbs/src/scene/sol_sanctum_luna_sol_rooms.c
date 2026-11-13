@@ -325,8 +325,10 @@ static void SolSanctumLunaSolRooms_TintPassageBetweenRooms(void) {
 /// CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_BLACK_BACKDROP turns the backdrop
 /// black.
 static void SolSanctumLunaSolRooms_ClearBackdropColor(void) {
+  s32 black = RGB(0, 0, 0);
   u16 *backdropColor = (u16 *)&PLTT_BACKDROP;
-  *backdropColor = 0;
+
+  *backdropColor = black;
 }
 
 /// Draws the light of each lit quarter of the Luna room's picture, from four
@@ -1652,7 +1654,9 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   wait(1);
   Actor_SetPosition(ACTOR_GARET, 280, 134);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
-  gFieldWork->transitionFrames = 1;
+  // The heap slots are read from one address, the palette fade's from the
+  // field's.
+  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 1;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, PALETTES_BG);
@@ -1715,7 +1719,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Scene_WalkIntoLeader(ACTOR_GARET);
-  palette = gPaletteFadeWork;
+  palette = HEAP_SLOT_BLOCK(HEAP_SLOT_PALETTE_FADE);
   palette->target[0] = 0;
   palette->target[1] = 0;
   palette->target[2] = 0;
@@ -1724,9 +1728,9 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   palette->step = 1;
   palette->padding2a03 = 1;
   Io_Write16(0, &PLTT_BACKDROP);
-  gFieldWork->transition =
+  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  gFieldWork->transitionFrames = 16;
+  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 16;
   Event_End();
 }
 

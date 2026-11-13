@@ -840,7 +840,8 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
 
   actor = Actor_Get(ACTOR_SATUROS);
   actor->steeringFlags |= ACTOR_FACES_MOTION;
-  Actor_Get(ACTOR_MENARDI)->steeringFlags |= ACTOR_FACES_MOTION;
+  actor = Actor_Get(ACTOR_MENARDI);
+  actor->steeringFlags |= ACTOR_FACES_MOTION;
 
   Actor_SetAnimation(ACTOR_SATUROS, ANIM_STILL);
   Actor_SetAnimation(ACTOR_MENARDI, ANIM_STILL);

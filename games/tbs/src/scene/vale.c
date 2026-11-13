@@ -497,13 +497,15 @@ static void Vale_TalkAboutTheMayorAndTremors(void) {
 ///
 /// After the party has left, she says Kraden has not come back.
 static void Vale_WarnAboutGoingBeyondKradensCottage(void) {
+  s32 asked = FLAG_VALE_ASKED_IF_GOING_TO_KRADEN;
+
   Event_Start();
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     Event_SetMessageId(MsgValeKradenHasntComeBack);
     // "I guess Kraden still hasn't come back."
     Event_ShowMessage(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, 0);
-  } else if (GameFlag_Get(FLAG_VALE_ASKED_IF_GOING_TO_KRADEN) == 0) {
-    GameFlag_Set(FLAG_VALE_ASKED_IF_GOING_TO_KRADEN);
+  } else if (GameFlag_Get(asked) == 0) {
+    GameFlag_Set(asked);
     Event_SetMessageId(MsgValeDoYouNeedToGo);
     Actor_FaceEachOther(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, ACTOR_PARTY_LEADER,
                         4);
@@ -3040,9 +3042,9 @@ static void Vale_CycleThirdBoardPalette(void) {
 /// The distance in whole pixels between two positions of 16.16 fixed-point x,
 /// y and z.
 static s32 Vale_DistanceInPixels(s32 *first, s32 *second) {
-  s32 dx = (first[0] - second[0]) >> 16;
-  s32 dy = (first[1] - second[1]) >> 16;
-  s32 dz = (first[2] - second[2]) >> 16;
+  s32 dx = (*first++ - *second++) >> 16;
+  s32 dy = (*first++ - *second++) >> 16;
+  s32 dz = (*first - *second) >> 16;
 
   return Iwram_Sqrt(dx * dx + dy * dy + dz * dz);
 }

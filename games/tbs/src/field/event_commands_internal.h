@@ -115,8 +115,7 @@ void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
 
 /// Per-frame update of an afterimage: closes half the distance to the actor
 /// it watches, on all three axes.
-static inline void FieldEffect_MoveAfterimageHalfway(struct Actor *actor) {
-  struct Actor *afterimage = (struct Actor *)actor;
+static inline void FieldEffect_MoveAfterimageHalfway(struct Actor *afterimage) {
   struct Actor *target = afterimage->watchedActor;
 
   afterimage->x.fixed += (target->x.fixed - afterimage->x.fixed) / 2;

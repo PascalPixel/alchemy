@@ -114,8 +114,7 @@ DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkActorAndDestroyFast, -1024)
 /// leader on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a
 /// pixel a frame, and is released 20 pixels above the leader's feet. Set by
 /// Djinn_RunVenusJoinEffect in venus.c.
-void FieldEffect_UpdateDescendingOrbitActor(struct Actor *actor) {
-  struct Actor *mote = (struct Actor *)actor;
+void FieldEffect_UpdateDescendingOrbitActor(struct Actor *mote) {
   struct Vector3 position;
   struct Actor *leader;
   s32 timer;

@@ -334,8 +334,7 @@ void FieldEffect_ReleaseSlots(void) {
 
 /// Per-frame update: spins an actor 1/8 turn a frame.
 void FieldEffect_AdvanceSpinAngle(struct Actor *actor) {
-  struct Actor *object = (struct Actor *)actor;
-  object->facing += TRIG_TURN / 8;
+  actor->facing += TRIG_TURN / 8;
 }
 
 /// The states of a Jupiter Djinni's light particle, in order.

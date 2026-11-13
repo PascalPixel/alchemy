@@ -242,16 +242,14 @@ static void SuhallaDesert_FightFlash(void) {
 /// A storm's actor placement script, which clears its sprite and collision
 /// flags.
 static s32
-SuhallaDesert_ClearActorSpriteAndCollisionFlags(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+SuhallaDesert_ClearActorSpriteAndCollisionFlags(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
   actor->collisionFlags = 0;
   return 0;
 }
 
 /// A storm's actor placement script, which toggles its single-sprite storage.
-static s32 SuhallaDesert_ToggleActorActive(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 SuhallaDesert_ToggleActorActive(struct Actor *actor) {
   actor->spriteStorageKind ^= 1;
   return 1;
 }
@@ -616,8 +614,7 @@ static void SuhallaDesert_IodemAsksWhetherToPressOn(void) {
 ///
 /// It throws up sand every eight frames, and catches a moving leader it comes
 /// within 8 pixels of (event 55).
-static s32 SuhallaDesert_ChaseLeader(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 SuhallaDesert_ChaseLeader(struct Actor *actor) {
   struct EffectOptions options;
   struct Actor *selectedActor;
   s32 dx;

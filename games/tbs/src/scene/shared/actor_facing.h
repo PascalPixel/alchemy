@@ -7,8 +7,7 @@
 
 /// An actor script call: an actor with a facing target turns towards
 /// it, at most a sixteenth of a turn a frame.
-static s32 Scene_TurnTowardTarget(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 Scene_TurnTowardTarget(struct Actor *actor) {
   s32 delta;
   u16 old;
   s32 angle;

@@ -183,8 +183,7 @@ static s32 MercuryLighthouseEntrance_PlayStepSound(struct Actor *interpreter) {
 // while the leader is north of 184 pixels, and looks back north at the doorway
 // otherwise.
 static UNREAD_RESULT
-MercuryLighthouseEntrance_MiaWatchesLeader(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+MercuryLighthouseEntrance_MiaWatchesLeader(struct Actor *actor) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   if ((leader->z.fixed >> 19) <= 22) {

@@ -164,8 +164,7 @@ static void GomaCavePillar_FightForge(void) {
 
 /// Advances the fragment's selected coordinate plane and keeps its targets in
 /// step.
-static void GomaCavePillar_UpdateFragment(struct Actor *updated) {
-  struct Actor *fragment = (struct Actor *)updated;
+static void GomaCavePillar_UpdateFragment(struct Actor *fragment) {
   // The actor's speed and acceleration slots carry the two selected axis
   // steps.
   s16 plane = (s16)fragment->userValue;
@@ -193,8 +192,7 @@ static void GomaCavePillar_UpdateFragment(struct Actor *updated) {
 }
 
 /// Applies child value 15 at the end of a fragment's lifetime.
-static s32 GomaCavePillar_FinishFragment(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 GomaCavePillar_FinishFragment(struct Actor *actor) {
   Actor_SetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
   return 0;
 }

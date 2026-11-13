@@ -277,28 +277,28 @@ static s32 Xian_UpdateCarrierTracking(struct Actor *actor, struct Actor *target,
 
 // Ask the carrier to move after the leader blocks her route for two seconds.
 static UNREAD_RESULT Xian_WatchWaterCarrierPath(struct Actor *updated) {
-  struct Actor *self = (struct Actor *)updated;
   struct Actor *leader;
   s32 near = 0;
 
-  if (self->targetX == ACTOR_NO_TARGET && self->targetZ == ACTOR_NO_TARGET)
+  if (updated->targetX == ACTOR_NO_TARGET &&
+      updated->targetZ == ACTOR_NO_TARGET)
     RETURN_UNREAD(0);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if ((u32)(FIELD_CELL(leader->x.fixed) - 17) <= 1 &&
-      FIELD_CELL(leader->z.fixed) == 14 && self->x.fixed >> 20 <= 19 &&
-      self->velocityX <= 0) {
-    if (leader->x.fixed <= self->x.fixed) {
-      self->riseCounter++;
+      FIELD_CELL(leader->z.fixed) == 14 && updated->x.fixed >> 20 <= 19 &&
+      updated->velocityX <= 0) {
+    if (leader->x.fixed <= updated->x.fixed) {
+      updated->riseCounter++;
       near = 1;
     }
   } else {
-    self->riseCounter = 0;
+    updated->riseCounter = 0;
   }
-  if (near && self->riseCounter > XIAN_CARRIER_BLOCKED_FRAMES - 1) {
+  if (near && updated->riseCounter > XIAN_CARRIER_BLOCKED_FRAMES - 1) {
     gFieldWork->raisedTrigger = RAISED_CARRIER_BLOCKED;
-    self->riseCounter = 0;
+    updated->riseCounter = 0;
   }
-  Xian_UpdateCarrierTracking(self, leader, 18, near);
+  Xian_UpdateCarrierTracking(updated, leader, 18, near);
   RETURN_UNREAD(0);
 }
 

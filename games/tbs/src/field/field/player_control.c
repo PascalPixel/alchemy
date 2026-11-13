@@ -176,8 +176,7 @@ s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
 /// Sets the leader's speed, target, velocity, angle and timer, moves the
 /// actors it pushes, counts gFieldWork->blockedSteps and creates the
 /// footprint actors.
-s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+s32 Actor_UpdatePlayerControl(struct Actor *actor) {
 
   struct FieldPosition position;
   struct FieldPosition testPosition;
@@ -563,8 +562,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
 /// Actor_StartWorldMapControl on the world map. Sets the leader's
 /// speed, target, velocity, angle and timer, turns the perspective work's
 /// yaw, counts gFieldWork->blockedSteps and creates the ripple actors.
-s32 Actor_MoveOnWorldMap(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+s32 Actor_MoveOnWorldMap(struct Actor *actor) {
 
   struct FieldPosition position;
 #if TBS_PATCH_1
@@ -870,8 +868,7 @@ update_object:
 /// Returns 1. Run each frame by gActor_KeyCheckScript, which the
 /// field sequence starts on the leader in LEADER_MOVEMENT_AIRBORNE, where the
 /// pad does not move it.
-s32 Field_CheckConfiguredKeysAndCount(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+s32 Field_CheckConfiguredKeysAndCount(struct Actor *actor) {
 
   Field_CheckConfiguredKeys();
   actor->scriptCursor++;
@@ -886,8 +883,7 @@ s32 Field_CheckConfiguredKeysAndCount(struct Actor *interpreter) {
 /// Run each frame by gActor_KeysScript, which the field sequence starts
 /// on the leader in LEADER_MOVEMENT_CLIMB. Sets the leader's speed,
 /// angle, target or velocity, and counts gFieldWork->blockedSteps.
-s32 Actor_MoveByKeys(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+s32 Actor_MoveByKeys(struct Actor *actor) {
 
   struct FieldPosition position;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never

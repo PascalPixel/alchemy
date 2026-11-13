@@ -248,8 +248,7 @@ static void TunnelRuins_MarkPushPillarCells(void);
 /// Turns off the shadow of the Venus Lighthouse model once
 /// gTunnelRuins_ShrinkScript has shrunk it
 /// (https://alchemy.pascalpixel.com/places/tunnel-ruins-great-statue/map-1.png).
-static s32 TunnelRuins_RefreshActorAfterShrinking(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 TunnelRuins_RefreshActorAfterShrinking(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
@@ -374,8 +373,7 @@ static void TunnelRuins_UpdateTrackedActor(void) {
 
 // While Douse rains on a pillar: its two frames alternate, and every fourth
 // frame a small splash appears on its top.
-static UNREAD_RESULT TunnelRuins_SplashDousedPillar(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+static UNREAD_RESULT TunnelRuins_SplashDousedPillar(struct Actor *actor) {
   struct EffectOptions options;
   s32 x;
   s32 z;
@@ -402,8 +400,7 @@ static UNREAD_RESULT TunnelRuins_SplashDousedPillar(struct Actor *updated) {
 // pillar while the pillar is in row 10 and the leader is above 48 pixels down;
 // otherwise the target is put away at the map's origin.
 static UNREAD_RESULT
-TunnelRuins_FrostTargetFollowsPillar(struct Actor *updated) {
-  struct Actor *frostTarget = (struct Actor *)updated;
+TunnelRuins_FrostTargetFollowsPillar(struct Actor *frostTarget) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   if (leader->y.fixed > -px(48) &&
@@ -1018,8 +1015,7 @@ static void TunnelRuins_FreezeDousePillarFrostTarget(void) {
 
 // A carved stone set on the balance rides 16 pixels above what it rests on,
 // whose actor its timer holds.
-static UNREAD_RESULT TunnelRuins_RideStoneBelow(struct Actor *updated) {
-  struct Actor *supportedActor = (struct Actor *)updated;
+static UNREAD_RESULT TunnelRuins_RideStoneBelow(struct Actor *supportedActor) {
   s16 *supportingActorId = &supportedActor->timer;
   struct Actor *supportingActor = Actor_Get(*supportingActorId);
 

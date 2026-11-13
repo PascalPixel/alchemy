@@ -249,8 +249,7 @@ FuchinTemple_ClearScriptedActorSpriteFlags(struct Actor *interpreter) {
 }
 
 // Keep an actor facing the party leader while the conversation is staged.
-static UNREAD_RESULT FuchinTemple_FaceLeader(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+static UNREAD_RESULT FuchinTemple_FaceLeader(struct Actor *actor) {
   struct Actor *player = Actor_Get(ACTOR_PARTY_LEADER);
   actor->facing = ArcTan2(player->z.fixed - actor->z.fixed,
                           player->x.fixed - actor->x.fixed);

@@ -8,8 +8,7 @@
 // (ACTOR_PRIORITY_UNDERFOOT) unless the leader is north of it and no higher
 // than its height plus their distance and 4 pixels, that is, behind it rather
 // than on it.
-static UNREAD_RESULT Actor_SetFlagBitByRelativeDepth(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+static UNREAD_RESULT Actor_SetFlagBitByRelativeDepth(struct Actor *actor) {
   struct Actor *ref;
   u8 *fp;
   u8 flag;

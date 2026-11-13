@@ -391,8 +391,7 @@ enum TolbiShipDeckCellBehavior {
 /// An actor script call that shows the actor's sprite.
 ///
 /// Returns 0 to end the call.
-static s32 TolbiShipDeck_ShowSprite(struct Actor *interpreter) {
-  struct Actor *a = interpreter;
+static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
   Actor_SetSpriteFlags(a, SPRITE_FLAG_SHADOW);
   return 0;
 }
@@ -411,8 +410,7 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *interpreter) {
 /// side. riseEnabled picks which side it returns to.
 ///
 /// Returns 1 to keep running.
-static s32 TolbiShipDeck_HoverAndDiveAtOuranos(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 TolbiShipDeck_HoverAndDiveAtOuranos(struct Actor *actor) {
   if (actor->riseCounter != 0) {
     switch (actor->riseCounter) {
     case 1:
@@ -502,8 +500,7 @@ static s32 TolbiShipDeck_HoverAndDiveAtOuranos(struct Actor *interpreter) {
 }
 
 /// The same for the monster that dives at Sean.
-static s32 TolbiShipDeck_HoverAndDiveAtSean(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 TolbiShipDeck_HoverAndDiveAtSean(struct Actor *actor) {
   if (actor->riseCounter != 0) {
     switch (actor->riseCounter) {
     case 1:
@@ -614,8 +611,7 @@ static s32 sOarDepth[8];
 /// each frame.
 ///
 /// The actor's work halfword says which way it is going. Returns 1.
-static s32 TolbiShipDeck_Bob(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 TolbiShipDeck_Bob(struct Actor *actor) {
   s16 *flag = (s16 *)&actor->userValue;
   s32 val;
   s32 tmp;
@@ -646,8 +642,7 @@ done:
 /// north-northeast or north-northwest.
 ///
 /// Returns 1.
-static s32 TolbiShipDeck_LookAround(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 TolbiShipDeck_LookAround(struct Actor *actor) {
   u32 roll = ((u32)(Import_RandomNext() << 5)) >> 16;
 
   if (roll == 6)
@@ -663,8 +658,7 @@ static s32 TolbiShipDeck_LookAround(struct Actor *interpreter) {
 /// lands on one of two spots chosen by riseEnabled.
 ///
 /// The actor's timer holds the step. Returns 1.
-static s32 TolbiShipDeck_LeapAtOuranos(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 TolbiShipDeck_LeapAtOuranos(struct Actor *actor) {
   switch (actor->timer) {
   case 0:
     if ((((u32)Import_RandomNext() * 40) >> 16) == 0) {
@@ -734,8 +728,7 @@ static s32 TolbiShipDeck_LeapAtOuranos(struct Actor *interpreter) {
 }
 
 /// The same for the monster that leaps at Sean.
-static s32 TolbiShipDeck_LeapAtSean(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 TolbiShipDeck_LeapAtSean(struct Actor *actor) {
   switch (actor->timer) {
   case 0:
     if ((((u32)Import_RandomNext() * 40) >> 16) == 0) {
@@ -806,8 +799,7 @@ static s32 TolbiShipDeck_LeapAtSean(struct Actor *interpreter) {
 /// Makes the actor hop at random, one frame in 40 on average.
 ///
 /// Returns 1.
-static s32 TolbiShipDeck_RandomlyStartActorHop(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 TolbiShipDeck_RandomlyStartActorHop(struct Actor *actor) {
   if ((((u32)(Import_RandomNext() * 40)) >> 16) == 0)
     actor->velocityY = px(4);
   return 1;
@@ -815,8 +807,7 @@ static s32 TolbiShipDeck_RandomlyStartActorHop(struct Actor *interpreter) {
 
 /// The update that shrinks an enlarged actor by 1/32 a frame until it is
 /// back to normal size.
-static void TolbiShipDeck_ShrinkToNormalSize(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+static void TolbiShipDeck_ShrinkToNormalSize(struct Actor *actor) {
   if (actor->scaleX > Q16_ONE) {
     actor->scaleX -= Q16_ONE / 32;
     actor->scaleY -= Q16_ONE / 32;
@@ -827,8 +818,7 @@ static void TolbiShipDeck_ShrinkToNormalSize(struct Actor *updated) {
 /// random intervals of 80 to 160 frames.
 ///
 /// riseCounter counts down the wait. Returns 1.
-static s32 TolbiShipDeck_IdleTurn(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 TolbiShipDeck_IdleTurn(struct Actor *actor) {
   if (actor->riseCounter != 0) {
     actor->riseCounter--;
   } else {

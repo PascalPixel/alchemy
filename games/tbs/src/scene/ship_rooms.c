@@ -544,8 +544,7 @@ static void ShipRooms_SwapRowerSelections(s32 firstSeatFlags,
 /// velocity and no target.
 ///
 /// Returns 0.
-static s32 ShipRooms_ResetActor(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 ShipRooms_ResetActor(struct Actor *actor) {
   Actor_SelectAnimation(actor, ANIM_STAND);
   actor->x.fixed = 0;
   actor->y.fixed = 0;
@@ -560,8 +559,7 @@ static s32 ShipRooms_ResetActor(struct Actor *interpreter) {
 /// frame.
 ///
 /// Returns 1.
-static s32 ShipRooms_Bob(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 ShipRooms_Bob(struct Actor *actor) {
   s16 verticalMotionDirection;
   s32 descendingY;
   s32 ascendingY;
@@ -590,8 +588,7 @@ static s32 ShipRooms_Bob(struct Actor *interpreter) {
 /// south-southwest.
 ///
 /// Returns 1.
-static s32 ShipRooms_LookAround(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 ShipRooms_LookAround(struct Actor *actor) {
   u32 choice = (u32)(Import_RandomNext(actor) << 6) >> 16;
 
   if (choice == 6) {
@@ -641,8 +638,7 @@ static s32 ShipRooms_HasArrived(struct Actor *actor) {
 /// At three points of the round he signals the captain (ACTOR_QUARTERS_CAPTAIN)
 /// through his own riseEnabled, but not while the captain is paused. work holds
 /// the step.
-static void ShipRooms_PaceCaptainsQuarters(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+static void ShipRooms_PaceCaptainsQuarters(struct Actor *actor) {
   struct Actor *captain;
 
   captain = Actor_Get(ACTOR_QUARTERS_CAPTAIN);
@@ -714,8 +710,7 @@ static void ShipRooms_PaceCaptainsQuarters(struct Actor *updated) {
 ///
 /// He turns north-northeast at the first signal, nods at the second if still
 /// turned, and faces east at the third. Does nothing while paused.
-static void ShipRooms_WatchPacer(struct Actor *actor) {
-  struct Actor *watcher = (struct Actor *)actor;
+static void ShipRooms_WatchPacer(struct Actor *watcher) {
   struct Actor *pacer;
 
   pacer = Actor_Get(ACTOR_QUARTERS_KAJA);
@@ -740,8 +735,7 @@ static void ShipRooms_WatchPacer(struct Actor *actor) {
 /// at priority 1 with its parts hidden.
 ///
 /// Returns 1.
-static s32 ShipRooms_LayFlat(struct Actor *interpreter) {
-  struct Actor *work = interpreter;
+static s32 ShipRooms_LayFlat(struct Actor *work) {
   struct Sprite *sprite = work->sprite;
 
   work->collisionFlags = ACTOR_NOT_TARGETED;

@@ -653,8 +653,7 @@ CrossboneIsleSteppingStones_UpdateDampedParticle(struct Actor *actor) {
 /// Sets the actor's sprite to the colour mode (enum SpriteColorMode) in
 /// the low four bits of its timer.
 static s32
-CrossboneIsleSteppingStones_SetChildValueFromTimer(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+CrossboneIsleSteppingStones_SetChildValueFromTimer(struct Actor *actor) {
   Actor_SetSpriteColor(actor, actor->timer & 15);
   return 0;
 }
@@ -950,8 +949,7 @@ CrossboneIsleSteppingStones_SyncPriorityIfAhead(struct Actor *front,
 /// Keeps each moving pillar's priority and collision flags consistent with the
 /// leader.
 static UNREAD_RESULT
-CrossboneIsleSteppingStones_UpdateActorPriority(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+CrossboneIsleSteppingStones_UpdateActorPriority(struct Actor *actor) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 hit;
   u32 id;
@@ -1213,8 +1211,7 @@ static void CrossboneIsleSteppingStones_StopRising(void) {
 /// Puts the frozen puddle under the leader when it is behind and below the
 /// leader.
 static UNREAD_RESULT
-CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority(struct Actor *actor) {
   struct Actor *ref = Actor_Get(ACTOR_PARTY_LEADER);
 
   if (actor->z.fixed > ref->z.fixed) {
@@ -1334,8 +1331,7 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
 
 /// Emits a randomized particle from the thawing puddle every eight frames.
 static UNREAD_RESULT
-CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *actor) {
   struct EffectOptions options;
   u32 phase = gFrameCount & 7;
   s32 x;

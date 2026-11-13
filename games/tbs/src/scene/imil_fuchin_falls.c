@@ -1753,8 +1753,7 @@ static void FuchinFallsCave_UpdateDustMotion(struct Actor *raw) {
 
 /// Hides the dust (SPRITE_COLOR_HIDDEN) when its actor script finishes
 /// looping.
-static s32 FuchinFallsCave_SetDustPalette(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 FuchinFallsCave_SetDustPalette(struct Actor *actor) {
   Actor_SetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
   return 0;
 }
@@ -1957,8 +1956,7 @@ static void FuchinFallsCave_EndRevealLighting(void) {
 
 /// Turns the actor sliding on Imil Falls Cave's ice gradually toward the
 /// held direction.
-static void Imil_TurnSkaterTowardHeldDirection(struct Actor *updated) {
-  struct Actor *actor = updated;
+static void Imil_TurnSkaterTowardHeldDirection(struct Actor *actor) {
   s32 timer;
   s32 direction;
   u16 facing;

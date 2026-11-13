@@ -191,8 +191,7 @@ enum TolbiShipMastCellBehavior {
 };
 
 /// Keeps the effect actor relative to the saved camera origin and rotates it.
-static s32 TolbiShipMast_FollowCameraAndRotate(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 TolbiShipMast_FollowCameraAndRotate(struct Actor *actor) {
   s32 *position = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
   s32 *origin = gTolbiShipMast_CameraOrigin;
   s32 *center = gTolbiShipMast_CameraCenter;
@@ -206,8 +205,7 @@ static s32 TolbiShipMast_FollowCameraAndRotate(struct Actor *interpreter) {
 }
 
 /// A random sample of 6 or 9 turns the lookout to either side of north.
-static s32 TolbiShipMast_RandomizeLookoutFacing(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 TolbiShipMast_RandomizeLookoutFacing(struct Actor *actor) {
   u32 sample = (u32)(Import_RandomNext() << 6) >> 16;
 
   if (sample == 6) {
@@ -224,8 +222,7 @@ static s32 TolbiShipMast_RandomizeLookoutFacing(struct Actor *interpreter) {
 }
 
 /// Grows both axes by the same amount until the actor reaches full scale.
-static void TolbiShipMast_GrowActorScale(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+static void TolbiShipMast_GrowActorScale(struct Actor *actor) {
   if (actor->scaleX < Q16_ONE) {
     actor->scaleX += 160;
     actor->scaleY += 160;
@@ -241,8 +238,7 @@ enum TolbiShipMastSway {
 };
 
 /// Randomly reverses horizontal drift and vertical bobbing at their limits.
-static s32 TolbiShipMast_SwayActor(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 TolbiShipMast_SwayActor(struct Actor *actor) {
   s16 *state = &actor->timer;
   s32 next;
 
@@ -284,8 +280,7 @@ static s32 TolbiShipMast_SwayActor(struct Actor *interpreter) {
 }
 
 /// Shrinks both axes. Once small enough, clears the actor's position and speed.
-static s32 TolbiShipMast_ShrinkAndStopActor(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 TolbiShipMast_ShrinkAndStopActor(struct Actor *actor) {
   struct Sprite *sprite = actor->sprite;
 
   sprite->image.priority = 3;

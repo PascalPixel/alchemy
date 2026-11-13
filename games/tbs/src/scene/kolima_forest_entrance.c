@@ -130,9 +130,7 @@ extern s32 gKolimaForestEntrance_SparkleSoundOn;
 
 /// The end of a field's growing: if a sparkle has burst on a field, the field
 /// takes its next pose.
-static s32
-KolimaForestEntrance_FlashHitPsynergyFields(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 KolimaForestEntrance_FlashHitPsynergyFields(struct Actor *actor) {
   s32 *pending = &gKolimaForestEntrance_PsynergyFieldHit;
   if (*pending) {
     Actor_SelectAnimation(actor, 2);
@@ -144,9 +142,7 @@ KolimaForestEntrance_FlashHitPsynergyFields(struct Actor *interpreter) {
 /// Each frame, a ground sparkle's timer runs on at random. The sparkle shows
 /// its bright frame (7) while the timer is past 1000, its dim one (10) before.
 /// At 1200 the timer starts over.
-static s32
-KolimaForestEntrance_TwinkleGroundSparkle(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 KolimaForestEntrance_TwinkleGroundSparkle(struct Actor *actor) {
   s16 *counter = &actor->timer;
   *counter = (*counter + (((u32)Import_RandomNext() * 100) >> 16));
   if (*counter > 1000)
@@ -1159,9 +1155,7 @@ static void KolimaForestEntrance_SpawnCurseSparkle(void) {
 /// The end of a sparkle's fall: one that lands on a field (the Psynergy fields'
 /// area, which differs with Mia) bursts with a sound, and the Psynergy fields
 /// are told.
-static s32
-KolimaForestEntrance_BurstOnPsynergyField(struct Actor *interpreter) {
-  struct Actor *sparkle = interpreter;
+static s32 KolimaForestEntrance_BurstOnPsynergyField(struct Actor *sparkle) {
   s32 x;
 
   if (!(gKolimaForestEntrance_MiaInParty != 0

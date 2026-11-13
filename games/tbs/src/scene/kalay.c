@@ -374,8 +374,7 @@ static void Kalay_ScorchJoins(void) {
 
 /// In Kalay, while the tour waits, a tourist now and then nods, shakes his head
 /// or turns.
-static s32 Kalay_UpdateTouristFidget(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 Kalay_UpdateTouristFidget(struct Actor *actor) {
   u32 action;
   u32 nextTimer;
 
@@ -2365,11 +2364,10 @@ static void Kalay_UpdateTunnelPassages(void) {
 // released, with an explicit status in the modern build.
 // Advance a particle, damp its velocity, and expire its lifetime.
 #ifdef UBFIX
-static s32 Kalay_UpdateTunnelParticle(struct Actor *interpreter) {
+static s32 Kalay_UpdateTunnelParticle(struct Actor *particle) {
 #else
-static void Kalay_UpdateTunnelParticle(struct Actor *interpreter) {
+static void Kalay_UpdateTunnelParticle(struct Actor *particle) {
 #endif
-  struct Actor *particle = interpreter;
   s16 *lifetime;
   s32 remainingFrames;
   s32 velocityX;

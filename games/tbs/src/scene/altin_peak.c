@@ -342,8 +342,7 @@ static void AltinPeak_TalkToDjinni(void) {
 
 // Update routine of AltinPeakFallingRocks's boulder shadow: it stays under the
 // boulder, on the ground 12 pixels down, while the boulder bounces.
-static UNREAD_RESULT AltinPeak_ShadowFollowBoulder(struct Actor *updated) {
-  struct Actor *follower = (struct Actor *)updated;
+static UNREAD_RESULT AltinPeak_ShadowFollowBoulder(struct Actor *follower) {
   struct Actor *actor = Actor_Get(ACTOR_FALLING_BOULDER);
 
   follower->x.fixed = actor->x.fixed;
@@ -356,8 +355,7 @@ static UNREAD_RESULT AltinPeak_ShadowFollowBoulder(struct Actor *updated) {
 
 /// Actor script routine for a piece of flying rock debris. It moves by its
 /// velocity, grows by its z velocity and falls under its gravity.
-static s32 AltinPeak_FlyDebris(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 AltinPeak_FlyDebris(struct Actor *actor) {
   s32 rise;
   s32 growth;
 

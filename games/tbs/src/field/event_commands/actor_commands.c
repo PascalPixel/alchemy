@@ -473,8 +473,7 @@ void Actor_RunRepeatedMotion(u32 actorId, s32 count) {
 /// and z velocity (kept in speed and acceleration), which drag slows by 1/18
 /// and 1/16 each frame, and rises 1/64 pixel a frame. Runs each frame as the
 /// puff's update routine.
-void FieldEffect_UpdateDustPuff(struct Actor *actor) {
-  struct Actor *particle = (struct Actor *)actor;
+void FieldEffect_UpdateDustPuff(struct Actor *particle) {
   s32 velocityX;
   s32 x;
   s32 velocityZ;
@@ -743,16 +742,15 @@ void Actor_ConfigureSpriteColor(s32 actorId, s32 param) {
 /// from gActor_BlinkSpriteColors (7 for two frames out of eight, otherwise 0).
 /// Actor_ConfigureSpriteColor installs it.
 void Actor_UpdateBlink(struct Actor *actor) {
-  struct Actor *object = (struct Actor *)actor;
 
-  if ((object->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
+  if ((actor->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
     u8 param;
     struct Sprite *container;
     u8 partCount;
 
     // The table's four entries each last two frames.
     param = gActor_BlinkSpriteColors[(gFrameCount >> 1) & 3];
-    container = object->sprite;
+    container = actor->sprite;
     partCount = container->count;
     if (partCount != 0) {
       struct SpriteAnimation **entries = container->entries;
@@ -774,10 +772,9 @@ void Actor_UpdateBlink(struct Actor *actor) {
 /// Marks the sprite dirty. Called by Actor_ConfigureSpriteColor,
 /// FieldEffect_SpawnDustPuff and about 40 event sites.
 void Actor_SetSpriteColor(struct Actor *actor, s32 param) {
-  struct Actor *object = actor;
 
-  if ((object->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
-    struct Sprite *container = object->sprite;
+  if ((actor->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
+    struct Sprite *container = actor->sprite;
     u8 partCount = container->count;
 
     if (partCount != 0) {

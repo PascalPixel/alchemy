@@ -206,9 +206,7 @@ enum {
 
 /// Clears the scripted actor's sprite flags and completes this script
 /// command.
-static s32
-BilibinCave_ClearScriptedActorSpriteFlags(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 BilibinCave_ClearScriptedActorSpriteFlags(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
   return 0;
 }

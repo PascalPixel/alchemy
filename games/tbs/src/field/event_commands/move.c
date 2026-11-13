@@ -16,8 +16,7 @@ s32 Input_GetDpadAngle(u32 unused) {
 /// Per-frame update of Move's hand (FieldEffect_SpawnMoveHand): turns it
 /// toward the actor it watches, at most 1/16 turn a frame, and sheds a
 /// particle (SPRITE_SPARKLE) round it.
-void FieldEffect_UpdateMoveHand(struct Actor *actor) {
-  struct Actor *source = (struct Actor *)actor;
+void FieldEffect_UpdateMoveHand(struct Actor *source) {
   struct Actor *target;
   struct Vector3 position;
   struct Actor *fragment;

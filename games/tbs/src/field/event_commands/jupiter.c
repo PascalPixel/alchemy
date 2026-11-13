@@ -80,12 +80,11 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
 /// two values of gFieldEffect_PulseScales every 4 frames. The Mars Djinni's
 /// joining sets it on the leader, and clears it to end the pulse.
 void FieldEffect_PulseActorScale(struct Actor *actor) {
-  u8 *object = (u8 *)actor;
   const u32 *table = gFieldEffect_PulseScales;
   u32 index = ((u32)gVBlankCount >> 2) & 1;
   u32 scale = table[index];
-  ((struct Actor *)object)->scaleX = scale;
-  ((struct Actor *)object)->scaleY = scale;
+  actor->scaleX = scale;
+  actor->scaleY = scale;
 }
 
 /// Per-frame update: spins an actor ever faster, from 1/16 turn a frame up to
@@ -93,14 +92,12 @@ void FieldEffect_PulseActorScale(struct Actor *actor) {
 /// caller zeroes the frame count first (Actor.spinRampFrames), as the Mars
 /// Djinni's joining does.
 void FieldEffect_AdvanceAngleWithRamp(struct Actor *actor) {
-  void *obj = (void *)actor;
-  struct Actor *spin = obj;
   u32 step;
 
-  step = spin->spinRampFrames * 80;
-  spin->facing = spin->facing + step + FACING_STEP;
+  step = actor->spinRampFrames * 80;
+  actor->facing = actor->facing + step + FACING_STEP;
   if (step < FACING_STEP) {
-    spin->spinRampFrames = spin->spinRampFrames + 1;
+    actor->spinRampFrames = actor->spinRampFrames + 1;
   }
 }
 

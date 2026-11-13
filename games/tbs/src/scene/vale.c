@@ -3154,8 +3154,7 @@ static s32 Vale_TestFacing(struct Actor *actor, struct Actor *target, s32 range,
 
 /// The update routine of the man guarding Mt. Aleph. While he walks, he stops
 /// when the leader comes within 18 pixels in front of him (Vale_TestFacing).
-static UNREAD_RESULT Vale_HaveGuardWatchTheLeader(struct Actor *updated) {
-  struct Actor *guard = updated;
+static UNREAD_RESULT Vale_HaveGuardWatchTheLeader(struct Actor *guard) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (guard->targetX == ACTOR_NO_TARGET && guard->targetZ == ACTOR_NO_TARGET)
     RETURN_UNREAD(0);
@@ -3165,8 +3164,7 @@ static UNREAD_RESULT Vale_HaveGuardWatchTheLeader(struct Actor *updated) {
 
 /// The Move hand's update routine in the opening. Each frame it sheds a sparkle
 /// (SPRITE_SPARKLE) just below and around it, with SE_ITEM_BREAK.
-static void Vale_TrailSparkles(struct Actor *updated) {
-  struct Actor *source = updated;
+static void Vale_TrailSparkles(struct Actor *source) {
   s32 spawnPosition[3];
   s32 randomDistance;
   struct Actor *particle;

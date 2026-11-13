@@ -549,8 +549,7 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
 
 /// The leaping stump's update routine turns its sprite a fixed amount per
 /// frame.
-static void GomaCaveEntrance_SpinStump(struct Actor *updated) {
-  struct Actor *actor = updated;
+static void GomaCaveEntrance_SpinStump(struct Actor *actor) {
   struct Sprite *state = actor->sprite;
   s32 v = state->rotation - TRIG_TURN / 32;
 

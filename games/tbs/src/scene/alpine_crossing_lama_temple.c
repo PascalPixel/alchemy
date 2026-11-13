@@ -227,8 +227,7 @@ enum { TREASURE_SPOT_PASSAGE = 100 };
 /// Draws the actor behind the background, on sprite priority 3 with
 /// automatic priority off. The first worker from Xian at the Alpine Crossing
 /// runs it from his actor placement.
-static s32 Actor_DrawBehindScenery(struct Actor *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 Actor_DrawBehindScenery(struct Actor *actor) {
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->sprite->image.priority = 3;
   actor->sprite->shadow.priority = 3;
@@ -236,8 +235,7 @@ static s32 Actor_DrawBehindScenery(struct Actor *interpreter) {
 }
 
 // Update routine that turns the party leader toward Feizhi while she runs past.
-static UNREAD_RESULT AlpineCrossing_LeaderFaceFeizhi(struct Actor *updated) {
-  struct Actor *leader = (struct Actor *)updated;
+static UNREAD_RESULT AlpineCrossing_LeaderFaceFeizhi(struct Actor *leader) {
   struct Actor *feizhi;
 
   feizhi = Actor_Get(ACTOR_FEIZHI);
@@ -934,8 +932,7 @@ static void AlpineCrossing_HidePath(void) {
 // Update routine of the frozen pillar: it draws under the party leader while
 // the leader stands higher than its top, so the leader can climb onto it, and
 // over the leader otherwise. bx r1 to pop {r0};
-static UNREAD_RESULT Pillar_SortAgainstLeader(struct Actor *updated) {
-  struct Actor *pillar = (struct Actor *)updated;
+static UNREAD_RESULT Pillar_SortAgainstLeader(struct Actor *pillar) {
   if (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed > pillar->y.fixed) {
     pillar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   } else {

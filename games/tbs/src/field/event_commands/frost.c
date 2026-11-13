@@ -10,8 +10,7 @@
 DEFINE_FROST_GLINT(, Actor_SetSpriteColorModeFar)
 
 /// Per-frame update: shrinks by 1/16 a frame and is released at 1/16.
-void FieldEffect_UpdateOrbitingParticleFade(struct Actor *actor) {
-  struct Actor *particle = (struct Actor *)actor;
+void FieldEffect_UpdateOrbitingParticleFade(struct Actor *particle) {
   s32 scale;
 
   if (particle != NULL) {

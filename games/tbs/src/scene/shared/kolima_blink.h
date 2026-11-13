@@ -9,8 +9,7 @@
 
 /// An actor script call, each frame of the fall: the speck flickers between
 /// palettes 10 and 7, every second frame.
-static s32 Kolima_FlickerCurseDust(struct Actor *interpreter) {
-  struct Actor *speck = interpreter;
+static s32 Kolima_FlickerCurseDust(struct Actor *speck) {
   if ((gFrameCount >> 1) & 1) {
     Actor_SetSpriteColor(speck, SPRITE_COLOR_RED_TINT);
   } else {

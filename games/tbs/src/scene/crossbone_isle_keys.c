@@ -287,8 +287,7 @@ static void CrossboneIsleKeys_HaltPursuer(void) {}
 
 // Turn the Djinni toward the party leader each frame.
 static UNREAD_RESULT
-CrossboneIsleKeys_FaceBaneTowardLeader(struct Actor *updated) {
-  struct Actor *actor = updated;
+CrossboneIsleKeys_FaceBaneTowardLeader(struct Actor *actor) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   actor->facing = ArcTan2(leader->z.fixed - actor->z.fixed,

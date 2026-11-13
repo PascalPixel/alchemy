@@ -645,8 +645,7 @@ static void AltmillerCave_PushFallenColumn(void) {
 
 /// Update routine of the light at the top of the stopped ring. It pulses
 /// through four sizes.
-static void AltmillerCave_PulseLight(struct Actor *actor) {
-  struct Actor *light = (struct Actor *)actor;
+static void AltmillerCave_PulseLight(struct Actor *light) {
   s32 scale = gAltmillerCave_PulseScales[(light->timer >> 2) & 3];
 
   light->scaleX = scale;
@@ -2119,8 +2118,7 @@ const struct Trigger *AltmillerCave_GetTriggers(void) {
 
 /// Update routine of AltmillerCaveDraught's obstacles. They are drawn on the
 /// leader's sprite priority.
-static void AltmillerCave_MatchLeaderPriority(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+static void AltmillerCave_MatchLeaderPriority(struct Actor *actor) {
   if (actor != NULL) {
     actor->priorityFlags = 0;
     actor->sprite->image.priority =

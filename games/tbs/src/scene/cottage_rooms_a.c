@@ -191,8 +191,7 @@ static void CottageRoomsA_SpawnSleepZ(void);
 /// Called each frame by gCottageRoomsA_SleepZScript. The actor's timer and
 /// work are its x and y steps in signed 8.8 pixels, set by
 /// CottageRoomsA_SpawnSleepZ.
-static s32 CottageRoomsA_AdvanceSleepZ(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 CottageRoomsA_AdvanceSleepZ(struct Actor *actor) {
 
   actor->x.fixed += (s16)actor->timer * 256;
   actor->y.fixed += (s16)actor->userValue * 256;

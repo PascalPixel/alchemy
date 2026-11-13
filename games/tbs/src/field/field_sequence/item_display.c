@@ -79,8 +79,7 @@ static inline void Actor_InitializeSparkle(struct Actor *actor) {
 /// within 16 pixels of it. Installed as the picture's update routine by
 /// ItemDisplay_ShowItemInFront, ItemDisplay_ShowPicture
 /// and ItemDisplay_ShowItem.
-void ItemDisplay_EmitSparkles(struct Actor *actor) {
-  struct Actor *emitter = (struct Actor *)actor;
+void ItemDisplay_EmitSparkles(struct Actor *emitter) {
   union PolarOffsetPosition position;
   struct Actor *object;
   u32 randomRadius;

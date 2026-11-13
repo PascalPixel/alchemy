@@ -1257,9 +1257,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
 /// last match.
 ///
 /// Its timer and work hold signed 1/256-pixel steps.
-static s32
-ColosseumNavampaMatch_AdvanceParticleMotion(struct Actor *interpreter) {
-  struct Actor *particle = interpreter;
+static s32 ColosseumNavampaMatch_AdvanceParticleMotion(struct Actor *particle) {
   particle->x.fixed += particle->timer * 256;
   particle->y.fixed += (s16)particle->userValue * 256;
   particle->scaleX += Q16_ONE / 40;

@@ -223,8 +223,7 @@ static void LamakanDesert_TalkToSmog(void) {
 
 // The update a leader pulled into an Ant Lion's pit runs: sand sounds every 8
 // frames and a spray of sand every 16.
-static UNREAD_RESULT LamakanDesert_LeaderSpraySand(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+static UNREAD_RESULT LamakanDesert_LeaderSpraySand(struct Actor *actor) {
   struct EffectOptions params;
   s32 phase;
 

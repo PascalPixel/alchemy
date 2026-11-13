@@ -356,15 +356,13 @@ static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
 }
 
 /// An actor script call: draws the actor in the colour mode its timer holds.
-static s32 MogallForest_CopyTimerToChild(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 MogallForest_CopyTimerToChild(struct Actor *actor) {
   Actor_SetSpriteColor(actor, actor->timer);
   return 0;
 }
 
 /// Clears the actor's sprite flags when its script requests it.
-static s32 MogallForest_ClearActorSpriteFlags(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 MogallForest_ClearActorSpriteFlags(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
   return 0;
 }

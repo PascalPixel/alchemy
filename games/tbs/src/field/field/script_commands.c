@@ -333,8 +333,7 @@ s32 ActorScript_ApplyAbsolutePosition(struct Actor *interpreter) {
 }
 
 /// SC_MOVE_BY(x, y, z): sends the actor towards its position plus (x, y, z).
-s32 ActorScript_ApplyRelativePosition(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+s32 ActorScript_ApplyRelativePosition(struct Actor *actor) {
 
   u8 *commandBytes = (u8 *)(actor->script + (s16)actor->scriptCursor);
   s32 *arguments = (s32 *)(commandBytes + 4);
@@ -350,8 +349,7 @@ s32 ActorScript_ApplyRelativePosition(struct Actor *interpreter) {
 
 /// SC_FACE_WATCHED: stores the angle from the actor to its watched actor in
 /// scriptValue, measured on the ground plane (x and z).
-s32 ActorScript_StoreAngleToWatchedActor(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+s32 ActorScript_StoreAngleToWatchedActor(struct Actor *actor) {
 
   struct Actor *target;
 
@@ -363,8 +361,7 @@ s32 ActorScript_StoreAngleToWatchedActor(struct Actor *interpreter) {
 }
 
 /// SC_MOVE_TO_WATCHED: sends the actor towards its watched actor.
-s32 ActorScript_ApplyWatchedActorPosition(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+s32 ActorScript_ApplyWatchedActorPosition(struct Actor *actor) {
 
   struct Actor *target;
 
@@ -376,8 +373,7 @@ s32 ActorScript_ApplyWatchedActorPosition(struct Actor *interpreter) {
 
 /// SC_MOVE_LOCAL(a, b): sends the actor towards its position plus an offset
 /// that is never filled in; the operands are skipped unread.
-s32 ActorScript_ApplyLocalOffsetPosition(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+s32 ActorScript_ApplyLocalOffsetPosition(struct Actor *actor) {
 
   s32 localOffset[3];
 
@@ -401,8 +397,7 @@ s32 ActorScript_ApplyLocalOffsetPosition(struct Actor *interpreter) {
 /// Run each frame by gActor_CameraScript, which
 /// Actor_StartCamera starts. Clears the camera's flags and target,
 /// moves its position, and counts its step.
-s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
-  struct Actor *cameraActor = interpreter;
+s32 FieldCamera_FollowLeaderInBounds(struct Actor *cameraActor) {
 
   struct Actor *leader;
   struct MapGridScrollWork *bounds;
@@ -509,8 +504,7 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
 /// Run each frame by gActor_ApproachWatchedScript, which
 /// Actor_StartApproachWatched starts. Copies the watched actor's speed
 /// limit and acceleration, and sets the move target.
-s32 Actor_ApproachWatchedActor(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+s32 Actor_ApproachWatchedActor(struct Actor *actor) {
 
   s32 distancePixels;
   s32 moveZ;
@@ -554,8 +548,7 @@ s32 Actor_ApproachWatchedActor(struct Actor *interpreter) {
 /// 45 degrees either side, and within limit pixels of home. After seven
 /// failed tries it turns around (turnedBack) and waits for the next frame.
 /// No script in games/tbs names SC_WANDER; events use SC_WANDER_HOME.
-s32 Actor_Wander(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+s32 Actor_Wander(struct Actor *actor) {
 
   struct FieldPosition candidatePosition;
   struct FieldPosition probePosition;
@@ -656,8 +649,7 @@ retry:
 /// Used by scripts in Vault and Vale (vault.c, vale_plaza.c). Sets bit 1 of
 /// collisionFlags while it roams and clears it on the way home, sets the move
 /// target, and always moves on to the next command.
-s32 ActorScript_WanderNearHome(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+s32 ActorScript_WanderNearHome(struct Actor *actor) {
 
   struct FieldPosition candidatePosition;
   struct FieldPosition probePosition;

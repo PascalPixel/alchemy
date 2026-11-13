@@ -91,9 +91,7 @@ void Event_WaitForZoomTransition(void) {
 // Per-frame update of a riding actor: keeps it on the actor it rides (its
 // watched actor), raised by the actor's sprite height (its metadata's boxX) and
 // 8 pixels. Its work holds the actor's id.
-UNREAD_RESULT FieldEffect_CopyWatchedActorPosition(struct Actor *updated) {
-  void *self = (void *)updated;
-  struct Actor *actor = self;
+UNREAD_RESULT FieldEffect_CopyWatchedActorPosition(struct Actor *actor) {
   struct Actor *host;
 
   host = actor->watchedActor;

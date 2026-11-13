@@ -182,8 +182,7 @@ again:
 /// gFieldEffect_HeavyImpactScript (field_sequence_tables.c), where the
 /// interpreter is the actor running the script, which Force's thrown actor runs
 /// (force.c). Returns 0, so the script moves on and releases the actor.
-s32 SpawnHeavyImpactEffect(struct Actor *interpreter) {
-  struct Actor *source = interpreter;
+s32 SpawnHeavyImpactEffect(struct Actor *source) {
   struct Vector3 pos;
   struct Actor *impact;
   struct Actor *fragment;

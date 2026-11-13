@@ -239,16 +239,15 @@ s32 FixedPoint_Remainder(s32 value, s32 divisor) {
 /// axis), releases it: gFieldEffect_UntargetedActorScript is a lone SC_RELEASE.
 /// Mind Read's particles end this way at the caster.
 void FieldEffect_ReleaseOnArrival(struct Actor *actor) {
-  struct Actor *object = (struct Actor *)actor;
   s32 targetY;
   s32 targetX;
 
-  targetX = object->targetX;
+  targetX = actor->targetX;
   if (targetX == ACTOR_NO_TARGET) // no destination
   {
-    targetY = object->targetY;
-    if ((targetY == targetX) && (object->targetZ == targetY)) {
-      Actor_StartScriptFar(object, gFieldEffect_UntargetedActorScript);
+    targetY = actor->targetY;
+    if ((targetY == targetX) && (actor->targetZ == targetY)) {
+      Actor_StartScriptFar(actor, gFieldEffect_UntargetedActorScript);
     }
   }
 }

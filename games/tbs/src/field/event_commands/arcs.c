@@ -8,8 +8,7 @@
 /// (scale sin(frame / 64 turn)) while it rises a pixel a frame on the actor
 /// it follows, 9 pixels in front of it and up to 5 pixels further while
 /// small.
-void FieldEffect_UpdateScaledArcActorA(struct Actor *actor) {
-  struct Actor *arc = (struct Actor *)actor;
+void FieldEffect_UpdateScaledArcActorA(struct Actor *arc) {
   struct Actor *anchor;
   s32 frame;
   s32 scale;
@@ -30,8 +29,7 @@ void FieldEffect_UpdateScaledArcActorA(struct Actor *actor) {
 
 /// Per-frame update of arc B: arc A upside down, 16 pixels in front of the
 /// actor and up to 5 pixels nearer while small.
-void FieldEffect_UpdateScaledArcActorB(struct Actor *actor) {
-  struct Actor *arc = (struct Actor *)actor;
+void FieldEffect_UpdateScaledArcActorB(struct Actor *arc) {
   struct Actor *anchor;
   s32 frame;
   s32 scale;
@@ -135,8 +133,7 @@ void FieldEffect_SpawnScaledArcActors(struct Actor *watched) {
 /// Per-frame update: flashes an actor between sprite param 7 and 0 every 2
 /// frames and spawns the swelling arcs on it every 16. FieldPsynergy_StartCast
 /// gives it to the caster as a cast starts with a flash (effectWork->visible).
-void FieldEffect_FlickerActorAndSpawnArcs(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+void FieldEffect_FlickerActorAndSpawnArcs(struct Actor *actor) {
   if ((gFrameCount & 2) != 0) {
     Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_WHITE);
   } else {
@@ -151,8 +148,7 @@ void FieldEffect_FlickerActorAndSpawnArcs(struct Actor *updated) {
 /// every 2 frames, and spawns the swelling arcs on it every 16.
 /// FieldPsynergy_StartCast gives it to the caster in place of the flicker
 /// while FLAG_PLAY_PSYNERGY_CAST is set.
-void FieldEffect_CycleActorAndSpawnArcs(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+void FieldEffect_CycleActorAndSpawnArcs(struct Actor *actor) {
   if ((gFrameCount & 1) != 0) {
     s32 colorIndex = (gFrameCount >> 1) % 6;
 

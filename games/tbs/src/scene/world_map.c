@@ -509,8 +509,7 @@ static void WorldMap_MeetHail(void) {
 
 /// The update routine of a sparkle around the Black Orb. It releases the
 /// sparkle on its second frame.
-static void WorldMap_ReleaseSparkAfterDelay(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+static void WorldMap_ReleaseSparkAfterDelay(struct Actor *actor) {
   if (actor->timer <= 0) {
     actor->timer++;
   } else {
@@ -520,8 +519,7 @@ static void WorldMap_ReleaseSparkAfterDelay(struct Actor *updated) {
 
 /// The update routine of the Black Orb held up over the wreck. It swells and
 /// shrinks every four frames and gives off a sparkle every other frame.
-static void WorldMap_PulseOrbAndSpawnSparks(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+static void WorldMap_PulseOrbAndSpawnSparks(struct Actor *actor) {
   struct Actor *spark;
   s32 x;
   s32 y;
@@ -556,8 +554,7 @@ static void WorldMap_PulseOrbAndSpawnSparks(struct Actor *updated) {
 /// He flickers white and red and circles 16 pixels around his spot, bobbing 4
 /// pixels up and down, facing the way he goes. WorldMap_MeetFlint stops him
 /// by setting his work to 1.
-static void WorldMap_CircleFlint(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+static void WorldMap_CircleFlint(struct Actor *actor) {
   s16 *angle;
 
   if (gFrameCount & 2)
@@ -577,8 +574,7 @@ static void WorldMap_CircleFlint(struct Actor *updated) {
 
 /// Flint's actor script (gWorldMapFlintScript). Until he is caught or his
 /// lesson has begun (FLAG_DJINN_LESSON), he circles his spot at half size.
-static s32 WorldMap_SetUpFlint(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 WorldMap_SetUpFlint(struct Actor *actor) {
   if (GameFlag_Get(FLAG_DJINNI(DJINNI_FLINT)) != 0) {
     return 0;
   }
@@ -616,8 +612,7 @@ static s32 WorldMap_SetUpKolimaBridge(struct Actor *interpreter) {
 
 /// The actor script of every picture on the map (gWorldMapAlignToMapScript).
 /// It turns the sprite with the map's rotation.
-static s32 WorldMap_AlignToMap(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 WorldMap_AlignToMap(struct Actor *actor) {
   struct WorldMapRenderWork *work = gMapGridWork[0];
   struct Sprite *sprite = actor->sprite;
 
@@ -628,8 +623,7 @@ static s32 WorldMap_AlignToMap(struct Actor *interpreter) {
 
 /// Iodem's actor script (gWorldMapIodemScript). He turns with the map and
 /// blocks the way, so the leader cannot walk through him.
-static s32 WorldMap_SetUpIodem(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 WorldMap_SetUpIodem(struct Actor *actor) {
   struct WorldMapRenderWork *work = gMapGridWork[0];
   struct Sprite *sprite = actor->sprite;
 
@@ -645,8 +639,7 @@ static s32 WorldMap_SetUpIodem(struct Actor *interpreter) {
 /// and FLAG_WORLD_MAP_STORM_GONE keeps it from catching the party.
 ///
 /// Called by its actor script.
-static s32 WorldMap_SetUpStorm(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 WorldMap_SetUpStorm(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
   Actor_SetColorMode(actor, SPRITE_COLOR_RED_TINT);
   actor->collisionFlags = 0;
@@ -661,8 +654,7 @@ static s32 WorldMap_SetUpStorm(struct Actor *interpreter) {
 /// Called each frame by the storm's actor script (gWorldMapStormScript). It
 /// hides the storm on odd frames, and WorldMap_UpdateAreaContacts shows it
 /// again on the next, so it flickers.
-static s32 WorldMap_BlinkActorSprite(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 WorldMap_BlinkActorSprite(struct Actor *actor) {
   if ((actor->spriteStorageKind & 1) && (gFrameCount & 1))
     actor->spriteStorageKind ^= 1;
   return 1;

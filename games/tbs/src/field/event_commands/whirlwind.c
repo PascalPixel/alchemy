@@ -57,8 +57,7 @@ void FieldEffect_SpawnRadialParticleRing(struct Actor *origin) {
 /// While it wanders, the field's own motion lifts the particle (the velocity
 /// and gravity FieldEffect_CircleAnchor gave it); this only moves it across the
 /// ground.
-void FieldEffect_WanderAroundAnchor(struct Actor *actor) {
-  struct Actor *effect = (struct Actor *)actor;
+void FieldEffect_WanderAroundAnchor(struct Actor *effect) {
   s32 len;
   s32 angle;
   s32 dx;
@@ -88,8 +87,7 @@ void FieldEffect_WanderAroundAnchor(struct Actor *actor) {
 /// Per-frame update: circles the anchor at 8 pixels; after 121 frames it
 /// starts to wander (FieldEffect_WanderAroundAnchor). FieldPsynergy_Whirlwind
 /// gives it to each of the 16 particles it spawns round the orb.
-void FieldEffect_CircleAnchor(struct Actor *actor) {
-  struct Actor *effect = (struct Actor *)actor;
+void FieldEffect_CircleAnchor(struct Actor *effect) {
   struct Actor *anchor;
   s32 angle;
   s32 radius;
@@ -122,15 +120,14 @@ void FieldEffect_CircleAnchor(struct Actor *actor) {
 /// The scale falls by 1/512 each frame. From unit scale the strict lower bound
 /// takes 257 updates.
 void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *actor) {
-  struct Actor *object = (struct Actor *)actor;
   s32 scale;
 
-  scale = object->scaleX - WHIRLWIND_TARGET_SCALE_STEP;
-  object->scaleY = scale;
-  object->scaleX = scale;
+  scale = actor->scaleX - WHIRLWIND_TARGET_SCALE_STEP;
+  actor->scaleY = scale;
+  actor->scaleX = scale;
   if (scale < WHIRLWIND_TARGET_MIN_SCALE) {
-    Actor_SetPositionAndResetMotionFar(object, 0, 0, 0);
-    object->update = 0;
+    Actor_SetPositionAndResetMotionFar(actor, 0, 0, 0);
+    actor->update = 0;
   }
 }
 

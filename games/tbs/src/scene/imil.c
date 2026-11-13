@@ -281,8 +281,7 @@ static void Imil_RunIceSlide(void);
 ///
 /// The pause is longer for ACTOR_SICK_OLD_MAN, whose work Imil_Initialize
 /// sets.
-static s32 Imil_UpdateShiver(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 Imil_UpdateShiver(struct Actor *actor) {
   switch (actor->timer) {
   case 6:
     actor->scaleX += -Q16_ONE / 4;

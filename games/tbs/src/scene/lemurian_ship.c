@@ -187,8 +187,7 @@ enum { ANIM_DROP_BURST = 1 };
 /// of spray and is released 20 frames later by gSprayFallScript.
 ///
 /// This is the update routine Ship_UpdateSwell gives each drop it creates.
-static void LemurianShip_SprayUpdate(struct Actor *actor) {
-  struct Actor *drop = (struct Actor *)actor;
+static void LemurianShip_SprayUpdate(struct Actor *drop) {
 
   if (drop->timer != 0) {
     s32 drift;

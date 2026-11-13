@@ -1305,8 +1305,7 @@ static void CottageRoomsB_CyclePaletteAndSpawnPair(struct Actor *actor) {
 
 /// Copies the parent's ground height into two oppositely moving vertical
 /// effects.
-static void CottageRoomsB_SpawnEffectPair(struct Actor *actor) {
-  struct Actor *parent = actor;
+static void CottageRoomsB_SpawnEffectPair(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
   struct Sprite *part;

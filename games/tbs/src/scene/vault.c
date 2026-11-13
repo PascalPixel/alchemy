@@ -166,9 +166,7 @@ static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay);
 // The woman wanting the roof fixed walks about looking for the man who should
 // be fixing it and stops to face the leader when near, or while a conversation
 // holds the field.
-static UNREAD_RESULT
-Vault_UpdateRoofComplainerProximity(struct Actor *updated) {
-  struct Actor *entity = (struct Actor *)updated;
+static UNREAD_RESULT Vault_UpdateRoofComplainerProximity(struct Actor *entity) {
   struct WindowWork *work = (struct WindowWork *)gWindowWork[0];
   u8 *workspace = gWindowWork[12];
   s32 flag = 0;
@@ -994,8 +992,7 @@ static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay) {
 /// Applies drift and gradually damps both rates toward zero.
 /// This custom update uses speed/acceleration as its two drift rates and
 /// mirrors the resulting position into the actor's target coordinates.
-static void Vault_UpdateDriftingEffect(struct Actor *updated) {
-  struct Actor *effect = (struct Actor *)updated;
+static void Vault_UpdateDriftingEffect(struct Actor *effect) {
   s32 horizontalRate;
   s32 verticalRate;
 

@@ -199,8 +199,7 @@ static void Sanctum_SpawnActorSpark(s32 id);
 static void Sanctum_RestoreQuestFloor(void);
 
 /// Faces the actor whose ID this update routine stores in the timer field.
-static UNREAD_RESULT Sanctum_FaceActorNamedByTimer(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+static UNREAD_RESULT Sanctum_FaceActorNamedByTimer(struct Actor *actor) {
   struct Actor *target;
 
   target = Actor_Get((s16)actor->timer);
@@ -578,8 +577,7 @@ static void Sanctum_LeaveAfterRefusing(void) {
 }
 
 /// Keeps this actor at the party leader's drawing priority.
-static UNREAD_RESULT Sanctum_MatchLeaderPriority(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+static UNREAD_RESULT Sanctum_MatchLeaderPriority(struct Actor *actor) {
   actor->sprite->image.priority =
       Actor_Get(ACTOR_PARTY_LEADER)->sprite->image.priority;
   actor->sprite->shadow.priority =
@@ -1617,8 +1615,7 @@ static void Sanctum_HideHealerAfterimage(void) {
 }
 
 /// Cycles the afterimage through four offsets from the healer.
-static void Sanctum_UpdateHealerAfterimage(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+static void Sanctum_UpdateHealerAfterimage(struct Actor *actor) {
   struct Actor *healer;
 
   healer = Actor_Get(ACTOR_HEALER);
@@ -1642,8 +1639,7 @@ static void Sanctum_UpdateHealerAfterimage(struct Actor *updated) {
 }
 
 /// Advances an effect around its watched actor on an elliptical path.
-static void Sanctum_UpdateOrbitingEffect(struct Actor *updated) {
-  struct Actor *effect = (struct Actor *)updated;
+static void Sanctum_UpdateOrbitingEffect(struct Actor *effect) {
   struct Actor *anchor = effect->watchedActor;
   u16 *angle = &effect->timer;
   u16 orbitAngle = *angle;
@@ -2019,8 +2015,7 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
 }
 
 /// Moves a spark upward, cycles its scale, and expires its lifetime.
-static void Sanctum_UpdateRisingSpark(struct Actor *updated) {
-  struct Actor *spark = updated;
+static void Sanctum_UpdateRisingSpark(struct Actor *spark) {
   s32 scale;
   s32 timer;
 

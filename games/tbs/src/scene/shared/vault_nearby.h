@@ -14,11 +14,10 @@
 // 376 or the render mode is set the range is 26 pixels, and a villager being
 // talked to stops whichever way it faces.
 static UNREAD_RESULT Vault_UpdateWalkingVillager(struct Actor *actor) {
-  struct Actor *self = (struct Actor *)actor;
   u8 **globals = gWindowWork;
   u8 *windowWork = globals[0];
   u8 *workspace = globals[12];
-  s16 *flags = &self->timer;
+  s16 *flags = &actor->timer;
   s32 force = 0;
   s32 range = 18;
   struct Actor *partner;
@@ -29,7 +28,7 @@ static UNREAD_RESULT Vault_UpdateWalkingVillager(struct Actor *actor) {
   } else {
     partner = Actor_GetById(ACTOR_BOY_ROUND_THE_WELL);
   }
-  if (Vault_StopIfFacingNear(self, partner, 32, 0) != 0) {
+  if (Vault_StopIfFacingNear(actor, partner, 32, 0) != 0) {
     RETURN_UNREAD(0);
   }
 
@@ -43,6 +42,6 @@ static UNREAD_RESULT Vault_UpdateWalkingVillager(struct Actor *actor) {
     }
   }
 
-  Vault_StopIfFacingNear(self, player, range, force);
+  Vault_StopIfFacingNear(actor, player, range, force);
   RETURN_UNREAD(0);
 }

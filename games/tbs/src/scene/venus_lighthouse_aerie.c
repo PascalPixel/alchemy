@@ -211,8 +211,7 @@ enum {
 
 /// Pulses the actor scale around the countdown, then chooses its next
 /// pause.
-static s32 VenusLighthouseAerie_PulseActorScale(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 VenusLighthouseAerie_PulseActorScale(struct Actor *actor) {
   s16 *counter = &actor->timer;
 
   switch (*counter) {
@@ -264,8 +263,7 @@ static void VenusLighthouseAerie_UpdateDriftingParticle(struct Actor *actor) {
 
 /// Turns the falling actor sprite until its rotation leaves the negative
 /// half-turn.
-static void VenusLighthouseAerie_StepSpriteRotation(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+static void VenusLighthouseAerie_StepSpriteRotation(struct Actor *actor) {
   struct Sprite *sprite = actor->sprite;
   u16 rotation = sprite->rotation;
 
@@ -1865,8 +1863,7 @@ static void VenusLighthouseAerie_FlashScreen(void) {
 
 /// Orbits a particle around the upper beam and keeps its target at that
 /// position.
-static void VenusLighthouseAerie_UpdateUpperOrbit(struct Actor *actor) {
-  struct Actor *effect = actor;
+static void VenusLighthouseAerie_UpdateUpperOrbit(struct Actor *effect) {
   struct Actor *center = Actor_Get(ACTOR_BEAM_BOTTOM);
   u16 angle = effect->timer;
 
@@ -1879,8 +1876,7 @@ static void VenusLighthouseAerie_UpdateUpperOrbit(struct Actor *actor) {
 }
 
 /// Orbits a particle around the rising beam using its rise counter as a radius.
-static void VenusLighthouseAerie_UpdateRisingOrbit(struct Actor *updated) {
-  struct Actor *actor = updated;
+static void VenusLighthouseAerie_UpdateRisingOrbit(struct Actor *actor) {
   struct Actor *anchor = Actor_Get(ACTOR_BEACON_ORB);
   s32 angle = (u16)actor->timer;
   s32 cosine;

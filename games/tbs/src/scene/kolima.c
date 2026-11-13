@@ -208,8 +208,7 @@ enum KolimaBridgeActorId {
 };
 
 /// Applies the deferred pose change requested by the falling-effect script.
-static s32 Kolima_ApplyPendingPose(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 Kolima_ApplyPendingPose(struct Actor *actor) {
   if (gKolima_PendingPose != 0) {
     Actor_SelectAnimation(actor, 2);
     gKolima_PendingPose = 0;
@@ -220,8 +219,7 @@ static s32 Kolima_ApplyPendingPose(struct Actor *interpreter) {
 /// Each frame of a sparkle on Kolima's ground, its timer runs on at random. It
 /// shows its bright frame (7) past 1000 and its dim one (10) before. At 1200
 /// the timer starts over.
-static s32 Kolima_UpdateTimedAppearance(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 Kolima_UpdateTimedAppearance(struct Actor *actor) {
   s32 randomValue = Import_RandomNext();
   s32 scaledRandom = randomValue * 100;
   s32 appearanceTimer = (u16)actor->timer + ((u32)scaledRandom >> 16);
@@ -267,8 +265,7 @@ Kolima_InitializeCursedVillagers(struct ActorPlacement *placements) {
 
 /// Each frame of a piece of Kolima Bridge as it falls: it moves, grows, and is
 /// released when its timer runs out.
-static s32 Kolima_UpdateFallingDebris(struct Actor *interpreter) {
-  struct Actor *debris = interpreter;
+static s32 Kolima_UpdateFallingDebris(struct Actor *debris) {
   debris->x.fixed += debris->velocityX;
   debris->z.fixed += debris->velocityZ;
   debris->velocityZ -= px(1) / 25;
@@ -1627,8 +1624,7 @@ static void Kolima_SpawnCurseSparkle(void) {
 #include "shared/kolima_blink.h"
 
 /// Triggers a temporary pose when an effect enters the party's occupied area.
-static s32 Kolima_TriggerRegionScript(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 Kolima_TriggerRegionScript(struct Actor *actor) {
   if (gKolima_MiaInParty != 0) {
     if ((actor->x.fixed > px(59) && actor->x.fixed < px(141) &&
          actor->z.fixed > px(211) && actor->z.fixed < px(257)) ||

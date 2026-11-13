@@ -8,8 +8,7 @@
 // The leader's update routine while passing: each frame a small spark rises
 // from a point that sweeps across the leader's chest, in palette 7 or 5 by
 // turns.
-static UNREAD_RESULT MercuryLighthouse_TrailSparks(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+static UNREAD_RESULT MercuryLighthouse_TrailSparks(struct Actor *actor) {
   struct EffectOptions options;
   s32 velocityY;
 

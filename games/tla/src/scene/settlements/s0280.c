@@ -522,7 +522,7 @@ void Func_02000e04(void) {
 
 /// The hblank split: above the line Scroll_StartHBlank sets, BG1 scrolls by one
 /// value and blending is off; below it, by the other, with BG1 blended.
-void Func_02000e30(void) {
+void Scroll_HBlank(void) {
   if (REG_VCOUNT < gData_02002ce0) {
     Io_Write16(gData_02002ce4, &REG_BG1HOFS);
     REG_BLDCNT = 0;
@@ -536,7 +536,7 @@ void Func_02000e30(void) {
 DEFINE_LAYER_TRACK_SCROLL(Layer_TrackScroll, gData_02002ce0, gData_02002ce4,
     gData_02002ce6)
 
-DEFINE_SCROLL_START_HBLANK(Scroll_StartHBlank, Func_02000e30, Layer_TrackScroll)
+DEFINE_SCROLL_START_HBLANK(Scroll_StartHBlank, Scroll_HBlank, Layer_TrackScroll)
 
 void Func_02000ef0(void) { Func_02002190(gData_0200226c); }
 

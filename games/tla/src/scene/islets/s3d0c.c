@@ -4,7 +4,7 @@
 #include "../islets.h"
 #include "event_inline.h"
 
-void Func_02003d0c(struct Actor *object) {
+void Actor_StopAtPushTarget(struct Actor *object) {
   struct Vector3 position;
   struct Actor *hit;
   u32 i;

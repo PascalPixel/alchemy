@@ -37,7 +37,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 void Func_02000054(void) { Import_EventSetExitRequest(6); }
 
-void Func_02000060(s32 animate) {
+void JupiterLighthouse_OpenDoor(s32 animate) {
   if (animate == 1) {
     Event_PlaySound(133);
     MapGrid_CopyCellsLayered(81, 20, 2, 3, 79, 29);
@@ -50,7 +50,7 @@ void Func_02000060(s32 animate) {
   MapGrid_CopyCellAttributes(20, 22, 2, 1, 15, 39);
 }
 
-void Func_020000ec(void) {
+void JupiterLighthouse_CloseDoor(void) {
   Event_PlaySound(134);
   MapGrid_CopyCellsLayered(81, 20, 2, 3, 79, 29);
   MapGrid_CopyCellsLayered(81, 20, 2, 3, 79, 37);
@@ -62,11 +62,11 @@ void Func_020000ec(void) {
 }
 
 DEFINE_JUPITER_LIGHTHOUSE_CHECK_BLOCK_ON_CELL(
-    JupiterLighthouse_CheckBlockOnCell, 10, 0xa01, 17, 33, Func_02000060)
+    JupiterLighthouse_CheckBlockOnCell, 10, 0xa01, 17, 33, JupiterLighthouse_OpenDoor)
 
-DEFINE_SCENE_RUN_ONCE(Scene_RunOnce, 0x200, Func_02000060)
+DEFINE_SCENE_RUN_ONCE(Scene_RunOnce, 0x200, JupiterLighthouse_OpenDoor)
 
-DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Scene_RunIfFlagCleared, 0x200, Func_020000ec,
+DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Scene_RunIfFlagCleared, 0x200, JupiterLighthouse_CloseDoor,
                                  JupiterLighthouse_CheckBlockOnCell)
 
 void Func_020001f4(void) {
@@ -82,10 +82,10 @@ s32 Scene_Initialize(void) {
     Func_02001bcc(gMainRoutineWork.currentOwner);
   if (Event_GetFlag(0xa01)) {
     Actor_SetPosition(10, PIXELS(280), PIXELS(536));
-    Func_02000060(0);
+    JupiterLighthouse_OpenDoor(0);
   }
   if (Event_GetFlag(0x200))
-    Func_02000060(0);
+    JupiterLighthouse_OpenDoor(0);
   return 0;
 }
 

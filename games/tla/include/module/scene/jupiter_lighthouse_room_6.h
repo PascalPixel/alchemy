@@ -9,7 +9,7 @@
 
 void JupiterLighthouse_OpenDoor(s32 value);
 
-void Func_02000154(void);
+void JupiterLighthouse_CheckBlockOnCell(void);
 
 void Teleporter_PlaceArrival(s32 x, s32 z, s32 effect);
 

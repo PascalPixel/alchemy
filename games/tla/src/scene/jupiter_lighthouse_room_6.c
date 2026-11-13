@@ -57,7 +57,7 @@ DEFINE_JUPITER_LIGHTHOUSE_OPEN_DOOR(JupiterLighthouse_OpenDoor, 84, 36, 2, 78, 4
 
 DEFINE_JUPITER_LIGHTHOUSE_CLOSE_DOOR(JupiterLighthouse_CloseDoor, 84, 36, 2, 78, 40, 84, 20, 44, 14, 42)
 
-void Func_02000154(void) {
+void JupiterLighthouse_CheckBlockOnCell(void) {
   struct JupiterLighthouseRoom6Object *object =
       ((struct JupiterLighthouseRoom6Object *)Actor_Get(12));
 
@@ -69,11 +69,11 @@ void Func_02000154(void) {
 
 DEFINE_SCENE_RUN_ONCE(Scene_RunOnce, 512, JupiterLighthouse_OpenDoor)
 
-DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Scene_RunIfFlagCleared, 512, JupiterLighthouse_CloseDoor, Func_02000154)
+DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Scene_RunIfFlagCleared, 512, JupiterLighthouse_CloseDoor, JupiterLighthouse_CheckBlockOnCell)
 
 void Func_020001d0(void) {
   System_Wait(10);
-  Func_02000154();
+  JupiterLighthouse_CheckBlockOnCell();
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }

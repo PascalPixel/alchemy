@@ -40,7 +40,7 @@ void Actor_Release(struct Actor *object);
 extern s32 gData_02002ce0;
 extern u16 gData_02002ce4;
 extern u16 gData_02002ce6;
-void Func_02000e30(void);
+void Scroll_HBlank(void);
 void Layer_TrackScroll(void);
 void Irq_SetHandler(s32 a, s32 b, void (*callback)(void));
 void Event_End(void);

@@ -138,7 +138,7 @@ s32 Func_02003688(s32 x, s32 y, s32 z, s32 kind);
 s32 Func_020036b8(s32 a, s32 b);
 void Func_0200389c(struct Actor *object);
 void Actor_StartScripted(struct Actor *object, s32 priority);
-void Func_020039f0(s32 *position, s32 base);
+void Vent_Puff(s32 *position, s32 base);
 s32 Func_02003bb8(s32 index, s32 value);
 s32 Func_02003bcc(void);
 s32 Vents_AdvanceCounter(s32 limit);

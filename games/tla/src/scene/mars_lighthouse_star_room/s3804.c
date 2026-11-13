@@ -9,7 +9,7 @@
 #include "module/scene/scene.h"
 
 #define CELL_TABLE gData_02004cf4
-#define CELL_SPRITE_DRAW Func_02003804
+#define CELL_SPRITE_DRAW Teleporters_Update
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepth
 #include "../../field/map/cell_sprite.c"
 
@@ -21,7 +21,7 @@
 #include "event_inline.h"
 #include "cell_target.h"
 
-DEFINE_TELEPORTERS_FIND(Func_02003930, gData_02004cf4, Func_02003804)
+DEFINE_TELEPORTERS_FIND(Func_02003930, gData_02004cf4, Teleporters_Update)
 
 #include "scene_tables.h"
 

@@ -553,7 +553,7 @@ extern s32 gData_0200559c[];
 DEFINE_ORBITER_SPIRAL(Orbiter_Spiral, Func_02001314)
 
 // Moves around in a circle.
-s32 Func_0200142c(struct GaiaRockInsideOrbit *object) {
+s32 Orbit_Update(struct GaiaRockInsideOrbit *object) {
   s32 z;
 
   object->angle += object->speed;

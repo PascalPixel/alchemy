@@ -1798,7 +1798,7 @@ void TaopoSwamp_SaveFirmGround(void) {
 
 DEFINE_ACTOR_START_SCRIPTED(Actor_StartScripted, Actor_SelectAnimation, gData_02002af4)
 
-void TaopoSwamp_PuffVent(s32 *position, s32 base) {
+void Vent_Puff(s32 *position, s32 base) {
   struct Actor *object =
       Func_02002808_(0x11d, position[0], position[1], position[2] - 0x20000);
   s32 angle;
@@ -1820,7 +1820,7 @@ void TaopoSwamp_PuffVent(s32 *position, s32 base) {
   }
 }
 
-DEFINE_VENTS_UPDATE(TaopoSwamp_UpdateVents, TaopoSwamp_PuffVent)
+DEFINE_VENTS_UPDATE(Vents_Update, Vent_Puff)
 
 // The registers by io_reg.h's names from here on: local.h names the blend
 // register its own way for TaopoSwamp_DarkenRoom above.
@@ -1881,7 +1881,7 @@ void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg) {
       REG_BLDCNT = cnt;
     }
   }
-  Task_AddFrame(TaopoSwamp_UpdateVents, 0x480);
+  Task_AddFrame(Vents_Update, 0x480);
 }
 
 /// The accessors step the work pointer by whole entries and then take entry 0:

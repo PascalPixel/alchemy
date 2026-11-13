@@ -17,7 +17,7 @@
 
 DEFINE_ACTOR_START_SCRIPTED(Actor_StartScripted, Actor_SelectAnimation, gData_020044c8)
 
-void Func_020039f0(s32 *position, s32 base) {
+void Vent_Puff(s32 *position, s32 base) {
   struct Actor *object = Import_ActorCreate_(0x11d, position[0], position[1],
                                              position[2] - 0x20000);
   s32 angle;
@@ -39,7 +39,7 @@ void Func_020039f0(s32 *position, s32 base) {
   }
 }
 
-DEFINE_VENTS_UPDATE(Vents_Update, Func_020039f0)
+DEFINE_VENTS_UPDATE(Vents_Update, Vent_Puff)
 
 void Func_02003ab0(const u16 *spots, const u16 *levels, void (*handler)(void)) {
   struct WaterWork *work = (struct WaterWork *)(gInventorySnapshot + 0x188);

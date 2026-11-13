@@ -86,7 +86,7 @@ void Func_02001e78(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 }
 
 #define CELL_TABLE gData_02003488
-#define CELL_SPRITE_DRAW Func_02002040
+#define CELL_SPRITE_DRAW Teleporters_Update
 #define CELL_PUSH_SLOT_ENTRY Import_OamAddSpriteAtDepthClamped
 #include "../../field/map/cell_sprite.c"
 
@@ -95,7 +95,7 @@ void Func_02001e78(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "iwram_call.h"
 #include "cell_target.h"
 
-DEFINE_TELEPORTERS_FIND(Teleporters_Find, gData_02003488, Func_02002040)
+DEFINE_TELEPORTERS_FIND(Teleporters_Find, gData_02003488, Teleporters_Update)
 
 #include "../shared/jupiter_lighthouse_aerie.h"
 #include "scene_tables.h"

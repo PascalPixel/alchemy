@@ -247,7 +247,7 @@ void Func_02000458(struct YampiDesertCaveRect rect);
 void Func_02000898(void);
 void Func_020008fc(void);
 s32 List_CountEntries(u16 *list);
-void Func_0200099c(void);
+void PaletteCycle_Fade(void);
 void Statue_Sink(u16 *list, s32 mode, s32 count);
 void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void Func_02001958(void);
@@ -386,20 +386,20 @@ DEFINE_PALETTE_SET_COLORS(Func_020007dc, gData_02001fd8, gData_02001fdc,
 
 DEFINE_PALETTE_CYCLE_START_VBLANK(Func_02000898, gData_02001fe8, gData_02001fe4,
     List_CountEntries, gData_02001fd8, gData_02001fd4, 15, gData_02001fd0, 16,
-    gData_02001fc8, Func_0200099c)
+    gData_02001fc8, PaletteCycle_Fade)
 
 void Func_020008fc(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 256;
-  Task_RemoveFar(Func_0200099c);
+  Task_RemoveFar(PaletteCycle_Fade);
 }
 
 DEFINE_PALETTE_CYCLE_START_VBLANK(Func_0200091c, gData_02001fe8, gData_02001fe4,
     List_CountEntries, gData_02001fd8, gData_02001fd4, 2, gData_02001fd0, 2,
-    gData_02001fc8, Func_0200099c)
+    gData_02001fc8, PaletteCycle_Fade)
 
 DEFINE_LIST_COUNT_ENTRIES(List_CountEntries)
 
-void Func_0200099c(void) {
+void PaletteCycle_Fade(void) {
   s32 step = 0;
   u16 *color;
   volatile u16 *dst;

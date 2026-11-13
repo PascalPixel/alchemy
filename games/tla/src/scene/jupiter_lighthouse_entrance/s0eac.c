@@ -86,7 +86,7 @@ void Func_02000eac(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 }
 
 #define CELL_TABLE gTeleporters
-#define CELL_SPRITE_DRAW Func_02001074
+#define CELL_SPRITE_DRAW Teleporters_Update
 #define CELL_PUSH_SLOT_ENTRY Import_OamAddSpriteAtDepthClamped
 #include "../../field/map/cell_sprite.c"
 
@@ -95,7 +95,7 @@ void Func_02000eac(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "iwram_call.h"
 #include "cell_target.h"
 
-DEFINE_TELEPORTERS_FIND_LOWER(Teleporters_FindLower, gTeleporters, Func_02001074)
+DEFINE_TELEPORTERS_FIND_LOWER(Teleporters_FindLower, gTeleporters, Teleporters_Update)
 
 #include "scene_tables.h"
 

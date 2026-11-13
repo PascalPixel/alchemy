@@ -878,7 +878,7 @@ s32 Func_02003ed4(struct Orbiter *orbiter) {
 }
 
 // Moves around in a circle.
-s32 Func_02003f94(struct Orbit *object) {
+s32 Orbit_Update(struct Orbit *object) {
   s32 z;
 
   object->angle += object->speed;

@@ -87,7 +87,7 @@ void Func_02001094(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 }
 
 #define CELL_TABLE gTeleporters
-#define CELL_SPRITE_DRAW Func_0200125c
+#define CELL_SPRITE_DRAW Teleporters_Update
 #define CELL_PUSH_SLOT_ENTRY Import_OamAddSpriteAtDepthClamped
 #include "../../field/map/cell_sprite.c"
 
@@ -97,7 +97,7 @@ void Func_02001094(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "cell_target.h"
 
 DEFINE_TELEPORTERS_FIND_LOWER(Teleporters_FindLower, gTeleporters,
-                              Func_0200125c)
+                              Teleporters_Update)
 
 #include "scene_ids.h"
 #include "frame.h"
@@ -116,7 +116,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode);
 
 #define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
 
-void Func_020015cc(void) {
+void Leader_CenterInCell(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = leader->x;
   s32 z = leader->z;
@@ -138,4 +138,4 @@ void Func_020015cc(void) {
 /// the table's source cell over the leader's, keeping the source column's and
 /// row's 64 bit; Teleporters_Step calls it the first time the leader steps on
 /// one of the table's cells.
-DEFINE_TELEPORTER_UNCOVER(Teleporter_Uncover, Func_020015cc)
+DEFINE_TELEPORTER_UNCOVER(Teleporter_Uncover, Leader_CenterInCell)

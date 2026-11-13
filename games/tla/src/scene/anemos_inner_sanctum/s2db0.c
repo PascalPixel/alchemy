@@ -21,7 +21,7 @@ void Teleporter_Sink(struct PushEvent *event) {
   x |= (s16)(event->x & mask);
   z = object->z >> 20;
   z |= (s16)(event->z & mask);
-  Func_02002cb8();
+  Leader_CenterInCell();
   Sound_Play(229);
   Map_CopyCellsRect(event->x, event->z + 2, 1, 1, x, z);
   Event_Wait(12);

@@ -94,7 +94,7 @@ void Func_020000f4(void);
 
 void Func_020034b0(void);
 
-void Func_02002cb8(void);
+void Leader_CenterInCell(void);
 
 extern struct CellTarget gTeleporters;
 

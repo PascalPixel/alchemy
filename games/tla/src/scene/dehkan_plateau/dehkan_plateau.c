@@ -589,7 +589,7 @@ void Func_02001ee8(void) {
 
 DEFINE_ACTOR_HIDE(Actor_Hide, Func_02003cc0)
 
-void Func_02001f68(void) {
+void Scene_RunUnlessFlag(void) {
   if (GameFlag_Test(0x109) != 0) {
     if (GameFlag_Test(0x200) == 0)
       Func_02001500();
@@ -598,15 +598,15 @@ void Func_02001f68(void) {
   }
 }
 
-DEFINE_ACTORS_FOR_RANGE(Func_02001f94, 13, Actor_Hide, 13, Func_02001f68)
+DEFINE_ACTORS_FOR_RANGE(Func_02001f94, 13, Actor_Hide, 13, Scene_RunUnlessFlag)
 
-DEFINE_ACTORS_FOR_RANGE(Func_02001fac, 12, Actor_Hide, 25, Func_02001f68)
+DEFINE_ACTORS_FOR_RANGE(Func_02001fac, 12, Actor_Hide, 25, Scene_RunUnlessFlag)
 
-DEFINE_ACTORS_FOR_RANGE(Func_02001fc4, 9, Actor_Hide, 26, Func_02001f68)
+DEFINE_ACTORS_FOR_RANGE(Func_02001fc4, 9, Actor_Hide, 26, Scene_RunUnlessFlag)
 
-DEFINE_ACTORS_FOR_RANGE(Func_02001fdc, 2, Actor_Hide, 8, Func_02001f68)
+DEFINE_ACTORS_FOR_RANGE(Func_02001fdc, 2, Actor_Hide, 8, Scene_RunUnlessFlag)
 
-DEFINE_ACTORS_FOR_RANGE(Func_02001ff4, 5, Actor_Hide, 10, Func_02001f68)
+DEFINE_ACTORS_FOR_RANGE(Func_02001ff4, 5, Actor_Hide, 10, Scene_RunUnlessFlag)
 
 void HeldActor_RaiseCell(struct Actor *object);
 

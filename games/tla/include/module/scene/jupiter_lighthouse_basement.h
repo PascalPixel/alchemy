@@ -22,7 +22,7 @@ extern s16 gLightSpriteCount;
 extern struct Actor *gData_020023f4[];
 extern struct LightOam Data_02002434[];
 
-void Func_020015cc(void);
+void Leader_CenterInCell(void);
 
 void Func_02000074(void);
 

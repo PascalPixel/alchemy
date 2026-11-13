@@ -32,7 +32,7 @@ void Func_02000af8(void);
 void Func_02000b6c(void);
 void Func_02000cd8(void);
 void Orbiter_Spiral(void);
-void Func_0200142c(void);
+void Orbit_Update(void);
 void Actor_AimAtWatched(void);
 void Actor_StepToWatched(void);
 void Func_020019cc(void);
@@ -88,7 +88,7 @@ s32 gData_02005234[] = {
     SC_END,
 };
 
-DEFINE_G_DATA_02005244(gData_02005244, Func_0200142c, Actor_AimAtWatched,
+DEFINE_G_DATA_02005244(gData_02005244, Orbit_Update, Actor_AimAtWatched,
     Actor_StepToWatched)
 
 DEFINE_G_DATA_02005264(gData_02005264, 24)

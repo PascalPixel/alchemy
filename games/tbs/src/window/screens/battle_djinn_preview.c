@@ -143,8 +143,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
       sprite->sentinel = 240;
       sprite->x = 120;
       sprite->y = 120;
-      /* FAKEMATCH(type): the two words stored through pointer types; through
-       * the unions, 1 of 87 instructions moves in tbs-en. */
+      /* FAKEMATCH(type): the two words stored through pointer types; as
+       * the unions, 2 of 87 instructions differ in tbs-en. */
       *(struct Window **)&entry->attributes =
           (struct Window *)(OBJ_SIZE_16X16 |
                             OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));

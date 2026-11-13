@@ -112,8 +112,7 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
     colorCount = COLOR_HALF;
   }
 
-  // One colour: write it once, then let DMA copy it over the rest. The copy
-  // reads three halfwords behind where it writes, so the colour repeats.
+  // One colour: write it once, then let DMA copy it over the rest.
   if (mode < PALETTE_TINT_FROM_SOURCE) {
     *dst++ = mode & 0x7c00;
     *dst++ = (mode & 0x03e0) << 5;

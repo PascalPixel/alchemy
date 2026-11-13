@@ -40,8 +40,7 @@ s32 VramCache_AllocateBlocks(u32 id, u32 size) {
       break;
     }
   occupied:
-    // Skip an owned block by its owner's whole size. This assumes the owner's
-    // run starts here, which holds while runs are only ever taken whole.
+    // Skip an owned block by its owner's whole size.
     pos +=
         gVramCacheEntries[gVramCacheBlockOwners[pos]].size / VRAM_BLOCK_BYTES;
   }
@@ -134,8 +133,7 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
   // 8 KB, 128 blocks, is a quarter of sprite VRAM and the most one entry holds
   if (size > 8192)
     return 0;
-  // A same-size upload keeps its existing VRAM run. Sizes of 16 or less mark
-  // an entry that holds no VRAM (VramCache_ReleaseVram leaves 1).
+  // A same-size upload keeps its existing VRAM run.
   if (entry->size > 16) {
     if (entry->size != size) {
       VramCache_FreeEntry(no);

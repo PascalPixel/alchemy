@@ -329,9 +329,7 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
   s32 y;
   struct AnimationSpritePart *shadow;
 
-  // The margins are the 16x8 shadow's half width and height. A double-size
-  // affine sprite is drawn in a box twice as wide and tall, so both halves
-  // double.
+  // The margins are the 16x8 shadow's half width and height.
   if (scaleX > Q16_ONE || scaleY > Q16_ONE) {
     affine = 3;
     marginX = 16;

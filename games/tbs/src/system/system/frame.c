@@ -240,7 +240,7 @@ void wait(s32 frames) {
           "restore the hardware stack pointer after the proven stack copy")
       __asm__ volatile("mov sp, %0" : : "r"(sp) : "memory");
       /* FAKEMATCH(dead): size dropped and the copy's size taken under
-       * complementary tests; through size, 4 of 403 instructions differ in
+       * complementary tests; as through size, 4 of 403 instructions differ in
        * tbs-en. */
       size = NULL;
       {
@@ -375,8 +375,7 @@ void System_VBlankHandler(void) {
   }
   Task_RunPass(TASK_PASS_VBLANK);
 
-  // Read the keypad (its bits are 0 while pressed). A newly held key restarts
-  // the repeat at once; letting go of all keys restarts the full delay.
+  // Read the keypad (its bits are 0 while pressed).
   keys = REG_KEYINPUT ^ KEYS_MASK;
   {
     u32 pressed = keys & ~gKeysHeld;

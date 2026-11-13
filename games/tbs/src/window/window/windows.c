@@ -88,8 +88,7 @@ void WindowSystem_InitField(void) {
   Iwram_FillWords(work, sizeof(work->tilemap),
                   WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
 #endif
-  // Make the sprite and palette pools available, then start the updates. The
-  // upload's order is TASK_PASS_VBLANK: it runs in vertical blank.
+  // Make the sprite and palette pools available, then start the updates.
   WindowSprite_InitializeFreeList();
   Portrait_ClearSlots();
   Task_Add(WindowSystem_UploadTilemap, TASK_PASS_VBLANK);
@@ -296,8 +295,7 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
     found->sprites.tailLink = &slot->sprites.head;
     found->opened = 1;
     found->flags = WINDOW_FLAG_OPEN;
-    // Every new window starts the shared text style afresh. The function
-    // takes no arguments: x is passed and ignored.
+    // Every new window starts the shared text style afresh.
     Text_ResetStyle(x);
     if (attrs & WINDOW_FLAG_TEXT_CANVAS) {
       found->flags |= WINDOW_FLAG_TEXT_CANVAS;

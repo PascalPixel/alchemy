@@ -55,8 +55,7 @@ s32 ArcTan2(s32 x, s32 y) {
     // the largest angle the eight search bits can represent.
     result = TRIG_TURN / 4;
     if (ratio <= 64362) {
-      // Eight comparisons choose angle bits 0x2000 down to 0x40. Halving
-      // each table step retains the interval selected by the earlier bits.
+      // Eight comparisons choose angle bits 0x2000 down to 0x40.
       table = &gMath_TanTable[127];
       result = 0;
 
@@ -125,8 +124,7 @@ s32 Math_IntegerSqrt(s32 value) {
   s32 bit;
   s32 result;
 
-  // remainder is value - result squared. Each trial is the extra square
-  // cost of setting the next bit, preserving the higher bits already chosen.
+  // remainder is value - result squared.
   remainder = value;
   result = 0;
   for (bit = 15; bit >= 0; bit -= 1) {

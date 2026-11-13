@@ -10,8 +10,7 @@ extern u8 IwramClearWords[];
 /// depth slots sprites are linked into.
 void Oam_ResetFrame(void) {
   gOamMatrixCount = 0;
-  // IwramClearWords(destination, bytes): 1024 bytes are the 256 slot heads. It
-  // zeroes r2 itself, so the third argument is never read.
+  // IwramClearWords(destination, bytes): 1024 bytes are the 256 slot heads.
   _call_via_r3(((u32)&gOamDepthLists), 1024, ((u32)&gOamMatrixCount),
                (u32)IwramClearWords);
 }
@@ -44,8 +43,8 @@ s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
   coefficient = matrix->coefficients;
   if ((xScale == yScale || -xScale == yScale) && angle == 0) {
     // Unrotated and evenly scaled (or mirrored): only the diagonal is set.
-    // Q16_ONE / scale is the 8.8 inverse of an 8.8 scale.
     s32 reciprocal;
+    // Q16_ONE / scale is the 8.8 inverse of an 8.8 scale.
     s32 xReciprocal;
 
     reciprocal = Iwram_SignedDivide(Q16_ONE, yScale);

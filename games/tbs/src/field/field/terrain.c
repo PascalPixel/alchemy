@@ -110,9 +110,8 @@ s32 Terrain_GetBendSumDiagonalHeight(const u8 *heightBytes, s32 x, s32 y) {
   firstHeight = CURVE_HEIGHT_FIXED(*samples++);
   middleHeight = CURVE_HEIGHT_FIXED(*samples);
   lastHeight = CURVE_HEIGHT_FIXED(samples[1]);
-  // x + y from 0 to 30: 15 is the diagonal, below it the first half and
-  // above it the second. Each half divides by 15, so it reaches its end
-  // sample.
+  // x + y from 0 to 30: 15 is the diagonal, below it the first half and above
+  // it the second.
   x += y;
   if (x == CURVE_FULL_STEPS - 1) {
     height = middleHeight;
@@ -315,8 +314,7 @@ s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y) {
   if (work != NULL) {
     cell = work->layers[layer & 3].cells;
   }
-  // Cells are 16 pixels, 128 to a row. A cell's shape is four
-  // bytes: the kind, then up to three height samples.
+  // Cells are 16 pixels, 128 to a row.
   cell += x / 16 + (y / 16 << 7);
   heightBytes = Ram_MapGridShapes + cell->shape * 4;
   // UB: read the kind byte before passing the remaining samples.

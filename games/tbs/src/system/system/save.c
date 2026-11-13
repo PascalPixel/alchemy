@@ -60,8 +60,7 @@ s32 Save_InitializeWork(void) {
      * used directly, 98 of 140 instructions differ in tbs-en. */
     header = &headerStorage;
 
-    // Not a save sector, or one for no part, or a damaged one: it stays
-    // free. A sector with the signature still keeps its counter.
+    // Not a save sector, or one for no part, or a damaged one: it stays free.
     if (Save_CompareBytes(header->signature, (u8 *)gSave_Signature, 7) != 0)
       continue;
     work->counter[index] = header->counter;

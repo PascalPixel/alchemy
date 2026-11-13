@@ -61,8 +61,7 @@ void TileMap_DrawRowsFromRam(const struct WorldMapAffinePair *lines,
                              u8 *pixels) {
   const u8 *base;
 
-  // The second tile and map banks are BG2. The kernel falls back to BG3's
-  // preceding banks when a BG2 pixel is transparent.
+  // The second tile and map banks are BG2.
   base = gDecodeBuffer;
   RamCode_LoadSlot(HEAP_SLOT_RAM_CODE_TEMP, TileMap_DrawRows,
                    TileMap_DrawRowsCodeSize);
@@ -100,9 +99,8 @@ void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
       cameraCoordinates[1] - Iwram_MulQ16(cameraCoordinates[2], pitchSlope);
   focus = -gProjection.focal;
   for (line = 0; line < FIELD_VIEW_HEIGHT / Q16_ONE; line++) {
-    // The line's ray slope: its offset from the projection's centre line
-    // over the focal length. Lines below the screen centre have a negative
-    // displacement.
+    // The line's ray slope: its offset from the projection's centre line over
+    // the focal length.
     distance = Iwram_RatioMulQ14(focus, px(gProjection.centerY - line));
     // A ray parallel to the ground would divide by zero.
     difference = distance - pitchSlope;

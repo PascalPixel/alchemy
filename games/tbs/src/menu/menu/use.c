@@ -215,8 +215,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       break;
     }
 
-    // Then the ability's effect (enum AbilityEffect). The first two cases are
-    // an HP and a PP restore no ability has (ability_table.c).
+    // Then the ability's effect (enum AbilityEffect).
     switch (effect->effect) {
     case ABILITY_EFFECT_RESTORE_HP:
       if (target->hp <= 0 || target->hp == target->hpMax) {

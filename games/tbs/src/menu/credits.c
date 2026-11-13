@@ -20,8 +20,7 @@
 #include "iwram_call.h"
 #include "flags.h"
 
-// Credits text uses six 32-pixel sprites across each 192-pixel line. Its
-// 32 tile rows form a ring, with sixteen rows visible at a time.
+// Credits text uses six 32-pixel sprites across each 192-pixel line.
 #define CREDITS_LINE_PIXELS 192
 #define CREDITS_VISIBLE_ROWS 16
 #define CREDITS_COLUMNS 6
@@ -196,8 +195,7 @@ s32 Credits_Run(void) {
   gIdleSleepEnabled = 0;
   Task_ResetAll();
   Task_Add(Credits_ScrollBackgrounds, TASK_PASS_VBLANK);
-  // Each layer owns its map, tiles and palette half. Load the invisible
-  // half while the other remains on screen.
+  // Each layer owns its map, tiles and palette half.
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
   Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(15));
   Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(31));
@@ -217,8 +215,7 @@ s32 Credits_Run(void) {
   // Give the names a five-second lead before the first picture.
   Credits_InitTextSprites();
   wait(300);
-  // Alternate the hidden layer after each 64-frame crossfade. Loading it
-  // cannot overwrite the picture that is still showing.
+  // Alternate the hidden layer after each 64-frame crossfade.
   for (slide = 0;
        slide < sizeof(gCredits_Backgrounds) / sizeof(gCredits_Backgrounds[0]);
        slide++) {
@@ -990,10 +987,10 @@ void Credits_InitTextSprites(void) {
                  (void *)(OBJ_VRAM0 + CREDITS_RING_BYTES), 256);
 
   // OAM attributes 0 and 1 share the first word; attribute 2 is the second.
-  // Here row counts the sprites across, 32 pixels apart (row << 21 is x).
   oamWords = (u32 *)SCROLL_OBJECTS;
   for (row = 0; row < 8; row++) {
     *oamWords++ = (row << 21) | OBJ_SIZE_32X16;
+    // Here row counts the sprites across, 32 pixels apart (row << 21 is x).
     *oamWords++ = CREDITS_RING_TILES;
   }
   // The bottom strip: eight 32x16 sprites at y 136 and eight 32x8 at y 152,
@@ -1066,8 +1063,7 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
 #endif
     return -1;
   }
-  // The ninth raster row holds the shadow below this line. Carry it into the
-  // next line before clearing the rest of the reused scratch buffer.
+  // The ninth raster row holds the shadow below this line.
   if (!GameFlag_GetFar(FLAG_CREDITS_LINE_DRAWN)) {
     Iwram_FillWords(linePixels, CREDITS_BUFFER_BYTES, 0);
     GameFlag_SetFar(FLAG_CREDITS_LINE_DRAWN);

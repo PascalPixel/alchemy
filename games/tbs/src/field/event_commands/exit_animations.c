@@ -93,8 +93,8 @@ void Exit_PrepareAnimation(s32 animation) {
     // No shadow as the leader leaves.
     sprite->flags = cleared;
     doorway->colorMode = hidden;
-    // Keep the cell and put the leader at its middle in x and its south edge
-    // in z.
+    // Keep the cell and put the leader at its middle in x and its south edge in
+    // z.
     // Each coordinate read and written as the word it is.
     *(s32 *)&actor->x = (*(s32 *)&actor->x & FIELD_CELL_MASK) + px(8);
     *(s32 *)&actor->z = (*(s32 *)&actor->z & FIELD_CELL_MASK) + px(16);

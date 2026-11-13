@@ -107,7 +107,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   state->linkTimer = 0;
   state->timerHidden = 0;
   /* FAKEMATCH(type): cleared as a word, among the other words; as a pointer
-   * store, 2 of 1841 instructions move in tbs-en. */
+   * store, 2 of 1727 instructions differ in tbs-en. */
   *(s32 *)&state->timerWindow = 0;
   // Both peers announce the command-entry phase before accepting commands: this
   // side writes "VSST" into halfwords 4 to 7 of its signature, then waits for
@@ -214,8 +214,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       break;
     }
 
-    // Each party member in turn. A command starts from the standby Djinn the
-    // earlier ones leave, so two summons cannot spend the same Djinn.
+    // Each party member in turn.
     for (;;) {
       if (commandIndex == 0) {
         BattleDjinn_CountStandbyFar(0, state->standbyDjinn[0]);

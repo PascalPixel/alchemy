@@ -308,9 +308,7 @@ void StatusPanel_DrawHpPp(struct Unit *unit, struct Window *window) {
   s16 value;
 
 #if LANGUAGE != LANGUAGE_JAPANESE
-  // The label at the left and a slash at 48. A current figure ends before
-  // the slash, at 48, and a maximum at 88, each in a field as wide as its
-  // digits.
+  // The label at the left and a slash at 48.
   Text_DrawStringAtOffsetFar(gStatusPanel_HpString, window, 0, 40);
   Text_DrawStringInWindowFar((u8 *)gStatusPanel_SlashString, window, 48, 40);
   value = unit->hpMax;

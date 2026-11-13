@@ -292,8 +292,7 @@ void Actor_UpdateAllThumb(void) {
         }
 
         // Float: bob up and down on a triangle wave (ACTOR_FLOATS_HIGH makes it
-        // bigger). The phase runs over 64 frames, each table entry held for
-        // two.
+        // bigger).
         if ((actor->motionFlags & ACTOR_FLOATS) != 0) {
           phase = (actor->bounce & 0x3f);
           if ((actor->motionFlags & ACTOR_FLOATS_HIGH) != 0)

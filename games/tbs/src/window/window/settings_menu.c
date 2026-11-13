@@ -681,8 +681,7 @@ struct Window *PauseMenu_Open(void) {
   }
   if (gDebugMode != 0)
     rows += PAUSE_MENU_DEBUG_ROWS;
-  // Three tiles a row and a tile more. The window starts higher by a row for
-  // each entry, and at row 1, 19 tall, when it would reach row 19.
+  // Three tiles a row and a tile more.
   top = 8 - rows;
   height = rows * 3 + 1;
   if (top + height > 19) {

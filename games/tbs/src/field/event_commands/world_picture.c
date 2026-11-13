@@ -254,8 +254,7 @@ void WorldPicture_UpdateMarkers(void) {
     cursorY = work->cursorY.part.pixel;
   }
 
-  // Actor id 0 consumes no marker row. Ordinary rows begin at actor id 11; a
-  // selected slot in 1..10 also consumes one.
+  // Actor id 0 consumes no marker row.
   for (markerIndex = 0; markerIndex < WORLD_MAP_MARKER_CAPACITY;
        markerIndex++) {
     if (markerIndex != leader && markerIndex < WORLD_MAP_FIRST_AREA_ACTOR)

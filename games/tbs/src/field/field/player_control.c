@@ -541,8 +541,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *actor) {
 #if !TBS_PATCH_1
   count = 0;
 #endif
-  // Walk, or run with the dash keys. L, as it repeats, raises the limit
-  // further; unlike the field's fast walk, no debug test or flag guards it.
+  // Walk, or run with the dash keys.
   if (gKeysHeld & gMainRoutineWork.dashKeys) {
     actor->speedLimit = WORLD_MAP_RUN_SPEED;
     actor->acceleration = WORLD_MAP_RUN_ACCELERATION;

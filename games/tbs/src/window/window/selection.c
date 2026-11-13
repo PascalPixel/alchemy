@@ -20,8 +20,7 @@ void SelectionMenu_Create(void) {
   screen->window = NULL;
   screen->unread = clear;
   screen->top = clear;
-  // Bit 7: the first list starts from its first entry. Until the list is
-  // first cleared the row is drawn 32 pixels lower and takes no input.
+  // Bit 7: the first list starts from its first entry.
   screen->cursorIndex = 128;
   screen->verticalScroll = 32;
   screen->count = clear;
@@ -477,8 +476,7 @@ void SelectionMenu_Close(void) {
     node = node->next;
   }
   Resource_ResetPendingTransfer();
-  // An arrow's y is nonzero once SelectionMenu_SetupArrow has given it a
-  // slot. The right arrow's slot is freed on the left arrow's y, read twice.
+  // An arrow's y is nonzero once SelectionMenu_SetupArrow has given it a slot.
   if (state->records[0].y != 0) {
     VramCache_FreeEntry(state->records[0].slot);
     if (state->records[0].y != 0) {
@@ -1424,8 +1422,7 @@ u32 Menu_RunSelectionForValue(u32 initialIndex) {
   struct SelectionMenuWork *screen = gSelectionMenuWork;
   u32 result;
 
-  // locked 1: a yes or no row stays at the bottom. The name window is 5
-  // tiles wide inside its frame.
+  // locked 1: a yes or no row stays at the bottom.
   screen->cursorIndex = initialIndex;
   screen->locked = 1;
   SelectionMenu_BuildEntries(initialIndex);

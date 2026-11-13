@@ -130,8 +130,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   for (;;) {
     code = work->textBuffer[entryIndex];
     entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
-    // A character adds its width. Spaces (in Japanese every character) are
-    // counted as the points the line can be stretched at.
+    // A character adds its width.
     if (code > 31) {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
       if (code == 32) {

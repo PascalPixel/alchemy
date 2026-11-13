@@ -49,8 +49,7 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 oamFlags,
   sprite->x = x;
   sprite->y = y;
   sprite->index = slot;
-  // Kind 1: the sprite owns the slot, which is freed with it. Its motion is
-  // WINDOW_SPRITE_MOTION_STILL.
+  // Kind 1: the sprite owns the slot, which is freed with it.
   sprite->kind = WINDOW_SPRITE_ICON;
   sprite->motion = 1;
   WindowSprite_AppendToList(&window->sprites, sprite);

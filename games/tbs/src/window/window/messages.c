@@ -400,9 +400,7 @@ UNUSED s32 Text_DecodeSymbolInC(struct MessageReader *reader) {
   text = (const u8 *)reader->words;
   textBits = reader->bits;
   treeBits = 1;
-  // The previous code's high bits pick the bank, its low byte the tree. The
-  // tree runs forwards from base; its leaves' symbols run backwards from
-  // base - 1.
+  // The previous code's high bits pick the bank, its low byte the tree.
   contextBank = code >> 8;
   code &= 0xff;
   base = Text_MessageContexts[contextBank][0];

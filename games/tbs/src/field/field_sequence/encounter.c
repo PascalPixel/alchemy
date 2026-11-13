@@ -304,8 +304,7 @@ void BattleBackground_SelectForMap(void) {
   s32 target = gMainRoutineWork.next;
   s32 *table = gScene_BattleBackgroundRules;
   s32 entry = *table++;
-  // The first scene_rules.s word names a battle background. It cannot match the
-  // halfword scene id, so the loop sets this before testing any scene.
+  // The first scene_rules.s word names a battle background.
   s32 backdrop;
 
   if (entry != 0 && entry != target) {

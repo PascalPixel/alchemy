@@ -32,8 +32,7 @@ loop:
       Window_DrawOpened(window);
     }
   } else if (window->duration != 0) {
-    // Closing: zoom in one stage a frame, then erase it and free its slot. Each
-    // stage erases the rectangle the stage before drew (previousX and its kin).
+    // Closing: zoom in one stage a frame, then erase it and free its slot.
     if ((s16)window->zoomStage != window->duration) {
       Window_EraseBorderRect((s16)window->previousX, (s16)window->previousY,
                              (s16)window->previousWidth,
@@ -494,8 +493,7 @@ void FieldMessage_Show(s32 message, s32 flags) {
   } else {
     s32 actorTileY;
 
-    // The character's screen y in pixels, as a tile row. In the lower half
-    // the window's top goes 5 rows above it; otherwise 4 rows below.
+    // The character's screen y in pixels, as a tile row.
     Actor_GetScreenPositionFar(gMainRoutineWork.leaderActorId, actorPosition);
     actorTileY = actorPosition[1] >> 3;
     if (actorTileY > 9) {

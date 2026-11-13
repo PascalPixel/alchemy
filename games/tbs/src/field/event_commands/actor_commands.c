@@ -260,8 +260,7 @@ void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z) {
     actor->x.fixed = x;
     actor->z.fixed = z;
     // Swap the old ground's height for the new one, so the actor's height above
-    // the ground is kept. The coordinates are whole pixels, rounded toward
-    // zero.
+    // the ground is kept.
     if (1 & actor->motionFlags) {
       terrainId = actor->layer;
       tileX = x;
@@ -642,8 +641,9 @@ void Actor_ReleaseById(s32 index) {
     Actor_ReleaseFar(released);
 #ifdef UBFIX
     // The getter accepts slots through 191, including non-actor storage.
-    // Copy the pointer representation without extending the actor array.
     memcpy((u8 *)table + offsetof(struct FieldWork, actors) +
+               // Copy the pointer representation without extending the actor
+               // array.
                index * sizeof(void *),
            &empty, sizeof(empty));
 #else

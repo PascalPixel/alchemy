@@ -423,9 +423,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   // counter, a full turn every 256 frames.
   if ((gKeysHeld & KEY_B) != 0)
     angle = (s16)(gVBlankCount << 8);
-  // The steps are a sixth, an eighth, a tenth and
-  // a quarter of a turn. Unused positions of the ten
-  // are skipped.
+  // The steps are a sixth, an eighth, a tenth and a quarter of a turn.
   switch ((u32)facingKind) {
   case ANIM_FACING_THREE_PICTURES:
     for (facingIndex = 0; facingIndex < 6; facingIndex++) {

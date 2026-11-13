@@ -212,8 +212,7 @@ void PartyStatus_Draw(s32 flags) {
   u8 standbyDjinn[4];
 
   // List the party members shown: those fighting in battle, the party
-  // otherwise. In battle the window is a row shorter and its text starts a row
-  // higher.
+  // otherwise.
   if (work->battleMode != WINDOW_FIELD) {
     count = BattleParty_PrepareMembersFar(0);
     y = -1;

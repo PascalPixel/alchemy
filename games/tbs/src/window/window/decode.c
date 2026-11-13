@@ -429,8 +429,7 @@ s32 Message_Decode(s32 script, s32 clear) {
         }
 
 #endif
-        // A character. Halting speech breaks off with an ellipsis at the
-        // first space or after 11 characters.
+        // A character.
         if (code > 31) {
           if (work->haltingSpeech != 0 && (code == 32 || decodedCount > 10)) {
             TEXT_APPEND(entry, writePosition, '.');
@@ -897,8 +896,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             previousCode != TEXT_JAPANESE_COMMA) {
           TEXT_APPEND(entry, writePosition, ENTRY_WIDE_GAP);
         }
-        // A character. Halting speech breaks off with an ellipsis at the
-        // first space or after 11 characters.
+        // A character.
         if (code > 31) {
           // A battle message doubles each space. The ellipsis here is
           // ・・・。.

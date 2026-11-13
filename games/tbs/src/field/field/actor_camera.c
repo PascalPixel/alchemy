@@ -212,8 +212,7 @@ void ActorSystem_ProjectSprites(void) {
   } else {
     Transform_SetLookAt((s32 *)eye, (s32 *)target);
   }
-  // The actors are placed from the last down. A sprite's layer byte is its
-  // draw slot here: 0 sorts it by distance (Render_PlaceProjectedSprite).
+  // The actors are placed from the last down.
   actor = gActors;
   actor += ACTOR_COUNT - 1;
   {

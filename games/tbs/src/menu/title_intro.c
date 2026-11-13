@@ -320,8 +320,7 @@ s32 Title_ShowIntro(s32 prompt) {
   Title_LoadIntroBackgrounds();
   TitlePaletteFade_Initialize();
   TitlePaletteFade_SetCurrent(RGB(2, 0, 0), PALETTES_ALL);
-  // This screen supplies its own OAM list in VBlank. Keep the normal OAM
-  // copy disabled until its sprite task is removed at the white flash.
+  // This screen supplies its own OAM list in VBlank.
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
@@ -708,8 +707,7 @@ void TitlePaletteFade_Update(void) {
             DMA_COPY_WORDS(sizeof(work->current) / 4), REG_DMA3);
     work->duration = 0;
   }
-  // The queued DMA keeps a pointer until VBlank. Build into the spare page
-  // so packing this frame cannot overwrite the last frame's pending colours.
+  // The queued DMA keeps a pointer until VBlank.
   packedColors = work->packed[work->page ^ 1];
   {
     s32 blueMask = 0x7c00;

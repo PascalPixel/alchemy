@@ -83,8 +83,7 @@ s32 Field_UsePsynergy(u32 code) {
     Unit_AddPpFar(userId, -ppCost);
   }
 
-  // Find the scene's events, and choose how the Psynergy plays. The before
-  // event runs before the two flags are read, so it can change them.
+  // Find the scene's events, and choose how the Psynergy plays.
   before = Scene_FindPsynergyTrigger(
       PSYNERGY_TRIGGER(PSYNERGY_PHASE_BEFORE_CAST), abilityGroup, &target);
   after = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_AFTER_CAST),

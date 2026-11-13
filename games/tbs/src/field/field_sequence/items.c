@@ -109,9 +109,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
   trigger = (const struct Trigger *)Field_FindItemTrigger(itemId);
   if (trigger != 0 && trigger->value != 0) {
-    // The scene's event: a message, or a function. A value below
-    // TRIGGER_RESULT_MESSAGE_END is a message number; anything else is a code
-    // address. TRIGGER_SUBJECT_OWN_EFFECT skips the "uses the item" message.
+    // The scene's event: a message, or a function.
     GameFlag_ClearFar(FLAG_ITEM_USED_UP);
     GameFlag_ClearFar(FLAG_NOTHING_HAPPENS);
     if (!(trigger->subject & TRIGGER_SUBJECT_OWN_EFFECT)) {
@@ -164,6 +162,9 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       MessageArgument_PushFar(actorId, MESSAGE_ARGUMENT_ACTOR);
       MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
       FieldMessage_ShowFar(MsgActorUsesItem, FIELD_MESSAGE_ZOOM);
+      /* FAKEMATCH(type): called as returning a value, as a C89 call with no
+       * prototype is; as its void prototype, 2 of 253 instructions differ in
+       * tbs-en. */
       ((s32 (*)(s32, s32))FieldPsynergy_LoadResources)(abilityId, 0);
       work->psynergyActing = 1;
       FieldPsynergy_Run();

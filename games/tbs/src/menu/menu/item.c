@@ -473,8 +473,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       Party_ClearUnusableShortcutsFar();
       break;
 
-    // Give the item, or some of a stack, to the chosen party member. A full
-    // inventory offers a trade instead; the new holder may equip it.
+    // Give the item, or some of a stack, to the chosen party member.
     case ITEM_STEP_GIVE:
       transferFailed = 0;
       item = Item_GetDirectFar(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
@@ -586,8 +585,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       state = ITEM_STEP_MEMBER;
       break;
 
-    // Trade: the receiver gives back one of their items. Both units are saved
-    // first and restored if any part of the swap fails.
+    // Trade: the receiver gives back one of their items.
     case ITEM_STEP_TRADE:
       transferFailed = 0;
       ItemMenu_SetMessageWindowHeight3();
@@ -725,8 +723,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       state = ITEM_STEP_MEMBER;
       break;
 
-    // Equip it. Inventory_EquipFar returns -1 when the party member cannot
-    // equip it and -2 when the item it would replace is cursed on.
+    // Equip it.
     case ITEM_STEP_EQUIP:
       result = Inventory_EquipFar(menu->sideMember[0], menu->selectedSlots[0]);
       if (result == -1) {

@@ -123,7 +123,7 @@ MapGrid_CopyCellPictureHalfColumn(u32 *cell, u8 *screenMap, u32 screenRowOffset,
   u32 index = ((*cell << 20) >> 18) + tileHalf;
 
   /* FAKEMATCH(temporary): entry holds each row's table, then steps to the
-   * picture; as one expression, about 30 of 81 instructions differ in tbs-en.
+   * picture; as one expression, 30 of 81 instructions differ in tbs-en.
    */
   entry = (u16 *)Ram_CellPictures;
   entry += index;
@@ -146,8 +146,8 @@ static __inline__ void MapGrid_CopyCellPictureToScreen(u32 *cell, u8 *screenMap,
   u32 index = (*cell << 20) >> 19;
 
   /* FAKEMATCH(temporary): as in MapGrid_CopyCellPictureHalfColumn, rows
-   * steps from each row's table to the picture; as one expression, about 35
-   * of 66 instructions differ in tbs-en. */
+   * steps from each row's table to the picture; as one expression, 35 of
+   * 66 instructions differ in tbs-en. */
   rows = (u32 *)Ram_CellPictures;
   rows += index;
   screenTile = screenMap + screenRowOffset * 2 + screenColumnOffset * 2;
@@ -225,8 +225,7 @@ s32 MapGrid_LoadMap(s32 index) {
       HeapSlot_AllocEwram(HEAP_SLOT_MAP_GRID, sizeof(struct MapGridScrollWork));
   Iwram_ClearWords(grid, sizeof(struct MapGridScrollWork));
   mapHeader = MAPGRID_RESOURCE(mapResources, 0);
-  // The header's offsets count from the header itself. The cell pictures are
-  // staged in the cell buffer, which the cell planes then overwrite.
+  // The header's offsets count from the header itself.
   packed = (u8 *)mapHeader + mapHeader->cellPictures;
   TileMap_DecodeStagedBuffer(
       Decompress_TaggedLz(packed, Ram_MapGridCellBuffer + 1));
@@ -249,8 +248,7 @@ s32 MapGrid_LoadMap(s32 index) {
   // The treasure spot list is not decoded: Field_PlaceTreasureSpots reads it in
   // place through this pointer (MapGridMarkers.markers).
   grid->markers = (u8 *)mapHeader + mapHeader->markers;
-  // The header's bounds and origins are in 8-pixel tiles. The view starts at
-  // (0, 0) until the camera is centred.
+  // The header's bounds and origins are in 8-pixel tiles.
   grid->minX = px(mapHeader->cameraBounds[0] * 8);
   grid->minY = px(mapHeader->cameraBounds[1] * 8);
   grid->maxX = px(mapHeader->cameraBounds[2] * 8);
@@ -642,7 +640,7 @@ void MapGrid_CopyCellPictureIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
           u8 *screen, *cellPicture;
 
           /* FAKEMATCH(temporary): the addresses held as numbers, a step at a
-           * time; as plain pointer expressions, about 75 of 150 instructions
+           * time; as plain pointer expressions, 75 of 150 instructions
            * differ in tbs-en. */
           screenAddress = (u32)BG_SCREEN_BLOCK(5);
           screen = (u8 *)screenAddress;
@@ -777,7 +775,7 @@ void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY, s32 width,
           u8 *screen, *cellPicture;
 
           /* FAKEMATCH(temporary): the addresses held as numbers, a step at a
-           * time; as plain pointer expressions, about 75 of 150 instructions
+           * time; as plain pointer expressions, 75 of 150 instructions
            * differ in tbs-en. */
           screenAddress = (u32)BG_SCREEN_BLOCK(5);
           screen = (u8 *)screenAddress;
@@ -875,7 +873,7 @@ void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
           u8 *screen, *cellPicture;
 
           /* FAKEMATCH(temporary): the addresses held as numbers, a step at a
-           * time; as plain pointer expressions, about 75 of 150 instructions
+           * time; as plain pointer expressions, 75 of 150 instructions
            * differ in tbs-en. */
           screenAddress = (u32)BG_SCREEN_BLOCK(5);
           screen = (u8 *)screenAddress;

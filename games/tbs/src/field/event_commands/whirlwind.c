@@ -66,8 +66,7 @@ void FieldEffect_WanderAroundAnchor(struct Actor *effect) {
   dz = Iwram_MulQ16(len, Trig_Sin(angle));
   effect->x.fixed += dx;
   effect->z.fixed += dz;
-  // The u16 angle wraps: 0xfff0 gives a small backwards drift. A turn burst
-  // adds 1/32 of a turn each frame without stopping the outward motion.
+  // The u16 angle wraps: 0xfff0 gives a small backwards drift.
   effect->facing += 0xfff0;
   if (effect->turnFrames != 0) {
     effect->turnFrames--;
@@ -99,9 +98,7 @@ void FieldEffect_CircleAnchor(struct Actor *effect) {
     effect->z.fixed = anchor->z.fixed + dz;
     effect->facing += WHIRLWIND_ORBIT_ANGLE_STEP;
     if (++effect->swirlFrames == WHIRLWIND_ORBIT_FRAMES) {
-      // The field integrates height after this update routine. Supply upward
-      // speed and gravity here; the wandering update routine only changes x and
-      // z.
+      // The field integrates height after this update routine.
       effect->update = FieldEffect_WanderAroundAnchor;
       effect->swirlFrames = 0;
       effect->turnFrames = 0;
@@ -209,8 +206,7 @@ void FieldPsynergy_Whirlwind(void) {
   wait(30);
   Sound_PlayFar(SE_WHOOSH);
   wait(20);
-  // Every particle has left its orbit by now. Its wandering update routine no
-  // longer reads the anchor, so the orb can be released independently.
+  // Every particle has left its orbit by now.
   Actor_ReleaseFar(ball);
   FieldPsynergy_FadeFromCastColor();
 }

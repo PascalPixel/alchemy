@@ -1,4 +1,9 @@
-// ---- games/tla/src/scene/shaman_village/s00b8.c ----
+/// @file
+/// The Shaman Village, whose people will not talk to outsiders: Moapa, shown
+/// the Shaman's Rod, sends the party to Trial Road, where Sheba's Whirlwind
+/// clears the sand before the race to the summit; its houses, inn, shop and
+/// sanctum, Aroma the Djinni, and the lettering that counts the race down.
+
 #include "../shared/actors.h"
 #include "types.h"
 #include "field_effect.h"
@@ -11,7 +16,7 @@
 #include "resource.h"
 #include "module/window/window.h"
 
-extern const s32 *gData_02004c50[];
+extern const s32 *gFieldEffect_DurationScripts[];
 
 /* VIEW(s00b8): routine Actor_SetSpriteFlags as void
  * Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
@@ -24,9 +29,9 @@ extern void
 Actor_SetSingleChildFlags__s00b8(struct FieldEffect *effect,
                                  s32 flags) __asm__("Actor_SetSpriteFlags");
 
-void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options) {
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options) {
   struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
@@ -41,8 +46,9 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Import_ActorSetMode((struct Actor *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Import_ActorStartScript((struct Actor *)effect,
-                          gData_02004c50[flags & EFFECT_SCRIPT_MASK]);
+  Import_ActorStartScript(
+      (struct Actor *)effect,
+      gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags__s00b8(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
@@ -71,7 +77,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     s32 target;
     s32 frames;
 
-    script = gData_02004c50[flags & EFFECT_SCRIPT_MASK];
+    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
     target = options->targetScaleX;
     frames = script[3];
     if ((flags & EFFECT_USE_START_SCALE) != 0) {
@@ -107,7 +113,7 @@ extern void Import_ActorSetMode__s0280(struct ShamanVillageObject *object,
 #include "shaman_village.h"
 #undef Import_ActorSetMode
 
-void Func_02000280(void) { Djinn_JoinParty(18, 3, 13); }
+void ShamanVillage_MeetAroma(void) { Djinn_JoinParty(18, 3, 13); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -161,7 +167,7 @@ extern u32 gShamanVillage_Placements[];
 extern u32 gShamanVillage_Room1Placements[];
 extern s16 gShamanVillage_Room3Placements[];
 
-extern struct ShamanVillageSceneBlock gData_020056b0;
+extern struct ShamanVillageSceneBlock gShamanVillage_Room2Placements;
 extern u32 gShamanVillage_Room4Placements[];
 extern u32 gShamanVillage_Room5Placements[];
 extern u32 gShamanVillage_Room6Placements[];
@@ -175,8 +181,8 @@ void *Scene_GetPlacements(void) {
     return gShamanVillage_Room3Placements;
   if (scene == (s32)&SceneId_ShamanVillage2) {
     if (Event_GetFlag(0x9fe))
-      gData_020056b0.field16 = 1;
-    return &gData_020056b0;
+      gShamanVillage_Room2Placements.field16 = 1;
+    return &gShamanVillage_Room2Placements;
   }
   if (scene == (s32)&SceneId_ShamanVillage4)
     return gShamanVillage_Room4Placements;
@@ -193,8 +199,8 @@ void *Scene_GetPlacements(void) {
 
 /// Fills BG0's line scroll table with a jittered sine wave and streams it
 /// to BG0HOFS by HBlank DMA 0.
-void Func_02000378(void) {
-  s16 *line = gData_02006350;
+void ShamanVillage_WaveWhirlwindLines(void) {
+  s16 *line = gShamanVillage_WaveLines;
   s32 i;
   s16 *source;
   volatile u16 *scroll;
@@ -213,7 +219,7 @@ void Func_02000378(void) {
     else if (*line < -64)
       *line += 64;
   }
-  line = gData_02006350;
+  line = gShamanVillage_WaveLines;
   scroll = (volatile u16 *)REG_BG0HOFS;
   *scroll = *line;
   dma = REG_DMA0;
@@ -224,7 +230,7 @@ void Func_02000378(void) {
   Dma_Set(source, scroll, 0xa2600001, (volatile u32 *)dma);
 }
 
-void Func_02000420(void) {
+void ShamanVillage_ScrollSandLayer(void) {
   s32 *view = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 376);
 
   view[2] -= 0x20000;
@@ -236,13 +242,12 @@ void Func_02000420(void) {
   }
 }
 
-void Func_02000458(struct ShamanVillageObject *object) {
+void ShamanVillage_FlickerRock(struct ShamanVillageObject *object) {
   s32 bit = (((u32)gFrameCount & 3) >> *((u8 *)object + 99)) & 1;
 
   FieldActor_SetSpriteColor(object, (u8)(bit * *((u8 *)object + 98)));
 }
 
-// ---- games/tla/src/field/field_effect/circle_blink.c ----
 #include "field_event.h"
 #include "frame.h"
 
@@ -250,8 +255,7 @@ void Func_02000458(struct ShamanVillageObject *object) {
 
 /// Circles the object around the centre in words 68 and 76, twice as wide
 /// as it is deep, the radius growing with its height, one step of 256 per
-/// lap, and blinks the part attribute every other frame. Overlay 663's
-/// Func_020008ac is the same function.
+/// lap, and blinks the part attribute every other frame.
 void Effect_CircleAndBlink(struct Actor *object) {
   s32 radius = object->y;
   s32 step = WORD_AT(object, 48);
@@ -271,7 +275,7 @@ void Effect_CircleAndBlink(struct Actor *object) {
 /// Swings an object about x = 168: left of it the object speeds up rightward
 /// and grows, right of it leftward and shrinks. It takes sprite priority 1
 /// while it moves right, 2 otherwise, and spins.
-void Func_02000508(struct ShamanVillageObject *object) {
+void ShamanVillage_SwirlSandGrain(struct ShamanVillageObject *object) {
   object->x += object->field44;
   object->y += object->field48;
   object->z += *(s32 *)((u8 *)object + 76);
@@ -295,12 +299,12 @@ void Func_02000508(struct ShamanVillageObject *object) {
 #include "system/io_reg.h"
 #include "system/field_effect.h"
 
-extern const s32 gData_02004ae0[];
+extern const s32 gFieldEffect_MediumScript[];
 
-void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
-void Func_02000420(void);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
+void ShamanVillage_ScrollSandLayer(void);
 
 #define OBJ14_BYTE(offset) (((u8 *)Actor_GetById(14))[offset])
 
@@ -354,7 +358,7 @@ row:
   Event_PlaySound(246);
   OBJ14_BYTE(98) = 9;
   OBJ14_BYTE(99) = 1;
-  Actor_GetById(14)->update = Func_02000458;
+  Actor_GetById(14)->update = ShamanVillage_FlickerRock;
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
       spark = (struct Actor *)Import_ActorCreate(0x2a0, Actor_GetById(14)->x,
@@ -369,7 +373,7 @@ row:
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
       Import_ActorSetMode((struct Actor *)spark, 7);
-      Import_ActorStartScript((struct Actor *)spark, gData_02004ae0);
+      Import_ActorStartScript((struct Actor *)spark, gFieldEffect_MediumScript);
       Actor_SetSpriteFlags(spark, 0);
       FieldActor_SetSpriteColor(spark, 2);
       spark->update = Effect_CircleAndBlink;
@@ -381,7 +385,7 @@ row:
   FieldCamera_SetSpeed(0x10000, 0x2000);
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(424), 1);
   FieldCamera_WaitForArrival();
-  Task_Add(Func_02000378, 0xc80);
+  Task_Add(ShamanVillage_WaveWhirlwindLines, 0xc80);
   Event_PlaySound(207);
   REG_BLDALPHA = 0xf00;
   REG_BLDCNT = 0x3f41;
@@ -402,7 +406,7 @@ rise:
   MapGrid_CopyCellsTo(2, 83, 36, 64, 16, 16);
   MapGrid_CopyCellsTo(64, 64, 2, 83, 16, 16);
   REG_BG1CNT &= ~3;
-  Task_Add(Func_02000420, 0x480);
+  Task_Add(ShamanVillage_ScrollSandLayer, 0x480);
   i = 0;
 swirl:
   REG_BLDALPHA = ((16 - (i >> 2)) << 8) | (i >> 2);
@@ -441,15 +445,15 @@ frame:
     s32 *v = velocity;
 
     options.priority = 1;
-    options.update = Func_02000508;
+    options.update = ShamanVillage_SwirlSandGrain;
     v[0] = 0;
     v[2] = -0x20000;
     v[1] = 0;
     {
       s32 x = ((Random16Far() & 127) << 16) + (208 << 15);
 
-      Func_020000b8(x, 0, (472 - (Random16Far() & 127)) << 16, v[0], v[1], v[2],
-                    0x1020001, &options);
+      FieldEffect_Spawn(x, 0, (472 - (Random16Far() & 127)) << 16, v[0], v[1],
+                        v[2], 0x1020001, &options);
     }
   }
   REG_BLDALPHA = ((j >> 2) << 8) | (16 - (j >> 2));
@@ -485,7 +489,7 @@ clear:
   Event_Wait(1);
   if (i != 68)
     goto clear;
-  Task_RemoveFar(Func_02000420);
+  Task_RemoveFar(ShamanVillage_ScrollSandLayer);
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 1;
   MapGrid_CopyCellsTo(36, 64, 2, 83, 16, 16);
@@ -505,7 +509,7 @@ fade:
   i++;
   if (i != 65)
     goto fade;
-  Task_RemoveFar(Func_02000378);
+  Task_RemoveFar(ShamanVillage_WaveWhirlwindLines);
   {
     s32 zero = 0;
 
@@ -606,7 +610,7 @@ void ShamanVillage_TalkToGuard(void) {
     Event_SetFlag(0x200);
     ShamanVillage_ExplainTrialRules();
   } else {
-    ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
     Event_ShowMessage(17, 0);
   }
   Event_End();
@@ -631,7 +635,7 @@ void ShamanVillage_TalkToOtherGuard(void) {
     Event_SetFlag(0x200);
     ShamanVillage_ExplainTrialRules();
   } else {
-    ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
     Event_ShowMessage(16, 0);
   }
   Event_End();
@@ -640,39 +644,39 @@ void ShamanVillage_TalkToOtherGuard(void) {
 /// ★ Named from the game: "Then what are you standing around for? Get out of
 /// town!" (MsgShamanOutsidersLeaveTown)
 void ShamanVillage_TellOutsidersToLeave(void) {
-  struct ShamanVillageEventWork *work = Ram_HeapSlots->eventWork;
+  struct EventWork *work = Ram_HeapSlots->eventWork;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanOutsidersLeaveTown);
   Event_ShowMessage(15, 0);
-  work->field15a = 1;
+  work->unk15a = 1;
   Event_End();
 }
 
 /// ★ Named from the game: "If you anger Moapa, you'll be in for a little taste
 /// of his awesome and terrible power." (MsgShamanFearMoapaPower)
 void ShamanVillage_WarnOfMoapasPower(void) {
-  struct ShamanVillageEventWork *work = Ram_HeapSlots->eventWork;
+  struct EventWork *work = Ram_HeapSlots->eventWork;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanFearMoapaPower);
   Event_ShowMessage(17, 0);
-  work->field15a = 1;
+  work->unk15a = 1;
   Event_End();
 }
 
 /// ★ Named from the game: "If there's something you want to say, say it to
 /// Moapa, not to us." (MsgShamanSpeakToMoapa)
 void ShamanVillage_SendToMoapa(void) {
-  struct ShamanVillageEventWork *work = Ram_HeapSlots->eventWork;
+  struct EventWork *work = Ram_HeapSlots->eventWork;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanSpeakToMoapa);
   Event_ShowMessage(16, 0);
-  work->field15a = 1;
+  work->unk15a = 1;
   Event_End();
 }
 
@@ -789,7 +793,7 @@ void ShamanVillage_TalkToMoapa(void) {
         1) {
       Event_ShowMessage(11, 0);
     } else {
-      ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
+      ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
       Event_ShowMessage(11, 0);
       Event_SetFlag(0x9ed);
     }
@@ -844,7 +848,7 @@ void ShamanVillage_TellFortune(void) {
         1) {
       Event_ShowMessage(17, 0);
     } else {
-      ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
+      ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
       Event_ShowMessage(17, 0);
       Event_PlaySound(11);
       Actor_SetAnimation(17, 5);
@@ -964,7 +968,7 @@ void ShamanVillage_OfferToGiveUp(void) {
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 168, 368);
     Event_ClearFlag(0x201);
   } else {
-    ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
     Event_ShowMessage(15, 0);
     FieldCamera_SetSpeed(0x13333, 0x2666);
     FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(280), 1);
@@ -993,7 +997,7 @@ void ShamanVillage_ChallengeMoapa(void) {
     Event_ShowMessage(0x200f, 0);
     ShamanVillage_StepBackFromTrial();
   } else {
-    ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
     Event_OpenMessage(0x200f, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
@@ -1002,15 +1006,15 @@ void ShamanVillage_ChallengeMoapa(void) {
       Event_SetFlag(0x200);
       ShamanVillage_ExplainTrialRules();
     } else {
-      ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
+      ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
       ShamanVillage_CheckTrialEntry();
     }
   }
   Event_End();
 }
 
-extern const u8 gData_02004c5c[];
-extern const u8 gData_02004cac[];
+extern const u8 gShamanVillage_WalkToLeftStartScript[];
+extern const u8 gShamanVillage_WalkToRightStartScript[];
 
 /// The leader takes the left path and Moapa the right, after the countdown.
 /// ★ Named from the game: "If you have chosen, then we shall take the other
@@ -1058,8 +1062,9 @@ void ShamanVillage_TakeLeftPath(void) {
   FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(200), 1);
   owner->unk63 = 0;
   shaman->unk63 = 0;
-  Actor_SetScript(gMainRoutineWork.currentOwner, gData_02004c5c);
-  Actor_SetScript(15, gData_02004cac);
+  Actor_SetScript(gMainRoutineWork.currentOwner,
+                  gShamanVillage_WalkToLeftStartScript);
+  Actor_SetScript(15, gShamanVillage_WalkToRightStartScript);
   do {
     wait(1);
   } while (owner->unk63 == 0 || shaman->unk63 == 0);
@@ -1126,8 +1131,9 @@ void ShamanVillage_TakeRightPath(void) {
   FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(200), 1);
   owner->unk63 = 0;
   shaman->unk63 = 0;
-  Actor_SetScript(15, gData_02004c5c);
-  Actor_SetScript(gMainRoutineWork.currentOwner, gData_02004cac);
+  Actor_SetScript(15, gShamanVillage_WalkToLeftStartScript);
+  Actor_SetScript(gMainRoutineWork.currentOwner,
+                  gShamanVillage_WalkToRightStartScript);
   do {
     wait(1);
   } while (owner->unk63 == 0 || shaman->unk63 == 0);

@@ -13,59 +13,59 @@ struct ShamanVillageSceneBlock {
   u8 field16;
 };
 
-extern s16 gData_02006350[];
+extern s16 gShamanVillage_WaveLines[];
 
-void Func_02000378(void);
+void ShamanVillage_WaveWhirlwindLines(void);
 
-extern u32 gData_02004cfc[];
-extern u32 gData_02004d40[];
-extern u32 gData_02004dc8[];
-extern u32 gData_02004e0c[];
-extern u32 gData_02004eac[];
-extern u32 gData_02004f08[];
+extern u32 gShamanVillage_KradenStandsByRodScript[];
+extern u32 gShamanVillage_PiersStandsByRodScript[];
+extern u32 gShamanVillage_ShebaStandsByRodScript[];
+extern u32 gShamanVillage_MoapaLeavesHouseScript[];
+extern u32 gShamanVillage_OtherGuardLeavesHouseScript[];
+extern u32 gShamanVillage_RejoinLeaderAtHouseScript[];
 
-struct ItemDefinition *Func_02004894(s32 item);
+struct ItemDefinition *Import_ItemGet(s32 item);
 
-extern u32 gData_020064d0[];
+extern u32 gShamanVillage_LetteringSprites[];
 
-extern s16 gData_02005158[];
+extern s16 gShamanVillage_LetteringVramEntry[];
 
-extern s16 gData_020064bc;
-extern s16 *gData_020064c0;
-extern s32 gData_020064a0;
-extern s16 gData_02006504;
-extern s16 gData_0200649c;
-extern s16 gData_020064a8;
-extern s16 gData_020064a4;
-extern s16 gData_02006498;
-extern s16 gData_02006490;
-extern s16 gData_02006508;
-extern s16 gData_020064b4;
-extern s16 gData_020064b8;
-extern s16 gData_020064c4;
-extern s16 gData_020064ac;
-extern s16 gData_020064b0;
-extern s16 gData_02006494;
+extern s16 gShamanVillage_LetteringWait;
+extern s16 *gShamanVillage_LetteringCursor;
+extern s32 gShamanVillage_LetteringX;
+extern s16 gShamanVillage_LetteringSpeed;
+extern s16 gShamanVillage_LetteringSpeedFrames;
+extern s16 gShamanVillage_LetteringSpeedFrame;
+extern s16 gShamanVillage_LetteringScale;
+extern s16 gShamanVillage_LetteringScaleFrom;
+extern s16 gShamanVillage_LetteringScaleFrames;
+extern s16 gShamanVillage_LetteringScaleFrame;
+extern s16 gShamanVillage_LetteringBlend;
+extern s16 gShamanVillage_LetteringBlendFrom;
+extern s16 gShamanVillage_LetteringBlendFrames;
+extern s16 gShamanVillage_LetteringBlendFrame;
+extern s16 gShamanVillage_LetteringMode;
+extern s16 gShamanVillage_LetteringTileOffset;
 
-extern s16 gData_0200515a[];
-extern s16 gData_02004b58[];
-extern s16 gData_02005186[];
-extern s16 gData_02004b80[];
-extern u32 gData_02005204[];
-extern u8 gData_02004bfe[];
+extern s16 gShamanVillage_LetteringSlideScript[];
+extern s16 gShamanVillage_LetteringCountScript[];
+extern s16 gShamanVillage_LetteringGoScript[];
+extern s16 gShamanVillage_LetteringThrobScript[];
+extern u32 gShamanVillage_LetteringThrobFadeScript[];
+extern u8 gShamanVillage_LetteringPalettes[];
 extern char ResourceId_LetteringBanner;
 
 void Import_DecompressTaggedLz(const void *source, void *destination);
 
 void ShamanVillage_CastWhirlwindOnSand(void);
-extern u32 gData_02004f3c[];
-extern u32 gData_02004f80[];
+extern u32 gShamanVillage_KradenWatchesShebaScript[];
+extern u32 gShamanVillage_LeaderWatchesShebaScript[];
 
-extern u32 gData_02004fc4[];
+extern u32 gShamanVillage_JennaWatchesShebaScript[];
 
-extern u32 gData_02005008[];
-extern u32 gData_0200504c[];
-extern u32 gData_020050bc[];
+extern u32 gShamanVillage_PiersWatchesShebaScript[];
+extern u32 gShamanVillage_HeadForTrialRoadScript[];
+extern u32 gShamanVillage_RejoinLeaderAtSandScript[];
 void ShamanVillage_SetUpVillage(void);
 void ShamanVillage_SetUpRoom3(void);
 void ShamanVillage_SetUpRoom2(void);

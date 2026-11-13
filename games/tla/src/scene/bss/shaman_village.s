@@ -2,59 +2,59 @@
 	.thumb
 	.section .bss,"aw",%nobits
 	.space 0x00000004
-	.global gData_02006350
-gData_02006350:
+	.global gShamanVillage_WaveLines
+gShamanVillage_WaveLines:
 	.space 0x00000140
-	.global gData_02006490
-gData_02006490:
+	.global gShamanVillage_LetteringScaleFrames
+gShamanVillage_LetteringScaleFrames:
 	.space 0x00000004
-	.global gData_02006494
-gData_02006494:
+	.global gShamanVillage_LetteringTileOffset
+gShamanVillage_LetteringTileOffset:
 	.space 0x00000004
-	.global gData_02006498
-gData_02006498:
+	.global gShamanVillage_LetteringScaleFrom
+gShamanVillage_LetteringScaleFrom:
 	.space 0x00000004
-	.global gData_0200649c
-gData_0200649c:
+	.global gShamanVillage_LetteringSpeedFrames
+gShamanVillage_LetteringSpeedFrames:
 	.space 0x00000004
-	.global gData_020064a0
-gData_020064a0:
+	.global gShamanVillage_LetteringX
+gShamanVillage_LetteringX:
 	.space 0x00000004
-	.global gData_020064a4
-gData_020064a4:
+	.global gShamanVillage_LetteringScale
+gShamanVillage_LetteringScale:
 	.space 0x00000004
-	.global gData_020064a8
-gData_020064a8:
+	.global gShamanVillage_LetteringSpeedFrame
+gShamanVillage_LetteringSpeedFrame:
 	.space 0x00000004
-	.global gData_020064ac
-gData_020064ac:
+	.global gShamanVillage_LetteringBlendFrame
+gShamanVillage_LetteringBlendFrame:
 	.space 0x00000004
-	.global gData_020064b0
-gData_020064b0:
+	.global gShamanVillage_LetteringMode
+gShamanVillage_LetteringMode:
 	.space 0x00000004
-	.global gData_020064b4
-gData_020064b4:
+	.global gShamanVillage_LetteringBlend
+gShamanVillage_LetteringBlend:
 	.space 0x00000004
-	.global gData_020064b8
-gData_020064b8:
+	.global gShamanVillage_LetteringBlendFrom
+gShamanVillage_LetteringBlendFrom:
 	.space 0x00000004
-	.global gData_020064bc
-gData_020064bc:
+	.global gShamanVillage_LetteringWait
+gShamanVillage_LetteringWait:
 	.space 0x00000004
-	.global gData_020064c0
-gData_020064c0:
+	.global gShamanVillage_LetteringCursor
+gShamanVillage_LetteringCursor:
 	.space 0x00000004
-	.global gData_020064c4
-gData_020064c4:
+	.global gShamanVillage_LetteringBlendFrames
+gShamanVillage_LetteringBlendFrames:
 	.space 0x0000000c
-	.global gData_020064d0
-gData_020064d0:
+	.global gShamanVillage_LetteringSprites
+gShamanVillage_LetteringSprites:
 	.space 0x00000030
-	.global gData_02006500
-gData_02006500:
+	.global gShamanVillage_LetteringSpeedFrom
+gShamanVillage_LetteringSpeedFrom:
 	.space 0x00000004
-	.global gData_02006504
-gData_02006504:
+	.global gShamanVillage_LetteringSpeed
+gShamanVillage_LetteringSpeed:
 	.space 0x00000004
-	.global gData_02006508
-gData_02006508:
+	.global gShamanVillage_LetteringScaleFrame
+gShamanVillage_LetteringScaleFrame:

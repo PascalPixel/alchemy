@@ -116,8 +116,8 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
       }
     }
 
-    // Frame 8: the first target is hit, and the screen shakes for 8 frames
-    // (shakeFrames takes the frame number).
+    // The first target is hit, and the screen shakes for 8 frames (shakeFrames
+    // takes the frame number).
     if (frame == 8) {
       work->shakeFrames = frame;
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);

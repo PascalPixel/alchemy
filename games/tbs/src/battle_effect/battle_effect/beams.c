@@ -216,8 +216,8 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
                   gBeam_PictureWidths[picture], gBeam_PictureHeights[picture]);
       }
     }
-    // Frames 4 to 15: the yellow orb flashes over the target, six 40x48
-    // pictures, two frames each.
+    // The yellow orb flashes over the target, six 40x48 pictures, two frames
+    // each.
     if (frame >= 4 && frame <= 15)
       draw[0](canvas, Ram_MapGridCellBuffer + (frame - 4) / 2 * (40 * 48),
               anchor.x - 16, anchor.y - 24, 40, 48);

@@ -419,7 +419,6 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                                          KNOCKBACK_HURL);
         }
       }
-      // Frames 80 to 143.
       if ((u32)stormFrame <= 63) {
         s32 moteX;
         s32 moteY;
@@ -551,7 +550,6 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         }
         BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_THOR, thorX, thorY);
       }
-      // Frames 16 to 143.
       if ((u32)(frame - 16) <= 127) {
         s32 thorScreenX;
         for (i = 0, thorScreenX = thorX >> 17; i != 3; i++) {

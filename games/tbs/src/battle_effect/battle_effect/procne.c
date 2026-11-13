@@ -251,7 +251,6 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       } while (index != 24);
     }
 
-    // Frame 160.
     if (frame == 160) {
       s32 speed;
       s32 angle;
@@ -306,8 +305,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       }
     }
 
-    // From frame 160: sway Procne, faster for its first 64 frames, plus what is
-    // left of each comet's push.
+    // Sway Procne, faster for its first 64 frames, plus what is left of each
+    // comet's push.
     if (frame > 159) {
       scale = unitScale;
       size = 16;
@@ -350,7 +349,6 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         Transform_Reset();
         Transform_ApplyPosition(Vector3_Coordinates(&depthOffset));
 
-        // Frames 256 to 329.
         if (frame <= 329) {
           index = 0;
           do {

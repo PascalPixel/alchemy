@@ -135,7 +135,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     if (frame == 224)
       work->transferMode = CANVAS_COPY;
     EFFECT_VIEW_FROM_CAMERA(camera);
-    // Frame 31: Cybele lands; the screen shakes and the targets flinch.
+    // Cybele lands; the screen shakes and the targets flinch.
     if (frame == 31) {
       work->shakeFrames = 8;
       Sound_PlayFar(SE_GATE_MOVE);
@@ -166,8 +166,8 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           work->sprites[4], gCybele_ObjectPoses[pose][CYBELE_POSE_FACE_RIGHT]);
     }
 
-    // Frames 72 to 127: thorn i flies from frame 72 + i until it reaches
-    // the ground at y 104, its picture changing every 4 frames.
+    // Thorn i flies from frame 72 + i until it reaches the ground at y 104, its
+    // picture changing every 4 frames.
     if (frame >= 72 && frame <= 127) {
       for (i = 0; i != 16; i++) {
         struct Particle *thorn = &work->particles[CYBELE_FIRST_THORN + i];
@@ -188,7 +188,6 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
         }
       }
     }
-    // Frame 128.
     if (frame == 128) {
       for (i = 0; i != 48; i++) {
         struct Particle *chip = &work->particles[CYBELE_FIRST_CHIP + i];
@@ -202,7 +201,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       REG_BG2X = 0;
     }
 
-    // Frames 128 to 224: grow the vines, shaking the screen while they grow.
+    // Grow the vines, shaking the screen while they grow.
     phase = frame - 128;
     if (phase >= 0 && phase <= 96) {
       rise = phase;
@@ -316,7 +315,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       }
     }
 
-    // Frames 128 to 300: six sparks keep flashing around each target's body.
+    // Six sparks keep flashing around each target's body.
     if (phase >= 0 && phase <= 172) {
       EFFECT_FOR_EACH_TARGET(i, work->args) {
         struct Actor *actor =
@@ -418,7 +417,6 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       }
     }
 
-    // Frame 302.
     if (frame == 302) {
       EFFECT_RELEASE_BLITTERS();
       Resource_LoadAndDecompress((s32)&ResourceId_YellowRingSheet, work->sheet,

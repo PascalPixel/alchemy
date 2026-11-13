@@ -111,7 +111,7 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
                 y - 64, 32, 64);
       }
     }
-    // Frame 4: the user leaps, heading out past its own position.
+    // The user leaps, heading out past its own position.
     if (frame == 4) {
       actor->velocityY = px(20);
       actor->acceleration = px(1);
@@ -124,8 +124,8 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
       work->shakeFrames = 4;
       Sound_PlayFar(SE_WHOOSH);
     }
-    // Frame 16: switch to the fireball images and line the user up with
-    // the target's depth.
+    // Switch to the fireball images and line the user up with the target's
+    // depth.
     if (frame == 16) {
       palette = Resource_GetTableEntry((s32)&ResourceId_FlameballSheet);
       Iwram_CopyWords((void *)BG_PLTT, palette, 128);
@@ -137,7 +137,6 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
       actor->z.fixed = target->z.fixed;
       Actor_StartIdleFar(actor);
     }
-    // From frame 18.
     if (frame > 17) {
       if (actor->y.fixed > 0) {
         actor->x.fixed += dx;

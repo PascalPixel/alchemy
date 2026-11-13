@@ -69,7 +69,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   }
   work->shakeFrames = 8;
   for (frame = 0; frame != 54; frame++) {
-    // Frame 10: the strike, with a second 8-frame shake.
+    // The strike, with a second 8-frame shake.
     if (frame == 10) {
       work->shakeFrames = 8;
       EFFECT_SHOW_DAMAGE(SE_POWER_UP);

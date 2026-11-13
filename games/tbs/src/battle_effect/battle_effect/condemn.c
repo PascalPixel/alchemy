@@ -98,8 +98,8 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     if (frame == CONDEMN_SWING_FRAME) {
       Sound_PlayFar(SE_HEAVY_IMPACT);
     }
-    // Frame 32: the second pass, lower and further across; the reaper skips
-    // a frame while it moves, and comes back opaque on frame 33.
+    // The second pass, lower and further across; the reaper skips a frame while
+    // it moves, and comes back opaque on frame 33.
     if (frame == 32) {
       if (work->args->side == EFFECT_SIDE_PARTY) {
         swayCenter[0] = -px(32);
@@ -113,7 +113,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       REG_BLDALPHA = BLEND_ALPHA(16, 16);
       drawReaper = 1;
     }
-    // Frame 64: the last pass, on the first target.
+    // The last pass, on the first target.
     if (frame == 64) {
       Projection_ScaledUnit(work->args->targets[0], position);
       if (work->args->side == EFFECT_SIDE_PARTY) {
@@ -218,8 +218,8 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
         }
       }
     }
-    // Frame 88: knock the target back, away from the middle of the field,
-    // to twice its x at up to 2 pixels a frame.
+    // Knock the target back, away from the middle of the field, to twice its x
+    // at up to 2 pixels a frame.
     if (frame == CONDEMN_SWING_FRAME) {
       target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
       target->velocityY = px(1);
@@ -232,7 +232,6 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       BattleEffect_TintBattler(work->args->targets[0], TINT_KEEP, POSE_DAMAGE,
                                TINT_KEEP, 0);
     }
-    // Frame 120.
     if (frame == CONDEMN_BOUNCE_FRAME) {
       GetBattleObjectSlotFar(work->args->targets[0])->actor->gravity =
           BATTLE_UNIT_GRAVITY;

@@ -413,7 +413,6 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
              gBoreas_RisingCrystalHeights[picture]);
       }
     }
-    // Frame 72.
     if (frame == 72) {
       for (i = 0; i != 64; i++) {
         work->particles[i].x = px(BOREAS_POINT_X(i & 15) - 56);

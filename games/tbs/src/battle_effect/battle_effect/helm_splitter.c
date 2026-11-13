@@ -99,7 +99,6 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
     // kept under the user.
     Projection_Unit(work->args->user, &position);
     REG_BG2X = (80 - position.x) << 8;
-    // Frames 8 to 23.
     if (frame >= 8 && frame <= 23) {
       s32 picture = (frame - 8) / 2;
 

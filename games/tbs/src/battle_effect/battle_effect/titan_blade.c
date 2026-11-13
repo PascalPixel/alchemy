@@ -141,7 +141,6 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
 
-    // From frame 56.
     if (frame > 55) {
       for (i = 0; i != TITAN_BLADE_RING; i++) {
         struct Particle *flash = &work->particles[i];
@@ -185,7 +184,6 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
       }
     }
 
-    // Frames 32 to 63.
     step = frame - 32;
     if (step >= 0 && step <= 31) {
       s32 cnt;
@@ -318,7 +316,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
       }
     }
 
-    // Frame 68: every target flashes and recoils.
+    // Every target flashes and recoils.
     if (frame == 68) {
       EFFECT_FOR_EACH_TARGET(i, work->args) {
         BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,

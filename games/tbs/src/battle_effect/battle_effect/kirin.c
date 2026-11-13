@@ -319,7 +319,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         }
       }
 
-      // Frame 8: BattleCamera_Shake shakes the screen for 8 frames.
+      // BattleCamera_Shake shakes the screen for 8 frames.
       if (frame == 8) {
         work->shakeFrames = 8;
         Sound_PlayFar(SE_CRASH);
@@ -406,8 +406,8 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       if (frame > 64) {
         work->transferMode = CANVAS_COPY_AND_FADE;
       }
-      // Frame 58: every target, burnt by the wall of fire, turns black in its
-      // damage pose.
+      // Every target, burnt by the wall of fire, turns black in its damage
+      // pose.
       if (frame == 58) {
         EFFECT_FOR_EACH_TARGET(i, work->args) {
           BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_BLACK,

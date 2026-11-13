@@ -95,7 +95,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
 
     EFFECT_VIEW_FROM_CAMERA(camera);
 
-    // Frame 0: both leap at 15 pixels a frame.
+    // Both leap at 15 pixels a frame.
     if (frame == 0) {
       target->velocityY = px(15);
       target->gravity = px(57) / 100;
@@ -109,8 +109,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       target->y.fixed += targetHeight;
     }
 
-    // Frame 54: the target flashes and both bounce; the user heads back
-    // towards the middle of the field.
+    // The target flashes and both bounce; the user heads back towards the
+    // middle of the field.
     if (frame == 54) {
       BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 10);
@@ -129,7 +129,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
     Projection_Point(point, &screen);
     screen.x >>= 1;
 
-    // Frames 54 and 55: one big flash on the user.
+    // One big flash on the user.
     if (frame == 54 || frame == 55)
       draw[0](canvas, work->sheet, screen.x - 16, screen.y - 16, 32, 64);
     if (frame >= 56 && frame <= 67) {
@@ -148,7 +148,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       }
     }
 
-    // Frame 64: both turn right side up again.
+    // Both turn right side up again.
     if (frame == 64) {
       target->scaleY = -target->scaleY;
       user->scaleY = -user->scaleY;
@@ -641,7 +641,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_MONSTER_ROAR);
     if (frame == 5)
       Sound_PlayFar(SE_CRASH);
-    // Frame 5: bring the battle background back on BG1.
+    // Bring the battle background back on BG1.
     if (frame == 5) {
       gBgScroll[1].x = work->savedBg1X;
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, -1);
@@ -677,13 +677,13 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       }
     }
 
-    // Frame 4: the whole screen turns the disc's grey.
+    // The whole screen turns the disc's grey.
     if (frame == 4)
       Iwram_FillWords((void *)BG_CHAR_BLOCK(2), BATTLE_BACKGROUND_BYTES,
                       CANVAS_FILL_WORD(2));
 
-    // Frames 0 to 3: grow the disc in the mask by 32 pixels of radius,
-    // brighten its grey (colour 2), and copy the mask to the screen.
+    // Grow the disc in the mask by 32 pixels of radius, brighten its grey
+    // (colour 2), and copy the mask to the screen.
     if (frame <= 3) {
       s32 v;
 
@@ -766,8 +766,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       }
     }
 
-    // Frames 8 to 50: colour 1 goes from black to white, one step a frame,
-    // and is white from frame 39.
+    // Colour 1 goes from black to white, one step a frame, and is white from
+    // frame 39.
     if (frame >= 8 && frame <= 50) {
       s32 v;
 
@@ -777,7 +777,6 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       BG_PLTT[1] = RGB(v, v, v);
     }
 
-    // Frame 51.
     if (frame == 51) {
       Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet,
                                  1, 0);
@@ -932,12 +931,10 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
       BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                                TINT_KEEP, 0, 20);
     }
-    // Frames 28 to 48: the burst of light (48x48), seven images, three
-    // frames each.
+    // The burst of light (48x48), seven images, three frames each.
     if (frame >= 28 && frame <= 48)
       draw[0](canvas, work->sheet + (frame - 28) / 3 * (48 * 48) + 5120, 40,
               ground.y - 24, 48, 48);
-    // Frames 0 to 14.
     if (frame >= 0 && frame <= 14) {
       s32 picture = frame / 3 % 5;
       DrawRectangle *slot =

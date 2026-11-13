@@ -221,8 +221,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
 
     if (frame == 76) {
       for (i = 0; i != 1024; i++) {
-        // Frame 76: a second spray from around (64, 96) out of every free
-        // slot, up to 2 pixels a frame either way across and 2 to 6 up.
+        // A second spray from around (64, 96) out of every free slot, up to 2
+        // pixels a frame either way across and 2 to 6 up.
         if (PARTICLES[i].variant == -1) {
           s32 r = Random16() & 255;
           s32 a = Random16() & TRIG_ANGLE_MASK;
@@ -234,16 +234,16 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         }
       }
     }
-    // Frame 152: only the lines from 96 down stay stretched, and the battle
-    // background's colours darken over 24 frames.
+    // Only the lines from 96 down stay stretched, and the battle background's
+    // colours darken over 24 frames.
     if (frame == 152) {
       Irq_SetHandler(IRQ_VCOUNT, 96, BattleEffect_SetBg2AffineScaleHalf);
       work->fadeFrames = 24;
       work->fadeStep = 0;
     }
 
-    // Frames 152 to 239: the 32 flares converge on Neptune's head at
-    // (112, 62), four more starting each frame, each shown for 32 frames.
+    // The 32 flares converge on Neptune's head at (112, 62), four more starting
+    // each frame, each shown for 32 frames.
     t = frame - 152;
     if (t >= 0 && t < 88) {
       for (i = 0, flare = work->particles; i != 32; i++, flare++) {
@@ -264,7 +264,6 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
 
     if (frame == 222) {
       for (i = 0; i != 64; i++) {
-        // Frame 222.
         burstSeed = &work->particles[i];
         burstSeed->x = (Random16() & 15) - 8;
         burstSeed->y = (Random16() & 15) - 8;

@@ -252,7 +252,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
     }
 
-    // Frame 72: the battle background starts its 24-frame fade
+    // The battle background starts its 24-frame fade
     // (Palette_StepFadeTransfer).
     if (frame == 72) {
       work->fadeFrames = 24;
@@ -328,7 +328,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
     }
 
-    // Frames 116 to 143.
     if (frame >= 116 && frame < 144) {
       s32 high;
       s32 picture;
@@ -375,7 +374,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
     }
 
-    // From frame 144.
     if (frame > 143) {
       s32 top = (frame << 4) - 2272;
       s32 n;
@@ -515,7 +513,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
     }
 
-    // Frame 64.
     if (frame == 64) {
       IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_16);
       IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, 0, IO_WRITE_32);
@@ -542,8 +539,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
     }
 
-    // Frame 70: undo the inversion, rewriting the battle background's palette
-    // from the battle's copy with every channel 7 levels darker.
+    // Undo the inversion, rewriting the battle background's palette from the
+    // battle's copy with every channel 7 levels darker.
     if (frame == 70) {
       BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
                                   (s32)&ResourceId_AerialViewBackdrop, 7);
@@ -633,8 +630,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
     }
 
-    // Frames 0 to 63: a flare falls onto the aerial view, drawn as four
-    // mirrored quarters, its picture flickering every 4 frames.
+    // A flare falls onto the aerial view, drawn as four mirrored quarters, its
+    // picture flickering every 4 frames.
     if (frame <= 63) {
       u8 *sheet;
       s32 top = frame - 4;
@@ -667,7 +664,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
     }
 
-    // Frames 64 to 85.
     if (frame >= 64 && frame < 66) {
       draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_SMALL, 52, 51, 16, 17);
     }
@@ -703,7 +699,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
               d + 38, 22, 44);
     }
 
-    // Frames 72 to 75.
     if (frame >= 72 && frame < 76) {
       s32 r2 = (frame << 4) - 1136;
       s32 size = 10;
@@ -717,8 +712,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
 
     if (frame > 85) {
-      // Frames 86 to 213: draw that many more rings a frame into the wave
-      // picture, each one pixel wider than the last.
+      // Draw that many more rings a frame into the wave picture, each one pixel
+      // wider than the last.
       if (frame <= 213) {
         for (i = 0; i != rings; i++, ring++) {
           s32 radius = ring;
@@ -804,7 +799,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
     }
 
-    // Frames 86 to 149.
     if (frame >= 86 && frame < 150) {
       s32 angle = -TRIG_TURN / 4;
       for (i = 0; i != 9; i++, angle += TRIG_TURN / 16) {
@@ -844,7 +838,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
     }
 
-    // Frames 214 to 279.
     if (frame >= 214 && frame < 280) {
       gBgScroll[1].x += 8;
     }

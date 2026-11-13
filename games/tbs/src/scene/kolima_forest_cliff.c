@@ -36,7 +36,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "tbs_edition.h"
 
 #include "pushed_actor.h"

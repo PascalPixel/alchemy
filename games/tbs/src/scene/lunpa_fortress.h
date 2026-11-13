@@ -5,7 +5,6 @@
 #include "edition.h"
 #include "types.h"
 
-#include "types.h"
 #include "static_assert.h"
 #include "scene_tables.h"
 #include "system.h"

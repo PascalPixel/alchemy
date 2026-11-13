@@ -95,7 +95,6 @@
 #include "system.h"
 #include "heap_slots.h"
 #include "map_grid.h"
-#include "types.h"
 #include "event.h"
 #include "scene_tables.h"
 #include "ability_ids.h"

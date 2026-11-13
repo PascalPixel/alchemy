@@ -12,7 +12,6 @@
 #include "task.h"
 #include "colosso_gauge.h"
 #include "battle_sprite_id.h"
-#include "types.h"
 #include "heap_release.h"
 #include "event.h"
 #include "dma.h"

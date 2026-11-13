@@ -47,7 +47,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "event.h"
 #include "system_call.h"
 #include "heap_release.h"

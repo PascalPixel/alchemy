@@ -108,7 +108,6 @@
 #include "sound.h"
 #include "system.h"
 #include "heap_slots.h"
-#include "types.h"
 #include "text/msg_ids.h"
 #include "event.h"
 #include "scene_tables.h"

@@ -125,7 +125,6 @@
 #include "sound.h"
 #include "system.h"
 #include "imil_fuchin_falls.h"
-#include "types.h"
 #include "glyph.h"
 #include "event.h"
 #include "scene_tables.h"

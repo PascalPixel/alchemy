@@ -9,7 +9,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "frame.h"
 #include "io_reg.h"
 

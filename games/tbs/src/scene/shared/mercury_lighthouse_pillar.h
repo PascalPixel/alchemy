@@ -10,7 +10,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "mercury_lighthouse.h"
 #include "iwram_call.h"
 #include "event.h"

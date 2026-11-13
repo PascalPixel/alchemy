@@ -51,7 +51,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "tbs_edition.h"
 #include "event.h"
 #include "system_call.h"

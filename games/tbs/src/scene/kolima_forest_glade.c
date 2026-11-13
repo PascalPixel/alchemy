@@ -38,7 +38,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "event.h"
 #include "pushed_actor.h"
 #include "io_reg.h"

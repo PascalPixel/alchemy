@@ -80,7 +80,6 @@
 #include "system.h"
 #include "heap_slots.h"
 #include "dma.h"
-#include "edition.h"
 #include "text/msg_ids.h"
 #include "event_inline.h"
 #include "irq.h"

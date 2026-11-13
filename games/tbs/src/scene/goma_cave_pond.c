@@ -34,7 +34,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 
 #include "heap_slots.h"
 #include "scene_tables.h"

@@ -113,7 +113,6 @@
 #include "sound.h"
 #include "system.h"
 #include "heap_slots.h"
-#include "types.h"
 #include "sprite.h"
 #include "event.h"
 #include "io_reg.h"
@@ -123,9 +122,6 @@
 #include "iwram_call.h"
 #include "dma.h"
 
-#include "types.h"
-
-#include "event.h"
 #include "scene_tables.h"
 #include "djinn_ids.h"
 

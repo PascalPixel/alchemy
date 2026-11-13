@@ -98,7 +98,6 @@
 #include "battle_unit.h"
 #include "battle_sprite_id.h"
 #include "ability_ids.h"
-#include "edition.h"
 #include "item_ids.h"
 #include "actor_script.h"
 #include "actor.h"

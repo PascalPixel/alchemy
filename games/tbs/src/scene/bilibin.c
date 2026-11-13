@@ -126,7 +126,6 @@
 #include "sound.h"
 #include "system.h"
 #include "bilibin.h"
-#include "types.h"
 #include "event.h"
 #include "event_inline.h"
 #include "scene_tables.h"

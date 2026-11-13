@@ -93,8 +93,6 @@
 #include "sound.h"
 #include "system.h"
 #include "heap_release.h"
-#include "edition.h"
-#include "types.h"
 #include "task.h"
 #include "item_ids.h"
 #include "event.h"

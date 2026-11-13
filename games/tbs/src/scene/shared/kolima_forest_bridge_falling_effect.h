@@ -10,7 +10,6 @@
 #include "sound.h"
 #include "system.h"
 #include "heap_slots.h"
-#include "types.h"
 #include "event.h"
 #include "map_grid_scroll.h"
 #include "sounds.h"

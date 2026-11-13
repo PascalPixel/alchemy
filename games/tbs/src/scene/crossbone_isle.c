@@ -107,7 +107,6 @@
 #include "edition.h"
 #include "far_call.h"
 #include "sound.h"
-#include "edition.h"
 #include "event_inline.h"
 #include "scene_ids.h"
 #include "ability_ids.h"

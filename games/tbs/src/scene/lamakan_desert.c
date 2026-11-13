@@ -567,8 +567,6 @@ static void LamakanDesert_BatheInOasis(void) {
   s32 count;
   const s32 *oases;
   s32 total;
-  s32 passed;
-  const s32 *oasis;
   s32 nearest;
   s32 distance;
   struct Actor *leader;
@@ -593,31 +591,13 @@ static void LamakanDesert_BatheInOasis(void) {
     oases = gLamakanDesertOasesOther;
   }
   // Every oasis is nearer than 240 pixels, so the first always counts; a tie
-  // goes to the later. The table is walked by its byte offset.
-  total = count;
-  oasis = oases;
-  if (count != 0) {
-    passed = 0;
-    do {
-      distance = LamakanDesert_PixelsToOasis(
-          &Actor_Get(ACTOR_PARTY_LEADER)->x.fixed, oasis);
-      if (distance <= best) {
-        best = distance;
-        nearest = total - count;
-      }
-      passed += 2 * sizeof(s32);
-      oasis = (const s32 *)((const u8 *)oases + passed);
-    } while (--count != 0);
-    /* FAKEMATCH(dead): two self-tests of passed, each with updates that cancel
-     * out, rank it above count in allocation; without them, 22 of 228
-     * instructions differ in tbs-en. */
-    if (passed) {
-      passed++;
-      passed--;
-    }
-    if (passed) {
-      passed++;
-      passed--;
+  // goes to the later.
+  for (total = count; count != 0; count--) {
+    distance = LamakanDesert_PixelsToOasis(
+        &Actor_Get(ACTOR_PARTY_LEADER)->x.fixed, &oases[(total - count) * 2]);
+    if (distance <= best) {
+      best = distance;
+      nearest = total - count;
     }
   }
   // The oasis's x, then its z.
@@ -907,69 +887,58 @@ static void LamakanDesert_SlideDownDune(void) {
 /// stops and backs away as the Manticore rises out of the sand. This plays
 /// until the Manticore is beaten.
 static void LamakanDesert_MeetManticore(void) {
-  s32 paused;
-  struct Actor *record;
-  struct FieldPosition backwardOffset;
-  u16 *revealFrames;
-  u8 *eventBytes;
+  struct FieldWork *work = gFieldWork;
+  struct FieldPosition backward;
 
-  eventBytes = (u8 *)gFieldWork;
   HeatGauge_CountStep();
-  if (GameFlag_Get(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
-    paused = Event_GetFlag(FLAG_DESERT_EVENT_RUNNING);
-    if (paused == 0) {
-      GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
-      // Suspend heat accumulation while the leader notices the Manticore.
-      HeatGauge_SetHeld(1);
-      // A running Reveal's countdown is refilled to 600 frames as the
-      // Manticore rises and again once it has.
-      revealFrames = (u16 *)&((struct FieldWork *)eventBytes)->revealFrames;
-      {
-        s32 holdFrames = 600;
-
-        *revealFrames = holdFrames;
-        record = Actor_Get(ACTOR_PARTY_LEADER);
-        record->velocityX = paused;
-        record = Actor_Get(ACTOR_PARTY_LEADER);
-        record->velocityZ = paused;
-        record = Actor_Get(ACTOR_PARTY_LEADER);
-        record->targetX = ACTOR_NO_TARGET;
-        record = Actor_Get(ACTOR_PARTY_LEADER);
-        record->targetZ = ACTOR_NO_TARGET;
-        Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-        Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_MANTICORE, 0);
-        Event_Wait(40);
-        Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-        Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
-                                                        ATTACHED_EFFECT_ONCE);
-        Event_Wait(40);
-        Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-        backwardOffset.x = paused;
-        // Step backward without turning away from the emerging Manticore.
-        backwardOffset.y = paused;
-        backwardOffset.z = paused;
-        record = Actor_Get(ACTOR_PARTY_LEADER);
-        FieldVector_AddPolarOffset(-16, record->facing, &backwardOffset);
-        Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
-        Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-        Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, backwardOffset.x / px(1),
-                                   backwardOffset.z / px(1));
-        Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-        Event_Wait(2);
-        Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-        Event_Wait(30);
-        Sound_Play(SE_BOSS_ROAR);
-        Actor_RunRepeatedMotion(ACTOR_MANTICORE, 2);
-        Event_Wait(20);
-        Actor_SetSpeed(ACTOR_MANTICORE, 2.5);
-        Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 104);
-        Actor_SetSpeed(ACTOR_MANTICORE, 0.5);
-        Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 92);
-        *revealFrames = holdFrames;
-        HeatGauge_SetHeld(0);
-      }
-    }
+  if (GameFlag_Get(FLAG_LAMAKAN_MANTICORE_BEATEN) != 0) {
+    return;
   }
+  if (Event_GetFlag(FLAG_DESERT_EVENT_RUNNING) != 0) {
+    return;
+  }
+  GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
+  // The heat stops rising while the leader faces the Manticore, and a running
+  // Reveal is kept full until it has risen.
+  HeatGauge_SetHeld(1);
+  work->revealFrames = 600;
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityX = 0;
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityZ = 0;
+  Actor_Get(ACTOR_PARTY_LEADER)->targetX = ACTOR_NO_TARGET;
+  Actor_Get(ACTOR_PARTY_LEADER)->targetZ = ACTOR_NO_TARGET;
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_MANTICORE, 0);
+  Event_Wait(40);
+  Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Event_Wait(40);
+
+  // The leader backs away 16 pixels, still facing the Manticore.
+  Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  backward.x = 0;
+  backward.y = 0;
+  backward.z = 0;
+  FieldVector_AddPolarOffset(-16, Actor_Get(ACTOR_PARTY_LEADER)->facing,
+                             &backward);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, backward.x / px(1),
+                             backward.z / px(1));
+  Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
+  Event_Wait(2);
+  Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
+  Event_Wait(30);
+
+  Sound_Play(SE_BOSS_ROAR);
+  Actor_RunRepeatedMotion(ACTOR_MANTICORE, 2);
+  Event_Wait(20);
+  Actor_SetSpeed(ACTOR_MANTICORE, 2.5);
+  Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 104);
+  Actor_SetSpeed(ACTOR_MANTICORE, 0.5);
+  Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 92);
+  work->revealFrames = 600;
+  HeatGauge_SetHeld(0);
 }
 
 /// Entering Lamakan Desert starts the heat gauge (600 steps) on all but

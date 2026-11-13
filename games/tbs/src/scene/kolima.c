@@ -88,7 +88,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "event.h"
 #include "event_inline.h"
 #include "scene_tables.h"

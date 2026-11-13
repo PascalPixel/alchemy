@@ -52,7 +52,6 @@
 #include "sound.h"
 #include "system.h"
 #include "heap_slots.h"
-#include "types.h"
 #include "event.h"
 #include "dma.h"
 #include "io_reg.h"

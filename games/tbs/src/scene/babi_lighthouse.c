@@ -71,7 +71,6 @@
 #define FIELD_STAGED_ACTOR_IMPORTS
 #include "edition.h"
 #include "types.h"
-#include "types.h"
 #include "event.h"
 #include "scene_tables.h"
 #include "djinn_ids.h"
@@ -83,7 +82,6 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "edition.h"
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"

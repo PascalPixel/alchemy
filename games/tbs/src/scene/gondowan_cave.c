@@ -77,7 +77,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "event.h"
 #include "scene_tables.h"
 #include "pushed_actor.h"

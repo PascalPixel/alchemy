@@ -20,7 +20,6 @@
 #include "map_grid.h"
 #include "map_grid_scroll.h"
 #include "event.h"
-#include "types.h"
 #include "sounds.h"
 
 // Seventeen scenes with things the leader pushes (Altmiller Cave, Babi

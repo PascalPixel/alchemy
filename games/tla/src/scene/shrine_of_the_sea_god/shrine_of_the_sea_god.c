@@ -258,7 +258,6 @@ void Func_0200063c(s32 x, s32 y) {
 
 void BlendScript_Suspend(void);
 void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
-void Import_EventSetExitRequest(s32 value);
 
 /// The Sea God's Tear (item 458) used on the statue on the island, actor 10,
 /// makes the water rise.
@@ -323,7 +322,7 @@ void ShrineOfTheSeaGod_UseSeaGodsTear(void) {
       ->screenEffect = 521;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(3);
+  Event_SetExitRequest(3);
 }
 
 void Func_0200087c(void) {
@@ -586,7 +585,7 @@ loop:
   i++;
   if (i <= 99)
     goto loop;
-  Import_EventSetExitRequest(1);
+  Event_SetExitRequest(1);
 }
 
 void Func_02000f18(s32 actor) {

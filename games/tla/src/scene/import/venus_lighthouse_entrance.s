@@ -38,9 +38,9 @@ HeapSlot_Alloc:
 	.thumb_func
 HeapSlot_Release:
 	overlay_veneer HeapSlot_ReleaseFar
-	.global Import_DecompressTaggedLz
+	.global Decompress_TaggedLz
 	.thumb_func
-Import_DecompressTaggedLz:
+Decompress_TaggedLz:
 	overlay_veneer Decompress_TaggedLzFar
 	.global VramCache_FreeEntry
 	.thumb_func
@@ -226,9 +226,9 @@ FieldCamera_WaitForArrival:
 	.thumb_func
 FieldCamera_MoveToActorById:
 	overlay_veneer FieldCamera_MoveToActorByIdFar
-	.global Import_EventSetDestination
+	.global Event_SetDestination
 	.thumb_func
-Import_EventSetDestination:
+Event_SetDestination:
 	overlay_veneer Event_SetDestinationFar
 	.global Field_RequestBattleFromEncounterTable
 	.thumb_func

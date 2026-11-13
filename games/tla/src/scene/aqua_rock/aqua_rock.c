@@ -1323,7 +1323,7 @@ void Func_02002550(void) {
 
   Iwram_ClearWordsEntry(work, 0x70c);
   buffer = MemAlloc_(0x100);
-  Import_DecompressTaggedLz(gData_02002c74, buffer);
+  Decompress_TaggedLz(gData_02002c74, buffer);
   work->vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(work->vramEntry, 0x100, buffer);
   Heap_Release(buffer);

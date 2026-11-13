@@ -2134,7 +2134,6 @@ struct CounterBits {
 };
 
 void Actor_SetSpriteColorMode(struct Actor *, u32);
-void Func_0200424c(struct SparkleSprite *sprite);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 
 /// The sparkle's update: raises two pairs of sprites over the object, each pair
@@ -2188,7 +2187,7 @@ void Func_02003cd8(struct Actor *object) {
             sprite->unk10 -= 0x10000;
             sprite->unk18 = -sprite->unk18;
           }
-          Func_0200424c(sprite);
+          EffectSprite_Draw(sprite);
           sprite++;
         }
         work->unka0[i]++;
@@ -2243,8 +2242,6 @@ struct SparkleWork__s3e54 {
   struct Actor *object;
 };
 
-void Func_02004244(struct SparkleSprite__s3e54 *sprite, s32 width, s32 height,
-                   u32 attributes, s32 tile);
 
 /// Sets up the sparkle: loads its picture and its four 16 by 16 sprites, and
 /// hands the object to its update, Func_02003cd8.
@@ -2267,7 +2264,7 @@ void Func_02003e54(struct Actor *object, struct SparkleWork__s3e54 *work) {
   object->watchedObject = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
     for (col = 1, sprite = work->sprites + row + row; col >= 0; col--) {
-      Func_02004244(sprite, 16, 16, 0x80004000, tile);
+      EffectSprite_Init(sprite, 16, 16, 0x80004000, tile);
       sprite->blend = 0;
       sprite->palette = 0;
       sprite->priority = BattleEffect_GetObjectPriority(object);

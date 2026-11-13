@@ -46,7 +46,6 @@ void WorldMap_Freeze(void);
 void WorldMap_ReloadPendingAreaGraphics(void);
 s32 Field_FindNearbyTalkTarget(s32 owner);
 s32 WorldMap_IsWalkable(struct Actor *object, s32 *position);
-void Import_SceneTalkToActor(s32 value);
 void Party_GivePiersDjinn(void);
 void Event_WaitForZoomTransition(void);
 void DjinnMenu_Run(void);
@@ -571,7 +570,7 @@ void WorldMap_GazeIntoPond(void) {
      * statements, 6 of 129 instructions differ in tla-en. */
     do {
       *(u16 *)((u8 *)work + 0xd34) = amount;
-      Import_SceneTalkToActor(0x1000 | slot);
+      Scene_TalkToActor(0x1000 | slot);
     } while (0);
   } else if (roll == 1) {
     MapGrid_SetShake(0x30000, 0x50000, 0x10000);

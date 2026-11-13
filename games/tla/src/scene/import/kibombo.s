@@ -322,9 +322,9 @@ FieldPsynergy_RunHandler:
 	.thumb_func
 BattleEffect_LoadActionEffectResources:
 	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
-	.global Import_FieldPsynergySetupActorPair
+	.global FieldPsynergy_SetupActorPair
 	.thumb_func
-Import_FieldPsynergySetupActorPair:
+FieldPsynergy_SetupActorPair:
 	overlay_veneer FieldPsynergy_SetupActorPairFar
 	.global BattleEffect_StopMainActor
 	.thumb_func

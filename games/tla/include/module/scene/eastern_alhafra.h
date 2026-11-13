@@ -58,7 +58,6 @@ void Func_02002a08(void);
 
 extern s16 gData_02005284[];
 
-void Import_DecompressTaggedLz(void *entry, void *destination);
 void Func_02004c64(struct RockSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 

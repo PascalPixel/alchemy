@@ -139,9 +139,9 @@ Actor_SetSpriteColorMode:
 Actor_SetSpritePriorityDirect:
 	overlay_veneer Actor_SetSpritePriorityDirectFar
 	.ifndef TLA_EDITION_JA
-	.global Import_FieldCheckSpheresOverlap
+	.global Field_CheckSpheresOverlap
 	.thumb_func
-Import_FieldCheckSpheresOverlap:
+Field_CheckSpheresOverlap:
 	overlay_veneer Field_CheckSpheresOverlapFar
 	.endif
 	.global TileMap_ConvertBuffer

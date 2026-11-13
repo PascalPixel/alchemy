@@ -97,7 +97,6 @@ void FieldPsynergy_RunHandler(s32 type);
 void FieldCamera_WaitForArrival(void);
 void Import_EventSetExitRequest(s32 countdown);
 void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
-s32 Import_FieldPsynergySetupActorPair(s32 a, s32 b);
 void BattleEffect_StopMainActor(void);
 
 void Field_TryJumpForward(void);

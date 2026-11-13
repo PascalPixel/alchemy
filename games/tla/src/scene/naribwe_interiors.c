@@ -20,7 +20,6 @@
 #include "module/scene/naribwe_interiors.h"
 #include "module/scene/scene.h"
 
-const u8 *Import_ItemGet(s32 item);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -229,7 +228,7 @@ ask:
     return;
   }
   unitData = Unit_Get(unit);
-  Import_ItemGet(unitData->items[slot]);
+  Item_GetDirect(unitData->items[slot]);
   Actor_SetItemIcon(Actor_Get(18), unitData->items[slot]);
   Actor_SetPosition(18, 0x2a00000, 0x680000);
   FieldEvent_Wait(60);
@@ -297,7 +296,7 @@ read:
   Actor_ShowEmote(10, 0x100, 60);
   Event_ShowMessage(10, 0);
   unitData = Unit_Get(unit);
-  info = Import_ItemGet(unitData->items[slot]);
+  info = Item_GetDirect(unitData->items[slot]);
 #if !TLA_PATCH_1
   item = unitData->items[slot];
 #else

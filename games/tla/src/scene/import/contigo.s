@@ -374,13 +374,13 @@ Actor_Spawn:
 	.thumb_func
 TileCopies_CopyTouchedCells:
 	overlay_veneer TileCopies_CopyTouchedCellsFar
-	.global Func_02004244
+	.global EffectSprite_Init
 	.thumb_func
-Func_02004244:
+EffectSprite_Init:
 	overlay_veneer EffectSprite_InitFar
-	.global Func_0200424c
+	.global EffectSprite_Draw
 	.thumb_func
-Func_0200424c:
+EffectSprite_Draw:
 	overlay_veneer EffectSprite_DrawFar
 	.global BattleEffect_GetObjectPriority
 	.thumb_func

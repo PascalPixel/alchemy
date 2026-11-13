@@ -235,7 +235,6 @@ extern u32 gTrialRoad_RightKnightToChestsScript[];
 
 extern u32 gTrialRoad_RightKnightLeavesScript[];
 
-void Import_DecompressTaggedLz(const void *source, void *destination);
 s32 Actor_GetCellIndex(struct Actor *object);
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 void Actor_DisableById(s32 id);

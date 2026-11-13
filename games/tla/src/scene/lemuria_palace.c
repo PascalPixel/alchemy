@@ -55,14 +55,11 @@ extern u8 gLemuriaPalace_FirstMapShown[];
 extern u8 gLemuriaPalace_SecondMapShown[];
 extern u8 gLemuriaPalace_FirstMapSprite[];
 extern u8 gLemuriaPalace_SecondMapSprite[];
-s32 Func_0200210c();
 extern const u8 gLemuriaPalace_FirstMapTiles[];
 extern const u8 gLemuriaPalace_SecondMapTiles[];
 extern s32 gLemuriaPalace_SecondMapVram;
 extern s32 gLemuriaPalace_FirstMapTile;
 extern s32 gLemuriaPalace_SecondMapTile;
-void Func_02002104(struct LemuriaPalaceMapSprite *sprite, s32 a, s32 b,
-                   u32 attr, s32 tile);
 
 void Event_Start();
 /* VIEW(lemuria_palace): routine Event_End as void Event_End(); event_work.h has
@@ -271,12 +268,12 @@ void LemuriaPalace_DrawMaps(void) {
   if (*(s32 *)gLemuriaPalace_FirstMapShown != 0) {
     ((struct Actor *)gLemuriaPalace_FirstMapSprite)->y = position.x;
     ((struct Actor *)gLemuriaPalace_FirstMapSprite)->z = position.z;
-    Func_0200210c(gLemuriaPalace_FirstMapSprite);
+    EffectSprite_Draw(gLemuriaPalace_FirstMapSprite);
   }
   if (*(s32 *)gLemuriaPalace_SecondMapShown != 0) {
     ((struct Actor *)gLemuriaPalace_SecondMapSprite)->y = position.x;
     ((struct Actor *)gLemuriaPalace_SecondMapSprite)->z = position.z;
-    Func_0200210c(gLemuriaPalace_SecondMapSprite);
+    EffectSprite_Draw(gLemuriaPalace_SecondMapSprite);
   }
 }
 
@@ -349,7 +346,7 @@ void LemuriaPalace_LoadMaps(void) {
   *firstSlot = VramCache_FindFreeEntry();
   firstTile = &gLemuriaPalace_FirstMapTile;
   *firstTile = Vram_Load(gLemuriaPalace_FirstMapVram, 0x1000, buffer);
-  Func_02002104(&gLemuriaPalace_FirstMapSprite__s03a0, 0, 0, 0xc0000000,
+  EffectSprite_Init(&gLemuriaPalace_FirstMapSprite__s03a0, 0, 0, 0xc0000000,
                 gLemuriaPalace_FirstMapTile);
   gLemuriaPalace_FirstMapSprite__s03a0.unk1e = 1;
   gLemuriaPalace_FirstMapSprite__s03a0.priority = 2;
@@ -361,7 +358,7 @@ void LemuriaPalace_LoadMaps(void) {
   *secondSlot = VramCache_FindFreeEntry();
   secondTile = &gLemuriaPalace_SecondMapTile;
   *secondTile = Vram_Load(gLemuriaPalace_SecondMapVram, 0x1000, buffer);
-  Func_02002104(&gLemuriaPalace_SecondMapSprite__s03a0, 0, 0, 0xc0000000,
+  EffectSprite_Init(&gLemuriaPalace_SecondMapSprite__s03a0, 0, 0, 0xc0000000,
                 gLemuriaPalace_SecondMapTile);
   gLemuriaPalace_SecondMapSprite__s03a0.unk1e = 2;
   gLemuriaPalace_SecondMapSprite__s03a0.priority = 2;

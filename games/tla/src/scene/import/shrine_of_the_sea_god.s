@@ -226,9 +226,9 @@ FieldCamera_WaitForArrival:
 	.thumb_func
 FieldCamera_GetActor:
 	overlay_veneer FieldCamera_GetActorFar
-	.global Import_EventSetExitRequest
+	.global Event_SetExitRequest
 	.thumb_func
-Import_EventSetExitRequest:
+Event_SetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
 	.global Field_RequestDjinnBattle
 	.thumb_func

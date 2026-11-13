@@ -151,7 +151,7 @@ extern s32 Func_02003180__s2118(
 #define SHARED_F02002148_ID4 Actor_SelectAnimation
 #define SHARED_F02002148_ID5 MapGrid_GetCellAttributeLowNibbleOrBump
 #define SHARED_F02002148_ID6 Func_02003180__s2118
-#define SHARED_F02002148_ID7 Import_FieldCheckSpheresOverlap
+#define SHARED_F02002148_ID7 Field_CheckSpheresOverlap
 #include "../shared/func_02002148.c"
 #undef SHARED_F02002148_NAME
 #undef SHARED_F02002148_ID2

@@ -682,7 +682,7 @@ void ShamanVillage_LoadLettering(s32 graphic) {
   palette = gShamanVillage_LetteringPalettes[graphic];
   if (graphic == 8)
     graphic = 4;
-  Import_DecompressTaggedLz(
+  Decompress_TaggedLz(
       Resource_GetTableEntry((s32)&ResourceId_LetteringBanner), sheet);
   Dma_Set(sheet->palettes[0] + palette, (void *)&OBJ_PLTT_COLOR(15, 0),
           (DMA_ENABLE | DMA_32BIT) << 16 | 32 / 4, REG_DMA3);

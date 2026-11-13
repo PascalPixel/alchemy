@@ -193,7 +193,7 @@ DEFINE_KIBOMBO_SET_CROWD_MODE(Func_020032c8, 1)
 
 void Func_020032e0(void) {
   BattleEffect_LoadActionEffectResources(143, 1);
-  Import_FieldPsynergySetupActorPair(17, 27);
+  FieldPsynergy_SetupActorPair(17, 27);
   EventObject_Initialize();
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
@@ -571,7 +571,7 @@ void Func_020037e4(void) {
 void Func_0200384c(void) {
   BattleEffect_LoadActionEffectResources(136, 1);
   Task_Add(Func_020037e4, 0x480);
-  Import_FieldPsynergySetupActorPair(gMainRoutineWork.currentOwner, -1);
+  FieldPsynergy_SetupActorPair(gMainRoutineWork.currentOwner, -1);
   EventObject_Initialize();
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();

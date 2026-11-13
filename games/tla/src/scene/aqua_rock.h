@@ -44,7 +44,6 @@ struct AquaRockWork {
   struct Bubble bubbles[64];
 };
 
-void Import_DecompressTaggedLz(const void *source, void *destination);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *data);
 void Actor_Release(struct Actor *object);

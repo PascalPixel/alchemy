@@ -398,9 +398,9 @@ Party_SetFields1f2And1f4:
 	.thumb_func
 Field_FindNearbyTalkTarget:
 	overlay_veneer Field_FindNearbyTalkTargetFar
-	.global Import_SceneTalkToActor
+	.global Scene_TalkToActor
 	.thumb_func
-Import_SceneTalkToActor:
+Scene_TalkToActor:
 	overlay_veneer Scene_TalkToActorFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func

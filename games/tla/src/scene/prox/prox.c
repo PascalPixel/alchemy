@@ -1943,8 +1943,6 @@ struct Position {
  * in this function). */
 extern void Func_0200385c__s391c(void) __asm__("Func_0200385c");
 void Actor_SelectAnimation(struct Actor *actor, s32 mode);
-s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 radiusA, struct Position *b,
-                                    s32 radiusB);
 s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
 /* VIEW(s391c): variable gData_02004780 as extern s16 gData_02004780[]; the
  * definition has s32 gData_02004780[] = { 0xffff, - 0x8000, 0xc000, (s32)
@@ -1956,7 +1954,7 @@ extern s16 gData_02004780__s391c[] __asm__("gData_02004780");
 
 DEFINE_LEADER_SLIDE_ON_ICE(Func_0200391c, Func_020038e8, gData_02004780__s391c,
                            Actor_SelectAnimation, Func_0200385c__s391c,
-                           Import_FieldCheckSpheresOverlap)
+                           Field_CheckSpheresOverlap)
 
 extern volatile s16 gData_020062a4;
 
@@ -1969,7 +1967,7 @@ s32 Actor_HasArrived(struct Actor *object);
 #define SHARED_F02003070_ID5 Actor_SelectAnimation
 #define SHARED_F02003070_ID6 Actor_HasArrived
 #define SHARED_F02003070_ID7 Func_0200385c__s391c
-#define SHARED_F02003070_ID8 Import_FieldCheckSpheresOverlap
+#define SHARED_F02003070_ID8 Field_CheckSpheresOverlap
 #include "../shared/func_02003070.c"
 #undef SHARED_F02003070_NAME
 #undef SHARED_F02003070_ID2
@@ -1992,7 +1990,7 @@ void Func_02003edc(s32 a0) { gData_020062a4 = a0; }
 DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003ee8, Func_020038e8,
                                  Actor_SelectAnimation,
                                  Func_0200385c__s391c,
-                                 Import_FieldCheckSpheresOverlap)
+                                 Field_CheckSpheresOverlap)
 
 struct ParticleSprite {
   u8 unk0[8];

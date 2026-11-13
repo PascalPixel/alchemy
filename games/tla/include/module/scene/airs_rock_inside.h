@@ -73,9 +73,6 @@ void Actor_PlaceMovedBlock(void);
 void Func_02002790(void);
 void Func_02004534(void);
 
-s32 Func_02005ea4();
-s32 Func_02005eac();
-
 extern struct Trigger gData_02006c10[];
 extern struct Trigger gData_02006d6c[];
 extern struct Trigger gData_02006e2c[];

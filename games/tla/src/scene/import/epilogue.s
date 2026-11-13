@@ -78,9 +78,9 @@ Event_Wait:
 	.thumb_func
 Actor_GetById:
 	overlay_veneer Actor_GetByIdFar
-	.global Import_EventSetDestination
+	.global Event_SetDestination
 	.thumb_func
-Import_EventSetDestination:
+Event_SetDestination:
 	overlay_veneer Event_SetDestinationFar
 	.global Speaker_GetVoice
 	.thumb_func

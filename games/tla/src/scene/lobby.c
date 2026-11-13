@@ -579,7 +579,6 @@ check:
 
 #include "task.h"
 
-void Import_TaskSetFlags(void *callback, s32 mask);
 void Map_ClearLayerEntryFlag(s32 layer);
 void Map_SetLayerEntryFlag(s32 layer);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
@@ -681,7 +680,7 @@ s32 LinkLobby_EnterBattle(void) {
         LinkLobby_WriteSlotValue(0);
         LinkLobby_WriteSlotValue(4);
         Task_Add((TaskFunc)LinkLobby_PollPeerReady, TASK_PASS_VBLANK);
-        Import_TaskSetFlags(LinkLobby_PollPeerReady, 1);
+        Task_SetFlags(LinkLobby_PollPeerReady, 1);
         Event_ClearFlag(0x201);
         Event_ClearFlag(0x202);
         Event_ClearFlag(0x303);
@@ -1279,7 +1278,6 @@ extern u8 gAutoSleepEnabled;
 s32 LinkLobby_PollPeerReady(void);
 void LinkLobby_InitializeSerial(void);
 void Serial_Initialize(void);
-void Import_TaskSetFlags(void *func, s32 mask);
 void Map_SetLayerEntryFlag(s32 entry);
 void Party_RestoreHpPp(s32 value);
 void Sound_LoadReverbCode(s32 preset);
@@ -1475,7 +1473,7 @@ s32 LinkLobby_Initialize(void) {
   }
   func = LinkLobby_PollPeerReady;
   Task_Add(func, 0x480);
-  Import_TaskSetFlags(func, 1);
+  Task_SetFlags(func, 1);
   if (gMainRoutineWork.entrance != 8 || !Event_GetFlag(0x173)) {
     Party_RestoreHpPp(1);
     DjinnRecovery_CountDownTwenty();

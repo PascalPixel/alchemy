@@ -193,7 +193,7 @@ void Func_02002e00(void) {
   struct RockSprite__s29d0 *sprite;
   s32 i;
 
-  Import_DecompressTaggedLz(
+  Decompress_TaggedLz(
       Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
   resource = VramCache_FindFreeEntry();
   tile = Vram_Load(resource, sizeof(work->tiles), work);

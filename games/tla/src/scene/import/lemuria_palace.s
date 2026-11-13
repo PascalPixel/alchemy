@@ -234,13 +234,13 @@ Actor_WatchAndSetScript:
 	.thumb_func
 Actor_Spawn:
 	overlay_veneer Actor_SpawnFar
-	.global Func_02002104
+	.global EffectSprite_Init
 	.thumb_func
-Func_02002104:
+EffectSprite_Init:
 	overlay_veneer EffectSprite_InitFar
-	.global Func_0200210c
+	.global EffectSprite_Draw
 	.thumb_func
-Func_0200210c:
+EffectSprite_Draw:
 	overlay_veneer EffectSprite_DrawFar
 	.global Field_StartColorTransition
 	.thumb_func

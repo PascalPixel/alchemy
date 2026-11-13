@@ -30,8 +30,6 @@ struct Work020023c4 {
 };
 
 s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
-s32 Import_FieldCheckSpheresOverlap(s32 *from, s32 radius, struct Vector3 *to,
-                                    s32 radius2);
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
 void Func_02002120(void);
 extern u8 gInventorySnapshot[];
@@ -42,7 +40,7 @@ extern u8 gInventorySnapshot[];
 #define SHARED_F02002148_ID4 Actor_SelectAnimation
 #define SHARED_F02002148_ID5 MapGrid_GetCellAttributeLowNibbleOrBump
 #define SHARED_F02002148_ID6 MapGrid_CheckCollision
-#define SHARED_F02002148_ID7 Import_FieldCheckSpheresOverlap
+#define SHARED_F02002148_ID7 Field_CheckSpheresOverlap
 #include "../shared/func_02002148.c"
 #undef SHARED_F02002148_NAME
 #undef SHARED_F02002148_ID2
@@ -422,7 +420,7 @@ extern s16 gData_0200483c[];
 
 DEFINE_LEADER_SLIDE_ON_ICE(Func_02002dc4, Func_02002d90, gData_0200483c,
                            Actor_SelectAnimation, Func_02002d04,
-                           Import_FieldCheckSpheresOverlap)
+                           Field_CheckSpheresOverlap)
 
 #include "input.h"
 
@@ -435,16 +433,16 @@ extern volatile s16 gData_02004cf0__s3070 __asm__("gData_02004cf0");
 extern s16 gData_0200483c[];
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Actor_HasArrived(struct Actor *object);
-/* VIEW(s3070): routine Import_FieldCheckSpheresOverlap as s32
- * Import_FieldCheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
- * s2dc4 has s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 radiusA, struct
+/* VIEW(s3070): routine Field_CheckSpheresOverlap as s32
+ * Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
+ * s2dc4 has s32 Field_CheckSpheresOverlap(s32 *a, s32 radiusA, struct
  * Position *b, s32 radiusB); tried as the rest of the object declares it, it
  * does not compile in tla-ja:
  * games/tla/src/scene/mars_lighthouse_star_room/s2148.c:1093:
  * `Func_0200428c__s3070' undeclared (first use in this function). */
 extern s32
 Func_0200428c__s3070(s32 *a, s32 aRadius, s32 *b,
-                     s32 bRadius) __asm__("Import_FieldCheckSpheresOverlap");
+                     s32 bRadius) __asm__("Field_CheckSpheresOverlap");
 
 #define SHARED_F02003070_NAME Func_02003070
 #define SHARED_F02003070_ID2 gData_02004cf0__s3070

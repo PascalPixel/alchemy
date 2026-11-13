@@ -55,8 +55,6 @@ extern u32 gShamanVillage_LetteringThrobFadeScript[];
 extern u8 gShamanVillage_LetteringPalettes[];
 extern char ResourceId_LetteringBanner;
 
-void Import_DecompressTaggedLz(const void *source, void *destination);
-
 void ShamanVillage_CastWhirlwindOnSand(void);
 extern u32 gShamanVillage_KradenWatchesShebaScript[];
 extern u32 gShamanVillage_LeaderWatchesShebaScript[];

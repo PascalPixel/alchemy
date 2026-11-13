@@ -302,9 +302,9 @@ Actor_SetActionCallback:
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_020035fc
+	.global EffectSprite_Init
 	.thumb_func
-Func_020035fc:
+EffectSprite_Init:
 	overlay_veneer EffectSprite_InitFar
 	.global EffectSprite_Draw
 	.thumb_func

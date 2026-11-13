@@ -1502,7 +1502,7 @@ static __inline__ void Place(struct FlashSprite *a, s32 b, s32 c, u32 d,
                              s32 e) {
   /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 4 of 181
    * instructions differ in tla-en. */
-  Func_020035fc(a, b, c, d, e);
+  EffectSprite_Init(a, b, c, d, e);
 }
 
 void Func_020029f8(s32 id, s32 mode) {
@@ -1595,7 +1595,7 @@ static __inline__ void Place__s2c88(struct ChampaCliffCavesSprite *a, s32 b,
                                     s32 c, u32 d, s32 e) {
   /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 4 of 78
    * instructions differ in tla-en. */
-  Func_020035fc(a, b, c, d, e);
+  EffectSprite_Init(a, b, c, d, e);
 }
 
 void Func_02002c88(void) {
@@ -1667,7 +1667,7 @@ static __inline__ void Place__s2d34(struct ChampaCliffCavesSprite *a, s32 b,
                                     s32 c, u32 d, s32 e) {
   /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 4 of 78
    * instructions differ in tla-en. */
-  Func_020035fc(a, b, c, d, e);
+  EffectSprite_Init(a, b, c, d, e);
 }
 
 void Func_02002d34(void) {

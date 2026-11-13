@@ -30,9 +30,9 @@ HeapSlot_Alloc:
 	.thumb_func
 HeapSlot_Release:
 	overlay_veneer HeapSlot_ReleaseFar
-	.global Func_02000560
+	.global Decompress_TaggedLz
 	.thumb_func
-Func_02000560:
+Decompress_TaggedLz:
 	overlay_veneer Decompress_TaggedLzFar
 	.global VramCache_FreeEntry
 	.thumb_func

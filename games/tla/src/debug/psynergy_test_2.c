@@ -42,7 +42,6 @@ void Rope_Coil(s32 a, s32 b, s32 c);
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-void Func_02000560(void *entry, void *destination);
 
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 
@@ -247,7 +246,7 @@ void Func_0200029c(void) {
   struct Rock *rock;
   struct RockSprite *sprite;
 
-  Func_02000560(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
   entry = VramCache_FindFreeEntry();
   tile = Vram_Load(entry, 0x500, work);
   work->tileBase = tile;

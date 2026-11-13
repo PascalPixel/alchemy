@@ -1100,7 +1100,7 @@ void Func_02004534(void) {
   if (Value1(GameFlag_Get, 0x8d4) != 0) {
     Event_End();
   } else {
-    Func_02005ea4((s32)MsgCheckedTheTablet);
+    Event_SetMessageId((s32)MsgCheckedTheTablet);
     EVENT_WORK->messageId++;
     Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0xb333,
           0x5999);
@@ -1114,7 +1114,7 @@ void Func_02004534(void) {
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
     Actor_ArmCallback(6, FACING_WEST, 0);
     FieldEvent_Wait(10);
-    Call2(Func_02005eac, 6, 0);
+    Call2(Event_ShowMessageAndWait, 6, 0);
     Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
     FieldEvent_Wait(30);
     Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 256, 152);

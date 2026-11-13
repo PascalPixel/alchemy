@@ -52,7 +52,6 @@ extern u32 gData_02003304[];
 void EffectSprite_DrawAtWorldPosition(struct ParticleSprite *sprite,
                                       struct Particle *particle);
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
-void Import_DecompressTaggedLz(void *source, void *destination);
 
 void Func_020007dc(void);
 void Func_02000920(void);

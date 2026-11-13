@@ -62,9 +62,9 @@ Serial_StartReceive:
 	.thumb_func
 Serial_GetActiveTransfers:
 	overlay_veneer Serial_GetActiveTransfersFar
-	.global Import_TaskSetFlags
+	.global Task_SetFlags
 	.thumb_func
-Import_TaskSetFlags:
+Task_SetFlags:
 	overlay_veneer Task_SetFlagsFar
 	.global Unit_Get
 	.thumb_func

@@ -1607,7 +1607,7 @@ void TrialRoad_StartFountains(s32 unused, s32 shape) {
   if (!Event_GetFlag(0x109))
     Iwram_ClearWords(work, 0x1c8);
   buffer = Pool_Alloc(0x800);
-  Import_DecompressTaggedLz(gField_Tiles64D, buffer);
+  Decompress_TaggedLz(gField_Tiles64D, buffer);
   work->vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(work->vramEntry, 0x800, buffer);
   Heap_Release(buffer);
@@ -2100,7 +2100,7 @@ void TrialRoad_MoveRival(void) {
     Actor_SelectAnimation(rival, ok);
   } else if (state->mode == 1) {
     if (state->resource != work->resource) {
-      Import_DecompressTaggedLz(Resource_GetTableEntry(state->resource),
+      Decompress_TaggedLz(Resource_GetTableEntry(state->resource),
                                 work->path);
       work->resource = state->resource;
     }
@@ -2268,7 +2268,7 @@ void TrialRoad_DrawProgress(void) {
       Dma_Set(gTrialRoad_ProgressPalette, (void *)0x050003c0, 0x80000010,
               REG_DMA3);
       buffer = TrialRoadLink_AllocPicture();
-      Import_DecompressTaggedLz(gTrialRoad_ProgressPicture, buffer);
+      Decompress_TaggedLz(gTrialRoad_ProgressPicture, buffer);
       VramCache_Load(*vramEntry, 576, buffer);
       Heap_Release(buffer);
     }
@@ -2352,7 +2352,7 @@ void TrialRoad_ShowProgress(s32 a, s32 b) {
   zero = 0;
   *unkda = zero;
   *unke0 = zero;
-  Import_DecompressTaggedLz(gTrialRoad_ProgressPicture, buffer);
+  Decompress_TaggedLz(gTrialRoad_ProgressPicture, buffer);
   *vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(*vramEntry, 576, buffer);
   Task_Add(TrialRoad_DrawProgress, 0x476);

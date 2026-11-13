@@ -22,7 +22,6 @@ struct EpilogueSprite;
 
 void EffectSprite_Draw(struct EpilogueSprite *sprite);
 
-s32 Import_EventSetDestination();
 
 s32 EndingPicture_LowerTopStrip();
 
@@ -447,7 +446,7 @@ L_0200871e:
   DebugText_Clear();
   gRenderOamEnabled = 1;
   Event_ClearFlag(0x17c);
-  Call2((void (*)())Import_EventSetDestination, (s32)&SceneId_Ov64a, 2);
+  Call2((void (*)())Event_SetDestination, (s32)&SceneId_Ov64a, 2);
   return 0;
 }
 

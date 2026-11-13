@@ -230,13 +230,13 @@ Actor_ConfigureSpriteColor:
 	.thumb_func
 Actor_SetSpriteColor:
 	overlay_veneer Actor_SetSpriteColorFar
-	.global Func_02005ea4
+	.global Event_SetMessageId
 	.thumb_func
-Func_02005ea4:
+Event_SetMessageId:
 	overlay_veneer Event_SetMessageIdFar
-	.global Func_02005eac
+	.global Event_ShowMessageAndWait
 	.thumb_func
-Func_02005eac:
+Event_ShowMessageAndWait:
 	overlay_veneer Event_ShowMessageAndWaitFar
 	.global Actor_ArmCallback
 	.thumb_func

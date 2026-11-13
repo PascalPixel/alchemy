@@ -42,9 +42,9 @@ FieldMessage_Show:
 	.thumb_func
 MessageArgument_Push:
 	overlay_veneer MessageArgument_PushFar
-	.global Import_ItemGet
+	.global Item_GetDirect
 	.thumb_func
-Import_ItemGet:
+Item_GetDirect:
 	overlay_veneer Item_GetDirectFar
 	.global PartyInventory_FindMember
 	.thumb_func

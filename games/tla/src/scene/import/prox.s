@@ -142,9 +142,9 @@ MapGrid_SetScreenShake:
 	.thumb_func
 Actor_HasArrived:
 	overlay_veneer Actor_HasArrivedFar
-	.global Import_FieldCheckSpheresOverlap
+	.global Field_CheckSpheresOverlap
 	.thumb_func
-Import_FieldCheckSpheresOverlap:
+Field_CheckSpheresOverlap:
 	overlay_veneer Field_CheckSpheresOverlapFar
 	.global Event_Wait
 	.thumb_func

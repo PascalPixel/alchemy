@@ -50,9 +50,7 @@ struct DustPuffWork {
   u16 unk2182;
 };
 
-s32 Import_EventSetDestination();
 s32 Actor_FallOverWithAnimationById();
-void Import_DecompressTaggedLz(void *source, void *destination);
 void Func_02002a0c(struct GlowSprite *sprite, s32 width, s32 height, s32 attr,
                    s32 tile);
 void Actor_SelectAnimation(struct Actor *actor, s32 mode);
@@ -192,7 +190,7 @@ s32 Scene_Initialize(void) {
     Party_RemoveMember(4);
     Party_RemoveMember(6);
     Party_RemoveMember(7);
-    Import_EventSetDestination((s32)&SceneId_VenusLighthouseEntrance, 1);
+    Event_SetDestination((s32)&SceneId_VenusLighthouseEntrance, 1);
   }
   t33 = Event_GetFlag(0x893);
   if (t33 == 0) {
@@ -1321,7 +1319,7 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   work->x = actor->x;
   work->y = actor->y;
   work->z = actor->z + 0x20000;
-  Import_DecompressTaggedLz(gField_Tiles64D, work);
+  Decompress_TaggedLz(gField_Tiles64D, work);
   resource = VramCache_FindFreeEntry();
   tile = Vram_Load(resource, 0x800, work);
   work->tile = tile;
@@ -1473,7 +1471,7 @@ void VenusLighthouseEntrance_StartDust(void) {
   struct SparkState *state;
   struct SparkSprite__s26f4 *sprite;
 
-  Import_DecompressTaggedLz(Resource_GetTableEntry((s32)&ResourceId_DustPuffA),
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DustPuffA),
                             work);
   resource = VramCache_FindFreeEntry();
   tileBase = Vram_Load(resource, 0x800, work);

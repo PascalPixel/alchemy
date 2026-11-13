@@ -48,8 +48,6 @@ struct FlashSprite;
 
 void FieldEffect_StartBlankOverlay(s32 a);
 void Field_StartColorTransition(s32 a, s32 b);
-void Func_020035fc(struct FlashSprite *sprite, s32 width, s32 height,
-                   u32 attributes, s32 tile);
 extern char ResourceId_FireColumn;
 
 #endif

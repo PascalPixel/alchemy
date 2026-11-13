@@ -261,7 +261,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
                        16)
                 message = Message_ShowAndWait(Func_0804519c() + 9, 15, 8);
               ((u8 *)Ram_HeapSlots->windowTiles)[5] &= ~4;
-              Func_08118128(102, 155);
+              BattleMessage_WaitForAdvanceAtFar(102, 155);
               Window_Close(message, 1);
               navigation->tutorialStep++;
               navigation->tutorialDelay = 45;

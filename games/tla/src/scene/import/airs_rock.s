@@ -142,10 +142,10 @@ Func_02003ba8:
 	.thumb_func
 FieldMessage_Show:
 	overlay_veneer FieldMessage_ShowFar
-	.global Func_0803f9c0
+	.global WindowColor_Apply
 	.thumb_func
-Func_0803f9c0:
-	overlay_veneer Func_08038348
+WindowColor_Apply:
+	overlay_veneer WindowColor_ApplyFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -210,10 +210,10 @@ Func_02003c30:
 	.thumb_func
 Func_02003c38:
 	overlay_veneer FieldCamera_MoveToActorByIdFar
-	.global Func_080d4568
+	.global FieldCamera_GetActor
 	.thumb_func
-Func_080d4568:
-	overlay_veneer Func_080c8258
+FieldCamera_GetActor:
+	overlay_veneer FieldCamera_GetActorFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:

@@ -74,7 +74,7 @@ struct GabombaCatacombsParty {
     FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);             \
   } while (0)
 
-void Func_02000038(void) { Func_080d2b4c(8, 10); }
+void Func_02000038(void) { Field_RequestDjinnBattle(8, 10); }
 
 void Func_02000044(void) { Func_02001274_(7, 63, 1, 16, 16, 57, 63); }
 
@@ -261,7 +261,7 @@ void Actor_MoveToObject(s32 actor, s32 target);
 void Func_02001214(s32 actor, s32 a);
 
 #define TALK()                                                                 \
-  FieldMessage_ShowCentered((s16)((union EventLine *)work)->line++, 0, -3)
+  EventMessage_ShowCentered((s16)((union EventLine *)work)->line++, 0, -3)
 
 void Func_020009d4(void) {
   struct Actor *follower = Actor_GetById(9);
@@ -316,7 +316,7 @@ void Func_020009d4(void) {
   Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xc000, 0);
   TALK();
-  Func_080d47b4(9, 258, 0);
+  Actor_ShowEmoteById(9, 258, 0);
   Actor_FaceDirection(9, 0xb000, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(9, 0);
@@ -324,7 +324,7 @@ void Func_020009d4(void) {
   Actor_ShowEmote(9, 261, 0);
   Event_Wait(30);
   TALK();
-  Func_080d47b4(9, 265, 0);
+  Actor_ShowEmoteById(9, 265, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(9, 0);
   TALK();
@@ -332,13 +332,13 @@ void Func_020009d4(void) {
   Actor_ArmCallback(9, 0x8000, 0);
   Event_Wait(10);
   Actor_ShowEmote(gMainRoutineWork.currentOwner, 257, 0);
-  Func_080d47b4(9, 257, 0);
+  Actor_ShowEmoteById(9, 257, 0);
   Event_Wait(60);
   TALK();
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
   Actor_FaceDirection(9, 0xb000, 0);
   Actor_ShowEmote(gMainRoutineWork.currentOwner, 261, 0);
-  Func_080d47b4(9, 261, 0);
+  Actor_ShowEmoteById(9, 261, 0);
   Event_Wait(60);
   TALK();
   Event_Wait(40);

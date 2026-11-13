@@ -8,7 +8,7 @@
 #include "module/scene/scene.h"
 #include "text/msg_ids.h"
 
-void Func_02000280(void) { Func_080d2b4c(11, 27); }
+void Func_02000280(void) { Field_RequestDjinnBattle(11, 27); }
 
 u32 Func_0200028c(struct Actor *object) {
   s32 left;
@@ -21,7 +21,7 @@ s32 Func_020002a0(struct Actor *object) {
   if (object->timer != 0) {
     object->timer--;
   } else {
-    Func_080d47b4((s16)object->unk66, 0x105, 0);
+    Actor_ShowEmoteById((s16)object->unk66, 0x105, 0);
     object->timer = ((Random16Far() * 240) >> 16) + 240;
   }
   return 1;
@@ -1165,12 +1165,12 @@ void Func_02001e0c(void) {
 }
 
 void Func_02001e30(void) {
-  Func_080d47b4(9, 0x100, 0);
+  Actor_ShowEmoteById(9, 0x100, 0);
   Func_02001d40();
 }
 
 void Func_02001e44(void) {
-  Func_080d47b4(10, 0x100, 0);
+  Actor_ShowEmoteById(10, 0x100, 0);
   Func_02001db4();
 }
 
@@ -1333,7 +1333,7 @@ void Func_02002248(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Func_080d47b4(gMainRoutineWork.currentOwner, 0x100, 20);
+  Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 0x100, 20);
   Sound_Play(132);
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 10);
   leader->velocityY = PIXELS(6);
@@ -1391,7 +1391,7 @@ void Func_020023e8(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Func_080d4568()->motionFlags = 0;
+  FieldCamera_GetActor()->motionFlags = 0;
   ((void (*)())Actor_ArmCallback)(12, 0);
   Event_SetMessageId((s32)&MsgKandoreanTemple08);
   Event_ShowMessage(0x800c, 0);

@@ -153,7 +153,7 @@ FieldMessage_Show:
 	.global Func_02005e04
 	.thumb_func
 Func_02005e04:
-	overlay_veneer Func_08038348
+	overlay_veneer WindowColor_ApplyFar
 	.global FieldEvent_Wait
 	.thumb_func
 FieldEvent_Wait:
@@ -273,7 +273,7 @@ Func_02005eec:
 	.global Func_02005ef4
 	.thumb_func
 Func_02005ef4:
-	overlay_veneer Func_080c8258
+	overlay_veneer FieldCamera_GetActorFar
 	.global Func_02005efc
 	.thumb_func
 Func_02005efc:

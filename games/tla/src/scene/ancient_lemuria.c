@@ -40,7 +40,7 @@ static inline void MapCopy(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
 #include "module/scene/ancient_lemuria.h"
 #include "module/scene/scene.h"
 
-void Func_02000038(void) { Func_080d7788(12, 1, 13); }
+void Func_02000038(void) { Djinn_JoinParty(12, 1, 13); }
 
 void Func_02000048(struct Actor *object) {
   struct FieldSprite *sprite = object->sprite;
@@ -680,7 +680,7 @@ void Func_02000838(void) {
       Actor_FaceDirection(11, 0x5000, 0);
       Actor_ArmCallbackAndRefresh(7, 0x3000);
       Event_Wait(10);
-      Func_080d47b4(7, 0x102, 50);
+      Actor_ShowEmoteById(7, 0x102, 50);
       Motion_SetVarCbAndRefresh(11, 2);
       Event_Wait(10);
       Event_ShowMessageThenWait(0x200b, 0, 10);
@@ -838,7 +838,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Func_020000c4)},
     {0x602, 22, CONDITION_ALWAYS, EVENT(Func_02000830)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_02000038)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x961, (u32)(Func_020000d4)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8,
+     0x961, (u32)(Func_020000d4)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x961, EVENT(Func_020000d8)},
     {0x50008905, 30, CONDITION_ALWAYS, EVENT(Func_02000110)},
     {0x50008905, 31, CONDITION_ALWAYS, EVENT(Func_020003bc)},
@@ -846,7 +847,8 @@ struct Trigger gSceneEvents[] = {
     {0x50008905, 33, CONDITION_ALWAYS, EVENT(Func_020003fc)},
     {0x50008905, 34, CONDITION_ALWAYS, EVENT(Func_0200041c)},
     {0x50008905, 35, CONDITION_ALWAYS, EVENT(Func_0200043c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_TREMOR, PSYNERGY_PHASE_BEFORE_CAST), 13, 0x196e, EVENT(Func_0200045c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_TREMOR, PSYNERGY_PHASE_BEFORE_CAST), 13,
+     0x196e, EVENT(Func_0200045c)},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 13, 0x196e, EVENT(Func_02000468)},
     {TRIGGERS_END},
 };

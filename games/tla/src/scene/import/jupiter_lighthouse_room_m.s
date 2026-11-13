@@ -162,10 +162,10 @@ Func_02004774:
 	.thumb_func
 FieldMessage_Show:
 	overlay_veneer FieldMessage_ShowFar
-	.global Func_0803f9c0
+	.global WindowColor_Apply
 	.thumb_func
-Func_0803f9c0:
-	overlay_veneer Func_08038348
+WindowColor_Apply:
+	overlay_veneer WindowColor_ApplyFar
 	.global Unit_Calculate
 	.thumb_func
 Unit_Calculate:
@@ -326,10 +326,10 @@ Battle_ShowPairedUnitWorkAndWait:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
@@ -350,10 +350,10 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Func_020048f4:
 	overlay_veneer FieldCamera_WaitForArrivalFar
-	.global Func_080d4568
+	.global FieldCamera_GetActor
 	.thumb_func
-Func_080d4568:
-	overlay_veneer Func_080c8258
+FieldCamera_GetActor:
+	overlay_veneer FieldCamera_GetActorFar
 	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
 Field_RequestBattleFromEncounterTable:
@@ -440,10 +440,10 @@ Func_0200499c:
 	.thumb_func
 Func_020049a4:
 	overlay_veneer Func_080c8830
-	.global Func_080dbdd4
+	.global MapGrid_SetCellBehavior
 	.thumb_func
-Func_080dbdd4:
-	overlay_veneer Func_080c8840
+MapGrid_SetCellBehavior:
+	overlay_veneer MapGrid_SetCellBehaviorFar
 	.global Func_020049b4
 	.thumb_func
 Func_020049b4:

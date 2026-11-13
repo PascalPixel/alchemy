@@ -59,14 +59,15 @@ void Func_02001b2c(struct VenusActor *object, s32 mode);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Script_WaitForEventTimeout(struct Actor *actor);
 s32 Func_02001b64(struct VenusActor *object, s32 *position);
-/* VIEW(floor): routine Func_080d47b4 as void Func_080d47b4(s32 actor, s32
- * height, s32 frames); event.h has s32 Func_080d47b4(s32 actorId, s32 emote,
- * s32 frames); tried as the definition's struct BattleEffectWatchedObject
- * *Func_080d47b4(s32 resourceId, s32 flags, s32 state), it does not compile in
- * tla-ja: games/tla/src/scene/venus_lighthouse/floor.c:38: conflicting types
- * for `Func_080d47b4'. */
+/* VIEW(floor): routine Actor_ShowEmoteById as void Actor_ShowEmoteById(s32
+ * actor, s32 height, s32 frames); event.h has s32 Actor_ShowEmoteById(s32
+ * actorId, s32 emote, s32 frames); tried as the definition's struct
+ * BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags, s32
+ * state), it does not compile in tla-ja:
+ * games/tla/src/scene/venus_lighthouse/floor.c:38: conflicting types for
+ * `Actor_ShowEmoteById'. */
 extern void Func_080d47b4__floor(s32 actor, s32 height,
-                                 s32 frames) __asm__("Func_080d47b4");
+                                 s32 frames) __asm__("Actor_ShowEmoteById");
 s32 VenusLighthouse_EmitRisingParticles(struct VenusActor *object);
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -359,7 +360,7 @@ static inline void Venus_ObjWalk2(s32 actor, s32 x, s32 z) {
 }
 
 static inline void Venus_Jump(s32 actor, s32 height, s32 frames) {
-  Func_080d47b4(actor, height, frames);
+  Actor_ShowEmoteById(actor, height, frames);
 }
 
 static inline void Venus_CamMove(s32 x, s32 y, s32 z, s32 mode) {

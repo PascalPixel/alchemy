@@ -8,8 +8,8 @@ Resource_FarCall00C:
 	export BattleEffect_RunSceneEffectFar, BattleEffect_RunSceneEffect
 	export BattleEffect_RunTableEffectFar, BattleEffect_RunTableEffect
 	export Func_08138020, Func_0813e3d0
-	export Func_08138028, BattleEffect_RunShatteringOpening
-	export Func_08138030, BattleEffect_RunElementBurst
+	export BattleEffect_RunShatteringOpeningFar, BattleEffect_RunShatteringOpening
+	export BattleEffect_RunElementBurstFar, BattleEffect_RunElementBurst
 	export Func_08138038, Func_0813fa88
 	export BattleEffect_EndElementStreaksFar, BattleEffect_EndElementStreaks
 	export BattleEffect_LoadBlitterFar, BattleEffect_LoadBlitter

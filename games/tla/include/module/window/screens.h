@@ -618,7 +618,7 @@ void IconMenu_DrawIcons(void);
 void Link_DrawPageArrows(s32 destination);
 s32 Link_CreateCountdownLabelWindow(void);
 
-void Func_08118128(s32 x, s32 y);
+void BattleMessage_WaitForAdvanceAtFar(s32 x, s32 y);
 
 extern const u8 gDjinnMenu_BlinkTile[32];
 extern u8 gDjinnMenu_ElementXOffsets[4];

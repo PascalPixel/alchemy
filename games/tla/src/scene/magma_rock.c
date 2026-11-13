@@ -14,7 +14,7 @@ struct EventObjects {
   struct Actor *objects[64];
 };
 
-void Func_02000594(void) { Func_080d2b4c(8, 56); }
+void Func_02000594(void) { Field_RequestDjinnBattle(8, 56); }
 
 DEFINE_FUNC_020003D0(Func_020005a0)
 

@@ -54,9 +54,9 @@ s32 Func_02000538(u32 layer, u32 x, u32 y, u32 width, u32 height, s32 value) {
 // ---- games/tla/src/scene/magma_rock_inside/s0594.c ----
 #include "../magma_rock_inside.h"
 
-void Func_02000594(void) { Func_080d2b4c(15, 56); }
+void Func_02000594(void) { Field_RequestDjinnBattle(15, 56); }
 
-void Func_020005a0(void) { Func_080d7788(17, 2, 19); }
+void Func_020005a0(void) { Djinn_JoinParty(17, 2, 19); }
 
 DEFINE_FUNC_020003D0(Func_020005b0)
 

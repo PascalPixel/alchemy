@@ -104,7 +104,7 @@ void Func_020048b4(void);
     /* of 711 instructions differ in tla-en (Func_02002068). */                \
     register s32 emote_ __asm__("r1") = (emote);                               \
     s32 frames_ = (frames);                                                    \
-    Func_080d47b4((actor), emote_, frames_);                                   \
+    Actor_ShowEmoteById((actor), emote_, frames_);                             \
   }
 
 // ---- this overlay

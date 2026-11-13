@@ -40,7 +40,7 @@ s32 Func_02000054(struct KibomboObject *object) {
     dy += ((Random16Far() * 3) >> 16) << 16;
 
     Actor_SetPositionAndResetMotion(object, object->field44 + dx,
-                                     object->field48 + dy, object->z);
+                                    object->field48 + dy, object->z);
   }
   return 1;
 }
@@ -63,27 +63,64 @@ s32 Func_020000c4(struct KibomboObject *object) {
 }
 
 // ---- games/tla/src/scene/kibombo.c ----
-// The scene code of overlay 0x670 that its scene tables belong to, in ROM order; the rest of the overlay is in kibombo/.
+// The scene code of overlay 0x670 that its scene tables belong to, in ROM
+// order; the rest of the overlay is in kibombo/.
 
 #include "battle.h"
-/* VIEW(kibombo): routine Actor_SetPositionAndResetMotion as void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z); kibombo.h has void Actor_SetPositionAndResetMotion(struct KibomboObject *object, s32 x, s32 y, s32 z); tried as the definition's void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z), it does not compile in tla-ja: games/tla/include/actor.h:95: conflicting types for `Actor_SetPositionAndResetMotion'. */
+/* VIEW(kibombo): routine Actor_SetPositionAndResetMotion as void
+ * Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
+ * kibombo.h has void Actor_SetPositionAndResetMotion(struct KibomboObject
+ * *object, s32 x, s32 y, s32 z); tried as the definition's void
+ * Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z), it
+ * does not compile in tla-ja: games/tla/include/actor.h:95: conflicting types
+ * for `Actor_SetPositionAndResetMotion'. */
 struct Actor;
-extern void Actor_SetPositionAndResetMotion__kibombo(struct Actor *object, s32 x, s32 y, s32 z) __asm__("Actor_SetPositionAndResetMotion");
+extern void Actor_SetPositionAndResetMotion__kibombo(
+    struct Actor *object, s32 x, s32 y,
+    s32 z) __asm__("Actor_SetPositionAndResetMotion");
 #define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion__kibombo
-/* VIEW(kibombo): routine Actor_SetSpritePriority as void Actor_SetSpritePriority(u32, s32); kibombo.h has void Actor_SetSpritePriority(s32 actor, s32 variant); tried as the definition's void Actor_SetSpritePriority(u32 objectId, s32 priority), it does not compile in tla-ja: games/tla/include/actor.h:106: conflicting types for `Actor_SetSpritePriority'. */
-extern void Actor_SetSpritePriority__kibombo(u32, s32) __asm__("Actor_SetSpritePriority");
+/* VIEW(kibombo): routine Actor_SetSpritePriority as void
+ * Actor_SetSpritePriority(u32, s32); kibombo.h has void
+ * Actor_SetSpritePriority(s32 actor, s32 variant); tried as the definition's
+ * void Actor_SetSpritePriority(u32 objectId, s32 priority), it does not compile
+ * in tla-ja: games/tla/include/actor.h:106: conflicting types for
+ * `Actor_SetSpritePriority'. */
+extern void
+Actor_SetSpritePriority__kibombo(u32, s32) __asm__("Actor_SetSpritePriority");
 #define Actor_SetSpritePriority Actor_SetSpritePriority__kibombo
-/* VIEW(kibombo): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct Actor *object, u32 flags); kibombo.h has void Actor_SetSingleChildFlags(struct KibomboObject *object, u32 value); tried as the 35 declarations' void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags), it does not compile in tla-ja: games/tla/include/field/field.h:25: conflicting types for `Actor_SetSingleChildFlags'. */
+/* VIEW(kibombo): routine Actor_SetSingleChildFlags as void
+ * Actor_SetSingleChildFlags(struct Actor *object, u32 flags); kibombo.h has
+ * void Actor_SetSingleChildFlags(struct KibomboObject *object, u32 value);
+ * tried as the 35 declarations' void Actor_SetSingleChildFlags(struct
+ * FieldEffect *effect, s32 flags), it does not compile in tla-ja:
+ * games/tla/include/field/field.h:25: conflicting types for
+ * `Actor_SetSingleChildFlags'. */
 struct Actor;
-extern void Actor_SetSingleChildFlags__kibombo(struct Actor *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
+extern void Actor_SetSingleChildFlags__kibombo(
+    struct Actor *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
 #define Actor_SetSingleChildFlags Actor_SetSingleChildFlags__kibombo
-/* VIEW(kibombo): routine Animation_SetStateFlags as void Animation_SetStateFlags(struct Actor *object, u32 value); kibombo.h has void Animation_SetStateFlags(struct KibomboObject *object, s32 flags); tried as the definition's void Animation_SetStateFlags(struct Actor *object, u32 value), which the object already declares, it does not compile in tla-ja: games/tla/include/field/field.h:58: conflicting types for `Animation_SetStateFlags'. */
+/* VIEW(kibombo): routine Animation_SetStateFlags as void
+ * Animation_SetStateFlags(struct Actor *object, u32 value); kibombo.h has void
+ * Animation_SetStateFlags(struct KibomboObject *object, s32 flags); tried as
+ * the definition's void Animation_SetStateFlags(struct Actor *object, u32
+ * value), which the object already declares, it does not compile in tla-ja:
+ * games/tla/include/field/field.h:58: conflicting types for
+ * `Animation_SetStateFlags'. */
 struct Actor;
-extern void Animation_SetStateFlags__kibombo(struct Actor *object, u32 value) __asm__("Animation_SetStateFlags");
+extern void
+Animation_SetStateFlags__kibombo(struct Actor *object,
+                                 u32 value) __asm__("Animation_SetStateFlags");
 #define Animation_SetStateFlags Animation_SetStateFlags__kibombo
-/* VIEW(kibombo): routine Actor_SetPartAttribute as void Actor_SetPartAttribute(struct Actor *object, s32 attribute); kibombo.h has void Actor_SetPartAttribute(struct KibomboObject *object, s32 value); tried as the definition's void Actor_SetPartAttribute(struct Actor *object, s32 attribute), which the object already declares, it does not compile in tla-ja: games/tla/include/field/field.h:93: conflicting types for `Actor_SetPartAttribute'. */
+/* VIEW(kibombo): routine Actor_SetPartAttribute as void
+ * Actor_SetPartAttribute(struct Actor *object, s32 attribute); kibombo.h has
+ * void Actor_SetPartAttribute(struct KibomboObject *object, s32 value); tried
+ * as the definition's void Actor_SetPartAttribute(struct Actor *object, s32
+ * attribute), which the object already declares, it does not compile in tla-ja:
+ * games/tla/include/field/field.h:93: conflicting types for
+ * `Actor_SetPartAttribute'. */
 struct Actor;
-extern void Actor_SetPartAttribute__kibombo(struct Actor *object, s32 attribute) __asm__("Actor_SetPartAttribute");
+extern void Actor_SetPartAttribute__kibombo(
+    struct Actor *object, s32 attribute) __asm__("Actor_SetPartAttribute");
 #define Actor_SetPartAttribute Actor_SetPartAttribute__kibombo
 #include "field.h"
 #undef Actor_SetPartAttribute
@@ -116,7 +153,8 @@ u8 *Scene_GetRegions(void) {
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 // ---- games/tla/src/scene/kibombo/events_a.c ----
-// Scene code of overlay 0x670, in ROM order, from events_a's offset up to the next object the overlay links.
+// Scene code of overlay 0x670, in ROM order, from events_a's offset up to the
+// next object the overlay links.
 
 extern u8 gData_02006510[];
 extern u8 gData_020066d8[];
@@ -420,7 +458,7 @@ void Func_020007c8(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Kibombo_CamMove(-1, -1, -1, 0);
-  Func_080d4568()->motionFlags = 0;
+  FieldCamera_GetActor()->motionFlags = 0;
   Camera_SetSpeedParameters(0x9999, 0x1333);
   Camera_MoveWithinMapBounds(PIXELS(88), -1, PIXELS(392), 1);
   Kibombo_ObjSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
@@ -473,7 +511,7 @@ void Func_02000978(void) {
     ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
     Event_ShowMessageAndWait(5, 0);
   }
-  Func_080d47b4(7, 0x101, 20);
+  Actor_ShowEmoteById(7, 0x101, 20);
   Event_ShowMessageAndWait(7, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
   Kibombo_ObjArm(26, FACING_NORTHWEST + FACING_STEP, 0);
@@ -484,7 +522,7 @@ void Func_02000978(void) {
   Actor_ArmCallback(5, FACING_EAST, 0);
   Kibombo_ObjArm(6, FACING_NORTHEAST, 20);
   Event_ShowMessageAndWait(7, 0);
-  Func_080d47b4(26, 0x100, 0);
+  Actor_ShowEmoteById(26, 0x100, 0);
   Event_ShowMessageAndWait(26, 0);
   Event_ShowMessageAndWait(7, 0);
   Event_ShowMessageAndWait(6, 0);
@@ -498,7 +536,7 @@ void Func_02000978(void) {
   Event_ShowMessageAndWait(6, 0);
   Kibombo_ObjEmote(5, 0x103, 10);
   Event_ShowMessageAndWait(5, 0);
-  Func_080d47b4(7, 0x103, 10);
+  Actor_ShowEmoteById(7, 0x103, 10);
   Event_ShowMessageAndWait(7, 0);
 }
 
@@ -508,7 +546,7 @@ void Func_02000b2c(void) {
   Kibombo_ObjArm(5, FACING_SOUTH, 10);
   Actor_SetModeById(5, 4);
   Event_ShowMessageAndWait(5, 0);
-  Func_080d47b4(7, 0x101, 20);
+  Actor_ShowEmoteById(7, 0x101, 20);
   Event_ShowMessageAndWait(7, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
   Kibombo_ObjArm(26, FACING_NORTHWEST + FACING_STEP, 0);
@@ -523,7 +561,7 @@ void Func_02000b2c(void) {
   Event_ShowMessageAndWait(7, 0);
   Event_ShowMessageThenWait(26, 0, 20);
   Event_ShowMessageAndWait(7, 0);
-  Func_080d47b4(6, 0x109, 0);
+  Actor_ShowEmoteById(6, 0x109, 0);
   Event_ShowMessageAndWait(6, 0);
   Kibombo_ObjArm(5, FACING_SOUTHWEST, 40);
   Actor_ArmCallback(5, FACING_EAST, 0);
@@ -535,7 +573,7 @@ void Func_02000b2c(void) {
   Event_ShowMessageAndWait(6, 0);
   Kibombo_ObjEmote(5, 0x103, 10);
   Event_ShowMessageAndWait(5, 0);
-  Func_080d47b4(7, 0x103, 10);
+  Actor_ShowEmoteById(7, 0x103, 10);
   Event_ShowMessageAndWait(7, 0);
 }
 
@@ -678,7 +716,7 @@ void Func_02000d74(void) {
   Actor_WaitForMoveById(26);
   Actor_SetModeById(26, 1);
   Kibombo_ObjArm(26, FACING_NORTH + FACING_STEP, 40);
-  Func_080d47b4(26, 0x100, 20);
+  Actor_ShowEmoteById(26, 0x100, 20);
   Event_ShowMessageAndWait(26, 0);
   Kibombo_ObjArm(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Kibombo_ObjArm(5, FACING_NORTH, 0);
@@ -726,45 +764,102 @@ void Func_02001218(void) {
 }
 
 // ---- games/tla/src/scene/kibombo/s1318.c ----
-// Scene code of overlay 0x670, in ROM order, from s1318's offset up to the next object the overlay links.
+// Scene code of overlay 0x670, in ROM order, from s1318's offset up to the next
+// object the overlay links.
 
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
-/* VIEW(s1318): routine Task_Add as s32 Task_Add(TaskFunc func, s32 order); kibombo.h has void Task_Add(void(*func) (void), s32 priority); tried as the definition's s32 Task_Add(TaskFunc func, s32 order), which the object already declares, it does not compile in tla-ja: games/tla/include/system/task.h:55: conflicting types for `Task_Add'. */
+/* VIEW(s1318): routine Task_Add as s32 Task_Add(TaskFunc func, s32 order);
+ * kibombo.h has void Task_Add(void(*func) (void), s32 priority); tried as the
+ * definition's s32 Task_Add(TaskFunc func, s32 order), which the object already
+ * declares, it does not compile in tla-ja: games/tla/include/system/task.h:55:
+ * conflicting types for `Task_Add'. */
 #define Task_Add Task_Add__s1318
-/* VIEW(s1318): routine Actor_GetById as struct Actor *Actor_GetById(u32 objectId); kibombo.h has struct KibomboObject *Actor_GetById(s32 id); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/include/field/event.h:37: conflicting types for `Actor_GetById'. */
+/* VIEW(s1318): routine Actor_GetById as struct Actor *Actor_GetById(u32
+ * objectId); kibombo.h has struct KibomboObject *Actor_GetById(s32 id); tried
+ * as the definition's struct Actor *Actor_GetById(u32 objectId), which the
+ * object already declares, it does not compile in tla-ja:
+ * games/tla/include/field/event.h:37: conflicting types for `Actor_GetById'. */
 struct Actor;
-extern struct Actor *Actor_GetById__s1318(u32 objectId) __asm__("Actor_GetById");
+extern struct Actor *
+Actor_GetById__s1318(u32 objectId) __asm__("Actor_GetById");
 #define Actor_GetById Actor_GetById__s1318
-/* VIEW(s1318): routine Actor_SetMoveTarget as void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z); kibombo.h has void Actor_SetMoveTarget(struct KibomboObject *object, s32 x, s32 y, s32 z); tried as the definition's void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z), it does not compile in tla-ja: games/tla/include/field/event.h:59: conflicting types for `Actor_SetMoveTarget'. */
+/* VIEW(s1318): routine Actor_SetMoveTarget as void Actor_SetMoveTarget(struct
+ * Actor *actor, s32 x, s32 y, s32 z); kibombo.h has void
+ * Actor_SetMoveTarget(struct KibomboObject *object, s32 x, s32 y, s32 z); tried
+ * as the definition's void Actor_SetMoveTarget(struct Actor *object, s32 x, s32
+ * y, s32 z), it does not compile in tla-ja: games/tla/include/field/event.h:59:
+ * conflicting types for `Actor_SetMoveTarget'. */
 struct Actor;
-extern void Actor_SetMoveTarget__s1318(struct Actor *actor, s32 x, s32 y, s32 z) __asm__("Actor_SetMoveTarget");
+extern void Actor_SetMoveTarget__s1318(struct Actor *actor, s32 x, s32 y,
+                                       s32 z) __asm__("Actor_SetMoveTarget");
 #define Actor_SetMoveTarget Actor_SetMoveTarget__s1318
-/* VIEW(s1318): routine Import_ActorCreate as struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z); kibombo.h has struct KibomboObject *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/include/field/event.h:60: conflicting types for `Import_ActorCreate'. */
+/* VIEW(s1318): routine Import_ActorCreate as struct Actor
+ * *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z); kibombo.h has struct
+ * KibomboObject *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z); tried as
+ * the rest of the object declares it, it does not compile in tla-ja:
+ * games/tla/include/field/event.h:60: conflicting types for
+ * `Import_ActorCreate'. */
 struct Actor;
-extern struct Actor *Import_ActorCreate__s1318(s32 type, s32 x, s32 y, s32 z) __asm__("Import_ActorCreate");
+extern struct Actor *
+Import_ActorCreate__s1318(s32 type, s32 x, s32 y,
+                          s32 z) __asm__("Import_ActorCreate");
 #define Import_ActorCreate Import_ActorCreate__s1318
-/* VIEW(s1318): routine Actor_SetSpritePriority as void Actor_SetSpritePriority(u32 actorId, s32 priority); kibombo.h has void Actor_SetSpritePriority(s32 actor, s32 variant); tried as the definition's void Actor_SetSpritePriority(u32 objectId, s32 priority), it does not compile in tla-ja: games/tla/include/field/event.h:105: conflicting types for `Actor_SetSpritePriority'. */
-extern void Actor_SetSpritePriority__s1318(u32 actorId, s32 priority) __asm__("Actor_SetSpritePriority");
+/* VIEW(s1318): routine Actor_SetSpritePriority as void
+ * Actor_SetSpritePriority(u32 actorId, s32 priority); kibombo.h has void
+ * Actor_SetSpritePriority(s32 actor, s32 variant); tried as the definition's
+ * void Actor_SetSpritePriority(u32 objectId, s32 priority), it does not compile
+ * in tla-ja: games/tla/include/field/event.h:105: conflicting types for
+ * `Actor_SetSpritePriority'. */
+extern void
+Actor_SetSpritePriority__s1318(u32 actorId,
+                               s32 priority) __asm__("Actor_SetSpritePriority");
 #define Actor_SetSpritePriority Actor_SetSpritePriority__s1318
-/* VIEW(s1318): routine Actor_SetPositionAndResetMotion as void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z); kibombo.h has void Actor_SetPositionAndResetMotion(struct KibomboObject *object, s32 x, s32 y, s32 z); tried as the definition's void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z), it does not compile in tla-ja: games/tla/include/field/event.h:110: conflicting types for `Actor_SetPositionAndResetMotion'. */
+/* VIEW(s1318): routine Actor_SetPositionAndResetMotion as void
+ * Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
+ * kibombo.h has void Actor_SetPositionAndResetMotion(struct KibomboObject
+ * *object, s32 x, s32 y, s32 z); tried as the definition's void
+ * Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z), it
+ * does not compile in tla-ja: games/tla/include/field/event.h:110: conflicting
+ * types for `Actor_SetPositionAndResetMotion'. */
 struct Actor;
-extern void Actor_SetPositionAndResetMotion__s1318(struct Actor *object, s32 x, s32 y, s32 z) __asm__("Actor_SetPositionAndResetMotion");
+extern void Actor_SetPositionAndResetMotion__s1318(
+    struct Actor *object, s32 x, s32 y,
+    s32 z) __asm__("Actor_SetPositionAndResetMotion");
 #define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion__s1318
-/* VIEW(s1318): routine Actor_SetPartAttribute as void Actor_SetPartAttribute(struct Actor *object, s32 attribute); kibombo.h has void Actor_SetPartAttribute(struct KibomboObject *object, s32 value); tried as the definition's void Actor_SetPartAttribute(struct Actor *object, s32 attribute), which the object already declares, it does not compile in tla-ja: games/tla/include/field/event.h:112: conflicting types for `Actor_SetPartAttribute'. */
+/* VIEW(s1318): routine Actor_SetPartAttribute as void
+ * Actor_SetPartAttribute(struct Actor *object, s32 attribute); kibombo.h has
+ * void Actor_SetPartAttribute(struct KibomboObject *object, s32 value); tried
+ * as the definition's void Actor_SetPartAttribute(struct Actor *object, s32
+ * attribute), which the object already declares, it does not compile in tla-ja:
+ * games/tla/include/field/event.h:112: conflicting types for
+ * `Actor_SetPartAttribute'. */
 struct Actor;
-extern void Actor_SetPartAttribute__s1318(struct Actor *object, s32 attribute) __asm__("Actor_SetPartAttribute");
+extern void
+Actor_SetPartAttribute__s1318(struct Actor *object,
+                              s32 attribute) __asm__("Actor_SetPartAttribute");
 #define Actor_SetPartAttribute Actor_SetPartAttribute__s1318
-/* VIEW(s1318): routine Script_WaitForEventTimeout as void Script_WaitForEventTimeout(struct Actor *actor); kibombo.h has void Script_WaitForEventTimeout(struct KibomboObject *object); tried as the definition's void Script_WaitForEventTimeout(void *fieldObject), it does not compile in tla-ja: games/tla/include/field/event.h:115: conflicting types for `Script_WaitForEventTimeout'. */
+/* VIEW(s1318): routine Script_WaitForEventTimeout as void
+ * Script_WaitForEventTimeout(struct Actor *actor); kibombo.h has void
+ * Script_WaitForEventTimeout(struct KibomboObject *object); tried as the
+ * definition's void Script_WaitForEventTimeout(void *fieldObject), it does not
+ * compile in tla-ja: games/tla/include/field/event.h:115: conflicting types for
+ * `Script_WaitForEventTimeout'. */
 struct Actor;
-extern void Script_WaitForEventTimeout__s1318(struct Actor *actor) __asm__("Script_WaitForEventTimeout");
+extern void Script_WaitForEventTimeout__s1318(struct Actor *actor) __asm__(
+    "Script_WaitForEventTimeout");
 #define Script_WaitForEventTimeout Script_WaitForEventTimeout__s1318
-/* VIEW(s1318): routine Func_080d4568 as struct Actor *Func_080d4568(void); kibombo.h has struct KibomboObject *Func_080d4568(void); tried as the definition's struct Actor *Func_080d4568(void), which the object already declares, it does not compile in tla-ja: games/tla/include/field/event.h:124: conflicting types for `Func_080d4568'. */
-extern struct Actor *Func_080d4568__s1318(void) __asm__("Func_080d4568");
-#define Func_080d4568 Func_080d4568__s1318
+/* VIEW(s1318): routine FieldCamera_GetActor as struct Actor
+ * *FieldCamera_GetActor(void); kibombo.h has struct KibomboObject
+ * *FieldCamera_GetActor(void); tried as the definition's struct Actor
+ * *FieldCamera_GetActor(void), which the object already declares, it does not
+ * compile in tla-ja: games/tla/include/field/event.h:124: conflicting types for
+ * `FieldCamera_GetActor'. */
+extern struct Actor *Func_080d4568__s1318(void) __asm__("FieldCamera_GetActor");
+#define FieldCamera_GetActor Func_080d4568__s1318
 #include "event_inline.h"
-#undef Func_080d4568
+#undef FieldCamera_GetActor
 #undef Script_WaitForEventTimeout
 #undef Actor_SetPartAttribute
 #undef Actor_SetPositionAndResetMotion
@@ -824,7 +919,7 @@ void Func_02001318(void) {
   Actor_SetMovementTypeAndWaitById(6, gData_02005f9c);
   Event_Wait(20);
   Event_ShowMessage(0x2007, 0);
-  Func_080d47b4(5, 0x100, 20);
+  Actor_ShowEmoteById(5, 0x100, 20);
   Event_ShowMessage(0x1005, 0);
   Motion_SetModeAndWaitAnimation(7, 3);
   Event_ShowMessage(0x2007, 0);
@@ -865,7 +960,7 @@ void Func_02001318(void) {
   Actor_ShowEmote(gMainRoutineWork.currentOwner, 257, 0);
   Actor_ShowEmote(5, 257, 0);
   Actor_ShowEmote(6, 257, 40);
-  Func_080d47b4(7, 261, 20);
+  Actor_ShowEmoteById(7, 261, 20);
   Event_ShowMessage(0x2007, 0);
   Actor_SetModeById(6, 3);
   Event_ShowMessageAndWait(0x1006, 0);
@@ -885,14 +980,14 @@ void Func_02001318(void) {
   Actor_SetModeById(26, 3);
   Event_ShowMessage(0x101a, 0);
   Motion_SetModeAndWaitAnimation(7, 3);
-  Func_080d47b4(26, 264, 20);
+  Actor_ShowEmoteById(26, 264, 20);
   Event_ShowMessage(0x101a, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   Actor_FaceDirection(6, FACING_SOUTH, 0);
   Actor_ShowEmote(gMainRoutineWork.currentOwner, 257, 0);
   Actor_ShowEmote(5, 257, 0);
-  Func_080d47b4(6, 257, 40);
+  Actor_ShowEmoteById(6, 257, 40);
   Actor_FaceDirection(26, FACING_NORTH + FACING_STEP, 0);
   Event_OpenMessage(0x101a, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
@@ -929,9 +1024,9 @@ void Func_02001318(void) {
   Actor_FaceDirection(6, FACING_SOUTH, 0);
   Actor_FaceDirection(7, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(26, FACING_NORTHWEST + FACING_STEP, 0);
-  Func_080d47b4(26, 261, 20);
+  Actor_ShowEmoteById(26, 261, 20);
   Event_ShowMessage(0x101a, 0);
-  Func_080d47b4(7, 262, 40);
+  Actor_ShowEmoteById(7, 262, 40);
   Event_ShowMessage(0x2007, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_ArmCallback(5, FACING_EAST, 0);
@@ -1021,17 +1116,17 @@ void Func_02001318(void) {
   Actor_Stop(26);
   Actor_FaceDirection(26, FACING_NORTHWEST + FACING_STEP, 0);
   Event_ShowMessage(0x101a, 0);
-  Func_080d47b4(7, 257, 20);
+  Actor_ShowEmoteById(7, 257, 20);
   Actor_FaceDirection(7, FACING_SOUTH, 40);
   Actor_FaceDirectionAndWait(26, FACING_NORTH + FACING_STEP);
   Event_ShowMessage(0x101a, 0);
-  Func_080d47b4(7, 0x100, 20);
+  Actor_ShowEmoteById(7, 0x100, 20);
   Event_ShowMessage(0x1007, 0);
   Actor_FaceDirection(26, FACING_NORTHWEST + FACING_STEP, 0);
   Motion_SetModeAndWaitAnimation(26, 4);
   Event_ShowMessage(0x101a, 0);
   Event_ShowMessage(0x101a, 0);
-  Func_080d47b4(7, 265, 40);
+  Actor_ShowEmoteById(7, 265, 40);
   Event_ShowMessage(0x1007, 0);
   Actor_SetAttachedEffect(26, 258);
   Event_Wait(20);
@@ -1047,7 +1142,7 @@ void Func_02001318(void) {
   Actor_FaceDirection(26, FACING_NORTH + FACING_STEP, 0);
   Event_OpenMessage(0x101a, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
-    Func_080d47b4(26, 264, 20);
+    Actor_ShowEmoteById(26, 264, 20);
     Event_ShowMessageAndWait(0x101a, 0);
     Actor_FaceDirection(5, FACING_SOUTHWEST, 0);
     Actor_FaceDirection(6, FACING_NORTHEAST, 20);
@@ -1056,7 +1151,7 @@ void Func_02001318(void) {
     *(u16 *)(EVENT_WORK + 0x1c4) += 3;
   } else {
     *(u16 *)(EVENT_WORK + 0x1c4) += 1;
-    Func_080d47b4(26, 263, 20);
+    Actor_ShowEmoteById(26, 263, 20);
     Event_ShowMessageAndWait(0x101a, 0);
     Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
     Event_ShowMessageAndWait(0x1005, 0);
@@ -1067,7 +1162,7 @@ void Func_02001318(void) {
     Event_Wait(40);
     Func_02005c7c();
   }
-  Func_080d47b4(7, 265, 40);
+  Actor_ShowEmoteById(7, 265, 40);
   Event_ShowMessageAndWait(0x1007, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_FaceDirection(6, FACING_NORTH, 0);
@@ -1156,7 +1251,7 @@ void Func_02002050(void) {
   Event_ShowMessageAndWait(6, 0);
   Actor_ShowEmote(5, 257, 0);
   Event_ShowMessageAndWait(5, 0);
-  Func_080d47b4(26, 262, 20);
+  Actor_ShowEmoteById(26, 262, 20);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 26);
   Actor_WatchAndSetScript(5, 26);
   Actor_WatchAndSetScript(6, 26);
@@ -1222,7 +1317,7 @@ void Func_02002050(void) {
   Event_Wait(1);
   Actor_GetById__s1318(26)->actionFlags |= 1;
   FieldMessage_ShowAtActor(26, 0);
-  Func_080d47b4(gMainRoutineWork.currentOwner, 257, 0);
+  Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 257, 0);
   Actor_FaceDirection(5, FACING_WEST, 0);
   Actor_FaceDirection(6, FACING_WEST, 0);
 ask:
@@ -1296,7 +1391,7 @@ ask:
   Actor_FaceDirection(7, FACING_NORTHEAST, 0);
   Actor_SetAttachedEffect(7, 258);
   Event_ShowMessageAndWait(7, 0);
-  Func_080d47b4(26, 265, 0);
+  Actor_ShowEmoteById(26, 265, 0);
   Actor_FaceDirectionAndWait(26, FACING_WEST);
   Event_ShowMessage(0x201a, 0);
   Actor_ShowEmote(7, 257, 20);
@@ -1342,19 +1437,19 @@ ask:
   Event_ShowMessageAndWait(26, 0);
   Actor_ArmCallback(26, FACING_EAST, 10);
   Event_ShowMessageAndWait(26, 0);
-  Func_080d47b4(7, 263, 0);
+  Actor_ShowEmoteById(7, 263, 0);
   Event_ShowMessageAndWait(7, 0);
   Actor_FaceDirectionAndWait(26, FACING_WEST);
   Actor_SetModeById(26, 4);
   Event_ShowMessageAndWait(0x201a, 0);
-  Func_080d47b4(7, 257, 40);
+  Actor_ShowEmoteById(7, 257, 40);
   Actor_ArmCallbackAndRefresh(26, FACING_EAST);
   Event_ShowMessageAndWait(26, 0);
   Actor_ShowEmote(7, 0x100, 0);
   Actor_ShowEmote(gMainRoutineWork.currentOwner, 0x100, 0);
   Actor_ShowEmote(5, 0x100, 0);
-  Func_080d47b4(6, 0x100, 40);
-  Func_080d47b4(26, 264, 20);
+  Actor_ShowEmoteById(6, 0x100, 40);
+  Actor_ShowEmoteById(26, 264, 20);
   Event_ShowMessageAndWait(26, 0);
   Actor_SetModeById(26, 3);
   Event_ShowMessageAndWait(26, 0);
@@ -1377,7 +1472,8 @@ ask:
 #undef EVENT_WORK
 
 // ---- games/tla/src/scene/kibombo/s2ad8.c ----
-// Scene code of overlay 0x670, in ROM order, from s2ad8's offset up to the next object the overlay links.
+// Scene code of overlay 0x670, in ROM order, from s2ad8's offset up to the next
+// object the overlay links.
 
 void Func_02002ad8(void) {
   struct KibomboWork90 *work = Ram_HeapSlots->unk84[3];

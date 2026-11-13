@@ -43,7 +43,7 @@ void Actor_ResetAndSetPositionInMode2(s32 actorId, s32 x, s32 z);
 void Actor_OffsetPositionAndReset(u32 objectId, s32 x_offset, s32 z_offset);
 void Actor_ArmCallback(s32 actorId, s32 angle, s32 frames);
 void Actor_SetAngleToward(s32 actorId, s32 target, s32 frames);
-s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
+s32 Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames);
 void FieldEffect_SetAttached(s32 actorId, s32 effect);
 void Camera_SetSpeedParameters(s32 speed, s32 acceleration);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 pan);
@@ -114,28 +114,28 @@ void Actor_Stop(s32 actorId);
 void Import_EventSetExitRequest(s32 countdown);
 void Script_WaitForEventTimeout(struct Actor *actor);
 s32 PartyInventory_FindMember(s32 item_id);
-void Func_0803ce64(s32 message, s32 mode, s32 yOffset);
+void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset);
 s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 flags);
 void Party_SetFields1eeAnd1f0(s32 sceneId, s32 entrance);
 void Party_SetFields1f2And1f4(s32 sceneId, s32 entrance);
 void Task_RemoveFar(TaskFunc func);
-void Func_080d7788(s32 slot, s32 element, s32 djinn);
+void Djinn_JoinParty(s32 slot, s32 element, s32 djinn);
 void FieldPsynergy_StartMindReadWave(s32 x, s32 y);
-struct Actor *Func_080d4568(void);
-s32 Func_080d295c(s32 atBottom);
+struct Actor *FieldCamera_GetActor(void);
+s32 FieldYesNo_Ask(s32 atBottom);
 void WorldMap_StartZoom(s32 zoom, s32 frames);
-void Func_0803f9c0(s32 phase, s32 brightness);
-void Func_080d2b4c(s32 flag, s32 no);
+void WindowColor_Apply(s32 phase, s32 brightness);
+void Field_RequestDjinnBattle(s32 flag, s32 no);
 void Event_PrepareObjectAndApplyValue(s32 unit, s32 announce);
 void Map_WaitForShakeToSettle(void);
 s32 GetMapCellCollision(s32 layer, s32 x, s32 y);
 void Actor_SetActionById(s32 actorId, s32 steps);
-void Func_080d3b28(s32 actorId, s32 item);
-void Func_0802372c(struct Actor *actor, s32 item);
-void Func_0802bdd0(s32 x, s32 y, s32 px, s32 py);
-s32 Func_080d452c(s32 actorId, s32 pan);
-void Func_080d3928(s32 actorId, s32 angle);
-s32 Func_080dbdd4(s32 x, s32 z, s32 layer, s32 behavior);
+void Actor_ShowItemIconById(s32 actorId, s32 item);
+void Actor_SetItemIcon(struct Actor *actor, s32 item);
+void WorldMap_SetWindowCellTileAndDraw(s32 x, s32 y, s32 px, s32 py);
+s32 FieldCamera_MoveToActor(s32 actorId, s32 pan);
+void Actor_SetSpriteRotationById(s32 actorId, s32 angle);
+s32 MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 behavior);
 
 /// Shows the event's next line of dialogue and waits for the player to read
 /// it.
@@ -208,12 +208,12 @@ static inline void Actor_FaceActor(s32 actorId, s32 target, s32 frames) {
 /// Pops an emote bubble up over an actor, then lets frames pass before
 /// the event goes on.
 static inline s32 Actor_ShowEmote(s32 actorId, s32 emote, s32 frames) {
-  return Func_080d47b4(actorId, emote, frames);
+  return Actor_ShowEmoteById(actorId, emote, frames);
 }
 
 /// Actor_ShowEmote, for an event that leaves its result unread.
 static inline void FieldActor_ShowEmote(s32 actorId, s32 emote, s32 frames) {
-  Func_080d47b4(actorId, emote, frames);
+  Actor_ShowEmoteById(actorId, emote, frames);
 }
 
 /// Attaches a field effect to an actor, takes it off, or plays one

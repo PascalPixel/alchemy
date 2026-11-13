@@ -130,10 +130,10 @@ Actor_ArmCallbackAndRefresh:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global Camera_SetSpeedParameters
 	.thumb_func
 Camera_SetSpeedParameters:
@@ -146,10 +146,10 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Func_020010e0:
 	overlay_veneer FieldCamera_WaitForArrivalFar
-	.global Func_080d4568
+	.global FieldCamera_GetActor
 	.thumb_func
-Func_080d4568:
-	overlay_veneer Func_080c8258
+FieldCamera_GetActor:
+	overlay_veneer FieldCamera_GetActorFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:
@@ -166,10 +166,10 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_080d7788
+	.global Djinn_JoinParty
 	.thumb_func
-Func_080d7788:
-	overlay_veneer Func_080c8580
+Djinn_JoinParty:
+	overlay_veneer Djinn_JoinPartyFar
 	.global Actor_WatchAndSetScript
 	.thumb_func
 Actor_WatchAndSetScript:

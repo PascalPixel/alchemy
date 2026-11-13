@@ -85,7 +85,7 @@ void FieldCamera_MoveToActorById(s32 id, s32 use_setter) {
 }
 
 /// As FieldCamera_MoveToActorById, to the actor's height too.
-void Func_080d452c(s32 id, s32 use_setter) {
+void FieldCamera_MoveToActor(s32 id, s32 use_setter) {
   struct Actor *obj = ObjectTable_Get(id);
 
   if (obj != NULL)
@@ -100,7 +100,7 @@ void FieldCamera_WaitForArrival(void) {
 }
 
 /// The event command "get view centre": returns the camera actor.
-struct Actor *Func_080d4568(void) {
+struct Actor *FieldCamera_GetActor(void) {
   return ((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))->viewCenter;
 }
 

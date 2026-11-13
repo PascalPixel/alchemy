@@ -186,7 +186,11 @@ void Func_02000260(void) { FieldActor_SetSpritePriority(25, 3); }
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(alhafra): routine Func_02001d2c as s32 Func_02001d2c(); module/scene/scene.h has s32 Func_02001d2c(s32 x, s32 z, s32 layer); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/alhafra.c:194: too few arguments to function `Func_02001d2c'. */
+/* VIEW(alhafra): routine Func_02001d2c as s32 Func_02001d2c();
+ * module/scene/scene.h has s32 Func_02001d2c(s32 x, s32 z, s32 layer); tried as
+ * the rest of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/alhafra.c:194: too few arguments to function
+ * `Func_02001d2c'. */
 extern s32 Func_02001d2c__alhafra() __asm__("Func_02001d2c");
 extern u8 gData_02001d54[];
 
@@ -211,7 +215,7 @@ void Func_02000288(void) {
   FieldEvent_ShowMessageThenWait(0x18, 0, 0xa);
   Actor_ArmCallback(19, -256, 0);
   Event_Wait(10);
-  Func_080d47b4(0x13, 0x107, 0x1e);
+  Actor_ShowEmoteById(0x13, 0x107, 0x1e);
   FieldEvent_ShowMessageThenWait(0x13, 0, 0xa);
   FieldActor_StartRepeatedMotion(24, 3);
   FieldEffect_SetAttached(0x18, 0x102);
@@ -227,7 +231,6 @@ void Func_02000288(void) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-
 
 void Func_020002f8(void) {
   GameFlag_SetBit(0x8b5);
@@ -288,7 +291,10 @@ void Func_02000398(s32 id) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(alhafra): routine Func_02001ccc as void Func_02001ccc(void); module/scene/scene.h has void Func_02001ccc(s32 actor, s32 value); tried as the rest of the object declares it, Func_0200047c moves: 3 of 189 instructions, Func_02000aa0 moves: 11 of 1456 instructions in tla-ja. */
+/* VIEW(alhafra): routine Func_02001ccc as void Func_02001ccc(void);
+ * module/scene/scene.h has void Func_02001ccc(s32 actor, s32 value); tried as
+ * the rest of the object declares it, Func_0200047c moves: 3 of 189
+ * instructions, Func_02000aa0 moves: 11 of 1456 instructions in tla-ja. */
 extern void Func_02001ccc__alhafra(void) __asm__("Func_02001ccc");
 
 void Func_0200047c(void) {
@@ -318,9 +324,9 @@ void Func_0200047c(void) {
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(29, 3);
   Event_Wait(20);
-  Func_080d47b4(0x1e, 0x108, 0x1e);
+  Actor_ShowEmoteById(0x1e, 0x108, 0x1e);
   FieldEvent_ShowMessageThenWait(0x1e, 0, 0xa);
-  Func_080d47b4(0x1d, 0x102, 0x28);
+  Actor_ShowEmoteById(0x1d, 0x102, 0x28);
   Actor_FaceDirection(29, 0x4000, 0);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(29, 2);
@@ -431,7 +437,6 @@ const u8 *Scene_GetEvents(void) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-
 
 s32 Scene_Initialize(void) {
   s32 t1, t2, t3, t4, t9, t10, t11, t23, t24, t25, t37, t39, t41, t44, t50, t51,
@@ -671,7 +676,7 @@ void Func_02000aa0(s32 a0) {
      * call with constant arguments, 37 of 1456 instructions differ in tla-en.
      */
     __asm__ volatile("" : "+l"(y), "+l"(z));
-    Func_080d47b4(0x21, y, z);
+    Actor_ShowEmoteById(0x21, y, z);
   }
   Actor_FaceDirection(33, 0x3000, 0);
   Event_Wait(40);
@@ -796,7 +801,7 @@ void Func_02000aa0(s32 a0) {
   FieldEvent_ShowMessageThenWait(0x20, 0, 0xa);
   Actor_SetModeById(29, 1);
   Event_Wait(10);
-  Func_080d47b4(0x1d, 0x107, 0x1e);
+  Actor_ShowEmoteById(0x1d, 0x107, 0x1e);
   Actor_FaceDirection(29, 0x8000, 0);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(0x1d, 0, 0xa);
@@ -839,7 +844,7 @@ void Func_02000aa0(s32 a0) {
   Actor_ArmCallback(29, 0, 0);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(0x201d, 0, 0xa);
-  Func_080d47b4(0x22, 0x100, 0x28);
+  Actor_ShowEmoteById(0x22, 0x100, 0x28);
   FieldEvent_ShowMessageThenWait(0x22, 0, 0xa);
   Actor_FaceDirection(29, 0x8000, 0);
   Event_Wait(20);
@@ -872,10 +877,10 @@ void Func_02000aa0(s32 a0) {
   Actor_WalkToAndWait(17, 448, 808);
   Actor_WalkByAndWait(30, 8, 0);
   FieldEvent_ShowMessageThenWait(0x101e, 0, 0xa);
-  Func_080d47b4(0x11, 0x101, 0x32);
+  Actor_ShowEmoteById(0x11, 0x101, 0x32);
   Actor_FaceDirection(17, 0x8000, 0);
   Event_Wait(20);
-  Func_080d47b4(0x1e, 0x108, 0x1e);
+  Actor_ShowEmoteById(0x1e, 0x108, 0x1e);
   FieldEvent_ShowMessageThenWait(0x101e, 0, 0xa);
   Motion_SetVarCbAndRefresh(17, 2);
   Event_Wait(10);
@@ -1061,7 +1066,7 @@ void Func_02001958(s32 a0) {
     Event_ShowMessageThenWait(0x19, 0, 0xa);
     {
       s32 b = 0x107, c = 0x1e;
-      Func_080d47b4(0x19, b, c);
+      Actor_ShowEmoteById(0x19, b, c);
     }
     Event_OpenMessage(0x19, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
@@ -1091,7 +1096,7 @@ void Func_02001958(s32 a0) {
     Event_Wait(70);
     {
       s32 b = 0x100, c = 0x32;
-      Func_080d47b4(0x19, b, c);
+      Actor_ShowEmoteById(0x19, b, c);
     }
     Event_ShowMessageThenWait(0x19, 0, 0xa);
   }

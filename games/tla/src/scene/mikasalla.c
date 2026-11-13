@@ -52,7 +52,11 @@ void Func_02000438(void);
 extern u8 MsgFieldAreYouLookingForSomeone[];
 #include "event_inline.h"
 
-/* VIEW(mikasalla): tag struct WarpEntry as struct WarpEntry__mikasalla; module/scene/scene.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mikasalla.c:67: invalid use of undefined type `struct WarpEntry'. */
+/* VIEW(mikasalla): tag struct WarpEntry as struct WarpEntry__mikasalla;
+ * module/scene/scene.h has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/mikasalla.c:67: invalid use of undefined type `struct
+ * WarpEntry'. */
 struct WarpEntry__mikasalla {
   s32 map;
   u16 x;
@@ -84,7 +88,7 @@ void Func_0200009c(void) {
   Sound_Play(158);
   index--;
   MapGrid_AnimateCells(gData_0200073c[index].map, gData_0200073c[index].x,
-                 gData_0200073c[index].z);
+                       gData_0200073c[index].z);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
 
@@ -99,7 +103,7 @@ void Func_0200009c(void) {
   Event_End();
 }
 
-void Func_0200014c(void) { Func_080d7788(18, 2, 8); }
+void Func_0200014c(void) { Djinn_JoinParty(18, 2, 8); }
 
 struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;

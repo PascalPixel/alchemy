@@ -148,10 +148,10 @@ Func_020031b0:
 	.thumb_func
 Func_020031b8:
 	overlay_veneer Func_08020390
-	.global Func_0803ce64
+	.global FieldMessage_ShowCentered
 	.thumb_func
-Func_0803ce64:
-	overlay_veneer Func_08038210
+FieldMessage_ShowCentered:
+	overlay_veneer FieldMessage_ShowCenteredFar
 	.global PartyInventory_FindMember
 	.thumb_func
 PartyInventory_FindMember:

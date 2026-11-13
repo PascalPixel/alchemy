@@ -135,7 +135,7 @@ static inline void Kibombo_ObjSetPos(struct KibomboObject *object, s32 x, s32 y,
 }
 
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-struct KibomboObject *Func_080d4568(void);
+struct KibomboObject *FieldCamera_GetActor(void);
 void Camera_SetSpeedParameters(s32 speed, s32 acceleration);
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
@@ -200,7 +200,7 @@ static inline void Kibombo_FadeTo(s32 a, s32 b) {
   }
 
 static inline void Kibombo_ObjEmote(s32 actor, s32 emote, s32 frames) {
-  Func_080d47b4(actor, emote, frames);
+  Actor_ShowEmoteById(actor, emote, frames);
 }
 
 static inline void Kibombo_ObjEmoteWait(s32 actor, s32 emote) {

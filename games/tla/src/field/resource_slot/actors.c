@@ -621,7 +621,7 @@ struct IconSprite__resource_slot {
 /// icon in heap slot 68, whose tiles at +0x400 go to the sprite's VRAM cache
 /// slot, and the sprite is reset to scale 1.0, 16-colour palette 0.
 // No ☀️ twin found.
-void Func_0802372c(struct IconOwner *owner, s32 id) {
+void Actor_SetItemIcon(struct IconOwner *owner, s32 id) {
   struct IconSprite__resource_slot *sprite;
   u8 *buffer;
   s32 tile;

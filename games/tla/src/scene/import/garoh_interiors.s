@@ -34,10 +34,10 @@ Func_020007d4:
 	.thumb_func
 Func_020007dc:
 	overlay_veneer Map_SetShownLayersFar
-	.global Func_0803ce64
+	.global FieldMessage_ShowCentered
 	.thumb_func
-Func_0803ce64:
-	overlay_veneer Func_08038210
+FieldMessage_ShowCentered:
+	overlay_veneer FieldMessage_ShowCenteredFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -122,10 +122,10 @@ Event_ResolvePendingActions:
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_080d3928
+	.global Actor_SetSpriteRotationById
 	.thumb_func
-Func_080d3928:
-	overlay_veneer Func_080c87a8
+Actor_SetSpriteRotationById:
+	overlay_veneer Actor_SetSpriteRotationByIdFar
 	.global Func_0200089c
 	.thumb_func
 Func_0200089c:

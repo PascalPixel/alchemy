@@ -56,7 +56,7 @@ s32 Func_02000330(void) {
   Event_Wait(10);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
   Event_Wait(10);
-  Func_080d47b4(gMainRoutineWork.currentOwner, 0x109, 0);
+  Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 0x109, 0);
   Event_Wait(30);
   Func_02005868();
   Import_EventSetExitRequest(9);
@@ -76,8 +76,8 @@ void Func_02000428(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner,
-                                   ((leader->x >> 20) << 4) + 8,
-                                   ((leader->z >> 20) << 4) + 8);
+                            ((leader->x >> 20) << 4) + 8,
+                            ((leader->z >> 20) << 4) + 8);
   TrialRoad_Idle();
   found = Func_020000fc(0);
   if (found != 0)
@@ -132,7 +132,11 @@ void Func_020004f4(s32 item, s32 owner, s32 slot) {
   Event_End();
 }
 
-/* VIEW(s0218): tag struct EventWork15a as struct EventWork15a__s0218; module/tla.h has another definition; tried with the definition the rest of the object has, its members read value as flag, it does not compile in tla-ja: games/tla/src/scene/trial_road/s0218.c:171: dereferencing pointer to incomplete type. */
+/* VIEW(s0218): tag struct EventWork15a as struct EventWork15a__s0218;
+ * module/tla.h has another definition; tried with the definition the rest of
+ * the object has, its members read value as flag, it does not compile in
+ * tla-ja: games/tla/src/scene/trial_road/s0218.c:171: dereferencing pointer to
+ * incomplete type. */
 struct EventWork15a__s0218 {
   u8 unk000[0x15a];
   u16 value;
@@ -498,8 +502,9 @@ void Func_02000ce4(s32 phase) {
     Func_020045ac(gData_02007734, 16);
 }
 
-// Blocks the three cells through an object's cell on layers 0 and 2 (collision code
-// 255): the column above and below it in mode 0, the row beside it otherwise.
+// Blocks the three cells through an object's cell on layers 0 and 2 (collision
+// code 255): the column above and below it in mode 0, the row beside it
+// otherwise.
 #include "map.h"
 
 /// Blocks the three cells through an object's cell on layers 0 and 2 (collision

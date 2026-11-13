@@ -37,10 +37,12 @@ struct Actor *Func_02000910();
 
 void Func_02000054(void) {
   if (gMainRoutineWork.renderMode == 10)
-    MapGrid_SetCellBehavior(0x2200000, 0x1100000, 0, 255);
+    FieldMapGrid_SetCellBehavior(0x2200000, 0x1100000, 0, 255);
 }
 
-void Func_0200007c(void) { Func_080dbdd4(0x2200000, 0x1100000, 0, 6); }
+void Func_0200007c(void) {
+  MapGrid_SetCellBehavior(0x2200000, 0x1100000, 0, 6);
+}
 
 void Func_02000090(s32 id) {
   struct Actor *object;
@@ -65,8 +67,7 @@ void Func_020000e8(s32 id) {
   struct Actor *object;
   struct Actor *motion;
 
-  if (gData_02002618 == 0 &&
-      Actor_Get(gMainRoutineWork.currentOwner)->y > 0) {
+  if (gData_02002618 == 0 && Actor_Get(gMainRoutineWork.currentOwner)->y > 0) {
     object = Actor_Get(8);
     if (id == 50) {
       Actor_SetPosition(8, PIXELS(488), PIXELS(280));
@@ -193,10 +194,10 @@ extern s32 gData_020025f0;
 static inline void Counter_Set(s32 value) { gData_020025f0 = value; }
 
 DEFINE_FUNC_0200027C(Func_020003a4, gData_020025f0, gData_020025f4,
-    gData_0200261c)
+                     gData_0200261c)
 
 DEFINE_FUNC_020002F4(Func_02000460, gData_020025f4, gData_0200261c,
-    gData_0200263c, Func_020003a4, gData_02002640)
+                     gData_0200263c, Func_020003a4, gData_02002640)
 
 DEFINE_FUNC_02000378(Func_020004e4, Func_02001bd8, Func_02001c98)
 
@@ -213,4 +214,4 @@ s32 Func_02001c88(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_FUNC_02000628(Func_02000750, Func_02001c88, Func_02000724,
-    gData_020025f8, gData_02002618)
+                     gData_020025f8, gData_02002618)

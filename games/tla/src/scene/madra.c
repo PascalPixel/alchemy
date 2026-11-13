@@ -44,7 +44,13 @@ const u8 *Scene_GetPlacements(void) {
   return gData_02002d38;
 }
 
-/* VIEW(madra): variable gData_02003308 as extern struct MadraPlacement gData_02003308[]; the definition has s32 gData_02003308[] = { (s32) gData_020032fc, 0x30014, (s32) gData_020032f0, 0x17000d, (s32) gData_020032f0, 0x110011, (s32) gData_020032f0...; tried as the definition's extern s32 gData_02003308[], it does not compile in tla-ja: games/tla/src/scene/madra.c:71: request for member `x' in something not a structure or union. */
+/* VIEW(madra): variable gData_02003308 as extern struct MadraPlacement
+ * gData_02003308[]; the definition has s32 gData_02003308[] = { (s32)
+ * gData_020032fc, 0x30014, (s32) gData_020032f0, 0x17000d, (s32)
+ * gData_020032f0, 0x110011, (s32) gData_020032f0...; tried as the definition's
+ * extern s32 gData_02003308[], it does not compile in tla-ja:
+ * games/tla/src/scene/madra.c:71: request for member `x' in something not a
+ * structure or union. */
 extern struct MadraPlacement gData_02003308__madra[] __asm__("gData_02003308");
 
 void Func_0200006c(void) {
@@ -150,12 +156,12 @@ void Func_020002bc(void) {
      * asm the calls share 0x103 in r5); as no asm, 14 of 38 instructions
      * differ in tla-en. */
     __asm__ volatile("" : "+r"(a), "+r"(b));
-    Func_080d47b4(33, a, b);
+    Actor_ShowEmoteById(33, a, b);
     FieldMessage_ShowAtActor(33, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
       a = 0x103;
       b = 30;
-      Func_080d47b4(33, a, b);
+      Actor_ShowEmoteById(33, a, b);
       Event_ShowMessageThenWait(33, 0, 10);
     } else {
       Func_02000294();
@@ -173,20 +179,28 @@ void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Map_PlayMapEdit(const void *data, s32 a, s32 b);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
-void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 y, s32 z);
-/* VIEW(events_b): routine Func_080d47b4 as void Func_080d47b4(s32 id, s32 a, s32 b); event.h has s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames); tried as the definition's struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags, s32 state), it does not compile in tla-ja: games/tla/src/scene/madra.c:176: conflicting types for `Func_080d47b4'. */
-extern void Func_080d47b4__events_b(s32 id, s32 a, s32 b) __asm__("Func_080d47b4");
+void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 y,
+                                                    s32 z);
+/* VIEW(events_b): routine Actor_ShowEmoteById as void Actor_ShowEmoteById(s32
+ * id, s32 a, s32 b); event.h has s32 Actor_ShowEmoteById(s32 actorId, s32
+ * emote, s32 frames); tried as the definition's struct
+ * BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags, s32
+ * state), it does not compile in tla-ja: games/tla/src/scene/madra.c:176:
+ * conflicting types for `Actor_ShowEmoteById'. */
+extern void Func_080d47b4__events_b(s32 id, s32 a,
+                                    s32 b) __asm__("Actor_ShowEmoteById");
 
 extern const u8 gData_02002ff0[];
 
-/* VIEW(events_b): variable MsgUsingPsynergyOn as extern u8 MsgUsingPsynergyOn; msg_ids.h has extern u8 MsgUsingPsynergyOn[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:191: `MsgUsingPsynergyOn__events_b' undeclared (first use in this function). */
+/* VIEW(events_b): variable MsgUsingPsynergyOn as extern u8 MsgUsingPsynergyOn;
+ * msg_ids.h has extern u8 MsgUsingPsynergyOn[]; tried as the rest of the object
+ * declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:191:
+ * `MsgUsingPsynergyOn__events_b' undeclared (first use in this function). */
 extern u8 MsgUsingPsynergyOn__events_b __asm__("MsgUsingPsynergyOn");
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ s32 Flag_Test(s32 flag) {
-  return GameFlag_Test(flag);
-}
+static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Test(flag); }
 
 void Func_02000320(void) {
   s32 x, z;
@@ -283,7 +297,8 @@ void Func_02000490(void) {
 }
 
 // ---- games/tla/src/scene/madra/s051c.c ----
-// Scene code of overlay 0x658, in ROM order, from s051c's offset up to the next object the overlay links.
+// Scene code of overlay 0x658, in ROM order, from s051c's offset up to the next
+// object the overlay links.
 
 #include "event_work.h"
 #include "field_sprite.h"
@@ -495,7 +510,7 @@ void Func_02000968(void) {
     if (GameFlag_Test(0x300) == 0) {
       x = 0x100;
       z = 30;
-      Func_080d47b4(14, x, z);
+      Actor_ShowEmoteById(14, x, z);
       Actor_SetAngleToward(14, 4, 0);
     }
     msg = (s32)&MsgDidYouCome;
@@ -545,8 +560,13 @@ void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
 void Actor_Jump(s32 id, s32 a, s32 b);
 void Actor_LaunchFromLeader(s32 id, s32 a, s32 b, s32 c);
-/* VIEW(s0ac4): routine Map_PlayMapEdit as s32 Map_PlayMapEdit(const void *edit, s32 a, s32 b); events_b has void Map_PlayMapEdit(const void *data, s32 a, s32 b); tried as the definition's void Map_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY), it does not compile in tla-ja: games/tla/src/scene/madra.c:547: conflicting types for `Map_PlayMapEdit'. */
-extern s32 Map_PlayMapEdit__s0ac4(const void *edit, s32 a, s32 b) __asm__("Map_PlayMapEdit");
+/* VIEW(s0ac4): routine Map_PlayMapEdit as s32 Map_PlayMapEdit(const void *edit,
+ * s32 a, s32 b); events_b has void Map_PlayMapEdit(const void *data, s32 a, s32
+ * b); tried as the definition's void Map_PlayMapEdit(u16 *steps, s32
+ * destinationX, u32 destinationY), it does not compile in tla-ja:
+ * games/tla/src/scene/madra.c:547: conflicting types for `Map_PlayMapEdit'. */
+extern s32 Map_PlayMapEdit__s0ac4(const void *edit, s32 a,
+                                  s32 b) __asm__("Map_PlayMapEdit");
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);
 void Func_02002c50(s32 item, s32 a);
@@ -560,7 +580,7 @@ static __inline__ struct Actor *Emote(s32 id, s32 emote, s32 frames) {
    * constants, as ☀️'s scene layer does; as direct calls, 8 of 475 instructions
    * of Func_02000ac4 differ in tla-en, 25 of 549 of Func_02000f80 and 27 of 490
    * of Func_020014fc. */
-  return Func_080d47b4(id, emote, frames);
+  return Actor_ShowEmoteById(id, emote, frames);
 }
 
 /// Actors 24 and 25 talk with 32 and 4, 25 is moved about with its priority
@@ -777,7 +797,7 @@ void Func_02000f80(void) {
   Motion_SetModeAndWaitAnimation(34, 3);
   Event_Wait(20);
   Event_ShowMessageThenWait(34, 0, 10);
-  Func_080d47b4(33, 258, 30);
+  Actor_ShowEmoteById(33, 258, 30);
   Event_ShowMessageThenWait(33, 0, 10);
   Actor_FaceDirection(33, FACING_NORTH, 0);
   Actor_ArmCallback(34, FACING_NORTH, 0);
@@ -791,7 +811,7 @@ void Func_02000f80(void) {
   Event_Wait(20);
   Actor_ArmCallback(33, FACING_WEST, 0);
   Event_Wait(20);
-  Func_080d47b4(33, 257, 30);
+  Actor_ShowEmoteById(33, 257, 30);
   Event_ShowMessageThenWait(33, 0, 10);
   Event_ShowMessageThenWait(33, 0, 10);
   Motion_SetVarCbAndRefresh(34, 2);
@@ -806,12 +826,12 @@ void Func_02000f80(void) {
   Actor_SetAngleToward(33, 4, 0);
   Event_Wait(30);
   Event_ShowMessageThenWait(33, 0, 10);
-  Func_080d47b4(4, 261, 30);
+  Actor_ShowEmoteById(4, 261, 30);
   Motion_SetVarCbAndRefresh(34, 2);
   Event_Wait(20);
   Event_ShowMessageThenWait(34, 0, 10);
   Event_Wait(20);
-  Func_080d47b4(33, 262, 30);
+  Actor_ShowEmoteById(33, 262, 30);
   FieldMessage_ShowAtActor(33, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_ShowMessageThenWait(33, 0, 10);
@@ -828,7 +848,7 @@ void Func_02000f80(void) {
   Motion_SetVarCbAndRefresh(33, 2);
   Event_Wait(20);
   Event_ShowMessageThenWait(33, 0, 10);
-  Func_080d47b4(34, 258, 30);
+  Actor_ShowEmoteById(34, 258, 30);
   Motion_SetModeAndWaitAnimation(33, 3);
   Event_Wait(20);
   Event_ShowMessageThenWait(33, 0, 10);
@@ -885,21 +905,21 @@ void Func_020014fc(void) {
   Actor_ArmCallback(4, FACING_EAST, 0);
   Actor_ArmCallback(32, FACING_WEST, 0);
   Event_Wait(20);
-  Func_080d47b4(32, 0x101, 30);
+  Actor_ShowEmoteById(32, 0x101, 30);
   Event_ShowMessageAndWait(32, 0);
   Motion_SetModeAndWaitAnimation(4, 4);
   Actor_FaceDirectionAndWait(24, FACING_SOUTH + FACING_STEP);
   Motion_SetModeAndWaitAnimation(24, 4);
   Event_ShowMessageThenWait(24, 0, 10);
   Actor_FaceDirection(32, FACING_NORTH + FACING_STEP, 0);
-  Func_080d47b4(32, 0x103, 0);
+  Actor_ShowEmoteById(32, 0x103, 0);
   Actor_Jump(32, 6, 15);
   Actor_Jump(32, 6, 23);
   Event_ShowMessageAndWait(32, 0);
   Emote(4, 0x100, 30);
   Actor_SetAngleToward(4, 24, 0);
   Event_Wait(20);
-  Func_080d47b4(32, 0x100, 30);
+  Actor_ShowEmoteById(32, 0x100, 30);
   Actor_FaceDirectionAndWait(32, FACING_NORTH + FACING_STEP);
   Event_ShowMessageAndWait(32, 0);
   Actor_FaceDirectionAndWait(25, FACING_SOUTHEAST);
@@ -923,7 +943,7 @@ void Func_020014fc(void) {
   Event_Wait(20);
   Actor_FaceDirectionAndWait(32, FACING_NORTHWEST + FACING_STEP);
   Event_ShowMessageAndWait(32, 0);
-  Func_080d47b4(25, 0x102, 30);
+  Actor_ShowEmoteById(25, 0x102, 30);
   Event_ShowMessageThenWait(25, 0, 10);
   Motion_SetVarCbAndRefresh(24, 2);
   Event_Wait(20);
@@ -957,13 +977,13 @@ void Func_020014fc(void) {
   Event_Wait(20);
   Actor_FaceDirection(32, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(4, FACING_NORTHWEST + FACING_STEP, 0);
-  Func_080d47b4(25, 0x102, 30);
+  Actor_ShowEmoteById(25, 0x102, 30);
   Motion_SetModeAndWaitAnimation(25, 4);
   Event_Wait(10);
   Actor_FaceDirection(25, FACING_SOUTHEAST, 0);
   Event_ShowMessageThenWait(25, 0, 10);
   Emote(32, 0x101, 0);
-  Func_080d47b4(4, 0x101, 30);
+  Actor_ShowEmoteById(4, 0x101, 30);
   Event_ShowMessageAndWait(32, 0);
   Actor_FaceDirectionAndWait(24, FACING_SOUTH + FACING_STEP);
   Motion_SetModeAndWaitAnimation(24, 4);
@@ -999,8 +1019,13 @@ void Func_020014fc(void) {
   Event_End();
 }
 
-/* VIEW(s0ac4): variable gData_02003308 as extern const struct CellPictureCopyEntry gData_02003308[]; madra has extern struct MadraPlacement gData_02003308[]; tried as the definition's extern s32 gData_02003308[], it does not compile in tla-ja: games/tla/src/scene/madra.c:1085: request for member `steps' in something not a structure or union. */
-extern const struct CellPictureCopyEntry gData_02003308__s0ac4[] __asm__("gData_02003308");
+/* VIEW(s0ac4): variable gData_02003308 as extern const struct
+ * CellPictureCopyEntry gData_02003308[]; madra has extern struct MadraPlacement
+ * gData_02003308[]; tried as the definition's extern s32 gData_02003308[], it
+ * does not compile in tla-ja: games/tla/src/scene/madra.c:1085: request for
+ * member `steps' in something not a structure or union. */
+extern const struct CellPictureCopyEntry
+    gData_02003308__s0ac4[] __asm__("gData_02003308");
 
 // The macro's do-while starts each mode change's own scheduling region; as
 // plain calls, 88 of 1565 instructions differ in tla-en.
@@ -1035,8 +1060,9 @@ void Func_020019d8(void) {
   Actor_WaitForMoveById(4);
   Actor_FaceDirection(4, FACING_NORTH, 0);
   Event_Wait(20);
-  Map_PlayMapEdit__s0ac4(gData_02003308__s0ac4[6].steps, gData_02003308__s0ac4[6].unk04,
-                  gData_02003308__s0ac4[6].unk06);
+  Map_PlayMapEdit__s0ac4(gData_02003308__s0ac4[6].steps,
+                         gData_02003308__s0ac4[6].unk04,
+                         gData_02003308__s0ac4[6].unk06);
   Actor_SetHorizontalPositionAndAngleWithTerrain(34, x, z, FACING_SOUTH);
   Actor_CommitPositionAndActivate(34, 0, 4);
   SET_MODE(34, 3);
@@ -1084,7 +1110,7 @@ void Func_020019d8(void) {
   Event_Wait(20);
   Event_Wait(20);
   Event_ShowMessageThenWait(34, 0, 0);
-  Func_080d47b4(6, 0x102, 30);
+  Actor_ShowEmoteById(6, 0x102, 30);
   Actor_SetAngleToward(6, 5, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(6, 0);
@@ -1094,7 +1120,7 @@ void Func_020019d8(void) {
   Event_Wait(33);
   Event_Wait(20);
   Event_ShowMessageAndWait(5, 0);
-  Func_080d47b4(34, 0x100, 30);
+  Actor_ShowEmoteById(34, 0x100, 30);
   Event_Wait(20);
   Event_ShowMessageThenWait(34, 0, 0);
   Actor_CommitPositionAndActivate(34, 16, 8);
@@ -1123,7 +1149,7 @@ void Func_020019d8(void) {
   }
   Actor_WalkByAndWait(34, -16, -8);
   Actor_FaceDirectionAndWait(34, FACING_SOUTH);
-  Func_080d47b4(34, 0x105, 30);
+  Actor_ShowEmoteById(34, 0x105, 30);
   Event_ShowMessageThenWait(34, 0, 0);
   SET_MODE(34, 3);
   Event_Wait(20);
@@ -1151,7 +1177,7 @@ void Func_020019d8(void) {
   Emote(5, 0x101, 0);
   Emote(7, 0x101, 0);
   Emote(6, 0x101, 0);
-  Func_080d47b4(32, 0x101, 30);
+  Actor_ShowEmoteById(32, 0x101, 30);
   Actor_SetAngleToward(4, 33, 0);
   Actor_SetAngleToward(7, 33, 0);
   Actor_SetAngleToward(6, 33, 0);
@@ -1185,16 +1211,16 @@ void Func_020019d8(void) {
   Actor_SetAngleToward(6, 5, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(6, 0);
-  Func_080d47b4(5, 0x100, 30);
+  Actor_ShowEmoteById(5, 0x100, 30);
   Event_ShowMessageAndWait(5, 0);
-  Func_080d47b4(33, 0x107, 30);
+  Actor_ShowEmoteById(33, 0x107, 30);
   Event_ShowMessageAndWait(33, 0);
   Actor_SetAngleToward(33, 4, 0);
   Event_Wait(20);
   FieldMessage_ShowAtActor(33, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) != 0) {
     Event_ShowMessageAndWait(33, 0);
-    Func_080d47b4(4, 0x102, 30);
+    Actor_ShowEmoteById(4, 0x102, 30);
     Event_Wait(40);
     SET_MODE(33, 3);
     Event_Wait(20);
@@ -1209,7 +1235,7 @@ void Func_020019d8(void) {
     SET_MODE(6, 4);
     Event_Wait(33);
     Event_Wait(20);
-    Func_080d47b4(33, 0x109, 30);
+    Actor_ShowEmoteById(33, 0x109, 30);
     Event_ShowMessageAndWait(33, 0);
   } else {
     Event_SetMessageId(MsgICanTBelieveIt);
@@ -1223,7 +1249,7 @@ void Func_020019d8(void) {
     SET_MODE(6, 4);
     Event_Wait(33);
     Event_Wait(20);
-    Func_080d47b4(6, 0x109, 30);
+    Actor_ShowEmoteById(6, 0x109, 30);
     Event_ShowMessageAndWait(33, 0);
   }
   Event_SetMessageId(MsgWhoIsThis);
@@ -1244,14 +1270,14 @@ void Func_020019d8(void) {
   Emote(4, 0x109, 0);
   Emote(5, 0x109, 0);
   Emote(6, 0x109, 0);
-  Func_080d47b4(32, 0x109, 30);
+  Actor_ShowEmoteById(32, 0x109, 30);
   Event_Wait(60);
-  Func_080d47b4(33, 0x106, 30);
+  Actor_ShowEmoteById(33, 0x106, 30);
   Event_ShowMessageThenWait(33, 0, 0);
   Emote(4, 0x102, 0);
   Emote(5, 0x102, 0);
   Emote(6, 0x102, 0);
-  Func_080d47b4(32, 0x102, 30);
+  Actor_ShowEmoteById(32, 0x102, 30);
   SET_MODE(33, 3);
   Event_Wait(20);
   Event_Wait(20);
@@ -1294,8 +1320,8 @@ void Func_020019d8(void) {
   Emote(7, 0x100, 0);
   Emote(5, 0x100, 0);
   Emote(6, 0x100, 0);
-  Func_080d47b4(4, 0x100, 30);
-  Func_080d47b4(33, 0x101, 30);
+  Actor_ShowEmoteById(4, 0x100, 30);
+  Actor_ShowEmoteById(33, 0x101, 30);
   Event_ShowMessageAndWait(33, 0);
   Actor_ArmCallbackAndRefresh(33, FACING_EAST);
   Event_Wait(20);
@@ -1315,11 +1341,11 @@ void Func_020019d8(void) {
   Event_Wait(20);
   FieldMessage_ShowAtActor(33, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
-    Func_080d47b4(33, 0x108, 30);
+    Actor_ShowEmoteById(33, 0x108, 30);
     Event_ShowMessageThenWait(33, 0, 0);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
   } else {
-    Func_080d47b4(33, 0x103, 30);
+    Actor_ShowEmoteById(33, 0x103, 30);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     Event_ShowMessageThenWait(33, 0, 0);
   }
@@ -1346,7 +1372,7 @@ void Func_020019d8(void) {
   Actor_SetHorizontalPositionWithTerrain(33, 0, 0);
   Party_PlaySavedMusic();
   Camera_FollowActor(4, 1);
-  Func_080d47b4(6, 0x102, 30);
+  Actor_ShowEmoteById(6, 0x102, 30);
   Event_ShowMessageAndWait(6, 0);
   SET_MODE(5, 3);
   Event_Wait(20);
@@ -1372,7 +1398,7 @@ void Func_020019d8(void) {
   Actor_FaceDirection(32, FACING_SOUTH, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(32, 0);
-  Func_080d47b4(7, 0x101, 20);
+  Actor_ShowEmoteById(7, 0x101, 20);
   Actor_SetAngleToward(7, 32, 0);
   Actor_SetAngleToward(4, 32, 0);
   Actor_SetAngleToward(6, 32, 0);
@@ -1398,7 +1424,7 @@ void Func_020019d8(void) {
   Event_ShowMessageAndWait(32, 0);
   Actor_SetPartAttribute(Actor_GetById(5), 0);
   Event_Wait(20);
-  Func_080d47b4(5, 0x100, 30);
+  Actor_ShowEmoteById(5, 0x100, 30);
   Actor_SetAngleToward(5, 32, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(5, 0);
@@ -1434,7 +1460,7 @@ void Func_020019d8(void) {
   SET_MODE(5, 3);
   Event_Wait(20);
   Event_Wait(20);
-  Func_080d47b4(32, 0x108, 30);
+  Actor_ShowEmoteById(32, 0x108, 30);
   Event_ShowMessageAndWait(32, 0);
   SET_MODE(6, 3);
   SET_MODE(7, 3);
@@ -1501,15 +1527,31 @@ void Func_020019d8(void) {
 // ---- games/tla/src/scene/madra/events_d.c ----
 #include "text/msg_ids.h"
 
-/* VIEW(events_d): variable gData_02002d38 as extern s16 gData_02002d38[]; s051c has extern const u8 gData_02002d38[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:1663: conflicting types for `gData_02002d38'. */
+/* VIEW(events_d): variable gData_02002d38 as extern s16 gData_02002d38[]; s051c
+ * has extern const u8 gData_02002d38[]; tried as the rest of the object
+ * declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:1663:
+ * conflicting types for `gData_02002d38'. */
 extern s16 gData_02002d38__events_d[] __asm__("gData_02002d38");
-/* VIEW(events_d): variable gData_02002ff0 as extern struct ActorPlacement gData_02002ff0[]; s051c has extern const u8 gData_02002ff0[]; tried as the definition's extern u32 gData_02002ff0[], it does not compile in tla-ja: games/tla/src/scene/madra.c:1554: conflicting types for `gData_02002ff0'. */
-extern struct ActorPlacement gData_02002ff0__events_d[] __asm__("gData_02002ff0");
-/* VIEW(events_d): variable gData_02003358 as extern struct Trigger gData_02003358[]; s051c has extern const u8 gData_02003358[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:1762: conflicting types for `gData_02003358'. */
+/* VIEW(events_d): variable gData_02002ff0 as extern struct ActorPlacement
+ * gData_02002ff0[]; s051c has extern const u8 gData_02002ff0[]; tried as the
+ * definition's extern u32 gData_02002ff0[], it does not compile in tla-ja:
+ * games/tla/src/scene/madra.c:1554: conflicting types for `gData_02002ff0'. */
+extern struct ActorPlacement
+    gData_02002ff0__events_d[] __asm__("gData_02002ff0");
+/* VIEW(events_d): variable gData_02003358 as extern struct Trigger
+ * gData_02003358[]; s051c has extern const u8 gData_02003358[]; tried as the
+ * rest of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/madra.c:1762: conflicting types for `gData_02003358'. */
 extern struct Trigger gData_02003358__events_d[] __asm__("gData_02003358");
-/* VIEW(events_d): variable gData_0200367c as extern struct Trigger gData_0200367c[]; s051c has extern const u8 gData_0200367c[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:1832: conflicting types for `gData_0200367c'. */
+/* VIEW(events_d): variable gData_0200367c as extern struct Trigger
+ * gData_0200367c[]; s051c has extern const u8 gData_0200367c[]; tried as the
+ * rest of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/madra.c:1832: conflicting types for `gData_0200367c'. */
 extern struct Trigger gData_0200367c__events_d[] __asm__("gData_0200367c");
-/* VIEW(events_d): variable gData_0200394c as extern struct Trigger gData_0200394c[]; s051c has extern const u8 gData_0200394c[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:1895: conflicting types for `gData_0200394c'. */
+/* VIEW(events_d): variable gData_0200394c as extern struct Trigger
+ * gData_0200394c[]; s051c has extern const u8 gData_0200394c[]; tried as the
+ * rest of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/madra.c:1895: conflicting types for `gData_0200394c'. */
 extern struct Trigger gData_0200394c__events_d[] __asm__("gData_0200394c");
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -1741,32 +1783,57 @@ struct Trigger gData_02003358__events_d[] = {
     {TRIGGER_TALK, 30, CONDITION_ALWAYS, EVENT(Func_0200018c)},
     {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Func_02000210)},
     {TRIGGER_TALK, 35, CONDITION_ALWAYS, EVENT(Func_02000210)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgEveryoneThinksBriggs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTheTownElderIs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgIfABig)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgItSABit)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgThatChampaIn)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgIVeAlways)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgEveryoneThinksBriggs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgTheTownElderIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgIfABig)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgItSABit)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgThatChampaIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgIVeAlways)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1038, 0x300, EVENT(Func_02000968)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgWhoWasIt)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgNowMadraIs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgWhenISaw)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTheChampaMust)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgItSNot)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgIMNotSure)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgILlNever)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgILookedInto)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgIWonderHowMany)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgIMissMy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgItSSoWeird)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgTheseAreRough)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgTheChampaDug)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgItWasAll)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgMySoreBottom)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgTheItemVendor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgThoseLousyChampa)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS, MSGNO(MsgBriggsAndHis)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 35, CONDITION_ALWAYS, MSGNO(MsgBriggsAndHis)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     MSGNO(MsgWhoWasIt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     MSGNO(MsgNowMadraIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+     MSGNO(MsgWhenISaw)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+     MSGNO(MsgTheChampaMust)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
+     MSGNO(MsgItSNot)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
+     MSGNO(MsgIMNotSure)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
+     MSGNO(MsgILlNever)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
+     MSGNO(MsgILookedInto)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
+     MSGNO(MsgIWonderHowMany)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS,
+     MSGNO(MsgIMissMy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
+     MSGNO(MsgItSSoWeird)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS,
+     MSGNO(MsgTheseAreRough)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS,
+     MSGNO(MsgTheChampaDug)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS,
+     MSGNO(MsgItWasAll)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS,
+     MSGNO(MsgMySoreBottom)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS,
+     MSGNO(MsgTheItemVendor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS,
+     MSGNO(MsgThoseLousyChampa)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS,
+     MSGNO(MsgBriggsAndHis)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 35, CONDITION_ALWAYS,
+     MSGNO(MsgBriggsAndHis)},
     {TRIGGERS_END},
 };
 
@@ -1808,28 +1875,50 @@ struct Trigger gData_0200367c__events_d[] = {
     {TRIGGER_TALK, 29, CONDITION_ALWAYS, EVENT(Func_02000108)},
     {TRIGGER_TALK, 30, CONDITION_ALWAYS, EVENT(Func_0200018c)},
     {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Func_02000210)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgIfItWerenT)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgIfGondowanIs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgItSStrangeIt)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTheMayorIs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgHeToldUs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgInGondowanThey)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgIHeardThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgIfTheyWere)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgItWasSo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgIWonderWhoDug)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgWaitIfBriggs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgIVeNeverSeenAny)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgDidnTSeem)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgWasSoHappy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgIDidnT)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgICanTBelieveNobody)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgTheWayThings)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgIVeBeenStanding)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgWeSealedUp)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgTheChampaWeapons)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgTheGroupThat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS, MSGNO(MsgThatShinIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgIfItWerenT)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgIfGondowanIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgItSStrangeIt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgTheMayorIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgHeToldUs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgInGondowanThey)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     MSGNO(MsgIHeardThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     MSGNO(MsgIfTheyWere)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+     MSGNO(MsgItWasSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+     MSGNO(MsgIWonderWhoDug)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
+     MSGNO(MsgWaitIfBriggs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
+     MSGNO(MsgIVeNeverSeenAny)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
+     MSGNO(MsgDidnTSeem)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
+     MSGNO(MsgWasSoHappy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
+     MSGNO(MsgIDidnT)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS,
+     MSGNO(MsgICanTBelieveNobody)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
+     MSGNO(MsgTheWayThings)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS,
+     MSGNO(MsgIVeBeenStanding)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS,
+     MSGNO(MsgWeSealedUp)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS,
+     MSGNO(MsgTheChampaWeapons)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS,
+     MSGNO(MsgTheGroupThat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS,
+     MSGNO(MsgThatShinIs)},
     {TRIGGERS_END},
 };
 
@@ -1872,28 +1961,51 @@ struct Trigger gData_0200394c__events_d[] = {
     {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Func_02000210)},
     {TRIGGER_TALK, 33, CONDITION_ALWAYS, EVENT(Func_020002bc)},
     {TRIGGER_TALK, 35, CONDITION_ALWAYS, EVENT(Func_020003b8)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgWhyWouldAnyoneBe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTheyVeBeenHaving)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgEveryoneGetsThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgIWonderWhy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgWhatWasThat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgThePeopleOf)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgThatIslandThat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgHowBigWould)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgTheseNewBoats)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgIfABuilding)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgSailorsAreSupposed)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgOurMayorS)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgIsTurningWater)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgMadraIsAlways)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgSoThisFellow)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgIKnewI)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgHeWasGone)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgHowMuchLongerDo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgThePiratesAnd)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgThatNightThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS, MSGNO(MsgShinSeemsTerrified)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 33, CONDITION_ALWAYS, EVENT(Func_02000320)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 35, CONDITION_ALWAYS, MSGNO(MsgWeReStill)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgWhyWouldAnyoneBe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgTheyVeBeenHaving)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgEveryoneGetsThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgIWonderWhy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgWhatWasThat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgThePeopleOf)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     MSGNO(MsgThatIslandThat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     MSGNO(MsgHowBigWould)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+     MSGNO(MsgTheseNewBoats)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+     MSGNO(MsgIfABuilding)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
+     MSGNO(MsgSailorsAreSupposed)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
+     MSGNO(MsgOurMayorS)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
+     MSGNO(MsgIsTurningWater)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
+     MSGNO(MsgMadraIsAlways)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
+     MSGNO(MsgSoThisFellow)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS,
+     MSGNO(MsgIKnewI)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
+     MSGNO(MsgHeWasGone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS,
+     MSGNO(MsgHowMuchLongerDo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS,
+     MSGNO(MsgThePiratesAnd)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS,
+     MSGNO(MsgThatNightThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS,
+     MSGNO(MsgShinSeemsTerrified)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 33, CONDITION_ALWAYS,
+     EVENT(Func_02000320)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 35, CONDITION_ALWAYS,
+     MSGNO(MsgWeReStill)},
     {TRIGGERS_END},
 };

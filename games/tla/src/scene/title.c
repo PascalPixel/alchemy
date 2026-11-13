@@ -45,7 +45,11 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-/* VIEW(title): tag struct TitleSprite as struct TitleSprite__title; module/tla.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/title.c:191: invalid use of undefined type `struct TitleSprite'. */
+/* VIEW(title): tag struct TitleSprite as struct TitleSprite__title;
+ * module/tla.h has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/title.c:191: invalid use of undefined type `struct
+ * TitleSprite'. */
 struct TitleSprite__title {
   u32 attr[3];
 };
@@ -139,14 +143,16 @@ s32 Title_Run(void) {
     if (gMainRoutineWork.entrance == 2) {
       Sound_Play(40);
       Func_0200063c(0);
-      Func_0803f9c0(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
+      WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
+                        gMainRoutineWork.paletteGlow[1]);
       Party_SetLeaderJenna();
       Event_SetDestination((s32)&SceneId_VenusLighthouse, 99);
     }
     if (gMainRoutineWork.entrance == 3) {
       Sound_Play(75);
       Func_02000624(0);
-      Func_0803f9c0(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
+      WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
+                        gMainRoutineWork.paletteGlow[1]);
       Party_SetLeaderFelix();
       Event_SetDestination((s32)&SceneId_Ov650, 13);
     }

@@ -66,10 +66,10 @@ Event_ShowMessageAndWait:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:

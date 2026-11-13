@@ -10,7 +10,8 @@
 /// compiler-steering device. An event writes
 /// `Actor_FaceEachOther(4, 8, 30);` and the inline makes the
 /// call. Where an inline would have its routine's name, the routine keeps it
-/// and the inline takes the Field prefix, as FieldActor_Jump does.
+/// and the inline takes the Field prefix, as FieldActor_Jump does, or Event in
+/// place of a Field the routine's name already has (EventCamera_GetActor).
 
 #include "event.h"
 #include "system_call.h"
@@ -213,10 +214,11 @@ static inline s32 FieldPartyInventory_FindMember(s32 item) {
   return PartyInventory_FindMember(item);
 }
 
-/// Shows a message in a window in the middle of the screen (Func_0803ce64).
-static inline void FieldMessage_ShowCentered(s32 message, s32 mode,
+/// Shows a message in a window in the middle of the screen
+/// (FieldMessage_ShowCentered).
+static inline void EventMessage_ShowCentered(s32 message, s32 mode,
                                              s32 yOffset) {
-  Func_0803ce64(message, mode, yOffset);
+  FieldMessage_ShowCentered(message, mode, yOffset);
 }
 
 /// Party_GetLeaderActor, from an event.
@@ -242,19 +244,19 @@ static inline void Event_SetDefeatDestination(s32 sceneId, s32 entrance) {
   Party_SetFields1f2And1f4(sceneId, entrance);
 }
 
-/// Adds a Djinni to the party (Func_080d7788).
-static inline void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
-  Func_080d7788(slot, element, djinn);
+/// Adds a Djinni to the party (Djinn_JoinParty).
+static inline void FieldDjinn_JoinParty(s32 slot, s32 element, s32 djinn) {
+  Djinn_JoinParty(slot, element, djinn);
 }
 
-/// The actor the camera follows (Func_080d4568).
-static inline struct Actor *FieldCamera_GetActor(void) {
-  return Func_080d4568();
+/// The actor the camera follows (FieldCamera_GetActor).
+static inline struct Actor *EventCamera_GetActor(void) {
+  return FieldCamera_GetActor();
 }
 
-/// Asks the player yes or no (Func_080d295c).
-static inline s32 FieldYesNo_Ask(s32 atBottom) {
-  return Func_080d295c(atBottom);
+/// Asks the player yes or no (FieldYesNo_Ask).
+static inline s32 EventYesNo_Ask(s32 atBottom) {
+  return FieldYesNo_Ask(atBottom);
 }
 
 /// Schedules a zoom of the field (WorldMap_StartZoom).
@@ -262,14 +264,14 @@ static inline void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
   WorldMap_StartZoom(zoom, frames);
 }
 
-/// Applies a window colour (Func_0803f9c0).
-static inline void WindowColor_Apply(s32 phase, s32 brightness) {
-  Func_0803f9c0(phase, brightness);
+/// Applies a window colour (WindowColor_Apply).
+static inline void FieldWindowColor_Apply(s32 phase, s32 brightness) {
+  WindowColor_Apply(phase, brightness);
 }
 
-/// Requests a battle with a Djinni (Func_080d2b4c).
-static inline void Field_RequestDjinnBattle(s32 flag, s32 no) {
-  Func_080d2b4c(flag, no);
+/// Requests a battle with a Djinni (Field_RequestDjinnBattle).
+static inline void Event_RequestDjinnBattle(s32 flag, s32 no) {
+  Field_RequestDjinnBattle(flag, no);
 }
 
 /// Event_PrepareObjectAndApplyValue, from an event.
@@ -292,36 +294,39 @@ static inline void Actor_SetAnimationSpeedById(s32 actorId, s32 steps) {
   Actor_SetActionById(actorId, steps);
 }
 
-/// Draws an item's icon into an actor's sprite, or blanks it (Func_080d3b28).
-static inline void Actor_ShowItemIconById(s32 actorId, s32 item) {
-  Func_080d3b28(actorId, item);
+/// Draws an item's icon into an actor's sprite, or blanks it
+/// (Actor_ShowItemIconById).
+static inline void FieldActor_ShowItemIconById(s32 actorId, s32 item) {
+  Actor_ShowItemIconById(actorId, item);
 }
 
-/// Draws an item's icon into an actor's sprite (Func_0802372c).
-static inline void Actor_SetItemIcon(struct Actor *actor, s32 item) {
-  Func_0802372c(actor, item);
+/// Draws an item's icon into an actor's sprite (Actor_SetItemIcon).
+static inline void FieldActor_SetItemIcon(struct Actor *actor, s32 item) {
+  Actor_SetItemIcon(actor, item);
 }
 
-/// Changes one tile of the World Map and draws it (Func_0802bdd0).
-static inline void WorldMap_SetWindowCellTileAndDraw(s32 x, s32 y, s32 px,
-                                                     s32 py) {
-  Func_0802bdd0(x, y, px, py);
+/// Changes one tile of the World Map and draws it
+/// (WorldMap_SetWindowCellTileAndDraw).
+static inline void FieldWorldMap_SetWindowCellTileAndDraw(s32 x, s32 y, s32 px,
+                                                          s32 py) {
+  WorldMap_SetWindowCellTileAndDraw(x, y, px, py);
 }
 
-/// Moves the camera onto an actor, keeping its height (Func_080d452c).
-static inline s32 FieldCamera_MoveToActor(s32 actorId, s32 pan) {
-  return Func_080d452c(actorId, pan);
+/// Moves the camera onto an actor, keeping its height
+/// (FieldCamera_MoveToActor).
+static inline s32 EventCamera_MoveToActor(s32 actorId, s32 pan) {
+  return FieldCamera_MoveToActor(actorId, pan);
 }
 
-/// Rotates an actor's sprite (Func_080d3928).
-static inline void Actor_SetSpriteRotationById(s32 actorId, s32 angle) {
-  Func_080d3928(actorId, angle);
+/// Rotates an actor's sprite (Actor_SetSpriteRotationById).
+static inline void FieldActor_SetSpriteRotationById(s32 actorId, s32 angle) {
+  Actor_SetSpriteRotationById(actorId, angle);
 }
 
-/// Sets the cell behavior of a cell (Func_080dbdd4).
-static inline s32 MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer,
-                                          s32 behavior) {
-  return Func_080dbdd4(x, z, layer, behavior);
+/// Sets the cell behavior of a cell (MapGrid_SetCellBehavior).
+static inline s32 FieldMapGrid_SetCellBehavior(s32 x, s32 z, s32 layer,
+                                               s32 behavior) {
+  return MapGrid_SetCellBehavior(x, z, layer, behavior);
 }
 
 #endif

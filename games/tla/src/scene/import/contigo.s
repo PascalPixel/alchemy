@@ -270,10 +270,10 @@ Battle_ShowPairedUnitWorkAndWait:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
@@ -350,10 +350,10 @@ Event_ResolvePendingActions:
 	.thumb_func
 Party_PlaySavedMusic:
 	overlay_veneer Party_PlaySavedMusicFar
-	.global Func_080d7788
+	.global Djinn_JoinParty
 	.thumb_func
-Func_080d7788:
-	overlay_veneer Func_080c8580
+Djinn_JoinParty:
+	overlay_veneer Djinn_JoinPartyFar
 	.global Camera_WorldToScreen
 	.thumb_func
 Camera_WorldToScreen:

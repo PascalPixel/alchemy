@@ -78,10 +78,10 @@ Func_02001d78:
 	.thumb_func
 Func_02001d80:
 	overlay_veneer ActorSystem_ResumeProjectionAndHideLayersFar
-	.global Func_0803ce64
+	.global FieldMessage_ShowCentered
 	.thumb_func
-Func_0803ce64:
-	overlay_veneer Func_08038210
+FieldMessage_ShowCentered:
+	overlay_veneer FieldMessage_ShowCenteredFar
 	.global Icon_DrawItem
 	.thumb_func
 Icon_DrawItem:
@@ -206,10 +206,10 @@ Actor_SetSpritePriority:
 	.thumb_func
 Func_02001e80:
 	overlay_veneer Func_080c8208
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:

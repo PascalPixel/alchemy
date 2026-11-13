@@ -563,7 +563,7 @@ void Func_020011c0(void) {
     Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, zero, 8);
   }
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Func_080d47b4(gMainRoutineWork.currentOwner, 256, 0);
+  Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 256, 0);
   FieldEvent_Wait(10);
   AnkohlRuins_CamBounds(-1, -1, -1, 0);
   Event_PlaySound(204);

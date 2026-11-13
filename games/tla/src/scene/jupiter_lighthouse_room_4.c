@@ -38,12 +38,11 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-
 static inline void SetCollisionCode(s32 x, s32 z, s32 layer, s32 value) {
   /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
    * scene layer, so each call keeps its own constants; as a direct call, 12
    * of 47 instructions of Func_02000054 differ in tla-en. */
-  ((u8)Func_080dbdd4(x, z, layer, value));
+  ((u8)MapGrid_SetCellBehavior(x, z, layer, value));
 }
 
 void Func_02000054(void) {
@@ -53,7 +52,7 @@ void Func_02000054(void) {
   Actor_SetPosition(14, PIXELS(504), PIXELS(168));
   if (Event_GetFlag(0xa00)) {
     Func_02000724(14);
-    ((u8)MapGrid_SetCellBehavior(0x1f00000, 0xa00000, 0, 254));
+    ((u8)FieldMapGrid_SetCellBehavior(0x1f00000, 0xa00000, 0, 254));
   }
 }
 
@@ -106,7 +105,6 @@ void Func_0200021c(void) {
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
-
 
 /// A particle's step, Jupiter Lighthouse room 2's Func_02000720 with other
 /// numbers: it circles at its angle (action) around x 232 and rises with its
@@ -247,10 +245,10 @@ extern s32 gData_020026f0;
 static inline void Counter_Set(s32 value) { gData_020026f0 = value; }
 
 DEFINE_FUNC_0200027C(Func_020005e4, gData_020026f0, gData_020026f4,
-    gData_0200271c)
+                     gData_0200271c)
 
 DEFINE_FUNC_020002F4(Func_020006a0, gData_020026f4, gData_0200271c,
-    gData_0200273c, Func_020005e4, gData_02002740)
+                     gData_0200273c, Func_020005e4, gData_02002740)
 
 DEFINE_FUNC_02000378(Func_02000724, Func_02001e28, Func_02001ef8)
 
@@ -267,4 +265,4 @@ s32 Func_02001ee8(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_FUNC_02000628(Func_02000990, Func_02001ee8, Func_02000964,
-    gData_020026f8, gData_02002718)
+                     gData_020026f8, gData_02002718)

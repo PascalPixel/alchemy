@@ -1031,7 +1031,7 @@ void Func_080ae410(u8 *save, s32 keepSettings) {
     state->eventMode = party->eventMode;
     state->battleFxEnabled = party->battleFxEnabled;
     state->unk244[6] = party->unk244[6];
-    Func_08038348(state->paletteGlow[0], state->paletteGlow[1]);
+    WindowColor_ApplyFar(state->paletteGlow[0], state->paletteGlow[1]);
   }
 
   j = 4; // A local reused for a second value: the unit loop's bound.
@@ -1072,8 +1072,8 @@ void Func_080ae5fc(u8 *save) {
   gMainRoutineWork.eventMode = party->eventMode;
   gMainRoutineWork.battleFxEnabled = party->battleFxEnabled;
   gMainRoutineWork.unk244[6] = party->unk244[6];
-  Func_08038348(gMainRoutineWork.paletteGlow[0],
-                gMainRoutineWork.paletteGlow[1]);
+  WindowColor_ApplyFar(gMainRoutineWork.paletteGlow[0],
+                       gMainRoutineWork.paletteGlow[1]);
   count = 8;
   for (i = 0; i < count; i++) {
     struct BattleUnit *unit = Unit_Get(i);

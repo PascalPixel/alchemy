@@ -8,11 +8,11 @@
 #include "module/scene/settlements.h"
 #include "palette_snapshots.h"
 
-void Func_02000280(void) { Func_080d7788(10, 1, 14); }
+void Func_02000280(void) { Djinn_JoinParty(10, 1, 14); }
 
-void Func_02000290(void) { Func_080d7788(11, 2, 14); }
+void Func_02000290(void) { Djinn_JoinParty(11, 2, 14); }
 
-void Func_020002a0(void) { Func_080d7788(23, 3, 19); }
+void Func_020002a0(void) { Djinn_JoinParty(23, 3, 19); }
 
 s32 Func_020002b0(struct Actor *object) {
   Actor_SetSingleChildFlags(object, 0);
@@ -557,7 +557,7 @@ void Func_02000e30(void) {
 }
 
 DEFINE_FUNC_02000E90(Func_02000e90, gData_02002ce0, gData_02002ce4,
-    gData_02002ce6)
+                     gData_02002ce6)
 
 DEFINE_FUNC_02000ED0(Func_02000ed0, Func_02000e30, Func_02000e90)
 

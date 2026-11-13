@@ -190,7 +190,7 @@ void Func_020001b0(void) {
   Event_ShowMessageAndWait(1, 0);
   Func_02000608();
   Actor_Jump(9, 2, 0);
-  Func_080d47b4(9, 263, 20);
+  Actor_ShowEmoteById(9, 263, 20);
   Event_ShowMessageAndWait(0x8009, 0);
   FieldPsynergy_StartMindReadWave(13, 14);
   Event_ShowMessageAndWait(3, 0);

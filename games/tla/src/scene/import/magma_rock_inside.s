@@ -282,10 +282,10 @@ Func_02004e20:
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_080d2b4c
+	.global Field_RequestDjinnBattle
 	.thumb_func
-Func_080d2b4c:
-	overlay_veneer Func_080c8288
+Field_RequestDjinnBattle:
+	overlay_veneer Field_RequestDjinnBattleFar
 	.global Func_02004e38
 	.thumb_func
 Func_02004e38:
@@ -342,10 +342,10 @@ Func_02004e98:
 	.thumb_func
 Party_PlaySavedMusic:
 	overlay_veneer Party_PlaySavedMusicFar
-	.global Func_080d7788
+	.global Djinn_JoinParty
 	.thumb_func
-Func_080d7788:
-	overlay_veneer Func_080c8580
+Djinn_JoinParty:
+	overlay_veneer Djinn_JoinPartyFar
 	.global Actor_SetActionCallback
 	.thumb_func
 Actor_SetActionCallback:

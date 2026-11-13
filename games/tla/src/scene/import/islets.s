@@ -86,10 +86,10 @@ Func_02003e2c:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Func_0802372c
+	.global Actor_SetItemIcon
 	.thumb_func
-Func_0802372c:
-	overlay_veneer Func_08020300
+Actor_SetItemIcon:
+	overlay_veneer Actor_SetItemIconFar
 	.global FieldMessage_Show
 	.thumb_func
 FieldMessage_Show:
@@ -226,10 +226,10 @@ Actor_SetSpritePriority:
 	.thumb_func
 Func_02003f4c:
 	overlay_veneer Func_080c8208
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:

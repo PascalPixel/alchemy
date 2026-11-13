@@ -122,7 +122,7 @@ u8 Func_080dbdc8(s32 x, s32 z, s32 layer) {
   return Func_080dbb78(x, z, layer)->collisionCode;
 }
 
-u8 Func_080dbdd4(s32 x, s32 z, s32 layer, s32 value) {
+u8 MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 value) {
   Func_080dbb78(x, z, layer)->collisionCode = value;
   return value;
 }

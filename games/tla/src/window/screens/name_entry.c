@@ -292,8 +292,8 @@ s32 NameEntry_EditMemberName(s32 member) {
   u16 *palette;
 
   Window_LoadGraphics();
-  Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
-                gMainRoutineWork.paletteGlow[1]);
+  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
+                    gMainRoutineWork.paletteGlow[1]);
   keyboardWindow = Window_Create(3, 6, 24, NAME_KEYBOARD_HEIGHT, 2);
   nameWindow = Window_Create(8, 3, 8, 3, 2);
   Portrait_OpenWindow(member, 0, 3, 1);
@@ -577,8 +577,8 @@ s32 NameEntry_EditMemberName(s32 member) {
   u16 *palette;
 
   Window_LoadGraphics();
-  Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
-                gMainRoutineWork.paletteGlow[1]);
+  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
+                    gMainRoutineWork.paletteGlow[1]);
   keyboardWindow = Window_Create(3, 6, 24, 9, 2);
   nameWindow = Window_Create(8, 3, NAME_LABEL_WIDTH, 3, 2);
   Portrait_OpenWindow(member, 0, 3, 1);

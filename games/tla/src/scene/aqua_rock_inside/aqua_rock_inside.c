@@ -14,7 +14,7 @@
 #include "module/tla.h"
 #include "text/msg_ids.h"
 
-void Func_0200033c(void) { Func_080d2b4c(10, 32); }
+void Func_0200033c(void) { Field_RequestDjinnBattle(10, 32); }
 
 #include "battle.h"
 #include "field.h"
@@ -255,7 +255,7 @@ void Func_020007a8(void) {
   struct Actor *object;
   struct FieldSpriteFlags *sprite;
 
-  Actor_ShowItemIconById(10, 0x1c8);
+  FieldActor_ShowItemIconById(10, 0x1c8);
   object = Actor_Get(20);
   sprite = object->sprite;
   sprite->flag0 = 1;

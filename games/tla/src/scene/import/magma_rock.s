@@ -218,18 +218,18 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Func_02003b6c:
 	overlay_veneer FieldCamera_WaitForArrivalFar
-	.global Func_080d452c
+	.global FieldCamera_MoveToActor
 	.thumb_func
-Func_080d452c:
-	overlay_veneer Func_080c8250
+FieldCamera_MoveToActor:
+	overlay_veneer FieldCamera_MoveToActorFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_080d2b4c
+	.global Field_RequestDjinnBattle
 	.thumb_func
-Func_080d2b4c:
-	overlay_veneer Func_080c8288
+Field_RequestDjinnBattle:
+	overlay_veneer Field_RequestDjinnBattleFar
 	.global Func_02003b8c
 	.thumb_func
 Func_02003b8c:

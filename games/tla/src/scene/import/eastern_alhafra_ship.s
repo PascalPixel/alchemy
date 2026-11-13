@@ -138,10 +138,10 @@ Actor_ArmCallback:
 	.thumb_func
 Battle_ShowPairedUnitWorkAndWait:
 	overlay_veneer Battle_ShowPairedUnitWorkAndWaitFar
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
@@ -190,10 +190,10 @@ Actor_OffsetPositionAndReset:
 	.thumb_func
 Actor_CommitPositionAndActivate:
 	overlay_veneer Actor_CommitPositionAndActivateFar
-	.global Func_080d3928
+	.global Actor_SetSpriteRotationById
 	.thumb_func
-Func_080d3928:
-	overlay_veneer Func_080c87a8
+Actor_SetSpriteRotationById:
+	overlay_veneer Actor_SetSpriteRotationByIdFar
 	.global Func_02003268
 	.thumb_func
 Func_02003268:
@@ -218,10 +218,10 @@ BattleEffect_WaitForArcGroups:
 	.thumb_func
 BattleEffect_SetObjectUpdateMode:
 	overlay_veneer BattleEffect_SetObjectUpdateModeFar
-	.global Func_080d3b28
+	.global Actor_ShowItemIconById
 	.thumb_func
-Func_080d3b28:
-	overlay_veneer Func_080c8860
+Actor_ShowItemIconById:
+	overlay_veneer Actor_ShowItemIconByIdFar
 	.global Func_020032a0
 	.thumb_func
 Func_020032a0:

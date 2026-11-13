@@ -68,10 +68,10 @@ Func_02001850:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Func_0803ce64
+	.global FieldMessage_ShowCentered
 	.thumb_func
-Func_0803ce64:
-	overlay_veneer Func_08038210
+FieldMessage_ShowCentered:
+	overlay_veneer FieldMessage_ShowCenteredFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -124,10 +124,10 @@ Actor_SetSpritePriority:
 	.thumb_func
 Func_020018c8:
 	overlay_veneer Func_080c8208
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global Event_SetDestination
 	.thumb_func
 Event_SetDestination:
@@ -136,10 +136,10 @@ Event_SetDestination:
 	.thumb_func
 Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
-	.global Func_080d2b4c
+	.global Field_RequestDjinnBattle
 	.thumb_func
-Func_080d2b4c:
-	overlay_veneer Func_080c8288
+Field_RequestDjinnBattle:
+	overlay_veneer Field_RequestDjinnBattleFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
 BattleEffect_ApplyColorToTargetBuffer:

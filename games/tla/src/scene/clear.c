@@ -49,8 +49,8 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 static __inline__ void Decode_(void *source, void *destination) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps the buffer address
    * a constant of each call, as ☀️'s system call layer does; as a direct call
-   * the address is kept in r5; as Resource_DecodeType01 called directly, 21 of 103
-   * instructions differ in tla-en (Func_0200005c). */
+   * the address is kept in r5; as Resource_DecodeType01 called directly, 21 of
+   * 103 instructions differ in tla-en (Func_0200005c). */
   Resource_DecodeType01(source, destination);
 }
 
@@ -230,9 +230,14 @@ s32 Func_020002e0(void) {
 #include "field/event_work.h"
 #include "window.h"
 
-/* VIEW(clear): variable gData_02003860 as s16 gData_02003860; module/tla.h has u16 gData_02003860; tried as the 2 declarations' extern s16 gData_02003860, it does not compile in tla-ja: games/tla/src/scene/clear.c:243: conflicting types for `gData_02003860'. */
+/* VIEW(clear): variable gData_02003860 as s16 gData_02003860; module/tla.h has
+ * u16 gData_02003860; tried as the 2 declarations' extern s16 gData_02003860,
+ * it does not compile in tla-ja: games/tla/src/scene/clear.c:243: conflicting
+ * types for `gData_02003860'. */
 extern s16 gData_02003860__clear __asm__("gData_02003860");
-/* VIEW(clear): variable gData_02001000 as u32 gData_02001000; module/tla.h has s8 gData_02001000[]; tried as the rest of the object declares it, Scene_Initialize moves: 2 of 738 instructions in tla-ja. */
+/* VIEW(clear): variable gData_02001000 as u32 gData_02001000; module/tla.h has
+ * s8 gData_02001000[]; tried as the rest of the object declares it,
+ * Scene_Initialize moves: 2 of 738 instructions in tla-ja. */
 extern u32 gData_02001000__clear __asm__("gData_02001000");
 
 s32 Func_020022d0(void);
@@ -274,7 +279,7 @@ s32 Party_AddMember(s32 value);
     (party)->scene = (party)->savedScene;                                      \
     (party)->entrance = (party)->savedEntrance;                                \
     Func_020023e0((party)->scene, (party)->entrance);                          \
-    Event_ClearFlag(0x109);                                                         \
+    Event_ClearFlag(0x109);                                                    \
   }
 
 s32 Scene_Initialize(void) {
@@ -291,7 +296,7 @@ s32 Scene_Initialize(void) {
   ask_save:
     message = (s32)MsgSaveYourAdventure;
     FieldMessage_Show(message, 5);
-    i = Func_080d295c(1);
+    i = FieldYesNo_Ask(1);
     Message_CloseFinishedWindows();
     if (i == 0) {
       FieldMessage_Show(message + 1, 1);
@@ -319,7 +324,7 @@ top:
   if (result < 0 && gDebugMode) {
     gMainRoutineWork.unk244[6] = 1;
     gAutoSleepEnabled = 1;
-    Func_0803ce64((s32)&SceneId_DailaInteriors1, 1, 8);
+    FieldMessage_ShowCentered((s32)&SceneId_DailaInteriors1, 1, 8);
   }
   if (result == 0 && !started) {
     wait(30);
@@ -333,8 +338,8 @@ top:
     result = 0;
   if (result == 0) {
     Func_02002350();
-    Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
-                  gMainRoutineWork.paletteGlow[1]);
+    WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
+                      gMainRoutineWork.paletteGlow[1]);
     i = 4;
     limit = 5;
   open:
@@ -417,7 +422,7 @@ top:
           {
             struct MainRoutineWork *party = &gMainRoutineWork;
 
-            Func_0803f9c0(party->paletteGlow[0], party->paletteGlow[1]);
+            WindowColor_Apply(party->paletteGlow[0], party->paletteGlow[1]);
             RESTORE_CELLS()
             Func_020023a0(MAP_CELL_BACKUP);
             party->unk284[3] = 1;
@@ -451,7 +456,7 @@ top:
     {
       struct MainRoutineWork *party = &gMainRoutineWork;
 
-      Func_0803f9c0(party->paletteGlow[0], party->paletteGlow[1]);
+      WindowColor_Apply(party->paletteGlow[0], party->paletteGlow[1]);
       if (PARTY_WORD(party, 0) != BuildStamp_GetTime()) {
         RETURN_TO_SAVED(party)
       } else if (mask = 0x208, (gInput.held & mask) == mask) {
@@ -501,7 +506,7 @@ top:
       party->currentOwner = 4;
       if (Event_GetFlag(0x9ff))
         Func_02002390();
-      Func_0803f9c0(party->paletteGlow[0], party->paletteGlow[1]);
+      WindowColor_Apply(party->paletteGlow[0], party->paletteGlow[1]);
       Event_ClearFlag(0x109);
       Event_ClearFlag(0x106);
       party->ownerOverride = 0;
@@ -516,8 +521,8 @@ link:
   result = Func_020022d8(6);
   if (result == -1)
     goto top;
-  Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
-                gMainRoutineWork.paletteGlow[1]);
+  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
+                    gMainRoutineWork.paletteGlow[1]);
 again:
   result = Func_020022b0(2);
   if (result == -1)
@@ -639,7 +644,6 @@ void Func_02000a70(s32 cell, u16 *text) {
 
 #define RECEIVED_FLAGS (Ram_MapCellBuffer + 0x3040)
 #define RECEIVED_UNITS (Ram_MapCellBuffer + 0x3240)
-
 
 void WindowSprite_PrepareForRedraw(struct Window *work);
 
@@ -783,8 +787,8 @@ done:
   Unit_Calculate(2);
   Unit_Calculate(3);
   Iwram_CopyWords(RECEIVED_FLAGS, flags, 0xf40);
-  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                gMainRoutineWork.paletteGlow[1]);
+  FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
+                         gMainRoutineWork.paletteGlow[1]);
   return 1;
 }
 
@@ -840,12 +844,12 @@ void Func_02000db4(const struct Window *object, s32 x, s32 y, s32 width,
 #include "battle/battle_unit.h"
 #include "owner_state.h"
 
-
 extern u8 gData_0200247c[];
 
 extern u8 MsgFieldPasswordKana[];
 
-void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position, u32 offsetX, u32 offsetY);
+void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position,
+                             u32 offsetX, u32 offsetY);
 s32 Party_RemoveMember(s32 value);
 u16 Func_0200217c(u32 length, u8 *p);
 void Resource_CopyFixedBlockB(void);
@@ -895,24 +899,24 @@ static inline void Cursor_Show(struct ShopCursor *cursor, s32 x, s32 y) {
 #define DRAW_TITLE(window)                                                     \
   {                                                                            \
     message = MSGNO(MsgFieldPasswordKana);                                     \
-    Text_DrawMessageAsTiles(message++, window, 0, 0);                       \
-    Text_DrawMessageAsTiles(message++, window, 0, 8);                       \
-    Text_DrawMessageAsTiles(message++, window, 0, 16);                      \
-    Text_DrawMessageAsTiles(message++, window, 0, 24);                      \
-    Text_DrawMessageAsTiles(message++, window, 48, 0);                      \
-    Text_DrawMessageAsTiles(message++, window, 48, 8);                      \
-    Text_DrawMessageAsTiles(message++, window, 48, 16);                     \
-    Text_DrawMessageAsTiles(message++, window, 48, 24);                     \
-    Text_DrawMessageAsTiles(message++, window, 96, 0);                      \
-    Text_DrawMessageAsTiles(message++, window, 96, 8);                      \
-    Text_DrawMessageAsTiles(message++, window, 96, 16);                     \
-    Text_DrawMessageAsTiles(message++, window, 96, 24);                     \
-    Text_DrawMessageAsTiles(message++, window, 144, 0);                     \
-    Text_DrawMessageAsTiles(message++, window, 144, 8);                     \
+    Text_DrawMessageAsTiles(message++, window, 0, 0);                          \
+    Text_DrawMessageAsTiles(message++, window, 0, 8);                          \
+    Text_DrawMessageAsTiles(message++, window, 0, 16);                         \
+    Text_DrawMessageAsTiles(message++, window, 0, 24);                         \
+    Text_DrawMessageAsTiles(message++, window, 48, 0);                         \
+    Text_DrawMessageAsTiles(message++, window, 48, 8);                         \
+    Text_DrawMessageAsTiles(message++, window, 48, 16);                        \
+    Text_DrawMessageAsTiles(message++, window, 48, 24);                        \
+    Text_DrawMessageAsTiles(message++, window, 96, 0);                         \
+    Text_DrawMessageAsTiles(message++, window, 96, 8);                         \
+    Text_DrawMessageAsTiles(message++, window, 96, 16);                        \
+    Text_DrawMessageAsTiles(message++, window, 96, 24);                        \
+    Text_DrawMessageAsTiles(message++, window, 144, 0);                        \
+    Text_DrawMessageAsTiles(message++, window, 144, 8);                        \
     Window_DrawDividerLine(window, 24, 0, 24, 5);                              \
-    Text_DrawMessageAsTiles(message++, window, 192, 0);                     \
-    Text_DrawMessageAsTiles(message++, window, 192, 8);                     \
-    Text_DrawMessageAsTiles(message, window, 192, 24);                      \
+    Text_DrawMessageAsTiles(message++, window, 192, 0);                        \
+    Text_DrawMessageAsTiles(message++, window, 192, 8);                        \
+    Text_DrawMessageAsTiles(message, window, 192, 24);                         \
   }
 #else
 /// Draws the password screen's title and key help into the main window.
@@ -924,9 +928,9 @@ static inline void Cursor_Show(struct ShopCursor *cursor, s32 x, s32 y) {
     Text_DrawStringInWindow(gData_0200247c, window, 0, 24);                    \
     message = MSGNO(MsgFieldSpace);                                            \
     Window_DrawDividerLine(window, 20, 0, 20, 5);                              \
-    Text_DrawMessageAsTiles(message++, window, 160, 0);                     \
-    Text_DrawMessageAsTiles(message++, window, 160, 8);                     \
-    Text_DrawMessageAsTiles(message, window, 160, 24);                      \
+    Text_DrawMessageAsTiles(message++, window, 160, 0);                        \
+    Text_DrawMessageAsTiles(message++, window, 160, 8);                        \
+    Text_DrawMessageAsTiles(message, window, 160, 24);                         \
   }
 #endif
 
@@ -962,8 +966,8 @@ s32 Func_02000e44(void) {
   s32 height;
 
   Window_LoadGraphics();
-  Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
-                gMainRoutineWork.paletteGlow[1]);
+  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
+                    gMainRoutineWork.paletteGlow[1]);
   palette = (u16 *)0x050001c0;
   Dma_Set((const void *)0x050001e0, palette, (DMA_ENABLE | DMA_32BIT) << 16 | 8,
           (volatile u32 *)0x040000d4);
@@ -1182,8 +1186,7 @@ s32 Func_02000e44(void) {
           crc = check;
           if (DECODED_PASSWORD[size2] == (u16)crc >> 8 &&
               DECODED_PASSWORD[action - 1] == (u16)crc % 256) {
-            Text_DrawMessageAsTiles(MSGNO(MsgFieldPasswordAccepted), box, 0,
-                                       0);
+            Text_DrawMessageAsTiles(MSGNO(MsgFieldPasswordAccepted), box, 0, 0);
             Sound_Play(112);
           wait_accepted:
             System_Wait(1);
@@ -1205,7 +1208,7 @@ s32 Func_02000e44(void) {
             Window_Close(box, 2);
             Window_Close(grid, 2);
             Window_Close(window, 2);
-            Func_0803f9c0(party->paletteGlow[0], party->paletteGlow[1]);
+            WindowColor_Apply(party->paletteGlow[0], party->paletteGlow[1]);
             Sound_Play(74);
             System_Wait(6);
             Func_020022f8(0);
@@ -1418,10 +1421,9 @@ void Func_020018e0(s32 mode, u8 *in) {
           in[statsOffset + 7] << 28 | in[statsOffset + 8] << 20 |
           in[statsOffset + 9] << 12 | in[statsOffset + 10] << 4 |
           in[statsOffset + 11] >> 4;
-      packedStats[i * 4 + 3] = in[statsOffset + 11] << 28 |
-                               in[statsOffset + 12] << 20 |
-                               in[statsOffset + 13] << 12 |
-                               in[statsOffset + 14] << 4;
+      packedStats[i * 4 + 3] =
+          in[statsOffset + 11] << 28 | in[statsOffset + 12] << 20 |
+          in[statsOffset + 13] << 12 | in[statsOffset + 14] << 4;
       statsOffset += 15;
     }
     for (i = 0; i != 4; i++) {
@@ -1821,7 +1823,10 @@ u16 Func_0200217c(u32 length, u8 *p) {
 }
 
 u16 gData_02002410[] = {
-    4, 4, 4, 0,
+    4,
+    4,
+    4,
+    0,
 };
 
 // clang-format off

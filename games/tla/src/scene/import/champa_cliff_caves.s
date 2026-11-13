@@ -210,10 +210,10 @@ Actor_ArmCallbackAndRefresh:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
@@ -332,10 +332,10 @@ Field_StartPaletteTransition:
 	overlay_veneer Field_StartPaletteTransitionFar
 	.endif
 	.endif
-	.global Func_080d3b28
+	.global Actor_ShowItemIconById
 	.thumb_func
-Func_080d3b28:
-	overlay_veneer Func_080c8860
+Actor_ShowItemIconById:
+	overlay_veneer Actor_ShowItemIconByIdFar
 	.global Func_02003624
 	.thumb_func
 Func_02003624:

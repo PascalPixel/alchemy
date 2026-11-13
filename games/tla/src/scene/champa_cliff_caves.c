@@ -293,7 +293,7 @@ s32 Scene_Initialize(void) {
       Func_02001868();
     }
     if (GameFlag_Test(0x977) && !GameFlag_Test(0x978)) {
-      Actor_ShowItemIconById(10, 326);
+      FieldActor_ShowItemIconById(10, 326);
       Actor_SetPosition(10, 0x2980000, 0xe80000);
       Actor_GetById(10)->motionFlags = 4;
     }
@@ -319,7 +319,7 @@ void Func_020005e8(s32 actor) {
   Event_Wait(5);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 6);
   Event_Wait(7);
-  Func_080d3b28(10, actor);
+  Actor_ShowItemIconById(10, actor);
   Actor_SetHorizontalPositionWithTerrain(10, 648 << 16, 196 << 16);
   Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags &= ~1;
   Actor_CommitPositionAndActivate(gMainRoutineWork.currentOwner, -16, -8);
@@ -392,19 +392,19 @@ void Func_02000804(s32 actor) {
   Func_02003534_(8, 0x3000);
   Actor_SetModeById(8, 7);
   Event_Wait(30);
-  Func_080d47b4(8, 257, 50);
+  Actor_ShowEmoteById(8, 257, 50);
   Actor_SetModeById(8, 1);
   Event_Wait(15);
   Event_ShowMessageThenWait(8, 0, 5);
   Actor_SetModeById(8, 7);
   Event_Wait(30);
-  Func_080d47b4(8, 261, 50);
+  Actor_ShowEmoteById(8, 261, 50);
   Actor_SetModeById(8, 1);
   Event_Wait(15);
   Event_ShowMessageThenWait(8, 0, 5);
   Actor_SetModeById(8, 7);
   Event_Wait(30);
-  Func_080d47b4(8, 256, 50);
+  Actor_ShowEmoteById(8, 256, 50);
   Actor_SetModeById(8, 1);
   Event_Wait(15);
   Event_ShowMessageThenWait(8, 0, 5);
@@ -414,7 +414,7 @@ void Func_02000804(s32 actor) {
   Func_0200067c(0);
   Actor_ArmCallbackAndRefresh(8, FACING_WEST);
   Event_Wait(10);
-  Func_080d47b4(8, 258, 30);
+  Actor_ShowEmoteById(8, 258, 30);
   /* FAKEMATCH(signature): called through a type returning s32, which gives the
    * native's argument order (r1 before r0); as the void call scene_call.h
    * declares, which the other scenes match with, 2 of 144 instructions differ
@@ -443,13 +443,13 @@ void Func_02000978(s32 actor) {
   Func_02003534_(8, 0x3000);
   Actor_SetModeById(8, 7);
   Event_Wait(30);
-  Func_080d47b4(8, 258, 50);
+  Actor_ShowEmoteById(8, 258, 50);
   Actor_SetModeById(8, 1);
   Event_Wait(15);
   Event_ShowMessageThenWait(8, 0, 5);
   Actor_SetModeById(8, 7);
   Event_Wait(30);
-  Func_080d47b4(8, 264, 50);
+  Actor_ShowEmoteById(8, 264, 50);
   Actor_SetModeById(8, 1);
   Event_Wait(15);
   Event_ShowMessageThenWait(8, 0, 5);
@@ -481,10 +481,15 @@ void Func_02000978(s32 actor) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(s0a34): variable gData_02003634 as extern const struct ThrowAnimations gData_02003634; the definition has u32 gData_02003634[] = { 439, 440, 441, }; tried as the definition's extern u32 gData_02003634[], it does not compile in tla-ja: games/tla/src/scene/champa_cliff_caves.c:522: incompatible types in assignment. */
-extern const struct ThrowAnimations gData_02003634__s0a34 __asm__("gData_02003634");
+/* VIEW(s0a34): variable gData_02003634 as extern const struct ThrowAnimations
+ * gData_02003634; the definition has u32 gData_02003634[] = { 439, 440, 441, };
+ * tried as the definition's extern u32 gData_02003634[], it does not compile in
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:522: incompatible types in
+ * assignment. */
+extern const struct ThrowAnimations
+    gData_02003634__s0a34 __asm__("gData_02003634");
 
-void Func_080d3b28(s32 id, s32 animation);
+void Actor_ShowItemIconById(s32 id, s32 animation);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Func_02000734(u16 *from, u16 *to, s32 frames);
 
@@ -516,9 +521,9 @@ void Func_02000a34(s32 value) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWellDoneYou);
   Func_020005e8(value);
-  Value3((s32 (*)())Func_080d47b4, 8, 0x100, 30);
+  Value3((s32 (*)())Actor_ShowEmoteById, 8, 0x100, 30);
   Event_ShowMessageThenWait(8, 0, 5);
-  Value3((s32 (*)())Func_080d47b4, 8, 0x108, 30);
+  Value3((s32 (*)())Actor_ShowEmoteById, 8, 0x108, 30);
   Event_ShowMessageThenWait(8, 0, 5);
   Func_0200067c(1);
   Call3((void (*)())Actor_SetPositionAndReset, 8, 0x298, 200);
@@ -543,7 +548,7 @@ void Func_02000a34(s32 value) {
   Camera_MoveWithinMapBounds(0x2980000, -1, 0xe80000, 1);
   Func_02003564();
   Event_Wait(10);
-  Value3((s32 (*)())Func_080d47b4, 8, 0x107, 40);
+  Value3((s32 (*)())Actor_ShowEmoteById, 8, 0x107, 40);
   Event_ShowMessageThenWait(0x2008, 0, 5);
   for (i = 0; i <= 2; i++) {
     struct ThrowAnimations animations;
@@ -551,7 +556,7 @@ void Func_02000a34(s32 value) {
     animations = gData_02003634__s0a34;
     Actor_SetModeById(8, 9);
     Event_Wait(3);
-    Func_080d3b28(10, animations.animations[i]);
+    Actor_ShowItemIconById(10, animations.animations[i]);
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 10, 0x29c0000,
           0xc80000);
     thrown->gravity = 0x4000;
@@ -583,15 +588,16 @@ void Func_02000a34(s32 value) {
   Actor_SetModeById(8, 7);
   Event_Wait(60);
   Sound_Play(78);
-  Value3((s32 (*)())Func_080d47b4, 8, 0x101, 60);
+  Value3((s32 (*)())Actor_ShowEmoteById, 8, 0x101, 60);
   Call3((void (*)())Event_ShowMessageThenWait, 0x2008, 0, 5);
   Event_Wait(20);
   Sound_Play(220);
   Func_02000734(bright, dim, 48);
   Actor_StartRepeatedMotion(gMainRoutineWork.currentOwner, 3);
-  Call2((void (*)())FieldEffect_SetAttached, gMainRoutineWork.currentOwner, 0x102);
+  Call2((void (*)())FieldEffect_SetAttached, gMainRoutineWork.currentOwner,
+        0x102);
   Event_Wait(50);
-  Func_080d47b4(8, 0x101, 60);
+  Actor_ShowEmoteById(8, 0x101, 60);
   Call2((void (*)())Func_0200360c, 16, 0x1090);
   Call3((void (*)())Map_SetScreenShake, 0x20000, 0x20000, 0x10000);
   Func_02003164(glow);
@@ -616,7 +622,7 @@ void Func_02000a34(s32 value) {
   Sound_Play(194);
   Event_Wait(10);
   Event_ShowMessageThenWait(0x2008, 0, 5);
-  Call2((void (*)())Func_080d3b28, 10, 0x146);
+  Call2((void (*)())Actor_ShowItemIconById, 10, 0x146);
   Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 10, 0x2980000,
         0xe80000);
   Actor_SetSpritePriority(10, 1);
@@ -933,7 +939,11 @@ void Func_0200115c(void) {
   Event_End();
 }
 
-/* VIEW(s0a34): tag struct EventTransition as struct EventTransition__s0a34; champa_cliff_caves.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/champa_cliff_caves.c:967: structure has no member named `frames'. */
+/* VIEW(s0a34): tag struct EventTransition as struct EventTransition__s0a34;
+ * champa_cliff_caves.c has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/champa_cliff_caves.c:967: structure has no member named
+ * `frames'. */
 struct EventTransition__s0a34 {
   u8 unk000[0x1ac];
   s32 type;
@@ -962,7 +972,7 @@ void Func_02001774(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
-  Func_080d47b4(11, 264, 30);
+  Actor_ShowEmoteById(11, 264, 30);
   Event_ShowMessageThenWait(11, 0, 5);
   Motion_SetModeAndWaitAnimation(8, 4);
   Event_ShowMessageThenWait(8, 0, 20);
@@ -972,7 +982,7 @@ void Func_02001774(void) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_SetDestination((s16)gMainRoutineWork.savedScene,
-                (s16)gMainRoutineWork.savedEntrance);
+                       (s16)gMainRoutineWork.savedEntrance);
 }
 
 extern const u8 gData_020041e8[];
@@ -1037,7 +1047,7 @@ void Func_02001868(void) {
   Actor_Jump(11, 6, 15);
   Actor_Jump(11, 6, 23);
   Event_ShowMessageThenWait(11, 0, 5);
-  Func_080d47b4(8, 0x107, 30);
+  Actor_ShowEmoteById(8, 0x107, 30);
   Event_ShowMessageThenWait(8, 0, 5);
   Actor_StartRepeatedMotion(11, 3);
   Call2((void (*)())FieldEffect_SetAttached, 11, 0x102);
@@ -1056,14 +1066,14 @@ void Func_02001868(void) {
   Event_ShowMessageThenWait(8, 0, 5);
   Motion_SetVarCbAndRefresh(11, 2);
   Event_Wait(30);
-  Func_080d47b4(11, 0x106, 30);
+  Actor_ShowEmoteById(11, 0x106, 30);
   Event_ShowMessageThenWait(11, 0, 10);
   FieldActor_ShowEmote(8, 0x102, 40);
   Event_ShowMessageThenWait(8, 0, 0);
   Event_ShowMessageThenWait(15, 0, 5);
   Actor_ArmCallbackAndRefresh(8, 0x7ff6);
   Event_Wait(10);
-  Func_080d47b4(8, 0x101, 40);
+  Actor_ShowEmoteById(8, 0x101, 40);
   Call4((void (*)())Actor_LaunchFromLeader, 7, 0, -16, 0);
   Call4((void (*)())Actor_LaunchFromLeader, 5, -16, 0, 0);
   Call4((void (*)())Actor_LaunchFromLeader, 6, -16, -16, 0);
@@ -1142,7 +1152,7 @@ void Func_02001868(void) {
   Event_ShowMessageThenWait(8, 0, 5);
   FieldActor_ShowEmote(11, 0x102, 30);
   Event_ShowMessageThenWait(11, 0, 5);
-  Func_080d47b4(8, 0x103, 30);
+  Actor_ShowEmoteById(8, 0x103, 30);
   Event_ShowMessageThenWait(8, 0, 5);
   Actor_StartRepeatedMotion(11, 3);
   Call2((void (*)())FieldEffect_SetAttached, 11, 0x102);
@@ -1229,7 +1239,7 @@ void Func_02001868(void) {
   Event_ShowMessageThenWait(8, 0, 5);
   Motion_SetModeAndWaitAnimation(14, 4);
   Event_ShowMessageThenWait(14, 0, 5);
-  Func_080d47b4(8, 0x109, 30);
+  Actor_ShowEmoteById(8, 0x109, 30);
   Event_ShowMessageThenWait(8, 0, 5);
   Motion_SetModeAndWaitAnimation(11, 4);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 11, 0);
@@ -1242,7 +1252,7 @@ void Func_02001868(void) {
     Event_ShowMessageThenWait(8, 0, 5);
     Actor_ArmCallbackAndRefresh(11, FACING_WEST);
     Event_Wait(10);
-    Func_080d47b4(11, 0x108, 30);
+    Actor_ShowEmoteById(11, 0x108, 30);
     Event_ShowMessageThenWait(11, 0, 5);
     FIELD_AT(Ram_HeapSlots->eventWork, u16, 452) += 2;
   } else {
@@ -1251,14 +1261,14 @@ void Func_02001868(void) {
     Event_ShowMessageThenWait(8, 0, 5);
     Actor_ArmCallbackAndRefresh(11, FACING_WEST);
     Event_Wait(5);
-    Func_080d47b4(11, 0x107, 30);
+    Actor_ShowEmoteById(11, 0x107, 30);
     Event_ShowMessageThenWait(11, 0, 5);
     Actor_Jump(11, 6, 15);
     Actor_Jump(11, 6, 23);
   }
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 4, FACING_SOUTHEAST);
   Event_Wait(15);
-  Func_080d47b4(14, 0x109, 30);
+  Actor_ShowEmoteById(14, 0x109, 30);
   Event_ShowMessageThenWait(14, 0, 5);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 14, 0xb000);
   Event_Wait(10);
@@ -1277,7 +1287,7 @@ void Func_02001868(void) {
   Event_Wait(5);
   Event_ShowMessageThenWait(14, 0, 5);
   FieldActor_ShowEmote(11, 0x105, 60);
-  Func_080d47b4(14, 0x101, 30);
+  Actor_ShowEmoteById(14, 0x101, 30);
   Event_ShowMessageThenWait(14, 0, 5);
   Actor_StartRepeatedMotion(11, 3);
   FieldEffect_SetAttached(11, 0x102);
@@ -1292,7 +1302,7 @@ void Func_02001868(void) {
   Actor_ArmCallbackAndRefresh(14, 0xd000);
   Event_Wait(10);
   Event_ShowMessageThenWait(14, 0, 5);
-  Func_080d47b4(8, 0x105, 50);
+  Actor_ShowEmoteById(8, 0x105, 50);
   Event_ShowMessageThenWait(8, 0, 5);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 14, 0xb000);
   Event_Wait(10);
@@ -1334,11 +1344,11 @@ void Func_02001868(void) {
   Event_ShowMessageThenWait(11, 0, 5);
   FieldActor_ShowEmote(14, 0x101, 30);
   Event_ShowMessageThenWait(14, 0, 5);
-  Func_080d47b4(11, 0x105, 30);
+  Actor_ShowEmoteById(11, 0x105, 30);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 11, 0x5000);
   Event_Wait(10);
   Event_ShowMessageThenWait(11, 0, 15);
-  Func_080d47b4(14, 0x106, 30);
+  Actor_ShowEmoteById(14, 0x106, 30);
   Event_ShowMessageThenWait(14, 0, 5);
   FieldActor_ShowEmote(11, 0x101, 35);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 11, FACING_WEST);
@@ -1354,7 +1364,7 @@ void Func_02001868(void) {
   Call3((void (*)())Actor_CommitPositionAndActivate, 14, -8, 0);
   Call3((void (*)())Actor_ArmCallback, 11, FACING_WEST, 0);
   Call3((void (*)())Actor_CommitPositionAndActivate, 14, -8, 0);
-  Func_080d47b4(11, 0x102, 0);
+  Actor_ShowEmoteById(11, 0x102, 0);
   Call3((void (*)())Actor_CommitPositionAndActivate, 14, -56, 0);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 14, 0xb000);
   FieldActor_ShowEmote(14, 0x101, 30);
@@ -1395,7 +1405,7 @@ void Func_02001868(void) {
   FieldActor_ShowEmote(7, 0x101, 0);
   FieldActor_ShowEmote(5, 0x101, 0);
   FieldActor_ShowEmote(6, 0x101, 0);
-  Func_080d47b4(15, 0x101, 30);
+  Actor_ShowEmoteById(15, 0x101, 30);
   Actor_ArmCallback(4, FACING_EAST, 0);
   Actor_ArmCallback(7, FACING_EAST, 0);
   Actor_ArmCallback(5, FACING_EAST, 0);
@@ -1474,10 +1484,22 @@ void Func_02001868(void) {
 
 #include "system/dma.h"
 
-/* VIEW(champa_cliff_caves): routine Resource_DecodeType01 as void Resource_DecodeType01(void *entry, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination); tried as the definition's s32 Resource_DecodeType01(const void *source, void *destination), which the object already declares, Func_02002d34 moves: 1 of 78 instructions in tla-ja. */
-extern void Resource_DecodeType01__champa_cliff_caves(void *entry, void *destination) __asm__("Resource_DecodeType01");
-/* VIEW(champa_cliff_caves): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position); tried as the definition's void Camera_WorldToScreen(struct EffectVector *position), which the object already declares, Func_02002de4 moves: 2 of 175 instructions in tla-ja. */
-extern void Camera_WorldToScreen__champa_cliff_caves(s32 *position) __asm__("Camera_WorldToScreen");
+/* VIEW(champa_cliff_caves): routine Resource_DecodeType01 as void
+ * Resource_DecodeType01(void *entry, void *destination); resource.h has s32
+ * Resource_DecodeType01(const void *source, void *destination); tried as the
+ * definition's s32 Resource_DecodeType01(const void *source, void
+ * *destination), which the object already declares, Func_02002d34 moves: 1 of
+ * 78 instructions in tla-ja. */
+extern void Resource_DecodeType01__champa_cliff_caves(
+    void *entry, void *destination) __asm__("Resource_DecodeType01");
+/* VIEW(champa_cliff_caves): routine Camera_WorldToScreen as void
+ * Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void
+ * Camera_WorldToScreen(struct EffectVector *position); tried as the
+ * definition's void Camera_WorldToScreen(struct EffectVector *position), which
+ * the object already declares, Func_02002de4 moves: 2 of 175 instructions in
+ * tla-ja. */
+extern void Camera_WorldToScreen__champa_cliff_caves(s32 *position) __asm__(
+    "Camera_WorldToScreen");
 
 static __inline__ void Place(struct FlashSprite *a, s32 b, s32 c, u32 d,
                              s32 e) {
@@ -1509,8 +1531,8 @@ void Func_020029f8(s32 id, s32 mode) {
   Actor_SetSingleChildFlags(object, 0);
   Dma_Set(Field_Palette685, (void *)0x050003e0, 0x80000010,
           (volatile u32 *)0x040000d4);
-  Resource_DecodeType01__champa_cliff_caves(Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion),
-                work);
+  Resource_DecodeType01__champa_cliff_caves(
+      Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion), work);
   slot = Resource_FindFreeEntry();
   tile = Vram_Load(slot, 0x400, work);
   sprite = &work->sprite;
@@ -1569,9 +1591,11 @@ void Func_020029f8(s32 id, s32 mode) {
 #undef BYTE_AT
 #undef WORD_AT
 
-/* VIEW(s2c88): static Place as Place__s2c88; the definition has static __inline__ void Place(struct FlashSprite *a, s32 b, s32 c, u32 d, s32 e); not tried: Place's definition holds a FAKEMATCH tag. */
-static __inline__ void Place__s2c88(struct ChampaCliffCavesSprite *a, s32 b, s32 c,
-                             u32 d, s32 e) {
+/* VIEW(s2c88): static Place as Place__s2c88; the definition has static
+ * __inline__ void Place(struct FlashSprite *a, s32 b, s32 c, u32 d, s32 e); not
+ * tried: Place's definition holds a FAKEMATCH tag. */
+static __inline__ void Place__s2c88(struct ChampaCliffCavesSprite *a, s32 b,
+                                    s32 c, u32 d, s32 e) {
   /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 4 of 78
    * instructions differ in tla-en. */
   Func_020035fc(a, b, c, d, e);
@@ -1585,7 +1609,8 @@ void Func_02002c88(void) {
   s32 entry;
   s32 vram;
 
-  Resource_DecodeType01__champa_cliff_caves(Resource_GetTableEntry((s32)&ResourceId_GlowDisc), work);
+  Resource_DecodeType01__champa_cliff_caves(
+      Resource_GetTableEntry((s32)&ResourceId_GlowDisc), work);
   i = 0;
   tile = work->tiles;
 next:
@@ -1611,7 +1636,11 @@ next:
 
 // ---- games/tla/src/scene/champa_cliff_caves/s2d34.c ----
 
-/* VIEW(s2d34): tag struct ChampaCliffCavesWork as struct ChampaCliffCavesWork__s2d34; champa_cliff_caves.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/champa_cliff_caves.c:1657: request for member `value' in something not a structure or union. */
+/* VIEW(s2d34): tag struct ChampaCliffCavesWork as struct
+ * ChampaCliffCavesWork__s2d34; champa_cliff_caves.c has another definition;
+ * tried with the definition the rest of the object has, it does not compile in
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1657: request for member
+ * `value' in something not a structure or union. */
 struct ChampaCliffCavesWork__s2d34 {
   u8 tiles[0x1000];
   s32 originX;
@@ -1634,9 +1663,11 @@ struct ChampaCliffCavesWork__s2d34 {
   u8 unk1076[2];
 };
 
-/* VIEW(s2d34): static Place as Place__s2d34; the definition has static __inline__ void Place(struct FlashSprite *a, s32 b, s32 c, u32 d, s32 e); not tried: Place's definition holds a FAKEMATCH tag. */
-static __inline__ void Place__s2d34(struct ChampaCliffCavesSprite *a, s32 b, s32 c,
-                             u32 d, s32 e) {
+/* VIEW(s2d34): static Place as Place__s2d34; the definition has static
+ * __inline__ void Place(struct FlashSprite *a, s32 b, s32 c, u32 d, s32 e); not
+ * tried: Place's definition holds a FAKEMATCH tag. */
+static __inline__ void Place__s2d34(struct ChampaCliffCavesSprite *a, s32 b,
+                                    s32 c, u32 d, s32 e) {
   /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 4 of 78
    * instructions differ in tla-en. */
   Func_020035fc(a, b, c, d, e);
@@ -1650,7 +1681,8 @@ void Func_02002d34(void) {
   s32 entry;
   s32 vram;
 
-  Resource_DecodeType01__champa_cliff_caves(Resource_GetTableEntry((s32)&ResourceId_FireColumn), work);
+  Resource_DecodeType01__champa_cliff_caves(
+      Resource_GetTableEntry((s32)&ResourceId_FireColumn), work);
   i = 0;
   tile = work->tiles;
 next:
@@ -1675,7 +1707,11 @@ next:
 }
 
 // The glow's frame callback.
-/* VIEW(champa_cliff_caves): tag struct GlowSprite as struct GlowSprite__champa_cliff_caves; module/scene/scene.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/champa_cliff_caves.c:1735: structure has no member named `x'. */
+/* VIEW(champa_cliff_caves): tag struct GlowSprite as struct
+ * GlowSprite__champa_cliff_caves; module/scene/scene.h has another definition;
+ * tried with the definition the rest of the object has, it does not compile in
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1735: structure has no
+ * member named `x'. */
 struct GlowSprite__champa_cliff_caves {
   u8 unk_0[12];
   s32 x;
@@ -1860,7 +1896,11 @@ void Func_02003078(void) {
 // ---- games/tla/src/scene/champa_cliff_caves/s3164.c ----
 #include "task.h"
 
-/* VIEW(s3164): tag struct ChampaCliffCavesWork as struct ChampaCliffCavesWork__s3164; champa_cliff_caves.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/champa_cliff_caves.c:1900: invalid operands to binary +. */
+/* VIEW(s3164): tag struct ChampaCliffCavesWork as struct
+ * ChampaCliffCavesWork__s3164; champa_cliff_caves.c has another definition;
+ * tried with the definition the rest of the object has, it does not compile in
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1900: invalid operands to
+ * binary +. */
 struct ChampaCliffCavesWork__s3164 {
   u8 tiles[0x1000];
   s32 originX;

@@ -1055,8 +1055,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
     if (summaryDirty != 0) {
       summaryDirty = 0;
       if (save->summary[selectedFile].level != 0) {
-        Func_0803f9c0(save->summary[selectedFile].paletteGlow,
-                      save->summary[selectedFile].paletteGlowSub);
+        WindowColor_Apply(save->summary[selectedFile].paletteGlow,
+                          save->summary[selectedFile].paletteGlowSub);
         if (summaryWindow == NULL)
           summaryWindow = Window_Create(1, 10, 14, 9, 2);
         FileList_DrawSummary((s32)summaryWindow,
@@ -1085,7 +1085,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
           djinnWindow = NULL;
         }
       } else {
-        Func_0803f9c0(gMainRoutineWork.unk220[5], gMainRoutineWork.unk220[6]);
+        WindowColor_Apply(gMainRoutineWork.unk220[5],
+                          gMainRoutineWork.unk220[6]);
         Menu_SetEntryObjectsHiddenFar(0);
         Menu_ClearFirstObjectRowAndScheduleUpdate();
         Window_Close(djinnWindow, 2);
@@ -1144,7 +1145,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   Window_Close(fileList, 2);
   FileList_StopPulse();
   HeapSlot_Release(220);
-  Func_0803f9c0(gMainRoutineWork.unk220[5], gMainRoutineWork.unk220[6]);
+  WindowColor_Apply(gMainRoutineWork.unk220[5], gMainRoutineWork.unk220[6]);
   wait(1);
 done:
   return result;

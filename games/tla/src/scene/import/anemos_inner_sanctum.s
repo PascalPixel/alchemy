@@ -162,10 +162,10 @@ SetMapCellCollision:
 	.thumb_func
 Func_02003380:
 	overlay_veneer Func_08020360
-	.global Func_0803ce64
+	.global FieldMessage_ShowCentered
 	.thumb_func
-Func_0803ce64:
-	overlay_veneer Func_08038210
+FieldMessage_ShowCentered:
+	overlay_veneer FieldMessage_ShowCenteredFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -254,10 +254,10 @@ Func_02003430:
 	.thumb_func
 Func_02003438:
 	overlay_veneer FieldCamera_MoveToActorByIdFar
-	.global Func_080d4568
+	.global FieldCamera_GetActor
 	.thumb_func
-Func_080d4568:
-	overlay_veneer Func_080c8258
+FieldCamera_GetActor:
+	overlay_veneer FieldCamera_GetActorFar
 	.global Event_SetDestination
 	.thumb_func
 Event_SetDestination:

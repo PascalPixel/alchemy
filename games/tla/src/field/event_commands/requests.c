@@ -27,7 +27,7 @@ extern s8 gData_02001000[];
 /// prepared first; the pending event is 300 + the Djinni id with that flag,
 /// the enemy group is chosen, and on the world map the zone and backdrop come
 /// from the leader's position.
-void Func_080d2b4c(u32 flags, u32 djinn) {
+void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   u8 *work = Ram_HeapSlots->eventWork;
   u32 noPrepare = flags & 0x800;
   u32 group;

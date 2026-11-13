@@ -100,7 +100,7 @@ static __inline__ void Func_02001420_(s32 x, s32 z, s32 a, s32 b) {
 }
 
 static __inline__ void Func_020015d0_(s32 x, s32 z, s32 a, s32 b) {
-  Func_080dbdd4(x, z, a, b);
+  MapGrid_SetCellBehavior(x, z, a, b);
 }
 
 static __inline__ void Func_02001400_(s32 a, s32 b, s32 c, s32 d, s32 e,
@@ -135,7 +135,8 @@ void Func_0200009c(void) {}
 void Func_020000a0(s32 id) {
   FieldEvent_SetMessageId((s32)&MsgOhStoppedBy);
   Event_OpenMessage(id, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
+      0) {
     FieldEvent_Wait(10);
     FieldEvent_SetMessageId((s32)(&MsgOhStoppedBy + 1));
   } else {
@@ -259,7 +260,7 @@ void Func_020002f8(void) {
   object = Actor_Get(11);
   object->motionFlags = 0;
   object->y = 0x100000;
-  Actor_SetSpriteRotationById(13, 0x1000);
+  FieldActor_SetSpriteRotationById(13, 0x1000);
   Actor_SetAnimation(11, 2);
   Actor_SetAnimation(12, 3);
   Actor_SetAnimation(13, 2);
@@ -331,7 +332,7 @@ void Func_0200051c(void) {
   Actor_Get(11)->priorityFlags |= 32;
   Func_02001230(gData_020016e4);
   Actor_SetSingleChildFlags(Actor_Get(9), 0);
-  Actor_SetSpriteRotationById(14, 0x1000);
+  FieldActor_SetSpriteRotationById(14, 0x1000);
   Actor_SetAnimation(12, 0);
   Actor_SetAnimation(13, 1);
   Actor_SetAnimation(14, 2);

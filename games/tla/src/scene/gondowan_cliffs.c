@@ -16,7 +16,7 @@ extern const u8 gData_02001728[];
 
 DEFINE_FUNC_02000038_58(Func_02000038)
 
-void Func_02000058(void) { Func_080d2b4c(21, 49); }
+void Func_02000058(void) { Field_RequestDjinnBattle(21, 49); }
 
 const u8 *Scene_GetEntrances(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov66bRoom2)

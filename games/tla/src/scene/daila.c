@@ -192,7 +192,7 @@ static inline void Actor_JoinLeader(s32 actor) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(actor, ((s16 *)&leader->x)[1],
-                                     ((s16 *)&leader->z)[1]);
+                              ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(actor);
   Actor_SetHorizontalPositionWithTerrain(actor, 0, 0);
 }
@@ -217,7 +217,7 @@ void Func_020003a0(void) {
   Actor_MoveToAndWait(27, 472, 280);
   Actor_FaceDirection(27, FACING_SOUTHEAST, 0);
   Event_Wait(30);
-  Func_080d47b4(27, 256, 0);
+  Actor_ShowEmoteById(27, 256, 0);
   Event_Wait(60);
   Event_ShowMessageAndWait(27, 0);
   FieldActor_LaunchFromLeader(5, 8, 16, 0xa000);
@@ -278,7 +278,7 @@ void Func_020003a0(void) {
     Event_SetMessageId(msg + 11);
     Event_ShowMessageAndWait(27, 0);
     Event_Wait(60);
-    Func_080d47b4(5, 259, 0);
+    Actor_ShowEmoteById(5, 259, 0);
     Event_Wait(60);
     Actor_SetAngleToward(5, 27, 0);
     Event_ShowMessageAndWait(5, 0);
@@ -303,7 +303,7 @@ void Func_020003a0(void) {
   Event_Wait(60);
   Event_ShowMessageAndWait(27, 0);
   Event_Wait(60);
-  Func_080d47b4(28, 258, 0);
+  Actor_ShowEmoteById(28, 258, 0);
   Event_Wait(60);
   Event_ShowMessageAndWait(28, 0);
   Event_Wait(60);
@@ -331,7 +331,7 @@ void Func_020003a0(void) {
   Actor_Jump(5, 4, 20);
   Actor_Jump(5, 4, 20);
   Event_Wait(30);
-  Func_080d47b4(5, 259, 0);
+  Actor_ShowEmoteById(5, 259, 0);
   Event_Wait(60);
   Event_ShowMessageAndWait(5, 0);
   Event_Wait(60);

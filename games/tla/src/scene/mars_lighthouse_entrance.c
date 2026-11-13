@@ -13,9 +13,9 @@ s32 Func_02000038(struct Actor *object) {
   return 0;
 }
 
-void Func_02000044(void) { Func_080d2b4c(11, 57); }
+void Func_02000044(void) { Field_RequestDjinnBattle(11, 57); }
 
-void Func_02000050(void) { Func_080d2b4c(17, 36); }
+void Func_02000050(void) { Field_RequestDjinnBattle(17, 36); }
 
 #include "battle.h"
 #include "game.h"

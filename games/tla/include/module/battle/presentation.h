@@ -363,7 +363,7 @@ extern const u8 gData_0812cc74[];
 
 extern u8 Data_0812cd74[];
 
-void Func_08138028(struct BattlePresentationWork *work);
+void BattleEffect_RunShatteringOpeningFar(struct BattlePresentationWork *work);
 
 extern char ResourceId_SerpentStarsBackdrop;
 

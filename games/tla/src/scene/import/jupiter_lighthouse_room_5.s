@@ -166,10 +166,10 @@ Func_02002888:
 	.thumb_func
 FieldMessage_Show:
 	overlay_veneer FieldMessage_ShowFar
-	.global Func_0803ce64
+	.global FieldMessage_ShowCentered
 	.thumb_func
-Func_0803ce64:
-	overlay_veneer Func_08038210
+FieldMessage_ShowCentered:
+	overlay_veneer FieldMessage_ShowCenteredFar
 	.global Func_020028a0
 	.thumb_func
 Func_020028a0:
@@ -258,10 +258,10 @@ Actor_ArmCallbackAndRefresh:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
@@ -274,10 +274,10 @@ Camera_FollowActor:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_080d4568
+	.global FieldCamera_GetActor
 	.thumb_func
-Func_080d4568:
-	overlay_veneer Func_080c8258
+FieldCamera_GetActor:
+	overlay_veneer FieldCamera_GetActorFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
 BattleEffect_ApplyColorToTargetBuffer:
@@ -366,10 +366,10 @@ BattleEffect_SetObjectUpdateMode:
 	.thumb_func
 Func_02002a20:
 	overlay_veneer Func_080c8830
-	.global Func_080dbdd4
+	.global MapGrid_SetCellBehavior
 	.thumb_func
-Func_080dbdd4:
-	overlay_veneer Func_080c8840
+MapGrid_SetCellBehavior:
+	overlay_veneer MapGrid_SetCellBehaviorFar
 	.global Func_02002a30
 	.thumb_func
 Func_02002a30:

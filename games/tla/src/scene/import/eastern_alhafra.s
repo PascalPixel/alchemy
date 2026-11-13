@@ -238,10 +238,10 @@ Actor_ArmCallbackAndRefresh:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
@@ -262,10 +262,10 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Func_02004b94:
 	overlay_veneer FieldCamera_WaitForArrivalFar
-	.global Func_080d452c
+	.global FieldCamera_MoveToActor
 	.thumb_func
-Func_080d452c:
-	overlay_veneer Func_080c8250
+FieldCamera_MoveToActor:
+	overlay_veneer FieldCamera_MoveToActorFar
 	.global Event_SetDestination
 	.thumb_func
 Event_SetDestination:
@@ -354,10 +354,10 @@ Func_02004c44:
 	.thumb_func
 Func_02004c4c:
 	overlay_veneer Func_080c8748
-	.global Func_080d3928
+	.global Actor_SetSpriteRotationById
 	.thumb_func
-Func_080d3928:
-	overlay_veneer Func_080c87a8
+Actor_SetSpriteRotationById:
+	overlay_veneer Actor_SetSpriteRotationByIdFar
 	.global Func_02004c5c
 	.thumb_func
 Func_02004c5c:
@@ -374,10 +374,10 @@ Func_02004c6c:
 	.thumb_func
 BattleEffect_StepVector3:
 	overlay_veneer BattleEffect_StepVector3Far
-	.global Func_080dbdd4
+	.global MapGrid_SetCellBehavior
 	.thumb_func
-Func_080dbdd4:
-	overlay_veneer Func_080c8840
+MapGrid_SetCellBehavior:
+	overlay_veneer MapGrid_SetCellBehaviorFar
 	.global Func_02004c84
 	.thumb_func
 Func_02004c84:

@@ -510,7 +510,8 @@ static __inline__ void Lobby_ResetTransferState(void) {
   ime = &REG_IME;
   /* FAKEMATCH(dead): the IME exchange in a once-only block, which keeps it
    * before the zero and status constants; as plain statements, the constants
-   * come first, 8 of 62 instructions of LinkLobby_ExchangePartyRecords differ in tla-en. */
+   * come first, 8 of 62 instructions of LinkLobby_ExchangePartyRecords differ
+   * in tla-en. */
   do {
     saved = *ime;
     *ime = (u16)ime;
@@ -1069,8 +1070,14 @@ void MessageArgument_Push(s32 value, s32 digits);
 void Func_020019ec(void);
 void Event_Start(void);
 void Event_End(void);
-/* VIEW(talk): routine Func_080d47b4 as void Func_080d47b4(s32 actor, s32 animation, s32 flags); event.h has s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames); tried as the definition's struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags, s32 state), it does not compile in tla-ja: games/tla/src/scene/lobby.c:1075: conflicting types for `Func_080d47b4'. */
-extern void Func_080d47b4__talk(s32 actor, s32 animation, s32 flags) __asm__("Func_080d47b4");
+/* VIEW(talk): routine Actor_ShowEmoteById as void Actor_ShowEmoteById(s32
+ * actor, s32 animation, s32 flags); event.h has s32 Actor_ShowEmoteById(s32
+ * actorId, s32 emote, s32 frames); tried as the definition's struct
+ * BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags, s32
+ * state), it does not compile in tla-ja: games/tla/src/scene/lobby.c:1075:
+ * conflicting types for `Actor_ShowEmoteById'. */
+extern void Func_080d47b4__talk(s32 actor, s32 animation,
+                                s32 flags) __asm__("Actor_ShowEmoteById");
 s32 Func_02001a84(s32 scene, s32 entrance);
 void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
 void FieldMessage_Show(s32 no, s32 flags);
@@ -1255,7 +1262,11 @@ next:
   Map_CenterOnFollowedPoint();
 }
 
-/* VIEW(scene_events): tag struct LobbyEventWork as struct LobbyEventWork__scene_events; lobby.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/lobby.c:1315: structure has no member named `startTransition'. */
+/* VIEW(scene_events): tag struct LobbyEventWork as struct
+ * LobbyEventWork__scene_events; lobby.c has another definition; tried with the
+ * definition the rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/lobby.c:1315: structure has no member named
+ * `startTransition'. */
 struct LobbyEventWork__scene_events {
   u8 unk000[0x16a];
   s16 raisedTrigger;
@@ -1298,7 +1309,8 @@ s32 LinkLobby_RunRoundResult(void) {
   gMainRoutineWork.packedEvents[1] = 0;
   gData_020022bc = 0;
   gData_020022b8 = 0;
-  ((struct LobbyEventWork__scene_events *)Ram_HeapSlots->eventWork)->startTransition = 0x201;
+  ((struct LobbyEventWork__scene_events *)Ram_HeapSlots->eventWork)
+      ->startTransition = 0x201;
   Sound_LoadReverbCode(2);
   Func_02001414(gMainRoutineWork.linkTallies[6]);
   MapGrid_CopyCellAttributes(11, 11, 1, 1, 13, 10);
@@ -1604,7 +1616,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHmItComes)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_0200122c)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_0200122c)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(LinkLobby_ChooseDebugParameterSet)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS,
+     EVENT(LinkLobby_ChooseDebugParameterSet)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_02001304)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgInTheLinked)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgSoYouWin)},

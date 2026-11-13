@@ -138,10 +138,10 @@ Script_WaitForEventTimeout:
 	.thumb_func
 Map_SetWindowCellTile:
 	overlay_veneer Map_SetWindowCellTileFar
-	.global Func_0802bdd0
+	.global WorldMap_SetWindowCellTileAndDraw
 	.thumb_func
-Func_0802bdd0:
-	overlay_veneer Func_08020208
+WorldMap_SetWindowCellTileAndDraw:
+	overlay_veneer WorldMap_SetWindowCellTileAndDrawFar
 	.global Actor_SetSingleChildFlags
 	.thumb_func
 Actor_SetSingleChildFlags:
@@ -178,10 +178,10 @@ MessageArgument_Push:
 	.thumb_func
 Message_CloseFinishedWindows:
 	overlay_veneer Message_CloseFinishedWindowsFar
-	.global Func_0803f9c0
+	.global WindowColor_Apply
 	.thumb_func
-Func_0803f9c0:
-	overlay_veneer Func_08038348
+WindowColor_Apply:
+	overlay_veneer WindowColor_ApplyFar
 	.global Menu_AnimateSelectionToEntry
 	.thumb_func
 Menu_AnimateSelectionToEntry:
@@ -346,10 +346,10 @@ Actor_ArmCallback:
 	.thumb_func
 Actor_ArmCallbackAndRefresh:
 	overlay_veneer Actor_ArmCallbackAndRefreshFar
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
@@ -382,10 +382,10 @@ Import_EventSetExitRequest:
 	.thumb_func
 Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
-	.global Func_080d2b4c
+	.global Field_RequestDjinnBattle
 	.thumb_func
-Func_080d2b4c:
-	overlay_veneer Func_080c8288
+Field_RequestDjinnBattle:
+	overlay_veneer Field_RequestDjinnBattleFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
 Party_SetFields1eeAnd1f0:
@@ -446,10 +446,10 @@ Party_PlaySavedMusic:
 	.thumb_func
 Scene_ResolveInteractionResult:
 	overlay_veneer Scene_ResolveInteractionResultFar
-	.global Func_080d7788
+	.global Djinn_JoinParty
 	.thumb_func
-Func_080d7788:
-	overlay_veneer Func_080c8580
+Djinn_JoinParty:
+	overlay_veneer Djinn_JoinPartyFar
 	.global Actor_LaunchFromLeader
 	.thumb_func
 Actor_LaunchFromLeader:
@@ -482,10 +482,10 @@ Func_02004e08:
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_080d3b28
+	.global Actor_ShowItemIconById
 	.thumb_func
-Func_080d3b28:
-	overlay_veneer Func_080c8860
+Actor_ShowItemIconById:
+	overlay_veneer Actor_ShowItemIconByIdFar
 	.global SceneEvent_FindActiveRecord
 	.thumb_func
 SceneEvent_FindActiveRecord:

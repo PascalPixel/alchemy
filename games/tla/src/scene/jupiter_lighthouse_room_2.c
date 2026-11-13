@@ -44,11 +44,11 @@ void Func_02000054(void) {
 
   t0 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
   if (FIELD_AT((t0 + 0x22), u8, 0) == 1) {
-    MapGrid_SetCellBehavior(0x900000, 0x2400000, 2, 0xea);
-    MapGrid_SetCellBehavior(0x1000000, 0x2300000, 2, 0xea);
+    FieldMapGrid_SetCellBehavior(0x900000, 0x2400000, 2, 0xea);
+    FieldMapGrid_SetCellBehavior(0x1000000, 0x2300000, 2, 0xea);
   } else {
-    MapGrid_SetCellBehavior(0x900000, 0x2400000, 2, 0xeb);
-    MapGrid_SetCellBehavior(0x1000000, 0x2300000, 2, 0xeb);
+    FieldMapGrid_SetCellBehavior(0x900000, 0x2400000, 2, 0xeb);
+    FieldMapGrid_SetCellBehavior(0x1000000, 0x2300000, 2, 0xeb);
   }
 }
 
@@ -61,7 +61,6 @@ void Func_020000b4(void) {
 #include "field_sprite.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-
 
 void Func_020000d0(s32 kind) {
   s32 owner = gMainRoutineWork.currentOwner;
@@ -306,7 +305,7 @@ void Func_02000500(s32 unused, s32 id) {
     FieldEvent_Wait(20);
     Event_PlaySound(167);
     MapGrid_CopyCellsLayered(93, 41, 1, 1, 85, 41);
-    MapGrid_SetCellBehavior(168 << 17, 164 << 18, 2, 236);
+    FieldMapGrid_SetCellBehavior(168 << 17, 164 << 18, 2, 236);
   }
 }
 
@@ -331,10 +330,12 @@ void Func_020006dc(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   if (party->renderMode == 10)
-    MapGrid_SetCellBehavior(0x1500000, 0x2500000, 0, 255);
+    FieldMapGrid_SetCellBehavior(0x1500000, 0x2500000, 0, 255);
 }
 
-void Func_02000704(void) { Func_080dbdd4(0x1500000, 0x2500000, 0, 4); }
+void Func_02000704(void) {
+  MapGrid_SetCellBehavior(0x1500000, 0x2500000, 0, 4);
+}
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
@@ -402,7 +403,7 @@ s32 Scene_Initialize(void) {
     MapGrid_CopyCellAttributes(28, 39, 1, 1, 20, 39);
     MapGrid_CopyCellsLayered(28, 39, 1, 1, 20, 39);
     MapGrid_CopyCellsLayered(92, 39, 2, 3, 84, 39);
-    MapGrid_SetCellBehavior(168 << 17, 164 << 18, 2, 236);
+    FieldMapGrid_SetCellBehavior(168 << 17, 164 << 18, 2, 236);
   } else {
     Func_02001498();
     Func_020015a0(17, 0);
@@ -444,19 +445,23 @@ extern s32 gData_02002b34;
 static inline void Counter_Set(s32 value) { gData_02002b34 = value; }
 
 DEFINE_FUNC_02000238(Func_020009e8, gData_02002b34, gData_02002b38,
-    gData_02002b98, 0x05000184)
+                     gData_02002b98, 0x05000184)
 
 extern u16 gData_02002bb8[];
 
 DEFINE_FUNC_020002F4(Func_02000aa4, gData_02002b38, gData_02002b98,
-    gData_02002bb8, Func_020009e8, gData_02002bbc)
+                     gData_02002bb8, Func_020009e8, gData_02002bbc)
 
 void Func_0200223c();
-/* VIEW(jupiter_lighthouse_room_2): routine Func_0200230c as void Func_0200230c(); module/scene/scene.h has void Func_0200230c(s32 actor); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_2.c:525: too many arguments to function `Func_0200230c'. */
+/* VIEW(jupiter_lighthouse_room_2): routine Func_0200230c as void
+ * Func_0200230c(); module/scene/scene.h has void Func_0200230c(s32 actor);
+ * tried as the rest of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_2.c:525: too many arguments to
+ * function `Func_0200230c'. */
 extern void Func_0200230c__jupiter_lighthouse_room_2() __asm__("Func_0200230c");
 
 DEFINE_FUNC_02000378(Func_02000b28, Func_0200223c,
-    Func_0200230c__jupiter_lighthouse_room_2)
+                     Func_0200230c__jupiter_lighthouse_room_2)
 
 #include "frame.h"
 

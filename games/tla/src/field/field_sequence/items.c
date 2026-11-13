@@ -90,7 +90,7 @@ s32 Event_FindFacingTrigger(s32 source) {
   return 0;
 }
 
-s32 Func_080d295c(s32 mode);
+s32 FieldYesNo_Ask(s32 mode);
 
 /// Uses an item on the field. packedItem holds the item (bits 0 to 9) and the
 /// character using it (bits 10 to 13; 15 for the character carrying most of
@@ -191,7 +191,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       if (actionId == 149 && !GameFlag_Test(0x144)) {
         MessageArgument_PushFar(itemId, 2);
         FieldMessage_ShowFar((s32)&MsgUseItemQuestion, 13);
-        i = Func_080d295c(1);
+        i = FieldYesNo_Ask(1);
         Message_CloseFinishedWindowsFar();
         if (i != 0)
           return 0;

@@ -303,8 +303,7 @@ s32 Text_CheckPauseSkipped(struct UiChannelSlot *ch) {
 /// (the pending presses in a window mode); while B is held the wait ends only
 /// at countdown 1, and otherwise the countdown is set to 2.
 s32 Text_CheckTextDismissed(struct UiChannelSlot *ch) {
-  struct WindowWork *work =
-      (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 cancel = 0;
   u32 keys;
 
@@ -357,14 +356,12 @@ void Message_CloseFinishedWindows(void) {
 #define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowTiles)
 
 s32 Message_Decode(s32 key, s32 mode);
-s32 Text_GetMessageSize(s32 message, s32 *x, s32 *y, u32 *width,
-                                 u32 *height);
-struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
-                                 s32 attrs);
+s32 Text_GetMessageSize(s32 message, s32 *x, s32 *y, u32 *width, u32 *height);
+struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs);
 s32 Message_AllTyped(void);
 s32 Window_IsClosed(struct Window *window);
 
-void Func_0803ce64(s32 message, s32 mode, s32 yOffset) {
+void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
   struct WindowWork *work;
   struct Window *window;
   s32 x;
@@ -379,8 +376,7 @@ void Func_0803ce64(s32 message, s32 mode, s32 yOffset) {
   window = NULL;
   entry = Message_Decode(message, 1);
   if (work->entries[entry] != 0) {
-    Text_GetMessageSize(message, &x, &y, (u32 *)&width,
-                                 (u32 *)&height);
+    Text_GetMessageSize(message, &x, &y, (u32 *)&width, (u32 *)&height);
     x = (30 - width) >> 1;
     y = ((15 - height) >> 1) + yOffset;
     if (mode != 0)
@@ -409,9 +405,7 @@ void Func_0803ce64(s32 message, s32 mode, s32 yOffset) {
 
 s32 Message_Decode(s32 message, s32 mode);
 
-s32 Message_DecodeMode1(s32 message) {
-  return Message_Decode(message, 1);
-}
+s32 Message_DecodeMode1(s32 message) { return Message_Decode(message, 1); }
 
 s32 Message_Decode(s32 message, s32 mode);
 
@@ -714,8 +708,7 @@ UNUSED s32 Text_DecodeSymbolInC(struct TextReader *reader) {
 extern const s16 gPortrait_CharacterMap[];
 extern const s16 gPortrait_SpriteMap[];
 
-struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
-                                 s32 flags);
+struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 s32 CreateSideObject(s32 id, s32 kind, s32 slot, struct Window *window, s32 x,
                      s32 y);
 
@@ -732,8 +725,7 @@ void Portrait_ClearSlots(void) {
 extern const s16 gPortrait_CharacterMap[];
 extern const s16 gPortrait_SpriteMap[];
 
-struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
-                                 s32 flags);
+struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 s32 CreateSideObject(s32 id, s32 kind, s32 slot, struct Window *window, s32 x,
                      s32 y);
 
@@ -798,7 +790,8 @@ s32 Portrait_GetForSpeaker(u32 value) {
   return result;
 }
 
-struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x, s32 y) {
+struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
+                                   s32 y) {
   struct Window *win;
   s32 minusFour;
   s32 offset;

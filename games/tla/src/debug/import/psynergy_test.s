@@ -58,10 +58,10 @@ Actor_SetSingleChildFlags:
 	.thumb_func
 Animation_ApplyChildValues:
 	overlay_veneer Animation_ApplyChildValuesFar
-	.global Func_0802372c
+	.global Actor_SetItemIcon
 	.thumb_func
-Func_0802372c:
-	overlay_veneer Func_08020300
+Actor_SetItemIcon:
+	overlay_veneer Actor_SetItemIconFar
 	.global Window_Close
 	.thumb_func
 Window_Close:
@@ -93,7 +93,7 @@ Message_CloseFinishedWindows:
 	.global Func_02000e04
 	.thumb_func
 Func_02000e04:
-	overlay_veneer Func_080382f8
+	overlay_veneer NameEntry_EditMemberNameFar
 	.global Func_02000e0c
 	.thumb_func
 Func_02000e0c:
@@ -174,10 +174,10 @@ Event_ShowMessageAndWait:
 	.thumb_func
 Actor_ArmCallback:
 	overlay_veneer Actor_ArmCallbackFar
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global Func_02000eb4
 	.thumb_func
 Func_02000eb4:

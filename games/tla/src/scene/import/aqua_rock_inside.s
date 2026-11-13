@@ -262,10 +262,10 @@ Actor_ArmCallback:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
@@ -286,10 +286,10 @@ Func_02003e54:
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_080d2b4c
+	.global Field_RequestDjinnBattle
 	.thumb_func
-Func_080d2b4c:
-	overlay_veneer Func_080c8288
+Field_RequestDjinnBattle:
+	overlay_veneer Field_RequestDjinnBattleFar
 	.global Func_02003e6c
 	.thumb_func
 Func_02003e6c:
@@ -354,10 +354,10 @@ Func_02003edc:
 	.thumb_func
 Func_02003ee4:
 	overlay_veneer Func_080c86d8
-	.global Func_080d3b28
+	.global Actor_ShowItemIconById
 	.thumb_func
-Func_080d3b28:
-	overlay_veneer Func_080c8860
+Actor_ShowItemIconById:
+	overlay_veneer Actor_ShowItemIconByIdFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

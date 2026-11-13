@@ -110,10 +110,10 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_080d7788
+	.global Djinn_JoinParty
 	.thumb_func
-Func_080d7788:
-	overlay_veneer Func_080c8580
+Djinn_JoinParty:
+	overlay_veneer Djinn_JoinPartyFar
 	.global Actor_CommitPositionAndActivate
 	.thumb_func
 Actor_CommitPositionAndActivate:

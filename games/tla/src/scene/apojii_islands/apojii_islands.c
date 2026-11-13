@@ -29,7 +29,7 @@
 #include "system.h"
 #include "task.h"
 
-void Func_0200033c(void) { Func_080d7788(10, 3, 11); }
+void Func_0200033c(void) { Djinn_JoinParty(10, 3, 11); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -256,7 +256,7 @@ blend:
    * ApojiiIslands_CamMove, so each builds its own -1; as direct calls, 25 of
    * 188 instructions differ in tla-en. */
   ApojiiIslands_CamMove(PIXELS(360), -1, PIXELS(328), 1);
-  Func_080d47b4(16, 256, 20);
+  Actor_ShowEmoteById(16, 256, 20);
   Func_02001d8c();
   ApojiiIslands_CamMove(PIXELS(440), -1, PIXELS(376), 1);
   Func_02001d8c();

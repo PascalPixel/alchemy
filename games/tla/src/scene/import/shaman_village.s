@@ -174,10 +174,10 @@ MessageArgument_Push:
 	.thumb_func
 Icon_DrawItem:
 	overlay_veneer Icon_DrawItemFar
-	.global Func_0803f9c0
+	.global WindowColor_Apply
 	.thumb_func
-Func_0803f9c0:
-	overlay_veneer Func_08038348
+WindowColor_Apply:
+	overlay_veneer WindowColor_ApplyFar
 	.global Func_02004894
 	.thumb_func
 Func_02004894:
@@ -334,10 +334,10 @@ Actor_ArmCallbackAndRefresh:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
@@ -358,10 +358,10 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Func_020049f4:
 	overlay_veneer FieldCamera_WaitForArrivalFar
-	.global Func_080d4568
+	.global FieldCamera_GetActor
 	.thumb_func
-Func_080d4568:
-	overlay_veneer Func_080c8258
+FieldCamera_GetActor:
+	overlay_veneer FieldCamera_GetActorFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:
@@ -386,10 +386,10 @@ Event_ResolvePendingActions:
 	.thumb_func
 Party_PlaySavedMusic:
 	overlay_veneer Party_PlaySavedMusicFar
-	.global Func_080d7788
+	.global Djinn_JoinParty
 	.thumb_func
-Func_080d7788:
-	overlay_veneer Func_080c8580
+Djinn_JoinParty:
+	overlay_veneer Djinn_JoinPartyFar
 	.global Actor_WatchAndSetScript
 	.thumb_func
 Actor_WatchAndSetScript:

@@ -101,7 +101,7 @@ WindowSprite_RedrawSavedRect:
 	.global Func_02000d20
 	.thumb_func
 Func_02000d20:
-	overlay_veneer Func_080382f8
+	overlay_veneer NameEntry_EditMemberNameFar
 	.global Func_02000d28
 	.thumb_func
 Func_02000d28:

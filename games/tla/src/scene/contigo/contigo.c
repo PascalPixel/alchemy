@@ -130,10 +130,10 @@ void Func_02000430(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-void Func_020005f8(void) { Func_080d7788(16, 0, 14); }
+void Func_020005f8(void) { Djinn_JoinParty(16, 0, 14); }
 
 void Func_02000608(void) {
-  Func_080d7788(17, 2, 15);
+  Djinn_JoinParty(17, 2, 15);
   GameFlag_SetBit(2534);
 }
 

@@ -202,12 +202,12 @@ void Func_0200049c(void) {
   Actor_TurnToFaceEachOther(6, gMainRoutineWork.currentOwner, 0);
   Event_ShowMessageAndWait(6, 0);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
-  Func_080d47b4(6, 0x105, 20);
+  Actor_ShowEmoteById(6, 0x105, 20);
   Event_ShowMessageAndWait(6, 0);
   Actor_FaceDirection(6, FACING_NORTHEAST, 20);
   Actor_FaceDirection(6, FACING_NORTHWEST, 40);
   Actor_FaceDirection(6, FACING_SOUTHWEST, 0);
-  Func_080d47b4(6, 0x100, 20);
+  Actor_ShowEmoteById(6, 0x100, 20);
   Event_ShowMessageAndWait(6, 0);
   Actor_SetAngleToward(6, gMainRoutineWork.currentOwner, 0);
   Event_Wait(20);
@@ -382,11 +382,11 @@ void Func_020006a8(void) {
     FieldActor_RefreshSelectorById(6);
     Event_ShowMessageAndWait(6, 0);
     Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 258);
-    Func_080d47b4(6, 263, 20);
+    Actor_ShowEmoteById(6, 263, 20);
     Event_ShowMessageAndWait(6, 0);
     Event_ShowMessageThenWait(8, 0, 40);
     Event_ShowMessageAndWait(6, 0);
-    Func_080d47b4(gMainRoutineWork.currentOwner, 265, 40);
+    Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 265, 40);
     Event_ShowMessageAndWait(6, 0);
     Actor_SetModeById(6, 4);
     Event_ShowMessageAndWait(6, 0);
@@ -398,7 +398,7 @@ void Func_020006a8(void) {
     Actor_FaceDirection(6, FACING_SOUTHEAST, 40);
     Actor_FaceDirection(6, FACING_SOUTHWEST, 0);
     Event_ShowMessageAndWait(6, 0);
-    Func_080d47b4(6, 257, 20);
+    Actor_ShowEmoteById(6, 257, 20);
     Event_ShowMessageAndWait(6, 0);
     Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 4);
     Motion_SetModeAndWaitAnimation(8, 4);

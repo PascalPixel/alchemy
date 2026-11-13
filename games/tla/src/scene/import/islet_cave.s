@@ -54,10 +54,10 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Func_0803ce64
+	.global FieldMessage_ShowCentered
 	.thumb_func
-Func_0803ce64:
-	overlay_veneer Func_08038210
+FieldMessage_ShowCentered:
+	overlay_veneer FieldMessage_ShowCenteredFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -130,10 +130,10 @@ Import_EventSetExitRequest:
 	.thumb_func
 Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
-	.global Func_080d2b4c
+	.global Field_RequestDjinnBattle
 	.thumb_func
-Func_080d2b4c:
-	overlay_veneer Func_080c8288
+Field_RequestDjinnBattle:
+	overlay_veneer Field_RequestDjinnBattleFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
 Party_SetFields1eeAnd1f0:

@@ -68,7 +68,7 @@ Resource_FarCall003:
 	export Func_080201f0, Func_0802b450
 	export Func_080201f8, Func_0802b590
 	export Map_SetWindowCellTileFar, Map_SetWindowCellTile
-	export Func_08020208, Func_0802bdd0
+	export WorldMap_SetWindowCellTileAndDrawFar, WorldMap_SetWindowCellTileAndDraw
 	export MapGrid_CheckCollisionFar, MapGrid_CheckCollision
 	export Actor_SetSingleChildFlagsFar, Actor_SetChildByteValue
 	export Animation_SetStateFlagsFar, Animation_SetStateFlags
@@ -99,7 +99,7 @@ Resource_FarCall003:
 	export ScriptObject_FindOverlappingEntryFar, ScriptObject_FindOverlappingEntry
 	export MapGrid_GetTerrainKindFar, MapGrid_GetTerrainKind
 	export Func_080202f8, Func_08023f94
-	export Func_08020300, Func_0802372c
+	export Actor_SetItemIconFar, Actor_SetItemIcon
 	export MapGrid_CheckCollisionAtFar, MapGrid_CheckCollisionAt
 	export MapGrid_GetTerrainHeightAboveFar, MapGrid_GetTerrainHeightAbove
 	export WorldMap_IsWalkableFar, WorldMap_IsWalkable

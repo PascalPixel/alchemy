@@ -29,7 +29,7 @@
 
 void Actor_ReturnHome(s32 a, s32 b, s32 c);
 
-void Func_02000038(void) { Func_080d7788(19, 3, 16); }
+void Func_02000038(void) { Djinn_JoinParty(19, 3, 16); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -156,7 +156,7 @@ L_0200821e:
   Actor_ArmCallbackAndRefresh(4, 0xc000);
   Event_Wait(30);
   Sound_Play(144);
-  Actor_ShowItemIconById(21, 0x1cc);
+  FieldActor_ShowItemIconById(21, 0x1cc);
   Actor_SetPosition(21, 0x1e80000, 0x14a0000);
   Actor_SetDestinationOffset(20, 0, 8);
   Actor_SetSpeed(21, 0x30000, 0x18000);
@@ -256,7 +256,7 @@ L_02008474:
   Event_Wait(30);
   FieldActor_ShowEmote(17, 0x102, 35);
   Event_ShowMessage(17, 0);
-  Func_080d47b4(16, 0x107, 35);
+  Actor_ShowEmoteById(16, 0x107, 35);
   Actor_WalkByAndWait(16, -12, 24);
   Actor_RunRepeatedMotion(16, 2);
   Event_ShowMessage(16, 0);
@@ -266,7 +266,7 @@ L_02008474:
   FieldActor_ShowEmote(18, 0x100, 35);
   Event_ShowMessage(18, 0);
   FieldActor_ShowEmote(16, 0x101, 0);
-  Func_080d47b4(17, 0x101, 35);
+  Actor_ShowEmoteById(17, 0x101, 35);
   Actor_FaceActor(16, 18, 0);
   Actor_FaceDirection(17, 0x2000, 0);
   Event_Wait(60);
@@ -283,13 +283,13 @@ L_02008474:
   FieldCamera_MoveTo(0x1e80000, -1, 0x1460000, 1);
   Event_Wait(60);
   FieldActor_ShowEmote(16, 0x100, 0);
-  Func_080d47b4(17, 0x100, 50);
+  Actor_ShowEmoteById(17, 0x100, 50);
   FieldActor_ShowEmote(17, 0x102, 35);
   Event_ShowMessage(17, 0);
   Actor_SetAnimation(16, 3);
   Event_ShowMessage(16, 0);
   Actor_FaceActor(18, 4, 0);
-  Func_080d47b4(18, 0x109, 35);
+  Actor_ShowEmoteById(18, 0x109, 35);
   FieldCamera_MoveTo(0x1e80000, -1, 0x16e0000, 1);
   Func_020013c8();
   Actor_FaceDirection(18, 0x5000, 0);
@@ -305,7 +305,7 @@ L_02008474:
   Actor_SetAnimation(18, 3);
   Actor_FaceDirection(17, 0x3000, 0);
   Event_ShowMessage(17, 0);
-  Func_080d47b4(4, 0x102, 35);
+  Actor_ShowEmoteById(4, 0x102, 35);
   Event_Wait(60);
   Event_Wait(10);
   Actor_FaceDirectionAndWait(16, 0x4000);
@@ -314,12 +314,12 @@ L_02008474:
   Event_ShowMessage(16, 0);
   FieldActor_ShowEmote(18, 0x105, 0);
   FieldActor_ShowEmote(17, 0x105, 0);
-  Func_080d47b4(16, 0x105, 60);
+  Actor_ShowEmoteById(16, 0x105, 60);
   FieldActor_ShowEmote(18, 0x106, 35);
   Event_ShowMessage(18, 0);
   Actor_SetModeById(17, 3);
   Event_Wait(40);
-  Func_080d47b4(17, 0x106, 35);
+  Actor_ShowEmoteById(17, 0x106, 35);
   Event_ShowMessage(17, 0);
   Actor_SetModeById(16, 3);
   Event_Wait(30);
@@ -750,7 +750,8 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room1 && GameFlag_Test(0xa5f))
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room1 &&
+      GameFlag_Test(0xa5f))
     Func_020000ac();
   return 0;
 }

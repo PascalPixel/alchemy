@@ -210,14 +210,14 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Func_02002bd4:
 	overlay_veneer FieldCamera_WaitForArrivalFar
-	.global Func_080d4568
+	.global FieldCamera_GetActor
 	.thumb_func
-Func_080d4568:
-	overlay_veneer Func_080c8258
-	.global Func_080d2b4c
+FieldCamera_GetActor:
+	overlay_veneer FieldCamera_GetActorFar
+	.global Field_RequestDjinnBattle
 	.thumb_func
-Func_080d2b4c:
-	overlay_veneer Func_080c8288
+Field_RequestDjinnBattle:
+	overlay_veneer Field_RequestDjinnBattleFar
 	.global Func_02002bec
 	.thumb_func
 Func_02002bec:
@@ -258,10 +258,10 @@ Func_02002c2c:
 	.thumb_func
 Func_02002c34:
 	overlay_veneer Func_080c8830
-	.global Func_080dbdd4
+	.global MapGrid_SetCellBehavior
 	.thumb_func
-Func_080dbdd4:
-	overlay_veneer Func_080c8840
+MapGrid_SetCellBehavior:
+	overlay_veneer MapGrid_SetCellBehaviorFar
 	.global Func_02002c44
 	.thumb_func
 Func_02002c44:

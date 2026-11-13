@@ -30,7 +30,7 @@ void Func_02002c54(s32 x, s32 z, s32 a, s32 b);
 void Func_02001a48(const u8 *data, s32 a, s32 b);
 void Func_02002bec(void);
 
-void Func_02000038(void) { Func_080d2b4c(21, 74); }
+void Func_02000038(void) { Field_RequestDjinnBattle(21, 74); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -164,9 +164,9 @@ void Func_020002f0(void) {
   Call4((void (*)())Func_02002b54, 0x2300000, 0xf00000, 0, -2);
   Call4((void (*)())Func_02002b54, 0x1f00000, 0x1000000, 0, -2);
   Call4((void (*)())Func_02002b54, 0x2100000, 0xa00000, 0, -2);
-  MapGrid_SetCellBehavior(0x2600000, 0xa00000, 2, 0);
-  MapGrid_SetCellBehavior(0x1f00000, 0xa00000, 2, 0);
-  MapGrid_SetCellBehavior(0x1f00000, 0xe00000, 2, 0);
+  FieldMapGrid_SetCellBehavior(0x2600000, 0xa00000, 2, 0);
+  FieldMapGrid_SetCellBehavior(0x1f00000, 0xa00000, 2, 0);
+  FieldMapGrid_SetCellBehavior(0x1f00000, 0xe00000, 2, 0);
   if (Event_GetFlag(0xa10) || Event_GetFlag(0xa11))
     Func_02002b54(0x2300000, 0xf00000, 0, 0);
   if (Event_GetFlag(0xa12) || Event_GetFlag(0xa13))
@@ -178,19 +178,19 @@ void Func_020002f0(void) {
     MapGrid_CopyCellsLayered(0x6f, 0x33, 1, 1, 0x63, 0xf);
     if (Event_GetFlag(0xa13)) {
       MapGrid_CopyCellsLayered(0x69, 0x33, 1, 3, 0x5f, 0xe);
-      MapGrid_SetCellBehavior(0x1f00000, 0xe00000, 2, 0xec);
+      FieldMapGrid_SetCellBehavior(0x1f00000, 0xe00000, 2, 0xec);
     }
     if (Event_GetFlag(0xa15))
       MapGrid_CopyCellsLayered(0x6f, 0x35, 1, 1, 0x61, 0xa);
   } else if (Event_GetFlag(0xa11)) {
     MapGrid_CopyCellsLayered(0x62, 0x33, 5, 1, 0x62, 0xa);
     MapGrid_CopyCellsLayered(0x63, 0x34, 4, 5, 0x63, 0xb);
-    MapGrid_SetCellBehavior(0x2600000, 0xa00000, 2, 0xec);
+    FieldMapGrid_SetCellBehavior(0x2600000, 0xa00000, 2, 0xec);
     if (Event_GetFlag(0xa12))
       MapGrid_CopyCellsLayered(0x6a, 0x35, 1, 1, 0x5f, 0x10);
     if (Event_GetFlag(0xa14)) {
       MapGrid_CopyCellsLayered(0x6d, 0x33, 3, 1, 0x5f, 0xa);
-      MapGrid_SetCellBehavior(0x1f00000, 0xa00000, 2, 0xec);
+      FieldMapGrid_SetCellBehavior(0x1f00000, 0xa00000, 2, 0xec);
     }
   } else {
     if (Event_GetFlag(0xa12))
@@ -367,7 +367,7 @@ void Func_020007a4(s32 unused, s32 id) {
     Event_PlaySound(151);
     Func_02002ad4(object, 3);
     object->priorityFlags &= ~2;
-    MapGrid_SetCellBehavior(object->x, object->z, object->terrainId, 255);
+    FieldMapGrid_SetCellBehavior(object->x, object->z, object->terrainId, 255);
     Event_Wait(30);
     FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
     Func_02002bd4();
@@ -390,7 +390,7 @@ void Func_020007a4(s32 unused, s32 id) {
     Event_PlaySound(151);
     Func_02002ad4(object, 3);
     object->priorityFlags &= ~2;
-    MapGrid_SetCellBehavior(object->x, object->z, object->terrainId, 255);
+    FieldMapGrid_SetCellBehavior(object->x, object->z, object->terrainId, 255);
   } else {
     Func_02002b54(object->x, object->z, 0, 8);
     Func_02002c4c(object->x, object->z, 0, 128);
@@ -681,7 +681,7 @@ static inline void Counter_Set(s32 value) { gData_02003590 = value; }
 extern u32 gData_020035bc[];
 
 DEFINE_FUNC_0200027C(Func_02001168, gData_02003590, gData_02003594,
-    gData_020035bc)
+                     gData_020035bc)
 
 extern u16 gData_020035dc[];
 extern u16 gData_020035e0[];
@@ -689,7 +689,7 @@ extern u16 gData_020035e0[];
 void Func_02002c44();
 
 DEFINE_FUNC_020002F4(Func_02001224, gData_02003594, gData_020035bc,
-    gData_020035dc, Func_02001168, gData_020035e0)
+                     gData_020035dc, Func_02001168, gData_020035e0)
 
 DEFINE_FUNC_02000378(Func_020012a8, Func_02002b54, Func_02002c44)
 
@@ -714,4 +714,4 @@ s32 Math_Cosine(s32 angle);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_FUNC_02000628(Func_02001514, Func_02002c34, Func_020014e8,
-    gData_02003598, Data_020035b8)
+                     gData_02003598, Data_020035b8)

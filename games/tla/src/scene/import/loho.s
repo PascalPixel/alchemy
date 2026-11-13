@@ -198,10 +198,10 @@ Actor_ArmCallback:
 	.thumb_func
 Actor_ArmCallbackAndRefresh:
 	overlay_veneer Actor_ArmCallbackAndRefreshFar
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
@@ -242,10 +242,10 @@ Actor_ReturnHome:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_080d7788
+	.global Djinn_JoinParty
 	.thumb_func
-Func_080d7788:
-	overlay_veneer Func_080c8580
+Djinn_JoinParty:
+	overlay_veneer Djinn_JoinPartyFar
 	.global Actor_OffsetPositionAndReset
 	.thumb_func
 Actor_OffsetPositionAndReset:
@@ -262,10 +262,10 @@ Actor_WatchAndSetScript:
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_080d3b28
+	.global Actor_ShowItemIconById
 	.thumb_func
-Func_080d3b28:
-	overlay_veneer Func_080c8860
+Actor_ShowItemIconById:
+	overlay_veneer Actor_ShowItemIconByIdFar
 	.global Func_02001430
 	.thumb_func
 Func_02001430:

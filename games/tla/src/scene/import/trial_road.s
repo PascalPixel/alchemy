@@ -302,10 +302,10 @@ Actor_ArmCallbackAndRefresh:
 	.thumb_func
 Func_02005958:
 	overlay_veneer Func_080c8208
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global ObjectVisual_CopyAttributes
 	.thumb_func
 ObjectVisual_CopyAttributes:
@@ -334,10 +334,10 @@ Import_EventSetExitRequest:
 	.thumb_func
 Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
-	.global Func_080d2b4c
+	.global Field_RequestDjinnBattle
 	.thumb_func
-Func_080d2b4c:
-	overlay_veneer Func_080c8288
+Field_RequestDjinnBattle:
+	overlay_veneer Field_RequestDjinnBattleFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
 Party_SetFields1eeAnd1f0:
@@ -418,10 +418,10 @@ Func_02005a38:
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_080d3928
+	.global Actor_SetSpriteRotationById
 	.thumb_func
-Func_080d3928:
-	overlay_veneer Func_080c87a8
+Actor_SetSpriteRotationById:
+	overlay_veneer Actor_SetSpriteRotationByIdFar
 	.global Func_02005a50
 	.thumb_func
 Func_02005a50:

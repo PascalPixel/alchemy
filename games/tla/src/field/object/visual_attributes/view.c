@@ -101,8 +101,8 @@ extern const u8 gData_080f3310[];
 /// The Broken Seal's BattleEffect_SpawnLinked with this game's object kind
 /// (488): spawns an effect object at object resourceId that follows it,
 /// waits state, and returns the new object.
-struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags,
-                                                s32 state) {
+struct BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags,
+                                                      s32 state) {
   struct BattleEffectResource *resource;
   struct BattleEffectWatchedObject *object;
 

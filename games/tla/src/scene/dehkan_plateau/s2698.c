@@ -96,12 +96,12 @@ void Func_020027e0(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 25);
-  Func_080d4568()->motionFlags = 0;
+  FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(PIXELS(616), -1, PIXELS(280), 1);
   Func_02003cf0();
   Actor_SetAngleToward(25, gMainRoutineWork.currentOwner, 0);
   // A direct call: as Call3 the actor id is loaded before the 0x100's shift.
-  Func_080d47b4(25, 0x100, 40);
+  Actor_ShowEmoteById(25, 0x100, 40);
   Actor_SetSpritePriority(25, 1);
   Actor_SetSpeed(25, 0x19999, 0xcccc);
   Actor_WalkToAndWait(25, 632, 280);
@@ -172,7 +172,7 @@ void Func_02002a5c(void) {
   Sound_Play(161);
   Func_020021b4();
   Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
-  Func_080d47b4(9, 0x100, 20);
+  Actor_ShowEmoteById(9, 0x100, 20);
   Func_02002bcc();
   Event_Wait(20);
   leader->facing = FACING_SOUTH;
@@ -316,7 +316,7 @@ void Func_02002c14(void) {
     FieldActor_SetMoveTarget(gData_02004420, 0xf80000, 0, 0x580000);
   Script_WaitForEventTimeout(leader);
   Event_Wait(20);
-  Func_080d47b4(9, 0x103, 0);
+  Actor_ShowEmoteById(9, 0x103, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
   Actor_ArmCallback(9, 0x8000, 60);
   Actor_WalkToAndWait(9, 296, 104);
@@ -339,7 +339,7 @@ void Func_02002dd4(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 16);
-  Func_080d4568()->motionFlags = 0;
+  FieldCamera_GetActor()->motionFlags = 0;
   Camera_MoveWithinMapBounds(PIXELS(760), PIXELS(32), PIXELS(204), 1);
   Func_02003cf0();
   Actor_SetAngleToward(16, gMainRoutineWork.currentOwner, 0);
@@ -401,7 +401,7 @@ void Func_02002f08(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetAngleToward(16, gMainRoutineWork.currentOwner, 0);
-  Func_080d47b4(16, 0x100, 40);
+  Actor_ShowEmoteById(16, 0x100, 40);
   Actor_ArmCallbackAndRefresh(16, FACING_EAST);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(16, 3);

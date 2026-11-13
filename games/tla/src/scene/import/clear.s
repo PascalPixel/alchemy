@@ -128,10 +128,10 @@ FileList_SelectAction:
 	.thumb_func
 Func_020022b0:
 	overlay_veneer IconMenu_ChooseSendOptionFar
-	.global Func_0803ce64
+	.global FieldMessage_ShowCentered
 	.thumb_func
-Func_0803ce64:
-	overlay_veneer Func_08038210
+FieldMessage_ShowCentered:
+	overlay_veneer FieldMessage_ShowCenteredFar
 	.global WindowSprite_RedrawSavedRect
 	.thumb_func
 WindowSprite_RedrawSavedRect:
@@ -163,7 +163,7 @@ Func_020022f0:
 	.global Func_020022f8
 	.thumb_func
 Func_020022f8:
-	overlay_veneer Func_080382f8
+	overlay_veneer NameEntry_EditMemberNameFar
 	.global Resource_CopyFixedBlockB
 	.thumb_func
 Resource_CopyFixedBlockB:
@@ -172,10 +172,10 @@ Resource_CopyFixedBlockB:
 	.thumb_func
 Resource_CopyFixedBlockA:
 	overlay_veneer Resource_CopyFixedBlockAFar
-	.global Func_0803f9c0
+	.global WindowColor_Apply
 	.thumb_func
-Func_0803f9c0:
-	overlay_veneer Func_08038348
+WindowColor_Apply:
+	overlay_veneer WindowColor_ApplyFar
 	.global YesNoMenu_Run
 	.thumb_func
 YesNoMenu_Run:
@@ -274,10 +274,10 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_080d295c
+	.global FieldYesNo_Ask
 	.thumb_func
-Func_080d295c:
-	overlay_veneer Func_080c8558
+FieldYesNo_Ask:
+	overlay_veneer FieldYesNo_AskFar
 	.global Func_020023e0
 	.thumb_func
 Func_020023e0:

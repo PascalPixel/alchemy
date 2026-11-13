@@ -287,7 +287,7 @@ void Func_020005dc(s32 a0) {
 void Func_0200060c(void) {
   s32 angle;
 
-  Actor_ShowItemIconById(31, 415);
+  FieldActor_ShowItemIconById(31, 415);
   /* FAKEMATCH(temporary): the facing in a local, which starts it before the
    * other arguments as the native has; as the plain argument 0xc000, 4 of 17
    * instructions differ in tla-en. */
@@ -1531,7 +1531,7 @@ s16 gData_020031e6[] = {
 // clang-format on
 
 DEFINE_G_DATA_0200064C(gData_020031fc, gData_020031e6, 0x9001d, gData_020031e4,
-    0)
+                       0)
 
 s32 gData_0200320c[] = {
     0xc602,

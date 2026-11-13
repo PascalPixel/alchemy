@@ -202,10 +202,10 @@ Actor_SetSpritePriority:
 	.thumb_func
 Func_02003aa0:
 	overlay_veneer Func_080c8208
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
@@ -222,18 +222,18 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Func_02003ac8:
 	overlay_veneer FieldCamera_WaitForArrivalFar
-	.global Func_080d4568
+	.global FieldCamera_GetActor
 	.thumb_func
-Func_080d4568:
-	overlay_veneer Func_080c8258
+FieldCamera_GetActor:
+	overlay_veneer FieldCamera_GetActorFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_080d2b4c
+	.global Field_RequestDjinnBattle
 	.thumb_func
-Func_080d2b4c:
-	overlay_veneer Func_080c8288
+Field_RequestDjinnBattle:
+	overlay_veneer Field_RequestDjinnBattleFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:

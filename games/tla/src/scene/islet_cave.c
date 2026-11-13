@@ -114,12 +114,12 @@ void Func_02000328(void) {
 #include "text/msg_ids.h"
 
 void Func_020003b0(void) {
-  Func_080d2b4c(15, 12);
+  Field_RequestDjinnBattle(15, 12);
   return;
 }
 
 void Func_020003bc(void) {
-  Func_080d2b4c(9, 37);
+  Field_RequestDjinnBattle(9, 37);
   return;
 }
 
@@ -626,7 +626,7 @@ void Func_020010ac(void) {
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
   PaletteFade_StartInterpolation(0x3c);
   Event_Wait(60);
-  FieldMessage_ShowCentered((s32)MsgSummonGuardianOfWind, 0, 2);
+  EventMessage_ShowCentered((s32)MsgSummonGuardianOfWind, 0, 2);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   PaletteFade_StartInterpolation(0x3c);
   Event_Wait(60);

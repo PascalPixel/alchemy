@@ -26,7 +26,7 @@ void Actor_SetMovementTypeById(s32 id, const void *script);
 void Actor_SetMovementTypeAndWaitById(s32 id, const void *script);
 void Func_02000494(void);
 void Func_02000be0(u16 value);
-void Func_0803ce64(s32 message, s32 a, s32 b);
+void FieldMessage_ShowCentered(s32 message, s32 a, s32 b);
 void Event_Start(void);
 void Event_End(void);
 void Actor_MoveToObject(s32 id, s32 a);

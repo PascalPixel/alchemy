@@ -158,10 +158,10 @@ Func_02003010:
 	.thumb_func
 Func_02003018:
 	overlay_veneer Func_080202f8
-	.global Func_0802372c
+	.global Actor_SetItemIcon
 	.thumb_func
-Func_0802372c:
-	overlay_veneer Func_08020300
+Actor_SetItemIcon:
+	overlay_veneer Actor_SetItemIconFar
 	.global Func_02003028
 	.thumb_func
 Func_02003028:
@@ -262,10 +262,10 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
-	.global Func_080d2b4c
+	.global Field_RequestDjinnBattle
 	.thumb_func
-Func_080d2b4c:
-	overlay_veneer Func_080c8288
+Field_RequestDjinnBattle:
+	overlay_veneer Field_RequestDjinnBattleFar
 	.global Func_020030f8
 	.thumb_func
 Func_020030f8:

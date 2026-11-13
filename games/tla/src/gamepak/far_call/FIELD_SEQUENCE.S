@@ -69,7 +69,7 @@ Resource_FarCall006:
 	export Message_SetVoiceFromActorFar, Message_SetVoiceFromActor
 	export Actor_SetSpritePriorityFar, Actor_SetSpritePriority
 	export Func_080c8208, Func_080d390c
-	export Func_080c8210, Func_080d47b4
+	export Actor_ShowEmoteByIdFar, Actor_ShowEmoteById
 	export FieldEffect_SetAttachedFar, FieldEffect_SetAttached
 	export ObjectVisual_CopyAttributesFar, ObjectVisual_CopyAttributes
 	export Camera_FollowActorFar, Camera_FollowActor
@@ -77,14 +77,14 @@ Resource_FarCall006:
 	export Camera_MoveWithinMapBoundsFar, Camera_MoveWithinMapBounds
 	export FieldCamera_WaitForArrivalFar, FieldCamera_WaitForArrival
 	export FieldCamera_MoveToActorByIdFar, FieldCamera_MoveToActorById
-	export Func_080c8250, Func_080d452c
-	export Func_080c8258, Func_080d4568
+	export FieldCamera_MoveToActorFar, FieldCamera_MoveToActor
+	export FieldCamera_GetActorFar, FieldCamera_GetActor
 	export MapGrid_SetCameraBoundsFar, MapGrid_SetCameraBounds
 	export Event_SetDestinationFar, Event_SetDestination
 	export Event_SetRestartPointFar, Event_SetRestartPoint
 	export Event_SetExitRequestFar, Event_SetExitRequest
 	export Field_RequestBattleFromEncounterTableFar, Field_RequestBattleFromEncounterTable
-	export Func_080c8288, Func_080d2b4c
+	export Field_RequestDjinnBattleFar, Field_RequestDjinnBattle
 	export Party_SetFields1eeAnd1f0Far, Party_SetFields1eeAnd1f0
 	export Party_SetFields1f2And1f4Far, Party_SetFields1f2And1f4
 	export Field_SetDestinationFar, Field_SetDestination
@@ -174,12 +174,12 @@ Resource_FarCall006:
 	export BattleParty_ApplyDrainFar, BattleParty_ApplyDrain
 	export BattleParty_ApplyHealthDeltaFar, BattleParty_ApplyHealthDelta
 	export ResourceTable_CountFreeBlocksFar, ResourceTable_CountFreeBlocks
-	export Func_080c8558, Func_080d295c
+	export FieldYesNo_AskFar, FieldYesNo_Ask
 	export Encounter_GetEnemyGroupAtSlotFar, Encounter_GetEnemyGroupAtSlot
 	export Encounter_GetDjinnEnemyGroupFar, Encounter_GetDjinnEnemyGroup
 	export Party_PlaySavedMusicFar, Party_PlaySavedMusic
 	export Scene_ResolveInteractionResultFar, Scene_ResolveInteractionResult
-	export Func_080c8580, Func_080d7788
+	export Djinn_JoinPartyFar, Djinn_JoinParty
 	export FieldParticle_UpdateFar, FieldParticle_Update
 	export FieldParticle_HasPendingTargetFar, FieldParticle_HasPendingTarget
 	export FieldParticle_SetPositionFar, FieldParticle_SetPosition
@@ -248,7 +248,7 @@ Resource_FarCall006:
 	export Func_080c8790, Func_080db0b0
 	export Func_080c8798, Func_080d5d70
 	export Func_080c87a0, Func_080eb960
-	export Func_080c87a8, Func_080d3928
+	export Actor_SetSpriteRotationByIdFar, Actor_SetSpriteRotationById
 	export Func_080c87b0, Func_080d3940
 	export Func_080c87b8, Func_080d3a10
 	export Func_080c87c0, Func_080eaf98
@@ -268,11 +268,11 @@ Resource_FarCall006:
 	export Func_080c8828, Func_080e4244
 	export Func_080c8830, Func_080dbdc8
 	export Func_080c8838, Func_080dbde8
-	export Func_080c8840, Func_080dbdd4
+	export MapGrid_SetCellBehaviorFar, MapGrid_SetCellBehavior
 	export Func_080c8848, Func_080dbdf4
 	export Func_080c8850, Func_080dbe08
 	export Func_080c8858, Func_080dbe44
-	export Func_080c8860, Func_080d3b28
+	export Actor_ShowItemIconByIdFar, Actor_ShowItemIconById
 	export Func_080c8868, Func_080da908
 	export Func_080c8870, Func_080da938
 	export Func_080c8878, Func_080d4ab4

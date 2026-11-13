@@ -198,10 +198,10 @@ Actor_ArmCallback:
 	.thumb_func
 Battle_ShowPairedUnitWorkAndWait:
 	overlay_veneer Battle_ShowPairedUnitWorkAndWaitFar
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:

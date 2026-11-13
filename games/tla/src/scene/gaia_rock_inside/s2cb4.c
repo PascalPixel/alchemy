@@ -307,7 +307,7 @@ s32 Scene_Initialize(void) {
         Event_WaitTransitionFrames();
         C4(Camera_MoveWithinMapBounds, 0x1e80000, none, 0x1800000, 1);
         Func_02004f54();
-        C3(Func_080d47b4, 10, 264, 0);
+        C3(Actor_ShowEmoteById, 10, 264, 0);
         C1(Event_Wait, 40);
         C1(Event_SetMessageId, (s32)MsgFieldAtLastTheSerpentHas);
         C2(Event_ShowMessageAndWait, 10, 0);
@@ -353,7 +353,7 @@ s32 Scene_Initialize(void) {
         dragon->velocityY = fast;
         C2(FieldEffect_SetAttached, 10, 258);
         C1(Actor_WaitForMoveById, 10);
-        C3(Func_080d47b4, 10, 257, 20);
+        C3(Actor_ShowEmoteById, 10, 257, 20);
         C1(Event_Wait, 30);
         Actor_SetModeById(10, 8);
         C1(Event_Wait, 10);
@@ -385,7 +385,7 @@ s32 Scene_Initialize(void) {
         C2(Animation_ApplyChildValues, object, 6);
         C3(Actor_Jump, 10, 2, 0);
         C1(Event_Wait, 5);
-        C3(Func_080d47b4, 10, 258, 0);
+        C3(Actor_ShowEmoteById, 10, 258, 0);
         C1(Event_Wait, 55);
         C1(Event_Wait, 5);
         C1(Sound_Play, 136);
@@ -483,13 +483,13 @@ s32 Scene_Initialize(void) {
       C3(Actor_ArmCallback, 10, 0xc000, 0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
-      C3(Func_080d47b4, 11, 258, 30);
+      C3(Actor_ShowEmoteById, 11, 258, 30);
       C1(Sound_Play, 530);
       C2(Event_ShowMessageAndWait, 11, 0);
       C1(Sound_Play, 530);
       C2(Event_ShowMessageAndWait, 10, 0);
       Actor_ShowEmote(*owner, 256, 0);
-      C3(Func_080d47b4, 11, 256, 0);
+      C3(Actor_ShowEmoteById, 11, 256, 0);
       C1(Event_Wait, 15);
       C3(Actor_ArmCallback, *owner, 0x4000, 0);
       C3(Actor_ArmCallback, 11, 0x4000, 0);
@@ -586,7 +586,7 @@ s32 Scene_Initialize(void) {
       C3(Map_SetScreenShake, 0x50000, 0x50000, scale);
       C1(Sound_Play, 107);
       C1(Event_Wait, 30);
-      C3(Func_080d47b4, *owner, 256, 0);
+      C3(Actor_ShowEmoteById, *owner, 256, 0);
       C1(Event_Wait, 15);
       C3(Actor_ArmCallback, *owner, 0xc000, 0);
       C1(Event_Wait, 15);
@@ -1019,7 +1019,7 @@ s32 Scene_Initialize(void) {
         Event_WaitTransitionFrames();
         C4(Camera_MoveWithinMapBounds, 0x1e80000, none, 0x1800000, 1);
         Func_02004f54();
-        C3(Func_080d47b4, 10, 264, 0);
+        C3(Actor_ShowEmoteById, 10, 264, 0);
         C1(Event_Wait, 40);
         C1(Event_SetMessageId, (s32)MsgFieldAtLastTheSerpentHas);
         C2(Event_ShowMessageAndWait, 10, 0);
@@ -1065,7 +1065,7 @@ s32 Scene_Initialize(void) {
         dragon->velocityY = fast;
         C2(FieldEffect_SetAttached, 10, 258);
         C1(Actor_WaitForMoveById, 10);
-        C3(Func_080d47b4, 10, 257, 20);
+        C3(Actor_ShowEmoteById, 10, 257, 20);
         C1(Event_Wait, 30);
         Actor_SetModeById(10, 8);
         C1(Event_Wait, 10);
@@ -1097,7 +1097,7 @@ s32 Scene_Initialize(void) {
         C2(Animation_ApplyChildValues, object, 6);
         C3(Actor_Jump, 10, 2, 0);
         C1(Event_Wait, 5);
-        C3(Func_080d47b4, 10, 258, 0);
+        C3(Actor_ShowEmoteById, 10, 258, 0);
         C1(Event_Wait, 55);
         C1(Event_Wait, 5);
         C1(Sound_Play, 136);
@@ -1195,13 +1195,13 @@ s32 Scene_Initialize(void) {
       C3(Actor_ArmCallback, 10, 0xc000, 0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
-      C3(Func_080d47b4, 11, 258, 30);
+      C3(Actor_ShowEmoteById, 11, 258, 30);
       C1(Sound_Play, 530);
       C2(Event_ShowMessageAndWait, 11, 0);
       C1(Sound_Play, 530);
       C2(Event_ShowMessageAndWait, 10, 0);
       Actor_ShowEmote(*owner, 256, 0);
-      C3(Func_080d47b4, 11, 256, 0);
+      C3(Actor_ShowEmoteById, 11, 256, 0);
       C1(Event_Wait, 15);
       C3(Actor_ArmCallback, *owner, 0x4000, 0);
       C3(Actor_ArmCallback, 11, 0x4000, 0);
@@ -1298,7 +1298,7 @@ s32 Scene_Initialize(void) {
       C3(Map_SetScreenShake, 0x50000, 0x50000, scale);
       C1(Sound_Play, 107);
       C1(Event_Wait, 30);
-      C3(Func_080d47b4, *owner, 256, 0);
+      C3(Actor_ShowEmoteById, *owner, 256, 0);
       C1(Event_Wait, 15);
       C3(Actor_ArmCallback, *owner, 0xc000, 0);
       C1(Event_Wait, 15);

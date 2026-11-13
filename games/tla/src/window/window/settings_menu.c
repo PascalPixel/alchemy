@@ -26,7 +26,7 @@ u16 Func_0803f974(s16 *rgb, s32 scale_r, s32 scale_g, s32 scale_b);
     BG_PLTT_COLOR(15, (index)) = color_;                                       \
   } while (0)
 
-void Func_0803f9c0(s32 phase, s32 brightness) {
+void WindowColor_Apply(s32 phase, s32 brightness) {
   s16 rgb[3];
   s16 step;
   s16 red;
@@ -391,7 +391,7 @@ extern const u8 gOptionMenu_FirstColorPresets[],
 void SettingsMenu_InitializeWork(void);
 void SettingsMenu_Release(void);
 struct RenderInput *SettingsMenu_Open(void);
-void Func_0803f9c0(s32 hue, s32 brightness);
+void WindowColor_Apply(s32 hue, s32 brightness);
 struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,
                                       s32 x, s32 y);
 void MenuTitle_Bob(struct WindowSprite *pair);
@@ -493,7 +493,7 @@ s32 SettingsMenu_Run(void) {
       Window_ClearInteriorTiles((const struct Window *)settingsWindow, CHOICE_X,
                                 88, CHOICE_RIGHT, 96);
       Text_DrawMessageAsTiles(x, settingsWindow, CHOICE_X, 88);
-      Func_0803f9c0(*hue, *brightness);
+      WindowColor_Apply(*hue, *brightness);
 
       x = (s16)settingsWindow->x * 8;
       {
@@ -566,8 +566,8 @@ s32 SettingsMenu_Run(void) {
     gMainRoutineWork.unk244[6] = work->option[4];
     gAutoSleepEnabled = gMainRoutineWork.unk244[6];
   } else {
-    Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
-                  gMainRoutineWork.paletteGlow[1]);
+    WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
+                      gMainRoutineWork.paletteGlow[1]);
   }
   SettingsMenu_Release();
   wait(1);

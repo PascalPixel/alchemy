@@ -53,7 +53,7 @@ extern const struct CellRecord gData_02004066[];
 
 void Func_0200118c(void) {
   GameFlag_SetBit(0x209);
-  Func_080d2b4c(16, 47);
+  Field_RequestDjinnBattle(16, 47);
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -405,7 +405,7 @@ void Func_02001a30(void) {
                              cellZ << 3);
   Actor_SetPositionAndResetMotion(leader, cellX << 19, leader->y, cellZ << 19);
   Event_Wait(4);
-  Func_080d4568()->y += -0x80000;
+  FieldCamera_GetActor()->y += -0x80000;
   next = record + 1;
   if (GameFlag_Test(flag)) {
     s32 x, y, index, toX, toZ;
@@ -636,7 +636,7 @@ void Func_02002180(void) {
 }
 
 void Func_020021b4(void) {
-  struct Actor *object = Func_080d4568();
+  struct Actor *object = FieldCamera_GetActor();
   u32 i;
 
   object->y += -0x80000;
@@ -715,11 +715,11 @@ static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
 void Func_020021e8(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Func_080d4568()->motionFlags = 0;
+  FieldCamera_GetActor()->motionFlags = 0;
   Camera_MoveWithinMapBounds(658 << 16, -1, 164 << 16, 1);
   Func_02003cf0();
   Actor_SetAngleToward(24, gMainRoutineWork.currentOwner, 0);
-  Func_080d47b4(24, 0x100, 40);
+  Actor_ShowEmoteById(24, 0x100, 40);
   Actor_SetSpeed(24, 0x19999, 0xcccc);
   Actor_MoveTo(24, 664, 136);
   Map_CopyCellPictureIndicesRect(68, 33, 105, 6, 1, 1);
@@ -744,7 +744,7 @@ void Func_020022e0(void) {
   Camera_MoveWithinMapBounds(245 << 18, -1, 168 << 16, 1);
   Func_02003cf0();
   Actor_SetAngleToward(24, gMainRoutineWork.currentOwner, 0);
-  Func_080d47b4(24, 0x100, 40);
+  Actor_ShowEmoteById(24, 0x100, 40);
   Actor_GetById(24)->motionFlags = 0;
   Actor_SetSpritePriority(24, 1);
   Actor_SetSpeed(24, 0x19999, 0xcccc);
@@ -763,7 +763,7 @@ void Func_02002390(void) {
   Camera_MoveWithinMapBounds(144 << 16, -1, 214 << 15, 1);
   Func_02003cf0();
   Actor_SetAngleToward(25, gMainRoutineWork.currentOwner, 0);
-  Func_080d47b4(25, 0x100, 40);
+  Actor_ShowEmoteById(25, 0x100, 40);
   Actor_SetSpeed(25, 0x19999, 0xcccc);
   Actor_SetPositionAndReset(25, 168, 104);
   Event_Wait(10);
@@ -782,11 +782,11 @@ void Func_02002458(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 25);
-  Func_080d4568()->motionFlags = 0;
+  FieldCamera_GetActor()->motionFlags = 0;
   Camera_SetBounds(212 << 17, -1, 208 << 15, 1);
   Func_02003cf0();
   Actor_SetAngleToward(25, gMainRoutineWork.currentOwner, 0);
-  Func_080d47b4(25, 0x100, 20);
+  Actor_ShowEmoteById(25, 0x100, 20);
   Camera_MoveWithinMapBounds(212 << 17, -1, 152 << 16, 1);
   Actor_SetSpeed(25, 0x19999, 0xcccc);
   Actor_MoveTo(25, 424, 152);

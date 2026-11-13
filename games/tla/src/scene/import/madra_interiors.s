@@ -22,10 +22,10 @@ Func_0802b450:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Func_0802372c
+	.global Actor_SetItemIcon
 	.thumb_func
-Func_0802372c:
-	overlay_veneer Func_08020300
+Actor_SetItemIcon:
+	overlay_veneer Actor_SetItemIconFar
 	.global PartyInventory_Remove
 	.thumb_func
 PartyInventory_Remove:
@@ -158,10 +158,10 @@ Actor_ArmCallback:
 	.thumb_func
 Actor_ArmCallbackAndRefresh:
 	overlay_veneer Actor_ArmCallbackAndRefreshFar
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func
 FieldEffect_SetAttached:
@@ -218,10 +218,10 @@ EventObject_Initialize:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_080d7788
+	.global Djinn_JoinParty
 	.thumb_func
-Func_080d7788:
-	overlay_veneer Func_080c8580
+Djinn_JoinParty:
+	overlay_veneer Djinn_JoinPartyFar
 	.global Actor_LaunchFromLeader
 	.thumb_func
 Actor_LaunchFromLeader:
@@ -242,10 +242,10 @@ Actor_WatchAndSetScript:
 	.thumb_func
 Party_GetLeaderActor:
 	overlay_veneer Party_GetLeaderActorFar
-	.global Func_080d3928
+	.global Actor_SetSpriteRotationById
 	.thumb_func
-Func_080d3928:
-	overlay_veneer Func_080c87a8
+Actor_SetSpriteRotationById:
+	overlay_veneer Actor_SetSpriteRotationByIdFar
 	.global Func_02001ef8
 	.thumb_func
 Func_02001ef8:

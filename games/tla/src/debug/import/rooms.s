@@ -6,7 +6,7 @@
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Func_080d7788
+	.global Djinn_JoinParty
 	.thumb_func
-Func_080d7788:
-	overlay_veneer Func_080c8580
+Djinn_JoinParty:
+	overlay_veneer Djinn_JoinPartyFar

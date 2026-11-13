@@ -187,7 +187,7 @@ void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
 /// Map_SetWindowCellTile without its view test: puts world map tile
 /// (x / 16, y / 16) at cell (px / 16, py / 16) of the tile grid and draws it in
 /// both layers.
-void Func_0802bdd0(s32 x, s32 y, s32 px, s32 py) {
+void WorldMap_SetWindowCellTileAndDraw(s32 x, s32 y, s32 px, s32 py) {
   struct MapTileWindow_08010d48 *window;
   s32 *position;
   s32 originX;

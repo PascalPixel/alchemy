@@ -109,7 +109,7 @@ const struct Trigger *Scene_GetPlacements(void) {
 }
 
 DEFINE_FUNC_020001A0(Func_020001a0, Func_02004fac, Func_020057cc, 1,
-    Func_02005010)
+                     Func_02005010)
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
@@ -192,7 +192,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(506), PIXELS(280));
     System_Wait(1);
     FieldCamera_MoveTo(-1, -1, -1, 0);
-    FieldCamera_GetActor()->motionFlags = 0;
+    EventCamera_GetActor()->motionFlags = 0;
     FieldCamera_MoveTo(PIXELS(512), PIXELS(96), PIXELS(312), 1);
     Map_CenterOnFollowedPoint();
     System_Wait(1);
@@ -235,7 +235,8 @@ void Func_020004a4(void) {
   u32 phase;
 
   if (anchor != NULL && (phase = Data_0200eb60 & 15) == 0) {
-    object = FieldActor_Create(0x2a0, anchor->x + 0x80000, anchor->y + offset + 0x80000, anchor->z);
+    object = FieldActor_Create(0x2a0, anchor->x + 0x80000,
+                               anchor->y + offset + 0x80000, anchor->z);
     offset = (offset / 0x60000) << 16;
     if (object != NULL) {
       u8 zero;
@@ -361,7 +362,7 @@ void Func_0200065c(void) {
   Event_ShowMessage(18, 0);
   t16 = gMainRoutineWork.currentOwner;
   Actor_ShowEmote(t16, 0x100, 20);
-  t18 = FieldCamera_GetActor();
+  t18 = EventCamera_GetActor();
   FIELD_AT(t18, u8, 85) = 0;
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   FieldCamera_MoveTo(0x2000000, -1, 0x1300000, 1);
@@ -474,7 +475,10 @@ void Func_0200065c(void) {
   Actor_SetAttachedEffect(t120, 0x102);
   t122 = gMainRoutineWork.currentOwner;
   t123 = Actor_Get(t122);
-  { u8 *f = (u8 *)t123 + 90; *f &= 254; }
+  {
+    u8 *f = (u8 *)t123 + 90;
+    *f &= 254;
+  }
   t125 = gMainRoutineWork.currentOwner;
   Actor_SetSpeed(t125, 0x3333, 0x1999);
   t127 = gMainRoutineWork.currentOwner;
@@ -864,7 +868,10 @@ L_02009638:
   FieldActor_Jump(t494, 4, 0);
   t496 = work->currentOwner;
   t497 = Actor_Get(t496);
-  { u8 *f = (u8 *)t497 + 90; *f &= 254; }
+  {
+    u8 *f = (u8 *)t497 + 90;
+    *f &= 254;
+  }
   t499 = work->currentOwner;
   Actor_WalkToAndWait(t499, 0x1f8, 0x140);
   FieldEvent_Wait(1);
@@ -1103,7 +1110,7 @@ extern u8 gData_0200602c[];
 extern u8 gData_02006070[];
 
 static __inline__ void W_Func_02005714(s32 a0, s32 a1, s32 a2) {
-  Func_080d47b4(a0, a1, a2);
+  Actor_ShowEmoteById(a0, a1, a2);
 }
 
 void Func_02001f10(void) {
@@ -1231,7 +1238,7 @@ void Func_02001f10(void) {
   Actor_FaceDirection(26, 0x4000, 0);
   Actor_FaceDirection(25, 0x4000, 0);
   FieldCamera_SetSpeed(0x19999, 0x3333);
-  FIELD_AT((FieldCamera_GetActor()), u8, 85) = 0;
+  FIELD_AT((EventCamera_GetActor()), u8, 85) = 0;
   FieldCamera_MoveTo(0x2000000, 0x500000, 0x1540000, 1);
   Func_02005734();
   Actor_ShowEmote(19, 0x109, 20);
@@ -1276,8 +1283,9 @@ L_0200a47a:
   Event_ShowMessage(21, 0);
   FieldActor_SetSpritePriority(20, 2);
   FieldActor_SetSpritePriority(22, 2);
-  /* FAKEMATCH(wrapper): this call through W_Func_02005714; as Actor_ShowEmote(20,
-   * 0x100, 0), 103 of 1038 instructions differ in tla-en (as Call3, 2). */
+  /* FAKEMATCH(wrapper): this call through W_Func_02005714; as
+   * Actor_ShowEmote(20, 0x100, 0), 103 of 1038 instructions differ in tla-en
+   * (as Call3, 2). */
   W_Func_02005714(20, 0x100, 0);
   Actor_SetSpeed(20, 0x19999, 0xcccc);
   Actor_WalkToAndWait(20, 0x1ea, 0x128);
@@ -1407,7 +1415,7 @@ L_0200a47a:
 #include "event_work.h"
 
 static __inline__ void Func_02005714_(s32 actor, s32 a, s32 b) {
-  Func_080d47b4(actor, a, b);
+  Actor_ShowEmoteById(actor, a, b);
 }
 
 void Func_0200298c(s32 id) {
@@ -1506,7 +1514,7 @@ void Func_020029ac(void) {
   FieldEvent_Wait(1);
   Actor_Get(1)->actionFlags |= 1;
   FieldCamera_SetSpeed(0xcccc, 0x1999);
-  FieldCamera_GetActor()->motionFlags = 0;
+  EventCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(PIXELS(540), PIXELS(76), PIXELS(340), 1);
   Func_02005734();
   Actor_FaceDirectionAndWait(1, FACING_SOUTH);
@@ -1562,7 +1570,8 @@ void Func_020029ac(void) {
 
     Event_OpenMessage(0x8000, flags);
   }
-  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
+      0) {
     Actor_SetAnimationAndWait(5, 3);
     Event_ShowMessage(0x8005, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
@@ -1621,12 +1630,14 @@ void Func_020029ac(void) {
   Actor_SetSpriteColor(Actor_Get(28), 0xf);
   Actor_SetPosition(28, PIXELS(568), PIXELS(274));
   Actor_Get(17)->motionFlags = 0;
-  FieldActor_SetPositionAndResetMotion(Actor_Get(17), PIXELS(492), PIXELS(96), PIXELS(284));
+  FieldActor_SetPositionAndResetMotion(Actor_Get(17), PIXELS(492), PIXELS(96),
+                                       PIXELS(284));
   Actor_Get(29)->motionFlags = 0;
-  FieldActor_SetPositionAndResetMotion(Actor_Get(29), PIXELS(510), PIXELS(96), PIXELS(295));
+  FieldActor_SetPositionAndResetMotion(Actor_Get(29), PIXELS(510), PIXELS(96),
+                                       PIXELS(295));
   Actor_Get(30)->motionFlags = 0;
-  FieldActor_SetPositionAndResetMotion(Actor_Get(30), PIXELS(540),
-                                  PIXELS(96), PIXELS(300));
+  FieldActor_SetPositionAndResetMotion(Actor_Get(30), PIXELS(540), PIXELS(96),
+                                       PIXELS(300));
   System_Wait(1);
   Event_SetFlag(0x17c);
   Event_SetFlag(0x144);

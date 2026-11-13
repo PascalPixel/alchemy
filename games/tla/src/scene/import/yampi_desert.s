@@ -257,7 +257,7 @@ Func_020040f8:
 	.global Func_02004100
 	.thumb_func
 Func_02004100:
-	overlay_veneer Func_080c8210
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global Func_02004108
 	.thumb_func
 Func_02004108:
@@ -281,7 +281,7 @@ Func_02004128:
 	.global Func_02004130
 	.thumb_func
 Func_02004130:
-	overlay_veneer Func_080c8258
+	overlay_veneer FieldCamera_GetActorFar
 	.global Func_02004138
 	.thumb_func
 Func_02004138:
@@ -293,7 +293,7 @@ Field_RequestBattleFromEncounterTable:
 	.global Func_02004148
 	.thumb_func
 Func_02004148:
-	overlay_veneer Func_080c8288
+	overlay_veneer Field_RequestDjinnBattleFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
 Party_SetFields1eeAnd1f0:

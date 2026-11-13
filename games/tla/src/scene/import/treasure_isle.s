@@ -54,10 +54,10 @@ Animation_SetStateFlags:
 	.thumb_func
 Map_SetScreenShake:
 	overlay_veneer Map_SetScreenShakeFar
-	.global Func_0803ce64
+	.global FieldMessage_ShowCentered
 	.thumb_func
-Func_0803ce64:
-	overlay_veneer Func_08038210
+FieldMessage_ShowCentered:
+	overlay_veneer FieldMessage_ShowCenteredFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -106,10 +106,10 @@ Func_02001014:
 	.thumb_func
 Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
-	.global Func_080d2b4c
+	.global Field_RequestDjinnBattle
 	.thumb_func
-Func_080d2b4c:
-	overlay_veneer Func_080c8288
+Field_RequestDjinnBattle:
+	overlay_veneer Field_RequestDjinnBattleFar
 	.global Func_0200102c
 	.thumb_func
 Func_0200102c:
@@ -130,10 +130,10 @@ PaletteFade_StartInterpolation:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_080d7788
+	.global Djinn_JoinParty
 	.thumb_func
-Func_080d7788:
-	overlay_veneer Func_080c8580
+Djinn_JoinParty:
+	overlay_veneer Djinn_JoinPartyFar
 	.global Func_0200105c
 	.thumb_func
 Func_0200105c:

@@ -129,8 +129,8 @@ static __inline__ s32 GameFlag_GetByte_(s32 flag) {
   return GameFlag_GetByte(flag);
 }
 
-static __inline__ void
-Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx, s32 dz) {
+static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
+                                                           s32 dz) {
   Actor_OffsetPositionAndResetMotion(id, dx, dz);
 }
 
@@ -160,8 +160,7 @@ static __inline__ void Func_02002990_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
   Func_02002990(a, b, c, d, e, f, g);
 }
 
-static __inline__ struct Actor *Func_02002808_(s32 type, s32 x, s32 y,
-                                                       s32 z) {
+static __inline__ struct Actor *Func_02002808_(s32 type, s32 x, s32 y, s32 z) {
   return Import_ActorCreate(type, x, y, z);
 }
 
@@ -171,7 +170,7 @@ static __inline__ void Func_02002838_(s32 a, s32 b, s32 c, s32 d, s32 e,
 }
 
 static __inline__ void Actor_SetSpeedParameters_(s32 id, s32 speed,
-                                                        s32 acceleration) {
+                                                 s32 acceleration) {
   Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
@@ -180,8 +179,8 @@ static __inline__ void Func_02002848_(s32 a, s32 b, s32 c, s32 d, s32 e,
   Func_0802b450(a, b, c, d, e, f);
 }
 
-static __inline__ void Func_02002818_(struct Actor *object, s32 x,
-                                      s32 y, s32 z) {
+static __inline__ void Func_02002818_(struct Actor *object, s32 x, s32 y,
+                                      s32 z) {
   Actor_SetMoveTarget(object, x, y, z);
 }
 
@@ -207,7 +206,7 @@ static __inline__ void Func_020029a8_(s32 a, s32 b, s32 c) {
 #include "module/scene/taopo_swamp.h"
 #include "module/tla.h"
 
-void Func_02000038(void) { Func_080d2b4c(8, 11); }
+void Func_02000038(void) { Field_RequestDjinnBattle(8, 11); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -256,7 +255,8 @@ void Func_02000118(void) {
 
 extern u8 gData_02002ae8[];
 s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags);
-void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *record, u32 value);
+void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *record,
+                                        u32 value);
 void Animation_ApplyChildValue(struct ChildGroup *group, s32 value);
 
 // When actor id stands at x 12, inside an event: the actor drops in place, then
@@ -278,7 +278,7 @@ void Func_0200013c(s32 unused, s32 id) {
   actor->y = 0x40000;
   sprite = actor->sprite;
   i = 0;
-do {
+  do {
     ((struct Charge *)sprite)->level = i;
     sprite->nextFrame |= 8;
     sprite->nextFrame &= ~1;
@@ -305,7 +305,7 @@ do {
     }
     System_Wait(3);
     i++;
-} while (i <= 24);
+  } while (i <= 24);
 
   actor->animationKind = 0;
   actor->y = 0;
@@ -352,8 +352,7 @@ void Func_02000334(void) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
-      Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0,
-                                                 -16);
+      Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -16);
       leader->velocityY = 0x60000;
       FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Event_End();
@@ -1572,8 +1571,11 @@ void Func_02002120(void) {
     Iwram_ClearWordsEntry(state, 12);
 }
 
-// volatile: the VBlank handler sets the held keys, as gKeysHeld in The Broken Seal.
-/* VIEW(taopo_swamp): variable gInput as volatile u32 gInput; input.h has struct InputState gInput; tried as the 3 declarations' extern u32 gInput, Func_02002144 moves: 5 of 159 instructions in tla-ja. */
+// volatile: the VBlank handler sets the held keys, as gKeysHeld in The Broken
+// Seal.
+/* VIEW(taopo_swamp): variable gInput as volatile u32 gInput; input.h has struct
+ * InputState gInput; tried as the 3 declarations' extern u32 gInput,
+ * Func_02002144 moves: 5 of 159 instructions in tla-ja. */
 extern volatile u32 gInput__taopo_swamp __asm__("gInput");
 
 void Func_02002144(void) {

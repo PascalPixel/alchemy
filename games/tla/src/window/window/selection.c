@@ -1659,7 +1659,7 @@ s32 FieldMenu_SelectCommand(s32);
 s32 DjinnMenu_RunFar(void);
 s32 Actor_GetTriggerTileAheadOfCurrentFar(void);
 s32 PsynergyMenu_RunFar(void);
-s32 Func_080f8000(void);
+s32 ItemMenu_RunFar(void);
 s32 StatusScreen_RunFar(void);
 
 /// Runs the field menu until the player picks something that leaves it, and
@@ -1706,7 +1706,7 @@ loop:
       goto loop;
     break;
   case 3:
-    ret = Func_080f8000();
+    ret = ItemMenu_RunFar();
     if (ret == -1)
       goto loop;
     break;

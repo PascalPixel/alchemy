@@ -218,10 +218,10 @@ FieldMessage_ShowAtActor:
 	.thumb_func
 Event_ShowMessageAndWait:
 	overlay_veneer Event_ShowMessageAndWaitFar
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global Func_02001a84
 	.thumb_func
 Func_02001a84:

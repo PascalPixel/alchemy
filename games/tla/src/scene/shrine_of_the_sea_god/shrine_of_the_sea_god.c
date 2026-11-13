@@ -22,24 +22,48 @@ void Func_02000280(void) {
       GameFlag_SetBit(0x341);
     else if (*state == 5)
       GameFlag_SetBit(0x342);
-    Func_080d2b4c(14, 67);
+    Field_RequestDjinnBattle(14, 67);
   }
 }
 
 // ---- games/tla/src/scene/shrine_of_the_sea_god.c ----
-// The scene code of overlay 0x654 that its scene tables belong to, in ROM order; the rest of the overlay is in shrine_of_the_sea_god/.
+// The scene code of overlay 0x654 that its scene tables belong to, in ROM
+// order; the rest of the overlay is in shrine_of_the_sea_god/.
 
 #include "battle.h"
-/* VIEW(shrine_of_the_sea_god): routine Actor_SetPositionAndResetMotion as void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z); shrine_of_the_sea_god.h has void Actor_SetPositionAndResetMotion(struct ShrineOfTheSeaGodObject *object, s32 x, s32 y, s32 z); tried as the definition's void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z), it does not compile in tla-ja: games/tla/include/actor.h:95: conflicting types for `Actor_SetPositionAndResetMotion'. */
+/* VIEW(shrine_of_the_sea_god): routine Actor_SetPositionAndResetMotion as void
+ * Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
+ * shrine_of_the_sea_god.h has void Actor_SetPositionAndResetMotion(struct
+ * ShrineOfTheSeaGodObject *object, s32 x, s32 y, s32 z); tried as the
+ * definition's void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x,
+ * s32 y, s32 z), it does not compile in tla-ja: games/tla/include/actor.h:95:
+ * conflicting types for `Actor_SetPositionAndResetMotion'. */
 struct Actor;
-extern void Actor_SetPositionAndResetMotion__shrine_of_the_sea_god(struct Actor *object, s32 x, s32 y, s32 z) __asm__("Actor_SetPositionAndResetMotion");
-#define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine Actor_SetSpritePriority as void Actor_SetSpritePriority(u32, s32); shrine_of_the_sea_god.h has void Actor_SetSpritePriority(s32 actor, s32 variant); tried as the definition's void Actor_SetSpritePriority(u32 objectId, s32 priority), it does not compile in tla-ja: games/tla/include/actor.h:106: conflicting types for `Actor_SetSpritePriority'. */
-extern void Actor_SetSpritePriority__shrine_of_the_sea_god(u32, s32) __asm__("Actor_SetSpritePriority");
+extern void Actor_SetPositionAndResetMotion__shrine_of_the_sea_god(
+    struct Actor *object, s32 x, s32 y,
+    s32 z) __asm__("Actor_SetPositionAndResetMotion");
+#define Actor_SetPositionAndResetMotion                                        \
+  Actor_SetPositionAndResetMotion__shrine_of_the_sea_god
+/* VIEW(shrine_of_the_sea_god): routine Actor_SetSpritePriority as void
+ * Actor_SetSpritePriority(u32, s32); shrine_of_the_sea_god.h has void
+ * Actor_SetSpritePriority(s32 actor, s32 variant); tried as the definition's
+ * void Actor_SetSpritePriority(u32 objectId, s32 priority), it does not compile
+ * in tla-ja: games/tla/include/actor.h:106: conflicting types for
+ * `Actor_SetSpritePriority'. */
+extern void Actor_SetSpritePriority__shrine_of_the_sea_god(u32, s32) __asm__(
+    "Actor_SetSpritePriority");
 #define Actor_SetSpritePriority Actor_SetSpritePriority__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct Actor *object, u32 flags); shrine_of_the_sea_god.h has void Actor_SetSingleChildFlags(struct ShrineOfTheSeaGodObject *object, u32 value); tried as the 35 declarations' void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags), it does not compile in tla-ja: games/tla/include/field/field.h:25: conflicting types for `Actor_SetSingleChildFlags'. */
-extern void Actor_SetSingleChildFlags__shrine_of_the_sea_god(struct Actor *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
-#define Actor_SetSingleChildFlags Actor_SetSingleChildFlags__shrine_of_the_sea_god
+/* VIEW(shrine_of_the_sea_god): routine Actor_SetSingleChildFlags as void
+ * Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+ * shrine_of_the_sea_god.h has void Actor_SetSingleChildFlags(struct
+ * ShrineOfTheSeaGodObject *object, u32 value); tried as the 35 declarations'
+ * void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags), it
+ * does not compile in tla-ja: games/tla/include/field/field.h:25: conflicting
+ * types for `Actor_SetSingleChildFlags'. */
+extern void Actor_SetSingleChildFlags__shrine_of_the_sea_god(
+    struct Actor *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
+#define Actor_SetSingleChildFlags                                              \
+  Actor_SetSingleChildFlags__shrine_of_the_sea_god
 #include "field.h"
 #undef Actor_SetSingleChildFlags
 #undef Actor_SetSpritePriority
@@ -141,7 +165,8 @@ const struct Trigger *Scene_GetEvents(void) {
 }
 
 // ---- games/tla/src/scene/shrine_of_the_sea_god/event7.c ----
-// Scene code of overlay 0x654, in ROM order, from event7's offset up to the next object the overlay links.
+// Scene code of overlay 0x654, in ROM order, from event7's offset up to the
+// next object the overlay links.
 
 #include "text/msg_ids.h"
 #include "../shrine_of_the_sea_god.h"
@@ -191,7 +216,7 @@ void Func_02000568(void) {
   struct ShrineOfTheSeaGodMapLayer *layer2 = &map->layers[2];
   struct ShrineOfTheSeaGodObject *leader =
       Actor_GetById(gMainRoutineWork.currentOwner);
-  struct ShrineOfTheSeaGodObject *camera = Func_080d4568();
+  struct ShrineOfTheSeaGodObject *camera = FieldCamera_GetActor();
   struct ShrineOfTheSeaGodObject *object8 = Actor_GetById(8);
   struct ShrineOfTheSeaGodObject *object9 = Actor_GetById(9);
   struct ShrineOfTheSeaGodObject *object10 = Actor_GetById(10);
@@ -308,7 +333,7 @@ void Func_0200087c(void) {
   struct ShrineOfTheSeaGodMapLayer *layer2 = &map->layers[2];
   struct ShrineOfTheSeaGodObject *leader =
       Actor_GetById(gMainRoutineWork.currentOwner);
-  struct ShrineOfTheSeaGodObject *camera = Func_080d4568();
+  struct ShrineOfTheSeaGodObject *camera = FieldCamera_GetActor();
   struct ShrineOfTheSeaGodObject *object8 = Actor_GetById(8);
   struct ShrineOfTheSeaGodObject *object9 = Actor_GetById(9);
   struct ShrineOfTheSeaGodObject *object10 = Actor_GetById(10);
@@ -363,7 +388,7 @@ void Func_02000994(void) {
   struct ShrineOfTheSeaGodMapLayer *layer2 = &map->layers[2];
   struct ShrineOfTheSeaGodObject *leader =
       Actor_GetById(gMainRoutineWork.currentOwner);
-  struct ShrineOfTheSeaGodObject *ride = Func_080d4568();
+  struct ShrineOfTheSeaGodObject *ride = FieldCamera_GetActor();
   struct ShrineOfTheSeaGodObject *a = Actor_GetById(8);
   struct ShrineOfTheSeaGodObject *b = Actor_GetById(9);
   struct ShrineOfTheSeaGodObject *c = Actor_GetById(10);

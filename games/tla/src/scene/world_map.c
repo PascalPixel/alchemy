@@ -53,7 +53,7 @@
     party = &gMainRoutineWork;                                                 \
     if (party->encounterSteps >= work->threshold * 9 / 10) {                   \
       if (Random16Far() < 0x8000) {                                            \
-        Field_RequestDjinnBattle(a, b);                                        \
+        Event_RequestDjinnBattle(a, b);                                        \
         work->bias = 0;                                                        \
       } else {                                                                 \
         party->encounterSteps = work->threshold;                               \
@@ -71,7 +71,7 @@
     if (party->renderMode == 1) {                                              \
       if (party->encounterSteps >= work->threshold * 9 / 10) {                 \
         if (Random16Far() < 0x8000) {                                          \
-          Field_RequestDjinnBattle(a, b);                                      \
+          Event_RequestDjinnBattle(a, b);                                      \
           work->bias = 0;                                                      \
         } else {                                                               \
           party->encounterSteps = work->threshold;                             \
@@ -549,7 +549,7 @@ void Func_02000be0(void) {
       object->y = position[1];
       object->z = position[2];
     }
-    Actor_ShowItemIconById(79, amount);
+    FieldActor_ShowItemIconById(79, amount);
     /* FAKEMATCH(dead): the store and the call in a once-only block; as plain
      * statements, 6 of 129 instructions differ in tla-en. */
     do {
@@ -580,7 +580,7 @@ void Func_02000d4c(void) {
   u8 *animation;
   s32 a, id;
 
-  Actor_ShowItemIconById(19, 0x198);
+  FieldActor_ShowItemIconById(19, 0x198);
   object = Actor_Get(19);
   animation = object->sprite;
   animation[17] |= 1;
@@ -1159,7 +1159,7 @@ static inline void SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
 }
 
 static inline void ShowEmote(s32 id, s32 animation, s32 frames) {
-  Func_080d47b4(id, animation, frames);
+  Actor_ShowEmoteById(id, animation, frames);
 }
 
 /// A tutorial message: the second set (from MsgDjinnGiveTutorialB) when
@@ -1311,7 +1311,7 @@ void Func_02001e34(void) {
     }
     Actor_SetModeById(owner, 22);
     Event_ShowMessageAndWait(9, 0);
-    Func_080d47b4(9, 0x102, 30);
+    Actor_ShowEmoteById(9, 0x102, 30);
     Actor_SetAngleToward(9, owner, 0);
     Motion_SetVarCbAndRefresh(9, 2);
     Event_ShowMessageAndWait(9, 0);
@@ -1409,7 +1409,7 @@ refused:
   Actor_Jump(9, 2, 20);
   Actor_Jump(9, 2, 20);
   Event_ShowMessageAndWait(9, 0);
-  Func_080d47b4(9, 0x100, 30);
+  Actor_ShowEmoteById(9, 0x100, 30);
   Event_ShowMessageAndWait(9, 0);
   Event_SetFlag(0x16f);
   Event_SetFlag(0x171);
@@ -1420,7 +1420,7 @@ refused:
   // The constant local: with a plain 0 here, the zero that motionFlags = 2
   // leaves is shared by the first visit's stores of 0 and its reloads take
   // other registers (differ 26).
-  Djinn_JoinParty(9, zero, 7);
+  FieldDjinn_JoinParty(9, zero, 7);
   Party_PlaySavedMusic();
   Event_End();
   Event_ClearFlag(0x16e);
@@ -1478,12 +1478,12 @@ void Func_02002618(s32 id, s32 dx, s32 dz) {
 }
 
 void Func_02002640(s32 a, s32 b, s32 dx, s32 dz) {
-  WorldMap_SetWindowCellTileAndDraw(a, b, 48, 224);
+  FieldWorldMap_SetWindowCellTileAndDraw(a, b, 48, 224);
   Func_02002618(5, dx, dz);
   Func_02002618(8, dx, dz);
   Func_02002618(9, dx, dz);
   Func_02002618(10, dx, dz);
-  WorldMap_SetWindowCellTileAndDraw(a + 16, b, 64, 224);
+  FieldWorldMap_SetWindowCellTileAndDraw(a + 16, b, 64, 224);
 }
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -1651,8 +1651,8 @@ void Func_02002ab0(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  WorldMap_SetWindowCellTileAndDraw(64, 176, 304, 240);
-  WorldMap_SetWindowCellTileAndDraw(80, 176, 320, 240);
+  FieldWorldMap_SetWindowCellTileAndDraw(64, 176, 304, 240);
+  FieldWorldMap_SetWindowCellTileAndDraw(80, 176, 320, 240);
   boat->scaleX = 0x13333;
   boat->scaleY = 0x13333;
   FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -1739,7 +1739,7 @@ void Func_02002ab0(void) {
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02004d08_(s32 actor, s32 value, s32 frames) {
-  Func_080d47b4(actor, value, frames);
+  Actor_ShowEmoteById(actor, value, frames);
 }
 
 /// The leader is hidden and released, the screen fades and the camera moves;

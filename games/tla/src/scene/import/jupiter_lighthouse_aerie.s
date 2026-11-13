@@ -222,10 +222,10 @@ Camera_MoveWithinMapBounds:
 	.thumb_func
 Func_02002af0:
 	overlay_veneer FieldCamera_WaitForArrivalFar
-	.global Func_080d4568
+	.global FieldCamera_GetActor
 	.thumb_func
-Func_080d4568:
-	overlay_veneer Func_080c8258
+FieldCamera_GetActor:
+	overlay_veneer FieldCamera_GetActorFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:

@@ -37,7 +37,7 @@ Actor_SetSingleChildFlags:
 	.global Func_02000cbc
 	.thumb_func
 Func_02000cbc:
-	overlay_veneer Func_08020300
+	overlay_veneer Actor_SetItemIconFar
 	.global FieldMessage_Show
 	.thumb_func
 FieldMessage_Show:
@@ -145,7 +145,7 @@ Import_ActorSetSpritePriority:
 	.global Func_02000d94
 	.thumb_func
 Func_02000d94:
-	overlay_veneer Func_080c8210
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global Func_02000d9c
 	.thumb_func
 Func_02000d9c:
@@ -165,7 +165,7 @@ Import_EventResolvePendingActions:
 	.global Func_02000dbc
 	.thumb_func
 Func_02000dbc:
-	overlay_veneer Func_080c8558
+	overlay_veneer FieldYesNo_AskFar
 	.global Func_02000dc4
 	.thumb_func
 Func_02000dc4:

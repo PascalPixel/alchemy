@@ -98,10 +98,10 @@ Event_ShowMessageThenWait:
 	.thumb_func
 Actor_ArmCallback:
 	overlay_veneer Actor_ArmCallbackFar
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:
@@ -122,10 +122,10 @@ Import_EventSetExitRequest:
 	.thumb_func
 Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
-	.global Func_080d2b4c
+	.global Field_RequestDjinnBattle
 	.thumb_func
-Func_080d2b4c:
-	overlay_veneer Func_080c8288
+Field_RequestDjinnBattle:
+	overlay_veneer Field_RequestDjinnBattleFar
 	.global Party_SetFields1eeAnd1f0
 	.thumb_func
 Party_SetFields1eeAnd1f0:

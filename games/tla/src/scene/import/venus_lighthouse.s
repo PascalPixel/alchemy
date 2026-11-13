@@ -158,10 +158,10 @@ Event_ShowMessageAndWait:
 	.thumb_func
 Actor_ArmCallback:
 	overlay_veneer Actor_ArmCallbackFar
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global Camera_FollowActor
 	.thumb_func
 Camera_FollowActor:

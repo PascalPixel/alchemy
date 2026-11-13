@@ -339,7 +339,7 @@ void Func_08125d74(s32 arg, s32 kind) {
     work.count = BattleParty_ListActorIds(2, (u16 *)work.actors);
     work.actors[work.count] = 255;
     BattleActor_SpawnObjectsForList(work.actors, 0);
-    Func_08138028(&work);
+    BattleEffect_RunShatteringOpeningFar(&work);
     BattleCamera_SetView(0, 0, 0, 100);
     *timer = zero;
     Irq_SetHandler(2, 32, Func_08125d68);

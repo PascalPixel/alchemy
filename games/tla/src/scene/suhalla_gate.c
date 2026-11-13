@@ -29,7 +29,7 @@ extern u8 MsgNotThatWay[];
 #include "module/scene/suhalla_gate.h"
 #include "scene_ids.h"
 
-void Func_02000038(void) { Func_080d2b4c(13, 26); }
+void Func_02000038(void) { Field_RequestDjinnBattle(13, 26); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -184,7 +184,7 @@ void Func_020003ac(void) {
     s32 x = 256;
     s32 z = 50;
 
-    Func_080d47b4(8, x, z);
+    Actor_ShowEmoteById(8, x, z);
   }
   Event_ShowMessageThenWait(8, 0, 10);
   Motion_SetModeAndWaitAnimation(8, 3);
@@ -248,7 +248,7 @@ void Func_020005e8(void) {
   owner = Actor_GetById(gMainRoutineWork.currentOwner);
   if (owner != NULL)
     Actor_ResetAndSetPosition(8, *(s16 *)((u8 *)owner + 10),
-                                     *(s16 *)((u8 *)owner + 18));
+                              *(s16 *)((u8 *)owner + 18));
   Event_Wait(20);
   Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate3, 99);
   Party_SetFields1f2And1f4((s32)&SceneId_VenusLighthouseEntrance, 98);
@@ -263,7 +263,7 @@ void Func_02000650(void) {
   Actor_SetHorizontalPositionWithTerrain(8, PIXELS(472), PIXELS(480));
   Event_Wait(16);
   Actor_SetAngleToward(gMainRoutineWork.currentOwner, 8, 0);
-  Func_080d47b4(gMainRoutineWork.currentOwner, 0x100, 0);
+  Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 0x100, 0);
   Camera_FollowActor(8, 1);
   Func_02000a30();
   Actor_Jump(8, 4, 0);
@@ -290,7 +290,7 @@ void Func_0200071c(void) {
   Actor_SetAngleToward(gMainRoutineWork.currentOwner, 8, 0);
   x = 0x100;
   z = 0;
-  Func_080d47b4(gMainRoutineWork.currentOwner, x, z);
+  Actor_ShowEmoteById(gMainRoutineWork.currentOwner, x, z);
   Event_Wait(16);
   Actor_WalkTo(gMainRoutineWork.currentOwner, 488, 440);
   Event_Wait(16);
@@ -317,7 +317,8 @@ void Func_02000800(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgMyThatWas);
   Actor_SetPosition(9, PIXELS(512), PIXELS(432));
-  Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, PIXELS(528), PIXELS(432));
+  Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
+                                         PIXELS(528), PIXELS(432));
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_ShowMessageThenWait(9, 0, 10);
@@ -333,7 +334,7 @@ void Func_02000800(void) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader)
     Actor_ResetAndSetPosition(9, ((s16 *)&leader->x)[1],
-                                     ((s16 *)&leader->z)[1]);
+                              ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(9);
   Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
   Event_Wait(10);
@@ -353,7 +354,7 @@ void Func_020008cc(void) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader)
     Actor_ResetAndSetPosition(16, ((s16 *)&leader->x)[1],
-                                     ((s16 *)&leader->z)[1]);
+                              ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(16);
   Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
   Event_Wait(10);

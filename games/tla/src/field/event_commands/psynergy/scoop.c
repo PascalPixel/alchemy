@@ -609,7 +609,7 @@ struct DropEvent {
 struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 void *Unit_Get(s32 owner);
 s32 PartyInventory_FindRoomFar(s32 item);
-void Func_080d3b28(s32 id, s32 item);
+void Actor_ShowItemIconById(s32 id, s32 item);
 extern const u16 gData_080f0fc0[];
 
 /// Object 79 at the anchor, fetched or spawned (kind 489), takes a random item
@@ -646,7 +646,7 @@ void Func_080e716c(void) {
   object->x = anchor->x;
   object->y = anchor->y;
   object->z = anchor->z;
-  Func_080d3b28(id, item);
+  Actor_ShowItemIconById(id, item);
   ((struct DropEvent *)event)->item = item;
   BattleEffect_DropObjectAtAnchor(id);
 }
@@ -1025,7 +1025,7 @@ extern char ResourceId_GlowDisc, ResourceId_WhitePuff;
 s32 Func_080dbd5c(s32 x, s32 z, s32 layer);
 s32 Func_080db9a8(struct Actor *object, s32 facing);
 void BattleEffect_ApplyColorToTargetBuffer(s32 packed, s32 mode);
-void Func_080dbdd4(s32 x, s32 z, s32 layer, s32 value);
+void MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 value);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
 void BattleEffect_FadeToSavedPalettes(s32 frames);
 
@@ -1339,7 +1339,7 @@ loaded:
 
   if (found != -1) {
     struct Actor *marked = Actor_GetById(found);
-    Func_080dbdd4(marked->x, marked->z, marked->terrainId, 0);
+    MapGrid_SetCellBehavior(marked->x, marked->z, marked->terrainId, 0);
     Actor_SetHorizontalPositionWithTerrain(found, 0, 0);
   }
   if (pending != NULL)

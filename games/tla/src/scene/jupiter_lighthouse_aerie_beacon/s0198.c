@@ -487,7 +487,9 @@ void Func_0200065c(void) {
 
 void *Unit_Get(s32 owner);
 void Inventory_Equip(s32 id, s32 slot);
-static __inline__ s32 Func_0200592c_(void) { return ((s32)Func_080d4568()); }
+static __inline__ s32 Func_0200592c_(void) {
+  return ((s32)FieldCamera_GetActor());
+}
 static __inline__ void Func_02005984_(s32 a) { Event_ResolvePendingActions(a); }
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z, s32 b) {
   Camera_MoveWithinMapBounds(x, y, z, b);
@@ -526,7 +528,7 @@ static __inline__ void Func_020058d4_(s32 id, s32 a, s32 b) {
   Event_ShowMessageThenWait(id, a, b);
 }
 static __inline__ void *Func_020058fc_(s32 id, s32 emote, s32 frames) {
-  return ((void *)Func_080d47b4(id, emote, frames));
+  return ((void *)Actor_ShowEmoteById(id, emote, frames));
 }
 static __inline__ s32 FieldMessage_ShowAtActor_(s32 id, s32 flags) {
   return FieldMessage_ShowAtActor(id, flags);
@@ -2352,7 +2354,7 @@ void Func_020040f4(void) {
   actor->motionFlags = 3;
   Actor_SetSingleChildFlags(actor, 1);
   Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
-  shadow = FieldCamera_GetActor();
+  shadow = EventCamera_GetActor();
   shadow->speedLimit = 0x80000;
   shadow->acceleration = 0x10000;
   shadow->motionFlags = 0;

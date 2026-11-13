@@ -3,7 +3,7 @@
 	.include "games/tla/src/gamepak/far_call/veneer.s"
 	.global Resource_FarCall007
 Resource_FarCall007:
-	export Func_080f8000, ItemMenu_Run
+	export ItemMenu_RunFar, ItemMenu_Run
 	export PsynergyMenu_RunFar, PsynergyMenu_Run
 	export StatusScreen_RunFar, StatusScreen_Run
 	export PartyMemberChooser_OpenFar, PartyMemberChooser_Open

@@ -1004,7 +1004,7 @@ struct ElementSession {
 
 s32 BattleMotion_ProjectScaledPosition(s32 slot, s32 *screen);
 void Func_08138020(struct BattlePresentationWork *launch);
-void Func_08138030(struct BattlePresentationWork *launch);
+void BattleEffect_RunElementBurstFar(struct BattlePresentationWork *launch);
 void Func_08138038(s32 mode);
 void BattleEffect_EndElementStreaksFar(void);
 
@@ -1084,7 +1084,7 @@ void Func_08127308(s32 unit, s32 kind, s32 mode, s32 variant) {
     launch2.actors[0] = unit;
     launch2.count = 1;
     launch2.initialValue = 1;
-    Func_08138030(&launch2);
+    BattleEffect_RunElementBurstFar(&launch2);
   }
 }
 

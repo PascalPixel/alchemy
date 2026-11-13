@@ -43,7 +43,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 void Func_02002304(s32 slot, s32 actor);
 
 static inline void LeaderAnimate(s32 animation, s32 frames) {
-  Func_080d47b4(gMainRoutineWork.currentOwner, animation, frames);
+  Actor_ShowEmoteById(gMainRoutineWork.currentOwner, animation, frames);
 }
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
@@ -122,11 +122,11 @@ void Func_02000298(void) {
     Event_SetMessageId((s32)MsgSusaSNot);
     Event_ShowMessageAndWait(8, 0);
     Event_Wait(30);
-    Func_080d47b4(8, 265, 0);
+    Actor_ShowEmoteById(8, 265, 0);
     Event_Wait(60);
     Event_ShowMessageAndWait(8, 0);
     Event_Wait(30);
-    Func_080d47b4(8, 261, 0);
+    Actor_ShowEmoteById(8, 261, 0);
     Event_Wait(60);
     Event_ShowMessageAndWait(8, 0);
     Event_Wait(30);
@@ -199,7 +199,7 @@ void Func_02000458(void) {
     Event_ShowMessageAndWait(15, 0);
     if (GameFlag_Test(0x923)) {
       LeaderAnimate(256, 30);
-      Func_080d47b4(15, 259, 30);
+      Actor_ShowEmoteById(15, 259, 30);
       Event_ShowMessageAndWait(15, 0);
       LeaderAnimate(258, 30);
       Actor_SetModeById(15, 4);
@@ -662,7 +662,7 @@ void Func_0200061c(s32 mode) {
   Actor_SetAngleToward(15, *(s32 *)owner, 0);
   Actor_SetAngleToward(20, *(s32 *)owner, 0);
   Event_Wait(30);
-  Func_080d47b4(*(s32 *)owner, 0x102, 30);
+  Actor_ShowEmoteById(*(s32 *)owner, 0x102, 30);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
@@ -683,7 +683,7 @@ void Func_0200061c(s32 mode) {
   Actor_SetAngleToward(23, 21, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
-  Func_080d47b4(20, 0x106, 30);
+  Actor_ShowEmoteById(20, 0x106, 30);
   Event_ShowMessageAndWait(20, 0);
   Actor_ShowEmote(23, 0x108, 30);
   Event_ShowMessageAndWait(23, 0);
@@ -698,14 +698,14 @@ void Func_0200061c(s32 mode) {
   Actor_SetAngleToward(23, 7, 0);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
-  Func_080d47b4(15, 0x101, 30);
+  Actor_ShowEmoteById(15, 0x101, 30);
   Actor_SetAngleToward(23, 15, 0);
   Actor_SetAngleToward(7, 15, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(15, 0);
   Actor_ShowEmote(6, 0x108, 30);
   Event_ShowMessageAndWait(6, 0);
-  Func_080d47b4(21, 0x100, 30);
+  Actor_ShowEmoteById(21, 0x100, 30);
   Event_ShowMessageAndWait(21, 0);
   Actor_SetModeById(5, 3);
   Event_Wait(30);
@@ -724,7 +724,7 @@ void Func_0200061c(s32 mode) {
   answer = Event_AskYesNoWithActorAnimation(*(s32 *)owner, 0);
   if (answer == 0) {
     Event_SetMessageId((s32)MsgRegardlessOfYour);
-    Func_080d47b4(15, 0x108, 30);
+    Actor_ShowEmoteById(15, 0x108, 30);
     Event_ShowMessageAndWait(15, 0);
   } else {
     Event_SetMessageId((s32)MsgYouTookPity);
@@ -736,7 +736,7 @@ void Func_0200061c(s32 mode) {
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
   Actor_SetAngleToward(15, 23, 0);
-  Func_080d47b4(15, 0x101, 30);
+  Actor_ShowEmoteById(15, 0x101, 30);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
@@ -757,13 +757,13 @@ void Func_0200061c(s32 mode) {
   Event_ShowMessageAndWait(6, 0);
   Actor_ShowEmote(5, 0x108, 30);
   Event_ShowMessageAndWait(5, 0);
-  Func_080d47b4(15, 0x100, 30);
+  Actor_ShowEmoteById(15, 0x100, 30);
   Event_Wait(15);
   Actor_SetAngleToward(15, 21, 0);
   Event_ShowMessageAndWait(15, 0);
-  Func_080d47b4(21, 0x108, 30);
+  Actor_ShowEmoteById(21, 0x108, 30);
   Event_ShowMessageAndWait(21, 0);
-  Func_080d47b4(6, 0x106, 30);
+  Actor_ShowEmoteById(6, 0x106, 30);
   owner = (s32)&gMainRoutineWork;
   owner = owner + 532;
   Actor_SetAngleToward(6, *(s32 *)owner, 0);
@@ -791,7 +791,7 @@ void Func_0200061c(s32 mode) {
   message = (s32)MsgIDisagree2;
   Event_SetMessageId(message);
   Actor_SetAngleToward(23, 21, 0);
-  Func_080d47b4(23, 0x101, 30);
+  Actor_ShowEmoteById(23, 0x101, 30);
   Event_ShowMessageAndWait(23, 0);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
@@ -866,7 +866,7 @@ void Func_0200061c(s32 mode) {
   Event_Wait(30);
   Actor_ShowEmote(15, 0x100, 0);
   Actor_ShowEmote(20, 0x100, 0);
-  Func_080d47b4(21, 0x100, 0);
+  Actor_ShowEmoteById(21, 0x100, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(20, 0);
   Actor_SetAngleToward(*(s32 *)owner, 15, 0);
@@ -876,7 +876,7 @@ void Func_0200061c(s32 mode) {
   Actor_SetAngleToward(23, 15, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(23, 0);
-  Func_080d47b4(15, 0x109, 30);
+  Actor_ShowEmoteById(15, 0x109, 30);
   Event_ShowMessageAndWait(15, 0);
   Actor_SetModeById(5, 3);
   Event_Wait(30);
@@ -884,7 +884,7 @@ void Func_0200061c(s32 mode) {
   Actor_SetModeById(20, 3);
   Event_Wait(30);
   Event_ShowMessageAndWait(20, 0);
-  Func_080d47b4(6, 0x105, 0);
+  Actor_ShowEmoteById(6, 0x105, 0);
   Event_Wait(30);
   Event_ShowMessageAndWait(6, 0);
   Actor_SetAngleToward(6, 5, 0);
@@ -993,11 +993,11 @@ L_02009e3a:
   Event_SetMessageId(((s32)&MsgAhCouldIt + 2));
   Event_ShowMessageAndWait(15, 0);
 L_02009e48:
-  Func_080d47b4(15, 0x109, 60);
+  Actor_ShowEmoteById(15, 0x109, 60);
   Event_SetMessageId((s32)&MsgAgainYouHave);
   Event_ShowMessageAndWait(15, 0);
   Actor_ShowEmote(15, 0x105, 120);
-  Func_080d47b4(15, 0x106, 60);
+  Actor_ShowEmoteById(15, 0x106, 60);
   Event_ShowMessageAndWait(15, 0);
   BattleEffect_StartArcEffect();
   t21 = ((s32)Actor_GetById(15));
@@ -1036,7 +1036,7 @@ L_02009e48:
   Event_Wait(60);
   Event_ShowMessageAndWait(15, 0);
   Actor_Jump(24, 2, 20);
-  Func_080d7788(24, 2, 11);
+  Djinn_JoinParty(24, 2, 11);
   Event_End();
   Event_Start();
   Event_ResolvePendingActions(0);

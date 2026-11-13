@@ -14,7 +14,7 @@
 #include "scene_tables.h"
 #include "module/field/object.h"
 
-void Func_02000038(void) { Func_080d2b4c(8, 75); }
+void Func_02000038(void) { Field_RequestDjinnBattle(8, 75); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

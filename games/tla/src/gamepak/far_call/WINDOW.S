@@ -69,7 +69,7 @@ Resource_FarCall004:
 	export IconMenu_ChooseSendOptionFar, IconMenu_ChooseSendOption
 	export AreaNameWindow_ShowFar, AreaNameWindow_Show
 	export AreaNameWindow_HideFar, AreaNameWindow_Hide
-	export Func_08038210, Func_0803ce64
+	export FieldMessage_ShowCenteredFar, FieldMessage_ShowCentered
 	export BattleMessage_CloseFar, BattleMessage_Close
 	export Message_ResetIdleFar, Message_ResetIdle
 	export MenuArrow_CreateFar, MenuArrow_Create
@@ -98,17 +98,17 @@ Resource_FarCall004:
 	export Func_080382e0, Func_08043534
 	export Save_WriteFileFar, Save_WriteFile
 	export Func_080382f0, Func_080432a4
-	export Func_080382f8, NameEntry_EditMemberName
+	export NameEntry_EditMemberNameFar, NameEntry_EditMemberName
 	export Resource_CopyFixedBlockBFar, Resource_CopyFixedBlockB
 	export Resource_CopyFixedBlockAFar, Resource_CopyFixedBlockA
 	export SelectionMenu_SetPositionFar, SelectionMenu_SetPosition
 	export DebugBrowser_IconsFar, DebugBrowser_Icons
 	export DebugBrowser_PortraitsFar, DebugBrowser_Portraits
-	export Func_08038328, Djinn_ShowJoinedMessage
+	export Djinn_ShowJoinedMessageFar, Djinn_ShowJoinedMessage
 	export Party_ShowJoinedMessageFar, Party_ShowJoinedMessage
 	export Party_ShowPairJoinedMessageFar, Party_ShowPairJoinedMessage
 	export Func_08038340, Func_08044dc8
-	export Func_08038348, Func_0803f9c0
+	export WindowColor_ApplyFar, WindowColor_Apply
 	export SettingsMenu_RunFar, SettingsMenu_Run
 	export PauseMenu_RunFar, PauseMenu_Run
 	export BgScreen_FillRectFar, BgScreen_FillRect

@@ -27,7 +27,7 @@ DEFINE_FUNC_020011F4(Func_02003b38, Func_020039f4)
 extern s32 gData_02006be4;
 
 DEFINE_FUNC_0200122C(Func_02003b70, gData_02004fc8, gData_02006be4,
-    Func_02003aac)
+                     Func_02003aac)
 
 DEFINE_FUNC_02001274(Func_02003bb8, Func_02003b38, Func_02003b70)
 
@@ -35,7 +35,9 @@ DEFINE_FUNC_020012AC(Func_02003bf0, Func_02003bb8, Func_02004b90)
 
 u32 __umodsi3(u32 a, u32 b);
 
-void Func_02003c3c(void) { Func_02003bb8(Actor_GetById(Party_GetLeaderActor()), 0); }
+void Func_02003c3c(void) {
+  Func_02003bb8(Actor_GetById(Party_GetLeaderActor()), 0);
+}
 
 static inline void QueueBlend(u32 address, u32 value) {
   /* FAKEMATCH(wrapper): forwarding through the inline sets the arguments up in
@@ -233,8 +235,8 @@ void Func_020042e0(void) {
   System_Wait(1);
   Window_LoadGraphics();
   DebugText_Clear();
-  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                gMainRoutineWork.paletteGlow[1]);
+  FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
+                         gMainRoutineWork.paletteGlow[1]);
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;
 }
@@ -259,8 +261,7 @@ void Func_02004634(struct Actor *parent) {
   s32 i;
 
   for (i = 0; i < 2; ++i) {
-    child = (FieldActor_Create(271, parent->x, parent->y,
-                                                parent->z));
+    child = (FieldActor_Create(271, parent->x, parent->y, parent->z));
     pair[i] = child;
     if (child != NULL) {
       child->terrainHeight = parent->terrainHeight;
@@ -306,15 +307,27 @@ void Func_02004634(struct Actor *parent) {
 #include "task.h"
 #include "input.h"
 
-/* VIEW(s3b38): variable gData_02006e0c as s16 gData_02006e0c; module/scene/scene.h has u8 gData_02006e0c[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/world_map/s3b38.c:447: `gData_02006e0c' has an incomplete type. */
+/* VIEW(s3b38): variable gData_02006e0c as s16 gData_02006e0c;
+ * module/scene/scene.h has u8 gData_02006e0c[]; tried as the rest of the object
+ * declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/world_map/s3b38.c:447: `gData_02006e0c' has an incomplete
+ * type. */
 extern s16 gData_02006e0c__s3b38 __asm__("gData_02006e0c");
-/* VIEW(s3b38): variable gData_02006e0e as s16 gData_02006e0e; module/scene/scene.h has u8 gData_02006e0e[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/world_map/s3b38.c:532: array subscript is not an integer. */
+/* VIEW(s3b38): variable gData_02006e0e as s16 gData_02006e0e;
+ * module/scene/scene.h has u8 gData_02006e0e[]; tried as the rest of the object
+ * declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/world_map/s3b38.c:532: array subscript is not an integer.
+ */
 extern s16 gData_02006e0e__s3b38 __asm__("gData_02006e0e");
-/* VIEW(s3b38): variable gData_02006f20 as u8 gData_02006f20[][32]; module/scene/scene.h has u8 gData_02006f20[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/world_map/s3b38.c:492: subscripted value is neither array nor pointer. */
+/* VIEW(s3b38): variable gData_02006f20 as u8 gData_02006f20[][32];
+ * module/scene/scene.h has u8 gData_02006f20[]; tried as the rest of the object
+ * declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/world_map/s3b38.c:492: subscripted value is neither array
+ * nor pointer. */
 extern u8 gData_02006f20__s3b38[][32] __asm__("gData_02006f20");
 
 DEFINE_FUNC_02001BE0(Func_02004744, gData_02006e0c__s3b38, Data_02006e20,
-    gData_02006f20__s3b38, gData_02006e0e__s3b38)
+                     gData_02006f20__s3b38, gData_02006e0e__s3b38)
 
 // The world map cursor: counts down while A or B is held, redraws the gauge and
 // queues its sprite over the leader.
@@ -325,7 +338,8 @@ void Func_020048f4(void) {
   s32 screen[3];
   u32 attributes;
 
-  if ((gInput.held & 3) != 0 && Event_GetFlag(0x106) == 0 && leader->y > 0x40000) {
+  if ((gInput.held & 3) != 0 && Event_GetFlag(0x106) == 0 &&
+      leader->y > 0x40000) {
     if (--gData_02006e10 <= 0) {
       Func_02004c08(1);
       gData_02006e10 = 10;
@@ -346,10 +360,12 @@ void Func_020048f4(void) {
 }
 
 DEFINE_FUNC_02001E58(Func_020049bc, gData_02006f20__s3b38,
-    gData_02006e0e__s3b38, gData_02006e0c__s3b38, gData_02006e10, Func_020048f4)
+                     gData_02006e0e__s3b38, gData_02006e0c__s3b38,
+                     gData_02006e10, Func_020048f4)
 
 DEFINE_FUNC_02001EB8(Func_02004a1c, gData_02006f20__s3b38,
-    gData_02006e0e__s3b38, gData_02006e0c__s3b38, Func_020048f4)
+                     gData_02006e0e__s3b38, gData_02006e0c__s3b38,
+                     Func_020048f4)
 
 #include "scene_tables.h"
 

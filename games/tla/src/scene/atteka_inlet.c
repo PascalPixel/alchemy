@@ -25,7 +25,7 @@
 #include "module/scene/scene.h"
 
 void Func_02000038(void) {
-  Func_080d7788(14, 0, 15);
+  Djinn_JoinParty(14, 0, 15);
   GameFlag_ClearBit(0x300);
 }
 
@@ -134,7 +134,7 @@ void Func_02000208(void) {
     Event_Wait(10);
     Event_SetMessageId((s32)MsgWhereDoYouThink);
     Event_ShowMessage(0x4009, 0);
-    Func_080d47b4(10, 265, 0);
+    Actor_ShowEmoteById(10, 265, 0);
     Event_ShowMessageAndWait(10, 0);
     Actor_FaceDirection(9, 0x3000, 0);
     Event_ShowMessage(0x4009, 0);
@@ -142,7 +142,7 @@ void Func_02000208(void) {
     Actor_SetModeById(10, 3);
     Event_ShowMessageAndWait(10, 0);
     Actor_ArmCallback(10, FACING_EAST, 0);
-    Func_080d47b4(9, 264, 0);
+    Actor_ShowEmoteById(9, 264, 0);
     Actor_ArmCallback(9, FACING_EAST, 20);
     Event_ShowMessageAndWait(0x4009, 0);
     Event_ShowMessageAndWait(10, 0);
@@ -171,7 +171,7 @@ void Func_020003e4(void) {
     Event_ShowMessageAndWait(23, 0);
     Actor_FaceDirectionAndWait(23, 0xb000);
     Event_ShowMessage(0x2017, 0);
-    Func_080d4568()->motionFlags = 0;
+    FieldCamera_GetActor()->motionFlags = 0;
     FieldCamera_SetSpeed(0x4cccc, 0x9999);
     FieldCamera_MoveTo(PIXELS(440), PIXELS(32), PIXELS(368), 1);
     Func_020010e0();
@@ -199,10 +199,10 @@ void Func_020003e4(void) {
     Event_ShowMessageAndWait(23, 0);
     Actor_SetModeById(23, 4);
     Event_ShowMessageAndWait(23, 0);
-    Func_080d47b4(gMainRoutineWork.currentOwner, 257, 40);
-    Func_080d47b4(23, 265, 20);
+    Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 257, 40);
+    Actor_ShowEmoteById(23, 265, 20);
     Event_ShowMessageAndWait(23, 0);
-    Func_080d47b4(23, 264, 20);
+    Actor_ShowEmoteById(23, 264, 20);
     Event_ShowMessageAndWait(23, 0);
     Motion_SetModeAndWaitAnimation(23, 3);
     Event_ShowMessageAndWait(23, 0);
@@ -262,7 +262,8 @@ void Func_02000640(void) {
   }
 }
 
-void Func_02001120(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX, s32 destY, s32 layer);
+void Func_02001120(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
+                   s32 destY, s32 layer);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -335,14 +336,14 @@ void Func_0200097c(void) {
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Actor_FaceDirection(23, 0x3000, 0);
   FieldCamera_SetSpeed(0x19999, 0x3333);
-  Func_080d4568()->motionFlags = 0;
+  FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(PIXELS(512), -1, PIXELS(380), 1);
   Actor_SetSpeed(24, 0x19999, 0xcccc);
   Actor_WalkToAndWait(24, 520, 432);
   Actor_WalkToAndWait(24, 520, 388);
   Actor_FaceDirection(23, 0x3000, 0);
   Event_ShowMessageAndWait(24, 0);
-  Func_080d47b4(23, 256, 10);
+  Actor_ShowEmoteById(23, 256, 10);
   Event_ShowMessageAndWait(23, 0);
   Actor_ShowEmote(24, 265, 0);
   Event_ShowMessageAndWait(24, 0);
@@ -368,12 +369,12 @@ void Func_0200097c(void) {
   Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
   Actor_ArmCallbackAndRefresh(23, angle);
   Event_ShowMessageAndWait(23, 0);
-  Func_080d47b4(23, 265, 0);
+  Actor_ShowEmoteById(23, 265, 0);
   Event_ShowMessageAndWait(23, 0);
   Actor_SetModeById(23, 3);
   Event_ShowMessageAndWait(23, 0);
   Motion_SetModeAndWaitAnimation(23, 3);
-  Func_080d47b4(23, 264, 0);
+  Actor_ShowEmoteById(23, 264, 0);
   Event_ShowMessageAndWait(23, 0);
   GameFlag_SetBit(0x9ad);
   Event_End();

@@ -1146,7 +1146,7 @@ void SetMapCellCollisionFar(s32 terrain, s32 x, s32 z, s32 value);
 
 void ResourceMetadata_ClearRecordFar(void *record);
 
-void Func_08038328(s32 owner, s32 element, s32 djinni);
+void Djinn_ShowJoinedMessageFar(s32 owner, s32 element, s32 djinni);
 
 extern const u8 gData_080f0c04[];
 extern const u8 Data_080f0e00[];

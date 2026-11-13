@@ -299,16 +299,17 @@ struct Actor;
 extern void Script_WaitForEventTimeout__s3308(struct Actor *actor) __asm__(
     "Script_WaitForEventTimeout");
 #define Script_WaitForEventTimeout Script_WaitForEventTimeout__s3308
-/* VIEW(s3308): routine Func_080d4568 as struct Actor *Func_080d4568(void);
- * kibombo.h has struct KibomboObject *Func_080d4568(void); tried as the
- * definition's struct Actor *Func_080d4568(void), which the object already
- * declares, it does not compile in tla-ja: games/tla/include/field/event.h:124:
- * conflicting types for `Func_080d4568'. */
+/* VIEW(s3308): routine FieldCamera_GetActor as struct Actor
+ * *FieldCamera_GetActor(void); kibombo.h has struct KibomboObject
+ * *FieldCamera_GetActor(void); tried as the definition's struct Actor
+ * *FieldCamera_GetActor(void), which the object already declares, it does not
+ * compile in tla-ja: games/tla/include/field/event.h:124: conflicting types for
+ * `FieldCamera_GetActor'. */
 struct Actor;
-extern struct Actor *Func_080d4568__s3308(void) __asm__("Func_080d4568");
-#define Func_080d4568 Func_080d4568__s3308
+extern struct Actor *Func_080d4568__s3308(void) __asm__("FieldCamera_GetActor");
+#define FieldCamera_GetActor Func_080d4568__s3308
 #include "event_inline.h"
-#undef Func_080d4568
+#undef FieldCamera_GetActor
 #undef Script_WaitForEventTimeout
 #undef Actor_SetPartAttribute
 #undef Actor_SetPositionAndResetMotion
@@ -763,7 +764,7 @@ void Func_02003dec(void) {
   struct KibomboObject *leader;
 
   Kibombo_CamMove(-1, -1, -1, 0);
-  Func_080d4568()->motionFlags = 0;
+  FieldCamera_GetActor()->motionFlags = 0;
   Event_SetMessageId((s32)MsgAtLastThe);
   Event_ShowMessageAndWait(17, 0);
   Sound_Play(78);
@@ -846,7 +847,7 @@ void Func_020040cc(void) {
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   Kibombo_CamMove(-1, -1, -1, 0);
-  Func_080d4568()->motionFlags = 0;
+  FieldCamera_GetActor()->motionFlags = 0;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Kibombo_TaskAdd(Func_02002ccc, 0x480);
@@ -899,7 +900,7 @@ void Func_02004294(void) {
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   Kibombo_CamMove(-1, -1, -1, 0);
-  Func_080d4568()->motionFlags = 0;
+  FieldCamera_GetActor()->motionFlags = 0;
   Actor_SetSingleChildFlags(Actor_GetById(27), 0);
   Actor_GetById(27)->motionFlags = 0;
   Actor_SetPositionAndResetMotion(Actor_GetById(27), PIXELS(265), PIXELS(24),
@@ -997,7 +998,7 @@ void Func_02004524(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Kibombo_CamMove(-1, -1, -1, 0);
-  Func_080d4568()->motionFlags = 0;
+  FieldCamera_GetActor()->motionFlags = 0;
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   KIBOMBO_TASK_ADD(Func_02002ccc, 0x480);
@@ -1068,7 +1069,7 @@ void Func_020045d0(void) {
   Kibombo_ObjArm(23, FACING_NORTHWEST + FACING_STEP, 0);
   Kibombo_ObjArm(24, FACING_NORTHWEST + FACING_STEP, 0);
   Kibombo_ObjArm(25, FACING_NORTHWEST + FACING_STEP, 0);
-  Func_080d47b4(17, 0x107, 0);
+  Actor_ShowEmoteById(17, 0x107, 0);
   Kibombo_MessagePut(0x8000 + 17, 0);
   Kibombo_MessagePut(0x8000 + 17, 0);
   Motion_SetModeAndWaitAnimation(17, 3);
@@ -1119,7 +1120,7 @@ void Func_0200489c(void) {
   Actor_SetPartAttribute(Actor_GetById(12), 0);
   Actor_SetPartAttribute(Actor_GetById(13), 0);
   wait(8);
-  Func_080d47b4(17, 0x100, 20);
+  Actor_ShowEmoteById(17, 0x100, 20);
   Event_SetMessageId((s32)MsgLookLookThe);
   Event_ShowMessageAndWait(17, 0);
   Sound_Play(0x241);
@@ -1144,7 +1145,7 @@ void Func_02004978(void) {
   wait(8);
   Actor_GetById(12)->update = Func_020000a0;
   Actor_GetById(13)->update = Func_020000a0;
-  Func_080d47b4(17, 0x100, 20);
+  Actor_ShowEmoteById(17, 0x100, 20);
   Event_SetMessageId((s32)MsgLookTheGreat);
   Event_ShowMessageThenWait(17, 0, 20);
   Sound_Play(0x240);
@@ -1173,7 +1174,7 @@ void Func_02004a28(void) {
   Actor_SetPartAttribute(Actor_GetById(12), 0);
   Actor_SetPartAttribute(Actor_GetById(13), 0);
   wait(8);
-  Func_080d47b4(17, 0x100, 20);
+  Actor_ShowEmoteById(17, 0x100, 20);
   Event_SetMessageId((s32)MsgLookTheGreatGabomba);
   Event_ShowMessageThenWait(17, 0, 20);
   Kibombo_SePlay(0x240);
@@ -1308,9 +1309,9 @@ void Func_02004cf4(void) {
   Actor_Jump(8, 4, 10);
   Kibombo_MessagePut(0x2008, 0);
   Actor_ArmCallbackAndRefresh(9, FACING_EAST);
-  Func_080d47b4(8, 259, 20);
+  Actor_ShowEmoteById(8, 259, 20);
   Kibombo_MessagePut(0x2008, 0);
-  Func_080d47b4(9, 256, 20);
+  Actor_ShowEmoteById(9, 256, 20);
   Event_ShowMessageAndWait(9, 0);
   Kibombo_ObjTurn(8, FACING_WEST);
   Actor_SetModeById(8, 4);
@@ -1323,7 +1324,7 @@ void Func_02004cf4(void) {
   Kibombo_ObjSpeed(8, 0x19999, 0xcccc);
   Kibombo_ObjWalk(8, 364, 576);
   Kibombo_ObjArm(8, FACING_NORTHWEST + FACING_STEP, 0);
-  Func_080d47b4(9, 261, 80);
+  Actor_ShowEmoteById(9, 261, 80);
   Event_ShowMessageAndWait(9, 0);
   Kibombo_ObjTurn(9, FACING_SOUTHEAST + FACING_STEP);
   Event_ShowMessageAndWait(9, 0);

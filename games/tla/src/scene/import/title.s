@@ -54,10 +54,10 @@ Fade_Wait:
 	.thumb_func
 Func_020005d4:
 	overlay_veneer Func_080382f0
-	.global Func_0803f9c0
+	.global WindowColor_Apply
 	.thumb_func
-Func_0803f9c0:
-	overlay_veneer Func_08038348
+WindowColor_Apply:
+	overlay_veneer WindowColor_ApplyFar
 	.global Party_SetLeaderJenna
 	.thumb_func
 Party_SetLeaderJenna:

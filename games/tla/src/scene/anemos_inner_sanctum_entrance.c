@@ -55,7 +55,7 @@ void Func_02000388(void) {
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
   PaletteFade_StartInterpolation(60);
   Event_Wait(60);
-  Func_0803ce64((s32)&MsgIAmTheShadow, 0, 6);
+  FieldMessage_ShowCentered((s32)&MsgIAmTheShadow, 0, 6);
   party = (struct AnemosInnerSanctumEntranceParty *)&gMainRoutineWork;
   party->battleGroup = 0x1a9f;
   party->battleRule = 2;

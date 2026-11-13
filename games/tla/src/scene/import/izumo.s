@@ -105,7 +105,7 @@ Actor_SetSpritePriority:
 	.global Func_02000d88
 	.thumb_func
 Func_02000d88:
-	overlay_veneer Func_080c8210
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global Func_02000d90
 	.thumb_func
 Func_02000d90:

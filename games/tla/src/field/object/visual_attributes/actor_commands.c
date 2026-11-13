@@ -77,7 +77,7 @@ void Func_080d390c(u32 id) {
   Actor_SetSingleChildFlagsFar(object, 0);
 }
 
-void Func_080d3928(u32 id, s32 rotation) {
+void Actor_SetSpriteRotationById(u32 id, s32 rotation) {
   struct Actor *object = Actor_GetById(id);
   struct FieldSprite *sprite = object->sprite;
 
@@ -173,7 +173,7 @@ void Func_080d3a10(s32 id, u32 angle, s32 mode) {
 /// Gives an actor's sprite a still picture: resource, drawn by Icon_DrawItemFar
 /// into a cleared 128-byte buffer, or a blank one when bit 15 is set, loaded
 /// into the sprite's VRAM block as its tile.
-void Func_080d3b28(u32 id, s32 resource) {
+void Actor_ShowItemIconById(u32 id, s32 resource) {
   struct Actor *object = Actor_GetById(id);
   struct FieldSprite *sprite;
   u8 *buffer;

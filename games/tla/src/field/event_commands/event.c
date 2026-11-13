@@ -235,7 +235,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
         }
         MessageArgument_PushFar(item, 2);
         FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 1, 5);
-        result = Func_080d295c(1);
+        result = FieldYesNo_Ask(1);
         Message_CloseFinishedWindowsFar();
         if (result != 0)
           goto retry;
@@ -370,7 +370,7 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
   return answer;
 }
 
-s32 Func_080d295c(s32 a) { return YesNoMenu_RunFar(a, 0, 0, 0); }
+s32 FieldYesNo_Ask(s32 a) { return YesNoMenu_RunFar(a, 0, 0, 0); }
 
 /// Gives the party item from actor: with no room it shows the item, says it
 /// was found and left behind and returns -1; otherwise it adds the item, sets

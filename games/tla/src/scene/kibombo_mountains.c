@@ -16,7 +16,7 @@
 
 void Func_0200114c(void);
 
-void Func_02000038(void) { Func_080d2b4c(18, 70); }
+void Func_02000038(void) { Field_RequestDjinnBattle(18, 70); }
 
 #include "battle.h"
 #include "game.h"
@@ -140,7 +140,10 @@ void Func_020001a0(s32 unused, s32 id) {
         FieldEvent_Wait(60);
         Actor_SetAnimationAndWait(9, 4);
         FieldEvent_Wait(20);
-        { void *from = &saved; Iwram_CopyWordsEntry(other, from, 128); }
+        {
+          void *from = &saved;
+          Iwram_CopyWordsEntry(other, from, 128);
+        }
         MapGrid_CopyCellAttributes(53, 35, 1, 1, 53, 36);
         Event_SetFlag(0x224);
       }
@@ -302,7 +305,7 @@ s32 Scene_Initialize(void) {
     } else {
       Actor_SetAttachedEffect(10, 257);
     }
-    Func_080d3b28(17, 231);
+    Actor_ShowItemIconById(17, 231);
     if (GameFlag_Test(0x882))
       Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
     else
@@ -347,7 +350,6 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
-
 
 void Func_02000960(void) {
   Event_Start();

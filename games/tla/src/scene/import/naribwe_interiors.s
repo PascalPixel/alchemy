@@ -30,10 +30,10 @@ GameFlag_Test:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Func_0802372c
+	.global Actor_SetItemIcon
 	.thumb_func
-Func_0802372c:
-	overlay_veneer Func_08020300
+Actor_SetItemIcon:
+	overlay_veneer Actor_SetItemIconFar
 	.global FieldMessage_Show
 	.thumb_func
 FieldMessage_Show:
@@ -126,10 +126,10 @@ Actor_SetSpritePriority:
 	.thumb_func
 Func_02001158:
 	overlay_veneer Func_080c8208
-	.global Func_080d47b4
+	.global Actor_ShowEmoteById
 	.thumb_func
-Func_080d47b4:
-	overlay_veneer Func_080c8210
+Actor_ShowEmoteById:
+	overlay_veneer Actor_ShowEmoteByIdFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
 BattleEffect_ApplyColorToTargetBuffer:

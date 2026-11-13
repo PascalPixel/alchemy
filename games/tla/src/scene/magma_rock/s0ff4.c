@@ -314,7 +314,8 @@ void Func_020014bc(s32 mode, s32 cue) {
     Func_02003a54(work->target, 3);
 }
 
-// One of the four parts Func_02001738 builds: rises and falls with its owner's action counter.
+// One of the four parts Func_02001738 builds: rises and falls with its owner's
+// action counter.
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -346,7 +347,8 @@ void Func_02001528(struct Actor *part) {
   }
 }
 
-// The fifth part of Func_02001738's group: follows its owner like the others, throws effect 403 every eighth frame and marks the ground beneath.
+// The fifth part of Func_02001738's group: follows its owner like the others,
+// throws effect 403 every eighth frame and marks the ground beneath.
 #include "system/field_effect.h"
 #include "system/main_routine_work.h"
 
@@ -380,10 +382,12 @@ void Func_020015e4(union FieldObject *object) {
     EFFECT_Y(object) = EFFECT_Y(object) + (watched->timer << 19) + (-34 << 19);
   } else {
     if (watched->timer >= 9 && watched->timer <= 331) {
-      EFFECT_Y(object) = watched->y + (object->effect.unk5a[8] << 20) + 0x180000;
+      EFFECT_Y(object) =
+          watched->y + (object->effect.unk5a[8] << 20) + 0x180000;
     } else if (watched->timer > 332 &&
                watched->timer < (object->effect.unk5a[8] << 1) + 333) {
-      EFFECT_Y(object) = watched->y + (object->effect.unk5a[8] << 20) + 0x180000;
+      EFFECT_Y(object) =
+          watched->y + (object->effect.unk5a[8] << 20) + 0x180000;
       EFFECT_Y(object) -= (watched->timer << 19) - (332 << 19);
     } else if ((object->effect.unk5a[8] << 1) + 333 < watched->timer) {
       object->effect.y = object->actor.terrainHeight;
@@ -614,8 +618,14 @@ void Func_02001be0(void) {
 #include "call.h"
 
 void Actor_SetActionById(s32 id, s32 action);
-/* VIEW(s1c00): routine Func_080d452c as void Func_080d452c(s32 a, s32 b); event.h has s32 Func_080d452c(s32 actorId, s32 pan); tried as the definition's void Func_080d452c(s32 id, s32 use_setter), it does not compile in tla-ja: games/tla/src/scene/magma_rock/s0ff4.c:672: conflicting types for `Func_080d452c'. */
-extern void Func_080d452c__s1c00(s32 a, s32 b) __asm__("Func_080d452c");
+/* VIEW(s1c00): routine FieldCamera_MoveToActor as void
+ * FieldCamera_MoveToActor(s32 a, s32 b); event.h has s32
+ * FieldCamera_MoveToActor(s32 actorId, s32 pan); tried as the definition's void
+ * FieldCamera_MoveToActor(s32 id, s32 use_setter), it does not compile in
+ * tla-ja: games/tla/src/scene/magma_rock/s0ff4.c:672: conflicting types for
+ * `FieldCamera_MoveToActor'. */
+extern void Func_080d452c__s1c00(s32 a,
+                                 s32 b) __asm__("FieldCamera_MoveToActor");
 void Func_02003b6c(void);
 
 void Func_02001c00(void) {

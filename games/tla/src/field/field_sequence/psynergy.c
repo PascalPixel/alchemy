@@ -63,7 +63,7 @@ s32 Func_080ce61c(u32 code) {
     }
     MessageArgument_PushFar(149, 4);
     FieldMessage_ShowFar((s32)&MsgKey0dbc, 13);
-    cost = Func_080d295c(1);
+    cost = FieldYesNo_Ask(1);
     Message_CloseFinishedWindowsFar();
     if (cost != 0)
       return 0;

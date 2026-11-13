@@ -503,7 +503,7 @@ DEFINE_FUNC_02000128(Func_02000c44, Func_02001940, Func_02001828)
 
 void Func_02000cec(void) {
   GameFlag_SetBit(0x271);
-  Func_080d2b4c(17, 17);
+  Field_RequestDjinnBattle(17, 17);
   return;
 }
 
@@ -512,7 +512,7 @@ void Event_End();
 void Func_02000d04(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Func_080d47b4(gMainRoutineWork.currentOwner, 0x101, 32);
+  Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 0x101, 32);
   Event_End();
   return;
 }
@@ -734,7 +734,7 @@ void Func_0200130c(void) {
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
   PaletteFade_StartInterpolation(60);
   Event_Wait(60);
-  FieldMessage_ShowCentered((s32)MsgIAmThe, 0, 6);
+  EventMessage_ShowCentered((s32)MsgIAmThe, 0, 6);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   PaletteFade_StartInterpolation(60);
   Event_Wait(60);

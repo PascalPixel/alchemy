@@ -30,7 +30,9 @@
 #include "module/game/game.h"
 
 void Event_Start();
-/* VIEW(lemuria_palace): routine Event_End as void Event_End(); event_work.h has void Event_End(void); not tried: Event_End's bound declaration was not found. */
+/* VIEW(lemuria_palace): routine Event_End as void Event_End(); event_work.h has
+ * void Event_End(void); not tried: Event_End's bound declaration was not found.
+ */
 extern void Event_End__lemuria_palace() __asm__("Event_End");
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -71,7 +73,11 @@ void Func_020000c8(s32 kind) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-/* VIEW(lemuria_palace): variable gData_02002608 as extern s16 gData_02002608[]; the definition has u32 gData_02002608[] = { 0x76c07b00, 0x6e407280, 0x65c06a00, 0x65c06180, 0x6e406a00, 0x76c07280, }; tried as the definition's extern u32 gData_02002608[], Func_020000f4 moves: 2 of 35 instructions in tla-ja. */
+/* VIEW(lemuria_palace): variable gData_02002608 as extern s16 gData_02002608[];
+ * the definition has u32 gData_02002608[] = { 0x76c07b00, 0x6e407280,
+ * 0x65c06a00, 0x65c06180, 0x6e406a00, 0x76c07280, }; tried as the definition's
+ * extern u32 gData_02002608[], Func_020000f4 moves: 2 of 35 instructions in
+ * tla-ja. */
 extern s16 gData_02002608__lemuria_palace[] __asm__("gData_02002608");
 
 static inline u32 Frame_Mod6(u32 frame) {
@@ -146,14 +152,14 @@ void Func_020001d8(void) {
   first->acceleration = 0x20000;
   first->motionFlags = 0;
   FieldActor_SetMoveTarget(first, first->x + PIXELS(6), first->y + PIXELS(8),
-                      first->z);
+                           first->z);
   second =
       Actor_Spawn(674, object->x + 0xa0000, object->y + 0x100000, object->z);
   second->speedLimit = 0x20000;
   second->acceleration = 0x20000;
   second->motionFlags = 0;
   FieldActor_SetMoveTarget(second, first->x + PIXELS(8), first->y - PIXELS(4),
-                      first->z);
+                           first->z);
   Actor_WaitForMove(first);
   Func_02001f9c(first);
   Actor_WaitForMove(second);
@@ -237,17 +243,41 @@ void Func_020002b4(void) {
 #include "system/io_write.h"
 
 extern s32 gData_02003020;
-/* VIEW(s03a0): variable Data_02003060 as extern struct Unk_020003a0Sprite Data_02003060; lemuria_palace has extern u8 Data_02003060[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:264: request for member `unk1e' in something not a structure or union. */
+/* VIEW(s03a0): variable Data_02003060 as extern struct Unk_020003a0Sprite
+ * Data_02003060; lemuria_palace has extern u8 Data_02003060[]; tried as the
+ * rest of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/lemuria_palace.c:264: request for member `unk1e' in
+ * something not a structure or union. */
 extern struct Unk_020003a0Sprite Data_02003060__s03a0 __asm__("Data_02003060");
-/* VIEW(s03a0): variable Data_02003030 as extern struct Unk_020003a0Sprite Data_02003030; lemuria_palace has extern u8 Data_02003030[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:275: request for member `unk1e' in something not a structure or union. */
+/* VIEW(s03a0): variable Data_02003030 as extern struct Unk_020003a0Sprite
+ * Data_02003030; lemuria_palace has extern u8 Data_02003030[]; tried as the
+ * rest of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/lemuria_palace.c:275: request for member `unk1e' in
+ * something not a structure or union. */
 extern struct Unk_020003a0Sprite Data_02003030__s03a0 __asm__("Data_02003030");
-/* VIEW(s03a0): variable Data_02003090 as extern s32 Data_02003090; lemuria_palace has extern u8 Data_02003090[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:280: `Data_02003090' has an incomplete type. */
+/* VIEW(s03a0): variable Data_02003090 as extern s32 Data_02003090;
+ * lemuria_palace has extern u8 Data_02003090[]; tried as the rest of the object
+ * declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/lemuria_palace.c:280: `Data_02003090' has an incomplete
+ * type. */
 extern s32 Data_02003090__s03a0 __asm__("Data_02003090");
-/* VIEW(s03a0): variable Data_02003024 as extern s32 Data_02003024; lemuria_palace has extern u8 Data_02003024[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:281: `Data_02003024' has an incomplete type. */
+/* VIEW(s03a0): variable Data_02003024 as extern s32 Data_02003024;
+ * lemuria_palace has extern u8 Data_02003024[]; tried as the rest of the object
+ * declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/lemuria_palace.c:281: `Data_02003024' has an incomplete
+ * type. */
 extern s32 Data_02003024__s03a0 __asm__("Data_02003024");
-/* VIEW(s03a0): variable Data_02003098 as extern s32 Data_02003098; lemuria_palace has extern u8 Data_02003098[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:282: `Data_02003098' has an incomplete type. */
+/* VIEW(s03a0): variable Data_02003098 as extern s32 Data_02003098;
+ * lemuria_palace has extern u8 Data_02003098[]; tried as the rest of the object
+ * declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/lemuria_palace.c:282: `Data_02003098' has an incomplete
+ * type. */
 extern s32 Data_02003098__s03a0 __asm__("Data_02003098");
-/* VIEW(s03a0): variable gData_0200308c as extern u8 gData_0200308c; lemuria_palace has extern u8 gData_0200308c[]; tried as the definition's extern struct Trigger gData_0200308c[], which the object already declares, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:283: `gData_0200308c' has an incomplete type. */
+/* VIEW(s03a0): variable gData_0200308c as extern u8 gData_0200308c;
+ * lemuria_palace has extern u8 gData_0200308c[]; tried as the definition's
+ * extern struct Trigger gData_0200308c[], which the object already declares, it
+ * does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:283:
+ * `gData_0200308c' has an incomplete type. */
 extern u8 gData_0200308c__s03a0 __asm__("gData_0200308c");
 
 void Func_020003a0(void) {
@@ -353,11 +383,20 @@ loop:
        ->v)
 
 void Event_Start();
-/* VIEW(s03a0): routine Event_End as s32 Event_End(); lemuria_palace has void Event_End(); not tried: Event_End's bound declaration was not found. */
+/* VIEW(s03a0): routine Event_End as s32 Event_End(); lemuria_palace has void
+ * Event_End(); not tried: Event_End's bound declaration was not found. */
 extern s32 Func_02001fd4__s03a0() __asm__("Event_End");
-/* VIEW(lemuria_palace): routine Func_020020ac as void Func_020020ac(); module/scene/scene.h has void Func_020020ac(s32 value); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:411: too few arguments to function `Func_020020ac'. */
+/* VIEW(lemuria_palace): routine Func_020020ac as void Func_020020ac();
+ * module/scene/scene.h has void Func_020020ac(s32 value); tried as the rest of
+ * the object declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/lemuria_palace.c:411: too few arguments to function
+ * `Func_020020ac'. */
 extern void Func_020020ac__lemuria_palace() __asm__("Func_020020ac");
-/* VIEW(s03a0): routine Func_020001d8 as s32 Func_020001d8(); the definition has void Func_020001d8(void); tried as the definition's void Func_020001d8(struct Actor *object), it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:356: conflicting types for `Func_020001d8'. */
+/* VIEW(s03a0): routine Func_020001d8 as s32 Func_020001d8(); the definition has
+ * void Func_020001d8(void); tried as the definition's void Func_020001d8(struct
+ * Actor *object), it does not compile in tla-ja:
+ * games/tla/src/scene/lemuria_palace.c:356: conflicting types for
+ * `Func_020001d8'. */
 extern s32 Func_020001d8__s03a0() __asm__("Func_020001d8");
 s32 __modsi3();
 void Field_StartPaletteTransition();
@@ -417,7 +456,7 @@ L_0200863c:
   Func_020020ac__lemuria_palace();
   Event_Wait(10);
   Call3((void (*)())Actor_ArmCallback, 16, FACING_SOUTH + FACING_STEP, 0);
-  Value3((s32 (*)())Func_080d47b4, 13, 0x100, 45);
+  Value3((s32 (*)())Actor_ShowEmoteById, 13, 0x100, 45);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 13,
         FACING_SOUTH + FACING_STEP);
   Event_Wait(10);
@@ -441,13 +480,13 @@ L_0200863c:
   Motion_SetVarCbAndRefresh(15, 2);
   Event_Wait(5);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 15, FACING_WEST);
-  Value3((s32 (*)())Func_080d47b4, 15, 0x103, 30);
+  Value3((s32 (*)())Actor_ShowEmoteById, 15, 0x103, 30);
   Event_ShowMessageThenWait(15, 0, 5);
   Call3((void (*)())Actor_ArmCallback, 7, FACING_NORTHEAST, 0);
   Actor_ArmCallback(13, FACING_EAST, 0);
   Actor_ArmCallbackAndRefresh(14, FACING_EAST);
   Event_Wait(10);
-  Value3((s32 (*)())Func_080d47b4, 13, 0x108, 30);
+  Value3((s32 (*)())Actor_ShowEmoteById, 13, 0x108, 30);
   Event_ShowMessageThenWait(13, 0, 5);
   Motion_SetVarCbAndRefresh(15, 2);
   Event_ShowMessageThenWait(15, 0, 5);
@@ -479,7 +518,8 @@ L_0200863c:
         1);
   Func_020020ac__lemuria_palace();
   Event_Wait(5);
-  Call4((void (*)())Actor_LaunchFromLeader, 17, 16, 0, FACING_NORTHWEST + FACING_STEP);
+  Call4((void (*)())Actor_LaunchFromLeader, 17, 16, 0,
+        FACING_NORTHWEST + FACING_STEP);
   Call4((void (*)())Actor_LaunchFromLeader, 5, -16, 0, FACING_NORTH);
   Call4((void (*)())Actor_LaunchFromLeader, 6, -32, 0, FACING_NORTH);
   Call3((void (*)())Actor_ArmCallback, 4, FACING_NORTH, 0);
@@ -545,7 +585,7 @@ L_0200863c:
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 13,
         FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(10);
-  Value3((s32 (*)())Func_080d47b4, 13, 0x108, 30);
+  Value3((s32 (*)())Actor_ShowEmoteById, 13, 0x108, 30);
   Call3((void (*)())Event_ShowMessageThenWait, 0x200d, 0, 5);
   Actor_StartRepeatedMotion(17, 3);
   Call2((void (*)())FieldEffect_SetAttached, 17, 0x102);
@@ -563,7 +603,7 @@ L_0200863c:
         FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(10);
   Call3((void (*)())Event_ShowMessageThenWait, 0x200d, 0, 5);
-  Value3((s32 (*)())Func_080d47b4, 13, 0x105, 30);
+  Value3((s32 (*)())Actor_ShowEmoteById, 13, 0x105, 30);
   Call3((void (*)())Event_ShowMessageThenWait, 0x200d, 0, 5);
   Motion_SetVarCbAndRefresh(13, 2);
   Event_Wait(5);
@@ -599,13 +639,13 @@ L_0200863c:
   Data_02003024__s03a0 = r7_1;
   Sound_Play(153);
   Func_02000510();
-  Value3((s32 (*)())Func_080d47b4, 4, 0x100, 0);
-  Value3((s32 (*)())Func_080d47b4, 17, 0x100, 0);
-  Value3((s32 (*)())Func_080d47b4, 6, 0x100, 0);
-  Value3((s32 (*)())Func_080d47b4, 5, 0x100, 55);
+  Value3((s32 (*)())Actor_ShowEmoteById, 4, 0x100, 0);
+  Value3((s32 (*)())Actor_ShowEmoteById, 17, 0x100, 0);
+  Value3((s32 (*)())Actor_ShowEmoteById, 6, 0x100, 0);
+  Value3((s32 (*)())Actor_ShowEmoteById, 5, 0x100, 55);
   Call3((void (*)())Event_ShowMessageThenWait, 0x200d, 0, 5);
   Event_ShowMessageThenWait(15, 0, 10);
-  Func_080d47b4(17, 0x105, 50);
+  Actor_ShowEmoteById(17, 0x105, 50);
   v10 = Func_020001d8__s03a0(13);
   Func_02000550();
   Event_Wait(30);
@@ -626,18 +666,18 @@ L_0200863c:
   Call2((void (*)())FieldEffect_SetAttached, 17, 0x102);
   Event_Wait(40);
   Event_ShowMessageThenWait(17, 0, 5);
-  Value3((s32 (*)())Func_080d47b4, 13, 0x108, 30);
+  Value3((s32 (*)())Actor_ShowEmoteById, 13, 0x108, 30);
   Call3((void (*)())Event_ShowMessageThenWait, 0x200d, 0, 5);
   Actor_ArmCallbackAndRefresh(6, FACING_EAST);
   Event_Wait(10);
-  Value3((s32 (*)())Func_080d47b4, 6, 0x101, 30);
+  Value3((s32 (*)())Actor_ShowEmoteById, 6, 0x101, 30);
   Event_ShowMessageThenWait(6, 0, 5);
   Actor_CommitPositionAndActivate(17, 0, 16);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 17, FACING_WEST);
   Event_Wait(10);
-  Value3((s32 (*)())Func_080d47b4, 17, 0x109, 30);
+  Value3((s32 (*)())Actor_ShowEmoteById, 17, 0x109, 30);
   Event_ShowMessageThenWait(17, 0, 5);
-  Func_080d47b4(5, 0x100, 30);
+  Actor_ShowEmoteById(5, 0x100, 30);
   Actor_ArmCallbackAndRefresh(5, FACING_EAST);
   Event_Wait(5);
   Event_ShowMessageThenWait(5, 0, 5);
@@ -678,7 +718,7 @@ L_0200863c:
   Motion_SetVarCbAndRefresh(15, 2);
   Event_Wait(5);
   Event_ShowMessageThenWait(15, 0, 5);
-  Func_080d47b4(13, 0x109, 30);
+  Actor_ShowEmoteById(13, 0x109, 30);
   Actor_ArmCallbackAndRefresh(13, FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(10);
   Func_020001d8__s03a0(13);
@@ -715,15 +755,15 @@ L_02008ff2:
   Motion_SetModeAndWaitAnimation(7, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(7, 0, 5);
-  Value3((s32 (*)())Func_080d47b4, 13, 0x108, 30);
+  Value3((s32 (*)())Actor_ShowEmoteById, 13, 0x108, 30);
   Call3((void (*)())Event_ShowMessageThenWait, 0x200d, 0, 5);
   Motion_SetModeAndWaitAnimation(7, 4);
   Event_ShowMessageThenWait(7, 0, 5);
-  Value3((s32 (*)())Func_080d47b4, 13, 0x101, 50);
-  Value3((s32 (*)())Func_080d47b4, 7, 0x102, 30);
+  Value3((s32 (*)())Actor_ShowEmoteById, 13, 0x101, 50);
+  Value3((s32 (*)())Actor_ShowEmoteById, 7, 0x102, 30);
   Event_ShowMessageThenWait(7, 0, 5);
-  Value3((s32 (*)())Func_080d47b4, 14, 0x100, 0);
-  Value3((s32 (*)())Func_080d47b4, 13, 0x100, 50);
+  Value3((s32 (*)())Actor_ShowEmoteById, 14, 0x100, 0);
+  Value3((s32 (*)())Actor_ShowEmoteById, 13, 0x100, 50);
   Actor_ArmCallback(14, FACING_EAST, 0);
   Actor_ArmCallbackAndRefresh(13, FACING_EAST);
   Event_Wait(20);
@@ -742,7 +782,7 @@ L_02008ff2:
   Event_Wait(25);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 17, FACING_WEST);
   Event_Wait(20);
-  Value3((s32 (*)())Func_080d47b4, 17, 0x102, 30);
+  Value3((s32 (*)())Actor_ShowEmoteById, 17, 0x102, 30);
   Event_ShowMessageThenWait(17, 0, 5);
   Actor_ArmCallbackAndRefresh(17, FACING_NORTHWEST + FACING_STEP);
   Event_Wait(15);
@@ -752,14 +792,14 @@ L_02008ff2:
   Motion_SetVarCbAndRefresh(14, 2);
   Event_Wait(5);
   Event_ShowMessageThenWait(14, 0, 5);
-  Value3((s32 (*)())Func_080d47b4, 13, 0x108, 30);
+  Value3((s32 (*)())Actor_ShowEmoteById, 13, 0x108, 30);
   Call3((void (*)())Event_ShowMessageThenWait, 0x200d, 0, 5);
   Motion_SetModeAndWaitAnimation(17, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(17, 0, 5);
   Motion_SetModeAndWaitAnimation(13, 4);
   Event_ShowMessageThenWait(0x200d, 0, 5);
-  Value3((s32 (*)())Func_080d47b4, 17, 0x109, 30);
+  Value3((s32 (*)())Actor_ShowEmoteById, 17, 0x109, 30);
   Event_ShowMessageThenWait(17, 0, 5);
   Motion_SetVarCbAndRefresh(7, 2);
   Event_Wait(5);
@@ -770,7 +810,7 @@ L_02008ff2:
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(14, 4);
   Event_ShowMessageThenWait(14, 0, 5);
-  Func_080d47b4(15, 0x102, 40);
+  Actor_ShowEmoteById(15, 0x102, 40);
   Actor_ArmCallbackAndRefresh(15, FACING_WEST);
   Event_Wait(10);
   Event_ShowMessageThenWait(15, 0, 5);
@@ -778,19 +818,19 @@ L_02008ff2:
   Actor_ArmCallbackAndRefresh(13, FACING_EAST);
   Event_Wait(10);
   Event_ShowMessageThenWait(13, 0, 5);
-  Func_080d47b4(15, 0x101, 50);
+  Actor_ShowEmoteById(15, 0x101, 50);
   Motion_SetModeAndWaitAnimation(15, 4);
   Event_ShowMessageThenWait(15, 0, 5);
   Motion_SetModeAndWaitAnimation(13, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(13, 0, 5);
-  Func_080d47b4(15, 0x100, 45);
+  Actor_ShowEmoteById(15, 0x100, 45);
   Actor_ArmCallbackAndRefresh(13, FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(5);
   Event_ShowMessageThenWait(13, 0, 5);
   Actor_ArmCallbackAndRefresh(15, FACING_SOUTH + FACING_STEP);
   Event_Wait(10);
-  Value3((s32 (*)())Func_080d47b4, 15, 0x103, 30);
+  Value3((s32 (*)())Actor_ShowEmoteById, 15, 0x103, 30);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 15, 0);
   v18 = Event_AskYesNoWithActorAnimation(4, 0);
   if (v18 == 0) {
@@ -808,14 +848,14 @@ L_02008ff2:
   }
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 15, FACING_WEST);
   Event_Wait(10);
-  Value3((s32 (*)())Func_080d47b4, 15, 0x107, 30);
+  Value3((s32 (*)())Actor_ShowEmoteById, 15, 0x107, 30);
   Event_ShowMessageThenWait(15, 0, 5);
   Actor_ArmCallbackAndRefresh(13, FACING_EAST);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(13, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(13, 0, 5);
-  Value3((s32 (*)())Func_080d47b4, 13, 0x109, 30);
+  Value3((s32 (*)())Actor_ShowEmoteById, 13, 0x109, 30);
   Event_ShowMessageThenWait(13, 0, 5);
   Motion_SetModeAndWaitAnimation(15, 4);
   Call3((void (*)())Actor_SetSpeedParameters, 15, 0x8000, 0x4000);
@@ -844,12 +884,12 @@ L_02008ff2:
   Motion_SetModeAndWaitAnimation(15, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(15, 0, 5);
-  Value3((s32 (*)())Func_080d47b4, 4, 0x102, 0);
-  Value3((s32 (*)())Func_080d47b4, 5, 0x102, 0);
-  Value3((s32 (*)())Func_080d47b4, 6, 0x102, 0);
-  Value3((s32 (*)())Func_080d47b4, 17, 0x102, 0);
-  Value3((s32 (*)())Func_080d47b4, 7, 0x102, 60);
-  Value3((s32 (*)())Func_080d47b4, 15, 0x108, 30);
+  Value3((s32 (*)())Actor_ShowEmoteById, 4, 0x102, 0);
+  Value3((s32 (*)())Actor_ShowEmoteById, 5, 0x102, 0);
+  Value3((s32 (*)())Actor_ShowEmoteById, 6, 0x102, 0);
+  Value3((s32 (*)())Actor_ShowEmoteById, 17, 0x102, 0);
+  Value3((s32 (*)())Actor_ShowEmoteById, 7, 0x102, 60);
+  Value3((s32 (*)())Actor_ShowEmoteById, 15, 0x108, 30);
   Event_ShowMessageThenWait(15, 0, 5);
   Motion_SetVarCbAndRefresh(15, 2);
   Event_Wait(5);
@@ -885,7 +925,7 @@ L_02008ff2:
   Event_Wait(15);
   Actor_ArmCallbackAndRefresh(15, FACING_NORTH + FACING_STEP);
   Event_Wait(10);
-  Value3((s32 (*)())Func_080d47b4, 15, 0x107, 40);
+  Value3((s32 (*)())Actor_ShowEmoteById, 15, 0x107, 40);
   Event_ShowMessageThenWait(15, 0, 5);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 15,
         FACING_SOUTH + FACING_STEP);
@@ -943,7 +983,7 @@ L_02008ff2:
   Call3((void (*)())Event_ShowMessageThenWait, 0x200d, 0, 5);
   Motion_SetVarCbAndRefresh(6, 2);
   Event_ShowMessageThenWait(6, 0, 5);
-  Value3((s32 (*)())Func_080d47b4, 13, 0x108, 30);
+  Value3((s32 (*)())Actor_ShowEmoteById, 13, 0x108, 30);
   Event_ShowMessageThenWait(0x200d, 0, 5);
   Actor_ArmCallbackAndRefresh(13, FACING_WEST);
   Event_Wait(20);
@@ -972,10 +1012,10 @@ L_02009988:
   v23 = Actor_GetById(64);
   v23->scaleY = 0x10000;
   Event_Wait(5);
-  Value3((s32 (*)())Func_080d47b4, 5, 0x101, 0);
-  Value3((s32 (*)())Func_080d47b4, 17, 0x101, 0);
-  Value3((s32 (*)())Func_080d47b4, 6, 0x101, 0);
-  Value3((s32 (*)())Func_080d47b4, 4, 0x101, 60);
+  Value3((s32 (*)())Actor_ShowEmoteById, 5, 0x101, 0);
+  Value3((s32 (*)())Actor_ShowEmoteById, 17, 0x101, 0);
+  Value3((s32 (*)())Actor_ShowEmoteById, 6, 0x101, 0);
+  Value3((s32 (*)())Actor_ShowEmoteById, 4, 0x101, 60);
   Call3((void (*)())Actor_CommitPositionAndActivate, 14, -24, -26);
   Actor_CommitPositionAndActivate(14, 0, -8);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 14,
@@ -999,7 +1039,7 @@ L_02009988:
   Call3((void (*)())Event_ShowMessageThenWait, 0x200d, 0, 5);
   Actor_ArmCallbackAndRefresh(7, FACING_EAST);
   Event_Wait(10);
-  Value3((s32 (*)())Func_080d47b4, 7, 0x101, 30);
+  Value3((s32 (*)())Actor_ShowEmoteById, 7, 0x101, 30);
   Event_ShowMessageThenWait(7, 0, 5);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 13, FACING_WEST);
   Motion_SetModeAndWaitAnimation(13, 4);
@@ -1026,7 +1066,7 @@ L_02009988:
   Motion_SetModeAndWaitAnimation(14, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(14, 0, 5);
-  Value3((s32 (*)())Func_080d47b4, 13, 0x102, 30);
+  Value3((s32 (*)())Actor_ShowEmoteById, 13, 0x102, 30);
   Call3((void (*)())Event_ShowMessageThenWait, 0x200d, 0, 5);
   Motion_SetModeAndWaitAnimation(13, 3);
   Event_Wait(10);

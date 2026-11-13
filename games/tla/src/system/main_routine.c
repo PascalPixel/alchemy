@@ -218,8 +218,8 @@ void MainRoutine_Run(s32 mode) {
     gMainRoutineWork.scene = (s32)&SceneId_Title;
     gMainRoutineWork.entrance = 1;
   }
-  Func_08038348(gMainRoutineWork.paletteGlow[0],
-                gMainRoutineWork.paletteGlow[1]);
+  WindowColor_ApplyFar(gMainRoutineWork.paletteGlow[0],
+                       gMainRoutineWork.paletteGlow[1]);
   VramCache_Reset();
   Task_ResetAll();
   Task_ResetAll();

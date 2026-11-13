@@ -72,7 +72,7 @@ void Func_02000100(void) {
   *color = 0x7fff;
   wait(1);
   work = Ram_HeapSlots->eventWork;
-  Func_0803ce64((s16)work->field1c4++, 0, 2);
+  FieldMessage_ShowCentered((s16)work->field1c4++, 0, 2);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 2);
   PaletteFade_StartInterpolation(20);
   wait(20);
@@ -181,7 +181,7 @@ void Func_02000184(void) {
   Event_ShowMessageAndWait(0x200e, 0);
   Actor_SetSpeed(14, 0x19999, 0xcccc);
   Actor_WalkToAndWait(14, 392, 164);
-  Func_080d47b4(14, 264, 0);
+  Actor_ShowEmoteById(14, 264, 0);
   Actor_Jump(14, 6, 20);
   Event_ShowMessageAndWait(0x600e, 0);
   Actor_WalkToAndWait(14, 392, 220);
@@ -213,13 +213,13 @@ void Func_02000184(void) {
   wait(10);
   *color = 0x7fff;
   wait(1);
-  Func_0803ce64((s16)(*(u16 *)(EVENT_WORK + 0x1c4))++, 0, 2);
+  FieldMessage_ShowCentered((s16)(*(u16 *)(EVENT_WORK + 0x1c4))++, 0, 2);
   PaletteFade_ApplyTarget(0x10000, 2);
   PaletteFade_StartInterpolation(20);
   wait(20);
   Actor_SetModeById(8, 1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xe000, 0);
-  Func_080d47b4(gMainRoutineWork.currentOwner, 0x100, 40);
+  Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 0x100, 40);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x4000, 0);
   Actor_FaceDirection(9, 0xb000, 20);
   Func_02000100();
@@ -244,7 +244,7 @@ void Func_02000184(void) {
   Actor_FaceDirectionAndWait(9, 0xd000);
   Event_ShowMessageAndWait(9, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xe000, 0);
-  Func_080d47b4(13, 257, 40);
+  Actor_ShowEmoteById(13, 257, 40);
   Func_02000100();
   Event_ShowMessageThenWait(9, 0, 40);
   Func_02000100();
@@ -352,7 +352,7 @@ void Func_02000184(void) {
   *(s32 *)(EVENT_WORK + 0x1b4) = 1;
   PaletteFade_StartInterpolation(1);
   Func_02001d78();
-  Func_0803ce64(MsgCarriedTheMessage, 0, 3);
+  FieldMessage_ShowCentered(MsgCarriedTheMessage, 0, 3);
   Func_02001d80();
   GameFlag_SetBit(0x8ff);
   GameFlag_ClearBit(0x86b);
@@ -620,7 +620,7 @@ void Func_020010d4(void) {
   Actor_SetAttachedEffect(6, 258);
   Actor_FaceDirectionAndWait(6, FACING_WEST);
   Event_ShowMessage(0x4006, 0);
-  Func_080d47b4(5, 265, 20);
+  Actor_ShowEmoteById(5, 265, 20);
   Event_ShowMessageAndWait(5, 0);
   FieldActor_SetPositionAndResetMotion(((s32)Actor_GetById(13)), PIXELS(392), 0,
                                        PIXELS(340));
@@ -662,9 +662,9 @@ void Func_020010d4(void) {
   PaletteFade_StartInterpolation(40);
   wait(40);
   Party_PlaySavedMusic();
-  Func_080d47b4(11, 0x100, 40);
+  Actor_ShowEmoteById(11, 0x100, 40);
   Event_ShowMessage(0x400b, 0);
-  Func_080d47b4(6, 261, 20);
+  Actor_ShowEmoteById(6, 261, 20);
   Event_ShowMessage(0x4006, 0);
   Actor_ArmCallbackAndRefresh(5, turnA);
   Event_ShowMessageAndWait(0x1005, 0);
@@ -677,7 +677,7 @@ void Func_020010d4(void) {
   Actor_SetModeById(7, 4);
   Event_ShowMessageAndWait(7, 0);
   Event_ShowMessageAndWait(0x4006, 0);
-  Func_080d47b4(11, 0x100, 0);
+  Actor_ShowEmoteById(11, 0x100, 0);
   Event_ShowMessage(0x400b, 0);
   Actor_FaceDirectionAndWait(11, FACING_SOUTHEAST + FACING_STEP);
   Event_ShowMessageAndWait(0x400b, 0);
@@ -715,9 +715,9 @@ void Func_020010d4(void) {
   }
   Actor_ShowEmote(7, 263, 20);
   Event_ShowMessageAndWait(7, 0);
-  Func_080d47b4(12, 0x100, 40);
+  Actor_ShowEmoteById(12, 0x100, 40);
   Event_ShowMessageAndWait(12, 0);
-  Func_080d47b4(6, 263, 20);
+  Actor_ShowEmoteById(6, 263, 20);
   Event_ShowMessageAndWait(6, 0);
   FieldEffect_SetAttached(12, 258);
   Event_Wait(20);
@@ -729,7 +729,7 @@ void Func_020010d4(void) {
   Motion_SetModeAndWaitAnimation(11, 3);
   Actor_SetModeById(12, 4);
   Event_ShowMessageAndWait(12, 0);
-  Func_080d47b4(5, 261, 20);
+  Actor_ShowEmoteById(5, 261, 20);
   Actor_SetSpeed(5, 0xcccc, 0x6666);
   Actor_WalkToAndWait(5, 420, 228);
   Actor_ArmCallbackAndRefresh(5, FACING_NORTHWEST);
@@ -797,7 +797,7 @@ void Func_02001710(void) {
   FieldEvent_Wait(40);
   Actor_FaceDirection(12, 0xd000, 20);
   Actor_FaceDirectionAndWait(12, 0x5000);
-  Func_080d47b4(12, 0x106, 40);
+  Actor_ShowEmoteById(12, 0x106, 40);
   Actor_FaceDirection(7, 0xc000, 0);
   Actor_FaceDirection(5, 0xc000, 0);
   Actor_FaceDirection(11, 0xd000, 0);
@@ -824,7 +824,7 @@ void Func_02001710(void) {
   System_Wait(1);
   Actor_SetPosition(12, 0, 0);
   System_Wait(1);
-  Func_080d47b4(5, turn, 20);
+  Actor_ShowEmoteById(5, turn, 20);
   Actor_FaceDirection(5, angleC, 0);
   FieldMessage_ShowAtActor(0x4005, 0);
   if (Event_AskYesNoWithActorAnimation(*owner, 0) == 0) {

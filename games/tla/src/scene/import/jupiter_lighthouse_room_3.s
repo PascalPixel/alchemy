@@ -210,10 +210,10 @@ Camera_FollowActor:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_080d4568
+	.global FieldCamera_GetActor
 	.thumb_func
-Func_080d4568:
-	overlay_veneer Func_080c8258
+FieldCamera_GetActor:
+	overlay_veneer FieldCamera_GetActorFar
 	.global Import_EventSetExitRequest
 	.thumb_func
 Import_EventSetExitRequest:
@@ -262,10 +262,10 @@ Func_02002448:
 	.thumb_func
 Func_02002450:
 	overlay_veneer Func_080c8830
-	.global Func_080dbdd4
+	.global MapGrid_SetCellBehavior
 	.thumb_func
-Func_080dbdd4:
-	overlay_veneer Func_080c8840
+MapGrid_SetCellBehavior:
+	overlay_veneer MapGrid_SetCellBehaviorFar
 	.global Func_02002460
 	.thumb_func
 Func_02002460:

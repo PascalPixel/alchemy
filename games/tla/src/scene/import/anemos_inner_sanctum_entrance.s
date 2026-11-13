@@ -94,10 +94,10 @@ Actor_SetSingleChildFlags:
 	.thumb_func
 Animation_SetStateFlags:
 	overlay_veneer Animation_SetStateFlagsFar
-	.global Func_0803ce64
+	.global FieldMessage_ShowCentered
 	.thumb_func
-Func_0803ce64:
-	overlay_veneer Func_08038210
+FieldMessage_ShowCentered:
+	overlay_veneer FieldMessage_ShowCenteredFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:

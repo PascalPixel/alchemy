@@ -1041,7 +1041,7 @@ void Func_02001a04(void) {
   struct LemurianShipObject *object =
       ((struct LemurianShipObject *)Actor_GetById(9));
 
-  Func_080d47b4(9, 0x100, 0);
+  Actor_ShowEmoteById(9, 0x100, 0);
   Motion_SetVarCbAndRefresh(9, 2);
   object->field48 = 0x8000;
   Actor_SetSpritePriority(9, 1);

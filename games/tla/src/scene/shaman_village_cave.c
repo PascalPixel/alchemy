@@ -177,7 +177,7 @@ void Func_02000184(void) {
 void Func_0200030c(void) {
   Event_SetFlag(0x205);
   Event_SetFlag(0x206);
-  Field_RequestDjinnBattle(17, 35);
+  Event_RequestDjinnBattle(17, 35);
 }
 
 s32 Func_0200032c(struct Actor *object) {
@@ -242,7 +242,7 @@ void Func_020003cc(void) {
 void Func_02000404(void) {
   s32 angle;
 
-  Actor_ShowItemIconById(22, 0x190);
+  FieldActor_ShowItemIconById(22, 0x190);
   angle = 0xc000;
   Actor_SetPositionAndFacing(22, PIXELS(212), PIXELS(199), angle);
   Event_SetFlag(0xa73);
@@ -421,7 +421,7 @@ void Func_0200087c(void) {
   FieldEvent_ShowMessageThenWait(21, 0, 5);
   Actor_ShowEmote(19, 263, 30);
   Event_OpenMessage(19, 0);
-  if (FieldYesNo_Ask(1) == 0) {
+  if (EventYesNo_Ask(1) == 0) {
     Message_CloseFinishedWindows();
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     EVENT_MESSAGE++;
@@ -441,7 +441,7 @@ void Func_0200087c(void) {
   Actor_ShowEmote(18, 261, 1);
   FieldEvent_Wait(20);
   Event_SetDestination((s16)gMainRoutineWork.savedScene,
-                (s16)gMainRoutineWork.savedEntrance);
+                       (s16)gMainRoutineWork.savedEntrance);
 #if TLA_PATCH_1
   Func_02001208(gMainRoutineWork.scene, gMainRoutineWork.entrance);
 #endif

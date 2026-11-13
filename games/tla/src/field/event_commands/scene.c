@@ -416,7 +416,7 @@ void FieldPsynergy_GreyMindReadPalette(void) {
   Task_Add((TaskFunc)FieldEffect_ArmBg0HBlankDma, TASK_PASS_FRAME - 20);
 }
 
-void Func_08038348(s32 first, s32 second);
+void WindowColor_ApplyFar(s32 first, s32 second);
 
 /// Stops line scrolling and restores background palette 15.
 void FieldPsynergy_RestoreMindReadPalette(void) {
@@ -427,6 +427,6 @@ void FieldPsynergy_RestoreMindReadPalette(void) {
   BG_PLTT_COLOR(15, 3) = 0;       // Black.
   BG_PLTT_COLOR(15, 11) = 0x294a; // Gray (10).
   BG_PLTT_COLOR(15, 12) = 0x5294; // Gray (20).
-  Func_08038348(gMainRoutineWork.unk220[5], gMainRoutineWork.unk220[6]);
+  WindowColor_ApplyFar(gMainRoutineWork.unk220[5], gMainRoutineWork.unk220[6]);
   work[4] = 0;
 }

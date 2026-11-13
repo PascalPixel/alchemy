@@ -4,14 +4,6 @@
 
 #include "../battle_internal.h"
 
-// The window work's byte that marks a message window busy; it moved when the
-// international editions grew the work.
-#if LANGUAGE != LANGUAGE_JAPANESE
-#define WINDOW_WORK_MESSAGE_BUSY 0x12f8
-#else
-#define WINDOW_WORK_MESSAGE_BUSY 0x1188
-#endif
-
 // The first message of the viewer's second range: in Japanese, an earlier
 // copy of the first range's opening lines; the localizations moved it
 // elsewhere.
@@ -214,9 +206,9 @@ void DebugBattle_ViewMessages(void) {
         wait(1);
       }
       Window_CloseAllFar(1);
-      // Close the window and free the message system for the next one.
+      // Close the window and clear its page arrow.
       Window_CloseFar(messageWindow, 1);
-      (*(u8 **)&gWindowWork)[WINDOW_WORK_MESSAGE_BUSY] = 0;
+      ((struct WindowWork *)gWindowWork[0])->pageArrowShown = 0;
     }
   }
 }

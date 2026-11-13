@@ -67,6 +67,9 @@ enum {
 /// WINDOW_PALETTE with its background lightened (Palette_LightenHighlight),
 /// which the item icons borrow (Palette_LoadIconsIntoHighlight).
 #define HIGHLIGHT_PALETTE 14
+/// How many levels HIGHLIGHT_PALETTE lightens each channel of
+/// WINDOW_BACKGROUND_COLOR by (Palette_LightenHighlight).
+#define HIGHLIGHT_LIGHTEN_STEPS 9
 /// The window palette's background colour, behind its text; in
 /// HIGHLIGHT_PALETTE, the selected row's.
 #define WINDOW_BACKGROUND_COLOR 4

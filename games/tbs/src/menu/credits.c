@@ -306,21 +306,17 @@ extern u16 gCreditsScrollPosition __asm__("gWaitForFlashWrite");
 // UB: the native casts alias the flash declarations and store a pointer through
 // a declared u16. UBFIX gives these assembler-backed cells their credits views.
 #ifdef UBFIX
-/* VIEW(credits): variable gFlashNumRemainingBytes as struct CreditsOamEntry
- * *gFlashNumRemainingBytes__credits; flash.h has u16 gFlashNumRemainingBytes.
- */
+/// The sprite buffer, in gFlashNumRemainingBytes.
 extern struct CreditsOamEntry *
-    gFlashNumRemainingBytes__credits __asm__("gFlashNumRemainingBytes");
-/* VIEW(credits): variable gFlash as s16 gFlash__credits; flash_data.h has const
- * struct FlashType *gFlash. */
-extern s16 gFlash__credits __asm__("gFlash");
-/* VIEW(credits): variable gProgramFlashSector as s16
- * gProgramFlashSector__credits; flash.h has u32 gProgramFlashSector. */
-extern s16 gProgramFlashSector__credits __asm__("gProgramFlashSector");
+    gCreditsScrollObjects __asm__("gFlashNumRemainingBytes");
+/// The last line drawn, as a pixel position, in the low half of gFlash.
+extern s16 gCreditsLastLinePosition __asm__("gFlash");
+/// 0 until the text ends, then -1, in the low half of gProgramFlashSector.
+extern s16 gCreditsEndOfText __asm__("gProgramFlashSector");
 
-#define SCROLL_OBJECTS gFlashNumRemainingBytes__credits
-#define CREDITS_LAST_LINE_POSITION gFlash__credits
-#define CREDITS_END_OF_TEXT gProgramFlashSector__credits
+#define SCROLL_OBJECTS gCreditsScrollObjects
+#define CREDITS_LAST_LINE_POSITION gCreditsLastLinePosition
+#define CREDITS_END_OF_TEXT gCreditsEndOfText
 #else
 #define SCROLL_OBJECTS (*(struct CreditsOamEntry **)&gFlashNumRemainingBytes)
 #define CREDITS_LAST_LINE_POSITION (*(s16 *)&gFlash)

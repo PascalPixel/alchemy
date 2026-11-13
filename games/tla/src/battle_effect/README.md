@@ -7,7 +7,6 @@ battle the moment the blow should land.
 
 Each effect is one function, its handler, and they are all in this folder.
 
-<<<<<<< HEAD
 ## How an ability picks its effect
 
 A table gives every ability two numbers: which effect to play, and a
@@ -108,10 +107,3 @@ of them, each adding something of its own.
   assembly here.
 - The blitters are assembly fragments, put together as an effect needs
   them.
-=======
-- The code is one object, `battle_effect.c`, as in The Broken Seal: its own
-  parts under `battle_effect/`, then the effects from Cybele to Bolt, the
-  ability effects under `ability_effects/`, the Liquifier and the summon
-  effects under `summon_effects/`, in ROM order, each part named for the first
-  ability it draws.
->>>>>>> origin/main

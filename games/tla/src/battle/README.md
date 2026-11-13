@@ -6,7 +6,6 @@ fight in order and says which routine does each part.
 
 ## Starting a battle
 
-<<<<<<< HEAD
 A battle is handed one number, a [formation](../../glossary.md#formation),
 and `Battle_RunEncounter` plays the whole fight from it.
 
@@ -164,20 +163,3 @@ is switched from one to the other partway down the screen as it is drawn.
 - The bank's C is two objects, written as parts cut where The Broken
   Seal's are. Its tables are the TSV files above and
   `debug_parameter_sets.tsv`, for the debug battles.
-=======
-- The bank's C is one object, `battle.c`, as in The Broken Seal: eleven
-  parts under `battle/`, cut where The Broken Seal's are, from the debug
-  routines to the start of an action's staging, then the rest of the bank in
-  ROM order, its parts under `presentation/`. One of those calls
-  `BattleObject_Reset` with one argument where the object's definition has two,
-  through a view (`battle.c` says more).
-- The tables (`actflags.tsv`, `actstat.tsv`, the
-  [formations](../../../tbs/glossary.md#formation) in `formatn.tsv` and the
-  debug parameter sets in `debug_parameter_sets.tsv`) are still TSV, packed by
-  the build into the `.table` files that `battle_action.s`, `battle_vars.s`
-  and `debug_parameter_sets.s` include; The Broken Seal writes its tables as C
-  arrays (`gFormations` in [formations.c](../../../tbs/src/battle/formations.c)).
-- This game's Thumb files are compiled with options of their own
-  ([The Lost Age: system](../system/README.md)), so the same C can compile to
-  different instructions here.
->>>>>>> origin/main

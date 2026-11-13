@@ -7,7 +7,6 @@ know where each lives before you open the code.
 
 ## The field sequence serves requests
 
-<<<<<<< HEAD
 Setting a place up always goes in the same order, because each step needs
 the one before: load the map, choose its random battles, clear room for 64
 actors, take the scene's tables, place the party and the people, put out
@@ -221,46 +220,3 @@ those few routines into the console's fast memory and runs them there.
   kinds in `psynergy/`.
 - The three games of chance and the scene table, `gScenes`, sit in this
   folder itself.
-=======
-- `field_sequence.c` holds the start of the field-sequence bank as parts
-  under `field_sequence/`, cut where The Broken Seal's are: encounters,
-  actors, walking, the run, the palette editor, triggers, targets, items,
-  Psynergy and the treasure spots. The same object goes on with the screen
-  transitions and the start of the event-command bank, its parts under
-  `event_commands/`: `event.c`, `requests.c` and `actor_commands.c`, as The
-  Broken Seal's event_commands.c begins.
-  The main routine, which The Broken Seal also keeps in its System folder, is
-  in [The Lost Age: system](../system/README.md).
-- The rest of the bank's C follows in ROM order: `object/step_angle.c`,
-  `object/visual_attributes.c` (with the scene, mind-reading, cloak and carry
-  commands after its own parts), `field_effect/move.c`,
-  `field_effect/spawn_resident.c`, `field_effect/advance_motion.c` and
-  `event_commands/radial.c` (the radial effects to the World Map pictures).
-  `step_angle.c`, `move.c` and `advance_motion.c` are objects of their own
-  because field overlays link them too, which is also why the objects around
-  them are apart.
-- `field.c` holds the start of the field bank's C as parts under `field/`,
-  cut where The Broken Seal's field.c parts are, then the resource slots
-  (parts under `resource_slot/`), the tile animation and the terrain: the
-  bank's C up to its tables, in one object as the ROM has it.
-- The rest of the folder is grouped by family of the field's code rather than by The
-  Broken Seal's objects. A family
-  folder holds its files whatever their bank (`object/` holds files of three
-  banks). `work9c/` and `worka0/` are named for the
-  [heap slot](../../../tbs/glossary.md#heap-slot) their code works in, by its
-  offset in the slot table (`0x9c` and `0xa0`, slots 39 and 40), and their
-  files and functions by address (`Rope_AllocNode`) until their meaning is
-  read.
-- The ground height functions, in `field.c` with the rest of the map code,
-  are The Broken Seal's, described under
-  [How high a step can go](../../../tbs/src/field/README.md#how-high-a-step-can-go),
-  but this game drops the two bends along an axis: the sample tables come
-  twice, the first pair with x and y swapped, and the last two kinds are new
-  steps split three ways.
-- Each row of the scene table is 8 bytes in both games, but here its last
-  halfword is a sixth column, `flag`, which The Broken Seal's rows leave
-  zero. This game's scene [overlays](../../../tbs/glossary.md#overlay) are numbered from `0x649`
-  (`scene Title, 0x649, ...`).
-- The actor script commands keep `Script_` where The Broken Seal says
-  `ActorScript_`.
->>>>>>> origin/main

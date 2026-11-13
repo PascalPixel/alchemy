@@ -444,8 +444,10 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
             if (spark->y > px(108)) {
               spark->velocityY = -spark->velocityY / 2;
             } else if (spark->x >= 0 && spark->x < px(127) && spark->y >= 0) {
-              s32 x = Q_16_16_TO_INT(spark->x);
-              s32 y = Q_16_16_TO_INT(spark->y);
+              // On the canvas: the tests above keep x in 0 to 126 and y in 0 to
+              // 108.
+              s16 x = Q_16_16_TO_INT(spark->x);
+              s16 y = Q_16_16_TO_INT(spark->y);
               s32 size = spark->variant / 5 + 1;
 
               EFFECT_DRAW_MOTE(draw[j & 1], canvas, graphics, x, y, size);

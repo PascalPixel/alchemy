@@ -136,8 +136,6 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
   graphics = Ram_HeapSlots->unk64[0];
   camera = Ram_HeapSlots->cameraWork;
   // heap holds the heap slots from here for the second blitter's read, so the
-  // 0x03000000 base is built again there; as Ram_HeapSlots at that read, 28
-  // of 518 instructions differ in tla-en.
   heap = Ram_HeapSlots;
 
   // Set up: the rune picture with its palette, the dots, the flares, the
@@ -296,8 +294,6 @@ void BattleEffect_RunTriangleStrike(struct BattleEffectArgument *effect) {
   graphics = Ram_HeapSlots->unk64[0];
   camera = Ram_HeapSlots->cameraWork;
   // heap holds the heap slots from here for the second blitter's read, so the
-  // 0x03000000 base is built again there; as Ram_HeapSlots at that read, 32
-  // of 428 instructions differ in tla-en.
   heap = Ram_HeapSlots;
 
   // Set up: the rune picture with its palette, the dots, the flares, and a

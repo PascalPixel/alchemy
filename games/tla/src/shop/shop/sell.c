@@ -164,10 +164,6 @@ s32 Shop_SelectSell(s32 unitId) {
         Sound_PlayFar(SE_RECOVERY);
         window = Window_CreateFar(0, 9, DETAILS_WINDOW_WIDTH, 10, 2);
         ItemMenu_DrawItemDetailsFar(window, item);
-        // Through a byte pointer the store may alias any memory, so the
-        // input address saved across the calls is restored after it, as
-        // the native does; as shop->detailsHidden = 0, the restore moves
-        // above it (6 of 374 instructions differ in tla-en).
         *(u8 *)&shop->detailsHidden = 0;
         while (gInput.held & KEY_SELECT)
           wait(1);

@@ -868,8 +868,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
 
   // BG1 shows the ground: the map cell buffer filled with colour 1.
   Iwram_FillWords(Ram_MapCellBuffer, 0x8000, 0x01010101);
-  // The copy in a once-only block, so its entry loads before the size; as
-  // the plain call, 2 of 1591 instructions differ in tla-en.
+  /* FAKEMATCH(dead): the copy in a once-only block. */
   do {
     Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapCellBuffer, 0x7800);
   } while (0);

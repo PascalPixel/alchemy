@@ -369,8 +369,6 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   struct EffectVector position;
 
   owner = Actor_GetById(gMainRoutineWork.currentOwner);
-  // Each age test reads age signed (ldrsh); as particle->age == 60 and so on,
-  // 54 of 122 instructions differ in tla-en.
   if (particle->state == 0) {
     particle->orbitRadius += 1;
     particle->orbitAngle += 1;

@@ -358,8 +358,6 @@ void FieldPsynergy_SteerPushedTarget(void) {
   target->acceleration = 0x3333;
   target->actionFlags = moved;
   // Through target rather than layer, which keeps moved's load after the
-  // acceleration's value is built; through layer, 2 of 444 instructions differ
-  // in tla-en.
   target->terrainId = 2;
   while (1) {
     wait(1);
@@ -763,11 +761,8 @@ void FieldPsynergy_Reveal(void) {
   if (pending != 0)
     Field_RunPsynergyEvent(pending, scene->firstObjectId,
                            scene->secondObjectId);
-  // Leave the centre (in pixels) and the time in the event work, and put
-  // up the markers nearby.
-  // The cue and the active flag in a once-only block keep active's store
-  // before the centre's reload; as plain statements, 4 of 137 instructions
-  // differ in tla-en.
+  /* FAKEMATCH(dead): leave the centre (in pixels) and the time in the event
+   * work. */
   do {
     Sound_PlayFar(SE_PSYNERGY_SPARKLE);
     event->active = 1;

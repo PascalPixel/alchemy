@@ -699,8 +699,7 @@ void FieldPsynergy_LashOnTarget(s32 value) {
     work->failed = 1;
   } else {
     state->valueD32 = value;
-    // An empty once-only loop keeps the first result's load after the value's
-    // store; without it, 4 of 34 instructions differ in tla-en.
+    /* FAKEMATCH(dead): an empty once-only loop. */
     do {
     } while (0);
     state->valueD33 = first;
@@ -1123,8 +1122,6 @@ void FieldPsynergy_Avoid(void) {
   flags = group->flags;
   slot = VramCache_FindFreeEntry();
   scene->arcTileSlot = slot;
-  // tiles holds the picture's address, loaded between the slot's two shifts;
-  // as the address in the call, 2 of 156 instructions differ in tla-en.
   tiles = gFieldEffect_ArcSparkTiles;
   VramCache_Load((s16)slot, 0x100, tiles);
   gMainRoutineWork.avoidDistance = 0x09600000;
@@ -1173,8 +1170,7 @@ void FieldPsynergy_Avoid(void) {
   }
   group->dirty = 1;
   entry->param = 0;
-  // An empty once-only loop keeps the wait's argument after the param store;
-  // without it, 2 of 156 instructions differ in tla-en.
+  /* FAKEMATCH(dead): an empty once-only loop. */
   do {
   } while (0);
   wait(1);

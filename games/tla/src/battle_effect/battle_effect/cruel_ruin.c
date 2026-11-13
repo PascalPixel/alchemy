@@ -118,9 +118,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
       s16 entry;
 
       entry = ((k * 16 + j * 2 + 1) << 8) | ((k * 8 + j) * 2);
-      // The map written through a volatile pointer, which keeps the ROM's
-      // order of stores; as a plain pointer, 295 of 1102 instructions differ
-      // in tla-en.
+      /* FAKEMATCH(volatile): the map written through a volatile pointer. */
       *(volatile s16 *)(0x06003800 + i) = entry;
     }
   }
@@ -447,8 +445,6 @@ void BattleEffect_RunElementBurst(struct BattleEffectArgument *effect) {
     break;
   }
   {
-    // The entry held in a local loads before the palette's address; as a
-    // plain Iwram_CopyWords call, 2 of 380 instructions differ in tla-en.
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
     copy((void *)BG_PLTT, palette, 128);
@@ -494,8 +490,6 @@ void BattleEffect_RunElementBurst(struct BattleEffectArgument *effect) {
     // The corner sparks, each with its own flips.
     if (frame >= 0 && frame <= 14) {
       s32 picture = frame / 3 % 5;
-      // mode holds BLIT_MAX in r6 across the loop; as BLIT_MAX in the call,
-      // 38 of 380 instructions differ in tla-en.
       s32 mode;
 
       for (i = 0, mode = BLIT_MAX; i != 4; i++) {
@@ -686,9 +680,7 @@ void BattleEffect_StartElementStreaks(s32 kind) {
       s32 entry;
 
       entry = (s16)(((k * 16 + j * 2 + 1) << 8) | ((k * 8 + j) * 2));
-      // The map written through a volatile pointer, which keeps the ROM's
-      // order of stores; as a plain pointer, 97 of 280 instructions differ in
-      // tla-en.
+      /* FAKEMATCH(volatile): the map written through a volatile pointer. */
       *(volatile u16 *)(0x06003800 + i) = *(u16 *)&entry;
     }
   }

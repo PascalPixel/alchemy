@@ -80,9 +80,7 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
 
       // Each target's skulls turn about a point 20 pixels above it.
       Transform_Reset();
-      // The look-at call in a once-only block, so the eye loads before the
-      // point it looks at; as the plain call, 2 of 355 instructions differ in
-      // tla-en.
+      /* FAKEMATCH(dead): the look-at call in a once-only block. */
       do {
         Transform_SetLookAt(camera, camera + 3);
       } while (0);
@@ -305,8 +303,6 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
     palette = (s32)&ResourceId_MarsDjinnSheet;
   else
     palette = (s32)&ResourceId_MercuryDjinnSheet;
-  // The entry held in a local loads before the arguments; as a plain
-  // Iwram_CopyWords call, 2 of 511 instructions differ in tla-en.
   {
     const void *source_ = Resource_GetTableEntry(palette);
     __typeof__(Iwram_CopyWordsEntry) routine = Iwram_CopyWordsEntry;

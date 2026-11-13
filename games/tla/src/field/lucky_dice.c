@@ -239,9 +239,8 @@ void LuckyDice_Run(void) {
   s32 groundPoint[3];
   s32 screen[3];
   s32 unused[8];
-  // volatile: four halfwords stored to sp+166..160 and each reloaded with ldrh,
-  // the form the bytes prove; as plain u16 locals, 888 of 2055 instructions
-  // differ in tla-en.
+  /* FAKEMATCH(volatile): four halfwords stored to sp+166..160 and each reloaded
+   * with ldrh. */
   volatile u16 affineA;
   volatile u16 affineB;
   volatile u16 affineC;
@@ -253,9 +252,6 @@ void LuckyDice_Run(void) {
   s32 matchedNumbers[2];
   u16 *spritePalette;
   struct DiceWork *diceWork;
-  // The OAM shadow it builds is struct DiceOam, whose words are volatile as
-  // The Broken Seal's struct OamWords; as plain u32 members, 1595 of 2055
-  // instructions differ in tla-en.
   struct LuckyDiceSprites *sprites;
   struct DiceCamera *camera;
   s32 frame;
@@ -534,9 +530,6 @@ void LuckyDice_Run(void) {
     } else if (state == 0 && frame > 17) {
       (void)gInput.repeat;
       (void)gInput.repeat;
-      // The held keys read through a volatile pointer, as The Broken Seal's
-      // gKeysHeld is declared; as gInput.held, 10 of 2055 instructions differ
-      // in tla-en.
       if (*(volatile u32 *)&gInput.held & KEY_UP) {
         diceWork->particles[0].y += 0x40000;
         diceWork->particles[1].y += 0x40000;

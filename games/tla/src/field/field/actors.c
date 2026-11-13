@@ -705,10 +705,7 @@ void ActorSystem_PlaceSprites(void) {
   viewZ = view[1] & 0xffff0000;
   system = Ram_HeapSlots->objectSystem;
   originY = map->origin[1];
-  // The decoder's copy in a once-only block, as in
-  // ObjectSystem_UpdateCameraFixed, keeps the first call's arguments after the
-  // followed point's height; as a plain call, 6 of 606 instructions differ in
-  // tla-en.
+  /* FAKEMATCH(dead): the decoder's copy in a once-only block. */
   do {
     Dma_Set(
         Render_DecodePictureCode,
@@ -939,9 +936,7 @@ void ObjectSystem_UpdateCameraFixed(void) {
   // Unused: gives the stack frame its 12 bytes.
   struct CameraPoint unused;
 
-  // The decoder's copy in a once-only block makes the stack frame before the
-  // first call's arguments; as a plain call, 6 of 93 instructions differ in
-  // tla-en.
+  /* FAKEMATCH(dead): the decoder's copy in a once-only block. */
   do {
     Dma_Set(
         Render_DecodePictureCode,

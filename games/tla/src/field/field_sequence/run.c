@@ -149,7 +149,7 @@ s32 FieldSequence_Run(void) {
     gMainRoutineWork.cloaked = 0;
   }
   FieldPsynergy_ResumeCloakCheck();
-  /* FAKEMATCH(signature): Field_GetSceneAttributes declared returning s32,
+  /* FAKEMATCH(signature): field_GetSceneAttributes declared returning s32,
    * though it returns s16. */
   value = Field_GetSceneAttributes(gMainRoutineWork.scene);
   work->sceneAttributeHigh = (value >> 4) & 15;
@@ -199,8 +199,6 @@ s32 FieldSequence_Run(void) {
         s32 zero = 0;
 
         Teleport_PlaySparksAndFade();
-        // (s16): the id compared as the field's own width; without it, 79 of
-        // 1300 instructions differ in tla-en.
         if (ARRIVAL.scene != (s16)(s32)&SceneId_WorldMap)
           goto clearOwner;
         /* FAKEMATCH(barrier): an empty asm clobbering r0. */
@@ -492,8 +490,6 @@ s32 FieldSequence_Run(void) {
       wait(1);
       leader = WorldMap_Unfreeze();
       if (gDebugMode == 0 || !GameFlag_Get(355)) {
-        // unk66 read signed (ldrsh), as its other readers read it; as
-        // leader->unk66 == 0, 39 of 1300 instructions differ in tla-en.
         if (*pending == 0 ||
             (leader->timer == 0 && *(s16 *)&leader->unk66 == 0))
           Field_UpdateWalking(leader->terrainId, leader->x, leader->y,

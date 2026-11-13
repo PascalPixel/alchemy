@@ -637,9 +637,6 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
             obj = work->sprites[k];
             v = work->particles[row + (wavePhase + 64 + i) % 8].timer;
           }
-          // The tile through the attributes alone: as obj->tile, the store
-          // would also stand for the sprite's 32-bit scale and pos.x's read
-          // would wait for it (2 of 3921 instructions differ in tla-en).
           ((struct SpriteAttributes *)obj)->tile = v & 0x3ff;
           if (pos.x > 0xffffff)
             pos.x -= 0x1200000;
@@ -1679,8 +1676,6 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
         for (; j != 8; j++, spark++) {
           s32 speed;
           s32 angle;
-          // The mask set first and the random number masked in (as
-          // Random16() & 31, 23 of 575 instructions differ in tla-en).
           speed = 31;
           speed &= Random16();
           angle = Random16();
@@ -1746,9 +1741,6 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
       /* FAKEMATCH(temporary): the disc's x copied into the loop counter i. */
       i = discX;
       size = 128;
-      // cells holds the cell buffer, set again before each call; as
-      // gMapCellBuffer passed directly, 56 of 575 instructions differ in
-      // tla-en.
       if (grow <= 64) {
         size = grow * 2;
         cells = gMapCellBuffer;

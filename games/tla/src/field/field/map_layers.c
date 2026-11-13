@@ -613,7 +613,6 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
   u32 firstSourceCopy = sourceX;
 
   // endMarker set after the copy, which puts the ip copy among its
-  // instructions; as an initializer, 2 of 53 instructions differ in tla-en.
   endMarker = 0xffff;
   /* FAKEMATCH(dead): the updates that cancel out emit nothing but end CSE
    * before the comparison. */
@@ -734,8 +733,6 @@ void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
         u32 scaled;
         u32 mask;
 
-        // cellPictureId holds its mask before the masked cell; as cell & 0xfff,
-        // 110 of 148 instructions differ in tla-en.
         cellPictureId = 0xfff;
         mask = 0x7ff;
         /* FAKEMATCH(barrier): an empty asm on mask once it holds 0x7ff. */

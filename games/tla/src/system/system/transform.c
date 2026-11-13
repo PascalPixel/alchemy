@@ -415,9 +415,6 @@ void Projection_Set(u32 value0, u32 value1, u32 value2) {
   work[2] = value2;
 }
 
-// The Broken Seal's typed Iwram_TransformVector inline from iwram_call.h, the
-// layer every call goes through there; as a direct call to the fixed entry, 4
-// of 82 instructions of Render_ProjectPoint differ in tla-en.
 static inline void Render_TransformVector(const void *vector, s32 *result) {
   Iwram_TransformVectorEntry(vector, result);
 }

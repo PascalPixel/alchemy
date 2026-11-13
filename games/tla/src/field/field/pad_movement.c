@@ -369,9 +369,7 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
   angleOffsets[headingCount++] = direction - TRIG_TURN / 8;
   angleOffsets[headingCount++] = direction + TRIG_TURN * 3 / 16;
   angleOffsets[headingCount++] = direction - TRIG_TURN * 3 / 16;
-  // An empty once-only loop keeps the last store before the counter and
-  // places the first loop's exit block after this loop; without it, 243 of
-  // 827 instructions differ in tla-en.
+  /* FAKEMATCH(dead): an empty once-only loop. */
   do {
   } while (0);
   for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {

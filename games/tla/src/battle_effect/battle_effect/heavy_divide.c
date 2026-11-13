@@ -138,9 +138,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *effect, s32 mode) {
       struct EffectPosition *at = &hit;
       struct EffectStep *chip;
 
-      // The store in a once-only block, so the buffer's address loads before
-      // at is passed; as the plain store, 2 of 671 instructions differ in
-      // tla-en.
+      /* FAKEMATCH(dead): the store in a once-only block. */
       do {
         chip = (struct EffectStep *)gMapCellBuffer;
       } while (0);
@@ -748,9 +746,6 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     splash = 25000;
     /* FAKEMATCH(barrier): an empty asm through splash hides its constant. */
     asm("" : "+r"(splash));
-    // The loop is written with goto: as for (i = 0; i != 6; i++, drop++),
-    // loop.c hoists the halving of splash out of it, and 150 of 568
-    // instructions differ in tla-en.
     i = 0;
     drop = work->particles;
   nextSplash:

@@ -330,8 +330,6 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
       for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
         s32 col;
 
-        // The add of 0x452 stays apart from the store it addresses; as a plain
-        // store, 11 of 1119 instructions differ in tla-en.
         for (col = 0; col <= 2; col++)
           *(volatile u16 *)(work->tilemap + (entryIndex + 17) * 32 + panel * 3 +
                             5 + (col & 3)) = 0xf07f;
@@ -384,8 +382,7 @@ void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 alt) {
           p++;
         } while (col != 0);
       }
-      // The dirty-row mark in a once-only block keeps it before the row count's
-      // step; as the plain store, 2 of 72 instructions differ in tla-en.
+      /* FAKEMATCH(dead): the dirty-row mark in a once-only block. */
       do {
         tiles->dirty |= 2 << ((u32)y >> 2);
       } while (0);

@@ -66,8 +66,6 @@ void FieldPsynergy_StartCloak(void) {
     wait(2);
   }
 
-  // The task priority is set before the stores; as TASK_PASS_VBLANK in the
-  // call, 18 of 91 instructions differ in tla-en.
   order = TASK_PASS_VBLANK;
   sprite->blend = 2;
   entry->param = 0;
@@ -459,8 +457,6 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     Vector_AddPolarOffset(0x100000, angle, &position);
     i = ActorScript_CheckOverlapFar(target, &position);
     // Both tests jump into the blocked path, which keeps it ahead of the drop
-    // path as the ROM lays them out; written as one || test, 389 of 551
-    // instructions differ in tla-en.
     if (i != 0)
       goto blocked;
     if (Actor_ProbeRaised(target, p) > 0) {
@@ -513,9 +509,6 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   p->y = target->y + 0x100000;
   p->z = target->z;
   {
-    // The shards are stored through a walking pointer, so the counter runs
-    // down from 19 as the ROM's does; as shards[i], 22 of 551 instructions
-    // differ in tla-en.
     struct FxObject **walk = shards;
 
     for (i = 0; i < 20; i++) {

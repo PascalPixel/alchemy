@@ -130,8 +130,6 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
       Iwram_ExpandBitRuns(glyph, dst + 50, shadowColour);
       Iwram_ExpandBitRuns(glyph, dst + 32, colour);
       Iwram_ExpandBitRuns(glyph, dst + 33, colour);
-      // The signed halfword width grows through its shifted form; as
-      // (s16)(secondWidth + 1), 26 of 203 instructions differ in tla-en.
       secondWidth = (s32)(((u32)secondWidth << 16) + 0x10000) >> 16;
     } else {
       u8 *dst = pixels + width;

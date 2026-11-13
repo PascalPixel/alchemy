@@ -358,9 +358,8 @@ void System_VBlankHandler(void) {
 
   keys = REG_KEYINPUT ^ 0x3ff;
   {
-    // The input state reached through a volatile pointer, so each access is a
-    // load or store of its own; as gInput used plainly, 31 of 152
-    // instructions differ in tla-en.
+    /* FAKEMATCH(volatile): the input state reached through a volatile pointer.
+     */
     volatile struct InputState *input = (void *)&gInput;
     u32 pressed = keys & ~input->held;
 
@@ -378,15 +377,13 @@ void System_VBlankHandler(void) {
     }
   }
   {
-    // The VBlank count read and written through a volatile pointer; as a
-    // plain pointer, 33 of 152 instructions differ in tla-en.
+    /* FAKEMATCH(volatile): the VBlank count read and written through a volatile
+     * pointer. */
     volatile u32 *count;
     volatile struct SoundVBlankState *sound;
 
     count = &gVBlankCount;
-    // The store through a volatile cast, so it comes before the sound state's
-    // address is loaded; as a plain store, 2 of 152 instructions differ in
-    // tla-en.
+    /* FAKEMATCH(volatile): the store through a volatile cast. */
     ((volatile struct InputState *)&gInput)->previousVblankHeld = keys;
     sound = &gSoundVBlankState;
     vblankCount = *count;
@@ -402,9 +399,7 @@ void System_VBlankHandler(void) {
     }
     *count = vblankCount + 1;
   }
-  // The frame count's step in a once-only block, so its address is loaded
-  // after the VBlank count's store; as a plain step, 2 of 152 instructions
-  // differ in tla-en.
+  /* FAKEMATCH(dead): the frame count's step in a once-only block. */
   do {
     gFrameVBlanks++;
   } while (0);

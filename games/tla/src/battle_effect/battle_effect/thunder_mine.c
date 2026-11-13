@@ -697,9 +697,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
               s32 gx = column + (Random16() & 7) - (gData_08197492[k] >> 1);
               s32 gy = (Random16() & 63) - (gData_08197498[k] >> 1);
 
-              // An empty once-only loop ends CSE's block, so the table reads
-              // stay apart; without it, 188 of 1152 instructions differ in
-              // tla-en.
+              /* FAKEMATCH(dead): an empty once-only loop. */
               do {
               } while (0);
               BattleEffect_BuildBlitter(188, 7, 7,

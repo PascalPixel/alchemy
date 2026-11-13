@@ -456,8 +456,8 @@ void BattleCommandRow_LoadIcon(u8 *base, s32 index, u32 value) {
                                  index * 16);
   store_offset = offset + 0x11C;
   *(u32 *)(base + store_offset) = value;
-  // The sprite's shape and its cleared attributes 2 and 3 in a once-only
-  // block; as plain stores, 4 of 47 instructions differ in tla-en.
+  /* FAKEMATCH(dead): the sprite's shape and its cleared attributes 2 and 3 in a
+   * once-only block. */
   do {
     *(u32 *)(entry + 4) = 0x80002000;
     *(u32 *)(entry + 8) = 0;

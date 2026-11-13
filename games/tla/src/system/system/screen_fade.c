@@ -35,11 +35,9 @@ void ScreenFade_Update(void) {
       s32 level;
       s32 step;
 
-      // level = target + (start - target) * remaining / duration: BLDY moves
-      // in a straight line and reaches the target as remaining reaches 0
-      // The decrement in a once-only block, so the target level's address is
-      // loaded after its store; as the plain decrement, 6 of 48 instructions
-      // differ in tla-en.
+      /* FAKEMATCH(dead): level = target + (start - target) * remaining /
+       * duration: BLDY moves in a straight line and reaches the target as
+       * remaining reaches 0 The decrement in a once-only block. */
       do {
         (*remaining)--;
       } while (0);
@@ -47,13 +45,9 @@ void ScreenFade_Update(void) {
       delta = gBlendStartLevel - gBlendTargetLevel;
       step = *remaining;
       // The division written as a call to __divsi3, which clobbers memory, so
-      // the zero test reloads *remaining; as delta * step / gBlendDuration, 21
-      // of 48 instructions differ in tla-en.
       level += __divsi3(delta * step, gBlendDuration);
       REG_BLDY = level;
-      // The end test in a once-only block, so BLDY's address is finished after
-      // the quotient is added; as the plain test, 2 of 48 instructions differ
-      // in tla-en.
+      /* FAKEMATCH(dead): the end test in a once-only block. */
       do {
         if (*remaining == 0)
           gBlendDuration = 0;

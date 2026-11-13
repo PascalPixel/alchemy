@@ -415,8 +415,6 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         break;
       }
       if (palette != NULL) {
-        // The entry held in a local loads before the arguments; as a plain
-        // Iwram_CopyWords call, 2 of 2239 instructions differ in tla-en.
         __typeof__(Iwram_CopyWordsEntry) routine = Iwram_CopyWordsEntry;
         routine((void *)BG_PLTT, palette, 128);
       }

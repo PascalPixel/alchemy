@@ -69,9 +69,6 @@ void Scoop_Update(void) {
       picture = work->picture;
       vram = (u8 *)OBJ_VRAM0 + work->pictureTile * TILE_SIZE_4BPP;
       Picture_ShiftColumnsByWave(work->tiles, picture, work->timer + 14);
-      // The heap copy of Render_CopyStrided called as returning the source
-      // pointer it leaves in r0, which moves picture to r0 after the width's
-      // 32; called as void, 2 of 596 instructions differ in tla-en.
       ((const u8 *(*)(const u8 *, s32, s32, void *))Ram_HeapSlots->unk4c[2])(
           picture, 32, 32, vram);
       sprite = &work->pictureSprite;
@@ -1373,9 +1370,7 @@ void BgMap_DrawClipped16x16(s32 x, s32 y) {
   s32 sy;
   s32 (*fill)(void *, s32, u32);
 
-  // The opening in a once-only block keeps the destination's load after the
-  // fill value's 0; as plain statements, 4 of 66 instructions differ in
-  // tla-en.
+  /* FAKEMATCH(dead): the opening in a once-only block. */
   do {
     x /= 8;
     y /= 8;
@@ -1478,8 +1473,7 @@ void FieldPsynergy_UpdateUnnamed28(void) {
       green = (green >> 16) + 23;
       blue = ((blue >> 16) + 12) << 10;
       green <<= 5;
-      // An empty once-only loop keeps red's 28 after green's or; without it, 2
-      // of 272 instructions differ in tla-en.
+      /* FAKEMATCH(dead): an empty once-only loop. */
       do {
       } while (0);
       color = blue | green | red;

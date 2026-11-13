@@ -77,8 +77,7 @@ void BattleCamera_AdjustByShoulderKeys(void) {
   if ((gInput.held & KEY_L) != 0) {
     cam->yaw += 512;
   }
-  // The held keys reread through a volatile pointer, a load apart from the L
-  // test's; as gInput.held, 18 of 41 instructions differ in tla-en.
+  /* FAKEMATCH(volatile): the held keys reread through a volatile pointer. */
   if ((*(volatile u32 *)&gInput.held & KEY_R) != 0) {
     cam->yaw -= 512;
   }
@@ -414,9 +413,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   work.kind = 0;
   BattleEffect_RunFromTableFar(&work);
   Actor_SelectAnimationFar((struct Actor *)object, 1);
-  // An empty once-only loop ends CSE's knowledge of work's address, so the
-  // return loop's exit test addresses work afresh; without it, 103 of 180
-  // instructions differ in tla-en.
+  /* FAKEMATCH(dead): an empty once-only loop. */
   do {
   } while (0);
   for (i = 0; i != work.count; i++)

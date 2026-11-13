@@ -18,9 +18,8 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   u32 ime;
   u32 *slot;
 
-  // The save in a once-only block loads REG_IME's address after the stack
-  // frame is made, and a loop on a zero local stores it through slot before
-  // IME is cleared; without them, 8 of 54 instructions differ in tla-en.
+  /* FAKEMATCH(dead): the save in a once-only block loads REG_IME's address
+   * after the stack frame is made. */
   do {
     u16 *imeReg;
     s32 once;
@@ -117,9 +116,7 @@ void BattleBackground_Init(void) {
   void *block = HeapSlot_AllocEwram(40, 0x2a0);
   struct BattlePresentationTransition *work = Ram_HeapSlots->transitionWork;
 
-  // An empty once-only loop after the work's load keeps the fill's entry
-  // ahead of the size's copy; without it, 4 of 18 instructions differ in
-  // tla-en.
+  /* FAKEMATCH(dead): an empty once-only loop after the work's load. */
   do {
   } while (0);
   Iwram_FillWordsEntry(block, 0x2a0, 0);
@@ -191,8 +188,6 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
 
   horizon = 0x800;
   wrap = 0;
-  // ratio is reused for Q16_ONE, the scale test's and the call's; as the
-  // constant in both, 2 of 199 instructions differ in tla-en.
   ratio = Q16_ONE;
   if (scale >= ratio) {
     wrap = 0x2000;
@@ -486,8 +481,7 @@ s32 Battle_AdjustDebugValue(s32 value) {
   }
   if (gInput.held & KEY_SELECT)
     value = DEBUG_VALUE_SELECT;
-  // The held keys reread through a volatile pointer, a load apart from the
-  // Select test's; as gInput.held, 11 of 114 instructions differ in tla-en.
+  /* FAKEMATCH(volatile): the held keys reread through a volatile pointer. */
   if (*(volatile u32 *)&gInput.held & KEY_R)
     value = 399;
   return value;
@@ -748,9 +742,6 @@ void ElementGlow_UpdateStarField(void) {
       } else {
         scale = Iwram_RatioMulQ14(dist, Q16_ONE);
         spark->life--;
-        // The multiply's entry held in a local keeps its address ahead of the
-        // cursor and the axis count; called directly, 2 of 267 instructions
-        // differ in tla-en.
         mul = Iwram_MulQ16;
         pos = spark->pos;
         for (k = 2; k >= 0; k--) {

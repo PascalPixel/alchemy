@@ -128,8 +128,6 @@ s32 Message_Type(struct UiChannelSlot *channel) {
 
   if (work->menuState != 0) {
     // The VBlank count read through a volatile view, a load apart from the
-    // test's register; as a plain read, 25 of 697 instructions differ in
-    // tla-en.
     frameVBlanks = *(volatile u16 *)&gLastFrameVBlanks;
     if (frameVBlanks < 0)
       frameVBlanks = 0;

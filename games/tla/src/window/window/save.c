@@ -397,8 +397,6 @@ s32 Save_BuildFileSummary(void) {
     i = 0;
     n <<= 2;
     summary->frames = frames;
-    // Entered at its test: as a while loop, 32 of 179 instructions differ (it
-    // counts down and loses the entry jump).
     goto test;
     do {
       sum += *word++;

@@ -23,9 +23,7 @@ extern struct FxBgScroll gBgScroll__f14cca8[] __asm__("gBgScroll");
  * instructions in tla-ja. */
 static __inline__ void FillWords___f14cca8(void *destination, s32 size,
                                            u32 value) {
-  // The call in a once-only block, so the entry loads before the size; as
-  // the plain call, 6 of 59 instructions of BattleEffect_SetupBlendedDisplay
-  // differ in tla-en.
+  /* FAKEMATCH(dead): the call in a once-only block. */
   do {
     Iwram_FillWordsEntry(destination, size, value);
   } while (0);

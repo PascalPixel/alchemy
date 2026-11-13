@@ -1048,8 +1048,6 @@ void SelectionMenu_StepLeft(struct StepMenu *state) {
     } else {
       node = state->nodes;
       i = 64;
-      // kind is reused for the 0; as a plain 0, 20 of 206 instructions differ
-      // in tla-en.
       kind = 0;
       state->moreBelow = kind;
       while (node->next != NULL) {

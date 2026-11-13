@@ -243,8 +243,6 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
                                                      COMPOSITE_FLIP));
     }
     draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    // The slot read through an offset struct: as unkb8[1], 8 of 989
-    // instructions differ.
     draw[1] = ((struct {
                 u8 before[188];
                 DrawRectangle draw;
@@ -310,8 +308,6 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
         HEAP_BLITTER_ALTERNATE,
         BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
     draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    // The slot read through an offset struct: as unkb8[1], 8 of 989
-    // instructions differ.
     draw[1] = ((struct {
                 u8 before[188];
                 DrawRectangle draw;
@@ -352,9 +348,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
                   gData_08197498[cel] / 2;
           u32 flip = Random16();
 
-          // An empty once-only loop ends CSE's block, so the two reads of each
-          // size table's address stay apart; without it, 397 of 989
-          // instructions differ in tla-en.
+          /* FAKEMATCH(dead): an empty once-only loop. */
           do {
           } while (0);
           BattleEffect_BuildBlitter(HEAP_BLITTER_ALTERNATE, 7, 7,

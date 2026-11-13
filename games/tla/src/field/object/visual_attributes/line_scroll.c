@@ -29,8 +29,7 @@ void Exit_PrepareAnimation(s32 animation) {
   effect = ResourceMetadata_RegisterFar(context, 267);
   zero = 0;
   context->flags = zero;
-  // An empty once-only loop keeps the cleared flags' store before the kind's
-  // load; without it, 8 of 47 instructions differ in tla-en.
+  /* FAKEMATCH(dead): an empty once-only loop. */
   do {
   } while (0);
   param = 15;

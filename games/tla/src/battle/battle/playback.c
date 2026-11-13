@@ -255,9 +255,8 @@ void BattlePlayback_Run(void) {
       prompt->x = x;
       prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
                   (offset->y >> 8) + 6;
-      // The held keys reread through a volatile pointer for the last test, a
-      // load apart from the B test's; as gInput.held, 16 of 844 instructions
-      // differ in tla-en.
+      /* FAKEMATCH(volatile): the held keys reread through a volatile pointer
+       * for the last test. */
       if ((gInput.held & KEY_B) ||
           (gInput.pendingPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) ||
           ((u32)(gVBlankCount - events->timer) > 10 && (KEYS_HELD & 0x303))) {

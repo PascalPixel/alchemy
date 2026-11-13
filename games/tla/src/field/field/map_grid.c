@@ -470,8 +470,7 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
       rightPosition.x = object->x;
       /* FAKEMATCH(temporary): y read into its own local before the block. */
       y = object->y;
-      // The right probe's y stored in a once-only block; as the plain store,
-      // 50 of 470 instructions differ in tla-en.
+      /* FAKEMATCH(dead): the right probe's y stored in a once-only block. */
       do {
         rightPosition.y = y;
       } while (0);

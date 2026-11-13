@@ -436,9 +436,7 @@ void Actor_SetActionById(u32 objectId, s32 action) {
 void Actor_WaitForAnimationChange(u32 objectId) {
   struct Actor *object = ObjectTable_Get(objectId);
   struct AnimationGroup *group;
-  // volatile: saved lives in a 4-byte stack frame, stored once and loaded again
-  // for each compare, as the bytes have it; as a plain u32, 29 of 37
-  // instructions differ in tla-en.
+  /* FAKEMATCH(volatile): saved lives in a 4-byte stack frame. */
   volatile u32 saved;
   s32 elapsedFrames;
 

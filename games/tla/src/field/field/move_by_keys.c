@@ -288,8 +288,6 @@ s32 Actor_CrossTightrope(struct Actor *object) {
     position.y = object->y;
     position.z = object->z;
     Vector_AddPolarOffset(0x80000, angle, &position);
-    // Read through the slot's address: as Ram_HeapSlots->unk84[7], 44 of 324
-    // instructions differ in tla-en.
     tightrope = *(struct TightropeWork **)&Ram_HeapSlots->unk84[7];
     point = tightrope->nodes;
     best = NULL;

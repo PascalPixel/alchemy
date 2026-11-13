@@ -156,8 +156,8 @@ void Party_RemoveMemberRestored(s32 owner) {
   Party_RemoveMemberFar(owner);
   Party_ClearUnusableShortcuts();
   vitals = Unit_Get(owner);
-  // The two copies in a once-only block keep both ahead of the ratio; as the
-  // plain stores, 2 of 148 instructions differ in tla-en.
+  /* FAKEMATCH(dead): the two copies in a once-only block keep both ahead of the
+   * ratio. */
   do {
     vitals->hp = vitals->maxHp;
     vitals->pp = vitals->maxPp;

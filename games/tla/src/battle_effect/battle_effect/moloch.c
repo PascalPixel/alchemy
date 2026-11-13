@@ -465,17 +465,11 @@ void Iris_DrawDrop(u32 frame, s32 x, s32 y, s32 small) {
   // The trail: particles of size 8 (6 for a small drop), half a size apart.
   size = 8 - small * 2;
   half = size / 2;
-  // A goto loop: loop.c leaves it alone, so y + i * half multiplies on every
-  // pass and the table entry and frame / 2 * 0x302 are recomputed; as a for
-  // loop, 111 of 120 instructions differ in tla-en. The argument x - size / 2
-  // is not one GCSE carries out of the loop (as x - half, 83 differ).
   i = 1;
   trailY = y + i * half;
   if (trailY > 112)
     return;
 next:
-  // The offset grouped before the sheet base: ungrouped, 2 instructions
-  // differ (the base is added before the product).
   draw[0](canvas,
           work->sheet + (gBattleEffect_MoteCells[size - 1] + frame / 2 * 0x302),
           x - size / 2, trailY, size, size * 2);
@@ -2736,8 +2730,6 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   u32 frame[34];
 
   src = BattleEffect_PatchTemplateCode;
-  // dst is reused for the block's size; as HeapSlot_Alloc(slot, 436), 31 of
-  // 597 instructions differ in tla-en.
   dst = (u32 *)436;
   dst = HeapSlot_Alloc(slot, (s32)dst);
 
@@ -2957,8 +2949,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
     PUT(src[1]);
   }
   src += 2;
-  // An empty once-only loop keeps the step before the size's load; without
-  // it, 2 of 597 instructions differ in tla-en.
+  /* FAKEMATCH(dead): an empty once-only loop. */
   do {
   } while (0);
 
@@ -3002,8 +2993,7 @@ void RamCode_RunKernel0(s32 arg0, s32 arg1) {
   void (*routine)(s32, s32);
   u32 size;
 
-  // The size's load in a once-only block keeps it after the parameters are
-  // copied; as a plain assignment, 4 of 31 instructions differ in tla-en.
+  /* FAKEMATCH(dead): the size's load in a once-only block. */
   do {
     size = (u32)Data_081380acCodeSize;
   } while (0);
@@ -3025,8 +3015,7 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count) {
   void (*routine)(const void *, void *, s32);
   u32 size;
 
-  // The size's load in a once-only block keeps it after the parameters are
-  // copied; as a plain assignment, 4 of 36 instructions differ in tla-en.
+  /* FAKEMATCH(dead): the size's load in a once-only block. */
   do {
     size = (u32)Data_0813b9a0CodeSize;
   } while (0);

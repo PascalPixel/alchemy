@@ -291,8 +291,7 @@ u32 MessageArgument_Lookup(u32 kind, u32 clear) {
 s32 Text_CheckPauseSkipped(struct UiChannelSlot *ch) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 cancel = 0;
-  // The held keys read through a volatile pointer, so each test loads them
-  // again; as a plain pointer, 13 of 40 instructions differ in tla-en.
+  /* FAKEMATCH(volatile): the held keys read through a volatile pointer. */
   volatile u32 *held;
 
   if (work->busy != 0 && Sound_GetBgmRestoreDelayFar() == 0)
@@ -609,8 +608,7 @@ void Message_Find(struct TextReader *reader, s32 message) {
   void (*routine)(struct TextReader *, s32);
   u32 size;
 
-  // The size's load in a once-only block keeps it after the parameters are
-  // copied; as a plain assignment, 4 of 31 instructions differ in tla-en.
+  /* FAKEMATCH(dead): the size's load in a once-only block. */
   do {
     size = (u32)Text_LookupSymbolCodeSize;
   } while (0);

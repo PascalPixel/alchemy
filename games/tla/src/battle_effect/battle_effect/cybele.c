@@ -462,7 +462,6 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
       BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                                BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
                                    COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X);
-      // As Ram_HeapSlots->unkb8[1], 267 of 1490 instructions differ.
       draw[1] = (DrawRectangle) * (Ram_HeapSlots->unkb8 + 1);
       REG_BLDCNT = 0x3f46;
       REG_BG2PA = 0x80;

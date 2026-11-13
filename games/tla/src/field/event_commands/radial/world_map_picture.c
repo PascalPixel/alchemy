@@ -650,8 +650,6 @@ void WorldMapPicture_DrawColumn(s32 column, s32 row) {
     cell = WorldMap_AddColumn(column, cell);
     cell <<= 6;
     tile <<= 6;
-    // line is reused for the screen's address; as (u8 *)BG_VRAM + (256 << 6) +
-    // tile in the call, 6 of 51 instructions differ in tla-en.
     line = BG_VRAM + (256 << 6);
     Dma_Set(Ram_MapCellBuffer + cell, (u8 *)line + tile, DMA_COPY_WORDS(16),
             REG_DMA3);
@@ -821,13 +819,12 @@ s32 WorldPicture_Show(s32 mode) {
     wait(1);
     ((struct MapViewWork *)map)->picturePending = 1;
     do {
-      // A once-only block: as a plain statement, 16 of 548 instructions differ.
+      /* FAKEMATCH(dead): the statement in a once-only block. */
       blend = REG_BLDALPHA;
     } while (0);
   } else {
     do {
-      // A once-only block: as a plain statement, 281 of 548 instructions
-      // differ.
+      /* FAKEMATCH(dead): the statement in a once-only block. */
       event->viewCenter->movementState = 1;
     } while (0);
     savedDelay = event->delay;
@@ -973,8 +970,6 @@ s32 WorldPicture_Show(s32 mode) {
         if (mode != 0) {
           routine->unk2be = 0xffff;
           {
-            // The -1 in a local of its own; as choice->flag = -1, 40 of 548
-            // instructions differ in tla-en.
             s32 none = -1;
 
             choice->flag = none;

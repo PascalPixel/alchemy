@@ -54,8 +54,6 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    // The entry held in a local loads ahead of the destination's shift; as a
-    // plain Iwram_CopyWords call, 2 of 457 instructions differ in tla-en.
     copy((void *)BG_PLTT, palette, 128);
   }
 
@@ -249,8 +247,6 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    // The entry held in a local loads ahead of the destination's shift; as a
-    // plain Iwram_CopyWords call, 2 of 783 instructions differ in tla-en.
     copy((void *)BG_PLTT, palette, 128);
   } else if (kind == SPARKS_FROM_ACTOR) {
     const void *palette =
@@ -258,8 +254,6 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    // The entry held in a local loads ahead of the destination's shift; as a
-    // plain Iwram_CopyWords call, 2 of 783 instructions differ in tla-en.
     copy((void *)BG_PLTT, palette, 128);
   }
 

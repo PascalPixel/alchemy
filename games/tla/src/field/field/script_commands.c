@@ -769,8 +769,6 @@ s32 Actor_Wander(struct ActorScriptView *object) {
   base = *args++;
   range = *args++;
   limit = *args / Q16_ONE;
-  // The tries are a loop written with goto: as while (++tries <= 7) with
-  // continue, 116 of 188 instructions differ in tla-en.
   tries = 0;
   limit = limit * limit;
 retry:
@@ -804,8 +802,8 @@ retry:
     Vector_AddPolarOffset(radius, heading - TRIG_TURN / 8, &probe);
     if (MapGrid_CheckCollision((struct Actor *)object, &probe) != 0)
       goto retry;
-    // The offsets in a once-only block keep the division on the loaded x; as
-    // plain statements, 16 of 188 instructions differ in tla-en.
+    /* FAKEMATCH(dead): the offsets in a once-only block keep the division on
+     * the loaded x. */
     do {
       dx = pos.x / Q16_ONE - object->homeX;
       dz = pos.z / Q16_ONE - object->homeZ;

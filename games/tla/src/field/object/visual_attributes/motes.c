@@ -78,9 +78,8 @@ void FieldMotes_Start(void) {
     mote->timer = (i & 15) + 1;
     mote++;
   }
-  // The blend writes in a once-only block keep the task routine's address
-  // ahead of the call's other argument; as a plain block, 4 of 92 instructions
-  // differ in tla-en.
+  /* FAKEMATCH(dead): the blend writes in a once-only block keep the task
+   * routine's address ahead of the call's other argument. */
   do {
     /* FAKEMATCH(temporary): the values through v and the registers through one
      * stepped pointer. */
@@ -223,10 +222,7 @@ void FieldEffect_UpdateSparkles(void) {
 #ifdef UBFIX
         frames = gFrameCount;
 #else
-        // UB: this reads a u32 as unsigned long. The unsigned long alias
-        // combines the size and flip stores; as gFrameCount or a u32 alias,
-        // 29 of 232 instructions differ in tla-en. UBFIX reads the declared
-        // type.
+        // UB: this reads a u32 as unsigned long; UBFIX reads the declared type.
         frames = *(unsigned long *)&gFrameCount;
 #endif
         sparkle->y = sy;

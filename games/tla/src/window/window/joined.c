@@ -47,8 +47,6 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   s32 tile, slot;
   s32 id;
   s32 text;
-  // One zero for every 0 stored or passed below, as the Broken Seal's form
-  // keeps it; as literal 0s, 58 of 124 instructions differ in tla-en.
   u32 zero;
   s32 *p;
 

@@ -93,8 +93,6 @@ s32 EnemySprite_LoadIntoSlots(s32 unit) {
       break;
 
     // The buffers' address held in a local, taken before the palette's call,
-    // leaves r3 to the first result; inside the sum, 6 of 134 instructions
-    // differ in tla-en.
     slotBuffers = (s32)Data_02018000;
     {
       s32 flag = BattleSprite_GetPalette(actor->enemyId);

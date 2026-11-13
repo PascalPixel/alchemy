@@ -214,13 +214,11 @@ void FieldPsynergy_UpdateBurst(void) {
            16)
           << 5;
 
-      // An empty once-only loop keeps the green term's shift ahead of blue's
-      // copy; without it, 2 of 950 instructions differ in tla-en.
+      /* FAKEMATCH(dead): an empty once-only loop. */
       do {
       } while (0);
       *palette++ = green | blue | red;
-      // An empty once-only loop that ends the body keeps i's update after the
-      // colour's store; without it, 4 of 950 instructions differ in tla-en.
+      /* FAKEMATCH(dead): an empty once-only loop. */
       do {
       } while (0);
     }

@@ -123,8 +123,6 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
 
   for (i = 0; i < 5; i++) {
     s32 y;
-    // t holds the attribute zero, then is reused for the window's y; as plain
-    // stores, 2 of 817 instructions differ in tla-en.
     u32 t = 0;
 
     y = i * 2;

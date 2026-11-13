@@ -22,9 +22,6 @@ void BattleObject_Reset(struct BattleObj *actor, s32 keep) {
     object = (struct MotionObject *)Actor_CreateFar(0xf000, 0, 0, 0);
   else
     object = actor->object;
-  // The zero in a local of its own, set before the keep test, serves the 0
-  // stores on both paths; as plain 0 stores, 36 of 63 instructions differ in
-  // tla-en.
   zero = 0;
   actor->scale = 0xe666;
   actor->object = object;

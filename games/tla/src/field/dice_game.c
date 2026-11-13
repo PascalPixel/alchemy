@@ -148,8 +148,6 @@ struct ReelWork {
 
 s32 SuperLuckyDice_DrawNumber(s32 sprite, s32 x, s32 y, s32 value, s32 palette,
                               s32 digits) {
-  // The sprite words are volatile, as The Broken Seal's struct OamWords; as
-  // plain u32 members, 84 of 119 instructions differ in tla-en.
   struct ReelWork *work;
   s32 started;
   s32 digit;
@@ -412,8 +410,8 @@ void SuperLuckyDice_Run(void) {
   s32 groundPoint[3];
   s32 screen[3];
   s32 drawOrder[4];
-  // volatile: four halfwords stored to sp+138..132 and each reloaded with ldrh;
-  // as plain u16 locals, 1094 of 3555 instructions differ in tla-en.
+  /* FAKEMATCH(volatile): four halfwords stored to sp+138..132 and each reloaded
+   * with ldrh. */
   volatile u16 affineA;
   volatile u16 affineB;
   volatile u16 affineC;
@@ -421,9 +419,6 @@ void SuperLuckyDice_Run(void) {
   u16 *spritePalette;
   u8 *cellBuffer;
   struct DiceWork *dice;
-  // The OAM shadow it builds is struct DiceOam, whose words are volatile as
-  // The Broken Seal's struct OamWords; as plain u32 members, 901 of 3555
-  // instructions differ in tla-en.
   struct DiceSprites *sprites;
   struct DiceCamera *camera;
   u8 *resourceAddress;

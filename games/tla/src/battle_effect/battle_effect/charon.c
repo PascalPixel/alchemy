@@ -1355,13 +1355,11 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   wait(1);
   scene->unk867 = 0;
   BattleBackground_LoadFar(1, scene->unk670, 24);
-  // An empty once-only loop before the canvas fill, so its entry loads before
-  // the size; without it, 2 of 4354 instructions differ in tla-en.
+  /* FAKEMATCH(dead): an empty once-only loop before the canvas fill. */
   do {
   } while (0);
   Iwram_FillWords(canvas, CANVAS_BYTES, 0);
-  // An empty once-only loop before the BG fill, so its address loads before
-  // the size; without it, 10 of 4354 instructions differ in tla-en.
+  /* FAKEMATCH(dead): an empty once-only loop before the BG fill. */
   do {
   } while (0);
   Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x4000, 0);

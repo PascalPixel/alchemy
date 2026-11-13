@@ -52,11 +52,6 @@ struct Scale {
   s32 y;
 };
 
-// The battle background's id, read through a union view of the bytes that
-// begin with it. A union's member has the union's alias set, which conflicts
-// with every store, so the read waits for view->secondMode's store as well
-// as the scroll's and the scheduler keeps the two stores in source order; as
-// *(u16 *)(battle)->unk670, 4 of 376 instructions differ in tla-en.
 union BattleBackgroundId {
   u16 id;
   u8 bytes[6];

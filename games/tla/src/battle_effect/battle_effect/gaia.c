@@ -392,9 +392,6 @@ struct AnimationEntry *AnimationObject_AllocateEmpty(void) {
   struct AnimationEntry *entry = Ram_HeapSlots->unk0c[0];
   struct AnimationEntry *found = NULL;
   s32 i = 0;
-  // The script's NULL held from the start lives longest, so the word zero
-  // takes r3 and the byte zero r2; as a plain NULL, 24 of 30 instructions
-  // differ in tla-en.
   void *none = NULL;
 
   while (i <= 63) {

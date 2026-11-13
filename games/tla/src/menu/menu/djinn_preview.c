@@ -609,8 +609,6 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     wait(1);
   }
   {
-    // A local holding one constant: as a literal argument, 2 of 436
-    // instructions differ in tla-en.
     s32 priority = TASK_PASS_VBLANK;
     Task_Add(Menu_UpdateEntryObjectTransforms, priority);
   }

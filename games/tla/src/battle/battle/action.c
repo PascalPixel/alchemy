@@ -203,8 +203,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     s32 index;
     s32 id;
 
-    // The held keys reread through a volatile pointer, a load apart from the R
-    // test's; as gInput.held, 12 of 1601 instructions differ in tla-en.
+    /* FAKEMATCH(volatile): the held keys reread through a volatile pointer. */
     if (KEYS_HELD & 4)
       enemy = 0;
     for (index = 0;; index++) {
@@ -583,9 +582,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     }
     MessageArgument_PushFar(request->unitId, 1);
     BattleMessage_ShowAndWaitFar((s32)&MsgActorAttacks);
-    // The rolls in a one-pass block left by break, which places them ahead of
-    // the five tests; as an if on the negated tests, 119 of 1601 instructions
-    // differ in tla-en.
+    /* FAKEMATCH(dead): the rolls in a one-pass block left by break. */
     do {
       if (target->hp == 0 || target->sleep != 0 || target->stun != 0 ||
           target->immobile != 0 || target->charm != 0)

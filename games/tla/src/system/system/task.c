@@ -295,10 +295,6 @@ void Task_RunPass(s32 pass) {
 }
 
 s32 Task_CountInPass(s32 pass) {
-  // The loop is written with goto: as for (i = 0; i < 24; i++, task++), the
-  // compiler tests it at the bottom and 24 instructions differ from the 22 in
-  // tla-en. The cursor is a u32, so it can start one task before gTasks
-  // without forming that pointer.
   u32 cursor;
   struct Task *task;
   s32 count;

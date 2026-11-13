@@ -120,8 +120,7 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
 
   if (event->unkcb6 == 0) {
     work = HeapSlot_Alloc(HEAP_SLOT_FX, sizeof(*work));
-    // An empty once-only loop keeps the work's copy at once after the
-    // allocation; without it, 4 of 239 instructions differ in tla-en.
+    /* FAKEMATCH(dead): an empty once-only loop. */
     do {
     } while (0);
     Iwram_FillWordsEntry(work, sizeof(*work), 0);
@@ -226,8 +225,8 @@ void EventObject_Initialize(void) {
   s8 sound;
 
   Actor_SelectAnimationFar(object, 20);
-  // The stores in a once-only block keep them all ahead of the sound's read;
-  // as plain statements, 8 of 109 instructions differ in tla-en.
+  /* FAKEMATCH(dead): the stores in a once-only block keep them all ahead of the
+   * sound's read. */
   do {
     object->targetX = object->x;
     object->velocityX = 0;

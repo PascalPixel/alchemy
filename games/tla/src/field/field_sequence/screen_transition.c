@@ -385,8 +385,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
   s32 originX = origin[0] & 0xffff0000;
   s32 originZ = origin[1] & 0xffff0000;
   s32 result[3];
-  // volatile: headerWord lives at sp+4, stored once; as a plain s32, 86 of
-  // 193 instructions differ in tla-en.
+  /* FAKEMATCH(volatile): headerWord lives at sp+4, stored once. */
   volatile s32 headerWord;
   struct Actor *object;
   s16 type;
@@ -429,8 +428,6 @@ void FieldEffect_SpawnRevealMarkers(void) {
       y = object->y;
       z = object->z;
     }
-    // Both differences are taken before either is shifted; shifted as each is
-    // taken, 2 of 193 instructions differ in tla-en.
     dx = x - originX;
     dz = z - originZ - y;
     dx >>= 16;
@@ -471,8 +468,8 @@ void FieldEffect_StartWindowHBlankDma(void) {
   channel[5] &= ~DMA_ENABLE;
   (void)channel[5];
   REG_DISPCNT |= DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
-  // The load in a once-only block comes before the register address is
-  // built; as the plain load, 2 of 68 instructions differ in tla-en.
+  /* FAKEMATCH(dead): the load in a once-only block comes before the register
+   * address is built. */
   do {
     in = *src;
   } while (0);
@@ -1343,8 +1340,6 @@ void BattlePalette_UpdateBlend(void) {
       *sum++ += *add++;
     }
   } else {
-    // The routine's entry in a local loads ahead of the size's shift; as a
-    // direct call, 2 of 175 instructions differ in tla-en.
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
     copy(work->current, work->target, sizeof(work->current));
@@ -1772,8 +1767,6 @@ void BattleEffect_LoadBufferPalette(const u16 *colours) {
   struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
 
   if (buffers != NULL) {
-    // The routine's entry in a local loads after the size; as a direct call,
-    // 2 of 23 instructions differ in tla-en.
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 

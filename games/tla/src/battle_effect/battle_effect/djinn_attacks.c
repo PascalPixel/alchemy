@@ -336,8 +336,6 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal) {
   u8 *res = Resource_GetTableEntry(id);
 
   if (copy_pal != 0) {
-    // The entry held in a local loads after the destination is built; as a
-    // plain Iwram_CopyWords call, 2 of 26 instructions differ in tla-en.
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
     copy((void *)BG_PLTT, res, 128);

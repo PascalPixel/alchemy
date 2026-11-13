@@ -118,8 +118,8 @@ s32 ShopStock_CopyItems(s32 stockRow, s16 *output) {
     dst = output;
     src = sStockTable[stockRow];
     do {
-      // The row's halfword read through a volatile pointer, a load apart from
-      // the end test's; as *src, 41 of 28 instructions differ in tla-en.
+      /* FAKEMATCH(volatile): the row's halfword read through a volatile
+       * pointer. */
       *dst = *(const volatile s16 *)src;
       count++;
       src++;

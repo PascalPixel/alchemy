@@ -124,8 +124,6 @@ void BattleStaging_PlanAuroraField(struct ActionTargets *targets) {
     targets->stateD[i] = 1;
   }
   {
-    // The zero in a local of its own takes r3 and leaves r2 to the two
-    // constants; as a plain 0, 18 of 69 instructions differ in tla-en.
     s32 zero = 0;
 
     targets->abilityId = 298;

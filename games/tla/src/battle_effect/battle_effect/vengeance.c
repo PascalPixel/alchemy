@@ -718,9 +718,6 @@ extern const u8 gData_08198c6c[];
 extern const u8 Data_08198df8[];
 
 static inline void CopyPalette(const void *palette) {
-  // Both palette copies go through this helper; as direct calls to
-  // Iwram_CopyWords, 4 of 513 instructions of BattleEffect_RunGeyser differ in
-  // tla-en.
   Iwram_CopyWordsEntry((void *)BG_PLTT, palette, 128);
 }
 
@@ -782,9 +779,7 @@ void BattleEffect_RunGeyser(struct BattleEffectArgument *effect, s32 mode) {
         BattleEffect_GetTargetsMidpoint(&midpoint);
       if (frame == 0) {
         Sound_PlayFar(SE_CLATTER);
-        // An empty once-only loop after the call, so work reloads before the
-        // shake count's offset is built; without it, 2 of 513 instructions
-        // differ in tla-en.
+        /* FAKEMATCH(dead): an empty once-only loop after the call. */
         do {
         } while (0);
         work->shakeFrames = 16;

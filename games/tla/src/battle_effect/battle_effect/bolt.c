@@ -118,9 +118,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
           x -= gData_08197492[kind] >> 1;
           flip = Random16();
 
-          // An empty once-only loop ends CSE's block, so the two reads of each
-          // size table's address stay apart; without it, 172 of 552
-          // instructions differ in tla-en.
+          /* FAKEMATCH(dead): an empty once-only loop. */
           do {
           } while (0);
           BattleEffect_BuildBlitter(188, 7, 7,

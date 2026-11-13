@@ -909,9 +909,8 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
 
       n = frame / 2 % 4; // a pillar picture every 2 frames
       BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
-      // The left half's pillar draw and glow index in a once-only block,
-      // which ends CSE's block so the mirrored half works out both pictures
-      // again; as plain statements, 235 of 456 instructions differ in tla-en.
+      /* FAKEMATCH(dead): the left half's pillar draw and glow index in a
+       * once-only block. */
       do {
         draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
         draw[1](canvas, work->sheet + n * 1088, 47, ground.y - 64, 17, 64);
@@ -1017,9 +1016,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
       s32 entry;
 
       entry = (s16)(((k * 16 + j * 2 + 1) << 8) | ((k * 8 + j) * 2));
-      // The map written through a volatile pointer, which keeps the ROM's
-      // order of stores; as a plain pointer, 185 of 376 instructions differ in
-      // tla-en.
+      /* FAKEMATCH(volatile): the map written through a volatile pointer. */
       *(volatile u16 *)(0x06003800 + i) = *(u16 *)&entry;
     }
   }
@@ -1047,9 +1044,8 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
 
   // Fade the colours up a shade every two frames; B starts again, A ends.
   for (frame = 0; frame != 32096; frame++) {
-    // The A test reads the held keys through a volatile pointer, a load apart
-    // from the B test's; as gInput.held, 10 of 376 instructions differ in
-    // tla-en.
+    /* FAKEMATCH(volatile): the A test reads the held keys through a volatile
+     * pointer. */
     if (gInput.held & KEY_B)
       frame = 0;
     if (*(volatile u32 *)&gInput.held & KEY_A)

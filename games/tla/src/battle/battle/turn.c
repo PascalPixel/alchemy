@@ -202,9 +202,6 @@ static inline void BattleAction_Swap(struct BattleActionRecord *a,
                                      struct BattleActionRecord *b) {
   struct BattleActionRecord temporary;
 
-  // The swap as an inline takes the temporary's address afresh at each copy;
-  // written in the sort's loop, 44 of 110 instructions of
-  // BattleActionOrder_Sort differ in tla-en.
   Iwram_CopyWordsEntry(&temporary, a, sizeof(struct BattleActionRecord));
   Iwram_CopyWordsEntry(a, b, sizeof(struct BattleActionRecord));
   Iwram_CopyWordsEntry(b, &temporary, sizeof(struct BattleActionRecord));

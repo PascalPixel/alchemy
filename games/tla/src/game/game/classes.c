@@ -129,9 +129,7 @@ void Unit_CalculateBaseElements(s32 owner,
     destination[i].power = gElement_PowerResistByLevel[tens].power + ones;
     destination[i].resistance = gElement_PowerResistByLevel[tens].res + ones;
 #else
-    // UB: the stats are stored through an s16 [4][2] view of the four
-    // structs, the element pair table's spelling; as destination[i].power
-    // and .resistance, 4 of 86 instructions differ in tla-en.
+    // UB: the stats are stored through an s16 [4][2] view of the four structs.
     ((s16 (*)[2])destination)[i][0] =
         gElement_PowerResistByLevel[tens].power + ones;
     ((s16 (*)[2])destination)[i][1] =

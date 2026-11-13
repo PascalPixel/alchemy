@@ -14,10 +14,6 @@ struct Model;
 
 #define KIND125_FRAMES 114
 
-// The battle background's id, read through a union view of the bytes that
-// begin with it. Its s32 member gives the read the alias set of
-// transition->active, so the read waits for that store; as
-// *(u16 *)(battle)->unk670, 6 of 1075 instructions differ in tla-en.
 /* VIEW(summon_effects): tag union BattleBackgroundId as union
  * BattleBackgroundId__summon_effects; module/battle_effect/battle_effect.h has
  * another definition; not tried: struct BattleBackgroundId__summon_effects was

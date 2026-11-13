@@ -414,9 +414,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
               index = 0;
               do {
                 if (spark[index].variant > 0) {
-                  // The transform in a once-only block, which ends CSE's block
-                  // before it; as a plain block, 6 of 1493 instructions differ
-                  // in tla-en.
+                  /* FAKEMATCH(dead): the transform in a once-only block. */
                   do {
                     void (*transform)(const void *, s32 *) =
                         Iwram_TransformVector;
@@ -608,8 +606,6 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    // The entry held in a local loads ahead of the destination's shift; as a
-    // plain Iwram_CopyWords call, 2 of 1072 instructions differ in tla-en.
     copy((void *)BG_PLTT, lightning, 128);
   }
   work->transferMode = 2;

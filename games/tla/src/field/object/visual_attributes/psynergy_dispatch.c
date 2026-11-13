@@ -664,8 +664,7 @@ void Func_080dba5c(void) {
   if (scene->mode == 0xc000) {
     scene->active = 1;
     buffer = Heap_Alloc(0x200);
-    // An empty once-only loop keeps the zero kept in sl after the fill's
-    // arguments; without it, 12 of 103 instructions differ in tla-en.
+    /* FAKEMATCH(dead): an empty once-only loop. */
     do {
     } while (0);
     Iwram_FillWordsEntry(buffer, 0x200, 0);

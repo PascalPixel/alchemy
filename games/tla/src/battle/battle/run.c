@@ -245,8 +245,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     gMainRoutineWork.battleRule24b = 4;
   }
   if (battle->twoSided != 0) {
-    // The seed's store in a once-only block keeps it ahead of the wait loop's
-    // setup; as the plain store, 4 of 885 instructions differ in tla-en.
+    /* FAKEMATCH(dead): the seed's store in a once-only block. */
     do {
       gBattleRandomSeed = 0;
     } while (0);

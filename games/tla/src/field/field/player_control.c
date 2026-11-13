@@ -329,9 +329,7 @@ s32 Field_RequestShortcut(u32 value) {
   if (GameFlag_Get(0x107) != 0) {
     event->result = 250;
   } else if (event->mode == 3) {
-    // The held keys, read again for the second test through a volatile
-    // pointer; through a plain pointer, 14 of 69 instructions differ in
-    // tla-en.
+    /* FAKEMATCH(volatile): the held keys. */
     volatile u32 *held = &gInput.held;
 
     if (*held & 0x100)

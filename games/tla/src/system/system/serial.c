@@ -213,9 +213,8 @@ void Serial_PrepareSendPacket(void *payload) {
     cur = sr->currentMask;
     recv = sr->receivedMask;
     sum = 0;
-    // The checksum's zero stored through a volatile cast, so it comes after
-    // both masks are read; as a plain store, 2 of 50 instructions differ in
-    // tla-en.
+    /* FAKEMATCH(volatile): the checksum's zero stored through a volatile cast.
+     */
     *(volatile u16 *)(pkt + 2) = sum;
     pkt[1] = recv ^ cur;
     Dma_Set(payload, pkt + 4, DMA_COPY_WORDS(6), REG_DMA3);
@@ -458,8 +457,7 @@ void LinkBattle_ResetTransferState(void) {
 
   state = &gSerialTransfer;
   ime = &REG_IME;
-  // The IME exchange in a once-only block keeps it before the zero and the
-  // status store; as plain statements, 10 of 19 instructions differ in tla-en.
+  /* FAKEMATCH(dead): the IME exchange in a once-only block. */
   do {
     saved = *ime;
     *ime = (u16)ime;
@@ -586,10 +584,6 @@ void SerialTest_Run(void) {
   s32 value;
   s32 n;
   s32 delay;
-  // The held keys read through a volatile pointer, so each key test loads them
-  // afresh into the register it masks, as The Broken Seal reads its volatile
-  // gKeysHeld; as gInput.held read plainly, 16 of 74 instructions differ in
-  // tla-en.
   volatile u32 *held;
 
   Sound_PlayFar(MUS_003);

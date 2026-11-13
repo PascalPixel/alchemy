@@ -219,7 +219,6 @@ UNUSED s32 DebugMenu_Run(s32 index) {
 
       index = (index + 5) % 5;
       x = (s16)window->x * 8 - 4;
-      // The row is read first: as one expression, 4 of 105 instructions differ.
       y = (s16)window->y;
       y = (index * 3 + y) * 8 + 16;
       if (moved == -1)
@@ -461,8 +460,6 @@ UNUSED s32 DebugWarp_Run(s32 index) {
       moved = 1;
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
-    // down holds the Down mask; as gInput.repeat & KEY_DOWN, 32 of 115
-    // instructions differ in tla-en.
     down = KEY_DOWN;
     if (gInput.repeat & down) {
       index++;
@@ -563,8 +560,6 @@ UNUSED s32 DebugShortcut_Run(void) {
   s32 x;
   s32 y;
   s32 pp;
-  // columns holds 4, so the wrap divides with __modsi3; as a constant 4, which
-  // the compiler reduces to shifts, 84 of 261 instructions differ in tla-en.
   s32 columns = 4;
 
   DebugShortcut_Initialize();

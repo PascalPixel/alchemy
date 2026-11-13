@@ -94,18 +94,15 @@ void FieldPsynergy_Unnamed28(void) {
     {
       s32 (*fill)(void *, s32, u32);
 
-      // An empty once-only loop, and the fill routine's entry in a local, load
-      // the entry ahead of the size's constant; as a direct Iwram_FillWords
-      // call, 10 of 563 instructions differ in tla-en.
+      /* FAKEMATCH(dead): an empty once-only loop. */
       do {
       } while (0);
       fill = Iwram_FillWordsEntry;
       fill((void *)BG_SCREEN_BLOCK(4), 0x800, 0);
     }
 
-    // The picture's release and allocation in a once-only block, which ends
-    // scheduling at both sides; without it, 8 of 563 instructions differ in
-    // tla-en.
+    /* FAKEMATCH(dead): the picture's release and allocation in a once-only
+     * block. */
     do {
       HeapSlot_Release(96);
       picture = HeapSlot_AllocEwram(96, 0x2000);
@@ -119,8 +116,7 @@ void FieldPsynergy_Unnamed28(void) {
       s32 control;
 
       control = 0x480;
-      // An empty once-only loop keeps the register's address after the
-      // control value; without it, 2 of 563 instructions differ in tla-en.
+      /* FAKEMATCH(dead): an empty once-only loop. */
       do {
       } while (0);
       REG_BG0CNT = control;

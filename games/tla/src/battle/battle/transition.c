@@ -16,9 +16,7 @@
 /// four random numbers a frame, which only advances the random number
 /// generator. Returns 0.
 s32 BattleTransition_RunMosaicFadeOut(void) {
-  // volatile: the four saved BGxCNT values kept on the stack, each stored and
-  // loaded again as in the ROM; without volatile, 65 of 94 instructions differ
-  // in tla-en.
+  /* FAKEMATCH(volatile): the four saved BGxCNT values kept on the stack. */
   volatile u16 bg0cnt;
   volatile u16 bg1cnt;
   volatile u16 bg2cnt;
@@ -86,8 +84,6 @@ void Graphics_BuildSequentialTileTable(s32 *dst) {
     v += 0x04040404;
   } while (n >= 0 && n <= 55);
 
-  // The fill's entry held in a local loads its address before the size's
-  // shift; called directly, 2 of 25 instructions differ in tla-en.
   fill = Iwram_FillWordsEntry;
   fill(dst, 544, -1);
 }

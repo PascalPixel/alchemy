@@ -454,9 +454,7 @@ void HoverGlow_Update(void) {
   // Cycle the glow's colours; the last takes the 15th's level.
   palette = OBJ_PALETTE_14;
   for (i = 0; i < 16; i++) {
-    // The colour's store in a once-only block, which ends the scheduler's
-    // region there; as the plain store, 2 of 194 instructions differ in
-    // tla-en.
+    /* FAKEMATCH(dead): the colour's store in a once-only block. */
     do {
       *palette++ = HoverGlow_GetColor((((s16)work->phase >> 2) + i / 2) % 24,
                                       i == 15 ? 14 : i);

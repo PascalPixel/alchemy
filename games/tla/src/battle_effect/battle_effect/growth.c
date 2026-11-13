@@ -158,8 +158,6 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
                   u8 *cell;
                   u32 width;
                   // side is set to 1 and then masked with i, which builds the 1
-                  // in its register first; as side = i & 1, 195 of 514
-                  // instructions differ in tla-en.
                   side = 1;
                   side &= i;
                   cell = work->sheet + gGrowth_VineCells[shape];
@@ -177,8 +175,6 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
                   u8 *cell;
                   u32 width;
                   // side is set to 1 and then masked with i, which builds the 1
-                  // in its register first; as side = i & 1, 195 of 514
-                  // instructions differ in tla-en.
                   side = 1;
                   side &= i;
                   cell = work->sheet + gGrowth_PillarCells[shape];
@@ -462,9 +458,6 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
         if (gGrowth_Kinds[i] < 2) {
           height = age * 16;
           // Six times the age, spelled as the shifts and add the native
-          // computes from age in r10 each frame. Written age * 6, loop.c
-          // strength-reduces age * 3 into a spilled induction variable of
-          // its own: 225 of 453 instructions differ in tla-en.
           lean = (age * 2 + age) * 2;
           if (height > 80) {
             height = 80;

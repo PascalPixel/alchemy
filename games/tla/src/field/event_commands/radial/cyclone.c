@@ -270,8 +270,7 @@ void FieldPsynergy_Cyclone(void) {
   blue = 31 << 10;
   for (j = 0; j < 16; j++) {
     c = j + 16;
-    // An empty once-only loop keeps c's add ahead of the colour's copy;
-    // without it, 2 of 713 instructions differ in tla-en.
+    /* FAKEMATCH(dead): an empty once-only loop. */
     do {
     } while (0);
     *palette++ = (c << 5) | blue | c;

@@ -42,8 +42,6 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    // The entry held in a local loads ahead of the destination's shift; as a
-    // plain Iwram_CopyWords call, 2 of 604 instructions differ in tla-en.
     copy((void *)BG_PLTT, palette, 128);
   } else if (effect->variant == 2) {
     const void *palette =
@@ -51,8 +49,6 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    // The entry held in a local loads ahead of the destination's shift; as a
-    // plain Iwram_CopyWords call, 2 of 604 instructions differ in tla-en.
     copy((void *)BG_PLTT, palette, 128);
   }
   BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_MAX << 4 | COMPOSITE_CLIP_X |

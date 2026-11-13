@@ -86,7 +86,7 @@ SECTIONS
     .rom_start :
     {
         "*/games/tla/src/gamepak/rom_header.o"(.text .rodata .data .padding)
-        "*/games/tla/src/gamepak/far_call/SYSTEM.o"(.text .rodata .data .padding)
+        "*/games/tla/src/gamepak/far_call/system.o"(.text .rodata .data .padding)
         "*/games/tla/src/system/entry.o"(.text .rodata .data .padding)
         "*/games/tla/src/sound/driver/resampler_records.o"(.text .rodata .data .padding)
         "*/games/tla/src/sound/driver/resampler_records_pad.o"(.text .rodata .data .padding)
@@ -173,7 +173,7 @@ SECTIONS
         "*/games/tla/src/gamepak/flash/flashat.o"(.rodata)
         "*/games/tla/src/gamepak/flash/atmel.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x08020000);
-        "*/games/tla/src/gamepak/far_call/FIELD.o"(.text .rodata .data .padding)
+        "*/games/tla/src/gamepak/far_call/field.o"(.text .rodata .data .padding)
         "*/games/tla/src/field/field_tables.o"(.rodata)
         "*/games/tla/src/field/picture_decode.o"(.text .rodata .data .padding)
         "*/games/tla/src/field/picture_decode_data.o"(.text .rodata .data .padding)
@@ -192,7 +192,7 @@ SECTIONS
         "*/games/tla/src/field/curve_data.o"(.rodata)
         "*/games/tla/src/field/map_grid_data.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x08038000);
-        "*/games/tla/src/gamepak/far_call/WINDOW.o"(.text .rodata .data .padding)
+        "*/games/tla/src/gamepak/far_call/window.o"(.text .rodata .data .padding)
         "*/games/tla/src/window/message_decode.o"(.text .rodata .data .padding)
         "*/games/tla/src/window/lookup_symbol.o"(.text .rodata .data .padding)
         "*/games/tla/src/window/glyph_arm_entries.o"(.text)
@@ -233,11 +233,11 @@ SECTIONS
         "*/games/tla/src/graphics/ui/slider_palette.o"(.rodata)
         "*/games/tla/src/window/keyboard.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + GAME_BANK_START);
-        "*/games/tla/src/gamepak/far_call/GAME.o"(.text .rodata .data .padding)
+        "*/games/tla/src/gamepak/far_call/game.o"(.text .rodata .data .padding)
         "*/games/tla/src/game/game.o"(.text)
         "*/games/tla/src/game/game.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + FIELD_SEQUENCE_BANK_START);
-        "*/games/tla/src/gamepak/far_call/FIELD_SEQUENCE.o"(.text .rodata .data .padding)
+        "*/games/tla/src/gamepak/far_call/field_sequence.o"(.text .rodata .data .padding)
         "*/games/tla/src/field/field_sequence/integrate_vectors.o"(.text .rodata .data .padding)
         "*/games/tla/src/field/field_sequence/tables2.o"(.rodata)
         "*/games/tla/src/field/field_sequence/decode_picture.o"(.text .rodata .data .padding)
@@ -275,18 +275,18 @@ SECTIONS
         "*/games/tla/src/field/field_effect/fxdata.o"(.rodata)
         "*/games/tla/src/field/event_commands/event_commands_tables.o"(.rodata.c)
         . = ABSOLUTE(ROM_SHIFT + MENU_BANK_START);
-        "*/games/tla/src/gamepak/far_call/MENU.o"(.text .rodata .data .padding)
+        "*/games/tla/src/gamepak/far_call/menu.o"(.text .rodata .data .padding)
         "*/games/tla/src/menu/menu.o"(.text)
         "*/games/tla/src/graphics/ui/menu_sprites.o"(.rodata)
         "*/games/tla/src/menu/menu_strings.o"(.rodata)
         "*/games/tla/src/menu/menu_tables.o"(.data)
         . = ABSOLUTE(ROM_SHIFT + SHOP_BANK_START);
-        "*/games/tla/src/gamepak/far_call/SHOP.o"(.text .rodata .data .padding)
+        "*/games/tla/src/gamepak/far_call/shop.o"(.text .rodata .data .padding)
         "*/games/tla/src/shop/shop.o"(.text)
         "*/games/tla/src/graphics/ui/shop_sprites.o"(.rodata)
         "*/games/tla/src/shop/shop_tables.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x08118000);
-        "*/games/tla/src/gamepak/far_call/BATTLE.o"(.text .rodata .data .padding)
+        "*/games/tla/src/gamepak/far_call/battle.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle/model_decode.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle/model_bit_dispatch.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle/model_bit_commands.o"(.text .rodata .data .padding)
@@ -297,7 +297,7 @@ SECTIONS
         "*/games/tla/src/graphics/ui/page_arrow_2.o"(.rodata)
         "*/games/tla/src/battle/battle_tables.o"(.rodata.a)
         . = ABSOLUTE(ROM_SHIFT + 0x08138000);
-        "*/games/tla/src/gamepak/far_call/BATTLE_EFFECT.o"(.text .rodata .data .padding)
+        "*/games/tla/src/gamepak/far_call/battle_effect.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle_effect/kernel_bank_integrate_vectors.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle_effect/relocated_kernel_0.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle_effect/relocated_kernels.o"(.text .rodata .data .padding)
@@ -317,7 +317,7 @@ SECTIONS
         "*/games/tla/src/battle_effect/effect_bits.o"(.rodata)
         "*/games/tla/src/battle_effect/effect_table.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x081a0000);
-        "*/games/tla/src/gamepak/far_call/CREDITS.o"(.text)
+        "*/games/tla/src/gamepak/far_call/credits.o"(.text)
         "*/games/tla/src/menu/credits_background_decode.o"(.text .rodata .data .padding)
         "*/games/tla/src/menu/credits_background_expand.o"(.text .rodata .data .padding)
         "*/games/tla/src/menu/credits_background_expand_link.o"(.text .rodata .data .padding)
@@ -335,18 +335,18 @@ SECTIONS
         "*/games/tla/src/menu/credits.o"(.data)
         "*/games/tla/src/graphics/credits/font.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x081a6000);
-        "*/games/tla/src/gamepak/far_call/TITLE.o"(.text)
+        "*/games/tla/src/gamepak/far_call/title.o"(.text)
         "*/games/tla/src/menu/title_intro.o"(.text)
         "*/games/tla/src/graphics/title/prompt.o"(.rodata)
         "*/games/tla/src/menu/logo.o"(.rodata)
         "*/games/tla/src/graphics/title/prompt_blend_levels.o"(.rodata)
         "*/games/tla/src/menu/title_intro_tables.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x081ac000);
-        "*/games/tla/src/gamepak/far_call/LUCKY_DICE.o"(.text)
+        "*/games/tla/src/gamepak/far_call/lucky_dice.o"(.text)
         "*/games/tla/src/field/lucky_dice.o"(.text)
         "*/games/tla/src/field/lucky_dice.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x081b2000);
-        "*/games/tla/src/gamepak/far_call/LUCKY_WHEELS.o"(.text)
+        "*/games/tla/src/gamepak/far_call/lucky_wheels.o"(.text)
         "*/games/tla/src/field/lucky_wheels.o"(.text)
         "*/games/tla/src/field/lucky_wheels.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x081b8000);
@@ -354,7 +354,7 @@ SECTIONS
         "*/games/tla/src/field/dice_game.o"(.text)
         "*/games/tla/src/field/dice_game.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x081c0000);
-        "*/games/tla/src/gamepak/far_call/SOUND.o"(.text .rodata .data .padding)
+        "*/games/tla/src/gamepak/far_call/sound.o"(.text .rodata .data .padding)
         "*/games/tla/src/sound/driver/leftover_mplay_main_tail.o"(.text .rodata .data .padding)
         "*/games/tla/src/sound/driver/leftover_handle_note.o"(.text .rodata .data .padding)
         "*/games/tla/src/sound/driver/leftover_release_key.o"(.text .rodata .data .padding)

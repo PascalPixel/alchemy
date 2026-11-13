@@ -154,7 +154,7 @@ const s32 gData_0802ed28[] = {
 // six tile sets, by resource id.
 //--------------------------------------------------------------------------
 
-const u32 gData_0802ed34[4][9] = {
+const u32 gWorldMap_GraphicsResources[4][9] = {
     {
         (u32)&ResourceId_WorldMapPaletteA,
         (u32)&ResourceId_DefaultMapAnimation,

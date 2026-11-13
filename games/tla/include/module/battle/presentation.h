@@ -352,7 +352,7 @@ extern u16 Data_0200049c;
 
 s32 Unit_TryLevelUpFar(s32 unitId, s16 *gains);
 
-extern u8 Data_0812996c[];
+extern u8 gBattleMessage_AdvanceArrowTiles[];
 
 extern u8 Data_0812cc5c[];
 extern u8 Data_0812cc64[];

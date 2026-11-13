@@ -124,7 +124,7 @@ void Func_0802d088(s32 region, s32 gradual);
 
 s32 Func_080c8950(void);
 
-extern u8 gData_0201c000[];
+extern u8 gDecodeBuffer[];
 
 void TilesetAnim_Update(void);
 

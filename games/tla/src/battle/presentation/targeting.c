@@ -445,7 +445,7 @@ void BattleMessage_WaitForAdvance(void) {
   prompt = &promptStorage;
   // The arrow sheet's address held in a local is added after the window's
   // loads; at its use, 36 of 146 instructions differ in tla-en.
-  sheet = (s32)Data_0812996c;
+  sheet = (s32)gBattleMessage_AdvanceArrowTiles;
   tileSlot = VramCache_AllocEntry(128);
   for (frame = 0;; frame++) {
     // Cycle the eight pictures, one every four frames.

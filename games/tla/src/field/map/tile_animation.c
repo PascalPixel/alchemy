@@ -77,7 +77,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     graphicsSet = 0;
     break;
   }
-  resources = gData_0802ed34[graphicsSet];
+  resources = gWorldMap_GraphicsResources[graphicsSet];
   if (resources != window->resources) {
     window->resources = resources;
     window->reloadSteps = 12;
@@ -181,14 +181,14 @@ void MapAnimation_Start(void) {
   if (work->extraTiles != 0)
     Decompress_TaggedLz(Resource_GetTableEntry(resources[4]), gData_0203a000);
   work->extraTiles = 0;
-  Dma_Set((void *)0x06004000, gData_0201c000, DMA_COPY_WORDS(0x2000 / 4),
+  Dma_Set((void *)0x06004000, gDecodeBuffer, DMA_COPY_WORDS(0x2000 / 4),
           REG_DMA3);
   wait(1);
   TileMap_DrawRowsFromRam(pages + (gFrameCount & one) * 0x1400 + 0xc80,
                           Ram_MapCellBuffer);
   work->windowTop = 200;
   work->windowBottom = 255;
-  gData_030011f8 = MapAnimation_PresentPicture;
+  gVBlankCallback = MapAnimation_PresentPicture;
   work->pictureShown = one;
 }
 
@@ -229,7 +229,7 @@ s32 WorldMap_LoadAreaGraphics(void) {
   Decompress_TaggedLz(Resource_GetTableEntry(resources[6]), gData_0203e000);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gData_02028000);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), gWorldMapWork);
-  gData_030011f8 = Map_ShowBg1FromBuffer;
+  gVBlankCallback = Map_ShowBg1FromBuffer;
   state->windowTop = 0;
   state->windowBottom = 159;
   wait(1);
@@ -247,7 +247,7 @@ s32 WorldMap_LoadAreaGraphics(void) {
 void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
   struct MapViewWork *work = (struct MapViewWork *)Ram_HeapSlots->mapWork;
 
-  gData_030011f8 = Map_ShowBg1FromBuffer;
+  gVBlankCallback = Map_ShowBg1FromBuffer;
   work->windowTop = 0;
   work->windowBottom = 0x9f;
   wait(1);

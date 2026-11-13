@@ -263,7 +263,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
     graphicsSet = 0;
     break;
   }
-  resources = gData_0802ed34[graphicsSet];
+  resources = gWorldMap_GraphicsResources[graphicsSet];
   view->resources = (u32 *)resources;
   backdropColor = *(s16 *)BG_PLTT;
   Resource_DecodeByteLzInRam(Resource_GetTableEntry(resources[0]), buffer);

@@ -4,7 +4,7 @@
 #include "types.h"
 
 #define Ram_MapCellBuffer FIXED_ADDRESS((u8 *), 0x02010000, gMapCellBuffer)
-#define Ram_DecodeBuffer FIXED_ADDRESS((u8 *), 0x0201c000, gData_0201c000)
+#define Ram_DecodeBuffer FIXED_ADDRESS((u8 *), 0x0201c000, gDecodeBuffer)
 #define Ram_MapCollision FIXED_ADDRESS((u8 *), 0x0202c000, gMapCollision)
 #define Ram_Data_0202e008 FIXED_ADDRESS((u8 *), 0x0202e008, gData_0202e008)
 #define Ram_BgTileBuffer FIXED_ADDRESS((u8 *), 0x02038000, gData_02038000)
@@ -98,6 +98,6 @@ extern u8 gMapShapeGrid[];
 
 extern u32 gMapBlocks[];
 
-extern void (*gData_030011f8)(void);
+extern void (*gVBlankCallback)(void);
 
 #endif

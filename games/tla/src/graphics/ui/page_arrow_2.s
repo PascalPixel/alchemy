@@ -1,4 +1,4 @@
 	.section .rodata
-	.global Data_0812996c
-Data_0812996c:
+	.global gBattleMessage_AdvanceArrowTiles
+gBattleMessage_AdvanceArrowTiles:
 	.incbin "games/tla/src/graphics/ui/page_arrow.8bpp8x16"

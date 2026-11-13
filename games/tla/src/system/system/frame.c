@@ -355,9 +355,9 @@ void System_VBlankHandler(void) {
     Copy16Bytes(gBgScroll, REG_BG0HOFS);
     IoWriteQueue_FlushPending();
   }
-  hook = gData_030011f8;
+  hook = gVBlankCallback;
   if (hook != 0) {
-    gData_030011f8 = 0;
+    gVBlankCallback = 0;
     hook();
   }
   Task_RunPassBeforeVBlankTasks(TASK_PASS_FRAME);

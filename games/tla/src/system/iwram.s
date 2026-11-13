@@ -94,8 +94,8 @@ Data_030011f0:
 	.global gBlendLayers
 gBlendLayers:
 	.space 0x00000004
-	.global gData_030011f8
-gData_030011f8:
+	.global gVBlankCallback
+gVBlankCallback:
 	.space 0x00000004
 	.global gObjAffineCount
 gObjAffineCount:

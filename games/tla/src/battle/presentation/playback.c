@@ -230,7 +230,7 @@ void BattlePlayback_Run(void) {
       }
     } else if (events->phase == 5) {
       struct ArrowSprite__presentation *prompt = &events->arrow;
-      u8 *arrowTiles = Data_0812996c;
+      u8 *arrowTiles = gBattleMessage_AdvanceArrowTiles;
       s32 pictureTiles = (s32)arrowTiles + ((gFrameCount >> 2) & 7) * 128;
       struct BattleMessageDisplay *display =
           (struct BattleMessageDisplay *)Ram_HeapSlots->unk84[4];

@@ -67,7 +67,7 @@ s32 Func_080d53b8(void);
 
 void ItemDisplay_EmitSparkles(struct ParticleEmitter *emitter);
 
-extern const u32 gData_0802ed34[4][9];
+extern const u32 gWorldMap_GraphicsResources[4][9];
 
 void Actor_SetSpritePriorityDirectFar(struct Actor *object, s32 priority);
 

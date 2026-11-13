@@ -105,7 +105,7 @@ done:
 
 void TileMap_DrawRowsFromRam(s32 arg0, s32 arg1) {
   void (*routine)(s32, s32, u8 *, u8 *);
-  u8 *tiles = gData_0201c000;
+  u8 *tiles = gDecodeBuffer;
 
   RamCode_Load(routine, Render_DrawMapCode, Render_DrawMapCodeSize);
   routine(arg0, arg1, gData_0203c000, tiles + 0x1000);

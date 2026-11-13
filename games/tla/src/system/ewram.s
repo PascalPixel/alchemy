@@ -726,8 +726,8 @@ Data_02018000:
 	.global Data_02019600
 Data_02019600:
 	.space 0x00002a00
-	.global gData_0201c000
-gData_0201c000:
+	.global gDecodeBuffer
+gDecodeBuffer:
 	.space 0x00004000
 	.global gMapBlocks
 gMapBlocks:

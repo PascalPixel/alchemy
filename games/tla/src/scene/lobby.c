@@ -1,7 +1,6 @@
 /// @file
 /// The scene code of overlay 0x6b5, in ROM order.
 
-// ---- games/tla/src/scene/lobby/lobby.c ----
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -959,7 +958,6 @@ s32 LinkLobby_PartyContains(s32 owner) {
 void Func_02000fb8(void) {}
 #undef LOBBY_PREFIX_LIMIT
 
-// ---- games/tla/src/scene/lobby/s0fbc.c ----
 extern u8 MsgYouHaveA[];
 extern u8 MsgComeBackWhen[];
 extern u16 gData_02001b02[];
@@ -1043,7 +1041,6 @@ void Func_02000fbc(s32 actor) {
   Event_End();
 }
 
-// ---- games/tla/src/scene/lobby/talk.c ----
 #include "scene_ids.h"
 
 s32 LinkLobby_PartyContains(s32 id);
@@ -1209,7 +1206,6 @@ s32 LinkLobby_ReportMonsterRecord(s32 id) {
   Event_End();
 }
 
-// ---- games/tla/src/scene/lobby/scene_events.c ----
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 s32 LinkLobby_PartyContains(s32 id);

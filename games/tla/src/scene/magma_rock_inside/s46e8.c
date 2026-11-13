@@ -1,7 +1,6 @@
 /// @file
 /// Scene code of overlay 0x692, in ROM order.
 
-// ---- games/tla/src/scene/magma_rock_inside/s46e8.c ----
 #include "../shared/map_cells.h"
 #include "../shared/effects.h"
 #include "../shared/tables.h"
@@ -110,7 +109,6 @@ void Func_0200481c(void) {
   } while (i <= 16);
 }
 
-// ---- games/tla/src/scene/magma_rock_inside/s4934.c ----
 #include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
 #include "map.h"
 
@@ -147,7 +145,6 @@ struct RockWork {
 /// thrown up and out along it.
 DEFINE_ROCKS_SPAWN(Func_02004a5c)
 
-// ---- games/tla/src/scene/magma_rock_inside/s4b18.c ----
 #include "system/task.h"
 
 void Func_02004b18(void) {

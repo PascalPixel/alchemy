@@ -1,7 +1,6 @@
 /// @file
 /// Scene code of overlay 0x6af, in ROM order.
 
-// ---- games/tla/src/scene/treasure_isle/scene_tables.c ----
 #include "../shared/tables.h"
 #include "../shared/map_cells.h"
 #include "battle.h"
@@ -378,8 +377,6 @@ void Func_02000ba0(void) {
 }
 #undef FIELD_AT
 
-// ---- games/tla/src/scene/treasure_isle/s0cf4.c ----
-// Scene code of overlay 0x6af, in ROM order, from s0cf4's offset to the end of
 // its code, then the overlay's data.
 
 #include "actor.h"

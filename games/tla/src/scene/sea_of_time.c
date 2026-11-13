@@ -2,8 +2,6 @@
 /// The scene code of overlay 0x687 that its scene tables belong to, in ROM
 /// order; the rest of the overlay is in sea_of_time/.
 
-// ---- games/tla/src/scene/sea_of_time.c ----
-
 #include "shared/actors.h"
 #include "sea_of_time/sea_of_time.h"
 #include "event_work.h"
@@ -489,7 +487,6 @@ void Func_02000c50(void) {
   *state = gFrameCount;
 }
 
-// ---- games/tla/src/scene/sea_of_time/s0c94.c ----
 // Two fades of BG palette 3: toward RGB(11, 6, 23), then, in Func_02000da0,
 // back to its saved colours.
 #include "system/io_reg.h"
@@ -627,8 +624,6 @@ fade:
   return Func_02001fb4__s0c94();
 }
 
-// ---- games/tla/src/scene/sea_of_time/s0ef0.c ----
-// Scene code of overlay 0x687, in ROM order, from s0ef0's offset up to the
 // next object the overlay links.
 
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

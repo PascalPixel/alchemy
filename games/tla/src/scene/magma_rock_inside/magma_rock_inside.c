@@ -1,7 +1,6 @@
 /// @file
 /// Scene code of overlay 0x692, in ROM order.
 
-// ---- games/tla/src/scene/magma_rock_inside/s03b4.c ----
 #include "../shared/push.h"
 #include "../shared/map_cells.h"
 #include "../shared/actors.h"
@@ -63,7 +62,6 @@ s32 Func_02000538(u32 layer, u32 x, u32 y, u32 width, u32 height, s32 value) {
   return 0;
 }
 
-// ---- games/tla/src/scene/magma_rock_inside/s0594.c ----
 #include "../magma_rock_inside.h"
 
 void Func_02000594(void) { Field_RequestDjinnBattle(15, 56); }
@@ -119,7 +117,6 @@ void Func_020007ac(struct Actor *object) {
     *state = 0;
 }
 
-// ---- games/tla/src/scene/magma_rock_inside/s0800.c ----
 #include "field.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -181,7 +178,6 @@ L_02008870:
 }
 #undef FIELD_AT
 
-// ---- games/tla/src/scene/magma_rock_inside.c ----
 // The scene code of overlay 0x692 that its scene tables belong to, in ROM
 // order; the rest of the overlay is in magma_rock_inside/.
 
@@ -437,8 +433,6 @@ test:
 }
 
 void Func_02000e14(void) { Event_ResolvePendingActions(0); }
-
-// ---- games/tla/src/scene/magma_rock_inside/s0e20.c ----
 
 extern u16 gData_02005500[];
 extern u16 gData_0200550c[];
@@ -1079,7 +1073,6 @@ void Func_02001828(void) {
   Event_End();
 }
 
-// ---- games/tla/src/scene/magma_rock_inside/s1ca0.c ----
 #define DEFINE_FUNC_02001CA0(name, n1, n2)                                     \
   void name(s32 a, s32 b) {                                                    \
     struct Actor **work = Ram_HeapSlots->effectWork;                           \
@@ -1108,7 +1101,6 @@ void Func_02001d04(struct Actor *object) {
   }
 }
 
-// ---- games/tla/src/scene/magma_rock_inside/s1d64.c ----
 extern const s32 gData_02005050[];
 
 static __inline__ void Arrive(s32 id, s32 x, s32 z) {

@@ -1,7 +1,6 @@
 /// @file
 /// Scene code of overlay 0x6aa, in ROM order.
 
-// ---- games/tla/src/scene/mars_lighthouse_entrance/s01f8.c ----
 #include "../shared/mars_lighthouse.h"
 #include "../shared/actors.h"
 #include "types.h"
@@ -137,7 +136,6 @@ void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index) {
   }
 }
 
-// ---- games/tla/src/scene/mars_lighthouse_entrance.c ----
 /* VIEW(mars_lighthouse_entrance): routine MarsLighthouseEntrance_PoundIceCone
  * as void MarsLighthouseEntrance_PoundIceCone(void); the definition has void
  * MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index); tried as the
@@ -829,7 +827,6 @@ void Func_02001378(void) {
     Func_02003878(1);
 }
 
-// ---- games/tla/src/scene/mars_lighthouse_entrance/s138c.c ----
 #include "version.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -1314,7 +1311,6 @@ DEFINE_ACTOR_SETUP_SCRIPTED_FOR(Func_0200202c, Func_02004bc0, gData_020056a0)
 DEFINE_RIDE_SPAWN_SPARK(Func_0200206c, Func_02004bd8_, Func_0200202c,
                         Func_02001f90)
 
-// ---- games/tla/src/scene/mars_lighthouse_entrance/s20ec.c ----
 /* VIEW(s20ec): tag struct Actor as struct Actor__s20ec; actor.h has another
  * definition; tried with the definition the rest of the object has, it does not
  * compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1669:

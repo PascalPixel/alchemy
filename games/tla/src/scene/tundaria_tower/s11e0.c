@@ -266,7 +266,6 @@ void Func_020017dc(struct Actor *object) {
   Actor_SetAnimationSpeed(object, 48);
 }
 
-// ---- games/tla/src/scene/tundaria_tower/events_e.c ----
 #include "input.h"
 
 void Func_02001868(void) {

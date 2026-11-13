@@ -145,8 +145,6 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
   }
 }
 
-// ---- games/tla/src/scene/venus_lighthouse/push.c ----
-// Scene code of overlay 0x64e, in ROM order, from push's offset up to the next
 // object the overlay links, and the overlay's data.
 
 #include "field_event.h"

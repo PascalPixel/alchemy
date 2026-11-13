@@ -1,7 +1,6 @@
 /// @file
 /// Scene code of overlay 0x697, in ROM order.
 
-// ---- games/tla/src/scene/trial_road/s15a8.c ----
 #include "../shared/map_cells.h"
 #include "../shared/effects.h"
 #include "../shared/trial_road.h"
@@ -385,7 +384,6 @@ extern s32 gData_02007e20;
 DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gData_02007e20,
                              gData_02007e24, gData_02007e28, 0x050000a4)
 
-// ---- games/tla/src/scene/trial_road/s1fc4.c ----
 #include "system.h"
 
 extern s32 gData_02007e20;
@@ -1546,7 +1544,6 @@ void Func_02003da0(void) {
 #undef FIELD_AT
 #undef SET_LAYER
 
-// ---- games/tla/src/scene/trial_road/s3f68.c ----
 // Trial Road's movers' sprites, the setup of its gauge, a rising platform's
 // entry, the trap table's setup, Func_02004418, the placing of actors 8, 9
 // and 10, Func_02004828 and a second copy of
@@ -1964,7 +1961,6 @@ void Func_02004a14(union FieldObject *object) {
   to->bits = bits;
 }
 
-// ---- games/tla/src/scene/trial_road/s4a94.c ----
 #include "field_sprite.h"
 
 extern const s32 gData_02006254[];
@@ -2109,7 +2105,6 @@ void TrialRoad_WaitForBalanceState(void) {
   }
 }
 
-// ---- games/tla/src/scene/trial_road/s4ddc.c ----
 // The Trial Road rival's per-frame update.
 
 #include "../shared/trial_road.h"
@@ -2274,8 +2269,6 @@ void Func_02004ddc(void) {
   }
 }
 
-// ---- games/tla/src/scene/trial_road/s51a0.c ----
-// Scene code of overlay 0x697, in ROM order, from s51a0's offset up to the
 // next object the overlay links, and the overlay's data.
 
 #include "heap_release.h"

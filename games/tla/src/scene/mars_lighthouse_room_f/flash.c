@@ -1,7 +1,6 @@
 /// @file
 /// Scene code of overlay 0x6ad, in ROM order.
 
-// ---- games/tla/src/scene/mars_lighthouse_room_f/flash.c ----
 #include "../shared/mars_lighthouse.h"
 #include "types.h"
 #include "ram_buffer.h"
@@ -422,7 +421,6 @@ void Func_02002f6c(struct Actor *object) {
 #undef position
 #undef WORK
 
-// ---- games/tla/src/scene/mars_lighthouse_room_f/s2f80.c ----
 #define MapLayer MapLayer__s2f80
 #include "map.h"
 #undef MapLayer

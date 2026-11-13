@@ -1,7 +1,8 @@
 /// @file
-/// The scene code of overlay 0x64d, in ROM order.
-
-// ---- games/tla/src/scene/venus_lighthouse_entrance.c ----
+/// Outside the Venus Lighthouse, at the start of the prologue: Jenna and Kraden
+/// come out of the lighthouse, Tolbi's soldiers and the Ruffians close in,
+/// and Psynergy hurls two of them skyward on columns of rising earth before the
+/// party heads west for the meeting spot.
 
 #include "battle.h"
 #include "debug.h"
@@ -28,6 +29,27 @@
 #include "module/game/game.h"
 #include "text/msg_ids.h"
 
+/// The dust puffs' work, kept in Ram_HeapSlots' menu runtime while they play.
+struct DustPuffState {
+  u8 unk00[24];
+  s32 frame;
+};
+
+struct DustPuffSprite {
+  u8 unk00[8];
+  u16 tile : 10;
+  u16 attributes : 6;
+  u8 unk0a[30];
+};
+
+struct DustPuffWork {
+  u8 unk0000[0x800];
+  struct DustPuffState states[96];
+  struct DustPuffSprite sprites[96];
+  u16 unk2180;
+  u16 unk2182;
+};
+
 s32 Import_EventSetDestination();
 s32 Func_02002a04();
 void Import_DecompressTaggedLz(void *source, void *destination);
@@ -45,30 +67,30 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-void VenusLighthouseEntrance_RunActorSparkBurst(void *object) {
+void VenusLighthouseEntrance_BlastActorWithPsynergy(void *object) {
   Field_StartColorTransition(8, 0x4084);
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode(Actor_Get(5), 2);
   FieldEvent_Wait(20);
-  Func_020023a4(object);
+  VenusLighthouseEntrance_BlastActorSkyward(object);
   BattleEffect_SetObjectUpdateMode(Actor_Get(5), 0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Field_StartPaletteTransition(8);
 }
 
-void VenusLighthouseEntrance_UpdateSparkTrail(struct Actor *object) {
-  Func_0200260c(object, object->x, object->y, object->z);
+void VenusLighthouseEntrance_TrailDust(struct Actor *object) {
+  VenusLighthouseEntrance_EmitDust(object, object->x, object->y, object->z);
   if (++object->timer % 8 == 0)
     Event_PlaySound(125);
 }
 
-/// The spark trail while the actor steps 96 out and 96 back.
-void Func_020000c8(s32 actor) {
+/// Talked to, a soldier runs 96 pixels out and back trailing dust.
+void VenusLighthouseEntrance_RunWithDustTrail(s32 actor) {
   struct Actor *object = Actor_Get(actor);
 
-  Func_020026f4();
-  object->update = VenusLighthouseEntrance_UpdateSparkTrail;
+  VenusLighthouseEntrance_StartDust();
+  object->update = VenusLighthouseEntrance_TrailDust;
   object->priorityFlags = 0;
   {
     s32 a = actor;
@@ -95,7 +117,7 @@ void Func_020000c8(s32 actor) {
   object->update = 0;
   object->priorityFlags = 1;
   FieldEvent_Wait(30);
-  VenusLighthouseEntrance_StopSparks();
+  VenusLighthouseEntrance_StopDust();
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
@@ -109,7 +131,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
    } *)(base))                                                                 \
        ->v)
 
-void Func_0200030c(void);
+void VenusLighthouseEntrance_BirdsLand(void);
 void VenusLighthouseEntrance_WakeUp(void);
 
 s32 Scene_Initialize(void) {
@@ -152,7 +174,7 @@ s32 Scene_Initialize(void) {
     if (t21 == 0) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
-      Func_0200030c();
+      VenusLighthouseEntrance_BirdsLand();
       Event_End();
     }
   }
@@ -194,7 +216,11 @@ s32 Scene_PrepareMap(void) { return 0; }
 s32 Actor_StartScript();
 void FieldCamera_WaitForArrival(void);
 
-void Func_0200030c(void) {
+/// Two birds (actors 10 and 11) fly down and land as the party comes out of the
+/// lighthouse, the first time (flag 0x891).
+// XXX: birds, read from their flight and landing; a render of entrance 9
+// would settle it.
+void VenusLighthouseEntrance_BirdsLand(void) {
   s32 t1;
   s32 t3;
   s32 t9;
@@ -223,13 +249,13 @@ void Func_0200030c(void) {
   Actor_SetAnimation(10, 4);
   Event_PlaySound(165);
   FieldActor_SetMoveTarget(t9, PIXELS(352), PIXELS(8), PIXELS(176));
-  Actor_StartScript(t9, (s32)gData_0200b000);
+  Actor_StartScript(t9, (s32)gVenusLighthouseEntrance_BirdLands);
   FieldEvent_Wait(25);
   FieldCamera_MoveTo(PIXELS(376), -1, PIXELS(104), 1);
   t16 = ((s32)Actor_Get(11));
   Actor_SetAnimation(11, 4);
   FieldActor_SetMoveTarget(t16, PIXELS(416), PIXELS(8), PIXELS(152));
-  Actor_StartScript(t16, (s32)gData_0200b000);
+  Actor_StartScript(t16, (s32)gVenusLighthouseEntrance_BirdLands);
   FieldEvent_Wait(60);
   Event_PlaySound(165);
   FieldActor_WaitForMoveById(10);
@@ -237,14 +263,10 @@ void Func_0200030c(void) {
   FieldCamera_WaitForArrival();
 }
 
-/* VIEW(venus_lighthouse_entrance): variable gData_02003040 as extern u8
- * gData_02003040[]; the definition has u32 gData_02003040[] = { 1, 0, 1, 38, };
- * tried as the definition's extern s32 gData_02003040[], it does not compile in
- * tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1535: conflicting
- * types for `gData_02003040'. */
-extern u8 gData_02003040__venus_lighthouse_entrance[] __asm__("gData_02003040");
+extern u32 gVenusLighthouseEntrance_BirdFlies[];
 
-void Func_02000440(void) {
+/// The birds take off as the party walks past them (flag 0x892).
+void VenusLighthouseEntrance_BirdsFlyOff(void) {
   s32 t7;
   s32 t11;
 
@@ -261,14 +283,14 @@ void Func_02000440(void) {
   FIELD_AT(t7, s32, 52) = 0x8000;
   Actor_SetAnimation(10, 4);
   FieldActor_SetMoveTarget(t7, PIXELS(616), PIXELS(96), PIXELS(176));
-  Actor_StartScript(t7, (s32)gData_02003040__venus_lighthouse_entrance);
+  Actor_StartScript(t7, (s32)gVenusLighthouseEntrance_BirdFlies);
   t11 = Actor_Get(11);
   FIELD_AT((t11 + 0x55), u8, 0) = 0;
   FIELD_AT(t11, s32, 48) = 0x20000;
   FIELD_AT(t11, s32, 52) = 0x8000;
   Actor_SetAnimation(11, 4);
   FieldActor_SetMoveTarget(t11, PIXELS(120), PIXELS(96), PIXELS(176));
-  Call2(Actor_StartScript, t11, (s32)gData_02003040__venus_lighthouse_entrance);
+  Call2(Actor_StartScript, t11, (s32)gVenusLighthouseEntrance_BirdFlies);
   Event_End();
 }
 
@@ -554,7 +576,7 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   FieldEvent_Wait(60);
   Event_PlaySound(0x186);
   FieldActor_SetSpritePriority(12, 0);
-  Func_020023a4(12);
+  VenusLighthouseEntrance_BlastActorSkyward(12);
   Actor_ShowEmote(17, 0x100, 0);
   Actor_ShowEmote(18, 0x100, 0);
   Actor_ShowEmote(19, 0x100, 0);
@@ -563,7 +585,7 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   Actor_ShowEmote(14, 0x100, 0);
   Actor_ShowEmote(15, 0x100, 50);
   FieldActor_SetSpritePriority(13, 1);
-  Func_020023a4(13);
+  VenusLighthouseEntrance_BlastActorSkyward(13);
   FieldEvent_Wait(30);
   record = ((u8 *)Actor_GetById(9));
   BattleEffect_SetObjectUpdateMode((s32)record, 0);
@@ -630,14 +652,14 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   FieldActor_Jump(18, 6, 0);
   FieldActor_Jump(19, 6, 0);
   FieldActor_Jump(20, 6, 25);
-  Func_020026f4();
+  VenusLighthouseEntrance_StartDust();
   Actor_SetSpeed(20, 0x1cccc, 0xe666);
   Actor_SetSpeed(19, 0x1cccc, 0xe666);
   Actor_SetSpeed(18, 0x1cccc, 0xe666);
   Actor_SetSpeed(17, 0x1cccc, 0xe666);
   v5 = 0;
   rec = ((u8 *)Actor_GetById(20));
-  callback = (s32)VenusLighthouseEntrance_UpdateSparkTrail;
+  callback = (s32)VenusLighthouseEntrance_TrailDust;
   ((struct SparkRecord *)rec)->delay = v5;
   {
     s32 next = 19;
@@ -754,7 +776,7 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   Actor_SetPosition(19, 0, 0);
   Actor_SetPosition(18, 0, 0);
   Actor_SetPosition(17, 0, 0);
-  VenusLighthouseEntrance_StopSparks();
+  VenusLighthouseEntrance_StopDust();
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(9, 4);
   FieldEvent_Wait(10);
@@ -1140,7 +1162,7 @@ struct GlowWork {
   s8 follow;
 };
 
-void Func_02001fd0(void) {
+void VenusLighthouseEntrance_UpdateBlastColumn(void) {
   struct GlowWork *work = Ram_HeapSlots->menuRuntime;
   struct Actor *object = work->object;
   struct Actor *effect = work->effect;
@@ -1279,13 +1301,13 @@ void Func_02001fd0(void) {
 }
 #undef FIELD_AT
 
-// ---- games/tla/src/scene/venus_lighthouse_entrance/s23a4.c ----
-// Scene code of overlay 0x64d, in ROM order, from s23a4's offset up to the next
 // object the overlay links.
 
 s32 BattleEffect_GetObjectDepth(struct Actor *actor);
 
-void Func_020023a4(s32 id) {
+/// A column of rising earth lifts an actor, holds it, then hurls it off the
+/// top of the screen, and the ground shakes as the column sinks.
+void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   struct GlowWork *work = HeapSlot_AllocFar(220, 0x860);
   struct Actor *actor = Actor_Get(id);
   struct Actor *effect;
@@ -1331,25 +1353,25 @@ void Func_020023a4(s32 id) {
   work->height = 0;
   work->follow = 1;
   Event_PlaySound(221);
-  Task_AddFrame(Func_02001fd0, 0x480);
+  Task_AddFrame(VenusLighthouseEntrance_UpdateBlastColumn, 0x480);
   if (work->stage != 999) {
   wait:
     System_Wait(1);
     if (work->stage != 999)
       goto wait;
   }
-  FieldTask_Remove(Func_02001fd0);
+  FieldTask_Remove(VenusLighthouseEntrance_UpdateBlastColumn);
   Actor_Release(effect);
   VramCache_FreeEntry(resource);
   HeapSlot_Release(220);
 }
 
-void BattleEffect_StepVector3(struct Unk_0200258cState *state, s32 a, s32 b);
+void BattleEffect_StepVector3(struct DustPuffState *state, s32 a, s32 b);
 
-void Func_0200258c(void) {
-  struct Unk_0200258cWork *work = Ram_HeapSlots->menuRuntime;
-  struct Unk_0200258cState *state = work->states;
-  struct Unk_0200258cSprite *sprite = work->sprites;
+void VenusLighthouseEntrance_UpdateDust(void) {
+  struct DustPuffWork *work = Ram_HeapSlots->menuRuntime;
+  struct DustPuffState *state = work->states;
+  struct DustPuffSprite *sprite = work->sprites;
   s32 value;
   s32 i;
 
@@ -1387,7 +1409,8 @@ struct SparkWork {
   u16 tileBase;
 };
 
-void Func_0200260c(struct Actor *source, s32 x, s32 y, s32 z) {
+void VenusLighthouseEntrance_EmitDust(struct Actor *source, s32 x, s32 y,
+                                      s32 z) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;
   s32 angle = Random16Far();
   s16 *next = &work->next;
@@ -1408,8 +1431,6 @@ void Func_0200260c(struct Actor *source, s32 x, s32 y, s32 z) {
   *next = *next + 1;
   *next = *next % 96;
 }
-
-// ---- games/tla/src/scene/venus_lighthouse_entrance/s26f4.c ----
 
 /* VIEW(s26f4): tag struct SparkSprite as struct SparkSprite__s26f4;
  * venus_lighthouse_entrance.c has another definition; tried with the definition
@@ -1444,7 +1465,7 @@ struct SparkWork__s26f4 {
   u16 resource;
 };
 
-void Func_020026f4(void) {
+void VenusLighthouseEntrance_StartDust(void) {
   struct SparkWork__s26f4 *work = HeapSlot_AllocFar(220, 0x2188);
   s32 resource;
   s32 tileBase;
@@ -1474,10 +1495,9 @@ void Func_020026f4(void) {
     s32 zero = 0;
     work->unk2180 = zero;
   }
-  Task_AddFrame(Func_0200258c, (s32)(0x480));
+  Task_AddFrame(VenusLighthouseEntrance_UpdateDust, (s32)(0x480));
 }
 
-// ---- games/tla/src/scene/venus_lighthouse_entrance/sparks.c ----
 #include "resource.h"
 #include "heap_release.h"
 
@@ -1493,10 +1513,10 @@ struct SparkWork__sparks {
   s16 resource;
 };
 
-void VenusLighthouseEntrance_StopSparks(void) {
+void VenusLighthouseEntrance_StopDust(void) {
   struct SparkWork__sparks *work = Ram_HeapSlots->menuRuntime;
 
-  FieldTask_Remove(Func_0200258c);
+  FieldTask_Remove(VenusLighthouseEntrance_UpdateDust);
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(220);
 }
@@ -1554,7 +1574,7 @@ struct ActorPlacement gActorPlacements[] = {
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 9, 0x892, EVENT(Func_02000440)},
+    {TRIGGER_STEP, 9, 0x892, EVENT(VenusLighthouseEntrance_BirdsFlyOff)},
     {TRIGGER_STEP, 10, 0x890, EVENT(VenusLighthouseEntrance_ThievesAttack)},
     {TRIGGER_STEP, 11, 0x893,
      EVENT(VenusLighthouseEntrance_ThiefWaitsForBackup)},
@@ -1562,19 +1582,20 @@ struct Trigger gSceneEvents[] = {
      EVENT(VenusLighthouseEntrance_PointToMeetingSpot)},
     {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgUggghICan)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS,
-     EVENT(VenusLighthouseEntrance_RunActorSparkBurst)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_020000c8)},
+     EVENT(VenusLighthouseEntrance_BlastActorWithPsynergy)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS,
+     EVENT(VenusLighthouseEntrance_RunWithDustTrail)},
     {TRIGGER_TABLE_END},
 };
 
 // clang-format off
-u32 gData_0200b000[] = {
+u32 gVenusLighthouseEntrance_BirdLands[] = {
     1, 0, 1, 39, 2, 0,
     4, 22, 26, 3, 22, 13,
     0, 0, 1, 17,
 };
 
-u32 gData_02003040[] = {
+u32 gVenusLighthouseEntrance_BirdFlies[] = {
     1, 0, 1, 38,
 };
 // clang-format on

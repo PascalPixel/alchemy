@@ -1,7 +1,6 @@
 /// @file
 /// Scene code of overlay 0x654, in ROM order.
 
-// ---- games/tla/src/scene/shrine_of_the_sea_god/event0.c ----
 #include "../shrine_of_the_sea_god.h"
 #include "event_work.h"
 #include "module/scene/scene.h"
@@ -26,7 +25,6 @@ void Func_02000280(void) {
   }
 }
 
-// ---- games/tla/src/scene/shrine_of_the_sea_god.c ----
 // The scene code of overlay 0x654 that its scene tables belong to, in ROM
 // order; the rest of the overlay is in shrine_of_the_sea_god/.
 
@@ -163,8 +161,6 @@ const struct Trigger *Scene_GetEvents(void) {
   return (const struct Trigger *)gShrineOfTheSeaGod_Triggers;
 }
 
-// ---- games/tla/src/scene/shrine_of_the_sea_god/event7.c ----
-// Scene code of overlay 0x654, in ROM order, from event7's offset up to the
 // next object the overlay links.
 
 #include "text/msg_ids.h"

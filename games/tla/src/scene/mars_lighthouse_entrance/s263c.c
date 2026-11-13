@@ -1,7 +1,6 @@
 /// @file
 /// Scene code of overlay 0x6aa, in ROM order.
 
-// ---- games/tla/src/scene/mars_lighthouse_entrance/s263c.c ----
 #include "../shared/mars_lighthouse.h"
 #include "version.h"
 
@@ -60,7 +59,6 @@ void MarsLighthouseEntrance_ContinueSlide(void) {
     Func_0200263c();
 }
 
-// ---- games/tla/src/scene/mars_lighthouse_entrance/s2860.c ----
 #include "../shared/mars_lighthouse_entrance_room.h"
 
 /* VIEW(s2860): routine Func_020024c0 as s32 Func_020024c0(s32 a, s32 b); s263c
@@ -368,7 +366,6 @@ DEFINE_ACTOR_STEER_BY_PAD(Func_020031f8, gData_02005758, Func_02004bc0)
 
 DEFINE_LEADER_STOP_IF_PENDING(Func_02003284)
 
-// ---- games/tla/src/scene/mars_lighthouse_entrance/s32b8.c ----
 #include "system/iwram_call.h"
 #include "system/input.h"
 #include "system/main_routine_work.h"
@@ -387,7 +384,6 @@ extern s16 gData_02005798[];
 DEFINE_LEADER_SLIDE_ON_ICE(Func_020032b8, Func_02003284, gData_02005798,
                            Func_02004bc0, Func_020031f8, Func_02004c78)
 
-// ---- games/tla/src/scene/mars_lighthouse_entrance/s3564.c ----
 extern volatile s16 gData_020068b0;
 extern s16 gData_02005798[];
 /* VIEW(s3564): routine Func_020031f8 as void Func_020031f8(struct Actor

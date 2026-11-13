@@ -1,7 +1,6 @@
 /// @file
 /// Scene code of overlay 0x6ad, in ROM order.
 
-// ---- games/tla/src/scene/mars_lighthouse_room_f/s3d80.c ----
 #include "../shared/teleporter.h"
 #include "../shared/jupiter_lighthouse.h"
 #include "../shared/mars_lighthouse.h"
@@ -156,8 +155,6 @@ DEFINE_LEADER_SLIDE_ON_ICE(Func_02004140, Func_0200410c, gData_02005f38__s3d80,
 #undef SHARED_F02003070_ID7
 #undef SHARED_F02003070_ID8
 
-// ---- games/tla/src/scene/mars_lighthouse_room_f/s4700.c ----
-
 void Func_02004700(s32 value) { gData_020074c8 = value; }
 
 #include "system/main_routine_work.h"
@@ -281,7 +278,6 @@ DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Actor_StopAtPushTarget, Func_02005680,
 #undef PIXELS
 #define PIXELS(value) ((value) << 16)
 
-// ---- games/tla/src/scene/mars_lighthouse_room_f/s5048.c ----
 #define MapLayer MapLayer__s5048
 #include "map.h"
 #undef MapLayer

@@ -258,7 +258,6 @@ hit:
   return Func_02003af4();
 }
 
-// ---- games/tla/src/scene/magma_rock/target.c ----
 #include "macros.h"
 
 void Func_02001444(void) {
@@ -414,7 +413,6 @@ void Func_020015e4(union FieldObject *object) {
 #undef PART_Y
 #undef EFFECT_Y
 
-// ---- games/tla/src/scene/magma_rock/s1738.c ----
 #include "system/ram_buffer.h"
 
 /// The native reads these event work halfwords signed (ldrsh).
@@ -640,7 +638,6 @@ void Func_02001be0(void) {
   Event_ClearFlag(0x212);
 }
 
-// ---- games/tla/src/scene/magma_rock/s1c00.c ----
 #include "call.h"
 
 void Actor_SetActionById(s32 id, s32 action);
@@ -729,7 +726,6 @@ second:
   Func_02003af4();
 }
 
-// ---- games/tla/src/scene/magma_rock/s1e08.c ----
 #include "fixed_math.h"
 
 void Func_0200074c(struct Actor *object);

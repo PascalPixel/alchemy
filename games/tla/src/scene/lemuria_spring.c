@@ -1,7 +1,6 @@
 /// @file
 /// The scene code of overlay 0x68e, in ROM order.
 
-// ---- games/tla/src/scene/lemuria_spring.c ----
 #include "battle.h"
 #include "io_write.h"
 #include "field.h"
@@ -944,7 +943,6 @@ void LemuriaSpring_UpdateTossSimulation(void) {
 #undef TOSS_WINDOW_WIDTH
 #undef WEIGHT
 
-// ---- games/tla/src/scene/lemuria_spring/ride.c ----
 #include "task.h"
 
 /* VIEW(ride): variable gData_02001760 as extern struct SpringRide

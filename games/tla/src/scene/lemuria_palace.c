@@ -1,7 +1,6 @@
 /// @file
 /// The scene code of overlay 0x68d, in ROM order.
 
-// ---- games/tla/src/scene/lemuria_palace.c ----
 #include "shared/tables.h"
 #include "battle.h"
 #include "field.h"
@@ -252,7 +251,6 @@ void Func_020002b4(void) {
   }
 }
 
-// ---- games/tla/src/scene/lemuria_palace/s03a0.c ----
 #include "task.h"
 #include "call.h"
 #include "system/io_write.h"

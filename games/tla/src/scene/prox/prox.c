@@ -1,8 +1,6 @@
 /// @file
 /// Scene code of overlay 0x6a8, in ROM order.
 
-// ---- games/tla/src/scene/prox.c ----
-
 #include "../shared/tables.h"
 #include "../shared/mars_lighthouse.h"
 #include "../shared/actors.h"
@@ -1012,8 +1010,6 @@ void Func_02001c24(s32 a0) {
 #undef BYTE_AT
 #undef FIELD_AT
 
-// ---- games/tla/src/scene/prox/s1cf0.c ----
-// Scene code of overlay 0x6a8, in ROM order, from s1cf0's offset up to the next
 // object the overlay links.
 
 #include "io_reg.h"
@@ -1925,8 +1921,6 @@ void Func_020038e8(void) {
 }
 #undef FIELD_AT
 
-// ---- games/tla/src/scene/prox/s391c.c ----
-// Scene code of overlay 0x6a8, in ROM order, from s391c's offset up to the next
 // object the overlay links.
 
 #include "fixed_math.h"
@@ -2057,8 +2051,6 @@ struct RockWork {
 DEFINE_ROCKS_SPAWN(Rocks_Spawn)
 #undef FIELD_AT
 
-// ---- games/tla/src/scene/prox/s4254.c ----
-// Scene code of overlay 0x6a8, in ROM order, from s4254's offset up to the next
 // object the overlay links, and the overlay's data.
 
 #include "system/task.h"

@@ -1,7 +1,6 @@
 /// @file
 /// Scene code of overlay 0x6ae, in ROM order.
 
-// ---- games/tla/src/scene/mars_lighthouse_aerie/s3370.c ----
 #include "../shared/actors.h"
 #include "../shared/effects.h"
 #include "../shared/tables.h"

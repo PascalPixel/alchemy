@@ -94,7 +94,6 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-// ---- games/tla/src/scene/shaman_village/s0280.c ----
 /* VIEW(s0280): routine Import_ActorSetMode as void Import_ActorSetMode(struct
  * ShamanVillageObject *object, s32 mode); field_event.h has void
  * Import_ActorSetMode(struct Actor *object, s32 mode); tried as the rest of the
@@ -120,7 +119,6 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gShamanVillage_Entrances;
 }
 
-// ---- games/tla/src/scene/shaman_village/scene_tables.c ----
 #include "battle.h"
 /* VIEW(scene_tables): routine Actor_SetSpriteFlags as void
  * Actor_SetSpriteFlags(struct Actor *object, u32 flags); shaman_village.h
@@ -159,7 +157,6 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-// ---- games/tla/src/scene/shaman_village/s02dc.c ----
 extern u32 gShamanVillage_Placements[];
 extern u32 gShamanVillage_Room1Placements[];
 extern s16 gShamanVillage_Room3Placements[];
@@ -271,8 +268,6 @@ void Effect_CircleAndBlink(struct Actor *object) {
 }
 #undef WORD_AT
 
-// ---- games/tla/src/scene/shaman_village/s0508.c ----
-
 /// Swings an object about x = 168: left of it the object speeds up rightward
 /// and grows, right of it leftward and shrinks. It takes sprite priority 1
 /// while it moves right, 2 otherwise, and spins.
@@ -294,7 +289,6 @@ void Func_02000508(struct ShamanVillageObject *object) {
   object->sprite->rotation += 0x1800;
 }
 
-// ---- games/tla/src/scene/shaman_village/s057c.c ----
 #include "actor.h"
 #include "field_sprite.h"
 #include "system/dma.h"
@@ -545,7 +539,6 @@ fade:
 }
 #undef OBJ14_BYTE
 
-// ---- games/tla/src/scene/shaman_village/s0c80.c ----
 extern u32 gShamanVillage_Triggers[];
 extern u32 gShamanVillage_Room1Triggers[];
 extern u32 gShamanVillage_Room3Triggers[];

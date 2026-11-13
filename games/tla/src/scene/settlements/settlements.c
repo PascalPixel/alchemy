@@ -1,7 +1,6 @@
 /// @file
 /// Scene code of overlay 0x690, in ROM order.
 
-// ---- games/tla/src/scene/settlements/s1620.c ----
 #include "types.h"
 #include "field_effect.h"
 #include "actor.h"
@@ -80,7 +79,6 @@ void Func_020016b0(struct Actor *object) {
   Actor_SetAnimationSpeed(object, 48);
 }
 
-// ---- games/tla/src/scene/settlements/s173c.c ----
 #include "event_work.h"
 #include "call.h"
 #include "main_routine_work.h"

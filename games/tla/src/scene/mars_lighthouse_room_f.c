@@ -153,7 +153,7 @@ extern s16 gData_02005f18[];
 
 void Func_02000cb8(s32 id);
 
-void Func_02004700(s32 value);
+void Leader_SetSlideStopped(s32 value);
 
 void Func_020025b0(void);
 
@@ -242,14 +242,12 @@ void Party_TakeFallDamage(void);
 
 s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 terrain, s32 x, s32 z);
 
-extern struct WarpWork gData_020070a8;
-
 void Leader_CenterInCell(void);
 
 s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 radiusA, struct Position *b,
                                     s32 radiusB);
 
-extern volatile s16 gData_020074c8;
+extern volatile s16 gMarsLighthouseRoomF_SlideStopped;
 
 s32 Actor_HasArrived(struct Actor *object);
 
@@ -813,7 +811,7 @@ extern struct Trigger gMarsLighthouseRoomF_Room1Triggers[];
 extern struct Trigger gMarsLighthouseRoomF_Room3Triggers[];
 extern struct Trigger gMarsLighthouseRoomF_Room2Triggers[];
 #define MarsLighthouseRoomF_ContinueSlide MarsLighthouseRoomF_ContinueSlide
-void Func_020043ec(void);
+void Leader_SlideOnIceFromEdge(void);
 
 void Func_02000c80(s32 id) {
   struct Actor *object = Actor_Get(id);
@@ -876,7 +874,7 @@ void Func_02000d80(void) {
 }
 
 void Func_02000df8(void) {
-  Func_020043ec();
+  Leader_SlideOnIceFromEdge();
   MarsLighthouseRoomF_ContinueSlide();
 }
 
@@ -894,7 +892,7 @@ const struct Trigger *Scene_GetEvents(void) {
 
 void Func_02000e68(void) {
   if (Func_02002cfc())
-    Func_02004700(1);
+    Leader_SetSlideStopped(1);
 }
 
 void JupiterLighthouse_LoadPalettesZero(s32 mode);
@@ -2270,12 +2268,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-/* VIEW(s35b8): variable gData_020070a8 as cell_sprite.c reads it; the scene's
- * module header has another type; tried as the rest of the object declares it,
- * it does not compile in tla-ja: games/tla/src/field/map/cell_sprite.c:16:
- * conflicting types for `gData_020070a8'. */
-extern struct CellTarget gData_020070a8__s35b8 __asm__("gData_020070a8");
-#define CELL_TABLE gData_020070a8__s35b8
+extern struct CellTarget gData_020070a8;
+#define CELL_TABLE gData_020070a8
 #define CELL_SPRITE_DRAW CrackedTiles_Update
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
@@ -2384,64 +2378,47 @@ void Func_02003fc8(s32 dx, s32 dz, s32 value) {
   }
 }
 
-/* VIEW(s3d80): variable gData_02005ef8 as extern const s16 gData_02005ef8[];
- * the definition has s32 gData_02005ef8[] = { 0xffff, - 0x8000, (s32)
- * 0xe000c000, (s32) 0xc000a000, 0x20004000, 0x40006000, 0xffff, - 0x8000, };
- * tried as the rest of the object declares it, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:2317: `gData_02005ef8'
- * undeclared (first use in this function). */
-extern const s16 gData_02005ef8__s3d80[] __asm__("gData_02005ef8");
+extern s16 gData_02005ef8[];
 
-DEFINE_ACTOR_STEER_BY_PAD(Actor_SteerByPad, gData_02005ef8__s3d80,
-                          Func_02005480)
+DEFINE_ACTOR_STEER_BY_PAD(Actor_SteerByPad, gData_02005ef8, Func_02005480)
 
 DEFINE_LEADER_STOP_IF_PENDING(Leader_StopIfPending)
 
 // A point on the map: 16.16 fixed-point pixels.
-/* VIEW(s3d80): variable gData_02005f38 as extern s16 gData_02005f38[]; the
- * definition has s32 gData_02005f38[] = { 0xffff, - 0x8000, 0xc000, (s32)
- * 0xc0008000, 0x4000, 0x40008000, 0xffff, - 0x8000, }; tried as the rest of the
- * object declares it, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:2333: `gData_02005f38'
- * undeclared (first use in this function). */
-extern s16 gData_02005f38__s3d80[] __asm__("gData_02005f38");
+extern s16 gData_02005f38[];
 
 DEFINE_LEADER_SLIDE_ON_ICE(Leader_SlideOnIce, Leader_StopIfPending,
-                           gData_02005f38__s3d80, Func_02005480,
-                           Actor_SteerByPad, Import_FieldCheckSpheresOverlap)
+                           gData_02005f38, Func_02005480, Actor_SteerByPad,
+                           Import_FieldCheckSpheresOverlap)
 
-#define SHARED_F02003070_NAME Func_020043ec
-#define SHARED_F02003070_ID2 gData_020074c8
-#define SHARED_F02003070_ID3 Leader_StopIfPending
-#define SHARED_F02003070_ID4 gData_02005f38__s3d80
-#define SHARED_F02003070_ID5 Func_02005480
-#define SHARED_F02003070_ID6 Actor_HasArrived
-#define SHARED_F02003070_ID7 Actor_SteerByPad
-#define SHARED_F02003070_ID8 Import_FieldCheckSpheresOverlap
-#include "shared/func_02003070.c"
-#undef SHARED_F02003070_NAME
-#undef SHARED_F02003070_ID2
-#undef SHARED_F02003070_ID3
-#undef SHARED_F02003070_ID4
-#undef SHARED_F02003070_ID5
-#undef SHARED_F02003070_ID6
-#undef SHARED_F02003070_ID7
-#undef SHARED_F02003070_ID8
+#define SLIDE_FROM_EDGE Leader_SlideOnIceFromEdge
+#define SLIDE_STOPPED gMarsLighthouseRoomF_SlideStopped
+#define SLIDE_STOP_LEADER Leader_StopIfPending
+#define SLIDE_ANGLES gData_02005f38
+#define SLIDE_SET_ANIMATION Func_02005480
+#define SLIDE_HAS_ARRIVED Actor_HasArrived
+#define SLIDE_KEEP_SLIDING Actor_SteerByPad
+#define SLIDE_SPHERES_OVERLAP Import_FieldCheckSpheresOverlap
+#include "shared/slide_on_ice_from_edge.c"
+#undef SLIDE_FROM_EDGE
+#undef SLIDE_STOPPED
+#undef SLIDE_STOP_LEADER
+#undef SLIDE_ANGLES
+#undef SLIDE_SET_ANIMATION
+#undef SLIDE_HAS_ARRIVED
+#undef SLIDE_KEEP_SLIDING
+#undef SLIDE_SPHERES_OVERLAP
 
-void Func_02004700(s32 value) { gData_020074c8 = value; }
+void Leader_SetSlideStopped(s32 value) {
+  gMarsLighthouseRoomF_SlideStopped = value;
+}
 
 DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Leader_StopIfPending,
                                  Func_02005480, Actor_SteerByPad,
                                  Import_FieldCheckSpheresOverlap)
 
 extern u16 gData_02005f58[];
-/* VIEW(s4700): variable gData_02005f64 as extern s8 gData_02005f64[][4]; the
- * definition has u32 gData_02005f64[] = { 0x820f8e0, 0x2008e0f8, 0x20f0e0,
- * 0x2008e0f8, 0x820f8e0, 0x2008e0f8, }; tried as the rest of the object
- * declares it, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_f.c:2391: `gData_02005f64'
- * undeclared (first use in this function). */
-extern s8 gData_02005f64__s4700[][4] __asm__("gData_02005f64");
+extern s8 gData_02005f64[][4];
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
@@ -2470,14 +2447,10 @@ s32 Func_02004938(s32 id) {
   j = (u16)i;
   if (j == 6)
     return 0;
-  width =
-      (ABS(gData_02005f64__s4700[j][0]) + ABS(gData_02005f64__s4700[j][2])) >>
-      4;
-  height =
-      (ABS(gData_02005f64__s4700[j][1]) + ABS(gData_02005f64__s4700[j][3])) >>
-      4;
-  x = (object->x + (gData_02005f64__s4700[j][0] << 16)) >> 20;
-  z = (object->z + (gData_02005f64__s4700[j][1] << 16)) >> 20;
+  width = (ABS(gData_02005f64[j][0]) + ABS(gData_02005f64[j][2])) >> 4;
+  height = (ABS(gData_02005f64[j][1]) + ABS(gData_02005f64[j][3])) >> 4;
+  x = (object->x + (gData_02005f64[j][0] << 16)) >> 20;
+  z = (object->z + (gData_02005f64[j][1] << 16)) >> 20;
   mapX = *(s32 *)(map + 328) >> 20;
   i = mapX;
   mapZ = *(s32 *)(map + 332) >> 20;
@@ -2517,19 +2490,18 @@ static inline s32 Func_020054f8_(struct Actor *object, s32 *position) {
 // (MapGrid_CheckCollision returns 2). Leaves the object's resting place in
 // target and returns 1, or 0 when nothing is pushed or it cannot move at all.
 DEFINE_PUSH_TARGET_FIND_SLIDE(PushTarget_FindSlide, PushTarget_FindAhead,
-                              gData_02005f64__s4700, gData_02005f7c,
-                              Func_020054f8_)
+                              gData_02005f64, gData_02005f7c, Func_020054f8_)
 
 #undef PIXELS
 // The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])
 
 DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gData_02005f58,
-                              gData_02005f7c, gData_02005f64__s4700)
+                              gData_02005f7c, gData_02005f64)
 
 #undef PIXELS
 
-DEFINE_PUSH_TARGET_PUSH(PushTarget_Push, gData_02005f64__s4700, Func_02004a44,
+DEFINE_PUSH_TARGET_PUSH(PushTarget_Push, gData_02005f64, Func_02004a44,
                         Actor_StopAtPushTarget, Func_02005480, gData_02005f7c)
 
 DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Actor_StopAtPushTarget, Actor_FindAtCell,
@@ -2787,40 +2759,35 @@ DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
 
 DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
 
-s32 gData_02005ef8[] = {
-    0xffff, -0x8000, (s32)0xe000c000, (s32)0xc000a000, 0x20004000, 0x40006000,
-    0xffff, -0x8000,
-};
+s16 gData_02005ef8[] = {-1, 0, -32768, -1, -16384, -8192, -24576, -16384, 16384, 8192, 24576, 16384, -1, 0, -32768, -1};
 
 s16 gData_02005f18[] = {
     -1, 0, -0x8000, -1, -0x4000, -1, -1, -0x4000,
     0x4000, -1, -1, 0x4000, -1, 0, -0x8000, -1,
 };
 
-s32 gData_02005f38[] = {
-    0xffff, -0x8000, 0xc000, (s32)0xc0008000, 0x4000, 0x40008000,
-    0xffff, -0x8000,
-};
+s16 gData_02005f38[] = {-1, 0, -32768, -1, -16384, 0, -32768, -16384, 16384, 0, -32768, 16384, -1, 0, -32768, -1};
 
 u16 gData_02005f58[] = {
     258, 259, 293, 294, 332, 331,
 };
 
-u32 gData_02005f64[] = {
-    0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8,
+s8 gData_02005f64[][4] = {
+    {-32, -8, 32, 8},  {-8, -32, 8, 32}, {-32, -16, 32, 0},
+    {-8, -32, 8, 32},  {-32, -8, 32, 8},  {-8, -32, 8, 32},
 };
 
 DEFINE_PUSH_LEADER_STEPS(gData_02005f7c)
 // clang-format on
 
-#undef SHARED_F02003070_NAME
-#undef SHARED_F02003070_ID2
-#undef SHARED_F02003070_ID3
-#undef SHARED_F02003070_ID4
-#undef SHARED_F02003070_ID5
-#undef SHARED_F02003070_ID6
-#undef SHARED_F02003070_ID7
-#undef SHARED_F02003070_ID8
+#undef SLIDE_FROM_EDGE
+#undef SLIDE_STOPPED
+#undef SLIDE_STOP_LEADER
+#undef SLIDE_ANGLES
+#undef SLIDE_SET_ANIMATION
+#undef SLIDE_HAS_ARRIVED
+#undef SLIDE_KEEP_SLIDING
+#undef SLIDE_SPHERES_OVERLAP
 #undef ABS
 #undef PIXELS
 #define PIXELS(value) ((value) << 16)

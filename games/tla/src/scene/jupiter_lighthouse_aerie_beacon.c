@@ -2651,8 +2651,6 @@ void Whirlwind_Update(struct Object6a5 *object) {
 
 // Scene code of overlay 0x6a5, in ROM order.
 
-extern u8 gLightSpritesLarge[];
-
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -2714,12 +2712,7 @@ void Func_02004644(void) {
   }
 }
 
-/* VIEW(s44cc): variable gLightSpritesLarge as s16 gLightSpritesLarge;
- * module/scene/scene.h has u8 gLightSpritesLarge[]; tried as the 11
- * declarations' extern s16 gLightSpritesLarge, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2693: conflicting types
- * for `gLightSpritesLarge'. */
-extern s16 gLightSpritesLarge__s44cc __asm__("gLightSpritesLarge");
+extern s16 gLightSpritesLarge;
 
 // Queues the lit actors' sprites: for each listed actor with a position,
 // projects it from the map's view, skips it off screen, and writes a 16 by 16
@@ -2727,7 +2720,7 @@ extern s16 gLightSpritesLarge__s44cc __asm__("gLightSpritesLarge");
 // picture and depth.
 DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
                           gLightSpriteCount, gLightSpriteActors,
-                          gLightSpritesLarge__s44cc, gLightSpritePriority,
+                          gLightSpritesLarge, gLightSpritePriority,
                           BattleEffect_GetObjectPriority,
                           Oam_AddSpriteAtDepthClamped)
 
@@ -2737,17 +2730,17 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gLightSpritesLarge__s44cc,
+                            gLightSpriteCount, gLightSpritesLarge,
                             gLightSpritePriority)
 
 DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gLightSpritesLarge__s44cc,
+                            gLightSpriteCount, gLightSpritesLarge,
                             gLightSpritePriority)
 
 DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gLightSpritesLarge__s44cc,
+                            gLightSpriteCount, gLightSpritesLarge,
                             gLightSpritePriority)
 
 DEFINE_LIGHT_SPRITES_ADD_COUNTED(LightSprites_AddCounted, gLightSpriteActors,

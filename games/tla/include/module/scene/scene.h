@@ -1260,8 +1260,6 @@ extern char SceneId_SuhallaGate1;
 extern char SceneId_Ov650;
 extern char ResourceId_FarCall00B;
 
-extern u8 gData_02006c08[];
-
 extern char SceneId_Ov676Room1;
 extern char SceneId_Ov676Room2;
 

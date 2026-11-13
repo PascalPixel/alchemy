@@ -602,13 +602,8 @@ void Func_02000900(struct Counted *object) {
 
 extern struct ActorPlacement gGaiaRockInside_Room2Placements[];
 
-/* VIEW(s07f4): variable gData_02005ee4 as s32 gData_02005ee4;
- * scene/gaia_rock_inside/s4d00 has u32 gData_02005ee4[] = {; tried as the
- * definition's extern u32 gData_02005ee4[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside.c:618: `gData_02005ee4' undeclared
- * (first use in this function). */
-extern s32 gData_02005ee4__s07f4 __asm__("gData_02005ee4");
-#define gData_02005ee4 gData_02005ee4__s07f4
+extern s32 gData_02005ee4;
+#define gData_02005ee4 gData_02005ee4
 extern s32 gData_02005e28[];
 
 // Return the table for the current room.
@@ -4618,9 +4613,7 @@ s32 gData_02005e28[] = {
     SC_END,
 };
 
-u32 gData_02005ee4[] = {
-    0,
-};
+s32 gData_02005ee4 = 0;
 
 struct Trigger gGaiaRockInside_Triggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_0200485c)},

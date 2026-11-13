@@ -2109,14 +2109,6 @@ DEFINE_TILE_SPRITE_RESET(Func_020035e0)
 #undef Actor_SetSpriteColorMode
 // ---- scene/world_map/s3600.c ----
 
-/* VIEW(s3600): variable gData_02006c08 as struct Actor *gData_02006c08[];
- * module/scene/scene.h has u8 gData_02006c08[]. The three parts after see it so
- * too; tried as the 3 declarations' extern struct Actor *gData_02006c08[], it
- * does not compile in tla-ja: games/tla/src/scene/shared/world_map_s3600.c:8:
- * conflicting types for `gData_02006c08'. */
-extern struct Actor *gData_02006c08__s3600[] __asm__("gData_02006c08");
-#define gData_02006c08 gData_02006c08__s3600
-
 /// Scene code of overlay 0x64b, in ROM order.
 
 #include "shared/world_map_s3600.c"
@@ -2132,8 +2124,6 @@ extern struct Actor *gData_02006c08__s3600[] __asm__("gData_02006c08");
 /// Scene code of overlay 0x64b, in ROM order.
 
 #include "shared/world_map_s3960.c"
-
-#undef gData_02006c08
 
 // ---- scene/world_map/cell_index.c ----
 
@@ -2166,10 +2156,6 @@ s32 Func_020039a8(struct Actor *object) {
 // ---- scene/world_map/s3b38.c ----
 
 /// Scene code of overlay 0x64b, in ROM order.
-
-extern u8 gData_02006f20[];
-extern u8 gData_02006e0e[];
-extern u8 gData_02006e0c[];
 
 DEFINE_ACTOR_FLICKER(Func_02003b38, Func_020039f4)
 
@@ -2449,33 +2435,18 @@ void Func_02004634(struct Actor *parent) {
   }
 }
 
-/* VIEW(s3b38): variable gData_02006e0c as s16 gData_02006e0c;
- * module/scene/scene.h has u8 gData_02006e0c[]; tried as the one declaration
- * extern s16 gData_02006e0c, it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:2390: conflicting types for `gData_02006e0c'.
- */
-extern s16 gData_02006e0c__s3b38 __asm__("gData_02006e0c");
-/* VIEW(s3b38): variable gData_02006e0e as s16 gData_02006e0e;
- * module/scene/scene.h has u8 gData_02006e0e[]; tried as the one declaration
- * extern s16 gData_02006e0e, it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:2392: conflicting types for `gData_02006e0e'.
- */
-extern s16 gData_02006e0e__s3b38 __asm__("gData_02006e0e");
-/* VIEW(s3b38): variable gData_02006f20 as u8 gData_02006f20[][32];
- * module/scene/scene.h has u8 gData_02006f20[]; tried as the rest of the object
- * declares it, it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:2447: subscripted value is neither array nor
- * pointer. */
-extern u8 gData_02006f20__s3b38[][32] __asm__("gData_02006f20");
+extern s16 gData_02006e0c;
+extern s16 gData_02006e0e;
+extern u8 gData_02006f20[][32];
 
-DEFINE_GAUGE_DRAW(Func_02004744, gData_02006e0c__s3b38, Data_02006e20,
-                  gData_02006f20__s3b38, gData_02006e0e__s3b38)
+DEFINE_GAUGE_DRAW(Func_02004744, gData_02006e0c, Data_02006e20, gData_02006f20,
+                  gData_02006e0e)
 
 // The world map cursor: counts down while A or B is held, redraws the gauge and
 // queues its sprite over the leader.
 void Func_020048f4(void) {
   u32 *oam = Data_02006e14;
-  s32 tile = gResourceTableEntries[gData_02006e0e__s3b38].offset >> 5;
+  s32 tile = gResourceTableEntries[gData_02006e0e].offset >> 5;
   struct Actor *leader = Actor_Get(FieldParty_GetLeaderActor());
   s32 screen[3];
   u32 attributes;
@@ -2501,11 +2472,11 @@ void Func_020048f4(void) {
   Oam_AddSpriteAtDepthClamped(Data_02006e14, 255);
 }
 
-DEFINE_GAUGE_INIT(Func_020049bc, gData_02006f20__s3b38, gData_02006e0e__s3b38,
-                  gData_02006e0c__s3b38, gData_02006e10, Func_020048f4)
+DEFINE_GAUGE_INIT(Func_020049bc, gData_02006f20, gData_02006e0e, gData_02006e0c,
+                  gData_02006e10, Func_020048f4)
 
-DEFINE_GAUGE_END(Func_02004a1c, gData_02006f20__s3b38, gData_02006e0e__s3b38,
-                 gData_02006e0c__s3b38, Func_020048f4)
+DEFINE_GAUGE_END(Func_02004a1c, gData_02006f20, gData_02006e0e, gData_02006e0c,
+                 Func_020048f4)
 
 // clang-format off
 u32 gData_02004e38[] = {
@@ -2570,7 +2541,6 @@ u32 gData_02004fc8[] = {
 #undef TUTORIAL_SET_MESSAGE
 #undef TUTORIAL_MESSAGE
 #undef Actor_SetSpriteColorMode
-#undef gData_02006c08
 #undef gData_02006be4
 
 void Func_02000038(void);

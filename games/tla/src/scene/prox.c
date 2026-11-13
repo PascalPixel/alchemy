@@ -2061,14 +2061,9 @@ void Prox_SayFarewell(void) {
 }
 
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
-/* VIEW(s1cf0): variable gData_02004740 as extern const s16 gData_02004740[];
- * the definition has s32 gData_02004740[] = { 0xffff, - 0x8000, (s32)
- * 0xe000c000, (s32) 0xc000a000, 0x20004000, 0x40006000, 0xffff, - 0x8000,
- * 0xffff, - 0x8000, -...; tried as the definition's extern s32
- * gData_02004740[], Actor_SteerByPad moves: 7 of 60 instructions in tla-ja. */
-extern const s16 gData_02004740__s1cf0[] __asm__("gData_02004740");
+extern s16 gData_02004740[];
 
-DEFINE_ACTOR_STEER_BY_PAD(Actor_SteerByPad, gData_02004740__s1cf0,
+DEFINE_ACTOR_STEER_BY_PAD(Actor_SteerByPad, gData_02004740,
                           Actor_SelectAnimation)
 
 void Func_020038e8(void) {
@@ -2094,38 +2089,33 @@ struct Position {
 
 void Actor_SelectAnimation(struct Actor *actor, s32 mode);
 s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
-/* VIEW(s391c): variable gData_02004780 as extern s16 gData_02004780[]; the
- * definition has s32 gData_02004780[] = { 0xffff, - 0x8000, 0xc000, (s32)
- * 0xc0008000, 0x4000, 0x40008000, 0xffff, - 0x8000, }; tried as the
- * definition's extern s32 gData_02004780[], Leader_SlideOnIce moves: 4 of 302
- * instructions, Func_02003bc8 moves: 1 of 330 instructions in tla-ja. */
-extern s16 gData_02004780__s391c[] __asm__("gData_02004780");
+extern s16 gData_02004780[];
 
-DEFINE_LEADER_SLIDE_ON_ICE(Leader_SlideOnIce, Func_020038e8,
-                           gData_02004780__s391c, Actor_SelectAnimation,
-                           Actor_SteerByPad, Field_CheckSpheresOverlap)
+DEFINE_LEADER_SLIDE_ON_ICE(Leader_SlideOnIce, Func_020038e8, gData_02004780,
+                           Actor_SelectAnimation, Actor_SteerByPad,
+                           Field_CheckSpheresOverlap)
 
-extern volatile s16 gData_020062a4;
+extern volatile s16 gProx_SlideStopped;
 
 s32 Actor_HasArrived(struct Actor *object);
 
-#define SHARED_F02003070_NAME Func_02003bc8
-#define SHARED_F02003070_ID2 gData_020062a4
-#define SHARED_F02003070_ID3 Func_020038e8
-#define SHARED_F02003070_ID4 gData_02004780__s391c
-#define SHARED_F02003070_ID5 Actor_SelectAnimation
-#define SHARED_F02003070_ID6 Actor_HasArrived
-#define SHARED_F02003070_ID7 Actor_SteerByPad
-#define SHARED_F02003070_ID8 Field_CheckSpheresOverlap
-#include "shared/func_02003070.c"
-#undef SHARED_F02003070_NAME
-#undef SHARED_F02003070_ID2
-#undef SHARED_F02003070_ID3
-#undef SHARED_F02003070_ID4
-#undef SHARED_F02003070_ID5
-#undef SHARED_F02003070_ID6
-#undef SHARED_F02003070_ID7
-#undef SHARED_F02003070_ID8
+#define SLIDE_FROM_EDGE Leader_SlideOnIceFromEdge
+#define SLIDE_STOPPED gProx_SlideStopped
+#define SLIDE_STOP_LEADER Func_020038e8
+#define SLIDE_ANGLES gData_02004780
+#define SLIDE_SET_ANIMATION Actor_SelectAnimation
+#define SLIDE_HAS_ARRIVED Actor_HasArrived
+#define SLIDE_KEEP_SLIDING Actor_SteerByPad
+#define SLIDE_SPHERES_OVERLAP Field_CheckSpheresOverlap
+#include "shared/slide_on_ice_from_edge.c"
+#undef SLIDE_FROM_EDGE
+#undef SLIDE_STOPPED
+#undef SLIDE_STOP_LEADER
+#undef SLIDE_ANGLES
+#undef SLIDE_SET_ANIMATION
+#undef SLIDE_HAS_ARRIVED
+#undef SLIDE_KEEP_SLIDING
+#undef SLIDE_SPHERES_OVERLAP
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -2134,7 +2124,7 @@ s32 Actor_HasArrived(struct Actor *object);
    } *)(base))                                                                 \
        ->v)
 
-void Func_02003edc(s32 a0) { gData_020062a4 = a0; }
+void Leader_SetSlideStopped(s32 a0) { gProx_SlideStopped = a0; }
 
 DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Func_020038e8,
                                  Actor_SelectAnimation, Actor_SteerByPad,
@@ -2301,16 +2291,9 @@ s32 gProx_EnterDoorScript[] = {
     0, 1, 13, 24, 0, 17,
 };
 
-s32 gData_02004740[] = {
-    0xffff, -0x8000, (s32)0xe000c000, (s32)0xc000a000, 0x20004000, 0x40006000,
-    0xffff, -0x8000, 0xffff, -0x8000, -0x4000, (s32)0xc000ffff,
-    -0xc000, 0x4000ffff, 0xffff, -0x8000,
-};
+s16 gData_02004740[] = {-1, 0, -32768, -1, -16384, -8192, -24576, -16384, 16384, 8192, 24576, 16384, -1, 0, -32768, -1, -1, 0, -32768, -1, -16384, -1, -1, -16384, 16384, -1, -1, 16384, -1, 0, -32768, -1};
 
-s32 gData_02004780[] = {
-    0xffff, -0x8000, 0xc000, (s32)0xc0008000, 0x4000, 0x40008000,
-    0xffff, -0x8000,
-};
+s16 gData_02004780[] = {-1, 0, -32768, -1, -16384, 0, -32768, -16384, 16384, 0, -32768, 16384, -1, 0, -32768, -1};
 
 s32 gFieldEffect_DurationScripts[] = {
     (s32)gData_02004644,

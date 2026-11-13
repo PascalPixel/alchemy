@@ -1,12 +1,15 @@
 /// @file
-/// A routine 4 scenes' overlays each keep a copy of
-/// (mars_lighthouse_entrance/s263c, mars_lighthouse_room_f/s3d80,
-/// mars_lighthouse_star_room/s2148, prox), included as text where each copy
-/// sits after the scene defines SHARED_F02003070_NAME, SHARED_F02003070_ID2,
-/// SHARED_F02003070_ID3, SHARED_F02003070_ID4, SHARED_F02003070_ID5,
-/// SHARED_F02003070_ID6, SHARED_F02003070_ID7, SHARED_F02003070_ID8.
+/// The leader slides over ice from the cell they stand on: from its centre in
+/// the direction the pad holds, or else from its edge toward the centre, then
+/// cell by cell until a wall, a raised cell or another actor stops them. Six
+/// scenes keep a copy; each includes this file as text after defining
+/// SLIDE_FROM_EDGE, its name, and the names its copy calls: SLIDE_STOPPED, the
+/// flag another routine sets to end the slide; SLIDE_STOP_LEADER;
+/// SLIDE_ANGLES, the heading for each pad direction (-1 for none);
+/// SLIDE_SET_ANIMATION; SLIDE_HAS_ARRIVED; SLIDE_KEEP_SLIDING, the update hook
+/// that steers the leader meanwhile; and SLIDE_SPHERES_OVERLAP.
 
-void SHARED_F02003070_NAME(void) {
+void SLIDE_FROM_EDGE(void) {
   struct Actor *object;
   s32 startCell;
   s32 targetX;
@@ -26,13 +29,13 @@ void SHARED_F02003070_NAME(void) {
   s32 *q;
   s32 *p;
 
-  /* FAKEMATCH(volatile): gData_020068b0 read as a volatile s16, reread after
+  /* FAKEMATCH(volatile): the stop flag read as a volatile s16, reread after
    * each test and for lsls #16; as a plain u16, 54 of 347 instructions differ
    * in tla-en. */
   object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  SHARED_F02003070_ID2 = 0;
+  SLIDE_STOPPED = 0;
 retry:
-  SHARED_F02003070_ID3();
+  SLIDE_STOP_LEADER();
   object->speedLimit = 0x10000;
   object->acceleration = 0x8000;
   object->targetX = 0x80000000;
@@ -50,7 +53,7 @@ retry:
   dz = targetZ - object->z;
   dx = targetX - object->x;
   if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
-    angle = SHARED_F02003070_ID4[(gInput.held >> 4) & 15];
+    angle = SLIDE_ANGLES[(gInput.held >> 4) & 15];
     // -1 for no direction, tested as its halfword.
     if ((u16)angle == 0xffff)
 #if !TLA_PATCH_1
@@ -79,23 +82,23 @@ retry:
   object->acceleration = 0x1999;
   object->timer = 0;
   Actor_SetMoveTarget(object, x, object->y, z);
-  SHARED_F02003070_ID5(object, 2);
+  SLIDE_SET_ANIMATION(object, 2);
   Actor_SetAnimationSpeed(object, 48);
 #if !TLA_PATCH_1
   FieldActor_WaitForMove(object);
 #else
-  for (i = 0; i <= 179 && SHARED_F02003070_ID6(object) == 0; i++) {
-    if (SHARED_F02003070_ID2 != 0)
+  for (i = 0; i <= 179 && SLIDE_HAS_ARRIVED(object) == 0; i++) {
+    if (SLIDE_STOPPED != 0)
       goto end;
     System_Wait(1);
   }
 #endif
-  object->update = (void (*)(void))SHARED_F02003070_ID7;
+  object->update = (void (*)(void))SLIDE_KEEP_SLIDING;
   goto walk;
 walkNext:
   if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
     goto blocked;
-  if (SHARED_F02003070_ID2 != 0)
+  if (SLIDE_STOPPED != 0)
 #if !TLA_PATCH_1
     goto blocked;
 #else
@@ -109,7 +112,7 @@ overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
     /* FAKEMATCH(wrapper): the overlap call goes through Value4; as a direct
      * call, 2 of 347 instructions differ in tla-en. */
-    if (Value4((s32 (*)())SHARED_F02003070_ID8, (s32)&entry->x, radius,
+    if (Value4((s32 (*)())SLIDE_SPHERES_OVERLAP, (s32)&entry->x, radius,
                (s32)position, entry->radius - 2) >= 0)
       goto blocked;
   }
@@ -129,10 +132,9 @@ next:
   System_Wait(1);
   i++;
 test:
-  if (i <= 179 && SHARED_F02003070_ID6(object) == 0 &&
-      SHARED_F02003070_ID2 == 0)
+  if (i <= 179 && SLIDE_HAS_ARRIVED(object) == 0 && SLIDE_STOPPED == 0)
     goto next;
-  if (SHARED_F02003070_ID2 != 0)
+  if (SLIDE_STOPPED != 0)
     goto end;
   if (cell != startCell)
     goto changed;
@@ -158,5 +160,5 @@ end:
   object->update = NULL;
   object->actionFlags |= 1;
   object->acceleration = 0x4000;
-  SHARED_F02003070_ID5(object, 1);
+  SLIDE_SET_ANIMATION(object, 1);
 }

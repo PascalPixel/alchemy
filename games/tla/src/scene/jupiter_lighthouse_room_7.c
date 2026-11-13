@@ -76,7 +76,6 @@ extern s32
     gPaletteCyclePausesInEvents__first __asm__("gPaletteCyclePausesInEvents");
 #define gPaletteCyclePausesInEvents gPaletteCyclePausesInEvents__first
 extern s16 gLightSpriteCount;
-extern u16 gLightSpritePriority;
 void JupiterLighthouse_OpenDoor(s32 value);
 void JupiterLighthouse_CloseDoor(void);
 void JupiterLighthouse_CheckBlockOnCell(void);
@@ -881,12 +880,7 @@ DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
                            Actor_SelectAnimation)
 
 extern u32 gLightSpriteActors[];
-/* VIEW(s16d4): variable gLightSpritePriority as s16 gLightSpritePriority;
- * scene/jupiter_lighthouse_room_7 has u16 gLightSpritePriority; tried as the 13
- * declarations' extern s16 gLightSpritePriority, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_7.c:876: conflicting types for
- * `gLightSpritePriority'. */
-extern s16 gLightSpritePriority__s16d4 __asm__("gLightSpritePriority");
+extern s16 gLightSpritePriority;
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 
@@ -896,7 +890,7 @@ s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 /// picture and depth.
 DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
                           gLightSpriteCount, gLightSpriteActors,
-                          gLightSpritesLarge, gLightSpritePriority__s16d4,
+                          gLightSpritesLarge, gLightSpritePriority,
                           BattleEffect_GetObjectPriority,
                           Oam_AddSpriteAtDepthClamped)
 
@@ -907,24 +901,22 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
                             gLightSpriteCount, gLightSpritesLarge,
-                            gLightSpritePriority__s16d4)
+                            gLightSpritePriority)
 
 DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
                             gLightSpriteCount, gLightSpritesLarge,
-                            gLightSpritePriority__s16d4)
+                            gLightSpritePriority)
 
 DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
                             gLightSpriteCount, gLightSpritesLarge,
-                            gLightSpritePriority__s16d4)
+                            gLightSpritePriority)
 
 DEFINE_LIGHT_SPRITES_ADD_COUNTED(LightSprites_AddCounted, gLightSpriteActors,
                                  gLightSpriteCount)
 
-void LightSprites_SetPriority(u16 value) {
-  gLightSpritePriority__s16d4 = value;
-}
+void LightSprites_SetPriority(u16 value) { gLightSpritePriority = value; }
 
 #include "../field/object/set_sprite_priority.c"
 

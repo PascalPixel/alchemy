@@ -1684,8 +1684,6 @@ extern u8 gInventorySnapshot[];
 #undef SHARED_F02002148_ID6
 #undef SHARED_F02002148_ID7
 
-extern u16 gData_02004cf0[];
-
 void Func_02002354(void) {
   if (((struct RideWork *)(gInventorySnapshot + 0x188))->active)
     Func_02002148();
@@ -1785,8 +1783,6 @@ s32 MarsLighthouseStarRoom_SlideOnIce(void) {
   Actor_SetSpriteColorMode(leader, 0);
   ride->active = 0;
 }
-
-extern u16 gData_02004cf0[];
 
 DEFINE_RIDE_IF_ACTIVE(MarsLighthouseStarRoom_ContinueSlide,
                       MarsLighthouseStarRoom_SlideOnIce)
@@ -1968,7 +1964,6 @@ DEFINE_ACTOR_POP_UP_SLOW(Actor_PopUpSlow, Actor_SelectAnimation)
 DEFINE_ACTOR_POP_UP(Actor_PopUp, Actor_SelectAnimation)
 
 extern u8 gInventorySnapshot[];
-extern u16 gData_02004cf0[];
 
 DEFINE_ACTOR_PARK(Actor_Park, Actor_LaunchAhead)
 
@@ -1993,43 +1988,38 @@ DEFINE_LEADER_SLIDE_ON_ICE(Leader_SlideOnIce, Func_02002d90, gData_0200483c,
                            Actor_SelectAnimation, Actor_SteerByPad,
                            Field_CheckSpheresOverlap)
 
-/* VIEW(s3070): variable gData_02004cf0 as extern volatile s16 gData_02004cf0;
- * s2a58 has extern u16 gData_02004cf0[]; tried as the one declaration extern
- * u16 gData_02004cf0[], it does not compile in tla-ja:
- * games/tla/src/scene/shared/func_02003070.c:33: `gData_02004cf0' has an
- * incomplete type. */
-extern volatile s16 gData_02004cf0__s3070 __asm__("gData_02004cf0");
+extern volatile s16 gMarsLighthouseStarRoom_SlideStopped;
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Actor_HasArrived(struct Actor *object);
 
-#define SHARED_F02003070_NAME Func_02003070
-#define SHARED_F02003070_ID2 gData_02004cf0__s3070
-#define SHARED_F02003070_ID3 Func_02002d90
-#define SHARED_F02003070_ID4 gData_0200483c
-#define SHARED_F02003070_ID5 Actor_SelectAnimation
-#define SHARED_F02003070_ID6 Actor_HasArrived
-#define SHARED_F02003070_ID7 Actor_SteerByPad
-#define SHARED_F02003070_ID8 Field_CheckSpheresOverlap
-#include "shared/func_02003070.c"
-#undef SHARED_F02003070_NAME
-#undef SHARED_F02003070_ID2
-#undef SHARED_F02003070_ID3
-#undef SHARED_F02003070_ID4
-#undef SHARED_F02003070_ID5
-#undef SHARED_F02003070_ID6
-#undef SHARED_F02003070_ID7
-#undef SHARED_F02003070_ID8
+#define SLIDE_FROM_EDGE Leader_SlideOnIceFromEdge
+#define SLIDE_STOPPED gMarsLighthouseStarRoom_SlideStopped
+#define SLIDE_STOP_LEADER Func_02002d90
+#define SLIDE_ANGLES gData_0200483c
+#define SLIDE_SET_ANIMATION Actor_SelectAnimation
+#define SLIDE_HAS_ARRIVED Actor_HasArrived
+#define SLIDE_KEEP_SLIDING Actor_SteerByPad
+#define SLIDE_SPHERES_OVERLAP Field_CheckSpheresOverlap
+#include "shared/slide_on_ice_from_edge.c"
+#undef SLIDE_FROM_EDGE
+#undef SLIDE_STOPPED
+#undef SLIDE_STOP_LEADER
+#undef SLIDE_ANGLES
+#undef SLIDE_SET_ANIMATION
+#undef SLIDE_HAS_ARRIVED
+#undef SLIDE_KEEP_SLIDING
+#undef SLIDE_SPHERES_OVERLAP
 
 // ---- scene/mars_lighthouse_star_room/set_data.c ----
 
 /// Scene code of overlay 0x6ab, in ROM order.
 
-extern u16 gData_02004cf0[];
-
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 #define MarsLighthouseStarRoom_SlideOnIce MarsLighthouseStarRoom_SlideOnIce
 
-void Func_02003384(u16 value) { gData_02004cf0[0] = value; }
+void Leader_SetSlideStopped(s32 value) {
+  gMarsLighthouseStarRoom_SlideStopped = value;
+}
 
 DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Func_02002d90,
                                  Actor_SelectAnimation, Actor_SteerByPad,
@@ -2056,14 +2046,14 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Func_02002d90,
 #undef SHARED_F02002148_ID7
 #undef WORK
 #undef ABS
-#undef SHARED_F02003070_NAME
-#undef SHARED_F02003070_ID2
-#undef SHARED_F02003070_ID3
-#undef SHARED_F02003070_ID4
-#undef SHARED_F02003070_ID5
-#undef SHARED_F02003070_ID6
-#undef SHARED_F02003070_ID7
-#undef SHARED_F02003070_ID8
+#undef SLIDE_FROM_EDGE
+#undef SLIDE_STOPPED
+#undef SLIDE_STOP_LEADER
+#undef SLIDE_ANGLES
+#undef SLIDE_SET_ANIMATION
+#undef SLIDE_HAS_ARRIVED
+#undef SLIDE_KEEP_SLIDING
+#undef SLIDE_SPHERES_OVERLAP
 #undef Unit_Get
 #undef Position
 #undef Position

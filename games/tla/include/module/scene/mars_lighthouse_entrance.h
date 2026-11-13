@@ -61,7 +61,7 @@ void Func_020012e4(struct Actor *object);
 
 void Actor_Attach(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
 
-void Func_02003564(void);
+void Leader_SlideOnIceFromEdge(void);
 
 s32 Func_020029a0(void);
 
@@ -71,7 +71,7 @@ void Func_02000d18(void);
 
 s32 Func_020029bc(void);
 
-void Func_02003878(s32 value);
+void Leader_SetSlideStopped(s32 value);
 
 void Func_02000414(s32 value);
 

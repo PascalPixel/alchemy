@@ -90,8 +90,6 @@ struct Actor;
 
 extern s16 gData_02001cde;
 extern struct Actor *gLightSpriteActors[];
-extern u16 gData_02001de2;
-extern u16 gData_02001de4;
 extern s16 gLightSpriteTile;
 extern s16 gData_02001de0;
 
@@ -180,17 +178,13 @@ void Func_020004b4(struct Actor *object) {
     Actor_SetSpriteFlags(object, 0);
 }
 
-/* VIEW(hide): variable gData_02000ee0 as extern const s8 gData_02000ee0[]; the
- * definition has u32 gData_02000ee0[] = { 0x1c0b1b0b, 0x1c0c1b0c, 0x1c0d1b0d,
- * }; tried as the definition's extern u32 gData_02000ee0[], Func_020004e4
- * moves: 1 of 32 instructions in tla-ja. */
-extern const s8 gData_02000ee0__hide[] __asm__("gData_02000ee0");
+extern s8 gData_02000ee0[];
 
 void Func_020004e4(s32 a, s32 b) {
   s32 i;
 
-  const s8 *x = gData_02000ee0__hide;
-  const s8 *z = gData_02000ee0__hide + 1;
+  const s8 *x = gData_02000ee0;
+  const s8 *z = gData_02000ee0 + 1;
 
   for (i = 9; i <= 14; i++) {
     struct Actor *object = Actor_GetById(i);
@@ -378,18 +372,8 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 extern struct LightOam gData_02001d20[];
-/* VIEW(s0588): variable gData_02001de2 as extern s16 gData_02001de2; hide has
- * extern u16 gData_02001de2; tried as the one declaration extern s16
- * gData_02001de2, it does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum_entrance.c:378: conflicting types
- * for `gData_02001de2'. */
-extern s16 gData_02001de2__s0588 __asm__("gData_02001de2");
-/* VIEW(s0588): variable gData_02001de4 as extern s16 gData_02001de4; hide has
- * extern u16 gData_02001de4; tried as the one declaration extern s16
- * gData_02001de4, it does not compile in tla-ja:
- * games/tla/src/scene/anemos_inner_sanctum_entrance.c:380: conflicting types
- * for `gData_02001de4'. */
-extern s16 gData_02001de4__s0588 __asm__("gData_02001de4");
+extern s16 gData_02001de2;
+extern s16 gData_02001de4;
 
 void LightSprites_Draw(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -403,7 +387,7 @@ void LightSprites_Draw(void) {
   tile = gResourceTableEntries[gLightSpriteTile].offset >> 5;
   viewY = map->origin[1];
   oam = gData_02001d20;
-  picture = gData_02001de4__s0588 * ((gFrameCount >> 2) % 5 * 32 + 32);
+  picture = gData_02001de4 * ((gFrameCount >> 2) % 5 * 32 + 32);
 
   for (i = 0; i < gData_02001cde; i++) {
     struct Actor *actor = gLightSpriteActors[i];
@@ -431,10 +415,10 @@ void LightSprites_Draw(void) {
         *word++ = 0;
         *word++ = oy | (ox << 16) | (frame & 0x80) << 21 | 0x40002000;
         *word = (tile + picture + (frame & 7) * 8) | 0x800;
-        if (gData_02001de2__s0588 == -1)
+        if (gData_02001de2 == -1)
           oam->priority = BattleEffect_GetObjectPriority(actor);
         else
-          oam->priority = gData_02001de2__s0588;
+          oam->priority = gData_02001de2;
         Oam_AddSpriteAtDepthClamped(oam, depth);
         oam++;
       } else {
@@ -451,10 +435,10 @@ void LightSprites_Draw(void) {
         *word++ = 0;
         *word++ = oy | (ox << 16) | 0xc000a000;
         *word = (tile + frame * 8) | 0x800;
-        if (gData_02001de2__s0588 == -1)
+        if (gData_02001de2 == -1)
           oam->priority = BattleEffect_GetObjectPriority(actor);
         else
-          oam->priority = gData_02001de2__s0588;
+          oam->priority = gData_02001de2;
         Oam_AddSpriteAtDepthClamped(oam, depth);
         oam++;
       }
@@ -468,7 +452,7 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw, gData_02001cde,
-                            gData_02001de0, gData_02001de2__s0588)
+                            gData_02001de0, gData_02001de2)
 
 void Func_02000b18(void) {
   u8 *buffer = BumpAlloc(0x1800);
@@ -481,8 +465,8 @@ void Func_02000b18(void) {
   Task_Add(LightSprites_Draw, TASK_PASS_VBLANK);
   gData_02001cde = 0;
   gData_02001de0 = 0;
-  gData_02001de2__s0588 = -1;
-  gData_02001de4__s0588 = 0;
+  gData_02001de2 = -1;
+  gData_02001de4 = 0;
 }
 
 void Func_02000ba4(s32 id, s32 value) {
@@ -495,9 +479,9 @@ void Func_02000ba4(s32 id, s32 value) {
   }
 }
 
-void Func_02000bd4(u16 value) { gData_02001de2__s0588 = value; }
+void Func_02000bd4(u16 value) { gData_02001de2 = value; }
 
-void Func_02000be0(u16 value) { gData_02001de4__s0588 = value; }
+void Func_02000be0(u16 value) { gData_02001de4 = value; }
 
 // clang-format off
 u32 gData_02000d6c[] = {
@@ -537,11 +521,7 @@ s32 gData_02000ea4[] = {
 };
 // clang-format on
 
-u32 gData_02000ee0[] = {
-    0x1c0b1b0b,
-    0x1c0c1b0c,
-    0x1c0d1b0d,
-};
+s8 gData_02000ee0[] = {11, 27, 11, 28, 12, 27, 12, 28, 13, 27, 13, 28};
 
 s8 gData_02000eec[] = {
     12, 14, 9, 11, 13, 10,

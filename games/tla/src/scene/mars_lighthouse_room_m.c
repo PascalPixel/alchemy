@@ -290,13 +290,8 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gMarsLighthouseRoomM_Placements;
 }
 
-/* VIEW(mars_lighthouse_room_m): variable gData_020036c4 as s32 gData_020036c4;
- * scene/mars_lighthouse_room_m/s2708 has s32 gData_020036c4[] = {; tried as the
- * one declaration extern s32 gData_020036c4, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:304: `gData_020036c4' undeclared
- * (first use in this function). */
-extern s32 gData_020036c4__mars_lighthouse_room_m __asm__("gData_020036c4");
-#define gData_020036c4 gData_020036c4__mars_lighthouse_room_m
+extern s32 gData_020036c4;
+#define gData_020036c4 gData_020036c4
 extern u16 gData_0200393c[];
 extern u16 gData_0200397c[];
 
@@ -389,13 +384,8 @@ void Func_0200030c(void) {
   Event_End();
 }
 
-/* VIEW(mars_lighthouse_room_m): variable gData_02003704 as s32 gData_02003704;
- * scene/mars_lighthouse_room_m/s2708 has s32 gData_02003704[] = {; tried as the
- * one declaration extern s32 gData_02003704, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:397: `gData_02003704' undeclared
- * (first use in this function). */
-extern s32 gData_02003704__mars_lighthouse_room_m __asm__("gData_02003704");
-#define gData_02003704 gData_02003704__mars_lighthouse_room_m
+extern s32 gData_02003704;
+#define gData_02003704 gData_02003704
 extern u16 gData_02003a5c[];
 
 void Func_020003c4(void) {
@@ -1888,9 +1878,7 @@ struct Trigger gMarsLighthouseRoomM_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-s32 gData_020036c4[] = {
-    -1,
-};
+s32 gData_020036c4 = -1;
 
 struct Trigger gMarsLighthouseRoomM_Room6Triggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_020002c8)},
@@ -1900,9 +1888,7 @@ struct Trigger gMarsLighthouseRoomM_Room6Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-s32 gData_02003704[] = {
-    -1,
-};
+s32 gData_02003704 = -1;
 
 struct Trigger gMarsLighthouseRoomM_Room1Triggers[] = {
     {0x31, 2, CONDITION_ALWAYS, 2},

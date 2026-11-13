@@ -22,6 +22,7 @@
 
 #include "shared/actors.h"
 #include "shared/effects.h"
+#include "shared/mars_lighthouse.h"
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
@@ -38,7 +39,6 @@ extern u8 MsgSettlements01[];
 #include "system/frame.h"
 
 extern s16 gSettlements_FallsObjects[];
-extern u16 gSettlements_SlideStopped;
 
 void Settlements_SpawnSmoke(s32 x, s32 y, s32 z);
 void Settlements_CycleWaterColors(void);
@@ -1045,39 +1045,10 @@ void Settlements_SpawnSplashRing(s32 objectId) {
 
 void Settlements_LiftBoulder(void) { GameFlag_Set(0x208); }
 
-/* VIEW(s1620): variable gInput as extern u32 gInput; input.h has extern struct
- * InputState gInput; tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/scene/settlements.c:1058: invalid operands
- * to binary >>. */
-extern u32 gInput__s1620 __asm__("gInput");
 extern s16 gSettlements_SlideAngles[];
 
-void Settlements_KeepSliding(struct Actor *object) {
-  s32 angle;
-  s32 turn;
-
-  if (object->timer != 0) {
-    object->timer--;
-    return;
-  }
-  *(u8 *)((u8 *)object + 0x5a) = 0;
-  if (Event_GetFlag(0x106))
-    angle = -1;
-  else
-    angle = gSettlements_SlideAngles[(gInput__s1620 >> 4) & 15];
-  if (angle == -1) {
-    Actor_SelectAnimation(object, 9);
-    return;
-  }
-  turn = (s16)(angle - object->facing);
-  if (turn > 0x1000)
-    turn = 0x1000;
-  if (turn < -0x1000)
-    turn = -0x1000;
-  object->facing += turn;
-  Actor_SelectAnimation(object, 2);
-  Actor_SetAnimationSpeed(object, 48);
-}
+DEFINE_ACTOR_STEER_BY_PAD(Settlements_KeepSliding, gSettlements_SlideAngles,
+                          Actor_SelectAnimation)
 
 void Settlements_StopLeader(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -1090,464 +1061,46 @@ void Settlements_StopLeader(void) {
   }
 }
 
-void Settlements_SlideOnIce(void) {
-  struct Actor *object;
-  s32 startCell;
-  s32 targetX;
-  s32 targetZ;
-  s32 x;
-  s32 z;
-  u8 *layer;
-  s32 radius;
-  s32 position[3];
-  s32 dx, dz;
-  s32 cell;
-  s16 angle;
-  s32 j;
-  struct Actor *entry;
-  u8 *flags;
-  s32 *p;
-  s32 *q;
+extern s16 gSettlements_SlideAnglesByKey[];
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
+s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
-  object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-retry:
-  Settlements_StopLeader();
-  object->speedLimit = 0x10000;
-  object->acceleration = 0x8000;
-  object->targetX = 0x80000000;
-  object->targetZ = 0x80000000;
-  object->velocityX = 0;
-  object->velocityZ = 0;
-  p = position;
-  p[0] = x = (object->x & 0xfff00000) + 0x80000;
-  p[1] = object->y;
-  p[2] = z = (object->z & 0xfff00000) + 0x80000;
-  targetZ = z;
-  targetX = x;
-  layer = &object->terrainId;
-  startCell = FieldMapGrid_GetCellBehaviorAt(*layer, targetX, targetZ);
-  dz = targetZ - object->z;
-  dx = targetX - object->x;
-  if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
-    angle = gSettlements_SlideAnglesByKey[(gInput.held >> 4) & 15];
-    if ((u16)angle == 0xffff)
-      return;
-  } else {
-    angle = ArcTan2(targetZ - object->z, targetX - object->x);
-    angle = (angle + 0x2000) & 0xc000;
-  }
-  /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse's hoist of the
-   * position's address; as no asm, 2 of 304 instructions differ in tla-en. */
-  __asm__("" : : : SFP_CLOBBER);
-  FieldVector_AddPolarOffset(0x100000, angle, position);
-  cell = FieldMapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
-  if (cell == 255 ||
-      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
-    object->facing = angle;
-    object->velocityX = 0;
-    object->velocityZ = 0;
-    object->x = x;
-    object->z = z;
-    goto end;
-  }
-  p[0] = x;
-  p[2] = z;
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  object->timer = 0;
-  FieldActor_SetMoveTarget(object, x, object->y, z);
-  Actor_SelectAnimation(object, 2);
-  Actor_SetAnimationSpeed(object, 48);
-  FieldActor_WaitForMove(object);
-  object->update = Settlements_KeepSliding;
-  goto walk;
-walkNext:
-  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
-    goto blocked;
-  radius = object->radius - 2;
-  entry = Ram_HeapSlots->scriptObjects;
-  j = 0;
-  flags = &entry->collisionFlags;
-overlap:
-  if (entry->script != NULL && (1 & *flags) && entry != object) {
-    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius,
-               (s32)position, entry->radius - 2) >= 0)
-      goto blocked;
-  }
-  j++;
-  flags += sizeof(*entry);
-  entry++;
-  if (j <= 63)
-    goto overlap;
-  targetX = q[0];
-  targetZ = q[2];
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  FieldActor_SetMoveTarget(object, q[0], q[1], q[2]);
-  FieldActor_WaitForMove(object);
-  if (cell != startCell)
-    goto moved;
-walk:
-  FieldVector_AddPolarOffset(0x100000, angle, position);
-  q = position;
-  cell = FieldMapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
-  if (cell != 255)
-    goto walkNext;
-blocked:
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x10000;
-  FieldActor_SetMoveTarget(object, targetX, object->y, targetZ);
-  FieldActor_WaitForMove(object);
-  System_Wait(2);
-  goto retry;
-moved:
-  System_Wait(10);
-end:
-  object->update = NULL;
-  object->actionFlags |= 1;
-  object->acceleration = 0x4000;
-  Actor_SelectAnimation(object, 1);
-}
+DEFINE_LEADER_SLIDE_ON_ICE(Settlements_SlideOnIce, Settlements_StopLeader,
+                           gSettlements_SlideAnglesByKey, Actor_SelectAnimation,
+                           Settlements_KeepSliding, Field_CheckSpheresOverlap)
 
 // ---- scene/settlements/s1a1c.c ----
 
 // The settlements' events, continued; settlements.c says which places these
 // are.
 
-#if TLA_PATCH_1
+extern volatile s16 gSettlements_SlideStopped;
 
-#include "types.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "system/iwram_call.h"
-#include "system/input.h"
-#include "call.h"
-
-/* VIEW(s1a1c): variable gSettlements_SlideStopped as volatile s16
- * gSettlements_SlideStopped; scene/settlements.h has u16
- * gSettlements_SlideStopped; tried as the 2 declarations' extern volatile s16
- * gSettlements_SlideStopped, it does not compile in tla-en:
- * games/tla/src/scene/settlements.c:1220: conflicting types for
- * `gSettlements_SlideStopped'. */
-extern volatile s16
-    gSettlements_SlideStopped__s1a1c __asm__("gSettlements_SlideStopped");
 extern s16 gSettlements_SlideAnglesByKey[];
 void Settlements_KeepSliding(struct Actor *object);
 void Settlements_StopLeader(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 ArcTan2(s32 y, s32 x);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
-void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 s32 Actor_HasArrived(struct Actor *object);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
-void Settlements_SlideOnIceFromEdge(void) {
-  struct Actor *object;
-  s32 startCell;
-  s32 targetX;
-  s32 targetZ;
-  s32 x;
-  s32 z;
-  u8 *layer;
-  s32 radius;
-  s32 position[3];
-  s32 dx, dz;
-  s32 cell;
-  s16 angle;
-  s32 i;
-  s32 j;
-  struct Actor *entry;
-  u8 *flags;
-  s32 *q;
-  s32 *p;
-
-  /* FAKEMATCH(volatile): gSettlements_SlideStopped read as a volatile s16,
-   * reread after each test and for lsls #16; as a plain u16, 54 of 347
-   * instructions differ in tla-en. */
-  object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  gSettlements_SlideStopped__s1a1c = 0;
-retry:
-  Settlements_StopLeader();
-  object->speedLimit = 0x10000;
-  object->acceleration = 0x8000;
-  object->targetX = 0x80000000;
-  object->targetZ = 0x80000000;
-  object->velocityX = 0;
-  object->velocityZ = 0;
-  p = position;
-  p[0] = x = (object->x & 0xfff00000) + 0x80000;
-  p[1] = object->y;
-  p[2] = z = (object->z & 0xfff00000) + 0x80000;
-  targetZ = z;
-  targetX = x;
-  layer = &object->terrainId;
-  startCell = MapGrid_GetCellBehaviorAt(*layer, targetX, targetZ);
-  dz = targetZ - object->z;
-  dx = targetX - object->x;
-  if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
-    angle = gSettlements_SlideAnglesByKey[(gInput.held >> 4) & 15];
-    // -1 for no direction, tested as its halfword.
-    if ((u16)angle == 0xffff)
-      goto end;
-  } else {
-    angle = ArcTan2(targetZ - object->z, targetX - object->x);
-    angle = (angle + 0x2000) & 0xc000;
-  }
-  FieldVector_AddPolarOffset(0x100000, angle, position);
-  cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
-  if (cell == 255 ||
-      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
-    object->facing = angle;
-    object->velocityX = 0;
-    object->velocityZ = 0;
-    object->x = x;
-    object->z = z;
-    goto end;
-  }
-  p[0] = x;
-  p[2] = z;
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  object->timer = 0;
-  Actor_SetMoveTarget(object, x, object->y, z);
-  Actor_SelectAnimation(object, 2);
-  Actor_SetAnimationSpeed(object, 48);
-  for (i = 0; i <= 179 && Actor_HasArrived(object) == 0; i++) {
-    if (gSettlements_SlideStopped__s1a1c != 0)
-      goto end;
-    System_Wait(1);
-  }
-  object->update = (void (*)(void))Settlements_KeepSliding;
-  goto walk;
-walkNext:
-  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
-    goto blocked;
-  if (gSettlements_SlideStopped__s1a1c != 0)
-    goto end;
-  radius = object->radius - 2;
-  entry = Ram_HeapSlots->scriptObjects;
-  j = 0;
-  flags = &entry->collisionFlags;
-overlap:
-  if (entry->script != NULL && (1 & *flags) && entry != object) {
-    /* FAKEMATCH(wrapper): the overlap call goes through Value4; as a direct
-     * call, 2 of 347 instructions differ in tla-en. */
-    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius,
-               (s32)position, entry->radius - 2) >= 0)
-      goto blocked;
-  }
-  j++;
-  flags += sizeof(*entry);
-  entry++;
-  if (j <= 63)
-    goto overlap;
-  targetX = q[0];
-  targetZ = q[2];
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  Actor_SetMoveTarget(object, q[0], q[1], q[2]);
-  i = 0;
-  goto test;
-next:
-  System_Wait(1);
-  i++;
-test:
-  if (i <= 179 && Actor_HasArrived(object) == 0 &&
-      gSettlements_SlideStopped__s1a1c == 0)
-    goto next;
-  if (gSettlements_SlideStopped__s1a1c != 0)
-    goto end;
-  if (cell != startCell)
-    goto changed;
-walk:
-  /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
-   * position's address; as no asm, 94 of 347 instructions differ in tla-en. */
-  __asm__("" : : : SFP_CLOBBER);
-  FieldVector_AddPolarOffset(0x100000, angle, position);
-  q = position;
-  cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
-  if (cell != 255)
-    goto walkNext;
-blocked:
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x10000;
-  Actor_SetMoveTarget(object, targetX, object->y, targetZ);
-  FieldActor_WaitForMove(object);
-  System_Wait(2);
-  goto retry;
-changed:
-  System_Wait(10);
-end:
-  object->update = NULL;
-  object->actionFlags |= 1;
-  object->acceleration = 0x4000;
-  Actor_SelectAnimation(object, 1);
-}
-
-#else
-
-// The Japanese release's older form.
-
-#include "types.h"
-#include "actor.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "system/iwram_call.h"
-#include "system/input.h"
-#include "call.h"
-
-extern volatile s16
-    gSettlements_SlideStopped__s1a1c __asm__("gSettlements_SlideStopped");
-extern s16 gSettlements_SlideAnglesByKey[];
-void Settlements_KeepSliding(struct Actor *object);
-void Settlements_StopLeader(void);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 ArcTan2(s32 y, s32 x);
-void Actor_SelectAnimation(struct Actor *object, s32 mode);
-void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-s32 Actor_HasArrived(struct Actor *object);
-s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
-
-void Settlements_SlideOnIceFromEdge(void) {
-  struct Actor *object;
-  s32 startCell;
-  s32 targetX;
-  s32 targetZ;
-  s32 x;
-  s32 z;
-  u8 *layer;
-  s32 radius;
-  s32 position[3];
-  s32 dx, dz;
-  s32 cell;
-  s16 angle;
-  s32 i;
-  s32 j;
-  struct Actor *entry;
-  u8 *flags;
-  s32 *q;
-  s32 *p;
-
-  // gSettlements_SlideStopped is read as a volatile s16: it is reread after
-  // each test.
-  object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  gSettlements_SlideStopped__s1a1c = 0;
-retry:
-  Settlements_StopLeader();
-  object->speedLimit = 0x10000;
-  object->acceleration = 0x8000;
-  object->targetX = 0x80000000;
-  object->targetZ = 0x80000000;
-  object->velocityX = 0;
-  object->velocityZ = 0;
-  p = position;
-  p[0] = x = (object->x & 0xfff00000) + 0x80000;
-  p[1] = object->y;
-  p[2] = z = (object->z & 0xfff00000) + 0x80000;
-  targetZ = z;
-  targetX = x;
-  layer = &object->terrainId;
-  startCell = MapGrid_GetCellBehaviorAt(*layer, targetX, targetZ);
-  dz = targetZ - object->z;
-  dx = targetX - object->x;
-  if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
-    angle = gSettlements_SlideAnglesByKey[(gInput.held >> 4) & 15];
-    // -1 for no direction, tested as its halfword.
-    if ((u16)angle == 0xffff)
-      return;
-  } else {
-    angle = ArcTan2(targetZ - object->z, targetX - object->x);
-    angle = (angle + 0x2000) & 0xc000;
-  }
-  FieldVector_AddPolarOffset(0x100000, angle, position);
-  cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
-  if (cell == 255 ||
-      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
-    object->facing = angle;
-    object->velocityX = 0;
-    object->velocityZ = 0;
-    object->x = x;
-    object->z = z;
-    goto end;
-  }
-  p[0] = x;
-  p[2] = z;
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  object->timer = 0;
-  Actor_SetMoveTarget(object, x, object->y, z);
-  Actor_SelectAnimation(object, 2);
-  Actor_SetAnimationSpeed(object, 48);
-  FieldActor_WaitForMove(object);
-  object->update = (void (*)(void))Settlements_KeepSliding;
-  goto walk;
-walkNext:
-  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
-    goto blocked;
-  if (gSettlements_SlideStopped__s1a1c != 0)
-    goto blocked;
-  radius = object->radius - 2;
-  entry = Ram_HeapSlots->scriptObjects;
-  j = 0;
-  flags = &entry->collisionFlags;
-overlap:
-  if (entry->script != NULL && (1 & *flags) && entry != object) {
-    /* FAKEMATCH(wrapper): the overlap call goes through Value4; as a direct
-     * call, 2 of 332 instructions differ in tla-ja. */
-    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius,
-               (s32)position, entry->radius - 2) >= 0)
-      goto blocked;
-  }
-  j++;
-  flags += sizeof(*entry);
-  entry++;
-  if (j <= 63)
-    goto overlap;
-  targetX = q[0];
-  targetZ = q[2];
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  Actor_SetMoveTarget(object, q[0], q[1], q[2]);
-  i = 0;
-  goto test;
-next:
-  System_Wait(1);
-  i++;
-test:
-  if (i <= 179 && Actor_HasArrived(object) == 0 &&
-      gSettlements_SlideStopped__s1a1c == 0)
-    goto next;
-  if (gSettlements_SlideStopped__s1a1c != 0)
-    goto end;
-  if (cell != startCell)
-    goto changed;
-walk:
-  /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
-   * position's address; as no asm, 90 of 332 instructions differ in tla-ja. */
-  __asm__("" : : : SFP_CLOBBER);
-  FieldVector_AddPolarOffset(0x100000, angle, position);
-  q = position;
-  cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
-  if (cell != 255)
-    goto walkNext;
-blocked:
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x10000;
-  Actor_SetMoveTarget(object, targetX, object->y, targetZ);
-  FieldActor_WaitForMove(object);
-  System_Wait(2);
-  goto retry;
-changed:
-  System_Wait(10);
-end:
-  object->update = NULL;
-  object->actionFlags |= 1;
-  object->acceleration = 0x4000;
-  Actor_SelectAnimation(object, 1);
-}
-
-#endif
+#define SLIDE_FROM_EDGE Settlements_SlideOnIceFromEdge
+#define SLIDE_STOPPED gSettlements_SlideStopped
+#define SLIDE_STOP_LEADER Settlements_StopLeader
+#define SLIDE_ANGLES gSettlements_SlideAnglesByKey
+#define SLIDE_SET_ANIMATION Actor_SelectAnimation
+#define SLIDE_HAS_ARRIVED Actor_HasArrived
+#define SLIDE_KEEP_SLIDING Settlements_KeepSliding
+#define SLIDE_SPHERES_OVERLAP Field_CheckSpheresOverlap
+#include "shared/slide_on_ice_from_edge.c"
+#undef SLIDE_FROM_EDGE
+#undef SLIDE_STOPPED
+#undef SLIDE_STOP_LEADER
+#undef SLIDE_ANGLES
+#undef SLIDE_SET_ANIMATION
+#undef SLIDE_HAS_ARRIVED
+#undef SLIDE_KEEP_SLIDING
+#undef SLIDE_SPHERES_OVERLAP
 
 // ---- scene/settlements/s1d30.c ----
 
@@ -1558,112 +1111,10 @@ void Settlements_SetSlideStopped(s32 value) {
   gSettlements_SlideStopped = value;
 }
 
-void Settlements_SlideOnIceFacing(void) {
-  struct Actor *object;
-  s16 angle;
-  s32 startCell;
-  s32 targetX;
-  s32 targetZ;
-  s32 radius;
-  s32 position[3];
-  s32 *p;
-  s32 x;
-  s32 z;
-  u8 *layer;
-  s32 cell;
-  s32 *q;
-  struct Actor *entry;
-  s32 j;
-  u8 *flags;
-
-  object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  angle = (object->facing + 0x2000) & 0xc000;
-retry:
-  Settlements_StopLeader();
-  object->speedLimit = 0x10000;
-  object->acceleration = 0x8000;
-  object->targetX = 0x80000000;
-  object->targetZ = 0x80000000;
-  object->velocityX = 0;
-  object->velocityZ = 0;
-  p = position;
-  p[0] = x = (object->x & 0xfff00000) + 0x80000;
-  p[1] = object->y;
-  p[2] = z = (object->z & 0xfff00000) + 0x80000;
-  targetX = x;
-  targetZ = z;
-  layer = &object->terrainId;
-  startCell = FieldMapGrid_GetCellBehaviorAt(*layer, x, z);
-  FieldVector_AddPolarOffset(0x100000, angle, p);
-  cell = FieldMapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
-  if (cell == 255 ||
-      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
-    object->facing = angle;
-    object->velocityX = 0;
-    object->velocityZ = 0;
-    object->x = x;
-    object->z = z;
-    goto end;
-  }
-  p[0] = x;
-  p[2] = z;
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  object->timer = 0;
-  Actor_SelectAnimation(object, 2);
-  Actor_SetAnimationSpeed(object, 48);
-  object->update = Settlements_KeepSliding;
-  goto walk;
-walkNext:
-  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
-    goto blocked;
-  radius = object->radius - 2;
-  entry = Ram_HeapSlots->scriptObjects;
-  j = 0;
-  flags = &entry->collisionFlags;
-overlap:
-  if (entry->script != NULL && (1 & *flags) && entry != object) {
-    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius,
-               (s32)position, entry->radius - 2) >= 0)
-      goto blocked;
-  }
-  j++;
-  flags += sizeof(*entry);
-  entry++;
-  if (j <= 63)
-    goto overlap;
-  targetX = q[0];
-  targetZ = q[2];
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x1999;
-  FieldActor_SetMoveTarget(object, q[0], q[1], q[2]);
-  FieldActor_WaitForMove(object);
-  if (cell != startCell)
-    goto moved;
-walk:
-  /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
-   * position's address; as no asm, 43 of 246 instructions differ in tla-en. */
-  __asm__("" : : : SFP_CLOBBER);
-  FieldVector_AddPolarOffset(0x100000, angle, position);
-  q = position;
-  cell = FieldMapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
-  if (cell != 255)
-    goto walkNext;
-blocked:
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x10000;
-  FieldActor_SetMoveTarget(object, targetX, object->y, targetZ);
-  FieldActor_WaitForMove(object);
-  System_Wait(2);
-  goto retry;
-moved:
-  System_Wait(10);
-end:
-  object->update = NULL;
-  object->actionFlags |= 1;
-  object->acceleration = 0x4000;
-  Actor_SelectAnimation(object, 1);
-}
+DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Settlements_SlideOnIceFacing,
+                                 Settlements_StopLeader, Actor_SelectAnimation,
+                                 Settlements_KeepSliding,
+                                 Field_CheckSpheresOverlap)
 
 #include "text/msg_ids.h"
 

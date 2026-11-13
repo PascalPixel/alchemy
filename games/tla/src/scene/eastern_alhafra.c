@@ -2251,12 +2251,7 @@ void Func_020040c0(void) {
 // layers there is filled with 255. Returns 1, or 0 for a shape with no
 // footprint.
 
-/* VIEW(s4004): routine gPushFootprints as this part declared it; the joined
- * file has another; tried as the definition's extern u32 gPushFootprints[], it
- * does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:2278:
- * `gPushFootprints' undeclared (first use in this function). */
-extern s8 gPushFootprints__s4004[][4] __asm__("gPushFootprints");
-#define gPushFootprints gPushFootprints__s4004
+extern s8 gPushFootprints[][4];
 
 static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 
@@ -2397,13 +2392,6 @@ struct PushTarget {
   void (*callback)(void);
 };
 
-/* VIEW(s44c4): variable gPushFootprints as s8 gPushFootprints[];
- * scene/eastern_alhafra/s4004 has s8 gPushFootprints[][4]; tried as the
- * definition's extern u32 gPushFootprints[], it does not compile in tla-ja:
- * games/tla/src/scene/eastern_alhafra.c:2389: conflicting types for
- * `gPushFootprints__s4004'. */
-extern s8 gPushFootprints__s44c4[] __asm__("gPushFootprints");
-
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 void Func_020044c4(struct PushTarget target) {
@@ -2427,14 +2415,13 @@ void Func_020044c4(struct PushTarget target) {
   acceleration = leader->acceleration;
   from[0] = object->x;
   from[2] = object->z;
-  cell[0] = (object->x + (gPushFootprints__s44c4[footprint * 4] << 16)) >> 20;
-  cell[2] =
-      (object->z + (gPushFootprints__s44c4[footprint * 4 + 1] << 16)) >> 20;
-  width = (ABS(gPushFootprints__s44c4[footprint * 4]) +
-           ABS(gPushFootprints__s44c4[footprint * 4 + 2])) >>
+  cell[0] = (object->x + (gPushFootprints[footprint][0] << 16)) >> 20;
+  cell[2] = (object->z + (gPushFootprints[footprint][1] << 16)) >> 20;
+  width = (ABS(gPushFootprints[footprint][0]) +
+           ABS(gPushFootprints[footprint][2])) >>
           4;
-  height = (ABS(gPushFootprints__s44c4[footprint * 4 + 1]) +
-            ABS(gPushFootprints__s44c4[footprint * 4 + 3])) >>
+  height = (ABS(gPushFootprints[footprint][1]) +
+            ABS(gPushFootprints[footprint][3])) >>
            4;
   Map_FillCellRectByte2(0, cell[0], cell[2], width, height, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x1999);
@@ -2473,8 +2460,8 @@ void Func_020044c4(struct PushTarget target) {
   Event_PlaySound(213);
   FieldActor_SetPositionAndResetMotion(object, target.x, object->y, target.z);
   Actor_SelectAnimation(object, 1);
-  target.x = target.x + (gPushFootprints__s44c4[footprint * 4] << 16);
-  target.z = target.z + (gPushFootprints__s44c4[footprint * 4 + 1] << 16);
+  target.x = target.x + (gPushFootprints[footprint][0] << 16);
+  target.z = target.z + (gPushFootprints[footprint][1] << 16);
   target.x >>= 20;
   target.z >>= 20;
   originX = *(s32 *)(map + 328) >> 20;
@@ -2483,8 +2470,8 @@ void Func_020044c4(struct PushTarget target) {
                              originX + target.x, originZ + target.z);
   Map_FillCellRectByte2(0, target.x, target.z, width, height, 255);
   Map_FillCellRectByte2(2, target.x, target.z, width, height, 255);
-  cell[0] = (from[0] + (gPushFootprints__s44c4[footprint * 4] << 16)) >> 20;
-  cell[2] = (from[2] + (gPushFootprints__s44c4[footprint * 4 + 1] << 16)) >> 20;
+  cell[0] = (from[0] + (gPushFootprints[footprint][0] << 16)) >> 20;
+  cell[2] = (from[2] + (gPushFootprints[footprint][1] << 16)) >> 20;
   originX += cell[0];
   originZ += cell[2];
   MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);
@@ -2537,7 +2524,6 @@ DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
 #undef FIELD_AT
 #undef PIXELS
 #define PIXELS(value) ((value) << 16)
-#undef gPushFootprints
 #include "text/msg_ids.h"
 
 void Func_02000958(void);
@@ -2547,8 +2533,9 @@ u16 gPushKinds[] = {
     258, 259, 293, 294, 332, 331,
 };
 
-u32 gPushFootprints[] = {
-    0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8,
+s8 gPushFootprints[][4] = {
+    {-32, -8, 32, 8},  {-8, -32, 8, 32}, {-32, -16, 32, 0},
+    {-8, -32, 8, 32},  {-32, -8, 32, 8},  {-8, -32, 8, 32},
 };
 
 s32 gPushDirectionSteps[] = {

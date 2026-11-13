@@ -214,12 +214,7 @@ void Func_020003cc(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->terrainId = 0;
 }
 
-/* VIEW(apojii_islands): variable gData_020024c4 as extern s32 gData_020024c4;
- * the definition has s32 gData_020024c4[] = { - 1, }; tried as the definition's
- * extern s32 gData_020024c4[], it does not compile in tla-ja:
- * games/tla/src/scene/apojii_islands.c:238: `gData_020024c4' has an incomplete
- * type. */
-extern s32 gData_020024c4__apojii_islands __asm__("gData_020024c4");
+extern s32 gData_020024c4;
 extern u16 Data_02002958[];
 extern u16 Data_02002978[];
 extern u16 gData_02002998[];
@@ -234,15 +229,15 @@ void Func_020003e8(void) {
     return;
   if (*(s8 *)(work + 0xca4) != 0)
     return;
-  if (gData_020024c4__apojii_islands == -1) {
+  if (gData_020024c4 == -1) {
     Call3((void (*)())Iwram_CopyWordsEntry, Data_02002958, (void *)0x05000060,
           32);
     Iwram_CopyWordsEntry(Data_02002978, Data_02002958, 32);
     Iwram_CopyWordsEntry(gData_02002998, (void *)0x05000080, 32);
     Iwram_CopyWordsEntry(gData_020029b8, gData_02002998, 32);
-    gData_020024c4__apojii_islands = 0;
+    gData_020024c4 = 0;
   }
-  phase = gData_020024c4__apojii_islands / 8 % 4;
+  phase = gData_020024c4 / 8 % 4;
   k = 0;
   firstCopy = Data_02002978;
   secondCopy = gData_020029b8;
@@ -253,15 +248,10 @@ void Func_020003e8(void) {
   }
   IO_WRITE_QUEUE_PUSH(0x05000060, (u32)firstCopy, 0x84000008);
   IO_WRITE_QUEUE_PUSH(0x05000080, (u32)secondCopy, 0x84000008);
-  gData_020024c4__apojii_islands++;
+  gData_020024c4++;
 }
 
-/* VIEW(apojii_islands): variable gData_020024c8 as extern s32 gData_020024c8;
- * the definition has s32 gData_020024c8[] = { - 1, }; tried as the definition's
- * extern s32 gData_020024c8[], it does not compile in tla-ja:
- * games/tla/src/scene/apojii_islands.c:275: `gData_020024c8' has an incomplete
- * type. */
-extern s32 gData_020024c8__apojii_islands __asm__("gData_020024c8");
+extern s32 gData_020024c8;
 extern u16 Data_020029d8[];
 extern u16 Data_020029f8[];
 extern u16 Data_02002a18[];
@@ -276,14 +266,14 @@ void Func_02000540(void) {
   busy = *(s8 *)(work + 0xca4);
   if (busy != 0)
     return;
-  if (gData_020024c8__apojii_islands == -1) {
+  if (gData_020024c8 == -1) {
     Call3((void (*)())Iwram_CopyWordsEntry, (s32)Data_020029d8, 0x05000060, 32);
     Iwram_CopyWordsEntry(Data_020029f8, Data_020029d8, 32);
     Iwram_CopyWordsEntry(Data_02002a18, (void *)0x050001a0, 32);
     Iwram_CopyWordsEntry(Data_02002a38, Data_02002a18, 32);
-    gData_020024c8__apojii_islands = busy;
+    gData_020024c8 = busy;
   }
-  phase = gData_020024c8__apojii_islands / 8 % 4;
+  phase = gData_020024c8 / 8 % 4;
   for (k = 0; k <= 3; k++) {
     /* FAKEMATCH(dead): the phase and the first colour in a once-only block,
      * whose end holds the order around it; as plain statements, 6 of 152
@@ -296,7 +286,7 @@ void Func_02000540(void) {
   }
   IO_WRITE_QUEUE_PUSH(0x05000060, (u32)Data_020029f8, 0x84000008);
   IO_WRITE_QUEUE_PUSH(0x050001a0, (u32)Data_02002a38, 0x84000008);
-  gData_020024c8__apojii_islands++;
+  gData_020024c8++;
 }
 
 void Func_02000694(void) {
@@ -1144,13 +1134,9 @@ struct Trigger gApojiiIslands_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-s32 gData_020024c4[] = {
-    -1,
-};
+s32 gData_020024c4 = -1;
 
-s32 gData_020024c8[] = {
-    -1,
-};
+s32 gData_020024c8 = -1;
 
 s32 gData_020024cc[] = {
     -1,

@@ -552,13 +552,8 @@ void Func_020007a8(void) {
   object->y = 0x180000;
 }
 
-/* VIEW(aqua_rock_inside): variable gData_02003fb8 as const u8 gData_02003fb8[];
- * scene/aqua_rock_inside/s3844 has u32 gData_02003fb8[] = {; tried as the
- * definition's extern u32 gData_02003fb8[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside.c:592: `gData_02003fb8' undeclared
- * (first use in this function). */
-extern const u8 gData_02003fb8__aqua_rock_inside[] __asm__("gData_02003fb8");
-#define gData_02003fb8 gData_02003fb8__aqua_rock_inside
+extern u8 gData_02003fb8[];
+#define gData_02003fb8 gData_02003fb8
 
 void Func_020007d4(void) {
   s32 priority;
@@ -2551,10 +2546,7 @@ u32 gData_02003f7c[] = {
     1, 38, 17,
 };
 
-u32 gData_02003fb8[] = {
-    0x424b4243, 0x425b4253, 0x426b4263, 0x51434273, 0x5153514b, 0x5163515b,
-    0x5173516b, 0x604b6043,
-};
+u8 gData_02003fb8[] = {67, 66, 75, 66, 83, 66, 91, 66, 99, 66, 107, 66, 115, 66, 67, 81, 75, 81, 83, 81, 91, 81, 99, 81, 107, 81, 115, 81, 67, 96, 75, 96};
 
 u32 gData_02003fd8[] = {
     0, 6, 38, 17,

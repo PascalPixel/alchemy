@@ -177,13 +177,6 @@ void Func_02000080(void) {
   }
 }
 
-/* VIEW(jupiter_lighthouse_room_m): variable gBgScroll as s16 gBgScroll[];
- * bg_scroll.h has struct BgScroll gBgScroll[]; tried as the rest of the object
- * declares it, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:216: incompatible types in
- * assignment. */
-extern s16 gBgScroll__jupiter_lighthouse_room_m[] __asm__("gBgScroll");
-
 s32 Actor_EmitRisingSparks(struct Actor *object);
 
 void Func_020000c4(void) {
@@ -219,8 +212,8 @@ void Func_020000c4(void) {
   Heap_Release(buffer);
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0x3f41;
-  gBgScroll__jupiter_lighthouse_room_m[0] = -104;
-  gBgScroll__jupiter_lighthouse_room_m[1] = 16;
+  gBgScroll[0].x = -104;
+  gBgScroll[0].y = 16;
   System_Wait(30);
   PaletteFade_ApplySource(0x10003, 0);
   PaletteFade_ApplyTarget(0x7fff, 0);
@@ -255,8 +248,8 @@ void Func_020000c4(void) {
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
   REG_DISPCNT |= 0x100;
-  gBgScroll__jupiter_lighthouse_room_m[0] = 0;
-  gBgScroll__jupiter_lighthouse_room_m[1] = 0;
+  gBgScroll[0].x = 0;
+  gBgScroll[0].y = 0;
   System_Wait(1);
   gCpuLoadDisplayEnabled = 1;
   MapGrid_SetShake(0, 0, 0);

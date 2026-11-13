@@ -536,13 +536,7 @@ void Func_02000978(s32 actor) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(s0a34): variable gData_02003634 as extern const struct ThrowAnimations
- * gData_02003634; the definition has u32 gData_02003634[] = { 439, 440, 441, };
- * tried as the definition's extern u32 gData_02003634[], it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:595: incompatible types in
- * assignment. */
-extern const struct ThrowAnimations
-    gData_02003634__s0a34 __asm__("gData_02003634");
+extern struct ThrowAnimations gData_02003634;
 void Actor_ShowItemIconById(s32 id, s32 animation);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 
@@ -606,7 +600,7 @@ void Func_02000a34(s32 value) {
   for (i = 0; i <= 2; i++) {
     struct ThrowAnimations animations;
     s32 landing[3];
-    animations = gData_02003634__s0a34;
+    animations = gData_02003634;
     Actor_SetModeById(8, 9);
     Event_Wait(3);
     Actor_ShowItemIconById(10, animations.animations[i]);
@@ -2049,11 +2043,7 @@ void Func_020032a4(void) {
   HeapSlot_Release(220);
 }
 
-u32 gData_02003634[] = {
-    439,
-    440,
-    441,
-};
+struct ThrowAnimations gData_02003634 = {{439, 440, 441}};
 #undef FIELD_AT
 
 #undef FIELD_AT

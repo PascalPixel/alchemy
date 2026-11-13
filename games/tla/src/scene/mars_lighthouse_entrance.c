@@ -813,7 +813,7 @@ void Func_02000fa4(void) {
 }
 
 void Func_02000fd4(void) {
-  Func_02003564();
+  Leader_SlideOnIceFromEdge();
   Func_020029a0();
 }
 
@@ -989,7 +989,7 @@ void Func_02001344(struct Actor *object) {
 
 void Func_02001378(void) {
   if (Func_020029bc())
-    Func_02003878(1);
+    Leader_SetSlideStopped(1);
 }
 
 #define FIELD_AT(base, type, off)                                              \
@@ -1019,12 +1019,6 @@ extern s16 gData_0200586c[];
 extern s16 gData_0200587c[];
 extern s16 gData_020058a8[];
 extern u32 gData_020058d4[];
-/* VIEW(s138c): variable gMainRoutineWork as extern u8 gMainRoutineWork[];
- * main_routine_work.h has extern struct MainRoutineWork gMainRoutineWork; tried
- * as the 4 declarations' extern u8 gMainRoutineWork[], it does not compile in
- * tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1005: conflicting
- * types for `gMainRoutineWork'. */
-extern u8 gMainRoutineWork__s138c[] __asm__("gMainRoutineWork");
 
 s32 Scene_Initialize(void) {
   s32 v_r8, v_r7, v_r5, t0, t1, t2, t8, t12, t17, t21;
@@ -1033,8 +1027,8 @@ s32 Scene_Initialize(void) {
   s32 t93, t96, t97, t98, t99, t100, t101, t102, t103, t104;
   s32 t105, t106, t107, t108, t109, t110, t111;
 
-  t0 = FIELD_AT((s32)gMainRoutineWork__s138c, s16, 480);
-  t1 = FIELD_AT((s32)gMainRoutineWork__s138c, s16, 482);
+  t0 = gMainRoutineWork.scene;
+  t1 = gMainRoutineWork.entrance;
   *(s32 *)(s32)Data_02006878 = 0;
   t2 = (s32)Ram_HeapSlots->eventWork;
   FIELD_AT(t2, s32, 428) = 0x204;
@@ -1139,7 +1133,7 @@ L_020095b4:
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   MapGrid_SetShake(0, 0x20000, 0x10000);
-  t48 = FIELD_AT((s32)gMainRoutineWork__s138c, s32, 532);
+  t48 = gMainRoutineWork.currentOwner;
   Actor_SetPosition(t48, 0, 0);
   Actor_SetPosition(18, 0, 0);
   t51 = (s32)Actor_Get(18);
@@ -1997,30 +1991,32 @@ DEFINE_LEADER_SLIDE_ON_ICE(Leader_SlideOnIce, Leader_StopIfPending,
                            gData_02005798, Func_02004bc0, Actor_SteerByPad,
                            Func_02004c78)
 
-extern volatile s16 gData_020068b0;
+extern volatile s16 gMarsLighthouseEntrance_SlideStopped;
 void Actor_SteerByPad(struct Actor *object);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02004bc0(struct Actor *object, s32 mode);
 
-#define SHARED_F02003070_NAME Func_02003564
-#define SHARED_F02003070_ID2 gData_020068b0
-#define SHARED_F02003070_ID3 Leader_StopIfPending
-#define SHARED_F02003070_ID4 gData_02005798
-#define SHARED_F02003070_ID5 Func_02004bc0
-#define SHARED_F02003070_ID6 Actor_HasArrived
-#define SHARED_F02003070_ID7 Actor_SteerByPad
-#define SHARED_F02003070_ID8 Func_02004c78
-#include "shared/func_02003070.c"
-#undef SHARED_F02003070_NAME
-#undef SHARED_F02003070_ID2
-#undef SHARED_F02003070_ID3
-#undef SHARED_F02003070_ID4
-#undef SHARED_F02003070_ID5
-#undef SHARED_F02003070_ID6
-#undef SHARED_F02003070_ID7
-#undef SHARED_F02003070_ID8
+#define SLIDE_FROM_EDGE Leader_SlideOnIceFromEdge
+#define SLIDE_STOPPED gMarsLighthouseEntrance_SlideStopped
+#define SLIDE_STOP_LEADER Leader_StopIfPending
+#define SLIDE_ANGLES gData_02005798
+#define SLIDE_SET_ANIMATION Func_02004bc0
+#define SLIDE_HAS_ARRIVED Actor_HasArrived
+#define SLIDE_KEEP_SLIDING Actor_SteerByPad
+#define SLIDE_SPHERES_OVERLAP Func_02004c78
+#include "shared/slide_on_ice_from_edge.c"
+#undef SLIDE_FROM_EDGE
+#undef SLIDE_STOPPED
+#undef SLIDE_STOP_LEADER
+#undef SLIDE_ANGLES
+#undef SLIDE_SET_ANIMATION
+#undef SLIDE_HAS_ARRIVED
+#undef SLIDE_KEEP_SLIDING
+#undef SLIDE_SPHERES_OVERLAP
 
-void Func_02003878(s32 value) { gData_020068b0 = value; }
+void Leader_SetSlideStopped(s32 value) {
+  gMarsLighthouseEntrance_SlideStopped = value;
+}
 
 #undef Func_02002614
 // ---- scene/mars_lighthouse_entrance/s3884.c ----
@@ -2050,14 +2046,14 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Leader_StopIfPending,
 #undef SHARED_F02002148_ID7
 #undef WORK
 #undef ABS
-#undef SHARED_F02003070_NAME
-#undef SHARED_F02003070_ID2
-#undef SHARED_F02003070_ID3
-#undef SHARED_F02003070_ID4
-#undef SHARED_F02003070_ID5
-#undef SHARED_F02003070_ID6
-#undef SHARED_F02003070_ID7
-#undef SHARED_F02003070_ID8
+#undef SLIDE_FROM_EDGE
+#undef SLIDE_STOPPED
+#undef SLIDE_STOP_LEADER
+#undef SLIDE_ANGLES
+#undef SLIDE_SET_ANIMATION
+#undef SLIDE_HAS_ARRIVED
+#undef SLIDE_KEEP_SLIDING
+#undef SLIDE_SPHERES_OVERLAP
 #undef gMarsLighthouseEntrance_Placements
 #undef gMarsLighthouseEntrance_Room1Placements
 #undef gMarsLighthouseEntrance_Room2Placements

@@ -1,7 +1,7 @@
 /// @file
 /// A sprite particle that grows as it drifts, and FieldPsynergy_EndSand, which
 /// sets up 64 of them as a dust puff.
-// Part of psynergy.c.
+// Part of radial.c.
 
 #include "../psynergy_internal.h"
 

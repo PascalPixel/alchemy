@@ -1,7 +1,7 @@
 /// @file
 /// The body of Heavy Divide and Strong Hit, then Cool, Wyrd Curse, Radiant Fire
 /// and Hurricane.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 

@@ -1,7 +1,7 @@
 /// @file
 /// A spray started from an event, and whether an object is blocked, with
 /// routines not yet understood.
-// Part of psynergy.c.
+// Part of radial.c.
 
 #include "../psynergy_internal.h"
 

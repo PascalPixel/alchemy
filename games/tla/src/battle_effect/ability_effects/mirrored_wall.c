@@ -1,6 +1,6 @@
 /// @file
 /// A lunge behind a glowing streak.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 

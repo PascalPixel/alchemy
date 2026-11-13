@@ -1,6 +1,6 @@
 /// @file
 /// An effect object that sinks and shrinks.
-// Part of psynergy.c.
+// Part of radial.c.
 
 #include "../psynergy_internal.h"
 

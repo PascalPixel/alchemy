@@ -1,7 +1,7 @@
 /// @file
 /// Player control: the configured keys, and SC_PLAYER, the leader moved by the
 /// pad (Actor_UpdatePlayerControl).
-// Part of resource_slot.c.
+// Part of field.c.
 
 #include "../resource_slot_internal.h"
 #include "flag_call.h"

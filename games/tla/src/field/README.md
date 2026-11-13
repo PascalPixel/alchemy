@@ -46,8 +46,8 @@ explains how this code works.
   offset in the slot table (`0x9c` and `0xa0`, slots 39 and 40), and their
   files and functions by address (`Rope_AllocNode`) until their meaning is
   read.
-- The ground height functions in `map/tile_animation.c` are The Broken Seal's,
-  described under
+- The ground height functions, in `field.c` with the rest of the map code,
+  are The Broken Seal's, described under
   [How high a step can go](../../../tbs/src/field/README.md#how-high-a-step-can-go),
   but this game drops the two bends along an axis: the sample tables come
   twice, the first pair with x and y swapped, and the last two kinds are new

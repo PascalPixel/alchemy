@@ -1,7 +1,7 @@
 /// @file
 /// The Ulysses summon and Spider Web, with the effect sprites, grey ramp and
 /// circle maps they draw with.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 

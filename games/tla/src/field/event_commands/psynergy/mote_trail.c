@@ -1,6 +1,6 @@
 /// @file
 /// A summon tablet's runes flying as it is read, and placing the flag blocks.
-// Part of psynergy.c.
+// Part of radial.c.
 
 #include "../psynergy_internal.h"
 

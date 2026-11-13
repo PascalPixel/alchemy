@@ -1,6 +1,6 @@
 /// @file
 /// Choosing a battle target.
-// Part of menus.c.
+// Part of window.c.
 
 #include "../menus_internal.h"
 #include "flag_call.h"

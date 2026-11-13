@@ -1,7 +1,7 @@
 /// @file
 /// The link battle timer, and a localized message shown until the player reads
 /// it.
-// Part of menus.c.
+// Part of window.c.
 
 #include "../menus_internal.h"
 #include "gamepak/far_call/battle.h"

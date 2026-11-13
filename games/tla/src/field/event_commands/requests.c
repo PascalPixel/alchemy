@@ -1,6 +1,6 @@
 /// @file
 /// Battles and destinations an event requests, and the queued sound.
-// Part of event_commands.c.
+// Part of field_sequence.c.
 
 #include "../event_commands_internal.h"
 #include "flag_call.h"

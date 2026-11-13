@@ -2,7 +2,7 @@
 /// A unit's motion graphics in battle: setting its records' frames, the flash
 /// when it is hit, its removal from the formations and the graphics of a
 /// defeated unit, with routines around them not yet understood.
-// Part of presentation.c.
+// Part of battle.c.
 
 #include "../presentation_internal.h"
 #include "module/battle/battle.h"

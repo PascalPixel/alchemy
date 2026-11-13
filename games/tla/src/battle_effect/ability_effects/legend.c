@@ -1,6 +1,6 @@
 /// @file
 /// Legend, and the Bramble, Frost, Flame and Thunder Cards.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 

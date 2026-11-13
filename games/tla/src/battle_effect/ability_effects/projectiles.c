@@ -1,7 +1,7 @@
 /// @file
 /// The opening every Djinn effect shares, Cutting Edge, Heat Wave and Blizzard,
 /// and the projectile volleys.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 

@@ -1,6 +1,6 @@
 /// @file
 /// The party status window.
-// Part of screens.c.
+// Part of window.c.
 
 #include "../screens_internal.h"
 #include "menu_list.h"

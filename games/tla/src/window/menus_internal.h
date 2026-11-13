@@ -2,8 +2,8 @@
 #define ALCHEMY_MENUS_INTERNAL_H
 
 /// @file
-/// What every part of the menus object shares: its includes. menus.c
-/// includes it before the parts, and each part includes it too.
+/// What every part under menus/ shares: its includes. window.c includes it
+/// before those parts, and each part includes it too.
 
 #include "types.h"
 #include "ram_buffer.h"

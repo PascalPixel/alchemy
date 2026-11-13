@@ -1,7 +1,7 @@
 /// @file
 /// The burst of sparkles an effect ends with, and moving the view: opening the
 /// whole map to it, swinging it and giving the bounds back.
-// Part of psynergy.c.
+// Part of radial.c.
 
 #include "../psynergy_internal.h"
 

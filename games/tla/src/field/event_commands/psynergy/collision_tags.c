@@ -1,6 +1,6 @@
 /// @file
 /// The map collision's tags and the flag blocks.
-// Part of psynergy.c.
+// Part of radial.c.
 
 #include "../psynergy_internal.h"
 

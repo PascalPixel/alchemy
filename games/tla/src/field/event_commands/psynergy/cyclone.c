@@ -3,7 +3,7 @@
 /// burst, an actor carried from one point to another as it circles, a whirl of
 /// rings, an actor spinning away and back (Actor_DepartInRing,
 /// Actor_ArriveInRing) and a spray of drops and smoke puffs.
-// Part of psynergy.c.
+// Part of radial.c.
 
 #include "../psynergy_internal.h"
 

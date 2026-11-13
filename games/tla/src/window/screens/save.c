@@ -1,6 +1,6 @@
 /// @file
 /// Save files, the file list and the saving screen's progress bar.
-// Part of screens.c.
+// Part of window.c.
 
 #include "../screens_internal.h"
 #include "system/io_write.h"

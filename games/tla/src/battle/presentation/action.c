@@ -1,7 +1,7 @@
 /// @file
 /// Whether a unit stands in its side's formation and how many Djinn a side has
 /// on standby, and one routine not yet understood.
-// Part of presentation.c.
+// Part of battle.c.
 
 #include "../presentation_internal.h"
 #include "flag_call.h"

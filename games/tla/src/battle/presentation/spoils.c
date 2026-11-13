@@ -1,6 +1,6 @@
 /// @file
 /// The spoils: coins, experience, items and level ups.
-// Part of presentation.c.
+// Part of battle.c.
 
 #include "../presentation_internal.h"
 #include "gamepak/far_call/game.h"

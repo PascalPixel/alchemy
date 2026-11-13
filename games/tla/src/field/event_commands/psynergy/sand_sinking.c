@@ -1,7 +1,7 @@
 /// @file
 /// The Sand sinking the leader into the ground: its picture, its sprite and
 /// the grains it throws up.
-// Part of psynergy.c.
+// Part of radial.c.
 
 #include "../psynergy_internal.h"
 

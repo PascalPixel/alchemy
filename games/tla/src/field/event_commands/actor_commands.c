@@ -1,6 +1,6 @@
 /// @file
 /// Event commands on actors: placing, moving and animating them.
-// Part of event_commands.c.
+// Part of field_sequence.c.
 
 #include "../event_commands_internal.h"
 #include "frame.h"

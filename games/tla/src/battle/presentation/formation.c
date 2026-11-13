@@ -1,7 +1,7 @@
 /// @file
 /// Enemy formations: the enemies chosen, levelled and lettered, and each enemy
 /// class's sprite, palette, size and attack effect.
-// Part of presentation.c.
+// Part of battle.c.
 
 #include "../presentation_internal.h"
 #include "flag_call.h"

@@ -2,7 +2,7 @@
 /// Scoop, Teleport (field Psynergy kind 30) and its whirl and sparks, an object
 /// dropped at the effect's anchor, and the
 /// canvas circle and image copies, with routines not yet understood.
-// Part of psynergy.c.
+// Part of radial.c.
 
 #include "../psynergy_internal.h"
 

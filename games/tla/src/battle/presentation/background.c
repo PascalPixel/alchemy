@@ -2,7 +2,7 @@
 /// The battle background, its palette and modes, the camera's zoom and the
 /// units' highlights, the star field behind a summon and a unit's element
 /// effect.
-// Part of presentation.c.
+// Part of battle.c.
 
 #include "../presentation_internal.h"
 #include "module/battle/presentation.h"

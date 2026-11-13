@@ -1,6 +1,6 @@
 /// @file
 /// The view swayed up and down, and the glow of field Psynergy kind 24.
-// Part of psynergy.c.
+// Part of radial.c.
 
 #include "../psynergy_internal.h"
 

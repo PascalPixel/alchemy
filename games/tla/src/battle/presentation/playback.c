@@ -1,7 +1,7 @@
 /// @file
 /// Battle playback: starting it, scheduling its phases, resetting it and
 /// waiting until it is ready.
-// Part of presentation.c.
+// Part of battle.c.
 
 #include "../presentation_internal.h"
 #include "module/battle/presentation.h"

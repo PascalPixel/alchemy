@@ -2,10 +2,9 @@
 #define ALCHEMY_SCREENS_INTERNAL_H
 
 /// @file
-/// What every part of the screens object shares: its includes and the
-/// declarations the parts disagreed on. screens.c includes it before the
-/// parts, and each part includes it too, so that a part read on its own still
-/// resolves.
+/// What every part under screens/ shares: its includes and the declarations
+/// the parts disagreed on. window.c includes it before those parts, and each
+/// part includes it too, so that a part read on its own still resolves.
 
 #include "battle.h"
 #include "debug.h"

@@ -1,6 +1,6 @@
 /// @file
 /// Moving actors by the direction pad, and the party's keys.
-// Part of resource_slot.c.
+// Part of field.c.
 
 #include "../resource_slot_internal.h"
 #include "gamepak/far_call/field_sequence.h"

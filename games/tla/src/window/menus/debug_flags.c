@@ -1,7 +1,7 @@
 /// @file
 /// The debug menus' keys, the flag browser, and hexadecimal numbers written as
 /// text.
-// Part of menus.c.
+// Part of window.c.
 
 #include "../menus_internal.h"
 #include "flag_call.h"

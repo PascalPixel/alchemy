@@ -1,6 +1,6 @@
 /// @file
 /// Core and Cannon: a Mars Djinni charging the target.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 

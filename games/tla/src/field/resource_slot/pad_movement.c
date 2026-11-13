@@ -1,7 +1,7 @@
 /// @file
 /// Script commands that move the leader by the pad, on the map and the world
 /// map, and the configured keys checked from a script.
-// Part of resource_slot.c.
+// Part of field.c.
 
 #include "../resource_slot_internal.h"
 #include "flag_call.h"

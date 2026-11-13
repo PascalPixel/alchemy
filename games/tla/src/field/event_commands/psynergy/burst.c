@@ -1,6 +1,6 @@
 /// @file
 /// Two routines not yet understood.
-// Part of psynergy.c.
+// Part of radial.c.
 
 #include "../psynergy_internal.h"
 

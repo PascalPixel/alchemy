@@ -1,7 +1,7 @@
 /// @file
 /// Moving on the world map by the pad, and decoding a map's tilemaps and
 /// palette.
-// Part of resource_slot.c.
+// Part of field.c.
 
 #include "../resource_slot_internal.h"
 #include "module/field/field.h"

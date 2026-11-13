@@ -1,7 +1,7 @@
 /// @file
 /// Layered maps: loading, drawing and scrolling, copying cells, and the edits
 /// flags apply.
-// Part of resource_slot.c.
+// Part of field.c.
 
 #include "../resource_slot_internal.h"
 

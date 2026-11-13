@@ -1,6 +1,6 @@
 /// @file
 /// The summons that spend one Djinni: Mercury, Jupiter, Venus and Mars.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 

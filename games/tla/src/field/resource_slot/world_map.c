@@ -1,7 +1,7 @@
 /// @file
 /// The world map's window cells, and drawing its tiles into a BG map, with
 /// routines not yet understood.
-// Part of resource_slot.c.
+// Part of field.c.
 
 #include "../resource_slot_internal.h"
 #include "fixed_math.h"

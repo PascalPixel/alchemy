@@ -2,8 +2,9 @@
 #define ALCHEMY_PRESENTATION_INTERNAL_H
 
 /// @file
-/// What every part of the presentation object shares: its includes.
-/// presentation.c includes it before the parts, and each part includes it too.
+/// What every part under presentation/ shares: its includes.
+/// battle.c includes it before the presentation parts, and each part includes
+/// it too.
 
 #include "types.h"
 #include "actor.h"

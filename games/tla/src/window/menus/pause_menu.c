@@ -1,7 +1,7 @@
 /// @file
 /// The save screen's selection, the portrait browser, and the flag grid drawn
 /// into a tilemap.
-// Part of menus.c.
+// Part of window.c.
 
 #include "../menus_internal.h"
 #include "item_icon.h"

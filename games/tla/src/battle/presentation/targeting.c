@@ -1,7 +1,7 @@
 /// @file
 /// Applying an ability to each of its targets, the battle events queued on the
 /// way, and the wait for the player to advance a battle message.
-// Part of presentation.c.
+// Part of battle.c.
 
 #include "../presentation_internal.h"
 #include "gamepak/far_call/game.h"

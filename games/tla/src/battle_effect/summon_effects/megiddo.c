@@ -1,6 +1,6 @@
 /// @file
 /// The Megiddo summon.
-// Part of summon_effects.c.
+// Part of battle_effect.c.
 
 #include "../summon_effects_internal.h"
 

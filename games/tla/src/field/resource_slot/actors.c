@@ -1,7 +1,7 @@
 /// @file
 /// Animated map tiles, then actors: creating and releasing them, their
 /// animations, and starting scripts.
-// Part of resource_slot.c.
+// Part of field.c.
 
 #include "../resource_slot_internal.h"
 #include "flag_call.h"

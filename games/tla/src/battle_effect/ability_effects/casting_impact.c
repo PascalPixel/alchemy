@@ -1,7 +1,7 @@
 /// @file
 /// The casting impacts, and the step of the background colours toward a
 /// palette.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 

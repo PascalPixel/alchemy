@@ -1,7 +1,7 @@
 /// @file
 /// Odyssey, the turning cloud swirl, and the screen wipe and teardown of summon
 /// 25.
-// Part of summon_effects.c.
+// Part of battle_effect.c.
 
 #include "../summon_effects_internal.h"
 

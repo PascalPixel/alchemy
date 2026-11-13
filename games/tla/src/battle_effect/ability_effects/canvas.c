@@ -1,6 +1,6 @@
 /// @file
 /// One routine of the canvas layer, not yet understood.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 

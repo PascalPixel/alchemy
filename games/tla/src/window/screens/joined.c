@@ -1,6 +1,6 @@
 /// @file
 /// The joined-party and found-Djinni messages.
-// Part of screens.c.
+// Part of window.c.
 
 #include "../screens_internal.h"
 #include "module/window/screens.h"

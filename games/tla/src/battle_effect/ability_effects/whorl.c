@@ -1,7 +1,7 @@
 /// @file
 /// The water-column scene of Whorl, Gale, Lethe Albion, Poison Flow and Raging
 /// Flood.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 

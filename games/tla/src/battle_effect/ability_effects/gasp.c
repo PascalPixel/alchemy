@@ -1,6 +1,6 @@
 /// @file
 /// The body that sixteen abilities' effects share, from Gasp to Demon Eye.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 

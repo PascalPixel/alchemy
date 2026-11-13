@@ -1,6 +1,6 @@
 /// @file
 /// Actor script commands: waits, jumps, flags, moves and work values.
-// Part of resource_slot.c.
+// Part of field.c.
 
 #include "../resource_slot_internal.h"
 #include "flag_call.h"

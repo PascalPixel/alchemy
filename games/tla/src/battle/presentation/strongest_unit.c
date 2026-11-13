@@ -1,7 +1,7 @@
 /// @file
 /// Picking a unit on one side: a random living target, or the living unit with
 /// the highest Attack.
-// Part of presentation.c.
+// Part of battle.c.
 
 #include "../presentation_internal.h"
 

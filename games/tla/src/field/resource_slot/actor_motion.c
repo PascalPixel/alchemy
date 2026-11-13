@@ -1,6 +1,6 @@
 /// @file
 /// Actor motion, each frame.
-// Part of resource_slot.c.
+// Part of field.c.
 
 #include "../resource_slot_internal.h"
 #include "module/field/resource_slot.h"

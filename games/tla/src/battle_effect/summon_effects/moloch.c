@@ -1,7 +1,7 @@
 /// @file
 /// The Moloch and Iris summons, and the model renderers and projections the
 /// effects draw with.
-// Part of summon_effects.c.
+// Part of battle_effect.c.
 
 #include "../summon_effects_internal.h"
 

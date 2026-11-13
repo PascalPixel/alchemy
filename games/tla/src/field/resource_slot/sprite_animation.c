@@ -1,6 +1,6 @@
 /// @file
 /// Sprites, their animations and the picture caches they draw from.
-// Part of resource_slot.c.
+// Part of field.c.
 
 #include "../resource_slot_internal.h"
 #include "module/field/field.h"

@@ -1,6 +1,6 @@
 /// @file
 /// The Flora summon, Sabre Dance and Backstab.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 

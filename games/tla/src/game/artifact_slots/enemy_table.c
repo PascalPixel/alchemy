@@ -1,7 +1,7 @@
 /// @file
 /// The 380 enemies, by enemy id. Each name is the English release's
 /// (MsgEnemyName plus the enemy id).
-// Part of artifact_slots.c.
+// Part of game.c.
 
 #include "../artifact_slots_internal.h"
 

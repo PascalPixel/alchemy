@@ -1,6 +1,6 @@
 /// @file
 /// The Haures summon, and the open cylinder a summon's band is drawn on.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 

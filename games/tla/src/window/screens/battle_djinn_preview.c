@@ -1,6 +1,6 @@
 /// @file
 /// The preview of what setting or removing a Djinni changes.
-// Part of screens.c.
+// Part of window.c.
 
 #include "../screens_internal.h"
 #include "djinn_preview.h"

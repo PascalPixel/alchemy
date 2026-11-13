@@ -1,7 +1,7 @@
 /// @file
 /// Field Psynergy kind 24's work, a sprite's four-picture cycle and a step
 /// toward a target, with routines not yet understood.
-// Part of psynergy.c.
+// Part of radial.c.
 
 #include "../psynergy_internal.h"
 

@@ -1,6 +1,6 @@
 /// @file
 /// The row of command icons the player picks a command from.
-// Part of screens.c.
+// Part of window.c.
 
 #include "../screens_internal.h"
 #include "module/window/screens.h"

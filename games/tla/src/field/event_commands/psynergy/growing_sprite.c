@@ -1,6 +1,6 @@
 /// @file
 /// A particle's sprite that grows as it animates.
-// Part of psynergy.c.
+// Part of radial.c.
 
 #include "../psynergy_internal.h"
 

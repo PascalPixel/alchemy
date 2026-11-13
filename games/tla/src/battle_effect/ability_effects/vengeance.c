@@ -1,7 +1,7 @@
 /// @file
 /// Vengeance and Life Shear, a geyser, swarms of stars and a column of bubbles,
 /// and the Coatlicue summon.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 

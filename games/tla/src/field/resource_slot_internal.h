@@ -2,8 +2,8 @@
 #define ALCHEMY_RESOURCE_SLOT_INTERNAL_H
 
 /// @file
-/// What every part of the resource_slot object shares: its includes.
-/// resource_slot.c includes it before the parts, and each part includes it too.
+/// What every part under resource_slot/ shares: its includes. field.c
+/// includes it before those parts, and each part includes it too.
 
 #include "battle.h"
 #include "field.h"

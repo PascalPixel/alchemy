@@ -1,6 +1,6 @@
 /// @file
 /// Field Psynergy kind 19: the view swayed from side to side.
-// Part of psynergy.c.
+// Part of radial.c.
 
 #include "../psynergy_internal.h"
 

@@ -167,32 +167,25 @@ static void Colosso_UpdateMarker(void) {
   s32 total;
   s32 step;
   s32 *oam;
-  s16 *steps;
   s32 *dst;
   s32 x;
   s32 y;
-  s32 diff;
-  s32 base;
-  s16 *py;
-  union MarkerCoordinate *sy;
 
   oam = gColosso_PointerOam;
   tile = gVramCacheEntries[gColosso_MarkerSlot].offset >> 5;
-  steps = &gColosso_MarkerSteps;
-  total = *steps;
+  total = gColosso_MarkerSteps;
   if (total != 0) {
     step = ++gColosso_MarkerStep;
-    py = &gColosso_MarkerX;
-    sy = &gColosso_MarkerStartX;
-    diff = gColosso_MarkerEndX - sy->signedValue;
-    base = sy->value;
-    *py = base + diff * (s16)step / total;
+    gColosso_MarkerX =
+        gColosso_MarkerStartX.value +
+        (gColosso_MarkerEndX - gColosso_MarkerStartX.signedValue) * (s16)step /
+            total;
     gColosso_MarkerY =
         gColosso_MarkerStartY.value +
         (gColosso_MarkerEndY - gColosso_MarkerStartY.signedValue) * (s16)step /
             total;
     if ((s16)step >= total)
-      *steps = 0;
+      gColosso_MarkerSteps = 0;
     gColosso_MarkerBlink = 0;
   }
   if (++gColosso_MarkerBlink <= 13) {

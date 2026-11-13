@@ -260,7 +260,7 @@ void Party_InitializeCharacters(void) {
   s32 slot;
   u8 *name;
 
-  for (unitId = 0; unitId <= 7; unitId++) {
+  for (unitId = 0; unitId <= ALLY_MAX; unitId++) {
     unit = Unit_Get(unitId);
     Message_DecodeRawUnboundedFar(unitId + MsgCharacterName, nameBuf);
     name = unit->name;
@@ -286,7 +286,7 @@ void Party_InitializeCharacters(void) {
         unit->id = *startingUnitId;
         character = Character_GetDefinition(unit->id);
 
-        for (i = 14; i >= 0; i--)
+        for (i = INVENTORY_SLOTS - 1; i >= 0; i--)
           unit->inventory[i] = 0;
 
         for (i = 0; i < sizeof(character->items) / sizeof(character->items[0]);
@@ -372,30 +372,37 @@ struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
     }
     // Each twenty-level band interpolates between adjacent growth points.
     // Keep one RNG draw per stat, in HP, PP, attack, defense, agility, luck
-    // order. Random16() * 20 >> 16 is 0 to 19, so a rising step of d gives
-    // d / 20 rounded up with a chance of about (d % 20) / 20: on average a
-    // twentieth of the step a level, the whole step over a 20-level band
-    // (band 0, levels 1 to 19, gains nineteen twentieths).
-    growthBand = gains->level / 20;
-    CLAMP(growthBand, 0, 4);
+    // order. Random16() * GROWTH_BAND_LEVELS >> 16 is 0 to 19, so a rising step
+    // of d gives d / 20 rounded up with a chance of about (d % 20) / 20: on
+    // average a twentieth of the step a level, the whole step over a 20-level
+    // band (band 0, levels 1 to 19, gains nineteen twentieths).
+    growthBand = gains->level / GROWTH_BAND_LEVELS;
+    CLAMP(growthBand, 0, GROWTH_POINTS - 2);
     growthDifference =
         work->growth->hp[growthBand + 1] - work->growth->hp[growthBand];
-    gains->hp += ((Random16() * 20 >> 16) + growthDifference) / 20;
+    gains->hp += ((Random16() * GROWTH_BAND_LEVELS >> 16) + growthDifference) /
+                 GROWTH_BAND_LEVELS;
     growthDifference =
         work->growth->pp[growthBand + 1] - work->growth->pp[growthBand];
-    gains->pp += ((Random16() * 20 >> 16) + growthDifference) / 20;
+    gains->pp += ((Random16() * GROWTH_BAND_LEVELS >> 16) + growthDifference) /
+                 GROWTH_BAND_LEVELS;
     growthDifference =
         work->growth->atk[growthBand + 1] - work->growth->atk[growthBand];
-    gains->atk += ((Random16() * 20 >> 16) + growthDifference) / 20;
+    gains->atk += ((Random16() * GROWTH_BAND_LEVELS >> 16) + growthDifference) /
+                  GROWTH_BAND_LEVELS;
     growthDifference =
         work->growth->def[growthBand + 1] - work->growth->def[growthBand];
-    gains->def += ((Random16() * 20 >> 16) + growthDifference) / 20;
+    gains->def += ((Random16() * GROWTH_BAND_LEVELS >> 16) + growthDifference) /
+                  GROWTH_BAND_LEVELS;
     growthDifference =
         work->growth->agi[growthBand + 1] - work->growth->agi[growthBand];
-    gains->agi += ((Random16() * 20 >> 16) + growthDifference) / 20;
+    gains->agi += ((Random16() * GROWTH_BAND_LEVELS >> 16) + growthDifference) /
+                  GROWTH_BAND_LEVELS;
     growthDifference =
         work->growth->luck[growthBand + 1] - work->growth->luck[growthBand];
-    gains->luck += ((Random16() * 20 >> 16) + growthDifference) / 20;
+    gains->luck +=
+        ((Random16() * GROWTH_BAND_LEVELS >> 16) + growthDifference) /
+        GROWTH_BAND_LEVELS;
     // Commit the six gains before rebuilding Psynergy and derived stats.
     unit->baseHp += gains->hp;
     unit->basePp += gains->pp;

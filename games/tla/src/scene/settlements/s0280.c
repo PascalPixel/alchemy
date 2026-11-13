@@ -151,45 +151,25 @@ void Func_0200052c(void) {
 }
 
 void Func_020005cc(void) {
-  s32 id;
-
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_WalkByAndWait(4, 0, -14);
-  id = 4;
-  Actor_WalkByAndWait(id, 16, 0);
+  Actor_WalkByAndWait(4, 16, 0);
   Func_0200052c();
 }
 
 void Func_020005f4(void) {
-  s32 id, x, z;
-
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_WalkByAndWait(4, -2, -6);
-  x = 14;
-  z = 8;
-  id = 4;
-  /* FAKEMATCH(barrier): the empty asm on the actor id, which then comes
-   * between the distances and their negation; as Actor_WalkByAndWait(4, -x,
-   * -z), 2 of 18 instructions differ in tla-en. */
-  __asm__ volatile("" : "+r"(id));
-  Actor_WalkByAndWait(id, -x, -z);
+  Actor_WalkByAndWait(4, -14, -8);
   Func_0200052c();
 }
 
 void Func_02000624(void) {
-  s32 id, a;
-
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  a = 192;
-  id = 4;
-  /* FAKEMATCH(barrier): the empty asm on the actor id, which then comes
-   * between the angle byte and its shift; as Actor_FaceDirection(4, a << 8,
-   * 0), 2 of 11 instructions differ in tla-en. */
-  __asm__ volatile("" : "+r"(id));
-  Actor_FaceDirection(id, a << 8, 0);
+  Actor_FaceDirection(4, 192 << 8, 0);
   Func_0200052c();
 }
 

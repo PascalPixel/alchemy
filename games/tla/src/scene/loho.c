@@ -652,40 +652,18 @@ void Func_02000f38(void) {
 }
 
 void Func_02000ffc(void) {
-  s32 back;
-  s32 id;
-  s32 x;
-
   Event_Start();
   Event_ResolvePendingActions(0);
-  back = 14;
-  id = 4;
-  x = 0;
-  /* FAKEMATCH(barrier): the empty asm on back, id and x, so the other
-   * arguments are set before the step is negated; as constant arguments, 2 of
-   * 17 instructions differ in tla-en. */
-  asm("" : "+l"(back), "+l"(id), "+l"(x));
-  Actor_CommitPositionAndActivate(id, x, -back);
+  Actor_WalkByAndWait(4, 0, -14);
   Actor_CommitPositionAndActivate(4, 16, 0);
   Event_Wait(10);
   Func_02000f38();
 }
 
 void Func_0200102c(void) {
-  s32 back;
-  s32 id;
-  s32 x;
-
   Event_Start();
   Event_ResolvePendingActions(0);
-  back = 14;
-  id = 4;
-  x = 0;
-  /* FAKEMATCH(barrier): the empty asm on back, id and x, so the other
-   * arguments are set before the step is negated; as constant arguments, 2 of
-   * 18 instructions differ in tla-en. */
-  asm("" : "+l"(back), "+l"(id), "+l"(x));
-  Actor_CommitPositionAndActivate(id, x, -back);
+  Actor_WalkByAndWait(4, 0, -14);
   Actor_CommitPositionAndActivate(4, -16, 0);
   Event_Wait(10);
   Func_02000f38();

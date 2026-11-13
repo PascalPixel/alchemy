@@ -14,6 +14,13 @@
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect/spawn.c"
 
+/* VIEW(placements): routines Statue_Sink and PartyInventory_GiveItem as
+ * yampi_desert/scene.h declares them; the joined file defines and declares
+ * them otherwise. */
+void Statue_Sink__placements(const void *script, s32 a, s32 b) __asm__("Statue_Sink");
+void PartyInventory_GiveItem__placements(s32 item, s32 flags) __asm__("PartyInventory_GiveItem");
+#define Statue_Sink Statue_Sink__placements
+#define PartyInventory_GiveItem PartyInventory_GiveItem__placements
 #include "yampi_desert/scene.h"
 #include "module/scene/yampi_desert.h"
 #include "module/tla.h"
@@ -475,6 +482,8 @@ void YampiDesert_WatchScorpionStop(void) {
   Event_End();
 }
 
+#undef Statue_Sink
+#undef PartyInventory_GiveItem
 #include "../field/field_effect/advance_motion_priority.c"
 
 #undef EFFECT_SPAWN

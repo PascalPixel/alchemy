@@ -2568,7 +2568,9 @@ void Func_02001a1c(void);
 void Leader_SinkAway__data(void) __asm__("Leader_SinkAway");
 #define Leader_SinkAway Leader_SinkAway__data
 
-extern u8 Data_020005f4[];
+/* VIEW(data): variable Data_020005f4 as this part declared it; the scene defines it as a routine. */
+extern u8 Data_020005f4__data[] __asm__("Data_020005f4");
+#define Data_020005f4 Data_020005f4__data
 /* VIEW(data): routine gData_02003f04 as this part declared it; the joined file has another. */
 extern u8 gData_02003f04__data[] __asm__("gData_02003f04");
 #define gData_02003f04 gData_02003f04__data
@@ -2984,3 +2986,4 @@ LATE_DATA u32 gData_0200534c[] = {
 #undef gData_02003f04
 #undef gData_02003f40
 #undef gData_02003f7c
+#undef Data_020005f4

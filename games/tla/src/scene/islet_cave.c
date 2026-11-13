@@ -288,11 +288,12 @@ loop:
   Event_End();
 }
 
-/* VIEW(first): routine gData_02001388 as this part declared it; the joined file has another. */
-/* VIEW(first): routine gData_0200135c as this part declared it; the joined file has another. */
-/* VIEW(first): routine gData_0200134c as this part declared it; the joined file has another. */
-extern u16 gData_0200134c__first[], gData_0200135c__first[], gData_02001388__first[],
-    gData_020013b4[] __asm__("gData_02001388") __asm__("gData_0200135c") __asm__("gData_0200134c");
+/* VIEW(first): variables gData_0200134c, gData_0200135c and gData_02001388 as
+ * this part declared them; the joined file has others. */
+extern u16 gData_0200134c__first[] __asm__("gData_0200134c");
+extern u16 gData_0200135c__first[] __asm__("gData_0200135c");
+extern u16 gData_02001388__first[] __asm__("gData_02001388");
+extern u16 gData_020013b4[];
 #define gData_0200134c gData_0200134c__first
 #define gData_0200135c gData_0200135c__first
 #define gData_02001388 gData_02001388__first

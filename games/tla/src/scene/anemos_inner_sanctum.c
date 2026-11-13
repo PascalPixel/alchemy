@@ -1334,7 +1334,9 @@ void Func_02001df4(void) {
 s32 Func_02000038__s1938() __asm__("Func_02000038");
 #define Func_02000038 Func_02000038__s1938
 s32 CrackedTiles_Find();
-s32 CrackedTile_PlaceLanding();
+/* VIEW(scene_tables): routine CrackedTile_PlaceLanding as this part declared it; the joined file has another. */
+s32 CrackedTile_PlaceLanding__scene_tables() __asm__("CrackedTile_PlaceLanding");
+#define CrackedTile_PlaceLanding CrackedTile_PlaceLanding__scene_tables
 /* VIEW(s1938): routine gData_0200384c as this part declared it; the joined file has another. */
 extern u8 gData_0200384c__s1938[] __asm__("gData_0200384c");
 #define gData_0200384c gData_0200384c__s1938
@@ -1899,6 +1901,7 @@ void CrackedTile_Fall(struct PushEvent *event) {
 #undef gData_02003888
 #undef gData_020038b4
 #undef gData_02004428
+#undef CrackedTile_PlaceLanding
 // ---- from scene/anemos_inner_sanctum/s2f48.c ----
 // @file
 // Scene code of overlay 0x6b0, in ROM order.
@@ -2002,8 +2005,7 @@ void CrackedTile_Fall__s2f48(struct CellTarget *work, struct CellTargetEntry *en
 DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
                           CrackedTile_Fall)
 
-/* VIEW(s2f48): routine CrackedTile_PlaceLanding as this part declared it; the joined file has another. */
-DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding__s2f48, gCrackedTiles,
+DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
                                   CrackedTile_DropIn)
 
 #include "scene_tables.h"
@@ -2021,8 +2023,7 @@ void Func_020006f8__s2f48(void) __asm__("Func_020006f8");
 void Func_02000794__s2f48(void) __asm__("Func_02000794");
 #define Func_02000794 Func_02000794__s2f48
 
-extern u32 gData_0200378c[] __asm__("CrackedTile_PlaceLanding");
-#define CrackedTile_PlaceLanding CrackedTile_PlaceLanding__s2f48
+extern u32 gData_0200378c[];
 extern u32 gData_020037c8[];
 
 // clang-format off

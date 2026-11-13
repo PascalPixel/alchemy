@@ -961,7 +961,10 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 // leader steps on.
 #define CELL_TABLE gCrackedTiles
 #define CELL_SPRITE_DRAW CrackedTiles_Update
-#define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
+/* VIEW(s1f74): routine Oam_AddSpriteAtDepthClamped as cell_sprite.c declares it; the
+ * joined file has another. */
+void Oam_AddSpriteAtDepthClamped__s1f74(void *entry, s32 priority) __asm__("Oam_AddSpriteAtDepthClamped");
+#define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped__s1f74
 #include "../field/map/cell_sprite.c"
 
 #include "ram_buffer.h"
@@ -1008,7 +1011,9 @@ struct CellTarget__s25a4 {
 
 #include "io_write.h"
 
-/* VIEW(s25a4): routine CrackedTile_Fall as this part declared it; the joined file has another. */
+/* VIEW(s25a4): routine CrackedTile_Fall as this part defines it; the scene's
+ * module header declares it with the joined file's CellTarget. */
+void CrackedTile_Fall__s25a4(struct CellTarget__s25a4 *table, struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
 DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall__s25a4, CellTarget__s25a4,
                          Leader_CenterInCell)
 
@@ -1039,8 +1044,7 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall__s25a4, CellTarget__s25a4,
 
 /* VIEW(s273c): routine FieldEffect_Spawn as this part declared it; the joined file has another. */
 void FieldEffect_Spawn__s273c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags, struct EffectOptions *options) __asm__("FieldEffect_Spawn") __asm__("CrackedTile_Fall");
-#define CrackedTile_Fall CrackedTile_Fall__s25a4
+                       s32 velocityZ, u32 flags, struct EffectOptions *options) __asm__("FieldEffect_Spawn");
 #define FieldEffect_Spawn FieldEffect_Spawn__s273c
 
 void CrackedTile_DropIn(void) {
@@ -1127,7 +1131,6 @@ s16 gData_02002c64__s273c[] __asm__("gData_02002c64") = {
 };
 // clang-format on
 
-#undef CrackedTile_Fall
 #undef FieldEffect_Spawn
 // ---- from scene/data/jupiter_lighthouse_room_7.c ----
 

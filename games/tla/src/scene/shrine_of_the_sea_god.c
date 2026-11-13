@@ -906,20 +906,6 @@ void Func_0200142c(struct ShrineOfTheSeaGodObject *object) {
 
 void Func_02001464(void) { Func_0200142c(Actor_GetById(14)); }
 
-// field_effect.h's EffectOptions, which this overlay's headers cannot include.
-struct EffectOptions {
-  s32 priority;
-  s32 palette;
-  s32 startScaleX;
-  s32 startScaleY;
-  s32 targetScaleX;
-  s32 targetScaleY;
-  s16 type;
-  const s32 *script;
-  u16 rotation;
-  u16 spin;
-  void (*update)(void *object);
-};
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,

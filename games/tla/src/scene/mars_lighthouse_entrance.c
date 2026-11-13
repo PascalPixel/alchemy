@@ -1055,7 +1055,9 @@ s32 Func_020022e4__mars_lighthouse_entrance() __asm__("Func_020022e4");
  * undeclared (first use in this function). */
 s32 Func_0200248c__mars_lighthouse_entrance() __asm__("Func_0200248c");
 #define Func_0200248c Func_0200248c__mars_lighthouse_entrance
-s32 Func_020045f8();
+/* VIEW(first): routine Func_020045f8 as this part declared it; the joined file has another. */
+s32 Func_020045f8__first() __asm__("Func_020045f8");
+#define Func_020045f8 Func_020045f8__first
 void Func_0200196c(void);
 /* VIEW(mars_lighthouse_entrance): routine gData_02005314 as this part declared it; the joined file has another. */
 extern u8 gData_02005314__mars_lighthouse_entrance[] __asm__("gData_02005314");
@@ -2427,6 +2429,7 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003884, Func_02003284, Func_02004bc0,
 #undef gData_02005798
 #undef gData_02005798
 #undef Position
+#undef Func_020045f8
 // ---- from scene/mars_lighthouse_entrance/s3b30.c ----
 // @file
 // Scene code of overlay 0x6aa, in ROM order.
@@ -2711,17 +2714,15 @@ DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, Data_020068b4,
 extern u16 *gData_0200e88c;
 extern u16 *gData_02006890;
 
-/* VIEW(s42f8): routine Func_020045f8 as this part declared it; the joined file has another. */
 // Records the four palette lists, writes each listed palette entry from its
 // red, green and blue, then copies two palettes from block32 and starts the
 // blend.
-DEFINE_PALETTE_SET_COLORS_FADE(Func_020045f8__s42f8, gData_0200e88c, gData_02006890,
+DEFINE_PALETTE_SET_COLORS_FADE(Func_020045f8, gData_0200e88c, gData_02006890,
                                Data_02006894, Data_02006880, Func_020048e8)
 
 #include "task.h"
 
-extern u16 gData_02006898 __asm__("Func_020045f8");
-#define Func_020045f8 Func_020045f8__s42f8
+extern u16 gData_02006898;
 
 DEFINE_PALETTE_CYCLE_START(Func_020046b4, gData_0200689c, gData_02006898,
                            Func_02004794, gData_0200e88c, gData_0200e888, 15,

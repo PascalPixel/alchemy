@@ -2085,13 +2085,6 @@ void Func_02002f08(void) {
   Event_End();
 }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                          s32 f) {
-  Map_CopyCellAttributeRect(a, b, c, d, e, f);
-}
-
 void Func_02002f74(void) {
   if (GameFlag_Get(0x207) != 0)
     Func_02002f08();
@@ -2200,6 +2193,8 @@ static __inline__ void Actor_PlaceAndResetMotion(struct Actor *object, s32 x,
                                                  s32 y, s32 z) {
   Actor_SetPositionAndResetMotion(object, x, y, z);
 }
+/* VIEW(s2698): routine Actor_PlaceFacing as this part has it; dehkan_plateau has its own. */
+#define Actor_PlaceFacing Actor_PlaceFacing__s2698
 
 static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
   Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle);
@@ -2496,10 +2491,6 @@ loop:
 
 // ---- games/tla/src/scene/dehkan_plateau/s390c.c ----
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Get(flag); }
-
 void Func_0200390c(void) {
   struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 entrance;
@@ -2611,6 +2602,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 #undef gData_02003fc8
 #undef Pillars_Raise
 #undef gData_02004276
+#undef Actor_PlaceFacing
 // ---- from scene/data/dehkan_plateau.c ----
 #include "types.h"
 #include "scene_tables.h"

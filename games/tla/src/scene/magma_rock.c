@@ -1539,6 +1539,8 @@ const struct Trigger *Scene_GetEvents(void) {
 #undef gMagmaRock_Room2TopTriggers
 #undef gMagmaRock_Room3Triggers
 // ---- from scene/magma_rock/s22ac.c ----
+/* VIEW(s22ac): tag struct MagmaRockEventWork as this part has it; the joined file has another. */
+#define MagmaRockEventWork MagmaRockEventWork__s22ac
 // @file
 // Magma Rock's rooms set up, the leader launched and landed, and the
 // crumbling pillars and traps.
@@ -2918,3 +2920,4 @@ struct Trigger gMagmaRock_Room3Triggers[] = {
 #undef MagmaRock_BurstColumn4
 #undef MagmaRock_BurstColumn5
 #undef MagmaRock_BlastOpenWall
+#undef MagmaRockEventWork

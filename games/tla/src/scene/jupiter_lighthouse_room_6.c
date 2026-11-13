@@ -133,7 +133,9 @@ extern s32 gPaletteCycleFrame;
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
 s32 __modsi3();
-void CrackedTiles_Find(s32 a, s32 b, s32 c, s32 d, s32 e);
+/* VIEW(first): routine CrackedTiles_Find as this part declared it; the joined file defines it otherwise. */
+void CrackedTiles_Find__first(s32 a, s32 b, s32 c, s32 d, s32 e) __asm__("CrackedTiles_Find");
+#define CrackedTiles_Find CrackedTiles_Find__first
 
 s32 Scene_Initialize(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -367,6 +369,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
 #undef FLAG_DOOR_BUTTON_HELD
 #undef FieldEffect_Spawn
 #undef Oam_AddSpriteAtDepthClamped
+#undef CrackedTiles_Find
 // ---- from scene/jupiter_lighthouse_room_6/cracked_tiles.c ----
 // @file
 // The hall below Jupiter Lighthouse's aerie: its copy of the effect spawner,
@@ -475,8 +478,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "scene_tables.h"
 #include "cell_target.h"
 
-/* VIEW(cracked_tiles): routine CrackedTiles_Find as this part declared it; the joined file has another. */
-DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find__cracked_tiles, gCrackedTiles, CrackedTiles_Update)
+DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find, gCrackedTiles, CrackedTiles_Update)
 
 DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 
@@ -486,8 +488,7 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 // one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
-struct CellTargetEntry __asm__("CrackedTiles_Find");
-#define CrackedTiles_Find CrackedTiles_Find__cracked_tiles
+struct CellTargetEntry;
 
 /* VIEW(s158c): tag struct CellTarget as struct CellTarget__s158c; cell_target.h
  * has another definition; tried with the definition the rest of the object has,
@@ -515,7 +516,6 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s158c,
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 #undef Actor_StartScript
-#undef CrackedTiles_Find
 // ---- from scene/jupiter_lighthouse_room_6/cracked_tile_steps.c ----
 // @file
 // The hall below Jupiter Lighthouse's aerie: the cracked tiles' steps and

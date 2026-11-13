@@ -722,6 +722,19 @@ void Func_020010d4(struct Actor *object) {
 #include "field.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
+/* VIEW(events_f): routines Func_020010d4, Func_02000404, Func_020007dc,
+ * Func_02000f0c and Func_02000fb8 as module/scene/tundaria_tower.h declares
+ * them; the scene before defines them otherwise. */
+void Func_020010d4__events_f(void) __asm__("Func_020010d4");
+void Func_02000404__events_f(const u8 *data) __asm__("Func_02000404");
+void Func_020007dc__events_f(void) __asm__("Func_020007dc");
+void Func_02000f0c__events_f(void) __asm__("Func_02000f0c");
+void Func_02000fb8__events_f(void) __asm__("Func_02000fb8");
+#define Func_020010d4 Func_020010d4__events_f
+#define Func_02000404 Func_02000404__events_f
+#define Func_020007dc Func_020007dc__events_f
+#define Func_02000f0c Func_02000f0c__events_f
+#define Func_02000fb8 Func_02000fb8__events_f
 #include "module/scene/tundaria_tower.h"
 #include "module/system/system.h"
 #include "module/tla.h"
@@ -2577,3 +2590,8 @@ struct Trigger gData_02003c90[] = {
 #undef FIELD_AT
 #undef BYTE_AT
 #undef Func_02000c64
+#undef Func_020010d4
+#undef Func_02000404
+#undef Func_020007dc
+#undef Func_02000f0c
+#undef Func_02000fb8

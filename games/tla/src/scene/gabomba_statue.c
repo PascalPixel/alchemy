@@ -1585,6 +1585,9 @@ void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
 #undef Func_020043a4
 #undef gData_0200e88c
 // ---- from scene/gabomba_statue/s2394.c ----
+/* VIEW(s2394): tags Wanderer and SceneState as this part has them; the scene before has its own. */
+#define Wanderer Wanderer__s2394
+#define SceneState SceneState__s2394
 // @file
 // Scene code of overlay 0x671, in ROM order.
 
@@ -2326,7 +2329,8 @@ struct SceneState {
   struct Sprite oam[10];
 };
 
-extern struct SceneState gSceneState;
+extern struct SceneState gSceneState__s2394 __asm__("gSceneState");
+#define gSceneState gSceneState__s2394
 
 void Func_02003868(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
@@ -3125,7 +3129,8 @@ s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id) {
 
 /* VIEW(puzzle_turn): routine gData_02006f38 as this part declared it; the joined file has another. */
 /* VIEW(puzzle_turn): routine gData_02006ec0 as this part declared it; the joined file has another. */
-extern const u8 gData_02006f38__puzzle_turn[], gData_02006ec0__puzzle_turn[] __asm__("gData_02006f38") __asm__("gData_02006ec0");
+extern const u8 gData_02006f38__puzzle_turn[] __asm__("gData_02006f38");
+extern const u8 gData_02006ec0__puzzle_turn[] __asm__("gData_02006ec0");
 #define gData_02006ec0 gData_02006ec0__puzzle_turn
 #define gData_02006f38 gData_02006f38__puzzle_turn
 /* VIEW(puzzle_turn): routine Actor_StartScript as this part declared it; the joined file has another. */
@@ -3722,6 +3727,9 @@ u32 gData_02005944[] = {
 #undef gData_02006ec0
 #undef gData_02006f38
 #undef Actor_StartScript
+#undef Wanderer
+#undef SceneState
+#undef gSceneState
 // ---- from scene/data/gabomba_statue.c ----
 
 #include "macros.h"

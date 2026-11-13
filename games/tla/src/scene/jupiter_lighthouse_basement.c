@@ -546,10 +546,6 @@ DEFINE_CRACKED_TILES_FIND_LOWER(CrackedTiles_FindLower, gCrackedTiles,
 #include "field_sprite.h"
 #include "scene_tables.h"
 
-struct EventWork1ac {
-  u8 unk000[0x1ac];
-  s32 value;
-};
 
 void TilesetAnim_SuspendAll(void);
 void TilesetAnim_ResumeAll(void);

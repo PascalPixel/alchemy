@@ -1040,7 +1040,10 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #define CELL_TABLE gData_02003488
 #define CELL_SPRITE_DRAW CrackedTiles_Update
-#define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
+/* VIEW(s1e78): routine Oam_AddSpriteAtDepthClamped as cell_sprite.c declares it; the
+ * joined file has another. */
+void Oam_AddSpriteAtDepthClamped__s1e78(void *entry, s32 priority) __asm__("Oam_AddSpriteAtDepthClamped");
+#define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped__s1e78
 #include "../field/map/cell_sprite.c"
 
 #include "ram_buffer.h"
@@ -1097,7 +1100,9 @@ struct CellTarget__s24a8 {
 void Leader_CenterInCell(void);
 #include "io_write.h"
 
-/* VIEW(s24a8): routine CrackedTile_Fall as this part declared it; the joined file has another. */
+/* VIEW(s24a8): routine CrackedTile_Fall as this part defines it; the scene's
+ * module header declares it with the joined file's CellTarget. */
+void CrackedTile_Fall__s24a8(struct CellTarget__s24a8 *table, struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
 DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall__s24a8, CellTarget__s24a8,
                          Leader_CenterInCell)
 
@@ -1121,8 +1126,7 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall__s24a8, CellTarget__s24a8,
 #include "event_inline.h"
 #include "shared/jupiter_lighthouse_aerie.h"
 
-extern s32 gPaletteCycleFrame __asm__("CrackedTile_Fall");
-#define CrackedTile_Fall CrackedTile_Fall__s24a8
+extern s32 gPaletteCycleFrame;
 extern s32 gPaletteCyclePausesInEvents;
 extern u16 gPaletteCycleColors[];
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

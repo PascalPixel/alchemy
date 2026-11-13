@@ -4,6 +4,12 @@
 // ---- games/tla/src/scene/kibombo/s0038.c ----
 
 #include "shared/actors.h"
+#include "types.h"
+struct KibomboObject;
+/* VIEW(kibombo): routine Import_ActorCreate as kibombo.h declares it; field_event.h,
+ * which a helper below includes, has another. */
+struct KibomboObject *Import_ActorCreate__kibombo(s32 type, s32 x, s32 y, s32 z) __asm__("Import_ActorCreate");
+#define Import_ActorCreate Import_ActorCreate__kibombo
 #include "kibombo.h"
 #include "event_work.h"
 #include "gamepak/far_call/system.h"
@@ -1644,6 +1650,7 @@ void Func_02002eb0(void) {
   }
 }
 
+#undef Import_ActorCreate
 #include "../field/field_effect/advance_motion.c"
 
 #undef DEFINE_KIBOMBO_WOBBLE

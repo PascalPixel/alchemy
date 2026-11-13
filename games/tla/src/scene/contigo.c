@@ -90,6 +90,10 @@ void Func_02000328(void) {
 #include "../field/field_effect/move.c"
 
 // ---- from scene/contigo/contigo.c ----
+/* VIEW(contigo): tag struct TalkActor as this part has it; the joined file has another. */
+#define TalkActor TalkActor__contigo
+/* VIEW(contigo): tag struct ContigoEventWork as this part has it; the joined file has another. */
+#define ContigoEventWork ContigoEventWork__contigo
 // @file
 // Scene code of overlay 0x694, in ROM order.
 
@@ -2973,3 +2977,5 @@ struct Trigger gData_02005ed0[] = {
 #undef Func_02003e54
 #undef Func_02003f54
 #undef Palette_SetColors
+#undef ContigoEventWork
+#undef TalkActor

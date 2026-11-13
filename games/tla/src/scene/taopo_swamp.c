@@ -1251,21 +1251,21 @@ DEFINE_DRIP_AT_RANDOM(TaopoSwamp_DripInRoom7, 0x1800000, 0x1900000)
 
 DEFINE_DRIP_AT_RANDOM(TaopoSwamp_DripInRoom8, 0x1a00000, 0x1600000)
 
-/* VIEW(first): routine gTaopoSwamp_Room5VentPair as this part declared it; the joined file has another. */
-/* VIEW(first): routine gTaopoSwamp_Room8Vents as this part declared it; the joined file has another. */
-/* VIEW(first): routine gTaopoSwamp_RockRoomVents as this part declared it; the joined file has another. */
-/* VIEW(first): routine gTaopoSwamp_Room5Vents as this part declared it; the joined file has another. */
-/* VIEW(first): routine gTaopoSwamp_Room7Vents as this part declared it; the joined file has another. */
-extern const u8 gTaopoSwamp_Room5Vents__first[], gTaopoSwamp_Room5VentPair__first[],
-    gTaopoSwamp_Room7Vents__first[], gTaopoSwamp_Room8Vents__first[],
-    gTaopoSwamp_RockRoomVents__first[] __asm__("gTaopoSwamp_RockRoomVents") __asm__("gTaopoSwamp_Room7Vents");
-#define gTaopoSwamp_Room7Vents gTaopoSwamp_Room7Vents__first
-#define gTaopoSwamp_RockRoomVents gTaopoSwamp_RockRoomVents__first
-void TaopoSwamp_ResetMud(void) __asm__("gTaopoSwamp_Room8Vents") __asm__("gTaopoSwamp_Room5Vents");
+/* VIEW(first): variables gTaopoSwamp_Room5Vents, Room5VentPair, Room7Vents,
+ * Room8Vents and RockRoomVents as this part declared them; the joined file has
+ * others. */
+extern const u8 gTaopoSwamp_Room5Vents__first[] __asm__("gTaopoSwamp_Room5Vents");
+extern const u8 gTaopoSwamp_Room5VentPair__first[] __asm__("gTaopoSwamp_Room5VentPair");
+extern const u8 gTaopoSwamp_Room7Vents__first[] __asm__("gTaopoSwamp_Room7Vents");
+extern const u8 gTaopoSwamp_Room8Vents__first[] __asm__("gTaopoSwamp_Room8Vents");
+extern const u8 gTaopoSwamp_RockRoomVents__first[] __asm__("gTaopoSwamp_RockRoomVents");
 #define gTaopoSwamp_Room5Vents gTaopoSwamp_Room5Vents__first
-#define gTaopoSwamp_Room8Vents gTaopoSwamp_Room8Vents__first
-void Actor_SetWideSprite(s32 id, s32 wide) __asm__("gTaopoSwamp_Room5VentPair");
 #define gTaopoSwamp_Room5VentPair gTaopoSwamp_Room5VentPair__first
+#define gTaopoSwamp_Room7Vents gTaopoSwamp_Room7Vents__first
+#define gTaopoSwamp_Room8Vents gTaopoSwamp_Room8Vents__first
+#define gTaopoSwamp_RockRoomVents gTaopoSwamp_RockRoomVents__first
+void TaopoSwamp_ResetMud(void);
+void Actor_SetWideSprite(s32 id, s32 wide);
 void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg);
 
 #if !TLA_PATCH_1

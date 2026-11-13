@@ -2177,7 +2177,10 @@ void Func_020035b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-#define CELL_TABLE gData_020070a8
+/* VIEW(s35b8): variable gData_020070a8 as cell_sprite.c reads it; the scene's
+ * module header has another type. */
+extern struct CellTarget gData_020070a8__s35b8 __asm__("gData_020070a8");
+#define CELL_TABLE gData_020070a8__s35b8
 #define CELL_SPRITE_DRAW CrackedTiles_Update
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
@@ -2212,6 +2215,8 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 #undef CELL_PUSH_SLOT_ENTRY
 #undef gData_02007058
 // ---- from scene/mars_lighthouse_room_f/s3d80.c ----
+/* VIEW(s3d80): tag struct Position as this part has it; the joined file has another. */
+#define Position Position__s3d80
 // @file
 // Scene code of overlay 0x6ad, in ROM order.
 
@@ -2801,6 +2806,7 @@ DEFINE_PUSH_LEADER_STEPS(gData_02005f7c)
 #undef Func_020006f4
 #undef Func_02003478
 #undef Func_0200351c
+#undef Position
 // ---- from scene/data/mars_lighthouse_room_f.c ----
 
 #include "macros.h"
@@ -2809,6 +2815,10 @@ DEFINE_PUSH_LEADER_STEPS(gData_02005f7c)
 #include "scene_tables.h"
 #include "version.h"
 #include "objcmd.h"
+/* VIEW(data): routine Func_02001010 as module/scene/airs_rock.h declares it; the
+ * joined file has another. */
+void Func_02001010__data(void) __asm__("Func_02001010");
+#define Func_02001010 Func_02001010__data
 #include "module/scene/airs_rock.h"
 #include "module/scene/mars_lighthouse_room_f.h"
 
@@ -2864,7 +2874,9 @@ void Func_02000cf4__data(void) __asm__("Func_02000cf4");
 /* VIEW(data): routine Func_02000d38 as this part declared it; the joined file has another. */
 void Func_02000d38__data(void) __asm__("Func_02000d38");
 #define Func_02000d38 Func_02000d38__data
-void Func_0200297c(void);
+/* VIEW(data): routine Func_0200297c as this part declared it; the joined file has another. */
+void Func_0200297c__data(void) __asm__("Func_0200297c");
+#define Func_0200297c Func_0200297c__data
 /* VIEW(data): routine MarsLighthouseRoomF_ContinueSlide as this part declared it; the joined file has another. */
 void MarsLighthouseRoomF_ContinueSlide__data(void) __asm__("MarsLighthouseRoomF_ContinueSlide");
 #define MarsLighthouseRoomF_ContinueSlide MarsLighthouseRoomF_ContinueSlide__data
@@ -3165,3 +3177,5 @@ LATE_DATA s32 gData_02007058[] = {
 #undef gData_02005e44
 #undef gData_02005e80
 #undef gData_02005ebc
+#undef Func_02001010
+#undef Func_0200297c

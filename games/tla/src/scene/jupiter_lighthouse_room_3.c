@@ -681,7 +681,10 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
 DEFINE_CRACKED_TILE_DROP_IN(CrackedTile_DropIn, FieldEffect_Spawn)
 
 void CrackedTile_Crack();
-void CrackedTile_FallEvent();
+/* VIEW(cracked_tile_steps): routine CrackedTile_FallEvent as this part declared it,
+ * with no parameter list; the joined file defines it with one. */
+void CrackedTile_FallEvent__cracked_tile_steps() __asm__("CrackedTile_FallEvent");
+#define CrackedTile_FallEvent CrackedTile_FallEvent__cracked_tile_steps
 
 DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
                           CrackedTile_FallEvent)
@@ -690,6 +693,7 @@ DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
                                   CrackedTile_DropIn)
 
 #undef FieldEffect_Spawn
+#undef CrackedTile_FallEvent
 // ---- from scene/data/jupiter_lighthouse_room_3.c ----
 
 #include "macros.h"

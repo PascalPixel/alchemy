@@ -2866,10 +2866,6 @@ static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 use_setter) {
   FieldCamera_MoveWithinMapBounds(x, y, z, use_setter);
 }
 
-static __inline__ void Func_020057ac_(s32 a, s32 b, s32 c) {
-  MapGrid_SetScreenShake(a, b, c);
-}
-
 void CrackedTile_DropIn(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct EffectOptions options;

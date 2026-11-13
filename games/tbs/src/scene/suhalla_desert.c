@@ -850,9 +850,9 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// A capture goes on spinning, Reveal's color is saved, and the first two
 /// scenes set up their storms.
 s32 Scene_Initialize(void) {
-  struct MapGridScrollAnimView *gridState;
+  struct MapGridScrollAnimView *grid;
 
-  gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
+  grid = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   if (FieldGameFlag_GetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT) != 0) {
@@ -872,7 +872,7 @@ s32 Scene_Initialize(void) {
     Sound_Play(SE_STOP_ACTION_SE);
   }
   if (gMainRoutineWork.entrance == ENTRANCE_DEFAULT) {
-    gridState->flags &= ~DISPCNT_BG1_ON;
+    grid->flags &= ~DISPCNT_BG1_ON; // no haze on a fresh arrival
   }
   return 0;
 }
@@ -885,7 +885,7 @@ s32 Scene_Initialize(void) {
 static void SuhallaDesert_SetUpFirstMapStorms(void) {
   struct Actor *actor;
   s32 stormId;
-  s32 stormAlpha = 0;
+  s32 hazeWeight = 0;
 
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED)) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_FIRST_SANDSTORM_RISEN);
@@ -915,12 +915,11 @@ static void SuhallaDesert_SetUpFirstMapStorms(void) {
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND, IO_WRITE_16);
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN)) {
-    stormAlpha = 16;
+    hazeWeight = 16;
     Scene_QueueMusic(SE_SANDSTORM);
   }
-  // BLEND_ALPHA(stormAlpha, 16 - stormAlpha), whose operand order compiles
-  // differently.
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - stormAlpha) << 8) | stormAlpha,
+  // The haze at full weight once a storm has risen, else not at all.
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - hazeWeight) << 8) | hazeWeight,
                       IO_WRITE_16);
 }
 
@@ -932,7 +931,7 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
   struct Actor *actor;
   struct Sprite *sprite;
   s32 stormId;
-  s32 stormAlpha = 0;
+  s32 hazeWeight = 0;
 
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED)) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_FIRST_SANDSTORM_RISEN);
@@ -972,12 +971,11 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND, IO_WRITE_16);
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN)) {
-    stormAlpha = 16;
+    hazeWeight = 16;
     Scene_QueueMusic(SE_SANDSTORM);
   }
-  // BLEND_ALPHA(stormAlpha, 16 - stormAlpha), whose operand order compiles
-  // differently.
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - stormAlpha) << 8) | stormAlpha,
+  // The haze at full weight once a storm has risen, else not at all.
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - hazeWeight) << 8) | hazeWeight,
                       IO_WRITE_16);
 }
 

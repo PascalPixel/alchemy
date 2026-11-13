@@ -1,32 +1,32 @@
 .syntax unified
 	.thumb
 	.section .bss,"aw",%nobits
-	.global gData_02003020
-gData_02003020:
+	.global gLemuriaPalace_FirstMapVram
+gLemuriaPalace_FirstMapVram:
 	.space 0x00000004
-	.global Data_02003024
-Data_02003024:
+	.global gLemuriaPalace_SecondMapShown
+gLemuriaPalace_SecondMapShown:
 	.space 0x0000000c
-	.global Data_02003030
-Data_02003030:
+	.global gLemuriaPalace_SecondMapSprite
+gLemuriaPalace_SecondMapSprite:
 	.space 0x00000028
-	.global Data_02003058
-Data_02003058:
+	.global gLemuriaPalace_SecondMapTile
+gLemuriaPalace_SecondMapTile:
 	.space 0x00000008
-	.global Data_02003060
-Data_02003060:
+	.global gLemuriaPalace_FirstMapSprite
+gLemuriaPalace_FirstMapSprite:
 	.space 0x00000028
-	.global Data_02003088
-Data_02003088:
+	.global gLemuriaPalace_FirstMapTile
+gLemuriaPalace_FirstMapTile:
 	.space 0x00000004
-	.global gData_0200308c
-gData_0200308c:
+	.global gLemuriaPalace_MapMode
+gLemuriaPalace_MapMode:
 	.space 0x00000004
-	.global Data_02003090
-Data_02003090:
+	.global gLemuriaPalace_FirstMapShown
+gLemuriaPalace_FirstMapShown:
 	.space 0x00000004
-	.global gData_02003094
-gData_02003094:
+	.global gLemuriaPalace_SecondMapVram
+gLemuriaPalace_SecondMapVram:
 	.space 0x00000004
-	.global Data_02003098
-Data_02003098:
+	.global gLemuriaPalace_MapTime
+gLemuriaPalace_MapTime:

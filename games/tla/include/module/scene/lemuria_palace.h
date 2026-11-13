@@ -6,13 +6,13 @@
 
 #include "types.h"
 
-extern s32 gData_02002368[];
-extern s32 gData_02002378[];
+extern s32 gLemuriaPalace_Doors[];
+extern s32 gLemuriaPalace_InnerDoor[];
 
-void Func_020002b4(void);
+void LemuriaPalace_DrawMaps(void);
 
 void Field_StartColorTransition();
 
-extern s16 gData_0200233c[];
+extern s16 gLemuriaPalace_DoorOpening[];
 
 #endif

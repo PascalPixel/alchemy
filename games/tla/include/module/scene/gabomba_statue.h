@@ -36,7 +36,7 @@ void Func_02000c38(void);
 
 void Func_02000c8c(void);
 
-void Func_02000fc0(void);
+void GabombaStatue_HearTheOffering(void);
 
 void Func_02001284(void);
 
@@ -90,12 +90,12 @@ extern u32 gData_02005c40[];
 
 void Func_02001c10(void);
 
-void Func_020034ec(void);
-void Func_020034f4(void);
-void Func_0200359c(void);
-void Func_020035f0(void);
-void Func_02003634(void);
-void Func_02003868(void);
+void GabombaStatue_InitializeRoom1(void);
+void GabombaStatue_InitializeRoom2(void);
+void GabombaStatue_InitializeRoom3(void);
+void GabombaStatue_InitializeRoom5(void);
+void GabombaStatue_InitializeRoom6(void);
+void GabombaStatue_InitializeRoom7(void);
 void Func_020052a4();
 void Func_020053ac();
 s32 Func_02003fc0(s32 x0, s32 z0, s32 x1, s32 z1, s32 a, s32 b, s32 c, s32 d);
@@ -119,7 +119,7 @@ s32 Func_02005844(struct Actor *object);
 
 void Func_02002074(void);
 
-void Func_02001950(s32 show, s32 first, u32 count);
+void Actors_SetHidden(s32 show, s32 first, u32 count);
 
 void Func_02002394(void);
 

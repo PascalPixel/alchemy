@@ -1,9 +1,16 @@
+/// @file
+/// The Gabomba Statue above Kibombo, in the seven rooms of this overlay: halls
+/// of pinions and cogs the party rides and hops across, stopped by Lashing a
+/// rope (GabombaStatue_LashRope) and turned the other way by Pounding the two
+/// cone pillars beside a flashing cog (GabombaStatue_PoundConePillar). From
+/// inside, the party hears the offering made below
+/// (GabombaStatue_HearTheOffering), and works out that the channel must bring
+/// two magical charges to the statue in the middle at once
+/// (GabombaStatue_FocusEnergies to GabombaStatue_FixTheChannel).
 
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/field_effect/move.c"
-/// @file
-/// The scene code of overlay 0x671, in ROM order.
 
 // ---- games/tla/src/scene/gabomba_statue.c ----
 
@@ -377,7 +384,7 @@ extern s8 gData_02006b38[];
 #define DIFF_WITHIN(a, b, limit)                                               \
   ((a) - (b) >= 0 ? (a) - (b) <= (limit) : (b) - (a) <= (limit))
 
-void Func_02000550(void) {
+void GabombaStatue_LashRope(void) {
   struct Orbiter__find_near *actor =
       ((struct Orbiter__find_near *)Actor_Get(9));
   u16 zero = 0;
@@ -818,7 +825,7 @@ void Func_02000f6c(void) {
   Func_020022d0(14, 10, 10, 0xc000);
 }
 
-void Func_02000fc0(void) {
+void GabombaStatue_HearTheOffering(void) {
   s32 result;
 
   Event_SetFlag(0x205);
@@ -1124,26 +1131,26 @@ DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(Func_02001864, 440, 248)
 
 DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(Func_020018a8, 440, 184)
 
-void Func_020018ec(s32 show) {
+void GabombaStatue_SetActorsHidden(s32 show) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov671Room1)
-    Func_02001950(show, 8, 1);
+    Actors_SetHidden(show, 8, 1);
   else if (gMainRoutineWork.scene == (s32)&SceneId_Ov671Room2)
-    Func_02001950(show, 29, 2);
+    Actors_SetHidden(show, 29, 2);
 }
 
 extern s16 gData_02005d7c[];
 
-void Func_02001928(void) {
-  Func_020018ec(1);
+void GabombaStatue_HideActors(void) {
+  GabombaStatue_SetActorsHidden(1);
   Event_SetFlag(512);
 }
 
-void Func_0200193c(void) {
-  Func_020018ec(0);
+void GabombaStatue_ShowActors(void) {
+  GabombaStatue_SetActorsHidden(0);
   Event_ClearFlag(512);
 }
 
-void Func_02001950(s32 show, s32 first, u32 count) {
+void Actors_SetHidden(s32 show, s32 first, u32 count) {
   u32 i;
 
   for (i = 0; i < count; i++) {
@@ -1156,7 +1163,7 @@ void Func_02001950(s32 show, s32 first, u32 count) {
   }
 }
 
-void Func_02001990(s32 a, s32 b) {
+void GabombaStatue_PoundConePillar(s32 a, s32 b) {
   Statue_Sink(gData_02005d7c, a, b);
   if (Event_GetFlag(0x8ce) && Event_GetFlag(0x8cf))
     ((struct GateEventWork *)Ram_HeapSlots->eventWork)->gateTimer = 200;
@@ -1220,7 +1227,7 @@ void Func_02001adc(s32 id) {
 void Func_02001b0c(void) {
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     if (!Event_GetFlag(512))
-      Func_0200193c();
+      GabombaStatue_ShowActors();
   } else {
     Event_SetFlag(512);
   }
@@ -1582,7 +1589,7 @@ static __inline__ void Func_0200578c_ArgsFirst(s32 id, s32 a, s32 b) {
   Actor_ShowEmoteById(id, a_, b_);
 }
 
-void Func_0200253c(void) {
+void GabombaStatue_FocusEnergies(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -1718,7 +1725,7 @@ void Func_020027cc(void) {
 extern s16 gData_02005d7c[];
 extern u32 gData_02005d8c[];
 
-void Func_02002a64(void) {
+void GabombaStatue_SeeHowItWorks(void) {
   s32 north;
   s32 cue = 0x6007;
 
@@ -1851,7 +1858,7 @@ void Func_02002a64(void) {
   FieldEvent_SetExitRequest(13);
 }
 
-void Func_02002f70(void) {
+void GabombaStatue_SawEnergyFlow(void) {
   s32 index = Func_02003604();
   s32 x;
   s32 z;
@@ -1953,7 +1960,7 @@ void Func_02002f70(void) {
   FieldEvent_SetExitRequest(18);
 }
 
-void Func_02003338(void) {
+void GabombaStatue_FixTheChannel(void) {
   Func_0200533c();
   Actor_MoveToObject(23, gMainRoutineWork.currentOwner);
   FieldActor_SetSpriteColor(Actor_Get(23), 15);
@@ -1988,18 +1995,18 @@ s32 Scene_Initialize(void) {
   Actor_Get(FieldParty_GetLeaderActor())->priorityFlags |= 0x20;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov671Room1) {
-    Func_020034ec();
+    GabombaStatue_InitializeRoom1();
   } else if (scene == (s32)&SceneId_Ov671Room2) {
     MapGrid_CopyCellAttributes(15, 68, 8, 3, 15, 4);
-    Func_020034f4();
+    GabombaStatue_InitializeRoom2();
   } else if (scene == (s32)&SceneId_Ov671Room3) {
-    Func_0200359c();
+    GabombaStatue_InitializeRoom3();
   } else if (scene == (s32)&SceneId_Ov671Room5) {
-    Func_020035f0();
+    GabombaStatue_InitializeRoom5();
   } else if (scene == (s32)&SceneId_Ov671Room6) {
-    Func_02003634();
+    GabombaStatue_InitializeRoom6();
   } else if (scene == (s32)&SceneId_Ov671Room7) {
-    Func_02003868();
+    GabombaStatue_InitializeRoom7();
   }
   return 0;
 }
@@ -2015,7 +2022,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-void Func_020034ec(void) { Func_02001b38(); }
+void GabombaStatue_InitializeRoom1(void) { Func_02001b38(); }
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -2023,7 +2030,7 @@ static __inline__ void Exit_Set(s32 index, s32 flag, s32 a, s32 b) {
   Func_0200583c(index, flag, a, b);
 }
 
-void Func_020034f4(void) {
+void GabombaStatue_InitializeRoom2(void) {
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1) {
     Actor_SetScript(27, gData_02005944);
     Actor_SetScript(28, gData_02005944);
@@ -2038,7 +2045,7 @@ void Func_020034f4(void) {
   Func_02001b68();
 }
 
-void Func_0200359c(void) {
+void GabombaStatue_InitializeRoom3(void) {
   Rope_Initialize();
   Func_0200583c(0, 513, 31, 32);
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
@@ -2051,7 +2058,7 @@ void Func_0200359c(void) {
   }
 }
 
-void Func_020035f0(void) {
+void GabombaStatue_InitializeRoom5(void) {
   Rope_Initialize();
   ((s32 (*)(s32, s32, s32))Func_0200582c)(0, 8, 9);
 }
@@ -2074,7 +2081,7 @@ s32 Func_02003604(void) {
        ->v)
 void Func_02001ac0();
 
-void Func_02003634(void) {
+void GabombaStatue_InitializeRoom6(void) {
   s32 t1, t4, t6, t8, t10, t12, t14, t16, t18, t20, t22, t24, t26, t27, t29,
       t30, t42, t43, t46, t50, t53, t59, t60, p_r3, v_r5;
   const u8 *table;
@@ -2110,7 +2117,7 @@ void Func_02003634(void) {
   t27 = Event_GetFlag(0x8fd);
   if (t27 != 0)
     goto L_0200b6f2;
-  Func_02002f70();
+  GabombaStatue_SawEnergyFlow();
   goto L_0200b856;
 L_0200b6f2:
   t29 = Event_GetFlag(0x8fc);
@@ -2155,12 +2162,12 @@ L_0200b7c0:
     p_r3 = gMainRoutineWork.entrance;
     goto L_0200b7dc;
   }
-  Func_0200253c();
+  GabombaStatue_FocusEnergies();
   goto L_0200b7e4;
 L_0200b7dc:
   if (p_r3 != 3)
     goto L_0200b7e4;
-  Func_02002a64();
+  GabombaStatue_SeeHowItWorks();
 L_0200b7e4:
   t53 = Event_GetFlag(0x8fc);
   if (t53 == 0)
@@ -2178,7 +2185,7 @@ L_0200b7e4:
   t60 = Event_GetFlag(0x9ec);
   if (t60 != 0)
     goto L_0200b84a;
-  Func_02003338();
+  GabombaStatue_FixTheChannel();
 L_0200b84a:
   Event_ClearFlag(0x12f);
   Event_End();
@@ -2215,7 +2222,7 @@ struct SceneState {
 extern struct SceneState gSceneState__s2394 __asm__("gSceneState");
 #define gSceneState gSceneState__s2394
 
-void Func_02003868(void) {
+void GabombaStatue_InitializeRoom7(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   if (gMainRoutineWork.entrance == 1) {
     Event_SetFlag(0xa27);
@@ -3602,7 +3609,7 @@ u32 gData_02005944[] = {
 #undef gSceneState
 
 void Func_02000280(void);
-void Func_02000550(void);
+void GabombaStatue_LashRope(void);
 void Func_02000784(void);
 void Func_020013bc(void);
 void Func_02001564(void);
@@ -4012,10 +4019,10 @@ LATE_DATA struct Trigger gGabombaStatue_Room2Triggers[] = {
     {0x202, 1, CONDITION_ALWAYS, EVENT(Func_020012ec)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_020017dc)},
     {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Func_02001820)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x201, EVENT(Func_02000550)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x201, EVENT(GabombaStatue_LashRope)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 10, 0x202, 0},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 12, 0x8ce, EVENT(Func_02001990)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 13, 0x8cf, EVENT(Func_02001990)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 12, 0x8ce, EVENT(GabombaStatue_PoundConePillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 13, 0x8cf, EVENT(GabombaStatue_PoundConePillar)},
     {TRIGGER_RAISED, 200, 0x8cd, EVENT(Func_020019d0)},
     {TRIGGER_TABLE_END},
 };
@@ -4075,7 +4082,7 @@ LATE_DATA struct Trigger gGabombaStatue_Room6Triggers[] = {
     {TRIGGER_STEP, 81, CONDITION_ALWAYS, EVENT(Func_02004530)},
     {TRIGGER_STEP, 82, CONDITION_ALWAYS, EVENT(Func_020046c8)},
     {TRIGGER_STEP, 83, CONDITION_ALWAYS, EVENT(Func_02004620)},
-    {TRIGGER_RAISED, 201, 0x205, EVENT(Func_02000fc0)},
+    {TRIGGER_RAISED, 201, 0x205, EVENT(GabombaStatue_HearTheOffering)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 15, 0x8fb, EVENT(Func_02001a6c)},
     {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Func_02001a8c)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 16, CONDITION_ALWAYS, EVENT(Func_020043ec)},

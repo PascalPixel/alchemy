@@ -992,13 +992,11 @@ static void MogallForest_ThirdArea_PushLog(void) {
 /// the leader onto the second river log, which bobs under the weight.
 static void MogallForest_ThirdArea_JumpWest(void) {
   struct Actor *leader;
-  u8 *motionFlags;
   u8 savedMotionFlags;
   struct FieldPosition position;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  motionFlags = &leader->motionFlags;
-  savedMotionFlags = *motionFlags;
+  savedMotionFlags = leader->motionFlags;
 
   position.x = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed - px(32);
   position.y = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
@@ -1008,7 +1006,7 @@ static void MogallForest_ThirdArea_JumpWest(void) {
 
     Event_Start();
 
-    *motionFlags = 0;
+    leader->motionFlags = 0;
     Actor_SetAnimation(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG,
                        MOGALL_FOREST_LOG_STEPPED_ON);
 
@@ -1027,7 +1025,7 @@ static void MogallForest_ThirdArea_JumpWest(void) {
     leader->y.fixed += px(1);
     leader->groundHeight += px(1);
 
-    *motionFlags = savedMotionFlags;
+    leader->motionFlags = savedMotionFlags;
     Event_End();
   }
 }

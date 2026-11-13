@@ -662,14 +662,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   sprite->flags = SPRITE_FLAG_SHADOW;
   Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 0, 0);
   Actor_SetSpritePriority(ACTOR_FELIX_MASKED, 1);
-  {
-    u8 *flags = &Actor_Get(ACTOR_FELIX_MASKED)->priorityFlags;
-
-    // i is reused for the flags; *flags |= ACTOR_PRIORITY_AUTOMATIC differs.
-    i = ACTOR_PRIORITY_AUTOMATIC;
-    i |= *flags;
-    *flags = i;
-  }
+  Actor_Get(ACTOR_FELIX_MASKED)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpriteColorById(ACTOR_FELIX_MASKED, SPRITE_COLOR_NORMAL);
   Actor_SetSpeed(ACTOR_FELIX_MASKED, 0.5);
   Actor_WalkToAndWait(ACTOR_FELIX_MASKED, 471, 306);

@@ -902,22 +902,21 @@ static void WorldMap_ReturnToTolbiShip(void) {
 /// FLAG_VALE_PARTY_LEFT and flag 0x85c, which nothing reads.
 s32 WorldMap_Initialize(void) {
   struct MainRoutineWork *state = &gMainRoutineWork;
-  s16 *entrance = &state->entrance;
 
-  if (*entrance == WORLD_MAP_FROM_DEBUG) {
+  if (state->entrance == WORLD_MAP_FROM_DEBUG) {
     GameFlag_Set(FLAG_NO_ENCOUNTERS);
     GameFlag_Set(FLAG_NO_ENCOUNTERS_IN_AREA);
     GameFlag_Set(FLAG_DEBUG_STEPS_OFF);
   }
-  if (*entrance == WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT) {
+  if (state->entrance == WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT) {
     WorldMap_PlayLighthouseTransition(WORLD_MAP_LIGHTHOUSE_MERCURY);
     Event_SetDestination((s32)&SceneId_MercuryLighthouseAerie,
                          MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT);
-  } else if (*entrance == WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT) {
+  } else if (state->entrance == WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT) {
     WorldMap_PlayLighthouseTransition(WORLD_MAP_LIGHTHOUSE_VENUS);
     Event_SetDestination((s32)&SceneId_VenusLighthouseAerie,
                          VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT);
-  } else if (*entrance == WORLD_MAP_AFTER_BLACK_ORB_DEFEAT) {
+  } else if (state->entrance == WORLD_MAP_AFTER_BLACK_ORB_DEFEAT) {
     Event_Start();
     PartyInventory_Discard(ITEM_BLACK_ORB);
     Import_EventSetExitRequest(WORLD_MAP_TO_ROCK_ROOMS);
@@ -933,7 +932,7 @@ s32 WorldMap_Initialize(void) {
       Field_SetWorldMapWindowCellTile(128, 256, 176, 56);
     }
     // Each special entrance resumes its journey or story event.
-    switch (*entrance) {
+    switch (state->entrance) {
     case WORLD_MAP_FROM_VALE_PLAZA:
       if (Event_GetFlag(FLAG_VALE_PARTY_LEFT) == 0) {
         GameFlag_Set(FLAG_VALE_PARTY_LEFT);

@@ -652,19 +652,13 @@ static void TunnelRuins_HopSouthOrPushSmallPillars(void) {
 ///
 /// Reached by Whirlwind on ivy A until FLAG_SCENE_TEMP_00 is set. Sets it.
 static void TunnelRuins_BlowAwayIvyA(void) {
-  u8 *flags;
-  u8 value;
-
   GameFlag_Set(FLAG_SCENE_TEMP_00);
   if (GameFlag_Get(FLAG_SCENE_TEMP_01) != 0) {
     Actor_Get(ACTOR_SMALL_PILLAR_C)->riseCounter = 0;
     Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags &= ~ACTOR_NOT_TARGETED;
   } else {
     Actor_Get(ACTOR_SMALL_PILLAR_C)->riseCounter = 1;
-    flags = &Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags;
-    value = 8;
-    value |= *flags;
-    *flags = value;
+    Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags |= ACTOR_NOT_TARGETED;
   }
 }
 
@@ -672,19 +666,13 @@ static void TunnelRuins_BlowAwayIvyA(void) {
 ///
 /// Reached by Whirlwind on ivy B until FLAG_SCENE_TEMP_01 is set. Sets it.
 static void TunnelRuins_BlowAwayIvyB(void) {
-  u8 *flags;
-  u8 value;
-
   GameFlag_Set(FLAG_SCENE_TEMP_01);
   if (GameFlag_Get(FLAG_SCENE_TEMP_00) != 0) {
     Actor_Get(ACTOR_SMALL_PILLAR_C)->riseCounter = 0;
     Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags &= ~ACTOR_NOT_TARGETED;
   } else {
     Actor_Get(ACTOR_SMALL_PILLAR_C)->riseCounter = 1;
-    flags = &Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags;
-    value = 8;
-    value |= *flags;
-    *flags = value;
+    Actor_Get(ACTOR_SMALL_PILLAR_C)->collisionFlags |= ACTOR_NOT_TARGETED;
   }
 }
 
@@ -800,16 +788,14 @@ static void TunnelRuins_PushNorthwestSinkingPillar(void) {
 ///
 /// Reached by Frost on that target until FLAG_SCENE_TEMP_00 is set. Sets it.
 static void TunnelRuins_FreezeNorthwestPillarFrostTarget(void) {
-  u8 *flags;
-
   Actor_SetAnimation(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
                      PUDDLE_ANIMATION_PUDDLE);
   Actor_SetSpriteColorById(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
                            SPRITE_COLOR_NORMAL);
   Actor_SetAnimation(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
                      PUDDLE_ANIMATION_FREEZE);
-  flags = &Actor_Get(ACTOR_NORTHWEST_PILLAR_FROST_TARGET)->priorityFlags;
-  *flags &= ~ACTOR_PRIORITY_UNDERFOOT;
+  Actor_Get(ACTOR_NORTHWEST_PILLAR_FROST_TARGET)->priorityFlags &=
+      ~ACTOR_PRIORITY_UNDERFOOT;
   GameFlag_Set(FLAG_SCENE_TEMP_00);
 }
 
@@ -907,16 +893,14 @@ static void TunnelRuins_DouseSoutheastPillar(void) {
 ///
 /// Reached by Frost on that target until FLAG_SCENE_TEMP_01 is set. Sets it.
 static void TunnelRuins_FreezeSoutheastPillarFrostTarget(void) {
-  u8 *flags;
-
   Actor_SetAnimation(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
                      PUDDLE_ANIMATION_PUDDLE);
   Actor_SetSpriteColorById(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
                            SPRITE_COLOR_NORMAL);
   Actor_SetAnimation(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
                      PUDDLE_ANIMATION_FREEZE);
-  flags = &Actor_Get(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET)->priorityFlags;
-  *flags &= ~ACTOR_PRIORITY_UNDERFOOT;
+  Actor_Get(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET)->priorityFlags &=
+      ~ACTOR_PRIORITY_UNDERFOOT;
   GameFlag_Set(FLAG_SCENE_TEMP_01);
 }
 
@@ -993,10 +977,8 @@ static void TunnelRuins_FreezeDousePillarFrostTarget(void) {
                            SPRITE_COLOR_NORMAL);
   Actor_SetAnimation(ACTOR_DOUSE_PILLAR_FROST_TARGET, PUDDLE_ANIMATION_FREEZE);
 
-  {
-    u8 *flag = &Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->priorityFlags;
-    *flag &= ~ACTOR_PRIORITY_UNDERFOOT;
-  }
+  Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->priorityFlags &=
+      ~ACTOR_PRIORITY_UNDERFOOT;
 
   GameFlag_Set(FLAG_TUNNEL_RUINS_DOUSE_FROST_TARGET_FROZEN);
 

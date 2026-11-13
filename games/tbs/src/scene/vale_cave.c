@@ -462,12 +462,10 @@ static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
 
   union FieldCoordinate landingPosition[3];
   struct Actor *leader;
-  u8 *motionFlags;
   s32 savedMotionFlags;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  motionFlags = &leader->motionFlags;
-  savedMotionFlags = *motionFlags;
+  savedMotionFlags = leader->motionFlags;
 #if TBS_PATCH_1
   landingPosition[0].fixed = (leader->x.fixed & -0x100000) + px(8);
   landingPosition[1].fixed = leader->y.fixed;
@@ -488,13 +486,13 @@ static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
     leader->speedLimit = px(3);
     leader->acceleration = px(2);
     leader->velocityY = px(4);
-    *motionFlags &= 126;
+    leader->motionFlags &= 126;
     Actor_SetSpriteFlags(leader, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, landingPosition[0].part.pixel,
                         landingPosition[2].part.pixel);
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
-    *motionFlags = savedMotionFlags;
+    leader->motionFlags = savedMotionFlags;
     Event_End();
     return 1;
   }

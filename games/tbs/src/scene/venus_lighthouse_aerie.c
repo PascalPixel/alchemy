@@ -1241,12 +1241,12 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
 /// Flashes the actor white two frames in four, with Psynergy rings every 15
 /// frames.
 static void VenusLighthouseAerie_FlashActorPalette(struct Actor *actor) {
-  if (*(s32 *)&gFrameCount & 2) {
+  if (gFrameCount & 2) {
     Actor_SetColorMode(actor, SPRITE_COLOR_WHITE);
   } else {
     Actor_SetColorMode(actor, SPRITE_COLOR_NORMAL);
   }
-  if (Math_RemainderUnsigned(*(s32 *)&gFrameCount, 15) == 0) {
+  if (Math_RemainderUnsigned(gFrameCount, 15) == 0) {
     Scene_SpawnPsynergyRings(actor);
   }
 }
@@ -1975,7 +1975,7 @@ static void VenusLighthouseAerie_UpdateBeamActors(void) {
         menardi->scaleY += Q16_ONE / 128;
       }
     } else {
-      if ((*(s32 *)&gFrameCount & 2) != 0) {
+      if ((gFrameCount & 2) != 0) {
         Actor_SetSpriteColorById(ACTOR_SATUROS, SPRITE_COLOR_HIDDEN);
         Actor_SetSpriteColorById(ACTOR_MENARDI, SPRITE_COLOR_NORMAL);
       } else {

@@ -496,7 +496,7 @@ MenuBackdropResult Menu_OpenBackdropScreen(void) {
   wait(1);
   Iwram_CopyWords(backdrop->tiles, BG_CHAR_BLOCK(1), sizeof(backdrop->tiles));
   Iwram_CopyWords(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0), 128);
-  Iwram_FillWords(BG_CHAR_BLOCK(1), sizeof(backdrop->tiles), 0x33333333);
+  Iwram_FillWords(BG_CHAR_BLOCK(1), sizeof(backdrop->tiles), PIXELS_4BPP(3));
   Iwram_FillWords((void *)&BG_PLTT_COLOR(4, 0), 128, 0x55555555);
   Graphics_ExpandVramTilesByColorTableFar((u16 *)(BG_CHAR_BLOCK(1) + 4096));
   Iwram_CopyWords(BG_CHAR_BLOCK(1) +

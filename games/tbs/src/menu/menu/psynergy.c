@@ -67,7 +67,7 @@ s32 PsynergyMenu_Run(void) {
   Menu_SuspendFieldTasks();
   Iwram_CopyWords(saved, PSYNERGY_PROMPT_TILES, PSYNERGY_PROMPT_TILES_SIZE);
   Iwram_FillWords(PSYNERGY_PROMPT_TILES, PSYNERGY_PROMPT_TILES_SIZE,
-                  0x33333333);
+                  PIXELS_4BPP(3));
   Text_UseExtraTilesFar(1);
 #endif
   // Let the player choose.

@@ -194,7 +194,7 @@ s32 StatusScreen_Run(void) {
           DMA_ENABLE << 16 | 1, REG_DMA3);
 #if TBS_PATCH_1
   Iwram_CopyWords(tiles, BG_CHAR_BLOCK(1), STATUS_SAVED_TILE_BYTES);
-  Iwram_FillWords(BG_CHAR_BLOCK(1), STATUS_SAVED_TILE_BYTES, 0x33333333);
+  Iwram_FillWords(BG_CHAR_BLOCK(1), STATUS_SAVED_TILE_BYTES, PIXELS_4BPP(3));
   Text_UseExtraTilesFar(1);
 #endif
   menu->selectorWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);

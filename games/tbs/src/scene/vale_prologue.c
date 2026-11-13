@@ -896,8 +896,7 @@ static void ValePrologue_FirstRockFalls(void) {
   s32 walkZ;
   struct Sprite *rockSprite;
 
-  if (Event_GetFlag(FLAG_VALE_STORM_FIRST_ROCK_PASSED) != 0) {
-  } else {
+  if (Event_GetFlag(FLAG_VALE_STORM_FIRST_ROCK_PASSED) == 0) {
     Event_Start();
     if (Event_GetFlag(FLAG_VALE_STORM_FIRST_ROCK_FELL) == 0) {
       rock = Actor_Get(ACTOR_FIRST_ROCK);
@@ -975,8 +974,7 @@ static void ValePrologue_SecondRockFalls(void) {
   struct Actor *leader;
   s32 targetHeight;
 
-  if (Event_GetFlag(FLAG_VALE_STORM_SECOND_ROCK_PASSED) != 0) {
-  } else {
+  if (Event_GetFlag(FLAG_VALE_STORM_SECOND_ROCK_PASSED) == 0) {
     Event_Start();
     if (Event_GetFlag(FLAG_VALE_STORM_SECOND_ROCK_FELL) == 0) {
       rock = Actor_Get(ACTOR_FIRST_ROCK + 1);
@@ -1130,8 +1128,7 @@ static void ValePrologue_FourthRockFalls(void) {
   struct Actor *leader;
   s32 targetHeight;
 
-  if (Event_GetFlag(FLAG_VALE_STORM_FOURTH_ROCK_PASSED) != 0) {
-  } else {
+  if (Event_GetFlag(FLAG_VALE_STORM_FOURTH_ROCK_PASSED) == 0) {
     Event_Start();
     if (Event_GetFlag(FLAG_VALE_STORM_FOURTH_ROCK_FELL) == 0) {
       rock = Actor_Get(ACTOR_FIRST_ROCK + 3);
@@ -2202,10 +2199,8 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
   s32 automaticPriority;
   struct Sprite *sprite;
 
-  if (GameFlag_Get(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) == 0) {
-  } else {
-    if (Event_GetFlag(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0) {
-    } else {
+  if (GameFlag_Get(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) != 0) {
+    if (Event_GetFlag(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) == 0) {
       Event_Start();
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
       Actor_SetSpeed(ACTOR_GARET_CHILD, 1);

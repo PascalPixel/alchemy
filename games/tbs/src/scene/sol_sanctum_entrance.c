@@ -369,10 +369,8 @@ static void SolSanctumEntrance_SetFirstSmallJewel(void) {
   s32 oneCell;
   s32 reliefWidth;
 
-  if (GameFlag_Get(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND) == 0) {
-  } else {
-    if (Event_GetFlag(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET) != 0) {
-    } else {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND) != 0) {
+    if (Event_GetFlag(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET) == 0) {
       Event_Start();
       Field_EndBusyAndReveal();
       // The eye sparkles, then the wall opens.

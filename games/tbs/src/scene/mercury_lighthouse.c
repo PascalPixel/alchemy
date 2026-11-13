@@ -1588,8 +1588,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     column += px(16) - 1;
   column >>= 20;
   Event_Start();
-  if (column != 51) {
-  } else {
+  if (column == 51) {
     // Mia turns: "Did you do that?"
     Actor_SetSpeed(ACTOR_MIA, 0.8);
     Event_Wait(20);

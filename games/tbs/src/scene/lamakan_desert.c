@@ -987,8 +987,7 @@ s32 LamakanDesert_Initialize(void) {
   gMainRoutineWork.hazardLimit = 600;
   gMainRoutineWork.hazardMode = HAZARD_COUNT_ON_CELLS;
   gMainRoutineWork.hazardDamage = HAZARD_DAMAGE_PERCENT | 25;
-  if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertCave) {
-  } else {
+  if (gMainRoutineWork.next != (s32)&SceneId_LamakanDesertCave) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     HeatGauge_Start();
     Task_AddFrame(HeatGauge_RaiseQuarterTriggers, TASK_PASS_FRAME);

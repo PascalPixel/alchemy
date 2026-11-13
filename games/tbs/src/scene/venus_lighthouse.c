@@ -1840,16 +1840,13 @@ static void VenusLighthouse_MoveGatePillar(void) {
                                FIELD_CELL(pillar->z.fixed));
   }
   column = FIELD_CELL(pillar->x.fixed);
-  if (column != VENUS_GATE_PILLAR_SOCKET_COLUMN) {
-  } else {
+  if (column == VENUS_GATE_PILLAR_SOCKET_COLUMN) {
     row = FIELD_CELL(pillar->z.fixed);
-    if (row != VENUS_GATE_PILLAR_SOCKET_ROW) {
-    } else {
+    if (row == VENUS_GATE_PILLAR_SOCKET_ROW) {
       // Sink an unsolved pillar only when both of its target cell coordinates
       // match.
       gateOpened = GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_GATE_OPEN);
-      if (gateOpened != 0) {
-      } else {
+      if (gateOpened == 0) {
         if (FIELD_CELL(leader->z.fixed) <= VENUS_GATE_PILLAR_SOCKET_ROW) {
           occlusionEffect = VenusLighthouse_CreateOccludingPassageEffect(
               px(744), 0, px(704), SPRITE_CHEST);

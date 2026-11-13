@@ -885,8 +885,7 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
 static void ValeKradensCottage_OverhearKraden(void) {
   struct Actor *leader;
 
-  if (Event_GetFlag(FLAG_KRADEN_WONDERED_ABOUT_STRANGERS) != 0) {
-  } else {
+  if (Event_GetFlag(FLAG_KRADEN_WONDERED_ABOUT_STRANGERS) == 0) {
     Event_Start();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
     // Kraden wonders aloud who they were, while Garet and Jenna step out of

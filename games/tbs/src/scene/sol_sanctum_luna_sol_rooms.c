@@ -1175,10 +1175,8 @@ static void SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights(void) {
 static void SolSanctumLunaSolRooms_KradenSeesLunaPictureChange(void) {
   struct Actor *leader;
 
-  if (Event_GetFlag(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0) {
-  } else {
-    if (SolSanctumLunaSolRooms_AreAllStatueLightsLit() == 0) {
-    } else {
+  if (Event_GetFlag(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) == 0) {
+    if (SolSanctumLunaSolRooms_AreAllStatueLightsLit() != 0) {
       Event_Start();
       Actor_SetPosition(ACTOR_KRADEN, 577, 147);
       Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 1);
@@ -1277,8 +1275,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
   s32 frame;
   struct Sprite *sprite;
 
-  if (GameFlag_Get(FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN) == 0) {
-  } else {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN) != 0) {
     Event_Start();
     // Isaac steps onto the symbol and Kraden comes out beside him.
     FieldCamera_SetSpeed(1);
@@ -1300,8 +1297,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     }
     Event_Wait(40);
     // Reveal the passage only once; later visits reuse its open state.
-    if (Event_GetFlag(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) != 0) {
-    } else {
+    if (Event_GetFlag(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) == 0) {
       MapGrid_CopyCellsTo(36, 62, 17, 36, 2, 3);
       MapGrid_CopyCellsTo(44, 59, 17, 38, 2, 1);
       Event_Wait(10);

@@ -6,6 +6,6 @@
 
 #include "types.h"
 
-void Func_02000738(void);
+void AlhafraInteriors_OverhearCrossboneIsleTale(void);
 
 #endif

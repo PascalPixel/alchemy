@@ -38,4 +38,34 @@
 #define FLAG_APOJII_CAVE_FOLIAGE_BLOWN(actor)                                  \
   (FLAG_APOJII_CAVE_FOLIAGE_FIRST - ACTOR_FIRST_PLACED + (actor))
 
+/// Set as Briggs is caught on the boat he bought at Alhafra; the town then
+/// thanks the party and talks of pirates.
+/// ★ Named from the game: "Capturing the dreaded Briggs was a great deed."
+/// (MsgAlhafraInteriors86)
+#define FLAG_BRIGGS_CAUGHT 0x8ab
+/// Set once Burst has broken the last block on the Alhafran boat's mast, so
+/// the mast is ready for repairs; the town then wonders whether Briggs was a
+/// pirate at all.
+/// ★ Named from the game: "Briggs paid for that boat fair and square."
+/// (MsgAlhafraInteriors88)
+#define FLAG_ALHAFRA_MAST_CLEARED 0x8a7
+/// Set as Alex greets the party at Alhafra's inn.
+/// ★ Named from the game: "So, you've finally come." (MsgAlhafraInteriors31)
+#define FLAG_ALHAFRA_MET_ALEX 0x8b2
+/// Set once Alex has left Alhafra's inn.
+/// ★ Named from the game: "That cute boy next door left already."
+/// (MsgAlhafraInteriors84)
+#define FLAG_ALEX_LEFT_ALHAFRA 0x971
+/// Set as Alhafra's inn tells that someone named Isaac picked Crossbone Isle
+/// clean, which it tells only while FLAG_ISAAC_CLEARED_CROSSBONE_ISLE is set.
+/// ★ Named from the game: "Legends said that Crossbone Isle could be found in
+/// the middle of the Karagol Sea." (MsgAlhafraInteriors120)
+#define FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE 0x903
+/// XXX: what sets it; the code that reads a Broken Seal save or password would
+/// settle it. Alhafra's inn tells of Isaac picking Crossbone Isle clean only
+/// while it is set.
+/// ★ Named from the game: "Someone named Isaac picked it clean."
+/// (MsgAlhafraInteriors120)
+#define FLAG_ISAAC_CLEARED_CROSSBONE_ISLE 0x823
+
 #endif

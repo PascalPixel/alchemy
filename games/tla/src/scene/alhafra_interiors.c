@@ -1,5 +1,8 @@
 /// @file
-/// The scene code of overlay 0x666, in ROM order.
+/// Alhafra's houses, inn and sanctum, whose people are taking in their
+/// neighbors after the tidal wave. Their tables follow the story: before Briggs
+/// is caught, after (FLAG_BRIGGS_CAUGHT), and once the boat's mast is cleared
+/// (FLAG_ALHAFRA_MAST_CLEARED).
 
 #include "system/main_routine_work.h"
 #include "event_work.h"
@@ -13,6 +16,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
+#include "flags.h"
 #include "scene_tables.h"
 #include "module/scene/scene.h"
 
@@ -61,18 +65,18 @@ void Event_StartScreenTransition(void);
 // ---- this overlay
 
 extern struct ActorPlacement gActorPlacements[];
-extern u8 gData_02000f14[];
-extern u8 gData_0200116c[];
-extern struct Trigger gData_020013dc[];
-extern struct Trigger gData_02001730[];
-extern struct Trigger gData_020019dc[];
+extern u8 gAlhafraInteriors_ActorPlacementsOnceBriggsIsCaught[];
+extern u8 gAlhafraInteriors_ActorPlacementsOnceTheMastIsCleared[];
+extern struct Trigger gAlhafraInteriors_Triggers[];
+extern struct Trigger gAlhafraInteriors_TriggersOnceBriggsIsCaught[];
+extern struct Trigger gAlhafraInteriors_TriggersOnceTheMastIsCleared[];
 #include "event_inline.h"
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (Event_GetFlag(0x8a7))
-    return gData_0200116c;
-  if (Event_GetFlag(0x8ab))
-    return gData_02000f14;
+  if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED))
+    return gAlhafraInteriors_ActorPlacementsOnceTheMastIsCleared;
+  if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
+    return gAlhafraInteriors_ActorPlacementsOnceBriggsIsCaught;
   return gActorPlacements;
 }
 
@@ -83,8 +87,12 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_02000084(void) {
-  Event_SetFlag(0x8b2);
+/// Stepping into Alhafra's inn the first time: Felix walks up to Alex, who
+/// says he too is resting here while he looks for a boat
+/// (FLAG_ALHAFRA_MET_ALEX).
+/// ★ Named from the game: "So, you've finally come." (MsgAlhafraInteriors31)
+void AlhafraInteriors_MeetAlex(void) {
+  Event_SetFlag(FLAG_ALHAFRA_MET_ALEX);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors31);
@@ -118,7 +126,8 @@ void Func_02000084(void) {
   Event_End();
 }
 
-void Func_020001ac(s32 actor) {
+/// The merchant: across the counter, his shop; else what he says.
+void AlhafraInteriors_TalkToItemMerchant(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
@@ -129,7 +138,8 @@ void Func_020001ac(s32 actor) {
   }
 }
 
-void Func_020001fc(s32 actor) {
+/// The innkeeper: across the counter, the inn; else what he says.
+void AlhafraInteriors_TalkToInnkeeper(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
@@ -140,7 +150,8 @@ void Func_020001fc(s32 actor) {
   }
 }
 
-void Func_0200024c(s32 actor) {
+/// The healer: across the counter, the sanctum; else what he says.
+void AlhafraInteriors_TalkToHealer(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
@@ -151,13 +162,20 @@ void Func_0200024c(s32 actor) {
   }
 }
 
-void Func_02000298(s32 a0) {
+/// The lady of the house, worn out by her houseguests.
+/// ★ Named from the game: "Augh! With all these demanding houseguests, I feel
+/// like I've lost control of my own house!" (MsgAlhafraInteriors06)
+void AlhafraInteriors_TalkToHostess(s32 a0) {
   Actor_ShowEmote(a0, 0x107, 0x1e);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors06);
   Event_ShowMessage(a0, 0);
 }
 
-void Func_020002bc(void) {
+/// The old couple who lost their house in the wave ask the lady of the house
+/// for tea, once (flag 0x8b1).
+/// ★ Named from the game: "Sorry to bother you, but we'd like some tea."
+/// (MsgAlhafraInteriors07)
+void AlhafraInteriors_GuestsAskForTea(void) {
   Event_SetFlag(0x8b1);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -203,21 +221,25 @@ void Func_020002bc(void) {
   Event_End();
 }
 
-void Func_02000444(s32 a0) {
+/// The old houseguest, put out by the lady of the house.
+void AlhafraInteriors_TalkToDemandingGuest(s32 a0) {
   Actor_FaceEachOther(a0, gMainRoutineWork.currentOwner, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors08);
   Event_ShowMessage(a0, 0);
   Actor_FaceDirection(14, 0x3000, 0);
 }
 
-void Func_0200047c(s32 a0, s32 a1) {
+/// Mind Read on Alex: he turns to the party and asks them to stop.
+void AlhafraInteriors_ReadAlexsMind(s32 a0, s32 a1) {
   Actor_FaceEachOther(a1, gMainRoutineWork.currentOwner, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors48);
   Event_ShowMessage(a1, 0);
   Actor_FaceDirection(a1, 0xe000, 0);
 }
 
-void Func_020004b8(s32 a0) {
+/// The master of the house tells that the town has started rebuilding, once
+/// (flag 0x8b8).
+void AlhafraInteriors_HostTellsOfRepairs(s32 a0) {
   Event_SetFlag(0x8b8);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors55);
   Event_ShowMessage(a0, 0);
@@ -226,7 +248,8 @@ void Func_020004b8(s32 a0) {
   Event_ShowMessage(a0, 0);
 }
 
-void Func_020004f4(s32 actor) {
+/// Alex asks whether the party caught Briggs.
+void AlhafraInteriors_AlexHearsOfBriggs(s32 actor) {
   s32 msg = (s32)MsgAlhafraInteriors74;
 
   FieldEvent_SetMessageId(msg);
@@ -243,11 +266,11 @@ void Func_020004f4(s32 actor) {
 }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (Event_GetFlag(0x8a7))
-    return gData_020019dc;
-  if (Event_GetFlag(0x8ab))
-    return gData_02001730;
-  return gData_020013dc;
+  if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED))
+    return gAlhafraInteriors_TriggersOnceTheMastIsCleared;
+  if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
+    return gAlhafraInteriors_TriggersOnceBriggsIsCaught;
+  return gAlhafraInteriors_Triggers;
 }
 
 s32 BattleEffect_DrawSpriteAtWorldPosition();
@@ -291,20 +314,22 @@ s32 Scene_Initialize(void) {
   *(s32 *)(gData_02001c60 + 24) = 0x18000;
   Actor_Get(14)->update = Func_02000578;
   Actor_Get(15)->update = Func_02000598;
-  if (Event_GetFlag(0x8a7)) {
+  if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     if (Actor_Get(gMainRoutineWork.currentOwner)->x >= 0x2000000)
       Event_SetFlag(0x200);
     else
       Event_ClearFlag(0x200);
-    if (Event_GetFlag(0x200) && Event_GetFlag(0x823) && !Event_GetFlag(0x903)) {
+    if (Event_GetFlag(0x200) &&
+        Event_GetFlag(FLAG_ISAAC_CLEARED_CROSSBONE_ISLE) &&
+        !Event_GetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE)) {
       Actor_SetPosition(31, PIXELS(376), PIXELS(316));
       Actor_SetPosition(32, PIXELS(392), PIXELS(344));
     } else {
       Actor_SetPosition(31, 0, 0);
       Actor_SetPosition(32, 0, 0);
     }
-  } else if (Event_GetFlag(0x8ab)) {
-    if (Event_GetFlag(0x971))
+  } else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
+    if (Event_GetFlag(FLAG_ALEX_LEFT_ALHAFRA))
       Actor_SetPosition(31, 0, 0);
   } else {
     FieldActor_SetSpritePriority(24, 2);
@@ -332,13 +357,14 @@ s32 Scene_Initialize(void) {
   *(s32 *)(gData_02001c60 + 24) = 0x18000;
   Actor_Get(14)->update = Func_02000578;
   Actor_Get(15)->update = Func_02000598;
-  if (Event_GetFlag(0x8a7)) {
-    if (!Event_GetFlag(0x823) || Event_GetFlag(0x903)) {
+  if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
+    if (!Event_GetFlag(FLAG_ISAAC_CLEARED_CROSSBONE_ISLE) ||
+        Event_GetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE)) {
       Actor_SetPosition(31, 0, 0);
       Actor_SetPosition(32, 0, 0);
     }
-  } else if (Event_GetFlag(0x8ab)) {
-    if (Event_GetFlag(0x971))
+  } else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
+    if (Event_GetFlag(FLAG_ALEX_LEFT_ALHAFRA))
       Actor_SetPosition(31, 0, 0);
   } else {
     FieldActor_SetSpritePriority(24, 2);
@@ -354,11 +380,14 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 extern u8 gData_02000be4[];
 
-void Func_02000738(void) {
+/// Two guests of the inn tell that Isaac picked Crossbone Isle clean, once
+/// (FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE), while
+/// FLAG_ISAAC_CLEARED_CROSSBONE_ISLE is set.
+void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
   s32 t0;
   s32 t1;
 
-  t0 = Event_GetFlag(0x903);
+  t0 = Event_GetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE);
   if (t0 != 0) {
   } else {
 #if TLA_PATCH_1 /* The Japanese edition does not check 0x200. */
@@ -367,7 +396,7 @@ void Func_02000738(void) {
     } else
 #endif
     {
-      Event_SetFlag(0x903);
+      Event_SetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE);
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       FieldEvent_SetMessageId((s32)MsgAlhafraInteriors120);

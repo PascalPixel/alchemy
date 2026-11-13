@@ -1,18 +1,19 @@
 #include "types.h"
+#include "flags.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "module/scene/alhafra_interiors.h"
 
-void Func_02000084(void);
-void Func_020001ac(void);
-void Func_020001fc(void);
-void Func_0200024c(void);
-void Func_02000298(void);
-void Func_020002bc(void);
-void Func_02000444(void);
-void Func_0200047c(void);
-void Func_020004b8(void);
-void Func_020004f4(void);
+void AlhafraInteriors_MeetAlex(void);
+void AlhafraInteriors_TalkToItemMerchant(void);
+void AlhafraInteriors_TalkToInnkeeper(void);
+void AlhafraInteriors_TalkToHealer(void);
+void AlhafraInteriors_TalkToHostess(void);
+void AlhafraInteriors_GuestsAskForTea(void);
+void AlhafraInteriors_TalkToDemandingGuest(void);
+void AlhafraInteriors_ReadAlexsMind(void);
+void AlhafraInteriors_HostTellsOfRepairs(void);
+void AlhafraInteriors_AlexHearsOfBriggs(void);
 
 // clang-format off
 u32 gData_02000be4[] = {
@@ -70,7 +71,7 @@ struct ActorPlacement gActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-s16 gData_02000f14[] = {
+s16 gAlhafraInteriors_ActorPlacementsOnceBriggsIsCaught[] = {
     110, -1, 1, 0, 0, 488, 0, 0,
     0, 88, FACING_SOUTH, 1, 202, -1, 1, 0,
     0, 160, 0, 0, 0, 544, FACING_SOUTH, 1,
@@ -111,7 +112,7 @@ s16 gData_02000f14[] = {
     0, 0, 0, 0,
 };
 
-s16 gData_0200116c[] = {
+s16 gAlhafraInteriors_ActorPlacementsOnceTheMastIsCleared[] = {
     110, -1, 1, 0, 0, 488, 0, 0,
     0, 88, FACING_SOUTH, 1, 202, -1, 1, 0,
     0, 160, 0, 0, 0, 544, FACING_SOUTH, 1,
@@ -154,7 +155,7 @@ s16 gData_0200116c[] = {
 };
 // clang-format on
 
-struct Trigger gData_020013dc[] = {
+struct Trigger gAlhafraInteriors_Triggers[] = {
     {0x4401, 1, CONDITION_ALWAYS, 1},
     {0x4401, 2, CONDITION_ALWAYS, 2},
     {0x4401, 5, CONDITION_ALWAYS, 5},
@@ -166,26 +167,28 @@ struct Trigger gData_020013dc[] = {
     {TRIGGER_EXIT, 23, CONDITION_ALWAYS, 23},
     {TRIGGER_EXIT, 24, CONDITION_ALWAYS, 24},
     {TRIGGER_EXIT, 25, CONDITION_ALWAYS, 25},
-    {0xc400, 8, CONDITION_ALWAYS, EVENT(Func_020001ac)},
-    {0xc400, 16, CONDITION_ALWAYS, EVENT(Func_020001fc)},
-    {0xc400, 9, CONDITION_ALWAYS, EVENT(Func_0200024c)},
+    {0xc400, 8, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToItemMerchant)},
+    {0xc400, 16, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToInnkeeper)},
+    {0xc400, 9, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToHealer)},
     {0x173, 214, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors121)},
     {0x173, 215, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors122)},
     {0x173, 216, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors123)},
     {0x173, 217, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors124)},
     {0x173, 200, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors125)},
-    {TRIGGER_STEP, 30, 0x8b2, EVENT(Func_02000084)},
+    {TRIGGER_STEP, 30, FLAG_ALHAFRA_MET_ALEX, EVENT(AlhafraInteriors_MeetAlex)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors01)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors02)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraInteriors03)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraInteriors04)},
-    {TRIGGER_TALK, 14, 0x8b1, EVENT(Func_020002bc)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1038, 0x8b1, EVENT(Func_020002bc)},
+    {TRIGGER_TALK, 14, 0x8b1, EVENT(AlhafraInteriors_GuestsAskForTea)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1038, 0x8b1,
+     EVENT(AlhafraInteriors_GuestsAskForTea)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors05)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_02000298)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_02000444)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToHostess)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS,
+     EVENT(AlhafraInteriors_TalkToDemandingGuest)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors09)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraInteriors10)},
@@ -245,14 +248,14 @@ struct Trigger gData_020013dc[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraInteriors47)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1055, CONDITION_ALWAYS,
-     EVENT(Func_0200047c)},
+     EVENT(AlhafraInteriors_ReadAlexsMind)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors49)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraInteriors50)},
     {TRIGGERS_END},
 };
 
-struct Trigger gData_02001730[] = {
+struct Trigger gAlhafraInteriors_TriggersOnceBriggsIsCaught[] = {
     {0x4401, 1, CONDITION_ALWAYS, 1},
     {0x4401, 2, CONDITION_ALWAYS, 2},
     {0x4401, 5, CONDITION_ALWAYS, 5},
@@ -264,24 +267,25 @@ struct Trigger gData_02001730[] = {
     {TRIGGER_EXIT, 23, CONDITION_ALWAYS, 23},
     {TRIGGER_EXIT, 24, CONDITION_ALWAYS, 24},
     {TRIGGER_EXIT, 25, CONDITION_ALWAYS, 25},
-    {0xc400, 8, CONDITION_ALWAYS, EVENT(Func_020001ac)},
-    {0xc400, 16, CONDITION_ALWAYS, EVENT(Func_020001fc)},
-    {0xc400, 9, CONDITION_ALWAYS, EVENT(Func_0200024c)},
+    {0xc400, 8, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToItemMerchant)},
+    {0xc400, 16, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToInnkeeper)},
+    {0xc400, 9, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToHealer)},
     {0x173, 214, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors121)},
     {0x173, 215, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors122)},
     {0x173, 216, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors123)},
     {0x173, 217, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors124)},
     {0x173, 200, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors125)},
-    {TRIGGER_TALK, 30, IF_FLAG_SET(0x971), MSGNO(MsgAlhafraInteriors84)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, IF_FLAG_SET(0x971),
-     MSGNO(MsgAlhafraInteriors85)},
+    {TRIGGER_TALK, 30, IF_FLAG_SET(FLAG_ALEX_LEFT_ALHAFRA),
+     MSGNO(MsgAlhafraInteriors84)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30,
+     IF_FLAG_SET(FLAG_ALEX_LEFT_ALHAFRA), MSGNO(MsgAlhafraInteriors85)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors51)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors52)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraInteriors53)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraInteriors54)},
-    {TRIGGER_TALK, 12, 0x8b8, EVENT(Func_020004b8)},
+    {TRIGGER_TALK, 12, 0x8b8, EVENT(AlhafraInteriors_HostTellsOfRepairs)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors56)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors57)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors58)},
@@ -305,7 +309,8 @@ struct Trigger gData_02001730[] = {
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors71)},
     {TRIGGER_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors72)},
     {TRIGGER_TALK, 30, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors73)},
-    {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Func_020004f4)},
+    {TRIGGER_TALK, 31, CONDITION_ALWAYS,
+     EVENT(AlhafraInteriors_AlexHearsOfBriggs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraInteriors75)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
@@ -330,7 +335,7 @@ struct Trigger gData_02001730[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_020019dc[] = {
+struct Trigger gAlhafraInteriors_TriggersOnceTheMastIsCleared[] = {
     {0x4401, 1, CONDITION_ALWAYS, 1},
     {0x4401, 2, CONDITION_ALWAYS, 2},
     {0x4401, 5, CONDITION_ALWAYS, 5},
@@ -342,15 +347,16 @@ struct Trigger gData_020019dc[] = {
     {TRIGGER_EXIT, 23, CONDITION_ALWAYS, 23},
     {TRIGGER_EXIT, 24, CONDITION_ALWAYS, 24},
     {TRIGGER_EXIT, 25, CONDITION_ALWAYS, 25},
-    {0xc400, 8, CONDITION_ALWAYS, EVENT(Func_020001ac)},
-    {0xc400, 16, CONDITION_ALWAYS, EVENT(Func_020001fc)},
-    {0xc400, 9, CONDITION_ALWAYS, EVENT(Func_0200024c)},
+    {0xc400, 8, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToItemMerchant)},
+    {0xc400, 16, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToInnkeeper)},
+    {0xc400, 9, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToHealer)},
     {0x173, 214, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors121)},
     {0x173, 215, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors122)},
     {0x173, 216, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors123)},
     {0x173, 217, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors124)},
     {0x173, 200, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgAlhafraInteriors125)},
-    {TRIGGER_STEP, 31, IF_FLAG_SET(0x823), EVENT(Func_02000738)},
+    {TRIGGER_STEP, 31, IF_FLAG_SET(FLAG_ISAAC_CLEARED_CROSSBONE_ISLE),
+     EVENT(AlhafraInteriors_OverhearCrossboneIsleTale)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors88)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors89)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,

@@ -14,6 +14,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
+#include "flags.h"
 #include "scene_tables.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -137,17 +138,17 @@ s32 Scene_Initialize(void) {
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   if (gMainRoutineWork.entrance == 99) {
     GameFlag_SetBit(0x8aa);
-    GameFlag_SetBit(0x8ab);
+    GameFlag_SetBit(FLAG_BRIGGS_CAUGHT);
     gMainRoutineWork.secondary = 3;
     gMainRoutineWork.entrance = 3;
     Func_02000c5c();
   }
-  if (GameFlag_Test(0x8a7)) {
+  if (GameFlag_Test(FLAG_ALHAFRA_MAST_CLEARED)) {
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
-  } else if (GameFlag_Test(0x8ab)) {
+  } else if (GameFlag_Test(FLAG_BRIGGS_CAUGHT)) {
     Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
     if (!GameFlag_Test(0x8bd)) {

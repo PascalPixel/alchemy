@@ -12,6 +12,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
+#include "flags.h"
 #include "scene_tables.h"
 #include "event_work.h"
 #include "module/scene/alhafra.h"
@@ -35,12 +36,12 @@ extern struct ActorPlacement gActorPlacements[];
 extern struct DoorStep gData_0200277c[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (GameFlag_Test(0x8a7)) {
+  if (GameFlag_Test(FLAG_ALHAFRA_MAST_CLEARED)) {
     if (GameFlag_Test(0x90f) == 0)
       return gActorPlacements;
     return gData_02002358;
   }
-  if (GameFlag_Test(0x8ab))
+  if (GameFlag_Test(FLAG_BRIGGS_CAUGHT))
     return gData_02002100;
   return gData_02001e48;
 }
@@ -420,12 +421,12 @@ extern struct Trigger gData_02002e48[];
 extern struct Trigger gData_02003154[];
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (GameFlag_Test(0x8a7)) {
+  if (GameFlag_Test(FLAG_ALHAFRA_MAST_CLEARED)) {
     if (GameFlag_Test(0x90f) == 0)
       return gData_02003154;
     return gData_02002e48;
   }
-  if (GameFlag_Test(0x8ab))
+  if (GameFlag_Test(FLAG_BRIGGS_CAUGHT))
     return gData_02002ad0;
   return gData_020027f4;
 }
@@ -441,7 +442,7 @@ s32 Scene_Initialize(void) {
   s32 t1, t2, t9, t23, t37, t39, t41, t44, t51, t53, t56, t58, t60;
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
-  t1 = GameFlag_Test(0x8a7);
+  t1 = GameFlag_Test(FLAG_ALHAFRA_MAST_CLEARED);
   if (t1 == 0)
     goto L_020088aa;
   t2 = GameFlag_Test(0x90f);
@@ -472,7 +473,7 @@ L_02008836:
   Actor_SetSpritePriority(10, 3);
   goto L_02008a0a;
 L_020088aa:
-  t23 = GameFlag_Test(0x8ab);
+  t23 = GameFlag_Test(FLAG_BRIGGS_CAUGHT);
   if (t23 == 0)
     goto L_0200898a;
   Actor_GetById(14)->update = (void (*)(void))Func_02000a98;
@@ -535,7 +536,7 @@ L_02008a0a:
 #undef FIELD_AT
 
 s32 Scene_PrepareMap(void) {
-  if (GameFlag_Test(0x8ab)) {
+  if (GameFlag_Test(FLAG_BRIGGS_CAUGHT)) {
     u16 *src = (u16 *)0x5000116;
 
     u32 c;

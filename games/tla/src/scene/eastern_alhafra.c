@@ -36,7 +36,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 void *Scene_GetPlacements(void) {
-  if (Event_GetFlag(0x8ab))
+  if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
     return gData_02004fe4;
   return gData_02004dbc;
 }
@@ -45,7 +45,7 @@ void Func_0200006c(s32 mode, s32 id) {
   if (id == 0)
     Func_02004004();
   if (mode == 1) {
-    Event_SetFlag(0x8a7);
+    Event_SetFlag(FLAG_ALHAFRA_MAST_CLEARED);
     Func_02000fa4();
   }
   if (mode == 2)
@@ -365,12 +365,12 @@ void Func_02000730(void) {
 }
 
 void Func_02000838(void) {
-  if (Event_GetFlag(0x8a7)) {
+  if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     if (Event_GetFlag(0x904) == 0) {
       Event_SetFlag(0x904);
       Func_02001cb0();
     }
-  } else if (Event_GetFlag(0x8ab)) {
+  } else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
     if (Event_GetFlag(0x8a0) && Party_FindOwnerWithAction(151) == -1 &&
         Event_GetFlag(0x8ad) == 0) {
       Event_SetFlag(0x8ad);
@@ -431,7 +431,8 @@ run:
   Event_End();
   return;
 check:
-  if (Event_GetFlag(0x8ab) && Event_GetFlag(0x8a7) == 0 && Event_GetFlag(0x8be))
+  if (Event_GetFlag(FLAG_BRIGGS_CAUGHT) &&
+      Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) == 0 && Event_GetFlag(0x8be))
     goto run;
 }
 
@@ -512,7 +513,7 @@ s32 Scene_Initialize(void) {
   *(s32 *)(EVENT_WORK + 0x1ac) = 0x100;
   Func_02000af8();
   OBJECT(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
-  if (Event_GetFlag(0x8a7) != 0) {
+  if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) != 0) {
     if (Event_GetFlag(0x905) != 0 && Event_GetFlag(0x90f) == 0) {
       Actor_SetPosition(30, PIXELS(184), PIXELS(616));
       Actor_SetPosition(31, PIXELS(136), PIXELS(600));
@@ -617,7 +618,8 @@ s32 Scene_Initialize(void) {
   Actor_SetSingleChildFlags(Actor_Get(17), 0);
   FieldActor_SetSpritePriority(10, 2);
   ((u8 *)OBJECT(23))[0x62] = 1;
-  if (Event_GetFlag(0x8ab) != 0 && Event_GetFlag(0x8a7) == 0) {
+  if (Event_GetFlag(FLAG_BRIGGS_CAUGHT) != 0 &&
+      Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) == 0) {
     Actor_SetPosition(22, 0, 0);
     Actor_SetPosition(23, 0, 0);
     Actor_SetPosition(24, 0, 0);
@@ -700,7 +702,7 @@ L_020090a8:
                           0);
   Func_02004c84(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0, 128);
 L_02009100:
-  t24 = Event_GetFlag(0x8a7);
+  t24 = Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED);
   if (t24 == 0)
     goto L_02009122;
   MapGrid_CopyCells(32, 24, 2, 2, 30, 24);
@@ -861,12 +863,12 @@ void Func_02001574(void) {
   struct Actor *object6;
   struct Actor *object7;
 
-  result0 = Event_GetFlag(0x8ab);
+  result0 = Event_GetFlag(FLAG_BRIGGS_CAUGHT);
   if (result0 != 0)
     goto L_02009586;
   goto L_020097dc;
 L_02009586:
-  result1 = Event_GetFlag(0x8a7);
+  result1 = Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED);
   if (result1 == 0)
     goto L_02009596;
   goto L_020097dc;
@@ -1279,7 +1281,7 @@ void Func_02001cb0(void) {
 /// Only once flag 0x8a7 is set: the scene that opens with MsgIStillJust, which
 /// sets flag 0x905 and ends by sending the party to SceneId_Ov667, entrance 81.
 void Func_02002048(void) {
-  if (Event_GetFlag(0x8a7) == 0)
+  if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) == 0)
     return;
   Event_SetFlag(0x905);
   Event_Start();
@@ -1548,7 +1550,7 @@ void Func_02002a08(void) {
   s32 i;
   s32 step = 0x10000;
 
-  if (Event_GetFlag(0x8a7) == 0)
+  if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) == 0)
     return;
   Event_SetFlag(0x90f);
   Event_SetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA);

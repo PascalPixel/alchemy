@@ -24,7 +24,7 @@
 #include "scene_ids.h"
 #include "system/input.h"
 #include "field_sprite.h"
-#include "../../include/system/io_reg.h"
+#include "system/io_reg.h"
 #include "version.h"
 #include "shared/tables.h"
 #include "objcmd.h"

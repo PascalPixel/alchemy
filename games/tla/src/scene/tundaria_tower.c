@@ -19,7 +19,7 @@
 #include "module/field/map.h"
 #include "module/scene/magma_rock.h"
 #include "flag_call.h"
-#include "tundaria_tower/tundaria_tower.h"
+#include "shared/tundaria_tower.h"
 #include "field_event.h"
 #include "battle/battle.h"
 #include "game/game.h"
@@ -1204,7 +1204,7 @@ end:
 #include "call.h"
 
 /* VIEW(s1b48): variable gData_02003cd0 as volatile s16 gData_02003cd0;
- * scene/tundaria_tower/tundaria_tower.h has u16 gData_02003cd0; tried as the 2
+ * scene/shared/tundaria_tower.h has u16 gData_02003cd0; tried as the 2
  * declarations' extern volatile s16 gData_02003cd0, it does not compile in
  * tla-en: games/tla/src/scene/tundaria_tower/events_f.c:419: conflicting types
  * for `gData_02003cd0'. */

@@ -19,7 +19,7 @@
 #include "system/field_effect.h"
 #include "module/field/field_effect.h"
 #include "shared/map_cells.h"
-#include "tundaria_tower/tundaria_tower.h"
+#include "shared/tundaria_tower.h"
 #include "module/field/field.h"
 #include "flags.h"
 #include "shared/actors.h"

@@ -239,7 +239,7 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
-#include "../../../../games/tla/src/field/field_effect/spawn.c"
+#include "../field/field_effect/spawn.c"
 
 // ---- scene/aqua_rock_inside/aqua_rock_inside.c ----
 

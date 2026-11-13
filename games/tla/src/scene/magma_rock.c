@@ -75,7 +75,7 @@ struct Actor *MagmaRock_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect/spawn.c"
 
-#include "venus_lighthouse/distance.c"
+#include "shared/distance.c"
 
 #include "../field/object/find_in_cell.c"
 

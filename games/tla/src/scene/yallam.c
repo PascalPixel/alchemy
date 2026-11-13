@@ -72,7 +72,7 @@ s32 Yallam_HideSprite(struct Actor *object) {
   return 0;
 }
 
-#include "venus_lighthouse/distance.c"
+#include "shared/distance.c"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 

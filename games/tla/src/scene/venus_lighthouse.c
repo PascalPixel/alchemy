@@ -153,7 +153,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-#include "venus_lighthouse/distance.c"
+#include "shared/distance.c"
 
 #include "../field/object/find_in_cell.c"
 

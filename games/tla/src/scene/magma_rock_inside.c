@@ -92,7 +92,7 @@ static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
 #include "module/field/field_effect.h"
 #include "field/particle.h"
 #include "graphics/resource.h"
-#include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
+#include "shared/tundaria_tower.h"
 #include "system/task.h"
 #include "objcmd.h"
 

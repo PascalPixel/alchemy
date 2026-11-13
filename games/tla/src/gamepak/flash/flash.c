@@ -1,6 +1,6 @@
-#include "../../../include/gamepak/flash.h"
-#include "../../../include/gamepak/flash_data.h"
-#include "../../../include/system/io_reg.h"
+#include "gamepak/flash.h"
+#include "gamepak/flash_data.h"
+#include "system/io_reg.h"
 #include "types.h"
 
 typedef u8 (*FlashByteRead)(u8 *address);

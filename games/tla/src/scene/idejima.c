@@ -183,7 +183,8 @@ void Idejima_WakeKraden(void) {
   System_Wait(40);
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceActor(ACTOR_KRADEN, gMainRoutineWork.currentOwner, 0);
-  Actor_SetAttachedEffect(ACTOR_KRADEN, 0x102);
+  Actor_SetAttachedEffect(ACTOR_KRADEN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 20);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
@@ -196,7 +197,8 @@ void Idejima_WakeKraden(void) {
   Actor_WalkToAndWait(ACTOR_KRADEN, 416, 680);
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 20);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceActor(ACTOR_KRADEN, gMainRoutineWork.currentOwner, 0);
@@ -430,8 +432,10 @@ void Idejima_CatchUpWithFelix(void) {
     FieldActor_Jump(ACTOR_JENNA, 4, 20);
     Event_ShowMessage(ACTOR_JENNA, 0);
     Event_ShowMessage(ACTOR_JENNA, 0);
-    Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 258);
-    Actor_SetAttachedEffect(ACTOR_KRADEN, 258);
+    Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_SetAttachedEffect(ACTOR_KRADEN,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
     Event_ShowMessage(ACTOR_JENNA, 0);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
@@ -485,7 +489,8 @@ void Idejima_CatchUpWithFelix(void) {
     Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
     FieldActor_RefreshSelectorById(ACTOR_SHEBA);
     Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-    Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 258);
+    Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_ShowEmoteById(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
     Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 40);
@@ -695,7 +700,8 @@ void Idejima_RunAlexDeparture(void) {
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  Actor_SetAttachedEffect(ACTOR_KRADEN, 0x102);
+  Actor_SetAttachedEffect(ACTOR_KRADEN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 20);
@@ -1053,7 +1059,8 @@ void Idejima_FindFelixAndSheba(void) {
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_SetAttachedEffect(ACTOR_KRADEN, 258);
+  Actor_SetAttachedEffect(ACTOR_KRADEN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
@@ -1093,8 +1100,10 @@ void Idejima_FindFelixAndSheba(void) {
     System_Wait(1);
   } while (actor->timer == 0);
   FieldEvent_Wait(10);
-  Actor_SetAttachedEffect(ACTOR_KRADEN, 258);
-  Actor_SetAttachedEffect(ACTOR_JENNA, 258);
+  Actor_SetAttachedEffect(ACTOR_KRADEN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_JENNA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_ShowTwoMessagesAndWait(ACTOR_JENNA, 7, 13, 2, 12, 8, 9, 2, 4, 1,
                                     0);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -1159,7 +1168,8 @@ void Idejima_RideTheTidalWave(void) {
                                     11, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
-  Actor_SetAttachedEffect(ACTOR_JENNA, 0x102);
+  Actor_SetAttachedEffect(ACTOR_JENNA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 1);
   FieldEvent_Wait(40);
@@ -1180,7 +1190,8 @@ void Idejima_RideTheTidalWave(void) {
   Actor_SetAnimation(ACTOR_SHEBA, 1);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SHEBA), 1);
   FieldEvent_Wait(20);
-  Actor_SetAttachedEffect(ACTOR_JENNA, 0x102);
+  Actor_SetAttachedEffect(ACTOR_JENNA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_Get(ACTOR_SHEBA)->actionFlags |= 1;
@@ -1259,7 +1270,8 @@ void Idejima_RideTheTidalWave(void) {
   Actor_ShowEmote(gMainRoutineWork.currentOwner,
                   EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_RunRepeatedMotion(gMainRoutineWork.currentOwner, 2);
-  Actor_SetAttachedEffect(ACTOR_KRADEN, 0x102);
+  Actor_SetAttachedEffect(ACTOR_KRADEN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 20);
   FieldActor_StartRepeatedMotion(gMainRoutineWork.currentOwner, 3);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
@@ -1280,7 +1292,8 @@ void Idejima_RideTheTidalWave(void) {
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 1);
   leader->scaleX = 0x10000;
   FieldEvent_Wait(20);
-  Actor_SetAttachedEffect(ACTOR_JENNA, 0x102);
+  Actor_SetAttachedEffect(ACTOR_JENNA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_Get(gMainRoutineWork.currentOwner)->actionFlags |= 1;
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHWEST, 40);

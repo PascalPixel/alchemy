@@ -231,7 +231,7 @@ fire:
   if (t26 != 0)
     goto ask;
   Event_SetFlag(0x90d);
-  FieldEvent_ShowMessageThenWait(0x2007, 0, 5);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 7, 0, 5);
 ask:
   FieldEvent_SetMessageId((v_r10 + 1));
   Event_OpenMessage(11, 0);
@@ -298,9 +298,9 @@ growBall:
   Event_WaitTransitionFrames();
   t70 = (s32)Ram_HeapSlots->eventWork;
   FIELD_AT(t70, s32, 436) = 8;
-  FieldEvent_ShowMessageThenWait(0x2005, 0, 5);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 5, 0, 5);
   FieldEvent_ShowMessageThenWait(11, 0, 5);
-  FieldEvent_ShowMessageThenWait(0x2006, 0, 5);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 6, 0, 5);
   Actor_SetSpeed(8, 0.8);
   Actor_MoveToAndWait(8, 0x1d0, 176);
   EventCamera_FollowActor(8, 1);

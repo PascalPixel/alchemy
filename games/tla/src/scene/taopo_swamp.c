@@ -353,7 +353,8 @@ void TaopoSwamp_DigHoleUnderfoot(void) {
     if (leader->x >> 20 == 16 && leader->z >> 20 == 41) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
-      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
+      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -16);
       leader->velocityY = 0x60000;
       FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
@@ -490,7 +491,7 @@ void TaopoSwamp_BlowFlowerOffLedge(void) {
                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldCamera_MoveTo(408, CAMERA_KEEP, 312, 1);
   FieldCamera_WaitForArrival();
-  Actor_SetAttachedEffect(8, 257);
+  Actor_SetAttachedEffect(8, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   speed = 0x8000;
   i = 2;
   do {
@@ -564,7 +565,8 @@ void TaopoSwamp_ShatterIcePillar(s32 id) {
   object = Actor_Get(id);
   if (object->x >> 20 == leader->x >> 20 &&
       object->z >> 20 == leader->z >> 20) {
-    Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
+    Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_WalkByAndWait(gMainRoutineWork.currentOwner, 0, 16);
     FieldEvent_Wait(2);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
@@ -617,7 +619,8 @@ void TaopoSwamp_ShatterDripIcePillar(s32 id) {
   object = Actor_Get(id);
   if (object->x >> 20 == leader->x >> 20 &&
       object->z >> 20 == leader->z >> 20) {
-    Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
+    Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_WalkByAndWait(gMainRoutineWork.currentOwner, 0, 16);
     FieldEvent_Wait(2);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);

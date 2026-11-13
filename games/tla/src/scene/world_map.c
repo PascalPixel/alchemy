@@ -600,7 +600,8 @@ void WorldMap_RefuseToRunAway(void) {
       Event_ShowMessage(5, 0);
       WorldMap_ReloadPendingAreaGraphics();
       Actor_FaceDirection(5, west, 0);
-      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 258);
+      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, x + 12, besideZ);
       Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
       Actor_SetAnimation(5, 4);
@@ -1767,7 +1768,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 1);
   System_Wait(1);
   WorldMap_Freeze();
-  Actor_SetAttachedEffect(5, 0x102);
+  Actor_SetAttachedEffect(5, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Event_ShowMessage(5, 0);
   Actor_SetAnimationAndWait(9, 4);
@@ -1776,7 +1777,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   FieldActor_Jump(6, 6, 23);
   Actor_FaceActor(6, 4, 0);
   Event_ShowMessage(6, 0);
-  Actor_SetAttachedEffect(8, 0x101);
+  Actor_SetAttachedEffect(8, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Event_ShowMessage(8, 0);
   Actor_SetSpeed(8, 1);
   Actor_WalkTo(8, 0xe18, 0x1e0f);

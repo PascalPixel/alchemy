@@ -386,7 +386,8 @@ void Func_020005b0(void) {
   Event_PlaySound(MUS_000);
   FieldEvent_Wait(40);
   Actor_Get(gMainRoutineWork.currentOwner)->actionFlags &= ~1;
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, 8);
   FieldActor_Jump(gMainRoutineWork.currentOwner, 4, 10);
@@ -819,7 +820,8 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   Event_PlaySound(SE_RUMBLE);
   MapGrid_SetShake(2, 2, 1);
   FieldEvent_Wait(20);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   MapGrid_SetShake(1, 1, 1);
   FieldEvent_Wait(20);
   PaletteFade_ApplySource(0x10000, 0);
@@ -997,7 +999,8 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   Event_PlaySound(SE_RUMBLE);
   MapGrid_SetShake(2, 2, 1);
   FieldEvent_Wait(20);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   MapGrid_SetShake(1, 1, 1);
   FieldEvent_Wait(20);
   PaletteFade_ApplySource(0x10000, 0);

@@ -359,7 +359,8 @@ void GondowanCliffs_TurnBackToHelpPiers(void) {
   Actor_FaceActor(6, 5, 0);
   Event_ShowMessage(6, 0);
   FieldActor_WatchAndSetScript(6, gMainRoutineWork.currentOwner);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 258);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(22, 3);
   Event_ShowMessage(22, 0);

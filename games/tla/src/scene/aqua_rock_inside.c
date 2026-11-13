@@ -1921,7 +1921,8 @@ void Func_02002ca4(void) {
   if ((gFrameCount & 4) == 0)
     Func_02002bd4(actor);
   if (hit < 0) {
-    Actor_SetAttachedEffect(id, 258);
+    Actor_SetAttachedEffect(id,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     FieldActor_SetMoveTargetFixed(actor, actor->x, actor->y,
                                   actor->z + 0x80000);
     Actor_SelectAnimation(actor, 49);

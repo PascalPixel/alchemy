@@ -334,7 +334,7 @@ void Func_020003b8(s32 unused, s32 id) {
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
     Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags |= 1;
     FieldActor_StartRepeatedMotion(4, 3);
-    Actor_SetAttachedEffect(4, 258);
+    Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     FieldEvent_Wait(40);
     FieldEvent_Wait(60);
     FieldCamera_SetSpeed(3);
@@ -517,7 +517,8 @@ s32 Func_02000a78(void) {
     struct FieldSprite *sprite = object->sprite;
 
     if ((gFrameCount & 127) == 0)
-      Actor_SetAttachedEffect(29, 258);
+      Actor_SetAttachedEffect(29,
+                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     if (sprite != NULL) {
       *(sprite->unk14 + 3) = 30;
       *(sprite->unk14 + 2) = 252;
@@ -736,7 +737,7 @@ void Func_02000cac(s32 arg) {
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(1, 0, 5);
   FieldActor_StartRepeatedMotion(3, 3);
-  Actor_SetAttachedEffect(3, 258);
+  Actor_SetAttachedEffect(3, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   FieldEvent_ShowMessageThenWait(3, 0, 5);
   Actor_RunRepeatedMotion(1, 2);

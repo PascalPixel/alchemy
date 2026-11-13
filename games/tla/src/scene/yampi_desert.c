@@ -872,7 +872,8 @@ loop_3:
   YampiDesert_RaiseSandCloud();
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   FieldEvent_Wait(20);
-  FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);
+  FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 27);
   FieldEvent_Wait(30);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
@@ -1992,7 +1993,8 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   FieldEvent_Wait(24);
   YampiDesert_BurstSand(leader->x, leader->y, leader->z);
   Sound_Play(SE_THUMP);
-  FieldEffect_SetAttached(party->currentOwner, 0x101);
+  FieldEffect_SetAttached(party->currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Motion_SetModeAndWaitAnimation(party->currentOwner, 49);
   Sound_Play(SE_DUST_PUFF);
   actor8->motionFlags = 3;

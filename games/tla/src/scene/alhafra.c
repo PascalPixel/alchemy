@@ -198,7 +198,8 @@ void Alhafra_SailorToldToWork(void) {
   Actor_ShowEmoteById(0x13, EMOTE_IN_FRONT | EMOTE_SCOWL, 0x1e);
   FieldEvent_ShowMessageThenWait(0x13, 0, 0xa);
   FieldActor_StartRepeatedMotion(24, 3);
-  FieldEffect_SetAttached(0x18, 0x102);
+  FieldEffect_SetAttached(0x18,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Actor_FaceDirection(19, FACING_WEST, 0);
   FieldEvent_ShowMessageThenWait(0x18, 0, 0);
@@ -634,7 +635,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_FaceDirection(29, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(30, FACING_NORTHEAST, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x101e, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 30, 0, 0xa);
   Actor_SetModeById(29, 1);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(29, 3);
@@ -702,7 +703,8 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_ArmCallback(33, 0xd000, 0);
   Event_Wait(30);
   FieldActor_StartRepeatedMotion(33, 3);
-  FieldEffect_SetAttached(0x21, 0x102);
+  FieldEffect_SetAttached(0x21,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(50);
   Actor_FaceDirection(33, FACING_WEST, 0);
   Event_Wait(20);
@@ -713,7 +715,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(20);
   Actor_ArmCallback(29, 0, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x201d, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 29, 0, 0xa);
   Actor_ShowEmoteById(0x22, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0x28);
   FieldEvent_ShowMessageThenWait(0x22, 0, 0xa);
   Actor_FaceDirection(29, FACING_WEST, 0);
@@ -746,12 +748,12 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_WalkToAndWait(17, 448, 792);
   Actor_WalkToAndWait(17, 448, 808);
   Actor_WalkByAndWait(30, 8, 0);
-  FieldEvent_ShowMessageThenWait(0x101e, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 30, 0, 0xa);
   Actor_ShowEmoteById(0x11, EMOTE_IN_FRONT | EMOTE_QUESTION, 0x32);
   Actor_FaceDirection(17, FACING_WEST, 0);
   Event_Wait(20);
   Actor_ShowEmoteById(0x1e, EMOTE_IN_FRONT | EMOTE_SMILE, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x101e, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 30, 0, 0xa);
   Motion_SetVarCbAndRefresh(17, 2);
   Event_Wait(10);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->waitMode = 0;
@@ -922,7 +924,8 @@ void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
     Actor_WalkByAndWaitById(ACTOR_LOOKOUT, -8, 0);
     Event_Wait(15);
     Actor_StartRepeatedMotion(ACTOR_LOOKOUT, 3);
-    FieldEffect_SetAttached(ACTOR_LOOKOUT, 0x102);
+    FieldEffect_SetAttached(ACTOR_LOOKOUT,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
     Actor_GetById(ACTOR_LOOKOUT)->actionFlags &= 0xfe;
     Actor_WalkToAndWaitById(ACTOR_LOOKOUT, 192, 736);

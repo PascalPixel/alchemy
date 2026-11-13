@@ -1815,7 +1815,7 @@ void DehkanPlateau_CannonCornered(void) {
   Motion_SetVarCbAndRefresh(16, 3);
   Actor_SetAngle(16, FACING_WEST);
   Actor_WatchAndSetScript(16, gMainRoutineWork.currentOwner);
-  FieldEffect_SetAttached(16, 0x102);
+  FieldEffect_SetAttached(16, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Event_End();
 }
@@ -2187,12 +2187,14 @@ loop:
   if (i <= 16)
     goto loop;
   Sound_Play(SE_THUMP);
-  FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x101);
+  FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
-  FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x100);
+  FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
   Event_Wait(10);

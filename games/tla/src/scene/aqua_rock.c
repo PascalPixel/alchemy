@@ -630,7 +630,8 @@ void Func_02000d80(void) {
     if ((gFrameCount & 4) == 0)
       Func_02001d30(leader);
     if (result < 0) {
-      Actor_SetAttachedEffect(owner, 258);
+      Actor_SetAttachedEffect(owner,
+                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetMoveTarget(leader, leader->x, leader->y, leader->z - 0x80000);
       Actor_SelectAnimation(leader, 7);
       Actor_WaitForMove(leader);
@@ -728,7 +729,8 @@ void Func_0200106c(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 257);
+  FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SelectAnimation(object, 40);
   object->motionFlags = 3;
   for (i = 0; i < 180; i++) {
@@ -738,7 +740,7 @@ void Func_0200106c(void) {
   }
   state = &gMainRoutineWork;
   object->gravity = saved;
-  FieldEffect_SetAttached(state->currentOwner, 0);
+  FieldEffect_SetAttached(state->currentOwner, ATTACHED_EFFECT_REMOVE);
   Actor_SetSpriteFlags(object, 1);
   Actor_SelectAnimation(object, 1);
   state->renderMode = 0;
@@ -1206,7 +1208,8 @@ void Func_02001e00(void) {
   if ((gFrameCount & 4) == 0)
     Func_02001d30(leader);
   if (result < 0) {
-    Actor_SetAttachedEffect(owner, 0x102);
+    Actor_SetAttachedEffect(owner,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_SetMoveTarget(leader, leader->x, leader->y, leader->z + 0x80000);
     Actor_SelectAnimation(leader, 49);
     Actor_WaitForMove(leader);

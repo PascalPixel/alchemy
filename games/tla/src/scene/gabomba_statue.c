@@ -584,7 +584,8 @@ void Func_02000a20(struct Actor *object) {
   object->z = 0xf741cf;
   object->facing = FACING_SOUTH;
   party = &gMainRoutineWork;
-  Actor_SetAttachedEffect(party->currentOwner, 258);
+  Actor_SetAttachedEffect(party->currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAnimation(party->currentOwner, 27);
   FieldEvent_Wait(30);
   Actor_SetAnimation(party->currentOwner, 28);
@@ -1521,12 +1522,14 @@ void Func_02002394(void) {
     i++;
   } while (i <= 16);
   Event_PlaySound(SE_THUMP);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   actor->gravity = 0x10000;
   actor->bounce = 0x4000;
   System_Wait(10);
@@ -1728,8 +1731,9 @@ void GabombaStatue_SeeHowItWorks(void) {
   Actor_FaceDirection(7, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(6, FACING_WEST);
   Actor_SetAnimation(6, 3);
-  Event_ShowMessage(0x4006, 0);
-  ((void *)Event_OpenMessage(0x6005, 0));
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 6, 0);
+  ((void *)Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 5,
+                             0));
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
       0) {
     Func_0200578c_ArgsFirst(7, 256, 20);
@@ -1739,7 +1743,7 @@ void GabombaStatue_SeeHowItWorks(void) {
     Actor_WalkToAndWait(7, 364, 308);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
     Actor_FaceDirectionAndWait(7, FACING_SOUTHWEST);
-    Event_ShowMessage(0x6007, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 7, 0);
     (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
   } else {
     (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
@@ -1754,25 +1758,25 @@ void GabombaStatue_SeeHowItWorks(void) {
   }
   Actor_FaceDirectionAndWait(23, FACING_WEST);
   Actor_SetAnimationAndWait(23, 4);
-  Event_ShowMessage(0x6017, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 23, 0);
   Actor_FaceDirection(7, FACING_EAST, 0);
   Func_0200578c_ArgsFirst(7, 257, 40);
-  Event_ShowMessage(0x6017, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 23, 0);
   Actor_SetAnimationAndWait(7, 3);
   Func_0200578c_ArgsFirst(23, 265, 20);
-  Event_ShowMessage(0x6017, 0);
-  Event_ShowMessage(0x4007, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 23, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
   Func_0200578c_ArgsFirst(7, 256, 40);
-  Event_ShowMessage(0x4007, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
   Actor_SetAnimation(23, 3);
-  Event_ShowMessage(0x4017, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 23, 0);
   Func_0200578c_ArgsFirst(7, 265, 10);
-  Event_ShowMessage(0x4007, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
   Actor_SetSpeed(6, 0.8);
   Actor_WalkToAndWait(6, 440, 296);
   Actor_FaceDirectionAndWait(6, FACING_WEST);
   Actor_SetAnimationAndWait(6, 3);
-  Event_ShowMessage(0x4006, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 6, 0);
   Actor_FaceDirection(7, FACING_NORTHEAST, 0);
   Func_0200578c_ArgsFirst(7, 261, 0);
   Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
@@ -1780,7 +1784,7 @@ void GabombaStatue_SeeHowItWorks(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 80);
   Func_0200578c_ArgsFirst(7, 261, 40);
   Actor_FaceDirectionAndWait(7, FACING_EAST);
-  Event_ShowMessage(0x4007, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
   Actor_FaceDirection(5, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(6, FACING_WEST);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
@@ -1801,7 +1805,7 @@ void GabombaStatue_SeeHowItWorks(void) {
   Event_ShowMessage(6, 0);
   Event_ShowMessage(23, 0);
   Event_ShowMessage(7, 0);
-  Event_ShowMessage(0x2005, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
   FieldCamera_MoveTo(392, CAMERA_KEEP, 292, 1);
   FieldCamera_WaitForArrival();
   Actor_SetAnimation(23, 3);
@@ -1895,7 +1899,7 @@ void GabombaStatue_SawEnergyFlow(void) {
   FieldCamera_WaitForArrival();
   Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
   Event_ShowMessage(5, 0);
-  Actor_SetAttachedEffect(24, 258);
+  Actor_SetAttachedEffect(24, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Event_ShowMessage(24, 0);
   Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, PIXELS(472),
@@ -1909,13 +1913,13 @@ void GabombaStatue_SawEnergyFlow(void) {
   FieldCamera_MoveTo(440, CAMERA_KEEP, 264, 1);
   FieldCamera_WaitForArrival();
   FieldActor_Jump(24, 4, 10);
-  Event_ShowMessage(0x4018, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 24, 0);
   Actor_SetAnimationAndWait(7, 4);
-  Event_ShowMessage(0x8007, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 7, 0);
   Actor_ShowEmote(24, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Event_ShowMessage(0x8006, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 6, 0);
   Actor_SetAnimation(23, 4);
-  Event_ShowMessage(0x9017, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_BELOW | 23, 0);
   FieldEvent_Wait(20);
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0, 0);

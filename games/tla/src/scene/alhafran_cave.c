@@ -475,12 +475,12 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldActor_Jump(ACTOR_EOLEO, 6, 23);
   FieldEvent_ShowMessageThenWait(ACTOR_EOLEO, 0, 10);
   Actor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  FieldEvent_ShowMessageThenWait(0x2016, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 22, 0, 10);
   Actor_RunRepeatedMotion(16, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(16, 0, 10);
   Actor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  FieldEvent_ShowMessageThenWait(0x2016, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 22, 0, 10);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   (void *)Actor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_SCOWL, 50);
@@ -489,7 +489,8 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_Wait(20);
   Actor_SetAnimation(ACTOR_EOLEO, 3);
   FieldActor_StartRepeatedMotion(ACTOR_JAILER, 3);
-  Actor_SetAttachedEffect(ACTOR_JAILER, 0x102);
+  Actor_SetAttachedEffect(ACTOR_JAILER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   EventCamera_FollowActor(ACTOR_JAILER, 1);
   FieldCamera_WaitForArrival();
@@ -544,7 +545,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldCamera_MoveTo(808, CAMERA_KEEP, 288, 1);
   FieldCamera_WaitForArrival();
   FieldActor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, 0x102);
+  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
   Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   FieldCamera_MoveTo(744, CAMERA_KEEP, 272, 1);
@@ -556,7 +557,8 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(40);
   FieldActor_StartRepeatedMotion(ACTOR_BRIGGS, 3);
-  Actor_SetAttachedEffect(ACTOR_BRIGGS, 0x102);
+  Actor_SetAttachedEffect(ACTOR_BRIGGS,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
@@ -579,7 +581,8 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(ACTOR_EOLEO, 3);
-  Actor_SetAttachedEffect(ACTOR_EOLEO, 0x102);
+  Actor_SetAttachedEffect(ACTOR_EOLEO,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Actor_FaceDirection(ACTOR_EOLEO, FACING_NORTH, 0);
   FieldEvent_Wait(30);
@@ -633,7 +636,8 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_JAILER, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  Actor_SetAttachedEffect(ACTOR_EOLEO, 0x101);
+  Actor_SetAttachedEffect(ACTOR_EOLEO,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   FieldEvent_ShowMessageThenWait(ACTOR_EOLEO, 0, 20);
   gAlhafranCave_ClearedWord = 0;
   Task_AddFrame(AlhafranCave_IdleTask, 0x480);
@@ -650,14 +654,15 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_WalkByAndWait(ACTOR_CHAUCHA, 0, 8);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x2016, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 22, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_EOLEO, 2);
   FieldEvent_Wait(10);
-  Actor_SetAttachedEffect(ACTOR_EOLEO, 0x100);
+  Actor_SetAttachedEffect(ACTOR_EOLEO,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   FieldEvent_ShowMessageThenWait(ACTOR_EOLEO, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_CHAUCHA, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x2016, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 22, 0, 10);
   Actor_FaceDirection(ACTOR_EOLEO, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_EOLEO, 3);
@@ -665,19 +670,19 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_EOLEO, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_CHAUCHA, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x2016, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 22, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_EOLEO, 3);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_EOLEO, 0, 10);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_EAST_NORTHEAST, 0);
   FieldEvent_Wait(30);
-  FieldEvent_ShowMessageThenWait(0x2016, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 22, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_JAILER, 3);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x2016, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 22, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_BRIGGS, 3);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_CHAUCHA, 3);
@@ -696,7 +701,8 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_WalkByAndWait(ACTOR_EOLEO, 52, 0);
   FieldEvent_Wait(15);
   FieldActor_StartRepeatedMotion(ACTOR_CHAUCHA, 3);
-  Actor_SetAttachedEffect(ACTOR_CHAUCHA, 0x102);
+  Actor_SetAttachedEffect(ACTOR_CHAUCHA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   FieldActor_WatchAndSetScript(4, 21);
   FieldActor_SetSpritePriority(ACTOR_CHAUCHA, 2);

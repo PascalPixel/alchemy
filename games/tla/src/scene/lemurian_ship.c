@@ -433,7 +433,8 @@ void Func_02000870(void) {
     state = &leader->terrainId;
     if (opened) {
       Event_PlaySound(SE_243);
-      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
+      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       MapGrid_SetShake(0, 2, 1);
       Event_Wait(20);
       MapGrid_SetShake(0, 0, 0);
@@ -464,7 +465,8 @@ void Func_02000870(void) {
         *bits = value;
       }
       Event_PlaySound(SE_243);
-      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
+      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       MapGrid_SetShake(0, 2, 1);
       Event_Wait(20);
       MapGrid_SetShake(0, 0, 0);
@@ -487,7 +489,8 @@ void Func_02000870(void) {
       Actor_MoveToAndWait(9, 832, 74);
       Actor_Jump(9, 4, 0);
       Actor_MoveToAndWait(9, 856, 88);
-      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
+      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Event_Wait(20);
       Event_PlaySound(SE_CRUNCH);
       MapGrid_CopyCellsTo(72, 68, 50, 64, 3, 3);
@@ -512,7 +515,8 @@ void Func_02000af4(void) {
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 812, 72);
     Event_PlaySound(SE_243);
-    Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
+    Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     MapGrid_SetShake(0, 2, 1);
     Event_Wait(20);
     MapGrid_SetShake(0, 0, 0);
@@ -536,7 +540,8 @@ void Func_02000af4(void) {
     Event_ResolvePendingActions(0);                                            \
     Actor_FaceActorById(id, gMainRoutineWork.currentOwner, 0);                 \
     Actor_StartRepeatedMotion(id, 2);                                          \
-    Actor_SetAttachedEffect(id, 0x102);                                        \
+    Actor_SetAttachedEffect(id,                                                \
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);  \
     Event_Wait(20);                                                            \
     gMainRoutineWork.battleRule24b = 2;                                        \
     Field_RequestBattleFromEncounterTable(11, 0);                              \

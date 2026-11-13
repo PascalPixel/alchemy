@@ -136,23 +136,23 @@ void AlhafraManor_DefendTheMayor(void) {
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(8, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x4008, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
   Motion_SetModeAndWaitAnimation(8, 3);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x4008, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
   Motion_SetVarCbAndRefresh(8, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x4008, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
   Actor_ArmCallback(8, FACING_NORTHEAST, 0);
   Event_Wait(50);
   Actor_ArmCallback(8, FACING_EAST, 0);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x4008, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
   Motion_SetVarCbAndRefresh(8, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x4008, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
   Motion_SetModeAndWaitAnimation(8, 4);
-  Event_ShowMessageThenWait(0x4008, 0, 10);
+  Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
   Event_End();
 }
 
@@ -306,9 +306,9 @@ void AlhafraManor_BriggsEscapes(void) {
   Event_Wait(20);
   Event_ShowMessageThenWait(13, 0, 10);
   Motion_SetModeAndWaitAnimation(9, 4);
-  FieldEvent_ShowMessageThenWait(0x2009, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 10);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  FieldEvent_ShowMessageThenWait(0x2009, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 10);
   Motion_SetVarCbAndRefresh(6, 2);
   Event_Wait(10);
   Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
@@ -318,15 +318,15 @@ void AlhafraManor_BriggsEscapes(void) {
   Event_Wait(30);
   Motion_SetModeAndWaitAnimation(5, 3);
   Event_Wait(20);
-  Event_ShowMessageThenWait(0x2005, 0, 10);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 5, 0, 10);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x2009, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 10);
   Actor_StartRepeatedMotion(6, 3);
-  Actor_SetAttachedEffect(6, 258);
+  Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_StartRepeatedMotion(5, 3);
-  Actor_SetAttachedEffect(5, 258);
+  Actor_SetAttachedEffect(5, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Actor_FaceDirection(6, FACING_NORTHEAST, 0);
   Actor_FaceDirection(5, FACING_NORTHEAST, 0);
@@ -336,7 +336,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(9, 3);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x2009, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 10);
   Actor_FaceDirection(9, FACING_WEST, 0);
   Event_Wait(40);
   EVENT_WORD(0x1ac) = 0x100;
@@ -358,7 +358,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
   Actor_StartRepeatedMotion(9, 3);
-  Actor_SetAttachedEffect(9, 258);
+  Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Actor_FaceDirection(6, FACING_NORTHEAST, 0);
   Actor_FaceDirection(5, FACING_NORTHEAST, 0);
@@ -370,9 +370,9 @@ void AlhafraManor_BriggsEscapes(void) {
   Event_Wait(35);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
   Actor_StartRepeatedMotion(6, 3);
-  Actor_SetAttachedEffect(6, 258);
+  Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_StartRepeatedMotion(5, 3);
-  Actor_SetAttachedEffect(5, 258);
+  Actor_SetAttachedEffect(5, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
   Motion_SetModeAndWaitAnimation(9, 3);
   Event_Wait(30);
@@ -403,7 +403,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
   Event_Wait(20);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
-  Event_ShowMessageThenWait(0x1009, 0, 10);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 9, 0, 10);
   Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 45);
   Actor_WalkByAndWait(8, -16, 0);
   Actor_FaceDirection(8, FACING_NORTHWEST, 0);
@@ -543,10 +543,10 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_Stop(5);
   Actor_Stop(6);
   Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
-  FieldEvent_ShowMessageThenWait(0x2009, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 10);
   Actor_ArmCallback(9, 0xb000, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x2009, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 10);
   Actor_ArmCallback(6, FACING_EAST, 0);
   Actor_FaceDirection(5, FACING_WEST, 0);
   Actor_FaceDirection(4, FACING_NORTHWEST, 0);
@@ -554,7 +554,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_FaceDirection(13, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(50);
   Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-  FieldEvent_ShowMessageThenWait(0x2009, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 10);
   Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(4, FACING_SOUTHEAST, 0);
@@ -563,7 +563,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Event_Wait(35);
   Motion_SetVarCbAndRefresh(9, 2);
   Event_Wait(10);
-  Event_ShowMessageThenWait(0x2009, 0, 10);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 10);
   Actor_WalkByAndWaitById(8, -32, 0);
   Event_Wait(10);
   Actor_Jump(8, 6, 15);
@@ -597,7 +597,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_ArmCallback(7, FACING_EAST, 0);
   Actor_ArmCallback(13, 0x5000, 0);
   Event_Wait(20);
-  FieldMessage_ShowAtActor(0x2005, 0);
+  FieldMessage_ShowAtActor(SPEAKER_PORTRAIT_RIGHT | 5, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Func_020015f0();
     Event_Wait(30);
@@ -613,15 +613,15 @@ void AlhafraManor_BriggsEscapes(void) {
   }
   Motion_SetModeAndWaitAnimation(13, 3);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x200d, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 13, 0, 10);
   Actor_FaceDirection(7, FACING_NORTHEAST, 0);
   Actor_ArmCallback(4, FACING_NORTH, 0);
   Event_Wait(30);
   Actor_ShowEmoteById(13, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  FieldEvent_ShowMessageThenWait(0x200d, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 13, 0, 10);
   Motion_SetModeAndWaitAnimation(13, 3);
   Event_Wait(10);
-  Event_ShowMessageThenWait(0x200d, 0, 10);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 13, 0, 10);
   Actor_SetModeById(4, 3);
   Actor_SetModeById(6, 3);
   Actor_SetModeById(5, 3);

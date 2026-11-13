@@ -392,14 +392,16 @@ void AncientLemuria_MeetTheLemurians(void) {
   if (result == 0) {
     Event_Wait(30);
     Actor_StartRepeatedMotion(10, 3);
-    FieldEffect_SetAttached(10, 0x102);
+    FieldEffect_SetAttached(10,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
     Event_ShowMessageThenWait(10, 0, 10);
     ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
   } else {
     Event_Wait(40);
     Actor_StartRepeatedMotion(10, 3);
-    FieldEffect_SetAttached(10, 0x102);
+    FieldEffect_SetAttached(10,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
     ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
     Event_ShowMessageThenWait(10, 0, 0);
@@ -415,7 +417,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_WaitForMoveById(11);
   Event_Wait(20);
   Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  FieldEvent_ShowMessageThenWait(0x200b, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 11, 0, 10);
   Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(10);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
@@ -453,7 +455,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldMessage_ShowAtActor(9, 0);
   Event_Wait(20);
-  Event_ShowMessageThenWait(0x800a, 0, 0);
+  Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 10, 0, 0);
   Message_CloseFinishedWindows();
   Event_Wait(10);
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
@@ -485,9 +487,9 @@ void AncientLemuria_MeetTheLemurians(void) {
   Motion_SetModeAndWaitAnimation(4, 3);
   Event_Wait(25);
   Actor_StartRepeatedMotion(9, 3);
-  Actor_SetAttachedEffect(9, 0x102);
+  Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_StartRepeatedMotion(10, 3);
-  Actor_SetAttachedEffect(10, 0x102);
+  Actor_SetAttachedEffect(10, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Actor_ArmCallback(9, FACING_EAST, 0);
   Actor_FaceDirection(10, FACING_WEST, 0);
@@ -512,7 +514,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   Event_ShowMessageThenWait(7, 0, 10);
   Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  FieldEvent_ShowMessageThenWait(0x200b, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 11, 0, 10);
   Actor_Jump(9, 6, 15);
   Actor_Jump(9, 6, 23);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
@@ -521,30 +523,30 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_Jump(11, 6, 15);
   Actor_Jump(11, 6, 23);
   Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
-  FieldEvent_ShowMessageThenWait(0x200b, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 11, 0, 10);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Event_ShowMessageThenWait(10, 0, 10);
   Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  FieldEvent_ShowMessageThenWait(0x200b, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 11, 0, 10);
   Actor_ArmCallback(7, FACING_SOUTHEAST, 0);
   Event_Wait(30);
   Motion_SetModeAndWaitAnimation(7, 4);
   Event_ShowMessageThenWait(7, 0, 10);
   Actor_StartRepeatedMotion(11, 3);
-  Actor_SetAttachedEffect(11, 0x102);
+  Actor_SetAttachedEffect(11, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(50);
   Motion_SetModeAndWaitAnimation(7, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(7, 0, 10);
   Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  FieldEvent_ShowMessageThenWait(0x200b, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 11, 0, 10);
   Actor_WalkByAndWait(11, 0, -16);
   Actor_FaceDirection(11, FACING_NORTH_NORTHWEST, 0);
   Actor_ArmCallback(7, FACING_EAST, 0);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(11, 3);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x200b, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 11, 0, 10);
   Motion_SetModeAndWaitAnimation(9, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(9, 0, 10);
@@ -587,14 +589,14 @@ void AncientLemuria_MeetTheLemurians(void) {
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(11, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x200b, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 11, 0, 10);
   Actor_ArmCallback(7, FACING_EAST, 0);
   Event_Wait(20);
   Event_ShowMessageThenWait(7, 0, 10);
   Actor_StartRepeatedMotion(9, 3);
-  Actor_SetAttachedEffect(9, 0x102);
+  Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_StartRepeatedMotion(10, 3);
-  Actor_SetAttachedEffect(10, 0x102);
+  Actor_SetAttachedEffect(10, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHWEST, 0);
@@ -656,7 +658,7 @@ void AncientLemuria_MeetTheLemurians(void) {
       Event_Wait(30);
       Motion_SetModeAndWaitAnimation(11, 3);
       Event_Wait(10);
-      Event_ShowMessageThenWait(0x200b, 0, 10);
+      Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 11, 0, 10);
       ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
     } else {
       Event_Wait(35);
@@ -666,7 +668,7 @@ void AncientLemuria_MeetTheLemurians(void) {
       Event_Wait(30);
       Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
       ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
-      Event_ShowMessageThenWait(0x200b, 0, 10);
+      Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 11, 0, 10);
     }
     ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count += 2;
   } else {
@@ -684,7 +686,7 @@ void AncientLemuria_MeetTheLemurians(void) {
       Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
       Motion_SetVarCbAndRefresh(11, 2);
       Event_Wait(10);
-      Event_ShowMessageThenWait(0x200b, 0, 10);
+      Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 11, 0, 10);
       ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
     } else {
       Event_Wait(35);
@@ -695,7 +697,7 @@ void AncientLemuria_MeetTheLemurians(void) {
       Actor_Jump(11, 6, 15);
       Actor_Jump(11, 6, 23);
       ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
-      Event_ShowMessageThenWait(0x200b, 0, 10);
+      Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 11, 0, 10);
     }
     Actor_FaceDirectionById(7, FACING_NORTH);
     Event_Wait(10);
@@ -737,7 +739,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_WalkByAndWait(11, 0, -10);
   Actor_ArmCallback(11, FACING_WEST, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x200b, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 11, 0, 10);
   Actor_ArmCallback(7, FACING_EAST, 0);
   Event_Wait(20);
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
@@ -750,7 +752,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_FaceDirection(7, FACING_NORTH, 0);
   Event_Wait(40);
   Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  Event_ShowMessageThenWait(0x200b, 0, 10);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 11, 0, 10);
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
   Actor_ArmCallback(7, FACING_EAST, 0);
   Event_Wait(30);

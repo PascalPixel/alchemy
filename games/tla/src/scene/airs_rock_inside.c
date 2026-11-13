@@ -6,6 +6,7 @@
 /// restores the party's PP (AirsRockInside_CheckPsynergyStone).
 
 #include "shared/map_cells.h"
+#include "field/emote.h"
 #include "sounds.h"
 #include "shared/actors.h"
 #include "types.h"
@@ -3086,12 +3087,14 @@ void Func_0200505c(void) {
         &options);
   }
   Sound_Play(SE_THUMP);
-  FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 257);
+  FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
   Call3((void (*)())MapGrid_SetScreenShake, 0x50000, 0x50000, 0x10000);
   Call3((void (*)())MapGrid_SetScreenShake, -1, -1, 0xe666);
   MapGrid_WaitForShakeToSettle();
-  FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 256);
+  FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;

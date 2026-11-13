@@ -620,7 +620,8 @@ dust:
   Event_PlaySound(SE_590);
   Event_PlaySound(SE_FLOOR_SWITCH);
   MapGrid_SetShake(2, 2, 0.9);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SelectAnimation(leader, 40);
   FieldEvent_Wait(40);
   Event_PlaySound(SE_DUST_PUFF);
@@ -638,7 +639,8 @@ fall:
   }
   Event_PlaySound(SE_THUMP);
   leader->gravity = gravity;
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_REMOVE);
   Actor_SelectAnimation(leader, 38);
   MapGrid_SetShake(1, 4, 1);
   System_Wait(10);

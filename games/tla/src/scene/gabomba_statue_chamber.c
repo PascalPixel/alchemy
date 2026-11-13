@@ -157,12 +157,12 @@ void Func_02000184(void) {
   Actor_ArmCallback(10, 0, 20);
   Actor_FaceDirection(10, FACING_WEST, 40);
   Actor_ArmCallback(10, 0, 20);
-  Event_ShowMessage(0x200a, 0);
-  Actor_SetAttachedEffect(9, 258);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 10, 0);
+  Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessageAndWait(9, 0);
   Actor_FaceDirectionAndWait(10, FACING_NORTH_NORTHWEST);
   Actor_Jump(10, 4, 20);
-  Event_ShowMessageAndWait(0x200a, 0);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 10, 0);
   Func_02000100();
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 40);
@@ -197,14 +197,15 @@ void Func_02000184(void) {
   Func_02000100();
   Actor_Jump(14, 2, 10);
   Actor_Jump(14, 4, 10);
-  Event_ShowMessage(0x200e, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 14, 0);
   Actor_SetMovementTypeAndWaitById(14, gData_02001f78);
-  Event_ShowMessageAndWait(0x200e, 0);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 14, 0);
   Actor_SetSpeed(14, 1.6);
   Actor_WalkToAndWait(14, 392, 164);
   Actor_ShowEmoteById(14, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   Actor_Jump(14, 6, 20);
-  Event_ShowMessageAndWait(0x600e, 0);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 14,
+                           0);
   Actor_WalkToAndWait(14, 392, 220);
   Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
@@ -256,8 +257,9 @@ void Func_02000184(void) {
   Actor_ArmCallback(9, 0, 0);
   Actor_SetMovementTypeAndWaitById(12, gData_02001fe4);
   Func_02000100();
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 258);
-  Actor_SetAttachedEffect(9, 258);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
   Actor_FaceDirection(9, FACING_NORTH_NORTHEAST, 20);
   Func_02000100();
@@ -537,7 +539,7 @@ void Func_02000e60(void) {
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Event_SetMessageId((s32)MsgIHaveFollowed);
-  Actor_SetAttachedEffect(10, 0x102);
+  Actor_SetAttachedEffect(10, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessageAndWait(10, 0);
   Actor_FaceDirectionAndWait(10, FACING_WEST);
   Event_ShowMessageAndWait(10, 0);
@@ -662,9 +664,9 @@ void Func_020010d4(void) {
   Actor_Jump(7, 4, 10);
   Event_SetMessageId(MsgTheBlackOrb);
   Event_ShowMessageAndWait(7, 0);
-  Actor_SetAttachedEffect(6, 258);
+  Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirectionAndWait(6, FACING_WEST);
-  Event_ShowMessage(0x4006, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 6, 0);
   Actor_ShowEmoteById(5, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   Event_ShowMessageAndWait(5, 0);
   FieldActor_SetPositionAndResetMotion(((s32)Actor_GetById(13)), PIXELS(392), 0,
@@ -708,24 +710,24 @@ void Func_020010d4(void) {
   wait(40);
   Scene_PlayMusic();
   Actor_ShowEmoteById(11, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Event_ShowMessage(0x400b, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 11, 0);
   Actor_ShowEmoteById(6, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
-  Event_ShowMessage(0x4006, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 6, 0);
   Actor_FaceDirectionById(5, turnA);
-  Event_ShowMessageAndWait(0x1005, 0);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 5, 0);
   Actor_ArmCallback(5, FACING_NORTHWEST, 0);
   Actor_SetSpeed(6, 0.8);
   Actor_WalkToAndWait(6, 400, 172);
   Actor_SetModeById(6, 9);
   Event_Wait(20);
-  Event_ShowMessage(0x4006, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 6, 0);
   Actor_SetModeById(7, 4);
   Event_ShowMessageAndWait(7, 0);
-  Event_ShowMessageAndWait(0x4006, 0);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 6, 0);
   Actor_ShowEmoteById(11, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Event_ShowMessage(0x400b, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 11, 0);
   Actor_FaceDirectionAndWait(11, FACING_SOUTHEAST + FACING_STEP);
-  Event_ShowMessageAndWait(0x400b, 0);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 11, 0);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   Sound_Play(MUS_000);
   {
@@ -749,7 +751,8 @@ void Func_020010d4(void) {
   Actor_Jump(12, 4, 10);
   FieldMessage_ShowAtActor(12, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
-    FieldEffect_SetAttached(12, 258);
+    FieldEffect_SetAttached(12,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(20);
     Event_ShowMessageAndWait(12, 0);
     *(u16 *)(EVENT_WORK + 0x1c4) += 1;
@@ -764,7 +767,7 @@ void Func_020010d4(void) {
   Event_ShowMessageAndWait(12, 0);
   Actor_ShowEmoteById(6, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
   Event_ShowMessageAndWait(6, 0);
-  FieldEffect_SetAttached(12, 258);
+  FieldEffect_SetAttached(12, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
   Event_ShowMessageAndWait(12, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
@@ -863,7 +866,7 @@ void Func_02001710(void) {
   Actor_MoveToAndWait(8, 0x1a8, 152);
   Actor_FaceDirectionAndWait(12, FACING_SOUTH_SOUTHWEST);
   FieldEvent_SetMessageId((s32)MsgIMightBe);
-  Event_ShowMessage(0x400c, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 12, 0);
   Actor_SetAnimationAndWait(12, 3);
   Actor_WalkToAndWait(12, 0x188, 140);
   System_Wait(1);
@@ -871,30 +874,30 @@ void Func_02001710(void) {
   System_Wait(1);
   Actor_ShowEmoteById(5, turn, 20);
   Actor_FaceDirection(5, angleC, 0);
-  FieldMessage_ShowAtActor(0x4005, 0);
+  FieldMessage_ShowAtActor(SPEAKER_WINDOW_ABOVE | 5, 0);
   if (Event_AskYesNoWithActorAnimation(*owner, 0) == 0) {
     Actor_FaceDirectionAndWait(7, FACING_EAST);
     Actor_SetAnimation(7, 3);
-    Event_ShowMessage(0x4007, 0);
+    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
     ((struct GroupWork *)heap->eventWork)->unk1c4++;
   } else {
     ((struct GroupWork *)heap->eventWork)->unk1c4++;
     Actor_FaceDirectionAndWait(7, angleC);
-    Event_ShowMessage(0x4007, 0);
+    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
     Func_02001f08();
   }
   Actor_FaceDirection(6, FACING_WEST, 0);
-  Actor_SetAttachedEffect(6, 0x102);
+  Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
-  Event_ShowMessage(0x4006, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 6, 0);
   Actor_FaceDirectionAndWait(11, FACING_EAST);
   Actor_SetAnimation(11, 4);
-  Event_ShowMessage(0x400b, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 11, 0);
   Actor_FaceDirectionAndWait(11, FACING_NORTH_NORTHEAST);
-  Event_ShowMessage(0x400b, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 11, 0);
   Actor_FaceDirectionAndWait(11, FACING_SOUTH_SOUTHEAST);
   Actor_SetAnimationAndWait(11, 3);
-  Event_ShowMessage(0x400b, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 11, 0);
   Actor_FaceDirection(7, FACING_WEST, 0);
   Actor_FaceDirection(7, FACING_WEST, 20);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);

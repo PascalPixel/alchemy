@@ -349,12 +349,14 @@ loop:
   if (i <= 16)
     goto loop;
   Event_PlaySound(SE_THUMP);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   actor->gravity = 0x10000;
   actor->bounce = 0x4000;
   FieldEvent_Wait(10);
@@ -453,7 +455,7 @@ extern u32 gData_0200559c[];
 
 s32 Func_020006f8(void) {
   Actor_StartScript(((s32)Actor_Get(9)), (s32)gData_0200559c);
-  Actor_SetAttachedEffect(0xa, 0x102);
+  Actor_SetAttachedEffect(0xa, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   return 0;
 }
 
@@ -464,7 +466,7 @@ s32 Func_02000718(void) {
   Actor_StartScript(object, (s32)gData_020055c0);
   object->x = 0x1d80000;
   Actor_SetAnimationSpeed(object, 0x10);
-  Actor_SetAttachedEffect(0xa, 0x102);
+  Actor_SetAttachedEffect(0xa, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   return 0;
 }
 
@@ -474,7 +476,7 @@ s32 Func_02000748(void) {
   t0 = ((s32)Actor_Get(9));
   Actor_StartScript(t0, (s32)gData_02005610);
   Actor_SetAnimationSpeed(t0, 0);
-  Actor_SetAttachedEffect(0xa, 0x102);
+  Actor_SetAttachedEffect(0xa, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   return 0;
 }
 
@@ -660,7 +662,8 @@ void Func_02000b6c(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     if (leader->x >> 20 == 38 && leader->z >> 20 == 25) {
-      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 258);
+      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);
       leader->velocityY = PIXELS(6);
       FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
@@ -4071,7 +4074,8 @@ burst:
   Event_PlaySound(SE_590);
   Event_PlaySound(SE_FLOOR_SWITCH);
   MapGrid_SetShake(2, 2, 0.9);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 257);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SelectAnimation(leader, 40);
   FieldEvent_Wait(40);
   Event_PlaySound(SE_DUST_PUFF);
@@ -4085,7 +4089,7 @@ burst:
   Event_PlaySound(SE_THUMP);
   work = &gMainRoutineWork;
   leader->gravity = gravity;
-  Actor_SetAttachedEffect(work->currentOwner, 0);
+  Actor_SetAttachedEffect(work->currentOwner, ATTACHED_EFFECT_REMOVE);
   Actor_SelectAnimation(leader, 38);
   MapGrid_SetShake(1, 4, 1);
   System_Wait(10);

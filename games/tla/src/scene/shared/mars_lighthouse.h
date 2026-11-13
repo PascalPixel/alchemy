@@ -273,7 +273,8 @@
     Party_AddHp(-10, 0);                                                       \
     work->downCount = 0;                                                       \
     work->standingCount = 0;                                                   \
-    Actor_SetAttachedEffect(leader, 258);                                      \
+    Actor_SetAttachedEffect(leader,                                            \
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);  \
     for (i = 0; i < count; i++) {                                              \
       struct MainRoutineWork *main = &gMainRoutineWork;                        \
       struct BattleUnit *unit = Unit_Get(main->activeOwners[i]);               \

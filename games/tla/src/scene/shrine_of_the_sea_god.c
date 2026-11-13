@@ -12,6 +12,7 @@
 
 #include "types.h"
 #include "field/emote.h"
+#include "field/speaker.h"
 #include "flags.h"
 #include "sounds.h"
 #include "system/main_routine_work.h"
@@ -973,7 +974,8 @@ void Func_02001340(struct ShrineOfTheSeaGodObject *object,
   u32 n;
   u32 i;
 
-  FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 258);
+  FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Sound_Play(SE_HIDDEN_PASSAGE_OPEN);
   object->motionFlags = 0;
   for (n = 0; n <= 1; n++) {
@@ -1193,7 +1195,7 @@ void ShrineOfTheSeaGod_ThrowRopeAgain(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgFieldRopeThrownAgain);
-  Event_ShowMessageAndWait(0x200c, 0);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 12, 0);
   ShrineOfTheSeaGod_ObjSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   ShrineOfTheSeaGod_ObjSpeed(14, 0xcccc, 0x6666);
   ShrineOfTheSeaGod_ObjWalk(gMainRoutineWork.currentOwner, 272, 336);
@@ -1223,11 +1225,11 @@ void ShrineOfTheSeaGod_ThrowRopeAgain(void) {
   ShrineOfTheSeaGod_MessagePut(0x800d, 0);
   ShrineOfTheSeaGod_MessagePut(0x400c, 0);
   Actor_ArmCallback(13, 0, 0);
-  FieldEffect_SetAttached(13, 258);
+  FieldEffect_SetAttached(13, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
-  Event_ShowMessageAndWait(0x800d, 0);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 13, 0);
   Motion_SetModeAndWaitAnimation(12, 3);
-  Event_ShowMessageAndWait(0x400c, 0);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 12, 0);
   Camera_SetSpeedParameters(0x33333, 0x6666);
   ShrineOfTheSeaGod_CamMove(420 << 16, -1, 200 << 16, 1);
   ShrineOfTheSeaGod_ObjSpeed(12, 0x19999, 0xcccc);
@@ -1349,7 +1351,7 @@ void ShrineOfTheSeaGod_LashRope(void) {
   ShrineOfTheSeaGod_MessagePut(0x400d, 0);
   ShrineOfTheSeaGod_ObjTurn(14, 0xb000, 40);
   ShrineOfTheSeaGod_ObjTurn(14, 0x8000, 0);
-  Event_ShowMessageThenWait(0x200e, 0, 60);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 14, 0, 60);
   ShrineOfTheSeaGod_MessagePut(0x400d, 0);
   Actor_SetModeById(13, 3);
   ShrineOfTheSeaGod_ObjPlace(12, 394 << 16, 286 << 16);

@@ -262,7 +262,7 @@ void LemuriaInteriors_PiersVisitsUncle(void) {
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 45);
   Actor_FaceDirection(12, FACING_WEST, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x200c, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 12, 0, 10);
   Actor_FaceDirection(4, FACING_EAST, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(4, 3);
@@ -337,7 +337,7 @@ void LemuriaInteriors_PiersVisitsUncle(void) {
   Actor_FaceDirection(4, FACING_NORTHEAST, 0);
   Actor_FaceDirection(12, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x200c, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 12, 0, 10);
   Actor_RunRepeatedMotion(7, 2);
   Event_Wait(20);
   Actor_FaceDirection(7, FACING_SOUTHWEST, 0);
@@ -357,7 +357,7 @@ void LemuriaInteriors_PiersVisitsUncle(void) {
   Actor_FaceDirection(7, FACING_WEST, 0);
   Event_Wait(20);
   Actor_StartRepeatedMotion(7, 3);
-  Actor_SetAttachedEffect(7, 0x102);
+  Actor_SetAttachedEffect(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(50);
   Actor_WalkByAndWait(7, -12, 0);
   Event_Wait(10);
@@ -399,7 +399,7 @@ void LemuriaInteriors_PiersVisitsUncle(void) {
   object1->actionFlags |= 1;
   Event_Wait(10);
   Actor_StartRepeatedMotion(7, 3);
-  Actor_SetAttachedEffect(7, 0x102);
+  Actor_SetAttachedEffect(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(55);
   Actor_WatchAndSetScript(4, 7);
   Actor_WatchAndSetScript(12, 7);
@@ -415,18 +415,18 @@ void LemuriaInteriors_PiersVisitsUncle(void) {
   Actor_FaceDirection(12, FACING_WEST, 0);
   Actor_FaceDirection(4, FACING_EAST, 0);
   Event_Wait(20);
-  Event_OpenMessage(0x200c, 0);
+  Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 12, 0);
   result2 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (result2 != 0)
     goto answeredNo;
   Event_Wait(20);
-  Event_ShowMessageThenWait(0x200c, 0, 10);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 12, 0, 10);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
   goto answered;
 answeredNo:
   Event_Wait(40);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
-  Event_ShowMessageThenWait(0x200c, 0, 10);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 12, 0, 10);
 answered:
   Actor_SetAnimationAndWait(12, 3);
   Event_Wait(10);
@@ -477,14 +477,14 @@ visited:
   Event_SetMessageId((s32)MsgLemuriaInteriors10);
   Actor_SetSpeed(10, 0.8);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   Actor_WalkToAndWait(4, 136, 152);
   Actor_FaceDirection(4, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(10, 4);
-  FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-  FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   Actor_SetAnimationAndWait(4, 3);
   FieldEvent_Wait(20);
   Actor_FaceDirection(4, FACING_SOUTHEAST, 0);
@@ -492,7 +492,7 @@ visited:
   Actor_WalkByAndWait(4, 8, 16);
   Actor_FaceDirection(4, FACING_SOUTH, 0);
   Actor_RunRepeatedMotion(10, 2);
-  FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceDirection(4, FACING_NORTHWEST, 0);
   FieldEvent_Wait(30);
@@ -500,14 +500,14 @@ visited:
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(10, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   Actor_SetAnimationAndWait(10, 4);
-  FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   Actor_SetAnimationAndWait(10, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   FieldActor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, 0x102);
+  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
   Actor_WalkByAndWait(10, 12, 12);
   FieldEvent_Wait(10);
@@ -516,59 +516,59 @@ visited:
   answer = Event_AskYesNoWithActorAnimation(4, 0);
   if (answer == 0) {
     FieldEvent_Wait(30);
-    FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
+    FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
     FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452) =
         (FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452)) + 1;
   } else {
     FieldEvent_Wait(40);
     FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452) =
         (FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452)) + 1;
-    FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
+    FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   }
   Actor_SetAnimationAndWait(10, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
-  FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   Actor_RunRepeatedMotion(10, 2);
   FieldEvent_Wait(10);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   FieldActor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, 0x102);
+  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_OpenMessage(10, 0);
   answer = Event_AskYesNoWithActorAnimation(4, 0);
   if (answer == 0) {
     FieldEvent_Wait(30);
-    FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
+    FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
     FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452) =
         (FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452)) + 1;
   } else {
     FieldEvent_Wait(40);
     FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452) =
         (FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452)) + 1;
-    FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
+    FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   }
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  FieldEvent_ShowMessageThenWait(0x400a, 0, 20);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 20);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
-  FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   Actor_WalkToAndWait(10, 89, 92);
   FieldEvent_Wait(10);
   Actor_FaceDirection(10, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   Actor_RunRepeatedMotion(10, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   Actor_FaceDirection(10, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(10, 4);
-  FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   Actor_FaceDirection(10, FACING_WEST, 0);
   FieldEvent_Wait(30);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
@@ -577,10 +577,10 @@ visited:
   Event_PlaySound(SE_619);
   FieldEvent_Wait(60);
   FieldActor_StartRepeatedMotion(11, 3);
-  Actor_SetAttachedEffect(11, 0x102);
+  Actor_SetAttachedEffect(11, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(10);
   FieldActor_StartRepeatedMotion(11, 3);
-  Actor_SetAttachedEffect(11, 0x102);
+  Actor_SetAttachedEffect(11, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
   Actor_SetAnimation(11, 3);
   actor->motionFlags = 0;
@@ -640,7 +640,7 @@ visited:
   FieldEvent_Wait(10);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   Actor_FaceDirection(10, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
@@ -691,7 +691,7 @@ visited:
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(10, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x400a, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   FieldActor_SetSpritePriority(10, 2);
   Event_End();
 }
@@ -799,7 +799,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_SetAnimation(6, 3);
   Actor_SetAnimationAndWait(12, 3);
   Actor_StartRepeatedMotion(18, 3);
-  Actor_SetAttachedEffect(18, 0x102);
+  Actor_SetAttachedEffect(18, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Event_ShowMessageThenWait(18, 0, 10);
   Actor_SetAnimation(4, 3);
@@ -831,9 +831,9 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(20);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_StartRepeatedMotion(12, 3);
-  Actor_SetAttachedEffect(12, 0x102);
+  Actor_SetAttachedEffect(12, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Actor_FaceDirection(4, FACING_EAST, 0);
   Actor_FaceDirection(6, FACING_EAST, 0);
@@ -874,12 +874,12 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_WalkByAndWait(18, 12, 0);
   Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_SetAnimationAndWait(12, 4);
   Event_ShowMessageThenWait(12, 0, 10);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_SetAnimationAndWait(12, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(12, 0, 10);
@@ -887,7 +887,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_Wait(10);
   Event_Wait(10);
   Actor_SetAnimationAndWait(18, 4);
-  FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_SetAnimationAndWait(5, 4);
   Event_ShowMessageThenWait(5, 0, 10);
   Actor_WalkByAndWait(18, -12, 0);
@@ -917,7 +917,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(20);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-  Event_ShowMessageThenWait(0x1012, 0, 10);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_SetAnimationAndWait(5, 4);
   Event_ShowMessageThenWait(5, 0, 10);
   Actor_WalkByAndWait(18, -12, 0);
@@ -996,7 +996,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_FaceDirection(5, FACING_EAST, 0);
   Event_Wait(30);
   Actor_StartRepeatedMotion(6, 3);
-  Actor_SetAttachedEffect(6, 0x102);
+  Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Event_ShowMessageThenWait(6, 0, 10);
   Actor_SetAnimationAndWait(12, 3);
@@ -1006,9 +1006,9 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_FaceDirection(6, FACING_EAST, 0);
   Event_Wait(40);
   Actor_StartRepeatedMotion(5, 3);
-  Actor_SetAttachedEffect(5, 0x102);
+  Actor_SetAttachedEffect(5, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_StartRepeatedMotion(6, 3);
-  Actor_SetAttachedEffect(6, 0x102);
+  Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Actor_FaceDirection(5, FACING_EAST, 0);
   Event_Wait(30);
@@ -1049,7 +1049,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_FaceDirection(18, FACING_SOUTHEAST + FACING_STEP, 0);
   Event_Wait(20);
   Actor_StartRepeatedMotion(18, 3);
-  Actor_SetAttachedEffect(18, 0x102);
+  Actor_SetAttachedEffect(18, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(50);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessageThenWait(5, 0, 10);
@@ -1073,7 +1073,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_WalkByAndWait(18, 12, 0);
   Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1084,7 +1084,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 0);
   Event_Wait(20);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_WalkByAndWait(12, -12, 0);
   Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 0);
   Event_Wait(15);
@@ -1092,11 +1092,11 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(18, 3);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessageThenWait(12, 0, 10);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-  FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_FaceDirection(6, FACING_EAST, 0);
   Actor_FaceDirection(5, FACING_WEST, 0);
   Event_Wait(40);
@@ -1107,7 +1107,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_FaceDirection(4, FACING_EAST, 0);
   Actor_FaceDirection(12, FACING_WEST, 0);
   Event_Wait(25);
-  FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   Actor_FaceDirection(4, FACING_SOUTH, 0);
@@ -1115,23 +1115,23 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_Wait(25);
   Actor_SetAnimationAndWait(18, 3);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_SetAnimation(4, 3);
   Actor_SetAnimation(5, 3);
   Actor_SetAnimation(6, 3);
   Actor_SetAnimationAndWait(12, 3);
   Event_Wait(10);
   Actor_SetAnimationAndWait(18, 4);
-  FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_FaceDirection(18, FACING_SOUTH + FACING_STEP, 0);
   Event_Wait(30);
-  FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_FaceDirection(6, FACING_EAST, 0);
   Actor_FaceDirection(5, FACING_WEST, 0);
   Actor_FaceDirection(4, FACING_EAST, 0);
   Actor_FaceDirection(12, FACING_WEST, 0);
   Event_Wait(30);
-  FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   Actor_FaceDirection(4, FACING_SOUTH, 0);
@@ -1142,25 +1142,25 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_SetAnimation(6, 4);
   Actor_SetAnimationAndWait(12, 4);
   Actor_SetAnimationAndWait(18, 4);
-  FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   FieldActor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Actor_RunRepeatedMotion(18, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_FaceDirection(18, 0xd00a, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Event_ShowMessageThenWait(12, 0, 10);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SCOWL, 42);
   Actor_Jump(18, 6, 15);
   Actor_Jump(18, 6, 23);
-  FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_WalkByAndWait(18, -2, -12);
   Event_Wait(10);
   Actor_SetAnimationAndWait(18, 3);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_SetSpeed(18, 1.6);
   Actor_WalkByAndWait(18, -8, 40);
   Actor_FaceDirection(6, FACING_SOUTH, 0);
@@ -1176,7 +1176,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   MapGrid_SetShake(0, 0, 0);
   Event_Wait(10);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_SetSpeed(18, 0.6);
   Actor_GetById(18)->actionFlags &= 0xfe;
   Actor_WalkByAndWait(18, 0, -24);
@@ -1190,7 +1190,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   object = Actor_GetById(18);
   object->timer = 0;
   object->update = (void (*)(void))Actor_CyclePictures;
-  FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_SetSpeed(18, 2.2);
   Actor_WalkByAndWait(18, 0, 32);
   target = Actor_GetById(18);
@@ -1208,19 +1208,19 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   MapGrid_SetShake(0, 0, 0);
   Event_Wait(20);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, 0x102);
+  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_StartRepeatedMotion(5, 3);
-  Actor_SetAttachedEffect(5, 0x102);
+  Actor_SetAttachedEffect(5, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_StartRepeatedMotion(6, 3);
-  Actor_SetAttachedEffect(6, 0x102);
+  Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_StartRepeatedMotion(12, 3);
-  Actor_SetAttachedEffect(12, 0x102);
+  Actor_SetAttachedEffect(12, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(25);
-  Event_ShowMessageThenWait(0x1012, 0, 10);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_WalkByAndWait(18, 0, 48);
   Actor_SetPosition(18, 0, 0);
   Event_Wait(30);

@@ -428,7 +428,9 @@ void Func_02000a48(void) { Func_02001e0c_(68, 38, 39, 24, 68, 4, 1); }
       if (leader->x >> 20 == n9 && leader->z >> 20 == n10) {                   \
         Event_Start();                                                         \
         FieldEvent_ResolvePendingActions(0);                                   \
-        Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);         \
+        Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,                 \
+                                ATTACHED_EFFECT_IN_FRONT |                     \
+                                    ATTACHED_EFFECT_ONCE);                     \
         Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);      \
         leader->velocityY = 0x60000;                                           \
         FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);             \
@@ -674,7 +676,8 @@ void Func_020011a8(void) {
     if ((gFrameCount & 4) == 0)
       Func_020010d8(leader);
     if (result < 0) {
-      Actor_SetAttachedEffect(owner, 0x102);
+      Actor_SetAttachedEffect(owner,
+                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       FieldActor_SetMoveTargetFixed(leader, leader->x, leader->y,
                                     leader->z + 0x80000);
       Actor_SelectAnimation(leader, 49);

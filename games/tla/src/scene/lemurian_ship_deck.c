@@ -322,9 +322,9 @@ void LemurianShipDeck_TakeTheTiller(void) {
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   Actor_FaceDirectionAndWait(5, FACING_NORTHEAST);
   Event_ShowMessage(5, 0);
-  Actor_SetAttachedEffect(6, 0x102);
+  Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirectionAndWait(6, FACING_SOUTHWEST);
-  Event_ShowMessage(0x4006, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 6, 0);
   Event_ShowMessage(5, 0);
   Event_ShowMessage(9, 0);
   Actor_FaceDirection(6, FACING_NORTH, 0);
@@ -569,7 +569,7 @@ void LemurianShipDeck_SightMenardisShip(void) {
   FieldCamera_MoveTo(264, CAMERA_KEEP, 128, 1);
   FieldCamera_WaitForArrival();
   Actor_SetAnimationAndWait(5, 4);
-  Event_ShowMessage(0x2005, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
   Actor_FaceDirectionAndWait(6, FACING_EAST);
   Actor_SetAnimation(6, 4);
   Event_ShowMessage(6, 0);
@@ -592,7 +592,7 @@ void LemurianShipDeck_SightMenardisShip(void) {
     Event_ShowMessage(9, 0);
   }
   Actor_SetAnimation(5, 4);
-  Event_ShowMessage(0x2005, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
   Actor_FaceDirectionAndWait(6, FACING_EAST);
   Actor_SetAnimation(6, 4);
   Event_ShowMessage(6, 0);
@@ -603,7 +603,7 @@ void LemurianShipDeck_SightMenardisShip(void) {
   Actor_WalkToAndWait(9, 288, 144);
   FieldEvent_Wait(1);
   Actor_Get(9)->actionFlags |= 1;
-  Event_ShowMessage(0x2009, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 9, 0);
   Actor_SetAnimation(6, 3);
   Actor_SetAnimation(5, 3);
   Actor_SetAnimation(4, 3);
@@ -854,9 +854,9 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_SetAnimationAndWait(5, 3);
   Event_ShowMessage(5, 0);
   Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
-  Actor_SetAttachedEffect(7, 258);
+  Actor_SetAttachedEffect(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
-  Event_ShowMessage(0x2007, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
   Actor_SetAnimation(5, 3);
   Actor_SetAnimationAndWait(6, 3);
   Actor_SetAnimation(9, 4);
@@ -882,7 +882,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
   }
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Actor_FaceDirectionAndWait(9, FACING_NORTHEAST);
-  Event_ShowMessage(0x9009, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_BELOW | 9, 0);
   Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
   Actor_SetAnimation(7, 4);
   Event_ShowMessage(7, 0);
@@ -900,7 +900,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_FaceDirectionAndWait(6, FACING_SOUTHWEST);
   Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-  Actor_SetAttachedEffect(9, 258);
+  Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Event_ShowMessage(9, 0);
   Actor_FaceDirection(7, FACING_NORTHEAST, 0);
@@ -923,7 +923,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_RunRepeatedMotion(9, 3);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-  Actor_SetAttachedEffect(5, 258);
+  Actor_SetAttachedEffect(5, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
   Event_ShowMessage(5, 0);
   Actor_FaceDirectionAndWait(9, FACING_WEST);
@@ -945,7 +945,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Event_ShowMessage(7, 0);
   Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
-  Event_ShowMessage(0x2007, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
   Actor_FaceDirectionAndWait(7, FACING_NORTH);
   Actor_SetAnimation(7, 3);
   Event_ShowMessage(7, 0);
@@ -953,13 +953,13 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Event_ShowMessage(5, 0);
   Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
   Actor_SetAnimation(7, 4);
-  Event_ShowMessage(0x2007, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
   Actor_SetAnimationAndWait(5, 3);
   Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
   Event_ShowMessage(7, 0);
   Actor_SetAnimationAndWait(9, 3);
   Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
-  Event_ShowMessage(0x2007, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
   Actor_FaceDirection(9, FACING_WEST, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Event_ShowMessage(9, 0);

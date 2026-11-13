@@ -423,10 +423,10 @@ s32 Scene_Initialize(void) {
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     System_Wait(30);
     FieldEvent_SetMessageId(MsgGoldenSunFormation);
-    Event_ShowMessage(0x4008, 0);
+    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 8, 0);
     System_Wait(30);
     Actor_RunRepeatedMotion(8, 2);
-    Event_ShowMessage(0x4008, 0);
+    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 8, 0);
     Actor_SetAnimationSpeedById(8, 32);
     i = 0;
   L4:
@@ -534,13 +534,13 @@ s32 Scene_Initialize(void) {
     FieldEvent_Wait(5);
     Event_PlaySound(SOUND_FADE_OUT_BGM);
     FieldEvent_SetMessageId(MsgGoldenSunEternalLifeAndPower);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     Actor_FaceDirection(8, FACING_SOUTH, 0);
     FieldEvent_Wait(30);
     Actor_SetAnimation(8, 14);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     Actor_SetAnimation(8, 15);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 150);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 150);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     Actor_SetAnimation(8, 1);
     Actor_FaceDirection(8, FACING_SOUTHWEST, 0);
@@ -555,7 +555,7 @@ s32 Scene_Initialize(void) {
     FieldEvent_Wait(50);
     Actor_SetAnimation(8, 15);
     FieldEvent_Wait(50);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     FieldEvent_Wait(50);
     Actor_RunRepeatedMotion(8, 2);
     FieldEvent_Wait(5);
@@ -564,7 +564,7 @@ s32 Scene_Initialize(void) {
     Actor_FaceDirection(8, FACING_SOUTHEAST, 0);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     FieldEvent_SetMessageId((MsgGoldenSunEternalLifeAndPower + 4));
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     Event_PlaySound(MUS_722);
     FieldEvent_ShowMessageThenWait(9, 0, 5);
     Actor_SetAnimation(8, 1);
@@ -575,24 +575,24 @@ s32 Scene_Initialize(void) {
     Actor_SetSpeed(8, 0.6);
     FieldEvent_Wait(20);
     Actor_SetAnimation(8, 1);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     Actor_SetAnimation(9, 4);
     FieldEvent_ShowMessageThenWait(9, 0, 5);
     Actor_RunRepeatedMotion(8, 2);
     FieldEvent_Wait(5);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     message = MsgGoldenSunEternalLifeAndPower;
     Actor_SetAnimation(9, 5);
     FieldEvent_ShowMessageThenWait(9, 0, 5);
-    Actor_SetAttachedEffect(8, 0x102);
+    Actor_SetAttachedEffect(8, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     FieldEvent_Wait(20);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     Actor_SetAnimation(9, 6);
     FieldEvent_ShowMessageThenWait(9, 0, 5);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     message += 12;
     FieldEvent_SetMessageId(message);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     Actor_SetAnimation(8, 13);
     BattleEffect_StartArcEffect();
     BattleEffect_SetObjectUpdateMode((s32)Actor_Get(8), 2);
@@ -622,7 +622,7 @@ s32 Scene_Initialize(void) {
     if (j != 4)
       goto L8;
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     FieldEvent_Wait(10);
     BattleEffect_SetObjectUpdateMode((s32)Actor_Get(8), 0);
     BattleEffect_WaitForArcGroups();
@@ -673,7 +673,7 @@ s32 Scene_Initialize(void) {
       goto L11;
     Actor_RunRepeatedMotion(8, 2);
     FieldEvent_Wait(5);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     i = 0;
   L12:
     ACTOR(8)->y += 0x10000;
@@ -705,12 +705,12 @@ s32 Scene_Initialize(void) {
     FieldEvent_ShowMessageThenWait(9, 0, 5);
     Actor_RunRepeatedMotion(8, 2);
     FieldEvent_Wait(5);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     Actor_SetAnimation(9, 3);
     FieldEvent_ShowMessageThenWait(9, 0, 5);
     Actor_SetAnimation(8, 18);
     FieldEvent_Wait(10);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     FieldEvent_Wait(120);
     Event_PlaySound(SE_TREMOR);
     i = 0;
@@ -725,7 +725,7 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(9, 7);
     FieldEvent_ShowMessageThenWait(9, 0, 5);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     Actor_SetAnimation(9, 8);
     FieldEvent_ShowMessageThenWait(9, 0, 5);
     for (i = 0, j = 0x20000; i != 4; i++, j += 0x10000) {
@@ -734,7 +734,7 @@ s32 Scene_Initialize(void) {
     }
     Actor_RunRepeatedMotion(8, 2);
     FieldEvent_Wait(5);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     Actor_SetAnimation(9, 3);
     FieldEvent_ShowMessageThenWait(9, 0, 5);
     Actor_RunRepeatedMotion(8, 2);

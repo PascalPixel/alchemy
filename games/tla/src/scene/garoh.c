@@ -1039,7 +1039,7 @@ loop2:
   Actor_FaceDirection(8, FACING_NORTH, 0);
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(8, 3);
-  Actor_SetAttachedEffect(8, 0x102);
+  Actor_SetAttachedEffect(8, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Actor_FaceDirection(8, FACING_WEST, 0);
   FieldEvent_Wait(10);
@@ -1075,7 +1075,7 @@ loop2:
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   Actor_RunRepeatedMotion(6, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x2006, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 6, 0, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   if (Event_GetFlag(7))
@@ -1091,7 +1091,7 @@ loop2:
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   Actor_RunRepeatedMotion(6, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x2006, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 6, 0, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
@@ -1125,12 +1125,12 @@ loop2:
   FieldEvent_Wait(20);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 0);
   Actor_FaceDirection(5, FACING_NORTHWEST, 0);
   if (Event_GetFlag(7))
     Actor_FaceDirection(7, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
-  Event_OpenMessage(0x2005, 0);
+  Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
   Actor_FaceDirection(4, FACING_SOUTHEAST, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     FieldEvent_Wait(30);
@@ -1140,7 +1140,7 @@ loop2:
     FieldEvent_Wait(20);
     if (Event_GetFlag(7))
       Actor_FaceDirection(7, FACING_NORTH, 0);
-    FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
   } else {
     FieldEvent_Wait(40);
@@ -1151,11 +1151,11 @@ loop2:
     if (Event_GetFlag(7))
       Actor_FaceDirection(7, FACING_NORTH, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
-    FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 0);
   }
   FieldActor_Jump(9, 6, 15);
   FieldActor_Jump(9, 6, 23);
-  FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 0);
   Actor_RunRepeatedMotion(5, 2);
   FieldEvent_Wait(10);
   Actor_FaceDirection(5, FACING_NORTH, 0);
@@ -1170,14 +1170,14 @@ loop2:
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
   FieldEvent_Wait(20);
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  FieldEvent_ShowMessageThenWait(0x2006, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 6, 0, 0);
   FieldActor_StartRepeatedMotion(9, 3);
-  Actor_SetAttachedEffect(9, 0x102);
+  Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
-  FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 0);
   Func_020013b0(6);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x2006, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 6, 0, 0);
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_Wait(10);
   Actor_SetSpeed(9, 0.4);
@@ -1186,9 +1186,9 @@ loop2:
   FieldEvent_Wait(1);
   Actor_Get(9)->actionFlags |= 1;
   FieldEvent_Wait(20);
-  Actor_SetAttachedEffect(9, 0x102);
+  Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
-  FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 0);
   Actor_FaceDirection(5, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(5, 0, 0);
@@ -1214,7 +1214,7 @@ loop2:
   Actor_WalkByAndWait(9, 0, 16);
   FieldEvent_Wait(20);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
-  FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 0);
   Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   if (Event_GetFlag(7))
@@ -1222,7 +1222,7 @@ loop2:
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 0);
   Actor_SetSpeed(9, 2);
   Actor_WalkByAndWait(9, -16, 0);
   Actor_FaceDirection(5, FACING_NORTHWEST, 0);
@@ -1234,9 +1234,9 @@ loop2:
   FieldEvent_Wait(20);
   Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   ACTOR_MODE_THEN_WAIT(9, 4, 33);
-  FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 0);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
-  FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 0);
   FieldActor_Jump(9, 6, 15);
   FieldActor_Jump(9, 6, 23);
   if (Event_GetFlag(7))
@@ -1285,9 +1285,9 @@ void Func_020022f4(void) {
   Actor_FaceDirection(4, FACING_EAST, 0);
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(9, 3);
-  Actor_SetAttachedEffect(9, 0x102);
+  Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, 0x102);
+  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(45);
   FieldEvent_ShowMessageThenWait(8, 0, 0);
   Actor_FaceDirection(9, FACING_NORTHWEST + FACING_STEP, 0);
@@ -1402,7 +1402,7 @@ void Func_02002694(void) {
   Actor_WalkToAndWait(4, 320, 224);
   Actor_FaceDirection(4, FACING_NORTH, 0);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x8009, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 9, 0, 0);
   FieldActor_LaunchFromLeader(9, -16, -8, FACING_NORTH);
   FieldActor_WaitForMoveById(9);
   FieldEvent_Wait(30);
@@ -1552,7 +1552,7 @@ void Func_02002694(void) {
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldEvent_ShowMessageThenWait(6, 0, 0);
   FieldActor_StartRepeatedMotion(8, 3);
-  Actor_SetAttachedEffect(8, 0x102);
+  Actor_SetAttachedEffect(8, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   FieldEvent_ShowMessageThenWait(8, 0, 0);
   Actor_RunRepeatedMotion(9, 2);
@@ -1820,7 +1820,7 @@ void Func_02002694(void) {
   FieldActor_Jump(8, 6, 0);
   Actor_FaceDirection(8, FACING_WEST, 0);
   FieldEvent_Wait(30);
-  Actor_SetAttachedEffect(8, 0x102);
+  Actor_SetAttachedEffect(8, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   {
     s32 a0 = 8;
     /* FAKEMATCH(barrier): an empty asm on a0. */
@@ -1829,7 +1829,7 @@ void Func_02002694(void) {
   }
   FieldEvent_Wait(20);
   FieldEvent_Wait(15);
-  Actor_SetAttachedEffect(8, 0x102);
+  Actor_SetAttachedEffect(8, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   {
     s32 a0 = 8;
     /* FAKEMATCH(barrier): an empty asm on a0. */
@@ -2149,7 +2149,8 @@ void Func_02003878(void) {
   FieldEvent_Wait(10);
   ACTOR_MODE_THEN_WAIT(10, 3, 20);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x600a, 0, 0);
+  FieldEvent_ShowMessageThenWait(
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 10, 0, 0);
   Actor_SetAnimation(4, 3);
   Actor_SetAnimation(5, 3);
   Actor_SetAnimation(6, 3);
@@ -2169,34 +2170,40 @@ L_0200ba8c:;
   Actor_WalkByAndWait(10, -8, 0);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x600a, 0, 0);
+  FieldEvent_ShowMessageThenWait(
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 10, 0, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-  FieldEvent_ShowMessageThenWait(0x600a, 0, 0);
+  FieldEvent_ShowMessageThenWait(
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 10, 0, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   Actor_RunRepeatedMotion(10, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x600a, 0, 0);
+  FieldEvent_ShowMessageThenWait(
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 10, 0, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   Actor_WalkByAndWait(10, 16, 0);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x600a, 0, 0);
+  FieldEvent_ShowMessageThenWait(
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 10, 0, 0);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldEvent_ShowMessageThenWait(5, 0, 0);
   Actor_FaceDirection(10, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x600a, 0, 0);
+  FieldEvent_ShowMessageThenWait(
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 10, 0, 0);
   Actor_RunRepeatedMotion(6, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(6, 0, 0);
   Actor_WalkByAndWait(10, -8, 0);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x600a, 0, 0);
+  FieldEvent_ShowMessageThenWait(
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 10, 0, 0);
   ACTOR_MODE_THEN_WAIT(4, 3, 20);
   FieldEvent_Wait(35);
   Actor_WalkByAndWait(10, -8, 0);
@@ -2204,34 +2211,38 @@ L_0200ba8c:;
   FieldEvent_Wait(25);
   ACTOR_MODE_THEN_WAIT(10, 3, 20);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x600a, 0, 0);
+  FieldEvent_ShowMessageThenWait(
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 10, 0, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   ACTOR_MODE_THEN_WAIT(10, 4, 33);
-  FieldEvent_ShowMessageThenWait(0x600a, 0, 0);
+  FieldEvent_ShowMessageThenWait(
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 10, 0, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 45);
   FieldActor_Jump(9, 6, 15);
   FieldActor_Jump(9, 6, 23);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  FieldEvent_ShowMessageThenWait(0x600a, 0, 0);
+  FieldEvent_ShowMessageThenWait(
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 10, 0, 0);
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_Wait(10);
   Actor_FaceDirection(10, FACING_NORTH, 0);
   FieldEvent_Wait(30);
-  FieldEvent_ShowMessageThenWait(0x600a, 0, 0);
+  FieldEvent_ShowMessageThenWait(
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 10, 0, 0);
   Actor_WalkByAndWait(10, 4, -12);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(10, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
   Actor_WalkByAndWait(10, 4, -12);
   FieldEvent_Wait(10);
   ACTOR_MODE_THEN_WAIT(10, 4, 33);
-  FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
   Actor_FaceDirection(10, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
-  FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
   Actor_SetAnimation(4, 3);
   Actor_SetAnimation(5, 3);
   Actor_SetAnimation(6, 3);
@@ -2239,34 +2250,34 @@ L_0200ba8c:;
   FieldEvent_Wait(20);
   ACTOR_MODE_THEN_WAIT(10, 3, 20);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
   Actor_RunRepeatedMotion(10, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
-  FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
   Actor_RunRepeatedMotion(10, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_ShowMessageThenWait(6, 0, 0);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   ACTOR_MODE_THEN_WAIT(10, 3, 20);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
   ACTOR_MODE_THEN_WAIT(10, 4, 33);
-  FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
   Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(4, FACING_NORTHWEST, 0);
   Actor_FaceDirection(6, FACING_WEST, 0);
@@ -2278,7 +2289,7 @@ L_0200bf32:;
   FieldEvent_Wait(40);
   Actor_RunRepeatedMotion(10, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
   if (!Event_GetFlag(7))
     goto L_0200bf6a;
   Actor_FaceDirection(7, FACING_NORTHWEST, 0);
@@ -2292,7 +2303,7 @@ L_0200bf6a:;
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
@@ -2300,9 +2311,9 @@ L_0200bf6a:;
   FieldEvent_Wait(10);
   ACTOR_MODE_THEN_WAIT(10, 3, 20);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
@@ -2317,7 +2328,7 @@ L_0200bf6a:;
   FieldEvent_Wait(30);
   ACTOR_MODE_THEN_WAIT(10, 3, 20);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
   Actor_SetAnimation(4, 3);
   ACTOR_MODE_THEN_WAIT(5, 3, 20);
   FieldEvent_Wait(30);
@@ -2327,16 +2338,16 @@ L_0200bf6a:;
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   FieldActor_StartRepeatedMotion(10, 3);
-  Actor_SetAttachedEffect(10, 0x102);
+  Actor_SetAttachedEffect(10, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
-  FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
   Actor_FaceDirection(9, FACING_EAST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
@@ -2460,9 +2471,9 @@ L_0200c596:;
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(6, 0, 0);
   FieldActor_StartRepeatedMotion(10, 3);
-  Actor_SetAttachedEffect(10, 0x102);
+  Actor_SetAttachedEffect(10, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(9, 3);
-  Actor_SetAttachedEffect(9, 0x102);
+  Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Actor_FaceDirection(4, FACING_NORTHEAST, 0);
   Actor_FaceDirection(5, FACING_NORTHEAST, 0);
@@ -2482,11 +2493,11 @@ L_0200c596:;
   Actor_FaceDirection(7, FACING_NORTHWEST, 0);
 L_0200c694:;
   FieldActor_StartRepeatedMotion(10, 3);
-  Actor_SetAttachedEffect(10, 0x102);
+  Actor_SetAttachedEffect(10, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   FieldEvent_ShowMessageThenWait(10, 0, 0);
   FieldActor_StartRepeatedMotion(9, 3);
-  Actor_SetAttachedEffect(9, 0x102);
+  Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
@@ -2514,7 +2525,7 @@ L_0200c694:;
   Actor_FaceDirection(5, FACING_NORTH, 0);
   Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 0);
   Actor_FaceDirection(9, FACING_NORTH, 0);
   FieldEvent_Wait(20);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHWEST, 0);
@@ -2525,7 +2536,7 @@ L_0200c694:;
   FieldEvent_Wait(10);
   if (Event_GetFlag(7)) {
     Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
-    FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 0);
     Actor_FaceDirection(10, FACING_SOUTH_SOUTHWEST, 0);
     FieldEvent_Wait(20);
     ACTOR_MODE_THEN_WAIT(10, 3, 20);
@@ -2554,7 +2565,7 @@ L_0200c694:;
   FieldEvent_Wait(30);
   ACTOR_MODE_THEN_WAIT(4, 3, 20);
   FieldEvent_Wait(25);
-  FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
   ACTOR_MODE_THEN_WAIT(9, 4, 33);
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   Actor_FaceDirection(10, FACING_NORTH, 0);
@@ -2565,7 +2576,7 @@ L_0200c694:;
   Actor_WalkByAndWait(10, 16, 0);
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(10, 3);
-  Actor_SetAttachedEffect(10, 0x102);
+  Actor_SetAttachedEffect(10, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Actor_FaceDirection(10, FACING_WEST, 0);
   FieldEvent_Wait(20);
@@ -2590,7 +2601,7 @@ L_0200c694:;
   Actor_FaceDirection(10, FACING_NORTH, 0);
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(10, 3);
-  Actor_SetAttachedEffect(10, 0x102);
+  Actor_SetAttachedEffect(10, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Actor_WalkByAndWait(10, 0, -12);
   FieldEvent_Wait(20);
@@ -2648,21 +2659,21 @@ L_0200caf6:;
   Actor_WalkByAndWait(12, 0, 8);
   FieldEvent_Wait(5);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  FieldEvent_ShowMessageThenWait(0x2005, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 5, 0, 0);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
   Actor_WalkByAndWait(10, 0, 24);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
   {
     s32 a1 = 0;
 
-    Event_OpenMessage(0x200a, a1);
+    Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 10, a1);
   }
   Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(5, FACING_WEST, 0);
@@ -2674,7 +2685,7 @@ L_0200cc42:;
   FieldEvent_Wait(20);
   if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
     FieldEvent_Wait(30);
-    FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
     *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
         (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
   } else {
@@ -2696,7 +2707,7 @@ L_0200ccdc:;
   FieldEvent_Wait(30);
   Actor_RunRepeatedMotion(10, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
   Actor_SetSpeed(10, 2.4);
   t22 = Actor_Get(10);
   *(u8 *)(((u8 *)t22 + 90)) = (254 & *(u8 *)(((u8 *)t22 + 90)));
@@ -2742,7 +2753,7 @@ L_0200cda2:;
   Actor_FaceDirection(5, FACING_NORTH, 0);
   FieldEvent_Wait(20);
   ACTOR_MODE_THEN_WAIT(10, 4, 33);
-  FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
   FieldEvent_Wait(20);
   ACTOR_MODE_THEN_WAIT(10, 3, 20);
@@ -2754,7 +2765,7 @@ L_0200cda2:;
      * first. */
     Actor_ShowEmote(5, a1, a2);
   }
-  FieldEvent_ShowMessageThenWait(0x2005, 0, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 5, 0, 0);
   {
     s32 a1 = 0x3000;
     s32 a2 = 0;

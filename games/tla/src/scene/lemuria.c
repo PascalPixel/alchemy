@@ -262,7 +262,8 @@ void Lemuria_DigFifthSpot(void) {
     if (leader->x >> 20 == 50 && leader->z >> 20 == 73) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
-      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
+      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);
       leader->velocityY = PIXELS(6);
       FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
@@ -778,14 +779,14 @@ void Lemuria_MarvelAtCity(void) {
   Actor_FaceDirection(25, FACING_SOUTHEAST + FACING_STEP, 0);
   FieldEvent_Wait(30);
   FieldActor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, 0x102);
+  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   FieldActor_SetSpritePriority(25, 2);
   Actor_WalkByAndWait(25, 16, 0);
   Actor_FaceDirection(25, FACING_SOUTH + FACING_STEP, 0);
   FieldEvent_Wait(30);
   FieldActor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, 0x102);
+  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Actor_WalkByAndWait(25, -8, 0);
   Actor_FaceDirection(25, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -810,9 +811,9 @@ void Lemuria_MarvelAtCity(void) {
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   FieldActor_StartRepeatedMotion(24, 3);
-  Actor_SetAttachedEffect(24, 0x102);
+  Actor_SetAttachedEffect(24, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(25, 3);
-  Actor_SetAttachedEffect(25, 0x102);
+  Actor_SetAttachedEffect(25, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(45);
   Actor_FaceDirection(24, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(25, FACING_SOUTH + FACING_STEP, 0);

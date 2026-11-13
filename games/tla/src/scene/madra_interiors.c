@@ -943,7 +943,7 @@ answeredNo:
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(7, 0, 10);
   FieldActor_StartRepeatedMotion(15, 3);
-  Actor_SetAttachedEffect(15, 0x102);
+  Actor_SetAttachedEffect(15, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
   FieldEvent_ShowMessageThenWait(15, 0, 10);
 answered:

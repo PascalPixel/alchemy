@@ -461,7 +461,8 @@ void Func_02000b3c(void) {
   Event_Wait(10);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
   Event_Wait(30);
-  FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);
+  FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Motion_SetVarCbAndRefresh(gMainRoutineWork.currentOwner, 2);
   Event_Wait(20);
   leader->facing = 0xc000;
@@ -816,12 +817,14 @@ void Func_020011e0(void) {
     i++;
   } while (i <= 16);
   Sound_Play(SE_THUMP);
-  FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x101);
+  FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
-  FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x100);
+  FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;

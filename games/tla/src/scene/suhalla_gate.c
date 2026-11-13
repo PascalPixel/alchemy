@@ -365,7 +365,7 @@ void SuhallaGate_PointToMeetingSpot(void) {
   Event_SetMessageId((s32)&MsgNotThatWay);
   Actor_LaunchFromLeader(16, -16, 0, 0);
   Actor_WaitForMoveById(16);
-  Event_ShowMessageThenWait(0x1010, 0, 10);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 16, 0, 10);
   Actor_SetAnimation(16, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader)

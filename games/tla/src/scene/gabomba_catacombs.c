@@ -97,7 +97,8 @@ void Actor_DepartInRing(s32 id);
   do {                                                                         \
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
-    FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);             \
+    FieldEffect_SetAttached(gMainRoutineWork.currentOwner,                     \
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);  \
   } while (0)
 
 void GabombaCatacombs_FightMud(void) { Field_RequestDjinnBattle(8, 10); }
@@ -172,7 +173,8 @@ void Func_020002e0(void) {
   if (leader->x >> 20 == 9 && leader->z >> 20 == 16) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);
+    FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, -16, 0);
     leader->velocityY = PIXELS(6);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
@@ -200,7 +202,8 @@ void Func_02000564(void) {
   if (leader->x >> 20 == 17 && leader->z >> 20 == 18) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);
+    FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -16);
     leader->velocityY = PIXELS(6);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);

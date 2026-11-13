@@ -581,7 +581,7 @@ void Func_02000a34(s32 value) {
   FieldCamera_WaitForArrival();
   Event_Wait(10);
   Value3((s32 (*)())Actor_ShowEmoteById, 8, 0x107, 40);
-  Event_ShowMessageThenWait(0x2008, 0, 5);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
   for (i = 0; i <= 2; i++) {
     struct ThrowAnimations animations;
     s32 landing[3];
@@ -642,7 +642,7 @@ void Func_02000a34(s32 value) {
   Actor_GetById(4)->actionFlags |= 1;
   Event_Wait(10);
   Actor_StartRepeatedMotion(8, 3);
-  FieldEffect_SetAttached(8, 0x102);
+  FieldEffect_SetAttached(8, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(30);
   Call3((void (*)())Event_ShowMessageThenWait, 0x2008, 0, 5);
   Call3((void (*)())MapGrid_SetScreenShake, 0x40000, 0x40000, 0x10000);
@@ -653,7 +653,7 @@ void Func_02000a34(s32 value) {
   Actor_Jump(8, 6, 23);
   Sound_Play(SE_194);
   Event_Wait(10);
-  Event_ShowMessageThenWait(0x2008, 0, 5);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
   Call2((void (*)())Actor_ShowItemIconById, 10, 0x146);
   Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 10, 0x2980000,
         0xe80000);
@@ -680,7 +680,7 @@ void Func_02000a34(s32 value) {
   Call3((void (*)())Event_ShowMessageThenWait, 0x2008, 0, 5);
   Actor_FaceDirectionById(8, FACING_WEST);
   Event_Wait(10);
-  Event_ShowMessageThenWait(0x2008, 0, 5);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
   Actor_FaceDirectionById(8, FACING_SOUTH_SOUTHWEST);
   Event_Wait(10);
   Actor_SetSpritePriority(10, 2);
@@ -800,9 +800,9 @@ void Func_0200115c(void) {
     FieldCamera_WaitForArrival();
     Event_Wait(5);
     Motion_SetModeAndWaitAnimation(8, 4);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
   } else {
     Flag_Set(0x974);
     Event_SetMessageId((s32)MsgHoldItRight);
@@ -889,16 +889,16 @@ void Func_0200115c(void) {
     Actor_SetPosition(12, 0, 0);
     Actor_SetModeById(8, 1);
     Actor_GetById(8)->facing = 0x8000;
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
     Actor_WalkByAndWaitById(4, -16, 0);
     Event_Wait(5);
   } else {
     Event_Wait(25);
     ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-    FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     Sound_Play(SOUND_FADE_OUT_BGM);
     Func_0200343c_(656 << 16, 208 << 16, 0, -4);
     Func_0200343c_(656 << 16, 224 << 16, 0, -4);
@@ -1110,15 +1110,15 @@ void Func_02001868(void) {
   Actor_StartRepeatedMotion(11, 3);
   Call2((void (*)())FieldEffect_SetAttached, 11, 0x102);
   Event_Wait(40);
-  Event_ShowMessageThenWait(0x2008, 0, 5);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
   Motion_SetModeAndWaitAnimation(5, 3);
   Event_Wait(10);
-  Event_ShowMessageThenWait(0x1005, 0, 5);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 5, 0, 5);
   Actor_FaceDirectionById(8, FACING_EAST);
   Event_Wait(5);
   Event_ShowMessageThenWait(8, 0, 5);
   Actor_StartRepeatedMotion(11, 3);
-  FieldEffect_SetAttached(11, 0x102);
+  FieldEffect_SetAttached(11, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(35);
   Event_ShowMessageThenWait(11, 0, 0);
   Motion_SetModeAndWaitAnimation(7, 4);
@@ -1132,7 +1132,7 @@ void Func_02001868(void) {
     Event_Wait(5);
     Motion_SetModeAndWaitAnimation(6, 3);
     Event_Wait(10);
-    Event_ShowMessageThenWait(0x1006, 0, 5);
+    Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 6, 0, 5);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
   } else {
     Event_Wait(35);
@@ -1140,7 +1140,7 @@ void Func_02001868(void) {
     Event_Wait(5);
     Motion_SetModeAndWaitAnimation(6, 4);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
-    Event_ShowMessageThenWait(0x1006, 0, 5);
+    Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 6, 0, 5);
   }
   Actor_ArmCallback(15, FACING_EAST, 0);
   Actor_FaceDirectionById(6, FACING_EAST);
@@ -1243,7 +1243,7 @@ void Func_02001868(void) {
   Event_ShowMessageThenWait(11, 0, 5);
   Call2((void (*)())Actor_FaceDirectionById, 14, 0xb000);
   Event_Wait(10);
-  Event_ShowMessageThenWait(0x200e, 0, 5);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 14, 0, 5);
   Motion_SetVarCbAndRefresh(8, 2);
   Event_Wait(10);
   Call3((void (*)())Actor_SetSpeedParameters, 8, 0x10000, 0x8000);
@@ -1311,7 +1311,7 @@ void Func_02001868(void) {
   Actor_ShowEmoteById(14, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessageThenWait(14, 0, 5);
   Actor_StartRepeatedMotion(11, 3);
-  FieldEffect_SetAttached(11, 0x102);
+  FieldEffect_SetAttached(11, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Call2((void (*)())Actor_FaceDirectionById, 11, FACING_WEST);
   Event_Wait(10);
@@ -1339,14 +1339,14 @@ void Func_02001868(void) {
     Event_Wait(15);
     Motion_SetModeAndWaitAnimation(15, 3);
     Event_Wait(10);
-    Event_ShowMessageThenWait(0x200f, 0, 5);
+    Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 15, 0, 5);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
   } else {
     Event_Wait(35);
     Motion_SetModeAndWaitAnimation(15, 3);
     Event_Wait(10);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
-    Event_ShowMessageThenWait(0x200f, 0, 5);
+    Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 15, 0, 5);
   }
   Call3((void (*)())Actor_ArmCallback, 8, 0x5000, 0);
   Call3((void (*)())Actor_ArmCallback, 4, FACING_SOUTHEAST, 0);

@@ -179,7 +179,8 @@ void Izumo_CycloneSecondPatch(void) {
     if (object->x >> 20 == 28 && object->z >> 20 == 36) {
       Event_Start();
       Event_ResolvePendingActions(0);
-      FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 258);
+      FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, -16, 0);
       object->velocityY = 0x60000;
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
@@ -198,7 +199,8 @@ void Izumo_CycloneThirdPatch(void) {
     if (object->x >> 20 == 29 && object->z >> 20 == 34) {
       Event_Start();
       Event_ResolvePendingActions(0);
-      FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 258);
+      FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Call3((void (*)())Actor_SetDestinationOffsetById,
             gMainRoutineWork.currentOwner, 0, -16);
       object->velocityY = 0x60000;
@@ -230,7 +232,8 @@ void Izumo_CycloneSeventhPatch(void) {
     if (object->x >> 20 == 10 && object->z >> 20 == 20) {
       Event_Start();
       Event_ResolvePendingActions(0);
-      FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 258);
+      FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, 16, 0);
       object->velocityY = 0x60000;
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);

@@ -413,13 +413,13 @@ void Func_02000440(void) {
   if (result0 == 0) {
     FieldEvent_SetMessageId((s32)MsgWeLikeThis);
     Event_ShowMessage(8, 0);
-    Actor_SetAttachedEffect(9, 0x102);
+    Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_FaceDirection(9, FACING_WEST, 0);
     Event_ShowMessage(9, 0);
     Actor_FaceDirectionAndWait(8, FACING_EAST);
     FieldActor_Jump(9, 4, 10);
     Event_ShowMessage(9, 0);
-    Actor_SetAttachedEffect(9, 0x102);
+    Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     FieldEvent_Wait(20);
     Event_SetFlag(FLAG_SCENE_TEMP_14);
   }
@@ -608,13 +608,13 @@ void Func_020006f4(void) {
         Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
         Actor_ShowEmoteById(10, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
         Event_SetMessageId(asked + 1);
-        Event_ShowMessageAndWait(0x800a, 0);
+        Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 10, 0);
         HAND_BACK(leader, given, 0)
       } else {
         FieldPsynergy_GreyMindReadPalette();
         Actor_ShowEmoteById(10, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
         Event_SetMessageId(asked + 4);
-        Event_ShowMessageAndWait(0x800a, 0);
+        Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 10, 0);
       }
     } else {
       noticed = MsgOhThatRed;
@@ -666,13 +666,13 @@ void Func_020006f4(void) {
         FieldPsynergy_GreyMindReadPalette();
         Actor_ShowEmoteById(10, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
         Event_SetMessageId(noticed + 4);
-        Event_ShowMessageAndWait(0x800a, 0);
+        Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 10, 0);
         HAND_BACK(item, item, zero.v)
       } else {
         FieldPsynergy_GreyMindReadPalette();
         Actor_ShowEmoteById(10, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
         Event_SetMessageId(noticed + 7);
-        Event_ShowMessageAndWait(0x800a, 0);
+        Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 10, 0);
         Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_NORTH);
         Actor_Jump(gMainRoutineWork.currentOwner, 4, 10);
         if (item != 0)

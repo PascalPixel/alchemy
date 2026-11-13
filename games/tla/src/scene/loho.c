@@ -215,7 +215,7 @@ inPlace:
   Actor_FaceDirection(18, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(25);
   FieldActor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, 0x102);
+  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_WalkByAndWait(4, 24, 12);
   Actor_FaceDirectionAndWait(4, FACING_NORTH);
   Event_Wait(30);

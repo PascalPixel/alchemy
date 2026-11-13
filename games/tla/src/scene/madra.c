@@ -733,8 +733,8 @@ void Madra_GrantPassageToOsenia(void) {
   Event_Wait(20);
   Actor_FaceDirection(33, FACING_NORTH, 0);
   Actor_FaceDirection(34, FACING_NORTH, 0);
-  Actor_SetAttachedEffect(34, 258);
-  Actor_SetAttachedEffect(33, 258);
+  Actor_SetAttachedEffect(34, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(33, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(50);
   Motion_SetModeAndWaitAnimation(34, 3);
   Motion_SetModeAndWaitAnimation(33, 3);

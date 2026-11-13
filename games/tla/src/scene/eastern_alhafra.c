@@ -818,7 +818,7 @@ void Func_0200112c(void) {
   Actor_FaceDirection(25, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(25, 3);
-  Actor_SetAttachedEffect(25, 0x102);
+  Actor_SetAttachedEffect(25, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   FieldEvent_ShowMessageThenWait(25, 0, 10);
   FieldCamera_MoveTo(392, 16, 416, 1);
@@ -1200,7 +1200,8 @@ void Func_02001cb0(void) {
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(28, 3);
-  Actor_SetAttachedEffect(0x1c, 0x102);
+  Actor_SetAttachedEffect(0x1c,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
   Func_02004b6c_(0x1d, 0x102, 0x1e);
   FieldEvent_ShowMessageThenWait(0x1c, 0, 0xa);
@@ -1336,9 +1337,11 @@ void Func_02002048(void) {
   Actor_SetSpeed(25, 1.6);
   Actor_SetSpeed(27, 1.6);
   FieldActor_StartRepeatedMotion(25, 3);
-  Actor_SetAttachedEffect(0x19, 0x102);
+  Actor_SetAttachedEffect(0x19,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(27, 3);
-  Actor_SetAttachedEffect(0x1b, 0x102);
+  Actor_SetAttachedEffect(0x1b,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Actor_SetScript(28, gData_0200d5d0);
   Actor_SetScript(29, gData_02005620);
@@ -1356,9 +1359,11 @@ void Func_02002048(void) {
   FieldActor_RefreshSelectorById(29);
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(25, 3);
-  Actor_SetAttachedEffect(0x19, 0x102);
+  Actor_SetAttachedEffect(0x19,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(27, 3);
-  Actor_SetAttachedEffect(0x1b, 0x102);
+  Actor_SetAttachedEffect(0x1b,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   FieldCamera_SetSpeed(6);
   FieldCamera_MoveTo(384, CAMERA_KEEP, 480, 1);
@@ -1407,9 +1412,11 @@ void Func_02002048(void) {
   Func_02004b6c_(0x19, 0x101, 0x1e);
   FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
   FieldActor_StartRepeatedMotion(28, 3);
-  Actor_SetAttachedEffect(0x1c, 0x102);
+  Actor_SetAttachedEffect(0x1c,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(29, 3);
-  Actor_SetAttachedEffect(0x1d, 0x102);
+  Actor_SetAttachedEffect(0x1d,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
   Actor_FaceDirection(28, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(29, FACING_NORTH_NORTHWEST, 0);
@@ -1443,17 +1450,17 @@ void Func_02002048(void) {
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(26, 3);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0x201a, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 26, 0, 0xa);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
   Actor_SetAnimationAndWait(26, 4);
-  FieldEvent_ShowMessageThenWait(0x201a, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 26, 0, 0xa);
   Func_02004b6c_(0x19, 0x109, 0x1e);
   FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
   Actor_FaceDirection(26, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x201a, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 26, 0, 0xa);
   Actor_RunRepeatedMotion(27, 2);
   FieldEvent_Wait(20);
   Actor_FaceDirection(26, FACING_SOUTH_SOUTHWEST, 0);
@@ -1498,7 +1505,7 @@ void Func_02002048(void) {
     Actor_FaceDirection(26, FACING_WEST, 0);
     FieldEvent_Wait(20);
     Actor_SetAnimationAndWait(26, 4);
-    FieldEvent_ShowMessageThenWait(0x201a, 0, 0xa);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 26, 0, 0xa);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
   } else {
     FieldEvent_Wait(30);
@@ -1507,7 +1514,7 @@ void Func_02002048(void) {
     Actor_SetAnimationAndWait(26, 3);
     FieldEvent_Wait(10);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
-    FieldEvent_ShowMessageThenWait(0x201a, 0, 0xa);
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 26, 0, 0xa);
   }
   Actor_FaceDirection(4, FACING_EAST, 0);
   FieldEvent_Wait(20);
@@ -1639,7 +1646,8 @@ void Func_02002a08(void) {
   Func_02004b6c_(0x17, 0x100, 0);
   Func_02004b6c_(0x16, 0x100, 0x32);
   FieldActor_StartRepeatedMotion(22, 3);
-  Actor_SetAttachedEffect(0x16, 0x102);
+  Actor_SetAttachedEffect(0x16,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Actor_WalkByAndWait(22, 0, 16);
   FieldEvent_Wait(20);
@@ -1737,10 +1745,10 @@ void Func_02002a08(void) {
   FieldEvent_Wait(10);
   FieldActor_Jump(22, 6, 15);
   FieldActor_Jump(22, 6, 23);
-  FieldEvent_ShowMessageThenWait(0x4016, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 22, 0, 0xa);
   FieldEvent_ShowMessageThenWait(0x1a, 0, 0xa);
   Func_02004b6c_(0x16, 0x108, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x4016, 0, 0x14);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 22, 0, 0x14);
   Actor_SetAnimation(22, 8);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(0x16, 0, 0xa);
@@ -1762,7 +1770,7 @@ turn:
   FieldEvent_Wait(20);
   FieldActor_Jump(23, 6, 15);
   FieldActor_Jump(23, 6, 23);
-  FieldEvent_ShowMessageThenWait(0x4017, 0, 0xf);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 23, 0, 0xf);
   Actor_SetAnimationAndWait(22, 3);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(22, 3);
@@ -1817,15 +1825,15 @@ void Func_02003274(void) {
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Func_02004b6c_(0x19, 0x103, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x1019, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 0xa);
   Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
-  FieldEvent_ShowMessageThenWait(0x1019, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 0xa);
   FieldActor_Jump(25, 6, 15);
   FieldActor_Jump(25, 6, 23);
   FieldEvent_Wait(10);
   Func_02004b6c_(0x19, 0x109, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x1019, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 0xa);
   Actor_FaceDirection(25, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(30);
   Func_02004b6c_(0x19, 0x100, 0x1e);
@@ -1873,7 +1881,7 @@ void Func_02003274(void) {
   Actor_GetById(29)->facing = 0x3000;
   FieldEvent_Wait(20);
   Actor_GetById(25)->actionFlags |= 1;
-  FieldEvent_ShowMessageThenWait(0x1019, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 0xa);
   Actor_SetPosition(29, 168, 368);
   FieldActor_SetSpriteRotationById(0x1d, 0);
   Actor_SetSpriteFlags(Actor_GetById(29), 1);
@@ -1921,7 +1929,7 @@ void Func_02003274(void) {
   Actor_GetById(27)->actionFlags |= 1;
   Actor_GetById(27)->facing = 0x5000;
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x1019, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 0xa);
   Actor_SetPosition(27, 168, 424);
   FieldActor_SetSpriteRotationById(0x1b, 0);
   Actor_SetSpriteFlags(Actor_GetById(27), 1);
@@ -1931,23 +1939,25 @@ void Func_02003274(void) {
   Actor_ArmCallback(25, 0xd000, 0);
   FieldEvent_Wait(30);
   Func_02004b6c_(0x19, 0x107, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x1019, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 0xa);
   Func_02004b6c_(0x1d, 0x109, 0x32);
   Actor_ArmCallback(25, 0x3000, 0);
   FieldEvent_Wait(30);
   Func_02004b6c_(0x19, 0x107, 0x1e);
-  FieldEvent_ShowMessageThenWait(0x1019, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 0xa);
   Func_02004b6c_(0x1b, 0x102, 0x32);
   Actor_SetAnimation(25, 5);
   FieldEvent_Wait(30);
-  FieldEvent_ShowMessageThenWait(0x1019, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 0xa);
   Actor_ArmCallback(29, 0x3000, 0);
   Actor_ArmCallback(27, 0xd000, 0);
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(29, 3);
-  Actor_SetAttachedEffect(0x1d, 0x102);
+  Actor_SetAttachedEffect(0x1d,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(27, 3);
-  Actor_SetAttachedEffect(0x1b, 0x102);
+  Actor_SetAttachedEffect(0x1b,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Actor_SetSpeed(29, 1.8);
   Actor_WalkByAndWait(29, 16, 16);
@@ -1958,7 +1968,7 @@ void Func_02003274(void) {
   FieldEvent_Wait(30);
   Actor_ArmCallback(29, 0xb000, 0);
   Actor_ArmCallback(27, 0xb000, 0);
-  FieldEvent_ShowMessageThenWait(0x1019, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 0xa);
   Actor_SetAnimation(27, 3);
   Actor_SetAnimationAndWait(29, 3);
   FieldEvent_Wait(20);
@@ -1985,23 +1995,25 @@ void Func_02003274(void) {
   Actor_ArmCallback(25, 0x5000, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(25, 4);
-  FieldEvent_ShowMessageThenWait(0x6019, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 25, 0, 0xa);
   FieldActor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, 0x102);
+  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldActor_StartRepeatedMotion(26, 3);
-  Actor_SetAttachedEffect(0x1a, 0x102);
+  Actor_SetAttachedEffect(0x1a,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Actor_WalkBy(27, 0, 64);
   Actor_WalkBy(29, 0, 64);
   Actor_WalkByAndWait(25, 0, 64);
   Func_02004b6c_(0x19, 0x106, 0x28);
-  FieldEvent_ShowMessageThenWait(0x2019, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 25, 0, 0xa);
   Actor_ArmCallback(26, 0x3000, 0);
   Actor_ArmCallback(4, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(0x2019, 0, 0xa);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 25, 0, 0xa);
   Actor_WalkByAndWait(25, 0, 16);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(25, 2);

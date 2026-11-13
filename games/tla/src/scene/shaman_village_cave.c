@@ -161,7 +161,8 @@ void ShamanVillageCave_EddyFlees(void) {
     Actor_SetDestinationOffset(17, -8, 0);
     FieldActor_WaitForMoveById(17);
     FieldActor_Jump(17, 4, 20);
-    Actor_SetAttachedEffect(17, 258);
+    Actor_SetAttachedEffect(17,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     FieldEvent_Wait(30);
     Actor_GetById(17)->actionFlags &= ~1;
     Actor_WalkBy(17, 8, 0);

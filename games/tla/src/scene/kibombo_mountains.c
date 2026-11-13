@@ -211,7 +211,8 @@ void Func_0200036c(void) {
     Actor_SetDestination(17, 764, 376);
     Actor_WalkToAndWait(10, 764, 380);
     Actor_SetAnimation(10, 4);
-    Actor_SetAttachedEffect(10, 257);
+    Actor_SetAttachedEffect(10,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
     Event_SetFlag(FLAG_SCENE_TEMP_02);
   }
   Event_End();
@@ -347,7 +348,8 @@ s32 Scene_Initialize(void) {
       lift->terrainHeight = 0xe00000;
       lift->collisionFlags = flag;
     } else {
-      Actor_SetAttachedEffect(10, 257);
+      Actor_SetAttachedEffect(10, ATTACHED_EFFECT_IN_FRONT |
+                                      ATTACHED_EFFECT_ATTACH);
     }
     Actor_ShowItemIconById(17, 231);
     if (GameFlag_Get(0x882))
@@ -539,11 +541,13 @@ void Func_02000da8(s32 id) {
   Actor_FaceActor(id, owner, 20);
   FieldEvent_SetMessageId(MsgGuardsAnIntruder);
   Event_ShowMessage(id, 0);
-  Actor_SetAttachedEffect(owner, 0x101);
+  Actor_SetAttachedEffect(owner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SetAnimation(id, 4);
   FieldEvent_Wait(30);
   Event_ShowMessage(id, 0);
-  Actor_SetAttachedEffect(owner, 0x100);
+  Actor_SetAttachedEffect(owner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   Func_02000d80();
   Event_End();
 }
@@ -558,11 +562,13 @@ void Func_02000e28(s32 id) {
   Actor_FaceActor(id, owner, 20);
   FieldEvent_SetMessageId(MsgGrrrrrRrrruffRrufff);
   Event_ShowMessage(id, 0);
-  Actor_SetAttachedEffect(owner, 0x101);
+  Actor_SetAttachedEffect(owner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SetAnimation(id, 4);
   FieldEvent_Wait(30);
   Event_ShowMessage(8, 0);
-  Actor_SetAttachedEffect(owner, 0x100);
+  Actor_SetAttachedEffect(owner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   Func_02000d80();
   Event_End();
 }

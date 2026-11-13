@@ -754,7 +754,7 @@ void ShamanVillage_TalkToGuard(void) {
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 204, 292);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 182, 280);
     Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
-    Event_ShowMessage(0x200f, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     Event_SetFlag(FLAG_SCENE_TEMP_00);
     ShamanVillage_ExplainTrialRules();
   } else {
@@ -777,7 +777,7 @@ void ShamanVillage_TalkToOtherGuard(void) {
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 182, 280);
     Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
-    Event_ShowMessage(0x200f, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     Event_SetFlag(FLAG_SCENE_TEMP_00);
     ShamanVillage_ExplainTrialRules();
   } else {
@@ -991,7 +991,8 @@ void ShamanVillage_TellFortune(void) {
       Actor_SetAnimation(17, 1);
       Actor_SetAnimation(17, 3);
       Event_ShowMessage(17, 0);
-      Actor_SetAttachedEffect(17, 0x102);
+      Actor_SetAttachedEffect(17,
+                              ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Event_Wait(40);
       Event_ShowMessage(17, 0);
       Actor_RunRepeatedMotion(17, 1);
@@ -1021,18 +1022,19 @@ void ShamanVillage_ExplainTrialRules(void) {
     Actor_FaceDirectionAndWait(17, FACING_WEST);
     Actor_SetAnimationAndWait(15, 3);
     Event_SetMessageId((s32)MsgShamanListenCarefully);
-    Event_ShowMessage(0x200f, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     Actor_FaceDirectionAndWait(15, FACING_NORTH);
     FieldCamera_SetSpeed(3.2);
     FieldCamera_MoveTo(224, CAMERA_KEEP, 182, 1);
     FieldCamera_WaitForArrival();
-    Event_ShowMessage(0x200f, 0);
-    Actor_SetAttachedEffect(15, 0x102);
-    Event_ShowMessage(0x200f, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
+    Actor_SetAttachedEffect(15,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     FieldCamera_MoveTo(224, CAMERA_KEEP, 280, 1);
     FieldCamera_WaitForArrival();
     Actor_FaceDirectionAndWait(15, FACING_WEST);
-    Event_ShowMessage(0x200f, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     FieldCamera_MoveTo(178, CAMERA_KEEP, 220, 1);
     FieldCamera_WaitForArrival();
     Event_Wait(10);
@@ -1043,10 +1045,10 @@ void ShamanVillage_ExplainTrialRules(void) {
     FieldCamera_MoveTo(226, CAMERA_KEEP, 280, 1);
     FieldCamera_WaitForArrival();
     Actor_FaceDirectionAndWait(15, FACING_WEST);
-    Event_ShowMessage(0x200f, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   }
   Actor_FaceDirectionAndWait(15, FACING_NORTH);
-  Event_ShowMessage(0x200f, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   Actor_SetAnimationAndWait(15, 3);
   Actor_FaceDirection(16, FACING_SOUTHEAST, 0);
   Actor_FaceDirectionAndWait(17, FACING_SOUTHWEST);
@@ -1113,17 +1115,17 @@ void ShamanVillage_ChallengeMoapa(void) {
   Actor_FaceDirection(17, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(15, FACING_WEST);
   Event_SetMessageId((s32)MsgShamanChallengeTrialRoadPrompt);
-  Event_OpenMessage(0x200f, 0);
+  Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
-    Event_ShowMessage(0x200f, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     ShamanVillage_StepBackFromTrial();
   } else {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
-    Event_OpenMessage(0x200f, 0);
+    Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
       Event_PlaySound(MUS_076);
-      Event_ShowMessage(0x200f, 0);
+      Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
       Event_SetFlag(FLAG_SCENE_TEMP_00);
       ShamanVillage_ExplainTrialRules();
     } else {
@@ -1341,17 +1343,17 @@ void ShamanVillage_MeetMoapa(void) {
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
    * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(15, 259, 20)
-  Event_ShowMessage(0x800f, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   Actor_StartRepeatedMotion(17, 1);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
    * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(17, 259, 0)
-  Event_ShowMessage(0x8011, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 17, 0);
   Actor_StartRepeatedMotion(16, 1);
   FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Event_ShowMessage(0x8010, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 16, 0);
   Actor_SetAnimationAndWait(15, 3);
-  Event_ShowMessage(0x800f, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   Event_SetFlag(0x94f);
   Event_End();
 }
@@ -1453,7 +1455,7 @@ void ShamanVillage_ShowShamansRod(void) {
    * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(15, 257, 20)
   Event_ShowMessage(15, 0);
-  Actor_SetAttachedEffect(18, 258);
+  Actor_SetAttachedEffect(18, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
   Event_ShowMessage(18, 0);
   Actor_SetSpeed(15, 0.8);
@@ -1519,7 +1521,7 @@ void ShamanVillage_ShowShamansRod(void) {
   SHAMAN_VILLAGE_EMOTE(7, 265, 20)
   Event_ShowMessage(7, 0);
   Actor_FaceDirection(15, FACING_SOUTHEAST, 0);
-  Actor_SetAttachedEffect(18, 258);
+  Actor_SetAttachedEffect(18, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessage(18, 0);
   FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
   Event_ShowMessage(15, 0);
@@ -1590,7 +1592,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_FaceDirectionAndWait(6, FACING_EAST);
   Event_ShowMessage(6, 0);
   Actor_FaceDirectionAndWait(5, FACING_WEST);
-  Event_ShowMessage(0x2005, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
   Event_ShowMessage(18, 0);
   Actor_FaceDirectionAndWait(18, FACING_WEST);
   Event_ShowMessage(18, 0);
@@ -1711,11 +1713,11 @@ void ShamanVillage_CheckTrialEntry(void) {
   refuse:
     /* FAKEMATCH(pin): the emote pinned to r1 by SHAMAN_VILLAGE_EMOTE. */
     SHAMAN_VILLAGE_EMOTE(15, 257, 20)
-    Event_ShowMessage(0x200f, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     ShamanVillage_StepBackFromTrial();
   } else {
     EVENT_WORK->messageId++;
-    Event_ShowMessage(0x200f, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     Actor_WatchAndSetScript(16, gMainRoutineWork.currentOwner);
     Actor_WatchAndSetScript(17, gMainRoutineWork.currentOwner);
     Actor_WatchAndSetScript(15, gMainRoutineWork.currentOwner);
@@ -2073,7 +2075,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   Event_ShowMessage(5, 0);
   Actor_FaceDirectionAndWait(6, FACING_WEST);
   Actor_SetAnimation(6, 3);
-  Event_ShowMessage(0x2006, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 6, 0);
   Actor_FaceDirectionAndWait(6, FACING_NORTH);
   Actor_FaceDirectionAndWait(6, FACING_EAST);
   Actor_SetAnimationAndWait(6, 3);
@@ -2089,16 +2091,16 @@ void ShamanVillage_ShebaClearsSand(void) {
   FieldCamera_MoveTo(168, CAMERA_KEEP, 540, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
-  Actor_SetAttachedEffect(15, 258);
+  Actor_SetAttachedEffect(15, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
   Event_ShowMessage(15, 0);
-  Actor_SetAttachedEffect(17, 258);
-  Event_ShowMessage(0x8011, 0);
-  Actor_SetAttachedEffect(16, 258);
-  FieldEvent_ShowMessageThenWait(0x8010, 0, 20);
+  Actor_SetAttachedEffect(17, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 17, 0);
+  Actor_SetAttachedEffect(16, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 16, 0, 20);
   Actor_RunRepeatedMotion(15, 1);
   Actor_FaceDirectionAndWait(15, FACING_NORTHWEST);
-  Event_ShowMessage(0x200f, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
    * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(15, 256, 0)
@@ -2109,7 +2111,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_SetAnimation(6, 3);
   Event_ShowMessage(6, 0);
   Actor_FaceDirectionAndWait(7, FACING_SOUTHWEST);
-  Event_ShowMessage(0x4007, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
   Actor_FaceDirectionAndWait(15, FACING_NORTHEAST);
   Actor_SetAnimation(15, 4);
   Event_ShowMessage(15, 0);
@@ -2121,11 +2123,11 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
   Event_ShowMessage(5, 0);
   Actor_FaceDirectionAndWait(15, FACING_NORTHWEST);
-  Event_ShowMessage(0x200f, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
    * frames load before the actor. */
   SHAMAN_VILLAGE_EMOTE(18, 257, 40)
-  Event_ShowMessage(0x4012, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 18, 0);
   Actor_SetAnimationAndWait(15, 3);
   Actor_FaceDirectionAndWait(15, FACING_NORTH);
   Event_ShowMessage(15, 0);
@@ -2145,7 +2147,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_FaceDirection(6, FACING_SOUTHWEST, 20);
   Actor_FaceDirectionAndWait(6, FACING_SOUTH);
   Event_ShowMessage(6, 0);
-  Actor_SetAttachedEffect(15, 258);
+  Actor_SetAttachedEffect(15, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessage(15, 0);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
    * frames load before the actor. */
@@ -2155,10 +2157,10 @@ void ShamanVillage_ShebaClearsSand(void) {
   Event_ShowMessage(6, 0);
   Actor_FaceDirectionAndWait(17, FACING_NORTHWEST);
   Actor_SetAnimation(17, 4);
-  Event_ShowMessage(0x8011, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 17, 0);
   Actor_FaceDirectionAndWait(16, FACING_NORTHEAST);
   Actor_SetAnimation(16, 4);
-  Event_ShowMessage(0x8010, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 16, 0);
   Actor_FaceDirection(16, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(17, FACING_WEST);
   Event_Wait(10);
@@ -2226,7 +2228,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_FaceDirectionAndWait(15, FACING_NORTHEAST);
   Actor_FaceDirectionAndWait(16, FACING_SOUTHEAST);
   Event_ShowMessage(16, 0);
-  Actor_SetAttachedEffect(15, 258);
+  Actor_SetAttachedEffect(15, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirection(15, FACING_NORTHWEST, 20);
   Actor_FaceDirectionAndWait(17, FACING_WEST);
   Actor_Jump(17, 4, 10);
@@ -2243,7 +2245,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   Event_ShowMessage(5, 0);
   Actor_SetAnimation(6, 3);
   Event_ShowMessage(6, 0);
-  Actor_SetAttachedEffect(15, 258);
+  Actor_SetAttachedEffect(15, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirection(15, FACING_NORTH, 40);
   Actor_FaceDirectionAndWait(15, FACING_NORTHEAST);
   Event_Wait(20);
@@ -2449,16 +2451,16 @@ void ShamanVillage_RestartTrial(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   FieldCamera_WaitForArrival();
   Event_SetMessageId((s32)MsgShamanMustFinishTrialRoad);
-  Event_ShowMessage(0x200f, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   Actor_SetAnimation(15, 3);
-  Event_OpenMessage(0x200f, 0);
+  Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
-    Event_OpenMessage(0x200f, 0);
+    Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
       Actor_SetAnimationAndWait(15, 3);
       Event_PlaySound(MUS_076);
-      Event_ShowMessage(0x200f, 0);
+      Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
       Event_SetFlag(FLAG_SCENE_TEMP_00);
       ShamanVillage_ExplainTrialRules();
       return;
@@ -2467,13 +2469,13 @@ void ShamanVillage_RestartTrial(void) {
   } else {
     EVENT_WORK->messageId += 2;
   }
-  Event_OpenMessage(0x200f, 0);
+  Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
-    Event_ShowMessage(0x200f, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     ShamanVillage_StepBackFromTrial();
   } else {
     EVENT_WORK->messageId++;
-    Event_ShowMessage(0x200f, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     ShamanVillage_CheckTrialEntry();
   }
   Scene_PlayMusic();
@@ -2495,7 +2497,7 @@ void ShamanVillage_AdviseQuitting(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
-  Event_ShowMessage(0x200f, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   ShamanVillage_StepBackFromTrial();
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   Event_End();

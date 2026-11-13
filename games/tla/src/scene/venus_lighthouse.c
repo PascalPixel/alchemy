@@ -680,14 +680,14 @@ void VenusLighthouse_DoubtLeaving(void) {
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(5, FACING_NORTHEAST, 0);
   FieldEvent_Wait(30);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(5, 3);
   FieldEvent_Wait(10);
@@ -717,7 +717,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   Actor_FaceDirection(8, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
   FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_Wait(10);
@@ -745,7 +745,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceDirection(9, FACING_NORTHEAST, 0);
@@ -757,7 +757,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Actor_FaceDirection(9, FACING_EAST_NORTHEAST, 0);
@@ -802,7 +802,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   Actor_FaceDirection(8, FACING_WEST_NORTHWEST, 0);
   FieldEvent_Wait(20);
   FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(5, FACING_EAST_SOUTHEAST, 0);
   FieldEvent_Wait(20);
@@ -830,7 +830,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(8, 2);
   FieldEvent_Wait(10);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(5, FACING_EAST, 0);
   FieldEvent_Wait(20);
@@ -845,14 +845,14 @@ void VenusLighthouse_DoubtLeaving(void) {
   Actor_SetAnimationAndWait(5, 3);
   FieldEvent_Wait(30);
   FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(5, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Event_ShowMessage(5, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(5, 2);
   FieldEvent_Wait(10);
@@ -865,7 +865,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   Event_ShowMessage(9, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Event_ShowMessage(5, 0);
@@ -874,7 +874,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(8, 3);
   FieldEvent_Wait(10);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(5, 2);
   FieldEvent_Wait(10);
@@ -924,7 +924,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(8, 3);
   FieldEvent_Wait(10);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_Wait(10);
@@ -951,7 +951,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceDirection(9, FACING_EAST_NORTHEAST, 0);
@@ -978,7 +978,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(8, 3);
   FieldEvent_Wait(10);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
@@ -999,7 +999,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(20);
   Actor_FaceDirection(8, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  Event_ShowMessage(0x2008, 0);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(5, 2);
   FieldEvent_Wait(10);

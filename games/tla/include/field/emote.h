@@ -2,7 +2,8 @@
 #define ALCHEMY_EMOTE_H
 
 /// @file
-/// The bubbles an actor shows over its head (Actor_ShowEmoteById).
+/// What an actor shows over it: the bubbles of Actor_ShowEmoteById and the
+/// effects FieldEffect_SetAttached attaches.
 
 /// Actor_ShowEmoteById's emote flag: the bubble takes sprite priority 1
 /// instead of its actor's. The low four bits pick the bubble (enum Emote).
@@ -21,6 +22,16 @@ enum Emote {
   EMOTE_SCOWL = 7,       ///< a scowling face
   EMOTE_SMILE = 8,       ///< a smiling face
   EMOTE_SWEAT_DROP = 9   ///< a sweat drop
+};
+
+/// FieldEffect_SetAttached's flags: a mode in the low two bits, and
+/// ATTACHED_EFFECT_IN_FRONT, as The Broken Seal's.
+enum AttachedEffectFlag {
+  ATTACHED_EFFECT_REMOVE = 0, ///< removes the attached actor
+  ATTACHED_EFFECT_ATTACH = 1, ///< attaches one that stays until removed
+  ATTACHED_EFFECT_ONCE = 2,   ///< shows a one-off one that ends by itself
+  /// The attached actor takes sprite priority 1, not the actor's.
+  ATTACHED_EFFECT_IN_FRONT = 0x100
 };
 
 #endif

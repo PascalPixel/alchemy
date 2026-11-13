@@ -137,6 +137,7 @@
 #include "script_operands.h"
 
 #include "ground_mask.h"
+
 #include "shared/orbit.h"
 
 #include "flags.h"
@@ -315,7 +316,7 @@ static s32 Kalay_UpdateTouristFidget(struct Actor *actor) {
   return 1;
 }
 
-#include "shared/actor_heading.h"
+#include "shared/actor_heading.c"
 
 /// The party has heard in Lunpa that Hammet is held there, or he is already
 /// free. It changes what Layana says.
@@ -1965,7 +1966,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Event_End();
 }
 
-#include "shared/actor_find_at_cell.h"
+#include "shared/actor_find_at_cell.c"
 
 /// In the Kalay Tunnel (KalayTunnelTreasureRoom), walking into a statue pushes
 /// it one cell when there is room.
@@ -2254,7 +2255,7 @@ static void Kalay_FreezePuddle(void) {
   GameFlag_Set(FLAG_TUNNEL_PUDDLE_FROZEN);
 }
 
-#include "shared/actor_orbit.h"
+#include "shared/actor_orbit.c"
 
 // One cell in each facing direction: x in the high 16 bits, z in the low 16.
 // UB: negative x coordinates cannot be left-shifted as signed integers.

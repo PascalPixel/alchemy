@@ -446,7 +446,7 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
   return 0;
 }
 
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_spawn.c"
 #include "ability_ids.h"
 
 /// The scene's names for the bytes Actor keeps for scene code. A statue
@@ -458,8 +458,8 @@ enum {
   SW_VENUS_LIGHT_ARRIVED = SW_RISE_ENABLED
 };
 
-#include "shared/actor_distance.h"
-#include "shared/actor_find_at_position.h"
+#include "shared/actor_distance.c"
+#include "shared/actor_find_at_position.c"
 #include "shared/actor_step.h"
 
 /// Pushing a pillar moves the pillar ahead of the leader one cell on with him,
@@ -535,7 +535,7 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
 static UNUSED s32 PushedActor_FillGridAttributeRectangle(u32 layer, s32 x,
                                                          s32 z, u32 width,
                                                          u32 height, s32 value);
-#include "shared/pushed_actor_fill_rectangle.h"
+#include "shared/pushed_actor_fill_rectangle.c"
 
 /// After a battle, draws every actor whose timer holds a
 /// VENUS_COLOR_MARK in its colour mode again.
@@ -694,9 +694,9 @@ static void VenusLighthouse_LeaveCappedPillarRows(void) {
   gFadeOverlayWork->actor = NULL;
 }
 
-#include "shared/actor_depth.h"
-#include "shared/actor_wait_until_idle.h"
-#include "shared/field_effect_advance.h"
+#include "shared/actor_depth.c"
+#include "shared/actor_wait_until_idle.c"
+#include "shared/field_effect_advance.c"
 
 /// Drops the leader onto the floor and emits the radial landing dust.
 static void VenusLighthouse_LandWithRadialDust(void) {
@@ -751,7 +751,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
   Event_End();
 }
 
-#include "shared/field_effect_radial.h"
+#include "shared/field_effect_radial.c"
 
 /// In VenusLighthouseGroundFloor, the leader stands on the floor switch and
 /// holds it down.
@@ -3402,7 +3402,7 @@ static s32 VenusLighthouse_RouteLight(struct Actor *light) {
   return 0;
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 /// The cell ahead for each of sixteen headings, 16 pixels east-west in the
 /// upper halfword and north-south in the lower (DIRECTION_STEP).
@@ -3537,7 +3537,7 @@ s32 gVenusMiniatureLighthouseScript[] = {
     SC_END,
 };
 
-#include "shared/glint_twinkle_script.h"
+#include "shared/glint_twinkle_script.c"
 
 /// The actor scripts that give a spiral pillar its piece of track.
 s32 gVenusTrackNorthSouthScript[] = {

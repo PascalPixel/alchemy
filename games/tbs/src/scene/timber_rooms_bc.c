@@ -390,7 +390,7 @@ static void TimberRoomsBC_TalkToIodem(void) {
   Event_ShowMessage(ACTOR_IODEM, 0);
 }
 
-#include "shared/leave_by_exit.h"
+#include "shared/leave_by_exit.c"
 
 /// What the party can talk to, touch and search in each scene, before and
 /// after Venus Lighthouse.

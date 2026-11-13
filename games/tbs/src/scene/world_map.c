@@ -2641,10 +2641,10 @@ UNUSED static void WorldMap_UpdateCyclingLinkedEffects(struct Actor *actor) {
   }
 }
 
-#include "shared/color_mode_cycle.h"
+#include "shared/color_mode_cycle.c"
 
-#include "shared/field_effect_vertical.h"
-#include "shared/world_map_attached_effects.h"
+#include "shared/field_effect_vertical.c"
+#include "shared/world_map_attached_effects.c"
 
 /// Hammet's caravan outside Vault (WorldMap_ShowHammetsCaravan): each of
 /// the four wagons, at one and a half times its size, rolls up to the party

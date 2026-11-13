@@ -226,7 +226,7 @@ static s32 Kolima_UpdateFallingDebris(struct Actor *debris) {
   return 1;
 }
 
-#include "shared/actor_facing.h"
+#include "shared/actor_facing.c"
 
 /// Selects the entrances of Kolima, Kolima Tunnel or Kolima Bridge.
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -527,7 +527,7 @@ static void Kolima_AlternateProtectiveFieldHeights(void) {
   Kolima_SetProtectiveFieldHeight(ACTOR_GARET_PSYNERGY_FIELD, 1);
 }
 
-#include "shared/mind_read.h"
+#include "shared/mind_read.c"
 
 /// Gives the four companions the same nod, waiting on the final actor.
 static inline void Kolima_NodTogether(void) {
@@ -1450,7 +1450,7 @@ static void Kolima_FaceActorAndWait(s32 actorId, s32 facing, s32 waitFrames) {
   Event_Wait(waitFrames);
 }
 
-#include "shared/kolima_grow.h"
+#include "shared/kolima_grow.c"
 
 /// Spawns a moving curse sparkle every eighth frame.
 static void Kolima_SpawnCurseSparkle(void) {
@@ -1489,7 +1489,7 @@ static void Kolima_SpawnCurseSparkle(void) {
   Actor_StartScript(sparkle, gKolima_GoldenRingsScript);
 }
 
-#include "shared/kolima_blink.h"
+#include "shared/kolima_blink.c"
 
 /// Triggers a temporary pose when an effect enters the party's occupied area.
 static s32 Kolima_TriggerRegionScript(struct Actor *actor) {
@@ -1517,7 +1517,7 @@ static s32 Kolima_TriggerRegionScript(struct Actor *actor) {
   return 0;
 }
 
-#include "shared/kolima_forest_bridge_falling_effect.h"
+#include "shared/kolima_forest_bridge_falling_effect.c"
 s32 gKolima_PendingPose __attribute__((section(".bss")));
 s32 gKolima_MiaInParty __attribute__((section(".bss")));
 s32 gKolima_EffectActive __attribute__((section(".bss")));
@@ -1560,7 +1560,7 @@ s32 gKolima_MiaWalksIn[] = {
     SC_ANIMATION(1), SC_END,
 };
 
-#include "shared/kolima_squash.h"
+#include "shared/kolima_squash.c"
 
 s32 gKolima_ProtectiveFieldGrowActions[] = {
     SC_SET(SW_SCALE_X, Q16_ONE / 10),

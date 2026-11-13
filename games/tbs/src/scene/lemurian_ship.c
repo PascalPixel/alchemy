@@ -778,7 +778,7 @@ void LineScroll_BuildPage(void) {
   work->page ^= 1;
 }
 
-#include "shared/scroll_initialize_hblank_dma.h"
+#include "shared/scroll_initialize_hblank_dma.c"
 
 /// Takes the ripple's tasks off and stops DMA 0.
 static void Ripple_Stop(void) {

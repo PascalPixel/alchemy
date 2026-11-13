@@ -138,7 +138,7 @@ enum ValeKradensCottageActorId {
   ACTOR_COTTAGE_VISITOR
 };
 
-#include "shared/actor_facing.h"
+#include "shared/actor_facing.c"
 
 /// The front door of Kraden's cottage stands open since Kraden set off. So
 /// walking in (cell behavior 3, the exit into the cottage) skips its opening.
@@ -148,13 +148,9 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gValeKradensCottage_Entrances;
 }
 
-const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  return NULL;
-}
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Scene_GetExits(void) {
-  return gValeKradensCottage_Exits;
-}
+const u32 *Scene_GetExits(void) { return gValeKradensCottage_Exits; }
 
 /// Returns the one actor placement table for every visit.
 /// Scene_Initialize removes the actors a visit does not use.

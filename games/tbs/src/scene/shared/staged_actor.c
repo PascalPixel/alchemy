@@ -22,7 +22,7 @@
 extern s32 gPushedActor_DirectionSteps[];
 extern s32 gPushedActor_FootprintBounds[];
 
-#include "actor_distance.h"
+#include "actor_distance.c"
 
 /// Returns the placed actor on the cell of the 16.16 position and at its
 /// height (in whole pixels), or 0. origin is not read.
@@ -115,7 +115,7 @@ UNUSED static void PushedActor_AdvancePair(void) {
   Actor_SelectAnimation(lead, ANIM_STAND);
 }
 
-#include "pushed_actor_fill_rectangle.h"
+#include "pushed_actor_fill_rectangle.c"
 
 /// The leader's update routine while pushing a large thing: stop the leader
 /// when another actor that is not a large thing, or a wall, is in the

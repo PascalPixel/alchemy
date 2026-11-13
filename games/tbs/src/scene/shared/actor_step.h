@@ -4,7 +4,7 @@
 #include "macros.h"
 
 // The pushed-statue scenes (Bilibin, its cave, Kalay, Sol Sanctum's entrance,
-// the Vault's cave, Venus Lighthouse) and those of staged_actor.h.
+// the Vault's cave, Venus Lighthouse) and those of staged_actor.c.
 
 /// Sets `position` to one step from `actor`: `step` packs the step in x in its
 /// high half and the step in z in its low half, as the push tables do.

@@ -167,7 +167,7 @@ enum {
 };
 
 // The scene flag the inn keeps as FLAG_VAULT_LEADER_BESIDE_BONE
-// (shared/vault_bone_proximity_flag.h) once the thieves are jailed means
+// (shared/vault_bone_proximity_flag.c) once the thieves are jailed means
 // something else in the guests' room:
 /// The party is cornering the two suspects in the guests' room, so talking to
 /// Ivan or the suspects does nothing.
@@ -411,7 +411,7 @@ static void LogRoomsA_TalkToInnkeeper(void) {
   Event_End();
 }
 
-#include "shared/vault_bone.h"
+#include "shared/vault_bone.c"
 
 /// At Vault's inn, while the party corners the suspects, Garet refuses to stop
 /// for anything else. "We don't have time for that, Isaac!"
@@ -462,7 +462,7 @@ static void LogRoomsA_StandAndShowMessage(s32 x) {
   Event_ShowMessage(x, 0);
 }
 
-#include "shared/vault_talk.h"
+#include "shared/vault_talk.c"
 
 /// Faces the leader and selects the next reply when the answer is no.
 static void LogRoomsA_AskYesNoAndShowReply(s32 x) {
@@ -1863,7 +1863,7 @@ static void LogRoomsA_AdvanceSuspectRoute(s32 actorId, s32 expected, s32 next,
   }
 }
 
-#include "shared/vault_bone_proximity_flag.h"
+#include "shared/vault_bone_proximity_flag.c"
 
 /// Arriving in any room of Vault's houses, shops and inn: restores the room
 /// for the story so far, and plays the loft's events.
@@ -2139,7 +2139,7 @@ static s32 LogRoomsA_GetIvanVenusDjinnCount(void) {
   return Unit_Get(IVAN)->djinnHeldCounts[ELEMENT_VENUS];
 }
 
-#include "shared/vault_djinn.h"
+#include "shared/vault_djinn.c"
 
 /// Stages the defeated thieves and gathers the townspeople in the loft.
 static void LogRoomsA_DefeatThieves(void) {
@@ -2877,9 +2877,9 @@ static void LogRoomsA_PlayAnimationAndWait(s32 actorId, s32 animation,
   Event_Wait(waitFrames);
 }
 
-#include "shared/mind_read.h"
+#include "shared/mind_read.c"
 
-#include "shared/vault_item_icon.h"
+#include "shared/vault_item_icon.c"
 
 /// Finds the route node containing the actor's position on the
 /// eight-pixel grid.

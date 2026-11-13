@@ -176,7 +176,7 @@ static inline void LiftPillar(s32 column, u8 motionFlags) {
   Actor_Get(ACTOR_FIRST_PILLAR)->y.fixed = px(32);
 }
 
-#include "shared/staged_actor.h"
+#include "shared/staged_actor.c"
 
 /// Talking to Bane in CrossboneIsleBane while Halt holds it
 /// (TRIGGER_TALK_HALTED): Bane, a Venus Djinni, joins the party.
@@ -1251,7 +1251,7 @@ UNUSED static void CrossboneIsleKeys_UnusedRedrawKeyActors(void) {
   }
 }
 
-#include "shared/colosso_item_icon.h"
+#include "shared/colosso_item_icon.c"
 
 /// Restores collected keys and already opened passages.
 static void CrossboneIsleKeys_InitializeKeys(void) {
@@ -1357,7 +1357,7 @@ static void CrossboneIsleKeys_InitializeBane(void) {
   }
 }
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 // clang-format off
 
 s32 gCrossboneIsleKeys_BaneSquashScript[] = {

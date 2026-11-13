@@ -262,7 +262,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gImilFuchinFalls_NoActorPlacements;
 }
 
-#include "shared/actor_pair_move.h"
+#include "shared/actor_pair_move.c"
 
 /// The first room's first log lies at the east end of its track.
 #define FLAG_FUCHIN_FALLS_ENTRANCE_FIRST_LOG_EAST FLAG_AREA_TEMP_01

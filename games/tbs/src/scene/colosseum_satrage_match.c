@@ -1372,25 +1372,25 @@ static void ColosseumSatrageMatch_TalkToBoardWalkAttendant(s32 attendant) {
   Event_End();
 }
 
-// This scene's exits for colosso_solo.h.
+// This scene's exits for colosso_solo.c.
 #define COLOSSO_SOLO_TO_RACE COLOSSEUM_SATRAGE_MATCH_LEND_A_HAND_TO_RACE
 #define COLOSSO_SOLO_TO_COLOSSEUM COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_SOUTH
-#include "shared/colosso_solo.h"
-#include "shared/item_equip.h"
-#include "shared/colosso_task.h"
+#include "shared/colosso_solo.c"
+#include "shared/item_equip.c"
+#include "shared/colosso_task.c"
 
-#include "shared/colosso_lettering.h"
+#include "shared/colosso_lettering.c"
 
-#include "shared/colosso_marker.h"
-#include "shared/colosso_item_icon.h"
+#include "shared/colosso_marker.c"
+#include "shared/colosso_item_icon.c"
 
-#include "shared/colosso_hex_string.h"
-#include "shared/colosso_finish.h"
+#include "shared/colosso_hex_string.c"
+#include "shared/colosso_finish.c"
 
-#include "shared/colosso_path_opponent.h"
+#include "shared/colosso_path_opponent.c"
 
 /// Colosseum Final 2's own copy of Colosso_StartRaceGauge
-/// (shared/colosso_setup.h), which passes the gauge routine's address as it is.
+/// (shared/colosso_setup.c), which passes the gauge routine's address as it is.
 void ColosseumSatrageMatch_StartRaceGauge(s32 leaderId, s32 opponentId,
                                           s32 segments, s32 finishX,
                                           s32 finishZ, s32 firstItem,
@@ -1453,10 +1453,10 @@ static void ColosseumSatrageMatch_StartOpponentPath(s32 pathResource) {
   Task_AddFrame(Colosso_UpdatePathOpponent, TASK_PASS_FRAME + 5);
 }
 
-#include "shared/colosso_map_state.h"
-#include "shared/actor_find_at_position.h"
+#include "shared/colosso_map_state.c"
+#include "shared/actor_find_at_position.c"
 
-#include "shared/colosso_occupant.h"
+#include "shared/colosso_occupant.c"
 
 /// Closes the arena's step trigger. Nothing in the game sets it.
 #define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_SCENE_TEMP_10
@@ -1465,12 +1465,12 @@ static void ColosseumSatrageMatch_StartOpponentPath(s32 pathResource) {
 
 const u8 gColosseumSatrageMatch_RollLogScript[] = {2, 2, 3, 3};
 
-#include "shared/colosso_lettering_tables.h"
+#include "shared/colosso_lettering_tables.c"
 // clang-format off
 
 char gHexDigits[20] = "0123456789ABCDEF";
 
-#include "shared/colosso_prize_scripts.h"
+#include "shared/colosso_prize_scripts.c"
 
 u32 gPushedActor_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),
@@ -1636,9 +1636,9 @@ struct Trigger gColosseumSatrageMatchTriggers[] = {
 
 s16 gColosso_LetteringSlot = -1;
 
-#include "shared/colosso_lettering_scripts.h"
+#include "shared/colosso_lettering_scripts.c"
 // clang-format on
 
 s16 gColosso_MarkerSlot = -1;
 
-#include "shared/colosso_finish_scripts.h"
+#include "shared/colosso_finish_scripts.c"

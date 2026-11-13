@@ -113,11 +113,11 @@ enum {
 };
 
 // Shared effect and proximity routines precede the scene's entry points.
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
-#include "shared/actor_distance.h"
-#include "shared/vault_range.h"
-#include "shared/vault_nearby.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
+#include "shared/actor_distance.c"
+#include "shared/vault_range.c"
+#include "shared/vault_nearby.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gVaultRevisit_Entrances;
@@ -457,7 +457,7 @@ static void VaultRevisit_EnterMayorsHouse(void) {
   Vault_WalkThroughExit(120, 144, VAULT_REVISIT_TO_LOG_ROOMS_B_NORTHWEST);
 }
 
-#include "shared/vault_map_cells.h"
+#include "shared/vault_map_cells.c"
 #include "ability_ids.h"
 #include "item_ids.h"
 
@@ -475,7 +475,7 @@ static void VaultRevisit_EnterJail(void) {
 }
 
 // Shared entrance toggles precede the Djinni and dog events.
-#include "shared/vault_toggle.h"
+#include "shared/vault_toggle.c"
 
 /// Talking to Sap, a Venus Djinni, makes it join the party.
 static void VaultRevisit_SapJoins(void) {
@@ -595,7 +595,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,
@@ -603,7 +603,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-#include "shared/vault_well_routes.h"
+#include "shared/vault_well_routes.c"
 
 struct SceneEntrance gVaultRevisit_Entrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,

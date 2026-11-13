@@ -160,9 +160,9 @@ static struct FieldPosition sSparkOrigin;
 static s32 sSparkFrame;
 static s16 *sLastCocoon;
 
-#include "shared/field_effect_create.h"
+#include "shared/field_effect_create.c"
 
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_spawn.c"
 #include "ability_ids.h"
 #include "item_ids.h"
 
@@ -1070,7 +1070,7 @@ static void TreeRooms_CastReveal(void) {
   Task_Remove(TretPalette_UpdateMapTint);
 }
 
-#include "shared/field_effect_advance.h"
+#include "shared/field_effect_advance.c"
 
 /// Entrance 10, at the end of the fall from cocoon 50.
 static void TreeRooms_RunLandingDustEvent(void) {
@@ -1128,7 +1128,7 @@ static void TreeRooms_RunLandingDustEvent(void) {
   Event_End();
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 /// The torn cocoons redrawn after a battle. Each row is the cocoon's flag,
 /// whether it is redrawn (0 for the four the layout draws torn), the staging

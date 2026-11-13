@@ -164,10 +164,10 @@ enum { PIT_MASK = SPRITE_CRATE };
 static void BabiLighthouse_CloseTruthDoor(void);
 static void BabiLighthouse_RedrawLedgePillarCells(void);
 
-#include "shared/staged_actor.h"
+#include "shared/staged_actor.c"
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
 
 /// Talking to the Djinni in BabiLighthouseLuff starts the battle with
 /// Luff, a Jupiter Djinni.
@@ -175,8 +175,8 @@ static void BabiLighthouse_StartDjinnBattle(void) {
   Field_RequestDjinnBattle(ACTOR_LUFF, DJINNI_LUFF);
 }
 
-#include "shared/actor_wait_until_idle.h"
-#include "shared/field_effect_advance.h"
+#include "shared/actor_wait_until_idle.c"
+#include "shared/field_effect_advance.c"
 
 /// The leader arrives by falling from the floor above. He drops in, lands with
 /// a thud that shakes the screen and throws up a ring of dust, and is startled.
@@ -1449,9 +1449,9 @@ s32 BabiLighthouse_SetupMap(void) {
   return 0;
 }
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

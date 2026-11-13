@@ -90,8 +90,8 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void);
 static void GomaCaveEntrance_LeapStump(s32 stumpId);
 static void GomaCaveEntrance_GiveShamansRod(void);
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
 
 /// Shows the next message over the speaker, then pauses.
 static void GomaCaveEntrance_SayThenWait(s32 actorId, s32 frames) {
@@ -510,7 +510,7 @@ static void GomaCaveEntrance_SpinStump(struct Actor *actor) {
   state->rotation = v;
 }
 
-#include "shared/actor_wait_below_height.h"
+#include "shared/actor_wait_below_height.c"
 
 /// The stump leaps out of the way and sinks in the pool.
 static void GomaCaveEntrance_LeapStump(s32 stumpId) {
@@ -571,7 +571,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   MapGrid_WaitForShakeToSettle();
 }
 
-#include "shared/item_equip.h"
+#include "shared/item_equip.c"
 
 /// Gives Ivan the Shaman's Rod and equips it.
 static void GomaCaveEntrance_GiveShamansRod(void) {
@@ -621,7 +621,7 @@ retry:
   }
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

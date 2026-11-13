@@ -1,7 +1,7 @@
 /// @file
 /// The distance between two actors, for the scenes where someone reacts to
 /// who is near: the Mercury and Venus Lighthouse aeries, Tolbi, Vault,
-/// Venus Lighthouse, Xian and every scene with staged_actor.h.
+/// Venus Lighthouse, Xian and every scene with staged_actor.c.
 
 /// The distance in whole pixels between two positions, each given by its x
 /// and read on through the y and z that follow it, as an actor holds them.

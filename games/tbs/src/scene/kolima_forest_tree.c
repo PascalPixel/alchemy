@@ -787,7 +787,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "shared/kolima_grow.h"
+#include "shared/kolima_grow.c"
 
 /// Spawns the growing sparks that repel the party leader.
 static void KolimaForestTree_SpawnRejectionSpark(void) {
@@ -1024,7 +1024,7 @@ static void KolimaForestTree_ReplaceInventoryItem(s32 oldItemId,
   }
 }
 
-#include "shared/kolima_palette.h"
+#include "shared/kolima_palette.c"
 
 s32 gKolimaForestTree_GaretApproachActions[] = {
     SC_ANIMATION(2),

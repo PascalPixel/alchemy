@@ -134,7 +134,7 @@ static void CottageRoomsB_ShowMythrilBag(void);
 static void CottageRoomsB_SpawnEffectPair(struct Actor *actor);
 static void CottageRoomsB_DemonstrateCatch(void);
 
-#include "shared/actor_facing.h"
+#include "shared/actor_facing.c"
 
 /// Back from Kalay, Dora has got out of her sickbed on this visit to show Isaac
 /// she is well.
@@ -1101,9 +1101,9 @@ static void CottageRoomsB_CyclePaletteAndSpawnPair(struct Actor *actor) {
   }
 }
 
-#include "shared/color_mode_cycle.h"
+#include "shared/color_mode_cycle.c"
 
-#include "shared/field_effect_vertical.h"
+#include "shared/field_effect_vertical.c"
 
 /// Copies the parent's ground height into two oppositely moving vertical
 /// effects.
@@ -1158,7 +1158,7 @@ static void CottageRoomsB_SpawnEffectPair(struct Actor *parent) {
   }
 }
 
-#include "shared/event_psynergy.h"
+#include "shared/event_psynergy.c"
 
 /// Cycles Dora's palette and gives off pairs of effects.
 UNUSED static void CottageRoomsB_CyclePaletteWithParticles(void) {

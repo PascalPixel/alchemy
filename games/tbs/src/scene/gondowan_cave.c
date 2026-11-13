@@ -131,10 +131,10 @@ enum GondowanCaveActorId {
 static void GondowanCave_MovePillar(void);
 static void GondowanCave_RunSpinningLeap(s32 actorId);
 
-#include "shared/field_effect_create.h"
+#include "shared/field_effect_create.c"
 
-#include "shared/field_effect_spawn.h"
-#include "shared/staged_actor.h"
+#include "shared/field_effect_spawn.c"
+#include "shared/staged_actor.c"
 #include "ability_ids.h"
 #include "item_ids.h"
 
@@ -501,9 +501,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 // clang-format off
 
 const s32 *gFieldEffect_DurationScripts[] = {

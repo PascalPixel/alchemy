@@ -119,7 +119,7 @@ enum {
 /// Set once the mayor has told Isaac the thieves escaped from jail.
 enum { FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK = FLAG_AREA_TEMP_00 };
 
-#include "shared/vault_bone_proximity_flag.h"
+#include "shared/vault_bone_proximity_flag.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gLogRoomsB_Entrances;
@@ -270,7 +270,7 @@ static void LogRoomsB_ReadMindAndWelcomeIsaacBack(void) {
   Actor_SetMovementTypeById(ACTOR_MAYOR, 2);
 }
 
-#include "shared/vault_bone.h"
+#include "shared/vault_bone.c"
 
 /// Across the counter the weapon shop opens.
 static void LogRoomsB_TalkToWeaponMerchant(void) {
@@ -383,7 +383,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "shared/vault_item_icon.h"
+#include "shared/vault_item_icon.c"
 
 struct SceneEntrance gLogRoomsB_Entrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,

@@ -120,7 +120,7 @@ enum { ENTRANCE_STUMP_FALL = 99 };
 /// (GomaCavePillar_FidgetWhileForgeFights).
 enum GomaCavePillarRaisedTrigger { RAISED_FORGE_JOINED = 99 };
 
-#include "shared/staged_actor.h"
+#include "shared/staged_actor.c"
 
 /// Talking to Forge, a Mars Djinni, in Goma Cave: the man beside it jumps in
 /// surprise, and the battle with the Djinni begins.
@@ -475,7 +475,7 @@ static void GomaCavePillar_JumpGapWest(void) {
   /* LEFTOVER(template): destination holds &target, the landing reached
    * through a pointer; Camelot's template: the same leap body in the sibling
    * leap routines MogallForest_TryJumpLeaderTo, LogRoomsA_TryJumpTo,
-   * TunnelRuins_HopLeaderTo and shared/kolima_jump.h takes its landing as a
+   * TunnelRuins_HopLeaderTo and shared/kolima_jump.c takes its landing as a
    * struct FieldPosition *; as target.y and &target, 51 of 79 instructions
    * differ in tbs-ja. */
   destination = &target;
@@ -610,7 +610,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 // clang-format off
 
 /// The scripts a pillar fragment can run, chosen by the low bits of its spawn

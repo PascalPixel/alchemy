@@ -19,8 +19,8 @@ enum {
 
 /// The shared effect-spawning source, at its place in the ROM.
 #define EFFECT_SPAWN_RESIDENT
-#include "../../scene/shared/field_effect_spawn.h"
-#include "../../scene/shared/field_effect_advance.h"
+#include "../../scene/shared/field_effect_spawn.c"
+#include "../../scene/shared/field_effect_advance.c"
 #undef EFFECT_SPAWN_RESIDENT
 
 /// Spawns 17 particles that spread from origin in a flat ring, their x velocity

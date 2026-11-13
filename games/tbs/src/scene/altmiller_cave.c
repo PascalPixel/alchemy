@@ -247,7 +247,7 @@ enum {
 struct LightWheel gAltmillerCave_LightWheelState
     __attribute__((nocommon, aligned(4)));
 
-#include "shared/staged_actor.h"
+#include "shared/staged_actor.c"
 
 /// Talking to the Djinni in AltmillerCaveSquall starts the battle with Squall,
 /// a Jupiter Djinni.
@@ -2177,7 +2177,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   FieldEffect_ReleaseSlots();
 }
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 
 struct LightWheel *gAltmillerCave_LightWheel = &gAltmillerCave_LightWheelState;
 

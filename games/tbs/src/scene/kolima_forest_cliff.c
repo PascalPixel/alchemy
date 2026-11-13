@@ -45,7 +45,7 @@ enum {
   ACTOR_RIVER_LOG = ACTOR_FIRST_LOG + 2
 };
 
-#include "shared/staged_actor.h"
+#include "shared/staged_actor.c"
 
 /// The river log has tipped into the river and floats there as ground the party
 /// can cross.
@@ -90,7 +90,7 @@ static void KolimaForestCliff_PushLog(void) {
   Event_End();
 }
 
-#include "shared/kolima_jump.h"
+#include "shared/kolima_jump.c"
 
 /// The logs, the two ways out and the hop east from the bank.
 const struct Trigger *Scene_GetTriggers(void) {
@@ -122,9 +122,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "shared/kolima_palette.h"
+#include "shared/kolima_palette.c"
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 // clang-format off
 
 struct SceneEntrance gKolimaForestCliffEntrances[] = {

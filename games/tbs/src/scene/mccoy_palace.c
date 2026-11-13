@@ -149,7 +149,7 @@ static void McCoyPalace_McCoyRewardsParty(void);
 static void McCoyPalace_PresentRewardChests(void);
 
 // The shared facing routine precedes the scene's entry points.
-#include "shared/actor_facing.h"
+#include "shared/actor_facing.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gMcCoyPalaceEntrances;

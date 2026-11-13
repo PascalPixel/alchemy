@@ -184,8 +184,8 @@ enum {
 // the party and flashed white. FLAG_VENUS_AERIE_ON_PLATFORM: the leader stands
 // on a platform.
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
 
 /// Pulses the actor scale around the countdown, then chooses its next
 /// pause.
@@ -249,19 +249,15 @@ static void VenusLighthouseAerie_StepSpriteRotation(struct Actor *actor) {
   }
 }
 
-#include "shared/actor_heading.h"
+#include "shared/actor_heading.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gVenusLighthouseAerieEntrances;
 }
 
-const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  return 0;
-}
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-const u32 *Scene_GetExits(void) {
-  return gVenusLighthouseAerieExits;
-}
+const u32 *Scene_GetExits(void) { return gVenusLighthouseAerieExits; }
 
 /// Returns the beacon's statues, the platforms, Saturos and Menardi, Felix and
 /// Sheba, the party and the beacon effects.
@@ -269,8 +265,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gVenusLighthouseAerieActorPlacements;
 }
 
-#include "shared/actor_distance.h"
-#include "shared/actor_nearest.h"
+#include "shared/actor_distance.c"
+#include "shared/actor_nearest.c"
 
 /// Saturos and Menardi slide together as they fuse.
 #define FLAG_VENUS_AERIE_FUSION_SLIDING FLAG_SCENE_TEMP_34
@@ -1204,9 +1200,9 @@ static void VenusLighthouseAerie_CycleActorPalette(struct Actor *actor) {
 }
 
 #define PSYNERGY_RINGS_SOUND SE_PSYNERGY_SPARKLE
-#include "shared/psynergy_rings.h"
+#include "shared/psynergy_rings.c"
 
-#include "shared/event_psynergy.h"
+#include "shared/event_psynergy.c"
 
 static void VenusLighthouseAerie_UpdateShebaPalette(void) {
   VenusLighthouseAerie_CycleActorPalette(Actor_Get(ACTOR_SHEBA));
@@ -3096,7 +3092,7 @@ static void VenusLighthouseAerie_UpdateOrbitingEffect(struct Actor *actor) {
   effect->spin -= TRIG_TURN / 128;
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

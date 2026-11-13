@@ -1,10 +1,10 @@
 /// @file
 /// Vale in the storm and Venus Lighthouse's aerie: the rings of light around
 /// someone using Psynergy in an event.
-#include "field_effect_vertical.h"
+#include "field_effect_vertical.c"
 
 /// Spawns a pair of rings of light on the actor, one rising and one falling
-/// (field_effect_vertical.h), sharing the field effect's cached tiles, with
+/// (field_effect_vertical.c), sharing the field effect's cached tiles, with
 /// the sound the includer names as PSYNERGY_RINGS_SOUND.
 static void Scene_SpawnPsynergyRings(struct Actor *parent) {
   struct Actor *pair[2];

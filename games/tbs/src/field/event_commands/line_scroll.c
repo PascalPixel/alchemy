@@ -118,7 +118,7 @@ void LineScroll_BuildPage(void) {
 }
 
 // The shared source that starts the line scroll, at its place in the ROM.
-#include "../../scene/shared/scroll_initialize_hblank_dma.h"
+#include "../../scene/shared/scroll_initialize_hblank_dma.c"
 
 /// Stops the line scroll: removes its two tasks and stops DMA 0.
 void LineScroll_Stop(void) {

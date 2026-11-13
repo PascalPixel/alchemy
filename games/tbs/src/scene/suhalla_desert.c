@@ -156,8 +156,8 @@ static u16 sSuhallaDesertSavedColor;
 /// The colour Reveal pulses, the last of BG palette 12.
 #define SUHALLA_REVEAL_PALETTE_COLOR BG_PLTT_COLOR(12, 15)
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
 
 /// The first sandstorm (ACTOR_FIRST_SANDSTORM) has risen on this visit.
 ///
@@ -855,7 +855,7 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
                       IO_WRITE_16);
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

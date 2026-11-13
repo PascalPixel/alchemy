@@ -7,7 +7,7 @@
 /// the chest, and SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST into the
 /// room with the stepping stones.
 ///
-/// Its setup, SolSanctumRooms_Initialize (shared/sol_sanctum_init_zoom.h), is
+/// Its setup, SolSanctumRooms_Initialize (shared/sol_sanctum_init_zoom.c), is
 /// the one SceneId_SolSanctumMaze shares. Once Mt. Aleph has erupted
 /// (FLAG_SOL_SANCTUM_ERUPTED), the passage rumbles and shakes.
 
@@ -43,7 +43,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gSolSanctumCorridorTriggers;
 }
 
-#include "shared/sol_sanctum_init_zoom.h"
+#include "shared/sol_sanctum_init_zoom.c"
 
 struct SceneEntrance gSolSanctumCorridorEntrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1,

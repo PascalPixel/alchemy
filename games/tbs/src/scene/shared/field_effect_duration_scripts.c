@@ -1,6 +1,6 @@
 /// @file
 /// Twenty-four scenes: the three lifetimes FieldEffect_Spawn
-/// (field_effect_spawn.h) gives its effects through
+/// (field_effect_spawn.c) gives its effects through
 /// gFieldEffect_DurationScripts. An effect lasts 24, 46 or 128 frames: it
 /// waits a frame 22, 44 or 126 times, then twice more, placed at 0, 0, 0 and
 /// stopped between the two, and is released. The repeated one-frame wait keeps

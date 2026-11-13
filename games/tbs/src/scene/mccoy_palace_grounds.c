@@ -104,7 +104,7 @@ static void McCoyPalaceGrounds_RestoreStory(void);
 static void McCoyPalaceGrounds_GuardsArrestParty(void);
 static void McCoyPalaceGrounds_OpenGate(void);
 
-#include "shared/actor_facing.h"
+#include "shared/actor_facing.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gMcCoyPalaceGroundsEntrances;
@@ -446,7 +446,7 @@ static void McCoyPalaceGrounds_OpenGate(void) {
   GameFlag_Set(FLAG_GATE_OPEN);
 }
 
-#include "shared/actor_orbit.h"
+#include "shared/actor_orbit.c"
 
 // clang-format off
 /// The gate opening: three steps of cells, 5 frames each.

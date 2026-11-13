@@ -163,9 +163,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-const u32 *Scene_GetExits(void) {
-  return gSolSanctumEntrance_Exits;
-}
+const u32 *Scene_GetExits(void) { return gSolSanctumEntrance_Exits; }
 
 /// Selects the actors for the scene and, in Sol Sanctum, the room.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
@@ -496,7 +494,7 @@ static void SolSanctumEntrance_RowStatue6Moved(void) {
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
-#include "shared/actor_find_at_cell.h"
+#include "shared/actor_find_at_cell.c"
 
 /// The party has entered the second relief room, which turns off Move on the
 /// first relief room's statues.

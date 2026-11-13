@@ -78,15 +78,11 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gKolimaForestFloodgateEntrances;
 }
 
-const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  return 0;
-}
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
 /// The ways back (SceneId_KolimaForestCliff) and on to Tret
 /// (SceneId_KolimaForestTree).
-const u32 *Scene_GetExits(void) {
-  return gKolimaForestFloodgateExits;
-}
+const u32 *Scene_GetExits(void) { return gKolimaForestFloodgateExits; }
 
 /// The short log, the switch and the sign.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
@@ -112,7 +108,7 @@ static void KolimaForestFloodgate_PushLog(void) {
 /// (step trigger 10) makes the leader jump across.
 static void KolimaForestFloodgate_JumpSouth(void) { Field_TryJumpForward(); }
 
-#include "shared/map_grid_panel.h"
+#include "shared/map_grid_panel.c"
 
 /// Gives the short log's column of cells its cell behavior: column 4 at the
 /// west place, column 6 at the east.
@@ -582,7 +578,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   Event_End();
 }
 
-#include "shared/kolima_palette.h"
+#include "shared/kolima_palette.c"
 
 /// The logs on a first visit, as struct FloodgateLog, each in the sprite of the
 /// way it runs: one sprite for north to south, another for west to east.

@@ -145,7 +145,7 @@ enum CottageRoomsAAnimation {
 static void CottageRoomsA_GaretComesHome(void);
 static void CottageRoomsA_SpawnSleepZ(void);
 
-#include "shared/actor_facing.h"
+#include "shared/actor_facing.c"
 
 /// Moves and grows a Z drifting up from Garet's sleeping grandfather.
 static s32 CottageRoomsA_AdvanceSleepZ(struct Actor *actor) {

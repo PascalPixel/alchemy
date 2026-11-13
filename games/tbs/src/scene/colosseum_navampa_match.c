@@ -209,13 +209,9 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gColosseumNavampaMatchEntrances;
 }
 
-const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  return 0;
-}
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-const u32 *Scene_GetExits(void) {
-  return gColosseumNavampaMatchExits;
-}
+const u32 *Scene_GetExits(void) { return gColosseumNavampaMatchExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gColosseumNavampaMatchActorPlacements;
@@ -1802,27 +1798,27 @@ static void ColosseumNavampaMatch_TalkToLogRollingAttendant(s32 actorId) {
   Event_End();
 }
 
-// This scene's exits for colosso_solo.h.
+// This scene's exits for colosso_solo.c.
 #define COLOSSO_SOLO_TO_RACE COLOSSEUM_NAVAMPA_MATCH_LEND_A_HAND_TO_RACE
 #define COLOSSO_SOLO_TO_COLOSSEUM COLOSSEUM_NAVAMPA_MATCH_TO_COLOSSEUM
-#include "shared/colosso_solo.h"
-#include "shared/item_equip.h"
-#include "shared/colosso_task.h"
+#include "shared/colosso_solo.c"
+#include "shared/item_equip.c"
+#include "shared/colosso_task.c"
 
-#include "shared/colosso_lettering.h"
+#include "shared/colosso_lettering.c"
 
-#include "shared/colosso_marker.h"
-#include "shared/colosso_item_icon.h"
+#include "shared/colosso_marker.c"
+#include "shared/colosso_item_icon.c"
 
-#include "shared/colosso_hex_string.h"
-#include "shared/colosso_finish.h"
+#include "shared/colosso_hex_string.c"
+#include "shared/colosso_finish.c"
 
-#include "shared/colosso_path_opponent.h"
-#include "shared/colosso_setup.h"
-#include "shared/colosso_map_state.h"
-#include "shared/actor_find_at_position.h"
+#include "shared/colosso_path_opponent.c"
+#include "shared/colosso_setup.c"
+#include "shared/colosso_map_state.c"
+#include "shared/actor_find_at_position.c"
 
-#include "shared/colosso_occupant.h"
+#include "shared/colosso_occupant.c"
 
 /// Closes the arena's step trigger. Nothing in the game sets it.
 #define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_SCENE_TEMP_10
@@ -1869,11 +1865,11 @@ const s32 gColosseumNavampaMatch_SidewalkLogScript[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-#include "shared/colosso_lettering_tables.h"
+#include "shared/colosso_lettering_tables.c"
 
 char gHexDigits[20] = "0123456789ABCDEF";
 
-#include "shared/colosso_prize_scripts.h"
+#include "shared/colosso_prize_scripts.c"
 
 u32 gPushedActor_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),
@@ -2150,9 +2146,9 @@ s32 gColossoParticleKinds[] = {
 
 s16 gColosso_LetteringSlot = -1;
 
-#include "shared/colosso_lettering_scripts.h"
+#include "shared/colosso_lettering_scripts.c"
 // clang-format on
 
 s16 gColosso_MarkerSlot = -1;
 
-#include "shared/colosso_finish_scripts.h"
+#include "shared/colosso_finish_scripts.c"

@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 
 // Mercury Lighthouse and its entrance: the lights that carry the leader over
-// the pool (mercury_lighthouse_pillar.h).
+// the pool (mercury_lighthouse_pillar.c).
 
 /// Keeps the lights' state st in HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS for the
 /// floor's region, the pool's cell behavior. On an ordinary arrival the

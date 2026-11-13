@@ -164,30 +164,25 @@ enum SolSanctumElementalStarRoomCellBehavior {
 
 struct Actor;
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
 
 /// Advances through the current dialogue's consecutive messages.
 static inline void SolSanctumElementalStarRoom_SkipMessages(s32 amount) {
   gFieldWork->message += amount;
 }
 
-#include "shared/actor_facing.h"
+#include "shared/actor_facing.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSolSanctumElementalStarRoom_Entrances;
 }
 
-const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  return NULL;
-}
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Scene_GetExits(void) {
-  return gSolSanctumElementalStarRoom_Exits;
-}
+const u32 *Scene_GetExits(void) { return gSolSanctumElementalStarRoom_Exits; }
 
-const struct ActorPlacement *
-Scene_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gSolSanctumElementalStarRoom_ActorPlacements;
 }
 
@@ -2174,9 +2169,9 @@ static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), SPRITE_FLAG_SHADOW);
 }
 
-#include "shared/sol_sanctum_elemental_star_ring_setup.h"
+#include "shared/sol_sanctum_elemental_star_ring_setup.c"
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,
@@ -2189,7 +2184,7 @@ s32 gSolSanctumElementalStarRoom_AngleScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-#include "shared/item_icon_grow_script.h"
+#include "shared/item_icon_grow_script.c"
 
 struct SceneEntrance gSolSanctumElementalStarRoom_Entrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 472, 0, 322, FACING_SOUTH, 0, -1, -1,
@@ -2274,5 +2269,5 @@ u16 gSolSanctumElementalStarRoom_StarCells[] = {
     MAPGRID_ANIMATION_STEP(59, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(62, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(65, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(68, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(71, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(74, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(77, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(80, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(83, 40, 3, 4, 0), MAPGRID_ANIMATION_STEPS_END,
 };
 
-#include "shared/sol_sanctum_elemental_star_ring_tables.h"
+#include "shared/sol_sanctum_elemental_star_ring_tables.c"
 // clang-format on

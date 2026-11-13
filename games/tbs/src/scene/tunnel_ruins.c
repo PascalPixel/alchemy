@@ -168,10 +168,10 @@ static void TunnelRuins_UpdateSecondPillarCells(void);
 static void TunnelRuins_UpdateSmallPillarCells(void);
 static void TunnelRuins_MarkPushPillarCells(void);
 
-#include "shared/staged_actor.h"
+#include "shared/staged_actor.c"
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
 
 /// Turns off the shadow of the Venus Lighthouse model once
 /// gTunnelRuins_ShrinkScript has shrunk it
@@ -291,7 +291,7 @@ static void TunnelRuins_UpdateTrackedActor(void) {
   }
 }
 
-#include "shared/actor_depth.h"
+#include "shared/actor_depth.c"
 
 /// While Douse rains on a pillar: its two frames alternate, and every fourth
 /// frame a small splash appears on its top.
@@ -365,7 +365,7 @@ static void TunnelRuins_WaitForActorToLand(struct Actor *actor) {
   actor->targetY = ACTOR_NO_TARGET;
 }
 
-#include "shared/field_effect_advance.h"
+#include "shared/field_effect_advance.c"
 
 /// Walking south off a step makes the leader hop 12 pixels forward and slide 16
 /// pixels down, kicking up dust behind.
@@ -423,7 +423,7 @@ static void TunnelRuins_HopDownStep(void) {
   ((void (*)(struct Actor *))TunnelRuins_RideStoneBelow)
 #endif
 
-#include "shared/field_effect_radial.h"
+#include "shared/field_effect_radial.c"
 
 /// In TunnelRuinsLadyStatues, Douse has soaked the pillar, and its Frost target
 /// follows it.
@@ -1600,9 +1600,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 /// A balance platform's height by its weight (its timer). Each carved stone on
 /// it takes it 16 pixels further down, and the other platform up as far.

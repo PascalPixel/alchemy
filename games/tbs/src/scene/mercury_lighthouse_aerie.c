@@ -147,24 +147,20 @@ static void MercuryLighthouseAerie_LowerLift(void);
 static void MercuryLighthouseAerie_RaiseLift(void);
 static void MercuryLighthouseAerie_FlickerBeacon(void);
 
-#include "shared/field_effect_create.h"
+#include "shared/field_effect_create.c"
 
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_spawn.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gMercuryLighthouseAerieEntrances;
 }
 
-const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  return 0;
-}
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
 /// Returns the one exit, the lift down to SceneId_MercuryLighthouseExterior's
 /// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE, by the Fountain
 /// of Healing.
-const u32 *Scene_GetExits(void) {
-  return gMercuryLighthouseAerieExits;
-}
+const u32 *Scene_GetExits(void) { return gMercuryLighthouseAerieExits; }
 
 /// Returns the actors, with Jenna, Kraden, Felix and Menardi placed only on the
 /// first arrival (MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT).
@@ -353,8 +349,8 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Event_End();
 }
 
-#include "shared/actor_distance.h"
-#include "shared/actor_nearest.h"
+#include "shared/actor_distance.c"
+#include "shared/actor_nearest.c"
 
 /// Lighthouse Aerie: walking into cell behavior 10 or 11.
 static void MercuryLighthouseAerie_JumpToPlatform(void) {
@@ -1845,7 +1841,7 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
   sprite->image.priority = beacon->sprite->image.priority;
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

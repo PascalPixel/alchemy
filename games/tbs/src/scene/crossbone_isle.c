@@ -213,10 +213,10 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void);
 static void CrossboneIsle_RestoreIvy(void);
 static void CrossboneIsle_DrawLogPuzzleFootprints(void);
 
-#include "shared/staged_actor.h"
+#include "shared/staged_actor.c"
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
 
 /// Unused: an empty function nothing refers to.
 UNUSED static void CrossboneIsle_UnusedNoOp(void) {}
@@ -262,7 +262,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gCrossboneIsle_NoActorPlacements;
 }
 
-#include "shared/field_effect_advance.h"
+#include "shared/field_effect_advance.c"
 
 /// Emits a ring of dust around a corridor room's pillar as it sinks.
 static void CrossboneIsle_SpawnPillarMovedBurst(s32 actorId) {
@@ -1975,12 +1975,12 @@ static void CrossboneIsle_SlideNinthLogEast(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }
 
-#include "shared/actor_orbit.h"
+#include "shared/actor_orbit.c"
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 // clang-format off
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 u16 gCrossboneIsle_EntranceCells[] = {
     MAPGRID_ANIMATION_STEP(58, 23, 1, 2, 5), MAPGRID_ANIMATION_STEP(59, 23, 1, 2, 5), MAPGRID_ANIMATION_STEPS_END,

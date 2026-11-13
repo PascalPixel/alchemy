@@ -253,7 +253,7 @@ static void AltinPeak_TalkToDjinni(void) {
   Field_RequestDjinnBattle(ACTOR_SPRITZ, DJINNI_SPRITZ);
 }
 
-#include "shared/actor_facing.h"
+#include "shared/actor_facing.c"
 
 /// Update routine of AltinPeakFallingRocks's boulder shadow: it stays under the
 /// boulder, on the ground 12 pixels down, while the boulder bounces.

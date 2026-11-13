@@ -174,8 +174,8 @@ static void FuchinTemple_FinishMindReadDemonstration(void);
 static void FuchinTemple_SpawnNyunpasParticles(void);
 static void FuchinTemple_AnimateRevealLesson(void);
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
 
 /// The Psynergy Stone outside the temple has been taken. It refills once the
 /// party enters another area.
@@ -2609,7 +2609,7 @@ static void FuchinTemple_AnimateRevealLesson(void) {
   Actor_SetSpriteColorById(ACTOR_IVAN, SPRITE_COLOR_NORMAL);
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

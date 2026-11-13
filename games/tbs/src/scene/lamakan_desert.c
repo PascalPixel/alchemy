@@ -172,8 +172,8 @@ enum {
   MapGrid_CopyCellAttributes(SECRET_SPARE_COLUMN(number), SECRET_SPARE_ROW, 4, \
                              2, column, (row) + 1)
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
 
 /// In LamakanDesertSmog, talking to Smog, whom Reveal uncovers, adds the
 /// Jupiter Djinni to the party.
@@ -181,7 +181,7 @@ static void LamakanDesert_TalkToSmog(void) {
   Djinn_JoinParty(ACTOR_SMOG, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_SMOG));
 }
 
-#include "shared/actor_wait_below_height.h"
+#include "shared/actor_wait_below_height.c"
 
 /// The update a leader pulled into an Ant Lion's pit runs: sand sounds every 8
 /// frames and a spray of sand every 16.
@@ -271,9 +271,7 @@ static void LamakanDesert_LeaveForTheWorldMap(void) {
 }
 
 /// The desert's triggers, the same in every scene.
-const struct Trigger *Scene_GetTriggers(void) {
-  return gLamakanDesertTriggers;
-}
+const struct Trigger *Scene_GetTriggers(void) { return gLamakanDesertTriggers; }
 
 /// Reveal wears off, and the desert's secrets sink under the sand again.
 static UNREAD_RESULT Reveal_HideSecrets(void) {
@@ -1118,7 +1116,7 @@ void HeatGauge_Start(void) {
 static void HeatGauge_SetHeld(u16 value) { gHeatGauge_Held = value; }
 
 #define FIELD_EFFECT_DURATION_SCRIPT_QUALIFIER const
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 // clang-format off
 /// Each map's oases, the middle of each as x, z pairs.

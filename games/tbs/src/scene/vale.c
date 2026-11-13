@@ -295,7 +295,7 @@ enum ValeAnimation {
   ANIM_GARET_STARTLED = 13
 };
 
-#include "shared/staged_actor.h"
+#include "shared/staged_actor.c"
 
 /// The roof of Isaac's house has just been mended. For the rest of the visit
 /// Dora frets about the hole Garet left.
@@ -2849,7 +2849,7 @@ static void Vale_RoofMended(void) {
   Event_End();
 }
 
-#include "shared/event_psynergy.h"
+#include "shared/event_psynergy.c"
 
 /// Cycles palettes on Garet and periodically spawns attached effects.
 static void Vale_UpdateGaretPaletteAndEffects(void) {
@@ -3118,7 +3118,7 @@ static void Vale_AdjustPillarPriorityForLeaderHeight(void) {
   }
 }
 
-#include "shared/actor_orbit.h"
+#include "shared/actor_orbit.c"
 
 /// Someone calling up Psynergy. They are drawn SPRITE_COLOR_WHITE (7) for two
 /// frames in four, with the World Map's attached sparks every 16 frames.
@@ -3146,10 +3146,10 @@ static void Vale_CycleActorPalette(struct Actor *actor) {
     Actor_SetColorMode(actor, (gFrameCount >> 1) % 6);
 }
 
-#include "shared/field_effect_vertical.h"
-#include "shared/world_map_attached_effects.h"
+#include "shared/field_effect_vertical.c"
+#include "shared/world_map_attached_effects.c"
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 
 // clang-format off
 

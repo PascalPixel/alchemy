@@ -46,7 +46,7 @@
 /// - FLAG_VALE_STORM_GARET_LEFT: ValePrologue_GaretFollowsIsaac, as Isaac
 ///   leaves for the plaza again. The night ends in vale_plaza.c.
 ///
-/// Every way out goes through Vale_RequestBackdropExit (shared/vale.h), which
+/// Every way out goes through Vale_RequestBackdropExit (shared/vale.c), which
 /// stops the lightning first, and each door plays its opening cells before
 /// it. gValePrologue_Exits gives each exit's destination.
 ///
@@ -234,7 +234,7 @@ static s32 ValePrologue_RerollHeadingOnCountdown(struct Actor *actor) {
   return 1;
 }
 
-#include "shared/actor_pulse.h"
+#include "shared/actor_pulse.c"
 
 /// The door of Isaac's house, from which Dora and Isaac came out into the
 /// storm, stands open.
@@ -261,9 +261,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gValePrologue_ActorPlacements;
 }
 
-const struct Trigger *Scene_GetTriggers(void) {
-  return gValePrologue_Triggers;
-}
+const struct Trigger *Scene_GetTriggers(void) { return gValePrologue_Triggers; }
 
 /// In Vale on the stormy night, swaps the bridge's cell behaviors as
 /// the leader steps onto it.
@@ -279,7 +277,7 @@ static void ValePrologue_StepOffBridge(void) {
   MapGrid_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
-#include "shared/vale.h"
+#include "shared/vale.c"
 
 /// Unused: on the stormy night, the Sanctum's door opens and the leader goes
 /// into a house of Vale.
@@ -2683,9 +2681,9 @@ static void ValePrologue_CycleActorPalettes(struct Actor *actor) {
 }
 
 #define PSYNERGY_RINGS_SOUND SE_JUMP
-#include "shared/psynergy_rings.h"
+#include "shared/psynergy_rings.c"
 
-#include "shared/event_psynergy.h"
+#include "shared/event_psynergy.c"
 
 /// Cycles the four elders' palettes and effects while they hold the Boulder.
 /// The westernmost elder's stop once that elder lets go (sShakeDone).

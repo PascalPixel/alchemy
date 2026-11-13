@@ -71,8 +71,8 @@ enum { ENTRANCE_BESIDE_STUMP = 99 };
 
 static void GomaCaveStream_LeapStump(s32 stumpId);
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_GomaCaveBridge) {
@@ -142,7 +142,7 @@ static void GomaCaveStream_SpinStump(struct Actor *actor) {
   sprite->rotation -= TRIG_TURN / 32;
 }
 
-#include "shared/actor_wait_below_height.h"
+#include "shared/actor_wait_below_height.c"
 
 /// The stump leaps out of the way and sinks in the water.
 static void GomaCaveStream_LeapStump(s32 stumpId) {
@@ -206,7 +206,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
   MapGrid_WaitForShakeToSettle();
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

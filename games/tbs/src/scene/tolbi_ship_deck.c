@@ -289,7 +289,7 @@ enum TolbiShipDeckCellBehavior {
   CELL_BEHAVIOR_TOLBI_SHIP_DECK_WEST_OF_DOOR = 12
 };
 
-#include "shared/actor_pulse.h"
+#include "shared/actor_pulse.c"
 
 /// The door to the passengers' hold has been drawn open this visit.
 #define FLAG_TOLBI_SHIP_DECK_PASSENGER_HOLD_DOOR_OPEN FLAG_SCENE_TEMP_71

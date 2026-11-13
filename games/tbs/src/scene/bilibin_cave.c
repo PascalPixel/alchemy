@@ -495,7 +495,7 @@ static void BilibinCave_RestoreIceRoom(void) {
   }
 }
 
-#include "shared/actor_find_at_cell.h"
+#include "shared/actor_find_at_cell.c"
 
 /// Pushing one of the two movable torches in Bilibin Cave
 /// (SceneId_BilibinCaveIce) moves it only when its next cell and movement
@@ -775,4 +775,4 @@ struct Trigger gBilibinCaveIceTriggers[] = {
 };
 // clang-format on
 
-#include "shared/pushed_actor_direction_steps.h"
+#include "shared/pushed_actor_direction_steps.c"

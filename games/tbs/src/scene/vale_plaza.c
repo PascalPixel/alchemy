@@ -333,7 +333,7 @@ static void ValePlaza_UpdateShowingStrongmanPsynergy(void);
 static void ValePlaza_UpdateSmallRockPalette(void);
 static void ValePlaza_SetProgressFlagsAndExit(void);
 
-#include "shared/actor_facing.h"
+#include "shared/actor_facing.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gValePlaza_Entrances;
@@ -671,7 +671,7 @@ static void ValePlaza_PsynergyStoneIsGone(void) {
   Event_End();
 }
 
-#include "shared/vale.h"
+#include "shared/vale.c"
 
 /// Opens a door's map grid cells and sends the leader through its threshold.
 static inline void ValePlaza_OpenDoorAndWalkThrough(s32 cellX, s32 cellZ, s32 x,
@@ -1752,10 +1752,10 @@ static void ValePlaza_CyclePsynergyPalette(struct Actor *actor) {
   }
 }
 
-#include "shared/field_effect_vertical.h"
+#include "shared/field_effect_vertical.c"
 
 /// Spawns a pair of Psynergy sparks, one rising and one falling
-/// (shared/field_effect_vertical.h).
+/// (shared/field_effect_vertical.c).
 static void ValePlaza_SpawnEffectPair(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
@@ -1806,7 +1806,7 @@ static void ValePlaza_SpawnEffectPair(struct Actor *parent) {
   }
 }
 
-#include "shared/event_psynergy.h"
+#include "shared/event_psynergy.c"
 
 /// Updates the rock-lifting boy's Psynergy display.
 static void ValePlaza_UpdateRockLiftingBoyPsynergy(void) {

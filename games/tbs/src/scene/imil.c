@@ -249,7 +249,7 @@ static s32 Imil_UpdateShiver(struct Actor *actor) {
   return 1;
 }
 
-#include "shared/actor_facing.h"
+#include "shared/actor_facing.c"
 
 /// Imil is two scenes: the village, and its houses and Sanctum.
 const struct SceneEntrance *Scene_GetEntrances(void) {

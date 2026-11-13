@@ -1,7 +1,7 @@
 /// @file
 /// Colosseum Final 1 and 3: setting up a race against the opponent, with
 /// the race gauge at the top of the screen and the opponent running a recorded
-/// path (colosso_path_opponent.h).
+/// path (colosso_path_opponent.c).
 
 /// Starts the race gauge (struct ColossoRaceWork, in HEAP_SLOT_COLOSSO_RACE):
 /// Isaac and the opponent as playerActorId and opponentActorId, a bar

@@ -144,11 +144,11 @@ STATIC_ASSERT(sizeof(union CrossboneIslePillarCell) ==
 STATIC_ASSERT(offsetof(union CrossboneIslePillarCell, bits.behavior) == 2);
 STATIC_ASSERT(offsetof(union CrossboneIslePillarCell, bits.shape) == 3);
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
-#include "shared/staged_actor.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
+#include "shared/staged_actor.c"
 
-#include "shared/map_grid_panel.h"
+#include "shared/map_grid_panel.c"
 
 /// Waits up to sixty frames for landing, then stops vertical movement on the
 /// ground.
@@ -1582,9 +1582,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 // clang-format off
 
 const s32 *gFieldEffect_DurationScripts[] = {

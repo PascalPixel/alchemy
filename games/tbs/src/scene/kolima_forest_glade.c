@@ -48,7 +48,7 @@ enum KolimaForestGladeActorId {
   ACTOR_NUT = ACTOR_FIRST_LOG + 3
 };
 
-#include "shared/staged_actor.h"
+#include "shared/staged_actor.c"
 
 /// Where the party enters, from SceneId_KolimaForestEntrance and
 /// SceneId_KolimaForestCliff.
@@ -106,10 +106,10 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "shared/kolima_palette.h"
-#include "shared/actor_orbit.h"
+#include "shared/kolima_palette.c"
+#include "shared/actor_orbit.c"
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 // clang-format off
 
 struct SceneEntrance gKolimaForestGlade_Entrances[] = {

@@ -43,7 +43,7 @@
 ///
 /// The rope bridge in the town's south-east spans a path that runs under it.
 /// Stepping onto either end of it or off its west end switches the cells
-/// beneath it between the deck and the path (shared/vault_toggle.h).
+/// beneath it between the deck and the path (shared/vault_toggle.c).
 
 #include "main_routine_work.h"
 #include "sprite.h"
@@ -120,10 +120,10 @@ static void Vault_ShowStandingActorMessage(s32 actorId);
 static void Vault_ShowMessageAndWait(s32 actorId, s32 delay);
 static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay);
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
 
-#include "shared/vault_nearby.h"
+#include "shared/vault_nearby.c"
 
 /// The woman wanting the roof fixed walks about looking for the man who should
 /// be fixing it and stops to face the leader when near, or while a conversation
@@ -167,7 +167,7 @@ static int Vault_GetIvanVenusDjinnCount(void) {
   return Unit_Get(IVAN)->djinnHeldCounts[ELEMENT_VENUS];
 }
 
-#include "shared/vault_djinn.h"
+#include "shared/vault_djinn.c"
 
 /// Leaving Vault by either gate, Ivan stays behind if he is helping search
 /// for the rod and the thieves are free.
@@ -375,7 +375,7 @@ static void Vault_ShowStandingActorMessage(s32 actorId) {
   Event_End();
 }
 
-#include "shared/vault_talk.h"
+#include "shared/vault_talk.c"
 
 /// The welcoming young man asks whether the party is leaving again.
 /// He asks after the thieves are jailed. "So, you're hitting the road again?"
@@ -597,7 +597,7 @@ static void Vault_ReadWomanWantingTheRoofFixedMind(void) {
   Event_End();
 }
 
-#include "shared/vault_toggle.h"
+#include "shared/vault_toggle.c"
 
 /// Walks to the exit's threshold and requests the room's transition.
 static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
@@ -664,7 +664,7 @@ static void Vault_EnterMayorsHouse(void) {
   Vault_WalkThroughExit(120, 144, VAULT_TO_LOG_ROOMS_A_NORTHWEST);
 }
 
-#include "shared/vault_map_cells.h"
+#include "shared/vault_map_cells.c"
 
 /// In Vault, the jail door opens and the party walks in, drawn behind the
 /// doorway (VAULT_TO_STONE_ROOMS, the jail's STONE_ROOMS_FROM_VAULT).
@@ -857,8 +857,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "shared/actor_distance.h"
-#include "shared/vault_range.h"
+#include "shared/actor_distance.c"
+#include "shared/vault_range.c"
 
 static void Vault_ShowMessageAndWait(s32 actorId, s32 delay) {
   Event_ShowMessage(actorId, 0);
@@ -984,7 +984,7 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   sprite->image.priority = anchor->sprite->image.priority;
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,
@@ -1051,7 +1051,7 @@ s32 gVault_WomanWantingTheRoofFixedRoute[] = {
     SC_END,
 };
 
-#include "shared/vault_well_routes.h"
+#include "shared/vault_well_routes.c"
 
 struct SceneEntrance gVault_Entrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 223, 0, 135, FACING_SOUTH, 0, -1, -1,

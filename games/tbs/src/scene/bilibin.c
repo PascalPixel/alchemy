@@ -216,7 +216,7 @@ struct BilibinRippleTimer {
 
 struct BilibinRippleTimer gBilibin_RippleTimer;
 
-#include "shared/actor_facing.h"
+#include "shared/actor_facing.c"
 
 /// The party has looked once at the tree at Bilibin's entrance, so a second
 /// look says it looks like a living person.
@@ -812,7 +812,7 @@ static void Bilibin_SetUpTreasury(void) {
   }
 }
 
-#include "shared/actor_find_at_cell.h"
+#include "shared/actor_find_at_cell.c"
 
 /// Pushing a statue in Bilibin or the Bilibin Treasury, or the crates at the
 /// Bilibin Barricade, slides it one cell ahead with the leader behind it, if
@@ -1258,7 +1258,7 @@ u8 gBilibin_CratesLaneCells[] = {
 };
 // clang-format on
 
-#include "shared/pushed_actor_direction_steps.h"
+#include "shared/pushed_actor_direction_steps.c"
 
 s32 gBilibin_RippleScript[] = {
     SC_WAIT(30),

@@ -208,10 +208,10 @@ enum { FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED = FLAG_SCENE_TEMP_14 };
   FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT
 #endif
 
-#include "shared/staged_actor.h"
+#include "shared/staged_actor.c"
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
 
 /// Mogall Forest, the second area: talking to Quartz, a Venus Djinni, starts
 /// the Djinni battle.
@@ -1493,12 +1493,12 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "shared/actor_orbit.h"
+#include "shared/actor_orbit.c"
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 // clang-format off
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

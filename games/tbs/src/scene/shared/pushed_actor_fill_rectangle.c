@@ -1,5 +1,5 @@
 /// @file
-/// The pushed-actor scenes (staged_actor.h) and Venus Lighthouse's unused copy:
+/// The pushed-actor scenes (staged_actor.c) and Venus Lighthouse's unused copy:
 /// a rectangle of cells given one cell behavior.
 
 /// Sets the cell behavior of a width by height rectangle of cells, from

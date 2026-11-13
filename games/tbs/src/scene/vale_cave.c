@@ -155,9 +155,9 @@ enum ValeCaveCellBehavior { CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE = 45 };
 static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row);
 static void ValeCave_ApplyEntryState(void);
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
-#include "shared/staged_actor.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
+#include "shared/staged_actor.c"
 
 /// In the third room, the western log has been pushed off the ledge.
 #define FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE FLAG_SCENE_TEMP_02
@@ -650,7 +650,7 @@ static void ValeCave_UpdateRidingLogPassage(void) {
   }
 }
 
-#include "shared/actor_pair_move.h"
+#include "shared/actor_pair_move.c"
 
 /// In Vale Cave's second room, walking east onto the riding log has it carry
 /// the leader to the eastern end of the passage.
@@ -798,9 +798,9 @@ static void ValeCave_TouchRidingLog(void) {
   Actor_SetAnimation(ACTOR_RIDING_LOG, 2);
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 // clang-format off
 
 /// The twelve points round the far side of Kite's ledge, x then z in pixels,

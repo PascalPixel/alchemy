@@ -1,5 +1,5 @@
 
-// Twenty-three scenes, most of those that spawn effects (field_effect_spawn.h):
+// Twenty-three scenes, most of those that spawn effects (field_effect_spawn.c):
 // two ways to place a still field effect of a given type, each taking whole
 // pixels, with a Fixed form for a 16.16 position.
 

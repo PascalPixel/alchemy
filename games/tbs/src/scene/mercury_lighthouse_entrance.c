@@ -39,7 +39,7 @@
 ///   answer those, while the water between them stays a wall. From then on the
 ///   pool's heart gives the leader up to three lights. Each hop into the water
 ///   spends one, and landing in it without one sinks the leader back to the
-///   heart (the helpers of shared/mercury_lighthouse_pillar.h). Dropping in
+///   heart (the helpers of shared/mercury_lighthouse_pillar.c). Dropping in
 ///   from above
 ///   (MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE) the first
 ///   time, the leader lands in a burst, and until Ply has worked the
@@ -74,7 +74,7 @@
 /// they are black until then.
 ///
 /// The lights the leader carries come back from their heap slot
-/// (shared/mercury_lighthouse_lights.h) on a return after a battle.
+/// (shared/mercury_lighthouse_lights.c) on a return after a battle.
 ///
 /// Three entrances each have two rows, chosen by whether the channels upstairs
 /// run (FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN). They are
@@ -146,10 +146,10 @@ enum {
 static void MercuryLighthouseEntrance_LizardManBlocksMia(void);
 static void MercuryLighthouseEntrance_MiaEntersLighthouse(void);
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
-#include "shared/staged_actor.h"
-#include "shared/mercury_lighthouse_sparks.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
+#include "shared/staged_actor.c"
+#include "shared/mercury_lighthouse_sparks.c"
 
 /// The sound of the Lizard Man's sidestep, played by all three step scripts
 /// as he lands.
@@ -176,7 +176,7 @@ MercuryLighthouseEntrance_MiaWatchesLeader(struct Actor *actor) {
 #endif
 }
 
-#include "shared/mercury_lighthouse_palette_cycle.h"
+#include "shared/mercury_lighthouse_palette_cycle.c"
 
 /// Mercury Lighthouse, the pool, once Ply has worked: touching
 /// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER keeps blue ripples spreading
@@ -211,17 +211,12 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gMercuryLighthouseEntrance_Entrances;
 }
 
-const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  return NULL;
-}
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Scene_GetExits(void) {
-  return gMercuryLighthouseEntrance_Exits;
-}
+const u32 *Scene_GetExits(void) { return gMercuryLighthouseEntrance_Exits; }
 
 /// Returns Mia, the Lizard Man, the six statues and the Ply target.
-const struct ActorPlacement *
-Scene_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gMercuryLighthouseEntrance_ActorPlacements;
 }
 
@@ -233,7 +228,7 @@ static void MercuryLighthouseEntrance_ReadHeartInscription(void) {
   Event_End();
 }
 
-#include "shared/mercury_lighthouse_passage.h"
+#include "shared/mercury_lighthouse_passage.c"
 
 /// Mercury Lighthouse: walking north into cell behavior 67, a sparkling
 /// passage, leaves by
@@ -372,7 +367,7 @@ static void MercuryLighthouseEntrance_FightLizardMan(void) {
   Event_End();
 }
 
-#include "shared/mercury_lighthouse_arrive.h"
+#include "shared/mercury_lighthouse_arrive.c"
 
 /// Sets up Mercury Lighthouse's ground floor, then plays the event of the
 /// entrance taken.
@@ -660,7 +655,7 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
   }
 }
 
-#include "shared/mercury_lighthouse_lights.h"
+#include "shared/mercury_lighthouse_lights.c"
 
 /// Spreads one blue ripple (SPRITE_RIPPLE) from an actor, for 30 frames.
 static void MercuryLighthouse_SpawnRipple(struct Actor *source) {
@@ -682,11 +677,11 @@ static void MercuryLighthouse_SpawnRipple(struct Actor *source) {
   }
 }
 
-#include "shared/mercury_lighthouse_pillar.h"
+#include "shared/mercury_lighthouse_pillar.c"
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 // clang-format off
 
 s32 gMercuryLighthouseEntrance_RippleScript[] = {
@@ -897,5 +892,5 @@ struct Trigger gMercuryLighthouseEntrance_Triggers[] = {
     { TRIGGER_TABLE_END },
 };
 
-#include "shared/glint_twinkle_script.h"
+#include "shared/glint_twinkle_script.c"
 // clang-format on

@@ -78,8 +78,8 @@
 #include "actor_script.h"
 #include "flags.h"
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
 
 // Xian's temporary flags: FLAG_XIAN_WATER_SPILLED the water carrier has spilled
 // her water FLAG_XIAN_SPILLED_WATER_FROZEN the spilled water is frozen
@@ -178,7 +178,7 @@ static void Xian_SpawnTrainingParticles(void) {
   }
 }
 
-#include "shared/actor_distance.h"
+#include "shared/actor_distance.c"
 
 /// The water carrier has spilled her water.
 #define FLAG_XIAN_WATER_SPILLED FLAG_SCENE_TEMP_00
@@ -797,7 +797,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

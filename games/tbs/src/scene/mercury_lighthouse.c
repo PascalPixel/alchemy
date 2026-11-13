@@ -44,7 +44,7 @@
 ///   (FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), the pool's heart gives the
 ///   leader golden rings of light (SPRITE_GOLDEN_RINGS). They carry him across
 ///   the water, a ring spent with each hop, as there
-///   (shared/mercury_lighthouse_pillar.h). A chest holds a Sleep Bomb.
+///   (shared/mercury_lighthouse_pillar.c). A chest holds a Sleep Bomb.
 /// - SceneId_MercuryLighthouseMiddle. One pipe section raises or lowers stairs
 ///   (FLAG_STAIRS_RAISED), and another starts a fountain
 ///   (FLAG_FOUNTAIN_RUNNING). A statue moved onto a floor switch holds a gate
@@ -283,9 +283,9 @@ enum {
 #define MERCURY_LIGHTHOUSE_OFFSET_FIXED(value) ((value) << 16)
 #endif
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
-#include "shared/staged_actor.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
+#include "shared/staged_actor.c"
 
 /// MercuryLighthouseMiddle: talking to Sleet, a Mercury Djinni, starts its
 /// battle.
@@ -310,8 +310,8 @@ static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
 }
 #endif
 
-#include "shared/mercury_lighthouse_sparks.h"
-#include "shared/mercury_lighthouse_palette_cycle.h"
+#include "shared/mercury_lighthouse_sparks.c"
+#include "shared/mercury_lighthouse_palette_cycle.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.next;
@@ -328,9 +328,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gMercuryLighthouseEntrancesOther;
 }
 
-const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  return NULL;
-}
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 /// Returns the packed exits shared by the lighthouse scenes.
 const u32 *Scene_GetExits(void) { return gMercuryLighthouse_Exits; }
@@ -407,7 +405,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gMercuryLighthouseTriggersOther;
 }
 
-#include "shared/mercury_lighthouse_passage.h"
+#include "shared/mercury_lighthouse_passage.c"
 
 /// MercuryLighthouseUpper, walking north into cell behavior 53: the leader
 /// rises through
@@ -1987,7 +1985,7 @@ static void MercuryLighthouse_EnterRisingPassage(void) {
   Event_End();
 }
 
-#include "shared/mercury_lighthouse_arrive.h"
+#include "shared/mercury_lighthouse_arrive.c"
 
 /// Raises the stairs: their cells are redrawn row by row, two rows, with
 /// sparkles rising along their edge.
@@ -2795,7 +2793,7 @@ static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem) {
   }
 }
 
-#include "shared/mercury_lighthouse_lights.h"
+#include "shared/mercury_lighthouse_lights.c"
 
 /// Spreads one blue ripple (SPRITE_RIPPLE) from an actor, for 30
 /// frames.
@@ -2823,11 +2821,11 @@ static void MercuryLighthouse_SpawnRipple(struct Actor *source) {
   }
 }
 
-#include "shared/mercury_lighthouse_pillar.h"
+#include "shared/mercury_lighthouse_pillar.c"
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
-#include "shared/pushed_actor_tables.h"
+#include "shared/pushed_actor_tables.c"
 // clang-format off
 
 s32 gMercuryLighthouse_RippleScript[] = {
@@ -2866,7 +2864,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-#include "shared/glint_twinkle_script.h"
+#include "shared/glint_twinkle_script.c"
 
 s32 gMercuryLighthouse_PushScriptA[] = {
     SC_WAIT(45),

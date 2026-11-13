@@ -61,8 +61,8 @@ static void Lunpa_WatchForUncloakedParty(void);
 
 enum { PALETTE_TRANSLUCENT_EFFECT = 14, PALETTE_EFFECT = 15 };
 
-#include "shared/field_effect_create.h"
-#include "shared/field_effect_spawn.h"
+#include "shared/field_effect_create.c"
+#include "shared/field_effect_spawn.c"
 
 /// Frost has frozen the hidden puddle into an ice pillar to stand on.
 #define FLAG_LUNPA_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
@@ -81,7 +81,7 @@ enum { PALETTE_TRANSLUCENT_EFFECT = 14, PALETTE_EFFECT = 15 };
 /// The guards have caught the party and are marching it down the steps.
 #define FLAG_LUNPA_FORTRESS_GATES_GUARDS_CAUGHT_PARTY FLAG_SCENE_TEMP_44
 
-#include "shared/field_effect_duration_scripts.h"
+#include "shared/field_effect_duration_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,
@@ -933,7 +933,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-#include "shared/actor_orbit.h"
+#include "shared/actor_orbit.c"
 
 #define LUNPA_ENTRANCE(entrance, x, z, facing)                                 \
   {(entrance), CONDITION_ALWAYS, (x), 0, (z), (facing), 0, -1, -1, -1, -1, 0}

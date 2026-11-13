@@ -206,7 +206,7 @@ static void TimberRoomsA_AskIfBlownHere(s32 actorId) {
   Event_ShowMessage(actorId, 0);
 }
 
-#include "shared/leave_by_exit.h"
+#include "shared/leave_by_exit.c"
 
 /// In Suhalla after Babi's audience, Iodem steps out of the party and
 /// questions the two wounded soldiers.

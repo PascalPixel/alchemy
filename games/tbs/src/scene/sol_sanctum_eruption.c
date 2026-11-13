@@ -122,13 +122,9 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSolSanctumEruption_Entrances;
 }
 
-const struct SceneExitRegion *Scene_GetExitRegions(void) {
-  return NULL;
-}
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Scene_GetExits(void) {
-  return gSolSanctumEruption_Exits;
-}
+const u32 *Scene_GetExits(void) { return gSolSanctumEruption_Exits; }
 
 /// Returns everyone the event moves, all placed off the map until it does.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
@@ -1729,7 +1725,7 @@ static void SolSanctumEruption_CycleActorPalette(struct Actor *actor) {
   }
 }
 
-#include "shared/field_effect_vertical.h"
+#include "shared/field_effect_vertical.c"
 
 /// Creates two vertical effects sharing the parent position and cached tiles.
 static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent) {
@@ -1778,14 +1774,14 @@ static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent) {
   }
 }
 
-#include "shared/event_psynergy.h"
+#include "shared/event_psynergy.c"
 
 /// Cycles the Wise One's palette while it glows.
 static void SolSanctumEruption_UpdateWiseOnePalette(void) {
   SolSanctumEruption_CycleActorPalette(Actor_Get(ACTOR_WISE_ONE));
 }
 
-#include "shared/sol_sanctum_elemental_star_ring_setup.h"
+#include "shared/sol_sanctum_elemental_star_ring_setup.c"
 
 s32 gEruption_ArcOriginsHead[] = {
     SC_SET(SW_VELOCITY_Y, px(6)),
@@ -1896,5 +1892,5 @@ s32 gEruption_EmberScript[] = {
     SC_END,
 };
 
-#include "shared/sol_sanctum_elemental_star_ring_tables.h"
+#include "shared/sol_sanctum_elemental_star_ring_tables.c"
 // clang-format on

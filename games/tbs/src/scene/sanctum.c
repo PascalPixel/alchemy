@@ -2134,7 +2134,7 @@ u32 gSanctum_GaretCircleScript[] = {
     SC_END,
 };
 
-#include "shared/item_icon_grow_script.h"
+#include "shared/item_icon_grow_script.c"
 
 s32 gSanctum_ItemIconEndScript[] = {
     SC_WAIT(60),

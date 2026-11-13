@@ -9,19 +9,12 @@ s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
   struct InventoryMenuState *menu;
   s32 useResult;
   s32 itemId;
-  s32 entry;
   struct OwnerInventoryState *unit;
   struct ItemDefinition *item;
 
   unit = Unit_Get(memberId);
   menu = Ram_HeapSlots->menuRuntime;
-  /* FAKEMATCH(temporary): the inventory entry read into its own local first, so
-   * the barrier sits between the mask and the and; as itemId &=
-   * unit->inventory[slot] after the asm, 24 of 90 instructions differ in
-   * tla-en. */
-  entry = unit->inventory[slot];
-  itemId = ITEM_ID_MASK;
-  itemId &= entry;
+  itemId = ITEM_ID_MASK & unit->inventory[slot];
   item = Item_GetDirectFar(itemId);
   useResult = Ability_ApplyToTargets(OWNER_ACTION_ID_MASK & item->actionId,
                                      memberId, targetId, 1);

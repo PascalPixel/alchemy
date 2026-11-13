@@ -169,12 +169,10 @@ UNREAD_RESULT ElementGlow_UpdateStarField(void) {
   work->ready = 1;
 }
 
-// Copies the canvas, once a frame is drawn, to BG2's tiles in character block
-// 1 through PaletteFade_BackupAndScaleThreeQuarters, and clears
-// SparkWork.ready. Runs each frame as a task added by
-// ElementGlow_InitializeStarField. UB: the task runner invokes a void task.
-// Plain void changes the native return register from r1 to r0 in tbs-en;
-// matching builds keep the old type.
+// Copies the canvas, once a frame is drawn, to BG2's tiles in character block 1
+// through PaletteFade_BackupAndScaleThreeQuarters, and clears SparkWork.ready.
+// Runs each frame as a task added by ElementGlow_InitializeStarField. UB: the
+// task runner invokes a void task.
 #ifdef UBFIX
 void ElementGlow_UploadStarField(void) {
 #else

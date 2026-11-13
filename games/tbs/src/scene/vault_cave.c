@@ -301,9 +301,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Finds a placed actor with collision enabled at the requested map
 /// cell.
 static struct Actor *VaultCave_FindCollidableActorAtCell(s32 column, s32 row) {
-  // UB: map creation leaves unused actor slots NULL. The plain safe
-  // lookup adds four native bytes in EN; retain the original reads for
-  // matching.
+  // UB: map creation leaves unused actor slots NULL.
 #ifdef UBFIX
   struct FieldWork *work = gFieldWork;
   u32 actorSlot;
@@ -574,8 +572,6 @@ static void VaultCave_MoveNorthernPillar(void) {
 /// The puddle is in VaultCaveVambrace's puddle room. Freezing it changes its
 /// map cell, and arriving again re-freezes every puddle whose flag is set.
 static void VaultCave_FreezeWestUpperPuddle(void) {
-  // An ordinary shared Frost helper keeps the extents but saves r5-r7 instead
-  // of r5 alone and changes the map-copy argument registers in native English.
   struct Actor *target = Actor_Get(ACTOR_WEST_UPPER_PUDDLE);
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 23, 32);

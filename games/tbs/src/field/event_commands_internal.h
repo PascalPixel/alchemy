@@ -177,8 +177,7 @@ struct WaveEffectSprite {
 /// frames.
 static inline void
 FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
-  // Spawn and choose its position at the call site: combining the spawn here
-  // moves the kind load after the coordinate loads in the native English build.
+  // The caller spawns the fragment and places it.
   if (fragment != NULL) {
     fragment->motionFlags = ACTOR_FALLS;
     fragment->gravity = px(1) / 10;

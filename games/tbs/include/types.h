@@ -29,7 +29,11 @@ typedef unsigned long long u64;
 /// UBFIX the routine returns nothing; RETURN_UNREAD(value) returns its result.
 #ifdef UBFIX
 #define UNREAD_RESULT void
-#define RETURN_UNREAD(value) return
+#define RETURN_UNREAD(value)                                                   \
+  do {                                                                         \
+    (void)(value);                                                             \
+    return;                                                                    \
+  } while (0)
 #else
 #define UNREAD_RESULT s32
 #define RETURN_UNREAD(value) return value

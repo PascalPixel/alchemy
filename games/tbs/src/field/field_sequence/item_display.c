@@ -14,9 +14,7 @@ STATIC_ASSERT(offsetof(struct Actor, sprite) == 0x50);
 #ifdef UBFIX
 #define EFFECT_OBJECT_POOL gActors
 #else
-// UB: gActors and gFieldWork are separate globals. The named pool load
-// changes register allocation and shrinks StartRandomParticleEmitter from 344
-// to 342 bytes in tbs-en; keep the native read here.
+// UB: gActors and gFieldWork are separate globals.
 #define EFFECT_OBJECT_POOL (*(struct Actor **)((u8 *)&gFieldWork - 88))
 #endif
 

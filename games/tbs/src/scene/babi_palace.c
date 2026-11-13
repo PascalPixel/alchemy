@@ -1262,8 +1262,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   work->transitionFrames = 12;
   wait(1);
   ScreenTransition_InitializeBattleEffectState(WINDOW_TRANSITION_LEADER);
-  // UB: HEAP_SLOT_SCREEN_TRANSITION lies past scalar gFieldWork. Its named load
-  // adds four bytes in the native English trial (2,092 to 2,096 bytes).
+  // UB: HEAP_SLOT_SCREEN_TRANSITION lies past scalar gFieldWork.
 #ifdef UBFIX
   state = gScreenTransitionWork;
 #else

@@ -485,8 +485,7 @@ void DjinnMenu_AdjustPalettes(s32 brightnessDelta) {
 /// DjinnMenu_AdjustPalettes(8) makes 14, 4 and 6 from 15, 5 and 7.
 MenuBackdropResult Menu_OpenBackdropScreen(void) {
   // UB: the implicit int call conflicts with DrawElementList's void definition.
-  // The sole caller ignores this wrapper's result. Plain void changes the
-  // native tbs-en return from pop {r1}; bx r1 to pop {r0}; bx r0.
+  // The sole caller ignores this wrapper's result.
   struct DjinnMenuWork *menu = gMenuWork;
   struct DjinnMenuBackdrop *backdrop = menu->backdrop;
 

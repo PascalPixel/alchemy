@@ -428,7 +428,6 @@ static void AltmillerCave_InitializeDarkness(void) {
   wait(1);
   ScreenTransition_InitializeBattleEffectState(WINDOW_TRANSITION_LEADER_LOW);
   // UB: the fourth following pointer cell lies past scalar gFieldWork.
-  // Its named load adds eight bytes in the native EN trial (152 to 160).
 #ifdef UBFIX
   state = gScreenTransitionWork;
 #else

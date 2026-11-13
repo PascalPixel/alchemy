@@ -398,11 +398,6 @@ static void BattleArena_WriteSlotValue(s32 slot) {
   dst[gBattleArena_SlotColumns[slot]] = *src;
 }
 
-// The task runner ignores this result. Keep the native status calculation in
-// matching builds: making the function void removes eight instructions. The
-// modern build uses the task's actual function type to avoid an
-// incompatible indirect call.
-#ifdef UBFIX
 /// The task that watches the partner each frame in the Battle Arena.
 ///
 /// - It forgets the partner after LOBBY_PEER_WAIT_FRAMES without a link.
@@ -413,10 +408,7 @@ static void BattleArena_WriteSlotValue(s32 slot) {
 ///
 /// BattleArena_Initialize schedules it on every arrival, and
 /// BattleArena_EnterBattle removes it.
-static void BattleArena_PollPeerReady(void) {
-#else
-static s32 BattleArena_PollPeerReady(void) {
-#endif
+static UNREAD_RESULT BattleArena_PollPeerReady(void) {
   struct FieldWork *work;
   s32 result;
   s32 i;
@@ -482,11 +474,7 @@ static s32 BattleArena_PollPeerReady(void) {
   if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED)) {
     work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
   }
-#ifdef UBFIX
-  (void)result;
-#else
-  return result;
-#endif
+  RETURN_UNREAD(result);
 }
 
 /// Calls of BattleArena_PromptToParticipate towards asking again, at 300. It is
@@ -706,8 +694,6 @@ static s32 BattleArena_CopyPartyOwnerIds(u16 *memberIds) {
     s32 remaining;
 #ifdef UBFIX
     // The original short-pointer addition traverses a struct as an array.
-    // The actual member avoids that UB; used plainly, it removes four native
-    // bytes (68 to 64), so matching builds retain the old address form.
     source = gMainRoutineWork.party;
 #else
     partyAddress += 252;
@@ -742,8 +728,6 @@ static s32 BattleArena_CopyPartyOwnerIds(u16 *memberIds) {
 /// Returns 0, or -1 when a send fails or runs out of time. The copies go
 /// through an EWRAM pool buffer freed before returning.
 static s32 BattleArena_SendPartyRecords(void) {
-  // Measured plain form: replacing only the final wait and test polling
-  // region with while(active transfers) adds 8 bytes in tbs-en.
   s32 result;
   u8 *slotMap;
   u16 memberIds[8];
@@ -1530,8 +1514,6 @@ u8 *BattleArena_GetTriggers(void) { return (u8 *)gBattleArenaTriggers; }
 /// of the save stamp (gBattleArenaRecord) into the current file.
 /// BattleArena_Initialize calls it after each linked battle won or lost.
 static s32 BattleArena_SaveBattleResults(void) {
-  // A shared inline message-pair helper grows each save routine from 108 to
-  // 112 bytes in the native build, so retain the two copies.
   struct Window *window;
 
   Sound_Play(MUS_SAVED);

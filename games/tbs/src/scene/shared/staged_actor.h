@@ -56,8 +56,7 @@ PushedActor_FindAtTile(const struct FieldPosition *position,
        i < sizeof(work->actors) / sizeof(work->actors[0]); i++) {
     struct Actor *actor = slots[i];
 
-    // UB: Actor_ClearAll leaves unfilled slots null. The guard grows
-    // this helper from 88 to 92 bytes in the native English trial.
+    // UB: Actor_ClearAll leaves unfilled slots null.
 #ifdef UBFIX
     if (actor == NULL)
       continue;
@@ -137,20 +136,10 @@ UNUSED static void PushedActor_AdvancePair(void) {
 
 #include "pushed_actor_fill_rectangle.h"
 
-// UB: the native s32 update routine is called through Actor's void update. The
-// void form keeps 164 bytes in Altmiller English but changes the return move.
-#ifdef UBFIX
 /// The leader's update routine while pushing a large thing: stop the leader
 /// when another actor that is not a large thing, or a wall, is in the
 /// way.
-static void PushedActor_StopBlockedMotion(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
-#else
-/// The leader's update routine while pushing a large thing: stop the leader
-/// when another actor that is not a large thing, or a wall, is in the
-/// way.
-static s32 PushedActor_StopBlockedMotion(struct Actor *actor) {
-#endif
+static UNREAD_RESULT PushedActor_StopBlockedMotion(struct Actor *actor) {
   struct FieldPosition probe;
   u32 dir;
   struct Actor *target;
@@ -202,8 +191,7 @@ static struct Actor *Scene_FindActorRegion(s32 *direction, s32 *slot,
        i < sizeof(work->actors) / sizeof(work->actors[0]); list++, i++) {
     struct Actor *actor = *list;
     s32 kind;
-    // UB: the same empty slots are scanned here; the null guard grows the
-    // native English helper from 296 to 308 bytes.
+    // UB: the same empty slots are scanned here.
 #ifdef UBFIX
     if (actor == NULL)
       continue;
@@ -354,8 +342,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   s32 horizontalExtent;
   s32 verticalExtent;
 
-  // UB: reading the pointer slot through u32 aliases its declared type. The
-  // direct pointer read moves ahead of the probe stores in native English.
+  // UB: reading the pointer slot through u32 aliases its declared type.
 #ifdef UBFIX
   workspace = gMapGridWork[0];
 #else

@@ -396,7 +396,7 @@ enum {
 #define LUNPA_FORTRESS_ROOM_LAYERS (DISPCNT_BG2_ON | DISPCNT_BG3_ON)
 
 /// The paired patrol's layer origin across: 136 pixels, in 16.16 fixed point.
-// The native paired patrol computes this layer offset in floating point.
+// The paired patrol computes this layer offset in floating point.
 #define PAIRED_PATROL_LAYER_ORIGIN_X (136.0 * 65536)
 
 static s32 LunpaFortress_TryTakeChestItem(s32 actorId, s32 itemId);
@@ -855,8 +855,7 @@ static s32 LunpaFortress_IsLeaderInPatrolSafeZone(void) {
 }
 
 // UB: these patrols formerly reached gFieldWork through gMapGridWork[19] and
-// treated its request members as a halfword array. Named owner access adds
-// eight bytes to each of the three patrol tasks in the EN trial.
+// treated its request members as a halfword array.
 #ifdef UBFIX
 #define PATROL_PSYNERGY_REQUEST(work) ((work)->psynergy)
 #define PATROL_ITEM_REQUEST(work) ((work)->item)

@@ -36,8 +36,7 @@ void FieldPsynergy_CheckCloakTile(void) {
 #ifdef UBFIX
   tile = gMapGridWork[0];
 #else
-  // The named map slot avoids reading outside gFieldWork. It adds 4 bytes
-  // to this function in the forced native EN build (192 -> 196 bytes).
+  // The named map slot avoids reading outside gFieldWork.
   tile = (u8 *)*(struct MapGridScrollAnimView **)(slot - 76); // gMapGridWork[0]
 #endif
 

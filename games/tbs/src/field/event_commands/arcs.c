@@ -9,8 +9,6 @@
 /// it follows, 9 pixels in front of it and up to 5 pixels further while
 /// small.
 void FieldEffect_UpdateScaledArcActorA(struct Actor *actor) {
-  // A shared inline kernel with a constant inversion argument changes both
-  // arc updates from 88 to 92 bytes in the forced native English build.
   struct Actor *arc = (struct Actor *)actor;
   struct Actor *anchor;
   s32 frame;

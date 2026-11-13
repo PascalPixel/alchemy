@@ -78,9 +78,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
   struct MapGridScrollWork *grid;
   u16 *scanlineData;
 #ifndef UBFIX
-  // UB: viewX is a scalar, so indexing its address cannot reach viewY.
-  // Direct named members grow the English function from 2,316 to 2,324
-  // bytes. Modern code reads the actual members below.
+  // UB: viewX is a scalar, so indexing its address cannot reach viewY. Modern
+  // code reads the actual members below.
   s32 *viewInverse;
   s32 *viewRipple;
   s32 *viewLeader;
@@ -110,7 +109,6 @@ void ScreenTransition_UpdateScanlineTable(void) {
   state = gScreenTransitionWork;
 #else
   // UB: this indexes past gMapGridWork into the separate transition-work cell.
-  // The named cell grows 2,316 to 2,320 native bytes in English.
   state = gMapGridWork[23];
 #endif
 
@@ -202,8 +200,6 @@ void ScreenTransition_UpdateScanlineTable(void) {
           }
         } else {
           // These shared temporaries hold the left and right endpoints here.
-          // Four span-local endpoints shrink 2,316 to 2,236 bytes in English;
-          // keep this reuse until a plain form matches.
           radiusSquaredQ16 = span->x0;
           left = span->y0;
           delta = span->x1;
@@ -907,8 +903,7 @@ void ScreenTransition_UpdateScanline(void) {
   scanline = REG_VCOUNT;
   state = gMapGridWork[0];
 
-  // Keep the same VCount sample across phase changes. A for/switch retry loop
-  // shrinks the English function from 210 to 186 bytes.
+  // Keep the same VCount sample across phase changes.
 again:
   switch (state->irqPhase) {
   case DISPLAY_TRANSITION_IRQ_WAIT_FIRST:

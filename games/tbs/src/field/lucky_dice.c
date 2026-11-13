@@ -286,9 +286,8 @@ void LuckyDice_Run(void) {
   s32 flashTimer[DICE_COUNT];   // set on a win; nothing here reads it
   s32 luckyNumbers[DICE_COUNT]; // the two numbers shown at the top, never equal
   s32 drawOrder[DICE_COUNT];    // the dice, back to front
-// UB: three equal numbers produce three pairs, so the unused result list
-// needs a third slot. Keep the original stack frame layout in the matching
-// build.
+// UB: three equal numbers produce three pairs, so the unused result list needs
+// a third slot.
 #ifdef UBFIX
   UNUSED s32 matchedNumbers[3]; // written, never read
 #else
@@ -414,8 +413,7 @@ void LuckyDice_Run(void) {
   resultKind = -1;
   winnings = 0;
   payoutTimer = 0;
-  // Unsigned arithmetic wraps before storage as signed fixed point. Signed
-  // subtraction grows the English routine from 4,724 to 4,736 bytes.
+  // Unsigned arithmetic wraps before storage as signed fixed point.
   for (index = 0; index != DICE_COUNT; index++) {
     diceWork->particles[index].x = ((Random16() & 127) - 64) << 16;
     diceWork->particles[index].y = (Random16() & 31) << 16;
@@ -695,7 +693,6 @@ void LuckyDice_Run(void) {
 
       rollingDie = &diceWork->particles[drawOrder[index]];
       // Projection reads the die's three coordinate words directly.
-      // Copying them to an array grows native EN from 4,724 to 4,756 bytes.
       Transform_ProjectPoint(rollingDie, screen);
       // Depth is clamped to 350..650; the nearer, the larger the die.
       if (screen[2] < 350) {

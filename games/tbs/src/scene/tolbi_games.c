@@ -889,7 +889,6 @@ prompt:
         Party_AdjustCoins(gTolbiSpring_CoinPrizes[result]);
 #else
         // UB: the original view indexes beyond its one-element array.
-        // Plain arrays change register allocation and add four bytes in tbs-en.
         Party_AdjustCoins(((struct { u16 coins[1]; } *)gTolbiSpring_CoinPrizes)
                               ->coins[result]);
 #endif
@@ -936,7 +935,8 @@ prompt:
 #ifdef UBFIX
       TolbiSpring_RevealPrize(gTolbiSpring_PrizeItems[prizeIndex]);
 #else
-      // UB: use the whole item array in modern C; preserve the native view.
+      // UB: the view reads past its one-element array; UBFIX reads the whole
+      // item array.
       TolbiSpring_RevealPrize(
           ((struct { s32 prize[1]; } *)gTolbiSpring_PrizeItems)
               ->prize[prizeIndex]);

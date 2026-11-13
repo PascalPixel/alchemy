@@ -104,8 +104,7 @@ void WorldPicture_Initialize(void) {
 #ifdef UBFIX
   marker = work->markers;
 #else
-  // UB: the flat word view runs across sprite entries. Typed word/sprite
-  // unions change tbs-en setup from 368 to 364 bytes.
+  // UB: the flat word view runs across sprite entries.
   oam = (u32 *)work->markers;
 #endif
   actor = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -267,9 +266,8 @@ void WorldPicture_UpdateMarkers(void) {
     // L or R: the current area.
     areaActor = Actor_Lookup(gMainRoutineWork.leaderActorId);
 #ifdef UBFIX
-    // The native null branch leaves this frame's cursor coordinates unset.
-    // A missing selected actor violates the screen's lifetime contract;
-    // skipping that frame changes tbs-en from 1088 to 1092 bytes.
+    // UB: with no selected actor the ROM leaves this frame's cursor
+    // coordinates unset; UBFIX skips the frame.
     if (areaActor == NULL)
       return;
 #endif
@@ -354,8 +352,7 @@ void WorldPicture_UpdateMarkers(void) {
     width = x - cursorX;
     height = y - cursorY;
     if (width * width + height * height < nearestDistanceSquared) {
-      // UB: marker 0 has no table message. Its unused native read keeps the
-      // 1088-byte tbs-en body; skip the read for that marker with UBFIX.
+      // UB: marker 0 has no table message.
 #ifdef UBFIX
       if (markerIndex != 0)
 #endif

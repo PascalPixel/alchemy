@@ -137,8 +137,7 @@ void FieldPsynergy_EndReveal(void) {
   struct ScreenTransitionState *transition = gScreenTransitionWork;
   struct FieldWork *state = gFieldWork;
 #else
-  // Named slots avoid stepping outside gFieldEffectWork. They add 8 bytes to
-  // this function in the forced native EN build (232 -> 240 bytes).
+  // Named slots avoid stepping outside gFieldEffectWork.
   struct FieldEffectWork **cell = &gFieldEffectWork;
   struct FieldEffectWork *effectWork = *cell;
   struct ScreenTransitionState *transition =

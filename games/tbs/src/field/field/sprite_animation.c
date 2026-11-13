@@ -479,9 +479,8 @@ struct SpriteAnimation *SpriteAnimation_Alloc(s32 id) {
       }
     }
     if (found != NULL) {
-      // Bind the metadata and start its first animation at command zero.
-      // UB: the word view aliases a pointer field. It keeps the zero load
-      // ahead of pictures as native; reading the pointer swaps those loads.
+      // Bind the metadata and start its first animation at command zero. UB:
+      // the word view aliases a pointer field.
 #ifdef UBFIX
       pictures = metadata->pictures;
 #else
@@ -606,7 +605,7 @@ struct Sprite *Sprite_Create(s32 id) {
   }
 
   // Part 0 is the image; part 1 is its shadow, from the shared shadow tiles.
-  // UB: the native word cursor aliases the sprite and crosses its members.
+  // UB: the word cursor aliases the sprite and crosses its members.
   // UBFIX copies the same representation from an actual word array.
 #ifdef UBFIX
   attributes[0] = 0;

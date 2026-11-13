@@ -19,8 +19,7 @@
 /// transform state, and through BattleCamera_SetRange the background's affine
 /// page.
 void BattleCamera_Update(void) {
-  // UB: indexing past scalar gBattleCamera reaches other heap slots. Named
-  // slots add four bytes in the native EN trial (248 to 252 bytes).
+  // UB: indexing past scalar gBattleCamera reaches other heap slots.
 #ifdef UBFIX
   struct BattleCamera *camera = gBattleCamera;
   struct BattleBackgroundWork *view =

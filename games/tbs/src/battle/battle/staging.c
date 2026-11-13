@@ -256,8 +256,7 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
   s32 n;
   u32 kept;
   struct Actor *object;
-  // UB: indexing past scalar gBattleWork reaches another heap slot. Named
-  // slots keep the native EN size (954 bytes), but reorder address setup.
+  // UB: indexing past scalar gBattleWork reaches another heap slot.
 #ifndef UBFIX
   void **slots = (void **)&gBattleWork;
 #endif

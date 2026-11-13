@@ -754,7 +754,7 @@ static void SuhallaDesert_StormCarriesPartyAway(void) {
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Sound_Play(SE_GUSH);
-  // BUG: the native passes an actor id where the sprite helper needs a pointer.
+  // BUG: this passes an actor id where the sprite helper needs a pointer.
 #ifdef BUGFIX
   Actor_SetSpriteFlags(selectedActor, 0);
 #else
@@ -835,19 +835,11 @@ static s32 SuhallaDesert_RevealEnds(void) {
   }
 }
 
-#ifdef UBFIX
 /// Reveal shows a hidden stone pillar in the desert's south.
 ///
 /// In SuhallaDesertSouth the stone pillar appears at 248, 712. Map cells and
 /// the Psynergy Stone's map object change, and a palette color pulses.
-static void SuhallaDesert_RevealStarts(void) {
-#else
-/// Reveal shows a hidden stone pillar in the desert's south.
-///
-/// In SuhallaDesertSouth the stone pillar appears at 248, 712. Map cells and
-/// the Psynergy Stone's map object change, and a palette color pulses.
-static s32 SuhallaDesert_RevealStarts(void) {
-#endif
+static UNREAD_RESULT SuhallaDesert_RevealStarts(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_SuhallaDesertSouth) {
     Actor_Get(ACTOR_REVEALED_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Actor_Get(ACTOR_REVEALED_PILLAR)->motionFlags = 0;
@@ -911,8 +903,6 @@ s32 Scene_Initialize(void) {
 /// is coming back to where it stood. The sand haze is faded in if a storm has
 /// risen before.
 static void SuhallaDesert_SetUpFirstMapStorms(void) {
-  // Trial: sharing the blend tail through an ordinary inline shrinks this
-  // function from 324 to 312 bytes in tbs-en; retain the original body.
   struct Actor *actor;
   s32 stormId;
   s32 stormAlpha = 0;
@@ -959,8 +949,6 @@ static void SuhallaDesert_SetUpFirstMapStorms(void) {
 /// The fourth storm's first sprite part takes parameter 10, and once the
 /// chasing storm has been doused it is gone for good.
 static void SuhallaDesert_SetUpSecondMapStorms(void) {
-  // Trial: the same blend-tail inline shrinks this function from 344 to 332
-  // bytes in tbs-en; retain the original body.
   struct Actor *actor;
   struct Sprite *sprite;
   s32 stormId;

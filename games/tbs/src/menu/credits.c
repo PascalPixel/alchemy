@@ -303,7 +303,7 @@ extern u16 gCreditsScrollPosition __asm__("gWaitForFlashWrite");
 // XXX (no evidence): why the credits borrow them rather than keep globals of
 // their own; only Camelot's link map or source could say whether the sharing
 // was meant.
-// UB: the native casts alias the flash declarations and store a pointer through
+// UB: the casts alias the flash declarations and store a pointer through
 // a declared u16. UBFIX gives these assembler-backed cells their credits views.
 #ifdef UBFIX
 /// The sprite buffer, in gFlashNumRemainingBytes.
@@ -1029,8 +1029,6 @@ void Credits_DrawEnteringLine(void) {
 /// the EWRAM bump pool and is never freed; each line buffer is taken from the
 /// pool after it and given back.
 void Credits_InitTextSprites(void) {
-  // Sharing the three border-strip loops through an ordinary inline helper
-  // changes registers at the same 376-byte native English extent.
   volatile u32 dmaFill;
   u32 *oamWords;
   u32 row;

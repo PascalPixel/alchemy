@@ -102,10 +102,7 @@ enum {
 #define SHIP_NOT_ON_DECK (-px(1))
 
 /// The sprite of a gangway piece or a party actor.
-// ACTOR_SPRITE reads actor->sprite through an s32, so each store
-// reloads it as the native does; read as the field, the two stores share one
-// load. UB: the s32 read aliases the pointer field. UBFIX reads the field
-// itself.
+// UB: the s32 read aliases the pointer field. UBFIX reads the field itself.
 #ifdef UBFIX
 #define ACTOR_SPRITE(actor) ((actor)->sprite)
 #else
@@ -934,7 +931,7 @@ static void Curtain_Close(void) {
   tile = gVramCacheEntries[sCurtainVramSlot].offset >> 5;
   // Each part is written whole as three words: the queue link, attributes 0
   // and 1, and attribute 2.
-  // UB: the native word cursor crosses the parts' members. UBFIX builds the
+  // UB: the word cursor crosses the parts' members. UBFIX builds the
   // same words in a word array and copies them.
 #ifdef UBFIX
   entry = words;

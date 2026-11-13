@@ -198,15 +198,8 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY, s32 fixedZ);
 static void Sanctum_SpawnActorSpark(s32 id);
 static void Sanctum_RestoreQuestFloor(void);
 
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void changes 44 to 42 bytes in tbs-en.
-#ifdef UBFIX
 /// Faces the actor whose ID this update routine stores in the timer field.
-static void Sanctum_FaceActorNamedByTimer(struct Actor *updated) {
-#else
-/// Faces the actor whose ID this update routine stores in the timer field.
-static s32 Sanctum_FaceActorNamedByTimer(struct Actor *updated) {
-#endif
+static UNREAD_RESULT Sanctum_FaceActorNamedByTimer(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;
   struct Actor *target;
 
@@ -584,15 +577,8 @@ static void Sanctum_LeaveAfterRefusing(void) {
   }
 }
 
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void changes 66 to 64 bytes in tbs-en.
-#ifdef UBFIX
 /// Keeps this actor at the party leader's drawing priority.
-static void Sanctum_MatchLeaderPriority(struct Actor *updated) {
-#else
-/// Keeps this actor at the party leader's drawing priority.
-static s32 Sanctum_MatchLeaderPriority(struct Actor *updated) {
-#endif
+static UNREAD_RESULT Sanctum_MatchLeaderPriority(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;
   actor->sprite->image.priority =
       Actor_Get(ACTOR_PARTY_LEADER)->sprite->image.priority;

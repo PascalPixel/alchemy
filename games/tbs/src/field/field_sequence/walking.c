@@ -139,8 +139,6 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 /// Called by Field_UpdateWalking when the leader steps on a cell with a
 /// non-zero cell behavior. Sets work->exit and stops the leader.
 void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
-  // A do/while or while scan changes register allocation (51 text bytes in
-  // tbs-en); keep the sentinel backedge until that form matches.
   s32 exitValue;
   struct FieldWork *work;
   s32 fixedZ;

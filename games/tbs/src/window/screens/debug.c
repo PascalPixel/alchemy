@@ -29,14 +29,12 @@ void DebugSceneSelect_DrawRow(struct Window *window, s32 sceneId,
   Text_DrawMessage(label, window, MENU_LABEL_X, 0);
 }
 
-// The debug scene selector: a scene and an entrance number, starting from
-// the scene being run (DebugSceneSelect_HandleRowInput has the keys). An exits
-// there (Event_SetDestinationFar), B closes it. The field opens it in
-// debug mode when the Start button's menu (Save your quest, Sleep, Change
-// settings) is opened with B held (field/field_sequence/run.c).
-// The task runner and the debug menu's far call ignore this selection result.
-// Plain void removes two result moves (252 to 248 bytes in tbs-en) and
-// reorders Event_SetDestinationFar's argument setup.
+// The debug scene selector: a scene and an entrance number, starting from the
+// scene being run (DebugSceneSelect_HandleRowInput has the keys). An exits
+// there (Event_SetDestinationFar), B closes it. The field opens it in debug
+// mode when the Start button's menu (Save your quest, Sleep, Change settings)
+// is opened with B held (field/field_sequence/run.c). The task runner and the
+// debug menu's far call ignore this selection result.
 #ifdef UBFIX
 void DebugSceneSelect_Run(void) {
 #else

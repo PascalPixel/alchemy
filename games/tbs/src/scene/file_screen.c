@@ -254,8 +254,7 @@ const u16 gFileScreen_ExtraButtonCode[] = {
 // clang-format on
 
 // The actual arrays have four and fifteen entries. The original one-element
-// view makes the second key an out-of-bounds access. Direct array reads also
-// reorder both native held-key stores (same 248-byte function extent).
+// view makes the second key an out-of-bounds access.
 #ifdef UBFIX
 #define FILE_SCREEN_BUTTON_CODE_KEYS(code) (code)
 #else
@@ -437,9 +436,6 @@ s32 FileScreen_Run(void) {
   s32 pageCount;
   s32 encodedSize;
   struct Window *pageWindow;
-  // Keep encoded integer handles: the earlier typed-window split changes
-  // four native bytes. Integer windowHandle/passwordColumn and peerIndex/
-  // requiredLinkMask split plainly without changing the output.
   s32 wrappedPage;
   s32 glyphColumn;
   s32 windowHandle;
@@ -1091,9 +1087,8 @@ struct PasswordMember {
 ///   each party member, from the low half of byte 107
 /// - the coins, in bytes 165 to 167
 static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
-  // A direct Unit member plus the real member table shrinks the native
-  // function from 1,024 to 1,012 bytes. The private view remains pending member
-  // reconciliation; its fields below follow Unit's actual base stats.
+  // The private view remains pending member reconciliation; its fields below
+  // follow Unit's actual base stats.
   s32 length;
   u32 levelBits;
   u32 djinnBits;

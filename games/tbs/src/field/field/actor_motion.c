@@ -539,8 +539,7 @@ void Actor_UpdateAllMotion(void) {
     y = actor->y.fixed;
     z = actor->z.fixed;
     // UB: a frozen actor otherwise reads an uninitialized arrival flag, or
-    // inherits the preceding actor's flag. Initializing it here changes the
-    // EN load/store schedule while keeping the 788-byte function extent.
+    // inherits the preceding actor's flag.
 #ifdef UBFIX
     arrivedAtTarget = 0;
 #endif

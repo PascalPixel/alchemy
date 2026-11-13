@@ -1239,8 +1239,6 @@ static void BabiLighthouse_UpdateMovedPillar(void) {
 /// Walking into the pillar on the Road to Babi Lighthouse, the leader pushes it
 /// (PushedActor_AdvancePair) when it stands within 8 pixels of his height.
 static void BabiLighthouse_PushRoadPillar(void) {
-  // Trial: inverting the empty success arm changes two branch instructions
-  // (three text bytes in tbs-en); retain the existing branch order.
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *ahead = BabiLighthouse_FindActorAhead(leader);
   s32 heightDifference;

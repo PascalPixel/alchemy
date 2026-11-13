@@ -409,8 +409,8 @@ static void CrossboneIsleSteppingStones_SetCellAttributes(
   struct MapGridScrollWork *grid = gMapGridWork[0];
 
   if (grid != 0) {
-    // UB: the native bitfield view aliases MapGridCell storage. Byte writes
-    // keep its fields separate without that alias (tbs-en: 88 to 84 bytes).
+    // UB: the bitfield view aliases MapGridCell storage; UBFIX writes the
+    // bytes.
 #ifdef UBFIX
     u8 *cell = (u8 *)grid->layers[layer].cells;
 
@@ -947,19 +947,10 @@ CrossboneIsleSteppingStones_SyncPriorityIfAhead(struct Actor *front,
   return result;
 }
 
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void changes 320 to 316 bytes in tbs-en.
-#ifdef UBFIX
 /// Keeps each moving pillar's priority and collision flags consistent with the
 /// leader.
-static void
+static UNREAD_RESULT
 CrossboneIsleSteppingStones_UpdateActorPriority(struct Actor *updated) {
-#else
-/// Keeps each moving pillar's priority and collision flags consistent with the
-/// leader.
-static s32
-CrossboneIsleSteppingStones_UpdateActorPriority(struct Actor *updated) {
-#endif
   struct Actor *actor = (struct Actor *)updated;
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 hit;
@@ -1011,7 +1002,6 @@ static void CrossboneIsleSteppingStones_SortPillarActors(void) {
   struct PillarPlacement savedPlacement;
 #else
   // UB: the original 12-byte scratch receives a 16-byte DMA transfer.
-  // A complete placement array adds four native stack bytes.
   s32 savedPlacement[3];
 #endif
 
@@ -1220,19 +1210,10 @@ static void CrossboneIsleSteppingStones_StopRising(void) {
   leader->riseCounter = 0;
 }
 
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void changes 54 to 52 bytes in tbs-en.
-#ifdef UBFIX
-/// Keeps the frozen puddle's underfoot flag consistent with the leader's height
-/// and depth.
-static void
-CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority(struct Actor *updated) {
-#else
 /// Puts the frozen puddle under the leader when it is behind and below the
 /// leader.
-static s32
+static UNREAD_RESULT
 CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority(struct Actor *updated) {
-#endif
   struct Actor *actor = (struct Actor *)updated;
   struct Actor *ref = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -1351,17 +1332,9 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
                     &options);
 }
 
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void changes 172 to 168 bytes in tbs-en.
-#ifdef UBFIX
 /// Emits a randomized particle from the thawing puddle every eight frames.
-static void
+static UNREAD_RESULT
 CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *updated) {
-#else
-/// Emits a randomized particle from the thawing puddle every eight frames.
-static s32
-CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *updated) {
-#endif
   struct Actor *actor = (struct Actor *)updated;
   struct EffectOptions options;
   u32 phase = gFrameCount & 7;

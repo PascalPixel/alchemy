@@ -286,7 +286,7 @@ enum {
 #define WATER_SPRAY_LIFETIME 20
 #define WATER_SPRAY_START_SCALE (3 * Q16_ONE / 10)
 
-// UB: the native facing test overflows a signed left shift for many headings.
+// UB: the ROM's facing test overflows a signed left shift for many headings.
 #ifdef UBFIX
 #define ALTIN_FACES_COUNTER(facing) FACING_IS_NORTH(facing)
 #else

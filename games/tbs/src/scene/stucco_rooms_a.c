@@ -333,8 +333,7 @@ static void StuccoRoomsA_TalkToInnkeeper(void) {
 static void StuccoRoomsA_TalkToHealer(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  // FACING_IS_NORTH removes the native EN halfword shift and changes its
-  // comparison constant. Keep the original unsigned-halfword arithmetic.
+  // Keep the original unsigned-halfword arithmetic.
   if ((u16)(leader->facing + 0x5fff) <= 0x3ffe) {
     Sanctum_Run(ACTOR_HEALER);
   } else {

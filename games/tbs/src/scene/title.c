@@ -250,8 +250,8 @@ static void Title_UpdateSpriteReveal(void) {
   for (; row <= 3; row++) {
     for (column = 0; column <= 29; column++) {
 #ifdef UBFIX
-      // Stay inside each sprite's three-word array instead of walking into
-      // the next struct. The English indexed form adds four native bytes.
+      // Stay inside each sprite's three-word array instead of walking into the
+      // next struct.
       attributes = sprite->attr;
 #endif
       *attributes++ = 0;

@@ -302,7 +302,6 @@ static UNREAD_RESULT Xian_WatchWaterCarrierPath(struct Actor *updated) {
   RETURN_UNREAD(0);
 }
 
-// Keep the native callback representation beside its modern signature choice.
 #ifdef UBFIX
 #define XIAN_WATER_CARRIER_UPDATE Xian_WatchWaterCarrierPath
 #else

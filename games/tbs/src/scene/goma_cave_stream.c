@@ -214,8 +214,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
   Actor_SetDestination(stumpId, 346, 292);
   Actor_WaitForMoveById(stumpId);
   Actor_WaitBelowHeight(stump, 0);
-  // UB: the native integer store aliases the update pointer. A typed clear
-  // swaps this store with the following sprite-pointer load.
+  // UB: the integer store aliases the update pointer.
 #ifdef UBFIX
   stump->update = NULL;
 #else

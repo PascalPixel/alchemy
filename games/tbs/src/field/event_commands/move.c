@@ -247,9 +247,6 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
 /// pixels a frame and comes back turning at most 1/64 turn a frame, so it
 /// curves home.
 void FieldEffect_UpdateOutAndBack(struct FieldParticle *effect) {
-  // Forward OUT_AND_BACK_FLYING_OUT fallthrough keeps the callback extent but
-  // changes native instructions; retain the immediate retry until a plain form
-  // matches.
   struct Vector3 position;
   s8 *statePtr = &effect->state;
   s32 state;

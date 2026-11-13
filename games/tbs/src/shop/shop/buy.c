@@ -329,8 +329,6 @@ void Shop_DrawMoney(void) {
 /// repair lists.
 void Shop_DrawItemPrice(struct Window *window, s32 itemId, s32 price,
                         s32 priceKind) {
-  // A structured switch with early returns reduced the English native extent
-  // from 152 to 144, so the existing shared draw tail remains.
   s32 labelMessage;
 
   if (window == 0)

@@ -1423,8 +1423,7 @@ static void Kalay_PrepareTunnel(void) {
     }
     effectWork->actor = actor;
 #else
-    // The original integer temporary carries an actor pointer too. The
-    // typed branch adds a jump and a zero load in the native English trial.
+    // The original integer temporary carries an actor pointer too.
     if (trackingValue != 0) {
       trackingValue = Actor_Get(ACTOR_PARTY_LEADER);
     }
@@ -2361,8 +2360,8 @@ static void Kalay_UpdateTunnelPassages(void) {
   }
 }
 
-// UB: the native void epilogue returns through r0, leaving the nonzero return
-// address as SC_CALL's status. Repeat once per frame until the actor is
+// UB: the void routine's epilogue returns through r0, leaving the nonzero
+// return address as SC_CALL's status. Repeat once per frame until the actor is
 // released, with an explicit status in the modern build.
 // Advance a particle, damp its velocity, and expire its lifetime.
 #ifdef UBFIX

@@ -597,8 +597,7 @@ static void ValeCave_KiteKeepsAway(void) {
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       djinni->acceleration = leader->acceleration;
       routeIndex -= CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE;
-      // X/Z pairs occupy eight bytes. Plain pair indexing changes six
-      // instruction words in the English build, so keep separate offsets.
+      // X/Z pairs occupy eight bytes.
       walkTargetBytes = (const u8 *)gValeCave_WalkTargets;
       routeIndex <<= 3;
       targetZOffset = routeIndex + sizeof(s32);

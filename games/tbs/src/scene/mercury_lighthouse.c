@@ -824,9 +824,6 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
 
   MapGrid_CopyCellsTo(78, 59, 110, 36, 1, 1);
   MapGrid_CopyCellsTo(76, 59, 109, 36, 1, 1);
-  // The shared initializer grows this path from 336 to 340 bytes and
-  // moves its palette store after the scales; the stop path also reorders
-  // stores. Keep the ordinary assignments, without a new steering wrapper.
   options.palette = 7;
   options.startScaleX = Q16_ONE / 2;
   options.startScaleY = Q16_ONE / 2;
@@ -1075,9 +1072,6 @@ enum { STONE_DOOR_WEST = 0, STONE_DOOR_SOUTH = 1, STONE_DOOR_NORTH = 2 };
 
 /// Chooses the random speed component used by stone-door particles.
 static __inline__ s32 MercuryLighthouse_RandomDoorParticleSpeed(void) {
-  // Sharing a centered-velocity helper with other sprays shrinks the fountain
-  // from 336 to 296 bytes and grows this door from 636 to 644 bytes in
-  // English.
   u32 drift = Import_RandomNext();
 
   return ((drift << 3) >> 16) * (px(1) / 5);
@@ -1243,8 +1237,7 @@ static s32 MercuryLighthouse_StartStatueSpray(struct Actor *interpreter) {
 }
 
 // The sparkles stop when the statue halts; slide scripts and code call it.
-// SC_CALL passes the interpreter. The native no-argument form also has two
-// direct callers; adding NULL to those calls inserts two r0 = 0 instructions.
+// SC_CALL passes the interpreter.
 #ifdef UBFIX
 static s32 MercuryLighthouse_StopStatueSpray(struct Actor *interpreter) {
 #else

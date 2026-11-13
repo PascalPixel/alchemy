@@ -10,9 +10,7 @@
 
 struct Actor;
 
-// UB: scripts have variable lengths, so a one-word member cannot describe
-// them. Keep the native view outside UBFIX: a flat word pointer changes one
-// Thumb load's base/index order; a pointer to an unbounded array does too.
+// UB: scripts have variable lengths, so a one-word member cannot describe them.
 #ifdef UBFIX
 typedef s32 ActorScriptWords;
 #else

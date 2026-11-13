@@ -160,7 +160,6 @@ void m4aSoundMode(u32 mode) {
 /// Unused: silences every PCM and CGB channel with the sound work's ident
 /// raised. Nothing in the game calls it.
 UNUSED void SoundClear(void) {
-  // Splitting the counter or typed iterators changes the native EN registers.
   struct SoundInfo *work = SOUND_INFO_PTR;
   s32 channelCounter;
   void *channel;

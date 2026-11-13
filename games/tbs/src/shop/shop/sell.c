@@ -82,8 +82,6 @@ s32 Shop_ChooseMember(void) {
 /// empty. Returns -1 when cancelled, 0 when the inventory ran out. Called by
 /// Shop_ChooseMember.
 s32 Shop_SelectSell(s32 unitId) {
-  // Shared previous/next-row inlines added four bytes to each sell, repair and
-  // use picker in the English native build; the direct row arithmetic remains.
   struct Window *descriptionWindow;
   struct ShopWork *shop;
   struct Window *priceWindow;

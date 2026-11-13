@@ -13,8 +13,6 @@
 /// the battle ends. Writes each battle object's icon state and its sprites'
 /// priorities.
 void BattleObject_UpdateSpritePriorities(void) {
-  // The two side walks stay separate: a shared priority helper changes EN
-  // register allocation despite the same 428-byte extent.
   u16 unitIds[UNIT_MAX];
   // The party's, then the enemies': sprite priority 1 for the side in front,
   // 2 behind (the lower number draws over the higher).

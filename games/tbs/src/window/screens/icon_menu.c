@@ -46,9 +46,8 @@ struct WindowBuffer {
 /// icon on the lines it overhangs (below a row at the top, above one at the
 /// bottom, whose lines are 136 to 159).
 void IconMenu_DrawIcons(void) {
-  // UB: native pointers traverse scalar link/span fields into adjacent fields
-  // and records. Use their real members under UBFIX. Plain OAM field accesses
-  // and indexed scanlines each shrink the EN body from 840 to 836 bytes.
+  // UB: the pointers run from scalar link and span fields into the fields and
+  // records after them. UBFIX uses their real members.
   struct IconMenuWork *work;
   struct IconMenuEntry *entry;
   struct AffineTransform transform;

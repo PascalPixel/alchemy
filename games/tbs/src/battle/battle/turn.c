@@ -60,8 +60,7 @@ void Palette_UpdatePulseBrightness(void) {
 /// task leaves the background alone), gProjection and the background's
 /// affine page.
 void BattleCamera_SetCommandView(s32 verticalOffset) {
-  // UB: indexing past scalar gBattleCamera reaches another heap slot. Named
-  // slots add four bytes in the native EN trial (216 to 220 bytes).
+  // UB: indexing past scalar gBattleCamera reaches another heap slot.
 #ifdef UBFIX
   struct BattleCamera *camera = gBattleCamera;
   struct BattleBackgroundWork *view =

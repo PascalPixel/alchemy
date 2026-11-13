@@ -319,19 +319,11 @@ const struct Trigger *LamakanDesert_GetTriggers(void) {
   return gLamakanDesertTriggers;
 }
 
-#ifdef UBFIX
 /// Reveal wears off, and the desert's secrets sink under the sand again. It
 /// also runs on every entry to Lamakan Desert. The pits, the Manticore and Smog
 /// vanish under the sand (cells 70, 68 or 69, 99 over the saved patches), the
 /// chests and Psynergy Stones hide and the heat haze shimmers.
-static void Reveal_HideSecrets(void) {
-#else
-/// Reveal wears off, and the desert's secrets sink under the sand again. It
-/// also runs on every entry to Lamakan Desert. The pits, the Manticore and Smog
-/// vanish under the sand (cells 70, 68 or 69, 99 over the saved patches), the
-/// chests and Psynergy Stones hide and the heat haze shimmers.
-static s32 Reveal_HideSecrets(void) {
-#endif
+static UNREAD_RESULT Reveal_HideSecrets(void) {
   s32 markerId;
 
   GameFlag_Clear(FLAG_SECRETS_REVEALED);
@@ -394,17 +386,10 @@ static s32 Reveal_HideSecrets(void) {
   }
 }
 
-#ifdef UBFIX
 /// Casting Reveal uncovers what the desert's sand hides. In Lamakan Desert, the
 /// saved patches of sand come back, the pits, the Manticore and Smog stand
 /// where they are, the chests and Psynergy Stones show and the haze stops.
-static void Reveal_ShowSecrets(void) {
-#else
-/// Casting Reveal uncovers what the desert's sand hides. In Lamakan Desert, the
-/// saved patches of sand come back, the pits, the Manticore and Smog stand
-/// where they are, the chests and Psynergy Stones show and the haze stops.
-static s32 Reveal_ShowSecrets(void) {
-#endif
+static UNREAD_RESULT Reveal_ShowSecrets(void) {
   s32 i;
 
   GameFlag_Clear(FLAG_DESERT_EVENT_RUNNING);
@@ -761,7 +746,7 @@ static void HeatGauge_CountStep(void) {
     if (phase != 0) {
       return;
     }
-    // Reads the frame counter again and drops the value, as the native does.
+    // Reads the frame counter again and drops the value.
     gFrameCount;
     params.startScaleX = 4 * Q16_ONE / 5;
     params.startScaleY = 4 * Q16_ONE / 5;

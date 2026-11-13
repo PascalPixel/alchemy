@@ -183,9 +183,7 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
         // scale; otherwise they draw at 3/4 size.
         actor->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
         if (!GameFlag_GetFar(FLAG_ISAAC_WEARS_TUNIC)) {
-          // UB: sprite creation can fail while the actor slot stays
-          // live. The native local is then indeterminate or from an earlier
-          // row. Checking the sprite grows tbs-en from 608 to 628 bytes.
+          // UB: sprite creation can fail while the actor slot stays live.
 #ifdef UBFIX
           if (actor->spriteStorageKind == ACTOR_SPRITE_ONE &&
               (sprite = actor->sprite) != NULL)

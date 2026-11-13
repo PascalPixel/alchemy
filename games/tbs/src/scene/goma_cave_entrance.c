@@ -603,8 +603,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   Actor_SetDestination(stumpId, 139, 196);
   Actor_WaitForMoveById(stumpId);
   Actor_WaitBelowHeight(stump, px(32));
-  // UB: the native integer store aliases the update pointer. A typed clear
-  // swaps this store with the following sprite-pointer load.
+  // UB: the integer store aliases the update pointer.
 #ifdef UBFIX
   stump->update = NULL;
 #else

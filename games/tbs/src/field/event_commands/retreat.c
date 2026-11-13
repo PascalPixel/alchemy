@@ -177,8 +177,6 @@ void FieldPsynergy_Retreat(void) {
 /// of it and up to 5 pixels further while small; released 10 pixels above
 /// the ground (4 on the World Map, MAP_INDEX_WORLD).
 void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *actor) {
-  // One shared inline kernel with constant inversion grows the positive and
-  // negative update routines 116 -> 124 and 120 -> 124 bytes in native English.
   struct Actor *particle = (struct Actor *)actor;
   struct Actor *source;
   s32 y;

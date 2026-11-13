@@ -355,10 +355,8 @@ void FieldEffect_UpdateSparkles(void) {
 #ifdef UBFIX
         frames = gFrameCount;
 #else
-        // UB: this drops volatile and reads a u32 as unsigned long.
-        // The unsigned long alias combines the size and flip stores; as
-        // gFrameCount or a u32 alias, 3 of 235 instructions differ in tbs-en.
-        // UBFIX reads the declared type.
+        // UB: this drops volatile and reads a u32 as unsigned long. UBFIX reads
+        // the declared type.
         frames = *(unsigned long *)&gFrameCount;
 #endif
         sparkle->y = sy;

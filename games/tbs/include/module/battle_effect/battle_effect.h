@@ -240,7 +240,6 @@ typedef struct {
 #define EFFECT_CLIP_BOUNDS (BLITTER_CLIP_X | BLITTER_CLIP_Y)
 
 // Extract signed 16.16 pixels without reading an s32 through an s16 alias.
-// The plain shift adds four bytes to native English battle_effect.text overall.
 #ifdef UBFIX
 #define Q_16_16_TO_INT(v) ((s32)(v) >> 16)
 #else

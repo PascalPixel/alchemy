@@ -30,9 +30,7 @@
 /// right-aligned on the 30-tile screen row at the top. It is four tiles high
 /// outside battle and three in battle, plus one with the PP row.
 void PartyStatus_BuildLayoutBounds(s32 flags) {
-  // UB: slot[-1] steps before the single party-status heap slot. Reading
-  // the actual members grows the EN function from 104 to 108 bytes.
-  // Keep the original address formation only in the matching build.
+  // UB: slot[-1] steps before the single party-status heap slot.
 #ifdef UBFIX
   struct PartyStatusWindow *layout = HEAP_SLOT_BLOCK(HEAP_SLOT_PARTY_STATUS);
   struct WindowWork *work = WINDOW_WORK;
@@ -186,7 +184,7 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
       bar = PIXELS_4BPP(8);
       shadow = PIXELS_4BPP(13);
 #ifdef UBFIX
-      // At zero (including a multiple-of-eight remainder), the native
+      // At zero (including a multiple-of-eight remainder), the ROM's
       // right shifts by 32 yield zero. Keep the empty patterns without
       // evaluating those undefined C shifts.
     } else if (length > 0) {
@@ -225,8 +223,6 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
 /// erased and laid out again first.
 void PartyStatus_Draw(s32 flags) {
   // UB: the negative indices leave the single party-status heap slot.
-  // Named members grow the EN function from 980 to 988 bytes. Keep the
-  // original address formation and load order in the matching build.
 #ifdef UBFIX
   struct PartyStatusWindow *layout = HEAP_SLOT_BLOCK(HEAP_SLOT_PARTY_STATUS);
   struct BattleWork *battle = gBattleWork;

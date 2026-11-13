@@ -45,7 +45,7 @@
 #include "f15585c/f17cc30.c"
 #include "f15585c/rushing_strike.c"
 #include "f15585c/mirrored_wall.c"
-#include "f15585c/rushing_strike_2.c"
+#include "f15585c/daedalus.c"
 #include "f15585c/f1811d4.c"
 #include "f15585c/f1843fc.c"
 #include "f15585c/f186dfc.c"

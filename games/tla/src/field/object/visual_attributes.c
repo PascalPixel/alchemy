@@ -13,7 +13,7 @@
 #include "visual_attributes/line_scroll.c"
 #include "visual_attributes/weather.c"
 #include "visual_attributes/ground_particles.c"
-#include "visual_attributes/weather_2.c"
+#include "visual_attributes/motes.c"
 #include "visual_attributes/djinni.c"
 #include "visual_attributes/jupiter.c"
 #include "visual_attributes/mars.c"

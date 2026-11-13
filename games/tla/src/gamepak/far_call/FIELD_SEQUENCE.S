@@ -243,9 +243,9 @@ Resource_FarCall006:
 	export Func_080c8768, Func_080dbcd8
 	export Func_080c8770, Func_080dbd48
 	export Party_GetLeaderActorFar, Party_GetLeaderActor
-	export Func_080c8780, Func_080db444
-	export Func_080c8788, Func_080daecc
-	export Func_080c8790, Func_080db0b0
+	export Func_080c8780, HangingVine_Place
+	export HangingVine_HangFar, HangingVine_Hang
+	export HangingVine_SwingFar, HangingVine_Swing
 	export Func_080c8798, Func_080d5d70
 	export Func_080c87a0, Func_080eb960
 	export Actor_SetSpriteRotationByIdFar, Actor_SetSpriteRotationById
@@ -266,12 +266,12 @@ Resource_FarCall006:
 	export BattleEffect_SetObjectUpdateModeFar, BattleEffect_SetObjectUpdateMode
 @ Why assembly: 8-byte far-call veneers: ldr r4, the target's word, bx r4.
 	export Actor_CheckBlockedFar, Actor_CheckBlocked
-	export Func_080c8830, Func_080dbdc8
-	export Func_080c8838, Func_080dbde8
+	export Func_080c8830, MapGrid_GetCellBehavior
+	export Func_080c8838, MapGrid_GetAttributeBAt
 	export MapGrid_SetCellBehaviorFar, MapGrid_SetCellBehavior
-	export Func_080c8848, Func_080dbdf4
-	export Func_080c8850, Func_080dbe08
-	export Func_080c8858, Func_080dbe44
+	export Func_080c8848, MapGrid_SetAttributeBAt
+	export Func_080c8850, MapGrid_SetAttributeBBitsAt
+	export Func_080c8858, MapGrid_ClearAttributeBBitsAt
 	export Actor_ShowItemIconByIdFar, Actor_ShowItemIconById
 	export Func_080c8868, Tightrope_Release
 	export Func_080c8870, Tightrope_Settle

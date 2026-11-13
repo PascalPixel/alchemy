@@ -284,11 +284,11 @@ void FieldPsynergy_FadeToCastColor(void);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Actor_ReleaseFar(struct Actor *object);
 void Func_080dba5c(void);
-void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_080dbf94(struct Actor *object, s32 x, s32 y, s32 z);
+void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z);
+void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z);
 s32 Func_08020330(struct Actor *object);
-s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
-s32 Func_080dbdc8(s32 x, s32 z, s32 layer);
+s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
+s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 s32 Func_080cda84(s32 id, struct Actor *object, s32 *position);
 s32 Func_080dbc04(s32 x, s32 z, s32 layer);
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
@@ -363,7 +363,7 @@ void FieldPsynergy_Scoop(void) {
   if (!(event->unkd4c & 1))
     Func_080dba5c();
   Sound_PlayFar(138);
-  Func_080dbed0(object, scene->x, scene->y + 0x200000, scene->z);
+  FieldPsynergy_GrowFromCaster(object, scene->x, scene->y + 0x200000, scene->z);
   wait(10);
   Actor_SelectAnimationFar(object, 1);
   wait(15);
@@ -380,12 +380,13 @@ void FieldPsynergy_Scoop(void) {
     if (target != NULL && target->script != NULL &&
         (Func_08020330(target) == 406 || (target->collisionFlags & 1)) &&
         target != scene->mainObject && ((u8 *)target->sprite)[27] != 0 &&
-        Func_080dbe80(&scene->x, 4, &target->x, target->radius - 2) >= 0) {
+        FieldPsynergy_CheckOverlap(&scene->x, 4, &target->x,
+                                   target->radius - 2) >= 0) {
       failed = 1;
       break;
     }
   }
-  if (Func_080dbdc8(scene->x, scene->z, caster->terrainId) == 255)
+  if (MapGrid_GetCellBehavior(scene->x, scene->z, caster->terrainId) == 255)
     failed = 4;
   if (Func_080cda84(scene->fieldKind, caster, &scene->x) == -1)
     failed = 2;
@@ -561,7 +562,7 @@ void FieldPsynergy_Scoop(void) {
   }
   Task_Remove(Func_080e6400);
   Sound_PlayFar(114);
-  Func_080dbf94(object, object->x, object->y, object->z);
+  FieldPsynergy_ShrinkToCaster(object, object->x, object->y, object->z);
   if (particleEntry != 96)
     VramCache_FreeEntry(particleEntry);
   if (pictureEntry != 96)
@@ -1087,7 +1088,8 @@ void FieldPsynergy_Parch(void) {
     animation = object->sprite;
     if (object->script != NULL && animation->definition[0] == kind &&
         animation->unk18 == 1 &&
-        Func_080dbe80(pos, 4, &object->x, object->radius - 2) >= 0) {
+        FieldPsynergy_CheckOverlap(pos, 4, &object->x, object->radius - 2) >=
+            0) {
       result = 2;
       found = i;
       Actor_GetById(i)->priorityFlags |= 2;
@@ -1101,7 +1103,7 @@ void FieldPsynergy_Parch(void) {
   } else if (Func_080dbd5c(pos[0], pos[2], caster->terrainId) != 0) {
     pending = Scene_FindPsynergyTrigger(
         0x50000005, scene->fieldKind,
-        Func_080dbdc8(pos[0], pos[2], caster->terrainId));
+        MapGrid_GetCellBehavior(pos[0], pos[2], caster->terrainId));
     result = 2;
     if (pending == NULL)
       result = 1;

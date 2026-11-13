@@ -712,7 +712,8 @@ failure:
   return -1;
 }
 
-struct Work9cItem *Func_080d5670(s32 *position) {
+/// Returns the nearest tied rope node within reach of position, or NULL.
+struct Work9cItem *Rope_FindNodeNear(s32 *position) {
   struct Work9cItem *found;
   struct Work9c *work;
   struct Work9cItem *item;
@@ -748,10 +749,12 @@ struct Work9cItem *Func_080d5670(s32 *position) {
   return found;
 }
 
-s32 Func_080d5720(void) {
+/// Hops the leader onto the nearest tied rope node, to cross the rope (render
+/// mode 3); returns 0 when none is in reach.
+s32 Leader_StepOntoRope(void) {
   struct Actor *leader = ObjectTable_Get(gMainRoutineWork.currentOwner);
   struct FieldSprite *sprite = leader->sprite;
-  struct Work9cItemPosition *item = Func_080d5670(&leader->x);
+  struct Work9cItemPosition *item = Rope_FindNodeNear(&leader->x);
   u8 *flags;
 
   ((struct EventWorkGrab *)Ram_HeapSlots->eventWork)->grabState = 0;
@@ -815,7 +818,8 @@ s32 Field_ClimbDown(void) {
   return 1;
 }
 
-struct WorkA0Node *Func_080d5930(s32 *position) {
+/// Returns the nearest tightrope node within reach of position, or NULL.
+struct WorkA0Node *Tightrope_FindNodeNear(s32 *position) {
   struct WorkA0Node *found;
   struct WorkA0 *work;
   struct WorkA0Node *item;
@@ -850,11 +854,13 @@ struct WorkA0Node *Func_080d5930(s32 *position) {
   return found;
 }
 
-s32 Func_080d59dc(void) {
+/// Hops the leader onto the nearest tightrope node (render mode 4); returns 0
+/// when none is in reach.
+s32 Leader_StepOntoTightrope(void) {
   struct MainRoutineWork *work = &gMainRoutineWork;
   struct Actor *leader = ObjectTable_Get(work->currentOwner);
   struct FieldSprite *sprite = leader->sprite;
-  struct Work9cItemPosition *item = Func_080d5930(&leader->x);
+  struct Work9cItemPosition *item = Tightrope_FindNodeNear(&leader->x);
   u8 *flags;
 
   ((struct EventWorkGrab *)Ram_HeapSlots->eventWork)->grabState = 0;
@@ -879,7 +885,9 @@ s32 Func_080d59dc(void) {
   return 1;
 }
 
-s32 Func_080d5aa0(void) {
+/// Hops the leader off a rope a cell in the direction the pad holds, when that
+/// cell is open; returns 0 otherwise.
+s32 Leader_StepOffRope(void) {
   struct Actor *leader = ObjectTable_Get(gMainRoutineWork.currentOwner);
   struct FieldSprite *sprite = leader->sprite;
   s32 position[3];

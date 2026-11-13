@@ -43,7 +43,8 @@ struct WorkA4Slot {
   u8 unk0c[4];
   s32 phase; ///< where the swing is in its arc, an angle
   s32 active;
-  struct ChainLink *root; ///< the first link Func_080daecc hangs; NULL if free
+  struct ChainLink
+      *root; ///< the first link HangingVine_Hang hangs; NULL if free
 };
 
 struct WorkA4Item {

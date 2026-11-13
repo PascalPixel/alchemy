@@ -13,25 +13,25 @@ struct FieldParticle;
 struct ParticleEmitter;
 struct WorkA4Slot;
 
-s32 Func_080dbde8(s32 x, s32 z, s32 layer);
-u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value);
+s32 MapGrid_GetAttributeBAt(s32 x, s32 z, s32 layer);
+u8 MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value);
 
 extern const s32 gActor_LaunchScript[];
 
 void ItemDisplay_ShowItem(s32 item, s32 flags);
 void FieldEffect_SpawnRevealMarkers(void);
 
-void Func_080daecc(s32 objectId, s32 grow);
+void HangingVine_Hang(s32 objectId, s32 grow);
 void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
                                                s32 magnitude, s32 angle);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 
-s32 Func_080dbe80(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
+s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
 
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 
 s32 Func_080dbcd8(s32 x, s32 z, s32 layer);
-void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z);
+void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z);
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
 s32 Func_080dbd5c(s32 x, s32 z, s32 layer);
 
@@ -39,7 +39,7 @@ s32 Rope_FindById(s32 id, s32 *value, s32 *index);
 
 void Rope_Lash(s32 index, s32 fromId, s32 toId);
 
-void Func_080db0b0(s32 id);
+void HangingVine_Swing(s32 id);
 
 s32 Func_080dbda8(s32 x, s32 z, s32 layer);
 
@@ -130,9 +130,9 @@ s32 Tightrope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
 
 s32 Tightrope_Recoil(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
                      s32 wave);
-void Func_080daab0(void);
+void HangingVine_Draw(void);
 
-void Func_080dacb8(void);
+void HangingVine_Update(void);
 struct WorkA4Slot *Func_080dae70(s32 id);
 
 void BattleEffect_DrawSceneSprite(void);
@@ -184,6 +184,6 @@ s32 Actor_GetSpriteById(s32 key);
 void Actor_CopyGraphics(u32 targetId, u32 sourceId);
 
 s32 ResourceTable_CountFreeBlocks(void);
-void Func_080dbb40(void);
+void FieldPsynergy_ReleaseSceneSprite(void);
 
 #endif

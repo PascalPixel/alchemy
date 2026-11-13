@@ -2051,14 +2051,14 @@ struct EffectSprite__f0cf050 {
 /* VIEW(f0cf050): routine EffectSprite_Init as void EffectSprite_Init();
  * effect_sprite.h has void EffectSprite_Init(struct EffectSprite *sprite, s32
  * pivotX, s32 pivotY, u32 attributes, s32 tile). */
-extern void Func_080eaf98__f0cf050() __asm__("EffectSprite_Init");
+extern void EffectSprite_Init__f0cf050() __asm__("EffectSprite_Init");
 
 /// Sets up sprite through EffectSprite_Init with resource 94's tiles, at
 /// priority 1 in palette 0.
 void EffectSprite_InitFromSlot94(struct EffectSprite__f0cf050 *sprite, s32 a,
                                  s32 b, s32 c) {
-  Func_080eaf98__f0cf050(sprite, a, b, c,
-                         gResourceTableEntries[94].offset >> 5);
+  EffectSprite_Init__f0cf050(sprite, a, b, c,
+                             gResourceTableEntries[94].offset >> 5);
   sprite->depth = 0;
   sprite->priority = 1;
   sprite->palette256 = 0;
@@ -2073,7 +2073,8 @@ Camera_WorldToScreen__f0cf050(s32 *position) __asm__("Camera_WorldToScreen");
 /* VIEW(f0cf050): routine EffectSprite_Draw as void EffectSprite_Draw(void
  * *sprite); effect_sprite.h has void EffectSprite_Draw(struct EffectSprite
  * *sprite). */
-extern void Func_080eb01c__f0cf050(void *sprite) __asm__("EffectSprite_Draw");
+extern void
+EffectSprite_Draw__f0cf050(void *sprite) __asm__("EffectSprite_Draw");
 
 /// Projects the world position (x, y, z) to the screen, stores it as the
 /// effect sprite's position and draws the sprite.
@@ -2084,14 +2085,14 @@ void BattleEffect_DrawSpriteAtWorldPosition(s32 *sprite, s32 x, s32 y, s32 z) {
   Camera_WorldToScreen__f0cf050(position);
   sprite[3] = position[0];
   sprite[4] = position[2];
-  Func_080eb01c__f0cf050(sprite);
+  EffectSprite_Draw__f0cf050(sprite);
 }
 
 /// The twin of EffectSprite_InitFromSlot94 with object mode 1 and priority 0.
 void EffectSprite_InitFromSlot94Blended(struct EffectSprite__f0cf050 *sprite,
                                         s32 a, s32 b, s32 c) {
-  Func_080eaf98__f0cf050(sprite, a, b, c,
-                         gResourceTableEntries[94].offset >> 5);
+  EffectSprite_Init__f0cf050(sprite, a, b, c,
+                             gResourceTableEntries[94].offset >> 5);
   sprite->depth = 0;
   sprite->priority = 0;
   sprite->palette256 = 0;

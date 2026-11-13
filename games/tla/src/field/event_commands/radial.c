@@ -363,7 +363,7 @@ void FieldPsynergy_Whirlwind(void) {
     FieldPsynergy_FadeFromCastColor();
     ((struct OrbitEffect__f0dfd00 *)orb)->timer = 0;
     orb->update = (void (*)(void))BattleEffect_AgeAndCueAtEighty__f0dfd00;
-    Func_080db0b0(scene->secondObjectId);
+    HangingVine_Swing(scene->secondObjectId);
     Func_08020340(orb);
     Actor_ReleaseFar(orb);
   }
@@ -871,7 +871,8 @@ void FieldPsynergy_Lash(void) {
       particle++;
     }
 
-    Func_080dbed0(object, scene->x, scene->y + 0x200000, scene->z);
+    FieldPsynergy_GrowFromCaster(object, scene->x, scene->y + 0x200000,
+                                 scene->z);
     Actor_SelectAnimationFar(object, 1);
     wait(10);
     for (i = 15; i >= 0; i--) {
@@ -1609,7 +1610,8 @@ again:
       object = event->objects[objectIndex];
       if (object != NULL && object->script != NULL &&
           (object->collisionFlags & 1) && object != scene->mainObject &&
-          Func_080dbe80(&motion->x, 2, &object->x, object->radius - 2) >= 0)
+          FieldPsynergy_CheckOverlap(&motion->x, 2, &object->x,
+                                     object->radius - 2) >= 0)
         goto hit;
     }
     break;
@@ -1977,7 +1979,7 @@ void Func_080e2264(void) {
 
 // Runs the field events an effect touched.
 
-s32 Func_080dbdc8(s32 x, s32 z, s32 layer);
+s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 /* VIEW(f0e150c): routine Field_RunPsynergyEvent as void
  * Field_RunPsynergyEvent(s32 event, s32 argument0, s32 argument1); event_work.h
  * has s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32
@@ -2001,7 +2003,8 @@ void Func_080e249c(void) {
   s32 i, j;
 
   for (i = 0; cells[i].x != -1; i++) {
-    s16 id = Func_080dbdc8(cells[i].x << 20, cells[i].z << 20, owner->layer);
+    s16 id = MapGrid_GetCellBehavior(cells[i].x << 20, cells[i].z << 20,
+                                     owner->layer);
 
     for (j = 0; j < count; j++) {
       if (ids[j] == id)
@@ -2102,7 +2105,8 @@ extern u8 gData_02001000__f0e2718[] __asm__("gData_02001000");
  * does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:2357:
  * conflicting types for `MapGrid_GetCellAt'. */
 extern struct MapCell *
-Func_080dbb78__f0e2718(s32 x, s32 z, s32 layer) __asm__("MapGrid_GetCellAt");
+MapGrid_GetCellAt__f0e2718(s32 x, s32 z,
+                           s32 layer) __asm__("MapGrid_GetCellAt");
 
 /// For each entry of the event work's list at 0x174c, calls
 /// MapGrid_CopyCellPictureCellsRectFar with its bytes and clears the collision
@@ -2116,7 +2120,7 @@ void Func_080e2718(void) {
 
     MapGrid_CopyCellPictureCellsRectFar(entry[0], entry[1], 1, 1, entry[2],
                                         entry[3]);
-    Func_080dbb78__f0e2718(entry[4] << 20, entry[5] << 20, 2)->collisionCode =
-        0;
+    MapGrid_GetCellAt__f0e2718(entry[4] << 20, entry[5] << 20, 2)
+        ->collisionCode = 0;
   }
 }

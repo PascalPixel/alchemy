@@ -50,9 +50,9 @@ struct EffectParticle {
  * EffectSprite__f0e446c *sprite, s32 width, s32 height, u32 shape, s32 tiles);
  * effect_sprite.h has void EffectSprite_Init(struct EffectSprite *sprite, s32
  * pivotX, s32 pivotY, u32 attributes, s32 tile). */
-extern void Func_080eaf98__f0e446c(struct EffectSprite__f0e446c *sprite,
-                                   s32 width, s32 height, u32 shape,
-                                   s32 tiles) __asm__("EffectSprite_Init");
+extern void EffectSprite_Init__f0e446c(struct EffectSprite__f0e446c *sprite,
+                                       s32 width, s32 height, u32 shape,
+                                       s32 tiles) __asm__("EffectSprite_Init");
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Camera_WorldToScreen(s32 *position);
@@ -93,7 +93,7 @@ void Func_080e4510(struct EffectSprite__f0e446c *sprite, s32 tiles) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 position[3];
 
-  Func_080eaf98__f0e446c(sprite, 16, 30, 0x80000000, tiles);
+  EffectSprite_Init__f0e446c(sprite, 16, 30, 0x80000000, tiles);
   sprite->depth = BattleEffect_GetObjectDepth(scene->mainObject);
   sprite->priority = BattleEffect_GetObjectPriority(scene->mainObject);
   sprite->color = 1;
@@ -145,7 +145,7 @@ void Func_080e45a8(struct EffectSprite__f0e446c *sprite,
   particle->velocityX = position[0];
   particle->velocityY = 0;
   particle->velocityZ = position[2];
-  Func_080eaf98__f0e446c(sprite, 8, 8, 0x40000000, tiles);
+  EffectSprite_Init__f0e446c(sprite, 8, 8, 0x40000000, tiles);
   sprite->scaleX = 0x3333;
   sprite->scaleY = 0x3333;
   sprite->priority = BattleEffect_GetObjectPriority(mainObject);

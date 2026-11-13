@@ -49,7 +49,7 @@ extern char ResourceId_RingOrb;
 
 void wait(s32 frames);
 s32 Func_080dbcc0(s32 x, s32 z, s32 layer);
-s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
+s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 void Func_080e9940(void);
 
 void FieldPsynergy_Hover(void) {
@@ -101,8 +101,8 @@ void FieldPsynergy_Hover(void) {
         position[0] = other->x;
         position[1] = other->terrainHeight;
         position[2] = other->z;
-        if (Func_080dbe80(&player->x, player->radius, &other->x,
-                          other->radius - 2) >= 0) {
+        if (FieldPsynergy_CheckOverlap(&player->x, player->radius, &other->x,
+                                       other->radius - 2) >= 0) {
           found = 1;
           break;
         }

@@ -144,7 +144,7 @@ struct ChainWork__f0d9194 {
  * *Rope_AllocNode(void); the definition has struct Work9cItem
  * *Rope_AllocNode(void). */
 extern struct ChainNode__f0d9194 *
-Func_080d8d40__f0d9194(void) __asm__("Rope_AllocNode");
+Rope_AllocNode__f0d9194(void) __asm__("Rope_AllocNode");
 
 /// Builds a slot's chain of nodes, one for each 6 units of the distance between
 /// two points, laid out as a flat spiral around the first point.
@@ -166,7 +166,7 @@ s32 Rope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
 
   slot->segments = segments;
   for (i = 0; i <= segments; i++) {
-    struct ChainNode__f0d9194 *node = Func_080d8d40__f0d9194();
+    struct ChainNode__f0d9194 *node = Rope_AllocNode__f0d9194();
     u16 step;
 
     if (node == NULL) {
@@ -231,15 +231,15 @@ extern s32 gRope_LashPhase;
 /* VIEW(f0d92d4): routine Rope_Throw as void Rope_Throw(s32 index, s32 x,
  * s32 y, s32 z, s32 toX, s32 toY, s32 toZ, s32 wobble); the definition has s32
  * Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ). */
-extern void Func_080d9498__f0d92d4(s32 index, s32 x, s32 y, s32 z, s32 toX,
-                                   s32 toY, s32 toZ,
-                                   s32 wobble) __asm__("Rope_Throw");
+extern void Rope_Throw__f0d92d4(s32 index, s32 x, s32 y, s32 z, s32 toX,
+                                s32 toY, s32 toZ,
+                                s32 wobble) __asm__("Rope_Throw");
 /* VIEW(f0d92d4): routine Rope_Recoil as void Rope_Recoil(s32 index, s32 x,
  * s32 y, s32 z, s32 toX, s32 toY, s32 toZ, s32 wobble); the definition has s32
  * Rope_Recoil(s32 index, s32 x, s32 y, s32 z). */
-extern void Func_080d9790__f0d92d4(s32 index, s32 x, s32 y, s32 z, s32 toX,
-                                   s32 toY, s32 toZ,
-                                   s32 wobble) __asm__("Rope_Recoil");
+extern void Rope_Recoil__f0d92d4(s32 index, s32 x, s32 y, s32 z, s32 toX,
+                                 s32 toY, s32 toZ,
+                                 s32 wobble) __asm__("Rope_Recoil");
 
 /// Lash: throws rope index from post fromId to post toId and ties it (both
 /// posts take animation 2). A rope coiled too short to reach falls back to its
@@ -275,16 +275,16 @@ void Rope_Lash(s32 index, s32 fromId, s32 toId) {
       y = toY;
       z = from->z + (toZ - from->z) * count / segments;
 
-      Func_080d9498__f0d92d4(index, from->x, from->y + 0x80000, from->z, x,
-                             y + 0x80000, z, Trig_Sin(gRope_LashPhase) << 2);
+      Rope_Throw__f0d92d4(index, from->x, from->y + 0x80000, from->z, x,
+                          y + 0x80000, z, Trig_Sin(gRope_LashPhase) << 2);
       slot->unk18 = 0;
       wait(1);
-      Func_080d9790__f0d92d4(index, from->x, from->y + 0x80000, from->z, x,
-                             y + 0x80000, z, Trig_Sin(gRope_LashPhase) << 2);
+      Rope_Recoil__f0d92d4(index, from->x, from->y + 0x80000, from->z, x,
+                           y + 0x80000, z, Trig_Sin(gRope_LashPhase) << 2);
     } else {
-      Func_080d9498__f0d92d4(index, from->x, from->y + 0x80000, from->z, to->x,
-                             to->y + 0x80000, to->z,
-                             Trig_Sin(gRope_LashPhase) << 2);
+      Rope_Throw__f0d92d4(index, from->x, from->y + 0x80000, from->z, to->x,
+                          to->y + 0x80000, to->z,
+                          Trig_Sin(gRope_LashPhase) << 2);
       gRope_LashPhase += 0x1000;
       wait(6);
       Actor_SelectAnimationFar(from, 2);
@@ -432,9 +432,9 @@ extern s32 gRope_UntiePhase;
 /* VIEW(f0d9710): routine Rope_Recoil as void Rope_Recoil(s32 index, s32 x,
  * s32 y, s32 z, s32 toX, s32 toY, s32 toZ, s32 wobble); the definition has s32
  * Rope_Recoil(s32 index, s32 x, s32 y, s32 z). */
-extern void Func_080d9790__f0d9710(s32 index, s32 x, s32 y, s32 z, s32 toX,
-                                   s32 toY, s32 toZ,
-                                   s32 wobble) __asm__("Rope_Recoil");
+extern void Rope_Recoil__f0d9710(s32 index, s32 x, s32 y, s32 z, s32 toX,
+                                 s32 toY, s32 toZ,
+                                 s32 wobble) __asm__("Rope_Recoil");
 
 /// Unties rope index between posts fromId and toId (Rope_Recoil).
 void Rope_Untie(s32 index, s32 fromId, s32 toId) {
@@ -449,9 +449,9 @@ void Rope_Untie(s32 index, s32 fromId, s32 toId) {
   if (from != NULL && to != NULL) {
     work->from = from;
     work->to = to;
-    Func_080d9790__f0d9710(index, from->x, from->y + 0x80000, from->z, to->x,
-                           to->y + 0x80000, to->z,
-                           Trig_Sin(gRope_UntiePhase) * 4);
+    Rope_Recoil__f0d9710(index, from->x, from->y + 0x80000, from->z, to->x,
+                         to->y + 0x80000, to->z,
+                         Trig_Sin(gRope_UntiePhase) * 4);
     gRope_UntiePhase += 0x1000;
   }
 }
@@ -1010,7 +1010,7 @@ void Tightrope_Coil(s32 index, s32 from, s32 to) {
 /* VIEW(f0d9b80): routine Rope_AllocNode as struct LineNode
  * *Rope_AllocNode(void); f0d9194 has struct ChainNode__f0d9194
  * *Rope_AllocNode(void). */
-extern struct LineNode *Func_080d8d40__f0d9b80(void) __asm__("Rope_AllocNode");
+extern struct LineNode *Rope_AllocNode__f0d9b80(void) __asm__("Rope_AllocNode");
 
 /// Builds a slot's chain of nodes, one for each 6 units of the distance between
 /// two points, laid out as a flat spiral around the first point, every node of
@@ -1032,7 +1032,7 @@ s32 Tightrope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
   s32 kind = 2; // One constant for its whole life.
 
   for (i = 0; i <= segments; i++) {
-    struct LineNode *node = Func_080d8d40__f0d9b80();
+    struct LineNode *node = Rope_AllocNode__f0d9b80();
     u16 step;
 
     if (node == NULL) {
@@ -1058,9 +1058,9 @@ extern s32 gTightrope_LashPhase;
  * x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2, s32 wave); the definition has s32
  * Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ).
  */
-extern void Func_080da3bc__f0d9b80(s32 arg, s32 x1, s32 y1, s32 z1, s32 x2,
-                                   s32 y2, s32 z2,
-                                   s32 wave) __asm__("Tightrope_Throw");
+extern void Tightrope_Throw__f0d9b80(s32 arg, s32 x1, s32 y1, s32 z1, s32 x2,
+                                     s32 y2, s32 z2,
+                                     s32 wave) __asm__("Tightrope_Throw");
 
 /// Unused: nothing refers to it. Rope_Lash for a tightrope, without the
 /// short rope's fall.
@@ -1069,9 +1069,9 @@ void Tightrope_Lash(s32 arg, s32 firstId, s32 secondId) {
   struct Actor *second = ObjectTable_Get(secondId);
 
   if (first != NULL && second != NULL) {
-    Func_080da3bc__f0d9b80(arg, first->x, first->y + 0x80000, first->z,
-                           second->x, second->y + 0x80000, second->z,
-                           Trig_Sin(gTightrope_LashPhase) << 2);
+    Tightrope_Throw__f0d9b80(arg, first->x, first->y + 0x80000, first->z,
+                             second->x, second->y + 0x80000, second->z,
+                             Trig_Sin(gTightrope_LashPhase) << 2);
     gTightrope_LashPhase += 0x1000;
     wait(6);
     Actor_SelectAnimationFar(first, 2);
@@ -1310,13 +1310,20 @@ extern const u8 Data_080f0d07[], Data_080f0d5e[], Data_080f0dbb[];
 #define TILE_EFFECT_KIND_ALT 372 // the kind that takes the first picture set
 #define PICTURE_SIZE 0x100
 
-/// Starts a field effect that animates sixteen tiles of its own: takes a
+// The hanging vines (heap slot 164): eight slots, each seven links hung below
+// an anchor object, which sway, swing less while the leader stands under
+// them, and carry the leader across a gap. XXX: Telago's walkthrough has
+// Felix swing on a vine hanging over a gap once Whirlwind moves it (Gaia
+// Rock); a render would confirm the name and the swing.
+
+/// Starts the hanging vines, a field effect that animates sixteen tiles of its
+/// own: takes a
 /// 0x10e4-byte work block at heap offset 164 (worka0.h's WorkA4 lies there),
 /// clears it, decodes four 256-byte tile pictures into a scratch buffer (one
 /// set for kind 372, another for the rest; the second set repeats one
 /// picture), loads them into a VRAM slot and schedules the two per-frame
-/// routines Func_080daab0 and Func_080dacb8.
-struct TileEffectWork *Func_080da9a8(s32 kind) {
+/// routines HangingVine_Draw and HangingVine_Update.
+struct TileEffectWork *HangingVine_Initialize(s32 kind) {
   struct TileEffectWork *work;
   u8 *pictures;
   s32 size;
@@ -1346,9 +1353,9 @@ struct TileEffectWork *Func_080da9a8(s32 kind) {
   {
     s32 priority = 0x480;
 
-    Task_Add(Func_080daab0, priority);
+    Task_Add(HangingVine_Draw, priority);
   }
-  Task_Add(Func_080dacb8, 0x48f);
+  Task_Add(HangingVine_Update, 0x48f);
   Heap_Release(pictures);
   return work;
 }
@@ -1383,7 +1390,8 @@ struct ChainWork__f0da3bc {
   struct ChainSlot__f0da3bc slots[8];
 };
 
-void Func_080daab0(void) {
+/// The vines' first per-frame task: draws each link turned along its vine.
+void HangingVine_Draw(void) {
   struct ChainWork__f0da3bc *work = Ram_HeapSlots->unk84[8];
   s32 i;
   u32 angle;
@@ -1477,7 +1485,8 @@ struct ChainSlot__f0dacb8 {
 
 /* VIEW(f0dacb8): tag struct ChainWork as struct ChainWork__f0dacb8;
  * visual_attributes.c has another definition; tried with the definition the
- * rest of the object has, Func_080dacb8 moves: 1 of 173 instructions in tla-ja.
+ * rest of the object has, HangingVine_Update moves: 1 of 173 instructions in
+ * tla-ja.
  */
 struct ChainWork__f0dacb8 {
   u8 unk00[4];
@@ -1488,7 +1497,9 @@ struct Actor *Actor_GetById(u32 objectId);
 
 #define CHAIN_WORK ((struct ChainWork__f0dacb8 *)Ram_HeapSlots->unk84[8])
 
-void Func_080dacb8(void) {
+/// The vines' second per-frame task: sways each active vine's links below
+/// its anchor.
+void HangingVine_Update(void) {
   struct ChainWork__f0dacb8 *work = CHAIN_WORK;
   struct ChainSlot__f0dacb8 *slot;
   struct Actor *leader;
@@ -1547,7 +1558,7 @@ void Func_080dacb8(void) {
 }
 
 /// Returns the first of WORK_A4's eight slots with no chain, or NULL.
-struct WorkA4Slot *Func_080dae3c(void) {
+struct WorkA4Slot *HangingVine_FindFreeSlot(void) {
   struct WorkA4 *work = WORK_A4;
   struct WorkA4Slot *found = NULL;
   s32 index;
@@ -1584,7 +1595,7 @@ struct WorkA4Slot *Func_080dae70(s32 id) {
   return found;
 }
 
-struct WorkA4Item *Func_080daea8(void) {
+struct WorkA4Item *HangingVine_AllocLink(void) {
   struct WorkA4 *work = WORK_A4;
   struct WorkA4Item *item = work->items;
   s32 index;

@@ -176,7 +176,7 @@ gData_080f0bfc:
 gRope_Tiles:
 	.incbin "games/tla/src/field/event_commands/rope.8bpp.lz"
 
-@ Func_080da9a8 unpacks four 16x16 sprites, top first, into one VRAM block:
+@ HangingVine_Initialize unpacks four 16x16 sprites, top first, into one VRAM block:
 @ the vine's when its argument is 372, else the chain's, whose middle
 @ sprite it unpacks twice
 	.global Data_080f0c1c

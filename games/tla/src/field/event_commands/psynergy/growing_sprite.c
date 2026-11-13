@@ -33,9 +33,9 @@ struct EffectSprite__psynergy_effects_11 {
 /* VIEW(psynergy_effects_11): routine EffectSprite_Draw as void
  * EffectSprite_Draw(struct EffectSprite__psynergy_effects_11 *sprite);
  * effect_sprite.h has void EffectSprite_Draw(struct EffectSprite *sprite). */
-extern void
-Func_080eb01c__psynergy_effects_11(struct EffectSprite__psynergy_effects_11
-                                       *sprite) __asm__("EffectSprite_Draw");
+extern void EffectSprite_Draw__psynergy_effects_11(
+    struct EffectSprite__psynergy_effects_11
+        *sprite) __asm__("EffectSprite_Draw");
 void Camera_WorldToScreen(s32 *position);
 /* VIEW(psynergy_effects_11): routine BattleEffect_IntegrateVector3 as void
  * BattleEffect_IntegrateVector3(struct EffectParticle *particle, s32 frames,
@@ -67,6 +67,6 @@ void BattleEffect_UpdateGrowingParticleSprite(
   Camera_WorldToScreen(position);
   sprite->x = position[0];
   sprite->y = position[2];
-  Func_080eb01c__psynergy_effects_11(sprite);
+  EffectSprite_Draw__psynergy_effects_11(sprite);
   BattleEffect_IntegrateVector3__psynergy_effects_11(particle, 60, 0);
 }

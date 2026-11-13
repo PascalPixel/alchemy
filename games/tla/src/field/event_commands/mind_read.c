@@ -953,7 +953,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
       wait((((u32)Random16() * 2) >> 16) + 2);
       n--;
     } while (n >= 0);
-    Func_080daecc(scene->secondObjectId, 1);
+    HangingVine_Hang(scene->secondObjectId, 1);
   } else {
     wait(10);
     Sound_PlayFar(126);

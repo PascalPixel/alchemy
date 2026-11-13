@@ -613,7 +613,7 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object);
 void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
                                       struct SprayParticle *particle);
 s32 MapGrid_CheckCollisionFar(struct Actor *object, s32 *position);
-s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
+s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 
 /// The frame callback of FieldPsynergy_Blaze's spray. Every fourth frame while
 /// it is emitting, a free one of sixteen drops starts at the origin with the
@@ -689,7 +689,8 @@ void Func_080e38c8(void) {
       if (other != NULL && other->script != NULL &&
           (other->collisionFlags & 1) && other != scene->mainObject &&
           other != scene->otherObject &&
-          Func_080dbe80(&particle->x, 2, &other->x, other->radius - 2) >= 0) {
+          FieldPsynergy_CheckOverlap(&particle->x, 2, &other->x,
+                                     other->radius - 2) >= 0) {
         work->hit = 1;
         work->hitObject = j;
         particle->timer = -1;

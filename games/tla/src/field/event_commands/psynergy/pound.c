@@ -65,7 +65,7 @@ void *HeapSlot_Alloc(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 s32 Func_080cda84(s32 id, struct Actor *object, s32 *position);
-s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
+s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 void FieldPsynergy_FadeToCastColor(void);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Actor_ReleaseFar(struct Actor *object);
@@ -81,8 +81,8 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void wait(s32 frames);
-void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_080dbf94(struct Actor *object, s32 x, s32 y, s32 z);
+void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z);
+void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z);
 void BattleEffect_SinkAndShrinkObject(void);
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
 s32 Func_080ce31c(s32 kind);
@@ -142,7 +142,8 @@ void FieldPsynergy_Pound(void) {
         object = event->objects[j];
         if (object != NULL && object->script != NULL &&
             (object->collisionFlags & 1) &&
-            Func_080dbe80(&scene->x, 4, &object->x, object->radius - 2) >= 0)
+            FieldPsynergy_CheckOverlap(&scene->x, 4, &object->x,
+                                       object->radius - 2) >= 0)
           goto outOfReach;
       }
     }
@@ -238,7 +239,7 @@ void FieldPsynergy_Pound(void) {
     sprite->scaleY = sprite->scaleX = 0xcccc;
   }
   wait(1);
-  Func_080dbed0(shine, scene->x, scene->y + lift, scene->z);
+  FieldPsynergy_GrowFromCaster(shine, scene->x, scene->y + lift, scene->z);
   Actor_SelectAnimationFar(shine, 1);
   wait(15);
   rise = 24;
@@ -278,7 +279,7 @@ void FieldPsynergy_Pound(void) {
     Task_Remove(Func_080e5a64);
     wait(10);
     Sound_PlayFar(114);
-    Func_080dbf94(shine, shine->x, shine->y, shine->z);
+    FieldPsynergy_ShrinkToCaster(shine, shine->x, shine->y, shine->z);
   }
   Actor_ReleaseFar(shine);
   VramCache_FreeEntry(starEntry);

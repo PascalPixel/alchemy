@@ -300,7 +300,7 @@ void BattleEffect_CleanupSceneObjects(void) {
     }
   }
   event->unkcb7 = 0;
-  Func_080dbb40();
+  FieldPsynergy_ReleaseSceneSprite();
   Task_Remove(BattleEffect_UpdateAllEffectSlots);
   map->shakeX = work->savedShakeX;
   map->shakeY = work->savedShakeY;

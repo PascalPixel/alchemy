@@ -11,7 +11,7 @@
 
 /// If the scene's sprite is active, stops its update callback
 /// (BattleEffect_DrawSceneSprite) and frees its VRAM cache entry.
-void Func_080dbb40(void) {
+void FieldPsynergy_ReleaseSceneSprite(void) {
   struct DepthScene *scene = Ram_HeapSlots->effectWork;
 
   if (scene->active != 0) {
@@ -116,7 +116,8 @@ s32 Func_080dbda8(s32 x, s32 z, s32 layer) {
   return 0;
 }
 
-u8 Func_080dbdc8(s32 x, s32 z, s32 layer) {
+/// Returns the behaviour (collision code) of the map cell at x, z in layer.
+u8 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer) {
   return MapGrid_GetCellAt(x, z, layer)->collisionCode;
 }
 
@@ -125,17 +126,20 @@ u8 MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 value) {
   return value;
 }
 
-s32 Func_080dbde8(s32 x, s32 z, s32 layer) {
+/// Returns the attribute byte of the map cell at x, z in layer.
+s32 MapGrid_GetAttributeBAt(s32 x, s32 z, s32 layer) {
   return MapGrid_GetCellAt(x, z, layer)->attributeB;
 }
 
-u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value) {
+/// Sets the attribute byte of the map cell at x, z in layer.
+u8 MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value) {
   MapGrid_GetCellAt(x, z, layer)->attributeB = value;
   return value;
 }
 
-u8 Func_080dbe08(s32 x, s32 z, s32 layer, s32 bits) {
-  s32 flags = Func_080dbde8(x, z, layer);
+/// Sets bits in the attribute byte of the map cell at x, z in layer.
+u8 MapGrid_SetAttributeBBitsAt(s32 x, s32 z, s32 layer, s32 bits) {
+  s32 flags = MapGrid_GetAttributeBAt(x, z, layer);
   u8 *cell = (u8 *)MapGrid_GetCellAt(x, z, layer);
 
   flags |= bits;
@@ -143,8 +147,9 @@ u8 Func_080dbe08(s32 x, s32 z, s32 layer, s32 bits) {
   return flags;
 }
 
-u8 Func_080dbe44(s32 x, s32 z, s32 layer, s32 bits) {
-  s32 flags = Func_080dbde8(x, z, layer);
+/// Clears bits in the attribute byte of the map cell at x, z in layer.
+u8 MapGrid_ClearAttributeBBitsAt(s32 x, s32 z, s32 layer, s32 bits) {
+  s32 flags = MapGrid_GetAttributeBAt(x, z, layer);
   u8 *cell = (u8 *)MapGrid_GetCellAt(x, z, layer);
 
   flags &= ~bits;
@@ -152,7 +157,10 @@ u8 Func_080dbe44(s32 x, s32 z, s32 layer, s32 bits) {
   return flags;
 }
 
-s32 Func_080dbe80(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
+/// Returns 1 when two upright cylinders overlap: their centres closer on the
+/// ground than the sum of radius_a and radius_b, and their heights within it;
+/// else -1.
+s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
   s32 dx = (*a++ - *b++) >> 16;
   s32 dy = (*a++ - *b++) >> 16;
   s32 dz = (*a - *b) >> 16;
@@ -167,11 +175,9 @@ s32 Func_080dbe80(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
   return -1;
 }
 
-// Moves an object into place while growing it.
-
 /// Moves the object from 16 pixels above the effect's main object to (x, y,
 /// z), growing it from 0.25 to 1.
-void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z) {
+void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z) {
   struct MoveScene *scene = Ram_HeapSlots->effectWork;
   struct Actor *mainObject = scene->mainObject;
   s32 start[3];
@@ -194,7 +200,9 @@ void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z) {
 
 struct MapCell;
 
-void Func_080dbf94(struct Actor *object, s32 x, s32 y, s32 z) {
+/// FieldPsynergy_GrowFromCaster backwards: moves the object from (x, y, z) to
+/// 16 pixels above the effect's main object, shrinking it from 1 to 0.25.
+void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z) {
   struct Actor *mainObject =
       ((struct MoveScene *)Ram_HeapSlots->effectWork)->mainObject;
   s32 start[3];

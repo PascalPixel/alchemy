@@ -203,19 +203,28 @@ struct MapScrollWork {
 struct WorldView {
   s32 *origin;
   s32 shakeX, shakeY, shakeDecay;
-  u8 *unk010;
-  u16 unk014;
-  u8 unk016;
+  u8 *script;  ///< NULL at load, as The Broken Seal's WorldMapView
+  u16 fade;    ///< REG_DISPCNT bits, BG0 to BG3 and the sprites at load
+  u8 fadeStep; ///< 0x80 at load
   u8 unk017[0xcd];
   s32 viewX;
   s32 viewY;
-  u8 unk0ec[0x18];
+  s32 scaleX; ///< 32 in 16.16 at load, as The Broken Seal's WorldMapView
+  s32 scaleY; ///< 64 in 16.16 at load
+  s32 limitX; ///< 16352 in 16.16 at load
+  s32 limitY; ///< 16352 in 16.16 at load
+  u8 unk0fc[8];
   u16 windowTop;
   u16 windowBottom;
-  u8 unk108[0x14];
+  u8 unk108[0xc];
+  /// The world map's tile offsets (ResourceId_PerspectiveDataA).
+  void *tiles;
+  u8 unk118[4];
   u16 pitch;
   u16 yaw;
-  u8 unk120[0x83c];
+  u8 unk120[0x28];
+  u16 tileIds[1024]; ///< the world map tile in each cell
+  u8 unk948[0x14];
   s32 farPlane;
   s32 distance;
   u8 unk964[4];

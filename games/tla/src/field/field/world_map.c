@@ -30,27 +30,28 @@ void WorldMap_InitializePerspective(void) {
   s32 farPlane;
   s32 tileIndex;
 
-  REG_DISPCNT &= 0xc1ff;
+  REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
+                   DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
   ScreenFade_FromBlack(0);
   perspective = HeapSlot_Alloc(32, 0x978);
   view = (struct WorldView *)perspective;
   Dma_Fill32Cell(fill, 0, perspective, 0x978);
   view->viewX = 0;
   view->viewY = 0;
-  *(s32 *)(perspective + 0xec) = 0x200000;
-  *(s32 *)(perspective + 0xf0) = 0x400000;
-  *(s32 *)(perspective + 0xf4) = 0x3fe00000;
-  *(s32 *)(perspective + 0xf8) = 0x3fe00000;
-  view->unk010 = NULL;
-  *(void **)(perspective + 0x114) =
-      Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
+  view->scaleX = Q16_ONE * 32;
+  view->scaleY = Q16_ONE * 64;
+  view->limitX = px(16352);
+  view->limitY = px(16352);
+  view->script = NULL;
+  view->tiles = Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
   Io_Write16(0x3f9e, &REG_BLDCNT);
   Io_Write16(0x1010, &REG_BLDALPHA);
   REG_BLDY = 0;
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells),
                       gMapCellBuffer);
-  view->unk014 = 0x1f00;
-  view->unk016 = 0x80;
+  view->fade = DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON |
+               DISPCNT_BG3_ON | DISPCNT_OBJ_ON;
+  view->fadeStep = 128;
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Data199),
                       gData_0202e000);
   Io_Write16(0xa80a, &REG_BG3CNT);
@@ -135,7 +136,7 @@ void WorldMap_InitializePerspective(void) {
   Task_Add(WorldMap_UpdateView, 0x485);
   Task_Add(WorldMap_ApplyAffinePage, 0xc80);
   for (tileIndex = 0; tileIndex <= 0x3ff; tileIndex++)
-    ((u16 *)(perspective + 0x148))[tileIndex] = tileIndex;
+    view->tileIds[tileIndex] = tileIndex;
 }
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))

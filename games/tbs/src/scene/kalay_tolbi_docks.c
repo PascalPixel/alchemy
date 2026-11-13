@@ -780,7 +780,6 @@ static void KalayTolbiDocks_PrepareKalayDocks(void) {
 /// left them, the angry one still lying on the ground.
 static void KalayTolbiDocks_PrepareTolbiDocks(void) {
   struct Actor *actor;
-  u8 zero;
 
   KalayTolbiDocks_UpdateCrateCells();
   if (Event_GetFlag(FLAG_COLOSSO_OVER)) {
@@ -808,14 +807,13 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
     actor = Actor_Get(ACTOR_ANGRY_YOUNG_MAN);
     actor->collisionFlags = 0;
     actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    ((u8 *)actor->sprite)[9] |= 12;
-    ((u8 *)actor->sprite)[38] = 0;
-    zero = 0;
+    actor->sprite->image.priority = 3;
+    actor->sprite->flags = 0;
     actor->sprite->rotation = TRIG_TURN * 3 / 4;
     actor = Actor_Get(ACTOR_STRANDED_WOMAN);
-    actor->priorityFlags = zero;
-    ((u8 *)actor->sprite)[9] |= 12;
-    ((u8 *)actor->sprite)[21] |= 12;
+    actor->priorityFlags = 0;
+    actor->sprite->image.priority = 3;
+    actor->sprite->shadow.priority = 3;
   }
   // Once Colosso is over, the passengers stranded at Tolbi's docks gather
   // here, and the two cells just north of where they stand take a wall's
@@ -986,8 +984,8 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Event_SetMessageId(MsgKalayReturnedTicketCost);
   actor = Actor_Get(ACTOR_STRANDED_WOMAN);
   actor->priorityFlags = 0;
-  ((u8 *)actor->sprite)[9] |= 12;
-  ((u8 *)actor->sprite)[21] |= 12;
+  actor->sprite->image.priority = 3;
+  actor->sprite->shadow.priority = 3;
   FieldCamera_MoveTo(232, CAMERA_KEEP, 304, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 216, 272);
@@ -1141,8 +1139,8 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   actor = Actor_Get(ACTOR_ANGRY_YOUNG_MAN);
   actor->collisionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  ((u8 *)actor->sprite)[9] |= 12;
-  ((u8 *)actor->sprite)[38] = 0;
+  actor->sprite->image.priority = 3;
+  actor->sprite->flags = 0;
   actor->sprite->rotation = TRIG_TURN * 3 / 4;
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, -12, 4);
   Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_SOUTH, 0);

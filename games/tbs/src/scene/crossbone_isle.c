@@ -651,6 +651,19 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
   Event_End();
 }
 
+/// Growth on one of Crossbone Isle's plants: it stops blocking the way, shows
+/// grown and opens the cell at pixel (x, z) to climbing.
+static inline void CrossboneIsle_GrowPlant(s32 actorId, s32 plant, s32 x,
+                                           s32 z) {
+  struct Actor *actor = Actor_Get(ACTOR_FIRST_PLANT + plant);
+
+  if (actor != 0) {
+    actor->collisionFlags = 0;
+  }
+  Actor_SetSpriteFlags(Actor_Get(actorId), 0);
+  MapGrid_SetCellBehaviorAt(0, px(x), px(z), CELL_BEHAVIOR_CLIMB);
+}
+
 /// Unused: Growth on Crossbone Isle's first plant would grow it and let the
 /// party climb at (304, 368).
 ///
@@ -658,60 +671,26 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
 /// forest's corner. No cast can reach it there and the player never sees it
 /// (its render).
 static void CrossboneIsle_UnusedGrowFirstPlant(s32 actorId) {
-  s32 fixedX = px(304);
-  s32 fixedZ = px(368);
-  struct Actor *actor = Actor_Get(ACTOR_FIRST_PLANT);
-
-  if (actor != 0) {
-    actor->collisionFlags = 0;
-  }
-  Actor_SetSpriteFlags(Actor_Get(actorId), 0);
-  MapGrid_SetCellBehaviorAt(0, fixedX, fixedZ, CELL_BEHAVIOR_CLIMB);
+  CrossboneIsle_GrowPlant(actorId, 0, 304, 368);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN);
 }
 
 /// Growth on Crossbone Isle's second plant.
 static void CrossboneIsle_GrowSecondPlant(s32 actorId) {
-  s32 fixedX = px(80);
-  s32 fixedZ = px(368);
-  struct Actor *actor = Actor_Get(ACTOR_FIRST_PLANT + 1);
-
-  if (actor != 0) {
-    actor->collisionFlags = 0;
-  }
-  Actor_SetSpriteFlags(Actor_Get(actorId), 0);
-  MapGrid_SetCellBehaviorAt(0, fixedX, fixedZ, CELL_BEHAVIOR_CLIMB);
+  CrossboneIsle_GrowPlant(actorId, 1, 80, 368);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 1);
 }
 
 /// Growth on Crossbone Isle's third plant.
 static void CrossboneIsle_GrowThirdPlant(s32 actorId) {
-  s32 fixedX = px(96);
-  s32 fixedZ = px(336);
-  struct Actor *actor = Actor_Get(ACTOR_FIRST_PLANT + 2);
-
-  if (actor != 0) {
-    actor->collisionFlags = 0;
-  }
-  Actor_SetSpriteFlags(Actor_Get(actorId), 0);
-  MapGrid_SetCellBehaviorAt(0, fixedX, fixedZ, CELL_BEHAVIOR_CLIMB);
+  CrossboneIsle_GrowPlant(actorId, 2, 96, 336);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 2);
 }
 
 /// Growth on Crossbone Isle's fourth plant, which opens two cells.
 static void CrossboneIsle_GrowFourthPlant(s32 actorId) {
-  s32 fixedX = px(144);
-  s32 fixedZ = px(320);
-  s32 secondFixedX = px(752);
-  s32 secondFixedZ = px(320);
-  struct Actor *actor = Actor_Get(ACTOR_FIRST_PLANT + 3);
-
-  if (actor != 0) {
-    actor->collisionFlags = 0;
-  }
-  Actor_SetSpriteFlags(Actor_Get(actorId), 0);
-  MapGrid_SetCellBehaviorAt(0, fixedX, fixedZ, CELL_BEHAVIOR_CLIMB);
-  MapGrid_SetCellBehaviorAt(0, secondFixedX, secondFixedZ, CELL_BEHAVIOR_CLIMB);
+  CrossboneIsle_GrowPlant(actorId, 3, 144, 320);
+  MapGrid_SetCellBehaviorAt(0, px(752), px(320), CELL_BEHAVIOR_CLIMB);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 3);
 }
 

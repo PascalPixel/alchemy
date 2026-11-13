@@ -23,6 +23,12 @@ enum AbilityId {
   ABILITY_POUND = 134,
   /// ★ Named from the game: "Tremor" (MsgAbilityName)
   ABILITY_TREMOR = 135,
+  /// ★ Named from the game: "Scoop" (MsgAbilityName)
+  ABILITY_SCOOP = 136,
+  /// ★ Named from the game: "Cyclone" (MsgAbilityName)
+  ABILITY_CYCLONE = 137,
+  /// ★ Named from the game: "Parch" (MsgAbilityName)
+  ABILITY_PARCH = 138,
   /// ★ Named from the game: "Sand" (MsgAbilityName)
   ABILITY_SAND = 139,
   /// ★ Named from the game: "Move" (MsgAbilityName)

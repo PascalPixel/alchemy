@@ -175,6 +175,10 @@ enum PsynergyPhase {
 #define PSYNERGY_PHASE_ON_ACTOR(ability, phase)                                \
   ((u32)(phase) << 28 | PSYNERGY_ON_ACTOR(ability))
 
+/// A Psynergy trigger on the cell behavior ahead, at one phase of the cast.
+#define PSYNERGY_PHASE_ON_CELL(ability, phase)                                 \
+  ((u32)(phase) << 28 | (ability) << 8 | TRIGGER_PSYNERGY)
+
 /// A Psynergy trigger for any target, not a particular actor or cell.
 #define TRIGGER_PSYNERGY_ANYWHERE 0x80
 #define PSYNERGY_ANYWHERE(ability, phase)                                      \

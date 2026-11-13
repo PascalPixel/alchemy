@@ -90,4 +90,34 @@
 /// (MsgFieldPraiseRopeWork)
 #define FLAG_TAVI_RESCUED 0x873
 
+/// Set once Felix has woken on Idejima's shore.
+/// ★ Named from the game: "Do you want to check yourself for injuries?"
+/// (MsgIdejimaCheckForInjuries)
+#define FLAG_IDEJIMA_FELIX_WOKE 0x844
+/// Set as Kraden, Jenna and Sheba, each in turn, join Felix on Idejima.
+/// ★ Named from the game: "Kraden has joined your party." (MsgIdejimaGroan)
+#define FLAG_IDEJIMA_KRADEN_JOINED 0x863
+/// ★ Named from the game: "{actor_name:6} has joined your party."
+/// (MsgIdejimaAwakeningExclamation)
+#define FLAG_IDEJIMA_JENNA_JOINED 0x864
+/// ★ Named from the game: "{actor_name:7} has joined your party."
+/// (MsgIdejimaSecondGroan)
+#define FLAG_IDEJIMA_SHEBA_JOINED 0x865
+/// Set once the party has wondered where Alex has gone.
+/// ★ Named from the game: "By the way... Where has Alex gone?"
+/// (MsgIdejimaWhereHasAlexGone)
+#define FLAG_IDEJIMA_ASKED_WHERE_ALEX_WENT 0x867
+
+/// Set once Daila's greeter has asked whether the party has been there before.
+/// ★ Named from the game: "You don't look familiar. Have you been to Daila
+/// before?" (MsgDailaBeenBefore)
+#define FLAG_DAILA_GREETER_ASKED 0x843
+/// Set as Alex leaves Daila for Madra.
+/// ★ Named from the game: "Perhaps you will see me in Madra..."
+/// (MsgDailaFelixCall)
+#define FLAG_DAILA_MET_ALEX 0x84b
+/// Set once Scoop has dug up the Psy Crystal under Daila's puddle.
+/// ★ Named from the game: "Psy Crystal" (MsgItemName)
+#define FLAG_DAILA_PSY_CRYSTAL_DUG 0x300
+
 #endif

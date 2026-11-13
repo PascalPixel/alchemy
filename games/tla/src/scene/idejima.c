@@ -48,29 +48,12 @@
 #include "input.h"
 #include "task.h"
 #include "scene_ids.h"
+#include "flags.h"
 #include "module/scene/scene.h"
 
 /// Set once the leader has been walked back from the edge of the map by
 /// Idejima_CatchUpWithFelix, so the next one to catch up finds him there.
 #define FLAG_IDEJIMA_LEADER_WALKED_BACK 0x200
-
-/// Set as Kraden, Jenna and Sheba, each in turn, join Felix on Idejima.
-/// ★ Named from the game: "Kraden has joined your party." (MsgIdejimaGroan)
-#define FLAG_IDEJIMA_KRADEN_JOINED 0x863
-/// ★ Named from the game: "{actor_name:6} has joined your party."
-/// (MsgIdejimaAwakeningExclamation)
-#define FLAG_IDEJIMA_JENNA_JOINED 0x864
-/// ★ Named from the game: "{actor_name:7} has joined your party."
-/// (MsgIdejimaSecondGroan)
-#define FLAG_IDEJIMA_SHEBA_JOINED 0x865
-/// Set once the party has wondered where Alex has gone.
-/// ★ Named from the game: "By the way... Where has Alex gone?"
-/// (MsgIdejimaWhereHasAlexGone)
-#define FLAG_IDEJIMA_ASKED_WHERE_ALEX_WENT 0x867
-/// Set once Felix has woken on Idejima's shore.
-/// ★ Named from the game: "Do you want to check yourself for injuries?"
-/// (MsgIdejimaCheckForInjuries)
-#define FLAG_IDEJIMA_FELIX_WOKE 0x844
 
 /// The scene's placed actors, numbering the rows of gIdejimaPlacements; its
 /// rows of Jenna's and Sheba's sprites place ACTOR_JENNA and ACTOR_SHEBA.

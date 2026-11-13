@@ -233,7 +233,7 @@ struct Trigger {
   /// A message below TRIGGER_RESULT_MESSAGE_END, else an event; for an exit,
   /// the exit kind its scene's exit table matches, and for an examine trigger,
   /// a FIND_ value.
-  u32 value;
+  s32 value;
 };
 
 STATIC_ASSERT(sizeof(struct Trigger) == 12);

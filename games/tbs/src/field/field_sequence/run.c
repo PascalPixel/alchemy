@@ -419,10 +419,11 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
                               << 2);
     } else {
       // The ground layer's cells.
-      cell = (u8 *)grid->layers[MAPGRID_LAYER_GROUND].cells +
-             (((probePosition.vector.x / px(16)) +
-               ((probePosition.vector.z / px(16)) << 7))
-              << 2);
+      u8 *cells = (u8 *)grid->layers[MAPGRID_LAYER_GROUND].cells;
+
+      cell = cells + (((probePosition.vector.x / px(16)) +
+                       ((probePosition.vector.z / px(16)) << 7))
+                      << 2);
     }
     behavior = cell[2];
     if (behavior >= CELL_BEHAVIOR_JAR && behavior <= CELL_BEHAVIOR_WELL) {

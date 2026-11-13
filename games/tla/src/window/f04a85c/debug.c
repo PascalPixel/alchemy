@@ -11,7 +11,6 @@ extern void WindowSprite_PrepareForRedraw__selrow(void *window) __asm__("WindowS
 void Text_DrawNumber(s32 value, s32 digits, void *window, s32 x, s32 y);
 /* VIEW(selrow): routine Text_DrawString as void Text_DrawString(const u8 *text, void *window, s32 x, s32 y); graphics.h has void Text_DrawString(u8 *text, s32 window, s32 x, s32 y). */
 extern void Text_DrawString__selrow(const u8 *text, void *window, s32 x, s32 y) __asm__("Text_DrawString");
-extern u8 MsgDebugAreaName[];
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define SELROW_TEXT_X 100

@@ -1534,13 +1534,13 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-s32 Func_020053a0(s32 a, s32 b, s32 c);
-void Func_02003684(void);
+/* VIEW(kandorean_temple): routine Func_020053a0 as s32 Func_020053a0(s32 a, s32 b, s32 c); module/scene/gabomba_statue.h has s32 Func_020053a0(void). */
+extern s32 Func_020053a0__kandorean_temple(s32 a, s32 b, s32 c) __asm__("Func_020053a0");
 
 void Func_0200290c(void) {
   Func_02005398();
-  Func_020053a0(0, 8, 9);
-  Func_020053a0(1, 10, 11);
+  Func_020053a0__kandorean_temple(0, 8, 9);
+  Func_020053a0__kandorean_temple(1, 10, 11);
   Actor_SetModeById(8, 4);
   Actor_SetModeById(9, 4);
   Actor_SetModeById(10, 4);

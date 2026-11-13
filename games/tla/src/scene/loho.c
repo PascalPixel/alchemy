@@ -23,6 +23,7 @@
 #include "module/scene/scene.h"
 #include "module/tla.h"
 #include "scene_ids.h"
+#include "resource.h"
 
 void Actor_ReturnHome(s32 a, s32 b, s32 c);
 
@@ -81,9 +82,6 @@ void Func_02000178(void) {
        ->v)
 
 void Func_020013c8();
-
-void *Resource_GetTableEntry(s32 index);
-
 
 static __inline__ void W_Func_020013a8(s32 a0, s32 a1, s32 a2) {
   /* FAKEMATCH(wrapper): W_Func_020013a8 forwarded inline; as direct calls to
@@ -537,7 +535,6 @@ void Func_02000d40(void) {
   Func_02001440(13, count);
 }
 
-
 void Func_02000d4c(void) {
   Actor_GetById(gMainRoutineWork.currentOwner);
   if (GameFlag_Test(800)) {
@@ -581,7 +578,6 @@ void Func_02000e3c(void) {
   GameFlag_ClearBit(800);
   Actor_SetMovementTypeById(8, gData_0200171c);
 }
-
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

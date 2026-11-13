@@ -11,6 +11,7 @@
 #include "frame.h"
 #include "module/scene/scene.h"
 #include "module/scene/shrine_of_the_sea_god.h"
+#include "module/field/field_effect.h"
 
 extern u32 gData_02004a18[];
 
@@ -78,7 +79,6 @@ struct EffectOptions {
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-void Effect_AdvanceMotion(union FieldObject *object);
 void Map_SetScreenShake(s32 a, s32 b, s32 c);
 void Map_WaitForShakeToSettle(void);
 s32 Math_Sine(s32 angle);

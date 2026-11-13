@@ -57,4 +57,12 @@ void Sound_WaitForJingle(void);
 
 extern s32 gBuildStamp[];
 
+extern s32 gSoundMixerClipped;
+
+extern u8 gBgmFadeRequested;
+extern u8 gSound_UnreadByte;
+
+void m4aSoundInit(void);
+void m4aSongNumStart(u16 songId);
+
 #endif

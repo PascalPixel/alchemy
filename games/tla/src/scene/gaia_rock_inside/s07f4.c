@@ -17,10 +17,10 @@
 #include "module/scene/scene.h"
 #include "module/tla.h"
 #include "text/msg_ids.h"
+#include "module/field/field_effect.h"
 
 void Func_02004d9c(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const s32 *script);
-void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 
 /* VIEW(s07f4): tag struct DustSprite as struct DustSprite__s07f4; module/scene/scene.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s07f4.c:43: structure has no member named `layer'. */
 struct DustSprite__s07f4 {
@@ -263,7 +263,6 @@ void Func_02000cf8(void) { Func_02004ff4_(18, 17, 0, 3, 3, 31, 0); }
 
 extern const struct CellPoint gData_020051d8[12];
 
-
 void Func_02000d18(void) {
   struct Actor *guard;
   struct Actor *leader;
@@ -318,8 +317,6 @@ void Func_02000d18(void) {
   Event_SetFlag(0x9c4);
   FieldEvent_SetExitRequest(9);
 }
-
-extern u8 MsgGaiaRockInside05[];
 
 void Func_02000edc(void) {
   Event_Start();
@@ -531,7 +528,6 @@ void Func_02001314(s32 a0) {
 
 #include "frame.h"
 #include "system/field_effect.h"
-
 
 // Steps an orbiting object around its anchor: turns it by half its speed, puts
 // it on the anchor (raised 8 pixels) and pushes it out by its radius; when its

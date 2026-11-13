@@ -73,4 +73,6 @@ void Func_02000a28(void);
 
 void Func_02000c94(void);
 
+void Func_020011bc(s32 a, s32 b, s32 c, s32 d);
+
 #endif

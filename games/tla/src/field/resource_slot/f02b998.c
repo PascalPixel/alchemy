@@ -10,8 +10,6 @@
 #include "resource_ids.h"
 #include "transform.h"
 
-extern u32 gCameraSceneParameters[];
-
 /* VIEW(resource_slot): routine Projection_Set as void Projection_Set(s32 distance, s32 nearPlane, s32 farPlane); module/system/system.h has void Projection_Set(u32 value0, u32 value1, u32 value2). */
 extern void Projection_Set__resource_slot(s32 distance, s32 nearPlane, s32 farPlane) __asm__("Projection_Set");
 /* VIEW(f02b998): routine Render_ResetTransformState as u32 Render_ResetTransformState(void); graphics.h has void Render_ResetTransformState(void); tried as the definition's void Render_ResetTransformState(void), which the object already declares, Func_0802b998 moves: 1 of 372 instructions in tla-ja. */

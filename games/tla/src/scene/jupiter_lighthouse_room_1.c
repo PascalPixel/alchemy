@@ -158,7 +158,8 @@ next:
   gData_0200222c++;
 }
 
-void Func_02001b14();
+/* VIEW(jupiter_lighthouse_room_1): routine Func_02001b14 as void Func_02001b14(); module/scene/gabomba_statue_chamber.h has void Func_02001b14(void). */
+extern void Func_02001b14__jupiter_lighthouse_room_1() __asm__("Func_02001b14");
 void Func_02001bc4();
 
 void Func_02000384(s32 mode) {
@@ -187,7 +188,7 @@ void Func_02000408(s32 id) {
   object->y = height + 0x200000;
   object->priorityFlags |= 128;
   height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
-  Func_02001b14(object->x, object->z, 0, (height >> 19) + 6);
+  Func_02001b14__jupiter_lighthouse_room_1(object->x, object->z, 0, (height >> 19) + 6);
   Func_02001bc4(object->x, object->z, 0, 128);
 }
 

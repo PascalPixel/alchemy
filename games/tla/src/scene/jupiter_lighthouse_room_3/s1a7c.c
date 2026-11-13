@@ -17,8 +17,6 @@
 #include "module/scene/jupiter_lighthouse_room_3.h"
 #include "module/scene/scene.h"
 
-void Func_02001950(void);
-
 s32 Func_02001a7c(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   struct CellTarget *table = &gData_02002e34;
   struct CellTargetEntry *entry = table->entries;

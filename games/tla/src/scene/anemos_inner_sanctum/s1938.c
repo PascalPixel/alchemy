@@ -7,6 +7,8 @@
 #include "module/field/object.h"
 #include "module/scene/anemos_inner_sanctum.h"
 #include "text/msg_ids.h"
+#include "module/scene/world_map.h"
+#include "scene_ids.h"
 
 void Func_02000178(void);
 void Func_020017b4(void);
@@ -151,7 +153,6 @@ void Func_02001b88(void) {
   Event_End();
 }
 
-extern char SceneId_Ov6B0Room1;
 extern const u8 gData_02003dc0[];
 extern const u8 gData_02003dcc[];
 extern const u8 gData_02003e38[];
@@ -172,8 +173,6 @@ const u8 *Scene_GetEvents(void) {
     return gData_020042c4;
   return gData_02003dc0;
 }
-
-extern char SceneId_Ov694Room1;
 
 void Func_02001c60(void) {
   Func_020000f4();
@@ -295,7 +294,6 @@ s32 Func_02000038();
 s32 Func_02000a78();
 s32 Func_02002a74();
 s32 Func_02003190();
-void Func_02003490(void);
 extern u8 gData_020036e4[];
 extern u8 gData_020036ea[];
 extern u8 gData_020036f6[];

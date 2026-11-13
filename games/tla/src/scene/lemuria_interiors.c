@@ -18,6 +18,7 @@
 #include "module/scene/lemuria_interiors.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
+#include "module/game/game.h"
 
 void Event_Start();
 void Event_End();
@@ -164,8 +165,6 @@ L_0200825a:
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
-
-s32 Party_RemoveMember(s32 value);
 
 s32 Scene_Initialize(void) {
   struct Actor *object;

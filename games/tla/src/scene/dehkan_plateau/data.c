@@ -9,7 +9,6 @@ void Func_02001590(void);
 void Func_020015a4(void);
 void Func_020016b0(void);
 void Func_02001788(void);
-void Func_02002140(void);
 void Func_02002180(void);
 void Func_020022e0(void);
 

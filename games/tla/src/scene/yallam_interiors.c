@@ -352,7 +352,8 @@ void Func_02000524(void) {
   }
 }
 
-u16 *Func_02000988(s32 item);
+/* VIEW(yallam_interiors): routine Func_02000988 as u16 *Func_02000988(s32 item); module/scene/airs_rock_inside.h has void Func_02000988(void). */
+extern u16 *Func_02000988__yallam_interiors(s32 item) __asm__("Func_02000988");
 
 void Func_0200077c(s32 actor) {
   if (!Event_GetFlag(0x10f)) {
@@ -363,7 +364,7 @@ void Func_0200077c(s32 actor) {
     Event_ShowMessageAndWait(actor, 0);
   } else if (Func_02000a90()) {
     s32 item = Func_02000a90();
-    u32 price = *Func_02000988(item);
+    u32 price = *Func_02000988__yallam_interiors(item);
     s32 message;
 
     MessageArgument_Push(item, 2);

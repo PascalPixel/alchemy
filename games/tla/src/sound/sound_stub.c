@@ -5,33 +5,8 @@
 
 #include "types.h"
 #include "sound_driver_symbols.h"
-
-enum {
-  /// Full volume, and the song's own tempo and pitch: 1.0 in the ramps' 8.8
-  /// fixed point.
-  BGM_UNITY_SCALE = 256,
-  /// A ramp's step a VBlank: a full fade in or out takes 64 VBlanks.
-  BGM_DEFAULT_RAMP_STEP = 4,
-  /// The track mask of every music command here: tracks 0 to 7.
-  TRACKS_ALL = 0xff,
-  MUSIC_PLAYER_COUNT = 8, ///< gMusicPlayerLastSound's entries, one a player.
-  /// VBlanks after a jingle starts before the music waits for it to end.
-  BGM_RESTORE_DELAY_VBLANKS = 10,
-  /// Sound_WaitForBgmRestore gives up after this many frames, about
-  /// five seconds.
-  BGM_WAIT_TIMEOUT_FRAMES = 300
-};
-
-extern u16 gCurrentBgm;
-extern u16 gBgmTempoPitchTarget;
-extern u16 gBgmTempoPitch;
-extern u16 gBgmTempoPitchStep;
-extern u8 gBgmFadeRequested;
-extern u8 gSound_UnreadByte;
-extern u16 gMusicPlayerLastSound[MUSIC_PLAYER_COUNT];
-
-void m4aSoundInit(void);
-void Sound_SetFixedSampleFreq(u32 mode);
+#include "module/sound/sound.h"
+#include "sound.h"
 
 void Func_081c0c18(void) {}
 
@@ -68,12 +43,6 @@ void Sound_Initialize(void) {
 
 #include "sound_driver.h"
 
-extern struct SoundPlayer gMPlayInfo_ActionSE;
-extern struct SoundPlayer gMPlayInfo_SE5;
-extern struct SoundPlayer gMPlayInfo_Jingle;
-
-void SoundFlag_Set(s32 sound);
-void m4aSongNumStart(u16 sound);
 void Sound_LoadReverbCode(s32 code);
 
 /// Returns the reverb code Sound_Play gives music `sound`: SOUND_REVERB_LONG
@@ -204,8 +173,6 @@ void Sound_UpdateBgmRamps(void) {
                          (s16)gBgmTempoPitch * 12 - 12 * BGM_UNITY_SCALE);
   }
 }
-
-void SoundDriver_Update(void);
 
 /// Runs the sound driver's VBlank work: the DMA restart count The Broken
 /// Seal's Sound_UpdateBgmRamps ran at its end. Reached through the far-call

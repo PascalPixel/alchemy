@@ -2,6 +2,7 @@
 #include "event.h"
 #include "module/sound/sound.h"
 #include "system.h"
+#include "sound.h"
 
 /// An empty function in the sound driver.
 // As ☀️'s UnusedDummyFunc (games/tbs/src/sound/audio.c).
@@ -12,7 +13,6 @@ void Func_081c1010(void) {}
 
 #include "sound_driver_symbols.h"
 
-extern s32 gSoundMixerClipped;
 /* VIEW(noop_stub): variable gBuildStamp as s32 gBuildStamp; sound.h has s32 gBuildStamp[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/sound/noop_stub.c:41: `gBuildStamp' undeclared (first use in this function). */
 extern s32 gBuildStamp__noop_stub __asm__("gBuildStamp");
 

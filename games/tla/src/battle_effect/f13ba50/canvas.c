@@ -39,7 +39,6 @@ struct RenderModel__f14153c {
   u8 scrollV;
 };
 
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Render_DrawModelList(struct Model *model);
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
@@ -57,7 +56,6 @@ extern char ResourceId_Data0C1, ResourceId_Data0C9, ResourceId_Data0CA;
 extern u8 gMapCellBuffer[];
 /* VIEW(f14153c): variable gData_02014000 as extern struct EffectStep gData_02014000[]; f13eb70 has extern u8 gData_02014000[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/battle_effect/f13ba50.c:4528: `gData_02014000__f14153c' undeclared (first use in this function). */
 extern struct EffectStep gData_02014000__f14153c[] __asm__("gData_02014000");
-extern u32 gCameraSceneParameters[];
 
 struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape,
                                    u32 attributes);

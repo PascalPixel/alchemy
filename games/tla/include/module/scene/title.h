@@ -16,4 +16,8 @@ void Func_0200063c(s32 value);
 
 void Title_LoadBackground(void);
 
+struct TitleSprite__title;
+
+void Func_020005ac(struct TitleSprite__title *sprite, s32 priority);
+
 #endif

@@ -24,4 +24,6 @@ extern s16 gData_02002760[];
 extern s16 gData_02002762[];
 extern s16 gData_0200276e[];
 
+void Func_02000398(s32 id);
+
 #endif

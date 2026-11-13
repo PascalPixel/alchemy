@@ -3,6 +3,18 @@
 #include "actor.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "battle.h"
+#include "battle_display.h"
+#include "gamepak/far_call/battle.h"
+#include "graphics.h"
+#include "module/battle_effect/battle_effect.h"
+#include "module/field/object.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "module/window/screens.h"
+#include "resource_ids.h"
+#include "scene.h"
+#include "system.h"
 
 struct BattleEffectArgument;
 
@@ -23,17 +35,8 @@ struct DescriptorEntry {
   u8 unk02[6];
 };
 
-extern void *gOverlayArea[];
 extern struct DescriptorEntry gData_080eff28[];
 
-void BattleEffect_StartTiledCanvas(s32 bgControl);
-void BattleEffect_EndCanvasLayer(void);
-void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode);
-void PartyStatus_CreateWindow(s32 flags);
-void wait(s32 frames);
-s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer);
-s32 Func_080dbde8(s32 x, s32 z, s32 layer);
-u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value);
 void Shop_InitializeWork(void);
 s32 Inn_RoomPrice(s32 innId);
 void Shop_ReleaseWork(void);
@@ -62,61 +65,7 @@ struct FxPartyList;
 #define HEAP_BLITTER 104           // ☀️ HEAP_SLOT_BLITTER
 #define HEAP_BLITTER_ALTERNATE 188 // ☀️ HEAP_SLOT_BLITTER_ALTERNATE
 
-// The Lost Age numbers its blitter modes in the reverse of The Broken Seal's
-// order: Func_08196404 builds additive for 0, max for 1, transparent for 2.
-enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
-
 #define FORMATION_THORN_VINES 645 // eight objects
-
-// The camera work, as far as this scene reads it.
-struct EffectCamera {
-  s32 eye[3];
-  s32 pos[3];
-};
-
-extern char ResourceId_ThornVineSheet;
-extern char ResourceId_YellowRingSheet;
-extern char ResourceId_BlastSheet;
-extern u8 Data_081981fc[];  // ☀️ gCybele_ObjectPoses
-extern u16 Data_08198202[]; // ☀️ gCybele_ThornOffsets
-extern u8 Data_0819820c[];  // ☀️ gCybele_ThornWidths
-extern u8 Data_08198211[];  // ☀️ gCybele_ThornHeights
-extern u16 Data_08198216[]; // ☀️ gCybele_LeafOffsets
-extern u8 Data_0819821c[];  // ☀️ gCybele_LeafSizes
-extern u16 Data_08198220[]; // ☀️ the second gCybele_ThornOffsets
-extern u8 Data_0819822a[];  // ☀️ the second gCybele_ThornWidths
-extern u8 Data_0819822f[];  // ☀️ the second gCybele_ThornHeights
-extern u16 Data_08198234[]; // ☀️ gCybele_SparkOffsets
-extern u8 Data_0819823e[];  // ☀️ gCybele_SparkSizes
-extern u16 Data_08198244[]; // ☀️ gCybele_EmberOffsets
-extern u16 Data_08198252[]; // ☀️ gCybele_EmberSizes
-
-/// The canvas layer and its helpers; the comments give The Broken Seal's
-/// names where the twin is known.
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_ProcessPendingGraphicsTransfer(
-    void); // ☀️ ProcessPendingGraphicsTransfer
-
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 flags); // ☀️ BattleEffect_BuildBlitter
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // ☀️ SelectLivingTargets
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant);     // ☀️ SpawnObjects
-void Func_0816442c(s32 formation, s32 x, s32 y); // ☀️ PlaceFormationObjects
-void Func_0816467c(s32 formation, s32 x, s32 y); // ☀️ RunImpactBurst
-void Func_08118088(s32 actor, s32 motion);       // ☀️ ApplyVariantMotionFar
-void Animation_ApplyChildArgumentFar(void *, s32);
-void *GetMotionRecordFar(void *object, s32 index);
-void Render_ResetTransformState(void);
-
-void Func_081180e8(s32 phase); // BattlePlayback_StartFar
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // ☀️ BattleEffect_TintBattler
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffect_CountDownBattlerTints(void);
 
 static __inline__ void BurstAt_(s32 formation, s32 x, s32 y) {
   Func_0816467c(formation, x, y);
@@ -618,11 +567,6 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 #define TRAILS ((struct EffectStep *)(Ram_MapCellBuffer + 0xe00))
 
-struct Scale {
-  s32 x;
-  s32 y;
-};
-
 struct ScaledSprite;
 
 // An object's sprite attributes, as far as this scene sets them.
@@ -632,44 +576,6 @@ struct SpriteAttributes {
   u8 priority : 2;
   u8 palette : 4;
 };
-
-extern u32 gCameraSceneParameters[];
-extern char ResourceId_IceBlockSheet;
-extern char ResourceId_SparkleDots; // directory row 0x17e
-extern char ResourceId_VioletSkyBackdrop;
-extern u8 Data_08198260[][2];      // ☀️ gBoreas_Points
-extern s8 Data_08198280[];         // ☀️ gBoreas_ShakeOffsets
-extern u16 Data_08198284[];        // ☀️ gBoreas_RockCells
-extern u8 Data_0819828a[];         // ☀️ gBoreas_RockWidths
-extern u8 Data_0819828d[];         // ☀️ gBoreas_RockHeights
-extern u8 Data_08198290[];         // ☀️ gBoreas_Animations
-extern struct Scale Data_08196e14; // ☀️ gBattleFx10_UnitScale
-extern u16 Data_081982aa[];        // ☀️ gBoreas_DebrisCells
-extern u8 Data_08198294[];         // ☀️ gBoreas_DebrisWidths
-extern u8 Data_0819829f[];         // ☀️ gBoreas_DebrisHeights
-extern u16 Data_081982c6[];        // ☀️ gBoreas_SprayCells
-extern u8 Data_081982c0[];         // ☀️ gBoreas_SprayWidths
-extern u8 Data_081982c3[];         // ☀️ gBoreas_SprayHeights
-extern u8 Data_0819745e[];         // ☀️ gBattleEffect_PuffSizes
-extern u16 Data_0819744c[];        // ☀️ gBattleEffect_PuffCells
-extern u16 Data_081982cc[];        // ☀️ gBoreas_BoulderCells
-extern u8 Data_081982d2[];         // ☀️ gBoreas_BoulderWidths
-extern u8 Data_081982d5[];         // ☀️ gBoreas_BoulderHeights
-extern u16 Data_081982de[];        // ☀️ gBoreas_FallCells
-extern u8 Data_081982d8[];         // ☀️ gBoreas_FallWidths
-extern u8 Data_081982db[];         // ☀️ gBoreas_FallHeights
-
-void BattleEffect_ConfigureEffectDisplay(void);
-
-void BattleEffect_WipeCanvas(s32 mode, s32 value);
-
-void BattleBackground_LoadFar(s32, s32, s32);
-void BattleEffect_BuildWindowEdgeTable(void);
-
-void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
-                                       s32 *position, s32 *scale, s32 mode);
-
-void Func_0814cca8(void); // ☀️ BattleEffect_SetupBlendedDisplay
 
 // Summon 10: a window opens over a violet sky on a field of rocks; a 3x3
 // block of ice rises, a great ice block falls into it and throws up debris
@@ -1114,17 +1020,10 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
 
 #include "heap_release.h"
 
-s32 BattleUnit_GetEffectHeightFar(s32 actor);
-
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
 
 #define SHARDS_PER_MEMBER 128
 #define SHARDS ((struct EffectStep *)Ram_MapCellBuffer)
-
-extern char ResourceId_Data134; // the particle sheet
-
-extern u16 gData_08197410[]; // gBattleEffect_MoteCells
-extern s32 gData_081982e4[]; // gDrain_Gravities
 
 /// Ice shards burst up from each target in turn, 20 frames apart.
 /// Setup: 128 shards per target are scattered around the middle of its body
@@ -1259,15 +1158,8 @@ void BattleEffect_RunTrueCollide(u8 *effect) { Func_0814ea58(effect, 2); }
 
 #include "battle_display.h"
 
-void Func_0815b510(u8 *map, s32 size, s32 scale);
-void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-
 #define MOTES_PER_MEMBER 128
 #define MOTES ((struct EffectStep *)Ram_MapCellBuffer)
-
-extern char ResourceId_VioletPaletteC;
-extern u8 Data_081982f4[]; // the mote size by mode
 
 // Motes of light burst out of each target in turn, 20 frames apart, and
 // are drawn into the user.
@@ -1489,16 +1381,6 @@ static __inline__ s32 CopyWords_(void *destination, const void *source,
   return Iwram_CopyWords(destination, source, size);
 }
 
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
-                   s32 *world);   // BattleEffect_RunDjinniEntrance
-void Func_0815f0a0(s32 resource); // BattleEffect_StepPaletteToResource
-void Func_080150e4(s32 angle);    // SceneTransform_ApplyRoll
-
-// Func_0815585c's packed argument: the Djinni's element, the side, and
-// whether the Djinni stands at the anchor.
-enum { DJINNI_VENUS, DJINNI_MERCURY, DJINNI_MARS, DJINNI_JUPITER };
 #define DJINNI_SIDE(side) ((side) << 4)
 #define DJINNI_ANCHORED 32
 
@@ -1507,20 +1389,6 @@ enum { DJINNI_VENUS, DJINNI_MERCURY, DJINNI_MARS, DJINNI_JUPITER };
 #define BEAM_SHEET 0x800    // the blue beam as unpacked, two bytes a pixel
 #define BEAM_BYTES 0x2000   // the beam packed to a byte a pixel
 #define DJINNI_SHEET 0x1000 // the Djinni picture
-
-extern char ResourceId_BlueBeamSheet;
-extern char ResourceId_IceShardSheet;
-
-extern char ResourceId_OrangePaletteB;
-extern char ResourceId_CyanPalette;
-extern char ResourceId_MarsDjinnSheet;
-extern char ResourceId_MarsDjinnSmallSheet;
-extern char ResourceId_MercuryDjinnSheet;
-extern char ResourceId_MercuryDjinnSmallSheet;
-extern char ResourceId_VenusDjinnSheet;
-extern char ResourceId_VenusDjinnSmallSheet;
-extern char ResourceId_JupiterDjinnSheet;
-extern char ResourceId_JupiterDjinnSmallSheet;
 
 // Motes of light gather around each target in turn, eight frames apart,
 // turning as they close in on its middle; a healing chime sounds as they
@@ -1921,8 +1789,6 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode);
-
 /// Abilities: Impact, High Impact, Demon Spear, Angel Spear (kind 26); Forge
 /// (kind 210); Kindle (kind 223); kind 46 is used by no ability.
 DEFINE_EFFECT_KIND(BattleEffect_RunImpact, Func_0814fab8, 0)
@@ -1971,11 +1837,6 @@ void BattleEffect_RunStatBoostMode10(struct BattleEffectArgument *effect) {
   Func_0814fab8(effect, 10);
 }
 
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode); // BattleEffect_BuildBlitter
-
-void Graphics_LoadGreyRamp(void); // a grey ramp from color 1
-
 // The two blitters' heap slots, byte offsets into Ram_HeapSlots (The Broken
 // Seal's HEAP_SLOT_BLITTER and HEAP_SLOT_BLITTER_ALTERNATE).
 #define BLITTER_SLOT 104           // Ram_HeapSlots->unk64[1]
@@ -1986,29 +1847,8 @@ void Graphics_LoadGreyRamp(void); // a grey ramp from color 1
   Func_08196404(BLITTER_SLOT, 7, 7, flags, mode);                              \
   out = (DrawRectangle)Ram_HeapSlots->unk64[1]
 
-// Places in the sheet.
-enum SeriesBSheet {
-  SERIES_B_FLARES = 0x0000,  // the gathering lights
-  SERIES_B_BURST = 0x060e,   // six 40x40 bursts
-  SERIES_B_PICTURE = 0x2b8e, // the mode's picture
-  SERIES_B_DJINNI = 0x65c0   // the 40x40 Djinni
-};
-
 #define FLARES ((struct EffectStep *)Ram_MapCellBuffer)
 #define FLARES_PER_MEMBER 64
-
-extern char ResourceId_ParticleSpritesD;
-extern char ResourceId_GlowOrbSheet;
-extern char ResourceId_VioletStreakSheet;
-extern char ResourceId_WispSheet;
-extern char ResourceId_DaggerSheet;
-extern char ResourceId_ShieldSheet;
-extern char ResourceId_PinkBurstSheet;
-extern char ResourceId_EffectPalette01;
-
-extern u16 Data_08197424[]; // gBattleEffect_FlareCells
-
-typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
 
 static inline CopyWordsFn CopyWordsRoutine(void) {
   /* FAKEMATCH(wrapper): the routine fetched through this inline; as direct
@@ -2412,11 +2252,6 @@ void SummonEffect_RunCanvasMode2(void *action) {
 #define RAMP_IMAGE 0x2580 // the shard picture, then seven darker copies
 #define RAMP_SIZE 696     // one copy
 
-extern char ResourceId_PaletteRampImage;
-extern u16 Data_081974dc[]; // gStatChange_ShardCells
-extern u8 Data_081974f4[];  // gStatChange_ShardWidths
-extern u8 Data_08197500[];  // gStatChange_ShardHeights
-
 /// A dagger (modes 0 and 3) or a shield (1 and 2) appears over each target
 /// in turn, four frames apart, and breaks into shards that fly off and
 /// darken.
@@ -2598,12 +2433,6 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect,
 
 #define FLAME_COUNT 9
 
-extern char ResourceId_EmberStreakSheet;
-extern u16 gData_0819747a[]; // gBattleEffect_PuffArcCells
-extern u8 gData_08197467[];  // gBattleEffect_PuffArcCellWidths
-extern u8 gData_08197473[];  // gBattleEffect_PuffArcCellBiasY
-extern u8 gData_0819746d[];  // gBattleEffect_PuffArcCellHeights
-
 // Nine flames puff up along a half-circle arc, four frames apart.
 
 // Setup: the flames are placed on an arc 32 pixels wide and 16 high, from
@@ -2714,15 +2543,6 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-typedef struct {
-  s32 reserved00[3];
-  s32 currentValue;
-  s32 indexRadius;
-  s32 entryLimit;
-  s32 reserved18[3];
-  s16 values[1];
-} BattleEffectIndexWindow;
-
 s32 BattleEffect_BuildCenteredIndexList(BattleEffectIndexWindow *window,
                                         s16 *output) {
   s32 length = window->indexRadius * 2 + 1;
@@ -2749,27 +2569,12 @@ s32 BattleEffect_BuildCenteredIndexList(BattleEffectIndexWindow *window,
 // Battle effect kind 1, the quake: rock pillars rise under the targets. The
 // Broken Seal's BattleEffect_RunQuake, call for call.
 
-// A row of Data_081982f7, one for each variant.
-enum {
-  TIMING_FRAMES,      // the whole effect
-  TIMING_RISE_FRAMES, // how long each pillar stands
-  TIMING_SHAKE        // the camera shake
-};
-
-struct RockWallHeights {
-  s32 column[4]; // each pillar's height in pixels
-};
-
 #define PILLAR_W 40        // pixels
 #define ROCK_OFFSET 0x1e00 // the rock picture in the sheet, after the band
 
 // The byte of pixel (x, y) in a 32-tile-wide 8bpp character block.
 #define BG_DOT(x, y)                                                           \
   (((x) & 7) + (((x) / 8) << 6) + (((y) & 7) << 3) + (((y) / 8) << 11))
-
-extern char ResourceId_RockWallSheet;
-extern u8 Data_081982f7[][3];                // gQuake_Timings
-extern struct RockWallHeights Data_08196e1c; // gRockWall_Heights
 
 /// Three rock pillars rise from the ground, left to right four frames apart,
 /// and sink again; targets standing on one are thrown into the air.
@@ -2913,19 +2718,8 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Camera_ApplyPhasedDelta(void);
-
-void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);
-
 #define EMBERS ((struct EffectStep *)Ram_MapCellBuffer)
 #define IN_FLIGHT -1 // an ember's variant; 0 and up count its flare's frames
-
-extern u8 Data_08198300[]; // gFire_Counts
-
-extern u16 Data_08198316[]; // gFire_FlareCells
-extern u8 Data_08198303[];  // gFire_FlareWidths
-extern u8 Data_0819830f[];  // gFire_FlareBiasY
-extern u8 Data_08198309[];  // gFire_FlareHeights
 
 // Embers spray out of the user, two a frame, then home in on the targets.
 
@@ -3098,29 +2892,9 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-// A row of Data_08198348, one for each variant.
-enum {
-  RISE_MOTES,   // the rising motes
-  RISE_COLUMNS, // the pillars
-  RISE_FRAME    // the frame they burst
-};
-
 #define CHIPS ((struct EffectStep *)Ram_MapCellBuffer)
 
 #define TIMING(field) Data_08198348[effect->variant * 3 + (field)]
-
-extern char ResourceId_IceChipSheet;
-
-extern u8 Data_08198348[];  // gFrost_Timings
-extern u8 Data_08198322[];  // gFrost_ColumnSpots
-extern u16 Data_08198362[]; // gFrost_MoteCells
-extern u8 Data_08198351[];  // gFrost_MoteWidths
-extern u8 Data_08198359[];  // gFrost_MoteHeights
-extern u16 Data_08198372[]; // gFrost_ColumnCells
-extern u8 Data_08198378[];  // gFrost_ColumnHeights
-extern u16 Data_0819838c[]; // gFrost_ChipCells
-extern u8 Data_0819837b[];  // gFrost_ChipWidths
-extern u8 Data_08198383[];  // gFrost_ChipHeights
 
 // Motes swirl up around the targets while ice pillars rise one by one;
 // then everything bursts.
@@ -3348,12 +3122,6 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-// The canvas layer and its helpers; the comments give The Broken Seal's
-// names where the twin is known.
-void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-
-void Func_0815e22c(struct EffectPosition *midpoint);
-
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
 #define SPARK_COUNT 1024
@@ -3361,10 +3129,6 @@ void Func_0815e22c(struct EffectPosition *midpoint);
 #define BOLT_SHEET 0x60e // the bolt pictures in the sheet
 #define BOLT_SIZE 2880   // one 24x120 bolt
 #define BOLT_COUNT 4
-
-extern char ResourceId_LightningBoltSheet;
-
-extern u8 Data_0819839c[][2]; // gRay_Sparks
 
 // Four lightning bolts turn and close in on the targets, throwing sparks
 // from their feet.
@@ -3538,24 +3302,13 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
 
 #include "battle_effect_argument.h"
 
-void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode);
-
 /// Abilities: Smoke Bomb, Sleep Bomb (kind 380).
 DEFINE_EFFECT_KIND(BattleEffect_RunSmokeBomb, Func_08151ff0, 1)
 
 /// Abilities: Blast, Mad Blast, Fiery Blast (kind 14).
 DEFINE_EFFECT_KIND(BattleEffect_RunBlast, Func_08151ff0, 0)
 
-// A row of Data_081983a2, one for each variant.
-enum { FIELD_MOTES, FIELD_PUFFS, FIELD_FRAMES };
-
 #define MOTE_SHEET 0x3200 // the mote pictures in the sheet
-
-extern char ResourceId_FireStreakSheet;
-extern u8 Data_081983a2[][3]; // gEruption_Counts
-
-extern u16 Data_081983ac[]; // gEruption_PuffCells
-extern u16 Data_081983ba[]; // gEruption_PuffSizes
 
 // A blast of motes and smoke puffs bursts from the near or far edge of the
 // field toward the targets.
@@ -3914,48 +3667,7 @@ static __inline__ s32 ClearWords_(void *destination, s32 size) {
   return Iwram_ClearWords(destination, size);
 }
 
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position);
-
 #define DJINNI_BEHIND 64
-
-// Places in the sheet.
-enum VolleyBSheet {
-  VOLLEY_B_SHOTS = 0x0000,   // the mode's own shot pictures
-  VOLLEY_B_BEAM = 0x1000,    // the beam, doubled to 48 wide
-  VOLLEY_B_GLOW = 0x1492,    // mode 20's glows
-  VOLLEY_B_PICTURE = 0x0c56, // the mode's picture
-  VOLLEY_B_DJINNI = 0x65c0   // the 20x40 Djinni
-};
-
-// Directory rows 0x192 BattleEffect_TornadoSheet (named), 0x188
-// BattleEffect_LightningBoltSheet and 0x134 Resource_Data134 (named), the
-// spark sprites the twin calls ParticleSpritesA.
-extern char ResourceId_TornadoSheet;
-
-extern char ResourceId_VioletLightningSheetA;
-extern char ResourceId_Data0D7;
-extern char ResourceId_BoulderSheet;
-extern char ResourceId_DemonFaceSheet;
-extern char ResourceId_HeartSheet;
-extern char ResourceId_SmokeSheet;
-extern char ResourceId_FlashBurstSheet;
-extern char ResourceId_WaterSpraySheet;
-extern char ResourceId_PinkPalette;
-extern char ResourceId_RockSpireSheet;
-
-extern char ResourceId_LimePalette;
-
-// The Broken Seal's gBattleEffect_GlintCells, _GlintCellWidths and
-// _GlintCellHeights, and gBattleEffect_MoteCells.
-extern u16 gData_08197486[]; // gBattleEffect_GlintCells
-extern u8 gData_08197492[];  // gBattleEffect_GlintCellWidths
-extern u8 gData_08197498[];  // gBattleEffect_GlintCellHeights
-extern u8 gData_0819749e[];  // gSpire_ShardWidths
-extern u8 gData_081974ad[];  // the shard heights
-extern u16 gData_081974bc[]; // gSpire_ShardCells
-extern u8 Data_081983c8[];   // gTargetStrike_GlintDrawFlags
 
 // A volley of shots flies from the user at the targets, one launched each
 // frame toward the next target.
@@ -4653,8 +4365,6 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
 
 #define STARS ((struct EffectStep *)Ram_MapCellBuffer)
 
-extern char ResourceId_StarDotSheet;
-
 // Sixty-four stars swirl about a point in front of the camera and are
 // drawn in.
 
@@ -4759,8 +4469,6 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
 }
 
 #define BURST_IMAGE 0x1b00 // the burst pictures, after the smoke
-
-extern char ResourceId_TargetBurstImage;
 
 // Bursts of smoke rise from each target in turn, eight frames apart.
 
@@ -4881,11 +4589,8 @@ void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
    } *)Ram_HeapSlots)                                                          \
        ->draw)
 
-void Func_0813baec(void); // BattleEffect_AdvanceScrollOnInterval
-
-void Palette_LoadBasicObjColors(void);
-
-struct SpritePlacement {
+/* VIEW(tiled_canvas_begin): tag struct SpritePlacement as struct SpritePlacement__tiled_canvas_begin; render_placement.h has another definition. */
+struct SpritePlacement__tiled_canvas_begin {
   s32 x, height, y, groundHeight;
 };
 
@@ -4908,30 +4613,6 @@ struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape,
 
 #define GIANT_PIECES 11
 
-// Places in the slash sheet.
-enum SlashSheetCell {
-  SLASH_FLASH_1 = 0x0000,
-  SLASH_FLASH_2 = 0x0188,
-  SLASH_FLASH_3_TOP = 0x057c,
-  SLASH_FLASH_3_BOTTOM = 0x07d4,
-  SLASH_FLASH_4_TOP = 0x0aaa,
-  SLASH_FLASH_4_MIDDLE = 0x0c90,
-  SLASH_FLASH_4_BOTTOM = 0x0e74,
-  SLASH_FLASH_5_TOP = 0x1088,
-  SLASH_FLASH_5_MIDDLE = 0x11f8,
-  SLASH_FLASH_5_BOTTOM = 0x147c,
-  SLASH_TOP = 0x16ac,
-  SLASH_MIDDLE = 0x17fc,
-  SLASH_BOTTOM = 0x1bf3
-};
-
-extern char ResourceId_LeafWarriorTiles;
-extern char ResourceId_SlashSheet;
-
-extern char ResourceId_StagedParticlePath;
-
-extern s32 Data_081983cc[]; // gAtalanta_UnitScale
-
 // Summon 4: a giant strides across a violet sky and cuts the air; sixteen
 // slashes gather light and fly, then rain down on the targets.
 
@@ -4945,7 +4626,7 @@ extern s32 Data_081983cc[]; // gAtalanta_UnitScale
 void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   s32 point[3];
   struct EffectPosition screen;
-  struct SpritePlacement position;
+  struct SpritePlacement__tiled_canvas_begin position;
   struct EffectPosition target;
   DrawRectangle draw[2];
   struct BattlePresentationTransition *presentation;
@@ -5254,8 +4935,6 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_081548d0(struct BattleEffectArgument *effect, s32 mode);
-
 /// Abilities: Growth, Mad Growth, Wild Growth (kind 4).
 void BattleEffect_RunGrowth(void *object) { Func_081548d0(object, 0); }
 
@@ -5264,34 +4943,6 @@ void BattleEffect_RunPunji(void *object) { Func_081548d0(object, 1); }
 
 // The dust puffs at the map cell buffer: 1024 cleared, the first 512 used.
 #define PUFFS ((struct EffectStep *)Ram_MapCellBuffer)
-
-// Directory rows 0x144 BattleEffect_GreenPillarSheet and 0x145
-// BattleEffect_VineSheet.
-extern char ResourceId_GreenPillarSheet;
-extern char ResourceId_VineSheet;
-
-// The Broken Seal's gGrowth_* tables, in effect_table.s.
-extern u8 Data_081983ea[];  // _ColumnCounts: columns by strength
-extern u8 Data_081983ed[];  // _ColumnX: each column's root
-extern u8 Data_081983d7[];  // _HeightLimits: by i % 3
-extern u16 Data_081983da[]; // _VineCells
-extern u8 Data_081983d4[];  // _VineWidths
-extern s8 Data_081983fd[];  // _PillarHeights: by i & 7
-extern u16 Data_081983e4[]; // _PillarCells
-extern u8 Data_081983e0[];  // _PillarWidths
-extern u16 Data_08198414[]; // _PuffCells
-extern s8 Data_08198405[];  // _PuffWidths
-extern u8 Data_0819840c[];  // _PuffHeights
-
-// A growing column, laid over struct EffectStep in work->particles.
-struct DualColumn {
-  s32 x; // root on the canvas
-  s32 y;
-  u8 unk08[8];
-  s32 height; // full length
-  u8 unk14[4];
-  s32 start; // the frame it starts to grow
-};
 
 #define COLUMN_COUNT 16
 #define COLUMN_INTERVAL 4
@@ -5546,13 +5197,6 @@ void Func_081548d0(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-// Directory row 0x16b, BattleEffect_GreenVineSheet: five 32x32 vine cels.
-extern char ResourceId_GreenVineSheet;
-
-// The Broken Seal's gGrowth_ColumnOffsets: each vine's x about the
-// middle of the targets.
-extern const s8 Data_08198422[];
-
 #define VINE_COUNT 16
 #define VINE_FRAMES 70
 #define CUE_FRAME 32 // the vines reach the targets
@@ -5669,23 +5313,6 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
 #undef PUFF_COUNT
 
 // The dust puffs, 1024 particles at the map cell buffer.
-
-// Directory row 0x13f, BattleEffect_ThornSheet: the large thorn at 0, the
-// small thorn at 0xf00 and the dust cels after them.
-extern char ResourceId_ThornSheet;
-
-// The Broken Seal's gGrowth_Counts: thorns by strength.
-extern u8 Data_08198442[];
-// The Broken Seal's gGrowth_X: each thorn's root.
-extern s8 Data_0819843a[];
-// The Broken Seal's gGrowth_Kinds: 0-1 large, 2-3 small; odd ones
-// grow to the left.
-extern u8 Data_08198432[];
-// The Broken Seal's gGrowth_ThornPuffHeights, _PuffCells, _PuffWidths:
-// the seven dust cels.
-extern u8 Data_0819844c[];
-extern u16 Data_08198454[];
-extern s8 Data_08198445[];
 
 #define THORN_INTERVAL 8
 #define PUFF_COUNT 1024
@@ -5859,15 +5486,6 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
   HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }
-
-// The Broken Seal's gBolt_Counts: four bytes for each strength,
-// sparks, glints, glint spread and bolts.
-extern u8 Data_08198462[];
-// The Broken Seal's gBolt_GlintFlips and _GlintModes.
-extern u8 Data_0819846e[];
-extern u8 Data_08198472[];
-
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *pos);
 
 #define BOLT_INTERVAL 8
 

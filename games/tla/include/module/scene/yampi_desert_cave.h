@@ -35,4 +35,6 @@ void Func_02001120(void);
 
 extern u32 gData_02001b48[];
 
+void Func_02001950(void);
+
 #endif

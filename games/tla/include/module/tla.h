@@ -506,4 +506,15 @@ struct RenderInput *Func_080380f8(s32 resource, s32 x, s32 y, s32 mode);
 
 extern struct BattleUnit gOwnerStates[];
 
+struct UnitBaseStats {
+  s16 hp;
+  s16 pp;
+  s16 hpGauge;
+  s16 ppGauge;
+  u16 attack;
+  u16 defense;
+  u16 agility;
+  u8 luck;
+};
+
 #endif

@@ -140,7 +140,8 @@ struct FxGroup {
 
 extern struct DescriptorEntry gData_080eff28[];
 
-void Func_0814ea58(void *effect, s32 mode);
+/* VIEW(field_sequence): routine Func_0814ea58 as void Func_0814ea58(void *effect, s32 mode); module/battle_effect/battle_effect.h has void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode). */
+extern void Func_0814ea58__field_sequence(void *effect, s32 mode) __asm__("Func_0814ea58");
 
 /// Unused: runs the loaded overlay's initialize entry; nothing calls it.
 UNUSED void Overlay_CallInitialize(void) { ((s32 (*)(void))gOverlayArea[1])(); }

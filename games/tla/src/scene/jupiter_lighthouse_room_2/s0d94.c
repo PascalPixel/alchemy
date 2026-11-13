@@ -98,7 +98,8 @@ stop:
   Data_02002b94 = 0;
 }
 
-void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+/* VIEW(s0d94): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
+extern void Actor_SetSingleChildFlags__s0d94(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
 
 void Func_0200165c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
@@ -116,7 +117,7 @@ struct GustObject *Func_02000f54(struct GustObject *source) {
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                    position.z));
   Func_020021b4(object, 2);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags__s0d94(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->angle = source->angle;
@@ -286,7 +287,6 @@ void Func_0200125c(void) {
     }
   }
 }
-
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

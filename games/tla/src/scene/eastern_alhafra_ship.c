@@ -20,6 +20,7 @@
 #include "text/msg_ids.h"
 #include "module/scene/eastern_alhafra_ship.h"
 #include "module/scene/scene.h"
+#include "module/field/event_commands.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -241,8 +242,6 @@ void Event_End();
 
 #include "map.h"
 #include "scene_ids.h"
-
-void Field_RequestBattleFromEncounterTable(s32 row, s32 column);
 
 void Func_020004f4(void) {
   struct MapWork *map;

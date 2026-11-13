@@ -13,8 +13,10 @@
 #include "field_sprite.h"
 #include "ram_buffer.h"
 #include "module/scene/scene.h"
+#include "module/scene/jupiter_lighthouse_room_8.h"
 
-void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+/* VIEW(s07e8): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
+extern void Actor_SetSingleChildFlags__s07e8(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
 void Func_02000628(struct GustObject *object);
 void Func_02001600(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
@@ -32,7 +34,7 @@ struct GustObject *Func_020007e8(struct GustObject *source) {
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                     position.z));
   Func_02002160(object, 2);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags__s07e8(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->angle = source->angle;
@@ -129,7 +131,6 @@ void Func_02000960(void) {
   }
 }
 
-extern u16 gData_020022d0[];
 extern const s8 gData_020022dc[][4];
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))

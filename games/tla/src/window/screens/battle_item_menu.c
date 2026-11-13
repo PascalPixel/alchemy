@@ -72,7 +72,8 @@ struct DescriptorEntry {
 
 extern struct DescriptorEntry gData_080eff28[];
 
-void Func_0814ea58(void *effect, s32 mode);
+/* VIEW(screens): routine Func_0814ea58 as void Func_0814ea58(void *effect, s32 mode); module/battle_effect/battle_effect.h has void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode). */
+extern void Func_0814ea58__screens(void *effect, s32 mode) __asm__("Func_0814ea58");
 
 /// Copies one 4bpp tile of BG character block 0 to another, each given as a
 /// tilemap entry whose palette and flip bits are ignored. The battle lists copy

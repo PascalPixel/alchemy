@@ -808,7 +808,6 @@ void Func_02001364(struct Actor *object) {
 // overlay 681's Func_0200136c. The first push goes through Call3 (directly, its
 // offset pointer is set after the angle's load).
 
-
 s32 Func_020013bc(struct Orbiter *orbiter) {
   struct Actor *anchor = orbiter->anchor;
   s16 *angle;
@@ -1092,7 +1091,6 @@ void Func_0200124c();
 void Event_Start();
 void Event_End();
 void Actor_MoveToObject();
-extern u8 MsgWhatWentWrong[];
 
 void Func_02001a1c(void) {
   s32 t4, t59;
@@ -1786,7 +1784,6 @@ void Func_02002c3c(struct Actor *object) {
   }
 }
 
-
 void Func_02002ca4(void) {
   struct Actor *center;
   s32 id;
@@ -1886,7 +1883,6 @@ void Func_02002e34(s32 entrance) {
   Event_End();
   FieldEvent_SetExitRequest(entrance);
 }
-
 
 /// On odd frames, spawns a drifting effect above the object, swaying with the
 /// frame count; Func_02002030 of Aqua Rock is the same function.

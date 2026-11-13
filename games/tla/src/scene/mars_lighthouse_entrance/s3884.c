@@ -17,7 +17,6 @@ struct Position {
   s32 z;
 };
 
-void Func_02003284(void);
 void Func_020031f8(void);
 
 void Func_02003884(void) {

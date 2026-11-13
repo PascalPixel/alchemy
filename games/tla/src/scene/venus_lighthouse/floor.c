@@ -13,6 +13,7 @@
 #include "module/scene/scene.h"
 #include "module/scene/venus_lighthouse.h"
 #include "system.h"
+#include "module/game/game.h"
 
 /* VIEW(floor): variable gData_02001dd8 as extern const u8 gData_02001dd8[]; the definition has s32 gData_02001dd8[] = { 39, 12, 22, 38, (s32) OverlayObject_UpdateEveryFourFrames, (s32) 0x80010000, 22, 9, 0x11999, 22, 10, 0x11999, 0, 2,...; tried as the definition's extern s32 gData_02001dd8[], it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse/floor.c:56: `gData_02001dd8__floor' undeclared (first use in this function). */
 extern const u8 gData_02001dd8__floor[] __asm__("gData_02001dd8");
@@ -307,8 +308,6 @@ s32 VenusLighthouse_Start(void) {
 #endif
 
 s32 Scene_PrepareMap(void) { return 0; }
-
-s32 Party_RemoveMember(s32 value);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

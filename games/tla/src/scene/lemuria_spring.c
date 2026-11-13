@@ -18,6 +18,10 @@
 #include "module/scene/lemuria_spring.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
+#include "module/window/window.h"
+#include "text/msg_ids.h"
+#include "text_render.h"
+#include "uiflow.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -35,8 +39,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-
-extern u8 MsgAndTheOthers[];
 
 void Func_02000054(void) {
   Message_ShowCentered((s32)MsgAndTheOthers, 1);
@@ -153,11 +155,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 // The Japanese catalog does not name these yet.
 extern u8 MsgWhatWillYou[], MsgCoins2[], MsgToss2[], MsgYouWonCoin[];
-struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs);
-void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position, u32 offsetX, u32 offsetY);
-void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y);
 s32 Menu_SelectCoinsOrMedals();
-void Window_Close(struct Window *work, s32 release);
 
 // French draws the count window two tiles wider, its numbers 16 pixels further
 // right; Japanese draws them 16 pixels further left, each followed by its

@@ -10,7 +10,6 @@
 
 /* VIEW(f14cca8): variable gBgScroll as extern struct FxBgScroll gBgScroll[]; bg_scroll.h has extern struct BgScroll gBgScroll[]; tried as the rest of the object declares it, Func_0814cca8 moves: 1 of 57 instructions in tla-ja. */
 extern struct FxBgScroll gBgScroll__f14cca8[] __asm__("gBgScroll");
-extern u32 gCameraSceneParameters[];
 
 /* VIEW(f14cca8): static FillWords_ as FillWords___f14cca8; f13eb70 has static __inline__ void FillWords_(void *destination, s32 size, u32 value) { Iwram_FillWords(destination, size, value); }; tried with the definition the rest of the object has, Func_0814cca8 moves: 3 of 57 instructions in tla-ja. */
 static __inline__ void FillWords___f14cca8(void *destination, s32 size, u32 value) {

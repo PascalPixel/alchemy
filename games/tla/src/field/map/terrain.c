@@ -21,6 +21,8 @@
 #include "module/field/map.h"
 #include "module/system/system.h"
 #include "module/tla.h"
+#include "resource.h"
+#include "sprite_metadata.h"
 
 u8 GetWorldMapTerrainBehavior(struct WorldPosition *position,
                               s32 *terrainKind) {
@@ -181,9 +183,8 @@ void Func_0802dd70(s32 pitchSlope, s32 *position, struct ScanlineRow *row) {
 
 extern u32 gMapCellBuffer[];
 
-struct AnimationMetadata *Resource_GetMetadataRecordFar(u32 id);
-struct ResourceObject *ResourceObject_Create(s32 id);
-s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id);
+/* VIEW(terrain): routine ResourceMetadata_Register as s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id); actor_view.h has s32 ResourceMetadata_Register(struct ActorSpriteView *, s32). */
+extern s32 ResourceMetadata_Register__terrain(struct MetadataSlotState *state, s32 id) __asm__("ResourceMetadata_Register");
 struct SpritePlacement;
 
 // The native reads the held keys afresh at each test.
@@ -245,9 +246,9 @@ restart:
         (i & 1))
       part = 1;
     sprite = ResourceObject_Create(layers[0].spriteId + part + (part << 12));
-    ResourceMetadata_Register(sprite, layers[1].spriteId);
-    ResourceMetadata_Register(sprite, layers[2].spriteId);
-    ResourceMetadata_Register(sprite, layers[3].spriteId);
+    ResourceMetadata_Register__terrain(sprite, layers[1].spriteId);
+    ResourceMetadata_Register__terrain(sprite, layers[2].spriteId);
+    ResourceMetadata_Register__terrain(sprite, layers[3].spriteId);
     sprite->flags = shadowsEnabled;
   }
   for (i = 0; i < 4; i++) {
@@ -494,7 +495,6 @@ s32 Func_0802e444(s32 value, s32 delta) {
 
 #include "sprite.h"
 #include "render_placement.h"
-
 
 /// Lays out the sprite viewer's ring around pixel (x, z): one position per
 /// facing of the first sprite's facing kind (6, 8, 10 or 4, or two opposite

@@ -31,6 +31,9 @@
 #include "module/debug/level.h"
 #include "module/game/game.h"
 #include "module/window/screens.h"
+#include "module/window/window.h"
+#include "text_render.h"
+#include "uiflow.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -69,8 +72,6 @@ void IncreaseItemAndLevel_ShowName(s32 actorId) {
   Event_ShowMessageAndWait(actorId, 0);
   Event_End();
 }
-
-void MessageArgument_Push(u32 value, u32 kind);
 
 /// Shows a party member's name when they are talked to in a room of names:
 /// Isaac's for ISAAC, and so on, with the character as the message's actor
@@ -113,12 +114,6 @@ void IncreaseItemAndLevel_AdjustPartyLevels(s32 amount) {
   for (i = 0; i < ownerCount; i++)
     IncreaseItemAndLevel_AdjustOwnerLevel(ownerIds[i], amount);
 }
-
-struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs);
-void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX, s32 offsetY);
-void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y);
-void Window_Close(struct Window *work, s32 release);
 
 /// The pressed keys under a mask, for the last test of a group: the next
 /// test loads gInput's address again.
@@ -193,8 +188,6 @@ void IncreaseItemAndLevel_RunLevelEditor(void) {
 #define BROWSER_PAGE_STEP 30 ///< R and L move thirty.
 #define ITEM_ID_MASK 0x1ff
 
-void Text_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *work, s32 x, s32 y);
-void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position, u32 offsetX, u32 offsetY);
 void ItemMenu_DrawItemDetails(void *window, s32 item);
 
 /// Browses nonempty item definitions and gives the selected item to the party,

@@ -36,6 +36,8 @@
 #include "module/system/system.h"
 #include "module/tla.h"
 #include "module/window/window.h"
+#include "module/game/game.h"
+#include "scene_ids.h"
 
 // Once the party has walked nine tenths of the encounter threshold, a coin
 // toss either requests the event's battle now or makes the party walk the
@@ -253,7 +255,6 @@ void Func_02000458(void) {
   }
 }
 
-
 /// Sets render mode 7, clears object 8's child flags, then adds up the PP of
 /// the active party; when it is 0, the current owner gets 1 PP back. The loop
 /// is the listing's goto loop, which the loop pass leaves alone
@@ -335,8 +336,6 @@ void Func_02000574(void) {
 #endif
   FieldEffect_ScheduleRatioTransition(0x10000, 30);
 }
-
-
 
 void Func_020006d0(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -613,11 +612,7 @@ void Func_02000db0(s32 id) { Func_02003654(id, 3, 2); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-extern char SceneId_WorldMap;
-extern char SceneId_Ov6a5;
 extern u8 gData_0200632c[];
-
-void Func_02002698(void);
 
 s32 Scene_Initialize(void) {
   struct EventWork *work;
@@ -1180,8 +1175,6 @@ void Func_02001c5c(void) {
   Event_End();
 }
 
-s32 Party_RemoveMember(s32 value);
-s32 Party_AddMember(s32 value);
 static inline void SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
   Actor_SetMoveTarget(object, x, y, z);
 }

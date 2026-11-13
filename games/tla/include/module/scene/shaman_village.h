@@ -105,4 +105,6 @@ void Func_02001cc8(void);
 
 void Func_02001d3c(void);
 
+void Func_02000fc4(void);
+
 #endif

@@ -156,4 +156,8 @@ void Func_02000fd4(void);
 int Func_02002860(void);
 void Func_020032b8(void);
 
+void Func_02003284(void);
+
+void Func_02000b24(void);
+
 #endif

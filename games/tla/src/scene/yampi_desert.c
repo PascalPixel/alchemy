@@ -578,7 +578,6 @@ void Func_02001690(s32 p0) {
   Event_End();
 }
 
-
 struct Actor *Func_02001b70(void) {
   struct Actor *object =
       Func_02003fc0__yampi_desert(489, 232 << 16, 32 << 16, 200 << 16);
@@ -1633,7 +1632,6 @@ void Func_020036d0(void) {
   }
 }
 
-void Func_02003da0(s32 unused, s32 value);
 struct RideEntry *Func_02003e3c(s32 slot, s32 id, s32 timer, s32 low, s32 high);
 
 /// Room 10's setup.
@@ -1874,7 +1872,6 @@ void Func_020039b8(void) {
   }
 }
 
-
 // Draws the rising platforms' columns as sprites, one 16-pixel piece per step
 // of height and a bobbing top, up to 80 of them, each an OAM entry queued by
 // Func_02003f88.
@@ -1957,7 +1954,6 @@ void Func_02003b80(void) {
     count++;
   }
 }
-
 
 void Func_02003da0(s32 unused, s32 value) {
   struct YampiDesertRideWork *work =

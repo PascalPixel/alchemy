@@ -12,7 +12,6 @@ void Func_020001f0(void);
 void Func_02000248(void);
 void Func_0200026c(void);
 void Func_020002f8(void);
-void Func_02000398(s32 id);
 void Func_0200047c(void);
 void Func_0200066c(void);
 void Func_02000aa0(void);

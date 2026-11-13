@@ -13,6 +13,7 @@
 #include "field.h"
 #include "module/field/object.h"
 #include "module/scene/magma_rock.h"
+#include "module/scene/mars_lighthouse_star_room.h"
 
 struct MagmaRockEventWork {
   u8 unk000[0x1ac];
@@ -193,7 +194,6 @@ void Func_02002518(u16 id) {
 s32 Func_02000668();
 void Func_02000ee4();
 s32 Func_020006cc();
-void Func_02003bfc(struct CellTarget *table, struct CellTargetEntry *entry);
 void Func_0200079c();
 
 s32 Scene_Initialize(void) {

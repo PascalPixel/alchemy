@@ -25,8 +25,6 @@ struct Model;
 #define SHEET_TEXTURE 0x2710
 #define SHEET_DJINN 0x65c0
 
-void BattleEffect_ProcessPendingGraphicsTransfer(
-    void); // ☀️ ProcessPendingGraphicsTransfer
 void Render_DrawModelList(struct Model *model);
 
 // Sixteen textured quads tumble down over the targets (or, from the first

@@ -8,6 +8,7 @@
 #include "module/scene/shaman_village.h"
 #include "module/system/system.h"
 #include "resource.h"
+#include "module/window/window.h"
 
 extern const s32 *gData_02004c50[];
 
@@ -661,7 +662,6 @@ s32 Func_02000f94(void) {
 
 u32 Func_02004a8c(s32 shop);
 void Inn_PlaySleep(s32 roomPrice);
-void MessageArgument_Push(u32 value, u32 kind);
 
 void Func_02000fc4(void) {
   if (GameFlag_Test(0x9fe)) {

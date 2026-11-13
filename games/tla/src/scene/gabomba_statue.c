@@ -10,8 +10,16 @@
 #include "field_sprite.h"
 #include "field_effect.h"
 #include "event_inline.h"
+#include "event_work.h"
+#include "item_icon.h"
+#include "module/scene/gabomba_statue.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "scene_ids.h"
+#include "system.h"
 
-extern void Func_02005624(struct FieldEffect *effect, s32 mode);
+/* VIEW(gabomba_statue): routine Func_02005624 as void Func_02005624(struct FieldEffect *effect, s32 mode); module/scene/scene.h has void Func_02005624(struct Actor *object, s32 mode). */
+extern void Func_02005624__gabomba_statue(struct FieldEffect *effect, s32 mode) __asm__("Func_02005624");
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gData_02005ae4[];
 
@@ -32,7 +40,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Func_02005624(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Func_02005624__gabomba_statue(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect, gData_02005ae4[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags(effect, 0);
@@ -74,7 +82,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Func_02005624(effect, 1);
+    Func_02005624__gabomba_statue(effect, 1);
     Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
@@ -94,8 +102,6 @@ struct Wanderer {
   u16 facingA;
   u16 facingB;
 };
-
-u32 Random16Far(void);
 
 void Func_02000280(void) { Func_080d2b4c(33, 9); }
 s32 Func_0200028c(struct Wanderer *actor) {
@@ -169,16 +175,6 @@ const u8 *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-struct FieldPartBytes {
-  u8 unk00[5];
-  u8 frame;
-};
-
-struct FieldAnimation {
-  u8 unk00[40];
-  struct FieldPartBytes *part;
-};
-
 s32 Func_02000364(struct Actor *actor) {
   u32 frame = gFrameCount;
 
@@ -189,7 +185,8 @@ s32 Func_02000364(struct Actor *actor) {
 
 #include "macros.h"
 
-struct Orbiter {
+/* VIEW(gabomba_statue): tag struct Orbiter as struct Orbiter__gabomba_statue; module/scene/scene.h has another definition. */
+struct Orbiter__gabomba_statue {
   u8 unk00[6];
   u16 facing;
   s32 x;
@@ -208,7 +205,7 @@ struct Orbiter {
 extern s32 gData_02005af0;
 s32 __divsi3(s32 numerator, s32 denominator);
 
-void Func_02000398(struct Orbiter *actor, s32 *x, s32 *z) {
+void Func_02000398(struct Orbiter__gabomba_statue *actor, s32 *x, s32 *z) {
   s32 position[3];
   s32 angle = (actor->phase << 16) / 180;
   s32 turn;
@@ -221,7 +218,7 @@ void Func_02000398(struct Orbiter *actor, s32 *x, s32 *z) {
   *z = position[2];
 }
 
-s32 Func_02000408(struct Orbiter *actor) {
+s32 Func_02000408(struct Orbiter__gabomba_statue *actor) {
   u8 *phase = &actor->phase;
   s32 angle = (*phase << 16) / 180;
   s32 next;
@@ -243,13 +240,6 @@ s32 Func_02000408(struct Orbiter *actor) {
 #include "ram_buffer.h"
 #include "actor.h"
 
-struct PuzzleCell {
-  u8 kind;
-  u8 blocked;
-  u8 state;
-  u8 occupied;
-};
-
 struct SceneState {
   struct PuzzleCell cells[88];
   u8 unk160[4];
@@ -262,11 +252,6 @@ struct SceneState {
   s16 originZ;
 };
 
-struct EventWork1cc {
-  u8 unk000[0x1cc];
-  struct Actor *object;
-};
-
 struct IoReg16 {
   u16 value;
 };
@@ -276,19 +261,10 @@ struct IoReg16 {
 
 extern struct SceneState gSceneState;
 extern const s8 gData_02005940[];
-extern const u8 gData_02005948[];
 
-s32 Resource_FindFreeEntry(void);
-void Func_02001950(s32 show, s32 first, u32 count);
-void Func_02002394(void);
 void Func_02004380(s32 x, s32 z, s32 a);
-void Func_020055cc(const u8 *data, void *buffer);
-void Func_0200561c(void *animation, s32 a);
-void Func_020056b4(struct Actor *object);
-void Event_End(void);
-void Func_02005824(void);
-void Func_0200582c(s32 index, s32 a, s32 b);
-void Func_0200583c(s32 index, s32 flag, s32 a, s32 b);
+/* VIEW(gabomba_statue): routine Func_020056b4 as void Func_020056b4(struct Actor *object); module/scene/scene.h has void Func_020056b4(void). */
+extern void Func_020056b4__gabomba_statue(struct Actor *object) __asm__("Func_020056b4");
 
 s32 Func_0200047c(struct Actor *object) {
   struct Actor *owner = object->watchedObject;
@@ -374,8 +350,6 @@ extern const u8 gData_020064cc[];
 extern const u8 gData_020067e4[];
 extern const u8 gData_02006898[];
 extern const u8 gData_02006a90[];
-s32 Func_02005834(s32 value);
-void Func_020020f0(s32 value);
 
 #define DIFF_WITHIN(a, b, limit)                                               \
   ((a) - (b) >= 0 ? (a) - (b) <= (limit) : (b) - (a) <= (limit))
@@ -445,19 +419,16 @@ struct Orbiter__find_near *Func_02000624(struct Orbiter__find_near *origin, s32 
   return NULL;
 }
 
-
-void Func_020057d4(struct Actor *object);
-
 void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity) {
   u8 *flags = &object->motionFlags;
   u8 saved;
 
   Func_020057d4(object);
   saved = *flags;
-  Func_02005624(object, 6);
+  Func_02005624__gabomba_statue(object, 6);
   System_Wait(6);
   Event_PlaySound(152);
-  Func_02005624(object, 7);
+  Func_02005624__gabomba_statue(object, 7);
   object->speedLimit = 0x30000;
   object->acceleration = 0x20000;
   object->velocityY = velocity;
@@ -466,7 +437,7 @@ void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity) {
   FieldActor_SetMoveTarget(object, object->x + dx, object->y, object->z + dz);
   Actor_WaitForMove(object);
   *flags = saved;
-  Func_02005624(object, 6);
+  Func_02005624__gabomba_statue(object, 6);
   Actor_SetSingleChildFlags(object, 1);
   System_Wait(3);
 }
@@ -492,9 +463,6 @@ void Func_02000740(void) {
 
 #include "iwram_call.h"
 #include "system/vector3.h"
-
-s32 Func_02005684(struct Actor *object, struct Vector3 *position);
-s32 Math_Cosine(s32 angle);
 
 void Func_02000784(void) {
   struct Actor *actor, *table;
@@ -596,10 +564,8 @@ void Func_02000978(void) {
   }
 }
 
-
 /* VIEW(find_near): routine Func_020056b4 as void Func_020056b4(void); gabomba_statue has void Func_020056b4(struct Actor *object); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/gabomba_statue.c:606: too few arguments to function `Func_020056b4'. */
 extern void Func_020056b4__find_near(void) __asm__("Func_020056b4");
-void Event_FinishScreenTransition(void);
 
 void Func_02000a20(struct Actor *object) {
   u32 i;
@@ -631,8 +597,6 @@ void Func_02000a20(struct Actor *object) {
     }
   }
 }
-
-extern char SceneId_Ov671Room4;
 
 // Moves the controlled character with the moving platforms (Func_020005b4 finds
 // the one under it, 360 forward and 361 back): it stays within 2 pixels of the
@@ -703,8 +667,6 @@ void Func_02000ad4(void) {
     FieldEvent_SetExitRequest(6);
   }
 }
-
-void Event_End(void);
 
 void Func_02000c38(void) {
   s32 *speed = &gData_02005af0;
@@ -818,12 +780,7 @@ void Func_02000cf0(struct Actor *object) {
 #include "text/msg_ids.h"
 
 void Func_020022d0(s32 id, s32 x, s32 z, s32 facing);
-void Func_020011bc(s32 message, s32 value);
-void Func_0200533c(void);
-void Func_020057b4(void);
-s32 Func_02004d48(s32 a, s32 b);
 void ObjectTable_Snapshot(void);
-void Event_WaitTransitionFrames(void);
 
 void Func_02000f50(s32 id) {
   Actor_SetPosition(id, 0, 0);
@@ -896,7 +853,6 @@ void Func_02000fc0(void) {
     break;
   }
 }
-
 
 extern const u8 gData_02006e9c[];
 extern const u8 gData_02006b54[];
@@ -1100,7 +1056,8 @@ void Func_020015b8(void) {
   Func_020011bc(440, 288);
 }
 
-struct EventWork154 {
+/* VIEW(gabomba_statue): tag struct EventWork154 as struct EventWork154__gabomba_statue; module/scene/scene.h has another definition. */
+struct EventWork154__gabomba_statue {
   u8 unk000[0x154];
   s16 exit;
 };
@@ -1111,7 +1068,7 @@ void Func_02001630(void) {
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   struct Actor *leader;
-  struct EventWork154 *work;
+  struct EventWork154__gabomba_statue *work;
 
   if (x == 28 && z == 9 && !(gInput.held & 0x10))
     return;
@@ -1205,19 +1162,12 @@ void Func_020018a8(struct Actor *actor) {
   Event_End();
 }
 
-void Func_02001950(s32 show, s32 first, u32 count);
-
 void Func_020018ec(s32 show) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov671Room1)
     Func_02001950(show, 8, 1);
   else if (gMainRoutineWork.scene == (s32)&SceneId_Ov671Room2)
     Func_02001950(show, 29, 2);
 }
-
-struct GateEventWork {
-  u8 unk000[362];
-  u16 gateTimer;
-};
 
 extern const u8 gData_02005d7c[];
 void Func_02005428(const u8 *data, s32 a, s32 b);
@@ -1275,14 +1225,7 @@ void Func_020019d0(void) {
   Event_End();
 }
 
-struct FieldPart {
-  s16 kind;
-};
-
-
 void Func_020043a4(s32 value);
-s32 Func_020053a0(void);
-void Func_02005784(s32 id);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 void Func_02001a6c(s32 value) {
   Func_020043a4(value);
@@ -1297,7 +1240,7 @@ void Func_02001a8c(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_Wait(20);
   Event_PlaySound(214);
-  Func_02005624(object, 5);
+  Func_02005624__gabomba_statue(object, 5);
   object->scaleY = 0x10000;
   Event_End();
 }
@@ -1399,9 +1342,6 @@ next:
 
 #include "task.h"
 
-extern u32 gData_02005910[];
-extern u8 Data_0202c001[];
-
 #define MARK(at, cellPicture, shape)                                           \
   (cell = (at), layerA[cell] = (cellPicture), layerB[cell] = (cellPicture),    \
    word = &shapesA[cell], *word |= (shape), word = &shapesB[cell],             \
@@ -1498,9 +1438,6 @@ void Func_02001c10(void) {
   Task_AddFrame(Func_02001b98, TASK_PASS_VBLANK);
 }
 
-
-
-
 #define REG_BLDALPHA ((struct IoReg16 *)0x04000052)
 
 /// Makes the scene more translucent the farther inside the object is.
@@ -1518,13 +1455,11 @@ void Func_02002074(void) {
 
 extern const s8 gData_02005940[];
 
-void Func_0200561c(void *animation, s32 a);
-
 void Func_020020b0(s32 id, s32 direction, s32 value) {
   struct Actor *object = Actor_Get(id);
   void *animation = object->sprite;
 
-  Func_02005624(object, gData_02005940[(direction + 1) & 3]);
+  Func_02005624__gabomba_statue(object, gData_02005940[(direction + 1) & 3]);
   object->unk5c[0] = 2;
   Func_0200561c(animation, value);
 }
@@ -1589,7 +1524,7 @@ void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
   struct Orbiter__find_near *object = ((struct Orbiter__find_near *)Actor_Get(slot));
   struct Orbiter__find_near *target = ((struct Orbiter__find_near *)Actor_Get(targetId));
 
-  Func_02005624(object, 0);
+  Func_02005624__gabomba_statue(object, 0);
   Func_02005634__find_near(object, gData_0200e88c);
   Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;

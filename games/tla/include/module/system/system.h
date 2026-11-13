@@ -159,4 +159,6 @@ s32 Func_0801596c(void);
 s32 Save_LoadFileSummaries(void);
 void Save_ReleaseWork(void);
 
+void Serial_Initialize(void);
+
 #endif

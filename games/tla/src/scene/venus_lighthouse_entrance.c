@@ -25,7 +25,8 @@
 #include "module/tla.h"
 #include "resource.h"
 #include "scene_ids.h"
-
+#include "module/game/game.h"
+#include "text/msg_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -103,7 +104,6 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 void Func_0200030c(void);
 void Func_02001c30(void);
-s32 Party_RemoveMember(s32 value);
 
 s32 Scene_Initialize(void) {
   s32 t37;
@@ -260,8 +260,6 @@ void Func_02000440(void) {
   Call2(Actor_StartScript, t11, (s32)gData_02003040__venus_lighthouse_entrance);
   Event_End();
 }
-
-extern u8 MsgThereTheyAre[];
 
 void Func_02000510(void) {
   u32 i;
@@ -932,8 +930,6 @@ void Func_02000510(void) {
   Event_End();
 }
 
-extern u8 MsgWhyDoI[];
-
 void Func_02001a2c(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -979,8 +975,6 @@ void Func_02001a2c(void) {
   Event_End();
 }
 
-extern u8 MsgNotThatWayThe[];
-
 void Func_02001bb0(void) {
   s32 t7;
 
@@ -1003,8 +997,6 @@ void Func_02001bb0(void) {
 }
 
 #include "iwram_call.h"
-
-extern u8 MsgAreAreYou[];
 
 void Func_02001c30(void) {
   s32 t96;
@@ -1274,7 +1266,6 @@ void Func_02001fd0(void) {
 // ---- games/tla/src/scene/venus_lighthouse_entrance/s23a4.c ----
 // Scene code of overlay 0x64d, in ROM order, from s23a4's offset up to the next object the overlay links.
 
-
 s32 Func_02002a2c(struct Actor *actor);
 
 void Func_020023a4(s32 id) {
@@ -1424,7 +1415,6 @@ struct SparkWork__s26f4 {
   u16 tileBase;
   u16 resource;
 };
-
 
 void Func_020026f4(void) {
   struct SparkWork__s26f4 *work = HeapSlot_AllocFar(220, 0x2188);

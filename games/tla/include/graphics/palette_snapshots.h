@@ -45,4 +45,11 @@ struct PaletteCycle {
   u16 colors[16];
 };
 
+struct PaletteCycleWork {
+  u8 unk000[0x166];
+  s16 unk166;
+  u8 unk168[0xca4 - 0x168];
+  s8 unkca4;
+};
+
 #endif

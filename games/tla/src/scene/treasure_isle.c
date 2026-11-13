@@ -14,6 +14,8 @@
 #include "module/scene/scene.h"
 #include "module/scene/treasure_isle.h"
 #include "scene_ids.h"
+#include "module/field/event_commands.h"
+#include "text/msg_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -23,7 +25,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "main_routine_work.h"
 #include "scene_ids.h"
-
 
 const u8 *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -352,8 +353,6 @@ void Func_02000a5c(void) {
 }
 
 #include "call.h"
-void Field_RequestBattleFromEncounterTable(s32 row, s32 column);
-extern u8 MsgIAmTheGuardian[];
 
 void Func_02000a8c(void) {
   s32 t12;
@@ -540,7 +539,6 @@ void Func_02000f4c(void) { Func_0200102c(); }
 #define RUSTY_SWORD_MESSAGE MSGNO(MsgRustySword2)
 #endif
 
-void Func_020005ac(void);
 void Func_02000684(void);
 void Func_02000728(void);
 void Func_02000940(void);

@@ -13,7 +13,8 @@
 #include "module/tla.h"
 #include "particle.h"
 
-void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+/* VIEW(s29d0): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
+extern void Actor_SetSingleChildFlags__s29d0(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
 void Func_02002f80(struct FieldEffect *effect, s32 mode);
 
 void Func_020029d0(s32 spread) {
@@ -35,7 +36,7 @@ void Func_020029d0(s32 spread) {
       frame = Func_02003150(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSingleChildFlags(effect, 0);
+      Actor_SetSingleChildFlags__s29d0(effect, 0);
       Func_02002f80(effect, 2);
       Func_02002f90(effect, gData_020032d4);
       effect->scaleY = effect->scaleX = 0xb333;
@@ -79,7 +80,7 @@ void Func_02002b04(void) {
         zero = 0;
         effect->motionFlags = zero;
         effect->collisionFlags = zero;
-        Actor_SetSingleChildFlags(effect, 0);
+        Actor_SetSingleChildFlags__s29d0(effect, 0);
         Func_02002f80(effect, 2);
         Func_02002f90(effect, gData_02003304);
         angle = i << 12;

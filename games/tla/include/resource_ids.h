@@ -138,4 +138,40 @@ extern char ResourceId_IntroTilesB;
 
 extern char ResourceId_CommandIcons;
 
+extern char ResourceId_FireStreakSheet;
+
+extern char ResourceId_JupiterDjinnSmallSheet;
+extern char ResourceId_VenusDjinnSmallSheet;
+extern char ResourceId_IceChipSheet;
+extern char ResourceId_IceBlockSheet;
+extern char ResourceId_RockSpireSheet;
+
+extern char ResourceId_WispSheet;
+
+extern char ResourceId_MarsDjinnSmallSheet;
+
+extern char ResourceId_DaggerSheet;
+extern char ResourceId_PaletteRampImage;
+
+extern char ResourceId_ThornVineSheet;
+extern char ResourceId_YellowRingSheet;
+extern char ResourceId_VioletStreakSheet;
+extern char ResourceId_ShieldSheet;
+extern char ResourceId_RockWallSheet;
+extern char ResourceId_VioletLightningSheetA;
+extern char ResourceId_DemonFaceSheet;
+extern char ResourceId_StarDotSheet;
+extern char ResourceId_TargetBurstImage;
+extern char ResourceId_SlashSheet;
+extern char ResourceId_StagedParticlePath;
+// Directory rows 0x144 BattleEffect_GreenPillarSheet and 0x145
+// BattleEffect_VineSheet.
+extern char ResourceId_GreenPillarSheet;
+extern char ResourceId_VineSheet;
+// Directory row 0x16b, BattleEffect_GreenVineSheet: five 32x32 vine cels.
+extern char ResourceId_GreenVineSheet;
+// Directory row 0x13f, BattleEffect_ThornSheet: the large thorn at 0, the
+// small thorn at 0xf00 and the dust cels after them.
+extern char ResourceId_ThornSheet;
+
 #endif

@@ -13,7 +13,6 @@
 #include "module/scene/scene.h"
 #include "module/tla.h"
 
-
 void Func_020003cc(struct Actor *object) {
   struct TileSprite *sprite = object->sprite;
 
@@ -182,7 +181,8 @@ const u8 *Scene_GetEvents(void) {
 #include "frame.h"
 #include "io_reg.h"
 
-extern u16 gData_02001ae0[];
+/* VIEW(s03cc): variable gData_02001ae0 as u16 gData_02001ae0[]; module/scene/loho.h has struct Trigger gData_02001ae0[]. */
+extern u16 gData_02001ae0__s03cc[] __asm__("gData_02001ae0");
 
 void Func_02000738(void) {
   u16 *color = (u16 *)&BG_PLTT_COLOR(0, 12);
@@ -193,7 +193,7 @@ void Func_02000738(void) {
     u32 index = 3;
 
     index &= phase;
-    *color++ = gData_02001ae0[index];
+    *color++ = gData_02001ae0__s03cc[index];
     phase++;
   }
 }
@@ -209,7 +209,7 @@ void Func_02000768(void) {
   }
   Func_020012fc();
   Value3((s32 (*)())Func_02001304, 0, 9, 10);
-  Value3((s32 (*)())Iwram_CopyWordsEntry, (s32)gData_02001ae0, 0x05000018, 8);
+  Value3((s32 (*)())Iwram_CopyWordsEntry, (s32)gData_02001ae0__s03cc, 0x05000018, 8);
   Task_AddFrame(Func_02000738, 0x480);
 }
 
@@ -343,7 +343,7 @@ s32 Scene_Initialize(void) {
   } else {
     Actor_GetById(15)->collisionFlags |= 16;
   }
-  Iwram_CopyWords(((u8 *)gData_02001ae0), (void *)&BG_PLTT_COLOR(0, 12), 8);
+  Iwram_CopyWords(((u8 *)gData_02001ae0__s03cc), (void *)&BG_PLTT_COLOR(0, 12), 8);
   Task_AddFrame(Func_02000738, 0x480);
   ((struct MapLayerBits *)Ram_HeapSlots->mapWork)->priority = 1;
 done:
@@ -560,7 +560,6 @@ void Func_02000dac(void) {
     count++;
   }
 }
-
 
 void Func_02000fcc(s32 unused, s32 value) {
   struct GondowanCliffsWork *work =

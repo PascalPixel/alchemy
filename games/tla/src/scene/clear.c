@@ -22,6 +22,17 @@
 #include "event_inline.h"
 #include "input.h"
 #include "scene_ids.h"
+#include "event_work.h"
+#include "frame.h"
+#include "heap_slots.h"
+#include "module/game/game.h"
+#include "module/scene/clear.h"
+#include "module/scene/scene.h"
+#include "module/system/system.h"
+#include "module/tla.h"
+#include "module/window/screens.h"
+#include "module/window/window.h"
+#include "serial.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -34,17 +45,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
-
-struct ClearWork {
-  u8 unk00[20];
-  u16 mode;
-};
-
-extern char ResourceId_LogoOnBlack;
-extern u16 gData_020024f4[];
-
-void Fade_ToBlack(s32 vblanks);
-s32 Resource_DecodeType01(const void *source, void *destination);
 
 static __inline__ void Decode_(void *source, void *destination) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps the buffer address
@@ -143,16 +143,6 @@ void Func_0200015c(void) {
     FieldTask_Remove(Func_0200015c);
 }
 
-// The two secret button codes: unlocked, held and progress of each.
-extern s16 gData_020024f6;
-extern s16 gData_020024f8;
-extern s16 gData_020024fa;
-extern s16 gData_020024fc;
-extern s16 gData_020024fe;
-extern s16 gData_02002500;
-extern u16 gData_02002410[];
-extern u16 gData_02002418[];
-
 /// Follows the two secret button codes: each held key that matches the next
 /// key of a code advances it, a wrong key starts it again, and finishing a
 /// code unlocks it with a sound.
@@ -250,37 +240,23 @@ s32 Func_020002e0(void) {
 #include "field/event_work.h"
 #include "window.h"
 
-extern s16 gData_02003860;
-extern u32 gData_02001000;
-extern u8 gData_02000000[];
+/* VIEW(clear): variable gData_02003860 as s16 gData_02003860; module/tla.h has u16 gData_02003860. */
+extern s16 gData_02003860__clear __asm__("gData_02003860");
+/* VIEW(clear): variable gData_02001000 as u32 gData_02001000; module/tla.h has s8 gData_02001000[]. */
+extern u32 gData_02001000__clear __asm__("gData_02001000");
 
-extern char SceneId_Ov6b5;
-
-s32 Func_02000b24(void);
-s32 Func_02000e44(void);
-s32 Func_020022b0(s32 mode);
+/* VIEW(clear): routine Func_020022b0 as s32 Func_020022b0(s32 mode); module/scene/scene.h has s32 Func_020022b0(struct Actor *actor). */
+extern s32 Func_020022b0__clear(s32 mode) __asm__("Func_020022b0");
 s32 Func_020022d0(void);
 s32 Func_020022d8(s32 mode);
 void Func_020022e0(void);
-void Func_020022e8(void);
-s32 Func_020022f0(void);
-s32 Func_020022f8(s32 step);
-void Func_02002350(void);
-void Func_02002370(void *data, s32 a, s32 b);
+/* VIEW(clear): routine Func_020022f8 as s32 Func_020022f8(s32 step); module/scene/yallam.h has void Func_020022f8(void). */
+extern s32 Func_020022f8__clear(s32 step) __asm__("Func_020022f8");
 u32 BuildStamp_GetTime(void);
 void Func_02002390(void);
-void Func_02002398(void);
-void Func_020023a0(void *data);
-void Event_SetDestination(s32 a, s32 b);
-void Func_020023e0(s32 scene, s32 entrance);
 void Func_020023e8(void);
-void Event_StartScreenTransition(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Message_CloseFinishedWindows(void);
-s32 YesNoMenu_Run(s32 a, s32 b, s32 c, s32 d);
-s32 FileList_SelectAction(void);
-void Party_AddMember(s32 id);
+/* VIEW(clear): routine Party_AddMember as void Party_AddMember(s32 id); module/game/game.h has s32 Party_AddMember(s32 owner). */
+extern void Party_AddMember__clear(s32 id) __asm__("Party_AddMember");
 
 #define PARTY_WORD(party, index) FIELD_AT(party, u32, 4 * (index))
 
@@ -335,12 +311,12 @@ s32 Scene_Initialize(void) {
     if (i == 0) {
       FieldMessage_Show(message + 1, 1);
       gMainRoutineWork.unk22d[2] = 1;
-      Party_AddMember(5);
-      Party_AddMember(6);
-      Party_AddMember(7);
-      Party_AddMember(1);
-      Party_AddMember(2);
-      Party_AddMember(3);
+      Party_AddMember__clear(5);
+      Party_AddMember__clear(6);
+      Party_AddMember__clear(7);
+      Party_AddMember__clear(1);
+      Party_AddMember__clear(2);
+      Party_AddMember__clear(3);
       i = Func_020022d0();
       if (i == -1)
         goto ask_save;
@@ -378,7 +354,7 @@ top:
     limit = 5;
   open:
     wait(6);
-    result = Func_020022f8(i);
+    result = Func_020022f8__clear(i);
     if (result == -1) {
       if (i == 4)
         goto top;
@@ -395,7 +371,7 @@ top:
     Message_CloseFinishedWindows();
     if (result == 0) {
     enter:
-      result = Func_020022b0(0);
+      result = Func_020022b0__clear(0);
       if (result == -1)
         goto top;
       if (result == 1) {
@@ -428,7 +404,7 @@ top:
     limit = 1;
   close:
     wait(6);
-    result = Func_020022f8(i);
+    result = Func_020022f8__clear(i);
     if (result == -1) {
       if (i == 0)
         goto ask;
@@ -439,14 +415,14 @@ top:
       limit = 4;
     if (++i < limit)
       goto close;
-    if (gData_02003860 != 0) {
+    if (gData_02003860__clear != 0) {
     save:
       message = (s32)MsgPlayOnEasyLevel;
       FieldMessage_Show(message, 13);
       i = YesNoMenu_Run(1, (s32)MsgYeah, YEAH_WIDTH, 0);
       Message_CloseFinishedWindows();
       if (i == 0) {
-        if (gData_02003860 == 0) {
+        if (gData_02003860__clear == 0) {
           FieldMessage_Show(message + 1, 1);
         } else {
           SAVE_CELLS();
@@ -500,7 +476,7 @@ top:
         }
         RETURN_TO_SAVED(party)
         Event_SetFlag(0x13e);
-      } else if (party->playTime != gData_02001000) {
+      } else if (party->playTime != gData_02001000__clear) {
         recovery = (s32)MsgSomeDataIsCorrupted;
         FieldMessage_Show(recovery, 9);
         FieldMessage_Show(recovery + 1, 13);
@@ -558,7 +534,7 @@ link:
   Func_0803f9c0(gMainRoutineWork.paletteGlow[0],
                 gMainRoutineWork.paletteGlow[1]);
 again:
-  result = Func_020022b0(2);
+  result = Func_020022b0__clear(2);
   if (result == -1)
     goto link;
   if (result == 1) {
@@ -584,7 +560,7 @@ again:
     limit = 1;
   shut:
     wait(6);
-    result = Func_020022f8(i);
+    result = Func_020022f8__clear(i);
     if (result == -1) {
       if (i == 0)
         goto link;
@@ -684,22 +660,18 @@ static inline s32 Iwram_CopyWords(void *destination, const void *source,
   return Iwram_CopyWordsEntry(destination, source, size);
 }
 
-extern volatile u16 gLinkStatus;
-extern u16 gLinkPeerSignatures[][12];
-extern u16 gSerialReceivedSize;
-extern s32 gSerialReceiveDest;
-extern u16 gData_02003a74[4];
+/* VIEW(clear): variable gSerialReceivedSize as u16 gSerialReceivedSize; serial.h has volatile u16 gSerialReceivedSize. */
+extern u16 gSerialReceivedSize__clear __asm__("gSerialReceivedSize");
+/* VIEW(clear): variable gData_02003a74 as u16 gData_02003a74[4]; module/tla.h has u16 gData_02003a74[]. */
+extern u16 gData_02003a74__clear[4] __asm__("gData_02003a74");
 #define RECEIVED_FLAGS (Ram_MapCellBuffer + 0x3040)
 #define RECEIVED_UNITS (Ram_MapCellBuffer + 0x3240)
 
-struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 mode);
-void Text_DrawMessage(s32 message, void *window, s32 x, s32 y);
+/* VIEW(clear): routine Text_DrawMessage as void Text_DrawMessage(s32 message, void *window, s32 x, s32 y); module/window/window.h has void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3). */
+extern void Text_DrawMessage__clear(s32 message, void *window, s32 x, s32 y) __asm__("Text_DrawMessage");
 
-void WindowSprite_PrepareForRedraw(void *window);
-s32 Serial_StartReceive(void *destination);
-void Unit_Calculate(s32 id);
-void Serial_Initialize(void);
-void Serial_RemoveIrqHandlers(void);
+/* VIEW(clear): routine WindowSprite_PrepareForRedraw as void WindowSprite_PrepareForRedraw(void *window); module/window/window.h has void WindowSprite_PrepareForRedraw(struct Window *). */
+extern void WindowSprite_PrepareForRedraw__clear(void *window) __asm__("WindowSprite_PrepareForRedraw");
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define REQUEST_EDITION 'C'
@@ -748,9 +720,9 @@ s32 Func_02000b24(void) {
 
   window = Window_Create(RECEIVE_WINDOW_X, 5, RECEIVE_WINDOW_WIDTH, 8, 2);
   message = MSGNO(MsgFieldPreparingToReceive);
-  Text_DrawMessage(message, window, 0, 4);
-  Text_DrawMessage(message + 1, window, 0, 16);
-  Text_DrawMessage(message + 3, window, 0, 36);
+  Text_DrawMessage__clear(message, window, 0, 4);
+  Text_DrawMessage__clear(message + 1, window, 0, 16);
+  Text_DrawMessage__clear(message + 3, window, 0, 36);
   Serial_Initialize();
   System_Wait(10);
 restart:
@@ -762,7 +734,7 @@ scan:
 
     if (signature[0] == 48 && signature[1] == 48 && signature[2] == 48 &&
         signature[3] == 48) {
-      request = gData_02003a74;
+      request = gData_02003a74__clear;
       request[0] = REQUEST_EDITION;
       request[1] = 'V';
       request[2] = 'T';
@@ -786,14 +758,14 @@ receive:
   shown = 0;
   i = 0;
 transfer:
-  if (!shown && gSerialReceivedSize != 0) {
+  if (!shown && gSerialReceivedSize__clear != 0) {
     shown = 1;
     Window_Close(window, 2);
     window = Window_Create(STATUS_WINDOW_X, 10, STATUS_WINDOW_WIDTH, 4, 2);
-    Text_DrawMessage(MSGNO(MsgFieldTransferringData), window, 0, 4);
+    Text_DrawMessage__clear(MSGNO(MsgFieldTransferringData), window, 0, 4);
   }
-  if (i == 9 && gSerialReceivedSize == 0) {
-    request = gData_02003a74;
+  if (i == 9 && gSerialReceivedSize__clear == 0) {
+    request = gData_02003a74__clear;
     request[0] = 0;
     request[1] = 0;
     request[2] = 0;
@@ -819,8 +791,8 @@ transfer:
   }
 done:
   if (!ok) {
-    WindowSprite_PrepareForRedraw(window);
-    Text_DrawMessage(MSGNO(MsgFieldDataTransferWasInterrupted), window, 0, 4);
+    WindowSprite_PrepareForRedraw__clear(window);
+    Text_DrawMessage__clear(MSGNO(MsgFieldDataTransferWasInterrupted), window, 0, 4);
   interrupted:
     System_Wait(1);
     if (!(gInput.pressed & 1))
@@ -899,7 +871,8 @@ void Func_02000db4(const struct Window *object, s32 x, s32 y, s32 width,
 #include "owner_state.h"
 
 /// A selection cursor, as the shops keep theirs (struct ShopCursor).
-struct ShopCursor {
+/* VIEW(clear): tag struct ShopCursor as struct ShopCursor__clear; module/tla.h has another definition. */
+struct ShopCursor__clear {
   struct WindowSprite *anchor;
   u16 x;
   u16 y;
@@ -909,61 +882,44 @@ struct ShopCursor {
   s8 kind;
 };
 
-struct PasswordWork {
-  void *glyphs[50];
-  void *cells[50];
-  u8 shown[50];
-  u8 unk1c2[26];
-};
-
-extern u32 gVBlankCount;
-extern s8 gData_02002438[];
-extern u8 gData_02002440[];
-extern u8 gData_02002454[];
-extern u8 gData_02002468[];
 extern u8 gData_0200247c[];
-extern u8 gData_0200265e[];
-extern u8 Data_0200274a[];
-extern u8 Data_0200288a[];
-extern u8 Data_0200284e[];
-extern u8 Data_02012f94[];
 
 extern u8 MsgFieldPasswordKana[];
 
-void Window_DrawDividerLine(struct Window *window, s32 x, s32 y, s32 length,
-                            s32 mode);
-void Text_DrawStringInWindow(const u8 *text, struct Window *window, s32 x,
-                             s32 y);
-void Text_DrawMessageAsTiles(s32 message, struct Window *window, s32 x,
-                                s32 y);
-void WindowSprite_RedrawSavedRect(struct Window *window);
-void Party_RemoveMember(s32 id);
+/* VIEW(clear): routine Window_DrawDividerLine as void Window_DrawDividerLine(struct Window *window, s32 x, s32 y, s32 length, s32 mode); module/window/window.h has void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2, u32 y2). */
+extern void Window_DrawDividerLine__clear(struct Window *window, s32 x, s32 y, s32 length,
+                            s32 mode) __asm__("Window_DrawDividerLine");
+/* VIEW(clear): routine Text_DrawStringInWindow as void Text_DrawStringInWindow(const u8 *text, struct Window *window, s32 x, s32 y); module/window/window.h has void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y). */
+extern void Text_DrawStringInWindow__clear(const u8 *text, struct Window *window, s32 x,
+                             s32 y) __asm__("Text_DrawStringInWindow");
+/* VIEW(clear): routine Text_DrawMessageAsTiles as void Text_DrawMessageAsTiles(s32 message, struct Window *window, s32 x, s32 y); text_render.h has void Text_DrawMessageAsTiles(s32 character, struct RenderInput *work, u32 offsetX, u32 offsetY). */
+extern void Text_DrawMessageAsTiles__clear(s32 message, struct Window *window, s32 x,
+                                s32 y) __asm__("Text_DrawMessageAsTiles");
+/* VIEW(clear): routine Party_RemoveMember as void Party_RemoveMember(s32 id); module/game/game.h has s32 Party_RemoveMember(s32 owner). */
+extern void Party_RemoveMember__clear(s32 id) __asm__("Party_RemoveMember");
 u16 Func_0200217c(u32 length, u8 *p);
-void Func_020018e0(s32 mode, u8 *data);
-s32 Func_02002068(u8 *src, s32 length, u8 *dst);
-void Window_LoadGraphics(void);
 void Resource_CopyFixedBlockB(void);
 void Resource_CopyFixedBlockA(void);
 void Graphics_ExpandVramTilesByColorTable(void *vram);
-void Func_02002328(s32 glyph, void *cell);
-void *Func_02002330(struct Window *window, void *glyph, s32 x, s32 y);
-void Func_020023f0(struct ShopCursor *cursor);
-void Func_020023f8(struct ShopCursor *cursor, s32 x, s32 y, s32 kind);
-void Func_02002400(struct ShopCursor *cursor, s32 x, s32 y);
+/* VIEW(clear): routine Func_02002328 as void Func_02002328(s32 glyph, void *cell); module/scene/ankohl_ruins.h has void Func_02002328(void). */
+extern void Func_02002328__clear(s32 glyph, void *cell) __asm__("Func_02002328");
+void Func_020023f0(struct ShopCursor__clear *cursor);
+void Func_020023f8(struct ShopCursor__clear *cursor, s32 x, s32 y, s32 kind);
+void Func_02002400(struct ShopCursor__clear *cursor, s32 x, s32 y);
 
 /// Gives a cursor its sprite.
-static inline void Cursor_Attach(struct ShopCursor *cursor,
+static inline void Cursor_Attach(struct ShopCursor__clear *cursor,
                                  struct WindowSprite *sprite) {
   cursor->anchor = sprite;
 }
 
 /// Sets a cursor where it starts.
-static inline void Cursor_Place(struct ShopCursor *cursor, s32 x, s32 y) {
+static inline void Cursor_Place(struct ShopCursor__clear *cursor, s32 x, s32 y) {
   Func_02002400(cursor, x, y);
 }
 
 /// Moves a cursor and shows it.
-static inline void Cursor_Show(struct ShopCursor *cursor, s32 x, s32 y) {
+static inline void Cursor_Show(struct ShopCursor__clear *cursor, s32 x, s32 y) {
   Func_020023f8(cursor, x, y, 1);
   Func_020023f0(cursor);
 }
@@ -1027,8 +983,8 @@ static inline void Cursor_Show(struct ShopCursor *cursor, s32 x, s32 y) {
 #endif
 
 s32 Func_02000e44(void) {
-  struct ShopCursor cursorStore;
-  struct ShopCursor gridStore;
+  struct ShopCursor__clear cursorStore;
+  struct ShopCursor__clear gridStore;
   u16 glyph[12];
   s32 mode;
   s32 cursor;
@@ -1064,7 +1020,7 @@ s32 Func_02000e44(void) {
   Dma_Set((const void *)0x050001e0, palette, (DMA_ENABLE | DMA_32BIT) << 16 | 8,
           (volatile u32 *)0x040000d4);
   palette[4] = 0x6318;
-  mode = Func_020022b0(1);
+  mode = Func_020022b0__clear(1);
   if (mode == -1)
     return -1;
   Sound_Play(71);
@@ -1278,7 +1234,7 @@ s32 Func_02000e44(void) {
           crc = check;
           if (DECODED_PASSWORD[size2] == (u16)crc >> 8 &&
               DECODED_PASSWORD[action - 1] == (u16)crc % 256) {
-            Text_DrawMessageAsTiles(MSGNO(MsgFieldPasswordAccepted), box, 0,
+            Text_DrawMessageAsTiles__clear(MSGNO(MsgFieldPasswordAccepted), box, 0,
                                        0);
             Sound_Play(112);
           wait_accepted:
@@ -1289,14 +1245,14 @@ s32 Func_02000e44(void) {
             Func_02002350();
             party = &gMainRoutineWork;
             party->currentOwner = 0;
-            Party_RemoveMember(4);
-            Party_RemoveMember(5);
-            Party_RemoveMember(6);
-            Party_RemoveMember(7);
-            Party_AddMember(0);
-            Party_AddMember(1);
-            Party_AddMember(2);
-            Party_AddMember(3);
+            Party_RemoveMember__clear(4);
+            Party_RemoveMember__clear(5);
+            Party_RemoveMember__clear(6);
+            Party_RemoveMember__clear(7);
+            Party_AddMember__clear(0);
+            Party_AddMember__clear(1);
+            Party_AddMember__clear(2);
+            Party_AddMember__clear(3);
             Func_020018e0(mode, DECODED_PASSWORD);
             Window_Close(box, 2);
             Window_Close(grid, 2);
@@ -1304,13 +1260,13 @@ s32 Func_02000e44(void) {
             Func_0803f9c0(party->paletteGlow[0], party->paletteGlow[1]);
             Sound_Play(74);
             System_Wait(6);
-            Func_020022f8(0);
+            Func_020022f8__clear(0);
             Func_020023e8();
             Iwram_CopyWords(Data_02012f94 + 0xac, gGameFlagBytes, 0xf40);
             return 0;
           }
           Sound_Play(113);
-          Text_DrawMessageAsTiles(MSGNO(MsgFieldInvalidPassword), box, 0, 0);
+          Text_DrawMessageAsTiles__clear(MSGNO(MsgFieldInvalidPassword), box, 0, 0);
         wait_rejected:
           System_Wait(1);
           if (!(gInput.pressed & 1) && !(gInput.pressed & 2))
@@ -1348,7 +1304,7 @@ s32 Func_02000e44(void) {
       s32 y;
 
       for (i = 0, y = 2; i != 4; i++, y += 2)
-        Window_DrawDividerLine(grid, 0, y, 18, y);
+        Window_DrawDividerLine__clear(grid, 0, y, 18, y);
     }
     {
       for (i = 0; i != pages; i++) {
@@ -1385,7 +1341,7 @@ s32 Func_02000e44(void) {
           Iwram_ClearWords(work->cells[i], 128);
         } else {
           Func_02000a70(entered[index], glyph);
-          Func_02002328(glyph[0], work->cells[i]);
+          Func_02002328__clear(glyph[0], work->cells[i]);
         }
       }
     }
@@ -1398,14 +1354,6 @@ s32 Func_02000e44(void) {
     System_Wait(1);
   }
 }
-
-struct Panel_02001804 {
-  u8 unk00[8];
-  u16 stride;
-  u8 unk0a[2];
-  s16 x;
-  s16 y;
-};
 
 /// Unpacks source into a scratch block, then writes a 16 by 8 block of tiles
 /// at the panel's cell into the BG map at 0x06002000 and into the window
@@ -1488,10 +1436,10 @@ next_column:
 extern s32 gData_020026a0[];
 extern u16 gData_020026b0[];
 extern u16 gData_020026c0[];
-extern u16 gData_02002490[];
 
 s32 Unit_GetExperienceForLevel(s32 id, s32 level);
-void PartyInventory_Add(s32 item);
+/* VIEW(clear): routine PartyInventory_Add as void PartyInventory_Add(s32 item); module/game/game.h has s32 PartyInventory_Add(s32 itemId). */
+extern void PartyInventory_Add__clear(s32 item) __asm__("PartyInventory_Add");
 
 void Func_020018e0(s32 mode, u8 *in) {
   u32 levelBits;
@@ -1588,7 +1536,7 @@ void Func_020018e0(s32 mode, u8 *in) {
     Unit_Get(gData_020026a0[0]);
     for (i = 0; i != 8; i++) {
       if ((keyItemBits >> i) & 1)
-        PartyInventory_Add(gData_020026b0[i]);
+        PartyInventory_Add__clear(gData_020026b0[i]);
     }
   }
 
@@ -1645,21 +1593,9 @@ void Func_020018e0(s32 mode, u8 *in) {
   }
 }
 
-struct UnitBaseStats {
-  s16 hp;
-  s16 pp;
-  s16 hpGauge;
-  s16 ppGauge;
-  u16 attack;
-  u16 defense;
-  u16 agility;
-  u8 luck;
-};
-
 extern u16 gData_02002700[];
 extern s32 gData_020026f0[];
 extern u16 gData_0200270c[];
-extern u16 gData_0200271c[];
 
 s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
   s32 size;

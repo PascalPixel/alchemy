@@ -32,6 +32,7 @@
 #include "module/system/system.h"
 #include "particle.h"
 #include "resource.h"
+#include "text/msg_ids.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -220,7 +221,6 @@ const u8 *Scene_GetEvents(void) {
 }
 
 s32 Func_0200446c();
-extern u8 MsgProx33[];
 
 void Func_02000620(void) {
   Event_Start();
@@ -240,9 +240,6 @@ s32 Func_02000644(void) {
     facing = 0;
   return facing;
 }
-
-extern u8 MsgProx135[];
-extern u8 MsgProx56[];
 
 void Func_02000674(void) {
   s32 t0;
@@ -266,8 +263,6 @@ void Func_02000674(void) {
 }
 
 s32 Func_02004624();
-extern u8 MsgProx132[];
-extern u8 MsgProx53[];
 
 void Func_020006c4(void) {
   s32 t0;
@@ -291,8 +286,6 @@ void Func_020006c4(void) {
 }
 
 s32 Func_0200462c();
-extern u8 MsgProx139[];
-extern u8 MsgProx60[];
 
 void Func_02000714(void) {
   s32 t0;
@@ -323,13 +316,6 @@ struct TalkActor {
   u8 unk08[0x5b];
   u8 unk63; ///< Func_020002d8 reads it
 };
-
-extern u8 MsgProx113[];
-extern u8 MsgProx114[];
-extern u8 MsgProx115[];
-extern u8 MsgProx117[];
-extern u8 MsgProx118[];
-extern u8 MsgProx119[];
 
 void Func_02000764(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -394,8 +380,6 @@ void Func_02000884(void) {
   Func_0200446c();
 }
 
-extern u8 MsgProx47[];
-
 void Func_02000914(void) {
   s32 t0;
   s32 t8;
@@ -452,7 +436,6 @@ void Func_02000914(void) {
 }
 
 void Func_0200457c(void);
-extern u8 MsgProx62[];
 
 void Func_02000ad8(void) {
   Event_Start();
@@ -533,7 +516,6 @@ void Func_02000ad8(void) {
 }
 
 s32 Actor_MoveToObject();
-extern u8 MsgProx75[];
 extern u32 gData_020049c4[];
 
 void Func_02000dac(void) {
@@ -1023,7 +1005,6 @@ void Func_02001c24(s32 a0) {
 
 void Func_0200457c(void);
 s32 Func_0200446c();
-extern u8 MsgProx80[];
 
 void Func_02001cf0(void) {
   s32 t83;
@@ -1288,7 +1269,6 @@ struct EventWork1ac {
 };
 
 void Actor_SetWideSprite(s32 id, s32 wide);
-void Func_020018e0(void);
 void Func_0200440c(s32 layer);
 void Func_02004414(u32 layer);
 void Func_020045dc(s32 a);
@@ -1368,7 +1348,6 @@ struct Walker {
   u8 unk66[6];
   void (*update)(void);
 };
-
 
 void Func_0200279c(s32 actor, s32 x, s32 z, s32 frames) {
   struct Walker *object = ((struct Walker *)Actor_Get(actor));
@@ -1516,7 +1495,6 @@ extern u8 gData_02006088__s1cf0[] __asm__("gData_02006088");
 extern u8 gData_020060fc__s1cf0[] __asm__("gData_020060fc");
 /* VIEW(s1cf0): variable gData_02006268 as extern u8 gData_02006268[]; the definition has u32 gData_02006268[] = { 39, 2, 4, 0x980000, 0, 0x15c0000, 1, 39, 1, 0, 1, 3, 0, 1, 17, }; tried as the definition's extern s16 gData_02006268[], it does not compile in tla-ja: games/tla/src/scene/prox.c:3203: conflicting types for `gData_02006268'. */
 extern u8 gData_02006268__s1cf0[] __asm__("gData_02006268");
-extern u8 MsgProx153[];
 
 void Func_02002a8c(void) {
   u32 i;
@@ -2515,7 +2493,6 @@ void Func_02004198(s32 x, s32 y, s32 z, s32 count) {
 
 extern char ResourceId_FallingRock;
 
-
 /* VIEW(s4254): tag struct RockSprite as struct RockSprite__s4254; prox.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/prox.c:2547: structure has no member named `unk05_5'. */
 struct RockSprite__s4254 {
   u8 unk00[5];
@@ -2530,7 +2507,6 @@ struct RockSprite__s4254 {
   u16 unk1e;
   u8 unk20[8];
 };
-
 
 void Func_02004604(struct RockSprite__s4254 *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);

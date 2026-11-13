@@ -86,4 +86,8 @@ extern u16 gBgmVolumeStep;
 extern u8 gBgmRestoreDelay;
 extern u8 gSoundCommandMask;
 
+extern u16 gBgmTempoPitchTarget;
+extern u16 gBgmTempoPitch;
+extern u16 gBgmTempoPitchStep;
+
 #endif

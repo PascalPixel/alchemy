@@ -73,7 +73,8 @@ void Func_02001724(void) {
 
 extern struct CellTarget gData_02002530;
 
-void GameFlag_SetByte(s32 flag, s32 value);
+/* VIEW(s1724): routine GameFlag_SetByte as void GameFlag_SetByte(s32 flag, s32 value); game_flags.h has u32 GameFlag_SetByte(u32 flag, u8 value). */
+extern void GameFlag_SetByte__s1724(s32 flag, s32 value) __asm__("GameFlag_SetByte");
 void Func_0200151c(struct CellTarget *work, struct CellTargetEntry *entry);
 void Func_0200158c(struct CellTarget *work, struct CellTargetEntry *entry);
 
@@ -97,8 +98,8 @@ s32 Func_020018bc(void) {
         break;
       work->current = i;
       Func_0200158c(work, entry);
-      GameFlag_SetByte(work->flagByte, x);
-      GameFlag_SetByte(work->flagByte + 8, z);
+      GameFlag_SetByte__s1724(work->flagByte, x);
+      GameFlag_SetByte__s1724(work->flagByte + 8, z);
       return 1;
     }
   }
@@ -114,8 +115,8 @@ void Func_0200196c(s32 x, s32 z, s32 effect) {
   if (dx != 0 || dz != 0) {
     struct Actor *marker;
 
-    GameFlag_SetByte(gData_02002530.flagByte, 0);
-    GameFlag_SetByte(gData_02002530.flagByte + 8, 0);
+    GameFlag_SetByte__s1724(gData_02002530.flagByte, 0);
+    GameFlag_SetByte__s1724(gData_02002530.flagByte + 8, 0);
     leader->x = ((dx + x) << 20) + 0x80000;
     leader->z = ((dz + z) << 20) + 0x80000;
     marker = work->marker;
@@ -134,7 +135,6 @@ void Func_0200196c(s32 x, s32 z, s32 effect) {
 void Func_02000054(void);
 void Func_02000084(void);
 void Func_02000190(void);
-void Func_020001d0(void);
 
 // clang-format off
 u32 gData_02002068[] = {

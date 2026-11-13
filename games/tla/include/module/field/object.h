@@ -182,4 +182,7 @@ struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
 s32 ObjectTable_ReadActiveValue(s32 key);
 void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
 
+s32 ResourceTable_CountFreeBlocks(void);
+void Func_080dbb40(void);
+
 #endif

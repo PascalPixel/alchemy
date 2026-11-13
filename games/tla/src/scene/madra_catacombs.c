@@ -16,6 +16,7 @@
 #include "module/scene/madra_catacombs.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
+#include "text/msg_ids.h"
 
 s32 Func_020011d4(struct Actor *object);
 
@@ -220,8 +221,6 @@ const struct Trigger *Scene_GetEvents(void) {
   return gData_02001914;
 }
 
-extern u8 MsgFieldDoorWontBudge[];
-
 void Func_020011e4(const void *data);
 void Func_020011cc(const void *data);
 
@@ -339,11 +338,8 @@ struct EventWork1ac {
   s32 flag;
 };
 
-extern u8 MsgFieldEyesOfTruth[];
-
 void Actor_MoveToObject(s32 id, s32 value);
 void Func_020011b4(void);
-void Func_020011bc(s32 a, s32 b, s32 c, s32 d);
 /* VIEW(madra_catacombs): routine Func_020011c4 as void Func_020011c4(const void *data); module/scene/mars_lighthouse_room_m.h has void Func_020011c4(void); tried as the definition's void Func_020011c4(void), which the object already declares, Func_02000dcc moves: 1 of 142 instructions in tla-ja. */
 extern void Func_020011c4__madra_catacombs(const void *data) __asm__("Func_020011c4");
 /* VIEW(madra_catacombs): routine Func_020011dc as void Func_020011dc(const void *data); module/scene/trial_road.h has void Func_020011dc(void); tried as the definition's void Func_020011dc(void), which the object already declares, Func_02000dcc moves: 1 of 142 instructions in tla-ja. */
@@ -427,7 +423,6 @@ void Func_020008f4(void) {
 }
 
 void Func_0200092c(void) { Func_0200014c(gData_020013ca); }
-
 
 void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 

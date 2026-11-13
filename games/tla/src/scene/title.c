@@ -52,7 +52,6 @@ struct TitleSprite__title {
 
 extern struct TitleSprite__title gData_020006f0[];
 
-void Func_020005ac(struct TitleSprite__title *sprite, s32 priority);
 s32 Func_020005d4(void);
 void Func_0200062c(s32 value);
 void Func_02000634(s32 value);

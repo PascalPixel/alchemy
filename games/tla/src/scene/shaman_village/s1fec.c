@@ -7,7 +7,6 @@
 #include "module/scene/shaman_village.h"
 #include "task.h"
 
-
 struct ShamanVillageObject *Func_02001fec(void) {
   struct ShamanVillageObject *object =
       ((struct ShamanVillageObject *)Import_ActorCreate(489, 0x780000, 0x400000,
@@ -698,7 +697,6 @@ void Func_02003040(void) {
   Sound_Play(237);
   Sound_Play(76);
 }
-
 
 void Func_020030bc(void) {
   u8 *work = Ram_HeapSlots->effectWork;
@@ -1669,7 +1667,6 @@ void Func_02000d08(void);
 void Func_02000d28(void);
 void Func_02000d48(void);
 void Func_02000e3c(void);
-void Func_02000fc4(void);
 
 // clang-format off
 u32 gData_02005204[] = {

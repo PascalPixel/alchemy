@@ -64,4 +64,26 @@ struct Actor *Func_02003940(s32 *direction, s32 *number, s32 *kind);
 
 void Func_02001c4c(void);
 
+struct Actor;
+
+struct ActionScript {
+  u32 words[9];
+};
+
+struct IsletsMapWork {
+  u8 unk000[0x190];
+  s32 value190;
+  s32 value194;
+};
+
+void Func_02003dfc(struct Actor *object);
+void Func_02003fbc(void);
+void Func_02003fc4(void);
+void Func_02003f74(void);
+void Func_02003fec();
+
+s32 Func_02003684(s32 id);
+
+void Func_02003f4c(s32 actor);
+
 #endif

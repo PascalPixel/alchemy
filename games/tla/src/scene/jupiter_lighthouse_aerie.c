@@ -83,7 +83,6 @@ void Func_02000054(s32 mode) {
   rider->motionFlags = 4;
 }
 
-
 void Func_020001b4(void) {
   Event_SetFlag(0xa0a);
   Event_Start();
@@ -441,7 +440,8 @@ s32 Func_02000b1c(s32 *a, s32 *b) {
 }
 
 extern const s32 gData_0200331c[];
-extern s32 gData_0200333c;
+/* VIEW(jupiter_lighthouse_aerie): variable gData_0200333c as s32 gData_0200333c; module/scene/eastern_alhafra_ship.h has s32 gData_0200333c[]. */
+extern s32 gData_0200333c__jupiter_lighthouse_aerie __asm__("gData_0200333c");
 
 s32 Func_02002b50(s32 x, s32 z, s32 layer);
 /* VIEW(jupiter_lighthouse_aerie): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position); tried as the definition's void Camera_WorldToScreen(struct EffectVector *position), which the object already declares, Func_02001080 moves: 1 of 856 instructions in tla-ja. */
@@ -523,14 +523,13 @@ stop:
     self->update = zero;
     Actor_StartScript(self, gData_0200331c);
     Event_PlaySound(228);
-    gData_0200333c = zero;
+    gData_0200333c__jupiter_lighthouse_aerie = zero;
   }
 }
 
 // ---- games/tla/src/scene/jupiter_lighthouse_aerie/s0d08.c ----
 #include "call.h"
 #include "field_effect.h"
-
 
 struct GustObject *Func_02000d08(struct GustObject *source) {
   struct Vector3 position;

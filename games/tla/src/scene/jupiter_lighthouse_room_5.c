@@ -69,7 +69,6 @@ void Func_02000064(s32 unused, s32 id) {
 u32 __umodsi3();
 void Animation_ApplyChildValues();
 
-
 void Func_020000c8(struct Actor *object) {
   struct AnimatedSprite *sprite = (struct AnimatedSprite *)object->sprite;
   struct SpritePictures *pictures = sprite->pictures;
@@ -748,7 +747,8 @@ s32 Func_02001044(s32 *a, s32 *b) {
 }
 
 extern const s32 gData_020033e0[];
-extern s32 gData_02003400;
+/* VIEW(jupiter_lighthouse_room_5): variable gData_02003400 as s32 gData_02003400; module/scene/idejima.h has u32 gData_02003400[]. */
+extern s32 gData_02003400__jupiter_lighthouse_room_5 __asm__("gData_02003400");
 
 s32 Func_02002a20(s32 x, s32 z, s32 layer);
 /* VIEW(jupiter_lighthouse_room_5): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position); tried as the definition's void Camera_WorldToScreen(struct EffectVector *position), which the object already declares, Func_02001538 moves: 1 of 131 instructions in tla-ja. */
@@ -831,7 +831,7 @@ stop:
     self->update = zero;
     Func_02002820__s0cb8(self, gData_020033e0);
     Event_PlaySound(228);
-    gData_02003400 = zero;
+    gData_02003400__jupiter_lighthouse_room_5 = zero;
   }
 }
 
@@ -841,7 +841,6 @@ stop:
 #include "call.h"
 #include "field_effect.h"
 #include "field_coordinate.h"
-
 
 struct GustObject *Func_02001230(struct GustObject *source) {
   struct Vector3 position;
@@ -893,7 +892,6 @@ s32 Func_02001308(struct Actor *object) {
 done:
   return 0;
 }
-
 
 void Func_020013a8(void) {
   struct PositionedActor *actor9 = ((struct PositionedActor *)Actor_Get(9));
@@ -980,8 +978,6 @@ struct SparkWork__s1230 {
   s32 to[3];
   s16 next;
 };
-
-void Func_020029e8(struct SparkSprite__jupiter_lighthouse_room_5 *sprite);
 
 void Func_02001538(void) {
   struct SparkWork__s1230 *work = Ram_HeapSlots->menuRuntime;

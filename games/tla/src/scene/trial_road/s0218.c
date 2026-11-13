@@ -10,6 +10,7 @@
 #include "field.h"
 #include "event_work.h"
 #include "module/scene/trial_road.h"
+#include "module/window/window.h"
 
 void Func_02000218(s32 side, s32 phase) {
   if (side == 0) {
@@ -120,8 +121,6 @@ void Func_02000428(void) {
   GameFlag_SetBit(644);
   Event_End();
 }
-
-void MessageArgument_Push(u32 value, u32 kind);
 
 /// Puts an item in the chest: "{protagonist} put {actor}'s {item} in the
 /// chest." (MsgTrialRoadStoredItem) with sound 125 while the chest object

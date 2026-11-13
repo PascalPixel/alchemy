@@ -1,16 +1,15 @@
 // ---- games/tla/src/field/event_commands/f0ec2b8.c ----
 #include "types.h"
 #include "ram_buffer.h"
-
-// A flag entry as the world map reads it: its world position.
-struct WorldMapPlace {
-  u8 flag;
-  u8 value;
-  s16 unk02;
-  s16 x;
-  s16 z;
-  u8 unk08[12];
-};
+#include "event_work.h"
+#include "flag_call.h"
+#include "gamepak/far_call/window.h"
+#include "lib.h"
+#include "module/field/event_commands.h"
+#include "module/system/system.h"
+#include "scene.h"
+#include "text/msg_ids.h"
+#include "world_map.h"
 
 // The world map screen's work, laid out as field/world_map.h has it.
 /* VIEW(f0ec2b8): tag struct WorldMapWork as struct WorldMapWork__f0ec2b8; world_map.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:45: dereferencing pointer to incomplete type. */
@@ -24,11 +23,7 @@ struct WorldMapWork__f0ec2b8 {
   s32 unk648;
 };
 
-s32 Party_GetLeaderActor(void);
-const struct FlagEntry *FlagEntries_GetTable(void);
 u32 Func_080ec298(struct WorldMapPlace *place);
-s32 GameFlag_Test(s32 flag);
-void Func_080ec1d0(s32 *screenX, s32 *screenY);
 
 // The place's position on the world map screen.
 #define PLACE_SCREEN_X(place) ((place)->x * 853 / 16384 - 269)
@@ -154,23 +149,6 @@ void Func_080ec484(struct WindowSpriteList *list, s32 dx, s32 dy) {
 #define WORLD_MAP_NAME_LEFT 1
 #endif
 
-struct WorldMapMarker {
-  u8 unk00[4];
-  u16 y : 8;
-  u16 affine : 2;
-  u16 objectMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[2];
-};
-
 /* VIEW(f0ec4d4): tag struct WorldMapWork as struct WorldMapWork__f0ec4d4; f0ec2b8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:272: dereferencing pointer to incomplete type. */
 struct WorldMapWork__f0ec4d4 {
   u16 vramBlock;
@@ -201,48 +179,22 @@ struct WorldMapPlace__f0ec4d4 {
   u8 unk10[4];
 };
 
-struct ResourceTableEntry {
+/* VIEW(f0ec2b8): tag struct ResourceTableEntry as struct ResourceTableEntry__f0ec2b8; module/tla.h has another definition. */
+struct ResourceTableEntry__f0ec2b8 {
   u16 unk00;
   u16 offset;
 };
 
 #define WORK Ram_WorldMapWork
-extern struct ResourceTableEntry gResourceTableEntries[];
-extern const u8 Data_080f1100[];
-extern const u16 Data_080f1120[];
-extern u8 MsgPresentLocation[];
-extern u8 MsgBoat[];
-extern u8 MsgDebugAreaName[];
-extern s32 Data_0202a644;
-extern s32 Data_0202a648;
-extern s16 Data_0202a640;
-extern s16 gData_0202a642;
-extern s16 Data_0202a654[];
-extern s16 Data_0202a656[];
-// A halfword typed beside a word, for the FAKEMATCH that reads the name box's
-// y; no such data exists.
-struct WorldMapAliasedHalfword {
-  s16 value;
-  s32 unk04;
-};
+/* VIEW(f0ec2b8): variable gResourceTableEntries as struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has struct VramBlockCacheEntry gResourceTableEntries[]. */
+extern struct ResourceTableEntry__f0ec2b8 gResourceTableEntries__f0ec2b8[] __asm__("gResourceTableEntries");
 #define NAME_BOX_X Ram_WorldMapNameBox[0]
 #define NAME_BOX_Y Ram_WorldMapNameBox[1]
 #define NAME_BOX_WIDTH Ram_WorldMapNameBox[2]
 #define NAME_BOX_HEIGHT Ram_WorldMapNameBox[3]
-extern struct WorldMapMarker Data_0202a620;
 
-s32 Party_GetLeaderActor(void);
-const struct FlagEntry *FlagEntries_GetTable(void);
-s32 FixedSqrt(s32 value);
-void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-void Func_080ec1d0(s32 *screenX, s32 *screenY);
-s32 GameFlag_Test(s32 flag);
-void Func_080140d8(void *entry, s32 slot);
-s32 ArcTan2(s32 y, s32 x);
-void WindowSprite_PrepareForRedrawFar(void *window);
-s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance);
-void Text_MeasureMessageFar(s32 message, s32 *width, s32 *height);
-void Text_DrawMessageFar(s32 message, void *window, s32 x, s32 y);
+/* VIEW(f0ec2b8): routine Text_DrawMessageFar as void Text_DrawMessageFar(s32 message, void *window, s32 x, s32 y); menu.h has void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y). */
+extern void Text_DrawMessageFar__f0ec2b8(s32 message, void *window, s32 x, s32 y) __asm__("Text_DrawMessageFar");
 
 #define WORLD_MAP_HIGH(value) (((s16 *)&(value))[1])
 #define WORLD_MAP_SCALE(value) ((value) * 300 / 640)
@@ -286,7 +238,7 @@ void Func_080ec4d4(void) {
   Party_GetLeaderActor();
   work = WORK;
   marker = work->markers;
-  tileBase = gResourceTableEntries[work->vramBlock].offset >> 5;
+  tileBase = gResourceTableEntries__f0ec2b8[work->vramBlock].offset >> 5;
   nearest = -1;
   nearestDistance = 64;
   nearestX = 0;
@@ -502,7 +454,7 @@ void Func_080ec4d4(void) {
         }
         if (cursorY < 0)
           cursorY = 0;
-        Text_DrawMessageFar(nearestName, work->window, cursorX, cursorY);
+        Text_DrawMessageFar__f0ec2b8(nearestName, work->window, cursorX, cursorY);
         {
           // One local carries width, then height, into the name box.
           s32 value = width;
@@ -731,7 +683,6 @@ void Func_080ed030(s32 column, s32 row) {
             REG_DMA3);
   }
 }
-
 
 /// The world map cursor's position (x, then y, 16.16 pixels).
 extern s32 *Data_0202a62c;

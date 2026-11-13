@@ -29,6 +29,7 @@
 #include "module/tla.h"
 #include "resource.h"
 #include "scene_ids.h"
+#include "module/scene/venus_lighthouse.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -143,7 +144,6 @@ extern u8 gData_02003d84[];
 extern u8 gData_02003d88[];
 extern u16 gData_02003d8e[];
 extern s8 gData_02003d9c[][2];
-extern s32 gData_0200215c[];
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, -1, z, mode);
@@ -868,7 +868,6 @@ void Func_02001a80(struct Actor *object) {
 #include "call.h"
 #include "task.h"
 
-
 void Func_02001ad0(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
@@ -1019,9 +1018,9 @@ done:
   Vram_Load(gData_02003fc6, 0x100, gData_02003fd8);
 }
 
-extern u32 gInput;
+/* VIEW(staff_credit): variable gInput as u32 gInput; input.h has struct InputState gInput. */
+extern u32 gInput__staff_credit __asm__("gInput");
 extern s16 gData_02003fc8;
-
 
 // The same cursor as the world map's, in this overlay: counts down while A or B
 // is held, redraws the gauge and queues its sprite over the leader.
@@ -1032,7 +1031,7 @@ void Func_02001d90(void) {
   s32 screen[3];
   u32 attributes;
 
-  if ((gInput & 3) != 0 && Event_GetFlag(0x106) == 0 && leader->y > 0x40000) {
+  if ((gInput__staff_credit & 3) != 0 && Event_GetFlag(0x106) == 0 && leader->y > 0x40000) {
     if (--gData_02003fc8 <= 0) {
       Func_0200200c(1);
       gData_02003fc8 = 10;

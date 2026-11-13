@@ -1949,4 +1949,74 @@ extern char SceneId_Ov664Room4;
 
 void Func_020018c8(s32 id);
 
+struct Actor;
+struct SparkSprite__jupiter_lighthouse_room_5;
+struct Vector3;
+struct Window;
+
+struct ClearWork {
+  u8 unk00[20];
+  u16 mode;
+};
+
+struct PasswordWork {
+  void *glyphs[50];
+  void *cells[50];
+  u8 shown[50];
+  u8 unk1c2[26];
+};
+
+struct FieldPartBytes {
+  u8 unk00[5];
+  u8 frame;
+};
+
+struct FieldAnimation {
+  u8 unk00[40];
+  struct FieldPartBytes *part;
+};
+
+struct GateEventWork {
+  u8 unk000[362];
+  u16 gateTimer;
+};
+
+struct FieldPart {
+  s16 kind;
+};
+
+extern char SceneId_Ov6b5;
+
+void Func_020022e8(void);
+s32 Func_020022f0(void);
+void Func_02002350(void);
+void Func_02002370(void *data, s32 a, s32 b);
+void Func_02002398(void);
+void Func_020023a0(void *data);
+void Func_020023e0(s32 scene, s32 entrance);
+
+extern u8 gData_02002440[];
+extern u8 gData_02002454[];
+extern u8 gData_02002468[];
+
+extern u8 gData_0200265e[];
+
+extern u8 Data_0200274a[];
+extern u8 Data_0200288a[];
+extern u8 Data_0200284e[];
+
+extern u8 Data_02012f94[];
+
+void *Func_02002330(struct Window *window, void *glyph, s32 x, s32 y);
+
+void Func_0200561c(void *animation, s32 a);
+s32 Func_02005834(s32 value);
+
+void Func_020057d4(struct Actor *object);
+
+s32 Func_02005684(struct Actor *object, struct Vector3 *position);
+void Func_02005784(s32 id);
+
+void Func_020029e8(struct SparkSprite__jupiter_lighthouse_room_5 *sprite);
+
 #endif

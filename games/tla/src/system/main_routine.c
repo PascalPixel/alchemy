@@ -30,10 +30,12 @@
 #include "module/tla.h"
 #include "task.h"
 
-extern struct SceneEntries gOverlayArea;
+/* VIEW(main_routine): variable gOverlayArea as struct SceneEntries gOverlayArea; scene.h has void *gOverlayArea[]. */
+extern struct SceneEntries gOverlayArea__main_routine __asm__("gOverlayArea");
 
 void *Unit_Get(s32 owner);
-void Irq_SetHandler(s32 a, s32 b, void *callback);
+/* VIEW(main_routine): routine Irq_SetHandler as void Irq_SetHandler(s32 a, s32 b, void *callback); irq.h has void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler). */
+extern void Irq_SetHandler__main_routine(s32 a, s32 b, void *callback) __asm__("Irq_SetHandler");
 s32 FieldSequence_Run(s32 entrance);
 
 /// The scene overlay's exit table: a header word holding a scene id, then that
@@ -67,7 +69,7 @@ void Scene_TakeExit(s32 exitKind) {
   s32 flag;
 
   currentScene = gMainRoutineWork.scene;
-  exitTable = gOverlayArea.exits();
+  exitTable = gOverlayArea__main_routine.exits();
   nextScene = EXIT_NONE;
   nextEntrance = 0;
   if (exitKind == EXIT_NONE)
@@ -238,8 +240,8 @@ void MainRoutine_Run(s32 mode) {
     }
     gRenderOamEnabled = 1;
     Task_ResetAll();
-    Irq_SetHandler(1, 0, 0);
-    Irq_SetHandler(2, 0, 0);
+    Irq_SetHandler__main_routine(1, 0, 0);
+    Irq_SetHandler__main_routine(2, 0, 0);
     Heap_Initialize();
     DebugText_Clear();
     VramCache_Reset();
@@ -285,7 +287,7 @@ void BattleEffect_LoadResourceGroup(s32 unused) {
   const struct Scene *table = gScenes;
   s16 scene = gMainRoutineWork.scene;
 
-  Resource_LoadCode(table[scene].resourceId, &gOverlayArea);
+  Resource_LoadCode(table[scene].resourceId, &gOverlayArea__main_routine);
 }
 
 #define SCENE_RECORD(id) (&gScenes[id])

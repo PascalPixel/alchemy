@@ -414,4 +414,15 @@ extern const u8 gData_0802e89c[];
 extern u8 Render_CopyStridedCode[];
 extern u8 Render_CopyStridedCodeSize[];
 
+struct IconSprite__resource_slot;
+
+struct IconOwner {
+  u8 unk00[80];
+  struct IconSprite__resource_slot *sprite;
+  u8 unk54[8];
+  u8 unk5c;
+  u8 unk5d[5];
+  u8 iconId;
+};
+
 #endif

@@ -17,7 +17,8 @@ void Func_0200065c(void);
 void Func_02000744(void);
 void Func_02000784(void);
 void Func_020007bc(void);
-void Func_02000920(void);
+/* VIEW(data): routine Func_02000920 as void Func_02000920(void); games/tla/src/scene/taopo_swamp/local.h has void Func_02000920 ( s32 , s32 ). */
+extern void Func_02000920__data(void) __asm__("Func_02000920");
 void Func_0200096c(void);
 void Func_02000adc(void);
 void Func_02000afc(void);
@@ -364,7 +365,7 @@ struct Trigger gData_020033e0[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_020004c8)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x308, 0},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, PSYNERGY_PHASE_ACTS), 10, 0x220, EVENT(Func_02000920)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, PSYNERGY_PHASE_ACTS), 10, 0x220, EVENT(Func_02000920__data)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 10, 0x1222, EVENT(Func_0200096c)},
     {TRIGGERS_END},
 };

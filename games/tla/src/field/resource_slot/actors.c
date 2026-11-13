@@ -582,15 +582,6 @@ struct IconSprite__resource_slot {
   u8 unk1b;
 };
 
-struct IconOwner {
-  u8 unk00[80];
-  struct IconSprite__resource_slot *sprite;
-  u8 unk54[8];
-  u8 unk5c;
-  u8 unk5d[5];
-  u8 iconId;
-};
-
 /// Shows icon id on its owner's 16 by 16 sprite: Func_08038248 prepares the
 /// icon in heap slot 68, whose tiles at +0x400 go to the sprite's VRAM cache
 /// slot, and the sprite is reset to scale 1.0, 16-colour palette 0.

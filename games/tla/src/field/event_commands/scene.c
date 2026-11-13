@@ -2,8 +2,17 @@
 #include "task.h"
 #include "ram_buffer.h"
 #include "field_particle.h"
-
-void Field_StartPaletteTransition(s32 frames);
+#include "battle.h"
+#include "battle_system.h"
+#include "event.h"
+#include "field.h"
+#include "flag_call.h"
+#include "gamepak/far_call/window.h"
+#include "heap_release.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/field/object.h"
+#include "text/msg_ids.h"
 
 /// Fades the palettes back to the saved ones over the given frames.
 void BattleEffect_FadeToSavedPalettes(s32 frames) {
@@ -13,14 +22,6 @@ void BattleEffect_FadeToSavedPalettes(s32 frames) {
 void BattleEffect_PrepareBufferInterpolation(void) {
   Field_StartPaletteTransition(8);
 }
-
-struct EffectVector {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-s32 Render_ProjectPoint(const void *position, s32 *result);
 
 void Camera_WorldToScreen(struct EffectVector *position) {
   struct HeapSlots *slots = Ram_HeapSlots;
@@ -44,7 +45,8 @@ void Camera_WorldToScreen(struct EffectVector *position) {
   }
 }
 
-struct BattleFxScene {
+/* VIEW(scene): tag struct BattleFxScene as struct BattleFxScene__scene; field_psynergy_work.h has another definition. */
+struct BattleFxScene__scene {
   u8 unk00[0x50];
   struct FieldParticle slots[24];
   u8 unk710[0xe4];
@@ -52,7 +54,7 @@ struct BattleFxScene {
 
 /// A task: updates the scene's 24 effect slots.
 void BattleEffect_UpdateAllEffectSlots(void) {
-  struct BattleFxScene *scene;
+  struct BattleFxScene__scene *scene;
   struct FieldParticle *slot;
   s32 remainingSlots;
 
@@ -95,28 +97,6 @@ struct EffectWork {
   u8 unk7c8[0x2a];
   s16 unk7f2;
 };
-
-struct LoadEventWork {
-  u8 unk000[0xca5];
-  u8 unkca5;
-  u8 unkca6[7];
-  u8 unkcad;
-  u8 unkcae[8];
-  s8 unkcb6;
-  u8 unkcb7[0x79];
-  u8 unkd30;
-  s8 target;
-  s8 targetY;
-  s8 targetZ;
-  u8 unkd34[4];
-  u8 unkd38;
-};
-
-void *HeapSlot_Alloc(s32 slot, s32 size);
-struct BattleAct *Ability_Get(s32 actionId);
-s32 ResourceTable_CountFreeBlocks(void);
-void BattleEffect_SetupObjectPair(s32 userId, s32 targetId);
-void BattleEffect_StartArcEffect(void);
 
 #define HEAP_SLOT_FX 224
 
@@ -185,26 +165,8 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
 #include "sprite.h"
 #include "actor.h"
 
-struct PairScene {
-  u16 angle;  ///< Four directions.
-  u16 angle8; ///< Eight directions.
-  s32 x;
-  s32 y;
-  s32 z;
-  struct Actor *mainObject;
-  struct Actor *child;
-  s16 firstObjectId;
-  s16 secondObjectId;
-  u8 unk1c[0x1c];
-  void *savedCallback;
-  const s32 *savedScript;
-  u8 savedPalette;
-  u8 unk41[0x6d7];
-  u8 savedTerrain;
-  u8 savedPriority;
-};
-
-void Vector_AddPolarOffset(s32 magnitude, s32 angle, void *position);
+/* VIEW(scene): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 magnitude, s32 angle, void *position); module/system/system.h has void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position). */
+extern void Vector_AddPolarOffset__scene(s32 magnitude, s32 angle, void *position) __asm__("Vector_AddPolarOffset");
 
 void BattleEffect_SetupObjectPair(s32 userId, s32 targetId) {
   struct Actor *user;
@@ -241,32 +203,9 @@ void BattleEffect_SetupObjectPair(s32 userId, s32 targetId) {
     scene->x = user->x;
     scene->z = user->z;
     scene->y = user->y;
-    Vector_AddPolarOffset(0x100000, scene->angle, &scene->x);
+    Vector_AddPolarOffset__scene(0x100000, scene->angle, &scene->x);
   }
 }
-
-struct FinishWork {
-  u8 unk000[16];
-  struct Actor *object;
-  u8 unk014[8];
-  s16 quantity;
-  u8 unk01e[4];
-  s8 sound;
-  s8 showQuantity;
-  u8 unk024[0x6ee];
-  s8 messageRow;
-  u8 messageShown;
-};
-
-extern char MsgBlank2;
-
-s32 GameFlag_Test(s32 flag);
-void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
-void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
-                           s32 action);
-void MessageArgument_PushFar(s32, s32);
-void FieldMessage_ShowFar(s32 message, s32 flags);
-void BattleEffect_StopMainActor(void);
 
 void Func_080dc6d8(void) {
   struct FinishWork *work = Ram_HeapSlots->effectWork;
@@ -317,11 +256,6 @@ void Func_080dc6d8(void) {
 #include "frame.h"
 #include "actor_view.h"
 
-struct EffectSceneWork {
-  u8 reserved00[16];
-  struct Actor *mainObject;
-};
-
 void BattleEffect_StopMainActor(void) {
   struct EffectSceneWork *work = Ram_HeapSlots->effectWork;
 
@@ -330,40 +264,6 @@ void BattleEffect_StopMainActor(void) {
 }
 
 #include "field_sprite.h"
-
-struct CleanupWork {
-  u8 unk000[16];
-  struct Actor *owner;
-  u8 unk014[10];
-  s16 animation;
-  u8 unk020[36];
-  s32 savedShakeX;
-  s32 savedShakeY;
-  s32 savedShakeDecay;
-  struct FieldParticle slots[24];
-  u8 unk710[8];
-  u8 ownerByte;
-  u8 layer;
-};
-
-struct CleanupEventWork {
-  u8 unk000[394];
-  s8 mode;
-  u8 unk18b[0xca5 - 395];
-  s8 unkca5;
-  u8 unkca6[7];
-  s8 unkcad;
-  u8 unkcae[8];
-  s8 unkcb6;
-  s8 unkcb7;
-};
-
-void BattleEffect_ClearOwnedSlot(struct FieldParticle *slot);
-void Func_080dc954(void);
-void BattleEffect_WaitForArcGroups(void);
-void BattleEffect_EndArcEffect(void);
-void Func_080dbb40(void);
-void Event_NoOp(void);
 
 void BattleEffect_CleanupSceneObjects(void) {
   struct CleanupWork *work = Ram_HeapSlots->effectWork;
@@ -432,7 +332,8 @@ void Func_080dc954(void) {
 
 #define WAVE_FX_SLOT 88
 
-struct WaveFxWork {
+/* VIEW(scene): tag struct WaveFxWork as struct WaveFxWork__scene; module/field/event_commands.h has another definition. */
+struct WaveFxWork__scene {
   u8 unk000[0x28b];
   s8 red;
   s8 green;
@@ -445,18 +346,11 @@ struct WaveFxWork {
   u8 unk296[2];
 };
 
-void BattleEffect_InitializeSharedScene(void);
-void BattleEffect_AdvanceHueCycle(void);
-void BattleEffect_ApplyColorToTargetBuffer(s32 colors, s32 mode);
-void BattleEffect_StartBufferInterpolation(s32 frames);
-void Palette_FillNumber15Grey(void);
-void Func_080dcb44(void);
-
 /// Starts the wave effect's work in heap slot WAVE_FX_SLOT: a phase taken
 /// from the frame count, id and value, then the shared scene, the first hue
 /// step and its colour fade, with Func_080dcb44 run each frame.
 void Func_080dc978(s32 id, s32 value) {
-  struct WaveFxWork *work;
+  struct WaveFxWork__scene *work;
 
   work = HeapSlot_AllocEwram(WAVE_FX_SLOT, sizeof(*work));
   Dma_Fill32(0, work, sizeof(*work));
@@ -476,15 +370,15 @@ void Func_080dc978(s32 id, s32 value) {
 
 struct Actor;
 struct Actor *Actor_GetById(u32 objectId);
-void BattleEffect_ApplyFlickerValue(struct Actor *object, s32 value);
-void Func_080dcadc(void);
+/* VIEW(scene): routine BattleEffect_ApplyFlickerValue as void BattleEffect_ApplyFlickerValue(struct Actor *object, s32 value); module/field/event_commands.h has void BattleEffect_ApplyFlickerValue(void *object, s32 value). */
+extern void BattleEffect_ApplyFlickerValue__scene(struct Actor *object, s32 value) __asm__("BattleEffect_ApplyFlickerValue");
 
 void BattleEffect_FinishSceneAndReleaseHeapBlock(void) {
   u8 *work = Ram_HeapSlots->unk4c[3];
 
   Func_080dcadc();
   Task_Remove((TaskFunc)Func_080dcb44);
-  BattleEffect_ApplyFlickerValue(Actor_GetById(*(u16 *)(work + 0x290)), 1);
+  BattleEffect_ApplyFlickerValue__scene(Actor_GetById(*(u16 *)(work + 0x290)), 1);
   BattleEffect_PrepareBufferInterpolation();
   HeapSlot_Release(WAVE_FX_SLOT);
 }
@@ -492,8 +386,6 @@ void BattleEffect_FinishSceneAndReleaseHeapBlock(void) {
 #define BG_PLTT_COLOR(bank, color)                                             \
   (*(volatile u16 *)(0x05000000 + ((bank) * 16 + (color)) * 2))
 #define GREY28 0x739c
-
-void BattleEffect_ArmBg0HBlankDma(void);
 
 /// Gray BG palette 15 colors 1 and 3-12, then start line scrolling.
 void Palette_FillNumber15Grey(void) {

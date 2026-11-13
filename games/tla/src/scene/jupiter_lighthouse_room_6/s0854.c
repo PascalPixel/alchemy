@@ -135,7 +135,8 @@ void Func_020009cc(void) {
   }
 }
 
-extern struct Actor *gData_0200242c[];
+/* VIEW(s0854): variable gData_0200242c as struct Actor *gData_0200242c[]; module/scene/sea_of_time.h has struct Trigger gData_0200242c[]. */
+extern struct Actor *gData_0200242c__s0854[] __asm__("gData_0200242c");
 /* VIEW(s0854): variable gData_0200252e as s16 gData_0200252e; module/scene/scene.h has u16 gData_0200252e; tried as the rest of the object declares it, Func_02000b5c moves: 99 of 200 instructions, Func_02000d18 moves: 0 of 36 instructions, Func_02000d98 moves: 0 of 36 instructions, 1 more in tla-ja. */
 extern s16 gData_0200252e__s0854 __asm__("gData_0200252e");
 
@@ -157,7 +158,7 @@ void Func_02000b5c(void) {
   oam = Data_0200246c;
 
   for (i = 0; i < gData_0200242a; i++) {
-    struct Actor *actor = gData_0200242c[i];
+    struct Actor *actor = gData_0200242c__s0854[i];
     if (actor != 0 && actor->x != 0) {
       s32 big, ox, y, z, oy, depth;
       s32 frame;
@@ -215,7 +216,6 @@ void Func_02000b5c(void) {
   }
 }
 
-
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
@@ -223,7 +223,7 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 void Func_02000d18(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
-  Iwram_ClearWords(gData_0200242c, 64);
+  Iwram_ClearWords(gData_0200242c__s0854, 64);
   Resource_DecodeType01(gField_CachedTilesA, buffer);
   gData_02002428 = Resource_FindFreeEntry();
   VramCache_Load(gData_02002428, 0xc00, buffer);
@@ -237,7 +237,7 @@ void Func_02000d18(void) {
 void Func_02000d98(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
-  Iwram_ClearWords(gData_0200242c, 64);
+  Iwram_ClearWords(gData_0200242c__s0854, 64);
   Resource_DecodeType01(gField_CachedTilesB, buffer);
   gData_02002428 = Resource_FindFreeEntry();
   Vram_Load(gData_02002428, 0x800, buffer);
@@ -251,7 +251,7 @@ void Func_02000d98(void) {
 void Func_02000e18(void) {
   u8 *buffer = BumpAlloc(0x800);
 
-  Iwram_ClearWords(gData_0200242c, 64);
+  Iwram_ClearWords(gData_0200242c__s0854, 64);
   Resource_DecodeType01(gField_CachedTilesC, buffer);
   gData_02002428 = Resource_FindFreeEntry();
   Vram_Load(gData_02002428, 0x800, buffer);
@@ -273,7 +273,7 @@ void Func_02000ea0(s32 id, s32 value) {
 
   if (object != NULL) {
     object->timer = value;
-    gData_0200242c[gData_0200242a] = object;
+    gData_0200242c__s0854[gData_0200242a] = object;
     gData_0200242a++;
   }
 }

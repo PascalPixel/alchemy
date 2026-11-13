@@ -19,16 +19,16 @@
 #include "scene_ids.h"
 #include "frame.h"
 #include "field.h"
+#include "event_work.h"
+#include "module/field/event_commands.h"
+#include "module/scene/jupiter_lighthouse_aerie_beacon.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "system.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-extern s32 gData_02006a24;
-extern s32 gData_0200641c[];
-extern s32 gData_02006470[];
-
-u32 Random16Far(void);
 void Actor_StartScript(struct Actor *object, const void *script);
-void SceneActor_ParkRecord(struct Actor *object);
 void Func_020000ec(void);
 
 static inline void Event_PlayCue(s32 cue) { Sound_Play(cue); }
@@ -167,8 +167,8 @@ void Func_02000198(void) {
    } *)(base))                                                                 \
        ->v)
 
-void Event_Start(void);
-s32 Func_0200581c();
+/* VIEW(s0198): routine Func_0200581c as s32 Func_0200581c(); module/scene/jupiter_lighthouse_aerie_beacon.h has void Func_0200581c(void). */
+extern s32 Func_0200581c__s0198() __asm__("Func_0200581c");
 
 void Func_0200045c(void) {
   s32 t0;
@@ -193,7 +193,7 @@ void Func_0200045c(void) {
       } while (0);
       FieldEvent_Wait(20);
       Event_ShowMessage(0x1b, 0);
-      Func_0200581c();
+      Func_0200581c__s0198();
     }
   }
 }
@@ -249,19 +249,6 @@ void Func_020004c8(void) {
   }
 }
 
-/// The halves of a 16.16 coordinate. Read through an s16 pointer instead, the
-/// high half's offset folds into the coordinate's (differ 11).
-struct FixedHalves {
-  u16 fraction;
-  s16 whole;
-};
-
-/// What a field sprite's record points to.
-struct SpriteRecord {
-  u8 unk00[5];
-  u8 unk05; ///< XXX: set to 1 here; the resource metadata code would say why.
-};
-
 /// While the view's z is at most 177 pixels, sets object 36 at y 0x6f8000 and
 /// full size on odd frames, or at y 0x688000 and 1.3 times the size on even
 /// ones; beyond it, calls Actor_SetPosition(36, 0, 0).
@@ -296,9 +283,10 @@ void Func_020005b8(void) {
 }
 
 s32 Actor_MoveToObject();
-void Func_02005924(void);
-s32 PartyInventory_Remove();
-void *HeapSlot_AllocFar();
+/* VIEW(s0198): routine PartyInventory_Remove as s32 PartyInventory_Remove(); module/game/game.h has s32 PartyInventory_Remove(s32 item_id). */
+extern s32 PartyInventory_Remove__s0198() __asm__("PartyInventory_Remove");
+/* VIEW(s0198): routine HeapSlot_AllocFar as void *HeapSlot_AllocFar(); gamepak/far_call/system.h has void *HeapSlot_AllocFar(s32 slot, s32 size). */
+extern void *HeapSlot_AllocFar__s0198() __asm__("HeapSlot_AllocFar");
 
 extern u8 gData_02006338[];
 
@@ -333,7 +321,7 @@ void Func_0200065c(void) {
       PaletteFade_ApplyTarget(0x10003, 1);
       PaletteFade_Interpolate(20);
       System_Wait(20);
-      Call1((void (*)())PartyInventory_Remove, 245);
+      Call1((void (*)())PartyInventory_Remove__s0198, 245);
       actor4 = Actor_GetById(4);
       created =
           FieldActor_Create(0x1e9, actor4->x, actor4->y + 0x80000, actor4->z);
@@ -348,7 +336,7 @@ void Func_0200065c(void) {
         created->unk5c[0] = 1;
         created->speedLimit = 0x6666;
         created->acceleration = 0xccc;
-        buffer = HeapSlot_AllocFar(68, 0x608);
+        buffer = HeapSlot_AllocFar__s0198(68, 0x608);
         Item_LoadIcon(246);
         Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
         Call1((void (*)())HeapSlot_Release, 68);
@@ -501,18 +489,14 @@ void Func_0200065c(void) {
       Event_SetFlag(0x11a);
       FieldEvent_SetExitRequest(2);
     }
-    Func_0200581c();
+    Func_0200581c__s0198();
   }
 }
 
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Map_CenterOnFollowedPoint(void);
-
-void PartyInventory_Add(s32 item);
+/* VIEW(s0198): routine PartyInventory_Add as void PartyInventory_Add(s32 item); module/game/game.h has s32 PartyInventory_Add(s32 itemId). */
+extern void PartyInventory_Add__s0198(s32 item) __asm__("PartyInventory_Add");
 void *Unit_Get(s32 owner);
 void Inventory_Equip(s32 id, s32 slot);
-void Field_RequestBattleFromEncounterTable(s32 row, s32 column);
 static __inline__ s32 Func_0200592c_(void) { return ((s32)Func_080d4568()); }
 static __inline__ void Func_02005984_(s32 a) { Event_ResolvePendingActions(a); }
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z, s32 b) {
@@ -574,7 +558,7 @@ static __inline__ void FieldMessage_Show_(s32 message, s32 position) {
   FieldMessage_Show(message, position);
 }
 static __inline__ void PartyInventory_Add_(s32 item) {
-  PartyInventory_Add(item);
+  PartyInventory_Add__s0198(item);
 }
 static __inline__ void *Unit_Get_(s32 id) { return Unit_Get(id); }
 static __inline__ void Func_020057ec_(s32 id, s32 slot) {
@@ -588,11 +572,6 @@ static __inline__ void Actor_StartRepeatedMotion_(s32 id, s32 motion) {
 }
 static __inline__ void GameFlag_SetBit_(s32 flag) { GameFlag_SetBit(flag); }
 static __inline__ void Func_0200593c_(s32 a, s32 b) { Field_RequestBattleFromEncounterTable(a, b); }
-
-struct UnitItems {
-  u8 unk00[0xd8];
-  u16 items[15];
-};
 
 #define ACTOR_SET_MODE_AND_WAIT(id, mode, frames)                              \
   do {                                                                         \
@@ -1065,28 +1044,28 @@ void Func_020016e8(void) {
   Field_RequestBattleFromEncounterTable(13, 7);
 }
 
-s32 BattleEffect_StartArcEffect();
-s32 BattleEffect_SetObjectUpdateMode();
-s32 BattleEffect_WaitForArcGroups();
-s32 BattleEffect_EndArcEffect();
+/* VIEW(s0198): routine BattleEffect_StartArcEffect as s32 BattleEffect_StartArcEffect(); module/field/event_commands.h has void BattleEffect_StartArcEffect(void). */
+extern s32 BattleEffect_StartArcEffect__s0198() __asm__("BattleEffect_StartArcEffect");
+/* VIEW(s0198): routine BattleEffect_SetObjectUpdateMode as s32 BattleEffect_SetObjectUpdateMode(); module/field/event_commands.h has void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode). */
+extern s32 BattleEffect_SetObjectUpdateMode__s0198() __asm__("BattleEffect_SetObjectUpdateMode");
+/* VIEW(s0198): routine BattleEffect_WaitForArcGroups as s32 BattleEffect_WaitForArcGroups(); module/field/event_commands.h has void BattleEffect_WaitForArcGroups(void). */
+extern s32 BattleEffect_WaitForArcGroups__s0198() __asm__("BattleEffect_WaitForArcGroups");
+/* VIEW(s0198): routine BattleEffect_EndArcEffect as s32 BattleEffect_EndArcEffect(); module/field/event_commands.h has void BattleEffect_EndArcEffect(void). */
+extern s32 BattleEffect_EndArcEffect__s0198() __asm__("BattleEffect_EndArcEffect");
 
 void Func_02001ac4(s32 a0, s32 a1) {
-  BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(((s32)Actor_Get(a0)), 2);
+  BattleEffect_StartArcEffect__s0198();
+  BattleEffect_SetObjectUpdateMode__s0198(((s32)Actor_Get(a0)), 2);
   Event_PlaySound(0xc9);
   FieldEvent_Wait(60);
-  BattleEffect_SetObjectUpdateMode(((s32)Actor_Get(a0)), 0);
-  BattleEffect_WaitForArcGroups();
-  BattleEffect_EndArcEffect();
+  BattleEffect_SetObjectUpdateMode__s0198(((s32)Actor_Get(a0)), 0);
+  BattleEffect_WaitForArcGroups__s0198();
+  BattleEffect_EndArcEffect__s0198();
   Actor_SetAnimation(a1, 1);
 }
 
-void Event_FinishScreenTransition(void);
-
-void Func_02003a6c(s32 mode);
-void Func_02003c58(s32 mode);
-
-s32 Party_PlaySavedMusic();
+/* VIEW(s0198): routine Party_PlaySavedMusic as s32 Party_PlaySavedMusic(); module/system/system.h has void Party_PlaySavedMusic(void). */
+extern s32 Party_PlaySavedMusic__s0198() __asm__("Party_PlaySavedMusic");
 extern u8 gData_02005ff0[];
 extern u8 gData_02005ff8[];
 extern u8 gData_02006088[];
@@ -1263,7 +1242,7 @@ void Func_02001bc4(void) {
   FieldEvent_ShowMessageThenWait(30, 0, 0);
   Actor_SetPositionAndFacing(30, 0x2000000, 0x1480000, mid);
   Func_02003a6c(0);
-  Party_PlaySavedMusic();
+  Party_PlaySavedMusic__s0198();
   FieldEvent_Wait(10);
   Actor_SetPositionAndFacing(0, 0x2180000, 0x1700000, mid);
   Actor_SetPositionAndFacing(1, 0x2180000, 0x1800000, mid);
@@ -1547,7 +1526,7 @@ L_0200a9e0:
   Event_WaitTransitionFrames();
   Func_02001b04(0);
   FieldEvent_SetExitRequest(1);
-  Func_0200581c();
+  Func_0200581c__s0198();
   return;
 }
 
@@ -1834,7 +1813,7 @@ void Func_02002ae4(void) {
   Actor_FaceDirection(6, 0x4000, 0);
   Actor_FaceDirection(7, 0x4000, 0);
   Func_02003a6c(3);
-  Party_PlaySavedMusic();
+  Party_PlaySavedMusic__s0198();
   FieldEvent_ShowMessageThenWait(0, 0, 0);
   Actor_ShowEmote(4, 0x102, 0x1e);
   W_Func_020058fc(5, 0x109, 0x1e);
@@ -2044,7 +2023,7 @@ void Func_02002ae4(void) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(1);
-  Func_0200581c();
+  Func_0200581c__s0198();
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
@@ -2073,29 +2052,19 @@ void Func_02003a28(s32 *out, s32 zArg) {
   }
 }
 
-struct SceneActor {
-  u8 pad0[16];
-  s32 unk_10;
-  u8 pad14[35 - 20];
-  u8 unk_23;
-  u8 pad24[64 - 36];
-  s32 unk_40;
-  u8 pad44[85 - 68];
-  u8 unk_55;
-};
 struct SceneWork {
   u8 pad0[12];
   s32 unk_0c;
 };
-struct FieldWork {
+/* VIEW(s0198): tag struct FieldWork as struct FieldWork__s0198; field_work.h has another definition. */
+struct FieldWork__s0198 {
   u8 pad0[0x178];
   struct SceneWork unk_178;
 };
 struct Iwram {
   u8 pad0[32];
-  struct FieldWork *field;
+  struct FieldWork__s0198 *field;
 };
-extern s32 Data_02006a1c;
 extern s32 gData_020059fc[];
 extern s32 gData_02005a0c[];
 extern s32 gData_02005a14[];
@@ -2188,21 +2157,17 @@ void Func_02003a6c(s32 mode) {
   }
 }
 
-struct HeapSlotWords {
+/* VIEW(s0198): tag struct HeapSlotWords as struct HeapSlotWords__s0198; module/scene/scene.h has another definition. */
+struct HeapSlotWords__s0198 {
   s32 unk00[8];
   u8 *map;
-};
-
-struct ScrollWork {
-  s32 unk00[3];
-  s32 height;
 };
 
 extern s32 gData_02005a20[];
 
 void Func_02003c58(s32 mode) {
   struct ScrollWork *work =
-      (struct ScrollWork *)(((struct HeapSlotWords *)Ram_HeapSlots)->map + 376);
+      (struct ScrollWork *)(((struct HeapSlotWords__s0198 *)Ram_HeapSlots)->map + 376);
   s32 speed = 0x18000;
   u32 count = 0;
   u32 i;
@@ -2244,9 +2209,9 @@ void Func_02003c58(s32 mode) {
   System_Wait(2);
 }
 
-s32 Func_020059b4();
 s32 Func_02004644();
-s32 Party_AddMember();
+/* VIEW(s0198): routine Party_AddMember as s32 Party_AddMember(); module/game/game.h has s32 Party_AddMember(s32 owner). */
+extern s32 Party_AddMember__s0198() __asm__("Party_AddMember");
 
 s32 Scene_Initialize(void) {
   s32 t11;
@@ -2297,11 +2262,11 @@ s32 Scene_Initialize(void) {
     gMainRoutineWork.retreatEntrance = 1;
   } else {
     if (gMainRoutineWork.entrance == 0xa) {
-      Party_AddMember(5);
+      Party_AddMember__s0198(5);
       Func_02001388();
     } else {
       if (gMainRoutineWork.entrance == 0xb) {
-        Party_AddMember(6);
+        Party_AddMember__s0198(6);
         Func_020016e8();
       } else {
         if (gMainRoutineWork.entrance == 0xc) {
@@ -2350,7 +2315,6 @@ extern s32 gData_020069f4;
 
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gData_020069f4 = value; }
-extern u16 gData_02006a2c[];
 
 void Func_02003f60(void) {
   u16 colors[16];
@@ -2391,12 +2355,8 @@ next:
   gData_020069f4++;
 }
 
-extern u16 gData_02006a4c[];
-extern u16 gData_02006a50[];
-
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_020057c4();
-void Func_020059ec();
+/* VIEW(s0198): routine Func_020057c4 as void Func_020057c4(); module/scene/scene.h has void Func_020057c4(void). */
+extern void Func_020057c4__s0198() __asm__("Func_020057c4");
 
 void Func_0200401c(s32 mode) {
   gData_020069f8 = 1;
@@ -2424,15 +2384,12 @@ void Func_020040a0(s32 id) {
   object->y = height + 0x200000;
   object->priorityFlags |= 128;
   height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
-  Func_020057c4(object->x, object->z, 0, (height >> 19) + 6);
+  Func_020057c4__s0198(object->x, object->z, 0, (height >> 19) + 6);
   Func_020059ec(object->x, object->z, 0, 128);
 }
 
 #include "vector3.h"
 #include "main_routine_work.h"
-
-void Event_Start(void);
-
 
 void Func_020040f4(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -2502,7 +2459,7 @@ void Func_020040f4(void) {
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unkd46 = 1;
   work->exit = 0;
-  Func_0200581c();
+  Func_0200581c__s0198();
 }
 
 s32 Func_020042e0(s32 *a, s32 *b) {
@@ -2512,47 +2469,13 @@ s32 Func_020042e0(s32 *a, s32 *b) {
   return Iwram_Sqrt(dx * dx + dz * dz);
 }
 
-/// The object this update drives: an Actor with its own bytes over the callback
-/// word.
-struct Object6a5 {
-  u8 unk00[6];
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x1c];
-  s32 speed;
-  u8 unk34[0x1c];
-  s8 *sprite;
-  u8 unk54[0x0e];
-  u8 unk62;
-  u8 unk63;
-  u16 unk64;
-  u8 unk66[6];
-  void (*update)(void);
-};
-
-/// The scene's event work, as far as this update reads it.
-struct EventWork6a5 {
-  u8 unk000[346];
-  s16 unk15a;
-  u8 unk15c[2];
-  s16 unk15e;
-  u8 unk160[6];
-  s16 unk166;
-  s16 unk168;
-  s16 unk16a;
-};
-
 /* VIEW(s3f54): routine Actor_StartScript as void Actor_StartScript(struct Object6a5 *object, const void *script); s0198 has void Actor_StartScript(struct Actor *object, const void *script); not tried: Actor_StartScript's bound declaration was not found. */
 extern void Func_02005764__s3f54(struct Object6a5 *object, const void *script) __asm__("Actor_StartScript");
-void Camera_WorldToScreen(struct Vector3 *position);
-s32 Func_020059e4();
-s32 Math_Cosine(s32 angle);
-void Actor_SetAnimationSpeed(struct Object6a5 *object, s32 value);
-s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
+/* VIEW(s0198): routine Camera_WorldToScreen as void Camera_WorldToScreen(struct Vector3 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
+extern void Camera_WorldToScreen__s0198(struct Vector3 *position) __asm__("Camera_WorldToScreen");
+/* VIEW(s0198): routine Actor_SetAnimationSpeed as void Actor_SetAnimationSpeed(struct Object6a5 *object, s32 value); module/field/field.h has void Actor_SetAnimationSpeed(struct Actor *object, s32 value). */
+extern void Actor_SetAnimationSpeed__s0198(struct Object6a5 *object, s32 value) __asm__("Actor_SetAnimationSpeed");
 extern u8 gData_020069fc[];
-extern s32 Data_02006a28;
 
 void Func_0200430c(struct Object6a5 *object) {
   struct EventWork6a5 *work = Ram_HeapSlots->eventWork;
@@ -2565,10 +2488,10 @@ void Func_0200430c(struct Object6a5 *object) {
 
   if (work->unk166 != 0 || work->unk15a != 0 || work->unk15e != 0 ||
       work->unk168 != 0) {
-    Actor_SetAnimationSpeed(object, 0);
+    Actor_SetAnimationSpeed__s0198(object, 0);
     return;
   }
-  Actor_SetAnimationSpeed(object, 16);
+  Actor_SetAnimationSpeed__s0198(object, 16);
   timer = object->unk64 + 1;
   object->unk64 = timer;
   if ((timer & 31) == 31)
@@ -2583,7 +2506,7 @@ void Func_0200430c(struct Object6a5 *object) {
     position.x = object->x;
     position.y = object->y;
     position.z = object->z;
-    Camera_WorldToScreen(&position);
+    Camera_WorldToScreen__s0198(&position);
     if (position.x <= 0x1100000) {
       if (position.x >= -0x200000) {
         if (object->unk62 == 0) {

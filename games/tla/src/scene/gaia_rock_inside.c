@@ -22,6 +22,7 @@
 #include "module/field/event_commands.h"
 #include "module/field/object.h"
 #include "module/scene/scene.h"
+#include "module/scene/gaia_rock_inside.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -231,8 +232,6 @@ s32 Func_020006f8(void) {
   return 0;
 }
 
-extern s32 gData_020055c0[];
-
 s32 Func_02000718(void) {
   s32 t0;
 
@@ -243,8 +242,6 @@ s32 Func_02000718(void) {
   Actor_SetAttachedEffect(0xa, 0x102);
   return 0;
 }
-
-extern s32 gData_02005610[];
 
 s32 Func_02000748(void) {
   s32 t0;

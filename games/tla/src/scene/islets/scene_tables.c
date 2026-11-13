@@ -8,6 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
+#include "module/scene/islets.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -86,11 +87,10 @@ const u8 *Scene_GetEvents(void) {
 #include "event_work.h"
 #include "text/msg_ids.h"
 
-void Func_02003ff4();
-void Func_02003dfc(struct Actor *object);
-void Func_02003fbc(void);
-void Func_02003fc4(void);
-void PartyInventory_Remove(s32 item);
+/* VIEW(scene_tables): routine Func_02003ff4 as void Func_02003ff4(); module/scene/mars_lighthouse_aerie.h has void Func_02003ff4(void). */
+extern void Func_02003ff4__scene_tables() __asm__("Func_02003ff4");
+/* VIEW(scene_tables): routine PartyInventory_Remove as void PartyInventory_Remove(s32 item); module/game/game.h has s32 PartyInventory_Remove(s32 item_id). */
+extern void PartyInventory_Remove__scene_tables(s32 item) __asm__("PartyInventory_Remove");
 
 void Func_02000210(void) {
   s32 result0;
@@ -222,7 +222,7 @@ void Func_0200040c(void) {
   result0 = Func_020003dc();
   if (result0 == 0)
     goto L_0200841e;
-  Func_02003ff4(21);
+  Func_02003ff4__scene_tables(21);
   goto L_0200843a;
 L_0200841e:
   Event_Start();
@@ -331,7 +331,7 @@ void Func_02000568(void) {
     FieldEvent_Wait(10);
     Func_02003fc4();
     Message_ShowCentered((s32)MsgOhMyThat + 1, 1);
-    PartyInventory_Remove(0x1c4);
+    PartyInventory_Remove__scene_tables(0x1c4);
     Party_GiveItem(0x1c5, 0);
     Func_02003fbc();
     if (spawned != 0) {
@@ -358,8 +358,6 @@ void Func_02000568(void) {
 // store reuses the second answer, which then stays in r7. HAND_BACK is a plain
 // block: a do-while(0) ends CSE's block and loses the owner address and
 // message bases in the refusals.
-
-void Func_02003f74(void);
 
 #define STEP(actor, x, z)                                                      \
   (Actor_GetById(actor)->actionFlags &= ~1, Actor_WalkToAndWait(actor, x, z),  \
@@ -654,7 +652,7 @@ void Func_02000e38(void) {
     trader->update = 0;
     Func_02003fc4();
     Message_ShowCentered((s32)MsgTradedHisMilk, 1);
-    PartyInventory_Remove(454);
+    PartyInventory_Remove__scene_tables(454);
     Party_GiveItem(giftItem, 0);
     Func_02003fbc();
     Actor_GetById(gMainRoutineWork.currentOwner)->facing = 0x4000;
@@ -696,10 +694,6 @@ void Func_02001278(struct Actor *object) {
 #define ISLETS_GIFT_TRANSITION 513
 #endif
 
-struct ActionScript {
-  u32 words[9];
-};
-
 extern struct ActionScript gData_02004004;
 
 void Func_0200129c(struct Actor *gift) {
@@ -730,7 +724,7 @@ void Func_0200129c(struct Actor *gift) {
   Actor_WaitForMove(gift);
   Func_02003de4(gift, 1);
   gift->update = 0;
-  PartyInventory_Remove(455);
+  PartyInventory_Remove__scene_tables(455);
   Event_ShowMessage(9, 0);
   ((u8 *)HeapSlot_AllocEwram(88, 664))[661] = 99;
   Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
@@ -1018,12 +1012,13 @@ void Func_02001c4c(void) {
 #include "dma.h"
 #include "io_reg.h"
 
-extern u8 gData_02004f04;
+/* VIEW(scene_tables): variable gData_02004f04 as u8 gData_02004f04; module/scene/prox.h has s32 gData_02004f04[]. */
+extern u8 gData_02004f04__scene_tables __asm__("gData_02004f04");
 extern s16 gData_02004f10[2][160];
 
 /// Applies BG1 horizontal line scrolling with HBlank DMA.
 void Func_02001cac(void) {
-  s16 *lines = gData_02004f10[gData_02004f04];
+  s16 *lines = gData_02004f10[gData_02004f04__scene_tables];
   s32 first = lines[0];
   volatile u16 *scroll;
   volatile u16 *dma;
@@ -1046,7 +1041,7 @@ void Func_02001cac(void) {
 
 void Func_02001cfc(void) {
   s16 *layer = (s16 *)&Ram_HeapSlots->mapWork->layers[2];
-  s16 *lines = gData_02004f10[gData_02004f04 ^ 1];
+  s16 *lines = gData_02004f10[gData_02004f04__scene_tables ^ 1];
   s32 v[2];
   s32 *count = &v[1];
   s32 value;
@@ -1063,7 +1058,7 @@ void Func_02001cfc(void) {
     value += *count % 3;
     *lines++ = value - 1;
   }
-  gData_02004f04 ^= 1;
+  gData_02004f04__scene_tables ^= 1;
 }
 
 void Func_02001d90(void) {
@@ -1164,12 +1159,13 @@ void Func_02001f74(void) {
   Event_End();
 }
 
-void Actor_JumpDownLedge();
+/* VIEW(scene_tables): routine Actor_JumpDownLedge as void Actor_JumpDownLedge(); module/field/event_commands.h has void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle). */
+extern void Actor_JumpDownLedge__scene_tables() __asm__("Actor_JumpDownLedge");
 
 void Func_0200208c(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, 1);
+  Actor_JumpDownLedge__scene_tables(gMainRoutineWork.currentOwner, 6, 1);
   Event_End();
   return;
 }
@@ -1372,8 +1368,6 @@ void Func_0200253c(void) {
     }
   }
 }
-
-void Func_02003fec();
 
 void Func_020025a4(void) {
   Event_SetFlag(0x218);
@@ -1733,7 +1727,6 @@ void Func_02002d7c(void) {
   } while (--*owed != 0);
 }
 
-s32 Func_02003684(s32 id);
 extern const u8 gData_02004274[];
 
 /// The room's setup: flags, the objects' places and the scene state.
@@ -1818,14 +1811,6 @@ void Func_020030b4(void) {
 }
 
 // A room's setup.
-
-void Func_02003f4c(s32 actor);
-
-struct IsletsMapWork {
-  u8 unk000[0x190];
-  s32 value190;
-  s32 value194;
-};
 
 /// Sets up the room's actors and map work.
 void Func_02003164(void) {

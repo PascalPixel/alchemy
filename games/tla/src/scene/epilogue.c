@@ -20,6 +20,7 @@
 #include "resource.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
+#include "uiflow.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -112,7 +113,6 @@ void Func_02000098(void) {
 
 struct EpilogueWindow *Message_OpenWindow(s32 id, s32 x, s32 y,
                                                 s32 resource);
-void Window_Close(struct Window *work, s32 release);
 
 /// Opens the epilogue's message window at x and y and, unless bit 15 of the
 /// message is set, a name window at left and line that Func_0200005c follows;

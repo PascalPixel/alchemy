@@ -16,6 +16,7 @@
 #include "module/scene/gaia_rock_inside.h"
 #include "module/scene/scene.h"
 #include "module/system/system.h"
+#include "field.h"
 
 struct Spark {
   u8 unk00[8];
@@ -43,10 +44,9 @@ struct Spark {
 
 extern const u8 gData_02005264[], gData_02005218[], gData_02005234[],
     gData_02005288[], gData_02005244[], gData_020052ac[], gData_020052dc[];
-void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Func_02004d9c(void *object, s32 mode);
-void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
-void Animation_SetStateFlags(struct Actor *object, u32 value);
+/* VIEW(s15d0): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
+extern void Actor_SetSingleChildFlags__s15d0(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
 void Actor_StartScript(void *object, const u8 *script);
 void Func_02001548(void);
 
@@ -93,7 +93,7 @@ first:
     Actor_SetPartAttribute(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
     Func_02004d9c(spark, 7);
-    Actor_SetSingleChildFlags(spark, 0);
+    Actor_SetSingleChildFlags__s15d0(spark, 0);
     Animation_SetStateFlags(spark, 1);
     Actor_StartScript(spark, gData_02005218);
     REG_BLDALPHA = 0x1004;
@@ -125,7 +125,7 @@ second:
     Actor_SetPartAttribute(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
     Func_02004d9c(spark, 7);
-    Actor_SetSingleChildFlags(spark, 0);
+    Actor_SetSingleChildFlags__s15d0(spark, 0);
     Animation_SetStateFlags(spark, 1);
     /* FAKEMATCH(wrapper): forwarded for its argument order; as a direct call, 2
      * of 402 instructions differ in tla-en. */
@@ -168,7 +168,7 @@ third:
     spark->priorityFlags = 1;
     Actor_SetPartAttribute(spark, 2);
     Func_02004d9c(spark, 7);
-    Actor_SetSingleChildFlags(spark, 0);
+    Actor_SetSingleChildFlags__s15d0(spark, 0);
     Animation_SetStateFlags(spark, 1);
     Actor_StartScript(spark, gData_02005244);
   }
@@ -397,7 +397,6 @@ void Func_02001d14(void) {
 // the four flags 0x9bc to 0x9bf) and leaves. The destination setters take s32:
 // as u16 the scene symbol loads through ldrh and the pools break up.
 #include "text/msg_ids.h"
-
 
 void Func_02001ebc(void) {
   s32 count;

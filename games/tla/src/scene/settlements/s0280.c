@@ -1,7 +1,8 @@
 #include "local.h"
 #include "field_event.h"
-
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+#include "field.h"
+#include "module/scene/settlements.h"
+#include "palette_snapshots.h"
 
 void Func_02000280(void) { Func_080d7788(10, 1, 14); }
 
@@ -60,14 +61,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "main_routine_work.h"
 #include "io_reg.h"
 #include "version.h"
-
-extern char SceneId_Ov690Room1;
-extern char SceneId_Ov690Room2;
-extern char SceneId_Ov690Room4;
-extern char SceneId_Ov690Room7;
-extern char SceneId_Ov690Room8;
-extern char SceneId_Ov690Room9;
-extern char SceneId_Ov690Room10;
 
 extern u8 gData_020024ac[];
 extern u8 gData_020024dc[];
@@ -321,50 +314,9 @@ s32 Func_020007fc(s32 *p) {
   return 0;
 }
 
-struct OrbitSprite {
-  u8 unk00[5];
-  u8 flags05Low : 5;
-  u8 flags05Bit5 : 1;
-  u8 flags05High : 2;
-  u8 unk06[3];
-  u8 flags09Low : 2;
-  u8 flags09Mode : 2;
-  u8 flags09High : 4;
-  u8 unk0a[6];
-  u8 palette;
-  u8 unk11[10];
-  u8 state;
-};
-
-struct OrbitObject {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[15];
-  u8 flags23;
-  u8 unk24[12];
-  s32 orbitAngle;
-  u8 unk34[4];
-  s32 orbitCenterX;
-  s32 orbitCenterY;
-  s32 orbitCenterZ;
-  u8 unk44[12];
-  struct OrbitSprite *sprite;
-  u8 unk54;
-  u8 mode;
-  u8 state;
-  u8 unk57[5];
-  u8 active;
-  u8 unk5d[4];
-  u8 visible;
-  u8 unk62[10];
-  u32 callback;
-};
-
 void Func_02002180(s32 a, s32 b, s32 c, s32 d);
-void Func_02002170(void);
-u8 *HeapSlot_AllocFar(s32 slot, s32 size);
+/* VIEW(s0280): routine HeapSlot_AllocFar as u8 *HeapSlot_AllocFar(s32 slot, s32 size); gamepak/far_call/system.h has void *HeapSlot_AllocFar(s32 slot, s32 size). */
+extern u8 *HeapSlot_AllocFar__s0280(s32 slot, s32 size) __asm__("HeapSlot_AllocFar");
 
 static __inline__ void Settlements_Func_02002180(s32 a, s32 b, s32 c, s32 d) {
   Func_02002180(a, b, c, d);
@@ -402,7 +354,7 @@ void Func_02000860(void) {
     actor->y += 0x100000;
   actor->flags23 &= 0xfe;
   actor->visible = 1;
-  transfer = HeapSlot_AllocFar(68, 0x608);
+  transfer = HeapSlot_AllocFar__s0280(68, 0x608);
   Item_LoadIcon(193);
   transfer += 0x400;
   Vram_Load(sprite->palette, 128, transfer);
@@ -415,14 +367,9 @@ void Func_02000860(void) {
   actor->state = 0;
 }
 
-extern char SceneId_Ov690Room6;
-
 extern const u8 gData_02002272[];
 
 void Func_02000e04(void);
-void Func_0200125c(void);
-void Func_02002140(s32 a);
-void Func_02002188(const void *data);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -569,15 +516,6 @@ void Func_02000cfc(void) {
 }
 
 extern s32 gData_02002c5c;
-extern u16 gData_02002c60[];
-extern u16 gData_02002c80[];
-
-struct PaletteCycleWork {
-  u8 unk000[0x166];
-  s16 unk166;
-  u8 unk168[0xca4 - 0x168];
-  s8 unkca4;
-};
 
 void Func_02000d14(void) {
   struct PaletteCycleWork *work =
@@ -821,8 +759,6 @@ void Func_02001304(void) {
 
 extern const u8 gData_0200232c[];
 
-void Func_02001620(s32 id);
-
 #define SINK(frames)                                                           \
   i = (frames);                                                                \
   do {                                                                         \
@@ -888,25 +824,6 @@ void Func_0200155c(void) {
   Func_0200122c();
   Func_0200138c();
 }
-
-struct SettlementsVector {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct SettlementsSpawn {
-  s32 unk00;
-  s32 unk04;
-  s32 scaleX;
-  s32 scaleY;
-  s32 speed;
-  s32 acceleration;
-  u16 kind;
-  const u8 *script;
-  s32 unk20;
-  void *update;
-};
 
 extern const u8 gData_02002310[];
 

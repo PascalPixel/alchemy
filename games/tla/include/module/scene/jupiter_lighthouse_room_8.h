@@ -48,4 +48,6 @@ extern struct CellTarget gData_02002bf8;
 
 void Func_02001bc0(struct CellTarget *table, struct CellTargetEntry *entry);
 
+extern u16 gData_020022d0[];
+
 #endif

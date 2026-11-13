@@ -7,21 +7,24 @@
 #include "module/field/field.h"
 #include "module/system/system.h"
 
-struct SwitchCell {
+/* VIEW(f0eabd0): tag struct SwitchCell as struct SwitchCell__f0eabd0; field.h has another definition. */
+struct SwitchCell__f0eabd0 {
   u8 unk00[2];
   u8 block;
   u8 flags;
 };
 
-struct RestoreLayer {
+/* VIEW(f0eabd0): tag struct RestoreLayer as struct RestoreLayer__f0eabd0; module/field/field.h has another definition. */
+struct RestoreLayer__f0eabd0 {
   u8 unk00[0x138 - 0x108];
-  struct SwitchCell *cells;
+  struct SwitchCell__f0eabd0 *cells;
   u8 unk34[4];
 };
 
-struct RestoreMap {
+/* VIEW(f0eabd0): tag struct RestoreMap as struct RestoreMap__f0eabd0; module/field/field.h has another definition. */
+struct RestoreMap__f0eabd0 {
   u8 unk000[0x108];
-  struct RestoreLayer layers[3];
+  struct RestoreLayer__f0eabd0 layers[3];
 };
 
 extern u8 gMapShapeGrid[];
@@ -30,8 +33,8 @@ struct Actor *Actor_GetById(u32 objectId);
 #include "field.h"
 
 void Func_080eabd0(u16 *actors) {
-  struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapWork;
-  struct SwitchCell *blocks = map->layers[2].cells;
+  struct RestoreMap__f0eabd0 *map = (struct RestoreMap__f0eabd0 *)Ram_HeapSlots->mapWork;
+  struct SwitchCell__f0eabd0 *blocks = map->layers[2].cells;
   u8 *grid = gMapShapeGrid;
   struct Actor *leader;
   s32 height;
@@ -42,12 +45,12 @@ void Func_080eabd0(u16 *actors) {
     s32 level =
         MapGrid_GetTerrainHeightFar(object->terrainId, object->x, object->z) >> 19;
     s32 slot = Func_080eab70(object);
-    struct SwitchCell *cells = map->layers[object->terrainId].cells;
+    struct SwitchCell__f0eabd0 *cells = map->layers[object->terrainId].cells;
     // The row's address as an integer sum, index first: &grid[row] adds the
     // grid first.
     u8 *shapes =
         (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
-    struct SwitchCell *cell;
+    struct SwitchCell__f0eabd0 *cell;
     s32 tag;
     u8 flags;
 
@@ -91,11 +94,11 @@ void Func_080eace8(u16 *actors) {
 
   for (; *actors != 0xffff; actors++) {
     if (target == Actor_GetById(*actors)) {
-      struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapWork;
+      struct RestoreMap__f0eabd0 *map = (struct RestoreMap__f0eabd0 *)Ram_HeapSlots->mapWork;
       s32 zero = 0;
       u8 *grid = gMapShapeGrid;
-      struct SwitchCell *cells = map->layers[target->terrainId].cells;
-      struct SwitchCell *blocks = map->layers[2].cells;
+      struct SwitchCell__f0eabd0 *cells = map->layers[target->terrainId].cells;
+      struct SwitchCell__f0eabd0 *blocks = map->layers[2].cells;
       u8 *shapes = &grid[((s32)cells - (s32)Ram_MapCellBuffer) >> 2];
       u32 key = Func_080202f0(target->terrainId, target->x, target->z);
       s32 level =
@@ -125,15 +128,15 @@ void Func_080eadfc(void) {
       *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
 
   if (target != NULL) {
-    struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapWork;
+    struct RestoreMap__f0eabd0 *map = (struct RestoreMap__f0eabd0 *)Ram_HeapSlots->mapWork;
     /* FAKEMATCH(temporary): the cell table read split into its byte offset
      * and the read, with the grid's address read between them; as
      * cells = map->layers[target->terrainId].cells, 35 of 84 instructions
      * differ in tla-en. */
-    s32 offset = offsetof(struct RestoreMap, layers[target->terrainId].cells);
+    s32 offset = offsetof(struct RestoreMap__f0eabd0, layers[target->terrainId].cells);
     u8 *grid = gMapShapeGrid;
-    struct SwitchCell *cells = *(struct SwitchCell **)((u8 *)map + offset);
-    struct SwitchCell *blocks = map->layers[2].cells;
+    struct SwitchCell__f0eabd0 *cells = *(struct SwitchCell__f0eabd0 **)((u8 *)map + offset);
+    struct SwitchCell__f0eabd0 *blocks = map->layers[2].cells;
     s32 index = ((s32)cells - (s32)Ram_MapCellBuffer) >> 2;
     u8 *shapes;
     u32 key;
@@ -353,7 +356,6 @@ struct ScreenSprite {
   s32 y;
   u8 unk14[0x14];
 };
-
 
 /// Places sprite at the screen position of world position and draws it.
 void EffectSprite_DrawAtWorldPosition(struct ScreenSprite *sprite,

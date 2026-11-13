@@ -28,6 +28,7 @@
 #include "module/field/lucky_wheels.h"
 #include "module/system/system.h"
 #include "resource_ids.h"
+#include "graphics.h"
 
 /// Blanks the display but for 1D objects, seeds the random state from the
 /// play time, plays sound 709 and runs Lucky Wheels.
@@ -379,8 +380,6 @@ struct ReelWork {
   s32 phase;
 #endif
 };
-
-void Text_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x, s32 y);
 
 extern char MsgSlotsBet[];
 extern char MsgSlotsStopReels[];

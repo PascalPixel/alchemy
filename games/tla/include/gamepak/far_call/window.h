@@ -61,4 +61,6 @@ struct WindowSprite *WindowSprite_CreateLoadedFar(s32 item, s32 mode,
 s32 Menu_SelectShopCommandFar(s32 action);
 s32 Menu_SelectSanctumServiceFar(s32 prev);
 
+void Text_MeasureMessageFar(s32 message, s32 *width, s32 *height);
+
 #endif

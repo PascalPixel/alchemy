@@ -27,6 +27,7 @@
 #include "module/system/system.h"
 #include "scene_call.h"
 #include "text/msg_ids.h"
+#include "module/window/window.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -82,28 +83,6 @@ next:
   Event_WaitTransitionFrames();
   Event_End();
 }
-
-extern u8 MsgItLooksLikeThe[];
-extern u8 MsgTheArmorerAnd[];
-extern u8 MsgAfterTheChampa[];
-extern u8 MsgPeopleAreSaying[];
-extern u8 MsgIKnewThere[];
-extern u8 MsgOwOwOw[];
-extern u8 MsgMyBoyfriendShin[];
-extern u8 MsgAllMyInjuries[];
-extern u8 MsgMySisterWas[];
-extern u8 MsgIfYouDon[];
-extern u8 MsgHaveYouBy[];
-extern u8 MsgWhereCouldMenardi[];
-extern u8 MsgEveryoneHereIn[];
-extern u8 MsgYeahWellWe[];
-extern u8 MsgYouCominThrough[];
-extern u8 MsgYeahUhWe[];
-extern u8 MsgOhUhYou[];
-extern u8 MsgWasIJust[];
-extern u8 MsgHeyMisterAre[];
-extern u8 MsgDidYouCome[];
-extern u8 MsgIsThereBy[];
 
 void Func_02000108(s32 arg) {
   if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
@@ -199,28 +178,8 @@ extern void Func_080d47b4__events_b(s32 id, s32 a, s32 b) __asm__("Func_080d47b4
 
 extern const u8 gData_02002ff0[];
 
-extern u8 MsgItLooksLikeThe[];
-extern u8 MsgTheArmorerAnd[];
-extern u8 MsgAfterTheChampa[];
-extern u8 MsgPeopleAreSaying[];
-extern u8 MsgIKnewThere[];
-extern u8 MsgOwOwOw[];
-extern u8 MsgMyBoyfriendShin[];
-extern u8 MsgAllMyInjuries[];
-extern u8 MsgMySisterWas[];
-extern u8 MsgIfYouDon[];
 /* VIEW(events_b): variable MsgUsingPsynergyOn as extern u8 MsgUsingPsynergyOn; msg_ids.h has extern u8 MsgUsingPsynergyOn[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:232: `MsgUsingPsynergyOn__events_b' undeclared (first use in this function). */
 extern u8 MsgUsingPsynergyOn__events_b __asm__("MsgUsingPsynergyOn");
-extern u8 MsgWhereCouldMenardi[];
-extern u8 MsgEveryoneHereIn[];
-extern u8 MsgYeahWellWe[];
-extern u8 MsgYouCominThrough[];
-extern u8 MsgYeahUhWe[];
-extern u8 MsgOhUhYou[];
-extern u8 MsgWasIJust[];
-extern u8 MsgHeyMisterAre[];
-extern u8 MsgDidYouCome[];
-extern u8 MsgIsThereBy[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -389,27 +348,6 @@ void Func_020005b8(void) {
 }
 
 extern const u8 gData_02002ff0[];
-
-extern u8 MsgItLooksLikeThe[];
-extern u8 MsgTheArmorerAnd[];
-extern u8 MsgAfterTheChampa[];
-extern u8 MsgPeopleAreSaying[];
-extern u8 MsgIKnewThere[];
-extern u8 MsgOwOwOw[];
-extern u8 MsgMyBoyfriendShin[];
-extern u8 MsgAllMyInjuries[];
-extern u8 MsgMySisterWas[];
-extern u8 MsgIfYouDon[];
-extern u8 MsgWhereCouldMenardi[];
-extern u8 MsgEveryoneHereIn[];
-extern u8 MsgYeahWellWe[];
-extern u8 MsgYouCominThrough[];
-extern u8 MsgYeahUhWe[];
-extern u8 MsgOhUhYou[];
-extern u8 MsgWasIJust[];
-extern u8 MsgHeyMisterAre[];
-extern u8 MsgDidYouCome[];
-extern u8 MsgIsThereBy[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -610,13 +548,11 @@ void Actor_LaunchFromLeader(s32 id, s32 a, s32 b, s32 c);
 extern s32 Map_PlayMapEdit__s0ac4(const void *edit, s32 a, s32 b) __asm__("Map_PlayMapEdit");
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);
-void MessageArgument_Push(u32 value, u32 kind);
 void Func_02002c50(s32 item, s32 a);
 s32 PartyInventory_GiveItem(s32 item, s32 count);
 void FieldMessage_Show(s32 message, s32 position);
 void Camera_FollowActor(s32 id, s32 mode);
 void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
-
 
 static __inline__ void CommitPos(s32 id, s32 x, s32 z) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own

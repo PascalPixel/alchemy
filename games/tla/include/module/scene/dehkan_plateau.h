@@ -101,4 +101,80 @@ struct Actor *Func_02003df0(void);
 
 void Func_02001f94(void);
 
+struct Actor;
+struct EffectOptions;
+
+struct AnimationFacing {
+  u8 unk00[9];
+  u8 low : 2;
+  u8 facing : 2;
+  u8 high : 4;
+};
+
+void Func_02002140(void);
+
+void Func_02002bcc(void);
+
+void Func_020000a4(const void *data, s32 mode, s32 timer);
+
+void Func_02001474(s32 show);
+
+void Func_020015b8(struct Actor *object);
+
+void Func_02003bb8(struct Actor *object);
+
+void Func_02002f08(void);
+
+void Func_0200056c(s32 id);
+
+void Func_02000974(s32 spread);
+
+void Func_02000aa8(void);
+
+void Func_02000c4c(s32 a, s32 b);
+
+void Func_02002698();
+void Func_020030e4(void);
+
+void Func_02003164(void);
+
+void Func_02003284(void);
+void Func_0200369c(void);
+void Func_0200390c(void);
+void Func_02003aa0(void);
+
+void Func_020001d0(const void *data);
+
+void Func_020012d8(void);
+void Func_02001fac(void);
+
+void Func_02003db8(const void *data);
+
+void Func_020013b0(void);
+void Func_02001930(void);
+void Func_02001fc4(void);
+
+void Func_02003d90(void);
+s32 Func_02003d98(void);
+
+s32 Func_02003da0(s32 a, s32 b, s32 c);
+
+void Func_02003da8(s32 a, s32 b, s32 c, s32 d);
+
+void Func_02001fdc(void);
+
+void Func_02003764(void);
+
+void Func_02000fc4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                   s32 velocityZ, u32 flags,
+                   const struct EffectOptions *options);
+
+void Func_020019b8(void);
+
+void Func_02002c14(void);
+void Func_020035ec(void);
+void Func_02003a30(void);
+
+void Func_02001ff4(void);
+
 #endif

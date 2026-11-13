@@ -212,7 +212,8 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   Heap_Release(base);
 }
 
-struct UnitBaseStats {
+/* VIEW(f11e3ac): tag struct UnitBaseStats as struct UnitBaseStats__f11e3ac; module/tla.h has another definition. */
+struct UnitBaseStats__f11e3ac {
   s16 hp;
   s16 pp;
   s16 hpGauge;
@@ -227,7 +228,7 @@ struct UnitBaseStats {
 /// base block, then recalculates its stats.
 // No ☀️ twin found.
 void Func_08127a0c(s32 unitId) {
-  struct UnitBaseStats *saved = Heap_AllocEwram(36);
+  struct UnitBaseStats__f11e3ac *saved = Heap_AllocEwram(36);
   struct BattleUnit *unit = Unit_Get__f11f66c(unitId);
   s32 value;
   s32 floor;

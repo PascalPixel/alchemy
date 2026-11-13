@@ -207,7 +207,8 @@ void Func_080e0618(void) {
   work->timer++;
 }
 
-struct EffectSceneWork {
+/* VIEW(radial): tag struct EffectSceneWork as struct EffectSceneWork__radial; module/field/event_commands.h has another definition. */
+struct EffectSceneWork__radial {
   u8 unk00[0x20];
   u8 failed;
 };
@@ -217,7 +218,7 @@ struct EffectSceneWork {
 /// Then runs Func_080e09c0.
 void Func_080e0978(s32 value) {
   struct EffectSceneState *state = Ram_HeapSlots->eventWork;
-  struct EffectSceneWork *work = Ram_HeapSlots->effectWork;
+  struct EffectSceneWork__radial *work = Ram_HeapSlots->effectWork;
   s32 second;
   s32 first;
 

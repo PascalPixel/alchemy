@@ -378,7 +378,8 @@ void Func_02000b68(s32 unused, s32 id) {
   Event_End();
 }
 
-void GameFlag_SetByte(s32 flag, s32 value);
+/* VIEW(aqua_rock): routine GameFlag_SetByte as void GameFlag_SetByte(s32 flag, s32 value); game_flags.h has u32 GameFlag_SetByte(u32 flag, u8 value). */
+extern void GameFlag_SetByte__aqua_rock(s32 flag, s32 value) __asm__("GameFlag_SetByte");
 
 void Func_02000cd8(s32 unused, s32 id) {
 
@@ -390,8 +391,8 @@ void Func_02000cd8(s32 unused, s32 id) {
 
     column = first->x >> 20;
     row = first->z >> 20;
-    GameFlag_SetByte(0x310, column);
-    GameFlag_SetByte(0x318, row);
+    GameFlag_SetByte__aqua_rock(0x310, column);
+    GameFlag_SetByte__aqua_rock(0x318, row);
     GameFlag_ClearBit_(0x320);
     GameFlag_ClearBit(0x321);
     if (column == 7 && row == 35)

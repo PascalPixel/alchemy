@@ -57,13 +57,14 @@ void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b) {
 
 #include "task.h"
 
-extern u16 gData_02001a1c;
+/* VIEW(islet_cave): variable gData_02001a1c as u16 gData_02001a1c; module/scene/madra_catacombs.h has struct Trigger gData_02001a1c[]. */
+extern u16 gData_02001a1c__islet_cave __asm__("gData_02001a1c");
 
 void Func_020000f4(void) {
   gData_02001a34 = 0;
   gData_02001a30 = Func_020001d4(gData_02001a24);
   gData_02001a20 = 15;
-  gData_02001a1c = 16;
+  gData_02001a1c__islet_cave = 16;
   gData_02001a14 = 1;
   Task_Add(Func_020001f8, TASK_PASS_VBLANK);
 }
@@ -77,7 +78,7 @@ void Func_02000178(void) {
   gData_02001a34 = 0;
   gData_02001a30 = Func_020001d4(gData_02001a24);
   gData_02001a20 = 2;
-  gData_02001a1c = 2;
+  gData_02001a1c__islet_cave = 2;
   gData_02001a14 = 1;
   Task_Add(Func_020001f8, TASK_PASS_VBLANK);
 }
@@ -101,10 +102,10 @@ void Func_020001f8(void) {
   int red, green, blue;
 
   step = 0;
-  if (gData_02001a1c != 0) {
-    if (--gData_02001a1c == 0) {
+  if (gData_02001a1c__islet_cave != 0) {
+    if (--gData_02001a1c__islet_cave == 0) {
       step = 1;
-      gData_02001a1c = gData_02001a20;
+      gData_02001a1c__islet_cave = gData_02001a20;
       if (gData_02001a20 > 2)
         gData_02001a20--;
     }

@@ -71,7 +71,8 @@ void Func_02001dc8(void) {
   Event_End();
 }
 
-void GameFlag_SetByte(s32 flag, s32 value);
+/* VIEW(s1dc8): routine GameFlag_SetByte as void GameFlag_SetByte(s32 flag, s32 value); game_flags.h has u32 GameFlag_SetByte(u32 flag, u8 value). */
+extern void GameFlag_SetByte__s1dc8(s32 flag, s32 value) __asm__("GameFlag_SetByte");
 void Func_02001c30(struct CellTarget *work, struct CellTargetEntry *entry);
 
 s32 Func_02001f60(void) {
@@ -94,8 +95,8 @@ s32 Func_02001f60(void) {
         break;
       work->current = i;
       Func_02001c30(work, entry);
-      GameFlag_SetByte(work->flagByte, x);
-      GameFlag_SetByte(work->flagByte + 8, z);
+      GameFlag_SetByte__s1dc8(work->flagByte, x);
+      GameFlag_SetByte__s1dc8(work->flagByte + 8, z);
       return 1;
     }
   }
@@ -111,8 +112,8 @@ void Func_02002010(s32 x, s32 z, s32 effect) {
   if (dx != 0 || dz != 0) {
     struct Actor *marker;
 
-    GameFlag_SetByte(gData_02002bf8.flagByte, 0);
-    GameFlag_SetByte(gData_02002bf8.flagByte + 8, 0);
+    GameFlag_SetByte__s1dc8(gData_02002bf8.flagByte, 0);
+    GameFlag_SetByte__s1dc8(gData_02002bf8.flagByte + 8, 0);
     leader->x = ((dx + x) << 20) + 0x80000;
     leader->z = ((dz + z) << 20) + 0x80000;
     marker = work->marker;

@@ -17,6 +17,7 @@
 #include "module/tla.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
+#include "module/scene/aqua_rock_inside.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -424,7 +425,6 @@ const struct Trigger *Scene_GetEvents(void) {
 void Func_0200154c(u16 *slots, u16 *colours, u16 *a, u16 *b);
 /* VIEW(s0b64): routine Func_02002e6c as void Func_02002e6c(void); mars_lighthouse_room_m has void Func_02002e6c(struct Actor *self); tried as the definition's void Func_02002e6c(struct Actor *self), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:490: too few arguments to function `Func_02002e6c'. */
 extern void Func_02002e6c__s0b64(void) __asm__("Func_02002e6c");
-void Func_02003278(void);
 
 extern u8 gData_0200338c[];
 extern u8 gData_0200339c[];

@@ -19,7 +19,8 @@
 
 extern const s32 gData_02003e00[];
 
-void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+/* VIEW(s0974): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
+extern void Actor_SetSingleChildFlags__s0974(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 
 /// Eight puffs (type 285) in a row over the leader, flung outwards when spread
@@ -43,7 +44,7 @@ void Func_02000974(s32 spread) {
       frame = Func_02003d80(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSingleChildFlags(effect, 0);
+      Actor_SetSingleChildFlags__s0974(effect, 0);
       Func_02003ba0(effect, 2);
       Actor_StartScript(effect, gData_02003e00);
       effect->scaleY = effect->scaleX = 0xb333;
@@ -90,7 +91,7 @@ void Func_02000aa8(void) {
       frame = Func_02003d80(effect->sprite, frame);
       object->motionFlags = 0;
       object->collisionFlags = 0;
-      Actor_SetSingleChildFlags(object, 0);
+      Actor_SetSingleChildFlags__s0974(object, 0);
       Func_02003ba0(object, 2);
       Actor_StartScript(object, gData_02003e30);
       effect->velocityX = Math_Cosine(i << 12);

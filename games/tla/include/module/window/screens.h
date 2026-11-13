@@ -668,4 +668,6 @@ void MenuTitle_Bob(struct BobPairObject *object);
 struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,
                                       s32 x, s32 y);
 
+s32 FileList_SelectAction(void);
+
 #endif

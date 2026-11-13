@@ -290,4 +290,6 @@ void Func_02001c6c(void);
 
 void Func_02001d8c(void);
 
+void Func_02003da0(void);
+
 #endif

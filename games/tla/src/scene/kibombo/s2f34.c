@@ -8,9 +8,9 @@
 #include "module/field/event_commands.h"
 #include "module/scene/kibombo.h"
 #include "module/scene/scene.h"
+#include "module/field/field_effect.h"
 
 void Actor_StartScript(struct KibomboObject *object, const void *script);
-void Effect_AdvanceMotion(union FieldObject *object);
 extern u32 gData_02005ca4[];
 
 void Func_02002f34(void) {

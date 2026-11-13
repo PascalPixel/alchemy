@@ -71,7 +71,8 @@ void Func_020034ec(void) {
   return;
 }
 
-struct PaletteCycleWork {
+/* VIEW(s3410): tag struct PaletteCycleWork as struct PaletteCycleWork__s3410; palette_snapshots.h has another definition. */
+struct PaletteCycleWork__s3410 {
   struct PaletteCycle entries[4];
   u16 count;
 };
@@ -81,7 +82,7 @@ struct PaletteCycleWork {
 
 void Func_020034fc(void) {
   if (EVENT_S16(0x166) == 0 && EVENT_S16(0x15a) == 0 && EVENT_S16(0x15e) == 0) {
-    struct PaletteCycleWork *work = gPaletteWork;
+    struct PaletteCycleWork__s3410 *work = gPaletteWork;
     u8 i;
     u16 count = work->count & 3;
     u16 buf[16];

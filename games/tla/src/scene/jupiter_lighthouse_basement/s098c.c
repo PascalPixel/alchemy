@@ -10,7 +10,8 @@
 #include "module/scene/jupiter_lighthouse_basement.h"
 #include "module/scene/scene.h"
 
-void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+/* VIEW(s098c): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
+extern void Actor_SetSingleChildFlags__s098c(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
 void Func_020007cc(struct GustObject *object);
 
 struct GustObject *Func_0200098c(struct GustObject *source) {
@@ -26,7 +27,7 @@ struct GustObject *Func_0200098c(struct GustObject *source) {
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                    position.z));
   Func_02001bec(object, 2);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags__s098c(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->angle = source->angle;
@@ -133,7 +134,8 @@ void Func_02000b04(void) {
 #include "map.h"
 #include "vram_tab.h"
 
-extern s16 gData_020024f4;
+/* VIEW(s098c): variable gData_020024f4 as s16 gData_020024f4; module/scene/clear.h has u16 gData_020024f4[]. */
+extern s16 gData_020024f4__s098c __asm__("gData_020024f4");
 
 void Func_02001bc4(struct LightOam *oam, s32 depth);
 
@@ -160,8 +162,8 @@ void Func_02000c94(void) {
       z = actor->z - viewZ - viewY;
       oy = z - y;
       depth = ((y + z) >> 16) + 58;
-      big = gData_020024f4;
-      big = gData_020024f4;
+      big = gData_020024f4__s098c;
+      big = gData_020024f4__s098c;
       if (big == 0) {
         s32 x, sy;
         frame = actor->timer;
@@ -209,7 +211,6 @@ void Func_02000c94(void) {
   }
 }
 
-
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
@@ -224,7 +225,7 @@ void Func_02000e50(void) {
   Heap_Release(buffer);
   Task_Add(Func_02000c94, TASK_PASS_VBLANK);
   gData_020023f2 = 0;
-  gData_020024f4 = 0;
+  gData_020024f4__s098c = 0;
   gData_020024f6 = -1;
 }
 
@@ -238,7 +239,7 @@ void Func_02000ed0(void) {
   Heap_Release(buffer);
   Task_AddFrame(Func_02000c94, TASK_PASS_VBLANK);
   gData_020023f2 = 0;
-  gData_020024f4 = 0;
+  gData_020024f4__s098c = 0;
   gData_020024f6 = -1;
 }
 
@@ -252,7 +253,7 @@ void Func_02000f50(void) {
   Heap_Release(buffer);
   Task_AddFrame(Func_02000c94, TASK_PASS_VBLANK);
   gData_020023f2 = 0;
-  gData_020024f4 = 1;
+  gData_020024f4__s098c = 1;
   gData_020024f6 = -1;
 }
 

@@ -133,7 +133,6 @@ void Func_0200043c(void);
 void Func_020005cc(void);
 void Func_02000644(void);
 void Func_02000c44(void);
-void Func_020011bc(void);
 void Func_020011d4(void);
 
 extern u32 gData_02002230[];

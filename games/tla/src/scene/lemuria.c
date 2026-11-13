@@ -61,7 +61,8 @@ s32 Func_02000070(struct Actor *self, struct Actor *other, s32 range) {
 }
 
 s32 Func_02001d54(struct Actor *object);
-void Func_02001b7c(struct Actor *object, s32 mode);
+/* VIEW(lemuria): routine Func_02001b7c as void Func_02001b7c(struct Actor *object, s32 mode); module/scene/prox.h has void Func_02001b7c(void). */
+extern void Func_02001b7c__lemuria(struct Actor *object, s32 mode) __asm__("Func_02001b7c");
 
 s32 Func_020000e8(struct Actor *self) {
   u8 *event = Ram_HeapSlots->eventWork;
@@ -89,11 +90,11 @@ s32 Func_020000e8(struct Actor *self) {
     goto near;
 far:
   *state = 0;
-  Func_02001b7c(self, 2);
+  Func_02001b7c__lemuria(self, 2);
   return 0;
 near:
   *state = 1;
-  Func_02001b7c(self, 1);
+  Func_02001b7c__lemuria(self, 1);
   return 0;
 }
 

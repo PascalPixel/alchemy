@@ -19,7 +19,8 @@
 #include "module/scene/jupiter_lighthouse_room_9.h"
 #include "module/scene/scene.h"
 
-void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+/* VIEW(s0910): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
+extern void Actor_SetSingleChildFlags__s0910(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
 void Func_02000750(struct GustObject *object);
 void Func_02001018(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
@@ -36,7 +37,7 @@ struct GustObject *Func_02000910(struct GustObject *source) {
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                     position.z));
   Func_02001b68(object, 2);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags__s0910(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->angle = source->angle;
@@ -133,10 +134,13 @@ void Func_02000a88(void) {
   }
 }
 
-extern s16 gData_0200265e;
+/* VIEW(s0910): variable gData_0200265e as s16 gData_0200265e; module/scene/scene.h has u8 gData_0200265e[]. */
+extern s16 gData_0200265e__s0910 __asm__("gData_0200265e");
 extern struct LightOam gData_020026a0[];
-extern s16 gData_02002760;
-extern s16 gData_02002762;
+/* VIEW(s0910): variable gData_02002760 as s16 gData_02002760; module/scene/alhafra.h has s16 gData_02002760[]. */
+extern s16 gData_02002760__s0910 __asm__("gData_02002760");
+/* VIEW(s0910): variable gData_02002762 as s16 gData_02002762; module/scene/alhafra.h has s16 gData_02002762[]. */
+extern s16 gData_02002762__s0910 __asm__("gData_02002762");
 
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
 /// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
@@ -153,7 +157,7 @@ void Func_02000c18(void) {
   viewY = map->origin[1];
   oam = gData_020026a0;
 
-  for (i = 0; i < gData_0200265e; i++) {
+  for (i = 0; i < gData_0200265e__s0910; i++) {
     struct Actor *actor = gData_02002660[i];
     if (actor != 0 && actor->x != 0) {
       s32 big, ox, y, z, oy, depth;
@@ -164,7 +168,7 @@ void Func_02000c18(void) {
       z = actor->z - viewZ - viewY;
       oy = z - y;
       depth = ((y + z) >> 16) + 58;
-      big = gData_02002760;
+      big = gData_02002760__s0910;
       if (big == 0) {
         s32 x, sy;
         frame = actor->timer;
@@ -180,10 +184,10 @@ void Func_02000c18(void) {
         *word++ = 0;
         *word++ = oy | (ox << 16) | 0x40002000;
         *word = (tile + frame * 8) | 0x800;
-        if (gData_02002762 == -1)
+        if (gData_02002762__s0910 == -1)
           oam->priority = Func_02001c80(actor);
         else
-          oam->priority = gData_02002762;
+          oam->priority = gData_02002762__s0910;
         Func_02001b40(oam, depth);
         oam++;
       } else {
@@ -201,17 +205,16 @@ void Func_02000c18(void) {
         *word++ = 0;
         *word++ = oy | (ox << 16) | 0xc000a000;
         *word = (tile + frame * 8) | 0x800;
-        if (gData_02002762 == -1)
+        if (gData_02002762__s0910 == -1)
           oam->priority = Func_02001c80(actor);
         else
-          oam->priority = gData_02002762;
+          oam->priority = gData_02002762__s0910;
         Func_02001b40(oam, depth);
         oam++;
       }
     }
   }
 }
-
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -226,9 +229,9 @@ void Func_02000dd4(void) {
   VramCache_Load(gData_0200265c, 0xc00, buffer);
   Heap_Release(buffer);
   Task_Add(Func_02000c18, TASK_PASS_VBLANK);
-  gData_0200265e = 0;
-  gData_02002760 = 0;
-  gData_02002762 = -1;
+  gData_0200265e__s0910 = 0;
+  gData_02002760__s0910 = 0;
+  gData_02002762__s0910 = -1;
 }
 
 void Func_02000e54(void) {
@@ -240,9 +243,9 @@ void Func_02000e54(void) {
   Vram_Load(gData_0200265c, 0x800, buffer);
   Heap_Release(buffer);
   Task_AddFrame(Func_02000c18, TASK_PASS_VBLANK);
-  gData_0200265e = 0;
-  gData_02002760 = 0;
-  gData_02002762 = -1;
+  gData_0200265e__s0910 = 0;
+  gData_02002760__s0910 = 0;
+  gData_02002762__s0910 = -1;
 }
 
 void Func_02000ed4(void) {
@@ -254,9 +257,9 @@ void Func_02000ed4(void) {
   Vram_Load(gData_0200265c, 0x800, buffer);
   Heap_Release(buffer);
   Task_AddFrame(Func_02000c18, TASK_PASS_VBLANK);
-  gData_0200265e = 0;
-  gData_02002760 = 1;
-  gData_02002762 = -1;
+  gData_0200265e__s0910 = 0;
+  gData_02002760__s0910 = 1;
+  gData_02002762__s0910 = -1;
 }
 
 void Func_02000f5c(s32 id, s32 value) {
@@ -266,12 +269,12 @@ void Func_02000f5c(s32 id, s32 value) {
     s16 *count;
 
     object->timer = value;
-    count = &gData_0200265e;
+    count = &gData_0200265e__s0910;
     gData_02002660[*count] = object;
     (*count)++;
   }
 }
 
-void Func_02000f8c(s32 value) { gData_02002762 = value; }
+void Func_02000f8c(s32 value) { gData_02002762__s0910 = value; }
 
 #include "../../field/object/set_sprite_priority.c"

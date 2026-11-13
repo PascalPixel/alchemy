@@ -82,4 +82,6 @@ extern s32 gData_02005634[];
 extern s32 gData_0200564c[];
 extern s32 gData_02005664[];
 
+void Func_02003684(void);
+
 #endif

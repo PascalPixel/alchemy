@@ -14,7 +14,6 @@ void Func_02000428(void);
 void Func_020004b0(void);
 void Func_0200051c(void);
 void Func_02000f9c(void);
-void Func_02000fc4(void);
 
 extern u32 gData_02001728[];
 

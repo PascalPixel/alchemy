@@ -9,6 +9,7 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "module/scene/anemos_inner_sanctum.h"
+#include "scene_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -18,7 +19,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "main_routine_work.h"
 
-extern char SceneId_Ov6B0Room1;
 extern const u8 gData_02003b38[];
 extern const u8 gData_02003b50[];
 extern const u8 gData_02003b68[];
@@ -64,7 +64,8 @@ struct Work {
 };
 
 void Func_020006f8();
-void Func_020032e0(struct Actor *, s32);
+/* VIEW(scene_tables): routine Func_020032e0 as void Func_020032e0(struct Actor *, s32); module/scene/kibombo.h has void Func_020032e0(void). */
+extern void Func_020032e0__scene_tables(struct Actor *, s32) __asm__("Func_020032e0");
 void Actor_StartScript();
 extern u8 gData_02003684[];
 
@@ -89,7 +90,7 @@ void Func_0200088c(struct Vector3 *from, struct Vector3 *to, s16 part) {
   Animation_SetStateFlags(actor, 1);
   Actor_SetSpriteColor(actor, (u16)part);
   Scene_SetActorSpritePriority(actor, 2);
-  Func_020032e0(actor, 7);
+  Func_020032e0__scene_tables(actor, 7);
   Actor_SetSingleChildFlags(actor, 0);
   FieldVector_AddPolarOffset(actor->unk4c, actor->unk64, &actor->position);
   Actor_StartScript(actor, gData_02003684);
@@ -129,7 +130,7 @@ void Func_020009b8(s32 x, s32 y, s16 part, s16 a3) {
     Animation_SetStateFlags(object, 1);
     Actor_SetSpriteColor(object, (u16)part);
     Scene_SetActorSpritePriority(object, 2);
-    Func_020032e0(object, 7);
+    Func_020032e0__scene_tables(object, 7);
     Actor_SetSingleChildFlags(object, 0);
     Actor_StartScript(object, gData_02003584);
     i += 2;
@@ -143,6 +144,6 @@ void Func_02000a78(s32 a0, s32 a1, s16 a2) {
   t0->motionFlags = 4;
   Actor_SetSpriteColor(t0, (u16)a2);
   Scene_SetActorSpritePriority(t0, 2);
-  Func_020032e0(t0, 7);
+  Func_020032e0__scene_tables(t0, 7);
   Actor_SetSingleChildFlags(t0, 0);
 }

@@ -10,6 +10,7 @@
 #include "event_work.h"
 #include "module/field/field.h"
 #include "module/scene/gaia_rock_inside.h"
+#include "text/msg_ids.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -35,8 +36,6 @@ void Func_02001f84(void) {
 }
 
 #include "ram_buffer.h"
-
-extern u8 MsgCheckedTheAltar[];
 
 void Func_02001fa0(void) {
   s32 t0;

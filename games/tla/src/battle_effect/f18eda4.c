@@ -6,6 +6,16 @@
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "task.h"
+#include "actor.h"
+#include "battle_display.h"
+#include "fixed_math.h"
+#include "graphics.h"
+#include "module/battle_effect/battle_effect.h"
+#include "module/system/system.h"
+#include "render_model.h"
+#include "resource.h"
+#include "resource_ids.h"
+#include "system.h"
 
 struct Model;
 
@@ -14,17 +24,9 @@ struct Model;
 
 #define KIND123_FRAMES 111
 
-// A texture for the ARM model renderer: its size as powers of two and the
-// address of its pixels.
-struct ModelTexture {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  const void *pixels;
-};
-
 // A model for the ARM renderer (Render_DrawModelList).
-struct RenderModel {
+/* VIEW(f18eda4): tag struct RenderModel as struct RenderModel__f18eda4; render_model.h has another definition. */
+struct RenderModel__f18eda4 {
   s32 kind;
   s32 unk04;
   const u8 *mesh;
@@ -33,55 +35,11 @@ struct RenderModel {
   s32 shade;
 };
 
-extern char ResourceId_FlashBurstSheet;
-extern char ResourceId_Data0CB;
-extern char ResourceId_Data0C9;
-extern char ResourceId_Data0C2;
-extern char ResourceId_Data134;
-extern char ResourceId_OrangePaletteB;
-extern u8 gData_02014000[];
 // The first load names the buffer by its address: as the symbol it would
 // combine with the second.
 #define EFFECT_PICTURES (Ram_MapCellBuffer + 0x4000)
-extern u16 gData_08197410[];
-extern u8 Data_081992b0[];
-extern const u8 Data_08199220[];
-extern const u8 gData_08199364[];
-extern const u8 Data_08199eb4[];
-extern const u8 Data_08199ebc[];
-extern const u8 Data_08199ea4[];
-extern const u8 Data_081991c0[];
-extern const u8 Data_081991e0[];
-extern const u8 gData_08199210[];
 
-void BattleEffect_StartCanvasLayer(s32 layer);
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
-void *Resource_GetTableEntry(s32 id);
-
-void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void wait(s32 frames);
-u32 Random16(void);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
-void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                          s32 gravity);
-struct PoolEntry *Render_AllocateModelList(s32 count);
-void Render_ResetTransformState(void);
-void Func_08015160(s32 x, s32 y, s32 z);
-void Func_080151e4(s32 x, s32 y, s32 z);
-void Func_080150e4(s32 angle);
-void SceneTransform_ApplyPitch(s32 angle);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
-void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                                   s32 speedLimit, s32 velocityY, s32 percent);
-void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void BattleEffect_CountDownBattlerTints(void);
-void Func_081180e8(s32 phase);
-void Sound_PlayFar(s32 cue);
 
 // Effect kind 123, 111 frames. Sparks gather at the caster (frames 0-15)
 // and burst from it toward the target (16-110); eight flat flashes turn about
@@ -253,7 +211,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
 
     {
       void *projected = Heap_AllocEwram(32);
-      struct RenderModel *model = Render_AllocateModelList(1);
+      struct RenderModel__f18eda4 *model = Render_AllocateModelList(1);
       void *splash = gData_02014000;
 
       // Eight flashes turn about the caster, each for 16 frames from its
@@ -443,17 +401,6 @@ static inline s32 Iwram_ClearWords(void *d, s32 n) {
 
 // The ball is the last particle, never a local: the native rereads its address.
 #define ball (&work->particles[63])
-extern char ResourceId_BlueFlameSheet;
-extern const u8 Data_08199ec5[];
-
-s32 BattleEffect_LoadBlitter(s32 slot, s32 value);
-void Palette_StepFadeTransfer(void);
-void Func_0815b434(u8 *map, s32 size, s32 scale);
-void Func_0815e22c(struct EffectPosition *position);
-
-void Func_08118088(s32 actor, s32 mode);
-void SummonEffect_RunCanvasMode1(void *action);
-void BattleStaging_ConfigurePaletteFadeFar(s32 mode, s32 background, s32 value);
 
 // Draws a disc of the given size from the disc sheet in the map cell buffer
 // as four quarter blits about (x, y), with the second blitter loaded for

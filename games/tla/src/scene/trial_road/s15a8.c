@@ -12,6 +12,7 @@
 #include "resource.h"
 #include "serial.h"
 #include "task.h"
+#include "heap_slots.h"
 
 void Func_020015a8(void) { GameFlag_SetBit(0x289); }
 
@@ -190,8 +191,6 @@ void Func_02001a70(void) {
   Func_0200062c(18);
   Func_0200062c(19);
 }
-
-
 
 void Func_02001afc(void) {
   OBJECT_BYTE(Actor_GetById(18), 98) = 1;
@@ -1566,7 +1565,6 @@ struct TrialRoadMovers__s3f68 {
   u32 *entries;
 };
 
-
 /// Queues the Trial Road movers' sprites.
 void Func_02003f68(void) {
   struct TrialRoadMovers__s3f68 *base =
@@ -1661,8 +1659,6 @@ void Func_02003f68(void) {
 }
 
 #include "actor.h"
-
-void Func_02003da0(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -2295,8 +2291,6 @@ void TrialRoad_WaitForBalanceState(void) {
 // The Trial Road rival's per-frame update.
 
 #include "../../../../games/tla/src/scene/trial_road/trial_road.h"
-
-extern u16 gLinkPeerSignatures[][12];
 
 /// Updates the Trial Road rival by the scene state's mode: 4 follows the
 /// leader's position mirrored across the course; 3 places the rival and its

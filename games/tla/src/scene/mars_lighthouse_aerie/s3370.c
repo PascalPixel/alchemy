@@ -11,6 +11,7 @@
 #include "module/scene/scene.h"
 #include "module/tla.h"
 #include "system.h"
+#include "text/msg_ids.h"
 
 extern s32 gData_02005b54[];
 
@@ -138,7 +139,6 @@ void Func_02003648(s32 id) { Actor_GetById(id)->motionFlags = 3; }
 struct Actor;
 void Func_02000610(s32 id);
 void Func_02000640(s32 id);
-extern u8 MsgTheBeaconIs[];
 extern s32 gData_020060fc[];
 
 #define OWNER gMainRoutineWork.currentOwner
@@ -443,7 +443,6 @@ L_0200bcea:
    } *)(base))                                                                 \
        ->v)
 void Func_020004a4(void);
-extern u8 MsgWhatCouldHe[];
 
 static __inline__ void W_Func_02005714(s32 a0, s32 a1, s32 a2) {
   /* FAKEMATCH(wrapper): W_Func_02005714 forwarded inline; as direct calls to
@@ -837,8 +836,6 @@ L_0200c72a:
   return;
 }
 
-extern u8 MsgWillYouCast[];
-
 void Func_02004bc4(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1144,7 +1141,6 @@ void Func_020050b0(void) {
     gData_02006cf0 = 0;
 }
 
-
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_0200575c_(s32 a, s32 b) {
@@ -1267,7 +1263,6 @@ struct SparkleWork__s53e4 {
   u16 unka6;
   struct Actor *object;
 };
-
 
 /* VIEW(s3370): routine Func_020057b4 as s32 Func_020057b4(struct Actor *object); module/scene/scene.h has void Func_020057b4(void); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie/s3370.c:1299: too many arguments to function `Func_020057b4'. */
 extern s32 Func_020057b4__s3370(struct Actor *object) __asm__("Func_020057b4");

@@ -121,4 +121,14 @@ s32 Func_02005844(struct Actor *object);
 
 void Func_02002074(void);
 
+extern const u8 gData_02005948[];
+void Func_02001950(s32 show, s32 first, u32 count);
+
+void Func_02002394(void);
+
+void Func_020011bc(s32 message, s32 value);
+
+s32 Func_020053a0(void);
+extern u32 gData_02005910[];
+
 #endif

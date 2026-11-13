@@ -6,6 +6,8 @@
 
 #include "types.h"
 #include "module/field/field.h"
+#include "curve.h"
+#include "script.h"
 
 //--------------------------------------------------------------------------
 // Map terrain: the height curve of each cell kind, the world map's
@@ -16,10 +18,6 @@
 /// leaves them unspecified.
 typedef s32 (*TerrainHeightFn)();
 
-s32 Terrain_GetFlatHeight(const s8 *samples);
-s32 Terrain_GetSlopeXHeight(const s8 *samples, s32 position);
-s32 Terrain_GetSlopeYHeight(const s8 *samples, s32 unused, s32 position);
-s32 Terrain_GetStepSumDiagonalHeight(const s8 *samples, s32 start, s32 end);
 s32 Terrain_GetStepDifferenceDiagonalHeight();
 s32 Terrain_GetBendSumDiagonalHeight();
 s32 Terrain_GetBendDifferenceDiagonalHeight();
@@ -28,7 +26,6 @@ s32 Terrain_GetStepXHeight();
 s32 Terrain_GetStepYHeight();
 s32 Terrain_GetSampleTableTransposedHeight();
 s32 Terrain_GetSampleTableTransposedMirroredHeight();
-s32 Terrain_GetSampleTableHeight(const s8 *samples, u32 position, u32 row);
 s32 Terrain_GetSampleTableMirroredHeight();
 s32 Terrain_GetSplitTopStepHeight();
 s32 Terrain_GetSplitBottomStepHeight();
@@ -155,9 +152,6 @@ s32 Script_SetAnimation();
 s32 Script_Nop();
 s32 Script_PlaySound();
 s32 Script_CallWithOperand();
-s32 Script_JumpToNextOperandPointer(struct ScriptInterpreter *sc);
-s32 Script_ClearByte54(struct ScriptInterpreter *sc);
-s32 Script_SetByte54(struct ScriptInterpreter *sc);
 s32 Script_InvokeCallback();
 s32 Func_08025428();
 s32 Func_0802509c();

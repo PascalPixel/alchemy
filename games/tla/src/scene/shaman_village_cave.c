@@ -19,6 +19,7 @@
 #include "event_inline.h"
 #include "module/scene/scene.h"
 #include "module/scene/shaman_village_cave.h"
+#include "module/scene/garoh.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -190,8 +191,6 @@ void Func_02000384(void) {
 }
 
 #include "call.h"
-
-void Func_02001098(void);
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 

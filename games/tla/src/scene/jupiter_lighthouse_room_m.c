@@ -1130,8 +1130,6 @@ void Func_02000cac(s32 arg) {
 #include "actor.h"
 #include "event_work.h"
 
-s32 Party_RemoveMember(s32 value);
-
 static __inline__ void JupiterLighthouseRoomM_AddHp(s32 owner, s32 delta) {
   /* FAKEMATCH(wrapper): forwarding through the inline reloads -10000 from
    * the pool at each call, as the native does; as direct calls, 23 of 160

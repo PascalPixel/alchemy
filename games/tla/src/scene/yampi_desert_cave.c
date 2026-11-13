@@ -449,8 +449,6 @@ void Func_0200099c(void) {
     gData_02001fe8 = 0;
 }
 
-void Func_02001950(void);
-
 void Func_02000acc(void) {
   struct YampiDesertCaveEventWork *work = Ram_HeapSlots->eventWork;
   s32 saved;
@@ -774,7 +772,6 @@ void Func_020011b4(s32 a, s32 b) {
 }
 
 extern const s16 gData_020019cc[];
-
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

@@ -62,4 +62,6 @@ extern u32 gData_020010ec[];
 extern u32 gData_0200131c[];
 extern u32 gData_020014e0[];
 
+void Func_020005ac(void);
+
 #endif

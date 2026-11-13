@@ -369,7 +369,8 @@ void Func_020045e4(struct Actor *object) {
   object->z = parent->z - (rise - scale) * 5 + 0x100000;
 }
 
-s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags);
+/* VIEW(s3b38): routine Animation_ApplyChildArgument as s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags); actor_view.h has s32 Animation_ApplyChildArgument(struct ActorSpriteView *, s32). */
+extern s32 Animation_ApplyChildArgument__s3b38(struct AnimationGroup *state, s32 flags) __asm__("Animation_ApplyChildArgument");
 
 void Func_02004634(struct Actor *parent) {
   struct Actor *pair[2];
@@ -389,7 +390,7 @@ void Func_02004634(struct Actor *parent) {
       child->timer = 0;
       child->watchedObject = parent;
       if (sprite != NULL) {
-        Animation_ApplyChildArgument(sprite, 0);
+        Animation_ApplyChildArgument__s3b38(sprite, 0);
         sprite->nextFrame = 0;
         Resource_ResetEntry(sprite->vramBlock);
         sprite->vramBlock = work->vramBlock;
@@ -526,7 +527,6 @@ void Func_02004744(s32 progress) {
 done:
   Vram_Load(gData_02006e0e__s3b38, 0x100, Data_02006e20);
 }
-
 
 // The world map cursor: counts down while A or B is held, redraws the gauge and
 // queues its sprite over the leader.

@@ -99,4 +99,6 @@ void Func_02004c08(s32 value);
 s32 Func_02004c10(void);
 void Func_02004ad0(u32 *oam, s32 priority);
 
+void Func_02002698(void);
+
 #endif

@@ -6,6 +6,7 @@
 
 #include "types.h"
 #include "effect_sprite.h"
+#include "field/field_particle.h"
 
 struct Actor;
 struct AnimationEntry;
@@ -365,5 +366,228 @@ void Field_RequestBattleFromEncounterTable(s32 row, s32 column);
 
 void Party_LearnAbility(s32 unit, s32 ability);
 void Party_RemoveMemberRestored(s32 owner);
+
+struct Actor;
+
+// The field event work's pending Psynergy request (eventWork + 0x166).
+struct CloakEvent {
+  u8 unk000[0x166];
+  s16 psynergyRequest;
+};
+
+struct FallingObject {
+  u8 unk00[0xc];
+  s32 y;
+  u8 unk10[4];
+  s32 floor;
+  u8 unk18[0x46];
+  s16 dispatchState;
+  u8 unk60[0xc];
+  void *update;
+};
+
+struct Effect05Sprite {
+  u32 unk00[2];
+  u8 unk08;
+  u32 unk09_0 : 2;
+  u32 mode : 2;
+  u32 unk09_4 : 4;
+};
+
+struct Effect05State {
+  u16 angle;
+  u8 unk02[2];
+  s32 x;
+  s32 y;
+  s32 z;
+  struct Actor *target;
+  struct Actor *anchor;
+  s16 firstObjectId;
+  s16 secondObjectId;
+  u8 unk1c[4];
+  u8 highArc;
+  u8 unk21[0x13];
+  u8 variant;
+  u8 unk35[0x0c];
+  u8 alternate;
+};
+
+struct FallVector {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+struct FxPosition {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+struct FxObject {
+  u8 unk00[8];
+  s32 x;
+  s32 y;
+  s32 z;
+  s32 ground;
+  u8 unk18[10];
+  u8 mode;
+  u8 unk23;
+  s32 velocityX;
+  s32 velocityY;
+  s32 velocityZ;
+  s32 speed;
+  s32 lift;
+  u8 unk38[12];
+  s32 gravity;
+  u8 unk48[13];
+  u8 flag;
+  u8 unk56[4];
+  u8 unk5a;
+  u8 unk5b;
+  u8 unk5c[12];
+  struct FxObject *linked;
+  void *callback;
+};
+
+// A flag entry as the world map reads it: its world position.
+struct WorldMapPlace {
+  u8 flag;
+  u8 value;
+  s16 unk02;
+  s16 x;
+  s16 z;
+  u8 unk08[12];
+};
+
+struct WorldMapMarker {
+  u8 unk00[4];
+  u16 y : 8;
+  u16 affine : 2;
+  u16 objectMode : 2;
+  u16 mosaic : 1;
+  u16 fullColor : 1;
+  u16 shape : 2;
+  u16 x : 9;
+  u16 affineIndex : 5;
+  u16 size : 2;
+  u16 tile : 10;
+  u16 priority : 2;
+  u16 palette : 4;
+  u8 unk0a[2];
+};
+
+// A halfword typed beside a word, for the FAKEMATCH that reads the name box's
+// y; no such data exists.
+struct WorldMapAliasedHalfword {
+  s16 value;
+  s32 unk04;
+};
+
+struct LoadEventWork {
+  u8 unk000[0xca5];
+  u8 unkca5;
+  u8 unkca6[7];
+  u8 unkcad;
+  u8 unkcae[8];
+  s8 unkcb6;
+  u8 unkcb7[0x79];
+  u8 unkd30;
+  s8 target;
+  s8 targetY;
+  s8 targetZ;
+  u8 unkd34[4];
+  u8 unkd38;
+};
+
+struct PairScene {
+  u16 angle;  ///< Four directions.
+  u16 angle8; ///< Eight directions.
+  s32 x;
+  s32 y;
+  s32 z;
+  struct Actor *mainObject;
+  struct Actor *child;
+  s16 firstObjectId;
+  s16 secondObjectId;
+  u8 unk1c[0x1c];
+  void *savedCallback;
+  const s32 *savedScript;
+  u8 savedPalette;
+  u8 unk41[0x6d7];
+  u8 savedTerrain;
+  u8 savedPriority;
+};
+
+struct FinishWork {
+  u8 unk000[16];
+  struct Actor *object;
+  u8 unk014[8];
+  s16 quantity;
+  u8 unk01e[4];
+  s8 sound;
+  s8 showQuantity;
+  u8 unk024[0x6ee];
+  s8 messageRow;
+  u8 messageShown;
+};
+
+struct EffectSceneWork {
+  u8 reserved00[16];
+  struct Actor *mainObject;
+};
+
+struct CleanupWork {
+  u8 unk000[16];
+  struct Actor *owner;
+  u8 unk014[10];
+  s16 animation;
+  u8 unk020[36];
+  s32 savedShakeX;
+  s32 savedShakeY;
+  s32 savedShakeDecay;
+  struct FieldParticle slots[24];
+  u8 unk710[8];
+  u8 ownerByte;
+  u8 layer;
+};
+
+struct CleanupEventWork {
+  u8 unk000[394];
+  s8 mode;
+  u8 unk18b[0xca5 - 395];
+  s8 unkca5;
+  u8 unkca6[7];
+  s8 unkcad;
+  u8 unkcae[8];
+  s8 unkcb6;
+  s8 unkcb7;
+};
+
+void FieldEffect_CheckCloakTile(void);
+
+void Func_080dc954(void);
+
+void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
+                           s32 action);
+
+extern const u8 Data_080f1100[];
+
+extern const u16 Data_080f1120[];
+
+extern s32 Data_0202a644;
+extern s32 Data_0202a648;
+extern s16 Data_0202a640;
+extern s16 Data_0202a654[];
+extern s16 Data_0202a656[];
+extern struct WorldMapMarker Data_0202a620;
+
+void Palette_FillNumber15Grey(void);
+
+void Func_080dcb44(void);
+
+void Func_080dcadc(void);
+
+void BattleEffect_ArmBg0HBlankDma(void);
 
 #endif

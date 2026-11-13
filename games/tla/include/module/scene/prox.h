@@ -88,4 +88,6 @@ void Func_0200391c(void);
 extern u32 gData_02004644[];
 extern u32 gData_02004680[];
 
+void Func_020018e0(void);
+
 #endif

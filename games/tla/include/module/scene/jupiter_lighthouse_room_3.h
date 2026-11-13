@@ -42,4 +42,6 @@ s32 Func_02002448(struct Actor *actor);
 /// leader steps on.
 extern struct CellTarget gData_02002e34;
 
+void Func_02001950(void);
+
 #endif

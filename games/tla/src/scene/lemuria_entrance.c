@@ -21,11 +21,10 @@
 #include "module/scene/scene.h"
 #include "module/window/window.h"
 #include "text/msg_ids.h"
-
+#include "uiflow.h"
 
 void Text_GetMessageSize(s32 id, s32 *a, s32 *b, s32 *c, s32 *d);
 void Message_OpenWindow(s32 id, s32 x, s32 y, u32 flags);
-void Window_Close(struct Window *work, s32 release);
 s32 Func_0200053c(s32 a, s32 b, s32 c, s32 d);
 
 s32 Func_02000038(struct Actor *object) {

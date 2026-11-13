@@ -5,6 +5,7 @@
 #include "module/tla.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
+#include "module/field/event_commands.h"
 
 void Func_02000038(struct Actor *object) {
   u8 *timer = &object->unk5c[6];
@@ -221,11 +222,12 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-void Func_020057d4(s32 a);
+/* VIEW(mars_lighthouse_aerie): routine Func_020057d4 as void Func_020057d4(s32 a); module/scene/scene.h has void Func_020057d4(struct Actor *object). */
+extern void Func_020057d4__mars_lighthouse_aerie(s32 a) __asm__("Func_020057d4");
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.entrance == 1 && Event_GetFlag(0xa3d) == 0)
-    Func_020057d4(1);
+    Func_020057d4__mars_lighthouse_aerie(1);
   Func_020055dc(gMainRoutineWork.map +
                     ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),
                 0x5000000);
@@ -320,7 +322,6 @@ struct SparkleWork;
 void Func_020053e4(struct Actor *object, struct SparkleWork *work);
 s32 ObjectTable_DestroyById();
 s32 Actor_MoveToObject();
-void Field_RequestBattleFromEncounterTable(s32 row, s32 column);
 extern u8 gData_02005ba8[];
 extern u8 gData_02005bd0[];
 extern u8 gData_02005bf8[];
@@ -1422,7 +1423,6 @@ L_0200a47a:
 }
 
 #include "event_work.h"
-
 
 static __inline__ void Func_02005714_(s32 actor, s32 a, s32 b) {
   Func_080d47b4(actor, a, b);

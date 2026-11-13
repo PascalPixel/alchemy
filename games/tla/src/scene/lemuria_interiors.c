@@ -369,7 +369,7 @@ void Func_0200031c(void) {
   object1->actionFlags |= 1;
   Event_Wait(10);
   Actor_StartRepeatedMotion(7, 3);
-  Func_080d489c(7, 0x102);
+  FieldEffect_SetAttached(7, 0x102);
   Event_Wait(55);
   Actor_WatchAndSetScript(4, 7);
   Actor_WatchAndSetScript(12, 7);

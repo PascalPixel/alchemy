@@ -40,7 +40,7 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 void Func_0802d088(s32 region, s32 gradual);
 s32 Func_080c8950(void);
 void Func_080c8970(void *palette);
-void Func_0802cc9c(const u16 *script);
+void TilesetAnim_StartAll(const u16 *script);
 
 void Func_0802c58c(void) {
   struct MapTileWindow *window = (struct MapTileWindow *)Ram_HeapSlots->mapWork;
@@ -122,7 +122,7 @@ void Func_0802c58c(void) {
       u8 *anim = Data_0202d000;
       Func_080c8970(buffer);
       Resource_DecodeType01(Resource_GetTableEntry(resources[1]), anim);
-      Func_0802cc9c((const u16 *)anim);
+      TilesetAnim_StartAll((const u16 *)anim);
     }
     Resource_DecodeType01(Resource_GetTableEntry(resources[2]), gMapCollision);
     break;
@@ -358,7 +358,7 @@ void Map_SetLayerEntryFlag(u32 no) {
 
 #include "iwram_call.h"
 
-void Func_0802cc9c(const u16 *script) {
+void TilesetAnim_StartAll(const u16 *script) {
   struct MapWork *state = Ram_HeapSlots->mapWork;
   s32 count;
   u32 command;
@@ -1124,7 +1124,7 @@ s32 Func_0802d958(u8 *object, s16 *position) {
   return 0;
 }
 
-s32 Func_0802da24(s32 *position) {
+s32 MapGrid_IsWallAt(s32 *position) {
   s32 x = position[0] / 65536;
   s32 z = (u32)((position[2] & 0xfff00000) - position[1]) >> 16;
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;

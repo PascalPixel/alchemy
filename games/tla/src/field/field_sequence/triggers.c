@@ -154,7 +154,7 @@ void Func_0814ea58(void *effect, s32 mode);
 void PartyStatus_CreateWindow(s32 flags);
 s32 Func_080dbde8(s32 x, s32 z, s32 layer);
 u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value);
-void Func_08108148(void);
+void Shop_InitializeWork(void);
 s32 Inn_RoomPrice(s32 innId);
 void Func_0810824c(void);
 
@@ -276,10 +276,9 @@ s32 Func_080ccec8(s32 id) {
       busy = &((u8 *)object)[91];
       *busy = 1;
       if (silent == 0)
-        FieldMessage_ShowFar(
-            found + (s32)&MsgKey0dc4, 1);
-      if (gMainRoutineWork.scene == (s32)&SceneId_VenusLighthouse && noHint == 0 &&
-          !GameFlag_Test(flag)) {
+        FieldMessage_ShowFar(found + (s32)&MsgKey0dc4, 1);
+      if (gMainRoutineWork.scene == (s32)&SceneId_VenusLighthouse &&
+          noHint == 0 && !GameFlag_Test(flag)) {
         MessageArgument_PushFar(contents, 2);
         FieldMessage_ShowFar((s32)&MsgKey15b5, 1);
       }
@@ -297,7 +296,7 @@ s32 Func_080ccec8(s32 id) {
         struct Actor *trap = ObjectEvent_GetObject(index);
 
         trap->update = Marker_MoveLeaderAwayFromEmitter;
-        Func_080cf350(trap);
+        ItemDisplay_RaiseAboveLeader(trap);
         Sound_PlayFar(83);
         MessageArgument_PushFar(contents, 5);
         FieldMessage_ShowFar((s32)&MsgKey0e17, 3);
@@ -365,7 +364,7 @@ s32 Func_080ccec8(s32 id) {
           if (type == 128)
             ObjectEvent_SetMode2(index);
         }
-        Func_080cf350(shown);
+        ItemDisplay_RaiseAboveLeader(shown);
         Sound_PlayFar(83);
         contents &= 0x7fff;
         MessageArgument_PushFar(contents, 5);
@@ -406,7 +405,7 @@ s32 Func_080ccec8(s32 id) {
       }
       if (type == 128)
         ObjectEvent_SetMode2(index);
-      Func_080cf350(shown);
+      ItemDisplay_RaiseAboveLeader(shown);
       Sound_PlayFar(83);
       MessageArgument_PushFar(contents, 2);
       if (slot == gMainRoutineWork.currentOwner) {
@@ -428,8 +427,7 @@ s32 Func_080ccec8(s32 id) {
       result = 0;
       goto done;
     empty:
-      FieldMessage_ShowFar(found + (s32)&MsgKey0def,
-                                             1);
+      FieldMessage_ShowFar(found + (s32)&MsgKey0def, 1);
     done:
       *busy = 0;
       Event_End();
@@ -448,7 +446,7 @@ s32 Func_080ccec8(s32 id) {
         return result;
       if (talk->script >= 0x10000) {
         Event_RunMessage(id, BattleEffect_GetFlags(id) * 2 +
-                                        ((Random16() << 1) >> 16) + (s32)&MsgKey137f);
+                                 ((Random16() << 1) >> 16) + (s32)&MsgKey137f);
         goto resume;
       }
       goto check;
@@ -468,7 +466,7 @@ s32 Func_080ccec8(s32 id) {
     if ((u8)placement->talkFacing <= 1 || (s8)placement->talkFacing == 3) {
       leader = Actor_GetById(gMainRoutineWork.currentOwner);
       Actor_SetPositionAndResetMotionFar(leader, leader->x, leader->y,
-                                          leader->z);
+                                         leader->z);
       Actor_TurnToFaceEachOther(id, gMainRoutineWork.currentOwner, 0);
     }
   }
@@ -608,8 +606,8 @@ s32 Func_080d50f8(void);
 s32 Func_080d53b8(void);
 
 /// The field's push and button handler for keys, idle while
-/// gMainRoutineWork.pendingThird is set. After the leader has pushed for more than
-/// 12 frames: key 0x20 on a 0x80 push makes the leader jump
+/// gMainRoutineWork.pendingThird is set. After the leader has pushed for more
+/// than 12 frames: key 0x20 on a 0x80 push makes the leader jump
 /// (Actor_JumpDownLedge(owner, 6, 0)); key 0x80 runs
 /// Func_080d4d08; key 0x40 runs Func_080d50f8 or Func_080d53b8 by the push kind
 /// and clears the push state when it returns 0; key 2 with Func_080cdc74 runs

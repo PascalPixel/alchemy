@@ -84,7 +84,7 @@ void Func_08044348(struct Window *window, const void *resource) {
 s32 Text_MeasureEntry(s32 start, u32 *width, u32 *height, s32 mode);
 
 void Window_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
-                                 s32 width, s32 height, u32 field) {
+                               s32 width, s32 height, u32 field) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
 
   x += (s16)object->x + 1;
@@ -272,12 +272,12 @@ extern u8 gNameEntry_EndKeyLabel[];
 #endif
 
 void Window_LoadGraphics(void);
-void Func_0803d3c0(s32 member, s32 x, s32 y, s32 side);
+void Portrait_OpenWindow(s32 member, s32 x, s32 y, s32 side);
 void Func_08108048(struct NameCursorMotion *cursor, s32 x, s32 y);
 void Func_08108040(struct NameCursorMotion *cursor, s32 x, s32 y, s32 speed);
 void Func_08108030(struct NameCursorMotion *cursor);
 void Func_08108038(struct NameCursorMotion *cursor);
-void Func_0803d450(s32 member);
+void Portrait_CloseWindow(s32 member);
 
 // The Japanese form enters kana: a dakuten or handakuten joins the kana before
 // it (Func_08044488 refuses a mark that cannot), takes a byte but is no
@@ -312,7 +312,7 @@ s32 Func_08044558(s32 member) {
                 gMainRoutineWork.paletteGlow[1]);
   keyboardWindow = Window_Create(3, 6, 24, NAME_KEYBOARD_HEIGHT, 2);
   nameWindow = Window_Create(8, 3, 8, 3, 2);
-  Func_0803d3c0(member, 0, 3, 1);
+  Portrait_OpenWindow(member, 0, 3, 1);
   Func_08044348(keyboardWindow, gNameEntry_KeyboardTilemap);
   Window_DrawDividerLine(keyboardWindow, 18, 0, 18, NAME_DIVIDER_BOTTOM);
   render->dirty = textDirty;
@@ -566,7 +566,7 @@ s32 Func_08044558(s32 member) {
   }
   Window_Close(keyboardWindow, 2);
   Window_Close(nameWindow, 2);
-  Func_0803d450(member);
+  Portrait_CloseWindow(member);
   wait(1);
   return result;
 }
@@ -596,7 +596,7 @@ s32 Func_08044558(s32 member) {
                 gMainRoutineWork.paletteGlow[1]);
   keyboardWindow = Window_Create(3, 6, 24, 9, 2);
   nameWindow = Window_Create(8, 3, NAME_LABEL_WIDTH, 3, 2);
-  Func_0803d3c0(member, 0, 3, 1);
+  Portrait_OpenWindow(member, 0, 3, 1);
   Func_08044348(keyboardWindow, gNameEntry_KeyboardTilemap);
 #if NAME_KEY_LABELS
   Text_DrawStringInWindow(gNameEntry_DeleteKeyLabel, keyboardWindow, 144, 32);
@@ -793,7 +793,7 @@ s32 Func_08044558(s32 member) {
   }
   Window_Close(keyboardWindow, 2);
   Window_Close(nameWindow, 2);
-  Func_0803d450(member);
+  Portrait_CloseWindow(member);
   wait(1);
   while (gInput.held != 0)
     wait(1);

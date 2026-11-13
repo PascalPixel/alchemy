@@ -4,7 +4,20 @@
 
 #include "../f15585c_internal.h"
 
-void Func_08163c2c(s32 mode, s32 value) {
+/// Wipes the whole canvas to one colour with a ragged edge: each row (or
+/// column) lags a random 0 to 63 pixels behind the front, which speeds up as
+/// it goes. Returns when the wipe is done, a frame at a time: 23 frames
+/// across, 15 down.
+///
+/// Called by the summons and effects that open on a wiped canvas: Boreas,
+/// Thor, Atalanta, Neptune, Kirin, Ramses, the particle streams and
+/// Judgment. Writes the canvas and sets work->transferPending each frame;
+/// the caller's transfer task must already be running.
+///
+/// direction: CANVAS_WIPE_ACROSS sweeps left to right, anything else top to
+///            bottom (enum CanvasWipeDirection).
+/// fill: what the wipe leaves (enum CanvasWipeFill).
+void BattleEffect_WipeCanvas(s32 mode, s32 value) {
   struct BattleFxWork *work;
   u8 *canvas;
   u8 delay[128];

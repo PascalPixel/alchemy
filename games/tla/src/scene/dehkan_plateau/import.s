@@ -206,9 +206,9 @@ Func_02003cc0:
 	.thumb_func
 Func_080d47b4:
 	overlay_veneer Func_080c8210
-	.global Func_080d489c
+	.global FieldEffect_SetAttached
 	.thumb_func
-Func_080d489c:
+FieldEffect_SetAttached:
 	overlay_veneer Func_080c8218
 	.global ObjectVisual_CopyAttributes
 	.thumb_func

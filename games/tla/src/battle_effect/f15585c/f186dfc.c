@@ -8,7 +8,6 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
@@ -72,15 +71,19 @@ void Transform_Pop(void);
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1])
 
-
-
 struct HalfPair {
   u16 x;
   u16 y;
 };
 
-/* VIEW(f186dfc): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations' extern struct ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:35991: conflicting types for `gResourceTableEntries'. */
-extern struct ResourceTableEntry gResourceTableEntries__f186dfc[] __asm__("gResourceTableEntries");
+/* VIEW(f186dfc): variable gResourceTableEntries as extern struct
+ * ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct
+ * VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations'
+ * extern struct ResourceTableEntry gResourceTableEntries[], it does not compile
+ * in tla-ja: games/tla/src/battle_effect/f15585c.c:35991: conflicting types for
+ * `gResourceTableEntries'. */
+extern struct ResourceTableEntry
+    gResourceTableEntries__f186dfc[] __asm__("gResourceTableEntries");
 struct WingVertex {
   s8 x;
   s8 y;
@@ -134,11 +137,15 @@ extern char ResourceId_SmokeBandSheet;
 extern char ResourceId_Data134;
 
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
-/* VIEW(f186dfc): routine Func_0815b290 as struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags). */
-extern struct SpriteObject *Func_0815b290__f186dfc(s32 width, s32 height, u32 shape,
-                                   u32 attributes) __asm__("Func_0815b290");
+/* VIEW(f186dfc): routine Func_0815b290 as struct SpriteObject
+ * *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the
+ * definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32
+ * attributes, s32 flags). */
+extern struct SpriteObject *
+Func_0815b290__f186dfc(s32 width, s32 height, u32 shape,
+                       u32 attributes) __asm__("Func_0815b290");
 void BattleEffect_ConfigureEffectDisplay(void);
-void Func_08163c2c(s32 a, s32 b);
+void BattleEffect_WipeCanvas(s32 a, s32 b);
 void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 void Func_08164abc(s32 r, s32 g, s32 b);
@@ -154,7 +161,10 @@ void BattleEffect_ProcessPendingStampTransfer(
 #define STAMP_CANVAS(work) ((u8 *)(work) + 0x6780)
 #define HALF_HI(v) (((s16 *)&(v))[1])
 
-/* VIEW(f186dfc): static ClearWords as ClearWords__f186dfc; f16c274 has static inline s32 ClearWords(void *destination, s32 size) { return Iwram_ClearWords(destination, size); }; not tried: ClearWords's definition holds a FAKEMATCH tag. */
+/* VIEW(f186dfc): static ClearWords as ClearWords__f186dfc; f16c274 has static
+ * inline s32 ClearWords(void *destination, s32 size) { return
+ * Iwram_ClearWords(destination, size); }; not tried: ClearWords's definition
+ * holds a FAKEMATCH tag. */
 static inline s32 ClearWords__f186dfc(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the buffer clears through this inline; as direct
    * calls to Iwram_ClearWords, 4 of 2667 instructions of
@@ -208,7 +218,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   BG_PLTT[1] = 0;
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
-  Func_08163c2c(1, 0);
+  BattleEffect_WipeCanvas(1, 0);
   REG_BLDCNT = 0x3f40;
   REG_BG2X = 0x400;
   gCameraSceneParameters[4] = 240;
@@ -1122,7 +1132,6 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   HeapSlot_Release(SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }
-
 
 // The two rings sit at y = -36 and y = -18.
 #define FIRST_RING_Y -36

@@ -39,36 +39,36 @@ void Func_0810a2d8(s32 unitId, s32 slot) {
   kind = item->useType;
   if (kind != 2) {
     MessageArgument_PushFar(itemId, 2);
-    Func_0810857c((s32)MsgRepairNotHandled);
+    Shop_ShowKeeperMessageHidingCursor((s32)MsgRepairNotHandled);
     return;
   }
   if (!(unit->inventory[slot] & 0x400)) {
     MessageArgument_PushFar(itemId, 2);
-    Func_0810857c((s32)MsgRepairNotDamaged);
+    Shop_ShowKeeperMessageHidingCursor((s32)MsgRepairNotDamaged);
     return;
   }
   if ((unit->inventory[slot] & 0x200) && (kind & item->flags)) {
     MessageArgument_PushFar(itemId, 2);
-    Func_0810857c((s32)MsgRepairStuckOn);
+    Shop_ShowKeeperMessageHidingCursor((s32)MsgRepairStuckOn);
     return;
   }
   if (price > gMainRoutineWork.coins) {
-    Func_0810857c((s32)MsgRepairNotEnoughMoney);
+    Shop_ShowKeeperMessageHidingCursor((s32)MsgRepairNotEnoughMoney);
     return;
   }
   MessageArgument_PushFar(itemId, 2);
   MessageArgument_PushFar(price, 5);
   message = (s32)MsgRepairOffer;
-  Func_0810857c(message);
-  if (Func_08108630(0) != 0) {
-    Func_0810857c(message + 1);
+  Shop_ShowKeeperMessageHidingCursor(message);
+  if (Shop_AskYesNo(0) != 0) {
+    Shop_ShowKeeperMessageHidingCursor(message + 1);
     return;
   }
   saved = unit->inventory[slot];
   unit->inventory[slot] = 0;
   Shop_DrawItemCount(shop->itemWindow, unitId);
   MessageArgument_PushFar(itemId, 2);
-  Func_0810857c(message + 2);
+  Shop_ShowKeeperMessageHidingCursor(message + 2);
   Message_CloseFinishedWindowsFar();
   wait(10);
   Sound_PlayFar(100);
@@ -85,7 +85,7 @@ void Func_0810a2d8(s32 unitId, s32 slot) {
   Func_08109188();
   Shop_DrawItemCount(shop->itemWindow, unitId);
   MessageArgument_PushFar(itemId, 2);
-  Func_0810857c(message + 3);
+  Shop_ShowKeeperMessageHidingCursor(message + 3);
   if (Shop_ConfirmEquip(unitId, slot))
     Shop_SellOld(unitId, equipped);
 }

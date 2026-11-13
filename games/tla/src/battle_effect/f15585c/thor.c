@@ -108,10 +108,10 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
   Task_Add(Func_0813baec, 0xc80);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   work->transferMode = 0;
-  Func_08163c2c(0, 0);
+  BattleEffect_WipeCanvas(0, 0);
   BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
   gCameraSceneParameters[4] = 240;
-  Func_08163c2c(0, 1);
+  BattleEffect_WipeCanvas(0, 1);
   REG_BG2PA = 0x80;
   BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_ADDITIVE, BLIT_CLIP));
   blit[0] = BLITTER;

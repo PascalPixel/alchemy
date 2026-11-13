@@ -112,7 +112,7 @@ void Func_0810a9fc(s32 message) {
 // (his face resource from the actor's sprite, or a plain window), the cursor
 // and the coins window, then offers the party service until the menu is
 // cancelled. The Broken Seal's Shop_ConfirmAct in games/tbs/src/shop/shop.c,
-// written with this game's calls (Func_08108148 for the cursor work,
+// written with this game's calls (Shop_InitializeWork for the cursor work,
 // Func_080380f8 for the side-object window, MenuCursor_SetPositionImmediate to
 // place the cursor, Func_0810a9ac to show a message, Shop_CountUnits to count
 // the downed, Func_0810abf0 for the service, Func_0810824c to clean up), its
@@ -131,7 +131,7 @@ s32 Shop_ConfirmAct(s32 unitId) {
   struct ShopRuntime *shop;
   struct ShopCursorAnchor *cursorAnchor;
 
-  Func_08108148();
+  Shop_InitializeWork();
   shop = Ram_HeapSlots->menuRuntime;
   shop->partyAction = listWindow;
 
@@ -148,8 +148,8 @@ s32 Shop_ConfirmAct(s32 unitId) {
   }
 
   cursorAnchor = (struct ShopCursorAnchor *)WindowSprite_CreateFar(
-      shop->cursorIcon, OUTPUT_SIZE_16X16, (struct RenderInput *)listWindow,
-      0, 0);
+      shop->cursorIcon, OUTPUT_SIZE_16X16, (struct RenderInput *)listWindow, 0,
+      0);
   cursorAnchor->active = 1;
   cursorAnchor->unk00[4] = 0;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
@@ -318,7 +318,7 @@ loop:
     MessageArgument_PushFar(price, 5);
     messageBase = (s32)MsgReviving;
     Func_0810a9ac(messageBase);
-    if (Func_08108660(0) != 0) {
+    if (Sanctum_AskYesNo(0) != 0) {
       Func_0810a9fc(messageBase + 2);
       chooseAgain = 1;
       goto loop;

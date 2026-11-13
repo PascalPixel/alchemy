@@ -138,9 +138,9 @@ Import_ActorReturnHome:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_080d3070
+	.global Actor_LaunchFromLeader
 	.thumb_func
-Func_080d3070:
+Actor_LaunchFromLeader:
 	overlay_veneer Motion_LaunchFromFocusedObjectFar
 	.global Func_02000d50
 	.thumb_func

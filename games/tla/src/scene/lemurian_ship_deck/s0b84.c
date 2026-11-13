@@ -1,5 +1,6 @@
 /// @file
-/// Scene code of overlay 0x657, in ROM order, from s0b84's offset up to the next object the overlay links, and the overlay's data.
+/// Scene code of overlay 0x657, in ROM order, from s0b84's offset up to the
+/// next object the overlay links, and the overlay's data.
 
 #include "types.h"
 #include "system.h"
@@ -56,8 +57,8 @@ void Func_020002cc(void) {
   FieldCamera_MoveTo(PIXELS(342), PIXELS(48), PIXELS(408), 0);
   System_Wait(1);
   MapGrid_CopyCellsTo(60, 53, 67, 16, 7, 3);
-  Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, PIXELS(552), PIXELS(376),
-                FACING_EAST);
+  Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, PIXELS(552),
+                             PIXELS(376), FACING_EAST);
   /* FAKEMATCH(temporary): the angle held in a local, so its two-instruction
    * constant is built ahead of the position arguments; as the constant
    * argument, 4 of 405 instructions differ in tla-en. */
@@ -103,7 +104,8 @@ void Func_020002cc(void) {
   Actor_ShowEmote(5, 0x108, 20);
   Event_ShowMessage(5, 0);
   Event_OpenMessage(7, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
+      0) {
     Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 0);
     Actor_ShowEmote(9, 0x109, 20);
     Event_ShowMessage(9, 0);
@@ -422,7 +424,8 @@ void Func_02000ce0(void) {
   Event_OpenMessage(9, 0);
   Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
-  answer = FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
+  answer =
+      FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   owner = gMainRoutineWork.currentOwner;
   if (answer == 0) {
     Actor_WaitForAnimationChange(owner);
@@ -460,18 +463,15 @@ void Func_02000ce0(void) {
     Actor_SetAnimation(9, 2);
     target = Actor_Get(4);
     if (target != NULL)
-      Actor_SetDestination(9, ((s16 *)&target->x)[1],
-                                ((s16 *)&target->z)[1]);
+      Actor_SetDestination(9, ((s16 *)&target->x)[1], ((s16 *)&target->z)[1]);
     Actor_SetAnimation(5, 2);
     target = Actor_Get(4);
     if (target != NULL)
-      Actor_SetDestination(5, ((s16 *)&target->x)[1],
-                                ((s16 *)&target->z)[1]);
+      Actor_SetDestination(5, ((s16 *)&target->x)[1], ((s16 *)&target->z)[1]);
     Actor_SetAnimation(6, 2);
     target = Actor_Get(4);
     if (target != NULL)
-      Actor_SetDestination(6, ((s16 *)&target->x)[1],
-                                ((s16 *)&target->z)[1]);
+      Actor_SetDestination(6, ((s16 *)&target->x)[1], ((s16 *)&target->z)[1]);
   }
   FieldActor_WaitForMoveById(6);
   Actor_SetPosition(6, 0, 0);
@@ -566,7 +566,8 @@ void Func_02001188(void) {
 u8 *HeapSlot_AllocFar(s32 slot, s32 size);
 
 struct Actor *Func_02001210(void) {
-  struct Actor *object = (struct Actor *)Import_ActorCreate(0x1e9, 0x1680000, 0x400000, 0x1a80000);
+  struct Actor *object =
+      (struct Actor *)Import_ActorCreate(0x1e9, 0x1680000, 0x400000, 0x1a80000);
   u8 *buffer = 0;
   struct FieldSprite *sprite;
 
@@ -906,7 +907,7 @@ static __inline__ void Func_020020b4_(s32 id, s32 a, s32 b, s32 c) {
    * scene layer, so the arguments are set up in their own order and each call
    * keeps its constants; as a direct call, the costly constant is built first
    * or shared, 2 of 93 instructions differ in tla-en. */
-  Func_080d3070(id, a, b, c);
+  Actor_LaunchFromLeader(id, a, b, c);
 }
 
 void Func_02001da0(void) {

@@ -140,7 +140,7 @@ void Func_080426e0(struct Window *window, u32 flags) {
 
 s32 Palette_GetBasicObjColors(void);
 
-s32 Func_08042808(struct RenderInput *window, s32 x, s32 y, s32 value) {
+s32 PartyStatus_DrawBars(struct RenderInput *window, s32 x, s32 y, s32 value) {
   s32 i;
   struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 filled = value;
@@ -311,8 +311,9 @@ void PartyStatus_Draw(s32 flags) {
       barLength = (current * 40) / unit->maxHp;
       if (barLength == 0 && current != 0)
         barLength = 1;
-      Func_08042808((struct RenderInput *)window,
-                    x + i * PARTY_STATUS_COLUMN_WIDTH + 1, y + 2, barLength);
+      PartyStatus_DrawBars((struct RenderInput *)window,
+                           x + i * PARTY_STATUS_COLUMN_WIDTH + 1, y + 2,
+                           barLength);
     }
     if (flags & PARTY_STATUS_SHOW_PP) {
       work->level = 14;
@@ -326,8 +327,9 @@ void PartyStatus_Draw(s32 flags) {
         barLength = (current * 40) / unit->maxPp;
         if (barLength == 0 && current != 0)
           barLength = 1;
-        Func_08042808((struct RenderInput *)window,
-                      x + i * PARTY_STATUS_COLUMN_WIDTH + 1, y + 3, barLength);
+        PartyStatus_DrawBars((struct RenderInput *)window,
+                             x + i * PARTY_STATUS_COLUMN_WIDTH + 1, y + 3,
+                             barLength);
       }
     }
   }

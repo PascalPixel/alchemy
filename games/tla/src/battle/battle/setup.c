@@ -10,7 +10,7 @@ void SceneTransform_SetPosition(s32 *position);
 void Func_080150ac(s32 yaw);
 void SceneTransform_ApplyPitch(s32);
 
-void Func_08118adc(void) {
+void BattleCamera_Update(void) {
   struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
   struct BattlePresentationTransition *transition =
       Ram_HeapSlots->transitionWork;
@@ -99,11 +99,11 @@ void Func_08118bcc(s32 enemyCount) {
   }
 }
 
-// Func_08118c68: The Broken Seal's BattleParty_CollectUnitList.
+// BattleUnit_Collect: The Broken Seal's BattleParty_CollectUnitList.
 
 extern const s8 gData_081287c8[];
 
-void Func_08118c68(void) {
+void BattleUnit_Collect(void) {
   u16 buf[14];
   struct BattleWork *battle;
   s32 count;
@@ -244,7 +244,7 @@ void Func_08118eb0(void) {
       for (djinn = 0; djinn <= 19; djinn++) {
         if (Djinn_IsReadyFar(owner, element, djinn) != 0) {
           list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
-                      owner > 7))
+                       owner > 7))
                       ->list;
           for (i = 0; i < list->count; i++) {
             if (element == list->entries[i].element &&
@@ -271,9 +271,9 @@ void Func_08118f6c(void) {
   u32 availableMask;
 
   partySize = BattleParty_PrepareActiveOwners(partyMembers);
-  availableMask =
-      ((struct BattleSummonState *)Djinn_GetRecoveryTableFar(0))->availableMask &
-      0xffff0000;
+  availableMask = ((struct BattleSummonState *)Djinn_GetRecoveryTableFar(0))
+                      ->availableMask &
+                  0xffff0000;
 
   element = 0;
   do {

@@ -284,7 +284,7 @@ extern const u8 *const gText_NumberWords[];
 #endif
 #endif
 
-u32 Func_0803cd08(u32 name, u32 clear);
+u32 MessageArgument_Lookup(u32 name, u32 clear);
 void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 void MessageArgument_ClearAll(void);
 u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width);
@@ -380,7 +380,7 @@ s32 Message_Decode(s32 script, s32 clear) {
           switch (code) {
           case 19:
             decode(messageReader);
-            Func_0803cd08(3, clear);
+            MessageArgument_Lookup(3, clear);
             break;
           case 0:
           case 2:
@@ -388,17 +388,17 @@ s32 Message_Decode(s32 script, s32 clear) {
             running = 0;
             break;
           case 22:
-            Func_0803cd08(5, clear);
+            MessageArgument_Lookup(5, clear);
             break;
           case 20:
             decode(messageReader);
-            Func_0803cd08(2, clear);
+            MessageArgument_Lookup(2, clear);
             break;
           case 21:
-            Func_0803cd08(4, clear);
+            MessageArgument_Lookup(4, clear);
             break;
           case 23:
-            Func_0803cd08(6, clear);
+            MessageArgument_Lookup(6, clear);
             break;
           case 8:
           case 9:
@@ -498,7 +498,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             break;
           case 22:
-            value = Func_0803cd08(5, clear);
+            value = MessageArgument_Lookup(5, clear);
             magnitude = value;
             if (magnitude < 0)
               magnitude = -value;
@@ -515,7 +515,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case 19:
             no = decode(messageReader) - 1;
-            argument = Func_0803cd08(3, clear);
+            argument = MessageArgument_Lookup(3, clear);
             Message_DecodeRaw(argument + (s32)MsgClassName, name, 24);
             writePosition = Message_AppendArticleName(
                 0, name, writePosition, entry, no, plural, &suffix);
@@ -532,7 +532,7 @@ s32 Message_Decode(s32 script, s32 clear) {
 #else
               form = no;
 #endif
-              argument = Func_0803cd08(2, clear) & ITEM_ID_MASK;
+              argument = MessageArgument_Lookup(2, clear) & ITEM_ID_MASK;
               if (form == 2 || (form == 3 && plural != 0) || form == 4)
                 Message_DecodeRaw(
                     argument + (s32)(MsgItemName + ITEM_PLURAL_NAME_OFFSET),
@@ -549,7 +549,7 @@ s32 Message_Decode(s32 script, s32 clear) {
                 afterItem = 0;
             }
 #else
-            argument = Func_0803cd08(2, clear);
+            argument = MessageArgument_Lookup(2, clear);
             Message_DecodeRaw((argument & ITEM_ID_MASK) + (s32)MsgItemName,
                               name, 24);
             writePosition = Message_AppendArticleName(
@@ -557,7 +557,7 @@ s32 Message_Decode(s32 script, s32 clear) {
 #endif
             break;
           case 21:
-            argument = Func_0803cd08(4, clear);
+            argument = MessageArgument_Lookup(4, clear);
             Message_DecodeRaw(argument + (s32)MsgAbilityNothing, name, 24);
             p = name;
             nextPosition = writePosition;
@@ -570,7 +570,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case 23:
             Message_DecodeRaw(
-                Scene_GetAreaNameIndexFar(Func_0803cd08(6, clear), 1) +
+                Scene_GetAreaNameIndexFar(MessageArgument_Lookup(6, clear), 1) +
                     (s32)MsgDebugAreaName,
                 name, 24);
             p = name;
@@ -597,7 +597,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case 18:
             no = decode(messageReader) - 1;
-            nameBytes = Unit_Get(Func_0803cd08(1, clear))->name;
+            nameBytes = Unit_Get(MessageArgument_Lookup(1, clear))->name;
             nameOutput = name;
             j = 0;
             do {
@@ -711,14 +711,14 @@ s32 Message_Decode(s32 script, s32 clear) {
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_ITALIAN
             // The item's possessive, by its gender; c holds the gender
             // first.
-            argument = Func_0803cd08(2, 0);
+            argument = MessageArgument_Lookup(2, 0);
             argument &= ITEM_ID_MASK;
             possessives = gLocalizedWord_ItemPossessives;
             c = gLocalizedWord_ItemGenders[argument];
             word = possessives.text[c & 3];
 #else
             // DEAD: the item argument is read and dropped.
-            Func_0803cd08(2, 0);
+            MessageArgument_Lookup(2, 0);
 #if LANGUAGE == LANGUAGE_FRENCH
             word = (s8 *)gLocalizedWord_ItemPronoun;
 #else
@@ -926,7 +926,7 @@ s32 Message_Decode(s32 script, s32 clear) {
         if (code < 32) {
           switch (code) {
           case 19:
-            Func_0803cd08(3, clear);
+            MessageArgument_Lookup(3, clear);
             break;
           case 0:
           case 2:
@@ -938,16 +938,16 @@ s32 Message_Decode(s32 script, s32 clear) {
             decode(messageReader);
             break;
           case 22:
-            Func_0803cd08(5, clear);
+            MessageArgument_Lookup(5, clear);
             break;
           case 20:
-            Func_0803cd08(2, clear);
+            MessageArgument_Lookup(2, clear);
             break;
           case 21:
-            Func_0803cd08(4, clear);
+            MessageArgument_Lookup(4, clear);
             break;
           case 23:
-            Func_0803cd08(6, clear);
+            MessageArgument_Lookup(6, clear);
             break;
           case 17:
             decode(messageReader);
@@ -1018,7 +1018,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             break;
           case 22:
-            value = Func_0803cd08(5, clear);
+            value = MessageArgument_Lookup(5, clear);
             numberText = String_FormatNumber(numberBuffer, value, 0);
             i = numberText - numberBuffer;
             while (i != 16 && numberBuffer[i] != 0) {
@@ -1028,27 +1028,27 @@ s32 Message_Decode(s32 script, s32 clear) {
             }
             break;
           case 19:
-            argument = Func_0803cd08(3, clear);
+            argument = MessageArgument_Lookup(3, clear);
             Message_DecodeRaw(argument + (s32)MsgClassName, name, 24);
             writePosition = Message_AppendArticleName(mode, name, writePosition,
                                                       entry, 0, 0, 0);
             break;
           case 20:
-            argument = Func_0803cd08(2, clear);
+            argument = MessageArgument_Lookup(2, clear);
             Message_DecodeRaw((argument & ITEM_ID_MASK) + (s32)MsgItemName,
                               name, 24);
             writePosition = Message_AppendArticleName(mode, name, writePosition,
                                                       entry, 0, 0, 0);
             break;
           case 21:
-            argument = Func_0803cd08(4, clear);
+            argument = MessageArgument_Lookup(4, clear);
             Message_DecodeRaw(argument + (s32)MsgAbilityNothing, name, 24);
             writePosition = Message_AppendArticleName(mode, name, writePosition,
                                                       entry, 0, 0, 0);
             break;
           case 23:
             Message_DecodeRaw(
-                Scene_GetAreaNameIndexFar(Func_0803cd08(6, clear), 1) +
+                Scene_GetAreaNameIndexFar(MessageArgument_Lookup(6, clear), 1) +
                     (s32)MsgDebugAreaName,
                 name, 24);
             writePosition = Message_AppendArticleName(mode, name, writePosition,
@@ -1068,7 +1068,7 @@ s32 Message_Decode(s32 script, s32 clear) {
                                                       entry, 0, 0, 0);
             break;
           case 18:
-            unit = Unit_Get(Func_0803cd08(1, clear));
+            unit = Unit_Get(MessageArgument_Lookup(1, clear));
             if (work->menuState != 0 &&
                 (unit->enemyId == ENEMY_MYSTERY_MAN ||
                  unit->enemyId == ENEMY_MYSTERY_WOMAN)) {

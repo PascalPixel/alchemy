@@ -247,7 +247,7 @@ struct PartyStepView {
 
 s32 DjinnRecovery_CountDownFar(void);
 void Event_ClearValidPackedIds(void);
-void Func_080d489c(s32 owner, s32 mode);
+void FieldEffect_SetAttached(s32 owner, s32 mode);
 
 void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
   struct StepWork *work = Ram_HeapSlots->eventWork;
@@ -308,7 +308,8 @@ void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
     if (GameFlag_Test(0x167))
       speed <<= 1;
     if (*((s8 *)work + 0x18a) == 3) {
-      work->encounterEnemyGroup = Encounter_RollWorldMap((s32)&leader->x, speed);
+      work->encounterEnemyGroup =
+          Encounter_RollWorldMap((s32)&leader->x, speed);
     } else {
       if (attributes & 4)
         zone = 1;
@@ -350,9 +351,9 @@ void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
   if (gPartyStep.hazardMode == 1) {
     gPartyStep.hazardSteps++;
     if ((s16)gPartyStep.hazardSteps == gPartyStep.hazardLimit / 2)
-      Func_080d489c(leaderId, 0x101);
+      FieldEffect_SetAttached(leaderId, 0x101);
     if ((s16)gPartyStep.hazardSteps == gPartyStep.hazardLimit)
-      Func_080d489c(leaderId, 0x100);
+      FieldEffect_SetAttached(leaderId, 0x100);
   }
   if ((s16)gPartyStep.hazardSteps >= gPartyStep.hazardLimit) {
     amount = gPartyStep.hazardDamage;
@@ -364,7 +365,7 @@ void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
   if (partyHurt) {
     work->fallenCount = 0;
     work->survivorCount = 0;
-    Func_080d489c(leaderId, 0x102);
+    FieldEffect_SetAttached(leaderId, 0x102);
     for (i = 0; i < partyCount; i++) {
       unit = Unit_Get(gPartyStep.activeOwners[i]);
       if (unit->hp > 0) {

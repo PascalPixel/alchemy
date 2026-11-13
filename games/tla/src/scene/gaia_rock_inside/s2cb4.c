@@ -352,7 +352,7 @@ s32 Func_02002f30(void) {
         C3(Actor_ResetAndSetPositionInMode2, 10, 456, 360);
         fast = 0x40000;
         dragon->velocityY = fast;
-        C2(Func_080d489c, 10, 258);
+        C2(FieldEffect_SetAttached, 10, 258);
         C1(Actor_WaitForMoveById, 10);
         C3(Func_080d47b4, 10, 257, 20);
         C1(Event_Wait, 30);
@@ -372,7 +372,7 @@ s32 Func_02002f30(void) {
         }
         C3(Actor_ResetAndSetPositionInMode2, 10, 456, 360);
         dragon->velocityY = fast;
-        C2(Func_080d489c, 10, 258);
+        C2(FieldEffect_SetAttached, 10, 258);
         C1(Actor_WaitForMoveById, 10);
         C2(Event_ShowMessageAndWait, 10, 0);
         C1(Event_Wait, 15);
@@ -1064,7 +1064,7 @@ s32 Func_02002f30(void) {
         C3(Actor_ResetAndSetPositionInMode2, 10, 456, 360);
         fast = 0x40000;
         dragon->velocityY = fast;
-        C2(Func_080d489c, 10, 258);
+        C2(FieldEffect_SetAttached, 10, 258);
         C1(Actor_WaitForMoveById, 10);
         C3(Func_080d47b4, 10, 257, 20);
         C1(Event_Wait, 30);
@@ -1084,7 +1084,7 @@ s32 Func_02002f30(void) {
         }
         C3(Actor_ResetAndSetPositionInMode2, 10, 456, 360);
         dragon->velocityY = fast;
-        C2(Func_080d489c, 10, 258);
+        C2(FieldEffect_SetAttached, 10, 258);
         C1(Actor_WaitForMoveById, 10);
         C2(Event_ShowMessageAndWait, 10, 0);
         C1(Event_Wait, 15);

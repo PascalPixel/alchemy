@@ -19,14 +19,15 @@ void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object) {
   object->age++;
 }
 
-
-
-/* VIEW(age_and_cue): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position); f0dfd00 has void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *p). */
-extern void Vector_AddPolarOffset__age_and_cue(s32 radius, s32 angle, s32 *position) __asm__("Vector_AddPolarOffset");
+/* VIEW(age_and_cue): routine Vector_AddPolarOffset as void
+ * Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position); f0dfd00 has void
+ * Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *p). */
+extern void Vector_AddPolarOffset__age_and_cue(
+    s32 radius, s32 angle, s32 *position) __asm__("Vector_AddPolarOffset");
 void Camera_WorldToScreen(struct EffectVector *pos);
 void BattleEffect_ClearOwnedSlot(struct FieldParticle *slot);
 
-void Func_080e0020(struct FieldParticle *effect) {
+void FieldEffect_UpdateHaltParticle(struct FieldParticle *effect) {
   struct BattleFxScene *scene;
   struct EffectVector pos;
   s8 *st;
@@ -41,7 +42,8 @@ top:
     pos.x = effect->originX;
     pos.z = effect->originZ;
     angle = Random16();
-    Vector_AddPolarOffset__age_and_cue(Random16() * 30 + (40 << 16), (u16)angle, &pos);
+    Vector_AddPolarOffset__age_and_cue(Random16() * 30 + (40 << 16), (u16)angle,
+                                       &pos);
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
     effect->acceleration = 4 << 16;
@@ -73,14 +75,13 @@ top:
     BattleEffect_ClearOwnedSlot(effect);
 }
 
-void Func_080e0134(void);
+void FieldPsynergy_Halt(void);
 
 /// Pauses the scene's child (byte 91) and runs the fallback transition.
 void BattleEffect_MarkChildAndRunFallbackTransition(void) {
   (*(u8 **)((u8 *)Ram_HeapSlots->effectWork + 20))[91] = 1;
-  Func_080e0134();
+  FieldPsynergy_Halt();
 }
-
 
 // ⚓️'s effect work holds its slots 8 bytes earlier than ☀️'s.
 struct FallbackScene {
@@ -95,7 +96,7 @@ void Actor_Destroy(struct Actor *object);
 void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
                               s32 z);
 
-void Func_080e0134(void) {
+void FieldPsynergy_Halt(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct Actor *user = scene->mainObject;
   struct Actor *obj;
@@ -154,7 +155,7 @@ void Func_080e0134(void) {
     Camera_WorldToScreen(&pos);
     Vector_AddPolarOffset__age_and_cue(4 << 16, Random16(), &pos);
     FieldParticle_Initialize(slot, 673, pos.x, pos.z);
-    FieldParticle_SetCallback(slot, Func_080e0020);
+    FieldParticle_SetCallback(slot, FieldEffect_UpdateHaltParticle);
     Animation_ApplyChildValuesToRecordFar(slot->object, 7);
     slot++;
   }
@@ -168,7 +169,6 @@ void Func_080e0134(void) {
   wait(30);
   BattleEffect_PrepareBufferInterpolation();
 }
-
 
 #define Actor_SetAnimationSpeedFar                                             \
   ((void (*)(void *, s32))Actor_SetAnimationSpeedFar)
@@ -226,10 +226,10 @@ s32 BattleEffect_FilterObjectIdByFlags(s32 id) {
   return id;
 }
 
-void Func_080e03cc(void);
+void FieldPsynergy_Catch(void);
 
-/// Runs field effect 13 (Func_080e03cc) for the request dispatcher.
-void BattleEffect_CallEffect13(void) { Func_080e03cc(); }
+/// Runs field effect 13 (FieldPsynergy_Catch) for the request dispatcher.
+void BattleEffect_CallEffect13(void) { FieldPsynergy_Catch(); }
 
 struct FxScene13 {
   u16 angle;

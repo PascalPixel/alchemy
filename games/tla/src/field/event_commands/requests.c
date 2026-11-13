@@ -70,7 +70,7 @@ void Field_SetDestination(s16 scene, s16 entrance) {
   event->countdown = 999;
 }
 
-void Func_080d2c64(s32 cue) {
+void Scene_QueueMusic(s32 cue) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 state;
 

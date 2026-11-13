@@ -36,7 +36,7 @@ Actor_SetActionCallbackFar:
 	.global Func_080c8688
 	.thumb_func
 Func_080c8688:
-	overlay_veneer Func_080d2c64
+	overlay_veneer Scene_QueueMusic
 	.global Event_NoOpFar
 	.thumb_func
 Event_NoOpFar:

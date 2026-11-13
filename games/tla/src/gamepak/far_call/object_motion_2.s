@@ -20,7 +20,7 @@ BattleEffect_ClearActiveSlotsAndScheduleUpdatesFar:
 	.global Motion_LaunchFromFocusedObjectFar
 	.thumb_func
 Motion_LaunchFromFocusedObjectFar:
-	overlay_veneer Func_080d3070
+	overlay_veneer Actor_LaunchFromLeader
 	.global Actor_OffsetPositionAndResetFar
 	.thumb_func
 Actor_OffsetPositionAndResetFar:

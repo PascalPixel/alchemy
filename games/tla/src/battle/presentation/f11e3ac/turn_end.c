@@ -183,7 +183,6 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 id) {
   return expired;
 }
 
-
 s32 sub_08124af8(s32 id) {
   struct BattleUnit *unit = Unit_Get__f11f66c(id);
   u8 *count = &unit->refrain;
@@ -268,7 +267,8 @@ s32 DjinnRecovery_CountDown(void) {
     timedEntry = list->entries;
     do {
       if (timedEntry->turns > 0 &&
-          ((struct BattleUnit *)Unit_Get__f11f66c(timedEntry->unitId))->hp != 0) {
+          ((struct BattleUnit *)Unit_Get__f11f66c(timedEntry->unitId))->hp !=
+              0) {
         timedEntry->turns--;
       }
       index++;
@@ -329,7 +329,8 @@ s32 Func_08124cc4(s32 side) {
     do {
       if (timedEntry->turns > 0 &&
           BattleParty_IsUnitListed(timedEntry->unitId) &&
-          ((struct BattleUnit *)Unit_Get__f11f66c(timedEntry->unitId))->hp != 0) {
+          ((struct BattleUnit *)Unit_Get__f11f66c(timedEntry->unitId))->hp !=
+              0) {
         timedEntry->turns--;
         result = 1;
       }
@@ -379,7 +380,6 @@ s32 Func_08124cc4(s32 side) {
   }
   return result;
 }
-
 
 // The Japanese text holds these messages in the same order two places later,
 // but its labels for several of them belong to their neighbours, so the
@@ -467,7 +467,8 @@ void Func_08124e20(void) {
       do {
         if (timedEntry->turns > 0 &&
             BattleObject_Get(timedEntry->unitId) != 0 &&
-            ((struct BattleUnit *)Unit_Get__f11f66c(timedEntry->unitId))->hp != 0) {
+            ((struct BattleUnit *)Unit_Get__f11f66c(timedEntry->unitId))->hp !=
+                0) {
           timedEntry->turns--;
         }
         recoveryIndex++;
@@ -727,7 +728,7 @@ again:
   }
 }
 
-void Func_0812561c(struct BattlePlan *plan) {
+void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
   u32 unitId;
   struct BattleUnit *unit;
   s32 battleContinues;

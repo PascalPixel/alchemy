@@ -222,9 +222,9 @@ Actor_ArmCallbackAndRefresh:
 	.thumb_func
 Func_080d47b4:
 	overlay_veneer Func_080c8210
-	.global Func_080d489c
+	.global FieldEffect_SetAttached
 	.thumb_func
-Func_080d489c:
+FieldEffect_SetAttached:
 	overlay_veneer Func_080c8218
 	.global Camera_SetSpeedParameters
 	.thumb_func
@@ -270,9 +270,9 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_080d3070
+	.global Actor_LaunchFromLeader
 	.thumb_func
-Func_080d3070:
+Actor_LaunchFromLeader:
 	overlay_veneer Motion_LaunchFromFocusedObjectFar
 	.global Actor_CommitPositionAndActivate
 	.thumb_func

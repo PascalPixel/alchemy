@@ -85,7 +85,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   *(u16 *)0x05000002 = 0x18;
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  Func_08163c2c(1, 0);
+  BattleEffect_WipeCanvas(1, 0);
   BattleEffect_SpawnObjects(9, 644, 1);
   gCameraSceneParameters[4] = 240;
   BattleEffect_SelectLivingTargets(work->effect);
@@ -93,7 +93,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   REG_WIN0H = 0xca;
   wait(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
-  Func_08163c2c(1, 1);
+  BattleEffect_WipeCanvas(1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireBlobSheet, work->sheet, 1, 1);
   REG_DISPCNT = 0x7741;
@@ -451,7 +451,6 @@ void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 #undef RESULTS_FRAME
 #undef SPARK_COUNT
 #undef HIT_FRAME
-
 
 // Here PARTICLES, the map cell buffer, holds the spray (and, at the start,
 // the serpent's tiles and the window's column noise).

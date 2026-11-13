@@ -4,7 +4,7 @@
 	.global Func_08020258
 	.thumb_func
 Func_08020258:
-	overlay_veneer Func_0802da24
+	overlay_veneer MapGrid_IsWallAt
 	.global Actor_RegisterSpriteMetadataFar
 	.thumb_func
 Actor_RegisterSpriteMetadataFar:

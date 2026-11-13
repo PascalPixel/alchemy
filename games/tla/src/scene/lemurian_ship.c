@@ -11,17 +11,31 @@
 #include "scene_tables.h"
 #include "scene_ids.h"
 
-/* VIEW(scene_tables): variable gData_02003054 as extern u8 gData_02003054[]; the definition has s32 gData_02003054[] = { - 0x10000, 172, 0x40000095, - 0x10000, - 1, 0xffff, 0xffff, 0, 0, 0, 0, 0, }. */
+/* VIEW(scene_tables): variable gData_02003054 as extern u8 gData_02003054[];
+ * the definition has s32 gData_02003054[] = { - 0x10000, 172, 0x40000095, -
+ * 0x10000, - 1, 0xffff, 0xffff, 0, 0, 0, 0, 0, }. */
 extern u8 gData_02003054__scene_tables[] __asm__("gData_02003054");
-/* VIEW(scene_tables): variable gData_02003084 as extern u8 gData_02003084[]; the definition has u32 gData_02003084[] = { 0xffff0009, 406, 0xc0000178, 0x1500000, 0x2680108, 424, 0xffff000a, 550, 0xc0000179, 0x1500000, 0x2680108, 424, 0xf.... */
+/* VIEW(scene_tables): variable gData_02003084 as extern u8 gData_02003084[];
+ * the definition has u32 gData_02003084[] = { 0xffff0009, 406, 0xc0000178,
+ * 0x1500000, 0x2680108, 424, 0xffff000a, 550, 0xc0000179, 0x1500000, 0x2680108,
+ * 424, 0xf.... */
 extern u8 gData_02003084__scene_tables[] __asm__("gData_02003084");
 extern s32 gData_02003054[];
 extern u32 gData_02003084[];
-/* VIEW(scene_tables): variable gData_0200312c as extern u8 gData_0200312c[]; the definition has s16 gData_0200312c[] = { 0, - 1, 72, 0, 72, 0x4000, 0, - 1, - 1, - 1, - 1, 0, 1, - 1, 72, 0, 72, 0x4000, 0, 8, 16, 248, 256, 0, 2, - 1, 168,...; tried as the definition's extern u32 gData_0200312c[], it does not compile in tla-ja: games/tla/src/scene/lemurian_ship.c:1713: conflicting types for `gData_0200312c'. */
+/* VIEW(scene_tables): variable gData_0200312c as extern u8 gData_0200312c[];
+ * the definition has s16 gData_0200312c[] = { 0, - 1, 72, 0, 72, 0x4000, 0, -
+ * 1, - 1, - 1, - 1, 0, 1, - 1, 72, 0, 72, 0x4000, 0, 8, 16, 248, 256, 0, 2, -
+ * 1, 168,...; tried as the definition's extern u32 gData_0200312c[], it does
+ * not compile in tla-ja: games/tla/src/scene/lemurian_ship.c:1713: conflicting
+ * types for `gData_0200312c'. */
 extern u8 gData_0200312c__scene_tables[] __asm__("gData_0200312c");
-/* VIEW(scene_tables): variable gData_02003234 as extern u8 gData_02003234[]; the definition has u32 gData_02003234[] = { 0xffec01d2, 0x1da0244, 0x24cfff4, 0x13ffff, 0xffff, 0, 0, 0, }. */
+/* VIEW(scene_tables): variable gData_02003234 as extern u8 gData_02003234[];
+ * the definition has u32 gData_02003234[] = { 0xffec01d2, 0x1da0244, 0x24cfff4,
+ * 0x13ffff, 0xffff, 0, 0, 0, }. */
 extern u8 gData_02003234__scene_tables[] __asm__("gData_02003234");
-/* VIEW(scene_tables): variable gData_02003254 as extern u8 gData_02003254[]; the definition has u32 gData_02003254[] = { 0x100200, 0x21000be, 0xce0020, 0xaffff, 0xffff, 0, 0, 0, }. */
+/* VIEW(scene_tables): variable gData_02003254 as extern u8 gData_02003254[];
+ * the definition has u32 gData_02003254[] = { 0x100200, 0x21000be, 0xce0020,
+ * 0xaffff, 0xffff, 0, 0, 0, }. */
 extern u8 gData_02003254__scene_tables[] __asm__("gData_02003254");
 extern u32 gData_02003234[];
 extern u32 gData_02003254[];
@@ -49,15 +63,31 @@ u8 *Func_02000078(void) {
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 // ---- games/tla/src/scene/lemurian_ship/s00b8.c ----
-// Scene code of overlay 0x656, in ROM order, from s00b8's offset up to the next object the overlay links.
+// Scene code of overlay 0x656, in ROM order, from s00b8's offset up to the next
+// object the overlay links.
 
-/* VIEW(s00b8): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct LemurianShipObject *object, u32 value); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemurian_ship/lemurian_ship.h:72: conflicting types for `Actor_SetSingleChildFlags'. */
+/* VIEW(s00b8): routine Actor_SetSingleChildFlags as void
+ * Actor_SetSingleChildFlags(struct LemurianShipObject *object, u32 value);
+ * field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+ * tried as the rest of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/lemurian_ship/lemurian_ship.h:72: conflicting types for
+ * `Actor_SetSingleChildFlags'. */
 struct LemurianShipObject;
-extern void Actor_SetSingleChildFlags__s00b8(struct LemurianShipObject *object, u32 value) __asm__("Actor_SetSingleChildFlags");
+extern void Actor_SetSingleChildFlags__s00b8(
+    struct LemurianShipObject *object,
+    u32 value) __asm__("Actor_SetSingleChildFlags");
 #define Actor_SetSingleChildFlags Actor_SetSingleChildFlags__s00b8
-/* VIEW(s00b8): routine Animation_SetStateFlags as void Animation_SetStateFlags(struct LemurianShipObject *object, s32 flags); field.h has void Animation_SetStateFlags(struct Actor *object, u32 value); tried as the definition's void Animation_SetStateFlags(struct Actor *object, u32 value), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/lemurian_ship/lemurian_ship.h:73: conflicting types for `Animation_SetStateFlags'. */
+/* VIEW(s00b8): routine Animation_SetStateFlags as void
+ * Animation_SetStateFlags(struct LemurianShipObject *object, s32 flags);
+ * field.h has void Animation_SetStateFlags(struct Actor *object, u32 value);
+ * tried as the definition's void Animation_SetStateFlags(struct Actor *object,
+ * u32 value), which the object already declares, it does not compile in tla-ja:
+ * games/tla/src/scene/lemurian_ship/lemurian_ship.h:73: conflicting types for
+ * `Animation_SetStateFlags'. */
 struct LemurianShipObject;
-extern void Animation_SetStateFlags__s00b8(struct LemurianShipObject *object, s32 flags) __asm__("Animation_SetStateFlags");
+extern void
+Animation_SetStateFlags__s00b8(struct LemurianShipObject *object,
+                               s32 flags) __asm__("Animation_SetStateFlags");
 #define Animation_SetStateFlags Animation_SetStateFlags__s00b8
 #include "lemurian_ship/lemurian_ship.h"
 #undef Animation_SetStateFlags
@@ -243,11 +273,11 @@ void Func_02000438(void) {
     Actor_SetSpeedParameters(party->currentOwner, 0x8000, 0x4000);
     x = leader->x;
     cell = x >> 16;
-    Actor_SetMoveTarget(leader, ((8 - cell % 16) << 16) + x, leader->y, leader->z);
+    Actor_SetMoveTarget(leader, ((8 - cell % 16) << 16) + x, leader->y,
+                        leader->z);
     Script_WaitForEventTimeout(leader);
     leader->facing = 0xc000;
-    Actor_SetMovementTypeById(party->currentOwner,
-                                            gData_02002de8);
+    Actor_SetMovementTypeById(party->currentOwner, gData_02002de8);
     wait(12);
     Sound_Play(123);
     Event_FinishScreenTransition();
@@ -395,15 +425,16 @@ void Func_02000838(void) {
 void Func_02000860(void) { Func_02002dc0(gData_02003034); }
 
 void Func_02000870(void) {
-  /* FAKEMATCH(wrapper): Map_SetScreenShake through LemurianShip_SetWork; as a direct
-   * call, 54 of 260 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): Map_SetScreenShake through LemurianShip_SetWork; as a
+   * direct call, 54 of 260 instructions differ in tla-en. */
   struct LemurianShipObject *leader;
   struct LemurianShipObject *helper;
   s32 opened;
   u8 *state;
 
   if (!GameFlag_Test(0x983)) {
-    leader = ((struct LemurianShipObject *)Actor_GetById(gMainRoutineWork.currentOwner));
+    leader = ((struct LemurianShipObject *)Actor_GetById(
+        gMainRoutineWork.currentOwner));
     Func_02002c68();
     Event_ResolvePendingActions(0);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
@@ -449,17 +480,19 @@ void Func_02000870(void) {
       Event_Wait(20);
       MapGrid_SetShake(0, 0, 0);
       MapGrid_CopyCellsTo(68, 68, 50, 64, 3, 3);
-      { s32 two = 2;
-      *state = two;
-      Event_Wait(20);
-      Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x6000, 20);
-      Actor_Jump(gMainRoutineWork.currentOwner, 4, 0);
-      Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
-      Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 840, 88);
-      Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x8000);
-      Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 9);
-      helper->field48 = 0x10000;
-      helper->field22 = two; }
+      {
+        s32 two = 2;
+        *state = two;
+        Event_Wait(20);
+        Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x6000, 20);
+        Actor_Jump(gMainRoutineWork.currentOwner, 4, 0);
+        Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+        Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 840, 88);
+        Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x8000);
+        Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 9);
+        helper->field48 = 0x10000;
+        helper->field22 = two;
+      }
       Actor_Jump(9, 4, 0);
       Actor_MoveToAndWait(9, 832, 74);
       Actor_Jump(9, 4, 0);
@@ -490,7 +523,7 @@ void Func_02000af4(void) {
     Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 812, 72);
     Sound_Play(243);
-    Func_080d489c(gMainRoutineWork.currentOwner, 0x102);
+    FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);
     Map_SetScreenShake(0, 0x20000, 0x10000);
     Event_Wait(20);
     Map_SetScreenShake(0, 0, 0);
@@ -765,16 +798,19 @@ void Func_020011f4(void) {
   Func_02002c70();
 }
 
-/// Places the leader and object 64 304 pixels back along z (Actor_SetHorizontalPositionWithTerrain),
-/// lets the camera follow the leader, starts a blend and sets flag 0x9e4.
+/// Places the leader and object 64 304 pixels back along z
+/// (Actor_SetHorizontalPositionWithTerrain), lets the camera follow the leader,
+/// starts a blend and sets flag 0x9e4.
 void Func_020012b4(void) {
-  struct LemurianShipObject *leader = ((struct LemurianShipObject *)Actor_GetById(gMainRoutineWork.currentOwner));
+  struct LemurianShipObject *leader = ((
+      struct LemurianShipObject *)Actor_GetById(gMainRoutineWork.currentOwner));
   struct LemurianShipObject *object;
 
   Func_02002c68();
   Event_ResolvePendingActions(0);
   Field_SetCameraBounds(0x80000, 0x100000, 0xf80000, 0x1000000);
-  Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, leader->x, leader->z + 0xfed00000);
+  Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
+                                         leader->x, leader->z + 0xfed00000);
   object = ((struct LemurianShipObject *)Actor_GetById(64));
   Actor_SetHorizontalPositionWithTerrain(64, object->x, object->z + 0xfed00000);
   Actor_SetPartAttribute(((struct LemurianShipObject *)Actor_GetById(64)), 0);
@@ -1357,7 +1393,8 @@ void Func_02001e0c(void) {
 }
 
 void Func_020023f8(void) {
-  struct LemurianShipObject *leader = ((struct LemurianShipObject *)Actor_GetById(gMainRoutineWork.currentOwner));
+  struct LemurianShipObject *leader = ((
+      struct LemurianShipObject *)Actor_GetById(gMainRoutineWork.currentOwner));
 
   Actor_SetSpritePriority(8, leader->sprite->priority);
 }
@@ -1370,7 +1407,8 @@ void Func_0200241c(void) {
 }
 
 void Func_0200245c(s32 id) {
-  struct LemurianShipObject *object = ((struct LemurianShipObject *)Actor_GetById(id));
+  struct LemurianShipObject *object =
+      ((struct LemurianShipObject *)Actor_GetById(id));
 
   ((struct LemurianShipObject *)Actor_GetById(id))->priorityFlags |= 0x20;
   Actor_SetSpritePriority(id, 1);
@@ -1540,7 +1578,8 @@ void Func_02002970(void) {
     GameFlag_SetBit(0x202);
     GameFlag_SetBit(0x203);
   }
-  Actor_SetSingleChildFlags__s00b8(((struct LemurianShipObject *)Actor_GetById(8)), 0);
+  Actor_SetSingleChildFlags__s00b8(
+      ((struct LemurianShipObject *)Actor_GetById(8)), 0);
   if (Event_GetFlag(0x202)) {
     object = ((struct LemurianShipObject *)Actor_GetById(8));
     Map_CopyCellPictureIndicesRect(35, 68, 35, 69, 1, 1);
@@ -1558,7 +1597,8 @@ void Func_02002970(void) {
     else
       Actor_SetModeById(8, 2);
   }
-  Actor_SetSingleChildFlags__s00b8(((struct LemurianShipObject *)Actor_GetById(9)), 0);
+  Actor_SetSingleChildFlags__s00b8(
+      ((struct LemurianShipObject *)Actor_GetById(9)), 0);
   if (!GameFlag_Test(0x109))
     GameFlag_SetBit(0x203);
   if (Event_GetFlag(0x203)) {

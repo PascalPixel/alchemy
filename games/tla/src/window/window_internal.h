@@ -60,15 +60,14 @@
 // The window object's functions its parts call before their definitions, or
 // with declarations of their own that disagree.
 void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height);
-void Func_0803a2b0(s32 x, s32 y, u32 width, u32 height, s32 whole);
+void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height, s32 whole);
 void Text_ResetStyle();
 struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
                                     s32 y, u16 *spacing, s32 flags);
 void Window_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
                         u16 *spacing, u32 flags);
 s32 Text_GetMessageSize(s32 no, s32 *x, s32 *y, u32 *width, u32 *height);
-s32 Func_0803bde4(struct Window *window, s32 character, s32 x, s32 y,
-                  s32 mode);
+s32 Func_0803bde4(struct Window *window, s32 character, s32 x, s32 y, s32 mode);
 void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2, u32 y2);
 void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y);

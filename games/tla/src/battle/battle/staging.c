@@ -167,7 +167,7 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
                   struct BattleActionRecord *selection);
 s32 Func_0811de78(struct BattlePlan *plan);
 s32 Func_08124cc4(s32 party);
-void Func_0812561c(struct BattlePlan *plan);
+void BattleUnit_ProcessActionEnd(struct BattlePlan *plan);
 void Func_0812628c(s32 mode, s32 background, s32 value);
 
 s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
@@ -337,7 +337,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
   }
 
   BattleMotion_DestroyAllSlotObjects();
-  Func_0812561c(&battle->plan);
+  BattleUnit_ProcessActionEnd(&battle->plan);
   BattleObject_Put();
   Enemy_Update();
   Func_0811d9a4();

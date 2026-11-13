@@ -24,4 +24,4 @@ Func_08038348:
 	.global Func_08038350
 	.thumb_func
 Func_08038350:
-	overlay_veneer Func_080400e8
+	overlay_veneer SettingsMenu_Run

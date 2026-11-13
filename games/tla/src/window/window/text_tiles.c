@@ -306,7 +306,7 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
   }
 }
 
-void Func_08041b68(void) {
+void Window_MarkVisibleTextTiles(void) {
   u8 *base = Ram_HeapSlots->windowTiles;
   u32 alternate = ((struct WindowWork *)base)->alt;
   u16 *cursor = ((struct WindowWork *)base)->tilemap[0];
@@ -367,7 +367,7 @@ void Func_08041c50(void) {}
 /// Draws a divider from (x1, y1) to (x2, y2), one of which must agree,
 /// joining it to the frame and divider tiles already on the tilemap.
 void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
-                              u32 y2) {
+                            u32 y2) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u16 *cursor;
   u32 pos;
@@ -381,8 +381,7 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
       y1 = y2;
       y2 = pos;
     }
-    Window_ClearTextTilesInRect((s16)win->x + x2, (s16)win->y + y1, 1,
-                                       y2 - y1);
+    Window_ClearTextTilesInRect((s16)win->x + x2, (s16)win->y + y1, 1, y2 - y1);
     cursor = work->tilemap[(s16)win->y + y1] + (s16)win->x + x2;
     for (pos = y1; pos <= y2; pos++) {
       tile = *cursor;
@@ -455,8 +454,7 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
       x1 = x2;
       x2 = pos;
     }
-    Window_ClearTextTilesInRect((s16)win->x + x1, (s16)win->y + y1,
-                                       x2 - x1, 1);
+    Window_ClearTextTilesInRect((s16)win->x + x1, (s16)win->y + y1, x2 - x1, 1);
     cursor = work->tilemap[(s16)win->y + y1] + (s16)win->x + x1;
     for (pos = x1; pos <= x2; pos++) {
       tile = *cursor;
@@ -658,12 +656,11 @@ void Text_DrawNumber(s32 value, s32 width, s32 output, s32 x, s32 y) {
 }
 
 void Text_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *work,
-                               s32 x, s32 y) {
+                             s32 x, s32 y) {
   u8 data[16];
   s32 pinned = value;
 
-  Text_DrawStringAtOffset(String_FormatNumber(data, pinned, width), work, x,
-                            y);
+  Text_DrawStringAtOffset(String_FormatNumber(data, pinned, width), work, x, y);
 }
 
 void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y) {
@@ -671,7 +668,7 @@ void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y) {
   s32 pinned = value;
 
   Text_DrawStringInWindow(String_FormatNumber(data, pinned, width), output, x,
-                            y);
+                          y);
 }
 
 #undef TEXT_JAPANESE_FONT

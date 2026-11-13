@@ -46,12 +46,12 @@ s32 PartyInventory_CountItemFar(s32 item);
 void Shop_DrawMsg(s32 win, s32 message);
 s32 Shop_SelectBuyCount(s32 unit, s32 item);
 void Shop_BuyDone(s32 unit, s32 item, s32 quantity);
-void Func_08109068(struct RenderInput *window, s32 selected);
+void Shop_DrawStock(struct RenderInput *window, s32 selected);
 void Func_081091cc(s32 window, s32 itemId, s32 price, s32 priceKind);
 void Func_080f8040(void *window, s32 item, s32 count);
 void Func_0810928c(struct RenderInput *window, s32 selected, s32 itemId);
 void Func_081095b0(struct RenderInput *window, s32 unitId, s32 itemId);
-void Func_081093a4(s32 window, s32 unitId, s32 itemId);
+void Shop_DrawEquipComparison(s32 window, s32 unitId, s32 itemId);
 void Func_0810a490(void *partyWindow, void *itemWindow);
 
 s32 Func_08108b70(void) {
@@ -104,7 +104,7 @@ next_page:
       stockDefinition = Item_Get(itemId);
       Shop_PlaceCursor(stockWindow, selectionIndex % 7 * 32 - 8, 8);
       shop->mode = 4;
-      Func_08109068(stockWindow, selectionIndex);
+      Shop_DrawStock(stockWindow, selectionIndex);
       Shop_DrawMsg(messageWindow, itemId + (s32)MsgItemPlainName);
       WindowSprite_RedrawSavedRectFar(priceWindow);
       Func_081091cc(priceWindow, itemId, (u16)stockDefinition->price, 0);
@@ -146,7 +146,7 @@ next_page:
       while (gInput.held & 4)
         wait(1);
       Window_CloseFar(window, 2);
-      Func_08109068(stockWindow, selectionIndex);
+      Shop_DrawStock(stockWindow, selectionIndex);
       Func_08109188();
 #if TLA_PATCH_1
       // Japanese does not redraw the price window here.
@@ -166,7 +166,7 @@ next_page:
     goto close;
 
   shop->selectedItem = shop->stockItemIds[selected];
-  Func_081084f4((s32)MsgWhoGetsThis);
+  Shop_ShowKeeperMessage((s32)MsgWhoGetsThis);
   selectedDefinition = Item_Get(shop->selectedItem);
   quantity = 1;
   unitId = 0;
@@ -182,7 +182,7 @@ next_page:
   while (1) {
     if (repromptRecipient != 0) {
       repromptRecipient = 0;
-      Func_081084f4((s32)MsgWhoGetsThis);
+      Shop_ShowKeeperMessage((s32)MsgWhoGetsThis);
       redraw = 1;
     }
     if (redraw != 0) {
@@ -197,7 +197,7 @@ next_page:
       if (Item_GetEquipmentGroupFar(shop->selectedItem) == 0)
         Func_081095b0(itemWindow, unitId, shop->selectedItem);
       else
-        Func_081093a4(itemWindow, unitId, shop->selectedItem);
+        Shop_DrawEquipComparison(itemWindow, unitId, shop->selectedItem);
     }
     if (key = gInput.pressed & 1) {
       redraw = 2;
@@ -208,22 +208,22 @@ next_page:
         MessageArgument_PushFar(unitId, 1);
         MessageArgument_PushFar(shop->selectedItem, 2);
         if (Inventory_CountFar(unitId) == 15)
-          Func_081084f4((s32)MsgPackFull);
+          Shop_ShowKeeperMessage((s32)MsgPackFull);
         else
-          Func_081084f4((s32)MsgCannotCarryItem);
+          Shop_ShowKeeperMessage((s32)MsgCannotCarryItem);
         continue;
       }
       Inventory_RemoveFar(unitId, capacitySlot);
       if ((u16)selectedDefinition->price > (u32)gMainRoutineWork.coins) {
         Sound_PlayFar(113);
-        Func_0810857c((s32)MsgBuyNotEnoughMoney);
+        Shop_ShowKeeperMessageHidingCursor((s32)MsgBuyNotEnoughMoney);
         purchaseResult = -1;
         break;
       }
       if (Item_IsCompatibleWithOwnerFar(unitId, shop->selectedItem) == 0) {
         MessageArgument_PushFar(unitId, 1);
-        Func_081084f4((s32)MsgCannotEquipStillWant);
-        if (Func_08108630(0) != 0) {
+        Shop_ShowKeeperMessage((s32)MsgCannotEquipStillWant);
+        if (Shop_AskYesNo(0) != 0) {
           repromptRecipient = 1;
           continue;
         }
@@ -261,7 +261,7 @@ next_page:
     if (selected > shop->stockCount - 1)
       selected = shop->stockCount - 1;
   }
-  Func_081084f4((s32)MsgBuyAnythingElse);
+  Shop_ShowKeeperMessage((s32)MsgBuyAnythingElse);
   goto next_page;
 
 close:
@@ -281,7 +281,7 @@ struct WindowSprite *WindowSprite_CreateLoadedFar(s32 item, s32 mode,
                                                   struct RenderInput *window,
                                                   s32 x, s32 y);
 
-void Func_08109068(struct RenderInput *window, s32 selected) {
+void Shop_DrawStock(struct RenderInput *window, s32 selected) {
   struct ShopRuntime *shop;
   s16 *itemIds;
   s16 *stockCursor;
@@ -335,7 +335,8 @@ void Func_08109068(struct RenderInput *window, s32 selected) {
           icon->sentinel = 253;
         }
         // Read unsigned (ldrh), as the buy screen reads the price elsewhere.
-        icon = Shop_CreatePriceSprite((u16)definition->price, window, priceX, 0);
+        icon =
+            Shop_CreatePriceSprite((u16)definition->price, window, priceX, 0);
         icon->sentinel = 251;
       }
     }
@@ -405,11 +406,11 @@ void Func_081091cc(s32 window, s32 itemId, s32 price, s32 priceKind) {
   goto draw;
 cannot_buy:
   Text_DrawCharacterAtOffsetFar((s32)MsgCannotBuyThat, window,
-                                  SHOP_PRICE_LABEL_X, 8);
+                                SHOP_PRICE_LABEL_X, 8);
   return;
 not_broken:
   Text_DrawCharacterAtOffsetFar((s32)MsgNotBroken, window, SHOP_PRICE_LABEL_X,
-                                  8);
+                                8);
   return;
 show_price:
   labelMessage = (s32)MsgPrice;
@@ -430,8 +431,7 @@ draw:
     }
   }
   if (priceKind == 3)
-    Text_DrawCharacterAtOffsetFar(price + (s32)MsgItemCondition, window, 8,
-                                    8);
+    Text_DrawCharacterAtOffsetFar(price + (s32)MsgItemCondition, window, 8, 8);
   else
     goto show_price;
 }
@@ -524,7 +524,12 @@ struct ShopWork {
   s8 partyAction;
 };
 
-void Func_081093a4(s32 window, s32 unitId, s32 itemId) {
+/// Shows how Attack, Defense and Agility would change if the party member wore
+/// the item: equips it in place of what it would replace, recomputes, puts the
+/// slot back and recomputes again, then draws both values with an arrow and
+/// the name of the item it would replace. Called by Shop_SelectBuy for
+/// weapons and armor.
+void Shop_DrawEquipComparison(s32 window, s32 unitId, s32 itemId) {
   struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
   struct BattleUnit *unit = Unit_Get(unitId);
   struct ItemDefinition *item = Item_Get(itemId);
@@ -610,7 +615,8 @@ void Func_081095b0(struct RenderInput *window, s32 unitId, s32 itemId) {
     slot = Inventory_FindFar(unitId, itemId);
     if (slot != -1) {
       quantityOffset = slot * 2 + 216;
-      MessageArgument_PushFar((*(u16 *)(unitBytes + quantityOffset) >> 11) + 1, 5);
+      MessageArgument_PushFar((*(u16 *)(unitBytes + quantityOffset) >> 11) + 1,
+                              5);
       Text_DrawCharacterAtOffsetFar((s32)MsgYouHave, window, 0, 0);
     } else {
       Text_DrawCharacterAtOffsetFar((s32)MsgShopNoneInStock, window, 0, 0);
@@ -624,7 +630,7 @@ s32 __udivsi3(s32, s32);
 
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define QUANTITY_CURSOR_Y 120
-#elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||                    \
+#elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||       \
     (LANGUAGE == LANGUAGE_ITALIAN)
 #define QUANTITY_CURSOR_Y 104
 #else
@@ -646,7 +652,7 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
   item = Item_Get(itemId);
   result = 1;
   if (item->flags & 0x10) {
-    Func_081084f4((s32)MsgHowManyToBuy);
+    Shop_ShowKeeperMessage((s32)MsgHowManyToBuy);
     slot = Inventory_FindFar(unitId, itemId);
     if (slot != -1)
       quantity = (unit->inventory[slot] >> 11) + 1;
@@ -844,7 +850,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
       Func_08109188();
     } while (remaining != 0);
   }
-  Func_0810857c((s32)MsgHereYouGo);
+  Shop_ShowKeeperMessageHidingCursor((s32)MsgHereYouGo);
   if (Shop_ConfirmEquip(unitId, addedSlot) != 0)
     Shop_SellOld(unitId, replacedSlot);
 }
@@ -879,8 +885,8 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   }
 
   MessageArgument_PushFar(unitId, 1);
-  Func_081084f4((s32)MsgEquipNowPrompt);
-  if (Func_08108630(0) != 0)
+  Shop_ShowKeeperMessage((s32)MsgEquipNowPrompt);
+  if (Shop_AskYesNo(0) != 0)
     return 0;
 
   Inventory_EquipFar(unitId, slot);
@@ -907,7 +913,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
       wait(1);
   }
 
-  Func_0810857c((s32)MsgLookBolder);
+  Shop_ShowKeeperMessageHidingCursor((s32)MsgLookBolder);
   return 1;
 }
 
@@ -928,7 +934,7 @@ s32 Shop_SellOld(s32 unitId, s32 slot) {
     return 0;
   if (Item_Get(itemId)->flags & 8)
     return 0;
-  Func_0810a108(unitId, slot, -1);
+  Shop_SellItem(unitId, slot, -1);
   return 1;
 }
 

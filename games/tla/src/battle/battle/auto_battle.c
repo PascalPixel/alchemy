@@ -15,8 +15,7 @@ struct BattleSortedUnitEntry {
   u8 unk0c[4];
 };
 
-s32 AutoBattle_BuildActions(
-    struct BattleSortedUnitEntry *entries) {
+s32 AutoBattle_BuildActions(struct BattleSortedUnitEntry *entries) {
   struct BattleSortedUnitEntry swap;
   u16 unitIds[14];
   s32 firstCount;
@@ -98,8 +97,8 @@ void BattleCamera_AdjustByShoulderKeys(void) {
 }
 
 extern u8 gData_03001ae8[];
-s32 Func_0811ca54(struct BattleActionRecord *action);
-s32 Func_0811c710(struct BattleActionRecord *);
+s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action);
+s32 AutoBattle_RunPsynergy(struct BattleActionRecord *);
 
 s32 AutoBattle_RunAction(s16 *action) {
   struct BattlePresentationTransition *transition;
@@ -135,18 +134,18 @@ s32 AutoBattle_RunAction(s16 *action) {
     break;
   case 2:
     wait(45);
-    Func_0811ca54((struct BattleActionRecord *)action);
+    AutoBattle_RunAttackOrItem((struct BattleActionRecord *)action);
     break;
   case 0:
   default: {
     struct BattlePresentationTransition *tr = Ram_HeapSlots->transitionWork;
     tr->flag = 0;
-    Func_0811ca54((struct BattleActionRecord *)action);
+    AutoBattle_RunAttackOrItem((struct BattleActionRecord *)action);
     tr->flag = 0;
     break;
   }
   case 1:
-    Func_0811c710((struct BattleActionRecord *)action);
+    AutoBattle_RunPsynergy((struct BattleActionRecord *)action);
     break;
   }
 
@@ -211,7 +210,14 @@ s32 AutoBattle_ShowDefend(s16 *script) {
   return 0;
 }
 
-s32 Func_0811c710(struct BattleActionRecord *action) {
+/// Auto battle: casts Psynergy. The camera turns to the caster's side and
+/// the caster raises its hand; the target side fades out, its living units
+/// are readied alone, the Psynergy's effect (kind action->parameter) plays
+/// on them, and everyone fades back in. Returns -1 for an invalid unit or
+/// target. Called by AutoBattle_RunAction for COMMAND_PSYNERGY. Writes
+/// REG_BLDCNT and REG_BLDALPHA and the actors' colour modes, and leaves the
+/// battle objects readied again.
+s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   u16 visibleUnits[14];
   struct BattlePresentationWork context;
   s32 actorId;
@@ -357,7 +363,13 @@ s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
 void Func_08138018(struct BattlePresentationWork *work);
 void Func_08138020(struct BattlePresentationWork *work);
 
-s32 Func_0811ca54(struct BattleActionRecord *action) {
+/// Auto battle: an attack or an item. Turns the camera to the acting unit's
+/// side, poses the unit and plays the battle effect (kind action->parameter) on
+/// the first living unit of the target's side, then sends both back. Returns -1
+/// for an invalid unit. Called by AutoBattle_RunAction for
+/// COMMAND_ATTACK, COMMAND_ITEM and any other command but fleeing, defending
+/// and Psynergy.
+s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   struct BattlePresentationWork work;
   struct BattlePresentationTransition *transition =
       Ram_HeapSlots->transitionWork;
@@ -432,7 +444,7 @@ s32 Func_0811ca54(struct BattleActionRecord *action) {
 }
 
 void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
-                                        u8 *context) {
+                            u8 *context) {
   u8 localContext[4];
   struct BattleUnit *character;
   struct BattleObj *slot;

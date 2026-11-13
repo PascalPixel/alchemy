@@ -40,7 +40,7 @@ Func_08038288:
 	.global Func_08038290
 	.thumb_func
 Func_08038290:
-	overlay_veneer Func_08041b68
+	overlay_veneer Window_MarkVisibleTextTiles
 	.global ItemIcon_ComposeFar
 	.thumb_func
 ItemIcon_ComposeFar:

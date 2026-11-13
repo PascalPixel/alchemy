@@ -14,11 +14,12 @@ s32 Func_0810b5c4(s32 objectId) {
   s32 message;
   s32 result;
 
-  Func_08108148();
+  Shop_InitializeWork();
   shop = Ram_HeapSlots->menuRuntime;
   shop->shopType = 1;
   shop->partyAction = 4;
-  shop->keeperResource = *((struct FieldObject *)Actor_GetByIdFar(objectId))->sprite->portrait;
+  shop->keeperResource =
+      *((struct FieldObject *)Actor_GetByIdFar(objectId))->sprite->portrait;
   window = Func_080380f8(shop->keeperResource, 0, 0, 0);
   icon = WindowSprite_CreateFar(shop->cursorIcon, 0x40000000, window, 0, 0);
   icon->sentinel = 255;
@@ -27,12 +28,12 @@ s32 Func_0810b5c4(s32 objectId) {
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = icon;
   message = (s32)MsgRightWhenI;
-  Func_081084f4(message);
-  Func_081084f4(message + 1);
+  Shop_ShowKeeperMessage(message);
+  Shop_ShowKeeperMessage(message + 1);
   result = Func_0810b6bc();
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   if (result == -1)
-    Func_081084f4(message + 2);
+    Shop_ShowKeeperMessage(message + 2);
   Window_CloseFar(window, 2);
   Func_0810824c();
   return 0;
@@ -62,17 +63,17 @@ s32 Func_0810b6cc(s32 unitId, s32 slot) {
   result = -1;
 
   if (Forge_GetMaterialChance(item) == 0) {
-    Func_0810857c((s32)MsgNoThatSNoGood);
+    Shop_ShowKeeperMessageHidingCursor((s32)MsgNoThatSNoGood);
   } else {
     MessageArgument_PushFar(item, 2);
-    Func_0810857c(chance == 1 ? (s32)MsgItSOkIfIWork
-                              : (s32)MsgYouWantItToShine);
-    if (Func_08108630(0) != 0) {
-      Func_0810857c(chance == 1 ? (s32)MsgHmThatSNotRight
-                                : (s32)MsgWellHmIWonder);
+    Shop_ShowKeeperMessageHidingCursor(chance == 1 ? (s32)MsgItSOkIfIWork
+                                                   : (s32)MsgYouWantItToShine);
+    if (Shop_AskYesNo(0) != 0) {
+      Shop_ShowKeeperMessageHidingCursor(chance == 1 ? (s32)MsgHmThatSNotRight
+                                                     : (s32)MsgWellHmIWonder);
     } else {
-      Func_0810857c(chance == 1 ? (s32)MsgWellAllRightIM
-                                : (s32)MsgALittleElbowGrease);
+      Shop_ShowKeeperMessageHidingCursor(
+          chance == 1 ? (s32)MsgWellAllRightIM : (s32)MsgALittleElbowGrease);
       Inventory_RemoveFar(unitId, slot);
       Shop_DrawItemCount(shop->itemWindow, unitId);
       item = Forge_RollResult(item);
@@ -109,7 +110,7 @@ s32 Func_0810b7b4(s32 *outUnit, s32 *outSlot, s32 itemMode) {
   s32 slot;
   s32 result;
 
-  Func_08108148();
+  Shop_InitializeWork();
   shop = Ram_HeapSlots->menuRuntime;
   shop->itemMode = itemMode;
   shop->itemWindow = Window_CreateFar(16, 12, 14, 8, 2);

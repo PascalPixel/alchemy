@@ -46,9 +46,9 @@ Event_SetMessageId:
 	.thumb_func
 Event_ShowMessageAndWait:
 	overlay_veneer Event_ShowMessageAndWaitFar
-	.global Func_080d489c
+	.global FieldEffect_SetAttached
 	.thumb_func
-Func_080d489c:
+FieldEffect_SetAttached:
 	overlay_veneer Func_080c8218
 	.global Camera_FollowActor
 	.thumb_func

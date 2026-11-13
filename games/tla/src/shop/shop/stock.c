@@ -30,9 +30,9 @@ void Func_0810a490(void *window, void *itemWindow) {
   shop->selectedItem = 228;
   MessageArgument_PushFar(228, 2);
   message = (s32)MsgLetMeGiveYouThis;
-  Func_0810857c(message);
+  Shop_ShowKeeperMessageHidingCursor(message);
   MessageArgument_PushFar(shop->selectedItem, 2);
-  Func_0810857c(message + 1);
+  Shop_ShowKeeperMessageHidingCursor(message + 1);
   redraw = 2;
   while (1) {
     if (redraw != 0) {
@@ -54,20 +54,20 @@ void Func_0810a490(void *window, void *itemWindow) {
         MessageArgument_PushFar(unitId, 1);
         MessageArgument_PushFar(shop->selectedItem, 2);
         if (Inventory_CountFar(unitId) == 15)
-          Func_081084f4((s32)MsgPackFull);
+          Shop_ShowKeeperMessage((s32)MsgPackFull);
         else
-          Func_081084f4((s32)MsgCannotCarryItem);
+          Shop_ShowKeeperMessage((s32)MsgCannotCarryItem);
         continue;
       }
       Inventory_RemoveFar(unitId, slot);
       Sound_PlayFar(101);
-      Func_0810857c((s32)MsgHereYouGo);
+      Shop_ShowKeeperMessageHidingCursor((s32)MsgHereYouGo);
       Inventory_AddItemFar(unitId, shop->selectedItem);
       Party_AdjustShopCreditFar(-creditCost);
       Party_AdjustShopGiftsFar(1);
       break;
     } else if (gInput.pressed & 2) {
-      Func_0810857c((s32)MsgDontWantIt);
+      Shop_ShowKeeperMessageHidingCursor((s32)MsgDontWantIt);
       Sound_PlayFar(113);
       break;
     } else {

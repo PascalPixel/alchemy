@@ -75,9 +75,8 @@ struct BobPairObject;
 void Func_08043b70(void);
 s32 Func_08043cd8(s32 selectedFile, s32 menuMode);
 void MenuTitle_Bob(struct BobPairObject *object);
-struct WindowSprite *RenderResource_CreatePair(s32 group,
-                                               struct RenderInput *input, s32 x,
-                                               s32 y);
+struct WindowSprite *
+RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y);
 
 // What several parts call, declared once here for all of them.
 extern u32 gVBlankCount;
@@ -90,7 +89,7 @@ extern const u8 gResource_FixedBlockBTiles[];
 void Vram_FillWindowBlockPattern(void);
 void MessageArgument_ClearAll(void);
 void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
-void Func_08041b68(void);
+void Window_MarkVisibleTextTiles(void);
 void Input_ResetKeyRepeat(void);
 
 #endif

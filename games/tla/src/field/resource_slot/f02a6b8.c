@@ -42,7 +42,6 @@ struct LayeredSceneHeader {
   s32 script;
 };
 
-
 struct MapLayerScroll {
   s32 x, y;
   s32 offsetX, offsetY;
@@ -69,8 +68,10 @@ struct MapScrollWork {
   struct MapLayerScroll layers[3];
 };
 
-/* VIEW(f02a6b8): variable gData_0802f380 as extern struct LayeredSceneEntry gData_0802f380[]; f0298c0 has extern const u16 gData_0802f380[][6]. */
-extern struct LayeredSceneEntry gData_0802f380__f02a6b8[] __asm__("gData_0802f380");
+/* VIEW(f02a6b8): variable gData_0802f380 as extern struct LayeredSceneEntry
+ * gData_0802f380[]; f0298c0 has extern const u16 gData_0802f380[][6]. */
+extern struct LayeredSceneEntry
+    gData_0802f380__f02a6b8[] __asm__("gData_0802f380");
 extern char ResourceId_Map000;
 extern u8 gMapShapeGrid[];
 extern u8 gData_02028000[];
@@ -78,7 +79,7 @@ extern u8 gData_02028000[];
 void Fade_FromBlack(s32);
 void Tilemap_DecodeStagedBuffer(s32 size);
 void Tilemap_ConvertBuffer(void);
-void Func_0802cc9c(const u16 *);
+void TilesetAnim_StartAll(const u16 *);
 void DisplayBlend_StartScript(u16 *);
 s32 Resource_DecodeType2(const void *source, void *destination);
 s32 GameFlag_Test(s32 flag);
@@ -121,7 +122,7 @@ s32 Func_0802a6b8(s32 index) {
   if (sceneHeader->animation != 0) {
     encodedData = (u8 *)sceneHeader + sceneHeader->animation;
     Resource_DecodeType01(encodedData, Ram_MapCollision + 0x1000);
-    Func_0802cc9c((const u16 *)(Ram_MapCollision + 0x1000));
+    TilesetAnim_StartAll((const u16 *)(Ram_MapCollision + 0x1000));
   }
   if (sceneHeader->blend != 0) {
     encodedData = (u8 *)sceneHeader + sceneHeader->blend;

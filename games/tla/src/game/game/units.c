@@ -32,7 +32,8 @@ u32 Party_GetAverageLevel(void) {
     return 0;
   }
   for (i = 0; i < count; i++) {
-    total += ((struct BattleUnit *)Unit_Get(gMainRoutineWork.activeOwners[i]))->level;
+    total += ((struct BattleUnit *)Unit_Get(gMainRoutineWork.activeOwners[i]))
+                 ->level;
   }
   total = total / count;
   return total;
@@ -48,7 +49,7 @@ const u8 *Enemy_GetDefinition(s32 selector) {
 }
 
 void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
-                                  s32 direction) {
+                                 s32 direction) {
   s32 index;
 
   if (direction != 0) {
@@ -211,8 +212,10 @@ void Unit_Calculate(s32 owner) {
       if (work->item->flags & 1)
         st->curse |= 3;
       work->atk += work->item->primaryBonus;
-/* FAKEMATCH(barrier): an empty asm after `work->atk += work->item->primaryBonus;`; as plain statements, 2 of 900 instructions differ in tla-en. */
-asm("");
+      /* FAKEMATCH(barrier): an empty asm after `work->atk +=
+       * work->item->primaryBonus;`; as plain statements, 2 of 900 instructions
+       * differ in tla-en. */
+      asm("");
       work->def += work->item->secondaryBonus;
       for (j = 0; j < 4; j++) {
         kind = work->item->effects[j].kind;
@@ -642,7 +645,7 @@ extern s16 gData_020036d0;
 extern u16 gData_02003860;
 extern const u8 Data_080b1f2c[4][5];
 
-void Func_080af7ac(void);
+void Party_InitializeCharacters(void);
 s32 Party_AddActiveOwner(s32 owner);
 s32 Unit_LearnPsynergy(s32 owner, s32 ability);
 
@@ -688,7 +691,7 @@ void Func_080addf0(void) {
   zero = 0;
   START_DMA(&zero, gOwnerStates,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 664);
-  Func_080af7ac();
+  Party_InitializeCharacters();
   gMainRoutineWork.keys230 = 1;
   gMainRoutineWork.unk232 = 2;
   gMainRoutineWork.keys234 = 4;

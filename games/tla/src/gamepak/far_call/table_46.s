@@ -4,7 +4,7 @@
 	.global BattleUnit_GetEffectHeightFar
 	.thumb_func
 BattleUnit_GetEffectHeightFar:
-	overlay_veneer Func_0811c37c
+	overlay_veneer BattleUnit_GetEffectHeight
 	.global BattleMotion_ApproachTargetFar
 	.thumb_func
 BattleMotion_ApproachTargetFar:

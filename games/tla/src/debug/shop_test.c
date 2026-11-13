@@ -1,5 +1,6 @@
 /// @file
-/// Overlay 0x6ba's scene: its code up to Func_02000520, then its tables, in ROM order.
+/// Overlay 0x6ba's scene: its code up to Func_02000520, then its tables, in ROM
+/// order.
 
 // ---- games/tla/src/debug/shop_test.c ----
 
@@ -120,7 +121,7 @@ void Func_0200012c(void) {
                 MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-void Func_02000144(void) {
+void MenuTest_BrowseWeaponShopMessages(void) {
   Func_02000054((s32)MsgArmorShopWelcome,
                 MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
@@ -306,7 +307,7 @@ void Func_020003b8(void) {
 }
 
 void Func_0200012c(void);
-void Func_02000144(void);
+void MenuTest_BrowseWeaponShopMessages(void);
 void Func_0200015c(void);
 void Func_02000178(void);
 void Func_020001cc(void);
@@ -399,7 +400,7 @@ struct Trigger gSceneEvents[] = {
     {0, 14, CONDITION_ALWAYS, EVENT(Func_020001d4)},
     {0, 15, CONDITION_ALWAYS, EVENT(Func_020002a8)},
     {0, 17, CONDITION_ALWAYS, EVENT(Func_0200012c)},
-    {0, 18, CONDITION_ALWAYS, EVENT(Func_02000144)},
+    {0, 18, CONDITION_ALWAYS, EVENT(MenuTest_BrowseWeaponShopMessages)},
     {0, 19, CONDITION_ALWAYS, EVENT(Func_0200015c)},
     {0, 16, CONDITION_ALWAYS, EVENT(Func_02000178)},
     {0, 20, CONDITION_ALWAYS, EVENT(Func_02000394)},
@@ -435,8 +436,13 @@ struct Trigger gSceneEvents[] = {
 
 void Unit_AddPp(s32 owner, s32 amount);
 void Inventory_Break(s32 owner, s32 slot);
-/* VIEW(s0520): routine Func_02000d48 as struct ItemDefinition *Func_02000d48(s32 item); shop_test has u16 *Func_02000d48(s32 item); tried as the definition's void Func_02000d48(struct Actor *shot), it does not compile in tla-ja: games/tla/src/debug/shop_test.c:438: conflicting types for `Func_02000d48'. */
-extern struct ItemDefinition *Func_02000d48__s0520(s32 item) __asm__("Func_02000d48");
+/* VIEW(s0520): routine Func_02000d48 as struct ItemDefinition
+ * *Func_02000d48(s32 item); shop_test has u16 *Func_02000d48(s32 item); tried
+ * as the definition's void Func_02000d48(struct Actor *shot), it does not
+ * compile in tla-ja: games/tla/src/debug/shop_test.c:438: conflicting types for
+ * `Func_02000d48'. */
+extern struct ItemDefinition *
+Func_02000d48__s0520(s32 item) __asm__("Func_02000d48");
 void Func_02000dc0(void);
 
 void Func_02000520(void) {
@@ -459,7 +465,8 @@ void Func_02000520(void) {
   unit[0x131] = 2;
   unit = Unit_Get(4);
   for (i = 0; i <= 14; i++) {
-    item = Func_02000d48__s0520(((struct OwnerInventoryState *)unit)->inventory[i]);
+    item = Func_02000d48__s0520(
+        ((struct OwnerInventoryState *)unit)->inventory[i]);
     if (((struct OwnerInventoryState *)unit)->inventory[i] == 0)
       break;
     if (item[12] == 2) {
@@ -469,7 +476,8 @@ void Func_02000520(void) {
   }
   unit = Unit_Get(5);
   for (i = 0; i <= 14; i++) {
-    item = Func_02000d48__s0520(((struct OwnerInventoryState *)unit)->inventory[i]);
+    item = Func_02000d48__s0520(
+        ((struct OwnerInventoryState *)unit)->inventory[i]);
     if (((struct OwnerInventoryState *)unit)->inventory[i] == 0)
       break;
     if (item[12] == 2) {

@@ -1,5 +1,6 @@
 /// @file
-/// The scene code of overlay 0x672 that its scene tables belong to, in ROM order; the rest of the overlay is in gabomba_statue_chamber/.
+/// The scene code of overlay 0x672 that its scene tables belong to, in ROM
+/// order; the rest of the overlay is in gabomba_statue_chamber/.
 
 // ---- games/tla/src/scene/gabomba_statue_chamber.c ----
 
@@ -527,19 +528,19 @@ void Func_02000e60(void) {
   Func_02001da8();
 }
 
-void Func_02000ef0(struct Actor *object) {
-  object->x = Actor_GetById(8)->x;
-}
+void Func_02000ef0(struct Actor *object) { object->x = Actor_GetById(8)->x; }
 #undef EVENT_WORK
 #undef OBJECT
 
 // ---- games/tla/src/scene/gabomba_statue_chamber/s0f00.c ----
-// Scene code of overlay 0x672, in ROM order, from s0f00's offset up to the next object the overlay links.
+// Scene code of overlay 0x672, in ROM order, from s0f00's offset up to the next
+// object the overlay links.
 
-
-
-/* VIEW(s0f00): variable gData_02002058 as extern struct GabombaStatueChamberObject *gData_02002058; gabomba_statue_chamber has extern struct Actor *gData_02002058. */
-extern struct GabombaStatueChamberObject *gData_02002058__s0f00 __asm__("gData_02002058");
+/* VIEW(s0f00): variable gData_02002058 as extern struct
+ * GabombaStatueChamberObject *gData_02002058; gabomba_statue_chamber has extern
+ * struct Actor *gData_02002058. */
+extern struct GabombaStatueChamberObject *
+    gData_02002058__s0f00 __asm__("gData_02002058");
 void *HeapSlot_AllocFar(s32 slot, s32 size);
 void Func_02000ef0();
 
@@ -613,7 +614,6 @@ void Func_02001010(void) {
   MapGrid_CopyCellsTo(86, 30, 86, 20, 5, 2);
   Map_CopyCellPictureIndicesRect(86, 30, 84, 22, 9, 2);
 }
-
 
 void Func_02001064(void) {
   Map_CopyCellAttributeRect(23, 1, 3, 1, 23, 9);
@@ -774,7 +774,7 @@ void Func_020010d4(void) {
   Actor_Jump(12, 4, 10);
   FieldMessage_ShowAtActor(12, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
-    Func_080d489c(12, 258);
+    FieldEffect_SetAttached(12, 258);
     Event_Wait(20);
     Event_ShowMessageAndWait(12, 0);
     *(u16 *)(EVENT_WORK + 0x1c4) += 1;
@@ -789,7 +789,7 @@ void Func_020010d4(void) {
   Event_ShowMessageAndWait(12, 0);
   Func_080d47b4(6, 263, 20);
   Event_ShowMessageAndWait(6, 0);
-  Func_080d489c(12, 258);
+  FieldEffect_SetAttached(12, 258);
   Event_Wait(20);
   Event_ShowMessageAndWait(12, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
@@ -1087,13 +1087,13 @@ void Func_02001c44(void) {
        * tla-en. */
       scene = &SceneId_Ov671Room7;
       gMainRoutineWork.retreatScene = (s32)scene;
-        gMainRoutineWork.retreatEntrance = 1;
+      gMainRoutineWork.retreatEntrance = 1;
     } else if (GameFlag_Test(0xa28)) {
       /* FAKEMATCH(temporary): the scene id through a local, as in the first
        * branch; as plain stores, 4 of 71 instructions differ in tla-en. */
       scene = &SceneId_Ov672Room1;
       gMainRoutineWork.retreatScene = (s32)scene;
-        gMainRoutineWork.retreatEntrance = 3;
+      gMainRoutineWork.retreatEntrance = 3;
     }
   }
 #endif

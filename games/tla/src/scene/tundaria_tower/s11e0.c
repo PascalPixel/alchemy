@@ -63,12 +63,12 @@ void Func_020011e0(void) {
     i++;
   } while (i <= 16);
   Sound_Play(188);
-  Func_080d489c(gMainRoutineWork.currentOwner, 0x101);
+  FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
   Map_WaitForShakeToSettle();
-  Func_080d489c(gMainRoutineWork.currentOwner, 0x100);
+  FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
@@ -243,7 +243,10 @@ s32 Func_020013b8(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/* VIEW(s11e0): variable gInput as extern u32 gInput; input.h has extern struct InputState gInput; tried as the 3 declarations' extern u32 gInput, it does not compile in tla-ja: games/tla/include/system/input.h:37: conflicting types for `gInput'. */
+/* VIEW(s11e0): variable gInput as extern u32 gInput; input.h has extern struct
+ * InputState gInput; tried as the 3 declarations' extern u32 gInput, it does
+ * not compile in tla-ja: games/tla/include/system/input.h:37: conflicting types
+ * for `gInput'. */
 extern u32 gInput__s11e0 __asm__("gInput");
 extern s16 gData_02003272[];
 void Func_02002f80(struct Actor *object, s32 mode);
@@ -291,7 +294,11 @@ void Func_02001868(void) {
 }
 
 extern s16 gData_020032b2[];
-/* VIEW(events_e): routine Func_020017dc as void Func_020017dc(void); the definition has void Func_020017dc(struct Actor *object); tried as the definition's void Func_020017dc(struct Actor *actor), it does not compile in tla-ja: games/tla/src/scene/tundaria_tower/s11e0.c:374: `Func_020017dc__events_e' undeclared (first use in this function). */
+/* VIEW(events_e): routine Func_020017dc as void Func_020017dc(void); the
+ * definition has void Func_020017dc(struct Actor *object); tried as the
+ * definition's void Func_020017dc(struct Actor *actor), it does not compile in
+ * tla-ja: games/tla/src/scene/tundaria_tower/s11e0.c:374:
+ * `Func_020017dc__events_e' undeclared (first use in this function). */
 extern void Func_020017dc__events_e(void) __asm__("Func_020017dc");
 s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);

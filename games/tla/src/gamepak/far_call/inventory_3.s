@@ -28,7 +28,7 @@ Func_080ad098:
 	.global Func_080ad0a0
 	.thumb_func
 Func_080ad0a0:
-	overlay_veneer Func_080af7ac
+	overlay_veneer Party_InitializeCharacters
 	.global Func_080ad0a8
 	.thumb_func
 Func_080ad0a8:

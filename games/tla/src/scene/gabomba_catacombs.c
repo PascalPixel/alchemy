@@ -1,5 +1,6 @@
 /// @file
-/// Overlay 0x673's scene: its code, then its tables, in the order the ROM has them.
+/// Overlay 0x673's scene: its code, then its tables, in the order the ROM has
+/// them.
 
 #include "gabomba_catacombs/local.h"
 
@@ -9,7 +10,7 @@
   do {                                                                         \
     Func_0200119c();                                                           \
     Event_ResolvePendingActions(0);                                            \
-    Func_080d489c(gMainRoutineWork.currentOwner, 0x102);                       \
+    FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);             \
   } while (0)
 
 void Func_02000038(void) { Func_080d2b4c(8, 10); }
@@ -90,7 +91,7 @@ void Func_020002e0(void) {
   if (leader->x >> 20 == 9 && leader->z >> 20 == 16) {
     Func_0200119c();
     Event_ResolvePendingActions(0);
-    Func_080d489c(gMainRoutineWork.currentOwner, 0x102);
+    FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);
     Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, -16, 0);
     leader->velocityY = PIXELS(6);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
@@ -162,7 +163,7 @@ void Func_02000564(void) {
   if (leader->x >> 20 == 17 && leader->z >> 20 == 18) {
     Func_0200119c();
     Event_ResolvePendingActions(0);
-    Func_080d489c(gMainRoutineWork.currentOwner, 0x102);
+    FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);
     Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -16);
     leader->velocityY = PIXELS(6);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);

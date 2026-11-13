@@ -204,7 +204,7 @@ Func_080c8210:
 	.global Func_080c8218
 	.thumb_func
 Func_080c8218:
-	overlay_veneer Func_080d489c
+	overlay_veneer FieldEffect_SetAttached
 	.global ObjectVisual_CopyAttributesFar
 	.thumb_func
 ObjectVisual_CopyAttributesFar:

@@ -1,5 +1,6 @@
 /// @file
-/// Scene code of overlay 0x655, in ROM order, from s2698's offset up to the next object the overlay links.
+/// Scene code of overlay 0x655, in ROM order, from s2698's offset up to the
+/// next object the overlay links.
 
 // ---- games/tla/src/scene/dehkan_plateau/s2698.c ----
 
@@ -214,8 +215,7 @@ void Func_02002b68(void) {
     Sound_Play(229);
     Map_CopyCellPictureIndicesRect(64, 64, 15, 8, 1, 1);
     Map_CopyCellPictureIndicesRect(64, 66, 15, 72, 1, 2);
-    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                       0);
+    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   }
 }
 
@@ -251,8 +251,8 @@ void Func_02003dc8(void);
 void Sound_Play(s32 cue);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Func_02003de8(void);
-void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
-                   s32 height);
+void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
+                                    s32 width, s32 height);
 void Func_020015b8(struct Actor *object);
 void Func_0200172c(void);
 void Func_02001804(void);
@@ -267,7 +267,8 @@ struct CellRecord {
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
-void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z, s32 angle);
+void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
+                                                    s32 angle);
 s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
 void Func_02003cf0(void);
 struct Actor *Func_080d4568(void);
@@ -278,7 +279,7 @@ void Func_02003d68(void);
 void Func_02003d70(void);
 void Actor_ArmCallbackAndRefresh(s32 id, s32 value);
 void Func_02003cc0(s32 id);
-void Func_080d489c(s32 id, s32 value);
+void FieldEffect_SetAttached(s32 id, s32 value);
 void Func_02003d40(struct Actor *object, s32 mode);
 void Func_02003bb8(struct Actor *object);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
@@ -294,8 +295,12 @@ void Actor_Jump(s32 id, s32 a, s32 b);
 void Actor_ArmCallback(s32 id, s32 a, s32 b);
 void Actor_WatchAndSetScript(s32 id, s32 target);
 void Event_Wait(s32 frames);
-/* VIEW(events_i): routine Task_Add as void Task_Add(void(*func) (void), s32 priority); task.h has s32 Task_Add(TaskFunc func, s32 order); tried as the definition's s32 Task_Add(TaskFunc func, s32 order), which the object already declares, Func_02002bcc moves: 1 of 24 instructions in tla-ja. */
-extern void Task_Add__events_i(void (*func)(void), s32 priority) __asm__("Task_Add");
+/* VIEW(events_i): routine Task_Add as void Task_Add(void(*func) (void), s32
+ * priority); task.h has s32 Task_Add(TaskFunc func, s32 order); tried as the
+ * definition's s32 Task_Add(TaskFunc func, s32 order), which the object already
+ * declares, Func_02002bcc moves: 1 of 24 instructions in tla-ja. */
+extern void Task_Add__events_i(void (*func)(void),
+                               s32 priority) __asm__("Task_Add");
 void Task_RemoveFar(void (*func)(void));
 void Field_DispatchTypeHandler(s32 type);
 
@@ -311,7 +316,8 @@ void Func_02002bcc(void) {
 }
 
 // ---- games/tla/src/scene/dehkan_plateau/s2c14.c ----
-// Scene code of overlay 0x655, in ROM order, from s2c14's offset up to the next object the overlay links.
+// Scene code of overlay 0x655, in ROM order, from s2c14's offset up to the next
+// object the overlay links.
 
 #include "map.h"
 #include "iwram_call.h"
@@ -468,7 +474,6 @@ void Func_020015b8(struct Actor *object);
 void Func_0200172c(void);
 void Func_02001804(void);
 
-
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
@@ -481,7 +486,6 @@ void Func_02003d40(struct Actor *object, s32 mode);
 void Func_02003bb8(struct Actor *object);
 void Func_02002b68(void);
 void Func_02002f08(void);
-
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -499,7 +503,7 @@ void Func_02002f08(void) {
   Motion_SetVarCbAndRefresh(16, 3);
   Actor_SetAngle(16, FACING_WEST);
   Actor_WatchAndSetScript(16, gMainRoutineWork.currentOwner);
-  Func_080d489c(16, 0x102);
+  FieldEffect_SetAttached(16, 0x102);
   Event_Wait(40);
   Func_02003c30();
 }
@@ -625,20 +629,25 @@ void Func_02000584(const void *data);
 void Func_020012d8(void);
 void Func_020018a8(void);
 void Func_02001fac(void);
-void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
-                   s32 height);
+void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
+                                    s32 width, s32 height);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
-void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z, s32 angle);
+void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
+                                                    s32 angle);
 void Func_02003cc0(s32 id);
 void Func_02003db8(const void *data);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 
-/* VIEW(s3164): static Actor_SetPosition as Actor_SetPosition__s3164; the definition has static inline void Actor_SetPosition(s32 actorId, s32 fixed_x, s32 fixed_z); tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/dehkan_plateau/s2698.c:658: too many arguments to function `Actor_SetPosition'. */
+/* VIEW(s3164): static Actor_SetPosition as Actor_SetPosition__s3164; the
+ * definition has static inline void Actor_SetPosition(s32 actorId, s32 fixed_x,
+ * s32 fixed_z); tried with the definition the rest of the object has, it does
+ * not compile in tla-ja: games/tla/src/scene/dehkan_plateau/s2698.c:658: too
+ * many arguments to function `Actor_SetPosition'. */
 static __inline__ void Actor_SetPosition__s3164(struct Actor *object, s32 x,
-                                         s32 y, s32 z) {
+                                                s32 y, s32 z) {
   Actor_SetPositionAndResetMotion(object, x, y, z);
 }
 
@@ -682,7 +691,8 @@ void Func_02003164(void) {
 }
 
 // ---- games/tla/src/scene/dehkan_plateau/s3284.c ----
-// Scene code of overlay 0x655, in ROM order, from s3284's offset up to the next object the overlay links.
+// Scene code of overlay 0x655, in ROM order, from s3284's offset up to the next
+// object the overlay links.
 
 #include "task.h"
 #include "field_effect.h"
@@ -705,7 +715,11 @@ void Func_02003d90(void);
 s32 Func_02003d98(void);
 s32 Func_02003da0(s32 a, s32 b, s32 c);
 void Func_02003da8(s32 a, s32 b, s32 c, s32 d);
-/* VIEW(s3284): routine Func_02003db0 as s32 Func_02003db0(void); s2c14 has s32 Func_02003db0(struct Actor *object); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/dehkan_plateau/s2698.c:760: too few arguments to function `Func_02003db0'. */
+/* VIEW(s3284): routine Func_02003db0 as s32 Func_02003db0(void); s2c14 has s32
+ * Func_02003db0(struct Actor *object); tried as the rest of the object declares
+ * it, it does not compile in tla-ja:
+ * games/tla/src/scene/dehkan_plateau/s2698.c:760: too few arguments to function
+ * `Func_02003db0'. */
 extern s32 Func_02003db0__s3284(void) __asm__("Func_02003db0");
 void Func_02003db8(const void *data);
 
@@ -746,8 +760,8 @@ void Func_02003284(void) {
   if (GameFlag_Test(0x841) != 0)
     Func_0200172c();
   else
-    /* FAKEMATCH(wrapper): forwarded, so each call builds its own constants; as direct
-     * calls, 8 of 276 instructions differ in tla-en. */
+    /* FAKEMATCH(wrapper): forwarded, so each call builds its own constants; as
+     * direct calls, 8 of 276 instructions differ in tla-en. */
     MapGrid_CopyCellAttributes(38, 32, 1, 1, 38, 33);
   Actor_GetById(14)->priorityFlags &= ~1;
   Actor_GetById(15)->priorityFlags &= ~1;
@@ -769,8 +783,8 @@ void Func_02003284(void) {
   if (GameFlag_Test(0x86e) != 0) {
     s32 angle = 0x4000;
 
-    /* FAKEMATCH(wrapper): forwarded, so the angle loads ahead of the coordinates; as
-     * direct calls, 4 of 276 instructions differ in tla-en. */
+    /* FAKEMATCH(wrapper): forwarded, so the angle loads ahead of the
+     * coordinates; as direct calls, 4 of 276 instructions differ in tla-en. */
     Actor_SetPositionAndFacing(25, 212 << 17, 208 << 15, angle);
   }
   Actor_SetModeById(18, 3);
@@ -939,8 +953,11 @@ void Effect_AdvanceMotionAtLeaderPriority(struct Actor *object);
 void Func_02000fc4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-/* VIEW(s3284): routine Effect_AdvanceMotion as void Effect_AdvanceMotion(union FieldObject *object); s2698 has void Effect_AdvanceMotion(struct Actor *object). */
-extern void Effect_AdvanceMotion__s3284(union FieldObject *object) __asm__("Effect_AdvanceMotion");
+/* VIEW(s3284): routine Effect_AdvanceMotion as void Effect_AdvanceMotion(union
+ * FieldObject *object); s2698 has void Effect_AdvanceMotion(struct Actor
+ * *object). */
+extern void Effect_AdvanceMotion__s3284(union FieldObject *object) __asm__(
+    "Effect_AdvanceMotion");
 void Func_02003bc8(void);
 
 void Func_02003764(void) {
@@ -997,12 +1014,12 @@ loop:
   if (i <= 16)
     goto loop;
   Sound_Play(188);
-  Func_080d489c(gMainRoutineWork.currentOwner, 0x101);
+  FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
   Map_WaitForShakeToSettle();
-  Func_080d489c(gMainRoutineWork.currentOwner, 0x100);
+  FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
   Event_Wait(10);
@@ -1034,14 +1051,15 @@ void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ s32 Flag_Test(s32 flag) {
-  return GameFlag_Test(flag);
-}
+static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Test(flag); }
 
-
-/* VIEW(s390c): static Actor_SetPosition as Actor_SetPosition__s390c; the definition has static inline void Actor_SetPosition(s32 actorId, s32 fixed_x, s32 fixed_z); tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/dehkan_plateau/s2698.c:1052: too many arguments to function `Actor_SetPosition'. */
+/* VIEW(s390c): static Actor_SetPosition as Actor_SetPosition__s390c; the
+ * definition has static inline void Actor_SetPosition(s32 actorId, s32 fixed_x,
+ * s32 fixed_z); tried with the definition the rest of the object has, it does
+ * not compile in tla-ja: games/tla/src/scene/dehkan_plateau/s2698.c:1052: too
+ * many arguments to function `Actor_SetPosition'. */
 static __inline__ void Actor_SetPosition__s390c(struct Actor *object, s32 x,
-                                         s32 y, s32 z) {
+                                                s32 y, s32 z) {
   Actor_SetPositionAndResetMotion(object, x, y, z);
 }
 
@@ -1085,8 +1103,8 @@ void Func_0200390c(void) {
 }
 
 // ---- games/tla/src/scene/dehkan_plateau/s3a30.c ----
-// Scene code of overlay 0x655, in ROM order, from s3a30's offset up to the next object the overlay links.
-
+// Scene code of overlay 0x655, in ROM order, from s3a30's offset up to the next
+// object the overlay links.
 
 extern struct Actor *gData_02004420;
 

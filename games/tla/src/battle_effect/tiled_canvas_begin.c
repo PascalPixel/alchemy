@@ -34,7 +34,7 @@ void wait(s32 frames);
 s32 Func_08020310(s32 x, s32 z, s32 layer);
 s32 Func_080dbde8(s32 x, s32 z, s32 layer);
 u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value);
-void Func_08108148(void);
+void Shop_InitializeWork(void);
 s32 Inn_RoomPrice(s32 innId);
 void Func_0810824c(void);
 
@@ -661,7 +661,7 @@ extern u8 Data_081982db[];         // ☀️ gBoreas_FallHeights
 
 void BattleEffect_ConfigureEffectDisplay(void);
 
-void Func_08163c2c(s32 mode, s32 value);
+void BattleEffect_WipeCanvas(s32 mode, s32 value);
 
 void BattleBackground_LoadFar(s32, s32, s32);
 void BattleEffect_BuildWindowEdgeTable(void);
@@ -712,7 +712,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   REG_WININ = 0x2137;
-  Func_08163c2c(1, 0);
+  BattleEffect_WipeCanvas(1, 0);
   REG_WIN0H = 0xf0f0;
   Resource_LoadAndDecompress((s32)&ResourceId_IceBlockSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, dots, 0, 0);
@@ -4662,7 +4662,7 @@ extern char ResourceId_StarDotSheet;
 // (160 frames): four stars a frame join, each turning about one of four
 // axes as fast as its number, sized by depth; thirty frames after joining
 // a star accelerates toward the center by 1/256 of its distance a frame.
-void Func_081539d0(struct BattleEffectArgument *effect) {
+void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 record[3];
@@ -4768,7 +4768,7 @@ extern char ResourceId_TargetBurstImage;
 // heading. Frame loop (96 frames): for 40 frames from its start a
 // target's puffs rise 40 pixels above it through six 24x48 pictures; the
 // sixth, drawn ADDITIVE, is the burst itself and falls faster.
-void Func_08153c30(struct BattleEffectArgument *effect) {
+void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   void *palette;
@@ -4977,7 +4977,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   BG_PLTT[1] = 0;
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  Func_08163c2c(0, 0);
+  BattleEffect_WipeCanvas(0, 0);
   BattleEffect_SelectLivingTargets(work->effect);
 
   // The giant: eleven sprite objects with their tiles.
@@ -5019,7 +5019,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   work->scrollStepY = 0;
   Task_Add(Func_0813baec, TASK_PASS_FRAME);
   presentation->active = 1;
-  Func_08163c2c(0, 1);
+  BattleEffect_WipeCanvas(0, 1);
   REG_DISPCNT = 0x7741;
   REG_BG2PA = 0x80;
   REG_BLDALPHA = 0x1010;

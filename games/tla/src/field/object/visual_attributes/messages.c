@@ -6,7 +6,7 @@
 
 struct Actor;
 
-s32 Func_080d5bec(s32 objectId, s32 *position);
+s32 Actor_GetScreenPosition(s32 objectId, s32 *position);
 void Text_GetMessageSizeAltFar(s32 message, s32 *left, s32 *top, u32 *width,
                                u32 *height);
 void Text_GetMessageSizeFar(s32 message, s32 *left, s32 *top, u32 *width,
@@ -68,7 +68,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
         found = 1;
         y -= 2;
       } else {
-        if (Func_080d5bec(localId, pos) != -1)
+        if (Actor_GetScreenPosition(localId, pos) != -1)
           found = 1;
         else
           found = 0;
@@ -84,7 +84,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
         y = pos[1] >> 3;
         found = 1;
       } else {
-        if (Func_080d5bec(Party_GetLeaderActor(), pos) != -1)
+        if (Actor_GetScreenPosition(Party_GetLeaderActor(), pos) != -1)
           found = 1;
         else
           found = 0;
@@ -188,7 +188,6 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   work->messageId++;
   return handle;
 }
-
 
 void Window_CloseMatchingIdFar(s32 id);
 void Message_CloseFinishedWindowsFar(void);
@@ -294,7 +293,6 @@ void Func_080d40dc(s32 speaker) {
   }
   work->messageId++;
 }
-
 
 void Event_ShowCounterAtPosition(s32 unused0, s32 unused1, s32 x, s32 y);
 
@@ -416,7 +414,6 @@ void Func_080d4330(s32 key) {
     *(s16 *)&work->speakerVoiceCountdown = value;
   }
 }
-
 
 void Camera_FollowActor(s32 id, s32 flag) {
   struct Actor *obj;

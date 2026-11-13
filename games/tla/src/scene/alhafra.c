@@ -229,7 +229,7 @@ void Func_02000288(void) {
   Func_080d47b4(0x13, 0x107, 0x1e);
   FieldEvent_ShowMessageThenWait(0x13, 0, 0xa);
   FieldActor_StartRepeatedMotion(24, 3);
-  Func_080d489c(0x18, 0x102);
+  FieldEffect_SetAttached(0x18, 0x102);
   Event_Wait(40);
   Actor_FaceDirection(19, FACING_WEST, 0);
   FieldEvent_ShowMessageThenWait(0x18, 0, 0);
@@ -864,7 +864,7 @@ void Func_02000aa0(s32 a0) {
   Actor_ArmCallback(33, 0xd000, 0);
   Event_Wait(30);
   FieldActor_StartRepeatedMotion(33, 3);
-  Func_080d489c(0x21, 0x102);
+  FieldEffect_SetAttached(0x21, 0x102);
   Event_Wait(50);
   Actor_FaceDirection(33, 0x8000, 0);
   Event_Wait(20);
@@ -1088,7 +1088,7 @@ void Func_02001958(s32 a0) {
     Actor_CommitPositionAndActivate(25, -8, 0);
     Event_Wait(15);
     Actor_StartRepeatedMotion(25, 3);
-    Func_080d489c(0x19, 0x102);
+    FieldEffect_SetAttached(0x19, 0x102);
     Event_Wait(40);
     t22 = ((s32)Actor_GetById(25));
     FIELD_AT((t22 + 0x5a), u8, 0) = (0xfe & FIELD_AT((t22 + 0x5a), u8, 0));

@@ -74,7 +74,7 @@ void Func_0814ea58(void *effect, s32 mode);
 s32 Func_08020310(s32 x, s32 z, s32 layer);
 s32 Func_080dbde8(s32 x, s32 z, s32 layer);
 u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value);
-void Func_08108148(void);
+void Shop_InitializeWork(void);
 s32 Inn_RoomPrice(s32 innId);
 void Func_0810824c(void);
 
@@ -186,7 +186,7 @@ struct ItemMenuOam {
     (sprite).oam.word.attr23 = 0;                                              \
   } while (0)
 
-s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
+s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   struct ItemMenuWork *work;
   s32 drawnFirstEntry;
   s32 drawnRow;

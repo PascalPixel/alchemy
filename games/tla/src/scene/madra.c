@@ -1,5 +1,6 @@
 /// @file
-/// The scene code of overlay 0x658 that its scene tables belong to, in ROM order; the rest of the overlay is in madra/.
+/// The scene code of overlay 0x658 that its scene tables belong to, in ROM
+/// order; the rest of the overlay is in madra/.
 
 // ---- games/tla/src/scene/madra.c ----
 
@@ -44,7 +45,13 @@ struct MadraPlacement {
   u16 y;
 };
 
-/* VIEW(madra): variable gData_02003308 as extern struct MadraPlacement gData_02003308[]; the definition has s32 gData_02003308[] = { (s32) gData_020032fc, 0x30014, (s32) gData_020032f0, 0x17000d, (s32) gData_020032f0, 0x110011, (s32) gData_020032f0...; tried as the definition's extern s32 gData_02003308[], it does not compile in tla-ja: games/tla/src/scene/madra.c:77: request for member `x' in something not a structure or union. */
+/* VIEW(madra): variable gData_02003308 as extern struct MadraPlacement
+ * gData_02003308[]; the definition has s32 gData_02003308[] = { (s32)
+ * gData_020032fc, 0x30014, (s32) gData_020032f0, 0x17000d, (s32)
+ * gData_020032f0, 0x110011, (s32) gData_020032f0...; tried as the definition's
+ * extern s32 gData_02003308[], it does not compile in tla-ja:
+ * games/tla/src/scene/madra.c:77: request for member `x' in something not a
+ * structure or union. */
 extern struct MadraPlacement gData_02003308__madra[] __asm__("gData_02003308");
 
 void Event_FinishScreenTransition(void);
@@ -220,20 +227,26 @@ void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 s32 FieldMessage_ShowAtActor(s32 localId, s32 unused);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Map_PlayMapEdit(const void *data, s32 a, s32 b);
-void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY);
+void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
+                               s32 destX, s32 destY);
 void Func_0802b450(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY);
 void Func_02002b28(void);
 void Func_02002b30(void);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
-void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 y, s32 z);
+void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 y,
+                                                    s32 z);
 void Event_SetMessageId(s32 message);
 void Event_ShowMessageThenWait(s32 id, s32 a, s32 b);
 void Event_ShowMessageAndWait(s32 a, s32 b);
 void Actor_ArmCallbackAndRefresh(s32 id, s32 a);
-/* VIEW(events_b): routine Func_080d47b4 as void Func_080d47b4(s32 id, s32 a, s32 b); event.h has s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames); tried as the definition's struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags, s32 state), it does not compile in tla-ja: games/tla/src/scene/madra.c:235: conflicting types for `Func_080d47b4'. */
-extern void Func_080d47b4__events_b(s32 id, s32 a, s32 b) __asm__("Func_080d47b4");
+/* VIEW(events_b): routine Func_080d47b4 as void Func_080d47b4(s32 id, s32 a,
+ * s32 b); event.h has s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
+ * tried as the definition's struct BattleEffectWatchedObject *Func_080d47b4(s32
+ * resourceId, s32 flags, s32 state), it does not compile in tla-ja:
+ * games/tla/src/scene/madra.c:235: conflicting types for `Func_080d47b4'. */
+extern void Func_080d47b4__events_b(s32 id, s32 a,
+                                    s32 b) __asm__("Func_080d47b4");
 void Import_EventSetExitRequest(s32 a);
 void Event_ResolvePendingActions(s32 a);
 s32 Party_GetLeaderActor(void);
@@ -258,7 +271,10 @@ extern u8 MsgMyBoyfriendShin[];
 extern u8 MsgAllMyInjuries[];
 extern u8 MsgMySisterWas[];
 extern u8 MsgIfYouDon[];
-/* VIEW(events_b): variable MsgUsingPsynergyOn as extern u8 MsgUsingPsynergyOn; msg_ids.h has extern u8 MsgUsingPsynergyOn[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:281: `MsgUsingPsynergyOn__events_b' undeclared (first use in this function). */
+/* VIEW(events_b): variable MsgUsingPsynergyOn as extern u8 MsgUsingPsynergyOn;
+ * msg_ids.h has extern u8 MsgUsingPsynergyOn[]; tried as the rest of the object
+ * declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:281:
+ * `MsgUsingPsynergyOn__events_b' undeclared (first use in this function). */
 extern u8 MsgUsingPsynergyOn__events_b __asm__("MsgUsingPsynergyOn");
 extern u8 MsgWhereCouldMenardi[];
 extern u8 MsgEveryoneHereIn[];
@@ -273,9 +289,7 @@ extern u8 MsgIsThereBy[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ s32 Flag_Test(s32 flag) {
-  return GameFlag_Test(flag);
-}
+static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Test(flag); }
 
 void Func_02000320(void) {
   s32 x, z;
@@ -372,7 +386,8 @@ void Func_02000490(void) {
 }
 
 // ---- games/tla/src/scene/madra/s051c.c ----
-// Scene code of overlay 0x658, in ROM order, from s051c's offset up to the next object the overlay links.
+// Scene code of overlay 0x658, in ROM order, from s051c's offset up to the next
+// object the overlay links.
 
 #include "event_work.h"
 #include "field_sprite.h"
@@ -684,20 +699,30 @@ s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Func_02002b28(void);
 void Func_02002b30(void);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
-/* VIEW(s0ac4): routine Event_SetMessageId as void Event_SetMessageId(const u8 *message); event_work.h has void Event_SetMessageId(s32 message). */
-extern void Event_SetMessageId__s0ac4(const u8 *message) __asm__("Event_SetMessageId");
+/* VIEW(s0ac4): routine Event_SetMessageId as void Event_SetMessageId(const u8
+ * *message); event_work.h has void Event_SetMessageId(s32 message). */
+extern void
+Event_SetMessageId__s0ac4(const u8 *message) __asm__("Event_SetMessageId");
 void Event_ShowMessageThenWait(s32 id, s32 a, s32 b);
 void Actor_ArmCallbackAndRefresh(s32 id, s32 a);
-/* VIEW(s0ac4): routine Func_080d47b4 as struct Actor *Func_080d47b4(s32 id, s32 emote, s32 frames); event.h has s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames). */
-extern struct Actor *Func_080d47b4__s0ac4(s32 id, s32 emote, s32 frames) __asm__("Func_080d47b4");
-void Func_080d489c(s32 id, s32 a);
+/* VIEW(s0ac4): routine Func_080d47b4 as struct Actor *Func_080d47b4(s32 id, s32
+ * emote, s32 frames); event.h has s32 Func_080d47b4(s32 actorId, s32 emote, s32
+ * frames). */
+extern struct Actor *Func_080d47b4__s0ac4(s32 id, s32 emote,
+                                          s32 frames) __asm__("Func_080d47b4");
+void FieldEffect_SetAttached(s32 id, s32 a);
 void Func_02002c28(void);
 void Event_ResolvePendingActions(s32 a);
 void Event_ShowMessageAndWait(s32 id, s32 a);
 void Actor_Jump(s32 id, s32 a, s32 b);
-void Func_080d3070(s32 id, s32 a, s32 b, s32 c);
-/* VIEW(s0ac4): routine Map_PlayMapEdit as s32 Map_PlayMapEdit(const void *edit, s32 a, s32 b); events_b has void Map_PlayMapEdit(const void *data, s32 a, s32 b); tried as the definition's void Map_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY), it does not compile in tla-ja: games/tla/src/scene/madra.c:695: conflicting types for `Map_PlayMapEdit'. */
-extern s32 Map_PlayMapEdit__s0ac4(const void *edit, s32 a, s32 b) __asm__("Map_PlayMapEdit");
+void Actor_LaunchFromLeader(s32 id, s32 a, s32 b, s32 c);
+/* VIEW(s0ac4): routine Map_PlayMapEdit as s32 Map_PlayMapEdit(const void *edit,
+ * s32 a, s32 b); events_b has void Map_PlayMapEdit(const void *data, s32 a, s32
+ * b); tried as the definition's void Map_PlayMapEdit(u16 *steps, s32
+ * destinationX, u32 destinationY), it does not compile in tla-ja:
+ * games/tla/src/scene/madra.c:695: conflicting types for `Map_PlayMapEdit'. */
+extern s32 Map_PlayMapEdit__s0ac4(const void *edit, s32 a,
+                                  s32 b) __asm__("Map_PlayMapEdit");
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);
 void Func_02002b10(s32 item, s32 a);
@@ -710,23 +735,32 @@ void FieldMessage_Show(s32 message, s32 position);
 void Camera_FollowActor(s32 id, s32 mode);
 void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 
-/* VIEW(s0ac4): variable MsgYouThereHold as extern const u8 MsgYouThereHold[]; msg_ids.h has extern u8 MsgYouThereHold[]. */
+/* VIEW(s0ac4): variable MsgYouThereHold as extern const u8 MsgYouThereHold[];
+ * msg_ids.h has extern u8 MsgYouThereHold[]. */
 extern const u8 MsgYouThereHold__s0ac4[] __asm__("MsgYouThereHold");
-/* VIEW(s0ac4): variable MsgHasEscaped2 as extern const u8 MsgHasEscaped2[]; msg_ids.h has extern u8 MsgHasEscaped2[]. */
+/* VIEW(s0ac4): variable MsgHasEscaped2 as extern const u8 MsgHasEscaped2[];
+ * msg_ids.h has extern u8 MsgHasEscaped2[]. */
 extern const u8 MsgHasEscaped2__s0ac4[] __asm__("MsgHasEscaped2");
-/* VIEW(s0ac4): variable MsgHeyYouLot as extern const u8 MsgHeyYouLot[]; msg_ids.h has extern u8 MsgHeyYouLot[]. */
+/* VIEW(s0ac4): variable MsgHeyYouLot as extern const u8 MsgHeyYouLot[];
+ * msg_ids.h has extern u8 MsgHeyYouLot[]. */
 extern const u8 MsgHeyYouLot__s0ac4[] __asm__("MsgHeyYouLot");
-/* VIEW(s0ac4): variable MsgItWasThem as extern const u8 MsgItWasThem[]; msg_ids.h has extern u8 MsgItWasThem[]. */
+/* VIEW(s0ac4): variable MsgItWasThem as extern const u8 MsgItWasThem[];
+ * msg_ids.h has extern u8 MsgItWasThem[]. */
 extern const u8 MsgItWasThem__s0ac4[] __asm__("MsgItWasThem");
-/* VIEW(s0ac4): variable MsgWasAnythingStolen as extern const u8 MsgWasAnythingStolen[]; msg_ids.h has extern u8 MsgWasAnythingStolen[]. */
+/* VIEW(s0ac4): variable MsgWasAnythingStolen as extern const u8
+ * MsgWasAnythingStolen[]; msg_ids.h has extern u8 MsgWasAnythingStolen[]. */
 extern const u8 MsgWasAnythingStolen__s0ac4[] __asm__("MsgWasAnythingStolen");
-/* VIEW(s0ac4): variable MsgWait3 as extern const u8 MsgWait3[]; msg_ids.h has extern u8 MsgWait3[]. */
+/* VIEW(s0ac4): variable MsgWait3 as extern const u8 MsgWait3[]; msg_ids.h has
+ * extern u8 MsgWait3[]. */
 extern const u8 MsgWait3__s0ac4[] __asm__("MsgWait3");
-/* VIEW(s0ac4): variable MsgTheMayorTried as extern const u8 MsgTheMayorTried[]; msg_ids.h has extern u8 MsgTheMayorTried[]. */
+/* VIEW(s0ac4): variable MsgTheMayorTried as extern const u8 MsgTheMayorTried[];
+ * msg_ids.h has extern u8 MsgTheMayorTried[]. */
 extern const u8 MsgTheMayorTried__s0ac4[] __asm__("MsgTheMayorTried");
-/* VIEW(s0ac4): variable MsgICanTBelieveIt as extern const u8 MsgICanTBelieveIt[]; msg_ids.h has extern u8 MsgICanTBelieveIt[]. */
+/* VIEW(s0ac4): variable MsgICanTBelieveIt as extern const u8
+ * MsgICanTBelieveIt[]; msg_ids.h has extern u8 MsgICanTBelieveIt[]. */
 extern const u8 MsgICanTBelieveIt__s0ac4[] __asm__("MsgICanTBelieveIt");
-/* VIEW(s0ac4): variable MsgWhoIsThis as extern const u8 MsgWhoIsThis[]; msg_ids.h has extern u8 MsgWhoIsThis[]. */
+/* VIEW(s0ac4): variable MsgWhoIsThis as extern const u8 MsgWhoIsThis[];
+ * msg_ids.h has extern u8 MsgWhoIsThis[]. */
 extern const u8 MsgWhoIsThis__s0ac4[] __asm__("MsgWhoIsThis");
 extern u8 MsgYouThereHold[];
 extern u8 MsgHasEscaped2[];
@@ -805,7 +839,7 @@ static __inline__ void LaunchFromFocused(s32 id, s32 a, s32 b, s32 c) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
    * constants, as ☀️'s scene layer does; as direct calls, 36 of 475
    * instructions of Func_02000ac4 differ in tla-en. */
-  Func_080d3070(id, a, b, c);
+  Actor_LaunchFromLeader(id, a, b, c);
 }
 
 static __inline__ void SetPosInMode2(s32 id, s32 x, s32 z) {
@@ -826,7 +860,7 @@ static __inline__ void Madra_Func_02002c10(s32 id, s32 a) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
    * constants, as ☀️'s scene layer does; as direct calls, 31 of 549
    * instructions of Func_02000f80 differ in tla-en. */
-  Func_080d489c(id, a);
+  FieldEffect_SetAttached(id, a);
 }
 
 /// Actors 24 and 25 talk with 32 and 4, 25 is moved about with its priority
@@ -1140,7 +1174,7 @@ void Func_020014fc(void) {
   Actor_SetPositionAndReset(4, 472, 426);
   Event_Wait(10);
   ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, FACING_NORTH);
-  Func_080d3070(32, 16, 1, FACING_NORTH);
+  Actor_LaunchFromLeader(32, 16, 1, FACING_NORTH);
   Func_02002c28();
   Actor_WaitForMoveById(32);
   Actor_CommitPositionAndActivate(25, 3, 8);
@@ -1273,8 +1307,13 @@ struct CellPictureCopyEntry {
   u16 unk06;
 };
 
-/* VIEW(s0ac4): variable gData_02003308 as extern const struct CellPictureCopyEntry gData_02003308[]; madra has extern struct MadraPlacement gData_02003308[]; tried as the definition's extern s32 gData_02003308[], it does not compile in tla-ja: games/tla/src/scene/madra.c:1293: request for member `steps' in something not a structure or union. */
-extern const struct CellPictureCopyEntry gData_02003308__s0ac4[] __asm__("gData_02003308");
+/* VIEW(s0ac4): variable gData_02003308 as extern const struct
+ * CellPictureCopyEntry gData_02003308[]; madra has extern struct MadraPlacement
+ * gData_02003308[]; tried as the definition's extern s32 gData_02003308[], it
+ * does not compile in tla-ja: games/tla/src/scene/madra.c:1293: request for
+ * member `steps' in something not a structure or union. */
+extern const struct CellPictureCopyEntry
+    gData_02003308__s0ac4[] __asm__("gData_02003308");
 
 // The macro's do-while starts each mode change's own scheduling region; as
 // plain calls, 88 of 1565 instructions differ in tla-en.
@@ -1313,8 +1352,9 @@ void Func_020019d8(void) {
   Actor_WaitForMoveById(4);
   ArmCallback(4, FACING_NORTH, 0);
   Event_Wait(20);
-  Map_PlayMapEdit__s0ac4(gData_02003308__s0ac4[6].steps, gData_02003308__s0ac4[6].unk04,
-                  gData_02003308__s0ac4[6].unk06);
+  Map_PlayMapEdit__s0ac4(gData_02003308__s0ac4[6].steps,
+                         gData_02003308__s0ac4[6].unk04,
+                         gData_02003308__s0ac4[6].unk06);
   Actor_SetHorizontalPositionAndAngleWithTerrain(34, x, z, FACING_SOUTH);
   Actor_CommitPositionAndActivate(34, 0, 4);
   SET_MODE(34, 3);
@@ -1785,15 +1825,31 @@ void Func_02002c88(s32 a, s32 b);
 void Func_02000f80(void);
 void Func_020019d8(void);
 
-/* VIEW(events_d): variable gData_02002d38 as extern s16 gData_02002d38[]; s051c has extern const u8 gData_02002d38[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:1888: conflicting types for `gData_02002d38'. */
+/* VIEW(events_d): variable gData_02002d38 as extern s16 gData_02002d38[]; s051c
+ * has extern const u8 gData_02002d38[]; tried as the rest of the object
+ * declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:1888:
+ * conflicting types for `gData_02002d38'. */
 extern s16 gData_02002d38__events_d[] __asm__("gData_02002d38");
-/* VIEW(events_d): variable gData_02002ff0 as extern struct ActorPlacement gData_02002ff0[]; s051c has extern const u8 gData_02002ff0[]; tried as the definition's extern u32 gData_02002ff0[], it does not compile in tla-ja: games/tla/src/scene/madra.c:1768: conflicting types for `gData_02002ff0'. */
-extern struct ActorPlacement gData_02002ff0__events_d[] __asm__("gData_02002ff0");
-/* VIEW(events_d): variable gData_02003358 as extern struct Trigger gData_02003358[]; s051c has extern const u8 gData_02003358[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:1987: conflicting types for `gData_02003358'. */
+/* VIEW(events_d): variable gData_02002ff0 as extern struct ActorPlacement
+ * gData_02002ff0[]; s051c has extern const u8 gData_02002ff0[]; tried as the
+ * definition's extern u32 gData_02002ff0[], it does not compile in tla-ja:
+ * games/tla/src/scene/madra.c:1768: conflicting types for `gData_02002ff0'. */
+extern struct ActorPlacement
+    gData_02002ff0__events_d[] __asm__("gData_02002ff0");
+/* VIEW(events_d): variable gData_02003358 as extern struct Trigger
+ * gData_02003358[]; s051c has extern const u8 gData_02003358[]; tried as the
+ * rest of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/madra.c:1987: conflicting types for `gData_02003358'. */
 extern struct Trigger gData_02003358__events_d[] __asm__("gData_02003358");
-/* VIEW(events_d): variable gData_0200367c as extern struct Trigger gData_0200367c[]; s051c has extern const u8 gData_0200367c[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:2057: conflicting types for `gData_0200367c'. */
+/* VIEW(events_d): variable gData_0200367c as extern struct Trigger
+ * gData_0200367c[]; s051c has extern const u8 gData_0200367c[]; tried as the
+ * rest of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/madra.c:2057: conflicting types for `gData_0200367c'. */
 extern struct Trigger gData_0200367c__events_d[] __asm__("gData_0200367c");
-/* VIEW(events_d): variable gData_0200394c as extern struct Trigger gData_0200394c[]; s051c has extern const u8 gData_0200394c[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:2120: conflicting types for `gData_0200394c'. */
+/* VIEW(events_d): variable gData_0200394c as extern struct Trigger
+ * gData_0200394c[]; s051c has extern const u8 gData_0200394c[]; tried as the
+ * rest of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/madra.c:2120: conflicting types for `gData_0200394c'. */
 extern struct Trigger gData_0200394c__events_d[] __asm__("gData_0200394c");
 
 // The scene's own event inlines: a habit of the whole game written once, as

@@ -43,7 +43,7 @@ s32 Inn_RoomPrice(s32 innId) {
 s32 Func_0810b3ec(s32 value) {
   struct InnRuntime *work;
 
-  Func_08108148();
+  Shop_InitializeWork();
   work = Ram_HeapSlots->menuRuntime;
   work->busy = 1;
   value = Inn_RoomPrice(value);
@@ -54,12 +54,13 @@ s32 Func_0810b3ec(s32 value) {
 // Inn_CheckIn is the inn. It shows the keeper's window and the price, then on
 // yes and enough coins closes the windows, plays the night (Inn_PlaySleep) and
 // greets the party in the morning. The Broken Seal's Inn_CheckIn in
-// games/tbs/src/shop/shop.c, written with this game's calls (Func_08108148 for
-// the cursor work, Func_080380f8 for the keeper's window, Inn_RoomPrice for the
-// room price, MessageArgument_PushFar, Func_081084f4 to show a message,
-// Func_08108630 for the choice, Func_08109188 for the coins, Func_0810824c to
-// clean up) and its work-block offsets; this game has no special-inn flag.
-// Messages from MsgInnWelcome ("Welcome to our inn.").
+// games/tbs/src/shop/shop.c, written with this game's calls
+// (Shop_InitializeWork for the cursor work, Func_080380f8 for the keeper's
+// window, Inn_RoomPrice for the room price, MessageArgument_PushFar,
+// Shop_ShowKeeperMessage to show a message, Shop_AskYesNo for the choice,
+// Func_08109188 for the coins, Func_0810824c to clean up) and its work-block
+// offsets; this game has no special-inn flag. Messages from MsgInnWelcome
+// ("Welcome to our inn.").
 
 // The inn work block, as this function reads it.
 struct InnRuntimeState {
@@ -98,7 +99,7 @@ s32 Inn_CheckIn(s32 mode, s32 objectId) {
   s32 amount;
   s32 messageBase;
 
-  Func_08108148();
+  Shop_InitializeWork();
   state = Ram_HeapSlots->menuRuntime;
   state->active = 1;
 
@@ -109,26 +110,26 @@ s32 Inn_CheckIn(s32 mode, s32 objectId) {
   amount = Inn_RoomPrice(mode);
   MessageArgument_PushFar(amount, 5);
   messageBase = (s32)MsgInnWelcome;
-  Func_081084f4(messageBase);
+  Shop_ShowKeeperMessage(messageBase);
   state->window = Window_CreateFar(0, 16, SHOP_COIN_WINDOW_WIDTH, 4, 2);
   Func_08109188();
 
-  if (Func_08108630(0) != 0) {
-    Func_081084f4(messageBase + INN_MESSAGE_GOODBYE);
+  if (Shop_AskYesNo(0) != 0) {
+    Shop_ShowKeeperMessage(messageBase + INN_MESSAGE_GOODBYE);
     Window_CloseFar(state->window, 2);
   } else if ((u32)amount > gMainRoutineWork.coins) {
-    Func_081084f4(messageBase + INN_MESSAGE_NOT_ENOUGH_COINS);
+    Shop_ShowKeeperMessage(messageBase + INN_MESSAGE_NOT_ENOUGH_COINS);
     Window_CloseFar(state->window, 2);
   } else {
     Window_CloseFar(state->window, 2);
-    Func_081084f4(messageBase + INN_MESSAGE_STAY_COMPLETE);
+    Shop_ShowKeeperMessage(messageBase + INN_MESSAGE_STAY_COMPLETE);
     Window_CloseFar(win, 2);
     Inn_PlaySleep(amount);
 
     object = Actor_GetByIdFar(objectId);
     state->resourceId = *object->component->resourceId;
     win = Func_080380f8(state->resourceId, 0, 0, 0);
-    Func_081084f4(messageBase + INN_MESSAGE_REST_COMPLETE);
+    Shop_ShowKeeperMessage(messageBase + INN_MESSAGE_REST_COMPLETE);
   }
 
   Window_CloseFar(win, 2);

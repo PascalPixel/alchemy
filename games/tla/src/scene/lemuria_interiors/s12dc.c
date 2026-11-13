@@ -567,7 +567,7 @@ void Func_020013f0(void) {
   Actor_StartRepeatedMotion(6, 3);
   Actor_SetAttachedEffect(6, 0x102);
   Actor_StartRepeatedMotion(12, 3);
-  Func_080d489c(12, 0x102);
+  FieldEffect_SetAttached(12, 0x102);
   Event_Wait(40);
   Actor_ArmCallback(18, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(25);

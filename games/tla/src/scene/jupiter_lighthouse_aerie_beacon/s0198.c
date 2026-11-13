@@ -581,7 +581,7 @@ static __inline__ void Func_020057ec_(s32 id, s32 slot) {
   Func_020057ec(id, slot);
 }
 static __inline__ void Func_02005904_(s32 id, s32 emote) {
-  Func_080d489c(id, emote);
+  FieldEffect_SetAttached(id, emote);
 }
 static __inline__ void Actor_StartRepeatedMotion_(s32 id, s32 motion) {
   Actor_StartRepeatedMotion(id, motion);
@@ -2453,7 +2453,6 @@ void Func_020040a0(s32 id) {
 
 void Func_02005814(void);
 
-
 void Func_020040f4(void) {
   /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
    * Value, this file's own); as direct calls, 8 of 216 instructions differ in
@@ -2567,8 +2566,11 @@ struct EventWork6a5 {
   s16 unk16a;
 };
 
-/* VIEW(s3f54): routine Func_02005764 as void Func_02005764(struct Object6a5 *object, const void *script); s0198 has void Func_02005764(struct Actor *object, const void *script). */
-extern void Func_02005764__s3f54(struct Object6a5 *object, const void *script) __asm__("Func_02005764");
+/* VIEW(s3f54): routine Func_02005764 as void Func_02005764(struct Object6a5
+ * *object, const void *script); s0198 has void Func_02005764(struct Actor
+ * *object, const void *script). */
+extern void Func_02005764__s3f54(struct Object6a5 *object,
+                                 const void *script) __asm__("Func_02005764");
 void Func_02005994(struct Vector3 *position);
 s32 Func_020059e4();
 s32 Math_Cosine(s32 angle);

@@ -4,7 +4,10 @@
 
 #include "../visual_attributes_internal.h"
 
-/* VIEW(f0d6674): tag struct GroundParticleWork as struct GroundParticleWork__f0d6674; visual_attributes.c has another definition; tried with the definition the rest of the object has, Func_080d6674 moves: 1 of 167 instructions in tla-ja. */
+/* VIEW(f0d6674): tag struct GroundParticleWork as struct
+ * GroundParticleWork__f0d6674; visual_attributes.c has another definition;
+ * tried with the definition the rest of the object has, Func_080d6674 moves: 1
+ * of 167 instructions in tla-ja. */
 struct GroundParticleWork__f0d6674 {
   u8 unk00[4];
   // long, not s32: its own alias set lets the sprite stores pass its load.
@@ -67,13 +70,12 @@ void Func_080d6674(void) {
   }
 }
 
-
 void BattleEffect_ApplyColorToTargetBuffer(void *buffer, s32 mode);
 
 void Sound_PlayFar(s32 cue);
 
 // Lightning: selects the palette according to the remaining duration.
-void Func_080d67e8(void) {
+void Weather_UpdateLightning(void) {
   struct FieldBlendWork *work = Ram_HeapSlots->unk70[2];
   struct BattleEffectBuffers *target = Ram_HeapSlots->block32;
   s16 *timer = &work->timer;

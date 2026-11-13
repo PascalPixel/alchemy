@@ -4,7 +4,7 @@
 	.global Func_080c82a8
 	.thumb_func
 Func_080c82a8:
-	overlay_veneer Func_080d5bec
+	overlay_veneer Actor_GetScreenPosition
 	.global Actor_GetTriggerTileAheadOfCurrentFar
 	.thumb_func
 Actor_GetTriggerTileAheadOfCurrentFar:

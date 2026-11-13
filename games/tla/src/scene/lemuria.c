@@ -556,7 +556,7 @@ void Func_02000a6c(void) {
 }
 
 /// Puts the per-line BG2 horizontal scroll on an HBlank DMA, as overlay 674's
-/// Func_080d489c does for BG1.
+/// FieldEffect_SetAttached does for BG1.
 void Func_02000ad8(void) {
   s16 *lines = gData_020025a0[gData_02002590];
   s32 first = lines[0];

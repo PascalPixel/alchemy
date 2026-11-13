@@ -242,9 +242,9 @@ Actor_SetSpritePriority:
 	.thumb_func
 Func_020030c0:
 	overlay_veneer Func_080c8208
-	.global Func_080d489c
+	.global FieldEffect_SetAttached
 	.thumb_func
-Func_080d489c:
+FieldEffect_SetAttached:
 	overlay_veneer Func_080c8218
 	.global ObjectVisual_CopyAttributes
 	.thumb_func

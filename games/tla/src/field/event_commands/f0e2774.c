@@ -111,7 +111,7 @@ void FacingObject_TurnPairToFaceEachOther(struct Actor *first,
                                           struct Actor *second);
 void Event_Wait(s32 frames);
 void Actor_StartRepeatedMotion(s32 actor, s32 variant);
-void Func_080d489c(s32 actor, s32 value);
+void FieldEffect_SetAttached(s32 actor, s32 value);
 
 void Func_080e28d4(s32 sprite, s32 x, s32 z) {
   s32 ownerId = Party_GetLeaderActor();
@@ -139,7 +139,7 @@ void Func_080e28d4(s32 sprite, s32 x, s32 z) {
   owner->timer = owner->facing;
   Event_Wait(10);
   Actor_StartRepeatedMotion(ownerId, 3);
-  Func_080d489c(ownerId, 258);
+  FieldEffect_SetAttached(ownerId, 258);
   Event_Wait(32);
   object->gravity = 0x10000;
   object->velocityY = 0x60000;

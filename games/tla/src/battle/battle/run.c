@@ -35,7 +35,7 @@ void Func_081195ec(void) {
     to->anchorX = from->anchorX;
     to->anchorZ = from->anchorZ;
     Actor_SetPositionAndResetMotionFar((void *)object, place->x, place->y,
-                                        place->z);
+                                       place->z);
     gMainRoutineWork.activeOwners[i] = id;
     work->partyUnits[i] = id;
   }
@@ -293,7 +293,7 @@ s32 Func_081197f0(s32 enemyGroup) {
     BattleParty_AssignMemberSlots();
     battle->battleType = 0;
   }
-  Task_Add(Func_08118adc, 0x47f);
+  Task_Add(BattleCamera_Update, 0x47f);
 
   cue = gMainRoutineWork.sceneCue;
   if (cue != 0) {
@@ -306,7 +306,7 @@ s32 Func_081197f0(s32 enemyGroup) {
     Sound_PlayFar(50);
   }
 
-  Func_08118c68();
+  BattleUnit_Collect();
   BattleUnit_RefreshPlacement();
   Func_08118eb0();
   Func_08118f6c();

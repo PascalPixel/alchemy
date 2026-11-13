@@ -239,16 +239,16 @@ s32 Func_08109cac(s32 unitId) {
     if (shop->partyAction == 1) {
       count = Func_0810a03c(unitId, slot);
       if (count != -1)
-        Func_0810a108(unitId, slot, count);
-      Func_081084f4((s32)MsgSellAnythingElse);
+        Shop_SellItem(unitId, slot, count);
+      Shop_ShowKeeperMessage((s32)MsgSellAnythingElse);
     } else if (shop->partyAction == 3) {
       Func_0810a2d8(unitId, slot);
-      Func_081084f4((s32)MsgRepairAnythingElse);
+      Shop_ShowKeeperMessage((s32)MsgRepairAnythingElse);
     } else {
       result = Func_0810b6cc(unitId, slot);
       if (result == 0)
         break;
-      Func_081084f4((s32)MsgWhichItemNeedsAttention);
+      Shop_ShowKeeperMessage((s32)MsgWhichItemNeedsAttention);
     }
   } while (Inventory_CountFar(unitId) != 0);
   Window_CloseFar(priceWindow, 2);
@@ -293,7 +293,7 @@ void Icon_PrepareActorFar(struct WindowSprite *object);
 
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define QUANTITY_CURSOR_X 120
-#elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||                    \
+#elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||       \
     (LANGUAGE == LANGUAGE_ITALIAN)
 #define QUANTITY_CURSOR_X 104
 #else
@@ -322,7 +322,7 @@ s32 Func_0810a03c(s32 unitId, s32 slot) {
   count = Inventory_GetQuantityFar(unitId, slot);
   selection = count;
   if ((item->flags & ITEM_STACKABLE) && count > 1) {
-    Func_081084f4((s32)MsgHowManyToSell);
+    Shop_ShowKeeperMessage((s32)MsgHowManyToSell);
     savedX = shop->cursor.targetX;
     savedY = shop->cursor.targetY;
     shop->cursor.anchor->active = 4;
@@ -341,7 +341,7 @@ s32 Func_0810a03c(s32 unitId, s32 slot) {
 void Inventory_DiscardFar(s32 unitId, s32 slot);
 void Unit_RefreshPsynergyFar(s32 unitId);
 
-void Func_0810a108(s32 unitId, s32 slot, s32 count) {
+void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
   struct ShopRuntime *shop;
 
   shop = Ram_HeapSlots->menuRuntime;
@@ -364,12 +364,12 @@ void Func_0810a108(s32 unitId, s32 slot, s32 count) {
     total = Shop_GetSellPrice(unit->inventory[slot]) * count;
     if (total == 0) {
       MessageArgument_PushFar(itemId, 2);
-      Func_0810857c((s32)MsgWeDoNotBuy);
+      Shop_ShowKeeperMessageHidingCursor((s32)MsgWeDoNotBuy);
       return;
     }
     if ((unit->inventory[slot] & 0x200) && (item->flags & 2)) {
       MessageArgument_PushFar(itemId, 2);
-      Func_0810857c((s32)MsgCannotSellEquipped);
+      Shop_ShowKeeperMessageHidingCursor((s32)MsgCannotSellEquipped);
       return;
     }
     if (all)
@@ -384,13 +384,13 @@ void Func_0810a108(s32 unitId, s32 slot, s32 count) {
       message = (s32)MsgSellOffer;
     MessageArgument_PushFar(itemId, 2);
     MessageArgument_PushFar(total, 5);
-    Func_0810857c(message);
-    if (Func_08108630(0) != 0) {
+    Shop_ShowKeeperMessageHidingCursor(message);
+    if (Shop_AskYesNo(0) != 0) {
       if (rare || all)
         message = (s32)MsgKeepIt;
       else
         message = (s32)MsgChangedMind;
-      Func_0810857c(message);
+      Shop_ShowKeeperMessageHidingCursor(message);
       return;
     }
     Sound_PlayFar(102);
@@ -405,6 +405,6 @@ void Func_0810a108(s32 unitId, s32 slot, s32 count) {
       message = (s32)MsgSold;
     else
       message = (s32)MsgDeal;
-    Func_0810857c(message);
+    Shop_ShowKeeperMessageHidingCursor(message);
   }
 }

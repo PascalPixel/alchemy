@@ -44,7 +44,7 @@ void Actor_OffsetPositionAndReset(u32 objectId, s32 x_offset, s32 z_offset);
 void Actor_ArmCallback(s32 actorId, s32 angle, s32 frames);
 void Actor_SetAngleToward(s32 actorId, s32 target, s32 frames);
 s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
-void Func_080d489c(s32 actorId, s32 effect);
+void FieldEffect_SetAttached(s32 actorId, s32 effect);
 void Camera_SetSpeedParameters(s32 speed, s32 acceleration);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 pan);
 void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dst_x,
@@ -86,7 +86,7 @@ s32 Math_Sine(s32 angle);
 void FieldMessage_Show(s32 message, s32 flags);
 s32 PartyInventory_GiveItem(s32 item, s32 flags);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
-void Func_080d3070(s32 actorId, s32 dx, s32 dz, s32 facing);
+void Actor_LaunchFromLeader(s32 actorId, s32 dx, s32 dz, s32 facing);
 void Vector_AddPolarOffsetFar(s32 radius, s32 heading, s32 *probe);
 void SetMapCellCollision(s32 layer, s32 x, s32 y, s32 behavior);
 void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py);
@@ -219,7 +219,7 @@ static inline void FieldActor_ShowEmote(s32 actorId, s32 emote, s32 frames) {
 /// Attaches a field effect to an actor, takes it off, or plays one
 /// over it once.
 static inline void Actor_SetAttachedEffect(s32 actorId, s32 effect) {
-  Func_080d489c(actorId, effect);
+  FieldEffect_SetAttached(actorId, effect);
 }
 
 /// Sets how fast the camera pans for the event's next camera moves.

@@ -8,7 +8,6 @@
 #undef FORMATION_SIZE
 #undef SCENE_FRAMES
 
-
 // The map cell buffer holds the sparks of the final blow.
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 #define SPARK_COUNT 512
@@ -92,7 +91,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   *(u16 *)(BG_PLTT + 1) = 0;
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  Func_08163c2c(1, 0);
+  BattleEffect_WipeCanvas(1, 0);
   BattleEffect_SelectLivingTargets(work->effect);
   BattleEffect_SpawnObjects(FORMATION_SIZE, FORMATION, 2);
   for (i = 0; i != ROCK_COUNT; i++) {
@@ -119,7 +118,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
 
   // The desert, the dust and spark pictures, and the blend.
   BattleBackground_LoadFar(1, (s32)&ResourceId_DesertBackdrop, 0);
-  Func_08163c2c(1, 1);
+  BattleEffect_WipeCanvas(1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, cells, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 1);
   REG_DISPCNT = 0x7741;

@@ -4,7 +4,11 @@
 
 #include "../visual_attributes_internal.h"
 
-/* VIEW(ground_particles): tag struct GroundParticleWork as struct GroundParticleWork__ground_particles; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:2771: structure has no member named `entry'. */
+/* VIEW(ground_particles): tag struct GroundParticleWork as struct
+ * GroundParticleWork__ground_particles; visual_attributes.c has another
+ * definition; tried with the definition the rest of the object has, it does not
+ * compile in tla-ja: games/tla/src/field/object/visual_attributes.c:2771:
+ * structure has no member named `entry'. */
 struct GroundParticleWork__ground_particles {
   s32 entry;
   s32 tileBase;
@@ -14,7 +18,7 @@ struct GroundParticleWork__ground_particles {
   s32 unk810;
 };
 
-void Func_080d2c64(s32 sound);
+void Scene_QueueMusic(s32 sound);
 void Func_080d64f0(void);
 s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
 extern const u8 gData_080f3798[];
@@ -32,9 +36,10 @@ void Func_080d690c(void) {
   // The fill's value; as a literal 0 the fill differs.
   u32 zero = 0;
 
-  work = HeapSlot_AllocEwram(116, sizeof(struct GroundParticleWork__ground_particles));
+  work = HeapSlot_AllocEwram(
+      116, sizeof(struct GroundParticleWork__ground_particles));
   leader = Ram_HeapSlots->mapWork->origin;
-  Func_080d2c64(170);
+  Scene_QueueMusic(170);
   particle = work->particles;
   Dma_Fill32(zero, work, sizeof(struct GroundParticleWork__ground_particles));
   words = HeapSlot_AllocEwram(56, 0x400);
@@ -63,7 +68,6 @@ void Func_080d690c(void) {
   Io_Write16(0, &REG_BLDY);
   Task_Add(Func_080d64f0, TASK_PASS_VBLANK);
 }
-
 
 /// One rising particle: its sprite, world position, drift and frames left.
 struct RisingParticle {
@@ -106,8 +110,11 @@ struct RisingParticleWork {
 
 u32 Random16(void);
 void Camera_WorldToScreen(union FieldCoordinate *position);
-/* VIEW(ground_particles): routine Func_080140d8 as void Func_080140d8(void *sprite, s32 depth); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32 depth). */
-extern void Func_080140d8__ground_particles(void *sprite, s32 depth) __asm__("Func_080140d8");
+/* VIEW(ground_particles): routine Func_080140d8 as void Func_080140d8(void
+ * *sprite, s32 depth); f0d6674 has void Func_080140d8(struct GroundParticle
+ * *sprite, s32 depth). */
+extern void Func_080140d8__ground_particles(void *sprite,
+                                            s32 depth) __asm__("Func_080140d8");
 
 extern const u8 gData_080f385e[];
 

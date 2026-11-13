@@ -275,12 +275,14 @@ struct SlotEffectEntry {
 };
 
 void BattleMotion_SpawnSlotEffectAndWait(s32 slot) {
-  struct SlotEffectEntry *entry = (struct SlotEffectEntry *)BattleObject_Get(slot);
+  struct SlotEffectEntry *entry =
+      (struct SlotEffectEntry *)BattleObject_Get(slot);
   u8 *effect;
 
   if (entry->object != NULL) {
     if ((entry->object->kind & 0xf) == 1) {
-      effect = (u8 *)ResourceMetadata_RegisterFar(entry->object->resource, 0x29f);
+      effect =
+          (u8 *)ResourceMetadata_RegisterFar(entry->object->resource, 0x29f);
       if (effect != NULL) {
         Animation_SetWorkEntryFar(effect, 1);
         effect[6] = 3;
@@ -295,7 +297,7 @@ struct SlotMotionRecord {
   s32 height;
 };
 
-s32 Func_0811c37c(s32 owner);
+s32 BattleUnit_GetEffectHeight(s32 owner);
 
 s32 Func_0811c2b4(s32 slot, s32 *screen) {
   struct MotionObject *object = BattleObject_Get(slot)->object;
@@ -306,7 +308,7 @@ s32 Func_0811c2b4(s32 slot, s32 *screen) {
 
   Camera_ApplyTransformByFlag();
   scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), record->height);
-  screen[1] -= Iwram_MulQ16(scale, Func_0811c37c(slot) >> 16);
+  screen[1] -= Iwram_MulQ16(scale, BattleUnit_GetEffectHeight(slot) >> 16);
   return 0;
 }
 
@@ -331,9 +333,10 @@ struct SummonOwnerState {
 
 u8 BattleClass_GetEffectHeight(s32 index);
 
-s32 Func_0811c37c(s32 owner) {
+s32 BattleUnit_GetEffectHeight(s32 owner) {
   s32 value = BattleClass_GetEffectHeight(
-      ((struct SummonOwnerState *)Unit_Get(owner))->summon) << 16;
+                  ((struct SummonOwnerState *)Unit_Get(owner))->summon)
+              << 16;
 
   if (value == 0) {
     if (BattleClass_IsSmall(

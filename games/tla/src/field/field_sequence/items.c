@@ -11,9 +11,7 @@ void Event_RunMessage(s32 actor, s32 message) {
   Event_End();
 }
 
-void Event_ResolveAllPendingActions(void) {
-  Event_ResolvePendingActions(0);
-}
+void Event_ResolveAllPendingActions(void) { Event_ResolvePendingActions(0); }
 
 void Event_ResolvePendingActions(s32 skip) {
   struct EventWork *state = Ram_HeapSlots->eventWork;
@@ -121,7 +119,18 @@ s32 Func_080d295c(s32 mode);
 void Message_CloseFinishedWindowsFar(void);
 void BattleEffect_CleanupSceneObjects(void);
 
-s32 Func_080ce0ac(s32 arg, s32 slot) {
+/// Uses an item on the field. packedItem holds the item (bits 0 to 9) and the
+/// character using it (bits 10 to 13; 15 for the character carrying most of
+/// it); slot is its inventory slot. The scene's item trigger for what the
+/// leader faces runs if there is one; otherwise an item with a field action
+/// uses it (Retreat asks first and leaves the scene). FLAG_NOTHING_HAPPENS
+/// still set afterwards says "But nothing happens."; FLAG_ITEM_USED_UP removes
+/// the item. Returns 0 when the scene's event ran or Retreat was declined, else
+/// -1, the item's own action included; FieldSequence_Run ignores it. Called by
+/// FieldSequence_Run for the item request (work->item and work->itemSlot).
+/// Retreat sets gMainRoutineWork.next and .entrance to the Retreat point
+/// and raises work->exit.
+s32 Field_UseItem(s32 arg, s32 slot) {
   s32 result;
   s32 itemId;
   s32 actor;
@@ -276,7 +285,9 @@ s32 Func_080ce31c(s32 kind) {
     s32 high = event->trigger & 0xf000;
     s16 hasFacing = (u16)event->trigger & 0x800;
     s32 target = (u16)event->trigger & 0xff;
-    s32 eventKind = ((const struct PendingAction *)BattleAction_Get((u16)flags >> 8))->eventKind;
+    s32 eventKind =
+        ((const struct PendingAction *)BattleAction_Get((u16)flags >> 8))
+            ->eventKind;
 
     if ((event->control & 15) == 5 && eventKind == kind &&
         GameFlag_IsConditionActive(event->condition)) {
@@ -335,7 +346,9 @@ struct TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector) {
     s32 high = event->trigger & 0xf000;
     s16 hasFacing = (u16)event->trigger & 0x800;
     s32 target = (u16)event->trigger & 0xff;
-    s32 eventKind = ((const struct PendingAction *)BattleAction_Get((u16)flags >> 8))->eventKind;
+    s32 eventKind =
+        ((const struct PendingAction *)BattleAction_Get((u16)flags >> 8))
+            ->eventKind;
 
     if ((event->control & 15) == 5 && eventKind == kind &&
         GameFlag_IsConditionActive(event->condition)) {

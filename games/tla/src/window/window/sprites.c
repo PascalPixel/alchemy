@@ -11,7 +11,7 @@ extern u8 Glyph_DrawCodeSize[];
 extern char ResourceId_WindowTiles;
 extern char ResourceId_SmallFont;
 
-s32 Func_0803a8fc(s32 character, u32 *tiles);
+s32 Text_DrawGlyphPair(s32 character, u32 *tiles);
 
 // A space's width in pixels, set by the font.
 #if LANGUAGE == LANGUAGE_JAPANESE
@@ -126,7 +126,7 @@ s32 Func_0803bde4(struct Window *window, s32 character, s32 x, s32 y,
         break;
       }
       {
-        s32 drawn = Func_0803a8fc(character, tiles);
+        s32 drawn = Text_DrawGlyphPair(character, tiles);
 
         // The Japanese edition keeps a width of 0.
 #if TLA_PATCH_1
@@ -170,7 +170,7 @@ done:
 
 // Where the glyph's sprite sits against the text position, in pixels: the
 // Japanese font's glyphs are drawn into their tiles differently (see
-// Func_0803a8fc).
+// Text_DrawGlyphPair).
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define GLYPH_SPRITE_OFFSET_X 1
 #define GLYPH_SPRITE_OFFSET_Y 0
@@ -189,7 +189,7 @@ struct GlyphSprite {
   u16 tile;
 };
 
-s32 Func_0803a8fc(s32 code, u32 *tiles);
+s32 Text_DrawGlyphPair(s32 code, u32 *tiles);
 
 s32 Func_0803c068(struct Window *window, s32 character, s32 x, s32 y) {
   struct WindowWork *work = Ram_HeapSlots->windowTiles;
@@ -207,7 +207,7 @@ s32 Func_0803c068(struct Window *window, s32 character, s32 x, s32 y) {
   index = (output - work->outputs) * 4;
   output->active = 1;
   output->kind = 0;
-  width = Func_0803a8fc(character, tiles);
+  width = Text_DrawGlyphPair(character, tiles);
   Dma_Set(tiles, (void *)(0x06010000 + (work->glyphTiles + index) * 32),
           0x84000020, REG_DMA3);
   ((u16 *)&output->sprite.oam)[0] =
@@ -228,13 +228,13 @@ s32 Func_0803c068(struct Window *window, s32 character, s32 x, s32 y) {
 void Func_0803c170(const void *source, void *destination) {
   u8 buffer[128];
 
-  Func_0803a8fc((s32)source, (u32 *)buffer);
+  Text_DrawGlyphPair((s32)source, (u32 *)buffer);
   Dma_Set(buffer, destination, DMA_COPY_WORDS(32), REG_DMA3);
 }
 
 // Where the glyph's sprite sits against the text position, in pixels, as in
 // Func_0803c068: the Japanese font's glyphs are drawn into their tiles
-// differently (see Func_0803a8fc).
+// differently (see Text_DrawGlyphPair).
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define GLYPH_SPRITE_OFFSET_X 1
 #define GLYPH_SPRITE_OFFSET_Y 0
@@ -402,7 +402,7 @@ enum {
 #define TILEMAP_ENTRIES (TILEMAP_WIDTH * 20)
 
 void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
-                              u32 mode) {
+                            u32 mode) {
   u16 *map = ((struct WindowWork *)Ram_HeapSlots->windowTiles)->tilemap[0];
   s32 palette;
   s32 index;
@@ -468,7 +468,7 @@ struct OutputSprite {
 };
 extern u16 gWindowSprite_BounceScales[];
 
-void Func_0803c40c(struct WindowSprite *output) {
+void WindowSprite_UpdateScaleAnimation(struct WindowSprite *output) {
   s32 scale = 256;
   struct OutputSprite *sprite = (struct OutputSprite *)&output->sprite;
   struct AffineTransform effect;
@@ -669,7 +669,7 @@ void WindowSprite_UpdateAll(void) {
       case 10:
       case 11:
       case 12:
-        Func_0803c40c((struct WindowSprite *)output);
+        WindowSprite_UpdateScaleAnimation((struct WindowSprite *)output);
         break;
       }
       if (output->active == 2) {

@@ -382,14 +382,14 @@ void Func_02000838(void) {
   if (result == 0) {
     Event_Wait(30);
     Actor_StartRepeatedMotion(10, 3);
-    Func_080d489c(10, 0x102);
+    FieldEffect_SetAttached(10, 0x102);
     Event_Wait(40);
     Event_ShowMessageThenWait(10, 0, 10);
     ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
   } else {
     Event_Wait(40);
     Actor_StartRepeatedMotion(10, 3);
-    Func_080d489c(10, 0x102);
+    FieldEffect_SetAttached(10, 0x102);
     Event_Wait(40);
     ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
     Event_ShowMessageThenWait(10, 0, 0);

@@ -5,14 +5,15 @@
 #include "../resource_slot_internal.h"
 
 /// The heading of each direction-pad combination, 0xffff for none.
-/* VIEW(move_by_keys): variable gData_0802ec5c as extern const u16 gData_0802ec5c[16]; f028aac has extern const s16 gData_0802ec5c[16]. */
+/* VIEW(move_by_keys): variable gData_0802ec5c as extern const u16
+ * gData_0802ec5c[16]; f028aac has extern const s16 gData_0802ec5c[16]. */
 extern const u16 gData_0802ec5c__move_by_keys[16] __asm__("gData_0802ec5c");
 
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
 s32 Func_080c8710(struct Actor *object);
 s32 Func_080c8700(struct Actor *object);
-s32 Func_0802da24(s32 *position);
+s32 MapGrid_IsWallAt(s32 *position);
 s32 Func_0802d45c(s32 terrainId, s32 x, s32 z);
 void Actor_SelectAnimation(struct Actor *object, s32 argument);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
@@ -81,7 +82,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
     destinationCell =
         &map->layers[object->terrainId]
              .cells[position.x / 0x100000 + (position.z / 0x100000) * 128];
-    if (Func_0802da24((s32 *)&position) != 0 ||
+    if (MapGrid_IsWallAt((s32 *)&position) != 0 ||
         !(sourceCell->attributeB & 64) || !(destinationCell->attributeB & 64)) {
       collisionFlags = 4;
       animation = 12;
@@ -121,7 +122,6 @@ s32 Actor_MoveByKeys(struct Actor *object) {
   object->step++;
   return 1;
 }
-
 
 struct ChainSlot {
   s16 unk00;

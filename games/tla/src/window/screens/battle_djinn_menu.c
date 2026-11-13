@@ -112,7 +112,7 @@ extern u8 gDjinnMenu_ElementYOffsets[4];
 
 void Text_UseExtraTiles(s32 on);
 
-s32 Func_0804868c(s32 member) {
+s32 BattleDjinnMenu_Run(s32 member) {
   struct DjinnMenuOam cursorSprite;
   u16 messageText[64];
   struct DjinnMenuWork *work;
@@ -192,7 +192,9 @@ s32 Func_0804868c(s32 member) {
         u32 v;
         s32 k;
 
-        list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar((u32)member > 7 ? 1 : 0))->list;
+        list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
+                     (u32)member > 7 ? 1 : 0))
+                    ->list;
         for (k = 0; k < list->count; k++) {
           if (list->entries[k].unitId == member &&
               list->entries[k].element == element &&
@@ -584,7 +586,7 @@ s32 Func_0804868c(s32 member) {
   Window_Close(messageWindow, 1);
   Window_Close(previewWindow, 1);
   Window_Close(listWindow, 1);
-  Func_08041b68();
+  Window_MarkVisibleTextTiles();
   Text_UseExtraTiles(0);
   Heap_Release(djinnEntries);
   wait(1);

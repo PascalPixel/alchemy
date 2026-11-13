@@ -7,7 +7,6 @@
 #define Resource_DecodeByteLzInRam                                             \
   ((void (*)(const void *, void *))Resource_DecodeByteLzInRam)
 
-
 extern const u8 gData_080f385e[];
 
 union MoteWord {
@@ -29,7 +28,11 @@ struct Mote {
 };
 
 /// Heap slot 0x74 while the motes run.
-/* VIEW(motes): tag struct MoteWork as struct MoteWork__motes; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:3089: structure has no member named `motes'. */
+/* VIEW(motes): tag struct MoteWork as struct MoteWork__motes;
+ * visual_attributes.c has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/field/object/visual_attributes.c:3089: structure has no member
+ * named `motes'. */
 struct MoteWork__motes {
   s32 vramEntry;
   s32 tileBase;
@@ -119,7 +122,6 @@ void FieldMotes_Start(void) {
 
 #undef Resource_DecodeByteLzInRam
 
-
 /// One of Func_080d6674's particles: its sprite's attribute words, its world
 /// position and its frames left.
 struct SparkParticle {
@@ -140,7 +142,7 @@ struct SparkParticleWork {
 };
 
 void Func_080d6674(void);
-void Func_080d2c64(s32 cue);
+void Scene_QueueMusic(s32 cue);
 
 extern const u8 Data_080f3901[];
 
@@ -148,7 +150,7 @@ extern const u8 Data_080f3901[];
 /// decodes the particle tiles into VRAM, sets each of the 64 particles' sprite
 /// words and places it on the ground at the map's focus with a timer of
 /// (i & 11) + 1, turns on alpha blending of all layers at 16/16, schedules the
-/// update and, when asked, plays cue 137 (Func_080d2c64).
+/// update and, when asked, plays cue 137 (Scene_QueueMusic).
 void Func_080d6f34(s32 withCue) {
   struct SparkParticleWork *work = HeapSlot_AllocEwram(116, 0x814);
   struct SparkParticle *particle = work->particles;
@@ -202,11 +204,10 @@ void Func_080d6f34(s32 withCue) {
   Io_Write16(clear, &REG_BLDY);
   Task_Add(Func_080d6674, TASK_PASS_VBLANK);
   if (withCue != 0)
-    Func_080d2c64(137);
+    Scene_QueueMusic(137);
 }
 
 void Func_080d7024(void) { Task_Remove(Func_080d6674); }
-
 
 struct Sparkle {
   u8 padding00[4];
@@ -246,8 +247,11 @@ struct SparklePicture {
 
 extern const struct SparklePicture gData_080f0b7c[];
 
-/* VIEW(motes): routine Func_080140d8 as void Func_080140d8(void *entry, s32 priority); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32 depth). */
-extern void Func_080140d8__motes(void *entry, s32 priority) __asm__("Func_080140d8");
+/* VIEW(motes): routine Func_080140d8 as void Func_080140d8(void *entry, s32
+ * priority); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32
+ * depth). */
+extern void Func_080140d8__motes(void *entry,
+                                 s32 priority) __asm__("Func_080140d8");
 
 void FieldEffect_UpdateSparkles(void) {
   struct SparkleWork *work;
@@ -342,7 +346,7 @@ void FieldEffect_UpdateSparkles(void) {
   } while (i <= 63);
 }
 
-void Func_080d67e8(void);
+void Weather_UpdateLightning(void);
 
 void BattleEffect_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
                                      s32 frames);
@@ -450,7 +454,7 @@ void BattleEffect_StartTwelveFrameBlend(void) {
   BattleEffect_BuildBuffer((s32)work, 0, buffers->target, 1);
   work->timer = 600;
   work->enabled = 1;
-  Task_Add(Func_080d67e8, TASK_PASS_VBLANK);
+  Task_Add(Weather_UpdateLightning, TASK_PASS_VBLANK);
 }
 
 void BattleEffect_SetBlock30ValuesMaxZero(void) {
@@ -493,5 +497,5 @@ void BattleEffect_StartBufferBlend(s32 from, s32 to) {
   BattleEffect_BuildBuffer((s32)work, 0, buffers->target, 1);
   work->timer = 120;
   work->enabled = 0;
-  Task_Add(Func_080d67e8, TASK_PASS_VBLANK);
+  Task_Add(Weather_UpdateLightning, TASK_PASS_VBLANK);
 }

@@ -4,11 +4,11 @@
 	.global Func_080380f8
 	.thumb_func
 Func_080380f8:
-	overlay_veneer Func_0803d3c0
+	overlay_veneer Portrait_OpenWindow
 	.global Window_CloseMatchingIdFar
 	.thumb_func
 Window_CloseMatchingIdFar:
-	overlay_veneer Func_0803d450
+	overlay_veneer Portrait_CloseWindow
 	.global Text_GetMessageSizeFar
 	.thumb_func
 Text_GetMessageSizeFar:
@@ -76,7 +76,7 @@ Resource_ResetOwnerEntriesFar:
 	.global Func_08038188
 	.thumb_func
 Func_08038188:
-	overlay_veneer Func_0803e7ac
+	overlay_veneer Menu_SetupSelectionBothSides
 	.global Func_08038190
 	.thumb_func
 Func_08038190:

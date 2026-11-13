@@ -93,7 +93,7 @@ extern char ResourceId_ShopCursorPictures;
 
 void Func_08108030(union OptionCursor *cursor);
 void Func_08108038(union OptionCursor *cursor);
-void Func_080450fc(void *object);
+void WindowSprite_Pulse(void *object);
 
 void GraphicsPalette_LoadSelectionResourcesAndAdvance(void) {
   s32 src0;
@@ -124,7 +124,7 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void) {
                  Resource_GetTableEntry(src1));
 
   if (selection > 1)
-    Func_080450fc(work->frame[selection - 2][work->option[selection]]);
+    WindowSprite_Pulse(work->frame[selection - 2][work->option[selection]]);
   work->cursorFrame++;
 }
 
@@ -152,8 +152,7 @@ void SettingsMenu_InitializeWork(void) {
   work->optionCount[3] = 2;
   work->option[4] = gMainRoutineWork.unk244[6];
   work->optionCount[4] = 2;
-  Task_Add(
-      GraphicsPalette_LoadSelectionResourcesAndAdvance, TASK_PASS_VBLANK);
+  Task_Add(GraphicsPalette_LoadSelectionResourcesAndAdvance, TASK_PASS_VBLANK);
 }
 
 void GraphicsPalette_LoadSelectionResourcesAndAdvance(void);
@@ -400,7 +399,7 @@ void FieldMessage_Show(s32 message, s32 mode);
 
 #define PRESSED (((volatile struct InputState *)&gInput)->pressed)
 
-s32 Func_080400e8(void) {
+s32 SettingsMenu_Run(void) {
   struct OptionScreen *work;
   struct RenderInput *settingsWindow;
   struct RenderInput *helpWindow;
@@ -583,22 +582,22 @@ struct ScreenPageWork {
   s32 values[1];
 };
 
-void Func_080405ac(void) {
+void PauseMenu_AnimateCursor(void) {
   struct ScreenPageWork *work = Ram_HeapSlots->unkd0[0];
 
   Func_08108030((union OptionCursor *)work->panel);
-  Func_080450fc((void *)work->values[work->page]);
+  WindowSprite_Pulse((void *)work->values[work->page]);
 }
 
 void Func_080405dc(void) {
   void *work = HeapSlot_AllocEwram(208, 0x628);
 
   Dma_Fill32(0, work, 0x628);
-  Task_Add(Func_080405ac, TASK_PASS_VBLANK);
+  Task_Add(PauseMenu_AnimateCursor, TASK_PASS_VBLANK);
 }
 
 void Func_08040614(void) {
-  Task_Remove(Func_080405ac);
+  Task_Remove(PauseMenu_AnimateCursor);
   HeapSlot_Release(208);
 }
 
@@ -617,7 +616,7 @@ extern const s8 gMenu_WorkspaceIcons[];
 s32 GameFlag_Test(s32 flag);
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 
-struct RenderInput *Func_08040628(void) {
+struct RenderInput *PauseMenu_Open(void) {
   struct WorkspaceScreen *work;
   s32 rows;
   s32 first;
@@ -699,7 +698,7 @@ extern const s8 gMenu_WorkspaceIcons[];
 s32 GameFlag_Test(s32 flag);
 void Func_080405dc(void);
 void Func_08040614(void);
-struct RenderInput *Func_08040628(void);
+struct RenderInput *PauseMenu_Open(void);
 struct WindowSprite *
 RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y);
 void MenuTitle_Bob(struct WindowSprite *pair);
@@ -738,7 +737,7 @@ s32 Func_08040798(s32 initial) {
   Func_080405dc();
   work = Ram_HeapSlots->unkd0[0];
   wait(1);
-  window = Func_08040628();
+  window = PauseMenu_Open();
   pair = RenderResource_CreatePair(7, window, 40, HEADING_Y);
   if (settingsOnly != 0) {
     rows = 1;

@@ -110,9 +110,9 @@ Event_ShowMessageAndWait:
 	.thumb_func
 Event_AskYesNoAndShowResponse:
 	overlay_veneer Func_080c81a8
-	.global Func_080d489c
+	.global FieldEffect_SetAttached
 	.thumb_func
-Func_080d489c:
+FieldEffect_SetAttached:
 	overlay_veneer Func_080c8218
 	.global Camera_MoveWithinMapBounds
 	.thumb_func

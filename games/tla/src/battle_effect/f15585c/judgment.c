@@ -49,7 +49,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   work->transferMode = 0;
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  Func_08163c2c(0, 0);
+  BattleEffect_WipeCanvas(0, 0);
   BattleEffect_SelectLivingTargets(work->effect);
   BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
 
@@ -58,7 +58,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   pal += 512;
   Resource_DecodeType01(pal, cells);
   for (i = 0; i != 16; i++) {
-    struct JudgmentObject *obj = Func_0815b290__actor_move_random(32, 32, 0x80002000, 0);
+    struct JudgmentObject *obj =
+        Func_0815b290__actor_move_random(32, 32, 0x80002000, 0);
 
     obj->priority = 2;
     work->objects[i] = obj;
@@ -68,7 +69,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   wait(1);
   transition[4] = 1;
   gBgScroll[1].x = 0;
-  Func_08163c2c(0, 1);
+  BattleEffect_WipeCanvas(0, 1);
   REG_DISPCNT = 0x7741;
   REG_BG2PA = 0x80;
   REG_BLDALPHA = 0x1010;

@@ -132,7 +132,7 @@ void Func_080f8058(s32 first);
 s32 Inventory_CountFar(s32 unit);
 void WindowSprite_PrepareForRedrawFar(void *window);
 void Menu_ReleaseEntryObjectsFar(void);
-void Func_0810a108(s32 unitId, s32 slot, s32 count);
+void Shop_SellItem(s32 unitId, s32 slot, s32 count);
 void Func_0810bf98(s16 *window, s32 x, s32 y, s32 owner);
 s32 Inventory_FindEquippedFar(s32 unitId, s32 type);
 void *Actor_GetByIdFar(s32 id);

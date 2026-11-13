@@ -13,7 +13,10 @@ struct ResourceObjectWork;
 struct StripQuad;
 
 // A texture for the IWRAM renderer.
-/* VIEW(f14153c): tag struct ModelTexture as struct ModelTexture__f14153c; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunEclipse moves: 1 of 2142 instructions, Func_08142944 moves: 1 of 730 instructions in tla-ja. */
+/* VIEW(f14153c): tag struct ModelTexture as struct ModelTexture__f14153c;
+ * render_model.h has another definition; tried with the definition the rest of
+ * the object has, BattleEffect_RunEclipse moves: 1 of 2142 instructions,
+ * Func_08142944 moves: 1 of 730 instructions in tla-ja. */
 struct ModelTexture__f14153c {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -21,7 +24,8 @@ struct ModelTexture__f14153c {
   const u8 *pixels;
 };
 
-/* VIEW(f14153c): tag struct RenderModel as struct RenderModel__f14153c; render_model.h has another definition. */
+/* VIEW(f14153c): tag struct RenderModel as struct RenderModel__f14153c;
+ * render_model.h has another definition. */
 struct RenderModel__f14153c {
   s32 kind;
   s32 unk04;
@@ -111,7 +115,6 @@ struct EclipseVertex {
   s8 pad;
 };
 
-
 // Rows of Resource_DirectoryTable; the directory has yet to name most of them.
 extern char ResourceId_EarthHorizonBackdrop, ResourceId_AerialViewBackdrop;
 extern char ResourceId_GoldenDragonTiles, ResourceId_GoldenDragonHeadTiles;
@@ -120,7 +123,11 @@ extern char ResourceId_Data134, ResourceId_TornadoSheet, ResourceId_Data0B4;
 extern char ResourceId_Data0C1, ResourceId_Data0C9, ResourceId_Data0CA;
 
 extern u8 gMapCellBuffer[];
-/* VIEW(f14153c): variable gData_02014000 as extern struct EffectStep gData_02014000[]; f13eb70 has extern u8 gData_02014000[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/battle_effect/f13ba50.c:4528: `gData_02014000__f14153c' undeclared (first use in this function). */
+/* VIEW(f14153c): variable gData_02014000 as extern struct EffectStep
+ * gData_02014000[]; f13eb70 has extern u8 gData_02014000[]; tried as the rest
+ * of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/f13ba50.c:4528: `gData_02014000__f14153c'
+ * undeclared (first use in this function). */
 extern struct EffectStep gData_02014000__f14153c[] __asm__("gData_02014000");
 extern u8 Data_02010400[];
 extern u8 Data_02010800[];
@@ -309,8 +316,8 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         work->fadeFrames = 1;
         work->fadeStep = frame;
         work->particles[16].variant = frame;
-        Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, gData_02014000__f14153c, 0,
-                                   0);
+        Resource_LoadAndDecompress((s32)&ResourceId_Data0B4,
+                                   gData_02014000__f14153c, 0, 0);
       }
       if (frame == 136) {
         u8 *dst = Data_02010400;
@@ -902,7 +909,6 @@ void Func_0814293c(void) {}
 
 void Func_08142940(void) {}
 
-
 struct Model;
 
 // Heap slots, as byte offsets into Ram_HeapSlots.
@@ -922,7 +928,10 @@ struct Model;
 enum { KIND_RIGHT = 78, KIND_LEFT = 79, KIND_FINALE = 80 };
 
 // One model for the IWRAM renderer.
-/* VIEW(f14153c): tag struct ModelDraw as struct ModelDraw__f14153c; f13ba50.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f13ba50.c:5359: structure has no member named `depthBias'. */
+/* VIEW(f14153c): tag struct ModelDraw as struct ModelDraw__f14153c; f13ba50.c
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja: games/tla/src/battle_effect/f13ba50.c:5359:
+ * structure has no member named `depthBias'. */
 struct ModelDraw__f14153c {
   s32 kind;
   s32 next;
@@ -1231,7 +1240,6 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
   HeapSlot_Release(SLOT_BATTLE_EFFECT);
 }
 
-
 /// The battle effect work, as far as the canvas transfer and the canvas layer
 /// read it.
 struct CanvasWork {
@@ -1431,7 +1439,6 @@ void Func_08143354(void) {
   }
 }
 
-
 // The scenes' frame callbacks that copy the display registers the effect
 // keeps in its work to the hardware.
 
@@ -1572,7 +1579,6 @@ void Func_0814355c(void) {
 }
 
 #undef HI
-
 
 static __inline__ s32 ClearWords_(void *destination, s32 size) {
   return Iwram_ClearWords(destination, size);
@@ -1850,7 +1856,7 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
   wait(1);
 }
 
-void Func_08143d80(void) {
+void BattleEffect_SetupCanvasTileMap(void) {
   void *canvas = Ram_HeapSlots->battleFxWork[1];
   struct BattleWork *screen = Ram_HeapSlots->battleWork;
   struct BattleBackgroundView *layer =

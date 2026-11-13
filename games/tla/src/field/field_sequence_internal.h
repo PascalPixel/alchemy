@@ -105,7 +105,7 @@ struct FieldUnit {
 // The object's functions its parts call before their definitions.
 struct TriggerView;
 void Func_080ca4a8(void);
-void Func_080ca514(s32 terrain);
+void BattleBackground_SelectForEnvironment(s32 terrain);
 void BattleEffect_SelectBattleCue(s32 zone, s32 slot);
 s32 Func_080ca9cc(s32 id, s32 *position);
 void ObjectTable_Clear(void);
@@ -134,7 +134,7 @@ void Event_RunMessage(s32 actor, s32 message);
 void Event_ResolveAllPendingActions(void);
 void Event_ResolvePendingActions(s32 skip);
 s32 Party_GetLeaderActor(void);
-s32 Func_080ce0ac(s32 arg, s32 slot);
+s32 Field_UseItem(s32 arg, s32 slot);
 s32 Event_ExecutePackedAction(u32 packed);
 s32 Func_080ce61c(u32 code);
 struct PendingEvent;
@@ -169,7 +169,7 @@ void FieldMessage_ShowFar(s32 message, s32 mode);
 void MessageArgument_PushFar(s32 value, s32 kind);
 void BattleEffect_LoadActionEffectResources(s32 action, s32 flags);
 void Actor_ReleaseIfPresent(struct Actor *object);
-void Func_080cf350(struct Actor *object);
+void ItemDisplay_RaiseAboveLeader(struct Actor *object);
 struct ParticleEmitter;
 void Marker_MoveLeaderAwayFromEmitter(struct ParticleEmitter *emitter);
 

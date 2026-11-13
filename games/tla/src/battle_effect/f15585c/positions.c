@@ -71,8 +71,6 @@ void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
   HeapSlot_Release(100);
 }
 
-
-
 // The blitter slots read as what they hold, a drawing routine.
 #define ALTERNATE_BLITTER_SLOT                                                 \
   (((struct {                                                                  \
@@ -95,7 +93,6 @@ void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define SPARK_COUNT 64
-
 
 extern char ResourceId_WaveSheet;
 extern char ResourceId_BeamImage;
@@ -130,7 +127,7 @@ void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 // Configures the battle display for an effect.
 void BattleEffect_ConfigureEffectDisplay(void);
 // Sets up the canvas tile map on BG1.
-void Func_08143d80(void);
+void BattleEffect_SetupCanvasTileMap(void);
 // Marks the transition done and shows the battle view again.
 void BattleEffect_HideBg1AndRestoreBackdrop(void);
 // Copies the canvas to VRAM when a transfer is pending.
@@ -170,7 +167,7 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   // Setup: the display, the tile map on BG1, the blitters for the side.
   wait(1);
   BattleEffect_ConfigureEffectDisplay();
-  Func_08143d80();
+  BattleEffect_SetupCanvasTileMap();
   REG_BG1CNT = 0x1f80;
   wait(1);
   if (kind == 5 || kind == 6) {
@@ -388,8 +385,6 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   BattleEffect_HideBg1AndRestoreBackdrop();
 }
 
-
-
 extern char ResourceId_GreyCrescentSheet;
 
 void Sound_PlayFar(s32 cue);
@@ -440,7 +435,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
   BattleCamera_SetViewAtPairMidpointFar(effect->actor, effect->firstTarget,
                                         130);
   wait(1);
-  Func_08143d80();
+  BattleEffect_SetupCanvasTileMap();
   REG_BG1CNT = 0x1f80;
   if (effect->side == 0) {
     BattleEffect_LoadBlitter(
@@ -654,7 +649,6 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
   }
   BattleEffect_HideBg1AndRestoreBackdrop();
 }
-
 
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent) {

@@ -98,7 +98,7 @@ s32 Summon_ListLearnedFar(u8 *summons);
 void Func_0803c274(struct SummonMenuWindow *window, s32 character, s32 x, s32 y,
                    s32 mode);
 
-s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
+s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   struct SummonMenuOam cursorStorage;
   struct SummonMenuSprite sprites[4];
   u8 learnedSummons[33];
@@ -283,8 +283,8 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
                 break;
             }
             affordable = element == 4;
-            Ability_LoadGlyph(summon->nameMessageId & 0x3fff, 0, &iconSlots[index],
-                              &glyph, 1);
+            Ability_LoadGlyph(summon->nameMessageId & 0x3fff, 0,
+                              &iconSlots[index], &glyph, 1);
             y = index * 2;
             sprites[index].oam.f.tile = glyph;
             if (!affordable)

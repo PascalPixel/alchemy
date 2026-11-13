@@ -13,8 +13,7 @@ struct Actor *Actor_GetById(u32 objectId) {
   return object;
 }
 
-void Actor_SetSpeedParameters(u32 objectId, s32 speedLimit,
-                                     s32 acceleration) {
+void Actor_SetSpeedParameters(u32 objectId, s32 speedLimit, s32 acceleration) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
@@ -155,29 +154,28 @@ void Actor_CenterOnColumn(u32 objectId, s32 action, s32 zOffset) {
     Actor_SetMode(object, 2);
     x = object->x;
     eight = 8;
-    Actor_SetTargetPosition(object, x + ((eight - angleRemainder) << 16), object->y,
-                       object->z);
+    Actor_SetTargetPosition(object, x + ((eight - angleRemainder) << 16),
+                            object->y, object->z);
     Actor_CommitPosition(object);
     Actor_SetSpritePriority(objectId, action);
     Actor_SetTargetPosition(object, object->x, object->y,
-                       object->z + (zOffset << 16));
+                            object->z + (zOffset << 16));
   }
 }
 
 void Actor_OffsetPositionAndResetMotion(u32 objectId, s32 xOffset,
-                                               s32 zOffset) {
+                                        s32 zOffset) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
     object->movementState = 0;
     Actor_ResetMotion(object);
     Actor_SetTargetPosition(object, object->x + (xOffset << 16), object->y,
-                       object->z + (zOffset << 16));
+                            object->z + (zOffset << 16));
   }
 }
 
-void Actor_OffsetPositionAndReset(u32 objectId, s32 xOffset,
-                                         s32 zOffset) {
+void Actor_OffsetPositionAndReset(u32 objectId, s32 xOffset, s32 zOffset) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
@@ -185,12 +183,11 @@ void Actor_OffsetPositionAndReset(u32 objectId, s32 xOffset,
     Actor_StartScriptFar(object, (u32)gActor_OffsetScript);
     Actor_SetMode(object, 2);
     Actor_SetTargetPosition(object, object->x + (xOffset << 16), object->y,
-                       object->z + (zOffset << 16));
+                            object->z + (zOffset << 16));
   }
 }
 
-void Actor_CommitPositionAndActivate(u32 objectId, s32 xOffset,
-                                            s32 zOffset) {
+void Actor_CommitPositionAndActivate(u32 objectId, s32 xOffset, s32 zOffset) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   Actor_OffsetPositionAndReset(objectId, xOffset, zOffset);
@@ -202,14 +199,15 @@ void Actor_CommitPositionAndActivate(u32 objectId, s32 xOffset,
 
 extern const s32 gData_080f32e0[];
 
-void Func_080d3070(u32 objectId, s32 xOffset, s32 zOffset, s32 action) {
+void Actor_LaunchFromLeader(u32 objectId, s32 xOffset, s32 zOffset,
+                            s32 action) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
     Actor_SetSpeedParameters(objectId, 0xcccc, 0x6666);
     Actor_MoveToObject(objectId, gMainRoutineWork.currentOwner);
     Actor_SetPositionAndResetMotionFar(object, object->x, object->y,
-                                        object->z - 0x10000);
+                                       object->z - 0x10000);
     object->movementState = 0;
     Actor_SetMode(object, 2);
     Actor_OffsetPositionAndResetMotion(objectId, xOffset, zOffset);
@@ -227,9 +225,8 @@ void Actor_WaitForMoveById(u32 objectId) {
   }
 }
 
-#define Actor_SetPositionAndResetMotionFar                                    \
-  ((s32 (*)(struct Actor *, s32, s32,                                  \
-            s32))Actor_SetPositionAndResetMotionFar)
+#define Actor_SetPositionAndResetMotionFar                                     \
+  ((s32 (*)(struct Actor *, s32, s32, s32))Actor_SetPositionAndResetMotionFar)
 
 void Actor_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
   struct Actor *object = ObjectTable_Get(objectId);
@@ -247,8 +244,8 @@ void Actor_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
   }
 }
 
-void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x,
-                                                           s32 z, s16 angle) {
+void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x, s32 z,
+                                                    s16 angle) {
   struct Actor *object = ObjectTable_Get(objectId);
   s32 terrainHeight;
 
@@ -298,9 +295,8 @@ void Actor_SetModeById(u32 objectId, s32 action) {
     Actor_SetMode(object, action);
 }
 
-#define Actor_SetAnimationSpeedFar                                 \
-  ((void (*)(struct Actor *,                                           \
-             s32))Actor_SetAnimationSpeedFar)
+#define Actor_SetAnimationSpeedFar                                             \
+  ((void (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
 void Motion_LaunchFromFocusedObject(u32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
@@ -671,7 +667,7 @@ void Actor_SetPartAttribute(struct Actor *object, s32 attribute) {
 /// acceleration, to keep up with it, and no collision flags, so it cannot
 /// block the target. The Broken Seal's ObjectEvent_SetTargetAndCallback.
 void Actor_SetTargetAndCallback(u32 objectId, s32 targetId,
-                                 const void *callback) {
+                                const void *callback) {
   struct Actor *follower = ObjectTable_Get(objectId);
   struct Actor *target = ObjectTable_Get(targetId & 0xff);
 

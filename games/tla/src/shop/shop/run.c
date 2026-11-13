@@ -49,13 +49,14 @@ void Func_0810bdf4(void);
 void Func_0810be3c(void);
 
 void Func_08108130(void) {
-  ShopCursor_Advance(&((struct ShopRuntime *)Ram_HeapSlots->menuRuntime)->cursor);
+  ShopCursor_Advance(
+      &((struct ShopRuntime *)Ram_HeapSlots->menuRuntime)->cursor);
 }
 
 /// Opens the shop's work: lists the party, loads the cursor, page arrow, gem
 /// and stat arrow tiles, and starts the cursor's callback.
 // The Broken Seal's Shop_InitializeCursorWork.
-void Func_08108148(void) {
+void Shop_InitializeWork(void) {
   struct ShopRuntime *work;
   s32 slot;
 
@@ -115,9 +116,9 @@ s32 EventTable_GetRowType(s32 row);
 void EventTable_ApplyRowAbilities(s32 row);
 struct RenderInput *Func_080380f8(s32 resource, s32 x, s32 y, s32 mode);
 struct RenderInput *Window_CreateFar(s32 x, s32 y, s32 width, s32 height,
-                                       s32 style);
+                                     s32 style);
 void MenuCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y);
-void Func_081084f4(s32 message);
+void Shop_ShowKeeperMessage(s32 message);
 s32 Menu_SelectShopCommandFar(s32 action);
 s32 ShopStock_CopyItems(s32 stockRow, s16 *output);
 s32 Func_08108b70(void);
@@ -134,7 +135,7 @@ s32 Func_081082c4(s32 stockRow, s32 keeperId) {
   if (stockRow >= EventTable_GetRowLimit() || stockRow < 0)
     stockRow = 0;
   EventTable_ApplyRowAbilities(stockRow);
-  Func_08108148();
+  Shop_InitializeWork();
   shop = Ram_HeapSlots->menuRuntime;
   shop->shopType = EventTable_GetRowType(stockRow);
   shop->keeperResource =
@@ -149,35 +150,35 @@ s32 Func_081082c4(s32 stockRow, s32 keeperId) {
   anchor->kind = 0;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = anchor;
-  Func_081084f4((s32)MsgWeaponShopWelcome);
+  Shop_ShowKeeperMessage((s32)MsgWeaponShopWelcome);
   while (1) {
     action = Menu_SelectShopCommandFar(action);
     shop->partyAction = action;
     if (action == 0) {
       shop->stockCount = ShopStock_CopyItems(stockRow, shop->stockItemIds);
-      Func_081084f4((s32)MsgWhatWouldYouLike);
+      Shop_ShowKeeperMessage((s32)MsgWhatWouldYouLike);
       Func_08108b70();
     } else if (action == 1) {
-      Func_081084f4((s32)MsgWhatToSell);
+      Shop_ShowKeeperMessage((s32)MsgWhatToSell);
       Func_08109ad8();
     } else if (action == 2) {
       if (Func_081080a8() != 0) {
-        Func_081084f4((s32)MsgConnoisseur);
+        Shop_ShowKeeperMessage((s32)MsgConnoisseur);
         Func_08108b70();
       } else {
-        Func_081084f4((s32)MsgOutOfStock);
+        Shop_ShowKeeperMessage((s32)MsgOutOfStock);
         wait(1);
       }
     } else if (action == 3) {
-      Func_081084f4((s32)MsgFixDamaged);
+      Shop_ShowKeeperMessage((s32)MsgFixDamaged);
       Func_0810a2c8();
     } else {
       break;
     }
     MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
-    Func_081084f4((s32)MsgAnythingElse);
+    Shop_ShowKeeperMessage((s32)MsgAnythingElse);
   }
-  Func_081084f4((s32)MsgShopFarewell);
+  Shop_ShowKeeperMessage((s32)MsgShopFarewell);
   Window_CloseFar(window, 2);
   Func_0810824c();
   return 0;
@@ -204,7 +205,7 @@ void Sound_WaitForJingle(void) {
 
 s32 BattleEffect_GetResourceIdFar(u16 id);
 
-void Func_081084f4(s32 first) {
+void Shop_ShowKeeperMessage(s32 first) {
   struct ShopRuntime *state = Ram_HeapSlots->menuRuntime;
   s32 message;
   s32 value;
@@ -226,7 +227,7 @@ void Func_081084f4(s32 first) {
   wait(1);
 }
 
-void Func_0810857c(s32 messageId) {
+void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
   s32 variant;
   s32 no;
   s8 mode;
@@ -255,13 +256,17 @@ void Func_0810857c(s32 messageId) {
   state->cursor.anchor->active = saved;
 }
 
-s32 Func_08108630(s32 arg0) {
+/// Runs the Yes or No choice beside the shopkeeper's line and returns it: 0
+/// for Yes, 1 for No or B. `choice` is where the cursor starts. Keeps the
+/// hand cursor's motion. Called by the counters before they buy, sell, equip
+/// or repair, and by the inn.
+s32 Shop_AskYesNo(s32 arg0) {
   struct WindowSprite **slot =
       &((struct ShopRuntime *)Ram_HeapSlots->menuRuntime)->cursor.anchor;
   u8 saved = (*slot)->active;
 
   Icon_PrepareActorFar(*slot);
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||                      \
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
   arg0 = Menu_RunConfirmSelectionAtFar(6, 5, arg0);
 #else
@@ -271,7 +276,10 @@ s32 Func_08108630(s32 arg0) {
   return arg0;
 }
 
-s32 Func_08108660(s32 arg0) {
+/// Runs the Yes or No choice at the sanctum's place on the screen and
+/// returns it, keeping the hand cursor's motion. Called by
+/// Sanctum_RunPartyService.
+s32 Sanctum_AskYesNo(s32 arg0) {
   struct WindowSprite **slot =
       &((struct ShopRuntime *)Ram_HeapSlots->menuRuntime)->cursor.anchor;
   u8 saved = (*slot)->active;

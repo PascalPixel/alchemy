@@ -254,9 +254,9 @@ Actor_SetPartAttribute:
 	.thumb_func
 Func_020055b8:
 	overlay_veneer Func_080c8208
-	.global Func_080d489c
+	.global FieldEffect_SetAttached
 	.thumb_func
-Func_080d489c:
+FieldEffect_SetAttached:
 	overlay_veneer Func_080c8218
 	.global Camera_FollowActor
 	.thumb_func

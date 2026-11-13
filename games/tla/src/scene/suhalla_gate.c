@@ -1,5 +1,6 @@
 /// @file
-/// Overlay 0x64f's scene: its code, then its tables, in the order the ROM has them.
+/// Overlay 0x64f's scene: its code, then its tables, in the order the ROM has
+/// them.
 
 #include "suhalla_gate/local.h"
 #include "types.h"
@@ -245,7 +246,7 @@ void Func_020005e8(void) {
   owner = Actor_GetById(gMainRoutineWork.currentOwner);
   if (owner != NULL)
     Actor_ResetAndSetPosition(8, *(s16 *)((u8 *)owner + 10),
-                                     *(s16 *)((u8 *)owner + 18));
+                              *(s16 *)((u8 *)owner + 18));
   Event_Wait(20);
   Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate3, 99);
   Party_SetFields1f2And1f4((s32)&SceneId_VenusLighthouseEntrance, 98);
@@ -314,7 +315,8 @@ void Func_02000800(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgMyThatWas);
   Actor_SetPosition(9, PIXELS(512), PIXELS(432));
-  Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, PIXELS(528), PIXELS(432));
+  Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
+                                         PIXELS(528), PIXELS(432));
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_ShowMessageThenWait(9, 0, 10);
@@ -330,7 +332,7 @@ void Func_02000800(void) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader)
     Actor_ResetAndSetPosition(9, ((s16 *)&leader->x)[1],
-                                     ((s16 *)&leader->z)[1]);
+                              ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(9);
   Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
   Event_Wait(10);
@@ -343,14 +345,14 @@ void Func_020008cc(void) {
   Func_02000988();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgNotThatWay);
-  Func_080d3070(16, -16, 0, 0);
+  Actor_LaunchFromLeader(16, -16, 0, 0);
   Actor_WaitForMoveById(16);
   Event_ShowMessageThenWait(0x1010, 0, 10);
   Actor_SetModeById(16, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader)
     Actor_ResetAndSetPosition(16, ((s16 *)&leader->x)[1],
-                                     ((s16 *)&leader->z)[1]);
+                              ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(16);
   Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
   Event_Wait(10);

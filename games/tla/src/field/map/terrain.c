@@ -218,8 +218,14 @@ extern const u16 gData_0802f054[8];
 void VramCache_Reset(void);
 void Func_080230e0(s32 mode);
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
-/* VIEW(terrain): routine Resource_GetMetadataRecordFar as struct ViewerMetadata *Resource_GetMetadataRecordFar(s32 id); sprite_metadata.h has struct AnimationMetadata *Resource_GetMetadataRecordFar(u32 number); tried as the definition's struct AnimationMetadata *Resource_GetMetadataRecordFar(u32 id), it does not compile in tla-ja: games/tla/src/field/map/terrain.c:285: dereferencing pointer to incomplete type. */
-extern struct ViewerMetadata *Resource_GetMetadataRecordFar__terrain(s32 id) __asm__("Resource_GetMetadataRecordFar");
+/* VIEW(terrain): routine Resource_GetMetadataRecordFar as struct ViewerMetadata
+ * *Resource_GetMetadataRecordFar(s32 id); sprite_metadata.h has struct
+ * AnimationMetadata *Resource_GetMetadataRecordFar(u32 number); tried as the
+ * definition's struct AnimationMetadata *Resource_GetMetadataRecordFar(u32 id),
+ * it does not compile in tla-ja: games/tla/src/field/map/terrain.c:285:
+ * dereferencing pointer to incomplete type. */
+extern struct ViewerMetadata *Resource_GetMetadataRecordFar__terrain(
+    s32 id) __asm__("Resource_GetMetadataRecordFar");
 struct ViewerSprite *ResourceObject_Create(s32 id);
 s32 ResourceMetadata_Register(struct ViewerSprite *sprite, s32 id);
 void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value);
@@ -228,7 +234,7 @@ void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value);
 void SpriteViewer_SetGridColumnNumber(s32 slot, s32 value);
 s32 Func_0802e444(s32 spriteId, s32 direction);
 struct SpritePlacement;
-void Func_0802e4c8(s32 x, s32 z, struct SpritePlacement *out);
+void SpriteViewer_BuildProbeRing(s32 x, s32 z, struct SpritePlacement *out);
 void Battle_PlaceActorsByFormationKind(void);
 void Fade_FromBlack(s32 vblanks);
 
@@ -283,13 +289,15 @@ restart:
   VramCache_Reset();
   Func_080230e0(2);
   ResourceSlot_Load(0, gMapCellBuffer, layers[0].spriteId, 0);
-  if (Resource_GetMetadataRecordFar__terrain(layers[0].spriteId)->drawKind == 20)
+  if (Resource_GetMetadataRecordFar__terrain(layers[0].spriteId)->drawKind ==
+      20)
     ResourceSlot_Load(1, Data_02018000, layers[0].spriteId + 1, 0);
   for (i = 0; i < 10; i++) {
     struct ViewerSprite *sprite;
     s32 part = 0;
 
-    if (Resource_GetMetadataRecordFar__terrain(layers[0].spriteId)->drawKind == 20 &&
+    if (Resource_GetMetadataRecordFar__terrain(layers[0].spriteId)->drawKind ==
+            20 &&
         (i & 1))
       part = 1;
     sprite = ResourceObject_Create(layers[0].spriteId + part + (part << 12));
@@ -314,7 +322,7 @@ restart:
       SpriteViewer_StartStaggeredAnimations(i, a);
     }
   }
-  Func_0802e4c8(x, y, ring);
+  SpriteViewer_BuildProbeRing(x, y, ring);
   Task_Add(Battle_PlaceActorsByFormationKind, 0x480);
 
 next:
@@ -329,7 +337,7 @@ next:
         y--;
       if (HELD & 128)
         y++;
-      Func_0802e4c8(x, y, ring);
+      SpriteViewer_BuildProbeRing(x, y, ring);
     } else {
       // DEAD: the repeated keys are read once and the value goes unused.
       (void)gInput.repeat;
@@ -557,7 +565,12 @@ struct ProbeObjects {
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *point);
 
-void Func_0802e4c8(s32 x, s32 z, struct SpritePlacement *out) {
+/// Lays out the sprite viewer's ring around pixel (x, z): one position per
+/// facing of the first sprite's facing kind (6, 8, 10 or 4, or two opposite
+/// pairs for ANIM_FACING_TWO_PART), 56 pixels out (40 for a two-part
+/// sprite). B held turns the ring. Called by SpriteViewer_Run when it starts
+/// and while Start moves the ring.
+void SpriteViewer_BuildProbeRing(s32 x, s32 z, struct SpritePlacement *out) {
   struct SpritePlacement *pair;
   s32 angle;
   s32 i;
@@ -754,7 +767,6 @@ void SpriteViewer_SetGridColumnNumber(s32 slot, s32 no) {
     base += 56;
   } while (count >= 0);
 }
-
 
 struct BattleCells {
   u8 *actors;

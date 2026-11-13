@@ -7,7 +7,7 @@
 /// Writes the object's position on screen, in pixels, to position[0] and
 /// position[1]; an animated object is raised by its frame box. Returns -1 when
 /// the object does not exist.
-s32 Func_080d5bec(s32 objectId, s32 *position) {
+s32 Actor_GetScreenPosition(s32 objectId, s32 *position) {
   struct Actor *object = ObjectTable_Get(objectId);
 #ifdef UBFIX
   struct MapWork *map;
@@ -42,12 +42,11 @@ s32 Func_080d5bec(s32 objectId, s32 *position) {
   return 0;
 }
 
-
 /// The Broken Seal's Scene_FadeColorFromWhite, playing cue 298 where that
 /// plays 288: turns the backdrop (on the world map, a colour of palette 15)
 /// white, finishes the screen transition and fades that colour to black
 /// over 16 frames.
-void Func_080d5c70(s32 unused) {
+void Field_StartEncounterTransition(s32 unused) {
   struct EventWork *work;
   s32 i;
   s32 c;

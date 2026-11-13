@@ -200,7 +200,9 @@ void Palette_StepTowardResource(s32 resource) {
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
-void Func_081b22b8(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
+/// Draws a line from (x0, y0) to (x1, y1) on the 256 x 128 8bpp canvas (32
+/// tiles across), writing only over lower colour numbers.
+void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
   s32 dx = x1 - x0;
   s32 dy = y1 - y0;
   s32 frac = 0x80;
@@ -1408,19 +1410,19 @@ void LuckyWheels_Run(void) {
 
           color = 65 - color;
           if (litLines[1])
-            Func_081b22b8(20, j + 19, 200, j + 19, color);
+            LuckyWheels_DrawCanvasLine(20, j + 19, 200, j + 19, color);
           if (litLines[2])
-            Func_081b22b8(28, j + 35, 200, j + 35, color);
+            LuckyWheels_DrawCanvasLine(28, j + 35, 200, j + 35, color);
           if (litLines[3])
-            Func_081b22b8(20, j + 51, 200, j + 51, color);
+            LuckyWheels_DrawCanvasLine(20, j + 51, 200, j + 51, color);
           if (litLines[4])
-            Func_081b22b8(28, j + 67, 200, j + 67, color);
+            LuckyWheels_DrawCanvasLine(28, j + 67, 200, j + 67, color);
           if (litLines[5])
-            Func_081b22b8(20, j + 83, 200, j + 83, color);
+            LuckyWheels_DrawCanvasLine(20, j + 83, 200, j + 83, color);
           if (litLines[0])
-            Func_081b22b8(28, j + 5, 200, j + 91, color);
+            LuckyWheels_DrawCanvasLine(28, j + 5, 200, j + 91, color);
           if (litLines[6])
-            Func_081b22b8(28, j + 97, 200, j + 11, color);
+            LuckyWheels_DrawCanvasLine(28, j + 97, 200, j + 11, color);
         }
       }
       work->transferPending = 1;

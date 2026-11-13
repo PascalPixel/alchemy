@@ -14,7 +14,7 @@ void MapGrid_SetCameraBounds(s32 minX, s32 minZ, s32 maxX, s32 maxZ) {
   map->maxZ = maxZ;
 }
 
-void Func_080d45d8(void) {
+void WorldMap_StepZoom(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s16 *duration;
   s32 *from;
@@ -37,7 +37,7 @@ void Func_080d45d8(void) {
   gData_03001144 = *(u16 *)((u8 *)map + 0x11c) + 1;
   if (*step == *duration) {
     *duration = 0;
-    Task_Remove(Func_080d45d8);
+    Task_Remove(WorldMap_StepZoom);
   }
 }
 
@@ -55,7 +55,7 @@ void Func_080d46a4(s32 zoom, s32 frames) {
   map->zoomTo = result;
   map->zoomFrames = frames;
   map->zoomStep = 0;
-  Task_Add(Func_080d45d8, TASK_PASS_VBLANK + 20);
+  Task_Add(WorldMap_StepZoom, TASK_PASS_VBLANK + 20);
 }
 
 void Func_080d4714(void) {
@@ -72,7 +72,6 @@ void Func_080d4714(void) {
     }
   }
 }
-
 
 s32 BattleEffect_CopyWatchedObjectPosition(struct Actor *object) {
   struct Actor *link;

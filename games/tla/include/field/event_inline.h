@@ -68,10 +68,10 @@ static inline s32 Vram_Load(s32 block, s32 size, const void *data) {
 }
 
 /// Puts an actor on the leader and sends it walking off by (dx, dz),
-/// then starts the movement type facing names (Func_080d3070).
+/// then starts the movement type facing names (Actor_LaunchFromLeader).
 static inline void FieldActor_LaunchFromLeader(s32 actorId, s32 dx, s32 dz,
                                                s32 facing) {
-  Func_080d3070(actorId, dx, dz, facing);
+  Actor_LaunchFromLeader(actorId, dx, dz, facing);
 }
 
 /// Moves a point radius along a heading on the ground plane

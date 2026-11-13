@@ -54,13 +54,13 @@ struct FieldWork {
 
 extern u8 gMapCellBuffer[];
 
-void Func_080d793c(s32 capture);
+void Djinn_ResolvePending(s32 capture);
 void Func_08020110(void);
 void Func_08020108(s32 map);
 void Func_080e2718(void);
 void WindowSystem_InitFieldFar(void);
 void ObjectSystem_InitializeFar(s32 mode);
-void Func_080d784c(void);
+void Djinn_RestoreActorAfterBattle(void);
 void Map_UpdateCurrentTileBlockFar(void);
 void WorldMap_LoadGraphicsFar(s32 x, s32 z);
 void Func_08020180(void);
@@ -80,7 +80,7 @@ void Func_080d5720(void);
 void Func_080d57e4(void);
 void Func_080d59dc(void);
 void Func_080d5aa0(void);
-void Func_080d5c70(s32 battle);
+void Field_StartEncounterTransition(s32 battle);
 void Menu_RunSelectionWithCursorObjectFar(void);
 void Menu_RunTopSelectionFar(void);
 void Menu_RunSelectionFar(void);
@@ -158,7 +158,7 @@ s32 FieldSequence_Run(void) {
   gMainRoutineWork.pair1f2[1] = -1;
   gMainRoutineWork.unk2c3 = 0;
   Task_ResetAll();
-  Func_080d793c(0);
+  Djinn_ResolvePending(0);
   if (gMainRoutineWork.map == (s32)&SceneId_Ov64a) {
     Func_08020110();
     gMainRoutineWork.unk244[0] = 1;
@@ -184,7 +184,7 @@ s32 FieldSequence_Run(void) {
   if (GameFlag_Test(265))
     ObjectTable_Restore();
   if (gMainRoutineWork.pendingDjinnEvent != 0)
-    Func_080d784c();
+    Djinn_RestoreActorAfterBattle();
   work->queuedSound = -1;
   if (mode == 3) {
     Map_UpdateCurrentTileBlockFar();
@@ -293,10 +293,10 @@ s32 FieldSequence_Run(void) {
     if (gMainRoutineWork.pendingDjinnEvent != 0) {
       // UB: called with a second argument (1) its definition does not take.
 #ifdef UBFIX
-      Func_080d793c(gMainRoutineWork.pendingDjinnEvent);
+      Djinn_ResolvePending(gMainRoutineWork.pendingDjinnEvent);
 #else
-      ((void (*)(s32, s32))Func_080d793c)(gMainRoutineWork.pendingDjinnEvent,
-                                          1);
+      ((void (*)(s32, s32))Djinn_ResolvePending)(
+          gMainRoutineWork.pendingDjinnEvent, 1);
 #endif
       gMainRoutineWork.pendingDjinnEvent = 0;
     }
@@ -439,7 +439,7 @@ s32 FieldSequence_Run(void) {
         party->scene = 510;
         *entrance = work->battle;
         work->warp = 999;
-        Func_080d5c70(work->battle);
+        Field_StartEncounterTransition(work->battle);
         work->unk194 = 0;
         work->battle = 0;
         *steps = 0;
@@ -510,7 +510,7 @@ s32 FieldSequence_Run(void) {
         work->psynergy = 0;
       } else if (work->item != 0) {
         Func_080cb82c();
-        Func_080ce0ac(work->item, work->itemArgument);
+        Field_UseItem(work->item, work->itemArgument);
         Func_080cb8a4();
         work->item = 0;
       } else if (work->start != 0) {

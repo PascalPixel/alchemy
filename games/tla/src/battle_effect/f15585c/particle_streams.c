@@ -36,9 +36,6 @@ void BattleEffect_StartActorMotionRandomDistance(s32 id) {
 
 // Unused: a second copy of Nereid's summon effect.
 
-
-
-
 struct FxPartyList;
 
 // The pixel half of a 16.16 fixed-point value.
@@ -72,8 +69,8 @@ struct FxPartyList;
 
 extern char ResourceId_WaterSpraySheet;
 extern char ResourceId_FirePillarSheetA;
-extern char ResourceId_Data134;    // ☀️ ParticleSpritesA
-extern u8 gData_0819896a[];        // the pillars' feet, x and y
+extern char ResourceId_Data134; // ☀️ ParticleSpritesA
+extern u8 gData_0819896a[];     // the pillars' feet, x and y
 // ☀️ gBattleEffect_MoteCells: the Data134 sheet's spark cells, by size - 1
 // (byte offsets).
 extern u16 gData_08197410[];
@@ -331,7 +328,6 @@ UNUSED void Func_08163e14(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-
 struct FormationScale {
   s32 x;
   s32 y;
@@ -423,8 +419,6 @@ void Func_0816442c(s32 formation, s32 x, s32 z) {
   }
 }
 
-
-
 #define SHARD_E 0x59d8
 
 extern char ResourceId_FlareSheet;
@@ -438,7 +432,6 @@ s32 BattleEffect_LoadBlitter(
     s32 modeAndFlags); // BattleEffect_BuildBlitter(slot, 7, 7, flags, mode)
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
-
 
 void Func_0816467c(s32 formation, s32 x, s32 y) {
   struct BattleFxWork *work;
@@ -644,7 +637,6 @@ void Func_08164abc(s32 red_delta, s32 green_delta, s32 blue_delta) {
   }
 }
 
-
 /// As Func_08164abc, from the battle work's saved palette into BG palette
 /// entries 96 to 223.
 void Func_08164b2c(s32 redDelta, s32 greenDelta, s32 blueDelta) {
@@ -677,7 +669,6 @@ void Func_08164b2c(s32 redDelta, s32 greenDelta, s32 blueDelta) {
   }
 }
 
-
 /// Stops DMA 0, then arms it to copy one palette line from the battle effect
 /// work into the BG palette at each horizontal blank.
 // The Broken Seal's BattleEffect_ArmPaletteHBlankDma.
@@ -695,7 +686,11 @@ void BattleEffect_ArmPaletteHBlankDma(void) {
 }
 
 /// The particle streams in mode 0.
-/* VIEW(actor_move_random): static CopyWords_ as CopyWords___actor_move_random; f15b3b0 has static __inline__ s32 CopyWords_(void *destination, const void *source, s32 size) { return Iwram_CopyWords(destination, source, size); }; tried with the definition the rest of the object has, BattleEffect_RunMeteor (gone) moves: 4 of 4 instructions in tla-ja. */
+/* VIEW(actor_move_random): static CopyWords_ as CopyWords___actor_move_random;
+ * f15b3b0 has static __inline__ s32 CopyWords_(void *destination, const void
+ * *source, s32 size) { return Iwram_CopyWords(destination, source, size); };
+ * tried with the definition the rest of the object has, BattleEffect_RunMeteor
+ * (gone) moves: 4 of 4 instructions in tla-ja. */
 DEFINE_EFFECT_KIND(BattleEffect_RunMeteor, BattleEffect_RunParticleStreams, 0)
 
 /// The particle streams in mode 1.
@@ -711,20 +706,16 @@ DEFINE_EFFECT_KIND(BattleEffect_RunOuterSpace, BattleEffect_RunParticleStreams,
 
 // Twin: ☀️ BattleEffect_RunParticleStreams (games/tbs/src/effect/effect.c),
 // ported: the heap blocks read from Ram_HeapSlots (canvas first), the effect
-// kept as the argument, Func_08163c2c for the canvas wipe, the fills through
-// IwramFillWords where ☀️ uses DMA, mode 1's two objects resource 638 + i *
-// 0x2001 (☀️ 483), mode 0's spawn 650 (☀️ 381), the palette lines at 0x7640 in
-// the work (☀️ 0x1f80), the blitter modes counted down from 3, and the callback
-// orders 0xc80, 0xcfe and 0xcff (☀️ 0x480, 0x4fe, 0x4ff).
+// kept as the argument, BattleEffect_WipeCanvas for the canvas wipe, the fills
+// through IwramFillWords where ☀️ uses DMA, mode 1's two objects resource 638 +
+// i * 0x2001 (☀️ 483), mode 0's spawn 650 (☀️ 381), the palette lines at 0x7640
+// in the work (☀️ 0x1f80), the blitter modes counted down from 3, and the
+// callback orders 0xc80, 0xcfe and 0xcff (☀️ 0x480, 0x4fe, 0x4ff).
 
-
-
-
-static __inline__ s32 CopyWords___actor_move_random(void *destination, const void *source,
-                                 s32 size) {
+static __inline__ s32
+CopyWords___actor_move_random(void *destination, const void *source, s32 size) {
   return Iwram_CopyWords(destination, source, size);
 }
-
 
 // The map cell buffer: first a 256 x 128 picture the streams draw into (BG1's
 // tiles), then, in the second act, the flashes and the embers.
@@ -746,7 +737,6 @@ static __inline__ s32 CopyWords___actor_move_random(void *destination, const voi
 #define SE_RISE 145
 #define SE_STREAMS 141
 #define SE_BLAST 156
-
 
 struct FxAnimObject {
   u8 unk00[9];
@@ -773,7 +763,7 @@ extern u16 Data_08198a56[];    // ☀️ gParticleStreams_FlashSizes
 
 void BattleEffect_ConfigureEffectDisplay(void);
 
-void Func_08163c2c(s32 mode, s32 value);
+void BattleEffect_WipeCanvas(s32 mode, s32 value);
 void Animation_ApplyChildArgumentFar(void *object, s32 animation);
 
 void BattleEffect_AdvanceBg2OnInterval(void);
@@ -884,7 +874,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   *(u16 *)(BG_PLTT + 1) = 0;
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  Func_08163c2c(0, 0);
+  BattleEffect_WipeCanvas(0, 0);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
 
   // Mode 1's two flames, or mode 0's sun.
@@ -904,16 +894,17 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   }
   Resource_LoadAndDecompress((s32)&ResourceId_FlameSheetB, work->sheet, 1, 1);
   if (mode == 1)
-    CopyWords___actor_move_random((void *)BG_PLTT,
-               Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
-               128);
+    CopyWords___actor_move_random(
+        (void *)BG_PLTT,
+        Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
 
   // BG1 shows the ground: the map cell buffer filled with colour 1.
   FillWords_(Ram_MapCellBuffer, 0x8000, 0x01010101);
   // The copy in a once-only block, so its entry loads before the size; as
   // the plain call, 2 of 1591 instructions differ in tla-en.
   do {
-    CopyWords___actor_move_random((void *)0x06008000, Ram_MapCellBuffer, 0x7800);
+    CopyWords___actor_move_random((void *)0x06008000, Ram_MapCellBuffer,
+                                  0x7800);
   } while (0);
   wait(1);
   REG_BLDCNT = 0;

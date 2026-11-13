@@ -431,7 +431,7 @@ void Func_02000b3c(void) {
   Event_Wait(10);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
   Event_Wait(30);
-  Func_080d489c(gMainRoutineWork.currentOwner, 0x102);
+  FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);
   Motion_SetVarCbAndRefresh(gMainRoutineWork.currentOwner, 2);
   Event_Wait(20);
   leader->facing = 0xc000;

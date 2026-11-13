@@ -98,7 +98,7 @@ extern const s32 gData_080f0e78[];
 
 void Actor_Destroy(struct Actor *object);
 
-void Func_080ddea8(void) {
+void FieldPsynergy_Lift(void) {
   struct BattleFxScene *work;
   struct Actor *obj;
   struct Actor *pair[2];
@@ -145,7 +145,6 @@ void Func_080ddea8(void) {
   Actor_Destroy(pair[1]);
   BattleEffect_PrepareBufferInterpolation();
 }
-
 
 /// Spawns object 278 and grows it from a quarter to full size, an eighth of a
 /// turn a frame, then faces it to angle.
@@ -213,8 +212,11 @@ struct RadialBurstEffect {
 };
 
 void Camera_WorldToScreen(struct EffectPosition *value);
-/* VIEW(f0dd820): routine BattleEffect_ClearOwnedSlot as void BattleEffect_ClearOwnedSlot(struct RadialBurstEffect *effect); f0dd054 has void BattleEffect_ClearOwnedSlot(struct FieldParticle *). */
-extern void BattleEffect_ClearOwnedSlot__f0dd820(struct RadialBurstEffect *effect) __asm__("BattleEffect_ClearOwnedSlot");
+/* VIEW(f0dd820): routine BattleEffect_ClearOwnedSlot as void
+ * BattleEffect_ClearOwnedSlot(struct RadialBurstEffect *effect); f0dd054 has
+ * void BattleEffect_ClearOwnedSlot(struct FieldParticle *). */
+extern void BattleEffect_ClearOwnedSlot__f0dd820(
+    struct RadialBurstEffect *effect) __asm__("BattleEffect_ClearOwnedSlot");
 void BattleEffect_ClearOwnedSlot(struct FieldParticle *slot);
 
 void Func_080de060(struct RadialBurstEffect *effect) {
@@ -310,8 +312,11 @@ s32 Func_080de154(struct Actor *src) {
 
 struct BattleEffectArgument;
 
-/* VIEW(f0dd820): routine Func_080de21c as void Func_080de21c(struct BattleEffectArgument *effect); the definition has void Func_080de21c(void). */
-extern void Func_080de21c__f0dd820(struct BattleEffectArgument *effect) __asm__("Func_080de21c");
+/* VIEW(f0dd820): routine Func_080de21c as void Func_080de21c(struct
+ * BattleEffectArgument *effect); the definition has void Func_080de21c(void).
+ */
+extern void Func_080de21c__f0dd820(struct BattleEffectArgument *effect) __asm__(
+    "Func_080de21c");
 
 /// Runs field Psynergy animation 4; the target is unused.
 void FieldEffect_RunForceOnTarget(struct BattleEffectArgument *effect) {

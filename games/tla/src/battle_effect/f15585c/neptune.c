@@ -74,7 +74,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   REG_WININ = 0x2137;
-  Func_08163c2c(1, 0);
+  BattleEffect_WipeCanvas(1, 0);
   REG_WIN0H = 0xf0f0;
   BattleEffect_SelectLivingTargets(work->effect);
   // Build the serpent: its palette, its tiles, and eight sprites.
@@ -85,7 +85,8 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     sheet += 0x200;
     Resource_DecodeType01(sheet, tiles);
     for (i = 0; i != 8; i++) {
-      struct SpriteObject *object = Func_0815b290__actor_move_random(32, 32, 0x80002000, 0);
+      struct SpriteObject *object =
+          Func_0815b290__actor_move_random(32, 32, 0x80002000, 0);
 
       object->priority = 1;
       work->objects[i] = object;

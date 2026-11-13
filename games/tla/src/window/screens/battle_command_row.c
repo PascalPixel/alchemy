@@ -159,8 +159,8 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
     selectionUi->entries[entryIndex].resource = iconSlot;
     if (selectionUi->commandKinds[entryIndex] == -1)
       break;
-    Func_080456f8(selectionUi, entryIndex,
-                  selectionUi->commandKinds[entryIndex]);
+    BattleCommandRow_LoadIcon(selectionUi, entryIndex,
+                              selectionUi->commandKinds[entryIndex]);
   }
   selectionUi->iconCount = entryIndex;
   selectionUi->affine.scaleX = 320;
@@ -254,8 +254,9 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
               (s32)MsgCommandName,
           selectionUi->window, 0, 0);
       selectionUi->drawnIndex = selectionUi->selectedIndex;
-      Func_080456f8(selectionUi, selectionUi->selectedIndex,
-                    selectionUi->commandKinds[selectionUi->selectedIndex]);
+      BattleCommandRow_LoadIcon(
+          selectionUi, selectionUi->selectedIndex,
+          selectionUi->commandKinds[selectionUi->selectedIndex]);
     }
     selectionUi->affineIndex =
         AffineMatrix_BuildForEffect(&selectionUi->affine);

@@ -198,7 +198,7 @@ static inline void Actor_JoinLeader(s32 actor) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(actor, ((s16 *)&leader->x)[1],
-                                     ((s16 *)&leader->z)[1]);
+                              ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(actor);
   Actor_SetHorizontalPositionWithTerrain(actor, 0, 0);
 }
@@ -228,7 +228,7 @@ void Func_020003a0(void) {
   Event_ShowMessageAndWait(27, 0);
   FieldActor_LaunchFromLeader(5, 8, 16, 0xa000);
   FieldActor_LaunchFromLeader(6, 16, 0, 0xa000);
-  Func_080d3070(28, 32, -8, 0x8000);
+  Actor_LaunchFromLeader(28, 32, -8, 0x8000);
   Event_Wait(60);
   Event_ShowMessageAndWait(27, 0);
   Event_Wait(30);

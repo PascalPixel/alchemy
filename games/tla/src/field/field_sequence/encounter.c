@@ -112,7 +112,7 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
     zone = rule->zone;
     break;
   }
-  Func_080ca514(behavior);
+  BattleBackground_SelectForEnvironment(behavior);
   return zone;
 }
 
@@ -438,7 +438,7 @@ extern char ResourceId_DesertBackdrop;
 extern const s16 Data_080efd1c[];
 
 /// Chooses the battle backdrop for a terrain; the ship deck's is the default.
-void Func_080ca514(s32 terrain) {
+void BattleBackground_SelectForEnvironment(s32 terrain) {
   u16 value;
 
   switch (terrain - 1) {

@@ -1441,17 +1441,15 @@ SECTIONS
     {
         "*/games/tla/src/scene/entry/jupiter_lighthouse_room_9.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_9.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_9/s0910.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_9/s1018.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_9/s1648.o"(.text)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_9/teleporters.o"(.text)
         "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_9/s17e0.o"(.text)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_9/teleporter_steps.o"(.text)
         "*/games/tla/src/scene/import/jupiter_lighthouse_room_9.o"(.text)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_9/s17e0.o"(.data)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_9.o"(.data)
     }
     .bss :
     {

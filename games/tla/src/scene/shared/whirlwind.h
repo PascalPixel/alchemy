@@ -166,7 +166,7 @@
     object->unk62 = 0;                                                         \
     object->unk63 = 0;                                                         \
     object->update = call2;                                                    \
-    object->unk30 = 0x18000;                                                   \
+    object->speedLimit = 0x18000;                                              \
     options.priority = 1;                                                      \
     options.palette = 7;                                                       \
     call3(position.x, source->y, position.z - 0x60000, 0, 0, 0, 0x30000,       \
@@ -196,7 +196,7 @@
     object->unk62 = 0;                                                         \
     object->unk63 = 0;                                                         \
     object->update = call2;                                                    \
-    object->unk30 = 0x18000;                                                   \
+    object->speedLimit = 0x18000;                                              \
     options.priority = 1;                                                      \
     options.palette = 7;                                                       \
     call3(position.x, source->y, position.z - 0x60000, 0, 0, 0, 0x30000,       \

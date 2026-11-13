@@ -1022,7 +1022,7 @@ struct GustObject *Func_02001a54(struct GustObject *source) {
   object->unk62 = 0;
   object->unk63 = 0;
   object->update = Func_02001894;
-  object->unk30 = 0x18000;
+  object->speedLimit = 0x18000;
   options.priority = 1;
   options.palette = 7;
   Func_020035b8(position.x, source->y, position.z - 0x60000, 0, 0, 0, 0x30000,

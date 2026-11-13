@@ -573,7 +573,7 @@ struct GustObject {
   u8 unk14[0x0f];
   u8 priorityFlags;
   u8 unk24[0x0c];
-  s32 unk30;
+  s32 speedLimit;
   u8 unk34[0x21];
   u8 motionFlags;
   u8 unk56[0x0c];

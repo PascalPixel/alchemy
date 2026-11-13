@@ -8,7 +8,7 @@
 
 extern const u8 gData_02002d38[];
 
-void Func_02002c88(s32 a, s32 b);
+void Shop_Run(s32 a, s32 b);
 
 void Func_02000f80(void);
 
@@ -33,5 +33,7 @@ void Func_02000968(void);
 void Func_02000ac4(void);
 extern s16 gData_020032f0[];
 extern s16 gData_020032fc[];
+
+void FieldCamera_WaitForArrival(void);
 
 #endif

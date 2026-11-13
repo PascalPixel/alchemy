@@ -88,7 +88,7 @@ next:
 void Func_02000108(s32 arg) {
   if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0xc000) {
-    Func_02002c88(4, arg);
+    Shop_Run(4, arg);
     return;
   }
   if (Event_GetFlag(0x8ff))
@@ -103,7 +103,7 @@ void Func_02000108(s32 arg) {
 void Func_0200018c(s32 arg) {
   if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0xc000) {
-    Func_02002c88(5, arg);
+    Shop_Run(5, arg);
     return;
   }
   if (Event_GetFlag(0x8ff))
@@ -118,7 +118,7 @@ void Func_0200018c(s32 arg) {
 void Func_02000210(s32 arg) {
   if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0xc000) {
-    Func_02002c88(6, arg);
+    Shop_Run(6, arg);
     return;
   }
   if (Event_GetFlag(0x8ff))
@@ -528,7 +528,7 @@ void Actor_LaunchFromLeader(s32 id, s32 a, s32 b, s32 c);
 extern s32 Map_PlayMapEdit__s0ac4(const void *edit, s32 a, s32 b) __asm__("Map_PlayMapEdit");
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);
-void Func_02002c50(s32 item, s32 a);
+void BattleEffect_StartEffectObject22(s32 item, s32 a);
 s32 PartyInventory_GiveItem(s32 item, s32 count);
 void FieldMessage_Show(s32 message, s32 position);
 void Camera_FollowActor(s32 id, s32 mode);
@@ -552,7 +552,7 @@ void Func_02000ac4(void) {
   Event_Wait(10);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
   FieldActor_LaunchFromLeader(32, 16, 1, FACING_NORTH);
-  Func_02002c28();
+  FieldCamera_WaitForArrival();
   Actor_WaitForMoveById(32);
   Actor_FaceDirection(4, FACING_EAST, 0);
   Actor_FaceDirection(32, FACING_WEST, 0);
@@ -678,7 +678,7 @@ void Func_02000f80(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Camera_MoveWithinMapBounds(PIXELS(124), -1, PIXELS(420), 1);
-  Func_02002c28();
+  FieldCamera_WaitForArrival();
   Actor_SetSpeed(33, 0xcccc, 0x6666);
   Actor_SetSpeed(34, 0xcccc, 0x6666);
   Event_StartScreenTransition();
@@ -846,7 +846,7 @@ void Func_020014fc(void) {
   Event_Wait(10);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
   Actor_LaunchFromLeader(32, 16, 1, FACING_NORTH);
-  Func_02002c28();
+  FieldCamera_WaitForArrival();
   Actor_WaitForMoveById(32);
   Actor_WalkByAndWait(25, 3, 8);
   Actor_FaceDirectionAndWait(25, FACING_EAST);
@@ -1071,7 +1071,7 @@ void Func_020019d8(void) {
   Actor_CommitPositionAndActivate(34, 16, 8);
   Actor_FaceDirection(34, FACING_SOUTH, 0);
   if (PartyInventory_FindRoom(210) >= 0) {
-    Func_02002c50(210, 3);
+    BattleEffect_StartEffectObject22(210, 3);
     PartyInventory_GiveItem(210, 0);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     Actor_ArmCallback(4, FACING_NORTH, 0);

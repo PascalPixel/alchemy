@@ -1,0 +1,95 @@
+grid:128x128	at:0,0	fill:0:0:0
+fff
+0 0:255 0:255 0:255 0:255 0:255 0:255 0:255 0:255 0:255 0:255 0:255 0:255 0:255 0:255 0:255 0:255 0:255 0:255
+0 0:255 8fff 8fff 8fff:255 8fff:2 8fff:2 8fff fff fff fff 8fff 8fff 8008 8fff 8fff 8fff 8fff 0:255 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 8000 8000 8000
+0 0:255 8fff 8fff 8fff:255 8fff 8fff 8fff fff fff fff 8017 8018 8017 8007 8fff 8fff 8fff 0:255 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 8000 8000 8000
+0 0:255 8fff 8fff 8fff:3 8fff 8fff 4fff fff fff fff 8fff 8024 8023 8016 8fff 8fff 8001 0:255 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 8000 8000 8000
+0 0:255 8fff 8fff 8fff 8004 8fff 8fff:255 fff fff fff 8fff 8fff 8fff 8022 8007 8fff 8fff 0:255 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 8000 9000 8000
+0 0:255 8fff afff afff 8fff 8fff a007 4fff fff 17 8fff 8017 8007 8fff 8016 8fff 8fff 0:255 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 8000 8000 8000 0 8000 4fff 4040 40 40 40 40
+0 0:255 8fff 8fff 8fff 8fff 8fff 6016 4fff 4011 8fff 8fff 8047 8016 8fff 8022 8fff 8fff 0:255 0 11 fff fff 4c 16 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 8000 8000 8000 0 4000 4fff 404e 4e 4e 4e 4e 0 0 0 0 0 0 0 fff fff 4f
+0 0:255 8fff 8fff 8fff 8fff 8fff 4022 4fff:0:32 4fff 8fff 8058 8058 8fff 8fff 8fff 803e 8fff 0:255 0 fff fff fff 5f fff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 8000 8000 8000 0 5000 504e 5fff fff fff fff 4e 0 0 0 0 0 0 fff fff fff 66 fff
+0 0:255 8fff 8fff 8fff 8013 8fff 8fff 802a 8fff 805f 805f 805f 8fff 8016 8fff 8007 8fff 0:255 0 fff fff fff fff 5f 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 8000 8000 4000 0 0 4e fff fff fff fff 4e 0 0 0 0 0 0 fff fff 7b 7b fff
+0 0:255 8fff 8011 8fff 8fff 8fff 8fff 8fff 8fff 805f 805f 805f 8fff 8fff 8fff 8016 8fff 0:255 0 fff 5f 5f fff 83 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4000 4000 4000 0 0 4e fff fff fff fff 4e 0 0 0 0 0 0 fff 7b 7b 7b 7b
+0 0:255 8fff 801d 8fff 8fff 806b 8fff 8fff 8fff 8fff 805f 805f 8fff 8034:255 8fff 8022 8fff 0:255 0 94 5f 5f fff 96 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4000 4000 4000 0 0 4e 4e 4e 4e 4e 4e 0 0 0 0 0 0 fff 7b 7b 7b 7b
+0 0:255 807d 8fff 8fff 8fff 8fff 8fff 8fff 8fff 8fff 8fff 8fff 8fff 8fff 8fff 8fff 8fff 0:255 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4000 4000 4000 0 0 fff aa aa aa aa aa
+0 0:255 8fff 8fff 8fff 8fff 808f 8fff 8fff 8fff 8fff 8fff 8fff 8fff 8fff 8032 8fff 8032 0:255 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4000 4000 4000
+0 0:255 8fff 80a7 4fff 4fff 8fff 8fff 8fff 8fff 8fff 8fff 804a 80a7 800c 80a7 8fff 8fff 0:255 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 8000 4000 4000
+0 0:255 8fff 8fff 8fff 802a 8fff 8fff:255 8fff 8fff 8fff 8fff 803e 8032 803e 8032 8fff 8fff 0:255 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 8000
+0 0:255 8fff 8fff 8fff 8fff 8fff 8fff 8fff 8fff 8fff 8fff 8fff 8fff 804a 8fff 8fff 8001 0:255
+0 0:255 800e 8fff 8fff 8fff 8fff 8fff 8fff 8fff 8fff 8fff 8fff 8fff 803e 8fff 8fff 8fff 0:255
+0 0:255 8fff 8fff 8fff 8fff 809e 8fff 8fff 8fff 8fff 8fff 8007 8fff 8007 8fff 8fff 8fff 0:255
+0 0:255 8fff 8fff 8fff 8fff 8fff 8fff 8fff 8fff:30 8fff:30 80cb:30 8016 8070 8016 803e 8fff 8fff 0:255
+0 0:255 8fff 8fff 8fff 8fff 803b 8fff 800c 807f 8fff 8fff 8022 80a9 8022 8007 8fff 8fff 0:255
+0 0:255 8001 8fff 803b 8018 8011 8fff 8fff 8fff 809b 8fff 8034:255 8097 8fff 8016 803e 8fff 0:255
+0 0:255 8fff 807f 8011 8fff 801d 8fff 8fff 8fff 8fff 8fff 8005 80a9 800c 8022 804a 8fff 0:255
+0 0:255 8fff 8091 801d 8fff 8fff 803b 8018 8011 8fff 8fff 8fff 8032 8fff 80cb 803e 8032 0:255
+0 0:255 8fff 807f 8fff 8fff 8037 8011 8113 801d 8fff 8fff 8fff 8fff 8fff 8fff 800c 80a7 0:255
+0 0:255 8fff 8032 8fff 8fff 8fff 801d 8fff 8fff 8fff 80e6 8fff 8fff 8fff 8fff 80ad 80ae 0:255
+0 0:255 8fff 810d 8fff 80a7 8fff 8fff 8fff 8fff 8fff 8fff 8fff 8021 8fff 8fff 80b9 8fff 0:255
+0 0:255 8fff 8fff 8fff 8fff 8fff 8fff 8033 8fff 8fff 8fff 8fff 8fff 800d 800e 8fff 8fff 0:255
+0 0:255 800d 800e 8109 8fff 8fff 807f 8fff 8fff 8fff 8021 8fff 8007 8fff 8fff 8fff 8fff 0:255
+0 0:255 8fff 8fff 812d 8011 806b 8091 8fff:1 8fff:1 8005:1 8fff 8fff 8016 8017 8018 8007 8fff 0:255
+0 0:255 0:255 0:255 0:255 0:255 0:255 0:255 0:255 0:255 0:255 0:255 0:255 0:255 0:255 0:255 0:255 0:255 0:255
+
+
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0:0:64
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0:0:64 0:0:128 0 0:0:128
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0:0:64
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+0 0 0 0 0 0 0 fff fff fff fff 0 0 0 fff 0 fff fff
+0 0 fff 0 0 0 0 0 fff fff fff 0 0 0 0 0 fff fff
+0 0 15f 0 0 0 0 0 fff fff fff fff fff 0 0 0 fff fff
+0 0 0 0 0 0 0 0 fff fff fff 0 fff 0 0 0 fff fff
+0 0 fff fff 0 0 0 0 0 0 0 0 0 0 0 0 0 fff
+0 0 fff fff 0 0 0 0 0 0 fff fff 17e 0 0 fff 0 0 0 0 0 17e 17f 17e
+0 0 163 0 0 0 0 0 0 fff fff fff fff fff 0 0 0 0 0 0 181 0 183 0 185
+0 0 0 0 fff 17a
+0 0 0 0 fff fff 0 0 0 0 0 0 0 0 0 fff
+0 0 0 0 0 fff 0 0 0 0 0 0 0 0 0 fff 0 fff
+0 0 0 0 0 fff fff 0 0 0 0 0 0 0 fff fff fff
+0 0 fff 17a 0 fff fff 0 0 0 0 0 18f fff fff fff fff fff
+0 0 fff fff 195 17a fff 0 0 0 0 0 fff fff 198 195 199
+0 0 0 160 161 fff fff 0 0 0 0 0 18b 19e 19d
+0 0 0 167 168 fff fff 0 0 0 0 0 0 fff 0 fff fff
+0 0 0 16c 16d fff fff 0 0 0 0 0 0 0 0 fff fff
+0 0 0 173 174 fff fff 17a 0 0 0 0 0 0 0 fff fff
+0 0 0 0 0 0 fff fff 195 17a 0 0 0 fff 0 fff fff
+0 0 0 0 0 0 164 165 fff fff 0 0 0 fff 0 fff fff
+0 0 0 0 0 0 16a 16b fff 0 0 0 0 1b0 0 0 fff
+0 0 0 0 0 0 171 fff 0 0 0 0 0 1b5 0 0 0 fff
+0 0 0 0 0 0 177 178 0 0 0 0 fff fff
+0 0 0 0 0 0 fff 0 0 0 0 0 fff fff 0 18f 199
+0 0 0 0 17a 0 fff 0 0 0 0 0 1b0 18f 195 164 165
+0 0 0 164 165 17a fff 0 0 0 0 0 1b5 0 0 16a 16b
+0 0 0 16a 16b 17b fff fff 0 0 0 fff 1bd 0 0 171 172
+0 0 0 171 172 0 fff fff 0 0 0 fff fff 0 0 177 178
+0 0 0 177 178 0 fff fff 0 0 0 fff fff

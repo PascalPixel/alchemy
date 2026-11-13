@@ -20,7 +20,7 @@ Resource_Data60D:
 	.incbin "games/tla/src/map/map_230/shapes.table.lz"
 	.balign 4, 0
 .LResource_Data60D_GRID:
-	.incbin "games/tla/src/map/r60d/grid.parts.lz"
+	.incbin "games/tla/src/map/r60d/map.grid.lz"
 	.balign 4, 0
 .LResource_Data60D_SHAPE_GRID:
 	.incbin "games/tla/src/map/r60d/shape_grid.plane.lz"

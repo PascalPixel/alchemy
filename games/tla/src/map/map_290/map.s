@@ -20,7 +20,7 @@ Field_Map290:
 	.incbin "games/tla/src/map/map_290/shapes.table.lz"
 	.balign 4, 0
 .LField_Map290_GRID:
-	.incbin "games/tla/src/map/map_290/grid.parts.lz"
+	.incbin "games/tla/src/map/map_290/map.grid.lz"
 	.balign 4, 0
 .LField_Map290_SHAPE_GRID:
 	.incbin "games/tla/src/map/map_290/shape_grid.plane.lz"

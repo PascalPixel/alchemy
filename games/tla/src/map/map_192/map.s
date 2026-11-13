@@ -22,7 +22,7 @@ Field_Map192:
 	.incbin "games/tla/src/map/map_192/shapes.table.lz"
 	.balign 4, 0
 .LField_Map192_GRID:
-	.incbin "games/tla/src/map/map_192/grid.parts.lz"
+	.incbin "games/tla/src/map/map_192/map.grid.lz"
 	.balign 4, 0
 .LField_Map192_SHAPE_GRID:
 	.incbin "games/tla/src/map/map_192/shape_grid.plane.lz"
@@ -51,7 +51,7 @@ Field_Map192:
 	.incbin "games/tla/src/map/map_192/shapes.table.lz"
 	.balign 4, 0
 .LField_Map192_GRID:
-	.incbin "games/tla/src/map/map_192/grid.parts.lz"
+	.incbin "games/tla/src/map/map_192/map.grid.lz"
 	.balign 4, 0
 .LField_Map192_SHAPE_GRID:
 	.incbin "games/tla/src/map/map_192/shape_grid.plane.lz"

@@ -1,0 +1,107 @@
+grid:128x128	at:0,0	fill:1:0:0
+fff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 fff 1 1 1 1 fff fff fff fff fff fff fff fff fff fff fff fff fff fff fff fff 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 fff fff:255 fff:255 fff:3 fff 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 fff 13:255 14:255 15:3 fff 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2
+0 0 0 0 0 0 0 0 fff fff fff fff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 12 13:255 14:255 15 16 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e
+0 0 0 0 0 0 0 19 fff fff 0 fff fff 0 0 19 1a 1b 20 0 19 1a 1b 1a 20 0 0 fff 0 17 13:255 14:255 fff 16 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a
+0 0 0 0 0 0 0 12 fff fff fff:4 fff 16 0 19 1d 1e fff 1f fff 1d 1e 27 1e 1f 20 0 0 0 12 13:255 14:255 15 1f 20 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 a b c d e f 10 11 2 3 4 5 6 7 8 9 a:0:1 b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6
+0 0 0 0 0 0 0 17 fff fff fff fff 16 0 17 23 24 fff fff fff fff 24 2d 24 26 16 0 0 0 12 13:255 14:255 15 26 1f 20 0 0 0 0 0 0 0 0 0 1 1 1 1 1 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2
+0 0 0 0 0 0 0 12 fff fff fff fff 18 0 12 fff fff:255 fff:255 fff fff fff 36:255 fff:255 37:255 38 18 0 0 19 1d 13:255 14:255 fff 2c 26 16 0 0 0 0 0 0 0 0 0 1 1 1 1 1 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e
+0 0 0 0 0 0 0 0 3c 32 33 fff 1f 28 1d fff:255:4 fff:255:4 3f:255:4 fff:255:4 3b:255:4 fff:255:4 3f:255:4 3f:255:4 3f:255:4 fff:255:4 16 0 0 12 23 13:255 14:255 3c 32 2c 18 0 0 0 0 0 0 0 0 0 1 1 1 1 1 e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6:0:1 7 8 9 a
+0 0 0 0 0 0 0 19 fff 32 33 fff 2e 2f 30 fff:255:4 3f:255:4 3f:255:4 3f:255:4 fff:11:132 3f:255:4 46:0:132 3f:255:4 46:0:132 fff:255:4 18 0 0 17 29 13:255 14:255 3c 32 fff 18 0 0 0 0 0 0 0 0 0 1 1 1 1 1 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6:0:1 7 8 9 a b c d e f 10 11 2 3 4 5 6
+0 0 0 0 0 0 19 1d 23 fff 33 3d 2c 39 29 45:255:4 46:0:132 46:0:132 3f:255:4 46:11:132 3f:255:4 3f:255:4 3f:255:4 3f:255:4 47:255:4 1f 20 0 12 22:0:128 13:255 14:255 3c 32 48 18 0 0 0 0 0 0 0 0 0 1 1 1 1 1 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2
+0 0 0 0 0 0 12 23 29 fff fff 32 33 fff:10 fff 45:255:4 3f:255:4 3f:255:4 3f:255:132 46:11:4 3f:255:4 3f:255:4 3f:255:4 46:0:132 46:0:132 26 16 19 1d fff 13:255 14:255 fff 32 33 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10:255 11:255 2:255 3:255 4 5 6 7 8 9 a b c d e
+0 0 0 0 0 0 17 29 fff fff 3b:255 fff 33 32:10 4d:0:128 45:255:4 46:0:132 3f:255:4 3f:255:4 46:11:132 3f:255:4 46:0:132 3f:255:4 3f:255:4 47:255:4 2c 18 12 23 fff 46:0:128 14:255 3c:0:128 fff:255 33 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5:0:1 6 7 8 9 a b c:255 d e f:255 10 11 2 3 4 5 6 7 8 9 a
+0 0 0 0 0 0 12 fff 51 fff:255 3f:255 fff:255 52 fff:10 51 3f:255:4 3f:255:4 3f:255:4 3f:255:4 3f:255:4 3f:255:4 46:0:132 3f:255:4 3f:255:4 46:0:132 22 1f 1d 29 fff fff:255 14:255 fff fff 33 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8:255 9:255 a:255 b:255 c d e f 10 11 2 3 4 5 6
+0 0 0 0 0 0 17 fff 56:255 3f:255:4 3f:255:4 3f:255:4 57:255:4 46:10:4 fff:255:4 3f:255:4 46:0:132 3f:255:4 3f:255:4 3f:255:4 3f:255:4 3f:255:4 3f:255:4 3f:255:4 47:255:4 22:0:128 26 23 fff 4d 13:255 14:255 3c fff:255 1f 20 0 0 0 0 0 0 0 0 0 1 1 1 1 1 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2
+0 0 0 0 0 0 17 fff:255 3f:255 46:0:132 3f:255:4 46:0:132 3f:255:4 46:10:132 46:0:132 3f:255:4 46:0:132 3f:255:4 3f:255:4 46:0:132 3f:255:4 46:0:132 3f:255:4 3f:255:4 3f:255:4 fff:255 2c 29 fff:0:128 51 5a:255 14:255 fff:255 fff 26 16 0 0 0 0 0 0 0 0 0 1 1 1 1 1 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e
+0 0 0 0 0 0 12 45:255 3f:255 3f:255:4 3f:255:4 3f:255:4 3f:255:4 3f:255:4 3f:255:4 3f:255:4 3f:255:4 3f:255:4 3f:255:4 3f:255:4 3f:255:4 3f:255:4 3f:255:4 3f:255:4 3f:255:4 46:0:132 fff:255 66:255 66:255 fff:255 fff:255 14:255 3c fff 2c 18 0 0 0 0 0 0 0 0 0 1 1 1 1 1 e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d:0:1 e f 10 11 2 3 4 5 6 7 8 9 a
+0 0 0 0 0 0 17 45:255 3f:255 3f:255:132 3f:255:4 3f:255:4 3f:255:4 3f:255:4 3f:255:4 46:0:132 3f:255:4 46:0:132 3f:255:4 46:0:132 3f:255:4 3f:255:4 3f:255:4 3f:255:4 3f:255:4 fff:255 fff:255 6b:255 46:0:128 6b:255 5a:255 fff:255 43 32 fff 16 0 0 0 0 0 0 0 0 0 1 1 1 1 1 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6:0:1 7 8 9 a b c d e f 10 11 2 3 4 5 6
+0 0 0 0 0 0 12 fff:255 3f:255 3f:255:4 3f:255:4 46:0:132 3f:255 46:0:132 3f:255 46:0:132 3f:255 3f:255 3f:255 3f:255 3f:255 3f:255 fff:255 fff fff fff:0:128 fff fff 71 72 71 fff 33 32 6d 16 0 0 0 0 0 0 0 0 0 1 1 1 1 1 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2
+0 0 0 0 0 0 17 fff 71 fff fff:255 3f:255 3f:255 3f:255 3f:255 3f:255 3f:255 3f:255 3f:255 3f:255 3f:255 6f:255 fff 32 33 32 33 32 33 32 33 32 33 32 fff 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 2 3 4 5 6 7 8 9 a b c:255 d:255 e:255 f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e
+0 0 0 0 0 0 12 fff 33 3d:64 6e:255 3f:255 3f:255 3f:255 3f:255 3f:255 6f:255 79 fff 77:0:128 fff:255 fff:0:128 33 32 33 32 33 32 33 32 33 32 33 32 33 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 e f 10 11 2 3 4 5 6 7 8:255 9 a:255 b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a
+0 0 0 0 0 0 0 fff 33 32 fff 71 fff:255 74 77:0:128 7d:255 79:0:128 32 33 fff:0:128 fff:255 fff:0:128 33 32 33 32 33 32 33 32 33 32 33 32 33 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 a b c d e f 10 11 2 3 4:255 5 6:255 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6
+0 0 0 0 0 0 0 fff 33 32 fff 33 fff:255 32 fff:0:128 83:255 fff:0:128 32 33 82 83:255 84 33 32 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 6 7 8 9 a b c d e f 10:255 11:255 2:255 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2
+0 0 0 0 0 0 0 0 0 0 0 0 fff 0 0 83:255 0 0 0 0 83:255 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 83 0 0 0 0 83:255 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 e f 10 11 2 3 4 5 6 7 8 9 a b c d e:0:1 f 10 11 2 3 4 5 6:0:1 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 83 0 0 0 0 83 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7:0:1 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11:0:1 2 3 4 5 6 7 8 9 a b c d e
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10:0:1 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a b c d e f 10 11 2 3 4 5 6 7 8 9 a
+fff 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b fff 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b fff 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b fff 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b fff fff 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b fff fff 8b 8b 8b 8b 8b 8b 8b fff 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b fff 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b fff 8b 8b 8b 8b 8b 90 fff 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b fff 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b fff fff 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 93 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 97 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b fff 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 93 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 9a 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8f 90 8b 8b 8b 98 99 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 98 92 8b 8b 8b 8b 98 fff 99 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 93 8b 8b 8b 8b 8b 8b 8b 98 9b fff 99 91 92 98 9b 9c 99 fff 9d 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b fff 8b 8b 91 92 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 98 92 8b 98 fff 99 9d 9d 9d 9d 91 99 9d 9d 9d 9d 9d 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b fff 91 9c 9b 9c 9c 9b 9c 92 8b 98 9f 99 fff 8b 97 9d 9d 9d 9d 9d 9d 9d 9d 9d 9d 9d 9d 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b a0 a0 a0 a0 a0 a0 a0 a0 8e 8b 97 9d 9d 8e 8b fff 9d 9d 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b a0 a0 a0 a0 a0 a1 8b a2 9d 9d a1 8b a2 9d 9d 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 91 9c 99 8b 8b 91 9b 99 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+fff 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 9d 9d 9d 8b 8b 9d 9d 9d 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 a5
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b 8b
+1 1 1 1 1 1 1 1 1 fff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff
+1 1 1 1 1 1 1 1 1 a7 1 1 1 1 1 1 1 1 fff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 95
+1 1 1 1 1 1 1 1 1 fff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 95
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff 1 1 1 1 1 1 1 1 1 fff
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 95 1 1 1 1 1 1 1 1 fff 1 1 1 1 1 1 1 1 1 aa
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff ad

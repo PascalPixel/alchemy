@@ -1,11 +1,11 @@
 /// @file
 /// Field Psynergy kind 19: the view swayed from side to side.
-// Part of f0e2c38.c.
+// Part of psynergy.c.
 
-#include "../f0e2c38_internal.h"
+#include "../psynergy_internal.h"
 
-// Field Psynergy kind 19 on a chosen object (BattleEffect_DispatchRequestKind's
-// case 19): Func_080e9090's sideways sway, stronger, with the object's
+// Field Psynergy kind 19 on a chosen object (FieldPsynergy_Dispatch's
+// case 19): FieldPsynergy_Tremor's sideways sway, stronger, with the object's
 // picture held in the work.
 
 #define SHAKE_SPRITE_COUNT 64
@@ -58,7 +58,11 @@ struct ObjectSprite {
   void *pictures;
 };
 
-/* VIEW(f0e8db0): tag struct EffectScene as struct EffectScene__f0e8db0; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:4982: structure has no member named `target'. */
+/* VIEW(f0e8db0): tag struct EffectScene as struct EffectScene__f0e8db0;
+ * f0e2c38.c has another definition; tried with the definition the rest of the
+ * object has, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/psynergy.c:4982: structure has no member
+ * named `target'. */
 struct EffectScene__f0e8db0 {
   u8 unk00[0x10];
   void *mainObject;
@@ -69,8 +73,8 @@ struct EffectScene__f0e8db0 {
 // needs a name in directory.s before this adopts.
 extern char ResourceId_ShakeTiles;
 
-void BattleEffect_InitializeSharedScene(void);
-void BattleEffect_PrepareBufferInterpolation(void);
+void FieldPsynergy_FadeToCastColor(void);
+void FieldPsynergy_FadeFromCastColor(void);
 void Animation_ApplyChildValueFar(void *sprite, s32 value);
 void wait(s32 frames);
 
@@ -80,7 +84,7 @@ void wait(s32 frames);
 // shake with it. The work also takes the object's picture and 64 sprites of
 // two tiles, which nothing here draws. An object whose picture is larger
 // than 2,048 pixels gets no sway.
-void Func_080e8db0(void) {
+void FieldPsynergy_TremorOnTarget(void) {
   struct ShakeWork *work = HeapSlot_Alloc(HEAP_SLOT_VIEW_MOVE, sizeof(*work));
   struct EffectScene__f0e8db0 *scene = Ram_HeapSlots->effectWork;
   struct EventWork *event = Ram_HeapSlots->eventWork;
@@ -103,7 +107,7 @@ void Func_080e8db0(void) {
       targetSprite->width * targetSprite->height > PICTURE_MAX_PIXELS)
     goto release;
 
-  BattleEffect_InitializeSharedScene();
+  FieldPsynergy_FadeToCastColor();
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ShakeTiles),
                         work->picture);
   tiles = Resource_FindFreeEntry();
@@ -207,7 +211,7 @@ void Func_080e8db0(void) {
   Func_080e8c9c();
   ViewMove_RestoreNearbySprites();
   Resource_ResetEntry(tiles);
-  BattleEffect_PrepareBufferInterpolation();
+  FieldPsynergy_FadeFromCastColor();
 release:
   HeapSlot_Release(HEAP_SLOT_VIEW_MOVE);
 }
@@ -216,7 +220,7 @@ release:
 #undef SWAY_RAMP
 #undef SWAY_HOLD_FRAMES
 
-// Field Psynergy kind 19 (BattleEffect_Run's case 19).
+// Field Psynergy kind 19 (FieldPsynergy_Run's case 19).
 
 #define VIEW_MOVE_WORK_SIZE 0x2154
 
@@ -231,7 +235,7 @@ release:
 // field is in control mode 2 the nearby objects' sprites shake with it; when
 // there are any, the hold lasts 50 frames instead of 10. Then the view bounds
 // and the sprites come back.
-void Func_080e9090(void) {
+void FieldPsynergy_Tremor(void) {
   struct ViewMoveWork *work =
       HeapSlot_Alloc(HEAP_SLOT_VIEW_MOVE, VIEW_MOVE_WORK_SIZE);
   struct EffectScene__f0e8db0 *scene = Ram_HeapSlots->effectWork;
@@ -243,7 +247,7 @@ void Func_080e9090(void) {
   s32 state;
   s32 frames;
 
-  BattleEffect_InitializeSharedScene();
+  FieldPsynergy_FadeToCastColor();
   BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
   Func_080e89e4(VIEW_MOVE_X);
   ViewMove_SaveNearbySprites();
@@ -312,10 +316,9 @@ void Func_080e9090(void) {
 
   Func_080e8c9c();
   ViewMove_RestoreNearbySprites();
-  BattleEffect_PrepareBufferInterpolation();
+  FieldPsynergy_FadeFromCastColor();
   HeapSlot_Release(HEAP_SLOT_VIEW_MOVE);
 }
-
 
 /// Moves rows 1 to rows - 2 of a buffer down one row by DMA, dropping the
 /// last, then clears row 0 (stride bytes per row).

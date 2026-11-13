@@ -1,9 +1,9 @@
 /// @file
 /// Field Psynergy kind 30, an object dropped at the effect's anchor, and the
 /// canvas circle and image copies, with routines not yet understood.
-// Part of f0e2c38.c.
+// Part of psynergy.c.
 
-#include "../f0e2c38_internal.h"
+#include "../psynergy_internal.h"
 
 struct Work080e6400 {
   u8 tiles[0x400];
@@ -21,13 +21,22 @@ struct Work080e6400 {
 };
 
 void Func_080e62f4(u8 *source, u8 *destination, s32 phase);
-/* VIEW(f0e6400): routine BattleEffect_UpdateGrowingParticleSprite as void BattleEffect_UpdateGrowingParticleSprite(struct EffectSprite *sprite, struct EffectParticle *particle, s32 tiles); the definition has void BattleEffect_UpdateGrowingParticleSprite(struct EffectSprite__psynergy_effects_11 *sprite, struct EffectParticle *particle, s32 tiles). */
-extern void BattleEffect_UpdateGrowingParticleSprite__f0e6400(struct EffectSprite *sprite,
-                                              struct EffectParticle *particle,
-                                              s32 tiles) __asm__("BattleEffect_UpdateGrowingParticleSprite");
-/* VIEW(f0e6400): routine EffectSprite_DrawAtWorldPosition as void EffectSprite_DrawAtWorldPosition(struct ScreenSprite *sprite, s32 *position); f0e4a34 has void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct GlowParticle *particle). */
-extern void EffectSprite_DrawAtWorldPosition__f0e6400(struct ScreenSprite *sprite,
-                                      s32 *position) __asm__("EffectSprite_DrawAtWorldPosition");
+/* VIEW(f0e6400): routine BattleEffect_UpdateGrowingParticleSprite as void
+ * BattleEffect_UpdateGrowingParticleSprite(struct EffectSprite *sprite, struct
+ * EffectParticle *particle, s32 tiles); the definition has void
+ * BattleEffect_UpdateGrowingParticleSprite(struct
+ * EffectSprite__psynergy_effects_11 *sprite, struct EffectParticle *particle,
+ * s32 tiles). */
+extern void BattleEffect_UpdateGrowingParticleSprite__f0e6400(
+    struct EffectSprite *sprite, struct EffectParticle *particle,
+    s32 tiles) __asm__("BattleEffect_UpdateGrowingParticleSprite");
+/* VIEW(f0e6400): routine EffectSprite_DrawAtWorldPosition as void
+ * EffectSprite_DrawAtWorldPosition(struct ScreenSprite *sprite, s32 *position);
+ * f0e4a34 has void EffectSprite_DrawAtWorldPosition(struct EffectSprite
+ * *sprite, struct GlowParticle *particle). */
+extern void EffectSprite_DrawAtWorldPosition__f0e6400(
+    struct ScreenSprite *sprite,
+    s32 *position) __asm__("EffectSprite_DrawAtWorldPosition");
 u32 Random16(void);
 
 #define NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
@@ -86,7 +95,7 @@ void Func_080e6400(void) {
         sprite = &work->sprites[i];
         if (particle->timer >= 0 && particle->timer < 32)
           BattleEffect_UpdateGrowingParticleSprite__f0e6400(sprite, particle,
-                                                   work->particleTile);
+                                                            work->particleTile);
         particle->timer++;
       }
     }
@@ -168,28 +177,27 @@ void Func_080e6400(void) {
     for (i = 0; i < 20; i++, sprite++, particle++) {
       if (particle->timer >= 0 && particle->timer < 32)
         BattleEffect_UpdateGrowingParticleSprite__f0e6400(sprite, particle,
-                                                 work->particleTile);
+                                                          work->particleTile);
       particle->timer++;
     }
   }
   work->timer++;
 }
 
-
-void Func_080e3d04(void);
-void Func_080e4a34(void);
-void Func_080e572c(void);
-void Func_080e5d5c(void);
-void Func_080e68d0(void);
-void Func_080e7844(void);
-void Func_080e9af4(void);
+void FieldPsynergy_Blaze(void);
+void FieldPsynergy_Sand(void);
+void FieldPsynergy_Burst(void);
+void FieldPsynergy_Pound(void);
+void FieldPsynergy_Scoop(void);
+void FieldPsynergy_Parch(void);
+void FieldPsynergy_Hover(void);
 void Func_080e74d8(void);
-void BattleEffect_PrepareBufferInterpolation(void);
+void FieldPsynergy_FadeFromCastColor(void);
 void wait(s32 frames);
 s32 Party_GetLeaderActor(void);
 
 /// Effect 20 cast on a target: runs the effect, ignoring the target.
-void BattleEffect_CallEffect20(void) { Func_080e68d0(); }
+void FieldPsynergy_ScoopOnTarget(void) { FieldPsynergy_Scoop(); }
 
 #include "field/event_work.h"
 
@@ -203,7 +211,11 @@ struct RiseParticle {
   s32 timer;
 };
 
-/* VIEW(f0e6400): tag struct RiseWork as struct RiseWork__f0e6400; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:3058: structure has no member named `other'. */
+/* VIEW(f0e6400): tag struct RiseWork as struct RiseWork__f0e6400; f0e2c38.c has
+ * another definition; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja:
+ * games/tla/src/field/event_commands/psynergy.c:3058: structure has no member
+ * named `other'. */
 struct RiseWork__f0e6400 {
   u8 tiles[0x400];
   u8 picture[0x400];
@@ -219,7 +231,11 @@ struct RiseWork__f0e6400 {
   s16 mode;
 };
 
-/* VIEW(f0e6400): tag struct FxScene as struct FxScene__f0e6400; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:3028: structure has no member named `facing'. */
+/* VIEW(f0e6400): tag struct FxScene as struct FxScene__f0e6400; f0e2c38.c has
+ * another definition; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja:
+ * games/tla/src/field/event_commands/psynergy.c:3028: structure has no member
+ * named `facing'. */
 struct FxScene__f0e6400 {
   u16 facing;
   u16 angle;
@@ -243,7 +259,11 @@ struct FxScene__f0e6400 {
 // The event work with its flag word past the shared struct. Read as a member,
 // the flag word takes this struct's alias set, which orders its reads after
 // s32 stores but not after an Actor's u8 stores, as the listing has them.
-/* VIEW(f0e6400): tag struct FxEvent as struct FxEvent__f0e6400; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:2984: structure has no member named `unkd4c'. */
+/* VIEW(f0e6400): tag struct FxEvent as struct FxEvent__f0e6400; f0e2c38.c has
+ * another definition; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja:
+ * games/tla/src/field/event_commands/psynergy.c:2984: structure has no member
+ * named `unkd4c'. */
 struct FxEvent__f0e6400 {
   struct EventWork work;
   u8 unkd48[4];
@@ -260,7 +280,7 @@ extern char ResourceId_DustPuffA, ResourceId_DustPuffB, ResourceId_WhiteSparkle,
 void *HeapSlot_Alloc(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-void BattleEffect_InitializeSharedScene(void);
+void FieldPsynergy_FadeToCastColor(void);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Actor_Destroy(struct Actor *object);
 void Func_080dba5c(void);
@@ -281,7 +301,7 @@ void Camera_WorldToScreen(s32 *position);
 s32 Func_080ce31c(s32 kind);
 void Func_080e716c(void);
 
-void Func_080e68d0(void) {
+void FieldPsynergy_Scoop(void) {
   struct RiseWork__f0e6400 *work = HeapSlot_Alloc(92, 0x193c);
   struct FxScene__f0e6400 *scene = Ram_HeapSlots->effectWork;
   struct FxEvent__f0e6400 *event = Ram_HeapSlots->eventWork;
@@ -310,7 +330,7 @@ void Func_080e68d0(void) {
     scene->z = (caster->z & 0xfff00000) + 0x80000;
     Vector_AddPolarOffset(0x100000, scene->facing, &scene->x);
   }
-  BattleEffect_InitializeSharedScene();
+  FieldPsynergy_FadeToCastColor();
   object = Actor_Spawn(353, 0, 0, 0);
   work->object = object;
   if (object == NULL)
@@ -550,12 +570,9 @@ void Func_080e68d0(void) {
 end:
   Actor_Destroy(object);
   Actor_Destroy(other);
-  BattleEffect_PrepareBufferInterpolation();
+  FieldPsynergy_FadeFromCastColor();
   HeapSlot_Release(92);
 }
-
-
-
 
 struct Actor *Actor_GetById(u32 objectId);
 
@@ -634,7 +651,6 @@ void Func_080e716c(void) {
   BattleEffect_DropObjectAtAnchor(id);
 }
 
-
 #define WHIRL_COUNT 100
 
 struct WhirlSpark {
@@ -648,7 +664,11 @@ struct WhirlSpark {
 };
 
 // Heap block 92: the decoded picture, then the sparks and their sprites.
-/* VIEW(f0e6400): tag struct WhirlWork as struct WhirlWork__f0e6400; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:3413: structure has no member named `sparks'. */
+/* VIEW(f0e6400): tag struct WhirlWork as struct WhirlWork__f0e6400; f0e2c38.c
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/psynergy.c:3413: structure has no member
+ * named `sparks'. */
 struct WhirlWork__f0e6400 {
   u8 picture[0x400];
   struct WhirlSpark sparks[WHIRL_COUNT];
@@ -825,7 +845,7 @@ void Func_080e74d8(void) {
   s32 age;
 
   wait(20);
-  BattleEffect_InitializeSharedScene();
+  FieldPsynergy_FadeToCastColor();
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs),
                         work);
   entry = Resource_FindFreeEntry();
@@ -948,21 +968,21 @@ void Func_080e74d8(void) {
 /// 10 frames.
 void Func_080e7804(void) {
   Func_080e74d8();
-  BattleEffect_PrepareBufferInterpolation();
+  FieldPsynergy_FadeFromCastColor();
   wait(10);
 }
 
 /// Field Psynergy kind 30's targeted handler.
-void Func_080e7818(void) {}
+void FieldPsynergy_TeleportOnTarget(void) {}
 
 /// Field Psynergy kind 30.
-void BattleEffect_RunEffect30(void) {
+void FieldPsynergy_Teleport(void) {
   ObjectTable_Get(Party_GetLeaderActor());
   ((struct ControlEvent *)Ram_HeapSlots->eventWork)->cue = 0xfc89;
 }
 
 /// Field Psynergy kind 22 on a chosen target: runs kind 22's animation.
-void BattleEffect_CallEffect22(void) { Func_080e7844(); }
+void FieldPsynergy_ParchOnTarget(void) { FieldPsynergy_Parch(); }
 
 #include "window.h"
 
@@ -988,7 +1008,11 @@ struct PuffWork {
   struct PuffParticle particles[64];
 };
 
-/* VIEW(f0e6400): tag struct ObjectAnimation as struct ObjectAnimation__f0e6400; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:3796: structure has no member named `unk18'. */
+/* VIEW(f0e6400): tag struct ObjectAnimation as struct ObjectAnimation__f0e6400;
+ * f0e2c38.c has another definition; tried with the definition the rest of the
+ * object has, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/psynergy.c:3796: structure has no member
+ * named `unk18'. */
 struct ObjectAnimation__f0e6400 {
   u8 unk00[24];
   u8 unk18;
@@ -1005,7 +1029,7 @@ void Func_080dbdd4(s32 x, s32 z, s32 layer, s32 value);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
 void BattleEffect_FadeToSavedPalettes(s32 frames);
 
-void Func_080e7844(void) {
+void FieldPsynergy_Parch(void) {
   struct PuffWork *work = HeapSlot_Alloc(92, 0x2160);
   struct HeapSlots *slots;
   struct FxScene__f0e6400 *scene = Ram_HeapSlots->effectWork;
@@ -1048,7 +1072,7 @@ void Func_080e7844(void) {
   found = -1;
   fade = -1;
   pending = NULL;
-  BattleEffect_InitializeSharedScene();
+  FieldPsynergy_FadeToCastColor();
   pos[0] = caster->x;
   pos[1] = caster->y;
   pos[2] = caster->z;
@@ -1293,7 +1317,7 @@ loaded:
         if (timer == 40) {
           fade = 0;
           BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
-          BattleEffect_StartBufferInterpolation(100);
+          PaletteFade_StartInterpolation(100);
         }
         spawn = 2;
         if (timer == 100) {
@@ -1325,10 +1349,9 @@ loaded:
   if (result == 2)
     BattleEffect_FadeToSavedPalettes(100);
   else
-    BattleEffect_PrepareBufferInterpolation();
+    FieldPsynergy_FadeFromCastColor();
   HeapSlot_Release(92);
 }
-
 
 void BattleEffect_PlotCanvasPixel(s32 x, s32 y, s32 color);
 

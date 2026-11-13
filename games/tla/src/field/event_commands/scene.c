@@ -19,9 +19,7 @@ void BattleEffect_FadeToSavedPalettes(s32 frames) {
   Field_StartPaletteTransition(frames);
 }
 
-void BattleEffect_PrepareBufferInterpolation(void) {
-  Field_StartPaletteTransition(8);
-}
+void FieldPsynergy_FadeFromCastColor(void) { Field_StartPaletteTransition(8); }
 
 void Camera_WorldToScreen(struct EffectVector *position) {
   struct HeapSlots *slots = Ram_HeapSlots;
@@ -45,7 +43,11 @@ void Camera_WorldToScreen(struct EffectVector *position) {
   }
 }
 
-/* VIEW(scene): tag struct BattleFxScene as struct BattleFxScene__scene; field_psynergy_work.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/scene.c:57: dereferencing pointer to incomplete type. */
+/* VIEW(scene): tag struct BattleFxScene as struct BattleFxScene__scene;
+ * field_psynergy_work.h has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/scene.c:57: dereferencing pointer to
+ * incomplete type. */
 struct BattleFxScene__scene {
   u8 unk00[0x50];
   struct FieldParticle slots[24];
@@ -148,7 +150,7 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
     *((u8 *)work + 0x41) = 1;
   if (gMainRoutineWork.map == (s32)&SceneId_Ov6A6Room1)
     *((u8 *)work + 0x41) = 1;
-  BattleEffect_SetupObjectPair(gMainRoutineWork.currentOwner, -1);
+  FieldPsynergy_SetupActorPair(gMainRoutineWork.currentOwner, -1);
   if (work->animation != 8)
     event->unkca5 = 0;
   if (work->animation != 28)
@@ -165,7 +167,7 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
 #include "sprite.h"
 #include "actor.h"
 
-void BattleEffect_SetupObjectPair(s32 userId, s32 targetId) {
+void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   struct Actor *user;
   struct Actor *target;
   struct PairScene *scene;
@@ -329,7 +331,11 @@ void Func_080dc954(void) {
 
 #define WAVE_FX_SLOT 88
 
-/* VIEW(scene): tag struct WaveFxWork as struct WaveFxWork__scene; module/field/event_commands.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/scene.c:343: structure has no member named `id'. */
+/* VIEW(scene): tag struct WaveFxWork as struct WaveFxWork__scene;
+ * module/field/event_commands.h has another definition; tried with the
+ * definition the rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/scene.c:343: structure has no member named
+ * `id'. */
 struct WaveFxWork__scene {
   u8 unk000[0x28b];
   s8 red;
@@ -345,8 +351,9 @@ struct WaveFxWork__scene {
 
 /// Starts the wave effect's work in heap slot WAVE_FX_SLOT: a phase taken
 /// from the frame count, id and value, then the shared scene, the first hue
-/// step and its colour fade, with Func_080dcb44 run each frame.
-void Func_080dc978(s32 id, s32 value) {
+/// step and its colour fade, with FieldPsynergy_UpdateMindReadWave run each
+/// frame.
+void FieldPsynergy_StartMindReadWave(s32 id, s32 value) {
   struct WaveFxWork__scene *work;
 
   work = HeapSlot_AllocEwram(WAVE_FX_SLOT, sizeof(*work));
@@ -356,22 +363,22 @@ void Func_080dc978(s32 id, s32 value) {
   work->value = value;
   work->steps = 8;
   work->unk295 = 0;
-  BattleEffect_InitializeSharedScene();
-  BattleEffect_AdvanceHueCycle();
+  FieldPsynergy_FadeToCastColor();
+  FieldEffect_AdvanceHueCycle();
   BattleEffect_ApplyColorToTargetBuffer(
       (work->blue << 10) | (work->green << 5) | work->red | 0x200000, 1);
-  BattleEffect_StartBufferInterpolation(8);
-  Palette_FillNumber15Grey();
-  Task_Add((TaskFunc)Func_080dcb44, TASK_PASS_VBLANK);
+  PaletteFade_StartInterpolation(8);
+  FieldPsynergy_GreyMindReadPalette();
+  Task_Add((TaskFunc)FieldPsynergy_UpdateMindReadWave, TASK_PASS_VBLANK);
 }
 
-void BattleEffect_FinishSceneAndReleaseHeapBlock(void) {
+void FieldPsynergy_StopMindReadWave(void) {
   u8 *work = Ram_HeapSlots->unk4c[3];
 
-  Func_080dcadc();
-  Task_Remove((TaskFunc)Func_080dcb44);
-  BattleEffect_ApplyFlickerValue(Actor_GetById(*(u16 *)(work + 0x290)), 1);
-  BattleEffect_PrepareBufferInterpolation();
+  FieldPsynergy_RestoreMindReadPalette();
+  Task_Remove((TaskFunc)FieldPsynergy_UpdateMindReadWave);
+  Actor_SetSpritePalette(Actor_GetById(*(u16 *)(work + 0x290)), 1);
+  FieldPsynergy_FadeFromCastColor();
   HeapSlot_Release(WAVE_FX_SLOT);
 }
 
@@ -380,7 +387,7 @@ void BattleEffect_FinishSceneAndReleaseHeapBlock(void) {
 #define GREY28 0x739c
 
 /// Gray BG palette 15 colors 1 and 3-12, then start line scrolling.
-void Palette_FillNumber15Grey(void) {
+void FieldPsynergy_GreyMindReadPalette(void) {
   volatile u16 *p;
 
   Ram_HeapSlots->windowTiles[4] = 1;
@@ -406,17 +413,16 @@ void Palette_FillNumber15Grey(void) {
   *p = GREY28;
   p += 1;
   *p = GREY28;
-  Task_Add((TaskFunc)BattleEffect_ArmBg0HBlankDma, TASK_PASS_FRAME - 20);
+  Task_Add((TaskFunc)FieldEffect_ArmBg0HBlankDma, TASK_PASS_FRAME - 20);
 }
 
 void Func_08038348(s32 first, s32 second);
 
-/// Stops line scrolling and restores background palette 15, as The
-/// Broken Seal's FieldPsynergy_RestoreMindReadPalette does.
-void Func_080dcadc(void) {
+/// Stops line scrolling and restores background palette 15.
+void FieldPsynergy_RestoreMindReadPalette(void) {
   u8 *work = Ram_HeapSlots->windowTiles;
 
-  Task_Remove((TaskFunc)BattleEffect_ArmBg0HBlankDma);
+  Task_Remove((TaskFunc)FieldEffect_ArmBg0HBlankDma);
   BG_PLTT_COLOR(15, 1) = 0x7fff;  // White.
   BG_PLTT_COLOR(15, 3) = 0;       // Black.
   BG_PLTT_COLOR(15, 11) = 0x294a; // Gray (10).

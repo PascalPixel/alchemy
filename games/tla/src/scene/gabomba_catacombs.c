@@ -15,8 +15,7 @@
 void Func_0200114c(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *script);
 struct GabombaCatacombsVec;
-s32 Func_02001174(struct Actor *object,
-                  struct GabombaCatacombsVec *position);
+s32 Func_02001174(struct Actor *object, struct GabombaCatacombsVec *position);
 void Event_End(void);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void Func_02001234(s32 a);
@@ -70,9 +69,9 @@ struct GabombaCatacombsParty {
 
 #define LEADER_HOP()                                                           \
   do {                                                                         \
-    Event_Start();                                                           \
+    Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
-    FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);                       \
+    FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);             \
   } while (0)
 
 void Func_02000038(void) { Func_080d2b4c(8, 10); }
@@ -275,7 +274,7 @@ void Func_020009d4(void) {
   Event_ResolvePendingActions(0);
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0x403108, 1);
-  BattleEffect_StartBufferInterpolation(60);
+  PaletteFade_StartInterpolation(60);
   FieldCamera_MoveTo(0xa80000, -1, 0x9e0000, 1);
   Sound_Play(26);
   Event_Wait(60);
@@ -362,7 +361,7 @@ void Func_020009d4(void) {
   GameFlag_SetBit(0x9ce);
   Party_PlaySavedMusic();
   PaletteFade_ApplyTarget(speed, 0);
-  BattleEffect_StartBufferInterpolation(60);
+  PaletteFade_StartInterpolation(60);
   Func_02001214(gMainRoutineWork.currentOwner, 1);
   Event_Wait(60);
   Event_End();
@@ -579,8 +578,10 @@ struct Trigger gData_02001594[] = {
 struct Trigger gData_020015c4[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x31, 2, CONDITION_ALWAYS, 2},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_0200066c)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_0200069c)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
+     CONDITION_ALWAYS, EVENT(Func_0200066c)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
+     CONDITION_ALWAYS, EVENT(Func_0200069c)},
     {0x50008905, 40, CONDITION_ALWAYS, EVENT(Func_02000060)},
     {0x50008905, 41, CONDITION_ALWAYS, EVENT(Func_02000080)},
     {0x50008905, 42, CONDITION_ALWAYS, EVENT(Func_020001e0)},

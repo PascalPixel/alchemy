@@ -362,13 +362,13 @@ void Func_02000964(void) {
   Event_ResolvePendingActions(0);
   TundariaTower_FadeFrom(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(2);
+  PaletteFade_StartInterpolation(2);
   Sound_Play(132);
   TundariaTower_SetWork(0x50000, 0x70000, 0x10000);
   TundariaTower_SetWork(-1, -1, 0xe666);
   Event_Wait(2);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(2);
+  PaletteFade_StartInterpolation(2);
   object->actionFlags = 0;
   object->update = 0;
   Actor_SetDestination(8, 424, 536);

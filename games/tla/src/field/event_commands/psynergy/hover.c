@@ -1,12 +1,16 @@
 /// @file
 /// Field Psynergy kind 24's work, a sprite's four-picture cycle and a step
 /// toward a target, with routines not yet understood.
-// Part of f0e2c38.c.
+// Part of psynergy.c.
 
-#include "../f0e2c38_internal.h"
+#include "../psynergy_internal.h"
 
 // Kind 24's work (battle_fx_work[0]), as Func_080e9940's draft has it.
-/* VIEW(f0e9af4): tag struct GlowWork as struct GlowWork__f0e9af4; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:5812: structure has no member named `resource'. */
+/* VIEW(f0e9af4): tag struct GlowWork as struct GlowWork__f0e9af4; f0e2c38.c has
+ * another definition; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja:
+ * games/tla/src/field/event_commands/psynergy.c:5812: structure has no member
+ * named `resource'. */
 struct GlowWork__f0e9af4 {
   u8 unk0000[0x1000];
   struct EffectSprite sprite;
@@ -28,7 +32,11 @@ struct GlowScene {
   s16 kind;
 };
 
-/* VIEW(f0e9af4): tag struct GlowEvent as struct GlowEvent__f0e9af4; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:5837: structure has no member named `objects'. */
+/* VIEW(f0e9af4): tag struct GlowEvent as struct GlowEvent__f0e9af4; f0e2c38.c
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/psynergy.c:5837: structure has no member
+ * named `objects'. */
 struct GlowEvent__f0e9af4 {
   u8 unk000[0x14];
   struct Actor *objects[80];
@@ -44,7 +52,7 @@ s32 Func_080dbcc0(s32 x, s32 z, s32 layer);
 s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 void Func_080e9940(void);
 
-void Func_080e9af4(void) {
+void FieldPsynergy_Hover(void) {
   struct GlowWork__f0e9af4 *work = HeapSlot_Alloc(92, 0x1038);
   struct GlowScene *scene = Ram_HeapSlots->effectWork;
   struct GlowEvent__f0e9af4 *event = Ram_HeapSlots->eventWork;
@@ -146,8 +154,9 @@ void Func_080e9af4(void) {
 
 struct Actor *Actor_GetById(u32 objectId);
 
-void Func_080e9db4(void) {
-  struct GlowWork__f0e9af4 *work = (struct GlowWork__f0e9af4 *)Ram_HeapSlots->battleFxWork[0];
+void FieldPsynergy_EndHover(void) {
+  struct GlowWork__f0e9af4 *work =
+      (struct GlowWork__f0e9af4 *)Ram_HeapSlots->battleFxWork[0];
   struct Actor *object = Actor_GetById(Party_GetLeaderActor());
   s32 i;
 
@@ -291,9 +300,13 @@ struct MoteWork {
 };
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
-/* VIEW(f0e9af4): routine EffectSprite_DrawAtWorldPosition as void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct Mote *mote); f0e92b4 has void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct SplashParticle *particle). */
-extern void EffectSprite_DrawAtWorldPosition__f0e9af4(struct EffectSprite *sprite,
-                                      struct Mote *mote) __asm__("EffectSprite_DrawAtWorldPosition");
+/* VIEW(f0e9af4): routine EffectSprite_DrawAtWorldPosition as void
+ * EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct Mote
+ * *mote); f0e92b4 has void EffectSprite_DrawAtWorldPosition(struct EffectSprite
+ * *sprite, struct SplashParticle *particle). */
+extern void EffectSprite_DrawAtWorldPosition__f0e9af4(
+    struct EffectSprite *sprite,
+    struct Mote *mote) __asm__("EffectSprite_DrawAtWorldPosition");
 
 void Func_080e9f68(void) {
   struct MoteWork *work = Ram_HeapSlots->battleFxWork[0];

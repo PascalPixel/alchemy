@@ -138,9 +138,9 @@ BattleEffect_ApplyColorToTargetBuffer:
 	.thumb_func
 BattleEffect_ApplyColorToSourceBuffer:
 	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
-	.global BattleEffect_StartBufferInterpolation
+	.global PaletteFade_StartInterpolation
 	.thumb_func
-BattleEffect_StartBufferInterpolation:
+PaletteFade_StartInterpolation:
 	overlay_veneer BattleEffect_StartBufferInterpolationFar
 	.global Func_02001254
 	.thumb_func

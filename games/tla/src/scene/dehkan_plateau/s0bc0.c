@@ -41,7 +41,6 @@ void Func_02001804(void);
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
-
 void Func_02000c4c(s32 a, s32 b) {
   Func_02000bc0(a, b, gMainRoutineWork.currentOwner);
 }
@@ -62,7 +61,7 @@ void Func_02000d78(u16 *list) {
   u8 *shapeGrid = gMapShapeGrid;
 
   if (held == NULL) {
-    s32 id = BattleEffect_FindNearestObject(gMainRoutineWork.currentOwner, 1);
+    s32 id = Field_FindNearbyPsynergyTarget(gMainRoutineWork.currentOwner, 1);
 
     if (id != -1)
       held = Actor_GetById(id);

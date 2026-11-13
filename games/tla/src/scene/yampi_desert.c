@@ -1,5 +1,6 @@
 /// @file
-/// Scene code of overlay 0x661, in ROM order, from s0b84's offset up to the next object the overlay links.
+/// Scene code of overlay 0x661, in ROM order, from s0b84's offset up to the
+/// next object the overlay links.
 
 // ---- games/tla/src/scene/yampi_desert/s0b84.c ----
 
@@ -19,8 +20,14 @@
 #include "module/tla.h"
 #include "resource.h"
 #include "text/msg_ids.h"
-/* VIEW(s0b84): routine Func_0200388c as void Func_0200388c(const void *script, s32 a, s32 b); the definition has void Func_0200388c(u16 *list, s32 mode, s32 count); tried as the definition's void Func_0200388c(u16 *list, s32 mode, s32 count), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/yampi_desert.c:1695: conflicting types for `Func_0200388c'. */
-extern void Func_0200388c__s0b84(const void *script, s32 a, s32 b) __asm__("Func_0200388c");
+/* VIEW(s0b84): routine Func_0200388c as void Func_0200388c(const void *script,
+ * s32 a, s32 b); the definition has void Func_0200388c(u16 *list, s32 mode, s32
+ * count); tried as the definition's void Func_0200388c(u16 *list, s32 mode, s32
+ * count), which the object already declares, it does not compile in tla-ja:
+ * games/tla/src/scene/yampi_desert.c:1695: conflicting types for
+ * `Func_0200388c'. */
+extern void Func_0200388c__s0b84(const void *script, s32 a,
+                                 s32 b) __asm__("Func_0200388c");
 #define Func_0200388c Func_0200388c__s0b84
 #include "yampi_desert/scene.h"
 #undef Func_0200388c
@@ -137,8 +144,16 @@ void Func_02000e78(void) {
   Event_End();
 }
 
-/* VIEW(yampi_desert): routine Func_02003fc0 as struct Actor *Func_02003fc0(s32 kind, s32 x, s32 y, s32 z); module/scene/gabomba_statue.h has s32 Func_02003fc0(s32 x0, s32 z0, s32 x1, s32 z1, s32 a, s32 b, s32 c, s32 d); tried as the definition's s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction, s32 last, s32 bit), it does not compile in tla-ja: games/tla/src/scene/yampi_desert.c:156: too few arguments to function `Func_02003fc0'. */
-extern struct Actor *Func_02003fc0__yampi_desert(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_02003fc0");
+/* VIEW(yampi_desert): routine Func_02003fc0 as struct Actor *Func_02003fc0(s32
+ * kind, s32 x, s32 y, s32 z); module/scene/gabomba_statue.h has s32
+ * Func_02003fc0(s32 x0, s32 z0, s32 x1, s32 z1, s32 a, s32 b, s32 c, s32 d);
+ * tried as the definition's s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32
+ * endZ, s32 length, s32 direction, s32 last, s32 bit), it does not compile in
+ * tla-ja: games/tla/src/scene/yampi_desert.c:156: too few arguments to function
+ * `Func_02003fc0'. */
+extern struct Actor *
+Func_02003fc0__yampi_desert(s32 kind, s32 x, s32 y,
+                            s32 z) __asm__("Func_02003fc0");
 void Actor_StartScript(struct Actor *object, const void *script);
 
 /// Spawns an object of kind 285 at each of the fifteen cells of
@@ -224,8 +239,7 @@ loop_3:
   Func_02002ca0();
   Sound_Play(136);
   Func_02000f24();
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   FieldEvent_Wait(20);
   Func_02004108(gMainRoutineWork.currentOwner, 0x102);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 27);
@@ -287,7 +301,8 @@ s32 Func_020012d4(s32 cell) { return cell * 16 + 8; }
   {                                                                            \
     s32 x_ = Func_020012d4(column);                                            \
     s32 z_ = Func_020012d4(row);                                               \
-    Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, x_ << 16, z_ << 16);               \
+    Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,      \
+                                           x_ << 16, z_ << 16);                \
   }
 
 void Func_020012dc(void) {
@@ -326,7 +341,8 @@ void Func_020012dc(void) {
     struct MainRoutineWork *work = &gMainRoutineWork;                          \
     s32 x = Func_020012d4(column);                                             \
     s32 z = Func_020012d4(row);                                                \
-    Actor_SetHorizontalPositionWithTerrain(work->currentOwner, x << 16, z << 16);                       \
+    Actor_SetHorizontalPositionWithTerrain(work->currentOwner, x << 16,        \
+                                           z << 16);                           \
   }
 
 void Func_020013f8(void) {
@@ -361,7 +377,8 @@ void Func_02001518(void) {
     Scene_Call4090(64, PIXELS(288), PIXELS(240));
     if ((leader->x + 0x80000) >> 20 == (object->x + 0x80000) >> 20 &&
         (leader->z + 0x80000) >> 20 == (object->z + 0x80000) >> 20)
-      Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, PIXELS(288), PIXELS(256));
+      Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
+                                             PIXELS(288), PIXELS(256));
   }
 }
 
@@ -533,29 +550,36 @@ void Func_02001690(s32 p0) {
   Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 13, 0, 0);
   Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 14, 0, 0);
   angle = 0xb000;
-  Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 8, 0x2080000, 0xf20000, angle);
+  Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 8,
+        0x2080000, 0xf20000, angle);
   {
     s32 facing = 0x8000;
 
-    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 9, 0x2150000, 0x10f0000, facing);
+    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 9,
+          0x2150000, 0x10f0000, facing);
   }
   {
     s32 facing = 0x3000;
 
-    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 10, 0x1b30000, 0xe80000, facing);
+    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 10,
+          0x1b30000, 0xe80000, facing);
   }
   {
     s32 facing = 0x5000;
 
-    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 11, 0x1d30000, 0xf80000, facing);
+    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 11,
+          0x1d30000, 0xf80000, facing);
   }
   {
     s32 facing = 0xd000;
 
-    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 12, 0x1ce0000, 0x1540000, facing);
-    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 13, 0x1e20000, 0x1540000, facing);
+    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 12,
+          0x1ce0000, 0x1540000, facing);
+    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 13,
+          0x1e20000, 0x1540000, facing);
   }
-  Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 14, 0x1e90000, 0x1400000, angle);
+  Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 14,
+        0x1e90000, 0x1400000, angle);
   Call2((void (*)())Actor_SetModeById, 8, 1);
   Call2((void (*)())Actor_SetModeById, 9, 1);
   Call2((void (*)())Actor_SetModeById, 10, 1);
@@ -651,7 +675,8 @@ void Func_02001c5c(void) {
 #undef MOVE_LEADER_TO
 
 // ---- games/tla/src/scene/yampi_desert/s1cc4.c ----
-// Scene code of overlay 0x661, in ROM order, from s1cc4's offset up to the next object the overlay links.
+// Scene code of overlay 0x661, in ROM order, from s1cc4's offset up to the next
+// object the overlay links.
 
 #include "input.h"
 #include "frame.h"
@@ -669,8 +694,9 @@ void Func_02001cc4(struct Actor *object, s32 dx, s32 dz) {
     u32 odd = gFrameCount & 1;
 
     if (odd == 0) {
-      struct Actor *dust = (struct Actor *)Value4(
-          (s32 (*)())Func_02003fc0__yampi_desert, 285, object->x, object->y, object->z);
+      struct Actor *dust =
+          (struct Actor *)Value4((s32 (*)())Func_02003fc0__yampi_desert, 285,
+                                 object->x, object->y, object->z);
 
       if (dust != NULL) {
         struct DustSprite *sprite;
@@ -766,8 +792,8 @@ void Func_02001e58(void) {
     if (gMainRoutineWork.renderMode == 5)
       speed = 0;
     else
-      Actor_SetSingleChildFlags(
-          Actor_GetById(gMainRoutineWork.currentOwner), 1);
+      Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+                                1);
   }
   if (ahead->collisionCode == 255)
     speed = 0;
@@ -1211,9 +1237,9 @@ void Func_02002c6c(void) {
 void Func_02002ca0(void) {
   BattleEffect_LoadActionEffectResources(136, 1);
   Scene_TaskAdd(Func_02002c6c, 0x480);
-  BattleEffect_SetupObjectPair(21, -1);
+  FieldPsynergy_SetupActorPair(21, -1);
   EventObject_Initialize();
-  Field_DispatchTypeHandler(1);
+  FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
   Task_RemoveFar(Func_02002c6c);
   BattleEffect_CleanupSceneObjects();
@@ -1315,7 +1341,8 @@ void Func_02002ebc(void) {
     // built last.
     s32 angle = TRIG_TURN / 4;
 
-    Call4(Actor_SetHorizontalPositionAndAngleWithTerrain, 8, PIXELS(232), PIXELS(148), angle);
+    Call4(Actor_SetHorizontalPositionAndAngleWithTerrain, 8, PIXELS(232),
+          PIXELS(148), angle);
   }
   actor8->motionFlags = 0;
   actor8->y = PIXELS(130);
@@ -1527,7 +1554,8 @@ void Func_02003404(void) {
 }
 
 /// A halfword of gMainRoutineWork that has no field name yet.
-#define MAIN_ROUTINE_WORK_U16(offset) (*(u16 *)((u8 *)&gMainRoutineWork + (offset)))
+#define MAIN_ROUTINE_WORK_U16(offset)                                          \
+  (*(u16 *)((u8 *)&gMainRoutineWork + (offset)))
 
 void Func_020035b8(void) {
   Func_02004180(0);
@@ -1659,14 +1687,17 @@ loop:
 DEFINE_FUNC_02000BC0_69(Func_0200388c, Func_02003910)
 
 // ---- games/tla/src/scene/yampi_desert/s3910.c ----
-// Scene code of overlay 0x661, in ROM order, from s3910's offset up to the next object the overlay links, and the overlay's data.
+// Scene code of overlay 0x661, in ROM order, from s3910's offset up to the next
+// object the overlay links, and the overlay's data.
 
 #include "iwram_call.h"
 
 DEFINE_FUNC_02000128(Func_02003910, Func_020041e0, Func_02003fa8)
 
 /// The whole-pixel half of a 16.16 coordinate.
-/* VIEW(s3910): macro PIXELS as PIXELS__s3910; another part or header has another definition; tried with the definition the rest of the object has, Func_020039b8 moves: 33 of 212 instructions in tla-ja. */
+/* VIEW(s3910): macro PIXELS as PIXELS__s3910; another part or header has
+ * another definition; tried with the definition the rest of the object has,
+ * Func_020039b8 moves: 33 of 212 instructions in tla-ja. */
 #define PIXELS__s3910(v) (((s16 *)&(v))[1])
 
 /// One rising platform and what rides it.
@@ -1838,9 +1869,14 @@ void Func_02003b80(void) {
     z = object->z - viewZ - originY;
     sy = z - y;
     x = (x >> 16) - 8;
-    /* FAKEMATCH(wrapper): forwarded, so -0x20000 is built for the call and again
-     * for the sum; as a direct call, 276 of 252 instructions differ in tla-en. */
-    sy = ((sy + Value2((s32 (*)())Iwram_MulQ16, -0x20000, Math_Sine(entry->phase)) + -0x20000) >> 16) - 4;
+    /* FAKEMATCH(wrapper): forwarded, so -0x20000 is built for the call and
+     * again for the sum; as a direct call, 276 of 252 instructions differ in
+     * tla-en. */
+    sy = ((sy +
+           Value2((s32 (*)())Iwram_MulQ16, -0x20000, Math_Sine(entry->phase)) +
+           -0x20000) >>
+          16) -
+         4;
     depth = ((y + z) >> 16) + 58;
     if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
       continue;

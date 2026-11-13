@@ -302,9 +302,9 @@ ScreenTransition_Start:
 	.thumb_func
 BattleEffect_ApplyColorToTargetBuffer:
 	overlay_veneer BattleEffect_ApplyColorToTargetBufferFar
-	.global BattleEffect_StartBufferInterpolation
+	.global PaletteFade_StartInterpolation
 	.thumb_func
-BattleEffect_StartBufferInterpolation:
+PaletteFade_StartInterpolation:
 	overlay_veneer BattleEffect_StartBufferInterpolationFar
 	.global Event_StartScreenTransition
 	.thumb_func
@@ -326,9 +326,9 @@ ObjectTable_Get:
 	.thumb_func
 Func_02004d88:
 	overlay_veneer Func_080c8480
-	.global BattleEffect_PrepareBufferInterpolation
+	.global FieldPsynergy_FadeFromCastColor
 	.thumb_func
-BattleEffect_PrepareBufferInterpolation:
+FieldPsynergy_FadeFromCastColor:
 	overlay_veneer BattleEffect_PrepareBufferInterpolationFar
 	.global Event_ResolveAllPendingActions
 	.thumb_func

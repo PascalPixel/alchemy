@@ -21,11 +21,11 @@ extern u16 *gData_02006004;
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
 DEFINE_FUNC_02000038_4(Func_02000038, gData_02006010, gData_02006014,
-    Data_02006018, gData_02006004, Func_02000328)
+                       Data_02006018, gData_02006004, Func_02000328)
 
 DEFINE_FUNC_020000F4_2(Func_020000f4, gData_02006020, gData_0200601c,
-    Func_020001d4, gData_02006010, gData_0200600c, 15, gData_02006008, 16,
-    gData_02006000, Func_020001f8)
+                       Func_020001d4, gData_02006010, gData_0200600c, 15,
+                       gData_02006008, 16, gData_02006000, Func_020001f8)
 
 void Func_02000158(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -35,8 +35,8 @@ void Func_02000158(void) {
 }
 
 DEFINE_FUNC_020000F4_2(Func_02000178, gData_02006020, gData_0200601c,
-    Func_020001d4, gData_02006010, gData_0200600c, 2, gData_02006008, 2,
-    gData_02006000, Func_020001f8)
+                       Func_020001d4, gData_02006010, gData_0200600c, 2,
+                       gData_02006008, 2, gData_02006000, Func_020001f8)
 
 s32 Func_020001d4(u16 *list) {
   s32 count = 0;
@@ -104,7 +104,7 @@ void Func_02000328(void) {
   wait(40);
   Func_02000158();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
-  BattleEffect_StartBufferInterpolation(16);
+  PaletteFade_StartInterpolation(16);
   wait(16);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;

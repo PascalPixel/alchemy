@@ -58,12 +58,12 @@ s32 Animation_InitializeObjects(struct AnimationObject *);
 void Animation_SetStateFlags(struct Actor *object, u32 value);
 void AnimationObject_SetActiveTimerSteps(struct AnimationObject *, s32);
 s32 BattleEffect_ApplyColorToTargetBufferFar(s32, s32);
-void BattleEffect_ClearChildValueOnMismatch(void);
-void BattleEffect_DispatchRequestKind(void);
+void FieldPsynergy_FinishMindRead(void);
+void FieldPsynergy_Dispatch(void);
 void BattleEffect_LoadActionEffectResources(s32 action, s32 flags);
-void BattleEffect_Run(void);
+void FieldPsynergy_Run(void);
 void BattleEffect_SelectBattleCue(s32 row, s32 column);
-void BattleEffect_SetupObjectPair(s32 actor, s32 target);
+void FieldPsynergy_SetupActorPair(s32 actor, s32 target);
 s32 BattleEffect_StartBufferInterpolationFar(s32);
 s32 BattleMotion_ProjectScaledPositionFar(s32, s32 *);
 struct BattleEffectArgument;
@@ -75,9 +75,9 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot);
 void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first,
                                           struct FacingObject *second);
 void Field_StartPaletteTransition(s32 mode);
-void Field_DispatchTypeHandler(s32 kind);
+void FieldPsynergy_RunHandler(s32 kind);
 void Field_EndActorSpriteEffect(s32 mode);
-void FieldEvent_RunTypeHandler(void);
+void FieldPsynergy_RunExtraHandler(void);
 
 s32 Func_080c88c8(struct ScriptInterpreter *interpreter, s32 value);
 void Actor_ReleaseAtIndex(u32 actorIndex);

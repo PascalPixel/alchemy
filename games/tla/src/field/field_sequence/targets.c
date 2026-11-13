@@ -169,7 +169,7 @@ s32 Func_080cdac0(s32 animation, s32 selfId, s32 otherId) {
   return distance;
 }
 
-s32 BattleEffect_FindNearestObject(s32 self, s32 effect) {
+s32 Field_FindNearbyPsynergyTarget(s32 self, s32 effect) {
   s32 nearest = 9999;
   s32 found = -1;
   s32 i;

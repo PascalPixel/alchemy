@@ -1,10 +1,14 @@
 /// @file
 /// Two routines not yet understood.
-// Part of f0e2c38.c.
+// Part of psynergy.c.
 
-#include "../f0e2c38_internal.h"
+#include "../psynergy_internal.h"
 
-/* VIEW(f0e572c): tag struct FxScene as struct FxScene__f0e572c; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:2101: structure has no member named `facing'. */
+/* VIEW(f0e572c): tag struct FxScene as struct FxScene__f0e572c; f0e2c38.c has
+ * another definition; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja:
+ * games/tla/src/field/event_commands/psynergy.c:2101: structure has no member
+ * named `facing'. */
 struct FxScene__f0e572c {
   u16 facing;
   u16 angle;
@@ -25,7 +29,7 @@ extern char ResourceId_FieldEffectExplosion, ResourceId_GlowDisc;
 
 void *HeapSlot_Alloc(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
-void BattleEffect_InitializeSharedScene(void);
+void FieldPsynergy_FadeToCastColor(void);
 void Camera_WorldToScreen(s32 *position);
 s32 Func_080db9a8(struct Actor *object, s32 facing);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
@@ -39,10 +43,10 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void wait(s32 frames);
 s32 Func_080ce31c(s32 kind);
-void BattleEffect_PrepareBufferInterpolation(void);
+void FieldPsynergy_FadeFromCastColor(void);
 void Func_080e4d9c(void);
 
-void Func_080e572c(void) {
+void FieldPsynergy_Burst(void) {
   struct GlowWork *work = HeapSlot_Alloc(92, sizeof(struct GlowWork));
   struct FxScene__f0e572c *scene = Ram_HeapSlots->effectWork;
   struct CanvasSpriteWork *canvas;
@@ -63,7 +67,7 @@ void Func_080e572c(void) {
   s32 i;
 
   scene->y += 0xa0000;
-  BattleEffect_InitializeSharedScene();
+  FieldPsynergy_FadeToCastColor();
   Func_080eb824();
   canvas = Ram_HeapSlots->unkec[1];
   pos[0] = scene->x;
@@ -146,11 +150,10 @@ void Func_080e572c(void) {
   Task_Remove(Func_080e4d9c);
   Resource_ResetEntry(sparkEntry);
   Resource_ResetEntry(burstEntry);
-  BattleEffect_PrepareBufferInterpolation();
+  FieldPsynergy_FadeFromCastColor();
   BattleEffect_EndCanvasSprite();
   HeapSlot_Release(92);
 }
-
 
 struct ShineParticle {
   s32 x;
@@ -189,9 +192,13 @@ struct BlendWork {
   u8 mode;
 };
 
-/* VIEW(f0e572c): routine BattleEffect_IntegrateVector2 as void BattleEffect_IntegrateVector2(struct ShineParticle *particle, s32 frames, s32 flags); f0e4a34 has void BattleEffect_IntegrateVector2(s32 *vector, s32 damping, s32 gravity). */
-extern void BattleEffect_IntegrateVector2__f0e572c(struct ShineParticle *particle, s32 frames,
-                                   s32 flags) __asm__("BattleEffect_IntegrateVector2");
+/* VIEW(f0e572c): routine BattleEffect_IntegrateVector2 as void
+ * BattleEffect_IntegrateVector2(struct ShineParticle *particle, s32 frames, s32
+ * flags); f0e4a34 has void BattleEffect_IntegrateVector2(s32 *vector, s32
+ * damping, s32 gravity). */
+extern void BattleEffect_IntegrateVector2__f0e572c(
+    struct ShineParticle *particle, s32 frames,
+    s32 flags) __asm__("BattleEffect_IntegrateVector2");
 void Map_SetScreenShakeFar(s32 a, s32 b, s32 c);
 
 void Func_080e5a64(void) {

@@ -273,7 +273,8 @@ void Func_02000458(struct YampiDesertCaveRect rect) {
   cell[0] = (object->x + (gData_02001974[kind * 4] << 16)) >> 20;
   cell[2] = (object->z + (gData_02001974[kind * 4 + 1] << 16)) >> 20;
   w = (ABS(gData_02001974[kind * 4]) + ABS(gData_02001974[kind * 4 + 2])) >> 4;
-  h = (ABS(gData_02001974[kind * 4 + 1]) + ABS(gData_02001974[kind * 4 + 3])) >> 4;
+  h = (ABS(gData_02001974[kind * 4 + 1]) + ABS(gData_02001974[kind * 4 + 3])) >>
+      4;
   Map_FillCellRectByte2(0, cell[0], cell[2], w, h, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x1999);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 8);
@@ -371,13 +372,13 @@ void Func_02000754(struct Actor *object) {
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
 DEFINE_FUNC_02000038_4(Func_020007dc, gData_02001fd8, gData_02001fdc,
-    gData_02001fe0, gData_02001fcc, Func_02000acc)
+                       gData_02001fe0, gData_02001fcc, Func_02000acc)
 
 #include "task.h"
 
 DEFINE_FUNC_020000F4_2(Func_02000898, gData_02001fe8, gData_02001fe4,
-    Func_02000978, gData_02001fd8, gData_02001fd4, 15, gData_02001fd0, 16,
-    gData_02001fc8, Func_0200099c)
+                       Func_02000978, gData_02001fd8, gData_02001fd4, 15,
+                       gData_02001fd0, 16, gData_02001fc8, Func_0200099c)
 
 void Func_020008fc(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 256;
@@ -385,8 +386,8 @@ void Func_020008fc(void) {
 }
 
 DEFINE_FUNC_020000F4_2(Func_0200091c, gData_02001fe8, gData_02001fe4,
-    Func_02000978, gData_02001fd8, gData_02001fd4, 2, gData_02001fd0, 2,
-    gData_02001fc8, Func_0200099c)
+                       Func_02000978, gData_02001fd8, gData_02001fd4, 2,
+                       gData_02001fd0, 2, gData_02001fc8, Func_0200099c)
 
 DEFINE_FUNC_020001D4(Func_02000978)
 
@@ -443,7 +444,7 @@ void Func_02000acc(void) {
   wait(40);
   Func_020008fc();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
-  BattleEffect_StartBufferInterpolation(16);
+  PaletteFade_StartInterpolation(16);
   wait(16);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
@@ -731,11 +732,11 @@ void Func_0200130c(void) {
   Event_Wait(20);
   PaletteFade_ApplySource(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
-  BattleEffect_StartBufferInterpolation(60);
+  PaletteFade_StartInterpolation(60);
   Event_Wait(60);
   FieldMessage_ShowCentered((s32)MsgIAmThe, 0, 6);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(60);
+  PaletteFade_StartInterpolation(60);
   Event_Wait(60);
   leader = ((s32)Actor_GetById(FIELD_AT(&gMainRoutineWork, s32, 0x214)));
   if (leader != 0)

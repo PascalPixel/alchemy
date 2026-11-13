@@ -242,9 +242,9 @@ Event_StartScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Field_DispatchTypeHandler
+	.global FieldPsynergy_RunHandler
 	.thumb_func
-Field_DispatchTypeHandler:
+FieldPsynergy_RunHandler:
 	overlay_veneer Field_DispatchTypeHandlerFar
 	.global BattleEffect_LoadActionEffectResources
 	.thumb_func

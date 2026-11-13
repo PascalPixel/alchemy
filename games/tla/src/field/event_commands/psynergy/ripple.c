@@ -1,10 +1,14 @@
 /// @file
 /// Routines not yet understood.
-// Part of f0e2c38.c.
+// Part of psynergy.c.
 
-#include "../f0e2c38_internal.h"
+#include "../psynergy_internal.h"
 
-/* VIEW(f0e446c): tag struct EffectSprite as struct EffectSprite__f0e446c; effect_sprite.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:1273: structure has no member named `priority'. */
+/* VIEW(f0e446c): tag struct EffectSprite as struct EffectSprite__f0e446c;
+ * effect_sprite.h has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/psynergy.c:1273: structure has no member
+ * named `priority'. */
 struct EffectSprite__f0e446c {
   u8 unk00[4];
   u16 attr0_0 : 13;
@@ -42,9 +46,13 @@ struct EffectParticle {
   s32 timer;
 };
 
-/* VIEW(f0e446c): routine Func_080eaf98 as void Func_080eaf98(struct EffectSprite__f0e446c *sprite, s32 width, s32 height, u32 shape, s32 tiles); effect_sprite.h has void Func_080eaf98(struct EffectSprite *sprite, s32 pivotX, s32 pivotY, u32 attributes, s32 tile). */
-extern void Func_080eaf98__f0e446c(struct EffectSprite__f0e446c *sprite, s32 width, s32 height,
-                   u32 shape, s32 tiles) __asm__("Func_080eaf98");
+/* VIEW(f0e446c): routine Func_080eaf98 as void Func_080eaf98(struct
+ * EffectSprite__f0e446c *sprite, s32 width, s32 height, u32 shape, s32 tiles);
+ * effect_sprite.h has void Func_080eaf98(struct EffectSprite *sprite, s32
+ * pivotX, s32 pivotY, u32 attributes, s32 tile). */
+extern void Func_080eaf98__f0e446c(struct EffectSprite__f0e446c *sprite,
+                                   s32 width, s32 height, u32 shape,
+                                   s32 tiles) __asm__("Func_080eaf98");
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Camera_WorldToScreen(s32 *position);
@@ -108,8 +116,9 @@ void Func_080e4510(struct EffectSprite__f0e446c *sprite, s32 tiles) {
 /// Forwards to Func_080eb01c, which draws an effect sprite.
 void Func_080e45a0(void *sprite) { Func_080eb01c(sprite); }
 
-void Func_080e45a8(struct EffectSprite__f0e446c *sprite, struct EffectParticle *particle,
-                   s32 unused, s32 tiles, s32 high) {
+void Func_080e45a8(struct EffectSprite__f0e446c *sprite,
+                   struct EffectParticle *particle, s32 unused, s32 tiles,
+                   s32 high) {
   struct Actor *mainObject =
       ((struct EffectScene *)Ram_HeapSlots->effectWork)->mainObject;
   s32 position[3];

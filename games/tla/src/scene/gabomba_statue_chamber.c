@@ -67,14 +67,14 @@ void Func_02000100(void) {
   Actor_SetModeById(8, 2);
   PaletteFade_ApplySource(0x10000, 2);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 2);
-  BattleEffect_StartBufferInterpolation(20);
+  PaletteFade_StartInterpolation(20);
   wait(20);
   *color = 0x7fff;
   wait(1);
   work = Ram_HeapSlots->eventWork;
   Func_0803ce64((s16)work->field1c4++, 0, 2);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 2);
-  BattleEffect_StartBufferInterpolation(20);
+  PaletteFade_StartInterpolation(20);
   wait(20);
   Actor_SetModeById(8, 1);
 }
@@ -108,7 +108,7 @@ void Func_02000184(void) {
   PaletteFade_ApplyTarget(0x10000, 2);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 1);
   BattleEffect_ApplyColorToTargetBuffer(0x403108, 1);
-  BattleEffect_StartBufferInterpolation(40);
+  PaletteFade_StartInterpolation(40);
   wait(40);
   Sound_Play(197);
   wait(1);
@@ -209,13 +209,13 @@ void Func_02000184(void) {
    * wait; as OBJ_PLTT_COLOR(0, 15) = 0x7fff after it, 4 of 895 instructions
    * differ in tla-en. */
   color = &OBJ_PLTT_COLOR(0, 15);
-  BattleEffect_StartBufferInterpolation(10);
+  PaletteFade_StartInterpolation(10);
   wait(10);
   *color = 0x7fff;
   wait(1);
   Func_0803ce64((s16)(*(u16 *)(EVENT_WORK + 0x1c4))++, 0, 2);
   PaletteFade_ApplyTarget(0x10000, 2);
-  BattleEffect_StartBufferInterpolation(20);
+  PaletteFade_StartInterpolation(20);
   wait(20);
   Actor_SetModeById(8, 1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xe000, 0);
@@ -266,18 +266,18 @@ void Func_02000184(void) {
   Actor_SetPartAttribute(((s32)Actor_GetById(13)), 7);
   Actor_SetPosition(13, 0x1a80000, 0x680000);
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(40);
+  PaletteFade_StartInterpolation(40);
   wait(40);
   Func_02001094();
   Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
   Event_Wait(1);
   PaletteFade_ApplyTarget(0x10000, 2);
   BattleEffect_ApplyColorToTargetBuffer(0x403108, 1);
-  BattleEffect_StartBufferInterpolation(60);
+  PaletteFade_StartInterpolation(60);
   wait(60);
   Func_02000100();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
-  BattleEffect_StartBufferInterpolation(20);
+  PaletteFade_StartInterpolation(20);
   wait(20);
   gData_02002058->motionFlags = 3;
   Event_Wait(10);
@@ -342,7 +342,7 @@ void Func_02000184(void) {
   Actor_SetMovementTypeById(gMainRoutineWork.currentOwner, gData_0200200c);
   Event_Wait(40);
   BattleEffect_ApplyColorToTargetBuffer(0, 0);
-  BattleEffect_StartBufferInterpolation(60);
+  PaletteFade_StartInterpolation(60);
   wait(0x40);
   *(s32 *)(EVENT_WORK + 0x1ac) = 513;
   *(s32 *)(EVENT_WORK + 0x1b4) = 10;
@@ -350,7 +350,7 @@ void Func_02000184(void) {
   Event_WaitTransitionFrames();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   *(s32 *)(EVENT_WORK + 0x1b4) = 1;
-  BattleEffect_StartBufferInterpolation(1);
+  PaletteFade_StartInterpolation(1);
   Func_02001d78();
   Func_0803ce64(MsgCarriedTheMessage, 0, 3);
   Func_02001d80();
@@ -529,15 +529,13 @@ void Func_02000e60(void) {
   Event_End();
 }
 
-void Func_02000ef0(struct Actor *object) {
-  object->x = Actor_GetById(8)->x;
-}
+void Func_02000ef0(struct Actor *object) { object->x = Actor_GetById(8)->x; }
 #undef EVENT_WORK
 #undef OBJECT
 
 // ---- games/tla/src/scene/gabomba_statue_chamber/s0f00.c ----
-// Scene code of overlay 0x672, in ROM order, from s0f00's offset up to the next object the overlay links.
-
+// Scene code of overlay 0x672, in ROM order, from s0f00's offset up to the next
+// object the overlay links.
 
 DEFINE_FUNC_02000F00(Func_02000f00, 230)
 
@@ -628,7 +626,7 @@ void Func_020010d4(void) {
                                        PIXELS(340));
   Sound_Play(78);
   BattleEffect_ApplyColorToTargetBuffer(0x10002, 0);
-  BattleEffect_StartBufferInterpolation(40);
+  PaletteFade_StartInterpolation(40);
   wait(40);
   Actor_SetModeById(9, 2);
   Actor_SetModeById(10, 2);
@@ -661,7 +659,7 @@ void Func_020010d4(void) {
   Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
   Event_Wait(20);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(40);
+  PaletteFade_StartInterpolation(40);
   wait(40);
   Party_PlaySavedMusic();
   Func_080d47b4(11, 0x100, 40);
@@ -994,13 +992,13 @@ void Func_02001c44(void) {
        * tla-en. */
       scene = &SceneId_Ov671Room7;
       gMainRoutineWork.retreatScene = (s32)scene;
-        gMainRoutineWork.retreatEntrance = 1;
+      gMainRoutineWork.retreatEntrance = 1;
     } else if (GameFlag_Test(0xa28)) {
       /* FAKEMATCH(temporary): the scene id through a local, as in the first
        * branch; as plain stores, 4 of 71 instructions differ in tla-en. */
       scene = &SceneId_Ov672Room1;
       gMainRoutineWork.retreatScene = (s32)scene;
-        gMainRoutineWork.retreatEntrance = 3;
+      gMainRoutineWork.retreatEntrance = 3;
     }
   }
 #endif

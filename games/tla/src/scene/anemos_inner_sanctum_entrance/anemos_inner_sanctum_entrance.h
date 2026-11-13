@@ -35,7 +35,7 @@ s32 Func_02000d0c(s32 id);
 void Func_02000d14(void);
 void BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
 void BattleEffect_ApplyColorToSourceBuffer(s32 a, s32 b);
-void BattleEffect_StartBufferInterpolation(s32 a);
+void PaletteFade_StartInterpolation(s32 a);
 void Event_ResolvePendingActions(s32 a);
 s32 Func_02000d4c(void);
 void Func_02000d54(void);

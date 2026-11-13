@@ -22,7 +22,7 @@
 extern s32 gData_02004fec[];
 
 DEFINE_FUNC_0200038C(Func_020003b4, gData_02004fec, Func_02004cf8,
-    Func_02004c98)
+                     Func_02004c98)
 
 #include "ram_buffer.h"
 #include "map.h"
@@ -119,7 +119,11 @@ void Func_020007ac(struct Actor *object) {
 void Func_02004c98();
 void Actor_StartScript();
 s32 GameFlag_Test();
-/* VIEW(s0800): routine Actor_GetById as s32 Actor_GetById(); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/magma_rock_inside.c:294: too few arguments to function `Actor_GetById'. */
+/* VIEW(s0800): routine Actor_GetById as s32 Actor_GetById(); event.h has struct
+ * Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor
+ * *Actor_GetById(u32 objectId), which the object already declares, it does not
+ * compile in tla-ja: games/tla/src/scene/magma_rock_inside.c:294: too few
+ * arguments to function `Actor_GetById'. */
 extern s32 Actor_GetById__s0800() __asm__("Actor_GetById");
 
 void Func_02000800(s32 a0, s32 a1, s32 a2) {
@@ -166,7 +170,8 @@ L_02008870:
 #undef FIELD_AT
 
 // ---- games/tla/src/scene/magma_rock_inside.c ----
-// The scene code of overlay 0x692 that its scene tables belong to, in ROM order; the rest of the overlay is in magma_rock_inside/.
+// The scene code of overlay 0x692 that its scene tables belong to, in ROM
+// order; the rest of the overlay is in magma_rock_inside/.
 
 s32 Func_020005dc(s32 terrain, s32 x, s32 z, s32 height);
 
@@ -352,7 +357,7 @@ void Func_02000ce4(s16 value) {
   BattleEffect_LoadActionEffectResources(151, 1);
   party = &gMainRoutineWork;
   Func_02004e78(party->currentOwner, value);
-  Field_DispatchTypeHandler(1);
+  FieldPsynergy_RunHandler(1);
   Func_02004e80();
   BattleEffect_CleanupSceneObjects();
 }
@@ -481,7 +486,10 @@ extern const s32 gData_0200502c[];
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-/* VIEW(s0e20): routine Func_02000ce4 as void Func_02000ce4(u16 id); the definition has void Func_02000ce4(s16 value); tried as the definition's void Func_02000ce4(s16 value), which the object already declares, Func_02000ed0 moves: 1 of 270 instructions in tla-ja. */
+/* VIEW(s0e20): routine Func_02000ce4 as void Func_02000ce4(u16 id); the
+ * definition has void Func_02000ce4(s16 value); tried as the definition's void
+ * Func_02000ce4(s16 value), which the object already declares, Func_02000ed0
+ * moves: 1 of 270 instructions in tla-ja. */
 extern void Func_02000ce4__s0e20(u16 id) __asm__("Func_02000ce4");
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -1537,7 +1545,11 @@ void Func_02002a14(struct Actor *source) {
   Actor_StartScript(object, gData_02005534);
 }
 
-/* VIEW(magma_rock_inside): tag struct Orbiter as struct Orbiter__magma_rock_inside; module/scene/scene.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/magma_rock_inside.c:1762: structure has no member named `parent'. */
+/* VIEW(magma_rock_inside): tag struct Orbiter as struct
+ * Orbiter__magma_rock_inside; module/scene/scene.h has another definition;
+ * tried with the definition the rest of the object has, it does not compile in
+ * tla-ja: games/tla/src/scene/magma_rock_inside.c:1762: structure has no member
+ * named `parent'. */
 struct Orbiter__magma_rock_inside {
   u8 unk00[8];
   s32 x;
@@ -1682,7 +1694,7 @@ void Func_02002cd0(s32 a, s32 b) {
   MapGrid_SetShake(0x20000, 0x20000, 0x10000);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
-  BattleEffect_StartBufferInterpolation(60);
+  PaletteFade_StartInterpolation(60);
   first->motionFlags = 0;
   first->acceleration = 0x3333;
   first->speedLimit = 0x3333;
@@ -1785,14 +1797,14 @@ column:
   Sound_Play(220);
   wait(50);
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(8);
+  PaletteFade_StartInterpolation(8);
   wait(16);
   MapGrid_SetShake(0, 0, 0);
   Actor_ConfigureSpriteColor(a, 0);
   Actor_ConfigureSpriteColor(b, 0);
   Sound_Play(574);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(80);
+  PaletteFade_StartInterpolation(80);
   Actor_SetMovementTypeById(a, gData_020055d8);
   Actor_SetMovementTypeById(b, gData_02005608);
   second->update = (void (*)(void))Func_02002c48;

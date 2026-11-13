@@ -341,8 +341,8 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
 
   work = HeapSlot_AllocFar(220, 0x1e58);
   flying = 0;
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_FieldEffectIceShard),
-                work);
+  Resource_DecodeType01(
+      Resource_GetTableEntry((s32)&ResourceId_FieldEffectIceShard), work);
   entry = Resource_FindFreeEntry();
   tiles = VramCache_Load(entry, 0x500, work);
   i = 0;
@@ -372,8 +372,8 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
    * buffer; as Heap_Alloc(0x1000), 19 of 323 instructions differ in tbs-en. */
   sheet = (void *)0x1000;
   sheet = Heap_Alloc((s32)sheet);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion),
-                sheet);
+  Resource_DecodeType01(
+      Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion), sheet);
   sparkEntry = Resource_FindFreeEntry();
   sparkTiles = VramCache_Load(sparkEntry, 0x400, sheet);
   Heap_Release(sheet);
@@ -390,7 +390,7 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
     }
     if (frame == 60) {
       BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
-      BattleEffect_StartBufferInterpolation(90);
+      PaletteFade_StartInterpolation(90);
       Sound_Play(141);
     }
     if (frame == 105) {

@@ -46,8 +46,13 @@
 // The parts, in ROM order.
 #include "module/system/system.h"
 
-/* VIEW(f0cf050): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 distance, u16 angle, s32 *position); module/system/system.h has void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position). */
-extern void Vector_AddPolarOffset__f0cf050(s32 distance, u16 angle, s32 *position) __asm__("Vector_AddPolarOffset");
+/* VIEW(f0cf050): routine Vector_AddPolarOffset as void
+ * Vector_AddPolarOffset(s32 distance, u16 angle, s32 *position);
+ * module/system/system.h has void Vector_AddPolarOffset(s32 radius, s32 angle,
+ * s32 *position). */
+extern void
+Vector_AddPolarOffset__f0cf050(s32 distance, u16 angle,
+                               s32 *position) __asm__("Vector_AddPolarOffset");
 
 void Func_080cf050(void) {
   struct Actor *leader;
@@ -77,10 +82,21 @@ void Func_080cf050(void) {
 #include "module/field/field.h"
 #include "module/field/object.h"
 
-/* VIEW(emitter): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position); f0cf050 has void Vector_AddPolarOffset(s32 distance, u16 angle, s32 *position); tried as the definition's void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position), it does not compile in tla-ja: games/tla/src/field/object/f0cf050.c:56: conflicting types for `Vector_AddPolarOffset'. */
-extern void Vector_AddPolarOffset__emitter(s32 radius, s32 angle, s32 *position) __asm__("Vector_AddPolarOffset");
-/* VIEW(f0cf050): routine Actor_Spawn as struct ParticleEffectObject *Actor_Spawn(s32, s32, s32, s32); module/field/event_commands.h has struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z). */
-extern struct ParticleEffectObject *Actor_Spawn__f0cf050(s32, s32, s32, s32) __asm__("Actor_Spawn");
+/* VIEW(emitter): routine Vector_AddPolarOffset as void
+ * Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position); f0cf050 has void
+ * Vector_AddPolarOffset(s32 distance, u16 angle, s32 *position); tried as the
+ * definition's void Vector_AddPolarOffset(s32 radius, s32 angle, s32
+ * *position), it does not compile in tla-ja:
+ * games/tla/src/field/object/f0cf050.c:56: conflicting types for
+ * `Vector_AddPolarOffset'. */
+extern void
+Vector_AddPolarOffset__emitter(s32 radius, s32 angle,
+                               s32 *position) __asm__("Vector_AddPolarOffset");
+/* VIEW(f0cf050): routine Actor_Spawn as struct ParticleEffectObject
+ * *Actor_Spawn(s32, s32, s32, s32); module/field/event_commands.h has struct
+ * Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z). */
+extern struct ParticleEffectObject *
+Actor_Spawn__f0cf050(s32, s32, s32, s32) __asm__("Actor_Spawn");
 
 void Marker_MoveLeaderAwayFromEmitter(struct ParticleEmitter *emitter) {
   struct ParticlePosition position;
@@ -131,8 +147,17 @@ s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
 }
 
 struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-/* VIEW(emitter): routine BattleEffect_SpawnRandomParticleAtPosition as void BattleEffect_SpawnRandomParticleAtPosition(void); the definition has void BattleEffect_SpawnRandomParticleAtPosition(const struct ParticleSource *source); tried as the definition's void BattleEffect_SpawnRandomParticleAtPosition(const struct ParticleSource *source), which the object already declares, it does not compile in tla-ja: games/tla/src/field/object/f0cf050.c:168: `BattleEffect_SpawnRandomParticleAtPosition' undeclared (first use in this function). */
-extern void BattleEffect_SpawnRandomParticleAtPosition__emitter(void) __asm__("BattleEffect_SpawnRandomParticleAtPosition");
+/* VIEW(emitter): routine BattleEffect_SpawnRandomParticleAtPosition as void
+ * BattleEffect_SpawnRandomParticleAtPosition(void); the definition has void
+ * BattleEffect_SpawnRandomParticleAtPosition(const struct ParticleSource
+ * *source); tried as the definition's void
+ * BattleEffect_SpawnRandomParticleAtPosition(const struct ParticleSource
+ * *source), which the object already declares, it does not compile in tla-ja:
+ * games/tla/src/field/object/f0cf050.c:168:
+ * `BattleEffect_SpawnRandomParticleAtPosition' undeclared (first use in this
+ * function). */
+extern void BattleEffect_SpawnRandomParticleAtPosition__emitter(void) __asm__(
+    "BattleEffect_SpawnRandomParticleAtPosition");
 
 /// Shows the picture of item above actor (in front of the controlled owner,
 /// on the centre of the cell), clearing Reveal's sparkles first.
@@ -163,7 +188,8 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
     i = 63;
     do {
       if (object->script != NULL) {
-        if (object->update == BattleEffect_SpawnRandomParticleAtPosition__emitter)
+        if (object->update ==
+            BattleEffect_SpawnRandomParticleAtPosition__emitter)
           Actor_Destroy(object);
         if (object->script == (s32 *)gBattleEffect_ParticleScript)
           Actor_Destroy(object);
@@ -226,8 +252,11 @@ void Actor_ReleaseIfPresent(struct Actor *object) {
 /// Nothing in the image calls it.
 void Func_080cf34c(void) {}
 
-/* VIEW(rising): routine Marker_MoveLeaderAwayFromEmitter as void Marker_MoveLeaderAwayFromEmitter(void); the definition has void Marker_MoveLeaderAwayFromEmitter(struct ParticleEmitter *emitter). */
-extern void Marker_MoveLeaderAwayFromEmitter__rising(void) __asm__("Marker_MoveLeaderAwayFromEmitter");
+/* VIEW(rising): routine Marker_MoveLeaderAwayFromEmitter as void
+ * Marker_MoveLeaderAwayFromEmitter(void); the definition has void
+ * Marker_MoveLeaderAwayFromEmitter(struct ParticleEmitter *emitter). */
+extern void Marker_MoveLeaderAwayFromEmitter__rising(void) __asm__(
+    "Marker_MoveLeaderAwayFromEmitter");
 
 /// Places the object 36 pixels above the controlled owner, gives it its
 /// sprite priority and, three frames on, the descent script, and turns the
@@ -275,7 +304,11 @@ void BattleEffect_RunActorRiseAndDescent(struct Actor *object, s32 flags) {
   }
 }
 
-/* VIEW(rising): tag struct EffectVisual as struct EffectVisual__rising; f0cf050.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/f0cf050.c:310: structure has no member named `flags09'. */
+/* VIEW(rising): tag struct EffectVisual as struct EffectVisual__rising;
+ * f0cf050.c has another definition; tried with the definition the rest of the
+ * object has, it does not compile in tla-ja:
+ * games/tla/src/field/object/f0cf050.c:310: structure has no member named
+ * `flags09'. */
 struct EffectVisual__rising {
   u8 unk00[5];
   u8 flags05;
@@ -330,8 +363,15 @@ void BattleEffect_StartEffectObject22(s32 item, s32 flags) {
   }
 }
 
-/* VIEW(rising): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32, s32, struct ParticlePosition *); f0cf050 has void Vector_AddPolarOffset(s32 distance, u16 angle, s32 *position); tried as the definition's void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position), it does not compile in tla-ja: games/tla/src/field/object/f0cf050.c:353: conflicting types for `Vector_AddPolarOffset'. */
-extern void Vector_AddPolarOffset__rising(s32, s32, struct ParticlePosition *) __asm__("Vector_AddPolarOffset");
+/* VIEW(rising): routine Vector_AddPolarOffset as void
+ * Vector_AddPolarOffset(s32, s32, struct ParticlePosition *); f0cf050 has void
+ * Vector_AddPolarOffset(s32 distance, u16 angle, s32 *position); tried as the
+ * definition's void Vector_AddPolarOffset(s32 radius, s32 angle, s32
+ * *position), it does not compile in tla-ja:
+ * games/tla/src/field/object/f0cf050.c:353: conflicting types for
+ * `Vector_AddPolarOffset'. */
+extern void Vector_AddPolarOffset__rising(
+    s32, s32, struct ParticlePosition *) __asm__("Vector_AddPolarOffset");
 
 void BattleEffect_SpawnRandomParticleAtPosition(
     const struct ParticleSource *source) {
@@ -369,7 +409,8 @@ void BattleEffect_SpawnRandomParticleAtPosition(
 // event has not run, a marker object goes at its event object, or at the map
 // cell of a tile event, when that point is on screen.
 
-/* VIEW(rising): variable Data_080f01b8 as extern const s32 Data_080f01b8[]; emitter has extern const u8 Data_080f01b8[]. */
+/* VIEW(rising): variable Data_080f01b8 as extern const s32 Data_080f01b8[];
+ * emitter has extern const u8 Data_080f01b8[]. */
 extern const s32 Data_080f01b8__rising[] __asm__("Data_080f01b8");
 
 /// Places a marker at each waiting scene item event that is on screen.
@@ -913,7 +954,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     break;
   case 1:
     BattleEffect_ApplyColorToSourceBuffer(0x8000, PLTT_BACKDROP);
-    BattleEffect_StartBufferInterpolation(frames);
+    PaletteFade_StartInterpolation(frames);
     wait(1);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
                         0x20000);
@@ -998,7 +1039,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     break;
   case 1:
     BattleEffect_ApplyColorToTargetBuffer(0x8000, 0);
-    BattleEffect_StartBufferInterpolation(frames);
+    PaletteFade_StartInterpolation(frames);
     break;
   case 2: {
     struct ScreenTransitionState *state =
@@ -1760,7 +1801,7 @@ void Func_080d1760(void) {
   work--;
 }
 
-void BattleEffect_StartBufferInterpolation(s32 mode) {
+void PaletteFade_StartInterpolation(s32 mode) {
   struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
 
   if (buffers != NULL) {
@@ -1986,7 +2027,8 @@ void BattleEffect_FillOverlayTiles(s32 solid) {
   HeapSlot_Release(56);
 }
 
-/* VIEW(f0cf050): tag struct EffectSprite as struct EffectSprite__f0cf050; effect_sprite.h has another definition. */
+/* VIEW(f0cf050): tag struct EffectSprite as struct EffectSprite__f0cf050;
+ * effect_sprite.h has another definition. */
 struct EffectSprite__f0cf050 {
   u8 unk00[4];
   u16 y : 8;
@@ -2003,22 +2045,29 @@ struct EffectSprite__f0cf050 {
   u16 depth;
 };
 
-/* VIEW(f0cf050): routine Func_080eaf98 as void Func_080eaf98(); effect_sprite.h has void Func_080eaf98(struct EffectSprite *sprite, s32 pivotX, s32 pivotY, u32 attributes, s32 tile). */
+/* VIEW(f0cf050): routine Func_080eaf98 as void Func_080eaf98(); effect_sprite.h
+ * has void Func_080eaf98(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
+ * u32 attributes, s32 tile). */
 extern void Func_080eaf98__f0cf050() __asm__("Func_080eaf98");
 
 /// Sets up sprite through Func_080eaf98 with resource 94's tiles, at
 /// priority 1 in palette 0.
 void Func_080d1dac(struct EffectSprite__f0cf050 *sprite, s32 a, s32 b, s32 c) {
-  Func_080eaf98__f0cf050(sprite, a, b, c, gResourceTableEntries[94].offset >> 5);
+  Func_080eaf98__f0cf050(sprite, a, b, c,
+                         gResourceTableEntries[94].offset >> 5);
   sprite->depth = 0;
   sprite->priority = 1;
   sprite->palette256 = 0;
   sprite->palette = 0;
 }
 
-/* VIEW(f0cf050): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void Camera_WorldToScreen(struct EffectVector *position). */
-extern void Camera_WorldToScreen__f0cf050(s32 *position) __asm__("Camera_WorldToScreen");
-/* VIEW(f0cf050): routine Func_080eb01c as void Func_080eb01c(void *sprite); effect_sprite.h has void Func_080eb01c(struct EffectSprite *sprite). */
+/* VIEW(f0cf050): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32
+ * *position); module/field/event_commands.h has void
+ * Camera_WorldToScreen(struct EffectVector *position). */
+extern void
+Camera_WorldToScreen__f0cf050(s32 *position) __asm__("Camera_WorldToScreen");
+/* VIEW(f0cf050): routine Func_080eb01c as void Func_080eb01c(void *sprite);
+ * effect_sprite.h has void Func_080eb01c(struct EffectSprite *sprite). */
 extern void Func_080eb01c__f0cf050(void *sprite) __asm__("Func_080eb01c");
 
 /// Projects the world position (x, y, z) to the screen, stores it as the
@@ -2035,7 +2084,8 @@ void BattleEffect_DrawSpriteAtWorldPosition(s32 *sprite, s32 x, s32 y, s32 z) {
 
 /// The twin of Func_080d1dac with object mode 1 and priority 0.
 void Func_080d1e18(struct EffectSprite__f0cf050 *sprite, s32 a, s32 b, s32 c) {
-  Func_080eaf98__f0cf050(sprite, a, b, c, gResourceTableEntries[94].offset >> 5);
+  Func_080eaf98__f0cf050(sprite, a, b, c,
+                         gResourceTableEntries[94].offset >> 5);
   sprite->depth = 0;
   sprite->priority = 0;
   sprite->palette256 = 0;
@@ -2074,8 +2124,15 @@ s32 BattleEffect_GetAnimationValue(u32 objectId) {
 #include "module/field/f0cf050.h"
 #include "resource_ids.h"
 
-/* VIEW(definition_flags): routine BattleEffect_GetAnimationValue as s32 BattleEffect_GetAnimationValue(void); the definition has s32 BattleEffect_GetAnimationValue(u32 objectId); tried as the definition's s32 BattleEffect_GetAnimationValue(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/field/object/f0cf050.c:2239: too few arguments to function `BattleEffect_GetAnimationValue'. */
-extern s32 BattleEffect_GetAnimationValue__definition_flags(void) __asm__("BattleEffect_GetAnimationValue");
+/* VIEW(definition_flags): routine BattleEffect_GetAnimationValue as s32
+ * BattleEffect_GetAnimationValue(void); the definition has s32
+ * BattleEffect_GetAnimationValue(u32 objectId); tried as the definition's s32
+ * BattleEffect_GetAnimationValue(u32 objectId), which the object already
+ * declares, it does not compile in tla-ja:
+ * games/tla/src/field/object/f0cf050.c:2239: too few arguments to function
+ * `BattleEffect_GetAnimationValue'. */
+extern s32 BattleEffect_GetAnimationValue__definition_flags(void) __asm__(
+    "BattleEffect_GetAnimationValue");
 
 /// Returns the voice sound of sprite id's messages, its definition's value
 /// plus 0x100, or 0 for none (0xff) or with option 3
@@ -2092,7 +2149,9 @@ s32 Speaker_GetVoice(s32 id) {
 }
 
 u8 BattleEffect_GetFlags(void) {
-  return BattleEffect_FindDefinition(BattleEffect_GetAnimationValue__definition_flags())->flags;
+  return BattleEffect_FindDefinition(
+             BattleEffect_GetAnimationValue__definition_flags())
+      ->flags;
 }
 
 extern const s32 gData_080f3228[];
@@ -2156,7 +2215,7 @@ void Func_080d1f20(s32 heading) {
   REG_WIN0V = 0x1848;
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10008, 0);
-  BattleEffect_StartBufferInterpolation(24);
+  PaletteFade_StartInterpolation(24);
   REG_DISPCNT ^= 0x100;
   left = 120;
   right = 120;
@@ -2224,7 +2283,7 @@ void Func_080d20fc(void) {
   volatile u32 fill;
 
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(24);
+  PaletteFade_StartInterpolation(24);
   for (;;) {
     for (; gData_080f3230[step] >= 0; step++) {
       for (x = 0; x < 26; x++) {

@@ -1,3 +1,7 @@
+/// @file
+/// Copying the map cells the leader's layer touches within a rectangle, and
+/// the routines after it.
+
 #include "types.h"
 #include "actor.h"
 #include "ram_buffer.h"
@@ -7,13 +11,21 @@
 #include "module/system/system.h"
 #include "module/tla.h"
 
-/* VIEW(f0e2774): tag struct MapCell as struct MapCell__f0e2774; map.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2774.c:57: dereferencing pointer to incomplete type. */
+/* VIEW(f0e2774): tag struct MapCell as struct MapCell__f0e2774; map.h has
+ * another definition; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja:
+ * games/tla/src/field/event_commands/tile_copies.c:57: dereferencing pointer to
+ * incomplete type. */
 struct MapCell__f0e2774 {
   u8 unk00[2];
   u8 unk02;
 };
 
-/* VIEW(f0e2774): variable gData_02001000 as struct TouchCopies gData_02001000; module/tla.h has s8 gData_02001000[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2774.c:61: request for member `count' in something not a structure or union. */
+/* VIEW(f0e2774): variable gData_02001000 as struct TouchCopies gData_02001000;
+ * module/tla.h has s8 gData_02001000[]; tried as the rest of the object
+ * declares it, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/tile_copies.c:61: request for member
+ * `count' in something not a structure or union. */
 extern struct TouchCopies gData_02001000__f0e2774 __asm__("gData_02001000");
 
 struct MapCell__f0e2774 *Func_080dbb78(s32 x, s32 z, s32 layer);

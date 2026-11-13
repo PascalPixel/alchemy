@@ -1,9 +1,9 @@
 /// @file
-/// A sprite particle that grows as it drifts, and Func_080e4730, which sets up
-/// 64 of them as a dust puff.
-// Part of f0e2c38.c.
+/// A sprite particle that grows as it drifts, and FieldPsynergy_EndSand, which
+/// sets up 64 of them as a dust puff.
+// Part of psynergy.c.
 
-#include "../f0e2c38_internal.h"
+#include "../psynergy_internal.h"
 
 void Camera_WorldToScreen(s32 *position);
 
@@ -11,7 +11,8 @@ void Camera_WorldToScreen(s32 *position);
 /// steps through eight pictures of eight tiles from tiles, four frames each,
 /// grows by a tenth of its size a frame to full size, is placed on screen at
 /// the particle's position and drawn, and the particle moves on; after that
-/// only its age counts on. Reached from Func_080e4730 and Func_080e4a34.
+/// only its age counts on. Reached from FieldPsynergy_EndSand and
+/// FieldPsynergy_Sand.
 void Func_080e46ac(struct EffectSprite *sprite, struct EffectParticle *particle,
                    s32 unused, s32 tiles) {
   s32 position[3];
@@ -39,10 +40,14 @@ void Func_080e46ac(struct EffectSprite *sprite, struct EffectParticle *particle,
   particle->timer++;
 }
 
-
 struct PendingEvent;
 
-/* VIEW(growing_particle): variable gMainRoutineWork as extern u8 gMainRoutineWork[]; main_routine_work.h has extern struct MainRoutineWork gMainRoutineWork; tried as the 3 declarations' extern u8 gMainRoutineWork[], it does not compile in tla-ja: games/tla/include/system/main_routine_work.h:123: conflicting types for `gMainRoutineWork'. */
+/* VIEW(growing_particle): variable gMainRoutineWork as extern u8
+ * gMainRoutineWork[]; main_routine_work.h has extern struct MainRoutineWork
+ * gMainRoutineWork; tried as the 3 declarations' extern u8 gMainRoutineWork[],
+ * it does not compile in tla-ja:
+ * games/tla/include/system/main_routine_work.h:123: conflicting types for
+ * `gMainRoutineWork'. */
 extern u8 gMainRoutineWork__growing_particle[] __asm__("gMainRoutineWork");
 extern u8 Data_02000452;
 
@@ -56,11 +61,18 @@ s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 s32 Resource_ResetEntry(u32 slot);
-/* VIEW(growing_particle): routine Func_080e45a8 as void Func_080e45a8(void *sprite, void *particle, s32 index, s32 tiles, s32 high); the definition has void Func_080e45a8(struct EffectSprite__f0e446c *sprite, struct EffectParticle *particle, s32 unused, s32 tiles, s32 high). */
-extern void Func_080e45a8__growing_particle(void *sprite, void *particle, s32 index, s32 tiles,
-                   s32 high) __asm__("Func_080e45a8");
-/* VIEW(growing_particle): routine Func_080e4510 as void Func_080e4510(void *sprite, s32 tiles); the definition has void Func_080e4510(struct EffectSprite__f0e446c *sprite, s32 tiles). */
-extern void Func_080e4510__growing_particle(void *sprite, s32 tiles) __asm__("Func_080e4510");
+/* VIEW(growing_particle): routine Func_080e45a8 as void Func_080e45a8(void
+ * *sprite, void *particle, s32 index, s32 tiles, s32 high); the definition has
+ * void Func_080e45a8(struct EffectSprite__f0e446c *sprite, struct
+ * EffectParticle *particle, s32 unused, s32 tiles, s32 high). */
+extern void Func_080e45a8__growing_particle(void *sprite, void *particle,
+                                            s32 index, s32 tiles,
+                                            s32 high) __asm__("Func_080e45a8");
+/* VIEW(growing_particle): routine Func_080e4510 as void Func_080e4510(void
+ * *sprite, s32 tiles); the definition has void Func_080e4510(struct
+ * EffectSprite__f0e446c *sprite, s32 tiles). */
+extern void Func_080e4510__growing_particle(void *sprite,
+                                            s32 tiles) __asm__("Func_080e4510");
 void Func_080e446c(u8 *source, u8 *destination, s32 phase);
 void Func_080e45a0(void *sprite);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
@@ -71,11 +83,15 @@ void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
 struct Actor *Actor_GetById(u32 objectId);
 void Camera_FollowActor(s32 actor, s32 mode);
 s32 Func_080ce31c(s32 kind);
-/* VIEW(growing_particle): routine Func_080ce458 as struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector); battle.h has struct TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector). */
-extern struct PendingEvent *Func_080ce458__growing_particle(u32 filter, s32 kind, s32 selector) __asm__("Func_080ce458");
+/* VIEW(growing_particle): routine Func_080ce458 as struct PendingEvent
+ * *Func_080ce458(u32 filter, s32 kind, s32 selector); battle.h has struct
+ * TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector). */
+extern struct PendingEvent *
+Func_080ce458__growing_particle(u32 filter, s32 kind,
+                                s32 selector) __asm__("Func_080ce458");
 s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 argument);
 
-void Func_080e4730(void) {
+void FieldPsynergy_EndSand(void) {
   u8 *work = HeapSlot_Alloc(92, 0x192c);
   u8 *effect = Ram_HeapSlots->effectWork;
   u8 *event = Ram_HeapSlots->eventWork;
@@ -112,7 +128,7 @@ void Func_080e4730(void) {
   particleSprite = work + 0x800;
   for (; i < 64; i++) {
     Func_080e45a8__growing_particle(particleSprite, particle, i, particleTiles,
-                  *(s16 *)(event + 0xd48));
+                                    *(s16 *)(event + 0xd48));
     *(s32 *)(particle + 24) = delay;
     particleSprite += 40;
     delay -= 2;
@@ -188,10 +204,10 @@ void Func_080e4730(void) {
         *motionFlags = 3;
       }
       if (*(s16 *)(event + 0xd48) == 0)
-        Field_RunPsynergyEvent(
-            Func_080ce458__growing_particle(0x40000005, *(s16 *)(effect + 30),
-                          Func_080ce31c(*(s16 *)(effect + 30))),
-            *(s16 *)(effect + 24), -1);
+        Field_RunPsynergyEvent(Func_080ce458__growing_particle(
+                                   0x40000005, *(s16 *)(effect + 30),
+                                   Func_080ce31c(*(s16 *)(effect + 30))),
+                               *(s16 *)(effect + 24), -1);
     }
     i = 0;
     particle = work + 0x1200;
@@ -210,17 +226,16 @@ void Func_080e4730(void) {
   HeapSlot_Release(92);
 }
 
-
-void Func_080e3d04(void);
-void Func_080e4a34(void);
-void Func_080e572c(void);
-void Func_080e5d5c(void);
-void Func_080e68d0(void);
-void Func_080e7844(void);
-void Func_080e9af4(void);
+void FieldPsynergy_Blaze(void);
+void FieldPsynergy_Sand(void);
+void FieldPsynergy_Burst(void);
+void FieldPsynergy_Pound(void);
+void FieldPsynergy_Scoop(void);
+void FieldPsynergy_Parch(void);
+void FieldPsynergy_Hover(void);
 void Func_080e74d8(void);
-void BattleEffect_PrepareBufferInterpolation(void);
+void FieldPsynergy_FadeFromCastColor(void);
 s32 Party_GetLeaderActor(void);
 
 /// Psynergy effect 23 cast on a target: runs its effect.
-void BattleEffect_CallEffect23(void) { Func_080e4a34(); }
+void FieldPsynergy_SandOnTarget(void) { FieldPsynergy_Sand(); }

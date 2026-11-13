@@ -1,3 +1,6 @@
+/// @file
+/// Carry.
+
 #include "types.h"
 #include "system.h"
 #include "objdisp.h"
@@ -10,7 +13,7 @@
 #include "module/field/field.h"
 #include "module/field/object.h"
 
-void Func_080df6f4(void) {
+void FieldPsynergy_Carry(void) {
   struct BattleFxScene *work;
   struct Actor *obj;
   struct Actor *pair[2];
@@ -20,7 +23,7 @@ void Func_080df6f4(void) {
   s32 dist;
 
   work = Ram_HeapSlots->effectWork;
-  BattleEffect_InitializeSharedScene();
+  FieldPsynergy_FadeToCastColor();
   pos.x = work->x;
   pos.y = work->y + 0x100000;
   pos.z = work->z;
@@ -55,7 +58,7 @@ void Func_080df6f4(void) {
 
   Actor_Destroy(pair[0]);
   Actor_Destroy(pair[1]);
-  BattleEffect_PrepareBufferInterpolation();
+  FieldPsynergy_FadeFromCastColor();
 }
 
 #include "fixed_math.h"

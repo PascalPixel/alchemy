@@ -410,9 +410,9 @@ BattleEffect_ApplyColorToTargetBuffer:
 	.thumb_func
 BattleEffect_ApplyColorToSourceBuffer:
 	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
-	.global BattleEffect_StartBufferInterpolation
+	.global PaletteFade_StartInterpolation
 	.thumb_func
-BattleEffect_StartBufferInterpolation:
+PaletteFade_StartInterpolation:
 	overlay_veneer BattleEffect_StartBufferInterpolationFar
 	.global Event_StartScreenTransition
 	.thumb_func
@@ -466,9 +466,9 @@ Actor_CommitPositionAndActivate:
 	.thumb_func
 Actor_WatchAndSetScript:
 	overlay_veneer Actor_WatchAndSetScriptFar
-	.global Func_080d46a4
+	.global WorldMap_StartZoom
 	.thumb_func
-Func_080d46a4:
+WorldMap_StartZoom:
 	overlay_veneer Func_080c8638
 	.global Func_02004e00
 	.thumb_func

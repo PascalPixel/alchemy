@@ -31,7 +31,7 @@ void FieldMessage_Show(s32 message, s32 position);
 void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 void Actor_SetWideSprite(s32 actor, s32 value);
 void Task_RemoveFar(TaskFunc func);
-void Field_DispatchTypeHandler(s32 type);
+void FieldPsynergy_RunHandler(s32 type);
 
 void Func_020006ac(void);
 void Func_02001594(void);
@@ -51,14 +51,15 @@ void Func_0200388c(const void *script, s32 a, s32 b);
 void Map_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
-void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z, s32 angle);
+void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z,
+                                                    s32 angle);
 s32 Func_020040d8(s32 speaker, s32 flags);
 void Func_020040f8(s32 actor);
 void Func_02004148(s32 a, s32 b);
 void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void Func_02004180(s32 value);
 void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
-void BattleEffect_SetupObjectPair(s32 a, s32 b);
+void FieldPsynergy_SetupActorPair(s32 a, s32 b);
 void BattleEffect_StopMainActor(void);
 void BattleEffect_CleanupSceneObjects(void);
 void Func_020041c8(s32 cue);

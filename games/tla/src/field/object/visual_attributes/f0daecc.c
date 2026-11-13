@@ -10,7 +10,8 @@
 #include "module/field/object.h"
 #include "module/system/system.h"
 
-/* VIEW(f0daecc): tag struct ChainLink as struct ChainLink__f0daecc; visual_attributes.c has another definition. */
+/* VIEW(f0daecc): tag struct ChainLink as struct ChainLink__f0daecc;
+ * visual_attributes.c has another definition. */
 struct ChainLink__f0daecc {
   struct ChainLink__f0daecc *next;
   s32 x;
@@ -20,7 +21,11 @@ struct ChainLink__f0daecc {
   s8 kind;
 };
 
-/* VIEW(f0daecc): tag struct ChainSlot as struct ChainSlot__f0daecc; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:6916: structure has no member named `root'. */
+/* VIEW(f0daecc): tag struct ChainSlot as struct ChainSlot__f0daecc;
+ * visual_attributes.c has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/field/object/visual_attributes.c:6916: structure has no member
+ * named `root'. */
 struct ChainSlot__f0daecc {
   s16 objectId;
   u8 unk02[2];
@@ -33,12 +38,19 @@ struct ChainSlot__f0daecc {
 };
 
 struct Actor *Actor_GetById(u32 objectId);
-/* VIEW(f0daecc): routine Func_080da9a8 as void *Func_080da9a8(s32 kind); the definition has struct TileEffectWork *Func_080da9a8(s32 kind). */
+/* VIEW(f0daecc): routine Func_080da9a8 as void *Func_080da9a8(s32 kind); the
+ * definition has struct TileEffectWork *Func_080da9a8(s32 kind). */
 extern void *Func_080da9a8__f0daecc(s32 kind) __asm__("Func_080da9a8");
-/* VIEW(f0daecc): routine Func_080dae3c as struct ChainSlot__f0daecc *Func_080dae3c(void); the definition has struct WorkA4Slot *Func_080dae3c(void). */
-extern struct ChainSlot__f0daecc *Func_080dae3c__f0daecc(void) __asm__("Func_080dae3c");
-/* VIEW(f0daecc): routine Func_080daea8 as struct ChainLink__f0daecc *Func_080daea8(void); the definition has struct WorkA4Item *Func_080daea8(void). */
-extern struct ChainLink__f0daecc *Func_080daea8__f0daecc(void) __asm__("Func_080daea8");
+/* VIEW(f0daecc): routine Func_080dae3c as struct ChainSlot__f0daecc
+ * *Func_080dae3c(void); the definition has struct WorkA4Slot
+ * *Func_080dae3c(void). */
+extern struct ChainSlot__f0daecc *
+Func_080dae3c__f0daecc(void) __asm__("Func_080dae3c");
+/* VIEW(f0daecc): routine Func_080daea8 as struct ChainLink__f0daecc
+ * *Func_080daea8(void); the definition has struct WorkA4Item
+ * *Func_080daea8(void). */
+extern struct ChainLink__f0daecc *
+Func_080daea8__f0daecc(void) __asm__("Func_080daea8");
 
 #define CELL_MASK 0xfff00000 // 16-pixel cells
 
@@ -326,109 +338,116 @@ void Func_080db444(s32 id, s32 force) {
 
 // Field Psynergy: the dispatchers that run each animation
 
-void BattleEffect_MarkChildAndRunFallbackTransition(s32 id);
-void Func_080dc978(s32 sourceId, s32 targetId);
-void Func_080dd054(s32 targetId);
-void FieldEffect_RunLiftOnTarget(s32 targetId);
-void FieldEffect_RunForceOnTarget(s32 targetId);
-void FieldEffect_RunDouseOnTarget(s32 targetId);
-void FieldEffect_RunFrostOnTarget(s32 targetId);
-void FieldEffect_RunPlyOnTarget(s32 targetId);
-/* VIEW(f0daecc): routine FieldEffect_RunWhirlwindOnTarget as void FieldEffect_RunWhirlwindOnTarget(s32 targetId); battle.h has void FieldEffect_RunWhirlwindOnTarget(void); tried as the definition's void FieldEffect_RunWhirlwindOnTarget(void), which the object already declares, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:7369: too many arguments to function `FieldEffect_RunWhirlwindOnTarget'. */
-extern void FieldEffect_RunWhirlwindOnTarget__f0daecc(s32 targetId) __asm__("FieldEffect_RunWhirlwindOnTarget");
-void BattleEffect_CallEffect13(s32 targetId);
-void BattleEffect_CallEffect23(s32 targetId);
-void BattleEffect_CallEffect26(s32 targetId);
-void BattleEffect_CallSpinEffect(s32 targetId);
-void BattleEffect_CallEffect20(s32 targetId);
-void Func_080e8db0(s32 targetId);
-void Func_080e92b4(s32 targetId);
-void BattleEffect_CallEffect24(s32 targetId);
-void Func_080e7818(s32 targetId);
-void BattleEffect_CallEffect22(s32 targetId);
-void BattleEffect_CallEffect21(s32 targetId);
-void BattleEffect_CallEffect18(s32 targetId);
+void FieldPsynergy_HaltOnTarget(s32 id);
+void FieldPsynergy_StartMindReadWave(s32 sourceId, s32 targetId);
+void FieldPsynergy_SteerPushedTarget(s32 targetId);
+void FieldPsynergy_LiftOnTarget(s32 targetId);
+void FieldPsynergy_ForceOnTarget(s32 targetId);
+void FieldPsynergy_DouseOnTarget(s32 targetId);
+void FieldPsynergy_FrostOnTarget(s32 targetId);
+void FieldPsynergy_PlyOnTarget(s32 targetId);
+/* VIEW(f0daecc): routine FieldPsynergy_WhirlwindOnTarget as void
+ * FieldPsynergy_WhirlwindOnTarget(s32 targetId); battle.h has void
+ * FieldPsynergy_WhirlwindOnTarget(void); tried as the definition's void
+ * FieldPsynergy_WhirlwindOnTarget(void), which the object already declares, it
+ * does not compile in tla-ja:
+ * games/tla/src/field/object/visual_attributes.c:7369: too many arguments to
+ * function `FieldPsynergy_WhirlwindOnTarget'. */
+extern void FieldEffect_RunWhirlwindOnTarget__f0daecc(s32 targetId) __asm__(
+    "FieldPsynergy_WhirlwindOnTarget");
+void FieldPsynergy_CatchOnTarget(s32 targetId);
+void FieldPsynergy_SandOnTarget(s32 targetId);
+void FieldPsynergy_BlazeOnTarget(s32 targetId);
+void FieldPsynergy_CycloneOnTarget(s32 targetId);
+void FieldPsynergy_ScoopOnTarget(s32 targetId);
+void FieldPsynergy_TremorOnTarget(s32 targetId);
+void FieldPsynergy_GrindOnTarget(s32 targetId);
+void FieldPsynergy_HoverOnTarget(s32 targetId);
+void FieldPsynergy_TeleportOnTarget(s32 targetId);
+void FieldPsynergy_ParchOnTarget(s32 targetId);
+void FieldPsynergy_BurstOnTarget(s32 targetId);
+void FieldPsynergy_PoundOnTarget(s32 targetId);
 
 /// Runs the animation's handler for kind: 0 runs it with no target chosen, 1
 /// on the chosen target (secondObjectId), 2 finishes it and 3 runs the kind's
 /// extra step.
-void Field_DispatchTypeHandler(s32 kind) {
-  if (kind == 0)
-    BattleEffect_Run();
-  else if (kind == 1)
-    BattleEffect_DispatchRequestKind();
-  else if (kind == 2)
-    BattleEffect_ClearChildValueOnMismatch();
-  else if (kind == 3)
-    FieldEvent_RunTypeHandler();
+void FieldPsynergy_RunHandler(s32 kind) {
+  if (kind == FIELD_PSYNERGY_HANDLER_UNTARGETED)
+    FieldPsynergy_Run();
+  else if (kind == FIELD_PSYNERGY_HANDLER_ON_TARGET)
+    FieldPsynergy_Dispatch();
+  else if (kind == FIELD_PSYNERGY_HANDLER_FINISH)
+    FieldPsynergy_FinishMindRead();
+  else if (kind == FIELD_PSYNERGY_HANDLER_EXTRA)
+    FieldPsynergy_RunExtraHandler();
 }
 
 /// Runs the field Psynergy animation the scene names, with no target chosen
 /// yet: each kind runs its effect to the end.
-void BattleEffect_Run(void) {
+void FieldPsynergy_Run(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   u8 *event = Ram_HeapSlots->eventWork;
   s32 animation = scene->fieldKind;
   s32 targetId = scene->secondObjectId;
   s32 objectId;
 
-  if (animation == FIELD_FX_PUSH)
-    FieldEffect_RunMove();
-  else if (animation == 7)
+  if (animation == FIELD_PSYNERGY_MOVE)
+    FieldPsynergy_Move();
+  else if (animation == FIELD_PSYNERGY_LIFT)
     FieldPsynergy_Lift();
-  else if (animation == 11)
-    Func_080df6f4();
-  else if (animation == 4)
-    Func_080de21c();
-  else if (animation == 5)
-    FieldEffect_RunDouse();
-  else if (animation == 14)
-    FieldEffect_RunWhirlwind();
-  else if (animation == 6)
-    FieldEffect_RunFrost();
-  else if (animation == 3)
-    FieldEffect_RunPly();
-  else if (animation == 12)
-    FieldEffect_RunGrowth();
-  else if (animation == 13)
+  else if (animation == FIELD_PSYNERGY_CARRY)
+    FieldPsynergy_Carry();
+  else if (animation == FIELD_PSYNERGY_FORCE)
+    FieldPsynergy_Force();
+  else if (animation == FIELD_PSYNERGY_DOUSE)
+    FieldPsynergy_Douse();
+  else if (animation == FIELD_PSYNERGY_WHIRLWIND)
+    FieldPsynergy_Whirlwind();
+  else if (animation == FIELD_PSYNERGY_FROST)
+    FieldPsynergy_Frost();
+  else if (animation == FIELD_PSYNERGY_PLY)
+    FieldPsynergy_Ply();
+  else if (animation == FIELD_PSYNERGY_GROWTH)
+    FieldPsynergy_Growth();
+  else if (animation == FIELD_PSYNERGY_CATCH)
     FieldPsynergy_Catch();
-  else if (animation == 15)
-    FieldEffect_RunRetreat();
-  else if (animation == 16)
-    BattleEffect_RunEffect16();
-  else if (animation == 10)
-    Func_080decb8();
-  else if (animation == 8)
-    Func_080dd820();
-  else if (animation == 17)
-    Func_080e09c0();
-  else if (animation == 29)
-    Func_080e1f2c();
-  else if (animation == 25)
-    Func_080e3074();
-  else if (animation == 26)
-    Func_080e3d04();
-  else if (animation == 21)
-    Func_080e572c();
-  else if (animation == 18)
-    Func_080e5d5c();
-  else if (animation == 20)
-    Func_080e68d0();
-  else if (animation == 19)
-    Func_080e9090();
-  else if (animation == 27)
-    BattleEffect_RunViewSway();
-  else if (animation == 24)
-    Func_080e9af4();
-  else if (animation == 23)
-    Func_080e4a34();
-  else if (animation == 30)
-    BattleEffect_RunEffect30();
-  else if (animation == 22)
-    Func_080e7844();
-  else if (animation == 28)
-    Func_080e82cc();
-  else if (animation == FIELD_FX_PAUSE) {
+  else if (animation == FIELD_PSYNERGY_RETREAT)
+    FieldPsynergy_Retreat();
+  else if (animation == FIELD_PSYNERGY_AVOID)
+    FieldPsynergy_Avoid();
+  else if (animation == FIELD_PSYNERGY_CLOAK)
+    FieldPsynergy_StartCloak();
+  else if (animation == FIELD_PSYNERGY_REVEAL)
+    FieldPsynergy_Reveal();
+  else if (animation == FIELD_PSYNERGY_LASH)
+    FieldPsynergy_Lash();
+  else if (animation == FIELD_PSYNERGY_UNNAMED_29)
+    FieldPsynergy_Unnamed29();
+  else if (animation == FIELD_PSYNERGY_CYCLONE)
+    FieldPsynergy_Cyclone();
+  else if (animation == FIELD_PSYNERGY_BLAZE)
+    FieldPsynergy_Blaze();
+  else if (animation == FIELD_PSYNERGY_BURST)
+    FieldPsynergy_Burst();
+  else if (animation == FIELD_PSYNERGY_POUND)
+    FieldPsynergy_Pound();
+  else if (animation == FIELD_PSYNERGY_SCOOP)
+    FieldPsynergy_Scoop();
+  else if (animation == FIELD_PSYNERGY_TREMOR)
+    FieldPsynergy_Tremor();
+  else if (animation == FIELD_PSYNERGY_GRIND)
+    FieldPsynergy_Grind();
+  else if (animation == FIELD_PSYNERGY_HOVER)
+    FieldPsynergy_Hover();
+  else if (animation == FIELD_PSYNERGY_SAND)
+    FieldPsynergy_Sand();
+  else if (animation == FIELD_PSYNERGY_TELEPORT)
+    FieldPsynergy_Teleport();
+  else if (animation == FIELD_PSYNERGY_PARCH)
+    FieldPsynergy_Parch();
+  else if (animation == FIELD_PSYNERGY_UNNAMED_28)
+    FieldPsynergy_Unnamed28();
+  else if (animation == FIELD_PSYNERGY_HALT) {
     // Let the object stopped last time go, then stop the nearest one that
     // has an event to run; with none, play the fallback transition.
     struct MainRoutineWork *party = &gMainRoutineWork;
@@ -436,150 +455,151 @@ void BattleEffect_Run(void) {
 
     paused = party->pausedObject;
     if (paused != -1) {
-      BattleEffect_ResumeObject(paused);
+      FieldPsynergy_ResumeHaltedActor(paused);
       party->pausedObject = -1;
     }
-    objectId = BattleEffect_FindNearestObject(scene->firstObjectId, animation);
-    objectId = BattleEffect_FilterObjectIdByFlags(objectId);
+    objectId = Field_FindNearbyPsynergyTarget(scene->firstObjectId, animation);
+    objectId = FieldPsynergy_FilterHaltTarget(objectId);
     if (Scene_FindActorTalkTrigger(objectId) != 0) {
-      BattleEffect_SetupObjectPair(scene->firstObjectId, objectId);
-      BattleEffect_MarkChildAndRunFallbackTransition(objectId);
-      BattleEffect_PauseObject(objectId);
+      FieldPsynergy_SetupActorPair(scene->firstObjectId, objectId);
+      FieldPsynergy_HaltOnTarget(objectId);
+      FieldPsynergy_HaltActor(objectId);
       party->pausedObject = objectId;
     } else {
       FieldPsynergy_Halt();
     }
-  } else if (animation == FIELD_FX_WAVE) {
+  } else if (animation == FIELD_PSYNERGY_MIND_READ) {
     // A wave still running from the last cast is reset first.
     if (*(s8 *)(event + 0xca4) != 0)
-      Func_080dd950();
-    Func_080dc978(scene->firstObjectId, targetId);
+      FieldPsynergy_EndReveal();
+    FieldPsynergy_StartMindReadWave(scene->firstObjectId, targetId);
   }
 }
 
 /// Runs the field Psynergy animation the scene names on the target the player
 /// chose (BattleFxScene.secondObjectId).
-void BattleEffect_DispatchRequestKind(void) {
+void FieldPsynergy_Dispatch(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   u8 *event = Ram_HeapSlots->eventWork;
   s32 animation = scene->fieldKind;
   s32 targetId = scene->secondObjectId;
 
   scene->enabled = 0;
-  if (animation == FIELD_FX_PUSH)
-    Func_080dd054(targetId);
-  else if (animation == 7)
-    FieldEffect_RunLiftOnTarget(targetId);
-  else if (animation == 11)
-    BattleEffect_SteerLiftedTarget(targetId);
-  else if (animation == 4)
-    FieldEffect_RunForceOnTarget(targetId);
-  else if (animation == 5)
-    FieldEffect_RunDouseOnTarget(targetId);
-  else if (animation == 6)
-    FieldEffect_RunFrostOnTarget(targetId);
-  else if (animation == 12)
-    Func_080dda30(targetId);
-  else if (animation == 3)
-    FieldEffect_RunPlyOnTarget(targetId);
-  else if (animation == 14)
+  if (animation == FIELD_PSYNERGY_MOVE)
+    FieldPsynergy_SteerPushedTarget(targetId);
+  else if (animation == FIELD_PSYNERGY_LIFT)
+    FieldPsynergy_LiftOnTarget(targetId);
+  else if (animation == FIELD_PSYNERGY_CARRY)
+    FieldPsynergy_SteerLiftedTarget(targetId);
+  else if (animation == FIELD_PSYNERGY_FORCE)
+    FieldPsynergy_ForceOnTarget(targetId);
+  else if (animation == FIELD_PSYNERGY_DOUSE)
+    FieldPsynergy_DouseOnTarget(targetId);
+  else if (animation == FIELD_PSYNERGY_FROST)
+    FieldPsynergy_FrostOnTarget(targetId);
+  else if (animation == FIELD_PSYNERGY_GROWTH)
+    FieldPsynergy_GrowthOnTarget(targetId);
+  else if (animation == FIELD_PSYNERGY_PLY)
+    FieldPsynergy_PlyOnTarget(targetId);
+  else if (animation == FIELD_PSYNERGY_WHIRLWIND)
     FieldEffect_RunWhirlwindOnTarget__f0daecc(targetId);
-  else if (animation == 13)
-    BattleEffect_CallEffect13(targetId);
-  else if (animation == 16)
-    BattleEffect_RunEffect16();
-  else if (animation == 17)
-    Func_080e0978(targetId);
-  else if (animation == 10)
-    Func_080decb8();
-  else if (animation == 15)
-    FieldEffect_RunRetreat();
-  else if (animation == 8)
-    Func_080dd820();
-  else if (animation == 23)
-    BattleEffect_CallEffect23(targetId);
-  else if (animation == 26)
-    BattleEffect_CallEffect26(targetId);
-  else if (animation == 25)
-    BattleEffect_CallSpinEffect(targetId);
-  else if (animation == 20)
-    BattleEffect_CallEffect20(targetId);
-  else if (animation == 19)
-    Func_080e8db0(targetId);
-  else if (animation == 27)
-    Func_080e92b4(targetId);
-  else if (animation == 24)
-    BattleEffect_CallEffect24(targetId);
-  else if (animation == 30)
-    Func_080e7818(targetId);
-  else if (animation == 22)
-    BattleEffect_CallEffect22(targetId);
-  else if (animation == 21)
-    BattleEffect_CallEffect21(targetId);
-  else if (animation == 18)
-    BattleEffect_CallEffect18(targetId);
-  else if (animation == 28)
-    Func_080e82cc();
-  else if (animation == FIELD_FX_WAVE) {
+  else if (animation == FIELD_PSYNERGY_CATCH)
+    FieldPsynergy_CatchOnTarget(targetId);
+  else if (animation == FIELD_PSYNERGY_AVOID)
+    FieldPsynergy_Avoid();
+  else if (animation == FIELD_PSYNERGY_LASH)
+    FieldPsynergy_LashOnTarget(targetId);
+  else if (animation == FIELD_PSYNERGY_CLOAK)
+    FieldPsynergy_StartCloak();
+  else if (animation == FIELD_PSYNERGY_RETREAT)
+    FieldPsynergy_Retreat();
+  else if (animation == FIELD_PSYNERGY_REVEAL)
+    FieldPsynergy_Reveal();
+  else if (animation == FIELD_PSYNERGY_SAND)
+    FieldPsynergy_SandOnTarget(targetId);
+  else if (animation == FIELD_PSYNERGY_BLAZE)
+    FieldPsynergy_BlazeOnTarget(targetId);
+  else if (animation == FIELD_PSYNERGY_CYCLONE)
+    FieldPsynergy_CycloneOnTarget(targetId);
+  else if (animation == FIELD_PSYNERGY_SCOOP)
+    FieldPsynergy_ScoopOnTarget(targetId);
+  else if (animation == FIELD_PSYNERGY_TREMOR)
+    FieldPsynergy_TremorOnTarget(targetId);
+  else if (animation == FIELD_PSYNERGY_GRIND)
+    FieldPsynergy_GrindOnTarget(targetId);
+  else if (animation == FIELD_PSYNERGY_HOVER)
+    FieldPsynergy_HoverOnTarget(targetId);
+  else if (animation == FIELD_PSYNERGY_TELEPORT)
+    FieldPsynergy_TeleportOnTarget(targetId);
+  else if (animation == FIELD_PSYNERGY_PARCH)
+    FieldPsynergy_ParchOnTarget(targetId);
+  else if (animation == FIELD_PSYNERGY_BURST)
+    FieldPsynergy_BurstOnTarget(targetId);
+  else if (animation == FIELD_PSYNERGY_POUND)
+    FieldPsynergy_PoundOnTarget(targetId);
+  else if (animation == FIELD_PSYNERGY_UNNAMED_28)
+    FieldPsynergy_Unnamed28();
+  else if (animation == FIELD_PSYNERGY_MIND_READ) {
     // A wave still running from the last cast is reset first; a target that
     // is not the paused object stops walking while the wave runs.
     struct MainRoutineWork *party;
 
     if (*(s8 *)(event + 0xca4) != 0)
-      Func_080dd950();
+      FieldPsynergy_EndReveal();
     party = &gMainRoutineWork;
     if (party->pausedObject != scene->secondObjectId)
       ((struct Actor *)scene->child)->movementState = 1;
-    Func_080dc978(scene->firstObjectId, targetId);
-  } else if (animation == FIELD_FX_PAUSE) {
+    FieldPsynergy_StartMindReadWave(scene->firstObjectId, targetId);
+  } else if (animation == FIELD_PSYNERGY_HALT) {
     // Let the object stopped last time go, then stop the target.
     struct MainRoutineWork *party = &gMainRoutineWork;
 
     if (party->pausedObject != -1) {
-      BattleEffect_ResumeObject(party->pausedObject);
+      FieldPsynergy_ResumeHaltedActor(party->pausedObject);
       party->pausedObject = -1;
     }
-    BattleEffect_PauseObject(targetId);
+    FieldPsynergy_HaltActor(targetId);
     party->pausedObject = targetId;
-    BattleEffect_MarkChildAndRunFallbackTransition(targetId);
+    FieldPsynergy_HaltOnTarget(targetId);
   }
 }
 
-void BattleEffect_ClearChildValueOnMismatch(void) {
+void FieldPsynergy_FinishMindRead(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
 
-  if (scene->fieldKind == 2) {
+  if (scene->fieldKind == FIELD_PSYNERGY_MIND_READ) {
     struct PartyPauseView *party;
 
-    BattleEffect_FinishSceneAndReleaseHeapBlock();
+    FieldPsynergy_StopMindReadWave();
     party = (struct PartyPauseView *)&gMainRoutineWork;
     if (party->pausedObject != scene->secondObjectId)
       ((struct Actor *)scene->child)->movementState = 0;
   }
 }
 
-/// Additional processing for each type.
-void FieldEvent_RunTypeHandler(void) {
+/// The extra handler of Reveal, Cloak, Avoid, Sand, Hover and the unnamed kind
+/// 28: what each does when it ends.
+void FieldPsynergy_RunExtraHandler(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
 
   switch (scene->fieldKind) {
-  case 8:
-    Func_080dd950();
+  case FIELD_PSYNERGY_REVEAL:
+    FieldPsynergy_EndReveal();
     break;
-  case 10:
-    Func_080debd8();
+  case FIELD_PSYNERGY_CLOAK:
+    FieldPsynergy_EndCloak();
     break;
-  case 16:
-    FieldEvent_ShowStatusMessage();
+  case FIELD_PSYNERGY_AVOID:
+    FieldPsynergy_ShowAvoidWoreOff();
     break;
-  case 23:
-    Func_080e4730();
+  case FIELD_PSYNERGY_SAND:
+    FieldPsynergy_EndSand();
     break;
-  case 24:
-    Func_080e9db4();
+  case FIELD_PSYNERGY_HOVER:
+    FieldPsynergy_EndHover();
     break;
-  case 28:
-    Func_080e87c4();
+  case FIELD_PSYNERGY_UNNAMED_28:
+    FieldPsynergy_EndUnnamed28();
     break;
   }
 }
@@ -626,8 +646,11 @@ void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
   }
 }
 
-/* VIEW(visual_attributes): routine Func_080eb01c as void Func_080eb01c(void *work); effect_sprite.h has void Func_080eb01c(struct EffectSprite *sprite). */
-extern void Func_080eb01c__visual_attributes(void *work) __asm__("Func_080eb01c");
+/* VIEW(visual_attributes): routine Func_080eb01c as void Func_080eb01c(void
+ * *work); effect_sprite.h has void Func_080eb01c(struct EffectSprite *sprite).
+ */
+extern void
+Func_080eb01c__visual_attributes(void *work) __asm__("Func_080eb01c");
 
 s32 Func_080db9a8(struct Actor *object, s32 kind) {
   if (kind == 0xc000)
@@ -673,10 +696,18 @@ void BattleEffect_DrawSceneSprite(void) {
   Func_080eb01c__visual_attributes((u8 *)Ram_HeapSlots->effectWork + 0x7c8);
 }
 
-/* VIEW(visual_attributes): routine Func_080eaf98 as void Func_080eaf98(struct DepthSprite *sprite, s32 a, s32 b, u32 c, s32 tiles); effect_sprite.h has void Func_080eaf98(struct EffectSprite *sprite, s32 pivotX, s32 pivotY, u32 attributes, s32 tile). */
-extern void Func_080eaf98__visual_attributes(struct DepthSprite *sprite, s32 a, s32 b, u32 c, s32 tiles) __asm__("Func_080eaf98");
-/* VIEW(f0daecc): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); ground_particles has void Camera_WorldToScreen(union FieldCoordinate *position). */
-extern void Camera_WorldToScreen__f0daecc(s32 *position) __asm__("Camera_WorldToScreen");
+/* VIEW(visual_attributes): routine Func_080eaf98 as void Func_080eaf98(struct
+ * DepthSprite *sprite, s32 a, s32 b, u32 c, s32 tiles); effect_sprite.h has
+ * void Func_080eaf98(struct EffectSprite *sprite, s32 pivotX, s32 pivotY, u32
+ * attributes, s32 tile). */
+extern void
+Func_080eaf98__visual_attributes(struct DepthSprite *sprite, s32 a, s32 b,
+                                 u32 c, s32 tiles) __asm__("Func_080eaf98");
+/* VIEW(f0daecc): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32
+ * *position); ground_particles has void Camera_WorldToScreen(union
+ * FieldCoordinate *position). */
+extern void
+Camera_WorldToScreen__f0daecc(s32 *position) __asm__("Camera_WorldToScreen");
 
 void Func_080dba5c(void) {
   struct DepthScene *scene = Ram_HeapSlots->effectWork;

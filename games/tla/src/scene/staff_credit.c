@@ -175,7 +175,7 @@ void Func_0200020c(s32 stage) {
   Camera_MoveWithinMapBounds_(gData_02003d20[stage][0] << 16,
                               gData_02003d20[stage][1] << 16, 0);
   Map_UpdateCurrentTileBlock();
-  Func_080d46a4(gData_02003d5c[stage], 1);
+  WorldMap_StartZoom(gData_02003d5c[stage], 1);
   map->yaw = 0x1000;
   map->unk11c = 0xd000;
   Iwram_ClearWordsEntry((void *)0x050001c0, 32);
@@ -191,7 +191,7 @@ void Func_0200020c(s32 stage) {
 
       map->yaw = (length - frame) << 5;
       if (frame == length - 59)
-        Func_080d46a4(gData_02003d70[stage], 60);
+        WorldMap_StartZoom(gData_02003d70[stage], 60);
     }
     if (frame >= gData_02003d84[stage] - 64)
     // Pointer arithmetic folds gData_02003d88 + 1 into one literal, as the
@@ -422,7 +422,7 @@ void Func_0200020c(s32 stage) {
     Func_0200207c();
     Camera_MoveWithinMapBounds_(gData_02003d48[stage][0] << 16,
                                 gData_02003d48[stage][1] << 16, 1);
-    Func_080d46a4(0xb333, 60);
+    WorldMap_StartZoom(0xb333, 60);
     for (frame = 0; frame != 124;) {
       map->yaw += 0xffe0;
       if (frame == 60) {
@@ -567,7 +567,7 @@ DEFINE_FUNC_020011F4(Func_020011f4, Func_020010b0)
 extern s32 gData_02003db8;
 
 DEFINE_FUNC_0200122C(Func_0200122c, gData_02002eac, gData_02003db8,
-    Func_02001168)
+                     Func_02001168)
 
 DEFINE_FUNC_02001274(Func_02001274, Func_020011f4, Func_0200122c)
 
@@ -749,8 +749,7 @@ void Func_02001ad0(struct Actor *parent) {
   s32 i;
 
   for (i = 0; i < 2; i++) {
-    child = (FieldActor_Create(271, parent->x, parent->y,
-                                                parent->z));
+    child = (FieldActor_Create(271, parent->x, parent->y, parent->z));
     pair[i] = child;
     if (child != NULL) {
       child->terrainHeight = parent->terrainHeight;
@@ -798,7 +797,7 @@ extern s16 gData_02003fc4;
 extern u8 gData_02003fd8[][32];
 
 DEFINE_FUNC_02001BE0(Func_02001be0, gData_02003fc4, gData_02003fd8,
-    gData_020040d8, gData_02003fc6)
+                     gData_020040d8, gData_02003fc6)
 
 extern u32 gInput;
 extern s16 gData_02003fc8;
@@ -833,10 +832,10 @@ void Func_02001d90(void) {
 }
 
 DEFINE_FUNC_02001E58(Func_02001e58, gData_020040d8, gData_02003fc6,
-    gData_02003fc4, gData_02003fc8, Func_02001d90)
+                     gData_02003fc4, gData_02003fc8, Func_02001d90)
 
 DEFINE_FUNC_02001EB8(Func_02001eb8, gData_020040d8, gData_02003fc6,
-    gData_02003fc4, Func_02001d90)
+                     gData_02003fc4, Func_02001d90)
 
 s32 gData_02002e74[] = {
     46,

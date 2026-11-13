@@ -1,13 +1,11 @@
 /// @file
 /// A spray started from an event, and whether an object is blocked, with
 /// routines not yet understood.
-// Part of f0e2c38.c.
+// Part of psynergy.c.
 
-#include "../f0e2c38_internal.h"
+#include "../psynergy_internal.h"
 
 #include "input.h"
-
-
 
 struct FxScene {
   u16 angleFraction;
@@ -64,13 +62,13 @@ s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
-void BattleEffect_PrepareBufferInterpolation(void);
+void FieldPsynergy_FadeFromCastColor(void);
 void Func_080e38c8(void);
 
 #define OBJECT_DEFINITION(object)                                              \
   (((struct ObjectAnimation *)(object)->sprite)->definition)
 
-void Func_080e3d04(void) {
+void FieldPsynergy_Blaze(void) {
   struct SprayWork *work;
   struct FxEvent *event;
   struct FxScene *scene;
@@ -280,7 +278,7 @@ void Func_080e3d04(void) {
   Resource_ResetEntry(dropSlot);
   Resource_ResetEntry(puffSlot);
 end:
-  BattleEffect_PrepareBufferInterpolation();
+  FieldPsynergy_FadeFromCastColor();
   HeapSlot_Release(92);
 }
 
@@ -331,7 +329,11 @@ struct CueEvent {
   u16 cue;
 };
 
-/* VIEW(f0e3d04): variable gMainRoutineWork as extern u8 gMainRoutineWork[]; main_routine_work.h has extern struct MainRoutineWork gMainRoutineWork; tried as the 3 declarations' extern u8 gMainRoutineWork[], it does not compile in tla-ja: games/tla/include/system/main_routine_work.h:123: conflicting types for `gMainRoutineWork'. */
+/* VIEW(f0e3d04): variable gMainRoutineWork as extern u8 gMainRoutineWork[];
+ * main_routine_work.h has extern struct MainRoutineWork gMainRoutineWork; tried
+ * as the 3 declarations' extern u8 gMainRoutineWork[], it does not compile in
+ * tla-ja: games/tla/include/system/main_routine_work.h:123: conflicting types
+ * for `gMainRoutineWork'. */
 extern u8 gMainRoutineWork__f0e3d04[] __asm__("gMainRoutineWork");
 
 s32 Func_080dbcd8(s32 x, s32 z, s32 layer);

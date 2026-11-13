@@ -171,7 +171,7 @@ loop:
   Event_PlaySound(158);
   index--;
   MapGrid_AnimateCells(gData_02005de0[index].data, gData_02005de0[index].a,
-                 gData_02005de0[index].b);
+                       gData_02005de0[index].b);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   {
@@ -194,7 +194,8 @@ void Func_02000580(s32 actor) {
 
   FieldEvent_SetMessageId(msg);
   Event_OpenMessage(actor, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
+      0) {
     FieldEvent_Wait(10);
     FieldEvent_SetMessageId(msg + 1);
   } else {
@@ -209,7 +210,8 @@ void Func_020005cc(s32 actor) {
 
   FieldEvent_SetMessageId(msg);
   Event_OpenMessage(actor, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
+      0) {
     FieldEvent_Wait(10);
     FieldEvent_SetMessageId(msg + 1);
   } else {
@@ -224,7 +226,8 @@ void Func_02000618(s32 actor) {
 
   FieldEvent_SetMessageId(msg);
   Event_OpenMessage(actor, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
+      0) {
     FieldEvent_Wait(10);
     FieldEvent_SetMessageId(msg + 1);
   } else {
@@ -307,16 +310,16 @@ void Func_02000808(void) {
 
   void Func_020007a0(s32 id) {
     BattleEffect_LoadActionEffectResources(144, 1);
-    BattleEffect_SetupObjectPair(id, 0);
-    Field_DispatchTypeHandler(1);
+    FieldPsynergy_SetupActorPair(id, 0);
+    FieldPsynergy_RunHandler(1);
     BattleEffect_StopMainActor();
     BattleEffect_CleanupSceneObjects();
   }
 
   void Func_020007d4(s32 id) {
     BattleEffect_LoadActionEffectResources(144, 1);
-    BattleEffect_SetupObjectPair(id, 0);
-    Field_DispatchTypeHandler(3);
+    FieldPsynergy_SetupActorPair(id, 0);
+    FieldPsynergy_RunHandler(3);
     BattleEffect_StopMainActor();
     BattleEffect_CleanupSceneObjects();
   }
@@ -507,7 +510,6 @@ void Func_02000be4(void) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-
 
 void Func_02000d30(void) {
   s32 t4;

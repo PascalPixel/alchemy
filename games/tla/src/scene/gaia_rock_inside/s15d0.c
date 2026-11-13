@@ -66,7 +66,7 @@ void Func_020015d0(s32 idA, s32 idB) {
   MapGrid_SetShake(0x20000, 0x20000, 0x10000);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
-  BattleEffect_StartBufferInterpolation(60);
+  PaletteFade_StartInterpolation(60);
   a->motionFlags = 0;
   a->acceleration = 0x3333;
   a->speedLimit = 0x3333;
@@ -170,14 +170,14 @@ third:
   Sound_Play(220);
   wait(50);
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(8);
+  PaletteFade_StartInterpolation(8);
   wait(16);
   MapGrid_SetShake(0, 0, 0);
   Actor_ConfigureSpriteColor(idA, 0);
   Actor_ConfigureSpriteColor(idB, 0);
   Sound_Play(574);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(80);
+  PaletteFade_StartInterpolation(80);
   Actor_SetMovementTypeById(idA, gData_020052ac);
   Actor_SetMovementTypeById(idB, gData_020052dc);
   b->update = Func_02001548;
@@ -191,7 +191,11 @@ third:
 void Actor_MoveToObject(s32 id, s32 target);
 void DisplayBlend_EnableRunScript(void);
 void DisplayBlend_DisableRunScript(void);
-/* VIEW(s15d0): routine Func_02004e64 as s32 Func_02004e64(void); module/scene/scene.h has void Func_02004e64(void); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s15d0.c:277: void value not ignored as it ought to be. */
+/* VIEW(s15d0): routine Func_02004e64 as s32 Func_02004e64(void);
+ * module/scene/scene.h has void Func_02004e64(void); tried as the rest of the
+ * object declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/gaia_rock_inside/s15d0.c:277: void value not ignored as
+ * it ought to be. */
 extern s32 Func_02004e64__s15d0(void) __asm__("Func_02004e64");
 
 /// The party meets person 11 on the ledge: they talk, the ground shakes, the
@@ -199,8 +203,8 @@ extern s32 Func_02004e64__s15d0(void) __asm__("Func_02004e64");
 /// and person 11 joins the leader (flag 0x9ba).
 s32 Func_020019cc(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  /* FAKEMATCH(volatile): the blend level rereads through its slot; as a plain local,
-   * 112 of 250 instructions differ in tla-en. */
+  /* FAKEMATCH(volatile): the blend level rereads through its slot; as a plain
+   * local, 112 of 250 instructions differ in tla-en. */
   volatile u16 level;
   s32 message;
 

@@ -126,9 +126,9 @@ Import_EventSetExitRequest:
 	.thumb_func
 Func_02001184:
 	overlay_veneer Func_080c82c0
-	.global BattleEffect_FindNearestObject
+	.global Field_FindNearbyPsynergyTarget
 	.thumb_func
-BattleEffect_FindNearestObject:
+Field_FindNearbyPsynergyTarget:
 	overlay_veneer BattleEffect_FindNearestObjectFar
 	.global Event_StartScreenTransition
 	.thumb_func

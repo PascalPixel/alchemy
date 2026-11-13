@@ -387,8 +387,8 @@ void Func_08020180(void);
 
 void Func_08038200(s32 scene);
 
-s32 Func_080ed2a4(s32 mode);
-void BattleEffect_RunVisibilityTransition(void);
+s32 WorldPicture_Show(s32 mode);
+void WorldMap_ZoomOutWhileLHeld(void);
 
 void Func_08038358(s32 mode);
 

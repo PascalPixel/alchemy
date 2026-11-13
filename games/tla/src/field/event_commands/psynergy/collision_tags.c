@@ -1,8 +1,8 @@
 /// @file
 /// The map collision's tags, with routines not yet understood.
-// Part of f0e2c38.c.
+// Part of psynergy.c.
 
-#include "../f0e2c38_internal.h"
+#include "../psynergy_internal.h"
 
 struct Actor *Actor_GetById(u32 objectId);
 s32 Func_080eab70(struct Actor *object);
@@ -10,10 +10,23 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Func_080eaa14(struct ActorFlag *list);
 s32 Party_GetLeaderActor(void);
-/* VIEW(f0ea8d4): routine Func_080ea8a8 as void Func_080ea8a8(s32 x, s32 z, s32 layer, s32 height); the definition has void Func_080ea8a8(s32 x, s32 z, s32 layer); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:6493: too many arguments to function `Func_080ea8a8'. */
-extern void Func_080ea8a8__f0ea8d4(s32 x, s32 z, s32 layer, s32 height) __asm__("Func_080ea8a8");
-/* VIEW(f0ea8d4): routine MapGrid_GetTerrainHeightAboveFar as s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer, s32 height); f0ea14c has s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer); tried as the 2 declarations' s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer), it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:6510: too many arguments to function `MapGrid_GetTerrainHeightAboveFar'. */
-extern s32 Func_08020310__f0ea8d4(s32 x, s32 z, s32 layer, s32 height) __asm__("MapGrid_GetTerrainHeightAboveFar");
+/* VIEW(f0ea8d4): routine Func_080ea8a8 as void Func_080ea8a8(s32 x, s32 z, s32
+ * layer, s32 height); the definition has void Func_080ea8a8(s32 x, s32 z, s32
+ * layer); tried as the rest of the object declares it, it does not compile in
+ * tla-ja: games/tla/src/field/event_commands/psynergy.c:6493: too many
+ * arguments to function `Func_080ea8a8'. */
+extern void Func_080ea8a8__f0ea8d4(s32 x, s32 z, s32 layer,
+                                   s32 height) __asm__("Func_080ea8a8");
+/* VIEW(f0ea8d4): routine MapGrid_GetTerrainHeightAboveFar as s32
+ * MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer, s32 height);
+ * f0ea14c has s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer);
+ * tried as the 2 declarations' s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32
+ * z, s32 layer), it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/psynergy.c:6510: too many arguments to
+ * function `MapGrid_GetTerrainHeightAboveFar'. */
+extern s32
+Func_08020310__f0ea8d4(s32 x, s32 z, s32 layer,
+                       s32 height) __asm__("MapGrid_GetTerrainHeightAboveFar");
 
 void Func_080ea8d4(struct ActorFlag *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -31,13 +44,13 @@ void Func_080ea8d4(struct ActorFlag *list) {
     Actor_SetSingleChildFlagsFar(object, 0);
     cell->collisionCode = 0xff;
     Func_080ea8a8__f0ea8d4(object->x + 0x100000, object->z, object->terrainId,
-                  object->terrainHeight);
+                           object->terrainHeight);
     Func_080ea8a8__f0ea8d4(object->x - 0x100000, object->z, object->terrainId,
-                  object->terrainHeight);
+                           object->terrainHeight);
     Func_080ea8a8__f0ea8d4(object->x, object->z + 0x100000, object->terrainId,
-                  object->terrainHeight);
+                           object->terrainHeight);
     Func_080ea8a8__f0ea8d4(object->x, object->z - 0x100000, object->terrainId,
-                  object->terrainHeight);
+                           object->terrainHeight);
     if (GameFlag_Test(flag)) {
       Actor_SetMode(object, 0);
       GameFlag_ClearBit(flag);
@@ -47,7 +60,8 @@ void Func_080ea8d4(struct ActorFlag *list) {
   }
   Func_080eaa14(first);
   owner = Actor_GetById(Party_GetLeaderActor());
-  if (Func_08020310__f0ea8d4(owner->x, owner->z, owner->terrainId, owner->terrainHeight))
+  if (Func_08020310__f0ea8d4(owner->x, owner->z, owner->terrainId,
+                             owner->terrainHeight))
     owner->terrainHeight = owner->y =
         MapGrid_GetTerrainHeightFar(owner->terrainId, owner->x, owner->z);
 }
@@ -106,9 +120,9 @@ void Func_080eaa14(struct ActorFlag *list) {
       shapes = &grid[((s32)cells - (s32)Ram_MapCellBuffer) >> 2];
       slot = Func_080eab70(object);
       key = Func_080202f0(object->terrainId, object->x, object->z);
-      height =
-          MapGrid_GetTerrainHeightFar(object->terrainId, object->x, object->z) >>
-          19;
+      height = MapGrid_GetTerrainHeightFar(object->terrainId, object->x,
+                                           object->z) >>
+               19;
 
       *(struct Actor **)(event + 0xcbc) = object;
       if (GameFlag_Test(flag)) {

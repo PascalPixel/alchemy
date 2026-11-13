@@ -75,7 +75,7 @@ void Event_End(void);
 void Func_02000a68(s32 shop, s32 keeper);
 void Func_02000a70(s32 keeper);
 void Func_02000a78(s32 shop, s32 keeper);
-void Field_DispatchTypeHandler(s32 type);
+void FieldPsynergy_RunHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
@@ -242,7 +242,9 @@ void Func_02000244(void) {
 }
 
 void Func_0200029c(s32 actor) {
-  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(gMainRoutineWork.currentOwner))->facing;
+  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(
+                    gMainRoutineWork.currentOwner))
+                   ->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000a68(20, actor);
@@ -256,7 +258,9 @@ void Func_0200029c(s32 actor) {
 }
 
 void Func_020002fc(s32 actor) {
-  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(gMainRoutineWork.currentOwner))->facing;
+  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(
+                    gMainRoutineWork.currentOwner))
+                   ->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000a68(21, actor);
@@ -270,7 +274,9 @@ void Func_020002fc(s32 actor) {
 }
 
 void Func_0200035c(s32 actor) {
-  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(gMainRoutineWork.currentOwner))->facing;
+  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(
+                    gMainRoutineWork.currentOwner))
+                   ->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000a68(22, actor);
@@ -284,7 +290,9 @@ void Func_0200035c(s32 actor) {
 }
 
 void Func_020003bc(s32 actor) {
-  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(gMainRoutineWork.currentOwner))->facing;
+  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(
+                    gMainRoutineWork.currentOwner))
+                   ->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000a78(7, actor);
@@ -299,7 +307,9 @@ void Func_020003bc(s32 actor) {
 }
 
 void Func_02000424(s32 actor) {
-  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(gMainRoutineWork.currentOwner))->facing;
+  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(
+                    gMainRoutineWork.currentOwner))
+                   ->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000a70(actor);
@@ -387,7 +397,8 @@ void Func_02000524(void) {
       Event_SetMessageId(message + 1);
       Event_ShowMessageAndWait(14, 0);
       Func_02000a60(14, 0xc000);
-      Actor_SetSingleChildFlags(((struct YallamInteriorsObject *)Actor_GetById(14)), 1);
+      Actor_SetSingleChildFlags(
+          ((struct YallamInteriorsObject *)Actor_GetById(14)), 1);
       Actor_SetDestination(gMainRoutineWork.currentOwner, 488, 408);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
@@ -408,7 +419,8 @@ void Func_02000524(void) {
         Actor_WaitForMoveById(14);
         Actor_SetModeById(14, 0);
         Actor_ArmCallback(14, FACING_SOUTH, 0);
-        ((struct YallamInteriorsObject *)Actor_GetById(14))->collisionFlags = 129;
+        ((struct YallamInteriorsObject *)Actor_GetById(14))->collisionFlags =
+            129;
         ((struct YallamInteriorsObject *)Actor_GetById(14))->priorityFlags = 1;
         Actor_SetSpritePriority(14, 1);
         ((struct YallamInteriorsObject *)Actor_GetById(14))->priorityFlags |= 1;
@@ -420,7 +432,8 @@ void Func_02000524(void) {
         Actor_ResetAndSetPosition(14, 491, 398);
         Actor_WaitForMoveById(14);
         Actor_ArmCallback(14, FACING_SOUTH, 0);
-        Actor_SetSingleChildFlags(((struct YallamInteriorsObject *)Actor_GetById(14)), 0);
+        Actor_SetSingleChildFlags(
+            ((struct YallamInteriorsObject *)Actor_GetById(14)), 0);
         Func_02000a60(14, 0);
       }
     } else {
@@ -616,16 +629,26 @@ struct Trigger gData_02000ea8[] = {
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_0200077c)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_0200014c)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_02000524)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors11)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors12)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors15)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors16)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors29)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors30)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT(Func_0200008c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, EVENT(Func_020000cc)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT(Func_0200010c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT(Func_0200008c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgYallamInteriors11)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgYallamInteriors12)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgYallamInteriors15)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgYallamInteriors16)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgYallamInteriors29)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgYallamInteriors30)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     EVENT(Func_0200008c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     EVENT(Func_020000cc)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+     EVENT(Func_0200010c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+     EVENT(Func_0200008c)},
     {0x173, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgYallamInteriors40))},
     {TRIGGERS_END},
 };
@@ -642,13 +665,21 @@ struct Trigger gData_02000fe0[] = {
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_0200029c)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_020002fc)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_0200035c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors19)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors20)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors22)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors24)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors26)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT(Func_0200018c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT(Func_020001b4)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, EVENT(Func_020001dc)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgYallamInteriors19)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgYallamInteriors20)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgYallamInteriors22)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgYallamInteriors24)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgYallamInteriors26)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     EVENT(Func_0200018c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     EVENT(Func_020001b4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     EVENT(Func_020001dc)},
     {TRIGGERS_END},
 };

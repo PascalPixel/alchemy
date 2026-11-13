@@ -186,55 +186,124 @@ void Func_020032e0(void) {
   BattleEffect_LoadActionEffectResources(143, 1);
   Func_02005c1c(17, 27);
   EventObject_Initialize();
-  Field_DispatchTypeHandler(1);
+  FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
   BattleEffect_CleanupSceneObjects();
 }
 
 // ---- games/tla/src/scene/kibombo/s3308.c ----
 #include "types.h"
-/* VIEW(s3308): routine Actor_SetPositionAndResetMotion as void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z); kibombo.h has void Actor_SetPositionAndResetMotion(struct KibomboObject *object, s32 x, s32 y, s32 z); tried as the definition's void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z), it does not compile in tla-ja: games/tla/include/actor.h:95: conflicting types for `Actor_SetPositionAndResetMotion'. */
+/* VIEW(s3308): routine Actor_SetPositionAndResetMotion as void
+ * Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
+ * kibombo.h has void Actor_SetPositionAndResetMotion(struct KibomboObject
+ * *object, s32 x, s32 y, s32 z); tried as the definition's void
+ * Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z), it
+ * does not compile in tla-ja: games/tla/include/actor.h:95: conflicting types
+ * for `Actor_SetPositionAndResetMotion'. */
 struct Actor;
-extern void Actor_SetPositionAndResetMotion__s3308(struct Actor *object, s32 x, s32 y, s32 z) __asm__("Actor_SetPositionAndResetMotion");
+extern void Actor_SetPositionAndResetMotion__s3308(
+    struct Actor *object, s32 x, s32 y,
+    s32 z) __asm__("Actor_SetPositionAndResetMotion");
 #define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion__s3308
-/* VIEW(s3308): routine Actor_SetSpritePriority as void Actor_SetSpritePriority(u32, s32); kibombo.h has void Actor_SetSpritePriority(s32 actor, s32 variant); tried as the definition's void Actor_SetSpritePriority(u32 objectId, s32 priority), it does not compile in tla-ja: games/tla/include/actor.h:106: conflicting types for `Actor_SetSpritePriority'. */
-extern void Actor_SetSpritePriority__s3308(u32, s32) __asm__("Actor_SetSpritePriority");
+/* VIEW(s3308): routine Actor_SetSpritePriority as void
+ * Actor_SetSpritePriority(u32, s32); kibombo.h has void
+ * Actor_SetSpritePriority(s32 actor, s32 variant); tried as the definition's
+ * void Actor_SetSpritePriority(u32 objectId, s32 priority), it does not compile
+ * in tla-ja: games/tla/include/actor.h:106: conflicting types for
+ * `Actor_SetSpritePriority'. */
+extern void
+Actor_SetSpritePriority__s3308(u32, s32) __asm__("Actor_SetSpritePriority");
 #define Actor_SetSpritePriority Actor_SetSpritePriority__s3308
 #include "actor.h"
 #undef Actor_SetSpritePriority
 #undef Actor_SetPositionAndResetMotion
 #include "field_sprite.h"
 #include "system/vector3.h"
-/* VIEW(s3308): routine Task_Add as s32 Task_Add(TaskFunc func, s32 order); kibombo.h has void Task_Add(void(*func) (void), s32 priority); tried as the definition's s32 Task_Add(TaskFunc func, s32 order), which the object already declares, it does not compile in tla-ja: games/tla/include/system/task.h:55: conflicting types for `Task_Add'. */
+/* VIEW(s3308): routine Task_Add as s32 Task_Add(TaskFunc func, s32 order);
+ * kibombo.h has void Task_Add(void(*func) (void), s32 priority); tried as the
+ * definition's s32 Task_Add(TaskFunc func, s32 order), which the object already
+ * declares, it does not compile in tla-ja: games/tla/include/system/task.h:55:
+ * conflicting types for `Task_Add'. */
 #define Task_Add Task_Add__s3308
-/* VIEW(s3308): routine Actor_GetById as struct Actor *Actor_GetById(u32 objectId); kibombo.h has struct KibomboObject *Actor_GetById(s32 id); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/include/field/event.h:37: conflicting types for `Actor_GetById'. */
+/* VIEW(s3308): routine Actor_GetById as struct Actor *Actor_GetById(u32
+ * objectId); kibombo.h has struct KibomboObject *Actor_GetById(s32 id); tried
+ * as the definition's struct Actor *Actor_GetById(u32 objectId), which the
+ * object already declares, it does not compile in tla-ja:
+ * games/tla/include/field/event.h:37: conflicting types for `Actor_GetById'. */
 struct Actor;
-extern struct Actor *Actor_GetById__s3308(u32 objectId) __asm__("Actor_GetById");
+extern struct Actor *
+Actor_GetById__s3308(u32 objectId) __asm__("Actor_GetById");
 #define Actor_GetById Actor_GetById__s3308
-/* VIEW(s3308): routine Actor_SetMoveTarget as void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z); kibombo.h has void Actor_SetMoveTarget(struct KibomboObject *object, s32 x, s32 y, s32 z); tried as the definition's void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z), it does not compile in tla-ja: games/tla/include/field/event.h:59: conflicting types for `Actor_SetMoveTarget'. */
+/* VIEW(s3308): routine Actor_SetMoveTarget as void Actor_SetMoveTarget(struct
+ * Actor *actor, s32 x, s32 y, s32 z); kibombo.h has void
+ * Actor_SetMoveTarget(struct KibomboObject *object, s32 x, s32 y, s32 z); tried
+ * as the definition's void Actor_SetMoveTarget(struct Actor *object, s32 x, s32
+ * y, s32 z), it does not compile in tla-ja: games/tla/include/field/event.h:59:
+ * conflicting types for `Actor_SetMoveTarget'. */
 struct Actor;
-extern void Actor_SetMoveTarget__s3308(struct Actor *actor, s32 x, s32 y, s32 z) __asm__("Actor_SetMoveTarget");
+extern void Actor_SetMoveTarget__s3308(struct Actor *actor, s32 x, s32 y,
+                                       s32 z) __asm__("Actor_SetMoveTarget");
 #define Actor_SetMoveTarget Actor_SetMoveTarget__s3308
-/* VIEW(s3308): routine Import_ActorCreate as struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z); kibombo.h has struct KibomboObject *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/include/field/event.h:60: conflicting types for `Import_ActorCreate'. */
+/* VIEW(s3308): routine Import_ActorCreate as struct Actor
+ * *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z); kibombo.h has struct
+ * KibomboObject *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z); tried as
+ * the rest of the object declares it, it does not compile in tla-ja:
+ * games/tla/include/field/event.h:60: conflicting types for
+ * `Import_ActorCreate'. */
 struct Actor;
-extern struct Actor *Import_ActorCreate__s3308(s32 type, s32 x, s32 y, s32 z) __asm__("Import_ActorCreate");
+extern struct Actor *
+Import_ActorCreate__s3308(s32 type, s32 x, s32 y,
+                          s32 z) __asm__("Import_ActorCreate");
 #define Import_ActorCreate Import_ActorCreate__s3308
-/* VIEW(s3308): routine Actor_SetSpritePriority as void Actor_SetSpritePriority(u32 actorId, s32 priority); kibombo.h has void Actor_SetSpritePriority(s32 actor, s32 variant); tried as the definition's void Actor_SetSpritePriority(u32 objectId, s32 priority), it does not compile in tla-ja: games/tla/include/field/event.h:105: conflicting types for `Actor_SetSpritePriority'. */
-extern void Actor_SetSpritePriority__s3308(u32 actorId, s32 priority) __asm__("Actor_SetSpritePriority");
+/* VIEW(s3308): routine Actor_SetSpritePriority as void
+ * Actor_SetSpritePriority(u32 actorId, s32 priority); kibombo.h has void
+ * Actor_SetSpritePriority(s32 actor, s32 variant); tried as the definition's
+ * void Actor_SetSpritePriority(u32 objectId, s32 priority), it does not compile
+ * in tla-ja: games/tla/include/field/event.h:105: conflicting types for
+ * `Actor_SetSpritePriority'. */
+extern void
+Actor_SetSpritePriority__s3308(u32 actorId,
+                               s32 priority) __asm__("Actor_SetSpritePriority");
 #define Actor_SetSpritePriority Actor_SetSpritePriority__s3308
-/* VIEW(s3308): routine Actor_SetPositionAndResetMotion as void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z); kibombo.h has void Actor_SetPositionAndResetMotion(struct KibomboObject *object, s32 x, s32 y, s32 z); tried as the definition's void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z), it does not compile in tla-ja: games/tla/include/field/event.h:110: conflicting types for `Actor_SetPositionAndResetMotion'. */
+/* VIEW(s3308): routine Actor_SetPositionAndResetMotion as void
+ * Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
+ * kibombo.h has void Actor_SetPositionAndResetMotion(struct KibomboObject
+ * *object, s32 x, s32 y, s32 z); tried as the definition's void
+ * Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z), it
+ * does not compile in tla-ja: games/tla/include/field/event.h:110: conflicting
+ * types for `Actor_SetPositionAndResetMotion'. */
 struct Actor;
-extern void Actor_SetPositionAndResetMotion__s3308(struct Actor *object, s32 x, s32 y, s32 z) __asm__("Actor_SetPositionAndResetMotion");
+extern void Actor_SetPositionAndResetMotion__s3308(
+    struct Actor *object, s32 x, s32 y,
+    s32 z) __asm__("Actor_SetPositionAndResetMotion");
 #define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion__s3308
-/* VIEW(s3308): routine Actor_SetPartAttribute as void Actor_SetPartAttribute(struct Actor *object, s32 attribute); kibombo.h has void Actor_SetPartAttribute(struct KibomboObject *object, s32 value); tried as the definition's void Actor_SetPartAttribute(struct Actor *object, s32 attribute), which the object already declares, it does not compile in tla-ja: games/tla/include/field/event.h:112: conflicting types for `Actor_SetPartAttribute'. */
+/* VIEW(s3308): routine Actor_SetPartAttribute as void
+ * Actor_SetPartAttribute(struct Actor *object, s32 attribute); kibombo.h has
+ * void Actor_SetPartAttribute(struct KibomboObject *object, s32 value); tried
+ * as the definition's void Actor_SetPartAttribute(struct Actor *object, s32
+ * attribute), which the object already declares, it does not compile in tla-ja:
+ * games/tla/include/field/event.h:112: conflicting types for
+ * `Actor_SetPartAttribute'. */
 struct Actor;
-extern void Actor_SetPartAttribute__s3308(struct Actor *object, s32 attribute) __asm__("Actor_SetPartAttribute");
+extern void
+Actor_SetPartAttribute__s3308(struct Actor *object,
+                              s32 attribute) __asm__("Actor_SetPartAttribute");
 #define Actor_SetPartAttribute Actor_SetPartAttribute__s3308
-/* VIEW(s3308): routine Script_WaitForEventTimeout as void Script_WaitForEventTimeout(struct Actor *actor); kibombo.h has void Script_WaitForEventTimeout(struct KibomboObject *object); tried as the definition's void Script_WaitForEventTimeout(void *fieldObject), it does not compile in tla-ja: games/tla/include/field/event.h:115: conflicting types for `Script_WaitForEventTimeout'. */
+/* VIEW(s3308): routine Script_WaitForEventTimeout as void
+ * Script_WaitForEventTimeout(struct Actor *actor); kibombo.h has void
+ * Script_WaitForEventTimeout(struct KibomboObject *object); tried as the
+ * definition's void Script_WaitForEventTimeout(void *fieldObject), it does not
+ * compile in tla-ja: games/tla/include/field/event.h:115: conflicting types for
+ * `Script_WaitForEventTimeout'. */
 struct Actor;
-extern void Script_WaitForEventTimeout__s3308(struct Actor *actor) __asm__("Script_WaitForEventTimeout");
+extern void Script_WaitForEventTimeout__s3308(struct Actor *actor) __asm__(
+    "Script_WaitForEventTimeout");
 #define Script_WaitForEventTimeout Script_WaitForEventTimeout__s3308
-/* VIEW(s3308): routine Func_080d4568 as struct Actor *Func_080d4568(void); kibombo.h has struct KibomboObject *Func_080d4568(void); tried as the definition's struct Actor *Func_080d4568(void), which the object already declares, it does not compile in tla-ja: games/tla/include/field/event.h:124: conflicting types for `Func_080d4568'. */
+/* VIEW(s3308): routine Func_080d4568 as struct Actor *Func_080d4568(void);
+ * kibombo.h has struct KibomboObject *Func_080d4568(void); tried as the
+ * definition's struct Actor *Func_080d4568(void), which the object already
+ * declares, it does not compile in tla-ja: games/tla/include/field/event.h:124:
+ * conflicting types for `Func_080d4568'. */
 struct Actor;
 extern struct Actor *Func_080d4568__s3308(void) __asm__("Func_080d4568");
 #define Func_080d4568 Func_080d4568__s3308
@@ -358,7 +427,8 @@ void Func_02003308(struct Actor *actor) {
 }
 
 // ---- games/tla/src/scene/kibombo/s3504.c ----
-// Scene code of overlay 0x670, in ROM order, from s3504's offset up to the next object the overlay links.
+// Scene code of overlay 0x670, in ROM order, from s3504's offset up to the next
+// object the overlay links.
 
 s32 Func_02005c44(struct FieldSprite *sprite, s32 previous);
 
@@ -495,7 +565,7 @@ void Func_0200384c(void) {
   Task_Add(Func_020037e4, 0x480);
   Func_02005c1c(gMainRoutineWork.currentOwner, -1);
   EventObject_Initialize();
-  Field_DispatchTypeHandler(1);
+  FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
   Task_RemoveFar(Func_020037e4);
   BattleEffect_CleanupSceneObjects();
@@ -551,8 +621,7 @@ void Func_02003948(void) {
   leader->facing = 0xc000;
   if (GameFlag_Test(0x202))
     Func_02003898();
-  Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
-                                          gData_02005cd0);
+  Actor_SetMovementTypeById(gMainRoutineWork.currentOwner, gData_02005cd0);
   wait(12);
   Sound_Play(123);
   Event_FinishScreenTransition();
@@ -640,7 +709,7 @@ done:
 void Func_02003c84(void) {
   Sound_Play(212);
   Kibombo_FadeTo(0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(1);
+  PaletteFade_StartInterpolation(1);
   wait(1);
   Kibombo_FadeTo(0x10000, 0);
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1b4 = 1;
@@ -653,13 +722,13 @@ void Func_02003c84(void) {
 
   Sound_Play(212);
   Kibombo_FadeTo(0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(1);
+  PaletteFade_StartInterpolation(1);
   wait(1);
   Kibombo_CamMove(146 << 18, -1, PIXELS(248), 0);
   Map_CenterOnFollowedPoint();
   wait(1);
   Kibombo_FadeTo(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(1);
+  PaletteFade_StartInterpolation(1);
   wait(1);
   Kibombo_TaskAdd(Func_02002d64, 0x480);
   wait(60);
@@ -668,13 +737,13 @@ void Func_02003c84(void) {
 
   Sound_Play(212);
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(1);
+  PaletteFade_StartInterpolation(1);
   wait(1);
   Camera_MoveWithinMapBounds(PIXELS(248), -1, 134 << 18, 0);
   Map_CenterOnFollowedPoint();
   wait(1);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(1);
+  PaletteFade_StartInterpolation(1);
   wait(1);
   Kibombo_TaskAdd(Func_02002d64, 0x480);
   wait(180);
@@ -1223,7 +1292,7 @@ void Func_02004cf4(void) {
   Actor_SetModeById(9, 3);
   Motion_SetModeAndWaitAnimation(8, 3);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(40);
+  PaletteFade_StartInterpolation(40);
   wait(60);
   Motion_SetModeAndWaitAnimation(10, 3);
   Event_SetMessageId((s32)MsgRightWellI);
@@ -1331,16 +1400,39 @@ void Func_02005114(void) {
 // ---- games/tla/src/scene/kibombo/s516c.c ----
 // Kibombo's setup.
 #include "main_routine_work.h"
-/* VIEW(s516c): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct Actor *object, u32 flags); kibombo.h has void Actor_SetSingleChildFlags(struct KibomboObject *object, u32 value); tried as the 35 declarations' void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags), it does not compile in tla-ja: games/tla/include/field/field.h:25: conflicting types for `Actor_SetSingleChildFlags'. */
+/* VIEW(s516c): routine Actor_SetSingleChildFlags as void
+ * Actor_SetSingleChildFlags(struct Actor *object, u32 flags); kibombo.h has
+ * void Actor_SetSingleChildFlags(struct KibomboObject *object, u32 value);
+ * tried as the 35 declarations' void Actor_SetSingleChildFlags(struct
+ * FieldEffect *effect, s32 flags), it does not compile in tla-ja:
+ * games/tla/include/field/field.h:25: conflicting types for
+ * `Actor_SetSingleChildFlags'. */
 struct Actor;
-extern void Actor_SetSingleChildFlags__s516c(struct Actor *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
+extern void Actor_SetSingleChildFlags__s516c(
+    struct Actor *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
 #define Actor_SetSingleChildFlags Actor_SetSingleChildFlags__s516c
-/* VIEW(s516c): routine Animation_SetStateFlags as void Animation_SetStateFlags(struct Actor *object, u32 value); kibombo.h has void Animation_SetStateFlags(struct KibomboObject *object, s32 flags); tried as the definition's void Animation_SetStateFlags(struct Actor *object, u32 value), which the object already declares, it does not compile in tla-ja: games/tla/include/field/field.h:58: conflicting types for `Animation_SetStateFlags'. */
+/* VIEW(s516c): routine Animation_SetStateFlags as void
+ * Animation_SetStateFlags(struct Actor *object, u32 value); kibombo.h has void
+ * Animation_SetStateFlags(struct KibomboObject *object, s32 flags); tried as
+ * the definition's void Animation_SetStateFlags(struct Actor *object, u32
+ * value), which the object already declares, it does not compile in tla-ja:
+ * games/tla/include/field/field.h:58: conflicting types for
+ * `Animation_SetStateFlags'. */
 struct Actor;
-extern void Animation_SetStateFlags__s516c(struct Actor *object, u32 value) __asm__("Animation_SetStateFlags");
+extern void
+Animation_SetStateFlags__s516c(struct Actor *object,
+                               u32 value) __asm__("Animation_SetStateFlags");
 #define Animation_SetStateFlags Animation_SetStateFlags__s516c
-/* VIEW(s516c): routine Actor_SetPartAttribute as void Actor_SetPartAttribute(struct Actor *object, s32 attribute); kibombo.h has void Actor_SetPartAttribute(struct KibomboObject *object, s32 value); tried as the definition's void Actor_SetPartAttribute(struct Actor *object, s32 attribute), which the object already declares, it does not compile in tla-ja: games/tla/include/field/field.h:93: conflicting types for `Actor_SetPartAttribute'. */
-extern void Actor_SetPartAttribute__s516c(struct Actor *object, s32 attribute) __asm__("Actor_SetPartAttribute");
+/* VIEW(s516c): routine Actor_SetPartAttribute as void
+ * Actor_SetPartAttribute(struct Actor *object, s32 attribute); kibombo.h has
+ * void Actor_SetPartAttribute(struct KibomboObject *object, s32 value); tried
+ * as the definition's void Actor_SetPartAttribute(struct Actor *object, s32
+ * attribute), which the object already declares, it does not compile in tla-ja:
+ * games/tla/include/field/field.h:93: conflicting types for
+ * `Actor_SetPartAttribute'. */
+extern void
+Actor_SetPartAttribute__s516c(struct Actor *object,
+                              s32 attribute) __asm__("Actor_SetPartAttribute");
 #define Actor_SetPartAttribute Actor_SetPartAttribute__s516c
 #include "field.h"
 #undef Actor_SetPartAttribute
@@ -1450,7 +1542,8 @@ void Func_0200516c(void) {
 }
 
 // ---- games/tla/src/scene/kibombo/s538c.c ----
-// Scene code of overlay 0x670, in ROM order, from s538c's offset up to the next object the overlay links and the overlay's data.
+// Scene code of overlay 0x670, in ROM order, from s538c's offset up to the next
+// object the overlay links and the overlay's data.
 
 void Func_02002de0(void);
 void Func_0200324c(void);
@@ -1635,13 +1728,11 @@ void Func_020057e0(void) {
   gData_02007948[1] = PALETTE_WORD(167);
   gData_02007948[2] = PALETTE_WORD(166);
   if (gMainRoutineWork.entrance == 10) {
-    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                       0);
+    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
     Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
     Func_02003c84();
   } else if (gMainRoutineWork.entrance == 11) {
-    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                       0);
+    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
     Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
     Func_02003c14();
   } else {
@@ -2173,29 +2264,41 @@ struct Trigger gData_02006ef4[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 12, 0x9e9, 0},
     {0xc602, 20, CONDITION_ALWAYS, EVENT(Func_02005994)},
     {0x8602, 21, CONDITION_ALWAYS, EVENT(Func_02005994)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 11, CONDITION_ALWAYS, 0},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 11,
+     CONDITION_ALWAYS, 0},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAkafubuHasFinally)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgEveryoneWasTerribly)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     MSGNO(MsgEveryoneWasTerribly)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_02000228)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgCoveringOurWarriors)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     MSGNO(MsgCoveringOurWarriors)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTheGreatGabomba)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgIWantTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+     MSGNO(MsgIWantTo)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgNowThatThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgNowThatTheWitch)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+     MSGNO(MsgNowThatTheWitch)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgICouldnT)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgBecauseKibomboLies)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
+     MSGNO(MsgBecauseKibomboLies)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgOhISmell)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgYouDonTThink)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
+     MSGNO(MsgYouDonTThink)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgGoodOlMeat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgGulpTheSmell)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
+     MSGNO(MsgGulpTheSmell)},
     {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgWeGetTo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgLatelyTheMonsters)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
+     MSGNO(MsgLatelyTheMonsters)},
     {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_0200024c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgNoOneInKibombo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
+     MSGNO(MsgNoOneInKibombo)},
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgTheOtherWarriors)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgWithAllOur)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS,
+     MSGNO(MsgWithAllOur)},
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, EVENT(Func_02000270)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgIWonderIfI)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
+     MSGNO(MsgIWonderIfI)},
     {TRIGGERS_END},
 };
 
@@ -2218,59 +2321,79 @@ struct Trigger gData_020070d4[] = {
     {TRIGGER_TALK, 20, 0x8fd, MSGNO(MsgAkafubuSCeremony)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgTheyToldMe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, 0x8fd, MSGNO(MsgItSStrange)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgAsLongAsThis)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
+     MSGNO(MsgAsLongAsThis)},
     {TRIGGER_TALK, 14, 0x8fd, MSGNO(MsgDuringTheLast)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAkafubuHasBeen)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x8fd, MSGNO(MsgTheGreatGabombaIs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgWhatSTaking)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x8fd,
+     MSGNO(MsgTheGreatGabombaIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     MSGNO(MsgWhatSTaking)},
     {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgIMAfraid)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgWhenHeFails)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS,
+     MSGNO(MsgWhenHeFails)},
     {TRIGGER_TALK, 21, 0x8fd, MSGNO(MsgIHopeThe)},
     {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgWhewThankGoodness)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, 0x8fd, MSGNO(MsgIfTheGreat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgAmIGoing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
+     MSGNO(MsgAmIGoing)},
     {TRIGGER_TALK, 17, 0x8fd, MSGNO(MsgIsMakingThe)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgOnceTheCeremony)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x8fd, MSGNO(MsgHeSFailed)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgKibomboWasSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+     MSGNO(MsgKibomboWasSo)},
     {TRIGGER_TALK, 22, 0x8fd, MSGNO(MsgWhenTheGabomba)},
     {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgLastTimeAkafubu)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, 0x8fd, MSGNO(MsgIHopeAkafubu)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgAkafubuSAlways)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
+     MSGNO(MsgAkafubuSAlways)},
     {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgAkafubuWasA)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgAkafubuHasNot)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS,
+     MSGNO(MsgAkafubuHasNot)},
     {TRIGGER_TALK, 15, 0x8fd, MSGNO(MsgAkafubuLooksReally)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgIThinkAkafubu)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x8fd, MSGNO(MsgHeTravelsTo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgAkafubuIsObsessed)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     MSGNO(MsgAkafubuIsObsessed)},
     {TRIGGER_TALK, 25, 0x8fd, MSGNO(MsgIfTheGreatGabomba)},
     {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgIBelieveIn)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, 0x8fd, MSGNO(MsgIfTheGreatGabombaActually)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgAkafubuAndOeia)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, 0x8fd,
+     MSGNO(MsgIfTheGreatGabombaActually)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS,
+     MSGNO(MsgAkafubuAndOeia)},
     {TRIGGER_TALK, 18, 0x8fd, MSGNO(MsgAkafubuHasTried)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgWhatDonT)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x8fd, MSGNO(MsgAsAChildAkafubu)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgIMSoFar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x8fd,
+     MSGNO(MsgAsAChildAkafubu)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
+     MSGNO(MsgIMSoFar)},
     {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgHeyNoPushing)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgThereAreSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS,
+     MSGNO(MsgThereAreSo)},
     {TRIGGER_TALK, 16, 0x8fd, MSGNO(MsgAkafubuIsAttempting)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTonightSeemsTo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x8fd, MSGNO(MsgOeiaSSudden)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgWillTheGreat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+     MSGNO(MsgWillTheGreat)},
     {TRIGGER_TALK, 23, 0x8fd, MSGNO(MsgHeWhoIs)},
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgOeiaSDeath)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, 0x8fd, MSGNO(MsgIfOnlyOeia)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgISuspectAkafubu)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS,
+     MSGNO(MsgISuspectAkafubu)},
     {TRIGGER_TALK, 19, 0x8fd, MSGNO(MsgAkafubuBlamesHis)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgTheySayThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x8fd, MSGNO(MsgTheyAttackedSome)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgTheyReSaying)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x8fd,
+     MSGNO(MsgTheyAttackedSome)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
+     MSGNO(MsgTheyReSaying)},
     {TRIGGER_TALK, 24, 0x8fd, MSGNO(MsgIfTheGreatGabombaS)},
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgAkafubuSeesThe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, 0x8fd, MSGNO(MsgIFeelSo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgIReallyWonder)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
+     MSGNO(MsgIReallyWonder)},
     {TRIGGER_TALK, 36, CONDITION_ALWAYS, EVENT(Func_0200042c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 36, CONDITION_ALWAYS, MSGNO(MsgIWonderIfA)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 36, CONDITION_ALWAYS,
+     MSGNO(MsgIWonderIfA)},
     {TRIGGERS_END},
 };
 
@@ -2310,7 +2433,8 @@ struct Trigger gData_020074dc[] = {
     {TRIGGER_STEP, 20, 0x8f3, EVENT(Func_020007c8)},
     {TRIGGER_STEP, 22, 0x92e, EVENT(Func_02000c90)},
     {TRIGGER_TALK, 7, CONDITION_ALWAYS, MSGNO(MsgTheOrbIs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 7, CONDITION_ALWAYS, MSGNO(MsgIAmCertain)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 7, CONDITION_ALWAYS,
+     MSGNO(MsgIAmCertain)},
     {TRIGGER_STEP, 21, 0x8f5, EVENT(Func_02002050)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgAhhSomethingIs)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgYouLookHuman)},
@@ -2320,14 +2444,22 @@ struct Trigger gData_020074dc[] = {
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgItSeemsThese)},
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgThisIsnT)},
     {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgItIsProper)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgTheyLookLike)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgIfNoPerson)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgISawAkafubu)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgIHopeAkafubuCompletes)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgWhatIfThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgLookAtThese)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgSureThisIs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgKoffKoffAll)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
+     MSGNO(MsgTheyLookLike)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
+     MSGNO(MsgIfNoPerson)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
+     MSGNO(MsgISawAkafubu)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
+     MSGNO(MsgIHopeAkafubuCompletes)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
+     MSGNO(MsgWhatIfThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS,
+     MSGNO(MsgLookAtThese)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
+     MSGNO(MsgSureThisIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS,
+     MSGNO(MsgKoffKoffAll)},
     {TRIGGERS_END},
 };
 
@@ -2347,47 +2479,65 @@ struct Trigger gData_02007698[] = {
     {0x202, 13, CONDITION_ALWAYS, EVENT(Func_02003b88)},
     {TRIGGER_TALK, 8, 0x8ee, MSGNO(MsgIMGoing)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgIJustCan)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgDangWhyDid)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgDangWhyDid)},
     {TRIGGER_TALK, 9, 0x8ee, MSGNO(MsgIThinkThat)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMySonHasBeen)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgAfterHeBecame)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgAfterHeBecame)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgIHaveHeard)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgIKnowI)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgIKnowI)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_020002c4)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgCrossingTheRiver)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgCrossingTheRiver)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgYouCanSee)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgIfIM)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgIfIM)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgIfYouAreLooking)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgSureOurLegends)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     MSGNO(MsgSureOurLegends)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgEachYearWhen)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgIWonderWhatOeia)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     MSGNO(MsgIWonderWhatOeia)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_020004dc)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT(Func_02000500)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+     EVENT(Func_02000500)},
     {TRIGGER_TALK, 28, CONDITION_ALWAYS, EVENT(Func_020004dc)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, EVENT(Func_02000500)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS,
+     EVENT(Func_02000500)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgAsSoonAs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgAkafubuGetsSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+     MSGNO(MsgAkafubuGetsSo)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgManyInGondowan)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgItWonT)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
+     MSGNO(MsgItWonT)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgWeThinkIt)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgIAmAMighty)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
+     MSGNO(MsgIAmAMighty)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Func_02000318)},
     {TRIGGER_EXAMINE, 20, CONDITION_ALWAYS, EVENT(Func_02000318)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgOurWarriorsAppear)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
+     MSGNO(MsgOurWarriorsAppear)},
     {TRIGGER_TALK, 21, CONDITION_ALWAYS, EVENT(Func_02000350)},
     {TRIGGER_EXAMINE, 21, CONDITION_ALWAYS, EVENT(Func_02000350)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgBecauseOurPaint)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
+     MSGNO(MsgBecauseOurPaint)},
     {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_02000388)},
     {TRIGGER_EXAMINE, 22, CONDITION_ALWAYS, EVENT(Func_02000388)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgIfIHad)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
+     MSGNO(MsgIfIHad)},
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, EVENT(Func_020003c0)},
     {TRIGGER_EXAMINE, 23, CONDITION_ALWAYS, EVENT(Func_020003c0)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgThatBedMakes)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS,
+     MSGNO(MsgThatBedMakes)},
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgICanTRemember)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgILoveKibombo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
+     MSGNO(MsgILoveKibombo)},
     {TRIGGER_TALK, 25, CONDITION_ALWAYS, EVENT(Func_020003f8)},
     {TRIGGER_EXAMINE, 24, CONDITION_ALWAYS, EVENT(Func_020003f8)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgICanTBelieve)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS,
+     MSGNO(MsgICanTBelieve)},
     {TRIGGERS_END},
 };
 #undef PALETTE_WORD

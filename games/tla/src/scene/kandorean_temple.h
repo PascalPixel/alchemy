@@ -30,10 +30,10 @@ void Func_020006b0(struct Actor *object);
 void Func_02000778(struct Actor *object, s32 dz);
 void Func_020052c0(s32 id);
 void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
-void BattleEffect_SetupObjectPair(s32 a, s32 b);
+void FieldPsynergy_SetupActorPair(s32 a, s32 b);
 void BattleEffect_StopMainActor(void);
 void BattleEffect_CleanupSceneObjects(void);
-void Field_DispatchTypeHandler(s32 type);
+void FieldPsynergy_RunHandler(s32 type);
 void Func_0200098c(s32 *position, s32 value);
 void Func_02000adc(void);
 extern s32 gData_02006298;
@@ -104,19 +104,17 @@ extern s16 gData_020054e0[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void
-Actor_SetSingleChildFlags_(struct Actor *object, s32 flags) {
+static __inline__ void Actor_SetSingleChildFlags_(struct Actor *object,
+                                                  s32 flags) {
   Actor_SetSingleChildFlags(object, flags);
 }
 
-static __inline__ struct Actor *Func_02005140_(s32 type, s32 x, s32 y,
-                                                       s32 z) {
+static __inline__ struct Actor *Func_02005140_(s32 type, s32 x, s32 y, s32 z) {
   return ((struct Actor *)Import_ActorCreate(type, x, y, z));
 }
 
-static __inline__ void
-Actor_SetPositionAndResetMotion_(struct Actor *object, s32 x, s32 y,
-                                  s32 z) {
+static __inline__ void Actor_SetPositionAndResetMotion_(struct Actor *object,
+                                                        s32 x, s32 y, s32 z) {
   Actor_SetPositionAndResetMotion(object, x, y, z);
 }
 

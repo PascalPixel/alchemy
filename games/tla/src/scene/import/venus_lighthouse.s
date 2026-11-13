@@ -190,17 +190,17 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Field_DispatchTypeHandler
+	.global FieldPsynergy_RunHandler
 	.thumb_func
-Field_DispatchTypeHandler:
+FieldPsynergy_RunHandler:
 	overlay_veneer Field_DispatchTypeHandlerFar
 	.global BattleEffect_LoadActionEffectResources
 	.thumb_func
 BattleEffect_LoadActionEffectResources:
 	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
-	.global BattleEffect_SetupObjectPair
+	.global FieldPsynergy_SetupActorPair
 	.thumb_func
-BattleEffect_SetupObjectPair:
+FieldPsynergy_SetupActorPair:
 	overlay_veneer BattleEffect_SetupObjectPairFar
 	.global BattleEffect_StopMainActor
 	.thumb_func

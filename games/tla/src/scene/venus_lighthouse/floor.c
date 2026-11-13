@@ -16,19 +16,42 @@
 #include "system.h"
 #include "module/game/game.h"
 
-/* VIEW(floor): variable gData_02001dd8 as extern const u8 gData_02001dd8[]; the definition has s32 gData_02001dd8[] = { 39, 12, 22, 38, (s32) OverlayObject_UpdateEveryFourFrames, (s32) 0x80010000, 22, 9, 0x11999, 22, 10, 0x11999, 0, 2,...; tried as the definition's extern s32 gData_02001dd8[], it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse/floor.c:57: `gData_02001dd8__floor' undeclared (first use in this function). */
+/* VIEW(floor): variable gData_02001dd8 as extern const u8 gData_02001dd8[]; the
+ * definition has s32 gData_02001dd8[] = { 39, 12, 22, 38, (s32)
+ * OverlayObject_UpdateEveryFourFrames, (s32) 0x80010000, 22, 9, 0x11999, 22,
+ * 10, 0x11999, 0, 2,...; tried as the definition's extern s32 gData_02001dd8[],
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/venus_lighthouse/floor.c:57: `gData_02001dd8__floor'
+ * undeclared (first use in this function). */
 extern const u8 gData_02001dd8__floor[] __asm__("gData_02001dd8");
 extern u8 gMapCellBuffer[];
 
-/* VIEW(floor): routine Actor_GetById as struct VenusActor *Actor_GetById(s32 id); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse/floor.c:71: invalid type argument of `->'. */
+/* VIEW(floor): routine Actor_GetById as struct VenusActor *Actor_GetById(s32
+ * id); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the
+ * definition's struct Actor *Actor_GetById(u32 objectId), which the object
+ * already declares, it does not compile in tla-ja:
+ * games/tla/src/scene/venus_lighthouse/floor.c:71: invalid type argument of
+ * `->'. */
 extern struct VenusActor *Actor_GetById__floor(s32 id) __asm__("Actor_GetById");
-void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
-                                          s32 destY, s32 width, s32 height);
+void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
+                                    s32 width, s32 height);
 void Actor_SetMovementTypeById(s32 actor, const void *callback);
-/* VIEW(floor): routine Actor_RefreshSelectorById as void Actor_RefreshSelectorById(s32 actor); actor.h has void Actor_RefreshSelectorById(u32); tried as the definition's void Actor_RefreshSelectorById(u32 objectId), Func_020006ac moves: 1 of 85 instructions in tla-ja. */
-extern void Actor_RefreshSelectorById__floor(s32 actor) __asm__("Actor_RefreshSelectorById");
-/* VIEW(floor): routine Actor_SetPartAttribute as void Actor_SetPartAttribute(struct VenusActor *object, s32 value); event.h has void Actor_SetPartAttribute(struct Actor *object, s32 attribute); tried as the definition's void Actor_SetPartAttribute(struct Actor *object, s32 attribute), which the object already declares, Func_020006ac moves: 3 of 85 instructions in tla-ja. */
-extern void Actor_SetPartAttribute__floor(struct VenusActor *object, s32 value) __asm__("Actor_SetPartAttribute");
+/* VIEW(floor): routine Actor_RefreshSelectorById as void
+ * Actor_RefreshSelectorById(s32 actor); actor.h has void
+ * Actor_RefreshSelectorById(u32); tried as the definition's void
+ * Actor_RefreshSelectorById(u32 objectId), Func_020006ac moves: 1 of 85
+ * instructions in tla-ja. */
+extern void Actor_RefreshSelectorById__floor(s32 actor) __asm__(
+    "Actor_RefreshSelectorById");
+/* VIEW(floor): routine Actor_SetPartAttribute as void
+ * Actor_SetPartAttribute(struct VenusActor *object, s32 value); event.h has
+ * void Actor_SetPartAttribute(struct Actor *object, s32 attribute); tried as
+ * the definition's void Actor_SetPartAttribute(struct Actor *object, s32
+ * attribute), which the object already declares, Func_020006ac moves: 3 of 85
+ * instructions in tla-ja. */
+extern void
+Actor_SetPartAttribute__floor(struct VenusActor *object,
+                              s32 value) __asm__("Actor_SetPartAttribute");
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
@@ -36,8 +59,14 @@ void Func_02001b2c(struct VenusActor *object, s32 mode);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Script_WaitForEventTimeout(struct Actor *actor);
 s32 Func_02001b64(struct VenusActor *object, s32 *position);
-/* VIEW(floor): routine Func_080d47b4 as void Func_080d47b4(s32 actor, s32 height, s32 frames); event.h has s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames); tried as the definition's struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags, s32 state), it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse/floor.c:38: conflicting types for `Func_080d47b4'. */
-extern void Func_080d47b4__floor(s32 actor, s32 height, s32 frames) __asm__("Func_080d47b4");
+/* VIEW(floor): routine Func_080d47b4 as void Func_080d47b4(s32 actor, s32
+ * height, s32 frames); event.h has s32 Func_080d47b4(s32 actorId, s32 emote,
+ * s32 frames); tried as the definition's struct BattleEffectWatchedObject
+ * *Func_080d47b4(s32 resourceId, s32 flags, s32 state), it does not compile in
+ * tla-ja: games/tla/src/scene/venus_lighthouse/floor.c:38: conflicting types
+ * for `Func_080d47b4'. */
+extern void Func_080d47b4__floor(s32 actor, s32 height,
+                                 s32 frames) __asm__("Func_080d47b4");
 s32 VenusLighthouse_EmitRisingParticles(struct VenusActor *object);
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -124,7 +153,8 @@ void Func_0200078c(void) {
 }
 
 // ---- games/tla/src/scene/venus_lighthouse/push.c ----
-// Scene code of overlay 0x64e, in ROM order, from push's offset up to the next object the overlay links, and the overlay's data.
+// Scene code of overlay 0x64e, in ROM order, from push's offset up to the next
+// object the overlay links, and the overlay's data.
 
 #include "field_event.h"
 #include "text/msg_ids.h"
@@ -232,16 +262,20 @@ s32 VenusLighthouse_Idle(void) { return 0; }
 
 void VenusLighthouse_RunSetupStep(void) {
   BattleEffect_LoadActionEffectResources(140, 1);
-  BattleEffect_SetupObjectPair(4, 10);
+  FieldPsynergy_SetupActorPair(4, 10);
   ((struct SetupWork *)Ram_HeapSlots->effectWork)->idle = VenusLighthouse_Idle;
   EventObject_Initialize();
   FieldEvent_Wait(10);
-  Field_DispatchTypeHandler(1);
+  FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
   BattleEffect_CleanupSceneObjects();
 }
 
-/* VIEW(floor): tag struct AerieEventWork as struct AerieEventWork__floor; module/scene/scene.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse/floor.c:248: structure has no member named `mode'. */
+/* VIEW(floor): tag struct AerieEventWork as struct AerieEventWork__floor;
+ * module/scene/scene.h has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/venus_lighthouse/floor.c:248: structure has no member
+ * named `mode'. */
 struct AerieEventWork__floor {
   u8 unk000[0x1ac];
   s32 mode;
@@ -1037,11 +1071,12 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXAMINE, 37, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
     {TRIGGER_EXAMINE, 38, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
     {TRIGGER_EXAMINE, 39, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
-    {TRIGGER_EXAMINE, 40, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadTrueHeart)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS,
-     EVENT(SceneState_ApplySixRectsAfterFlag161)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
-     EVENT(SceneState_ApplySixRectsAfter161)},
+    {TRIGGER_EXAMINE, 40, CONDITION_ALWAYS,
+     EVENT(VenusLighthouse_ReadTrueHeart)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
+     CONDITION_ALWAYS, EVENT(SceneState_ApplySixRectsAfterFlag161)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
+     CONDITION_ALWAYS, EVENT(SceneState_ApplySixRectsAfter161)},
     {TRIGGERS_END},
 };
 #undef Actor_SetPartAttribute

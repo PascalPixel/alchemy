@@ -57,7 +57,11 @@ void Func_020003cc(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->terrainId = 0;
 }
 
-/* VIEW(apojii_islands): variable gData_020024c4 as extern s32 gData_020024c4; the definition has s32 gData_020024c4[] = { - 1, }; tried as the definition's extern s32 gData_020024c4[], it does not compile in tla-ja: games/tla/src/scene/apojii_islands.c:76: `gData_020024c4' has an incomplete type. */
+/* VIEW(apojii_islands): variable gData_020024c4 as extern s32 gData_020024c4;
+ * the definition has s32 gData_020024c4[] = { - 1, }; tried as the definition's
+ * extern s32 gData_020024c4[], it does not compile in tla-ja:
+ * games/tla/src/scene/apojii_islands.c:76: `gData_020024c4' has an incomplete
+ * type. */
 extern s32 gData_020024c4__apojii_islands __asm__("gData_020024c4");
 extern u16 Data_02002958[], Data_02002978[], gData_02002998[], gData_020029b8[];
 
@@ -71,7 +75,8 @@ void Func_020003e8(void) {
   if (*(s8 *)(work + 0xca4) != 0)
     return;
   if (gData_020024c4__apojii_islands == -1) {
-    Call3((void (*)())Iwram_CopyWordsEntry, Data_02002958, (void *)0x05000060, 32);
+    Call3((void (*)())Iwram_CopyWordsEntry, Data_02002958, (void *)0x05000060,
+          32);
     Iwram_CopyWordsEntry(Data_02002978, Data_02002958, 32);
     Iwram_CopyWordsEntry(gData_02002998, (void *)0x05000080, 32);
     Iwram_CopyWordsEntry(gData_020029b8, gData_02002998, 32);
@@ -91,7 +96,11 @@ void Func_020003e8(void) {
   gData_020024c4__apojii_islands++;
 }
 
-/* VIEW(apojii_islands): variable gData_020024c8 as extern s32 gData_020024c8; the definition has s32 gData_020024c8[] = { - 1, }; tried as the definition's extern s32 gData_020024c8[], it does not compile in tla-ja: games/tla/src/scene/apojii_islands.c:110: `gData_020024c8' has an incomplete type. */
+/* VIEW(apojii_islands): variable gData_020024c8 as extern s32 gData_020024c8;
+ * the definition has s32 gData_020024c8[] = { - 1, }; tried as the definition's
+ * extern s32 gData_020024c8[], it does not compile in tla-ja:
+ * games/tla/src/scene/apojii_islands.c:110: `gData_020024c8' has an incomplete
+ * type. */
 extern s32 gData_020024c8__apojii_islands __asm__("gData_020024c8");
 extern u16 Data_020029d8[], Data_020029f8[], Data_02002a18[], Data_02002a38[];
 
@@ -168,10 +177,18 @@ DEFINE_FUNC_02000780(Func_02000780, 7)
 #include "actor.h"
 #include "task.h"
 
-/* VIEW(s07a4): routine Random16Far as u16 Random16Far(void); system.h has u32 Random16Far(void); tried as the rest of the object declares it, Func_020007a4 moves: 1 of 188 instructions in tla-ja. */
+/* VIEW(s07a4): routine Random16Far as u16 Random16Far(void); system.h has u32
+ * Random16Far(void); tried as the rest of the object declares it, Func_020007a4
+ * moves: 1 of 188 instructions in tla-ja. */
 extern u16 Random16Far__s07a4(void) __asm__("Random16Far");
-/* VIEW(s07a4): routine BattleEffect_ApplyColorToTargetBuffer as s32 BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b); event.h has void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode); tried as the definition's void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode), which the object already declares, Func_020007a4 moves: 1 of 188 instructions in tla-ja. */
-extern s32 BattleEffect_ApplyColorToTargetBuffer__s07a4(s32 a, s32 b) __asm__("BattleEffect_ApplyColorToTargetBuffer");
+/* VIEW(s07a4): routine BattleEffect_ApplyColorToTargetBuffer as s32
+ * BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b); event.h has void
+ * BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode); tried as the
+ * definition's void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode),
+ * which the object already declares, Func_020007a4 moves: 1 of 188 instructions
+ * in tla-ja. */
+extern s32 BattleEffect_ApplyColorToTargetBuffer__s07a4(s32 a, s32 b) __asm__(
+    "BattleEffect_ApplyColorToTargetBuffer");
 
 static inline void ApojiiIslands_Flash(s32 strength, s32 mode) {
   BattleEffect_ApplyColorToTargetBuffer__s07a4(strength, mode);
@@ -209,10 +226,10 @@ void Func_020007a4(s32 unused, s32 id) {
    * instructions differ in tla-en. */
 flash:
   ApojiiIslands_Flash(Random16Far__s07a4() & 0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(15);
+  PaletteFade_StartInterpolation(15);
   wait(10);
   ApojiiIslands_Flash(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(10);
+  PaletteFade_StartInterpolation(10);
   i--;
   wait(10);
   if (i >= 0)
@@ -248,7 +265,8 @@ blend:
 }
 
 // ---- games/tla/src/scene/apojii_islands/events_d.c ----
-// Scene code of overlay 0x679, in ROM order, from events_d's offset up to the next object the overlay links.
+// Scene code of overlay 0x679, in ROM order, from events_d's offset up to the
+// next object the overlay links.
 
 #include "map.h"
 #include "event_work.h"
@@ -339,7 +357,9 @@ s32 Func_02000d20(void) {
   return 0;
 }
 
-void Func_02000d74(void) { Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 1, 5); }
+void Func_02000d74(void) {
+  Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 1, 5);
+}
 
 const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -374,7 +394,8 @@ void Func_02000e40(s32 actor) {
   msg = (s32)&MsgYouGuysAren;
   FieldEvent_SetMessageId(msg);
   Event_OpenMessage(actor, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
+      0) {
     FieldEvent_Wait(10);
     FieldEvent_SetMessageId(msg + 1);
   } else {
@@ -418,7 +439,7 @@ void Func_02000ef8(void) {
 }
 
 DEFINE_FUNC_02000E90(Func_02000f58, gData_02002a98, gData_02002a9c,
-    gData_02002a9e)
+                     gData_02002a9e)
 
 DEFINE_FUNC_02000ED0(Func_02000f98, Func_02000ef8, Func_02000f58)
 
@@ -479,7 +500,7 @@ void Func_020010d8(struct Actor *object) {
   struct FieldSprite *sprite;
 
   child = (FieldActor_Create(14, object->x, object->y + 0x40000,
-                              object->z + 0x40000));
+                             object->z + 0x40000));
   parent = object->sprite;
   if (child != NULL) {
     sprite = child->sprite;
@@ -495,7 +516,8 @@ void Func_020010d8(struct Actor *object) {
 }
 
 // ---- games/tla/src/scene/apojii_islands/events_h.c ----
-// Scene code of overlay 0x679, in ROM order, from events_h's offset up to the next object the overlay links.
+// Scene code of overlay 0x679, in ROM order, from events_h's offset up to the
+// next object the overlay links.
 
 DEFINE_FUNC_02001140(Func_02001140, gData_02001ef4)
 
@@ -517,7 +539,8 @@ void Func_020011a8(void) {
       Func_020010d8(leader);
     if (result < 0) {
       Actor_SetAttachedEffect(owner, 0x102);
-      FieldActor_SetMoveTarget(leader, leader->x, leader->y, leader->z + 0x80000);
+      FieldActor_SetMoveTarget(leader, leader->x, leader->y,
+                               leader->z + 0x80000);
       Func_02001c6c(leader, 49);
       Actor_WaitForMove(leader);
       do {

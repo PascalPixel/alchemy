@@ -92,9 +92,9 @@ Resource_FarCall006:
 	export Actor_GetTriggerTileAheadOfCurrentFar, Func_080cc54c
 	export Func_080c82b8, Party_RemapCharacterIdByFlags
 	export Func_080c82c0, Field_FindNearbyTalkTarget
-	export Func_080c82c8, Func_080dd054
-	export Func_080c82d0, Func_080decb8
-	export BattleEffect_FindNearestObjectFar, BattleEffect_FindNearestObject
+	export Func_080c82c8, FieldPsynergy_SteerPushedTarget
+	export Func_080c82d0, FieldPsynergy_StartCloak
+	export BattleEffect_FindNearestObjectFar, Field_FindNearbyPsynergyTarget
 	export Func_080c82e0, Func_080d4d08
 	export Func_080c82e8, Func_080d50f8
 	export Func_080c82f0, Func_080d53b8
@@ -117,7 +117,7 @@ Resource_FarCall006:
 	export BattleEffect_ApplyColorToTargetBufferFar, BattleEffect_ApplyColorToTargetBuffer
 	export BattleEffect_ApplyColorToSourceBufferFar, BattleEffect_ApplyColorToSourceBuffer
 	export BattleEffect_InterpolateBuffersFar, BattleEffect_InterpolateBuffers
-	export BattleEffect_StartBufferInterpolationFar, BattleEffect_StartBufferInterpolation
+	export BattleEffect_StartBufferInterpolationFar, PaletteFade_StartInterpolation
 	export BattlePalette_StopBlendAndReleaseBufferFar, BattlePalette_StopBlendAndReleaseBuffer
 	export BattleEffect_SetPrimaryBufferValueFar, BattleEffect_SetPrimaryBufferValue
 	export Event_StartScreenTransitionFar, Event_StartScreenTransition
@@ -150,20 +150,20 @@ Resource_FarCall006:
 	export Func_080c8480, Func_080d1cc0
 	export Func_080c8488, Func_080d1d34
 	export Func_080c8490, Func_080d1d44
-	export Field_DispatchTypeHandlerFar, Field_DispatchTypeHandler
+	export Field_DispatchTypeHandlerFar, FieldPsynergy_RunHandler
 	export BattleEffect_LoadActionEffectResourcesFar, BattleEffect_LoadActionEffectResources
-	export BattleEffect_SetupObjectPairFar, BattleEffect_SetupObjectPair
+	export BattleEffect_SetupObjectPairFar, FieldPsynergy_SetupActorPair
 	export BattleEffect_StopMainActorFar, BattleEffect_StopMainActor
 	export BattleEffect_CleanupSceneObjectsFar, BattleEffect_CleanupSceneObjects
 	export EventObject_InitializeFar, Func_080dc6d8
-	export BattleEffect_InitializeSharedSceneFar, BattleEffect_InitializeSharedScene
-	export BattleEffect_PrepareBufferInterpolationFar, BattleEffect_PrepareBufferInterpolation
+	export BattleEffect_InitializeSharedSceneFar, FieldPsynergy_FadeToCastColor
+	export BattleEffect_PrepareBufferInterpolationFar, FieldPsynergy_FadeFromCastColor
 	export Event_ResolveAllPendingActionsFar, Event_ResolveAllPendingActions
 	export Event_ResolvePendingActionsFar, Event_ResolvePendingActions
-	export Func_080c84e8, Func_080dc978
-	export Func_080c84f0, BattleEffect_FinishSceneAndReleaseHeapBlock
-	export Func_080c84f8, Palette_FillNumber15Grey
-	export Func_080c8500, Func_080dcadc
+	export Func_080c84e8, FieldPsynergy_StartMindReadWave
+	export Func_080c84f0, FieldPsynergy_StopMindReadWave
+	export Func_080c84f8, FieldPsynergy_GreyMindReadPalette
+	export Func_080c8500, FieldPsynergy_RestoreMindReadPalette
 	export BattleEffect_HasMatchingEvent5Far, BattleEffect_HasMatchingEvent5
 	export BattleEffect_HasTriggerFar, BattleEffect_HasTrigger
 	export Func_080c8518, Sprite_ShareVramCacheEntry
@@ -196,13 +196,13 @@ Resource_FarCall006:
 	export Actor_OffsetPositionAndResetFar, Actor_OffsetPositionAndReset
 	export Actor_CommitPositionAndActivateFar, Actor_CommitPositionAndActivate
 	export Actor_WatchAndSetScriptFar, Actor_WatchAndSetScript
-	export BattleEffect_PauseObjectFar, BattleEffect_PauseObject
-	export BattleEffect_ResumeObjectFar, BattleEffect_ResumeObject
+	export BattleEffect_PauseObjectFar, FieldPsynergy_HaltActor
+	export BattleEffect_ResumeObjectFar, FieldPsynergy_ResumeHaltedActor
 	export ObjectTable_FindActiveByValueFar, ObjectTable_FindActiveByValue
 	export ObjectTable_ReadActiveValueFar, ObjectTable_ReadActiveValue
 	export ObjectTable_SnapshotFar, ObjectTable_Snapshot
 	export Func_080c8630, ObjectTable_Restore
-	export Func_080c8638, Func_080d46a4
+	export Func_080c8638, WorldMap_StartZoom
 	export Func_080c8640, Func_080d4714
 	export Scene_GetAreaNameIndexFar, Scene_GetAreaNameIndex
 	export Func_080c8650, Func_080d1ee8

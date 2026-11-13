@@ -242,9 +242,9 @@ Func_080d2b4c:
 	.thumb_func
 Func_02003d10:
 	overlay_veneer Func_080c82c0
-	.global BattleEffect_FindNearestObject
+	.global Field_FindNearbyPsynergyTarget
 	.thumb_func
-BattleEffect_FindNearestObject:
+Field_FindNearbyPsynergyTarget:
 	overlay_veneer BattleEffect_FindNearestObjectFar
 	.global Func_02003d20
 	.thumb_func
@@ -266,17 +266,17 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Func_02003d40:
 	overlay_veneer Func_080c83d8
-	.global Field_DispatchTypeHandler
+	.global FieldPsynergy_RunHandler
 	.thumb_func
-Field_DispatchTypeHandler:
+FieldPsynergy_RunHandler:
 	overlay_veneer Field_DispatchTypeHandlerFar
 	.global BattleEffect_LoadActionEffectResources
 	.thumb_func
 BattleEffect_LoadActionEffectResources:
 	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
-	.global BattleEffect_SetupObjectPair
+	.global FieldPsynergy_SetupActorPair
 	.thumb_func
-BattleEffect_SetupObjectPair:
+FieldPsynergy_SetupActorPair:
 	overlay_veneer BattleEffect_SetupObjectPairFar
 	.global BattleEffect_StopMainActor
 	.thumb_func

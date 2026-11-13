@@ -206,9 +206,9 @@ Func_0200207c:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_080d46a4
+	.global WorldMap_StartZoom
 	.thumb_func
-Func_080d46a4:
+WorldMap_StartZoom:
 	overlay_veneer Func_080c8638
 	.global Func_02002094
 	.thumb_func

@@ -29,8 +29,8 @@
 /// give.
 #define Ram_WorldMapScroll FIXED_ADDRESS((s32 *), 0x0202a630, Data_0202a630)
 
-/// The world map screen's work. Its setup (Func_080ebf94) reaches it at a
-/// constant address: the work's fields are read again after stores to the
+/// The world map screen's work. Its setup (WorldPicture_Initialize) reaches it
+/// at a constant address: the work's fields are read again after stores to the
 /// screen values whose addresses it passes out, which only a constant gives.
 #define Ram_WorldMapWork                                                       \
   FIXED_ADDRESS((struct WorldMapWork *), 0x0202a000, gWorldMapWork)
@@ -38,8 +38,8 @@
 /// setup points it at the work's cursor.
 #define Ram_WorldMapCursor FIXED_ADDRESS((s32 **), 0x0202a62c, Data_0202a62c)
 /// The shown place name's box on the world map screen (x, y, width, height,
-/// pixels). Func_080ec4d4 reaches the four halfwords from one address by
-/// adding and subtracting their offsets, which only constants give.
+/// pixels). WorldPicture_UpdateMarkers reaches the four halfwords from one
+/// address by adding and subtracting their offsets, which only constants give.
 #define Ram_WorldMapNameBox FIXED_ADDRESS((s16 *), 0x0202a638, Data_0202a638)
 /// The cursor's place when the screen opens (x, then y, 16.16 pixels).
 #define Ram_WorldMapCursorStart                                                \

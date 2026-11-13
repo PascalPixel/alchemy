@@ -32,16 +32,16 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y);
 #ifndef OWN_BattleActor_SpawnObjectsForList
 void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh);
 #endif
-void BattleEffect_InitializeSharedScene(void);
+void FieldPsynergy_FadeToCastColor(void);
 void BattleEvent_Playback(void);
 void BattleEffect_DrawScaledObject(struct FieldParticle *object);
 #ifndef OWN_BattleEffect_GetResourceGroup
 s8 BattleEffect_GetResourceGroup(s32 effect_index);
 #endif
-void BattleEffect_PrepareBufferInterpolation(void);
+void FieldPsynergy_FadeFromCastColor(void);
 void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode);
 void BattleEffect_DoNothing(void);
-void FieldEffect_RunFrost(void);
+void FieldPsynergy_Frost(void);
 void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                                       s32 mode);
 void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
@@ -62,7 +62,7 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count);
 void BattleUnit_ResetGuardLevels(void);
 void Camera_InitializeDefaultTransform(void);
 void FieldParticle_UpdateMotion(struct FieldParticle *effect);
-void FieldEffect_RunDouse(void);
+void FieldPsynergy_Douse(void);
 s32 BattleClass_IsSmall(s32 index);
 void BattleHighlight_SetModesFar(u16 *, s32);
 void Map_RenderAllAnimatedTilePicturesFar(void **, s32);
@@ -110,7 +110,7 @@ struct ActionDescriptor *Scene_FindActorPlacement(s32 id);
 s32 BattleActor_RemoveFromLists(s32);
 void BattleEffect_ApplyColorToSourceBuffer(s32 value, s32 mode);
 void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half);
-void FieldEffect_RunWhirlwindOnTarget(void);
+void FieldPsynergy_WhirlwindOnTarget(void);
 u16 Encounter_GetEnemyGroupAtSlot(s32 arg0, s32 arg1);
 s32 BattleEffect_HasMatchingEvent5(s32 effectId);
 void BattleEffect_IntegrateVector2(s32 *vector, s32 damping, s32 gravity);
@@ -120,7 +120,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
                                        u32 mode);
 void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind);
 void BattleEffect_SnapScaleToFull(struct Actor *object);
-void BattleEffect_StartBufferInterpolation(s32 frames);
+void PaletteFade_StartInterpolation(s32 frames);
 struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item);
 void BattleEffect_UpdateArcEffect(void);
 void PartyStatus_HighlightMembersFar(u16 *);
@@ -143,7 +143,7 @@ s32 Func_080cdac0(s32 effect, s32 from, s32 to);
 s32 Func_080ce31c(s32 kind);
 struct TriggerEvent;
 struct TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector);
-void Func_080e3074(void);
+void FieldPsynergy_Cyclone(void);
 void BattleObject_SpawnObjectsForList(s16 *list, s32 refresh, s32 spawn);
 void Func_0818f620(struct BattleEffectArgument *effect, u32 mode);
 void GameFlag_ClearBitFar(s32 flag);

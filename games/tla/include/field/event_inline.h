@@ -41,7 +41,7 @@ static inline void FieldActor_SetAnimation(s32 actorId, s32 animation) {
 /// Runs an event's palette fade, from the source colours to the target ones,
 /// over frames.
 static inline void PaletteFade_Interpolate(s32 frames) {
-  BattleEffect_StartBufferInterpolation(frames);
+  PaletteFade_StartInterpolation(frames);
 }
 
 /// Draws an item's icon, ready for an event to show it.
@@ -247,11 +247,6 @@ static inline void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
   Func_080d7788(slot, element, djinn);
 }
 
-/// Starts the wave Mind Read plays (Func_080dc978).
-static inline void FieldPsynergy_StartMindReadWave(s32 x, s32 y) {
-  Func_080dc978(x, y);
-}
-
 /// The actor the camera follows (Func_080d4568).
 static inline struct Actor *FieldCamera_GetActor(void) {
   return Func_080d4568();
@@ -262,9 +257,9 @@ static inline s32 FieldYesNo_Ask(s32 atBottom) {
   return Func_080d295c(atBottom);
 }
 
-/// Schedules a zoom of the field (Func_080d46a4).
+/// Schedules a zoom of the field (WorldMap_StartZoom).
 static inline void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
-  Func_080d46a4(zoom, frames);
+  WorldMap_StartZoom(zoom, frames);
 }
 
 /// Applies a window colour (Func_0803f9c0).

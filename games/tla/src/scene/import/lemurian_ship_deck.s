@@ -250,9 +250,9 @@ Import_EventSetExitRequest:
 	.thumb_func
 BattleEffect_ApplyColorToTargetBuffer:
 	overlay_veneer BattleEffect_ApplyColorToTargetBufferFar
-	.global BattleEffect_StartBufferInterpolation
+	.global PaletteFade_StartInterpolation
 	.thumb_func
-BattleEffect_StartBufferInterpolation:
+PaletteFade_StartInterpolation:
 	overlay_veneer BattleEffect_StartBufferInterpolationFar
 	.global Event_StartScreenTransition
 	.thumb_func

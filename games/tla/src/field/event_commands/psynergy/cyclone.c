@@ -3,9 +3,9 @@
 /// burst, an actor carried from one point to another as it circles, a whirl of
 /// rings, an actor spinning away and back (Func_080e3698, Func_080e37e0) and a
 /// spray of drops and smoke puffs.
-// Part of f0e2c38.c.
+// Part of psynergy.c.
 
-#include "../f0e2c38_internal.h"
+#include "../psynergy_internal.h"
 
 struct BurstSprite {
   u8 unk00[8];
@@ -190,8 +190,15 @@ void Func_080e2ec0(void) {
 
 #include "battle.h"
 #include "debug.h"
-/* VIEW(f0e2c38): routine BattleEffect_DropObjectAtAnchor as void BattleEffect_DropObjectAtAnchor(u32 objectId); the definition has void BattleEffect_DropObjectAtAnchor(s32 id); tried as the definition's void BattleEffect_DropObjectAtAnchor(s32 id), which the object already declares, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:3297: conflicting types for `BattleEffect_DropObjectAtAnchor'. */
-extern void BattleEffect_DropObjectAtAnchor__f0e2c38(u32 objectId) __asm__("BattleEffect_DropObjectAtAnchor");
+/* VIEW(f0e2c38): routine BattleEffect_DropObjectAtAnchor as void
+ * BattleEffect_DropObjectAtAnchor(u32 objectId); the definition has void
+ * BattleEffect_DropObjectAtAnchor(s32 id); tried as the definition's void
+ * BattleEffect_DropObjectAtAnchor(s32 id), which the object already declares,
+ * it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/psynergy.c:3297: conflicting types for
+ * `BattleEffect_DropObjectAtAnchor'. */
+extern void BattleEffect_DropObjectAtAnchor__f0e2c38(u32 objectId) __asm__(
+    "BattleEffect_DropObjectAtAnchor");
 #define BattleEffect_DropObjectAtAnchor BattleEffect_DropObjectAtAnchor__f0e2c38
 #include "field.h"
 #undef BattleEffect_DropObjectAtAnchor
@@ -207,7 +214,7 @@ void BattleEffect_SpinObject(struct MotionObject *object) {
   object->angle += 0x1000;
 }
 
-void BattleEffect_CallSpinEffect(void) { Func_080e3074(); }
+void FieldPsynergy_CycloneOnTarget(void) { FieldPsynergy_Cyclone(); }
 
 #include "canvas_sprite.h"
 #include "actor_view.h"
@@ -234,7 +241,7 @@ void Func_080e2acc(void);
 void Func_080e249c(void);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 
-void Func_080e3074(void) {
+void FieldPsynergy_Cyclone(void) {
   struct WhirlWork *work = HeapSlot_Alloc(92, 0x1b38);
   u8 *event = Ram_HeapSlots->eventWork;
   u8 *effect = Ram_HeapSlots->effectWork;
@@ -254,7 +261,7 @@ void Func_080e3074(void) {
   s32 blue, c;
   s32 point;
 
-  BattleEffect_InitializeSharedScene();
+  FieldPsynergy_FadeToCastColor();
   Func_080e2264();
   BattleEffect_SetObjectUpdateMode(*(struct Actor **)(effect + 16), 0);
   owner->update = BattleEffect_SpinObject;
@@ -313,7 +320,7 @@ void Func_080e3074(void) {
     canvas->command = 3;
     wait(1);
   }
-  BattleEffect_PrepareBufferInterpolation();
+  FieldPsynergy_FadeFromCastColor();
   work->follower = ring;
   work->from[0] = owner->x;
   work->from[1] = owner->y;
@@ -608,8 +615,8 @@ void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
 s32 Func_08020210(struct Actor *object, s32 *position);
 s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 
-/// The frame callback of Func_080e3d04's spray. Every fourth frame while it
-/// is emitting, a free one of sixteen drops starts at the origin with the
+/// The frame callback of FieldPsynergy_Blaze's spray. Every fourth frame while
+/// it is emitting, a free one of sixteen drops starts at the origin with the
 /// mode's speed (mode 3 faster, longer and lighter) along the spray's angle.
 /// Each live drop grows, cycles its four tiles, is drawn at its position, and
 /// dies after the mode's lifetime, on reaching an object of the event work's
@@ -751,15 +758,15 @@ struct ControlEvent {
   u16 cue;
 };
 
-void Func_080e3d04(void);
-void Func_080e4a34(void);
-void Func_080e572c(void);
-void Func_080e5d5c(void);
-void Func_080e68d0(void);
-void Func_080e7844(void);
-void Func_080e9af4(void);
+void FieldPsynergy_Blaze(void);
+void FieldPsynergy_Sand(void);
+void FieldPsynergy_Burst(void);
+void FieldPsynergy_Pound(void);
+void FieldPsynergy_Scoop(void);
+void FieldPsynergy_Parch(void);
+void FieldPsynergy_Hover(void);
 void Func_080e74d8(void);
 s32 Party_GetLeaderActor(void);
 
 /// Effect 26 cast on a target: runs the effect, ignoring the target.
-void BattleEffect_CallEffect26(void) { Func_080e3d04(); }
+void FieldPsynergy_BlazeOnTarget(void) { FieldPsynergy_Blaze(); }

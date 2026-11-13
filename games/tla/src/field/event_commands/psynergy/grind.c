@@ -1,8 +1,8 @@
 /// @file
 /// The view swayed up and down, and the glow of field Psynergy kind 24.
-// Part of f0e2c38.c.
+// Part of psynergy.c.
 
-#include "../f0e2c38_internal.h"
+#include "../psynergy_internal.h"
 
 struct SplashParticle {
   s32 x;
@@ -31,7 +31,11 @@ struct SplashAnimation {
   void *tiles;
 };
 
-/* VIEW(f0e92b4): tag struct FxScene as struct FxScene__f0e92b4; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:5353: structure has no member named `facing'. */
+/* VIEW(f0e92b4): tag struct FxScene as struct FxScene__f0e92b4; f0e2c38.c has
+ * another definition; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja:
+ * games/tla/src/field/event_commands/psynergy.c:5353: structure has no member
+ * named `facing'. */
 struct FxScene__f0e92b4 {
   u16 facing;
   u16 angle;
@@ -47,7 +51,11 @@ struct FxScene__f0e92b4 {
   s8 enabled;
 };
 
-/* VIEW(f0e92b4): tag struct PendingEvent as struct PendingEvent__f0e92b4; event_work.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:5484: structure has no member named `callback'. */
+/* VIEW(f0e92b4): tag struct PendingEvent as struct PendingEvent__f0e92b4;
+ * event_work.h has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/psynergy.c:5484: structure has no member
+ * named `callback'. */
 struct PendingEvent__f0e92b4 {
   u8 unk00[8];
   void (*callback)(s32, s32, s32);
@@ -58,11 +66,14 @@ extern char ResourceId_WaterSplash;
 void *HeapSlot_Alloc(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 s32 Func_080ce31c(s32 kind);
-/* VIEW(f0e92b4): routine Func_080ce458 as struct PendingEvent__f0e92b4 *Func_080ce458(u32 kind, s32 entry, s32 arg); f0e5d5c has void *Func_080ce458(u32 kind, s32 entry, s32 arg). */
-extern struct PendingEvent__f0e92b4 *Func_080ce458__f0e92b4(u32 kind, s32 entry, s32 arg) __asm__("Func_080ce458");
+/* VIEW(f0e92b4): routine Func_080ce458 as struct PendingEvent__f0e92b4
+ * *Func_080ce458(u32 kind, s32 entry, s32 arg); f0e5d5c has void
+ * *Func_080ce458(u32 kind, s32 entry, s32 arg). */
+extern struct PendingEvent__f0e92b4 *
+Func_080ce458__f0e92b4(u32 kind, s32 entry, s32 arg) __asm__("Func_080ce458");
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 s32 Func_08020330(struct Actor *object);
-void BattleEffect_InitializeSharedScene(void);
+void FieldPsynergy_FadeToCastColor(void);
 void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
@@ -76,13 +87,19 @@ void wait(s32 frames);
 u32 Random16(void);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
-/* VIEW(f0e92b4): routine EffectSprite_DrawAtWorldPosition as void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct SplashParticle *particle); f0e4a34 has void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct GlowParticle *particle). */
-extern void EffectSprite_DrawAtWorldPosition__f0e92b4(struct EffectSprite *sprite,
-                                      struct SplashParticle *particle) __asm__("EffectSprite_DrawAtWorldPosition");
+/* VIEW(f0e92b4): routine EffectSprite_DrawAtWorldPosition as void
+ * EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct
+ * SplashParticle *particle); f0e4a34 has void
+ * EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct
+ * GlowParticle *particle). */
+extern void EffectSprite_DrawAtWorldPosition__f0e92b4(
+    struct EffectSprite *sprite,
+    struct SplashParticle
+        *particle) __asm__("EffectSprite_DrawAtWorldPosition");
 void BattleEffect_ShiftRowsDown(u8 *base, s32 stride, s32 rows);
-void BattleEffect_PrepareBufferInterpolation(void);
+void FieldPsynergy_FadeFromCastColor(void);
 
-void Func_080e92b4(void) {
+void FieldPsynergy_GrindOnTarget(void) {
   struct SplashWork *work = HeapSlot_Alloc(92, 0x1920);
   struct FxScene__f0e92b4 *scene = Ram_HeapSlots->effectWork;
   struct Actor *caster = scene->mainObject;
@@ -143,7 +160,7 @@ void Func_080e92b4(void) {
   if (mode == 2)
     radius = 0x150000;
 
-  BattleEffect_InitializeSharedScene();
+  FieldPsynergy_FadeToCastColor();
   source = Resource_GetTableEntry((s32)&ResourceId_WaterSplash);
   picture = work->picture;
   Resource_DecodeType01(source, picture);
@@ -281,14 +298,13 @@ void Func_080e92b4(void) {
   } while (phase != 999);
   Sound_PlayFar(390);
   Func_080e8c9c();
-  BattleEffect_PrepareBufferInterpolation();
+  FieldPsynergy_FadeFromCastColor();
   Resource_ResetEntry(entry);
 end:
   HeapSlot_Release(92);
 }
 
-
-// Field Psynergy kind 27 (BattleEffect_Run's case 27): the view sways.
+// Field Psynergy kind 27 (FieldPsynergy_Run's case 27): the view sways.
 
 #define VIEW_MOVE_WORK_SIZE 0x1920
 
@@ -298,13 +314,10 @@ end:
 #define SWAY_RAMP 0x2666 ///< 0.15 pixels a frame
 #define SWAY_HOLD_FRAMES 10
 
-
-
-
 /// Sways the view up and down the screen: the swing grows from 2 to 6 pixels,
 /// holds for 10 frames, shrinks back to 2 and stops; then the map's view
 /// bounds come back.
-void BattleEffect_RunViewSway(void) {
+void FieldPsynergy_Grind(void) {
   struct EffectScene *scene;
   s32 phase;
   s32 amplitude;
@@ -313,7 +326,7 @@ void BattleEffect_RunViewSway(void) {
 
   HeapSlot_Alloc(HEAP_SLOT_VIEW_MOVE, VIEW_MOVE_WORK_SIZE);
   scene = Ram_HeapSlots->effectWork;
-  BattleEffect_InitializeSharedScene();
+  FieldPsynergy_FadeToCastColor();
   BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
   Func_080e89e4(VIEW_MOVE_Z);
   wait(10);
@@ -356,7 +369,7 @@ void BattleEffect_RunViewSway(void) {
   } while (state != SWAY_DONE);
 
   Func_080e8c9c();
-  BattleEffect_PrepareBufferInterpolation();
+  FieldPsynergy_FadeFromCastColor();
   HeapSlot_Release(HEAP_SLOT_VIEW_MOVE);
 }
 
@@ -402,7 +415,6 @@ s32 Func_080e989c(s32 counter, s32 level) {
   return (blue << 10) | (green << 5) | red;
 }
 
-
 #define OBJ_PALETTE_14 ((u16 *)0x050003c0)
 
 // The glow's strength, in frames: full at 112, and it fades out a frame at a
@@ -411,7 +423,11 @@ s32 Func_080e989c(s32 counter, s32 level) {
 #define GLOW_SPENT_CUE 0x2099
 
 // Kind 24's work (battle_fx_work[0]).
-/* VIEW(f0e92b4): tag struct GlowWork as struct GlowWork__f0e92b4; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:5689: structure has no member named `fading'. */
+/* VIEW(f0e92b4): tag struct GlowWork as struct GlowWork__f0e92b4; f0e2c38.c has
+ * another definition; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja:
+ * games/tla/src/field/event_commands/psynergy.c:5689: structure has no member
+ * named `fading'. */
 struct GlowWork__f0e92b4 {
   u8 unk0000[0x1000];
   struct EffectSprite sprite;
@@ -503,18 +519,17 @@ void Func_080e9940(void) {
   Func_080eb01c(sprite);
 }
 
-
-void Func_080e3d04(void);
-void Func_080e4a34(void);
-void Func_080e572c(void);
-void Func_080e5d5c(void);
-void Func_080e68d0(void);
-void Func_080e7844(void);
-void Func_080e9af4(void);
+void FieldPsynergy_Blaze(void);
+void FieldPsynergy_Sand(void);
+void FieldPsynergy_Burst(void);
+void FieldPsynergy_Pound(void);
+void FieldPsynergy_Scoop(void);
+void FieldPsynergy_Parch(void);
+void FieldPsynergy_Hover(void);
 void Func_080e74d8(void);
 
 /// Runs field Psynergy animation 24 for the dispatcher; the target is unused.
-void BattleEffect_CallEffect24(void) { Func_080e9af4(); }
+void FieldPsynergy_HoverOnTarget(void) { FieldPsynergy_Hover(); }
 #undef VIEW_MOVE_WORK_SIZE
 #undef SWAY_START
 #undef SWAY_PEAK

@@ -1,10 +1,14 @@
 /// @file
 /// Two routines not yet understood.
-// Part of f0e2c38.c.
+// Part of psynergy.c.
 
-#include "../f0e2c38_internal.h"
+#include "../psynergy_internal.h"
 
-/* VIEW(f0e5d5c): tag struct ShineParticle as struct ShineParticle__f0e5d5c; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:2599: structure has no member named `velocityX'. */
+/* VIEW(f0e5d5c): tag struct ShineParticle as struct ShineParticle__f0e5d5c;
+ * f0e2c38.c has another definition; tried with the definition the rest of the
+ * object has, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/psynergy.c:2599: structure has no member
+ * named `velocityX'. */
 struct ShineParticle__f0e5d5c {
   s32 x;
   s32 y;
@@ -15,7 +19,11 @@ struct ShineParticle__f0e5d5c {
   s32 timer;
 };
 
-/* VIEW(f0e5d5c): tag struct ShineWork as struct ShineWork__f0e5d5c; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:2567: structure has no member named `glow'. */
+/* VIEW(f0e5d5c): tag struct ShineWork as struct ShineWork__f0e5d5c; f0e2c38.c
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/psynergy.c:2567: structure has no member
+ * named `glow'. */
 struct ShineWork__f0e5d5c {
   u8 tiles[0x1000];
   struct ShineParticle__f0e5d5c particles[32];
@@ -28,7 +36,11 @@ struct ShineWork__f0e5d5c {
   s8 fading;
 };
 
-/* VIEW(f0e5d5c): tag struct FxScene as struct FxScene__f0e5d5c; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:2485: structure has no member named `facing'. */
+/* VIEW(f0e5d5c): tag struct FxScene as struct FxScene__f0e5d5c; f0e2c38.c has
+ * another definition; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja:
+ * games/tla/src/field/event_commands/psynergy.c:2485: structure has no member
+ * named `facing'. */
 struct FxScene__f0e5d5c {
   u16 facing;
   u16 angle;
@@ -47,7 +59,6 @@ struct FxScene__f0e5d5c {
   s16 frame;
 };
 
-
 extern char ResourceId_GlowDisc, ResourceId_GoldStar;
 
 void *HeapSlot_Alloc(s32 slot, s32 size);
@@ -55,7 +66,7 @@ void HeapSlot_Release(s32 slot);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 s32 Func_080cda84(s32 id, struct Actor *object, s32 *position);
 s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
-void BattleEffect_InitializeSharedScene(void);
+void FieldPsynergy_FadeToCastColor(void);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Actor_Destroy(struct Actor *object);
 void Func_080dba5c(void);
@@ -75,10 +86,10 @@ void Func_080dbf94(struct Actor *object, s32 x, s32 y, s32 z);
 void BattleEffect_SinkAndShrinkObject(void);
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
 s32 Func_080ce31c(s32 kind);
-void BattleEffect_PrepareBufferInterpolation(void);
+void FieldPsynergy_FadeFromCastColor(void);
 void Func_080e5a64(void);
 
-void Func_080e5d5c(void) {
+void FieldPsynergy_Pound(void) {
   struct ShineWork__f0e5d5c *work = HeapSlot_Alloc(92, 0x18b4);
   struct FxScene__f0e5d5c *scene = Ram_HeapSlots->effectWork;
   struct FxEvent *event = Ram_HeapSlots->eventWork;
@@ -143,7 +154,7 @@ void Func_080e5d5c(void) {
     }
   }
 
-  BattleEffect_InitializeSharedScene();
+  FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(138);
   shine = Actor_Spawn(352, 0, 0, 0);
   work->object = shine;
@@ -275,10 +286,9 @@ void Func_080e5d5c(void) {
   Resource_ResetEntry(glowEntry);
   BattleEffect_EndCanvasSprite();
 end:
-  BattleEffect_PrepareBufferInterpolation();
+  FieldPsynergy_FadeFromCastColor();
   HeapSlot_Release(92);
 }
-
 
 void Func_080e62f4(u8 *source, u8 *destination, s32 phase) {
   s32 width = 32;

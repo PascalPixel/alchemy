@@ -1,4 +1,8 @@
-// ---- games/tla/src/field/event_commands/f0ec2b8.c ----
+/// @file
+/// The world map screen's picture: drawing it, scrolling it with the cursor,
+/// its area markers, and zooming the view out while L is held.
+
+// ---- games/tla/src/field/event_commands/world_map_picture.c ----
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_work.h"
@@ -139,7 +143,11 @@ void Func_080ec484(struct WindowSpriteList *list, s32 dx, s32 dy) {
 #define WORLD_MAP_NAME_LEFT 1
 #endif
 
-/* VIEW(f0ec4d4): tag struct WorldMapWork as struct WorldMapWork__f0ec4d4; f0ec2b8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:221: structure has no member named `scrollX'. */
+/* VIEW(f0ec4d4): tag struct WorldMapWork as struct WorldMapWork__f0ec4d4;
+ * f0ec2b8.c has another definition; tried with the definition the rest of the
+ * object has, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/world_map_picture.c:221: structure has no
+ * member named `scrollX'. */
 struct WorldMapWork__f0ec4d4 {
   u16 vramBlock;
   u16 windowSlot;
@@ -156,7 +164,11 @@ struct WorldMapWork__f0ec4d4 {
   s32 scrollZ;
 };
 
-/* VIEW(f0ec4d4): tag struct WorldMapPlace as struct WorldMapPlace__f0ec4d4; f0ec2b8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:294: structure has no member named `name'. */
+/* VIEW(f0ec4d4): tag struct WorldMapPlace as struct WorldMapPlace__f0ec4d4;
+ * f0ec2b8.c has another definition; tried with the definition the rest of the
+ * object has, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/world_map_picture.c:294: structure has no
+ * member named `name'. */
 struct WorldMapPlace__f0ec4d4 {
   u8 flag;
   u8 value;
@@ -169,15 +181,26 @@ struct WorldMapPlace__f0ec4d4 {
   u8 unk10[4];
 };
 
-/* VIEW(f0ec2b8): tag struct ResourceTableEntry as struct ResourceTableEntry__f0ec2b8; module/tla.h has another definition; tried with the definition the rest of the object has, its members read unk00 as unk0, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:226: invalid use of undefined type `struct ResourceTableEntry'. */
+/* VIEW(f0ec2b8): tag struct ResourceTableEntry as struct
+ * ResourceTableEntry__f0ec2b8; module/tla.h has another definition; tried with
+ * the definition the rest of the object has, its members read unk00 as unk0, it
+ * does not compile in tla-ja:
+ * games/tla/src/field/event_commands/world_map_picture.c:226: invalid use of
+ * undefined type `struct ResourceTableEntry'. */
 struct ResourceTableEntry__f0ec2b8 {
   u16 unk00;
   u16 offset;
 };
 
 #define WORK Ram_WorldMapWork
-/* VIEW(f0ec2b8): variable gResourceTableEntries as struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has struct VramBlockCacheEntry gResourceTableEntries[]; tried as the 5 declarations' extern struct ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:230: invalid use of undefined type `struct ResourceTableEntry'. */
-extern struct ResourceTableEntry__f0ec2b8 gResourceTableEntries__f0ec2b8[] __asm__("gResourceTableEntries");
+/* VIEW(f0ec2b8): variable gResourceTableEntries as struct ResourceTableEntry
+ * gResourceTableEntries[]; vram_tab.h has struct VramBlockCacheEntry
+ * gResourceTableEntries[]; tried as the 5 declarations' extern struct
+ * ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/world_map_picture.c:230: invalid use of
+ * undefined type `struct ResourceTableEntry'. */
+extern struct ResourceTableEntry__f0ec2b8
+    gResourceTableEntries__f0ec2b8[] __asm__("gResourceTableEntries");
 #define NAME_BOX_X Ram_WorldMapNameBox[0]
 #define NAME_BOX_Y Ram_WorldMapNameBox[1]
 #define NAME_BOX_WIDTH Ram_WorldMapNameBox[2]
@@ -188,7 +211,7 @@ void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
 #define WORLD_MAP_HIGH(value) (((s16 *)&(value))[1])
 #define WORLD_MAP_SCALE(value) ((value) * 300 / 640)
 
-void Func_080ec4d4(void) {
+void WorldPicture_UpdateMarkers(void) {
   struct WorldMapWork__f0ec4d4 *work;
   struct WorldMapMarker *marker;
   s32 tileBase;
@@ -779,17 +802,17 @@ void ObjectTable_Snapshot(void);
 void WindowSystem_InitFieldFar(void);
 void Task_ResetAll(void);
 void wait(s32 frames);
-void Func_080ebf94(void);
-void Func_080ec4d4(void);
+void WorldPicture_Initialize(void);
+void WorldPicture_UpdateMarkers(void);
 void Func_080ec1d0(s32 *screenX, s32 *screenY);
 void Func_080ec2b8(s32 *screenX, s32 *screenY, s32 step);
 void FieldMessage_ShowFar(s32 message, s32 mode);
 void WindowSprite_PrepareForRedrawFar(void *window);
 void Func_080ca368(s32 scene, s32 entrance);
-void BattleEffect_CleanupResourcesAndWindow(void);
+void WorldPicture_Release(void);
 void Func_08020270(void);
 
-s32 Func_080ed2a4(s32 mode) {
+s32 WorldPicture_Show(s32 mode) {
   s32 savedDelay;
   u8 savedFlags[16];
   s32 screenX;
@@ -892,7 +915,7 @@ s32 Func_080ed2a4(s32 mode) {
   cursorZ = NULL;
   scrollX = NULL;
   scrollZ = NULL;
-  Func_080ebf94();
+  WorldPicture_Initialize();
   for (;;) {
     Data_0202a640 = zoomed;
     Func_080ece20();
@@ -909,7 +932,7 @@ s32 Func_080ed2a4(s32 mode) {
     cursorZ = &Data_0202a648;
     for (;;) {
       Func_080ed0a0();
-      Func_080ec4d4();
+      WorldPicture_UpdateMarkers();
       input = keys;
       wait(1);
       if ((input->repeat & 8) && gliding == 0) {
@@ -1006,7 +1029,7 @@ s32 Func_080ed2a4(s32 mode) {
     }
   }
 done:
-  BattleEffect_CleanupResourcesAndWindow();
+  WorldPicture_Release();
   Io_Write16(64, &REG_DISPCNT);
   if (mode != 0 || event->controlMode != 3) {
     event->countdown = 999;
@@ -1033,22 +1056,24 @@ done:
 
 extern const struct FlagEntry gData_080f1140[];
 
-void Func_080d46a4(s32 a0, s32 a1);
+void WorldMap_StartZoom(s32 scale, s32 frames);
 
-void BattleEffect_RunVisibilityTransition(void) {
+/// On the world map, zooms the view out to eight thirteenths while L is held,
+/// then back, six frames each way. FieldSequence_Run runs it for event -889.
+void WorldMap_ZoomOutWhileLHeld(void) {
   struct MainRoutineWork *party;
 
   if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 394) == 3) {
     Leader_StopMoving();
-    Func_080d46a4(0x9d89, 6);
-    while (gInput.held & 0x200)
+    WorldMap_StartZoom(Q16_ONE * 8 / 13, 6);
+    while (gInput.held & KEY_L)
       wait(1);
     party = &gMainRoutineWork;
 
     if (party->ownerOverride != 0)
-      Func_080d46a4(0x10000, 6);
+      WorldMap_StartZoom(Q16_ONE, 6);
     else
-      Func_080d46a4(0x10000, 6);
+      WorldMap_StartZoom(Q16_ONE, 6);
   }
 }
 

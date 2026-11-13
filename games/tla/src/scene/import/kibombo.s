@@ -294,9 +294,9 @@ BattleEffect_ApplyColorToTargetBuffer:
 	.thumb_func
 BattleEffect_ApplyColorToSourceBuffer:
 	overlay_veneer BattleEffect_ApplyColorToSourceBufferFar
-	.global BattleEffect_StartBufferInterpolation
+	.global PaletteFade_StartInterpolation
 	.thumb_func
-BattleEffect_StartBufferInterpolation:
+PaletteFade_StartInterpolation:
 	overlay_veneer BattleEffect_StartBufferInterpolationFar
 	.global Event_StartScreenTransition
 	.thumb_func
@@ -314,9 +314,9 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Func_02005c04:
 	overlay_veneer Func_080c8480
-	.global Field_DispatchTypeHandler
+	.global FieldPsynergy_RunHandler
 	.thumb_func
-Field_DispatchTypeHandler:
+FieldPsynergy_RunHandler:
 	overlay_veneer Field_DispatchTypeHandlerFar
 	.global BattleEffect_LoadActionEffectResources
 	.thumb_func

@@ -22,15 +22,15 @@ extern u16 *gData_02001a18;
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
 DEFINE_FUNC_02000038_4(Func_02000038, gData_02001a24, gData_02001a28,
-    Data_02001a2c, gData_02001a18, Func_02000328)
+                       Data_02001a2c, gData_02001a18, Func_02000328)
 
 #include "task.h"
 
 extern u16 gData_02001a1c;
 
 DEFINE_FUNC_020000F4_2(Func_020000f4, gData_02001a34, gData_02001a30,
-    Func_020001d4, gData_02001a24, gData_02001a20, 15, gData_02001a1c, 16,
-    gData_02001a14, Func_020001f8)
+                       Func_020001d4, gData_02001a24, gData_02001a20, 15,
+                       gData_02001a1c, 16, gData_02001a14, Func_020001f8)
 
 void Func_02000158(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
@@ -38,8 +38,8 @@ void Func_02000158(void) {
 }
 
 DEFINE_FUNC_020000F4_2(Func_02000178, gData_02001a34, gData_02001a30,
-    Func_020001d4, gData_02001a24, gData_02001a20, 2, gData_02001a1c, 2,
-    gData_02001a14, Func_020001f8)
+                       Func_020001d4, gData_02001a24, gData_02001a20, 2,
+                       gData_02001a1c, 2, gData_02001a14, Func_020001f8)
 
 DEFINE_FUNC_020001D4(Func_020001d4)
 
@@ -100,7 +100,7 @@ void Func_02000328(void) {
   wait(40);
   Func_02000158();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
-  BattleEffect_StartBufferInterpolation(16);
+  PaletteFade_StartInterpolation(16);
   wait(16);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
@@ -197,7 +197,7 @@ void Func_020004ac(void) {
   wait(40);
   Func_02000158();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
-  BattleEffect_StartBufferInterpolation(16);
+  PaletteFade_StartInterpolation(16);
   wait(16);
 
   gMainRoutineWork.unk2c2 = 0;
@@ -333,7 +333,7 @@ other:
       dim = 3;
     Func_02000580(0x400 - (dim << 7));
     Func_0200133c();
-    BattleEffect_StartBufferInterpolation(1);
+    PaletteFade_StartInterpolation(1);
     Event_WaitTransitionFrames();
   }
   return 0;
@@ -425,7 +425,11 @@ void Func_020009ec(void) {
   return;
 }
 
-/* VIEW(islet_cave): tag struct FieldActor as struct FieldActor__islet_cave; field_event.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/islet_cave.c:519: dereferencing pointer to incomplete type. */
+/* VIEW(islet_cave): tag struct FieldActor as struct FieldActor__islet_cave;
+ * field_event.h has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/islet_cave.c:519: dereferencing pointer to incomplete
+ * type. */
 struct FieldActor__islet_cave {
   u8 unk00[8];
   s32 x;
@@ -444,7 +448,8 @@ void Func_020009f8(s32 actorId, s32 dx, s32 dz) {
   s32 x;
   s32 z;
 
-  leader = ((struct FieldActor__islet_cave *)Actor_GetById(gMainRoutineWork.currentOwner));
+  leader = ((struct FieldActor__islet_cave *)Actor_GetById(
+      gMainRoutineWork.currentOwner));
   actor = ((struct FieldActor__islet_cave *)Actor_GetById(actorId));
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -601,8 +606,14 @@ void Func_02001034(void) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(islet_cave): routine Field_RequestBattleFromEncounterTable as s32 Field_RequestBattleFromEncounterTable(); module/field/event_commands.h has void Field_RequestBattleFromEncounterTable(s32 row, s32 column); tried as the definition's void Field_RequestBattleFromEncounterTable(s32 row, s32 column), which the object already declares, Func_020010ac moves: 1 of 64 instructions in tla-ja. */
-extern s32 Field_RequestBattleFromEncounterTable__islet_cave() __asm__("Field_RequestBattleFromEncounterTable");
+/* VIEW(islet_cave): routine Field_RequestBattleFromEncounterTable as s32
+ * Field_RequestBattleFromEncounterTable(); module/field/event_commands.h has
+ * void Field_RequestBattleFromEncounterTable(s32 row, s32 column); tried as the
+ * definition's void Field_RequestBattleFromEncounterTable(s32 row, s32 column),
+ * which the object already declares, Func_020010ac moves: 1 of 64 instructions
+ * in tla-ja. */
+extern s32 Field_RequestBattleFromEncounterTable__islet_cave() __asm__(
+    "Field_RequestBattleFromEncounterTable");
 
 void Func_020010ac(void) {
   s32 t12, cue;
@@ -613,11 +624,11 @@ void Func_020010ac(void) {
   Event_Wait(20);
   PaletteFade_ApplySource(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
-  BattleEffect_StartBufferInterpolation(0x3c);
+  PaletteFade_StartInterpolation(0x3c);
   Event_Wait(60);
   FieldMessage_ShowCentered((s32)MsgSummonGuardianOfWind, 0, 2);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(0x3c);
+  PaletteFade_StartInterpolation(0x3c);
   Event_Wait(60);
   t12 = ((s32)Actor_GetById(FIELD_AT(&gMainRoutineWork, s32, 532)));
   if (t12 != 0) {
@@ -629,8 +640,8 @@ void Func_020010ac(void) {
   FIELD_AT(&gMainRoutineWork, u8, 587) = 2;
   cue = 0x67;
   /* FAKEMATCH(barrier): the asm on the first argument loads it before the
-   * second, as the native does; as Field_RequestBattleFromEncounterTable(0x67, 2), 2 of 64
-   * instructions differ in tla-en. */
+   * second, as the native does; as Field_RequestBattleFromEncounterTable(0x67,
+   * 2), 2 of 64 instructions differ in tla-en. */
   __asm__ volatile("" : "+r"(cue));
   Field_RequestBattleFromEncounterTable__islet_cave(cue, 2);
   Event_End();

@@ -1,3 +1,7 @@
+/// @file
+/// The world map screen: its markers and cursor (The Broken Seal's
+/// world_picture.c), and where the leader stands on it.
+
 #include "types.h"
 #include "dma.h"
 #include "heap_release.h"
@@ -12,7 +16,7 @@
 
 struct Actor *Actor_GetById(u32 objectId);
 
-void Func_080ebf94(void) {
+void WorldPicture_Initialize(void) {
   u32 *markerTiles;
   struct WorldMapWork *work = Ram_WorldMapWork;
   u32 *oam;
@@ -104,8 +108,7 @@ void Func_080ebf94(void) {
 #include "sound.h"
 #include "system.h"
 
-
-void BattleEffect_CleanupResourcesAndWindow(void) {
+void WorldPicture_Release(void) {
   Resource_ResetEntry(gWorldMapWork.vramBlock);
   Resource_ResetEntry(gWorldMapWork.windowSlot);
   Window_CloseFar((u32)gWorldMapWork.window, 2);

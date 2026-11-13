@@ -71,7 +71,7 @@ void Import_ActorSetMode(struct ShamanVillageObject *object, s32 mode);
 void Func_0200481c(struct ShamanVillageObject *object);
 void Actor_SetSingleChildFlags(struct ShamanVillageObject *object, u32 value);
 void Animation_SetStateFlags(struct ShamanVillageObject *object, s32 flags);
-void Field_DispatchTypeHandler(s32 type);
+void FieldPsynergy_RunHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_020049f4(void);
@@ -85,7 +85,8 @@ void Actor_MoveToObject(s32 actor, s32 target);
 void BattleEffect_StartArcEffect(void);
 void BattleEffect_EndArcEffect(void);
 void BattleEffect_WaitForArcGroups(void);
-void BattleEffect_SetObjectUpdateMode(struct ShamanVillageObject *object, s32 value);
+void BattleEffect_SetObjectUpdateMode(struct ShamanVillageObject *object,
+                                      s32 value);
 void Party_PlaySavedMusic(void);
 void Func_020048b4(void);
 

@@ -274,7 +274,7 @@ void Func_02000c08(s16 value) {
   BattleEffect_LoadActionEffectResources(151, 1);
   party = &gMainRoutineWork;
   Func_02003bb4(party->currentOwner, value);
-  Field_DispatchTypeHandler(1);
+  FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
   BattleEffect_CleanupSceneObjects();
 }

@@ -270,9 +270,9 @@ Event_WaitTransitionFrames:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_080dc978
+	.global FieldPsynergy_StartMindReadWave
 	.thumb_func
-Func_080dc978:
+FieldPsynergy_StartMindReadWave:
 	overlay_veneer Func_080c84e8
 	.global Func_02003fb4
 	.thumb_func

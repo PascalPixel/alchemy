@@ -53,9 +53,7 @@ void Func_020007dc(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static inline s32 FlagCheck(s32 flag) {
-  return GameFlag_Test(flag);
-}
+static inline s32 FlagCheck(s32 flag) { return GameFlag_Test(flag); }
 
 static inline void ActorTurn(s32 actor, s32 angle, s32 frames) {
   Actor_ArmCallback(actor, angle, frames);
@@ -331,7 +329,7 @@ void Func_02000570(void) {
 extern u32 gData_020033c8[];
 void Func_02001e68();
 void BattleEffect_LoadActionEffectResources();
-void BattleEffect_SetupObjectPair();
+void FieldPsynergy_SetupActorPair();
 void BattleEffect_StopMainActor();
 
 /// The rooms' setup: the leader's sprite priority, the two rooms' actors and
@@ -500,7 +498,7 @@ void Func_020007dc(void) {
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(7, 0, 16);
   BattleEffect_LoadActionEffectResources(24, 1);
-  BattleEffect_SetupObjectPair(7, 8);
+  FieldPsynergy_SetupActorPair(7, 8);
   EventObject_Initialize();
   Actor_ShowEmote(9, 0x101, 30);
   Actor_FaceActor(9, 7, 0);
@@ -508,7 +506,7 @@ void Func_020007dc(void) {
   object2 = Actor_Get(9);
   Actor_SetSingleChildFlags(object2, 0);
   Actor_SetScript(9, gData_0200349c);
-  Field_DispatchTypeHandler(1);
+  FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
   BattleEffect_CleanupSceneObjects();
   FieldEvent_ShowMessageThenWait(11, 0, 10);
@@ -677,9 +675,9 @@ void Func_02000f0c(void) {
 
 void Func_02000fe0(void) {
   BattleEffect_LoadActionEffectResources(24, 1);
-  BattleEffect_SetupObjectPair(7, 8);
+  FieldPsynergy_SetupActorPair(7, 8);
   EventObject_Initialize();
-  Field_DispatchTypeHandler(1);
+  FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
   BattleEffect_CleanupSceneObjects();
   return;

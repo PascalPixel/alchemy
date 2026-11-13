@@ -72,7 +72,7 @@ Data_080f0f64:
 	.byte -1, 2, 0, 2, 1, 2
 	.balign 4
 
-@ The four colours (BGR555) Func_080e3d04 passes to
+@ The four colours (BGR555) FieldPsynergy_Blaze passes to
 @ Field_StartColorTransition
 	.global Data_080f0f90
 Data_080f0f90:

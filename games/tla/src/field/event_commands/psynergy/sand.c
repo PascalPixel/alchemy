@@ -1,8 +1,8 @@
 /// @file
 /// Two routines not yet understood.
-// Part of f0e2c38.c.
+// Part of psynergy.c.
 
-#include "../f0e2c38_internal.h"
+#include "../psynergy_internal.h"
 
 #include "field_psynergy_work.h"
 #include "main_routine_work.h"
@@ -22,27 +22,41 @@ void Func_080dc954(void);
 void Actor_SetOthersPaused(struct Actor *excludedActor, s32 groupMode,
                            s32 action);
 s32 Func_080dbcd8(s32 x, s32 z, s32 terrain);
-void BattleEffect_InitializeSharedScene(void);
+void FieldPsynergy_FadeToCastColor(void);
 void BattleEffect_SetObjectUpdateMode(struct Actor *actor, s32 mode);
-void BattleEffect_PrepareBufferInterpolation(void);
+void FieldPsynergy_FadeFromCastColor(void);
 void Func_080e42d4(void);
-void Func_080e4730(void);
+void FieldPsynergy_EndSand(void);
 void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 s32 Resource_ResetEntry(u32 slot);
-/* VIEW(f0e4a34): routine Func_080e45a8 as void Func_080e45a8(void *sprite, void *particle, s32 index, s32 tiles, s32 high); the definition has void Func_080e45a8(struct EffectSprite__f0e446c *sprite, struct EffectParticle *particle, s32 unused, s32 tiles, s32 high). */
-extern void Func_080e45a8__f0e4a34(void *sprite, void *particle, s32 index, s32 tiles,
-                   s32 high) __asm__("Func_080e45a8");
-/* VIEW(f0e4a34): routine Func_080e4510 as void Func_080e4510(void *sprite, s32 tiles); the definition has void Func_080e4510(struct EffectSprite__f0e446c *sprite, s32 tiles). */
-extern void Func_080e4510__f0e4a34(void *sprite, s32 tiles) __asm__("Func_080e4510");
+/* VIEW(f0e4a34): routine Func_080e45a8 as void Func_080e45a8(void *sprite, void
+ * *particle, s32 index, s32 tiles, s32 high); the definition has void
+ * Func_080e45a8(struct EffectSprite__f0e446c *sprite, struct EffectParticle
+ * *particle, s32 unused, s32 tiles, s32 high). */
+extern void Func_080e45a8__f0e4a34(void *sprite, void *particle, s32 index,
+                                   s32 tiles,
+                                   s32 high) __asm__("Func_080e45a8");
+/* VIEW(f0e4a34): routine Func_080e4510 as void Func_080e4510(void *sprite, s32
+ * tiles); the definition has void Func_080e4510(struct EffectSprite__f0e446c
+ * *sprite, s32 tiles). */
+extern void Func_080e4510__f0e4a34(void *sprite,
+                                   s32 tiles) __asm__("Func_080e4510");
 void Func_080e446c(u8 *source, u8 *destination, s32 phase);
 void Func_080e45a0(void *sprite);
-/* VIEW(f0e4a34): routine Func_080e46ac as void Func_080e46ac(void *sprite, void *particle, s32 index, s32 tiles); the definition has void Func_080e46ac(struct EffectSprite *sprite, struct EffectParticle *particle, s32 unused, s32 tiles). */
-extern void Func_080e46ac__f0e4a34(void *sprite, void *particle, s32 index, s32 tiles) __asm__("Func_080e46ac");
-/* VIEW(f0e4a34): routine Func_080e43a4 as void Func_080e43a4(void *source, void *buffer, s32 size); the definition has void Func_080e43a4(struct PictureSource *source, void *buffer, s32 size). */
-extern void Func_080e43a4__f0e4a34(void *source, void *buffer, s32 size) __asm__("Func_080e43a4");
+/* VIEW(f0e4a34): routine Func_080e46ac as void Func_080e46ac(void *sprite, void
+ * *particle, s32 index, s32 tiles); the definition has void
+ * Func_080e46ac(struct EffectSprite *sprite, struct EffectParticle *particle,
+ * s32 unused, s32 tiles). */
+extern void Func_080e46ac__f0e4a34(void *sprite, void *particle, s32 index,
+                                   s32 tiles) __asm__("Func_080e46ac");
+/* VIEW(f0e4a34): routine Func_080e43a4 as void Func_080e43a4(void *source, void
+ * *buffer, s32 size); the definition has void Func_080e43a4(struct
+ * PictureSource *source, void *buffer, s32 size). */
+extern void Func_080e43a4__f0e4a34(void *source, void *buffer,
+                                   s32 size) __asm__("Func_080e43a4");
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Actor_SetPositionAndResetMotionFar(struct Actor *actor, s32 x, s32 y,
                                         s32 z);
@@ -51,7 +65,7 @@ void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
 struct Actor *Actor_GetById(u32 objectId);
 void Camera_FollowActor(s32 actor, s32 mode);
 
-void Func_080e4a34(void) {
+void FieldPsynergy_Sand(void) {
   u8 *work = HeapSlot_Alloc(92, 0x192c);
   struct BattleFxScene *effect = Ram_HeapSlots->effectWork;
   struct GrabEventWork *event = Ram_HeapSlots->eventWork;
@@ -81,7 +95,7 @@ void Func_080e4a34(void) {
     event->standing = 1;
   else
     event->standing = 0;
-  BattleEffect_InitializeSharedScene();
+  FieldPsynergy_FadeToCastColor();
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DustPuffA),
                         work);
   particleEntry = Resource_FindFreeEntry();
@@ -161,13 +175,12 @@ void Func_080e4a34(void) {
   Actor_SetOthersPaused(owner, 0, 16);
   Resource_ResetEntry(pictureEntry);
   Resource_ResetEntry(particleEntry);
-  BattleEffect_PrepareBufferInterpolation();
+  FieldPsynergy_FadeFromCastColor();
 end:
   HeapSlot_Release(92);
   if (event->standing != 0)
-    Func_080e4730();
+    FieldPsynergy_EndSand();
 }
-
 
 struct GlowParticle {
   s32 x;
@@ -194,16 +207,20 @@ struct GlowWork {
   s8 paletteMode;
 };
 
-
 extern const u16 Data_080f0fa0[];
 
 s32 Trig_Sin(s32 angle);
 void Camera_WorldToScreen(s32 *position);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 void BattleEffect_IntegrateVector2(s32 *vector, s32 damping, s32 gravity);
-/* VIEW(f0e4a34): routine EffectSprite_DrawAtWorldPosition as void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct GlowParticle *particle); f0e2c38 has void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct SprayParticle *particle). */
-extern void EffectSprite_DrawAtWorldPosition__f0e4a34(struct EffectSprite *sprite,
-                                      struct GlowParticle *particle) __asm__("EffectSprite_DrawAtWorldPosition");
+/* VIEW(f0e4a34): routine EffectSprite_DrawAtWorldPosition as void
+ * EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct
+ * GlowParticle *particle); f0e2c38 has void
+ * EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct
+ * SprayParticle *particle). */
+extern void EffectSprite_DrawAtWorldPosition__f0e4a34(
+    struct EffectSprite *sprite,
+    struct GlowParticle *particle) __asm__("EffectSprite_DrawAtWorldPosition");
 void Map_SetScreenShakeFar(s32 x, s32 y, s32 decay);
 
 #define GLOW_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
@@ -479,16 +496,15 @@ void Func_080e4d9c(void) {
   work->timer++;
 }
 
-
-void Func_080e3d04(void);
-void Func_080e572c(void);
-void Func_080e5d5c(void);
-void Func_080e68d0(void);
-void Func_080e7844(void);
-void Func_080e9af4(void);
+void FieldPsynergy_Blaze(void);
+void FieldPsynergy_Burst(void);
+void FieldPsynergy_Pound(void);
+void FieldPsynergy_Scoop(void);
+void FieldPsynergy_Parch(void);
+void FieldPsynergy_Hover(void);
 void Func_080e74d8(void);
 s32 Party_GetLeaderActor(void);
 
 /// Runs field Psynergy animation 21 for the dispatcher's targeted path.
-void BattleEffect_CallEffect21(void) { Func_080e572c(); }
+void FieldPsynergy_BurstOnTarget(void) { FieldPsynergy_Burst(); }
 #undef GLOW_NEXT_PHASE

@@ -1,8 +1,8 @@
 /// @file
 /// An effect object that sinks and shrinks.
-// Part of f0e2c38.c.
+// Part of psynergy.c.
 
-#include "../f0e2c38_internal.h"
+#include "../psynergy_internal.h"
 
 struct RiseWork {
   u8 unk0000[0x18a8];
@@ -43,17 +43,16 @@ void BattleEffect_SinkAndShrinkObject(void) {
   work->timer++;
 }
 
-
-void Func_080e3d04(void);
-void Func_080e4a34(void);
-void Func_080e572c(void);
-void Func_080e5d5c(void);
-void Func_080e68d0(void);
-void Func_080e7844(void);
-void Func_080e9af4(void);
+void FieldPsynergy_Blaze(void);
+void FieldPsynergy_Sand(void);
+void FieldPsynergy_Burst(void);
+void FieldPsynergy_Pound(void);
+void FieldPsynergy_Scoop(void);
+void FieldPsynergy_Parch(void);
+void FieldPsynergy_Hover(void);
 void Func_080e74d8(void);
-void BattleEffect_PrepareBufferInterpolation(void);
+void FieldPsynergy_FadeFromCastColor(void);
 s32 Party_GetLeaderActor(void);
 
-/// Runs field effect 18 (Func_080e5d5c) for the request dispatcher.
-void BattleEffect_CallEffect18(void) { Func_080e5d5c(); }
+/// Runs field effect 18 (FieldPsynergy_Pound) for the request dispatcher.
+void FieldPsynergy_PoundOnTarget(void) { FieldPsynergy_Pound(); }

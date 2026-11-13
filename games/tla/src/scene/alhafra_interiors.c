@@ -53,7 +53,7 @@ void Event_End(void);
 void Func_02000bc4(s32 shop, s32 keeper);
 void Func_02000bcc(s32 keeper);
 void Func_02000bd4(s32 shop, s32 keeper);
-void Field_DispatchTypeHandler(s32 type);
+void FieldPsynergy_RunHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02000b7c(void);
@@ -235,7 +235,8 @@ void Func_020004f4(s32 actor) {
 
   FieldEvent_SetMessageId(msg);
   Event_OpenMessage(actor, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
+      0) {
     FieldEvent_Wait(10);
     FieldEvent_SetMessageId(msg + 1);
   } else {

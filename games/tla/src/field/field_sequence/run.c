@@ -217,8 +217,8 @@ s32 FieldSequence_Run(void) {
 #ifdef UBFIX
       Djinn_ResolvePending(gMainRoutineWork.pendingDjinnEvent);
 #else
-      ((void (*)(s32, s32))Djinn_ResolvePending)(gMainRoutineWork.pendingDjinnEvent,
-                                          1);
+      ((void (*)(s32, s32))Djinn_ResolvePending)(
+          gMainRoutineWork.pendingDjinnEvent, 1);
 #endif
       gMainRoutineWork.pendingDjinnEvent = 0;
     }
@@ -294,17 +294,17 @@ s32 FieldSequence_Run(void) {
           Func_080cb8a4();
         } else if (work->raisedEvent == -0x377) {
           Leader_StopMoving();
-          Func_080ed2a4(1);
+          WorldPicture_Show(1);
           if (ARRIVAL.scene != -1)
             ARRIVAL.state = 1;
         } else if (work->raisedEvent == -0x378) {
           Leader_StopMoving();
           value = 0;
-          while (Func_080ed2a4(value))
+          while (WorldPicture_Show(value))
             value ^= 1;
         } else if (work->raisedEvent == -0x379) {
           Leader_StopMoving();
-          BattleEffect_RunVisibilityTransition();
+          WorldMap_ZoomOutWhileLHeld();
         } else if (work->raisedEvent == -0x37b) {
           if (work->keys == gInput.held) {
             Func_080d5720();
@@ -503,7 +503,8 @@ done:
   return result;
 }
 
-/* VIEW(field_sequence): tag struct Object as struct Object__field_sequence; module/tla.h has another definition. */
+/* VIEW(field_sequence): tag struct Object as struct Object__field_sequence;
+ * module/tla.h has another definition. */
 struct Object__field_sequence {
   u8 pad0[6];
   u16 angle;

@@ -110,7 +110,7 @@ struct MainRoutineWork {
   u8 unk284[0x38]; ///< not named by ⚓️ code
   u16 forgeItem;   ///< the item left at the forge (Forge_SetItem)
   /// SceneId_WorldMap after a destination is chosen on the world map, 0xffff
-  /// after cancelling (Func_080ed2a4); not read by name in ⚓️ code.
+  /// after cancelling (WorldPicture_Show); not read by name in ⚓️ code.
   u16 unk2be;
   u8 unk2c0[2]; ///< not named by ⚓️ code
   u8 unk2c2;    ///< 0, 1 or 2, set by the Islet Cave and Contigo scenes

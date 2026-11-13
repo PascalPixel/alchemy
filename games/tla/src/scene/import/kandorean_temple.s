@@ -326,17 +326,17 @@ Func_02005330:
 	.thumb_func
 Func_02005338:
 	overlay_veneer Func_080c8480
-	.global Field_DispatchTypeHandler
+	.global FieldPsynergy_RunHandler
 	.thumb_func
-Field_DispatchTypeHandler:
+FieldPsynergy_RunHandler:
 	overlay_veneer Field_DispatchTypeHandlerFar
 	.global BattleEffect_LoadActionEffectResources
 	.thumb_func
 BattleEffect_LoadActionEffectResources:
 	overlay_veneer BattleEffect_LoadActionEffectResourcesFar
-	.global BattleEffect_SetupObjectPair
+	.global FieldPsynergy_SetupActorPair
 	.thumb_func
-BattleEffect_SetupObjectPair:
+FieldPsynergy_SetupActorPair:
 	overlay_veneer BattleEffect_SetupObjectPairFar
 	.global BattleEffect_StopMainActor
 	.thumb_func

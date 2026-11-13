@@ -7,7 +7,7 @@
 #include "module/field/object.h"
 
 #define FIELD_PSYNERGY_MESSAGE(user, ability, message)                         \
-  (MessageArgument_PushFar((user), 1), MessageArgument_PushFar((ability), 4),          \
+  (MessageArgument_PushFar((user), 1), MessageArgument_PushFar((ability), 4),  \
    FieldMessage_ShowFar((s32)&(message), 1))
 
 s32 Func_080ce61c(u32 code) {
@@ -155,14 +155,14 @@ s32 Func_080ce61c(u32 code) {
     effect[34] = 0;
     effect[35] = 0;
   }
-  BattleEffect_SetupObjectPair(Party_GetLeaderActor(), target);
+  FieldPsynergy_SetupActorPair(Party_GetLeaderActor(), target);
   Func_080dc6d8();
   Field_RunPsynergyEvent(before, userId, target);
   if (GameFlag_Test(320)) {
     if (GameFlag_Test(321))
-      BattleEffect_DispatchRequestKind();
+      FieldPsynergy_Dispatch();
     else
-      BattleEffect_Run();
+      FieldPsynergy_Run();
   }
   BattleEffect_StopMainActor();
   hit = ((s8 *)event)[0xd30];
@@ -174,7 +174,7 @@ s32 Func_080ce61c(u32 code) {
   }
   Field_RunPsynergyEvent(after, userId, target);
   if (GameFlag_Test(320))
-    BattleEffect_ClearChildValueOnMismatch();
+    FieldPsynergy_FinishMindRead();
   event[0xcb6] = 0;
   BattleEffect_CleanupSceneObjects();
   GameFlag_ClearBit(320);
@@ -182,8 +182,7 @@ s32 Func_080ce61c(u32 code) {
   return 0;
 }
 
-s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode,
-                                 s32 target) {
+s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target) {
   if (event != NULL) {
     if (event->action != 0) {
       if (event->action < 0x10000) {

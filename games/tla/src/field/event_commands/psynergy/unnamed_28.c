@@ -1,9 +1,9 @@
 /// @file
 /// The burst of sparkles an effect ends with, and moving the view: opening the
 /// whole map to it, swinging it and giving the bounds back.
-// Part of f0e2c38.c.
+// Part of psynergy.c.
 
-#include "../f0e2c38_internal.h"
+#include "../psynergy_internal.h"
 
 struct RingMote {
   s32 x;
@@ -37,25 +37,27 @@ struct RingEvent {
   s16 timer;
 };
 
-
 extern char ResourceId_StarSparkleFade, ResourceId_RingArcs, ResourceId_Data1ED;
 
 void *HeapSlot_AllocEwram(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
-void BattleEffect_InitializeSharedScene(void);
+void FieldPsynergy_FadeToCastColor(void);
 void Camera_WorldToScreen(s32 *position);
 void wait(s32 frames);
 void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 void Func_080e807c(void);
-/* VIEW(f0e82cc): routine Func_080e7f94 as void Func_080e7f94(u8 *canvas, s32 radius, s32 angle, s32 color); the definition has void Func_080e7f94(s32 unused, s32 radius, s32 angle, s32 color). */
-extern void Func_080e7f94__f0e82cc(u8 *canvas, s32 radius, s32 angle, s32 color) __asm__("Func_080e7f94");
+/* VIEW(f0e82cc): routine Func_080e7f94 as void Func_080e7f94(u8 *canvas, s32
+ * radius, s32 angle, s32 color); the definition has void Func_080e7f94(s32
+ * unused, s32 radius, s32 angle, s32 color). */
+extern void Func_080e7f94__f0e82cc(u8 *canvas, s32 radius, s32 angle,
+                                   s32 color) __asm__("Func_080e7f94");
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 u32 Random16(void);
-void BattleEffect_PrepareBufferInterpolation(void);
+void FieldPsynergy_FadeFromCastColor(void);
 
-void Func_080e82cc(void) {
+void FieldPsynergy_Unnamed28(void) {
   struct RingWork *work = HeapSlot_AllocEwram(92, 0x298c);
   struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct RingEvent *event = Ram_HeapSlots->eventWork;
@@ -83,7 +85,7 @@ void Func_080e82cc(void) {
   repeat = 1;
   drawing = 0;
   if (event->up == 0) {
-    BattleEffect_InitializeSharedScene();
+    FieldPsynergy_FadeToCastColor();
     gCpuLoadDisplayEnabled = angle;
     Func_080eb824();
     canvas = Ram_HeapSlots->unkec[1];
@@ -262,7 +264,7 @@ void Func_080e82cc(void) {
       }
     }
     Resource_ResetEntry(entry);
-    BattleEffect_PrepareBufferInterpolation();
+    FieldPsynergy_FadeFromCastColor();
   }
   work->cycling = 1;
   event->up = 1;
@@ -270,7 +272,6 @@ void Func_080e82cc(void) {
   event->timer = 600;
   Task_Add(Func_080e807c, 0x480);
 }
-
 
 // One mote: a position and a velocity (BattleEffect_IntegrateVector3's vector)
 // and a frame count, negative before it starts.
@@ -284,7 +285,11 @@ struct BurstMote {
   s32 timer;
 };
 
-/* VIEW(f0e82cc): tag struct BurstWork as struct BurstWork__f0e82cc; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:4606: structure has no member named `motes'. */
+/* VIEW(f0e82cc): tag struct BurstWork as struct BurstWork__f0e82cc; f0e2c38.c
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/psynergy.c:4606: structure has no member
+ * named `motes'. */
 struct BurstWork__f0e82cc {
   u8 unk0000[0x1000];
   struct EffectSprite sprites[64];
@@ -311,7 +316,7 @@ extern char ResourceId_SparkleFade;
 /// around the current owner, starting a quarter of them a frame later than
 /// the last, then moves and animates them for 40 frames before releasing the
 /// effect.
-void Func_080e87c4(void) {
+void FieldPsynergy_EndUnnamed28(void) {
   struct BurstWork__f0e82cc *work = Ram_HeapSlots->battleFxWork[0];
   struct BurstEvent *event = Ram_HeapSlots->eventWork;
   struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -517,8 +522,9 @@ void Func_080e89e4(s32 direction) {
   Actor_ResetMotion(center);
 }
 
-
-/* VIEW(f0e82cc): macro ABS as ABS__f0e82cc; another part or header has another definition; tried with the definition the rest of the object has, Func_080e8b44 moves: 8 of 117 instructions in tla-ja. */
+/* VIEW(f0e82cc): macro ABS as ABS__f0e82cc; another part or header has another
+ * definition; tried with the definition the rest of the object has,
+ * Func_080e8b44 moves: 8 of 117 instructions in tla-ja. */
 #define ABS__f0e82cc(x) ((x) >= 0 ? (x) : -(x))
 
 /// Swings the view centre away from where Func_080e89e4 found it, along the
@@ -544,11 +550,14 @@ void Func_080e8b44(s32 direction, s32 phase, s32 amplitude) {
   if (direction & VIEW_MOVE_X) {
     edge = work->edgeX;
     if (edge == -1)
-      x = work->x + Iwram_MulQ16(ABS__f0e82cc(Trig_Sin(phase << 12)), amplitude);
+      x = work->x +
+          Iwram_MulQ16(ABS__f0e82cc(Trig_Sin(phase << 12)), amplitude);
     else if (edge == 1)
-      x = work->x + Iwram_MulQ16(-ABS__f0e82cc(Trig_Sin(phase << 12)), amplitude);
+      x = work->x +
+          Iwram_MulQ16(-ABS__f0e82cc(Trig_Sin(phase << 12)), amplitude);
     else
-      x = work->x + Iwram_MulQ16(ABS__f0e82cc(Trig_Sin(phase << 12)), amplitude);
+      x = work->x +
+          Iwram_MulQ16(ABS__f0e82cc(Trig_Sin(phase << 12)), amplitude);
   } else {
     x = work->x;
   }
@@ -556,11 +565,14 @@ void Func_080e8b44(s32 direction, s32 phase, s32 amplitude) {
   if (direction & VIEW_MOVE_Z) {
     edge = work->edgeZ;
     if (edge == -1)
-      z = work->z + Iwram_MulQ16(ABS__f0e82cc(Trig_Sin(phase << 12)), amplitude);
+      z = work->z +
+          Iwram_MulQ16(ABS__f0e82cc(Trig_Sin(phase << 12)), amplitude);
     else if (edge == 1)
-      z = work->z + Iwram_MulQ16(-ABS__f0e82cc(Trig_Sin(phase << 12)), amplitude);
+      z = work->z +
+          Iwram_MulQ16(-ABS__f0e82cc(Trig_Sin(phase << 12)), amplitude);
     else
-      z = work->z + Iwram_MulQ16(ABS__f0e82cc(Trig_Sin(phase << 12)), amplitude);
+      z = work->z +
+          Iwram_MulQ16(ABS__f0e82cc(Trig_Sin(phase << 12)), amplitude);
   } else {
     z = work->z;
   }
@@ -570,7 +582,11 @@ void Func_080e8b44(s32 direction, s32 phase, s32 amplitude) {
   center->z = z;
 }
 
-/* VIEW(f0e82cc): tag struct EffectScene as struct EffectScene__f0e82cc; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:4845: structure has no member named `firstObjectId'. */
+/* VIEW(f0e82cc): tag struct EffectScene as struct EffectScene__f0e82cc;
+ * f0e2c38.c has another definition; tried with the definition the rest of the
+ * object has, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/psynergy.c:4845: structure has no member
+ * named `firstObjectId'. */
 struct EffectScene__f0e82cc {
   u8 unk00[0x18];
   s16 firstObjectId;
@@ -601,7 +617,6 @@ void Func_080e8c9c(void) {
     Camera_FollowActor(scene->firstObjectId, 1);
   }
 }
-
 
 struct FxGroup {
   u8 unk00[32];

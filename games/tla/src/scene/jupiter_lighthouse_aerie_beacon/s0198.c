@@ -43,7 +43,7 @@ static inline void ColorBuffer_ApplyTarget(s32 value, s32 mode) {
 }
 
 static inline void ColorBuffer_Interpolate(s32 frames) {
-  BattleEffect_StartBufferInterpolation(frames);
+  PaletteFade_StartInterpolation(frames);
 }
 
 void Func_02000198(void) {
@@ -127,8 +127,8 @@ void Func_02000198(void) {
   }
   if (spawn) {
     rise = ((u32)(Random16Far() * 80) >> 16) << 16;
-    effect =
-        FieldActor_Create(672, center->x, center->y - rise + 0xfff80000, center->z);
+    effect = FieldActor_Create(672, center->x, center->y - rise + 0xfff80000,
+                               center->z);
     if (effect != 0) {
       sprite = effect->sprite;
       Actor_StartScript(effect, gData_02006470);
@@ -159,7 +159,10 @@ void Func_02000198(void) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(s0198): routine Func_0200581c as s32 Func_0200581c(); module/scene/jupiter_lighthouse_aerie_beacon.h has void Func_0200581c(void); tried as the rest of the object declares it, Func_020040f4 moves: 1 of 216 instructions in tla-ja. */
+/* VIEW(s0198): routine Func_0200581c as s32 Func_0200581c();
+ * module/scene/jupiter_lighthouse_aerie_beacon.h has void Func_0200581c(void);
+ * tried as the rest of the object declares it, Func_020040f4 moves: 1 of 216
+ * instructions in tla-ja. */
 extern s32 Func_0200581c__s0198() __asm__("Func_0200581c");
 
 void Func_0200045c(void) {
@@ -213,17 +216,17 @@ void Func_020004c8(void) {
 
     random = Random16Far();
     effect = FieldActor_Create(672, center->x,
-                          (s32)((u32)(random << 8) >> 16 << 16) + center->y -
-                              0x1c0000,
-                          center->z);
+                               (s32)((u32)(random << 8) >> 16 << 16) +
+                                   center->y - 0x1c0000,
+                               center->z);
   } else {
     u32 random;
 
     random = Random16Far();
     effect = FieldActor_Create(672, center->x,
-                          (s32)((u32)(random << 6) >> 16 << 16) + center->y -
-                              0x1c0000,
-                          center->z);
+                               (s32)((u32)(random << 6) >> 16 << 16) +
+                                   center->y - 0x1c0000,
+                               center->z);
   }
   if (effect != 0) {
     sprite = effect->sprite;
@@ -558,7 +561,9 @@ static __inline__ void Actor_StartRepeatedMotion_(s32 id, s32 motion) {
   Actor_StartRepeatedMotion(id, motion);
 }
 static __inline__ void GameFlag_SetBit_(s32 flag) { GameFlag_SetBit(flag); }
-static __inline__ void Func_0200593c_(s32 a, s32 b) { Field_RequestBattleFromEncounterTable(a, b); }
+static __inline__ void Func_0200593c_(s32 a, s32 b) {
+  Field_RequestBattleFromEncounterTable(a, b);
+}
 
 #define ACTOR_SET_MODE_AND_WAIT(id, mode, frames)                              \
   do {                                                                         \
@@ -1021,7 +1026,6 @@ void Func_020016e8(void) {
   Event_ClearFlag(0x11b);
   Field_RequestBattleFromEncounterTable(13, 7);
 }
-
 
 void Func_02001ac4(s32 a0, s32 a1) {
   BattleEffect_StartArcEffect();
@@ -2024,7 +2028,11 @@ struct SceneWork {
   u8 pad0[12];
   s32 unk_0c;
 };
-/* VIEW(s0198): tag struct FieldWork as struct FieldWork__s0198; field_work.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2064: dereferencing pointer to incomplete type. */
+/* VIEW(s0198): tag struct FieldWork as struct FieldWork__s0198; field_work.h
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2064:
+ * dereferencing pointer to incomplete type. */
 struct FieldWork__s0198 {
   u8 pad0[0x178];
   struct SceneWork unk_178;
@@ -2125,7 +2133,11 @@ void Func_02003a6c(s32 mode) {
   }
 }
 
-/* VIEW(s0198): tag struct HeapSlotWords as struct HeapSlotWords__s0198; module/scene/scene.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2150: structure has no member named `map'. */
+/* VIEW(s0198): tag struct HeapSlotWords as struct HeapSlotWords__s0198;
+ * module/scene/scene.h has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2150: structure
+ * has no member named `map'. */
 struct HeapSlotWords__s0198 {
   s32 unk00[8];
   u8 *map;
@@ -2135,7 +2147,8 @@ extern s32 gData_02005a20[];
 
 void Func_02003c58(s32 mode) {
   struct ScrollWork *work =
-      (struct ScrollWork *)(((struct HeapSlotWords__s0198 *)Ram_HeapSlots)->map + 376);
+      (struct ScrollWork
+           *)(((struct HeapSlotWords__s0198 *)Ram_HeapSlots)->map + 376);
   s32 speed = 0x18000;
   u32 count = 0;
   u32 i;
@@ -2284,13 +2297,17 @@ extern s32 gData_020069f4;
 static inline void Counter_Set(s32 value) { gData_020069f4 = value; }
 
 DEFINE_FUNC_0200027C(Func_02003f60, gData_020069f4, gData_020069f8,
-    gData_02006a2c)
+                     gData_02006a2c)
 
-/* VIEW(s0198): routine Func_020057c4 as void Func_020057c4(); module/scene/scene.h has void Func_020057c4(void); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2369: too many arguments to function `Func_020057c4'. */
+/* VIEW(s0198): routine Func_020057c4 as void Func_020057c4();
+ * module/scene/scene.h has void Func_020057c4(void); tried as the rest of the
+ * object declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2369: too many
+ * arguments to function `Func_020057c4'. */
 extern void Func_020057c4__s0198() __asm__("Func_020057c4");
 
 DEFINE_FUNC_020002F4(Func_0200401c, gData_020069f8, gData_02006a2c,
-    gData_02006a4c, Func_02003f60, gData_02006a50)
+                     gData_02006a4c, Func_02003f60, gData_02006a50)
 
 DEFINE_FUNC_02000378(Func_020040a0, Func_020057c4__s0198, Func_020059ec)
 
@@ -2370,8 +2387,13 @@ void Func_020040f4(void) {
 
 DEFINE_FUNC_020003D0(Func_020042e0)
 
-/* VIEW(s3f54): routine Actor_StartScript as void Actor_StartScript(struct Object6a5 *object, const void *script); s0198 has void Actor_StartScript(struct Actor *object, const void *script); not tried: Actor_StartScript's bound declaration was not found. */
-extern void Func_02005764__s3f54(struct Object6a5 *object, const void *script) __asm__("Actor_StartScript");
+/* VIEW(s3f54): routine Actor_StartScript as void Actor_StartScript(struct
+ * Object6a5 *object, const void *script); s0198 has void
+ * Actor_StartScript(struct Actor *object, const void *script); not tried:
+ * Actor_StartScript's bound declaration was not found. */
+extern void
+Func_02005764__s3f54(struct Object6a5 *object,
+                     const void *script) __asm__("Actor_StartScript");
 extern u8 gData_020069fc[];
 
 void Func_0200430c(struct Object6a5 *object) {

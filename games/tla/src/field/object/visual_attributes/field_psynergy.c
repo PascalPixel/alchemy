@@ -284,8 +284,11 @@ void *Sprite_ShareVramCacheEntry(void *src, void *alt) {
 #define Actor_SetAnimationSpeedFar                                             \
   ((void (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
-/* VIEW(depthend): routine Func_080200c0 as struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); f0d8740 has struct CaptureObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
-extern struct Actor *Func_080200c0__depthend(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_080200c0");
+/* VIEW(depthend): routine Func_080200c0 as struct Actor *Func_080200c0(s32
+ * kind, s32 x, s32 y, s32 z); f0d8740 has struct CaptureObject
+ * *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
+extern struct Actor *Func_080200c0__depthend(s32 kind, s32 x, s32 y,
+                                             s32 z) __asm__("Func_080200c0");
 
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   struct SpawnScene *scene = Ram_HeapSlots->effectWork;
@@ -330,8 +333,11 @@ void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
   } while (objectId <= 0x50);
 }
 
-/* VIEW(depthend): routine BattleEffect_ApplyColorToTargetBuffer as void BattleEffect_ApplyColorToTargetBuffer(s32 colors, s32 mode); f0d6674 has void BattleEffect_ApplyColorToTargetBuffer(void *buffer, s32 mode). */
-extern void BattleEffect_ApplyColorToTargetBuffer__depthend(s32 colors, s32 mode) __asm__("BattleEffect_ApplyColorToTargetBuffer");
+/* VIEW(depthend): routine BattleEffect_ApplyColorToTargetBuffer as void
+ * BattleEffect_ApplyColorToTargetBuffer(s32 colors, s32 mode); f0d6674 has void
+ * BattleEffect_ApplyColorToTargetBuffer(void *buffer, s32 mode). */
+extern void BattleEffect_ApplyColorToTargetBuffer__depthend(
+    s32 colors, s32 mode) __asm__("BattleEffect_ApplyColorToTargetBuffer");
 
 void Field_StartColorTransition(s32 frames, s32 color) {
   u8 *state = Ram_HeapSlots->eventWork;
@@ -344,7 +350,7 @@ void Field_StartColorTransition(s32 frames, s32 color) {
   Dma_Set(buffers->target, buffers->current, DMA_COPY_WORDS(0x2a0), REG_DMA3);
   BattleEffect_ApplyColorToTargetBuffer__depthend(0x200000 | color, 1);
   GameFlag_SetBit(0x108);
-  BattleEffect_StartBufferInterpolation(frames);
+  PaletteFade_StartInterpolation(frames);
 }
 
 void Field_StartPaletteTransition(s32 frames) {
@@ -357,7 +363,7 @@ void Field_StartPaletteTransition(s32 frames) {
   else
     BattleEffect_ApplyColorToTargetBuffer__depthend(colors, 1);
   GameFlag_ClearBit(0x108);
-  BattleEffect_StartBufferInterpolation(frames);
+  PaletteFade_StartInterpolation(frames);
 }
 
 /// Flags 0x148-0x14f each force one tint, the last set one winning.
@@ -368,7 +374,7 @@ void Field_StartPaletteTransition(s32 frames) {
 /// animations, and forced by the tint flags; then fades towards it over eight
 /// frames. The palettes are copied by Field_StartColorTransition.
 // ☀️'s function of the same name also copies the palettes.
-void BattleEffect_InitializeSharedScene(void) {
+void FieldPsynergy_FadeToCastColor(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   s32 tint;
   s32 animation;

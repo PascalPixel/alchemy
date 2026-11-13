@@ -1,3 +1,6 @@
+/// @file
+/// The end of Cloak, and Douse.
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "field_psynergy_work.h"
@@ -22,7 +25,7 @@
 // Cloak the caster: flicker it ten times, leave it half transparent, then
 // check the ground under it every frame. When it cannot hide where it
 // stands, show it again at once.
-void Func_080decb8(void) {
+void FieldPsynergy_StartCloak(void) {
   struct CloakEvent *event = Ram_HeapSlots->eventWork;
   struct CloakCaster *caster =
       ((struct BattleFxScene *)Ram_HeapSlots->effectWork)->mainObject;
@@ -57,7 +60,7 @@ void Func_080decb8(void) {
   gMainRoutineWork.cloaked = 1;
   check();
   if (event->psynergyRequest == CLOAK_END) {
-    Func_080debd8();
+    FieldPsynergy_EndCloak();
     event->psynergyRequest = 0;
   }
 }
@@ -95,7 +98,7 @@ void BattleEffect_UpdateDriftingFallObject(struct Actor *object) {
   }
 }
 
-void FieldEffect_RunDouseOnTarget(void) { FieldEffect_RunDouse(); }
+void FieldPsynergy_DouseOnTarget(void) { FieldPsynergy_Douse(); }
 
 #include "event_work.h"
 
@@ -103,7 +106,7 @@ static __inline__ s32 Lerp10(s32 start, s32 end, s32 step) {
   return start + step * (end - start) / 10;
 }
 
-void FieldEffect_RunDouse(void) {
+void FieldPsynergy_Douse(void) {
   struct EffectVector pos;
   struct EffectVector start;
   struct EffectVector end;
@@ -125,7 +128,7 @@ void FieldEffect_RunDouse(void) {
   orb = Actor_Spawn(300, i = raised = 0, 0, 0);
   if (orb == 0)
     return;
-  BattleEffect_InitializeSharedScene();
+  FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(138);
   if (work->anchor == 0) {
     work->x = target->x;
@@ -268,7 +271,7 @@ void FieldEffect_RunDouse(void) {
     i++;
   } while (i < steps);
   Actor_Destroy((struct Actor *)orb);
-  BattleEffect_PrepareBufferInterpolation();
+  FieldPsynergy_FadeFromCastColor();
 }
 
 /// Each frame: one falling particle 8 to 24 pixels above the lifted object,
@@ -303,7 +306,11 @@ void BattleEffect_SpawnFallingParticles(void) {
 #include "battle_effect.h"
 #include "frame.h"
 
-/* VIEW(f0decb8): tag struct EffectWork as struct EffectWork__f0decb8; module/tla.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0decb8.c:351: dereferencing pointer to incomplete type. */
+/* VIEW(f0decb8): tag struct EffectWork as struct EffectWork__f0decb8;
+ * module/tla.h has another definition; tried with the definition the rest of
+ * the object has, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands/cloak.c:351: dereferencing pointer to
+ * incomplete type. */
 struct EffectWork__f0decb8 {
   u8 unk00[4];
   s32 x;
@@ -319,7 +326,6 @@ struct EffectWork__f0decb8 {
   u8 palette;
 };
 
-
 void Actor_ApplyRandomChildValues(void);
 void BattleEffect_SpawnRadialParticleRing(struct FxObject *object);
 
@@ -333,7 +339,7 @@ static __inline__ s32 Actor_ProbeRaised(struct FxObject *object,
   return hit;
 }
 
-void BattleEffect_SteerLiftedTarget(s32 targetId) {
+void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   struct EffectWork__f0decb8 *work;
   struct FxObject *source;
   struct FxObject *target;
@@ -352,7 +358,7 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
   target = work->target;
   if (target == NULL)
     return;
-  BattleEffect_InitializeSharedScene();
+  FieldPsynergy_FadeToCastColor();
   source->linked = target;
   Actor_StartScriptFar((struct Actor *)source, (u32)gData_080f0e60);
   /* FAKEMATCH(temporary): p holds &position everywhere but the steering
@@ -368,7 +374,7 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
   right = BattleEffect_SpawnItemBreakMode1(p->x - 0x200000, p->y, p->z, 0);
   anchors[1] = right;
   if (anchors[0] == NULL || right == NULL) {
-    BattleEffect_PrepareBufferInterpolation();
+    FieldPsynergy_FadeFromCastColor();
     return;
   }
   wait(15);
@@ -529,9 +535,9 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
     for (i = 0; i < 90 && target->velocityY < 0; i++)
       wait(1);
     BattleEffect_SpawnRadialParticleRing(target);
-    BattleEffect_PrepareBufferInterpolation();
+    FieldPsynergy_FadeFromCastColor();
     wait(30);
   } else {
-    BattleEffect_PrepareBufferInterpolation();
+    FieldPsynergy_FadeFromCastColor();
   }
 }

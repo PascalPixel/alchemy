@@ -14,9 +14,7 @@ void Event_RunMessage(s32 actor, s32 message) {
   Event_End();
 }
 
-void Event_ResolveAllPendingActions(void) {
-  Event_ResolvePendingActions(0);
-}
+void Event_ResolveAllPendingActions(void) { Event_ResolvePendingActions(0); }
 
 void Event_ResolvePendingActions(s32 skip) {
   struct EventWork *state = Ram_HeapSlots->eventWork;
@@ -208,7 +206,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       FieldMessage_ShowFar((s32)&MsgActorUsesItem, 1);
       BattleEffect_LoadActionEffectResources(actionId, 0);
       runtime->resolvingAction = 1;
-      BattleEffect_Run();
+      FieldPsynergy_Run();
       runtime->resolvingAction = 0;
       BattleEffect_CleanupSceneObjects();
 
@@ -243,7 +241,8 @@ s32 Func_080ce31c(s32 kind) {
     s32 high = event->trigger & 0xf000;
     s16 hasFacing = (u16)event->trigger & 0x800;
     s32 target = (u16)event->trigger & 0xff;
-    s32 eventKind = ((const struct PendingAction *)Ability_Get((u16)flags >> 8))->eventKind;
+    s32 eventKind =
+        ((const struct PendingAction *)Ability_Get((u16)flags >> 8))->eventKind;
 
     if ((event->control & 15) == 5 && eventKind == kind &&
         GameFlag_IsConditionActive(event->condition)) {
@@ -302,7 +301,8 @@ struct TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector) {
     s32 high = event->trigger & 0xf000;
     s16 hasFacing = (u16)event->trigger & 0x800;
     s32 target = (u16)event->trigger & 0xff;
-    s32 eventKind = ((const struct PendingAction *)Ability_Get((u16)flags >> 8))->eventKind;
+    s32 eventKind =
+        ((const struct PendingAction *)Ability_Get((u16)flags >> 8))->eventKind;
 
     if ((event->control & 15) == 5 && eventKind == kind &&
         GameFlag_IsConditionActive(event->condition)) {
@@ -354,9 +354,9 @@ s32 Event_ExecutePackedAction(u32 packed) {
       target = selector & 255;
   }
   BattleEffect_LoadActionEffectResources(action, 0);
-  BattleEffect_SetupObjectPair(Party_GetLeaderActor(), target);
+  FieldPsynergy_SetupActorPair(Party_GetLeaderActor(), target);
   Field_RunPsynergyEvent(first, mode, target);
-  FieldEvent_RunTypeHandler();
+  FieldPsynergy_RunExtraHandler();
   BattleEffect_StopMainActor();
   Field_RunPsynergyEvent(second, mode, target);
   BattleEffect_CleanupSceneObjects();

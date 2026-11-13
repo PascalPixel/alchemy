@@ -331,14 +331,14 @@ void Func_02000b68(s32 unused, s32 id) {
     Func_02002834(0);
   for (i = 3; i >= 0; i--) {
     BattleEffect_ApplyColorToTargetBuffer(Random16Far() & 0x7fff, 0);
-    BattleEffect_StartBufferInterpolation(15);
+    PaletteFade_StartInterpolation(15);
     wait(10);
     BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-    BattleEffect_StartBufferInterpolation(10);
+    PaletteFade_StartInterpolation(10);
     wait(10);
   }
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(20);
+  PaletteFade_StartInterpolation(20);
   Event_Wait(20);
   if (Event_GetFlag(0xa68) == 0) {
     GameFlag_SetBit(0xa68);
@@ -363,7 +363,7 @@ void Func_02000b68(s32 unused, s32 id) {
   }
   Event_Wait(30);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(30);
+  PaletteFade_StartInterpolation(30);
   Event_Wait(15);
   Event_End();
 }
@@ -414,8 +414,14 @@ void Func_02000d64(struct Actor *object, s32 limit) {
 #include "ram_buffer.h"
 #include "frame.h"
 
-/* VIEW(aqua_rock): routine Func_02002970 as s32 Func_02002970(struct Actor *object, struct Vector3 *position); module/scene/lemurian_ship.h has void Func_02002970(void); tried as the definition's void Func_02002970(void), which the object already declares, Func_02001e00 moves: 4 of 151 instructions in tla-ja. */
-extern s32 Func_02002970__aqua_rock(struct Actor *object, struct Vector3 *position) __asm__("Func_02002970");
+/* VIEW(aqua_rock): routine Func_02002970 as s32 Func_02002970(struct Actor
+ * *object, struct Vector3 *position); module/scene/lemurian_ship.h has void
+ * Func_02002970(void); tried as the definition's void Func_02002970(void),
+ * which the object already declares, Func_02001e00 moves: 4 of 151 instructions
+ * in tla-ja. */
+extern s32
+Func_02002970__aqua_rock(struct Actor *object,
+                         struct Vector3 *position) __asm__("Func_02002970");
 
 void Func_02000d80(void) {
   struct Actor *leader, *carried;
@@ -582,14 +588,14 @@ void Func_02001224(s32 unused, s32 id) {
   Sound_Play(220);
   for (i = 3; i >= 0; i--) {
     BattleEffect_ApplyColorToTargetBuffer(Random16Far() & 0x7fff, 0);
-    BattleEffect_StartBufferInterpolation(15);
+    PaletteFade_StartInterpolation(15);
     wait(10);
     BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-    BattleEffect_StartBufferInterpolation(10);
+    PaletteFade_StartInterpolation(10);
     wait(10);
   }
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(20);
+  PaletteFade_StartInterpolation(20);
   Event_Wait(20);
   GameFlag_SetBit(0xa69);
   Map_CopyCellAttributeRect(15, 48, 1, 1, 16, 48);
@@ -600,7 +606,7 @@ void Func_02001224(s32 unused, s32 id) {
   Map_CopyCellAttributeRect(64, 68, 5, 8, 14, 34);
   Event_Wait(30);
   Func_02002a20_(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(30);
+  PaletteFade_StartInterpolation(30);
   Event_Wait(15);
   Camera_SetSpeedParameters(0x10000, 0x2000);
   Camera_MoveWithinMapBounds(PIXELS(248), -PIXELS(32), PIXELS(760), 1);
@@ -801,7 +807,8 @@ settle:
 #undef UNK02003450_SET
 
 // ---- games/tla/src/scene/aqua_rock/s17f4.c ----
-// Scene code of overlay 0x67b, in ROM order, from s17f4's offset up to the next object the overlay links.
+// Scene code of overlay 0x67b, in ROM order, from s17f4's offset up to the next
+// object the overlay links.
 
 #include "call.h"
 
@@ -960,8 +967,8 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 void Func_02001d30(struct Actor *object) {
-  struct Actor *child = Import_ActorCreate(
-      14, object->x, object->y + 0x40000, object->z + 0x40000);
+  struct Actor *child = Import_ActorCreate(14, object->x, object->y + 0x40000,
+                                           object->z + 0x40000);
   struct FieldSprite *parentSprite = object->sprite;
 
   if (child != 0) {

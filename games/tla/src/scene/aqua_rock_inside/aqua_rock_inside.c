@@ -463,14 +463,19 @@ void Func_02000ca8(void) {
 }
 
 // ---- games/tla/src/scene/aqua_rock_inside/s0cc8.c ----
-// Scene code of overlay 0x67c, in ROM order, from s0cc8's offset up to the next object the overlay links.
+// Scene code of overlay 0x67c, in ROM order, from s0cc8's offset up to the next
+// object the overlay links.
 
 #include "actor.h"
 #include "system/vector3.h"
 #include "event_inline.h"
 #include "io_write_queue.h"
 
-/* VIEW(s0cc8): routine Func_02000ca8 as void Func_02000ca8(); the parts before it has another declaration; tried as the definition's void Func_02000ca8(void), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/aqua_rock_inside.c:503: too many arguments to function `Func_02000ca8'. */
+/* VIEW(s0cc8): routine Func_02000ca8 as void Func_02000ca8(); the parts before
+ * it has another declaration; tried as the definition's void
+ * Func_02000ca8(void), which the object already declares, it does not compile
+ * in tla-ja: games/tla/src/scene/aqua_rock_inside.c:503: too many arguments to
+ * function `Func_02000ca8'. */
 extern void Func_02000ca8__s0cc8() __asm__("Func_02000ca8");
 
 void Func_02000cc8(s32 trigger) {
@@ -795,7 +800,8 @@ void Func_02001364(struct Actor *object) {
 }
 
 // ---- games/tla/src/scene/aqua_rock_inside/s13bc.c ----
-// Scene code of overlay 0x67c, in ROM order, from s13bc's offset up to the next object the overlay links.
+// Scene code of overlay 0x67c, in ROM order, from s13bc's offset up to the next
+// object the overlay links.
 
 #include "frame.h"
 
@@ -867,7 +873,7 @@ void Func_02001620(s32 firstId, s32 secondId) {
   MapGrid_SetShake(0x20000, 0x20000, 0x10000);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
-  BattleEffect_StartBufferInterpolation(60);
+  PaletteFade_StartInterpolation(60);
   first->motionFlags = 0;
   first->acceleration = 0x3333;
   first->speedLimit = 0x3333;
@@ -969,14 +975,14 @@ column:
   Sound_Play(220);
   wait(50);
   BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
-  BattleEffect_StartBufferInterpolation(8);
+  PaletteFade_StartInterpolation(8);
   wait(16);
   MapGrid_SetShake(0, 0, 0);
   Actor_ConfigureSpriteColor(firstId, 0);
   Actor_ConfigureSpriteColor(secondId, 0);
   Sound_Play(574);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  BattleEffect_StartBufferInterpolation(80);
+  PaletteFade_StartInterpolation(80);
   Actor_SetMovementTypeById(firstId, gData_0200407c);
   Actor_SetMovementTypeById(secondId, gData_020040ac);
   second->update = Func_02001598;

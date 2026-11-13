@@ -53,7 +53,7 @@ void Func_02000388(void) {
   Event_Wait(20);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
-  BattleEffect_StartBufferInterpolation(60);
+  PaletteFade_StartInterpolation(60);
   Event_Wait(60);
   Func_0803ce64((s32)&MsgIAmTheShadow, 0, 6);
   party = (struct AnemosInnerSanctumEntranceParty *)&gMainRoutineWork;
@@ -107,7 +107,10 @@ void Func_020004b4(struct Actor *object) {
     Actor_SetSingleChildFlags(object, 0);
 }
 
-/* VIEW(hide): variable gData_02000ee0 as extern const s8 gData_02000ee0[]; the definition has u32 gData_02000ee0[] = { 0x1c0b1b0b, 0x1c0c1b0c, 0x1c0d1b0d, }; tried as the definition's extern u32 gData_02000ee0[], Func_020004e4 moves: 1 of 32 instructions in tla-ja. */
+/* VIEW(hide): variable gData_02000ee0 as extern const s8 gData_02000ee0[]; the
+ * definition has u32 gData_02000ee0[] = { 0x1c0b1b0b, 0x1c0c1b0c, 0x1c0d1b0d,
+ * }; tried as the definition's extern u32 gData_02000ee0[], Func_020004e4
+ * moves: 1 of 32 instructions in tla-ja. */
 extern const s8 gData_02000ee0__hide[] __asm__("gData_02000ee0");
 
 void Func_020004e4(s32 a, s32 b) {
@@ -171,8 +174,8 @@ void Func_02000588(void) {
     return;
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
 #if TLA_PATCH_1
-  FieldActor_SetMoveTarget(object, (object->x & 0xfff00000) + 0x80000, object->y,
-         (object->z & 0xfff00000) + 0x80000);
+  FieldActor_SetMoveTarget(object, (object->x & 0xfff00000) + 0x80000,
+                           object->y, (object->z & 0xfff00000) + 0x80000);
 #endif
   {
     s32 id = gMainRoutineWork.currentOwner;
@@ -313,9 +316,14 @@ s32 Scene_PrepareMap(void) { return 0; }
 #include "frame.h"
 
 extern struct LightOam gData_02001d20[];
-/* VIEW(s0588): variable gData_02001de2 as extern s16 gData_02001de2; hide has extern u16 gData_02001de2; tried as the rest of the object declares it, Func_02000858 moves: 149 of 260 instructions, Func_02000a98 moves: 0 of 36 instructions, Func_02000b18 moves: 0 of 39 instructions in tla-ja. */
+/* VIEW(s0588): variable gData_02001de2 as extern s16 gData_02001de2; hide has
+ * extern u16 gData_02001de2; tried as the rest of the object declares it,
+ * Func_02000858 moves: 149 of 260 instructions, Func_02000a98 moves: 0 of 36
+ * instructions, Func_02000b18 moves: 0 of 39 instructions in tla-ja. */
 extern s16 gData_02001de2__s0588 __asm__("gData_02001de2");
-/* VIEW(s0588): variable gData_02001de4 as extern s16 gData_02001de4; hide has extern u16 gData_02001de4; tried as the rest of the object declares it, Func_02000858 moves: 2 of 260 instructions in tla-ja. */
+/* VIEW(s0588): variable gData_02001de4 as extern s16 gData_02001de4; hide has
+ * extern u16 gData_02001de4; tried as the rest of the object declares it,
+ * Func_02000858 moves: 2 of 260 instructions in tla-ja. */
 extern s16 gData_02001de4__s0588 __asm__("gData_02001de4");
 
 void Func_02000858(void) {
@@ -397,7 +405,8 @@ void Func_02000858(void) {
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 DEFINE_FUNC_02000A98(Func_02000a98, gData_02001ce0, gData_02001cdc,
-    Func_02000858, gData_02001cde, gData_02001de0, gData_02001de2__s0588)
+                     Func_02000858, gData_02001cde, gData_02001de0,
+                     gData_02001de2__s0588)
 
 void Func_02000b18(void) {
   u8 *buffer = BumpAlloc(0x1800);

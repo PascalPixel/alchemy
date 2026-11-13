@@ -379,14 +379,6 @@ struct Unk_080db0b0Sprite {
   u16 unk12;
 };
 
-/// The Psynergy animations (BattleFxScene.animation) the dispatchers name.
-// The Broken Seal has 1-16; ⚓️ adds 17-30.
-enum FieldPsynergyAnimation {
-  FIELD_FX_PUSH = 1,  ///< pushes the target the way the pad points
-  FIELD_FX_WAVE = 2,  ///< the hue wave from the caster to the target
-  FIELD_FX_PAUSE = 9, ///< stops an object in its tracks
-};
-
 struct CompositeAnimation {
   u8 unk00[0x11];
   u8 displayFlags;
@@ -1159,7 +1151,7 @@ void Func_08038328(s32 owner, s32 element, s32 djinni);
 extern const u8 gData_080f0c04[];
 extern const u8 Data_080f0e00[];
 
-s32 BattleEffect_FindNearestObject(s32 self, s32 effect);
+s32 Field_FindNearbyPsynergyTarget(s32 self, s32 effect);
 
 s32 Func_080201d0(s32 layer, s32 x, s32 z);
 

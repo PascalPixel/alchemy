@@ -1,7 +1,7 @@
 	.section .rodata
 @ Three 8x8 glints that Func_080e1678 draws into its 64x64 canvas, the
 @ first two in turn; drawn in the basic colour palette and the ramp from
-@ blue to white that Func_080e1f2c writes to OBJ colours 0xe0 to 0xef
+@ blue to white that FieldPsynergy_Unnamed29 writes to OBJ colours 0xe0 to 0xef
 	.global Data_080eda0c
 Data_080eda0c:
 	.incbin "games/tla/src/field/event_commands/glint.8bpp"
@@ -244,7 +244,7 @@ gBattleEffect_CyclePatternWords:
 	.2byte 0x4000, 0xffff, 0xffff, 0x4000, 0xffff, 0x0000, 0x8000, 0xffff
 	.section .rodata.c
 @ An 8x8 dot of 256 colours, shaded from its rim (colour 0xe9) to its centre
-@ (0xef), that Func_080e572c loads into VRAM for its 32 particles. Its
+@ (0xef), that FieldPsynergy_Burst loads into VRAM for its 32 particles. Its
 @ callback Func_080e4d9c writes OBJ colours 0xe0 to 0xff, computed from the
 @ sine table, each frame; the picture carries the shared OBJ palette and
 @ those colours of the first frame.

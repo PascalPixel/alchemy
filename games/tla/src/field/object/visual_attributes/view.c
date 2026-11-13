@@ -44,7 +44,7 @@ void WorldMap_StepZoom(void) {
   }
 }
 
-void Func_080d46a4(s32 zoom, s32 frames) {
+void WorldMap_StartZoom(s32 zoom, s32 frames) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 result;
 

@@ -4,6 +4,9 @@
 
 #include "../game_internal.h"
 
+/// The battle's multipliers are 256ths: this one keeps an amount as it is.
+#define BATTLE_MULTIPLIER_ONE 256
+
 /// Returns the multiplier (256 = 1x) for an element difference `input`, read
 /// from a five-point line (gElement_PowerResistCurve); with `halve` the effect
 /// of the difference is half. Called by the damage and recovery formulas
@@ -48,7 +51,7 @@ s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
     multiplier /= 2;
     break;
   }
-  return multiplier + 256;
+  return multiplier + BATTLE_MULTIPLIER_ONE;
 }
 
 /// The battle's random number generator, the same linear congruential one as
@@ -198,47 +201,48 @@ s32 Battle_GetEffectBaseSuccessRate(s32 effectId) {
   s32 fixedChance;
   u32 effectIndex;
 
-  // The switch is on the effect less 8, as the ROM's jump table is.
-  effectIndex = effectId - 8;
+  // The switch is on the effect less its first case's, as the ROM's jump
+  // table is.
+  effectIndex = effectId - ABILITY_EFFECT_ATTACK_DOWN_2;
   switch (effectIndex) {
-  case ABILITY_EFFECT_DEFENSE_DOWN_2 - 8:
-  case ABILITY_EFFECT_DEFENSE_DOWN - 8:
+  case ABILITY_EFFECT_DEFENSE_DOWN_2 - ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_DEFENSE_DOWN - ABILITY_EFFECT_ATTACK_DOWN_2:
     return 70;
-  case ABILITY_EFFECT_RESISTANCE_DOWN_2 - 8:
-  case ABILITY_EFFECT_RESISTANCE_DOWN - 8:
+  case ABILITY_EFFECT_RESISTANCE_DOWN_2 - ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_RESISTANCE_DOWN - ABILITY_EFFECT_ATTACK_DOWN_2:
     return 75;
-  case ABILITY_EFFECT_CHARM - 8:
+  case ABILITY_EFFECT_CHARM - ABILITY_EFFECT_ATTACK_DOWN_2:
     return 30;
-  case ABILITY_EFFECT_STUN - 8:
+  case ABILITY_EFFECT_STUN - ABILITY_EFFECT_ATTACK_DOWN_2:
     return 40;
-  case ABILITY_EFFECT_SLEEP - 8:
+  case ABILITY_EFFECT_SLEEP - ABILITY_EFFECT_ATTACK_DOWN_2:
     return 45;
-  case ABILITY_EFFECT_POISON - 8:
-  case ABILITY_EFFECT_VENOM - 8:
-  case ABILITY_EFFECT_SEAL - 8:
+  case ABILITY_EFFECT_POISON - ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_VENOM - ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_SEAL - ABILITY_EFFECT_ATTACK_DOWN_2:
     return 55;
-  case ABILITY_EFFECT_HAUNT - 8:
+  case ABILITY_EFFECT_HAUNT - ABILITY_EFFECT_ATTACK_DOWN_2:
     return 25;
-  case ABILITY_EFFECT_INSTANT_DEATH - 8:
+  case ABILITY_EFFECT_INSTANT_DEATH - ABILITY_EFFECT_ATTACK_DOWN_2:
     return 20;
-  case ABILITY_EFFECT_DELUSION - 8:
-  case ABILITY_EFFECT_DRAIN_HP - 8:
+  case ABILITY_EFFECT_DELUSION - ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_DRAIN_HP - ABILITY_EFFECT_ATTACK_DOWN_2:
     return 65;
-  case ABILITY_EFFECT_CONFUSION - 8:
-  case ABILITY_EFFECT_LEAVE_ONE_HP - 8:
+  case ABILITY_EFFECT_CONFUSION - ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_LEAVE_ONE_HP - ABILITY_EFFECT_ATTACK_DOWN_2:
     return 35;
-  case ABILITY_EFFECT_HALVE_DEFENSE - 8:
+  case ABILITY_EFFECT_HALVE_DEFENSE - ABILITY_EFFECT_ATTACK_DOWN_2:
     return 50;
-  case ABILITY_EFFECT_REVIVE_HALF - 8:
+  case ABILITY_EFFECT_REVIVE_HALF - ABILITY_EFFECT_ATTACK_DOWN_2:
     fixedChance = 60;
     break;
-  case ABILITY_EFFECT_REVIVE_80 - 8:
+  case ABILITY_EFFECT_REVIVE_80 - ABILITY_EFFECT_ATTACK_DOWN_2:
     fixedChance = 90;
     break;
-  case ABILITY_EFFECT_ATTACK_DOWN_2 - 8:
-  case ABILITY_EFFECT_ATTACK_DOWN - 8:
-  case ABILITY_EFFECT_CURSE - 8:
-  case ABILITY_EFFECT_DRAIN_PP - 8:
+  case ABILITY_EFFECT_ATTACK_DOWN_2 - ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_ATTACK_DOWN - ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_CURSE - ABILITY_EFFECT_ATTACK_DOWN_2:
+  case ABILITY_EFFECT_DRAIN_PP - ABILITY_EFFECT_ATTACK_DOWN_2:
     return 60;
   default:
     fixedChance = 100;

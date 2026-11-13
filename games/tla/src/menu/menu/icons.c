@@ -252,7 +252,8 @@ void Menu_UpdateEntryObjectTransforms(void) {
         transform[1] = top;
         transform[2] = (menu->y[i] << 16) + top;
         transform[3] = 0;
-        Func_08020018(menu->objects[i], transform, scale, 0x4000, 250);
+        Render_ApplyProjectedPlacementAtDepthFar(menu->objects[i], transform,
+                                                 scale, 0x4000, 250);
       }
     }
   }
@@ -414,7 +415,8 @@ void MenuIcon_UpdateTransforms(void) {
       position.height = placeY;
       position.y = (menu->tabY[i] << 16) + placeY;
       position.groundHeight = 0;
-      Func_08020018(figure, &position, &scale, menu->depths[i], 250);
+      Render_ApplyProjectedPlacementAtDepthFar(figure, &position, &scale,
+                                               menu->depths[i], 250);
     }
   }
 }

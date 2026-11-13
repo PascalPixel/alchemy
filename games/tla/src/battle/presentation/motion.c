@@ -16,8 +16,15 @@
 
 void BattleObject_Reset();
 
-struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
-                                     struct BattlePresentationWork *work) {
+/// The Tamer's calls (abilities 600 to 606, Wild Wolf to Grand Golem): for
+/// a call that lands, saves the battle object it borrows and brings in the
+/// beast's class (Wild Wolf's 117 and so on) to play the attack; returns the
+/// save, or NULL for any other ability. BattleMotion_DismissBeast undoes it.
+/// ★ Named from the game: "Call on a feral ally's aid." (Wild Wolf's
+/// description)
+struct SavedBattleObj *
+BattleMotion_CallBeast(struct BattlePlan *plan,
+                       struct BattlePresentationWork *work) {
   s32 single;
   struct BattleObj *battleObject;
   struct SavedBattleObj *saved;
@@ -214,14 +221,12 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
   return saved;
 }
 
-#define Func_080219ccFar Func_08020370
-
 /// Frees the borrowed buffer and releases the motion graphics slot.
 void BattleMotion_ReleaseBuffer(struct Work0811e7dc *work) {
   struct MotionObject *object = BattleObject_Get(work->objectId)->object;
 
   if (work->buffer != NULL) {
-    Func_080219ccFar(GetMotionRecord(object, 0));
+    Animation_SkipToStopFar(GetMotionRecord(object, 0));
     wait(1);
     Heap_Release(work->buffer);
     work->buffer = NULL;
@@ -234,7 +239,9 @@ void BattleMotion_ReleaseBuffer(struct Work0811e7dc *work) {
   }
 }
 
-void Func_0811e830(struct SavedBattleObj *saved) {
+/// Sends the called beast away and puts back the battle object
+/// BattleMotion_CallBeast saved, then frees the save.
+void BattleMotion_DismissBeast(struct SavedBattleObj *saved) {
   u16 ids[14];
   struct MotionObject *object;
   s32 unitId;
@@ -359,7 +366,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   BattleStaging_BuildTargetList(plan, &work);
   if (work.kind == 135)
     PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus & ~1);
-  saved = Func_0811e3ac(plan, &work);
+  saved = BattleMotion_CallBeast(plan, &work);
   unit = Unit_Get(work.actor);
   Unit_Get(work.actors[0]);
   critical = plan->targetCritical[0];
@@ -458,7 +465,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
         BattleEffect_RunFromTableFar(&work);
     }
     if (saved) {
-      Func_0811e830(saved);
+      BattleMotion_DismissBeast(saved);
       Heap_Release(saved);
     }
     BattlePlayback_WaitForReady();
@@ -648,12 +655,12 @@ void BattleObject_SetColorMode(struct MotionObject *object, s32 value) {
 // plan's flags say so), raises the caster's hand with its element's glow, then
 // either fails ("But the Psynergy was blocked!" or "...But doesn't have enough
 // PP!") or plays the effect with the events. This game adds a second effect
-// object (Func_0811e3ac, shown by BattleMotion_ReleaseBuffer, put back and
-// freed by Func_0811e830), sets the caster's mode from the battle work's byte
-// 0x869, and skips the playback callback and its wait when the plan's word at
-// 100 is set. mode: 1 a Djinni, 2 an enemy's cast. The two fixed yaws are
-// stores in each arm of an if (as a ternary or one value the arms are folded
-// into a default and an override).
+// object (BattleMotion_CallBeast, shown by BattleMotion_ReleaseBuffer, put back
+// and freed by BattleMotion_DismissBeast), sets the caster's mode from the
+// battle work's byte 0x869, and skips the playback callback and its wait when
+// the plan's word at 100 is set. mode: 1 a Djinni, 2 an enemy's cast. The two
+// fixed yaws are stores in each arm of an if (as a ternary or one value the
+// arms are folded into a default and an override).
 
 /// Plays Psynergy, a Djinni or an enemy's cast. The camera turns toward
 /// the targets from the caster's side, the caster raises its hand and glows
@@ -714,7 +721,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   BattleHighlight_SetModes(0, 0);
   heap = Ram_HeapSlots;
   PartyStatus_DrawFar(heap->battleWork->partyStatus & ~1);
-  saved = Func_0811e3ac(plan, &work);
+  saved = BattleMotion_CallBeast(plan, &work);
   object = BattleObject_Get(work.actor)->object;
   Actor_SelectAnimationFar(object, ((u8 *)heap->battleWork)[0x869]);
   Actor_SetAnimationSpeedFar((struct Actor *)object, 16);
@@ -760,7 +767,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
       BattleBackground_RestorePalette();
     }
     if (saved) {
-      Func_0811e830(saved);
+      BattleMotion_DismissBeast(saved);
       Heap_Release(saved);
     }
     if (((s32 *)plan)[25] == 0)
@@ -882,4 +889,3 @@ void BattleMotion_ShowDowned(s32 id) {
     BattleObject_MarkForRelease(id);
   }
 }
-#undef Func_080219ccFar

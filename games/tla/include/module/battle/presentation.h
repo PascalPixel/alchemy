@@ -21,7 +21,7 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level);
 
 void BattleTransition_Run(s32 arg, s32 kind);
 
-void Func_08124cc0(void);
+void Battle_TurnEndNoOp(void);
 
 void BattleBackground_Free(void);
 
@@ -332,8 +332,7 @@ extern const u8 Model_DecodeCode[];
 
 extern u8 Model_DecodeCodeSize[];
 
-// Far call to Func_080219cc.
-void Func_08020370(void *record);
+void Animation_SkipToStopFar(void *record);
 
 void Sprite_RemoveAnimationAtFar(void *record, s32 slot);
 

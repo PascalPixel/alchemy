@@ -202,7 +202,10 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
   }
 }
 
-void Func_08118e64(void) {
+/// Clears every unit's guard and Ground's hold at the end of a turn: the
+/// party's members and reserves and the opponents. Battle_Run calls it once
+/// the turn's actions have played.
+void BattleParty_ClearGuards(void) {
   u16 ids[16];
   u16 *id = ids;
   s32 count;
@@ -212,10 +215,10 @@ void Func_08118e64(void) {
   count += BattleParty_ListActorIds(2, ids + count);
   if (count > 0) {
     do {
-      u8 *unit = Unit_Get(*id++);
+      struct BattleUnit *unit = Unit_Get(*id++);
 
-      unit[299] = 0;
-      unit[325] = 0;
+      unit->guardLevel = 0;
+      unit->immobile = 0;
       count--;
     } while (count != 0);
   }

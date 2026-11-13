@@ -229,7 +229,9 @@ s32 DebugParty_LoadPreset(s32 preset) {
   return done;
 }
 
-void Func_08118954(void) {}
+/// Does nothing; the debug battle menu calls it when Start is pressed, as The
+/// Broken Seal's calls Battle_DebugSelectNoOp on Select.
+void Battle_DebugStartNoOp(void) {}
 
 extern u8 gDebugTextEnabled;
 
@@ -279,7 +281,7 @@ restart:
         if (input->repeat & 1)
           break;
         if (input->repeat & 8)
-          Func_08118954();
+          Battle_DebugStartNoOp();
         // DEAD: once startModeSet is set, setting it again changes nothing;
         // the ROM keeps the test.
         if ((input->repeat & 2) || startModeSet)

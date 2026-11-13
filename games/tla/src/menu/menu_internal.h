@@ -323,8 +323,9 @@ void WindowSprite_PrepareForRedrawFar(s32 window);
 s32 Message_AllTypedFar(void);
 void DjinnFigures_SetSlotPhase(s32 index, s32 scale);
 void MenuIcon_SetPosition(s32 slot, s32 x, s32 y);
-void Func_08020018(struct AnimationObject *object,
-                   struct SpritePlacement *position, struct SpriteScale *scale,
-                   s32 depth, s32 mode);
+void Render_ApplyProjectedPlacementAtDepthFar(struct AnimationObject *object,
+                                              struct SpritePlacement *position,
+                                              struct SpriteScale *scale,
+                                              s32 depth, s32 mode);
 
 #endif

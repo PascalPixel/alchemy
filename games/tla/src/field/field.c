@@ -116,7 +116,12 @@ dispatch:
 #include "module/system/system.h"
 #include "task.h"
 
-void Func_080219cc(struct ScriptPlayer *player) {
+/// Runs each of the player's animation channels on to its next stop (a
+/// wait, end or jump: 0xef, 0xf1, 0xfd or 0xfe), taking the frames and
+/// settings on the way, and leaves the stop to run next; marks the player and
+/// each channel changed. The battle's motion calls it before it releases a
+/// borrowed sprite buffer.
+void Animation_SkipToStop(struct ScriptPlayer *player) {
   s32 i;
 
   for (i = 0; i < player->channelCount; i++) {
@@ -169,7 +174,7 @@ void Func_080219cc(struct ScriptPlayer *player) {
 }
 
 // The sprite object: The Broken Seal's struct Sprite with the shadow after
-// the layer fields. Render_PlaceProjectedSprite's twin writes OAM
+// the layer fields. Render_ApplyProjectedPlacementAtDepth writes OAM
 // attributes 0 and 1 as one word.
 struct LayeredSprite {
   union {
@@ -522,9 +527,9 @@ void Render_PlaceSpritePartPair(struct LayeredSprite *sprite, s32 screenX,
 // The object casts a shadow.
 #define OBJECT_SHADOW 1
 
-// Places an animation object's sprite (and its shadow) at the screen point
-// of a projected position (x, y, z, ground), scaled by scale[0] and
-// scale[1]; the sprites go into the depth list by their depth.
+/// Places an animation object's sprite (and its shadow) at the screen point
+/// of a projected position (x, y, z, ground), scaled by scale[0] and
+/// scale[1]; the sprites go into the depth list by their depth.
 void Render_ApplyProjectedPlacement(struct LayeredSprite *object, s32 *pos,
                                     s32 *scale, s32 mode) {
   s32 matrix;
@@ -618,8 +623,11 @@ static inline u8 PlacedObject_Height(struct LayeredSprite *object) {
   return object->height;
 }
 
-void Func_08022318(struct LayeredSprite *object, s32 *pos, s32 *scale, s32 mode,
-                   s32 depth) {
+/// Render_ApplyProjectedPlacement into the given draw slot: the sprite and its
+/// shadow both go to depth, and mode chooses the picture as facing does there.
+void Render_ApplyProjectedPlacementAtDepth(struct LayeredSprite *object,
+                                           s32 *pos, s32 *scale, s32 mode,
+                                           s32 depth) {
   s32 matrix;
   u32 halfWidth;
   u32 halfHeight;
@@ -722,8 +730,11 @@ void Func_08022318(struct LayeredSprite *object, s32 *pos, s32 *scale, s32 mode,
 
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 
-void Func_0802254c(struct LayeredSprite *sprite, s32 *point, s32 *scale,
-                   s32 facing, s32 depth) {
+/// Places a sprite at a 3D point for the fixed camera and queues it for
+/// drawing, projected to the screen and scaled by its distance, as The Broken
+/// Seal's Render_PlaceProjectedSprite does.
+void Render_PlaceProjectedSprite(struct LayeredSprite *sprite, s32 *point,
+                                 s32 *scale, s32 facing, s32 depth) {
   s32 screen[3];
   s32 ground[3];
   s32 z;

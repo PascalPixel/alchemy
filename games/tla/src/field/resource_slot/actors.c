@@ -693,8 +693,9 @@ s32 Actor_ReturnTrue(void) { return 1; }
 #include "field/sprite.h"
 #include "field/field.h"
 
-void Func_08022318(struct PlacedSprite *sprite, struct SpritePlacement *point,
-                   s32 *scale, s32 facing, s32 depth);
+void Render_ApplyProjectedPlacementAtDepth(struct PlacedSprite *sprite,
+                                           struct SpritePlacement *point,
+                                           s32 *scale, s32 facing, s32 depth);
 void Sprite_ComposePicture(struct PlacedSprite *sprite, s32 facing);
 
 #define BASE_PRIORITY(map) (((struct MapPriorityWork *)(map))->basePriority)
@@ -896,8 +897,9 @@ void ActorSystem_PlaceSprites(void) {
           point.groundHeight += 0x1400000;
         }
         if (*priorityFlags & 8)
-          Func_08022318(sprite, &point, scale.values, object->facing,
-                        ((u8 *)object)[0x63]);
+          Render_ApplyProjectedPlacementAtDepth(sprite, &point, scale.values,
+                                                object->facing,
+                                                ((u8 *)object)[0x63]);
         else
           Render_ApplyProjectedPlacement(sprite, SpritePlacement_Values(&point),
                                          scale.values, object->facing);
@@ -930,8 +932,8 @@ void ActorSystem_PlaceSprites(void) {
 // a function of its own, the body of ☀️'s ObjectSystem_UpdateCameraFixed
 // loop.
 
-void Func_0802254c(void *sprite, s32 *point, const s32 *scale, s32 facing,
-                   s32 depth);
+void Render_PlaceProjectedSprite(void *sprite, s32 *point, const s32 *scale,
+                                 s32 facing, s32 depth);
 
 s32 ActorCamera_ReturnTrue(void) { return 1; }
 
@@ -952,15 +954,16 @@ void Actor_PlaceSprites(struct PlacedObject *object, s32 angle) {
     point = object->position;
     sprite = object->target;
     if (!(object->flags & 0x10))
-      Func_0802254c(sprite, point, scale, object->angle + angle, object->layer);
+      Render_PlaceProjectedSprite(sprite, point, scale, object->angle + angle,
+                                  object->layer);
     break;
   case 2:
     sprites = object->target;
     for (remaining = 3; remaining >= 0; remaining--) {
       sprite = *sprites++;
       if (sprite != NULL)
-        Func_0802254c(sprite, object->position, scale, object->angle + angle,
-                      object->layer);
+        Render_PlaceProjectedSprite(sprite, object->position, scale,
+                                    object->angle + angle, object->layer);
     }
     break;
   case 0:

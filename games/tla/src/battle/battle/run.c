@@ -404,7 +404,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
         break;
     }
 
-    Func_08118e64();
+    BattleParty_ClearGuards();
     battle->extraQueue = battle->nextExtraQueue;
 #if TLA_PATCH_1
     // Japanese leaves the next turn's queue in place.
@@ -413,7 +413,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     battle->extraCount = battle->nextExtraCount;
     battle->nextExtraCount = 0;
     battle->encounterMode = 0;
-    Func_08124cc0();
+    Battle_TurnEndNoOp();
     Battle_ProcessTurnEnd();
     BattleMotion_DestroyAllSlotObjects();
     scripted = enemyGroup - 74;
@@ -509,7 +509,7 @@ finished:
   if ((u32)scripted <= 1)
     ScriptedBattle_SaveUnits();
   BattleParty_ResetActiveRuntimeFields();
-  Func_08124cc0();
+  Battle_TurnEndNoOp();
   DjinnRecovery_CountDown();
   gMainRoutineWork.battleRule24b = 0;
   Task_Remove(BattleObject_UpdateSpritePriorities);

@@ -989,7 +989,8 @@ s32 ElementGlow_End(s32 unused) {
   return Task_Remove(ElementGlow_UpdateStarField);
 }
 
-void Func_08127304(void) {}
+/// Does nothing; nothing calls it.
+void ElementGlow_ReservedNoOp(void) {}
 
 // The parts of the battle work this effect uses.
 struct ElementSession {

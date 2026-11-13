@@ -6,8 +6,8 @@ Resource_FarCall003:
 	export Resource_GetMetadataRecordFarFar, Resource_GetMetadataRecordFar
 	export ActorSystem_ConfigureFar, ActorSystem_Configure
 	export Render_ApplyProjectedPlacementFar, Render_ApplyProjectedPlacement
-	export Func_08020018, Func_08022318
-	export Func_08020020, Func_0802254c
+	export Render_ApplyProjectedPlacementAtDepthFar, Render_ApplyProjectedPlacementAtDepth
+	export Render_PlaceProjectedSpriteFar, Render_PlaceProjectedSprite
 	export InitializeAnimationObjectsFar, InitializeAnimationObjects
 	export Animation_ApplyChildArgumentFar, Animation_ApplyChildArgument
 	export Sprite_SetAnimationTimersFar, Sprite_SetAnimationTimers
@@ -113,7 +113,7 @@ Resource_FarCall003:
 	export WorldMap_GetCollisionFar, WorldMap_GetCollision
 	export Func_08020360, MapGrid_SetCellHeight
 	export Func_08020368, MapGrid_GetCellHeight
-	export Func_08020370, Func_080219cc
+	export Animation_SkipToStopFar, Animation_SkipToStop
 	export Map_LoadCellsAndShapesFar, Map_LoadCellsAndShapes
 	export VramBlock_Reset93Far, VramBlock_Reset93
 	export VramBlock_Load93Far, VramBlock_Load93

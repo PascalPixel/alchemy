@@ -584,7 +584,8 @@ void Menu_PlacePartyFigures(void) {
       position.height = placeY;
       position.y = (menu->rowPositions[i] << 16) + placeY;
       position.groundHeight = 0;
-      Func_08020018(figure, &position, &scale, 0x4000, 250);
+      Render_ApplyProjectedPlacementAtDepthFar(figure, &position, &scale,
+                                               0x4000, 250);
     }
   }
 }

@@ -787,10 +787,10 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-// Unused: two empty functions the ROM keeps after Eclipse; nothing calls them.
-void Func_0814293c(void) {}
+/// Unused: two empty functions the ROM keeps after Eclipse; nothing calls them.
+void BattleEffect_ReservedNoOpA(void) {}
 
-void Func_08142940(void) {}
+void BattleEffect_ReservedNoOpB(void) {}
 
 struct Model;
 

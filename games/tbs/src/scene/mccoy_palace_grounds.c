@@ -454,11 +454,7 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
     Actor_Get(ACTOR_EAST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_EAST_GUARD, 346, 263);
     Event_Wait(1);
-    {
-      struct Actor *guard = Actor_Get(ACTOR_EAST_GUARD);
-
-      guard->steeringFlags = ACTOR_FACES_MOTION | guard->steeringFlags;
-    }
+    Actor_Get(ACTOR_EAST_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
   }
   Actor_SetSpeed(ACTOR_WEST_GUARD, 0.8);
   // Escort Isaac through the opened gate before changing to the palace.

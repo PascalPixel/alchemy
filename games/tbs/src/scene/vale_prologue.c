@@ -1506,7 +1506,6 @@ static void ValePrologue_WatchBoulderFall(void) {
   s32 *shakeShift;
   struct Actor *actor;
   TaskFunc updateEffects;
-  TaskFunc cycleBoulderPalette;
   s32 boulderHeight;
 
   if (GameFlag_Get(FLAG_VALE_BOULDER_FELL) == 0) {
@@ -1576,8 +1575,7 @@ static void ValePrologue_WatchBoulderFall(void) {
     sShakeDone = 0;
     *shakeShift = 0;
     Task_AddOrUpdateFrame(updateEffects, TASK_PASS_FRAME);
-    cycleBoulderPalette = ValePrologue_CycleBoulderPalette;
-    Task_AddFrame(cycleBoulderPalette, TASK_PASS_FRAME);
+    Task_AddFrame(ValePrologue_CycleBoulderPalette, TASK_PASS_FRAME);
     Event_Wait(40);
     *shakeShift = 1;
     Event_Wait(30);
@@ -1660,7 +1658,7 @@ static void ValePrologue_WatchBoulderFall(void) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(30);
     Task_Remove(updateEffects);
-    Task_Remove(cycleBoulderPalette);
+    Task_Remove(ValePrologue_CycleBoulderPalette);
     Event_ShowMessage(ACTOR_GARET_CHILD, 0);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
     Event_Wait(20);
@@ -2143,7 +2141,6 @@ static void ValePrologue_DoraGoesForHelp(void) {
 /// Reached by talking to Kyle. The first time he greets Isaac and sets
 /// FLAG_VALE_STORM_KYLE_GREETED_ISAAC.
 static void ValePrologue_TalkAboutSavingFelix(void) {
-  s32 facing = FACING_SOUTHEAST;
   const s32 *pulseScript;
 
   Event_Start();
@@ -2163,7 +2160,7 @@ static void ValePrologue_TalkAboutSavingFelix(void) {
     // "You two don't have enough Psynergy to save Felix. Go find help."
     Event_ShowMessageThenWait(ACTOR_KYLE, 0, 10);
   }
-  Actor_FaceDirection(ACTOR_KYLE, facing, 20);
+  Actor_FaceDirection(ACTOR_KYLE, FACING_SOUTHEAST, 20);
   Actor_SetAnimation(ACTOR_KYLE, ANIM_KYLE_REACH_OUT);
   Event_Wait(10);
   {
@@ -2192,7 +2189,6 @@ static void ValePrologue_TalkAboutSavingFelix(void) {
 static void ValePrologue_BoulderSweepsThemAway(void) {
   struct Actor *leader;
   struct Actor *actor;
-  s32 automaticPriority = ACTOR_PRIORITY_AUTOMATIC;
   struct Sprite *sprite;
 
   if (GameFlag_Get(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) != 0) {
@@ -2299,9 +2295,9 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
       Actor_SetAnimation(ACTOR_JENNA_CHILD, ANIM_NOD);
       Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_NOD);
       Actor_SetAnimationAndWait(ACTOR_EXHAUSTED_STRONGMAN, ANIM_NOD);
-      leader->priorityFlags |= automaticPriority;
+      leader->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       actor = Actor_Get(ACTOR_EXHAUSTED_STRONGMAN);
-      actor->priorityFlags |= automaticPriority;
+      actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       ValePrologue_ShowBoulderSweepingDownriver();
       GameFlag_Set(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY);
       Event_End();
@@ -2760,8 +2756,8 @@ static void ValePrologue_UpdateBoulderShadow(void) {
     case 7:
     case 8:
     case 9:
-      shadow->scaleX += -3 * Q16_ONE / 100;
-      shadow->scaleY += -3 * Q16_ONE / 100;
+      shadow->scaleX -= 3 * Q16_ONE / 100;
+      shadow->scaleY -= 3 * Q16_ONE / 100;
       break;
     }
     sprite->scale = shadow->scaleX;

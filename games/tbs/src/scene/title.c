@@ -363,7 +363,6 @@ static void Title_LoadBackground(void) {
   u32 screenY;
   u16 tileIndex;
   struct ScrollPair *bgScroll;
-  s32 blankTile = LOGO_BLANK_TILE;
 
   resourceId = (s32)&ResourceId_GoldenSunLogo;
   ScreenFade_ToBlack(0);
@@ -381,8 +380,8 @@ static void Title_LoadBackground(void) {
   for (screenY = 0; screenY <= 19; screenY++) {
     for (screenX = 0; screenX <= 29; screenX++)
       *tilemap++ = tileIndex++;
-    *tilemap++ = blankTile;
-    *tilemap++ = blankTile;
+    *tilemap++ = LOGO_BLANK_TILE;
+    *tilemap++ = LOGO_BLANK_TILE;
   }
   // Reset all four background scroll pairs before enabling BG2 and sprites.
   bgScroll = (struct ScrollPair *)gBgScroll;

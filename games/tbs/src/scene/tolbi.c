@@ -479,7 +479,6 @@ static void Tolbi_CopyLeaderPriority(struct Actor *updated) {
 s32 Tolbi_ApplyEntryState(s32 unused) {
   struct Actor *actor;
   void (*kidUpdate)(struct Actor *);
-  s32 clearFlags = 0;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
@@ -493,7 +492,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   Actor_SetPosition(ACTOR_TOLBI_YOUNGER_SISTER, 368, 320);
   Actor_SetScript(ACTOR_TOLBI_YOUNGER_SISTER, gTolbiYoungerSisterRun);
   actor = Actor_Get(ACTOR_TOLBI_YOUNGER_SISTER);
-  actor->timer = clearFlags;
+  actor->timer = 0;
   actor->update = kidUpdate;
   actor = Actor_Get(ACTOR_TOLBI_OLD_MAN);
   actor->update = Tolbi_CopyLeaderPriority;
@@ -705,9 +704,7 @@ static void Tolbi_FreezePuddle(void) {
     puddle->motionFlags = 0;
   }
   Actor_SetAnimation(ACTOR_TOLBI_PUDDLE, PUDDLE_ANIMATION_PILLAR);
-  {
-    MapGrid_CopyCellAttributes(36, 16, 1, 1, 34, 16);
-  }
+  MapGrid_CopyCellAttributes(36, 16, 1, 1, 34, 16);
   GameFlag_Set(FLAG_TOLBI_PUDDLE_FROZEN);
 }
 

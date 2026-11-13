@@ -553,11 +553,11 @@ static void MogallForest_FirstArea_JumpSouth(void) {
     *motionFlags = 0;
     Actor_SetAnimation(ACTOR_FIRST_AREA_RIVER_LOG,
                        MOGALL_FOREST_LOG_STEPPED_ON);
-    actor->y.fixed += -px(1);
-    actor->groundHeight += -px(1);
+    actor->y.fixed -= px(1);
+    actor->groundHeight -= px(1);
     wait(2);
-    actor->y.fixed += -px(1);
-    actor->groundHeight += -px(1);
+    actor->y.fixed -= px(1);
+    actor->groundHeight -= px(1);
     wait(10);
     actor->y.fixed += px(1);
     actor->groundHeight += px(1);
@@ -717,7 +717,6 @@ static void MogallForest_SecondArea_PushLog(void) {
   struct PushedActorProbe probe;
   s32 destinationColumn;
   s32 destinationRow;
-  s32 rectangleHeight = 4;
 
   Event_Start();
 
@@ -748,7 +747,7 @@ static void MogallForest_SecondArea_PushLog(void) {
       destinationRow = 30;
       MapGrid_CopyCellAttributes(44, 30, 2, 4, destinationColumn,
                                  destinationRow);
-      PushedActor_FillGridAttributeRectangle(2, 35, 30, 1, rectangleHeight, 0);
+      PushedActor_FillGridAttributeRectangle(2, 35, 30, 1, 4, 0);
     }
   }
 
@@ -1013,12 +1012,12 @@ static void MogallForest_ThirdArea_JumpWest(void) {
     Actor_SetAnimation(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG,
                        MOGALL_FOREST_LOG_STEPPED_ON);
 
-    leader->y.fixed += -px(1);
-    leader->groundHeight += -px(1);
+    leader->y.fixed -= px(1);
+    leader->groundHeight -= px(1);
     wait(2);
 
-    leader->y.fixed += -px(1);
-    leader->groundHeight += -px(1);
+    leader->y.fixed -= px(1);
+    leader->groundHeight -= px(1);
     wait(10);
 
     leader->y.fixed += px(1);
@@ -1533,7 +1532,6 @@ s32 MogallForest_Initialize(void) {
         Scene_RedrawActorFootprint(ACTOR_SECOND_AREA_RIVER_LOG);
       } else {
 #if TBS_PATCH_1
-        s32 attr = 0;
 #endif
 
         wait(1);
@@ -1544,7 +1542,7 @@ s32 MogallForest_Initialize(void) {
             ACTOR_PRIORITY_UNDERFOOT;
         MapGrid_CopyCellAttributes(44, 30, 2, 4, 34, 30);
 #if TBS_PATCH_1
-        PushedActor_FillGridAttributeRectangle(0, 35, 29, 1, 4, attr);
+        PushedActor_FillGridAttributeRectangle(0, 35, 29, 1, 4, 0);
 #endif
       }
       Scene_RedrawActorFootprint(ACTOR_SECOND_AREA_LOG);

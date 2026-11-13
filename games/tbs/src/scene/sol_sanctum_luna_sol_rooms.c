@@ -324,9 +324,8 @@ static void SolSanctumLunaSolRooms_TintPassageBetweenRooms(void) {
 /// CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_BLACK_BACKDROP turns the backdrop
 /// black.
 static void SolSanctumLunaSolRooms_ClearBackdropColor(void) {
-  s32 black = 0;
   u16 *backdropColor = (u16 *)&PLTT_BACKDROP;
-  *backdropColor = black;
+  *backdropColor = 0;
 }
 
 /// Draws the light of each lit quarter of the Luna room's picture, from four
@@ -1365,7 +1364,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     frame = 0;
     do {
       actor->y.fixed += px(1) / 10;
-      sprite->scale += -Q16_ONE / 64;
+      sprite->scale -= Q16_ONE / 64;
       wait(1);
       frame++;
     } while (frame != 60);
@@ -1403,7 +1402,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     frame = 0;
     do {
       actor->y.fixed += px(1) / 10;
-      sprite->scale += -Q16_ONE / 64;
+      sprite->scale -= Q16_ONE / 64;
       wait(1);
       frame++;
     } while (frame != 60);

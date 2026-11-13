@@ -660,17 +660,16 @@ static void VaultCave_UseUnderfootFrostPriorities(void) {
   }
 }
 
-/// Restores automatic draw priority for the same six puddles.
+/// Restores automatic draw ACTOR_PRIORITY_AUTOMATIC for the same six puddles.
 static void VaultCave_UseAutomaticFrostPriorities(void) {
   s32 actorSlot = ACTOR_WEST_UPPER_PUDDLE;
-  s32 priority = ACTOR_PRIORITY_AUTOMATIC;
   s32 remaining = 5;
 
   do {
     struct Actor *target = Actor_Get(actorSlot);
 
     remaining--;
-    target->priorityFlags = priority;
+    target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     actorSlot++;
   } while (remaining >= 0);
 }
@@ -919,9 +918,7 @@ static void VaultCave_SpawnPuffs(struct Actor *source) {
     puff->speedLimit = Import_RandomNext() + px(4) / 5;
     puff->collisionFlags = ACTOR_SOLID;
     VaultCave_OffsetActorRadially(puff, px(32), Import_RandomNext());
-    {
-      puff->wait = 8;
-    }
+    puff->wait = 8;
     Actor_StartScript(puff, gVaultCave_PuffScript);
   }
 }

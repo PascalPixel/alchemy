@@ -630,11 +630,9 @@ static void ValeCave_PushLogOverEdge(void) {
       Actor_SetDestinationOffset(probe.actorSlot, -6, 0);
       ValeCave_WaitForActorLanding(Actor_Get(probe.actorSlot));
       Actor_SetAnimation(probe.actorSlot, 8);
-      {
-        struct Actor *movedLog = Actor_Get(probe.actorSlot);
+      movedLog = Actor_Get(probe.actorSlot);
 
-        movedLog->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-      }
+      movedLog->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       // The cells it held on the ledge, and its landing, become open floor.
       PushedActor_FillGridAttributeRectangle(0, FIELD_CELL(probe.position.x),
                                              (FIELD_CELL(probe.position.z) - 2),
@@ -659,7 +657,6 @@ static void ValeCave_PushLogOverEdge(void) {
 static void ValeCave_PushLogOffLedge(void) {
 
   struct Actor *pushedLog;
-  s32 stationaryMotion = 0;
 
   Event_Start();
   Event_Wait(10);
@@ -672,9 +669,9 @@ static void ValeCave_PushLogOffLedge(void) {
   Sound_Play(SE_HEAVY_MOVE);
   Actor_SetSpeedAndAcceleration(ACTOR_WEST_LOG, 0.5, 0.1);
   Actor_SetAnimation(ACTOR_WEST_LOG, 2);
-  Actor_Get(ACTOR_WEST_LOG)->motionFlags = stationaryMotion;
+  Actor_Get(ACTOR_WEST_LOG)->motionFlags = 0;
   pushedLog = Actor_Get(ACTOR_WEST_LOG);
-  pushedLog->bounce = stationaryMotion;
+  pushedLog->bounce = 0;
   Actor_SetDestinationOffset(ACTOR_WEST_LOG, 12, 0);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -703,6 +700,7 @@ static void ValeCave_PushLogOffLedge(void) {
 /// FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW, and then opens the cells above it.
 static void ValeCave_PushLogNorth(void) {
   struct PushedActorProbe probe;
+  struct Actor *slidingLog;
 
   Event_Start();
   if (PushedActor_FindClearPosition(&probe) != 0) {
@@ -714,25 +712,17 @@ static void ValeCave_PushLogNorth(void) {
     Event_Wait(45);
     Sound_Play(SE_LOG_FALL);
     Actor_SetAnimation(ACTOR_SOUTH_LOG, 8);
-    {
-      struct Actor *slidingLog = Actor_Get(ACTOR_SOUTH_LOG);
-      s32 clearedRows = 2;
-      s32 emptyAttributes = 0;
+    slidingLog = Actor_Get(ACTOR_SOUTH_LOG);
 
-      slidingLog->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-      PushedActor_FillGridAttributeRectangle(0, 13,
-                                             (FIELD_CELL(probe.position.z)) - 1,
-                                             4, clearedRows, emptyAttributes);
-    }
+    slidingLog->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+    PushedActor_FillGridAttributeRectangle(
+        0, 13, (FIELD_CELL(probe.position.z)) - 1, 4, 2, 0);
     if (FIELD_CELL(probe.position.z) == 20) {
       GameFlag_Set(FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW);
     } else {
       GameFlag_Set(FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW);
-      {
-
-        MapGrid_CopyCellAttributes(14, 17, 2, 1, 14, 16);
-        MapGrid_CopyCellAttributes(14, 13, 1, 1, 14, 15);
-      }
+      MapGrid_CopyCellAttributes(14, 17, 2, 1, 14, 16);
+      MapGrid_CopyCellAttributes(14, 13, 1, 1, 14, 15);
     }
   }
   Event_End();

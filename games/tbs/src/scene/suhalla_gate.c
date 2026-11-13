@@ -269,14 +269,13 @@ s32 Scene_Initialize(void) {
 /// The door opens in two frames and the leader steps into Gate to Suhalla.
 static void SuhallaGate_EnterHouse(void) {
   s32 exitTrigger;
-  s32 cellSize = 2;
 
   exitTrigger = gFieldWork->stepTrigger;
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Sound_Play(SE_DOOR_OPEN);
-  MapGrid_CopyCellsTo(66, 36, 71, 8, cellSize, cellSize);
+  MapGrid_CopyCellsTo(66, 36, 71, 8, 2, 2);
   wait(4);
-  MapGrid_CopyCellsTo(68, 36, 71, 8, cellSize, cellSize);
+  MapGrid_CopyCellsTo(68, 36, 71, 8, 2, 2);
   wait(4);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
   Import_EventSetExitRequest(exitTrigger);
@@ -483,12 +482,7 @@ static void SuhallaGate_TalkToEastGuard(void) {
     Event_ShowMessage(ACTOR_EAST_GUARD, 0);
   } else {
     Event_SetMessageId(MsgSuhallaWantGoBabi);
-    {
-      s32 mode = 0;
-      s32 no = ACTOR_EAST_GUARD;
-
-      Event_OpenMessage(no, mode);
-    }
+    Event_OpenMessage(ACTOR_EAST_GUARD, 0);
 
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_ShowMessage(ACTOR_EAST_GUARD, 0);

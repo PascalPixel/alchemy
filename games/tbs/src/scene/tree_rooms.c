@@ -856,6 +856,7 @@ s32 TreeRooms_EnterRoom(void) {
   struct FieldWork *work;
   s32 entrance;
   s32 leaderActorId;
+  struct Actor *tretSpeaker;
 
   tret = Actor_Get(ACTOR_TRET);
   // Point the cocoon latch at the scene state and save the palette first.
@@ -863,12 +864,10 @@ s32 TreeRooms_EnterRoom(void) {
   TretPalette_SaveMapColors();
   tret->motionFlags = 0;
   tret->y.fixed = -px(10);
-  {
-    struct Actor *tretSpeaker = Actor_Get(ACTOR_SECOND_TRET);
+  tretSpeaker = Actor_Get(ACTOR_SECOND_TRET);
 
-    tretSpeaker->motionFlags = 0;
-    tretSpeaker->y.fixed = -px(10);
-  }
+  tretSpeaker->motionFlags = 0;
+  tretSpeaker->y.fixed = -px(10);
   Actor_SetSpriteColorById(ACTOR_SECOND_TRET, SPRITE_COLOR_HIDDEN);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   if (gMainRoutineWork.entrance != TREE_ROOMS_AFTER_FIGHT_TRET)
@@ -1101,8 +1100,8 @@ static void TreeRooms_UpdateSwirlSpark(struct Actor *spark) {
     spark->y.fixed = position.y;
     spark->z.fixed = position.z;
     if (spark->timer <= SWIRL_SPARK_SHRINK_LAST_FRAME) {
-      spark->scaleX += -Q16_ONE / 50;
-      spark->scaleY += -Q16_ONE / 50;
+      spark->scaleX -= Q16_ONE / 50;
+      spark->scaleY -= Q16_ONE / 50;
     }
     spark->timer++;
   } else {

@@ -1739,7 +1739,7 @@ static void SolSanctumEruption_UpdateElementalArcs(void) {
     if (age != 0) {
       actor = gArcEffects[arcIndex];
       if ((u32)age <= 8) {
-        actor->scaleX += -ELEMENTAL_ARC_SCALE_X_DECREASE;
+        actor->scaleX -= ELEMENTAL_ARC_SCALE_X_DECREASE;
         actor->scaleY += Q16_ONE / 2;
         actor->y.fixed += px(3) / 10;
         actor->targetY += px(3) / 10;

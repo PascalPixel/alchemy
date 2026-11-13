@@ -1307,9 +1307,9 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
     Sanctum_SpawnActorSpark(ACTOR_WISE_ONE);
     Event_Wait(4);
     wiseOne = Actor_Get(ACTOR_WISE_ONE);
-    wiseOne->scaleX += -Q16_ONE / 100;
+    wiseOne->scaleX -= Q16_ONE / 100;
     wiseOne = Actor_Get(ACTOR_WISE_ONE);
-    wiseOne->scaleY += -Q16_ONE / 100;
+    wiseOne->scaleY -= Q16_ONE / 100;
   }
   Sound_Play(SE_STOP_ACTION_SE);
   Actor_SetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_NORMAL);
@@ -1675,11 +1675,8 @@ static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep) {
     if (effect != 0) {
       sprite = effect->sprite;
       Actor_StartScript(effect, gSanctum_OwnerEffectScript);
-      {
-
-        effect->motionFlags = 0;
-        effect->timer = 0;
-      }
+      effect->motionFlags = 0;
+      effect->timer = 0;
       effect->userValue = orbitStep;
       effect->update = Sanctum_UpdateOrbitingEffect;
       sprite->flags = 0;
@@ -2054,7 +2051,7 @@ static void Sanctum_SpawnActorSpark(s32 id) {
   randomOffset = Math_RemainderUnsigned(Import_RandomNext(), 20);
   x = actor->x.fixed;
   x += randomOffset << 16;
-  x += -px(10);
+  x -= px(10);
   spark = FieldActor_Create(SPRITE_GLINT, x,
                             actor->y.fixed +
                                 ((Import_RandomNext() & 15) << 16) + -px(8),
@@ -2073,12 +2070,8 @@ static void Sanctum_SpawnActorSpark(s32 id) {
 /// Copies two blocks of map grid cells for the quest's visits, the cell
 /// pictures of one and the cell behaviors of the other.
 static void Sanctum_RestoreQuestFloor(void) {
-  {
-    MapGrid_CopyCellsTo(0, 64, 11, 68, 3, 2);
-  }
-  {
-    MapGrid_CopyCellAttributes(11, 10, 3, 2, 11, 8);
-  }
+  MapGrid_CopyCellsTo(0, 64, 11, 68, 3, 2);
+  MapGrid_CopyCellAttributes(11, 10, 3, 2, 11, 8);
   wait(1);
 }
 

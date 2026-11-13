@@ -2479,11 +2479,7 @@ static void WorldMap_ShakeVenusLighthouse(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   wait(1);
   FieldCamera_SetSpeed(4);
-  {
-    s32 priority = TASK_PASS_FRAME;
-    TaskFunc func = WorldMap_UpdateLighthouseQuake;
-    Task_AddFrame(func, priority);
-  }
+  Task_AddFrame(WorldMap_UpdateLighthouseQuake, TASK_PASS_FRAME);
   PaletteFade_ApplySource(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_ApplyTarget(PALETTE_TINT_MUTED, PALETTES_BG);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);

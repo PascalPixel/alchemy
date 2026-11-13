@@ -216,20 +216,20 @@ static s32 VenusLighthouseAerie_PulseActorScale(struct Actor *actor) {
 
   switch (*counter) {
   case 6:
-    actor->scaleX += -Q16_ONE / 8;
+    actor->scaleX -= Q16_ONE / 8;
     actor->scaleY += Q16_ONE / 16;
     break;
   case 4:
     actor->scaleX += Q16_ONE / 16;
-    actor->scaleY += -Q16_ONE / 32;
+    actor->scaleY -= Q16_ONE / 32;
     break;
   case 2:
     actor->scaleX += Q16_ONE / 32;
-    actor->scaleY += -Q16_ONE / 64;
+    actor->scaleY -= Q16_ONE / 64;
     break;
   case 0:
     actor->scaleX += Q16_ONE / 32;
-    actor->scaleY += -Q16_ONE / 64;
+    actor->scaleY -= Q16_ONE / 64;
     *counter = Math_RemainderUnsigned(Import_RandomNext(), 80) + 80;
     break;
   }
@@ -371,13 +371,13 @@ static void VenusLighthouseAerie_LandOnPlatform(void) {
     platform = Actor_Get(gVenusLighthouseAerie_LandedPlatform);
     platform->motionFlags = 0;
     leader->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
-    platform->y.fixed += -px(3);
-    leader->y.fixed += -px(3);
-    leader->groundHeight += -px(3);
+    platform->y.fixed -= px(3);
+    leader->y.fixed -= px(3);
+    leader->groundHeight -= px(3);
     wait(2);
-    platform->y.fixed += -px(2);
-    leader->y.fixed += -px(2);
-    leader->groundHeight += -px(2);
+    platform->y.fixed -= px(2);
+    leader->y.fixed -= px(2);
+    leader->groundHeight -= px(2);
     wait(10);
     reboundStep = px(2);
     platform->y.fixed += reboundStep;
@@ -402,16 +402,15 @@ static void VenusLighthouseAerie_LandOnPlatform(void) {
 /// bobbing, as they do until the leader lands on one
 /// (VenusLighthouseAerie_LandOnPlatform).
 static void VenusLighthouseAerie_FloatPlatforms(void) {
-  s32 flags = ACTOR_FLOATS;
 
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  Actor_Get(ACTOR_FIRST_PLATFORM)->motionFlags = flags;
-  Actor_Get(ACTOR_FIRST_PLATFORM + 1)->motionFlags = flags;
-  Actor_Get(ACTOR_FIRST_PLATFORM + 2)->motionFlags = flags;
-  Actor_Get(ACTOR_FIRST_PLATFORM + 3)->motionFlags = flags;
-  Actor_Get(ACTOR_FIRST_PLATFORM + 4)->motionFlags = flags;
-  Actor_Get(ACTOR_LAST_PLATFORM)->motionFlags = flags;
+  Actor_Get(ACTOR_FIRST_PLATFORM)->motionFlags = ACTOR_FLOATS;
+  Actor_Get(ACTOR_FIRST_PLATFORM + 1)->motionFlags = ACTOR_FLOATS;
+  Actor_Get(ACTOR_FIRST_PLATFORM + 2)->motionFlags = ACTOR_FLOATS;
+  Actor_Get(ACTOR_FIRST_PLATFORM + 3)->motionFlags = ACTOR_FLOATS;
+  Actor_Get(ACTOR_FIRST_PLATFORM + 4)->motionFlags = ACTOR_FLOATS;
+  Actor_Get(ACTOR_LAST_PLATFORM)->motionFlags = ACTOR_FLOATS;
 }
 
 /// Returns the platform and confrontation step triggers.
@@ -429,7 +428,6 @@ const struct Trigger *VenusLighthouseAerie_GetTriggers(void) {
 s32 VenusLighthouseAerie_Initialize(void) {
   s32 mirroredScale;
   u32 platformId;
-  s32 clear = 0;
   s16 entrance;
   struct Actor *platform;
 
@@ -446,7 +444,7 @@ s32 VenusLighthouseAerie_Initialize(void) {
   platformId = ACTOR_FIRST_PLATFORM;
   do {
     platform = Actor_Get(platformId);
-    Actor_SetSpriteFlags(Actor_Get(platformId), clear);
+    Actor_SetSpriteFlags(Actor_Get(platformId), 0);
     Actor_SetSpritePriority(platformId, 1);
     platform->motionFlags = ACTOR_FLOATS;
     platform->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -499,7 +497,7 @@ s32 VenusLighthouseAerie_Initialize(void) {
       }
     }
   }
-  return clear;
+  return 0;
 }
 
 static void VenusLighthouseAerie_ShowMessage(s32 speaker) {
@@ -566,12 +564,8 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 504, 148);
   Event_Wait(10);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-  {
-    u16 shown = FACING_SOUTH;
-
-    leader->y.fixed = -px(32);
-    leader->facing = shown;
-  }
+  leader->y.fixed = -px(32);
+  leader->facing = FACING_SOUTH;
   Event_Wait(20);
   Sound_Play(SE_MATERIALIZE);
   Actor_MoveToAndWait(ACTOR_RISING_PLATFORM, 524, 191);
@@ -1990,8 +1984,8 @@ static void VenusLighthouseAerie_UpdateBeamActors(void) {
         menardi->x.fixed += px(1) / 16;
       }
       if (saturos->z.fixed > px(182)) {
-        saturos->z.fixed += -px(1) / 16;
-        menardi->z.fixed += -px(1) / 16;
+        saturos->z.fixed -= px(1) / 16;
+        menardi->z.fixed -= px(1) / 16;
       }
     }
   }
@@ -2344,6 +2338,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   struct Actor *middle;
   struct Actor *upper;
   struct Actor *actor;
+  u16 white;
 
   Sound_Play(MUS_SILENCE);
   Sound_Play(SE_STOP_ACTION_SE);
@@ -2537,11 +2532,9 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   Actor_Snapshot();
   Event_SetDestination((s32)&SceneId_WorldMap,
                        WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT);
-  {
-    u16 white = RGB(31, 31, 31);
+  white = RGB(31, 31, 31);
 
-    PLTT_BACKDROP = white;
-  }
+  PLTT_BACKDROP = white;
   gFieldWork->transitionFrames = 1;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

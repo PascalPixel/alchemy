@@ -1148,10 +1148,7 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     Actor_FaceDirection(ACTOR_KALAY_CREWMAN, FACING_SOUTH_SOUTHEAST, 40);
     FieldCamera_SetSpeed(1);
     FieldCamera_MoveTo(216, CAMERA_KEEP, 790, 1);
-    {
-      struct Actor *record = Actor_Get(ACTOR_KALAY_CREWMAN);
-      record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
-    }
+    Actor_Get(ACTOR_KALAY_CREWMAN)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
     Actor_SetSpeed(ACTOR_KALAY_CREWMAN, 1.2);
     Actor_WalkToAndWait(ACTOR_KALAY_CREWMAN, 182, 782);
     Actor_WalkToAndWait(ACTOR_KALAY_CREWMAN, 192, 808);
@@ -1179,6 +1176,7 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
 /// Runs until the party has confronted the crewman.
 static void TolbiShipDeck_CatchCrewmanFromEast(void) {
   u8 bits;
+  struct Actor *record;
 
   if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0) {
@@ -1203,12 +1201,10 @@ static void TolbiShipDeck_CatchCrewmanFromEast(void) {
       Actor_Get(ACTOR_KALAY_CREWMAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
       Actor_WalkToAndWait(ACTOR_KALAY_CREWMAN, 244, 804);
       Event_Wait(1);
-      {
-        struct Actor *record = Actor_Get(ACTOR_KALAY_CREWMAN);
+      record = Actor_Get(ACTOR_KALAY_CREWMAN);
 
-        bits |= record->steeringFlags;
-        record->steeringFlags = bits;
-      }
+      bits |= record->steeringFlags;
+      record->steeringFlags = bits;
       Event_Wait(20);
       Actor_SetSpeed(ACTOR_KALAY_CREWMAN, 3.2);
       Actor_WalkToAndWait(ACTOR_KALAY_CREWMAN, 248, 778);
@@ -1225,6 +1221,7 @@ static void TolbiShipDeck_CatchCrewmanFromEast(void) {
 /// (CELL_BEHAVIOR_TOLBI_SHIP_DECK_WEST_OF_DOOR).
 static void TolbiShipDeck_CatchCrewmanFromWest(void) {
   u8 bits;
+  struct Actor *record;
 
   if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0) {
@@ -1249,12 +1246,10 @@ static void TolbiShipDeck_CatchCrewmanFromWest(void) {
       Actor_Get(ACTOR_KALAY_CREWMAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
       Actor_WalkToAndWait(ACTOR_KALAY_CREWMAN, 192, 804);
       Event_Wait(1);
-      {
-        struct Actor *record = Actor_Get(ACTOR_KALAY_CREWMAN);
+      record = Actor_Get(ACTOR_KALAY_CREWMAN);
 
-        bits |= record->steeringFlags;
-        record->steeringFlags = bits;
-      }
+      bits |= record->steeringFlags;
+      record->steeringFlags = bits;
       Event_Wait(20);
       Actor_SetSpeed(ACTOR_KALAY_CREWMAN, 3.2);
       Actor_WalkToAndWait(ACTOR_KALAY_CREWMAN, 180, 778);
@@ -1503,12 +1498,10 @@ static void TolbiShipDeck_SetUpUnderSail(void) {
   }
   Actor_SetSpeed(ACTOR_SEA_SEAN, 0.6);
   Actor_SetScript(ACTOR_SEA_SEAN, gTolbiShipDeck_SeanPacesActions);
-  {
-    struct Actor *record = Actor_Get(ACTOR_SEA_OURANOS);
+  record = Actor_Get(ACTOR_SEA_OURANOS);
 
-    bits |= record->collisionFlags;
-    record->collisionFlags = bits;
-  }
+  bits |= record->collisionFlags;
+  record->collisionFlags = bits;
   Actor_SetSpeed(ACTOR_SEA_OURANOS, 0.8);
   Actor_SetScript(ACTOR_SEA_OURANOS, gTolbiShipDeck_OuranosPatrolsActions);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
@@ -1531,10 +1524,7 @@ static void TolbiShipDeck_SetUpAfterKraken(void) {
   record = Actor_Get(ACTOR_SEA_SEAN);
   record->facing = FACING_EAST;
   Actor_SetScript(ACTOR_SEA_SEAN, gTolbiShipDeck_SeanLooksAboutActions);
-  {
-    struct Actor *record = Actor_Get(ACTOR_SEA_OURANOS);
-    record->collisionFlags = 128 | record->collisionFlags;
-  }
+  Actor_Get(ACTOR_SEA_OURANOS)->collisionFlags |= 128;
   Actor_SetSpeed(ACTOR_SEA_OURANOS, 0.8);
   Actor_SetScript(ACTOR_SEA_OURANOS, gTolbiShipDeck_OuranosPatrolsActions);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
@@ -2146,10 +2136,7 @@ static void TolbiShipDeck_ThankForKraken(void) {
   record = Actor_Get(ACTOR_SEA_SEAN);
   record->facing = FACING_EAST;
   Actor_SetScript(ACTOR_SEA_SEAN, gTolbiShipDeck_SeanLooksAboutActions);
-  {
-    struct Actor *record = Actor_Get(ACTOR_SEA_OURANOS);
-    record->collisionFlags = 128 | record->collisionFlags;
-  }
+  Actor_Get(ACTOR_SEA_OURANOS)->collisionFlags |= 128;
   Actor_SetSpeed(ACTOR_SEA_OURANOS, 0.8);
   Actor_SetScript(ACTOR_SEA_OURANOS, gTolbiShipDeck_OuranosPatrolsActions);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -2815,10 +2802,7 @@ static void TolbiShipDeck_CopyUnderwayCells(void) {
   MapGrid_CopyCellsTo(78, 39, 78, 41, 5, 1);
   MapGrid_CopyCellsTo(78, 39, 79, 42, 4, 1);
   MapGrid_CopyCellsTo(78, 39, 82, 43, 1, 1);
-  {
-
-    MapGrid_CopyCellAttributes(17, 38, 5, 2, 17, 40);
-  }
+  MapGrid_CopyCellAttributes(17, 38, 5, 2, 17, 40);
 }
 
 /// Redraws two more blocks of cells, as they are at anchor.
@@ -2929,6 +2913,7 @@ static void TolbiShipDeck_SightIsland(void) {
 static void TolbiShipDeck_OfferToScoutIsland(void) {
   struct Actor *leader;
   u8 bits;
+  struct Actor *actor;
 
   Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
@@ -3004,12 +2989,10 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
   Actor_Get(ACTOR_SEA_OURANOS)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_SEA_OURANOS, 162, 676);
   Event_Wait(1);
-  {
-    struct Actor *actor = Actor_Get(ACTOR_SEA_OURANOS);
+  actor = Actor_Get(ACTOR_SEA_OURANOS);
 
-    bits |= actor->steeringFlags;
-    actor->steeringFlags = bits;
-  }
+  bits |= actor->steeringFlags;
+  actor->steeringFlags = bits;
   Actor_FaceDirection(ACTOR_SEA_SEAN, FACING_SOUTH_SOUTHEAST, 0);
   TolbiShipDeck_Turn(ACTOR_SEA_OURANOS, FACING_NORTH_NORTHEAST);
   TolbiShipDeck_Say(ACTOR_SEA_SEAN);

@@ -1264,16 +1264,15 @@ static void ShipRooms_StepBesideLeader(s32 passengerId) {
   struct Actor *leaderPosition;
   s32 blocked;
   s32 direction;
+  struct Actor *passenger;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   blocked = 1;
   Actor_SetSpritePriority(passengerId, 2);
-  {
-    struct Actor *passenger = Actor_Get(passengerId);
+  passenger = Actor_Get(passengerId);
 
-    passenger->priorityFlags =
-        ACTOR_PRIORITY_AUTOMATIC | passenger->priorityFlags;
-  }
+  passenger->priorityFlags =
+      ACTOR_PRIORITY_AUTOMATIC | passenger->priorityFlags;
   // Try the leader's right, then left, then the space behind.
   direction = (((leader->facing + TRIG_TURN / 4) & 0xf000) >> 12);
   if (ShipRooms_IsSpotFree(
@@ -1794,10 +1793,7 @@ static void ShipRooms_WatchWarriorsStormOff(void) {
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 184, 520);
     Event_Wait(1);
-    {
-      struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
-      actor->steeringFlags = ACTOR_FACES_MOTION | actor->steeringFlags;
-    }
+    Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Actor_Jump(ACTOR_HOLD_SECOND_GUIDE, 4, 20);
@@ -2706,7 +2702,6 @@ static void ShipRooms_PlaceFoundActors(s32 gated) {
 /// (FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT).
 static void ShipRooms_AskForReplacementOarsmen(void) {
   struct Actor *actor;
-  s32 mode = 128;
 
   // Bring Isaac to the crewman who explains the shortage of rowers.
   Event_Start();
@@ -2719,7 +2714,7 @@ static void ShipRooms_AskForReplacementOarsmen(void) {
   ShipRooms_PlaceActor(ACTOR_ROWING_DRUMMER, 452, 190, FACING_NORTH_NORTHWEST);
   Actor_SetAnimation(ACTOR_ROWING_DRUMMER, ANIM_STAND);
   ShipRooms_PlaceActor(ACTOR_PARTY_LEADER, 440, 134, FACING_WEST);
-  gFieldWork->transition = (mode << 1);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 408, 134);
@@ -2762,7 +2757,7 @@ static void ShipRooms_AskForReplacementOarsmen(void) {
   Actor_FaceDirection(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHWEST, 20);
   ShipRooms_Say(ACTOR_ROWING_KAJA);
   Actor_StartRepeatedMotion(ACTOR_ROWING_DRUMMER, 1);
-  Actor_ShowEmote(ACTOR_ROWING_DRUMMER, (mode << 1), 40);
+  Actor_ShowEmote(ACTOR_ROWING_DRUMMER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   ShipRooms_Say(ACTOR_ROWING_DRUMMER);
   Actor_StartRepeatedMotion(ACTOR_GARET, 3);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
@@ -2796,7 +2791,7 @@ static void ShipRooms_AskForReplacementOarsmen(void) {
   Actor_SetAnimation(ACTOR_ROWING_CREWMAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_ROWING_DRUMMER, ANIM_NOD);
   Event_Wait(40);
-  Actor_ShowEmote(ACTOR_ROWING_DRUMMER, (mode << 1), 20);
+  Actor_ShowEmote(ACTOR_ROWING_DRUMMER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   ShipRooms_Turn(ACTOR_ROWING_DRUMMER, FACING_NORTH_NORTHWEST);
   ShipRooms_Say(ACTOR_ROWING_DRUMMER);
   ShipRooms_Turn(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHEAST);
@@ -3052,12 +3047,11 @@ static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
   struct Actor *actor;
   s32 halfStep;
   s32 leftSeat;
-  s32 x = 432;
 
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_RESET_CAMERA, 0, 0);
   halfStep = px(1) / 2;
-  ShipRooms_PlaceActor(ACTOR_PARTY_LEADER, x, 134, FACING_WEST);
+  ShipRooms_PlaceActor(ACTOR_PARTY_LEADER, 432, 134, FACING_WEST);
   ShipRooms_PlaceFoundActors(1);
   wait(1);
   Event_StartScreenTransition();
@@ -3078,7 +3072,7 @@ static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     leftSeat = 0;
     Actor_SetSpeedFixed(ACTOR_PARTY_LEADER, px(1), halfStep);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, x, 168);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 432, 168);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != 0) {

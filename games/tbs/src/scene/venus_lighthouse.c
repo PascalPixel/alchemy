@@ -1353,28 +1353,26 @@ static void VenusLighthouse_SearchStatue(void) {
 static void VenusLighthouse_MovePillarTowardWall(void) {
   struct Actor *actor;
   struct Actor *leader;
-  s32 conversationFlag = FLAG_VENUS_LIGHTHOUSE_PILLAR_AT_WALL;
   s32 walkSpeed;
   s32 walkAcceleration;
   s32 emote;
-  s32 garetX = 824;
   walkSpeed = px(4) / 5;
   walkAcceleration = px(2) / 5;
   emote = EMOTE_IN_FRONT | EMOTE_EXCLAMATION;
   Event_Start();
   actor = Actor_Get(ACTOR_WALL_PILLAR);
   if (FIELD_CELL(actor->x.fixed) == 53) {
-    if (GameFlag_Get(conversationFlag) == 0) {
+    if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PILLAR_AT_WALL) == 0) {
       // Record the one-time conversation before bringing Garet out to inspect
       // the pillar.
-      GameFlag_Set(conversationFlag);
+      GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PILLAR_AT_WALL);
       actor = Actor_Get(ACTOR_PARTY_LEADER);
       if (actor != 0) {
         Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
       }
       Actor_SetSpeedFixed(ACTOR_GARET, walkSpeed, walkAcceleration);
-      Actor_WalkToAndWait(ACTOR_GARET, garetX, 88);
-      Actor_WalkToAndWait(ACTOR_GARET, garetX, 104);
+      Actor_WalkToAndWait(ACTOR_GARET, 824, 88);
+      Actor_WalkToAndWait(ACTOR_GARET, 824, 104);
       Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
       Event_Wait(20);
       Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
@@ -1393,7 +1391,7 @@ static void VenusLighthouse_MovePillarTowardWall(void) {
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
       Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
       Event_Wait(30);
-      Actor_WalkToAndWait(ACTOR_GARET, garetX, 88);
+      Actor_WalkToAndWait(ACTOR_GARET, 824, 88);
       Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       if (leader != 0) {
@@ -1747,7 +1745,7 @@ static void VenusLighthouse_StepOnWallSwitch(void) {
                               EFFECT_USE_SPIN,
                           &options);
         if (frame == 240) {
-          dustX += -px(48);
+          dustX -= px(48);
         }
         if (tileDelay == 0) {
           tileDelay = 40;
@@ -2529,12 +2527,8 @@ static void VenusLighthouse_JumpOrPushSocketPillar(void) {
 
   Event_Start();
   if (VenusLighthouse_JumpAcrossGap() == 0) {
-    {
-      MapGrid_CopyCellAttributes(69, 48, 4, 2, 5, 48);
-    }
-    {
-      MapGrid_CopyCellAttributes(73, 37, 9, 13, 9, 37);
-    }
+    MapGrid_CopyCellAttributes(69, 48, 4, 2, 5, 48);
+    MapGrid_CopyCellAttributes(73, 37, 9, 13, 9, 37);
     VenusLighthouse_PushAdjacentPillar();
   }
   Event_End();

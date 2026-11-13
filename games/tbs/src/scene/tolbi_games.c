@@ -718,7 +718,6 @@ static void TolbiSpring_OfferLuckyDice(void) {
 static s32 TolbiSpring_RunSpringGame(void) {
   s32 choice = 0;
   s32 text;
-  s32 cancel = -1;
   s32 coins;
   s32 medals;
   struct Window *window;
@@ -741,17 +740,15 @@ prompt:
   // "What will you throw?"
   Event_OpenMessage(-1, 0);
   window = Window_Create(0, 0, TOLBI_SPRING_COUNT_WIDTH, 4, 2);
-  {
-    text = MsgTolbiCoins;
-    Text_DrawMessageAsTiles(text, window, 0, 0);
-    Text_DrawNumberInWindow(coins, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 0);
-    Text_DrawMessageAsTiles(text + 1, window, 0, 8);
-    Text_DrawNumberInWindow(medals, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 8);
-  }
+  text = MsgTolbiCoins;
+  Text_DrawMessageAsTiles(text, window, 0, 0);
+  Text_DrawNumberInWindow(coins, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 0);
+  Text_DrawMessageAsTiles(text + 1, window, 0, 8);
+  Text_DrawNumberInWindow(medals, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 8);
   choice = Menu_SelectCoinsOrMedals(choice);
   Window_Close(window, 2);
   Message_CloseFinishedWindows();
-  if (choice == cancel) {
+  if (choice == (-1)) {
     Event_End();
     return 0;
   }
@@ -782,11 +779,9 @@ prompt:
   }
   window = Window_Create(TOLBI_SPRING_TOSS_MENU_X, 15,
                          TOLBI_SPRING_TOSS_MENU_WIDTH, 4, 2);
-  {
-    text = MsgTolbiToss;
-    Text_DrawMessageAsTiles(text, window, 0, 0);
-    Text_DrawMessageAsTiles(text + 1, window, 0, 8);
-  }
+  text = MsgTolbiToss;
+  Text_DrawMessageAsTiles(text, window, 0, 0);
+  Text_DrawMessageAsTiles(text + 1, window, 0, 8);
   wait(5);
   Sound_Play(SE_TOLBI_SPRING_TOSS_PROMPT);
   for (;;) {
@@ -824,7 +819,7 @@ prompt:
     choice = Menu_SelectCoinsOrMedals(choice);
     Window_Close(window, 2);
     Message_CloseFinishedWindows();
-    if (choice == cancel) {
+    if (choice == (-1)) {
       Event_End();
       return 0;
     }
@@ -879,7 +874,7 @@ prompt:
   }
 #endif
   // Charge the chosen token only after the player confirms the toss.
-  if (result != cancel) {
+  if (result != (-1)) {
     if (choice == SPRING_TOSS_COIN) {
       Party_AdjustCoins(-1);
     } else if (choice == SPRING_TOSS_MEDAL) {
@@ -1484,13 +1479,7 @@ static void TolbiSpring_InitializeTossSimulation(void) {
                         ANIM_TURTLE_SWIM);
   Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 3),
                         ANIM_TURTLE_SWIM);
-
-  {
-    s32 budget = 3203;
-    void (*task)(void) = TolbiSpring_UpdateTossSimulation;
-
-    Task_AddFrame(task, budget);
-  }
+  Task_AddFrame(TolbiSpring_UpdateTossSimulation, TASK_PASS_FRAME + 3);
 }
 
 /// Launches the chosen coin or medal and waits for its final prize ring.

@@ -496,14 +496,13 @@ static void Vale_TalkAboutTheMayorAndTremors(void) {
 ///
 /// After the party has left, she says Kraden has not come back.
 static void Vale_WarnAboutGoingBeyondKradensCottage(void) {
-  s32 flag = FLAG_VALE_ASKED_IF_GOING_TO_KRADEN;
   Event_Start();
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     Event_SetMessageId(MsgValeKradenHasntComeBack);
     // "I guess Kraden still hasn't come back."
     Event_ShowMessage(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, 0);
-  } else if (GameFlag_Get(flag) == 0) {
-    GameFlag_Set(flag);
+  } else if (GameFlag_Get(FLAG_VALE_ASKED_IF_GOING_TO_KRADEN) == 0) {
+    GameFlag_Set(FLAG_VALE_ASKED_IF_GOING_TO_KRADEN);
     Event_SetMessageId(MsgValeDoYouNeedToGo);
     Actor_FaceEachOther(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, ACTOR_PARTY_LEADER,
                         4);
@@ -2413,12 +2412,7 @@ static void Vale_RoofMended(void) {
   struct Actor *actor;
   u32 i;
   struct Actor *turned;
-  TaskFunc funcA;
-  TaskFunc funcB;
-  TaskFunc funcC;
-  TaskFunc funcD;
-  TaskFunc funcE;
-  TaskFunc funcF;
+  struct Actor *record;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Event_Start();
@@ -2493,24 +2487,18 @@ static void Vale_RoofMended(void) {
   }
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
 
-  funcA = Vale_UpdateLeaderPaletteAndEffects;
-  Task_AddFrame(funcA, TASK_PASS_FRAME);
-  funcB = Vale_CycleFirstBoardPalette;
-  Task_AddFrame(funcB, TASK_PASS_FRAME);
+  Task_AddFrame(Vale_UpdateLeaderPaletteAndEffects, TASK_PASS_FRAME);
+  Task_AddFrame(Vale_CycleFirstBoardPalette, TASK_PASS_FRAME);
   Actor_SetSpeed(ACTOR_FIRST_BOARD, 0.2);
   Actor_MoveToAndWait(ACTOR_FIRST_BOARD, 390, 832);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_MoveToAndWait(ACTOR_FIRST_BOARD, 400, 826);
   Event_Wait(20);
-  {
-    struct Actor *record = Actor_Get(ACTOR_PARTY_LEADER);
-
-    record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
-  }
+  Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Task_Remove(Vale_PlayStepSound);
-  Task_Remove(funcA);
-  Task_Remove(funcB);
+  Task_Remove(Vale_UpdateLeaderPaletteAndEffects);
+  Task_Remove(Vale_CycleFirstBoardPalette);
   wait(1);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
   Actor_SetSpriteColorById(ACTOR_FIRST_BOARD, SPRITE_COLOR_NORMAL);
@@ -2536,24 +2524,18 @@ static void Vale_RoofMended(void) {
     wait(1);
   }
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
-  funcC = Vale_UpdateLeaderPaletteAndEffects;
-  Task_AddFrame(funcC, TASK_PASS_FRAME);
-  funcD = Vale_CycleSecondBoardPalette;
-  Task_AddFrame(funcD, TASK_PASS_FRAME);
+  Task_AddFrame(Vale_UpdateLeaderPaletteAndEffects, TASK_PASS_FRAME);
+  Task_AddFrame(Vale_CycleSecondBoardPalette, TASK_PASS_FRAME);
   Actor_SetSpeed(ACTOR_SECOND_BOARD, 0.2);
   Actor_MoveToAndWait(ACTOR_SECOND_BOARD, 390, 832);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_MoveToAndWait(ACTOR_SECOND_BOARD, 377, 828);
   Event_Wait(20);
-  {
-    struct Actor *record = Actor_Get(ACTOR_PARTY_LEADER);
-
-    record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
-  }
+  Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Task_Remove(Vale_PlayStepSound);
-  Task_Remove(funcC);
-  Task_Remove(funcD);
+  Task_Remove(Vale_UpdateLeaderPaletteAndEffects);
+  Task_Remove(Vale_CycleSecondBoardPalette);
   wait(1);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
   Actor_SetSpriteColorById(ACTOR_SECOND_BOARD, SPRITE_COLOR_NORMAL);
@@ -2580,24 +2562,18 @@ static void Vale_RoofMended(void) {
     wait(1);
   }
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
-  funcE = Vale_UpdateLeaderPaletteAndEffects;
-  Task_AddFrame(funcE, TASK_PASS_FRAME);
-  funcF = Vale_CycleThirdBoardPalette;
-  Task_AddFrame(funcF, TASK_PASS_FRAME);
+  Task_AddFrame(Vale_UpdateLeaderPaletteAndEffects, TASK_PASS_FRAME);
+  Task_AddFrame(Vale_CycleThirdBoardPalette, TASK_PASS_FRAME);
   Actor_SetSpeed(ACTOR_THIRD_BOARD, 0.2);
   Actor_MoveToAndWait(ACTOR_THIRD_BOARD, 390, 832);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_MoveToAndWait(ACTOR_THIRD_BOARD, 360, 837);
   Event_Wait(20);
-  {
-    struct Actor *record = Actor_Get(ACTOR_PARTY_LEADER);
-
-    record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
-  }
+  Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Task_Remove(Vale_PlayStepSound);
-  Task_Remove(funcE);
-  Task_Remove(funcF);
+  Task_Remove(Vale_UpdateLeaderPaletteAndEffects);
+  Task_Remove(Vale_CycleThirdBoardPalette);
   wait(1);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
   Actor_SetSpriteColorById(ACTOR_THIRD_BOARD, SPRITE_COLOR_NORMAL);
@@ -2726,11 +2702,7 @@ static void Vale_RoofMended(void) {
   Actor_Get(ACTOR_JENNA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_JENNA, 408, 843);
   Event_Wait(1);
-  {
-    struct Actor *record = Actor_Get(ACTOR_JENNA);
-
-    record->steeringFlags = ACTOR_FACES_MOTION | record->steeringFlags;
-  }
+  Actor_Get(ACTOR_JENNA)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
@@ -2829,7 +2801,7 @@ static void Vale_RoofMended(void) {
   Event_Wait(4);
   for (i = 0; i != 4; i++) {
     actor->z.fixed += px(3) / 2;
-    actor->scaleY += -Q16_ONE / 10;
+    actor->scaleY -= Q16_ONE / 10;
     Event_Wait(1);
   }
   Actor_SetPosition(ACTOR_DORA, 0, 0);
@@ -3015,11 +2987,7 @@ static void Vale_RoofMended(void) {
                            ANIM_LEADER_CLIMB, 0);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 376, 912);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  {
-    struct Actor *record = Actor_Get(ACTOR_DORA);
-
-    record->steeringFlags = 1 | record->steeringFlags;
-  }
+  Actor_Get(ACTOR_DORA)->steeringFlags |= 1;
   Vale_ClimbDownRoofLadder(ACTOR_DORA, DORA_ANIMATION_CLIMB_OVER_TOP,
                            DORA_ANIMATION_CLIMB, 0);
   Actor_WalkToAndWait(ACTOR_DORA, 373, 887);
@@ -3190,8 +3158,8 @@ static void Vale_VanishMoveHand(struct Actor *emitter) {
   for (frameCountdown = 30; frameCountdown >= 0; frameCountdown--) {
     emitter->y.fixed += px(1);
     emitter->facing = (u16)(emitter->facing + TRIG_TURN / 8);
-    emitter->scaleX += -2048;
-    emitter->scaleY += -2048;
+    emitter->scaleX -= 2048;
+    emitter->scaleY -= 2048;
     wait(1);
   }
 

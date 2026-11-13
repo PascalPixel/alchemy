@@ -27,7 +27,7 @@ Field_Map280:
 	.incbin "games/tla/src/map/map_279/animation.script.lz"
 	.balign 4, 0
 .LField_Map280_BLEND:
-	.incbin "games/tla/src/map/map_001/blend.script.lz"
+	.incbin "games/tla/src/map/lobby/blend.script.lz"
 	.balign 4, 0
 .LField_Map280_SCENE:
 	.incbin "games/tla/src/map/map_280/scene.scene.lz"

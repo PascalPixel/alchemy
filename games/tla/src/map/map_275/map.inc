@@ -24,7 +24,7 @@ Field_Map275:
 	.incbin "games/tla/src/map/map_275/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Map275_ANIMATION:
-	.incbin "games/tla/src/map/map_263/animation.script.lz"
+	.incbin "games/tla/src/map/mars_lighthouse_aerie/animation.script.lz"
 	.balign 4, 0
 .LField_Map275_SCENE:
 	.incbin "games/tla/src/map/map_275/scene.scene.lz"

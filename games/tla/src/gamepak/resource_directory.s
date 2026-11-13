@@ -636,19 +636,19 @@ Resource_DirectoryTable:
 	resource , Resource_Data26F
 	resource , Resource_Data270
 	resource , Resource_Data271
-	resource , Field_Map001
+	resource , Field_Lobby
 	resource , Tileset_Set00Palette
 	resource , Tileset_Set00TilesA
 	resource , Tileset_Set00TilesB
 	resource , Tileset_Set00TilesC
 	resource , Tileset_Set00TilesD
-	resource , Field_Map002
+	resource , Field_VenusLighthouseEntrance
 	resource , Tileset_Set01Palette
 	resource , Tileset_Set01TilesA
 	resource , Tileset_Set01TilesB
 	resource , Tileset_Set01TilesC
 	resource , Tileset_Set01TilesD
-	resource , Field_Map003
+	resource , Field_VenusLighthouse
 	resource , Tileset_Set02Palette
 	resource , Tileset_Set02TilesA
 	resource , Tileset_Set02TilesB
@@ -667,7 +667,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Set04TilesB
 	resource , Tileset_Set04TilesC
 	resource , Tileset_Set04TilesD
-	resource , Field_Map007
+	resource , Field_Idejima
 	resource , Tileset_Set05Palette
 	resource , Tileset_Set05TilesA
 	resource , Tileset_Set05TilesB
@@ -773,19 +773,19 @@ Resource_DirectoryTable:
 	resource , Tileset_Set20TilesB
 	resource , Tileset_Set20TilesC
 	resource , Tileset_Set20TilesD
-	resource , Field_Map038
+	resource , Field_GondowanCliffsHideout
 	resource , Tileset_Set21Palette
 	resource , Tileset_Set21TilesA
 	resource , Tileset_Set21TilesB
 	resource , Tileset_Set21TilesC
 	resource , Tileset_Set21TilesD
-	resource , Field_Map039
+	resource , Field_Madra
 	resource , Tileset_Set22Palette
 	resource , Tileset_Set22TilesA
 	resource , Tileset_Set22TilesB
 	resource , Tileset_Set22TilesC
 	resource , Tileset_Set22TilesD
-	resource , Field_Map040
+	resource , Field_MadraInteriors
 	resource , Tileset_Set23Palette
 	resource , Tileset_Set23TilesA
 	resource , Tileset_Set23TilesB
@@ -825,19 +825,19 @@ Resource_DirectoryTable:
 	resource , Tileset_Palette01
 	resource , Field_Map047
 	resource , Tileset_Palette02
-	resource , Field_Map048
+	resource , Field_MadraDrawbridge
 	resource , Tileset_Set29Palette
 	resource , Tileset_Set29TilesA
 	resource , Tileset_Set29TilesB
 	resource , Tileset_Set29TilesC
 	resource , Tileset_Set29TilesD
-	resource , Field_Map049
+	resource , Field_OseniaCliffs
 	resource , Tileset_Set30Palette
 	resource , Tileset_Set30TilesA
 	resource , Tileset_Set30TilesB
 	resource , Tileset_Set30TilesC
 	resource , Tileset_Set30TilesD
-	resource , Field_Map050
+	resource , Field_Mikasalla
 	resource , Tileset_Set31Palette
 	resource , Tileset_Set31TilesA
 	resource , Tileset_Set31TilesB
@@ -847,7 +847,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Set32TilesB
 	resource , Tileset_Set32TilesC
 	resource , Tileset_Set32TilesD
-	resource , Field_Map052
+	resource , Field_MikasallaInteriors
 	resource , Tileset_Set33Palette
 	resource , Tileset_Set33TilesA
 	resource , Tileset_Set33TilesB
@@ -869,7 +869,7 @@ Resource_DirectoryTable:
 	resource , Field_Map058
 	resource , Tileset_Palette06
 	resource , Tileset_Palette07
-	resource , Field_Map059
+	resource , Field_GarohInteriors
 	resource , Tileset_Palette08
 	resource , Tileset_Palette09
 	resource , Field_Map060
@@ -926,33 +926,33 @@ Resource_DirectoryTable:
 	resource , Tileset_Set41TilesB
 	resource , Tileset_Set41TilesC
 	resource , Tileset_Set41TilesD
-	resource , Field_Map088
+	resource , Field_Alhafra
 	resource , Tileset_Palette10
-	resource , Field_Map089
+	resource , Field_AlhafraInteriors
 	resource , Tileset_Set42Palette
 	resource , Tileset_Set42TilesA
-	resource , Field_Map090
-	resource , Field_Map091
+	resource , Field_AlhafraManor
+	resource , Field_EasternAlhafra
 	resource , Tileset_Set43Palette
 	resource , Tileset_Set43TilesA
 	resource , Tileset_Set43TilesB
 	resource , Tileset_Set43TilesC
 	resource , Tileset_Set43TilesD
-	resource , Field_Map092
+	resource , Field_EasternAlhafraShip
 	resource , Tileset_Set44Palette
 	resource , Tileset_Set44TilesA
 	resource , Tileset_Set44TilesB
 	resource , Tileset_Set44TilesC
 	resource , Tileset_Set44TilesD
-	resource , Field_Map093
+	resource , Field_AlhafranCave
 	resource , Tileset_Set45Palette
 	resource , Tileset_Set45TilesA
 	resource , Tileset_Set45TilesB
 	resource , Tileset_Set45TilesC
 	resource , Tileset_Set45TilesD
-	resource , Field_Map094
+	resource , Field_AlhafraJail
 	resource , Tileset_Palette11
-	resource , Field_Map095
+	resource , Field_Naribwe
 	resource , Tileset_Set46Palette
 	resource , Tileset_Set46TilesA
 	resource , Tileset_Set46TilesB
@@ -964,13 +964,13 @@ Resource_DirectoryTable:
 	resource , Tileset_Set47TilesB
 	resource , Tileset_Set47TilesC
 	resource , Tileset_Set47TilesD
-	resource , Field_Map097
+	resource , Field_GondowanCliffs
 	resource , Tileset_Set48Palette
 	resource , Tileset_Set48TilesA
 	resource , Tileset_Set48TilesB
 	resource , Tileset_Set48TilesC
 	resource , Tileset_Set48TilesD
-	resource , Field_Map098
+	resource , Field_GondowanCliffsPass
 	resource , Field_Map099
 	resource , Tileset_Set49Palette
 	resource , Tileset_Set49TilesA
@@ -1059,7 +1059,7 @@ Resource_DirectoryTable:
 	resource , Field_Map120
 	resource , Field_Map121
 	resource , Field_Map122
-	resource , Field_Map123
+	resource , Field_LemurianShipDeck
 	resource , Tileset_Set60Palette
 	resource , Tileset_Set60TilesA
 	resource , Tileset_Set60TilesB
@@ -1084,9 +1084,9 @@ Resource_DirectoryTable:
 	resource , Tileset_Set62TilesB
 	resource , Tileset_Set62TilesC
 	resource , Tileset_Set62TilesD
-	resource , Field_Map130
+	resource , Field_Yallam
 	resource , Tileset_Palette24
-	resource , Field_Map131
+	resource , Field_YallamInteriors
 	resource , Tileset_Set63Palette
 	resource , Tileset_Set63TilesA
 	resource , Tileset_Set63TilesB
@@ -1140,7 +1140,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Set69TilesB
 	resource , Tileset_Set69TilesC
 	resource , Tileset_Set69TilesD
-	resource , Field_Map147
+	resource , Field_ApojiiIslandsCave
 	resource , Tileset_Set70Palette
 	resource , Tileset_Set70TilesA
 	resource , Tileset_Set70TilesB
@@ -1169,19 +1169,19 @@ Resource_DirectoryTable:
 	resource , Field_Map158
 	resource , Field_Map159
 	resource , Tileset_Palette28
-	resource , Field_Map160
+	resource , Field_Izumo
 	resource , Tileset_Set73Palette
 	resource , Tileset_Set73TilesA
 	resource , Tileset_Set73TilesB
 	resource , Tileset_Set73TilesC
 	resource , Tileset_Set73TilesD
-	resource , Field_Map161
+	resource , Field_IzumoInteriors
 	resource , Tileset_Set74Palette
 	resource , Tileset_Set74TilesA
 	resource , Tileset_Set74TilesB
 	resource , Tileset_Set74TilesC
 	resource , Tileset_Set74TilesD
-	resource , Field_Map162
+	resource , Field_IzumoRuinsFirstRoom
 	resource , Tileset_Set75Palette
 	resource , Tileset_Set75TilesA
 	resource , Field_Map163
@@ -1206,7 +1206,7 @@ Resource_DirectoryTable:
 	resource , Field_Map169
 	resource , Field_Map170
 	resource , Field_Map171
-	resource , Field_Map172
+	resource , Field_Champa
 	resource , Tileset_Palette30
 	resource , Field_Map173
 	resource , Tileset_Palette31
@@ -1219,7 +1219,7 @@ Resource_DirectoryTable:
 	resource , Field_Map175
 	resource , Field_Map176
 	resource , Field_Map177
-	resource , Field_Map178
+	resource , Field_ChampaSanctum
 	resource , Tileset_Palette32
 	resource , Field_Map179
 	resource , Tileset_Set80Palette
@@ -1248,29 +1248,29 @@ Resource_DirectoryTable:
 	resource , Tileset_Palette34
 	resource , Tileset_Palette35
 	resource , Tileset_Palette36
-	resource , Field_Map188
+	resource , Field_LemuriaEntrance
 	resource , Tileset_Palette37
-	resource , Field_Map189
+	resource , Field_Lemuria
 	resource , Tileset_Set82Palette
 	resource , Tileset_Set82TilesA
 	resource , Tileset_Set82TilesB
 	resource , Tileset_Set82TilesC
 	resource , Tileset_Set82TilesD
-	resource , Field_Map190
+	resource , Field_AncientLemuria
 	resource , Tileset_Palette38
-	resource , Field_Map191
+	resource , Field_LemuriaPalace
 	resource , Tileset_Set83Palette
 	resource , Tileset_Set83TilesA
 	resource , Tileset_Set83TilesB
 	resource , Tileset_Set83TilesC
 	resource , Tileset_Set83TilesD
-	resource , Field_Map192
+	resource , Field_LemuriaInteriors
 	resource , Tileset_Set84Palette
 	resource , Tileset_Set84TilesA
 	resource , Tileset_Set84TilesB
 	resource , Tileset_Set84TilesC
 	resource , Tileset_Set84TilesD
-	resource , Field_Map193
+	resource , Field_LemuriaSpring
 	resource , Tileset_Set85Palette
 	resource , Tileset_Set85TilesA
 	resource , Tileset_Set85TilesB
@@ -1356,7 +1356,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Set95TilesC
 	resource , Tileset_Set95TilesD
 	resource , Tileset_Palette49
-	resource , Field_Map222
+	resource , Field_ShamanVillageCave
 	resource , Tileset_Palette50
 	resource , Field_Map223
 	resource , Tileset_Set96Palette
@@ -1387,7 +1387,7 @@ Resource_DirectoryTable:
 	resource , Field_Map229
 	resource , Field_Map230
 	resource , Field_Map231
-	resource , Field_Map232
+	resource , Field_AnemosInnerSanctumEntrance
 	resource , Field_Map233
 	resource , Tileset_Set100Palette
 	resource , Tileset_Set100TilesA
@@ -1407,7 +1407,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Set102TilesB
 	resource , Tileset_Set102TilesC
 	resource , Tileset_Set102TilesD
-	resource , Field_Map237
+	resource , Field_JupiterLighthouseEntrance
 	resource , Tileset_Set103Palette
 	resource , Tileset_Set103TilesA
 	resource , Tileset_Set103TilesB
@@ -1416,21 +1416,21 @@ Resource_DirectoryTable:
 	resource , Field_Map238
 	resource , Tileset_Palette54
 	resource , Field_Map239
-	resource , Field_Map240
+	resource , Field_JupiterLighthouseRoom1
 	resource , Tileset_Set104Palette
 	resource , Tileset_Set104TilesA
 	resource , Tileset_Set104TilesB
 	resource , Tileset_Set104TilesC
 	resource , Tileset_Set104TilesD
-	resource , Field_Map241
-	resource , Field_Map242
-	resource , Field_Map243
-	resource , Field_Map244
-	resource , Field_Map245
-	resource , Field_Map246
-	resource , Field_Map247
-	resource , Field_Map248
-	resource , Field_Map249
+	resource , Field_JupiterLighthouseRoom2
+	resource , Field_JupiterLighthouseRoom3
+	resource , Field_JupiterLighthouseRoom4
+	resource , Field_JupiterLighthouseRoom5
+	resource , Field_JupiterLighthouseRoom6
+	resource , Field_JupiterLighthouseRoom7
+	resource , Field_JupiterLighthouseRoom8
+	resource , Field_JupiterLighthouseRoom9
+	resource , Field_JupiterLighthouseRoomM
 	resource , Tileset_Palette55
 	resource , Field_Map250
 	resource , Tileset_Palette56
@@ -1446,7 +1446,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Set106TilesB
 	resource , Tileset_Set106TilesC
 	resource , Tileset_Set106TilesD
-	resource , Field_Map253
+	resource , Field_NorthernReaches
 	resource , Tileset_Palette57
 	resource , Field_Map254
 	resource , Tileset_Set107Palette
@@ -1473,7 +1473,7 @@ Resource_DirectoryTable:
 	resource , Field_Map260
 	resource , Field_Map261
 	resource , Field_Map262
-	resource , Field_Map263
+	resource , Field_MarsLighthouseAerie
 	resource , Tileset_Set110Palette
 	resource , Tileset_Set110TilesA
 	resource , Tileset_Set110TilesB
@@ -1489,7 +1489,7 @@ Resource_DirectoryTable:
 	resource , Field_Map269
 	resource , Field_Map270
 	resource , Field_Map271
-	resource , Field_Map272
+	resource , Field_MarsLighthouseStarRoom
 	resource , Field_Map273
 	resource , Tileset_Map273TilesD
 	resource , Field_Map274
@@ -1500,7 +1500,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Palette64
 	resource , Tileset_Palette65
 	resource , Tileset_Palette66
-	resource , Field_Map277
+	resource , Field_MercuryLighthouse
 	resource , Tileset_Set112Palette
 	resource , Tileset_Set112TilesA
 	resource , Tileset_Set112TilesB
@@ -1547,7 +1547,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Set117TilesD
 	resource , Field_Map288
 	resource , Tileset_Palette71
-	resource , Field_Map289
+	resource , Field_MtAlephSummit
 	resource , Tileset_Set118Palette
 	resource , Tileset_Set118TilesA
 	resource , Tileset_Set118TilesB
@@ -1565,7 +1565,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Set120TilesB
 	resource , Tileset_Set120TilesC
 	resource , Tileset_Set120TilesD
-	resource , Field_Map291
+	resource , Field_ShopTest
 	resource , Tileset_Set121Palette
 	resource , Tileset_Set121TilesA
 	resource , Tileset_Set121TilesB

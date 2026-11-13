@@ -54,19 +54,19 @@ Resource_Overlay64A:
 Resource_Overlay64B:
 	.incbin "overlays/resource_64b.lz"
 	.ifdef TLA_EDITION_EN
-	.byte 0x0b, 0x80	@ PACKER: left in the buffer by Field_Map097+0x3dee
+	.byte 0x0b, 0x80	@ PACKER: left in the buffer by Field_GondowanCliffs+0x3dee
 	.endif
 	.ifdef TLA_EDITION_DE
-	.byte 0xde, 0x0b, 0x80	@ PACKER: left in the buffer by Field_Map097+0x3ded
+	.byte 0xde, 0x0b, 0x80	@ PACKER: left in the buffer by Field_GondowanCliffs+0x3ded
 	.endif
 	.ifdef TLA_EDITION_ES
-	.byte 0xdd, 0x03	@ PACKER: left in the buffer by Field_Map097+0x3dea
+	.byte 0xdd, 0x03	@ PACKER: left in the buffer by Field_GondowanCliffs+0x3dea
 	.endif
 	.ifdef TLA_EDITION_FR
-	.byte 0x0b, 0x80	@ PACKER: left in the buffer by Field_Map097+0x3dee
+	.byte 0x0b, 0x80	@ PACKER: left in the buffer by Field_GondowanCliffs+0x3dee
 	.endif
 	.ifdef TLA_EDITION_IT
-	.byte 0x0b, 0x80	@ PACKER: left in the buffer by Field_Map097+0x3dee
+	.byte 0x0b, 0x80	@ PACKER: left in the buffer by Field_GondowanCliffs+0x3dee
 	.endif
 	.balign 4, 0
 
@@ -497,10 +497,10 @@ Resource_Overlay663:
 Resource_Overlay664:
 	.incbin "overlays/resource_664.lz"
 	.ifdef TLA_EDITION_ES
-	.byte 0x00, 0x01, 0xa8	@ PACKER: left in the buffer by Field_Map097+0x4155
+	.byte 0x00, 0x01, 0xa8	@ PACKER: left in the buffer by Field_GondowanCliffs+0x4155
 	.endif
 	.ifdef TLA_EDITION_IT
-	.byte 0x00, 0x01, 0xa8	@ PACKER: left in the buffer by Field_Map097+0x4155
+	.byte 0x00, 0x01, 0xa8	@ PACKER: left in the buffer by Field_GondowanCliffs+0x4155
 	.endif
 	.balign 4, 0
 

@@ -3442,6 +3442,8 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
     VenusLighthouse_RubbleSetScaleAndSpin(&optionsStorage);
   // Repeat particle bursts on the fourth row before advancing the copied tiles.
   again:
+    /* FAKEMATCH(temporary): zero holds the velocities' 0, set as the loop
+     * starts; as 0 in both, 2 of 179 instructions differ in tbs-en. */
     particleZ = px(192);
     for (particleIndex = 0, zero = 0, particleZ += rowOffset;
          particleIndex <= 3; particleIndex++) {
@@ -3510,6 +3512,8 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
     VenusLighthouse_RubbleSetScaleAndSpin(&optionsStorage);
   // Keep this route task scheduling after each completed row.
   again:
+    /* FAKEMATCH(temporary): zero holds the velocities' 0, set as the loop
+     * starts; as 0 in both, 2 of 176 instructions differ in tbs-en. */
     particleZ = px(192);
     for (particleIndex = 0, zero = 0, particleZ += rowOffset;
          particleIndex <= 3; particleIndex++) {

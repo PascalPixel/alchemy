@@ -91,7 +91,6 @@ extern const u8 gShop_DownArrowTiles[];
 extern const u8 gShop_PriceTiles[];
 extern const u8 gShop_QuantityTiles[];
 
-
 #include "types.h"
 struct Window;
 
@@ -187,6 +186,5 @@ void Inn_PlaySleep(s32 roomPrice);
 s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot);
 s32 ItemPicker_SelectItem(s32 unitId);
 void ItemPicker_DrawItem(struct Window *window, s32 unitId, s32 slot);
-
 
 #endif

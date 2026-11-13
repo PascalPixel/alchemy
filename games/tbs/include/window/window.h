@@ -160,7 +160,6 @@ struct WindowWork {
 /// The window renderer's work, heap slot HEAP_SLOT_WINDOW under its own name.
 #define gWindowWork (*(u8 *(*)[]) & gHeapSlots[HEAP_SLOT_WINDOW])
 
-
 #include "types.h"
 #include "edition.h"
 #include "glyph.h"
@@ -788,6 +787,5 @@ void Text_DrawNumberInWindow(s32 value, s32 width, struct Window *window, s32 x,
 
 /// The menus' compressed 64x16 headings, Save to Setup (menu_titles.s).
 extern const u8 *gMenuTitlePictures[];
-
 
 #endif

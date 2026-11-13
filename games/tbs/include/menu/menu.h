@@ -144,7 +144,6 @@ extern const u8 gSettingsMenu_SliderTiles[];
 void Import_TitleShowCamelotLogo(s32 mode);
 void Import_CreditsRun(s32 mode);
 
-
 #include "types.h"
 
 struct Unit;
@@ -441,6 +440,5 @@ s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
                                s32 variant);
 s32 Icon_DrawVariantWithTileOffset(struct Window *window, s32 x, s32 y,
                                    s32 variant);
-
 
 #endif

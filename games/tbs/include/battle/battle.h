@@ -203,7 +203,6 @@ enum BattleElementGlow {
   GLOW_BURST    ///< the element's burst: a Djinni set
 };
 
-
 #include "types.h"
 
 struct BattleAction;
@@ -496,6 +495,5 @@ void BattleSpoils_Clear(void);
 s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus);
 void Battle_AwardSpoils(void);
 void Battle_DebugSelectNoOp(void);
-
 
 #endif

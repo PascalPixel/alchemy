@@ -81,7 +81,6 @@ extern u8 TransferCommandExecutor_Size[];
 void Iwram_Halt(void);
 void Mixer_Enter(void);
 
-
 #include "types.h"
 #include "task.h"
 #include "irq.h"
@@ -264,6 +263,5 @@ void LinkBattle_ResetTransferState(void);
 void Serial_StepBlockTransfer(void);
 void SerialTest_Delay(void);
 void SerialTest_Run(void);
-
 
 #endif

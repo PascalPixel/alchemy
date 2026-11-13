@@ -244,7 +244,6 @@ extern const u8 gSpriteColorTables[][256];
 /// 93.
 extern const u8 gActor_ShadowTiles[];
 
-
 #include "render_placement.h"
 
 #include "types.h"
@@ -722,6 +721,5 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
 void SpriteViewer_StartStaggeredAnimations(s32 layerIndex, s32 animationIndex);
 void SpriteViewer_SetGridColumnNumber(s32 layerIndex, s32 spriteId);
 void SpriteViewer_PlaceRing(void);
-
 
 #endif

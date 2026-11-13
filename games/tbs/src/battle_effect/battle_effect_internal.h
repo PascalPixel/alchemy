@@ -334,9 +334,9 @@ enum DjinniEntranceLength {
 enum DjinniEntranceAnchor {
   DJINNI_ANCHOR_OVER_TARGET, ///< over the first target
   DJINNI_ANCHOR_TARGET_X,    ///< at the first target's x, at depth 0
-  DJINNI_ANCHOR_OVER_USER,   ///< over the user
-  DJINNI_ANCHOR_USER_X,      ///< at the user's x, at depth 0; no caller
-  DJINNI_ANCHOR_CENTRE       ///< in the centre of the field
+  DJINNI_ANCHOR_OVER_USER,
+  DJINNI_ANCHOR_USER_X, ///< at the user's x, at depth 0; no caller
+  DJINNI_ANCHOR_CENTRE  ///< in the centre of the field
 };
 
 /// Where BattleEffect_RunSparkGroups' bursts go off.

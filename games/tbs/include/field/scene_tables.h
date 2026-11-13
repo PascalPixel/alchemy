@@ -411,6 +411,6 @@ enum ExamineTarget {
 /// An event as a Trigger value; its address is above
 /// TRIGGER_RESULT_MESSAGE_END, so it is never taken for a message.
 #define EVENT(script) ((u32)(script))
-#define TRIGGER_TABLE_END 0xffffffff ///< ends a trigger table
+#define TRIGGER_TABLE_END 0xffffffff
 
 #endif

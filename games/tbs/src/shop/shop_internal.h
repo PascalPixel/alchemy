@@ -65,7 +65,7 @@ enum ShopAction {
 /// sells, as Item_GetEquipmentGroup sorts items. It picks the artifacts the
 /// shop lists and which of the keepers' lines it says.
 enum ShopType {
-  SHOP_TYPE_ITEMS = EQUIPMENT_GROUP_NONE, ///< an item shop
+  SHOP_TYPE_ITEMS = EQUIPMENT_GROUP_NONE,
   SHOP_TYPE_WEAPONS = EQUIPMENT_GROUP_WEAPON,
   SHOP_TYPE_ARMOR = EQUIPMENT_GROUP_ARMOR
 };
@@ -78,9 +78,9 @@ enum ShopType {
 /// The stock rows the shop code itself names; each town's event names its
 /// own shops' rows where it opens them.
 enum ShopStockRow {
-  SHOP_STOCK_ROW_EMPTY = 0,        ///< sells nothing; stands in for a bad row
-  SHOP_STOCK_ROW_VALE_WEAPONS = 1, ///< Vale's weapon shop
-  SHOP_STOCK_ROW_VALE_ARMOR = 2,   ///< Vale's armor shop
+  SHOP_STOCK_ROW_EMPTY = 0, ///< sells nothing; stands in for a bad row
+  SHOP_STOCK_ROW_VALE_WEAPONS = 1,
+  SHOP_STOCK_ROW_VALE_ARMOR = 2,
   /// Xian's weapon, armor and item shops, the warriors' shops, which greet
   /// the party with lines of their own (ShopWork.warriorShop).
   SHOP_STOCK_ROW_XIAN_WEAPONS = 16,

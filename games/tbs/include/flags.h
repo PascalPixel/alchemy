@@ -616,7 +616,6 @@
 /// The first time the party walked onto Kalay Docks from the world map, Garet
 /// ran to the water and was told the Karagol is no real ocean.
 #define FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL 0x8ac
-/// The chest on Tolbi Docks.
 #define FLAG_TOLBI_DOCKS_POTION_CHEST 0xf96
 /// The wooden box on Tolbi Docks.
 #define FLAG_TOLBI_DOCKS_COINS_BOX 0xf95
@@ -1126,13 +1125,11 @@
 #define FLAG_VISITED_SICK_DORA 0x81e
 // The containers, set once each is searched; the last three hold their finds
 // only once the party is back from Kalay.
-/// A wooden box's Herb.
 #define FLAG_VALE_WOODEN_BOX_HERB 0xf47
 /// A jar's 5 coins.
 #define FLAG_VALE_JAR_COINS 0xf48
 /// A barrel's 1 coin.
 #define FLAG_VALE_BARREL_COIN 0xf49
-/// A jar's Vial.
 #define FLAG_VALE_JAR_VIAL 0x8ad
 /// A barrel's 123 coins.
 #define FLAG_VALE_BARREL_COINS 0x8ae
@@ -1261,9 +1258,7 @@
 /// scenes set it whenever FLAG_DODONPA_LOCKED_UP is set. The palace's passage
 /// door and the tunnel's way through are drawn open, and its guard turns away.
 #define FLAG_KALAY_TUNNEL_OPEN 0x915
-/// The palace's chest.
 #define FLAG_HAMMET_PALACE_WATER_JACKET_CHEST 0xf86
-/// The palace's barrel.
 #define FLAG_HAMMET_PALACE_NUT_BARREL 0xf87
 
 // Fuchin Temple and Master Feh's school

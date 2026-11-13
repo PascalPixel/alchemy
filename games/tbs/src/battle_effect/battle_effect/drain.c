@@ -4,7 +4,7 @@
 
 #include "../battle_effect_internal.h"
 
-#define DRAIN_ICE_SHARDS_PER_TARGET 128 ///< shards for each target
+#define DRAIN_ICE_SHARDS_PER_TARGET 128
 
 /// Ice shards burst up from each target in turn, 20 frames apart, tinting the
 /// target as they go, and fall away below line 112.
@@ -123,8 +123,8 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-#define DRAIN_MOTES_PER_TARGET 128 ///< motes for each target
-#define DRAIN_DRAWN 32             ///< motes drawn for each target
+#define DRAIN_MOTES_PER_TARGET 128
+#define DRAIN_DRAWN 32 ///< motes drawn for each target
 
 /// Motes of light burst from each target in turn, 20 frames apart, and are
 /// pulled into the centre of the user's body.

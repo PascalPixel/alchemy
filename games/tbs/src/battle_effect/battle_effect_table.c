@@ -21,8 +21,8 @@ struct BattleEffectParams;
 
 /// The six pictures of an erupting flame puff: where each begins in the sheet.
 #define FLAME_PUFF_PICTURES {0, 552, 1480, 2590, 3913, 5185}
-#define FLAME_PUFF_PICTURE_WIDTHS {24, 29, 30, 27, 24, 16}  ///< widths
-#define FLAME_PUFF_PICTURE_HEIGHTS {23, 32, 37, 49, 53, 52} ///< heights
+#define FLAME_PUFF_PICTURE_WIDTHS {24, 29, 30, 27, 24, 16}
+#define FLAME_PUFF_PICTURE_HEIGHTS {23, 32, 37, 49, 53, 52}
 /// How far below its anchor each picture's top goes.
 #define FLAME_PUFF_PICTURE_BIAS_Y {41, 32, 26, 11, 4, 2}
 /// The sides of the seven square pictures of a blast, a puff or a flash.
@@ -31,11 +31,11 @@ struct BattleEffectParams;
 #define BLAST_PICTURES {0, 256, 1280, 3584, 5888, 8192, 10496}
 #define EARTH_WALL_PICTURE_WIDTHS                                              \
   {17, 19, 20} ///< the earth wall's three widths
-#define EARTH_WALL_PICTURE_HEIGHTS {49, 55, 64} ///< and heights
+#define EARTH_WALL_PICTURE_HEIGHTS {49, 55, 64}
 /// Where each earth wall picture begins.
 #define EARTH_WALL_PICTURES {2702, 3535, 4580}
 #define SLASH_PICTURE_WIDTHS {38, 54, 71, 74, 77, 65} ///< the six slash widths
-#define SLASH_PICTURE_HEIGHTS {7, 9, 11, 13, 13, 11}  ///< and heights
+#define SLASH_PICTURE_HEIGHTS {7, 9, 11, 13, 13, 11}
 /// Each slash picture's reach from the target.
 #define SLASH_PICTURE_REACH {58, 42, 25, 13, 5, 0}
 /// The flash picture for each three frames at the end of a flash's life.

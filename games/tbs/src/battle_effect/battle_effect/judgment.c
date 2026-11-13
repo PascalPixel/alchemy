@@ -26,8 +26,8 @@ struct JudgmentWork {
 /// The gathering's 128 sparks, after its 128 motes in PARTICLES.
 #define JUDGMENT_SPARKS (&PARTICLES[128])
 
-#define JUDGMENT_GATHER_FRAMES 160    ///< frames of the gathering
-#define JUDGMENT_SWEEP_FRAMES 320     ///< frames of the sweep
+#define JUDGMENT_GATHER_FRAMES 160 ///< frames of the gathering
+#define JUDGMENT_SWEEP_FRAMES 320
 #define JUDGMENT_FORMATION_OBJECTS 16 ///< sprites in the formation, 4x4
 #define JUDGMENT_DEBRIS_OBJECTS 16    ///< debris sprites of the sweep
 /// The burst's seven quarter pictures (OverlayImageB), after the pink burst's

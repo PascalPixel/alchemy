@@ -253,9 +253,7 @@ void PaletteFade_SetSourceFar(s32 mode, s32 half);
 /// Moves the shown colours to the target colours over the given number of
 /// frames.
 void PaletteFade_StartInterpolationFar(s32 frames);
-/// Starts the event's screen transition.
 void Event_StartScreenTransitionFar(void);
-/// Finishes the event's screen transition.
 void Event_FinishScreenTransitionFar(void);
 /// Waits for as long as the screen transition runs.
 void Event_WaitTransitionFramesFar(void);

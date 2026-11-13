@@ -233,8 +233,8 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 
 /// The fragment pictures in the sheet, four of 12x24, after the flash.
 #define IMPACT_BURST_SHARD_PICTURES 23000
-#define IMPACT_BURST_FRAGMENT_WIDTH 12  ///< each fragment picture's width
-#define IMPACT_BURST_FRAGMENT_HEIGHT 24 ///< and height
+#define IMPACT_BURST_FRAGMENT_WIDTH 12 ///< each fragment picture's width
+#define IMPACT_BURST_FRAGMENT_HEIGHT 24
 
 #define IMPACT_BURST_FRAMES 72
 #define IMPACT_BURST_FRAGMENTS 3     ///< fragments, work->particles 61 to 63

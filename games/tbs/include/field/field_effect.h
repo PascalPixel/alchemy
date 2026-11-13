@@ -35,7 +35,7 @@ struct FieldEffect {
   /// Added to scaleX each frame by the update routines, in 16.16 fixed point a
   /// frame; zeroed by the spawner.
   s32 scaleRateX;
-  s32 scaleRateY; ///< as scaleRateX, for scaleY
+  s32 scaleRateY;
   /// Actor's targetX to targetZ; not named by this view.
   ///@{
   s32 targetX;

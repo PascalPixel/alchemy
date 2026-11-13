@@ -19,9 +19,9 @@ struct MindReadWork {
   s8 blue;
   u16 hue;      ///< hue, 0 to 359 degrees
   u16 sourceId; ///< the caster
-  u16 targetId; ///< the target
-  u8 delay;     ///< frames before it starts
-  u8 counter;   ///< particle spawn cycle (0 to 60)
+  u16 targetId;
+  u8 delay;   ///< frames before it starts
+  u8 counter; ///< particle spawn cycle (0 to 60)
 };
 
 /// Starts the wave effect of caster x on target y (actor ids): fades the

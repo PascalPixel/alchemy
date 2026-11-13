@@ -11,7 +11,7 @@
 #include "vector3.h"
 #include "fixed_math.h"
 
-#define VISIBLE_SCANLINES 160 ///< visible scanlines
+#define VISIBLE_SCANLINES 160
 
 /// An eight-byte entry of the System bank's far-call table holds the ldr/bx
 /// instructions and a target word. Entries this routine does not call keep

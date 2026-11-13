@@ -27,7 +27,7 @@ void FieldEffect_SpawnFallingParticles(void) {
   FieldEffect_InitializeFallingFragment(fragment);
 }
 
-#define CARRY_SHARD_MAX 20 ///< shards
+#define CARRY_SHARD_MAX 20
 
 /// Tests the target's move with its ground height raised 16 pixels, so a
 /// carried target passes over ground up to 24 pixels above its own (a step

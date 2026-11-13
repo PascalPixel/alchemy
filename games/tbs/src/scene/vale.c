@@ -277,7 +277,7 @@ enum ValeAfterKalayActorId {
   /// the eruption..." (Vale_AskAboutTheLackOfTravelers)
   ACTOR_MAN_MISSING_TRAVELERS,
   ACTOR_NUT_AFTER_KALAY,
-  ACTOR_PILLAR_AFTER_KALAY ///< the pillar of ACTOR_PILLAR
+  ACTOR_PILLAR_AFTER_KALAY
 };
 
 /// The game's opening (Vale_MendingTheRoof), the placed actors of

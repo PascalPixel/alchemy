@@ -150,13 +150,13 @@ struct MainRoutineWork {
   /// The buttons for each field command, as KEY_ masks; read with gKeysPressed
   /// except dashKeys, held.
   ///@{
-  u16 aKeys;              ///< examine; KEY_A
-  u16 bKeys;              ///< KEY_B
-  u16 selectKeys;         ///< the menu; KEY_SELECT
-  u16 startKeys;          ///< KEY_START
-  u16 firstShortcutKeys;  ///< firstShortcut; KEY_L
-  u16 secondShortcutKeys; ///< secondShortcut; KEY_R
-  u16 dashKeys;           ///< KEY_B
+  u16 aKeys; ///< examine; KEY_A
+  u16 bKeys;
+  u16 selectKeys; ///< the menu; KEY_SELECT
+  u16 startKeys;
+  u16 firstShortcutKeys;
+  u16 secondShortcutKeys;
+  u16 dashKeys;
   ///@}
   s16 returnMusic; ///< music playing when the field left; -1 for none
   /// The shortcuts' assignments. bits: 15..14 kind (0 Psynergy, 1 an item) |
@@ -241,7 +241,6 @@ STATIC_ASSERT(offsetof(struct MainRoutineWork, startStamp) == 0x2b8);
 /// The game's state (system/ewram.s).
 extern struct MainRoutineWork gMainRoutineWork;
 
-/// Sets the battle type.
 #define Battle_SetType(mode)                                                   \
   do {                                                                         \
     gMainRoutineWork.battleType = (mode);                                      \

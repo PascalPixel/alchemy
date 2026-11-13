@@ -70,62 +70,42 @@ enum SpriteId {
   /// The Psynergy Stones a map's treasure spots place.
   SPRITE_PSYNERGY_STONE,
   SPRITE_029,
-  /// The sprite of Kraden.
   SPRITE_KRADEN,
   /// The sprite of Dora, Isaac's mother.
   SPRITE_DORA,
-  /// The sprite of Saturos.
   SPRITE_SATUROS,
-  /// The sprite of Menardi.
   SPRITE_MENARDI,
   /// The sprite of Felix behind his mask.
   SPRITE_FELIX_MASKED,
   /// The sprite of Felix as a young man.
   SPRITE_FELIX,
-  /// Felix as a child.
   SPRITE_FELIX_CHILD,
   SPRITE_BOY_WITH_ORANGE_HAIR,
   SPRITE_WOMAN_IN_GREEN_HEADSCARF,
-  /// The sprite of Feizhi.
   SPRITE_FEIZHI,
-  /// The sprite of Feh.
   SPRITE_FEH,
-  /// The sprite of Hsu.
   SPRITE_HSU,
   SPRITE_WOMAN_WITH_ORANGE_PONYTAIL,
-  /// The sprite of Alex.
   SPRITE_ALEX,
-  /// The sprite of Donpa.
   SPRITE_DONPA,
-  /// The sprite of Layana.
   SPRITE_LAYANA,
   SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN,
   /// The sprite of Kaja, the Tolbi ship's fighter.
   SPRITE_KAJA,
-  /// Jenna as a child.
   SPRITE_JENNA_CHILD,
-  /// The sprite of Hammet.
   SPRITE_HAMMET,
-  /// The sprite of Dodonpa.
   SPRITE_DODONPA,
-  /// The sprite of Nyunpa.
   SPRITE_NYUNPA,
-  /// The sprite of Babi.
   SPRITE_BABI,
-  /// The sprite of Kyle.
   SPRITE_KYLE,
   SPRITE_MAN_IN_TEAL_SHIRT,
-  /// The sprite of Tret.
   SPRITE_TRET,
-  /// The sprite of Laurel.
   SPRITE_LAUREL,
-  /// The sprite of Iodem.
   SPRITE_IODEM,
   /// The sprite of McCoy.
   SPRITE_MCCOY,
   SPRITE_MAN_IN_GREEN_SHIRT,
   SPRITE_WOMAN_WITH_PINK_HAIR,
-  /// The sprite of Hama.
   SPRITE_HAMA,
   SPRITE_WARRIOR_IN_GOLDEN_HELMET,
   SPRITE_MAN_WITH_LONG_DARK_HAIR,
@@ -135,10 +115,8 @@ enum SpriteId {
   SPRITE_INVISIBLE_BABI,
   SPRITE_YOUNG_MAN_WITH_BLUE_HAIR,
   SPRITE_YOUNG_MAN_WITH_RED_HAIR,
-  /// The sprite of Bunza.
   SPRITE_BUNZA,
   SPRITE_WOMAN_WITH_PURPLE_HAIR,
-  /// The sprite of Faran.
   SPRITE_FARAN,
   /// Tret's face again: SPRITE_TRET's pictures and animations drawn 12 pixels
   /// higher (sprites.tsv's TRET_RAISED), as Kolima Forest shows him.
@@ -164,11 +142,8 @@ enum SpriteId {
   /// A Venus Djinni; gDjinn_ElementSprites gives each element's Djinni
   /// sprite.
   SPRITE_VENUS_DJINNI,
-  /// A Mercury Djinni.
   SPRITE_MERCURY_DJINNI,
-  /// A Mars Djinni.
   SPRITE_MARS_DJINNI,
-  /// A Jupiter Djinni.
   SPRITE_JUPITER_DJINNI,
   SPRITE_094,
   SPRITE_095,

@@ -401,9 +401,9 @@ enum FlurryArcs {
 /// Whose palette a flurry takes, its FLURRY_PALETTE.
 enum FlurryPalette {
   FLURRY_PALETTE_MARS_DJINNI, ///< the Mars Djinni sheet's
-  FLURRY_PALETTE_LIME,        ///< LimePalette
-  FLURRY_PALETTE_BLUE_ARC,    ///< blue arc B's
-  FLURRY_PALETTE_EMBER        ///< the ember streak sheet's
+  FLURRY_PALETTE_LIME,
+  FLURRY_PALETTE_BLUE_ARC,
+  FLURRY_PALETTE_EMBER ///< the ember streak sheet's
 };
 extern u8 gFlurry_Styles[][7];
 extern u16 gGaia_RowPictures[];

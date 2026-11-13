@@ -56,10 +56,10 @@ struct SelectionNode {
 
 /// The entries of SelectionMenuWork.records.
 enum SelectionRecord {
-  SELECTION_RECORD_ROW = 2,         ///< the first of the row's seven icons
-  SELECTION_RECORD_CHOSEN = 9,      ///< the first of the five icons chosen
-  SELECTION_RECORD_HAND = 14,       ///< the pointing hand
-  SELECTION_RECORD_LARGE_ICON = 15, ///< the large icon
+  SELECTION_RECORD_ROW = 2,    ///< the first of the row's seven icons
+  SELECTION_RECORD_CHOSEN = 9, ///< the first of the five icons chosen
+  SELECTION_RECORD_HAND = 14,  ///< the pointing hand
+  SELECTION_RECORD_LARGE_ICON = 15,
   SELECTION_RECORD_COUNT = 16
 };
 

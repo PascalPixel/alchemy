@@ -31,7 +31,7 @@ void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
   } while (row != rows);
 }
 
-#define RUSHING_STRIKE_SPARK_COUNT 64       ///< sparks
+#define RUSHING_STRIKE_SPARK_COUNT 64
 #define RUSHING_STRIKE_RING_BYTES (20 * 48) ///< one 20x48 ring picture
 
 /// The rushing strike's sparks' palettes (BattleEffect_RunRushingStrike), each

@@ -70,7 +70,6 @@
 #define FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
 /// The lowering switch has lowered the gate.
 #define FLAG_WEST_LUNPA_CAVE_GATE_LOWERED FLAG_SCENE_TEMP_01
-/// The gate is raised.
 #define FLAG_WEST_LUNPA_CAVE_GATE_RAISED FLAG_SCENE_TEMP_02
 /// The north puddle is frozen into a pillar.
 #define FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN FLAG_SCENE_TEMP_03

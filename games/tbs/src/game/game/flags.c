@@ -28,7 +28,6 @@ s32 GameFlag_Set(s32 flag) {
   return flag;
 }
 
-/// Clears `flag`.
 void GameFlag_Clear(s32 flag) {
   s32 bit = GAME_FLAG_BIT(flag);
   u8 *flags = gGameFlagBytes;

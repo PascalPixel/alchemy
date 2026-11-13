@@ -76,7 +76,7 @@ enum SpriteFlag {
 /// pointer holds.
 enum ActorSpriteKind {
   ACTOR_SPRITE_NONE = 0, ///< nothing drawn
-  ACTOR_SPRITE_ONE = 1,  ///< one sprite
+  ACTOR_SPRITE_ONE = 1,
   ACTOR_SPRITE_GROUP = 2 ///< a list of up to four sprites, empty ones null
 };
 
@@ -166,8 +166,8 @@ enum TerrainKind {
   TERRAIN_SAMPLE_TABLE = 12,
   /// As TERRAIN_SAMPLE_TABLE, mirrored left to right.
   TERRAIN_SAMPLE_TABLE_MIRRORED = 13,
-  TERRAIN_FLAT_B = 14, ///< as TERRAIN_FLAT
-  TERRAIN_FLAT_C = 15, ///< as TERRAIN_FLAT
+  TERRAIN_FLAT_B = 14,
+  TERRAIN_FLAT_C = 15,
   TERRAIN_KIND_COUNT = 16
 };
 

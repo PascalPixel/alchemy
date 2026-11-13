@@ -46,7 +46,7 @@ enum BattleCommand {
   COMMAND_PSYNERGY = 1,
   COMMAND_ITEM = 2,
   COMMAND_DEFEND = 3,
-  COMMAND_ENEMY_ABILITY = 4, ///< an enemy's ability
+  COMMAND_ENEMY_ABILITY = 4,
   COMMAND_DJINN = 5,
   COMMAND_SUMMON = 6,
   /// An enemy's Total Defense (ABILITY_EFFECT_TOTAL_DEFENSE).

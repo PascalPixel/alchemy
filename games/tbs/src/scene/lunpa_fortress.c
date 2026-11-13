@@ -1614,13 +1614,11 @@ static void LunpaFortress_SentriesThrowPartyOut(void) {
   GameFlag_Set(FLAG_LUNPA_FORTRESS_SENTRIES_CAUGHT_PARTY);
 }
 
-/// The first switch's passage opens.
 static void LunpaFortress_OpenFirstSwitchPassage(void) {
   MapGrid_CopyCells(2, 82, 1, 2, 21, 81);
   MapGrid_CopyCellAttributes(21, 32, 1, 1, 21, 34);
 }
 
-/// The second switch's passage opens.
 static void LunpaFortress_OpenSecondSwitchPassage(void) {
   MapGrid_CopyCells(2, 84, 1, 2, 6, 55);
   MapGrid_CopyCellAttributes(5, 9, 1, 1, 6, 10);

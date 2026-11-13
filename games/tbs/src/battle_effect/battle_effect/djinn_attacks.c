@@ -456,9 +456,9 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
 }
 
 #define MARS_FRAMES 112
-#define MARS_FLAMES 9            ///< flames along the arc
-#define MARS_EMBERS_PER_FLAME 16 ///< embers in each flame
-#define MARS_GLOW_ORB (20 * 40)  ///< six 40x40 pictures, after the 20x40 Djinni
+#define MARS_FLAMES 9 ///< flames along the arc
+#define MARS_EMBERS_PER_FLAME 16
+#define MARS_GLOW_ORB (20 * 40) ///< six 40x40 pictures, after the 20x40 Djinni
 
 /// A fireball blooms high over the targets and burns out, the Mars Djinni
 /// appears where it was and dives onto them, nine flames erupt in a row along

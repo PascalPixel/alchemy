@@ -4,7 +4,6 @@
 /// @file
 /// Djinn numbers, named from the English release.
 
-/// The Djinn of each element.
 #define DJINN_PER_ELEMENT 20
 
 /// A Djinni's place among its element's Djinn, from 0, as Djinn_JoinParty and

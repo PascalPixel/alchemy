@@ -17,7 +17,7 @@ enum DefaultEntrance { ENTRANCE_DEFAULT = 0 };
 /// SceneId_Title's entrances and exits.
 enum {
   TITLE_FROM_VALE_PLAZA = 1,
-  TITLE_AFTER_RUN = 2, ///< Title_Run
+  TITLE_AFTER_RUN = 2,
   TITLE_FROM_LEMURIAN_SHIP = 9,
   TITLE_FROM_WORLD_MAP = 10,
 };
@@ -1103,7 +1103,7 @@ enum {
   TREE_ROOMS_FOURTH_FLOOR_FROM_THIRD_FLOOR = 14,
   TREE_ROOMS_TRET_FROM_ENTRANCE = 15,
   TREE_ROOMS_ENTRANCE_FROM_TRET = 16,
-  TREE_ROOMS_AFTER_FIGHT_TRET = 19, ///< TreeRooms_FightTret
+  TREE_ROOMS_AFTER_FIGHT_TRET = 19,
   // The landings below the cocoons, each numbered as its cocoon's cell
   // behavior (TreeRooms_StepOnCocoon) and lying straight below it, one room
   // down.
@@ -2080,7 +2080,7 @@ enum {
   LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_EAST = 2,
   LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_SOUTH = 3,
   LAMAKAN_DESERT_MANTICORE_FROM_LAMAKAN_DESERT_CAVE_WEST = 4,
-  LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE = 5, ///< FightManticore
+  LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE = 5,
 };
 /// SceneId_LamakanDesertManticore's exits.
 enum {

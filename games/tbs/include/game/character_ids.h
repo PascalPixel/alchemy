@@ -9,12 +9,12 @@
 enum CharacterId {
   ISAAC, ///< Robin
   GARET, ///< Jerald
-  IVAN,  ///< Ivan
+  IVAN,
   MIA,   ///< Mary
   FELIX, ///< Garcia
   JENNA, ///< Jasmine
-  SHEBA, ///< Sheba
-  PIERS  ///< Picard
+  SHEBA,
+  PIERS ///< Picard
 };
 
 /// The portraits, one for each row of the portrait icons (Ui_Icons,

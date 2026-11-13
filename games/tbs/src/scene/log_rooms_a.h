@@ -17,7 +17,6 @@ enum LogRoomsACellBehavior {
   /// along their routes.
   CELL_BEHAVIOR_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE = 11,
   CELL_BEHAVIOR_LOG_ROOMS_A_LAST_SUSPECT_ROUTE = 18,
-  /// The guests' room's door.
   CELL_BEHAVIOR_LOG_ROOMS_A_GUESTS_ROOM_DOOR = 20,
   /// In the guests' room, where the party sets out to corner the suspects.
   CELL_BEHAVIOR_LOG_ROOMS_A_CORNERING_START = 21,

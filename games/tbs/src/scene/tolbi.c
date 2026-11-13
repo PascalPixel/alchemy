@@ -928,7 +928,6 @@ struct Trigger gTolbiTriggersFestival[] = {
     { TRIGGER_TABLE_END },
 };
 
-/// On finals day.
 struct Trigger gTolbiTriggersFinalsDay[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_TOLBI_SPROUT, FLAG_TOLBI_SPROUT_GROWN, EVENT(Tolbi_GrowSprout) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_SOUTH, CONDITION_ALWAYS, EVENT(Tolbi_EnterDoor) },

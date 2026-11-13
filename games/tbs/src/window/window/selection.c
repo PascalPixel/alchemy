@@ -634,7 +634,6 @@ s32 SelectionMenu_Run(s32 mode) {
   }
 }
 
-/// As SelectionMenu_Run, with the menu sounds.
 u32 SelectionMenu_RunWithSounds(u32 mode) {
   struct SelectionMenuWork *screen = gSelectionMenuWork;
   u32 result;

@@ -104,7 +104,6 @@ enum StuccoRoomsBActorId {
 /// the party can search.
 enum StuccoRoomsBCellBehavior {
   CELL_BEHAVIOR_STUCCO_ROOMS_B_FIRST_DOOR = 14,
-  /// The inn's sign.
   CELL_BEHAVIOR_STUCCO_ROOMS_B_INN_SIGN = 40,
   CELL_BEHAVIOR_STUCCO_ROOMS_B_VIAL_BARREL = 100,
   CELL_BEHAVIOR_STUCCO_ROOMS_B_MEDAL_BARREL = 101,

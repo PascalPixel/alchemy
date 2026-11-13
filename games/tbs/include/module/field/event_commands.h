@@ -16,8 +16,8 @@ enum FieldPsynergyHandler {
       0, ///< casts it with no target (FieldPsynergy_Run)
   /// Casts it on its target, secondActorId (FieldPsynergy_Dispatch).
   FIELD_PSYNERGY_HANDLER_ON_TARGET = 1,
-  FIELD_PSYNERGY_HANDLER_FINISH = 2, ///< finishes it
-  FIELD_PSYNERGY_HANDLER_EXTRA = 3   ///< runs its kind's extra handler
+  FIELD_PSYNERGY_HANDLER_FINISH = 2,
+  FIELD_PSYNERGY_HANDLER_EXTRA = 3 ///< runs its kind's extra handler
 };
 
 /// A field Psynergy, as the field kind: the type column of

@@ -58,8 +58,8 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 // as work->psynergy and work->item hold it. bits: 13..10 the user (13 is
 // ACT_PACKED) | 9..0 the Psynergy or item. Since ACT_PACKED is the user's top
 // bit, a packed use names user 8 or above.
-#define ABILITY_ID(c) ((c) & 0x3ff)    ///< the Psynergy
-#define ACT_ITEM_ID(c) ((c) & 0x3ff)   ///< the item
+#define ABILITY_ID(c) ((c) & 0x3ff) ///< the Psynergy
+#define ACT_ITEM_ID(c) ((c) & 0x3ff)
 #define ACT_UNIT(c) (((c) >> 10) & 15) ///< who uses it
 #define ACT_PACKED 0x2000              ///< use it without paying PP
 /// No user named: Field_UsePsynergy takes ISAAC, and Field_UseItem

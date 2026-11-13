@@ -90,7 +90,7 @@ enum StatusScreenPage {
 
 /// PsynergyMenuWork.mode: what choosing a Psynergy does.
 enum PsynergyMenuMode {
-  PSYNERGY_MODE_USE = 0,   ///< use it
+  PSYNERGY_MODE_USE = 0,
   PSYNERGY_MODE_SET_L = 1, ///< make it the L shortcut
   PSYNERGY_MODE_SET_R = 2  ///< make it the R shortcut
 };

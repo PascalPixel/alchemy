@@ -129,7 +129,6 @@
 ///
 /// Behaviors 1 and 2 are the exits.
 enum SolSanctumLunaSolRoomsCellBehavior {
-  /// Before Kraden in the Luna room.
   CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_BEFORE_KRADEN = 8,
   /// The way back out to SceneId_SolSanctumReliefs.
   CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_WAY_OUT = 9,

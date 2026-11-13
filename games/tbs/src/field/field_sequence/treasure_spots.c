@@ -36,8 +36,8 @@ enum {
 
 /// The chest sprite's animations.
 enum {
-  TREASURE_SPOT_CHEST_OPEN = 2,    ///< standing open
-  TREASURE_SPOT_CHEST_OPENING = 4, ///< opening
+  TREASURE_SPOT_CHEST_OPEN = 2, ///< standing open
+  TREASURE_SPOT_CHEST_OPENING = 4,
   TREASURE_SPOT_CHEST_CLOSING = 5, ///< closing again on what nobody could carry
   TREASURE_SPOT_CHEST_MIMIC = 7    ///< jumping up as a mimic
 };

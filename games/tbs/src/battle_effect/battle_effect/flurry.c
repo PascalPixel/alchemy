@@ -71,12 +71,12 @@ FLURRY_DEFINE_BY_VARIANT(BattleEffect_RunFlyingAttack, FLURRY_FLYING_ATTACK,
 enum FlurryColumn {
   FLURRY_ARC_SHEET, ///< the arcs (enum FlurryArcs)
   FLURRY_PALETTE,   ///< whose palette (enum FlurryPalette)
-  FLURRY_STRIKES,   ///< the strikes
-  FLURRY_MOTES,     ///< motes thrown by each strike, at most the 32 of
-                    ///< its run of PARTICLES
-  FLURRY_INTERVAL,  ///< frames between strikes
-  FLURRY_FRAMES,    ///< frames in the whole effect
-  FLURRY_FLASH      ///< 1 fills the canvas with level 47 on each hit
+  FLURRY_STRIKES,
+  FLURRY_MOTES,    ///< motes thrown by each strike, at most the 32 of
+                   ///< its run of PARTICLES
+  FLURRY_INTERVAL, ///< frames between strikes
+  FLURRY_FRAMES,   ///< frames in the whole effect
+  FLURRY_FLASH     ///< 1 fills the canvas with level 47 on each hit
 };
 
 /// The flash pictures, packed to half width after the arcs.

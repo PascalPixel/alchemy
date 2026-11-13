@@ -172,7 +172,6 @@ enum CrossboneIsleBaneActorId {
 
 enum { PASSAGE_INDEX_MASK = 0xff, PASSAGE_PLAY_OPENING = 0x100 };
 
-/// CrossboneIsleBane: the puddle is frozen.
 #define FLAG_CROSSBONE_ISLE_BANE_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
 /// CrossboneIsleBane: the chest on the second pillar has reached the ladder.
 #define FLAG_CROSSBONE_ISLE_BANE_CHEST_AT_LADDER FLAG_SCENE_TEMP_06

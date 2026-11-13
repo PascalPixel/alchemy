@@ -12,7 +12,7 @@
 
 /// The burst shower's styles, its mode argument.
 enum BurstShowerMode {
-  BURST_SHOWER_MODE_FLASH,     ///< flash bursts
+  BURST_SHOWER_MODE_FLASH,
   BURST_SHOWER_MODE_ICE,       ///< in the ice block palette
   BURST_SHOWER_MODE_SPRAY,     ///< in the water spray palette
   BURST_SHOWER_MODE_PINK,      ///< pink, fired from 16 pixels higher

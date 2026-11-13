@@ -107,11 +107,11 @@ typedef void (*MPlayFunc)(struct MusicPlayerInfo *player,
 /// Byte 0xCE: releases the track's sounding note of the key given (or of its
 /// last key when no key byte follows).
 #define MPLAY_JUMP_EOT 29
-#define MPLAY_JUMP_SAMPLE_FREQ_SET 30 ///< SampleFreqSet.
+#define MPLAY_JUMP_SAMPLE_FREQ_SET 30
 /// TrackStop: silences the track's notes and empties its list.
 #define MPLAY_JUMP_TRACK_STOP 31
-#define MPLAY_JUMP_FADE_OUT_BODY 32   ///< FadeOutBody: a fade's step a VBlank.
-#define MPLAY_JUMP_TRK_VOL_PIT_SET 33 ///< TrkVolPitSet.
+#define MPLAY_JUMP_FADE_OUT_BODY 32 ///< FadeOutBody: a fade's step a VBlank.
+#define MPLAY_JUMP_TRK_VOL_PIT_SET 33
 /// RealClearChain: unlinks a note from its track's list
 /// (ClearChain).
 #define MPLAY_JUMP_CLEAR_CHAIN 34

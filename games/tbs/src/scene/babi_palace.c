@@ -214,7 +214,7 @@ enum { FLAG_BABI_PALACE_ATTENDANT_SHOWED_BEDS = FLAG_SCENE_TEMP_00 };
 enum BabiPalaceDoorAnimation {
   BABI_PALACE_MEETING_ROOM_DOOR_ANIMATION = 1, ///< the throne room's door
   BABI_PALACE_OTHER_DOORS_ANIMATION = 2,       ///< every door without its own
-  BABI_PALACE_OVEN_ROOM_DOOR_ANIMATION = 4     ///< the oven room's door
+  BABI_PALACE_OVEN_ROOM_DOOR_ANIMATION = 4
 };
 
 /// The leader's animations in the big bedroom's bed, after the four shared ones

@@ -31,7 +31,7 @@ struct MercuryLighthouseLights {
   /// 16.16 fixed-point pixels: the centre of the column's cell, where a
   /// sinking leader is put back.
   s32 targetX;
-  s32 targetZ;          ///< as targetX
+  s32 targetZ;
   struct Actor *pillar; ///< the column of light over the leader, or null
   /// The light holding the leader up where they landed in the pool, or null.
   struct Actor *stepEffect;

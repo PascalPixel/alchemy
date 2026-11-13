@@ -300,7 +300,6 @@ enum TolbiShipDeckCellBehavior {
   CELL_BEHAVIOR_TOLBI_SHIP_DECK_BY_CREW = 10,
   /// East of the second door, which the crewman slipped through.
   CELL_BEHAVIOR_TOLBI_SHIP_DECK_EAST_OF_DOOR = 11,
-  /// West of that door.
   CELL_BEHAVIOR_TOLBI_SHIP_DECK_WEST_OF_DOOR = 12
 };
 

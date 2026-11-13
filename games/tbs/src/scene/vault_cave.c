@@ -301,32 +301,22 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Finds a placed actor with collision enabled at the requested map
 /// cell.
 static struct Actor *VaultCave_FindCollidableActorAtCell(s32 column, s32 row) {
-  // UB: map creation leaves unused actor slots NULL.
-#ifdef UBFIX
   struct FieldWork *work = gFieldWork;
   u32 actorSlot;
 
   for (actorSlot = ACTOR_FIRST_PLACED; actorSlot <= 65; actorSlot++) {
     struct Actor *actor = work->actors[actorSlot];
 
-    if (actor != NULL && column == FIELD_CELL(actor->x.fixed) &&
+    // UB: map creation leaves unused actor slots NULL.
+    if (
+#ifdef UBFIX
+        actor != NULL &&
+#endif
+        column == FIELD_CELL(actor->x.fixed) &&
         row == FIELD_CELL(actor->z.fixed) && actor->collisionFlags != 0) {
       return actor;
     }
   }
-#else
-  s32 **slots = (s32 **)((u8 *)gFieldWork + 0x14);
-  u32 actorSlot;
-
-  for (actorSlot = 8; actorSlot <= 65; actorSlot++) {
-    s32 *actorWords = slots[actorSlot];
-
-    if (column == (actorWords[2] >> 20) && row == (actorWords[4] >> 20) &&
-        *((u8 *)actorWords + 0x59) != 0) {
-      return (struct Actor *)actorWords;
-    }
-  }
-#endif
   return NULL;
 }
 

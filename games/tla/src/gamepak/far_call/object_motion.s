@@ -228,7 +228,7 @@ Func_080c8240:
 	.global Func_080c8248
 	.thumb_func
 Func_080c8248:
-	overlay_veneer Func_080d450c
+	overlay_veneer FieldCamera_MoveToActorById
 	.global Func_080c8250
 	.thumb_func
 Func_080c8250:

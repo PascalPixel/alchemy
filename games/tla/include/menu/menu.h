@@ -23,7 +23,7 @@ void ItemMenu_PositionCategory(void);
 void Menu_AppendResourceEntry(s32 no);
 void Menu_EndResourceSelection(void);
 void Resource_ResetPendingTransfer(void);
-s32 Shop_CanServe(s32 entry_id, s32 kind);
+s32 Sanctum_NeedsService(s32 entry_id, s32 kind);
 void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
 
 struct Obj;

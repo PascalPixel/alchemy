@@ -40,9 +40,35 @@
 #include "fixed_math.h"
 #include "field_event.h"
 #include "item_icon.h"
+#include "character_ids.h"
 
-struct Record_080b06c0 {
-  u8 filler0[4];
+/// What the player chose at a shop's counter, in the order of its menu's
+/// Buy, Sell, Artifacts and Repair, held in shop->partyAction while it runs.
+enum ShopAction {
+  SHOP_ACTION_BUY,
+  SHOP_ACTION_SELL,
+  SHOP_ACTION_ARTIFACTS,
+  SHOP_ACTION_REPAIR
+};
+
+/// A shop's type, the last column of its stock row: the equipment group it
+/// sells, as Item_GetEquipmentGroup sorts items, or a general store, which
+/// The Lost Age adds and which lists artifacts of every group. It picks the
+/// artifacts the shop lists and which of the keepers' lines it says.
+enum ShopType {
+  SHOP_TYPE_ITEMS = 0, ///< an item shop
+  /// ★ Named from the game: "Weapons Shop" (message 4973)
+  SHOP_TYPE_WEAPONS = 1,
+  SHOP_TYPE_ARMOR = 2,
+  /// ★ Named from the game: "General Storekeeper" (message 4982)
+  SHOP_TYPE_GENERAL_STORE = 3
+};
+
+/// Byte view of the six colour writes in a quantity-bar segment, laid over a
+/// 4-bit tile at the segment's byte column (QuantityBar_Fill, cursor.c).
+struct TileQuantityBarSegmentView {
+  u8 filler0[4]; ///< the 4 bytes before the segment's byte in row 1, untouched
+  /// Rows 1 to 6: index 4n is the segment's byte in row n + 1.
   u8 values[21];
 };
 
@@ -133,7 +159,7 @@ s32 Inventory_CountFar(s32 unit);
 void WindowSprite_PrepareForRedrawFar(void *window);
 void Menu_ReleaseEntryObjectsFar(void);
 void Shop_SellItem(s32 unitId, s32 slot, s32 count);
-void Func_0810bf98(s16 *window, s32 x, s32 y, s32 owner);
+void ItemIconGrid_ShowInventory(s16 *window, s32 x, s32 y, s32 owner);
 s32 Inventory_FindEquippedFar(s32 unitId, s32 type);
 void *Actor_GetByIdFar(s32 id);
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);

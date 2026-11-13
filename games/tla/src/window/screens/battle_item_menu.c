@@ -76,7 +76,7 @@ s32 Func_080dbde8(s32 x, s32 z, s32 layer);
 u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value);
 void Shop_InitializeWork(void);
 s32 Inn_RoomPrice(s32 innId);
-void Func_0810824c(void);
+void Shop_ReleaseWork(void);
 
 /// Copies one 4bpp tile of BG character block 0 to another, each given as a
 /// tilemap entry whose palette and flip bits are ignored. The battle lists copy

@@ -6,15 +6,15 @@ Resource_FarCall008:
 	.global Func_08108000
 	.thumb_func
 Func_08108000:
-	overlay_veneer Debug_ApplyPresetItemsAndFlags
+	overlay_veneer Shop_OpenDebugShop
 	.global Func_08108008
 	.thumb_func
 Func_08108008:
-	overlay_veneer Func_081082c4
+	overlay_veneer Shop_Run
 	.global Func_08108010
 	.thumb_func
 Func_08108010:
-	overlay_veneer Shop_ConfirmAct
+	overlay_veneer Sanctum_Run
 	.global Func_08108018
 	.thumb_func
 Func_08108018:
@@ -22,15 +22,15 @@ Func_08108018:
 	.global Func_08108020
 	.thumb_func
 Func_08108020:
-	overlay_veneer Func_0810b5c4
+	overlay_veneer Forge_Run
 	.global Func_08108028
 	.thumb_func
 Func_08108028:
-	overlay_veneer Func_0810b3ec
+	overlay_veneer Inn_QuoteRoomPrice
 	.global Func_08108030
 	.thumb_func
 Func_08108030:
-	overlay_veneer ShopCursor_Advance
+	overlay_veneer MenuCursor_Advance
 	.global Func_08108038
 	.thumb_func
 Func_08108038:
@@ -38,7 +38,7 @@ Func_08108038:
 	.global Func_08108040
 	.thumb_func
 Func_08108040:
-	overlay_veneer Shop_SetCursor
+	overlay_veneer MenuCursor_Set
 	.global Func_08108048
 	.thumb_func
 Func_08108048:
@@ -46,19 +46,19 @@ Func_08108048:
 	.global Shop_FillSelectorFar
 	.thumb_func
 Shop_FillSelectorFar:
-	overlay_veneer Shop_FillSelector
+	overlay_veneer QuantityBar_Fill
 	.global Shop_RestoreSceneTilesFar
 	.thumb_func
 Shop_RestoreSceneTilesFar:
-	overlay_veneer Shop_RestoreSceneTiles
+	overlay_veneer Shop_SaveAndTintFieldPalette
 	.global Shop_InitializeEffectFar
 	.thumb_func
 Shop_InitializeEffectFar:
-	overlay_veneer Shop_InitializeEffect
+	overlay_veneer Shop_RestoreFieldPalette
 	.global Func_08108068
 	.thumb_func
 Func_08108068:
-	overlay_veneer Func_0810b7a8
+	overlay_veneer ItemPicker_RunToDrop
 	.global Func_08108070
 	.thumb_func
 Func_08108070:

@@ -156,7 +156,7 @@ s32 Func_080dbde8(s32 x, s32 z, s32 layer);
 u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value);
 void Shop_InitializeWork(void);
 s32 Inn_RoomPrice(s32 innId);
-void Func_0810824c(void);
+void Shop_ReleaseWork(void);
 
 /// Unused: runs the loaded overlay's initialize entry; nothing calls it.
 UNUSED void Overlay_CallInitialize(void) { ((s32 (*)(void))gOverlayArea[1])(); }

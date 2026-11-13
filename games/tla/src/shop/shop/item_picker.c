@@ -5,9 +5,13 @@
 
 #include "../shop_internal.h"
 
-s32 Func_0810b6bc(void);
+s32 Forge_ChooseMember(void);
 
-s32 Func_0810b5c4(s32 objectId) {
+/// Runs the forge: the smith's line, then a party member's materials to
+/// forge, until the player leaves. `objectId` is the actor whose portrait the
+/// messages show. Called through the far-call table; returns 0.
+/// ★ Named from the game: "Sunshine's smithy" (message 4879)
+s32 Forge_Run(s32 objectId) {
   struct ShopRuntime *shop;
   struct WindowSprite *icon;
   void *window;
@@ -29,24 +33,27 @@ s32 Func_0810b5c4(s32 objectId) {
   message = (s32)MsgRightWhenI;
   Shop_ShowKeeperMessage(message);
   Shop_ShowKeeperMessage(message + 1);
-  result = Func_0810b6bc();
+  result = Forge_ChooseMember();
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   if (result == -1)
     Shop_ShowKeeperMessage(message + 2);
   Window_CloseFar(window, 2);
-  Func_0810824c();
+  Shop_ReleaseWork();
   return 0;
 }
 
-s32 Func_0810b6bc(void) { return Func_08109ad8(); }
+/// Runs the forge's party member choice, the sell counter's.
+s32 Forge_ChooseMember(void) { return Shop_ChooseMember(); }
 
-s32 Func_0810b6c4(s32 unitId) { return Func_08109cac(unitId); }
+/// Lets the player choose the party member's item to forge, on the sell
+/// counter's grid.
+s32 Forge_SelectItem(s32 unitId) { return Shop_SelectSell(unitId); }
 
 /// The forge's offer for one inventory item: refuses an item that is no
 /// material, otherwise asks (a rare material, chance 1, takes its own lines),
 /// and on yes takes the item, redraws the count and stores the rolled result.
 /// Returns 0 when the item was taken, else -1.
-s32 Func_0810b6cc(s32 unitId, s32 slot) {
+s32 Forge_OfferItem(s32 unitId, s32 slot) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   struct ShopUnit *unit = Unit_Get(unitId);
   u32 raw = unit->inventory[slot];
@@ -74,7 +81,7 @@ s32 Func_0810b6cc(s32 unitId, s32 slot) {
       Shop_ShowKeeperMessageHidingCursor(chance == 1 ? (s32)MsgWellAllRightIM
                                 : (s32)MsgALittleElbowGrease);
       Inventory_RemoveFar(unitId, slot);
-      Shop_DrawItemCount(shop->itemWindow, unitId);
+      Shop_DrawMemberItems(shop->itemWindow, unitId);
       item = Forge_RollResult(item);
       Forge_SetItem(item);
       result = 0;
@@ -83,22 +90,25 @@ s32 Func_0810b6cc(s32 unitId, s32 slot) {
   return result;
 }
 
-s32 Func_0810b7b4(s32 *outUnit, s32 *outSlot, s32 itemMode);
+s32 ItemPicker_Run(s32 *outUnit, s32 *outSlot, s32 itemMode);
 
-void Func_0810b79c(s32 a, s32 b) { Func_0810b7b4(a, b, 1); }
+// XXX: what the item picker's mode 1 chooses an item for; the callers through
+// the far-call table and Func_080ad270 would settle it.
+void Func_0810b79c(s32 a, s32 b) { ItemPicker_Run(a, b, 1); }
 
-void Func_0810b7a8(s32 a, s32 b) { Func_0810b7b4(a, b, 0); }
+/// Runs the item picker for an item to drop, showing each item's sale price.
+void ItemPicker_RunToDrop(s32 a, s32 b) { ItemPicker_Run(a, b, 0); }
 
-// Func_0810b7b4 picks a party member and then one of their items, four members
+// ItemPicker_Run picks a party member and then one of their items, four members
 // a page, returning the unit and slot through the pointers (both -1 when
 // cancelled): the twin of The Broken Seal's Shop_PickUnitItem.
 
-s32 Func_0810b9c0(s32 unitId);
+s32 ItemPicker_SelectItem(s32 unitId);
 
-/// Func_0810b7b4 picks a party member and then one of their items, four members
+/// ItemPicker_Run picks a party member and then one of their items, four members
 /// a page, returning the unit and slot through the pointers (both -1 when
 /// cancelled): the twin of The Broken Seal's Shop_PickUnitItem.
-s32 Func_0810b7b4(s32 *outUnit, s32 *outSlot, s32 itemMode) {
+s32 ItemPicker_Run(s32 *outUnit, s32 *outSlot, s32 itemMode) {
   struct ShopRuntime *shop;
   s32 unitId = 0;
   s32 redraw = 1;
@@ -128,14 +138,14 @@ s32 Func_0810b7b4(s32 *outUnit, s32 *outSlot, s32 itemMode) {
   while (1) {
     if (redraw != 0) {
       unitId = shop->partyMemberIds[memberIndex];
-      Shop_PlaceCursor(listWindow, (memberIndex % 4) * 24 - 12, 0);
+      MenuCursor_Place(listWindow, (memberIndex % 4) * 24 - 12, 0);
       shop->mode = 3;
       if (redraw == 2) {
         Func_080f8058(memberIndex / 4 * 4);
         wait(1);
       }
-      Func_0810928c(listWindow, memberIndex, 0);
-      Shop_DrawItemCount(shop->itemWindow, unitId);
+      Shop_DrawParty(listWindow, memberIndex, 0);
+      Shop_DrawMemberItems(shop->itemWindow, unitId);
       redraw = 0;
     }
     wait(1);
@@ -146,7 +156,7 @@ s32 Func_0810b7b4(s32 *outUnit, s32 *outSlot, s32 itemMode) {
       }
       WindowSprite_PrepareForRedrawFar(listWindow);
       Sound_PlayFar(112);
-      slot = Func_0810b9c0(unitId);
+      slot = ItemPicker_SelectItem(unitId);
       if (slot == -1) {
         shop->cursor.anchor->active = 4;
         shop->mode = 12;
@@ -164,7 +174,7 @@ s32 Func_0810b7b4(s32 *outUnit, s32 *outSlot, s32 itemMode) {
       result = -1;
       break;
     } else {
-      redraw = Func_08108690(&memberIndex, shop->partyMemberCount, 4);
+      redraw = MenuGrid_MoveCursor(&memberIndex, shop->partyMemberCount, 4);
     }
   }
   Menu_ReleaseEntryObjectsFar();
@@ -172,7 +182,7 @@ s32 Func_0810b7b4(s32 *outUnit, s32 *outSlot, s32 itemMode) {
   Window_CloseFar(listWindow, 2);
   Window_CloseFar(shop->itemWindow, 2);
   wait(1);
-  Func_0810824c();
+  Shop_ReleaseWork();
   return result;
 }
 
@@ -199,12 +209,12 @@ s32 Func_0810b7b4(s32 *outUnit, s32 *outSlot, s32 itemMode) {
 // Unnamed in the catalog yet: 4676 and 4675 take placeholders here.
 extern u8 MsgCannotRemoveIt[];
 
-void Func_0810bca0(void *window, s32 unitId, s32 slot);
+void ItemPicker_DrawItem(void *window, s32 unitId, s32 slot);
 
 s32 Func_080ad268(s32 unitId, s32 slot);
 s32 Func_080ad270(s32 unitId, s32 slot);
 
-s32 Func_0810b9c0(s32 unitId) {
+s32 ItemPicker_SelectItem(s32 unitId) {
   void *nameWindow;
   struct ShopRuntime *shop;
   void *priceWindow;
@@ -239,10 +249,10 @@ s32 Func_0810b9c0(s32 unitId) {
       window = shop->itemWindow;
       x = slot % 5;
       y = slot / 5;
-      Shop_PlaceCursor(window, x * 16, y * 16 + 8);
+      MenuCursor_Place(window, x * 16, y * 16 + 8);
       shop->mode = 3;
-      Func_0810bca0(priceWindow, unitId, slot);
-      Shop_DrawMsg(nameWindow, itemId + (s32)MsgItemPlainName);
+      ItemPicker_DrawItem(priceWindow, unitId, slot);
+      Shop_DrawMessage(nameWindow, itemId + (s32)MsgItemPlainName);
     }
     wait(1);
     if (gInput.pressed & 1) {
@@ -291,7 +301,7 @@ s32 Func_0810b9c0(s32 unitId) {
       wait(1);
       // German, Spanish and Italian also redraw the item window here.
 #if TLA_PATCH_4 || (TLA_PATCH_2 && !TLA_PATCH_3)
-      Shop_DrawItemCount(shop->itemWindow, unitId);
+      Shop_DrawMemberItems(shop->itemWindow, unitId);
       wait(1);
 #endif
       // Japanese does not redraw the cursor or the two windows here.
@@ -366,9 +376,9 @@ s32 Func_0810b9c0(s32 unitId) {
 /// Draws the selected item's panel in the sell and drop lists: its name, then
 /// why it cannot be dropped or removed, or, while selling, what the whole
 /// stack would sell for. The Broken Seal's Shop_DrawUseItem, with this game's
-/// check chosen by the list's mode. Called by Func_0810b9c0 each time the
+/// check chosen by the list's mode. Called by ItemPicker_SelectItem each time the
 /// cursor moves.
-void Func_0810bca0(void *window, s32 unitId, s32 slot) {
+void ItemPicker_DrawItem(void *window, s32 unitId, s32 slot) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   struct ShopUnit *unit = Unit_Get(unitId);
   s32 item = unit->inventory[slot] & 0x1ff;
@@ -393,7 +403,7 @@ void Func_0810bca0(void *window, s32 unitId, s32 slot) {
     Text_DrawCharacterAtOffsetFar((s32)MsgCannotRemove, window,
                                   SHOP_PRICE_NOTE_X, 8);
   } else if (shop->itemMode == 0) {
-    price = Shop_GetSellPrice(unit->inventory[slot]) * quantity;
+    price = Shop_SalePrice(unit->inventory[slot]) * quantity;
     message = (s32)MsgPriceHeading;
     Text_DrawCharacterAtOffsetFar(message, window, 8, 8);
     Text_DrawNumberInWindowFar(price, 5, window, SHOP_PRICE_NUMBER_X, 8);
@@ -406,7 +416,13 @@ void Func_0810bca0(void *window, s32 unitId, s32 slot) {
 #undef SHOP_PRICE_COINS_X
 #undef SHOP_PRICE_COINS_X
 
-void Func_0810bdb0(void) {
+/// The item icon grid: up to 15 item icons drawn as sprites over a window, as
+/// a party member's inventory is shown at a counter. It lives in the shop's
+/// work block from Shop_InitializeWork to Shop_ReleaseWork.
+///
+/// Queues each loaded icon's sprite while the grid is visible. Runs every
+/// frame as a task.
+void ItemIconGrid_Draw(void) {
   struct IconWork *work = Ram_HeapSlots->menuRuntime;
 
   if (work->active) {
@@ -422,7 +438,8 @@ void Func_0810bdb0(void) {
   }
 }
 
-void Func_0810bdf4(void) {
+/// Empties the grid, hides it and starts its drawing task.
+void ItemIconGrid_Initialize(void) {
   struct IconWork *work = Ram_HeapSlots->menuRuntime;
   s32 i;
 
@@ -434,28 +451,31 @@ void Func_0810bdf4(void) {
     s32 value = 0;
     work->active = value;
   }
-  Task_Add(Func_0810bdb0, TASK_PASS_VBLANK + 10);
+  Task_Add(ItemIconGrid_Draw, TASK_PASS_VBLANK + 10);
 }
 
-void Func_0810be3c(void) {
+/// Stops the drawing task and frees the icons' VRAM cache entries.
+void ItemIconGrid_Release(void) {
   struct IconWork *work = Ram_HeapSlots->menuRuntime;
   s32 i;
 
-  Task_Remove(Func_0810bdb0);
+  Task_Remove(ItemIconGrid_Draw);
   for (i = 0; i < ICON_COUNT; i++) {
     if (work->resources[i] != ICON_NONE)
       Resource_ResetEntry(work->resources[i]);
   }
 }
 
-void Func_0810be70(s32 index, s32 x, s32 y) {
+/// Places icon `index` at (x, y) screen pixels.
+void ItemIconGrid_SetPosition(s32 index, s32 x, s32 y) {
   struct IconWork *work = Ram_HeapSlots->menuRuntime;
 
   work->sprites[index].attr.x = x;
   work->sprites[index].attr.y = y;
 }
 
-void Func_0810bea8(s32 active) {
+/// Shows the grid (1) or hides it (0).
+void ItemIconGrid_SetVisible(s32 active) {
   struct IconWork *work = Ram_HeapSlots->menuRuntime;
 
   work->active = active;
@@ -464,7 +484,7 @@ void Func_0810bea8(s32 active) {
 /// Releases the item icons' VRAM entries, then loads the icons of up to count
 /// items (an empty item keeps its old entry) and gives each its sprite
 /// attributes and tile.
-void Func_0810bebc(u16 *items, s32 count, s32 mode) {
+void ItemIconGrid_LoadItems(u16 *items, s32 count, s32 mode) {
   struct IconWork *work = Ram_HeapSlots->menuRuntime;
   struct IconSprite *sprite;
   s32 entry;
@@ -494,14 +514,16 @@ void Func_0810bebc(u16 *items, s32 count, s32 mode) {
   }
 }
 
-void Func_0810bf98(s16 *window, s32 x, s32 y, s32 owner) {
+/// Shows a party member's 15 inventory icons at (x, y) pixels inside `window`,
+/// five to a row, 16 pixels apart.
+void ItemIconGrid_ShowInventory(s16 *window, s32 x, s32 y, s32 owner) {
   u8 *unit = Unit_Get(owner);
   s32 left = window[6] * 8 + x + 8;
   s32 top = window[7] * 8 + y + 8;
   s32 i;
 
-  Func_0810bebc((u16 *)(unit + 216), ICON_COUNT, 27);
+  ItemIconGrid_LoadItems((u16 *)(unit + 216), ICON_COUNT, 27);
   for (i = 0; i < ICON_COUNT; i++)
-    Func_0810be70(i, left + i % 5 * 16, top + i / 5 * 16);
-  Func_0810bea8(1);
+    ItemIconGrid_SetPosition(i, left + i % 5 * 16, top + i / 5 * 16);
+  ItemIconGrid_SetVisible(1);
 }

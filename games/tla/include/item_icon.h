@@ -36,9 +36,9 @@ s32 Resource_FindFreeEntry(void);
 void Icon_CopyResourceToSlotFar(s32 item, s32 mode, s32 resource);
 void *Unit_Get(s32 owner);
 
-void Func_0810bdb0(void);
-void Func_0810be70(s32 index, s32 x, s32 y);
-void Func_0810bea8(s32 active);
-void Func_0810bebc(u16 *items, s32 count, s32 mode);
+void ItemIconGrid_Draw(void);
+void ItemIconGrid_SetPosition(s32 index, s32 x, s32 y);
+void ItemIconGrid_SetVisible(s32 active);
+void ItemIconGrid_LoadItems(u16 *items, s32 count, s32 mode);
 
 #endif

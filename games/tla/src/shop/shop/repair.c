@@ -4,7 +4,9 @@
 
 #include "../shop_internal.h"
 
-s32 Shop_GetItemPrice(s32 item) {
+/// Returns what a repair costs: a quarter of the price for a broken item,
+/// nothing for one that is not broken.
+s32 Shop_RepairPrice(s32 item) {
   s32 price = (u16)Item_Get(item)->price >> 2;
 
   if ((item & 0x400) == 0)
@@ -12,9 +14,12 @@ s32 Shop_GetItemPrice(s32 item) {
   return price;
 }
 
-s32 Func_0810a2c8(void) { return Func_08109ad8(); }
+/// Runs the repair counter's party member choice. Called by Shop_Run for
+/// Repair.
+s32 Shop_RunRepairMemberChoice(void) { return Shop_ChooseMember(); }
 
-s32 Func_0810a2d0(s32 unitId) { return Func_08109cac(unitId); }
+/// In The Lost Age the sell screen serves repairs too, by shop->partyAction.
+s32 Shop_SelectRepair(s32 unitId) { return Shop_SelectSell(unitId); }
 
 extern u8 MsgRepairNotHandled[];     // MsgCannotRepairKind
 extern u8 MsgRepairNotDamaged[];     // MsgNotDamaged
@@ -24,7 +29,7 @@ extern u8 MsgRepairOffer[]; // MsgShopRepairConfirm, then its three replies
 
 void Inventory_RepairFar(s32 unitId, s32 slot);
 
-void Func_0810a2d8(s32 unitId, s32 slot) {
+void Shop_RepairItem(s32 unitId, s32 slot) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   struct BattleUnit *unit = Unit_Get(unitId);
   s32 itemId = unit->inventory[slot] & 0x1ff;
@@ -35,7 +40,7 @@ void Func_0810a2d8(s32 unitId, s32 slot) {
   u8 kind;
   u32 saved;
 
-  price = Shop_GetItemPrice(unit->inventory[slot]);
+  price = Shop_RepairPrice(unit->inventory[slot]);
   kind = item->useType;
   if (kind != 2) {
     MessageArgument_PushFar(itemId, 2);
@@ -66,7 +71,7 @@ void Func_0810a2d8(s32 unitId, s32 slot) {
   }
   saved = unit->inventory[slot];
   unit->inventory[slot] = 0;
-  Shop_DrawItemCount(shop->itemWindow, unitId);
+  Shop_DrawMemberItems(shop->itemWindow, unitId);
   MessageArgument_PushFar(itemId, 2);
   Shop_ShowKeeperMessageHidingCursor(message + 2);
   Message_CloseFinishedWindowsFar();
@@ -82,8 +87,8 @@ void Func_0810a2d8(s32 unitId, s32 slot) {
   unit->inventory[slot] = saved;
   Inventory_RepairFar(unitId, slot);
   Party_AdjustCoinsFar(-price);
-  Func_08109188();
-  Shop_DrawItemCount(shop->itemWindow, unitId);
+  Shop_DrawMoney();
+  Shop_DrawMemberItems(shop->itemWindow, unitId);
   MessageArgument_PushFar(itemId, 2);
   Shop_ShowKeeperMessageHidingCursor(message + 3);
   if (Shop_ConfirmEquip(unitId, slot))

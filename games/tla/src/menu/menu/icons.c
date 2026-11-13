@@ -594,7 +594,7 @@ struct MenuSlotAttr {
 void MenuIcon_SetSlot(s32 index, u32 x, s32 mode) {
   u8 *menu = Ram_HeapSlots->menuRuntime;
   /* FAKEMATCH(temporary): the offset as a local of its own, which adds the row
-   * and the field offset before the work pointer, as in the shop's Func_0810be70;
+   * and the field offset before the work pointer, as in the shop's ItemIconGrid_SetPosition;
    * as a plain field address, (struct MenuSlotAttr *)(menu +
    * 0xbd0) + index, 6 of 21 instructions differ in tla-en. */
   s32 offset =

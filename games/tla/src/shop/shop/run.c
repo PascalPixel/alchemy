@@ -5,33 +5,33 @@
 
 #include "../shop_internal.h"
 
-struct ShopItemList {
-  u8 unk000[0x270];
-  u16 items[0x149];
-  u16 count;
-  u8 unk504[2];
-  s8 group;
-};
-
-s32 Func_081080a8(void) {
-  struct ShopItemList *menu = Ram_HeapSlots->menuRuntime;
+/// Lists the current shop's artifacts: every item of the shop's type whose
+/// shared stock counter is above zero, or of any type at a general store.
+/// Writes them to the work block's stock list and returns how many. Called by
+/// Shop_Run when the player picks Artifacts, and by Shop_SelectBuy to refresh
+/// the list after a purchase.
+s32 Shop_ListAvailableArtifacts(void) {
+  struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   s32 count = 0;
-  s32 item;
+  s32 itemId;
 
-  for (item = 0; item < 0x200; item++) {
-    s32 group = menu->group;
+  // Every 9-bit id is tried.
+  for (itemId = 0; itemId <= ITEM_ID_MASK; itemId++) {
+    s32 shopType = shop->shopType;
 
-    if (group != 3) {
-      if (group != 4) {
-        if (group != Item_GetEquipmentGroupFar(item))
+    if (shopType != SHOP_TYPE_GENERAL_STORE) {
+      // XXX: no stock row has type 4; a row of the stock table or an event
+      // passing it would settle what it was for.
+      if (shopType != 4) {
+        if (shopType != Item_GetEquipmentGroupFar(itemId))
           continue;
       }
     }
-    if (Item_AdjustCounterFar(item, 0) != 0)
-      menu->items[count++] = item;
+    if (Item_AdjustCounterFar(itemId, 0) != 0)
+      shop->stockItemIds[count++] = itemId;
   }
-  menu->items[count] = 0;
-  menu->count = count;
+  shop->stockItemIds[count] = 0;
+  shop->stockCount = count;
   return count;
 }
 
@@ -41,20 +41,24 @@ extern char ResourceId_MenuArrowTiles;
 extern char ResourceId_ShopUpArrowTiles;
 extern char ResourceId_ShopDownArrowTiles;
 
-void ShopCursor_Advance(struct ShopCursor *cursor);
+void MenuCursor_Advance(struct ShopCursor *cursor);
 void Event_ResolveAllPendingActionsFar(void);
 void Palette_CopyObjectBankToBackground14Far(void);
 void VramBlock_LoadResource(s32 slot, s32 size, s32 resource);
-void Func_0810bdf4(void);
-void Func_0810be3c(void);
+void ItemIconGrid_Initialize(void);
+void ItemIconGrid_Release(void);
 
-void Func_08108130(void) {
-  ShopCursor_Advance(&((struct ShopRuntime *)Ram_HeapSlots->menuRuntime)->cursor);
+/// Advances the hand cursor one frame. Runs every frame as a task while a
+/// counter is open.
+void MenuCursor_Step(void) {
+  MenuCursor_Advance(&((struct ShopRuntime *)Ram_HeapSlots->menuRuntime)->cursor);
 }
 
-/// Opens the shop's work: lists the party, loads the cursor, page arrow, gem
-/// and stat arrow tiles, and starts the cursor's callback.
-// The Broken Seal's Shop_InitializeCursorWork.
+/// Allocates and clears the work block in the menu's heap slot, lists the
+/// party, loads the six cursor icons into the VRAM cache, starts the cursor's
+/// task and readies the item icon grid. Every counter opens with it: Shop_Run,
+/// the inn, the sanctum, the forge and the item picker. The block, the icons'
+/// cache entries and the task last until Shop_ReleaseWork.
 void Shop_InitializeWork(void) {
   struct ShopRuntime *work;
   s32 slot;
@@ -62,9 +66,11 @@ void Shop_InitializeWork(void) {
   work = HeapSlot_Alloc(220, 0xcec);
   Event_ResolveAllPendingActionsFar();
   Dma_Fill32(0, work, 0xcec);
+  // The hand cursor's glides take 12 frames until a screen changes it
   work->mode = 12;
   work->partyMemberCount = Party_ListActiveOwnersFar(work->partyMemberIds);
   Palette_CopyObjectBankToBackground14Far();
+  // Each icon is 128 bytes: four tiles of 4 bits a pixel, a 16x16 sprite
   slot = Resource_FindFreeEntry();
   work->cursorIcon = slot;
   VramBlock_LoadResource(slot, 128, (s32)&ResourceId_UiIconTiles);
@@ -83,18 +89,18 @@ void Shop_InitializeWork(void) {
   slot = Resource_FindFreeEntry();
   work->statUpIcon = slot;
   VramBlock_LoadResource(slot, 128, (s32)&ResourceId_MenuArrowTiles);
-  Task_Add(Func_08108130, TASK_PASS_VBLANK);
-  Func_0810bdf4();
+  Task_Add(MenuCursor_Step, TASK_PASS_VBLANK);
+  ItemIconGrid_Initialize();
 }
 
-/// Closes the shop: stops the cursor's callback, frees its tiles and the work.
-// The Broken Seal's Shop_ReleaseCursorWork.
-void Func_0810824c(void) {
+/// Releases the item icon grid, stops the cursor task, frees the six cursor
+/// icons and the work block. Every counter closes with it.
+void Shop_ReleaseWork(void) {
   struct ShopRuntime *state;
 
   state = Ram_HeapSlots->menuRuntime;
-  Func_0810be3c();
-  Task_Remove(Func_08108130);
+  ItemIconGrid_Release();
+  Task_Remove(MenuCursor_Step);
   Message_CloseFinishedWindowsFar();
   Resource_ResetEntry(state->cursorIcon);
   Resource_ResetEntry(state->previousPageIcon);
@@ -105,14 +111,9 @@ void Func_0810824c(void) {
   HeapSlot_Release(220);
 }
 
-// Func_081082c4 runs the shop's buy, sell, artifacts and repair menu with the
-// selected shopkeeper; the twin of The Broken Seal's Shop_Run
-// (games/tbs/src/shop/shop.c), without its warrior shop rows. The messages take
-// the twin's names.
-
-s32 EventTable_GetRowLimit(void);
-s32 EventTable_GetRowType(s32 row);
-void EventTable_ApplyRowAbilities(s32 row);
+s32 ShopStock_GetRowCount(void);
+s32 ShopStock_GetType(s32 row);
+void ShopStock_AddArtifacts(s32 row);
 struct RenderInput *Func_080380f8(s32 resource, s32 x, s32 y, s32 mode);
 struct RenderInput *Window_CreateFar(s32 x, s32 y, s32 width, s32 height,
                                        s32 style);
@@ -120,25 +121,34 @@ void MenuCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y);
 void Shop_ShowKeeperMessage(s32 message);
 s32 Menu_SelectShopCommandFar(s32 action);
 s32 ShopStock_CopyItems(s32 stockRow, s16 *output);
-s32 Func_08108b70(void);
-s32 Func_08109ad8(void);
-s32 Func_0810a2c8(void);
+s32 Shop_SelectBuy(void);
+s32 Shop_ChooseMember(void);
+s32 Shop_RunRepairMemberChoice(void);
 void Window_CloseFar(struct RenderInput *window, s32 mode);
 
-s32 Func_081082c4(s32 stockRow, s32 keeperId) {
+/// Runs a shop: the shopkeeper's welcome, then buy, sell, artifacts and repair
+/// until the player leaves. `stockRow` picks the row of the stock table (the
+/// empty row 0 for one out of range) and `keeperId` the actor whose portrait
+/// the messages show. Seeds the row's artifacts on the first visit and holds
+/// the work block while it runs. Called by the town scenes' shopkeepers through
+/// the far-call table, and by the debug shop. Returns 0.
+s32 Shop_Run(s32 stockRow, s32 keeperId) {
   struct ShopRuntime *shop;
   struct WindowSprite *anchor;
   struct RenderInput *window;
   s32 action = 0;
 
-  if (stockRow >= EventTable_GetRowLimit() || stockRow < 0)
+  if (stockRow >= ShopStock_GetRowCount() || stockRow < 0)
     stockRow = 0;
-  EventTable_ApplyRowAbilities(stockRow);
+  // Seed this place's artifact stock before creating the shop UI.
+  ShopStock_AddArtifacts(stockRow);
   Shop_InitializeWork();
   shop = Ram_HeapSlots->menuRuntime;
-  shop->shopType = EventTable_GetRowType(stockRow);
+  shop->shopType = ShopStock_GetType(stockRow);
   shop->keeperResource =
       **(u16 **)(*(u8 **)((u8 *)Actor_GetByIdFar(keeperId) + 80) + 40);
+  // The shopkeeper's portrait window, or an empty one off the right edge when
+  // there is no portrait.
   window = Func_080380f8(shop->keeperResource, 0, 0, 0);
   if (window == 0)
     window = Window_CreateFar(30, 0, 2, 2, 2);
@@ -147,30 +157,31 @@ s32 Func_081082c4(s32 stockRow, s32 keeperId) {
   anchor->sentinel = 255;
   anchor->active = 1;
   anchor->kind = 0;
+  // The hand waits off the left edge until a screen places it
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = anchor;
   Shop_ShowKeeperMessage((s32)MsgWeaponShopWelcome);
   while (1) {
     action = Menu_SelectShopCommandFar(action);
     shop->partyAction = action;
-    if (action == 0) {
+    if (action == SHOP_ACTION_BUY) {
       shop->stockCount = ShopStock_CopyItems(stockRow, shop->stockItemIds);
       Shop_ShowKeeperMessage((s32)MsgWhatWouldYouLike);
-      Func_08108b70();
-    } else if (action == 1) {
+      Shop_SelectBuy();
+    } else if (action == SHOP_ACTION_SELL) {
       Shop_ShowKeeperMessage((s32)MsgWhatToSell);
-      Func_08109ad8();
-    } else if (action == 2) {
-      if (Func_081080a8() != 0) {
+      Shop_ChooseMember();
+    } else if (action == SHOP_ACTION_ARTIFACTS) {
+      if (Shop_ListAvailableArtifacts() != 0) {
         Shop_ShowKeeperMessage((s32)MsgConnoisseur);
-        Func_08108b70();
+        Shop_SelectBuy();
       } else {
         Shop_ShowKeeperMessage((s32)MsgOutOfStock);
         wait(1);
       }
-    } else if (action == 3) {
+    } else if (action == SHOP_ACTION_REPAIR) {
       Shop_ShowKeeperMessage((s32)MsgFixDamaged);
-      Func_0810a2c8();
+      Shop_RunRepairMemberChoice();
     } else {
       break;
     }
@@ -179,23 +190,31 @@ s32 Func_081082c4(s32 stockRow, s32 keeperId) {
   }
   Shop_ShowKeeperMessage((s32)MsgShopFarewell);
   Window_CloseFar(window, 2);
-  Func_0810824c();
+  Shop_ReleaseWork();
   return 0;
 }
 
-s32 Debug_ApplyPresetItemsAndFlags(void) {
+/// Opens the debug shop with 200000 coins, the ticket counter at its cap,
+/// broken equipment for repairs and poisoned or haunted party members for the
+/// sanctum. It opens the empty stock row 0.
+s32 Shop_OpenDebugShop(void) {
   gMainRoutineWork.coins = 200000;
   gMainRoutineWork.counterC = 28;
-  Inventory_EquipFar(1, Inventory_AddItemFar(1, 0x48d));
-  Inventory_EquipFar(0, Inventory_AddItemFar(0, 0x40b));
-  Inventory_AddItemFar(2, 0xe7);
-  ((u8 *)Unit_Get(3))[0x131] = 1;
-  ((u8 *)Unit_Get(5))[0x131] = 1;
-  ((u8 *)Unit_Get(2))[0x140] = 1;
-  Func_081082c4(0, 30);
+  // A broken Virtuous Armlet (141), a broken Muramasa (11) and a Bone (231)
+  Inventory_EquipFar(GARET,
+                     Inventory_AddItemFar(GARET, INVENTORY_BROKEN | 141));
+  Inventory_EquipFar(ISAAC, Inventory_AddItemFar(ISAAC, INVENTORY_BROKEN | 11));
+  Inventory_AddItemFar(IVAN, 231);
+  ((struct BattleUnit *)Unit_Get(MIA))->poison = 1;
+  ((struct BattleUnit *)Unit_Get(JENNA))->poison = 1;
+  ((struct BattleUnit *)Unit_Get(IVAN))->haunt = 1;
+  Shop_Run(0, 30);
   return 0;
 }
 
+/// Waits one frame at a time until the sound driver has finished the last
+/// command. Called by the inn's sleep, the sanctum and events that wait for a
+/// jingle.
 void Sound_WaitForJingle(void) {
   while (Sound_GetBgmRestoreDelayFar() != 0) {
     wait(1);
@@ -289,7 +308,11 @@ s32 Sanctum_AskYesNo(s32 choice) {
   return choice;
 }
 
-s32 Func_08108690(s32 *cursor, s32 count, s32 columns) {
+/// Moves a cursor over `count` entries laid out `columns` to a row by the
+/// d-pad: left and right wrap round, up and down stop at the ends. Plays the
+/// cursor sound when it moves. Returns 0 when it stayed, 1 when it moved
+/// within its row, 2 when it changed row. Called by every counter's lists.
+s32 MenuGrid_MoveCursor(s32 *cursor, s32 count, s32 columns) {
   s32 changed = 0;
   s32 old = *cursor;
   s32 pos = old;

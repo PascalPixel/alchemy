@@ -116,13 +116,20 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
 /// work->particles 0 to 2, and builds and frees its blitters every frame.
 void BattleEffect_RunBind(struct BattleEffectParams *args) {
   struct ScreenPoint anchor;
-  struct Vector3 position;
-  struct ScreenPoint corner;
+  /* FAKEMATCH(temporary): one workspace for the target's position and each
+   * projected corner; as two locals, 166 of 524 instructions differ in tbs-en.
+   */
+  union {
+    struct Vector3 world;
+    struct ScreenPoint projected;
+  } position;
   struct ScreenPoint screen;
   struct Vector3 scale;
   s32 originX;
   s32 originY;
   BlitterPair draw;
+  void **slots;
+  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -214,10 +221,10 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
       actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
       if (memberFrame >= 0 && memberFrame < 96) {
         EFFECT_VIEW_FROM_CAMERA(camera);
-        position.x = actor->x.fixed;
-        position.y = actor->y.fixed;
-        position.z = actor->z.fixed;
-        Projection_Point(&position, &screen);
+        position.world.x = actor->x.fixed;
+        position.world.y = actor->y.fixed;
+        position.world.z = actor->z.fixed;
+        Projection_Point(&position.world, &screen);
         // Always canvas x 64, where BG2X puts the target; only the
         // projected y is kept.
         screen.x = anchor.x + shift;
@@ -240,9 +247,9 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
               Transform_ApplyYaw((64 - memberFrame) << 9);
             }
             Transform_ApplyRoll(j * (TRIG_TURN / 3));
-            Projection_Point(gBind_Vertex, &corner);
-            point->velocityX = corner.x + screen.x;
-            point->velocityY = corner.y + screen.y + 16;
+            Projection_Point(gBind_Vertex, &position.projected);
+            point->velocityX = position.projected.x + screen.x;
+            point->velocityY = position.projected.y + screen.y + 16;
           }
           for (j = 0; j != 3; j++) {
             struct Particle *from = &work->particles[j + member * 32];
@@ -293,10 +300,17 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
 /// user's approach through BattleMotion_ApproachTargetFar.
 void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   struct ScreenPoint anchor;
-  struct Vector3 position;
-  struct ScreenPoint corner;
+  /* FAKEMATCH(temporary): one workspace for the target's position and each
+   * projected corner; as two locals, 211 of 436 instructions differ in tbs-en.
+   */
+  union {
+    struct Vector3 world;
+    struct ScreenPoint projected;
+  } position;
   struct ScreenPoint screen;
   struct Vector3 scale;
+  void **slots;
+  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -363,10 +377,10 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
       actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
       if (memberFrame >= 0 && memberFrame < 96) {
         EFFECT_VIEW_FROM_CAMERA(camera);
-        position.x = actor->x.fixed;
-        position.y = actor->y.fixed;
-        position.z = actor->z.fixed;
-        Projection_Point(&position, &screen);
+        position.world.x = actor->x.fixed;
+        position.world.y = actor->y.fixed;
+        position.world.z = actor->z.fixed;
+        Projection_Point(&position.world, &screen);
         screen.x = anchor.x + shift;
         screen.y -= 24;
         if (memberFrame <= 67) {
@@ -382,9 +396,9 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
               Transform_ApplyYaw((64 - memberFrame) << 9);
             }
             Transform_ApplyRoll(j * (TRIG_TURN / 3));
-            Projection_Point(gBind_TriangleStrikeVertex, &corner);
-            point->velocityX = corner.x + screen.x;
-            point->velocityY = corner.y + screen.y + 16;
+            Projection_Point(gBind_TriangleStrikeVertex, &position.projected);
+            point->velocityX = position.projected.x + screen.x;
+            point->velocityY = position.projected.y + screen.y + 16;
           }
           for (j = 0; j != 3; j++) {
             struct Particle *from = &work->particles[j + member * 32];

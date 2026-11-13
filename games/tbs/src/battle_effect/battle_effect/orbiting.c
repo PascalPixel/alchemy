@@ -156,7 +156,13 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
     xOffset = 0;
   else
     xOffset = -112;
-  REG_BG2X = xOffset << 8;
+  /* FAKEMATCH(dead): the scroll's store in a once-only block, so the loop's
+   * i = 0 comes before the particles' address; as the plain store, 2 of 265
+   * instructions differ in tbs-en. */
+  do {
+    REG_BG2X = xOffset << 8;
+  } while (0);
+  i = 0;
   // velocityX holds each skull's angle on its orbit; x, y and z are set but
   // never read.
   for (i = 0; i != 64; i++) {
@@ -178,11 +184,20 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
       screen.x += xOffset;
       // Unsigned, so the frames before this target's turn are skipped too.
       if (memberFrame < 64) {
+        // Default: NULL until it is pointed at the point below.
+        s32 *rec = NULL;
+
         // The actor's projection is computed, but nothing reads it.
         EFFECT_VIEW_FROM_CAMERA(camera);
-        SET_VECTOR(point, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-        Projection_Point(point, &center);
+        rec = point;
+        SET_VECTOR(rec, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+        Projection_Point(rec, &center);
         center.x += xOffset;
+        /* FAKEMATCH(dead): an empty once-only loop keeps the store before the
+         * spark loop's i = 0; without it, 2 of 265 instructions differ in
+         * tbs-en. */
+        do {
+        } while (0);
         // Three skulls a third of a turn apart, each turning 1/128 of a turn
         // a frame; skull i is the i-th 24x24 picture, drawn with its bottom
         // 4 pixels above its point on the circle.

@@ -205,10 +205,13 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
 ///
 /// args: the targets.
 void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
+  void **slots;
+  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sheet;
   BlitterPair blit;
+  DrawRectangle *draw;
   struct Particle *ball;
   struct Particle *mote;
   s32 frame;
@@ -222,7 +225,10 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  BattleEffect_FetchRectangleBlitters(0, blit);
+  /* FAKEMATCH(temporary): draw stands in for blit; as blit used directly, 14
+   * of 348 instructions differ in tbs-en. */
+  draw = blit;
+  BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                              work->sheet, 1, 1);

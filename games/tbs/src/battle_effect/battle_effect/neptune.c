@@ -70,6 +70,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   s32 j;
   s32 emittedDrops;
   s32 dropOriginX;
+  u32 *cache;
   struct BattleEffectWork *work;
   s32 frame;
   s32 t;
@@ -84,9 +85,12 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   struct SpriteScale scale;
   s32 ground = 112; // where the columns land
 
-  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  particleSheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  cache = (u32 *)&gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
+  canvas = (void *)cache[0];
+  work = (struct BattleEffectWork *)HEAP_SLOT_FROM(
+      cache, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_BATTLE_EFFECT);
+  particleSheet = (u8 *)HEAP_SLOT_FROM(cache, HEAP_SLOT_BATTLE_CANVAS,
+                                       HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
@@ -321,15 +325,17 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       for (i = 0; i != 64; i++) {
         // Two more burst points start each frame, as the smallest flare; one
         // that leaves the top restarts.
+        /* FAKEMATCH(temporary): pictures holds gBattleEffect_FlarePictures; as
+         * gBattleEffect_FlarePictures[r - 1], 104 of 1474 instructions differ
+         * in tbs-en. */
+        u16 *pictures = gBattleEffect_FlarePictures;
         /* LEFTOVER(template): r holds 1, the smallest flare's size; the
          * sibling loop in BattleEffect_RunNeptune, the flares from frame 152
          * above, runs the same draw with a size that varies, (i & 3) + 5; as
          * 0, 1 and 2 written out, 62 of 1474 instructions differ in tbs-en. */
         s32 r = 1;
         if (frame >= i / 2 + 222) {
-          blit[0](canvas,
-                  work->sheet + gBattleEffect_FlarePictures[r - 1] +
-                      NEPTUNE_FLARE_SHEET,
+          blit[0](canvas, work->sheet + pictures[r - 1] + NEPTUNE_FLARE_SHEET,
                   work->particles[i].x - r, work->particles[i].y - r, r * 2,
                   r * 2);
           work->particles[i].x += work->particles[i].velocityX;

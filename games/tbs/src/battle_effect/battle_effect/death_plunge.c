@@ -196,6 +196,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
 UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
   struct ScreenPoint screenPosition;
   BlitterPair draw;
+  void **slots;
+  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle *blit;
@@ -203,8 +205,10 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
+  cursor = slots;
+  work = *cursor++;
+  canvas = *cursor;
   work->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   // Invisible to start with.
@@ -301,7 +305,7 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
                         (blade->x >> 16) - (width >> 1),
                         (blade->y >> 16) - (height >> 1), width, height);
 #else
-        blit[drift < 0](
+        blit[(u32)drift >> 31](
             canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
             (blade->x >> 16) -
                 ((width = gDeathPlunge_SwordWidths[picture]) >> 1),
@@ -325,7 +329,7 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
                         (blade->x >> 16) - (width >> 1),
                         (blade->y >> 16) - (height >> 1), width, height - 4);
 #else
-        blit[drift < 0](
+        blit[(u32)drift >> 31](
             canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
             (blade->x >> 16) -
                 ((width = gDeathPlunge_SwordWidths[picture]) >> 1),
@@ -1024,6 +1028,8 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
     // blitter is built for each corner and freed at once.
     if (frame >= 0 && frame <= 14) {
       s32 picture = frame / 3 % 5;
+      DrawRectangle *slot =
+          &((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2];
 
       for (i = 0; i != 4; i++) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
@@ -1046,6 +1052,10 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
           s32 x = (mote->y * Trig_Sin(mote->x) >> 16) + 64;
           s32 y = (mote->y * Trig_Cos(mote->x) >> 16) + ground.y;
 
+          /* FAKEMATCH(dead): size is at least 1 here; without this test, 224
+           * of 349 instructions differ in tbs-en. */
+          if (size <= 0)
+            size = 1;
           EFFECT_DRAW_FLARE(draw[0], canvas, sheet, x, y, size);
           mote->y -= 2;
           mote->variant--;

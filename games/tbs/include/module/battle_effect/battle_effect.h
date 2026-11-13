@@ -239,12 +239,8 @@ typedef struct {
 /// Clips overflow on all four sides.
 #define EFFECT_CLIP_BOUNDS (BLITTER_CLIP_X | BLITTER_CLIP_Y)
 
-// Extract signed 16.16 pixels without reading an s32 through an s16 alias.
-#ifdef UBFIX
+/// The whole pixels of a 16.16 value.
 #define Q_16_16_TO_INT(v) ((s32)(v) >> 16)
-#else
-#define Q_16_16_TO_INT(v) (((s16 *)&(v))[1])
-#endif
 
 /// Two-dimensional {x, y} pair for position or velocity, a local of the
 /// summon effects (Nereid, Procne, Tiamat and Ramses).

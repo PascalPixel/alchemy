@@ -50,14 +50,6 @@ s32 Unit_KnowsPsynergy(s32 unitId, s32 abilityId) {
 /// equipped item. Plain entries were taught for good.
 enum { PSYNERGY_FROM_CLASS = 0x8000, PSYNERGY_FROM_ITEM = 0x4000 };
 
-// Slots are four-byte entries, not a flat halfword array. UBFIX accesses each
-// entry through its actual declared type.
-#ifdef UBFIX
-#define PSYNERGY_ACTION_AT(slots, index) ((slots)[index].encodedAction)
-#else
-#define PSYNERGY_ACTION_AT(slots, index) (((u16 *)(slots))[(index) * 2])
-#endif
-
 /// Rebuilds a character's Psynergy list: drops the actions its class and items
 /// gave, closes up the list, adds every class action learned by its level and
 /// the action of each equipped item that grants one, and closes it up again.
@@ -83,28 +75,27 @@ s32 Unit_RefreshPsynergy(s32 unitId) {
   // Remove actions inherited from the previous class and equipment.
   originFlag = PSYNERGY_FROM_CLASS;
   for (sourceIndex = 0; sourceIndex < PSYNERGY_SLOTS; sourceIndex++) {
-    if (PSYNERGY_ACTION_AT(abilities, sourceIndex) & originFlag)
-      PSYNERGY_ACTION_AT(abilities, sourceIndex) = 0;
+    if (abilities[sourceIndex].encodedAction & originFlag)
+      abilities[sourceIndex].encodedAction = 0;
   }
   originFlag = PSYNERGY_FROM_ITEM;
   for (sourceIndex = 0; sourceIndex < PSYNERGY_SLOTS; sourceIndex++) {
-    if (PSYNERGY_ACTION_AT(abilities, sourceIndex) & originFlag)
-      PSYNERGY_ACTION_AT(abilities, sourceIndex) = 0;
+    if (abilities[sourceIndex].encodedAction & originFlag)
+      abilities[sourceIndex].encodedAction = 0;
   }
   // Pack permanent actions at the end to leave room for class abilities.
   for (slot = PSYNERGY_SLOTS - 1, sourceIndex = PSYNERGY_SLOTS - 1;
        slot >= 0;) {
-    if (PSYNERGY_ACTION_AT(abilities, slot) == 0) {
+    if (abilities[slot].encodedAction == 0) {
       slot--;
     } else {
-      PSYNERGY_ACTION_AT(abilities, sourceIndex) =
-          PSYNERGY_ACTION_AT(abilities, slot);
+      abilities[sourceIndex].encodedAction = abilities[slot].encodedAction;
       slot--;
       sourceIndex--;
     }
   }
   for (; sourceIndex >= 0; sourceIndex--)
-    PSYNERGY_ACTION_AT(abilities, sourceIndex) = 0;
+    abilities[sourceIndex].encodedAction = 0;
 
   // Add level-eligible class abilities, followed by equipped-item abilities.
   originFlag = PSYNERGY_FROM_CLASS;
@@ -116,15 +107,14 @@ s32 Unit_RefreshPsynergy(s32 unitId) {
       continue;
     slot = 0;
     while (slot < PSYNERGY_SLOTS &&
-           PSYNERGY_ACTION_AT(abilities, slot) !=
+           abilities[slot].encodedAction !=
                classDefinition->abilities[sourceIndex].ability)
       slot++;
     if (slot != PSYNERGY_SLOTS)
       continue;
     for (slot = 0; slot < PSYNERGY_SLOTS; slot++) {
-      if (PSYNERGY_ACTION_AT(abilities, slot) == 0) {
-        PSYNERGY_ACTION_AT(abilities, slot) =
-            classAbility->ability | originFlag;
+      if (abilities[slot].encodedAction == 0) {
+        abilities[slot].encodedAction = classAbility->ability | originFlag;
         break;
       }
     }
@@ -141,16 +131,15 @@ s32 Unit_RefreshPsynergy(s32 unitId) {
     if (item->useType != ITEM_USE_TEACHES)
       continue;
     for (slot = 0; slot < PSYNERGY_SLOTS; slot++) {
-      if ((PSYNERGY_ACTION_AT(abilities, slot) & PSYNERGY_ABILITY_MASK) ==
+      if ((abilities[slot].encodedAction & PSYNERGY_ABILITY_MASK) ==
           item->abilityId)
         break;
     }
     if (slot != PSYNERGY_SLOTS)
       continue;
     for (slot = 0; slot < PSYNERGY_SLOTS; slot++) {
-      if (PSYNERGY_ACTION_AT(abilities, slot) == 0) {
-        PSYNERGY_ACTION_AT(abilities, slot) =
-            item->abilityId | PSYNERGY_FROM_ITEM;
+      if (abilities[slot].encodedAction == 0) {
+        abilities[slot].encodedAction = item->abilityId | PSYNERGY_FROM_ITEM;
         break;
       }
     }
@@ -160,17 +149,16 @@ s32 Unit_RefreshPsynergy(s32 unitId) {
 
   // Restore a dense display list with empty slots at the end.
   for (slot = 0, sourceIndex = 0; slot < PSYNERGY_SLOTS;) {
-    if (PSYNERGY_ACTION_AT(abilities, slot) == 0) {
+    if (abilities[slot].encodedAction == 0) {
       slot++;
     } else {
-      PSYNERGY_ACTION_AT(abilities, sourceIndex) =
-          PSYNERGY_ACTION_AT(abilities, slot);
+      abilities[sourceIndex].encodedAction = abilities[slot].encodedAction;
       slot++;
       sourceIndex++;
     }
   }
   for (; sourceIndex < PSYNERGY_SLOTS; sourceIndex++)
-    PSYNERGY_ACTION_AT(abilities, sourceIndex) = 0;
+    abilities[sourceIndex].encodedAction = 0;
   return 0;
 }
 
@@ -452,5 +440,3 @@ void Unit_LevelUpTo(s32 unitId, s32 targetLevel) {
   }
   Unit_Calculate(unitId);
 }
-
-#undef PSYNERGY_ACTION_AT

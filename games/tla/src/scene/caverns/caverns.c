@@ -335,8 +335,8 @@ void Func_0200087c(void) {
       other = Func_0200115c(velocity, 1);
       if (other != NULL) {
         object->update = (void (*)(void))Func_02000848;
-        FIELD_AT(object, u8, 98) = 1;
-        FIELD_AT(other, u8, 98) = 1;
+        object->riseCounter = 1;
+        other->riseCounter = 1;
         GameFlag_SetBit(0x212);
       }
     }

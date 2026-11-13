@@ -195,11 +195,9 @@ extern s32 Func_02001d2c__alhafra() __asm__("Func_02001d2c");
 extern u8 gData_02001d54[];
 
 void Func_0200026c(s32 a0, s32 a1) {
-  s32 t1;
 
   Func_02001d2c__alhafra((s32)gData_02001d54);
-  t1 = ((s32)Actor_GetById(a1));
-  FIELD_AT((t1 + 0x23), u8, 0) = 0;
+  Actor_GetById(a1)->priorityFlags = 0;
 }
 #undef FIELD_AT
 
@@ -1026,10 +1024,6 @@ void Func_02000aa0(s32 a0) {
        ->v)
 
 void Func_02001958(s32 a0) {
-  s32 t22;
-  s32 t25;
-  s32 t37;
-  s32 t40;
 
   Event_SetFlag(0x8b4);
   Event_Start();
@@ -1057,12 +1051,10 @@ void Func_02001958(s32 a0) {
     Actor_StartRepeatedMotion(25, 3);
     FieldEffect_SetAttached(0x19, 0x102);
     Event_Wait(40);
-    t22 = ((s32)Actor_GetById(25));
-    FIELD_AT((t22 + 0x5a), u8, 0) = (0xfe & FIELD_AT((t22 + 0x5a), u8, 0));
+    Actor_GetById(25)->actionFlags &= 0xfe;
     Actor_SetPositionAndReset(25, 192, 736);
     Event_Wait(1);
-    t25 = ((s32)Actor_GetById(25));
-    FIELD_AT((t25 + 0x5a), u8, 0) = (1 | FIELD_AT((t25 + 0x5a), u8, 0));
+    Actor_GetById(25)->actionFlags |= 1;
     Event_Wait(10);
     Event_ShowMessageThenWait(0x19, 0, 0xa);
     {
@@ -1083,12 +1075,10 @@ void Func_02001958(s32 a0) {
           (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
       Event_ShowMessageThenWait(0x19, 0, 0xa);
     }
-    t37 = ((s32)Actor_GetById(4));
-    FIELD_AT((t37 + 0x5a), u8, 0) = (0xfe & FIELD_AT((t37 + 0x5a), u8, 0));
+    Actor_GetById(4)->actionFlags &= 0xfe;
     Actor_WalkToAndWait(4, 152, 752);
     Event_Wait(1);
-    t40 = ((s32)Actor_GetById(4));
-    FIELD_AT((t40 + 0x5a), u8, 0) = (1 | FIELD_AT((t40 + 0x5a), u8, 0));
+    Actor_GetById(4)->actionFlags |= 1;
     Actor_FaceDirection(4, 0xe000, 0);
     Event_Wait(20);
     Motion_SetModeAndWaitAnimation(25, 3);

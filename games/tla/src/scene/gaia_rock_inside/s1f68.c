@@ -28,13 +28,13 @@ DEFINE_LEADER_SET_LAYER_BYTE(Func_02001f84, 0)
 #include "ram_buffer.h"
 
 void Func_02001fa0(void) {
-  s32 t0;
+  struct Actor *t0;
 
-  t0 = ((s32)Actor_Get(66));
-  FIELD_AT(t0, s32, 8) = 0x2280000;
-  FIELD_AT(t0, s32, 16) = 0x1280000;
-  FIELD_AT(t0, s32, 12) = -1966080;
-  FIELD_AT(t0, s32, 20) = -2097152;
+  t0 = Actor_Get(66);
+  t0->x = 0x2280000;
+  t0->z = 0x1280000;
+  t0->y = -1966080;
+  t0->terrainHeight = -2097152;
   Event_ClearFlag(0x142);
   Func_02004f8c(0x1042);
 }
@@ -81,7 +81,7 @@ void Func_02002020(void) {
   v_r5 = (v_r5 + 0x214);
   Actor_MoveToObject(13, FIELD_AT(v_r5, s32, 0));
   Actor_SetDestination(13, 496, 712);
-  FIELD_AT(v_r10, s32, 40) = 0x60000;
+  v_r10->velocityY = 0x60000;
   FieldActor_WaitForMoveById(13);
   FieldEvent_Wait(45);
   Actor_FaceActor(8, FIELD_AT(v_r5, s32, 0), 0);
@@ -159,7 +159,7 @@ L_0200a1f8:
     goto L_0200a22e;
   Actor_SetDestination(13, FIELD_AT(t50, s16, 10), FIELD_AT(t50, s16, 18));
 L_0200a22e:
-  FIELD_AT(v_r10, s32, 40) = 0x60000;
+  v_r10->velocityY = 0x60000;
   FieldActor_WaitForMoveById(13);
   Actor_SetPosition(13, 0, 0);
   Event_End();

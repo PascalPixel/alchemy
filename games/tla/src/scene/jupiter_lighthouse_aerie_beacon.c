@@ -13,13 +13,6 @@
 #include "system.h"
 #include "scene_tables.h"
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 s32 Func_02000038(s32 a0) {
   Event_PlaySound(0x98);
   Actor_SetSingleChildFlags(a0, 0);
@@ -44,7 +37,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 #include "../field/object/park_record.c"
 
 #include "field_event.h"
-
 
 void Func_02000090(struct Actor *self) {
   struct Actor *centre = Actor_Get(31);

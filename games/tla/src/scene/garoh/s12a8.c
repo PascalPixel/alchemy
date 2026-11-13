@@ -534,8 +534,7 @@ loop2:
 
 void Func_020022f4(void) {
   s32 v5;
-  s32 t1;
-  s32 t2;
+  struct Actor *t2;
   s32 t3;
   s32 b1;
 
@@ -581,17 +580,16 @@ void Func_020022f4(void) {
   Actor_RunRepeatedMotion(8, 2);
   FieldEvent_Wait(10);
   Actor_SetSpeed(8, 0x9999, 0x4ccc);
-  t1 = ((s32)Actor_Get(8));
-  *(u8 *)((t1 + 90)) = (254 & *(u8 *)((t1 + 90)));
+  Actor_Get(8)->actionFlags &= 254;
   Actor_WalkToAndWait(8, 296, 712);
   FieldEvent_Wait(1);
-  t2 = ((s32)Actor_Get(8));
+  t2 = Actor_Get(8);
   /* FAKEMATCH(temporary): a local holding the constant 1, so the value is ORed
    * into the register that holds it; as one |= 1, 4 of 362 instructions differ
    * in tla-en. */
   b1 = 1;
-  b1 |= *(u8 *)((t2 + 90));
-  *(u8 *)((t2 + 90)) = b1;
+  b1 |= t2->actionFlags;
+  t2->actionFlags = b1;
   FieldEvent_Wait(15);
   Actor_FaceDirection(8, FACING_WEST + FACING_STEP, 0);
   FieldEvent_Wait(25);

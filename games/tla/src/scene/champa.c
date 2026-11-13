@@ -97,14 +97,10 @@ void Func_020000fc(s32 door) {
 }
 
 void Func_0200014c(void) {
-  s32 t2;
-  s32 t1;
 
   TreasureSpot_SetPosition(0x40, 0x1880000, 0x2380000);
-  t1 = ((s32)Actor_Get(64));
-  FIELD_AT((t1 + 0x55), u8, 0) = 0;
-  t2 = ((s32)Actor_Get(64));
-  FIELD_AT(t2, s32, 12) = 0x200000;
+  Actor_Get(64)->motionFlags = 0;
+  Actor_Get(64)->y = 0x200000;
 }
 
 void Func_02000178(void) { TreasureSpot_SetPosition(0x40, 0, 0); }
@@ -113,9 +109,6 @@ void Func_02000178(void) { TreasureSpot_SetPosition(0x40, 0, 0); }
 #include "actor.h"
 
 void Func_02000188(void) {
-  s32 t24;
-  s32 t26;
-  s32 t29;
 
   Event_SetFlag(0x973);
   Event_Start();
@@ -141,15 +134,12 @@ void Func_02000188(void) {
   FieldActor_Jump(33, 6, 0);
   Actor_SetSpeed(32, 0x1cccc, 0xe666);
   Actor_SetSpeed(33, 0x1cccc, 0xe666);
-  t24 = ((s32)Actor_Get(32));
-  FIELD_AT((t24 + 0x5a), u8, 0) = (0xfe & FIELD_AT((t24 + 0x5a), u8, 0));
+  Actor_Get(32)->actionFlags &= 0xfe;
   Actor_WalkBy(32, 0, -16);
-  t26 = ((s32)Actor_Get(33));
-  FIELD_AT((t26 + 0x5a), u8, 0) = (0xfe & FIELD_AT((t26 + 0x5a), u8, 0));
+  Actor_Get(33)->actionFlags &= 0xfe;
   Actor_WalkByAndWait(33, 0, -16);
   FieldEvent_Wait(1);
-  t29 = ((s32)Actor_Get(33));
-  FIELD_AT((t29 + 0x5a), u8, 0) = (1 | FIELD_AT((t29 + 0x5a), u8, 0));
+  Actor_Get(33)->actionFlags |= 1;
   FieldEvent_Wait(15);
   Actor_ShowEmote(0x20, 0x109, 0x1e);
   FieldEvent_ShowMessageThenWait(0x20, 0, 5);
@@ -509,8 +499,6 @@ void Func_02000a80(void) {
 s32 Func_02002ba4();
 
 s32 Scene_Initialize(void) {
-  s32 t7;
-  s32 t8;
   s32 t12;
   s32 t19;
   s32 t23;
@@ -521,10 +509,8 @@ s32 Scene_Initialize(void) {
   Actor_SetSingleChildFlags(((s32)Actor_Get(10)), 0);
   Actor_SetSingleChildFlags(((s32)Actor_Get(11)), 0);
   FieldActor_SetSpritePriority(13, 3);
-  t7 = ((s32)Actor_Get(23));
-  FIELD_AT(t7, s32, 24) = 0x8000;
-  t8 = ((s32)Actor_Get(23));
-  FIELD_AT(t8, s32, 28) = 0x8000;
+  Actor_Get(23)->scaleX = 0x8000;
+  Actor_Get(23)->scaleY = 0x8000;
   Func_02002ba4();
   Func_02002bac(0, 8, 9);
   Map_SetLayerEntryFlag(3);
@@ -658,12 +644,6 @@ static __inline__ void Champa_MessageOpen(s32 speaker, s32 flags) {
 
 void Func_02000e30(void) {
   s32 t0;
-  s32 t216;
-  s32 t219;
-  s32 t263;
-  s32 t266;
-  s32 t494;
-  s32 t497;
   s32 t673;
   s32 t679;
   s32 t685;
@@ -899,12 +879,10 @@ void Func_02000e30(void) {
   Actor_ShowEmote(0x1c, 0x108, 0x1e);
   Event_ShowMessage(0x1c, 0);
   Actor_SetSpeed(25, 0x10000, 0x8000);
-  t216 = ((s32)Actor_Get(25));
-  FIELD_AT((t216 + 0x5a), u8, 0) = (0xfe & FIELD_AT((t216 + 0x5a), u8, 0));
+  Actor_Get(25)->actionFlags &= 0xfe;
   Actor_WalkByAndWait(25, -7, 7);
   FieldEvent_Wait(1);
-  t219 = ((s32)Actor_Get(25));
-  FIELD_AT((t219 + 0x5a), u8, 0) = (FIELD_AT((t219 + 0x5a), u8, 0) | 1);
+  Actor_Get(25)->actionFlags |= 1;
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(25, 0x5000);
   Actor_ShowEmote(0x19, 0x108, 0x28);
@@ -948,12 +926,10 @@ void Func_02000e30(void) {
   Actor_SetSpeed(28, 0x9999, 0x4ccc);
   Actor_FaceDirectionAndWait(28, 0x5000);
   FieldEvent_Wait(2);
-  t263 = ((s32)Actor_Get(28));
-  FIELD_AT((t263 + 0x5a), u8, 0) = (0xfe & FIELD_AT((t263 + 0x5a), u8, 0));
+  Actor_Get(28)->actionFlags &= 0xfe;
   Actor_WalkByAndWait(28, -8, 8);
   FieldEvent_Wait(1);
-  t266 = ((s32)Actor_Get(28));
-  FIELD_AT((t266 + 0x5a), u8, 0) = (1 | FIELD_AT((t266 + 0x5a), u8, 0));
+  Actor_Get(28)->actionFlags |= 1;
   Actor_FaceDirectionAndWait(28, 0x5000);
   Actor_SetAnimationAndWait(28, 4);
   Event_ShowMessage(0x201c, 0);
@@ -1181,12 +1157,10 @@ void Func_02000e30(void) {
   Actor_FaceDirectionAndWait(7, 0x4000);
   FieldEvent_Wait(25);
   Actor_SetSpeed(28, 0x6666, 0x3333);
-  t494 = ((s32)Actor_Get(28));
-  FIELD_AT((t494 + 0x5a), u8, 0) = (0xfe & FIELD_AT((t494 + 0x5a), u8, 0));
+  Actor_Get(28)->actionFlags &= 0xfe;
   Actor_WalkByAndWait(28, 0, -24);
   FieldEvent_Wait(1);
-  t497 = ((s32)Actor_Get(28));
-  FIELD_AT((t497 + 0x5a), u8, 0) = (1 | FIELD_AT((t497 + 0x5a), u8, 0));
+  Actor_Get(28)->actionFlags |= 1;
   FieldEvent_Wait(10);
   Actor_SetAnimation(28, 8);
   FieldEvent_Wait(30);

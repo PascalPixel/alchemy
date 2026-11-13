@@ -12,12 +12,6 @@
 #include "../../field/field_effect/spawn.c"
 
 #include "types.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 s32 Func_0200033c(s32 a0) {
   Actor_SetSingleChildFlags(a0, 0);

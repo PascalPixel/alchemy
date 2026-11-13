@@ -43,10 +43,10 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
        ->v)
 
 void Func_02000054(void) {
-  s32 t0;
+  struct Actor *t0;
 
-  t0 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
-  if (FIELD_AT((t0 + 0x22), u8, 0) == 1) {
+  t0 = Actor_Get(gMainRoutineWork.currentOwner);
+  if (t0->terrainId == 1) {
     MapGrid_SetCellBehavior(0x900000, 0x2400000, 2, 0xea);
     MapGrid_SetCellBehavior(0x1000000, 0x2300000, 2, 0xea);
   } else {
@@ -255,10 +255,8 @@ void Func_02000454(void) {
 }
 
 void Func_020004d0(s32 a0, s32 a1) {
-  s32 t0;
 
-  t0 = ((s32)Actor_Get(a1));
-  FIELD_AT((t0 + 0x55), u8, 0) = 0;
+  Actor_Get(a1)->motionFlags = 0;
   FieldActor_SetSpritePriority(a1, 1);
   FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
 }

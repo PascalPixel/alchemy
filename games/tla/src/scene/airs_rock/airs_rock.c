@@ -120,12 +120,12 @@ void Func_02000568(void) {
 }
 
 void Func_020005ec(void) {
-  s32 t0;
+  struct Actor *t0;
 
-  t0 = ((s32)Actor_Get(10));
+  t0 = Actor_Get(10);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if ((FIELD_AT(t0, s32, 8) >> 20) == 0x1f) {
+  if ((t0->x >> 20) == 0x1f) {
     Event_SetFlag(0x310);
   } else {
     Event_ClearFlag(0x310);
@@ -165,12 +165,12 @@ void Func_02000620(void) {
 }
 
 void Func_020006d4(void) {
-  s32 t0;
+  struct Actor *t0;
 
-  t0 = ((s32)Actor_Get(13));
+  t0 = Actor_Get(13);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if ((FIELD_AT(t0, s32, 8) >> 19) == 0x17) {
+  if ((t0->x >> 19) == 0x17) {
     Event_SetFlag(0x879);
   }
   Event_End();

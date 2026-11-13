@@ -89,13 +89,6 @@ void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 s32 Func_02000654(s32 a0) {
   Actor_SetSingleChildFlags(a0, 0);
   return 0;

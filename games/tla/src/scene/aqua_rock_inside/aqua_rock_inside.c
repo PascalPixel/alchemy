@@ -1312,8 +1312,8 @@ s32 Scene_Initialize(void) {
         Actor_SetSpriteColor(Actor_GetById(9), 6);
       }
     }
-    FIELD_AT(Actor_GetById(13), u8, 98) = 1;
-    FIELD_AT(Actor_GetById(14), u8, 98) = 1;
+    Actor_GetById(13)->riseCounter = 1;
+    Actor_GetById(14)->riseCounter = 1;
     object = Actor_GetById(64);
     if (object != 0) {
       object->motionFlags = 0;
@@ -1350,12 +1350,12 @@ s32 Scene_Initialize(void) {
     } else {
       Actor_SetSpriteColor(Actor_GetById(9), 6);
     }
-    FIELD_AT(Actor_GetById(10), u8, 98) = 1;
-    FIELD_AT(Actor_GetById(11), u8, 98) = 1;
-    FIELD_AT(Actor_GetById(14), u8, 98) = 1;
-    FIELD_AT(Actor_GetById(16), u8, 98) = 1;
-    FIELD_AT(Actor_GetById(17), u8, 98) = 1;
-    FIELD_AT(Actor_GetById(18), u8, 98) = 1;
+    Actor_GetById(10)->riseCounter = 1;
+    Actor_GetById(11)->riseCounter = 1;
+    Actor_GetById(14)->riseCounter = 1;
+    Actor_GetById(16)->riseCounter = 1;
+    Actor_GetById(17)->riseCounter = 1;
+    Actor_GetById(18)->riseCounter = 1;
   }
   return 0;
 }

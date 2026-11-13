@@ -4,12 +4,6 @@
 #include "../shared/tables.h"
 #include "types.h"
 #include "module/scene/gaia_rock_inside.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 #include "task.h"
 #include "event_inline.h"

@@ -488,7 +488,7 @@ void Func_020011c8(void) {
        ->v)
 
 void Func_020012ac(void) {
-  s32 t5;
+  struct Actor *t5;
   s32 t2;
 
   Event_Start();
@@ -498,8 +498,8 @@ void Func_020012ac(void) {
     FieldEvent_SetMessageId((s32)MsgGaiaRockInside07);
     Event_ShowMessage(0xa, 0);
   } else {
-    t5 = ((s32)Actor_Get(9));
-    if (FIELD_AT(t5, s32, 0) == (s32)gData_02005610) {
+    t5 = Actor_Get(9);
+    if (t5->script == (s32)gData_02005610) {
       FieldActor_RefreshSelectorById(9);
     }
     Func_02000f00();

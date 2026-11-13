@@ -458,14 +458,13 @@ void Func_02001518(void) {
 }
 
 void Func_02001614(void) {
-  s32 t0;
+  struct Actor *t0;
   s32 t1;
 
-  t0 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
-  t1 =
-      MapGrid_GetCellBehaviorAt(2, FIELD_AT(t0, s32, 8), FIELD_AT(t0, s32, 16));
+  t0 = Actor_Get(gMainRoutineWork.currentOwner);
+  t1 = MapGrid_GetCellBehaviorAt(2, t0->x, t0->z);
   if (t1 == 0xe8) {
-    FIELD_AT((t0 + 0x22), u8, 0) = 2;
+    t0->terrainId = 2;
   }
 }
 

@@ -585,7 +585,7 @@ void SpriteViewer_SetGridColumnNumber(s32 layerIndex, s32 spriteId) {
   struct Sprite *spriteGroup = gSprites;
   s32 spriteIndex;
 
-  // The ROM looks the metadata up here and drops the result.
+  // DEAD: the sprite's metadata looked up and not used; the ROM keeps the call.
   Resource_GetMetadataRecordFar(spriteId);
   layerIndex &= ANIM_LAYER_COUNT - 1;
   for (spriteIndex = 0; spriteIndex < UI_SPRITE_VIEWER_COPY_COUNT;

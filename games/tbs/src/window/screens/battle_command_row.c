@@ -123,9 +123,7 @@ s32 BattleCommandRow_Run(s32 mode) {
     // Draw the strip once, six panels of 3x3 tiles ending at the name
     // window: the panels left empty as WINDOW_TILE_COMMAND_PANEL in the UI
     // tilemap, then each icon's top-left 3x3 tiles in BG1's map (screen block
-    // 31), the UI tilemap cleared to 0 over them. col never passes 2, but
-    // (col & 3) is the source's form: the ROM keeps each and, which plain col
-    // drops.
+    // 31), the UI tilemap cleared to 0 over them.
     if (stripDirty != 0) {
       stripDirty = 0;
       work->holdTilemapUpload = 1;

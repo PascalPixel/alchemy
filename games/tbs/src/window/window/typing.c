@@ -91,7 +91,7 @@ void Message_UpdateAll(void) {
 /// blips.
 s32 Message_Type(struct Message *message) {
   struct WindowWork *work = WINDOW_WORK;
-  // The ROM reads gKeysHeld here once and never uses the value.
+  // DEAD: gKeysHeld read and not used; the ROM keeps the load.
   u32 keys = gKeysHeld;
   s32 glyphsLeft = gMessageSpeed_Steps[gMainRoutineWork.messageSpeed];
   s32 frameVBlanks;

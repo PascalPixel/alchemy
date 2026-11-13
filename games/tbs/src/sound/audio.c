@@ -11,7 +11,7 @@
 
 /// Interpolates adjacent key frequencies and scales them by the wave sample
 /// frequency.
-s32 MidiKeyToFreq(void *wave, u8 key, u8 pitch) {
+s32 MidiKeyToFreq(struct WaveData *wave, u8 key, u8 pitch) {
   u32 keyIndex;
   u32 pitchScale;
   u32 lowerFrequency;
@@ -32,9 +32,8 @@ s32 MidiKeyToFreq(void *wave, u8 key, u8 pitch) {
   upperFrequency = gFreqTable[upperFrequency & 15] >> (upperFrequency >> 4);
 
   return umul3232H32(
-      *(s32 *)((u8 *)wave + 4),
-      lowerFrequency +
-          umul3232H32(upperFrequency - lowerFrequency, pitchScale));
+      wave->freq, lowerFrequency +
+                      umul3232H32(upperFrequency - lowerFrequency, pitchScale));
 }
 
 /// Does nothing; nothing in the game refers to it. The driver's empty callback

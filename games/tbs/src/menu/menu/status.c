@@ -941,9 +941,8 @@ void StatusScreen_DrawSelectionLabels(struct Window *target, s32 selected,
     Text_DrawMessageFar(MsgStatusNormal, target, 0, 0);
 }
 
-// The experience still needed is a u64 in the international editions and a
-// u32 in the Japanese ones, as each edition's code matches; the message
-// argument takes 32 bits either way.
+// The experience still needed is worked out in 64 bits outside Japanese; the
+// message argument takes 32 bits either way.
 #if TBS_PATCH_1
 typedef u64 ExperienceDifference;
 #else

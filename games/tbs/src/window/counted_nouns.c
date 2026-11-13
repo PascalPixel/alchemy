@@ -12,7 +12,7 @@ const u8 *const gLocalizedWord_CountedNouns[16] = {
     gLocalizedWord_Coin, gLocalizedWord_Coins, // Münze, Münzen
     gLocalizedWord_Round, gLocalizedWord_Rounds, // Runde, Runden
     gLocalizedWord_Ticket, gLocalizedWord_Tickets, // Ticket, Tickets
-    gLocalizedWord_Battle, gLocalizedWord_Battles, // Kampf, Käpfe (ROM spelling retained: the m is missing)
+    gLocalizedWord_Battle, gLocalizedWord_Battles, // Kampf, Käpfe (sic)
     (const u8 *)gArticle_Empty, (const u8 *)gArticle_Empty,
     (const u8 *)gArticle_Empty, (const u8 *)gArticle_Empty,
     (const u8 *)gArticle_Empty, 0,

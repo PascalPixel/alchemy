@@ -19,7 +19,7 @@ u16 EraseFlashChip(void) {
   CopyFlashReadRoutineToRam(savedCode);
 
   result = gWaitForFlashWrite(FLASH_PHASE_ERASE_CHIP, (u8 *)FLASH_BASE,
-                           FLASH_ERASED_BYTE);
+                              FLASH_ERASED_BYTE);
 
   REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | WAITCNT_SRAM_8;
 
@@ -49,7 +49,7 @@ u16 EraseFlashSector(u16 sector) {
   CopyFlashReadRoutineToRam(savedCode);
 
   result = gWaitForFlashWrite(FLASH_PHASE_ERASE_SECTOR, (u8 *)target,
-                           FLASH_ERASED_BYTE);
+                              FLASH_ERASED_BYTE);
 
   REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | WAITCNT_SRAM_8;
 

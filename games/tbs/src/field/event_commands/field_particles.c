@@ -108,7 +108,6 @@ void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
 /// Returns 1 while a field effect sprite that stops at its target still has one
 /// (it has not arrived), 0 once it has arrived or when it never stops.
 u32 FieldParticle_HasPendingTarget(struct FieldParticle *effect) {
-  // A plain != changes the English instructions at the same extent.
   u32 targetX;
 
   if (effect->stopAtTarget == 0) {

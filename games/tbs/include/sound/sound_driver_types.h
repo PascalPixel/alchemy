@@ -157,6 +157,16 @@ struct ToneData {
   u8 release; ///< PCM: envelope * release / 256 a VBlank. CGB: VBlanks a step.
 };
 
+/// A PCM sample's header, before its bytes.
+struct WaveData {
+  u16 type;
+  u16 status;
+  u32 freq; ///< The rate it plays at for its base key.
+  u32 loopStart;
+  u32 size;
+  s8 data[1];
+};
+
 /// A PCM note, one of 12 the mixer renders: its state and envelope, its output
 /// levels, and its links to the other notes of its track.
 struct SoundChannel {

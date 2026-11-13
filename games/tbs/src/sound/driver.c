@@ -590,7 +590,6 @@ void CgbSound(void) {
           // NRx1: the duty, which a square voice keeps in wave, in bits 7..6
           // over the length.
           *lengthDutyRegister = ((u32)note->wave << 6) + note->length;
-          // A labelled jump, the form this match needs.
           goto init_envelope;
         case CGB_CHANNEL_WAVE:
           // A new wave: NR30 bit 6 selects the bank the CPU writes, then 0

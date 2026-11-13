@@ -57,7 +57,7 @@ void Sound_Play(s32 id) {
     // back to MUSIC_PLAYER_SE_FIRST.
     player = gSongTable[id].ms;
     if (player == MUSIC_PLAYER_SE_LAST) {
-      while (((u8 *)&gMPlayTable[player].info->status)[0] != 0) {
+      while ((u8)gMPlayTable[player].info->status != 0) {
         player--;
         if (player < MUSIC_PLAYER_SE_FIRST) {
           player = MUSIC_PLAYER_SE_LAST;

@@ -319,7 +319,8 @@ s32 MapGrid_LoadMap(s32 index) {
     if (graphicsBuffer != NULL) {
       // Colour 0 of BG palette 0 is the backdrop; it survives the new palette.
       backdrop = *(s16 *)PLTT;
-      Decompress_TaggedLz(MAPGRID_RESOURCE(mapResources->palette), graphicsBuffer);
+      Decompress_TaggedLz(MAPGRID_RESOURCE(mapResources->palette),
+                          graphicsBuffer);
       *(s16 *)graphicsBuffer = backdrop;
       // These four copies call the IWRAM routine at its fixed address, not
       // through Iwram_CopyWords.

@@ -164,9 +164,9 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
     if (length > 7) {
       bar = PIXELS_4BPP(8);
       shadow = PIXELS_4BPP(13);
+      // UB: at a length of zero the shift below is by 32, which the GBA
+      // takes as zero.
 #ifdef UBFIX
-      // At zero (including a multiple-of-eight remainder), the ROM's right
-      // shifts by 32 yield zero.
     } else if (length > 0) {
 #else
     } else if (length >= 0) {

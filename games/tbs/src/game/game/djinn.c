@@ -8,13 +8,9 @@
 /// range gives DJINNI_FLINT's. Called by Unit_Calculate for a set Djinni's stat
 /// bonuses and by Djinn_GetAbilityId.
 const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index) {
-  s32 entry;
-
-  entry = 0;
-  if ((group < ELEMENT_COUNT) && (index < DJINN_PER_ELEMENT)) {
-    entry = (group * DJINN_PER_ELEMENT) + index;
-  }
-  return &gDjinn_DefinitionTable[entry];
+  if (group >= ELEMENT_COUNT || index >= DJINN_PER_ELEMENT)
+    return &gDjinn_DefinitionTable[0];
+  return &gDjinn_DefinitionTable[group * DJINN_PER_ELEMENT + index];
 }
 
 /// Gives a newly found Djinni to the party member holding the fewest Djinn who
@@ -96,8 +92,8 @@ s32 Djinn_CanSet(s32 unitId, s32 element, s32 djinnIndex) {
   if ((unit->djinnSet[element] & (1 << djinnIndex)) != 0)
     return 0;
 
-  list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(
-               (unitId < 0 || unitId > PIERS)))
+  list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(unitId < 0 ||
+                                                               unitId > PIERS))
               ->list;
   for (entryIndex = 0; entryIndex < list->count; entryIndex++) {
     if (element == list->entries[entryIndex].element &&
@@ -116,9 +112,7 @@ s32 Djinn_CanSet(s32 unitId, s32 element, s32 djinnIndex) {
 
 /// Returns 1 when the Djinni is set on the unit.
 u32 Djinn_IsSet(s32 unitId, s32 element, s32 djinnIndex) {
-  s32 activeBit = Unit_Get(unitId)->djinnSet[element] & (1 << djinnIndex);
-
-  return (u32)(-activeBit | activeBit) >> 31;
+  return (Unit_Get(unitId)->djinnSet[element] & (1 << djinnIndex)) != 0;
 }
 
 /// Sets a ready Djinni on the unit, counts it and works out the unit's class
@@ -129,11 +123,9 @@ s32 Djinn_Set(s32 unitId, s32 element, s32 djinnIndex) {
   s32 isReady = Djinn_CanSet(unitId, element, djinnIndex);
 
   if (isReady != 0) {
-    if (unit->djinnHeld[element] & (1 << djinnIndex)) {
-      unit->djinnSet[element] |= 1 << djinnIndex;
-    } else {
+    if (!(unit->djinnHeld[element] & (1 << djinnIndex)))
       return 0;
-    }
+    unit->djinnSet[element] |= 1 << djinnIndex;
     unit->djinnSetCounts[element]++;
     Unit_UpdateClass(unitId);
   }
@@ -163,8 +155,8 @@ s32 DjinnRecovery_Remove(s32 unitId, s32 element, s32 djinnIndex) {
   s32 removed = 0;
   s32 entryIndex;
 
-  list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(
-               (unitId < 0 || unitId > PIERS)))
+  list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(unitId < 0 ||
+                                                               unitId > PIERS))
               ->list;
   for (entryIndex = 0; entryIndex < list->count; entryIndex++) {
     if (element == list->entries[entryIndex].element &&
@@ -187,17 +179,17 @@ s32 DjinnRecovery_Remove(s32 unitId, s32 element, s32 djinnIndex) {
 /// by battle and by the event where Flint joins.
 u32 *DjinnRecovery_AddStandby(u32 unitId, u32 element, u32 djinnIndex) {
   struct DjinnRecoveryList *list;
-  s32 entryIndex;
+  struct DjinnRecoveryEntry *entry;
 
   DjinnRecovery_Remove(unitId, element, djinnIndex);
   list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(unitId > PIERS))
               ->list;
-  entryIndex = list->count;
-  list->entries[entryIndex].element = element;
-  list->entries[entryIndex].index = djinnIndex;
-  list->entries[entryIndex].unitId = unitId;
-  list->entries[entryIndex].turns = DJINN_RECOVERY_AFTER_BATTLE;
-  list->count = entryIndex + 1;
+  entry = &list->entries[list->count];
+  entry->element = element;
+  entry->index = djinnIndex;
+  entry->unitId = unitId;
+  entry->turns = DJINN_RECOVERY_AFTER_BATTLE;
+  list->count++;
   return (u32 *)&list->count;
 }
 
@@ -232,33 +224,23 @@ s32 Djinn_Transfer(s32 source, s32 element, s32 djinnIndex, s32 target) {
 /// given. Returns the total. Only GAME.S's bare veneer reaches it; nothing
 /// calls it by name.
 s32 DjinnRecovery_CountStandby(u8 *counts) {
+  struct DjinnRecoveryList *list =
+      &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(
+            DJINN_RECOVERY_PARTY))
+           ->list;
   s32 standbyCount = 0;
-  struct DjinnRecoveryTable *recoveryTable = Djinn_GetRecoveryTable(0);
-  struct DjinnRecoveryEntry *entry = recoveryTable->list.entries;
-  s32 entryIndex;
+  s32 i;
 
   if (counts != 0) {
-    u8 *slot;
-
-    slot = counts + 3;
-    *slot = standbyCount;
-    slot = counts + 2;
-    *slot = standbyCount;
-    slot = counts + 1;
-    *slot = standbyCount;
-    counts[0] = standbyCount;
+    for (i = ELEMENT_COUNT - 1; i >= 0; i--)
+      counts[i] = 0;
   }
-  entryIndex = 0;
-  if (recoveryTable->list.count != 0) {
-    do {
-      if (entry->turns == -1) {
-        if (counts != 0)
-          counts[entry->element]++;
-        standbyCount++;
-      }
-      entryIndex++;
-      entry++;
-    } while (entryIndex != recoveryTable->list.count);
+  for (i = 0; i != list->count; i++) {
+    if (list->entries[i].turns == DJINN_RECOVERY_AFTER_BATTLE) {
+      if (counts != 0)
+        counts[list->entries[i].element]++;
+      standbyCount++;
+    }
   }
   return standbyCount;
 }
@@ -274,26 +256,21 @@ s32 Djinn_GetAbilityId(u32 group, u32 index) {
 /// battle status screen and the battle command menu.
 s32 Party_SumDjinnCounts(s32 element) {
   u16 unitIds[16];
-  s32 djinnCount = 0;
   s32 partySize = Party_ListMembers(unitIds);
+  s32 djinnCount = 0;
+  s32 i;
 
-  if (djinnCount < partySize) {
-    u16 *unitCursor = unitIds;
-    s32 remainingUnits = partySize;
+  for (i = 0; i < partySize; i++) {
+    struct Unit *unit = Unit_Get(unitIds[i]);
 
-    do {
-      struct Unit *unit = Unit_Get(*unitCursor++);
+    if (element == -1) {
+      s32 each;
 
-      if (element == -1) {
-        djinnCount += unit->djinnHeldCounts[0];
-        djinnCount += unit->djinnHeldCounts[1];
-        djinnCount += unit->djinnHeldCounts[2];
-        djinnCount += unit->djinnHeldCounts[3];
-      } else {
-        djinnCount += unit->djinnHeldCounts[element];
-      }
-      remainingUnits--;
-    } while (remainingUnits != 0);
+      for (each = 0; each < ELEMENT_COUNT; each++)
+        djinnCount += unit->djinnHeldCounts[each];
+    } else {
+      djinnCount += unit->djinnHeldCounts[element];
+    }
   }
   return djinnCount;
 }

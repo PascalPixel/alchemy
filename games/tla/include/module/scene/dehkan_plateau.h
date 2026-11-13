@@ -21,7 +21,7 @@ struct ShapeBits {
 
 void Func_02002390(void);
 
-void Func_020000a4(const void *data, s32 mode, s32 timer);
+void Pillars_Pound(const void *data, s32 mode, s32 timer);
 
 void Func_02001474(s32 show);
 
@@ -37,13 +37,13 @@ extern u16 gData_02003fea[];
 extern u16 gData_020041b6[];
 extern u16 gData_020041b8[];
 
-void Func_0200056c(s32 id);
+void CrumblingPillar_Prepare(s32 id);
 
-void Func_02000974(s32 spread);
+void Rubble_Spray(s32 spread);
 
-void Func_02000aa8(void);
+void Rubble_Burst(void);
 
-void Func_02000c4c(s32 a, s32 b);
+void Leader_SetCellShapeAt(s32 a, s32 b);
 
 extern u16 gData_02003ff2[];
 extern u16 gData_02004012[];
@@ -93,7 +93,7 @@ void Func_02002ff4(void);
 extern u32 gData_02003e60[];
 extern u32 gData_02003e9c[];
 
-void Func_02000128(s32 id, u32 mode, s32 flag, s32 layer);
+void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer);
 
 void Actor_SetCellShape(s32 level, s32 layer, s32 owner);
 
@@ -125,7 +125,7 @@ void Func_0200369c(void);
 void Func_0200390c(void);
 void Func_02003aa0(void);
 
-void Func_020001d0(const void *data);
+void CrumblingPillars_Place(const void *data);
 
 void Func_020012d8(void);
 void Func_02001fac(void);

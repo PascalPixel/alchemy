@@ -34,7 +34,7 @@ extern const u8 gData_02003fb8[];
 extern const u8 gData_02003fc0[];
 extern const u8 gData_02003fc4[];
 
-void Func_020002f8(const void *data);
+void CrumblingPillars_Step(const void *data);
 
 void Func_02002180(void);
 void Func_02001804(void);
@@ -42,11 +42,11 @@ void Func_02001804(void);
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
-void Func_02000c4c(s32 a, s32 b) {
+void Leader_SetCellShapeAt(s32 a, s32 b) {
   Actor_SetCellShape(a, b, gMainRoutineWork.currentOwner);
 }
 
-void Func_020006ec(struct Actor *object, struct Actor *other);
+void Actor_TakePlaceOf(struct Actor *object, struct Actor *other);
 void Actor_StartScript(struct Actor *object, const void *script);
 void Actor_MoveToObject(s32 id, s32 target);
 

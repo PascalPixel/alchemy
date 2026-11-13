@@ -119,7 +119,7 @@ static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
   Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
-void Func_020012c8(void) { Func_020002f8(gData_02003f44); }
+void Func_020012c8(void) { CrumblingPillars_Step(gData_02003f44); }
 
 void Func_020012d8(void) {
   if (GameFlag_Test(0x213) == 0)
@@ -135,7 +135,7 @@ void Func_020012d8(void) {
 void Func_02001368(void) {
   s32 y;
 
-  Func_02000708(gData_02003f52);
+  CrumblingPillars_StepWithStandIn(gData_02003f52);
   Func_020012d8();
   y = Actor_GetById(gMainRoutineWork.currentOwner)->y;
   if (y < 0x80000) {
@@ -155,7 +155,7 @@ void Func_020013b0(void) {
 }
 
 void Func_020013fc(void) {
-  Func_020002f8(gData_02003f80);
+  CrumblingPillars_Step(gData_02003f80);
   Func_020013b0();
   if (Actor_GetById(gMainRoutineWork.currentOwner)->y < -0x180000) {
     Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
@@ -166,7 +166,7 @@ void Func_020013fc(void) {
 void Func_02001444(void) {
   s32 y;
 
-  Func_020002f8(gData_02003f92);
+  CrumblingPillars_Step(gData_02003f92);
   y = Actor_GetById(gMainRoutineWork.currentOwner)->y;
   if (y < 0x180000)
     Func_02002180();
@@ -204,15 +204,15 @@ DEFINE_ACTORS_SET_HIDDEN(Actors_SetHidden)
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 
-void Func_02001554(s32 a, s32 b) { Func_020000a4(gData_02003f98, a, b); }
+void Func_02001554(s32 a, s32 b) { Pillars_Pound(gData_02003f98, a, b); }
 
-void Func_02001568(s32 a, s32 b) { Func_020000a4(gData_02003fa0, a, b); }
+void Func_02001568(s32 a, s32 b) { Pillars_Pound(gData_02003fa0, a, b); }
 
-void Func_0200157c(s32 a, s32 b) { Func_020000a4(gData_02003fa8, a, b); }
+void Func_0200157c(s32 a, s32 b) { Pillars_Pound(gData_02003fa8, a, b); }
 
-void Func_02001590(s32 a, s32 b) { Func_020000a4(gData_02003fb0, a, b); }
+void Func_02001590(s32 a, s32 b) { Pillars_Pound(gData_02003fb0, a, b); }
 
-void Func_020015a4(s32 a, s32 b) { Func_020000a4(gData_02003fb8, a, b); }
+void Func_020015a4(s32 a, s32 b) { Pillars_Pound(gData_02003fb8, a, b); }
 
 DEFINE_ACTOR_DROP_AND_WAIT(Actor_DropAndWait)
 
@@ -392,7 +392,7 @@ void Func_020019b8(void) {
   }
 }
 
-void Func_020006ec(struct Actor *object, struct Actor *other);
+void Actor_TakePlaceOf(struct Actor *object, struct Actor *other);
 void Actor_StartScript(struct Actor *object, const void *script);
 void Actor_MoveToObject(s32 id, s32 target);
 
@@ -696,8 +696,8 @@ void Func_020021b4(void) {
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
 
-void Func_020002f8(const void *data);
-void Func_02000708(const void *data);
+void CrumblingPillars_Step(const void *data);
+void CrumblingPillars_StepWithStandIn(const void *data);
 void Func_02002180(void);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,

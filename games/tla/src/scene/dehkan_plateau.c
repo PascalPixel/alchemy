@@ -16,7 +16,7 @@
 
 void Func_02003cc0(s32 id);
 
-void Func_02000038(const u16 *list) {
+void Pillars_Place(const u16 *list) {
   const u16 *spec;
   u16 id;
   struct Actor *object;
@@ -37,7 +37,7 @@ next:
   flag = spec[2];
   object->collisionFlags &= 0xfe;
   Actor_SetSpriteFlags(object, 0);
-  Func_02000128(id, (u16)mode, (u16)flag, object->terrainId);
+  Actor_SetCellOpen(id, (u16)mode, (u16)flag, object->terrainId);
   limit = 0xff;
   spec += 3;
   first = spec[0];
@@ -46,7 +46,7 @@ next:
   }
 }
 
-void Func_020000a4(const void *data, s32 mode, s32 timer) {
+void Pillars_Pound(const void *data, s32 mode, s32 timer) {
   const u16 *spec = data;
   struct EffectWork1a *work = Ram_HeapSlots->effectWork;
   while (*spec != 0xffff) {
@@ -65,7 +65,7 @@ void Func_020000a4(const void *data, s32 mode, s32 timer) {
         object->scaleY += -0x1f00;
       if (mode == 1) {
         GameFlag_SetBit(flag);
-        Func_02000128(active, kind, flag, object->terrainId);
+        Actor_SetCellOpen(active, kind, flag, object->terrainId);
         object->scaleY = 0x10000;
       }
       return;
@@ -74,7 +74,7 @@ void Func_020000a4(const void *data, s32 mode, s32 timer) {
   }
 }
 
-void Func_02000128(s32 id, u32 mode, s32 flag, s32 layer) {
+void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer) {
   struct Actor *object = Actor_GetById(id);
   struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
 
@@ -122,7 +122,7 @@ void Func_02000128(s32 id, u32 mode, s32 flag, s32 layer) {
 #include "field_sprite.h"
 #include "iwram_call.h"
 
-void Func_020001d0(const void *data) {
+void CrumblingPillars_Place(const void *data) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   const u16 *list = data;
   struct Actor *leader;
@@ -167,7 +167,7 @@ void Func_020001d0(const void *data) {
   }
 }
 
-void Func_020002f8(u16 *list) {
+void CrumblingPillars_Step(u16 *list) {
   struct Actor *leader;
   struct Actor *target;
   s32 position[3];
@@ -202,7 +202,7 @@ void Func_020002f8(u16 *list) {
         Actor_SetSpriteColor(Actor_GetById(id), 7);
         wait(4);
         Actor_SetSpriteColor(Actor_GetById(id), 0);
-        Func_02000974(0);
+        Rubble_Spray(0);
         GameFlag_SetBit(flag);
       } else {
         s32 done = flag + 1;
@@ -212,13 +212,13 @@ void Func_020002f8(u16 *list) {
           leader->motionFlags = result;
           Sound_Play(185);
           MapGrid_SetShake(0x10000, 0x40000, 0x10000);
-          Func_02000974(0);
+          Rubble_Spray(0);
           wait(8);
           Func_02003ba0(target, 2);
-          Func_02000c4c(-2, target->terrainId);
-          Func_02000974(1);
+          Leader_SetCellShapeAt(-2, target->terrainId);
+          Rubble_Spray(1);
           wait(16);
-          Func_02000c4c(-2, target->terrainId);
+          Leader_SetCellShapeAt(-2, target->terrainId);
           wait(4);
           MapGrid_SetShake(-1, -1, 0xe666);
           wait(8);
@@ -227,7 +227,7 @@ void Func_020002f8(u16 *list) {
           Actor_SetPositionAndResetMotion(target, 0, 0, 0);
           wait(2);
           Sound_Play(188);
-          Func_02000aa8();
+          Rubble_Burst();
           wait(20);
           GameFlag_SetBit(done);
         }
@@ -244,8 +244,8 @@ void Func_020002f8(u16 *list) {
 /// Runs the event of the listed object `id` once: the list holds (object id,
 /// flag) pairs ended by 0xffff, and unless the flag after the entry's own is
 /// set, cues 185 and 188 play around Actor_SetCellShape and both flags are set.
-/// The twin of overlay 67f's Func_0200048c.
-void Func_0200048c(u16 *list, s32 id) {
+/// The twin of overlay 67f's CrumblingPillar_Collapse.
+void CrumblingPillar_Collapse(u16 *list, s32 id) {
   struct Actor *object = Actor_GetById(id);
   s32 flag;
 
@@ -261,18 +261,18 @@ loop:
   if (!GameFlag_Test(flag + 1)) {
     Sound_Play(185);
     MapGrid_SetShake(0x10000, 0x40000, 0x10000);
-    Func_02000974(0);
+    Rubble_Spray(0);
     wait(8);
     Func_02003ba0(object, 2);
     Actor_SetCellShape(-4, object->terrainId, id);
-    Func_02000974(1);
+    Rubble_Spray(1);
     wait(16);
     MapGrid_SetShake(-1, -1, 0xe666);
     wait(8);
     Actor_SetPositionAndResetMotion(object, 0, 0, 0);
     wait(2);
     Sound_Play(188);
-    Func_02000aa8();
+    Rubble_Burst();
     wait(20);
     GameFlag_SetBit(flag);
     GameFlag_SetBit(flag + 1);
@@ -302,7 +302,7 @@ void Func_02001804(void);
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
-void Func_0200056c(s32 id) {
+void CrumblingPillar_Prepare(s32 id) {
   Actor_GetById(id)->unk5c[0] = 3;
   Func_02003cc0(id);
 }
@@ -313,8 +313,8 @@ void Actor_MoveToObject(s32 id, s32 target);
 /// pairs ended by 0xffff: an actor whose flag + 1 is set is put back with
 /// Actor_SetHorizontalPositionWithTerrain; any other has the cell under it
 /// marked and its shape grid entry set from the terrain there, and copies
-/// attributes 9 when its flag is set. The twin of overlay 67f's Func_02000584.
-void Func_02000584(u16 *list) {
+/// attributes 9 when its flag is set. The twin of overlay 67f's CrumblingPillars_PlaceWithStandIns.
+void CrumblingPillars_PlaceWithStandIns(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   // Holds the grid's address for the whole function.
   u8 *grid = gMapShapeGrid;
@@ -323,9 +323,9 @@ void Func_02000584(u16 *list) {
   Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
   Actor_MoveToObject(10, gMainRoutineWork.currentOwner);
   wait(1);
-  Func_0200056c(8);
-  Func_0200056c(9);
-  Func_0200056c(10);
+  CrumblingPillar_Prepare(8);
+  CrumblingPillar_Prepare(9);
+  CrumblingPillar_Prepare(10);
   Actor_SetModeById(9, 0);
   wait(1);
   Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
@@ -366,14 +366,14 @@ void Func_02000584(u16 *list) {
   wait(10);
 }
 
-void Func_020006ec(struct Actor *object, struct Actor *target) {
+void Actor_TakePlaceOf(struct Actor *object, struct Actor *target) {
   Actor_SetPositionAndResetMotion(object, target->x, target->y, target->z);
   Actor_SetPositionAndResetMotion(target, 0, 0, 0);
 }
 
 void Actor_StartScript(struct Actor *object, const void *script);
 
-void Func_02000708(u16 *list) {
+void CrumblingPillars_StepWithStandIn(u16 *list) {
   struct Actor *leader;
   struct Actor *helper;
   struct Actor *target;
@@ -402,7 +402,7 @@ void Func_02000708(u16 *list) {
       Event_Start();
       if (GameFlag_Test(flag) == 0) {
         Func_02003ba0(helper, 1);
-        Func_020006ec(helper, target);
+        Actor_TakePlaceOf(helper, target);
         wait(1);
         Sound_Play(125);
         Actor_SetSpriteColor(Actor_GetById(8), 7);
@@ -414,8 +414,8 @@ void Func_02000708(u16 *list) {
         Actor_SetSpriteColor(Actor_GetById(8), 7);
         wait(4);
         Actor_SetSpriteColor(Actor_GetById(8), 0);
-        Func_02000974(0);
-        Func_020006ec(target, helper);
+        Rubble_Spray(0);
+        Actor_TakePlaceOf(target, helper);
         wait(1);
         GameFlag_SetBit(flag);
       } else {
@@ -424,18 +424,18 @@ void Func_02000708(u16 *list) {
 
         if (result == 0) {
           Func_02003ba0(helper, 0);
-          Func_020006ec(helper, target);
+          Actor_TakePlaceOf(helper, target);
           wait(1);
           leader->motionFlags = result;
           Sound_Play(185);
           MapGrid_SetShake(0x10000, 0x40000, 0x10000);
-          Func_02000974(0);
+          Rubble_Spray(0);
           wait(8);
           Func_02003ba0(helper, 2);
-          Func_02000c4c(-2, target->terrainId);
-          Func_02000974(1);
+          Leader_SetCellShapeAt(-2, target->terrainId);
+          Rubble_Spray(1);
           wait(16);
-          Func_02000c4c(-2, target->terrainId);
+          Leader_SetCellShapeAt(-2, target->terrainId);
           wait(4);
           MapGrid_SetShake(-1, -1, 0xe666);
           wait(8);
@@ -444,7 +444,7 @@ void Func_02000708(u16 *list) {
           Actor_SetPositionAndResetMotion(helper, 0, 0, 0);
           wait(2);
           Sound_Play(188);
-          Func_02000aa8();
+          Rubble_Burst();
           wait(20);
           GameFlag_SetBit(done);
         }

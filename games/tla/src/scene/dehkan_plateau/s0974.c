@@ -24,7 +24,7 @@ void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 
 /// Eight puffs (type 285) in a row over the leader, flung outwards when spread
 /// is set.
-void Func_02000974(s32 spread) {
+void Rubble_Spray(s32 spread) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   u32 frame = 0;
@@ -65,13 +65,13 @@ void Func_02000974(s32 spread) {
   } while (i <= 7);
 }
 
-void Func_020006ec(struct Actor *object, struct Actor *other);
+void Actor_TakePlaceOf(struct Actor *object, struct Actor *other);
 
 void Actor_MoveToObject(s32 id, s32 target);
 
 extern const u8 gData_02003e30[];
 
-void Func_02000aa8(void) {
+void Rubble_Burst(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 frame;
   u32 i;

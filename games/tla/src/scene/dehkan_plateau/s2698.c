@@ -219,8 +219,8 @@ extern const u8 gData_02003fb8[];
 extern const u8 gData_02003fc0[];
 extern const u8 gData_02003fc4[];
 
-void Func_020002f8(const void *data);
-void Func_02000708(const void *data);
+void CrumblingPillars_Step(const void *data);
+void CrumblingPillars_StepWithStandIn(const void *data);
 void Func_02002180(void);
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
@@ -274,7 +274,7 @@ void Func_02002bcc(void) {
 #include "scene_ids.h"
 #include "field.h"
 
-void Func_020006ec(struct Actor *object, struct Actor *other);
+void Actor_TakePlaceOf(struct Actor *object, struct Actor *other);
 void Actor_MoveToObject(s32 id, s32 target);
 
 void Func_02002c14(void) {
@@ -460,13 +460,13 @@ void Func_020030c0(void) {
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 
-void Func_02000038(const void *data);
+void Pillars_Place(const void *data);
 void Func_02001820(void);
 
 void Func_020030e4(void) {
-  Func_020001d0(gData_02003f44);
+  CrumblingPillars_Place(gData_02003f44);
   Actor_SetSpritePriority(8, 3);
-  Func_02000038(gData_02003f98);
+  Pillars_Place(gData_02003f98);
   Func_02003cc0(12);
   if (GameFlag_Test(0x301) != 0) {
     Map_CopyAttributes(54, 32, 2, 1, 56, 64);
@@ -485,7 +485,7 @@ void Func_020030e4(void) {
 
 // ---- games/tla/src/scene/dehkan_plateau/s3164.c ----
 
-void Func_02000584(const void *data);
+void CrumblingPillars_PlaceWithStandIns(const void *data);
 void Func_020018a8(void);
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
@@ -518,9 +518,9 @@ void Func_02003164(void) {
       Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
     }
   }
-  Func_02000584(gData_02003f52);
+  CrumblingPillars_PlaceWithStandIns(gData_02003f52);
   Func_020012d8();
-  Func_02000038(gData_02003fa0);
+  Pillars_Place(gData_02003fa0);
   if (GameFlag_Test(0x840) != 0) {
     Func_02003cc0(23);
     Map_CopyAttributes(50, 7, 1, 1, 52, 7);
@@ -644,7 +644,7 @@ void Func_02003284(void) {
     GameFlag_SetBit(534);
     Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
   }
-  Func_020001d0(gData_02003f80);
+  CrumblingPillars_Place(gData_02003f80);
   Func_020013b0();
   Func_02001fc4();
   {
@@ -829,7 +829,7 @@ void Func_0200390c(void) {
       }
     }
   }
-  Func_02000038(gData_02003fb0);
+  Pillars_Place(gData_02003fb0);
   Func_020019b8();
   entrance = gMainRoutineWork.entrance;
   if (entrance > 10) {
@@ -885,8 +885,8 @@ void Func_02003aa0(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   if (GameFlag_Test(95) != 0)
     GameFlag_SetBit(521);
-  Func_02000038(gData_02003fb8);
-  Func_020001d0(gData_02003f92);
+  Pillars_Place(gData_02003fb8);
+  CrumblingPillars_Place(gData_02003f92);
   if (GameFlag_Test(519) == 0) {
     Func_02002140();
     wait(10);

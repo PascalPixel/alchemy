@@ -196,7 +196,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Creates the effect's sprites in gBattleEffectWork's sprites.
+/// Creates the effect's sprites in its work block.
 void BattleEffect_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   s32 entryIndex = 0;

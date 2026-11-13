@@ -90,7 +90,6 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                                      s32 mode) {
   volatile u32 fill;
   u8 offsets[128];
-  void **cache;
   void *canvas;
   DrawRectangle draw;
   s32 direction;
@@ -139,9 +138,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   s32 frame;
   s32 i;
 
-  cache = &gBattleEffectWork[1];
-  canvas = cache[0];
-  work = cache[-1];
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
   // In Outer Space the Fusion Dragon leaps out of sight.
   work->args = args;

@@ -79,12 +79,11 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   return 0;
 }
 
-// The Lost Age keeps the same empty function, and neither game calls it.
-// XXX (no evidence): what it was for, perhaps keys that once chose an
-// effect for enemy targets; only a debug build would show it.
 /// Reads the held keys when the first target is an enemy and does nothing with
 /// them.
 void BattleEffect_ProbeKeysForExtendedActor(void) {
+  // XXX (no evidence): what the keys were for, perhaps choosing an effect for
+  // enemy targets; nothing calls this in either game.
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   struct BattleEffectParams *args = work->args;
 
@@ -96,17 +95,14 @@ void BattleEffect_ProbeKeysForExtendedActor(void) {
 /// the beams and the ring and spark effects.
 void BattleEffect_RunByIdRange(struct BattleEffectParams *args) {
   s32 kind;
-  s32 value;
 
-  value = 1550;
-  HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SHEET, value);
+  HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SHEET, 1550);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BattleEffectWork));
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-  value = args->kind;
-  kind = value;
-  value = kind - EFFECT_RANGE_CASTING_IMPACT;
-  if ((u32)value < EFFECT_RANGE_BEAM - EFFECT_RANGE_CASTING_IMPACT) {
-    BattleEffect_RunCastingImpact(args, value);
+  kind = args->kind;
+  if ((u32)(kind - EFFECT_RANGE_CASTING_IMPACT) <
+      EFFECT_RANGE_BEAM - EFFECT_RANGE_CASTING_IMPACT) {
+    BattleEffect_RunCastingImpact(args, kind - EFFECT_RANGE_CASTING_IMPACT);
   } else if (kind >= EFFECT_RANGE_RING_AND_SPARK) {
     BattleEffect_RunCriticalHit(args);
   } else {

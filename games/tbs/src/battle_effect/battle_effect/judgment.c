@@ -664,12 +664,12 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
 
     if (frame >= 72 && frame < 76) {
-      s32 r2 = (frame << 4) - 1136;
+      s32 radius = (frame - 71) * 16;
       s32 size = 10;
       for (i = 0; i != 256; i++) {
         s32 angle = i * (TRIG_TURN / 256);
-        s32 x = ((Trig_Sin(angle) * r2) >> 16) - (size >> 1);
-        s32 y = (Trig_Cos(angle) * r2) >> 17;
+        s32 x = ((Trig_Sin(angle) * radius) >> 16) - (size >> 1);
+        s32 y = (Trig_Cos(angle) * radius) >> 17;
         draw[0](canvas, ramp + gBattleEffect_MotePictures[size - 1], x + 60,
                 y + 50, size, size * 2);
       }

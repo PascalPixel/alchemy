@@ -20,13 +20,12 @@ void BattleEffect_ConfigureEffectDisplay(void) {
 /// Scrolls BG1 a step every few VBlanks.
 void BattleEffect_AdvanceScrollOnInterval(void) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  u32 *timer = (u32 *)&work->scrollTimer;
 
-  (*timer)++;
-  if (*timer == work->scrollInterval) {
+  work->scrollTimer++;
+  if (work->scrollTimer == work->scrollInterval) {
     gBgScroll[1].x += work->scrollStepX;
     gBgScroll[1].y += work->scrollStepY;
-    *timer = 0;
+    work->scrollTimer = 0;
   }
 }
 

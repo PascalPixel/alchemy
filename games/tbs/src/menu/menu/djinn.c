@@ -451,7 +451,6 @@ void DjinnMenu_AdjustPalettes(s32 brightnessDelta) {
       if (red < 0)
         red = 0;
       adjustedColor = RGB(red, green, blue);
-      // Into the palette before this one.
       ((s16 *)BG_PLTT - 16)[paletteIndex] = adjustedColor;
     }
     if (copyIndex == 0) {

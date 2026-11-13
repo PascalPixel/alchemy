@@ -145,7 +145,6 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
       center[2] += step[2];
     }
     Transform_ApplyPosition(center);
-    // The user glows white from frame 0 to frame 24.
     if (frame == 0)
       BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
                                TINT_KEEP, 0);
@@ -1010,9 +1009,9 @@ UNUSED void BattleEffect_InitializeRisingObject(s32 id) {
 /// in its leap pose. The speed is that distance over the frames; the
 /// distance is taken in 1/256 pixels so its square fits in 32 bits.
 ///
-/// Called by BattleEffect_RunRushingStrike. Sets the unit's acceleration,
-/// speed limit and gravity, turns it to face its motion, starts it moving on
-/// the ground towards that point and selects POSE_LEAP.
+/// Sets the unit's acceleration, speed limit and gravity, turns it to face its
+/// motion, starts it moving on the ground towards that point and selects
+/// POSE_LEAP.
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
   struct BattleObject *slot = GetBattleObjectSlotFar(id);
   struct BattleObject *targetSlot = GetBattleObjectSlotFar(targetId);

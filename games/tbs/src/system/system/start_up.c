@@ -133,7 +133,7 @@ struct BuildStampCopy {
 };
 
 /// Copies the build stamp resource (twelve digits) into gBuildStamp in high
-/// IWRAM and writes the zero word that ends it. Called by System_Initialize.
+/// IWRAM and writes the zero word that ends it.
 void System_CopyBuildStamp(void) {
   const void *stamp;
   struct BuildStampCopy *copy;

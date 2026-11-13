@@ -389,11 +389,8 @@ s32 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y) {
   return cell->behavior;
 }
 
-/// Sets the cell behavior of a layer's cell at (x, y) in 16.16 pixels.
-/// Writes the cell in the map's grid; does nothing before the map is set up.
-/// Called through MapGrid_SetCellBehaviorAtFar by scenes
-/// (Colosso, Altin Peak, Crossbone Isle, Venus Lighthouse, Tolbi, Sol
-/// Sanctum).
+/// Sets the cell behavior of a layer's cell at (x, y) in 16.16 pixels. Writes
+/// the cell in the map's grid; does nothing before the map is set up.
 void MapGrid_SetCellBehaviorAt(u32 layer, s32 x, s32 y, u32 behavior) {
   struct MapGridScrollWork *gridState = gMapGridWork[0];
 

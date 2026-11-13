@@ -317,7 +317,7 @@ s32 Sanctum_RunPartyService(void) {
 /// a revive, poison or the haunting cleared, or every cursed item taken off
 /// (Unit_Calculate then rebuilds the curse bits from what is still equipped).
 /// With no cursed item equipped, removing a curse changes nothing, whatever
-/// curse bits Sanctum_NeedsService saw. Called by Sanctum_RunPartyService.
+/// curse bits Sanctum_NeedsService saw.
 void Sanctum_ApplyService(s32 unitId, s32 serviceKind) {
   struct Unit *unit;
 

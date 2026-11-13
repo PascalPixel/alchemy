@@ -164,32 +164,26 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .ppCost = 23,
         .power = 140,
     },
-    // ?
     [ABILITY_018] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_019] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_020] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_021] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_022] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_023] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
@@ -331,32 +325,26 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .ppCost = 31,
         .power = 150,
     },
-    // ?
     [ABILITY_039] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_040] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_041] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_042] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_043] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_044] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
@@ -496,32 +484,26 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .ppCost = 31,
         .power = 150,
     },
-    // ?
     [ABILITY_060] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_061] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_062] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_063] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_064] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_065] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
@@ -662,47 +644,38 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .ppCost = 27,
         .power = 160,
     },
-    // ?
     [ABILITY_081] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_082] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_083] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_084] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_085] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_086] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_087] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_088] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_089] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
@@ -1066,52 +1039,42 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .range = 1,
         .ppCost = 5,
     },
-    // ?
     [ABILITY_130] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_131] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_132] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_133] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_134] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_135] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_136] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_137] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_138] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_139] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
@@ -1215,47 +1178,38 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .ppCost = 5,
         .fieldPsynergy = 16,
     },
-    // ?
     [ABILITY_151] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_152] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_153] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_154] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_155] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_156] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_157] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_158] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_159] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
@@ -1598,67 +1552,54 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .ppCost = 7,
         .power = 36,
     },
-    // ?
     [ABILITY_197] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_198] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_199] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_200] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_201] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_202] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_203] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_204] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_205] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_206] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_207] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_208] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_209] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
@@ -1889,57 +1830,46 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .range = 1,
         .power = 57,
     },
-    // ?
     [ABILITY_239] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_240] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_241] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_242] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_243] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_244] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_245] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_246] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_247] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_248] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_249] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
@@ -2007,7 +1937,6 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .effect = ABILITY_EFFECT_REVIVE,
         .range = 1,
     },
-    // ?
     [ABILITY_259] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
@@ -2054,7 +1983,6 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .range = 1,
         .power = 2,
     },
-    // ?
     [ABILITY_266] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
@@ -2087,147 +2015,118 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .range = 1,
         .power = 100,
     },
-    // ?
     [ABILITY_271] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_272] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_273] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_274] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_275] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_276] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_277] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_278] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_279] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_280] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_281] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_282] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_283] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_284] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_285] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_286] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_287] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_288] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_289] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_290] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_291] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_292] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_293] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_294] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_295] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_296] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_297] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_298] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_299] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
@@ -2835,12 +2734,10 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .range = 6,
         .power = 240,
     },
-    // ?
     [ABILITY_384] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_385] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
@@ -2877,12 +2774,10 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .range = 6,
         .power = 240,
     },
-    // ?
     [ABILITY_390] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_391] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
@@ -2919,12 +2814,10 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .range = 6,
         .power = 240,
     },
-    // ?
     [ABILITY_396] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_397] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
@@ -2961,92 +2854,74 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .range = 6,
         .power = 240,
     },
-    // ?
     [ABILITY_402] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_403] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_404] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_405] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_406] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_407] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_408] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_409] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_410] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_411] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_412] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_413] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_414] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_415] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_416] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_417] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_418] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_419] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
@@ -3252,17 +3127,14 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .range = 2,
         .power = 30,
     },
-    // ?
     [ABILITY_447] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_448] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,
     },
-    // ?
     [ABILITY_449] = {
         .targetMode = ABILITY_TARGET_ONE,
         .element = ELEMENT_VENUS,

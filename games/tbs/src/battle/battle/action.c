@@ -633,12 +633,9 @@ s32 BattleActionRun_Build(struct BattleAction *request,
     }
     MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
     BattleMessage_ShowAndWaitFar(MsgActorAttacks);
-    // Miss chance: 153/256 when deluded, plus a separate 1/32 roll.
-    // Attacks cannot miss a target that cannot move. In the Djinn tutorial
-    // the attack always misses.
-    // The rolls in a one-pass block left by break, which places them ahead of
-    // the five tests; as an if on the negated tests, 46 of 1393 instructions
-    // differ in tbs-en.
+    // Miss chance: 153/256 when deluded, plus a separate 1/32 roll. Attacks
+    // cannot miss a target that cannot move. In the Djinn tutorial the attack
+    // always misses.
     do {
       if (target->hp == 0 || target->sleep != 0 || target->stun != 0 ||
           target->immobile != 0 || target->charm != 0)

@@ -146,8 +146,7 @@ s32 Item_GetEquippedElement(s32 unitId) {
 }
 
 /// Returns the unleash chance, in percent, that a unit's equipment adds
-/// (EQUIP_EFFECT_ADD_UNLEASH_CHANCE). Called by RollWeaponUnleash and the
-/// BattleActionRun_Build.
+/// (EQUIP_EFFECT_ADD_UNLEASH_CHANCE).
 s32 Equipment_GetUnleashRateBonus(struct Unit *unit) {
   s32 chanceBonus;
   s32 inventorySlot;
@@ -196,9 +195,9 @@ s32 RollWeaponUnleash(struct Unit *unit) {
   return 1;
 }
 
-/// Returns the base chance, in percent, of effect `effectId`. A negative
-/// value is a fixed chance that elements and luck do not change; effects not
-/// listed always work (-100). Called by Battle_RollEffectSuccess.
+/// Returns the base chance, in percent, of effect `effectId`. A negative value
+/// is a fixed chance that elements and luck do not change; effects not listed
+/// always work (-100).
 s32 Battle_GetEffectBaseSuccessRate(s32 effectId) {
   s32 fixedChance;
 
@@ -251,7 +250,7 @@ s32 Battle_GetEffectBaseSuccessRate(s32 effectId) {
 
 /// Returns 1 when the unit is weak to effect `effectId`: one of three listed
 /// for its enemy kind (EnemyDefinition.weakEffects) or class
-/// (ClassDefinition.weakEffects). Called by Battle_RollEffectSuccess.
+/// (ClassDefinition.weakEffects).
 s32 BattleAbility_IsWeakToEffect(const struct Unit *target, s32 effectId) {
   const u8 *weakEffects;
   s32 weaknessIndex;

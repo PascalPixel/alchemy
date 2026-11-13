@@ -212,7 +212,7 @@ void m4aSoundVSyncOff(void) {
 }
 
 /// Restarts both FIFO transfers and takes the 10 m4aSoundVSyncOff added off
-/// the work's ident. Called by SampleFreqSet.
+/// the work's ident.
 void m4aSoundVSyncOn(void) {
   struct SoundInfo *work = SOUND_INFO_PTR;
   u32 ident = work->ident;

@@ -936,11 +936,9 @@ struct Streak {
 /// around a unit, motes spiral in, and from frame 28 a burst of light plays
 /// over the unit while the first target flashes.
 ///
-/// Called through BattleEffect_RunElementBurstFar by
-/// ElementGlow_Play (GLOW_BURST). Allocates and frees its own
-/// work, canvas and sheet slots; loads the element's colours over the first
-/// 64 of the background palette, fills PARTICLES 0 to 127 and
-/// work->particles, and moves BG2X with the unit.
+/// Allocates and frees its own work, canvas and sheet slots; loads the
+/// element's colours over the first 64 of the background palette, fills
+/// PARTICLES 0 to 127 and work->particles, and moves BG2X with the unit.
 ///
 /// args->kind : the element (enum Element), which picks the palette: Venus
 ///                yellow, Mercury blue, Mars red, others Jupiter violet.
@@ -1204,9 +1202,8 @@ void BattleEffect_StartElementStreaks(s32 element) {
 /// started: stops its tasks and the background palette fade, clears the
 /// canvas in VRAM and frees the work and the canvas.
 ///
-/// Called through BattleEffect_EndElementStreaksFar by
-/// ElementGlow_Play. Unlike BattleEffect_EndCanvasLayer it leaves
-/// BG2's settings and the battle background's colours as they are.
+/// Unlike BattleEffect_EndCanvasLayer it leaves BG2's settings and the battle
+/// background's colours as they are.
 void BattleEffect_EndElementStreaks(void) {
   Task_Remove(BattleEffect_DrawStreaks);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

@@ -7,9 +7,7 @@
 /// names (Event_Start, Actor_Jump, Event_SetMessageId and the rest), whose
 /// declarations it includes.
 ///
-/// It is a habit of the whole game written once, as declarations and macros,
-/// not a compiler-steering device. event_inline.h's inlines are written over
-/// it. An event reads `Event_Start(); Actor_Stop(ACTOR_GARET);
+/// An event reads `Event_Start(); Actor_Stop(ACTOR_GARET);
 /// Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0); Event_End();`.
 
 #include "module/field/field_sequence.h"
@@ -32,8 +30,6 @@
 #include "main_routine_work.h"
 
 // A scene stores into its own const tables: an overlay's data is in RAM.
-// The games' compiler takes the store as written; a current GCC refuses it,
-// so the modern build names the place without its const.
 #ifdef MODERN
 /// The comma expression removes qualifiers without promoting narrow integers.
 #define STORE_CONST(place) (*(__typeof__(((void)0, (place))) *)&(place))
@@ -356,7 +352,6 @@ static inline s32 Random_Next(void) { return Import_RandomNext(); }
 /// A random whole number from 0 to n - 1, as an event rolls one.
 #define Random_Below(n) ((u32)Random_Next() * (n) >> 16)
 
-/// Signed division written as a call; the `/` compiles to __divsi3.
 static inline s32 Math_Divide(s32 dividend, s32 divisor) {
   return dividend / divisor;
 }

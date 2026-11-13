@@ -168,9 +168,8 @@ void Scene_ReturnFromSequence(s32 result) {
   }
 }
 
-/// Returns the area sceneId belongs to. The scenes of one area
-/// share their music, area name and the flags kept while inside it. Called by
-/// Area_GetNameIndex.
+/// Returns the area sceneId belongs to. The scenes of one area share their
+/// music, area name and the flags kept while inside it.
 s32 Scene_GetArea(s32 sceneId) { return gScenes[sceneId].area; }
 
 /// The last two 16-colour background palettes, which the minigame runners save
@@ -375,9 +374,7 @@ void Scene_Arrive(s32 unused, s32 keep) {
   GameFlag_RefreshLureCapFar();
 }
 
-/// Starts the current scene's field music, chosen by
-/// Scene_ChooseMusic. Called by MainRoutine_Run, and by
-/// 34 scene overlays through Scene_PlayMusicFar.
+/// Starts the current scene's field music, chosen by Scene_ChooseMusic.
 void Scene_PlayMusic(void) { Sound_PlayFar(gMainRoutineWork.sceneMusic); }
 
 #undef EXIT_SCENE_MASK

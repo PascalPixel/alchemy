@@ -1308,7 +1308,6 @@ static void Kalay_PrepareTunnelTreasureRoom(void) {
 #endif
   s32 following;
   struct FadeOverlayWork *overlay;
-  // The field's heap slot and those after it.
   void **slots = &gHeapSlots[HEAP_SLOT_FIELD];
 
   ((struct FieldWork *)slots[0])->transition =

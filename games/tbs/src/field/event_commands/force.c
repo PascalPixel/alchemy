@@ -20,8 +20,7 @@ static __inline__ void FieldEffect_GetPositionAboveActor(struct Actor *actor,
 ///
 /// The shot is sprite 215, the hand of Move and Carry, flying at 4 pixels a
 /// frame; where it lands it makes a heavy impact
-/// (gFieldEffect_HeavyImpactScript, SpawnHeavyImpactEffect). Called by
-/// FieldPsynergy_Run, and through FieldPsynergy_ForceOnTarget.
+/// (gFieldEffect_HeavyImpactScript, SpawnHeavyImpactEffect).
 void FieldPsynergy_Force(void) {
   struct Actor *target;
   s32 eventTarget;
@@ -163,7 +162,6 @@ void FieldPsynergy_Force(void) {
     }
   }
 
-  // Run the scene's event for it, if there is one.
   event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
                                     FIELD_PSYNERGY_FORCE, &eventTarget);
   if (event != NULL)

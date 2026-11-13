@@ -78,11 +78,10 @@ void BattleCamera_Update(void) {
 }
 
 /// Announces the enemies at the start of a battle, then whether the party
-/// strikes first or is caught by surprise. Each of the first enemyCount enemies
-/// gets `<enemy> appeared!`; the last one's comes from a message of its own,
-/// MsgLastEnemyAppeared, whose text matches MsgEnemyAppeared's in every
-/// edition. Called by BattleTransition_Run. Rewrites the
-/// message argument tables.
+/// strikes first or is caught by surprise. Each of the first enemyCount
+/// enemies gets `<enemy> appeared!`; the last one's comes from a message of
+/// its own, MsgLastEnemyAppeared, whose text matches MsgEnemyAppeared's in
+/// every edition. Rewrites the message argument tables.
 void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   s16 enemies[8];
   struct BattleWork *battle = gBattleWork;

@@ -1,9 +1,6 @@
 /// @file
 /// The tables of staged_actor.h, which every scene with pushed things holds:
 /// the cell ahead for each of sixteen headings, and the six footprints.
-///
-/// An includer whose tables the ROM keeps in .rodata defines
-/// PUSHED_ACTOR_TABLE_SECTION first.
 
 #include "types.h"
 #include "pushed_actor_direction_steps.h"

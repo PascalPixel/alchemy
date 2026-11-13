@@ -565,9 +565,8 @@ void MapGrid_UpdateLayerScroll(void) {
 }
 
 /// Centres the view on (x, y) in 16.16 pixels, clamped to the map's bounds,
-/// and redraws every enabled layer's BG map around it. Called by
-/// MapGrid_CenterOnFollowedPoint. Sets map->view, and advances each
-/// drifting layer's phase by one frame.
+/// and redraws every enabled layer's BG map around it. Sets map->view, and
+/// advances each drifting layer's phase by one frame.
 void MapGrid_SetCameraCenter(s32 x, s32 y) {
   u32 layerIndex;
   u8 *screenMap;
@@ -652,9 +651,6 @@ struct MapGridTilePosition {
 /// sourceY) to (dstX, dstY), width by height cells, keeping each destination's
 /// attributes, and redraws the copied cells that are on screen. It does what
 /// MapGrid_CopyCellIndexRect does, with the destination before the size.
-///
-/// Called by MapGrid_PlayMapEdit, and by about 40 events
-/// through MapGrid_CopyCellPictureIndicesRectFar.
 void MapGrid_CopyCellPictureIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
                                         u32 dstY, u32 width, u32 height) {
   u32 y;
@@ -789,11 +785,10 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
   }
 }
 
-/// Copies a rectangle of cells (16x16 pixels each) as they are, from
-/// (sourceX, sourceY) to (dstX, dstY), width by height cells. Where a copied
-/// cell lies in a layer's visible area, its cell picture goes to that layer's
-/// BG map too. Called by about 15 events through
-/// MapGrid_CopyCellPictureCellsRectFar.
+/// Copies a rectangle of cells (16x16 pixels each) as they are, from (sourceX,
+/// sourceY) to (dstX, dstY), width by height cells. Where a copied cell lies
+/// in a layer's visible area, its cell picture goes to that layer's BG map
+/// too.
 void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY, s32 width,
                                       s32 height, s32 dstX, s32 dstY) {
   s32 y;
@@ -864,8 +859,7 @@ void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY, s32 width,
 /// Copies only the attributes of a rectangle of cells, from (sourceX, sourceY)
 /// to (dstX, dstY), width by height cells, keeping each destination cell's
 /// cell picture number. Nothing is redrawn: the attributes (flags, cell
-/// behavior and shape) do not show. Called by about 65 events through
-/// MapGrid_CopyCellAttributeRectFar.
+/// behavior and shape) do not show.
 void MapGrid_CopyCellAttributeRect(s32 sourceX, s32 sourceY, s32 width,
                                    s32 height, s32 dstX, s32 dstY) {
   u32 *destinationCells = MAPGRID_CELLS;

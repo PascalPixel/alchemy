@@ -570,8 +570,7 @@ static void VenusLighthouse_RestoreScriptedChildValues(void) {
   }
 }
 
-/// Called by gVenusGreyStatueScript and gVenusGreyPillarScript. It draws the
-/// actor in the colour mode of its VENUS_COLOR_MARK.
+/// It draws the actor in the colour mode of its VENUS_COLOR_MARK.
 static s32 VenusLighthouse_UpdateChildFromTimer(struct Actor *actor) {
   Actor_SetSpriteColor(actor, actor->timer & 15);
   return 0;

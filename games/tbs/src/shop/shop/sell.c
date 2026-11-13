@@ -79,8 +79,7 @@ s32 Shop_ChooseMember(void) {
 
 /// Lets the player choose items to sell from the party member's grid, one at a
 /// time, with each one's price and description, until B or the inventory is
-/// empty. Returns -1 when cancelled, 0 when the inventory ran out. Called by
-/// Shop_ChooseMember.
+/// empty. Returns -1 when cancelled, 0 when the inventory ran out.
 s32 Shop_SelectSell(s32 unitId) {
   struct Window *descriptionWindow;
   struct ShopWork *shop;
@@ -228,8 +227,8 @@ void Shop_DrawMemberItems(struct Window *window, s32 unitId) {
 }
 
 /// Asks how many to sell when the item is a stack of more than one, and
-/// returns the count (1 otherwise, -1 when cancelled), putting the cursor
-/// back after. Called by Shop_SelectSell.
+/// returns the count (1 otherwise, -1 when cancelled), putting the cursor back
+/// after.
 s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   s32 result;
   s16 savedX;
@@ -264,10 +263,9 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
 
 /// Sells `count` of the item in `slot`: refuses an item the shop does not buy
 /// or one equipped and cursed on, asks with the offer that fits (an old item
-/// the player just replaced, a broken one, a stack, a rare one), then
-/// discards them, pays the coins and redraws. `count` -1 is the old
-/// equipment the equip prompt offers to sell (Shop_SellOld). Called by
-/// Shop_SelectSell and Shop_SellOld. Each item goes through
+/// the player just replaced, a broken one, a stack, a rare one), then discards
+/// them, pays the coins and redraws. `count` -1 is the old equipment the equip
+/// prompt offers to sell (Shop_SellOld). Each item goes through
 /// Inventory_Discard, so one with a stock counter (an artifact) goes back on
 /// it, and the shops of its type may sell it again.
 void Shop_SellItem(s32 unitId, s32 slot, s32 count) {

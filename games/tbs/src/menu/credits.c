@@ -146,13 +146,13 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
                       DMA_COPY_WORDS(64));
 }
 
-/// Builds the 512 tilemap words surrounding a sliding credits picture:
-/// blank margins, 240 consecutive tile pairs, then a zero-filled tail.
-/// Called by Credits_Run. In 32-tile rows: two rows of tile
-/// 511, the picture's tiles 0 to 479 in fifteen rows, three rows of tile 511
-/// (160 pixels in all, the screen), then twelve rows of zeros below it. Each
-/// map follows its picture's 30 KB of tiles in the same 32 KB, so tile 511 is
-/// the map's own last 64 bytes, which the zeros keep transparent.
+/// Builds the 512 tilemap words surrounding a sliding credits picture: blank
+/// margins, 240 consecutive tile pairs, then a zero-filled tail. In 32-tile
+/// rows: two rows of tile 511, the picture's tiles 0 to 479 in fifteen rows,
+/// three rows of tile 511 (160 pixels in all, the screen), then twelve rows of
+/// zeros below it. Each map follows its picture's 30 KB of tiles in the same
+/// 32 KB, so tile 511 is the map's own last 64 bytes, which the zeros keep
+/// transparent.
 void Credits_BuildBackgroundTilemap(u32 *destination) {
   s32 remaining;
   u32 blankTiles = 0x01FF01FF;

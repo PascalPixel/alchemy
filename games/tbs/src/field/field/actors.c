@@ -19,7 +19,6 @@ void SpriteDissolve_Step(u8 *obj, u32 pos) {
 
   struct Sprite *sprite = (struct Sprite *)obj;
 
-  // The sprite's tiles in OBJ VRAM.
   tile = (u16 *)(OBJ_VRAM0 + gVramCacheEntries[sprite->slot].offset);
   tileCount = (sprite->width * sprite->height) / 64;
   i = 0;
@@ -194,7 +193,6 @@ UNUSED void ActorSystem_ReservedNoOpA(void) {}
 UNUSED void ActorSystem_ReservedNoOpB(void) {}
 
 /// Returns the first of the 64 actors not in use (with no script), or 0.
-/// Called by Actor_Create.
 void *Actor_FindFree(void) {
   struct Actor *actor = gActors;
   void *freeActor = 0;
@@ -541,12 +539,10 @@ void Actor_SetSpriteColorMode(struct Actor *actor, u32 param) {
     Sprite_SetAnimationColorModes(actor->sprite, param);
 }
 
-/// Suspends the actor camera updates, starts the palette back to normal and,
-/// a frame later, shows the sprites with BG1-3 hidden, leaving BG0 unchanged.
-/// Called through
-/// ActorSystem_SuspendProjectionAndShowSpritesFar by events (Colosso, the
-/// Tolbi ship, Vale, Venus Lighthouse). The events except Colosso's pair it
-/// with ActorSystem_ResumeProjectionAndHideLayers.
+/// Suspends the actor camera updates, starts the palette back to normal and, a
+/// frame later, shows the sprites with BG1-3 hidden, leaving BG0 unchanged.
+/// The events except Colosso's pair it with
+/// ActorSystem_ResumeProjectionAndHideLayers.
 void ActorSystem_SuspendProjectionAndShowSprites(void) {
   Task_SuspendAll(ActorSystem_PlaceSprites);
   Task_SuspendAll(ActorSystem_ProjectSprites);

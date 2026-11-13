@@ -23,10 +23,9 @@ const struct SpeakerDefinition *Speaker_FindDefinition(u32 id) {
   return entry;
 }
 
-/// Returns the sprite id stored by a live actor's animated sprite, or 0
-/// when that actor has no animated sprite or its sprite-id pointer is
-/// absent. The actor must exist: a NULL from Actor_Lookup is
-/// read through. Called by Speaker_GetHaltedLines.
+/// Returns the sprite id stored by a live actor's animated sprite, or 0 when
+/// that actor has no animated sprite or its sprite-id pointer is absent. The
+/// actor must exist: a NULL from Actor_Lookup is read through.
 s32 Speaker_GetActorSprite(s32 id) {
   struct Actor *actor = Actor_Lookup(id);
   struct SpeakerSprite *sprite;

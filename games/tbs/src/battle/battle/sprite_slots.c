@@ -18,8 +18,7 @@ void BattleObject_Put(void) {
 }
 
 /// Readies the sprite of every unit in the battle (releasing those of units
-/// that left), keeping their modes and motions. Called by
-/// BattleStaging_RunAttack.
+/// that left), keeping their modes and motions.
 void BattleUnit_ListAllAndSubmit(void) {
   s16 unitIds[UNIT_MAX];
 
@@ -59,15 +58,15 @@ s32 Enemy_HasSpriteRoom(s32 classId) {
   return spriteSlot != ENEMY_SPRITE_SLOTS;
 }
 
-/// Loads an enemy unit's battle sprite into the first free enemy sprite
-/// slots (one for a small enemy, two side by side for a large one) and
-/// marks them as the unit's. Two sprites, the Kraken's and the Fusion
-/// Dragon's, take a second part, loaded the same way into further slots.
-/// The slots stay the unit's until BattleObject_ReleaseSpriteSlots
-/// frees them as it leaves the battle. Returns the first slot and the
-/// sprite as (slot << 12) | sprite, or 0 for a party member's unit or when
-/// a load fails. Called by BattleObject_Make. Writes gBattleWork->spriteSlots
-/// and the slots' 16 KB sprite buffers at Ram_EnemySpriteSlots.
+/// Loads an enemy unit's battle sprite into the first free enemy sprite slots
+/// (one for a small enemy, two side by side for a large one) and marks them as
+/// the unit's. Two sprites, the Kraken's and the Fusion Dragon's, take a
+/// second part, loaded the same way into further slots. The slots stay the
+/// unit's until BattleObject_ReleaseSpriteSlots frees them as it leaves the
+/// battle. Returns the first slot and the sprite as (slot << 12) | sprite, or
+/// 0 for a party member's unit or when a load fails. Writes
+/// gBattleWork->spriteSlots and the slots' 16 KB sprite buffers at
+/// Ram_EnemySpriteSlots.
 s32 EnemySprite_LoadIntoSlots(s32 unitId) {
   s32 spritePart;
   struct BattleWork *battle = gBattleWork;
@@ -137,8 +136,7 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
 }
 
 /// Frees every enemy sprite slot unit unitId holds, unloading its sprite.
-/// Called by BattleObject_MarkForRelease. Clears those
-/// gBattleWork->spriteSlots.
+/// Clears those gBattleWork->spriteSlots.
 UNREAD_RESULT BattleObject_ReleaseSpriteSlots(s32 unitId) {
   struct BattleWork *battle = gBattleWork;
   s32 spriteSlot;
@@ -171,8 +169,7 @@ enum BattleWeaponKind {
 };
 
 /// Returns the kind (enum BattleWeaponKind) of the weapon whose item id is
-/// itemId, which picks a party member's weapon sprite. Called by
-/// BattleUnit_GetWeaponSprite.
+/// itemId, which picks a party member's weapon sprite.
 s32 BattleUnit_GetWeaponKind(s32 itemId) {
   s32 assignmentIndex;
   u32 assignment;

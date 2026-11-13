@@ -15,7 +15,7 @@
 /// items a page, picks one, chooses who gets it and how many, and pays. Checks
 /// room in the bag and coins first, and warns when the party member cannot
 /// equip it. An artifact bought takes its stock counter down, and the list is
-/// rebuilt. Repeats until B. Called by Shop_Run.
+/// rebuilt. Repeats until B.
 s32 Shop_SelectBuy(void) {
   struct ShopWork *shop = gMenuWork;
   struct Window *priceWindow = 0;
@@ -533,10 +533,9 @@ void Shop_DrawCarriedItem(struct Window *window, s32 unitId, s32 itemId) {
   }
 }
 
-/// Asks how many to buy when the item stacks, limited by what the coins
-/// buy, the artifact's stock and a stack of 30 less what the party member
-/// carries. Returns the count (1 for other items), or -1 when cancelled. Called
-/// by Shop_SelectBuy.
+/// Asks how many to buy when the item stacks, limited by what the coins buy,
+/// the artifact's stock and a stack of 30 less what the party member carries.
+/// Returns the count (1 for other items), or -1 when cancelled.
 s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
   struct ShopWork *shop;
   struct Unit *unit;
@@ -728,7 +727,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
 /// Offers to equip the item just bought, unless it is equipped already, the
 /// party member cannot equip it, or what it would replace is cursed on. Equips
 /// it on Yes, redraws the grid and warns of a curse. Returns 1 when it was
-/// equipped. Called by Shop_BuyDone.
+/// equipped.
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   struct ShopWork *shop = gMenuWork;
   struct Unit *unit = Unit_GetFar(unitId);
@@ -775,9 +774,8 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   return 1;
 }
 
-/// Offers to sell the item the new one replaced, unless there is none or it
-/// is a Psynergy item or indispensable. Returns 1 when it offered. Called by
-/// Shop_BuyDone.
+/// Offers to sell the item the new one replaced, unless there is none or it is
+/// a Psynergy item or indispensable. Returns 1 when it offered.
 s32 Shop_SellOld(s32 unitId, s32 slot) {
   struct Unit *unit;
   s32 itemId;

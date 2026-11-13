@@ -99,11 +99,11 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
 ///
 /// The caster turns south, plays ANIM_LEADER_ARMS_RAISED with its colours
 /// cycling, spins up for 70 frames (FieldEffect_UpdateSpinAngle), then rises
-/// and shrinks out of sight (FieldEffect_UpdateRetreatCaster) as the
-/// particles fly. It is hidden, not released, and the Psynergy opens an event
+/// and shrinks out of sight (FieldEffect_UpdateRetreatCaster) as the particles
+/// fly. It is hidden, not released, and the Psynergy opens an event
 /// (Event_Start) it does not end: the Retreat exit raised before it
 /// (EXIT_KEEP_DESTINATION, by Field_UsePsynergy or Field_UseItem) then leaves
-/// the scene. Called by FieldPsynergy_Run and FieldPsynergy_Dispatch.
+/// the scene.
 void FieldPsynergy_Retreat(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *actor = effectWork->mainActor;

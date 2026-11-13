@@ -363,7 +363,7 @@ s32 ShopStock_CopyItems(s32 stockRow, s16 *output) {
 }
 
 /// Returns the shop's type from the last column of its stock row (enum
-/// ShopType). Called by Shop_Run.
+/// ShopType).
 s32 ShopStock_GetType(s32 stockRow) {
   return sStockTable[stockRow][SHOP_STOCK_TYPE];
 }

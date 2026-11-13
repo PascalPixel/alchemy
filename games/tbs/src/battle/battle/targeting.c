@@ -62,9 +62,7 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
     if (order->items[slot] != BATTLE_UNIT_LIST_END) {
       entry = order->items;
       // The walk leaves by a break, so its loop's end note lies just before
-      // the else branch. As a do-while loop the else branch follows a bare
-      // barrier, CSE follows the requireLivingUnit test into it knowing count
-      // is 0, and 33 of 89 instructions differ in tbs-en.
+      // the else branch.
       for (;;) {
         value = entry[slot];
         if (value != BATTLE_UNIT_REMOVED) {

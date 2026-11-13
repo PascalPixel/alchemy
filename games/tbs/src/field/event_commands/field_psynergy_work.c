@@ -55,7 +55,6 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
     ev->effectTimerRunning = running;
   effectWork->tileSlot = VramCache_FindFreeEntry();
   VramCache_Load((s16)effectWork->tileSlot, 256, gFieldEffect_SparkTiles);
-  // TASK_PASS_FRAME: the slots update once a frame.
   Task_Add(FieldEffect_UpdateAllEffectSlots, TASK_PASS_FRAME);
 }
 

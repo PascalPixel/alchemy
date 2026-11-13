@@ -104,8 +104,7 @@ s32 Save_InitializeWork(void) {
 
 /// Picks the free sector to write part `mode` to, at random. The last free
 /// sector only goes to a part that already has a copy, so replacing a save
-/// always has room. Called by Save_WritePart. Returns SAVE_SECTOR_COUNT
-/// when there is no sector to use.
+/// always has room. Returns SAVE_SECTOR_COUNT when there is no sector to use.
 u32 Save_SelectWriteSector(s32 mode) {
   u32 empty[SAVE_SECTOR_COUNT];
   s32 count;
@@ -142,9 +141,8 @@ u32 Save_SelectWriteSector(s32 mode) {
 }
 
 /// Programs the workspace's sector buffer into flash sector `sector` and
-/// verifies it, through the flash library's routine for this chip. Called by
-/// Save_WritePart and Save_InvalidateSector. Returns 0 on success
-/// and 1 on failure.
+/// verifies it, through the flash library's routine for this chip. Returns 0
+/// on success and 1 on failure.
 u32 Save_WriteSector(s32 sector) {
   struct SaveWork *work = gSaveWork;
   u16 index = sector;
@@ -156,8 +154,7 @@ u32 Save_WriteSector(s32 sector) {
   return (u32)(-result | result) >> 31; // 1 for any nonzero result
 }
 
-/// Reads flash sector `index` into the workspace's sector buffer. Called by
-/// Save_InitializeWork and Save_ReadPart. Returns 0
+/// Reads flash sector `index` into the workspace's sector buffer. Returns 0
 /// when the payload matches the header's checksum, and the difference of the
 /// two checksums otherwise.
 s32 Save_ReadSector(s32 index) {
@@ -320,8 +317,7 @@ u32 Save_FindLatestSector(s32 partId) {
 }
 
 /// Overwrites sector `index` with a header for no part (SAVE_PART_NONE) and
-/// clears its occupied entry. Called by Save_WritePart and
-/// Save_DeletePart. Returns 0 on success and 1 on failure.
+/// clears its occupied entry. Returns 0 on success and 1 on failure.
 s32 Save_InvalidateSector(s32 index) {
   struct SaveWork *work;
   struct SaveSectorHeader header;

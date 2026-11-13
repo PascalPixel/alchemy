@@ -418,7 +418,6 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
                                (((probePosition.vector.z / px(32)) & 31) << 5))
                               << 2);
     } else {
-      // The ground layer's cells.
       u8 *cells = (u8 *)grid->layers[MAPGRID_LAYER_GROUND].cells;
 
       cell = cells + (((probePosition.vector.x / px(16)) +

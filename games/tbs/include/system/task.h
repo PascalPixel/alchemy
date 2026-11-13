@@ -43,8 +43,6 @@ STATIC_ASSERT(offsetof(struct Task, flags) == 6);
 #define TASK_STATE_HIGH(task) (((u8 *)&(task)->priority)[1])
 
 /// 1 while wait() runs the frame pass's tasks (TASK_PASS_FRAME).
-// volatile: the read Task_Add discards stays a load; as plain u8, 14 of 61
-// instructions differ in tbs-en.
 extern volatile u8 gTasksRunning;
 extern u8 gTasksInitialized; ///< 1 once the task table is set up
 extern struct Task gTasks[];

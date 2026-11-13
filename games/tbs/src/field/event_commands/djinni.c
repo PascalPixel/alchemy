@@ -310,7 +310,6 @@ void FieldEffect_InitializeSlots(void) {
 
   work = HeapSlot_Alloc(HEAP_SLOT_FIELD_EFFECT, sizeof(struct FieldEffectWork));
   Dma_Fill32(0, work, sizeof(struct FieldEffectWork));
-  // 3200 is TASK_PASS_FRAME: the slots update once a frame.
   Task_Add(FieldEffect_UpdateAllSlots, TASK_PASS_FRAME);
 }
 

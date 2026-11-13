@@ -6,16 +6,13 @@
 /// routines below that the scene, menu and debug overlays import; every overlay
 /// call of them goes through it.
 ///
-/// It is a habit of the whole game written once: a layer, not a
-/// compiler-steering device. An overlay writes
-/// `Task_AddFrame(func, TASK_PASS_FRAME)` and the inline
-/// calls Task_Add, which resolves to the overlay's import
-/// stub. Main-image code calls the routines as ordinary functions; only the
-/// shared scene/shared/scroll_initialize_hblank_dma.h, which
-/// field/event_commands.c includes as lemurian_ship.c does, reaches the
-/// layer there, as LuckyDice_Run's two decodes do through a tagged wrapper.
-/// event_inline.h includes this layer; rooms without the event command layer
-/// use it directly.
+/// An overlay writes `Task_AddFrame(func, TASK_PASS_FRAME)` and the inline
+/// calls Task_Add, which resolves to the overlay's import stub. Main-image
+/// code calls the routines as ordinary functions; only the shared
+/// scene/shared/scroll_initialize_hblank_dma.h, which field/event_commands.c
+/// includes as lemurian_ship.c does, reaches the layer there, as
+/// LuckyDice_Run's two decodes do through a tagged wrapper. event_inline.h
+/// includes this layer; rooms without the event command layer use it directly.
 
 // Passing arguments through inline parameters rematerializes constants at each
 // call.

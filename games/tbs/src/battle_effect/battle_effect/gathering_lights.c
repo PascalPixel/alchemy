@@ -39,11 +39,10 @@ void BattleEffect_RunHaunting(struct BattleEffectParams *args) {
 /// images. Each target is struck 70 frames after its turn starts, and the
 /// battle shows the damage at frame 80. The effect layer ripples throughout.
 ///
-/// Called by BattleEffect_RunDemonNight, BattleEffect_RunRumble and
-/// BattleEffect_RunHaunting. Loads its colours over the first 64 of the
-/// background palette, uses PARTICLES 0 to 1023, writes work->bg2xLines each
-/// frame and adds BattleEffect_ArmBg2AffineHBlankDma to feed it to BG2X;
-/// removes both its tasks before it returns.
+/// Loads its colours over the first 64 of the background palette, uses
+/// PARTICLES 0 to 1023, writes work->bg2xLines each frame and adds
+/// BattleEffect_ArmBg2AffineHBlankDma to feed it to BG2X; removes both its
+/// tasks before it returns.
 ///
 /// mode: the colours (enum GatheringLightsMode) and the row of
 ///       gGatheringLights_Counts: lights per target and frames, 16 and 88,

@@ -7,13 +7,10 @@
 #include "../battle_internal.h"
 
 /// Clears every status and stat change of a unit that goes down, recalculates
-/// its stats and rebuilds its status icons.
-/// Reached through the PLAYBACK_DEFEAT event, from
-/// BattlePlayback_RunAll and BattlePlayback_Run. Clears the unit's
-/// element levels, poison, stat stages and their turns, every status, its
-/// equipment bonuses, ready, immobile and challenge; Unit_CalculateFar then
-/// recomputes its stats, and BattleUnit_BuildStatusFlags its battle object's
-/// status flags.
+/// its stats and rebuilds its status icons. Clears the unit's element levels,
+/// poison, stat stages and their turns, every status, its equipment bonuses,
+/// ready, immobile and challenge; Unit_CalculateFar then recomputes its stats,
+/// and BattleUnit_BuildStatusFlags its battle object's status flags.
 UNREAD_RESULT BattleUnit_ClearStatuses(s32 unitId) {
   struct Unit *unit;
   s32 element;

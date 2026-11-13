@@ -379,10 +379,9 @@ void Inventory_NoOpCallback(void) {}
 /// An empty function; nothing in The Broken Seal calls it.
 void Inventory_ReservedNoOp(void) {}
 
-/// Waits, at most 90 frames, for an actor's animation to stop being
-/// animation: the actor has finished a one-off animation such as a nod.
-/// Only actors drawn as a sprite (ACTOR_SPRITE_ONE) are
-/// waited for. Called by Event_AskYesNoWithActorAnimation.
+/// Waits, at most 90 frames, for an actor's animation to stop being animation:
+/// the actor has finished a one-off animation such as a nod. Only actors drawn
+/// as a sprite (ACTOR_SPRITE_ONE) are waited for.
 void Actor_WaitForAnimationEnd(s32 actorId, s32 animation) {
   struct Actor *actor = Actor_Lookup(actorId);
 

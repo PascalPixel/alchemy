@@ -46,8 +46,6 @@ void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
 /// frame 138, the screen flares white over frames 160 to 175 and fades out
 /// after, and the battle shows the damage on frame 178.
 ///
-/// Called by BattleEffect_RunTiamat and BattleEffect_RunDragonDriver.
-///
 /// Four kinds of particle, in canvas coordinates with y growing downwards,
 /// 16.16 except the fireballs, which are whole pixels:
 ///   PARTICLES[0..511]  embers: rise from y 112, speeding up; one a frame

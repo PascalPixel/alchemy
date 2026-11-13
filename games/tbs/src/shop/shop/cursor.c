@@ -51,8 +51,8 @@ static const u16 sPriceDigitTileOffsets[5] = {
 };
 // clang-format on
 
-/// Copies decimal glyph `digit` into its price-tile position, stopping at
-/// zero source bytes. Called by Shop_CreatePriceSprite.
+/// Copies decimal glyph `digit` into its price-tile position, stopping at zero
+/// source bytes.
 void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition) {
   u8 *src = gShop_GlyphBytes + (digit << 5);
   u8 *dst = tileBuffer + sPriceDigitTileOffsets[digitPosition] + 2;

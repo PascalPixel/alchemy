@@ -500,11 +500,9 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   if (GameFlag_Get(FLAG_TOLBI_SPRING_OPENED) != 0) {
     Actor_SetPosition(ACTOR_TOLBI_SPRING_VISITOR, 316, 328);
   }
-  // The puddle is frozen.
   if (GameFlag_Get(FLAG_TOLBI_PUDDLE_FROZEN) != 0) {
     Tolbi_FreezePuddle();
   }
-  // The sprout has grown.
   if (GameFlag_Get(FLAG_TOLBI_SPROUT_GROWN) != 0) {
     Tolbi_GrowSprout();
     Actor_SetAnimation(ACTOR_TOLBI_SPROUT, 4);

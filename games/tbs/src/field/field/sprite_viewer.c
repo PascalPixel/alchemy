@@ -397,9 +397,8 @@ next:
   }
 }
 
-/// Returns the next sprite id after spriteId, stepping by direction (1 or
-/// -1) and wrapping within 0-511, whose metadata has an image (a nonzero
-/// width). Called by SpriteViewer_Run.
+/// Returns the next sprite id after spriteId, stepping by direction (1 or -1)
+/// and wrapping within 0-511, whose metadata has an image (a nonzero width).
 s32 SpriteViewer_FindNextSpriteWithPictures(s32 spriteId, s32 direction) {
   for (;;) {
     spriteId += direction;
@@ -567,7 +566,6 @@ UI_DEFINE_SET_GRID_COLUMN(SpriteViewer_SetGridColumnPriority, priority)
 /// Starts animationIndex on layerIndex of each of the viewer's ten sprites,
 /// each one a frame (16 timer units) behind the last, so the copies are
 /// staggered. Also sets each copy's offsetY and clears its rotation.
-/// Called by SpriteViewer_Run.
 void SpriteViewer_StartStaggeredAnimations(s32 layerIndex, s32 animationIndex) {
   s32 spriteIndex;
   struct Sprite *spriteGroup;

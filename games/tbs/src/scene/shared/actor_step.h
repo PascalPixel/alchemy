@@ -10,10 +10,7 @@
 // the Vault's cave, Venus Lighthouse) and those of staged_actor.h.
 
 /// Sets `position` to one step from `actor`: `step` packs the step in x in its
-/// high half and the step in z in its low half, as the push tables do. The
-/// fifteen places that look one cell ahead of a pushed thing or the leader
-/// share this one body, which compiles as each of them does; the name is
-/// ours.
+/// high half and the step in z in its low half, as the push tables do.
 static inline void Actor_StepFrom(struct FieldPosition *position,
                                   struct Actor *actor, s32 step) {
   SET_POSITION(position, actor->x.fixed + (step & -0x10000), actor->y.fixed,

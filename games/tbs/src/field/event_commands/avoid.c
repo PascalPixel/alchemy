@@ -81,8 +81,7 @@ void FieldPsynergy_ShowAvoidWoreOff(void) {
 /// wears off, and the game says "Monsters won't attack so often now.".
 /// FLAG_ITEM_USE marks it as cast from the Sacred Feather.
 ///
-/// Called by FieldPsynergy_Run and FieldPsynergy_Dispatch. Sets
-/// gMainRoutineWork.avoidDistance and avoidByItem; the leader's walking
+/// Sets gMainRoutineWork.avoidDistance and avoidByItem; the leader's walking
 /// counts the distance down by its speed (field_sequence/walking.c), 2,400
 /// pixels in all.
 void FieldPsynergy_Avoid(void) {

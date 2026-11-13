@@ -68,11 +68,9 @@ void BattleEffect_RunRecovery(struct BattleEffectParams *args) {
 /// feet for 48 frames; the target glows and the battle shows the result on
 /// frame 24.
 ///
-/// Called by BattleEffect_RunBerserk, BattleEffect_RunSpasm and
-/// BattleEffect_RunRecovery. Loads its colours over the first 64 of the
-/// background palette, sets BG2PA and BG2X so the wall stands on the target,
-/// and sets work->shakeFrames. Frees its blitters and closes the canvas
-/// layer before it returns.
+/// Loads its colours over the first 64 of the background palette, sets BG2PA
+/// and BG2X so the wall stands on the target, and sets work->shakeFrames.
+/// Frees its blitters and closes the canvas layer before it returns.
 ///
 /// mode: the wall's width, shake and colours (enum MirroredWallMode).
 void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {

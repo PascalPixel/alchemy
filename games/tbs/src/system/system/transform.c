@@ -35,13 +35,12 @@ void Transform_Push(void) {
   }
 }
 
-/// Copies gTransform to `dst`. Called by BattleEffect_RunAtalanta.
+/// Copies gTransform to `dst`.
 void Transform_Store(void *dst) {
   Dma_Set(gTransform, dst, TRANSFORM_DMA, REG_DMA3);
 }
 
-/// Copies the matrix at `src` into gTransform. Called by
-/// BattleEffect_RunAtalanta.
+/// Copies the matrix at `src` into gTransform.
 void Transform_Load(const void *src) {
   Dma_Set(src, gTransform, TRANSFORM_DMA, REG_DMA3);
 }
@@ -238,8 +237,7 @@ void Transform_ApplyScaledRotation(s32 *angles, s32 *position, s32 *scale) {
 }
 
 /// Builds in `out` the camera matrix of an eye at `eye` looking at `target`.
-/// The camera's sideways axis is kept level (no Y component). Called by
-/// Transform_SetLookAt and Transform_ApplyLookAt.
+/// The camera's sideways axis is kept level (no Y component).
 void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   u32 code[7];
   s32 dx, dy, dz;

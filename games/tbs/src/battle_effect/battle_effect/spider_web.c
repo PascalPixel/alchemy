@@ -33,13 +33,12 @@ void BattleEffect_RunSpinningBeat(struct BattleEffectParams *args) {
 /// four frames each: the first four from the swirl sheet, the last two from the
 /// tail sheet. The swipe lands on frame 8.
 ///
-/// Called by BattleEffect_RunPoisonBeat and BattleEffect_RunSpinningBeat.
 /// Decodes the tail sheet into Ram_MapGridCellBuffer, moves BG2X so the swipe
-/// crosses the target, and sets work->shakeFrames on the hit; Poison Beat loads
-/// its lime colours over the first 64 of the background palette, and the battle
-/// shows its damage at once as the target recoils; in Spinning Beat the
-/// target flashes, its actor is thrown up on frame 13 and the battle shows
-/// the damage as it lands on frame 65.
+/// crosses the target, and sets work->shakeFrames on the hit; Poison Beat
+/// loads its lime colours over the first 64 of the background palette, and the
+/// battle shows its damage at once as the target recoils; in Spinning Beat the
+/// target flashes, its actor is thrown up on frame 13 and the battle shows the
+/// damage as it lands on frame 65.
 ///
 /// mode: the swipe (enum SwirlSwipeMode).
 void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {

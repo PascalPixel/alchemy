@@ -435,7 +435,6 @@ void BattleUnit_RefreshPlacement(void) {
 s32 BattlePlacement_ContainsId(s16 *list, s32 place) {
   u32 i;
 
-  // An enemy's place to its unit id.
   if (place > ALLY_MAX)
     place += FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
   i = 0;

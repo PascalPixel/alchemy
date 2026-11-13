@@ -138,8 +138,6 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   // No voice blips while the message types.
   work->voiceSound = cleared;
   work->voiceCountdown = cleared;
-  // The message's arguments: the party member and the Djinni, by its
-  // ability.
   MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
   MessageArgument_Push(element * DJINN_PER_ELEMENT + djinn +
                            ABILITY_DJINNI_FIRST,

@@ -279,8 +279,6 @@ UNREAD_RESULT BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
 /// move) or down, else standing; then its sprites' animation speed, a timer
 /// step of 14 to 17 by the unit id's low two bits (16 is normal speed), so
 /// units side by side, even two of one kind, sway out of step.
-/// Called by BattleObject_SpawnObjectsForList, BattlePlayback_RunAll,
-/// BattlePlayback_Run and Battle_ProcessTurnEnd.
 UNREAD_RESULT BattleObject_UpdatePose(s32 unitId) {
   struct Unit *unit;
   s32 pose;
@@ -486,8 +484,7 @@ struct BattleObject *BattleObject_Get(s32 unitId) {
   return &objects[battle->objectIndex[place]];
 }
 
-/// Detaches the scripts from the four sprite entries of one sprite. Called
-/// only by ResetBattleObjectRecordGroups.
+/// Detaches the scripts from the four sprite entries of one sprite.
 void ResetMotionRecordGroup(void *recordGroup) {
   struct Sprite *record = recordGroup;
   s32 entryIndex;
@@ -547,7 +544,6 @@ void *BattleObject_DestroyAll(void) {
   s32 place;
 
   for (place = 0; place < UNIT_MAX; place++) {
-    // Places 0 to 7 are the party unit ids, 8 to 13 the enemies.
     s32 unitId = place + FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
     struct BattleObject *battleObject;
 

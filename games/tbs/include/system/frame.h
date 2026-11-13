@@ -18,8 +18,6 @@
 /// clears it.
 extern u8 gFrameRenderPending;
 /// Debug: wait() measures the CPU load into gCpuLoadPeak when set.
-// volatile: as plain u8, 88 of 438 instructions differ in tbs-en
-// (Title_ShowIntro).
 extern volatile u8 gCpuLoadDisplayEnabled;
 /// The VBlank handler copies the OAM list only while it is set; scenes clear
 /// it to keep their own sprites on screen.
@@ -28,8 +26,6 @@ extern u8 gOamCopyEnabled;
 extern u16 gFrameVBlanks;
 /// gFrameVBlanks as the last frame left it; the text typing paces itself by
 /// it.
-// volatile: as plain u16, 33 of 628 instructions differ in tbs-en
-// (Message_Type).
 extern volatile u16 gLastFrameVBlanks;
 /// Bit 0 is set by the VBlank handler; wait() clears it and halts until
 /// it is set again.
@@ -50,11 +46,8 @@ extern u32 gVBlankCount; ///< Counted up by every VBlank.
 extern void (*gVBlankCallback)(void);
 
 /// Nonzero: wait() counts no idle time and ignores sleep requests.
-// volatile: as plain u8, 82 of 403 instructions differ in tbs-en (wait()).
 extern volatile u8 gSleepDisabled;
 /// Sleep after three idle minutes.
-// volatile: as plain u8, 45 of 203 instructions differ in tbs-en
-// (MainRoutineWork_InitializeDefaults).
 extern volatile u8 gIdleSleepEnabled;
 /// 1: sleep this frame; more: count down to it.
 // volatile: wait() counts it down and reads it each frame, so it is no device.

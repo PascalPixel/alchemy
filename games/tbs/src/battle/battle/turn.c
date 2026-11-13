@@ -159,8 +159,8 @@ s32 BattleFlee_CheckSuccess(void) {
 /// The party's actions for the turn, from the command menu: a party member who
 /// is asleep, confused, charmed or stunned loses each of their actions
 /// (COMMAND_NONE); the others choose theirs (Battle_CollectPartyCommandsFar).
-/// Returns how many actions there are, or -1 if the menu gave up. Called by
-/// Battle_GatherActions. Fills entries.
+/// Returns how many actions there are, or -1 if the menu gave up. Fills
+/// entries.
 s32 Battle_BuildPartyActions(struct BattleAction *entries) {
   // Two lists, freed before the return; the allocator rounds them up to 20
   // and 12 bytes: up to eight choosers and the up to four party members with
@@ -294,10 +294,9 @@ s32 Battle_BuildEnemyActions(struct BattleAction *entries) {
 /// priority is raised by this, past any Agility (999 at most).
 #define DJINN_FIRST_PRIORITY 10000
 
-/// Sorts the turn's actions into action order, fastest first, after moving
-/// the guarding and grounding Djinn to the front. Called by
-/// Battle_GatherActions. Raises those Djinn actions' priority
-/// and reorders entries in place.
+/// Sorts the turn's actions into action order, fastest first, after moving the
+/// guarding and grounding Djinn to the front. Raises those Djinn actions'
+/// priority and reorders entries in place.
 void BattleActionOrder_Sort(struct BattleAction *entries, s32 count) {
   s32 actionIndex;
   s32 sortIndex;

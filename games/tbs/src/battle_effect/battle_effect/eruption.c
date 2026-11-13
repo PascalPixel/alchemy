@@ -41,7 +41,6 @@ enum {
 /// A fountain of motes and puffs of smoke bursts up beside the targets and
 /// falls back, hitting the targets one frame apart from frame 6.
 ///
-/// Called by BattleEffect_RunBlast and BattleEffect_RunSmokeBomb.
 /// A sound and a 6-frame screen shake start on frame 2, and the battle shows
 /// the damage 48 frames before the end. Writes the first 64 BG colours, sets
 /// work->shakeFrames.

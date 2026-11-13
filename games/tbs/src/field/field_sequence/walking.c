@@ -205,9 +205,6 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
   s16 previousHp[8];
   struct MapGridCell *tile;
 #ifdef UBFIX
-  // The defined form reads the struct Unit Unit_GetFar returns, rather
-  // than through the unrelated struct UnitHpPoisonView; one load is scheduled
-  // an instruction earlier (see the tag above).
   struct Unit *unitVitals;
 #else
   struct UnitHpPoisonView *unitVitals;

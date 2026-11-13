@@ -10,10 +10,10 @@
 // VRAM_CACHE_OFFSET_FREE is free; one whose size is 16 or less holds no VRAM.
 
 /// Finds the first run of free blocks that holds `size` bytes and gives it to
-/// entry `id`, writing `id` into gVramCacheBlockOwners for each block. Called
-/// by VramCache_Load. Returns its byte offset in sprite VRAM, or -1 when no run
-/// is long enough. The run is `size` / 64 blocks, rounded down, so a size
-/// that is not a multiple of 64 gets less than it asked for.
+/// entry `id`, writing `id` into gVramCacheBlockOwners for each block. Returns
+/// its byte offset in sprite VRAM, or -1 when no run is long enough. The run
+/// is `size` / 64 blocks, rounded down, so a size that is not a multiple of 64
+/// gets less than it asked for.
 s32 VramCache_AllocateBlocks(u32 id, u32 size) {
   u32 blocks;
   s32 ret;
@@ -76,9 +76,8 @@ s32 VramCache_GetLongestFreeRun(void) {
   return longestRun;
 }
 
-/// Frees every block entry `id` owns in gVramCacheBlockOwners. Called by
-/// VramCache_FreeEntry and VramCache_ReleaseVram. Returns -1 when it freed any
-/// (or `id` is out of range) and 0 when the entry owned none.
+/// Frees every block entry `id` owns in gVramCacheBlockOwners. Returns -1 when
+/// it freed any (or `id` is out of range) and 0 when the entry owned none.
 s32 VramCache_FreeBlocks(s32 id) {
   s32 freed = 0;
   u8 *owner;

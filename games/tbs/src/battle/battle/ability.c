@@ -1317,8 +1317,6 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
 
 /// Returns 1 for an ability that costs PP, and for Psy Drain, which costs
 /// none.
-/// Called by BattleActionRun_Build (a cast's staging) and
-/// BattleAI_ChooseAction (an enemy's PP and seal checks).
 u32 Ability_IsPsynergy(s32 abilityId) {
   u8 pp;
 

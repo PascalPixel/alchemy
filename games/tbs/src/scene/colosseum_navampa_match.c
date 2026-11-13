@@ -623,8 +623,7 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
   x = log->x.fixed;
   z = log->z.fixed;
   // Only a nearby rider rolls the log; other interactions push the actor
-  // ahead. Written with goto: as an if block round the rolling that returns,
-  // or with the far case first as an early return, tbs-en does not match.
+  // ahead.
   if ((ahead[0] - x >= 0 ? ahead[0] - x : x - ahead[0]) > px(8) ||
       (ahead[2] - z >= 0 ? ahead[2] - z : z - ahead[2]) > px(32)) {
     goto far;

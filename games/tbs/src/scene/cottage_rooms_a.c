@@ -159,9 +159,8 @@ static void CottageRoomsA_SpawnSleepZ(void);
 
 /// Moves and grows a Z drifting up from Garet's sleeping grandfather.
 ///
-/// Called each frame by gCottageRoomsA_SleepZScript. The actor's timer and
-/// work are its x and y steps in signed 8.8 pixels, set by
-/// CottageRoomsA_SpawnSleepZ.
+/// The actor's timer and work are its x and y steps in signed 8.8 pixels, set
+/// by CottageRoomsA_SpawnSleepZ.
 static s32 CottageRoomsA_AdvanceSleepZ(struct Actor *actor) {
 
   actor->x.fixed += (s16)actor->timer * 256;

@@ -1240,10 +1240,9 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
 /// fight. Win or lose, the party returns by VALE_PLAZA_AFTER_TRAVELERS_BATTLE.
 /// "You must forget everything you heard."
 ///
-/// Called by ValePlaza_MeetSurvivingTravelers. Starts the fifth slot of the
-/// encounter zone of the scripted battles of Vale, Vault and the World Map,
-/// with both outcomes leading back to VALE_PLAZA_AFTER_TRAVELERS_BATTLE, and
-/// sets FLAG_KEEP_MUSIC_ONCE.
+/// Starts the fifth slot of the encounter zone of the scripted battles of
+/// Vale, Vault and the World Map, with both outcomes leading back to
+/// VALE_PLAZA_AFTER_TRAVELERS_BATTLE, and sets FLAG_KEEP_MUSIC_ONCE.
 static void ValePlaza_FightTravelers(void) {
   struct Actor *actor;
 
@@ -1968,10 +1967,9 @@ static void ValePlaza_UpdateSmallRockPalette(void) {
 /// Arriving by VALE_PLAZA_DEBUG_STORY_FLAGS sets a preset of story flags,
 /// which differs by edition, and leaves by VALE_PLAZA_TO_BILIBIN.
 ///
-/// Called by ValePlaza_Initialize. Sets FLAG_NO_ENCOUNTERS and
-/// FLAG_DEBUG_BATTLE_KEYS. From the third patch it sets the whole story up to
-/// Kalay, and before that patch FLAG_TRET_DEFEATED and
-/// FLAG_KOLIMA_CURSE_LIFTED.
+/// Sets FLAG_NO_ENCOUNTERS and FLAG_DEBUG_BATTLE_KEYS. From the third patch it
+/// sets the whole story up to Kalay, and before that patch FLAG_TRET_DEFEATED
+/// and FLAG_KOLIMA_CURSE_LIFTED.
 static void ValePlaza_SetProgressFlagsAndExit(void) {
   GameFlag_Set(FLAG_NO_ENCOUNTERS);
   GameFlag_Set(FLAG_DEBUG_BATTLE_KEYS);

@@ -270,7 +270,6 @@ s32 Battle_Run(s32 enemyGroup) {
       if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, 0) == 0)
         goto party_lost;
       if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, 0) == 0) {
-        // Unit ids 0 to 7 are party members.
         if (actingUnit <= ALLY_MAX && battle->spoils.defeated == 1)
           battle->defeatState = DEFEAT_BY_PARTY_MEMBER;
         goto won;
@@ -416,8 +415,7 @@ s32 BattleParty_PrepareMembers(u16 *unitIds) {
 
 /// Lists the enemy units present, ended by BATTLE_UNIT_LIST_END, and returns
 /// how many there are (0 when unitIds is null). A link battle looks only at
-/// the opponent's three places. Called by BattleIntro_AnnounceEncounter,
-/// BattleUnit_Collect and BattleAbility_ApplyToTarget.
+/// the opponent's three places.
 s32 BattleEnemy_List(s16 *unitIds) {
   s16 *output = unitIds;
   s32 listed = 0;

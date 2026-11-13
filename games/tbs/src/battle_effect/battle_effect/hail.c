@@ -38,7 +38,6 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  // A Mercury Djinni appears over the user.
   BattleEffect_RunDjinniEntrance(args, ELEMENT_MERCURY, work->args->side,
                                  DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
   BattleEffect_FetchRectangleBlitters(work->args->side, draw);
@@ -198,7 +197,6 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  // A Venus Djinni appears over the user.
   BattleEffect_RunDjinniEntrance(args, ELEMENT_VENUS, work->args->side,
                                  DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);

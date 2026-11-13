@@ -75,9 +75,8 @@ UNUSED void Actor_SetUpdateValue(void *rawActor, s32 value) {
 /// assignment's low 14 bits, even when it raised an event instead; a shortcut
 /// with nothing assigned returns 0, as no key pressed does.
 ///
-/// Called by Field_CheckConfiguredKeys. Sets work->psynergy,
-/// work->item or work->event, which the field sequence (field_sequence.c)
-/// acts on.
+/// Sets work->psynergy, work->item or work->event, which the field sequence
+/// (field_sequence.c) acts on.
 u32 Field_RequestShortcut(u32 encodedAssignment) {
   u32 assignmentKind = encodedAssignment >> 14;
   u32 requestId = FIELD_SHORTCUT_ID_MASK & encodedAssignment;

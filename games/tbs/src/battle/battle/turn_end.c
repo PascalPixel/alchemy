@@ -302,7 +302,6 @@ UNREAD_RESULT Battle_ProcessTurnEnd(void) {
           BattlePlayback_Reset();
           BattlePlayback_SchedulePhase(30);
           BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
-          // The Djinni's own ability, which names it (ABILITY_DJINNI_FIRST).
           BattlePlayback_Push(PLAYBACK_ABILITY_NAME,
                               entry->element * DJINN_PER_ELEMENT +
                                   entry->index + ABILITY_DJINNI_FIRST);

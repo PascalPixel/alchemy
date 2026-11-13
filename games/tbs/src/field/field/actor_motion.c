@@ -46,8 +46,7 @@ void Actor_WaitForMove(void *actor) {
 
 /// Returns 1 when the actor has no movement target: none of its target
 /// coordinates set, or for an actor moved by the ground (any motion flag)
-/// neither its target x nor z. Called by Actor_WaitForMove and SC_SYNC
-/// (ActorScript_WaitForArrival).
+/// neither its target x nor z.
 s32 Actor_IsTargetUnset(struct Actor *actor) {
   s32 first;
   s32 second;
@@ -105,8 +104,6 @@ void Actor_UpdateAllThumb(void) {
   for (actorsLeft = ACTOR_COUNT - 1; actorsLeft >= 0; actorsLeft--, actor++) {
     arrivedAtTarget = 0;
 
-    // The script indexed as words, which compiles as the old word-array
-    // member did.
     script = (const ActorScriptWords *)actor->script;
     if (script == NULL)
       continue;

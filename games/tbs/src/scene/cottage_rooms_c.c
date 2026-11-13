@@ -27,7 +27,6 @@
 /// leaves Bilibin). From then on he sends the party to the waitress
 /// (CottageRoomsC_TalkToBusyChef).
 ///
-/// gCottageRoomsCTriggers keeps both times in one table, in the ROM's order.
 /// Every row that needs FLAG_KOLIMA_CURSE_LIFTED clear comes before the rows
 /// for afterwards, so the first row that matches picks the time.
 ///

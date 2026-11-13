@@ -182,7 +182,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
 
 /// Opens the debug shop with 200000 coins, the ticket counter at its cap,
 /// broken equipment for repairs and poisoned or haunted party members for the
-/// sanctum. Called by DebugMenu_RunPresetShop.
+/// sanctum.
 s32 Shop_OpenDebugShop(s32 unused) {
   gMainRoutineWork.coins = 200000;
   gMainRoutineWork.shopGifts = 28;
@@ -284,9 +284,8 @@ s32 Shop_AskYesNo(s32 choice) {
   return choice;
 }
 
-/// Runs the Yes or No choice at the sanctum's place on the screen and
-/// returns it, keeping the hand cursor's motion. Called by
-/// Sanctum_RunPartyService.
+/// Runs the Yes or No choice at the sanctum's place on the screen and returns
+/// it, keeping the hand cursor's motion.
 s32 Sanctum_AskYesNo(s32 choice) {
   struct WindowSprite **cursorSlot =
       &((struct ShopWork *)gMenuWork)->cursor.anchor;

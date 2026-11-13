@@ -20,9 +20,8 @@ void Item_UseNoOpCallback(void) {}
 /// its plain power (Ability_ApplyToTargets with fixedScale 1). When the action
 /// changed something, an item that is used up (ITEM_USE_CONSUMED) loses one
 /// from its stack and the menu's list is rebuilt, and Hermes' Water
-/// (ITEM_USE_EMPTIES) becomes an Empty Bottle. Returns 0, or
-/// -1 when nothing changed; the result message is left in the work's
-/// messageOffset. Called by ItemMenu_Use.
+/// (ITEM_USE_EMPTIES) becomes an Empty Bottle. Returns 0, or -1 when nothing
+/// changed; the result message is left in the work's messageOffset.
 s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
   struct ItemMenuWork *menu;
   s32 useResult;

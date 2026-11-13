@@ -1699,8 +1699,6 @@ static void LogRoomsA_StartCorneringSuspects(void) {
 
 /// Has the suspects react to the party's return and resets their route states.
 /// "Hey, they're back!"
-///
-/// Called by LogRoomsA_StartActorStops.
 static void LogRoomsA_ResetSuspectRoutes(void) {
   Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_SUSPECTED_LEADER, 1);
@@ -3390,8 +3388,7 @@ static void LogRoomsA_UpdateActorStops(void) {
 
 /// Arranges the chase, constrains its camera, and starts the route task.
 ///
-/// Called by LogRoomsA_StartCorneringSuspects. Starts
-/// LogRoomsA_UpdateActorStops and the chase music, MUS_DJINN_LESSON.
+/// Starts LogRoomsA_UpdateActorStops and the chase music, MUS_DJINN_LESSON.
 static void LogRoomsA_StartActorStops(void) {
   Event_Start();
   FieldCamera_MoveTo(168, CAMERA_KEEP, 656, 1);

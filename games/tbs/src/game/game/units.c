@@ -748,7 +748,6 @@ static inline s32 Unit_ClampGaugeValue(s32 value, s32 maximum) {
     Unit_UpdateGauges(unit);                                                   \
   }
 
-/// Called by BattleObject_DestroyTemporaryObject.
 UNIT_DEFINE_SET(Unit_SetHp, hp, hpMax)
 /// Only GAME.S's bare veneer reaches it; nothing calls it by name.
 UNIT_DEFINE_SET(Unit_SetPp, pp, ppMax)

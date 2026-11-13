@@ -1278,7 +1278,6 @@ void Menu_WatchStart(void) {
 /// call it before their command loops and Menu_StopWatchingStart after them.
 void Menu_StartWatchingStart(void) {
   GameFlag_ClearFar(FLAG_MENU_START_PRESSED);
-  // TASK_PASS_FRAME: once a frame, in the frame pass.
   Task_Add(Menu_WatchStart, TASK_PASS_FRAME);
 }
 

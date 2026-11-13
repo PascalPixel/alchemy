@@ -605,7 +605,6 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   struct Sprite *sprite;
   struct MapGridScrollWork *grid;
   struct Actor *viewCenter;
-  // The field's heap slot and those after it.
   struct FieldWork **field = (struct FieldWork **)&gHeapSlots[HEAP_SLOT_FIELD];
   struct FieldWork *work;
 
@@ -861,8 +860,6 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   alpha = &REG_BLDALPHA;
 
   // The flame brightens over four frames, then fades away over sixteen.
-  // The brightening is written with goto: as do { } while (++i <= 3), tbs-en
-  // does not match.
   i = 0;
 ramp:
   *alpha = BLEND_ALPHA(14, 16) + i;

@@ -6,15 +6,13 @@
 
 /// Returns the class series of a character whose strongest element is
 /// `primaryElement` and second `secondaryElement`, from the 4 by 4 table.
-/// Called by Class_Determine.
 s32 Class_GetSeries(s32 primaryElement, s32 secondaryElement) {
   return gClass_SeriesByElements[(primaryElement * 4) + secondaryElement];
 }
 
 /// Writes ten times each element level to `output`: an enemy's from its
 /// element preset, a character's from the Djinn set on it (`source` is its
-/// Djinn bits) plus its own element bonus. Called by Class_Determine,
-/// Unit_GetElementLevel and Unit_CalculateBaseElements.
+/// Djinn bits) plus its own element bonus.
 s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
   s32 i;
   s32 *cursor;
@@ -84,8 +82,7 @@ s32 Enemy_GetAttackElement(struct Unit *unit) {
 // Writes a unit's base power and resistance in each element: an enemy's come
 // from its preset, a character's from its element levels, as the value of
 // gElement_PowerResistByLevel for the whole level (0 to 15) plus the level's
-// tenths (Unit_GetElementLevels counts in tenths). Called by BattleUnit_Set
-// and Unit_UpdateClass.
+// tenths (Unit_GetElementLevels counts in tenths).
 UNREAD_RESULT
 Unit_CalculateBaseElements(s32 unitId, struct BattleElementStats *destination) {
   struct Unit *state = Unit_Get(unitId);
@@ -127,9 +124,9 @@ Unit_CalculateBaseElements(s32 unitId, struct BattleElementStats *destination) {
 /// Returns the class a character has with `djinn` set: the series is chosen by
 /// its two strongest elements, and the class is the last of the series whose
 /// element requirements it meets. Isaac and Garet as children and Jenna have
-/// fixed classes (200, 201 and 202). Called by Unit_UpdateClass. Returns 0
-/// for a unit past the eight characters, and for a character that reaches
-/// no class of its series; 0 is also the class that marks an enemy.
+/// fixed classes (200, 201 and 202). Returns 0 for a unit past the eight
+/// characters, and for a character that reaches no class of its series; 0 is
+/// also the class that marks an enemy.
 s32 Class_Determine(s32 character, const u8 *djinn) {
   s32 levels[4];
   s32 primary;

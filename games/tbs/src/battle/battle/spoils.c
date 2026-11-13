@@ -49,7 +49,6 @@ void BattleSpoils_Clear(void) {
 
 /// Returns an enemy's coins with the Djinn bonus: its own, plus a six-sided
 /// die for every ten levels and one more, at least 30 percent of its own.
-/// Used by BattleEnemy_RecordDefeat.
 static __inline__ s32 BattleEnemy_CalculateCoinReward(struct Unit *unit,
                                                       u16 *reward) {
   s32 rollIndex;
@@ -68,7 +67,7 @@ static __inline__ s32 BattleEnemy_CalculateCoinReward(struct Unit *unit,
 
 /// Returns an enemy's experience with the Djinn bonus: its own, plus a
 /// four-sided die for every ten levels and one more, at least 30 percent of
-/// its own. Used by BattleEnemy_RecordDefeat.
+/// its own.
 static __inline__ s32 BattleEnemy_CalculateExperienceReward(struct Unit *unit,
                                                             u16 *reward) {
   s32 rollIndex;

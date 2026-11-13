@@ -787,8 +787,6 @@ static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row) {
 /// Restores, on entry, Kite behind its ledge and the crates and logs of the
 /// puzzles already solved.
 ///
-/// Called by ValeCave_Initialize.
-///
 /// Kite's case is in Kite's part of the second room
 /// (VALE_CAVE_KITE_EAST_FROM_WEST to VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST),
 /// while Kite is free and FLAG_VALE_CAVE_KITE_BEHIND_LEDGE is set. It then sets

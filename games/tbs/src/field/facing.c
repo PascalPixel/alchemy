@@ -112,11 +112,7 @@ const s16 gActorScript_EndScriptTail[8] = {
     4096, -8192, 12288, -16384, 24576, -32768, 16384, 0,
 };
 
-/// The heading for each state of the direction pad (bits 4-7 of the keys:
-/// Right, Left, Up, Down), in 1/65536 turns: Right is 0, Down TRIG_TURN / 4,
-/// Left TRIG_TURN / 2 and Up TRIG_TURN * 3 / 4; WORLD_MAP_KEY_HEADING_NONE
-/// means no direction is held, or only an opposite pair. Read by
-/// Actor_UpdatePlayerControl, Actor_MoveOnWorldMap and Actor_MoveByKeys.
+/// The heading for each state of the direction pad (bits 4-7 of the keys: Right, Left, Up, Down), in 1/65536 turns: Right is 0, Down TRIG_TURN / 4, Left TRIG_TURN / 2 and Up TRIG_TURN * 3 / 4; WORLD_MAP_KEY_HEADING_NONE means no direction is held, or only an opposite pair.
 const u16 gWorldMap_KeyHeadings[16] = {
     WORLD_MAP_KEY_HEADING_NONE, 0, TRIG_TURN / 2, WORLD_MAP_KEY_HEADING_NONE,
     TRIG_TURN * 3 / 4, TRIG_TURN * 7 / 8, TRIG_TURN * 5 / 8, TRIG_TURN * 3 / 4,

@@ -179,7 +179,7 @@ void Title_UpdateIntroSprites(void) {
 /// Loads the title intro's two scrolling backgrounds and its sprite tiles,
 /// builds their tilemaps and sets the blending and windows. The pictures are
 /// decoded through Ram_MapGridCellBuffer, the map grid's cell buffer, which is
-/// free while no map is loaded. Called by Title_ShowIntro.
+/// free while no map is loaded.
 void Title_LoadIntroBackgrounds(void) {
   struct IntroWork *work;
   u8 *resourceData;
@@ -519,8 +519,8 @@ UNUSED void Title_NoOpPalette(void) {}
 
 /// Shows the Nintendo logo with its jingle. With `mode` 0 it fades in and
 /// holds two seconds; otherwise it waits a second, fades in, holds three
-/// seconds and fades out, faster once skipped. Called by Title_Run. Returns -1
-/// when A or Start skipped it.
+/// seconds and fades out, faster once skipped. Returns -1 when A or Start
+/// skipped it.
 s32 Title_ShowNintendoLogo(s32 mode) {
   s32 result;
   u8 *resourceData;
@@ -671,8 +671,7 @@ UNUSED void Title_NoOpColor(void) {}
 // colour components shown now, the target components and each one's step.
 
 /// Computes each of the 1536 colour components' change per frame from the
-/// current components to the target (nothing when `frames` is not
-/// positive). Called by TitlePaletteFade_Start.
+/// current components to the target (nothing when `frames` is not positive).
 void TitlePaletteFade_CalculateSteps(s16 *sourceComponents,
                                      s16 *targetComponents, s16 *componentSteps,
                                      s32 frames) {
@@ -1007,8 +1006,7 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
 }
 
 /// Allocates the palette fade, saves both hardware palettes in it as the
-/// starting colours and adds the task TitlePaletteFade_Update. Called by
-/// Title_ShowIntro.
+/// starting colours and adds the task TitlePaletteFade_Update.
 void TitlePaletteFade_Initialize(void) {
   struct TitlePaletteFade *buffer;
 
@@ -1038,8 +1036,7 @@ UNUSED void TitlePaletteFade_SetTarget(s32 mode, s32 selectedPalettes) {
                                  selectedPalettes);
 }
 
-/// Sets the colours shown now by tinting the saved palettes. Called by
-/// Title_ShowIntro.
+/// Sets the colours shown now by tinting the saved palettes.
 void TitlePaletteFade_SetCurrent(s32 mode, s32 selectedPalettes) {
   struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeWork;
 
@@ -1073,8 +1070,7 @@ void TitlePaletteFade_Start(s32 frames) {
   }
 }
 
-/// Clamps a five-bit colour channel to 0..31. Called by
-/// TitlePaletteFade_BuildColors.
+/// Clamps a five-bit colour channel to 0..31.
 s32 TitlePaletteFade_ClampComponent(s32 value) {
   if (value > 31)
     return 31;
@@ -1084,8 +1080,7 @@ s32 TitlePaletteFade_ClampComponent(s32 value) {
 }
 
 /// Caps a colour component at 0x7c00, the largest a five-bit channel shifted
-/// into the high bits reaches. There is no lower bound. Called by
-/// TitlePaletteFade_BuildColors.
+/// into the high bits reaches. There is no lower bound.
 s32 TitlePaletteFade_ClampShiftedComponent(s32 value) {
   if (value > 0x7c00)
     value = 0x7c00;

@@ -312,9 +312,8 @@ void BattleEffect_RunSoothingStar(struct BattleEffectParams *args) {
 /// wobbling, for 128 frames; a new group of 32 joins every 8 frames. Each
 /// target in turn reacts from frame 48, 8 frames apart.
 ///
-/// Called by BattleEffect_RunSleepStar and BattleEffect_RunSoothingStar. Fills
-/// PARTICLES 0 to 255 and loads the mode's colours over the first 64 of the
-/// background palette; the healing mode opens the canvas layer with BG
+/// Fills PARTICLES 0 to 255 and loads the mode's colours over the first 64 of
+/// the background palette; the healing mode opens the canvas layer with BG
 /// control 0 and the drifting mode with 1.
 ///
 /// mode: MOTE_FOUNTAIN_FOUNTAIN_HEALING throws orange motes that stay close to

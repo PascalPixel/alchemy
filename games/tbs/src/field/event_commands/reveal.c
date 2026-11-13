@@ -77,7 +77,6 @@ void FieldPsynergy_WatchLeaderDistance(void) {
 /// leader stepped over 19 frames, and the BG colours turn grey. Reveal lasts
 /// 600 frames of its own time, or until the leader leaves its circle
 /// (FieldPsynergy_WatchLeaderDistance), and FieldPsynergy_EndReveal ends it.
-/// Called by FieldPsynergy_Run and FieldPsynergy_Dispatch.
 void FieldPsynergy_Reveal(void) {
   struct FieldWork *work;
   struct ScreenTransitionState *state;

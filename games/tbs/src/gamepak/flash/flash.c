@@ -14,7 +14,7 @@ typedef u8 (*FlashByteRead)(u8 *address);
 /// Enters flash ID mode, waits for the chip and reads its device and
 /// manufacturer IDs. Returns device << 8 | maker; the makers' codes in
 /// gFlash_Chips' entries are 0xbf (SST), 0x1f (Atmel), 0xc2 (Macronix) and
-/// 0x32 (Panasonic). Called by IdentifyFlash.
+/// 0x32 (Panasonic).
 s32 ReadFlashId(void) {
   struct {
     u8 buffer[64];

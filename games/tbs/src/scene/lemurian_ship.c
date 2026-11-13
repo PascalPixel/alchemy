@@ -860,7 +860,6 @@ void LineScroll_BuildPage(void) {
 #include "shared/scroll_initialize_hblank_dma.h"
 
 /// Takes the ripple's tasks off and stops DMA 0.
-/// Called by Ripple_StopForReveal.
 static void Ripple_Stop(void) {
   volatile u16 *reg;
 

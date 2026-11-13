@@ -301,10 +301,9 @@ s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
 }
 
 /// Frees a departing enemy's name letter for the next of its class, reading
-/// the letter back from the end of its name.
-/// Does nothing for a unit that is not an enemy, a class not listed or one
-/// with no letters given. Clears the letter's bit in
-/// BattleWork.nameLetterMasks. Called by BattleObject_RemoveFromLists.
+/// the letter back from the end of its name. Does nothing for a unit that is
+/// not an enemy, a class not listed or one with no letters given. Clears the
+/// letter's bit in BattleWork.nameLetterMasks.
 UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
   struct BattleWork *battle = gBattleWork;
   struct Unit *unit;
@@ -403,17 +402,16 @@ s32 BattleFormation_GetRandomMember(s32 recordId) {
 }
 
 /// Builds the battle's enemies from formation recordId and returns how many
-/// there are.
-/// Each member comes its minimum number of times, plus a random number more
-/// up to its maximum while the six sprite slots hold them (a large enemy
-/// takes two). The formation's layout orders them: shuffled kinds, each
+/// there are. Each member comes its minimum number of times, plus a random
+/// number more up to its maximum while the six sprite slots hold them (a large
+/// enemy takes two). The formation's layout orders them: shuffled kinds, each
 /// kind together (FORMATION_LAYOUT_SHUFFLED), interleaved at random
 /// (FORMATION_LAYOUT_INTERLEAVED), or in the row's order. Under
 /// FLAG_MONSTER_BATTLE the formation is chosen for the party's level instead,
 /// and each enemy raised to it. An empty or out-of-range formation becomes
-/// formation 1. Called once by Battle_Run. Fills the enemy units
-/// from FIRST_ENEMY_UNIT, with their name letters, and sets BattleWork's
-/// battleType, firstDefeated, defeatState and the name-letter lists.
+/// formation 1. Fills the enemy units from FIRST_ENEMY_UNIT, with their name
+/// letters, and sets BattleWork's battleType, firstDefeated, defeatState and
+/// the name-letter lists.
 s32 BattleFormation_BuildEnemyList(s32 recordId) {
   u16 *enemyKinds;
   struct BattleWork *battle;

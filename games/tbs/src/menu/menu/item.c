@@ -2168,7 +2168,6 @@ void ItemMenu_DrawItemDetails(struct Window *window, s32 inventoryEntry) {
       row++;
     }
   }
-  // Each of its effects.
   for (i = 0; i < EQUIP_EFFECT_SLOTS; i++) {
     if (def->effects[i].kind == EQUIP_EFFECT_NONE)
       continue;

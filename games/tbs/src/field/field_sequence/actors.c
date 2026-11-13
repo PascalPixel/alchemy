@@ -41,9 +41,8 @@ s32 Party_GetCharacterSprite(s32 character) {
 /// Returns the sprite of character as Party_GetCharacterSprite would with
 /// FLAG_CHILDHOOD set to childhood (as recorded in a save file's summary).
 ///
-/// Called by FileList_ShowPartySprites through
-/// Party_RemapCharacterIdIfEnabledFar. Save summaries omit the tunic flag,
-/// so this never gives sprite SPRITE_ISAAC_TUNIC.
+/// Save summaries omit the tunic flag, so this never gives sprite
+/// SPRITE_ISAAC_TUNIC.
 s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood) {
   s32 sprite;
 
@@ -73,9 +72,7 @@ s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood) {
 /// kept by address, so it must last as long as the scene (the overlay's own
 /// tables do).
 ///
-/// Called by Actor_ResetForLeader (the leader, then the scene's table),
-/// Actor_Respawn and Event_AppendActorPlacements. Records
-/// the table in work->tables and each actor in work->actors.
+/// Records the table in work->tables and each actor in work->actors.
 void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
   struct FieldWork *work;
   struct Actor *actor;
@@ -158,7 +155,6 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
           (sprite = actor->sprite) != 0)
         sprite->lastNo = ((u32)(Random16()) % (u32)30);
       actor->facing = entry->facing;
-      // Solid.
       actor->collisionFlags = ACTOR_SOLID;
       Actor_SetMovementType(actor, entry->movement);
       Actor_SelectAnimationFar(actor, ANIM_STAND);
@@ -347,8 +343,7 @@ UNUSED void *Actor_GetSlotAddress(u32 actorIndex) {
 /// Gives each actor placement with condition 0 a condition saying whether
 /// it lies within the map's view bounds, so that only those inside appear.
 ///
-/// Called by scene overlays through Scene_AssignViewFlagsFar. Writes the
-/// actor placements' condition, and clears FLAG_IN_VIEW and sets
+/// Writes the actor placements' condition, and clears FLAG_IN_VIEW and sets
 /// FLAG_OUT_OF_VIEW.
 void Scene_AssignViewFlags(struct ActorPlacement *entry) {
   struct MapGridScrollWork *view = gMapGridWork[0];
@@ -470,8 +465,6 @@ void Actor_Respawn(void) {
 }
 
 /// Empties all the actor slots, without releasing the actors.
-///
-/// Called by Actor_ResetForLeader.
 void Actor_ClearAll(void) {
   struct FieldWork *work;
   struct Actor *emptyActor;

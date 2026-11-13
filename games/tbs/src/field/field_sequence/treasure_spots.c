@@ -195,7 +195,7 @@ static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
 }
 
 /// Closes the chest of treasure spot id again (its item could not be carried),
-/// with SE_CHEST_CLOSE. Called by Field_ExamineCell.
+/// with SE_CHEST_CLOSE.
 void TreasureSpot_CloseChest(s32 id) {
   SetMarkerAnimationAndPlaySound(id, TREASURE_SPOT_CHEST_CLOSING,
                                  SE_CHEST_CLOSE);

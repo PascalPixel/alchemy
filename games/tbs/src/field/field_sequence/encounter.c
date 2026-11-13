@@ -233,8 +233,8 @@ u16 Encounter_GetFormationAtSlot(s32 zone, s32 slot) {
   return gEncounterZones[zone * 14 + slot + 2];
 }
 
-/// Returns the formation of Djinni battle djinni, which the table gives as
-/// a zone and slot. Called by Field_RequestDjinnBattle.
+/// Returns the formation of Djinni battle djinni, which the table gives as a
+/// zone and slot.
 s16 Encounter_GetDjinnFormation(s32 djinni) {
   const struct DjinniBattle *battle = &gEncounter_DjinnBattles[djinni];
 
@@ -368,8 +368,7 @@ void BattleBackground_SelectForMap(void) {
 
 /// Chooses the battle background for a World Map battle environment (enum
 /// BattleEnvironment; any other gives Sol Sanctum's) and sets
-/// gMainRoutineWork.battleBackground. Called by
-/// Encounter_ResolveWorldMapZoneAndBackdrop.
+/// gMainRoutineWork.battleBackground.
 void BattleBackground_SelectForEnvironment(s32 behavior) {
   u16 backdrop;
 

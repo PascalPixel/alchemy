@@ -306,7 +306,6 @@ commands:
     break;
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL, IO_WRITE_16);
-  // BLEND_ALPHA(blend, 16 - blend), whose operand order compiles differently.
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend,
                       IO_WRITE_16);
 }

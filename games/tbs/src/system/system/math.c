@@ -24,7 +24,6 @@ void Vector_AddPolarOffset(s32 radius, s32 angle, void *position) {
   u8 *coordinate = position;
 
   *(s32 *)coordinate += Iwram_MulQ16(radius, Trig_Sin(angle + TRIG_TURN / 4));
-  // Over y to z in two steps, as the ROM's code steps.
   coordinate += sizeof(s32);
   coordinate += sizeof(s32);
   *(s32 *)coordinate += Iwram_MulQ16(radius, Trig_Sin(angle));

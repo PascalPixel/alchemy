@@ -7,8 +7,7 @@
 // Debug text: a 32x20-character screen of window font tiles in BG0, written
 // from gDebugTextCursor onwards; characters are tile numbers in WINDOW_PALETTE.
 
-/// Writes `value` as eight hexadecimal digits to the number buffer. Called by
-/// DebugText_PrintHex.
+/// Writes `value` as eight hexadecimal digits to the number buffer.
 void String_FormatHex(u32 value) {
   s32 i;
 
@@ -85,8 +84,6 @@ void DebugText_PrintBlanks(u32 count) {
 
 #ifdef MODERN
 /// Copies size bytes from source to destination, for the modern build.
-// Camelot's compiler copied the task inline; a modern one calls memcpy, and the
-// game links no C library.
 void *memcpy(void *destination, const void *source, unsigned long size) {
   u8 *to = destination;
   const u8 *from = source;
@@ -171,7 +168,6 @@ void Window_LoadGraphics(void) {
   Io_Write16(RGB(0, 13, 18), &BG_PLTT_COLOR(WINDOW_PALETTE, 8));
   Io_Write16(RGB(0, 14, 20), &BG_PLTT_COLOR(WINDOW_PALETTE, 9));
   Io_Write16(RGB(0, 15, 22), &BG_PLTT_COLOR(WINDOW_PALETTE, 10));
-  // 224 halfwords: 224 colours, sprite palettes 0 to 13
   Dma_Set(gBasicSpritePalettes, (void *)OBJ_PLTT, DMA_COPY_HALFWORDS(224),
           REG_DMA3);
 }

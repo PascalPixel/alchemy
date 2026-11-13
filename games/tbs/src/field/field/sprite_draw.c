@@ -217,9 +217,6 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
         continue;
       }
       key = (key << 8) | i;
-      // The scan leaves by goto, which keeps it unrotated with its step at the
-      // top: as a for loop that shifts while drawOrder[k] > key, 156 of 544
-      // instructions differ in tbs-en, and with one break test 91.
       k = drawCount;
       if (k >= 0 && drawOrder[k] > key) {
         drawOrder[k + 1] = drawOrder[k];

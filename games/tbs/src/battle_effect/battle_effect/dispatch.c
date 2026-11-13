@@ -97,13 +97,6 @@ void BattleEffect_RunSummon(struct BattleEffectParams *args) {
 /// canvas, runs the entry of gBattleEffect_Handlers for its kind,
 /// and frees them again.
 ///
-/// Called through BattleEffect_RunFromTableFar by
-/// BattleStaging_RunAttack, BattleStaging_RunItem,
-/// BattleStaging_RunPsynergyCast and BattleStaging_HideField
-/// (battle/staging.c, the last when the turn sets neither EFFECT_SUMMON nor
-/// EFFECT_BY_ID_RANGE), and by AutoBattle_RunAttackOrItem
-/// (battle/auto_battle.c).
-///
 /// Sets work->args before the handler runs, which every handler and
 /// task reads the effect through. BATTLE_EFFECT_NONE is no effect and
 /// only clears args->variant.

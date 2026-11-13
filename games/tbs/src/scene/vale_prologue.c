@@ -1151,8 +1151,7 @@ static void ValePrologue_ApplyFourthRockCollision(void) {
 /// for the first conversation of the night. A stout man runs out of the door,
 /// knocks Isaac back and runs off to the plaza. "Huh? Isaac?"
 ///
-/// Called by ValePrologue_LeaveToCottageRoomsA. Sets
-/// FLAG_VALE_STORM_BUMPED_INTO_VILLAGER.
+/// Sets FLAG_VALE_STORM_BUMPED_INTO_VILLAGER.
 static void ValePrologue_BumpIntoShovingMan(void) {
   s32 message;
 
@@ -1259,7 +1258,6 @@ static void ValePrologue_TalkToGaret(void) {
 /// chest and joins the party. A yes has him agree to forget his things. A no
 /// has him decide a rock would cost him chest and life alike.
 ///
-/// Called by ValePrologue_GaretCallsAfterIsaac and ValePrologue_TalkToGaret.
 /// Sets FLAG_VALE_STORM_GARET_JOINED.
 static void ValePrologue_GaretLeavesHisChest(void) {
   s32 agreedToLeaveBelongings;
@@ -1908,8 +1906,6 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
 /// Dora and Jenna run through the house by the river. Dora goes north for
 /// help and sends Jenna to the plaza, then asks Isaac and Garet to help. A
 /// yes sends them after Jenna, a no to the plaza all the same.
-///
-/// Called by ValePrologue_WatchAttemptToSaveFelix.
 static void ValePrologue_DoraGoesForHelp(void) {
   struct Actor *villager;
   s32 random;

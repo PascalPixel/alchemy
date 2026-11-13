@@ -113,15 +113,14 @@ void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
 /// fall's flames (0 to 31) and landings (32 to 47), then the burst's screen
 /// motes (0 to 63), in whole pixels.
 ///
-/// Called by BattleEffect_RunMeteor and BattleEffect_RunOuterSpace.
 /// The fall shows Ram_MapGridCellBuffer on BG1 through
 /// BattleEffect_FlushPendingGraphicsTransfer, scrolls BG2 with
 /// BattleEffect_AdvanceBg2OnInterval and colours the backdrop with
 /// BattleEffect_ArmPaletteHBlankDma, and removes all three after; it sets the
 /// background view's active flag while it runs. The projection centre moves
 /// down to line 240 from the dissolve on, until the burst's
-/// BattleEffect_SetupBlendedDisplay puts it back at line 120; the burst's shake
-/// then keeps it within 4 pixels of (120, 120) until
+/// BattleEffect_SetupBlendedDisplay puts it back at line 120; the burst's
+/// shake then keeps it within 4 pixels of (120, 120) until
 /// BattleEffect_EndCanvasLayer puts it back there at the end. The burst sets
 /// BG2 back to the half-scale canvas and ends the canvas layer. Releases the
 /// falling sprites it spawned (Outer Space's on frame 48 of the burst).

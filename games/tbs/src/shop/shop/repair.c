@@ -25,8 +25,7 @@ s32 Shop_RunRepairMemberChoice(void) {
 
 /// Lets the player choose items to repair from the party member's grid, one at
 /// a time, with each one's repair price, until B or the inventory is empty.
-/// Returns -1 when cancelled, 0 when the inventory ran out. Called by
-/// Shop_ChooseMember.
+/// Returns -1 when cancelled, 0 when the inventory ran out.
 s32 Shop_SelectRepair(s32 unitId) {
   struct ShopWork *shop;
   s32 inventoryCount;
@@ -130,11 +129,10 @@ s32 Shop_SelectRepair(s32 unitId) {
   return result;
 }
 
-/// Repairs the item in `slot`: refuses one that cannot break, is not broken
-/// or is equipped and cursed on, or that the coins do not cover; asks, then
-/// takes the item away for the smith's three hammer blows, gives it back
-/// mended, charges the price and offers to equip it. Called by
-/// Shop_SelectRepair.
+/// Repairs the item in `slot`: refuses one that cannot break, is not broken or
+/// is equipped and cursed on, or that the coins do not cover; asks, then takes
+/// the item away for the smith's three hammer blows, gives it back mended,
+/// charges the price and offers to equip it.
 void Shop_RepairItem(s32 unitId, s32 slot) {
   struct ShopWork *shop = gMenuWork;
   struct Unit *unit = Unit_GetFar(unitId);

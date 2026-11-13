@@ -195,8 +195,6 @@ s32 Icon_BuildMiscIconTiles(s32 icon, s32 unused, s32 cacheSlot) {
 /// the VRAM cache entry slot. Every value loads the same bytes: all four cases
 /// name the table itself.
 s32 Resource_LoadTableEntry(u32 value, s32 unused, u32 slot) {
-  // Three more names of the one table: the ROM keeps a literal for each case,
-  // and with one name the switch folds into a single load.
   extern const u8 *gMenuTitlePicturesCase1[] __asm__("gMenuTitlePictures"),
       *gMenuTitlePicturesCase2[] __asm__("gMenuTitlePictures"),
       *gMenuTitlePicturesCase3[] __asm__("gMenuTitlePictures");

@@ -6,8 +6,7 @@
 
 /// Returns how far, in pixels, a field Psynergy of the given kind reaches:
 /// gFieldEffect_TargetRangeByMode (field_sequence_tables.c) pairs kinds with
-/// ranges, ended by -1, and a kind not listed reaches 16 pixels. Called by
-/// Field_FindNearbyPsynergyTarget.
+/// ranges, ended by -1, and a kind not listed reaches 16 pixels.
 s32 Field_GetPsynergyTargetRange(s32 kind) {
   const s16 *rangeEntry = gFieldEffect_TargetRangeByMode;
   s32 range = 16;

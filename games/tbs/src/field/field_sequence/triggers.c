@@ -83,10 +83,9 @@ s32 GameFlag_IsConditionActive(s32 condition) {
 /// condition: one with more flags than its kind, unless its result is a mimic
 /// battle (FIND_MIMIC).
 ///
-/// Called by Scene_FindTrigger. Field_ExamineCell tests such an event's
-/// condition itself (a chest's flag is set once it is opened), so the event is
-/// found either way and the leader still checks the spot; a mimic is found only
-/// while its condition holds.
+/// Field_ExamineCell tests such an event's condition itself (a chest's flag is
+/// set once it is opened), so the event is found either way and the leader
+/// still checks the spot; a mimic is found only while its condition holds.
 u32 Scene_ExamineTriggerIgnoresCondition(s32 flags, s32 result) {
   u32 mimicDifference;
   s32 searchFlags;
@@ -494,7 +493,6 @@ s32 Field_ExamineCell(s32 tile) {
             FieldMessage_ShowFar(MsgTileResult + messageOffset,
                                  FIELD_MESSAGE_ZOOM);
         } else {
-          // A message.
           if (GameFlag_IsConditionActive(condition) != 0)
             FieldMessage_ShowFar((u16)trigger->value, FIELD_MESSAGE_ZOOM);
           else

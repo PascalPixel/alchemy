@@ -157,7 +157,7 @@ s32 BattleObject_IsValidId(u32 unitId) {
 
 /// Auto battle: the party tries to run, and gets away 15 times in 16, each
 /// living party member running off in turn. Returns 1 when they got away; else
-/// shows MsgCannotEscape and returns 0. Called by AutoBattle_RunAction.
+/// shows MsgCannotEscape and returns 0.
 s32 BattleFlee_PlayRun(struct BattleAction *action) {
   s16 partyMembers[UNIT_MAX];
   s32 partySize;
@@ -187,7 +187,6 @@ s32 BattleFlee_PlayRun(struct BattleAction *action) {
 
 /// Auto battle: shows that a standing unit is defending. The message is
 /// `<unit> is defending`. Returns -1 for an invalid unit id, 0 otherwise.
-/// Called by AutoBattle_RunAction.
 s32 AutoBattle_ShowDefend(const struct BattleAction *action) {
   s32 unitId;
   s32 result = 0;
@@ -528,9 +527,8 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
   Actor_SelectAnimationFar(battleObject->actor, POSE_STANDING);
 }
 
-/// For a unit whose HP has run out: plays its falling effect to the last
-/// frame and marks its battle object for release (BattleObject_MarkForRelease).
-/// Called by AutoBattle_ApplyDamage.
+/// For a unit whose HP has run out: plays its falling effect to the last frame
+/// and marks its battle object for release (BattleObject_MarkForRelease).
 void BattleMotion_PlayFall(s32 unitId) {
   struct SpriteAnimation *actorData;
   struct Sprite *animation;
@@ -552,9 +550,8 @@ void BattleMotion_PlayFall(s32 unitId) {
 /// side is down, before the next action.
 #define TARGET_SIDE_DEFEATED 256
 
-/// Returns the action's target, or a random living unit of its side when
-/// the target is down; TARGET_SIDE_DEFEATED when none is left. Called by
-/// AutoBattle_RunAction.
+/// Returns the action's target, or a random living unit of its side when the
+/// target is down; TARGET_SIDE_DEFEATED when none is left.
 s32 BattleAbility_ReplaceDefeated(const struct BattleAction *action) {
   u16 livingUnits[UNIT_MAX];
   s32 targetId;

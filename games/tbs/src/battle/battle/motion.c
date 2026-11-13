@@ -45,9 +45,8 @@ void BattleMotion_ReturnToSpot(s32 unitId) {
   }
 }
 
-/// Sends unitId running off its side of the battlefield, three times
-/// as far out as its spot, with a hop, in POSE_STANDING. Called by
-/// BattleFlee_PlayRun and BattleStaging_RunFlee.
+/// Sends unitId running off its side of the battlefield, three times as far
+/// out as its spot, with a hop, in POSE_STANDING.
 void BattleMotion_SetupEscapeObject(s32 unitId) {
   struct BattleObject *battleObject;
   struct Actor *actor;
@@ -110,9 +109,8 @@ void BattleMotion_ReturnObjectToSpot(struct BattleObject *battleObject) {
                          battleObject->anchorZ);
 }
 
-/// Sends unitId hopping out to one and a half times its spot's
-/// distance from the centre. Called by BattleStaging_RunAttack and
-/// BattleStaging_RunPlainAttack.
+/// Sends unitId hopping out to one and a half times its spot's distance from
+/// the centre.
 void BattleMotion_HopBack(s32 unitId) {
   struct BattleObject *battleObject;
   struct Actor *actor;

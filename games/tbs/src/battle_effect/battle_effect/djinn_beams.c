@@ -32,11 +32,10 @@ void BattleEffect_RunDew(struct BattleEffectParams *args) {
 /// and from 72 frames after its turn starts a column of light falls on it
 /// and narrows away; the battle shows the result on frame 80.
 ///
-/// Called by BattleEffect_RunRevive and BattleEffect_RunDew. Runs
-/// BattleEffect_RunDjinniEntrance first when args->prelude is 1. Loads three
-/// palettes over the first 64 background colours in turn, so the Djinni's
-/// is the one shown; fills PARTICLES 0 to 511, sets BG2PA and BG2X, and
-/// builds and frees its blitters every frame.
+/// Runs BattleEffect_RunDjinniEntrance first when args->prelude is 1. Loads
+/// three palettes over the first 64 background colours in turn, so the
+/// Djinni's is the one shown; fills PARTICLES 0 to 511, sets BG2PA and BG2X,
+/// and builds and frees its blitters every frame.
 ///
 /// element: the Djinni's, Venus or Mercury.
 void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {

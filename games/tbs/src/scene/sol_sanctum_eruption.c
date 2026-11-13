@@ -839,10 +839,9 @@ static inline void SolSanctumEruption_FinishMaterialization(void) {
 /// warns them of Alchemy's threat and sends them out as the volcano erupts.
 /// Isaac keeps the Star.
 ///
-/// Called by SolSanctumEruption_PlayHostageEvent. Sets FLAG_SOL_SANCTUM_ERUPTED
-/// and FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED and takes
-/// SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS, to the rooms of Sol and
-/// Luna (SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION).
+/// Sets FLAG_SOL_SANCTUM_ERUPTED and FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED and
+/// takes SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS, to the rooms of
+/// Sol and Luna (SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION).
 static void SolSanctumEruption_PlayWiseOneRescue(void) {
   struct WeatherWork *sparkles;
   struct Actor *wiseOne;

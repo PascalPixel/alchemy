@@ -154,9 +154,6 @@ s32 BattleCommandRow_Run(s32 mode) {
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
             for (col = 0; col <= 2; col++) {
-              // VRAM is hardware (its volatile is source, not a device): the
-              // store keeps its address adds; through a plain u16 pointer, 19
-              // of 1037 instructions differ in tbs-en.
               volatile u16 *vram =
                   (volatile u16 *)BG_SCREEN_BLOCK(31) + 21 * 32 + WINDOW_X;
 
@@ -182,8 +179,6 @@ s32 BattleCommandRow_Run(s32 mode) {
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
             for (col = 0; col <= 2; col++) {
-              // VRAM, as in the party member's row; through a plain u16
-              // pointer, 20 of 1037 instructions differ in tbs-en.
               volatile u16 *vram =
                   (volatile u16 *)BG_SCREEN_BLOCK(31) + 21 * 32 + 20;
 

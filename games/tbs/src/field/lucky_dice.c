@@ -234,11 +234,10 @@ s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
 /// throw. Each throw costs ten coins per level of the party's average. Two
 /// dice are thrown onto a board of six rows; each die's face and the row it
 /// stops in give four numbers. Four of a kind pays 5 times the bet (15 or 25
-/// times when it matches one of the two lucky numbers shown at the top),
-/// three of a kind 3 times, two pairs twice and one pair the bet back.
-/// Called by LuckyDice_Start. Takes the bet from and pays the
-/// winnings into gMainRoutineWork.coins, resets the task table, and
-/// frees the five heap slots it allocates before it returns.
+/// times when it matches one of the two lucky numbers shown at the top), three
+/// of a kind 3 times, two pairs twice and one pair the bet back. Takes the bet
+/// from and pays the winnings into gMainRoutineWork.coins, resets the task
+/// table, and frees the five heap slots it allocates before it returns.
 void LuckyDice_Run(void) {
   u16 bgPalette[256];
   s32 spriteDepth[DICE_RESULT_COUNT]; // the two dice, then their shadows

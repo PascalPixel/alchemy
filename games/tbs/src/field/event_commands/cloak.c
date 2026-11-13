@@ -130,8 +130,7 @@ void FieldPsynergy_ResumeCloakCheck(void) {
 ///
 /// Hidden, the leader is drawn as an outline only (SPRITE_FLAG_OUTLINED, no
 /// shadow), and while gMainRoutineWork.cloaked is set no random battles come
-/// (Encounter_CountStepsAndSelectFormation). Called by FieldPsynergy_Run and
-/// FieldPsynergy_Dispatch.
+/// (Encounter_CountStepsAndSelectFormation).
 void FieldPsynergy_StartCloak(void) {
   struct FieldWork *work = gFieldWork;
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);

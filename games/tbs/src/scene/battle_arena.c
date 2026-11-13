@@ -269,9 +269,6 @@ s32 Scene_GetExitRegions(void) { return 0; }
 static s32 BattleArena_InitializeSerial(void) {
   u32 savedIrqState;
 
-  // Returns no value: the ROM has the s32 epilogue (pop {r1}; bx r1) and no
-  // result.
-
   IRQ_LOCK(savedIrqState);
   Serial_RemoveIrqHandlers();
   Serial_Initialize();

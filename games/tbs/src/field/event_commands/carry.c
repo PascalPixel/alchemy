@@ -156,9 +156,6 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     pos.z = target->z.fixed;
     Vector_AddPolarOffset(px(16), angle, &pos);
     i = ActorScript_CheckOverlapFar(target, (s32 *)&pos);
-    // Both tests jump into the blocked path, which keeps it ahead of the drop
-    // path as the ROM lays them out; written as one || test, 407 of 531
-    // instructions differ in tbs-en.
     if (i != 0)
       goto blocked;
     if (FieldEffect_CheckRaisedTargetCollision(target, &pos) > 0) {

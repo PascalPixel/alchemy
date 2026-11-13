@@ -110,8 +110,8 @@ void Projection_Unit(s32 id, struct ScreenPoint *position) {
 /// reset to the battle camera first, so the result does not depend on the
 /// transform an effect has left behind.
 ///
-/// Called only by Projection_Sprite. Leaves the render transform
-/// looking from gBattleCamera's eye to its position, and always returns 0.
+/// Leaves the render transform looking from gBattleCamera's eye to its
+/// position, and always returns 0.
 ///
 /// screen: receives x and y.
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {

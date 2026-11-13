@@ -39,9 +39,7 @@ struct WorldMapCell {
 /// update set also draws it into the layer's BG map. Returns 0 when that
 /// quarter already shows the tile (and update is 0), else 1.
 ///
-/// Called by WorldMap_UpdateCurrentTileBlock and WorldMap_SetWindowCellTile
-/// (update 1) and by WorldMap_PreloadCurrentTileBlock (update 0). Sets the
-/// quarter's entry in perspective->quarterTiles, and borrows
+/// Sets the quarter's entry in perspective->quarterTiles, and borrows
 /// HEAP_SLOT_TILE_SCRATCH for the decoded tile.
 s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   struct WorldMapView *perspective = gMapGridWork[0];
@@ -171,9 +169,6 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
                        BGCNT_SCREEN_BASE(10) | BGCNT_WRAP | BGCNT_SIZE(2),
                    &REG_BG2CNT);
   Io_Write16Inline(BGCNT_PRIORITY(1) | BGCNT_SCREEN_BASE(5), &REG_BG1CNT);
-  // The identity and the REG_BG3Y clear go through Io_Write16, which keeps
-  // the Q_8_8(1) for REG_BG2PD built just before its store; as plain stores, 3
-  // of 331 instructions differ in tbs-en.
   Io_Write16(Q_8_8(1), &REG_BG2PA);
   REG_BG2PB = 0;
   REG_BG2PC = 0;

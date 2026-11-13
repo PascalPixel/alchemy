@@ -72,7 +72,6 @@ void FieldPsynergy_DouseOnTarget(s32 unused) { FieldPsynergy_Douse(); }
 ///
 /// The destination is the target's position (FieldPsynergy_SetupActorPair);
 /// with no target it is 16 pixels in front of the caster, on the ground.
-/// Called by FieldPsynergy_Run, and through FieldPsynergy_DouseOnTarget.
 void FieldPsynergy_Douse(void) {
   struct Vector3 pos;
   struct Vector3 start;

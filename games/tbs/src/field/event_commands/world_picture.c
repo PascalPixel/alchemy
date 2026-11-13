@@ -357,7 +357,6 @@ void WorldPicture_UpdateMarkers(void) {
     Oam_AddSpriteAtDepth(marker, nearestY);
   }
 
-  // The cursor.
   marker = &work->markers[WORLD_MAP_CURSOR_PART];
   marker->affineIndex = 0;
   marker->x = cursorX - 17;

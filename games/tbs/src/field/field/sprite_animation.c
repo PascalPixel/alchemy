@@ -108,7 +108,7 @@ s32 SpritePictureCache_FindByTag(s32 tag) {
 /// Resets each sprite animation of a sprite from its animation's metadata: its
 /// facing kind, pictures, scripts and codec, with no picture shown and no
 /// script running. The first sprite animation also sets the sprite's size,
-/// scale and offsets. Returns 0. Called by Actor_SetFirstSpriteAnimation.
+/// scale and offsets. Returns 0.
 s32 Sprite_ResetAnimations(struct Sprite *sprite) {
   s32 i;
 
@@ -399,13 +399,12 @@ void Sprite_SetAnimationSpeed(struct Sprite *sprite, s32 step) {
 }
 
 /// Allocates and zeroes the 64 sprites and 64 sprite animations
-/// (HEAP_SLOT_SPRITES and HEAP_SLOT_SPRITE_ANIMATIONS, from EWRAM
-/// first in ACTOR_SYSTEM_WORLD_MAP and IWRAM first otherwise), loads the basic
-/// sprite palettes, loads the shadow tiles into VRAM_CACHE_ENTRY_ACTOR_SHADOW
-/// and puts the sprite tile uploader in RAM. Called by ActorSystem_Initialize.
-/// Battle_Run (ACTOR_SYSTEM_BATTLE) takes both slots from EWRAM, at
-/// the same sizes, before it starts the actor system, so in battle this gets
-/// those blocks back.
+/// (HEAP_SLOT_SPRITES and HEAP_SLOT_SPRITE_ANIMATIONS, from EWRAM first in
+/// ACTOR_SYSTEM_WORLD_MAP and IWRAM first otherwise), loads the basic sprite
+/// palettes, loads the shadow tiles into VRAM_CACHE_ENTRY_ACTOR_SHADOW and
+/// puts the sprite tile uploader in RAM. Battle_Run (ACTOR_SYSTEM_BATTLE)
+/// takes both slots from EWRAM, at the same sizes, before it starts the actor
+/// system, so in battle this gets those blocks back.
 void ActorSystem_Configure(s32 mode) {
   void *sprites;
   void *layers;
@@ -440,8 +439,8 @@ void ActorSystem_Configure(s32 mode) {
 }
 
 /// Takes a free sprite animation and starts it on animation id's first
-/// animation. Returns the sprite animation, or NULL when none is free or the id
-/// has no image. Called by Sprite_AddAnimation.
+/// animation. Returns the sprite animation, or NULL when none is free or the
+/// id has no image.
 struct SpriteAnimation *SpriteAnimation_Alloc(s32 id) {
   struct AnimationMetadata *metadata;
   struct SpriteAnimation *candidate;

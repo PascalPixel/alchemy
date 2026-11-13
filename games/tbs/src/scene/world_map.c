@@ -1379,9 +1379,7 @@ static void WorldMap_UpdateFallingRock(void) {
 /// the mast for the first monster attack
 /// (TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK, tolbi_ship_mast.c).
 ///
-/// Called by WorldMap_Initialize at
-/// WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_FIRST_ATTACK. It sets
-/// FLAG_TOLBI_SHIP_ROWING.
+/// It sets FLAG_TOLBI_SHIP_ROWING.
 static void WorldMap_SailToFirstMonsterAttack(void) {
   struct Actor *actor;
 
@@ -1438,9 +1436,6 @@ static inline void WorldMap_SailCrossingLeg(s32 exit) {
 /// A leg of the Tolbi-bound Ship's crossing. WORLD_MAP_TO_TOLBI_SHIP_MAST_
 /// SECOND_ATTACK leads up to the lookout on the mast for the second monster
 /// attack (TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK).
-///
-/// Called by WorldMap_Initialize at
-/// WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_SECOND_ATTACK.
 static void WorldMap_SailToSecondMonsterAttack(void) {
   WorldMap_SailCrossingLeg(WORLD_MAP_TO_TOLBI_SHIP_MAST_SECOND_ATTACK);
 }
@@ -1448,9 +1443,6 @@ static void WorldMap_SailToSecondMonsterAttack(void) {
 /// A leg of the Tolbi-bound Ship's crossing. WORLD_MAP_TO_TOLBI_SHIP_MAST_
 /// THIRD_ATTACK leads up to the lookout on the mast for the third monster
 /// attack (TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK).
-///
-/// Called by WorldMap_Initialize at
-/// WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_THIRD_ATTACK.
 static void WorldMap_SailToThirdMonsterAttack(void) {
   WorldMap_SailCrossingLeg(WORLD_MAP_TO_TOLBI_SHIP_MAST_THIRD_ATTACK);
 }
@@ -1458,9 +1450,6 @@ static void WorldMap_SailToThirdMonsterAttack(void) {
 /// A leg of the Tolbi-bound Ship's crossing. WORLD_MAP_TO_SHIP_ROOMS
 /// leads back down to the rowing deck as the Kraken comes aboard
 /// (SHIP_ROOMS_FROM_WORLD_MAP).
-///
-/// Called by WorldMap_Initialize at
-/// WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_KRAKEN.
 static void WorldMap_SailToKraken(void) {
   WorldMap_SailCrossingLeg(WORLD_MAP_TO_SHIP_ROOMS);
 }
@@ -1473,7 +1462,6 @@ static void WorldMap_SailToKraken(void) {
 /// WORLD_MAP_TO_TOLBI_SHIP_MAST_LAND_HO then leads up to the lookout on the
 /// mast as he sights land (TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO).
 ///
-/// Called by WorldMap_Initialize at WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_LAND.
 /// It sets FLAG_TOLBI_SHIP_ROWING.
 static void WorldMap_SailUntilLandSighted(void) {
   struct Actor *actor;
@@ -1511,7 +1499,6 @@ static void WorldMap_SailUntilLandSighted(void) {
 /// WORLD_MAP_TO_TOLBI_SHIP_DECK leads back aboard as it docks
 /// (TOLBI_SHIP_DECK_FROM_WORLD_MAP).
 ///
-/// Called by WorldMap_Initialize at WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI.
 /// It sets FLAG_TOLBI_SHIP_REACHED_TOLBI and clears FLAG_TOLBI_SHIP_ROWING.
 static void WorldMap_SailIntoTolbi(void) {
   struct Actor *actor;
@@ -1539,8 +1526,8 @@ static void WorldMap_SailIntoTolbi(void) {
 
 /// Demonstrates setting a Djinni and placing it on standby.
 ///
-/// Called by WorldMap_MeetFlint. It sets and clears FLAG_DJINN_LESSON_PART_A
-/// and _PART_B to choose the menu's two lessons.
+/// It sets and clears FLAG_DJINN_LESSON_PART_A and _PART_B to choose the
+/// menu's two lessons.
 static void WorldMap_ShowDjinnTutorial(void) {
   WorldMap_Unfreeze();
   WorldMap_StartZoom(Q16_ONE, 6);
@@ -1803,8 +1790,6 @@ s32 gWorldMapIodem;
 
 /// Brings Bunza's wagon to a stop and lets Isaac step down, after Hammet's
 /// return home (kalay.c's Kalay_HammetReturnsToPalace).
-///
-/// Called by WorldMap_Initialize at WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH.
 static void WorldMap_StepDownFromBunzasWagon(void) {
   struct Actor *actor;
 
@@ -2227,8 +2212,6 @@ u16 gWorldMapBlend;
 /// They talk of the lit Venus beacon and of Felix and Isaac until Alex comes
 /// and leads them to Felix and Sheba. Then the Title returns
 /// (TITLE_FROM_WORLD_MAP).
-///
-/// Called by WorldMap_Initialize at WORLD_MAP_JENNA_AND_KRADEN_ADRIFT.
 static void WorldMap_ShowEndingEvent(void) {
   WindowColor_Apply(gMainRoutineWork.windowHue,
                     gMainRoutineWork.windowBrightness);
@@ -2372,8 +2355,7 @@ static void WorldMap_ShowEndingEvent(void) {
 /// as the colours fade. WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE then leads back
 /// up to the aerie, its music kept.
 ///
-/// Called by WorldMap_Initialize at WORLD_MAP_BEFORE_SHEBAS_FALL. It sets
-/// FLAG_KEEP_MUSIC_ONCE.
+/// It sets FLAG_KEEP_MUSIC_ONCE.
 static void WorldMap_ShakeVenusLighthouse(void) {
   Event_Start();
   Sound_Play(SE_RUMBLE);
@@ -2448,8 +2430,6 @@ static void WorldMap_UpdateLighthouseQuake(void) {
 /// The party comes out of the ship's rooms (SHIP_ROOMS_TO_WORLD_MAP). The
 /// ship sails to where ACTOR_TOLBI_SHIP stands, and the party goes back into
 /// it (WORLD_MAP_TO_SHIP_ROOMS_ROWING_DECK_ISLAND).
-///
-/// Called by WorldMap_Initialize at WORLD_MAP_FROM_SHIP_ROOMS.
 static void WorldMap_SailTolbiShipToIsland(void) {
   struct Actor *actor;
 
@@ -2631,9 +2611,8 @@ static void WorldMap_UpdateStormTimer(void) {
 
 /// Draws the leader into the storm, lifts him and starts its timer.
 ///
-/// Called by WorldMap_WalkIntoStorm. It sets FLAG_WORLD_MAP_CAUGHT_IN_STORM
-/// and gives the party 180 frames in the air
-/// (FLAG_WORLD_MAP_STORM_FRAMES_LEFT).
+/// It sets FLAG_WORLD_MAP_CAUGHT_IN_STORM and gives the party 180 frames in
+/// the air (FLAG_WORLD_MAP_STORM_FRAMES_LEFT).
 static void WorldMap_CatchInStorm(s32 targetActorId) {
   s32 alreadyTraveling;
   struct Actor *actor;
@@ -2803,9 +2782,7 @@ static inline void WorldMap_ShowTransitionPicture(u8 *buffer, s32 offset,
 /// The ball is seven frames, tile maps drawn on BG0 in the lighthouse's
 /// colours (gWorldMapPalettes, by enum WorldMapLighthouse).
 ///
-/// Called by WorldMap_Initialize at WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT and
-/// WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT. It clears FLAG_KEEP_PARTY_POSITION
-/// and sets FLAG_SKIP_SCENE_CHANGE_SOUND.
+/// It clears FLAG_KEEP_PARTY_POSITION and sets FLAG_SKIP_SCENE_CHANGE_SOUND.
 static void
 WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
   u8 *buffer = Heap_AllocEwram(16384);

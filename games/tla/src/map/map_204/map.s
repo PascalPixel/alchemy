@@ -33,3 +33,20 @@ Field_Map204:
 	.balign 4, 0
 .LField_Map204_SCENE:
 	.incbin "games/tla/src/map/map_204/scene.parts.lz"
+	.global Tileset_Set89Palette
+Tileset_Set89Palette:
+	.incbin "games/tla/src/graphics/tileset/set_89/palette.gbapal.lz"
+	.global Tileset_Set89TilesA
+Tileset_Set89TilesA:
+	.incbin "games/tla/src/graphics/tileset/set_89/tiles_a.4bpp.mtf"
+	.global Tileset_Set89TilesB
+Tileset_Set89TilesB:
+	.incbin "games/tla/src/graphics/tileset/set_89/tiles_b.4bpp.mtf"
+	.byte 0x04, 0x7a	@ PACKER: left in the buffer by Tileset_Set89TilesA+0x199a
+	.global Tileset_Set89TilesC
+Tileset_Set89TilesC:
+	.incbin "games/tla/src/graphics/tileset/set_89/tiles_c.4bpp.mtf"
+	.global Tileset_Set89TilesD
+Tileset_Set89TilesD:
+	.incbin "games/tla/src/graphics/tileset/set_89/tiles_d.4bpp.mtf"
+	.byte 0x0d	@ PACKER: left in the buffer by Tileset_Set89TilesC+0xb83

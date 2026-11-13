@@ -62,3 +62,7 @@ Field_Map128:
 .LField_Map128_SCENE:
 	.incbin "games/tla/src/map/map_128/scene.parts.lz"
 	.endif
+	.global Tileset_Palette23
+Tileset_Palette23:
+	.incbin "games/tla/src/graphics/tileset/palettes/pal_23.gbapal.lz"
+	.byte 0xe0, 0xe4	@ PACKER: left in the buffer by Field_Map128+0x18e

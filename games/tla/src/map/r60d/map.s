@@ -34,3 +34,21 @@ Resource_Data60D:
 .LResource_Data60D_SCENE:
 	.incbin "games/tla/src/map/map_000/scene.parts.lz"
 	.balign 4, 0
+	.global Tileset_Set120Palette
+Tileset_Set120Palette:
+	.incbin "games/tla/src/graphics/tileset/set_120/palette.gbapal.lz"
+	.global Tileset_Set120TilesA
+Tileset_Set120TilesA:
+	.incbin "games/tla/src/graphics/tileset/set_120/tiles_a.4bpp.mtf"
+	.global Tileset_Set120TilesB
+Tileset_Set120TilesB:
+	.incbin "games/tla/src/graphics/tileset/set_120/tiles_b.4bpp.mtf"
+	.byte 0xe0	@ PACKER: left in the buffer by Tileset_Set120TilesA+0x13f
+	.global Tileset_Set120TilesC
+Tileset_Set120TilesC:
+	.incbin "games/tla/src/graphics/tileset/set_120/tiles_c.4bpp.mtf"
+	.byte 0xe0	@ PACKER: left in the buffer by Tileset_Set120TilesB+0x13f
+	.global Tileset_Set120TilesD
+Tileset_Set120TilesD:
+	.incbin "games/tla/src/graphics/tileset/set_120/tiles_d.4bpp.mtf"
+	.byte 0xe0	@ PACKER: left in the buffer by Tileset_Set120TilesC+0x13f

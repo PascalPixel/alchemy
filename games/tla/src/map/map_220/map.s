@@ -33,3 +33,11 @@ Field_Map220:
 	.balign 4, 0
 .LField_Map220_SCENE:
 	.incbin "games/tla/src/map/map_220/scene.parts.lz"
+	.global Tileset_Set94Palette
+Tileset_Set94Palette:
+	.incbin "games/tla/src/graphics/tileset/set_94/palette.gbapal.lz"
+	.byte 0xed	@ PACKER: left in the buffer by Field_Map220+0x193
+	.global Tileset_Set94TilesA
+Tileset_Set94TilesA:
+	.incbin "games/tla/src/graphics/tileset/set_94/tiles_a.4bpp.mtf"
+	.balign 4, 0xff	@ PACKER: 0xff fill, not an earlier stream's bytes

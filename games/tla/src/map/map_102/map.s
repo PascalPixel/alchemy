@@ -34,3 +34,26 @@ Field_Map102:
 .LField_Map102_SCENE:
 	.incbin "games/tla/src/map/map_102/scene.parts.lz"
 	.balign 4, 0
+	.global Tileset_Set51Palette
+Tileset_Set51Palette:
+	.incbin "games/tla/src/graphics/tileset/set_51/palette.gbapal.lz"
+	.byte 0x5f, 0x52	@ PACKER: left in the buffer by Field_Map102+0x156
+	.global Tileset_Set51TilesA
+Tileset_Set51TilesA:
+	.incbin "games/tla/src/graphics/tileset/set_51/tiles_a.4bpp.mtf"
+	.ifdef TLA_EDITION_JA
+	.byte 0xd4, 0x0e, 0x40	@ PACKER: unused post-stream residue; Resource_DecodeType2 uses decoded RAM and output length; writer unknown
+	.else
+	.byte 0xef, 0x12, 0x40	@ PACKER: unused post-stream residue; Resource_DecodeType2 uses decoded RAM and output length; writer unknown
+	.endif
+	.global Tileset_Set51TilesB
+Tileset_Set51TilesB:
+	.incbin "games/tla/src/graphics/tileset/set_51/tiles_b.4bpp.mtf"
+	.byte 0x8e, 0x16, 0x18	@ PACKER: left in the buffer by Tileset_Set51TilesA+0x2221
+	.global Tileset_Set51TilesC
+Tileset_Set51TilesC:
+	.incbin "games/tla/src/graphics/tileset/set_51/tiles_c.4bpp.mtf"
+	.global Tileset_Set51TilesD
+Tileset_Set51TilesD:
+	.incbin "games/tla/src/graphics/tileset/set_51/tiles_d.4bpp.mtf"
+	.byte 0xe0, 0x75	@ PACKER: left in the buffer by Tileset_Set51TilesC+0x30a

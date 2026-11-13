@@ -69,3 +69,28 @@ Field_Map095:
 	.incbin "games/tla/src/map/map_095/scene.parts.lz"
 	.endif
 	.balign 4, 0
+	.global Tileset_Set46Palette
+Tileset_Set46Palette:
+	.incbin "games/tla/src/graphics/tileset/set_46/palette.gbapal.lz"
+	.byte 0x29, 0xc7	@ PACKER: left in the buffer by Field_Map095+0x132
+	.global Tileset_Set46TilesA
+Tileset_Set46TilesA:
+	.incbin "games/tla/src/graphics/tileset/set_46/tiles_a.4bpp.mtf"
+	.byte 0x94, 0xc6	@ PACKER: left in the buffer by Tileset_Set45TilesA+0x276a
+	.global Tileset_Set46TilesB
+Tileset_Set46TilesB:
+	.incbin "games/tla/src/graphics/tileset/set_46/tiles_b.4bpp.mtf"
+	.byte 0xc8, 0x02, 0x58	@ PACKER: left in the buffer by Tileset_Set46TilesA+0x1dd1
+	.global Tileset_Set46TilesC
+Tileset_Set46TilesC:
+	.incbin "games/tla/src/graphics/tileset/set_46/tiles_c.4bpp.mtf"
+	.global Tileset_Set46TilesD
+Tileset_Set46TilesD:
+	.ifeq EDITION_INTERNATIONAL
+	.incbin "games/tla/src/graphics/tileset/set_46/tiles_d_ja.4bpp.mtf"
+	.else
+	.incbin "games/tla/src/graphics/tileset/set_46/tiles_d.4bpp.mtf"
+	.endif
+	.ifdef TLA_EDITION_JA
+	.byte 0x01	@ PACKER: left in the buffer by Tileset_Set46TilesC+0x13f
+	.endif

@@ -1,5 +1,0 @@
-	.section .rodata
-	.global Monster_WispGhostSprites
-Monster_WispGhostSprites:
-	.incbin "games/tla/src/graphics/monster/wisp_ghost.pictures.lz"
-	.byte 0x3e, 0xca	@ PACKER: left in the buffer by Monster_OgreSprites+0xe46

@@ -30,16 +30,24 @@ s32 Menu_GetDjinnGiveMessage(void) {
   return (s32)MsgDjinnGiveTutorialA;
 }
 
-// Func_08100e7c runs the Djinn menu, keeping the field's tiles and the party's
+// DjinnMenu_Run runs the Djinn menu, keeping the field's tiles and the party's
 // event mode; the twin of The Broken Seal's DjinnMenu_Run
 // (games/tbs/src/menu/menu/djinn.c), rewritten with this game's heap block
-// (220, 0xcec), menu work and calls (Func_0810106c is the screen loop).
+// (220, 0xcec), menu work and calls (DjinnMenu_RunScreen is the screen loop).
 
 void Resource_LoadPairedBlocksIfAvailable(void);
 
-s32 Func_0810106c(void);
+s32 DjinnMenu_RunScreen(void);
 
-s32 Func_08100e7c(void) {
+/// Runs the Djinn menu over the field: the field menu's Djinn screen
+/// (FieldMenu_Run, FIELD_MENU_DJINN), and the Djinn tutorial. Types messages at
+/// MESSAGE_SPEED_FAST while it runs (the tutorial's steps set
+/// MESSAGE_SPEED_NORMAL for their messages, which stays until the menu closes)
+/// and puts the player's speed back. Takes the menu work (HEAP_SLOT_MENU) and
+/// the backdrop (struct DjinnMenuBackdrop, from the EWRAM pool), and frees
+/// both before returning, after putting back the field tiles and palettes the
+/// backdrop saved. Returns 1, which makes the field menu open again.
+s32 DjinnMenu_Run(void) {
   struct DjinnMenuWork *menu;
   u32 savedEventMode;
   s32 enabled;
@@ -86,7 +94,7 @@ s32 Func_08100e7c(void) {
   menu->selection[0] = 0;
   menu->selection[1] = 0;
   Func_081051a8();
-  Func_0810106c();
+  DjinnMenu_RunScreen();
   MenuIcon_ReleaseObjects();
   Menu_ResetTwoResourceEntries();
   wait(1);
@@ -115,12 +123,12 @@ struct DjinnElementList {
   s8 counts[8];
 };
 
-void Func_08101638(void);
+void Menu_OpenBackdropScreen(void);
 
-s32 Func_08102008(s32 mode);
-s32 Func_08104540(void);
-s32 Func_08101d5c(void);
-s32 Func_081039fc(u32 mode);
+s32 DjinnMenu_SelectDjinn(s32 mode);
+s32 DjinnMenu_ShowMemberStatus(void);
+s32 DjinnMenu_ShowHelp(void);
+s32 PsynergyList_RunCompareLoop(u32 mode);
 s32 Djinn_TransferFar(s32 owner, s32 element, s32 index, s32 recipient);
 
 u32 Djinn_DeactivateFar(s32 owner, s32 element, s32 index);
@@ -149,9 +157,9 @@ void DjinnMenu_BuildLists(struct OwnerList *list);
 
 /// The Djinn menu's screen loop, the twin of The Broken Seal's
 /// DjinnMenu_RunScreen. The Lost Age drops the pair steps 4 and 8, hides the
-/// page arrows before each confirmation and adds Func_08104540 (step 10) and
-/// Func_08101d5c (step 15) as its status and help pages.
-s32 Func_0810106c(void) {
+/// page arrows before each confirmation and adds DjinnMenu_ShowMemberStatus (step 10) and
+/// DjinnMenu_ShowHelp (step 15) as its status and help pages.
+s32 DjinnMenu_RunScreen(void) {
   /* FAKEMATCH(temporary): one icon local holding the cursor and then each
      arrow; as a cursor local and plain arrow stores, 109 of 603 instructions
      differ in tla-en. */
@@ -170,7 +178,7 @@ s32 Func_0810106c(void) {
   icon = menu->cursor;
   icon->active = 13;
   icon->animStep = 0;
-  Func_08101638();
+  Menu_OpenBackdropScreen();
   wait(1);
   step = 2;
   do {
@@ -185,7 +193,7 @@ s32 Func_0810106c(void) {
     case 2:
       Menu_SetFirstObjectRowCoordinates(0);
       MenuIcon_SetPosition(1, 0, 200);
-      result = Func_08102008(0);
+      result = DjinnMenu_SelectDjinn(0);
       step = 15;
       if (result == 10)
         break;
@@ -205,7 +213,7 @@ s32 Func_0810106c(void) {
       icon->active = 13;
       icon = menu->arrows[1];
       icon->active = 13;
-      result = Func_08104540();
+      result = DjinnMenu_ShowMemberStatus();
       if (result == -2)
         done = 1;
       step = 2;
@@ -215,7 +223,7 @@ s32 Func_0810106c(void) {
       icon->active = 13;
       icon = menu->arrows[1];
       icon->active = 13;
-      result = Func_08101d5c();
+      result = DjinnMenu_ShowHelp();
       if (result == -2)
         done = 1;
       step = 2;
@@ -225,7 +233,7 @@ s32 Func_0810106c(void) {
       menu->owner = menu->owners[menu->selectedColumn[0]];
       menu->shownMember[0] = menu->owners[menu->selectedColumn[0]];
       MenuIcon_SetPosition(0, menu->selectedColumn[0] * 56 + 48, 54);
-      result = Func_08102008(1);
+      result = DjinnMenu_SelectDjinn(1);
       for (listIndex = 0; listIndex < menu->memberCount; listIndex++)
         menu->memberY[listIndex] += 8;
       if (result == -2)
@@ -265,7 +273,7 @@ s32 Func_0810106c(void) {
       icon->active = 13;
       icon = menu->arrows[1];
       icon->active = 13;
-      result = Func_081039fc(1);
+      result = PsynergyList_RunCompareLoop(1);
       if (result == -2)
         done = 1;
       step = 3;
@@ -289,7 +297,7 @@ s32 Func_0810106c(void) {
       icon->active = 13;
       icon = menu->arrows[1];
       icon->active = 13;
-      result = Func_081039fc(2);
+      result = PsynergyList_RunCompareLoop(2);
       if (result == -2)
         done = 1;
       step = 3;
@@ -312,7 +320,7 @@ s32 Func_0810106c(void) {
       icon->active = 13;
       icon = menu->arrows[1];
       icon->active = 13;
-      result = Func_081039fc(0);
+      result = PsynergyList_RunCompareLoop(0);
       if (result == -2)
         done = 1;
       step = 3;
@@ -336,7 +344,7 @@ s32 Func_0810106c(void) {
       icon->active = 13;
       icon = menu->arrows[1];
       icon->active = 13;
-      result = Func_081039fc(3);
+      result = PsynergyList_RunCompareLoop(3);
       if (result == -2)
         done = 1;
       step = 3;
@@ -369,7 +377,7 @@ s32 Func_0810106c(void) {
 /// Adds d to the RGB components of the 16 colours of BG palettes 15, 5 and 7,
 /// clamped to 0-31, and writes palettes 14, 4 and 6. Palette 7 uses -12
 /// instead of d.
-void Graphics_AdjustPalettes(s32 d) {
+void DjinnMenu_AdjustPalettes(s32 d) {
   s32 n;
   s32 paletteNumber;
   s32 col;
@@ -437,7 +445,7 @@ s32 Palette_GetBasicObjColors(void);
 /// Menu_OpenBackdropScreen: saves the tiles and palettes it covers, draws the
 /// backdrop, lists the owners (DjinnMenu_BuildLists), then makes the list's cursor and
 /// the two page arrows and places the arrows at the list window's corners.
-void Func_08101638(void) {
+void Menu_OpenBackdropScreen(void) {
   struct DjinnMenuWork *menu = Ram_HeapSlots->menuRuntime;
   struct DjinnMenuBackdrop *backdrop = menu->backdrop;
   struct MenuWindow *window;
@@ -465,7 +473,7 @@ void Func_08101638(void) {
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   Dma_Set((void *)&BG_PLTT_COLOR(15, 0), (void *)&BG_PLTT_COLOR(7, 0),
           DMA_ENABLE << 16 | 16, REG_DMA3);
-  Graphics_AdjustPalettes(8);
+  DjinnMenu_AdjustPalettes(8);
   BG_PLTT_COLOR(7, 4) = BG_PLTT_COLOR(15, 4);
   BG_PLTT_COLOR(6, 4) = BG_PLTT_COLOR(15, 4);
   DjinnMenu_BuildLists(backdrop);
@@ -803,7 +811,13 @@ void UiPanel_SetRectPalette(struct UiPanel *panel, s32 x, s32 y, s32 width,
 
 struct UiChannelSlot *Func_080383d8(void *window, s32 message);
 
-s32 Func_08101d5c(void) {
+/// The Djinn menu's help, opened by Select on the first chooser: a list of
+/// seven topics (Djinn, Set, Standby, Summon, Recovery, Class, Psynergy) with
+/// the chosen one's text typed beside it. The d-pad moves through the topics,
+/// and A moves on once the text has finished. Returns DJINN_RESULT_BACK for B
+/// or Select, back to the list, or DJINN_RESULT_START for Start, which closes
+/// the Djinn menu.
+s32 DjinnMenu_ShowHelp(void) {
   struct UiPanel *helpWindow;
   struct UiPanel *statusWindow;
   struct DjinnMenuWork *menu;
@@ -963,7 +977,7 @@ s32 Menu_GetModuloOfSum(s32 value, s32 count) __attribute__((const));
       wait(1);                                                                 \
   } while (0)
 
-s32 Func_08102008(s32 mode) {
+s32 DjinnMenu_SelectDjinn(s32 mode) {
   s8 columnFlags[8];
   u8 requiresTrade[16];
   struct DjinnMenuWork *menu = Ram_HeapSlots->menuRuntime;
@@ -1306,7 +1320,7 @@ s32 Func_08102008(s32 mode) {
           gMainRoutineWork.eventMode = 1;
           messageWindow =
               Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 4, 9, 9, 1);
-          Func_080f8ab4(2, 146);
+          MenuCursor_Slide(2, 146);
           while (Message_AllTypedFar() == 0)
             wait(1);
           while (!(gInput.pressed & 1)) {
@@ -1621,7 +1635,7 @@ s32 Djinn_ListOwnerEntries(u16 *entriesOut, s32 memberId, s32 element) {
 
 #undef DJINN_ENTRY_SET
 
-s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot, s32 addPairSlot, s32 previewMode, s32 page, s32 side);
+s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot, s32 addPairSlot, s32 previewMode, s32 page, s32 side);
 
 #define ALT_PARAM 4
 
@@ -1639,15 +1653,15 @@ s32 DjinnMenu_DrawPairPreview(s32 mode, s32 pageIndex) {
   if (mode == 0) {
     sp14 = mode;
     first = menu->pairMember[1];
-    Func_08103218((s32)menu->secondWindow, 0, 0, first, 1, mode, 2, pageIndex,
+    DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0, first, 1, mode, 2, pageIndex,
                   1);
-    Func_08103218(menu->window, 0, 0, menu->pairMember[0], mode, 1, 2,
+    DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->pairMember[0], mode, 1, 2,
                   pageIndex, mode);
   } else {
     owner = menu->shownMember[1];
-    Func_08103218((s32)menu->secondWindow, 0, 0, owner, 1, 0, ALT_PARAM,
+    DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0, owner, 1, 0, ALT_PARAM,
                   pageIndex, 1);
-    Func_08103218(menu->window, 0, 0, menu->shownMember[0], 0, 0, 1, pageIndex,
+    DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->shownMember[0], 0, 0, 1, pageIndex,
                   0);
   }
   return 1;
@@ -1710,7 +1724,7 @@ s32 Icon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y, s32
 /// unit recalculated; page 0 draws the stats with an arrow beside each one that
 /// changes, later pages the Psynergy gained and lost; then the saved unit is
 /// copied back.
-s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
+s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
                   s32 addPairSlot, s32 previewMode, s32 page, s32 side) {
   // One constant for its whole life: the djinn tile loop starts from it.
   s32 firstElement = 0;

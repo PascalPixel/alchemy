@@ -5,11 +5,15 @@
 
 #include "../menu_internal.h"
 
-void Func_080fee04(s32 unused0, s32 unused1, s32 unused2, s32 unused3);
+void StatusScreen_Initialize(s32 unused0, s32 unused1, s32 unused2, s32 unused3);
 
 s32 PartyMemberChooser_Run(void);
 
-s32 Func_080fe184(void) {
+/// Lets the player choose one party member, over the field (the Colosso scenes
+/// use it, through MENU.S, and so does the debug test). Returns the chosen
+/// party member's id, or -1 when the player backs out. Owns the menu work
+/// (HEAP_SLOT_MENU) while it runs and frees it before returning.
+s32 PartyMemberChooser_Open(void) {
   struct OwnerMenuState *state =
       (struct OwnerMenuState *)HeapSlot_Alloc(220, 0x0cec);
   s32 result;
@@ -21,7 +25,7 @@ s32 Func_080fe184(void) {
   Window_InitializeWork(0);
 
   state->partyCount = Party_ListActiveOwnersFar(state->ownerIds);
-  Func_080fee04(0, 3, 0, 7);
+  StatusScreen_Initialize(0, 3, 0, 7);
   state->selectorWindow = Window_CreateFar(13, 0, 17, 5, 2);
   {
     struct {
@@ -73,12 +77,12 @@ s32 PartyMemberChooser_Run(void) {
   return result;
 }
 
-s32 Func_080fe49c(void);
+s32 StatusScreen_RunPages(void);
 
 void Func_081053a8(void);
 void MenuIcon_ReleaseSlots(void);
 
-s32 Func_080fe274(void) {
+s32 StatusScreen_Run(void) {
   struct OwnerMenuState *state =
       (struct OwnerMenuState *)HeapSlot_Alloc(220, 0x0cec);
   void *palette = Heap_AllocEwram(64);
@@ -101,7 +105,7 @@ s32 Func_080fe274(void) {
   page = &state->page;
   *page = 0;
   state->partyCount = Party_ListActiveOwnersFar(state->ownerIds);
-  Func_080fee04(0, 3, 0, 7);
+  StatusScreen_Initialize(0, 3, 0, 7);
   /* FAKEMATCH(wrapper): the copies forwarded through item.c's CopyWords_
    * inline, which keeps each call's own constants; as direct Iwram_CopyWords
    * calls, 48 of 216 instructions differ in tla-en, CSE keeping 0x05000000 in
@@ -125,7 +129,7 @@ s32 Func_080fe274(void) {
   Menu_CancelSoundReset();
   *page = 0;
 
-  result = Func_080fe49c();
+  result = StatusScreen_RunPages();
 
   Menu_EnsureCancelSound();
   MenuIcon_ReleaseSlots();
@@ -153,11 +157,16 @@ s32 Func_080fe274(void) {
 }
 
 void MenuIcon_SetActive(s32 active);
-s32 Func_080feec0(void);
+s32 StatusScreen_SelectCommand(void);
 s32 Func_080ffcd4(void);
-s32 Func_0810021c(void);
+s32 ItemMenu_SelectItem(void);
 
-s32 Func_080fe49c(void) {
+/// The Status menu's pages: choose a party member, then their status page, A
+/// for their Psynergy page and A again for their equipment page, whose A goes
+/// back round to the status page; B on any page goes back to the party member
+/// row. Returns -1 when the player backs out of the party member row or presses
+/// Start.
+s32 StatusScreen_RunPages(void) {
   struct MenuRuntimeSelect *state =
       (struct MenuRuntimeSelect *)Ram_HeapSlots->menuRuntime;
   s32 step = 0;
@@ -181,7 +190,7 @@ s32 Func_080fe49c(void) {
       break;
     case 1:
       MenuIcon_SetActive(1);
-      result = Func_080feec0();
+      result = StatusScreen_SelectCommand();
       changed = ~result;
       step = (-changed | changed) >> 31;
       step <<= 1;
@@ -195,7 +204,7 @@ s32 Func_080fe49c(void) {
       break;
     case 3:
       MenuIcon_SetActive(0);
-      result = Func_0810021c();
+      result = ItemMenu_SelectItem();
       changed = ~result;
       step = (-changed | changed) >> 31;
       break;
@@ -218,8 +227,8 @@ struct OwnerCursor {
   u16 animStep;
 };
 
-s32 Func_080feb58(void);
-s32 Func_080fe894(void);
+s32 PsynergyMenu_ChooseMember(void);
+s32 PartyMemberChooser_RunRearrange(void);
 
 /// The twin of The Broken Seal's CharacterMenu_SelectOwner.
 s32 StatusScreen_SelectMember(s32 slot) {
@@ -241,18 +250,18 @@ s32 StatusScreen_SelectMember(s32 slot) {
   if (index == -1)
     menu->tabIndex[slot] = 0;
   else
-    Func_080f8ab4(index * 24 - 10, 16);
+    MenuCursor_Slide(index * 24 - 10, 16);
   if (menu->page == 3)
-    result = Func_080feb58();
+    result = PsynergyMenu_ChooseMember();
   else
-    result = Func_080fe894();
+    result = PartyMemberChooser_RunRearrange();
   cursor = menu->sideIcon[slot];
   Icon_PrepareActor(cursor);
   wait(1);
   return result;
 }
 
-void Func_080fe638(void) {
+void DjinnMenu_ShowCurrentList(void) {
   struct DjinnMenuWork *menu = Ram_HeapSlots->menuRuntime;
   s32 page;
   s32 redraw;
@@ -367,7 +376,7 @@ void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame);
 
 s32 PartyMemberChooser_MoveEntry(s32 selection, s32 direction);
 
-s32 Func_080fe894(void) {
+s32 PartyMemberChooser_RunRearrange(void) {
   struct CharacterMenuState *menu;
   s32 ownerIndex;
   s32 ownerCount;
@@ -450,7 +459,7 @@ s32 Func_080fe894(void) {
       }
       wait(1);
     } else if ((KEYS_PRESSED & 4) && GameFlag_Test(55)) {
-      Func_080fe638();
+      DjinnMenu_ShowCurrentList();
       redraw = 1;
     } else {
       redraw = Menu_MoveGridCursor(&ownerIndex, ownerCount, 4);
@@ -488,7 +497,7 @@ struct OwnerPageState {
 
 void Menu_PlaceEntryActorsInGrid(s32 x, s32 y, s32 columns);
 
-s32 Func_080feb58(void) {
+s32 PsynergyMenu_ChooseMember(void) {
   struct OwnerPageState *menu =
       (struct OwnerPageState *)Ram_HeapSlots->menuRuntime;
   s32 selection = menu->ownerIndex;
@@ -511,7 +520,7 @@ s32 Func_080feb58(void) {
       page = (page + 3) % 3;
       Menu_CreateWindowAndEntryObjects(menu->ownerIds[selection], page);
       PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerIds[selection]);
-      menu->psynergyCount = Func_080fd6f0(Unit_Get(menu->ownerIds[selection]),
+      menu->psynergyCount = PsynergyMenu_CollectActions(Unit_Get(menu->ownerIds[selection]),
                                           menu->psynergies, 0);
       PsynergyMenu_DrawPsynergyIcons(menu->psynergies);
       Menu_PlaceEntryActorsInGrid(96, 96, 8);
@@ -605,7 +614,7 @@ struct MenuRuntimeCursor {
 void Menu_PlaceOwnerEntryObjects(struct MenuEntryWindow *window, s32 originX, s32 originY);
 
 /// Its callers pass four values it does not read.
-void Func_080fee04(s32 unused0, s32 unused1, s32 unused2, s32 unused3) {
+void StatusScreen_Initialize(s32 unused0, s32 unused1, s32 unused2, s32 unused3) {
   struct MenuRuntimeCursor *work = Ram_HeapSlots->menuRuntime;
 
   Menu_PlaceOwnerEntryObjects(Func_080f88d0(work), 2, 2);
@@ -634,7 +643,7 @@ typedef struct {
   u8 field0f;
 } Object0f;
 
-void Func_080ff370(s32, s32, s32); ///< draws the status ailments
+void StatusScreen_DrawStatusAilments(s32, s32, s32); ///< draws the status ailments
 
 /// Creates the status window and its side object the first time, spawns the
 /// icon entries in mode 3, then draws the status ailments (with 0x100 when the
@@ -660,10 +669,10 @@ void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame) {
     if ((((Object0f *)object)->field0f = 0xF0, state->mode) == 3) {
       Menu_SpawnIconEntries(state, handle);
     }
-    Func_080ff370(handle, resource, 0x100);
+    StatusScreen_DrawStatusAilments(handle, resource, 0x100);
     return;
   }
-  Func_080ff370(handle, resource, 0);
+  StatusScreen_DrawStatusAilments(handle, resource, 0);
 }
 
 // The pressed keys, read again at each test.
@@ -677,13 +686,13 @@ void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame) {
 #define SWITCH_CHARACTER_HELP_X 80
 #endif
 
-void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
+void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
                                        s32 invert);
 
-void CharacterMenu_DrawSelectionLabels(s32 target, s32 selected, const u8 *entries);
+void StatusScreen_DrawSelectionLabels(s32 target, s32 selected, const u8 *entries);
 void StatusScreen_ShowMemberProgressMessage(void *window, s32 help, s32 full);
 
-s32 Func_080feec0(void) {
+s32 StatusScreen_SelectCommand(void) {
   struct CharacterMenuState *menu;
   s32 pane;
   s32 result;
@@ -713,11 +722,11 @@ s32 Func_080feec0(void) {
   for (i = 3; i >= 0; i--)
     menu->rowY[i] = 104;
   done = 0;
-  Func_080f8ab4(-10, 88);
+  MenuCursor_Slide(-10, 88);
 
   while (done == 0 && !GameFlag_Test(0x150)) {
     Unit_Get(menu->selectedIds[0]);
-    Func_080ff370(window, menu->selectedIds[0], 1);
+    StatusScreen_DrawStatusAilments(window, menu->selectedIds[0], 1);
     count = CharacterMenu_BuildAvailability(entries, 1, menu->selectedIds[0]);
     hasAilments = 0;
     if (count == 0)
@@ -748,11 +757,11 @@ s32 Func_080feec0(void) {
           else
             selected = (selected + 7) % 7;
         }
-        CharacterMenu_DrawSelectionCursor(pane, selected, entries, 0);
+        StatusScreen_DrawSelectionCursor(pane, selected, entries, 0);
         WindowSprite_ClearListFar(helpWindow);
         wait(1);
         if (pane == 0)
-          CharacterMenu_DrawSelectionLabels(helpWindow, selected, entries);
+          StatusScreen_DrawSelectionLabels(helpWindow, selected, entries);
         else
           StatusScreen_ShowMemberProgressMessage(helpWindow, selected, hasDjinn);
       }
@@ -764,7 +773,7 @@ s32 Func_080feec0(void) {
         Func_080f8a44(48, selected * 8 + 80);
       wait(1);
       if (gInput.repeat & 0xf0)
-        CharacterMenu_DrawSelectionCursor(pane, selected, entries, 1);
+        StatusScreen_DrawSelectionCursor(pane, selected, entries, 1);
       if (KEYS_PRESSED & 1) {
         Sound_PlayFar(112);
         done = 1;
@@ -829,7 +838,11 @@ struct CursorMenuState {
   u8 *object;
 };
 
-void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
+/// Highlights (invert 0) or unhighlights (invert 1) the selected entry of the
+/// status page: in side 0 the selected status row, as wide as its label
+/// (gStatusScreen_CursorWidths); in side 1 one of the first four status rows
+/// or of the rows below.
+void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
                                        s32 invert) {
   struct CursorMenuState *state = Ram_HeapSlots->menuRuntime;
   u32 different;
@@ -871,7 +884,10 @@ void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
   Render_SetTilemapFlagRect(state->object, x, y, width, 1, last);
 }
 
-void CharacterMenu_DrawSelectionLabels(s32 target, s32 selected,
+/// Writes the advice for the selected status (two lines, for example how to
+/// revive a party member who is down) into window target, or that the party
+/// member is well when they have no status.
+void StatusScreen_DrawSelectionLabels(s32 target, s32 selected,
                                        const u8 *entries) {
   s32 count = 0;
   s32 index = 0;
@@ -960,7 +976,12 @@ void Func_081054e0(struct MenuPanel *panel, s32 x, s32 y, const u8 *enabled);
 
 s32 Unit_GetElementLevelFar(s32 ownerId, s32 element);
 
-void Func_080ff370(s32 window, s32 ownerId, s32 mode) {
+/// Draws party member memberId's status page into window: the top rows
+/// (ItemMenu_DrawMemberStatus), the status list or "Normal", and except on the
+/// chooser page the Djinn counts by element and, in mode 1, the elemental
+/// levels, Power and Resist. With STATUS_PAGE_NO_CLEAR in mode the window is
+/// not cleared first.
+void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
   struct CharacterMenuState *menu = Ram_HeapSlots->menuRuntime;
   struct BattleUnit *unit;
   s32 element;
@@ -1532,7 +1553,7 @@ s32 Func_080ffcd4(void) {
     if (refresh) {
       if (refresh == 2) {
         menu->psynergyCount =
-            Func_080fd6f0(Unit_Get(menu->memberIds[0]), menu->psynergies, 0);
+            PsynergyMenu_CollectActions(Unit_Get(menu->memberIds[0]), menu->psynergies, 0);
         PagedList_Build(&state, 0);
         ItemMenu_HideAllIcons();
         PsynergyMenu_DrawPsynergyIcons(menu->psynergies);
@@ -1818,7 +1839,7 @@ s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct MenuResult *state) {
 #define CURSOR_X 96
 #endif
 
-s32 Func_0810021c(void) {
+s32 ItemMenu_SelectItem(void) {
   struct InventoryMenuState *menu;
   struct BattleUnit *owner;
   s32 result;

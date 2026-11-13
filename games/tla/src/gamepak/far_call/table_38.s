@@ -10,15 +10,15 @@ Func_080f8000:
 	.global PsynergyMenu_RunFar
 	.thumb_func
 PsynergyMenu_RunFar:
-	overlay_veneer Func_080fcab8
+	overlay_veneer PsynergyMenu_Run
 	.global Func_080f8010
 	.thumb_func
 Func_080f8010:
-	overlay_veneer Func_080fe274
+	overlay_veneer StatusScreen_Run
 	.global Func_080f8018
 	.thumb_func
 Func_080f8018:
-	overlay_veneer Func_080fe184
+	overlay_veneer PartyMemberChooser_Open
 	.global Icon_CreateWithResourceVariantFar
 	.thumb_func
 Icon_CreateWithResourceVariantFar:

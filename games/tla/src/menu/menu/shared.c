@@ -136,7 +136,18 @@ static inline void RestoreUnit(struct BattleUnit *unit,
   Iwram_CopyWords(unit, backup, sizeof(struct BattleUnit));
 }
 
-void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
+/// Draws the status panel of the Item and Psynergy screens for the party
+/// party member `member` (window at tile 0,5, 13 by 12): the name, up to two
+/// statuses or the level, the party member's portrait, and below them what
+/// mode's panel kind asks for. slot is the inventory slot of the item the panel
+/// is about, for the equipment and Psynergy item panels. The first parameter,
+/// the status window, is not used: the window is the menu work's.
+///
+/// Opens the window on first use and keeps it in the work's statusWindow;
+/// unless mode has STATUS_PANEL_LOWER_ONLY, the portrait it creates replaces
+/// the work's cursor. The equipment panel equips the item on the real unit for
+/// a moment and puts the unit back from a heap copy it frees before returning.
+void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
   s32 created;
   struct ItemDefinition *def;
   u32 item;
@@ -595,7 +606,7 @@ void Func_080f8a44(s32 xOffset, s32 yOffset) {
 }
 
 /// The twin of The Broken Seal's MenuCursor_Slide.
-void Func_080f8ab4(s32 x, s32 y) {
+void MenuCursor_Slide(s32 x, s32 y) {
   struct OwnerMenuState *work =
       (struct OwnerMenuState *)Ram_HeapSlots->menuRuntime;
   struct WindowSprite *cursor;

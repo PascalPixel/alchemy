@@ -7,7 +7,7 @@
 
 void Func_08104e38(s32 first, s32 second);
 
-s32 Func_081039fc(u32 mode) {
+s32 PsynergyList_RunCompareLoop(u32 mode) {
   struct DjinnMenuWork *menu;
   struct DjinnMenuBackdrop *backdrop;
   struct WindowWork *work;
@@ -230,7 +230,7 @@ s32 Func_081039fc(u32 mode) {
           do {
             menu->cursor->active = 1;
           } while (0);
-          Func_080f8ab4(2, 96);
+          MenuCursor_Slide(2, 96);
           gMainRoutineWork.eventMode = 1;
           while (Message_AllTypedFar() == 0)
             wait(1);
@@ -262,7 +262,7 @@ s32 Func_081039fc(u32 mode) {
           do {
             menu->cursor->active = 1;
           } while (0);
-          Func_080f8ab4(106, 56);
+          MenuCursor_Slide(106, 56);
           gMainRoutineWork.eventMode = 1;
           while (Message_AllTypedFar() == 0)
             wait(1);
@@ -318,9 +318,9 @@ s32 Func_081039fc(u32 mode) {
       case 1:
         if (mode == 1)
           previewMode = 4;
-        Func_08103218(menu->window, 0, 0, menu->shownMember[1], page, 0,
+        DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->shownMember[1], page, 0,
                       previewMode, 0, 0);
-        Func_08103218((s32)menu->secondWindow, 0, 0, menu->shownMember[1], page,
+        DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0, menu->shownMember[1], page,
                       0, previewMode, selectedPages[1] + 1, 0);
         break;
       case 0:
@@ -328,9 +328,9 @@ s32 Func_081039fc(u32 mode) {
           previewMode = 1;
           addPairSlot = 0;
         }
-        Func_08103218(menu->window, 0, 0, menu->pairMember[0], page,
+        DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->pairMember[0], page,
                       addPairSlot, previewMode, page, 1);
-        Func_08103218((s32)menu->secondWindow, 0, 0, menu->pairMember[0], page,
+        DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0, menu->pairMember[0], page,
                       addPairSlot, previewMode, selectedPages[0] + 1, 1);
         break;
       }
@@ -465,7 +465,12 @@ s32 Func_081039fc(u32 mode) {
   return result;
 }
 
-s32 Func_08104540(void) {
+/// Shows the chosen party member's current stats and paged Psynergy list.
+/// Opened by L on the Djinn list ("Char. Status"): the party member's stats on
+/// the left, their Psynergy six to a page on the right, which Left and Right
+/// turn. Returns DJINN_RESULT_BACK for A, B, L or R, and DJINN_RESULT_START for
+/// Start, which closes the Djinn menu.
+s32 DjinnMenu_ShowMemberStatus(void) {
   s32 selectedPages[2];
   s32 pageCounts[2];
   s32 gained;
@@ -554,8 +559,8 @@ s32 Func_08104540(void) {
       render->menuBusy = 1;
       WindowSprite_PrepareForRedrawFar(menu->window);
       WindowSprite_PrepareForRedrawFar((s32)menu->secondWindow);
-      Func_08103218(menu->window, 0, 0, *pairMember, 0, 0, 3, 0, 1);
-      Func_08103218((s32)menu->secondWindow, 0, 0, *pairMember, 0, 0, 3,
+      DjinnMenu_DrawStatPreview(menu->window, 0, 0, *pairMember, 0, 0, 3, 0, 1);
+      DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0, *pairMember, 0, 0, 3,
                     selectedPages[0] + 1, 1);
       render->menuBusy = 0;
     }
@@ -635,7 +640,7 @@ s32 Func_08104540(void) {
   return result;
 }
 
-s32 Func_0810498c(s32 self, s32 other);
+s32 Djinn_CheckGiveBalance(s32 self, s32 other);
 
 /// Marks in table each other owner a djinn can move to from self and keep the
 /// party's djinn balanced, and returns how many there are.
@@ -661,7 +666,7 @@ s32 Djinn_MarkTradeOnlyRecipients(s8 *requiresTrade, s32 sourceMemberColumn) {
     do {
       *p = 0;
       if (i != sourceMemberColumn) {
-        if (Func_0810498c(sourceMemberColumn, i) == 0) {
+        if (Djinn_CheckGiveBalance(sourceMemberColumn, i) == 0) {
           *p = 1;
           cnt += 1;
         }
@@ -673,14 +678,14 @@ s32 Djinn_MarkTradeOnlyRecipients(s8 *requiresTrade, s32 sourceMemberColumn) {
   return cnt;
 }
 
-void Func_081049c8(u8 *counts);
+void Djinn_CountOwned(u8 *counts);
 
 // Test whether moving one from from to to preserves the balance.
-s32 Func_0810498c(s32 from, s32 to) {
+s32 Djinn_CheckGiveBalance(s32 from, s32 to) {
   s8 counts[16];
   s32 balanced;
 
-  Func_081049c8((u8 *)counts);
+  Djinn_CountOwned((u8 *)counts);
   counts[from] -= 1;
   counts[to] += 1;
   balanced = 1;
@@ -689,9 +694,12 @@ s32 Func_0810498c(s32 from, s32 to) {
   return balanced;
 }
 
-// Func_081049c8: The Broken Seal's Djinn_CountTurns.
+// Djinn_CountOwned: The Broken Seal's Djinn_CountTurns.
 
-void Func_081049c8(u8 *counts) {
+/// Counts each party member's Djinn across its set and available bitmasks:
+/// writes every party member's total, set or not, into ownedCounts by list
+/// column.
+void Djinn_CountOwned(u8 *counts) {
   struct DjinnMenuWork *work;
   struct DjinnUnit *unit;
   s32 ownerIndex;

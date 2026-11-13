@@ -410,9 +410,9 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     // "We'll be fine if they don't see us, right?"
     Event_OpenMessage(ACTOR_GARET, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-      Event_SetMessageId((sneakingMessage + 1));
+      Event_SetMessageId(sneakingMessage + 1);
     } else {
-      Event_SetMessageId((sneakingMessage + 2));
+      Event_SetMessageId(sneakingMessage + 2);
     }
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 6);
     // Jenna makes it their secret; a yes earns the warning not even to tell
@@ -1006,7 +1006,7 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
       if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
         Actor_RunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 2);
         Event_Wait(20);
-        Event_SetMessageId((message + 2));
+        Event_SetMessageId(message + 2);
         // "I knew it... This is it for me. Save yourselves..."
         Event_ShowMessage(ACTOR_ROCKSLIDE_SURVIVOR, 0);
         GameFlag_Set(FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP);
@@ -1015,7 +1015,7 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
         // warns them of the monsters on the way to the plaza.
         Actor_RunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 2);
         Event_Wait(20);
-        Event_SetMessageId((message + 3));
+        Event_SetMessageId(message + 3);
         // "This is awful. I'm left here for the monsters to..."
         Event_ShowMessageThenWait(ACTOR_ROCKSLIDE_SURVIVOR, 0, 40);
         Actor_FaceActor(ACTOR_ROCKSLIDE_SURVIVOR, ACTOR_PARTY_LEADER, 0);

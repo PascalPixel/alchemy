@@ -717,7 +717,7 @@ static void ValePrologue_DoraSendsIsaacToThePlaza(void) {
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST, 10);
   // "You can find your way, can't you, Isaac?" She asks again on every no:
   // "You're a big boy now, Isaac."
-  Event_SetMessageId((message + 8));
+  Event_SetMessageId(message + 8);
   // "You can find your way, can't you, Isaac?"
   Event_OpenMessage(ACTOR_DORA, 0);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 302, 905);
@@ -1057,7 +1057,7 @@ static void ValePrologue_BumpIntoShovingMan(void) {
   // No: "This isn't the time for games! Foolish boy!"
   Event_AskYesNo(ACTOR_SHOVING_MAN, 0);
   Actor_RunRepeatedMotion(ACTOR_SHOVING_MAN, 2);
-  Event_SetMessageId((message + 4));
+  Event_SetMessageId(message + 4);
   // "Well...we'd better get to the plaza before the Boulder hits."
   Event_ShowMessageThenWait(ACTOR_SHOVING_MAN, 0, 20);
   Actor_RunScriptAndWait(ACTOR_SHOVING_MAN, gValePrologue_ShovingManScript);
@@ -1195,7 +1195,7 @@ static void ValePrologue_UnusedGaretJoinsIsaac(void) {
     Event_AskYesNo(ACTOR_GARET_CHILD, 0);
     Event_Wait(40);
     Actor_RunRepeatedMotion(ACTOR_GARET_CHILD, 1);
-    Event_SetMessageId((message + 5));
+    Event_SetMessageId(message + 5);
     // "You came just in time... We can go together."
     Event_ShowMessageThenWait(ACTOR_GARET_CHILD, 0, 20);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1846,10 +1846,10 @@ static void ValePrologue_DoraGoesForHelp(void) {
   Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_EAST, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
-    Event_SetMessageId((northMessage + 4));
+    Event_SetMessageId(northMessage + 4);
   } else {
     Actor_RunRepeatedMotion(ACTOR_DORA, 2);
-    Event_SetMessageId((northMessage + 5));
+    Event_SetMessageId(northMessage + 5);
   }
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0);
   Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_WEST, 40);
@@ -1860,7 +1860,7 @@ static void ValePrologue_DoraGoesForHelp(void) {
   Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
-    Event_SetMessageId((helpMessage + 1));
+    Event_SetMessageId(helpMessage + 1);
     // "Jenna has gone to the plaza to get help. Go join her."
     Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0, 30);
     Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_WEST, 20);
@@ -1872,7 +1872,7 @@ static void ValePrologue_DoraGoesForHelp(void) {
     Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 90);
     Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
     Actor_SetAnimation(ACTOR_DORA, ANIM_SHAKE_HEAD);
-    Event_SetMessageId((helpMessage + 2));
+    Event_SetMessageId(helpMessage + 2);
     // "You don't have to if you don't want to... Just get..."
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_DORA, 0);
   }

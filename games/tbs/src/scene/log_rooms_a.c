@@ -1477,7 +1477,7 @@ static void LogRoomsA_DiscussSuspiciousGuests(void) {
   }
   LogRoomsA_ShowMessageAndWait(ACTOR_GARET, 30);
   // Garet's plan: the three of them surround one of the two.
-  Event_SetMessageId((base + 4));
+  Event_SetMessageId(base + 4);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
   LogRoomsA_FaceActorAndWait(ACTOR_GARET, ACTOR_IVAN, 50);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -2803,7 +2803,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   LogRoomsA_FaceActorAndWait(ACTOR_GARET, ACTOR_IVAN, 30);
   // He thanks the town, hands back any Venus Djinni and leaves the party.
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 20);
-  Event_SetMessageId((rod + 1));
+  Event_SetMessageId(rod + 1);
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   {

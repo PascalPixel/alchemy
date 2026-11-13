@@ -1051,7 +1051,7 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   Actor_WalkToAndWait(ACTOR_FELIX, 288, 192);
   Actor_WalkToAndWait(ACTOR_FELIX, 262, 176);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 40);
-  Event_SetMessageId((receiptMessage + 1));
+  Event_SetMessageId(receiptMessage + 1);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
   Actor_SetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);

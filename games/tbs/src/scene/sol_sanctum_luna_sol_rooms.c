@@ -560,10 +560,10 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
   // "What does it all mean? Isaac, would you look farther up the..."
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    Event_SetMessageId((request + 1));
+    Event_SetMessageId(request + 1);
     GameFlag_Set(FLAG_SOL_SANCTUM_ISAAC_SEARCHING_FOR_KRADEN);
   } else {
-    Event_SetMessageId((request + 2));
+    Event_SetMessageId(request + 2);
   }
   SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN,
                                             4);

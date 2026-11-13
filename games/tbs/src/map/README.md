@@ -92,5 +92,8 @@ behavior and shape in the high.
 
 Each folder holds `map.txt` (the grid), `cell_pictures.tsv`,
 `shapes.tsv` and `tileset_anims.tsv`. Where a language changes a map,
-its own grid sits beside it, such as `map_es.txt`. The code that reads
-them is in [Field code](../field/README.md).
+its own grid sits beside it, such as `map_es.txt`. A folder's `map.inc`
+writes the map's header and the pictures it reads, and `maps.s` gathers
+them in the order the Game Pak holds them; `resources.c` lists each
+layout's resources by map number. The code that reads them is in
+[Field code](../field/README.md).

@@ -119,7 +119,7 @@ struct MapResources {
   u16 tiles[3];       ///< For char blocks 1, 2 and 3.
   u16 animationTiles; ///< Into gMapGridAnimTiles.
 };
-/// Every layout's resources, by map number (maps.c).
+/// Every layout's resources, by map number (src/map/resources.c).
 extern const struct MapResources gMaps[];
 
 #endif

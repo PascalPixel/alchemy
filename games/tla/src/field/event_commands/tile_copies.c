@@ -10,6 +10,7 @@
 #include "module/field/event_commands.h"
 #include "module/system/system.h"
 #include "gamepak/far_call/field.h"
+#include "field/field.h"
 
 /* VIEW(f0e2774): tag struct MapCell as struct MapCell__f0e2774; map.h has
  * another definition; tried with the definition the rest of the object has, it

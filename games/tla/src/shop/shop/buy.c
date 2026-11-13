@@ -7,6 +7,7 @@
 #include "gamepak/far_call/window.h"
 #include "module/shop/shop.h"
 #include "gamepak/far_call/menu.h"
+#include "gamepak/far_call/field.h"
 
 // The Select window is wider outside English and narrower in Japanese, the
 // price window wider in German, French and Italian and narrower in Japanese;

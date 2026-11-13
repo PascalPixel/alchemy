@@ -9,6 +9,7 @@
 #include "module/tla.h"
 #include "module/window/screens.h"
 #include "module/window/window.h"
+#include "gamepak/far_call/field.h"
 
 /// The progress bar's serial callback: advances the stored progress by step
 /// and draws row min(progress, 6) of gWindow_ProgressBarRows.

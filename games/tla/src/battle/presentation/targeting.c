@@ -13,6 +13,7 @@
 #include "module/battle/presentation.h"
 #include "mul_q16.h"
 #include "resource.h"
+#include "game_flags.h"
 
 #define TARGET_MODE_NONE 0
 #define TARGET_MODE_FOES 1

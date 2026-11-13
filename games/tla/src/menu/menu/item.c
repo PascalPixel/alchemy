@@ -5,6 +5,37 @@
 
 #include "../menu_internal.h"
 
+// Defined below or in later parts of the menu object.
+struct OwnerInventoryState;
+struct MenuEntryWindow;
+s32 ItemMenu_ChooseCommand(void);
+s32 ItemMenu_CollectItems(struct OwnerInventoryState *owner, u16 *items,
+                          s32 mode);
+s32 ItemMenu_ConfirmDrop(s32 item);
+s32 ItemMenu_ConfirmEquip(s32 unused);
+s32 ItemMenu_CountItems(s32 owner_id);
+void ItemMenu_DrawIcons(u16 *items, s32 style);
+void ItemMenu_DrawItemHead(void);
+void ItemMenu_DrawMessage(s32 unused, s32 message);
+s32 ItemMenu_GetItemQuantity(s32 owner, s32 item);
+s32 ItemMenu_IsStatRaisingItem(s32 item_id);
+void ItemMenu_RefreshMember(s32 ownerId, s32 mode);
+s32 ItemMenu_RunList(s32 pane);
+s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
+                                s32 dropMode);
+s32 ItemMenu_SelectMember(s32 pane);
+s32 ItemMenu_SelectTarget(s32 mode);
+void ItemMenu_SetItemWindowRow3(void);
+void ItemMenu_SetItemWindowRow5(void);
+void ItemMenu_SetMessageWindowHeight3(void);
+void ItemMenu_SetMessageWindowHeight5(void);
+s32 ItemMenu_ShowDetails(s32 value);
+void ItemMenu_TryBreak(void);
+s32 ItemMenu_Use(void);
+s32 Item_ClassifyUseMode(s32 owner, s32 itemId);
+void Menu_PlaceOwnerEntryObjects(struct MenuEntryWindow *window, s32 originX,
+                                 s32 originY);
+
 /// @file
 /// The item menu, as far as this object holds it: the field menu's Item
 /// screen, its command loop, Use, the first screen's setup and the item icons.

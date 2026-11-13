@@ -4,6 +4,7 @@
 #include "types.h"
 #include "field_effect.h"
 #include "objdisp.h"
+#include "gamepak/far_call/field.h"
 
 /// The effect's sprite as the projection draft lays it out: FieldSprite with
 /// bytes 0x0c to 0x0f its 16.16 scale.

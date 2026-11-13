@@ -425,4 +425,7 @@ struct IconOwner {
   u8 iconId;
 };
 
+struct AnimationEntry;
+void SpriteAnimation_Reset(struct AnimationEntry *work);
+
 #endif

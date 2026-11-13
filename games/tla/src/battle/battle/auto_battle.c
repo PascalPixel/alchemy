@@ -6,6 +6,7 @@
 #include "../battle_internal.h"
 #include "module/battle/battle.h"
 #include "gamepak/far_call/battle_effect.h"
+#include "gamepak/far_call/window.h"
 
 s32 AutoBattle_BuildActions(struct BattleSortedUnitEntry *entries) {
   struct BattleSortedUnitEntry swap;

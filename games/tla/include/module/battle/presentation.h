@@ -370,4 +370,6 @@ extern char ResourceId_SerpentStarsBackdrop;
 
 extern const struct BattleGroupOrder Data_081297c4;
 
+void Battle_ApplyActionExtras(s32 unitId, s32 all, s32 announce);
+
 #endif

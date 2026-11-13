@@ -12,6 +12,7 @@
 #include "module/field/field.h"
 #include "module/system/system.h"
 #include "system.h"
+#include "module/field/object.h"
 
 #define SE_CLOAK 130
 

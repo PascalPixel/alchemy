@@ -29,7 +29,6 @@ struct PlayerSprite__f0298c0 {
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gData_0802ec5c[16];
 
-s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Actor_StartScript(struct Actor *, const s32 *);
 /* VIEW(f0298c0): routine Animation_ApplyChildArgument as s32

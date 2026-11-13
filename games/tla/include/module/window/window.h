@@ -83,4 +83,6 @@ extern const u8 gResource_FixedBlockBTiles[];
 
 void Text_FillCanvasBackground(void);
 
+void PartyStatus_OpenAndWait(void);
+
 #endif

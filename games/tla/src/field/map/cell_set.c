@@ -5,6 +5,7 @@
 #include "field.h"
 #include "module/field/map.h"
 #include "module/scene/magma_rock.h"
+#include "flag_call.h"
 
 extern u8 gMapCellBuffer[];
 

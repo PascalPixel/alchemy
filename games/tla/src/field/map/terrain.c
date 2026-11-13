@@ -22,6 +22,7 @@
 #include "module/system/system.h"
 #include "resource.h"
 #include "sprite_metadata.h"
+#include "module/field/resource_slot.h"
 
 extern u32 Data_02018000[];
 

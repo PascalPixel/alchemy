@@ -6,6 +6,7 @@
 #include "menu_list.h"
 #include "module/system/system.h"
 #include "module/window/screens.h"
+#include "module/window/window.h"
 
 void PartyStatus_BuildLayoutBounds(s32 flags) {
   struct UiWindowBounds *state = Ram_HeapSlots->windowLayout;

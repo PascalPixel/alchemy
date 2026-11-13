@@ -25,6 +25,8 @@
 #include "event_work.h"
 #include "fixed_math.h"
 #include "system/vector3.h"
+#include "inventory.h"
+#include "graphics/uiflow.h"
 
 #include "edition.h"
 #include "item_icon.h"

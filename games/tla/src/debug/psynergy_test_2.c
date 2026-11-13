@@ -24,6 +24,7 @@
 #include "module/tla.h"
 #include "particle.h"
 #include "resource.h"
+#include "gamepak/far_call/system.h"
 
 void Func_020005d8(s32 a, s32 b);
 

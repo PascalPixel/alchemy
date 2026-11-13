@@ -13,6 +13,7 @@
 #include "module/field/field.h"
 #include "module/field/object.h"
 #include "text/msg_ids.h"
+#include "module/system/system.h"
 
 /// Fades the palettes back to the saved ones over the given frames.
 void BattleEffect_FadeToSavedPalettes(s32 frames) {

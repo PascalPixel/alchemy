@@ -37,6 +37,7 @@
 #include "module/system/system.h"
 #include "ram_buffer.h"
 #include "resource_ids.h"
+#include "flag_call.h"
 
 extern u8 gDebugTextEnabled;
 

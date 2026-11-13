@@ -5,6 +5,8 @@
 
 #include "../menu_internal.h"
 
+s32 PsynergyMenu_IsActionRestricted(s32 no);
+
 s32 PsynergyMenu_RunSteps(s32 *ownerOut, s32 *targetOut, s32 *itemOut);
 
 /// A second item picker an event script opens, built as ItemMenu_Run: opens

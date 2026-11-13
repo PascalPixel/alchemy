@@ -10,8 +10,8 @@
 #include "edition.h"
 #include "far_call.h"
 
-/// A 16-byte rectangle. In TBS it only reserves stack space in
-/// tbs-ja's glyph renderer; no code reads its fields.
+/// A 16-byte rectangle. Only the Japanese glyph renderer declares one, and no
+/// code reads its fields.
 struct GlyphRect {
   u8 unused[8];
   u16 width;

@@ -102,12 +102,7 @@ void Scene_SetRestartPoint(void);
 s16 BattleBackground_GetSelected(void);
 void BattleBackground_SelectForMap(void);
 void BattleBackground_SelectForEnvironment(s32 behavior);
-// Matching builds call Encounter_SelectBattleMusic without a prototype, as in
-// field_sequence.c above its definition: in one file its definition
-// would come before Field_RequestDjinnBattle and
-// Field_RequestBattleFromEncounterTable, and Field_RequestDjinnBattle changes
-// (2 of 52 instructions in tbs-en). Split evidence for
-// field_sequence|event_commands.
+// The field sequence calls Encounter_SelectBattleMusic without a prototype.
 #ifdef UBFIX
 void Encounter_SelectBattleMusic(s32 zone, s32 slot);
 #endif
@@ -259,12 +254,7 @@ void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
                                 s32 frames);
 void PaletteFade_Update(void);
 // UB: event_commands.c calls PaletteFade_Build with no declaration in
-// scope, as a function returning int. With its prototype in scope (as in one
-// file with its definition) Weather_StartLightning and
-// Weather_StartLightningFlash change, 6 of 67 and 6 of 74 instructions in
-// tbs-en, and even a declaration without a prototype moves two instructions
-// in tbs-ja: evidence that field_sequence.c and event_commands.c were separate
-// files. UBFIX declares it.
+// scope, as a function returning int. UBFIX declares it.
 #ifdef UBFIX
 void PaletteFade_Build();
 #endif

@@ -1,6 +1,6 @@
-#define EFFECT_SPAWN Func_020000b8
-#define EFFECT_CREATE Func_02003fc0
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Import_ActorSelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gData_020045c8
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../../field/field_effect/spawn.c"

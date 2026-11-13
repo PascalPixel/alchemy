@@ -94,9 +94,9 @@ Actor_SetAnimationSpeed:
 	.thumb_func
 Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
-	.global Func_02003fc0
+	.global Import_ActorCreate
 	.thumb_func
-Func_02003fc0:
+Import_ActorCreate:
 	overlay_veneer Actor_CreateFar
 	.global Actor_Release
 	.thumb_func
@@ -282,9 +282,9 @@ FieldCamera_WaitForArrival:
 	.thumb_func
 Import_FieldCameraGetActor:
 	overlay_veneer FieldCamera_GetActorFar
-	.global Func_02004138
+	.global Import_EventSetExitRequest
 	.thumb_func
-Func_02004138:
+Import_EventSetExitRequest:
 	overlay_veneer Event_SetExitRequestFar
 	.global Field_RequestBattleFromEncounterTable
 	.thumb_func

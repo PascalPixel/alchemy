@@ -79,9 +79,9 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   struct Particle *trail;
   struct SpriteScale scale;
 
-  canvas = (void *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work = (struct BattleEffectWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  sparkleSheet = (u8 *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  sparkleSheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   edgeSpeed = 1;
   work->args = args;
   BattleEffect_StartCanvasLayer(0);

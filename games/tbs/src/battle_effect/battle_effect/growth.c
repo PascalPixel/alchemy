@@ -252,8 +252,8 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
   s32 i, frame, picture, height, offset, middle;
   struct Particle *column;
 
-  work = (struct BattleEffectWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  canvas = (void *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_RunDjinniEntrance(args, ELEMENT_VENUS + DJINNI_ENTRANCE_LONG,
                                  args->side, DJINNI_ANCHOR_CENTRE, &originX,
@@ -356,8 +356,8 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   s32 age;
   s32 start;
 
-  work = (struct BattleEffectWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  canvas = (void *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BG2PA = Q_8_8(1); // the canvas at its own width

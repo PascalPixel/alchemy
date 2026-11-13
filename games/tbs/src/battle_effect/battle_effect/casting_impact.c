@@ -200,9 +200,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   struct FixedPointPosition djinnPos;
   s32 phase;
   s32 i;
-  s32 *scanline;
   s32 n;
-  s32 djinnX;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -227,10 +225,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint projected;
   u8 *pictures;
 
-  work = (struct BattleEffectWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  sprites = (u8 *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   pictures = Ram_MapGridCellBuffer;
   work->args = args;
   if (mode == CASTING_IMPACT_IMPACT_MORTAL_DANGER ||
@@ -252,12 +250,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, pictures, 1, 0);
-  {
-    s32 width = 40;
-    s32 height = 288;
-    BattleEffect_PackTileRows(
-        pictures, work->sheet + CASTING_IMPACT_ORB_PICTURES, width, height);
-  }
+  BattleEffect_PackTileRows(pictures, work->sheet + CASTING_IMPACT_ORB_PICTURES,
+                            40, 288);
   if (mode == CASTING_IMPACT_IMPACT_SCORCH ||
       mode == CASTING_IMPACT_IMPACT_BARRAGE) {
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, pictures, 1,
@@ -368,13 +362,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
 
   // Gathering sparks: x is the radius (32 to 95), and the three velocities
   // are the spark's roll, pitch and yaw.
-  {
-    for (i = 0; i != CASTING_IMPACT_SPARKS; i++) {
-      particle = &work->particles[i];
-      SET_POSITION(particle, (Random16() & 63) + 32, 0, 0);
-      SET_VELOCITY(particle, Random16() & TRIG_ANGLE_MASK,
-                   Random16() & TRIG_ANGLE_MASK, Random16() & TRIG_ANGLE_MASK);
-    }
+  for (i = 0; i != CASTING_IMPACT_SPARKS; i++) {
+    particle = &work->particles[i];
+    SET_POSITION(particle, (Random16() & 63) + 32, 0, 0);
+    SET_VELOCITY(particle, Random16() & TRIG_ANGLE_MASK,
+                 Random16() & TRIG_ANGLE_MASK, Random16() & TRIG_ANGLE_MASK);
   }
   // Stop the acting unit, saving its motion for after the gathering, and
   // place the Djinni 80 pixels overhead.
@@ -403,29 +395,26 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       struct Particle *step = &work->particles[i];
       if (step->x >= 0) {
         if (frame >= i / 4) {
-          {
-            s32 size = 5;
-            Transform_Reset();
-            Transform_ApplyRoll(step->velocityZ);
-            Transform_ApplyPitch(step->velocityX);
-            Transform_ApplyYaw(step->velocityY);
-            Projection_Point(step, &sparkScreen);
-            sparkScreen.x = sparkScreen.x / 2 + casterPos.x;
-            // Djinni kinds circle the caster's chest; the rest circle lower,
-            // Severe Blow lowest.
-            if (mode <= CASTING_IMPACT_IMPACT_SAP)
-              sparkScreen.y = sparkScreen.y + casterPos.y - 8;
-            else if (mode == CASTING_IMPACT_IMPACT_SEVERE_BLOW)
-              sparkScreen.y = sparkScreen.y + casterPos.y + 44;
-            else
-              sparkScreen.y = sparkScreen.y + casterPos.y + 12;
-            // DEAD: the depth is clamped to -60..60 and moved to 0..120 but
-            // never read; the ROM keeps the clamp and the move.
-            CLAMP(sparkScreen.depth, -60, 60);
-            sparkScreen.depth += 60;
-            EFFECT_DRAW_MOTE(blitters[1], canvas, sprites, sparkScreen.x,
-                             sparkScreen.y, size);
-          }
+          Transform_Reset();
+          Transform_ApplyRoll(step->velocityZ);
+          Transform_ApplyPitch(step->velocityX);
+          Transform_ApplyYaw(step->velocityY);
+          Projection_Point(step, &sparkScreen);
+          sparkScreen.x = sparkScreen.x / 2 + casterPos.x;
+          // Djinni kinds circle the caster's chest; the rest circle lower,
+          // Severe Blow lowest.
+          if (mode <= CASTING_IMPACT_IMPACT_SAP)
+            sparkScreen.y = sparkScreen.y + casterPos.y - 8;
+          else if (mode == CASTING_IMPACT_IMPACT_SEVERE_BLOW)
+            sparkScreen.y = sparkScreen.y + casterPos.y + 44;
+          else
+            sparkScreen.y = sparkScreen.y + casterPos.y + 12;
+          // DEAD: the depth is clamped to -60..60 and moved to 0..120 but
+          // never read; the ROM keeps the clamp and the move.
+          CLAMP(sparkScreen.depth, -60, 60);
+          sparkScreen.depth += 60;
+          EFFECT_DRAW_MOTE(blitters[1], canvas, sprites, sparkScreen.x,
+                           sparkScreen.y, 5);
           step->x -= 4;
         }
         n++;
@@ -436,9 +425,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         EFFECT_VIEW_FROM_CAMERA(camera);
         Projection_Point(&djinnPos, &sparkScreen);
         sparkScreen.x /= 2;
-        djinnX = sparkScreen.x;
         blitters[0](canvas, pictures + CASTING_IMPACT_DJINNI_PICTURE,
-                    djinnX - 10, sparkScreen.y - 4, 20, 40);
+                    sparkScreen.x - 10, sparkScreen.y - 4, 20, 40);
       }
     }
     EFFECT_PRESENT_CANVAS(work);
@@ -452,8 +440,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   if (mode == CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
     REG_BG2PA = Q_8_8(1);
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
-      // frame is 32 here, the gathering's length.
-      REG_BG2X = (frame - targetPos.x) << 8;
+      REG_BG2X = (32 - targetPos.x) << 8;
     } else {
       REG_BG2X = (96 - targetPos.x) << 8;
     }
@@ -653,25 +640,18 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   // the caster's overlay, the palette step, the orb and the scattering
   // sparks, the impact's own effect, the Djinni's flight, then the cues
   // for the target.
-  frame = 0;
-  while (frame != duration) {
+  for (frame = 0; frame != duration; frame++) {
     // BG2 wave table: BG2X for each scanline. It is built for every impact
     // but Mortal Danger and Asura, and shows only for the six waving impacts,
     // for which BattleEffect_ArmBg2AffineHBlankDma was added above.
-    if (mode != CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
-      if (mode != CASTING_IMPACT_IMPACT_ASURA) {
-        s32 base;
-        scanline = work->bg2xLines;
-        i = 0;
-        base = 4 << 16;
-        phase = frame * (TRIG_TURN / 16);
-        for (; i != DISPLAY_HEIGHT; i++) {
-          // 1 - sin pixels (0 to 2), in BG2X's 20.8 format: a wave 32 lines
-          // long that moves up two lines a frame.
-          s32 offset = (base - ((Trig_Sin(phase) * 4))) >> 10;
-          *scanline++ = offset;
-          phase += TRIG_TURN / 32;
-        }
+    if (mode != CASTING_IMPACT_IMPACT_MORTAL_DANGER &&
+        mode != CASTING_IMPACT_IMPACT_ASURA) {
+      phase = frame * (TRIG_TURN / 16);
+      for (i = 0; i != DISPLAY_HEIGHT; i++) {
+        // 1 - sin pixels (0 to 2), in BG2X's 20.8 format: a wave 32 lines
+        // long that moves up two lines a frame.
+        work->bg2xLines[i] = (px(4) - Trig_Sin(phase) * 4) >> 10;
+        phase += TRIG_TURN / 32;
       }
     }
     // Follow the caster for the first three frames, anchoring 16 pixels
@@ -1284,9 +1264,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       if (frame <= 5) {
         Projection_Point(&djinnPos, &projected);
         projected.x /= 2;
-        djinnX = projected.x;
         blitters[1](canvas, pictures + CASTING_IMPACT_DJINNI_PICTURE,
-                    djinnX - 10, projected.y - 4, 20, 40);
+                    projected.x - 10, projected.y - 4, 20, 40);
         djinnPos.x += velocity.x;
         djinnPos.y += velocity.y;
         djinnPos.z += velocity.z;
@@ -1338,7 +1317,6 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     }
     BattleCamera_Shake(8, 8);
     EFFECT_END_FRAME(work);
-    frame++;
   }
   // Phase 4: Meltdown hands the cleared canvas to the stat reduction
   // (Impair), as CastingImpact_EndPrelude does; the others stop the wave

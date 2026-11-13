@@ -34,8 +34,8 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
   struct Particle *flame;
 
   // The work, the canvas, and BG1 and BG2 blended at 14:16.
-  work = (struct BattleEffectWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  canvas = (void *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDCNT =

@@ -121,9 +121,9 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
   s32 paletteId;
 
   // The slots are read from the canvas's, not the work block's.
-  canvas = (void *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work = (struct BattleEffectWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  sprites = (u8 *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);

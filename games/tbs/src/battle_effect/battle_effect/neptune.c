@@ -84,9 +84,9 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   struct SpriteScale scale;
   s32 ground = 112; // where the columns land
 
-  canvas = (void *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  work = (struct BattleEffectWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  particleSheet = (u8 *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  particleSheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();

@@ -1129,10 +1129,8 @@ SECTIONS
     {
         "*/games/tla/src/scene/entry/contigo.o"(.text)
         "*/games/tla/src/scene/contigo.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/contigo/contigo.o"(.text)
         "*/games/tla/src/scene/import/contigo.o"(.text)
-        "*/games/tla/src/scene/contigo/contigo.o"(.data)
+        "*/games/tla/src/scene/contigo.o"(.data)
     }
     .bss :
     {

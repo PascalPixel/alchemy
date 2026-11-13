@@ -81,8 +81,10 @@ s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
 }
 
 /// Links a sprite entry into depth slot `slot` (clamped to 0..255) for this
-/// frame. The entry's first word becomes its link to the next entry. Called
-/// by everything that draws a sprite, before wait() builds the OAM list.
+/// frame. A higher slot is drawn in front: the OAM list is built from slot 255
+/// down, and the hardware draws an earlier entry over a later one. The entry's
+/// first word becomes its link to the next entry. Called by everything that
+/// draws a sprite, before wait() builds the OAM list.
 void Oam_AddSpriteAtDepth(void *slotEntry, s32 slot) {
   void **head;
   void *previousHead;

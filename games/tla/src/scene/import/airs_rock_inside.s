@@ -322,13 +322,13 @@ Scene_QueueMusic:
 	.thumb_func
 Tightrope_Initialize:
 	overlay_veneer Tightrope_InitializeFar
-	.global Func_02005f5c
+	.global Tightrope_Place
 	.thumb_func
-Func_02005f5c:
+Tightrope_Place:
 	overlay_veneer Tightrope_PlaceFar
-	.global Func_02005f64
+	.global Actor_GetCellIndex
 	.thumb_func
-Func_02005f64:
+Actor_GetCellIndex:
 	overlay_veneer Actor_GetCellIndexFar
 	.global Actor_PlaceBlocks
 	.thumb_func

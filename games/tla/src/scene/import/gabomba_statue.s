@@ -378,9 +378,9 @@ Rope_GetState:
 	.thumb_func
 Func_0200583c:
 	overlay_veneer Rope_PlaceFar
-	.global Func_02005844
+	.global Actor_GetCellIndex
 	.thumb_func
-Func_02005844:
+Actor_GetCellIndex:
 	overlay_veneer Actor_GetCellIndexFar
 	.global Party_GetLeaderActor
 	.thumb_func

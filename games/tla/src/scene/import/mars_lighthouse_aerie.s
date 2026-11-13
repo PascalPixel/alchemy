@@ -354,9 +354,9 @@ Camera_WorldToScreen:
 	.thumb_func
 Func_020057a4:
 	overlay_veneer EffectSprite_InitFar
-	.global Func_020057ac
+	.global EffectSprite_Draw
 	.thumb_func
-Func_020057ac:
+EffectSprite_Draw:
 	overlay_veneer EffectSprite_DrawFar
 	.global BattleEffect_GetObjectPriority
 	.thumb_func

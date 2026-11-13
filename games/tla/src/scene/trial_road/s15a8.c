@@ -331,7 +331,7 @@ void TrialRoad_SetUpFountainStage(void) {
 
 void TrialRoad_SetUpSandStage(void) {
   Tightrope_Initialize();
-  Func_02005a10(0, 15, 16);
+  Tightrope_Place(0, 15, 16);
   if (!Event_GetFlag(0x374))
     MapGrid_CopyCellAttributes(18, 21, 1, 1, 19, 21);
   else
@@ -1669,7 +1669,7 @@ struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
 /// other marks its cell, writes a shape for its height into the shape grid, and
 /// takes mode 0 when its first flag is set. Then the leader is lifted onto the
 /// ground if it stands below it.
-DEFINE_PILLARS_RESTORE_RAISED(TrialRoad_RestoreCrumblingPillars, Func_02005a18,
+DEFINE_PILLARS_RESTORE_RAISED(TrialRoad_RestoreCrumblingPillars, Actor_GetCellIndex,
                               MapGrid_GetTerrainKind, Actor_DisableById,
                               MapCollision_FindOrAddTag, Actor_SelectAnimation)
 
@@ -1726,7 +1726,7 @@ void Actor_MoveToObject(s32 id, s32 owner);
 /// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
 /// it copy actor 9's visual attributes.
 DEFINE_PILLARS_RESTORE(TrialRoad_RestorePillars, TrialRoad_SetPillarMode3,
-                       Func_02005a18, MapGrid_GetTerrainKind, Actor_DisableById,
+                       Actor_GetCellIndex, MapGrid_GetTerrainKind, Actor_DisableById,
                        MapCollision_FindOrAddTag)
 
 void TrialRoad_TakePlaceOf(struct Actor *object, struct Actor *target) {

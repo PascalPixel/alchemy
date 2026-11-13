@@ -297,7 +297,7 @@ void Func_020017a0(void) {
     Event_ResolvePendingActions(0);
     *flags = 0;
     wait(1);
-    Func_02003de8();
+    Leader_PushObjectAhead();
     Func_0200172c();
     wait(1);
     *flags = 3;
@@ -625,11 +625,11 @@ void Func_0200200c(struct Actor *object) {
     Event_End();
   } else if (x == 18) {
     cell = ((struct MapCells *)Ram_HeapSlots->mapWork)->cells;
-    cell += Func_02003db0(object) * 4;
+    cell += Actor_GetCellIndex(object) * 4;
     cell[3] &= 0x7f;
   } else if (x == 54) {
     cell = ((struct MapCells *)Ram_HeapSlots->mapWork)->cells;
-    cell += Func_02003db0(object) * 4;
+    cell += Actor_GetCellIndex(object) * 4;
     cell[3] &= 0x7f;
     cell[2] = 11;
   } else if (x == 55) {
@@ -643,7 +643,7 @@ extern const u8 gData_02003fc8[];
 
 DEFINE_SCENE_RUN_IF_HELD(Scene_RunIfHeld, Leader_CanPushObjectAhead,
                          Field_FindNearbyTalkTarget, Func_02000d78,
-                         gData_02003fc8, Func_02003de8, Func_0200200c)
+                         gData_02003fc8, Leader_PushObjectAhead, Func_0200200c)
 
 void Func_02002114(void) { Func_02000d78(gData_02003fc8); }
 

@@ -433,7 +433,7 @@ extern u8 gMapShapeGrid[];
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 u8 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
-DEFINE_PILLARS_RESTORE_RAISED(MagmaRock_RestoreCrumblingPillars, Func_02003c04,
+DEFINE_PILLARS_RESTORE_RAISED(MagmaRock_RestoreCrumblingPillars, Actor_GetCellIndex,
                               MapGrid_GetTerrainKind, Actor_DisableById,
                               MapCollision_FindOrAddTag, Actor_SelectAnimation)
 
@@ -566,7 +566,7 @@ void Actor_MoveToObject(s32 id, s32 owner);
 /// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
 /// it copy actor 9's visual attributes.
 DEFINE_PILLARS_RESTORE(MagmaRock_RestorePillars, MagmaRock_SetPillarMode3,
-                       Func_02003c04, MapGrid_GetTerrainKind, Actor_DisableById,
+                       Actor_GetCellIndex, MapGrid_GetTerrainKind, Actor_DisableById,
                        MapCollision_FindOrAddTag)
 
 void MagmaRock_TakePlaceOf(struct Actor *object, struct Actor *source) {

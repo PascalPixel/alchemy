@@ -180,7 +180,7 @@ DEFINE_ROCKS_SPAWN(Rocks_Spawn)
 // The falling rocks' setup, and Func_02002ebc, which stops their task and
 // frees their picture and heap slot.
 
-void Func_02003190(struct RockSprite__s29d0 *sprite, s32 width, s32 height,
+void EffectSprite_Init(struct RockSprite__s29d0 *sprite, s32 width, s32 height,
                    u32 attr, s32 tile);
 
 /// The falling rocks' setup: loads their picture, sets up 64 small sprites,
@@ -202,7 +202,7 @@ void Func_02002e00(void) {
   rock = work->rocks;
   sprite = work->sprites;
   for (i = 63; i >= 0; i--) {
-    Func_02003190(sprite, 8, 8, 0x40000000, tile);
+    EffectSprite_Init(sprite, 8, 8, 0x40000000, tile);
     sprite->blend = 1;
     sprite->palette = 0;
     sprite->priority = 0;

@@ -2046,7 +2046,7 @@ void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer) {
   struct Actor *object = Actor_Get(id);
   struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
 
-  cell += Func_02005844(object);
+  cell += Actor_GetCellIndex(object);
   if (Event_GetFlag(flag)) {
     /* FAKEMATCH(temporary): the flags read into a local before the cell store
      * and a local holding 2, so the flags are ORed into the register that holds

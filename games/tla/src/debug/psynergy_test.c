@@ -45,7 +45,7 @@ void Actor_FallOverWithAnimationById(s32 actor, s32 angle, s32 frames);
 
 void Actor_ArriveInRing(s32 actor);
 
-void Func_02000eec(struct SparkleSprite *sprite);
+void EffectSprite_Draw(struct SparkleSprite *sprite);
 
 extern s32 gData_02000f44[];
 
@@ -626,7 +626,7 @@ void Func_02000ad0(struct Actor *object) {
             sprite->unk10 -= 0x10000;
             sprite->unk18 = -sprite->unk18;
           }
-          Func_02000eec(sprite);
+          EffectSprite_Draw(sprite);
           sprite++;
         }
         work->unka0[i]++;
@@ -822,7 +822,7 @@ struct SparkleWork__s0c4c {
   struct Actor *object;
 };
 
-void Func_02000ee4(struct SparkleSprite__s0c4c *sprite, s32 width, s32 height,
+void EffectSprite_Init(struct SparkleSprite__s0c4c *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 
 void Func_02000c4c(struct Actor *object, struct SparkleWork__s0c4c *work) {
@@ -848,7 +848,7 @@ void Func_02000c4c(struct Actor *object, struct SparkleWork__s0c4c *work) {
     offset = (row * 2) * sizeof(struct SparkleSprite__s0c4c);
     sprite = (struct SparkleSprite__s0c4c *)(offset + (s32)work);
     for (; col >= 0; col--) {
-      Func_02000ee4(sprite, 16, 16, 0x80004000, tile);
+      EffectSprite_Init(sprite, 16, 16, 0x80004000, tile);
       sprite->flag = 0;
       sprite->palette = 0;
       sprite->priority = BattleEffect_GetObjectPriority(object) & 3;

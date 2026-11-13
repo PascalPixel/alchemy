@@ -306,9 +306,9 @@ Party_GetLeaderActor:
 	.thumb_func
 Func_020035fc:
 	overlay_veneer EffectSprite_InitFar
-	.global Func_02003604
+	.global EffectSprite_Draw
 	.thumb_func
-Func_02003604:
+EffectSprite_Draw:
 	overlay_veneer EffectSprite_DrawFar
 	.global Field_StartColorTransition
 	.thumb_func

@@ -196,7 +196,7 @@ void TrialRoad_BlockLogs(void);
 void TrialRoad_StartFountains(s32 a, s32 b);
 
 void Tightrope_Initialize(void);
-void Func_02005a10(s32 a, s32 b, s32 c);
+void Tightrope_Place(s32 a, s32 b, s32 c);
 
 extern u32 gTrialRoad_GaspHopScript[];
 
@@ -236,7 +236,7 @@ extern u32 gTrialRoad_RightKnightToChestsScript[];
 extern u32 gTrialRoad_RightKnightLeavesScript[];
 
 void Import_DecompressTaggedLz(const void *source, void *destination);
-s32 Func_02005a18(struct Actor *object);
+s32 Actor_GetCellIndex(struct Actor *object);
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 void Actor_DisableById(s32 id);
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);

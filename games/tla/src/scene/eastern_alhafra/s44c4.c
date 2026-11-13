@@ -151,5 +151,5 @@ DEFINE_STATUE_SINK(Statue_Sink, Actor_SetCellOpen)
 
 #include "field_event.h"
 
-DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Func_02004c34,
+DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
                            Actor_SelectAnimation)

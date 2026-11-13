@@ -250,9 +250,9 @@ Camera_WorldToScreen:
 	.thumb_func
 Func_02002b28:
 	overlay_veneer HangingVine_PlaceFar
-	.global Func_02002b30
+	.global EffectSprite_Init
 	.thumb_func
-Func_02002b30:
+EffectSprite_Init:
 	overlay_veneer EffectSprite_InitFar
 	.global Func_02002b38
 	.thumb_func

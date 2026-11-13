@@ -27,7 +27,7 @@
 void Actor_DisableById(s32 id);
 void FieldEffect_StartBlankOverlay(s32 a0);
 void Tightrope_Initialize(void);
-void Func_02005678(s32 a0, s32 a1, s32 a2);
+void Tightrope_Place(s32 a0, s32 a1, s32 a2);
 void Actor_DepartInRing(s32 id);
 void Actor_ArriveInRing(s32 id);
 void TileMap_ConvertBuffer(s32 scene, s32 a1);
@@ -100,7 +100,7 @@ void Func_020000d0(void) {
     }
   }
   if (Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner) != -1)
-    Func_02005688();
+    Leader_PushObjectAhead();
 }
 
 void Func_02000168(void) { Field_TryJumpForward(); }
@@ -128,12 +128,12 @@ void Func_02000170(void) {
     if (Actor_FindAtCell(position, 1) != NULL)
       return;
   }
-  Func_02005688();
+  Leader_PushObjectAhead();
 }
 
 #else
 
-void Func_02000170(void) { Func_02005688(); }
+void Func_02000170(void) { Leader_PushObjectAhead(); }
 
 #endif
 
@@ -151,7 +151,7 @@ void Func_020001f4(s32 unused, s32 id) {
 void Func_0200021c(void) {
   struct Actor *object = Actor_Get(16);
 
-  Func_02005688();
+  Leader_PushObjectAhead();
   if (object->x >> 20 == 50) {
     Event_SetFlag(0xa38);
     object->motionFlags = 3;
@@ -805,7 +805,7 @@ s32 Scene_Initialize(void) {
     FieldEffect_StartBlankOverlay(0);
     ((struct SceneWork *)heap->eventWork)->unk1ac = value;
     Tightrope_Initialize();
-    Func_02005678(0, 8, 9);
+    Tightrope_Place(0, 8, 9);
     BYTE_AT(Actor_GetById(8), 98) = 1;
     BYTE_AT(Actor_GetById(9), 98) = 1;
     if (entrance - 5 <= 1U || entrance == 8) {

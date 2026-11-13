@@ -22,7 +22,7 @@ s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
 void Func_02002184(s32 id, u32 kind, s32 flag, s32 layer);
 
-s32 Func_02003160(struct Actor *object);
+s32 Actor_GetCellIndex(struct Actor *object);
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 s32 Field_TryJumpForward(void);
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);

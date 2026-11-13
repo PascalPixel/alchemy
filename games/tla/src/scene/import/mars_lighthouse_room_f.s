@@ -346,17 +346,17 @@ Event_NoOp:
 	.thumb_func
 Tightrope_Initialize:
 	overlay_veneer Tightrope_InitializeFar
-	.global Func_02005678
+	.global Tightrope_Place
 	.thumb_func
-Func_02005678:
+Tightrope_Place:
 	overlay_veneer Tightrope_PlaceFar
 	.global Actor_FindAtCell
 	.thumb_func
 Actor_FindAtCell:
 	overlay_veneer Actor_FindAtCellFar
-	.global Func_02005688
+	.global Leader_PushObjectAhead
 	.thumb_func
-Func_02005688:
+Leader_PushObjectAhead:
 	overlay_veneer Leader_PushObjectAheadFar
 	.global Party_GetLeaderActor
 	.thumb_func

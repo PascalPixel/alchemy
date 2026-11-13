@@ -159,7 +159,7 @@ void Func_02000548(void) {
   TundariaTower_02002fe8(19, 55, 7, 8, 24, 46);
   TundariaTower_02002fc0(24, 102, 24, 110, 7, 8);
   GameFlag_Set(2370);
-  Func_02003050();
+  Event_End();
 }
 
 void Func_0200058c(void) {
@@ -167,7 +167,7 @@ void Func_0200058c(void) {
   TundariaTower_02002fe8(37, 55, 7, 8, 32, 46);
   TundariaTower_02002fc0(32, 102, 32, 110, 7, 8);
   GameFlag_Set(2371);
-  Func_02003050();
+  Event_End();
 }
 
 #include "iwram_call.h"
@@ -219,7 +219,7 @@ void Func_020005d0(void) {
   Event_WaitTransitionFrames();
   Actor_WaitForMoveById(*owner);
   Import_EventSetExitRequest(*choice);
-  Func_02003050();
+  Event_End();
 }
 
 #include "call.h"
@@ -332,7 +332,7 @@ void Func_020008a8(void) {
   Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(68, PIXELS(344), PIXELS(372));
   Actor_GetById(68)->update = (void (*)(void))Func_02000840;
-  Func_02003050();
+  Event_End();
 }
 
 void Func_02000920(void) {
@@ -344,7 +344,7 @@ void Func_02000920(void) {
 
     work->unk15a = 1;
   }
-  Func_02003050();
+  Event_End();
 }
 
 void Func_0200095c(void) { Func_0200189c(); }
@@ -379,7 +379,7 @@ void Func_02000964(void) {
   MapCell_SetAttributes(0, 21, 33, 0x3200);
   MapCell_SetAttributes(0, 22, 33, 0x3200);
   MapCell_SetAttributes(0, 26, 33, 0xff00);
-  Func_02003050();
+  Event_End();
 }
 
 void Func_02000a48(s32 arg0, s32 arg1) {
@@ -438,7 +438,7 @@ void Func_02000b3c(void) {
   MapGrid_SetCellHeight(0x1300000, 0x3900000, 0, -12);
   Actor_GetById(gMainRoutineWork.currentOwner)->bounce = 0;
   Import_EventSetExitRequest(11);
-  Func_02003050();
+  Event_End();
 }
 
 void Func_02000bfc(void) {
@@ -489,7 +489,7 @@ void Func_02000c64(s32 unused, s32 actorArg) {
   object->x = ((object->x >> 19) | 1) << 19;
   object->z = ((object->z >> 19) | 1) << 19;
   Actor_PlaceMovedBlock();
-  Func_02003050();
+  Event_End();
 }
 
 #include "io_reg.h"
@@ -525,7 +525,7 @@ void Func_02000d2c(void) {
     if (o->x >> 19 == 25 && GameFlag_Get(0x947))
       GameFlag_Set(0x946);
   }
-  Func_02003050();
+  Event_End();
 }
 
 void Func_02000de4(void) {

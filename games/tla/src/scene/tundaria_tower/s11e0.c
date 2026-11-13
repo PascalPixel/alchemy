@@ -76,7 +76,7 @@ void Func_020011e0(void) {
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
-  Func_02003050();
+  Event_End();
 }
 
 #include "tundaria_tower.h"

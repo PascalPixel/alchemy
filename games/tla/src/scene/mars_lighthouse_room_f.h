@@ -59,7 +59,7 @@ s32 Field_FindNearbyTalkTarget(s32 id);
 void Field_TryJumpForward(void);
 void ObjectTable_Snapshot(void);
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
-void Func_02005688(void);
+void Leader_PushObjectAhead(void);
 void Func_02005480(struct Actor *object, s32 mode);
 void Actor_SetBlendMode(struct Actor *object, u32 value);
 s32 Trig_Cos(s32 angle);

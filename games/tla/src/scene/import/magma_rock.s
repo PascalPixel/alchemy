@@ -290,9 +290,9 @@ Func_02003bf4:
 	.thumb_func
 Func_02003bfc:
 	overlay_veneer Rope_PlaceFar
-	.global Func_02003c04
+	.global Actor_GetCellIndex
 	.thumb_func
-Func_02003c04:
+Actor_GetCellIndex:
 	overlay_veneer Actor_GetCellIndexFar
 	.global Actor_PlaceBlocks
 	.thumb_func
@@ -314,9 +314,9 @@ MapCollision_FindOrAddTag:
 	.thumb_func
 Actor_FindAtCell:
 	overlay_veneer Actor_FindAtCellFar
-	.global Func_02003c34
+	.global EffectSprite_Init
 	.thumb_func
-Func_02003c34:
+EffectSprite_Init:
 	overlay_veneer EffectSprite_InitFar
 	.global EffectSprite_DrawAtWorldPosition
 	.thumb_func

@@ -191,7 +191,7 @@ top:
 
 #include "map.h"
 
-DEFINE_ACTOR_SET_CELL_OPEN(Func_02002184, Func_02003160,
+DEFINE_ACTOR_SET_CELL_OPEN(Func_02002184, Actor_GetCellIndex,
                            Import_ActorSelectAnimation)
 
 // On entering, sets each listed pillar from its two flags (pushed: moved to its
@@ -230,7 +230,7 @@ next:
     u8 *slot;
     s32 height;
 
-    index = Func_02003160(object);
+    index = Actor_GetCellIndex(object);
     cell = &cells[index];
     slot = shapes + index;
     shape = MapGrid_GetTerrainKind(object->terrainId, object->x, object->z);
@@ -318,7 +318,7 @@ next:
         GameFlag_Set(second);
       }
     }
-    Func_02003050();
+    Event_End();
     return;
   }
 test:
@@ -360,7 +360,7 @@ loop:
     GameFlag_Set(flag);
     GameFlag_Set(nextFlag);
   }
-  Func_02003050();
+  Event_End();
   return;
 test:
   if (*row != 0xffff)
@@ -420,7 +420,7 @@ next:
     u8 *slot;
     s32 height;
 
-    index = Func_02003160(object);
+    index = Actor_GetCellIndex(object);
     cell = &cells[index];
     slot = shapes + index;
     shape = MapGrid_GetTerrainKind(object->terrainId, object->x, object->z);
@@ -519,7 +519,7 @@ void Func_02002764(const u16 *table) {
         GameFlag_Set(second);
       }
     }
-    Func_02003050();
+    Event_End();
     return;
   test:
     if (*table != 0xffff)

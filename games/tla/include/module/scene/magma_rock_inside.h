@@ -58,7 +58,7 @@ void FieldEffect_StartBlankOverlay(s32 value);
 void MagmaRockInside_RaiseActorCells(u16 *list);
 
 void HangingVine_Place(s32 id, s32 value);
-s32 Func_02004ed0(struct Actor *object);
+s32 Actor_GetCellIndex(struct Actor *object);
 s32 Field_TryJumpForward(void);
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 

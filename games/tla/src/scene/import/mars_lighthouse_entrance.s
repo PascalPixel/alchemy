@@ -346,9 +346,9 @@ Party_AddHp:
 	.thumb_func
 ObjectTable_Snapshot:
 	overlay_veneer ObjectTable_SnapshotFar
-	.global Func_02004db8
+	.global Actor_GetCellIndex
 	.thumb_func
-Func_02004db8:
+Actor_GetCellIndex:
 	overlay_veneer Actor_GetCellIndexFar
 	.global Party_GetLeaderActor
 	.thumb_func

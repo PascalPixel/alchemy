@@ -76,9 +76,9 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 
 void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
-s32 Func_02004c34(struct Actor *object);
+s32 Actor_GetCellIndex(struct Actor *object);
 
-s32 Func_02004c24();
+s32 Tightrope_Place();
 s32 Tightrope_Release();
 s32 Leader_CanPushObjectAhead();
 s32 Func_02004c4c();

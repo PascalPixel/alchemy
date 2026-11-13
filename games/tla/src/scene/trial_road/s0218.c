@@ -524,7 +524,7 @@ void TrialRoad_LandOnPillar(void) {
   if (y >= 0x100000) {
     Field_TryJumpForward();
   } else if (Leader_CanPushObjectAhead()) {
-    Func_02005a38();
+    Leader_PushObjectAhead();
     TrialRoad_CheckPoundedPillarsCovered(0, 0);
   }
 }

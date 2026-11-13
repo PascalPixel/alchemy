@@ -182,9 +182,9 @@ Event_Wait:
 	.thumb_func
 Event_Start:
 	overlay_veneer Event_StartFar
-	.global Func_02003050
+	.global Event_End
 	.thumb_func
-Func_02003050:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func
@@ -318,9 +318,9 @@ Sprite_ShareVramCacheEntry:
 	.thumb_func
 Actor_WatchAndSetScript:
 	overlay_veneer Actor_WatchAndSetScriptFar
-	.global Func_02003160
+	.global Actor_GetCellIndex
 	.thumb_func
-Func_02003160:
+Actor_GetCellIndex:
 	overlay_veneer Actor_GetCellIndexFar
 	.global Actor_PlaceBlocks
 	.thumb_func
@@ -342,9 +342,9 @@ MapCollision_FindOrAddTag:
 	.thumb_func
 Actor_FindAtCell:
 	overlay_veneer Actor_FindAtCellFar
-	.global Func_02003190
+	.global EffectSprite_Init
 	.thumb_func
-Func_02003190:
+EffectSprite_Init:
 	overlay_veneer EffectSprite_InitFar
 	.global EffectSprite_DrawAtWorldPosition
 	.thumb_func

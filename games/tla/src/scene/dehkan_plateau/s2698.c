@@ -555,12 +555,12 @@ extern s32 gData_02005678;
 
 void Pillars_Raise(const void *data);
 void Func_02001ee8(void);
-/* VIEW(s3284): routine Func_02003db0 as s32 Func_02003db0(void); s2c14 has s32
- * Func_02003db0(struct Actor *object); tried as the rest of the object declares
+/* VIEW(s3284): routine Actor_GetCellIndex as s32 Actor_GetCellIndex(void); s2c14 has s32
+ * Actor_GetCellIndex(struct Actor *object); tried as the rest of the object declares
  * it, it does not compile in tla-ja:
  * games/tla/src/scene/dehkan_plateau/s2698.c:617: too few arguments to function
- * `Func_02003db0'. */
-extern s32 Func_02003db0__s3284(void) __asm__("Func_02003db0");
+ * `Actor_GetCellIndex'. */
+extern s32 Func_02003db0__s3284(void) __asm__("Actor_GetCellIndex");
 
 // The room entry written in the scene layer of Func_02003164 and Func_0200390c:
 // sets actors' variants, links, cells and flags for the room.
@@ -582,12 +582,12 @@ void Func_02003284(void) {
   do {
   } while (0);
   Tightrope_Initialize();
-  Func_02003da0(0, 8, 9);
-  Func_02003da0(1, 10, 11);
+  Tightrope_Place(0, 8, 9);
+  Tightrope_Place(1, 10, 11);
   Actor_SetSpritePriority(12, 1);
   Actor_SetSpritePriority(13, 1);
   Func_02003d90();
-  Func_02003da8(0, 520, 12, 13);
+  Rope_Place(0, 520, 12, 13);
   Actor_PlaceBlocks(gData_02003fc4);
   if (Actor_GetById(19)->y > (s32)0xfff80000)
     Actor_SetSpritePriority(19, 1);

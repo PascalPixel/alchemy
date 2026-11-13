@@ -98,13 +98,13 @@ Field_RequestBattleFromEncounterTable:
 	.thumb_func
 Rope_Initialize:
 	overlay_veneer Rope_InitializeFar
-	.global Func_020005e8
+	.global Rope_Coil
 	.thumb_func
-Func_020005e8:
+Rope_Coil:
 	overlay_veneer Rope_CoilFar
-	.global Func_020005f0
+	.global EffectSprite_Init
 	.thumb_func
-Func_020005f0:
+EffectSprite_Init:
 	overlay_veneer EffectSprite_InitFar
 	.global EffectSprite_DrawAtWorldPosition
 	.thumb_func

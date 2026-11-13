@@ -48,7 +48,7 @@ static __inline__ void SetUp(struct EffectSprite *sprite, s32 pivotX,
                              s32 pivotY, u32 attributes, s32 tile) {
   /* FAKEMATCH(wrapper): the setup forwarded inline; as a direct call, 2 of 316
    * instructions differ in tla-en. */
-  Func_02002b30(sprite, pivotX, pivotY, attributes, tile);
+  EffectSprite_Init(sprite, pivotX, pivotY, attributes, tile);
 }
 
 void Func_020017a8(s32 a, s32 b, s32 side) {
@@ -77,7 +77,7 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   sprite = work->sprites;
   i = 31;
   for (; i >= 0; age -= 2, i--, sprite++, spark++) {
-    Func_02002b30(sprite, 4, 4, 0, smallTile);
+    EffectSprite_Init(sprite, 4, 4, 0, smallTile);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;

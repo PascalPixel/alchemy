@@ -78,7 +78,7 @@ void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer) {
   struct Actor *object = Actor_GetById(id);
   struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
 
-  cell += Func_02003db0(object);
+  cell += Actor_GetCellIndex(object);
   if (GameFlag_Get(flag)) {
     /* FAKEMATCH(temporary): the flags read into a local before the cell store
      * and ORed into the register that holds 2, as the native does; as one |=,
@@ -141,7 +141,7 @@ void CrumblingPillars_Place(const void *data) {
       if (GameFlag_Get(nextFlag)) {
         Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
       } else {
-        s32 index = Func_02003db0(object);
+        s32 index = Actor_GetCellIndex(object);
         struct MapCell *cell = &cells[index];
         u8 *shapeCell = &shapes[index];
         s32 shape =
@@ -345,7 +345,7 @@ void CrumblingPillars_PlaceWithStandIns(u16 *list) {
     if (GameFlag_Get(next)) {
       Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
     } else {
-      s32 index = Func_02003db0(actor);
+      s32 index = Actor_GetCellIndex(actor);
       struct MapCell *cell;
       u8 *slot;
       s32 shape, ground;

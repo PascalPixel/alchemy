@@ -390,13 +390,13 @@ Actor_WalkByAndWaitById:
 	.thumb_func
 Tightrope_Initialize:
 	overlay_veneer Tightrope_InitializeFar
-	.global Func_02005a10
+	.global Tightrope_Place
 	.thumb_func
-Func_02005a10:
+Tightrope_Place:
 	overlay_veneer Tightrope_PlaceFar
-	.global Func_02005a18
+	.global Actor_GetCellIndex
 	.thumb_func
-Func_02005a18:
+Actor_GetCellIndex:
 	overlay_veneer Actor_GetCellIndexFar
 	.global MapCollision_FindOrAddTag
 	.thumb_func
@@ -410,9 +410,9 @@ Actor_FindAtCell:
 	.thumb_func
 Leader_CanPushObjectAhead:
 	overlay_veneer Leader_CanPushObjectAheadFar
-	.global Func_02005a38
+	.global Leader_PushObjectAhead
 	.thumb_func
-Func_02005a38:
+Leader_PushObjectAhead:
 	overlay_veneer Leader_PushObjectAheadFar
 	.global Party_GetLeaderActor
 	.thumb_func

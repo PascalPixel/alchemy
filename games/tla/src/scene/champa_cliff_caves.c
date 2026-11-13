@@ -1575,7 +1575,7 @@ void Func_020029f8(s32 id, s32 mode) {
       sprite->tile = tile + 28;
       break;
     }
-    Func_02003604(sprite);
+    EffectSprite_Draw(sprite);
     wait(1);
   }
   Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
@@ -1771,7 +1771,7 @@ loop:
   sprite->z = position[2];
   sprite->scale = work->scale;
   sprite->trailingScale = work->trailingScale;
-  Func_02003604(sprite);
+  EffectSprite_Draw(sprite);
   position[0] = work->position[0];
   position[1] = work->position[1];
   position[2] = work->position[2];
@@ -1781,7 +1781,7 @@ loop:
   sprite->z = position[2];
   sprite->scale = work->scale2;
   sprite->trailingScale = work->trailingScale2;
-  Func_02003604(sprite);
+  EffectSprite_Draw(sprite);
   work->trailingScale = work->scale * 31 / 40;
   work->trailingScale2 = work->scale2 * 31 / 40;
   work->frame++;

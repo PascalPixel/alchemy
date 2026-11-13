@@ -77,8 +77,8 @@ void Func_020000c8(s32 mode, s32 arg) {
     Tightrope_Release(2);
     i = 0;
     do {
-      Func_02004c24(1, 18, 19);
-      Func_02004c24(2, 20, 21);
+      Tightrope_Place(1, 18, 19);
+      Tightrope_Place(2, 20, 21);
       System_Wait(1);
       Tightrope_Release(1);
       Tightrope_Release(2);
@@ -497,12 +497,12 @@ void Func_02000af8(void) {
 #define OBJECT(id) (Actor_Get((id)))
 
 void Func_020040ec();
-/* VIEW(eastern_alhafra): routine Func_02004c2c as void Func_02004c2c();
- * module/scene/mars_lighthouse_aerie.h has void Func_02004c2c(void); tried as
- * the definition's void Func_02004c2c(void), which the object already declares,
+/* VIEW(eastern_alhafra): routine Rope_Place as void Rope_Place();
+ * module/scene/mars_lighthouse_aerie.h has void Rope_Place(void); tried as
+ * the definition's void Rope_Place(void), which the object already declares,
  * it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:573: too
- * many arguments to function `Func_02004c2c'. */
-extern void Func_02004c2c__eastern_alhafra() __asm__("Func_02004c2c");
+ * many arguments to function `Rope_Place'. */
+extern void Func_02004c2c__eastern_alhafra() __asm__("Rope_Place");
 void Func_020047fc();
 /* VIEW(eastern_alhafra): routine Tightrope_Settle as void Tightrope_Settle();
  * module/scene/mars_lighthouse_aerie.h has void Tightrope_Settle(void); tried as
@@ -594,7 +594,7 @@ s32 Scene_Initialize(void) {
   OBJECT(8)->priorityFlags |= 32;
   OBJECT(9)->priorityFlags |= 32;
   Tightrope_Initialize();
-  Func_02004c24(0, 12, 13);
+  Tightrope_Place(0, 12, 13);
   Actor_SetSpriteFlags(Actor_Get(12), 0);
   Actor_SetSpriteFlags(Actor_Get(13), 0);
   Func_020047fc(gData_02004d0c);
@@ -611,14 +611,14 @@ s32 Scene_Initialize(void) {
     object = OBJECT(19);
     object->motionFlags = flag;
     object->y = 0x100000;
-    Func_02004c24(1, 18, 19);
+    Tightrope_Place(1, 18, 19);
     Func_02004c94__eastern_alhafra(1);
     object = OBJECT(20);
     object->collisionFlags |= 8;
     object = OBJECT(21);
     object->motionFlags = flag;
     object->y = 0x100000;
-    Func_02004c24(2, 20, 21);
+    Tightrope_Place(2, 20, 21);
   }
   Actor_SetSpriteFlags(Actor_Get(16), 0);
   Actor_SetSpriteFlags(Actor_Get(17), 0);

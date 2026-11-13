@@ -202,13 +202,13 @@ Actor_FallOverById:
 	.thumb_func
 Actor_FallOverWithAnimationById:
 	overlay_veneer Actor_FallOverWithAnimationByIdFar
-	.global Func_02000ee4
+	.global EffectSprite_Init
 	.thumb_func
-Func_02000ee4:
+EffectSprite_Init:
 	overlay_veneer EffectSprite_InitFar
-	.global Func_02000eec
+	.global EffectSprite_Draw
 	.thumb_func
-Func_02000eec:
+EffectSprite_Draw:
 	overlay_veneer EffectSprite_DrawFar
 	.global BattleEffect_GetObjectPriority
 	.thumb_func

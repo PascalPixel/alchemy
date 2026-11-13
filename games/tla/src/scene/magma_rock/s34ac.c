@@ -211,7 +211,7 @@ struct RockWork {
 };
 
 void Import_DecompressTaggedLz(void *entry, void *destination);
-void Func_02003c34(struct RockSprite *sprite, s32 width, s32 height,
+void EffectSprite_Init(struct RockSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 
 void MagmaRock_StartFallingRocks(void) {
@@ -231,7 +231,7 @@ void MagmaRock_StartFallingRocks(void) {
   rock = work->rocks;
   sprite = work->sprites;
   for (i = 63; i >= 0; i--, sprite++, rock++) {
-    Func_02003c34(sprite, 8, 8, 0x40000000, tile);
+    EffectSprite_Init(sprite, 8, 8, 0x40000000, tile);
     sprite->unk05_5 = 1;
     sprite->palette = 0;
     sprite->priority = 0;

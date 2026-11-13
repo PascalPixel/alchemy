@@ -52,7 +52,7 @@ void Actor_MoveToObject(s32 id, s32 target);
 
 // Raises each listed actor's cells: the shape grid and the cell flags under it,
 // then lifts the leader if the new terrain is above the leader.
-DEFINE_PILLARS_RAISE(Pillars_Raise, MapGrid_GetTerrainKind, Func_02003db0,
+DEFINE_PILLARS_RAISE(Pillars_Raise, MapGrid_GetTerrainKind, Actor_GetCellIndex,
                      MapCollision_FindOrAddTag)
 
 #define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
@@ -77,7 +77,7 @@ void Func_02000d78(u16 *list) {
       u8 *shapes = shapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
       s32 shape = MapGrid_GetTerrainKind(*layer, held->x, held->z);
       s32 level = Map_GetTerrainHeight(*layer, held->x, held->z);
-      s32 index = Func_02003db0(held);
+      s32 index = Actor_GetCellIndex(held);
       s32 value;
 
       shapes += index;
@@ -103,6 +103,6 @@ void Func_02000d78(u16 *list) {
 // it past the cell read; a plain store keeps its order.
 
 DEFINE_HELD_ACTOR_RAISE_CELL(HeldActor_RaiseCell, MapGrid_GetTerrainKind,
-                             Func_02003db0, MapCollision_FindOrAddTag)
+                             Actor_GetCellIndex, MapCollision_FindOrAddTag)
 
 #include "../../field/object/set_sprite_priority.c"

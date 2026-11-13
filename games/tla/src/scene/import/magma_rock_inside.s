@@ -358,13 +358,13 @@ Event_NoOp:
 	.thumb_func
 Tightrope_Initialize:
 	overlay_veneer Tightrope_InitializeFar
-	.global Func_02004ec8
+	.global Tightrope_Place
 	.thumb_func
-Func_02004ec8:
+Tightrope_Place:
 	overlay_veneer Tightrope_PlaceFar
-	.global Func_02004ed0
+	.global Actor_GetCellIndex
 	.thumb_func
-Func_02004ed0:
+Actor_GetCellIndex:
 	overlay_veneer Actor_GetCellIndexFar
 	.global Actor_PlaceBlocks
 	.thumb_func

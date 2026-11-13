@@ -192,7 +192,7 @@ void Func_020049dc(u16 *list, s32 mode, s32 count) {
 #include "field_event.h"
 #include "map.h"
 
-DEFINE_ACTOR_SET_CELL_OPEN(Func_02004a60, Func_02004db8, Func_02004bc0)
+DEFINE_ACTOR_SET_CELL_OPEN(Func_02004a60, Actor_GetCellIndex, Func_02004bc0)
 
 #include "scene_tables.h"
 #include "version.h"

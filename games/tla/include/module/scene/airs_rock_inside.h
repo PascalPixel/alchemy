@@ -48,7 +48,7 @@ extern struct ActorPlacement gData_020068ac[];
 
 void Func_020026c0(void);
 
-s32 Func_02005f64(struct Actor *object);
+s32 Actor_GetCellIndex(struct Actor *object);
 
 void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
@@ -100,7 +100,7 @@ void Func_02004cc8(void);
 
 void Scene_QueueMusic(s32 id);
 void Tightrope_Initialize(void);
-s32 Func_02005f5c(s32 slot, s32 a, s32 b);
+s32 Tightrope_Place(s32 slot, s32 a, s32 b);
 
 void Func_02000908(u16 *list);
 void Func_0200061c(void);

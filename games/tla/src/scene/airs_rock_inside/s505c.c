@@ -212,11 +212,11 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_GetById(13), 0);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room4) {
     Tightrope_Initialize();
-    Func_02005f5c(0, 11, 12);
-    Func_02005f5c(1, 13, 14);
-    Func_02005f5c(2, 15, 0x10);
-    Func_02005f5c(3, 17, 18);
-    Func_02005f5c(4, 19, 20);
+    Tightrope_Place(0, 11, 12);
+    Tightrope_Place(1, 13, 14);
+    Tightrope_Place(2, 15, 0x10);
+    Tightrope_Place(3, 17, 18);
+    Tightrope_Place(4, 19, 20);
     ((u8 *)Actor_GetById(18))[98] = 1;
     if (GameFlag_Get(769)) {
       Call6(MapGrid_CopyCellPictureIndicesRect, 69, 64, 29, 85, 5, 7);
@@ -260,9 +260,9 @@ s32 Scene_Initialize(void) {
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room6) {
     Func_02002770();
     Tightrope_Initialize();
-    Func_02005f5c(0, 11, 12);
-    Func_02005f5c(1, 13, 14);
-    Func_02005f5c(2, 15, 0x10);
+    Tightrope_Place(0, 11, 12);
+    Tightrope_Place(1, 13, 14);
+    Tightrope_Place(2, 15, 0x10);
     if (!GameFlag_Get(770)) {
       Call6(MapGrid_CopyCellPictureIndicesRect, 69, 64, 32, 79, 5, 7);
       Call6(Map_CopyCellAttributeRect, 49, 15, 5, 5, 32, 15);

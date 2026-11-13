@@ -330,17 +330,17 @@ Rope_Initialize:
 	.thumb_func
 Tightrope_Initialize:
 	overlay_veneer Tightrope_InitializeFar
-	.global Func_02004c24
+	.global Tightrope_Place
 	.thumb_func
-Func_02004c24:
+Tightrope_Place:
 	overlay_veneer Tightrope_PlaceFar
-	.global Func_02004c2c
+	.global Rope_Place
 	.thumb_func
-Func_02004c2c:
+Rope_Place:
 	overlay_veneer Rope_PlaceFar
-	.global Func_02004c34
+	.global Actor_GetCellIndex
 	.thumb_func
-Func_02004c34:
+Actor_GetCellIndex:
 	overlay_veneer Actor_GetCellIndexFar
 	.global Actor_FindAtCell
 	.thumb_func

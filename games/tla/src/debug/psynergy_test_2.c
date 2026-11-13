@@ -38,7 +38,7 @@ void Func_020001e0(s32 x, s32 y, s32 z, s32 count);
 void Func_0200029c(void);
 void Func_02000358(void);
 
-void Func_020005e8(s32 a, s32 b, s32 c);
+void Rope_Coil(s32 a, s32 b, s32 c);
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
@@ -102,7 +102,7 @@ s32 Func_02000104(void) {
   ((struct EventFlags *)work)->unkd36 = 0;
   gMainRoutineWork.eventMode = 2;
   Rope_Initialize();
-  Value3((s32 (*)())Func_020005e8, 0, 10, 11);
+  Value3((s32 (*)())Rope_Coil, 0, 10, 11);
   Actor_SetAnimation(9, 4);
   return 0;
 }
@@ -230,7 +230,7 @@ struct RockWork {
   u16 resource;
 };
 
-void Func_020005f0(struct RockSprite *sprite, s32 width, s32 height,
+void EffectSprite_Init(struct RockSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 
 static __inline__ void StartTask(void (*func)(void), s32 priority) {
@@ -255,7 +255,7 @@ void Func_0200029c(void) {
   rock = work->rocks;
   sprite = work->sprites;
   for (i = 63; i >= 0; i--, sprite++, rock++) {
-    Func_020005f0(sprite, 8, 8, 0x40000000, tile);
+    EffectSprite_Init(sprite, 8, 8, 0x40000000, tile);
     sprite->unk05_5 = 1;
     sprite->palette = 0;
     sprite->priority = 0;

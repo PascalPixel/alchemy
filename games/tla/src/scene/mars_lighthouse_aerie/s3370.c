@@ -1147,7 +1147,7 @@ void Func_02005268(struct Actor *object) {
             sprite->unk10 -= 0x10000;
             sprite->unk18 = -sprite->unk18;
           }
-          Func_020057ac(sprite);
+          EffectSprite_Draw(sprite);
           sprite++;
         }
         work->unka0[i]++;

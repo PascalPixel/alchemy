@@ -27,8 +27,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 extern char ResourceId_GoldenTrident;
 
-void Func_02002b30(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
-                   u32 attributes, s32 tile);
+void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
+                       u32 attributes, s32 tile);
 
 void Func_02001080(void);
 

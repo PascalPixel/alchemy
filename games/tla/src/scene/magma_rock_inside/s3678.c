@@ -28,7 +28,7 @@ extern const u8 gMagmaRockInside_Room6Pillars[];
 
 void MagmaRockInside_StartLavaPlatform(s32 id, const u8 *script, s32 flag);
 void Actor_PlaceBlocks(const u8 *table);
-void Func_02004ec8(s32 a, s32 b, s32 c);
+void Tightrope_Place(s32 a, s32 b, s32 c);
 s32 MagmaRockInside_SwapCells(u32 layer, s32 x, s32 y, s32 value);
 void MagmaRockInside_LayerWithLeader(void);
 
@@ -92,7 +92,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(11)->z = 166 << 18;
     Actor_PlaceBlocks(gMagmaRockInside_Room3Pillars);
     Tightrope_Initialize();
-    Func_02004ec8(0, 13, 14);
+    Tightrope_Place(0, 13, 14);
     MagmaRockInside_RaiseActorCells(gMagmaRockInside_Statues);
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
     Raise(9);
@@ -294,7 +294,7 @@ s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value);
 /// On entering, sets each listed pillar from its two flags, then lifts the
 /// leader onto the ground under it.
 DEFINE_PILLARS_RESTORE_RAISED(MagmaRockInside_RestoreCrumblingPillars,
-                              Func_02004ed0, MapGrid_GetTerrainKind,
+                              Actor_GetCellIndex, MapGrid_GetTerrainKind,
                               Actor_DisableById, MapCollision_FindOrAddTag, Func_02004c98)
 
 #include "../shared/trial_road.h"
@@ -355,7 +355,7 @@ void Actor_MoveToObject(s32 id, s32 owner);
 /// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
 /// it copy actor 9's visual attributes.
 DEFINE_PILLARS_RESTORE(MagmaRockInside_RestorePillars,
-                       MagmaRockInside_SetPillarMode3, Func_02004ed0,
+                       MagmaRockInside_SetPillarMode3, Actor_GetCellIndex,
                        MapGrid_GetTerrainKind, Actor_DisableById, MapCollision_FindOrAddTag)
 
 void MagmaRockInside_TakePlaceOf(struct Actor *object, struct Actor *target) {

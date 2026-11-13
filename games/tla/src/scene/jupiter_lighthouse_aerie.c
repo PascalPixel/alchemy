@@ -1,8 +1,5 @@
 /// @file
-#include "shared/whirlwind.h"
 #include "flags.h"
-#include "shared/jupiter_lighthouse.h"
-#include "shared/actors.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -39,7 +36,6 @@
 #include "system/heap_release.h"
 #include "item_icon.h"
 #include "graphics/resource.h"
-#include "shared/cracked_tile.h"
 #include "field/cell_target.h"
 #include "system/io_write.h"
 #include "shared/tables.h"
@@ -419,13 +415,27 @@ next:
   gPaletteCycleFrame++;
 }
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(
-    JupiterLighthouse_LoadPalettesZero, gPaletteCyclePausesInEvents,
-    gPaletteCycleColors, gPaletteCycleUnlitPalette, gPaletteCycleFrame,
-    PaletteCycle_Step, gPaletteCycleUnlitColors)
+void JupiterLighthouse_LoadPalettesZero(s32 mode) {
+  gPaletteCyclePausesInEvents = 1;
+  if (mode != 2) {
+    Iwram_CopyWordsEntry(gPaletteCycleColors, (void *)&BG_PLTT_COLOR(12, 0),
+                         32);
+    Iwram_CopyWordsEntry(gPaletteCycleUnlitPalette,
+                         (void *)&BG_PLTT_COLOR(13, 0), 32);
+  }
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
+    /* FAKEMATCH(temporary): a local holding 0. */
+    s32 zero = 0;
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
-                             MapGrid_SetAttributeBAt)
+    gPaletteCycleFrame = zero;
+    Task_Add(PaletteCycle_Step, 1152);
+  } else {
+    Dma_Set(gPaletteCycleUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
+            DMA_COPY_WORDS(2), REG_DMA3);
+  }
+}
+
+#include "shared/actor_raise_from_cell.h"
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
                                                    s32 mode) {
@@ -491,7 +501,7 @@ void Func_02000930(void) {
   Event_End();
 }
 
-DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
+#include "shared/position_flat_distance.h"
 
 extern s32 gData_0200331c[];
 extern s32 gData_0200333c;
@@ -578,8 +588,34 @@ stop:
   }
 }
 
-DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Import_ActorSelectAnimation,
-                       Whirlwind_Update, FieldEffect_Spawn)
+struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
+  struct Vector3 position;
+  struct EffectOptions options;
+  struct GustObject *object;
+
+  Event_PlaySound(SE_222);
+  position.x = source->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
+                                  Trig_Cos(source->angle));
+  position.z = source->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
+                                  Math_Sin(source->angle));
+  object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
+                                                   position.z));
+  Import_ActorSelectAnimation(object, 2);
+  Actor_SetSpriteFlags(object, 0);
+  object->motionFlags = 0;
+  object->priorityFlags &= ~1;
+  object->angle = source->angle;
+  object->unk64 = 0;
+  object->unk62 = 0;
+  object->unk63 = 0;
+  object->update = Whirlwind_Update;
+  object->speedLimit = 0x18000;
+  options.priority = 1;
+  options.palette = 7;
+  FieldEffect_Spawn(position.x, source->y, position.z - 0x60000, 0, 0, 0,
+                    0x30000, &options);
+  return object;
+}
 
 s32 Func_02000de0(struct Actor *object) {
   struct EffectOptions spark;
@@ -602,8 +638,7 @@ s32 Func_02000de0(struct Actor *object) {
   return 0;
 }
 
-DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
-    JupiterLighthouse_PlaceRaisedActors)
+#include "shared/jupiter_lighthouse_place_raised_actors.h"
 
 void Func_02001010(struct Actor *object) {
   u8 *fill = &gDecodeFillByte;
@@ -954,31 +989,17 @@ extern s16 gLightSpriteTile;
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
 /// sprite, or a 32 by 64 one when the big switch is set, at its animation
 /// picture and depth.
-DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
-                          gLightSpriteCount, gLightSpriteActors,
-                          gLightSpritesLarge, gLightSpritePriority,
-                          BattleEffect_GetObjectPriority,
-                          Oam_AddSpriteAtDepthClamped)
+#include "shared/light_sprites_draw.h"
 
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
-                            gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gLightSpritesLarge,
-                            gLightSpritePriority)
+#include "shared/light_sprites_init_a.h"
 
-DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gLightSpriteActors,
-                            gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gLightSpritesLarge,
-                            gLightSpritePriority)
+#include "shared/light_sprites_init_b.h"
 
-DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gLightSpriteActors,
-                            gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gLightSpritesLarge,
-                            gLightSpritePriority)
+#include "shared/light_sprites_init_c.h"
 
-DEFINE_LIGHT_SPRITES_ADD(LightSprites_Add, gLightSpriteCount,
-                         gLightSpriteActors)
+#include "shared/light_sprites_add.h"
 
 void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
@@ -1077,8 +1098,111 @@ void Oam_AddSpriteAtDepthClamped__s1e78(void *entry, s32 priority) __asm__(
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped__s1e78
 #include "../field/map/cell_sprite.c"
 
-DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find, gData_02003488,
-                          CrackedTiles_Update)
+s32 CrackedTiles_Find(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
+  struct CellTarget *table = &gData_02003488;
+  struct CellTargetEntry *entry = table->entries;
+  struct CellMapWork *map;
+  struct CellMapLayer *layer;
+  struct CellMapCell *cells;
+  struct CellMapCell *rows;
+  struct CellMapCell *cell;
+  s32 x0, z0, width, height, i, j;
+  u32 *buffer;
+  u32 event, last;
+  s32 cx, cz;
+  s32 k;
+
+  Iwram_ClearWordsEntry(table, 4);
+  table->kind = kind;
+  table->firstFlag = flag;
+  table->flagByte = flagByte;
+  table->x = x;
+  table->z = z;
+  table->current = -1;
+  table->count = 0;
+  map = (struct CellMapWork *)Ram_HeapSlots->mapWork;
+  layer = &map->layers[0];
+  cells = layer->cells;
+  x0 = (layer->originX + map->minX) >> 20;
+  z0 = (layer->originZ + map->minZ) >> 20;
+  width = (map->maxX - map->minX) >> 20;
+  height = (map->maxZ - map->minZ) >> 20;
+  cells += ((map->minZ >> 20) << 7) + (map->minX >> 20);
+  /* Goto loops: as for loops (either one) loop.c moves the 64 of the cell
+   */
+  /* copy's masks out of them and 321 of 268 instructions differ. */
+  j = 0;
+  rows = cells;
+  if (j < height) {
+  row:
+    cell = rows + (j << 7);
+    i = 0;
+    if (i < width) {
+    column:
+      event = cell->event;
+      if (event != 0 && event >= kind) {
+        last = kind + 1;
+        if (event <= last) {
+          cx = i + x0;
+          entry->x = cx;
+          cz = j + z0;
+          entry->z = cz;
+          entry->flag = flag;
+          flag++;
+          if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
+            if (event == last)
+              Event_SetFlag(entry->flag);
+          } else if (Event_GetFlag(entry->flag)) {
+            MapGrid_CopyCells(table->x, table->z + 1, 1, 1,
+                              cx | (s16)(table->x & 64),
+                              cz | (s16)(table->z & 64));
+          }
+          entry++;
+          table->count++;
+        }
+      }
+      i++;
+      cell++;
+      if (i < width)
+        goto column;
+    }
+    j++;
+    if (j < height)
+      goto row;
+  }
+  if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
+    struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+    s32 leaderX = leader->x >> 20;
+    s32 leaderZ = leader->z >> 20;
+
+    entry = table->entries;
+    k = 0;
+    if (k < table->count) {
+    search:
+      if (entry->x == leaderX && entry->z == leaderZ)
+        table->current = k;
+      entry++;
+      k++;
+      if (k < table->count)
+        goto search;
+    }
+  }
+  buffer = Heap_Alloc(0x100);
+  {
+    u32 *word = buffer;
+
+    k = 63;
+  fill:
+    *word++ = 0x11111111;
+    if (--k >= 0)
+      goto fill;
+  }
+  table->tile = VramCache_FindFreeEntry();
+  Vram_Load(table->tile, 0x100, buffer);
+  Heap_Release(buffer);
+  Task_AddFrame(CrackedTiles_Update, 0x480);
+  return table->count;
+}
 
 extern s32 gPaletteCycleFrame;
 extern s32 gPaletteCyclePausesInEvents;
@@ -1087,13 +1211,13 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
+#include "shared/leader_center_in_cell.h"
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
 // row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
 // one of the table's cells.
-DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
+#include "shared/cracked_tile_crack.h"
 
 struct CellTargetEntry;
 
@@ -1119,8 +1243,40 @@ void Leader_CenterInCell(void);
 void CrackedTile_Fall__s24a8(
     struct CellTarget__s24a8 *table,
     struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
-DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall__s24a8, CellTarget__s24a8,
-                         Leader_CenterInCell)
+void CrackedTile_Fall__s24a8(struct CellTarget__s24a8 *table,
+                             struct CellTargetEntry *entry) {
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 x = (leader->x >> 20) | (s16)(table->x & 64);
+  s32 z = (leader->z >> 20) | (s16)(table->z & 64);
+
+  Leader_CenterInCell();
+  Event_PlaySound(SE_SPLASH);
+  MapGrid_CopyCells(table->x, table->z + 2, 1, 1, x, z);
+  FieldEvent_Wait(12);
+  leader->facing = 0x4000;
+  leader->motionFlags = 0;
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Io_Write16(0xf1f, &REG_WINOUT);
+  REG_DISPCNT |= 0x8000;
+  table->shown = 1;
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
+  FieldEvent_Wait(16);
+  x = 0;
+  do {
+    if (x == 5)
+      Event_PlaySound(SE_DUST_PUFF);
+    leader->scaleX += -0x400;
+    leader->scaleY += -0x300;
+    leader->y += -0x9999;
+    System_Wait(1);
+    x++;
+  } while (x <= 39);
+  Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
+  table->shown = 0;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+}
 
 #include "../field/field_effect/advance_motion.c"
 
@@ -1144,10 +1300,35 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
   MapGrid_SetScreenShake(a, b, c);
 }
 
-DEFINE_CRACKED_TILE_DROP_IN(CrackedTile_DropIn, FieldEffect_Spawn)
+#include "shared/cracked_tile_drop_in.h"
 
-DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gData_02003488, CrackedTile_Crack,
-                          CrackedTile_Fall)
+s32 CrackedTiles_Step(void) {
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 x = object->x >> 20;
+  s32 z = object->z >> 20;
+  struct CellTarget *work = &gData_02003488;
+  struct CellTargetEntry *entry = work->entries;
+  s32 i;
+
+  for (i = 0; i < work->count; i++, entry++) {
+    if (entry->x == x && entry->z == z) {
+      if (Event_GetFlag(entry->flag) == 0) {
+        CrackedTile_Crack(work, entry);
+        Event_SetFlag(entry->flag);
+        work->current = i;
+        break;
+      }
+      if (i == work->current)
+        break;
+      work->current = i;
+      CrackedTile_Fall(work, entry);
+      GameFlag_SetByte(work->flagByte, x);
+      GameFlag_SetByte(work->flagByte + 8, z);
+      return 1;
+    }
+  }
+  return 0;
+}
 
 void Func_02002888(s32 dx, s32 dz, s32 value) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);

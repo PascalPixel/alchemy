@@ -45,7 +45,6 @@
 #include "shared/gabomba_statue_chamber.h"
 #include "system/task.h"
 #include "shared/tables.h"
-#include "shared/map_cells.h"
 #include "system/heap_release.h"
 #include "module/field/field.h"
 #include "module/field/field_effect.h"
@@ -3472,7 +3471,33 @@ void Func_020053bc(const u16 *entry) {
 }
 
 // Finds the current target's table row and shrinks it.
-DEFINE_STATUE_SINK(Statue_Sink, Func_020054ac)
+void Statue_Sink(u16 *list, s32 mode, s32 count) {
+  struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
+
+  while (*list != 0xffff) {
+    u32 entry = *list;
+    s32 id = work->objectId;
+
+    if (id == entry) {
+      struct Actor *object = Actor_GetById(id);
+      s32 a;
+      s32 flag;
+
+      list++;
+      a = list[0];
+      flag = list[1];
+      if (count < 8)
+        object->scaleY -= 0x1f00;
+      if (mode == 1) {
+        GameFlag_Set(flag);
+        Func_020054ac(id, a, flag, object->terrainId);
+        object->scaleY = 0x10000;
+      }
+      break;
+    }
+    list += 3;
+  }
+}
 
 void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer) {
   struct Actor *object = Actor_Get(id);

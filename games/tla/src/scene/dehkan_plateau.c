@@ -29,11 +29,9 @@
 #include "system/iwram_call.h"
 #include "system/field_effect.h"
 #include "module/field/field_effect.h"
-#include "shared/map_cells.h"
 #include "shared/tundaria_tower.h"
 #include "module/field/field.h"
 #include "flags.h"
-#include "shared/actors.h"
 #include "battle/battle.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -566,8 +564,7 @@ void Rubble_Burst(void) {
   }
 }
 
-DEFINE_ACTOR_SET_CELL_SHAPE(Actor_SetCellShape, MapGrid_GetTerrainKind,
-                            MapCollision_FindOrAddTag)
+#include "shared/actor_set_cell_shape.h"
 
 void Leader_SetCellShapeAt(s32 a, s32 b) {
   Actor_SetCellShape(a, b, gMainRoutineWork.currentOwner);
@@ -575,8 +572,7 @@ void Leader_SetCellShapeAt(s32 a, s32 b) {
 
 // Raises each listed actor's cells: the shape grid and the cell flags under it,
 // then lifts the leader if the new terrain is above the leader.
-DEFINE_PILLARS_RAISE(Pillars_Raise, MapGrid_GetTerrainKind, Actor_GetCellIndex,
-                     MapCollision_FindOrAddTag)
+#include "shared/pillars_raise.h"
 
 #define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
 
@@ -620,8 +616,7 @@ void Func_02000d78(u16 *list) {
   }
 }
 
-DEFINE_HELD_ACTOR_RAISE_CELL(HeldActor_RaiseCell, MapGrid_GetTerrainKind,
-                             Actor_GetCellIndex, MapCollision_FindOrAddTag)
+#include "shared/held_actor_raise_cell.h"
 
 #include "../field/object/set_sprite_priority.c"
 
@@ -798,7 +793,18 @@ void DehkanPlateau_ShowActors(void) {
   GameFlag_Clear(FLAG_SCENE_TEMP_00);
 }
 
-DEFINE_ACTORS_SET_HIDDEN(Actors_SetHidden)
+void Actors_SetHidden(s32 show, s32 first, u32 count) {
+  u32 i;
+
+  for (i = 0; i < count; i++) {
+    struct Actor *actor = Actor_GetById(first + i);
+
+    if (show)
+      actor->priorityFlags &= ~0x10;
+    else
+      actor->priorityFlags |= 0x10;
+  }
+}
 
 void Func_02001554(s32 a, s32 b) { Pillars_Pound(gData_02003f98, a, b); }
 
@@ -810,7 +816,7 @@ void Func_02001590(s32 a, s32 b) { Pillars_Pound(gData_02003fb0, a, b); }
 
 void Func_020015a4(s32 a, s32 b) { Pillars_Pound(gData_02003fb8, a, b); }
 
-DEFINE_ACTOR_DROP_AND_WAIT(Actor_DropAndWait)
+#include "shared/actor_drop_and_wait.h"
 
 void Func_020015e0(void) {
   struct Actor *object = Actor_GetById(12);
@@ -1201,7 +1207,7 @@ void DehkanPlateau_ForgetCrackOnLeaving(void) {
   }
 }
 
-DEFINE_ACTOR_HIDE(Actor_Hide, Actor_DisableById)
+#include "shared/actor_hide.h"
 
 void Scene_RunUnlessFlag(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
@@ -1212,20 +1218,45 @@ void Scene_RunUnlessFlag(void) {
   }
 }
 
-DEFINE_ACTORS_FOR_RANGE(DehkanPlateau_HideRoom1Actors, 13, Actor_Hide, 13,
-                        Scene_RunUnlessFlag)
+void DehkanPlateau_HideRoom1Actors(void) {
+  u32 i;
 
-DEFINE_ACTORS_FOR_RANGE(DehkanPlateau_HideRoom2Actors, 12, Actor_Hide, 25,
-                        Scene_RunUnlessFlag)
+  for (i = 0; i <= 13; i++)
+    Actor_Hide(i + 13);
+  Scene_RunUnlessFlag();
+}
 
-DEFINE_ACTORS_FOR_RANGE(DehkanPlateau_HideRoom3Actors, 9, Actor_Hide, 26,
-                        Scene_RunUnlessFlag)
+void DehkanPlateau_HideRoom2Actors(void) {
+  u32 i;
 
-DEFINE_ACTORS_FOR_RANGE(DehkanPlateau_HideRoom4Actors, 2, Actor_Hide, 8,
-                        Scene_RunUnlessFlag)
+  for (i = 0; i <= 12; i++)
+    Actor_Hide(i + 25);
+  Scene_RunUnlessFlag();
+}
 
-DEFINE_ACTORS_FOR_RANGE(DehkanPlateau_HideRoom6Actors, 5, Actor_Hide, 10,
-                        Scene_RunUnlessFlag)
+void DehkanPlateau_HideRoom3Actors(void) {
+  u32 i;
+
+  for (i = 0; i <= 9; i++)
+    Actor_Hide(i + 26);
+  Scene_RunUnlessFlag();
+}
+
+void DehkanPlateau_HideRoom4Actors(void) {
+  u32 i;
+
+  for (i = 0; i <= 2; i++)
+    Actor_Hide(i + 8);
+  Scene_RunUnlessFlag();
+}
+
+void DehkanPlateau_HideRoom6Actors(void) {
+  u32 i;
+
+  for (i = 0; i <= 5; i++)
+    Actor_Hide(i + 10);
+  Scene_RunUnlessFlag();
+}
 
 /* VIEW(dehkan_plateau): routine HeldActor_RaiseCell as this part declared it;
  * the joined file has another; tried as the one declaration
@@ -1268,9 +1299,17 @@ void Func_0200200c(struct Actor *object) {
 
 extern s16 gData_02003fc8[];
 
-DEFINE_SCENE_RUN_IF_HELD(Scene_RunIfHeld, Leader_CanPushObjectAhead,
-                         Field_FindNearbyTalkTarget, Func_02000d78,
-                         gData_02003fc8, Leader_PushObjectAhead, Func_0200200c)
+void Scene_RunIfHeld(void) {
+  struct Actor *object;
+
+  if (Leader_CanPushObjectAhead() != 0) {
+    object = Actor_GetById(
+        Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner));
+    Func_02000d78(gData_02003fc8);
+    Leader_PushObjectAhead();
+    Func_0200200c(object);
+  }
+}
 
 void Func_02002114(void) { Func_02000d78(gData_02003fc8); }
 

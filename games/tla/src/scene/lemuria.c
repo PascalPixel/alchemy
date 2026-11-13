@@ -5,7 +5,6 @@
 
 #include "shared/tables.h"
 #include "flags.h"
-#include "shared/actors.h"
 #include "types.h"
 #include "system/iwram_call.h"
 #include "actor.h"
@@ -46,9 +45,27 @@ extern u32 gLemuria_SecondWalkerPaces[];
 extern s16 gLemuria_DoorOpening[];
 extern s16 gLemuria_WideDoorOpening[];
 
-DEFINE_POSITION_DISTANCE(Lemuria_Distance)
+#include "shared/position_distance.h"
 
-DEFINE_ACTOR_IS_FACING_NEAR(Actor_IsFacingNear, Lemuria_Distance)
+s32 Actor_IsFacingNear(struct Actor *self, struct Actor *other, s32 range) {
+  s32 result = 0;
+  s32 *to;
+  s32 *from;
+
+  to = &other->x;
+  from = &self->x;
+  if (Position_Distance(to, from) < range) {
+    u32 angle = (u16)ArcTan2(other->z - self->z, *to - *from);
+    u32 left = (angle - 0x1000) & 0xf000;
+    u32 right = (angle + 0x1000) & 0xf000;
+    u32 ahead = angle & 0xf000;
+    u32 facing = self->facing & 0xf000;
+
+    if (ahead == facing || right == facing || left == facing)
+      result = 1;
+  }
+  return result;
+}
 
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
@@ -72,7 +89,7 @@ s32 Lemuria_NoticeLeader(struct Actor *self) {
   if (self->timer == 1)
     goto near;
   other = Actor_Get(gMainRoutineWork.currentOwner);
-  if (Lemuria_Distance(&self->x, &other->x) <= 11)
+  if (Position_Distance(&self->x, &other->x) <= 11)
     goto far;
   if (Actor_IsFacingNear(self, self->watchedObject, 18) != 0)
     goto near;

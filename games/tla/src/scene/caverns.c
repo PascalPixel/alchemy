@@ -1,5 +1,4 @@
 /// @file
-#include "shared/actors.h"
 #include "types.h"
 #include "system/io_reg.h"
 #include "scene_tables.h"
@@ -76,7 +75,7 @@ s32 Func_02000c38(struct Actor *object, s16 *position);
 
 #include "../field/object/prepare_object.c"
 
-DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
+#include "shared/scene_create_imported_actor.h"
 
 #include "../field/field_effect/move.c"
 

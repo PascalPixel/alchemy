@@ -2,7 +2,6 @@
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/object/prepare_object.c"
-#include "shared/actors.h"
 #include "flags.h"
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -27,7 +26,6 @@ void Field_TryJumpForward(void);
 s32 Leader_CanPushObjectAhead(void);
 void Leader_PushObjectAhead(void);
 #include "field/field.h"
-#include "shared/jupiter_lighthouse.h"
 #include "types.h"
 #include "actor.h"
 #include "field/event_inline.h"
@@ -58,7 +56,7 @@ void Leader_PushObjectAhead(void);
 
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 
-DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
+#include "shared/scene_create_imported_actor.h"
 
 #include "../field/field_effect/move.c"
 
@@ -435,9 +433,19 @@ void LightSprites_Draw(void) {
 
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
-                            gLightSpriteTile, LightSprites_Draw, gData_02001cde,
-                            gData_02001de0, gData_02001de2)
+void LightSprites_InitA(void) {
+  u8 *buffer = BumpAlloc(0xc00);
+
+  Iwram_ClearWordsEntry(gLightSpriteActors, 64);
+  Decompress_TaggedLz(gField_CachedTilesA, buffer);
+  gLightSpriteTile = VramCache_FindFreeEntry();
+  VramCache_Load(gLightSpriteTile, 0xc00, buffer);
+  Heap_Release(buffer);
+  Task_Add(LightSprites_Draw, TASK_PASS_VBLANK);
+  gData_02001cde = 0;
+  gData_02001de0 = 0;
+  gData_02001de2 = -1;
+}
 
 void Func_02000b18(void) {
   u8 *buffer = BumpAlloc(0x1800);

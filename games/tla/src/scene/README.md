@@ -197,15 +197,16 @@ scenes too.
 
 Only one overlay is ever loaded, so one cannot call another. Code that
 several scenes need is written once, in `shared/`, and compiled into each
-overlay that includes it. Most of it is macros, in headers by kind
-(`actors.h`, `push.h`, `whirlwind.h`, `cracked_tile.h`): each is one
-routine, which a scene expands where its copy sits, with its own names.
-Daila's pillars of ice are one:
+overlay that includes it. Each routine is a header of its own, as in The
+Broken Seal, which a scene includes where its copy sits. Daila's pillars of
+ice raise their actor with one:
 
 ```c
-DEFINE_SCENE_RAISE_HELD_ACTOR(Scene_RaiseHeldActor, FlagBlock_ApplyFlags,
-                              gDaila_PuddleFrozenFlags)
+#include "shared/scene_raise_held_actor.h"
 ```
+
+Where a scene's copy differs in a number from the others, the scene writes
+its copy out.
 
 The cartridge really does hold it several times over.
 
@@ -232,8 +233,8 @@ same village twice, with different people about.
   [`daila.c`](daila.c). The debug rooms are scenes too, kept in
   [`../debug/`](../debug/README.md).
 - [`shared/`](shared) is the code several overlays keep a copy of: the
-  macro headers above, and routines a scene includes as text where its
-  copy sits, such as the ice slide six scenes share
+  routine headers above, and the larger routines a scene includes where
+  its copy sits, such as the ice slide six scenes share
   ([`slide_on_ice_from_edge.c`](shared/slide_on_ice_from_edge.c)), the
   flames' knock-back in three Mars Lighthouse rooms
   ([`leader_knock_back.c`](shared/leader_knock_back.c)) and the World

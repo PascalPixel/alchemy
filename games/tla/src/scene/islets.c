@@ -1,8 +1,6 @@
 /// @file
 #include "flags.h"
 #include "item_ids.h"
-#include "shared/actors.h"
-#include "shared/effects.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -22,7 +20,6 @@
 #include "version.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
-#include "shared/push.h"
 #include "system/heap_release.h"
 #include "graphics/palette_snapshots.h"
 #include "module/field/field.h"
@@ -387,7 +384,7 @@ void Func_02000380(void) {
   return;
 }
 
-DEFINE_LEADER_IS_FACING_NORTH(Leader_IsFacingNorth)
+#include "shared/leader_is_facing_north.h"
 
 void Islets_TalkToHealer(void) {
   s32 result0;
@@ -708,7 +705,18 @@ struct Actor *Func_02000da0(struct Actor *object, s32 value) {
   return spawned;
 }
 
-DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 3, Actor_SelectAnimation, gSmokeScript)
+void Actor_EmitSmoke(struct Actor *object) {
+  struct Actor *spawned;
+
+  if ((gFrameCount & 3) == 0) {
+    spawned = FieldActor_Create(14, object->x, object->y, object->z);
+    if (spawned != 0) {
+      Actor_SetSpriteFlags(spawned, 0);
+      Actor_SelectAnimation(spawned, 1);
+      Actor_StartScript(spawned, gSmokeScript);
+    }
+  }
+}
 
 extern s32 gData_020043f8[];
 extern s32 gData_02004300[];
@@ -1316,9 +1324,21 @@ void Func_0200208c(void) {
   return;
 }
 
-DEFINE_LEADER_SET_LAYER(Leader_SetLayer, 2)
+void Leader_SetLayer(void) {
+  struct Actor *object0;
 
-DEFINE_LEADER_SET_LAYER(Func_020020d0, 0)
+  object0 = Actor_Get(gMainRoutineWork.currentOwner);
+  object0->terrainId = 2;
+  return;
+}
+
+void Func_020020d0(void) {
+  struct Actor *object0;
+
+  object0 = Actor_Get(gMainRoutineWork.currentOwner);
+  object0->terrainId = 0;
+  return;
+}
 
 void Func_020020ec(s32 x, s32 z, s32 layers, s32 value) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -2490,9 +2510,7 @@ void Actor_StopAtPushTarget(struct Actor *object);
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-DEFINE_PUSH_TARGET_PUSH(PushTarget_Push, gPushFootprints, Func_02003790,
-                        Actor_StopAtPushTarget, Actor_SelectAnimation,
-                        gPushLeaderSteps)
+#include "shared/push_target_push.h"
 
 void Actor_StopAtPushTarget(struct Actor *object) {
   struct Vector3 position;

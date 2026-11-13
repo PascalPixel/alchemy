@@ -234,7 +234,6 @@ static inline void ShrineOfTheSeaGod_ObjPlaceTurn(s32 actor, s32 x, s32 z,
 #include "system/io_write.h"
 #include "call.h"
 #include "macros.h"
-#include "shared/actors.h"
 #include "system/frame.h"
 #include "module/field/field_effect.h"
 #include "shared/tables.h"
@@ -1822,11 +1821,24 @@ struct ShrineOfTheSeaGodObject *Func_02002f88(s32 id) {
   return object;
 }
 
-DEFINE_ACTOR_HIDE(Actor_Hide, Actor_DisableById)
+#include "shared/actor_hide.h"
 
-DEFINE_SCENE_RUN_UNLESS_FLAG(Scene_RunUnlessFlag, 0x208, Func_0200123c)
+void Scene_RunUnlessFlag(void) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
+    if (GameFlag_Get(0x208) == 0)
+      Func_0200123c();
+  } else {
+    GameFlag_Set(0x208);
+  }
+}
 
-DEFINE_ACTORS_FOR_RANGE(Actors_ForRange, 2, Actor_Hide, 9, Scene_RunUnlessFlag)
+void Actors_ForRange(void) {
+  u32 i;
+
+  for (i = 0; i <= 2; i++)
+    Actor_Hide(i + 9);
+  Scene_RunUnlessFlag();
+}
 
 void Func_02003024(void) {
   const struct ShrineOfTheSeaGodSpot *spot = gData_02003cc0;

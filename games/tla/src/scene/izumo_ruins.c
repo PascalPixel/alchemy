@@ -2,7 +2,6 @@
 /// The Izumo Ruins' pillars: those Pound sinks into the floor (Pillars_Place,
 /// Pillars_Pound) and the grey ones that crack under a first step and crumble
 /// under a second (CrumblingPillars_Step).
-#include "shared/map_cells.h"
 #include "system/iwram_call.h"
 #include "actor.h"
 #include "system/main_routine_work.h"
@@ -107,7 +106,6 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 #include "system/field_effect.h"
 #include "module/field/field_effect.h"
 #include "flags.h"
-#include "shared/actors.h"
 #include "shared/tables.h"
 #include "battle/battle.h"
 #include "game/game.h"
@@ -188,8 +186,7 @@ top:
     goto top;
 }
 
-DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
-                           Actor_SelectAnimation)
+#include "shared/actor_set_cell_open.h"
 
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
@@ -589,8 +586,21 @@ void Rubble_Burst(void) {
 
 s32 MapCollision_FindOrAddTag(s32 terrainId, s32 value, s32 height);
 
-DEFINE_ACTOR_SET_CELL_SHAPE_AT(Actor_SetCellShapeAt, MapGrid_GetTerrainKind,
-                               MapCollision_FindOrAddTag)
+void Actor_SetCellShapeAt(s32 heightOffset, s32 layer, s32 id) {
+  struct Actor *actor = Actor_Get(id);
+  s32 cell = Ram_HeapSlots->mapWork->layers[layer].cells -
+             (struct MapCell *)Ram_MapCellBuffer;
+  s32 z = actor->z;
+  u8 *shapes = gMapShapeGrid + cell;
+  s32 value;
+  s32 height;
+
+  value = MapGrid_GetTerrainKind(actor->terrainId, actor->x, z);
+  height = Map_GetTerrainHeight(actor->terrainId, actor->x, actor->z) >> 19;
+  height += heightOffset;
+  shapes += actor->x / 0x100000 + (actor->z / 0x100000 << 7);
+  *shapes = MapCollision_FindOrAddTag(actor->terrainId, value, height);
+}
 
 void Leader_SetCellShapeAt(s32 a, s32 b) {
   Actor_SetCellShapeAt(a, b, gMainRoutineWork.currentOwner);
@@ -786,7 +796,7 @@ void IzumoRuins_SinkIntoSand(void) {
   return;
 }
 
-DEFINE_LEADER_SET_LAYER(Leader_SetLayer, 0)
+#include "shared/leader_set_layer.h"
 
 // Outside the first room, sets the high byte of map cell (50, 13) on layer 2
 // to 0xff; then starts the room's effect.

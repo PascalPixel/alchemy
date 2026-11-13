@@ -30,8 +30,6 @@
 #include "system/field_effect.h"
 #include "actor.h"
 #include "system/frame.h"
-#include "shared/map_cells.h"
-#include "shared/effects.h"
 #include "system/heap_release.h"
 #include "item_icon.h"
 #include "module/scene/scene.h"
@@ -238,7 +236,7 @@ void TrialRoad_PoundPillar(s32 id, s32 a, s32 b);
 void TrialRoad_StepOnSeesawPillar(s32 id, s32 other, s32 flag, s32 side);
 void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis);
 void TrialRoad_UncoverSpout(s32 id, s32 a, s32 frame);
-void TrialRoad_CheckCrumblingStep(const u16 *table);
+void MagmaRockInside_CheckCrumblingStep(const u16 *table);
 void TrialRoad_CrumblePillar(const void *data, s32 a);
 
 void TrialRoad_ClearGiveUpAsked(void);
@@ -381,9 +379,9 @@ void Actor_DisableById(s32 id);
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 
-void TrialRoad_SpawnRubble(s32 value);
-void TrialRoad_SetLeaderCellShape(s32 offset, s32 layer);
-void TrialRoad_SpawnDustRing(void);
+void MagmaRockInside_SpawnRubble(s32 value);
+void MagmaRockInside_SetLeaderCellShape(s32 offset, s32 layer);
+void MagmaRockInside_SpawnDustRing(void);
 void TrialRoad_SetActorCellShape(s32 a, s32 b, s32 c);
 
 u32 Sprite_ShareVramCacheEntry(struct FieldSprite *sprite, u32 frame);
@@ -925,7 +923,7 @@ void TrialRoad_LandOnPillar(void) {
 }
 
 void TrialRoad_CheckCrumblingPillars(void) {
-  TrialRoad_CheckCrumblingStep(gTrialRoad_CrumblingPillars);
+  MagmaRockInside_CheckCrumblingStep(gTrialRoad_CrumblingPillars);
 }
 
 void TrialRoad_CrumblePillar15(s32 phase) {
@@ -1484,7 +1482,7 @@ void TrialRoad_SetUpPoundStage(void) {
 }
 
 void TrialRoad_SetUpCrumblingStage(void) {
-  TrialRoad_RestoreCrumblingPillars(gTrialRoad_CrumblingPillars);
+  MagmaRockInside_RestoreCrumblingPillars(gTrialRoad_CrumblingPillars);
 }
 
 // Copies two blocks of map cells, sets byte 98 of objects 16 to 18 and clears
@@ -1672,9 +1670,41 @@ extern s32
     gTrialRoad_PaletteCycleFrame__s15a8 __asm__("gTrialRoad_PaletteCycleFrame");
 #define gTrialRoad_PaletteCycleFrame gTrialRoad_PaletteCycleFrame__s15a8
 
-DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gTrialRoad_PaletteCycleFrame,
-                             gTrialRoad_PaletteCycleRunning,
-                             gTrialRoad_PaletteCycleColors, 0x050000a4)
+void PaletteCycle_StepAt(void) {
+  u16 colors[16];
+  s32 phase = (gTrialRoad_PaletteCycleFrame / 4) % 5;
+  s32 i;
+  s32 offset;
+  u16 *p;
+
+  if (gTrialRoad_PaletteCycleRunning != 0) {
+    u8 *work = Ram_HeapSlots->eventWork;
+    s16 *state = (s16 *)(work + 358);
+
+    if (*state != 0 && (*state & 0x3ff) != 153)
+      return;
+    if (*(s8 *)(work + 0xca4) != 0)
+      return;
+    if (*(s16 *)(work + 350) != 0)
+      return;
+  }
+  i = 0;
+  offset = 4;
+next:
+  p = colors;
+  {
+    s32 slot = (phase + i) % 5;
+    u8 *table = (u8 *)gTrialRoad_PaletteCycleColors;
+
+    colors[slot] = *(u16 *)(table + offset);
+  }
+  i++;
+  offset += 2;
+  if (i <= 4)
+    goto next;
+  Dma_Set(p, (void *)0x050000a4, DMA_COPY_WORDS(2), REG_DMA3);
+  gTrialRoad_PaletteCycleFrame++;
+}
 
 void TrialRoad_StartPaletteCycle(s32 mode) {
   gTrialRoad_PaletteCycleRunning = 1;
@@ -2724,8 +2754,8 @@ void TrialRoad_UpdateFountains(void) {
 #undef SET_LAYER
 
 // Trial Road's movers' sprites, the setup of its gauge, a rising platform's
-// entry, the trap table's setup, TrialRoad_CheckCrumblingStep, the placing of
-// actors 8, 9 and 10, TrialRoad_StepOnTrap and a second copy of
+// entry, the trap table's setup, MagmaRockInside_CheckCrumblingStep, the
+// placing of actors 8, 9 and 10, TrialRoad_StepOnTrap and a second copy of
 // Effect_AdvanceMotionAtLeaderPriority, in ROM order.
 
 // Queues the Trial Road movers' sprites.
@@ -2893,15 +2923,9 @@ struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
 // other marks its cell, writes a shape for its height into the shape grid, and
 // takes mode 0 when its first flag is set. Then the leader is lifted onto the
 // ground if it stands below it.
-DEFINE_PILLARS_RESTORE_RAISED(TrialRoad_RestoreCrumblingPillars,
-                              Actor_GetCellIndex, MapGrid_GetTerrainKind,
-                              Actor_DisableById, MapCollision_FindOrAddTag,
-                              Actor_SelectAnimation)
+#include "shared/pillars_restore_raised.h"
 
-DEFINE_TRAPS_CHECK(TrialRoad_CheckCrumblingStep, Field_TryJumpForward,
-                   Actor_FindAtCell, Actor_SelectAnimation,
-                   TrialRoad_SpawnRubble, TrialRoad_SetLeaderCellShape,
-                   TrialRoad_SpawnDustRing)
+#include "shared/traps_check.h"
 
 void TrialRoad_CrumblePillar(const void *data, s32 id) {
   const struct TrapEntry *entry = data;
@@ -2919,18 +2943,18 @@ void TrialRoad_CrumblePillar(const void *data, s32 id) {
       if (!Event_GetFlag(flag + 1)) {
         Event_PlaySound(SE_PUSH);
         MapGrid_SetShake(1, 4, 1);
-        TrialRoad_SpawnRubble(0);
+        MagmaRockInside_SpawnRubble(0);
         wait(8);
         Actor_SelectAnimation(object, 2);
         TrialRoad_SetActorCellShape(-4, OBJECT_BYTE(object, 34), id);
-        TrialRoad_SpawnRubble(1);
+        MagmaRockInside_SpawnRubble(1);
         wait(16);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
         Actor_SetPositionAndResetMotion(object, 0, 0, 0);
         wait(2);
         Event_PlaySound(SE_THUMP);
-        TrialRoad_SpawnDustRing();
+        MagmaRockInside_SpawnDustRing();
         wait(20);
         Event_SetFlag(flag);
         Event_SetFlag(flag + 1);
@@ -2941,7 +2965,7 @@ void TrialRoad_CrumblePillar(const void *data, s32 id) {
   }
 }
 
-void TrialRoad_SetPillarMode3(s32 id) {
+void MagmaRockInside_SetPillarMode3(s32 id) {
   Actor_GetById(id)->unk5c[0] = 3;
   Actor_DisableById(id);
 }
@@ -2951,9 +2975,7 @@ void Actor_MoveToObject(s32 id, s32 owner);
 // halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
 // gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
 // it copy actor 9's visual attributes.
-DEFINE_PILLARS_RESTORE(TrialRoad_RestorePillars, TrialRoad_SetPillarMode3,
-                       Actor_GetCellIndex, MapGrid_GetTerrainKind,
-                       Actor_DisableById, MapCollision_FindOrAddTag)
+#include "shared/pillars_restore.h"
 
 void TrialRoad_TakePlaceOf(struct Actor *object, struct Actor *target) {
   Actor_SetPositionAndResetMotion(object, target->x, target->y, target->z);
@@ -3002,7 +3024,7 @@ void TrialRoad_StepOnTrap(const u16 *table) {
       Actor_SetSpriteColor(Actor_GetById(8), 7);
       wait(4);
       Actor_SetSpriteColor(Actor_GetById(8), 0);
-      TrialRoad_SpawnRubble(0);
+      MagmaRockInside_SpawnRubble(0);
       TrialRoad_TakePlaceOf(trap, partner);
       wait(1);
       GameFlag_Set(flag);
@@ -3016,13 +3038,13 @@ void TrialRoad_StepOnTrap(const u16 *table) {
         *motion = 0;
         Sound_Play(SE_PUSH);
         MapGrid_SetShake(1, 4, 1);
-        TrialRoad_SpawnRubble(0);
+        MagmaRockInside_SpawnRubble(0);
         wait(8);
         Actor_SelectAnimation(partner, 2);
-        TrialRoad_SetLeaderCellShape(-2, trap->terrainId);
-        TrialRoad_SpawnRubble(1);
+        MagmaRockInside_SetLeaderCellShape(-2, trap->terrainId);
+        MagmaRockInside_SpawnRubble(1);
         wait(16);
-        TrialRoad_SetLeaderCellShape(-2, trap->terrainId);
+        MagmaRockInside_SetLeaderCellShape(-2, trap->terrainId);
         wait(4);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
@@ -3031,7 +3053,7 @@ void TrialRoad_StepOnTrap(const u16 *table) {
         Actor_SetPositionAndResetMotion(partner, 0, 0, 0);
         wait(2);
         Sound_Play(SE_THUMP);
-        TrialRoad_SpawnDustRing();
+        MagmaRockInside_SpawnDustRing();
         wait(20);
         GameFlag_Set(second);
       }
@@ -3087,7 +3109,7 @@ void TrialRoad_DriftRubble(union FieldObject *object) {
 
 extern s32 gTrialRoad_RubbleScript[];
 
-void TrialRoad_SpawnRubble(s32 spread) {
+void MagmaRockInside_SpawnRubble(s32 spread) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   u32 frame = 0;
@@ -3129,7 +3151,7 @@ void TrialRoad_SpawnRubble(s32 spread) {
 
 extern s32 gTrialRoad_DustScript[];
 
-void TrialRoad_SpawnDustRing(void) {
+void MagmaRockInside_SpawnDustRing(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   u32 frame;
@@ -3166,10 +3188,21 @@ void TrialRoad_SpawnDustRing(void) {
   } while (i <= 16);
 }
 
-DEFINE_ACTOR_SET_CELL_SHAPE(TrialRoad_SetActorCellShape, MapGrid_GetTerrainKind,
-                            MapCollision_FindOrAddTag)
+void TrialRoad_SetActorCellShape(s32 level, s32 layer, s32 owner) {
+  struct Actor *object = Actor_GetById(owner);
+  u8 *shape = Ram_MapShapeGrid + (Ram_HeapSlots->mapWork->layers[layer].cells -
+                                  (struct MapCell *)Ram_MapCellBuffer);
+  s32 value = MapGrid_GetTerrainKind(object->terrainId, object->x, object->z);
+  s32 height =
+      Map_GetTerrainHeight(object->terrainId, object->x, object->z) >> 19;
 
-void TrialRoad_SetLeaderCellShape(s32 a, s32 b) {
+  height += level;
+
+  shape += object->x / 0x100000 + object->z / 0x100000 * 128;
+  *shape = MapCollision_FindOrAddTag(object->terrainId, value, height);
+}
+
+void MagmaRockInside_SetLeaderCellShape(s32 a, s32 b) {
   TrialRoad_SetActorCellShape(a, b, gMainRoutineWork.currentOwner);
 }
 

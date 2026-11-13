@@ -8,7 +8,6 @@
 /// Agatio arrive (Madra_MeetKarst), and the town takes other placements and
 /// triggers.
 
-#include "shared/actors.h"
 #include "flags.h"
 #include "item_ids.h"
 #include "battle/battle.h"
@@ -1539,10 +1538,20 @@ UNUSED void Madra_StepOntoLadderFacingWest(void) {
 
 /// Unused: the leader turns north on the spot and climbs down; no trigger runs
 /// it.
-UNUSED DEFINE_SCENE_TURN_ACTOR_AND_RUN(Madra_TurnAndClimbDownLadder,
-                                       Madra_ClimbDownLadder)
+UNUSED void Madra_TurnAndClimbDownLadder(void) {
+  s32 id, a;
 
-    void Madra_EnterDoor(void);
+  Event_Start();
+  Event_ResolvePendingActions(0);
+  a = 192;
+  id = 4;
+  /* FAKEMATCH(barrier): the id held at an empty asm. */
+  __asm__ volatile("" : "+r"(id));
+  Actor_ArmCallback(id, a << 8, 0);
+  Madra_ClimbDownLadder();
+}
+
+void Madra_EnterDoor(void);
 void Madra_KarstAsksAboutMenardi(void);
 void Madra_WorkerBlocksHole(void);
 void Madra_AskAboutJenna(void);

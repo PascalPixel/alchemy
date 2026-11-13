@@ -7,7 +7,6 @@
 /// pushes a crate across the deck.
 
 #include "shared/tables.h"
-#include "shared/effects.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -232,7 +231,26 @@ extern s32 EasternAlhafraShip_SpawnNote__s0438(
     s32 x, s32 y, s32 z, s32 rotation,
     s32 timer) __asm__("EasternAlhafraShip_SpawnNote");
 
-DEFINE_ACTOR_EMIT_NOTES(Actor_EmitNotes, EasternAlhafraShip_SpawnNote__s0438)
+void Actor_EmitNotes(s32 id) {
+  struct Actor *object = Actor_GetById(id);
+
+  EasternAlhafraShip_SpawnNote__s0438(object->x + 0x80000, object->y + 0x1c0000,
+                                      object->z, 0x1000, 15);
+  Sound_Play(SE_LIGHT_APPEAR);
+  Event_Wait(15);
+  EasternAlhafraShip_SpawnNote__s0438(object->x - 0x80000, object->y + 0x1c0000,
+                                      object->z, 0xf000, 15);
+  Sound_Play(SE_LIGHT_APPEAR);
+  Event_Wait(15);
+  EasternAlhafraShip_SpawnNote__s0438(object->x + 0x80000, object->y + 0x1c0000,
+                                      object->z, 0x1000, 15);
+  Sound_Play(SE_LIGHT_APPEAR);
+  Event_Wait(15);
+  EasternAlhafraShip_SpawnNote__s0438(object->x - 0x80000, object->y + 0x1c0000,
+                                      object->z, 0xf000, 15);
+  Sound_Play(SE_LIGHT_APPEAR);
+  Event_Wait(15);
+}
 
 extern u32 gEasternAlhafraShip_LeaveTheDeckScript[];
 

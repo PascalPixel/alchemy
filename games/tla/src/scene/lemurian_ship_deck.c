@@ -26,7 +26,6 @@
 #include "system/frame.h"
 #include "event_work.h"
 #include "module/scene/scene.h"
-#include "shared/effects.h"
 #include "shared/tables.h"
 #include "version.h"
 #include "macros.h"
@@ -1025,8 +1024,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Event_End();
 }
 
-DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 7, Actor_SelectAnimation,
-                        gLemurianShipDeck_SmokePuff)
+#include "shared/actor_emit_smoke.h"
 
 void LemurianShipDeck_SetOutForMadra(void) {
   if (Event_GetFlag(7)) {

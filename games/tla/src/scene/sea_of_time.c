@@ -10,7 +10,6 @@
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/object/prepare_object.c"
-#include "shared/actors.h"
 #include "flags.h"
 #include "types.h"
 #include "system/system.h"
@@ -90,7 +89,20 @@ static inline s32 SeaOfTime_Cos(s32 angle) { return Trig_Cos(angle); }
 #include "system/io_reg.h"
 #include "map.h"
 
-DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 34)
+struct Actor *Scene_CreateImportedActor(s32 x, s32 y, s32 z, s32 type) {
+  struct Actor *object = Import_ActorCreate(type, x, y, z);
+
+  if (object != NULL) {
+    Scene_SetActorSpritePriority(object, 1);
+    object->motionFlags = 0;
+    object->collisionFlags = 8;
+    Actor_SetSpriteFlags(object, 0);
+    Actor_SetSpriteColor(object, 15);
+    object->priorityFlags |= 34;
+    return object;
+  }
+  return NULL;
+}
 
 #include "../field/field_effect/move.c"
 
@@ -181,7 +193,7 @@ s32 SeaOfTime_SetCellCode(u32 layer, s32 x, s32 y, s32 value) {
   return old;
 }
 
-DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
+#include "shared/position_flat_distance.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

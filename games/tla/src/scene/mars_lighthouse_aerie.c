@@ -7,10 +7,8 @@
 /// (MarsLighthouseAerie_LightBeacon) before the Golden Sun rises
 /// (MarsLighthouseAerie_WatchGoldenSunRise).
 
-#include "shared/mars_lighthouse.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "shared/effects.h"
 #include "event_work.h"
 #include "module/scene/mars_lighthouse_aerie.h"
 #include "module/scene/scene.h"
@@ -36,7 +34,6 @@
 #include "call.h"
 #include "field_event.h"
 #include "system/frame.h"
-#include "shared/actors.h"
 #include "shared/tables.h"
 #include "item_icon.h"
 #include "version.h"
@@ -191,8 +188,7 @@ const struct Trigger *Scene_GetPlacements(void) {
   return (const struct Trigger *)gMarsLighthouseAerie_Placements;
 }
 
-DEFINE_SCENE_LEAVE_BY_EXIT(Scene_LeaveByExit, Func_02004fac,
-                           Teleport_PlaySparks, 1, Func_02005010)
+#include "shared/scene_leave_by_exit.h"
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
@@ -1731,8 +1727,46 @@ static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
 /// Every third frame, or every frame once flag 0x200 is set, starts a particle
 /// circling actor 23 at a random height above it, as overlay 69e's
 /// Func_020001a4 does under flag 0x201.
-DEFINE_ORBS_SPAWN_RISING(Orbs_SpawnRising, 0x200, gData_02006afc, Func_02003210,
-                         2)
+void Orbs_SpawnRising(void) {
+  struct Actor *center;
+  struct OrbitEffect *effect;
+  struct FieldSprite *sprite;
+  s32 angle;
+
+  if (Event_GetFlag(0x200) == 0 && gFrameCount % 3 != 0)
+    return;
+  center = Actor_Get(23);
+  if (Event_GetFlag(0x200) != 0) {
+    u32 random;
+
+    random = Random16();
+    effect = CreateOrbitEffect(0x2a0, center->x,
+                               (s32)((u32)(random << 8) >> 16 << 16) +
+                                   center->y - 0x1c0000,
+                               center->z);
+  } else {
+    u32 random;
+
+    random = Random16();
+    effect = CreateOrbitEffect(0x2a0, center->x,
+                               (s32)((u32)(random << 6) >> 16 << 16) +
+                                   center->y - 0x1c0000,
+                               center->z);
+  }
+  if (effect != 0) {
+    sprite = effect->sprite;
+    Actor_StartScript(effect, gData_02006afc);
+    FieldActor_SetSpriteColor(effect, 1);
+    effect->motionFlags = 0;
+    angle = Random16() & 0xffff000;
+    effect->angle = angle;
+    effect->unk66 = 0;
+    effect->update = (void (*)(struct OrbitEffect *))Func_02003210;
+    effect->radius = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24 >> 16;
+    sprite->nextFrame = 0;
+    sprite->priority = 2;
+  }
+}
 
 #include "../field/object/park_record.c"
 
@@ -2731,30 +2765,96 @@ void Func_02004ee4(void) { Func_02004e80(29, 21); }
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
-DEFINE_PALETTE_SET_COLORS_FADE(Palette_SetColorsFade, gData_02006ce0,
-                               Data_02006ce4, Data_02006ce8, Data_02006cd4,
-                               Func_020051e0)
+void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b) {
+  u8 *saved = Ram_HeapSlots->block32;
 
-DEFINE_PALETTE_CYCLE_START(Func_02004fac, gData_02006cf0, gData_02006cec,
-                           List_CountEntries, gData_02006ce0, gData_02006cdc,
-                           15, gData_02006cd8, 16, gData_02006cd0,
-                           PaletteCycle_Fade)
+  gData_02006ce0 = slots;
+  Data_02006ce4 = colours;
+  Data_02006ce8 = a;
+  Data_02006cd4 = b;
+  if (*slots != 0xffff && *colours != 0xffff) {
+  next:
+    {
+      int red = *colours++;
+      int index = *slots++;
+      int green = *colours++;
+      int blue = *colours++;
+      SET_RGB(((u16 *)BG_PLTT)[index], red, green, blue);
+    }
+    if (*slots != 0xffff && *colours != 0xffff)
+      goto next;
+  }
+  Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
+  PaletteFade_ApplyTarget(0x10000, 0);
+  if ((s8)gMainRoutineWork.unk2c2 == 2)
+    Func_020051e0();
+}
+
+void Func_02004fac(void) {
+  gData_02006cf0 = 0;
+  gData_02006cec = List_CountEntries(gData_02006ce0);
+  gData_02006cdc = 15;
+  gData_02006cd8 = 16;
+  gData_02006cd0 = 1;
+  Task_AddFrame(PaletteCycle_Fade, TASK_PASS_VBLANK);
+}
 
 void Func_02005010(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 256;
   FieldTask_Remove(PaletteCycle_Fade);
 }
 
-DEFINE_PALETTE_CYCLE_START(Func_02005030, gData_02006cf0, gData_02006cec,
-                           List_CountEntries, gData_02006ce0, gData_02006cdc, 2,
-                           gData_02006cd8, 2, gData_02006cd0, PaletteCycle_Fade)
+void Func_02005030(void) {
+  gData_02006cf0 = 0;
+  gData_02006cec = List_CountEntries(gData_02006ce0);
+  gData_02006cdc = 2;
+  gData_02006cd8 = 2;
+  gData_02006cd0 = 1;
+  Task_AddFrame(PaletteCycle_Fade, TASK_PASS_VBLANK);
+}
 
-DEFINE_LIST_COUNT_ENTRIES(List_CountEntries)
+#include "shared/list_count_entries.h"
 
-DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gData_02006cd8, gData_02006cdc,
-                          Data_02006ce8, gData_02006cec, Data_02006cd4,
-                          gData_02006cf0, gData_02006ce0, gData_02006cd0,
-                          Data_02006ce4)
+void PaletteCycle_Fade(void) {
+  s32 step;
+  u32 i;
+  u16 *src;
+  volatile u16 *dst;
+  int red, green, blue;
+
+  step = 0;
+  if (gData_02006cd8 != 0) {
+    if (--gData_02006cd8 == 0) {
+      step = 1;
+      gData_02006cd8 = gData_02006cdc;
+      if (gData_02006cdc > 2)
+        gData_02006cdc--;
+    }
+  }
+  if (step == 0)
+    return;
+  src = Data_02006ce8;
+  for (i = 0; i < gData_02006cec; i++) {
+    dst = &BG_PLTT[Data_02006cd4[gData_02006cf0 * gData_02006cec + i]];
+    red = *src++;
+    green = *src++;
+    blue = *src++;
+    SET_RGB(*dst, red, green, blue);
+  }
+  dst = &BG_PLTT[gData_02006ce0[gData_02006cec]];
+  if (gData_02006cd0 != 0)
+    src = Data_02006ce4 + gData_02006cec * 3;
+  else
+    src = Data_02006ce8 + gData_02006cec * 3;
+  red = *src++;
+  green = *src++;
+  blue = *src++;
+  SET_RGB(*dst, red, green, blue);
+  gData_02006cd0 ^= 1;
+  if (++gData_02006cf0 == gData_02006cec)
+    gData_02006cf0 = 0;
+}
 
 void Func_020051e0(void) {
   struct MarsLighthouseAerieEventWork *work = Ram_HeapSlots->eventWork;

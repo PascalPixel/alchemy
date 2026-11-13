@@ -1,5 +1,4 @@
 /// @file
-#include "shared/actors.h"
 #include "flags.h"
 #include "item_ids.h"
 #include "types.h"
@@ -38,7 +37,6 @@
 #include "module/game/game.h"
 #include "scene_ids.h"
 #include "system/io_reg.h"
-#include "shared/flight.h"
 #include "system/io_write_queue.h"
 #include "graphics/resource.h"
 #include "bg_scroll.h"
@@ -224,7 +222,7 @@ void Actor_SetSpriteColorMode__world_map(
 #define Actor_SetSpriteColorMode Actor_SetSpriteColorMode__world_map
 u32 __umodsi3(u32 a, u32 b);
 
-DEFINE_TILE_SPRITE_RESET(TileSprite_Reset)
+#include "shared/tile_sprite_reset.h"
 
 static __inline__ s32 MulQ16(s32 a, s32 b) {
   /* FAKEMATCH(wrapper): through the inline the multiply's address loads between
@@ -277,7 +275,14 @@ s32 StoryActor_Initialize(struct Actor *actor) {
   return 0;
 }
 
-DEFINE_TILE_SPRITE_RESET(Func_02000388)
+s32 Func_02000388(struct Actor *object) {
+  u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapWork + 286);
+  struct TileSprite *sprite = object->sprite;
+
+  sprite->tile = *tile;
+  sprite->frame = 0;
+  return 1;
+}
 
 s32 Func_020003a8(struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);
@@ -2055,12 +2060,19 @@ void Func_02003490(void) {
   FieldEvent_SetExitRequest(78);
 }
 
-DEFINE_TILE_SPRITE_RESET(Func_020035e0)
+s32 Func_020035e0(struct Actor *object) {
+  u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapWork + 286);
+  struct TileSprite *sprite = object->sprite;
+
+  sprite->tile = *tile;
+  sprite->frame = 0;
+  return 1;
+}
 
 #undef Actor_SetSpriteColorMode
 #include "shared/world_map_objects.c"
 
-DEFINE_ACTOR_FLICKER(Func_02003b38, WorldMap_SpawnSparkPair)
+#include "shared/actor_flicker.h"
 
 /* VIEW(s3b38): routine gData_02006be4 as this part declared it; the joined file
  * has another; tried as the definition's extern LATE_DATA
@@ -2071,13 +2083,11 @@ DEFINE_ACTOR_FLICKER(Func_02003b38, WorldMap_SpawnSparkPair)
 extern s32 gData_02006be4__s3b38 __asm__("gData_02006be4");
 #define gData_02006be4 gData_02006be4__s3b38
 
-DEFINE_ACTOR_CYCLE_CHILD_VALUES(Actor_CycleChildValues, gData_02004fc8,
-                                gData_02006be4, WorldMap_SpawnParticle)
+#include "shared/actor_cycle_child_values.h"
 
-DEFINE_ACTOR_SET_FLIGHT_MODE(Actor_SetFlightMode, Func_02003b38,
-                             Actor_CycleChildValues)
+#include "shared/actor_set_flight_mode.h"
 
-DEFINE_LEADER_SEARCH(Leader_Search, Actor_SetFlightMode, WorldMap_GetBlockPlace)
+#include "shared/leader_search.h"
 
 void Func_02003c3c(void) {
   Actor_SetFlightMode(Actor_GetById(Party_GetLeaderActor()), 0);
@@ -2111,7 +2121,7 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
 }
 
 /// Shakes the camera diagonally by one pixel every three frames.
-DEFINE_CAMERA_JITTER(WorldMap_JitterTransitionCamera)
+#include "shared/camera_jitter.h"
 
 #define PUSH_PICTURE(offset)                                                   \
   IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + (offset)), 0x84000140)
@@ -2275,15 +2285,24 @@ void Func_020042e0(void) {
   gBgScroll[0].y = 0;
 }
 
-DEFINE_ACTOR_FLICKER(Func_02004500, Func_02004634)
+void Func_02004500(struct Actor *object) {
+  if ((gFrameCount & 2) != 0) {
+    Actor_SetSpriteColorMode(object, 7);
+  } else {
+    Actor_SetSpriteColorMode(object, 0);
+  }
+  if ((gFrameCount & 15) == 0) {
+    Func_02004634(object);
+  }
+}
 
-DEFINE_ACTOR_ANIMATE_AND_EMIT(Actor_AnimateAndEmit, Func_02004634)
+#include "shared/actor_animate_and_emit.h"
 
-DEFINE_ACTOR_ANIMATE(Actor_Animate)
+#include "shared/actor_animate.h"
 
-DEFINE_ACTOR_GROW_UP(Actor_GrowUp, Actor_Release)
+#include "shared/actor_grow_up.h"
 
-DEFINE_ACTOR_GROW_DOWN(Actor_GrowDown, Actor_Release)
+#include "shared/actor_grow_down.h"
 
 void Func_02004634(struct Actor *parent) {
   struct Actor *pair[2];
@@ -2337,8 +2356,7 @@ extern s16 gData_02006e0c;
 extern s16 gData_02006e0e;
 extern u8 gData_02006f20[][32];
 
-DEFINE_GAUGE_DRAW(Gauge_Draw, gData_02006e0c, Data_02006e20, gData_02006f20,
-                  gData_02006e0e)
+#include "shared/gauge_draw.h"
 
 // The world map cursor: counts down while A or B is held, redraws the gauge and
 // queues its sprite over the leader.
@@ -2370,11 +2388,9 @@ void Func_020048f4(void) {
   Oam_AddSpriteAtDepthClamped(Data_02006e14, 255);
 }
 
-DEFINE_GAUGE_INIT(Gauge_Init, gData_02006f20, gData_02006e0e, gData_02006e0c,
-                  gData_02006e10, Func_020048f4)
+#include "shared/gauge_init.h"
 
-DEFINE_GAUGE_END(Gauge_End, gData_02006f20, gData_02006e0e, gData_02006e0c,
-                 Func_020048f4)
+#include "shared/gauge_end.h"
 
 // clang-format off
 u32 gData_02004e38[] = {

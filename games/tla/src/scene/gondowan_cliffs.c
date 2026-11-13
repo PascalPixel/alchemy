@@ -14,7 +14,6 @@
 /// data/gondowan_cliffs.c, which the overlay links after the field's tiles.
 
 #include "shared/tables.h"
-#include "shared/actors.h"
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
@@ -33,7 +32,6 @@
 #include "scene_tables.h"
 #include "objcmd.h"
 #include "flags.h"
-#include "shared/map_cells.h"
 #include "map.h"
 #include "event_work.h"
 #include "system/heap_release.h"
@@ -51,7 +49,7 @@
 extern s16 gGondowanCliffs_Entrances[];
 extern struct ActorPlacement gGondowanCliffs_PassEntrances[];
 
-DEFINE_TILE_SPRITE_RESET(TileSprite_Reset)
+#include "shared/tile_sprite_reset.h"
 
 void GondowanCliffs_FightKindle(void) { Field_RequestDjinnBattle(21, 49); }
 
@@ -101,7 +99,7 @@ u32 gFieldEffect_LongScript[] = {
 
 #include "../field/object/prepare_object.c"
 
-DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
+#include "shared/scene_create_actor.h"
 
 #include "../field/field_effect/move.c"
 
@@ -240,8 +238,7 @@ void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
   Event_End();
 }
 
-DEFINE_PILLAR_SET_MOVED(GondowanCliffs_FreezeFirstPuddle, 12, 79, 28, 81,
-                        FLAG_FIRST_PUDDLE_FROZEN)
+#include "shared/pillar_set_moved.h"
 
 void GondowanCliffs_FreezeSecondPuddle(void) {
   struct Actor *object = Actor_Get(13);

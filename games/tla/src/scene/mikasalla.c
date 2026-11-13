@@ -7,7 +7,6 @@
 /// lead to the inn's back yard, where Spark the Mars Djinni joins the party
 /// (Mikasalla_MeetSpark).
 
-#include "shared/actors.h"
 #include "flags.h"
 #include "shared/tables.h"
 #include "battle/battle.h"
@@ -284,8 +283,7 @@ void Mikasalla_StepOntoLadderFacingWest(void) {
 }
 
 /// Stepping onto a ladder top facing south, the leader turns and climbs down.
-DEFINE_SCENE_TURN_ACTOR_AND_RUN(Mikasalla_TurnAndClimbDownLadder,
-                                Mikasalla_ClimbDownLadder)
+#include "shared/scene_turn_actor_and_run.h"
 
 void Mikasalla_StepOntoLadderFacingNorth(void) {
   s32 x = ((s16 *)&Actor_GetById(4)->x)[1];

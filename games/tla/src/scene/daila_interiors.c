@@ -11,7 +11,6 @@
 #include "shared/tables.h"
 #include "field/emote.h"
 #include "sounds.h"
-#include "shared/actors.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -414,8 +413,7 @@ void DailaInteriors_TalkCaughtPracticing(void) {
   Event_End();
 }
 
-DEFINE_SCENE_RAISE_HELD_ACTOR(Scene_RaiseHeldActor, FlagBlock_ApplyFlags,
-                              gDailaInteriors_PillarFrozenFlags)
+#include "shared/scene_raise_held_actor.h"
 
 void ItemDisplay_ShowPicture(struct Actor *object, s32 mode);
 void Sound_Play(s32 cue);
@@ -619,7 +617,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-DEFINE_SCENE_FADE_IN_AND_CLEAR_FLAG(Scene_FadeInAndClearFlag)
+#include "shared/scene_fade_in_and_clear_flag.h"
 
 /// The step triggers of the cells to jump from, one for each heading.
 void DailaInteriors_JumpForward(void) { Field_TryJumpForward(); }

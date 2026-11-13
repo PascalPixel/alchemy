@@ -5,10 +5,7 @@
 /// Scoops up the Venus Djinni Crystal racing through the sand, and meets
 /// Valukar, the guardian of fire.
 
-#include "shared/map_cells.h"
 #include "flags.h"
-#include "shared/actors.h"
-#include "shared/effects.h"
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "map.h"
@@ -438,31 +435,25 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *object) {
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
-DEFINE_PALETTE_SET_COLORS(YampiDesertCave_SetMarkColors,
-                          gYampiDesertCave_MarkSlots,
-                          gYampiDesertCave_MarkColors,
-                          gYampiDesertCave_MarkDimColors,
-                          gYampiDesertCave_MarkCycleSlots,
-                          YampiDesertCave_ArriveByTeleport)
+#include "shared/palette_set_colors.h"
 
-DEFINE_PALETTE_CYCLE_START_VBLANK(
-    YampiDesertCave_StartMarkGlow, gYampiDesertCave_MarkCycleIndex,
-    gYampiDesertCave_MarkCount, List_CountEntries, gYampiDesertCave_MarkSlots,
-    gYampiDesertCave_MarkPeriod, 15, gYampiDesertCave_MarkTimer, 16,
-    gYampiDesertCave_MarkBright, PaletteCycle_Fade)
+#include "shared/palette_cycle_start_vblank.h"
 
 void YampiDesertCave_StopMarkGlow(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 256;
   Task_Remove(PaletteCycle_Fade);
 }
 
-DEFINE_PALETTE_CYCLE_START_VBLANK(
-    YampiDesertCave_StartMarkFlash, gYampiDesertCave_MarkCycleIndex,
-    gYampiDesertCave_MarkCount, List_CountEntries, gYampiDesertCave_MarkSlots,
-    gYampiDesertCave_MarkPeriod, 2, gYampiDesertCave_MarkTimer, 2,
-    gYampiDesertCave_MarkBright, PaletteCycle_Fade)
+void YampiDesertCave_StartMarkFlash(void) {
+  gYampiDesertCave_MarkCycleIndex = 0;
+  gYampiDesertCave_MarkCount = List_CountEntries(gYampiDesertCave_MarkSlots);
+  gYampiDesertCave_MarkPeriod = 2;
+  gYampiDesertCave_MarkTimer = 2;
+  gYampiDesertCave_MarkBright = 1;
+  Task_Add(PaletteCycle_Fade, TASK_PASS_VBLANK);
+}
 
-DEFINE_LIST_COUNT_ENTRIES(List_CountEntries)
+#include "shared/list_count_entries.h"
 
 void PaletteCycle_Fade(void) {
   s32 step = 0;
@@ -561,12 +552,70 @@ loop:
 }
 
 // Finds the current target's table row and shrinks it.
-DEFINE_STATUE_SINK(Statue_Sink, YampiDesertCave_SetStakeCell)
+void Statue_Sink(u16 *list, s32 mode, s32 count) {
+  struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
+
+  while (*list != 0xffff) {
+    u32 entry = *list;
+    s32 id = work->objectId;
+
+    if (id == entry) {
+      struct Actor *object = Actor_GetById(id);
+      s32 a;
+      s32 flag;
+
+      list++;
+      a = list[0];
+      flag = list[1];
+      if (count < 8)
+        object->scaleY -= 0x1f00;
+      if (mode == 1) {
+        GameFlag_Set(flag);
+        YampiDesertCave_SetStakeCell(id, a, flag, object->terrainId);
+        object->scaleY = 0x10000;
+      }
+      break;
+    }
+    list += 3;
+  }
+}
 
 s32 Actor_GetCellIndex(struct Actor *object);
 
-DEFINE_ACTOR_SET_CELL_OPEN(YampiDesertCave_SetStakeCell, Actor_GetCellIndex,
-                           Actor_SelectAnimation)
+void YampiDesertCave_SetStakeCell(s32 id, u32 kind, s32 flag, s32 layer) {
+  struct Actor *object = Actor_GetById(id);
+  struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
+
+  cell += Actor_GetCellIndex(object);
+  if (GameFlag_Get(flag)) {
+    cell->collisionCode = 0;
+    object->priorityFlags |= 2;
+    switch (kind) {
+    case 0:
+      Actor_SelectAnimation(object, 2);
+      break;
+    case 1:
+      Actor_SelectAnimation(object, 4);
+      break;
+    case 2:
+      Actor_SelectAnimation(object, 6);
+      break;
+    }
+  } else {
+    cell->collisionCode = 255;
+    switch (kind) {
+    case 0:
+      Actor_SelectAnimation(object, 1);
+      break;
+    case 1:
+      Actor_SelectAnimation(object, 3);
+      break;
+    case 2:
+      Actor_SelectAnimation(object, 5);
+      break;
+    }
+  }
+}
 
 /// Talking to Crystal, the Venus Djinni Scoop dug up, starts its battle
 /// (flag 0x271).

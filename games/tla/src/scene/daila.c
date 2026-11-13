@@ -10,10 +10,9 @@
 /// (Daila_MeetAlex). Six puddles (sprite 290) lie in its streets: Parch dries
 /// one for the visit (Daila_ParchFirstPuddle to Daila_ParchSixthPuddle) and
 /// Frost freezes one into a pillar of ice to stand on (Scene_RaiseHeldActor,
-/// gDaila_PuddleFrozenFlags). Scoop on one spot digs up a Psy Crystal
+/// gDailaInteriors_PillarFrozenFlags). Scoop on one spot digs up a Psy Crystal
 /// (Daila_DigUpPsyCrystal).
 
-#include "shared/actors.h"
 #include "event_work.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -44,7 +43,7 @@
 #define FLAG_DAILA_FIFTH_PUDDLE_PARCHED 0x214
 #define FLAG_DAILA_SIXTH_PUDDLE_PARCHED 0x215
 // The first of six flags, one for each of Daila2's puddles that Frost has
-// frozen into a pillar for this visit, by gDaila_PuddleFrozenFlags.
+// frozen into a pillar for this visit, by gDailaInteriors_PillarFrozenFlags.
 #define FLAG_DAILA_PUDDLE_FROZEN_FIRST 0x216
 
 /// The people and puddles the events move, numbering the rows of
@@ -76,7 +75,7 @@ extern struct ActorPlacement gDaila1ActorPlacements[];
 extern struct ActorPlacement gDaila2ActorPlacements[];
 extern struct Trigger gDaila1Triggers[];
 extern struct Trigger gDaila2Triggers[];
-extern s16 gDaila_PuddleFrozenFlags[];
+extern s16 gDailaInteriors_PillarFrozenFlags[];
 extern s32 gDaila_FallenOldManScript[];
 extern u32 gDaila_PuddleChildScript[];
 void Field_TryJumpForward(void);
@@ -460,15 +459,14 @@ DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchSixthPuddle, 16, 23, 17, 31,
 
 void Actor_SetWideSprite(s32 actor, s32 flag);
 
-DEFINE_SCENE_RAISE_HELD_ACTOR(Scene_RaiseHeldActor, FlagBlock_ApplyFlags,
-                              gDaila_PuddleFrozenFlags)
+#include "shared/scene_raise_held_actor.h"
 
 s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila1)
     Actor_FallOverById(12, 0);
   else if (gMainRoutineWork.scene == (s32)&SceneId_Daila2)
-    FlagBlock_PlaceAll(gDaila_PuddleFrozenFlags);
+    FlagBlock_PlaceAll(gDailaInteriors_PillarFrozenFlags);
   Actor_SetSpritePriority(21, 1);
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila2 &&
       GameFlag_Get(FLAG_DAILA_PSY_CRYSTAL_DUG) == 0)
@@ -498,7 +496,7 @@ s32 Scene_PrepareMap(void) {
 void Daila_JumpForward(void) { Field_TryJumpForward(); }
 
 // clang-format off
-s16 gDaila_PuddleFrozenFlags[] = {
+s16 gDailaInteriors_PillarFrozenFlags[] = {
     ACTOR_FIRST_PUDDLE,  FLAG_DAILA_PUDDLE_FROZEN_FIRST + 0,
     ACTOR_SECOND_PUDDLE, FLAG_DAILA_PUDDLE_FROZEN_FIRST + 1,
     ACTOR_THIRD_PUDDLE,  FLAG_DAILA_PUDDLE_FROZEN_FIRST + 2,

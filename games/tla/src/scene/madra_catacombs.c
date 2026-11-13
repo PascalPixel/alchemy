@@ -7,10 +7,8 @@
 /// tablet. Once the Black Crystal is stolen (flag 0x8ab) the Champa's way in is
 /// blocked.
 
-#include "shared/map_cells.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "shared/actors.h"
 #include "shared/tables.h"
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -100,8 +98,7 @@ s32 Actor_GetCellIndex(struct Actor *object);
 
 // Raises each listed actor's cells: the shape grid and the cell flags under it,
 // then lifts the leader if the new terrain is above the leader.
-DEFINE_PILLARS_RAISE(MadraCatacombs_RaisePillarCells, MapGrid_GetTerrainKind,
-                     Actor_GetCellIndex, MapCollision_FindOrAddTag)
+#include "shared/pillars_raise.h"
 
 #define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
 
@@ -150,8 +147,7 @@ void MadraCatacombs_LowerHeldPillarCells(u16 *list) {
   }
 }
 
-DEFINE_HELD_ACTOR_RAISE_CELL(HeldActor_RaiseCell, MapGrid_GetTerrainKind,
-                             Actor_GetCellIndex, MapCollision_FindOrAddTag)
+#include "shared/held_actor_raise_cell.h"
 
 struct SceneWork {
   u8 unk000[0x1ac];
@@ -221,7 +217,7 @@ void MadraCatacombs_TryLockedDoor(void) {
   Event_End();
 }
 
-DEFINE_ACTOR_DROP_AND_WAIT(Actor_DropAndWait)
+#include "shared/actor_drop_and_wait.h"
 
 /// The pillar Move pushes onto cell (40, 13) drops into the hole there, which
 /// it fills for good (flag 0x8c8).
@@ -400,12 +396,7 @@ void MadraCatacombs_SettleClimbablePillar(struct Actor *object) {
     Event_SetFlag(0x9ef);
 }
 
-DEFINE_SCENE_RUN_IF_HELD(Scene_RunIfHeld, Leader_CanPushObjectAhead,
-                         Field_FindNearbyTalkTarget,
-                         MadraCatacombs_LowerHeldPillarCells,
-                         gMadraCatacombs_ClimbablePillar,
-                         Leader_PushObjectAhead,
-                         MadraCatacombs_SettleClimbablePillar)
+#include "shared/scene_run_if_held.h"
 
 void MadraCatacombs_StartMovingClimbablePillar(void) {
   MadraCatacombs_LowerHeldPillarCells(gMadraCatacombs_ClimbablePillar);
@@ -617,7 +608,7 @@ void MadraCatacombs_SetUpVillage(void) {
   if (Event_GetFlag(0x9ef) != 0)
     Actor_SetPosition(8, 568, 280);
   Actor_GetById(8)->priorityFlags &= 0xfe;
-  MadraCatacombs_RaisePillarCells(gMadraCatacombs_ClimbablePillar);
+  Pillars_Raise(gMadraCatacombs_ClimbablePillar);
   FlagBlock_PlaceAll(gMadraCatacombs_Puddles);
   if (Event_GetFlag(0x8cb) != 0) {
     MapGrid_CopyCellsTo(75, 66, 97, 39, 2, 2);

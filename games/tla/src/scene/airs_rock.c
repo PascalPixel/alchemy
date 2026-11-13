@@ -3,14 +3,12 @@
 /// overlay: the Wind Stones Whirlwind strengthens, the walls and ledges of the
 /// climb, and the way into the rock itself (airs_rock_inside.c).
 
-#include "shared/actors.h"
 #include "types.h"
 #include "actor.h"
 #include "field/event_inline.h"
 #include "module/scene/airs_rock.h"
 #include "system/ram_buffer.h"
 #include "flags.h"
-#include "shared/map_cells.h"
 #include "system/main_routine_work.h"
 #include "field/field.h"
 #include "event_work.h"
@@ -44,7 +42,7 @@
 
 #include "../field/object/prepare_object.c"
 
-DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
+#include "shared/scene_create_actor.h"
 
 #include "../field/field_effect/move.c"
 
@@ -109,7 +107,36 @@ s32 Func_02000384(u32 layer, s32 x, s32 y, s32 value) {
 
 void Actor_PlaceMovedBlock(s32 id);
 
-DEFINE_BLOCKS_MARK_CELLS(Blocks_MarkCells, Func_02000348)
+void Blocks_MarkCells(u16 *ids) {
+  struct Actor *object;
+  u8 *blocked;
+  struct MapWork *map;
+  struct MapCell **cells;
+  struct MapCell *cell;
+  s32 x, z;
+
+  while (*ids != 0xffff) {
+    object = Actor_Get(*ids);
+    blocked = &object->blockMarked;
+    *blocked = 0;
+    if (Func_02000348(0, object->x >> 20, object->z >> 20) & 0x40) {
+      map = Ram_HeapSlots->mapWork;
+      if (map == NULL)
+        return;
+      cells = &map->layers[2].cells;
+      z = (object->z - object->y) >> 20;
+      x = object->x >> 20;
+      cell = *cells;
+      cell += x + ((z + 1) << 7);
+      cell->collisionCode = 255;
+      cell = *cells;
+      cell += x + ((z - 1) << 7);
+      cell->collisionCode = 255;
+      *blocked = 1;
+    }
+    ids++;
+  }
+}
 
 void Func_02000468(struct Unk_02000468 *unk) {
   struct MapWork *map;
@@ -880,9 +907,9 @@ void Func_02001560(void) {
   Event_End();
 }
 
-DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
+#include "shared/position_flat_distance.h"
 
-DEFINE_POSITION_DISTANCE_ABOVE(Position_DistanceAbove)
+#include "shared/position_distance_above.h"
 
 extern u32 gData_02003de0[];
 extern u32 gData_02003dcc[];
@@ -1522,7 +1549,7 @@ void Func_02002b88(void) {
   }
 }
 
-DEFINE_LEADER_LIFT(Leader_Lift)
+#include "shared/leader_lift.h"
 
 #define LEADER() Actor_GetById(gMainRoutineWork.currentOwner)
 #define BEAM ((s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x178))

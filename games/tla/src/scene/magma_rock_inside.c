@@ -49,10 +49,6 @@ void Actor_DisableById(s32 id);
 static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
   return Import_ActorCreate(kind, x, y, z);
 }
-#include "shared/actors.h"
-#include "shared/push.h"
-#include "shared/map_cells.h"
-#include "shared/effects.h"
 #include "types.h"
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
@@ -122,7 +118,7 @@ struct Actor *MagmaRockInside_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect/spawn.c"
 
-DEFINE_POSITION_DISTANCE(Position_Distance)
+#include "shared/position_distance.h"
 
 #include "../field/object/find_in_cell.c"
 
@@ -154,11 +150,11 @@ void MagmaRockInside_MarkBlockCells(u16 *ids);
 
 void MagmaRockInside_WaitForLanding(struct Actor *object);
 
-s32 MagmaRockInside_GetCell(u32 layer, s32 x, s32 y);
+s32 MapCell_Get(u32 layer, s32 x, s32 y);
 
 s32 MagmaRockInside_FindStatue(u16 *table);
 
-s32 MagmaRockInside_FlatDistance(s32 *from, s32 *to);
+s32 Position_FlatDistance(s32 *from, s32 *to);
 
 void MagmaRockInside_TrailEmbers(struct Actor *object);
 void MagmaRockInside_DrainLava(void);
@@ -196,7 +192,7 @@ void Func_02004c58(void *entry, void *destination);
 void Func_02004f10(struct RockSprite__s4b18 *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 
-void MagmaRockInside_UpdateFallingRocks(void);
+void Particles_UpdateFalling(void);
 
 void MagmaRockInside_FightFury(void);
 
@@ -247,8 +243,7 @@ extern s32 gMagmaRockInside_StepCellZ;
 
 extern s32 gPushLeaderSteps[];
 
-DEFINE_BLOCK_PUSH_ONTO(MagmaRockInside_PushBlockOnto, gPushLeaderSteps,
-                       MapGrid_CheckCollision, Actor_SelectAnimation)
+#include "shared/block_push_onto.h"
 
 extern struct MapCell gMapCellBuffer[];
 
@@ -279,13 +274,12 @@ void MagmaRockInside_FightFury(void) { Field_RequestDjinnBattle(15, 56); }
 
 void MagmaRockInside_MeetDjinni(void) { Djinn_JoinParty(17, 2, 19); }
 
-DEFINE_POSITION_FLAT_DISTANCE(MagmaRockInside_FlatDistance)
+#include "shared/position_flat_distance.h"
 
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
-DEFINE_MAP_CELL_SET_SHAPE(MagmaRockInside_SetCellShape, MapGrid_GetTerrainKind,
-                          MapCollision_FindOrAddTag)
+#include "shared/map_cell_set_shape.h"
 
 void MagmaRockInside_WaitForLanding(struct Actor *object) {
   s32 count;
@@ -302,19 +296,63 @@ void MagmaRockInside_WaitForLanding(struct Actor *object) {
   }
 }
 
-DEFINE_MAP_CELL_GET(MagmaRockInside_GetCell)
+#include "shared/map_cell_get.h"
 
-DEFINE_MAP_CELL_SWAP(MagmaRockInside_SwapCells)
+s32 MagmaRockInside_SwapCells(u32 layer, s32 x, s32 y, s32 value) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapCell *cell;
+  s32 old;
+
+  if (map == NULL)
+    return 0;
+  if (layer <= 2)
+    cell = map->layers[layer].cells;
+  else
+    cell = gMapCellBuffer;
+  cell += x + (y << 7);
+  old = (cell->collisionCode << 8) | cell->attributeB;
+  cell->collisionCode = value >> 8;
+  cell->attributeB = value;
+  return old;
+}
 
 // For each id of a list ended by 0xffff: clears the object's mark and, on a
 // cell with attribute bit 6, blocks the cells ahead of and behind it and sets
 // the mark.
-DEFINE_BLOCKS_MARK_CELLS(MagmaRockInside_MarkBlockCells,
-                         MagmaRockInside_GetCell)
+void MagmaRockInside_MarkBlockCells(u16 *ids) {
+  struct Actor *object;
+  u8 *blocked;
+  struct MapWork *map;
+  struct MapCell **cells;
+  struct MapCell *cell;
+  s32 x, z;
+
+  while (*ids != 0xffff) {
+    object = Actor_Get(*ids);
+    blocked = &object->blockMarked;
+    *blocked = 0;
+    if (MapCell_Get(0, object->x >> 20, object->z >> 20) & 0x40) {
+      map = Ram_HeapSlots->mapWork;
+      if (map == NULL)
+        return;
+      cells = &map->layers[2].cells;
+      z = (object->z - object->y) >> 20;
+      x = object->x >> 20;
+      cell = *cells;
+      cell += x + ((z + 1) << 7);
+      cell->collisionCode = 255;
+      cell = *cells;
+      cell += x + ((z - 1) << 7);
+      cell->collisionCode = 255;
+      *blocked = 1;
+    }
+    ids++;
+  }
+}
 
 // Clears the object's mark and the cells ahead of and behind it that the mark
 // blocked.
-DEFINE_BLOCK_CLEAR_CELLS(MagmaRockInside_ClearBlockCells)
+#include "shared/block_clear_cells.h"
 
 void MagmaRockInside_PausePlatform(struct Actor *object) {
   u8 *work = (u8 *)Ram_HeapSlots->eventWork;
@@ -385,8 +423,7 @@ hook:
 
 s32 MagmaRockInside_SetCellShape(s32 terrain, s32 x, s32 z, s32 height);
 
-DEFINE_ACTORS_RAISE_CELLS(MagmaRockInside_RaiseActorCells,
-                          MagmaRockInside_SetCellShape)
+#include "shared/actors_raise_cells.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -590,7 +627,7 @@ void MagmaRockInside_TrailEmbers(struct Actor *object) {
                     0x320001, &options);
 }
 
-DEFINE_ACTOR_FLASH_COLOR(MagmaRockInside_FlashStatue, 10)
+#include "shared/actor_flash_color.h"
 
 // The cell watch's table lookup over (id, cell, value) rows ended by 0xffff:
 // for the row of the cell under the watch, sets the watch's object to the row's
@@ -600,7 +637,7 @@ DEFINE_ACTOR_FLASH_COLOR(MagmaRockInside_FlashStatue, 10)
 s32 MagmaRockInside_FindStatue(u16 *table) {
   struct CellWatch *watch = Ram_HeapSlots->effectWork;
   s32 result = 0;
-  s32 cell = MagmaRockInside_GetCell(0, watch->x >> 20, watch->z >> 20) >> 8;
+  s32 cell = MapCell_Get(0, watch->x >> 20, watch->z >> 20) >> 8;
   u32 id;
 
   goto test;
@@ -712,9 +749,8 @@ void MagmaRockInside_FireFromStatue(struct Actor *source) {
   position[2] = flame->z;
 next:
   position[0] += step;
-  cell = MagmaRockInside_GetCell(2, position[0] >> 20,
-                                 (position[2] - position[1]) >> 20) >>
-         8;
+  cell =
+      MapCell_Get(2, position[0] >> 20, (position[2] - position[1]) >> 20) >> 8;
   if (cell == 212 || cell == 222)
     goto end;
   id = 8;
@@ -725,7 +761,7 @@ inner:
   if (source->x >> 20 == other->x >> 20 && source->y >> 20 == other->y >> 20 &&
       source->z >> 20 == other->z >> 20)
     goto skip;
-  if (MagmaRockInside_FlatDistance(&other->x, position) > 8)
+  if (Position_FlatDistance(&other->x, position) > 8)
     goto skip;
   if (other->y >> 20 != position[1] >> 20)
     goto skip;
@@ -1511,7 +1547,7 @@ void MagmaRockInside_TrackStepCell(void) {
   if (gMainRoutineWork.scene != (s32)&SceneId_MagmaRockInside8)
     return;
   work = Ram_HeapSlots->eventWork;
-  value = MagmaRockInside_GetCell(2, x, z) >> 8;
+  value = MapCell_Get(2, x, z) >> 8;
   if (value != 0) {
     /* FAKEMATCH(temporary): the value plus 200 held in delay before the store.
      */
@@ -1613,7 +1649,7 @@ fadeOut:
   REG_DISPCNT &= 0x7fff;
 }
 
-// Reads what the leader stands on (MagmaRockInside_GetCell, kind 2): on cells
+// Reads what the leader stands on (MapCell_Get, kind 2): on cells
 // 1 and 7 it only redraws the marker when flag 0x200 is set; elsewhere it
 // clears (MagmaRockInside_StampStepCell), redraws the marker in the row the
 // event work's counter gives, sets flag 0x200 and the counter's flag (312 on).
@@ -1623,7 +1659,7 @@ void MagmaRockInside_StepOnMarker(void) {
   s32 cell, row = 54;
 
   leader = Actor_Get(gMainRoutineWork.currentOwner);
-  cell = MagmaRockInside_GetCell(2, leader->x >> 20, leader->z >> 20);
+  cell = MapCell_Get(2, leader->x >> 20, leader->z >> 20);
   work += 0x16a;
   // From 54 in two steps: as one expression the constants fold into
   // 858 - 4 * counter.
@@ -1764,11 +1800,11 @@ s32 MagmaRockInside_OrbitParent(struct Orbiter__magma_rock_inside *object) {
 }
 
 // Moves around in a circle.
-DEFINE_ORBIT_UPDATE(Orbit_Update)
+#include "shared/orbit_update.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-DEFINE_ACTOR_AIM_AT_WATCHED(Actor_AimAtWatched)
+#include "shared/actor_aim_at_watched.h"
 
 s32 MagmaRockInside_DriftForSteps(struct Actor *object) {
   u8 *steps;
@@ -2500,16 +2536,9 @@ s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value);
 
 // On entering, sets each listed pillar from its two flags, then lifts the
 // leader onto the ground under it.
-DEFINE_PILLARS_RESTORE_RAISED(MagmaRockInside_RestoreCrumblingPillars,
-                              Actor_GetCellIndex, MapGrid_GetTerrainKind,
-                              Actor_DisableById, MapCollision_FindOrAddTag,
-                              Actor_SelectAnimation)
+#include "shared/pillars_restore_raised.h"
 
-DEFINE_TRAPS_CHECK(MagmaRockInside_CheckCrumblingStep, Field_TryJumpForward,
-                   Actor_FindAtCell, Actor_SelectAnimation,
-                   MagmaRockInside_SpawnRubble,
-                   MagmaRockInside_SetLeaderCellShape,
-                   MagmaRockInside_SpawnDustRing)
+#include "shared/traps_check.h"
 
 void MagmaRockInside_CrumblePillar(const void *data, s32 id) {
   const struct TrapEntry *entry = data;
@@ -2560,10 +2589,7 @@ void MagmaRockInside_SetPillarMode3(s32 id) {
 // halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
 // gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
 // it copy actor 9's visual attributes.
-DEFINE_PILLARS_RESTORE(MagmaRockInside_RestorePillars,
-                       MagmaRockInside_SetPillarMode3, Actor_GetCellIndex,
-                       MapGrid_GetTerrainKind, Actor_DisableById,
-                       MapCollision_FindOrAddTag)
+#include "shared/pillars_restore.h"
 
 void MagmaRockInside_TakePlaceOf(struct Actor *object, struct Actor *target) {
   FieldActor_SetPositionAndResetMotion(object, target->x, target->y, target->z);
@@ -2744,8 +2770,19 @@ void MagmaRockInside_SpawnDustRing(void) {
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
-DEFINE_ACTOR_SET_CELL_SHAPE(MagmaRockInside_SetActorCellShape,
-                            MapGrid_GetTerrainKind, MapCollision_FindOrAddTag)
+void MagmaRockInside_SetActorCellShape(s32 level, s32 layer, s32 owner) {
+  struct Actor *object = Actor_GetById(owner);
+  u8 *shape = Ram_MapShapeGrid + (Ram_HeapSlots->mapWork->layers[layer].cells -
+                                  (struct MapCell *)Ram_MapCellBuffer);
+  s32 value = MapGrid_GetTerrainKind(object->terrainId, object->x, object->z);
+  s32 height =
+      Map_GetTerrainHeight(object->terrainId, object->x, object->z) >> 19;
+
+  height += level;
+
+  shape += object->x / 0x100000 + object->z / 0x100000 * 128;
+  *shape = MapCollision_FindOrAddTag(object->terrainId, value, height);
+}
 
 void MagmaRockInside_SetLeaderCellShape(s32 a, s32 b) {
   MagmaRockInside_SetActorCellShape(a, b, gMainRoutineWork.currentOwner);
@@ -2753,8 +2790,7 @@ void MagmaRockInside_SetLeaderCellShape(s32 a, s32 b) {
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-DEFINE_PARTICLES_UPDATE_FALLING(MagmaRockInside_UpdateFallingRocks,
-                                EffectSprite_DrawAtWorldPosition)
+#include "shared/particles_update_falling.h"
 
 // The falling rocks' work: their tiles, 64 rocks and their sprites, in a
 // ring that next walks round.
@@ -2769,7 +2805,43 @@ struct RockWork {
 
 // Spawns count rocks around (x, y, z), each pushed out at a random angle and
 // thrown up and out along it.
-DEFINE_ROCKS_SPAWN(MagmaRockInside_DropRocks)
+void MagmaRockInside_DropRocks(s32 x, s32 y, s32 z, s32 count) {
+  struct RockWork *work;
+  s32 i;
+
+  /* FAKEMATCH(barrier): an empty asm before the work is read keeps the
+   * spills of x and y at the entry. */
+  asm("");
+  work = Ram_HeapSlots->menuRuntime;
+  /* A goto loop carries no loop notes, so the offsets are rebuilt on every
+   */
+  /* pass, as the bytes have them; a for loop hoists them. */
+  if (count > 0) {
+    i = count;
+  loop:;
+    {
+      s32 angle = Random16();
+      struct Rock *rock = &work->rocks[work->next];
+
+      rock->timer = 0;
+      rock->position[0] = x;
+      rock->position[1] = y;
+      rock->position[2] = z;
+      FieldVector_AddPolarOffset((Random16() << 3) + 0x80000, angle,
+                                 rock->position);
+      rock->velocity[0] = 0;
+      rock->velocity[1] = 0x50000;
+      rock->velocity[2] = 0;
+      FieldVector_AddPolarOffset((Random16() << 1) + 0x20000, angle,
+                                 rock->velocity);
+      work->next++;
+      work->next &= 63;
+    }
+    i--;
+    if (i != 0)
+      goto loop;
+  }
+}
 
 void MagmaRockInside_StartFallingRocks(void) {
   struct RockWork *work = HeapSlot_Alloc(220, sizeof(struct RockWork));
@@ -2799,13 +2871,13 @@ void MagmaRockInside_StartFallingRocks(void) {
 
     work->next = zero;
   }
-  FieldTask_AddFrame(MagmaRockInside_UpdateFallingRocks, 0x480);
+  FieldTask_AddFrame(Particles_UpdateFalling, 0x480);
 }
 
 void MagmaRockInside_EndFallingRocks(void) {
   struct MagmaRockInsideSparkWork *work = Ram_HeapSlots->menuRuntime;
 
-  FieldTask_Remove(MagmaRockInside_UpdateFallingRocks);
+  FieldTask_Remove(Particles_UpdateFalling);
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(220);
 }

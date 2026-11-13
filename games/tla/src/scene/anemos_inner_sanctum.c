@@ -1,6 +1,4 @@
 /// @file
-#include "shared/actors.h"
-#include "shared/effects.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "field/event_inline.h"
@@ -31,7 +29,6 @@
 #include "flags.h"
 #include "module/field/object.h"
 #include "call.h"
-#include "shared/cracked_tile.h"
 #include "system/heap_release.h"
 #include "item_icon.h"
 #include "module/scene/scene.h"
@@ -193,30 +190,25 @@ void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b) {
     Func_02000328();
 }
 
-DEFINE_PALETTE_CYCLE_START(Func_020000f4, gPaletteCycleIndex,
-                           gPaletteCycleLength, List_CountEntries,
-                           gPaletteSlots, gPaletteCycleDelay, 15,
-                           gPaletteCycleTimer, 16, gPaletteCycleBright,
-                           PaletteCycle_Fade)
+#include "shared/palette_cycle_start.h"
 
 void Func_02000158(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   FieldTask_Remove((s32)PaletteCycle_Fade);
 }
 
-DEFINE_PALETTE_CYCLE_START(Func_02000178, gPaletteCycleIndex,
-                           gPaletteCycleLength, List_CountEntries,
-                           gPaletteSlots, gPaletteCycleDelay, 2,
-                           gPaletteCycleTimer, 2, gPaletteCycleBright,
-                           PaletteCycle_Fade)
+void Func_02000178(void) {
+  gPaletteCycleIndex = 0;
+  gPaletteCycleLength = List_CountEntries(gPaletteSlots);
+  gPaletteCycleDelay = 2;
+  gPaletteCycleTimer = 2;
+  gPaletteCycleBright = 1;
+  Task_AddFrame(PaletteCycle_Fade, TASK_PASS_VBLANK);
+}
 
-DEFINE_LIST_COUNT_ENTRIES(List_CountEntries)
+#include "shared/list_count_entries.h"
 
-DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gPaletteCycleTimer,
-                          gPaletteCycleDelay, gPaletteCycleColors,
-                          gPaletteCycleLength, gPaletteCycleSlots,
-                          gPaletteCycleIndex, gPaletteSlots,
-                          gPaletteCycleBright, gPaletteColors)
+#include "shared/palette_cycle_fade.h"
 
 static __inline__ void Func_02003458_(s32 a, s32 b) {
   BattleEffect_ApplyColorToTargetBuffer(a, b);
@@ -987,7 +979,12 @@ void Func_02001614(void) {
   }
 }
 
-DEFINE_LEADER_SET_LAYER_BYTE(Leader_SetLayerByte, 0)
+void Leader_SetLayerByte(void) {
+  s32 t0;
+
+  t0 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
+  FIELD_AT((t0 + 0x22), u8, 0) = 0;
+}
 
 void Func_02001660(void) {
   Event_Start();
@@ -1796,7 +1793,7 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepth
 #include "../field/map/cell_sprite.c"
 
-DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find, gCrackedTiles, CrackedTiles_Update)
+#include "shared/cracked_tiles_find.h"
 
 void Leader_CenterInCell(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1822,7 +1819,7 @@ void Leader_CenterInCell(void) {
 // the table's source cell over the leader's, keeping the source column's and
 // row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
 // one of the table's cells.
-DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
+#include "shared/cracked_tile_crack.h"
 
 void CrackedTile_Fall(struct PushEvent *event) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -1971,11 +1968,9 @@ void CrackedTile_Fall__s2f48(
     struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
 #define CrackedTile_Fall CrackedTile_Fall__s2f48
 
-DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
-                          CrackedTile_Fall)
+#include "shared/cracked_tiles_step.h"
 
-DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
-                                  CrackedTile_DropIn)
+#include "shared/cracked_tile_place_landing.h"
 
 extern u32 gData_0200378c[];
 extern u32 gData_020037c8[];

@@ -4,9 +4,7 @@
 /// Serac at the end of their rides (IsletCave_FightMeld, IsletCave_FightSerac),
 /// and the cycling colours of its water (IsletCave_StartSlowPaletteCycle).
 
-#include "shared/actors.h"
 #include "flags.h"
-#include "shared/effects.h"
 #include "field/field.h"
 #include "system/main_routine_work.h"
 #include "types.h"
@@ -102,34 +100,98 @@ extern u16 *gPaletteCycleSlots;
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
-DEFINE_PALETTE_SET_COLORS(Palette_SetColors, gData_02001a24, gPaletteColors,
-                          Data_02001a2c, gPaletteCycleSlots, Func_02000328)
+void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
+  u8 *saved = Ram_HeapSlots->block32;
+
+  gData_02001a24 = slots;
+  gPaletteColors = colours;
+  Data_02001a2c = a;
+  gPaletteCycleSlots = b;
+  if (*slots != 0xffff && *colours != 0xffff) {
+  next:
+    {
+      int red = *colours++;
+      int index = *slots++;
+      int green = *colours++;
+      int blue = *colours++;
+      SET_RGB(((u16 *)BG_PLTT)[index], red, green, blue);
+    }
+    if (*slots != 0xffff && *colours != 0xffff)
+      goto next;
+  }
+  Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
+  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  if ((s8)gMainRoutineWork.unk2c2 == 2)
+    Func_02000328();
+}
 
 extern u16 gPaletteCycleTimer;
 
-DEFINE_PALETTE_CYCLE_START_VBLANK(IsletCave_StartSlowPaletteCycle,
-                                  gData_02001a34, gData_02001a30,
-                                  List_CountEntries, gData_02001a24,
-                                  gData_02001a20, 15, gPaletteCycleTimer, 16,
-                                  gData_02001a14, PaletteCycle_Fade)
+void IsletCave_StartSlowPaletteCycle(void) {
+  gData_02001a34 = 0;
+  gData_02001a30 = List_CountEntries(gData_02001a24);
+  gData_02001a20 = 15;
+  gPaletteCycleTimer = 16;
+  gData_02001a14 = 1;
+  Task_Add(PaletteCycle_Fade, TASK_PASS_VBLANK);
+}
 
 void IsletCave_StopPaletteCycle(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Task_Remove(PaletteCycle_Fade);
 }
 
-DEFINE_PALETTE_CYCLE_START_VBLANK(IsletCave_StartFastPaletteCycle,
-                                  gData_02001a34, gData_02001a30,
-                                  List_CountEntries, gData_02001a24,
-                                  gData_02001a20, 2, gPaletteCycleTimer, 2,
-                                  gData_02001a14, PaletteCycle_Fade)
+void IsletCave_StartFastPaletteCycle(void) {
+  gData_02001a34 = 0;
+  gData_02001a30 = List_CountEntries(gData_02001a24);
+  gData_02001a20 = 2;
+  gPaletteCycleTimer = 2;
+  gData_02001a14 = 1;
+  Task_Add(PaletteCycle_Fade, TASK_PASS_VBLANK);
+}
 
-DEFINE_LIST_COUNT_ENTRIES(List_CountEntries)
+#include "shared/list_count_entries.h"
 
-DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gPaletteCycleTimer, gData_02001a20,
-                          Data_02001a2c, gData_02001a30, gPaletteCycleSlots,
-                          gData_02001a34, gData_02001a24, gData_02001a14,
-                          gPaletteColors)
+void PaletteCycle_Fade(void) {
+  s32 step;
+  u32 i;
+  u16 *src;
+  volatile u16 *dst;
+  int red, green, blue;
+
+  step = 0;
+  if (gPaletteCycleTimer != 0) {
+    if (--gPaletteCycleTimer == 0) {
+      step = 1;
+      gPaletteCycleTimer = gData_02001a20;
+      if (gData_02001a20 > 2)
+        gData_02001a20--;
+    }
+  }
+  if (step == 0)
+    return;
+  src = Data_02001a2c;
+  for (i = 0; i < gData_02001a30; i++) {
+    dst = &BG_PLTT[gPaletteCycleSlots[gData_02001a34 * gData_02001a30 + i]];
+    red = *src++;
+    green = *src++;
+    blue = *src++;
+    SET_RGB(*dst, red, green, blue);
+  }
+  dst = &BG_PLTT[gData_02001a24[gData_02001a30]];
+  if (gData_02001a14 != 0)
+    src = gPaletteColors + gData_02001a30 * 3;
+  else
+    src = Data_02001a2c + gData_02001a30 * 3;
+  red = *src++;
+  green = *src++;
+  blue = *src++;
+  SET_RGB(*dst, red, green, blue);
+  gData_02001a14 ^= 1;
+  if (++gData_02001a34 == gData_02001a30)
+    gData_02001a34 = 0;
+}
 
 void Func_02000328(void) {
   struct IsletCaveEventWork *work = Ram_HeapSlots->eventWork;

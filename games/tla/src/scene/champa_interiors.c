@@ -8,7 +8,6 @@
 /// (FLAG_BRIGGS_SAILED_FROM_ALHAFRA) the village is hungry, its fish gone
 /// since the tidal wave; after, the people talk of the jewels he brought home.
 
-#include "shared/actors.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -105,7 +104,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-DEFINE_SCENE_FADE_IN_AND_CLEAR_FLAG(Scene_FadeInAndClearFlag)
+#include "shared/scene_fade_in_and_clear_flag.h"
 
 #include "text/msg_ids.h"
 

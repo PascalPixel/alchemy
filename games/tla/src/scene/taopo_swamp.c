@@ -4,9 +4,7 @@
 /// freezes, lava rocks to cool and push, drops falling in the dark rooms, the
 /// Mad Plant in its bush and Flower, the Venus Djinni.
 
-#include "shared/actors.h"
 #include "flags.h"
-#include "shared/vents.h"
 #include "types.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"
@@ -510,7 +508,7 @@ void TaopoSwamp_BlowFlowerOffLedge(void) {
   Event_End();
 }
 
-DEFINE_ACTOR_WAIT_TO_LAND(Actor_WaitToLand)
+#include "shared/actor_wait_to_land.h"
 
 /// Moved to column 16, the pillar drops into the gap there (flag 0xa6f).
 void TaopoSwamp_DropPillarIntoGap(s32 a, s32 id) {
@@ -1833,8 +1831,7 @@ void TaopoSwamp_SaveFirmGround(void) {
 #define VENT_BOUNCE Vent_Bounce
 #include "../field/object/vent_bounce.c"
 
-DEFINE_ACTOR_START_SCRIPTED(Actor_StartScripted, Actor_SelectAnimation,
-                            gTaopoSwamp_PuffRises)
+#include "shared/actor_start_scripted.h"
 
 void Vent_Puff(s32 *position, s32 base) {
   struct Actor *object = TaopoSwamp_CreateActor(0x11d, position[0], position[1],
@@ -1855,7 +1852,7 @@ void Vent_Puff(s32 *position, s32 base) {
   }
 }
 
-DEFINE_VENTS_UPDATE(Vents_Update, Vent_Puff)
+#include "shared/vents_update.h"
 
 // The registers by io_reg.h's names from here on: local.h names the blend
 // register its own way for TaopoSwamp_DarkenRoom above.
@@ -1941,7 +1938,7 @@ void Vent_SetActive(s32 index, s32 active) {
 /// The vents' frame counter, which their cycles time their gusts by.
 s32 Vents_GetCounter(void) { return VENT_WORK->counter; }
 
-DEFINE_VENTS_ADVANCE_COUNTER(Vents_AdvanceCounter)
+#include "shared/vents_advance_counter.h"
 
 /// The accessors step the work pointer by whole entries and then take entry 0:
 /// the bytes add the base to index * 20 before the field offset.
@@ -1953,7 +1950,7 @@ void Vent_SetGust(s32 index, s32 value) {
   VENT_AT(work, index)->entries[0].value = value;
 }
 
-DEFINE_VENTS_SET_ID(Vents_SetId)
+#include "shared/vents_set_id.h"
 
 #undef REG_BLDALPHA
 #define REG_BLDALPHA (*(volatile u16 *)0x04000052)

@@ -21,7 +21,6 @@
 #include "module/scene/magma_rock.h"
 #include "flag_call.h"
 #include "shared/tundaria_tower.h"
-#include "shared/mars_lighthouse.h"
 #include "field_event.h"
 #include "battle/battle.h"
 #include "game/game.h"
@@ -48,9 +47,7 @@
 #include "module/field/field_effect.h"
 #include "system/input.h"
 #include "version.h"
-#include "shared/map_cells.h"
 #include "module/field/object.h"
-#include "shared/effects.h"
 #include "shared/tables.h"
 #include "field_sprite.h"
 #include "gamepak/far_call/system.h"
@@ -981,8 +978,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
-DEFINE_ACTOR_STEER_BY_PAD(TundariaTower_KeepSliding, gTundariaTower_SlideAngles,
-                          Actor_SelectAnimation)
+#include "shared/actor_steer_by_pad.h"
 
 void TundariaTower_StopLeader(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -995,10 +991,7 @@ void TundariaTower_StopLeader(void) {
   }
 }
 
-DEFINE_LEADER_SLIDE_ON_ICE(TundariaTower_SlideOnIce, TundariaTower_StopLeader,
-                           gTundariaTower_SlideAnglesByKey,
-                           Actor_SelectAnimation, TundariaTower_KeepSliding,
-                           Field_CheckSpheresOverlap)
+#include "shared/leader_slide_on_ice.h"
 
 extern s16 gTundariaTower_SlideAnglesByKey[];
 void TundariaTower_KeepSliding(struct Actor *object);
@@ -1034,11 +1027,7 @@ void TundariaTower_SetSlideStopped(s32 value) {
 
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
-DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(TundariaTower_SlideOnIceFacing,
-                                 TundariaTower_StopLeader,
-                                 Actor_SelectAnimation,
-                                 TundariaTower_KeepSliding,
-                                 Field_CheckSpheresOverlap)
+#include "shared/leader_slide_on_ice_ahead.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -1099,8 +1088,7 @@ top:
     goto top;
 }
 
-DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
-                           Actor_SelectAnimation)
+#include "shared/actor_set_cell_open.h"
 
 // On entering, sets each listed pillar from its two flags (pushed: moved to its
 // place; else its cell raised and its shape redrawn), then lifts the leader
@@ -1524,8 +1512,7 @@ void Func_02002b04(void) {
   }
 }
 
-DEFINE_ACTOR_SET_CELL_SHAPE(Actor_SetCellShape, MapGrid_GetTerrainKind,
-                            MapCollision_FindOrAddTag)
+#include "shared/actor_set_cell_shape.h"
 
 void Func_02002ca8(s32 a, s32 b) {
   Actor_SetCellShape(a, b, gMainRoutineWork.currentOwner);
@@ -1590,7 +1577,7 @@ struct RockWork {
 
 // Spawns count rocks around (x, y, z), each pushed out at a random angle and
 // thrown up and out along it.
-DEFINE_ROCKS_SPAWN(Rocks_Spawn)
+#include "shared/rocks_spawn.h"
 
 // The falling rocks' setup, and Func_02002ebc, which stops their task and
 // frees their picture and heap slot.

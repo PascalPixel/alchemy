@@ -1,5 +1,4 @@
 /// @file
-#include "shared/actors.h"
 #include "flags.h"
 #include "types.h"
 #include "system/system.h"
@@ -98,7 +97,6 @@ static __inline__ void Func_02001e0c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
   TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
-#include "shared/effects.h"
 #include "shared/tables.h"
 #include "types.h"
 #include "system/main_routine_work.h"
@@ -133,7 +131,7 @@ static __inline__ void Func_02001e0c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
 
 #include "../field/object/prepare_object.c"
 
-DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
+#include "shared/scene_create_actor.h"
 
 #include "../field/field_effect/move.c"
 
@@ -311,7 +309,7 @@ void Func_02000770(struct Actor *object) {
   object->update = 0;
 }
 
-DEFINE_ACTOR_FLICKER_CHILD(Actor_FlickerChild, 7)
+#include "shared/actor_flicker_child.h"
 
 /* VIEW(s07a4): routine BattleEffect_ApplyColorToTargetBuffer as s32
  * BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b); event.h has void
@@ -585,10 +583,16 @@ void Scroll_HBlank(void) {
   }
 }
 
-DEFINE_LAYER_TRACK_SCROLL(Layer_TrackScroll, gData_02002a98, gData_02002a9c,
-                          gData_02002a9e)
+void Layer_TrackScroll(void) {
+  struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[2];
+  s16 y = layer->y >> 16;
 
-DEFINE_SCROLL_START_HBLANK(Scroll_StartHBlank, Scroll_HBlank, Layer_TrackScroll)
+  gData_02002a98 = 1448 - y;
+  gData_02002a9c = layer->x >> 16;
+  gData_02002a9e = (s16)(layer->x >> 16) - (gFrameCount >> 2);
+}
+
+#include "shared/scroll_start_hblank.h"
 
 // The overlay's entry: sets the map mode and screen effect 0x202, then starts
 // each room's own setup.
@@ -660,7 +664,7 @@ void Func_020010d8(struct Actor *object) {
   }
 }
 
-DEFINE_ACTOR_EMIT_WATER_DROP(Actor_EmitWaterDrop, gWaterDropScript)
+#include "shared/actor_emit_water_drop.h"
 
 void Func_020011a8(void) {
   struct EventWork1cc *work = Ram_HeapSlots->eventWork;
@@ -717,18 +721,18 @@ void Func_020011a8(void) {
   }
 }
 
-DEFINE_ACTOR_SHOW_PARTS(Actor_ShowParts, Actor_SelectAnimation)
+#include "shared/actor_show_parts.h"
 
-DEFINE_LEADER_SPIN_AWAY(Leader_SpinAway, Actor_SelectAnimation, Func_020010d8)
+#include "shared/leader_spin_away.h"
 
 // Every other frame, emits particle 7 (5 on every other such frame) from the
 // object, 26 pixels up, swaying with the frame count and drifting by a random
 // amount.
-DEFINE_ACTOR_EMIT_MIST(Actor_EmitMist)
+#include "shared/actor_emit_mist.h"
 
-DEFINE_LEADER_SINK_AWAY(Leader_SinkAway, Actor_EmitMist)
+#include "shared/leader_sink_away.h"
 
-DEFINE_LEADER_RISE_FROM_WATER(Leader_RiseFromWater, Actor_EmitMist)
+#include "shared/leader_rise_from_water.h"
 
 #define COPY_PICTURE(from, to)                                                 \
   Dma_Set((void *)(from), (void *)(offset + (to)), DMA_COPY_WORDS(16), REG_DMA3)
@@ -866,7 +870,7 @@ void Func_020017f8(u32 base, s32 a, s32 b) {
 
 extern s16 gGroundParticleFrames[];
 
-DEFINE_GROUND_PARTICLES_DRAW(GroundParticles_Draw, gGroundParticleFrames)
+#include "shared/ground_particles_draw.h"
 
 // Starts the sparkles: 64 sprites on the ground at the origin, their tiles
 // decoded into VRAM, and GroundParticles_Draw scheduled at priority 0x480 to

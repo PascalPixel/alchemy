@@ -7,7 +7,6 @@
 /// (AquaRockInside_ReadParchTablet); the Mercury Djinni Steam waits in one of
 /// its rooms (AquaRockInside_FightSteam).
 
-#include "shared/actors.h"
 #include "types.h"
 #include "item_ids.h"
 #include "system/system.h"
@@ -160,7 +159,7 @@ extern u32 gData_0200411c[];
 extern u32 gWaterDropScript[];
 extern const u8 gData_0200414c[];
 extern const u8 gData_02004351[];
-extern u32 gData_020044c8[];
+extern u32 gTaopoSwamp_PuffRises[];
 
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
                                                     s32 z) {
@@ -192,7 +191,6 @@ static __inline__ void Func_02003d24_(s32 a, s32 b, s32 c, s32 d, s32 e,
 
 static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "flags.h"
-#include "shared/effects.h"
 #include "event_work.h"
 #include "field/field.h"
 #include "module/field/map.h"
@@ -225,13 +223,12 @@ static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "map.h"
 #include "graphics/vram_tab.h"
 #include "macros.h"
-#include "shared/vents.h"
 #include "shared/tables.h"
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/object/prepare_object.c"
 
-DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
+#include "shared/scene_create_actor.h"
 
 #include "../field/field_effect/move.c"
 
@@ -1062,22 +1059,22 @@ void Func_02001364(struct Actor *object) {
 // overlay 681's Func_0200136c. The first push goes through Call3 (directly, its
 // offset pointer is set after the angle's load).
 
-DEFINE_ORBITER_SPIRAL(Orbiter_Spiral, Func_02001364)
+#include "shared/orbiter_spiral.h"
 
 // Moves around in a circle.
-DEFINE_ORBIT_UPDATE(Orbit_Update)
+#include "shared/orbit_update.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-DEFINE_ACTOR_AIM_AT_WATCHED(Actor_AimAtWatched)
+#include "shared/actor_aim_at_watched.h"
 
-DEFINE_ACTOR_STEP_TO_WATCHED(Actor_StepToWatched)
+#include "shared/actor_step_to_watched.h"
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, FieldEffect_Spawn)
+#include "shared/actor_emit_bubbles.h"
 #undef BYTE_AT
 
 union ActorView {
@@ -1896,7 +1893,7 @@ void Func_02002bd4(struct Actor *object) {
   }
 }
 
-DEFINE_ACTOR_EMIT_WATER_DROP(Actor_EmitWaterDrop, gWaterDropScript)
+#include "shared/actor_emit_water_drop.h"
 
 void Func_02002ca4(void) {
   struct Actor *center;
@@ -1959,17 +1956,43 @@ void Func_02002ca4(void) {
   actor->facing = 0x4000;
 }
 
-DEFINE_ACTOR_SHOW_PARTS(Actor_ShowParts, Actor_SelectAnimation)
+#include "shared/actor_show_parts.h"
 
-DEFINE_LEADER_SPIN_AWAY(Leader_SpinAway, Actor_SelectAnimation, Func_02002bd4)
+void Leader_SpinAway(s32 entrance) {
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 i;
+
+  Event_Start();
+  FieldEvent_ResolvePendingActions(0);
+  FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
+  leader->motionFlags = 0;
+  leader->priorityFlags |= 0x20;
+  Event_PlaySound(SE_SPLASH_SMALL);
+  Actor_SelectAnimation(leader, 18);
+  Event_PlaySound(SE_612);
+  for (i = 0; i < 60; i++) {
+    s32 angle;
+
+    if (i == 30)
+      Event_FinishScreenTransition();
+    leader->y -= 0x4000;
+    angle = leader->facing;
+    leader->facing = angle + 0x1000;
+    if ((i & 7) == 0)
+      Func_02002bd4(Actor_Get(15));
+    System_Wait(1);
+  }
+  Event_End();
+  FieldEvent_SetExitRequest(entrance);
+}
 
 // On odd frames, spawns a drifting effect above the object, swaying with the
 // frame count; Func_02002030 of Aqua Rock is the same function.
-DEFINE_ACTOR_EMIT_MIST(Actor_EmitMist)
+#include "shared/actor_emit_mist.h"
 
-DEFINE_LEADER_SINK_AWAY(Leader_SinkAway, Actor_EmitMist)
+#include "shared/leader_sink_away.h"
 
-DEFINE_LEADER_RISE_FROM_WATER(Leader_RiseFromWater, Actor_EmitMist)
+#include "shared/leader_rise_from_water.h"
 
 // Draws the scene's pillars: a top sprite for each active one and, when it
 // stands above its base, a column sprite as tall as its height.
@@ -2363,8 +2386,7 @@ s32 Func_020036b8(s32 first, s32 target) {
 #define VENT_BOUNCE Func_0200389c
 #include "../field/object/vent_bounce.c"
 
-DEFINE_ACTOR_START_SCRIPTED(Actor_StartScripted, Actor_SelectAnimation,
-                            gData_020044c8)
+#include "shared/actor_start_scripted.h"
 
 void Vent_Puff(s32 *position, s32 base) {
   struct Actor *object = Import_ActorCreate_(0x11d, position[0], position[1],
@@ -2385,7 +2407,7 @@ void Vent_Puff(s32 *position, s32 base) {
   }
 }
 
-DEFINE_VENTS_UPDATE(Vents_Update, Vent_Puff)
+#include "shared/vents_update.h"
 
 /* VIEW(s3844): routine Func_02003ab0 as void Func_02003ab0(const u16 *spots,
  * const u16 *levels, void (*handler)(void));
@@ -2468,7 +2490,7 @@ s32 Func_02003bb8(s32 index, s32 value) {
 
 s32 Func_02003bcc(void) { return VENT_WORK->counter; }
 
-DEFINE_VENTS_ADVANCE_COUNTER(Vents_AdvanceCounter)
+#include "shared/vents_advance_counter.h"
 
 void Func_02003c00(s32 index, s32 value) {
   u8 *base = (u8 *)VENT_WORK;
@@ -2476,7 +2498,7 @@ void Func_02003c00(s32 index, s32 value) {
   ((struct VentRow *)(base + index * 20))->value = value;
 }
 
-DEFINE_VENTS_SET_ID(Vents_SetId)
+#include "shared/vents_set_id.h"
 
 // clang-format off
 u32 gData_02003f04[] = {
@@ -2592,7 +2614,7 @@ void Func_02000b84(void);
 void AquaRockInside_ReadParchTablet(void);
 
 // clang-format off
-LATE_DATA u32 gData_020044c8[] = {
+LATE_DATA u32 gTaopoSwamp_PuffRises[] = {
     0, 44, 22, 38, 0, 2,
     0, 0, 0, 0, 1, 38,
 };

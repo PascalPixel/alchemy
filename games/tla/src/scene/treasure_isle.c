@@ -1,13 +1,11 @@
 /// @file
 /// Treasure Isle's first object: the shared actor helpers it links first.
 
-#include "shared/actors.h"
 #include "flags.h"
 #include "types.h"
 #include "actor.h"
 #include "field/event_inline.h"
 #include "shared/tables.h"
-#include "shared/map_cells.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -35,7 +33,7 @@
 
 #include "../field/object/prepare_object.c"
 
-DEFINE_SCENE_CREATE_ACTOR(TreasureIsle_CreateActor)
+#include "shared/scene_create_actor.h"
 
 #include "../field/field_effect/move.c"
 
@@ -143,7 +141,23 @@ const u8 *Scene_GetPlacements(void) {
 
 extern struct MapCell gMapCellBuffer[];
 
-DEFINE_MAP_CELL_SWAP(TreasureIsle_SwapCells)
+s32 TreasureIsle_SwapCells(u32 layer, s32 x, s32 y, s32 value) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapCell *cell;
+  s32 old;
+
+  if (map == NULL)
+    return 0;
+  if (layer <= 2)
+    cell = map->layers[layer].cells;
+  else
+    cell = gMapCellBuffer;
+  cell += x + (y << 7);
+  old = (cell->collisionCode << 8) | cell->attributeB;
+  cell->collisionCode = value >> 8;
+  cell->attributeB = value;
+  return old;
+}
 
 // Draws a spiky rock risen at its cell, blocks the cell and sets its flag.
 void TreasureIsle_SetSpikyRock(struct TreasureIsleCell *cells, s16 index) {

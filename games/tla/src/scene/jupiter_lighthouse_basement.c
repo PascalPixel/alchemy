@@ -1,9 +1,5 @@
 /// @file
 #include "flags.h"
-#include "shared/whirlwind.h"
-#include "shared/jupiter_lighthouse.h"
-#include "shared/actors.h"
-#include "shared/effects.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -43,7 +39,6 @@
 #include "system/task.h"
 #include "map.h"
 #include "graphics/vram_tab.h"
-#include "shared/cracked_tile.h"
 #include "system/heap_release.h"
 #include "system/io_write.h"
 #include "shared/tables.h"
@@ -273,38 +268,125 @@ extern s32 gPaletteCycleFrame;
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
-DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gPaletteCycleFrame,
-                             gPaletteCyclePausesInEvents, gPaletteCycleColors,
-                             0x05000184)
+#include "shared/palette_cycle_step_at.h"
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
-                                        gPaletteCyclePausesInEvents,
-                                        gPaletteCycleColors,
-                                        gPaletteCycleUnlitPalette,
-                                        PaletteCycle_StepAt,
-                                        gPaletteCycleUnlitColors)
+void JupiterLighthouse_LoadPalettes(s32 mode) {
+  gPaletteCyclePausesInEvents = 1;
+  if (mode != 2) {
+    Iwram_CopyWordsEntry(gPaletteCycleColors, (void *)&BG_PLTT_COLOR(12, 0),
+                         32);
+    Iwram_CopyWordsEntry(gPaletteCycleUnlitPalette,
+                         (void *)&BG_PLTT_COLOR(13, 0), 32);
+  }
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
+    Counter_Set(0);
+    Task_Add(PaletteCycle_StepAt, 1152);
+  } else {
+    Dma_Set(gPaletteCycleUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
+            DMA_COPY_WORDS(2), REG_DMA3);
+  }
+}
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02001c74,
-                             MapGrid_SetAttributeBAt)
+void Actor_RaiseFromCell(s32 id) {
+  struct Actor *object;
+  s32 height;
 
-DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Whirlwind_CarryLeaderLower)
+  object = Actor_Get(id);
+  object->motionFlags = 4;
+  height = object->terrainHeight;
+  object->bounce = 0;
+  object->y = height + 0x200000;
+  object->priorityFlags |= 128;
+  height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
+  Func_02001c74(object->x, object->z, 0, (height >> 19) + 6);
+  MapGrid_SetAttributeBAt(object->x, object->z, 0, 128);
+}
 
-DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
+#include "shared/whirlwind_carry_leader_lower.h"
+
+#include "shared/position_flat_distance.h"
 
 extern s32 gWhirlwindEndScript[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, MapGrid_GetCellBehavior,
-                              Position_FlatDistance, gWhirlwindEndScript,
-                              Data_020023ac)
+void Whirlwind_UpdateLower(struct Actor *self) {
+  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 position[3];
+  s32 distance;
+  s32 near;
+
+  if (work->unk166 != 0 || *(s16 *)&work->unk15a != 0 ||
+      *(s16 *)&work->unk15c[2] != 0 || *(s16 *)work->unk168 != 0) {
+    Actor_SetAnimationSpeed(self, 0);
+    return;
+  }
+  Actor_SetAnimationSpeed(self, 16);
+  if ((++*(u16 *)&self->timer & 31) == 31)
+    Event_PlaySound(SE_WATER_LEVEL);
+  ((struct FieldSprite *)self->sprite)->priority =
+      ((struct FieldSprite *)leader->sprite)->priority;
+  if (MapGrid_GetCellBehavior(self->x, self->z, 2) != 255) {
+    position[0] = self->x;
+    position[1] = self->y;
+    position[2] = self->z;
+    Camera_WorldToScreen(position);
+    distance = position[0];
+    if (distance > 0x1100000)
+      goto stop;
+    if (distance < -0x200000)
+      goto stop;
+    {
+      if (*((u8 *)self + 0x62) == 0) {
+        distance = leader->y - self->y;
+        if (distance < 0)
+          distance = self->y - leader->y;
+        near = 0;
+        if (Position_FlatDistance(&leader->x, &self->x) <= 12 &&
+            distance < 0xc0000)
+          near = 1;
+        if (near && !Event_GetFlag(260)) {
+          leader->facing = self->facing;
+          leader->watchedObject = self;
+          leader->priorityFlags &= ~1;
+          work->unk16a = 200;
+          gMainRoutineWork.renderMode = 0;
+          *((u8 *)self + 0x62) = 1;
+          *((u8 *)self + 0x63) = 1;
+        }
+      }
+      /* IwramMulQ16 reached from IwramIrqMain rather than at its fixed
+       * address: */
+      /* the address is a linked word read after the cosine, as the native
+       */
+      /* reads it after the speed (at Iwram_MulQ16 it is built before). */
+      self->x += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulQ16Offset))(
+          Trig_Cos(self->facing), self->speedLimit);
+      self->z += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulQ16Offset))(
+          Math_Sin(self->facing), self->speedLimit);
+      return;
+    }
+  }
+stop:
+  {
+    s32 zero = 0;
+
+    /* FAKEMATCH(temporary): one word zero clears the ride byte, then the
+     * update. */
+    *((u8 *)self + 0x63) = zero;
+    self->update = (void *)zero;
+  }
+  Actor_StartScript(self, gWhirlwindEndScript);
+  Event_PlaySound(SE_SPARKLING_PASSAGE);
+  Data_020023ac = 0;
+}
 
 extern s16 gData_020024f6;
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
-DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation,
-                       Whirlwind_UpdateLower, FieldEffect_Spawn)
+#include "shared/whirlwind_spawn.h"
 
 s32 Func_02000a64(struct Actor *object) {
   struct EffectOptions params;
@@ -326,8 +408,62 @@ s32 Func_02000a64(struct Actor *object) {
   return 0;
 }
 
-extern DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
-    JupiterLighthouse_PlaceRaisedActors) extern s16 gData_020024f4;
+void JupiterLighthouse_PlaceRaisedActors(void) {
+  struct PositionedActor *actor9 = ((struct PositionedActor *)Actor_Get(9));
+  struct PositionedActor *actor10 = ((struct PositionedActor *)Actor_Get(10));
+  struct PositionedActor *actor23 = ((struct PositionedActor *)Actor_Get(23));
+  struct FieldSprite *sprite = actor23->animation;
+
+  Actor_SetPosition(24, 512, 248);
+  Actor_SetPosition(23, 512, 248);
+  Actor_SetPosition(9, 472, 256);
+  Actor_SetPosition(10, 552, 256);
+  ((struct PositionedActor *)Actor_Get(24))->scaleX = 0;
+  actor23->motionFlags = 0;
+  actor23->y.fixed = actor23->terrainHeight;
+  actor9->motionFlags = 0;
+  actor9->y.fixed = actor9->terrainHeight;
+  actor10->motionFlags = 0;
+  actor10->y.fixed = actor10->terrainHeight;
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED)) {
+    actor9->y.fixed += 0x66640;
+    {
+      s32 step = 0x1eb80;
+
+      actor23->y.fixed += step;
+    }
+    actor23->x.fixed -= 0x28f40;
+    sprite->rotation += 0x800;
+    Actor_SetSpriteColorMode(((struct PositionedActor *)Actor_Get(9)), 4);
+    Actor_SetSpriteColorMode(((struct PositionedActor *)Actor_Get(11)), 4);
+  }
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
+    actor10->y.fixed += 0x66640;
+    {
+      s32 step = 0x1eb80;
+
+      actor23->y.fixed += step;
+    }
+    actor23->x.fixed += 0x28f40;
+    sprite->rotation -= 0x800;
+    Actor_SetSpriteColorMode(((struct PositionedActor *)Actor_Get(10)), 4);
+    Actor_SetSpriteColorMode(((struct PositionedActor *)Actor_Get(12)), 4);
+  }
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) &&
+      Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
+    actor9->y.fixed += 0x199900;
+    actor10->y.fixed += 0x199900;
+    {
+      s32 step = 0x1b8480;
+
+      actor23->y.fixed += step;
+    }
+    actor9->motionFlags = 4;
+    actor10->motionFlags = 4;
+    actor23->motionFlags = 4;
+  }
+}
+extern s16 gData_020024f4;
 
 void LightSprites_Draw(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -403,20 +539,49 @@ void LightSprites_Draw(void) {
 
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
-                            gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gData_020024f4, gData_020024f6)
+void LightSprites_InitA(void) {
+  u8 *buffer = BumpAlloc(0xc00);
 
-DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gLightSpriteActors,
-                            gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gData_020024f4, gData_020024f6)
+  Iwram_ClearWordsEntry(gLightSpriteActors, 64);
+  Decompress_TaggedLz(gField_CachedTilesA, buffer);
+  gLightSpriteTile = VramCache_FindFreeEntry();
+  VramCache_Load(gLightSpriteTile, 0xc00, buffer);
+  Heap_Release(buffer);
+  Task_Add(LightSprites_Draw, TASK_PASS_VBLANK);
+  gLightSpriteCount = 0;
+  gData_020024f4 = 0;
+  gData_020024f6 = -1;
+}
 
-DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gLightSpriteActors,
-                            gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gData_020024f4, gData_020024f6)
+void LightSprites_InitB(void) {
+  u8 *buffer = Heap_Alloc(0xc00);
 
-DEFINE_LIGHT_SPRITES_ADD(LightSprites_Add, gLightSpriteCount,
-                         gLightSpriteActors)
+  Iwram_ClearWordsEntry(gLightSpriteActors, 64);
+  Decompress_TaggedLz(gField_CachedTilesB, buffer);
+  gLightSpriteTile = VramCache_FindFreeEntry();
+  Vram_Load(gLightSpriteTile, 0x800, buffer);
+  Heap_Release(buffer);
+  Task_AddFrame(LightSprites_Draw, TASK_PASS_VBLANK);
+  gLightSpriteCount = 0;
+  gData_020024f4 = 0;
+  gData_020024f6 = -1;
+}
+
+void LightSprites_InitC(void) {
+  u8 *buffer = BumpAlloc(0x800);
+
+  Iwram_ClearWordsEntry(gLightSpriteActors, 64);
+  Decompress_TaggedLz(gField_CachedTilesC, buffer);
+  gLightSpriteTile = VramCache_FindFreeEntry();
+  Vram_Load(gLightSpriteTile, 0x800, buffer);
+  Heap_Release(buffer);
+  Task_AddFrame(LightSprites_Draw, TASK_PASS_VBLANK);
+  gLightSpriteCount = 0;
+  gData_020024f4 = 1;
+  gData_020024f6 = -1;
+}
+
+#include "shared/light_sprites_add.h"
 
 void Func_02001008(s32 value) { gData_020024f6 = value; }
 
@@ -503,8 +668,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map/cell_sprite.c"
 
-DEFINE_CRACKED_TILES_FIND_LOWER(CrackedTiles_FindLower, gCrackedTiles,
-                                CrackedTiles_Update)
+#include "shared/cracked_tiles_find_lower.h"
 
 void TilesetAnim_SuspendAll(void);
 void TilesetAnim_ResumeAll(void);
@@ -535,7 +699,7 @@ void Leader_CenterInCell(void) {
 // the table's source cell over the leader's, keeping the source column's and
 // row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
 // one of the table's cells.
-DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
+#include "shared/cracked_tile_crack.h"
 
 struct CellTargetEntry;
 
@@ -554,8 +718,40 @@ struct CellTarget__s16c4 {
   s16 tile;
 };
 
-DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s16c4,
-                         Leader_CenterInCell)
+void CrackedTile_Fall(struct CellTarget__s16c4 *table,
+                      struct CellTargetEntry *entry) {
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 x = (leader->x >> 20) | (s16)(table->x & 64);
+  s32 z = (leader->z >> 20) | (s16)(table->z & 64);
+
+  Leader_CenterInCell();
+  Event_PlaySound(SE_SPLASH);
+  MapGrid_CopyCells(table->x, table->z + 2, 1, 1, x, z);
+  FieldEvent_Wait(12);
+  leader->facing = 0x4000;
+  leader->motionFlags = 0;
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Io_Write16(0xf1f, &REG_WINOUT);
+  REG_DISPCNT |= 0x8000;
+  table->shown = 1;
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
+  FieldEvent_Wait(16);
+  x = 0;
+  do {
+    if (x == 5)
+      Event_PlaySound(SE_DUST_PUFF);
+    leader->scaleX += -0x400;
+    leader->scaleY += -0x300;
+    leader->y += -0x9999;
+    System_Wait(1);
+    x++;
+  } while (x <= 39);
+  Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
+  table->shown = 0;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+}
 
 #include "../field/field_effect/advance_motion.c"
 
@@ -573,17 +769,82 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
   MapGrid_SetScreenShake(a, b, c);
 }
 
-DEFINE_CRACKED_TILE_DROP_IN_LOWER(CrackedTile_DropInLower, FieldEffect_Spawn)
+void CrackedTile_DropIn(void) {
+  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
+  u32 i;
+  struct EffectOptions options;
+  s32 spawn = 1;
+
+  Event_Start();
+  FieldEvent_ResolvePendingActions(0);
+  CamBounds(-1, -1, -1, 0);
+  Map_CenterOnFollowedPoint();
+  System_Wait(1);
+  actor->y = 0x820000;
+  actor->gravity = 0x8000;
+  actor->bounce = 0;
+  actor->motionFlags = 0;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_PlaySound(SE_DUST_PUFF);
+  actor->motionFlags = 3;
+  FieldEvent_Wait(24);
+  options.palette = 7;
+  options.update = FieldEffect_AdvanceMotion;
+  options.startScaleX = 0xa3d7;
+  options.startScaleY = 0xa3d7;
+  i = 0;
+  /* A goto loop carries no loop notes: as a do, for or while loop, loop.c
+   */
+  /* moves the velocity array's address out of the loop. */
+loop:
+  {
+    s32 angle;
+    s32 velocity[3];
+    s32 cosine;
+
+    angle = i << 12;
+    cosine = Trig_Cos(angle);
+    /* FAKEMATCH(dead): spawn is always 1, a constant GCSE only folds after
+     * its partial redundancy pass. */
+    if (spawn) {
+      velocity[0] = cosine;
+      velocity[1] = 0;
+      velocity[2] = Math_Sin(angle);
+      velocity[0] += velocity[0] >> 1;
+      velocity[0] += (Random16() * 0xc000 >> 16) - 0x6000;
+      velocity[2] += (Random16() * 0x6000 >> 16) - 0x3000;
+      FieldEffect_Spawn(actor->x, actor->y, actor->z, velocity[0], velocity[1],
+                        velocity[2], 0x1090001, &options);
+    }
+    i++;
+  }
+  if (i <= 16)
+    goto loop;
+  Event_PlaySound(SE_THUMP);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
+  SetWorkTriple(0x50000, 0x50000, 0x10000);
+  SetWorkTriple(-1, -1, 0xe666);
+  FieldMapGrid_WaitForShakeToSettle();
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
+  actor->gravity = 0x10000;
+  actor->bounce = 0x4000;
+  FieldEvent_Wait(10);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+  Event_End();
+}
 
 extern struct CellTarget gCrackedTiles;
 void CrackedTile_Crack();
 void CrackedTile_Fall();
 
-DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
-                          CrackedTile_Fall)
+#include "shared/cracked_tiles_step.h"
 
-DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
-                                  CrackedTile_DropInLower)
+#include "shared/cracked_tile_place_landing.h"
 
 void Func_02000054(void);
 void Func_02000094(void);

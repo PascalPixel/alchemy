@@ -5,7 +5,6 @@
 /// finds the Venus Djinni Salt, and the cycling colours of its water
 /// (Contigo_StartSlowPaletteCycle).
 
-#include "shared/effects.h"
 #include "types.h"
 #include "item_ids.h"
 #include "system/main_routine_work.h"
@@ -49,7 +48,6 @@ static inline void Contigo_Tiles(s32 srcX, s32 srcY, s32 width, s32 height,
 #include "module/scene/scene.h"
 #include "flags.h"
 #include "shared/tables.h"
-#include "shared/actors.h"
 #include "system/field_effect.h"
 #include "event_work.h"
 #include "item_icon.h"
@@ -180,15 +178,40 @@ extern u16 *gPaletteCycleSlots;
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
-DEFINE_PALETTE_SET_COLORS(Palette_SetColors, gPaletteSlots, gPaletteColors,
-                          gPaletteCycleColors, gPaletteCycleSlots,
-                          Func_02000328)
+void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
+  u8 *saved = Ram_HeapSlots->block32;
 
-DEFINE_PALETTE_CYCLE_START_VBLANK(Contigo_StartSlowPaletteCycle,
-                                  gPaletteCycleIndex, gPaletteCycleLength,
-                                  List_CountEntries, gPaletteSlots,
-                                  gPaletteCycleDelay, 15, gPaletteCycleTimer,
-                                  16, gPaletteCycleBright, PaletteCycle_Fade)
+  gPaletteSlots = slots;
+  gPaletteColors = colours;
+  gPaletteCycleColors = a;
+  gPaletteCycleSlots = b;
+  if (*slots != 0xffff && *colours != 0xffff) {
+  next:
+    {
+      int red = *colours++;
+      int index = *slots++;
+      int green = *colours++;
+      int blue = *colours++;
+      SET_RGB(((u16 *)BG_PLTT)[index], red, green, blue);
+    }
+    if (*slots != 0xffff && *colours != 0xffff)
+      goto next;
+  }
+  Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
+  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  if ((s8)gMainRoutineWork.unk2c2 == 2)
+    Func_02000328();
+}
+
+void Contigo_StartSlowPaletteCycle(void) {
+  gPaletteCycleIndex = 0;
+  gPaletteCycleLength = List_CountEntries(gPaletteSlots);
+  gPaletteCycleDelay = 15;
+  gPaletteCycleTimer = 16;
+  gPaletteCycleBright = 1;
+  Task_Add(PaletteCycle_Fade, TASK_PASS_VBLANK);
+}
 
 void Contigo_StopPaletteCycle(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -197,11 +220,14 @@ void Contigo_StopPaletteCycle(void) {
   Task_Remove(PaletteCycle_Fade);
 }
 
-DEFINE_PALETTE_CYCLE_START_VBLANK(Contigo_StartFastPaletteCycle,
-                                  gPaletteCycleIndex, gPaletteCycleLength,
-                                  List_CountEntries, gPaletteSlots,
-                                  gPaletteCycleDelay, 2, gPaletteCycleTimer, 2,
-                                  gPaletteCycleBright, PaletteCycle_Fade)
+void Contigo_StartFastPaletteCycle(void) {
+  gPaletteCycleIndex = 0;
+  gPaletteCycleLength = List_CountEntries(gPaletteSlots);
+  gPaletteCycleDelay = 2;
+  gPaletteCycleTimer = 2;
+  gPaletteCycleBright = 1;
+  Task_Add(PaletteCycle_Fade, TASK_PASS_VBLANK);
+}
 
 s32 List_CountEntries(u16 *list) {
   s32 count = 0;
@@ -212,11 +238,7 @@ s32 List_CountEntries(u16 *list) {
   return count;
 }
 
-DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gPaletteCycleTimer,
-                          gPaletteCycleDelay, gPaletteCycleColors,
-                          gPaletteCycleLength, gPaletteCycleSlots,
-                          gPaletteCycleIndex, gPaletteSlots,
-                          gPaletteCycleBright, gPaletteColors)
+#include "shared/palette_cycle_fade.h"
 
 void Teleport_PlayWhirl(void);
 
@@ -342,9 +364,18 @@ void Func_02000608(void) {
   GameFlag_Set(2534);
 }
 
-DEFINE_POSITION_DISTANCE(Position_Distance)
+s32 Lemuria_Distance(s32 *a, s32 *b) {
+  s32 dx = (*a++ - *b++) >> 16;
+  s32 dy = (*a++ - *b++) >> 16;
+  s32 dz = (*a - *b) >> 16;
+  s32 dxsq = dx * dx;
+  s32 dysq = dy * dy;
+  s32 dzsq = dz * dz;
 
-DEFINE_ACTOR_IS_FACING_NEAR(Actor_IsFacingNear, Position_Distance)
+  return Iwram_Sqrt(dxsq + dysq + dzsq);
+}
+
+#include "shared/actor_is_facing_near.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -371,7 +402,7 @@ s32 Func_020006d0(struct Actor *self) {
   if (BYTE_AT(self, 99) == 1)
     goto near;
   other = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (Position_Distance(&self->x, &other->x) <= 11)
+  if (Lemuria_Distance(&self->x, &other->x) <= 11)
     goto far;
   if (BYTE_AT(self, 98) == 1)
     other = Actor_GetById(15);
@@ -482,7 +513,7 @@ void Func_0200096c(void) {
   Event_End();
 }
 
-DEFINE_SCENE_SHOW_ENTRANCE_LOCKED(Scene_ShowEntranceLocked)
+#include "shared/scene_show_entrance_locked.h"
 
 void Func_020009ac(void) {
   Event_Start();
@@ -636,7 +667,7 @@ void Shop_Run(s32 a, s32 b);
 void Sanctum_Run(s32 a);
 void Inn_CheckIn(s32 a, s32 b);
 
-DEFINE_LEADER_IS_FACING_NORTH(Leader_IsFacingNorth)
+#include "shared/leader_is_facing_north.h"
 
 void Contigo_TalkToItemMerchant(void) {
   if (Leader_IsFacingNorth()) {

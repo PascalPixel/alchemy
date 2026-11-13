@@ -9,7 +9,6 @@
 /// (Kibombo_DeadEndByTheStatue). The villagers' talk changes once Akafubu is
 /// the witch doctor (Kibombo_TalkPathToPeace).
 
-#include "shared/actors.h"
 #include "flags.h"
 #include "item_ids.h"
 #include "types.h"
@@ -180,7 +179,7 @@ void Kibombo_AskGoingWest(void) {
   Event_End();
 }
 
-DEFINE_LEADER_IS_FACING_NORTH(Leader_IsFacingNorth)
+#include "shared/leader_is_facing_north.h"
 
 void Kibombo_OpenWeaponShop(void) {
   if (Leader_IsFacingNorth()) {
@@ -1475,7 +1474,6 @@ void Func_02002eb0(void) {
 #undef Actor_SetPositionAndResetMotion
 // @file
 #include "flags.h"
-#include "shared/actors.h"
 #include "shared/tables.h"
 #include "kibombo.h"
 #include "event_work.h"
@@ -1614,9 +1612,16 @@ void Func_02003184(void) {
 
 #include "scene_tables.h"
 
-DEFINE_ACTOR_HIDE(Actor_Hide, Actor_DisableById)
+#include "shared/actor_hide.h"
 
-DEFINE_SCENE_RUN_UNLESS_FLAG(Scene_RunUnlessFlag, 0x200, Kibombo_ShowActors)
+void Scene_RunUnlessFlag(void) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
+    if (GameFlag_Get(0x200) == 0)
+      Kibombo_ShowActors();
+  } else {
+    GameFlag_Set(0x200);
+  }
+}
 
 void Func_0200324c(void) {
   u32 i;

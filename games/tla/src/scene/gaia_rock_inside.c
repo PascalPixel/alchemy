@@ -8,7 +8,6 @@
 /// starts the battle with it (GaiaRockInside_ChallengeSerpent). Felix reads
 /// the rock's tablet and learns Sand (GaiaRockInside_ReadSandTablet).
 
-#include "shared/actors.h"
 #include "types.h"
 #include "item_ids.h"
 #include "actor.h"
@@ -31,7 +30,6 @@
 #include "module/field/event_commands.h"
 #include "module/field/object.h"
 #include "module/scene/scene.h"
-#include "shared/effects.h"
 #include "flags.h"
 #include "module/field/field.h"
 #include "module/tla.h"
@@ -51,7 +49,7 @@
 
 #include "../field/object/prepare_object.c"
 
-DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
+#include "shared/scene_create_actor.h"
 
 #include "../field/field_effect/move.c"
 
@@ -994,7 +992,33 @@ void Func_02001314(s32 a0) {
 // takes a second, shrinking step. Returns 1 while it runs. The same code as
 // overlay 67C's Func_020013bc. The first push goes through Call3 (directly, its
 // offset pointer is set after the angle's load).
-DEFINE_ORBITER_SPIRAL(Orbiter_Spiral, Func_02001314)
+s32 Orbiter_Spiral(struct Orbiter *orbiter) {
+  struct Actor *anchor = orbiter->anchor;
+  s16 *angle;
+
+  orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
+  orbiter->x = anchor->x;
+  orbiter->y = anchor->y + 0x80000;
+  orbiter->z = anchor->z;
+  FieldVector_AddPolarOffset(orbiter->radius, orbiter->angle, &orbiter->x);
+  /* FAKEMATCH(temporary): the angle's address, taken after the first push,
+   * sets r2 from r8 before the second push reads it. */
+  angle = &orbiter->angle;
+  if (--orbiter->countdown == 0)
+    return 0;
+  if (orbiter->radius == 0x20000)
+    return 1;
+  Func_02001314(orbiter);
+  orbiter->radius -= 0x40000;
+  orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
+  orbiter->x = anchor->x;
+  orbiter->y = anchor->y + 0x80000;
+  orbiter->z = anchor->z;
+  FieldVector_AddPolarOffset(orbiter->radius, *angle, &orbiter->x);
+  Func_02001314(orbiter);
+  orbiter->radius -= 0x40000;
+  return 1;
+}
 
 // Moves around in a circle.
 s32 Orbit_Update(struct GaiaRockInsideOrbit *object) {
@@ -1018,15 +1042,15 @@ s32 Orbit_Update(struct GaiaRockInsideOrbit *object) {
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-DEFINE_ACTOR_AIM_AT_WATCHED(Actor_AimAtWatched)
+#include "shared/actor_aim_at_watched.h"
 
-DEFINE_ACTOR_STEP_TO_WATCHED(Actor_StepToWatched)
+#include "shared/actor_step_to_watched.h"
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, FieldEffect_Spawn)
+#include "shared/actor_emit_bubbles.h"
 #undef BYTE_AT
 
 #include "text/msg_ids.h"
@@ -1439,9 +1463,14 @@ void GaiaRockInside_ChallengeSerpent(void) {
    } *)(base))                                                                 \
        ->v)
 
-DEFINE_LEADER_SET_LAYER_BYTE(Leader_SetLayerByte, 2)
+#include "shared/leader_set_layer_byte.h"
 
-DEFINE_LEADER_SET_LAYER_BYTE(Func_02001f84, 0)
+void Func_02001f84(void) {
+  s32 t0;
+
+  t0 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
+  FIELD_AT((t0 + 0x22), u8, 0) = 0;
+}
 
 void Func_02001fa0(void) {
   struct Actor *object;

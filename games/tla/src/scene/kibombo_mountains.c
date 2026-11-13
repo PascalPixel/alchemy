@@ -7,8 +7,6 @@
 
 #include "flags.h"
 #include "item_ids.h"
-#include "shared/map_cells.h"
-#include "shared/actors.h"
 #include "field/field.h"
 #include "types.h"
 #include "actor.h"
@@ -86,7 +84,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-DEFINE_ACTOR_BOB(Actor_Bob)
+#include "shared/actor_bob.h"
 
 extern struct ActorPlacement gKibomboMountains_Placements[];
 extern struct ActorPlacement gKibomboMountains_Room1Placements[];
@@ -102,7 +100,14 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gKibomboMountains_Placements;
 }
 
-DEFINE_PILLAR_SET_MOVED(Pillar_SetMoved, 11, 24, 32, 22, 0x221)
+void Pillar_SetMoved(void) {
+  struct Actor *object = Actor_Get(11);
+
+  object->priorityFlags = 0;
+  object->motionFlags = 0;
+  MapGrid_CopyCellAttributes(24, 32, 1, 1, 22, 32);
+  Event_SetFlag(0x221);
+}
 
 void Func_02000124(void) {
   MapGrid_CopyCellAttributes(30, 35, 1, 1, 28, 34);
@@ -110,7 +115,7 @@ void Func_02000124(void) {
   Event_SetFlag(FLAG_SCENE_TEMP_22);
 }
 
-DEFINE_ACTOR_WAIT_TO_LAND(Actor_WaitToLand)
+#include "shared/actor_wait_to_land.h"
 
 void Func_02000190(s32 unused, s32 id) {
   if (id == 15)
@@ -223,9 +228,23 @@ void Func_02000428(void) { GameFlag_Set(0x882); }
 
 void Func_02000438(void) { Field_TryJumpForward(); }
 
-DEFINE_PILLAR_SET_MOVED(Func_02000440, 18, 6, 16, 4, 0x210)
+void Func_02000440(void) {
+  struct Actor *object = Actor_Get(18);
 
-DEFINE_PILLAR_SET_MOVED(Func_02000478, 19, 8, 30, 10, 0x211)
+  object->priorityFlags = 0;
+  object->motionFlags = 0;
+  MapGrid_CopyCellAttributes(6, 16, 1, 1, 4, 16);
+  Event_SetFlag(0x210);
+}
+
+void Func_02000478(void) {
+  struct Actor *object = Actor_Get(19);
+
+  object->priorityFlags = 0;
+  object->motionFlags = 0;
+  MapGrid_CopyCellAttributes(8, 30, 1, 1, 10, 30);
+  Event_SetFlag(0x211);
+}
 
 void Func_020004b0(s32 unused, s32 cell) {
   if (cell == 16 || cell == 17)

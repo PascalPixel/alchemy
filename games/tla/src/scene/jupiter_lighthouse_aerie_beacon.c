@@ -13,9 +13,6 @@
 #include "system/system.h"
 #include "scene_tables.h"
 #include "field_event.h"
-#include "shared/jupiter_lighthouse.h"
-#include "shared/actors.h"
-#include "shared/effects.h"
 #include "system/heap_release.h"
 #include "actor.h"
 #include "field_sprite.h"
@@ -38,12 +35,10 @@
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "system/vector3.h"
-#include "shared/whirlwind.h"
 #include "system/field_effect.h"
 #include "graphics/vram_tab.h"
 #include "system/task.h"
 #include "item_icon.h"
-#include "shared/cracked_tile.h"
 #include "module/field/field_effect.h"
 #include "macros.h"
 #include "shared/tables.h"
@@ -2439,22 +2434,44 @@ extern s32 gPaletteCycleFrame;
 // Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
-DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame,
-                          gPaletteCyclePausesInEvents, gPaletteCycleColors)
+#include "shared/palette_cycle_step.h"
 
 /* VIEW(s0198): routine MapGrid_SetCellHeight as void MapGrid_SetCellHeight();
  * module/scene/scene.h has void MapGrid_SetCellHeight(void); not tried:
  * MapGrid_SetCellHeight's bound declaration was not found. */
 extern void Func_020057c4__s0198() __asm__("MapGrid_SetCellHeight");
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
-                                        gPaletteCyclePausesInEvents,
-                                        gPaletteCycleColors,
-                                        gLighthousePalette13, PaletteCycle_Step,
-                                        gLighthouseUnlitColors)
+void JupiterLighthouse_LoadPalettes(s32 mode) {
+  gPaletteCyclePausesInEvents = 1;
+  if (mode != 2) {
+    Iwram_CopyWordsEntry(gPaletteCycleColors, (void *)&BG_PLTT_COLOR(12, 0),
+                         32);
+    Iwram_CopyWordsEntry(gLighthousePalette13, (void *)&BG_PLTT_COLOR(13, 0),
+                         32);
+  }
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
+    Counter_Set(0);
+    Task_Add(PaletteCycle_Step, 1152);
+  } else {
+    Dma_Set(gLighthouseUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
+            DMA_COPY_WORDS(2), REG_DMA3);
+  }
+}
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_020057c4__s0198,
-                             MapGrid_SetAttributeBAt)
+void Actor_RaiseFromCell(s32 id) {
+  struct Actor *object;
+  s32 height;
+
+  object = Actor_Get(id);
+  object->motionFlags = 4;
+  height = object->terrainHeight;
+  object->bounce = 0;
+  object->y = height + 0x200000;
+  object->priorityFlags |= 128;
+  height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
+  Func_020057c4__s0198(object->x, object->z, 0, (height >> 19) + 6);
+  MapGrid_SetAttributeBAt(object->x, object->z, 0, 128);
+}
 
 void Func_020040f4(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -2527,7 +2544,7 @@ void Func_020040f4(void) {
   Event_End();
 }
 
-DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
+#include "shared/position_flat_distance.h"
 
 extern u32 gData_020069fc[];
 
@@ -2600,10 +2617,9 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper, Actor_SelectAnimation,
-                             Whirlwind_Update, FieldEffect_Spawn)
+#include "shared/whirlwind_spawn_upper.h"
 
-DEFINE_ACTOR_EMIT_RISING_SPARKS_B(Actor_EmitRisingSparksB, FieldEffect_Spawn)
+#include "shared/actor_emit_rising_sparks_b.h"
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
@@ -2662,31 +2678,17 @@ extern s16 gLightSpritesLarge;
 // projects it from the map's view, skips it off screen, and writes a 16 by 16
 // sprite, or a 32 by 64 one when the big switch is set, at its animation
 // picture and depth.
-DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
-                          gLightSpriteCount, gLightSpriteActors,
-                          gLightSpritesLarge, gLightSpritePriority,
-                          BattleEffect_GetObjectPriority,
-                          Oam_AddSpriteAtDepthClamped)
+#include "shared/light_sprites_draw.h"
 
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
-                            gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gLightSpritesLarge,
-                            gLightSpritePriority)
+#include "shared/light_sprites_init_a.h"
 
-DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gLightSpriteActors,
-                            gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gLightSpritesLarge,
-                            gLightSpritePriority)
+#include "shared/light_sprites_init_b.h"
 
-DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gLightSpriteActors,
-                            gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gLightSpritesLarge,
-                            gLightSpritePriority)
+#include "shared/light_sprites_init_c.h"
 
-DEFINE_LIGHT_SPRITES_ADD_COUNTED(LightSprites_AddCounted, gLightSpriteActors,
-                                 gLightSpriteCount)
+#include "shared/light_sprites_add_counted.h"
 
 void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
@@ -2785,17 +2787,69 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 void CrackedTiles_Update(void);
 
-DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find, gCrackedTiles, CrackedTiles_Update)
+#include "shared/cracked_tiles_find.h"
 
-DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
+#include "shared/leader_center_in_cell.h"
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
 // row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
 // one of the table's cells.
-DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
+#include "shared/cracked_tile_crack.h"
 
-DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
+void CrackedTile_Fall(struct PushEvent *event) {
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 x;
+  s32 z;
+  s32 mask;
+
+  mask = 64;
+  x = object->x >> 20;
+  do {
+  } while (0);
+  x |= (s16)(event->x & mask);
+  z = object->z >> 20;
+  z |= (s16)(event->z & mask);
+  Leader_CenterInCell();
+  Event_PlaySound(SE_SPLASH);
+  MapGrid_CopyCells(event->x, event->z + 2, 1, 1, x, z);
+  FieldEvent_Wait(12);
+  {
+    u32 zero = 0;
+
+    object->facing = 0x4000;
+    object->motionFlags = zero;
+  }
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  {
+    /* FAKEMATCH(temporary): a word local holding 0xf1f, built with movs,
+     * lsls, adds as the native does. */
+    u32 winout = 0xf1f;
+
+    REG_WINOUT = winout;
+  }
+  do {
+  } while (0);
+  REG_DISPCNT |= 0x8000;
+  event->busy = 1;
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
+  FieldEvent_Wait(16);
+  for (x = 0; x < 40; x++) {
+    if (x == 5)
+      Event_PlaySound(SE_DUST_PUFF);
+    object->scaleX += -0x400;
+    object->scaleY += -0x300;
+    object->y += -0x9999;
+    System_Wait(1);
+  }
+  do {
+    Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
+  } while (0);
+  event->busy = 0;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+}
 
 #include "../field/field_effect/advance_motion.c"
 
@@ -2865,21 +2919,19 @@ void CrackedTile_DropIn(void) {
 }
 
 void GameFlag_SetByte(s32 flag, s32 value);
-/* VIEW(s539c): routine CrackedTile_FallEvent as this part declared it; the
+/* VIEW(s539c): routine CrackedTile_Fall as this part declared it; the
  * joined file has another; tried as the one declaration void
- * CrackedTile_FallEvent(), it does not compile in tla-ja:
+ * CrackedTile_Fall(), it does not compile in tla-ja:
  * games/tla/src/scene/jupiter_lighthouse_aerie_beacon.c:2860: too many
- * arguments to function `CrackedTile_FallEvent'. */
+ * arguments to function `CrackedTile_Fall'. */
 void CrackedTile_FallEvent__s539c(
     struct CellTarget *work,
-    struct CellTargetEntry *entry) __asm__("CrackedTile_FallEvent");
-#define CrackedTile_FallEvent CrackedTile_FallEvent__s539c
+    struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
+#define CrackedTile_Fall CrackedTile_FallEvent__s539c
 
-DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
-                          CrackedTile_FallEvent)
+#include "shared/cracked_tiles_step.h"
 
-DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
-                                  CrackedTile_DropIn)
+#include "shared/cracked_tile_place_landing.h"
 
 // clang-format off
 s32 gData_020059fc[] = {
@@ -2905,7 +2957,7 @@ s32 gData_02005a20[] = {
     64,
 };
 
-#undef CrackedTile_FallEvent
+#undef CrackedTile_Fall
 
 // clang-format off
 LATE_DATA u32 gFieldEffect_ShortScript[] = {                                                               

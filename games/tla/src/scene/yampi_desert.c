@@ -183,8 +183,6 @@ static inline void Scene_SetPositionAndReset(s32 id, s32 x, s32 z) {
 #include "actor.h"
 #include "system/main_routine_work.h"
 #include "map.h"
-#include "shared/map_cells.h"
-#include "shared/actors.h"
 #include "system/field_effect.h"
 #include "event_work.h"
 #include "flag_call.h"
@@ -1054,7 +1052,7 @@ void YampiDesert_HideSlideActors(void) {
   GameFlag_Clear(FLAG_SCENE_TEMP_0D);
 }
 
-DEFINE_ACTORS_SET_HIDDEN(YampiDesert_SetActorsHidden)
+#include "shared/actors_set_hidden.h"
 
 /* VIEW(yampi_desert): routine gYampiDesert_FinderRunsAhead as this part
  * declared it; the joined file has another; tried as the definition's extern
@@ -1879,10 +1877,9 @@ void YampiDesert_ScorpionUsesScoop(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
-DEFINE_ACTOR_HIDE(Actor_Hide, Actor_DisableById)
+#include "shared/actor_hide.h"
 
-DEFINE_SCENE_RUN_UNLESS_FLAG(Scene_RunUnlessFlag, 0x20d,
-                             YampiDesert_HideSlideActors)
+#include "shared/scene_run_unless_flag.h"
 
 void YampiDesert_SetUpRoom8SlideActors(void) {
   Actor_Hide(11);
@@ -1890,8 +1887,7 @@ void YampiDesert_SetUpRoom8SlideActors(void) {
   Scene_RunUnlessFlag();
 }
 
-DEFINE_ACTORS_FOR_RANGE(YampiDesert_SetUpRoom12SlideActors, 6, Actor_Hide, 9,
-                        Scene_RunUnlessFlag)
+#include "shared/actors_for_range.h"
 
 void YampiDesert_ClimbOut(struct Actor *object, s32 x, s32 z, s32 mode) {
   struct MainRoutineWork *party;
@@ -2317,10 +2313,68 @@ loop:
 #undef MAIN_ROUTINE_WORK_U16
 
 // Finds the current target's table row and shrinks it.
-DEFINE_STATUE_SINK(Statue_Sink, YampiDesert_SetStakeCell)
+void Statue_Sink(u16 *list, s32 mode, s32 count) {
+  struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
 
-DEFINE_ACTOR_SET_CELL_OPEN(YampiDesert_SetStakeCell, Actor_GetCellIndex,
-                           Actor_SelectAnimation)
+  while (*list != 0xffff) {
+    u32 entry = *list;
+    s32 id = work->objectId;
+
+    if (id == entry) {
+      struct Actor *object = Actor_GetById(id);
+      s32 a;
+      s32 flag;
+
+      list++;
+      a = list[0];
+      flag = list[1];
+      if (count < 8)
+        object->scaleY -= 0x1f00;
+      if (mode == 1) {
+        GameFlag_Set(flag);
+        YampiDesert_SetStakeCell(id, a, flag, object->terrainId);
+        object->scaleY = 0x10000;
+      }
+      break;
+    }
+    list += 3;
+  }
+}
+
+void YampiDesert_SetStakeCell(s32 id, u32 kind, s32 flag, s32 layer) {
+  struct Actor *object = Actor_GetById(id);
+  struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
+
+  cell += Actor_GetCellIndex(object);
+  if (GameFlag_Get(flag)) {
+    cell->collisionCode = 0;
+    object->priorityFlags |= 2;
+    switch (kind) {
+    case 0:
+      Actor_SelectAnimation(object, 2);
+      break;
+    case 1:
+      Actor_SelectAnimation(object, 4);
+      break;
+    case 2:
+      Actor_SelectAnimation(object, 6);
+      break;
+    }
+  } else {
+    cell->collisionCode = 255;
+    switch (kind) {
+    case 0:
+      Actor_SelectAnimation(object, 1);
+      break;
+    case 1:
+      Actor_SelectAnimation(object, 3);
+      break;
+    case 2:
+      Actor_SelectAnimation(object, 5);
+      break;
+    }
+  }
+}
 
 // The whole-pixel half of a 16.16 coordinate.
 /* VIEW(s3910): macro PIXELS as PIXELS__s3910; another part or header has

@@ -8,7 +8,6 @@
 /// clears the sand before the race to the summit; its houses, inn, shop and
 /// sanctum, Aroma the Djinni, and the lettering that counts the race down.
 
-#include "shared/actors.h"
 #include "flags.h"
 #include "item_ids.h"
 #include "types.h"
@@ -717,7 +716,7 @@ const struct Trigger *Scene_GetEvents(void) {
   return gShamanVillage_Triggers;
 }
 
-DEFINE_SCENE_SHOW_ENTRANCE_LOCKED(ShamanVillage_StopAtLockedEntrance)
+#include "shared/scene_show_entrance_locked.h"
 
 void ShamanVillage_StopAtClosedEntrance(void) {
   Event_Start();
@@ -2932,7 +2931,7 @@ s16 gShamanVillage_LetteringGoScript[] = {
 #include "text/msg_ids.h"
 
 void ShamanVillage_MeetAroma(void);
-void ShamanVillage_StopAtLockedEntrance(void);
+void Scene_ShowEntranceLocked(void);
 void ShamanVillage_StopAtClosedEntrance(void);
 void ShamanVillage_ReadTrialRoadSign(void);
 void ShamanVillage_TalkToOtherGuard(void);
@@ -3212,7 +3211,7 @@ struct Trigger gShamanVillage_Room2Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 21, 0x205,
      EVENT(ShamanVillage_GrowVine)},
     {EXAMINE_TRIGGER_FACING(FACING_NORTH), 20, 0x94d,
-     EVENT(ShamanVillage_StopAtLockedEntrance)},
+     EVENT(Scene_ShowEntranceLocked)},
     {EXAMINE_TRIGGER_FACING(FACING_NORTH), 22, 0x94d,
      EVENT(ShamanVillage_StopAtClosedEntrance)},
     {EXAMINE_TRIGGER_FACING(FACING_NORTH), 21, 0x94f,

@@ -1,5 +1,4 @@
 /// @file
-#include "shared/effects.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -26,13 +25,11 @@
 #include "call.h"
 #include "field_sprite.h"
 #include "scene_ids.h"
-#include "shared/push.h"
 #include "system/task.h"
 #include "system/heap_release.h"
 #include "item_icon.h"
 #include "graphics/resource.h"
 #include "system/vector3.h"
-#include "shared/map_cells.h"
 #include "module/field/field.h"
 #include "field_event.h"
 
@@ -2116,8 +2113,7 @@ void Func_02003274(void) {
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-DEFINE_PARTICLES_UPDATE_FALLING(Particles_UpdateFalling,
-                                EffectSprite_DrawAtWorldPosition)
+#include "shared/particles_update_falling.h"
 
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
 /// ring that next walks round.
@@ -2132,7 +2128,7 @@ struct RockWork {
 
 /// Spawns count rocks around (x, y, z), each pushed out at a random angle and
 /// thrown up and out along it.
-DEFINE_ROCKS_SPAWN(Rocks_Spawn)
+#include "shared/rocks_spawn.h"
 
 static __inline__ void StartTask(void (*func)(void), s32 priority) {
   /* FAKEMATCH(wrapper): Task_Add forwarded inline. */
@@ -2237,7 +2233,7 @@ s32 Func_020040ec(s32 id) {
 
 #include "../field/map/cellfill.c"
 
-extern s32 gPushDirectionSteps[];
+extern s32 gPushLeaderSteps[];
 
 static __inline__ s32 CallFunc_02004a64(struct Actor *actor,
                                         struct Vector3 *cell) {
@@ -2264,7 +2260,7 @@ s32 Func_02004240(struct PushState *push) {
         (Abs(gPushFootprints[kind][0]) + Abs(gPushFootprints[kind][2])) >> 4;
     height =
         (Abs(gPushFootprints[kind][1]) + Abs(gPushFootprints[kind][3])) >> 4;
-    offset = gPushDirectionSteps[direction];
+    offset = gPushLeaderSteps[direction];
     dx = offset & 0xffff0000;
     dz = offset << 16;
     push->unk14 = 0;
@@ -2309,8 +2305,7 @@ s32 Func_02004240(struct PushState *push) {
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])
 
-DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gPushKinds,
-                              gPushDirectionSteps, gPushFootprints)
+#include "shared/push_target_find_ahead.h"
 
 struct PushTarget {
   s32 x; ///< 16.16 fixed-point pixels
@@ -2375,8 +2370,8 @@ void Func_020044c4(struct PushTarget target) {
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.3, 0.1);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner,
-                             (gPushDirectionSteps[direction] << 16) >> 31,
-                             (gPushDirectionSteps[direction] << 16) >> 17);
+                             (gPushLeaderSteps[direction] << 16) >> 31,
+                             (gPushLeaderSteps[direction] << 16) >> 17);
   if (target.callback != 0)
     target.callback();
   FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
@@ -2408,8 +2403,7 @@ void Func_020044c4(struct PushTarget target) {
   Event_NoOp();
 }
 
-DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Actor_StopAtPushTarget, Actor_FindAtCell,
-                                 gPushKinds, MapGrid_CheckCollision)
+#include "shared/actor_stop_at_push_target.h"
 
 void Func_020047fc(const u16 *list) {
   const u16 *spec;
@@ -2442,10 +2436,9 @@ next:
 }
 
 // Finds the current target's table row and shrinks it.
-DEFINE_STATUE_SINK(Statue_Sink, Actor_SetCellOpen)
+#include "shared/statue_sink.h"
 
-DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
-                           Actor_SelectAnimation)
+#include "shared/actor_set_cell_open.h"
 
 #undef ABS
 #undef EVENT_WORK
@@ -2467,7 +2460,7 @@ s8 gPushFootprints[][4] = {
     {-8, -32, 8, 32},  {-32, -8, 32, 8},  {-8, -32, 8, 32},
 };
 
-s32 gPushDirectionSteps[] = {
+s32 gPushLeaderSteps[] = {
     0x100000, 0x100000, 0x100000, 0x10, 0x10, 0x10,
     0x10, 0xfff00000, 0xfff00000, 0xfff00000, 0xfff00000, 0xfff0,
     0xfff0, 0xfff0, 0xfff0, 0x100000, 0xffff000a,

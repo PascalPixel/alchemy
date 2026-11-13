@@ -4,7 +4,6 @@
 
 #include "shared/tables.h"
 #include "flags.h"
-#include "shared/actors.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -32,7 +31,7 @@ extern struct Trigger gMikasallaInteriors_SanctumTriggers[];
 
 void Shop_Run();
 
-void MikasallaInteriors_FadeInAndClearFlag(void);
+void Scene_FadeInAndClearFlag(void);
 
 extern u32 gMikasallaInteriors_ExplorersWidowPaces[];
 extern u32 gMikasallaInteriors_ClimbersWifePaces[];
@@ -197,7 +196,7 @@ s32 Scene_Initialize(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
   if (gMainRoutineWork.scene == (s32)&SceneId_MikasallaInteriors1) {
     if (gMainRoutineWork.entrance == 5)
-      MikasallaInteriors_FadeInAndClearFlag();
+      Scene_FadeInAndClearFlag();
     else if (!Event_GetFlag(0x821) ||
              (Event_GetFlag(0xa39) && !Event_GetFlag(FLAG_AREA_TEMP_41)) ||
              Event_GetFlag(34))
@@ -227,7 +226,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 /// Arriving by the inn's entrance 5, the screen fades in and flag 0x12f is
 /// cleared.
-DEFINE_SCENE_FADE_IN_AND_CLEAR_FLAG(MikasallaInteriors_FadeInAndClearFlag)
+#include "shared/scene_fade_in_and_clear_flag.h"
 
 void MikasallaInteriors_MeetGalahad(void);
 

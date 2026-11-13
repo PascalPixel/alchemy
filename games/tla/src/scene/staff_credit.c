@@ -1,7 +1,5 @@
 /// @file
-#include "shared/actors.h"
 #include "flags.h"
-#include "shared/flight.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -521,11 +519,20 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-DEFINE_TILE_SPRITE_RESET(TileSprite_Reset)
+#include "shared/tile_sprite_reset.h"
 
 #include "shared/world_map_objects.c"
 
-DEFINE_ACTOR_FLICKER(Func_020011f4, WorldMap_SpawnSparkPair)
+void Func_020011f4(struct Actor *object) {
+  if ((gFrameCount & 2) != 0) {
+    Actor_SetSpriteColorMode(object, 7);
+  } else {
+    Actor_SetSpriteColorMode(object, 0);
+  }
+  if ((gFrameCount & 15) == 0) {
+    WorldMap_SpawnSparkPair(object);
+  }
+}
 
 /* VIEW(first): routine gData_02003db8 as this part declared it; the joined file
  * has another; tried as the definition's extern LATE_DATA
@@ -536,13 +543,30 @@ DEFINE_ACTOR_FLICKER(Func_020011f4, WorldMap_SpawnSparkPair)
 extern s32 gData_02003db8__first __asm__("gData_02003db8");
 #define gData_02003db8 gData_02003db8__first
 
-DEFINE_ACTOR_CYCLE_CHILD_VALUES(Actor_CycleChildValues, gData_02002eac,
-                                gData_02003db8, WorldMap_SpawnParticle)
+void Actor_CycleChildValues(struct Actor *object) {
+  if (gFrameCount & 1) {
+    Actor_SetSpriteColorMode(object, gData_02002eac[gData_02003db8]);
+    gData_02003db8 = (gData_02003db8 + 1) & 3;
+  }
+  if (!(gFrameCount & 3)) {
+    WorldMap_SpawnParticle(object);
+  }
+}
 
-DEFINE_ACTOR_SET_FLIGHT_MODE(Actor_SetFlightMode, Func_020011f4,
-                             Actor_CycleChildValues)
+void Actor_SetFlightMode(struct Actor *object, s32 mode) {
+  if (mode == 0) {
+    object->update = 0;
+    Actor_SetSpriteColorMode(object, 0);
+    Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
+  } else if (mode == 1) {
+    object->update = (void (*)(void))Func_020011f4;
+  } else {
+    object->update = (void (*)(void))Actor_CycleChildValues;
+    Event_PlaySound(SE_291);
+  }
+}
 
-DEFINE_LEADER_SEARCH(Leader_Search, Actor_SetFlightMode, WorldMap_GetBlockPlace)
+#include "shared/leader_search.h"
 
 void Func_020012f8(void) {
   Actor_SetFlightMode(Actor_Get(FieldParty_GetLeaderActor()), 0);
@@ -569,7 +593,7 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
 }
 
 /// Shakes the camera diagonally by one pixel every three frames.
-DEFINE_CAMERA_JITTER(StaffCredit_JitterTransitionCamera)
+#include "shared/camera_jitter.h"
 
 #define PUSH_PICTURE(offset)                                                   \
   IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + (offset)), 0x84000140)
@@ -691,15 +715,31 @@ void Func_02001400(s32 mode) {
   Event_SetFlag(FLAG_SKIP_SCENE_CHANGE_SOUND);
 }
 
-DEFINE_ACTOR_FLICKER(Func_0200199c, Func_02001ad0)
+void Func_0200199c(struct Actor *object) {
+  if ((gFrameCount & 2) != 0) {
+    Actor_SetSpriteColorMode(object, 7);
+  } else {
+    Actor_SetSpriteColorMode(object, 0);
+  }
+  if ((gFrameCount & 15) == 0) {
+    Func_02001ad0(object);
+  }
+}
 
-DEFINE_ACTOR_ANIMATE_AND_EMIT(Actor_AnimateAndEmit, Func_02001ad0)
+void Actor_AnimateAndEmit(struct Actor *object) {
+  u32 frame = gFrameCount;
 
-DEFINE_ACTOR_ANIMATE(Actor_Animate)
+  if (frame & 1)
+    Actor_SetSpriteColorMode(object, (frame >> 1) % 6);
+  if ((gFrameCount & 15) == 0)
+    Func_02001ad0(object);
+}
 
-DEFINE_ACTOR_GROW_UP(Actor_GrowUp, Actor_Release)
+#include "shared/actor_animate.h"
 
-DEFINE_ACTOR_GROW_DOWN(Actor_GrowDown, Actor_Release)
+#include "shared/actor_grow_up.h"
+
+#include "shared/actor_grow_down.h"
 
 void Func_02001ad0(struct Actor *parent) {
   struct Actor *pair[2];
@@ -753,8 +793,99 @@ void Func_02001ad0(struct Actor *parent) {
 extern s16 gData_02003fc4;
 extern u8 gData_02003fd8[][32];
 
-DEFINE_GAUGE_DRAW(Gauge_Draw, gData_02003fc4, gData_02003fd8, gData_020040d8,
-                  gData_02003fc6)
+void Gauge_Draw(s32 progress) {
+  s32 level = ((progress * 30 + 0x8000) >> 16) + 1;
+  s32 kind = 0;
+  s32 count, base, i;
+
+  if (progress != 0)
+    kind = 100;
+  if (level <= 15 && (gFrameCount & 15) <= 1)
+    kind = 200;
+  if (level <= 7 && (gFrameCount & 7) <= 1)
+    kind = 200;
+  if (kind + level == gData_02003fc4)
+    return;
+  gData_02003fc4 = kind + level;
+  Call2((void (*)())Iwram_ClearWordsEntry, (s32)(gData_02003fd8), (s32)(0x100));
+  {
+    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
+
+    if (kind == 0) {
+      copy(gData_02003fd8, gData_020040d8[8], 0x80);
+      goto done;
+    }
+    if (kind == 100)
+      copy(gData_02003fd8, gData_020040d8[4], 0x80);
+    else
+      copy(gData_02003fd8, gData_020040d8[8], 0x80);
+  }
+  base = 0;
+  count = level;
+  if (count > 7) {
+    Iwram_CopyWordsEntry(gData_02003fd8, gData_020040d8, 32);
+    base = 8;
+    count -= 8;
+  }
+  if (level > 15) {
+    Iwram_CopyWordsEntry(gData_02003fd8[1], gData_020040d8[1], 32);
+    count = level;
+    base = 16;
+    count -= 16;
+  }
+  if (level > 23) {
+    Iwram_CopyWordsEntry(gData_02003fd8[2], gData_020040d8[2], 32);
+    count = level;
+    base = 24;
+    count -= 24;
+  }
+  if (level > 30) {
+    Iwram_CopyWordsEntry(gData_02003fd8[3], gData_020040d8[3], 32);
+    base = 0;
+    count = 0;
+  }
+  if (count != 0) {
+    i = 0;
+    if (i >= count)
+      goto done;
+  loop:
+    {
+      s32 j;
+      u8 *source = &gData_020040d8[base / 8][4] + i / 2;
+      u8 *dest = &gData_02003fd8[base / 8][4] + i / 2;
+      /* FAKEMATCH(barrier): the empty asm on dest changes its allocation
+       * rank. */
+      asm("" : "=r"(dest) : "0"(dest));
+
+      j = 2;
+      if ((i & 1) == 0) {
+        j = 1;
+      even:
+        *dest = (*dest & 240) | (*source & 15);
+        j++;
+        source += 4;
+        dest += 4;
+        if (j > 3)
+          goto next;
+        goto even;
+      } else {
+      oddLoop:
+        *dest = (*dest & 15) | (*source & 240);
+        j--;
+        source += 4;
+        dest += 4;
+        if (j >= 0)
+          goto oddLoop;
+      }
+    }
+  next:
+    i++;
+    if (i < count)
+      goto loop;
+  }
+done:
+  Vram_Load(gData_02003fc6, 0x100, gData_02003fd8);
+}
 
 extern u32 gInput;
 extern s16 gData_02003fc8;
@@ -789,11 +920,21 @@ void Func_02001d90(void) {
   Oam_AddSpriteAtDepthClamped(Data_02003fcc, 255);
 }
 
-DEFINE_GAUGE_INIT(Gauge_Init, gData_020040d8, gData_02003fc6, gData_02003fc4,
-                  gData_02003fc8, Func_02001d90)
+void Gauge_Init(void) {
+  Decompress_TaggedLz(gWorldMapPackedTilesC, gData_020040d8);
+  gData_02003fc6 = VramCache_FindFreeEntry();
+  Vram_Load(gData_02003fc6, 0x100, 0);
+  gData_02003fc4 = -1;
+  gData_02003fc8 = 10;
+  Task_AddFrame(Func_02001d90, TASK_PASS_VBLANK - 10);
+}
 
-DEFINE_GAUGE_END(Gauge_End, gData_020040d8, gData_02003fc6, gData_02003fc4,
-                 Func_02001d90)
+void Gauge_End(void) {
+  Decompress_TaggedLz(gWorldMapPackedTilesC, gData_020040d8);
+  VramCache_FreeEntry(gData_02003fc6);
+  gData_02003fc4 = -1;
+  FieldTask_Remove(Func_02001d90);
+}
 
 s32 gWorldMap_SparkScript[] = {
     46,

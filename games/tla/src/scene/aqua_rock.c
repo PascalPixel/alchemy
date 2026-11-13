@@ -113,9 +113,7 @@ static __inline__ void Actor_ResetAndSetPosition_(s32 id, s32 x, s32 z) {
 
 static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "flags.h"
-#include "shared/actors.h"
 #include "event_work.h"
-#include "shared/effects.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -501,9 +499,14 @@ void Func_02000844(void) {
   Task_Add(Func_02000580, TASK_PASS_VBLANK);
 }
 
-DEFINE_ACTOR_FLICKER_CHILD(Actor_FlickerChild, 7)
+#include "shared/actor_flicker_child.h"
 
-DEFINE_ACTOR_FLICKER_CHILD(Func_02000b34, 6)
+void Func_02000b34(struct Actor *object) {
+  if (gFrameCount & 2)
+    Actor_SetSpriteColorMode(object, 6);
+  else
+    Actor_SetSpriteColorMode(object, 0);
+}
 
 void Func_02000b58(struct Actor *object) {
   Actor_SetSpriteColorMode(object, 0);
@@ -1182,7 +1185,7 @@ void Func_02001d30(struct Actor *object) {
   }
 }
 
-DEFINE_ACTOR_EMIT_WATER_DROP(Actor_EmitWaterDrop, gWaterDropScript)
+#include "shared/actor_emit_water_drop.h"
 
 void Func_02001e00(void) {
   struct Actor *anchor;
@@ -1288,7 +1291,7 @@ void Func_02001f90(s32 arg0) {
 // Every other frame, emits particle 7 (5 on every other such frame) from the
 // object, 26 pixels up, swaying with the frame count and drifting by a random
 // amount.
-DEFINE_ACTOR_EMIT_MIST(Actor_EmitMist)
+#include "shared/actor_emit_mist.h"
 
 void Func_020020bc(s32 entrance) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -1510,7 +1513,7 @@ void Func_020025a8(s32 id) {
   }
 }
 
-DEFINE_GROUND_PARTICLES_DRAW(GroundParticles_Draw, gGroundParticleFrames)
+#include "shared/ground_particles_draw.h"
 
 // Starts the sparkles: 64 sprites on the ground at the origin, their tiles
 // decoded into VRAM, and GroundParticles_Draw scheduled at priority 0x480 to

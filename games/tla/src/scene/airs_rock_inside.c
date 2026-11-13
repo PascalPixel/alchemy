@@ -5,10 +5,8 @@
 /// walked to by AirsRockInside_WalkToRevealTablet), and a Psynergy Stone
 /// restores the party's PP (AirsRockInside_CheckPsynergyStone).
 
-#include "shared/map_cells.h"
 #include "field/emote.h"
 #include "sounds.h"
-#include "shared/actors.h"
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "field_event.h"
@@ -104,7 +102,6 @@ static inline void CopyCells(s32 srcX, s32 srcZ, s32 width, s32 height,
 #include "lib.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "shared/effects.h"
 #include "system/task.h"
 #include "event_work.h"
 #include "flag_call.h"
@@ -300,14 +297,13 @@ void Func_020000a4(u16 *list, s32 mode, s32 count) {
   }
 }
 
-DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
-                           Actor_SelectAnimation)
+#include "shared/actor_set_cell_open.h"
 
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/object/prepare_object.c"
 
-DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
+#include "shared/scene_create_imported_actor.h"
 
 #include "../field/field_effect/move.c"
 
@@ -703,9 +699,9 @@ void Func_02000988(void) {
   Event_End();
 }
 
-DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
+#include "shared/position_flat_distance.h"
 
-DEFINE_POSITION_DISTANCE_ABOVE(Position_DistanceAbove)
+#include "shared/position_distance_above.h"
 
 // Func_020010b4's twin for another shot: it also stops while the render mode
 // is 5, and on a cell of kind 212 it ends with one of two end scripts by its
@@ -2396,15 +2392,15 @@ s32 Orbit_Update(struct Orbit *object) {
   return 1;
 }
 
-DEFINE_ACTOR_AIM_AT_WATCHED(Actor_AimAtWatched)
+#include "shared/actor_aim_at_watched.h"
 
-DEFINE_ACTOR_STEP_TO_WATCHED(Actor_StepToWatched)
+#include "shared/actor_step_to_watched.h"
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, FieldEffect_Spawn)
+#include "shared/actor_emit_bubbles.h"
 
 extern u32 gData_020060e0[];
 extern u32 gData_02006094[];

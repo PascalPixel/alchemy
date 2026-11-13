@@ -24,8 +24,6 @@
 #include "module/game/game.h"
 #include "system/iwram_call.h"
 #include "field_event.h"
-#include "shared/actors.h"
-#include "shared/effects.h"
 #include "text/msg_ids.h"
 
 void LemuriaInteriors_PiersVisitsUncle(void);
@@ -724,9 +722,9 @@ void LemuriaInteriors_EmitNote(s32 x, s32 y, s32 z, s16 rotation, s32 timer) {
 void LemuriaInteriors_EmitNote();
 #endif
 
-DEFINE_ACTOR_EMIT_NOTES(Actor_EmitNotes, LemuriaInteriors_EmitNote)
+#include "shared/actor_emit_notes.h"
 
-DEFINE_ACTOR_CYCLE_PICTURES(Actor_CyclePictures)
+#include "shared/actor_cycle_pictures.h"
 
 void Event_Start();
 void Event_End();

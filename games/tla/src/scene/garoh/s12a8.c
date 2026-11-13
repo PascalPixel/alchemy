@@ -130,7 +130,7 @@ void Func_020013b0(s32 id) {
 }
 
 /// 2 copies: garoh/s12a8, garoh/s12a8.
-#define DEFINE_FUNC_02001418(name, n1, n2)                                     \
+#define DEFINE_GAROH_PLAY_EFFECT(name, n1, n2)                                 \
   void name(s32 actor) {                                                       \
     BattleEffect_LoadActionEffectResources(144, 1);                            \
     BattleEffect_SetupObjectPair(actor, 0);                                    \
@@ -140,9 +140,9 @@ void Func_020013b0(s32 id) {
     BattleEffect_CleanupSceneObjects();                                        \
   }
 
-DEFINE_FUNC_02001418(Func_02001418, 1, 44)
+DEFINE_GAROH_PLAY_EFFECT(Func_02001418, 1, 44)
 
-DEFINE_FUNC_02001418(Func_02001454, 3, 39)
+DEFINE_GAROH_PLAY_EFFECT(Func_02001454, 3, 39)
 
 #define ACTOR_MODE_THEN_WAIT(id, mode, frames)                                 \
   do {                                                                         \

@@ -67,7 +67,7 @@ static __inline__ void Func_02003534_(s32 actor, s32 angle) {
 #include "system.h"
 
 /// 2 copies: champa_cliff_caves, champa_cliff_caves.
-#define DEFINE_FUNC_02000038_3(name, n1)                                       \
+#define DEFINE_CHAMPA_CLIFF_CAVES_GROW(name, n1)                               \
   void name(struct RiseObject *object) {                                       \
     object->scale += n1;                                                       \
     if (object->scale >= 0x10000) {                                            \
@@ -77,7 +77,7 @@ static __inline__ void Func_02003534_(s32 actor, s32 angle) {
     object->scaleCopy = object->scale;                                         \
   }
 
-DEFINE_FUNC_02000038_3(Func_02000038, 0x1000)
+DEFINE_CHAMPA_CLIFF_CAVES_GROW(Func_02000038, 0x1000)
 
 #include "battle.h"
 #include "field.h"
@@ -737,7 +737,7 @@ chosen:
   }
 }
 
-DEFINE_FUNC_02000038_3(Func_02001138, 0xc00)
+DEFINE_CHAMPA_CLIFF_CAVES_GROW(Func_02001138, 0xc00)
 
 #include "flag_call.h"
 

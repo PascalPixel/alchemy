@@ -118,7 +118,7 @@ void Func_020001d4(void) { Import_EventSetExitRequest(5); }
 
 /// 6 copies: gabomba_catacombs, gabomba_catacombs, gabomba_catacombs,
 /// gabomba_catacombs, gabomba_catacombs, gabomba_catacombs.
-#define DEFINE_FUNC_020001E0(name, n1, n2, n3, n4, n5, n6, n7, n8, n9)         \
+#define DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(name, n1, n2, n3, n4, n5, n6, n7, n8, n9) \
   void name(void) {                                                            \
     struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);       \
                                                                                \
@@ -134,9 +134,9 @@ void Func_020001d4(void) { Import_EventSetExitRequest(5); }
     }                                                                          \
   }
 
-DEFINE_FUNC_020001E0(Func_020001e0, 7, 22, 3, 58, 8, 136, 376, 8, 23)
+DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(Func_020001e0, 7, 22, 3, 58, 8, 136, 376, 8, 23)
 
-DEFINE_FUNC_020001E0(Func_02000260, 5, 13, 5, 52, 9, 136, 248, 8, 15)
+DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(Func_02000260, 5, 13, 5, 52, 9, 136, 248, 8, 15)
 
 void Func_020002e0(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -154,13 +154,13 @@ void Func_020002e0(void) {
   }
 }
 
-DEFINE_FUNC_020001E0(Func_02000364, 5, 13, 5, 52, 11, 136, 280, 8, 17)
+DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(Func_02000364, 5, 13, 5, 52, 11, 136, 280, 8, 17)
 
-DEFINE_FUNC_020001E0(Func_020003e4, 5, 13, 5, 52, 12, 104, 280, 6, 17)
+DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(Func_020003e4, 5, 13, 5, 52, 12, 104, 280, 6, 17)
 
-DEFINE_FUNC_020001E0(Func_02000464, 5, 13, 5, 52, 13, 88, 264, 5, 16)
+DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(Func_02000464, 5, 13, 5, 52, 13, 88, 264, 5, 16)
 
-DEFINE_FUNC_020001E0(Func_020004e4, 5, 13, 5, 52, 14, 104, 248, 6, 15)
+DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(Func_020004e4, 5, 13, 5, 52, 14, 104, 248, 6, 15)
 
 void Func_02000564(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -203,7 +203,7 @@ void Func_0200069c(void) {
 /// 8 copies: gabomba_catacombs, gabomba_catacombs, gabomba_catacombs,
 /// gabomba_catacombs, gabomba_catacombs, gabomba_catacombs, gabomba_catacombs,
 /// gabomba_catacombs.
-#define DEFINE_FUNC_020006CC(name, n1, n2, n3, n4, n5, n6)                     \
+#define DEFINE_GABOMBA_CATACOMBS_SET_MOVED(name, n1, n2, n3, n4, n5, n6)       \
   void name(void) {                                                            \
     struct Actor *object = Actor_GetById(n1);                                  \
                                                                                \
@@ -213,21 +213,21 @@ void Func_0200069c(void) {
     MapGrid_CopyCellAttributes(n3, n4, 1, 1, n5, n6);                          \
   }
 
-DEFINE_FUNC_020006CC(Func_020006cc, 8, 0x200, 6, 23, 8, 23)
+DEFINE_GABOMBA_CATACOMBS_SET_MOVED(Func_020006cc, 8, 0x200, 6, 23, 8, 23)
 
-DEFINE_FUNC_020006CC(Func_02000704, 9, 0x201, 0, 4, 8, 15)
+DEFINE_GABOMBA_CATACOMBS_SET_MOVED(Func_02000704, 9, 0x201, 0, 4, 8, 15)
 
-DEFINE_FUNC_020006CC(Func_02000740, 10, 0x202, 0, 4, 9, 16)
+DEFINE_GABOMBA_CATACOMBS_SET_MOVED(Func_02000740, 10, 0x202, 0, 4, 9, 16)
 
-DEFINE_FUNC_020006CC(Func_0200077c, 11, 0x203, 0, 4, 8, 17)
+DEFINE_GABOMBA_CATACOMBS_SET_MOVED(Func_0200077c, 11, 0x203, 0, 4, 8, 17)
 
-DEFINE_FUNC_020006CC(Func_020007b8, 12, 0x204, 0, 4, 6, 17)
+DEFINE_GABOMBA_CATACOMBS_SET_MOVED(Func_020007b8, 12, 0x204, 0, 4, 6, 17)
 
-DEFINE_FUNC_020006CC(Func_020007f0, 13, 0x205, 0, 4, 5, 16)
+DEFINE_GABOMBA_CATACOMBS_SET_MOVED(Func_020007f0, 13, 0x205, 0, 4, 5, 16)
 
-DEFINE_FUNC_020006CC(Func_0200082c, 14, 0x206, 0, 4, 6, 15)
+DEFINE_GABOMBA_CATACOMBS_SET_MOVED(Func_0200082c, 14, 0x206, 0, 4, 6, 15)
 
-DEFINE_FUNC_020006CC(Func_02000868, 8, 0x200, 15, 18, 17, 18)
+DEFINE_GABOMBA_CATACOMBS_SET_MOVED(Func_02000868, 8, 0x200, 15, 18, 17, 18)
 
 void Func_020008a0(struct Actor *object, s32 dz) {
   struct GabombaCatacombsFollower *follower;

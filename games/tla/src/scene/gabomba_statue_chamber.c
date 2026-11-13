@@ -539,7 +539,7 @@ void Func_02000ef0(struct Actor *object) {
 
 
 /// 2 copies: gabomba_statue_chamber, gabomba_statue_chamber.
-#define DEFINE_FUNC_02000F00(name, n1)                                         \
+#define DEFINE_GABOMBA_STATUE_CHAMBER_SHOW_ITEM(name, n1)                      \
   void name(void) {                                                            \
     struct GabombaStatueChamberObject *leader =                                \
         ((struct GabombaStatueChamberObject *)Actor_GetById(8));               \
@@ -572,9 +572,9 @@ void Func_02000ef0(struct Actor *object) {
     }                                                                          \
   }
 
-DEFINE_FUNC_02000F00(Func_02000f00, 230)
+DEFINE_GABOMBA_STATUE_CHAMBER_SHOW_ITEM(Func_02000f00, 230)
 
-DEFINE_FUNC_02000F00(Func_02000f88, 242)
+DEFINE_GABOMBA_STATUE_CHAMBER_SHOW_ITEM(Func_02000f88, 242)
 
 void Func_02001010(void) {
   Map_CopyCellPictureIndicesRect(85, 78, 22, 79, 5, 11);

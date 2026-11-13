@@ -956,7 +956,7 @@ void Func_02001d34(void) {
 }
 
 /// 2 copies: ankohl_ruins, ankohl_ruins.
-#define DEFINE_FUNC_02001DDC(name, n1, n2, n3, n4, n5)                         \
+#define DEFINE_ANKOHL_RUINS_OPEN_ONCE(name, n1, n2, n3, n4, n5)                \
   void name(void) {                                                            \
     if (AnkohlRuins_FlagCheck(n1) == 0) {                                      \
       Event_SetFlag(n1);                                                       \
@@ -972,7 +972,7 @@ void Func_02001d34(void) {
     }                                                                          \
   }
 
-DEFINE_FUNC_02001DDC(Func_02001ddc, 0x9e2, 14, 65, 15, 5)
+DEFINE_ANKOHL_RUINS_OPEN_ONCE(Func_02001ddc, 0x9e2, 14, 65, 15, 5)
 
 void Func_02001e54(void) {
   s32 done = AnkohlRuins_FlagCheck(0x203);
@@ -996,7 +996,7 @@ void Func_02001e54(void) {
   }
 }
 
-DEFINE_FUNC_02001DDC(Func_02001f04, 0x9e3, 2, 83, 1, 23)
+DEFINE_ANKOHL_RUINS_OPEN_ONCE(Func_02001f04, 0x9e3, 2, 83, 1, 23)
 
 /// Each frame, moves the raft (object 9) down by 0xcccc and carries the leader
 /// and the event work's unk1cc object with it while the leader stands on it;

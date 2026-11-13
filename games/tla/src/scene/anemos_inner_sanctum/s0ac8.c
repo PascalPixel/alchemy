@@ -511,7 +511,7 @@ void Func_020016fc(void) {
 s32 Teleporters_Step();
 
 /// 2 copies: anemos_inner_sanctum/s0ac8, anemos_inner_sanctum/s0ac8.
-#define DEFINE_FUNC_0200178C(name, n1)                                         \
+#define DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(name, n1)                          \
   void name(void) {                                                            \
     s32 t0;                                                                    \
                                                                                \
@@ -521,9 +521,9 @@ s32 Teleporters_Step();
     }                                                                          \
   }
 
-DEFINE_FUNC_0200178C(Func_0200178c, 0xb)
+DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(Func_0200178c, 0xb)
 
-DEFINE_FUNC_0200178C(Func_020017a0, 0xc)
+DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(Func_020017a0, 0xc)
 
 #include "frame.h"
 

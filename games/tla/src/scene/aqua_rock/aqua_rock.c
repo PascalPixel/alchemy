@@ -559,7 +559,7 @@ void Func_0200106c(void) {
 }
 
 /// 3 copies: aqua_rock/aqua_rock, aqua_rock/aqua_rock, aqua_rock/aqua_rock.
-#define DEFINE_FUNC_020010F4(name, n1, n2, n3, n4)                             \
+#define DEFINE_AQUA_ROCK_SET_MOVED(name, n1, n2, n3, n4)                       \
   void name(s32 unused, s32 id) {                                              \
     struct Actor *object = Actor_GetById(id);                                  \
                                                                                \
@@ -569,14 +569,14 @@ void Func_0200106c(void) {
     GameFlag_SetBit(n4);                                                       \
   }
 
-DEFINE_FUNC_020010F4(Func_020010f4, 42, 32, 44, 0x221)
+DEFINE_AQUA_ROCK_SET_MOVED(Func_020010f4, 42, 32, 44, 0x221)
 
-DEFINE_FUNC_020010F4(Func_0200112c, 48, 32, 46, 0x222)
+DEFINE_AQUA_ROCK_SET_MOVED(Func_0200112c, 48, 32, 46, 0x222)
 
-DEFINE_FUNC_020010F4(Func_02001164, 44, 44, 46, 0x223)
+DEFINE_AQUA_ROCK_SET_MOVED(Func_02001164, 44, 44, 46, 0x223)
 
 /// 2 copies: aqua_rock/aqua_rock, aqua_rock/aqua_rock.
-#define DEFINE_FUNC_0200119C(name, n1, n2)                                     \
+#define DEFINE_AQUA_ROCK_DROP_AT_COLUMN(name, n1, n2)                          \
   void name(s32 unused, s32 id) {                                              \
     struct Actor *object = Actor_GetById(id);                                  \
     s32 column = object->x >> 20;                                              \
@@ -589,9 +589,9 @@ DEFINE_FUNC_020010F4(Func_02001164, 44, 44, 46, 0x223)
     }                                                                          \
   }
 
-DEFINE_FUNC_0200119C(Func_0200119c, 0x951, 52)
+DEFINE_AQUA_ROCK_DROP_AT_COLUMN(Func_0200119c, 0x951, 52)
 
-DEFINE_FUNC_0200119C(Func_020011e0, 0x952, 58)
+DEFINE_AQUA_ROCK_DROP_AT_COLUMN(Func_020011e0, 0x952, 58)
 
 /// Sets flag 0xa69 after four rounds of a random colour value, runs the
 /// blend scripts, then moves the camera to object 15, starts its update and

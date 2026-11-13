@@ -1447,7 +1447,7 @@ void Func_02002ba4(s32 index, s32 entry, s32 delta) {
 }
 
 /// 2 copies: kibombo, kibombo.
-#define DEFINE_FUNC_02002C34(name, n1, n2, n3, n4, call1, n5, n6, n7)          \
+#define DEFINE_KIBOMBO_WOBBLE(name, n1, n2, n3, n4, call1, n5, n6, n7)         \
   void name(void) {                                                            \
     struct KibomboEventWork *work = Ram_HeapSlots->eventWork;                  \
                                                                                \
@@ -1460,9 +1460,9 @@ void Func_02002ba4(s32 index, s32 entry, s32 delta) {
     }                                                                          \
   }
 
-DEFINE_FUNC_02002C34(Func_02002c34, 87, 8, 4, 103, Func_02002b18, 119, 4, 2)
+DEFINE_KIBOMBO_WOBBLE(Func_02002c34, 87, 8, 4, 103, Func_02002b18, 119, 4, 2)
 
-DEFINE_FUNC_02002C34(Func_02002ccc, 7, 6, 3, 6, Func_02002ba4, 76, 8, 4)
+DEFINE_KIBOMBO_WOBBLE(Func_02002ccc, 7, 6, 3, 6, Func_02002ba4, 76, 8, 4)
 
 void Func_02002d64(void) {
   struct KibomboEventWork *work = Ram_HeapSlots->eventWork;

@@ -284,7 +284,7 @@ void Func_02000a48(void) { Func_02001e0c_(68, 38, 39, 24, 68, 4, 1); }
 
 /// 3 copies: apojii_islands/apojii_islands, apojii_islands/apojii_islands,
 /// apojii_islands/apojii_islands.
-#define DEFINE_FUNC_02000A68(name, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10)    \
+#define DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(name, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10) \
   void name(void) {                                                            \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
                                                                                \
@@ -303,13 +303,13 @@ void Func_02000a48(void) { Func_02001e0c_(68, 38, 39, 24, 68, 4, 1); }
     }                                                                          \
   }
 
-DEFINE_FUNC_02000A68(Func_02000a68, 68, 38, 21, 4, 0xf9b, 65, 376, 376, 23, 23)
+DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(Func_02000a68, 68, 38, 21, 4, 0xf9b, 65, 376, 376, 23, 23)
 
-DEFINE_FUNC_02000A68(Func_02000af8, 68, 38, 21, 4, 0xf9a, 64, 600, 408, 37, 25)
+DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(Func_02000af8, 68, 38, 21, 4, 0xf9a, 64, 600, 408, 37, 25)
 
 void Func_02000b88(void) { Func_02001e0c_(67, 38, 11, 6, 67, 8, 1); }
 
-DEFINE_FUNC_02000A68(Func_02000ba8, 67, 11, 6, 8, 0xf9e, 64, 200, 152, 12, 9)
+DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(Func_02000ba8, 67, 11, 6, 8, 0xf9e, 64, 200, 152, 12, 9)
 
 void Func_02000c38(void) {
   u8 *work = Ram_HeapSlots->eventWork;

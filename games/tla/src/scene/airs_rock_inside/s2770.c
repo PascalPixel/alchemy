@@ -93,7 +93,7 @@ void Func_02002898(void) {
 /// When the controlled object steps onto a new cell, saves the 1 by 3 cells
 /// below it at (73, 72) and stamps the cells kept at (72, 72) in their place.
 /// 2 copies: airs_rock_inside/s2770, airs_rock_inside/s2770.
-#define DEFINE_FUNC_02002980(name, n1)                                         \
+#define DEFINE_AIRS_ROCK_INSIDE_TRACK_LEADER_CELL(name, n1)                    \
   void name(void) {                                                            \
     struct Actor *object = Actor_GetById(Party_GetLeaderActor());              \
     s32 x = object->x >> 20;                                                   \
@@ -113,10 +113,10 @@ void Func_02002898(void) {
     }                                                                          \
   }
 
-DEFINE_FUNC_02002980(Func_02002980, 64)
+DEFINE_AIRS_ROCK_INSIDE_TRACK_LEADER_CELL(Func_02002980, 64)
 
 /// As Func_02002980, one row nearer.
-DEFINE_FUNC_02002980(Func_02002a14, 63)
+DEFINE_AIRS_ROCK_INSIDE_TRACK_LEADER_CELL(Func_02002a14, 63)
 
 #include "system/field_effect.h"
 #include "system/vector3.h"
@@ -823,7 +823,7 @@ void Func_02003d40(void) {
 extern const u8 gData_02006084[];
 
 /// 2 copies: airs_rock_inside/s2770, airs_rock_inside/s2770.
-#define DEFINE_FUNC_02003DD4(name, n1, n2)                                     \
+#define DEFINE_AIRS_ROCK_INSIDE_SET_DOORS(name, n1, n2)                        \
   void name(void) {                                                            \
     Map_CopyCellAttributeRect(n1, 17, 1, 1, 8, 19);                            \
     Map_CopyCellAttributeRect(n1, 17, 1, 1, 24, 19);                           \
@@ -831,9 +831,9 @@ extern const u8 gData_02006084[];
     Map_CopyCellPictureIndicesRect(n2, 17, 88, 19, 1, 2);                      \
   }
 
-DEFINE_FUNC_02003DD4(Func_02003dd4, 26, 90)
+DEFINE_AIRS_ROCK_INSIDE_SET_DOORS(Func_02003dd4, 26, 90)
 
-DEFINE_FUNC_02003DD4(Func_02003e28, 25, 89)
+DEFINE_AIRS_ROCK_INSIDE_SET_DOORS(Func_02003e28, 25, 89)
 
 void Func_02003e7c(struct Actor *source) {
   struct Actor *object = (struct Actor *)Value4(
@@ -1176,7 +1176,7 @@ void Func_02004740(void) {
 }
 
 /// 2 copies: airs_rock_inside/s2770, airs_rock_inside/s2770.
-#define DEFINE_FUNC_020047B0(name, n1)                                         \
+#define DEFINE_AIRS_ROCK_INSIDE_READ_TABLET(name, n1)                          \
   void name(void) {                                                            \
     if (GameFlag_Test(0x8d4)) {                                                \
       Event_Start();                                                           \
@@ -1192,9 +1192,9 @@ void Func_02004740(void) {
     }                                                                          \
   }
 
-DEFINE_FUNC_020047B0(Func_020047b0, 280)
+DEFINE_AIRS_ROCK_INSIDE_READ_TABLET(Func_020047b0, 280)
 
-DEFINE_FUNC_020047B0(Func_02004818, 248)
+DEFINE_AIRS_ROCK_INSIDE_READ_TABLET(Func_02004818, 248)
 
 void Func_02004880(void) {}
 

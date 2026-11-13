@@ -323,7 +323,7 @@ loop:
 
 /// 3 copies: dehkan_plateau/dehkan_plateau, dehkan_plateau/dehkan_plateau,
 /// dehkan_plateau/dehkan_plateau.
-#define DEFINE_FUNC_02001820(name, data1, n1, data2)                           \
+#define DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(name, data1, n1, data2)            \
   void name(void) {                                                            \
     const u16 *cell = &data1[0].present;                                       \
     s32 flag = 0x240;                                                          \
@@ -356,17 +356,17 @@ loop:
       Func_02001804();                                                         \
   }
 
-DEFINE_FUNC_02001820(Func_02001820, gData_02004066, 13, gData_02003fd2)
+DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(Func_02001820, gData_02004066, 13, gData_02003fd2)
 
 extern const u16 gData_02003fda[];
 extern const struct CellRecord gData_0200410e[];
 
-DEFINE_FUNC_02001820(Func_020018a8, gData_0200410e, 7, gData_02003fda)
+DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(Func_020018a8, gData_0200410e, 7, gData_02003fda)
 
 extern const u16 gData_02003fe2[];
 extern const struct CellRecord gData_0200416e[];
 
-DEFINE_FUNC_02001820(Func_02001930, gData_0200416e, 5, gData_02003fe2)
+DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(Func_02001930, gData_0200416e, 5, gData_02003fe2)
 
 void Func_020019b8(void) {
   u16 *record = gData_020041b6;

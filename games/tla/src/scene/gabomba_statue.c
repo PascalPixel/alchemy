@@ -904,7 +904,7 @@ void Func_020011bc(s32 x, s32 z) {
 }
 
 /// 3 copies: gabomba_statue, gabomba_statue, gabomba_statue.
-#define DEFINE_FUNC_02001284(name, n1, n2, n3, n4, n5, n6, n7)                 \
+#define DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(name, n1, n2, n3, n4, n5, n6, n7) \
   void name(void) {                                                            \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
     s32 x = leader->x >> 20;                                                   \
@@ -921,10 +921,10 @@ void Func_020011bc(s32 x, s32 z) {
     Func_020011bc(n6, n7);                                                     \
   }
 
-DEFINE_FUNC_02001284(Func_02001284, 11, 18, 20, 19, 12, 312, 180)
+DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(Func_02001284, 11, 18, 20, 19, 12, 312, 180)
 
 /// 2 copies: gabomba_statue, gabomba_statue.
-#define DEFINE_FUNC_020012EC(name, n1, n2, n3, n4, n5, n6, n7, n8)             \
+#define DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(name, n1, n2, n3, n4, n5, n6, n7, n8) \
   void name(void) {                                                            \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
     s32 x = leader->x >> 20;                                                   \
@@ -944,7 +944,7 @@ DEFINE_FUNC_02001284(Func_02001284, 11, 18, 20, 19, 12, 312, 180)
     Func_020011bc(n7, n8);                                                     \
   }
 
-DEFINE_FUNC_020012EC(Func_020012ec, 29, 11, 13, 12, 28, 30, 472, 196)
+DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(Func_020012ec, 29, 11, 13, 12, 28, 30, 472, 196)
 
 void Func_02001364(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -995,9 +995,9 @@ void Func_02001430(void) {
   Func_020011bc(680, 208);
 }
 
-DEFINE_FUNC_02001284(Func_02001498, 7, 23, 25, 24, 8, 392, 112)
+DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(Func_02001498, 7, 23, 25, 24, 8, 392, 112)
 
-DEFINE_FUNC_02001284(Func_02001500, 9, 5, 7, 6, 10, 104, 146)
+DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(Func_02001500, 9, 5, 7, 6, 10, 104, 146)
 
 void Func_02001564(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1011,7 +1011,7 @@ void Func_02001564(void) {
   Func_020011bc(680, 146);
 }
 
-DEFINE_FUNC_020012EC(Func_020015b8, 27, 17, 19, 18, 26, 28, 440, 288)
+DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(Func_020015b8, 27, 17, 19, 18, 26, 28, 440, 288)
 
 /* VIEW(gabomba_statue): tag struct EventWork154 as struct EventWork154__gabomba_statue; module/scene/scene.h has another definition; tried with the definition the rest of the object has, its members read exit as returnEntrance, it does not compile in tla-ja: games/tla/src/scene/gabomba_statue.c:905: structure has no member named `returnEntrance'. */
 struct EventWork154__gabomba_statue {
@@ -1053,7 +1053,7 @@ void Func_02001630(void) {
 
 /// 5 copies: gabomba_statue, gabomba_statue, gabomba_statue, gabomba_statue,
 /// gabomba_statue.
-#define DEFINE_FUNC_02001728(name, n1, n2)                                     \
+#define DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(name, n1, n2)                     \
   void name(struct Actor *actor) {                                             \
     Func_020056b4();                                                           \
     FieldEvent_ResolvePendingActions(0);                                       \
@@ -1063,7 +1063,7 @@ void Func_02001630(void) {
     Event_End();                                                               \
   }
 
-DEFINE_FUNC_02001728(Func_02001728, 152, 424)
+DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(Func_02001728, 152, 424)
 
 void Func_0200176c(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1088,13 +1088,13 @@ void Func_0200176c(void) {
   Event_End();
 }
 
-DEFINE_FUNC_02001728(Func_020017dc, 376, 200)
+DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(Func_020017dc, 376, 200)
 
-DEFINE_FUNC_02001728(Func_02001820, 376, 136)
+DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(Func_02001820, 376, 136)
 
-DEFINE_FUNC_02001728(Func_02001864, 440, 248)
+DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(Func_02001864, 440, 248)
 
-DEFINE_FUNC_02001728(Func_020018a8, 440, 184)
+DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(Func_020018a8, 440, 184)
 
 void Func_020018ec(s32 show) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov671Room1)
@@ -1200,7 +1200,7 @@ void Func_02001b0c(void) {
   }
 }
 /// 2 copies: gabomba_statue, gabomba_statue.
-#define DEFINE_FUNC_02001B38_2(name, n1, n2)                                   \
+#define DEFINE_GABOMBA_STATUE_RAISE_ACTORS(name, n1, n2)                       \
   void name(void) {                                                            \
     u32 i = 0;                                                                 \
                                                                                \
@@ -1219,9 +1219,9 @@ void Func_02001b0c(void) {
     Func_02001b0c();                                                           \
   }
 
-DEFINE_FUNC_02001B38_2(Func_02001b38, 8, 1)
+DEFINE_GABOMBA_STATUE_RAISE_ACTORS(Func_02001b38, 8, 1)
 
-DEFINE_FUNC_02001B38_2(Func_02001b68, 29, 2)
+DEFINE_GABOMBA_STATUE_RAISE_ACTORS(Func_02001b68, 29, 2)
 void Func_02001b98(void) {
   s32 value = 16;
   s32 open = 0;

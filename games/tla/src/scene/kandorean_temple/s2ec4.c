@@ -112,7 +112,7 @@ do {
   Event_WaitTransitionFrames();
   Event_Wait(10);
 /// 2 copies: kandorean_temple/s2ec4, kandorean_temple/s2ec4.
-#define DEFINE_FUNC_02000CF8(n1, n2, n3, n4, n5)                               \
+#define DEFINE_KANDOREAN_TEMPLE_SINK_STEP(n1, n2, n3, n4, n5)                  \
   do {                                                                         \
     leader->y += -0x6c000;                                                     \
     statue->y += -0x6c000;                                                     \
@@ -126,7 +126,7 @@ do {
     wait(1);                                                                   \
   } while (Actor_GetById(n5)->scaleY > limit);
 
-DEFINE_FUNC_02000CF8(11, 13, 14, 15, 16)
+DEFINE_KANDOREAN_TEMPLE_SINK_STEP(11, 13, 14, 15, 16)
   gData_02006298 = 0;
   GameFlag_ClearBit(0x20c);
   Sound_Play(390);
@@ -189,7 +189,7 @@ do {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
-DEFINE_FUNC_02000CF8(12, 17, 18, 19, 20)
+DEFINE_KANDOREAN_TEMPLE_SINK_STEP(12, 17, 18, 19, 20)
   gData_0200629c = 0;
   GameFlag_ClearBit(0x20d);
   Sound_Play(390);
@@ -276,7 +276,7 @@ void Func_02003584(void) {
 
 /// The leader and actor 13 rise into view while actor 15 scales.
 /// 2 copies: kandorean_temple/s2ec4, kandorean_temple/s2ec4.
-#define DEFINE_FUNC_02003684(name, n1, n2, n3, n4, n5, n6, n7, data1)          \
+#define DEFINE_KANDOREAN_TEMPLE_RISE(name, n1, n2, n3, n4, n5, n6, n7, data1)  \
   void name(void) {                                                            \
     struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);       \
     struct Actor *first = Actor_GetById(n1);                                   \
@@ -325,11 +325,11 @@ void Func_02003584(void) {
     Event_End();                                                               \
   }
 
-DEFINE_FUNC_02003684(Func_02003684, 13, 15, 440, 200, 204, 27, 12,
+DEFINE_KANDOREAN_TEMPLE_RISE(Func_02003684, 13, 15, 440, 200, 204, 27, 12,
     gData_020062a0)
 
 /// As Func_02003684, for actors 14 and 16 at another place.
-DEFINE_FUNC_02003684(Func_020037e0, 14, 16, 600, 232, 236, 37, 14,
+DEFINE_KANDOREAN_TEMPLE_RISE(Func_020037e0, 14, 16, 600, 232, 236, 37, 14,
     gData_020062a4)
 
 /// Actor 13 rises out of view while actor 15 scales, then the scene moves on.

@@ -23,7 +23,7 @@
 #include "module/scene/scene.h"
 
 /// 2 copies: izumo_interiors, izumo_interiors.
-#define DEFINE_FUNC_02000038_2(name, n1, n2)                                   \
+#define DEFINE_IZUMO_INTERIORS_IS_AWAY(name, n1, n2)                           \
   s32 name(void) {                                                             \
     struct Actor *object = Actor_GetById(n1);                                  \
                                                                                \
@@ -38,9 +38,9 @@
     return 1;                                                                  \
   }
 
-DEFINE_FUNC_02000038_2(Func_02000038, 10, 0x940000)
+DEFINE_IZUMO_INTERIORS_IS_AWAY(Func_02000038, 10, 0x940000)
 
-DEFINE_FUNC_02000038_2(Func_0200006c, 9, 0x840000)
+DEFINE_IZUMO_INTERIORS_IS_AWAY(Func_0200006c, 9, 0x840000)
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

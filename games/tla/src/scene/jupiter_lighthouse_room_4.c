@@ -100,7 +100,7 @@ void Func_020001ac(void) {
 }
 
 /// 2 copies: jupiter_lighthouse_room_4, jupiter_lighthouse_room_4.
-#define DEFINE_FUNC_020001DC(name, n1, call1)                                  \
+#define DEFINE_JUPITER_LIGHTHOUSE_ROOM_4_USE_KEY(name, n1, call1)              \
   void name(s32 item) {                                                        \
     Event_SetFlag(n1);                                                         \
     Event_PlaySound(134);                                                      \
@@ -108,9 +108,9 @@ void Func_020001ac(void) {
     PartyInventory_Remove(item);                                               \
   }
 
-DEFINE_FUNC_020001DC(Func_020001dc, 0xa07, Func_0200017c)
+DEFINE_JUPITER_LIGHTHOUSE_ROOM_4_USE_KEY(Func_020001dc, 0xa07, Func_0200017c)
 
-DEFINE_FUNC_020001DC(Func_020001fc, 0xa08, Func_020001ac)
+DEFINE_JUPITER_LIGHTHOUSE_ROOM_4_USE_KEY(Func_020001fc, 0xa08, Func_020001ac)
 
 void Func_0200021c(void) {
   ((struct EventWorkLock *)Ram_HeapSlots->eventWork)->locked = 1;

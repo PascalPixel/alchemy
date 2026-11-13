@@ -171,7 +171,7 @@ void Func_020004ac(void) {
 }
 
 /// 2 copies: islet_cave, islet_cave.
-#define DEFINE_FUNC_02000508(name, n1, n2)                                     \
+#define DEFINE_ISLET_CAVE_ARRIVE_AT(name, n1, n2)                              \
   void name(void) {                                                            \
     IsletCave_StartSlowPaletteCycle();                                                           \
     Func_02001334();                                                           \
@@ -183,9 +183,9 @@ void Func_020004ac(void) {
     Func_020004ac();                                                           \
   }
 
-DEFINE_FUNC_02000508(Func_02000508, 232, 136)
+DEFINE_ISLET_CAVE_ARRIVE_AT(Func_02000508, 232, 136)
 
-DEFINE_FUNC_02000508(Func_02000544, 240, 480)
+DEFINE_ISLET_CAVE_ARRIVE_AT(Func_02000544, 240, 480)
 
 void Func_02000580(s32 scale) {
   u16 *source = Ram_HeapSlots->block32;
@@ -452,7 +452,7 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
 /// Rides log `logId` `dx` pixels across the water and moves its cells with it,
 /// then sets or clears its flag (`flagCall`) to say where it lies. The
 /// name is ours.
-#define DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(name, logId, dx, flagCall, flag)    \
+#define DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(name, logId, dx, flagCall, flag)     \
   void name(void) {                                                            \
     s32 fromX = Actor_GetById(logId)->x;                                       \
     s32 fromZ = Actor_GetById(logId)->z;                                       \

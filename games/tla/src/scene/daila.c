@@ -357,7 +357,7 @@ void Func_020003a0(void) {
 }
 
 /// 6 copies: daila, daila, daila, daila, daila, daila.
-#define DEFINE_FUNC_02000924(name, n1, n2, n3, n4, n5)                         \
+#define DEFINE_DAILA_CLEAR_OBSTACLE(name, n1, n2, n3, n4, n5)                  \
   void name(void) {                                                            \
     Import_EventStart();                                                       \
     Event_ResolvePendingActions(0);                                            \
@@ -367,17 +367,17 @@ void Func_020003a0(void) {
     Import_EventEnd();                                                         \
   }
 
-DEFINE_FUNC_02000924(Func_02000924, 10, 19, 11, 22, 0x210)
+DEFINE_DAILA_CLEAR_OBSTACLE(Func_02000924, 10, 19, 11, 22, 0x210)
 
-DEFINE_FUNC_02000924(Func_02000960, 25, 20, 26, 23, 0x211)
+DEFINE_DAILA_CLEAR_OBSTACLE(Func_02000960, 25, 20, 26, 23, 0x211)
 
-DEFINE_FUNC_02000924(Func_020009a0, 28, 23, 29, 24, 0x212)
+DEFINE_DAILA_CLEAR_OBSTACLE(Func_020009a0, 28, 23, 29, 24, 0x212)
 
-DEFINE_FUNC_02000924(Func_020009e0, 17, 11, 18, 25, 0x213)
+DEFINE_DAILA_CLEAR_OBSTACLE(Func_020009e0, 17, 11, 18, 25, 0x213)
 
-DEFINE_FUNC_02000924(Func_02000a20, 30, 17, 31, 26, 0x214)
+DEFINE_DAILA_CLEAR_OBSTACLE(Func_02000a20, 30, 17, 31, 26, 0x214)
 
-DEFINE_FUNC_02000924(Func_02000a5c, 16, 23, 17, 31, 0x215)
+DEFINE_DAILA_CLEAR_OBSTACLE(Func_02000a5c, 16, 23, 17, 31, 0x215)
 
 void Actor_SetWideSprite(s32 actor, s32 flag);
 

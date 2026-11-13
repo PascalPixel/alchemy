@@ -87,7 +87,7 @@ extern const u16 gData_020054b8[];
 
 // Build BG palette 1 colors 8-15 from the table.
 /// 2 copies: garoh/garoh, garoh/garoh.
-#define DEFINE_FUNC_02000390(name, data1, n1, n2)                              \
+#define DEFINE_GAROH_LOAD_PALETTE(name, data1, n1, n2)                         \
   void name(void) {                                                            \
     struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;              \
     const u8 *table = (const u8 *)data1;                                       \
@@ -111,10 +111,10 @@ extern const u16 gData_020054b8[];
       goto loop;                                                               \
   }
 
-DEFINE_FUNC_02000390(Func_02000390, gData_020054ee, 24, 8)
+DEFINE_GAROH_LOAD_PALETTE(Func_02000390, gData_020054ee, 24, 8)
 
 // Build BG palette 6 colors 1-9 from the table.
-DEFINE_FUNC_02000390(Func_020003d8, gData_020054b8, 97, 9)
+DEFINE_GAROH_LOAD_PALETTE(Func_020003d8, gData_020054b8, 97, 9)
 
 s32 Func_02000420(struct Actor *object) {
   Actor_SetSingleChildFlags(object, 0);
@@ -600,7 +600,7 @@ void Func_02000e78(s32 id, struct Actor *object) {
 }
 
 /// 2 copies: garoh/garoh, garoh/garoh.
-#define DEFINE_FUNC_02000EB0(name, n1, n2, n3, n4)                             \
+#define DEFINE_GAROH_TRIGGER_AT_CELL(name, n1, n2, n3, n4)                     \
   void name(void) {                                                            \
     struct Actor *object = Actor_Get(n1);                                      \
     s32 x = object->x >> 20;                                                   \
@@ -615,9 +615,9 @@ void Func_02000e78(s32 id, struct Actor *object) {
     }                                                                          \
   }
 
-DEFINE_FUNC_02000EB0(Func_02000eb0, 8, 0x201, 10, 29)
+DEFINE_GAROH_TRIGGER_AT_CELL(Func_02000eb0, 8, 0x201, 10, 29)
 
-DEFINE_FUNC_02000EB0(Func_02000eec, 9, 0x202, 15, 28)
+DEFINE_GAROH_TRIGGER_AT_CELL(Func_02000eec, 9, 0x202, 15, 28)
 
 void Func_02000f28(void) {
   Actor_Get(10);

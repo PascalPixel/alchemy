@@ -179,7 +179,7 @@ void Func_02003288(void) {
 }
 
 /// 2 copies: kibombo/s2f34, kibombo/s2f34.
-#define DEFINE_FUNC_020032B0(name, n1)                                         \
+#define DEFINE_KIBOMBO_SET_CROWD_MODE(name, n1)                                \
   void name(void) {                                                            \
     u32 i;                                                                     \
                                                                                \
@@ -187,9 +187,9 @@ void Func_02003288(void) {
       Actor_SetModeById(i + 18, n1);                                           \
   }
 
-DEFINE_FUNC_020032B0(Func_020032b0, 5)
+DEFINE_KIBOMBO_SET_CROWD_MODE(Func_020032b0, 5)
 
-DEFINE_FUNC_020032B0(Func_020032c8, 1)
+DEFINE_KIBOMBO_SET_CROWD_MODE(Func_020032c8, 1)
 
 void Func_020032e0(void) {
   BattleEffect_LoadActionEffectResources(143, 1);
@@ -606,7 +606,7 @@ void Func_02003ac8(void) {
 }
 
 /// 2 copies: kibombo/s2f34, kibombo/s2f34.
-#define DEFINE_FUNC_02003B20(name, n1, n2, n3, n4, n5, n6, n7)                 \
+#define DEFINE_KIBOMBO_STEP_WHEN_HELD(name, n1, n2, n3, n4, n5, n6, n7)        \
   void name(void) {                                                            \
     struct KibomboObject *leader =                                             \
         Actor_GetById(gMainRoutineWork.currentOwner);                          \
@@ -624,9 +624,9 @@ void Func_02003ac8(void) {
     Func_02003a08(n6, n7);                                                     \
   }
 
-DEFINE_FUNC_02003B20(Func_02003b20, 38, 23, 25, 24, 39, 392, 608)
+DEFINE_KIBOMBO_STEP_WHEN_HELD(Func_02003b20, 38, 23, 25, 24, 39, 392, 608)
 
-DEFINE_FUNC_02003B20(Func_02003b88, 54, 42, 44, 43, 55, 696, 864)
+DEFINE_KIBOMBO_STEP_WHEN_HELD(Func_02003b88, 54, 42, 44, 43, 55, 696, 864)
 
 void Func_02003bf0(void) {
   if (GameFlag_Test(0x202))

@@ -477,7 +477,7 @@ void Func_02000bcc(void) {
 
 /// 2 copies: kandorean_temple/kandorean_temple,
 /// kandorean_temple/kandorean_temple.
-#define DEFINE_FUNC_02000BF4(name, data1, n1, n2, n3, n4)                      \
+#define DEFINE_KANDOREAN_TEMPLE_SPAWN_EVERY(name, data1, n1, n2, n3, n4)       \
   void name(void) {                                                            \
     s32 position[3];                                                           \
                                                                                \
@@ -487,10 +487,10 @@ void Func_02000bcc(void) {
     }                                                                          \
   }
 
-DEFINE_FUNC_02000BF4(Func_02000bf4, gData_02006298, 9, 0x1280000, 0xb00000,
+DEFINE_KANDOREAN_TEMPLE_SPAWN_EVERY(Func_02000bf4, gData_02006298, 9, 0x1280000, 0xb00000,
     0x20000)
 
-DEFINE_FUNC_02000BF4(Func_02000c34, gData_0200629c, 5, 0x1580000, 0xa00000,
+DEFINE_KANDOREAN_TEMPLE_SPAWN_EVERY(Func_02000c34, gData_0200629c, 5, 0x1580000, 0xa00000,
     0x40000)
 
 void Func_02000c74(void) {

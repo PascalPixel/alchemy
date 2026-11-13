@@ -659,7 +659,7 @@ void Func_02003284(void) {
 extern const u16 gData_02004276[];
 
 /// 2 copies: dehkan_plateau/s2698, dehkan_plateau/s2698.
-#define DEFINE_FUNC_0200353C(name, n1, n2, n3, n4, n5, n6)                     \
+#define DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(name, n1, n2, n3, n4, n5, n6)      \
   void name(void) {                                                            \
     /* FAKEMATCH(pin): flag in r5, which leaves r6 to the entry; as a plain    \
      * local, 61 of 79 instructions differ in tla-en. */                       \
@@ -695,9 +695,9 @@ extern const u16 gData_02004276[];
     }                                                                          \
   }
 
-DEFINE_FUNC_0200353C(Func_0200353c, 3, 8, 67, 3, 66, 69)
+DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(Func_0200353c, 3, 8, 67, 3, 66, 69)
 
-DEFINE_FUNC_0200353C(Func_020035ec, 13, 5, 77, 0, 65, 65)
+DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(Func_020035ec, 13, 5, 77, 0, 65, 65)
 
 void Func_02001804(void);
 

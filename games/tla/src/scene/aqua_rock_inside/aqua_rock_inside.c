@@ -1097,7 +1097,7 @@ void Func_02001c68(void) {
 
 /// 2 copies: aqua_rock_inside/aqua_rock_inside,
 /// aqua_rock_inside/aqua_rock_inside.
-#define DEFINE_FUNC_02001CD8(name, n1)                                         \
+#define DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(name, n1)                          \
   void name(void) {                                                            \
     if (Event_GetFlag(0x9ae)) {                                                \
       Event_Start();                                                           \
@@ -1113,9 +1113,9 @@ void Func_02001c68(void) {
     }                                                                          \
   }
 
-DEFINE_FUNC_02001CD8(Func_02001cd8, 280)
+DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(Func_02001cd8, 280)
 
-DEFINE_FUNC_02001CD8(Func_02001d40, 248)
+DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(Func_02001d40, 248)
 
 extern const u8 gData_02004c70[];
 extern const u8 gData_02004c7c[];

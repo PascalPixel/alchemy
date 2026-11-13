@@ -208,7 +208,7 @@ spin:
 }
 
 /// 2 copies: jupiter_lighthouse_room_2, jupiter_lighthouse_room_2.
-#define DEFINE_FUNC_020003F4(name, n1)                                         \
+#define DEFINE_JUPITER_LIGHTHOUSE_ROOM_2_SET_STATE(name, n1)                   \
   void name(void) {                                                            \
     struct EventWork *event = Ram_HeapSlots->eventWork;                        \
     u8 *effect = Ram_HeapSlots->effectWork;                                    \
@@ -217,9 +217,9 @@ spin:
     effect[52] = 1;                                                            \
   }
 
-DEFINE_FUNC_020003F4(Func_020003f4, 30)
+DEFINE_JUPITER_LIGHTHOUSE_ROOM_2_SET_STATE(Func_020003f4, 30)
 
-DEFINE_FUNC_020003F4(Func_02000410, 31)
+DEFINE_JUPITER_LIGHTHOUSE_ROOM_2_SET_STATE(Func_02000410, 31)
 
 void Func_0200042c(void) {
   FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x16a), u16, 0) = 0x20;

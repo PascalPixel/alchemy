@@ -90,13 +90,13 @@ Actor_SetHorizontalPositionWithTerrain:
 	.thumb_func
 Actor_SetModeById:
 	overlay_veneer Actor_SetModeByIdFar
-	.global Func_020005d8
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_020005d8:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
-	.global Func_020005e0
+	.global Rope_Initialize
 	.thumb_func
-Func_020005e0:
+Rope_Initialize:
 	overlay_veneer Rope_InitializeFar
 	.global Func_020005e8
 	.thumb_func
@@ -106,11 +106,11 @@ Func_020005e8:
 	.thumb_func
 Func_020005f0:
 	overlay_veneer EffectSprite_InitFar
-	.global Func_020005f8
+	.global EffectSprite_DrawAtWorldPosition
 	.thumb_func
-Func_020005f8:
+EffectSprite_DrawAtWorldPosition:
 	overlay_veneer EffectSprite_DrawAtWorldPositionFar
-	.global Func_02000600
+	.global BattleEffect_StepVector3
 	.thumb_func
-Func_02000600:
+BattleEffect_StepVector3:
 	overlay_veneer BattleEffect_StepVector3Far

@@ -693,11 +693,11 @@ void Func_0200118c(void) {
   Event_End();
 }
 
-void Func_0200428c(void);
+void Teleport_PlaySparks(void);
 
 void Func_02001250(void) {
   Contigo_StartSlowPaletteCycle();
-  Func_0200428c();
+  Teleport_PlaySparks();
 
   gMainRoutineWork.unk2c2 = 2;
   Event_SetDestination((s32)&SceneId_Ov6B0Room1, 99);
@@ -718,7 +718,7 @@ static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
 
 static __inline__ void Func_0200423c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
-  Func_0200423c(a, b, c, d, e, f, g);
+  TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
 void Func_020012c4(void) {
@@ -1598,7 +1598,7 @@ void Func_02001d50(void) {
   Actor_SetMovementTypeById(5, gData_020049c4__contigo);
   Actor_SetMovementTypeById(6, gData_020049c4__contigo);
   Actor_SetMovementTypeAndWaitById(7, gData_020049c4__contigo);
-  Func_02004044();
+  Party_AddIsaacsParty();
   GameFlag_Set(2512);
   Event_End();
 }

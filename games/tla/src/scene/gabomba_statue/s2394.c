@@ -554,14 +554,14 @@ void Func_020034f4(void) {
   Func_020053bc(gData_02005d7c);
   if (!Event_GetFlag(0x8ce) || !Event_GetFlag(0x8cf))
     Actor_Get(26)->y = PIXELS(16);
-  Func_02005824();
+  Rope_Initialize();
   Exit_Set(0, 513, 8, 9);
   Exit_Set(1, 514, 10, 11);
   Func_02001b68();
 }
 
 void Func_0200359c(void) {
-  Func_02005824();
+  Rope_Initialize();
   Func_0200583c(0, 513, 31, 32);
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     s32 entrance = (u16)gMainRoutineWork.entrance;
@@ -574,7 +574,7 @@ void Func_0200359c(void) {
 }
 
 void Func_020035f0(void) {
-  Func_02005824();
+  Rope_Initialize();
   ((s32 (*)(s32, s32, s32))Func_0200582c)(0, 8, 9);
 }
 

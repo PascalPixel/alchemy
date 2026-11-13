@@ -27,7 +27,7 @@ void JupiterLighthouse_LoadPalettes(s32 value);
 
 void Func_02001538(void);
 
-void Func_020029c8(void *data);
+void Actor_PlaceBlocks(void *data);
 
 void Func_020029e0(struct SparkSprite *sprite, s32 width, s32 height,
                    s32 attributes, s32 tile);
@@ -58,11 +58,11 @@ extern u32 gFieldEffect_LongScript[];
 struct FieldEffect;
 struct SparkSprite__jupiter_lighthouse_room_5;
 
-void Func_020029d8(void);
+void Actor_PlaceMovedBlock(void);
 extern u16 gPaletteCycleColors[];
 extern u16 gPaletteCycleUnlitPalette[];
 extern u16 gPaletteCycleUnlitColors[];
-void Func_02002a30();
+void MapGrid_SetAttributeBAt();
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 void Func_020029e8(struct SparkSprite__jupiter_lighthouse_room_5 *sprite);
 

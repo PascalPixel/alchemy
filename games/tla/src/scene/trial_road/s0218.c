@@ -144,7 +144,7 @@ void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
     Event_PlaySound(138);
     Event_SetFlag(642);
   }
-  Func_02005870(owner, slot);
+  Inventory_ClearSlot(owner, slot);
   Event_End();
 }
 
@@ -713,7 +713,7 @@ void TrialRoad_PushLog18SouthFromRow52(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   if (party->renderMode == 2)
-    Func_020059c8();
+    Field_ClimbDown();
   else
     TrialRoad_PushLog(18, 0, 1, 1);
 }

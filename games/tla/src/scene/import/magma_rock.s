@@ -190,9 +190,9 @@ Actor_WaitForAnimationChange:
 	.thumb_func
 Actor_SetSpriteColor:
 	overlay_veneer Actor_SetSpriteColorFar
-	.global Func_02003b3c
+	.global Actor_DisableById
 	.thumb_func
-Func_02003b3c:
+Actor_DisableById:
 	overlay_veneer Actor_DisableByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func
@@ -274,13 +274,13 @@ Sprite_ShareVramCacheEntry:
 	.thumb_func
 Event_NoOp:
 	overlay_veneer Event_NoOpFar
-	.global Func_02003be4
+	.global Rope_Initialize
 	.thumb_func
-Func_02003be4:
+Rope_Initialize:
 	overlay_veneer Rope_InitializeFar
-	.global Func_02003bec
+	.global Tightrope_Initialize
 	.thumb_func
-Func_02003bec:
+Tightrope_Initialize:
 	overlay_veneer Tightrope_InitializeFar
 	.global Func_02003bf4
 	.thumb_func
@@ -294,25 +294,25 @@ Func_02003bfc:
 	.thumb_func
 Func_02003c04:
 	overlay_veneer Actor_GetCellIndexFar
-	.global Func_02003c0c
+	.global Actor_PlaceBlocks
 	.thumb_func
-Func_02003c0c:
+Actor_PlaceBlocks:
 	overlay_veneer Actor_PlaceBlocksFar
-	.global Func_02003c14
+	.global Actor_LiftTargetBlock
 	.thumb_func
-Func_02003c14:
+Actor_LiftTargetBlock:
 	overlay_veneer Actor_LiftTargetBlockFar
-	.global Func_02003c1c
+	.global Actor_PlaceMovedBlock
 	.thumb_func
-Func_02003c1c:
+Actor_PlaceMovedBlock:
 	overlay_veneer Actor_PlaceMovedBlockFar
-	.global Func_02003c24
+	.global MapCollision_FindOrAddTag
 	.thumb_func
-Func_02003c24:
+MapCollision_FindOrAddTag:
 	overlay_veneer MapCollision_FindOrAddTagFar
-	.global Func_02003c2c
+	.global Actor_FindAtCell
 	.thumb_func
-Func_02003c2c:
+Actor_FindAtCell:
 	overlay_veneer Actor_FindAtCellFar
 	.global Func_02003c34
 	.thumb_func

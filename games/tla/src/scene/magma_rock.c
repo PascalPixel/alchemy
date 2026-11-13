@@ -30,10 +30,10 @@ extern u8 gMapShapeGrid[];
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
-s32 Func_02003c24(s32 layer, s32 shape, s32 height);
+s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
 DEFINE_MAP_CELL_SET_SHAPE(MagmaRock_SetCellShape, MapGrid_GetTerrainKind,
-                          Func_02003c24)
+                          MapCollision_FindOrAddTag)
 
 #include "../field/map/cell_get.c"
 
@@ -148,7 +148,7 @@ const struct Trigger *Scene_GetPlacements(void) {
   return (const struct Trigger *)gMagmaRock_Placements;
 }
 
-void Func_02003c14(s16 *table);
+void Actor_LiftTargetBlock(s16 *table);
 
 void MagmaRock_UnblockMovedPillar(void) {
   u8 *event = Ram_HeapSlots->eventWork;
@@ -157,28 +157,28 @@ void MagmaRock_UnblockMovedPillar(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room1) {
     MapGrid_CopyCellAttributes(98, 18, 4, 3, 78, 21);
     MapGrid_CopyCellAttributes(98, 24, 4, 3, 78, 24);
-    Func_02003c14(gMagmaRock_Room1Pillars);
+    Actor_LiftTargetBlock(gMagmaRock_Room1Pillars);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
     if (gMainRoutineWork.entrance <= 3) {
-      Func_02003c14(gMagmaRock_Room2LowerPillars);
+      Actor_LiftTargetBlock(gMagmaRock_Room2LowerPillars);
     } else if (gMainRoutineWork.entrance <= 7) {
-      Func_02003c14(gMagmaRock_Room2MiddlePillars);
+      Actor_LiftTargetBlock(gMagmaRock_Room2MiddlePillars);
     } else if (gMainRoutineWork.entrance <= 11) {
       MapGrid_CopyCellAttributes(79, 46, 2, 1, 79, 36);
-      Func_02003c14(gMagmaRock_Room2UpperPillars);
+      Actor_LiftTargetBlock(gMagmaRock_Room2UpperPillars);
     } else {
       if (((s16 *)&work->target->z)[1] == 600)
         MapGrid_CopyCellAttributes(104, 38, 1, 1, 103, 38);
       else
         MapGrid_CopyCellAttributes(94, 44, 5, 1, 99, 38);
-      Func_02003c14(gMagmaRock_Room2TopPillars);
+      Actor_LiftTargetBlock(gMagmaRock_Room2TopPillars);
     }
   }
   MagmaRock_ClearBlockCells(*(struct Actor **)(event + 0xcbc));
 }
 
 void Event_Start();
-void Func_02003c1c();
+void Actor_PlaceMovedBlock();
 s32 Func_02003af4();
 
 /// Rebuilds the room's opened passages on entry and sets the flag of the cell
@@ -190,7 +190,7 @@ s32 MagmaRock_BlockMovedPillar(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Func_02003c1c();
+  Actor_PlaceMovedBlock();
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room1) {
     MapGrid_CopyCellAttributes(98, 21, 4, 3, 78, 21);
     MapGrid_CopyCellAttributes(98, 27, 4, 3, 78, 24);

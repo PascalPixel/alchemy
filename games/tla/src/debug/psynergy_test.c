@@ -31,9 +31,9 @@ struct SparkleSprite;
 
 extern s16 gData_02001300[];
 
-void Func_02000f34(s32 *, s32 *);
+void ItemPicker_RunToDrop(s32 *, s32 *);
 
-void Func_02000f2c(s32, s32);
+void Inn_CheckIn(s32, s32);
 
 void Func_0200092c(s32, s32, s32, s32, s32, s32, s32);
 void Func_02000950(s32, s32, s32, s32);
@@ -41,15 +41,15 @@ void Func_020009c0(s32, s32, s32, s32);
 void Func_02000a10(s32, s32, s32, s32, s32);
 void Func_02000d4c(struct Actor *);
 
-void Func_02000edc(s32 actor, s32 angle, s32 frames);
+void Actor_FallOverWithAnimationById(s32 actor, s32 angle, s32 frames);
 
-void Func_02000f0c(s32 actor);
+void Actor_ArriveInRing(s32 actor);
 
 void Func_02000eec(struct SparkleSprite *sprite);
 
 extern s32 gData_02000f44[];
 
-s32 Func_02000ef4(struct Actor *object);
+s32 BattleEffect_GetObjectPriority(struct Actor *object);
 
 #include "edition.h"
 #include "item_icon.h"
@@ -58,30 +58,30 @@ struct Actor;
 
 struct Vector3;
 
-void Func_02000eb4(s32 scene, s32 entrance);
+void Event_SetDestination(s32 scene, s32 entrance);
 
 extern u8 gData_02001860[];
 
-void Func_02000ebc(s32, s32);
+void Field_RequestBattleFromEncounterTable(s32, s32);
 
-void Func_02000e5c(s32, s32, s32);
+void Event_PickUpItem(s32, s32, s32);
 
-void Func_02000ec4(struct Vector3 *v);
+void Camera_WorldToScreen(struct Vector3 *v);
 
-s32 Func_02000efc(struct Actor *object);
+s32 BattleEffect_GetObjectDepth(struct Actor *object);
 
 #include "module/game/game.h"
 #include "module/tla.h"
 #include "module/window/window.h"
 
-void Func_02000e04(s32);
-/* VIEW(psynergy_test): routine Func_02000df4 as void Func_02000df4(s32, s32);
- * module/tla.h has s32 Func_02000df4(s32 *member, s32 *slot); tried as the rest
+void NameEntry_EditMemberName(s32);
+/* VIEW(psynergy_test): routine MessageArgument_Push as void MessageArgument_Push(s32, s32);
+ * module/tla.h has s32 MessageArgument_Push(s32 *member, s32 *slot); tried as the rest
  * of the object declares it, MenuTest_BrowseMessageRange moves: 2 of 67
  * instructions in tla-ja. */
-extern void Func_02000df4__psynergy_test(s32, s32) __asm__("Func_02000df4");
+extern void Func_02000df4__psynergy_test(s32, s32) __asm__("MessageArgument_Push");
 void Func_02000f1c(s32, s32);
-void Func_02000ecc(s32, s32, s32, s32, s32, s32, s32);
+void TileCopies_CopyTouchedCells(s32, s32, s32, s32, s32, s32, s32);
 void Message_OpenWindow(s32, s32, s32, s32);
 
 #define INPUT_HELD (*(volatile u32 *)&gInput.held)
@@ -99,10 +99,10 @@ void Test_ReceiveFlint(void) {}
 void Func_02000058(void) {
   s32 pos[2];
 
-  Func_02000f34(&pos[1], &pos[0]);
+  ItemPicker_RunToDrop(&pos[1], &pos[0]);
 }
 
-void Test_ReceiveFizz(void) { Func_02000e04(0); }
+void Test_ReceiveFizz(void) { NameEntry_EditMemberName(0); }
 
 void Func_02000074(void) {}
 
@@ -118,7 +118,7 @@ void MenuTest_BrowseMessageRange(s32 message, s32 count) {
   s32 i;
   void *window;
 
-  window = Func_02000dec(206, 0, 0, 0);
+  window = Portrait_OpenWindow(206, 0, 0, 0);
   for (i = 0; i < count; i++) {
     Func_02000df4__psynergy_test(1, 1);
     Func_02000df4__psynergy_test(5, 2);
@@ -174,7 +174,7 @@ void Func_020001bc(s32 value) { Func_02000f1c(3, value); }
 
 void Func_020001c8(s32 value) { Func_02000f1c(24, value); }
 
-void Func_020001d4(s32 value) { Func_02000f2c(0, value); }
+void Func_020001d4(s32 value) { Inn_CheckIn(0, value); }
 
 void Func_020001e0(void) {}
 
@@ -343,22 +343,22 @@ void Func_02000604(void) {
   a = 2;
   b = 10;
   c = 0;
-  Func_02000ecc(34, 26, 5, 4, a, b, c);
+  TileCopies_CopyTouchedCells(34, 26, 5, 4, a, b, c);
 }
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Map_CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                      s32 g) {
-  Func_02000ecc(a, b, c, d, e, f, g);
+  TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
 void Func_02000624(void) {
   Map_CopyCells(34, 26, 5, 4, 2, 10, 0);
-  Func_02000eb4((s32)&SceneId_Ov6b8Room1, 6);
+  Event_SetDestination((s32)&SceneId_Ov6b8Room1, 6);
 }
 
-void Func_02000650(void) { Func_02000eb4((s32)&SceneId_Ov6b8Room1, 8); }
+void Func_02000650(void) { Event_SetDestination((s32)&SceneId_Ov6b8Room1, 8); }
 
 /* VIEW(psynergy_test): variable gData_020017b0 as u8 gData_020017b0[];
  * module/tla.h has s32 gData_020017b0; tried as the rest of the object declares
@@ -368,7 +368,7 @@ extern u8 gData_020017b0__psynergy_test[] __asm__("gData_020017b0");
 void Func_02000660(void) {
   Func_02000f14(249, 40, 168);
   gMainRoutineWork.battleRule24b = 2;
-  Func_02000ebc(14, 0);
+  Field_RequestBattleFromEncounterTable(14, 0);
 }
 
 void Func_02000688(s32 actor) {
@@ -392,7 +392,7 @@ void Func_020006e8(s32 actor) {
 }
 
 void Func_0200070c(void) {
-  Func_02000e5c(19, ((u8 *)Actor_Get(19))[0x62], 0x310);
+  Event_PickUpItem(19, ((u8 *)Actor_Get(19))[0x62], 0x310);
 }
 
 void Func_02000724(void) {
@@ -419,8 +419,8 @@ void Func_02000748(s32 actor) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-void Func_02000ed4(s32 actor, s32 angle);
-void Func_02000f04(s32 actor);
+void Actor_FallOverById(s32 actor, s32 angle);
+void Actor_DepartInRing(s32 actor);
 
 s32 Func_0200079c(void) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -446,9 +446,9 @@ s32 Func_0200079c(void) {
   Actor_SetAnimation(15, 2);
   Actor_SetAnimation(16, 2);
   // Call3 and Call2 build each call's constants afresh (call.h).
-  Call3((void (*)())Func_02000edc, 9, 0x8000, 0);
-  Call2((void (*)())Func_02000ed4, 10, 0x8000);
-  Func_02000ed4(12, 0);
+  Call3((void (*)())Actor_FallOverWithAnimationById, 9, 0x8000, 0);
+  Call2((void (*)())Actor_FallOverById, 10, 0x8000);
+  Actor_FallOverById(12, 0);
   if (Event_GetFlag(0x300))
     MapGrid_CopyCells(36, 28, 1, 1, 10, 10);
   if (Event_GetFlag(0x301))
@@ -460,25 +460,25 @@ s32 Func_0200079c(void) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
     if (party->entrance == 6)
-      Func_02000f04(party->currentOwner);
+      Actor_DepartInRing(party->currentOwner);
     if (party->entrance == 8)
-      Func_02000f0c(party->currentOwner);
+      Actor_ArriveInRing(party->currentOwner);
   }
   return 0;
 }
 
-void Func_02000e0c();
-void Func_02000f24();
+void DebugBrowser_Icons();
+void Sanctum_Run();
 
 s32 Scene_PrepareMap(void) { return 0; }
 
 void Func_0200091c(void) {
-  Func_02000e0c();
+  DebugBrowser_Icons();
   return;
 }
 
 void Func_02000924(void) {
-  Func_02000f24();
+  Sanctum_Run();
   return;
 }
 
@@ -528,7 +528,7 @@ L_02008a06:
 /// Mode 1 places object kind 354 at (x, z) in pixels; mode 2 grows object
 /// kind 252 there from 0x6666 to full size while it turns, then turns it
 /// opposite the leader's facing and passes scene and entrance on to
-/// Func_02000ebc.
+/// Field_RequestBattleFromEncounterTable.
 void Func_02000a10(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
   struct Actor *object;
 
@@ -567,7 +567,7 @@ void Func_02000a10(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       object->scaleY = Q16_ONE;
       object->facing =
           Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x8000;
-      Func_02000ebc(scene, entrance);
+      Field_RequestBattleFromEncounterTable(scene, entrance);
     }
   }
 }
@@ -609,7 +609,7 @@ void Func_02000ad0(struct Actor *object) {
         p->x = object->x;
         p->y = object->y + (work->unka0[i] << 16);
         p->z = object->z;
-        Func_02000ec4(p);
+        Camera_WorldToScreen(p);
         x = p->x;
         j = 0;
         z = p->z;
@@ -620,9 +620,9 @@ void Func_02000ad0(struct Actor *object) {
           sprite->unk14 = sine;
           sprite->unk18 = sine;
           if (j == 0) {
-            sprite->unk1e = Func_02000efc(object) - 1;
+            sprite->unk1e = BattleEffect_GetObjectDepth(object) - 1;
           } else {
-            sprite->unk1e = Func_02000efc(object) + 1;
+            sprite->unk1e = BattleEffect_GetObjectDepth(object) + 1;
             sprite->unk10 -= 0x10000;
             sprite->unk18 = -sprite->unk18;
           }
@@ -851,7 +851,7 @@ void Func_02000c4c(struct Actor *object, struct SparkleWork__s0c4c *work) {
       Func_02000ee4(sprite, 16, 16, 0x80004000, tile);
       sprite->flag = 0;
       sprite->palette = 0;
-      sprite->priority = Func_02000ef4(object) & 3;
+      sprite->priority = BattleEffect_GetObjectPriority(object) & 3;
       sprite++;
     }
   }

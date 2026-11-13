@@ -111,10 +111,10 @@ extern u8 gMapShapeGrid[];
 
 s32 MapGrid_GetTerrainKind(s32 terrainId, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 Func_02003c24(s32 terrainId, s32 value, s32 height);
+s32 MapCollision_FindOrAddTag(s32 terrainId, s32 value, s32 height);
 
 DEFINE_ACTOR_SET_CELL_SHAPE_AT(MagmaRock_SetActorCellShape,
-                               MapGrid_GetTerrainKind, Func_02003c24)
+                               MapGrid_GetTerrainKind, MapCollision_FindOrAddTag)
 
 void MagmaRock_StepOnCrumblingPillar(const u8 *data);
 

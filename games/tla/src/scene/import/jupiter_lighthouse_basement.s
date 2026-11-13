@@ -226,29 +226,29 @@ Event_ResolvePendingActions:
 	.thumb_func
 Camera_WorldToScreen:
 	overlay_veneer Camera_WorldToScreenFar
-	.global Func_02001d1c
+	.global TileCopies_CopyTouchedCells
 	.thumb_func
-Func_02001d1c:
+TileCopies_CopyTouchedCells:
 	overlay_veneer TileCopies_CopyTouchedCellsFar
 	.global BattleEffect_GetObjectPriority
 	.thumb_func
 BattleEffect_GetObjectPriority:
 	overlay_veneer BattleEffect_GetObjectPriorityFar
-	.global Func_02001d2c
+	.global MapGrid_GetCellBehavior
 	.thumb_func
-Func_02001d2c:
+MapGrid_GetCellBehavior:
 	overlay_veneer MapGrid_GetCellBehaviorFar
-	.global Func_02001d34
+	.global MapGrid_SetAttributeBAt
 	.thumb_func
-Func_02001d34:
+MapGrid_SetAttributeBAt:
 	overlay_veneer MapGrid_SetAttributeBAtFar
-	.global Func_02001d3c
+	.global Actor_DepartInRing
 	.thumb_func
-Func_02001d3c:
+Actor_DepartInRing:
 	overlay_veneer Actor_DepartInRingFar
-	.global Func_02001d44
+	.global FieldItem_JumpToLeader
 	.thumb_func
-Func_02001d44:
+FieldItem_JumpToLeader:
 	overlay_veneer FieldItem_JumpToLeaderFar
 	.global Sound_Play
 	.thumb_func

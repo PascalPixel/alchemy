@@ -78,9 +78,9 @@ MessageArgument_Push:
 	.thumb_func
 Message_CloseFinishedWindows:
 	overlay_veneer Message_CloseFinishedWindowsFar
-	.global Func_02001338
+	.global Summon_ShowLearnedMessage
 	.thumb_func
-Func_02001338:
+Summon_ShowLearnedMessage:
 	overlay_veneer Summon_ShowLearnedMessageFar
 	.global Menu_SelectCoinsOrMedals
 	.thumb_func

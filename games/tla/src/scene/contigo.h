@@ -12,10 +12,10 @@ struct ContigoObject;
 
 void Actor_MoveToObject(s32 actor, s32 target);
 void Import_FieldCameraWaitForArrival(void);
-void Func_02004044(void);
+void Party_AddIsaacsParty(void);
 void Func_02001938(s32 mode);
 void Func_02001c5c(s32 a, s32 b, s32 c, s32 d);
-void Func_0200423c(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
+void TileCopies_CopyTouchedCells(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY, s32 mode);
 
 static inline void Contigo_Jump(s32 actor, s32 height, s32 frames) {
@@ -33,7 +33,7 @@ static inline void Contigo_Jump(s32 actor, s32 height, s32 frames) {
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void Contigo_Tiles(s32 srcX, s32 srcY, s32 width, s32 height,
                                  s32 destX, s32 destY, s32 mode) {
-  Func_0200423c(srcX, srcY, width, height, destX, destY, mode);
+  TileCopies_CopyTouchedCells(srcX, srcY, width, height, destX, destY, mode);
 }
 
 #endif

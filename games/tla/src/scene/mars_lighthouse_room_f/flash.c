@@ -115,7 +115,7 @@ s32 Func_0200297c(void) {
     actor->facing = TRIG_TURN / 4;
     Func_02005480(actor, 49);
     for (;;) {
-      if (Func_020054d8(actor->terrainId, actor->x, actor->z) == 7) {
+      if (MapGrid_GetCellAttributeLowNibbleOrBump(actor->terrainId, actor->x, actor->z) == 7) {
         s32 i;
 
         /* FAKEMATCH(temporary): velocityX stored through a union; as the plain
@@ -279,7 +279,7 @@ s32 MarsLighthouseRoomF_SlideOnIce(void) {
   leader->facing = 0x4000;
   Func_02005480(leader, 49);
   while (ride->unk6c->timer == 0) {
-    if (Func_020054d8(0, leader->x, leader->z) != 7) {
+    if (MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x, leader->z) != 7) {
       leader->x += ((s32 *)ride->unk6c->unk70)[0];
       leader->z += ((s32 *)ride->unk6c->unk70)[2];
     } else {
@@ -450,11 +450,11 @@ struct WorkEvent {
   s16 unk166;
 };
 
-s32 Func_020054d8(s32 terrain, s32 x, s32 z);
+s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 terrain, s32 x, s32 z);
 void Func_02002d08(struct Actor *actor);
 void Func_02002e8c(s32 x, s32 y, s32 z, s32 speed);
 extern u8 gInventorySnapshot[];
 
-DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_02002f80, Work020023c4__s2f80, Func_020054d8,
+DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_02002f80, Work020023c4__s2f80, MapGrid_GetCellAttributeLowNibbleOrBump,
                               Func_02002e8c, Func_02002d08)
 #undef ABS

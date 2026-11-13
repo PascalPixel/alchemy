@@ -27,7 +27,7 @@ extern u8 gData_02004dbc[];
 extern u8 gData_02004fe4[];
 
 void Statue_Sink(void *, s32, s32);
-s32 Func_02004a7c();
+s32 Actor_HasArrived();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -73,16 +73,16 @@ void Func_020000c8(s32 mode, s32 arg) {
     FieldActor_SetMoveTarget(a, 0x1b80000, 0, 0x1380000);
     FieldActor_SetPositionAndResetMotion(b, 0x1e80000, b->y, 0x1380000);
     FieldActor_SetMoveTarget(b, 0x1b80000, 0, 0x1780000);
-    Func_02004c8c(1);
-    Func_02004c8c(2);
+    Tightrope_Release(1);
+    Tightrope_Release(2);
     i = 0;
     do {
       Func_02004c24(1, 18, 19);
       Func_02004c24(2, 20, 21);
       System_Wait(1);
-      Func_02004c8c(1);
-      Func_02004c8c(2);
-      if (Func_02004a7c(a) != 0 && Func_02004a7c(b) != 0)
+      Tightrope_Release(1);
+      Tightrope_Release(2);
+      if (Actor_HasArrived(a) != 0 && Actor_HasArrived(b) != 0)
         break;
       i++;
     } while (i < 60);
@@ -318,7 +318,7 @@ void Func_020006ec(s32 mode) {
   tile = Func_02004bb4__eastern_alhafra(gMainRoutineWork.currentOwner);
   if (tile == 16) {
     Func_02000394(mode, 16);
-    if (Func_02004c44() != 0)
+    if (Leader_CanPushObjectAhead() != 0)
       Func_02004c4c();
     Func_0200042c(mode, 16);
   } else if (tile == 15) {
@@ -504,12 +504,12 @@ void Func_020040ec();
  * many arguments to function `Func_02004c2c'. */
 extern void Func_02004c2c__eastern_alhafra() __asm__("Func_02004c2c");
 void Func_020047fc();
-/* VIEW(eastern_alhafra): routine Func_02004c94 as void Func_02004c94();
- * module/scene/mars_lighthouse_aerie.h has void Func_02004c94(void); tried as
- * the definition's void Func_02004c94(void), which the object already declares,
+/* VIEW(eastern_alhafra): routine Tightrope_Settle as void Tightrope_Settle();
+ * module/scene/mars_lighthouse_aerie.h has void Tightrope_Settle(void); tried as
+ * the definition's void Tightrope_Settle(void), which the object already declares,
  * it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:595: too
- * many arguments to function `Func_02004c94'. */
-extern void Func_02004c94__eastern_alhafra() __asm__("Func_02004c94");
+ * many arguments to function `Tightrope_Settle'. */
+extern void Func_02004c94__eastern_alhafra() __asm__("Tightrope_Settle");
 
 s32 Scene_Initialize(void) {
   struct Actor *object;
@@ -525,9 +525,9 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(31, PIXELS(136), PIXELS(600));
       Actor_SetPosition(28, PIXELS(168), PIXELS(584));
       Actor_FaceDirection(28, FACING_SOUTH, 0);
-      Func_02004c5c(30, 0, 13);
-      Call3(Func_02004c5c, 31, 0x8000, 13);
-      Func_02004c5c(28, 0, 13);
+      Actor_FallOverWithAnimationById(30, 0, 13);
+      Call3(Actor_FallOverWithAnimationById, 31, 0x8000, 13);
+      Actor_FallOverWithAnimationById(28, 0, 13);
       Actor_SetPosition(25, PIXELS(112), PIXELS(432));
       Actor_SetPosition(27, PIXELS(176), PIXELS(408));
       Actor_SetPosition(29, PIXELS(152), PIXELS(376));
@@ -589,11 +589,11 @@ s32 Scene_Initialize(void) {
   Func_02000fa4();
   if (Event_GetFlag(0x8a6) == 0)
     Func_020040ec(15);
-  Func_02004c14();
+  Rope_Initialize();
   Func_02004c2c__eastern_alhafra(0, 0x8a3, 8, 9);
   OBJECT(8)->priorityFlags |= 32;
   OBJECT(9)->priorityFlags |= 32;
-  Func_02004c1c();
+  Tightrope_Initialize();
   Func_02004c24(0, 12, 13);
   Actor_SetSpriteFlags(Actor_Get(12), 0);
   Actor_SetSpriteFlags(Actor_Get(13), 0);
@@ -688,7 +688,7 @@ L_02009052:
   FIELD_AT(v_r5, u8, 35) = (2 | FIELD_AT(v_r5, u8, 35));
   FieldMapGrid_SetCellBehavior(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16),
                                0, 0);
-  Func_02004c84(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0, 128);
+  MapGrid_SetAttributeBAt(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0, 128);
 L_020090a8:
   t18 = Event_GetFlag(0x8a1);
   if (t18 == 0)
@@ -706,7 +706,7 @@ L_020090a8:
   FIELD_AT(v_r5, u8, 35) = (2 | FIELD_AT(v_r5, u8, 35));
   FieldMapGrid_SetCellBehavior(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16),
                                0, 0);
-  Func_02004c84(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0, 128);
+  MapGrid_SetAttributeBAt(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0, 128);
 L_02009100:
   t24 = Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED);
   if (t24 == 0)

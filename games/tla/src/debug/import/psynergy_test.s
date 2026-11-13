@@ -78,25 +78,25 @@ FieldMessage_Show:
 	.thumb_func
 Message_AllTyped:
 	overlay_veneer Message_AllTypedFar
-	.global Func_02000dec
+	.global Portrait_OpenWindow
 	.thumb_func
-Func_02000dec:
+Portrait_OpenWindow:
 	overlay_veneer Portrait_OpenWindowFar
-	.global Func_02000df4
+	.global MessageArgument_Push
 	.thumb_func
-Func_02000df4:
+MessageArgument_Push:
 	overlay_veneer MessageArgument_PushFar
 	.global Message_CloseFinishedWindows
 	.thumb_func
 Message_CloseFinishedWindows:
 	overlay_veneer Message_CloseFinishedWindowsFar
-	.global Func_02000e04
+	.global NameEntry_EditMemberName
 	.thumb_func
-Func_02000e04:
+NameEntry_EditMemberName:
 	overlay_veneer NameEntry_EditMemberNameFar
-	.global Func_02000e0c
+	.global DebugBrowser_Icons
 	.thumb_func
-Func_02000e0c:
+DebugBrowser_Icons:
 	overlay_veneer DebugBrowser_IconsFar
 	.global Unit_Calculate
 	.thumb_func
@@ -134,9 +134,9 @@ Item_AdjustCounter:
 	.thumb_func
 Event_Wait:
 	overlay_veneer Event_WaitFar
-	.global Func_02000e5c
+	.global Event_PickUpItem
 	.thumb_func
-Func_02000e5c:
+Event_PickUpItem:
 	overlay_veneer Event_PickUpItemFar
 	.global Actor_GetById
 	.thumb_func
@@ -178,29 +178,29 @@ Actor_ArmCallback:
 	.thumb_func
 Actor_ShowEmoteById:
 	overlay_veneer Actor_ShowEmoteByIdFar
-	.global Func_02000eb4
+	.global Event_SetDestination
 	.thumb_func
-Func_02000eb4:
+Event_SetDestination:
 	overlay_veneer Event_SetDestinationFar
-	.global Func_02000ebc
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_02000ebc:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
-	.global Func_02000ec4
+	.global Camera_WorldToScreen
 	.thumb_func
-Func_02000ec4:
+Camera_WorldToScreen:
 	overlay_veneer Camera_WorldToScreenFar
-	.global Func_02000ecc
+	.global TileCopies_CopyTouchedCells
 	.thumb_func
-Func_02000ecc:
+TileCopies_CopyTouchedCells:
 	overlay_veneer TileCopies_CopyTouchedCellsFar
-	.global Func_02000ed4
+	.global Actor_FallOverById
 	.thumb_func
-Func_02000ed4:
+Actor_FallOverById:
 	overlay_veneer Actor_FallOverByIdFar
-	.global Func_02000edc
+	.global Actor_FallOverWithAnimationById
 	.thumb_func
-Func_02000edc:
+Actor_FallOverWithAnimationById:
 	overlay_veneer Actor_FallOverWithAnimationByIdFar
 	.global Func_02000ee4
 	.thumb_func
@@ -210,21 +210,21 @@ Func_02000ee4:
 	.thumb_func
 Func_02000eec:
 	overlay_veneer EffectSprite_DrawFar
-	.global Func_02000ef4
+	.global BattleEffect_GetObjectPriority
 	.thumb_func
-Func_02000ef4:
+BattleEffect_GetObjectPriority:
 	overlay_veneer BattleEffect_GetObjectPriorityFar
-	.global Func_02000efc
+	.global BattleEffect_GetObjectDepth
 	.thumb_func
-Func_02000efc:
+BattleEffect_GetObjectDepth:
 	overlay_veneer BattleEffect_GetObjectDepthFar
-	.global Func_02000f04
+	.global Actor_DepartInRing
 	.thumb_func
-Func_02000f04:
+Actor_DepartInRing:
 	overlay_veneer Actor_DepartInRingFar
-	.global Func_02000f0c
+	.global Actor_ArriveInRing
 	.thumb_func
-Func_02000f0c:
+Actor_ArriveInRing:
 	overlay_veneer Actor_ArriveInRingFar
 	.global Func_02000f14
 	.thumb_func
@@ -234,17 +234,17 @@ Func_02000f14:
 	.thumb_func
 Func_02000f1c:
 	overlay_veneer Shop_RunFar
-	.global Func_02000f24
+	.global Sanctum_Run
 	.thumb_func
-Func_02000f24:
+Sanctum_Run:
 	overlay_veneer Sanctum_RunFar
-	.global Func_02000f2c
+	.global Inn_CheckIn
 	.thumb_func
-Func_02000f2c:
+Inn_CheckIn:
 	overlay_veneer Inn_CheckInFar
-	.global Func_02000f34
+	.global ItemPicker_RunToDrop
 	.thumb_func
-Func_02000f34:
+ItemPicker_RunToDrop:
 	overlay_veneer ItemPicker_RunToDropFar
 	.global Sound_Play
 	.thumb_func

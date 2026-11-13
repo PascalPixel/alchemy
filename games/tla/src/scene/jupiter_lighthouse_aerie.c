@@ -145,7 +145,7 @@ void Func_02000314(s32 unused, s32 actor) {
   struct JupiterLighthouseAerieObject *object =
       ((struct JupiterLighthouseAerieObject *)Actor_Get(actor));
 
-  Func_02002a78(object->x, object->z, 0, 4);
+  MapGrid_SetCellHeight(object->x, object->z, 0, 4);
 }
 
 // Jupiter Lighthouse aerie's two pushed objects: object 13 on cell (6, 12) or
@@ -153,7 +153,7 @@ void Func_02000314(s32 unused, s32 actor) {
 // (waited on for at most 30 frames), copies cells
 // (MapGrid_CopyCellPictureCellsRect, Map_CopyCellAttributeRect) with sounds 134
 // and 167 and runs its part (Func_020001b4, Func_02000264); off its cell it
-// only marks the cell it stands on (Func_02002a78). With both flags set, flag
+// only marks the cell it stands on (MapGrid_SetCellHeight). With both flags set, flag
 // 2591 is set. The fall wait is an if around a do-while.
 
 void Func_0200032c(s32 unused, s32 id) {
@@ -187,7 +187,7 @@ void Func_0200032c(s32 unused, s32 id) {
       FieldEvent_Wait(20);
       Func_020001b4();
     } else {
-      Func_02002a78(object->x, object->z, 0, 6);
+      MapGrid_SetCellHeight(object->x, object->z, 0, 6);
     }
   }
   if (id == 14) {
@@ -217,7 +217,7 @@ void Func_0200032c(s32 unused, s32 id) {
       FieldEvent_Wait(20);
       Func_02000264();
     } else {
-      Func_02002a78(object->x, object->z, 0, 6);
+      MapGrid_SetCellHeight(object->x, object->z, 0, 6);
     }
   }
   if (Event_GetFlag(2570) && Event_GetFlag(2571))
@@ -266,7 +266,7 @@ s32 Scene_PrepareMap(void) {
   {
     s32 last = 6;
 
-    Func_02002a78(object->x, object->z, 0, last);
+    MapGrid_SetCellHeight(object->x, object->z, 0, last);
   }
   if (Event_GetFlag(0xa0b)) {
     Actor_SetPosition(14, 0, 0);
@@ -283,7 +283,7 @@ s32 Scene_PrepareMap(void) {
   {
     s32 last = 6;
 
-    Func_02002a78(object->x, object->z, 0, last);
+    MapGrid_SetCellHeight(object->x, object->z, 0, last);
   }
   BYTE_AT(Actor_Get(11), 0x62) = 1;
   BYTE_AT(Actor_Get(12), 0x62) = 1;
@@ -346,7 +346,7 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(
     gPaletteCycleColors, gPaletteCycleUnlitPalette, gPaletteCycleFrame,
     PaletteCycle_Step, gPaletteCycleUnlitColors)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02002a78, Func_02002b58)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight, MapGrid_SetAttributeBAt)
 
 #include "frame.h"
 #include "field_sprite.h"
@@ -421,7 +421,7 @@ DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 extern const s32 gData_0200331c[];
 extern s32 gData_0200333c;
 
-s32 Func_02002b50(s32 x, s32 z, s32 layer);
+s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 /* VIEW(jupiter_lighthouse_aerie): routine Camera_WorldToScreen as void
  * Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void
  * Camera_WorldToScreen(struct EffectVector *position); tried as the
@@ -453,7 +453,7 @@ void Whirlwind_Update(struct Actor *self) {
     u32 a = from[9] & 12;
     to[9] = (s8)((to[9] & ~12) | a);
   }
-  if (Func_02002b50(self->x, self->z, 2) != 255) {
+  if (MapGrid_GetCellBehavior(self->x, self->z, 2) != 255) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;

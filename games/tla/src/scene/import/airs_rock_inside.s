@@ -138,13 +138,13 @@ TilesetAnim_SuspendAll:
 	.thumb_func
 TilesetAnim_ResumeAll:
 	overlay_veneer TilesetAnim_ResumeAllFar
-	.global Func_02005dec
+	.global Actor_HasArrived
 	.thumb_func
-Func_02005dec:
+Actor_HasArrived:
 	overlay_veneer Actor_HasArrivedFar
-	.global Func_02005df4
+	.global MapGrid_SetCellHeight
 	.thumb_func
-Func_02005df4:
+MapGrid_SetCellHeight:
 	overlay_veneer MapGrid_SetCellHeightFar
 	.global FieldMessage_Show
 	.thumb_func
@@ -318,9 +318,9 @@ Actor_SetActionCallback:
 	.thumb_func
 Import_SceneQueueMusic:
 	overlay_veneer Scene_QueueMusicFar
-	.global Func_02005f54
+	.global Tightrope_Initialize
 	.thumb_func
-Func_02005f54:
+Tightrope_Initialize:
 	overlay_veneer Tightrope_InitializeFar
 	.global Func_02005f5c
 	.thumb_func
@@ -330,17 +330,17 @@ Func_02005f5c:
 	.thumb_func
 Func_02005f64:
 	overlay_veneer Actor_GetCellIndexFar
-	.global Func_02005f6c
+	.global Actor_PlaceBlocks
 	.thumb_func
-Func_02005f6c:
+Actor_PlaceBlocks:
 	overlay_veneer Actor_PlaceBlocksFar
-	.global Func_02005f74
+	.global Actor_LiftTargetBlock
 	.thumb_func
-Func_02005f74:
+Actor_LiftTargetBlock:
 	overlay_veneer Actor_LiftTargetBlockFar
-	.global Func_02005f7c
+	.global Actor_PlaceMovedBlock
 	.thumb_func
-Func_02005f7c:
+Actor_PlaceMovedBlock:
 	overlay_veneer Actor_PlaceMovedBlockFar
 	.global Party_GetLeaderActor
 	.thumb_func

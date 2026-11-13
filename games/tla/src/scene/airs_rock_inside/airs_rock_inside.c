@@ -130,7 +130,7 @@ s32 Func_02000690(u32 layer, s32 x, s32 y) {
 /// 4 pixels when not on its ground and takes sprite priority 3; otherwise it
 /// marks both cells (0xff00 and 0xd480), rises 4 pixels and takes priority 1;
 /// then it writes both cells back and moves the object's height
-/// (Func_02005df4).
+/// (MapGrid_SetCellHeight).
 void Func_020006cc(struct Actor *object) {
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
@@ -161,7 +161,7 @@ void Func_020006cc(struct Actor *object) {
   }
   Func_0200062c(0, x, z, ground);
   Func_0200062c(2, x, z, cell);
-  Func_02005df4(px, pz, object->terrainId, height);
+  MapGrid_SetCellHeight(px, pz, object->terrainId, height);
 }
 
 #include "ram_buffer.h"
@@ -986,7 +986,7 @@ void Func_02001828(void) {
     Call4((void (*)())FieldCamera_MoveWithinMapBounds, x << 16, -1, z << 16, 1);
   }
   carried = 0;
-  while (Func_02005dec(gust) == 0) {
+  while (Actor_HasArrived(gust) == 0) {
     if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room6) {
       object = Actor_GetById(8);
       if (gust->x >> 19 == object->x >> 19 && carried == 0)
@@ -1038,7 +1038,7 @@ void Func_02001828(void) {
       object->motionFlags = 0;
       object->terrainHeight = 0;
       object->y = 0;
-      Func_02005df4(0x1400000, 0x3400000, 0, 4);
+      MapGrid_SetCellHeight(0x1400000, 0x3400000, 0, 4);
     } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room9) {
       OverlayObject_WaitUntilIdle(object);
       wait(1);
@@ -1047,7 +1047,7 @@ void Func_02001828(void) {
       object->motionFlags = 0;
       object->terrainHeight = 0;
       object->y = 0;
-      Func_02005df4(0x780000, 0x1980000, 0, 4);
+      MapGrid_SetCellHeight(0x780000, 0x1980000, 0, 4);
       if (GameFlag_Get(0x899))
         Func_02001084(object, 60, 0);
     }
@@ -1063,7 +1063,7 @@ void Func_02001828(void) {
           (s32)(cell.x << 16), (s32)(gust->y), (s32)(cell.z << 16));
     hit -= 30;
     i = 0;
-    while (Func_02005dec(gust) == 0) {
+    while (Actor_HasArrived(gust) == 0) {
       if (hit > 4)
         goto shrink;
       if (i == 0) {

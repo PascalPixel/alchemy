@@ -146,21 +146,21 @@ Event_ResolvePendingActions:
 	.thumb_func
 Actor_WalkByAndWaitById:
 	overlay_veneer Actor_WalkByAndWaitByIdFar
-	.global Func_02000de0
+	.global Actor_PlaceBlocks
 	.thumb_func
-Func_02000de0:
+Actor_PlaceBlocks:
 	overlay_veneer Actor_PlaceBlocksFar
-	.global Func_02000de8
+	.global Actor_LiftTargetBlock
 	.thumb_func
-Func_02000de8:
+Actor_LiftTargetBlock:
 	overlay_veneer Actor_LiftTargetBlockFar
-	.global Func_02000df0
+	.global Actor_PlaceMovedBlock
 	.thumb_func
-Func_02000df0:
+Actor_PlaceMovedBlock:
 	overlay_veneer Actor_PlaceMovedBlockFar
-	.global Func_02000df8
+	.global TileCopies_CopyTouchedCells
 	.thumb_func
-Func_02000df8:
+TileCopies_CopyTouchedCells:
 	overlay_veneer TileCopies_CopyTouchedCellsFar
 	.global Party_GetLeaderActor
 	.thumb_func

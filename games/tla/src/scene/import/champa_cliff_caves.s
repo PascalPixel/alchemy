@@ -78,9 +78,9 @@ Actor_SetSpriteFlags:
 	.thumb_func
 MapGrid_SetScreenShake:
 	overlay_veneer MapGrid_SetScreenShakeFar
-	.global Func_0200343c
+	.global MapGrid_SetCellHeight
 	.thumb_func
-Func_0200343c:
+MapGrid_SetCellHeight:
 	overlay_veneer MapGrid_SetCellHeightFar
 	.global PartyInventory_FindMember
 	.thumb_func
@@ -106,9 +106,9 @@ Event_End:
 	.thumb_func
 Event_AskYesNoWithActorAnimation:
 	overlay_veneer Event_AskYesNoWithActorAnimationFar
-	.global Func_02003474
+	.global Event_PickUpItem
 	.thumb_func
-Func_02003474:
+Event_PickUpItem:
 	overlay_veneer Event_PickUpItemFar
 	.global Actor_GetById
 	.thumb_func
@@ -262,9 +262,9 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_020035ac
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_020035ac:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
@@ -322,9 +322,9 @@ Field_StartPaletteTransition:
 	.thumb_func
 Actor_ShowItemIconById:
 	overlay_veneer Actor_ShowItemIconByIdFar
-	.global Func_02003624
+	.global Actor_WatchActor
 	.thumb_func
-Func_02003624:
+Actor_WatchActor:
 	overlay_veneer Actor_WatchActorFar
 	.global Sound_Play
 	.thumb_func

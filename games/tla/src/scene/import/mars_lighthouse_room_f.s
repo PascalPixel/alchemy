@@ -138,9 +138,9 @@ Map_GetTerrainHeight:
 	.thumb_func
 MapGrid_GetCellBehaviorAt:
 	overlay_veneer MapGrid_GetCellBehaviorAtFar
-	.global Func_020054d8
+	.global MapGrid_GetCellAttributeLowNibbleOrBump
 	.thumb_func
-Func_020054d8:
+MapGrid_GetCellAttributeLowNibbleOrBump:
 	overlay_veneer MapGrid_GetCellAttributeLowNibbleOrBumpFar
 	.global Map_CopyCellsRect
 	.thumb_func
@@ -182,17 +182,17 @@ Actor_SetSpriteColorMode:
 	.thumb_func
 Actor_SetSpritePriorityDirect:
 	overlay_veneer Actor_SetSpritePriorityDirectFar
-	.global Func_02005530
+	.global Actor_HasArrived
 	.thumb_func
-Func_02005530:
+Actor_HasArrived:
 	overlay_veneer Actor_HasArrivedFar
 	.global Import_FieldCheckSpheresOverlap
 	.thumb_func
 Import_FieldCheckSpheresOverlap:
 	overlay_veneer Field_CheckSpheresOverlapFar
-	.global Func_02005540
+	.global MapGrid_SetCellHeight
 	.thumb_func
-Func_02005540:
+MapGrid_SetCellHeight:
 	overlay_veneer MapGrid_SetCellHeightFar
 	.global TileMap_ConvertBuffer
 	.thumb_func
@@ -250,9 +250,9 @@ Actor_JumpDownLedge:
 	.thumb_func
 Actor_SetSpriteColor:
 	overlay_veneer Actor_SetSpriteColorFar
-	.global Func_020055b8
+	.global Actor_DisableById
 	.thumb_func
-Func_020055b8:
+Actor_DisableById:
 	overlay_veneer Actor_DisableByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func
@@ -314,9 +314,9 @@ Event_WaitTransitionFrames:
 	.thumb_func
 ObjectTable_Get:
 	overlay_veneer ObjectTable_GetFar
-	.global Func_02005638
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_02005638:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolveAllPendingActions
 	.thumb_func
@@ -342,17 +342,17 @@ ObjectTable_Snapshot:
 	.thumb_func
 Event_NoOp:
 	overlay_veneer Event_NoOpFar
-	.global Func_02005670
+	.global Tightrope_Initialize
 	.thumb_func
-Func_02005670:
+Tightrope_Initialize:
 	overlay_veneer Tightrope_InitializeFar
 	.global Func_02005678
 	.thumb_func
 Func_02005678:
 	overlay_veneer Tightrope_PlaceFar
-	.global Func_02005680
+	.global Actor_FindAtCell
 	.thumb_func
-Func_02005680:
+Actor_FindAtCell:
 	overlay_veneer Actor_FindAtCellFar
 	.global Func_02005688
 	.thumb_func

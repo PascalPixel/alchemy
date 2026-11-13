@@ -180,7 +180,7 @@ s32 TrialRoad_RivalIsAhead(s32 fallback);
 
 /// Inventory_ClearSlot through its far call: empties an inventory slot and
 /// returns 2.
-s32 Func_02005870(s32 owner, s32 slot);
+s32 Inventory_ClearSlot(s32 owner, s32 slot);
 
 extern s16 gTrialRoad_CrumblingPillars[];
 
@@ -195,7 +195,7 @@ void TrialRoad_BlockLogs(void);
 
 void TrialRoad_StartFountains(s32 a, s32 b);
 
-void Func_02005a08(void);
+void Tightrope_Initialize(void);
 void Func_02005a10(s32 a, s32 b, s32 c);
 
 extern u32 gTrialRoad_GaspHopScript[];
@@ -218,7 +218,7 @@ s32 TrialRoad_RivalIsWaiting(void);
 void TrialRoad_PlayRivalRecording(s32 a);
 void TrialRoad_DealStageOrder(u32 seed);
 
-void Func_02005828(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Map_CopyRawCellsRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 void TrialRoad_ShowProgress(s32 a, s32 b);
 
@@ -238,9 +238,9 @@ extern u32 gTrialRoad_RightKnightLeavesScript[];
 void Import_DecompressTaggedLz(const void *source, void *destination);
 s32 Func_02005a18(struct Actor *object);
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
-void Func_02005958(s32 id);
-s32 Func_02005a20(s32 layer, s32 shape, s32 height);
-struct Actor *Func_02005a28(s32 *position, s32 mode);
+void Actor_DisableById(s32 id);
+s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
+struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 
 void TrialRoad_SpawnRubble(s32 value);
 void TrialRoad_SetLeaderCellShape(s32 offset, s32 layer);

@@ -131,7 +131,7 @@ s32 Scene_Initialize(void) {
       if (GameFlag_Get(0xa8e))
         Call3(Actor_SetHorizontalPositionWithTerrain, 12, PIXELS(824),
               PIXELS(328));
-      Func_02005f6c(gData_02006050);
+      Actor_PlaceBlocks(gData_02006050);
     }
     Actor_GetById(10)->motionFlags = 0;
     Actor_GetById(10)->y = 0;
@@ -168,7 +168,7 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(0x898))
       Call3(Actor_SetHorizontalPositionWithTerrain, 11, PIXELS(104),
             PIXELS(392));
-    Func_02005f6c(gData_02006054);
+    Actor_PlaceBlocks(gData_02006054);
     if (!GameFlag_Get(0x899)) {
       Actor_SetSpriteColor(Actor_GetById(8), 6);
     } else {
@@ -194,7 +194,7 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(0x89d))
       Call3(Actor_SetHorizontalPositionWithTerrain, 12, PIXELS(472),
             PIXELS(520));
-    Func_02005f6c(gData_0200605a);
+    Actor_PlaceBlocks(gData_0200605a);
     if (!GameFlag_Get(0x899)) {
       Actor_SetSpriteColor(Actor_GetById(9), 6);
       Actor_SetSpriteColor(Actor_GetById(10), 6);
@@ -211,7 +211,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_GetById(10), 0);
     Actor_SetSpriteFlags(Actor_GetById(13), 0);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room4) {
-    Func_02005f54();
+    Tightrope_Initialize();
     Func_02005f5c(0, 11, 12);
     Func_02005f5c(1, 13, 14);
     Func_02005f5c(2, 15, 0x10);
@@ -238,7 +238,7 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(0x89e))
       Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(648),
             PIXELS(296));
-    Func_02005f6c(gData_02006064);
+    Actor_PlaceBlocks(gData_02006064);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room5) {
     GameFlag_Set(324);
     Func_02002770();
@@ -259,7 +259,7 @@ s32 Scene_Initialize(void) {
     Actor_SetActionCallback(Actor_GetById(8), 9);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room6) {
     Func_02002770();
-    Func_02005f54();
+    Tightrope_Initialize();
     Func_02005f5c(0, 11, 12);
     Func_02005f5c(1, 13, 14);
     Func_02005f5c(2, 15, 0x10);
@@ -302,7 +302,7 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(0x8d0))
       Call3(Actor_SetHorizontalPositionWithTerrain, 8, PIXELS(344),
             PIXELS(696));
-    Func_02005f6c(gData_02006068);
+    Actor_PlaceBlocks(gData_02006068);
     if (GameFlag_Get(772)) {
       Call6(MapGrid_CopyCellPictureIndicesRect, 39, 82, 38, 82, one, 3);
       Call6(Map_CopyCellAttributeRect, 39, 82, 1, 1, 38, 82);
@@ -330,7 +330,7 @@ s32 Scene_Initialize(void) {
       GameFlag_Set(0x200);
     }
     Actor_SetSpritePriority(9, 2);
-    Func_02005f6c(gData_02006072);
+    Actor_PlaceBlocks(gData_02006072);
     Func_0200062c(2, Actor_GetById(8)->x >> 20, Actor_GetById(8)->z >> 20, 0);
     Func_0200062c(2, Actor_GetById(9)->x >> 20, Actor_GetById(9)->z >> 20, 0);
     if (!GameFlag_Get(0x899))
@@ -343,7 +343,7 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(0x8d3))
       Call3(Actor_SetHorizontalPositionWithTerrain, 9, PIXELS(360),
             PIXELS(264));
-    Func_02005f6c(gData_0200607e);
+    Actor_PlaceBlocks(gData_0200607e);
     Func_0200062c(2, Actor_GetById(10)->x >> 20, Actor_GetById(10)->z >> 20, 0);
     Actor_GetById(10)->actionFlags = 0;
     if (!GameFlag_Get(0x899))

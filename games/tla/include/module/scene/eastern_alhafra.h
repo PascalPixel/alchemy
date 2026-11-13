@@ -72,20 +72,20 @@ s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *cell);
 
 void Actor_StopAtPushTarget(struct Actor *object);
 
-struct Actor *Func_02004c3c(s32 *position, s32 mode);
+struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 
 void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
 s32 Func_02004c34(struct Actor *object);
 
 s32 Func_02004c24();
-s32 Func_02004c8c();
-s32 Func_02004c44();
+s32 Tightrope_Release();
+s32 Leader_CanPushObjectAhead();
 s32 Func_02004c4c();
 extern u16 gData_020056e0[2][160];
-void Func_02004c5c();
-void Func_02004c14(void);
-void Func_02004c1c(void);
-void Func_02004c84();
+void Actor_FallOverWithAnimationById();
+void Rope_Initialize(void);
+void Tightrope_Initialize(void);
+void MapGrid_SetAttributeBAt();
 
 #endif

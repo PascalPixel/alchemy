@@ -1289,7 +1289,7 @@ struct EventWork1ac {
 void Actor_SetWideSprite(s32 id, s32 wide);
 void Map_ClearLayerEntryFlag(s32 layer);
 void Map_SetLayerEntryFlag(u32 layer);
-void Func_020045dc(s32 a);
+void FieldEffect_StartBlankOverlay(s32 a);
 void Weather_StartRain(s32 a);
 
 s32 Scene_Initialize(void) {
@@ -1311,14 +1311,14 @@ s32 Scene_Initialize(void) {
         &((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect;
     /* FAKEMATCH(pin): the call's argument pinned to the r0 it is passed in, so
      * it loads before the store as the native does; in the plain order the
-     * store comes first; as ...->screenEffect = 0x209 and Func_020045dc(0), as
+     * store comes first; as ...->screenEffect = 0x209 and FieldEffect_StartBlankOverlay(0), as
      * the other rooms write it, 2 of 147 instructions differ in tla-en. */
     register s32 skip __asm__("r0");
     s32 value = 0x209;
 
     skip = 0;
     *effect = value;
-    Func_020045dc(skip);
+    FieldEffect_StartBlankOverlay(skip);
   } else {
     if (!Event_GetFlag(0xa3d))
       Event_SetFlag(0x201);
@@ -1454,7 +1454,7 @@ void Func_020029a4(void) {
 void Func_020029c8(void) {
   s32 t2;
 
-  Func_020045dc(0);
+  FieldEffect_StartBlankOverlay(0);
   Task_AddFrame((s32)Func_020029a4, 0x480);
   if (gMainRoutineWork.entrance == 0x14) {
     t2 = Event_GetFlag(0x9c5);
@@ -1491,7 +1491,7 @@ void Func_02002a38(void) {
     else if ((u32)((entrance - 7) << 16) <= 0x10000)
       Func_02001c24(1);
   }
-  Func_020045dc(0);
+  FieldEffect_StartBlankOverlay(0);
   // The priority in a local is built before the task function's address (passed
   // directly, the address loads first).
   priority = 0x480;
@@ -1960,14 +1960,14 @@ DEFINE_LEADER_SLIDE_ON_ICE(Func_0200391c, Func_020038e8, gData_02004780__s391c,
 
 extern volatile s16 gData_020062a4;
 
-s32 Func_0200444c(struct Actor *object);
+s32 Actor_HasArrived(struct Actor *object);
 
 #define SHARED_F02003070_NAME Func_02003bc8
 #define SHARED_F02003070_ID2 gData_020062a4
 #define SHARED_F02003070_ID3 Func_020038e8
 #define SHARED_F02003070_ID4 gData_02004780__s391c
 #define SHARED_F02003070_ID5 Import_ActorSelectAnimation
-#define SHARED_F02003070_ID6 Func_0200444c
+#define SHARED_F02003070_ID6 Actor_HasArrived
 #define SHARED_F02003070_ID7 Func_0200385c__s391c
 #define SHARED_F02003070_ID8 Import_FieldCheckSpheresOverlap
 #include "../shared/func_02003070.c"

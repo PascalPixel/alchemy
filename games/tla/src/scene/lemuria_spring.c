@@ -398,7 +398,7 @@ end:
 
 #include "call.h"
 s32 Actor_MoveToObject();
-s32 Func_02001338();
+s32 Summon_ShowLearnedMessage();
 
 /// The spring's statue opens and gives the prize: an item, or, for the first
 /// medal to land in the middle (flag 0x90b), the special prize actor 29 brings.
@@ -464,7 +464,7 @@ void LemuriaSpring_GivePrize(s32 a0) {
     FIELD_AT(t52, s32, 12) = 0x200000;
     FieldActor_SetAnimation(FIELD_AT(&gMainRoutineWork, s32, 532), 0x1c);
     Func_02001400(0x1d);
-    Func_02001338(0x16);
+    Summon_ShowLearnedMessage(0x16);
     Class_GetSeries(0x16);
     Actor_SetPosition(0x1d, 0, 0);
     FieldActor_SetAnimation(FIELD_AT(&gMainRoutineWork, s32, 532), 1);

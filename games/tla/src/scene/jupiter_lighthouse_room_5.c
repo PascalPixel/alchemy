@@ -46,7 +46,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 extern u8 gData_02002fb8[];
 
-void Func_02000054(void) { Func_020029d0(gData_02002fb8); }
+void Func_02000054(void) { Actor_LiftTargetBlock(gData_02002fb8); }
 
 void Actor_RaiseFromCell(s32 id);
 
@@ -66,7 +66,7 @@ void Func_02000064(s32 unused, s32 id) {
     Actor_RaiseFromCell(id);
     Event_SetFlag(0xa09);
   } else {
-    Func_020029d8();
+    Actor_PlaceMovedBlock();
   }
 }
 
@@ -474,7 +474,7 @@ s32 Scene_Initialize(void) {
     angle = 0x4000;
     Actor_SetPositionAndFacing(22, PIXELS(64), PIXELS(225), angle);
   }
-  Func_020029c8(gData_02002fb8);
+  Actor_PlaceBlocks(gData_02002fb8);
   Actor_SetActionCallback(Actor_Get(64), 9);
   object = Actor_Get(23);
   object->scaleX = 0;
@@ -541,7 +541,7 @@ static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame,
                           gPaletteCyclePausesInEvents, gPaletteCycleColors)
 
-void Func_02002888();
+void MapGrid_SetCellHeight();
 
 DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
                                         gPaletteCyclePausesInEvents,
@@ -550,7 +550,7 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
                                         PaletteCycle_Step,
                                         gPaletteCycleUnlitColors)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02002888, Func_02002a30)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight, MapGrid_SetAttributeBAt)
 
 #include "field_sprite.h"
 #include "event_work.h"
@@ -562,7 +562,7 @@ DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 extern const s32 gData_020033e0[];
 extern s32 gData_02003400;
 
-s32 Func_02002a20(s32 x, s32 z, s32 layer);
+s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 /* VIEW(jupiter_lighthouse_room_5): routine Camera_WorldToScreen as void
  * Camera_WorldToScreen(s32 *position); module/field/event_commands.h has void
  * Camera_WorldToScreen(struct EffectVector *position); tried as the
@@ -600,7 +600,7 @@ void Func_02001070(struct Actor *self) {
     u32 a = from[9] & 12;
     to[9] = (s8)((to[9] & ~12) | a);
   }
-  if (Func_02002a20(self->x, self->z, 2) != 255) {
+  if (MapGrid_GetCellBehavior(self->x, self->z, 2) != 255) {
     position[0] = self->x;
     position[1] = self->y;
     position[2] = self->z;

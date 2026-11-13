@@ -158,9 +158,9 @@ MapGrid_WaitForShakeToSettle:
 	.thumb_func
 Actor_SetSpriteColorMode:
 	overlay_veneer Actor_SetSpriteColorModeFar
-	.global Func_02002888
+	.global MapGrid_SetCellHeight
 	.thumb_func
-Func_02002888:
+MapGrid_SetCellHeight:
 	overlay_veneer MapGrid_SetCellHeightFar
 	.global FieldMessage_Show
 	.thumb_func
@@ -318,17 +318,17 @@ Actor_WalkByAndWaitById:
 	.thumb_func
 Actor_SetActionCallback:
 	overlay_veneer Actor_SetActionCallbackFar
-	.global Func_020029c8
+	.global Actor_PlaceBlocks
 	.thumb_func
-Func_020029c8:
+Actor_PlaceBlocks:
 	overlay_veneer Actor_PlaceBlocksFar
-	.global Func_020029d0
+	.global Actor_LiftTargetBlock
 	.thumb_func
-Func_020029d0:
+Actor_LiftTargetBlock:
 	overlay_veneer Actor_LiftTargetBlockFar
-	.global Func_020029d8
+	.global Actor_PlaceMovedBlock
 	.thumb_func
-Func_020029d8:
+Actor_PlaceMovedBlock:
 	overlay_veneer Actor_PlaceMovedBlockFar
 	.global Func_020029e0
 	.thumb_func
@@ -362,17 +362,17 @@ BattleEffect_WaitForArcGroups:
 	.thumb_func
 BattleEffect_SetObjectUpdateMode:
 	overlay_veneer BattleEffect_SetObjectUpdateModeFar
-	.global Func_02002a20
+	.global MapGrid_GetCellBehavior
 	.thumb_func
-Func_02002a20:
+MapGrid_GetCellBehavior:
 	overlay_veneer MapGrid_GetCellBehaviorFar
 	.global MapGrid_SetCellBehavior
 	.thumb_func
 MapGrid_SetCellBehavior:
 	overlay_veneer MapGrid_SetCellBehaviorFar
-	.global Func_02002a30
+	.global MapGrid_SetAttributeBAt
 	.thumb_func
-Func_02002a30:
+MapGrid_SetAttributeBAt:
 	overlay_veneer MapGrid_SetAttributeBAtFar
 	.global Sound_WaitForJingle
 	.thumb_func

@@ -40,11 +40,11 @@ void Func_02000358(void);
 
 void Func_020005e8(s32 a, s32 b, s32 c);
 
-void Func_02000600(struct Particle *particle, s32 unk1, s32 step);
+void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
 void Func_02000560(void *entry, void *destination);
 
-void Func_020005d8(s32 a, s32 b);
+void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -79,7 +79,7 @@ void Func_02000088(s32 mode) {
 void Func_020000b8(void) {
   if (!Event_GetFlag(0x220)) {
     Event_SetFlag(0x220);
-    Func_020005d8(14, 0);
+    Field_RequestBattleFromEncounterTable(14, 0);
   }
 }
 
@@ -101,7 +101,7 @@ s32 Func_02000104(void) {
   ((struct EventFlags *)work)->unkd37 = 0;
   ((struct EventFlags *)work)->unkd36 = 0;
   gMainRoutineWork.eventMode = 2;
-  Func_020005e0();
+  Rope_Initialize();
   Value3((s32 (*)())Func_020005e8, 0, 10, 11);
   Actor_SetAnimation(9, 4);
   return 0;
@@ -112,7 +112,7 @@ s32 Func_02000104(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_020005f8(struct ParticleSprite *sprite, struct Particle *particle);
+void EffectSprite_DrawAtWorldPosition(struct ParticleSprite *sprite, struct Particle *particle);
 
 void Func_0200015c(void) {
   struct ParticleWork *work = Ram_HeapSlots->menuRuntime;
@@ -130,8 +130,8 @@ next:
     s32 attr = sprite->attr;
 
     sprite->attr = (attr & ~0x3ff) | tile;
-    Func_020005f8(sprite, particle);
-    Func_02000600(particle, 63, step);
+    EffectSprite_DrawAtWorldPosition(sprite, particle);
+    BattleEffect_StepVector3(particle, 63, step);
     particle->age++;
   }
   i--;
@@ -324,7 +324,7 @@ void Func_02000418(s32 mode, s32 id, s32 x, s32 z) {
 /// Mode 1 places object kind 354 at (x, z) in pixels; mode 2 grows object
 /// kind 252 there from 0x6666 to full size while it turns, then turns it
 /// opposite the leader's facing and passes scene and entrance on to
-/// Func_020005d8.
+/// Field_RequestBattleFromEncounterTable.
 void Func_02000468(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
   struct Actor *object;
 
@@ -363,7 +363,7 @@ void Func_02000468(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       object->scaleY = Q16_ONE;
       object->facing =
           Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x8000;
-      Func_020005d8(scene, entrance);
+      Field_RequestBattleFromEncounterTable(scene, entrance);
     }
   }
 }

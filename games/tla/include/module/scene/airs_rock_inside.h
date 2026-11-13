@@ -67,8 +67,8 @@ extern s16 gData_02006068[];
 extern s16 gData_02006072[];
 extern s16 gData_0200607e[];
 
-void Func_02005f74(const s16 *list);
-void Func_02005f7c(void);
+void Actor_LiftTargetBlock(const s16 *list);
+void Actor_PlaceMovedBlock(void);
 
 void Func_02002790(void);
 void Func_02004534(void);
@@ -94,12 +94,12 @@ void Func_02002770(void);
 void Func_02004f3c(void);
 void Func_02004eb0(void);
 
-void Func_02005f6c(u16 *actors);
+void Actor_PlaceBlocks(u16 *actors);
 
 void Func_02004cc8(void);
 
 void Import_SceneQueueMusic(s32 id);
-void Func_02005f54(void);
+void Tightrope_Initialize(void);
 s32 Func_02005f5c(s32 slot, s32 a, s32 b);
 
 void Func_02000908(u16 *list);
@@ -134,9 +134,9 @@ void Func_02004880(void);
 extern u32 gData_02005fd8[];
 extern u32 gData_020061f8[];
 
-void Func_02005df4(s32 x, s32 z, s32 terrain, s32 height);
+void MapGrid_SetCellHeight(s32 x, s32 z, s32 terrain, s32 height);
 struct Actor *FieldCamera_GetActor(void);
 void Func_02005f8c(struct Actor *object, s32 cue);
-s32 Func_02005dec(struct Actor *object);
+s32 Actor_HasArrived(struct Actor *object);
 
 #endif

@@ -51,7 +51,7 @@ struct DustPuffWork {
 };
 
 s32 Import_EventSetDestination();
-s32 Func_02002a04();
+s32 Actor_FallOverWithAnimationById();
 void Import_DecompressTaggedLz(void *source, void *destination);
 void Func_02002a0c(struct GlowSprite *sprite, s32 width, s32 height, s32 attr,
                    s32 tile);
@@ -202,7 +202,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(22, 40 << 16, 248 << 16);
     t37 = ((s32)Actor_Get(22));
     FIELD_AT(t37, u16, 6) = 0x4000;
-    Func_02002a04(0x16, 0x4000, 0);
+    Actor_FallOverWithAnimationById(0x16, 0x4000, 0);
     FieldActor_SetSpritePriority(22, 3);
     Actor_SetActionCallback(Actor_Get(22), 8);
   }

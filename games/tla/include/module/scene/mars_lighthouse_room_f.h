@@ -114,7 +114,7 @@ extern u32 gData_02006980[];
 
 void Func_02002800(void);
 
-s32 Func_020054d8(s32 terrain, s32 x, s32 z);
+s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 terrain, s32 x, s32 z);
 
 extern struct WarpWork gData_020070a8;
 
@@ -125,7 +125,7 @@ s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 radiusA, struct Position *b,
 
 extern volatile s16 gData_020074c8;
 
-s32 Func_02005530(struct Actor *object);
+s32 Actor_HasArrived(struct Actor *object);
 
 void Func_0200410c(void);
 void Func_02004080(struct Actor *object);

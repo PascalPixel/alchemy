@@ -79,10 +79,10 @@ void FieldEffect_SetAttached(s32 id, s32 a);
 void FieldCamera_WaitForArrival(void);
 void FieldCamera_MoveToActorById(s32 id, s32 value);
 void Func_02000db0(s32 value);
-void Func_02000de0(const s16 *data);
-void Func_02000de8(const s16 *data);
-void Func_02000df0(void);
-void Func_02000df8(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+void Actor_PlaceBlocks(const s16 *data);
+void Actor_LiftTargetBlock(const s16 *data);
+void Actor_PlaceMovedBlock(void);
+void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Sound_Play(s32 cue);
 void Izumo_RotateWaterColors(void);
 void Izumo_StopThePartyToThankThem(void);
@@ -104,7 +104,7 @@ void Izumo_TellTheCloudBrandLegend(void);
 #include "version.h"
 #include "frame.h"
 
-void Izumo_StartMovingStone(void) { Func_02000de8(gIzumo_MovableStones); }
+void Izumo_StartMovingStone(void) { Actor_LiftTargetBlock(gIzumo_MovableStones); }
 
 void Izumo_FinishMovingStone(void) {
   struct Actor *actor = Actor_GetById(12);
@@ -116,7 +116,7 @@ void Izumo_FinishMovingStone(void) {
    * Call6; as direct calls to GameFlag_Get, GameFlag_Set,
    * GameFlag_Clear and Map_CopyCellAttributeRect, 27 of 135 instructions
    * differ in tla-en. */
-  Func_02000df0();
+  Actor_PlaceMovedBlock();
   Sound_Play(132);
   if (x == 20 && z == 9) {
     if (Flag_IsSet(FLAG_REVEALING)) {
@@ -167,13 +167,13 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void Izumo_CycloneFirstPatch(void) {
-  Call7((void (*)())Func_02000df8, 53, 5, 8, 9, 23, 30, 0);
+  Call7((void (*)())TileCopies_CopyTouchedCells, 53, 5, 8, 9, 23, 30, 0);
 }
 
 void Izumo_CycloneSecondPatch(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  Call7((void (*)())Func_02000df8, 53, 5, 8, 9, 23, 30, 0);
+  Call7((void (*)())TileCopies_CopyTouchedCells, 53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Get(3999)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 64, PIXELS(456),
           PIXELS(584));
@@ -192,7 +192,7 @@ void Izumo_CycloneSecondPatch(void) {
 void Izumo_CycloneThirdPatch(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  Call7((void (*)())Func_02000df8, 53, 5, 8, 9, 23, 30, 0);
+  Call7((void (*)())TileCopies_CopyTouchedCells, 53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Get(4000)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 65, PIXELS(472),
           PIXELS(552));
@@ -210,21 +210,21 @@ void Izumo_CycloneThirdPatch(void) {
 }
 
 void Izumo_CycloneFourthPatch(void) {
-  Call7((void (*)())Func_02000df8, 44, 5, 8, 5, 7, 32, 0);
+  Call7((void (*)())TileCopies_CopyTouchedCells, 44, 5, 8, 5, 7, 32, 0);
 }
 
 void Izumo_CycloneFifthPatch(void) {
-  Call7((void (*)())Func_02000df8, 55, 0, 4, 2, 16, 23, 0);
+  Call7((void (*)())TileCopies_CopyTouchedCells, 55, 0, 4, 2, 16, 23, 0);
 }
 
 void Izumo_CycloneSixthPatch(void) {
-  Call7((void (*)())Func_02000df8, 42, 0, 6, 2, 9, 18, 0);
+  Call7((void (*)())TileCopies_CopyTouchedCells, 42, 0, 6, 2, 9, 18, 0);
 }
 
 void Izumo_CycloneSeventhPatch(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  Call7((void (*)())Func_02000df8, 42, 0, 6, 2, 9, 18, 0);
+  Call7((void (*)())TileCopies_CopyTouchedCells, 42, 0, 6, 2, 9, 18, 0);
   if (!GameFlag_Get(4001)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 66, PIXELS(168),
           PIXELS(328));
@@ -241,11 +241,11 @@ void Izumo_CycloneSeventhPatch(void) {
 }
 
 void Izumo_CycloneEighthPatch(void) {
-  Call7((void (*)())Func_02000df8, 49, 0, 5, 4, 24, 16, 0);
+  Call7((void (*)())TileCopies_CopyTouchedCells, 49, 0, 5, 4, 24, 16, 0);
 }
 
 void Izumo_CycloneNinthPatch(void) {
-  Call7((void (*)())Func_02000df8, 36, 0, 5, 3, 16, 9, 0);
+  Call7((void (*)())TileCopies_CopyTouchedCells, 36, 0, 5, 3, 16, 9, 0);
 }
 
 void Izumo_EnterDoor(void) {
@@ -509,7 +509,7 @@ s32 Scene_Initialize(void) {
   GameFlag_Clear(FLAG_THANKFUL_ONE_WAITS);
   WORD_AT(Ram_HeapSlots->eventWork, 428) = 0x100;
   Task_Add(Izumo_RotateWaterColors, TASK_PASS_FRAME);
-  Func_02000de0(gIzumo_MovableStones);
+  Actor_PlaceBlocks(gIzumo_MovableStones);
   if (GameFlag_Get(FLAG_SERPENT_SLAIN)) {
     BYTE_AT(Actor_GetById(15), 90) = 2;
     Actor_SetModeById(25, 5);

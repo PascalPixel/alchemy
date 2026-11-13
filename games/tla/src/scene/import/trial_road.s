@@ -146,9 +146,9 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 MapGrid_CopyCellPictureCellsRect:
 	overlay_veneer MapGrid_CopyCellPictureCellsRectFar
-	.global Func_02005828
+	.global Map_CopyRawCellsRect
 	.thumb_func
-Func_02005828:
+Map_CopyRawCellsRect:
 	overlay_veneer Map_CopyRawCellsRectFar
 	.global Actor_SetSpriteFlags
 	.thumb_func
@@ -182,9 +182,9 @@ PartyInventory_Discard:
 	.thumb_func
 InventorySnapshot_Restore:
 	overlay_veneer InventorySnapshot_RestoreFar
-	.global Func_02005870
+	.global Inventory_ClearSlot
 	.thumb_func
-Func_02005870:
+Inventory_ClearSlot:
 	overlay_veneer Inventory_ClearSlotFar
 	.global Event_Wait
 	.thumb_func
@@ -298,9 +298,9 @@ Actor_ArmCallback:
 	.thumb_func
 Actor_FaceDirectionById:
 	overlay_veneer Actor_FaceDirectionByIdFar
-	.global Func_02005958
+	.global Actor_DisableById
 	.thumb_func
-Func_02005958:
+Actor_DisableById:
 	overlay_veneer Actor_DisableByIdFar
 	.global Actor_ShowEmoteById
 	.thumb_func
@@ -354,9 +354,9 @@ Field_FindNearbyTalkTarget:
 	.thumb_func
 Import_FieldTryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
-	.global Func_020059c8
+	.global Field_ClimbDown
 	.thumb_func
-Func_020059c8:
+Field_ClimbDown:
 	overlay_veneer Field_ClimbDownFar
 	.global Event_StartScreenTransition
 	.thumb_func
@@ -386,9 +386,9 @@ Actor_WalkByById:
 	.thumb_func
 Actor_WalkByAndWaitById:
 	overlay_veneer Actor_WalkByAndWaitByIdFar
-	.global Func_02005a08
+	.global Tightrope_Initialize
 	.thumb_func
-Func_02005a08:
+Tightrope_Initialize:
 	overlay_veneer Tightrope_InitializeFar
 	.global Func_02005a10
 	.thumb_func
@@ -398,13 +398,13 @@ Func_02005a10:
 	.thumb_func
 Func_02005a18:
 	overlay_veneer Actor_GetCellIndexFar
-	.global Func_02005a20
+	.global MapCollision_FindOrAddTag
 	.thumb_func
-Func_02005a20:
+MapCollision_FindOrAddTag:
 	overlay_veneer MapCollision_FindOrAddTagFar
-	.global Func_02005a28
+	.global Actor_FindAtCell
 	.thumb_func
-Func_02005a28:
+Actor_FindAtCell:
 	overlay_veneer Actor_FindAtCellFar
 	.global Func_02005a30
 	.thumb_func

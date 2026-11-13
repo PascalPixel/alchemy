@@ -29,8 +29,8 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-void *Func_02000d00(s32, s32, s32, s32);
-void Func_02000d08(s32, s32);
+void *Portrait_OpenWindow(s32, s32, s32, s32);
+void MessageArgument_Push(s32, s32);
 void Message_CloseFinishedWindows(void);
 void Message_OpenWindow(s32, s32, s32, s32);
 s32 Message_AllTyped(void);
@@ -46,14 +46,14 @@ void Test_ReceiveFlint(s32 message, s32 count) {
 
   /* FAKEMATCH(volatile): the input read through a volatile pointer; as a plain
    * pointer, 31 of 94 instructions differ in tla-en. */
-  window = Func_02000d00(206, 0, 0, 0);
+  window = Portrait_OpenWindow(206, 0, 0, 0);
   i = 0;
   if (i >= count)
     goto done;
 loop:
-  Func_02000d08(1, 1);
-  Func_02000d08(5, 2);
-  Func_02000d08(0x1e240, 5);
+  MessageArgument_Push(1, 1);
+  MessageArgument_Push(5, 2);
+  MessageArgument_Push(0x1e240, 5);
   Message_CloseFinishedWindows();
   Message_OpenWindow(message, 5, 0, 0x22);
   frames = 0;
@@ -103,15 +103,15 @@ done:
   Window_Close(window, 2);
 }
 
-void Func_02000e40(s32 kind, s32 value);
-void Func_02000e48(void);
-void Func_02000e50(s32 kind, s32 value);
-void Func_02000e60(s32 *a, s32 *b);
-void Func_02000d20(s32 index);
-void Func_02000d38(s32 value);
-void Func_02000dd0(s32 value);
-void Func_02000d28(void);
-void Func_02000d30(void);
+void Shop_Run(s32 kind, s32 value);
+void Sanctum_Run(void);
+void Inn_CheckIn(s32 kind, s32 value);
+void ItemPicker_RunMode1(s32 *a, s32 *b);
+void NameEntry_EditMemberName(s32 index);
+void Summon_ShowLearnedMessage(s32 value);
+void Class_GetSeries(s32 value);
+void DebugBrowser_Icons(void);
+void DebugBrowser_Portraits(void);
 void Test_ReceiveFlint(s32 message, s32 count);
 
 void Func_0200012c(void) {
@@ -134,26 +134,26 @@ void Func_02000178(void) {
                     MsgRightWhenI - MsgWelcomeWearyWanderers);
 }
 
-void Func_02000190(s32 value) { Func_02000e40(1, value); }
+void Func_02000190(s32 value) { Shop_Run(1, value); }
 
-void Func_0200019c(s32 value) { Func_02000e40(2, value); }
+void Func_0200019c(s32 value) { Shop_Run(2, value); }
 
-void Func_020001a8(s32 value) { Func_02000e40(3, value); }
+void Func_020001a8(s32 value) { Shop_Run(3, value); }
 
-void Func_020001b4(s32 value) { Func_02000e40(24, value); }
+void Func_020001b4(s32 value) { Shop_Run(24, value); }
 
-void Func_020001c0(s32 value) { Func_02000e50(0, value); }
+void Func_020001c0(s32 value) { Inn_CheckIn(0, value); }
 
-void Func_020001cc(void) { Func_02000e48(); }
+void Func_020001cc(void) { Sanctum_Run(); }
 
 void Party_AdjustCoins(s32 amount);
-void Func_02000d08(s32 value, s32 slot);
+void MessageArgument_Push(s32 value, s32 slot);
 u16 *Func_02000d48(s32 item);
-s32 Func_02000dc8(s32 item);
-void Func_02000e28(s32 item, s32 mode);
-void Func_02000e58(s32 actor);
-void Func_02000e68(s32 value);
-s32 Func_02000e70(void);
+s32 PartyInventory_FindRoom(s32 item);
+void ItemDisplay_ShowItem(s32 item, s32 mode);
+void Forge_Run(s32 actor);
+void Forge_SetItem(s32 value);
+s32 Forge_GetItem(void);
 
 void Func_020001d4(s32 actor) {
   s32 message;
@@ -173,7 +173,7 @@ void Func_020001d4(s32 actor) {
   } else if (Event_GetFlag(0x200)) {
     Event_SetMessageId((s32)MsgICanTWait);
     Event_ShowMessageAndWait(actor, 0);
-  } else if (Func_02000e70()) {
+  } else if (Forge_GetItem()) {
     Event_SetMessageId((s32)MsgMyWifeHas);
     Event_ShowMessageAndWait(actor, 0);
   } else {
@@ -183,8 +183,8 @@ void Func_020001d4(s32 actor) {
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_SetMessageId(message + 1);
       Event_ShowMessageAndWait(actor, 0);
-      Func_02000e58(actor);
-      if (Func_02000e70())
+      Forge_Run(actor);
+      if (Forge_GetItem())
         Event_SetFlag(0x200);
     } else {
       Event_SetMessageId(message + 2);
@@ -200,20 +200,20 @@ void Func_020002a8(s32 actor) {
   } else if (Event_GetFlag(0x200)) {
     Event_SetMessageId((s32)MsgItTakesOur);
     Event_ShowMessageAndWait(actor, 0);
-  } else if (Func_02000e70()) {
-    s32 item = Func_02000e70();
+  } else if (Forge_GetItem()) {
+    s32 item = Forge_GetItem();
     u32 price = *Func_02000d48(item);
     s32 message;
 
-    Func_02000d08(item, 2);
-    Func_02000d08(price, 5);
+    MessageArgument_Push(item, 2);
+    MessageArgument_Push(price, 5);
     message = (s32)MsgHereSThe;
     Event_SetMessageId(message);
     FieldMessage_ShowAtActor(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) != 0) {
       Event_SetMessageId(message + 1);
       Event_ShowMessageAndWait(actor, 0);
-    } else if (Func_02000dc8(item) < 0) {
+    } else if (PartyInventory_FindRoom(item) < 0) {
       Event_SetMessageId(message + 2);
       Event_ShowMessageAndWait(actor, 0);
     } else if ((u32)gMainRoutineWork.coins < price) {
@@ -222,9 +222,9 @@ void Func_020002a8(s32 actor) {
     } else {
       Event_SetMessageId(message + 4);
       Event_ShowMessageAndWait(actor, 0);
-      Func_02000e28(item, 3);
+      ItemDisplay_ShowItem(item, 3);
       PartyInventory_GiveItem(item, 0);
-      Func_02000e68(0);
+      Forge_SetItem(0);
       Party_AdjustCoins(-price);
     }
   } else {
@@ -236,14 +236,14 @@ void Func_020002a8(s32 actor) {
 void Func_02000394(void) {
   s32 pos[2];
 
-  Func_02000e60(&pos[1], &pos[0]);
+  ItemPicker_RunMode1(&pos[1], &pos[0]);
 }
 
 void Func_020003a4(void) {
   s32 i;
 
   for (i = 0; i < 8; i++)
-    Func_02000d20(i);
+    NameEntry_EditMemberName(i);
 }
 
 void Party_RemoveMember(s32 owner);
@@ -440,7 +440,7 @@ void Inventory_Break(s32 owner, s32 slot);
  * `Func_02000d48'. */
 extern struct ItemDefinition *
 Func_02000d48__s0520(s32 item) __asm__("Func_02000d48");
-void Func_02000dc0(void);
+void GameFlag_RefreshLureCap(void);
 
 void Func_02000520(void) {
   u8 *unit;
@@ -482,7 +482,7 @@ void Func_02000520(void) {
       break;
     }
   }
-  Func_02000dc0();
+  GameFlag_RefreshLureCap();
 }
 
 void Func_020005fc(s32 owner, s32 element, s32 djinn, s32 activate) {
@@ -506,7 +506,7 @@ void Func_02000638(void) {
     Func_020005fc(6, 3, djinn, 1);
   for (djinn = 7; djinn < 14; djinn++)
     Func_020005fc(7, 1, djinn, 1);
-  Func_02000dc0();
+  GameFlag_RefreshLureCap();
 }
 #else
 void Func_02000638(void) {
@@ -518,35 +518,35 @@ void Func_02000638(void) {
     for (djinn = 0; djinn < 18; djinn++)
       Djinn_GiveToParty(element, djinn);
   }
-  Func_02000dc0();
+  GameFlag_RefreshLureCap();
 }
 #endif
 
 void Func_02000664(void) {}
 
-void Func_02000e40(s32 kind, s32 value);
-void Func_02000e48(void);
-void Func_02000e50(s32 kind, s32 value);
-void Func_02000e60(s32 *a, s32 *b);
-void Func_02000d20(s32 index);
-void Func_02000d38(s32 value);
-void Func_02000dd0(s32 value);
-void Func_02000d28(void);
-void Func_02000d30(void);
+void Shop_Run(s32 kind, s32 value);
+void Sanctum_Run(void);
+void Inn_CheckIn(s32 kind, s32 value);
+void ItemPicker_RunMode1(s32 *a, s32 *b);
+void NameEntry_EditMemberName(s32 index);
+void Summon_ShowLearnedMessage(s32 value);
+void Class_GetSeries(s32 value);
+void DebugBrowser_Icons(void);
+void DebugBrowser_Portraits(void);
 
 void Func_02000668(void) {
   PartyInventory_GiveItem(11, 0);
-  Func_02000d38(22);
-  Func_02000dd0(22);
+  Summon_ShowLearnedMessage(22);
+  Class_GetSeries(22);
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-void Func_02000db0(void);
+void Party_AddIsaacsParty(void);
 
 /// The scene's first entry: sets screen effect 256 and event mode 2, puts
 /// objects 16 to 19 in mode 5 and 30 to 33 in mode 6, and runs
-/// Func_02000db0 when the party came in by entrance 99.
+/// Party_AddIsaacsParty when the party came in by entrance 99.
 s32 Func_02000688(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   s32 *effect = &work->screenEffect;
@@ -563,7 +563,7 @@ s32 Func_02000688(void) {
   Actor_SetModeById(32, 6);
   Actor_SetModeById(33, 6);
   if (party->entrance == 99)
-    Func_02000db0();
+    Party_AddIsaacsParty();
   return 0;
 }
 
@@ -753,9 +753,9 @@ void Func_02000848(void) {
   Window_Close(details, 2);
 }
 
-void Func_02000aac(void) { Func_02000d28(); }
+void Func_02000aac(void) { DebugBrowser_Icons(); }
 
-void Func_02000ab4(void) { Func_02000d30(); }
+void Func_02000ab4(void) { DebugBrowser_Portraits(); }
 
 void Func_02000abc(s32 mode, s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
   if (mode == 1)
@@ -798,12 +798,12 @@ void Func_02000b50(s32 mode, s32 id, s32 x, s32 z) {
   }
 }
 
-void Func_02000e20(s32 scene, s32 entrance);
+void Field_RequestBattleFromEncounterTable(s32 scene, s32 entrance);
 
 /// Mode 1 places object kind 354 at (x, z) in pixels; mode 2 grows object
 /// kind 252 there from 0x6666 to full size while it turns, then turns it
 /// opposite the leader's facing and passes scene and entrance on to
-/// Func_02000e20.
+/// Field_RequestBattleFromEncounterTable.
 void Func_02000ba0(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
   struct Actor *object;
 
@@ -842,7 +842,7 @@ void Func_02000ba0(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       object->scaleY = Q16_ONE;
       object->facing =
           Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x8000;
-      Func_02000e20(scene, entrance);
+      Field_RequestBattleFromEncounterTable(scene, entrance);
     }
   }
 }

@@ -118,9 +118,9 @@ FieldMessage_Show:
 	.thumb_func
 MessageArgument_Push:
 	overlay_veneer MessageArgument_PushFar
-	.global Func_02004044
+	.global Party_AddIsaacsParty
 	.thumb_func
-Func_02004044:
+Party_AddIsaacsParty:
 	overlay_veneer Party_AddIsaacsPartyFar
 	.global Party_GetAverageLevel
 	.thumb_func
@@ -370,9 +370,9 @@ ObjectTable_Snapshot:
 	.thumb_func
 Actor_Spawn:
 	overlay_veneer Actor_SpawnFar
-	.global Func_0200423c
+	.global TileCopies_CopyTouchedCells
 	.thumb_func
-Func_0200423c:
+TileCopies_CopyTouchedCells:
 	overlay_veneer TileCopies_CopyTouchedCellsFar
 	.global Func_02004244
 	.thumb_func
@@ -406,13 +406,13 @@ BattleEffect_WaitForArcGroups:
 	.thumb_func
 BattleEffect_SetObjectUpdateMode:
 	overlay_veneer BattleEffect_SetObjectUpdateModeFar
-	.global Func_02004284
+	.global Teleport_PlayWhirl
 	.thumb_func
-Func_02004284:
+Teleport_PlayWhirl:
 	overlay_veneer Teleport_PlayWhirlFar
-	.global Func_0200428c
+	.global Teleport_PlaySparks
 	.thumb_func
-Func_0200428c:
+Teleport_PlaySparks:
 	overlay_veneer Teleport_PlaySparksFar
 	.global Shop_Run
 	.thumb_func

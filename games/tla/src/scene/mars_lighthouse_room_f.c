@@ -24,16 +24,16 @@
 #include "module/tla.h"
 #include "scene_ids.h"
 
-void Func_020055b8(s32 id);
-void Func_02005638(s32 a0);
-void Func_02005670(void);
+void Actor_DisableById(s32 id);
+void FieldEffect_StartBlankOverlay(s32 a0);
+void Tightrope_Initialize(void);
 void Func_02005678(s32 a0, s32 a1, s32 a2);
 void Func_020056b0(s32 id);
 void Func_020056b8(s32 id);
 void TileMap_ConvertBuffer(s32 scene, s32 a1);
 extern u16 gData_02007088[];
 extern u16 gData_0200708c[];
-void Func_02005540();
+void MapGrid_SetCellHeight();
 void Func_020056a8();
 extern s32 Data_02007064;
 s32 Func_020056a0(s32 x, s32 z, s32 layer);
@@ -119,13 +119,13 @@ void Func_02000170(void) {
   position[1] = (object->y + 0x40000) & 0xfff80000;
   position[2] = object->z;
   FieldVector_AddPolarOffset(0x100000, angle, position);
-  object = Func_02005680(position, 1);
+  object = Actor_FindAtCell(position, 1);
   if (object != NULL) {
     position[0] = object->x;
     position[1] = object->y;
     position[2] = object->z;
     FieldVector_AddPolarOffset(0x100000, angle, position);
-    if (Func_02005680(position, 1) != NULL)
+    if (Actor_FindAtCell(position, 1) != NULL)
       return;
   }
   Func_02005688();
@@ -689,7 +689,7 @@ s32 Scene_Initialize(void) {
   Flag_Set(0x112);
   Func_020025b0();
   if (scene == (s32)&SceneId_Ov6adRoom1) {
-    Func_02005638(0);
+    FieldEffect_StartBlankOverlay(0);
     ((struct SceneWork *)heap->eventWork)->unk1ac = value;
     if (entrance - 1 <= 1U) {
       Func_02002624(gData_02005bf0, gData_02005bf6, Func_02000514, 88);
@@ -707,14 +707,14 @@ s32 Scene_Initialize(void) {
         Func_020004bc(1, 0);
     } else {
       Func_02002624(gData_02005bfc, gData_02005c0e, 0, 88);
-      Func_020055b8(15);
-      Func_020055b8(16);
+      Actor_DisableById(15);
+      Actor_DisableById(16);
       Func_02004938(15);
       Func_02004938(16);
       Func_020003b4();
     }
   } else if (scene == (s32)&SceneId_Ov6adRoom2) {
-    Func_02005638(0);
+    FieldEffect_StartBlankOverlay(0);
     ((struct SceneWork *)heap->eventWork)->unk1ac = value;
     Func_02002624(gData_02005c14, gData_02005c26, Func_02001468, 88);
     Func_020027cc(3, 1);
@@ -744,9 +744,9 @@ s32 Scene_Initialize(void) {
       Flag_Set(0x220);
       Flag_Set(0x221);
     }
-    Func_020055b8(8);
-    Func_020055b8(9);
-    Func_020055b8(10);
+    Actor_DisableById(8);
+    Actor_DisableById(9);
+    Actor_DisableById(10);
     Func_02004938(8);
     Func_02004938(9);
     Func_02004938(10);
@@ -771,7 +771,7 @@ s32 Scene_Initialize(void) {
       Func_02000d80();
     Task_Add(Func_02000e68, 0x480);
   } else if (scene == (s32)&SceneId_Ov6adRoom3) {
-    Func_02005638(0);
+    FieldEffect_StartBlankOverlay(0);
     ((struct SceneWork *)heap->eventWork)->unk1ac = value;
     JupiterLighthouse_LoadPalettesZero(1);
     LightSprites_InitB();
@@ -802,9 +802,9 @@ s32 Scene_Initialize(void) {
         Func_02003d80();
     }
   } else if (scene == (s32)&SceneId_Ov6adRoom4) {
-    Func_02005638(0);
+    FieldEffect_StartBlankOverlay(0);
     ((struct SceneWork *)heap->eventWork)->unk1ac = value;
-    Func_02005670();
+    Tightrope_Initialize();
     Func_02005678(0, 8, 9);
     BYTE_AT(Actor_GetById(8), 98) = 1;
     BYTE_AT(Actor_GetById(9), 98) = 1;
@@ -890,7 +890,7 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(JupiterLighthouse_LoadPalettesZero,
 
 #include "event_inline.h"
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02005540, Func_020056a8)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight, Func_020056a8)
 
 #include "actor.h"
 #include "main_routine_work.h"

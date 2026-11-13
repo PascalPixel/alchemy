@@ -371,7 +371,7 @@ void Func_02000550(void) {
   s32 direction;
   s32 i;
 
-  if (Func_02005834(0) == 1) {
+  if (Rope_GetState(0) == 1) {
     direction = gData_02005af0;
     Func_020020f0(0);
     Event_SetFlag(515);
@@ -1206,7 +1206,7 @@ void Func_02001ac0(void) {
 }
 
 void Func_02001adc(s32 id) {
-  Func_02005784(id);
+  Actor_DisableById(id);
   FieldActor_SetSpriteColor(Actor_Get(id), 15);
   FieldActor_SetSpritePriority(id, 1);
   Actor_Get(id)->priorityFlags |= 2;
@@ -1401,7 +1401,7 @@ void Func_020020b0(s32 id, s32 direction, s32 value) {
 
   Func_02005624__gabomba_statue(object, gData_02005940[(direction + 1) & 3]);
   object->unk5c[0] = 2;
-  Func_0200561c(animation, value);
+  Sprite_SetAnimationTimers(animation, value);
 }
 
 void Func_020020f0(s32 direction) {

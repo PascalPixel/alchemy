@@ -58,7 +58,7 @@ DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gPaletteCycleTimer,
                           gPaletteCycleIndex, gPaletteSlots,
                           gPaletteCycleBright, gPaletteColors)
 
-void Func_02004284(void);
+void Teleport_PlayWhirl(void);
 
 void Func_02000328(void) {
   struct ContigoEventWork *work = Ram_HeapSlots->eventWork;
@@ -71,7 +71,7 @@ void Func_02000328(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Contigo_StartFastPaletteCycle();
-  Func_02004284();
+  Teleport_PlayWhirl();
   wait(40);
   Contigo_StopPaletteCycle();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);

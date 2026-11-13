@@ -34,7 +34,7 @@
 #include "module/scene/scene.h"
 #include "module/tla.h"
 
-s32 Func_02001d2c(s32 x, s32 z, s32 layer);
+s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -54,17 +54,17 @@ struct MainRoutineWork254 {
 extern const u8 gData_020022e8[];
 extern const u8 gData_0200236c[];
 
-void Func_02001d44(s32 a, s32 b, s32 c);
+void FieldItem_JumpToLeader(s32 a, s32 b, s32 c);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Func_02001d1c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
-  Func_02001d1c(a, b, c, d, e, f, g);
+  TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
 static __inline__ void Func_02001d44_(s32 a, s32 b, s32 c) {
-  Func_02001d44(a, b, c);
+  FieldItem_JumpToLeader(a, b, c);
 }
 
 void Func_02000054(void) { Func_02001d1c_(69, 0, 4, 4, 67, 24, 1); }
@@ -195,10 +195,10 @@ s32 Scene_Initialize(void) {
     JupiterLighthouse_LoadPalettes(1);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
         gMainRoutineWork.entrance == 4)
-      Func_02001d3c(gMainRoutineWork.currentOwner);
+      Actor_DepartInRing(gMainRoutineWork.currentOwner);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
         gMainRoutineWork.entrance == 6)
-      Func_02001d3c(gMainRoutineWork.currentOwner);
+      Actor_DepartInRing(gMainRoutineWork.currentOwner);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov699Room2) {
     *(volatile u16 *)0x04000052 = 0x1008;
@@ -243,7 +243,7 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
                                         PaletteCycle_StepAt,
                                         gPaletteCycleUnlitColors)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02001c74, Func_02001d34)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02001c74, MapGrid_SetAttributeBAt)
 
 #include "event_work.h"
 
@@ -257,6 +257,6 @@ extern const s32 gWhirlwindEndScript[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, Func_02001d2c,
+DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, MapGrid_GetCellBehavior,
                               Position_FlatDistance, gWhirlwindEndScript,
                               Data_020023ac)

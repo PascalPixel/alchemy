@@ -46,9 +46,9 @@ Actor_SetSpriteFlags:
 	.thumb_func
 Actor_SetSpriteColorMode:
 	overlay_veneer Actor_SetSpriteColorModeFar
-	.global Func_02001420
+	.global MapGrid_SetCellHeight
 	.thumb_func
-Func_02001420:
+MapGrid_SetCellHeight:
 	overlay_veneer MapGrid_SetCellHeightFar
 	.global Event_Wait
 	.thumb_func
@@ -174,9 +174,9 @@ Event_StartScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_02001520
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_02001520:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolvePendingActions
 	.thumb_func
@@ -210,21 +210,21 @@ Actor_WatchAndSetScript:
 	.thumb_func
 Actor_SetActionCallback:
 	overlay_veneer Actor_SetActionCallbackFar
-	.global Func_02001568
+	.global Rope_Initialize
 	.thumb_func
-Func_02001568:
+Rope_Initialize:
 	overlay_veneer Rope_InitializeFar
 	.global Func_02001570
 	.thumb_func
 Func_02001570:
 	overlay_veneer Rope_PlaceFar
-	.global Func_02001578
+	.global FlagBlock_PlaceAllMarkingEdges
 	.thumb_func
-Func_02001578:
+FlagBlock_PlaceAllMarkingEdges:
 	overlay_veneer FlagBlock_PlaceAllMarkingEdgesFar
-	.global Func_02001580
+	.global FlagBlock_ApplyFlags
 	.thumb_func
-Func_02001580:
+FlagBlock_ApplyFlags:
 	overlay_veneer FlagBlock_ApplyFlagsFar
 	.global Func_02001588
 	.thumb_func
@@ -266,17 +266,17 @@ BattleEffect_SetObjectUpdateMode:
 	.thumb_func
 MapGrid_SetCellBehavior:
 	overlay_veneer MapGrid_SetCellBehaviorFar
-	.global Func_020015d8
+	.global Actor_TakeLeaderLayer
 	.thumb_func
-Func_020015d8:
+Actor_TakeLeaderLayer:
 	overlay_veneer Actor_TakeLeaderLayerFar
 	.global BattleEffect_FillOverlayTiles
 	.thumb_func
 BattleEffect_FillOverlayTiles:
 	overlay_veneer BattleEffect_FillOverlayTilesFar
-	.global Func_020015e8
+	.global EffectSprite_InitFromSlot94
 	.thumb_func
-Func_020015e8:
+EffectSprite_InitFromSlot94:
 	overlay_veneer EffectSprite_InitFromSlot94Far
 	.global BattleEffect_DrawSpriteAtWorldPosition
 	.thumb_func

@@ -102,9 +102,9 @@ GameFlag_Set:
 	.thumb_func
 GameFlag_Clear:
 	overlay_veneer GameFlag_ClearFar
-	.global Func_0200561c
+	.global Sprite_SetAnimationTimers
 	.thumb_func
-Func_0200561c:
+Sprite_SetAnimationTimers:
 	overlay_veneer Sprite_SetAnimationTimersFar
 	.global Actor_SelectAnimation
 	.thumb_func
@@ -282,9 +282,9 @@ Actor_FaceDirectionById:
 	.thumb_func
 Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
-	.global Func_02005784
+	.global Actor_DisableById
 	.thumb_func
-Func_02005784:
+Actor_DisableById:
 	overlay_veneer Actor_DisableByIdFar
 	.global Actor_ShowEmoteById
 	.thumb_func
@@ -362,17 +362,17 @@ Actor_WatchAndSetScript:
 	.thumb_func
 ObjectTable_Snapshot:
 	overlay_veneer ObjectTable_SnapshotFar
-	.global Func_02005824
+	.global Rope_Initialize
 	.thumb_func
-Func_02005824:
+Rope_Initialize:
 	overlay_veneer Rope_InitializeFar
 	.global Func_0200582c
 	.thumb_func
 Func_0200582c:
 	overlay_veneer Rope_CoilFar
-	.global Func_02005834
+	.global Rope_GetState
 	.thumb_func
-Func_02005834:
+Rope_GetState:
 	overlay_veneer Rope_GetStateFar
 	.global Func_0200583c
 	.thumb_func

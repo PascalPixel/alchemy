@@ -142,7 +142,7 @@ DEFINE_LEADER_SLIDE_ON_ICE(Func_02004140, Func_0200410c, gData_02005f38__s3d80,
 #define SHARED_F02003070_ID3 Func_0200410c
 #define SHARED_F02003070_ID4 gData_02005f38__s3d80
 #define SHARED_F02003070_ID5 Func_02005480
-#define SHARED_F02003070_ID6 Func_02005530
+#define SHARED_F02003070_ID6 Actor_HasArrived
 #define SHARED_F02003070_ID7 Func_02004080
 #define SHARED_F02003070_ID8 Import_FieldCheckSpheresOverlap
 #include "../shared/func_02003070.c"
@@ -272,7 +272,7 @@ DEFINE_PUSH_TARGET_PUSH(Func_02004d10, gData_02005f64__s4700, Func_02004a44,
                         Actor_StopAtPushTarget, Func_02005480,
                         gData_02005f7c__s4700)
 
-DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Actor_StopAtPushTarget, Func_02005680,
+DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Actor_StopAtPushTarget, Actor_FindAtCell,
                                  gData_02005f58, MapGrid_CheckCollision)
 #undef ABS
 #undef PIXELS

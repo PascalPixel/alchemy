@@ -118,9 +118,9 @@ Actor_SetSpriteFlags:
 	.thumb_func
 Actor_SetSpritePriorityDirect:
 	overlay_veneer Actor_SetSpritePriorityDirectFar
-	.global Func_02004a7c
+	.global Actor_HasArrived
 	.thumb_func
-Func_02004a7c:
+Actor_HasArrived:
 	overlay_veneer Actor_HasArrivedFar
 	.global Party_FindOwnerWithAction
 	.thumb_func
@@ -322,13 +322,13 @@ Actor_WatchAndSetScript:
 	.thumb_func
 Event_NoOp:
 	overlay_veneer Event_NoOpFar
-	.global Func_02004c14
+	.global Rope_Initialize
 	.thumb_func
-Func_02004c14:
+Rope_Initialize:
 	overlay_veneer Rope_InitializeFar
-	.global Func_02004c1c
+	.global Tightrope_Initialize
 	.thumb_func
-Func_02004c1c:
+Tightrope_Initialize:
 	overlay_veneer Tightrope_InitializeFar
 	.global Func_02004c24
 	.thumb_func
@@ -342,13 +342,13 @@ Func_02004c2c:
 	.thumb_func
 Func_02004c34:
 	overlay_veneer Actor_GetCellIndexFar
-	.global Func_02004c3c
+	.global Actor_FindAtCell
 	.thumb_func
-Func_02004c3c:
+Actor_FindAtCell:
 	overlay_veneer Actor_FindAtCellFar
-	.global Func_02004c44
+	.global Leader_CanPushObjectAhead
 	.thumb_func
-Func_02004c44:
+Leader_CanPushObjectAhead:
 	overlay_veneer Leader_CanPushObjectAheadFar
 	.global Func_02004c4c
 	.thumb_func
@@ -358,9 +358,9 @@ Func_02004c4c:
 	.thumb_func
 Actor_SetSpriteRotationById:
 	overlay_veneer Actor_SetSpriteRotationByIdFar
-	.global Func_02004c5c
+	.global Actor_FallOverWithAnimationById
 	.thumb_func
-Func_02004c5c:
+Actor_FallOverWithAnimationById:
 	overlay_veneer Actor_FallOverWithAnimationByIdFar
 	.global Func_02004c64
 	.thumb_func
@@ -378,17 +378,17 @@ BattleEffect_StepVector3:
 	.thumb_func
 MapGrid_SetCellBehavior:
 	overlay_veneer MapGrid_SetCellBehaviorFar
-	.global Func_02004c84
+	.global MapGrid_SetAttributeBAt
 	.thumb_func
-Func_02004c84:
+MapGrid_SetAttributeBAt:
 	overlay_veneer MapGrid_SetAttributeBAtFar
-	.global Func_02004c8c
+	.global Tightrope_Release
 	.thumb_func
-Func_02004c8c:
+Tightrope_Release:
 	overlay_veneer Tightrope_ReleaseFar
-	.global Func_02004c94
+	.global Tightrope_Settle
 	.thumb_func
-Func_02004c94:
+Tightrope_Settle:
 	overlay_veneer Tightrope_SettleFar
 	.global Sound_Play
 	.thumb_func

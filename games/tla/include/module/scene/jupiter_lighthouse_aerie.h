@@ -19,7 +19,7 @@ void Func_020017a8(s32 a, s32 b, s32 side);
 void LightSprites_InitB(void);
 void LightSprites_Add(s32 id, s32 value);
 
-void Func_02002b58();
+void MapGrid_SetAttributeBAt();
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -63,7 +63,7 @@ struct BeamSpark;
 struct BeamSprite;
 struct FieldEffect;
 
-void Func_02002a78(s32 x, s32 z, s32 a, s32 b);
+void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 void Import_FieldCameraWaitForArrival(void);
 extern u16 gPaletteCycleUnlitPalette[];
 extern u16 gPaletteCycleUnlitColors[];

@@ -30,8 +30,8 @@ extern const struct WarpTarget gData_02003d10;
 
 void ChampaCliffCaves_OpenDoorAndEnter(const struct WarpTarget *warp, s32 door,
                                        s32 mode);
-void Func_02003474(s32 a, s32 b, s32 c);
-void Func_02003624(struct Actor *object, struct Actor *target);
+void Event_PickUpItem(s32 a, s32 b, s32 c);
+void Actor_WatchActor(struct Actor *object, struct Actor *target);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -230,7 +230,7 @@ void Func_02000350(s32 actor) {
   Event_SetMessageId((s32)MsgAllRightI);
   Event_ShowMessageAndWait(actor, 0);
   object = Actor_GetById(actor);
-  Func_02003624(object, Actor_GetById(gMainRoutineWork.currentOwner));
+  Actor_WatchActor(object, Actor_GetById(gMainRoutineWork.currentOwner));
 }
 
 void Func_0200038c(s32 actor) {
@@ -263,7 +263,7 @@ void Func_020003ec(void) {
 
 extern struct Trigger gData_02003d20[];
 
-void Func_02000464(s32 a) { Func_02003474(a, 326, 0x978); }
+void Func_02000464(s32 a) { Event_PickUpItem(a, 326, 0x978); }
 
 const struct Trigger *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -291,7 +291,7 @@ s32 Scene_Initialize(void) {
 #endif
   if (party->scene != (s32)&SceneId_Ov685Room1)
     Actor_GetById(party->currentOwner)->priorityFlags |= 32;
-  Func_020035ac(0);
+  FieldEffect_StartBlankOverlay(0);
   if (party->scene == (s32)&SceneId_Ov685Room4) {
     if (party->entrance == 98)
       Func_02001774();
@@ -655,7 +655,7 @@ void Func_02000a34(s32 value) {
   Event_End();
 }
 
-void Func_0200343c(s32 x, s32 z, s32 a, s32 b);
+void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -664,7 +664,7 @@ static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
 static __inline__ void Func_0200343c_(s32 x, s32 z, s32 a, s32 b) {
   /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 32 of
    * 613 instructions differ in tla-en. */
-  Func_0200343c(x, z, a, b);
+  MapGrid_SetCellHeight(x, z, a, b);
 }
 
 static __inline__ void Actor_ArmCallback_(s32 actor, s32 angle, s32 frames) {

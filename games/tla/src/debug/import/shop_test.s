@@ -82,13 +82,13 @@ Text_DrawNumberAtOffset:
 	.thumb_func
 Text_DrawNumberInWindow:
 	overlay_veneer Text_DrawNumberInWindowFar
-	.global Func_02000d00
+	.global Portrait_OpenWindow
 	.thumb_func
-Func_02000d00:
+Portrait_OpenWindow:
 	overlay_veneer Portrait_OpenWindowFar
-	.global Func_02000d08
+	.global MessageArgument_Push
 	.thumb_func
-Func_02000d08:
+MessageArgument_Push:
 	overlay_veneer MessageArgument_PushFar
 	.global Message_CloseFinishedWindows
 	.thumb_func
@@ -98,21 +98,21 @@ Message_CloseFinishedWindows:
 	.thumb_func
 WindowSprite_RedrawSavedRect:
 	overlay_veneer WindowSprite_RedrawSavedRectFar
-	.global Func_02000d20
+	.global NameEntry_EditMemberName
 	.thumb_func
-Func_02000d20:
+NameEntry_EditMemberName:
 	overlay_veneer NameEntry_EditMemberNameFar
-	.global Func_02000d28
+	.global DebugBrowser_Icons
 	.thumb_func
-Func_02000d28:
+DebugBrowser_Icons:
 	overlay_veneer DebugBrowser_IconsFar
-	.global Func_02000d30
+	.global DebugBrowser_Portraits
 	.thumb_func
-Func_02000d30:
+DebugBrowser_Portraits:
 	overlay_veneer DebugBrowser_PortraitsFar
-	.global Func_02000d38
+	.global Summon_ShowLearnedMessage
 	.thumb_func
-Func_02000d38:
+Summon_ShowLearnedMessage:
 	overlay_veneer Summon_ShowLearnedMessageFar
 	.global Unit_Calculate
 	.thumb_func
@@ -170,9 +170,9 @@ Party_AdjustCoins:
 	.thumb_func
 PartyInventory_HasSpace:
 	overlay_veneer PartyInventory_HasSpaceFar
-	.global Func_02000db0
+	.global Party_AddIsaacsParty
 	.thumb_func
-Func_02000db0:
+Party_AddIsaacsParty:
 	overlay_veneer Party_AddIsaacsPartyFar
 	.ifndef TLA_EDITION_JA
 	.global Djinn_GiveToParty
@@ -180,17 +180,17 @@ Func_02000db0:
 Djinn_GiveToParty:
 	overlay_veneer Djinn_GiveToPartyFar
 	.endif
-	.global Func_02000dc0
+	.global GameFlag_RefreshLureCap
 	.thumb_func
-Func_02000dc0:
+GameFlag_RefreshLureCap:
 	overlay_veneer GameFlag_RefreshLureCapFar
-	.global Func_02000dc8
+	.global PartyInventory_FindRoom
 	.thumb_func
-Func_02000dc8:
+PartyInventory_FindRoom:
 	overlay_veneer PartyInventory_FindRoomFar
-	.global Func_02000dd0
+	.global Class_GetSeries
 	.thumb_func
-Func_02000dd0:
+Class_GetSeries:
 	overlay_veneer Class_GetSeriesFar
 	.global Event_Wait
 	.thumb_func
@@ -228,13 +228,13 @@ FieldMessage_ShowAtActor:
 	.thumb_func
 Event_ShowMessageAndWait:
 	overlay_veneer Event_ShowMessageAndWaitFar
-	.global Func_02000e20
+	.global Field_RequestBattleFromEncounterTable
 	.thumb_func
-Func_02000e20:
+Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
-	.global Func_02000e28
+	.global ItemDisplay_ShowItem
 	.thumb_func
-Func_02000e28:
+ItemDisplay_ShowItem:
 	overlay_veneer ItemDisplay_ShowItemFar
 	.global Party_GetLeaderActor
 	.thumb_func
@@ -244,33 +244,33 @@ Party_GetLeaderActor:
 	.thumb_func
 ItemMenu_DrawItemDetails:
 	overlay_veneer ItemMenu_DrawItemDetailsFar
-	.global Func_02000e40
+	.global Shop_Run
 	.thumb_func
-Func_02000e40:
+Shop_Run:
 	overlay_veneer Shop_RunFar
-	.global Func_02000e48
+	.global Sanctum_Run
 	.thumb_func
-Func_02000e48:
+Sanctum_Run:
 	overlay_veneer Sanctum_RunFar
-	.global Func_02000e50
+	.global Inn_CheckIn
 	.thumb_func
-Func_02000e50:
+Inn_CheckIn:
 	overlay_veneer Inn_CheckInFar
-	.global Func_02000e58
+	.global Forge_Run
 	.thumb_func
-Func_02000e58:
+Forge_Run:
 	overlay_veneer Forge_RunFar
-	.global Func_02000e60
+	.global ItemPicker_RunMode1
 	.thumb_func
-Func_02000e60:
+ItemPicker_RunMode1:
 	overlay_veneer ItemPicker_RunMode1Far
-	.global Func_02000e68
+	.global Forge_SetItem
 	.thumb_func
-Func_02000e68:
+Forge_SetItem:
 	overlay_veneer Forge_SetItemFar
-	.global Func_02000e70
+	.global Forge_GetItem
 	.thumb_func
-Func_02000e70:
+Forge_GetItem:
 	overlay_veneer Forge_GetItemFar
 	.global Sound_Play
 	.thumb_func

@@ -278,9 +278,9 @@ Actor_SetActionCallback:
 	.thumb_func
 Actor_SetSpriteRotationById:
 	overlay_veneer Actor_SetSpriteRotationByIdFar
-	.global Func_02002a04
+	.global Actor_FallOverWithAnimationById
 	.thumb_func
-Func_02002a04:
+Actor_FallOverWithAnimationById:
 	overlay_veneer Actor_FallOverWithAnimationByIdFar
 	.global Func_02002a0c
 	.thumb_func

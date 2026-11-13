@@ -425,7 +425,7 @@ static inline void ClearLayer2Shape(s32 x, s32 z) {
    * shared z constant again for the second call, as the ROM does; as a direct
    * call, the constant is kept in r5 across the first call, 12 of 68
    * instructions differ in tla-en. */
-  Func_02005df4(x, z, 2, 0);
+  MapGrid_SetCellHeight(x, z, 2, 0);
 }
 
 /// Runs each room's list on entering it; room 7 also clears two cells' shapes
@@ -434,22 +434,22 @@ void Func_02003254(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov664Room1) {
-    Func_02005f74(gData_02006050);
+    Actor_LiftTargetBlock(gData_02006050);
   } else if (scene == (s32)&SceneId_Ov664Room2) {
-    Func_02005f74(gData_02006054);
+    Actor_LiftTargetBlock(gData_02006054);
   } else if (scene == (s32)&SceneId_Ov664Room3) {
-    Func_02005f74(gData_0200605a);
+    Actor_LiftTargetBlock(gData_0200605a);
   } else if (scene == (s32)&SceneId_Ov664Room4) {
-    Func_02005f74(gData_02006064);
+    Actor_LiftTargetBlock(gData_02006064);
   } else if (scene == (s32)&SceneId_Ov664Room7) {
     ClearLayer2Shape(0x2600000, 0x1500000);
-    Func_02005df4(0x2700000, 0x1500000, 2, 0);
-    Func_02005f74(gData_02006068);
+    MapGrid_SetCellHeight(0x2700000, 0x1500000, 2, 0);
+    Actor_LiftTargetBlock(gData_02006068);
   } else if (scene == (s32)&SceneId_Ov664Room8) {
-    Func_02005f74(gData_02006072);
+    Actor_LiftTargetBlock(gData_02006072);
   } else if (scene == (s32)&SceneId_Ov664Room9) {
     Actor_GetById(10)->timer = 0;
-    Func_02005f74(gData_0200607e);
+    Actor_LiftTargetBlock(gData_0200607e);
   }
 }
 
@@ -472,7 +472,7 @@ void Func_0200332c(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Func_02005f7c();
+  Actor_PlaceMovedBlock();
   if (Map_GetTerrainHeight(2, pushed->x, pushed->z) != pushed->y) {
     pushed->terrainId = 2;
     pushed->motionFlags = 3;
@@ -503,8 +503,8 @@ void Func_0200332c(void) {
     if (x == 81 && z == 37)
       GameFlag_Set(0x89e);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room7) {
-    Call4((void (*)())Func_02005df4, 0x2600000, 0x1500000, 2, -4);
-    Call4((void (*)())Func_02005df4, 0x2700000, 0x1500000, 2, -4);
+    Call4((void (*)())MapGrid_SetCellHeight, 0x2600000, 0x1500000, 2, -4);
+    Call4((void (*)())MapGrid_SetCellHeight, 0x2700000, 0x1500000, 2, -4);
     if (x == 43 && z == 87)
       GameFlag_Set(0x8d0);
     if ((Actor_GetById(9)->x >> 19 == 73 && Actor_GetById(9)->z >> 19 == 43) ||
@@ -1412,7 +1412,7 @@ void Func_02004cc8(void) {
   Import_ActorSetMoveTarget(lift, lift->x, lift->y + 0x480000, lift->z);
   Sound_Play(137);
   Event_StartScreenTransition();
-  while (!Func_02005dec(leader)) {
+  while (!Actor_HasArrived(leader)) {
     leader->facing = (u8)gFrameCount << 12;
     leader->priorityFlags ^= 2 << (gFrameCount & 1);
     wait(1);

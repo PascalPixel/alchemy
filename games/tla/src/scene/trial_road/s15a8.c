@@ -330,7 +330,7 @@ void TrialRoad_SetUpFountainStage(void) {
 }
 
 void TrialRoad_SetUpSandStage(void) {
-  Func_02005a08();
+  Tightrope_Initialize();
   Func_02005a10(0, 15, 16);
   if (!Event_GetFlag(0x374))
     MapGrid_CopyCellAttributes(18, 21, 1, 1, 19, 21);
@@ -747,18 +747,18 @@ s32 Scene_PrepareMap(void) {
         Actor_SetSpriteColor(Actor_GetById(10), 3);
         Actor_SetSpriteColor(Actor_GetById(11), 3);
         Actor_SetSpriteColor(Actor_GetById(12), 3);
-        Func_02005828(0, 12, 1, 21, 0, 13);
-        Func_02005828(x1, 12, 1, 21, x1, 13);
-        Func_02005828(x2, 12, 1, 21, x2, 13);
-        Func_02005828(0, 13, 33, 21, 1, 13);
-        Func_02005828(x1, 13, 33, 21, x1 + 1, 13);
-        Func_02005828(x2, 13, 33, 21, x2 + 1, 13);
+        Map_CopyRawCellsRect(0, 12, 1, 21, 0, 13);
+        Map_CopyRawCellsRect(x1, 12, 1, 21, x1, 13);
+        Map_CopyRawCellsRect(x2, 12, 1, 21, x2, 13);
+        Map_CopyRawCellsRect(0, 13, 33, 21, 1, 13);
+        Map_CopyRawCellsRect(x1, 13, 33, 21, x1 + 1, 13);
+        Map_CopyRawCellsRect(x2, 13, 33, 21, x2 + 1, 13);
         value = state->pattern;
         px = gTrialRoad_StageMapCells[value][0];
         row = gTrialRoad_StageMapCells[value][1];
-        Func_02005828(px, row, 13, 21, 1, 13);
-        Func_02005828(px + 42, row, 13, 21, x1 + 1, 13);
-        Func_02005828(px + 84, row, 13, 21, x2 + 1, 13);
+        Map_CopyRawCellsRect(px, row, 13, 21, 1, 13);
+        Map_CopyRawCellsRect(px + 42, row, 13, 21, x1 + 1, 13);
+        Map_CopyRawCellsRect(px + 84, row, 13, 21, x2 + 1, 13);
         // The native neither hoists the table's address nor strength-reduces
         // the index; as a for loop, 10 more instructions differ (376).
         i = 0;
@@ -782,24 +782,24 @@ s32 Scene_PrepareMap(void) {
         value = 1;
         if (entrance & value) {
           TrialRoad_CopyCellsBackward(0, 0, 102, 13, 9, 0);
-          Func_02005828(0, 0, 10, 1, 1, 0);
-          Func_02005828(0, 0, 10, 12, 0, 1);
-          Func_02005828(x1, 0, 10, 12, x1, 1);
-          Func_02005828(x2, 0, 10, 12, x2, 1);
+          Map_CopyRawCellsRect(0, 0, 10, 1, 1, 0);
+          Map_CopyRawCellsRect(0, 0, 10, 12, 0, 1);
+          Map_CopyRawCellsRect(x1, 0, 10, 12, x1, 1);
+          Map_CopyRawCellsRect(x2, 0, 10, 12, x2, 1);
           TrialRoad_CopyCellsBackward(0, 34, 102, 10, 9, 34);
-          Func_02005828(0, 33, 10, 10, 0, 34);
-          Func_02005828(x1, 33, 10, 10, x1, 34);
-          Func_02005828(x2, 33, 10, 10, x2, 34);
+          Map_CopyRawCellsRect(0, 33, 10, 10, 0, 34);
+          Map_CopyRawCellsRect(x1, 33, 10, 10, x1, 34);
+          Map_CopyRawCellsRect(x2, 33, 10, 10, x2, 34);
         } else {
-          Func_02005828(10, 0, 92, 13, 0, 0);
-          Func_02005828(23, 0, 10, 1, 24, 0);
-          Func_02005828(23, 0, 10, 12, 23, 1);
-          Func_02005828(57, 0, 10, 12, 57, 1);
-          Func_02005828(91, 0, 10, 12, 91, 1);
-          Func_02005828(10, 34, 92, 10, 0, 34);
-          Func_02005828(24, 33, 10, 10, 24, 34);
-          Func_02005828(58, 33, 10, 10, 58, 34);
-          Func_02005828(92, 33, 10, 10, 92, 34);
+          Map_CopyRawCellsRect(10, 0, 92, 13, 0, 0);
+          Map_CopyRawCellsRect(23, 0, 10, 1, 24, 0);
+          Map_CopyRawCellsRect(23, 0, 10, 12, 23, 1);
+          Map_CopyRawCellsRect(57, 0, 10, 12, 57, 1);
+          Map_CopyRawCellsRect(91, 0, 10, 12, 91, 1);
+          Map_CopyRawCellsRect(10, 34, 92, 10, 0, 34);
+          Map_CopyRawCellsRect(24, 33, 10, 10, 24, 34);
+          Map_CopyRawCellsRect(58, 33, 10, 10, 58, 34);
+          Map_CopyRawCellsRect(92, 33, 10, 10, 92, 34);
           Actor_SetPosition(9, 160 << 14, 152 << 16);
           Actor_SetPosition(10, 192 << 13, 152 << 16);
           Actor_SetPosition(11, 184 << 16, 152 << 16);
@@ -813,9 +813,9 @@ s32 Scene_PrepareMap(void) {
         value = state->pattern;
         px = gTrialRoad_StageMapCells[value][0];
         row = gTrialRoad_StageMapCells[value][1];
-        Func_02005828(px, row, 13, 21, 10, destinationY);
-        Func_02005828(px + 42, row, 13, 21, 44, destinationY);
-        Func_02005828(px + 84, row, 13, 21, 78, destinationY);
+        Map_CopyRawCellsRect(px, row, 13, 21, 10, destinationY);
+        Map_CopyRawCellsRect(px + 42, row, 13, 21, 44, destinationY);
+        Map_CopyRawCellsRect(px + 84, row, 13, 21, 78, destinationY);
         // A goto loop for the same reason as the one above.
         i = 0;
       hideUnused:
@@ -1670,11 +1670,11 @@ struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
 /// takes mode 0 when its first flag is set. Then the leader is lifted onto the
 /// ground if it stands below it.
 DEFINE_PILLARS_RESTORE_RAISED(TrialRoad_RestoreCrumblingPillars, Func_02005a18,
-                              MapGrid_GetTerrainKind, Func_02005958,
-                              Func_02005a20, Actor_SelectAnimation)
+                              MapGrid_GetTerrainKind, Actor_DisableById,
+                              MapCollision_FindOrAddTag, Actor_SelectAnimation)
 
 DEFINE_TRAPS_CHECK(TrialRoad_CheckCrumblingStep, Import_FieldTryJumpForward,
-                   Func_02005a28, Actor_SelectAnimation, TrialRoad_SpawnRubble,
+                   Actor_FindAtCell, Actor_SelectAnimation, TrialRoad_SpawnRubble,
                    TrialRoad_SetLeaderCellShape, TrialRoad_SpawnDustRing)
 
 void TrialRoad_CrumblePillar(const void *data, s32 id) {
@@ -1717,7 +1717,7 @@ void TrialRoad_CrumblePillar(const void *data, s32 id) {
 
 void TrialRoad_SetPillarMode3(s32 id) {
   Actor_GetById(id)->unk5c[0] = 3;
-  Func_02005958(id);
+  Actor_DisableById(id);
 }
 
 void Actor_MoveToObject(s32 id, s32 owner);
@@ -1726,8 +1726,8 @@ void Actor_MoveToObject(s32 id, s32 owner);
 /// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
 /// it copy actor 9's visual attributes.
 DEFINE_PILLARS_RESTORE(TrialRoad_RestorePillars, TrialRoad_SetPillarMode3,
-                       Func_02005a18, MapGrid_GetTerrainKind, Func_02005958,
-                       Func_02005a20)
+                       Func_02005a18, MapGrid_GetTerrainKind, Actor_DisableById,
+                       MapCollision_FindOrAddTag)
 
 void TrialRoad_TakePlaceOf(struct Actor *object, struct Actor *target) {
   Actor_SetPositionAndResetMotion(object, target->x, target->y, target->z);
@@ -1753,7 +1753,7 @@ void TrialRoad_StepOnTrap(const u16 *table) {
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;
-  trap = Func_02005a28(position, 0);
+  trap = Actor_FindAtCell(position, 0);
   if (trap != 0) {
     goto test;
   next:
@@ -1948,7 +1948,7 @@ void TrialRoad_SpawnDustRing(void) {
 }
 
 DEFINE_ACTOR_SET_CELL_SHAPE(TrialRoad_SetActorCellShape, MapGrid_GetTerrainKind,
-                            Func_02005a20)
+                            MapCollision_FindOrAddTag)
 
 void TrialRoad_SetLeaderCellShape(s32 a, s32 b) {
   TrialRoad_SetActorCellShape(a, b, gMainRoutineWork.currentOwner);

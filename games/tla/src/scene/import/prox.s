@@ -138,9 +138,9 @@ Actor_SetBlendMode:
 	.thumb_func
 MapGrid_SetScreenShake:
 	overlay_veneer MapGrid_SetScreenShakeFar
-	.global Func_0200444c
+	.global Actor_HasArrived
 	.thumb_func
-Func_0200444c:
+Actor_HasArrived:
 	overlay_veneer Actor_HasArrivedFar
 	.global Import_FieldCheckSpheresOverlap
 	.thumb_func
@@ -338,9 +338,9 @@ Actor_ReturnHome:
 	.thumb_func
 ObjectTable_Get:
 	overlay_veneer ObjectTable_GetFar
-	.global Func_020045dc
+	.global FieldEffect_StartBlankOverlay
 	.thumb_func
-Func_020045dc:
+FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
 	.global Event_ResolveAllPendingActions
 	.thumb_func

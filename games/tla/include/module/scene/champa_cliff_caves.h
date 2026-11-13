@@ -46,7 +46,7 @@ extern s16 gData_02003cfa[];
 
 struct FlashSprite;
 
-void Func_020035ac(s32 a);
+void FieldEffect_StartBlankOverlay(s32 a);
 void Field_StartColorTransition(s32 a, s32 b);
 void Func_020035fc(struct FlashSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);

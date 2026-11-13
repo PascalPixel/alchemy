@@ -35,7 +35,7 @@ void AlhafranCave_CloseWayToJail(void);
 void AlhafranCave_CastSand(void);
 void AlhafranCave_StartMovingCrate(void);
 void AlhafranCave_FinishMovingCrate(void);
-void Func_02001578(const void *data);
+void FlagBlock_PlaceAllMarkingEdges(const void *data);
 void Func_02001570(s32 a, s32 b, s32 c, s32 d);
 extern s32 gAlhafranCave_ClearedWord;
 
@@ -114,10 +114,10 @@ struct AlhafranCaveSwitch {
 
 void Actor_ApplyRandomChildValues(void);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
-void Func_02001420(s32 x, s32 z, s32 a, s32 b);
-void Func_02001580(const void *data);
+void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
+void FlagBlock_ApplyFlags(const void *data);
 s32 Func_02001588(void);
-void Func_020015d8(void);
+void Actor_TakeLeaderLayer(void);
 void BattleEffect_DrawSpriteAtWorldPosition(const void *data, s32 x, s32 y,
                                             s32 z);
 
@@ -137,7 +137,7 @@ extern u8 gAlhafranCave_CrateSprite[];
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void MapGrid_SetCellHeight_(s32 x, s32 z, s32 a, s32 b) {
-  Func_02001420(x, z, a, b);
+  MapGrid_SetCellHeight(x, z, a, b);
 }
 
 static __inline__ void MapGrid_SetCellBehavior_(s32 x, s32 z, s32 a, s32 b) {
@@ -187,26 +187,26 @@ void AlhafranCave_TalkToBriggs(s32 id) {
   Event_ShowMessage(id, 0);
 }
 
-void AlhafranCave_FreezePuddle(void) { Func_02001580(gAlhafranCave_Puddles); }
+void AlhafranCave_FreezePuddle(void) { FlagBlock_ApplyFlags(gAlhafranCave_Puddles); }
 
 void AlhafranCave_OpenWayToJail(void) {
   Event_SetFlag(FLAG_WAY_TO_JAIL_OPEN);
   MapGrid_SetCellHeight_(0x1900000, 0x1300000, 0, 4);
   MapGrid_SetCellHeight_(0x1a00000, 0x1300000, 0, 4);
-  Func_02001420(0x1b00000, 0x1300000, 0, 4);
+  MapGrid_SetCellHeight(0x1b00000, 0x1300000, 0, 4);
   MapGrid_SetCellBehavior_(0x1800000, 0x1200000, 0, 255);
   MapGrid_SetCellHeight_(0x1200000, 0x1800000, 0, 4);
-  Func_02001420(0x1500000, 0x1800000, 0, 4);
+  MapGrid_SetCellHeight(0x1500000, 0x1800000, 0, 4);
 }
 
 void AlhafranCave_CloseWayToJail(void) {
   Event_ClearFlag(FLAG_WAY_TO_JAIL_OPEN);
   MapGrid_SetCellHeight_(0x1900000, 0x1300000, 0, 0);
   MapGrid_SetCellHeight_(0x1a00000, 0x1300000, 0, 0);
-  Func_02001420(0x1b00000, 0x1300000, 0, 0);
+  MapGrid_SetCellHeight(0x1b00000, 0x1300000, 0, 0);
   MapGrid_SetCellBehavior_(0x1800000, 0x1200000, 0, 0);
   MapGrid_SetCellHeight_(0x1200000, 0x1800000, 0, 0);
-  Func_02001420(0x1500000, 0x1800000, 0, 0);
+  MapGrid_SetCellHeight(0x1500000, 0x1800000, 0, 0);
 }
 
 void AlhafranCave_CastSand(void) {
@@ -323,13 +323,13 @@ void AlhafranCave_SetUpCave(void) {
   object->motionFlags = 0;
   object->terrainHeight = 0;
   object->y = 0;
-  Func_02001420(object->x, object->z, 0, 4);
+  MapGrid_SetCellHeight(object->x, object->z, 0, 4);
   object = Actor_Get(15);
   object->motionFlags = 0;
   object->terrainHeight = 0;
   object->y = 0;
-  Func_02001420(object->x, object->z, 0, 4);
-  Func_02001578(gAlhafranCave_Puddles);
+  MapGrid_SetCellHeight(object->x, object->z, 0, 4);
+  FlagBlock_PlaceAllMarkingEdges(gAlhafranCave_Puddles);
   Actor_SetActionCallback(Actor_Get(16), 9);
   if (!Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     /* FAKEMATCH(wrapper): the three calls forwarded through
@@ -343,9 +343,9 @@ void AlhafranCave_SetUpCave(void) {
 
 #include "call.h"
 
-void Func_02001520(s32 value);
-void Func_02001568(void);
-void Func_020015e8(const void *data, s32 a, s32 b, s32 c);
+void FieldEffect_StartBlankOverlay(s32 value);
+void Rope_Initialize(void);
+void EffectSprite_InitFromSlot94(const void *data, s32 a, s32 b, s32 c);
 
 /// The rooms' setup: sprite priorities, the scene callback, actors 12 to 14,
 /// actors 15 to 24 by flags FLAG_ALHAFRA_MAST_CLEARED, FLAG_BRIGGS_CAUGHT and
@@ -357,17 +357,17 @@ void AlhafranCave_SetUpJail(void) {
 
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   Actor_Get(8)->priorityFlags |= 32;
-  Func_02001520(0);
+  FieldEffect_StartBlankOverlay(0);
   data = gAlhafranCave_CrateSprite;
   BattleEffect_FillOverlayTiles(0);
-  Call4((void (*)())Func_020015e8, (s32)data, 8, 15, 0x40000000);
+  Call4((void (*)())EffectSprite_InitFromSlot94, (s32)data, 8, 15, 0x40000000);
   FieldTask_AddFrame(AlhafranCave_DrawCrateSprite, 0x480);
   if ((u16)(gMainRoutineWork.entrance - 8) <= 1) {
     work = Ram_HeapSlots->eventWork;
 
     work->valueD4c = 3;
   }
-  Func_02001568();
+  Rope_Initialize();
   Func_02001570(0, 0x200, 10, 11);
   Actor_Get(10)->priorityFlags |= 32;
   Actor_Get(11)->priorityFlags |= 32;
@@ -735,7 +735,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Event_End();
 }
 
-void AlhafranCave_TakeLeadersLayer(void) { Func_020015d8(); }
+void AlhafranCave_TakeLeadersLayer(void) { Actor_TakeLeaderLayer(); }
 
 void AlhafranCave_ShakeUnderEoleosPower(void) {
   Actor_ApplyRandomChildValues();

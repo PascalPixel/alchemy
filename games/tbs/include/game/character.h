@@ -79,6 +79,9 @@ enum ClassSeries {
 
 /// A class: its series, the element levels it needs, its stat multipliers and
 /// the abilities it teaches.
+/// How many actions a class can teach (ClassDefinition.abilities).
+#define CLASS_ABILITY_SLOTS 16
+
 struct ClassDefinition {
   /// The series the class belongs to; Class_Determine picks the series from
   /// the character's two strongest elements.
@@ -86,14 +89,15 @@ struct ClassDefinition {
   /// The element levels the class needs, in tens: the last class of the
   /// series the character meets in all four is its class.
   u8 required[4];
-  u8 hp;                             ///< tenths of the base stat
-  u8 pp;                             ///< tenths of the base stat
-  u8 atk;                            ///< tenths of the base stat
-  u8 def;                            ///< tenths of the base stat
-  u8 agi;                            ///< tenths of the base stat
-  u8 luck;                           ///< tenths of the base stat
-  u8 padding[2];                     ///< padding
-  struct ClassAbility abilities[16]; ///< the Psynergy the class teaches
+  u8 hp;         ///< tenths of the base stat
+  u8 pp;         ///< tenths of the base stat
+  u8 atk;        ///< tenths of the base stat
+  u8 def;        ///< tenths of the base stat
+  u8 agi;        ///< tenths of the base stat
+  u8 luck;       ///< tenths of the base stat
+  u8 padding[2]; ///< padding
+  struct ClassAbility
+      abilities[CLASS_ABILITY_SLOTS]; ///< the Psynergy the class teaches
   /// [0] to [2]: the ability effects the class is weak to
   /// (BattleAbility_IsWeakToEffect); [3] is 0 in every row and not read.
   u8 weakEffects[4];

@@ -279,6 +279,9 @@ enum AbilityUse {
 #define UNIT_HP_REGEN_MAX 10000
 #define UNIT_PP_REGEN_MAX 200
 
+/// How many actions a unit's list holds (Unit.psynergy).
+#define PSYNERGY_SLOTS 32
+
 /// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
 /// Djinn and statuses.
 struct Unit {
@@ -328,7 +331,7 @@ struct Unit {
   struct BattleElementStats element[ELEMENT_COUNT];
   /// The action list: Psynergy taught for good, then the class's and the
   /// equipment's (Unit_RefreshPsynergy). An empty entry is 0.
-  struct PsynergyEntry psynergy[32];
+  struct PsynergyEntry psynergy[PSYNERGY_SLOTS];
   /// Items held, one entry each: bits 15..11 quantity | 10 broken |
   /// 9 equipped | 8..0 item id (INVENTORY_*). An empty entry is 0.
   u16 inventory[15];

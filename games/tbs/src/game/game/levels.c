@@ -83,17 +83,18 @@ s32 Unit_RefreshPsynergy(s32 unitId) {
     return 0;
   // Remove actions inherited from the previous class and equipment.
   originFlag = PSYNERGY_FROM_CLASS;
-  for (sourceIndex = 0; sourceIndex < 32; sourceIndex++) {
+  for (sourceIndex = 0; sourceIndex < PSYNERGY_SLOTS; sourceIndex++) {
     if (PSYNERGY_ACTION_AT(abilities, sourceIndex) & originFlag)
       PSYNERGY_ACTION_AT(abilities, sourceIndex) = 0;
   }
   originFlag = PSYNERGY_FROM_ITEM;
-  for (sourceIndex = 0; sourceIndex < 32; sourceIndex++) {
+  for (sourceIndex = 0; sourceIndex < PSYNERGY_SLOTS; sourceIndex++) {
     if (PSYNERGY_ACTION_AT(abilities, sourceIndex) & originFlag)
       PSYNERGY_ACTION_AT(abilities, sourceIndex) = 0;
   }
   // Pack permanent actions at the end to leave room for class abilities.
-  for (slot = 31, sourceIndex = 31; slot >= 0;) {
+  for (slot = PSYNERGY_SLOTS - 1, sourceIndex = PSYNERGY_SLOTS - 1;
+       slot >= 0;) {
     if (PSYNERGY_ACTION_AT(abilities, slot) == 0) {
       slot--;
     } else {
@@ -108,26 +109,27 @@ s32 Unit_RefreshPsynergy(s32 unitId) {
 
   // Add level-eligible class abilities, followed by equipped-item abilities.
   originFlag = PSYNERGY_FROM_CLASS;
-  for (sourceIndex = 0; sourceIndex < 16; sourceIndex++) {
+  for (sourceIndex = 0; sourceIndex < CLASS_ABILITY_SLOTS; sourceIndex++) {
     classAbility = &classDefinition->abilities[sourceIndex];
     if (classDefinition->abilities[sourceIndex].ability == 0)
       continue;
     if (unit->level < classDefinition->abilities[sourceIndex].level)
       continue;
     slot = 0;
-    while (slot < 32 && PSYNERGY_ACTION_AT(abilities, slot) !=
-                            classDefinition->abilities[sourceIndex].ability)
+    while (slot < PSYNERGY_SLOTS &&
+           PSYNERGY_ACTION_AT(abilities, slot) !=
+               classDefinition->abilities[sourceIndex].ability)
       slot++;
-    if (slot != 32)
+    if (slot != PSYNERGY_SLOTS)
       continue;
-    for (slot = 0; slot < 32; slot++) {
+    for (slot = 0; slot < PSYNERGY_SLOTS; slot++) {
       if (PSYNERGY_ACTION_AT(abilities, slot) == 0) {
         PSYNERGY_ACTION_AT(abilities, slot) =
             classAbility->ability | originFlag;
         break;
       }
     }
-    if (slot == 32)
+    if (slot == PSYNERGY_SLOTS)
       break;
   }
 
@@ -139,26 +141,26 @@ s32 Unit_RefreshPsynergy(s32 unitId) {
     item = Item_GetDirect(unit->inventory[sourceIndex]);
     if (item->useType != ITEM_USE_TEACHES)
       continue;
-    for (slot = 0; slot < 32; slot++) {
+    for (slot = 0; slot < PSYNERGY_SLOTS; slot++) {
       if ((PSYNERGY_ACTION_AT(abilities, slot) & PSYNERGY_ABILITY_MASK) ==
           item->abilityId)
         break;
     }
-    if (slot != 32)
+    if (slot != PSYNERGY_SLOTS)
       continue;
-    for (slot = 0; slot < 32; slot++) {
+    for (slot = 0; slot < PSYNERGY_SLOTS; slot++) {
       if (PSYNERGY_ACTION_AT(abilities, slot) == 0) {
         PSYNERGY_ACTION_AT(abilities, slot) =
             item->abilityId | PSYNERGY_FROM_ITEM;
         break;
       }
     }
-    if (slot == 32)
+    if (slot == PSYNERGY_SLOTS)
       break;
   }
 
   // Restore a dense display list with empty slots at the end.
-  for (slot = 0, sourceIndex = 0; slot < 32;) {
+  for (slot = 0, sourceIndex = 0; slot < PSYNERGY_SLOTS;) {
     if (PSYNERGY_ACTION_AT(abilities, slot) == 0) {
       slot++;
     } else {
@@ -168,7 +170,7 @@ s32 Unit_RefreshPsynergy(s32 unitId) {
       sourceIndex++;
     }
   }
-  for (; sourceIndex < 32; sourceIndex++)
+  for (; sourceIndex < PSYNERGY_SLOTS; sourceIndex++)
     PSYNERGY_ACTION_AT(abilities, sourceIndex) = 0;
   return 0;
 }

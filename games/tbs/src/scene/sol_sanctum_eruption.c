@@ -189,23 +189,10 @@ static inline void SolSanctumEruption_PlaceHostageGroup(void) {
 /// FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING, plays
 /// SolSanctumEruption_PlayWiseOneRescue and then removes Jenna from the party.
 static void SolSanctumEruption_PlayHostageEvent(void) {
-  void Actor_ShowEmote();
-  void PaletteFade_ApplyTarget();
-  void Sound_Play();
-
   struct Actor *actor;
   struct WeatherWork *sparkles;
-#ifndef UBFIX
-  struct WeatherWork **particleWorkSlot;
-  struct FieldWork **fieldWorkSlot;
-#endif
 
-#ifdef UBFIX
-  sparkles = gWeatherWork;
-#else
-  particleWorkSlot = &gWeatherWork;
-  sparkles = *particleWorkSlot;
-#endif
+  sparkles = HEAP_SLOT_BLOCK(HEAP_SLOT_WEATHER);
   Event_Start();
   sparkles->stopped = 0;
   // Reopen the chamber during the first quake and stage the two groups.
@@ -217,17 +204,9 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 0);
   SolSanctumEruption_PlaceHostageGroup();
   Actor_SetSpritePriority(ACTOR_WISE_ONE, 1);
-#ifndef UBFIX
-  // UB: these are separate work-pointer globals.
-  fieldWorkSlot = (struct FieldWork **)((u8 *)particleWorkSlot - 8);
-#endif
   FieldCamera_MoveTo(232, CAMERA_KEEP, 156, 0);
   MapGrid_CenterOnFollowedPoint();
-#ifdef UBFIX
-  gFieldWork->transitionFrames = 8;
-#else
-  (*fieldWorkSlot)->transitionFrames = 8;
-#endif
+  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 8;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);

@@ -191,6 +191,13 @@ struct LuckyDiceSprites {
 #define DICE_FACE_COUNT 6
 #define DICE_RESULT_COUNT 4
 #define DICE_BET_PER_LEVEL 10
+/// The result: one number every 5 frames, then 20 frames in the lettering,
+/// the winnings, and A to go on; the payout closes 15 frames after it starts.
+#define DICE_NUMBER_REVEAL_FRAMES 5
+#define DICE_RESULT_FRAMES 20
+#define DICE_PAYOUT_FRAMES 15
+/// The coins are drawn with six digits.
+#define DICE_COIN_DIGITS 6
 
 /// A die's roll angle (its particle's variant) crosses a face in
 /// DICE_TILES_PER_FACE tiles, and LuckyDice_Run reads the tile as angle /
@@ -437,8 +444,8 @@ void LuckyDice_Run(void) {
   window = Window_CreateFar(DICE_COIN_X, 0, DICE_COIN_W, 3, 6);
   sprites->coinsWindow = window;
   Text_DrawMessageAsTilesFar(MsgLuckyDiceCoins, window, DICE_LABEL_X, 0);
-  Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6, sprites->coinsWindow, 0,
-                             0);
+  Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
+                             sprites->coinsWindow, 0, 0);
   window = Window_CreateFar(DICE_HELP_X, 16, DICE_HELP_W, 4, 6);
   sprites->helpWindow = window;
   // MsgLuckyDiceThrow and MsgLuckyDiceQuit, by their offset from the coins
@@ -490,17 +497,17 @@ void LuckyDice_Run(void) {
     // result's lettering.
     if (state == LUCKY_DICE_RESULT || state == LUCKY_DICE_PAYOUT) {
       for (index = 0; index != DICE_RESULT_COUNT; index++) {
-        if (resultTimer == index * 5) {
+        if (resultTimer == index * DICE_NUMBER_REVEAL_FRAMES) {
           Sound_PlayFar(SE_LUCKY_DICE_NUMBER);
         }
-        if (resultTimer >= index * 5) {
+        if (resultTimer >= index * DICE_NUMBER_REVEAL_FRAMES) {
           sprites->oam[spriteCount].attr01 =
               64 | OBJ_SIZE_32X32 | OBJ_256_COLORS | ((56 + index * 32) << 16);
           sprites->oam[spriteCount].attr2 = numbers[index] * 32 + 152;
           spriteCount++;
         }
       }
-      if (resultTimer > 19 && resultKind >= 0) {
+      if (resultTimer >= DICE_RESULT_FRAMES && resultKind >= 0) {
         for (index = 0; index != gLuckyDice_LabelCounts[resultKind]; index++) {
           s32 labelX;
           s32 labelY;
@@ -521,7 +528,7 @@ void LuckyDice_Run(void) {
     // Showing the result: twenty frames in, pay the winnings and open their
     // window; A then moves on to the payout, or back to aiming after a loss.
     if (state == LUCKY_DICE_RESULT) {
-      if (resultTimer == 20 && winnings > 0) {
+      if (resultTimer == DICE_RESULT_FRAMES && winnings > 0) {
         Party_AdjustCoinsFar(winnings);
         if (winnings <= 9) {
           digits = 1;
@@ -548,7 +555,7 @@ void LuckyDice_Run(void) {
       if (payoutTimer > 0) {
         payoutTimer--;
       }
-      if (resultTimer > 19 && (gKeysRepeat & KEY_A)) {
+      if (resultTimer >= DICE_RESULT_FRAMES && (gKeysRepeat & KEY_A)) {
         Sound_PlayFar(SE_MENU_CONFIRM);
         if (winnings > 0) {
           state = LUCKY_DICE_PAYOUT;
@@ -573,10 +580,10 @@ void LuckyDice_Run(void) {
       if (payoutTimer == 0) {
         winnings = 0;
         Text_DrawNumberInWindowFar(0, digits, sprites->winningsWindow, 40, 0);
-        Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
+        Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
                                    sprites->coinsWindow, 0, 0);
       }
-      if (payoutTimer == 15) {
+      if (payoutTimer == DICE_PAYOUT_FRAMES) {
         state = LUCKY_DICE_AIM;
         Window_CloseFar(sprites->winningsWindow, 1);
         window = Window_CreateFar(DICE_HELP_X, 16, DICE_HELP_W, 4, 6);
@@ -633,7 +640,7 @@ void LuckyDice_Run(void) {
           bet = gMainRoutineWork.coins;
         }
         Party_AdjustCoinsFar(-bet);
-        Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
+        Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
                                    sprites->coinsWindow, 0, 0);
         for (index = 0; index != DICE_COUNT; index++) {
           rollingDie = &diceWork->particles[index];
@@ -911,7 +918,7 @@ void LuckyDice_Run(void) {
           } else {
             winnings = bet * 5;
           }
-          Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
+          Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
                                      sprites->coinsWindow, 0, 0);
           Sound_PlayFar(MUS_JINGLE_LARGE);
         } else {
@@ -927,13 +934,13 @@ void LuckyDice_Run(void) {
           }
           if (pairCount == 1) {
             winnings = bet;
-            Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
+            Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
                                        sprites->coinsWindow, 0, 0);
             resultKind = 3;
           }
           if (pairCount == 2) {
             winnings = bet * 2;
-            Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
+            Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
                                        sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 2;
@@ -941,7 +948,7 @@ void LuckyDice_Run(void) {
           }
           if (pairCount == 3) {
             winnings = bet * 3;
-            Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
+            Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
                                        sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 1;

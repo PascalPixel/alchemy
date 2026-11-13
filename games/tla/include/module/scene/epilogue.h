@@ -26,4 +26,6 @@ extern s32 gEpilogueNamePanelTile;  ///< the panel's first tile
 extern const u16 Data_02000874[];
 extern char ResourceId_GreenPanel;
 
+s32 Func_0200084c();
+
 #endif

@@ -134,4 +134,9 @@ void Func_02004880(void);
 extern u32 gData_02005fd8[];
 extern u32 gData_020061f8[];
 
+void Func_02005df4(s32 x, s32 z, s32 terrain, s32 height);
+struct Actor *Func_02005ef4(void);
+void Func_02005f8c(struct Actor *object, s32 cue);
+s32 Func_02005dec(struct Actor *object);
+
 #endif

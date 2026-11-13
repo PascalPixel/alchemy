@@ -49,4 +49,9 @@ void Teleporter_Uncover(struct CellTarget *table,
 
 void Teleporter_Sink(struct CellTarget *table, struct CellTargetEntry *entry);
 
+extern s16 gData_020035fe;
+void Func_02002b54(s32 x, s32 z, s32 a, s32 b);
+void Func_02002c54(s32 x, s32 z, s32 a, s32 b);
+void Func_02002bec(void);
+
 #endif

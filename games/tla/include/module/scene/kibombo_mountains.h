@@ -44,4 +44,6 @@ extern u32 gData_020017f8[];
 
 void Func_02000fc4(void);
 
+void Func_0200117c(s32 a, s32 b, s32 c, s32 d);
+
 #endif

@@ -38,4 +38,9 @@ extern u32 gData_020023fc[];
 
 void LightSprites_InitA(void);
 
+extern u16 gData_0200273c[];
+extern u16 gData_02002740[];
+void Func_02001e28();
+extern s32 gData_02002718;
+
 #endif

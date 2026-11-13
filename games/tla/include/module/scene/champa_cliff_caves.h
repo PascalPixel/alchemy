@@ -44,4 +44,12 @@ void Func_0200115c(void);
 extern s16 gData_02003ce4[];
 extern s16 gData_02003cfa[];
 
+struct FlashSprite;
+
+void Func_020035ac(s32 a);
+void Func_0200360c(s32 a, s32 b);
+void Func_020035fc(struct FlashSprite *sprite, s32 width, s32 height,
+                   u32 attributes, s32 tile);
+extern char ResourceId_FireColumn;
+
 #endif

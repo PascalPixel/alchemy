@@ -23,4 +23,7 @@ void Actor_SelectAnimation(struct Actor *object, s32 mode);
 extern s16 gData_020031e4[];
 extern s16 gData_020031e6[];
 
+s32 Func_02002bac();
+s32 Window_CloseMatchingId();
+
 #endif

@@ -21,4 +21,6 @@ extern struct Trigger gData_020015c4[];
 extern struct Trigger gData_020016cc[];
 extern struct Trigger gData_02001714[];
 
+void Func_0200126c(s32 id);
+
 #endif

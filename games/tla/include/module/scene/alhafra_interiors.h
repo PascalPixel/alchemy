@@ -8,4 +8,7 @@
 
 void AlhafraInteriors_OverhearCrossboneIsleTale(void);
 
+extern u8 gData_02001c90[];
+extern u8 gData_02001c60[];
+
 #endif

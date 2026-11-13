@@ -36,4 +36,11 @@ void Whirlwind_CarryLeader(void);
 extern u32 gData_0200211c[];
 extern u32 gData_02002158[];
 
+extern s32 gData_02002618;
+extern u16 gData_0200261c[];
+extern u16 gData_0200263c[];
+extern u16 gData_02002640[];
+void Func_02001bd8();
+void Func_02001c98();
+
 #endif

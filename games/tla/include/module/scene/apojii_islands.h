@@ -30,4 +30,6 @@ extern u32 gData_02001e70[];
 extern u32 gData_02001eac[];
 extern s32 gData_02002044[];
 
+extern u16 gData_02002a58[16];
+
 #endif

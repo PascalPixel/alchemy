@@ -34,4 +34,10 @@ extern u32 gData_020021c8[];
 extern u32 gData_02002204[];
 extern u32 gData_02002240[];
 
+void Func_02001d1c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+extern u16 gData_020023b0[];
+extern u16 gData_020023d0[];
+extern u16 gData_020023d4[];
+extern s32 Data_020023ac;
+
 #endif

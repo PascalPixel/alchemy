@@ -19,6 +19,8 @@
 #include "flags.h"
 #include "scene_tables.h"
 #include "module/scene/scene.h"
+extern u8 gData_02001c90[];
+extern u8 gData_02001c60[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

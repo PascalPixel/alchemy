@@ -9,6 +9,7 @@
 #include "heap_release.h"
 #include "item_icon.h"
 #include "module/scene/scene.h"
+void Func_020029f0(struct FieldEffect *effect, s32 mode);
 
 extern const s32 *gData_02003330[];
 

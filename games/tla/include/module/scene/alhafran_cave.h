@@ -23,4 +23,8 @@ void Func_02000098(void);
 
 void Func_0200009c(void);
 
+void Func_02001578(const void *data);
+void Func_02001570(s32 a, s32 b, s32 c, s32 d);
+extern s32 gData_02001c08;
+
 #endif

@@ -199,4 +199,6 @@ extern u32 gData_0200501c[];
 extern u32 gData_02005058[];
 extern u32 gData_02005094[];
 
+extern char SceneId_Ov681Room5;
+
 #endif

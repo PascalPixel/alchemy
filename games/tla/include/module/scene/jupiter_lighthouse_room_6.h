@@ -29,4 +29,12 @@ extern u32 gData_020020e0[];
 
 void Func_020001d0(void);
 
+extern s16 gData_0200242a;
+extern u16 gData_0200252e;
+extern u16 gData_020023e8[];
+void Func_02001be4();
+extern u16 gData_02002408[];
+extern u16 gData_0200240c[];
+extern s32 Data_020023e4;
+
 #endif

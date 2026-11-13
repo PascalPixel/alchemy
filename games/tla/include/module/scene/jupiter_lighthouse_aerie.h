@@ -59,4 +59,16 @@ void Teleporter_Sink(struct CellTarget *work, struct CellTargetEntry *entry);
 
 void Teleporter_DropIn(void);
 
+struct BeamSpark;
+struct BeamSprite;
+struct FieldEffect;
+
+void Func_02002a78(s32 x, s32 z, s32 a, s32 b);
+void Func_02002af0(void);
+extern u16 gData_02003360[];
+extern u16 gData_02003364[];
+void Func_02002b38(struct BeamSprite *sprite);
+void Func_02002b40(struct BeamSprite *sprite, struct BeamSpark *spark);
+void Func_020029f0(struct FieldEffect *effect, s32 mode);
+
 #endif

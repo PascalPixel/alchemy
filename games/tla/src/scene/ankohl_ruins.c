@@ -15,6 +15,7 @@
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
+extern struct AnkohlRuinsSpriteWork Data_02004030;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

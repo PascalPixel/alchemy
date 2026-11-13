@@ -13,4 +13,6 @@ extern s32 gData_0200333c[];
 
 void Func_0200008c(void);
 
+void Func_02003148();
+
 #endif

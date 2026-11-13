@@ -36,4 +36,23 @@ void Func_02001010(void);
 
 void Func_0200106c(void);
 
+struct Unk02003450 {
+  s16 unk00;
+  s16 unk02;
+  s16 unk04;
+  s16 unk06;
+  s16 unk08;
+  s16 unk0A;
+  s16 unk0C;
+  s16 unk0E;
+  s16 unk10;
+  s16 unk12;
+  s16 unk14;
+  s16 unk16[2];
+  s16 unk1A[2];
+  s16 unk1E;
+};
+
+extern struct Unk02003450 Data_02003450[];
+
 #endif

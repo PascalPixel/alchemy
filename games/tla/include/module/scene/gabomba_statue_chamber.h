@@ -22,4 +22,6 @@ void Func_02000d3c(void);
 
 extern s32 gData_02002048[];
 
+void Func_02001d78(void);
+
 #endif

@@ -207,23 +207,6 @@ struct ActorTail {
   u16 unk5e;
 };
 
-struct Unk02003450 {
-  s16 unk00;
-  s16 unk02;
-  s16 unk04;
-  s16 unk06;
-  s16 unk08;
-  s16 unk0A;
-  s16 unk0C;
-  s16 unk0E;
-  s16 unk10;
-  s16 unk12;
-  s16 unk14;
-  s16 unk16[2];
-  s16 unk1A[2];
-  s16 unk1E;
-};
-
 struct AquaRockEventWork {
   u8 unk000[0x16a];
   s16 field16a;
@@ -1302,61 +1285,19 @@ struct YampiDesertCaveEventWork {
   s32 value1ac;
 };
 
-extern char SceneId_Ov663Room1;
-extern char SceneId_Ov663Room2;
-
 s32 Math_Cosine(s32 angle);
 void Map_CenterOnFollowedPoint(void);
 
-void Func_02003b48(struct Actor *object);
 void Func_02003c38(s32 actor, s32 a);
-void Func_02003c30(void);
 
 extern char ResourceId_WhirlwindMap;
 extern char ResourceId_WhirlwindTiles;
 
-void Func_02003cd0(struct Actor *object, s32 cue);
-void Func_02003cb8(const void *data);
-
 extern char ResourceId_LightningMap;
 extern char ResourceId_LightningTiles;
-extern char SceneId_Ov663Room3;
 
-void Func_02003cb0(const u8 *table);
-void Func_02003ca0(const u8 *table);
-void Func_02003c80(s32 a);
-
-void Func_02005df4(s32 x, s32 z, s32 terrain, s32 height);
-void Func_02005efc(s32 a);
-void Func_02005ee4(void);
-struct Actor *Func_02005ef4(void);
 void Func_02005d8c(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_02005d94(struct Actor *object);
-void Func_02005f8c(struct Actor *object, s32 cue);
-void Func_02005d7c(struct Actor *object);
-s32 Func_02005dec(struct Actor *object);
 void Func_02005eec(s32 actor, s32 a);
-
-s32 Func_02001cec();
-
-extern u8 gData_02001c90[];
-extern u8 gData_02001c60[];
-
-void Func_02001578(const void *data);
-void Func_02001570(s32 a, s32 b, s32 c, s32 d);
-
-extern s32 gData_02001c08;
-
-void Func_020019e4();
-
-extern s16 gData_02001cde;
-extern struct Actor *gData_02001ce0[];
-extern u16 gData_02001de2;
-extern u16 gData_02001de4;
-extern s16 gData_02001cdc;
-extern s16 gData_02001de0;
-
-s32 Func_02000d5c(struct Actor *actor);
 
 extern u8 gField_CachedTilesA[];
 
@@ -1364,279 +1305,68 @@ extern u8 gField_CachedTilesD[];
 
 s32 Func_02002e0c(struct Actor *object, s32 *position);
 
-extern struct AnkohlRuinsSpriteWork Data_02004030;
-
 void Func_02002dac(u32 *oam, s32 b);
 
-extern u16 gData_02002a58[16];
-
 extern u8 Data_0202c001[];
-
-extern struct Unk02003450 Data_02003450[];
-
-void Func_02002940(s32 layer);
-void Func_02002a10(void);
 
 extern const u8 gField_Tiles679[];
 
 void Func_020028b0(const void *source, void *destination);
 
 s32 Func_02003d2c(struct Actor *object, struct Vector3 *target);
-void Func_02003cc4(struct Actor *object, s32 mode);
-void Func_02003ea4();
-void Func_02003ee4();
 void Func_02003c94(u32 *sprite, s32 depth);
 
-void Func_020010e0(void);
-
-s32 Func_02002b3c();
-s32 Func_020029fc();
-s32 Func_02002bac();
-
 s32 BattleEffect_GetResourceId(s32 object);
-
-s32 Window_CloseMatchingId();
-
-void Func_020035ac(s32 a);
-void Func_0200360c(s32 a, s32 b);
 
 extern const u16 Field_Palette685[];
 
 extern char ResourceId_FieldEffectExplosion;
 
-void Func_020035fc(struct FlashSprite *sprite, s32 width, s32 height,
-                   u32 attributes, s32 tile);
-
-extern char ResourceId_Data1F7;
 extern char ResourceId_GlowDisc;
-extern char ResourceId_FireColumn;
 
 void Func_02000180(s32 a, s32 b);
 
 extern char ResourceId_LogoOnBlack;
 
-void Func_02000d58(s16 *data);
-
 void Func_02000ddc(s32 slot, s32 actor);
-s32 Func_02000dbc(s32 mode);
-void Func_02000d9c(void);
-
-void Func_02003dc0(const void *data);
-void Func_02003dc8(void);
-void Func_02003de8(void);
-void Func_02003cf0(void);
 
 void EventObject_Initialize(void);
 
 void Func_02003cc0(s32 id);
-void Func_02003ba0(struct Actor *object, s32 mode);
 s32 Func_02003c10(s32 layer, s32 x, s32 z);
-s32 Func_02003d20(void);
-s32 Func_02003db0(struct Actor *object);
-s32 Func_02003dd0(s32 layer, s32 shape, s32 height);
-struct Actor *Func_02003dd8(s32 *position, s32 mode);
 
-extern s32 gData_0200567c;
-
-s32 Func_02003de0(void);
-s32 Func_02003d10(s32 owner);
-
-s32 Func_02004c24();
-s32 Func_02004c8c();
-s32 Func_02004a24();
-s32 Func_02004c44();
-s32 Func_02004c4c();
-
-extern u16 gData_020056e0[2][160];
-
-void Func_02004c5c();
-void Func_02004c14(void);
-void Func_02004c1c(void);
-void Func_02004c84();
-void Func_02004b94();
 void Func_02004c6c(struct ParticleSprite *sprite, struct Particle *particle);
 void Func_02004a0c(struct Actor *object, s32 mode);
 
-void Func_02003148();
-void Func_02003268();
-void Func_02003218();
 void Func_020032a0();
 
-s32 Func_0200084c();
-
-void Func_0200126c(s32 id);
-
 void Func_020055cc(const u8 *data, void *buffer);
-void Func_02005824(void);
-void Func_0200582c(s32 index, s32 a, s32 b);
-void Func_0200583c(s32 index, s32 flag, s32 a, s32 b);
 
 void Func_020057b4(void);
 
-void Func_020056b4(void);
 void Func_02005624(struct Actor *object, s32 mode);
 
-void Func_02001d78(void);
-
-extern char SceneId_Ov681Room5;
-
-void Func_02004e64(void);
-
-extern u16 Data_02006340[];
-
-extern char SceneId_Ov65FRoom1;
-extern char SceneId_Ov65FRoom2;
-extern char SceneId_Ov65FRoom3;
-extern char SceneId_Ov65FRoom4;
-extern char SceneId_Ov65FRoom5;
-
-void Func_020052b4(void);
-void Func_020052f4(s32 value);
-void Func_0200535c();
-
 extern const u8 gField_Tiles64D[];
-
-void Import_ActorPlaceAtActor();
-void Func_02003320();
-
-extern s16 gData_02003c14;
-extern s16 gData_02003990[2][160];
-
-extern u16 *gData_02001a24;
-extern u16 *Data_02001a2c;
-extern u16 gData_02001a14;
-extern u16 gData_02001a20;
-extern u16 gData_02001a30;
-extern u16 gData_02001a34;
-
-void Func_02001334(void);
-void Func_0200131c(s32 mode);
-void Func_0200133c(void);
-
-void Func_0200230c(s32 actor);
-
-void Func_02002a78(s32 x, s32 z, s32 a, s32 b);
-void Func_02002af0(void);
-
-extern u16 gData_02003360[];
-extern u16 gData_02003364[];
-
-void Func_02002b38(struct BeamSprite *sprite);
-void Func_02002b40(struct BeamSprite *sprite, struct BeamSpark *spark);
 
 extern u8 gField_CachedTilesB[];
 
 extern u8 gField_CachedTilesC[];
 
-void Func_020029f0(struct FieldEffect *effect, s32 mode);
-
-void Func_02001d1c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
-
-extern u16 gData_020023b0[];
-extern u16 gData_020023d0[];
-extern u16 gData_020023d4[];
-extern s32 Data_020023ac;
-
 s32 Func_02001d2c(s32 x, s32 z, s32 layer);
-
-extern u16 gData_020021c0[];
-extern u16 gData_020021e0[];
 
 void Func_02001b34();
 
-extern u16 gData_02002258[];
-extern u16 gData_02002278[];
-extern u16 gData_0200227c[];
-
 s32 Func_02001bb4(struct Actor *actor);
-
-s32 Func_0200231c();
-
-extern s32 gData_02002b88[3];
-extern const u8 gData_02002b60[];
-
-void Func_02002324(const void *script, s32 a, s32 b, s32 c);
-
-extern u16 gData_02002b98[];
-extern u16 gData_02002bbc[];
 
 void Func_02001f00(s32 id);
 
-extern u16 gData_0200273c[];
-extern u16 gData_02002740[];
-
-void Func_02001e28();
-
 void Func_02001ef8();
 
-extern s32 gData_02002718;
-
-void Func_020029d8(void);
-void Func_020028a0(s32 value);
-
-extern u16 gData_02003404[];
-extern u16 gData_02003424[];
-extern u16 gData_02003428[];
-
-void Func_02002a30();
-void Func_02002810(struct FieldEffect *effect, s32 mode);
-
-extern s16 gData_0200242a;
-extern u16 gData_0200252e;
-extern u16 gData_020023e8[];
-
-void Func_02001be4();
-
-extern u16 gData_02002408[];
-extern u16 gData_0200240c[];
-extern s32 Data_020023e4;
-
-extern s16 gData_020035fe;
-
-void Func_02002b54(s32 x, s32 z, s32 a, s32 b);
-void Func_02002c54(s32 x, s32 z, s32 a, s32 b);
-void Func_02002bec(void);
-
-void Func_020021e0(s32 x, s32 z, s32 a, s32 b);
-
-extern u16 gData_02002ab0[];
-extern u16 gData_02002ad4[];
-extern s32 Data_02002aac;
-
-s32 Func_020022b0(struct Actor *actor);
-
-extern s32 gData_02002618;
-extern u16 gData_0200261c[];
-extern u16 gData_0200263c[];
-extern u16 gData_02002640[];
-
-void Func_02001bd8();
-void Func_02001c98();
-
-s32 Event_ClearInvalidPackedValues();
-void Func_02004994(s32 id, s32 mode);
-void Func_02004984(void);
-void Func_0200498c(s32 a, s32 b, s32 c, s32 d);
-
-extern u16 gData_02005a60[];
-extern u16 gData_02005a64[];
-
-void Func_020049b4();
-s32 Func_020049a4(s32 x, s32 z, s32 layer);
-
-extern s32 gData_020062a0;
-extern u16 gData_020062a8;
 extern s32 gData_020062a4;
-extern u16 gData_020062aa;
 
 void Func_02005330(struct Actor *object, s32 mode);
-void Func_02005148(struct Actor *object);
-void Func_02005398(void);
-void Func_020053b8(const void *data);
 
 void Func_0200103c(struct Actor *object, s32 value);
-void Func_0200117c(s32 a, s32 b, s32 c, s32 d);
-void Func_02001134(void);
 
 // The scene's setup: places its actors, then plays what the entrance it was
 // reached by calls for.
@@ -1688,8 +1418,6 @@ void Func_02001438(s32 id);
 void Func_02002c28(void);
 
 struct Actor *Func_0200120c(void);
-
-void Func_02003ba8(struct Actor *object, const void *script);
 
 extern char SceneId_Ov65aRoom1;
 extern char SceneId_Ov65aRoom2;
@@ -1972,36 +1700,12 @@ struct FieldPart {
 
 extern char SceneId_Ov6b5;
 
-void Func_020022e8(void);
-s32 Func_020022f0(void);
-void Func_02002350(void);
-void Func_02002370(void *data, s32 a, s32 b);
-void Func_02002398(void);
-void Func_020023a0(void *data);
-void Func_020023e0(s32 scene, s32 entrance);
-
-extern u8 gData_02002440[];
-extern u8 gData_02002454[];
-extern u8 gData_02002468[];
-
 extern u8 gData_0200265e[];
 
-extern u8 Data_0200274a[];
-extern u8 Data_0200288a[];
-extern u8 Data_0200284e[];
-
 extern u8 Data_02012f94[];
-
-void *Func_02002330(struct Window *window, void *glyph, s32 x, s32 y);
-
-void Func_0200561c(void *animation, s32 a);
-s32 Func_02005834(s32 value);
 
 void Func_020057d4(struct Actor *object);
 
 s32 Func_02005684(struct Actor *object, struct Vector3 *position);
-void Func_02005784(s32 id);
-
-void Func_020029e8(struct SparkSprite__jupiter_lighthouse_room_5 *sprite);
 
 #endif

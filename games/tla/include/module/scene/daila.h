@@ -24,4 +24,6 @@ extern s32 gData_02000d9c[];
 
 extern u32 gData_02000f44[];
 
+void Func_02000d58(s16 *data);
+
 #endif

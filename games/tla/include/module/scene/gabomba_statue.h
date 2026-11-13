@@ -131,4 +131,11 @@ void Func_020011bc(s32 message, s32 value);
 s32 Func_020053a0(void);
 extern u32 gData_02005910[];
 
+void Func_02005824(void);
+void Func_0200582c(s32 index, s32 a, s32 b);
+void Func_0200583c(s32 index, s32 flag, s32 a, s32 b);
+void Func_0200561c(void *animation, s32 a);
+s32 Func_02005834(s32 value);
+void Func_02005784(s32 id);
+
 #endif

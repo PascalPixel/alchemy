@@ -60,4 +60,14 @@ extern u32 gData_020013fc[];
 extern s32 gData_02001418[];
 extern s16 gData_020019d4[];
 
+extern u16 *gData_02001a24;
+extern u16 *Data_02001a2c;
+extern u16 gData_02001a14;
+extern u16 gData_02001a20;
+extern u16 gData_02001a30;
+extern u16 gData_02001a34;
+void Func_02001334(void);
+void Func_0200131c(s32 mode);
+void Func_0200133c(void);
+
 #endif

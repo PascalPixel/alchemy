@@ -49,4 +49,9 @@ extern struct CellTarget gTeleporters;
 void Teleporter_Uncover(struct CellTarget *table,
                         struct CellTargetEntry *entry);
 
+void Func_020021e0(s32 x, s32 z, s32 a, s32 b);
+extern u16 gData_02002ab0[];
+extern u16 gData_02002ad4[];
+extern s32 Data_02002aac;
+
 #endif

@@ -53,4 +53,11 @@ extern u32 gData_020027a8[];
 extern u32 gData_020027e4[];
 extern u32 gData_02002820[];
 
+void Func_0200230c(s32 actor);
+extern s32 gData_02002b88[3];
+extern const u8 gData_02002b60[];
+void Func_02002324(const void *script, s32 a, s32 b, s32 c);
+extern u16 gData_02002b98[];
+extern u16 gData_02002bbc[];
+
 #endif

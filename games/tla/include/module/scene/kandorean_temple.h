@@ -84,4 +84,10 @@ extern s32 gData_02005664[];
 
 void Func_02003684(void);
 
+extern s32 gData_020062a0;
+extern u16 gData_020062a8;
+extern u16 gData_020062aa;
+void Func_02005398(void);
+void Func_020053b8(const void *data);
+
 #endif

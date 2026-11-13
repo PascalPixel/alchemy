@@ -81,4 +81,16 @@ extern s32 gData_02003dac[];
 
 void Func_02002b88(void);
 
+struct Actor;
+
+extern char SceneId_Ov663Room1;
+extern char SceneId_Ov663Room2;
+void Func_02003cd0(struct Actor *object, s32 cue);
+void Func_02003cb8(const void *data);
+extern char SceneId_Ov663Room3;
+void Func_02003cb0(const u8 *table);
+void Func_02003ca0(const u8 *table);
+void Func_02003c80(s32 a);
+void Func_02003ba8(struct Actor *object, const void *script);
+
 #endif

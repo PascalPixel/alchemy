@@ -78,4 +78,14 @@ void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
 s32 Func_02004c34(struct Actor *object);
 
+s32 Func_02004c24();
+s32 Func_02004c8c();
+s32 Func_02004c44();
+s32 Func_02004c4c();
+extern u16 gData_020056e0[2][160];
+void Func_02004c5c();
+void Func_02004c14(void);
+void Func_02004c1c(void);
+void Func_02004c84();
+
 #endif

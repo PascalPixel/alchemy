@@ -55,4 +55,15 @@ extern u32 gData_02002ebc[];
 extern u32 gData_02002ef8[];
 extern u32 gData_02002f34[];
 
+struct FieldEffect;
+struct SparkSprite__jupiter_lighthouse_room_5;
+
+void Func_020029d8(void);
+extern u16 gData_02003404[];
+extern u16 gData_02003424[];
+extern u16 gData_02003428[];
+void Func_02002a30();
+void Func_02002810(struct FieldEffect *effect, s32 mode);
+void Func_020029e8(struct SparkSprite__jupiter_lighthouse_room_5 *sprite);
+
 #endif

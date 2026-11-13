@@ -26,4 +26,6 @@ extern s32 gData_02003268[];
 extern u32 gData_02003280[];
 extern u32 gData_02003290[];
 
+struct AnkohlRuinsSpriteWork;
+
 #endif

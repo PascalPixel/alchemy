@@ -58,4 +58,13 @@ extern s16 gData_02005db2[];
 extern s16 gData_02005dc8[];
 void Func_0200132c(void);
 
+extern u16 Data_02006340[];
+extern char SceneId_Ov65FRoom1;
+extern char SceneId_Ov65FRoom2;
+extern char SceneId_Ov65FRoom3;
+extern char SceneId_Ov65FRoom4;
+extern char SceneId_Ov65FRoom5;
+void Func_020052f4(s32 value);
+void Func_0200535c();
+
 #endif

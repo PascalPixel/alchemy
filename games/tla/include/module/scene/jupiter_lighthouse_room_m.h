@@ -71,4 +71,13 @@ void Teleporter_Uncover(struct CellTarget *table,
 
 void Teleporter_Sink(struct CellTarget *table, struct CellTargetEntry *entry);
 
+s32 Event_ClearInvalidPackedValues();
+void Func_02004994(s32 id, s32 mode);
+void Func_02004984(void);
+void Func_0200498c(s32 a, s32 b, s32 c, s32 d);
+extern u16 gData_02005a60[];
+extern u16 gData_02005a64[];
+void Func_020049b4();
+s32 Func_020049a4(s32 x, s32 z, s32 layer);
+
 #endif

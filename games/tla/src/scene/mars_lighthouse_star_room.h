@@ -12,7 +12,7 @@
 #define DIFF(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
 
 s32 Trig_Cos(s32 angle);
-void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Func_02001928(struct Actor *object, s32 priority);
 
 // The scene's own event inlines: a habit of the whole game written once, as

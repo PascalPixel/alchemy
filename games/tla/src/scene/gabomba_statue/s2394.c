@@ -756,7 +756,7 @@ void Func_020038ac(void) {
   void *buffer = Mem_Alloc(0xc00);
   s32 handle;
 
-  Import_DecompressTaggedLz(gField_CachedTilesA, buffer);
+  Decompress_TaggedLz(gField_CachedTilesA, buffer);
   handle = VramCache_FindFreeEntry();
   VramCache_Load(handle, 0xc00, buffer);
   state->tileEntry = handle;
@@ -1494,7 +1494,7 @@ void Func_02004710(void) {
         oam->mode = 1;
         oam->affine = affine;
       }
-      Import_OamAddSpriteAtDepthClamped(oam, depth);
+      Oam_AddSpriteAtDepthClamped(oam, depth);
       oam++;
     }
   }
@@ -1944,7 +1944,7 @@ void Func_02005090(void) {
       oam->affine = scaled;
     else
       oam->affine = plain;
-    Import_OamAddSpriteAtDepthClamped(oam, 236);
+    Oam_AddSpriteAtDepthClamped(oam, 236);
   }
 }
 
@@ -1982,7 +1982,7 @@ void Func_020052a4(s32 mode) {
     clock->ringing = 1;
   }
   tiles = Heap_AllocEwram(0x400);
-  Import_DecompressTaggedLz(
+  Decompress_TaggedLz(
       Resource_GetTableEntry((s32)&ResourceId_ClockDigits), tiles);
   clock->tiles = tiles;
   clock->digits = tiles + 0x2c0;

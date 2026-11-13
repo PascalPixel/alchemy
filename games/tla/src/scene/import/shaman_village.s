@@ -178,9 +178,9 @@ Icon_DrawItem:
 	.thumb_func
 WindowColor_Apply:
 	overlay_veneer WindowColor_ApplyFar
-	.global Import_ItemGet
+	.global Item_GetDirect
 	.thumb_func
-Import_ItemGet:
+Item_GetDirect:
 	overlay_veneer Item_GetDirectFar
 	.global PartyInventory_FindMember
 	.thumb_func

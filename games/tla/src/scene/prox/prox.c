@@ -38,7 +38,7 @@
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 s32 Func_020002d8(struct Actor *object, struct Actor *target, s32 range,
                   s32 force) {
@@ -70,16 +70,16 @@ s32 Func_020002d8(struct Actor *object, struct Actor *target, s32 range,
 
       if (count > 120) {
         *movementState = 0;
-        Import_ActorSelectAnimation(object, 2);
+        Actor_SelectAnimation(object, 2);
       } else {
         *movementState = 1;
-        Import_ActorSelectAnimation(object, 1);
+        Actor_SelectAnimation(object, 1);
         result = 1;
       }
     }
   } else {
     object->movementState = 0;
-    Import_ActorSelectAnimation(object, 2);
+    Actor_SelectAnimation(object, 2);
   }
   return result;
 }
@@ -89,7 +89,7 @@ s32 Func_020002d8(struct Actor *object, struct Actor *target, s32 range,
 #if TLA_PATCH_1
 
 /// Once the leader is within 11 of the actor, stops it
-/// (Import_ActorSelectAnimation mode 2). Otherwise it runs Func_020002d8 toward
+/// (Actor_SelectAnimation mode 2). Otherwise it runs Func_020002d8 toward
 /// object 18, 16 or 17 by its action (0, 1, other) at 24, and if that returns
 /// 0, toward the leader at 32, flagged when action bit 1 is set while the event
 /// work's halfword 0x160 or byte 4 of the window tiles is nonzero.
@@ -102,7 +102,7 @@ s32 Func_020003bc(struct Actor *actor) {
   target = Actor_Get(gMainRoutineWork.currentOwner);
   if (SceneActor_CalculateFixedPointDistance(&target->x, &actor->x) <= 11) {
     actor->movementState = flag;
-    Import_ActorSelectAnimation(actor, 2);
+    Actor_SelectAnimation(actor, 2);
     return 0;
   }
   if (actor->timer == 0)
@@ -874,7 +874,7 @@ void Func_02001860(s32 a0, s32 a1, s32 a2) {
     FIELD_AT(t0, s32, 28) = 0x8000;
     FIELD_AT(t0, s32, 104) = 0x3c;
     FIELD_AT(t0, s32, 108) = (s32)Func_0200181c;
-    Call2(Import_ActorSelectAnimation, t0, 5);
+    Call2(Actor_SelectAnimation, t0, 5);
     Actor_SetBlendMode(t0, 1);
   }
 }
@@ -1898,7 +1898,7 @@ void Prox_SayFarewell(void) {
   }
 }
 
-void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 /* VIEW(s1cf0): variable gData_02004740 as extern const s16 gData_02004740[];
  * the definition has s32 gData_02004740[] = { 0xffff, - 0x8000, (s32)
  * 0xe000c000, (s32) 0xc000a000, 0x20004000, 0x40006000, 0xffff, - 0x8000,
@@ -1907,7 +1907,7 @@ void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 extern const s16 gData_02004740__s1cf0[] __asm__("gData_02004740");
 
 DEFINE_ACTOR_STEER_BY_PAD(Func_0200385c, gData_02004740__s1cf0,
-                          Import_ActorSelectAnimation)
+                          Actor_SelectAnimation)
 
 void Func_020038e8(void) {
   void *work = Ram_HeapSlots->eventWork;
@@ -1942,7 +1942,7 @@ struct Position {
  * games/tla/src/scene/prox.c:2004: `Func_0200385c__s391c' undeclared (first use
  * in this function). */
 extern void Func_0200385c__s391c(void) __asm__("Func_0200385c");
-void Import_ActorSelectAnimation(struct Actor *actor, s32 mode);
+void Actor_SelectAnimation(struct Actor *actor, s32 mode);
 s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 radiusA, struct Position *b,
                                     s32 radiusB);
 s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
@@ -1955,7 +1955,7 @@ s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
 extern s16 gData_02004780__s391c[] __asm__("gData_02004780");
 
 DEFINE_LEADER_SLIDE_ON_ICE(Func_0200391c, Func_020038e8, gData_02004780__s391c,
-                           Import_ActorSelectAnimation, Func_0200385c__s391c,
+                           Actor_SelectAnimation, Func_0200385c__s391c,
                            Import_FieldCheckSpheresOverlap)
 
 extern volatile s16 gData_020062a4;
@@ -1966,7 +1966,7 @@ s32 Actor_HasArrived(struct Actor *object);
 #define SHARED_F02003070_ID2 gData_020062a4
 #define SHARED_F02003070_ID3 Func_020038e8
 #define SHARED_F02003070_ID4 gData_02004780__s391c
-#define SHARED_F02003070_ID5 Import_ActorSelectAnimation
+#define SHARED_F02003070_ID5 Actor_SelectAnimation
 #define SHARED_F02003070_ID6 Actor_HasArrived
 #define SHARED_F02003070_ID7 Func_0200385c__s391c
 #define SHARED_F02003070_ID8 Import_FieldCheckSpheresOverlap
@@ -1990,7 +1990,7 @@ s32 Actor_HasArrived(struct Actor *object);
 void Func_02003edc(s32 a0) { gData_020062a4 = a0; }
 
 DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003ee8, Func_020038e8,
-                                 Import_ActorSelectAnimation,
+                                 Actor_SelectAnimation,
                                  Func_0200385c__s391c,
                                  Import_FieldCheckSpheresOverlap)
 

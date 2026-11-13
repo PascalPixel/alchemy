@@ -237,7 +237,7 @@ s32 Scene_PrepareMap(void) { return 0; }
  * not compile in tla-ja: games/tla/include/system/input.h:37: conflicting types
  * for `gInput'. */
 extern u32 gInput__s11e0 __asm__("gInput");
-void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 void Func_020017dc(struct Actor *object) {
   s32 angle;
@@ -253,7 +253,7 @@ void Func_020017dc(struct Actor *object) {
   else
     angle = gData_02003272[(gInput__s11e0 >> 4) & 15];
   if (angle == -1) {
-    Import_ActorSelectAnimation(object, 9);
+    Actor_SelectAnimation(object, 9);
     return;
   }
   turn = (s16)(angle - object->facing);
@@ -262,7 +262,7 @@ void Func_020017dc(struct Actor *object) {
   if (turn < -0x1000)
     turn = -0x1000;
   object->facing += turn;
-  Import_ActorSelectAnimation(object, 2);
+  Actor_SelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
 }
 
@@ -285,7 +285,7 @@ void Func_02001868(void) {
  * tla-ja: games/tla/src/scene/tundaria_tower/s11e0.c:355:
  * `Func_020017dc__events_e' undeclared (first use in this function). */
 extern void Func_020017dc__events_e(void) __asm__("Func_020017dc");
-void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 void Func_0200189c(void) {
   struct Actor *object;
@@ -353,7 +353,7 @@ retry:
   object->acceleration = 0x1999;
   object->timer = 0;
   Actor_SetMoveTarget(object, x, object->y, z);
-  Import_ActorSelectAnimation(object, 2);
+  Actor_SelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
   Actor_WaitForMove(object);
   object->update = Func_020017dc__events_e;
@@ -367,7 +367,7 @@ walkNext:
   flags = &entry->collisionFlags;
 overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
-    if (Value4((s32 (*)())Import_FieldCheckSpheresOverlap, (s32)&entry->x,
+    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x,
                radius, (s32)position, entry->radius - 2) >= 0)
       goto blocked;
   }
@@ -406,5 +406,5 @@ end:
   object->update = NULL;
   object->actionFlags |= 1;
   object->acceleration = 0x4000;
-  Import_ActorSelectAnimation(object, 1);
+  Actor_SelectAnimation(object, 1);
 }

@@ -371,7 +371,7 @@ void ShamanVillage_CheckTrialEntry(void) {
       s32 item = items[slot];
       if (item == 0)
         break;
-      if ((u8)(Import_ItemGet(item)->type - 1) <= 3)
+      if ((u8)(Item_GetDirect(item)->type - 1) <= 3)
         remaining--;
       if (remaining == 0)
         break;

@@ -1369,7 +1369,7 @@ void Func_0200276c(void) {
   Dma_Set((const void *)&zero, work,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 517, REG_DMA3);
   buf = HeapSlot_AllocEwram(56, 0x400);
-  Import_ResourceDecodeByteLzInRam(gField_Tiles679, buf);
+  Resource_DecodeByteLzInRam(gField_Tiles679, buf);
   work->vramEntry = VramCache_FindFreeEntry();
   work->tileBase = VramCache_Load(work->vramEntry, 0x300, buf);
   HeapSlot_Release(56);

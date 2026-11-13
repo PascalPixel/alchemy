@@ -20,7 +20,7 @@ s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 void Func_02001e5c(s32 value) { gData_02003cd0 = value; }
 
 void Func_020017dc(void);
-void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 void Func_02001e68(void) {
   struct Actor *object;
@@ -74,7 +74,7 @@ retry:
   object->speedLimit = 0x20000;
   object->acceleration = 0x1999;
   object->timer = 0;
-  Import_ActorSelectAnimation(object, 2);
+  Actor_SelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
   object->update = Func_020017dc;
   goto walk;
@@ -87,7 +87,7 @@ walkNext:
   flags = &entry->collisionFlags;
 overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
-    if (Value4((s32 (*)())Import_FieldCheckSpheresOverlap, (s32)&entry->x,
+    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x,
                radius, (s32)position, entry->radius - 2) >= 0)
       goto blocked;
   }
@@ -126,7 +126,7 @@ end:
   object->update = NULL;
   object->actionFlags |= 1;
   object->acceleration = 0x4000;
-  Import_ActorSelectAnimation(object, 1);
+  Actor_SelectAnimation(object, 1);
 }
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
@@ -192,7 +192,7 @@ top:
 #include "map.h"
 
 DEFINE_ACTOR_SET_CELL_OPEN(Func_02002184, Actor_GetCellIndex,
-                           Import_ActorSelectAnimation)
+                           Actor_SelectAnimation)
 
 // On entering, sets each listed pillar from its two flags (pushed: moved to its
 // place; else its cell raised and its shape redrawn), then lifts the leader
@@ -239,7 +239,7 @@ next:
     cell->attributeB = 128;
     *slot = MapCollision_FindOrAddTag(object->terrainId, shape, (height >> 19) + 4);
     if (GameFlag_Get(flag))
-      Import_ActorSelectAnimation(object, 0);
+      Actor_SelectAnimation(object, 0);
   }
   table += 2;
   if (*table != 0xffff)
@@ -284,7 +284,7 @@ next:
       Sound_Play(125);
       Actor_SetSpriteColor(Actor_GetById(id), 7);
       wait(2);
-      Import_ActorSelectAnimation(trap, 0);
+      Actor_SelectAnimation(trap, 0);
       Actor_SetSpriteColor(Actor_GetById(id), 0);
       wait(2);
       Actor_SetSpriteColor(Actor_GetById(id), 7);
@@ -300,7 +300,7 @@ next:
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_020029d0(0);
         wait(8);
-        Import_ActorSelectAnimation(trap, 2);
+        Actor_SelectAnimation(trap, 2);
         Func_02002ca8(-2, trap->terrainId);
         Func_020029d0(1);
         wait(16);
@@ -346,7 +346,7 @@ loop:
     TundariaTower_SetWork(0x10000, 0x40000, 0x10000);
     Func_020029d0(0);
     wait(8);
-    Import_ActorSelectAnimation(object, 2);
+    Actor_SelectAnimation(object, 2);
     Func_02002c1c(-4, object->terrainId, id);
     Func_020029d0(1);
     wait(16);
@@ -472,13 +472,13 @@ void Func_02002764(const u16 *table) {
     flag = table[1];
     Event_Start();
     if (!GameFlag_Get(flag)) {
-      Import_ActorSelectAnimation(partner, 1);
+      Actor_SelectAnimation(partner, 1);
       Func_02002748(partner, trap);
       wait(1);
       Sound_Play(125);
       Actor_SetSpriteColor(Actor_GetById(8), 7);
       wait(2);
-      Import_ActorSelectAnimation(partner, 0);
+      Actor_SelectAnimation(partner, 0);
       Actor_CopyGraphics(id, 9);
       Actor_SetSpriteColor(Actor_GetById(8), 0);
       wait(2);
@@ -492,7 +492,7 @@ void Func_02002764(const u16 *table) {
     } else {
       second = flag + 1;
       if (!GameFlag_Get(second)) {
-        Import_ActorSelectAnimation(partner, 0);
+        Actor_SelectAnimation(partner, 0);
         Func_02002748(partner, trap);
         motion = &leader->motionFlags;
         wait(1);
@@ -501,7 +501,7 @@ void Func_02002764(const u16 *table) {
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_020029d0(0);
         wait(8);
-        Import_ActorSelectAnimation(partner, 2);
+        Actor_SelectAnimation(partner, 2);
         Func_02002ca8(-2, trap->terrainId);
         Func_020029d0(1);
         wait(16);

@@ -62,9 +62,9 @@ Heap_AllocEwram:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Heap_ReleaseFar
-	.global Import_DecompressTaggedLz
+	.global Decompress_TaggedLz
 	.thumb_func
-Import_DecompressTaggedLz:
+Decompress_TaggedLz:
 	overlay_veneer Decompress_TaggedLzFar
 	.global VramCache_Load
 	.thumb_func
@@ -78,9 +78,9 @@ VramCache_FindFreeEntry:
 	.thumb_func
 OamMatrix_AllocFromTransform:
 	overlay_veneer OamMatrix_AllocFromTransformFar
-	.global Import_OamAddSpriteAtDepthClamped
+	.global Oam_AddSpriteAtDepthClamped
 	.thumb_func
-Import_OamAddSpriteAtDepthClamped:
+Oam_AddSpriteAtDepthClamped:
 	overlay_veneer Oam_AddSpriteAtDepthClampedFar
 	.global Resource_GetTableEntry
 	.thumb_func

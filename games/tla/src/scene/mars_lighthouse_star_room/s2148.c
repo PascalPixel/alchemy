@@ -39,7 +39,7 @@ extern u8 gInventorySnapshot[];
 #define SHARED_F02002148_NAME Func_02002148
 #define SHARED_F02002148_ID2 Func_02001fcc
 #define SHARED_F02002148_ID3 Func_02002120
-#define SHARED_F02002148_ID4 Import_ActorSelectAnimation
+#define SHARED_F02002148_ID4 Actor_SelectAnimation
 #define SHARED_F02002148_ID5 MapGrid_GetCellAttributeLowNibbleOrBump
 #define SHARED_F02002148_ID6 MapGrid_CheckCollision
 #define SHARED_F02002148_ID7 Import_FieldCheckSpheresOverlap
@@ -174,7 +174,7 @@ s32 MarsLighthouseStarRoom_SlideOnIce(void) {
   Event_ClearFlag(0x106);
   leader->update = (void (*)(void))Func_02002120;
   leader->facing = 0x4000;
-  Import_ActorSelectAnimation(leader, 49);
+  Actor_SelectAnimation(leader, 49);
   while (ride->car->stopped == 0) {
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x, leader->z) != 7) {
       leader->x += ride->car->stepX;
@@ -358,7 +358,7 @@ void Func_02002a58(s32 sourceId, s32 id, s32 kind, s32 value,
   Actor_StartScript(object, script);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
-  Import_ActorSelectAnimation(object, 1);
+  Actor_SelectAnimation(object, 1);
   *(struct Actor **)((u8 *)object + 0x68) = source;
   object->timer = 0;
   *(s16 *)((u8 *)object + 0x66) = value;
@@ -381,9 +381,9 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
-DEFINE_ACTOR_POP_UP_SLOW(Func_02002b98, Import_ActorSelectAnimation)
+DEFINE_ACTOR_POP_UP_SLOW(Func_02002b98, Actor_SelectAnimation)
 
-DEFINE_ACTOR_POP_UP(Func_02002c44, Import_ActorSelectAnimation)
+DEFINE_ACTOR_POP_UP(Func_02002c44, Actor_SelectAnimation)
 
 #include "macros.h"
 
@@ -393,7 +393,7 @@ extern u16 gData_02004cf0[];
 DEFINE_ACTOR_PARK(Func_02002ce8, Func_02002ad0)
 
 DEFINE_ACTOR_STEER_BY_PAD(Func_02002d04, gData_020047fc,
-                          Import_ActorSelectAnimation)
+                          Actor_SelectAnimation)
 
 void Func_02002d90(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -421,7 +421,7 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 extern s16 gData_0200483c[];
 
 DEFINE_LEADER_SLIDE_ON_ICE(Func_02002dc4, Func_02002d90, gData_0200483c,
-                           Import_ActorSelectAnimation, Func_02002d04,
+                           Actor_SelectAnimation, Func_02002d04,
                            Import_FieldCheckSpheresOverlap)
 
 #include "input.h"
@@ -450,7 +450,7 @@ Func_0200428c__s3070(s32 *a, s32 aRadius, s32 *b,
 #define SHARED_F02003070_ID2 gData_02004cf0__s3070
 #define SHARED_F02003070_ID3 Func_02002d90
 #define SHARED_F02003070_ID4 gData_0200483c
-#define SHARED_F02003070_ID5 Import_ActorSelectAnimation
+#define SHARED_F02003070_ID5 Actor_SelectAnimation
 #define SHARED_F02003070_ID6 Actor_HasArrived
 #define SHARED_F02003070_ID7 Func_02002d04
 #define SHARED_F02003070_ID8 Func_0200428c__s3070

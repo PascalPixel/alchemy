@@ -24,7 +24,7 @@ extern u32 gShamanVillage_MoapaLeavesHouseScript[];
 extern u32 gShamanVillage_OtherGuardLeavesHouseScript[];
 extern u32 gShamanVillage_RejoinLeaderAtHouseScript[];
 
-struct ItemDefinition *Import_ItemGet(s32 item);
+struct ItemDefinition *Item_GetDirect(s32 item);
 
 extern u32 gShamanVillage_LetteringSprites[];
 

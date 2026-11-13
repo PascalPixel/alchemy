@@ -42,9 +42,9 @@ Heap_Alloc:
 	.thumb_func
 Heap_Release:
 	overlay_veneer Heap_ReleaseFar
-	.global Import_ResourceDecodeByteLzInRam
+	.global Resource_DecodeByteLzInRam
 	.thumb_func
-Import_ResourceDecodeByteLzInRam:
+Resource_DecodeByteLzInRam:
 	overlay_veneer Resource_DecodeByteLzInRamFar
 	.global Import_DecompressTaggedLz
 	.thumb_func

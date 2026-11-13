@@ -1112,7 +1112,7 @@ void Func_02001424(void) {
     object->scaleY = 0x8000;
     *(s32 *)&object->watchedObject = 60;
     object->update = Func_020013e4;
-    Import_ActorSelectAnimation(object, 5);
+    Actor_SelectAnimation(object, 5);
     Actor_SetBlendMode(object, 1);
   }
 }
@@ -1185,7 +1185,7 @@ DEFINE_RIDE_UPDATE_CARRIED(Func_020015ec, RideWork__s1424, Func_02001528,
 
 extern const u8 gData_02004744[];
 
-void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *script);
 
 DEFINE_ACTOR_RESET_SCRIPTED(Func_02001750, gData_02004744)
@@ -1202,7 +1202,7 @@ void Func_02001780(s32 *position, s32 speed, s32 flag) {
     object->update = Func_020015ec;
     if (flag != 0)
       object->unk5c[0] = 2;
-    Import_ActorSelectAnimation(object, 2);
+    Actor_SelectAnimation(object, 2);
   }
 }
 
@@ -1268,7 +1268,7 @@ DEFINE_ACTOR_SETUP_SCRIPTED_PART(Func_02001928, gData_02004744)
       object->update = call1;                                                  \
       if (flag != 0)                                                           \
         object->unk5c[0] = 2;                                                  \
-      Import_ActorSelectAnimation(object, 2);                                  \
+      Actor_SelectAnimation(object, 2);                                  \
     }                                                                          \
   }
 
@@ -1286,7 +1286,7 @@ void Func_020019b4(s32 *position, s32 speed, s32 flag) {
     object->update = Func_020017c8;
     if (flag != 0)
       object->unk5c[0] = 2;
-    Import_ActorSelectAnimation(object, 2);
+    Actor_SelectAnimation(object, 2);
   }
 }
 
@@ -1308,7 +1308,7 @@ DEFINE_RIDE_UPDATE_DRIFT(Func_02001a9c, Func_02001a44)
 
 extern const u8 gData_02004744[];
 
-DEFINE_ACTOR_SETUP_SCRIPTED(Func_02001b38, Import_ActorSelectAnimation,
+DEFINE_ACTOR_SETUP_SCRIPTED(Func_02001b38, Actor_SelectAnimation,
                             gData_02004744)
 
 void Actor_SetBlendMode(struct Actor *object, u32 value);
@@ -1443,7 +1443,7 @@ void Func_02001d7c(void) {
     Iwram_ClearWordsEntry(work, 116);
   object = (struct Actor *)FieldActor_Create(365, 1, 0, 0);
   object->unk5c[0] = 2;
-  Import_ActorSelectAnimation(object, 1);
+  Actor_SelectAnimation(object, 1);
   animation = object->sprite;
   work->handle = object;
   work->value0c = animation->value10;

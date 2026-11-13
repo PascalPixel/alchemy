@@ -20,7 +20,7 @@ s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 u32 Sprite_ShareVramCacheEntry(struct FieldSprite *sprite, u32 frame);
 
 void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
-void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
+void Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
 
 void Func_020029d0(s32 spread) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -42,7 +42,7 @@ void Func_020029d0(s32 spread) {
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags(effect, 0);
-      Import_ActorSelectAnimation(effect, 2);
+      Actor_SelectAnimation(effect, 2);
       Func_02002f90(effect, gData_020032d4);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
@@ -84,7 +84,7 @@ void Func_02002b04(void) {
         effect->motionFlags = zero;
         effect->collisionFlags = zero;
         Actor_SetSpriteFlags(effect, 0);
-        Import_ActorSelectAnimation(effect, 2);
+        Actor_SelectAnimation(effect, 2);
         Func_02002f90(effect, gData_02003304);
         angle = i << 12;
         effect->velocity.x = Trig_Cos(angle);

@@ -18,7 +18,7 @@ struct TundariaTowerEventWork {
 
 void Func_02001868(void);
 
-s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
+s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
 void Func_02002184(s32 id, u32 kind, s32 flag, s32 layer);
 

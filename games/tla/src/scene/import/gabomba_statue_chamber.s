@@ -74,9 +74,9 @@ Actor_SetSingleChildFlags:
 	.thumb_func
 Func_02001d78:
 	overlay_veneer Func_08020240
-	.global Func_02001d80
+	.global ActorSystem_ResumeProjectionAndHideLayers
 	.thumb_func
-Func_02001d80:
+ActorSystem_ResumeProjectionAndHideLayers:
 	overlay_veneer Func_08020248
 	.global Func_0803ce64
 	.thumb_func
@@ -90,9 +90,9 @@ Icon_DrawItem:
 	.thumb_func
 Event_Wait:
 	overlay_veneer FieldEvent_WaitFar
-	.global Func_02001da0
+	.global Event_Start
 	.thumb_func
-Func_02001da0:
+Event_Start:
 	overlay_veneer Event_StartFar
 	.global Event_End
 	.thumb_func
@@ -222,9 +222,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 Camera_MoveWithinMapBounds:
 	overlay_veneer Camera_MoveWithinMapBoundsFar
-	.global Func_02001ea8
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Func_02001ea8:
+FieldCamera_WaitForArrival:
 	overlay_veneer Func_080c8240
 	.global Import_EventSetExitRequest
 	.thumb_func

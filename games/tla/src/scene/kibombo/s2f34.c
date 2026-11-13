@@ -439,8 +439,6 @@ void Func_02003308(struct Actor *actor) {
 // Scene code of overlay 0x670, in ROM order, from s3504's offset up to the next
 // object the overlay links.
 
-s32 Func_02005c44(struct FieldSprite *sprite, s32 previous);
-
 void Func_02003504(void) {
   struct KibomboObject *center = Actor_GetById(17);
   struct KibomboObject *spark;
@@ -467,7 +465,7 @@ void Func_02003504(void) {
     z = center->z;
     spark = Import_ActorCreate(673, x, y, z);
     if (spark != 0) {
-      previous = Func_02005c44(spark->sprite, previous);
+      previous = Sprite_ShareVramCacheEntry(spark->sprite, previous);
       spark->motionFlags = 0;
       spark->sprite->priority = 1;
       Actor_SetSingleChildFlags(spark, 0);

@@ -342,9 +342,9 @@ EventObject_Initialize:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Func_02005c44
+	.global Sprite_ShareVramCacheEntry
 	.thumb_func
-Func_02005c44:
+Sprite_ShareVramCacheEntry:
 	overlay_veneer Func_080c8518
 	.global Actor_WatchAndSetScript
 	.thumb_func

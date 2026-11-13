@@ -91,14 +91,14 @@ extern const u8 gData_02001f9c[];
 extern const u8 gData_02001fe4[];
 extern const u8 gData_0200200c[];
 #define OBJECT(id) (Actor_Get((id)))
-void Func_02001d80(void);
+void ActorSystem_ResumeProjectionAndHideLayers(void);
 
 void Func_02000184(void) {
   struct Actor *object, *leader;
   u32 i;
   volatile u16 *color;
 
-  Func_02001da0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(26);
   Sound_Play(212);
@@ -352,7 +352,7 @@ void Func_02000184(void) {
   BattleEffect_StartBufferInterpolation(1);
   Func_02001d78();
   Func_0803ce64(MsgCarriedTheMessage, 0, 3);
-  Func_02001d80();
+  ActorSystem_ResumeProjectionAndHideLayers();
   GameFlag_SetBit(0x8ff);
   GameFlag_ClearBit(0x86b);
   GameFlag_ClearBit(0x8f2);
@@ -369,7 +369,7 @@ void Func_02000a98(s32 x, s32 z) {
       ((struct GabombaStatueChamberObject *)Actor_GetById(
           gMainRoutineWork.currentOwner));
 
-  Func_02001da0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   object->motionFlags = 0;
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
@@ -422,7 +422,7 @@ void Func_02000be8(void) {
   u8 *upper = map + 0x178;
   s32 i, step;
 
-  Func_02001da0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   DisplayBlend_EnableRunScript();
   step = 1;
@@ -473,7 +473,7 @@ void Func_02000d3c(void) {
   u8 *upper = map + 0x178;
   s32 i, step;
 
-  Func_02001da0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   DisplayBlend_EnableRunScript();
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
@@ -509,10 +509,10 @@ void Func_02000d3c(void) {
 void Func_02000e50(void) { GameFlag_ClearBit(518); }
 
 void Func_02000e60(void) {
-  Func_02001da0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Camera_MoveWithinMapBounds(PIXELS(392), -1, PIXELS(120), 1);
-  Func_02001ea8();
+  FieldCamera_WaitForArrival();
   Event_Wait(20);
   Event_SetMessageId((s32)MsgIHaveFollowed);
   Actor_SetAttachedEffect(10, 0x102);
@@ -612,7 +612,7 @@ void Func_020010d4(void) {
   s32 turnA, turnB;
   s32 owner;
 
-  Func_02001da0();
+  Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   FieldActor_SetPositionAndResetMotion(((s32)Actor_GetById(13)), PIXELS(392), 0,
@@ -791,7 +791,7 @@ void Func_02001710(void) {
   s32 zero;
   s32 turn;
   struct HeapSlots *heap;
-  Func_02001da0();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   System_Wait(1);

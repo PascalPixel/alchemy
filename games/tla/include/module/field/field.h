@@ -188,8 +188,8 @@ struct ReelSave {
 /// One word of the table at Ram_MapBlocks, 32 words to a row.
 struct Data02020000 {
   u32 unk0 : 24;
-  /// Passed to Func_0802d088; region / 10 picks the set. The Broken Seal's
-  /// WorldMapCell keeps the encounter region at these bits.
+  /// Passed to WorldMap_UpdateRegionTint; region / 10 picks the set. The Broken
+  /// Seal's WorldMapCell keeps the encounter region at these bits.
   u32 region : 6;
   u32 unk1e : 2;
 };

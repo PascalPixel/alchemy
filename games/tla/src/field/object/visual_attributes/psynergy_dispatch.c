@@ -86,7 +86,7 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
       kind = *object->sprite->entries[0];
     HangingVine_Initialize__f0daecc(kind);
   }
-  if (Func_080dae70(objectId) != 0)
+  if (HangingVine_FindSlot(objectId) != 0)
     return;
   slot = HangingVine_FindFreeSlot__f0daecc();
   if (slot == 0)
@@ -198,7 +198,7 @@ void HangingVine_Swing(s32 id) {
   heldSprite = leader->sprite;
   if (leader->x < anchor->x)
     side = 1;
-  slot = (void *)Func_080dae70(id);
+  slot = (void *)HangingVine_FindSlot(id);
   if (slot == NULL)
     return;
 
@@ -660,7 +660,9 @@ void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
 extern void
 EffectSprite_Draw__visual_attributes(void *work) __asm__("EffectSprite_Draw");
 
-s32 Func_080db9a8(struct Actor *object, s32 kind) {
+/// The OBJ priority a Psynergy's canvas takes: the caster's own when it
+/// casts facing away (0xc000), else 0, in front of everything.
+s32 FieldPsynergy_GetCanvasPriority(struct Actor *object, s32 kind) {
   if (kind == 0xc000)
     return ((struct DepthPart *)object->sprite)->priority;
   return 0;

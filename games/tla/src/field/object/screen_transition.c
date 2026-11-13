@@ -251,8 +251,8 @@ void Actor_ReleaseIfPresent(struct Actor *object) {
     Actor_ReleaseFar(object);
 }
 
-/// Nothing in the image calls it.
-void Func_080cf34c(void) {}
+/// Does nothing; nothing in the image calls it.
+void ScreenTransition_ReservedNoOp(void) {}
 
 /* VIEW(rising): routine ItemDisplay_EmitSparkles as void
  * ItemDisplay_EmitSparkles(void); the definition has void

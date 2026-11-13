@@ -134,7 +134,9 @@ void Actor_FallOverById(u32 id, u32 angle) {
   }
 }
 
-void Func_080d3a10(s32 id, u32 angle, s32 mode) {
+/// Actor_FallOverById with an animation (mode, -1 for none) and the fall
+/// moving the actor itself half a cell the way it falls.
+void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
   struct Actor *object = Actor_GetById(id);
   struct FieldSprite *sprite = object->sprite;
   s32 position[3];

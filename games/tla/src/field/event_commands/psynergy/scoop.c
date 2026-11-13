@@ -1012,7 +1012,7 @@ struct ObjectAnimation__f0e6400 {
 extern char ResourceId_GlowDisc, ResourceId_WhitePuff;
 
 s32 Func_080dbd5c(s32 x, s32 z, s32 layer);
-s32 Func_080db9a8(struct Actor *object, s32 facing);
+s32 FieldPsynergy_GetCanvasPriority(struct Actor *object, s32 facing);
 void BattleEffect_ApplyColorToTargetBuffer(s32 packed, s32 mode);
 void MapGrid_SetCellBehavior(s32 x, s32 z, s32 layer, s32 value);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
@@ -1221,7 +1221,8 @@ loaded:
     EffectSprite_Init(sprite, 31, 31, 0xc0000000, packed);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
-    sprite->oam.priority = Func_080db9a8(scene->mainObject, scene->facing);
+    sprite->oam.priority =
+        FieldPsynergy_GetCanvasPriority(scene->mainObject, scene->facing);
     sprite->depth = 1;
     sprite->x = x;
     sprite->y = y;

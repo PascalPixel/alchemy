@@ -120,7 +120,7 @@ extern u8 gData_0203c000[];
 extern u8 gData_0203e000[];
 extern u8 gMapCollision[];
 
-void Func_0802d088(s32 region, s32 gradual);
+void WorldMap_UpdateRegionTint(s32 region, s32 gradual);
 
 s32 ScreenTransition_IsScanlineActiveFar(void);
 

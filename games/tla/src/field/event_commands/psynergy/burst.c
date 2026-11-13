@@ -28,7 +28,7 @@ extern const u8 Data_080f3984[];
 extern char ResourceId_FieldEffectExplosion, ResourceId_GlowDisc;
 
 void Camera_WorldToScreen(s32 *position);
-s32 Func_080db9a8(struct Actor *object, s32 facing);
+s32 FieldPsynergy_GetCanvasPriority(struct Actor *object, s32 facing);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 void FieldPsynergy_UpdateBurst(void);
 
@@ -62,7 +62,8 @@ void FieldPsynergy_Burst(void) {
   Camera_WorldToScreen(pos);
   canvas->x = (s16)(pos[0] >> 16);
   canvas->y = (s16)(pos[2] >> 16);
-  canvas->priority = Func_080db9a8(scene->mainObject, scene->facing);
+  canvas->priority =
+      FieldPsynergy_GetCanvasPriority(scene->mainObject, scene->facing);
   canvas->depth = BattleEffect_GetObjectDepth(scene->mainObject) + 2;
   canvas->mode = CANVAS_SPRITE_256_COLORS;
   canvas->scaleX = 0;

@@ -62,8 +62,8 @@ void Exit_StartStairsUp(void);
 void Func_080d5fd4(void);
 
 s32 Field_TryJumpForward(void);
-s32 Func_080d50f8(void);
-s32 Func_080d53b8(void);
+s32 Field_ClimbDown(void);
+s32 Field_ClimbUp(void);
 
 void ItemDisplay_EmitSparkles(struct ParticleEmitter *emitter);
 
@@ -133,7 +133,7 @@ s32 Tightrope_Recoil(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
 void HangingVine_Draw(void);
 
 void HangingVine_Update(void);
-struct WorkA4Slot *Func_080dae70(s32 id);
+struct WorkA4Slot *HangingVine_FindSlot(s32 id);
 
 void BattleEffect_DrawSceneSprite(void);
 

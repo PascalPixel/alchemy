@@ -96,8 +96,8 @@ Resource_FarCall006:
 	export FieldPsynergy_StartCloakFar, FieldPsynergy_StartCloak
 	export Field_FindNearbyPsynergyTargetFar, Field_FindNearbyPsynergyTarget
 	export Field_TryJumpForwardFar, Field_TryJumpForward
-	export Func_080c82e8, Func_080d50f8
-	export Func_080c82f0, Func_080d53b8
+	export Func_080c82e8, Field_ClimbDown
+	export Field_ClimbUpFar, Field_ClimbUp
 	export Leader_StopMovingFar, Leader_StopMoving
 	export GroundParticles_StartFar, GroundParticles_Start
 	export Weather_StartLightningFar, Weather_StartLightning
@@ -246,11 +246,11 @@ Resource_FarCall006:
 	export Func_080c8780, HangingVine_Place
 	export HangingVine_HangFar, HangingVine_Hang
 	export HangingVine_SwingFar, HangingVine_Swing
-	export Func_080c8798, Func_080d5d70
+	export Func_080c8798, Exit_PrepareActorAnimation
 	export Func_080c87a0, Actor_VanishInSparks
 	export Actor_SetSpriteRotationByIdFar, Actor_SetSpriteRotationById
 	export Func_080c87b0, Actor_FallOverById
-	export Func_080c87b8, Func_080d3a10
+	export Func_080c87b8, Actor_FallOverWithAnimationById
 	export Func_080c87c0, EffectSprite_Init
 	export Func_080c87c8, EffectSprite_Draw
 	export EffectSprite_DrawAtWorldPositionFar, EffectSprite_DrawAtWorldPosition

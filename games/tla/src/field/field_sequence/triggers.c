@@ -550,7 +550,7 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
 /// gMainRoutineWork.pendingThird is set. After the leader has pushed for more
 /// than 12 frames: key 0x20 on a 0x80 push makes the leader jump
 /// (Actor_JumpDownLedge(owner, 6, 0)); key 0x80 runs
-/// Field_TryJumpForward; key 0x40 runs Func_080d50f8 or Func_080d53b8 by the
+/// Field_TryJumpForward; key 0x40 runs Field_ClimbDown or Field_ClimbUp by the
 /// push kind and clears the push state when it returns 0; key 2 with
 /// Leader_CanPushObjectAhead runs the nearby talk target's kind 8 event and
 /// then the kind 9 event for keys (messages under 0x10000, otherwise a routine
@@ -575,9 +575,9 @@ s32 Field_RunPushCell(s32 keys) {
     s32 done = -1;
 
     if (kind == 0x80)
-      done = Func_080d50f8();
+      done = Field_ClimbDown();
     else if (kind == 0x40)
-      done = Func_080d53b8();
+      done = Field_ClimbUp();
     if (done == 0) {
       work->blockedSteps = 0;
       work->unk15a = 0;

@@ -245,7 +245,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   block =
       &((struct Data02020000 *)Ram_MapBlocks)[((x / (32 << 16)) & 31) +
                                               (((z / (32 << 16)) & 31) << 5)];
-  Func_0802d088(block->region, 0);
+  WorldMap_UpdateRegionTint(block->region, 0);
   // Reused: the region, then its group of ten.
   region = block->region;
   region /= 10;

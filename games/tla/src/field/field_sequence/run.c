@@ -19,10 +19,10 @@ extern u8 gMapCellBuffer[];
 void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 mode);
 s32 Field_GetSceneAttributes(s32 scene);
 s32 PartyInventory_GiveItem(s32 item);
-void Leader_StepOntoRope(void);
-void Field_ClimbDown(void);
-void Leader_StepOntoTightrope(void);
-void Leader_StepOffRope(void);
+s32 Leader_StepOntoRope(void);
+s32 Leader_StepOffRope(void);
+s32 Leader_StepOntoTightrope(void);
+s32 Leader_StepOffTightrope(void);
 
 static __inline__ s32 Unit_ClampGauge(s32 ratio) {
   s32 clamped;
@@ -316,7 +316,7 @@ s32 FieldSequence_Run(void) {
           }
         } else if (work->raisedEvent == -0x37a) {
           if (work->keys == gInput.held) {
-            Field_ClimbDown();
+            Leader_StepOffRope();
             work->menu = 0;
             work->start = 0;
             work->examine = 0;
@@ -334,7 +334,7 @@ s32 FieldSequence_Run(void) {
           }
         } else if (work->raisedEvent == -0x37c) {
           if (work->keys == gInput.held) {
-            Leader_StepOffRope();
+            Leader_StepOffTightrope();
             work->menu = 0;
             work->start = 0;
             work->examine = 0;

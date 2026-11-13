@@ -59,7 +59,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
   }
   block = (struct Data02020000 *)Ram_MapBlocks +
           (((x / 0x200000) & 31) + (((y / 0x200000) & 31) << 5));
-  Func_0802d088(block->region, 1);
+  WorldMap_UpdateRegionTint(block->region, 1);
   // One local holds the region, then ScreenTransition_IsScanlineActiveFar's
   // result: set twice, it reads the region into r3 for the divide, as the
   // original does.
@@ -241,7 +241,7 @@ s32 WorldMap_LoadAreaGraphics(void) {
   Task_ResumeAll(TilesetAnim_Update);
   state->picturePending = 0;
   state->pictureShown = 0;
-  Func_0802d088(state->area, 0);
+  WorldMap_UpdateRegionTint(state->area, 0);
   wait(1);
 }
 
@@ -518,7 +518,11 @@ void PaletteCycle_Step(void) {
 #include "io_write_queue.h"
 #include "flag_call.h"
 
-void Func_0802d088(s32 region, s32 gradual) {
+/// Tints the world map for the encounter region under the party: region 9
+/// brightens it by 12 steps, region 18 darkens it by 6 until flag 0x8ef is
+/// set, any other clears the tint. Gradually, the tint moves one step every 16
+/// frames; at once, it jumps there. Flag 0x106 holds the tint as it is.
+void WorldMap_UpdateRegionTint(s32 region, s32 gradual) {
   struct WorldTint *work = (struct WorldTint *)Ram_HeapSlots->mapWork;
 
   if (work->region != region) {

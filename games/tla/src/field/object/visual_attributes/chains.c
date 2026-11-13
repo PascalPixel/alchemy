@@ -588,7 +588,8 @@ s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
   return 0;
 }
 
-void Func_080d9974(void) {}
+/// Does nothing; nothing calls it.
+void Rope_ReservedNoOp(void) {}
 
 extern s32 gRope_DebugSwinging;
 
@@ -1576,8 +1577,8 @@ struct WorkA4Slot *HangingVine_FindFreeSlot(void) {
   return found;
 }
 
-/// Returns the slot among WORK_A4's eight that holds id, or NULL.
-struct WorkA4Slot *Func_080dae70(s32 id) {
+/// Returns the vine slot among WORK_A4's eight that holds actor id, or NULL.
+struct WorkA4Slot *HangingVine_FindSlot(s32 id) {
   struct WorkA4 *work = WORK_A4;
   struct WorkA4Slot *found = NULL;
   s32 index;

@@ -81,12 +81,12 @@ extern void Camera_WorldToScreen__visual_attributes(
 extern void Func_080140d8__ground_particles(void *sprite, s32 depth) __asm__(
     "Oam_AddSpriteAtDepthClamped");
 
-/// Updates the 64 rising particles: each starts on the ground at a random
-/// point of the strip for 120 frames, drifts right by a random amount each
-/// frame, rises with its age, and is drawn at priority 3, its tile stepping
-/// back by 8 at 90 and 60 frames left and flickering between two tiles every 8
-/// frames.
-void Func_080d69f4(void) {
+/// Task of RisingParticles_Start: updates the 64 rising particles; each starts
+/// on the ground at a random point of the strip for 120 frames, drifts right by
+/// a random amount each frame, rises with its age, and is drawn at priority 3,
+/// its tile stepping back by 8 at 90 and 60 frames left and flickering between
+/// two tiles every 8 frames.
+void RisingParticles_Update(void) {
   struct RisingParticleWork *work = Ram_HeapSlots->unk70[1];
   struct RisingParticle *particle = work->particles;
   union FieldCoordinate screen[3];
@@ -172,7 +172,7 @@ void RisingParticles_Start(void) {
     particle->timer = i * 2;
   }
   priority = 0x480;
-  Task_Add(Func_080d69f4, priority);
+  Task_Add(RisingParticles_Update, priority);
 }
 
 struct MoteWork {

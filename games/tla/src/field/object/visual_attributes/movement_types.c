@@ -317,7 +317,9 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
   return found;
 }
 
-s32 Func_080d4ccc(struct Actor *object, s32 *position) {
+/// Whether the ground at position stops a jump: terrain kind above 2 on a
+/// layered map; never on the world map or with no map.
+s32 MapGrid_BlocksJump(struct Actor *object, s32 *position) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s8 *event = Ram_HeapSlots->eventWork;
 
@@ -331,10 +333,10 @@ s32 Func_080d4ccc(struct Actor *object, s32 *position) {
 extern struct MapCell gMapCellBuffer[];
 
 /// The leader jumps two tiles forward, over the tile in
-/// front, when it faces a quarter turn, the map allows it (Func_080d4ccc and
-/// the step check) or a platform object (flag 0x80) waits 16 pixels below the
-/// landing, and no solid object stands there. A platform underfoot (sprite 258
-/// or 259 with flag 2) dips 2 pixels with the leader. Each jump advances
+/// front, when it faces a quarter turn, the map allows it (MapGrid_BlocksJump
+/// and the step check) or a platform object (flag 0x80) waits 16 pixels below
+/// the landing, and no solid object stands there. A platform underfoot (sprite
+/// 258 or 259 with flag 2) dips 2 pixels with the leader. Each jump advances
 /// walking distance, and the leader keeps jumping while it lands on a jump spot
 /// (collision 254). Returns 0 after a jump, -1 when the leader cannot jump.
 s32 Field_TryJumpForward(void) {
@@ -373,7 +375,7 @@ again:
   position[2] = (leader->z & 0xfff00000) + 0x80000;
   Vector_AddPolarOffset(0x200000, angle, position);
   canJump = 0;
-  if (Func_080d4ccc(leader, position) == 0 &&
+  if (MapGrid_BlocksJump(leader, position) == 0 &&
       MapGrid_CheckCollisionFar(leader, position) == 0)
     canJump = 1;
 
@@ -510,7 +512,9 @@ again:
 
 void Actor_WaitForMoveById(s32 id);
 
-s32 Func_080d50f8(void) {
+/// Climbs down onto the wall below the leader, as The Broken Seal's
+/// Field_ClimbDown does, or lets go and falls when it cannot.
+s32 Field_ClimbDown(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 gridX;
@@ -607,7 +611,9 @@ failure:
   return -1;
 }
 
-s32 Func_080d53b8(void) {
+/// Climbs up the wall in front of the leader, as The Broken Seal's
+/// Field_ClimbUp does.
+s32 Field_ClimbUp(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s16 spriteFlags = 1;
@@ -777,7 +783,9 @@ s32 Leader_StepOntoRope(void) {
   return 1;
 }
 
-s32 Field_ClimbDown(void) {
+/// Hops the leader off a tied rope a cell in the direction the pad holds,
+/// when that cell is open; returns 0 otherwise.
+s32 Leader_StepOffRope(void) {
   struct Actor *leader = ObjectTable_Get(gMainRoutineWork.currentOwner);
   struct FieldSprite *sprite = leader->sprite;
   s32 position[3];
@@ -883,9 +891,9 @@ s32 Leader_StepOntoTightrope(void) {
   return 1;
 }
 
-/// Hops the leader off a rope a cell in the direction the pad holds, when that
-/// cell is open; returns 0 otherwise.
-s32 Leader_StepOffRope(void) {
+/// Hops the leader off a tightrope a cell in the direction the pad holds, when
+/// that cell is open; returns 0 otherwise.
+s32 Leader_StepOffTightrope(void) {
   struct Actor *leader = ObjectTable_Get(gMainRoutineWork.currentOwner);
   struct FieldSprite *sprite = leader->sprite;
   s32 position[3];

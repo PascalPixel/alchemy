@@ -156,7 +156,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
   BattleEffect_BuildBlitter(slot, 7, 7, flags, mode)
 
 /// The blitter built in heap slot `slot`.
-#define EFFECT_BLITTER(slot) ((DrawRectangle)HEAP_SLOT_BLOCK(slot))
+#define EFFECT_BLITTER(slot) ((DrawRectangle)gHeapSlots[slot])
 
 /// Sets how the canvas transfer treats what is left in the canvas after each
 /// copy: `mode` with `value` (see enum CanvasTransferMode).

@@ -327,8 +327,8 @@ static void BabiPalace_ShowBeds(s32 actorId) {
     Event_ShowMessage(actorId, 0);
     Event_Wait(10);
     /* FAKEMATCH(temporary): the facing compared as a shifted word; as
-     * roundedFacing == FACING_SOUTH, the routine is 2 instructions shorter in
-     * tbs-en. */
+     * roundedFacing == FACING_SOUTH, 19 of 130 instructions differ in tbs-en.
+     */
     facingBits = roundedFacing << 16;
     facingOrMessage = FACING_SOUTH;
     if (facingBits == (FACING_SOUTH << 16)) {

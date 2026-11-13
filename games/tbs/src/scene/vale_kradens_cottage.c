@@ -1041,7 +1041,6 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
         // "But I'm serious about the monsters, so be careful on your..."
         Event_ShowMessageThenWait(ACTOR_ROCKSLIDE_SURVIVOR, 0, 10);
         Actor_SetAnimationAndWait(ACTOR_ROCKSLIDE_SURVIVOR, ANIM_NOD);
-        // Follow his escape until the party can see that he is unharmed.
         FieldActor_WatchAndStartScript(ACTOR_PARTY_LEADER,
                                        ACTOR_WATCH_KEEP_MOTION |
                                            ACTOR_ROCKSLIDE_SURVIVOR,

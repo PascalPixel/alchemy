@@ -1461,7 +1461,6 @@ static void WorldMap_MeetFlint(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   x = (leader->x.fixed - px(5584)) / 2 + px(5584);
   z = (leader->z.fixed - px(1328)) / 2 + px(1328);
-  // Introduce the Djinni and demonstrate how it joins the party.
   if (!Event_GetFlag(FLAG_DJINN_LESSON)) {
     Party_RestoreHpPp(1);
     GameFlag_Set(FLAG_DJINN_LESSON);
@@ -1946,7 +1945,6 @@ static void WorldMap_UseBlackOrb(void) {
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
-  // Present the orb icon before its sparks and the ship's response.
   orb = FieldActor_Create(SPRITE_BLANK, leader->x.fixed + px(2), px(38),
                           leader->z.fixed);
   if (orb != NULL) {
@@ -2617,7 +2615,6 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
   Event_WaitTransitionFrames();
   Sound_Play(SE_GLITTER);
 
-  // Fade through the inward pictures, hold, then reverse the animation.
   gWorldMapBlend = BLEND_ALPHA(0, 14);
   WorldMap_ShowTransitionPicture(buffer, 0x3480, 2);
   gWorldMapBlend = BLEND_ALPHA(0, 13);

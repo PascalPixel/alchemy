@@ -707,7 +707,6 @@ s32 ColosseumAzartMatch_Initialize(void) {
   Actor_Get(ACTOR_PIPE_EAST)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   Colosso_ShowItemIcon(ACTOR_PRIZE_A, ITEM_IRON_SHIELD);
   Colosso_ShowItemIcon(ACTOR_PRIZE_B, ITEM_PADDED_GLOVES);
-  // Select competition, support, explanation, or post-battle arrival.
   switch (gMainRoutineWork.entrance) {
   case COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND:
     Colosso_StartRaceGauge(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 4, px(1304),
@@ -868,7 +867,6 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
     // "Ask the attendants for explanations of the stages."
     Event_ShowMessage(guide, 0);
   }
-  // Explain the party's support role, then gather them behind Isaac.
   Event_SetMessageId(MsgColossoIsaacYoureContestantInFinals);
   Actor_RunRepeatedMotion(guide, 2);
   // "...Isaac, you're a contestant in the finals. Do not forget..."

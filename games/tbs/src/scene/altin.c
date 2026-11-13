@@ -604,7 +604,6 @@ static void Altin_EnterDoor(void) {
     MapGrid_AnimateCells(gAltin_Doors[doorIndex].steps, column, row);
   }
 
-  // Walk the leader through.
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
@@ -748,12 +747,6 @@ static void Altin_ApplyWaterLevel(void) {
   struct Actor *leader;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  // Select the water-level layout area and remove villagers whose areas are
-  // flooded.
-  // Altin at each level its water has dropped to is a whole 32-by-32 picture
-  // kept beside the flooded one. The picture for the level reached is copied
-  // over the town with its ground, and the townspeople that level has no
-  // place for are released.
   if (GameFlag_Get(FLAG_ALTIN_WATER_DRAINED) != 0) {
     MapGrid_CopyCellsTo(64, 32, 0, 32, 32, 32);
     MapGrid_CopyCellAttributes(64, 32, 32, 32, 0, 0);
@@ -777,8 +770,6 @@ static void Altin_ApplyWaterLevel(void) {
     Actor_ReleaseById(ACTOR_STRONGMAN_GUARDIAN_STATUES);
     Actor_ReleaseById(ACTOR_OLD_MAN_ROCK_FLUSHED_OUT);
   }
-  // Restore the remaining beast spitting water, with its sound
-  // (SE_AMBIENT_WATER) and its spray.
   if (GameFlag_Get(FLAG_ALTIN_WATER_BEAST_LEFT) != 0) {
     Actor_ReleaseById(ACTOR_WATER_BEAST);
   } else {
@@ -795,8 +786,6 @@ static void Altin_ApplyWaterLevel(void) {
     Actor_SetPosition(ACTOR_STONE_STATUE, 360, 168);
   }
   Actor_SetSpriteFlags(Actor_Get(ACTOR_STONE_STATUE), 0);
-  // Hide the three crates, which stay solid, and draw them under the
-  // actors.
   Actor_SetSpriteColorById(ACTOR_FIRST_CRATE, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteColorById(ACTOR_SECOND_CRATE, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteColorById(ACTOR_THIRD_CRATE, SPRITE_COLOR_HIDDEN);
@@ -809,7 +798,6 @@ static void Altin_ApplyWaterLevel(void) {
   Actor_SetSpritePriority(ACTOR_FIRST_CRATE, 1);
   Actor_SetSpritePriority(ACTOR_SECOND_CRATE, 1);
   Actor_SetSpritePriority(ACTOR_THIRD_CRATE, 1);
-  // Redraw at the leader after the map and actor state are ready.
   wait(1);
   Event_Start();
   FieldCamera_MoveToFixed(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0);

@@ -441,7 +441,6 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
     Event_SetMessageId(MsgKalayTicketsPlease);
     // "Tickets, please. Please show your tickets."
     Event_ShowMessage(ACTOR_CHECKING_TICKETS, 0);
-    // Hand over the actual inventory ticket before walking past the gate.
     if (GameFlag_Get(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
       ticketHolder = PartyInventory_FindMember(ITEM_BOAT_TICKET);
       ticketSlot = Inventory_Find(ticketHolder, ITEM_BOAT_TICKET);
@@ -515,7 +514,6 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
       MessageArgument_Push(ticketPrice, MESSAGE_ARGUMENT_NUMBER);
       // "Let's see...there are four of you, so it will cost ......"
       Event_OpenMessage(ACTOR_SELLING_TICKETS, 0);
-      // Keep the balance visible while the player confirms the purchase.
       coinsWindow =
           Window_Create(TICKET_COUNTER_WINDOW_X, 8, TICKET_COUNTER_WIDTH, 4, 2);
       coinLabel = MSGNO(MsgYourCoins);
@@ -803,7 +801,6 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Event_Wait(20);
-  // Follow Garet to the water before the man joins him.
   Event_SetMessageId(MsgKalayIncredibleOcean);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_SetSpeed(ACTOR_GARET, 1.6);

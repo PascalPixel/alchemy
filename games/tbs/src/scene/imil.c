@@ -796,7 +796,6 @@ s32 Imil_Initialize(void) {
       Imil_ArriveFromFallsCave();
     }
   } else if (gMainRoutineWork.next == (s32)&SceneId_IceRooms) {
-    // Restore each room's occupants before running its arrival event.
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     entrance = gMainRoutineWork.entrance;
@@ -951,7 +950,6 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 10);
   Actor_SetScript(ACTOR_OLD_MAN, table);
 
-  // Play the healing Psynergy, then let the old man respond.
   Imil_MiaCastsPlyOnOldMan();
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 40);
@@ -1380,7 +1378,6 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_FaceDirection(ACTOR_JUSTIN, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_MEGAN, FACING_SOUTH_SOUTHEAST, 20);
   Actor_SetSpeed(ACTOR_MEGAN, 1);
-  // Let the student approach Mia before she rejoins the party.
   Actor_Get(ACTOR_MEGAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_MEGAN, 656, 166);
   Event_Wait(1);
@@ -1446,8 +1443,6 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_Get(ACTOR_MEGAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_MEGAN, 644, 166);
   Event_Wait(1);
-  // Restore the student's steering after the farewell walk. A byte view: as
-  // the field, the next gFieldWork load moves after the constant.
   *((u8 *)Actor_Get(ACTOR_MEGAN) + offsetof(struct Actor, steeringFlags)) |=
       ACTOR_FACES_MOTION;
   gFieldWork->transition =
@@ -1543,7 +1538,6 @@ static void Imil_RunIceSlide(void) {
     Actor_WaitForMove(subject);
     subject->update = Imil_TurnSlidingActor;
 
-    // Advance along the slide until its next cell is blocked or too high.
     for (;;) {
       FieldVector_AddPolarOffset(16, heading, &probe);
       if ((nextBehavior =

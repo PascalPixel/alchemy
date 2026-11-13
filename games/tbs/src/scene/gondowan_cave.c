@@ -217,7 +217,6 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
   if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) == 0 &&
       Event_GetFlag(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
     Event_Start();
-    // Bring Iodem out of the party before opening his question.
     Actor_SetSpeed(ACTOR_IODEM, 1);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
@@ -443,7 +442,6 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
     actor->targetX = ACTOR_NO_TARGET;
   }
   actor->update = GondowanCave_RotateLeapingActor;
-  // Continue spinning through the first jump.
   Sound_Play(SE_WHOOSH);
   Actor_SetSpeed(actorId, 2);
   Actor_SetDestination(actorId, 472, 288);
@@ -454,7 +452,6 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   GondowanCave_WaitForDescent(actor, px(32));
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  // Emit a complete particle fan, including its closing direction.
   for (stepIndex = 0; stepIndex < 17; stepIndex++) {
     angle = stepIndex << 12;
     particleVelocity.x = Trig_Cos(angle);
@@ -467,7 +464,6 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
                       particleVelocity.z, 0, 0);
   }
   Actor_SetDestination(actorId, 440, 308);
-  // Finish the second movement before restoring the resting animation.
   Actor_WaitForMoveById(actorId);
   GondowanCave_WaitForDescent(actor, px(32));
   actor->update = 0;

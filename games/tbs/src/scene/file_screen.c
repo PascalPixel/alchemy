@@ -362,8 +362,6 @@ static s32 FileScreen_GetSaveRecoveryBlockMask(void) {
   if (gMainRoutineWork.sceneType == SCENE_TYPE_TOWN) {
     return 0;
   }
-  // -1 unless the map is the world map: -d | d has its top bit set for any
-  // d but 0.
   mapDifference = gMainRoutineWork.next ^ (s32)&SceneId_WorldMap;
   return -((u32)(-mapDifference | mapDifference) >> 31);
 }
@@ -449,8 +447,6 @@ s32 FileScreen_Run(void) {
     return 0;
   }
   gSleepDisabled = blendStarted;
-  // Choose a new game, existing save, arena entry, or data transfer; every
-  // way back comes here.
 menu_top:;
   result = Save_ScanFileSummaries();
   // No backup memory: in debug mode, say so and turn idle sleep on.
@@ -512,11 +508,6 @@ menu_top:;
     gMainRoutineWork.entrance = COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST;
     goto leave;
   }
-  // Continue a file where it was saved, except: a file from another build of
-  // the game, or one loaded with L and Start held, restarts at its last
-  // Sanctum (restartScene); a file whose two play times differ is reported
-  // corrupted, with the offer to restart there. The two chosen restarts set
-  // flags that nothing reads.
   if (result == 1) {
     struct MainRoutineWork *state;
 
@@ -608,7 +599,6 @@ menu_top:;
     if (result != 5) {
       goto menu_top;
     }
-    // Send: choose a cleared file, then Password (0) or Cable (1).
   link_load:;
     result = Save_ChooseAndLoadFile(5);
     if (result == -1) {
@@ -689,8 +679,6 @@ menu_top:;
       wait(10);
       Serial_StartSend(gSaveBuffer, 4100);
       wait(10);
-      // Wait for the send to finish, at most 600000 frames (about 2.8
-      // hours); ten frames in a row without both consoles is an error.
       limit = 0;
       {
         s32 requiredLinkMask = 3;
@@ -714,7 +702,6 @@ menu_top:;
           WindowSprite_PrepareForRedraw((struct Window *)result);
           Text_DrawMessage(MsgClearCommunicationError, (struct Window *)result,
                            0, 4);
-          // Wait for A.
           limit = KEY_A;
           do {
             wait(1);
@@ -780,8 +767,6 @@ menu_top:;
         helpWindow = (struct Window *)windowHandle;
         Text_DrawMessageAsTiles(passwordHeadingMessage - 1, helpWindow, 0, 0);
       }
-      // Copy the font's ten digit tiles to the 20 tiles from 768 in two
-      // colourings, for the page numbers.
       Graphics_ExpandVramTilesByColorTable(
           (u16 *)(BG_CHAR_BLOCK(0) + 768 * TILE_SIZE_4BPP));
       WindowSprite_PrepareForRedraw(pageWindow);
@@ -1060,7 +1045,6 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     packedStats[i] = 0;
   }
 
-  // Preserve the selected story flags and four heroes' transfer data.
   for (i = 0; i != 6; i++) {
     if (GameFlag_Get(((const u16 *)gFileScreen_PasswordFlags)[i])) {
       flagBits |= 1 << i;
@@ -1277,7 +1261,6 @@ static s32 FileScreen_EncodePassword(u8 *data, s32 size, u8 *out) {
       groupSymbols = 0;
     }
   } while (inputIndex != size);
-  // Add each symbol's position, wrapping within the 64-character alphabet.
   for (i = 0; i != symbolCount; i++)
     out[i] = (out[i] + i) & PASSWORD_SYMBOL_MASK;
   return symbolCount;

@@ -410,7 +410,6 @@ static void AltinPeak_RideCart(s32 log) {
   leader->sprite->image.priority = 3;
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
 
-  // Wait until the leader has come down into the cart.
   for (;;) {
     if (!((logActor->y.fixed >> 14) < (leader->y.fixed >> 14)))
       break;
@@ -888,7 +887,6 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Sound_Play(SE_STONE_RUMBLE);
   MapGrid_SetShake(3, 3, 1);
   Event_Wait(20);
-  // Stage the rolling actor and its follower for the escape route.
   shadow->scaleX = 6 * Q16_ONE / 5;
   shadow->scaleY = 6 * Q16_ONE / 5;
   shadow->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -920,7 +918,6 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 0);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  // Send the leader first, then release the rolling actor after its delay.
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 2.5);
   leader->timer = 0;
   Actor_SetScript(ACTOR_PARTY_LEADER, gAltinPeak_LeaderFleePath);
@@ -951,7 +948,6 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   shadow->update = NULL;
   shadow->z.fixed = px(618);
   shadow->y.fixed = -px(64);
-  // Let the rolling actor bounce before the final collapse.
   Actor_SetSpeed(ACTOR_FALLING_BOULDER, 1.6);
   boulder->bounce = Q16_ONE / 10;
   boulder->gravity = px(1) / 5;
@@ -965,14 +961,12 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   MapGrid_CopyCellAttributes(25, 35, 10, 5, 43, 35);
   Actor_SetPosition(ACTOR_FALLING_BOULDER, 0, 0);
   Actor_SetPosition(ACTOR_BOULDER_SHADOW, 0, 0);
-  // Hide the rolling actors and animate the falling debris.
   Task_AddFrame(AltinPeak_SpawnDebris, TASK_PASS_FRAME);
   Event_Wait(80);
   Task_Remove(AltinPeak_SpawnDebris);
   Event_Wait(60);
   Sound_Play(SOUND_FADE_OUT_BGM);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  // Return Garet to the party if the warning sign brought him into the event.
   Event_Wait(120);
   if (Event_GetFlag(FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS) != 0) {
     Actor_SetSpeed(ACTOR_GARET, 1);
@@ -1021,7 +1015,6 @@ static void AltinPeak_ReadFallingRockSign(void) {
   FieldMessage_Show(message, 1);
   if (GameFlag_Get(FLAG_ALTIN_PEAK_BOULDER_FALLEN) == 0 &&
       GameFlag_Get(FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND) == 0) {
-    // Bring Garet out to inspect the warning and demonstrate the danger.
     GameFlag_Set(FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 790, 140);
@@ -1196,7 +1189,6 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Event_Wait(40);
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(295, 32, 212, 1);
-  // Run the timed hopping update routine while the beast moves along its route.
   ((struct FieldEffect *)beast)->countdown = 0;
   beast->timer = 0;
   beast->userValue = 0;
@@ -1257,7 +1249,6 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_WEST, 40);
   Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->motionFlags = 0;
-  // Open the route for the final two beast jumps.
   MapGrid_CopyCellAttributes(3, 0, 1, 1, 17, 13);
   MapGrid_CopyCellAttributes(3, 0, 1, 1, 18, 13);
   MapGrid_CopyCellAttributes(3, 0, 1, 1, 19, 13);
@@ -1370,7 +1361,6 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   Actor_RunRepeatedMotion(ACTOR_FIRST_WATER_BEAST, 2);
   Event_Wait(80);
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
-  // End the route with a spray gust and a short skippable wait.
   AltinPeak_StartSpitting(130, 0, 168, FACING_EAST);
   Event_Wait(60);
   for (waitedFrames = 0; waitedFrames < 60 && gKeysPressed == 0;
@@ -2009,7 +1999,6 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
-  // Bring the party out for the victory conversation.
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
@@ -2080,7 +2069,6 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Sound_Play(SE_CURSE);
-  // Animate the statues while the party reacts.
   update = AltinPeak_FlickerStatue;
   Task_AddFrame(update, TASK_PASS_FRAME);
   celebrate = gAltinPeak_StatueSinkScript;
@@ -2111,7 +2099,6 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
-  // Return the companions and save the completed Hydros battle.
   party = gAltinPeak_RejoinScript;
   Actor_SetScript(ACTOR_GARET, party);
   Actor_SetScript(ACTOR_IVAN, party);

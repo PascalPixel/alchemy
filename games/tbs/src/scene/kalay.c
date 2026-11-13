@@ -1023,7 +1023,6 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_Stop(ACTOR_HEAD_GUIDE);
     Actor_Stop(ACTOR_SECOND_GUIDE);
     wait(1);
-    // Send the group onward, then bring in the missing tourist.
     Actor_SetScript(ACTOR_HEAD_GUIDE, gKalay_TourGroupLeaveScript);
     Actor_SetScript(ACTOR_FIRST_TOURIST, gKalay_TourGroupLeaveScript);
     Actor_SetScript(ACTOR_FIRST_TOURIST + 1, gKalay_TourGroupLeaveScript);
@@ -1684,7 +1683,6 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Kalay_AnimatePalaceDoor();
   Actor_WalkToAndWait(ACTOR_IVAN, 192, 222);
-  // Lead the party and guards through the opened palace door.
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 192, 222);

@@ -269,7 +269,6 @@ static void WestLunpaCave_HammetFindsBunza(void) {
   s32 recognition;
 
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
-    // Bring Hammet and the party into view as Bunza leaves his hiding place.
     GameFlag_Set(FLAG_LUNPA_CAVE_REUNION_SEEN);
     Event_Start();
     Actor_SetPosition(ACTOR_BUNZA, 144, 400);
@@ -881,8 +880,6 @@ static void Party_StaysBehind(void) {
   Event_SetMessageId(farewell + FAREWELL_GARET_MOVES_ON);
   Event_ShowMessage(ACTOR_GARET, 0);
 
-  // Merge the companions back into the leader and restore player camera
-  // control.
   Scene_WalkIntoLeader(ACTOR_GARET);
   Scene_WalkIntoLeader(ACTOR_IVAN);
   Scene_WalkIntoLeader(ACTOR_MIA);

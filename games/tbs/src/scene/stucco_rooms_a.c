@@ -272,7 +272,6 @@ static void StuccoRoomsA_TalkToInnkeeper(void) {
 static void StuccoRoomsA_TalkToHealer(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  // Keep the original unsigned-halfword arithmetic.
   if ((u16)(leader->facing - (FACING_NORTHWEST + 1)) <
       FACING_NORTHEAST - (FACING_NORTHWEST + 1)) {
     Sanctum_Run(ACTOR_HEALER);

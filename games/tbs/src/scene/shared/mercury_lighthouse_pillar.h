@@ -111,7 +111,6 @@ static s32 MercuryLighthouse_FollowLeader(struct Actor *actor) {
   if (moveDistance > actor->speedLimit)
     moveDistance = actor->speedLimit;
 
-  // Snap within a quarter pixel; otherwise ease toward the leader.
   if (distance < px(1) / 4) {
     actor->x.fixed = targetX;
     actor->z.fixed = targetZ;

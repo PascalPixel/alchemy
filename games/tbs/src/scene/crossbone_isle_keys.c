@@ -322,7 +322,6 @@ static void CrossboneIsleKeys_BaneSecondEscape(void) {
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       Event_Wait(30);
 
-      // Leave the Djinni tilted while its scale animation continues.
       Actor_SetPosition(ACTOR_BANE, 888, 664);
       spinningDjinni = Actor_Get(ACTOR_BANE);
       spinningDjinni->sprite->rotation = TRIG_TURN * 31 / 32;
@@ -344,7 +343,6 @@ static void CrossboneIsleKeys_BaneLastEscape(void) {
     GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE);
     Event_Start();
 
-    // Restore the sprite before the last jump and winding escape path.
     djinni = Actor_Get(ACTOR_BANE);
     djinni->sprite->rotation = 0;
     Actor_SetAnimationSpeed(djinni, 16);
@@ -1347,8 +1345,6 @@ static void CrossboneIsleKeys_InitializeStatues(void) {
 static void CrossboneIsleKeys_InitializeBane(void) {
   struct Actor *djinni;
 
-  // Put the chest back on the second pillar and rebuild all pillar support
-  // cells.
   Actor_Get(ACTOR_SECOND_PILLAR_CHEST)->motionFlags = 0;
   Task_AddOrUpdateFrame(CrossboneIsleKeys_FollowSecondPillar, TASK_PASS_FRAME);
   Task_AddFrame(CrossboneIsleKeys_UpdatePillarPriorities, TASK_PASS_FRAME);
@@ -1372,7 +1368,6 @@ static void CrossboneIsleKeys_InitializeBane(void) {
     Actor_SetAnimation(ACTOR_PUDDLE, PUDDLE_ANIMATION_PILLAR);
   }
 
-  // Restore the surviving Djinni at the last completed escape stage.
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
       Actor_SetPosition(ACTOR_BANE, 856, 824);

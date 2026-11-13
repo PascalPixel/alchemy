@@ -492,7 +492,6 @@ static void CrossboneIsle_MovePillar(void) {
   }
 #endif
 
-  // Play the moved-pillar reaction before hiding it and opening the passage.
   pillar->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 
   Event_Wait(8);
@@ -506,7 +505,6 @@ static void CrossboneIsle_MovePillar(void) {
   pillar->motionFlags = 0;
   pillar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 
-  // Replace the blocked cell and remember that the room's pillar is sunk.
   MapGrid_CopyCellAttributes(42, 10, 1, 1, column, 10);
 
   GameFlag_Set(gMainRoutineWork.next +

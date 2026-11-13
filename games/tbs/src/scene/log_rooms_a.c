@@ -1338,7 +1338,6 @@ static void LogRoomsA_FreeRooferAndConfrontThieves(void) {
   Event_Wait(20);
   LogRoomsA_PlayAnimationAndWait(ACTOR_THIEF_LEADER, ANIM_SHAKE_HEAD, 20);
   Event_ShowMessage(ACTOR_THIEF_LEADER, 0);
-  // Preserve the return destinations before requesting the thieves' encounter.
   GameFlag_Set(FLAG_VAULT_THIEVES_ATTACKED);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
@@ -1668,7 +1667,6 @@ static void LogRoomsA_ReadCorneredSuspectsMinds(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  // Move the discussion away from the suspects while the screen is closed.
   LogRoomsA_DiscussMindReading();
   // The suspects stay at their table, turned toward the leader from now on.
   MapGrid_CopyCellAttributes(14, 45, 3, 1, 14, 44);
@@ -1696,7 +1694,6 @@ static void LogRoomsA_ReadCorneredSuspectsMinds(void) {
 static void LogRoomsA_DiscussMindReading(void) {
   s32 persistedWithQuestions;
 
-  // Move the party outside the room and the suspects back to their table.
   Scene_PlayMusic();
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
   {
@@ -2853,7 +2850,6 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Event_Wait(30);
-  // Clear the loft of everyone the event used.
   Actor_SetPosition(ACTOR_TIED_UP_VILLAGER, 0, 0);
   Actor_SetPosition(ACTOR_LOFT_MAYOR, 0, 0);
   Actor_SetPosition(ACTOR_LOFT_ESCORT, 0, 0);

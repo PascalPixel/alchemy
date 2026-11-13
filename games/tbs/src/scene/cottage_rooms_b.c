@@ -541,7 +541,6 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   grid = *(struct MapGridScrollWork **)Ram_MapGridWork;
   viewCenter = work->camera;
   sprite = Actor_Get(ACTOR_TUNIC)->sprite;
-  // Present the bedside conversation before revealing the wider storm event.
   Event_Start();
   Actor_SetPosition(ACTOR_YOUNG_SMITH, 0, 0);
   Actor_SetPosition(ACTOR_YOUNG_SMITHS_MOTHER, 0, 0);
@@ -912,7 +911,6 @@ static void CottageRoomsB_VisitSickDora(void) {
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Event_Wait(80);
   Actor_SetSpeed(ACTOR_DORA, 0.8);
-  // Bring Dora out of bed before asking about her illness.
   Actor_SetDestination(ACTOR_DORA, 584, 406);
   TilesetAnim_Pause(11);
   TilesetAnim_Resume(12);
@@ -985,8 +983,6 @@ static void CottageRoomsB_VisitSickDora(void) {
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Event_Wait(40);
-  // Make room for Dora to walk and demonstrate that she feels well.
-  // Isaac steps back as Dora gets up, turns about and jumps three times.
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   leader->facing = FACING_EAST;
   wait(1);
@@ -1073,15 +1069,12 @@ static void CottageRoomsB_ShowMythrilBag(void) {
   sprite->count = clear;
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
-  // Load the item icon into the temporary actor before animating the
-  // bag.
   glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*glyph));
   Icon_DrawItem(ITEM_MYTHRIL_BAG);
   VramCache_Load(sprite->slot, 128, glyph->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Event_StartScreenTransition();
-  // Walk the presenter into view, then wait for both bag scripts to finish.
   Actor_SetSpeed(ACTOR_KRADEN, 1);
   Actor_WalkToAndWait(ACTOR_KRADEN, 480, 176);
   Actor_WalkToAndWait(ACTOR_KRADEN, 420, 164);

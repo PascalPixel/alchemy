@@ -631,7 +631,6 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
   if (steps == 0) {
     return;
   }
-  // Clear the old footprint, then move the log and rider together.
   MapGrid_CopyCellAttributes(74, 8, 1, 4, FIELD_CELL(log->x.fixed), 9);
   MapGrid_CopyCellAttributes(120, 60, 8, 5, 74, 60);
   Event_Start();
@@ -906,7 +905,6 @@ s32 ColosseumNavampaMatch_Initialize(void) {
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
-  // Restore the scale ledges, movable weight and supporting cell behaviors.
   Task_AddFrame(ColosseumNavampaMatch_UpdateEastEndCollision, TASK_PASS_FRAME);
   MapGrid_CopyCellAttributes(74, 60, 8, 6, 120, 60);
 
@@ -1190,7 +1188,6 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   const s32 *leaderScaleScript;
   TaskFunc particleFunc;
 
-  // Place the opponent and companions around the resting leader.
   Actor_ReleaseById(ACTOR_PRIZE_A);
   Actor_ReleaseById(ACTOR_PRIZE_B);
   Party_RestoreHpPp(1);
@@ -1457,7 +1454,6 @@ static void ColosseumNavampaMatch_TalkToScalesAttendant(s32 guideId) {
   Event_Start();
   promptResult = Colosso_GreetAtStage(guideId, 1);
   if (promptResult == COLOSSO_GUIDE_DESCRIBE) {
-    // Point out the ledges, demonstrate both heights, then restore the stage.
     Event_SetMessageId(MsgColossoStageCalledScales);
     FieldCamera_SetSpeed(3);
     FieldCamera_MoveTo(152, CAMERA_KEEP, 200, 1);
@@ -1576,7 +1572,6 @@ static void ColosseumNavampaMatch_TalkToWallWedgeAttendant(s32 guideId) {
     Event_Start();
     promptResult = Colosso_GreetAtStage(guideId, 3);
     if (promptResult == COLOSSO_GUIDE_DESCRIBE) {
-      // Show the pattern cycle before demonstrating a timed passage.
       work = gFieldWork;
       Event_SetMessageId(MsgColossoPlaceCalledWall);
       ColosseumNavampaMatch_ResetWallWedge();
@@ -1730,7 +1725,6 @@ static void ColosseumNavampaMatch_TalkToMovingSidewalkAttendant(s32 guideId) {
     Event_Start();
     result = Colosso_GreetAtStage(guideId, 5);
     if (result == COLOSSO_GUIDE_DESCRIBE) {
-      // Walk against the sidewalk, then show how its current pushes the rider.
       Event_SetMessageId(MsgColossoCalledMovingSidewalkStage);
       FieldCamera_SetSpeed(3);
       FieldCamera_MoveTo(1080, CAMERA_KEEP, 168, 1);

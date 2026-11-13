@@ -217,7 +217,6 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
   s32 message;
 
   Event_Start();
-  // Flash the room before revealing the crossings for this star.
   Sound_Play(SE_RUMBLE);
   for (i = 0; i != 6; i++) {
     PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(18, 18, 14), PALETTES_BG);
@@ -280,7 +279,6 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
   Event_Wait(20);
   PUT_OUT_STAR_LIGHT(43, 26);
   Event_Wait(20);
-  // Present the collected star, then return to Kraden's explanation.
   member =
       SolSanctumElementalStarRoom_PresentStar(ITEM_VENUS_STAR, 712, 16, 464);
   Event_Wait(40);
@@ -382,7 +380,6 @@ static void SolSanctumElementalStarRoom_BagMercuryStar(void) {
   Event_Wait(20);
   PUT_OUT_STAR_LIGHT(43, 6);
   Event_Wait(20);
-  // Present the collected star, then return to Kraden's explanation.
   member =
       SolSanctumElementalStarRoom_PresentStar(ITEM_MERCURY_STAR, 712, 16, 144);
   Event_Wait(40);
@@ -1463,7 +1460,6 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Event_Wait(20);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-  // Finish Isaac's arrival and let the companions inspect the room.
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
   sprite->flags = SPRITE_FLAG_SHADOW;
   Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 0, 0);
@@ -2033,7 +2029,6 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Scene_WalkIntoLeader(ACTOR_GARET);
   GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED);
   Party_RemoveMemberRestored(JENNA);
-  // Give out the bags and make the pedestal crossings available.
   SolSanctumElementalStarRoom_GiveMythrilBags();
   MapGrid_CopyCellAttributes(8, 0, 5, 1, 27, 17);
   gFieldWork->transitionFrames = 16;

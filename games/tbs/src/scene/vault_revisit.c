@@ -531,7 +531,6 @@ static void VaultRevisit_GiveBoneToDog(void) {
   Actor_WalkToAndWait(ACTOR_VAULT_DOG, 216, 408);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_VAULT_DOG, FACING_SOUTH, 20);
-  // Repeat the clue at the concealed passage, then step back.
   VaultRevisit_DogJumpAtPassage();
   VaultRevisit_DogJumpAtPassage();
   VaultRevisit_DogJumpAtPassage();
@@ -603,7 +602,6 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
-  // Keep the bridge deck after a battle, and mend the inn's roof.
   if (GameFlag_Get(FLAG_VAULT_ON_BRIDGE))
     MapGrid_CopyCellAttributes(55, 26, 4, 2, 23, 26);
   // A still actor on the well that shows nothing. XXX (no evidence): what it
@@ -612,14 +610,12 @@ s32 Scene_Initialize(void) {
   Actor_CreateConfigured(128, 0, 420, SPRITE_CRATE);
   MapGrid_CopyCellsTo(45, 41, 8, 45, 3, 3);
   wait(1);
-  // Resume the two walking villagers' proximity reactions.
   actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
   actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
   Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer = 1;
   actor = Actor_Get(ACTOR_GIRL_ROUND_THE_WELL);
   actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
   Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer = 0;
-  // Restore the dog's clue position and Sap's on the cliff top.
   if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE))
     Actor_SetPosition(ACTOR_VAULT_DOG, 216, 392);
   if (gMainRoutineWork.entrance <= VAULT_REVISIT_NORTH_UNUSED &&

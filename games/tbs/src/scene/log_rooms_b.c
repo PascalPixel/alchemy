@@ -233,7 +233,6 @@ static void LogRoomsB_OfferBones(void) {
     Event_OpenMessage(ACTOR_GIRL_AT_THE_INN, 0);
   }
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    // Show the offer before checking whether the party can carry the gift.
     Event_Wait(20);
     Event_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
     Event_Wait(20);
@@ -273,8 +272,6 @@ static void LogRoomsB_ReadMindAndWelcomeIsaacBack(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_MAYOR, 1);
   Event_End();
-  // Keep the actor paused through the conversation, then resume
-  // action 2.
   paused = &Actor_Get(ACTOR_MAYOR)->paused;
   *paused = 1;
   LogRoomsB_WelcomeIsaacBack();
@@ -389,16 +386,12 @@ s32 Scene_Initialize(void) {
   entrance = gMainRoutineWork.entrance;
 
   if (entrance == LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST) {
-    // Draw the table bare, its stone gone, and set the gem owner back on the
-    // floor.
     MapGrid_CopyCellsTo(0, 120, 8, 67, 4, 3);
     Actor_Get(ACTOR_GEM_OWNER)->motionFlags = 0;
     Actor_Get(ACTOR_GEM_OWNER)->y.fixed = 0;
     Actor_Get(ACTOR_GEM_OWNER)->groundHeight = 0;
   } else if (entrance == LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST ||
              entrance == LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS) {
-    // Show the Bone lying in the room, and track whether the leader stands
-    // beside it (FLAG_VAULT_LEADER_BESIDE_BONE).
     Vault_PlaceItemIcon(ITEM_BONE, px(568), px(16), px(672));
     Task_AddFrame(Vault_UpdateBoneProximityFlag, TASK_PASS_FRAME);
   }

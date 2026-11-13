@@ -523,7 +523,6 @@ static void SolSanctumEntrance_PushStatue(void) {
   u32 direction;
   struct FieldPosition target;
 
-  // Find the statue one map cell ahead in the leader's facing direction.
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   direction = leader->facing >> 12;
   statue = Actor_FindAtCell(
@@ -549,7 +548,6 @@ static void SolSanctumEntrance_PushStatue(void) {
       statue->velocityX = 0;
       statue->velocityZ = 0;
       Actor_SelectAnimation(leader, ANIM_STAND);
-      // Save the moved statue in the flag set belonging to this room.
       switch (gMainRoutineWork.entrance) {
       case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM:
       case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STATUE_NOOK:
@@ -647,7 +645,6 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
   case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM:
   case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STATUE_NOOK:
   case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM:
-    // Put back this room's statues after its introduction has played.
     Actor_SetSpriteFlags(Actor_Get(ACTOR_WEST_STATUE), 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_EAST_STATUE), 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_FIXED_STATUE), 0);
@@ -674,7 +671,6 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
   case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_EAST:
   case SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_FROM_ROUND_PASSAGE:
   case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS:
-    // Restore the row of statues and the second gem's doorway.
     Actor_SetSpriteFlags(Actor_Get(ACTOR_ROW_STATUE_1), 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_ROW_STATUE_2), 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_ROW_STATUE_3), 0);
@@ -706,7 +702,6 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
   Event_Wait(4);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  // Gather the followers around the leader for Kraden's introduction.
   FieldCamera_SetSpeed(0.6);
   FieldCamera_MoveTo(1224, CAMERA_KEEP, 136, 1);
   Scene_PlaceAtLeader(ACTOR_KRADEN);
@@ -774,7 +769,6 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
 
-  // Spread the party out while Kraden examines the room.
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL)
     Actor_SetPositionFixed(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
@@ -946,7 +940,6 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   }
 
-  // Bring Kraden back and return the followers to the party.
   Actor_SetSpeed(ACTOR_KRADEN, 0.6);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_KRADEN, 0, 48);
@@ -1010,7 +1003,6 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
   FieldCamera_SetSpeed(2.4);
-  // Pan across the statues, then return to the party's position.
   FieldCamera_MoveTo(1672, CAMERA_KEEP, 524, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
@@ -1041,7 +1033,6 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
 /// Sol Sanctum, the second relief room: sets the cells the six statues start
 /// on.
 static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeActors) {
-  // Clear all six destinations before restoring occupied cells.
   MapGrid_CopyCellAttributes(122, 20, 1, 1, 100, 32);
   MapGrid_CopyCellAttributes(122, 20, 1, 1, 104, 32);
   MapGrid_CopyCellAttributes(122, 20, 1, 1, 108, 32);

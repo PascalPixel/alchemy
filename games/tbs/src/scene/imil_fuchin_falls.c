@@ -1614,7 +1614,6 @@ static void ImilFuchinFalls_BlowCaveMouthDust(void) {
 static void FuchinFallsCave_LightDragonWithEye(void) {
   u32 pass;
 
-  // Flash the room as the eye opens the dragon's path.
   Sound_Play(MUS_SILENCE);
   Sound_Play(SE_GEM_SET);
   Event_Start();
@@ -1644,7 +1643,6 @@ static void FuchinFallsCave_LightDragonWithEye(void) {
   Task_Remove(ImilFuchinFalls_BlowCaveMouthDust);
   wait(20);
 
-  // Settle the lighting, consume the eye and remember the revealed path.
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(80);
 
@@ -1770,7 +1768,6 @@ static void Imil_SlideActorAcrossIce(void) {
 
     Event_Start();
 
-    // Start at the cell center and reject a blocked or raised next cell.
     probe.x = (actor->x.fixed & FIELD_CELL_MASK) + px(8);
     probe.y = actor->y.fixed;
     probe.z = (actor->z.fixed & FIELD_CELL_MASK) + px(8);
@@ -1800,7 +1797,6 @@ static void Imil_SlideActorAcrossIce(void) {
     Actor_WaitForMove(actor);
     actor->update = Imil_TurnSkaterTowardHeldDirection;
 
-    // Keep sliding through cells with the same cell behavior.
     for (;;) {
       FieldVector_AddPolarOffset(16, heading, &probe);
       nextBehavior = MapGrid_GetCellBehaviorAt(actor->layer, probe.x, probe.z);

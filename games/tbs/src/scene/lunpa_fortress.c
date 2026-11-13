@@ -2251,7 +2251,6 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_Wait(100);
   Sound_Play(SE_LOG_PUSH);
   Actor_SetAnimation(ACTOR_TOADONPA_DODONPA, ANIM_DODONPA_PRONE);
-  // Move the party and both monster parts together to free Dodonpa.
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.1);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, -24, 0);
   Actor_SetSpeed(ACTOR_GARET, 0.1);
@@ -2738,7 +2737,6 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_TOADONPA_HAMMET, ANIM_NOD);
   Event_Wait(100);
-  // Rejoin the companions, then escort Hammet out of the fortress.
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {

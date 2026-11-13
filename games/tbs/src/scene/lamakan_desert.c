@@ -353,7 +353,6 @@ static UNREAD_RESULT Reveal_HideSecrets(void) {
   Actor_SetPosition(ACTOR_FIRST_PIT + 2, 0, 0);
   Actor_SetPosition(ACTOR_LAST_PIT, 0, 0);
   Actor_SetPosition(ACTOR_SMOG, 0, 0);
-  // Hide the treasure spots independently of the actor placements.
   markerId = 100;
   do {
     TreasureSpot_SetActorPosition(markerId, 0, 0);
@@ -373,7 +372,6 @@ static UNREAD_RESULT Reveal_ShowSecrets(void) {
 
   GameFlag_Clear(FLAG_DESERT_EVENT_RUNNING);
   GameFlag_Set(FLAG_SECRETS_REVEALED);
-  // Restore each hidden patch from the spare cells saved on entry.
   if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertEast) {
     SHOW_SECRET(0, 22, 7);
     SHOW_SECRET(1, 8, 10);
@@ -764,7 +762,6 @@ static void LamakanDesert_FallIntoPit(void) {
     }
   }
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  // Face the pit, then reverse the walking direction while being pulled in.
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_FaceActor(ACTOR_PARTY_LEADER, best, 0);
   Event_Wait(20);
@@ -834,7 +831,6 @@ static void LamakanDesert_SlideDownDune(void) {
                       EFFECT_USE_SPIN, &params);
   }
   if (hit < 0) {
-    // Let the fall complete before returning to ordinary field movement.
     Actor_SetAttachedEffect(id,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     FieldActor_SetMoveTargetFixed(actor, actor->x.fixed, actor->y.fixed,
@@ -1046,8 +1042,6 @@ static void HeatGauge_Draw(void) {
     }
   }
 
-  // Tint the six changing palette entries: redder and less blue as the heat
-  // grows, flickering greener past 60 of 120.
   buffer = Heap_Alloc(2304);
   Dma_Set(gHeatGauge_Palette, buffer, (DMA_ENABLE | DMA_16BIT) << 16 | 16,
           REG_DMA3);

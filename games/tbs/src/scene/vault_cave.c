@@ -645,14 +645,12 @@ static void VaultCave_RunRumble(void) {
   MapGrid_SetShake(3, 3, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Sound_Play(SE_RUSH);
-  // Scroll and shake for 480 frames before the final fade.
   for (frame = 0; frame < 480; frame++) {
     u32 scrollDrift = Random_Below(2048);
 
     layer->phaseY = (double)layer->phaseY - (4718.592 - (double)scrollDrift);
     Event_Wait(1);
   }
-  // Fade the blend out over 70 frames, a step every 20.
   fadeLevel = 6;
   lowFadeLevel = 6;
   frame = 0;
@@ -667,7 +665,6 @@ static void VaultCave_RunRumble(void) {
     }
     frame++;
   } while (frame <= 69);
-  // Replace the mechanism's map cells after the fade completes.
   MapGrid_CopyCells(19, 83, 15, 8, 19, 91);
   Sound_Play(SE_STOP_ACTION_SE);
   MapGrid_CenterOnFollowedPoint();
@@ -683,7 +680,6 @@ static void VaultCave_FlipSwitch(void) {
   if (Event_GetFlag(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
     FieldMessage_Show(MSGNO(MsgFieldFlippedSwitch), 1);
     GameFlag_Set(FLAG_VAULT_CAVE_SWITCH_FLIPPED);
-    // Animate the switch face before the adjacent mechanism starts.
     destinationColumn = 92;
     Sound_Play(SE_SWITCH);
     MapGrid_CopyCells(107, 27, 1, 1, destinationColumn, 27);
@@ -751,7 +747,6 @@ static void VaultCave_UpdateTimedFallingActors(void) {
         gVaultCave_ScheduleIndex = 0;
       }
     }
-    // Reset actors that have reached the floor and spawn their landing puffs.
     for (fallingIndex = 0; fallingIndex <= 3; fallingIndex++) {
       fallingActor = Actor_Get((fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP));
       if (fallingActor->velocityY >= 0) {
@@ -792,7 +787,6 @@ static void VaultCave_UpdateFrostControlledFallingActors(void) {
 
   fallingActor = Actor_Get(ACTOR_FIRST_WATER_DROP);
   if (fallingActor->paused == 0) {
-    // Preserve one random selection per 64 frames.
     if ((++gVaultCave_DropFrames & 63) == 0) {
       selectedIndex = &gVaultCave_SelectedDrop;
       stateValue = Random_Next();

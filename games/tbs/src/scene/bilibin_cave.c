@@ -322,8 +322,6 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
   struct Actor *secondActor;
   s32 destinationCellX;
 
-  // Track each movable actor independently before changing the Frost
-  // target.
   firstActor = Actor_Get(ACTOR_THIRD_TORCH);
   secondActor = Actor_Get(ACTOR_FOURTH_TORCH);
   if (FIELD_CELL(firstActor->x.fixed) == 35 &&
@@ -440,8 +438,6 @@ static void BilibinCave_RestoreIceRoom(void) {
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  // Set up the decorative animations before restoring interactive
-  // actors.
   BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_ICE_PILLAR);
   BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_ICE_PILLAR + 1);
   BilibinCave_ClearActorSpriteFlags(ACTOR_FIRST_ICE_PILLAR + 2);
@@ -481,8 +477,6 @@ static void BilibinCave_RestoreIceRoom(void) {
   BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH + 3);
   BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH + 4);
   BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH + 5);
-  // Restore the surface exposed by Douse, including its cell behavior and
-  // priority.
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED) != 0) {
     Actor_SetPosition(ACTOR_ICE_ROOM_FIRE, 0, 0);
     Actor_SetAnimation(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_PILLAR);
@@ -496,8 +490,6 @@ static void BilibinCave_RestoreIceRoom(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_ICE_ROOM_FIRE), 0);
     Actor_SetAnimation(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
   }
-  // Rebuild the Frost target and return moved actors to their saved
-  // cells.
   Actor_SetAnimation(ACTOR_SECOND_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) != 0) {
     destinationCellX = 36;
@@ -553,8 +545,6 @@ static void BilibinCave_PushTorch(void) {
   if (blocker != 0)
     return;
 
-  // Check the destination before moving both actors into their push
-  // states.
   target->layer = 2;
 
   Actor_StepFrom(&destination, target, gPushedActor_DirectionSteps[heading]);
@@ -576,7 +566,6 @@ static void BilibinCave_PushTorch(void) {
   FieldActor_SetMoveTargetFixed(leader, destination.x, destination.y,
                                 destination.z);
 
-  // Wait for the target's movement before snapping it to the destination.
   Actor_WaitForMove(target);
 
   target->x.fixed = destination.x;
@@ -584,8 +573,6 @@ static void BilibinCave_PushTorch(void) {
   target->velocityX = (s32)blocker;
   target->velocityZ = (s32)blocker;
 
-  // Resume the leader and refresh the mechanism affected by the moved
-  // actor.
   Actor_SelectAnimation(leader, ANIM_STAND);
   BilibinCave_UpdateThirdPuddleFromTorches();
 }

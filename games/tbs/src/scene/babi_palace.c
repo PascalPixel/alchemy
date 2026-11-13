@@ -1357,7 +1357,6 @@ static void BabiPalace_WakeAfterFinals(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
   Event_Wait(30);
-  // Wait for the player to leave the bed before the companions rejoin.
   while ((gKeysHeld & KEYS_DPAD) == 0) {
     wait(1);
   }

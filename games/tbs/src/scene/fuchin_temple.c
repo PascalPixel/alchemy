@@ -768,7 +768,6 @@ static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
     Event_Wait(20);
   }
   Event_ShowMessageThenWait(ACTOR_TREE_STUDENT, 0, 20);
-  // Restore the tree and let the student return to the demonstration spot.
   FuchinTemple_StudentWalksAroundTree();
   Actor_RunRepeatedMotion(ACTOR_TREE_STUDENT, 3);
   Actor_SetPosition(ACTOR_TRAINING_TREE, 232, 168);
@@ -818,7 +817,6 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_TREE_STUDENT, ANIM_NOD);
   Event_Wait(20);
-  // Reset the tree after the group has reacted to the demonstration.
   Actor_SetSpeed(ACTOR_TREE_STUDENT, 0.8);
   FuchinTemple_StudentWalksAroundTree();
   Actor_RunRepeatedMotion(ACTOR_TREE_STUDENT, 3);
@@ -967,7 +965,6 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   // No: "It is unbelievable that someone who does not know kung fu..."
   Event_AskYesNo(ACTOR_MESSENGER_STUDENT, 0);
   Event_Wait(50);
-  // Bring the observers out through the school door.
   FieldCamera_FollowActor(ACTOR_MESSENGER_STUDENT, 1);
   Actor_SetSpeed(ACTOR_MESSENGER_STUDENT, 0.8);
   Actor_WalkToAndWait(ACTOR_MESSENGER_STUDENT, 176, 248);
@@ -1160,7 +1157,6 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Event_Wait(20);
   Actor_SetPosition(ACTOR_TRAINING_TREE, 232, 168);
   Actor_SetPosition(ACTOR_TRAINING_TREE_TARGET, 232, 168);
-  // Restore the tree before leaving the group ready for another demonstration.
   Actor_Get(ACTOR_TRAINING_TREE)->y.fixed = px(12);
   Actor_Get(ACTOR_TRAINING_TREE)->targetY = ACTOR_NO_TARGET;
   Actor_Get(ACTOR_TRAINING_TREE)->scaleX = 4 * Q16_ONE / 5;
@@ -1255,8 +1251,6 @@ static void FuchinTemple_FehAsksToSeeChi(void) {
 static void FuchinTemple_FehSeesChi(void) {
   struct Actor *actor;
 
-  // Stop the temporary facing update routines while the group reacts to the
-  // tree.
   Actor_Get(ACTOR_FEH)->update = 0;
   Actor_Get(ACTOR_PROUD_STUDENT)->update = 0;
   Actor_Get(ACTOR_WATCHING_STUDENT)->update = 0;
@@ -1266,7 +1260,6 @@ static void FuchinTemple_FehSeesChi(void) {
   FieldCamera_SetSpeed(0.5);
   FieldCamera_MoveTo(232, CAMERA_KEEP, 200, 1);
   FieldCamera_WaitForArrival();
-  // Continue the Chi discussion with the students gathered around the tree.
   Event_SetMessageId(MsgXianYaTreeFell);
   Actor_SetSpeed(ACTOR_KICKING_STUDENT, 0.8);
   Actor_SetSpeed(ACTOR_JUMPING_STUDENT, 0.8);
@@ -1622,7 +1615,6 @@ static void FuchinTemple_EnterWaterfallGrotto(void) {
   TaskFunc particleTask;
 
   Event_Start();
-  // Keep the entry effect alive until the leader has moved into the fade.
   particleTask = FuchinTemple_SpawnGrottoEntryParticle;
   Task_AddFrame(particleTask, TASK_PASS_FRAME);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.2);
@@ -1748,7 +1740,6 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
       Event_OpenMessage(ACTOR_NYUNPA, 0);
     } while (1);
   }
-  // Explain why hidden monsters make the new ability useful.
   Event_SetMessageId(MsgXianMonstersWaitInHidingWould);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
@@ -1815,7 +1806,6 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_HAMAS_BOY_MONK, FACING_NORTH_NORTHEAST, 0);
-  // Bring the other party members out from the leader for the lesson.
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
@@ -2322,11 +2312,9 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
         ACTOR_FACES_MOTION | leaderActor->steeringFlags;
   }
   Event_Wait(20);
-  // Finish Ivan's lesson before adding Reveal to his ability list.
   FuchinTemple_AnimateRevealLesson();
   Event_Wait(60);
   Party_LearnAbility(IVAN, ABILITY_REVEAL);
-  // Let Hama and her monk leave, then gather the party into the leader.
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
@@ -2610,7 +2598,6 @@ static void FuchinTemple_AnimateRevealLesson(void) {
   Actor_Get(ACTOR_IVAN)->update = FuchinTemple_AlternateLessonChildEffect;
   Event_Wait(120);
   hama = Actor_Get(ACTOR_HAMA);
-  // Emit the lesson particles while both temporary child effects run.
   options.priority = 1;
   options.palette = SPRITE_COLOR_RBG;
   options.type = SPRITE_SPARKLE;
@@ -2629,7 +2616,6 @@ static void FuchinTemple_AnimateRevealLesson(void) {
   }
   Sound_Play(SE_SHIMMER);
   Event_Wait(30);
-  // Fade back and remove both update routines before the conversation resumes.
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   Event_Wait(40);

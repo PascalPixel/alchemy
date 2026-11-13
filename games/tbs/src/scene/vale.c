@@ -721,7 +721,6 @@ static void Vale_WatchThePuppies(void) {
     savedOrigin = grid->origin;
     grid->origin = cameraPosition;
     frame = 0;
-    // Pan down to the puppies while the leader stays in place.
     do {
       cameraPosition[2] += px(2);
       Event_Wait(1);
@@ -738,7 +737,6 @@ static void Vale_WatchThePuppies(void) {
       frame++;
       MapGrid_CenterOnFollowedPoint();
     } while (frame != 40);
-    // Return camera ownership to the normal follow target.
     grid->origin = savedOrigin;
     Event_Wait(60);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 70, 741);
@@ -1952,7 +1950,6 @@ static void Vale_MendingTheRoof(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   moveHand = Actor_Get(ACTOR_OPENING_MOVE_HAND);
 
-  // Prepare the damaged house and start Isaac's hammering behind the caption.
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
@@ -1991,7 +1988,6 @@ static void Vale_MendingTheRoof(void) {
   FieldMessage_ShowCentered(message, 0, 0);
   ActorSystem_ResumeProjectionAndHideLayers();
 
-  // Follow Jenna through the village until she notices the repair work.
   FieldCamera_MoveTo(339, 160, 1173, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
@@ -2128,7 +2124,6 @@ static void Vale_MendingTheRoof(void) {
   Vale_VanishMoveHand(moveHand);
   Scene_EndEventPsynergy();
 
-  // Finish the reunion conversation after the repair effects settle.
   Event_Wait(10);
   Actor_WalkToAndWait(ACTOR_JENNA, 424, 624);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_JENNA, 60);

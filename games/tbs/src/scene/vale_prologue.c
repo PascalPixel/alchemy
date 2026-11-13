@@ -446,7 +446,6 @@ s32 ValePrologue_Initialize(void) {
     GameFlag_Clear(FLAG_VALE_ISAACS_DOOR_OPEN);
     GameFlag_Clear(FLAG_VALE_SHOVING_MANS_DOOR_OPEN);
   }
-  // Restore the rocks that have already fallen.
   if (GameFlag_Get(FLAG_VALE_STORM_FIRST_ROCK_FELL) != 0) {
     Actor_SetPosition(ACTOR_FIRST_ROCK, 334, 932);
     ValePrologue_ApplyFirstRockCollision();
@@ -490,7 +489,6 @@ s32 ValePrologue_Initialize(void) {
   } else {
     Actor_SetScript(ACTOR_BOULDER, gValePrologue_BoulderWaits);
   }
-  // Restore the riverbank cast at the saved stage of the storm.
   if (GameFlag_Get(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0) {
     const s32 *table;
     ValePrologue_RebuildRiverbank();
@@ -1335,7 +1333,6 @@ static void ValePrologue_WatchBoulderFall(void) {
     Actor_SetAttachedEffect(ACTOR_GARET_CHILD,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
-    // Show the four elders holding back the Boulder.
     Actor_SetAnimation(ACTOR_ELDER_EAST, ANIM_BEARDED_ELDER_HOLD_BACK);
     Actor_SetAnimation(ACTOR_ELDER_WEST, ANIM_BEARDED_ELDER_HOLD_BACK);
     Actor_SetAnimation(ACTOR_ELDER_FAR_EAST,
@@ -1362,7 +1359,6 @@ static void ValePrologue_WatchBoulderFall(void) {
       ValePrologue_FlashPaletteAndSpawnEffects(Actor_Get(ACTOR_ELDER_FAR_WEST));
       wait(1);
     }
-    // Run the palette effects while the boulder rocks back and forth.
     shakeShift = &sShakeShift;
     updateEffects = ValePrologue_UpdateBoulderMapEffects;
     sShakeDone = 0;
@@ -2115,7 +2111,6 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_SetSpeed(ACTOR_JENNA_CHILD, 1.2);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.2);
   Actor_SetSpeed(ACTOR_GARET_CHILD, 1.2);
-  // Bring the group to the riverbank as the lightning subsides.
   entryActions = gValePrologue_ToRiverbankPath;
   Actor_SetScript(ACTOR_EXHAUSTED_STRONGMAN, entryActions);
   Event_Wait(10);
@@ -2197,7 +2192,6 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(40);
   wait(40);
-  // Stage the boulder and its shadow for the downriver camera shot.
   Actor_SetSpriteColorById(ACTOR_BOULDER, SPRITE_COLOR_NORMAL);
   currentActor = Actor_Get(ACTOR_BOULDER);
   Actor_SetSpriteFlags(currentActor, 0);
@@ -2231,7 +2225,6 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(30);
   wait(30);
-  // Follow the boulder script until its eighth movement phase.
   Task_AddFrame(ValePrologue_UpdateBoulderShadow, TASK_PASS_FRAME);
   Actor_SetScript(ACTOR_BOULDER, gValePrologue_BoulderRollsDownriver);
   FieldCamera_SetSpeedAndAcceleration(2, 0.03);
@@ -2270,7 +2263,6 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   actor->targetX = 0;
   actor->targetZ = 0;
   wait(1);
-  // Stage the riverbank reactions between lightning flashes.
   Actor_SetAnimation(ACTOR_FELIX_CHILD, ANIM_FELIX_CLING_STILL);
   Actor_SetPosition(ACTOR_DORA, 169, 1264);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 0);
@@ -2366,7 +2358,6 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   TilesetAnim_Resume(3);
   TilesetAnim_Resume(4);
   TilesetAnim_Resume(5);
-  // Restore the riverbank and the idle actor scripts.
   ValePrologue_RebuildRiverbank();
   Actor_SetPosition(ACTOR_DORA, 165, 1229);
   Actor_SetAnimation(ACTOR_DORA, ANIM_STAND);

@@ -221,7 +221,6 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
   if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) == 0) {
     Sound_Play(MUS_BABI);
     Event_Start();
-    // Frame the speakers and bring the leader over before the dialogue.
     FieldCamera_MoveTo(368, CAMERA_KEEP, 104, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 368, 160);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);

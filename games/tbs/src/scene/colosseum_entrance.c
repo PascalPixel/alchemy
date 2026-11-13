@@ -462,9 +462,6 @@ static void ColosseumEntrance_TalkToAzart(void) {
   ColosseumEntrance_ShowMessageAndPause(ACTOR_AZART);
   Actor_RunRepeatedMotion(ACTOR_AZART, 1);
   Event_ShowMessage(ACTOR_AZART, 0);
-  // Give his wander back its home, where he is placed: MOVEMENT_TYPE_WANDER
-  // reads timer and work as homeX and homeZ (Actor.homeX and homeZ), in
-  // pixels.
   {
     u16 *timer = (u16 *)&contestant->timer;
     u16 duration = 720;
@@ -630,7 +627,6 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
   Actor_RunRepeatedMotion(ACTOR_FIRST_GATE_SOLDIER + 1, 1);
   Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER + 1, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  // Gather Isaac and his companions for the invitation.
   ColosseumEntrance_FaceDirection(ACTOR_FIRST_GATE_SOLDIER, FACING_WEST);
   Event_ShowMessageThenWait(ACTOR_FIRST_GATE_SOLDIER, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_FIRST_GATE_SOLDIER + 2, 1);
@@ -903,7 +899,6 @@ static void ColosseumEntrance_FinalsStart(void) {
       actor->targetY = ACTOR_NO_TARGET;
       actor->targetZ = ACTOR_NO_TARGET;
       wait(1);
-      // Send contestants through the gate at staggered intervals.
       script = gColosseumEntrance_EnterFinalsScript;
       Actor_SetScript(ACTOR_SATRAGE, script);
       Event_Wait(20);
@@ -1525,7 +1520,6 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  // Rejoin the companions before the soldier leads Isaac onward.
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_IVAN, 1);
   Actor_SetSpeed(ACTOR_MIA, 1);

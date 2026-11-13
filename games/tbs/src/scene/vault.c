@@ -193,7 +193,6 @@ static void Vault_IvanStaysBehind(void) {
         (CELL_BEHAVIOR_VAULT_SOUTH_GATE - VAULT_TO_WORLD_MAP_SOUTH));
     return;
   }
-  // Bring Ivan out beside the party at the exit they are using.
   Event_Start();
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != 0) {
@@ -215,7 +214,6 @@ static void Vault_IvanStaysBehind(void) {
   Event_ShowMessageThenWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  // Return any Djinn before removing Ivan from the party.
   if (Vault_GetIvanVenusDjinnCount() != 0) {
     Event_SetMessageId(MsgVaultWaitDontWantTakeYour);
     // "Oh, wait, I don't want to take your Djinni. I'll just leave..."
@@ -809,8 +807,6 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     Import_EventSetExitRequest(VAULT_TO_VAULT_REVISIT);
   }
-  // Keep the bridge deck after a battle, and restore the two children's
-  // proximity update routines.
   if (GameFlag_Get(FLAG_VAULT_ON_BRIDGE) != 0) {
     MapGrid_CopyCellAttributes(55, 26, 4, 2, 23, 26);
   }
@@ -956,7 +952,6 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   anchor = Actor_Get(ACTOR_VAULT_DOG);
   if (anchor == NULL)
     return;
-  // Pick a small offset around the anchor and create the drifting sprite there.
   x = Random_Next();
   z = Random_Next();
   x <<= 3;
@@ -993,7 +988,6 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     break;
   }
   effect->motionFlags = 0;
-  // Choose either depth drift with a slow rise or vertical drift.
   if (flags & 2) {
     s32 driftMultiplier;
     s32 directionBias;
@@ -1020,7 +1014,6 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     effect->acceleration = VAULT_DRIFT_RATE * driftMultiplier;
     effect->timer = 1;
   }
-  // Install the custom motion and share the anchor's drawing priority.
   {
     /* FAKEMATCH(temporary): spriteFlags holds &sprite->flags; as
      * sprite->flags, 2 of 141 instructions differ in tbs-en. */

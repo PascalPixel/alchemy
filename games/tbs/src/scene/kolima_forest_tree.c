@@ -414,7 +414,6 @@ static void KolimaForestTree_RestoreTret(void) {
   void (*spawnOrbitSparks)(void);
   const s32 *finalActions;
 
-  // Gather the companions while Hermes' Water seeps into Tret.
   includeMia = GameFlag_Get(FLAG_IN_PARTY(MIA));
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 212);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
@@ -473,7 +472,6 @@ static void KolimaForestTree_RestoreTret(void) {
   }
   Task_Remove(KolimaForestTree_UpdateHealingPalette);
   wait(10);
-  // Flash the two saved palettes before settling on the healthy forest.
   flash = 0;
   do {
     KolimaPalette_Restore(0);
@@ -615,7 +613,6 @@ static void KolimaForestTree_RestoreTret(void) {
   Event_ShowMessage(ACTOR_GARET, 0);
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_TRET, FACE_GESTURE_BLINK);
   Event_Wait(20);
-  // Explain the curse and how the falling Psynergy Stones changed the forest.
   Event_SetMessageId(MsgKolimaWasIndeedAngryPeopleHad);
   // "I was indeed angry that people had laid waste to my..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
@@ -746,7 +743,6 @@ static void KolimaForestTree_RestoreTret(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 10);
   KolimaForestTree_NodTogether();
   Sound_Play(SOUND_FADE_OUT_BGM);
-  // Rejoin the party and exchange the used water for its empty bottle.
   finalActions = gKolimaForestTree_RejoinPartyActions;
   Actor_SetScript(ACTOR_GARET, finalActions);
   if (includeMia != 0) {

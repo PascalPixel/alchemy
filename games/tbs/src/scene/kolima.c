@@ -819,8 +819,6 @@ static void Kolima_WitnessForestCurse(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   wait(60);
-  // Bring the falling curtain over the party and reveal their protective
-  // fields.
   gFallingEffectWidth = 0;
   firstCurtainState = &gFallingEffectState;
   gFallingEffectOffset = px(128);

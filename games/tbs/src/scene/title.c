@@ -187,7 +187,6 @@ static void Title_LoadSprites(s32 unused) {
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   Vram_Load(gTitleVramBlock, 40 * TILE_SIZE_4BPP, decodedSprites + 32);
 #endif
-  // Wait for the final DMA transfer before releasing the decode buffer.
   dma3 = REG_DMA3;
   while (dma3[2] & (DMA_ENABLE << 16))
     ;
@@ -274,7 +273,6 @@ static void Title_UpdateSpriteReveal(void) {
 static void Title_RevealScreen(s32 unused) {
   s32 brightnessStep;
 
-  // Load while dark, then let the sprite task reveal the lettering.
   Title_LoadBackground();
   Event_Wait(30);
   gTitleRevealFrame = 0;
@@ -296,13 +294,10 @@ static void Title_RevealScreen(s32 unused) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16, IO_WRITE_16);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 16), IO_WRITE_16);
   Event_Wait(120);
-  // Lift the darkening in 17 steps of three frames, down to BLDY 0.
   for (brightnessStep = 0; brightnessStep <= 16; brightnessStep++) {
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16 - brightnessStep, IO_WRITE_16);
     wait(3);
   }
-  // Open the screen in one frame, then set 60-frame transitions for what
-  // follows.
   gFieldWork->transition = 0;
   gFieldWork->transitionFrames = 1;
   Event_StartScreenTransition();
@@ -332,7 +327,6 @@ static void Title_LoadBackground(void) {
   FieldDecompress_TaggedLz(encodedGraphics, Ram_MapGridCellBuffer);
   Dma_Set((void *)Ram_MapGridCellBuffer, LOGO_TILES, DMA_COPY_WORDS(9600),
           REG_DMA3);
-  // Fill the visible 30 columns and pad each 32-entry tilemap row.
   tilemap = LOGO_MAP;
   tileIndex = LOGO_FIRST_TILE;
   for (screenY = 0; screenY <= 19; screenY++) {
@@ -341,7 +335,6 @@ static void Title_LoadBackground(void) {
     *tilemap++ = blankTile;
     *tilemap++ = blankTile;
   }
-  // Reset all four background scroll pairs before enabling BG2 and sprites.
   bgScroll = (struct ScrollPair *)gBgScroll;
   for (screenY = 0; screenY <= 3; screenY++) {
     bgScroll->y = 0;

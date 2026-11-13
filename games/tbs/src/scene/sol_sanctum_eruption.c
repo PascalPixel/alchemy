@@ -568,7 +568,6 @@ static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId) {
   Actor_SetSpriteColorById(actorId, SPRITE_COLOR_BLINK);
   actor->motionFlags = 0;
   Sound_Play(SE_ASCEND);
-  // Rise at full size, then shrink the actor and its shadow together.
   frame = 0;
   do {
     actor->y.fixed += px(1) / 2;
@@ -824,7 +823,6 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
 
   sparkles = gWeatherWork;
   wiseOne = Actor_Get(ACTOR_WISE_ONE);
-  // Clear the ember actors and bring Isaac and Garet back into view.
   Task_Remove(SolSanctumEruption_UpdateEmberFrequency);
   gEmberMask = 3;
   Event_Wait(80);
@@ -965,7 +963,6 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
 
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST_SOUTHWEST, 0);
-  // Pan around the chamber before another tremor interrupts the conversation.
   FieldCamera_SetSpeed(2);
   FieldCamera_MoveTo(284, CAMERA_KEEP, 92, 1);
   FieldCamera_WaitForMove();
@@ -1245,7 +1242,6 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   }
 
   starOrigin = Actor_Get(ACTOR_PARTY_LEADER);
-  // Lift the Mars Star icon and pulse its scale during the Wise One's effect.
   star = FieldActor_Create(ACTOR_ELEMENTAL_STAR, starOrigin->x.fixed,
                            starOrigin->y.fixed + px(36), starOrigin->z.fixed);
   if (star != NULL) {
@@ -1449,7 +1445,6 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Task_AddFrame(SolSanctumEruption_UpdateWiseOnePalette, TASK_PASS_FRAME);
   Event_Wait(20);
   PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_OBJECTS);
-  // Fade the chamber away, stop its effects and leave through the rescue exit.
   PaletteFade_StartInterpolation(60);
   wait(100);
   PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_BG);

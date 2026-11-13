@@ -310,7 +310,6 @@ static void GomaCavePillar_SpawnStumpDust(void) {
       secondRandomSpeed = Random_Next();
       secondSpeedBand =
           ((u32)((secondRandomSpeed << 2) + secondRandomSpeed) >> 16);
-      // Keep the same five falling speeds for the second fragment.
       secondBandScaled =
           (((secondSpeedBand << 1) + secondSpeedBand) << 2) + secondSpeedBand;
       secondFallingSpeed = secondBandScaled << 6;

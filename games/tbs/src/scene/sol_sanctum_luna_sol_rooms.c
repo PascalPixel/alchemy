@@ -194,7 +194,6 @@ const struct Trigger *SolSanctumLunaSolRooms_GetTriggers(void) {
 static void SolSanctumLunaSolRooms_TintSolRoom(void) {
   s32 paletteActive;
 
-  // Test all four quarters' flags without skipping any flag reads.
   if (SolSanctumLunaSolRooms_AreAllStatueLightsLit() != 0) {
     paletteActive = Event_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
     if (paletteActive == 0) {
@@ -503,7 +502,6 @@ static void SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum(void) {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 6);
-    // End the discussion and return the followers to Isaac.
     Actor_SetSpeed(ACTOR_GARET, 1);
     Actor_SetSpeed(ACTOR_JENNA, 1);
     Actor_SetSpeed(ACTOR_KRADEN, 2);
@@ -585,7 +583,6 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
   Actor_WalkToAndWait(ACTOR_KRADEN, 486, 131);
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 120);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 2);
-  // Leave Kraden by the northern wall for the search interactions.
   FieldCamera_SetSpeed(4);
   GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN);
 }
@@ -854,7 +851,6 @@ static void SolSanctumLunaSolRooms_SpringTrap(void) {
   gSolSanctumLunaSolRooms_Light3Timer = (Random_Below(60)) + 20;
   gSolSanctumLunaSolRooms_Light4Timer = (Random_Below(60)) + 20;
   gSolSanctumLunaSolRooms_FlashState = 0;
-  // Run the falling lights independently while the quarters keep flashing.
   Task_AddFrame(SolSanctumLunaSolRooms_UpdateFirstFallingLight,
                 TASK_PASS_FRAME);
   Task_AddFrame(SolSanctumLunaSolRooms_UpdateSecondFallingLight,
@@ -882,7 +878,6 @@ static void SolSanctumLunaSolRooms_SpringTrap(void) {
                                             6);
   Actor_SetSpeed(ACTOR_KRADEN, 2);
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 280);
-  // Stop all light tasks before leaving this room.
   Task_Remove(SolSanctumLunaSolRooms_UpdateFirstFallingLight);
   Task_Remove(SolSanctumLunaSolRooms_UpdateSecondFallingLight);
   Task_Remove(SolSanctumLunaSolRooms_UpdateThirdFallingLight);
@@ -1127,7 +1122,6 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(60);
-    // Raise Isaac first, then shrink his sprite into the passage.
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     FieldCamera_SetSpeed(0.6);
     FieldCamera_MoveTo(287, CAMERA_KEEP, 114, 1);
@@ -1165,7 +1159,6 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 20);
-    // Repeat the ascent for Kraden before closing the room transition.
     Actor_SetSpeed(ACTOR_KRADEN, 0.3);
     actor = Actor_Get(ACTOR_KRADEN);
     {
@@ -1244,8 +1237,6 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
       Actor_SetPosition(ACTOR_KRADEN, 576, 120);
     }
   }
-  // Play the one-time event this entrance comes back from
-  // SceneId_SolSanctumStatue for.
   if (gMainRoutineWork.entrance ==
       SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED) {
     if (Event_GetFlag(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING) == 0) {
@@ -1286,8 +1277,6 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
     GameFlag_Set(FLAG_SOL_SANCTUM_SOUTHEAST_LIGHT_SHOWN);
   }
   wait(4);
-  // Restore completed puzzle tiles without replaying the
-  // entrance's event.
   if (playedEntranceEvent == 0) {
     // With all four seals open, the sun symbol glowing on the floor is
     // redrawn as a crescent moon under a falling beam of light, and the

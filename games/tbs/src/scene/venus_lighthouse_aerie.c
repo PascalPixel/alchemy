@@ -487,7 +487,6 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   struct Actor *arrivalPlatform;
   struct Actor *leader;
 
-  // Bring the leader across on the moving platform, then reveal the party.
   arrivalPlatform = Actor_Get(ACTOR_RISING_PLATFORM);
   Event_Start();
   VenusLighthouseAerie_ShowPartyMember(1, 0);
@@ -570,7 +569,6 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Actor_WaitForMoveById(ACTOR_RISING_PLATFORM);
   Actor_SetPosition(ACTOR_RISING_PLATFORM, 0, 0);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  // Reveal Saturos and Menardi arguing with Felix about Sheba.
   Event_SetMessageId(MsgVenusLongLastTime);
   VenusLighthouseAerie_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_MENARDI);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
@@ -1168,7 +1166,6 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   VenusLighthouseAerie_ShowMessage(ACTOR_SATUROS);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
   VenusLighthouseAerie_ShowMessage(ACTOR_MENARDI);
-  // Save the rod owner for the defeat return path, then enter battle.
   rodHolder = PartyInventory_FindMember(ITEM_SHAMANS_ROD);
   GameFlag_Set(rodHolder + FLAG_SHAMANS_ROD_HOLDER);
   PartyInventory_Remove(ITEM_SHAMANS_ROD);
@@ -1272,7 +1269,6 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   struct Actor *starShadow;
   struct Sprite *sprite;
   u8 *iconPixels;
-  // Reuse the dialogue answer word for the later radial burst directions.
   u32 answeredYes;
 
   Event_Start();
@@ -1504,7 +1500,6 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
     star->z.fixed = 0;
     VenusLighthouseAerie_StopActorMotion(star);
   }
-  // Let the group react as the Venus Star reaches the beacon.
   VenusLighthouseAerie_ShowGroupEmote(EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_SetSpritePriority(ACTOR_FELIX, 1);
   Actor_Get(ACTOR_FELIX)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
@@ -1712,7 +1707,6 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   VenusLighthouseAerie_ShowMessage(ACTOR_GARET);
   Sound_Play(SOUND_FADE_OUT_BGM);
-  // Flash Saturos and Menardi and release their matching radial bursts.
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(13, 8, 9), PALETTES_BG);
   PaletteFade_Interpolate(40);
   VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_NORTH_NORTHEAST);
@@ -1776,8 +1770,6 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_Get(ACTOR_MENARDI)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetDestination(ACTOR_SATUROS, 294, 196);
   Actor_SetDestination(ACTOR_MENARDI, 294, 196);
-  // Slide the two transformed actors together, then start the fusion
-  // battle.
   Task_AddFrame(VenusLighthouseAerie_UpdateBeamActors, TASK_PASS_FRAME);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Event_ShowMessage(ACTOR_GARET, 0);
@@ -2119,7 +2111,6 @@ static void VenusLighthouseAerie_ShowSaturosAndMenardiFall(void) {
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 2);
   Event_Wait(10);
-  // Give Saturos and Menardi their final exchange before they fall.
   Event_SetMessageId(MsgVenusPairDefeated);
   VenusLighthouseAerie_ShowMessage(ACTOR_SATUROS);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 3);
@@ -2311,7 +2302,6 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   MapGrid_SetShake(1, 1, 1);
   FieldCamera_MoveTo(304, 32, 180, 1);
   FieldCamera_WaitForMove();
-  // Open the beacon beam before splitting the surrounding platform.
   Actor_Get(ACTOR_BEAM_BOTTOM)->scaleX = Q16_ONE / 10;
   Actor_Get(ACTOR_BEAM_LOWER)->scaleX = Q16_ONE / 10;
   Actor_SetScript(ACTOR_BEAM_BOTTOM, gVenusLighthouseAerie_BeamOpenAction);
@@ -2804,7 +2794,6 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Actor_Jump(ACTOR_GARET, 6, 0);
   Actor_Jump(ACTOR_IVAN, 6, 0);
   Actor_Jump(ACTOR_MIA, 6, 0);
-  // Shake the party and split away the remaining central floor tiles.
   Actor_SetScript(ACTOR_PARTY_LEADER, gVenusLighthouseAerie_PartyHeadingAction);
   Actor_SetScript(ACTOR_GARET, gVenusLighthouseAerie_PartyHeadingAction);
   Actor_SetScript(ACTOR_IVAN, gVenusLighthouseAerie_PartyHeadingAction);
@@ -2947,7 +2936,6 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
   case 16:
     MapGrid_SetShake(1, 1, 1);
     break;
-    // Start the lower beam beneath the floor, then pause each rise stage.
 
   case 24:
     center->x.fixed = px(304);

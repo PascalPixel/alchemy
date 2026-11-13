@@ -399,7 +399,6 @@ static void TunnelRuins_HopDownStep(void) {
                                 leader->z.fixed + px(12));
   wait(6);
   leader->motionFlags = 0;
-  // Emit particles on alternate frames while the leader descends.
   options.update = (void (*)(struct Actor *))FieldEffect_AdvanceMotion;
   Sound_Play(SE_LANDING_THUD);
   for (i = 0; i < 8; i++) {
@@ -1116,7 +1115,6 @@ static void TunnelRuins_MoveLadyStatue(void) {
   row >>= 20;
   column >>= 20;
   MapGrid_CopyCellAttributes(20, 56, 1, 1, column, row);
-  // Count the statues on their marks.
   actor = Actor_Get(ACTOR_LADY_STATUE_NORTHWEST);
   if (FIELD_CELL(actor->x.fixed) == 25) {
     actor = Actor_Get(ACTOR_LADY_STATUE_NORTHWEST);

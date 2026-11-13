@@ -791,7 +791,6 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
   Event_Wait(delayFrames);
   MercuryLighthouse_AnimateFountainTiles(0, nextRow, nextRow + 1);
   Sound_Play(SE_MERCURY_LIGHTHOUSE_MECHANISM);
-  // Keep the opened fountain spraying after the tile animation completes.
   Task_AddFrame(MercuryLighthouse_SprayAtFountain, TASK_PASS_FRAME);
   MapGrid_WaitForShakeToSettle();
 }
@@ -1185,7 +1184,6 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
         GameFlag_Clear(FLAG_DOOR_ROOM_PIPE_PUSHED);
       break;
     case ACTOR_DOOR_SWITCH_PIPE:
-      // Close the previous opening before revealing the new door edge.
       startColumn = FIELD_CELL(Actor_Get(ACTOR_DOOR_SWITCH_PIPE)->x.fixed);
       Actor_MoveAndRedraw(probe);
       destinationColumn = FIELD_CELL(probe.position.x);
@@ -1729,7 +1727,6 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
 
   Event_Start();
   Event_Wait(20);
-  // Remove the colored waterfall before rebuilding the passage tiles.
   MercuryLighthouse_FadePaletteToBlack();
   Task_Remove(MercuryLighthouse_CycleWaterfallPalette);
   MapGrid_CopyCellsTo(45, 77, 45, 73, 9, 4);
@@ -1803,7 +1800,6 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   options.targetScaleX = 6 * Q16_ONE / 5;
   options.targetScaleY = 6 * Q16_ONE / 5;
   wave = 0;
-  // Reveal the opening one map row at a time, trailing a stream of particles.
   do {
     s32 particleSpeed;
 
@@ -2198,7 +2194,6 @@ s32 MercuryLighthouse_Initialize(void) {
   s32 alpha;
 
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
-  // Set up common lighting before restoring each scene's puzzle-specific state.
   gMainRoutineWork.retreatEntrance = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
   gMainRoutineWork.retreatScene = (s32)&SceneId_MercuryLighthouseExterior;
   gFieldWork->transition =
@@ -2274,7 +2269,6 @@ s32 MercuryLighthouse_Initialize(void) {
     }
   }
   if (gMainRoutineWork.next == (s32)&SceneId_MercuryLighthouseMiddle) {
-    // Restore stairs, the floor-switch gate and the fountain's moved pipe.
     switch (gMainRoutineWork.entrance) {
     case MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_LOWER_SOUTH:
     case MERCURY_LIGHTHOUSE_MIDDLE_PIPES_FROM_GATE:
@@ -2342,7 +2336,6 @@ s32 MercuryLighthouse_Initialize(void) {
     }
   }
   if (gMainRoutineWork.next == (s32)&SceneId_MercuryLighthouseUpper) {
-    // Restore the movable pipes and the stone doors they opened.
     switch (gMainRoutineWork.entrance) {
     case MERCURY_LIGHTHOUSE_UPPER_ROW_STATUES_FROM_GATE:
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTHEAST:

@@ -174,7 +174,6 @@ static void StuccoRoomsB_EnterDoor(void) {
   s32 doorIndex;
 
   work = gFieldWork;
-  // Stop the room's actors before animating the selected doorway.
   for (actorId = ACTOR_FIRST_PLACED; actorId < STUCCO_ROOMS_B_ACTOR_SLOT_END;
        actorId++) {
     actor = Actor_Get(actorId);
@@ -315,7 +314,6 @@ s32 StuccoRoomsB_ApplyEntryState(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
-    // Restore the room's changed cells and the passengers' fixed draw priority.
     MapGrid_CopyCellAttributes(51, 47, 3, 1, 51, 45);
     actor = Actor_Get(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER);
     actor->priorityFlags = 0;

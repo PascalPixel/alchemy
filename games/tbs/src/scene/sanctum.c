@@ -796,7 +796,6 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_Wait(32);
     Actor_SetSpriteColorById(ACTOR_HEALER, SPRITE_COLOR_NORMAL);
     Event_Wait(30);
-    // Return to the gathering and finish the departure conversation.
     Sanctum_HideHealerAfterimage();
     Actor_SetAnimation(ACTOR_HEALER, ANIM_STAND);
     Actor_RunRepeatedMotion(ACTOR_HEALER, 2);
@@ -1076,7 +1075,6 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_ShowMessage(ACTOR_GARET, 0);
     Event_Wait(30);
   }
-  // Ask Isaac to commit, or leave the group waiting for his answer.
   Event_SetMessageId(MsgSanctumIsaacWillAcceptResponsibilityFor);
   Actor_RunRepeatedMotion(ACTOR_HEALER, 1);
   Event_Wait(20);
@@ -1217,7 +1215,6 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Actor_SetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_BLINK);
   Sound_Play(SOUND_FADE_OUT_BGM);
   Sound_Play(SE_MATERIALIZE);
-  // Shrink the Wise One amid sparks before restoring the room.
   for (sparkIndex = 0; sparkIndex < 32; sparkIndex++) {
     Sanctum_SpawnActorSpark(ACTOR_WISE_ONE);
     Event_Wait(4);
@@ -1830,7 +1827,6 @@ static void Sanctum_ReenactSolSanctum(void) {
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(10);
-  // Repeat the synchronized eight-point paths around the room.
   Actor_SetScript(ACTOR_PARTY_LEADER, gSanctum_LeaderCircleScript);
   Actor_SetScript(ACTOR_GARET, gSanctum_GaretCircleScript);
   Actor_WaitForScriptEndById(ACTOR_PARTY_LEADER);

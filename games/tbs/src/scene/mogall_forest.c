@@ -1160,7 +1160,6 @@ static void MogallForest_KillerApeAttacks(void) {
 
   actor = Actor_Get(ACTOR_THIRD_AREA_EAST_APE);
   Event_Start();
-  // Shake the hiding place twice before the ape appears.
   Actor_SetSpriteColorById(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_THIRD_AREA_EAST_APE), 0);
   Actor_SetPosition(ACTOR_THIRD_AREA_EAST_APE, 136, 360);
@@ -1250,8 +1249,6 @@ s32 MogallForest_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   sceneId = gMainRoutineWork.next;
   if (sceneId == (s32)&SceneId_MogallForestSign) {
-    // Show the first guide once, or restore the first area's completed
-    // crossing.
     entrance = gMainRoutineWork.entrance;
     switch (entrance) {
     case MOGALL_FOREST_SIGN_FROM_WORLD_MAP:
@@ -1332,7 +1329,6 @@ s32 MogallForest_Initialize(void) {
       break;
     }
   } else if (sceneId == (s32)&SceneId_MogallForestQuartz) {
-    // Restore revealed guides, moved rocks and the second crossing.
     entrance = gMainRoutineWork.entrance;
     switch (entrance) {
     case MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIDE_PATHS_NORTH:
@@ -1395,8 +1391,6 @@ s32 MogallForest_Initialize(void) {
       break;
     }
   } else if (sceneId == (s32)&SceneId_MogallForestKillerApe) {
-    // Restore both crossing logs and the creatures leading to the final
-    // encounter.
     entrance = gMainRoutineWork.entrance;
     switch (entrance) {
     case MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_WEST:

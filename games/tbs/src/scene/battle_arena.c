@@ -508,8 +508,6 @@ recordTest:
     result++;
   }
   wait(2);
-  // Put the prefix before the name, shifting it right and cutting it to the
-  // 14 letters and terminator a Unit name holds.
   FieldMessage_DecodeRawUnbounded(MsgEnemyLabel, namePrefix);
   i = 0;
   if (namePrefix[i] != 0) {
@@ -873,7 +871,6 @@ static s32 BattleArena_EnterBattle(void) {
     savedWork =
         HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, 6 * BATTLE_UNIT_SIZE);
     Task_Remove((TaskFunc)BattleArena_PollPeerReady);
-    // Run the map's tileset animation 5 for eight frames.
     TilesetAnim_Resume(5);
     wait(8);
     TilesetAnim_Pause(5);
@@ -973,7 +970,6 @@ static s32 BattleArena_ChooseBattleMode(void) {
   messageBase = MsgLobbyPleaseSpeakWhen;
   Event_Start();
   Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
-  // Look for the partner's signature twice, a frame apart.
   if (BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) == 0) {
     wait(1);
   }
@@ -1604,7 +1600,6 @@ s32 BattleArena_Initialize(void) {
     BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
     BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
   }
-  // Resume polling and restore the party unless continuing a monster run.
   func = (TaskFunc)BattleArena_PollPeerReady;
   Task_AddFrame(func, TASK_PASS_FRAME);
   Task_SetFlags(func, 1);

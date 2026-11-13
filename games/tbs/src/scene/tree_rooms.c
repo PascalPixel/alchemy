@@ -535,7 +535,6 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   TaskFunc sparkTask;
   const s32 *actions;
 
-  // Restore the party positions before opening the post-battle conversation.
   hasMia = GameFlag_Get(FLAG_IN_PARTY(MIA));
   Actor_Get(ACTOR_MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpritePriority(ACTOR_MIA, 2);
@@ -573,7 +572,6 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   FieldCamera_MoveTo(168, CAMERA_KEEP, 152, 1);
   FieldCamera_WaitForMove();
   Event_Wait(10);
-  // Open the passage in Tret's room before continuing the conversation.
   Sound_Play(SE_MAP_EXIT);
   MapGrid_CopyCellAttributes(26, 3, 1, 2, 10, 8);
   MapGrid_CopyCells(26, 38, 1, 1, 10, 43);
@@ -772,7 +770,6 @@ s32 TreeRooms_EnterRoom(void) {
   struct Actor *secondTret;
 
   tret = Actor_Get(ACTOR_TRET);
-  // Point the cocoon latch at the scene state and save the palette first.
   sLastCocoon = (s16 *)gSceneLocalState;
   TretPalette_SaveMapColors();
   tret->motionFlags = 0;
@@ -1123,7 +1120,6 @@ static void TreeRooms_RunLandingDustEvent(void) {
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Event_Wait(24);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  // Spread particles around the leader while the landing effect finishes.
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = 4 * Q16_ONE / 5;

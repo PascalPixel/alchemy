@@ -1096,7 +1096,6 @@ static void ShipRooms_StepBesideLeader(s32 passengerId) {
       direction = ((leader->facing + TRIG_TURN / 2) & 0xf000) >> 12;
     }
   }
-  // Start from where the leader stands.
   {
     struct Actor *start = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -1593,8 +1592,6 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   s32 ouranosSpeech;
   s32 captainSpeech;
 
-  // Gather the captain's quarters's attention around the argument about
-  // launching.
   Sound_Play(MUS_DUNGEON);
   FieldCamera_SetSpeed(2.4);
   ShipRooms_MoveCameraAndWait(456, CAMERA_KEEP, 648,
@@ -1794,8 +1791,6 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   ShipRooms_Turn(ACTOR_QUARTERS_CAPTAIN, FACING_SOUTH_SOUTHEAST);
   Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, ANIM_SHAKE_HEAD);
   ShipRooms_Say(ACTOR_QUARTERS_CAPTAIN);
-  // Settle the passengers where the next visit to the captain's quarters needs
-  // them.
   Actor_WalkToAndWait(ACTOR_QUARTERS_SEAN, 444, 628);
   ShipRooms_Turn(ACTOR_QUARTERS_SEAN, FACING_NORTH_NORTHEAST);
   ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_SEAN,
@@ -1860,7 +1855,6 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   s32 captainAboveSpeech;
   const s32 *action;
 
-  // Let the captain explain why the anchor matters and ask the party to help.
   Event_Start();
   Field_EndBusyAndReveal();
   Actor_FaceActor(ACTOR_QUARTERS_CAPTAIN, ACTOR_PARTY_LEADER, 0);
@@ -1949,7 +1943,6 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   Actor_FaceDirection(ACTOR_QUARTERS_KAJA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_QUARTERS_OURANOS, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_QUARTERS_SECOND_GUIDE, FACING_NORTH_NORTHEAST, 0);
-  // Bring the rest of the party out beside Isaac for the agreement.
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 486, 608);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
@@ -2070,7 +2063,6 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   Actor_StartRepeatedMotion(ACTOR_QUARTERS_CREWMAN, 2);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_SECOND_GUIDE, 2);
   Event_Wait(20);
-  // Send the crew away and merge the party's separate actors again.
   action = gShipRooms_LeaveCaptainsQuarters;
   Actor_SetScript(ACTOR_QUARTERS_CREWMAN, action);
   Event_Wait(4);
@@ -2462,7 +2454,6 @@ static void ShipRooms_PlaceFoundActors(s32 gated) {
 static void ShipRooms_AskForReplacementOarsmen(void) {
   struct Actor *actor;
 
-  // Bring Isaac to the crewman who explains the shortage of rowers.
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_PLACE_FOLLOWERS_AND_MONSTERS, 0, 0);
   ShipRooms_RunEventCommand(SHIP_RESET_CAMERA, 1, 0);
@@ -2509,7 +2500,6 @@ static void ShipRooms_AskForReplacementOarsmen(void) {
   Actor_SetSpeed(ACTOR_MIA, 0.8);
   Actor_WalkToAndWait(ACTOR_MIA, 472, 148);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 20);
-  // Let the full party respond to the request for replacement oarsmen.
   ShipRooms_RunEventCommand(SHIP_FACE_PARTY_EAST_AND_WEST, 0, 60);
   ShipRooms_RunEventCommand(SHIP_FACE_PARTY, FACING_SOUTH, 20);
   ShipRooms_RunEventCommand(SHIP_PLAY_PARTY_ANIMATION, 1, 20);
@@ -3666,7 +3656,6 @@ static void ShipRooms_NoticeShipRocking(void) {
   firstRower = ShipRooms_FindFirstSetFlag(0, 0);
   secondRower = ShipRooms_FindFirstSetFlag(1, 0);
   thirdRower = ShipRooms_FindFirstSetFlag(2, 0);
-  // Restore the occupied rowing seats before showing the ship's movement.
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_SETUP_ROWING_PARTY, 0, 0);
   ShipRooms_RunEventCommand(SHIP_HIDE_OARS, 0, 0);
@@ -3834,7 +3823,6 @@ static void ShipRooms_ReachIsland(void) {
   secondRower = ShipRooms_FindFirstSetFlag(1, 0);
   thirdRower = ShipRooms_FindFirstSetFlag(2, 0);
   fourthRower = ShipRooms_FindFirstSetFlag(3, 0);
-  // Restore all four selected rowers and announce the island stop.
   Event_Start();
   ShipRooms_SetOarCollision();
   ShipRooms_RunEventCommand(SHIP_SETUP_ROWING_PARTY, 0, 0);
@@ -3910,7 +3898,6 @@ static void ShipRooms_ReachIsland(void) {
   } else if (reaction == 2) {
     gFieldWork->message += 3;
   }
-  // Send the rowers and party back through their departure scripts.
   ShipRooms_Turn(firstRower, 0);
   ShipRooms_Say(firstRower);
   Actor_SetSpeed(firstRower, 1);

@@ -420,7 +420,6 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   FieldCamera_MoveTo(576, CAMERA_KEEP, 136, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
-  // Rejoin the companions to the leader and restore normal field control.
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_JENNA, 1);
   Scene_WalkIntoLeader(ACTOR_GARET);
@@ -598,7 +597,6 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   FieldCamera_MoveTo(576, CAMERA_KEEP, 215, 1);
   Actor_WalkToAndWait(ACTOR_KRADEN, 574, 323);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-  // Leave Isaac in control after Jenna and Garet rejoin him.
   FieldCamera_SetSpeed(3.6);
   FieldCamera_MoveTo(576, CAMERA_KEEP, 136, 1);
   FieldCamera_WaitForMove();
@@ -662,7 +660,6 @@ static void SolSanctumStatue_UnusedPutOutSeals(void) {
     Event_Wait(40);
     approachSide = 2;
   }
-  // Flash progressively faster, ending on an open seal's cells.
   for (frame = 0; frame != 6; frame++) {
     MapGrid_CopyCellsTo(2, 28, 34, 10, 4, 2);
     Event_Wait(8);
@@ -710,7 +707,6 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
   u32 column;
 
   if ((u32)(screenY + 16) <= 175) {
-    // Keep the first sprite just left of the screen for seamless tiling.
     scrollX = (gSolSanctumStatue_ScrollPhase >> 10) - cameraX;
     scrollX |= -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
     for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
@@ -1325,7 +1321,6 @@ static void SolSanctumStatue_OpenSeal(void) {
   exitResult = 0;
   Event_Start();
   if (!GameFlag_Get(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN)) {
-    // Show the configured seal and flash its two tile states.
     FieldCamera_SetSpeed(2);
     FieldCamera_MoveTo(576, CAMERA_KEEP, 172, 1);
     FieldCamera_WaitForMove();
@@ -1343,7 +1338,6 @@ static void SolSanctumStatue_OpenSeal(void) {
     COPY_CELLS(seal->opened);
     GameFlag_Set(seal->flag);
     exitResult = SolSanctumStatue_SelectStoryExit();
-    // Keep the statue reusable until the central statue has moved.
     if (exitResult == -1) {
       if (!GameFlag_Get(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED)) {
         FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 1);

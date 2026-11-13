@@ -338,7 +338,6 @@ static void Xian_TalkToWaterCarrier(void) {
     Event_End();
     return;
   }
-  // Make room for the carrier before spilling the water.
   if ((Actor_Get(ACTOR_PARTY_LEADER)->z.fixed >> 19) > 27 &&
       (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed >> 19) <= 29 &&
       (FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed)) != 26) {
@@ -372,7 +371,6 @@ static void Xian_TalkToWaterCarrier(void) {
   Actor_RunRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
   Event_Wait(10);
   Sound_Play(SE_SPARKLING_PASSAGE);
-  // Copy the wet terrain cell and grow the puddle into view.
   puddle->scaleX = 3 * Q16_ONE / 10;
   puddle->scaleY = 3 * Q16_ONE / 10;
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
@@ -412,7 +410,6 @@ static void Xian_TalkToWaterCarrier(void) {
       (FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed)) > 13) {
     leaderMustStepAside = 1;
   }
-  // Clear the carrier's route back to the water supply.
   if (leaderMustStepAside != 0) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 10);
@@ -481,7 +478,6 @@ static void Xian_TalkToKungFuStudent(void) {
     Actor_FaceDirection(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 10);
     Event_End();
   } else {
-    // Step back, then watch the student jump and strike the tree.
     Event_SetMessageId(MsgXianHooWhaaaHachaaa);
     // "Hoo-whaaa... Hachaaa!"
     Event_ShowMessage(ACTOR_KUNG_FU_STUDENT, 0);
@@ -524,7 +520,6 @@ static void Xian_TalkToKungFuStudent(void) {
                       &effectParams);
     Actor_SetDestination(ACTOR_KUNG_FU_STUDENT, 146, 312);
     Actor_WaitForMoveById(ACTOR_KUNG_FU_STUDENT);
-    // Finish the impact effects and leave the student in the final pose.
     Task_Remove(Xian_SpawnTrainingParticles);
     FieldEffect_Spawn(px(144), 0, px(312), 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
@@ -782,7 +777,6 @@ s32 Xian_Initialize(void) {
     Actor_SetPosition(ACTOR_KUNG_FU_STUDENT, 146, 312);
     Actor_FaceDirection(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 0);
   }
-  // Restore the frozen puddle and tasks when re-entering the village.
   if (GameFlag_Get(FLAG_XIAN_SPILLED_WATER_FROZEN)) {
     Actor_SetAnimation(ACTOR_SPILLED_WATER, PUDDLE_ANIMATION_PILLAR);
     {

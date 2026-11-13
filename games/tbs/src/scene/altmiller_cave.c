@@ -631,8 +631,6 @@ static void AltmillerCave_SpinLights(void) {
     s32 chosenLight = CAVE_SIGNED_STATE(CAVE_CHOSEN_LIGHT);
     s32 chosenAngle = Math_Divide(chosenLight * Q16_ONE, 5);
 
-    // Stop once the chosen light is within 767 of the top, the angles
-    // compared as turns in a word's upper half.
     if ((u32)(((wheel->angle - chosenAngle) << 16) +
               ((767 - TRIG_TURN / 4) << 16)) <= (2 * 767) << 16) {
       wheel->angle = chosenAngle + TRIG_TURN / 4;
@@ -824,7 +822,6 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   s32 eva;
   s32 evb;
 
-  // Give Babi the draught and bring the party beside him.
   GameFlag_Set(FLAG_BABI_SAVED);
   PartyInventory_Discard(ITEM_MYSTIC_DRAUGHT);
   Event_Start();
@@ -868,7 +865,6 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Sound_Play(SOUND_FADE_OUT_BGM);
   actor->sprite->rotation = 0;
   Actor_Jump(ACTOR_INVISIBLE_BABI, 10, 70);
-  // Flicker between sprite priorities before replacing invisible Babi.
   for (i = 0; i < 30; i++) {
     actor->sprite->image.priority = 0;
     Event_Wait(2);
@@ -946,7 +942,6 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     // "You must be well traveled indeed if that didn't shock you."
     Event_ShowMessage(ACTOR_BABI, 0);
   }
-  // Ask how Babi became invisible and hear about his Alchemy.
   Event_SetMessageId(MsgAltmillerHowDidBecomeParalyzedWhile);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
@@ -1496,7 +1491,6 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     // "You don't want to either, do you?"
     Event_ShowMessage(ACTOR_GARET, 0);
   }
-  // Let Isaac answer the invitation and reunite the party.
   Event_SetMessageId(MsgAltmillerEitherWayWereStuckHere);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
@@ -1588,7 +1582,6 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   struct Actor *leader;
   s32 line;
 
-  // Gather the party around the invisible voice.
   GameFlag_Set(FLAG_MET_INVISIBLE_BABI);
   Sound_Play(MUS_CAVE);
   Event_Start();
@@ -1774,7 +1767,6 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-  // Explain the hidden draught and the order of the five rocks.
   line += 7;
   Event_SetMessageId(line);
   Event_Wait(30);
@@ -2042,7 +2034,6 @@ s32 AltmillerCave_Initialize(void) {
       actor->sprite->rotation = TRIG_TURN / 4;
     }
   }
-  // Restore AltmillerCaveSquall's moved obstacles and frozen puddle.
   if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveSquall) {
     GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
     AltmillerCave_RedrawObstacleFootprints();
@@ -2062,7 +2053,6 @@ s32 AltmillerCave_Initialize(void) {
     }
 #endif
   }
-  // Rebuild the final rock puzzle from its saved phase and chosen light.
   if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveDraught) {
     GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
     AltmillerCave_RedrawObstacleFootprints();

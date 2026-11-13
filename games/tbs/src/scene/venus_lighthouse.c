@@ -492,7 +492,6 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   directionIndex = leader->facing >> 12;
-  // Look ahead for a pillar before testing its destination and overhead space.
   Actor_StepFrom(&targetPosition, leader,
                  gPushedActor_DirectionSteps[directionIndex]);
   pillar = Actor_FindAtPosition(&targetPosition, leader);
@@ -522,7 +521,6 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   if (transitionBusy != 0)
     return;
 
-  // Move the pillar and leader together, then restore their standing state.
   Actor_SelectAnimation(leader, ANIM_PUSH);
   moveRate = px(1) / 5;
   wait(15);
@@ -855,8 +853,6 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
 #endif
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  // Check the intervening cell before looking for a clear landing two cells
-  // ahead.
   savedMotionFlags = leader->motionFlags;
 #if TBS_PATCH_1
   landing.x = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
@@ -1215,7 +1211,6 @@ static void VenusLighthouse_SearchStatue(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(20);
   Event_Wait(40);
-  // Follow the revealed path after the statue and color effect have finished.
   FieldCamera_SetSpeed(0.5);
   FieldCamera_MoveTo(456, CAMERA_KEEP, 542, 1);
   FieldCamera_WaitForMove();
@@ -1240,8 +1235,6 @@ static void VenusLighthouse_MovePillarTowardWall(void) {
   actor = Actor_Get(ACTOR_WALL_PILLAR);
   if (FIELD_CELL(actor->x.fixed) == 53) {
     if (GameFlag_Get(talked) == 0) {
-      // Record the one-time conversation before bringing Garet out to inspect
-      // the pillar.
       GameFlag_Set(talked);
       actor = Actor_Get(ACTOR_PARTY_LEADER);
       if (actor != 0) {
@@ -1586,8 +1579,6 @@ static void VenusLighthouse_StepOnWallSwitch(void) {
       dustX = px(288);
       column = 29;
       tileDelay = 40;
-      // Scroll the layer while replacing the wall edge and emitting dust along
-      // it.
       for (frame = 0; frame <= 479; frame++, tileDelay--) {
         layer->offsetX += px(1) / 5;
         dustX -= px(1) / 5;
@@ -1730,8 +1721,6 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
 
   Event_Start();
   MapGrid_CopyCellAttributes(108, 39, 13, 7, 44, 39);
-  // Find pillars on unoccupied switch cells before committing any sinking
-  // motion.
   for (pillarId = ACTOR_FIRST_SWITCH_PILLAR;
        pillarId <= ACTOR_FIRST_SWITCH_PILLAR + 2; pillarId++) {
     pillar = Actor_Get(pillarId);
@@ -1768,8 +1757,6 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
     if (switchIndex == 5) {
       continue;
     }
-    // Preserve overlapping actors while the selected pillar sinks into
-    // its socket.
     savedPriority = leader->sprite->image.priority;
     if (FIELD_CELL(leader->z.fixed) <= gVenusThirdFloorSockets[switchIndex].z) {
       occlusionEffect = VenusLighthouse_CreateOccludingPassageEffect(
@@ -1972,8 +1959,6 @@ static void VenusLighthouse_CarryFloatingPillar(void) {
   s32 row;
 
   Event_Start();
-  // Handle completed destinations and fallen pillars before reordering a new
-  // stack.
   for (pillarIndex = 0; pillarIndex < 4; pillarIndex++) {
     pillar = Actor_Get(pillarIndex + ACTOR_FIRST_FLOATING_PILLAR);
     column = FIELD_CELL(pillar->x.fixed);
@@ -2008,8 +1993,6 @@ static void VenusLighthouse_CarryFloatingPillar(void) {
     }
     if (FIELD_CELL(pillar->z.fixed) == 19 &&
         !GameFlag_Get(FLAG_SCENE_TEMP_00 + pillarIndex)) {
-      // Keep settled pillars at the front of the actor slots before
-      // finding their support.
       FloatingPillar_Settle(pillar, 0);
       settledIndex = pillarIndex;
       for (earlierIndex = 0; earlierIndex < pillarIndex; earlierIndex++) {
@@ -2096,8 +2079,6 @@ static void VenusLighthouse_StepOnWestWallSwitch(void) {
       dustX = px(616);
       column = 0;
       tileDelay = 60;
-      // Move the west wall while its visible edge exposes successive tile
-      // strips.
       for (frame = 0; frame <= 319; frame++, tileDelay--) {
         layer->offsetX += px(1) / 5;
         if (dustX >= px(576) && frame > 40) {
@@ -2163,8 +2144,6 @@ static void VenusLighthouse_StepOnEastWallSwitch(void) {
       dustX = px(704);
       column = 61;
       tileDelay = 60;
-      // Move the east wall in the opposite direction, keeping its distinct dust
-      // limits.
       for (frame = 0; frame <= 319; frame++, tileDelay--) {
         layer->offsetX -= px(1) / 5;
         dustX += px(1) / 5;
@@ -2226,7 +2205,6 @@ static void VenusLighthouse_MoveSocketPillar(void) {
 #endif
   MapGrid_CopyCellAttributes(69, 48, 4, 2, 5, 48);
   MapGrid_CopyCellAttributes(73, 37, 9, 13, 9, 37);
-  // Find a pillar on a clear pillar socket and preserve overlapping draw order.
   for (pillarId = ACTOR_FIRST_SOCKET_PILLAR;
        pillarId <= ACTOR_FIRST_SOCKET_PILLAR + 3; pillarId++) {
     pillar = Actor_Get(pillarId);
@@ -2457,8 +2435,6 @@ s32 VenusLighthouse_Initialize(void) {
   GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_LIT);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   sceneId = gMainRoutineWork.next;
-  // Restore the scholars and soldiers outside and each room's puzzle by its
-  // entrance.
   if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (!GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD))
@@ -2500,9 +2476,6 @@ s32 VenusLighthouse_Initialize(void) {
       break;
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_FROM_GREAT_STATUE:
       GameFlag_Clear(FLAG_ARRIVAL_STAIRS_DOWN);
-      // Restore the same passage tiles as the room's other two
-      // entrances.
-      // fall through
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_FROM_PILLARS:
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR:
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
@@ -2525,7 +2498,6 @@ s32 VenusLighthouse_Initialize(void) {
       break;
     }
   } else if (sceneId == (s32)&SceneId_VenusLighthouseFirstFloor) {
-    // Restore depth pillars, the Carry puzzle and the paired tile-wave passage.
     switch (gMainRoutineWork.entrance) {
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_GROUND_FLOOR:
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
@@ -2596,7 +2568,6 @@ s32 VenusLighthouse_Initialize(void) {
       break;
     }
   } else if (sceneId == (s32)&SceneId_VenusLighthouseSecondFloor) {
-    // Restore the first sliding wall and its sunken-pillar gate.
     switch (gMainRoutineWork.entrance) {
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_SPARKLING_PASSAGE_FROM_PILLAR_PIT:
       VenusLighthouse_ArriveThroughSparkPassage();
@@ -2667,7 +2638,6 @@ s32 VenusLighthouse_Initialize(void) {
       break;
     }
   } else if (sceneId == (s32)&SceneId_VenusLighthouseThirdFloor) {
-    // Restore the two tile waves and the three-pillar socket puzzle.
     switch (gMainRoutineWork.entrance) {
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHWEST:
       VenusLighthouse_AnimateWestTileWave();
@@ -2760,8 +2730,6 @@ s32 VenusLighthouse_Initialize(void) {
       break;
     }
   } else if (sceneId == (s32)&SceneId_VenusLighthouseFourthFloor) {
-    // Restore floating supports, opposing walls and the four-pillar pillar
-    // puzzle.
     switch (gMainRoutineWork.entrance) {
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_NORTHWEST:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLARS_FROM_WALL_SWITCHES:
@@ -2823,8 +2791,6 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST:
       gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
       Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = -px(2);
-      // Restore the same spray and passage state.
-      // fall through
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PILLARS:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHWEST:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTH_NORTHEAST:
@@ -3048,7 +3014,6 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
     actor->z.fixed -= VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->x * 3, 15);
     return;
   }
-  // Advance the camera anchor together with an unobstructed actor.
   viewCenter->x.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->x * 3, 15);
   actor->x.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->x * 3, 15);
   viewCenter->z.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->z * 3, 15);
@@ -3083,7 +3048,6 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
   Event_Wait(40);
   Sound_Play(SE_WAVE);
   extraBursts = 0;
-  // Advance the first tile wave, holding its fourth row for three extra bursts.
   for (row = 0; row < 10; row++) {
     VenusLighthouse_RubbleSetScaleAndSpin(&options);
     for (;;) {
@@ -3381,8 +3345,6 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   Sound_Play(SOUND_FADE_OUT_BGM);
   Sound_Play(SE_MATERIALIZE);
   GameFlag_Set(FLAG_SKIP_SCENE_CHANGE_SOUND);
-  // Raise the leader, ground height and platform by the same pixel each
-  // frame.
   for (riseFrame = 0; riseFrame < 128; riseFrame++) {
     leader->y.fixed += px(1);
     leader->groundHeight += px(1);

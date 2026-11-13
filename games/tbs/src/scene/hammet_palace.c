@@ -250,7 +250,6 @@ static void HammetPalace_LeaveThroughDoor(void) {
   }
   Event_Wait(16);
   Import_EventSetExitRequest(work->stepTrigger);
-  // Restore the layer entries before returning control to the field.
   TilesetAnim_Pause(1);
   TilesetAnim_Pause(2);
   Event_End();
@@ -859,7 +858,6 @@ static void HammetPalace_HammetsHomecoming(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   FieldCamera_MoveTo(864, CAMERA_KEEP, 536, 0);
-  // Pan from the entrance while the party walks into its speaking positions.
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 864, 630);

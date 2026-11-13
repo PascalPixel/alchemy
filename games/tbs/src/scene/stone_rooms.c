@@ -131,7 +131,6 @@ static void StoneRooms_LeaderSilencesThieves(void) {
   Actor_RunRepeatedMotion(ACTOR_RIGHT_THIEF, 2);
   Event_Wait(20);
 
-  // Turn from the two thieves to the party for the remaining dialogue.
   Actor_TurnToFaceEachOther(ACTOR_THIEF_LEADER, ACTOR_PARTY_LEADER, 0);
   Event_Wait(20);
 

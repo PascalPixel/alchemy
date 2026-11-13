@@ -461,7 +461,6 @@ static void TolbiShipMast_RunAvastEvent(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  // Save the camera origin before the sparkle begins to turn.
   Event_Wait(20);
   gTolbiShipMast_CameraOrigin[0] = *cameraOrigin++;
   gTolbiShipMast_CameraOrigin[1] = *cameraOrigin;
@@ -491,7 +490,6 @@ static void TolbiShipMast_RunAvastEvent(void) {
   Actor_SetSpriteColorById(ACTOR_FIRST_SIGHTED_MONSTER, SPRITE_COLOR_BGR);
   Actor_SetSpriteColorById(ACTOR_FIRST_SIGHTED_MONSTER + 1, SPRITE_COLOR_BGR);
   Actor_SetSpriteColorById(ACTOR_FIRST_SIGHTED_MONSTER + 2, SPRITE_COLOR_BGR);
-  // Grow the three monsters from half size as they close in on the lookout.
   actor = Actor_Get(ACTOR_FIRST_SIGHTED_MONSTER);
   actor->scaleY = Q16_ONE / 2;
   actor->scaleX = Q16_ONE / 2;
@@ -754,8 +752,6 @@ static void TolbiShipMast_RunMonsterLanding(void) {
   Event_Wait(20);
   Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_WaveActions);
   Event_Wait(80);
-  // Let the monster bounce, then move it and its landing spot out of the
-  // shot.
   Actor_SetSpritePriority(ACTOR_LANDING_MONSTER, 1);
   Actor_SetSpeed(ACTOR_LANDING_MONSTER, 1);
   actor->bounce = Q16_ONE / 10;

@@ -179,7 +179,6 @@ static void Suhalla_EnterDoor(void) {
 
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gSuhallaDoorOpenSteps, cellX, cellZ);
-  // Walk through the opening while the exit transition counts down.
   Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -16);
   gFieldWork->transitionFrames = 16;
   Import_EventSetExitRequest(exitTrigger);

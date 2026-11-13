@@ -293,7 +293,6 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
   leaderRow = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed / px(16);
   if (leaderColumn == 12 && leaderRow == 32) {
     Event_Start();
-    // Fade the event before releasing fifteen sparks above the pool.
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_StartInterpolation(60);
     Event_Wait(120);
@@ -402,7 +401,6 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   Io_Write16(BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND, &REG_BLDCNT);
   alpha = BLEND_ALPHA(16, 16);
   REG_BLDALPHA = alpha;
-  // Restore persistent lighting and the Retreat destination first.
   MercuryLighthouse_RestoreLights(
       CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER,
       (struct MercuryLighthouseLights *)gSceneLocalState);

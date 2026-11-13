@@ -343,7 +343,6 @@ static void ColosseumSatrageMatch_KnockDownObstacle(void) {
   obstacle->acceleration = px(1) / 10;
   obstacle->speedLimit = px(6) / 5;
   Sound_Play(SE_TOPPLE);
-  // Spin through the fall, then settle the obstacle at its final height.
   FieldActor_SetMoveTarget(obstacle, 336, 10, 264);
   for (rotationStep = 0, fallFrames = 9; fallFrames >= 0; fallFrames--) {
     sprite->rotation -= rotationStep;
@@ -367,7 +366,6 @@ static void ColosseumSatrageMatch_KnockDownObstacle(void) {
   obstacle->z.fixed = px(264);
   obstacle->velocityY = 0;
   obstacle->velocityX = 0;
-  // Keep both the stage and its saved cell behavior strip in the new state.
   MapGrid_CopyCellAttributes(19, 16, 1, 1, 20, 16);
   MapGrid_CopyCellAttributes(20, 80, 1, 1, 21, 80);
 }
@@ -490,7 +488,6 @@ static void ColosseumSatrageMatch_RideLog(void) {
   }
   if (offsetX != 0) {
     ColosseumSatrageMatch_MovePusherAndLog(logId, offsetX, 0);
-    // Replace both log footprints after the moving pair has stopped.
     MapGrid_CopyCellAttributes(120, 10, 5, 6, 48, 10);
     column = FIELD_CELL(Actor_Get(ACTOR_RIDING_LOG_NORTH)->x.fixed);
     MapGrid_CopyCellAttributes(52, 28, 1, 3, column, 10);
@@ -679,7 +676,6 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
     MapGrid_CopyCellAttributes(57, 11, 1, 1, 58, 11);
     MapGrid_CopyCellAttributes(58, 14, 7, 1, 58, 13);
   }
-  // Start the next alternating route when the two-second cycle wraps.
   if (gColosseumSatrageMatch_LiftTimer == 0) {
     gColosseumSatrageMatch_LiftPhase ^= 1;
     if (gColosseumSatrageMatch_LiftPhase != 0) {
@@ -784,7 +780,6 @@ static void ColosseumSatrageMatch_ReachArena(void) {
     Actor_WaitForScriptEndById(ACTOR_OPPONENT);
     refreshCount = (refreshCount - 1);
   } while (refreshCount >= 0);
-  // Bring the warriors together before selecting the battle's result bias.
   Actor_SetSpeed(ACTOR_OPPONENT, 1);
   Actor_WalkTo(ACTOR_OPPONENT, 88, 256);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
@@ -861,8 +856,6 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   s32 row;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_FADE, 0);
-  // Restore the cell behavior templates before applying saved puzzle
-  // progress.
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   MapGrid_CopyCellAttributes(14, 11, 12, 4, 100, 11);
   MapGrid_CopyCellAttributes(48, 10, 5, 6, 120, 10);
@@ -1079,7 +1072,6 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   Actor_RunRepeatedMotion(attendantId, 2);
   // "...Isaac, that first match was terrific. I'll be right here,..."
   Event_ShowMessage(attendantId, 0);
-  // Gather the companions into Isaac before the attendant returns to his post.
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);

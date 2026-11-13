@@ -198,7 +198,6 @@ static void BabiLighthouse_LandWithParticles(void) {
   struct EffectOptions options;
   s32 velocity[3];
 
-  // Start above the room with movement disabled until the fall begins.
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
@@ -215,7 +214,6 @@ static void BabiLighthouse_LandWithParticles(void) {
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Event_Wait(24);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  // Spread the landing particles around the leader before restoring bounce.
   options.palette = 7;
   options.update = (void (*)(struct Actor *))FieldEffect_AdvanceMotion;
   options.startScaleX = 4 * Q16_ONE / 5;
@@ -248,7 +246,6 @@ static void BabiLighthouse_LandWithParticles(void) {
 static void BabiLighthouse_FallToExit(s32 exit) {
   struct Actor *leader;
 
-  // Start above the room with movement disabled until the fall begins.
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
@@ -464,7 +461,6 @@ static inline void BabiLighthouse_WalkBackToLeader(s32 actorId) {
 /// Faran asks the party to prove it can follow the kidnappers by opening the
 /// stone door.
 static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
-  // Bring the party to the witnesses gathered around the sealed door.
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW);
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED);
   Event_Start();
@@ -923,7 +919,6 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
   Actor_FaceDirection(ACTOR_FARAN, FACING_WEST, 0);
   Event_Wait(20);
-  // Explain the restriction and ask the onlookers to leave the pursuit to us.
   Event_OpenMessage(ACTOR_FARAN, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_WITNESS, FACING_WEST, 0);
@@ -1324,8 +1319,6 @@ s32 BabiLighthouse_SetupMap(void) {
       }
     }
   } else if (mapCopy == (s32)&SceneId_BabiLighthouseEntry) {
-    // Set up the movable ledge pillars and the staggered actor
-    // animations.
     Actor_SetSpriteColorById(ACTOR_LEFT_PILLAR, SPRITE_COLOR_GREY);
     Actor_SetSpriteColorById(ACTOR_RIGHT_PILLAR, SPRITE_COLOR_GREY);
 #if TBS_PATCH_2
@@ -1423,8 +1416,6 @@ s32 BabiLighthouse_SetupMap(void) {
       break;
     }
   } else if (sceneId == (s32)&SceneId_BabiLighthouseStoneDoor) {
-    // Restore the truth door and the onlookers' positions after each
-    // discussion.
     Actor_Get(ACTOR_LEFT_DOOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_Get(ACTOR_RIGHT_DOOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_SetSpeed(ACTOR_LEFT_DOOR, 1);

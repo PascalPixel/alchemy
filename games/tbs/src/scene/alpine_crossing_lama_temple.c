@@ -645,7 +645,6 @@ static void AlpineCrossing_TalkToFeizhi(void) {
 /// The camera finds Hsu, and Hama asks if he is okay.
 static void AlpineCrossing_HamaReachesHsu(void) {
   Event_Start();
-  // Reveal Hsu's position before Hama and Feizhi discuss freeing him.
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(30);
@@ -877,7 +876,6 @@ static void AlpineCrossing_PrepareFrost(void) {
 static void AlpineCrossing_FreezePuddle(void) {
   Event_Start();
 
-  // Stop the pillar and install its height-dependent drawing priority.
   Actor_Get(ACTOR_WATER_FOR_FROST)->priorityFlags &=
       (u8)~ACTOR_PRIORITY_UNDERFOOT;
   Actor_Get(ACTOR_WATER_FOR_FROST)->collisionFlags &= (u8)~ACTOR_PUSHABLE;

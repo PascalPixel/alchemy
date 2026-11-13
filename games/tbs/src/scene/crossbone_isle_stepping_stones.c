@@ -541,7 +541,6 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
   Actor_StepFrom(&destination, leader,
                  gPushedActor_DirectionSteps[jumpDirection]);
 #endif
-  // Require a free intervening cell before testing the two-cell landing.
   if (FieldActor_CheckMovementCollision(leader, &destination) != 1 &&
       PushedActor_FindAtTile(&destination, leader) == 0) {
 #if TBS_PATCH_1
@@ -795,7 +794,6 @@ static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
   FieldCamera_WaitForMove();
   FieldMessage_Show(MsgFieldFlippedSwitch, 1);
   waterRaised = Event_GetFlag(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED);
-  // Raise or drain the water before redrawing the logs' footprints.
   if (waterRaised == 0) {
     Sound_Play(SE_CRUNCH);
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_SwitchCloseSteps, 84, 24);
@@ -1061,7 +1059,6 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
       }
       *flags = 0;
     }
-    // Save the new ground cell before applying the pillar's height attributes.
     CrossboneIsleSteppingStones_ReadMapGridCell(0, FIELD_CELL(actor->x.fixed),
                                                 FIELD_CELL(actor->z.fixed),
                                                 &sPillarSlots[i].cell);
@@ -1080,7 +1077,6 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
     sPillarSlots[i].x = FIELD_CELL(actor->x.fixed);
     sPillarSlots[i].y = FIELD_CELL(actor->y.fixed);
     sPillarSlots[i].z = FIELD_CELL(actor->z.fixed);
-    // Mark pillars covered by this one, then restore their sort order.
     for (k = 0; k <= 3; k++) {
       if (k == i) {
         continue;
@@ -1515,8 +1511,6 @@ s32 Scene_Initialize(void) {
     Scene_RedrawActorFootprint(ACTOR_FIRST_PILLAR + 3);
     Scene_RedrawActorFootprint(ACTOR_FIRST_PILLAR + 4);
   } else if (gMainRoutineWork.next == (s32)&SceneId_CrossboneIsleFloodgate) {
-    // Rebuild the flooded room and float the logs again when the water stayed
-    // raised through a battle.
     MapGrid_CopyCells(32, 0, 64, 32, 0, 64);
     Scene_RedrawActorFootprint(ACTOR_FIRST_LOG);
     Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 1);
@@ -1536,7 +1530,6 @@ s32 Scene_Initialize(void) {
     }
   } else if (gMainRoutineWork.next ==
              (s32)&SceneId_CrossboneIsleStackedPillars) {
-    // Restore the four movable pillars and the leader's riding overlay.
     Actor_CreateConfigured(584, 0, 200, SPRITE_CRATE);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       Actor_Get(ACTOR_PARTY_LEADER)->riseCounter = 1;
@@ -1577,8 +1570,6 @@ s32 Scene_Initialize(void) {
       }
     }
   } else if (gMainRoutineWork.next == (s32)&SceneId_CrossboneIsleDragonStatue) {
-    // Restore CrossboneIsleDragonStatue's moved pillar, frozen puddles, and
-    // raised pillar pair.
     Actor_SetAnimation(ACTOR_SINKING_BOULDER, 2);
     Actor_SetSpriteColorById(ACTOR_SINKING_BOULDER, SPRITE_COLOR_GREY);
     Scene_RedrawActorFootprint(ACTOR_FIRST_LOG);

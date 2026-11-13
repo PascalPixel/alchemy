@@ -231,7 +231,6 @@ void Colosso_AskDoneCheering(s32 id) {
   s32 res;
 
   work = gFieldWork;
-  // Look up the speaker twice and discard both results (two original calls).
   Actor_GetById(id);
   Actor_GetById(id);
   slot = gMainRoutineWork.leaderActorId;

@@ -372,7 +372,6 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
   leaderZ = leader->z.part.pixel;
   Event_Start();
   Sound_Play(SE_SANDSTORM);
-  // Grow over 16 frames and, the first time, fade the haze in with it.
   for (frame = 0; frame < 16; frame++) {
     storm->scaleX = (frame << 11) + Q16_ONE / 32;
     storm->scaleY = (frame << 12) + Q16_ONE / 16;

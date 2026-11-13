@@ -299,7 +299,6 @@ static void ValeCave_MoveWestCratesIntoWater(void) {
 
   Event_Start();
   if (FIELD_CELL(Actor_Get(ACTOR_WEST_CRATES)->x.fixed) == 23) {
-    // Move the leader aside before the crates start sinking.
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 360, 664);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 10);
     Actor_Get(ACTOR_WEST_CRATES)->x.fixed += px(2);
@@ -395,7 +394,6 @@ static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
   landingPosition[1].fixed = leader->y.fixed;
   landingPosition[2].fixed = leader->z.fixed + px(32);
 #endif
-  // Keep the normal motion flags while staging the hop.
   if (FieldActor_CheckMovementCollision(
           leader, (struct FieldPosition *)landingPosition) == 0) {
     Event_Start();
@@ -592,7 +590,6 @@ static void ValeCave_PushLogNorth(void) {
   Event_Start();
   if (PushedActor_FindClearPosition(&probe) != 0) {
     Actor_MoveAndRedraw(probe);
-    // Slide into the new cell before replacing the cell behavior footprint.
     Actor_SetAnimation(ACTOR_SOUTH_LOG, 3);
     Actor_SetSpeedAndAcceleration(ACTOR_SOUTH_LOG, 0.25, 0.5);
     Actor_SetDestinationOffset(ACTOR_SOUTH_LOG, 0, -16);

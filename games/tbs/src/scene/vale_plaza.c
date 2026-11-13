@@ -492,7 +492,6 @@ static void ValePlaza_DemonstratePsynergy(void) {
     Event_Wait(20);
     Actor_StartRepeatedMotion(ACTOR_STRONGMAN_SHOWING_PSYNERGY, 2);
     Event_Wait(15);
-    // Flash the caster before starting the palette cycle and camera shake.
     Scene_StartEventPsynergy();
     shakes = 0;
     for (i = 0; i < 40; i++) {
@@ -513,7 +512,6 @@ static void ValePlaza_DemonstratePsynergy(void) {
       }
       Event_Wait(1);
     }
-    // End the display and restore the strongman's ordinary appearance.
     Sound_Play(SOUND_FADE_OUT_ACTION_SE);
     Task_Remove(ValePlaza_UpdateShowingStrongmanPsynergy);
     wait(1);

@@ -213,7 +213,6 @@ static void Lunpa_RevealSecrets(void) {
   s32 cellX;
   s32 cellZ;
 
-  // Restore the hidden stone and pillar before exposing the switch or passage.
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   cellX = actor->x.fixed / CELL_SIZE;
   cellZ = actor->z.fixed / CELL_SIZE;
@@ -612,7 +611,6 @@ static void Lunpa_PressHiddenSwitch(void) {
   if (Event_GetFlag(FLAG_LUNPA_HIDDEN_PASSAGE_OPEN) != 0) {
     return;
   }
-  // Open the passage over five map pictures, then remember its final state.
   Actor_SetPosition(ACTOR_SWITCH_SPARKLE, 0, 0);
   Sound_Play(SE_HIDDEN_PASSAGE_OPEN);
   wait(1);
@@ -711,7 +709,6 @@ static void Lunpa_GuardsCatchParty(void) {
   Actor_WalkTo(ACTOR_LEFT_GUARD, leader->x.part.pixel - 1,
                leader->z.part.pixel);
   Actor_WaitForMoveById(ACTOR_LEFT_GUARD);
-  // Bring the party and both guards together at the first landing.
   Actor_WalkTo(ACTOR_PARTY_LEADER, 160, 216);
   Actor_WalkTo(ACTOR_LEFT_GUARD, 152, 200);
   Actor_WalkTo(ACTOR_RIGHT_GUARD, 168, 200);
@@ -721,7 +718,6 @@ static void Lunpa_GuardsCatchParty(void) {
   Actor_FaceActor(ACTOR_LEFT_GUARD, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_RIGHT_GUARD, ACTOR_PARTY_LEADER, 0);
   Event_Wait(12);
-  // Continue to the foot of the gate before enabling the watcher again.
   Actor_WalkTo(ACTOR_PARTY_LEADER, 160, 272);
   Actor_WalkTo(ACTOR_LEFT_GUARD, 152, 256);
   Actor_WalkTo(ACTOR_RIGHT_GUARD, 168, 256);
@@ -929,7 +925,6 @@ s32 Scene_Initialize(void) {
     }
     GameFlag_Set(FLAG_LUNPA_SECRETS_HIDDEN);
   }
-  // Restore the gate's arrival event and active detection tasks separately.
   if (gMainRoutineWork.next == (s32)&SceneId_LunpaFortressGates) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gMainRoutineWork.retreatEntrance = GATE_RETREAT_ENTRANCE;

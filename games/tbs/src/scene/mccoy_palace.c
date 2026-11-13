@@ -554,7 +554,6 @@ s32 Scene_Initialize(void) {
           }
         }
       } else {
-        // Restore the displayed chest row after reloading the treasure room.
         if (gMainRoutineWork.entrance ==
             MCCOY_PALACE_TREASURE_ROOM_FROM_ENTRANCE_ROOM) {
           if (GameFlag_Get(FLAG_REWARD_OFFERED) != 0) {
@@ -608,7 +607,6 @@ static __inline__ void McCoyPalace_PrepareCompanionApproach(void) {
 static void McCoyPalace_AudienceWithMcCoy(void) {
   struct Actor *actor;
 
-  // Stage the first audience, or place the leader for a return visit.
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
@@ -728,7 +726,6 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     Event_Wait(40);
     Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHWEST, 20);
     Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-    // Let the party accept the assignment or leave after McCoy refuses them.
     Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
@@ -822,7 +819,6 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
   // "What is it? Yeh've had a change of heart? Yeh want tae help..."
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
-    // Reuse the initial refusal's dialogue and departure.
     goto declined;
   }
 accepted:
@@ -839,7 +835,6 @@ accepted:
   Event_SetMessageId(MsgBilibinHmmmWellGrant);
   // "Hmmm. Well, I'll grant yeh're a brave lot."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
-  // Animate McCoy tossing the barricade key to the party.
   actor = Actor_Get(ACTOR_BARRICADE_KEY);
   Actor_SetSpriteFlags(actor, 0);
   actor = Actor_Get(ACTOR_BARRICADE_KEY);
@@ -1040,7 +1035,6 @@ accepted:
   FieldActor_WatchAndStartScript(ACTOR_PARTY_LEADER,
                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
                                  gPalace_FacingActions);
-  // Keep the party looking at the captain while he leaves the audience.
   FieldActor_WatchAndStartScript(ACTOR_GARET,
                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
                                  gPalace_FacingActions);
@@ -1185,8 +1179,6 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   s32 advanceAlternateReply;
 
   Event_Start();
-  // Reveal the approach, then walk the leader and the captain into the
-  // audience.
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   viewCenter = FieldCamera_GetActor();
@@ -1220,8 +1212,6 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 2);
-  // Present the returning warriors, using the reply for their earlier
-  // reception.
   Event_SetMessageId(MsgBilibinWeveBroughtWarriorsMilord);
   // Adjacent variants depend on whether McCoy's earlier request was declined.
 
@@ -1291,7 +1281,6 @@ static void McCoyPalace_McCoyRewardsParty(void) {
     gFieldWork->message++;
   }
 
-  // Let the companions answer McCoy\'s thanks in turn.
   McCoyPalace_FaceCompanionsForDiscussion();
   Event_Wait(20);
   if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0) {
@@ -1472,8 +1461,6 @@ static void McCoyPalace_PresentRewardChests(void) {
   struct Actor *actor;
 
   Event_Start();
-  // Restore the chest-row cell behavior patches before presenting the
-  // reward.
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(628, CAMERA_KEEP, 748, 0);

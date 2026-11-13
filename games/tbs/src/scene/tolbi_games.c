@@ -869,7 +869,6 @@ prompt:
       if (prizeIndex == 15) {
         prizeIndex = 14;
       }
-      // Reveal the selected item, then reduce its chance on later tosses.
       TolbiSpring_RevealPrize(gTolbiSpring_PrizeItems[prizeIndex]);
       /* FAKEMATCH(dead): stepping routine away and back; without it, 6 of 280
        * instructions differ in tbs-en. */
@@ -1039,7 +1038,6 @@ static void TolbiSpring_UpdateTossSimulation(void) {
         }
       }
 
-      // Pull the floating token toward the prize rings, then let it slow down.
       if (toss->attractionFrames > 0) {
         s32 deltaX;
         s32 deltaZ;
@@ -1330,7 +1328,6 @@ static void TolbiSpring_UpdateTossSimulation(void) {
       }
     }
 
-    // Apply the obstacle's position, orientation and speed-dependent colors.
     switch (index) {
     case 0:
       TolbiSpring_SetActorAppearance(
@@ -1366,7 +1363,6 @@ static void TolbiSpring_UpdateTossSimulation(void) {
     index++;
   } while (index != 4);
 
-  // Draw the token, its ground-level shadow and the three trailing copies.
   toss->shadow.x = toss->trail[0].x;
   toss->shadow.y = 0;
   toss->shadow.z = toss->trail[0].z;
@@ -1484,7 +1480,6 @@ static s32 TolbiSpring_RunToss(s32 tossKind) {
     if (sTossFrame == 50) {
       Sound_Play(SE_TOLBI_SPRING_TOSS);
     }
-    // Release the token on the leader's throw frame.
     if (sTossFrame == 16) {
       Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_TOSS);
       toss->launchFrame = 0;

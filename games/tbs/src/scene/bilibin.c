@@ -588,7 +588,6 @@ static void Bilibin_JillGivesHardNut(void) {
   Actor_SetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
   // "Please, take this. It is a small token of my appreciation."
   Event_ShowMessageThenWait(ACTOR_JILL, 0, 10);
-  // Show the named gift before adding it to the party's inventory.
   FieldMessage_Show(MsgBilibinJillGaveIsaacSpecialGift, 1);
   gFieldWork->message++;
   Item_ShowFound(ITEM_HARD_NUT, 3);
@@ -657,7 +656,6 @@ static void Bilibin_RestoreVillageActors(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_TREE_MAN), 0);
     Actor_SetPosition(ACTOR_FORMER_TREE_MAN, 0, 0);
   }
-  // Apply arrival-specific changes after restoring the population.
   Actor_Get(ACTOR_IVY)->scaleY = 3 * Q16_ONE / 2;
   entrance = gMainRoutineWork.entrance;
   if (entrance == BILIBIN_FROM_BILIBIN_TREASURY_WEST) {

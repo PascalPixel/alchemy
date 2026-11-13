@@ -109,8 +109,8 @@ void Func_020032d8(void);
 void Func_02003348(void);
 void Func_020033b0(void);
 
-extern u32 gData_02004f38[];
-extern u32 gData_02004f74[];
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
 
 void Func_02001190(s32 mode, s32 cue);
 

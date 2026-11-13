@@ -265,11 +265,11 @@ void Func_02001af4(void);
 void Func_020020f8(void);
 
 // clang-format off
-DEFINE_G_DATA_020012A4(gData_02003c5c, 22)
+DEFINE_G_DATA_020012A4(gFieldEffect_ShortScript, 22)
 
-DEFINE_G_DATA_020012A4(gData_02003c98, 44)
+DEFINE_G_DATA_020012A4(gFieldEffect_MediumScript, 44)
 
-DEFINE_G_DATA_020012A4(gData_02003cd4, 126)
+DEFINE_G_DATA_020012A4(gFieldEffect_LongScript, 126)
 
 DEFINE_G_DATA_0200198C(gData_02003d10)
 
@@ -336,10 +336,10 @@ DEFINE_G_DATA_02001540(gData_02003e0c, 33)
 
 DEFINE_G_DATA_02001540(gData_02003e3c, 44)
 
-s32 gData_02003e6c[] = {
-    (s32)gData_02003c5c,
-    (s32)gData_02003c98,
-    (s32)gData_02003cd4,
+s32 gFieldEffect_DurationScripts[] = {
+    (s32)gFieldEffect_ShortScript,
+    (s32)gFieldEffect_MediumScript,
+    (s32)gFieldEffect_LongScript,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

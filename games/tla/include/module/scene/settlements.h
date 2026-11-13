@@ -43,8 +43,8 @@ void Func_0200155c(void);
 
 void Func_020016a4(void);
 
-extern u32 gData_020021b8[];
-extern u32 gData_020021f4[];
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
 extern s32 gData_020022e4[];
 extern u32 gData_0200231c[];
 

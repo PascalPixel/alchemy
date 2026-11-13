@@ -14,9 +14,9 @@
 #include "module/system/system.h"
 #include "module/tla.h"
 
-void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 void Func_02001620(s32 objectId) {
   struct Actor *object;
@@ -38,8 +38,8 @@ void Func_02001620(s32 objectId) {
     vec.z = z;
     x += x / 3;
     vec.x = x;
-    Func_020000b8(object->x, object->y, object->z, x, vec.y, z, 0x01000001,
-                  &params);
+    FieldEffect_Spawn(object->x, object->y, object->z, x, vec.y, z, 0x01000001,
+                      &params);
   }
 }
 

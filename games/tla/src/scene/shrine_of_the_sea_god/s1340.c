@@ -76,9 +76,9 @@ struct EffectOptions {
   void (*update)(void *object);
 };
 
-void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 void MapGrid_WaitForShakeToSettle(void);
 s32 Trig_Sin(s32 angle);
@@ -124,8 +124,8 @@ void Func_02001474(void) {
     i++;
     velocity[0] += -0x6000;
     velocity[2] += (((Random16Far() * 3) << 13) >> 16) + -0x3000;
-    Func_020000b8(leader->x, leader->y + -0x40000, leader->z, velocity[0],
-                  velocity[1], velocity[2], 0x01090001, &options);
+    FieldEffect_Spawn(leader->x, leader->y + -0x40000, leader->z, velocity[0],
+                      velocity[1], velocity[2], 0x01090001, &options);
   }
   *(s32 *)((u8 *)leader + 40) = 0x40000;
   wait(2);
@@ -1181,8 +1181,9 @@ void Func_020037a4(struct ShrineOfTheSeaGodObject *object) {
     }
     dy = Random16Far() & 7;
     params.kind = 673;
-    Func_020000b8(object->x + ((dx - 8) << 16), object->y + ((dy - 8) << 16),
-                  object->z, 0, 0x8000, phase, 0x100000, &params);
+    FieldEffect_Spawn(object->x + ((dx - 8) << 16),
+                      object->y + ((dy - 8) << 16), object->z, 0, 0x8000, phase,
+                      0x100000, &params);
   }
 }
 

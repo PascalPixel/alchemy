@@ -142,8 +142,8 @@ void Func_020011b8(struct Actor *object) {
 #include "field.h"
 
 s32 Trig_Cos(s32 angle);
-void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags, struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options);
 s32 Position_FlatDistance(s32 *a, s32 *b);
 // XXX: magma_rock.c defines this with an s16 value; this call matches only with
 // u16. A match of magma_rock.c's Func_02000c08 under u16 would settle which the
@@ -228,8 +228,8 @@ stop:
       options.script = (const s32 *)gData_02003d50;
       dx = Random16Far() & 31;
       dz = Random16Far() & 31;
-      Func_0200015c(position[0], position[1], position[2], (dx - 16) << 13,
-                    (dz - 16) << 13, parity, 0x1320000, &options);
+      FieldEffect_Spawn(position[0], position[1], position[2], (dx - 16) << 13,
+                        (dz - 16) << 13, parity, 0x1320000, &options);
     }
     System_Wait(1);
   }
@@ -402,9 +402,9 @@ void Func_020015e4(union FieldObject *object) {
     config.kind = 2;
     config.unk24 = Func_020011b8;
     config.data = gData_02003d50;
-    Func_0200015c(object->effect.x + 0x10000, object->effect.y - 0x40000,
-                  object->effect.z, ((Random16Far() & mask) - 3) << 14,
-                  -0x20000, step, 0x1330000, &config);
+    FieldEffect_Spawn(object->effect.x + 0x10000, object->effect.y - 0x40000,
+                      object->effect.z, ((Random16Far() & mask) - 3) << 14,
+                      -0x20000, step, 0x1330000, &config);
   }
   Func_020005cc(watched->terrainId, watched->x >> 20, watched->z >> 20,
                 (object->effect.y >> 19) + 1);
@@ -469,8 +469,8 @@ void Func_02001738(struct Actor *object) {
       config.data = gData_02003d50;
       dx = Random16Far() & 15;
       dz = Random16Far() & 15;
-      Func_0200015c(object->x + 0x10000, object->y + 0x180000, object->z,
-                    (dx - 8) << 14, 0, (dz - 8) << 14, 0x1330000, &config);
+      FieldEffect_Spawn(object->x + 0x10000, object->y + 0x180000, object->z,
+                        (dx - 8) << 14, 0, (dz - 8) << 14, 0x1330000, &config);
     }
   } else if (object->timer == 33) {
     struct Actor *parts[4];
@@ -681,8 +681,8 @@ first:
     offset[0] = ((r & 15) << 16) - 0x80000;
   }
   offset[1] = (Random16Far() & 15) << 16;
-  Func_0200015c(leader->x + offset[0], leader->y + offset[1], leader->z, 0,
-                0x13333, 0, 0xb0000, opt);
+  FieldEffect_Spawn(leader->x + offset[0], leader->y + offset[1], leader->z, 0,
+                    0x13333, 0, 0xb0000, opt);
   wait(5);
   i++;
   if (i != 8)
@@ -700,8 +700,8 @@ second:
   if (phase == 0) {
     offset[0] = ((Random16Far() & 15) << 16) - 0x80000;
     offset[1] = (Random16Far() & 15) << 16;
-    Func_0200015c(leader->x + offset[0], leader->y + offset[1], leader->z, 0,
-                  0x13333, phase, 0xb0000, opt);
+    FieldEffect_Spawn(leader->x + offset[0], leader->y + offset[1], leader->z,
+                      0, 0x13333, phase, 0xb0000, opt);
   }
   wait(1);
   if (leader->velocityY != 0) {
@@ -834,8 +834,8 @@ loop:
   position[0] = x + ((Random16Far() & 63) << 16) - Q16_ONE * 32;
   position[1] = (Random16Far() & 15) << 12;
   position[2] = z + ((Random16Far() & 63) << 16) - Q16_ONE * 32;
-  Func_0200015c(position[0], 0, position[2], 0, position[1], 0, 0x3a0001,
-                &config);
+  FieldEffect_Spawn(position[0], 0, position[2], 0, position[1], 0, 0x3a0001,
+                    &config);
   i++;
   if (i != 4)
     goto loop;

@@ -26,9 +26,9 @@ s32 Trig_Cos(s32 angle);
 void FieldEffect_AdvanceMotion();
 void Map_CenterOnFollowedPoint(void);
 void Func_02003af4(void);
-void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   struct MagmaRockEffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       struct MagmaRockEffectOptions *options);
 
 void Func_020022ac(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -65,8 +65,8 @@ loop:
   velocity[0] += velocity[0] >> 1;
   velocity[0] += ((Random16Far() * 3) << 14 >> 16) - 0x6000;
   velocity[2] += ((Random16Far() * 3) << 13 >> 16) - 0x3000;
-  Func_0200015c(leader->x, leader->y, leader->z, velocity[0], velocity[1],
-                velocity[2], 0x1090001, &options);
+  FieldEffect_Spawn(leader->x, leader->y, leader->z, velocity[0], velocity[1],
+                    velocity[2], 0x1090001, &options);
   i++;
   if (i <= 16)
     goto loop;

@@ -77,7 +77,7 @@ void Func_02002d50(void);
 void Func_02002e8c(void);
 void Func_02002ea8(void);
 
-extern u32 gData_02003b8c[];
+extern u32 gFieldEffect_MediumScript[];
 
 void Func_02001658(struct ShrineOfTheSeaGodObject *object, s32 base);
 void Func_020016c8(void);

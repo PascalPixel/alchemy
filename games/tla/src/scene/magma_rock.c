@@ -262,8 +262,8 @@ struct MagmaRockEffectParams {
 
 extern const u8 gData_02003d74[];
 
-void Func_0200015c(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags,
-                   s32 *params);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags,
+                       s32 *params);
 
 void Func_02000c40(struct Actor *object) {
   struct Actor *linked = object->watchedObject;
@@ -286,9 +286,9 @@ void Func_02000c40(struct Actor *object) {
         dx = mask & Random16Far();
       }
       dy = Random16Far() & 31;
-      Func_0200015c(object->x + ((dx - 8) << 16),
-                    object->y + (dy << 16) - 0x80000, object->z, 0, phase,
-                    phase, 0x320001, &params);
+      FieldEffect_Spawn(object->x + ((dx - 8) << 16),
+                        object->y + (dy << 16) - 0x80000, object->z, 0, phase,
+                        phase, 0x320001, &params);
     }
     if (gFrameCount & 4)
       FieldActor_SetSpriteColor(object, 10);
@@ -348,8 +348,8 @@ void Func_02000d40(struct Actor *object) {
     dz = ((Random16Far() & 15) - 8) << 15;
     velocityZ = ((Random16Far() & 31) - 16) << 12;
     z = object->z;
-    Func_0200015c(object->x, object->y, z + dz, 0, 0, velocityZ, 0x320001,
-                  &config);
+    FieldEffect_Spawn(object->x, object->y, z + dz, 0, 0, velocityZ, 0x320001,
+                      &config);
   }
 }
 

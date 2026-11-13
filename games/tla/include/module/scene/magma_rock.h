@@ -129,9 +129,9 @@ void Func_02001fb0(void);
 void Func_02001fd4(void);
 void Func_02001ffc(void);
 
-extern u32 gData_02003c5c[];
-extern u32 gData_02003c98[];
-extern u32 gData_02003cd4[];
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
+extern u32 gFieldEffect_LongScript[];
 
 s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b);
 

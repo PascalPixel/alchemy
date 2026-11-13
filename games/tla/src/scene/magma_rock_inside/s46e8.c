@@ -201,14 +201,14 @@ void Func_02002a6c(void);
 void Orbit_Update(void);
 void Actor_AimAtWatched(void);
 
-extern u32 gData_02004fb0[];
+extern u32 gFieldEffect_LongScript[];
 
 // clang-format off
-DEFINE_G_DATA_020012A4(gData_02004f38, 22)
+DEFINE_G_DATA_020012A4(gFieldEffect_ShortScript, 22)
 
-DEFINE_G_DATA_020012A4(gData_02004f74, 44)
+DEFINE_G_DATA_020012A4(gFieldEffect_MediumScript, 44)
 
-DEFINE_G_DATA_020012A4(gData_02004fb0, 126)
+DEFINE_G_DATA_020012A4(gFieldEffect_LongScript, 126)
 
 DEFINE_G_DATA_0200198C(gData_02004fec)
 
@@ -310,10 +310,10 @@ DEFINE_G_DATA_02001540(gData_02005638, 33)
 
 DEFINE_G_DATA_02001540(gData_02005668, 44)
 
-s32 gData_02005698[] = {
-    (s32)gData_02004f38,
-    (s32)gData_02004f74,
-    (s32)gData_02004fb0,
+s32 gFieldEffect_DurationScripts[] = {
+    (s32)gFieldEffect_ShortScript,
+    (s32)gFieldEffect_MediumScript,
+    (s32)gFieldEffect_LongScript,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

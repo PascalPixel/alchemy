@@ -759,8 +759,8 @@ void Func_0200155c(void) {
 
 extern const u8 gData_02002310[];
 
-void Func_020000b8(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz, s32 flags,
-                   struct SettlementsSpawn *spawn);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz, s32 flags,
+                       struct SettlementsSpawn *spawn);
 
 void Func_0200156c(s32 id) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
@@ -778,5 +778,5 @@ void Func_0200156c(s32 id) {
   spawn.acceleration = 0x10000;
   spawn.script = gData_02002310;
   Event_PlaySound(154);
-  Func_020000b8(object->x, object->y, object->z, 0, 0, 0, 0x1c0000, &spawn);
+  FieldEffect_Spawn(object->x, object->y, object->z, 0, 0, 0, 0x1c0000, &spawn);
 }

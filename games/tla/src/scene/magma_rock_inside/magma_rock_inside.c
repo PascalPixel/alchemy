@@ -372,9 +372,9 @@ void Func_02000ce4(s16 value) {
 
 extern const s32 gData_0200502c[];
 
-void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 /// An object's update: every fourth frame it spawns an effect of type 403 with
 /// its own script at a random point within 4 pixels of the object along z,
@@ -399,8 +399,8 @@ void Func_02000d1c(struct Actor *object) {
   /* FAKEMATCH(temporary): z read into its own local; as object->z in the
    * call, 4 of 60 instructions differ in tla-en. */
   z = object->z;
-  Func_0200015c(object->x, object->y, z + ((dz - 8) << 15), 0, 0, vz, 0x320001,
-                &options);
+  FieldEffect_Spawn(object->x, object->y, z + ((dz - 8) << 15), 0, 0, vz,
+                    0x320001, &options);
 }
 
 DEFINE_ACTOR_FLASH_COLOR(Func_02000da4, 10)
@@ -489,9 +489,9 @@ void Func_02000ea4(struct Actor *object) {
 
 extern const s32 gData_0200502c[];
 
-void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 /* VIEW(s0e20): routine Func_02000ce4 as void Func_02000ce4(u16 id); the
  * definition has void Func_02000ce4(s16 value); tried as the definition's void
  * Func_02000ce4(s16 value), which the object already declares, Func_02000ed0
@@ -568,9 +568,10 @@ spark:
     options.priority = 1;
     options.update = (void (*)(union FieldObject *))Func_02000ea4;
     options.script = gData_0200502c;
-    Func_0200015c(position[0], position[1], position[2],
-                  ((Random16Far() & 31) - 16) << 13,
-                  ((Random16Far() & 31) - 16) << 13, bit, 0x1320000, &options);
+    FieldEffect_Spawn(position[0], position[1], position[2],
+                      ((Random16Far() & 31) - 16) << 13,
+                      ((Random16Far() & 31) - 16) << 13, bit, 0x1320000,
+                      &options);
   }
   System_Wait(1);
   id++;
@@ -776,8 +777,8 @@ burst:
   burstPosition = position;
   burstPosition[0] = baseX + ((burstRandom & mask) << 16);
   Event_PlaySound(145);
-  Func_0200015c(burstPosition[0], burstPosition[1], burstPosition[2], 0,
-                (Random16Far() & mask) << 12, 0, 0x3a0001, effectOptions);
+  FieldEffect_Spawn(burstPosition[0], burstPosition[1], burstPosition[2], 0,
+                    (Random16Far() & mask) << 12, 0, 0x3a0001, effectOptions);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
   i++;
@@ -795,8 +796,8 @@ burst:
   riseX = baseX;
 rise:
   burstPosition[0] = riseX;
-  Func_0200015c(burstPosition[0], burstPosition[1], burstPosition[2], 0, 0,
-                (Random16Far() & 31) << 10, 0xe0001, effectOptions);
+  FieldEffect_Spawn(burstPosition[0], burstPosition[1], burstPosition[2], 0, 0,
+                    (Random16Far() & 31) << 10, 0xe0001, effectOptions);
   i++;
   riseX += 0x60000;
   if (i != 8)
@@ -822,9 +823,9 @@ rise:
     i = 0;
   column:
     burstPosition[0] = baseX + ((Random16Far() % 48) << 16);
-    Func_0200015c(burstPosition[0], burstPosition[1],
-                  burstPosition[2] + (row << 18) + 0x80000, 0, 0x10000, 0,
-                  0x330000, effectOptions);
+    FieldEffect_Spawn(burstPosition[0], burstPosition[1],
+                      burstPosition[2] + (row << 18) + 0x80000, 0, 0x10000, 0,
+                      0x330000, effectOptions);
     i++;
     if (i != 6)
       goto column;
@@ -844,9 +845,9 @@ rise:
       sparkRandom = Random16Far();
       sparkPosition = position;
       sparkPosition[0] = baseX + ((sparkRandom % 48) << 16);
-      Func_0200015c(sparkPosition[0], sparkPosition[1],
-                    sparkPosition[2] + 0x300000, 0, 0x10000, 0, 0x330000,
-                    effectOptions);
+      FieldEffect_Spawn(sparkPosition[0], sparkPosition[1],
+                        sparkPosition[2] + 0x300000, 0, 0x10000, 0, 0x330000,
+                        effectOptions);
       i++;
       if (i != 4)
         goto spark;
@@ -887,8 +888,9 @@ last:
   sparkPosition = position;
   sparkPosition[0] = baseX + ((sparkRandom % 48) << 16);
   i++;
-  Func_0200015c(sparkPosition[0], sparkPosition[1], sparkPosition[2] + 0x300000,
-                0, 0, 0, 0x3b0000, lastOptions);
+  FieldEffect_Spawn(sparkPosition[0], sparkPosition[1],
+                    sparkPosition[2] + 0x300000, 0, 0, 0, 0x3b0000,
+                    lastOptions);
   if (i != 6)
     goto last;
   MapGrid_SetShake(0x50000, 0x70000, 0x10000);
@@ -1028,8 +1030,8 @@ void Func_02001828(void) {
 
         p = position;
         p[0] = baseX + ((random % 48) << 16);
-        Func_0200015c(p[0], p[1], p[2] + (i << 18) + 0x170000, 0, 0x10000, 0,
-                      0x330000, &options);
+        FieldEffect_Spawn(p[0], p[1], p[2] + (i << 18) + 0x170000, 0, 0x10000,
+                          0, 0x330000, &options);
       }
       System_Wait(3);
       MapGrid_CopyCellsTo(75, 64, dstX, dstZ, 3, (i >> 1) + 1);
@@ -1096,8 +1098,8 @@ void Func_02001d04(struct Actor *object) {
     config.kind = 2;
     config.variant = 10;
     config.data = gData_0200502c;
-    Func_0200015c(object->x, object->y, object->z, 0, 0x1000, 0, 0x330000,
-                  &config);
+    FieldEffect_Spawn(object->x, object->y, object->z, 0, 0x1000, 0, 0x330000,
+                      &config);
   }
 }
 
@@ -1135,8 +1137,8 @@ void Func_02001d64(void) {
 loop:
   position[0] = ((Random16Far() & 31) << 16) + (190 << 18);
   position[2] = ((Random16Far() & 31) << 16) + (128 << 17);
-  Func_0200015c(position[0], position[1], position[2], 0, 0x10000, 0, 0x3b0000,
-                &options);
+  FieldEffect_Spawn(position[0], position[1], position[2], 0, 0x10000, 0,
+                    0x3b0000, &options);
   if ((i & 7) == 0)
     Event_PlaySound(567);
   if (i == 32) {
@@ -1627,8 +1629,8 @@ void Func_02002c48(struct Actor *object) {
   position[0] = object->x + (((Random16Far() & 31) - 16) << 16);
   position[1] = object->y + ((Random16Far() & 31) << 16) + 0x80000;
   position[2] = object->z;
-  Func_0200015c(position[0], position[1], position[2] + 0x40000, 0, 0x8000,
-                frame, 0x130000, &options);
+  FieldEffect_Spawn(position[0], position[1], position[2] + 0x40000, 0, 0x8000,
+                    frame, 0x130000, &options);
 }
 
 union ActorView {

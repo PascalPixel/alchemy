@@ -96,6 +96,7 @@
 #include "event.h"
 #include "module/import.h"
 #include "module/scene/lunpa_fortress.h"
+#include "shared/walk_into_leader.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -872,7 +873,7 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
   struct MapGridLayerScroll *patrolLayer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
            ->layers[MAPGRID_LAYER_OVERHEAD];
-  struct FieldWork *work = gMapGridWork[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID];
+  struct FieldWork *work = FIELD_WORK_FROM(gMapGridWork, HEAP_SLOT_MAP_GRID);
 
   if (gFrameCount & 1) {
     patrolLayer->speedX = 1;
@@ -979,7 +980,7 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
   struct MapGridLayerScroll *patrolLayer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
            ->layers[MAPGRID_LAYER_OVERHEAD];
-  struct FieldWork *work = gMapGridWork[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID];
+  struct FieldWork *work = FIELD_WORK_FROM(gMapGridWork, HEAP_SLOT_MAP_GRID);
 
   FieldCamera_GetActor();
   if (gFrameCount & 1) {
@@ -1053,7 +1054,7 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
   struct MapGridLayerScroll *patrolLayer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
            ->layers[MAPGRID_LAYER_OVERHEAD];
-  struct FieldWork *work = gMapGridWork[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID];
+  struct FieldWork *work = FIELD_WORK_FROM(gMapGridWork, HEAP_SLOT_MAP_GRID);
 
   if (gFrameCount & 1) {
     patrolLayer->speedX = 1;
@@ -1822,20 +1823,9 @@ static void UNUSED LunpaFortress_DoNothingE(void) {}
 
 /// Garet, Ivan and Mia step out of the leader and gather around Hammet.
 static void LunpaFortress_GatherPartyAroundHammet(void) {
-  struct Actor *leader;
-
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
-  }
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
-  }
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
-  }
+  Scene_PlaceAtLeader(ACTOR_IVAN);
+  Scene_PlaceAtLeader(ACTOR_MIA);
+  Scene_PlaceAtLeader(ACTOR_GARET);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_SetSpeed(ACTOR_IVAN, 0.7);
   Actor_WalkTo(ACTOR_IVAN, 456, 192);

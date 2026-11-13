@@ -288,7 +288,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
     actor->speedLimit = px(3);
     actor->acceleration = px(2);
     actor->velocityY = px(4);
-    actor->motionFlags &= 0x7e;
+    actor->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
 
     Actor_SetSpriteFlags(actor, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER,

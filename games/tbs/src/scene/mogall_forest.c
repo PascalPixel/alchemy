@@ -336,8 +336,7 @@ static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
     leader->speedLimit = px(3);
     leader->acceleration = px(2);
     leader->velocityY = px(4);
-    // Off the ground for the jump; the mask also clears bit 7, unnamed.
-    leader->motionFlags &= 0x7e;
+    leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(leader, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, position->x >> 16,
                         position->z >> 16);

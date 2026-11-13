@@ -65,6 +65,7 @@
 #include "heap.h"
 #include "module/import.h"
 #include "module/scene/altmiller_cave.h"
+#include "shared/walk_into_leader.h"
 #include "module/field/field_sequence.h"
 #include "module/system/main_routine.h"
 #include "module/field/event_commands.h"
@@ -1641,29 +1642,9 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_SetSpeed(ACTOR_GARET, 1.2);
   Actor_SetSpeed(ACTOR_IVAN, 1.2);
   Actor_SetSpeed(ACTOR_MIA, 1.2);
-  Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, 0, 0);
-  Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_IVAN);
-  Actor_SetPosition(ACTOR_IVAN, 0, 0);
-  Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(ACTOR_MIA);
-  Actor_SetPosition(ACTOR_MIA, 0, 0);
+  Scene_WalkIntoLeader(ACTOR_GARET);
+  Scene_WalkIntoLeader(ACTOR_IVAN);
+  Scene_WalkIntoLeader(ACTOR_MIA);
   Scene_PlayMusic();
   Event_End();
 }

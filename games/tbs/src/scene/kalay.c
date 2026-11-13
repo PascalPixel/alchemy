@@ -2378,9 +2378,8 @@ static void Kalay_UpdateNutOrbit(void) {
   effect->y = effect->orbitCenterY + offset;
   sprite->rotation = Trig_Cos(effect->orbitAngle + TRIG_TURN / 2) >> 3;
   first = Import_RandomNext();
-  effect->orbitAngle += ((u32)(first << 9) >> 16) +
-                        (Random_Below(512)) +
-                        TRIG_TURN / 64;
+  effect->orbitAngle +=
+      ((u32)(first << 9) >> 16) + (Random_Below(512)) + TRIG_TURN / 64;
 }
 
 /// Frost on the puddle in the Kalay Tunnel sinks it into the floor. The puddle

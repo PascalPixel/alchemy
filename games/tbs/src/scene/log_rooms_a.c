@@ -365,7 +365,7 @@ static s32 LogRoomsA_TryJumpTo(struct FieldPosition *position) {
     leader->speedLimit = px(3);
     leader->acceleration = px(2);
     leader->velocityY = px(4);
-    *flags &= 0x7e;
+    *flags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(leader, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER,
                         ((union FieldCoordinate *)&position->x)->part.pixel,

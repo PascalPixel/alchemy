@@ -242,7 +242,7 @@ typedef struct {
 /// The whole pixels of a 16.16 value.
 #define Q_16_16_TO_INT(v) ((s32)(v) >> 16)
 /// The whole pixels of a stored 16.16 value, read as its upper halfword, as
-/// the impact burst and Neptune read their particles.
+/// the impact burst, Neptune and the spark groups' ring flashes read them.
 // UB: the s32 is read through an s16.
 #ifdef UBFIX
 #define Q_16_16_UPPER_HALF(v) ((s32)(v) >> 16)

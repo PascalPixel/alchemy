@@ -476,8 +476,8 @@ static void TolbiShipMast_RunAvastEvent(void) {
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);
-  field =
-      (struct FieldWork **)&gMapGridWork[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID];
+  field = (struct FieldWork **)&HEAP_SLOT_FROM(gMapGridWork, HEAP_SLOT_MAP_GRID,
+                                               HEAP_SLOT_FIELD);
   (*field)->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   Event_StartScreenTransition();

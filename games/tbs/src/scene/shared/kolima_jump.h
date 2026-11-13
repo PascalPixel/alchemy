@@ -28,7 +28,7 @@ static s32 PushedActor_RunStepEffect(struct FieldPosition *request) {
     actor->speedLimit = px(3);
     actor->acceleration = px(2);
     actor->velocityY = px(4);
-    *flags &= 0x7e;
+    *flags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(actor, 0);
     Actor_MoveToAndWaitById(ACTOR_PARTY_LEADER,
                             ((union FieldCoordinate *)&request->x)->part.pixel,

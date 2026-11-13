@@ -397,13 +397,13 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
           s32 y;
 
           point = &work->particles[i * SPARK_GROUPS_FLASHES] + j;
-          y = Q_16_16_TO_INT(point->y) + originY;
+          y = Q_16_16_UPPER_HALF(point->y) + originY;
           if (work->args->side == EFFECT_SIDE_PARTY)
-            x = Q_16_16_TO_INT(point->x) + originX -
+            x = Q_16_16_UPPER_HALF(point->x) + originX -
                 gPlasma_Shapes[work->args->variant][SPARK_GROUPS_OFFSET + i] +
                 28;
           else
-            x = Q_16_16_TO_INT(point->x) + originX +
+            x = Q_16_16_UPPER_HALF(point->x) + originX +
                 gPlasma_Shapes[work->args->variant][SPARK_GROUPS_OFFSET + i] -
                 28;
           // A ring flash's variant counts down; its last 18 frames step
@@ -446,8 +446,8 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
             } else if (spark->x >= 0 && spark->x < px(127) && spark->y >= 0) {
               // On the canvas: the tests above keep x in 0 to 126 and y in 0 to
               // 108.
-              s16 y = Q_16_16_TO_INT(spark->y);
               s16 x = Q_16_16_TO_INT(spark->x);
+              s16 y = Q_16_16_TO_INT(spark->y);
               s32 size = spark->variant / 5 + 1;
 
               EFFECT_DRAW_MOTE(draw[j & 1], canvas, graphics, x, y, size);

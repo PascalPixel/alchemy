@@ -147,8 +147,7 @@ static s32 Tolbi_KidStopForTarget(struct Actor *kid, struct Actor *target,
 // 26 pixels), the child being talked to stops whatever the direction.
 static UNREAD_RESULT Tolbi_UpdateKid(struct Actor *updated) {
   struct WindowWork *window = (struct WindowWork *)gWindowWork[0];
-  struct FieldWork *field =
-      (struct FieldWork *)gWindowWork[HEAP_SLOT_FIELD - HEAP_SLOT_WINDOW];
+  struct FieldWork *field = FIELD_WORK_FROM(gWindowWork, HEAP_SLOT_WINDOW);
   s32 force = 0;
   s32 range = 18;
   struct Actor *other;

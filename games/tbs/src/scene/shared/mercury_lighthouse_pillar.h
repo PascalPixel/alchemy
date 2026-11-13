@@ -192,8 +192,7 @@ void MercuryLighthouse_ChargeLights(void) {
 
   state = *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
-  leader = ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))
-               ->actors[gMainRoutineWork.leaderActorId];
+  leader = gFieldWork->actors[gMainRoutineWork.leaderActorId];
   if ((u32)state->levels > 2)
     return;
   Event_Start();
@@ -356,7 +355,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
   actor->speedLimit = px(3);
   actor->acceleration = px(2);
   actor->velocityY = px(4);
-  *flags &= 0x7e;
+  *flags &= ACTOR_JUMP_KEEPS_MOTION;
   Actor_SetSpriteFlags(actor, 0);
   Actor_MoveToAndWaitById(ACTOR_PARTY_LEADER, pos[0].part.pixel,
                           pos[2].part.pixel);
@@ -397,8 +396,7 @@ void MercuryLighthouse_RippleAroundLeader(void) {
 
   state = *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
-  point = ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))
-              ->actors[gMainRoutineWork.leaderActorId];
+  point = gFieldWork->actors[gMainRoutineWork.leaderActorId];
   if (state->rippleTimer != 0) {
     state->rippleTimer--;
   } else {

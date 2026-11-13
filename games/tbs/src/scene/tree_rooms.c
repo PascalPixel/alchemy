@@ -86,6 +86,7 @@
 #include "main_routine_work.h"
 #include "scene_ids.h"
 #include "module/scene/tree_rooms.h"
+#include "shared/walk_into_leader.h"
 #include "module/scene/shared/field_effect_spawn.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
@@ -528,19 +529,10 @@ static void TreeRooms_FightTret(void) {
   Actor_SetSpritePriority(ACTOR_MIA, 2);
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
-  }
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
-  }
+  Scene_PlaceAtLeader(ACTOR_GARET);
+  Scene_PlaceAtLeader(ACTOR_IVAN);
   if (hasMia != 0) {
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != NULL) {
-      Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
-    }
+    Scene_PlaceAtLeader(ACTOR_MIA);
     Actor_SetScript(ACTOR_MIA, gTreeRooms_MiaGathersActions);
   }
   Actor_SetScript(ACTOR_PARTY_LEADER, gTreeRooms_LeaderGathersActions);

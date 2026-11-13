@@ -340,7 +340,7 @@ static void VenusLighthouseAerie_JumpToNextPlatform(void) {
     actor->acceleration = px(2);
     Sound_Play(SE_JUMP);
     actor->velocityY = px(4);
-    actor->motionFlags &= 0x7e;
+    actor->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(actor, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, destination.coordinates[0] >> 16,
                         destination.coordinates[2] >> 16);
@@ -1914,8 +1914,8 @@ static void VenusLighthouseAerie_SpawnUpperOrbitParticles(void) {
                                center->z.fixed);
   } else {
     effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
-                               (s32)(Random_Below(64) << 16) +
-                                   center->y.fixed - px(28),
+                               (s32)(Random_Below(64) << 16) + center->y.fixed -
+                                   px(28),
                                center->z.fixed);
   }
   if (effect != 0) {
@@ -2951,9 +2951,8 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 272, 216);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 272, 254);
   Event_Wait(80);
-  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 16;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transitionFrames = 16;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(80);

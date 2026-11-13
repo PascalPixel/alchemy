@@ -1903,13 +1903,11 @@ static void AltinPeak_DriftSpray(struct Actor *spray) {
   switch (gAltinPeak_SprayDirection) {
   case FACING_EAST:
     spray->x.fixed +=
-        (spray->timer << 12) +
-        ((s32)(((Random_Below(2)) - 1) << 16) >> 1);
+        (spray->timer << 12) + ((s32)(((Random_Below(2)) - 1) << 16) >> 1);
     break;
   case FACING_WEST:
     spray->x.fixed -=
-        (spray->timer << 12) +
-        ((s32)(((Random_Below(2)) - 1) << 16) >> 1);
+        (spray->timer << 12) + ((s32)(((Random_Below(2)) - 1) << 16) >> 1);
     break;
   }
   if (spray->timer <= 3) {
@@ -1980,8 +1978,7 @@ static void AltinPeak_SpawnDebris(void) {
 
   if (gFrameCount % 3 == 0) {
     debris = FieldActor_Create(
-        SPRITE_ROCK, ((Random_Below(48)) << 16) + px(765),
-        -px(64), px(608));
+        SPRITE_ROCK, ((Random_Below(48)) << 16) + px(765), -px(64), px(608));
     if (debris != NULL) {
       if (gFrameCount % 9 == 0) {
         if (Random_Below(2) != 0)
@@ -2000,8 +1997,8 @@ static void AltinPeak_SpawnDebris(void) {
       debris->sprite->image.priority = 1;
       Actor_SelectAnimation(debris, 1);
       Actor_StartScript(debris, gAltinPeak_DebrisScript);
-      SET_VELOCITY(debris, ((Random_Below(6)) - 3) << 16,
-                   px(8), (Random_Below(1536)) - 768);
+      SET_VELOCITY(debris, ((Random_Below(6)) - 3) << 16, px(8),
+                   (Random_Below(1536)) - 768);
     }
   }
 }

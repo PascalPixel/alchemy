@@ -736,8 +736,7 @@ static void SolSanctumLunaSolRooms_UpdateFirstFallingLight(void) {
       break;
     }
     gSolSanctumLunaSolRooms_Light1Timer++;
-    if (gSolSanctumLunaSolRooms_Light1Timer >
-        (Random_Below(40)) + 90) {
+    if (gSolSanctumLunaSolRooms_Light1Timer > (Random_Below(40)) + 90) {
       gSolSanctumLunaSolRooms_Light1Timer = 0;
     }
   }
@@ -785,7 +784,7 @@ static void SolSanctumLunaSolRooms_UpdateFirstFallingLight(void) {
         break;                                                                 \
       }                                                                        \
       timer++;                                                                 \
-      if (timer > (Random_Below(40)) + (restart)) {             \
+      if (timer > (Random_Below(40)) + (restart)) {                            \
         timer = 0;                                                             \
       }                                                                        \
     }                                                                          \
@@ -1562,7 +1561,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
   // The heap slots are read from one address, the palette fade's from the
   // field's.
-  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 1;
+  gFieldWork->transitionFrames = 1;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, PALETTES_BG);
@@ -1634,9 +1633,9 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   palette->step = 1;
   palette->padding2a03 = 1;
   Io_Write16(0, &PLTT_BACKDROP);
-  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
+  gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 16;
+  gFieldWork->transitionFrames = 16;
   Event_End();
 }
 

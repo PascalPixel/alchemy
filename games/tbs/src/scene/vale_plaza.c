@@ -1104,7 +1104,6 @@ s32 ValePlaza_Initialize(void) {
 /// boys being sent back. The return to the river (vale_prologue.c) waits for
 /// it.
 static void ValePlaza_SentToAidElders(void) {
-  struct Actor *leader;
   s32 skipReply = 0;
 
   if (GameFlag_Get(FLAG_VALE_STORM) != 0 &&
@@ -1124,11 +1123,7 @@ static void ValePlaza_SentToAidElders(void) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
     Actor_SetSpeed(ACTOR_STORM_GARET, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 179, 789);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != NULL) {
-      Actor_SetPositionFixed(ACTOR_STORM_GARET, leader->x.fixed,
-                             leader->z.fixed);
-    }
+    Scene_PlaceAtLeader(ACTOR_STORM_GARET);
     Actor_WalkToAndWait(ACTOR_STORM_GARET, 179, 804);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_STORM_GARET, 40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);

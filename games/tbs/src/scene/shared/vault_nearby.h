@@ -19,8 +19,7 @@ static UNREAD_RESULT Vault_UpdateWalkingVillager(struct Actor *actor) {
   // The heap slots from the window renderer's on.
   u8 **slots = gWindowWork;
   u8 *windowWork = slots[0];
-  struct FieldWork *work =
-      (struct FieldWork *)slots[HEAP_SLOT_FIELD - HEAP_SLOT_WINDOW];
+  struct FieldWork *work = FIELD_WORK_FROM(slots, HEAP_SLOT_WINDOW);
   s16 *flags = &actor->timer;
   s32 force = 0;
   s32 range = 18;

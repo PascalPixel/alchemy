@@ -92,6 +92,7 @@
 #include "input.h"
 #include "scene_ids.h"
 #include "module/scene/imil.h"
+#include "shared/walk_into_leader.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -1002,7 +1003,6 @@ s32 Imil_Initialize(void) {
 /// She heals him with Ply, the Mercury Lighthouse flashes, and Mia runs out.
 /// The party follows her.
 static void Imil_MeetMiaAtOldCouplesHouse(void) {
-  struct Actor *leader;
   const s32 *table;
   struct FieldWork *work;
 
@@ -1021,14 +1021,8 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_SetSpeed(ACTOR_IVAN, 0.4);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 142, 221);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 0);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
-  }
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
-  }
+  Scene_PlaceAtLeader(ACTOR_GARET);
+  Scene_PlaceAtLeader(ACTOR_IVAN);
   Actor_WalkTo(ACTOR_GARET, 150, 234);
   Actor_WalkToAndWait(ACTOR_IVAN, 134, 234);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
@@ -1433,8 +1427,6 @@ static void Imil_ArriveFromFallsCave(void) {
 /// Saturos is beaten: she says farewell to her two apprentices, Megan and
 /// Justin, before leaving with the party.
 static void Imil_MiaSaysFarewellToApprentices(void) {
-
-  struct Actor *leader;
   struct FieldWork *work;
 
   Event_Start();
@@ -1452,10 +1444,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_SetSpeed(ACTOR_MIA, 0.6);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
-  }
+  Scene_PlaceAtLeader(ACTOR_MIA);
   Actor_WalkToAndWait(ACTOR_MIA, 673, 183);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_StartRepeatedMotion(ACTOR_JUSTIN, 2);

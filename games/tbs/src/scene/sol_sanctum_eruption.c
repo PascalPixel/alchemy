@@ -206,7 +206,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Actor_SetSpritePriority(ACTOR_WISE_ONE, 1);
   FieldCamera_MoveTo(232, CAMERA_KEEP, 156, 0);
   MapGrid_CenterOnFollowedPoint();
-  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 8;
+  gFieldWork->transitionFrames = 8;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
@@ -777,15 +777,13 @@ static void SolSanctumEruption_StepEmbers(void) {
       ember->sprite->image.priority = 1;
       Actor_SelectAnimation(ember, 2);
       Actor_StartScript(ember, gEruption_EmberScript);
-      ember->x.fixed =
-          Iwram_MulQ16(Trig_Cos((u16)angle),
-                       ((Random_Below(256)) << 16) + px(256)) +
-          px(325);
+      ember->x.fixed = Iwram_MulQ16(Trig_Cos((u16)angle),
+                                    ((Random_Below(256)) << 16) + px(256)) +
+                       px(325);
       ember->y.fixed = 0;
-      ember->z.fixed =
-          Iwram_MulQ16(Trig_Sin((u16)angle),
-                       ((Random_Below(256)) << 16) + px(256)) +
-          px(302);
+      ember->z.fixed = Iwram_MulQ16(Trig_Sin((u16)angle),
+                                    ((Random_Below(256)) << 16) + px(256)) +
+                       px(302);
       x = Iwram_MulQ16(Trig_Cos((u16)angle),
                        ((Random_Next() & 63) << 16) + px(8));
       z = Iwram_MulQ16(Trig_Sin((u16)angle),

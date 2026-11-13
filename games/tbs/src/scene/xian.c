@@ -245,9 +245,7 @@ static s32 Xian_UpdateCarrierTracking(struct Actor *actor, struct Actor *target,
     return 1;
   }
 
-  if (Actor_Distance(target, actor) <
-          distanceLimit ||
-      forceTracking != 0) {
+  if (Actor_Distance(target, actor) < distanceLimit || forceTracking != 0) {
     u16 angle = ArcTan2(target->z.fixed - actor->z.fixed,
                         target->x.fixed - actor->x.fixed);
     s32 previousHeading = (angle - FACING_STEP) & 0xf000;

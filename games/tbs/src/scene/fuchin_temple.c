@@ -2777,8 +2777,7 @@ static void FuchinTemple_AnimateRevealLesson(void) {
     }
     particleX = hama->x.fixed +
                 ((((u32)(Import_RandomNext() * 3) << 4) >> 16) << 16) - px(12);
-    particleY = hama->y.fixed +
-                ((Random_Below(32)) << 16) - px(16);
+    particleY = hama->y.fixed + ((Random_Below(32)) << 16) - px(16);
     riseSpeed = ((Random_Below(4)) << 15) + (128 << 8);
     FieldEffect_Spawn(
         particleX, particleY, hama->z.fixed, 0, riseSpeed, 0,

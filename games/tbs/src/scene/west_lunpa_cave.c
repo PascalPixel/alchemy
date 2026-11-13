@@ -290,7 +290,6 @@ static void WestLunpaCave_FlipRaisingSwitch(void) {
 ///
 /// It sets FLAG_LUNPA_CAVE_REUNION_SEEN, so it plays once.
 static void WestLunpaCave_HammetFindsBunza(void) {
-  struct Actor *leader;
   s32 sighting;
   s32 recognition;
 
@@ -308,34 +307,22 @@ static void WestLunpaCave_HammetFindsBunza(void) {
     Event_Wait(30);
     FieldCamera_SetSpeed(0.5);
     FieldCamera_MoveTo(192, CAMERA_KEEP, 432, 1);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != NULL) {
-      Actor_SetPositionFixed(ACTOR_HAMMET, leader->x.fixed, leader->z.fixed);
-    }
+    Scene_PlaceAtLeader(ACTOR_HAMMET);
     Actor_SetSpeed(ACTOR_HAMMET, 1.3);
     Actor_WalkTo(ACTOR_HAMMET, 168, 464);
     Actor_WaitForMoveById(ACTOR_HAMMET);
     Actor_FaceDirection(ACTOR_HAMMET, FACING_NORTH, 0);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != NULL) {
-      Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
-    }
+    Scene_PlaceAtLeader(ACTOR_IVAN);
     Actor_SetSpeed(ACTOR_IVAN, 1.3);
     Actor_WalkTo(ACTOR_IVAN, 152, 488);
     Actor_WaitForMoveById(ACTOR_IVAN);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != NULL) {
-      Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
-    }
+    Scene_PlaceAtLeader(ACTOR_MIA);
     Actor_SetSpeed(ACTOR_MIA, 1.3);
     Actor_WalkTo(ACTOR_MIA, 168, 488);
     Actor_WaitForMoveById(ACTOR_MIA);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != NULL) {
-      Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
-    }
+    Scene_PlaceAtLeader(ACTOR_GARET);
     Actor_SetSpeed(ACTOR_GARET, 1.3);
     Actor_WalkTo(ACTOR_GARET, 184, 488);
     Actor_WaitForMoveById(ACTOR_GARET);

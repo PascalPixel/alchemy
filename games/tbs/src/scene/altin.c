@@ -982,8 +982,8 @@ static void Altin_SprayInitialize(struct Actor *spray) {
 /// its movement timer runs down. The separate lifetime releases it after 20
 /// updates.
 static void Altin_SprayDrift(struct Actor *spray) {
-  spray->x.fixed += WATER_SPRAY_LATERAL_STEP(
-      spray->timer, (s16)((s32)(Random_Below(2)) - 1));
+  spray->x.fixed +=
+      WATER_SPRAY_LATERAL_STEP(spray->timer, (s16)((s32)(Random_Below(2)) - 1));
   if (spray->timer <= 3) {
     spray->z.fixed += -(Random_Below((px(1) / 2))) - px(1);
     spray->scaleX += 3 * Q16_ONE / 20;

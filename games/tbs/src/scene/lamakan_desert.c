@@ -740,11 +740,11 @@ static void HeatGauge_CountStep(void) {
     params.startScaleX = 4 * Q16_ONE / 5;
     params.startScaleY = 4 * Q16_ONE / 5;
     params.spin = (Random_Below(4096)) + 0xf800;
-    FieldEffect_Spawn(
-        actor->x.fixed, actor->y.fixed + px(2), actor->z.fixed, 0,
-        (Random_Below(5)) * (px(1) / 10), phase,
-        EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | EFFECT_SCRIPT_MEDIUM,
-        &params);
+    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed + px(2), actor->z.fixed, 0,
+                      (Random_Below(5)) * (px(1) / 10), phase,
+                      EFFECT_USE_SPIN | EFFECT_USE_START_SCALE |
+                          EFFECT_SCRIPT_MEDIUM,
+                      &params);
   }
 }
 
@@ -850,11 +850,9 @@ static void LamakanDesert_SlideDownDune(void) {
   phase = gFrameCount & 4;
   if (phase == 0) {
     params.spin = (Random_Below(4096)) + 0xf800;
-    x = actor->x.fixed + ((Random_Below(12)) << 16) -
-        px(6);
+    x = actor->x.fixed + ((Random_Below(12)) << 16) - px(6);
     FieldEffect_Spawn(x, actor->y.fixed, actor->z.fixed, 0, phase,
-                      (Random_Below(5)) * (px(1) / 10) +
-                          5 * (px(1) / 10),
+                      (Random_Below(5)) * (px(1) / 10) + 5 * (px(1) / 10),
                       EFFECT_USE_SPIN, &params);
   }
   if (hit < 0) {

@@ -21,8 +21,8 @@ enum FieldPsynergyHandler {
 };
 
 /// A field Psynergy, as the field kind: the type column of
-/// games/tbs/src/game/abilities.tsv, named for the abilities that have it. The
-/// field effect keeps it as its animation.
+/// games/tbs/src/game/ability_table.c, named for the abilities that have it.
+/// The field effect keeps it as its animation.
 enum FieldPsynergy {
   FIELD_PSYNERGY_MOVE = 1,
   FIELD_PSYNERGY_MIND_READ = 2,

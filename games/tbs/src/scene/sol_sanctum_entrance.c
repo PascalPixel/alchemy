@@ -830,18 +830,9 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   // Gather the followers around the leader for Kraden's introduction.
   FieldCamera_SetSpeed(0.6);
   FieldCamera_MoveTo(1224, CAMERA_KEEP, 136, 1);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
-  }
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_JENNA, leader->x.fixed, leader->z.fixed);
-  }
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
-  }
+  Scene_PlaceAtLeader(ACTOR_KRADEN);
+  Scene_PlaceAtLeader(ACTOR_JENNA);
+  Scene_PlaceAtLeader(ACTOR_GARET);
   Actor_SetSpeed(ACTOR_KRADEN, 0.6);
   Actor_SetSpeed(ACTOR_JENNA, 0.6);
   Actor_SetSpeed(ACTOR_GARET, 0.6);
@@ -875,23 +866,11 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Event_Wait(20);
   FieldCamera_MoveTo(1224, CAMERA_KEEP, 148, 1);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
+  Scene_WalkTowardLeader(ACTOR_GARET);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_JENNA, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
+  Scene_WalkTowardLeader(ACTOR_JENNA);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(ACTOR_KRADEN, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
+  Scene_WalkTowardLeader(ACTOR_KRADEN);
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
@@ -1152,18 +1131,13 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
 /// Called by SolSanctumEntrance_RestoreInteriorState there until
 /// FLAG_SOL_SANCTUM_MORE_STATUES_SEEN is set, which it sets.
 static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
-  struct Actor *leader;
-
   Event_Start();
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
-  }
+  Scene_PlaceAtLeader(ACTOR_KRADEN);
   Actor_SetSpeed(ACTOR_KRADEN, 1);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_KRADEN, 24, -10);

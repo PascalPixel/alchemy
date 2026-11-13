@@ -63,6 +63,7 @@
 #include "scene_ids.h"
 #include "module/import.h"
 #include "module/scene/colosseum_entrance.h"
+#include "shared/walk_into_leader.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/game/game.h"
@@ -694,8 +695,6 @@ static void ColosseumEntrance_AskIfReadyForFinals(void) {
 ///
 /// Before Babi is saved it does nothing.
 static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
-  struct Actor *leader;
-
   if (GameFlag_Get(FLAG_BABI_SAVED) == 0) {
     return;
   }
@@ -766,18 +765,9 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 262, 188);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
-  }
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
-  }
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
-  }
+  Scene_PlaceAtLeader(ACTOR_GARET);
+  Scene_PlaceAtLeader(ACTOR_IVAN);
+  Scene_PlaceAtLeader(ACTOR_MIA);
   Actor_SetSpeed(ACTOR_GARET, 0.8);
   Actor_SetSpeed(ACTOR_IVAN, 0.8);
   Actor_SetSpeed(ACTOR_MIA, 0.8);

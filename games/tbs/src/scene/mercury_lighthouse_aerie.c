@@ -430,7 +430,7 @@ static void MercuryLighthouseAerie_JumpToPlatform(void) {
     actor->speedLimit = px(3);
     actor->acceleration = px(2);
     actor->velocityY = px(4);
-    actor->motionFlags &= 0x7e;
+    actor->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(actor, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, position.x >> 16, position.z >> 16);
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
@@ -865,7 +865,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_SetSpeedAndAcceleration(ACTOR_MENARDI, 3, 2);
   Actor_Get(ACTOR_MENARDI)->velocityY = px(4);
   Sound_Play(SE_JUMP);
-  Actor_Get(ACTOR_MENARDI)->motionFlags &= 0x7e;
+  Actor_Get(ACTOR_MENARDI)->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MENARDI), 0);
   Actor_Get(ACTOR_FIRST_LIFT_PLATFORM)->motionFlags = ACTOR_FLOATS;
   Actor_MoveToAndWait(ACTOR_MENARDI, 104, 168);
@@ -1656,23 +1656,21 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
       x = left->x.fixed;
       x += r;
       x -= px(12);
-      FieldEffect_Spawn(
-          x, left->y.fixed + ((Random_Below(32)) << 16) - px(16),
-          left->z.fixed, 0, px(4), 0,
-          EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
-              EFFECT_USE_PALETTE,
-          &options);
+      FieldEffect_Spawn(x, left->y.fixed + ((Random_Below(32)) << 16) - px(16),
+                        left->z.fixed, 0, px(4), 0,
+                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                        &options);
     } else {
       r = ((Random_Below(24)) << 16);
       x = right->x.fixed;
       x += r;
       x -= px(12);
-      FieldEffect_Spawn(
-          x, right->y.fixed + ((Random_Below(32)) << 16) - px(16),
-          right->z.fixed, 0, px(4), 0,
-          EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
-              EFFECT_USE_PALETTE,
-          &options);
+      FieldEffect_Spawn(x, right->y.fixed + ((Random_Below(32)) << 16) - px(16),
+                        right->z.fixed, 0, px(4), 0,
+                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                        &options);
     }
   }
   Actor_SetPosition(ACTOR_SATUROS, 0, 0);
@@ -1705,23 +1703,21 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
       x = left->x.fixed;
       x += r;
       x -= px(12);
-      FieldEffect_Spawn(
-          x, left->y.fixed + ((Random_Below(32)) << 16) + px(32),
-          left->z.fixed, 0, -px(4), 0,
-          EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
-              EFFECT_USE_PALETTE,
-          &options);
+      FieldEffect_Spawn(x, left->y.fixed + ((Random_Below(32)) << 16) + px(32),
+                        left->z.fixed, 0, -px(4), 0,
+                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                        &options);
     } else {
       r = ((Random_Below(24)) << 16);
       x = right->x.fixed;
       x += r;
       x -= px(12);
-      FieldEffect_Spawn(
-          x, right->y.fixed + ((Random_Below(32)) << 16) + px(32),
-          right->z.fixed, 0, -px(4), 0,
-          EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
-              EFFECT_USE_PALETTE,
-          &options);
+      FieldEffect_Spawn(x, right->y.fixed + ((Random_Below(32)) << 16) + px(32),
+                        right->z.fixed, 0, -px(4), 0,
+                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                        &options);
     }
     if (i == 20) {
       Actor_SetSpriteColorById(ACTOR_SATUROS, SPRITE_COLOR_BLINK);

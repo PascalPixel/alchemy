@@ -583,7 +583,7 @@ static void LemurianShip_SetSail(void) {
   FieldCamera_MoveTo(808, CAMERA_KEEP, 168, 1);
   Event_Wait(300);
   // Fade out to the clear screen.
-  work = gMapGridWork[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID];
+  work = FIELD_WORK_FROM(gMapGridWork, HEAP_SLOT_MAP_GRID);
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Io_Write16(0, &PLTT_BACKDROP);
   work->transitionFrames = 96;
@@ -737,8 +737,8 @@ s32 LemurianShip_SetupMap(void) {
   if (gMainRoutineWork.entrance == LEMURIAN_SHIP_WITH_BLACK_ORB) {
     Inventory_AddItem(ACTOR_PARTY_LEADER, ITEM_BLACK_ORB);
   }
-  ((struct FieldWork *)gMapGridWork[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID])
-      ->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  FIELD_WORK_FROM(gMapGridWork, HEAP_SLOT_MAP_GRID)->transition =
+      SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Actor_Get(ACTOR_GANGWAY_NORTH)->collisionFlags = 0;
   Actor_Get(ACTOR_GANGWAY_NORTH)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   Actor_Get(ACTOR_GANGWAY_SOUTH)->collisionFlags = 0;

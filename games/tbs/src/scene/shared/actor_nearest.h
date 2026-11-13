@@ -22,8 +22,7 @@ s32 Actor_FindNearestFloatingPlatform(void) {
     struct Actor *actor = *slot++;
     if (actor != 0) {
       if (actor->sprite->entries[0]->animationId == SPRITE_FLOATING_PLATFORM) {
-        s32 dist =
-            Actor_Distance(origin, actor);
+        s32 dist = Actor_Distance(origin, actor);
         if (dist < minDist) {
           minDist = dist;
           nearestActorId = actorId;

@@ -527,7 +527,7 @@ static void GomaCavePillar_JumpGapWest(void) {
     leader->speedLimit = px(3);
     leader->acceleration = px(2);
     leader->velocityY = px(4);
-    *motionFlags &= 0x7e;
+    *motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(leader, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, (s16)((u32)destination->x >> 16),
                         (s16)((u32)destination->z >> 16));

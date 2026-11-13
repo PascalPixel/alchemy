@@ -213,8 +213,7 @@ static void KolimaForestFloodgate_ShakeLines(void) {
   volatile u32 *destination = (volatile u32 *)&REG_BG1HOFS;
 
   if (line == 227 || line <= 52) {
-    if ((Random_Below(100)) <
-        gKolimaForestFloodgate_ShakeChance) {
+    if ((Random_Below(100)) < gKolimaForestFloodgate_ShakeChance) {
       source = gKolimaForestFloodgate_ShakeScroll;
     }
   }

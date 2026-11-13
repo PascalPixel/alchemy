@@ -117,8 +117,10 @@ Unit_CalculateBaseElements(s32 unitId, struct BattleElementStats *destination) {
     if (level < 0)
       level = 0;
     // The pair is written as two halfwords in a row, power then resistance.
-    ((s16 *)destination)[i * 2] = gElement_PowerResistByLevel[level].power + tenths;
-    ((s16 *)destination)[i * 2 + 1] = gElement_PowerResistByLevel[level].res + tenths;
+    ((s16 *)destination)[i * 2] =
+        gElement_PowerResistByLevel[level].power + tenths;
+    ((s16 *)destination)[i * 2 + 1] =
+        gElement_PowerResistByLevel[level].res + tenths;
   }
 }
 

@@ -190,5 +190,9 @@ STATIC_ASSERT(offsetof(struct FieldWork, queuedSound) == 0xcc8);
 /// The running field scene's work, heap slot HEAP_SLOT_FIELD; FieldSequence_Run
 /// takes it and frees it.
 #define gFieldWork (*(struct FieldWork **)&gHeapSlots[HEAP_SLOT_FIELD])
+/// The field work reached through `slots`, a view of gHeapSlots from slot
+/// `from`, where the code holds that slot's address already.
+#define FIELD_WORK_FROM(slots, from)                                           \
+  ((struct FieldWork *)HEAP_SLOT_FROM(slots, from, HEAP_SLOT_FIELD))
 
 #endif

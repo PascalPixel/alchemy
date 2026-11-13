@@ -1301,10 +1301,7 @@ static void SolSanctumElementalStarRoom_TakeMarsStar(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 232, 156);
   Event_Wait(10);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
-  }
+  Scene_PlaceAtLeader(ACTOR_GARET);
   Actor_SetSpeed(ACTOR_GARET, 1.2);
   Actor_WalkToAndWait(ACTOR_GARET, 218, 172);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
@@ -1526,14 +1523,8 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(20);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_JENNA, leader->x.fixed, leader->z.fixed);
-  }
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
-  }
+  Scene_PlaceAtLeader(ACTOR_JENNA);
+  Scene_PlaceAtLeader(ACTOR_GARET);
   Actor_SetSpeed(ACTOR_GARET, 0.5);
   Actor_SetSpeed(ACTOR_JENNA, 0.5);
   Actor_WalkTo(ACTOR_JENNA, 453, 302);
@@ -2244,12 +2235,11 @@ static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
       x = alex->x.fixed;
       x += xOffset;
       x -= px(12);
-      FieldEffect_Spawn(
-          x, alex->y.fixed + ((Random_Below(32)) << 16) + px(32),
-          alex->z.fixed, 0, -px(4), 0,
-          EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
-              EFFECT_USE_PALETTE,
-          &options);
+      FieldEffect_Spawn(x, alex->y.fixed + ((Random_Below(32)) << 16) + px(32),
+                        alex->z.fixed, 0, -px(4), 0,
+                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                        &options);
     }
     if (frame == 20)
       Actor_SetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_BLINK);

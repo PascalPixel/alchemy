@@ -10,7 +10,7 @@
 /// opening with what it holds (head -2 event_commands/*.c).
 ///
 /// A field Psynergy reaches its code through its field kind, the type column
-/// of games/tbs/src/game/abilities.tsv; field_psynergy.c runs the kind's
+/// of games/tbs/src/game/ability_table.c; field_psynergy.c runs the kind's
 /// handlers.
 ///
 /// README.md in this folder gives the words, prefixes and spellings the parts

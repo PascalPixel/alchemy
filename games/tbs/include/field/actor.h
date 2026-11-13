@@ -222,8 +222,16 @@ enum ActorMotionFlag {
   ACTOR_FLOATS = 0x04,          ///< bobs up and down by its gravity
   ACTOR_FLOATS_HIGH = 0x08,     ///< with ACTOR_FLOATS, four times as far
   /// Keeps its speed on slopes, which slow others down.
-  ACTOR_KEEPS_SPEED_ON_SLOPES = 0x10
+  ACTOR_KEEPS_SPEED_ON_SLOPES = 0x10,
+  /// Unused: nothing sets or reads it; a jump clears it with
+  /// ACTOR_FOLLOWS_TERRAIN.
+  ACTOR_MOTION_SPARE = 0x80
 };
+
+/// The motion flags a jump keeps as the actor leaves the ground: all but
+/// ACTOR_FOLLOWS_TERRAIN and the spare bit.
+#define ACTOR_JUMP_KEEPS_MOTION                                                \
+  ((u8)~(ACTOR_FOLLOWS_TERRAIN | ACTOR_MOTION_SPARE))
 
 /// Actor.collisionFlags bits.
 enum ActorCollisionFlag {

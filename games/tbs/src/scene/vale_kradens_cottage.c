@@ -217,14 +217,8 @@ static __inline__ void ValeKradensCottage_FacePartySouth(void) {
 
 /// Starts a companion walking back to Isaac's current pixel position.
 static __inline__ void ValeKradensCottage_WalkTowardLeader(s32 companionId) {
-  struct Actor *leader;
-
   Actor_SetAnimation(companionId, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(companionId, leader->x.part.pixel,
-                         leader->z.part.pixel);
-  }
+  Scene_WalkTowardLeader(companionId);
 }
 
 /// In Vale by Kraden's cottage, the child at the fence asks whether Isaac hears

@@ -28,7 +28,7 @@ struct AbilityDefinition;
 struct EnemyDefinition;
 struct EnemyElementPreset;
 
-/// The 519 abilities by ability id (abilities.tsv).
+/// The 519 abilities by ability id (ability_table.c).
 extern const struct AbilityDefinition gAbilityDefinitions[];
 /// Each character's lighthouse group: 0 for Isaac, Garet, Felix and Jenna,
 /// whose PP a lit Venus or Mars Lighthouse restores; 1 for the others, by

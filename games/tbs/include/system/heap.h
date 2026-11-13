@@ -23,6 +23,11 @@ extern void *gHeapSlots[64];
 /// Slot n's block, or null before it is allocated.
 #define HEAP_SLOT_BLOCK(n) (*(gHeapSlots + (n)))
 
+/// Heap slot `slot` read through `slots`, a pointer to slot `from` of
+/// gHeapSlots: code that holds one slot's address reaches its neighbours by
+/// their distance from it. The name is ours.
+#define HEAP_SLOT_FROM(slots, from, slot) ((slots)[(slot) - (from)])
+
 /// The heap's 64 slots, the first two holding the next free EWRAM and
 /// IWRAM addresses.
 union HeapState {

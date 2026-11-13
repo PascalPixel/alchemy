@@ -117,12 +117,10 @@ void FieldPsynergy_Reveal(void) {
   work->revealFrames = 600;
   work->effectTimerRunning = 1;
   FieldEffect_SpawnRevealMarkers();
-  frame = 0;
-  do {
+  for (frame = 0; frame <= 18; frame++) {
     wait(1);
     state->value = frame;
-    frame++;
-  } while (frame <= 18);
+  }
   Task_Add(FieldPsynergy_WatchLeaderDistance, TASK_PASS_FRAME);
 }
 

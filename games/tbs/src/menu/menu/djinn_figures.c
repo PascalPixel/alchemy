@@ -111,8 +111,7 @@ void DjinnFigures_UpdateBottomRow(void) {
   struct SpritePlacement placement;
 
   Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
-  objectIndex = 0;
-  do {
+  for (objectIndex = 0; objectIndex <= 3; objectIndex++) {
     struct Sprite *animation = menu->animations[objectIndex];
 
     if (animation != 0) {
@@ -148,8 +147,7 @@ void DjinnFigures_UpdateBottomRow(void) {
         limit = FACING_SOUTH;
       Actor_ApplyProjectedPlacementFar(animation, &placement, &scale, limit);
     }
-    objectIndex++;
-  } while (objectIndex <= 3);
+  }
 }
 
 /// Replaces the bottom row's four sprites and starts its easing task: one

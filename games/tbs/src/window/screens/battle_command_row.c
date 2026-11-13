@@ -106,16 +106,12 @@ s32 BattleCommandRow_Run(s32 mode) {
   selectionUi->affine.angle = 0;
   // Icons 24 pixels apart on line 136 (tile row 17), the last ending by the
   // name window.
-  entryIndex = 0;
-  if (entryIndex < selectionUi->iconCount) {
-    do {
-      s32 x = (entryIndex - selectionUi->iconCount) * 24;
-      selectionUi->entries[entryIndex].positionX = x + 155;
-      if (mode != COMMAND_ROW_PARTY)
-        selectionUi->entries[entryIndex].positionX = x + WINDOW_X * 8 - 5;
-      selectionUi->entries[entryIndex].positionY = 136;
-      entryIndex++;
-    } while (entryIndex < selectionUi->iconCount);
+  for (entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++) {
+    s32 x = (entryIndex - selectionUi->iconCount) * 24;
+    selectionUi->entries[entryIndex].positionX = x + 155;
+    if (mode != COMMAND_ROW_PARTY)
+      selectionUi->entries[entryIndex].positionX = x + WINDOW_X * 8 - 5;
+    selectionUi->entries[entryIndex].positionY = 136;
   }
   // BG1 shows the icons: behind the other layers above line 136, in front
   // from there down (CommandRow_PutBg1Behind).

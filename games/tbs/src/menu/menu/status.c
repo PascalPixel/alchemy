@@ -2054,15 +2054,13 @@ void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
   struct WindowSprite *icon;
   struct WindowSprite **icons;
 
-  entryIndex = 0;
   icons = ((struct ItemMenuWork *)gMenuWork)->entryIcons;
-  do {
+  for (entryIndex = 0; entryIndex <= 31; entryIndex++) {
     icon = *icons++;
     if (icon != NULL) {
       Menu_PlaceEntryActorInGrid(icon, entryIndex, originX, originY, columns);
     }
-    entryIndex += 1;
-  } while (entryIndex <= 31);
+  }
 }
 
 /// Places icon at cell index (an index above 31 is taken as 0) of a grid of
@@ -2179,10 +2177,9 @@ void StatusScreen_ShowStatusIcons(const u8 *flags) {
 
   menu = gMenuWork;
   ItemMenu_ResetCategory();
-  index = 0;
   slot = menu->categoryIcons;
   shown = 0;
-  do {
+  for (index = 0; index <= 4; index++) {
     entry = *slot++;
     if (entry != 0 && flags[index] != 0) {
       entry->x = 8;
@@ -2191,8 +2188,7 @@ void StatusScreen_ShowStatusIcons(const u8 *flags) {
       Icon_PrepareActor(entry);
       shown++;
     }
-    index++;
-  } while (index <= 4);
+  }
 }
 
 /// Moves the five status icons (the first category sprites) off screen,

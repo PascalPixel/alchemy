@@ -144,8 +144,7 @@ void FieldPsynergy_StartCloak(void) {
   Sound_PlayFar(SE_PSYNERGY_START);
   Actor_SelectAnimationFar(leader, ANIM_STILL);
   leader->update = 0;
-  n = 0;
-  do {
+  for (n = 0; n <= 9; n++) {
     entry->colorMode = SPRITE_COLOR_WHITE;
     animation->dirty = 1;
     animation->flags = SPRITE_FLAG_OUTLINED;
@@ -153,8 +152,7 @@ void FieldPsynergy_StartCloak(void) {
     animation->dirty = 1;
     animation->flags = 0;
     wait(2);
-    n++;
-  } while (n <= 9);
+  }
   n = 0;
   entry->colorMode = n;
   animation->flags = SPRITE_FLAG_OUTLINED;

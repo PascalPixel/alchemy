@@ -242,12 +242,8 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
         else
           tile = WINDOW_TILE_BLANK;
       }
-      column = 0;
-      if (column < width) {
-        do {
-          *cursor++ = tile;
-          column++;
-        } while (column < width);
+      for (column = 0; column < width; column++) {
+        *cursor++ = tile;
       }
       row++;
       cursor += 32 - width;

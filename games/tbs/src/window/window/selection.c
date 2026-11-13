@@ -31,12 +31,10 @@ void SelectionMenu_Create(void) {
   screen->locked = 999;
   // The records: 0 and 1 the end arrows, 2 to 8 the row's icons, 9 to 13 the
   // chosen icons, 14 the pointing hand and 15 the large icon.
-  i = 0;
-  do {
+  for (i = 0; i != 5; i++) {
     screen->records[i + SELECTION_RECORD_ROW].kind = ICON_KIND_NONE;
     screen->records[i + SELECTION_RECORD_CHOSEN].kind = ICON_KIND_NONE;
-    i++;
-  } while (i != 5);
+  }
   // The row has two icons more than the chosen ones; i is 5.
   screen->records[i + SELECTION_RECORD_ROW].kind = ICON_KIND_NONE;
   screen->records[i + SELECTION_RECORD_ROW + 1].kind = ICON_KIND_NONE;

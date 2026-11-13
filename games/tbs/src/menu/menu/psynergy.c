@@ -827,16 +827,14 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
 
   icons = ((struct PsynergyMenuWork *)gMenuWork)->entryIcons;
   p = psynergies;
-  remaining = 31;
-  do {
+  for (remaining = 31; remaining >= 0; remaining--) {
     psynergyId = *p++;
     if (psynergyId != 0) {
       Resource_LoadByModeIntoSlotFar(ICON_KIND_ABILITY, psynergyId,
                                      (u8)(*icons)->index, 0);
     }
     icons++;
-    remaining--;
-  } while (remaining >= 0);
+  }
   Menu_HideEmptyEntryIcons(psynergies);
 }
 

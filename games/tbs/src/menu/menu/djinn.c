@@ -426,8 +426,7 @@ void DjinnMenu_AdjustPalettes(s32 brightnessDelta) {
   s32 paletteIndex;
 
   paletteNumber = WINDOW_PALETTE;
-  copyIndex = 0;
-  do {
+  for (copyIndex = 0; copyIndex <= 2; copyIndex++) {
     for (colorIndex = 0; colorIndex <= 15; colorIndex++) {
       u32 color;
       s32 blue;
@@ -465,8 +464,7 @@ void DjinnMenu_AdjustPalettes(s32 brightnessDelta) {
       paletteNumber = 7;
       brightnessDelta = -12;
     }
-    copyIndex++;
-  } while (copyIndex <= 2);
+  }
 }
 
 /// PsynergyList_Diff' marks on an action id: Psynergy the change gives,
@@ -781,12 +779,10 @@ s32 DjinnMenu_ShowHelp(void) {
   helpWindow = Window_CreateFar(8, 12, 22, 7, WINDOW_FLAG_INSTANT);
   statusWindow = Window_CreateFar(8, 9, 22, 3, WINDOW_FLAG_INSTANT);
   Window_MarkVisibleTextTilesFar();
-  helpIndex = 0;
   listMessage = MsgDjinnInfoTopic;
-  do {
+  for (helpIndex = 0; helpIndex <= 6; helpIndex++) {
     Text_DrawMessageAsTilesFar(helpIndex + listMessage, list, 0, helpIndex * 8);
-    helpIndex++;
-  } while (helpIndex <= 6);
+  }
   do {
     WindowSprite_PrepareForRedrawFar(statusWindow);
     Text_DrawMessageFar(selection + MsgDjinnInfoTopic, statusWindow, 0, 0);

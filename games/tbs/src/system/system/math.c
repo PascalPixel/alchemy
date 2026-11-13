@@ -133,15 +133,13 @@ s32 Math_IntegerSqrt(s32 value) {
   // cost of setting the next bit, preserving the higher bits already chosen.
   remainder = value;
   result = 0;
-  bit = 15;
-  do {
+  for (bit = 15; bit >= 0; bit -= 1) {
     trial = (result << (bit + 1)) + (1 << (bit * 2));
     if (trial <= remainder) {
       result |= 1 << bit;
       remainder -= trial;
     }
-    bit -= 1;
-  } while (bit >= 0);
+  }
   return result;
 }
 

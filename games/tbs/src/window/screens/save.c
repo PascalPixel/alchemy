@@ -720,8 +720,7 @@ void FileList_PlaceDjinnSprites(void) {
   struct SpritePlacement position;
   s32 index;
 
-  index = 0;
-  do {
+  for (index = 0; index <= 3; index++) {
     struct Sprite *sprite = menu->animations[index];
 
     if (sprite != NULL) {
@@ -736,8 +735,7 @@ void FileList_PlaceDjinnSprites(void) {
       position.groundHeight = 0;
       Actor_ApplyProjectedPlacementFar(sprite, &position, &scale, FACING_SOUTH);
     }
-    index++;
-  } while (index <= 3);
+  }
 }
 
 /// Draws the Djinn counts of save file `summary`, one for each element, two

@@ -1386,22 +1386,14 @@ void Menu_HideEmptyEntryIcons(const u16 *items) {
 
 /// Returns how many of party member memberId's 15 inventory slots hold an item.
 s32 ItemMenu_CountItems(s32 memberId) {
-  s32 maskedItemId;
-  s32 remainingSlots;
-  s32 count;
-  u16 *inventory;
+  u16 *inventory = Unit_GetFar(memberId)->inventory;
+  s32 count = 0;
+  s32 slot;
 
-  count = 0;
-  inventory = Unit_GetFar(memberId)->inventory;
-  remainingSlots = INVENTORY_SLOTS - 1;
-  do {
-    maskedItemId = INVENTORY_ITEM_ID_MASK & *inventory;
-    inventory += 1;
-    if (maskedItemId != 0) {
-      count += 1;
-    }
-    remainingSlots -= 1;
-  } while (remainingSlots >= 0);
+  for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+    if ((*inventory++ & INVENTORY_ITEM_ID_MASK) != 0)
+      count++;
+  }
   return count;
 }
 

@@ -74,6 +74,7 @@ void WorldPicture_Initialize(void) {
   s32 tileAttributes;
   u32 i;
   u32 tile;
+  u32 cursorAttributes;
 
   markerTiles = Heap_AllocEwram(WORLD_MAP_MARKER_ALLOCATION_SIZE);
   work = (struct WorldPictureWork *)gMapGridCellBuffer;
@@ -135,7 +136,9 @@ void WorldPicture_Initialize(void) {
   work->cursorSpeed = WORLD_MAP_CURSOR_MIN_SPEED;
   *entryWords++ = 0;
   *entryWords++ = OBJ_SIZE_16X16;
-  *entryWords = tile >> 5 | OBJ_PRIORITY(1);
+  cursorAttributes = OBJ_PRIORITY(1);
+  cursorAttributes |= tile >> 5;
+  *entryWords = cursorAttributes;
 }
 
 #if TBS_PATCH_2

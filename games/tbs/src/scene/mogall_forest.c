@@ -324,14 +324,10 @@ static void MogallForest_StartDjinnBattle(void) {
 /// motion.
 static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  u8 *motionFlags = &leader->motionFlags;
-  s32 savedMotionFlags = *motionFlags;
-
+  s32 savedMotionFlags = leader->motionFlags;
   s32 collision = FieldActor_CheckMovementCollision(leader, position);
 
   if (collision == 0) {
-    s32 jumpMotionFlags;
-
     Event_Start();
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     wait(6);
@@ -340,15 +336,14 @@ static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
     leader->speedLimit = px(3);
     leader->acceleration = px(2);
     leader->velocityY = px(4);
-    jumpMotionFlags = 0x7e;
-    jumpMotionFlags &= *motionFlags;
-    *motionFlags = jumpMotionFlags;
+    // Off the ground for the jump; the mask also clears bit 7, unnamed.
+    leader->motionFlags &= 0x7e;
     Actor_SetSpriteFlags(leader, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, (s16)((u32)position->x >> 16),
                         (s16)((u32)position->z >> 16));
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
-    *motionFlags = savedMotionFlags;
+    leader->motionFlags = savedMotionFlags;
     Event_End();
     return 1;
   }

@@ -2584,25 +2584,18 @@ const struct Trigger *VenusLighthouse_GetTriggers(void) {
 }
 
 /// Lays one of the scholars or soldiers the wanderers hurt on the ground
-/// (ANIM_HURT_LYING), drawn behind the backgrounds' fronts, still and
-/// without the lower two bits of its collision.
+/// (ANIM_HURT_LYING), drawn behind the backgrounds' fronts, still, and neither
+/// solid nor pushable.
 static void VenusLighthouse_LayDownHurtActor(s32 actorId) {
   struct Actor *actor;
-  s32 collisionFlags;
 
   actor = Actor_Get(actorId);
   actor->motionFlags = 0;
-  collisionFlags = 252;
-  collisionFlags &= actor->collisionFlags;
-  actor->collisionFlags = collisionFlags;
+  actor->collisionFlags &= ~(ACTOR_SOLID | ACTOR_PUSHABLE);
   Actor_SetSpriteFlags(actor, 0);
   Actor_SelectAnimation(actor, ANIM_HURT_LYING);
   Actor_SetSpritePriority(actorId, 3);
-  {
-    s32 priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    priorityFlags |= actor->priorityFlags;
-    actor->priorityFlags = priorityFlags;
-  }
+  actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 }
 
 /// Visits the four pillar actors through the actor lookup.

@@ -573,11 +573,10 @@ static void MercuryLighthouse_PushChannelPipes(void) {
                                                FACING_WEST);
         GameFlag_Set(FLAG_PIPE_1_JOINED);
       } else {
-        s32 cellCount = 1;
 
-        MapGrid_CopyCellsTo(117, 9, 104, 7, cellCount, cellCount);
-        MapGrid_CopyCellsTo(119, 8, 109, 11, cellCount, cellCount);
-        MapGrid_CopyCellsTo(118, 8, 104, 13, cellCount, cellCount);
+        MapGrid_CopyCellsTo(117, 9, 104, 7, 1, 1);
+        MapGrid_CopyCellsTo(119, 8, 109, 11, 1, 1);
+        MapGrid_CopyCellsTo(118, 8, 104, 13, 1, 1);
         Actor_MoveAndRedraw(probe);
         GameFlag_Clear(FLAG_PIPE_1_JOINED);
       }
@@ -593,12 +592,11 @@ static void MercuryLighthouse_PushChannelPipes(void) {
         }
         GameFlag_Set(FLAG_PIPE_2_JOINED);
       } else {
-        s32 cellCount = 1;
 
-        MapGrid_CopyCellsTo(119, 8, 109, 11, cellCount, cellCount);
+        MapGrid_CopyCellsTo(119, 8, 109, 11, 1, 1);
         if (GameFlag_Get(FLAG_PIPE_1_JOINED)) {
-          MapGrid_CopyCellsTo(119, 9, 109, 11, cellCount, cellCount);
-          MapGrid_CopyCellsTo(118, 8, 104, 13, cellCount, cellCount);
+          MapGrid_CopyCellsTo(119, 9, 109, 11, 1, 1);
+          MapGrid_CopyCellsTo(118, 8, 104, 13, 1, 1);
         }
         Actor_MoveAndRedraw(probe);
         Event_ClearFlag(FLAG_PIPE_2_JOINED);
@@ -1429,9 +1427,8 @@ static void MercuryLighthouse_ChangeCellForGapStatue(void) {
   if (column == 28) {
     GameFlag_Set(FLAG_PASSAGE_STATUE_MOVED);
     {
-      s32 destinationColumn = 31;
 
-      MapGrid_CopyCellAttributes(29, 20, 1, 1, destinationColumn, 20);
+      MapGrid_CopyCellAttributes(29, 20, 1, 1, 31, 20);
     }
   }
   Event_End();

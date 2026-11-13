@@ -1703,10 +1703,9 @@ s32 Vale_Initialize(void) {
       }
       {
         s32 priority;
-        s32 actorId = ACTOR_DORA;
 
         priority = ((u32)(u8)set >> 8) + 2;
-        Actor_SetSpritePriority(actorId, priority);
+        Actor_SetSpritePriority(ACTOR_DORA, priority);
       }
 #endif
     }

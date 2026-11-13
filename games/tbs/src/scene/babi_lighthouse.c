@@ -1249,15 +1249,10 @@ static void BabiLighthouse_PushRoadPillar(void) {
 
   heightDifference = ahead->y.fixed - leader->y.fixed;
 
-  if (heightDifference >= 0) {
-
-    if (heightDifference < px(8)) {
-    } else {
-      return;
-    }
-  } else if (leader->y.fixed - ahead->y.fixed >= px(8)) {
+  // Either way up, 8 pixels or more apart is too far to push.
+  if (heightDifference >= 0 ? heightDifference >= px(8)
+                            : leader->y.fixed - ahead->y.fixed >= px(8))
     return;
-  }
 
   PushedActor_AdvancePair();
 }

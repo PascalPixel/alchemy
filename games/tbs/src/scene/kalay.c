@@ -2253,9 +2253,7 @@ static void Kalay_UpdateTunnelPassages(void) {
   firstStatue = Actor_Get(ACTOR_FIRST_STATUE);
   secondStatue = Actor_Get(ACTOR_SECOND_STATUE);
   firstPassageOpen = GameFlag_Get(FLAG_TUNNEL_FIRST_PASSAGE_OPEN);
-  if (firstPassageOpen != 0) {
-  } else if ((firstStatue->x.fixed >> 19) > 29) {
-  } else {
+  if (firstPassageOpen == 0 && (firstStatue->x.fixed >> 19) <= 29) {
     frostEffect = Actor_Get(ACTOR_PUDDLE);
     Event_Start();
     MapGrid_CopyCellAttributes(7, 44, 1, 1, firstPassageOpen, 1);
@@ -2312,9 +2310,8 @@ static void Kalay_UpdateTunnelPassages(void) {
     MapGrid_CopyCellAttributes(0, 1, 1, 1, 7, span);
     Event_End();
   }
-  if (GameFlag_Get(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) != 0) {
-  } else if ((secondStatue->x.fixed >> 19) > 87) {
-  } else {
+  if (GameFlag_Get(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) == 0 &&
+      (secondStatue->x.fixed >> 19) <= 87) {
     Event_Start();
     i = 67;
     width = 1;

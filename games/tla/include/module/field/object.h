@@ -116,6 +116,11 @@ void Rope_Tie(s32 index, s32 a1, s32 a2);
 
 void Rope_Coil(s32 index, s32 a1, s32 a2);
 
+void Rope_Initialize(void);
+s32 Rope_GetState(s32 index);
+void Rope_Place(s32 index, s32 flag, s32 a2, s32 a3);
+void HangingVine_Place(s32 id, s32 force);
+
 void Tightrope_Draw(void);
 void Tightrope_Update(void);
 

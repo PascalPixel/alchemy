@@ -2370,11 +2370,6 @@ void Func_02003cd8(struct Actor *object) {
 // The sparkle's setup, Func_02003f54, which sets byte 0x62 of an object, and
 // the overlay's data.
 
-struct ResourceTableEntry {
-  u16 unk0;
-  u16 offset; ///< in bytes; its tile is offset / 32
-};
-
 /* VIEW(s3e54): tag struct SparkleSprite as struct SparkleSprite__s3e54;
  * contigo.c has another definition; tried with the definition the rest of the
  * object has, it does not compile in tla-ja:

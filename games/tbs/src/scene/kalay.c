@@ -1390,34 +1390,49 @@ static void Kalay_StartWindowTransition(void) {
 /// puddle and the opened passages are restored. Once FLAG_KALAY_TUNNEL_OPEN is
 /// set the man waits here and some of the cells are redrawn.
 static void Kalay_PrepareTunnel(void) {
-  struct Actor *actor;
-  struct FadeOverlayWork *overlay = gHeapSlots[HEAP_SLOT_FADE_OVERLAY];
+#if TBS_PATCH_1
+  s32 resumed;
+#endif
+  s32 following;
+  struct FadeOverlayWork *overlay;
+  // The field's heap slot and those after it.
+  void **slots = &gHeapSlots[HEAP_SLOT_FIELD];
 
-  gFieldWork->transition =
+  ((struct FieldWork *)slots[0])->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   FieldEffect_StartFadeOverlay(0);
   // The overlay follows the leader except on the way down from the town.
 #if TBS_PATCH_1
-  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
-    overlay->actor = GameFlag_Get(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER)
-                         ? Actor_Get(ACTOR_PARTY_LEADER)
-                         : NULL;
+  resumed = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
+  if (resumed != 0) {
+    overlay = slots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD];
+    // The flag's own 0 is the overlay's want of an actor.
+    following = GameFlag_Get(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
+    if (following != 0)
+      following = (s32)Actor_Get(ACTOR_PARTY_LEADER);
+    overlay->actor = (struct Actor *)following;
   } else {
     Event_SetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
     if (gMainRoutineWork.entrance == KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
-      overlay->actor = NULL;
+      ((struct FadeOverlayWork *)
+           slots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD])
+          ->actor = NULL;
       GameFlag_Clear(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
     }
   }
 #else
   Event_SetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
-    overlay->actor = GameFlag_Get(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER)
-                         ? Actor_Get(ACTOR_PARTY_LEADER)
-                         : NULL;
+    overlay = slots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD];
+    // The flag's own 0 is the overlay's want of an actor.
+    following = GameFlag_Get(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
+    if (following != 0)
+      following = (s32)Actor_Get(ACTOR_PARTY_LEADER);
+    overlay->actor = (struct Actor *)following;
   } else if (gMainRoutineWork.entrance ==
              KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
-    overlay->actor = NULL;
+    ((struct FadeOverlayWork *)slots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD])
+        ->actor = NULL;
     GameFlag_Clear(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
   }
 #endif
@@ -1874,7 +1889,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 388, 300);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
   // Seed the party idle phases for the arrival conversation.
-  Actor_Get(ACTOR_PARTY_LEADER)->userValue = (Random_Next() * 5) >> 12;
+  Actor_Get(ACTOR_PARTY_LEADER)->userValue = (u32)(Random_Next() * 5) >> 12;
   Actor_SetScript(ACTOR_PARTY_LEADER, gKalay_PartyFidgetScript);
   Actor_Jump(ACTOR_BUNZA, 2, 20);
   Actor_SetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
@@ -1905,9 +1920,9 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 40);
-  Actor_Get(ACTOR_GARET)->userValue = (Random_Next() * 5) >> 12;
-  Actor_Get(ACTOR_IVAN)->userValue = (Random_Next() * 5) >> 12;
-  Actor_Get(ACTOR_MIA)->userValue = (Random_Next() * 5) >> 12;
+  Actor_Get(ACTOR_GARET)->userValue = (u32)(Random_Next() * 5) >> 12;
+  Actor_Get(ACTOR_IVAN)->userValue = (u32)(Random_Next() * 5) >> 12;
+  Actor_Get(ACTOR_MIA)->userValue = (u32)(Random_Next() * 5) >> 12;
   Actor_SetScript(ACTOR_GARET, gKalay_PartyFidgetScript);
   Actor_SetScript(ACTOR_IVAN, gKalay_PartyFidgetScript);
   Actor_SetScript(ACTOR_MIA, gKalay_PartyFidgetScript);
@@ -2354,10 +2369,12 @@ static void Kalay_UpdateTunnelEmitters(void) {
 /// is a puff of dust (SPRITE_DUST_PUFF) with its blue raised to full.
 static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z) {
   struct Actor *particle;
+  s32 random = Import_RandomNext();
 
-  particle = FieldActor_Create(
-      SPRITE_DUST_PUFF, x - px(8),
-      height + px((u32)(Import_RandomNext() * 8) >> 16) + px(16), z);
+  // It starts up to 7 pixels above 16 over the height.
+  particle =
+      FieldActor_Create(SPRITE_DUST_PUFF, x - px(8),
+                        px((u32)(random * 8) >> 16) + height + px(16), z);
   if (particle != 0) {
     particle->motionFlags = 0;
     particle->sprite->image.priority = 2;

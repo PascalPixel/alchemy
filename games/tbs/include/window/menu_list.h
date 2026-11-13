@@ -115,10 +115,8 @@ struct BattleMenuWork {
   /// The command row's choice: [0] for the party's row (fight, flee,
   /// status), [1] for a party member's commands.
   s32 commandSelection[2];
-  /// The window that shows the link battle's seconds left, a struct Window
-  /// pointer kept as a word (as a pointer, two of the turn's first stores
-  /// swap), or 0.
-  s32 timerWindow;
+  /// The window that shows the link battle's seconds left, or NULL.
+  struct Window *timerWindow;
   /// Set while the status screen is open, so the timer opens no window.
   s32 timerHidden;
   /// Frames left to choose commands in a link battle; -1 outside link battles.

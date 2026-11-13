@@ -368,13 +368,7 @@ void PartyStatus_Draw(s32 flags) {
 
 /// Closes the party status window and frees its heap block.
 void PartyStatus_Close(void) {
-  // UB: reads the heap slot's pointer through an s32 pointer; UBFIX reads
-  // the window through the block's own struct.
-#ifdef UBFIX
   Window_Close(((struct PartyStatusWindow *)gWindowWork[1])->window, 1);
-#else
-  Window_Close((struct Window *)**(s32 **)(u32)&gWindowWork[1], 1);
-#endif
   HeapSlot_Release(HEAP_SLOT_PARTY_STATUS);
 }
 

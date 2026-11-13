@@ -176,7 +176,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                     gWindowWork[HEAP_SLOT_BATTLE_MENU - HEAP_SLOT_WINDOW]);
   navigation->timerHidden = 1;
   if (navigation->timerWindow != 0) {
-    Window_Close((struct Window *)navigation->timerWindow, 1);
+    Window_Close(navigation->timerWindow, 1);
     navigation->timerWindow = 0;
   }
   Sound_PlayFar(SE_MENU_CONFIRM);

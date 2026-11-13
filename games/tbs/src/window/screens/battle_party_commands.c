@@ -10,7 +10,6 @@
 /// on one who needs it. A later test wins: an effect over the ability
 /// kind, revival over all.
 s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act) {
-  s32 signedEffect;
   s32 abilityKind;
   s32 targetKind;
   u8 effect;
@@ -21,8 +20,7 @@ s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act) {
     targetKind = TARGET_HINT_HP;
   if (abilityKind == ABILITY_FORMULA_HEAL_PP)
     targetKind = TARGET_HINT_PP;
-  signedEffect = (s8)act->effect;
-  effect = signedEffect;
+  effect = act->effect;
   if (effect == ABILITY_EFFECT_CURE_POISON)
     targetKind = TARGET_HINT_CURE_POISON;
   if (effect == ABILITY_EFFECT_RESTORE)
@@ -218,7 +216,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       command->target = 256;
       break;
     }
-    if (mode != 14) {
+    if (mode != COMMAND_ICON_FIGHT) {
       break;
     }
     Sound_PlayFar(SE_CAST);
@@ -243,12 +241,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 
       command = &commands[commandIndex];
       unitId = actors[commandIndex];
-      // UB: Unit_GetFar returns a pointer, not the cast's doubleword result.
-#ifdef UBFIX
       unit = Unit_GetFar(unitId);
-#else
-      unit = (struct Unit *)(s32)((s64 (*)(s32))Unit_GetFar)(unitId);
-#endif
       // The party member's row starts on Attack; its portrait shows at the
       // left.
       gBattleMenuWork->commandActor = unitId;
@@ -347,7 +340,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         u8 *pick;
         s32 cost;
         s32 handle;
-        s32 cnt;
+        s32 count;
         s32 k;
         s32 entryValue;
 
@@ -359,19 +352,19 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         Sound_PlayFar(SE_MENU_CONFIRM);
         mode = 0;
         BATTLE_MENU_SET_CURSOR(mode, mode, mode);
-      psynergy_menu:
+      psynergy_list:
         list = state->listAbilities;
         pick = state->listSlots;
         state->icons[0].oam.f.x = 48;
-        cnt = 0;
+        count = 0;
         k = 0;
         entryValue = unit->psynergy[k].encodedAction & ACTION_ID_MASK;
         if (entryValue != 0) {
           do {
             if ((Ability_Get(entryValue)->flags & BATTLE_OK) != 0) {
-              pick[cnt] = k;
-              list[cnt] = entryValue;
-              cnt++;
+              pick[count] = k;
+              list[count] = entryValue;
+              count++;
             }
             k++;
             if (k == 32) {
@@ -380,9 +373,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
             entryValue = unit->psynergy[k].encodedAction & ACTION_ID_MASK;
           } while (entryValue != 0);
         }
-        pick[cnt] = 0;
-        list[cnt] = 0;
-        mode = BattlePsynergyMenu_Run(unitId, list, cnt);
+        pick[count] = 0;
+        list[count] = 0;
+        mode = BattlePsynergyMenu_Run(unitId, list, count);
         if (mode == -1) {
           goto mark_visible;
         }
@@ -400,10 +393,6 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
-        /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
-         * after mov r1, r10 as native (constant 40); without it, 14 of 1727
-         * instructions differ in tbs-en. */
-        __asm__ volatile("");
         iconSprite->oam.f.tile =
             Resource_LoadIndexedEntryToBuffer(parameter, handle);
         state->iconShown[1] = 1;
@@ -429,15 +418,13 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         }
         command->range = cost;
         Sound_PlayFar(SE_MENU_CONFIRM);
-        mode = BattleTarget_RunSelection(
-            unitId, ability->targetMode, cost,
-            Battle_ClassifyEntryKind(
-                (const struct AbilityDefinition *)ability));
+        mode = BattleTarget_RunSelection(unitId, ability->targetMode, cost,
+                                         Battle_ClassifyEntryKind(ability));
         state->iconShown[1] = 0;
         VramCache_FreeEntry(handle);
         Window_Close(commandWindow, 1);
         if (mode == -1) {
-          goto psynergy_menu;
+          goto psynergy_list;
         }
         commandKind = COMMAND_PSYNERGY;
         target = mode;
@@ -453,14 +440,13 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         s32 j;
         s32 n;
 
-        // Summon (the labels djinn_menu here and summon_menu under Djinn
-        // have each other's names): the summon list from this command's
+        // Summon: the summon list from this command's
         // standby Djinn, the summon's window with its cost (its name in
         // TEXT_COLOR_RED and the error sound when it cannot be paid for), and
         // its target; COMMAND_SUMMON with the summon as parameter.
         Sound_PlayFar(SE_MENU_CONFIRM);
         BATTLE_MENU_SET_CURSOR(0, 0, 0);
-      djinn_menu:
+      summon_list:
         state->icons[0].oam.f.x = BATTLE_SUMMON_ICON_X;
         PartyStatus_HighlightMembers(signatureHeader);
         mode = BattleSummonMenu_Run(0, 0, state->standbyDjinn[commandIndex]);
@@ -487,10 +473,6 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.word.attr01 =
             OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         iconSprite->oam.word.attr23 = 0;
-        /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
-         * after mov r2, r9 as native (constant 56); without it, 12 of 1727
-         * instructions differ in tbs-en. */
-        __asm__ volatile("");
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
         iconSprite->oam.f.tile = Resource_LoadIndexedEntryToBuffer(
@@ -517,16 +499,15 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         } else {
           Sound_PlayFar(SE_MENU_ERROR);
         }
-        mode = BattleTarget_RunSelection(
-            unitId, ability->targetMode, ability->range,
-            Battle_ClassifyEntryKind(
-                (const struct AbilityDefinition *)ability));
+        mode = BattleTarget_RunSelection(unitId, ability->targetMode,
+                                         ability->range,
+                                         Battle_ClassifyEntryKind(ability));
         command->range = ability->range;
         state->iconShown[1] = 0;
         VramCache_FreeEntry(handle);
         Window_Close(commandWindow, 1);
         if (mode == -1) {
-          goto djinn_menu;
+          goto summon_list;
         }
         // Spend the cost from this command's standby Djinn: an element that
         // falls short is left at 0, and the elements after it are not spent.
@@ -555,7 +536,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         // ("Set Djinni", target mode 4, kind 7), its name in TEXT_COLOR_RED.
         Sound_PlayFar(SE_MENU_CONFIRM);
         BATTLE_MENU_SET_CURSOR(0, 0, 0);
-      summon_menu:
+      djinn_list:
         state->icons[0].oam.f.x = 144;
         gBattleMenuWork->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
         mode = BattleDjinnMenu_Run(unitId, 1);
@@ -580,10 +561,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           command->range = cost;
           wait(1);
           Sound_PlayFar(SE_MENU_CONFIRM);
-          mode = BattleTarget_RunSelection(
-              unitId, ability->targetMode, cost,
-              Battle_ClassifyEntryKind(
-                  (const struct AbilityDefinition *)ability));
+          mode = BattleTarget_RunSelection(unitId, ability->targetMode, cost,
+                                           Battle_ClassifyEntryKind(ability));
           if (state->tutorialStep != 0) {
             hint = Message_ShowAndWait(MsgDjinnUnleashHint, 15, 8);
             while (Message_AllTyped() == 0) {
@@ -595,7 +574,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           }
           Window_Close(commandWindow, 1);
           if (mode == -1) {
-            goto summon_menu;
+            goto djinn_list;
           }
           target = mode;
           break;
@@ -614,7 +593,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         mode = BattleTarget_RunSelection(unitId, 4, 0, TARGET_HINT_SET_DJINNI);
         Window_Close(commandWindow, 1);
         if (mode == -1) {
-          goto summon_menu;
+          goto djinn_list;
         }
         target = mode;
         break;
@@ -627,7 +606,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         u8 *pick;
         s32 cost;
         s32 handle;
-        s32 cnt;
+        s32 count;
         s32 k;
         s32 entryValue;
         s32 selection;
@@ -639,19 +618,19 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         Sound_PlayFar(SE_MENU_CONFIRM);
         mode = 0;
         BATTLE_MENU_SET_CURSOR(mode, mode, mode);
-      item_menu:
+      item_list:
         state->icons[0].oam.f.x = 96;
         pick = state->listSlots;
         list = state->listAbilities;
-        cnt = 0;
+        count = 0;
         k = 0;
         entryValue = unit->inventory[k];
         if (entryValue != 0) {
           do {
             Item_GetDirectFar(entryValue);
             if (Item_ClassifyUseAbility(unitId, entryValue) == 0) {
-              list[cnt] = entryValue;
-              pick[cnt++] = k;
+              list[count] = entryValue;
+              pick[count++] = k;
             }
             k++;
             if (k == 15) {
@@ -666,8 +645,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           do {
             Item_GetDirectFar(entryValue);
             if (Item_ClassifyUseAbility(unitId, entryValue) != 0) {
-              list[cnt] = entryValue;
-              pick[cnt++] = k;
+              list[count] = entryValue;
+              pick[count++] = k;
             }
             k++;
             if (k == 15) {
@@ -676,8 +655,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
             entryValue = unit->inventory[k];
           } while (entryValue != 0);
         }
-        list[cnt] = 0;
-        mode = BattleItemMenu_Run(unitId, list, cnt);
+        list[count] = 0;
+        mode = BattleItemMenu_Run(unitId, list, count);
         if (mode == -1) {
           goto mark_visible;
         }
@@ -693,10 +672,6 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.word.attr01 =
             OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         iconSprite->oam.word.attr23 = 0;
-        /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
-         * after ldr r1, [sp, #72] as native (constant 48); without it, 10 of
-         * 1727 instructions differ in tbs-en. */
-        __asm__ volatile("");
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
         iconSprite->oam.f.tile =
@@ -707,15 +682,13 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
             commandWindow, 24, 0);
         command->range = cost;
         Sound_PlayFar(SE_MENU_CONFIRM);
-        mode = BattleTarget_RunSelection(
-            unitId, ability->targetMode, cost,
-            Battle_ClassifyEntryKind(
-                (const struct AbilityDefinition *)ability));
+        mode = BattleTarget_RunSelection(unitId, ability->targetMode, cost,
+                                         Battle_ClassifyEntryKind(ability));
         state->iconShown[1] = 0;
         VramCache_FreeEntry(handle);
         Window_Close(commandWindow, 1);
         if (mode == -1) {
-          goto item_menu;
+          goto item_list;
         }
         commandKind = COMMAND_ITEM;
         target = mode;
@@ -769,22 +742,18 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     transferWords[7] = 'S';
   }
   if (state->timerWindow != 0) {
-    Window_Close((struct Window *)state->timerWindow, 1);
+    Window_Close(state->timerWindow, 1);
   }
   VramCache_FreeEntry(smallIconSlot);
   VramCache_FreeEntry(largeIconSlot);
   Task_Remove(UpdateLinkSessionCountdown);
   if (state->linkTimer != 0) {
     // Keep the completion wait visible while the peer finishes its commands.
-    s32 Link_DrawWaitingForOpponent(void) {
+    void Link_DrawWaitingForOpponent(void) {
       u16 data[64];
       BATTLE_MENU_MESSAGE_COPY(MsgWaitingForOpponent, data,
                                BATTLE_MENU_MESSAGE_CAPACITY);
-      Text_DrawWideStringAtOffset(data, (struct Window *)state->timerWindow, 0,
-                                  4);
-#ifdef UBFIX
-      return 0;
-#endif
+      Text_DrawWideStringAtOffset(data, state->timerWindow, 0, 4);
     }
 
     // The wait message shows only when the countdown never opened its
@@ -795,9 +764,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     mode = 0;
     if (state->timerWindow == 0 && linkBattle->linkPaused == 0) {
       state->timerWindow =
-          (s32)Window_Create(0, 16, 30, 4,
-                             WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
-                                 WINDOW_FLAG_BORDERED_CANVAS);
+          Window_Create(0, 16, 30, 4,
+                        WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                            WINDOW_FLAG_BORDERED_CANVAS);
       Text_FillCanvasBackground();
       Link_DrawWaitingForOpponent();
     } else {
@@ -829,7 +798,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       wait(1);
     }
     if (state->timerWindow != 0) {
-      Window_Close((struct Window *)state->timerWindow, 1);
+      Window_Close(state->timerWindow, 1);
     }
   }
   BattleCamera_SetCommandViewFar(0);

@@ -980,7 +980,7 @@ void Func_081a1810(void) {
   s32 i;
 
   for (i = 0; i < 24; i++)
-    Func_080140d8(entry++, 0);
+    Oam_AddSpriteAtDepthClamped(entry++, 0);
 }
 
 /// Allocates the 24 sprite entries of the scrolling picture's border strips,

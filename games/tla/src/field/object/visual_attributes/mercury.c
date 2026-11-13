@@ -237,11 +237,12 @@ struct ChainWork {
  * OamMatrix_AllocFromTransform(struct AffineTransform *source). */
 extern s32 AffineMatrix_BuildForEffect__f0d8740(
     struct ChainTransform *source) __asm__("OamMatrix_AllocFromTransform");
-/* VIEW(f0d8740): routine Func_080140d8 as void Func_080140d8(void *entry, s32
- * slot); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32
- * depth). */
-extern void Func_080140d8__f0d8740(void *entry,
-                                   s32 slot) __asm__("Func_080140d8");
+/* VIEW(f0d8740): routine Oam_AddSpriteAtDepthClamped as void
+ * Oam_AddSpriteAtDepthClamped(void *entry, s32 slot); f0d6674 has void
+ * Oam_AddSpriteAtDepthClamped(struct GroundParticle *sprite, s32 depth). */
+extern void
+Func_080140d8__f0d8740(void *entry,
+                       s32 slot) __asm__("Oam_AddSpriteAtDepthClamped");
 
 /// The heap slot 0x9c work's per-frame callback (Func_080d897c schedules it).
 /// For each of the eight slots it draws a sprite at the midpoint of each pair

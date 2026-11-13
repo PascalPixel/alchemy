@@ -40,7 +40,7 @@ FarCall_RuntimeTable:
 	export VramCache_FindFreeEntryFar, VramCache_FindFreeEntry
 	export DebugText_ClearFar, DebugText_Clear
 	export OamMatrix_AllocFromTransformFar, OamMatrix_AllocFromTransform
-	export Oam_AddSpriteAtDepthFar, Func_080140d8
+	export Oam_AddSpriteAtDepthFar, Oam_AddSpriteAtDepthClamped
 	export Window_LoadGraphicsFar, Window_LoadGraphics
 	export Palette_LoadBasicSpriteColorsFar, Palette_LoadBasicSpriteColors
 	export Transform_ResetFar, Transform_Reset

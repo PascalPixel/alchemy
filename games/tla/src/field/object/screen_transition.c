@@ -1886,7 +1886,7 @@ void FadeOverlay_DrawMarks(void) {
     mark->x = ((u32)(x >> 16) & 0xfff0) - cameraX;
     screenRow = (z >> 16) & 0xf0;
     mark->y = screenRow - cameraZ - height + 16;
-    Func_080140d8(mark, 0);
+    Oam_AddSpriteAtDepthClamped(mark, 0);
   }
   x += 0x100000;
   height = MapGrid_GetTerrainHeightFar(terrainLayer, x, z + 0x100000) >> 16;
@@ -1904,7 +1904,7 @@ void FadeOverlay_DrawMarks(void) {
     mark->x = ((u32)(x >> 16) & 0xfff0) - cameraX;
     screenRow = (z >> 16) & 0xf0;
     mark->y = screenRow - cameraZ - height + 16;
-    Func_080140d8(mark, 0);
+    Oam_AddSpriteAtDepthClamped(mark, 0);
   }
 }
 
@@ -1974,7 +1974,7 @@ void Func_080d1ae4(void) {
     m->x = (u16)(x - cameraX) - 8;
     m->y = (u16)(((u16)row & 0xf0) - cameraZ) - 32;
     mark = m + 1;
-    Func_080140d8(m, 1);
+    Oam_AddSpriteAtDepthClamped(m, 1);
   }
   a = cells + (x + 8) / 16 + (row / 16 - 1) * 128;
   b = cells + (x - 8) / 16 + (row / 16 - 1) * 128;
@@ -1985,7 +1985,7 @@ void Func_080d1ae4(void) {
     m->tile = tile;
     m->x = (u16)(x - cameraX) - 8;
     m->y = (u16)(((u16)row & 0xf0) - cameraZ) - 16;
-    Func_080140d8(m, 1);
+    Oam_AddSpriteAtDepthClamped(m, 1);
   }
 }
 

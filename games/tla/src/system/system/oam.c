@@ -58,8 +58,9 @@ s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
   return index;
 }
 
-/// Link entry at the head of its priority bucket (0-239).
-void Func_080140d8(void *entry, s32 slot) {
+/// As Oam_AddSpriteAtDepth, with the depth clamped to 0-239 in place of
+/// 0-255: links entry at the head of its priority bucket.
+void Oam_AddSpriteAtDepthClamped(void *entry, s32 slot) {
   u8 *mask;
   void **buckets;
   s32 bit;

@@ -721,11 +721,12 @@ struct ChainWork__f0d9b80 {
  * OamMatrix_AllocFromTransform(struct AffineTransform *source). */
 extern s32 AffineMatrix_BuildForEffect__f0d9b80(
     struct ChainTransform *source) __asm__("OamMatrix_AllocFromTransform");
-/* VIEW(f0d9b80): routine Func_080140d8 as void Func_080140d8(void *entry, s32
- * slot); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32
- * depth). */
-extern void Func_080140d8__f0d9b80(void *entry,
-                                   s32 slot) __asm__("Func_080140d8");
+/* VIEW(f0d9b80): routine Oam_AddSpriteAtDepthClamped as void
+ * Oam_AddSpriteAtDepthClamped(void *entry, s32 slot); f0d6674 has void
+ * Oam_AddSpriteAtDepthClamped(struct GroundParticle *sprite, s32 depth). */
+extern void
+Func_080140d8__f0d9b80(void *entry,
+                       s32 slot) __asm__("Oam_AddSpriteAtDepthClamped");
 
 void Func_080d9b80(void) {
   struct ChainWork__f0d9b80 *work = Ram_HeapSlots->unk84[7];
@@ -1309,11 +1310,12 @@ struct TileEffectWork *Func_080da9a8(s32 kind) {
   return work;
 }
 
-/* VIEW(f0da3bc): routine Func_080140d8 as void Func_080140d8(void *entry, s32
- * slot); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32
- * depth). */
-extern void Func_080140d8__f0da3bc(void *entry,
-                                   s32 slot) __asm__("Func_080140d8");
+/* VIEW(f0da3bc): routine Oam_AddSpriteAtDepthClamped as void
+ * Oam_AddSpriteAtDepthClamped(void *entry, s32 slot); f0d6674 has void
+ * Oam_AddSpriteAtDepthClamped(struct GroundParticle *sprite, s32 depth). */
+extern void
+Func_080140d8__f0da3bc(void *entry,
+                       s32 slot) __asm__("Oam_AddSpriteAtDepthClamped");
 
 // The transform as this function builds it, a word at a time.
 

@@ -174,11 +174,12 @@ struct SparkleWork {
   s32 stopped;
 };
 
-/* VIEW(motes): routine Func_080140d8 as void Func_080140d8(void *entry, s32
- * priority); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32
- * depth). */
-extern void Func_080140d8__motes(void *entry,
-                                 s32 priority) __asm__("Func_080140d8");
+/* VIEW(motes): routine Oam_AddSpriteAtDepthClamped as void
+ * Oam_AddSpriteAtDepthClamped(void *entry, s32 priority); f0d6674 has void
+ * Oam_AddSpriteAtDepthClamped(struct GroundParticle *sprite, s32 depth). */
+extern void
+Func_080140d8__motes(void *entry,
+                     s32 priority) __asm__("Oam_AddSpriteAtDepthClamped");
 
 void FieldEffect_UpdateSparkles(void) {
   struct SparkleWork *work;

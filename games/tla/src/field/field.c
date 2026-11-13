@@ -583,7 +583,7 @@ void Render_ApplyProjectedPlacement(struct LayeredSprite *object, s32 *pos,
     part->affine = 0;
     part->x = (px >> 16) - 8;
     part->y = y;
-    Func_080140d8(part, ((pz + pw) >> 16) + 60);
+    Oam_AddSpriteAtDepthClamped(part, ((pz + pw) >> 16) + 60);
   }
 
   if (scaleX == 0 || scaleY == 0)
@@ -610,7 +610,7 @@ void Render_ApplyProjectedPlacement(struct LayeredSprite *object, s32 *pos,
     part->y = y;
     part->affine = affine;
     part->affineIndex = matrix;
-    Func_080140d8(part, ((py + pz) >> 16) + 62);
+    Oam_AddSpriteAtDepthClamped(part, ((py + pz) >> 16) + 62);
   }
 }
 
@@ -786,9 +786,9 @@ void Func_0802254c(struct LayeredSprite *sprite, s32 *point, s32 *scale,
 
           if (slot <= 0)
             slot = 1;
-          Func_080140d8(sprite, slot);
+          Oam_AddSpriteAtDepthClamped(sprite, slot);
         } else {
-          Func_080140d8(sprite, depth);
+          Oam_AddSpriteAtDepthClamped(sprite, depth);
         }
       }
       if (sprite->flags & 1) {
@@ -807,9 +807,9 @@ void Func_0802254c(struct LayeredSprite *sprite, s32 *point, s32 *scale,
         shadow->affine = affine;
         shadow->affineIndex = matrix;
         if (depth == 0)
-          Func_080140d8(shadow, 0);
+          Oam_AddSpriteAtDepthClamped(shadow, 0);
         else
-          Func_080140d8(shadow, depth);
+          Oam_AddSpriteAtDepthClamped(shadow, depth);
       }
       return;
     }

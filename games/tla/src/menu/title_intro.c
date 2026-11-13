@@ -969,7 +969,7 @@ column:
           for (j = 0, x = PROMPT_X; j < PROMPT_SPRITES; j++) {
             sprite->x = x;
             sprite->y = y;
-            Func_080140d8(sprite, 0);
+            Oam_AddSpriteAtDepthClamped(sprite, 0);
             x += 32;
             sprite++;
           }
@@ -978,7 +978,7 @@ column:
         for (j = 0, x = PROMPT_X; j < PROMPT_SPRITES; j++) {
           sprite->x = x;
           sprite->y = PROMPT_Y;
-          Func_080140d8(sprite, 0);
+          Oam_AddSpriteAtDepthClamped(sprite, 0);
           x += 32;
           sprite++;
         }

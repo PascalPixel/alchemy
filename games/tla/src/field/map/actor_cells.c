@@ -373,7 +373,7 @@ void Func_080eb01c(struct EffectSprite *sprite) {
   sprite->oam.y = screenY;
   sprite->oam.affineMode = affineMode;
   sprite->oam.matrix = matrix;
-  Func_080140d8(sprite, sprite->depth);
+  Oam_AddSpriteAtDepthClamped(sprite, sprite->depth);
 }
 
 struct ScreenSprite {

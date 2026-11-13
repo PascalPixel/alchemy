@@ -81,7 +81,7 @@ void Resource_ReservedNoOp(s32 count);
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 
-void Func_080140d8(void *entry, s32 slot);
+void Oam_AddSpriteAtDepthClamped(void *entry, s32 slot);
 
 void Decompress_Halfwords(const void *source, void *destination);
 

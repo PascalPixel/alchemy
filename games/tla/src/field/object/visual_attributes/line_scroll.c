@@ -370,12 +370,13 @@ struct GroundParticleWork {
   struct GroundParticle__visual_attributes particles[64];
 };
 
-/* VIEW(visual_attributes): routine Func_080140d8 as void Func_080140d8(struct
- * GroundParticle *sprite, s32 depth); module/system/system.h has void
- * Func_080140d8(void *entry, s32 slot). */
+/* VIEW(visual_attributes): routine Oam_AddSpriteAtDepthClamped as void
+ * Oam_AddSpriteAtDepthClamped(struct GroundParticle *sprite, s32 depth);
+ * module/system/system.h has void Oam_AddSpriteAtDepthClamped(void *entry, s32
+ * slot). */
 extern void Func_080140d8__visual_attributes(
     struct GroundParticle__visual_attributes *sprite,
-    s32 depth) __asm__("Func_080140d8");
+    s32 depth) __asm__("Oam_AddSpriteAtDepthClamped");
 
 void Func_080d64f0(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;

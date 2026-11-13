@@ -73,11 +73,11 @@ void Func_080d690c(void) {
  * EffectVector *position). */
 extern void Camera_WorldToScreen__visual_attributes(
     union FieldCoordinate *position) __asm__("Camera_WorldToScreen");
-/* VIEW(ground_particles): routine Func_080140d8 as void Func_080140d8(void
- * *sprite, s32 depth); f0d6674 has void Func_080140d8(struct GroundParticle
- * *sprite, s32 depth). */
-extern void Func_080140d8__ground_particles(void *sprite,
-                                            s32 depth) __asm__("Func_080140d8");
+/* VIEW(ground_particles): routine Oam_AddSpriteAtDepthClamped as void
+ * Oam_AddSpriteAtDepthClamped(void *sprite, s32 depth); f0d6674 has void
+ * Oam_AddSpriteAtDepthClamped(struct GroundParticle *sprite, s32 depth). */
+extern void Func_080140d8__ground_particles(void *sprite, s32 depth) __asm__(
+    "Oam_AddSpriteAtDepthClamped");
 
 /// Updates the 64 rising particles: each starts on the ground at a random
 /// point of the strip for 120 frames, drifts right by a random amount each

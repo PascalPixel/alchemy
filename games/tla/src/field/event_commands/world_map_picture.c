@@ -377,7 +377,7 @@ void WorldPicture_UpdateMarkers(void) {
       nearestY = placeY;
     }
     if (always != 0 || (gFrameCount & 15) <= 7)
-      Func_080140d8(marker++, 246);
+      Oam_AddSpriteAtDepthClamped(marker++, 246);
   } while (++i, place++, i < 128);
 
   if (gInput.held == 0) {
@@ -412,7 +412,7 @@ void WorldPicture_UpdateMarkers(void) {
       marker->x = WORLD_MAP_SCALE(nearestX) - 2;
       marker->y = WORLD_MAP_SCALE(nearestY) - 2;
     }
-    Func_080140d8(marker, 246);
+    Oam_AddSpriteAtDepthClamped(marker, 246);
   }
 
   marker = &Data_0202a620;
@@ -424,7 +424,7 @@ void WorldPicture_UpdateMarkers(void) {
     marker->x = WORLD_MAP_SCALE(cursorX) - 17;
     marker->y = WORLD_MAP_SCALE(cursorY) + 1;
   }
-  Func_080140d8(marker, 246);
+  Oam_AddSpriteAtDepthClamped(marker, 246);
 
   if (work->shown != nearest) {
     // The Japanese release prepares the window and draws the new name in the

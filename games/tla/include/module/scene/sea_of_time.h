@@ -19,22 +19,22 @@ struct EventWork_02001650 {
 };
 
 extern struct ActorPlacement gSeaOfTime_Room2Placements[];
-extern u32 gData_020022c4[];
+extern u32 gSeaOfTime_LapStamp[];
 
-void Func_02000c50(void);
+void SeaOfTime_TrackWaves(void);
 
 extern struct Trigger gSeaOfTime_Room1Triggers[];
 
-extern struct Trigger gData_0200242c[];
+extern struct Trigger gSeaOfTime_EntranceTriggers[];
 extern struct Trigger gSeaOfTime_Triggers[];
-extern s16 gData_0200257c[1];
-void Func_0200054c(void);
+extern s16 gSeaOfTime_RedPulseStep[1];
+void SeaOfTime_RideCurrent(void);
 
-void Func_02000a80(void);
+void SeaOfTime_CountLaps(void);
 
-extern u32 gData_0200205c[];
-extern u32 gData_02002098[];
-extern u32 gData_020020d4[];
-extern s32 gData_02002154[];
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
+extern u32 gFieldEffect_LongScript[];
+extern s32 gSeaOfTime_ShipRests[];
 
 #endif

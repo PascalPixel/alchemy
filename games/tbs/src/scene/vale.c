@@ -3139,19 +3139,19 @@ static void Vale_TrailSparkles(struct Actor *source) {
 /// The Move hand rises, spins and shrinks for 31 frames, bursts into eight
 /// sparkles with SE_PSYNERGY_SPARKLE, and is put out of sight.
 static void Vale_VanishMoveHand(struct Actor *emitter) {
-  s32 frameCountdown;
+  s32 frame;
 
   Sound_Play(SE_CAST);
 
-  for (frameCountdown = 30; frameCountdown >= 0; frameCountdown--) {
+  for (frame = 0; frame < 31; frame++) {
     emitter->y.fixed += px(1);
     emitter->facing = (u16)(emitter->facing + TRIG_TURN / 8);
-    emitter->scaleX -= 2048;
-    emitter->scaleY -= 2048;
+    emitter->scaleX -= Q16_ONE / 32;
+    emitter->scaleY -= Q16_ONE / 32;
     wait(1);
   }
 
-  for (frameCountdown = 7; frameCountdown >= 0; frameCountdown--) {
+  for (frame = 0; frame < 8; frame++) {
     struct Actor *particle = FieldActor_Create(
         SPRITE_SPARKLE, emitter->x.fixed, emitter->y.fixed, emitter->z.fixed);
 

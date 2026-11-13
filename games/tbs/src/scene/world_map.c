@@ -1726,7 +1726,7 @@ static void WorldMap_MeetFlint(void) {
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Sound_Play(SE_PSYNERGY_SPARKLE);
     FieldPsynergy_LoadResources(ABILITY_MOVE, 0);
-    for (i = 59; i >= 0; i--) {
+    for (i = 0; i < 60; i++) {
       if (gFrameCount & 2)
         Actor_SetColorMode(djinni, SPRITE_COLOR_WHITE);
       else
@@ -1767,7 +1767,7 @@ static void WorldMap_MeetFlint(void) {
     djinni->motionFlags = ACTOR_FALLS;
     djinni->velocityY = 0;
     djinni->groundHeight = 0;
-    for (i = 7; i >= 0; i--) {
+    for (i = 0; i < 8; i++) {
       djinni->facing += FACING_STEP;
       wait(1);
     }

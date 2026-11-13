@@ -4,21 +4,6 @@
 
 #include "../field_sequence_internal.h"
 
-/// A scene's encounter zones (gScene_EncounterRules, encounter_rules.s),
-/// ended by scene -1. Encounter_SelectMapZones takes the first rule that
-/// matches the scene and entrance and is not turned off.
-struct SceneEncounterRule {
-  s16 sceneId;               ///< -1 ends the table
-  s16 entrance;              ///< -1 for any entrance
-  s16 flag : 15;             ///< -1, or a flag that turns the rule off once set
-  s16 firstZoneOnGround : 1; ///< the first zone is for ground 0, not 1
-  /// The first of up to seven consecutive zones, rows of encounter_zones.c; 0
-  /// for none on any ground.
-  s16 firstZone;
-};
-
-extern const struct SceneEncounterRule gScene_EncounterRules[];
-
 /// encounter_zones.c defines the zones; the code reads them through struct
 /// EncounterZone or as halfwords (gEncounterZones in battle.h).
 
@@ -261,18 +246,6 @@ s16 Encounter_GetDjinnFormation(s32 djinni) {
 #endif
 }
 
-/// A rule choosing a scene's field music (gScene_MusicRules,
-/// scene_rules.s), ended by id -1.
-struct MapMusicRule {
-  s16 id;            ///< a scene, or an area
-  s16 entrance : 15; ///< -1 for any entrance
-  u16 idIsMap : 1;   ///< 1 when id is a scene, 0 when it is an area
-  s16 flag;          ///< -1, or a flag that must be set
-  s16 music;         ///< the song (sounds.h's MUS_ numbers)
-};
-
-extern const struct MapMusicRule gScene_MusicRules[];
-
 /// Chooses the current scene's field music (gMainRoutineWork.cue) from the
 /// first rule matching the scene or its area and the entrance; SOUND_KEEP_BGM
 /// when none does. Called by MainRoutine_Run on entering each scene, before
@@ -307,20 +280,6 @@ void Scene_ChooseMusic(void) {
 
   gMainRoutineWork.sceneMusic = music;
 }
-
-/// A rule naming the area a scene is in (gArea_NameRules, scene_rules.s),
-/// ended by id -1.
-struct AreaNameRule {
-  s16 id;            ///< a scene, or an area
-  s16 entrance : 15; ///< -1 for any entrance
-  u16 useMapId : 1;  ///< 1 when id is a scene, 0 when it is an area
-  /// The area name, as an offset that most readers add to MsgDebugAreaName.
-  /// 0 is the Title's name (area 0's rule), which a scene no rule
-  /// matches also gets.
-  s32 areaNameIndex;
-};
-
-extern const struct AreaNameRule gArea_NameRules[];
 
 /// Returns the area name of sceneId and entrance, from the first rule matching
 /// the scene or its area; 0, the Title's name, when none does. No

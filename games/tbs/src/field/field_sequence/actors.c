@@ -61,8 +61,6 @@ s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood) {
 
 #define MAPGRID_CELLS ((struct MapGridCell *)Ram_MapGridCellBuffer)
 
-extern const struct ActorPlacement gField_DefaultActorPlacements[2];
-
 /// Creates the actors of a scene's actor placement table (ended by
 /// sprite -1), and records the table among the scene's tables. Sprites 0 to 7
 /// are the party's characters and take their own actor slot; other actor

@@ -55,15 +55,16 @@ struct DjinnRecoveryTable *Djinn_GetRecoveryTable(s32 enemySide) {
 /// random battle's enemies, and by the Lucky Dice game in Tolbi to set its
 /// prizes.
 u32 Party_GetAverageLevel(void) {
-  s32 partySize = Party_CountMembers();
   s32 totalLevels = 0;
+  s32 partySize = Party_CountMembers();
   s32 i;
 
   if (partySize == 0)
     return 0;
   for (i = 0; i < partySize; i++)
     totalLevels += Unit_Get(gMainRoutineWork.party[i])->level;
-  return totalLevels / partySize;
+  totalLevels /= partySize;
+  return totalLevels;
 }
 
 /// Returns the unit of `unitId`: ISAAC to PIERS are the playable
@@ -75,8 +76,10 @@ struct Unit *Unit_Get(u32 unitId) {
   // lr into r3.
   UNUSED void *caller = __builtin_return_address(0);
 
+  struct Unit *units = gMainRoutineWork.units;
+
   if (unitId <= PIERS)
-    return &gMainRoutineWork.units[unitId];
+    return &units[unitId];
   if (unitId - FIRST_ENEMY_UNIT < ENEMY_BATTLE_SIZE && gEnemyUnits != NULL)
     return &((struct Unit *)gEnemyUnits)[unitId - FIRST_ENEMY_UNIT];
   return NULL;
@@ -110,11 +113,12 @@ void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
                                  s32 direction) {
   s32 i;
 
-  for (i = 0; i < count; i++) {
-    if (direction != 0)
-      second[i] = first[i];
-    else
-      first[i] = second[i];
+  if (direction != 0) {
+    for (i = 0; i < count; i++)
+      *second++ = *first++;
+  } else {
+    for (i = 0; i < count; i++)
+      *first++ = *second++;
   }
 }
 
@@ -425,10 +429,11 @@ void Unit_Calculate(s32 unitId) {
 /// entering a scene (Scene_Arrive, FieldSequence_Run) and at the end of
 /// an event, so the encounter rate follows the cap.
 void GameFlag_RefreshLureCap(void) {
-  s32 partySize = Party_CountMembers();
+  s32 partySize;
   s32 member;
 
   GameFlag_Clear(FLAG_LURE_CAP);
+  partySize = Party_CountMembers();
   for (member = 0; member < partySize; member++) {
     struct Unit *unit = Unit_Get(gMainRoutineWork.party[member]);
     s32 slot;
@@ -456,14 +461,25 @@ void GameFlag_RefreshLureCap(void) {
 u32 BuildStamp_GetTime(void) {
   // The stamp is six ASCII digits, hhmmss.
   const u8 *digits = Resource_GetTableEntry((s32)&ResourceId_BuildStamp);
-  s32 hours = (digits[0] - '0') * 10 + digits[1] - '0';
-  s32 minutes = (digits[2] - '0') * 10 + digits[3] - '0';
-  s32 seconds = (digits[4] - '0') * 10 + digits[5] - '0';
-  u32 stamp = (((hours * 16 + minutes) * 64 + seconds) | 0x1000) & 0xffff;
+  s32 hours;
+  s32 minutes;
+  s32 seconds;
+  s16 time;
+  s32 stamp;
+
+  hours = (*digits++ - '0') * 10;
+  hours += *digits++ - '0';
+  minutes = (*digits++ - '0') * 10;
+  minutes += *digits++ - '0';
+  seconds = (digits[0] - '0') * 10;
+  seconds += digits[1] - '0';
+  time = (hours * 16 + minutes) * 64 + seconds;
+  time |= 0x1000;
+  stamp = time;
 
   if (gDebugMode != 0)
-    stamp |= 0x8000;
-  return stamp;
+    stamp |= 0xFFFF8000;
+  return (u16)stamp;
 }
 
 /// Clears the game-state header, the scene state with the Colosso's inventory

@@ -355,7 +355,6 @@ s32 gGomaCavePillar_WitnessFrames;
 /// over and falls into the room below with a crash that shakes the screen.
 static void GomaCavePillar_PushStumpOver(void) {
   s32 column;
-  s32 zero;
   void (*fragmentFunc)(void);
   s32 fixedX;
   s32 fixedZ;
@@ -374,7 +373,6 @@ static void GomaCavePillar_PushStumpOver(void) {
   Event_Start();
   if (column == 25) {
     overlayActor = Actor_Get(ACTOR_MASK_FOR_STUMP);
-    zero = 0;
     overlayActor->layer = 1;
     spriteActor = Actor_Get(ACTOR_MASK_FOR_STUMP);
     Actor_SetSpriteFlags(spriteActor, 0);
@@ -395,7 +393,7 @@ static void GomaCavePillar_PushStumpOver(void) {
     Actor_SetDestinationOffset(ACTOR_STUMP, 2, 0);
     Actor_WaitForMoveById(ACTOR_STUMP);
     bounceActor = Actor_Get(ACTOR_STUMP);
-    bounceActor->bounce = zero;
+    bounceActor->bounce = 0;
     gravityActor = Actor_Get(ACTOR_STUMP);
     gravityActor->gravity = px(3) / 5;
     Event_Wait(3);
@@ -426,8 +424,8 @@ static void GomaCavePillar_PushStumpOver(void) {
     fallingSpeed += speedBand;
     style = (u32)(Import_RandomNext() << 1) >> 16;
     fallingSpeed = -fallingSpeed;
-    GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, zero,
-                                 fallingSpeed, style, zero);
+    GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, 0,
+                                 fallingSpeed, style, 0);
     Event_Wait(20);
     // It lands below; the shake dies down before the map grid cells change.
     Sound_Play(SE_CAST);

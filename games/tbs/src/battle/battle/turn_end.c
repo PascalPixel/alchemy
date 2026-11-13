@@ -31,17 +31,15 @@ s32 BattleUnit_CountDownAttackStage(s32 unitId) {
   struct Unit *unit = Unit_GetFar(unitId);
 
   if (unit->attackTurns != 0) {
-    s32 cleared;
     unit->attackTurns--;
-    cleared = 0;
     if (unit->attackTurns == 0) {
-      unit->attackStage = cleared;
+      unit->attackStage = 0;
       return 1;
     }
     if (unit->attackStage < 0) {
       if (BattleUnit_RollCounterEarlyEnd(unitId, unit->attackTurns, 30) != 0) {
-        unit->attackStage = cleared;
-        unit->attackTurns = cleared;
+        unit->attackStage = 0;
+        unit->attackTurns = 0;
         return 1;
       }
     }

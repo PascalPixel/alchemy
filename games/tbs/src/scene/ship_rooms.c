@@ -2541,7 +2541,6 @@ static void ShipRooms_SetUpCaptainsQuarters(void) {
   s32 done;
   s32 x;
   s32 heading;
-  u16 zero;
 
   if (!GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT)) {
     ShipRooms_PlaceAnchorCharm();
@@ -2562,12 +2561,11 @@ static void ShipRooms_SetUpCaptainsQuarters(void) {
     ShipRooms_PlaceActor(ACTOR_QUARTERS_KAJA, x, 600, FACING_NORTH_NORTHWEST);
     Actor_SetSpeed(ACTOR_QUARTERS_KAJA, 0.8);
     actor->userValue = done;
-    zero = 0;
-    actor->riseEnabled = zero;
+    actor->riseEnabled = 0;
     actor->collisionFlags |= 128;
     actor->update = ShipRooms_PaceCaptainsQuarters;
     other = Actor_Get(ACTOR_QUARTERS_CAPTAIN);
-    other->riseCounter = zero;
+    other->riseCounter = 0;
     other->update = ShipRooms_WatchPacer;
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       ShipRooms_PlaceActor(ACTOR_PARTY_LEADER, x, 666, FACING_NORTHWEST);

@@ -165,7 +165,6 @@ s32 Sprite_ResetAnimations(struct Sprite *sprite) {
 /// viewer.
 void SpriteAnimation_Reset(struct SpriteAnimation *layer) {
   void **pictures;
-  s32 zero;
   struct AnimationMetadata *metadata;
 
   if (layer != NULL) {
@@ -180,10 +179,9 @@ void SpriteAnimation_Reset(struct SpriteAnimation *layer) {
       layer->scripts = metadata->animation;
       layer->pictures = pictures;
       layer->mode = metadata->pictureCodec;
-      zero = 0;
       layer->picture = SPRITE_PICTURE_NONE;
-      layer->script = (u8 *)zero;
-      layer->scriptOffset = zero;
+      layer->script = NULL;
+      layer->scriptOffset = 0;
     }
   }
 }

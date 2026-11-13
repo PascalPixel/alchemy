@@ -293,7 +293,6 @@ void MercuryLighthouse_HopAcrossPool(void) {
   u32 keys;
   s32 n;
   s32 i;
-  u8 zero;
   union FieldCoordinate pos[3];
 
   state = *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
@@ -344,8 +343,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
                                     pos[2].fixed);
       if (sprite != NULL) {
         Sprite_StartAnimation(sprite, 6);
-        zero = 0;
-        sprite->flags = zero;
+        sprite->flags = 0;
       }
       state->stepEffect = obj;
     }

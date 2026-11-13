@@ -149,7 +149,6 @@ void Exit_StartStairsDown(void) {
 /// Entrance_PlayArrival; frees the sprite part
 /// Exit_PrepareAnimation registered.
 void Entrance_EndArrivalAnimation(s32 animation) {
-  s32 zero;
   s32 mask;
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
   struct Sprite *spriteAnimation = leader->sprite;
@@ -157,9 +156,8 @@ void Entrance_EndArrivalAnimation(s32 animation) {
       (struct SpriteAnimation *)Sprite_AddAnimationFar(spriteAnimation,
                                                        SPRITE_DOORWAY);
 
-  zero = 0;
   mask = FIELD_CELL_MASK;
-  spriteAnimation->flags = zero;
+  spriteAnimation->flags = 0;
   eff->colorMode = SPRITE_COLOR_HIDDEN;
   // The coordinates as plain words: through .fixed, the union moves a store.
   *(s32 *)&leader->x = (*(s32 *)&leader->x & mask) + px(8);
@@ -170,7 +168,7 @@ void Entrance_EndArrivalAnimation(s32 animation) {
   // pixel a frame.
   spriteAnimation->count = 1;
   SpriteAnimation_ClearFar(spriteAnimation->entries[1]);
-  spriteAnimation->entries[1] = (void *)zero;
+  spriteAnimation->entries[1] = NULL;
   spriteAnimation->flags = SPRITE_FLAG_SHADOW;
   leader->acceleration = Q16_ONE;
   leader->speedLimit = Q16_ONE;

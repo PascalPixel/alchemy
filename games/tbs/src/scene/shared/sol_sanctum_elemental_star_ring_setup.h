@@ -188,7 +188,6 @@ void SolSanctum_StartFloatingLights(s32 first, u32 count) {
   struct SolSanctumRingEntry *entry;
   struct FieldEffect *light;
   u32 i;
-  s32 none;
   s32 cleared;
 
   list = HeapSlot_AllocEwram(HEAP_SLOT_SOL_SANCTUM_LIGHTS,
@@ -197,10 +196,9 @@ void SolSanctum_StartFloatingLights(s32 first, u32 count) {
   Dma_Fill32(0, list, sizeof(struct SolSanctumRingList));
   if (count > SOL_SANCTUM_RING_MAX)
     count = SOL_SANCTUM_RING_MAX;
-  none = 0;
-  i = none;
+  i = 0;
   if (count != 0) {
-    cleared = none;
+    cleared = 0;
     do {
       light = (struct FieldEffect *)Actor_GetById(first);
       {

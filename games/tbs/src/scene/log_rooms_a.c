@@ -2168,12 +2168,11 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   switch (gMainRoutineWork.entrance) {
   case LOG_ROOMS_A_FROM_VAULT_EAST_SOUTHEAST: {
-    s32 zero = 0;
 
     // The gem owner's house: he stands on the floor.
-    Actor_Get(ACTOR_GEM_OWNER)->motionFlags = zero;
-    Actor_Get(ACTOR_GEM_OWNER)->y.fixed = zero;
-    Actor_Get(ACTOR_GEM_OWNER)->groundHeight = zero;
+    Actor_Get(ACTOR_GEM_OWNER)->motionFlags = 0;
+    Actor_Get(ACTOR_GEM_OWNER)->y.fixed = 0;
+    Actor_Get(ACTOR_GEM_OWNER)->groundHeight = 0;
   } break;
   case LOG_ROOMS_A_FROM_VAULT_NORTHWEST:
     // The mayor's house: Ivan waits a step back once met and is gone once he

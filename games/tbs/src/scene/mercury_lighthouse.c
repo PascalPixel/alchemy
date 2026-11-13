@@ -1840,7 +1840,6 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
 static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   s32 rowOffset;
   u32 random;
-  s32 zero;
   s32 wave;
   s32 particleIndex;
   s32 particleX;
@@ -1858,8 +1857,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   options.palette = 5;
   options.type = SPRITE_GLINT;
   options.script = gGlint_TwinkleScript;
-  zero = 0;
-  wave = zero;
+  wave = 0;
   // Two bursts spread sparks across the water before it begins to part.
   do {
     u32 particleX, z;
@@ -1886,8 +1884,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     wave = (wave + 1);
   } while ((u32)wave <= 15);
   Event_Wait(40);
-  zero = 0;
-  wave = zero;
+  wave = 0;
   do {
     u32 particleX, z;
     s32 particleSpeed;
@@ -1924,8 +1921,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   options.startScaleY = 7 * Q16_ONE / 10;
   options.targetScaleX = 6 * Q16_ONE / 5;
   options.targetScaleY = 6 * Q16_ONE / 5;
-  zero = 0;
-  wave = zero;
+  wave = 0;
   // Reveal the opening one map row at a time, trailing a stream of particles.
   do {
     s32 particleSpeed;

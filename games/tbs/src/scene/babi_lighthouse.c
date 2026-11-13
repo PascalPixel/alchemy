@@ -1383,7 +1383,6 @@ s32 BabiLighthouse_SetupMap(void) {
   struct MainRoutineWork *state;
   s32 x;
   s32 z;
-  u8 zero;
 
   wait(1);
   gFieldWork->transition =
@@ -1437,32 +1436,31 @@ s32 BabiLighthouse_SetupMap(void) {
     placedActor->priorityFlags = 0;
     placedActor->wait = 0;
     placedActor->sprite->image.priority = 3;
-    zero = 0;
-    placedActor->sprite->flags = zero;
+    placedActor->sprite->flags = 0;
     placedActor->sprite->rotation = TRIG_TURN * 3 / 4;
     Actor_SetAnimation(ACTOR_FALLEN_SOLDIER_NO_MATCH, ANIM_STILL);
     placedActor = Actor_Get(ACTOR_FALLEN_STRONGMAN_ONLY_TWO);
-    placedActor->collisionFlags = zero;
-    placedActor->priorityFlags = zero;
+    placedActor->collisionFlags = 0;
+    placedActor->priorityFlags = 0;
     placedActor->wait = 30;
     placedActor->sprite->image.priority = 3;
-    placedActor->sprite->flags = zero;
+    placedActor->sprite->flags = 0;
     placedActor->sprite->rotation = TRIG_TURN / 4;
     Actor_SetAnimation(ACTOR_FALLEN_STRONGMAN_ONLY_TWO, ANIM_STILL);
     placedActor = Actor_Get(ACTOR_FALLEN_SOLDIER_KICKED_ASIDE);
-    placedActor->collisionFlags = zero;
-    placedActor->priorityFlags = zero;
+    placedActor->collisionFlags = 0;
+    placedActor->priorityFlags = 0;
     placedActor->wait = 60;
     placedActor->sprite->image.priority = 3;
-    placedActor->sprite->flags = zero;
+    placedActor->sprite->flags = 0;
     placedActor->sprite->rotation = TRIG_TURN / 2;
     Actor_SetAnimation(ACTOR_FALLEN_SOLDIER_KICKED_ASIDE, ANIM_STILL);
     placedActor = Actor_Get(ACTOR_FALLEN_MAN_SCORCHED_GROUND);
-    placedActor->collisionFlags = zero;
-    placedActor->priorityFlags = zero;
+    placedActor->collisionFlags = 0;
+    placedActor->priorityFlags = 0;
     placedActor->wait = 90;
     placedActor->sprite->image.priority = 3;
-    placedActor->sprite->flags = zero;
+    placedActor->sprite->flags = 0;
     placedActor->sprite->rotation = TRIG_TURN / 2;
     Actor_SetAnimation(ACTOR_FALLEN_MAN_SCORCHED_GROUND, ANIM_STILL);
   } else if (mapCopy == (s32)&SceneId_BabiLighthouseLuff) {

@@ -1680,10 +1680,9 @@ static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep) {
       sprite = effect->sprite;
       Actor_StartScript(effect, gSanctum_OwnerEffectScript);
       {
-        s32 zero = 0;
 
-        effect->motionFlags = zero;
-        effect->timer = zero;
+        effect->motionFlags = 0;
+        effect->timer = 0;
       }
       effect->userValue = orbitStep;
       effect->update = Sanctum_UpdateOrbitingEffect;

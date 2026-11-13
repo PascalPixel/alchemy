@@ -1686,19 +1686,17 @@ static void VenusLighthouse_FixPillarAtDestination(struct Actor *pillar) {
 /// pillars.
 static void VenusLighthouse_ReleaseFallenCarryPillar(struct Actor *pillar) {
   struct Sprite *sprite;
-  s32 zero;
   struct Actor *passageEffect;
 
   sprite = pillar->sprite;
   if (sprite->image.priority == 3) {
     sprite->image.priority = 1;
-    zero = 0;
-    pillar->bounce = zero;
+    pillar->bounce = 0;
     passageEffect = VenusLighthouse_CreateBlendedPassageEffect(
         pillar->x.fixed, 0, px(512), SPRITE_CRATE);
     Actor_WaitUntilIdle(pillar);
-    pillar->x.fixed = zero;
-    pillar->z.fixed = zero;
+    pillar->x.fixed = 0;
+    pillar->z.fixed = 0;
     Actor_Release(passageEffect);
   } else {
     VenusLighthouse_MoveCarryPillar();

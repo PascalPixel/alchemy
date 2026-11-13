@@ -1743,7 +1743,6 @@ static void TolbiShipDeck_SightSeaMonsters(void) {
 /// The cry is "It's no use. It's too late!" It plays at
 /// TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD.
 static void TolbiShipDeck_MonstersBoard(void) {
-  s32 zero;
   const s32 *shared;
 
   Event_Start();
@@ -1770,10 +1769,9 @@ static void TolbiShipDeck_MonstersBoard(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 2.4);
   Actor_SetDestination(ACTOR_PARTY_LEADER, 154, 609);
   Sound_Play(SE_ENEMY_CRY);
-  zero = 0;
-  Actor_Get(ACTOR_SEA_FIRST_ATTACK_MONSTER)->timer = zero;
-  Actor_Get(ACTOR_SEA_FIRST_ATTACK_MONSTER + 1)->timer = zero;
-  Actor_Get(ACTOR_SEA_FIRST_ATTACK_MONSTER + 2)->timer = zero;
+  Actor_Get(ACTOR_SEA_FIRST_ATTACK_MONSTER)->timer = 0;
+  Actor_Get(ACTOR_SEA_FIRST_ATTACK_MONSTER + 1)->timer = 0;
+  Actor_Get(ACTOR_SEA_FIRST_ATTACK_MONSTER + 2)->timer = 0;
   Actor_SetPosition(ACTOR_SEA_FIRST_ATTACK_MONSTER, 32, 484);
   Actor_SetPosition(ACTOR_SEA_FIRST_ATTACK_MONSTER + 1, 84, 496);
   Actor_SetPosition(ACTOR_SEA_FIRST_ATTACK_MONSTER + 2, 16, 596);

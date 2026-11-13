@@ -382,7 +382,6 @@ static void ColosseumAzartMatch_GrowPlant(void) {
 /// (FLAG_PIPES_MOVED).
 static void ColosseumAzartMatch_DousePipe(void) {
   struct Actor *actor;
-  s32 none;
 
   GameFlag_Set(FLAG_PIPES_MOVED);
   actor = Actor_Get(ACTOR_PIPE_WEST);
@@ -391,13 +390,12 @@ static void ColosseumAzartMatch_DousePipe(void) {
   FieldCamera_MoveTo(600, CAMERA_KEEP, 200, 1);
   Actor_SelectAnimation(actor, 3);
   FieldCamera_WaitForMove();
-  none = 0;
-  actor->motionFlags = none;
+  actor->motionFlags = 0;
   actor->acceleration = px(2) / 5;
   actor->speedLimit = px(4) / 5;
   FieldActor_SetMoveTargetFixed(actor, actor->x.fixed, px(8), actor->z.fixed);
   actor = Actor_Get(ACTOR_PIPE_EAST);
-  actor->motionFlags = none;
+  actor->motionFlags = 0;
   actor->acceleration = px(2) / 5;
   actor->speedLimit = px(4) / 5;
   FieldActor_SetMoveTargetFixed(actor, actor->x.fixed, px(32), actor->z.fixed);
@@ -741,7 +739,6 @@ s32 ColosseumAzartMatch_Initialize(void) {
   struct Actor *actor;
   s32 hit;
   s32 x;
-  u8 zero;
   s32 col;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_FADE, 0);
@@ -766,22 +763,21 @@ s32 ColosseumAzartMatch_Initialize(void) {
   Task_AddFrame(ColosseumAzartMatch_UpdateBrokenBridge, TASK_PASS_FRAME);
   actor = Actor_Get(ACTOR_GROWTH_PLANT);
   actor->layer = 1;
-  zero = 0;
   if (GameFlag_Get(FLAG_PLANT_GROWN)) {
     Actor_SelectAnimation(actor, 4);
     Actor_SetSpriteFlags(actor, 0);
-    actor->collisionFlags = zero;
+    actor->collisionFlags = 0;
     actor->priorityFlags = 3;
     MapGrid_CopyCellAttributes(47, 24, 1, 1, 47, 12);
   }
   actor = Actor_Get(ACTOR_LOG_NORTH_SOUTH);
   col = FIELD_CELL(actor->z.fixed);
-  actor->motionFlags = zero;
+  actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(64, 24, 3, 1, 64, col);
   actor = Actor_Get(ACTOR_LOG_EAST_WEST);
   col = FIELD_CELL(actor->x.fixed);
-  actor->motionFlags = zero;
+  actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(63, 25, 1, 3, col, 9);
   // With the pipeworks' pillar pushed, water pours from the pipe above it
@@ -794,7 +790,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
   actor = Actor_Get(ACTOR_PIPE_WEST);
   if (GameFlag_Get(FLAG_PIPES_MOVED)) {
     MapGrid_CopyCellAttributes(43, 12, 1, 1, 41, 12);
-    actor->motionFlags = zero;
+    actor->motionFlags = 0;
     actor->acceleration = px(2) / 5;
     actor->speedLimit = px(4) / 5;
     actor->y.fixed = px(8);

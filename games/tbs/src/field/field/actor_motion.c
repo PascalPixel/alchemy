@@ -6,12 +6,10 @@
 
 /// SC_BASE: restarts the script at the next word, and returns 1 to run on.
 s32 ActorScript_SetBase(struct Actor *interpreter) {
-  s32 zero;
 
   // The word after the command becomes the script's start.
   interpreter->script = interpreter->script + interpreter->scriptCursor + 1;
-  zero = 0;
-  interpreter->scriptCursor = zero;
+  interpreter->scriptCursor = 0;
   return 1;
 }
 

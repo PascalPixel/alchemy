@@ -2417,7 +2417,6 @@ static void Vale_RoofMended(void) {
   s32 turnBack;
   s32 turnSide;
   struct Actor *turned;
-  s32 none;
   s32 flag;
   TaskFunc funcA;
   TaskFunc funcB;
@@ -2810,7 +2809,6 @@ static void Vale_RoofMended(void) {
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Event_OpenMessage(ACTOR_DORA, 0);
-  none = 0;
 
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
     gFieldWork->message++;
@@ -2828,10 +2826,10 @@ static void Vale_RoofMended(void) {
   // "Ahhh!"
   // "Be careful, ma'am!"
   FieldEvent_ShowTwoMessagesAndWait(ACTOR_DORA, 14, 2, 24, 2, ACTOR_GARET, 10,
-                                    14, 4, 14, none);
+                                    14, 4, 14, 0);
   Sound_Play(SE_RATTLE);
   actor = Actor_Get(ACTOR_DORA);
-  actor->sprite->flags = none;
+  actor->sprite->flags = 0;
   actor->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetSpeed(ACTOR_DORA, 3);
   Actor_WalkToAndWait(ACTOR_DORA, 364, 815);

@@ -285,7 +285,6 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *arc) {
   struct Actor *actor;
   struct DescendingArcSprite *sprite;
   s32 arcIndex;
-  u8 zero;
 
   for (arcIndex = 0; arcIndex <= 1; arcIndex++) {
     actor = Actor_CreateFar(SPRITE_GOLDEN_RINGS, source->x.fixed,
@@ -297,14 +296,13 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *arc) {
     sprite = (struct DescendingArcSprite *)actor->sprite;
     actor->motionFlags = 0;
     actor->timer = 0;
-    zero = 0;
     actor->watchedActor = source;
     actor->scaleY = Q16_ONE * 2 / 5;
     actor->scaleX = Q16_ONE * 2 / 5;
     if (sprite == NULL)
       continue;
     Sprite_StartAnimationFar((struct Sprite *)sprite, 0);
-    sprite->flags = zero;
+    sprite->flags = 0;
     VramCache_FreeEntry(sprite->slot);
     sprite->slot = effectWork->arcTileSlot;
     sprite->retainCacheEntry = 1;
@@ -312,7 +310,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *arc) {
     sprite->fullColor = 0;
     sprite->shape = 1;
     sprite->size = 2;
-    sprite->firstEntry->picture = zero;
+    sprite->firstEntry->picture = 0;
   }
   // BUG: failed allocations above leave a missing arc or sprite here.
   // Preserve the original partial-pair behavior until recovery is established.

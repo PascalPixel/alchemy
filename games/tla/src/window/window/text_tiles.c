@@ -121,8 +121,6 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
   glyphs = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
   attr = work->level << 12;
   Iwram_ClearWords(pens, 16);
-  /* FAKEMATCH(wrapper): both fills forwarded through Text_FillWords; as
-   * Iwram_FillWords called directly, 8 of 428 instructions differ in tla-en. */
   if (attr == 0xF000) {
     pens[1] = gText_ColourPens[work->colour & 15];
     pens[3] = 3;

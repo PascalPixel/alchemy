@@ -3782,9 +3782,6 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       else
         *cell = value - 16;
     }
-    /* FAKEMATCH(wrapper): the palette copies through CopyWords_; as a direct
-     * call to Iwram_CopyWords, 2 of 2239 instructions of
-     * BattleEffect_RunProjectileVolleyB differ in tla-en. */
     if (mode == 17)
       Iwram_CopyWords((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),

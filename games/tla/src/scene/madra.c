@@ -36,18 +36,18 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern const u8 gData_02002ff0[];
-
-const u8 *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (Event_GetFlag(0x8ff))
-    return gData_02002ff0;
-  return gData_02002d38;
+    return gMadra_PlacementsOnReturn;
+  return gMadra_Placements;
 }
 
-/* VIEW(madra): variable gData_02003308 as extern struct MadraPlacement gData_02003308[]; the definition has s32 gData_02003308[] = { (s32) gData_020032fc, 0x30014, (s32) gData_020032f0, 0x17000d, (s32) gData_020032f0, 0x110011, (s32) gData_020032f0...; tried as the definition's extern s32 gData_02003308[], it does not compile in tla-ja: games/tla/src/scene/madra.c:71: request for member `x' in something not a structure or union. */
-extern struct MadraPlacement gData_02003308__madra[] __asm__("gData_02003308");
+extern struct MadraPlacement gMadra_Doors[];
 
-void Func_0200006c(void) {
+/// The party leader walks into one of Madra's doors. Everyone stops, the door
+/// opens with its cell animation (gMadra_Doors), and the leader walks in and
+/// leaves by the exit of the door's number.
+void Madra_EnterDoor(void) {
   struct MadraEventWork *work;
   struct Actor *object;
   s16 *trigger;
@@ -70,10 +70,10 @@ next:
   index = *trigger - 1;
   Event_PlaySound(158);
   {
-    s32 x = gData_02003308__madra[index].x;
-    s32 y = gData_02003308__madra[index].y;
+    s32 x = gMadra_Doors[index].x;
+    s32 y = gMadra_Doors[index].y;
 
-    MapGrid_AnimateCells(gData_02003308__madra[index].data, x, y);
+    MapGrid_AnimateCells(gMadra_Doors[index].data, x, y);
   }
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
@@ -85,7 +85,9 @@ next:
   Event_End();
 }
 
-void Func_02000108(s32 arg) {
+/// Madra's weapon merchant sells across the counter (stock row 4). Spoken to
+/// from elsewhere, she talks of the raid, then of the Kibombo's weapons.
+void Madra_TalkToWeaponMerchant(s32 arg) {
   if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0xc000) {
     Shop_Run(4, arg);
@@ -100,7 +102,9 @@ void Func_02000108(s32 arg) {
   Event_ShowMessage(29, 0);
 }
 
-void Func_0200018c(s32 arg) {
+/// Madra's armor merchant sells across the counter (stock row 5), and otherwise
+/// talks of the Champa and the Kibombo.
+void Madra_TalkToArmorMerchant(s32 arg) {
   if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0xc000) {
     Shop_Run(5, arg);
@@ -115,7 +119,9 @@ void Func_0200018c(s32 arg) {
   Event_ShowMessage(30, 0);
 }
 
-void Func_02000210(s32 arg) {
+/// Madra's item merchant sells across the counter (stock row 6), and otherwise
+/// talks of her sister, hurt in the Champa's attack, and of Shin.
+void Madra_TalkToItemMerchant(s32 arg) {
   if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0xc000) {
     Shop_Run(6, arg);
@@ -130,14 +136,19 @@ void Func_02000210(s32 arg) {
   Event_ShowMessage(arg, 0);
 }
 
-void Func_02000294(void) {
+/// Karst, told the party does not know her sister, sends it off.
+/// "If you don't know my sister, then I have nothing to say to you."
+void Madra_KarstSendsPartyAway(void) {
   Event_SetMessageId((s32)&MsgIfYouDon);
   Actor_SetAnimationAndWait(33, 4);
   Event_Wait(20);
   Event_ShowMessageThenWait(33, 0, 10);
 }
 
-void Func_020002bc(void) {
+/// Karst, waiting near the mayor's house, asks twice whether the party has seen
+/// her sister.
+/// "Have you by chance seen a girl named Menardi?"
+void Madra_KarstAsksAboutMenardi(void) {
   Event_SetMessageId(MsgHaveYouBy);
   Event_OpenMessage(33, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
@@ -147,10 +158,10 @@ void Func_020002bc(void) {
       FieldActor_ShowEmote(33, 0x103, 30);
       Event_ShowMessageThenWait(33, 0, 10);
     } else {
-      Func_02000294();
+      Madra_KarstSendsPartyAway();
     }
   } else {
-    Func_02000294();
+    Madra_KarstSendsPartyAway();
   }
 }
 
@@ -164,19 +175,11 @@ void Map_PlayMapEdit(const void *data, s32 a, s32 b);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 y, s32 z);
 
-extern const u8 gData_02002ff0[];
-
-/* VIEW(events_b): variable MsgUsingPsynergyOn as extern u8 MsgUsingPsynergyOn; msg_ids.h has extern u8 MsgUsingPsynergyOn[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:191: `MsgUsingPsynergyOn__events_b' undeclared (first use in this function). */
-extern u8 MsgUsingPsynergyOn__events_b __asm__("MsgUsingPsynergyOn");
-
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ s32 Flag_Test(s32 flag) {
-  return Event_GetFlag(flag);
-}
-
-void Func_02000320(void) {
-  Event_SetMessageId((s32)&MsgUsingPsynergyOn__events_b);
+/// Karst feels the party's Mind Read.
+/// "Using Psynergy on me? Are you so dense that you don't know when to be
+/// afraid?"
+void Madra_MindReadKarst(void) {
+  Event_SetMessageId((s32)MsgUsingPsynergyOn);
   Actor_RunRepeatedMotion(33, 2);
   Event_Wait(20);
   FieldActor_ShowEmote(33, 0x108, 30);
@@ -186,8 +189,11 @@ void Func_02000320(void) {
   Event_ShowMessageThenWait(33, 0, 10);
 }
 
-void Func_0200036c(void) {
-  if (Flag_Test(0x20f) == 0) {
+/// Stepping near the mayor's house the first time on the return with Piers, the
+/// party hears Karst call for her sister.
+/// "Where could Menardi have gone? Where are you, my sister?"
+void Madra_KarstCallsForMenardi(void) {
+  if (Event_GetFlag(0x20f) == 0) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldActor_ShowEmote(33, 0x105, 30);
@@ -198,7 +204,9 @@ void Func_0200036c(void) {
   }
 }
 
-void Func_020003b8(s32 actor) {
+/// "Everyone here in Madra is afraid of the Kibombo now. Do they scare you,
+/// too?"
+void Madra_AskAfraidOfKibombo(s32 actor) {
   s32 msg = (s32)&MsgEveryoneHereIn;
 
   Event_SetMessageId(msg);
@@ -213,11 +221,14 @@ void Func_020003b8(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-void Func_02000404(void) {
+/// The worker at the hole into the catacombs asks whether the party is coming
+/// through, and sends it back while they work.
+/// "You comin' through here?"
+void Madra_AskComingThroughHole(void) {
   s32 msg;
 
   Actor_FaceActor(26, 4, 0);
-  if (Flag_Test(0x281)) {
+  if (Event_GetFlag(0x281)) {
     Event_SetMessageId((s32)&MsgYeahWellWe);
   } else {
     msg = (s32)&MsgYouCominThrough;
@@ -237,11 +248,13 @@ void Func_02000404(void) {
   Event_ShowMessage(26, 0);
 }
 
-void Func_02000490(void) {
+/// After the raid the worker is sealing the hole, and asks again.
+/// "Oh, uh... You coming through?"
+void Madra_AskComingThroughSealedHole(void) {
   s32 msg;
 
   Actor_FaceActor(26, 4, 0);
-  if (Flag_Test(0x281)) {
+  if (Event_GetFlag(0x281)) {
     Event_SetMessageId((s32)&MsgYeahUhWe);
   } else {
     msg = (s32)&MsgOhUhYou;
@@ -272,27 +285,16 @@ void Func_02000490(void) {
     /* FAKEMATCH(temporary): the angle held in a block local, as overlay       \
      * 6a3's PLACE has it, so it is built first and shifted before the         \
      * positions; as the angle passed straight to the call, 8 of 60            \
-     * instructions of Func_0200051c differ in tla-en, and 8 of 51 of          \
-     * Func_020005b8. */                                                       \
+     * instructions of Madra_WorkerBlocksHole differ in tla-en, and 8 of 51 of          \
+     * Madra_WorkerBlocksSealedHole. */                                                       \
     s32 angle_ = (angle);                                                      \
     Actor_SetPositionAndFacing(id, x, z, angle_);          \
   }
 
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void ObjSpeed(s32 id, s32 speed, s32 acceleration) {
-  Actor_SetSpeed(id, speed, acceleration);
-}
-
-static __inline__ void ObjSetPos(s32 id, s32 x, s32 z) {
-  Actor_WalkToAndWait(id, x, z);
-}
-
-static __inline__ void ObjCall2bf8(s32 id, s32 a) {
-  Actor_FaceDirectionAndWait(id, a);
-}
-
-void Func_0200051c(void) {
+/// The worker pops up out of the hole the first time the party steps on it,
+/// until the gate inspection is over (flag 0x910); afterwards the hole leads
+/// down into the catacombs.
+void Madra_WorkerBlocksHole(void) {
   if (Event_GetFlag(0x910)) {
     Event_PlaySound(123);
     Import_EventSetExitRequest(16);
@@ -301,64 +303,59 @@ void Func_0200051c(void) {
     Event_ResolvePendingActions(0);
     PLACE(26, PIXELS(744), PIXELS(257), FACING_SOUTH);
     Actor_GetById(4)->velocityY = PIXELS(5);
-    ObjSpeed(4, 0x20000, 0x10000);
-    ObjSetPos(4, 720, 244);
-    ObjCall2bf8(4, FACING_SOUTHEAST);
+    Actor_SetSpeed(4, 0x20000, 0x10000);
+    Actor_WalkToAndWait(4, 720, 244);
+    Actor_FaceDirectionAndWait(4, FACING_SOUTHEAST);
     PLACE(4, PIXELS(720), PIXELS(244), FACING_SOUTHEAST);
     Event_SetFlag(0x280);
-    Func_02000404();
+    Madra_AskComingThroughHole();
     Event_End();
   }
 }
 
-void Func_020005b8(void) {
+/// After the raid, the worker pops up out of the hole he is sealing.
+void Madra_WorkerBlocksSealedHole(void) {
   if (!Event_GetFlag(0x280)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     PLACE(26, PIXELS(744), PIXELS(256), FACING_SOUTH);
     Actor_GetById(4)->velocityY = PIXELS(5);
-    ObjSpeed(4, 0x20000, 0x10000);
-    ObjSetPos(4, 720, 244);
-    ObjCall2bf8(4, FACING_SOUTHEAST);
+    Actor_SetSpeed(4, 0x20000, 0x10000);
+    Actor_WalkToAndWait(4, 720, 244);
+    Actor_FaceDirectionAndWait(4, FACING_SOUTHEAST);
     PLACE(4, PIXELS(720), PIXELS(244), FACING_SOUTHEAST);
     Event_SetFlag(0x280);
-    Func_02000490();
+    Madra_AskComingThroughSealedHole();
     Event_End();
   }
 }
 
-extern const u8 gData_02002ff0[];
-
-// The scene's own event inlines: a habit of the whole game written once, as
-// event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ void CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  MapGrid_CopyCellAttributes(a, b, c, d, e, f);
-}
-
-const u8 *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (Event_GetFlag(0x8ff))
-    return gData_0200394c;
+    return gMadra_TriggersOnReturn;
   if (Event_GetFlag(0x8ab))
-    return gData_0200367c;
-  return gData_02003358;
+    return gMadra_TriggersAfterRaid;
+  return gMadra_TriggersBeforeRaid;
 }
 
-void Func_02000670(void) { CopyCells(109, 14, 3, 3, 45, 14); }
+void Madra_SealHoleCells(void) { MapGrid_CopyCellAttributes(109, 14, 3, 3, 45, 14); }
 
-void Func_0200068c(void) {
+/// On the return with Piers the hole is sealed: its picture and its cells are
+/// drawn closed.
+void Madra_SealHole(void) {
   MapGrid_CopyCellsLayered(51, 10, 3, 3, 45, 10);
-  Func_02000670();
+  Madra_SealHoleCells();
 }
 
 /// Madra's prepare step: sets up actor 26 (larger, its sprite flags set)
 /// and places actors 26 to 28, 33 and 66 by the story flags, then runs
-/// Func_02000f80 on entrance 9 and Func_020019d8 once on entrance 7.
+/// Madra_GrantPassageToOsenia on entrance 9 and Madra_MeetKarst once on entrance 7.
 s32 Scene_Initialize(void) {
   struct Actor *object;
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   if (Event_GetFlag(0x8ff)) {
-    Func_0200068c();
+    Madra_SealHole();
   } else {
     Actor_SetSingleChildFlags(Actor_GetById(26), 0);
     object = Actor_GetById(26);
@@ -381,10 +378,10 @@ s32 Scene_Initialize(void) {
     }
   }
   if (gMainRoutineWork.entrance == 9 && Event_GetFlag(0x913) == 0)
-    Func_02000f80();
+    Madra_GrantPassageToOsenia();
   if (Event_GetFlag(0x8ff) != 0 && Event_GetFlag(0x989) != 0) {
     if (gMainRoutineWork.entrance == 7 && Event_GetFlag(0x98e) == 0) {
-      Func_020019d8();
+      Madra_MeetKarst();
       Event_SetFlag(0x98e);
     }
     if (Event_GetFlag(0x98e))
@@ -397,7 +394,8 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_0200083c(s32 actor) {
+/// "Was I just dreaming when that shaft of ice appeared?"
+void Madra_AskAboutIceShaft(s32 actor) {
   s32 msg;
 
   Event_Start();
@@ -416,7 +414,9 @@ void Func_0200083c(s32 actor) {
   Event_End();
 }
 
-void Func_02000894(void) {
+/// A boy asks whether Felix is the one who beat up Briggs.
+/// "Hey, mister! Are you the guy who beat up Briggs?"
+void Madra_AskAboutBriggs(void) {
   s32 msg;
 
   Event_Start();
@@ -453,7 +453,7 @@ void Func_02000894(void) {
   Event_End();
 }
 
-void Func_02000968(void) {
+void Madra_MindReadBriggsFan(void) {
   s32 msg, x, z;
 
   Event_Start();
@@ -494,7 +494,8 @@ void Func_02000968(void) {
   Event_End();
 }
 
-void Func_02000a48(void) {
+/// "Is there by any chance a girl named Sheba with you?"
+void Madra_AskAboutSheba(void) {
   s32 flags;
 
   Event_Start();
@@ -524,8 +525,6 @@ void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
 void Actor_Jump(s32 id, s32 a, s32 b);
 void Actor_LaunchFromLeader(s32 id, s32 a, s32 b, s32 c);
-/* VIEW(s0ac4): routine Map_PlayMapEdit as s32 Map_PlayMapEdit(const void *edit, s32 a, s32 b); events_b has void Map_PlayMapEdit(const void *data, s32 a, s32 b); tried as the definition's void Map_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY), it does not compile in tla-ja: games/tla/src/scene/madra.c:547: conflicting types for `Map_PlayMapEdit'. */
-extern s32 Map_PlayMapEdit__s0ac4(const void *edit, s32 a, s32 b) __asm__("Map_PlayMapEdit");
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);
 void BattleEffect_StartEffectObject22(s32 item, s32 a);
@@ -537,7 +536,7 @@ void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 /// Actors 24 and 25 talk with 32 and 4, 25 is moved about with its priority
 /// bit cleared and set, and 32 is placed at the current owner before flag
 /// 0x910 is set. It opens with "You there, hold".
-void Func_02000ac4(void) {
+void Madra_InspectPartyAtGate(void) {
   struct Actor *object;
 
   Event_Start();
@@ -672,7 +671,7 @@ void Func_02000ac4(void) {
 /// Once flag 0x911 is set: actors 33 and 34 talk with 4, the prompt's answer
 /// is counted in the event work either way, and flag 0x913 is set. The talk
 /// includes "... has escaped".
-void Func_02000f80(void) {
+void Madra_GrantPassageToOsenia(void) {
   if (!GameFlag_Test(0x911))
     return;
   Event_Start();
@@ -833,7 +832,7 @@ void Func_02000f80(void) {
 /// work; after flag 0x98f 32 asks again. It opens with "Hey, you lot"; 32's
 /// second question is "It was them". Then 32 is placed at the current owner and
 /// flag 0x914 is set.
-void Func_020014fc(void) {
+void Madra_StopPartyAfterRaid(void) {
   struct Actor *object;
 
   Event_Start();
@@ -970,8 +969,6 @@ void Func_020014fc(void) {
   Event_End();
 }
 
-/* VIEW(s0ac4): variable gData_02003308 as extern const struct CellPictureCopyEntry gData_02003308[]; madra has extern struct MadraPlacement gData_02003308[]; tried as the definition's extern s32 gData_02003308[], it does not compile in tla-ja: games/tla/src/scene/madra.c:1085: request for member `steps' in something not a structure or union. */
-extern const struct CellPictureCopyEntry gData_02003308__s0ac4[] __asm__("gData_02003308");
 
 // The macro's do-while starts each mode change's own scheduling region; as
 // plain calls, 88 of 1565 instructions differ in tla-en.
@@ -984,7 +981,7 @@ extern const struct CellPictureCopyEntry gData_02003308__s0ac4[] __asm__("gData_
 /// work. It opens with "Wait". With room for item 210 it is given and flag
 /// 0x918 is set, otherwise the mayor's two lines are shown. 33 then talks with
 /// the group, and they all gather at 4 before flags 0x980 and 0x98e are set.
-void Func_020019d8(void) {
+void Madra_MeetKarst(void) {
   struct Actor *object;
   s32 x = 153 << 16;
   s32 z;
@@ -1006,8 +1003,7 @@ void Func_020019d8(void) {
   Actor_WaitForMoveById(4);
   Actor_FaceDirection(4, FACING_NORTH, 0);
   Event_Wait(20);
-  Map_PlayMapEdit__s0ac4(gData_02003308__s0ac4[6].steps, gData_02003308__s0ac4[6].unk04,
-                  gData_02003308__s0ac4[6].unk06);
+  MapGrid_AnimateCells(gMadra_Doors[6].data, gMadra_Doors[6].x, gMadra_Doors[6].y);
   Actor_SetHorizontalPositionAndAngleWithTerrain(34, x, z, FACING_SOUTH);
   Actor_CommitPositionAndActivate(34, 0, 4);
   SET_MODE(34, 3);
@@ -1472,25 +1468,18 @@ void Func_020019d8(void) {
 // ---- games/tla/src/scene/madra/events_d.c ----
 #include "text/msg_ids.h"
 
-/* VIEW(events_d): variable gData_02002d38 as extern s16 gData_02002d38[]; s051c has extern const u8 gData_02002d38[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:1663: conflicting types for `gData_02002d38'. */
-extern s16 gData_02002d38__events_d[] __asm__("gData_02002d38");
-/* VIEW(events_d): variable gData_02002ff0 as extern struct ActorPlacement gData_02002ff0[]; s051c has extern const u8 gData_02002ff0[]; tried as the definition's extern u32 gData_02002ff0[], it does not compile in tla-ja: games/tla/src/scene/madra.c:1554: conflicting types for `gData_02002ff0'. */
-extern struct ActorPlacement gData_02002ff0__events_d[] __asm__("gData_02002ff0");
-/* VIEW(events_d): variable gData_02003358 as extern struct Trigger gData_02003358[]; s051c has extern const u8 gData_02003358[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:1762: conflicting types for `gData_02003358'. */
-extern struct Trigger gData_02003358__events_d[] __asm__("gData_02003358");
-/* VIEW(events_d): variable gData_0200367c as extern struct Trigger gData_0200367c[]; s051c has extern const u8 gData_0200367c[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:1832: conflicting types for `gData_0200367c'. */
-extern struct Trigger gData_0200367c__events_d[] __asm__("gData_0200367c");
-/* VIEW(events_d): variable gData_0200394c as extern struct Trigger gData_0200394c[]; s051c has extern const u8 gData_0200394c[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/madra.c:1895: conflicting types for `gData_0200394c'. */
-extern struct Trigger gData_0200394c__events_d[] __asm__("gData_0200394c");
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 
-void Func_020029ac(void) { GameFlag_SetBit(0x910); }
+void Madra_SkipGateInspection(void) { GameFlag_SetBit(0x910); }
 
-void Func_020029b8(void) { GameFlag_SetBit(0x914); }
+void Madra_SkipRaidQuestioning(void) { GameFlag_SetBit(0x914); }
 
-void Func_020029c8(void) {
+/// The leader, already beside a ladder top, turns north, steps onto the rungs
+/// and climbs down out of sight, then leaves by exit 16, or 15 from the door
+/// numbers above 34.
+void Madra_ClimbDownLadder(void) {
   s32 next;
 
   next = 16;
@@ -1512,29 +1501,29 @@ void Func_020029c8(void) {
   Event_End();
 }
 
-void Func_02002a58(void) {
+void Madra_StepOntoLadderFacingEast(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WalkByAndWait(4, 0, -14);
   Actor_WalkByAndWait(4, 16, 0);
-  Func_020029c8();
+  Madra_ClimbDownLadder();
 }
 
-void Func_02002a80(void) {
+void Madra_StepOntoLadderFacingWest(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WalkByAndWait(4, -2, -6);
   Actor_WalkByAndWait(4, -14, -8);
-  Func_020029c8();
+  Madra_ClimbDownLadder();
 }
 
-DEFINE_FUNC_02000544(Func_02002ab0, Func_020029c8)
+DEFINE_FUNC_02000544(Func_02002ab0, Madra_ClimbDownLadder)
 
-void Func_0200006c(void);
-void Func_020002bc(void);
-void Func_0200051c(void);
-void Func_02000a48(void);
-void Func_020014fc(void);
+void Madra_EnterDoor(void);
+void Madra_KarstAsksAboutMenardi(void);
+void Madra_WorkerBlocksHole(void);
+void Madra_AskAboutSheba(void);
+void Madra_StopPartyAfterRaid(void);
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -1560,54 +1549,39 @@ u32 gSceneExits[] = {
 };
 
 // clang-format off
-s16 gData_02002d38__events_d[] = {
-    71, -1, 1, 0, 0, 136, 0, 0,
-    0, 296, 0x3000, 1, 72, -1, 1, 0,
-    0, 744, 0, 0, 0, 392, 0xc000, 1,
-    73, -1, 1, 0, 0, 312, 0, 0,
-    0, 360, 0x4000, 1, 74, -1, 1, 0,
-    0, 184, 0, 0, 0, 440, 0xa000, 1,
-    75, -1, 1, 0, 0, 344, 0, 0,
-    0, 280, 0x4000, 1, 76, -1, 1, 0,
-    0, 408, 0, 0, 0, 384, 0xc000, 1,
-    77, -1, 1, 0, 0, 274, 0, 0,
-    0, 510, 0x4000, 1, 78, -1, 1, 0,
-    0, 312, 0, 0, 0, 376, 0xc000, 1,
-    75, -1, 1, 0, 0, 472, 0, 0,
-    0, 264, 0x2000, 1, 73, -1, 1, 0,
-    0, 504, 0, 0, 0, 232, 0x4000, 0,
-    224, -1, 1, 0, 0, 472, 0, 0,
-    0, 296, 0, 1, 78, -1, 1, 0,
-    0, 552, 0, 0, 0, 259, 0x4000, 1,
-    71, -1, 1, 0, 0, 72, 0, 0,
-    0, 472, 0xe000, 1, 72, -1, 1, 0,
-    0, 136, 0, 0, 0, 440, 0xc000, 1,
-    187, -1, 1, 0, 0, 88, 0, 0,
-    0, 360, 0x5000, 1, 187, -1, 1, 0,
-    0, 128, 0, 0, 0, 360, 0x5000, 1,
-    71, -1, 1, 0, 0, 504, 0, 0,
-    0, 408, 0x4000, 1, 71, -1, 1, 0,
-    0, 456, 0, 0, 0, 408, 0x4000, 1,
-    71, -1, 1, 0, 0, 744, 0, 0,
-    0, 248, 0xc000, 0, 187, 0x1911, 1, 0,
-    0, 112, 0, 0, 0, 440, 0xc000, 1,
-    192, 0x1911, 1, 0, 0, 88, 0, 0,
-    0, 440, 0xc000, 1, 205, -1, 1, 0,
-    0, 376, 0, 0, 0, 272, 0x4000, 1,
-    206, -1, 1, 0, 0, 328, 0, 0,
-    0, 256, 0x4000, 1, 198, 0x18ab, 1, 0,
-    0, 280, 0, 0, 0, 256, 0x4000, 1,
-    56, -1, 1, 0, 0, 8, 0, 0,
-    0, 8, 0xc000, 1, 200, -1, 1, 0,
-    0, 8, 0, 0, 0, 8, 0xc000, 1,
-    88, -1, 1, 0, 0, 8, 0, 0,
-    0, 8, 0xc000, 1, 186, 0x8ab, 1, 0,
-    0, 280, 0, 0, 0, 256, 0x4000, 1,
-    -1, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0,
+struct ActorPlacement gMadra_Placements[] = {
+    {71, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(296), FACING_SOUTHEAST + FACING_STEP, 1, 0},
+    {72, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(392), FACING_NORTH, 1, 0},
+    {73, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(360), FACING_SOUTH, 1, 0},
+    {74, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(440), FACING_NORTHWEST, 1, 0},
+    {75, CONDITION_ALWAYS, 1, PIXELS(344), 0, PIXELS(280), FACING_SOUTH, 1, 0},
+    {76, CONDITION_ALWAYS, 1, PIXELS(408), 0, PIXELS(384), FACING_NORTH, 1, 0},
+    {77, CONDITION_ALWAYS, 1, PIXELS(274), 0, PIXELS(510), FACING_SOUTH, 1, 0},
+    {78, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(376), FACING_NORTH, 1, 0},
+    {75, CONDITION_ALWAYS, 1, PIXELS(472), 0, PIXELS(264), FACING_SOUTHEAST, 1, 0},
+    {73, CONDITION_ALWAYS, 1, PIXELS(504), 0, PIXELS(232), FACING_SOUTH, 0, 0},
+    {224, CONDITION_ALWAYS, 1, PIXELS(472), 0, PIXELS(296), FACING_EAST, 1, 0},
+    {78, CONDITION_ALWAYS, 1, PIXELS(552), 0, PIXELS(259), FACING_SOUTH, 1, 0},
+    {71, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(472), FACING_NORTHEAST, 1, 0},
+    {72, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(440), FACING_NORTH, 1, 0},
+    {187, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(360), FACING_SOUTH + FACING_STEP, 1, 0},
+    {187, CONDITION_ALWAYS, 1, PIXELS(128), 0, PIXELS(360), FACING_SOUTH + FACING_STEP, 1, 0},
+    {71, CONDITION_ALWAYS, 1, PIXELS(504), 0, PIXELS(408), FACING_SOUTH, 1, 0},
+    {71, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(408), FACING_SOUTH, 1, 0},
+    {71, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(248), FACING_NORTH, 0, 0},
+    {187, 0x1911, 1, PIXELS(112), 0, PIXELS(440), FACING_NORTH, 1, 0},
+    {192, 0x1911, 1, PIXELS(88), 0, PIXELS(440), FACING_NORTH, 1, 0},
+    {205, CONDITION_ALWAYS, 1, PIXELS(376), 0, PIXELS(272), FACING_SOUTH, 1, 0},
+    {206, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(256), FACING_SOUTH, 1, 0},
+    {198, 0x18ab, 1, PIXELS(280), 0, PIXELS(256), FACING_SOUTH, 1, 0},
+    {56, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 1, 0},
+    {200, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 1, 0},
+    {88, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 1, 0},
+    {186, 0x8ab, 1, PIXELS(280), 0, PIXELS(256), FACING_SOUTH, 1, 0},
+    {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02002ff0__events_d[] = {
+struct ActorPlacement gMadra_PlacementsOnReturn[] = {
     {71, CONDITION_ALWAYS, 1, PIXELS(150), 0, PIXELS(344), FACING_SOUTH + FACING_STEP, 1, 0},
     {72, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(392), FACING_NORTH, 1, 0},
     {73, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(360), FACING_SOUTH, 1, 0},
@@ -1651,37 +1625,36 @@ s16 gData_020032fc[] = {
 };
 // clang-format on
 
-s32 gData_02003308[] = {
-    (s32)gData_020032fc, 0x30014,  (s32)gData_020032f0, 0x17000d,
-    (s32)gData_020032f0, 0x110011, (s32)gData_020032f0, 0x120017,
-    (s32)gData_020032f0, 0xa001c,  (s32)gData_020032f0, 0x6001c,
-    (s32)gData_020032f0, 0x60009,  (s32)gData_020032f0, 0x180013,
-    (s32)gData_020032f0, 0,        (s32)gData_020032fc, 0x30011,
+struct MadraPlacement gMadra_Doors[] = {
+    {gData_020032fc, 20, 3},  {gData_020032f0, 13, 23}, {gData_020032f0, 17, 17},
+    {gData_020032f0, 23, 18}, {gData_020032f0, 28, 10}, {gData_020032f0, 28, 6},
+    {gData_020032f0, 9, 6},   {gData_020032f0, 19, 24}, {gData_020032f0, 0, 0},
+    {gData_020032fc, 17, 3},
 };
 
-struct Trigger gData_02003358__events_d[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_0200006c)},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_0200006c)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_0200006c)},
-    {0xc602, 4, CONDITION_ALWAYS, EVENT(Func_0200006c)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Func_0200006c)},
-    {0xc602, 6, CONDITION_ALWAYS, EVENT(Func_0200006c)},
-    {0xc602, 7, CONDITION_ALWAYS, EVENT(Func_0200006c)},
-    {0xc602, 8, CONDITION_ALWAYS, EVENT(Func_0200006c)},
+struct Trigger gMadra_TriggersBeforeRaid[] = {
+    {0xc602, 1, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {0xc602, 2, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {0xc602, 3, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {0xc602, 4, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {0xc602, 5, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {0xc602, 6, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {0xc602, 7, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {0xc602, 8, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {0xc602, 10, CONDITION_ALWAYS, EVENT(Func_0200006c)},
+    {0xc602, 10, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
-    {TRIGGER_STEP, 16, CONDITION_ALWAYS, EVENT(Func_0200051c)},
-    {TRIGGER_STEP, 19, 0x910, EVENT(Func_020029ac)},
-    {TRIGGER_STEP, 20, 0x910, EVENT(Func_02000ac4)},
+    {TRIGGER_STEP, 16, CONDITION_ALWAYS, EVENT(Madra_WorkerBlocksHole)},
+    {TRIGGER_STEP, 19, 0x910, EVENT(Madra_SkipGateInspection)},
+    {TRIGGER_STEP, 20, 0x910, EVENT(Madra_InspectPartyAtGate)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTheTownElder)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgYouPickedThe)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgThatBigWave)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgLetMeGuess)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgMaybeWeLl)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgIfICould)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_02000894)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Madra_AskAboutBriggs)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgItSLike)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTheChampaWere)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgThoseChampaCurs)},
@@ -1693,20 +1666,20 @@ struct Trigger gData_02003358__events_d[] = {
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgMyPartnerWas)},
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgThereSNoWay)},
     {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgAllOfIndra)},
-    {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(Func_02000404)},
-    {TRIGGER_TALK, 27, CONDITION_ALWAYS, EVENT(Func_0200083c)},
+    {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(Madra_AskComingThroughHole)},
+    {TRIGGER_TALK, 27, CONDITION_ALWAYS, EVENT(Madra_AskAboutIceShaft)},
     {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgEvenIfWe)},
-    {TRIGGER_TALK, 29, CONDITION_ALWAYS, EVENT(Func_02000108)},
-    {TRIGGER_TALK, 30, CONDITION_ALWAYS, EVENT(Func_0200018c)},
-    {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Func_02000210)},
-    {TRIGGER_TALK, 35, CONDITION_ALWAYS, EVENT(Func_02000210)},
+    {TRIGGER_TALK, 29, CONDITION_ALWAYS, EVENT(Madra_TalkToWeaponMerchant)},
+    {TRIGGER_TALK, 30, CONDITION_ALWAYS, EVENT(Madra_TalkToArmorMerchant)},
+    {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Madra_TalkToItemMerchant)},
+    {TRIGGER_TALK, 35, CONDITION_ALWAYS, EVENT(Madra_TalkToItemMerchant)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgEveryoneThinksBriggs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTheTownElderIs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgIfABig)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgItSABit)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgThatChampaIn)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgIVeAlways)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1038, 0x300, EVENT(Func_02000968)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1038, 0x300, EVENT(Madra_MindReadBriggsFan)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgWhoWasIt)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgNowMadraIs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgWhenISaw)},
@@ -1729,29 +1702,29 @@ struct Trigger gData_02003358__events_d[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_0200367c__events_d[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_0200006c)},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_0200006c)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_0200006c)},
-    {0xc602, 4, CONDITION_ALWAYS, EVENT(Func_0200006c)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Func_0200006c)},
-    {0xc602, 6, CONDITION_ALWAYS, EVENT(Func_0200006c)},
-    {0xc602, 7, CONDITION_ALWAYS, EVENT(Func_0200006c)},
-    {0xc602, 8, CONDITION_ALWAYS, EVENT(Func_0200006c)},
+struct Trigger gMadra_TriggersAfterRaid[] = {
+    {0xc602, 1, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {0xc602, 2, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {0xc602, 3, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {0xc602, 4, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {0xc602, 5, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {0xc602, 6, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {0xc602, 7, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {0xc602, 8, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {0xc602, 10, CONDITION_ALWAYS, EVENT(Func_0200006c)},
+    {0xc602, 10, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
-    {TRIGGER_STEP, 16, CONDITION_ALWAYS, EVENT(Func_020005b8)},
-    {TRIGGER_STEP, 19, 0x914, EVENT(Func_020029b8)},
-    {TRIGGER_STEP, 20, 0x914, EVENT(Func_020014fc)},
+    {TRIGGER_STEP, 16, CONDITION_ALWAYS, EVENT(Madra_WorkerBlocksSealedHole)},
+    {TRIGGER_STEP, 19, 0x914, EVENT(Madra_SkipRaidQuestioning)},
+    {TRIGGER_STEP, 20, 0x914, EVENT(Madra_StopPartyAfterRaid)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgWeThinkThe)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSoTheKibombo)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTheKibomboCame)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgIHeardThatThe)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgIGuessThat)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgGondowanSoundsLike)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_02000894)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Madra_AskAboutBriggs)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgICanTBelieveSomeone)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgNowThatWe)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgThereAreStill)},
@@ -1763,10 +1736,10 @@ struct Trigger gData_0200367c__events_d[] = {
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgYouShouldaSeen)},
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgFirstPiratesRaid)},
     {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgMyGuessIs)},
-    {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(Func_02000490)},
-    {TRIGGER_TALK, 29, CONDITION_ALWAYS, EVENT(Func_02000108)},
-    {TRIGGER_TALK, 30, CONDITION_ALWAYS, EVENT(Func_0200018c)},
-    {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Func_02000210)},
+    {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(Madra_AskComingThroughSealedHole)},
+    {TRIGGER_TALK, 29, CONDITION_ALWAYS, EVENT(Madra_TalkToWeaponMerchant)},
+    {TRIGGER_TALK, 30, CONDITION_ALWAYS, EVENT(Madra_TalkToArmorMerchant)},
+    {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Madra_TalkToItemMerchant)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgIfItWerenT)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgIfGondowanIs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgItSStrangeIt)},
@@ -1792,24 +1765,24 @@ struct Trigger gData_0200367c__events_d[] = {
     {TRIGGERS_END},
 };
 
-struct Trigger gData_0200394c__events_d[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_0200006c)},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_0200006c)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_0200006c)},
-    {0xc602, 4, CONDITION_ALWAYS, EVENT(Func_0200006c)},
-    {0xc602, 5, CONDITION_ALWAYS, EVENT(Func_0200006c)},
-    {0xc602, 6, CONDITION_ALWAYS, EVENT(Func_0200006c)},
-    {0xc602, 7, CONDITION_ALWAYS, EVENT(Func_0200006c)},
-    {0xc602, 8, CONDITION_ALWAYS, EVENT(Func_0200006c)},
+struct Trigger gMadra_TriggersOnReturn[] = {
+    {0xc602, 1, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {0xc602, 2, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {0xc602, 3, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {0xc602, 4, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {0xc602, 5, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {0xc602, 6, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {0xc602, 7, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
+    {0xc602, 8, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {0xc602, 10, CONDITION_ALWAYS, EVENT(Func_0200006c)},
+    {0xc602, 10, CONDITION_ALWAYS, EVENT(Madra_EnterDoor)},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
-    {TRIGGER_STEP, 21, 0x98e, EVENT(Func_0200036c)},
+    {TRIGGER_STEP, 21, 0x98e, EVENT(Madra_KarstCallsForMenardi)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgIDonTThink)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgWeGoTo)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgIHeardTheBoat)},
-    {TRIGGER_TALK, 11, 0x301, EVENT(Func_02000a48)},
+    {TRIGGER_TALK, 11, 0x301, EVENT(Madra_AskAboutSheba)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgThoseTravelersLooked)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgIWonderIfThe)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgIDonTKnowWhatWill)},
@@ -1826,11 +1799,11 @@ struct Trigger gData_0200394c__events_d[] = {
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgTheMayorFinally)},
     {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgHeyItS)},
     {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgYeahWellWe)},
-    {TRIGGER_TALK, 29, CONDITION_ALWAYS, EVENT(Func_02000108)},
-    {TRIGGER_TALK, 30, CONDITION_ALWAYS, EVENT(Func_0200018c)},
-    {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Func_02000210)},
-    {TRIGGER_TALK, 33, CONDITION_ALWAYS, EVENT(Func_020002bc)},
-    {TRIGGER_TALK, 35, CONDITION_ALWAYS, EVENT(Func_020003b8)},
+    {TRIGGER_TALK, 29, CONDITION_ALWAYS, EVENT(Madra_TalkToWeaponMerchant)},
+    {TRIGGER_TALK, 30, CONDITION_ALWAYS, EVENT(Madra_TalkToArmorMerchant)},
+    {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Madra_TalkToItemMerchant)},
+    {TRIGGER_TALK, 33, CONDITION_ALWAYS, EVENT(Madra_KarstAsksAboutMenardi)},
+    {TRIGGER_TALK, 35, CONDITION_ALWAYS, EVENT(Madra_AskAfraidOfKibombo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgWhyWouldAnyoneBe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTheyVeBeenHaving)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgEveryoneGetsThe)},
@@ -1852,7 +1825,7 @@ struct Trigger gData_0200394c__events_d[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgThePiratesAnd)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgThatNightThe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS, MSGNO(MsgShinSeemsTerrified)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 33, CONDITION_ALWAYS, EVENT(Func_02000320)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 33, CONDITION_ALWAYS, EVENT(Madra_MindReadKarst)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 35, CONDITION_ALWAYS, MSGNO(MsgWeReStill)},
     {TRIGGERS_END},
 };

@@ -43,7 +43,7 @@ void GameFlag_Set(s32 flag);
 void GameFlag_Clear(s32 flag);
 void FieldEvent_Wait(s32 frames);
 void FieldMessage_Show(const u8 *message, s32 mode);
-void Import_ActorSelectAnimation(struct Actor *object, s32 value);
+void Actor_SelectAnimation(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const u8 *data);
 void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
                                         s32 f);

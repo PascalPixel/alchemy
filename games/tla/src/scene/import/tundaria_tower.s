@@ -98,9 +98,9 @@ Import_ActorCreate:
 	.thumb_func
 Actor_SetPositionAndResetMotion:
 	overlay_veneer Actor_SetPositionAndResetMotionFar
-	.global Import_MapCenterOnFollowedPoint
+	.global Map_CenterOnFollowedPoint
 	.thumb_func
-Import_MapCenterOnFollowedPoint:
+Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -214,9 +214,9 @@ Actor_WaitForMoveById:
 	.thumb_func
 Actor_SetHorizontalPositionWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionWithTerrainFar
-	.global Import_ActorMoveToObject
+	.global Actor_MoveToObject
 	.thumb_func
-Import_ActorMoveToObject:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func
@@ -266,13 +266,13 @@ Import_EventSetExitRequest:
 	.thumb_func
 Field_RequestDjinnBattle:
 	overlay_veneer Field_RequestDjinnBattleFar
-	.global Import_FieldTryJumpForward
+	.global Field_TryJumpForward
 	.thumb_func
-Import_FieldTryJumpForward:
+Field_TryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
-	.global Import_LeaderStopMoving
+	.global Leader_StopMoving
 	.thumb_func
-Import_LeaderStopMoving:
+Leader_StopMoving:
 	overlay_veneer Leader_StopMovingFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func
@@ -302,17 +302,17 @@ Event_WaitTransitionFrames:
 	.thumb_func
 ObjectTable_Get:
 	overlay_veneer ObjectTable_GetFar
-	.global Import_EventResolveAllPendingActions
+	.global Event_ResolveAllPendingActions
 	.thumb_func
-Import_EventResolveAllPendingActions:
+Event_ResolveAllPendingActions:
 	overlay_veneer Event_ResolveAllPendingActionsFar
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global Import_SpriteShareVramCacheEntry
+	.global Sprite_ShareVramCacheEntry
 	.thumb_func
-Import_SpriteShareVramCacheEntry:
+Sprite_ShareVramCacheEntry:
 	overlay_veneer Sprite_ShareVramCacheEntryFar
 	.global Actor_WatchAndSetScript
 	.thumb_func
@@ -350,9 +350,9 @@ Func_02003190:
 	.thumb_func
 EffectSprite_DrawAtWorldPosition:
 	overlay_veneer EffectSprite_DrawAtWorldPositionFar
-	.global Import_BattleEffectStepVector3
+	.global BattleEffect_StepVector3
 	.thumb_func
-Import_BattleEffectStepVector3:
+BattleEffect_StepVector3:
 	overlay_veneer BattleEffect_StepVector3Far
 	.global Sound_Play
 	.thumb_func

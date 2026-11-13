@@ -428,7 +428,7 @@ void PushTarget_UpdatePusher(struct Actor *object) {
 
 extern s16 gLightSpriteTile;
 
-void Import_OamAddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
+void Oam_AddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
 
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
@@ -438,7 +438,7 @@ DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
                           gLightSpriteCount, gLightSpriteActors,
                           gLightSpritesLarge, gLightSpritePriority,
                           BattleEffect_GetObjectPriority,
-                          Import_OamAddSpriteAtDepthClamped)
+                          Oam_AddSpriteAtDepthClamped)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

@@ -261,7 +261,7 @@ void Func_02002354(const u16 *table) {
   s32 flag;
   s32 second;
 
-  if (Import_FieldTryJumpForward() != 0)
+  if (Field_TryJumpForward() != 0)
     return;
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   position[0] = leader->x;
@@ -390,9 +390,9 @@ void Func_020025e0(u16 *list) {
   s32 index;
   u8 *grid = gMapShapeGrid; // the shape grid, read once
 
-  Import_ActorMoveToObject(8, gMainRoutineWork.currentOwner);
-  Import_ActorMoveToObject(9, gMainRoutineWork.currentOwner);
-  Import_ActorMoveToObject(10, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(8, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(10, gMainRoutineWork.currentOwner);
   wait(1);
   Func_020025c8(8);
   Func_020025c8(9);
@@ -453,7 +453,7 @@ void Func_02002764(const u16 *table) {
   s32 second;
   u8 *motion;
 
-  if (Import_FieldTryJumpForward() != 0)
+  if (Field_TryJumpForward() != 0)
     return;
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   partner = Actor_GetById(8);

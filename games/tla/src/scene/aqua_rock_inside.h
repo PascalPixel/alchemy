@@ -117,7 +117,7 @@ void Map_LoadCellsAndShapes(void);
 void MessageArgument_Push(s32 item, s32 mode);
 void Event_End(void);
 void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
-void Import_FieldCameraWaitForArrival(void);
+void FieldCamera_WaitForArrival(void);
 void Field_TryJumpForward(void);
 void Party_AddPp(s32 a, s32 b);
 void Scene_QueueMusic(s32 a);

@@ -199,7 +199,7 @@ void Func_02000200(s32 mode, s32 id) {
     FieldActor_Stop(gMainRoutineWork.currentOwner);
     System_Wait(30);
     for (i = 0; i <= 2; i++)
-      Import_ActorRelease(sparks[i]);
+      Actor_Release(sparks[i]);
   }
 }
 

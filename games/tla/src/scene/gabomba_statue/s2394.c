@@ -439,7 +439,7 @@ void Func_02002f70(void) {
   FieldCamera_MoveTo(spark->x, -1, spark->z, 1);
   FieldCamera_WaitForArrival();
   Event_ShowMessage(5, 0);
-  Import_ActorRelease(spark);
+  Actor_Release(spark);
   FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(304), 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
@@ -1724,10 +1724,10 @@ s32 Func_02004d48(s32 first, s32 check) {
   actor->unk62 = 2;
   actor->unk63 = 1;
   actor->unk4c = 0;
-  /* FAKEMATCH(signature): Import_ActorStartIdle, Actor_StartIdleFar's veneer,
+  /* FAKEMATCH(signature): Actor_StartIdle, Actor_StartIdleFar's veneer,
    * called without the actor it reads from r0; as
-   * Import_ActorStartIdle(actor), 73 of 230 instructions differ in tla-en. */
-  Import_ActorStartIdle();
+   * Actor_StartIdle(actor), 73 of 230 instructions differ in tla-en. */
+  Actor_StartIdle();
   Actor_SelectAnimation(actor, 2);
   id = second;
   actor = ((struct Unk02004d48 *)Actor_Get(id++));
@@ -1736,7 +1736,7 @@ s32 Func_02004d48(s32 first, s32 check) {
   actor->unk62 = 0;
   actor->unk63 = 1;
   actor->unk4c = 0;
-  Import_ActorStartIdle(actor);
+  Actor_StartIdle(actor);
   Actor_SelectAnimation(actor, 2);
   actor = ((struct Unk02004d48 *)Actor_Get(id++));
   actor->unk64 = 8;
@@ -1744,7 +1744,7 @@ s32 Func_02004d48(s32 first, s32 check) {
   actor->unk62 = 2;
   actor->unk63 = 1;
   actor->unk4c = 0;
-  Import_ActorStartIdle(actor);
+  Actor_StartIdle(actor);
   Actor_SelectAnimation(actor, 2);
   actor = ((struct Unk02004d48 *)Actor_Get(id));
   actor->unk64 = 10;
@@ -1752,7 +1752,7 @@ s32 Func_02004d48(s32 first, s32 check) {
   actor->unk62 = 0;
   actor->unk63 = 1;
   actor->unk4c = 0;
-  Import_ActorStartIdle(actor);
+  Actor_StartIdle(actor);
   Actor_SelectAnimation(actor, 2);
   for (tries = 0; tries <= 127; tries++) {
     done = 1;

@@ -11,7 +11,7 @@
 struct ContigoObject;
 
 void Actor_MoveToObject(s32 actor, s32 target);
-void Import_FieldCameraWaitForArrival(void);
+void FieldCamera_WaitForArrival(void);
 void Party_AddIsaacsParty(void);
 void Func_02001938(s32 mode);
 void Func_02001c5c(s32 a, s32 b, s32 c, s32 d);

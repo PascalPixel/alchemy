@@ -37,7 +37,7 @@ void Func_02001fa0(void) {
   t0->y = -1966080;
   t0->terrainHeight = -2097152;
   Event_ClearFlag(0x142);
-  Import_SceneTalkToActor(0x1042);
+  Scene_TalkToActor(0x1042);
 }
 
 /// Examines the altar.

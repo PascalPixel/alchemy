@@ -144,8 +144,8 @@ extern u16 gData_02004cf0[];
 void Actor_Release(void *handle);
 #include "main_routine_work.h"
 
-void Import_FieldCameraMoveToActorById(s32 a, s32 b);
-void Import_FieldCameraWaitForArrival(void);
+void FieldCamera_MoveToActorById(s32 a, s32 b);
+void FieldCamera_WaitForArrival(void);
 void Teleport_PlaySparks(void);
 
 DEFINE_RIDE_IF_ACTIVE(MarsLighthouseRoomM_ContinueSlide,

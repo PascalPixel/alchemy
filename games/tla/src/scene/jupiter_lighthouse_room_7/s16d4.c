@@ -92,7 +92,7 @@ DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
                           gLightSpriteCount, gLightSpriteActors,
                           gLightSpritesLarge, gLightSpritePriority,
                           BattleEffect_GetObjectPriority,
-                          Import_OamAddSpriteAtDepthClamped)
+                          Oam_AddSpriteAtDepthClamped)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

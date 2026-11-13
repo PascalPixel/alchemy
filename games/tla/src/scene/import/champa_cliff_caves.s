@@ -226,9 +226,9 @@ FieldCamera_FollowActor:
 	.thumb_func
 FieldCamera_MoveWithinMapBounds:
 	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
-	.global Import_FieldCameraWaitForArrival
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Import_FieldCameraWaitForArrival:
+FieldCamera_WaitForArrival:
 	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Event_SetDestination
 	.thumb_func

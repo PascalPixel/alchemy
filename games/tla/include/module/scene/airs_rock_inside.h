@@ -98,7 +98,7 @@ void Actor_PlaceBlocks(u16 *actors);
 
 void Func_02004cc8(void);
 
-void Import_SceneQueueMusic(s32 id);
+void Scene_QueueMusic(s32 id);
 void Tightrope_Initialize(void);
 s32 Func_02005f5c(s32 slot, s32 a, s32 b);
 

@@ -118,9 +118,9 @@ Actor_CopyGraphics:
 	.thumb_func
 FieldCamera_FollowActor:
 	overlay_veneer FieldCamera_FollowActorFar
-	.global Import_FieldTryJumpForward
+	.global Field_TryJumpForward
 	.thumb_func
-Import_FieldTryJumpForward:
+Field_TryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
 	.global FieldEffect_StartBlankOverlay
 	.thumb_func

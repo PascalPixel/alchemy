@@ -322,7 +322,7 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
   Actor_GetById(gMainRoutineWork.currentOwner)->update =
       YampiDesertCave_StopLeaderAtLog;
   wait(4);
-  Import_ActorSelectAnimation(object, 2);
+  Actor_SelectAnimation(object, 2);
   Event_PlaySound(239);
   Actor_SetSpeed(rect.word[4], 0x8000, 0x1999);
   Actor_SetMoveTarget(object, rect.word[0], rect.word[1], rect.word[2]);
@@ -351,7 +351,7 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
   Event_PlaySound(213);
   Actor_SetPositionAndResetMotion(object, rect.word[0], object->y,
                                   rect.word[2]);
-  Import_ActorSelectAnimation(object, 1);
+  Actor_SelectAnimation(object, 1);
   rect.word[0] =
       (rect.word[0] + (gYampiDesertCave_LogFootprints[kind * 4] << 16)) >> 20;
   rect.word[2] =
@@ -546,7 +546,7 @@ DEFINE_STATUE_SINK(Statue_Sink, YampiDesertCave_SetStakeCell)
 s32 Actor_GetCellIndex(struct Actor *object);
 
 DEFINE_ACTOR_SET_CELL_OPEN(YampiDesertCave_SetStakeCell, Actor_GetCellIndex,
-                           Import_ActorSelectAnimation)
+                           Actor_SelectAnimation)
 
 #include "battle.h"
 #include "game.h"

@@ -9,7 +9,7 @@
 
 #define CELL_TABLE Data_020068b4
 #define CELL_SPRITE_DRAW Teleporters_Update
-#define CELL_PUSH_SLOT_ENTRY Import_OamAddSpriteAtDepthClamped
+#define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../../field/map/cell_sprite.c"
 
 #include "types.h"

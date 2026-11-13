@@ -114,9 +114,9 @@ Actor_SetPositionAndResetMotion:
 	.thumb_func
 Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
-	.global Import_ActorStartIdle
+	.global Actor_StartIdle
 	.thumb_func
-Import_ActorStartIdle:
+Actor_StartIdle:
 	overlay_veneer Actor_StartIdleFar
 	.global Actor_SetMoveTarget
 	.thumb_func
@@ -218,9 +218,9 @@ FieldCamera_FollowActor:
 	.thumb_func
 FieldCamera_MoveWithinMapBounds:
 	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
-	.global Import_FieldCameraWaitForArrival
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Import_FieldCameraWaitForArrival:
+FieldCamera_WaitForArrival:
 	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global FieldCamera_GetActor
 	.thumb_func

@@ -42,7 +42,7 @@
 
 s32 Event_PickUpItem(s32 a, s32 b, s32 c);
 void Actor_StartRenderModeScript(void);
-void Import_WorldMapFreeze(void);
+void WorldMap_Freeze(void);
 void WorldMap_ReloadPendingAreaGraphics(void);
 s32 Field_FindNearbyTalkTarget(s32 owner);
 s32 WorldMap_IsWalkable(struct Actor *object, s32 *position);
@@ -51,7 +51,7 @@ void Party_GivePiersDjinn(void);
 void Event_WaitForZoomTransition(void);
 void DjinnMenu_Run(void);
 void Party_RestoreHpPp(s32 value);
-void Import_FieldCameraWaitForArrival(void);
+void FieldCamera_WaitForArrival(void);
 extern s32 Data_02006be8[8];
 
 // Once the party has walked nine tenths of the encounter threshold, a coin
@@ -225,7 +225,7 @@ void WorldMap_SetUpFlyingShip(void) {
 
   gMainRoutineWork.renderMode = 8;
   if (Event_GetFlag(0x147)) {
-    Import_WorldMapFreeze();
+    WorldMap_Freeze();
     MessageArgument_Push(153, 4);
     Message_ShowCentered((s32)MsgBlank2, 4);
   }
@@ -476,7 +476,7 @@ void WorldMap_RefuseToRunAway(void) {
       Actor_FaceDirection(5, southwest, 0);
       Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner,
                                  FACING_NORTHEAST);
-      Import_WorldMapFreeze();
+      WorldMap_Freeze();
       FieldEvent_SetMessageId((s32)MsgWeShouldnT);
       Event_ShowMessage(5, 0);
       WorldMap_ReloadPendingAreaGraphics();
@@ -496,7 +496,7 @@ void WorldMap_RefuseToRunAway(void) {
       Actor_FaceDirection(5, southwest, 0);
       Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner,
                                  FACING_NORTHEAST);
-      Import_WorldMapFreeze();
+      WorldMap_Freeze();
       FieldEvent_SetMessageId((s32)MsgYouReNot);
       Event_ShowMessage(5, 0);
       WorldMap_ReloadPendingAreaGraphics();
@@ -505,7 +505,7 @@ void WorldMap_RefuseToRunAway(void) {
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, x + 12, besideZ);
       Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0);
       Actor_SetAnimation(5, 4);
-      Import_WorldMapFreeze();
+      WorldMap_Freeze();
       Event_ShowMessage(5, 0);
       Actor_ShowEmote(5, 265, 0);
       Event_ShowMessage(5, 0);
@@ -738,7 +738,7 @@ void WorldMap_ExplainGivingDjinn(void) {
   WorldMap_ReloadPendingAreaGraphics();
   FieldEffect_ScheduleRatioTransition(0x10000, 6);
   Event_WaitForZoomTransition();
-  Import_WorldMapFreeze();
+  WorldMap_Freeze();
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_SetMessageId(Event_GetFlag(0x175) * ((s32)MsgDjinnGiveTutorialB -
                                                   (s32)MsgDjinnGiveTutorialA) +
@@ -790,7 +790,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_SetPositionAndFacing(20, 0x27b80000, 0x23280000, west);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Import_WorldMapFreeze();
+    WorldMap_Freeze();
     Event_SetMessageId((s32)MsgHeyWaitA);
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     WorldMap_ReloadPendingAreaGraphics();
@@ -800,7 +800,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_FaceDirection(4, west, 0);
     Event_WaitForZoomTransition();
     Actor_WaitForMoveById(4);
-    Import_WorldMapFreeze();
+    WorldMap_Freeze();
     {
       /* FAKEMATCH(barrier): the native copies the angle before the other
        * arguments; as the plain call, 2 of 946 instructions differ in tla-en.
@@ -827,7 +827,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_WaitForMoveById(20);
     Actor_WaitForMoveById(21);
     Actor_WaitForMoveById(22);
-    Import_WorldMapFreeze();
+    WorldMap_Freeze();
     FieldEvent_ShowMessageThenWait(23, 0, 5);
     Actor_RunRepeatedMotion(20, 2);
     Event_Wait(5);
@@ -923,7 +923,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_SetSpriteFlags(Actor_Get(4), 0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Import_WorldMapFreeze();
+    WorldMap_Freeze();
     Event_SetMessageId((s32)MsgItLooksLike);
     Actor_RunRepeatedMotion(4, 2);
     Event_Wait(5);
@@ -972,7 +972,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     FieldEffect_ScheduleRatioTransition(0x18000, 1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Import_WorldMapFreeze();
+    WorldMap_Freeze();
     Event_SetMessageId((s32)MsgWeLostAgain);
     Actor_RunRepeatedMotion(20, 2);
     Event_Wait(5);
@@ -1131,7 +1131,7 @@ void WorldMap_DeliverLohoCannon(void) {
   Event_WaitTransitionFrames();
   FieldEffect_ScheduleRatioTransition(0x13333, 6);
   Event_WaitForZoomTransition();
-  Import_WorldMapFreeze();
+  WorldMap_Freeze();
   FieldActor_WaitForMoveById(16);
   FieldEvent_Wait(40);
   Actor_SetAnimation(16, 3);
@@ -1222,7 +1222,7 @@ void WorldMap_MeetEcho(void) {
     Event_ResolvePendingActions(0);
     Djinn_Give(owner, 0, 7);
     DjinnRecovery_AddStandby(owner, 0, 7);
-    Import_WorldMapFreeze();
+    WorldMap_Freeze();
     Actor_FaceActorById(owner, 9, 0);
     Event_Wait(10);
     FieldActor_ShowEmote(owner, 0x101, 60);
@@ -1239,7 +1239,7 @@ void WorldMap_MeetEcho(void) {
     WorldMap_ReloadPendingAreaGraphics();
     FieldEffect_ScheduleRatioTransition(0x13333, 6);
     Event_WaitForZoomTransition();
-    Import_WorldMapFreeze();
+    WorldMap_Freeze();
     djinni->motionFlags = 2;
     djinni->gravity = 0x4000;
     djinni->speedLimit = 0x10000;
@@ -1370,7 +1370,7 @@ void WorldMap_MeetEcho(void) {
   djinni->velocityY = 0xa0000;
   FieldActor_SetMoveTarget(djinni, x, 0, z);
   Event_Wait(30);
-  Import_WorldMapFreeze();
+  WorldMap_Freeze();
   Actor_FaceActorById(9, owner, 0);
   Actor_FaceActorById(owner, 9, 0);
   Actor_SetModeById(owner, 22);
@@ -1508,16 +1508,16 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   FieldEvent_Wait(30);
   MapGrid_SetShake(0x70000, 0x60000, 0x10000);
   FieldEvent_Wait(30);
-  Import_WorldMapFreeze();
+  WorldMap_Freeze();
   MapGrid_SetShake(0x30000, 0x30000, 0x10000);
   Event_ShowMessage(9, 0);
   WorldMap_ReloadPendingAreaGraphics();
   MapGrid_SetShake(0x70000, 0x70000, 0x10000);
   FieldCamera_MoveTo(PIXELS(1988), -1, PIXELS(7553), 1);
   FieldEffect_ScheduleRatioTransition(0x9999, 60);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(30);
-  Import_WorldMapFreeze();
+  WorldMap_Freeze();
   Event_ShowMessage(5, 0);
   Event_ShowMessage(8, 0);
   WorldMap_ReloadPendingAreaGraphics();
@@ -1533,8 +1533,8 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   Func_02002640(64, 128, 32, 0);
   System_Wait(4);
   FieldCamera_MoveTo(PIXELS(2052), -1, PIXELS(7553), 1);
-  Import_FieldCameraWaitForArrival();
-  Import_WorldMapFreeze();
+  FieldCamera_WaitForArrival();
+  WorldMap_Freeze();
   MapGrid_SetShake(0x30000, 0x30000, 0x10000);
   Event_ShowMessage(9, 0);
   Event_ShowMessage(5, 0);
@@ -1546,8 +1546,8 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   System_Wait(20);
   Func_02002640(32, 160, 32, 0);
   FieldCamera_MoveTo(PIXELS(2148), -1, PIXELS(7553), 1);
-  Import_FieldCameraWaitForArrival();
-  Import_WorldMapFreeze();
+  FieldCamera_WaitForArrival();
+  WorldMap_Freeze();
   Event_ShowMessage(8, 0);
   Event_ShowMessage(5, 0);
   Event_PlaySound(78);
@@ -1659,7 +1659,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   FieldActor_SetMoveTarget(boat, 0x27ff0000, boat->y, 0x1ecc0000);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Import_WorldMapFreeze();
+  WorldMap_Freeze();
   FieldEvent_SetMessageId((s32)MsgWeReSaved);
   Event_ShowMessage(5, 0);
   Event_ShowMessage(8, 0);
@@ -1684,7 +1684,7 @@ void WorldMap_DriftNorthOfContinent(void) {
     Actor_Get(10)->scaleY += -0x300;
     System_Wait(1);
   }
-  Import_WorldMapFreeze();
+  WorldMap_Freeze();
   Event_SetFlag(0x200);
   Event_ShowMessage(5, 0);
   Event_ShowMessage(6, 0);
@@ -1707,7 +1707,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 1);
   System_Wait(1);
-  Import_WorldMapFreeze();
+  WorldMap_Freeze();
   Actor_SetAttachedEffect(5, 0x102);
   FieldEvent_Wait(20);
   Event_ShowMessage(5, 0);
@@ -1768,7 +1768,7 @@ void WorldMap_TakeTheTiller(void) {
     Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Import_WorldMapFreeze();
+    WorldMap_Freeze();
     FieldEvent_SetMessageId((s32)MsgTakeTheTiller);
     Event_Wait(40);
     FieldEvent_ShowMessageThenWait(7, 0, 10);
@@ -1871,7 +1871,7 @@ void WorldMap_TakeOff(void) {
   Actor_Get(23)->scaleX = 0;
   Actor_SetSpriteFlags(Actor_Get(23), 0);
   Actor_SetPosition(23, x << 16, z << 16);
-  Import_WorldMapFreeze();
+  WorldMap_Freeze();
   FieldEvent_SetMessageId((s32)MsgWeDidIt);
   Event_PlaySound(390);
   Event_ShowMessage(2, 0);

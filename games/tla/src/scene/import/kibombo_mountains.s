@@ -26,9 +26,9 @@ Actor_SelectAnimation:
 	.thumb_func
 Actor_StartScript:
 	overlay_veneer Actor_StartScriptFar
-	.global Import_ActorStartIdle
+	.global Actor_StartIdle
 	.thumb_func
-Import_ActorStartIdle:
+Actor_StartIdle:
 	overlay_veneer Actor_StartIdleFar
 	.global Actor_SetMoveTarget
 	.thumb_func

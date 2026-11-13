@@ -12,7 +12,7 @@ extern const u8 gYampiDesert_Room11Entrances[];
 extern const u8 gYampiDesert_Room10Regions[];
 extern const u8 gYampiDesert_Room11Regions[];
 
-void YampiDesert_FightBlitz(void) { Import_FieldRequestDjinnBattle(19, 68); }
+void YampiDesert_FightBlitz(void) { Field_RequestDjinnBattle(19, 68); }
 
 const u8 *Scene_GetEntrances(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room11)

@@ -1427,7 +1427,7 @@ void KandoreanTemple_ReceiveLash(void) {
     ItemDisplay_ShowPicture(gKandoreanTemple_LashPebble, 3);
   Party_GiveItem(198, 0);
   if (gKandoreanTemple_LashPebble != 0)
-    Import_ActorRelease(gKandoreanTemple_LashPebble);
+    Actor_Release(gKandoreanTemple_LashPebble);
   Actor_SetAnimation(12, 4);
   Event_ShowMessage(0x800c, 0);
   FieldCamera_SetSpeed(0x6666, 0xccc);

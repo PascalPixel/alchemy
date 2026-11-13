@@ -24,7 +24,7 @@
 #include "frame.h"
 #include "module/scene/mt_aleph_summit.h"
 
-extern void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
+extern void Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -44,7 +44,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Import_ActorSelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect,
                     gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
@@ -87,7 +87,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Import_ActorSelectAnimation(effect, 1);
+    Actor_SelectAnimation(effect, 1);
     Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)

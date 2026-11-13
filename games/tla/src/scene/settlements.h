@@ -40,7 +40,7 @@ void Actor_LiftTargetBlock(const void *data);
 void Actor_PlaceMovedBlock(void);
 void Settlements_EnterDoor(void);
 void Settlements_DriftSmoke(struct Actor *object);
-void Import_ActorSelectAnimation(struct Actor *object, s32 a);
+void Actor_SelectAnimation(struct Actor *object, s32 a);
 void Actor_Release(struct Actor *object);
 extern s32 gSettlements_WaterfallLine;
 extern u16 gSettlements_WaterfallScrollAbove;

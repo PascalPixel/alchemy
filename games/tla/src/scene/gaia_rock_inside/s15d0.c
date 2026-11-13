@@ -371,7 +371,7 @@ void Func_02001d14(void) {
   object->x = 0;
   object->z = 0;
   FieldEvent_Wait(1);
-  Import_ActorRelease(object);
+  Actor_Release(object);
   Event_PlaySound(390);
   FieldEvent_Wait(30);
   REG_DISPCNT |= 0xf00;

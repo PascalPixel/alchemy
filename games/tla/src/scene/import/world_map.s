@@ -366,9 +366,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 FieldCamera_MoveWithinMapBounds:
 	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
-	.global Import_FieldCameraWaitForArrival
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Import_FieldCameraWaitForArrival:
+FieldCamera_WaitForArrival:
 	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Event_SetDestination
 	.thumb_func
@@ -426,9 +426,9 @@ Event_FinishScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Import_WorldMapFreeze
+	.global WorldMap_Freeze
 	.thumb_func
-Import_WorldMapFreeze:
+WorldMap_Freeze:
 	overlay_veneer WorldMap_FreezeFar
 	.global WorldMap_ReloadPendingAreaGraphics
 	.thumb_func

@@ -18,9 +18,9 @@ GameFlag_Set:
 	.thumb_func
 GameFlag_Clear:
 	overlay_veneer GameFlag_ClearFar
-	.global Import_ActorStartIdle
+	.global Actor_StartIdle
 	.thumb_func
-Import_ActorStartIdle:
+Actor_StartIdle:
 	overlay_veneer Actor_StartIdleFar
 	.global Map_SetLayerEntryFlag
 	.thumb_func
@@ -54,9 +54,9 @@ Message_CloseFinishedWindows:
 	.thumb_func
 Unit_Calculate:
 	overlay_veneer Unit_CalculateFar
-	.global Import_ItemGet
+	.global Item_GetDirect
 	.thumb_func
-Import_ItemGet:
+Item_GetDirect:
 	overlay_veneer Item_GetDirectFar
 	.global Inventory_GetQuantity
 	.thumb_func
@@ -86,13 +86,13 @@ PartyInventory_FindRoom:
 	.thumb_func
 FieldEvent_Wait:
 	overlay_veneer Event_WaitFar
-	.global Import_EventStart
+	.global Event_Start
 	.thumb_func
-Import_EventStart:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Import_EventEnd
+	.global Event_End
 	.thumb_func
-Import_EventEnd:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
@@ -122,25 +122,25 @@ Actor_Jump:
 	.thumb_func
 Actor_FaceActorById:
 	overlay_veneer Actor_FaceActorByIdFar
-	.global Import_EventSetMessageId
+	.global Event_SetMessageId
 	.thumb_func
-Import_EventSetMessageId:
+Event_SetMessageId:
 	overlay_veneer Event_SetMessageIdFar
 	.global FieldMessage_ShowAtActor
 	.thumb_func
 FieldMessage_ShowAtActor:
 	overlay_veneer FieldMessage_ShowAtActorFar
-	.global Import_EventShowMessageAndWait
+	.global Event_ShowMessageAndWait
 	.thumb_func
-Import_EventShowMessageAndWait:
+Event_ShowMessageAndWait:
 	overlay_veneer Event_ShowMessageAndWaitFar
 	.global Actor_ArmCallback
 	.thumb_func
 Actor_ArmCallback:
 	overlay_veneer Actor_ArmCallbackFar
-	.global Import_ActorSetSpritePriority
+	.global Actor_SetSpritePriority
 	.thumb_func
-Import_ActorSetSpritePriority:
+Actor_SetSpritePriority:
 	overlay_veneer Actor_SetSpritePriorityFar
 	.global Actor_ShowEmoteById
 	.thumb_func
@@ -158,9 +158,9 @@ ItemDisplay_ShowPicture:
 	.thumb_func
 FieldEffect_StartBlankOverlay:
 	overlay_veneer FieldEffect_StartBlankOverlayFar
-	.global Import_EventResolvePendingActions
+	.global Event_ResolvePendingActions
 	.thumb_func
-Import_EventResolvePendingActions:
+Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
 	.global FieldYesNo_Ask
 	.thumb_func

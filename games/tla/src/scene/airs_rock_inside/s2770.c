@@ -309,7 +309,7 @@ row:
       spark->gravity = 0x18000;
       spark->unk4c = spark->z;
       spark->speedLimit = Random16() & 0xffff;
-      Import_ActorSelectAnimation(spark, 7);
+      Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gData_02005fd8);
       Actor_SetSpriteFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
@@ -623,7 +623,7 @@ row:
       spark->gravity = 0x18000;
       spark->unk4c = spark->z;
       spark->speedLimit = Random16() & 0xffff;
-      Import_ActorSelectAnimation(spark, 7);
+      Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gData_02005fd8);
       Actor_SetSpriteFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
@@ -765,7 +765,7 @@ fadeOut:
   Call6((void (*)())MapGrid_CopyCellPictureIndicesRect, 65, 1, cellX + 64,
         cellY, 1, 2);
   Func_0200062c(0, cellX, cellY, 0xff00);
-  Import_ActorRelease(marker);
+  Actor_Release(marker);
   Event_End();
   REG_BLDCNT = 0;
   REG_DISPCNT &= 0x7fff;
@@ -844,7 +844,7 @@ void Func_02003e7c(struct Actor *source) {
   object->motionFlags = 0;
   Actor_SetSpriteColor(object, 2);
   Scene_SetActorSpritePriority(object, 1);
-  Import_ActorSelectAnimation(object, 1);
+  Actor_SelectAnimation(object, 1);
   Actor_SetSpriteFlags(object, 0);
   Actor_SetBlendMode(object, 1);
   Actor_StartScript(object, gData_02006084);
@@ -952,7 +952,7 @@ first:
     spark->motionFlags = 0;
     Actor_SetSpriteColor(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
-    Import_ActorSelectAnimation(spark, 7);
+    Actor_SelectAnimation(spark, 7);
     Actor_SetSpriteFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
     Actor_StartScript(spark, gData_02006094);
@@ -992,7 +992,7 @@ second:
     ((union SparkView *)spark)->bytes.unk62 = (16 - i) * 8 + 15;
     Actor_SetSpriteColor(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
-    Import_ActorSelectAnimation(spark, 7);
+    Actor_SelectAnimation(spark, 7);
     Actor_SetSpriteFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
     Call3(Vector_AddPolarOffset, spark->unk4c, *angle, (s32)&spark->x);
@@ -1032,7 +1032,7 @@ third:
     spark->motionFlags = 0;
     spark->priorityFlags = 1;
     Actor_SetSpriteColor(spark, 2);
-    Import_ActorSelectAnimation(spark, 7);
+    Actor_SelectAnimation(spark, 7);
     Actor_SetSpriteFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
     Actor_StartScript(spark, gData_020060c0);
@@ -1278,9 +1278,9 @@ step:
   second->y = second->terrainHeight;
   GameFlag_Set(first->timer);
   GameFlag_Clear(second->timer);
-  Import_ActorSelectAnimation(first,
+  Actor_SelectAnimation(first,
                               ((struct FieldSprite *)first->sprite)->frame + 1);
-  Import_ActorSelectAnimation(
+  Actor_SelectAnimation(
       second, ((struct FieldSprite *)second->sprite)->frame - 1);
   Func_020006cc(first);
   Func_020006cc(second);
@@ -1403,13 +1403,13 @@ void Func_02004cc8(void) {
   leader->speedLimit = 0x18000;
   leader->acceleration = 0x18000;
   lift = Import_ActorCreate(280, leader->x, leader->y - 0x80000, leader->z);
-  Import_ActorSelectAnimation(lift, 2);
+  Actor_SelectAnimation(lift, 2);
   Actor_SetSpriteFlags(lift, 0);
   lift->motionFlags = 0;
   lift->speedLimit = 0x16666;
   lift->acceleration = 0x16666;
-  Import_ActorSetMoveTarget(leader, leader->x, leader->y + 0x500000, leader->z);
-  Import_ActorSetMoveTarget(lift, lift->x, lift->y + 0x480000, lift->z);
+  Actor_SetMoveTarget(leader, leader->x, leader->y + 0x500000, leader->z);
+  Actor_SetMoveTarget(lift, lift->x, lift->y + 0x480000, lift->z);
   Sound_Play(137);
   Event_StartScreenTransition();
   while (!Actor_HasArrived(leader)) {
@@ -1423,29 +1423,29 @@ void Func_02004cc8(void) {
   height = Map_GetTerrainHeight(0, lift->x, lift->z - 0x100000);
   leader->y = height;
   leader->terrainHeight = height;
-  Import_ActorSelectAnimation(leader, 6);
+  Actor_SelectAnimation(leader, 6);
   wait(6);
   Sound_Play(152);
-  Import_ActorSelectAnimation(leader, 7);
+  Actor_SelectAnimation(leader, 7);
   leader->speedLimit = 0x20000;
   leader->acceleration = 0x8000;
   leader->velocityY = 0x40000;
   leader->motionFlags = 2;
   leader->priorityFlags = 1;
-  Import_ActorSetMoveTarget(leader, leader->x, leader->y, leader->z - 0x100000);
+  Actor_SetMoveTarget(leader, leader->x, leader->y, leader->z - 0x100000);
   OverlayObject_WaitUntilIdle(leader);
-  Import_ActorWaitForMove(leader);
+  Actor_WaitForMove(leader);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
-  Import_ActorSelectAnimation(lift, 5);
+  Actor_SelectAnimation(lift, 5);
   wait(12);
-  Import_ActorRelease(lift);
+  Actor_Release(lift);
   leader->motionFlags = 3;
   leader->terrainHeight = leader->y;
   Actor_SetSpriteFlags(leader, 1);
 #if TLA_PATCH_1
   leader->priorityFlags = priorityFlags;
 #endif
-  Import_ActorRelease(prepared);
+  Actor_Release(prepared);
   wait(1);
   Event_WaitTransitionFrames();
   Event_End();

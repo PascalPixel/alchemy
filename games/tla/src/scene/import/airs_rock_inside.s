@@ -66,9 +66,9 @@ GameFlag_Set:
 	.thumb_func
 GameFlag_Clear:
 	overlay_veneer GameFlag_ClearFar
-	.global Import_ActorSelectAnimation
+	.global Actor_SelectAnimation
 	.thumb_func
-Import_ActorSelectAnimation:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_SetAnimationSpeed
 	.thumb_func
@@ -82,21 +82,21 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Actor_CreateFar
-	.global Import_ActorRelease
+	.global Actor_Release
 	.thumb_func
-Import_ActorRelease:
+Actor_Release:
 	overlay_veneer Actor_ReleaseFar
 	.global Map_CenterOnFollowedPoint
 	.thumb_func
 Map_CenterOnFollowedPoint:
 	overlay_veneer Map_CenterOnFollowedPointFar
-	.global Import_ActorSetMoveTarget
+	.global Actor_SetMoveTarget
 	.thumb_func
-Import_ActorSetMoveTarget:
+Actor_SetMoveTarget:
 	overlay_veneer Actor_SetMoveTargetFar
-	.global Import_ActorWaitForMove
+	.global Actor_WaitForMove
 	.thumb_func
-Import_ActorWaitForMove:
+Actor_WaitForMove:
 	overlay_veneer Actor_WaitForMoveFar
 	.global MapGrid_CopyCellPictureIndicesRect
 	.thumb_func
@@ -314,9 +314,9 @@ Scene_PlayMusic:
 	.thumb_func
 Actor_SetActionCallback:
 	overlay_veneer Actor_SetActionCallbackFar
-	.global Import_SceneQueueMusic
+	.global Scene_QueueMusic
 	.thumb_func
-Import_SceneQueueMusic:
+Scene_QueueMusic:
 	overlay_veneer Scene_QueueMusicFar
 	.global Tightrope_Initialize
 	.thumb_func

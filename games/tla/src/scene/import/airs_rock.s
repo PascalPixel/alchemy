@@ -86,9 +86,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Actor_CreateFar
-	.global Import_ActorRelease
+	.global Actor_Release
 	.thumb_func
-Import_ActorRelease:
+Actor_Release:
 	overlay_veneer Actor_ReleaseFar
 	.global Map_CenterOnFollowedPoint
 	.thumb_func

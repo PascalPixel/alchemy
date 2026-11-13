@@ -119,7 +119,7 @@ void Idejima_WakeSheba(void);
 void Idejima_CatchUpWithFelix(void);
 void Idejima_RunAlexDeparture(void);
 void Party_RestoreHpPp(s32 a);
-void Import_ActorMoveToObject();
+void Actor_MoveToObject();
 void Func_02003320();
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -171,7 +171,7 @@ void Idejima_WakeKraden(void) {
   struct Actor *actor;
   struct Actor *leader;
 
-  Import_EventStart();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
   message = (s32)MsgIdejimaGroan;
@@ -219,7 +219,7 @@ void Idejima_WakeKraden(void) {
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Message_ShowCentered(message + 8, 1);
   Event_SetFlag(FLAG_IDEJIMA_KRADEN_JOINED);
-  Import_EventEnd();
+  Event_End();
 }
 
 /// Felix looks at the sleeping Jenna, who wakes, asks whether he has checked on
@@ -230,7 +230,7 @@ void Idejima_WakeJenna(void) {
   struct Actor *actor;
   struct Actor *leader;
 
-  Import_EventStart();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 1);
   FieldEvent_Wait(40);
@@ -283,7 +283,7 @@ void Idejima_WakeJenna(void) {
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Event_PrepareActorAndApplyValue(ACTOR_JENNA, 1);
   Event_SetFlag(FLAG_IDEJIMA_JENNA_JOINED);
-  Import_EventEnd();
+  Event_End();
 }
 
 /// Felix looks at the sleeping Sheba, who wakes, wonders where they are and
@@ -293,7 +293,7 @@ void Idejima_WakeJenna(void) {
 void Idejima_WakeSheba(void) {
   struct Actor *leader;
 
-  Import_EventStart();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Motion_SetVarCbAndRefresh(ACTOR_SHEBA, 2);
   Event_SetMessageId(MsgIdejimaSecondGroan);
@@ -336,13 +336,13 @@ void Idejima_WakeSheba(void) {
   Actor_SetHorizontalPositionWithTerrain(ACTOR_SHEBA, 0, 0);
   Event_PrepareObjectAndApplyValue(ACTOR_SHEBA, 1);
   GameFlag_Set(FLAG_IDEJIMA_SHEBA_JOINED);
-  Import_EventEnd();
+  Event_End();
 }
 
 /// Stepping onto the door cell (behavior 3) while facing it plays the door's
 /// sound and leaves by exit 3.
 void Idejima_EnterDoor(void) {
-  Import_EventStart();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(123);
   Event_FinishScreenTransition();
@@ -367,7 +367,7 @@ void Idejima_CatchUpWithFelix(void) {
   struct Actor *leader;
 
   if (Event_GetFlag(FLAG_IDEJIMA_KRADEN_JOINED) == 0) {
-    Import_EventStart();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Idejima_WalkLeaderBack();
     FieldEvent_SetMessageId((s32)MsgIdejimaHeyFelix);
@@ -415,10 +415,10 @@ void Idejima_CatchUpWithFelix(void) {
     Message_ShowCentered((s32)MsgIdejimaHeyFelix + 8, 1);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 20);
     Event_SetFlag(FLAG_IDEJIMA_KRADEN_JOINED);
-    Import_EventEnd();
+    Event_End();
   }
   if (Event_GetFlag(FLAG_IDEJIMA_JENNA_JOINED) == 0) {
-    Import_EventStart();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Idejima_WalkLeaderBack();
     Actor_SetHorizontalPositionWithTerrain(ACTOR_JENNA, PIXELS(312),
@@ -470,10 +470,10 @@ void Idejima_CatchUpWithFelix(void) {
     Event_PrepareActorAndApplyValue(ACTOR_JENNA, 1);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 20);
     Event_SetFlag(FLAG_IDEJIMA_JENNA_JOINED);
-    Import_EventEnd();
+    Event_End();
   }
   if (Event_GetFlag(FLAG_IDEJIMA_SHEBA_JOINED) == 0) {
-    Import_EventStart();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Idejima_WalkLeaderBack();
     Actor_SetHorizontalPositionWithTerrain(ACTOR_SHEBA, PIXELS(312),
@@ -529,7 +529,7 @@ void Idejima_CatchUpWithFelix(void) {
     Event_PrepareObjectAndApplyValue(ACTOR_SHEBA, 1);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 20);
     GameFlag_Set(FLAG_IDEJIMA_SHEBA_JOINED);
-    Import_EventEnd();
+    Event_End();
   }
 }
 
@@ -540,13 +540,13 @@ void Idejima_CatchUpWithFelix(void) {
 void Idejima_RunAlexDeparture(void) {
   const u8 *script;
 
-  Import_EventStart();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0x9999, 0x1333);
   FieldCamera_MoveTo(PIXELS(108), -1, PIXELS(720), 1);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 86, 712);
-  Import_ActorMoveToObject(ACTOR_KRADEN, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.currentOwner);
   System_Wait(1);
   Actor_SetSpeed(ACTOR_KRADEN, 0xcccc, 0x6666);
   Actor_WalkToAndWait(ACTOR_KRADEN, 104, 712);
@@ -568,8 +568,8 @@ void Idejima_RunAlexDeparture(void) {
   Event_AskYesNo(ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_KRADEN, 0x106, 40);
   Event_ShowMessage(ACTOR_KRADEN, 0);
-  Import_ActorMoveToObject(ACTOR_JENNA, gMainRoutineWork.currentOwner);
-  Import_ActorMoveToObject(ACTOR_SHEBA, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.currentOwner);
   System_Wait(1);
   Actor_SetSpeed(ACTOR_SHEBA, 0xcccc, 0x6666);
   Actor_SetSpeed(ACTOR_JENNA, 0xcccc, 0x6666);
@@ -742,7 +742,7 @@ void Idejima_RunAlexDeparture(void) {
   Actor_SetScript(ACTOR_JENNA, script);
   Actor_RunScriptAndWait(ACTOR_SHEBA, script);
   Event_SetFlag(FLAG_IDEJIMA_ASKED_WHERE_ALEX_WENT);
-  Import_EventEnd();
+  Event_End();
 }
 
 /// Starts the wave scroll from its first phase and table.
@@ -822,7 +822,7 @@ void Idejima_BreakAwayFromGondowan(void) {
    * instructions differ in tla-en. */
   s32 south;
 
-  Import_EventStart();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   System_Wait(1);
@@ -847,7 +847,7 @@ void Idejima_BreakAwayFromGondowan(void) {
   Actor_WalkToAndWait(ACTOR_JENNA, 204, 196);
   Actor_WalkToAndWait(ACTOR_JENNA, 208, 218);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
-  Import_ActorMoveToObject(ACTOR_KRADEN, ACTOR_JENNA);
+  Actor_MoveToObject(ACTOR_KRADEN, ACTOR_JENNA);
   System_Wait(1);
   Actor_SetSpeed(ACTOR_KRADEN, 0xcccc, 0x6666);
   Actor_WalkToAndWait(ACTOR_KRADEN, 186, 216);
@@ -1033,7 +1033,7 @@ void Idejima_BreakAwayFromGondowan(void) {
 void Idejima_FindFelixAndSheba(void) {
   struct Actor *actor = Actor_Get(ACTOR_JENNA);
 
-  Import_EventStart();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Idejima_UseDriftPalette();
   DriftScene_Prepare();
@@ -1144,7 +1144,7 @@ void Idejima_RideTheTidalWave(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 a3000, aD000, a4000, a8000;
 
-  Import_EventStart();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   DriftScene_Prepare();
@@ -1402,7 +1402,7 @@ void Idejima_FelixWakes(void) {
   s32 leader;
 
   FelixWake_StartStep();
-  Import_EventStart();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   System_Wait(1);
@@ -1488,7 +1488,7 @@ void Idejima_FelixWakes(void) {
   Actor_SetPosition(ACTOR_NARRATOR, 0, 0);
   Event_ClearFlag(0x12f);
   Event_SetFlag(FLAG_IDEJIMA_FELIX_WOKE);
-  Import_EventEnd();
+  Event_End();
   FelixWake_EndStep();
 }
 

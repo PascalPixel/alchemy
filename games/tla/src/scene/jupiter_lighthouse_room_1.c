@@ -67,7 +67,7 @@ extern s16 gLightSpriteCount;
 extern struct Actor *gLightSpriteActors[];
 extern s16 gLightSpritesLarge;
 extern s16 gLightSpritePriority;
-void Import_OamAddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
+void Oam_AddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
 void JupiterLighthouse_StepOnButton(void);
 void JupiterLighthouse_StepOffButton(void);
 extern u16 gPaletteCycleColors[];
@@ -221,7 +221,7 @@ DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
                           gLightSpriteCount, gLightSpriteActors,
                           gLightSpritesLarge, gLightSpritePriority,
                           BattleEffect_GetObjectPriority,
-                          Import_OamAddSpriteAtDepthClamped)
+                          Oam_AddSpriteAtDepthClamped)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

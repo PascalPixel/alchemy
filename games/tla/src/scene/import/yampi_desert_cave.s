@@ -40,9 +40,9 @@ GameFlag_GetByte:
 	.thumb_func
 GameFlag_SetByte:
 	overlay_veneer GameFlag_SetByteFar
-	.global Import_ActorSelectAnimation
+	.global Actor_SelectAnimation
 	.thumb_func
-Import_ActorSelectAnimation:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_SetPositionAndResetMotion
 	.thumb_func

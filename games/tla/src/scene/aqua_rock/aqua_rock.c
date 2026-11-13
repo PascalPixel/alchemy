@@ -124,9 +124,9 @@ void Func_020004e4(struct Actor *object) {
   else
     object->z -= 0x20000;
   if (object->y >> 20 == 23)
-    Import_ActorRelease(object);
+    Actor_Release(object);
   if (object->z >> 20 == 48)
-    Import_ActorRelease(object);
+    Actor_Release(object);
 }
 
 void Func_0200052c(struct Actor *object) {

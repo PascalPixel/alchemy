@@ -69,7 +69,7 @@ DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
  * has an incomplete type. */
 extern s16 gData_020024f4__s098c __asm__("gData_020024f4");
 
-void Import_OamAddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
+void Oam_AddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
 
 void LightSprites_Draw(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -115,7 +115,7 @@ void LightSprites_Draw(void) {
           oam->priority = BattleEffect_GetObjectPriority(actor);
         else
           oam->priority = gData_020024f6;
-        Import_OamAddSpriteAtDepthClamped(oam, depth);
+        Oam_AddSpriteAtDepthClamped(oam, depth);
         oam++;
       } else {
         s32 x, sy;
@@ -136,7 +136,7 @@ void LightSprites_Draw(void) {
           oam->priority = BattleEffect_GetObjectPriority(actor);
         else
           oam->priority = gData_020024f6;
-        Import_OamAddSpriteAtDepthClamped(oam, depth);
+        Oam_AddSpriteAtDepthClamped(oam, depth);
         oam++;
       }
     }

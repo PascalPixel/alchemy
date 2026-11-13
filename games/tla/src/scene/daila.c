@@ -103,7 +103,7 @@ static inline void ReturnHome(s32 mode, s32 actor, s32 flag) {
   /* FAKEMATCH(wrapper): the call forwarded through the inline, as in the scene
    * layer of The Broken Seal; as a direct call, which shifts 0x300 before
    * the actor is loaded, 2 of 6 instructions differ in tla-en. */
-  Import_ActorReturnHome(mode, actor, flag);
+  Actor_ReturnHome(mode, actor, flag);
 }
 
 s32 *Scene_GetExits(void) {
@@ -125,7 +125,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 void Daila_EnterDoor(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
-  Import_EventStart();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
@@ -135,9 +135,9 @@ void Daila_EnterDoor(void) {
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -6);
   Event_Wait(10);
   Import_EventSetExitRequest(work->exit);
-  Import_EventFinishScreenTransition();
-  Import_EventWaitTransitionFrames();
-  Import_EventEnd();
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_End();
 }
 
 /// Scoop on the puddle's cell digs up the buried Psy Crystal.
@@ -158,7 +158,7 @@ void Daila_TalkBeenBefore(void) {
   s32 msg;
 
   if (GameFlag_Get(FLAG_DAILA_GREETER_ASKED) == 0) {
-    Import_EventStart();
+    Event_Start();
     Event_ResolvePendingActions(0);
     msg = (s32)MsgDailaBeenBefore;
     Event_SetMessageId(msg);
@@ -172,7 +172,7 @@ void Daila_TalkBeenBefore(void) {
     }
     Event_ShowMessageAndWait(ACTOR_GREETER, 0);
     GameFlag_Set(FLAG_DAILA_GREETER_ASKED);
-    Import_EventEnd();
+    Event_End();
   } else {
     Event_SetMessageId((s32)MsgDailaWaveNoInjuries);
     Event_ShowMessageAndWait(ACTOR_GREETER, 0);
@@ -182,7 +182,7 @@ void Daila_TalkBeenBefore(void) {
 void Daila_TalkIndraMoved(void) {
   s32 msg;
 
-  Import_EventStart();
+  Event_Start();
   Event_ResolvePendingActions(0);
   msg = (s32)MsgDailaIndraMoved;
   Event_SetMessageId(msg);
@@ -195,13 +195,13 @@ void Daila_TalkIndraMoved(void) {
     Event_SetMessageId(msg + 2);
   }
   Event_ShowMessageAndWait(ACTOR_INDRA_MOVED_MAN, 0);
-  Import_EventEnd();
+  Event_End();
 }
 
 void Daila_TalkBoat(void) {
   s32 msg;
 
-  Import_EventStart();
+  Event_Start();
   Event_ResolvePendingActions(0);
   msg = (s32)MsgDailaWantBoat;
   Event_SetMessageId(msg);
@@ -214,27 +214,27 @@ void Daila_TalkBoat(void) {
     Event_SetMessageId(msg + 2);
   }
   Event_ShowMessageAndWait(ACTOR_INDRA_MOVED_MAN, 0);
-  Import_EventEnd();
+  Event_End();
 }
 
 void Daila_AskAfterTaviAndRiki(s32 keeper) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Import_ShopRun(3, keeper);
+    Shop_Run(3, keeper);
   } else {
-    Import_EventStart();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgDailaTaviRikiWorry);
     Event_ShowMessageAndWait(keeper, 0);
-    Import_EventEnd();
+    Event_End();
   }
 }
 
 void Daila_TalkHip(void) {
   s32 msg;
 
-  Import_EventStart();
+  Event_Start();
   Event_ResolvePendingActions(0);
   msg = (s32)MsgDailaHurtHip;
   Event_SetMessageId(msg);
@@ -247,20 +247,20 @@ void Daila_TalkHip(void) {
     Event_SetMessageId(msg + 2);
   }
   Event_ShowMessageAndWait(ACTOR_FALLEN_OLD_MAN, 0);
-  Import_EventEnd();
+  Event_End();
 }
 
 void Daila_TaviAndRikiAreHome(s32 keeper) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    Import_ShopRun(3, keeper);
+    Shop_Run(3, keeper);
   } else {
-    Import_EventStart();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgDailaTaviRikiHome);
     Event_ShowMessageAndWait(keeper, 0);
-    Import_EventEnd();
+    Event_End();
   }
 }
 
@@ -290,7 +290,7 @@ void Daila_MeetAlex(void) {
     return;
   if (GameFlag_Get(7))
     return;
-  Import_EventStart();
+  Event_Start();
   Event_ResolvePendingActions(0);
   msg = (s32)MsgDailaFelixCall;
   Event_SetMessageId(msg);
@@ -436,7 +436,7 @@ void Daila_MeetAlex(void) {
   Actor_JoinLeader(ACTOR_JENNA);
   Actor_JoinLeader(ACTOR_SHEBA);
   Actor_JoinLeader(ACTOR_KRADEN);
-  Import_EventEnd();
+  Event_End();
   GameFlag_Set(FLAG_DAILA_MET_ALEX);
 }
 
@@ -445,12 +445,12 @@ void Daila_MeetAlex(void) {
 /// set.
 #define DEFINE_DAILA_PARCH_PUDDLE(name, fromX, y, toX, actor, flag)            \
   void name(void) {                                                            \
-    Import_EventStart();                                                       \
+    Event_Start();                                                       \
     Event_ResolvePendingActions(0);                                            \
     MapGrid_CopyCellAttributes(fromX, y, 1, 1, toX, y);                        \
     Actor_SetHorizontalPositionWithTerrain(actor, 0, 0);                       \
     GameFlag_Set(flag);                                                     \
-    Import_EventEnd();                                                         \
+    Event_End();                                                         \
   }
 
 DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchFirstPuddle, 10, 19, 11,

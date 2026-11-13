@@ -993,7 +993,7 @@ void TrialRoad_ReachPeakFirst(void) {
   Actor_FaceDirection(5, TrialRoad_MirrorAngle(0), 0);
   Actor_WaitForMoveById(6);
   Actor_FaceDirection(6, TrialRoad_MirrorAngle(0), 0);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   wait(20);
   Event_PlaySound(138);
   wait(20);
@@ -1101,7 +1101,7 @@ void TrialRoad_ReachPeakSecond(void) {
   Actor_FaceDirection(5, TrialRoad_MirrorAngle(0), 0);
   Actor_WaitForMoveById(6);
   Actor_FaceDirection(6, TrialRoad_MirrorAngle(0), 0);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   Event_SetMessageId((s32)MsgTrialRoadSlowArrival);
   FieldActor_ShowEmote(8, 256, 10);
   Event_ShowMessage(8, 0);
@@ -1290,17 +1290,17 @@ void TrialRoad_ShowTraps(void) {
   Event_Wait(20);
   FieldCamera_SetSpeed(0x20000, 0x4000);
   FieldCamera_MoveTo(184 << 16, -1, 600 << 16, 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   FieldCamera_MoveTo(120 << 16, -1, 552 << 16, 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   FieldCamera_MoveTo(120 << 16, -1, 408 << 16, 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   FieldCamera_MoveTo(120 << 16, -1, 120 << 16, 1);
   Event_SetMessageId((s32)MsgTrialRoadTrapInstructions);
   Event_ShowMessageAndWait(8, 0);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   FieldCamera_MoveTo(216 << 16, -1, 120 << 16, 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   Event_ShowMessageAndWait(8, 0);
   Event_ShowMessageAndWait(4, 0);
   Actor_SetMovementTypeById(13, gTrialRoad_LeftKnightToChestScript);
@@ -1356,7 +1356,7 @@ void TrialRoad_ShowTraps(void) {
   Event_ShowMessageAndWait(8, 0);
   Actor_SetMovementTypeById(14, gTrialRoad_RightKnightToChestsScript);
   FieldCamera_MoveTo(328 << 16, -1, 120 << 16, 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   Event_ShowMessageAndWait(8, 0);
   Event_ShowMessageAndWait(8, 0);
   Actor_FaceDirection(14, FACING_NORTHEAST, 0);
@@ -1390,7 +1390,7 @@ void TrialRoad_ShowTraps(void) {
   Motion_SetModeAndWaitAnimation(14, 3);
   Event_ShowMessageAndWait(8, 0);
   FieldCamera_MoveWithinMapBounds(408 << 16, -1, 120 << 16, 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   Event_ShowMessageAndWait(8, 0);
   Actor_SetMovementTypeById(14, gTrialRoad_RightKnightLeavesScript);
   Actor_RefreshSelectorById(14);
@@ -1673,7 +1673,7 @@ DEFINE_PILLARS_RESTORE_RAISED(TrialRoad_RestoreCrumblingPillars, Func_02005a18,
                               MapGrid_GetTerrainKind, Actor_DisableById,
                               MapCollision_FindOrAddTag, Actor_SelectAnimation)
 
-DEFINE_TRAPS_CHECK(TrialRoad_CheckCrumblingStep, Import_FieldTryJumpForward,
+DEFINE_TRAPS_CHECK(TrialRoad_CheckCrumblingStep, Field_TryJumpForward,
                    Actor_FindAtCell, Actor_SelectAnimation, TrialRoad_SpawnRubble,
                    TrialRoad_SetLeaderCellShape, TrialRoad_SpawnDustRing)
 
@@ -1746,7 +1746,7 @@ void TrialRoad_StepOnTrap(const u16 *table) {
   s32 second;
   u8 *motion;
 
-  if (Import_FieldTryJumpForward() != 0)
+  if (Field_TryJumpForward() != 0)
     return;
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   partner = Actor_GetById(8);

@@ -181,7 +181,7 @@ s32 Scene_Initialize(void) {
       Func_02004cc8();
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room3) {
     Func_02002770();
-    Import_SceneQueueMusic(245);
+    Scene_QueueMusic(245);
     REG_BLDALPHA = 0xc08;
     REG_BLDCNT = 0x3f10;
     Task_Add(Func_02001690, 0x480);
@@ -314,7 +314,7 @@ s32 Scene_Initialize(void) {
       Call6(Map_CopyCellAttributeRect, 38, 35, 1, 1, 38, 37);
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room8) {
-    Import_SceneQueueMusic(245);
+    Scene_QueueMusic(245);
     REG_BLDALPHA = 0xc08;
     REG_BLDCNT = 0x3f10;
     Task_Add(Func_02001690, 0x480);

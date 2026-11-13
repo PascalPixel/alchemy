@@ -19,7 +19,7 @@
 
 void BattleEffect_GetObjectPriority(void);
 void Func_02004ec0(void);
-void Import_FieldCameraWaitForArrival();
+void FieldCamera_WaitForArrival();
 void Func_020057c4(void);
 
 extern s32 gData_02005b54[];
@@ -173,7 +173,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   FieldCamera_SetSpeed(0x19999, 0x3333);
   A(((s32)FieldCamera_GetActor()))->motionFlags = 0;
   FieldCamera_MoveTo(0x2000000, 0x600000, 0x1380000, 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   System_Wait(1);
   *(u16 *)0x4000052 = 0xc08;
   *(u16 *)0x4000050 = 0x3f10;
@@ -536,7 +536,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Actor_FaceDirection(2, 0x6000, 0);
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   FieldCamera_MoveTo(0x2000000, -1, 0x1400000, 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   Actor_FaceDirectionAndWait(19, 0xd000);
   Actor_SetAnimation(19, 3);
   Event_ShowMessage(19, 0);
@@ -664,7 +664,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   FieldEvent_Wait(20);
   FieldCamera_SetSpeed(0x19999, 0x3333);
   FieldCamera_MoveTo(0x2000000, -1, 0x1200000, 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   FieldTask_Remove((s32)Func_020004a4);
   Event_PlaySound(140);
   t184 = Actor_Get(8);

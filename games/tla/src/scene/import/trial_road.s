@@ -318,9 +318,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 FieldCamera_MoveWithinMapBounds:
 	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
-	.global Import_FieldCameraWaitForArrival
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Import_FieldCameraWaitForArrival:
+FieldCamera_WaitForArrival:
 	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Event_SetDestination
 	.thumb_func
@@ -350,9 +350,9 @@ Party_SetFields1f2And1f4:
 	.thumb_func
 Field_FindNearbyTalkTarget:
 	overlay_veneer Field_FindNearbyTalkTargetFar
-	.global Import_FieldTryJumpForward
+	.global Field_TryJumpForward
 	.thumb_func
-Import_FieldTryJumpForward:
+Field_TryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
 	.global Field_ClimbDown
 	.thumb_func

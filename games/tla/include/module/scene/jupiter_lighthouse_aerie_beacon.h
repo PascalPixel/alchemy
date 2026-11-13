@@ -104,7 +104,7 @@ extern s32 gData_02006a24;
 extern s32 gData_0200641c[];
 extern s32 gData_02006470[];
 
-void Import_FieldCameraWaitForArrival(void);
+void FieldCamera_WaitForArrival(void);
 
 void Func_02003a6c(s32 mode);
 void Func_02003c58(s32 mode);

@@ -247,7 +247,7 @@ void Func_02000ac8(void) {
     }
   }
 
-  Import_ActorRelease(actor);
+  Actor_Release(actor);
   Event_SetFlag(0x200);
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();

@@ -24,7 +24,7 @@ void Func_02002184(s32 id, u32 kind, s32 flag, s32 layer);
 
 s32 Func_02003160(struct Actor *object);
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
-s32 Import_FieldTryJumpForward(void);
+s32 Field_TryJumpForward(void);
 struct Actor *Func_02003188(s32 *position, s32 mode);
 
 void Func_020029d0(s32 spread);
@@ -32,8 +32,8 @@ void Func_02002ca8(s32 a, s32 b);
 
 void Func_02002b04(void);
 
-void Import_ActorMoveToObject(s32 id, s32 target);
-void Import_MapCenterOnFollowedPoint(void);
+void Actor_MoveToObject(s32 id, s32 target);
+void Map_CenterOnFollowedPoint(void);
 
 extern union FieldObject *Data_02003ccc;
 
@@ -51,8 +51,7 @@ extern u32 gData_02003304[];
 
 void EffectSprite_DrawAtWorldPosition(struct ParticleSprite *sprite,
                                       struct Particle *particle);
-void Import_BattleEffectStepVector3(struct Particle *particle, s32 unk1,
-                                    s32 step);
+void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 void Import_DecompressTaggedLz(void *source, void *destination);
 
 void Func_020007dc(void);

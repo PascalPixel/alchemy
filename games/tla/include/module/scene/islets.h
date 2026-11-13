@@ -73,10 +73,10 @@ struct IsletsMapWork {
   s32 value194;
 };
 
-void Import_ActorRelease(struct Actor *object);
-void Import_FieldPsynergyGreyMindReadPalette(void);
-void Import_FieldPsynergyRestoreMindReadPalette(void);
-void Import_FieldCameraWaitForArrival(void);
+void Actor_Release(struct Actor *object);
+void FieldPsynergy_GreyMindReadPalette(void);
+void FieldPsynergy_RestoreMindReadPalette(void);
+void FieldCamera_WaitForArrival(void);
 void TileCopies_CopyTouchedCells();
 
 s32 Func_02003684(s32 id);

@@ -47,7 +47,7 @@ struct AquaRockWork {
 void Import_DecompressTaggedLz(const void *source, void *destination);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *data);
-void Import_ActorRelease(struct Actor *object);
+void Actor_Release(struct Actor *object);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Map_CopyCellsRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);

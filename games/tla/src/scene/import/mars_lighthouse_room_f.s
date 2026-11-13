@@ -286,9 +286,9 @@ Import_EventSetExitRequest:
 	.thumb_func
 Field_FindNearbyTalkTarget:
 	overlay_veneer Field_FindNearbyTalkTargetFar
-	.global Import_FieldTryJumpForward
+	.global Field_TryJumpForward
 	.thumb_func
-Import_FieldTryJumpForward:
+Field_TryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
 	.global Leader_StopMoving
 	.thumb_func

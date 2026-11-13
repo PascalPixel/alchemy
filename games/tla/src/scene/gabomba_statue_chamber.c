@@ -303,7 +303,7 @@ void Func_02000184(void) {
   }
   PartyInventory_GiveItem(242, 0);
   if (gData_02002058 != 0)
-    Import_ActorRelease((s32)gData_02002058);
+    Actor_Release((s32)gData_02002058);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x6000, 0);
   Actor_FaceDirection(9, 0xd000, 40);

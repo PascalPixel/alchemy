@@ -248,7 +248,7 @@ void Func_0200071c(void) {
   FieldTask_AddFrame(Func_020006d0, priority);
   FieldCamera_SetSpeed(0x28000, 0x4000);
   FieldCamera_MoveTo(PIXELS(776), -1, PIXELS(648), 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(30);
   Event_End();
   Event_SetFlag(0x240);
@@ -315,7 +315,7 @@ cell:
   i++;
   if (i <= 14)
     goto row;
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   MapGrid_SetShake(-1, -1, 0xe666);
   Event_PlaySound(390);
   FieldEvent_Wait(30);
@@ -1798,7 +1798,7 @@ void Func_020030f4(void) {
           screenY |= 0x40002000;
           entry->top[1] = screenY;
           entry->top[2] = (tile + rise) | attributes;
-          Import_OamAddSpriteAtDepthClamped(entry->top, depth);
+          Oam_AddSpriteAtDepthClamped(entry->top, depth);
         }
         screenY = z - y;
         screenY = (screenY >> 16) + 8;
@@ -1817,7 +1817,7 @@ void Func_020030f4(void) {
             screenY |= 0x6000;
             entry->column[1] = screenY;
             entry->column[2] = attributes | (tile + rise);
-            Import_OamAddSpriteAtDepthClamped(column, depth);
+            Oam_AddSpriteAtDepthClamped(column, depth);
           }
         }
       }
@@ -2004,7 +2004,7 @@ void Func_020034fc(void) {
         splash->sprite[0] = 0;
         splash->sprite[1] = screenY | (column << 16) | 0x40002000;
         *frame = (tile + (((Random16() * 3) >> 16) << 3)) | priority;
-        Import_OamAddSpriteAtDepthClamped(splash->sprite, z);
+        Oam_AddSpriteAtDepthClamped(splash->sprite, z);
       }
     }
     i--;

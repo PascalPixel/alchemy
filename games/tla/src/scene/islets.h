@@ -21,7 +21,7 @@ struct IsletsEventWork {
   s32 field1ac;
 };
 
-void Import_ActorSelectAnimation(struct Actor *object, s32 value);
+void Actor_SelectAnimation(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const void *script);
 void Func_020034ec(void);
 
@@ -99,6 +99,6 @@ void Func_02001278(struct Actor *object);
 void Actor_EmitSmoke(struct Actor *object);
 void Func_020034d8(void);
 void Actor_MoveToObject(s32 actor, s32 target);
-void Import_FieldPsynergyStopMindReadWave(void);
+void FieldPsynergy_StopMindReadWave(void);
 
 #endif

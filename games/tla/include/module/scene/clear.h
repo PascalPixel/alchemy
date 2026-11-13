@@ -39,8 +39,8 @@ extern u16 gData_02002490[];
 
 struct Window;
 
-s32 Import_SaveScanFileSummaries(void);
-void Import_MainRoutineWorkInitializeDefaults(void);
+s32 Save_ScanFileSummaries(void);
+void MainRoutineWork_InitializeDefaults(void);
 void DataTransfer_Apply(void *data, s32 a, s32 b);
 void DataTransfer_GiveDefaultDjinn(void);
 void ClearData_Apply(void *data);

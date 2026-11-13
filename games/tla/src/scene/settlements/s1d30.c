@@ -74,7 +74,7 @@ retry:
   object->speedLimit = 0x20000;
   object->acceleration = 0x1999;
   object->timer = 0;
-  Import_ActorSelectAnimation(object, 2);
+  Actor_SelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
   object->update = Settlements_KeepSliding;
   goto walk;
@@ -126,7 +126,7 @@ end:
   object->update = NULL;
   object->actionFlags |= 1;
   object->acceleration = 0x4000;
-  Import_ActorSelectAnimation(object, 1);
+  Actor_SelectAnimation(object, 1);
 }
 
 #include "scene_tables.h"

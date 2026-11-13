@@ -78,9 +78,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Actor_CreateFar
-	.global Import_ActorRelease
+	.global Actor_Release
 	.thumb_func
-Import_ActorRelease:
+Actor_Release:
 	overlay_veneer Actor_ReleaseFar
 	.global Map_CenterOnFollowedPoint
 	.thumb_func
@@ -290,9 +290,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 FieldCamera_MoveWithinMapBounds:
 	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
-	.global Import_FieldCameraWaitForArrival
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Import_FieldCameraWaitForArrival:
+FieldCamera_WaitForArrival:
 	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global MapGrid_SetCameraBounds
 	.thumb_func

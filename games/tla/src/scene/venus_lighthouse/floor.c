@@ -76,7 +76,7 @@ void VenusLighthouse_RepelLeader(void) {
   struct VenusActor *actor = Actor_GetById__floor(leader);
   s32 z;
 
-  Import_EventStart();
+  Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetMovementTypeById(leader, gVenusLighthouse_LeaderFlashes);
   Actor_RefreshSelectorById__floor(leader);
@@ -116,7 +116,7 @@ void VenusLighthouse_RepelLeader(void) {
   } while (0);
 
   actor->update = 0;
-  Import_EventEnd();
+  Event_End();
 }
 
 void VenusLighthouse_StepOnFloorSwitch(void) {
@@ -131,7 +131,7 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
     leader->terrainHeight = 0;
     leader->y = 0;
   } else if (!Event_GetFlag(0x201)) {
-    Import_EventStart();
+    Event_Start();
     Event_ResolvePendingActions(0);
     Event_Wait(5);
     MapGrid_CopyCellPictureIndicesRect(52, 50, 42, 49, 1, 1);
@@ -141,7 +141,7 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
     leader->motionFlags &= ~1;
     leader->terrainHeight = -0x20000;
     leader->y = -0x20000;
-    Import_EventEnd();
+    Event_End();
   }
 }
 
@@ -171,7 +171,7 @@ void VenusLighthouse_SinkStatue(void) {
   s32 b;
 
   obj = Actor_Get(10);
-  Import_EventStart();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (obj->x >> 20 == 42) {
     FieldEvent_Wait(30);
@@ -185,23 +185,23 @@ void VenusLighthouse_SinkStatue(void) {
     b = 5;
     MapGrid_CopyCellsTo(44, 117, 41, 117, a, b);
   }
-  Import_EventEnd();
+  Event_End();
 }
 
 void VenusLighthouse_ReadRelief(void) {
-  Import_EventStart();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(FieldParty_GetLeaderActor(), 1);
   Message_ShowCentered((s32)MsgVenusLighthouseReliefWords, 1);
-  Import_EventEnd();
+  Event_End();
 }
 
 void VenusLighthouse_ReadTrueHeart(void) {
-  Import_EventStart();
+  Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(FieldParty_GetLeaderActor(), 1);
   Message_ShowCentered((s32)MsgVenusLighthouseTrueHeart, 1);
-  Import_EventEnd();
+  Event_End();
 }
 
 /// Reveal fades: the paths it showed hide again.
@@ -281,11 +281,11 @@ struct AerieEventWork__floor {
 s32 VenusLighthouse_Start(void) {
   ((struct AerieEventWork__floor *)Ram_HeapSlots->eventWork)->mode = 0x204;
   if (gMainRoutineWork.entrance == ENTRANCE_OPENING) {
-    Import_EventStart();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     VenusLighthouse_FelixLeaves();
     VenusLighthouse_DoubtLeaving();
-    Import_EventEnd();
+    Event_End();
   } else {
     FieldActor_SetSpriteColor(Actor_Get(10), 6);
     FieldActor_SetSpriteColor(Actor_Get(17), 6);
@@ -315,11 +315,11 @@ s32 VenusLighthouse_Start(void) {
     // From patch 1 it also saves this scene and entrance 22.
     routine->savedScene = (s32)&SceneId_VenusLighthouse;
     routine->savedEntrance = 22;
-    Import_EventStart();
+    Event_Start();
     FieldEvent_ResolvePendingActions(0);
     VenusLighthouse_FelixLeaves();
     VenusLighthouse_DoubtLeaving();
-    Import_EventEnd();
+    Event_End();
   } else {
     FieldActor_SetSpriteColor(Actor_Get(10), 6);
     FieldActor_SetSpriteColor(Actor_Get(17), 6);

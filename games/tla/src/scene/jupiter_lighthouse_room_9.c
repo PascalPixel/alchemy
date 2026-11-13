@@ -57,7 +57,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode);
 extern s16 gLightSpriteTile;
 extern struct Actor *gLightSpriteActors[];
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
-void Import_OamAddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
+void Oam_AddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
 void JupiterLighthouse_StopHovering(void);
 void Whirlwind_CarryLeader(void);
 extern s32 gWhirlwindRiding;
@@ -301,7 +301,7 @@ DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
                           gLightSpriteCount__s0910, gLightSpriteActors,
                           gLightSpritesLarge, gLightSpritePriority,
                           BattleEffect_GetObjectPriority,
-                          Import_OamAddSpriteAtDepthClamped)
+                          Oam_AddSpriteAtDepthClamped)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

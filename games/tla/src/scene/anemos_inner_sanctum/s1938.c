@@ -84,7 +84,7 @@ void Func_020019a8(void) {
   object->y = 0;
   object->z = 0;
   Actor_SetPosition(8, 0, 0);
-  Import_ActorRelease(effect);
+  Actor_Release(effect);
   Event_End();
 }
 

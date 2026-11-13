@@ -153,14 +153,14 @@ UNUSED void DailaInteriors_PracticeShout(s32 unused, s32 actor) {
   Actor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
   if (!Daila_FlagCheck(FLAG_DAILA_PRACTICE_AT_DOOR)) {
-    Import_EventSetMessageId((s32)MsgDailaInteriorsGah);
-    Import_EventShowMessageAndWait(actor, 0);
+    Event_SetMessageId((s32)MsgDailaInteriorsGah);
+    Event_ShowMessageAndWait(actor, 0);
     Daila_ObjWalk(actor, 360, 72);
     Actor_ArmCallback(actor, FACING_SOUTH, 0);
     GameFlag_Set(FLAG_DAILA_PRACTICE_AT_DOOR);
   } else {
-    Import_EventSetMessageId((s32)MsgDailaInteriorsYarg);
-    Import_EventShowMessageAndWait(actor, 0);
+    Event_SetMessageId((s32)MsgDailaInteriorsYarg);
+    Event_ShowMessageAndWait(actor, 0);
     Daila_ObjWalk(actor, 392, 104);
     Actor_ArmCallback(actor, FACING_WEST, 0);
     GameFlag_Clear(FLAG_DAILA_PRACTICE_AT_DOOR);
@@ -176,33 +176,33 @@ UNUSED void DailaInteriors_StartleAtTheLeader(s32 unused, s32 actor) {
   Actor_Jump(actor, 6, 15);
   Actor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
-  Import_EventSetMessageId((s32)MsgDailaInteriorsWhatAreYouDoing);
-  Import_EventShowMessageAndWait(actor, 0);
+  Event_SetMessageId((s32)MsgDailaInteriorsWhatAreYouDoing);
+  Event_ShowMessageAndWait(actor, 0);
   FieldEvent_Wait(10);
 }
 
 s32 DailaInteriors_TalkScamps(void) {
-  Import_EventStart();
-  Import_EventResolvePendingActions(0);
-  Import_EventSetMessageId((s32)MsgDailaInteriorsScamps);
-  Import_EventShowMessageAndWait(19, 0);
-  Import_EventEnd();
+  Event_Start();
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)MsgDailaInteriorsScamps);
+  Event_ShowMessageAndWait(19, 0);
+  Event_End();
   return 0;
 }
 
 s32 DailaInteriors_TalkMazeTreasure(void) {
-  Import_EventStart();
-  Import_EventResolvePendingActions(0);
-  Import_EventSetMessageId((s32)MsgDailaInteriorsMazeTreasure);
-  Import_EventShowMessageAndWait(19, 0);
-  Import_EventEnd();
+  Event_Start();
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)MsgDailaInteriorsMazeTreasure);
+  Event_ShowMessageAndWait(19, 0);
+  Event_End();
   return 0;
 }
 
 void DailaInteriors_StartLeaderEvent(void) {
-  Import_EventStart();
-  Import_EventResolvePendingActions(0);
-  Import_ActorSetSpritePriority(gMainRoutineWork.currentOwner, 1);
+  Event_Start();
+  Event_ResolvePendingActions(0);
+  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
 }
 
 extern struct Trigger gDailaInteriors1Events[];
@@ -238,11 +238,11 @@ void DailaInteriors_TalkToWeaponMerchant(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Shop_Run(1, actor);
   } else {
-    Import_EventStart();
-    Import_EventResolvePendingActions(0);
-    Import_EventSetMessageId((s32)MsgDailaInteriorsSouthRoadDanger);
-    Import_EventShowMessageAndWait(actor, 0);
-    Import_EventEnd();
+    Event_Start();
+    Event_ResolvePendingActions(0);
+    Event_SetMessageId((s32)MsgDailaInteriorsSouthRoadDanger);
+    Event_ShowMessageAndWait(actor, 0);
+    Event_End();
   }
 }
 
@@ -252,11 +252,11 @@ void DailaInteriors_TalkToArmorMerchant(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Shop_Run(2, actor);
   } else {
-    Import_EventStart();
-    Import_EventResolvePendingActions(0);
-    Import_EventSetMessageId((s32)MsgDailaInteriorsNewTravelers);
-    Import_EventShowMessageAndWait(actor, 0);
-    Import_EventEnd();
+    Event_Start();
+    Event_ResolvePendingActions(0);
+    Event_SetMessageId((s32)MsgDailaInteriorsNewTravelers);
+    Event_ShowMessageAndWait(actor, 0);
+    Event_End();
   }
 }
 
@@ -268,11 +268,11 @@ void DailaInteriors_TalkToInnkeeper(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0x8000) {
     Inn_CheckIn__daila_interiors(0, actor);
   } else {
-    Import_EventStart();
-    Import_EventResolvePendingActions(0);
-    Import_EventSetMessageId((s32)MsgDailaInteriorsDinnerChoice);
-    Import_EventShowMessageAndWait(actor, 0);
-    Import_EventEnd();
+    Event_Start();
+    Event_ResolvePendingActions(0);
+    Event_SetMessageId((s32)MsgDailaInteriorsDinnerChoice);
+    Event_ShowMessageAndWait(actor, 0);
+    Event_End();
   }
 }
 
@@ -282,39 +282,39 @@ void DailaInteriors_TalkToHealer(s32 actor) {
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     if (GameFlag_Get(FLAG_DAILA_HEALER_SENT_TO_POI) == 0) {
-      Import_EventStart();
-      Import_EventResolvePendingActions(0);
+      Event_Start();
+      Event_ResolvePendingActions(0);
       msg = (s32)MsgDailaInteriorsTravelersFreeTime;
-      Import_EventSetMessageId(msg);
+      Event_SetMessageId(msg);
       FieldMessage_ShowAtActor(actor, 0);
       if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
         FieldEvent_Wait(10);
-        Import_EventSetMessageId(msg + 1);
+        Event_SetMessageId(msg + 1);
       } else {
         FieldEvent_Wait(20);
-        Import_EventSetMessageId(msg + 2);
+        Event_SetMessageId(msg + 2);
       }
-      Import_EventShowMessageAndWait(actor, 0);
-      Import_EventEnd();
+      Event_ShowMessageAndWait(actor, 0);
+      Event_End();
       GameFlag_Set(FLAG_DAILA_HEALER_SENT_TO_POI);
     } else {
       Sanctum_Run(actor);
     }
   } else {
-    Import_EventStart();
-    Import_EventResolvePendingActions(0);
+    Event_Start();
+    Event_ResolvePendingActions(0);
     msg = (s32)MsgDailaInteriorsTravelersFreeTime;
-    Import_EventSetMessageId(msg);
+    Event_SetMessageId(msg);
     FieldMessage_ShowAtActor(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       FieldEvent_Wait(10);
-      Import_EventSetMessageId(msg + 1);
+      Event_SetMessageId(msg + 1);
     } else {
       FieldEvent_Wait(20);
-      Import_EventSetMessageId(msg + 2);
+      Event_SetMessageId(msg + 2);
     }
-    Import_EventShowMessageAndWait(actor, 0);
-    Import_EventEnd();
+    Event_ShowMessageAndWait(actor, 0);
+    Event_End();
     GameFlag_Set(FLAG_DAILA_HEALER_SENT_TO_POI);
   }
 }
@@ -325,11 +325,11 @@ void DailaInteriors_TalkToHealerOnceTaviIsRescued(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Sanctum_Run(actor);
   } else {
-    Import_EventStart();
-    Import_EventResolvePendingActions(0);
-    Import_EventSetMessageId((s32)MsgDailaInteriorsLeaveForMadra);
-    Import_EventShowMessageAndWait(actor, 0);
-    Import_EventEnd();
+    Event_Start();
+    Event_ResolvePendingActions(0);
+    Event_SetMessageId((s32)MsgDailaInteriorsLeaveForMadra);
+    Event_ShowMessageAndWait(actor, 0);
+    Event_End();
   }
 }
 
@@ -339,11 +339,11 @@ void DailaInteriors_TalkToWeaponMerchantOnceTaviIsRescued(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Shop_Run(1, actor);
   } else {
-    Import_EventStart();
-    Import_EventResolvePendingActions(0);
-    Import_EventSetMessageId((s32)MsgDailaInteriorsPirateTreasure);
-    Import_EventShowMessageAndWait(actor, 0);
-    Import_EventEnd();
+    Event_Start();
+    Event_ResolvePendingActions(0);
+    Event_SetMessageId((s32)MsgDailaInteriorsPirateTreasure);
+    Event_ShowMessageAndWait(actor, 0);
+    Event_End();
   }
 }
 
@@ -353,11 +353,11 @@ void DailaInteriors_TalkToArmorMerchantOnceTaviIsRescued(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Shop_Run(2, actor);
   } else {
-    Import_EventStart();
-    Import_EventResolvePendingActions(0);
-    Import_EventSetMessageId((s32)MsgDailaInteriorsSpaciousVillage);
-    Import_EventShowMessageAndWait(actor, 0);
-    Import_EventEnd();
+    Event_Start();
+    Event_ResolvePendingActions(0);
+    Event_SetMessageId((s32)MsgDailaInteriorsSpaciousVillage);
+    Event_ShowMessageAndWait(actor, 0);
+    Event_End();
   }
 }
 
@@ -368,11 +368,11 @@ void DailaInteriors_TalkToInnkeeperOnceTaviIsRescued(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0x8000) {
     Inn_CheckIn__daila_interiors(0, actor);
   } else {
-    Import_EventStart();
-    Import_EventResolvePendingActions(0);
-    Import_EventSetMessageId((s32)MsgDailaInteriorsFishermenWaiting);
-    Import_EventShowMessageAndWait(actor, 0);
-    Import_EventEnd();
+    Event_Start();
+    Event_ResolvePendingActions(0);
+    Event_SetMessageId((s32)MsgDailaInteriorsFishermenWaiting);
+    Event_ShowMessageAndWait(actor, 0);
+    Event_End();
   }
 }
 
@@ -381,20 +381,20 @@ void DailaInteriors_TalkToInnkeeperOnceTaviIsRescued(s32 actor) {
 void DailaInteriors_AskGoingToMadra(void) {
   s32 msg;
 
-  Import_EventStart();
-  Import_EventResolvePendingActions(0);
+  Event_Start();
+  Event_ResolvePendingActions(0);
   msg = (s32)MsgDailaInteriorsGoingToMadra;
-  Import_EventSetMessageId(msg);
+  Event_SetMessageId(msg);
   FieldMessage_ShowAtActor(12, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     FieldEvent_Wait(10);
-    Import_EventSetMessageId(msg + 1);
+    Event_SetMessageId(msg + 1);
   } else {
     FieldEvent_Wait(20);
-    Import_EventSetMessageId(msg + 2);
+    Event_SetMessageId(msg + 2);
   }
-  Import_EventShowMessageAndWait(12, 0);
-  Import_EventEnd();
+  Event_ShowMessageAndWait(12, 0);
+  Event_End();
 }
 
 /// ★ Named from the game: "Don't tell me you're all looking for a boat, too!"
@@ -402,34 +402,34 @@ void DailaInteriors_AskGoingToMadra(void) {
 void DailaInteriors_TalkNoBoats(void) {
   s32 msg;
 
-  Import_EventStart();
-  Import_EventResolvePendingActions(0);
+  Event_Start();
+  Event_ResolvePendingActions(0);
   msg = (s32)MsgDailaInteriorsLookingForBoat;
-  Import_EventSetMessageId(msg);
+  Event_SetMessageId(msg);
   FieldMessage_ShowAtActor(14, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     FieldEvent_Wait(10);
-    Import_EventSetMessageId(msg + 1);
+    Event_SetMessageId(msg + 1);
   } else {
     FieldEvent_Wait(20);
-    Import_EventSetMessageId(msg + 2);
+    Event_SetMessageId(msg + 2);
   }
-  Import_EventShowMessageAndWait(14, 0);
-  Import_EventEnd();
+  Event_ShowMessageAndWait(14, 0);
+  Event_End();
 }
 
 /// ★ Named from the game: "Er... Aheh heh... You... weren't watching, were
 /// you?" (MsgDailaInteriorsWatchingPractice)
 void DailaInteriors_TalkCaughtPracticing(void) {
-  Import_EventStart();
-  Import_EventResolvePendingActions(0);
-  Import_EventSetMessageId((s32)MsgDailaInteriorsWatchingPractice);
-  Import_EventShowMessageAndWait(26, 0);
+  Event_Start();
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)MsgDailaInteriorsWatchingPractice);
+  Event_ShowMessageAndWait(26, 0);
   FieldEvent_Wait(30);
   Actor_SetModeById(26, 3);
   FieldEvent_Wait(30);
-  Import_EventShowMessageAndWait(26, 0);
-  Import_EventEnd();
+  Event_ShowMessageAndWait(26, 0);
+  Event_End();
 }
 
 DEFINE_SCENE_RAISE_HELD_ACTOR(Scene_RaiseHeldActor, FlagBlock_ApplyFlags,
@@ -474,7 +474,7 @@ extern struct DailaActor__item *
 Actor_GetById__item(s32 id) __asm__("Actor_GetById");
 void ItemDisplay_ShowPicture(struct DailaActor__item *object, s32 mode);
 void Sound_Play(s32 cue);
-void Import_ActorStartIdle(struct DailaActor__item *object);
+void Actor_StartIdle(struct DailaActor__item *object);
 
 /// Takes the Sea God's Tear from the top of the pillars, or, when the bags are
 /// full and nothing is dropped for it, puts it back.
@@ -488,8 +488,8 @@ void DailaInteriors_TakeSeaGodsTear(void) {
   item = 458;
   saved28 = Actor_GetById__item(ACTOR_SEA_GODS_TEAR)->unk28;
   savedY = Actor_GetById__item(ACTOR_SEA_GODS_TEAR)->y;
-  Import_EventStart();
-  Import_EventResolvePendingActions(0);
+  Event_Start();
+  Event_ResolvePendingActions(0);
   if (PartyInventory_FindRoom(item) >= 0) {
     ItemDisplay_ShowPicture(Actor_GetById__item(ACTOR_SEA_GODS_TEAR), 3);
     Sound_Play(83);
@@ -515,8 +515,8 @@ void DailaInteriors_TakeSeaGodsTear(void) {
       Actor_GetById__item(ACTOR_SEA_GODS_TEAR)->y = savedY;
       Actor_GetById__item(ACTOR_SEA_GODS_TEAR)->unk48 = saved48;
       Actor_GetById__item(ACTOR_SEA_GODS_TEAR)->unk6c = 0;
-      Import_ActorStartIdle(Actor_GetById__item(ACTOR_SEA_GODS_TEAR));
-      Import_ActorSetSpritePriority(ACTOR_SEA_GODS_TEAR, 1);
+      Actor_StartIdle(Actor_GetById__item(ACTOR_SEA_GODS_TEAR));
+      Actor_SetSpritePriority(ACTOR_SEA_GODS_TEAR, 1);
       Actor_GetById__item(ACTOR_SEA_GODS_TEAR)->kind55 = 2;
       Actor_GetById__item(ACTOR_SEA_GODS_TEAR)->speed1c = 0x13333;
       Actor_GetById__item(ACTOR_SEA_GODS_TEAR)->speed18 = 0x13333;
@@ -524,10 +524,10 @@ void DailaInteriors_TakeSeaGodsTear(void) {
       Daila_ObjPlace(ACTOR_SEA_GODS_TEAR, 232 << 16, 196 << 16);
     }
   }
-  Import_EventEnd();
+  Event_End();
 }
 
-struct ItemDefinition *Import_ItemGet(s32 item);
+struct ItemDefinition *Item_GetDirect(s32 item);
 
 /// Gives an item to the party, asking what to drop when no one has room for
 /// it; returns who took it, or -1.
@@ -552,7 +552,7 @@ s32 DailaInteriors_GiveItem(s32 item, s32 unused) {
     FieldMessage_Show((s32)MsgItemDropPrompt, 1);
     result = ItemPicker_RunToDrop(&member, &slot);
     if (result == -1) {
-      if (Import_ItemGet(item)->flags & 8) {
+      if (Item_GetDirect(item)->flags & 8) {
         MessageArgument_Push(item, 2);
         FieldMessage_Show((s32)MsgItemDropPrompt + 4, 1);
         goto retry;
@@ -652,13 +652,13 @@ s32 DailaInteriors_Start(void) {
           32;
       Actor_GetById__arrival(13)->priorityFlags |= 32;
       Actor_GetById__arrival(19)->priorityFlags |= 32;
-      Import_ActorSetSpritePriority(19, 2);
+      Actor_SetSpritePriority(19, 2);
       Actor_GetById__arrival(19)->collisionFlags |= 4;
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_DailaInteriors2) {
     map = (struct DailaMapWork *)Ram_HeapSlots->mapWork;
-    Import_EventStart();
-    Import_EventResolvePendingActions(0);
+    Event_Start();
+    Event_ResolvePendingActions(0);
     Actor_SetSingleChildFlags__arrival(Actor_GetById__arrival(ACTOR_TEAR_SPOT),
                                        0);
     FieldEffect_StartBlankOverlay(0);
@@ -666,7 +666,7 @@ s32 DailaInteriors_Start(void) {
       Actor_SetItemIcon(Actor_GetById__arrival(ACTOR_SEA_GODS_TEAR), 458);
       Actor_SetSingleChildFlags__arrival(
           Actor_GetById__arrival(ACTOR_SEA_GODS_TEAR), 0);
-      Import_ActorSetSpritePriority(ACTOR_SEA_GODS_TEAR, 1);
+      Actor_SetSpritePriority(ACTOR_SEA_GODS_TEAR, 1);
       Actor_GetById__arrival(ACTOR_SEA_GODS_TEAR)->speed1c = 0x13333;
       Actor_GetById__arrival(ACTOR_SEA_GODS_TEAR)->speed18 = 0x13333;
       Actor_GetById__arrival(ACTOR_SEA_GODS_TEAR)->collisionFlags |= 4;
@@ -684,7 +684,7 @@ s32 DailaInteriors_Start(void) {
     } else {
       FlagBlock_PlaceAll(gDailaInteriors_PillarFrozenFlags);
     }
-    Import_EventEnd();
+    Event_End();
   }
   return 0;
 }

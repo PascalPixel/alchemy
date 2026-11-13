@@ -35,7 +35,7 @@ void Func_020011e0(void) {
   Func_02003048();
   Event_ResolvePendingActions(0);
   TundariaTower_CamBounds(-1, -1, -1, 0);
-  Import_MapCenterOnFollowedPoint();
+  Map_CenterOnFollowedPoint();
   wait(1);
   leader->y = 0x820000;
   leader->gravity = 0x8000;
@@ -273,8 +273,8 @@ void Func_02001868(void) {
 
   if (work->actionCounter != 0) {
     Call1((void (*)())GameFlag_Set, 0x106);
-    Import_LeaderStopMoving();
-    Import_EventResolveAllPendingActions();
+    Leader_StopMoving();
+    Event_ResolveAllPendingActions();
     GameFlag_Clear(0x106);
   }
 }

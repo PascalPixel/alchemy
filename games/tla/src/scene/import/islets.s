@@ -42,9 +42,9 @@ GameFlag_Set:
 	.thumb_func
 GameFlag_Clear:
 	overlay_veneer GameFlag_ClearFar
-	.global Import_ActorSelectAnimation
+	.global Actor_SelectAnimation
 	.thumb_func
-Import_ActorSelectAnimation:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func
@@ -54,9 +54,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Actor_CreateFar
-	.global Import_ActorRelease
+	.global Actor_Release
 	.thumb_func
-Import_ActorRelease:
+Actor_Release:
 	overlay_veneer Actor_ReleaseFar
 	.global Actor_SetPositionAndResetMotion
 	.thumb_func
@@ -242,9 +242,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 FieldCamera_MoveWithinMapBounds:
 	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
-	.global Import_FieldCameraWaitForArrival
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Import_FieldCameraWaitForArrival:
+FieldCamera_WaitForArrival:
 	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global Import_EventSetExitRequest
 	.thumb_func
@@ -274,17 +274,17 @@ Event_ResolvePendingActions:
 	.thumb_func
 FieldPsynergy_StartMindReadWave:
 	overlay_veneer FieldPsynergy_StartMindReadWaveFar
-	.global Import_FieldPsynergyStopMindReadWave
+	.global FieldPsynergy_StopMindReadWave
 	.thumb_func
-Import_FieldPsynergyStopMindReadWave:
+FieldPsynergy_StopMindReadWave:
 	overlay_veneer FieldPsynergy_StopMindReadWaveFar
-	.global Import_FieldPsynergyGreyMindReadPalette
+	.global FieldPsynergy_GreyMindReadPalette
 	.thumb_func
-Import_FieldPsynergyGreyMindReadPalette:
+FieldPsynergy_GreyMindReadPalette:
 	overlay_veneer FieldPsynergy_GreyMindReadPaletteFar
-	.global Import_FieldPsynergyRestoreMindReadPalette
+	.global FieldPsynergy_RestoreMindReadPalette
 	.thumb_func
-Import_FieldPsynergyRestoreMindReadPalette:
+FieldPsynergy_RestoreMindReadPalette:
 	overlay_veneer FieldPsynergy_RestoreMindReadPaletteFar
 	.global Actor_WatchAndSetScript
 	.thumb_func

@@ -585,7 +585,7 @@ void Func_02000c90(void) {
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Camera_SetSpeedParameters(0x26666, 0x4ccc);
   FieldCamera_MoveWithinMapBounds(PIXELS(280), -1, PIXELS(88), 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   Event_Wait(20);
   Event_SetMessageId((s32)MsgYouVeCome);
   Event_ShowMessageAndWait(0x8007, 0);
@@ -623,7 +623,7 @@ void Func_02000d74(void) {
   Actor_ArmCallback(6, FACING_EAST, 10);
   Camera_SetSpeedParameters(0x4cccc, 0x9999);
   Kibombo_CamMove(PIXELS(264), -1, PIXELS(388), 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   Event_Wait(40);
   Kibombo_ObjArm(17, FACING_SOUTHEAST + FACING_STEP, 20);
   Motion_SetModeAndWaitAnimation(17, 3);
@@ -685,7 +685,7 @@ void Func_02000d74(void) {
   Func_020032b0();
   Event_Wait(80);
   FieldCamera_MoveWithinMapBounds(PIXELS(88), PIXELS(32), PIXELS(392), 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   Event_Wait(40);
   Event_ShowMessageAndWait(7, 0);
   Kibombo_ObjEmoteWait(7, 0x102);
@@ -892,7 +892,7 @@ void Func_02001318(void) {
   ((struct Actor *)((s32)Func_080d4568__s1318()))->motionFlags = 0;
   FieldCamera_SetSpeed(0x33333, 0x6666);
   FieldCamera_MoveTo(PIXELS(96), -1, PIXELS(340), 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   Actor_FaceDirection(7, FACING_NORTHWEST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
   FieldEffect_SetAttached(7, 258);
@@ -1235,16 +1235,16 @@ void Func_02002050(void) {
   Camera_SetSpeedParameters(0x26666, 0x4ccc);
   ((struct Actor *)((s32)Func_080d4568__s1318()))->motionFlags = done;
   FieldCamera_MoveTo(PIXELS(200), -1, PIXELS(180), 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   Event_Wait(10);
   FieldCamera_MoveTo(PIXELS(174), -1, PIXELS(224), 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   Event_Wait(10);
   FieldCamera_MoveTo(PIXELS(268), -1, PIXELS(120), 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   Event_Wait(20);
   FieldCamera_MoveTo(PIXELS(272), -1, PIXELS(180), 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   Actor_SetModeById(6, 4);
   Event_ShowMessageAndWait(6, 0);
   Actor_ShowEmote(5, 257, 0);

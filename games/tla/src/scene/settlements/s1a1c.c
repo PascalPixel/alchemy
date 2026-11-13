@@ -21,7 +21,7 @@ void Settlements_KeepSliding(struct Actor *object);
 void Settlements_StopLeader(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 ArcTan2(s32 y, s32 x);
-void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 s32 Actor_HasArrived(struct Actor *object);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
@@ -95,7 +95,7 @@ retry:
   object->acceleration = 0x1999;
   object->timer = 0;
   Actor_SetMoveTarget(object, x, object->y, z);
-  Import_ActorSelectAnimation(object, 2);
+  Actor_SelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
   for (i = 0; i <= 179 && Actor_HasArrived(object) == 0; i++) {
     if (gSettlements_SlideStopped != 0)
@@ -165,7 +165,7 @@ end:
   object->update = NULL;
   object->actionFlags |= 1;
   object->acceleration = 0x4000;
-  Import_ActorSelectAnimation(object, 1);
+  Actor_SelectAnimation(object, 1);
 }
 
 #else
@@ -186,7 +186,7 @@ void Settlements_KeepSliding(struct Actor *object);
 void Settlements_StopLeader(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 ArcTan2(s32 y, s32 x);
-void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 s32 Actor_HasArrived(struct Actor *object);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
@@ -259,7 +259,7 @@ retry:
   object->acceleration = 0x1999;
   object->timer = 0;
   Actor_SetMoveTarget(object, x, object->y, z);
-  Import_ActorSelectAnimation(object, 2);
+  Actor_SelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
   FieldActor_WaitForMove(object);
   object->update = (void (*)(void))Settlements_KeepSliding;
@@ -325,7 +325,7 @@ end:
   object->update = NULL;
   object->actionFlags |= 1;
   object->acceleration = 0x4000;
-  Import_ActorSelectAnimation(object, 1);
+  Actor_SelectAnimation(object, 1);
 }
 
 #endif

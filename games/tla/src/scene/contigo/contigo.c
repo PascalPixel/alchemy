@@ -325,7 +325,7 @@ void Func_020009d0(struct OrbitEffect *effect) {
     effect->pause = ((Random16() << 4) >> 16) + 8;
   }
   if (++effect->timer == 101)
-    Import_ActorRelease(effect);
+    Actor_Release(effect);
 }
 
 void Func_02000a80(void) {
@@ -405,7 +405,7 @@ void Func_02000af4(void) {
     i++;
     if (i < 28)
       goto shrink;
-    Import_ActorRelease(effect);
+    Actor_Release(effect);
   }
   BattleEffect_SetObjectUpdateMode(((struct ContigoObject *)Actor_GetById(17)),
                                    0);
@@ -1395,7 +1395,7 @@ void Func_02001d50(void) {
   Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(8)), 0);
   FieldCamera_SetSpeed(0x26666, 0x4ccc);
   FieldCamera_MoveTo(PIXELS(180), -1, PIXELS(410), 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   FieldCamera_MoveTo(PIXELS(148), -1, PIXELS(368), 1);
   Actor_SetSpeed(8, 0xcccc, 0x6666);
@@ -1534,7 +1534,7 @@ void Func_02001d50(void) {
   Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
   Camera_SetSpeedParameters(0x26666, 0x4ccc);
   FieldCamera_MoveWithinMapBounds(PIXELS(148), -1, PIXELS(368), 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   Scene_PlayMusic();
   Contigo_Jump(5, 265, 20);
   Event_ShowMessageAndWait(5, 0);

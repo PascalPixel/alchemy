@@ -12,7 +12,7 @@ extern u16 gYampiDesertCave_LogSprites[];
 
 void YampiDesertCave_StopLeaderAtLog(struct Actor *object);
 
-void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 void YampiDesertCave_ArriveByTeleport(void);
 

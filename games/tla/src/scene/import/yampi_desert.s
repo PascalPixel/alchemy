@@ -82,9 +82,9 @@ GameFlag_Set:
 	.thumb_func
 GameFlag_Clear:
 	overlay_veneer GameFlag_ClearFar
-	.global Import_ActorSelectAnimation
+	.global Actor_SelectAnimation
 	.thumb_func
-Import_ActorSelectAnimation:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_SetAnimationSpeed
 	.thumb_func
@@ -254,9 +254,9 @@ Actor_SetSpritePriority:
 	.thumb_func
 Actor_DisableById:
 	overlay_veneer Actor_DisableByIdFar
-	.global Import_ActorShowEmoteById
+	.global Actor_ShowEmoteById
 	.thumb_func
-Import_ActorShowEmoteById:
+Actor_ShowEmoteById:
 	overlay_veneer Actor_ShowEmoteByIdFar
 	.global FieldEffect_SetAttached
 	.thumb_func
@@ -278,9 +278,9 @@ FieldCamera_MoveWithinMapBounds:
 	.thumb_func
 FieldCamera_WaitForArrival:
 	overlay_veneer FieldCamera_WaitForArrivalFar
-	.global Import_FieldCameraGetActor
+	.global FieldCamera_GetActor
 	.thumb_func
-Import_FieldCameraGetActor:
+FieldCamera_GetActor:
 	overlay_veneer FieldCamera_GetActorFar
 	.global Import_EventSetExitRequest
 	.thumb_func
@@ -290,9 +290,9 @@ Import_EventSetExitRequest:
 	.thumb_func
 Field_RequestBattleFromEncounterTable:
 	overlay_veneer Field_RequestBattleFromEncounterTableFar
-	.global Import_FieldRequestDjinnBattle
+	.global Field_RequestDjinnBattle
 	.thumb_func
-Import_FieldRequestDjinnBattle:
+Field_RequestDjinnBattle:
 	overlay_veneer Field_RequestDjinnBattleFar
 	.global Event_SetAfterBattleDestination
 	.thumb_func

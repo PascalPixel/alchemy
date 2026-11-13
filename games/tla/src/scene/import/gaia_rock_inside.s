@@ -86,9 +86,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Actor_CreateFar
-	.global Import_ActorRelease
+	.global Actor_Release
 	.thumb_func
-Import_ActorRelease:
+Actor_Release:
 	overlay_veneer Actor_ReleaseFar
 	.global Map_CenterOnFollowedPoint
 	.thumb_func
@@ -318,9 +318,9 @@ Event_SetAfterBattleDestination:
 	.thumb_func
 Party_SetFields1f2And1f4:
 	overlay_veneer Party_SetFields1f2And1f4Far
-	.global Import_SceneTalkToActor
+	.global Scene_TalkToActor
 	.thumb_func
-Import_SceneTalkToActor:
+Scene_TalkToActor:
 	overlay_veneer Scene_TalkToActorFar
 	.global BattleEffect_ApplyColorToTargetBuffer
 	.thumb_func

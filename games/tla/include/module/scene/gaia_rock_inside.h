@@ -140,11 +140,11 @@ extern s32 gData_02005610[];
 void Func_02000f00(void);
 void Func_02000fac(void);
 
-void Import_ActorRelease(struct Actor *object);
+void Actor_Release(struct Actor *object);
 
 extern char SceneId_Ov681Room1;
 
-s32 Import_SceneTalkToActor();
+s32 Scene_TalkToActor();
 
 void Func_02002b58(s32 id, s32 x, s32 z);
 

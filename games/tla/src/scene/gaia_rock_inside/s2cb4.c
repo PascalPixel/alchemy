@@ -616,7 +616,7 @@ s32 Scene_Initialize(void) {
       object->x = 0;
       object->z = 0;
       C1(Event_Wait, 1);
-      C1(Import_ActorRelease, object);
+      C1(Actor_Release, object);
       C1(Sound_Play, 390);
       C1(Event_Wait, 30);
       REG_DISPCNT |= 0xf00;
@@ -863,7 +863,7 @@ void Func_02004a5c(s32 id, s32 x, s32 y, s32 z);
 void Func_02004d00(void);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const u8 *script);
-void Import_ActorRelease();
+void Actor_Release();
 void BlendScript_Resume(void);
 void BlendScript_Suspend(void);
 void Actor_SetSpritePriorityDirect();
@@ -1328,7 +1328,7 @@ s32 Scene_Initialize(void) {
       object->x = 0;
       object->z = 0;
       C1(Event_Wait, 1);
-      C1(Import_ActorRelease, object);
+      C1(Actor_Release, object);
       C1(Sound_Play, 390);
       C1(Event_Wait, 30);
       REG_DISPCNT |= 0xf00;

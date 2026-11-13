@@ -103,7 +103,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #define CELL_TABLE gTeleporters
 #define CELL_SPRITE_DRAW Teleporters_Update
-#define CELL_PUSH_SLOT_ENTRY Import_OamAddSpriteAtDepthClamped
+#define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../../field/map/cell_sprite.c"
 
 DEFINE_TELEPORTERS_FIND_LOWER(Teleporters_FindLower, gTeleporters,

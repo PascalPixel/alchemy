@@ -247,7 +247,7 @@ void Settlements_SpawnSmoke(s32 x, s32 y, s32 z) {
     object->scaleY = 0x8000;
     *(s32 *)&object->watchedObject = 60;
     object->update = (void (*)(void))Settlements_DriftSmoke;
-    Import_ActorSelectAnimation(object, 5);
+    Actor_SelectAnimation(object, 5);
     Actor_SetBlendMode(object, 1);
   }
 }

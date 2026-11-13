@@ -49,9 +49,9 @@ void Func_020004d4(struct Actor *object) {
   }
   self->unk66 = self->timer;
   if (self->timer == 212)
-    Import_ActorSelectAnimation(object, 9);
+    Actor_SelectAnimation(object, 9);
   else
-    Import_ActorSelectAnimation(object, 10);
+    Actor_SelectAnimation(object, 10);
 }
 
 void Func_02000550(struct Actor *object) {
@@ -213,9 +213,9 @@ void Func_020007b4(s32 mode, s32 step) {
     second->y = second->terrainHeight;
     GameFlag_Set(first->timer);
     GameFlag_Clear(second->timer);
-    Import_ActorSelectAnimation(
+    Actor_SelectAnimation(
         first, ((struct FieldSprite *)first->sprite)->frame + 1);
-    Import_ActorSelectAnimation(
+    Actor_SelectAnimation(
         second, ((struct FieldSprite *)second->sprite)->frame - 1);
     Func_020006cc(first);
     Func_020006cc(second);
@@ -250,7 +250,7 @@ void Func_02000908(u16 *list) {
       base += base << 1;
       base += choice;
     }
-    Import_ActorSelectAnimation(object, base);
+    Actor_SelectAnimation(object, base);
     object->motionFlags = 0;
     object->collisionFlags &= ~1;
     object->timer = flag;
@@ -367,20 +367,20 @@ void Func_02000988(void) {
         Map_GetTerrainHeight(((u8 *)rider)[98], ride->x + dx, ride->z + dz);
     leader->y = height;
     leader->terrainHeight = height;
-    Import_ActorSelectAnimation(leader, 6);
+    Actor_SelectAnimation(leader, 6);
     wait(6);
     Sound_Play(152);
-    Import_ActorSelectAnimation(leader, 7);
+    Actor_SelectAnimation(leader, 7);
     leader->speedLimit = 0x20000;
     leader->acceleration = 0x8000;
     leader->velocityY = 0x40000;
     *motion = 2;
     *priority = 1;
     leader->terrainId = ((u8 *)rider)[98];
-    Import_ActorSetMoveTarget(leader, leader->x + dx, leader->y,
+    Actor_SetMoveTarget(leader, leader->x + dx, leader->y,
                               leader->z + dz);
     OverlayObject_WaitUntilIdle(leader);
-    Import_ActorWaitForMove(leader);
+    Actor_WaitForMove(leader);
     Actor_SetSpriteFlags(leader, 1);
     *motion = 3;
     break;
@@ -398,11 +398,11 @@ void Func_02000988(void) {
     dust->speedLimit = 0x80000;
     dust->acceleration = 0x10000;
     dust->motionFlags = noFlags;
-    Import_ActorSetMoveTarget(dust, leader->x,
+    Actor_SetMoveTarget(dust, leader->x,
                               Map_GetTerrainHeight(0, leader->x, leader->z),
                               leader->z);
     OverlayObject_WaitUntilIdle(leader);
-    Import_ActorWaitForMove(dust);
+    Actor_WaitForMove(dust);
     break;
   }
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
@@ -535,7 +535,7 @@ void Func_02000f34(struct Actor *object) {
     }
     shot = (struct Actor *)Import_ActorCreate(280, position.x, object->y,
                                               position.z);
-    Import_ActorSelectAnimation(shot, 2);
+    Actor_SelectAnimation(shot, 2);
     Actor_SetSpriteFlags(shot, 0);
     ((struct FieldSprite *)shot->sprite)->priority = 1;
     shot->motionFlags = 0;
@@ -669,7 +669,7 @@ void Func_02001290(struct Actor *object) {
     shot->x = position.x;
     shot->y = object->y;
     shot->z = position.z;
-    Import_ActorSelectAnimation(shot, 2);
+    Actor_SelectAnimation(shot, 2);
     Actor_SetSpriteFlags(shot, 0);
     ((struct FieldSprite *)shot->sprite)->priority = 1;
     shot->priorityFlags |= 32;
@@ -717,7 +717,7 @@ void Func_02001458(struct Actor *object) {
   Actor_SetAnimationSpeed(object, 16);
   if (object->timer == 0) {
     if (object->x == 0) {
-      Import_ActorRelease(object);
+      Actor_Release(object);
     } else {
       object->z = 0;
       object->x = 0;
@@ -769,7 +769,7 @@ void Func_02001458(struct Actor *object) {
 void Func_0200160c(s32 x, s32 y, s32 z) {
   struct Actor *object = Import_ActorCreate(0x11d, x, y, z);
 
-  Import_ActorSelectAnimation(object, 1);
+  Actor_SelectAnimation(object, 1);
   Actor_SetSpriteFlags(object, 0);
   Actor_SetSpriteColor(object, 6);
   Actor_SetBlendMode(object, 1);
@@ -895,7 +895,7 @@ void Func_02001828(void) {
   Sound_Play(207);
   gust =
       (struct Actor *)Import_ActorCreate(280, leader->x, leader->y, leader->z);
-  Import_ActorSelectAnimation(gust, 2);
+  Actor_SelectAnimation(gust, 2);
   Actor_SetSpriteFlags(gust, 0);
   gust->scaleX = 0x1b333;
   gust->scaleY = 0x3333;
@@ -906,14 +906,14 @@ void Func_02001828(void) {
   ((struct FieldSprite *)gust->sprite)->priority =
       ((struct FieldSprite *)((struct Actor *)*(long *)&effect->target)->sprite)
           ->priority;
-  Import_ActorSetMoveTarget(gust, TARGET(effect)->x, TARGET(effect)->y,
+  Actor_SetMoveTarget(gust, TARGET(effect)->x, TARGET(effect)->y,
                             TARGET(effect)->z + 0xffff0000);
   gust->terrainHeight = Map_GetTerrainHeight(0, gust->x, gust->z);
   while (gust->scaleY <= 0x14ccb) {
     gust->scaleY += 0x1999;
     FieldEvent_Wait(1);
   }
-  Import_ActorWaitForMove(gust);
+  Actor_WaitForMove(gust);
   gust->z = TARGET(effect)->z + 0xffff0000;
   while (gust->scaleY <= 0x1cccb) {
     if ((gFrameCount & 3) == 0) {
@@ -926,7 +926,7 @@ void Func_02001828(void) {
       spark->gravity = 0xcccc;
       spark->unk4c = spark->z;
       spark->speedLimit = Random16() & 0xffff;
-      Import_ActorSelectAnimation(spark, 7);
+      Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gData_02005fd8);
       Actor_SetSpriteFlags(spark, 0);
       Actor_SetSpriteColor(spark, 2);
@@ -981,7 +981,7 @@ void Func_02001828(void) {
     cell.z = z;
     gust->speedLimit = 0x40000;
     gust->acceleration = 0x40000;
-    Import_ActorSetMoveTarget(gust, cell.x << 16, gust->y, cell.z << 16);
+    Actor_SetMoveTarget(gust, cell.x << 16, gust->y, cell.z << 16);
     Call2((void (*)())Camera_SetSpeedParameters, 0x50000, 0x50000);
     Call4((void (*)())FieldCamera_MoveWithinMapBounds, x << 16, -1, z << 16, 1);
   }
@@ -1059,7 +1059,7 @@ void Func_02001828(void) {
     cell.z = (gust->z >> 16) + dir.z * 48;
     gust->speedLimit = 0x8000;
     gust->acceleration = 0x8000;
-    Call4((void (*)())Import_ActorSetMoveTarget, (s32)(gust),
+    Call4((void (*)())Actor_SetMoveTarget, (s32)(gust),
           (s32)(cell.x << 16), (s32)(gust->y), (s32)(cell.z << 16));
     hit -= 30;
     i = 0;
@@ -1132,7 +1132,7 @@ shrink:
     gust->y += 0x38000;
     FieldEvent_Wait(1);
   }
-  Import_ActorRelease(gust);
+  Actor_Release(gust);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room4) {
     if (hit == 5) {
       SHAKE();

@@ -25,8 +25,8 @@
 
 extern u16 gData_02004cf0[];
 void Actor_Release(void *handle);
-void Import_FieldCameraMoveToActorById(s32 a, s32 b);
-void Import_FieldCameraWaitForArrival(void);
+void FieldCamera_MoveToActorById(s32 a, s32 b);
+void FieldCamera_WaitForArrival(void);
 void Teleport_PlaySparks(void);
 extern u16 Data_020039bc[];
 extern volatile u16 Data_020039dc[];
@@ -178,8 +178,8 @@ void Func_020002e8(void) {
 }
 
 void Func_020002fc(void) {
-  Import_FieldCameraMoveToActorById(10, 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_MoveToActorById(10, 1);
+  FieldCamera_WaitForArrival();
 }
 
 void Func_0200030c(void) {
@@ -483,7 +483,7 @@ s32 Scene_Initialize(void) {
         Event_PlaySound(78);
         FieldCamera_SetSpeed(0x20000, 0x4000);
         FieldCamera_MoveTo(0xe00000, 0x400000, 0xd80000, 1);
-        Import_FieldCameraWaitForArrival();
+        FieldCamera_WaitForArrival();
         FieldEvent_Wait(20);
         PaletteFade_ApplySource(0x10000, 0);
         PaletteFade_ApplyTarget(0x10003, 0);
@@ -498,7 +498,7 @@ s32 Scene_Initialize(void) {
         System_Wait(20);
         FieldCamera_SetSpeed(0x10000, 0x2000);
         FieldCamera_MoveTo(0xe00000, 0x100000, 0xd80000, 1);
-        Import_FieldCameraWaitForArrival();
+        FieldCamera_WaitForArrival();
         FieldEvent_Wait(40);
         actor = Actor_Get(16);
         actor->motionFlags = unset;
@@ -775,7 +775,7 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
       Event_ResolvePendingActions(0);
       FieldCamera_SetSpeed(0x20000, 0x4000);
       FieldCamera_MoveTo(PIXELS(224), PIXELS(64), PIXELS(216), 1);
-      Import_FieldCameraWaitForArrival();
+      FieldCamera_WaitForArrival();
       FieldEvent_Wait(20);
       PaletteFade_ApplySource(0x10000, 0);
       BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
@@ -802,7 +802,7 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
     Event_ResolvePendingActions(0);
     FieldCamera_SetSpeed(0x20000, 0x4000);
     FieldCamera_MoveTo(PIXELS(224), PIXELS(64), PIXELS(216), 1);
-    Import_FieldCameraWaitForArrival();
+    FieldCamera_WaitForArrival();
     FieldEvent_Wait(20);
     PaletteFade_ApplySource(0x10000, 0);
     BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
@@ -814,7 +814,7 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
     wait(10);
     EventMessage_ShowCentered((s32)MsgYouWhoHold + 1, 0, 3);
     FieldCamera_MoveTo(PIXELS(224), PIXELS(88), PIXELS(216), 1);
-    Import_FieldCameraWaitForArrival();
+    FieldCamera_WaitForArrival();
     FieldEvent_Wait(20);
     Event_PlaySound(560);
     Func_0200080c();
@@ -862,8 +862,8 @@ s32 MarsLighthouseRoomM_SlideOnIce(void);
 void Func_02002e6c(struct Actor *self);
 
 void Actor_SelectAnimation(struct Actor *object, s32 value);
-void Import_FieldCameraMoveToActorById(s32 a, s32 b);
-void Import_FieldCameraWaitForArrival(void);
+void FieldCamera_MoveToActorById(s32 a, s32 b);
+void FieldCamera_WaitForArrival(void);
 void Func_02001608(void);
 void Teleport_PlaySparks(void);
 void Func_0200166c(void);

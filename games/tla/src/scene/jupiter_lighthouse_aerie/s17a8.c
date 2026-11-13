@@ -42,7 +42,7 @@ struct BeamWork {
   struct Actor *second;
 };
 
-void Import_ActorStartIdle(struct Actor *object);
+void Actor_StartIdle(struct Actor *object);
 
 static __inline__ void SetUp(struct EffectSprite *sprite, s32 pivotX,
                              s32 pivotY, u32 attributes, s32 tile) {
@@ -122,7 +122,7 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   work->start[2] = work->from[2];
   carrier->speedLimit = 0x8000;
   carrier->acceleration = 0x8000;
-  Import_ActorStartIdle(carrier);
+  Actor_StartIdle(carrier);
   FieldActor_SetMoveTarget(carrier, work->start[0], work->start[1],
                            work->start[2]);
   Event_PlaySound(142);

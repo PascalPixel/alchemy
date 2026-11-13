@@ -437,7 +437,7 @@ void Func_0200065c(void) {
       Actor_GetById(31)->priorityFlags |= 1;
       Actor_GetById(32)->priorityFlags |= 1;
       FieldCamera_MoveTo(0x2000000, 0x600000, 0x1080000, 1);
-      Import_FieldCameraWaitForArrival();
+      FieldCamera_WaitForArrival();
       FieldActor_SetSpritePriority(31, 1);
       FieldActor_SetSpritePriority(32, 1);
       FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
@@ -611,7 +611,7 @@ void Func_02000cd0(void) {
   FieldMapGrid_WaitForShakeToSettle();
   Func_02005914_(0x6666, 0xccc);
   Camera_MoveWithinMapBounds_(0x2000000, 0x600000, 0x1280000, 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait_(20);
   ACTOR_SET_MODE_AND_WAIT(7, 3, 20);
   ACTOR_SET_MODE_AND_WAIT(4, 3, 20);
@@ -1136,7 +1136,7 @@ void Func_02001bc4(void) {
   Actor_FaceDirectionAndWait(28, 0x4000);
   FieldEvent_Wait(10);
   FieldCamera_MoveTo(0x2080000, 0x680000, 0x1580000, 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   Event_PlaySound(39);
   FieldActor_ShowEmote(27, 0x107, 30);
@@ -1239,11 +1239,11 @@ void Func_02001bc4(void) {
   FieldEvent_ShowMessageThenWait(3, 0, 0);
   Actor_FaceDirectionAndWait(0, fast);
   FieldCamera_MoveTo(0x1400000, 0x600000, 0x1680000, 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(0, 0, 0);
   FieldCamera_MoveTo(0x2000000, 0x600000, 0x1600000, 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   Func_02003c58(0);
   ACTOR_SET_MODE_AND_WAIT(1, 4, 33);
   FieldEvent_ShowMessageThenWait(1, 0, 0);
@@ -1433,7 +1433,7 @@ L_0200a75e:
   Func_02003c58(1);
   FieldEvent_Wait(60);
   EventCamera_FollowActor(4, 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(60);
   Actor_FaceDirectionAndWait(4, 0);
   FieldEvent_Wait(60);
@@ -1652,7 +1652,7 @@ void Func_02002ae4(void) {
   }
   Event_PlaySound(0x4e);
   FieldCamera_MoveTo(0x2080000, 0x680000, 0x1600000, 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(0xa);
   Event_PlaySound(0x27);
   FieldActor_ShowEmote(5, 0x100, 0x1e);
@@ -1934,7 +1934,7 @@ void Func_02002ae4(void) {
   Func_02003c58(1);
   FieldEvent_Wait(0x3c);
   EventCamera_FollowActor(4, 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   FieldEvent_Wait(0x3c);
   Actor_FaceDirectionAndWait(4, 0);
   FieldEvent_Wait(0x3c);

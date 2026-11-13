@@ -26,9 +26,9 @@
 #include "resource.h"
 #include "text/msg_ids.h"
 
-void Import_ActorShowEmoteById(s32 actor, s32 a, s32 b);
-s32 Import_FieldCameraGetActor();
-void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
+void Actor_ShowEmoteById(s32 actor, s32 a, s32 b);
+s32 FieldCamera_GetActor();
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Oam_AddSpriteAtDepthClamped(u32 *oam, s32 depth);
 /* VIEW(s0b84): routine Statue_Sink as void Statue_Sink(const void *script,
  * s32 a, s32 b); the definition has void Statue_Sink(u16 *list, s32 mode, s32
@@ -179,7 +179,7 @@ void YampiDesert_RaiseSandCloud(void) {
         object->speedLimit = 0x12000;
         object->acceleration = 0x8000;
         Actor_SetSpriteFlags((struct Actor *)object, 0);
-        Import_ActorSelectAnimation((struct Actor *)object, 1);
+        Actor_SelectAnimation((struct Actor *)object, 1);
         Actor_StartScript(object, gYampiDesert_SandCloudDrifts);
       }
     }
@@ -222,7 +222,7 @@ loop_3:
   Actor_SetHorizontalPositionWithTerrain(22, 0, 0);
   FieldEvent_Wait(20);
   Scene_CamBounds(PIXELS(232), -1, PIXELS(196), 1);
-  Import_ActorShowEmoteById(gMainRoutineWork.currentOwner, 0x101, 0);
+  Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 0x101, 0);
   Scene_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 232, 164);
   FieldEvent_Wait(20);
@@ -449,7 +449,7 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Call1((void (*)())Event_SetMessageId, (s32)MsgHeyLookUp);
   Call1((void (*)())Actor_Stop, 9);
   Call1((void (*)())wait, 1);
-  Value3((s32 (*)())Import_ActorShowEmoteById, 9, 0x100, 0);
+  Value3((s32 (*)())Actor_ShowEmoteById, 9, 0x100, 0);
   Call3((void (*)())Actor_ArmCallback, 9, 0, 20);
   Call2((void (*)())Event_ShowMessageAndWait, 9, 0);
   Call1((void (*)())Actor_Stop, 8);
@@ -462,9 +462,9 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Call3((void (*)())Actor_ArmCallback, 14, 0xd000, 0);
   owner = (s32 *)&gMainRoutineWork;
   owner += 133;
-  Call3((void (*)())Import_ActorShowEmoteById, *owner, 0x100, 0);
+  Call3((void (*)())Actor_ShowEmoteById, *owner, 0x100, 0);
   Call3((void (*)())Actor_ArmCallback, *owner, 0x8000, 0);
-  ((struct Actor *)Import_FieldCameraGetActor())->motionFlags = 0;
+  ((struct Actor *)FieldCamera_GetActor())->motionFlags = 0;
   Call2((void (*)())Camera_SetSpeedParameters, 0x19999, 0x3333);
   Call4((void (*)())FieldCamera_MoveWithinMapBounds, 0xd40000, 0, 0xd40000, 1);
   FieldCamera_WaitForArrival();
@@ -510,8 +510,8 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Call2((void (*)())Event_ShowMessageAndWait, 10, 0);
   Call3((void (*)())Actor_ArmCallback, 8, 0x8000, 0);
   Call3((void (*)())Actor_ArmCallback, 9, 0x8000, 0);
-  Value3((s32 (*)())Import_ActorShowEmoteById, 8, 0x102, 0);
-  Import_ActorShowEmoteById(9, 0x102, 80);
+  Value3((s32 (*)())Actor_ShowEmoteById, 8, 0x102, 0);
+  Actor_ShowEmoteById(9, 0x102, 80);
   Call2((void (*)())Event_ShowMessageAndWait, 14, 0);
   Call3((void (*)())Actor_ArmCallback, 8, 0xd000, 0);
   Call3((void (*)())Actor_ArmCallback, 10, 0x3000, 0);
@@ -714,7 +714,7 @@ void YampiDesert_SlideLeader(struct Actor *object, s32 dx, s32 dz) {
         dust->motionFlags = odd;
         dust->collisionFlags = odd;
         Actor_SetSpriteFlags(dust, 0);
-        Import_ActorSelectAnimation(dust, 1);
+        Actor_SelectAnimation(dust, 1);
         Actor_StartScript(dust, gYampiDesert_SlideDust);
         sprite = dust->sprite;
         sprite->mode = 1;
@@ -1706,7 +1706,7 @@ DEFINE_STATUE_SINK(Statue_Sink, YampiDesert_SetStakeCell)
 #include "iwram_call.h"
 
 DEFINE_ACTOR_SET_CELL_OPEN(YampiDesert_SetStakeCell, Actor_GetCellIndex,
-                           Import_ActorSelectAnimation)
+                           Actor_SelectAnimation)
 
 /// The whole-pixel half of a 16.16 coordinate.
 /* VIEW(s3910): macro PIXELS as PIXELS__s3910; another part or header has

@@ -24,7 +24,7 @@ void Func_02001868(void);
 void Func_020005e8(s32 value);
 void Func_0200067c(s32 mode);
 
-void Import_FieldCameraWaitForArrival(void);
+void FieldCamera_WaitForArrival(void);
 
 void Func_020032a4(void);
 void Func_02000804(s32 item);

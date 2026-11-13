@@ -244,7 +244,7 @@ extern s16 gData_02003860__clear __asm__("gData_02003860");
  * Scene_Initialize moves: 2 of 738 instructions in tla-ja. */
 extern u32 gData_02001000__clear __asm__("gData_02001000");
 
-s32 Import_SaveToChosenFile(void);
+s32 Save_ToChosenFile(void);
 s32 Save_ChooseAndLoadFile(s32 mode);
 void Save_CopyFile(void);
 u32 BuildStamp_GetTime(void);
@@ -310,7 +310,7 @@ s32 Scene_Initialize(void) {
       Party_AddMember(1);
       Party_AddMember(2);
       Party_AddMember(3);
-      i = Import_SaveToChosenFile();
+      i = Save_ToChosenFile();
       if (i == -1)
         goto ask_save;
     }
@@ -323,7 +323,7 @@ s32 Scene_Initialize(void) {
   }
   gSleepDisabled = started;
 top:
-  result = Import_SaveScanFileSummaries();
+  result = Save_ScanFileSummaries();
   if (result < 0 && gDebugMode) {
     gMainRoutineWork.unk244[6] = 1;
     gAutoSleepEnabled = 1;
@@ -340,7 +340,7 @@ top:
   else
     result = 0;
   if (result == 0) {
-    Import_MainRoutineWorkInitializeDefaults();
+    MainRoutineWork_InitializeDefaults();
     WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                       gMainRoutineWork.paletteGlow[1]);
     i = 4;
@@ -378,7 +378,7 @@ top:
         DataTransfer_Apply(MAP_CELL_BACKUP, 0, 0);
       } else if (result == 0) {
         SAVE_CELLS();
-        Import_MainRoutineWorkInitializeDefaults();
+        MainRoutineWork_InitializeDefaults();
 #if !TLA_PATCH_2
         status = Func_02000e44();
         RESTORE_CELLS()
@@ -541,7 +541,7 @@ again:
     DataTransfer_Apply(MAP_CELL_BACKUP, 0, 1);
   } else if (result == 0) {
     SAVE_CELLS();
-    Import_MainRoutineWorkInitializeDefaults();
+    MainRoutineWork_InitializeDefaults();
     status = Func_02000e44();
     RESTORE_CELLS()
     if (status == -1)
@@ -1195,7 +1195,7 @@ s32 Func_02000e44(void) {
             if (!(gInput.pressed & 1))
               goto wait_accepted;
             Sound_Play(112);
-            Import_MainRoutineWorkInitializeDefaults();
+            MainRoutineWork_InitializeDefaults();
             party = &gMainRoutineWork;
             party->currentOwner = 0;
             Party_RemoveMember(4);

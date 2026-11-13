@@ -38,7 +38,7 @@ DEFINE_POSITION_DISTANCE(Lemuria_Distance)
 DEFINE_ACTOR_IS_FACING_NEAR(Actor_IsFacingNear, Lemuria_Distance)
 
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
-void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 s32 Lemuria_NoticeLeader(struct Actor *self) {
   u8 *event = Ram_HeapSlots->eventWork;
@@ -68,11 +68,11 @@ s32 Lemuria_NoticeLeader(struct Actor *self) {
     goto near;
 far:
   *state = 0;
-  Import_ActorSelectAnimation(self, 2);
+  Actor_SelectAnimation(self, 2);
   return 0;
 near:
   *state = 1;
-  Import_ActorSelectAnimation(self, 1);
+  Actor_SelectAnimation(self, 1);
   return 0;
 }
 

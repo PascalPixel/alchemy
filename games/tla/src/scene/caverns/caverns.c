@@ -247,7 +247,7 @@ void Func_02000848(struct Actor *object) {
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-void Import_ActorRelease(struct Actor *object);
+void Actor_Release(struct Actor *object);
 
 void Func_0200087c(void) {
   s32 velocity[3];
@@ -292,7 +292,7 @@ void Func_0200087c(void) {
       OverlayObject_WaitUntilIdle(object);
       OverlayObject_WaitUntilIdle(object);
       object->x = object->y = object->z = 0;
-      Import_ActorRelease(spawned);
+      Actor_Release(spawned);
       wait(1);
       *blendControl = 0;
     } else {

@@ -17,7 +17,7 @@
 
 struct Actor;
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
-s32 Import_FieldTryJumpForward(void);
+s32 Field_TryJumpForward(void);
 struct Actor *Actor_FindAtCell(s32 *position, s32 flags);
 void Leader_SetCellShapeAt(s32 a, s32 b);
 
@@ -139,7 +139,7 @@ void CrumblingPillars_Step(u16 *list) {
   struct Actor *pillar;
   s32 position[3];
 
-  if (Import_FieldTryJumpForward() != 0)
+  if (Field_TryJumpForward() != 0)
     return;
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   position[0] = leader->x;
@@ -314,7 +314,7 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
   struct Actor *pillar;
   s32 position[3];
 
-  if (Import_FieldTryJumpForward() != 0)
+  if (Field_TryJumpForward() != 0)
     return;
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   helper = Actor_GetById(8);

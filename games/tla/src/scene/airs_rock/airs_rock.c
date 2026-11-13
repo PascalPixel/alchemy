@@ -472,7 +472,7 @@ void Func_0200095c(void) {
     gust->y += 0x38000;
     Event_Wait(1);
   }
-  Import_ActorRelease(gust);
+  Actor_Release(gust);
   Event_Wait(30);
   FieldCamera_MoveToActorById(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();

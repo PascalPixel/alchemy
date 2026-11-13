@@ -56,7 +56,7 @@ void Func_02004d10(struct PushTarget target);
 void Actor_StartScript(struct Actor *object, const void *script);
 void FieldCamera_WaitForArrival(void);
 s32 Field_FindNearbyTalkTarget(s32 id);
-void Import_FieldTryJumpForward(void);
+void Field_TryJumpForward(void);
 void ObjectTable_Snapshot(void);
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 void Func_02005688(void);

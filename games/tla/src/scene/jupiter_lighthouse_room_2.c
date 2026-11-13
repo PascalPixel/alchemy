@@ -109,7 +109,7 @@ void Func_020000d0(s32 kind) {
     System_Wait(1);
     i--;
   } while (i >= 0);
-  Import_ActorRelease(effect);
+  Actor_Release(effect);
   Actor_SetSpriteFlags(Actor_Get(owner), 1);
   leader->facing = 0x4000;
   leader->terrainId = 0;
@@ -187,7 +187,7 @@ spin:
   i--;
   if (i >= 0)
     goto spin;
-  Import_ActorRelease(effect);
+  Actor_Release(effect);
   Actor_SetSpriteFlags(Actor_Get(owner), 1);
   leader->facing = 0x4000;
   leader->terrainId = 1;

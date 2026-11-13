@@ -42,7 +42,7 @@ extern s16 gLightSpriteTile;
 extern struct LightOam gLightSpriteOams[];
 extern s16 gLightSpritesLarge;
 
-void Import_OamAddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
+void Oam_AddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
 
 void Teleporter_Uncover(struct CellTarget *table,
                         struct CellTargetEntry *entry);

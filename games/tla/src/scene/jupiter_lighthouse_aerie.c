@@ -113,7 +113,7 @@ void Func_020001b4(void) {
   Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(10)));
   Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(11)));
   Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(12)));
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   Event_End();
 }
 
@@ -137,7 +137,7 @@ void Func_02000264(void) {
   Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(10)));
   Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(11)));
   Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(12)));
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   Event_End();
 }
 

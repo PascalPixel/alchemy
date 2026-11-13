@@ -62,9 +62,9 @@ GameFlag_Set:
 	.thumb_func
 GameFlag_Clear:
 	overlay_veneer GameFlag_ClearFar
-	.global Import_ActorSelectAnimation
+	.global Actor_SelectAnimation
 	.thumb_func
-Import_ActorSelectAnimation:
+Actor_SelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_SetAnimationSpeed
 	.thumb_func

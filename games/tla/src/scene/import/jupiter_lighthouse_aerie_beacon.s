@@ -66,9 +66,9 @@ VramCache_Load:
 	.thumb_func
 VramCache_FindFreeEntry:
 	overlay_veneer VramCache_FindFreeEntryFar
-	.global Import_OamAddSpriteAtDepthClamped
+	.global Oam_AddSpriteAtDepthClamped
 	.thumb_func
-Import_OamAddSpriteAtDepthClamped:
+Oam_AddSpriteAtDepthClamped:
 	overlay_veneer Oam_AddSpriteAtDepthClampedFar
 	.global Unit_Get
 	.thumb_func
@@ -326,9 +326,9 @@ Camera_SetSpeedParameters:
 	.thumb_func
 FieldCamera_MoveWithinMapBounds:
 	overlay_veneer FieldCamera_MoveWithinMapBoundsFar
-	.global Import_FieldCameraWaitForArrival
+	.global FieldCamera_WaitForArrival
 	.thumb_func
-Import_FieldCameraWaitForArrival:
+FieldCamera_WaitForArrival:
 	overlay_veneer FieldCamera_WaitForArrivalFar
 	.global FieldCamera_GetActor
 	.thumb_func

@@ -224,7 +224,7 @@ void TrialRoad_ShowProgress(s32 a, s32 b);
 
 void TrialRoad_OpenLeaderDoor(s32 side, s32 phase);
 
-void Import_FieldCameraWaitForArrival(void);
+void FieldCamera_WaitForArrival(void);
 
 extern u32 gTrialRoad_LeftKnightEntersScript[];
 

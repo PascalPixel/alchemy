@@ -412,7 +412,7 @@ void Func_02002f9c(void) {
     Func_02003d40__s2698(gData_02004420, 3);
   PartyInventory_GiveItem(199, 0);
   if (gData_02004420 != 0)
-    Import_ActorRelease(gData_02004420);
+    Actor_Release(gData_02004420);
   Map_CopyAttributes(1, 0, 1, 1, 15, 5);
   GameFlag_Set(0x878);
   Event_End();

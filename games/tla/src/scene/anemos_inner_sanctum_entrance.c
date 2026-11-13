@@ -366,7 +366,7 @@ void LightSprites_Draw(void) {
           oam->priority = BattleEffect_GetObjectPriority(actor);
         else
           oam->priority = gData_02001de2__s0588;
-        Import_OamAddSpriteAtDepthClamped(oam, depth);
+        Oam_AddSpriteAtDepthClamped(oam, depth);
         oam++;
       } else {
         s32 frame = actor->timer;
@@ -386,7 +386,7 @@ void LightSprites_Draw(void) {
           oam->priority = BattleEffect_GetObjectPriority(actor);
         else
           oam->priority = gData_02001de2__s0588;
-        Import_OamAddSpriteAtDepthClamped(oam, depth);
+        Oam_AddSpriteAtDepthClamped(oam, depth);
         oam++;
       }
     }

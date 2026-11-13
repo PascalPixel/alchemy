@@ -64,7 +64,7 @@ struct BeamSprite;
 struct FieldEffect;
 
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
-void Import_FieldCameraWaitForArrival(void);
+void FieldCamera_WaitForArrival(void);
 extern u16 gPaletteCycleUnlitPalette[];
 extern u16 gPaletteCycleUnlitColors[];
 void Func_02002b38(struct BeamSprite *sprite);

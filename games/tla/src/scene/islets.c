@@ -321,13 +321,13 @@ void Func_02000568(void) {
       spawned->motionFlags = 0;
     }
     FieldEvent_Wait(10);
-    Import_FieldPsynergyRestoreMindReadPalette();
+    FieldPsynergy_RestoreMindReadPalette();
     Message_ShowCentered((s32)MsgOhMyThat + 1, 1);
     PartyInventory_Remove(0x1c4);
     Party_GiveItem(0x1c5, 0);
-    Import_FieldPsynergyGreyMindReadPalette();
+    FieldPsynergy_GreyMindReadPalette();
     if (spawned != 0) {
-      Import_ActorRelease(spawned);
+      Actor_Release(spawned);
       Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
     }
     Actor_FaceDirectionAndWait(10, FACING_EAST);
@@ -373,14 +373,14 @@ void Func_02000568(void) {
       Event_Wait(20);                                                          \
     }                                                                          \
     STEP(10, 116, 164);                                                        \
-    Import_FieldPsynergyRestoreMindReadPalette();                              \
+    FieldPsynergy_RestoreMindReadPalette();                              \
     PartyInventory_Remove(453);                                                \
     PartyInventory_GiveItem(454, 0);                                           \
     if (given != 0) {                                                          \
-      Import_ActorRelease(given);                                              \
+      Actor_Release(given);                                              \
       Actor_SetModeById(gMainRoutineWork.currentOwner, 1);                     \
     }                                                                          \
-    Import_FieldPsynergyGreyMindReadPalette();                                 \
+    FieldPsynergy_GreyMindReadPalette();                                 \
     GameFlag_Set(0xaa3);                                                    \
   }
 
@@ -414,8 +414,8 @@ void Func_020006f4(void) {
       asked = MsgAreYouGiving;
       Event_SetMessageId(asked);
       Event_ShowMessageAndWait(10, 0);
-      Import_FieldCameraWaitForArrival();
-      Import_FieldPsynergyRestoreMindReadPalette();
+      FieldCamera_WaitForArrival();
+      FieldPsynergy_RestoreMindReadPalette();
       if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
           0) {
         leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -434,7 +434,7 @@ void Func_020006f4(void) {
           item->unk5c[0] = 1;
         }
         Event_Wait(10);
-        Import_FieldPsynergyGreyMindReadPalette();
+        FieldPsynergy_GreyMindReadPalette();
         Actor_Stop(10);
         Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
         Actor_ShowEmoteById(10, 264, 20);
@@ -442,7 +442,7 @@ void Func_020006f4(void) {
         Event_ShowMessageAndWait(0x800a, 0);
         HAND_BACK(leader, given, 0)
       } else {
-        Import_FieldPsynergyGreyMindReadPalette();
+        FieldPsynergy_GreyMindReadPalette();
         Actor_ShowEmoteById(10, 265, 20);
         Event_SetMessageId(asked + 4);
         Event_ShowMessageAndWait(0x800a, 0);
@@ -480,34 +480,34 @@ void Func_020006f4(void) {
       Actor_Jump(gMainRoutineWork.currentOwner, 4, 10);
       Actor_SetPositionAndResetMotion(item, 0x680000, 0x180000, 0xa00000);
       Event_Wait(10);
-      Import_FieldPsynergyRestoreMindReadPalette();
+      FieldPsynergy_RestoreMindReadPalette();
       Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
       FieldMessage_Show(noticed + 2, 1);
       (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
-      Import_FieldPsynergyGreyMindReadPalette();
+      FieldPsynergy_GreyMindReadPalette();
       Actor_Jump(10, 6, 10);
       Event_SetMessageId(noticed + 3);
       Event_ShowMessageAndWait(10, 0);
       Actor_Stop(10);
       Actor_FaceDirectionById(gMainRoutineWork.currentOwner, 0);
-      Import_FieldPsynergyRestoreMindReadPalette();
+      FieldPsynergy_RestoreMindReadPalette();
       if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner,
                                                 0) == 0) {
         item = Actor_GetById(gMainRoutineWork.currentOwner);
-        Import_FieldPsynergyGreyMindReadPalette();
+        FieldPsynergy_GreyMindReadPalette();
         Actor_ShowEmoteById(10, 264, 20);
         Event_SetMessageId(noticed + 4);
         Event_ShowMessageAndWait(0x800a, 0);
         HAND_BACK(item, item, zero.v)
       } else {
-        Import_FieldPsynergyGreyMindReadPalette();
+        FieldPsynergy_GreyMindReadPalette();
         Actor_ShowEmoteById(10, 265, 20);
         Event_SetMessageId(noticed + 7);
         Event_ShowMessageAndWait(0x800a, 0);
         Actor_FaceDirectionById(gMainRoutineWork.currentOwner, 0xc000);
         Actor_Jump(gMainRoutineWork.currentOwner, 4, 10);
         if (item != 0)
-          Import_ActorRelease(item);
+          Actor_Release(item);
         Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
         Event_SetFlag(513);
       }
@@ -538,7 +538,7 @@ struct Actor *Func_02000da0(struct Actor *object, s32 value) {
   return spawned;
 }
 
-DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 3, Import_ActorSelectAnimation,
+DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 3, Actor_SelectAnimation,
                         gSmokeScript)
 
 #include "call.h"
@@ -631,14 +631,14 @@ void Func_02000e38(void) {
         (struct Actor *)Value2((s32 (*)())Func_02000da0, (s32)leader, giftItem);
     STEP(11, 280, 856);
     trader->update = 0;
-    Import_FieldPsynergyRestoreMindReadPalette();
+    FieldPsynergy_RestoreMindReadPalette();
     Message_ShowCentered((s32)MsgTradedHisMilk, 1);
     PartyInventory_Remove(454);
     Party_GiveItem(giftItem, 0);
-    Import_FieldPsynergyGreyMindReadPalette();
+    FieldPsynergy_GreyMindReadPalette();
     Actor_GetById(gMainRoutineWork.currentOwner)->facing = 0x4000;
     if (gift != 0) {
-      Import_ActorRelease(gift);
+      Actor_Release(gift);
       Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
     }
     Actor_FaceDirectionAndWait(11, 0xc000);
@@ -683,7 +683,7 @@ void Func_0200129c(struct Actor *gift) {
   struct ActionScript script = gData_02004004;
 
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Import_FieldPsynergyGreyMindReadPalette();
+  FieldPsynergy_GreyMindReadPalette();
   Actor_ShowEmote(9, 264, 20);
   guide->update = Actor_EmitSmoke;
   Actor_RunScriptAndWait(9, &script);
@@ -700,10 +700,10 @@ void Func_0200129c(struct Actor *gift) {
   gift->speedLimit = 0x19999;
   gift->acceleration = 0xcccc;
   gift->update = Actor_EmitSmoke;
-  Import_ActorSelectAnimation(gift, 2);
+  Actor_SelectAnimation(gift, 2);
   FieldActor_SetMoveTarget(gift, 0x1160000, 0, 0x1c40000);
   FieldActor_WaitForMove(gift);
-  Import_ActorSelectAnimation(gift, 1);
+  Actor_SelectAnimation(gift, 1);
   gift->update = 0;
   PartyInventory_Remove(455);
   Event_ShowMessage(9, 0);
@@ -726,10 +726,10 @@ void Func_0200129c(struct Actor *gift) {
   guide->update = Actor_EmitSmoke;
   Actor_SetDestination(9, 288, 538);
   FieldEvent_Wait(20);
-  Import_FieldPsynergyRestoreMindReadPalette();
+  FieldPsynergy_RestoreMindReadPalette();
   Func_020034ec();
   gift->update = Actor_EmitSmoke;
-  Import_ActorSelectAnimation(gift, 2);
+  Actor_SelectAnimation(gift, 2);
   FieldActor_SetMoveTarget(gift, 0x1200000, 0, 0x21a0000);
   FieldEvent_Wait(20);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect =
@@ -759,7 +759,7 @@ void Func_0200129c(struct Actor *gift) {
     if (b != 0) {                                                              \
       b->scaleY = 0x20000;                                                     \
       Actor_SetSpriteFlags(b, 0);                                              \
-      Import_ActorSelectAnimation(b, 1);                                       \
+      Actor_SelectAnimation(b, 1);                                       \
       Actor_StartScript(b, gSmokeScript);                                      \
     }                                                                          \
   }
@@ -786,7 +786,7 @@ void Func_020014e0(void) {
       message = MsgOhYouRe;
       Event_SetMessageId(message);
       Event_ShowMessage(9, 0);
-      Import_FieldPsynergyRestoreMindReadPalette();
+      FieldPsynergy_RestoreMindReadPalette();
       answer =
           Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
       if (answer == 0) {
@@ -800,7 +800,7 @@ void Func_020014e0(void) {
         Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x6000, 0);
         Func_0200129c(a);
       } else {
-        Import_FieldPsynergyGreyMindReadPalette();
+        FieldPsynergy_GreyMindReadPalette();
         Event_SetMessageId(message - 1);
         goto refused;
       }
@@ -831,12 +831,12 @@ void Func_020014e0(void) {
       Event_ShowMessage(9, 0);
       Actor_FaceDirectionAndWait(9, 0xd000);
       Event_ShowMessage(9, 0);
-      Import_FieldPsynergyRestoreMindReadPalette();
+      FieldPsynergy_RestoreMindReadPalette();
       if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
           0) {
         Func_0200129c(a);
       } else {
-        Import_FieldPsynergyGreyMindReadPalette();
+        FieldPsynergy_GreyMindReadPalette();
         Actor_ShowEmoteById(9, 265, 0);
         Event_ShowMessage(9, 0);
         Actor_FaceDirection(9, 0x5000, 0);
@@ -845,7 +845,7 @@ void Func_020014e0(void) {
         Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 302, 424);
         leader->update = 0;
         if (a != 0)
-          Import_ActorRelease(a);
+          Actor_Release(a);
         Event_SetFlag(513);
       }
     }
@@ -853,11 +853,11 @@ void Func_020014e0(void) {
     Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
     Event_SetMessageId(MsgWantToGo);
     Event_ShowMessage(9, 0);
-    Import_FieldPsynergyRestoreMindReadPalette();
+    FieldPsynergy_RestoreMindReadPalette();
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
       struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-      Import_FieldPsynergyGreyMindReadPalette();
+      FieldPsynergy_GreyMindReadPalette();
       (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId)++;
       Event_ShowMessage(9, 0);
       ((u8 *)HeapSlot_AllocEwram(88, 664))[0x295] = 99;
@@ -872,13 +872,13 @@ void Func_020014e0(void) {
       Actor_SetAnimation(9, 3);
       FieldEvent_Wait(20);
       Event_ShowMessage(9, 0);
-      Import_FieldPsynergyRestoreMindReadPalette();
+      FieldPsynergy_RestoreMindReadPalette();
       Actor_SetSpeed(9, 0xcccc, 0x6666);
       Actor_SetSpeed(10, 0xcccc, 0x6666);
       Actor_GetById(9)->update = Actor_EmitSmoke;
       Actor_SetDestination(9, 288, 538);
       FieldEvent_Wait(40);
-      Import_FieldPsynergyRestoreMindReadPalette();
+      FieldPsynergy_RestoreMindReadPalette();
       Func_020034ec();
       Actor_GetById(10)->update = Actor_EmitSmoke;
       Actor_WalkTo(10, 288, 538);
@@ -887,10 +887,10 @@ void Func_020014e0(void) {
           STORED_AT_1AC;
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();
-      Import_FieldPsynergyGreyMindReadPalette();
+      FieldPsynergy_GreyMindReadPalette();
       FieldEvent_SetExitRequest(3);
     } else {
-      Import_FieldPsynergyGreyMindReadPalette();
+      FieldPsynergy_GreyMindReadPalette();
     refused:
       Event_ShowMessage(9, 0);
       Actor_FaceDirectionAndWait(9, 0x5000);
@@ -918,11 +918,11 @@ void Func_02001a68(void) {
   FieldEvent_Wait(10);
   FieldEvent_SetMessageId((s32)MsgYouAllSet);
   Event_ShowMessage(9, 0);
-  Import_FieldPsynergyRestoreMindReadPalette();
+  FieldPsynergy_RestoreMindReadPalette();
   result =
       FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   if (result == 0) {
-    Import_FieldPsynergyGreyMindReadPalette();
+    FieldPsynergy_GreyMindReadPalette();
     Event_ShowMessage(9, 0);
     ((struct {
       u8 unk000[0x295];
@@ -936,7 +936,7 @@ void Func_02001a68(void) {
     FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
     Actor_SetAnimation(9, 3);
     FieldEvent_Wait(20);
-    Import_FieldPsynergyRestoreMindReadPalette();
+    FieldPsynergy_RestoreMindReadPalette();
     Actor_SetSpeed(9, 0x19999, 0xcccc);
     Actor_SetSpeed(10, 0x19999, 0xcccc);
     update = (void (*)(void))Actor_EmitSmoke;
@@ -955,10 +955,10 @@ void Func_02001a68(void) {
     ((struct IsletsEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x201;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
-    Import_FieldPsynergyGreyMindReadPalette();
+    FieldPsynergy_GreyMindReadPalette();
     FieldEvent_SetExitRequest(4);
   } else {
-    Import_FieldPsynergyGreyMindReadPalette();
+    FieldPsynergy_GreyMindReadPalette();
     FieldEvent_SetMessageId((s32)MsgYouAllSet + 4);
     Event_ShowMessage(9, 0);
     Actor_FaceDirectionAndWait(9, FACING_SOUTH);
@@ -1096,12 +1096,12 @@ void Func_02001db0(void) {
   FieldActor_SetPositionAndResetMotion(item, leader->x, leader->y + PIXELS(24),
                                        leader->z);
   FieldEvent_Wait(20);
-  Import_FieldPsynergyRestoreMindReadPalette();
+  FieldPsynergy_RestoreMindReadPalette();
   Party_GiveItem(0x1c4, 0);
-  Import_FieldPsynergyGreyMindReadPalette();
+  FieldPsynergy_GreyMindReadPalette();
   Actor_SetPosition(20, 0, 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
-  Import_FieldPsynergyStopMindReadWave();
+  FieldPsynergy_StopMindReadWave();
   Actor_FaceDirectionAndWait(9, FACING_NORTHWEST + FACING_STEP);
   Event_SetFlag(0xaa2);
   Event_End();
@@ -1491,7 +1491,7 @@ void Func_02002830(void) {
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 312, 440);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTHWEST);
   Event_ShowMessage(9, 0);
-  Import_FieldPsynergyStopMindReadWave();
+  FieldPsynergy_StopMindReadWave();
   Actor_FaceDirectionAndWait(9, FACING_SOUTH);
   work = Ram_HeapSlots->eventWork;
   work->field1ac = 0x100;
@@ -1554,7 +1554,7 @@ void Func_020029c4(void) {
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 152, 742);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
   Event_ShowMessage(9, 0);
-  Import_FieldPsynergyStopMindReadWave();
+  FieldPsynergy_StopMindReadWave();
   Actor_FaceDirectionAndWait(9, FACING_SOUTH);
   Func_020034d8();
 #if TLA_PATCH_1

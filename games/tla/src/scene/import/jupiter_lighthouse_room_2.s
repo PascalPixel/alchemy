@@ -54,9 +54,9 @@ VramCache_Load:
 	.thumb_func
 VramCache_FindFreeEntry:
 	overlay_veneer VramCache_FindFreeEntryFar
-	.global Import_OamAddSpriteAtDepthClamped
+	.global Oam_AddSpriteAtDepthClamped
 	.thumb_func
-Import_OamAddSpriteAtDepthClamped:
+Oam_AddSpriteAtDepthClamped:
 	overlay_veneer Oam_AddSpriteAtDepthClampedFar
 	.global GameFlag_Get
 	.thumb_func
@@ -90,9 +90,9 @@ Actor_StartScript:
 	.thumb_func
 Import_ActorCreate:
 	overlay_veneer Actor_CreateFar
-	.global Import_ActorRelease
+	.global Actor_Release
 	.thumb_func
-Import_ActorRelease:
+Actor_Release:
 	overlay_veneer Actor_ReleaseFar
 	.global Actor_SetPositionAndResetMotion
 	.thumb_func

@@ -140,9 +140,9 @@ WindowSprite_RedrawSavedRect:
 	.thumb_func
 Window_SetTilemapEntry:
 	overlay_veneer Window_SetTilemapEntryFar
-	.global Import_SaveToChosenFile
+	.global Save_ToChosenFile
 	.thumb_func
-Import_SaveToChosenFile:
+Save_ToChosenFile:
 	overlay_veneer Save_ToChosenFileFar
 	.global Save_ChooseAndLoadFile
 	.thumb_func
@@ -156,9 +156,9 @@ Save_CopyFile:
 	.thumb_func
 Save_EraseSelectedFile:
 	overlay_veneer Save_EraseSelectedFileFar
-	.global Import_SaveScanFileSummaries
+	.global Save_ScanFileSummaries
 	.thumb_func
-Import_SaveScanFileSummaries:
+Save_ScanFileSummaries:
 	overlay_veneer Save_ScanFileSummariesFar
 	.global NameEntry_EditMemberName
 	.thumb_func
@@ -204,9 +204,9 @@ Unit_Calculate:
 	.thumb_func
 PartyInventory_Add:
 	overlay_veneer PartyInventory_AddFar
-	.global Import_MainRoutineWorkInitializeDefaults
+	.global MainRoutineWork_InitializeDefaults
 	.thumb_func
-Import_MainRoutineWorkInitializeDefaults:
+MainRoutineWork_InitializeDefaults:
 	overlay_veneer MainRoutineWork_InitializeDefaultsFar
 	.global Party_AddMember
 	.thumb_func

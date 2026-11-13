@@ -86,7 +86,7 @@ void Actor_PlaceMovedBlock(void);
 
 void Func_02000158(void);
 
-void Import_ActorRelease(struct Actor *object);
+void Actor_Release(struct Actor *object);
 
 extern char SceneId_Ov6B0Room5;
 

@@ -67,7 +67,7 @@ void Settlements_KeepSliding(struct Actor *object) {
   else
     angle = gSettlements_SlideAngles[(gInput__s1620 >> 4) & 15];
   if (angle == -1) {
-    Import_ActorSelectAnimation(object, 9);
+    Actor_SelectAnimation(object, 9);
     return;
   }
   turn = (s16)(angle - object->facing);
@@ -76,7 +76,7 @@ void Settlements_KeepSliding(struct Actor *object) {
   if (turn < -0x1000)
     turn = -0x1000;
   object->facing += turn;
-  Import_ActorSelectAnimation(object, 2);
+  Actor_SelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
 }
 
@@ -174,7 +174,7 @@ retry:
   object->acceleration = 0x1999;
   object->timer = 0;
   FieldActor_SetMoveTarget(object, x, object->y, z);
-  Import_ActorSelectAnimation(object, 2);
+  Actor_SelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
   FieldActor_WaitForMove(object);
   object->update = Settlements_KeepSliding__s173c;
@@ -224,5 +224,5 @@ end:
   object->update = NULL;
   object->actionFlags |= 1;
   object->acceleration = 0x4000;
-  Import_ActorSelectAnimation(object, 1);
+  Actor_SelectAnimation(object, 1);
 }

@@ -78,13 +78,13 @@ Party_RemoveMember:
 	.thumb_func
 Event_Wait:
 	overlay_veneer Event_WaitFar
-	.global Import_EventStart
+	.global Event_Start
 	.thumb_func
-Import_EventStart:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Import_EventEnd
+	.global Event_End
 	.thumb_func
-Import_EventEnd:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Actor_GetById
 	.thumb_func

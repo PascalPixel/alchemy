@@ -93,7 +93,7 @@ void Func_020000d0(void) {
       if (object->x >> 20 != x || object->z >> 20 != z) {
         object = Actor_Get(12);
         if (object->x >> 20 != x || object->z >> 20 != z) {
-          Import_FieldTryJumpForward();
+          Field_TryJumpForward();
           return;
         }
       }
@@ -103,7 +103,7 @@ void Func_020000d0(void) {
     Func_02005688();
 }
 
-void Func_02000168(void) { Import_FieldTryJumpForward(); }
+void Func_02000168(void) { Field_TryJumpForward(); }
 
 #include "version.h"
 
@@ -560,7 +560,7 @@ void Func_02000b40(void) {
         cells = map->layers[2].cells;
       cells += (x + (z << 7)) << 2;
       if (cells[2] != 255)
-        Import_FieldTryJumpForward();
+        Field_TryJumpForward();
     }
   }
 }

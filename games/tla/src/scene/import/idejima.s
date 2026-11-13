@@ -66,13 +66,13 @@ Party_RestoreHpPp:
 	.thumb_func
 Event_Wait:
 	overlay_veneer Event_WaitFar
-	.global Import_EventStart
+	.global Event_Start
 	.thumb_func
-Import_EventStart:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Import_EventEnd
+	.global Event_End
 	.thumb_func
-Import_EventEnd:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_PrepareObjectAndApplyValue
 	.thumb_func
@@ -130,9 +130,9 @@ Actor_SetHorizontalPositionWithTerrain:
 	.thumb_func
 Actor_SetHorizontalPositionAndAngleWithTerrain:
 	overlay_veneer Actor_SetHorizontalPositionAndAngleWithTerrainFar
-	.global Import_ActorMoveToObject
+	.global Actor_MoveToObject
 	.thumb_func
-Import_ActorMoveToObject:
+Actor_MoveToObject:
 	overlay_veneer Actor_MoveToObjectFar
 	.global Actor_SetModeById
 	.thumb_func

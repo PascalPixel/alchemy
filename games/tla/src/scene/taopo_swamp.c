@@ -36,7 +36,7 @@ void Vent_SetGust(s32 id, s32 a);
 void Vents_SetId(s32 a, s32 b);
 void Event_End(void);
 void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
-void Import_FieldCameraWaitForArrival(void);
+void FieldCamera_WaitForArrival(void);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void Actor_ReturnHome(s32 a, s32 b, s32 c);
 void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
@@ -478,7 +478,7 @@ void TaopoSwamp_BlowFlowerOffLedge(void) {
   Actor_FaceActor(gMainRoutineWork.currentOwner, 8, 0);
   FieldActor_ShowEmote(gMainRoutineWork.currentOwner, 256, 30);
   FieldCamera_MoveTo(PIXELS(408), -1, PIXELS(312), 1);
-  Import_FieldCameraWaitForArrival();
+  FieldCamera_WaitForArrival();
   Actor_SetAttachedEffect(8, 257);
   speed = 0x8000;
   i = 2;

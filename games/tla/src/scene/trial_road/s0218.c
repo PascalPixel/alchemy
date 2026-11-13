@@ -272,7 +272,7 @@ void TrialRoad_BlowBushOffLonePillar(void) {
   Event_SetFlag(0x307);
 }
 
-void TrialRoad_JumpForward(void) { Import_FieldTryJumpForward(); }
+void TrialRoad_JumpForward(void) { Field_TryJumpForward(); }
 
 void TrialRoad_OpenSpoutCell(s32 id) {
   struct Actor *object = Actor_GetById(id);
@@ -292,7 +292,7 @@ void TrialRoad_TrackLeaderOnPillars(void) {
 
 void TrialRoad_JumpAcrossGap(void) {
   if (Actor_GetById(16)->z >> 20 == 23)
-    Import_FieldTryJumpForward();
+    Field_TryJumpForward();
   else
     Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, 0);
 }
@@ -338,7 +338,7 @@ void TrialRoad_MeltIceBesideTorch(s32 a, s32 id) {
 void TrialRoad_JumpMeltedPuddle(void) {
   if (Event_GetFlag(Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner) +
                     0x203))
-    Import_FieldTryJumpForward();
+    Field_TryJumpForward();
 }
 
 void TrialRoad_FreezePuddle(s32 a, s32 id) {
@@ -522,7 +522,7 @@ void TrialRoad_LandOnPillar(void) {
   s32 y = Actor_GetById(gMainRoutineWork.currentOwner)->y;
 
   if (y >= 0x100000) {
-    Import_FieldTryJumpForward();
+    Field_TryJumpForward();
   } else if (Func_02005a30()) {
     Func_02005a38();
     TrialRoad_CheckPoundedPillarsCovered(0, 0);

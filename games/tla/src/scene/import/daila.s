@@ -18,13 +18,13 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 Event_Wait:
 	overlay_veneer Event_WaitFar
-	.global Import_EventStart
+	.global Event_Start
 	.thumb_func
-Import_EventStart:
+Event_Start:
 	overlay_veneer Event_StartFar
-	.global Import_EventEnd
+	.global Event_End
 	.thumb_func
-Import_EventEnd:
+Event_End:
 	overlay_veneer Event_EndFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
@@ -118,21 +118,21 @@ Import_EventSetExitRequest:
 	.thumb_func
 Field_TryJumpForward:
 	overlay_veneer Field_TryJumpForwardFar
-	.global Import_EventFinishScreenTransition
+	.global Event_FinishScreenTransition
 	.thumb_func
-Import_EventFinishScreenTransition:
+Event_FinishScreenTransition:
 	overlay_veneer Event_FinishScreenTransitionFar
-	.global Import_EventWaitTransitionFrames
+	.global Event_WaitTransitionFrames
 	.thumb_func
-Import_EventWaitTransitionFrames:
+Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
 	.global Actor_SetWideSprite
 	.thumb_func
 Actor_SetWideSprite:
 	overlay_veneer Actor_SetWideSpriteFar
-	.global Import_ActorReturnHome
+	.global Actor_ReturnHome
 	.thumb_func
-Import_ActorReturnHome:
+Actor_ReturnHome:
 	overlay_veneer Actor_ReturnHomeFar
 	.global Event_ResolvePendingActions
 	.thumb_func
@@ -158,9 +158,9 @@ Party_GetLeaderActor:
 	.thumb_func
 Actor_FallOverById:
 	overlay_veneer Actor_FallOverByIdFar
-	.global Import_ShopRun
+	.global Shop_Run
 	.thumb_func
-Import_ShopRun:
+Shop_Run:
 	overlay_veneer Shop_RunFar
 	.global Sound_Play
 	.thumb_func

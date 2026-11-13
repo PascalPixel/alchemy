@@ -226,6 +226,11 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   gBattleBackgroundWork->mode = BATTLE_BACKGROUND_FIXED;
   work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 128 * 128);
+  /* FAKEMATCH(dead): an empty once-only loop keeps the multiply routine's
+   * address ahead of the spark cursor; without it, 2 of 246 instructions
+   * differ in tbs-en. */
+  do {
+  } while (0);
   // Each spark at a random angle, half of 1 to 2 (16.16) out, a random height
   // above, swirling: its velocity points inward and a little sideways. An odd
   // coordinate is mirrored, and the further out, the longer it lives.
@@ -370,8 +375,10 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   struct BattleStagingWork burstLaunch;
   // The heap slots read from the camera's, as the battle effects read theirs
   // from the effect's (EFFECT_SLOT).
+  void **slots = &gHeapSlots[HEAP_SLOT_CAMERA];
   volatile u16 *ime;
-  struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
+  struct BattleWork *battle =
+      HEAP_SLOT_FROM(slots, HEAP_SLOT_CAMERA, HEAP_SLOT_BATTLE);
   struct SparkWork *work;
   s32 frame;
   s32 *brightness;

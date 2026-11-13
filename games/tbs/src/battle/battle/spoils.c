@@ -197,6 +197,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
 void Battle_AwardSpoils(void) {
   struct BattleSpoils *spoils;
   s32 count;
+  u16 *unitIds;
   s32 unitIndex;
   s32 unitId;
   struct Unit *unit;
@@ -210,7 +211,7 @@ void Battle_AwardSpoils(void) {
   u16 *overflowItem;
   s32 itemPriority;
   struct LevelUpResult gains; // Read stat increases as signed values.
-  u16 unitIds[8];
+  u16 units[8];
 
   spoils = &gBattleWork->spoils;
   if (spoils->experience != 0) {
@@ -220,6 +221,9 @@ void Battle_AwardSpoils(void) {
   }
   // Experience and level ups: each party member is copied before every level it
   // may gain, so that what the level brought can be read against the copy.
+  /* FAKEMATCH(temporary): unitIds stands in for units' own address; as
+   * units used directly, 9 of 302 instructions differ in tbs-en. */
+  unitIds = units;
   count = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, unitIds);
   beforeLevelUp = Heap_AllocEwram(sizeof(struct Unit));
   for (unitIndex = 0; unitIndex < count; unitIndex++) {

@@ -441,6 +441,18 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
   s32 zoomOnCritical;
 
   view = gBattleBackgroundWork;
+  {
+    struct BattleActionRun *savedPlan = plan;
+
+    /* FAKEMATCH(dead): plan cleared and restored under tests that emit
+     * nothing, ending a CSE block so the first read of plan reloads it;
+     * without them, 17 of 289 instructions differ in tbs-en. */
+    if (view)
+      plan = NULL;
+    if (view)
+      plan = savedPlan;
+  }
+
   // The camera turns to halfway between YAW_PARTY_ACTION and the
   // attacker's bearing from the centre, an enemy's taken from the other
   // side: 5 frames if it is there already, else 10.
@@ -971,17 +983,23 @@ void BattleObject_RemoveFromLists(s32 unitId) {
   }
 
   // The enemies' list.
-  i = 0;
-nextEnemy:
-  listedUnit = battle->enemyIds[i];
-  if (listedUnit == unitId) {
-    battle->enemyIds[i] = BATTLE_UNIT_REMOVED;
-    goto removed;
-  }
-  i++;
-  if (listedUnit == BATTLE_UNIT_LIST_END)
-    return;
-  goto nextEnemy;
+  // The scan is a label loop, the form its branches match with.
+  /* FAKEMATCH(dead): a once-only block round the label loop keeps the party
+   * loop's first test from being peeled ahead of it; as the plain loop, 26 of
+   * 53 instructions differ in tbs-en. */
+  do {
+    i = 0;
+  again:
+    listedUnit = battle->enemyIds[i];
+    if (listedUnit == unitId) {
+      battle->enemyIds[i] = BATTLE_UNIT_REMOVED;
+      goto removed;
+    }
+    i++;
+    if (listedUnit == BATTLE_UNIT_LIST_END)
+      return;
+    goto again;
+  } while (0);
 
 removed:
   // Free the letter that told the enemy apart from others of its class.

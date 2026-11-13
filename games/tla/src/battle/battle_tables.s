@@ -2137,13 +2137,13 @@ gBattleAI_ActionWeights:
 @ A copy of The Broken Seal's gBattleTransition_CurtainVariants
 	.global gBattleTransition_CurtainVariants
 gBattleTransition_CurtainVariants:
-	.incbin "games/tla/src/battle/presentation/tilevar.4bpp"
+	.incbin "games/tla/src/battle/tilevar.4bpp"
 @ A copy of The Broken Seal's gBattleTransition_CurtainTiles
 	.global gBattleTransition_CurtainTiles
 gBattleTransition_CurtainTiles:
-	.incbin "games/tla/src/battle/presentation/curtain.4bpp"
+	.incbin "games/tla/src/battle/transition/curtain.4bpp"
 	.balign 4
-	.include "games/tla/src/battle/presentation/highlight_ramp.s"
+	.include "games/tla/src/battle/highlight_ramp.s"
 	.4byte 1, 38
 @ 660 enemy formations.
 	.global gBattleFormation_Records

@@ -48,18 +48,12 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
 
 UNUSED void Exit_NoOp(void) {}
 
-// UB: no value is returned, and field_sequence.c ignores it; as void, the
-// epilogue changes.
 /// Starts the transition into a random battle: plays the scene's battle music
 /// and the encounter sounds, closes the screen and flashes the backdrop white,
 /// fading it to black over 16 frames. Called by FieldSequence_Run when it
 /// handles work->encounter; clears work->transitionActive once the screen is
 /// closed.
-#ifdef UBFIX
-void Field_StartEncounterTransition(s32 unused) {
-#else
-s32 Field_StartEncounterTransition(s32 unused) {
-#endif
+UNREAD_RESULT Field_StartEncounterTransition(s32 unused) {
   struct FieldWork *work = gFieldWork;
   s32 i;
   s32 level;
@@ -100,8 +94,10 @@ s32 Field_StartEncounterTransition(s32 unused) {
 /// Starts the leader's animation for leaving through an exit: centres it on
 /// its cell, at the cell's south edge, stops it and plays animation over 18
 /// frames. The leader's sprite gains a second part (metadata 27) for it.
-/// Called by the two Exit_StartContextEffect functions below.
+/// Called by Exit_StartStairsUp and Exit_StartStairsDown below.
 void Exit_PrepareAnimation(s32 animation) {
+  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 20 of
+   * 49 instructions differ in tbs-en. */
   u32 zero;
   u8 param;
   struct Actor *actor;
@@ -155,7 +151,6 @@ void Exit_StartStairsDown(void) {
 /// Entrance_PlayArrival; frees the sprite part
 /// Exit_PrepareAnimation registered.
 void Entrance_EndArrivalAnimation(s32 animation) {
-  s32 zero;
   s32 mask;
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
   struct Sprite *spriteAnimation = leader->sprite;
@@ -163,9 +158,8 @@ void Entrance_EndArrivalAnimation(s32 animation) {
       (struct SpriteAnimation *)Sprite_AddAnimationFar(spriteAnimation,
                                                        SPRITE_DOORWAY);
 
-  zero = 0;
   mask = FIELD_CELL_MASK;
-  spriteAnimation->flags = zero;
+  spriteAnimation->flags = 0;
   eff->colorMode = SPRITE_COLOR_HIDDEN;
   // The coordinates as plain words: through .fixed, the union moves a store.
   *(s32 *)&leader->x = (*(s32 *)&leader->x & mask) + px(8);
@@ -176,7 +170,7 @@ void Entrance_EndArrivalAnimation(s32 animation) {
   // pixel a frame.
   spriteAnimation->count = 1;
   SpriteAnimation_ClearFar(spriteAnimation->entries[1]);
-  spriteAnimation->entries[1] = (void *)zero;
+  spriteAnimation->entries[1] = NULL;
   spriteAnimation->flags = SPRITE_FLAG_SHADOW;
   leader->acceleration = Q16_ONE;
   leader->speedLimit = Q16_ONE;

@@ -286,7 +286,7 @@ enum {
 #define WATER_SPRAY_LIFETIME 20
 #define WATER_SPRAY_START_SCALE (3 * Q16_ONE / 10)
 
-// UB: the native facing test overflows a signed left shift for many headings.
+// UB: the ROM's facing test overflows a signed left shift for many headings.
 #ifdef UBFIX
 #define ALTIN_FACES_COUNTER(facing) FACING_IS_NORTH(facing)
 #else
@@ -1295,7 +1295,7 @@ struct ActorPlacement gCottageRoomsD_ActorPlacements[] = {
 };
 
 struct Trigger gAltin_NoTriggers[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltin_Triggers[] = {
@@ -1382,7 +1382,7 @@ struct Trigger gAltin_Triggers[] = {
         MSGNO(MsgAltinIfMyGoodsAreWetIll)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_STATUE, CONDITION_ALWAYS, EVENT(Altin_CheckPillarMoved)},
     {TRIGGER_STEP, CELL_BEHAVIOR_ALTIN_NEAR_BEAST, FLAG_ALTIN_WATER_BEAST_LEFT, EVENT(Altin_ScareOffBeast)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gCottageRoomsD_Triggers[] = {
@@ -1490,7 +1490,7 @@ struct Trigger gCottageRoomsD_Triggers[] = {
         FIND_MESSAGE(MSGNO(MsgAltinHeIsMakingShrimpInA))},
     {EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 203, CONDITION_ALWAYS,
         FIND_MESSAGE(MSGNO(MsgAltinThereIsABookTitledAltin))},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 // clang-format on
 

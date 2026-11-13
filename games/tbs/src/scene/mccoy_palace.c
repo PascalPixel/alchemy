@@ -1828,7 +1828,7 @@ struct ActorPlacement gMcCoyPalaceActorPlacements[] = {
 
 /// Unused, as gMcCoyPalaceNoActorPlacements is.
 struct Trigger gMcCoyPalaceNoTriggers[] = {
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gMcCoyPalaceTriggers[] = {
@@ -1917,6 +1917,6 @@ struct Trigger gMcCoyPalaceTriggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_BARREL), 121, FLAG_MCCOY_PALACE_BARREL_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
     { EXAMINE_TRIGGER(EXAMINE_WARDROBE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBilibinTheresASilkNegligeeIsaacPut)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBilibinTheresASheetOfPaperTitled)) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on

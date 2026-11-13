@@ -133,8 +133,7 @@ void FieldPsynergy_End(void) {
   runtime = gFieldWork;
   grid = gMapGridWork[0];
 #else
-  // Indexing beyond the scalar global is undefined in C. Named slots add
-  // 8 bytes to this function in the forced native EN build (248 -> 256 bytes).
+  // Indexing beyond the scalar global is undefined in C.
   effectWorkCell = (struct FieldEffectWork **)&gFieldEffectWork;
   effectWork = *effectWorkCell;
   runtime = *(struct FieldWork **)((u8 *)effectWorkCell - 116);
@@ -221,8 +220,7 @@ void FieldPsynergy_StartCast(void) {
   if (effectWork->active != 0) {
     Actor_SetOthersPaused(caster, 1, 0);
     MessageArgument_PushFar(ability, MESSAGE_ARGUMENT_ABILITY);
-    // The mode branches currently show the same message. Merging them shrinks
-    // the native English function by 32 bytes, so keep this existing form.
+    // The mode branches currently show the same message.
     if ((s8)effectWork->mode != 0) {
       FieldMessage_ShowFar(MsgAbilityAnnounce, effectWork->messageMode);
     } else {
@@ -329,9 +327,7 @@ void Camera_WorldToScreen(struct Vector3 *position) {
 #ifdef UBFIX
     struct MapGridScrollWork *state = gMapGridWork[0];
 #else
-    // The named map slot avoids stepping outside gFieldWork. In forced native
-    // EN it replaces the address copy/subtract with a separate literal load
-    // and changes register allocation; the extent remains 104 bytes.
+    // The named map slot avoids stepping outside gFieldWork.
     struct MapGridScrollWork *state =
         *(struct MapGridScrollWork **)((u8 *)eventCell - 76);
 #endif

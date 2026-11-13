@@ -8,16 +8,7 @@
 // The leader's update routine while passing: each frame a small spark rises
 // from a point that sweeps across the leader's chest, in palette 7 or 5 by
 // turns.
-//
-// UB: update routines return void. In tbs-en mercury_lighthouse_entrance, plain
-// void differs in 21 bytes (extent 136 to 132 bytes). Keep the
-// unused native result in matching builds.
-#ifdef UBFIX
-static void MercuryLighthouse_TrailSparks(struct Actor *updated) {
-#else
-static s32 MercuryLighthouse_TrailSparks(struct Actor *updated) {
-#endif
-  struct Actor *actor = (struct Actor *)updated;
+static UNREAD_RESULT MercuryLighthouse_TrailSparks(struct Actor *actor) {
   struct EffectOptions options;
   s32 velocityY;
 
@@ -34,9 +25,5 @@ static s32 MercuryLighthouse_TrailSparks(struct Actor *updated) {
                     EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
                         EFFECT_USE_PALETTE,
                     &options);
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }

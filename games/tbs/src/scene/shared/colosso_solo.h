@@ -290,8 +290,8 @@ static void Colosso_AskReadyToRace(s32 actorId) {
   if (Party_CountMembers() <= 1) {
     Event_SetMessageId(MsgColossoIsaacDidGetGoodLook);
     if (Event_AskYesNoAndShowResponse(actorId, 0) == 0) {
-      InitializeActorZero();
-      InitializeSelectedActor(actorId);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
+      Actor_SetSpeed(actorId, 1);
       Actor_WalkToById(actorId, x, z + 64);
       Event_Wait(15);
       Actor_WalkToAndWaitById(ACTOR_PARTY_LEADER, x, z);

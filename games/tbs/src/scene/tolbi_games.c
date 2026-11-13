@@ -889,7 +889,6 @@ prompt:
         Party_AdjustCoins(gTolbiSpring_CoinPrizes[result]);
 #else
         // UB: the original view indexes beyond its one-element array.
-        // Plain arrays change register allocation and add four bytes in tbs-en.
         Party_AdjustCoins(((struct { u16 coins[1]; } *)gTolbiSpring_CoinPrizes)
                               ->coins[result]);
 #endif
@@ -936,7 +935,8 @@ prompt:
 #ifdef UBFIX
       TolbiSpring_RevealPrize(gTolbiSpring_PrizeItems[prizeIndex]);
 #else
-      // UB: use the whole item array in modern C; preserve the native view.
+      // UB: the view reads past its one-element array; UBFIX reads the whole
+      // item array.
       TolbiSpring_RevealPrize(
           ((struct { s32 prize[1]; } *)gTolbiSpring_PrizeItems)
               ->prize[prizeIndex]);
@@ -1725,7 +1725,7 @@ const struct Trigger gTolbiSpringTriggersOther[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_SOLDIER, FLAG_BABI_SAVED, MSGNO(MsgTolbiSpringILikePlayingLuckyDiceBut) },
     { TRIGGER_TALK, ACTOR_TOLBI_SPRING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringOhThereAreAlwaysScalpersAt) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringTheresNoWayPoorSoldiersLike) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 const struct Trigger gTolbiSpringTriggers[] = {
@@ -1740,7 +1740,7 @@ const struct Trigger gTolbiSpringTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_MEDAL_SEEKER, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringWhyWontAnyoneGiveMeA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_VISITOR_ONE_MEDAL, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringThisIsALuckyMedalSo) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_TOLBI_SPRING_WATER, CONDITION_ALWAYS, EVENT(TolbiSpring_TossCoinOrMedal) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 /// BLDALPHA steps.

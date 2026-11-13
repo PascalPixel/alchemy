@@ -11,7 +11,7 @@
 /// room with a crate. Behind the crate a way climbs to the inn's loft.
 ///
 /// The loft has actor placements and events of its own
-/// (LogRoomsA_GetActorPlacements and _GetTriggers).
+/// (Scene_GetActorPlacements and Scene_GetTriggers).
 /// FLAG_VAULT_THIEVES_JAILED chooses the other rooms' tables.
 ///
 /// The story flags drive the rooms in order:
@@ -2168,12 +2168,11 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   switch (gMainRoutineWork.entrance) {
   case LOG_ROOMS_A_FROM_VAULT_EAST_SOUTHEAST: {
-    s32 zero = 0;
 
     // The gem owner's house: he stands on the floor.
-    Actor_Get(ACTOR_GEM_OWNER)->motionFlags = zero;
-    Actor_Get(ACTOR_GEM_OWNER)->y.fixed = zero;
-    Actor_Get(ACTOR_GEM_OWNER)->groundHeight = zero;
+    Actor_Get(ACTOR_GEM_OWNER)->motionFlags = 0;
+    Actor_Get(ACTOR_GEM_OWNER)->y.fixed = 0;
+    Actor_Get(ACTOR_GEM_OWNER)->groundHeight = 0;
   } break;
   case LOG_ROOMS_A_FROM_VAULT_NORTHWEST:
     // The mayor's house: Ivan waits a step back once met and is gone once he
@@ -4093,7 +4092,7 @@ struct Trigger gLogRoomsA_Triggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), CELL_BEHAVIOR_LOG_ROOMS_A_WOODEN_BOX, FLAG_LOG_ROOMS_A_BOX_MINT, FIND_ITEM(ITEM_MINT) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, CELL_BEHAVIOR_LOG_ROOMS_A_HISTORY_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledHistoryOf)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_LOG_ROOMS_A_GEMS_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledGemsOf)) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gLogRoomsA_LoftTriggers[] = {
@@ -4103,7 +4102,7 @@ struct Trigger gLogRoomsA_LoftTriggers[] = {
     { TRIGGER_TALK, ACTOR_SECOND_CHEST, CONDITION_ALWAYS, EVENT(LogRoomsA_SearchEmptyChest) },
     { TRIGGER_TALK, ACTOR_THIRD_CHEST, CONDITION_ALWAYS, EVENT(LogRoomsA_SearchEmptyChest) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TIED_UP_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgVaultAhhHelpMe) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gLogRoomsA_TriggersAfterThieves[] = {
@@ -4156,7 +4155,7 @@ struct Trigger gLogRoomsA_TriggersAfterThieves[] = {
     { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), CELL_BEHAVIOR_LOG_ROOMS_A_WOODEN_BOX, FLAG_LOG_ROOMS_A_BOX_MINT, FIND_ITEM(ITEM_MINT) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, CELL_BEHAVIOR_LOG_ROOMS_A_HISTORY_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledHistoryOf)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_LOG_ROOMS_A_GEMS_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledGemsOf)) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 

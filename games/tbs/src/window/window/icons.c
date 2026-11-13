@@ -189,7 +189,6 @@ s32 Icon_BuildMiscIconTiles(s32 icon, s32 unused, s32 cacheSlot) {
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return 1;
 }
-extern const u8 *gMenuTitlePictures[];
 
 // Those bytes are the table's eight label pointers, not a picture.
 // XXX (no evidence): what the cases were meant to load; the one caller,

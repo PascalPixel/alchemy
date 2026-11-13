@@ -30,9 +30,7 @@
 /// right-aligned on the 30-tile screen row at the top. It is four tiles high
 /// outside battle and three in battle, plus one with the PP row.
 void PartyStatus_BuildLayoutBounds(s32 flags) {
-  // UB: slot[-1] steps before the single party-status heap slot. Reading
-  // the actual members grows the EN function from 104 to 108 bytes.
-  // Keep the original address formation only in the matching build.
+  // UB: slot[-1] steps before the single party-status heap slot.
 #ifdef UBFIX
   struct PartyStatusWindow *layout = HEAP_SLOT_BLOCK(HEAP_SLOT_PARTY_STATUS);
   struct WindowWork *work = WINDOW_WORK;
@@ -78,6 +76,8 @@ void PartyStatus_BuildLayoutBounds(s32 flags) {
 /// it erased until the battle draws it (Battle_Run); the field opens it with
 /// flags 1 (field/field_sequence/triggers.c).
 void PartyStatus_CreateWindow(s32 flags) {
+  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 16 of
+   * 39 instructions differ in tbs-en. */
   s32 zero;
   struct PartyStatusWindow *layout;
   s8 *busy;
@@ -147,19 +147,13 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
 
 // Recolours the five bar tiles at (x, y) in `window` to show a bar `length`
 // pixels long (0-40). The bar tiles are drawn in colour 14 with a colour 1
-// shadow; each pixel left of the length becomes colour 8 (shadow 13), the
-// rest colour 2 (shadow 12). Only the bottom row of each tile changes for an
-// empty bar, the bottom three otherwise. Outside battle it first loads the
-// basic colours into HIGHLIGHT_PALETTE, its TEXT_BACKGROUND_COLOR taken from
+// shadow; each pixel left of the length becomes colour 8 (shadow 13), the rest
+// colour 2 (shadow 12). Only the bottom row of each tile changes for an empty
+// bar, the bottom three otherwise. Outside battle it first loads the basic
+// colours into HIGHLIGHT_PALETTE, its TEXT_BACKGROUND_COLOR taken from
 // WINDOW_BACKGROUND_COLOR.
-// It is declared to return s32 but returns no value, and no caller reads one;
-// UBFIX makes it void, which changes the register its epilogue returns
-// through.
-#ifdef UBFIX
-void PartyStatus_DrawBars(struct Window *window, s32 x, s32 y, s32 length) {
-#else
-s32 PartyStatus_DrawBars(struct Window *window, s32 x, s32 y, s32 length) {
-#endif
+UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
+                                   s32 length) {
   s32 i;
   struct WindowWork *work = WINDOW_WORK;
   s32 fullLength = length;
@@ -192,7 +186,7 @@ s32 PartyStatus_DrawBars(struct Window *window, s32 x, s32 y, s32 length) {
       bar = PIXELS_4BPP(8);
       shadow = PIXELS_4BPP(13);
 #ifdef UBFIX
-      // At zero (including a multiple-of-eight remainder), the native
+      // At zero (including a multiple-of-eight remainder), the ROM's
       // right shifts by 32 yield zero. Keep the empty patterns without
       // evaluating those undefined C shifts.
     } else if (length > 0) {
@@ -231,8 +225,6 @@ s32 PartyStatus_DrawBars(struct Window *window, s32 x, s32 y, s32 length) {
 /// erased and laid out again first.
 void PartyStatus_Draw(s32 flags) {
   // UB: the negative indices leave the single party-status heap slot.
-  // Named members grow the EN function from 980 to 988 bytes. Keep the
-  // original address formation and load order in the matching build.
 #ifdef UBFIX
   struct PartyStatusWindow *layout = HEAP_SLOT_BLOCK(HEAP_SLOT_PARTY_STATUS);
   struct BattleWork *battle = gBattleWork;

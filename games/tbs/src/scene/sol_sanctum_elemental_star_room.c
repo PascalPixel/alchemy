@@ -592,6 +592,8 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   struct Actor *felix;
   struct Actor *shadow;
   s32 i;
+  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 29 of
+   * 464 instructions differ in tbs-en. */
   u8 zero;
 
   Sound_Play(MUS_OMINOUS);
@@ -1052,7 +1054,6 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   u32 i;
   struct Actor *actor;
   struct Actor *alex;
-  u8 none;
 
   Actor_RunRepeatedMotion(ACTOR_GARET, 3);
   Event_Wait(10);
@@ -1090,7 +1091,6 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   Actor_SetSpeed(ACTOR_GARET, 0.5);
   actor = Actor_Get(ACTOR_GARET);
   actor->steeringFlags &= ~ACTOR_FACES_MOTION;
-  none = 0;
   Actor_WalkToAndWait(ACTOR_GARET, 376, 470);
   Event_Wait(30);
   actor->steeringFlags |= ACTOR_FACES_MOTION;
@@ -1109,7 +1109,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   alex = Actor_Get(ACTOR_ALEX);
   Actor_SetSpriteFlags(alex, 0);
   actor = Actor_Get(ACTOR_ALEX);
-  actor->motionFlags = none;
+  actor->motionFlags = 0;
   Sound_Play(SE_SHIMMER);
   for (i = 0; i != 30; i++) {
     actor->y.fixed += px(1);
@@ -1497,7 +1497,6 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   s32 kradenSpeaker;
   s32 height;
   s32 kradenMessageSpeaker;
-  s32 zero;
 
   Event_Start();
   MapGrid_CopyCellAttributes(27, 16, 5, 1, 27, 17);
@@ -1567,7 +1566,6 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(20);
-  zero = 0;
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetPositionFixed(ACTOR_JENNA, leader->x.fixed, leader->z.fixed);
@@ -1640,7 +1638,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   // Materialize Kraden after the companions have explored the chamber.
   rising = Actor_Get(ACTOR_KRADEN);
   kradenSprite = &rising->sprite->flags;
-  *kradenSprite = zero;
+  *kradenSprite = 0;
   rising->scaleX = Q16_ONE / 10;
   rising->scaleY = Q16_ONE / 10;
   shadow->scaleX = Q16_ONE / 10;
@@ -1648,7 +1646,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_SetSpriteColorById(ACTOR_KRADEN, SPRITE_COLOR_BLINK);
   Actor_SetPosition(ACTOR_KRADEN, 471, 290);
   kradenMotion = &rising->motionFlags;
-  *kradenMotion = zero;
+  *kradenMotion = 0;
   rising->y.fixed = px(40);
   Event_Wait(1);
   Event_SetMessageId(MsgSolSanctumKradenWhereAreWe);
@@ -2411,7 +2409,7 @@ struct Trigger gSolSanctumElementalStarRoom_Triggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_SOL_SANCTUM_ELEMENTAL_STAR_ROOM_MERCURY_PEDESTAL, FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED, EVENT(SolSanctumElementalStarRoom_BagMercuryStar) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_SOL_SANCTUM_ELEMENTAL_STAR_ROOM_JUPITER_PEDESTAL, FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX, EVENT(SolSanctumElementalStarRoom_BagJupiterStarAndMeetSaturos) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_SOL_SANCTUM_ELEMENTAL_STAR_ROOM_MARS_PEDESTAL, FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED, EVENT(SolSanctumElementalStarRoom_TakeMarsStar) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 u16 gSolSanctumElementalStarRoom_StarCells[] = {

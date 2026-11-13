@@ -156,7 +156,7 @@ enum LaliveroActorId {
 enum LaliveroCellBehavior { CELL_BEHAVIOR_LALIVERO_SANCTUM_GATE = 6 };
 
 /// A cell of the wall along the town's south edge (CELL_BEHAVIOR_WALL), whose
-/// attributes Lalivero_SetupMap copies onto cells the party may not cross.
+/// attributes Lalivero_Initialize copies onto cells the party may not cross.
 enum { WALL_CELL_X = 20, WALL_CELL_Y = 23 };
 
 /// A chest searched while facing the given way.
@@ -1233,7 +1233,7 @@ struct Trigger gLaliveroTriggers[] = {
     // gLaliveroTriggersAfterLighthouse opens it from any side; the chest and the
     // ground around it are the same on both visits.
     { EXAMINE_CHEST_FACING(FACING_WEST), 102, FLAG_LALIVERO_WARRIORS_HELM, FIND_ITEM(ITEM_WARRIORS_HELM) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gLaliveroTriggersAfterLighthouse[] = {
@@ -1279,6 +1279,6 @@ struct Trigger gLaliveroTriggersAfterLighthouse[] = {
     { EXAMINE_TRIGGER(EXAMINE_JAR), 100, FLAG_LALIVERO_WATER_OF_LIFE, FIND_ITEM(ITEM_WATER_OF_LIFE) },
     { EXAMINE_TRIGGER(EXAMINE_STONE_PILLAR), 101, FLAG_LALIVERO_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_LALIVERO_WARRIORS_HELM, FIND_ITEM(ITEM_WARRIORS_HELM) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on

@@ -24,7 +24,7 @@ struct Scene {
   /// FLAG_AREA_VISITED(area) marks it visited (Scene_Arrive).
   s8 area;
   /// An enum SceneType, copied to gMainRoutineWork.sceneType:
-  /// SCENE_TYPE_TOWN for towns and their interiors (53 rows: Vale,
+  /// SCENE_TYPE_TOWN for towns and their rooms (53 rows: Vale,
   /// Bilibin, Kalay, Tolbi and others), SCENE_TYPE_OTHER for the rest.
   s8 sceneType;
   u16 mapIndex; ///< the map loaded for it, copied to gMainRoutineWork.mapId

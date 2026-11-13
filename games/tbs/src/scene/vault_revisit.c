@@ -687,18 +687,10 @@ s32 Scene_Initialize(void) {
   wait(1);
   // Resume the two walking villagers' proximity reactions.
   actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
-#ifdef UBFIX
-  actor->update = Vault_UpdateWalkingVillager;
-#else
   actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
-#endif
   Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer = 1;
   actor = Actor_Get(ACTOR_GIRL_ROUND_THE_WELL);
-#ifdef UBFIX
-  actor->update = Vault_UpdateWalkingVillager;
-#else
   actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
-#endif
   Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer = 0;
   // Restore the dog's clue position and Sap's on the cliff top.
   if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE))
@@ -897,6 +889,6 @@ struct Trigger gVaultRevisit_Triggers[] = {
     { USE_ITEM_ON_ACTOR(ITEM_BONE), ACTOR_VAULT_DOG, FLAG_VAULT_DOG_SHOWN_PASSAGE, EVENT(VaultRevisit_GiveBoneToDog) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(VaultRevisit_RevealPassage) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(VaultRevisit_HidePassage) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on

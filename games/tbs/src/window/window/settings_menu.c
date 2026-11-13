@@ -22,26 +22,25 @@ struct OptionMenuEntry {
 /// cursor animation.
 UNUSED void SettingsMenu_ResetEntries(struct OptionMenuWork *work) {
   struct OptionMenuEntry *entry = (struct OptionMenuEntry *)work->entries;
-  u16 zero = 0;
 
-  entry->state = zero;
+  entry->state = 0;
   entry++;
-  entry->state = zero;
+  entry->state = 0;
   entry++;
-  entry->state = zero;
+  entry->state = 0;
   entry++;
-  entry->state = zero;
+  entry->state = 0;
   entry++;
-  entry->state = zero;
+  entry->state = 0;
   entry++;
-  entry->state = zero;
+  entry->state = 0;
   entry++;
-  entry->state = zero;
-  work->page = zero;
-  work->tint[0] = zero;
-  work->tint[1] = zero;
-  work->tint[2] = zero;
-  work->cursorFrame = zero;
+  entry->state = 0;
+  work->page = 0;
+  work->tint[0] = 0;
+  work->tint[1] = 0;
+  work->tint[2] = 0;
+  work->cursorFrame = 0;
 }
 
 /// Works out the window tint (red, green and blue, 0 to 31) from the window

@@ -5,7 +5,6 @@
 #include "scene_tables.h"
 
 u8 *MenuTest_GetEntrances(void);
-s32 Scene_GetExitRegions(void);
 u8 *MenuTest_GetExits(void);
 u8 *MenuTest_GetActorPlacements(void);
 s32 MenuTest_GetTriggers(void);

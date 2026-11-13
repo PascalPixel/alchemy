@@ -1086,8 +1086,7 @@ static void TreeRooms_PlayGesture(s32 gesture) {
 }
 
 /// Moves a fading spark outward from its saved origin, then releases it.
-static void TreeRooms_UpdateSwirlSpark(struct Actor *actor) {
-  struct Actor *spark = (struct Actor *)actor;
+static void TreeRooms_UpdateSwirlSpark(struct Actor *spark) {
   struct FieldPosition position;
   s32 frame;
 
@@ -1610,7 +1609,7 @@ struct Trigger gTreeRoomsTriggers[] = {
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, 0xf5b, FIND_ITEM(ITEM_HEALING_RING)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 101, 0xf5c, FIND_ITEM(ITEM_NUT)},
     {EXAMINE_TRIGGER(EXAMINE_SILENT), 102, 0x350, FIND_PSYNERGY_STONE},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s32 gTreeRooms_TintIndex = 0;

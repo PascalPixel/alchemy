@@ -315,9 +315,7 @@ void Task_RunPass(s32 pass) {
         return;
       task++;
       if (TASK_STATE_HIGH(task) == pass) {
-        // UB: tasks return void, and the stored word is not a pointer
-        // object. The native integer-return call uses r0; a void call uses
-        // r3 instead (two instructions and the call relocation differ).
+        // UB: tasks return void, and the stored word is not a pointer object.
 #ifdef UBFIX
         TaskFunc func = (TaskFunc)task->func;
 #else

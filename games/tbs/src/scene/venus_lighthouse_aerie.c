@@ -211,8 +211,7 @@ enum {
 
 /// Pulses the actor scale around the countdown, then chooses its next
 /// pause.
-static s32 VenusLighthouseAerie_PulseActorScale(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 VenusLighthouseAerie_PulseActorScale(struct Actor *actor) {
   s16 *counter = &actor->timer;
 
   switch (*counter) {
@@ -245,27 +244,24 @@ static s32 VenusLighthouseAerie_PulseActorScale(struct Actor *interpreter) {
 /// Moves a particle, damps its horizontal velocity and updates its scale and
 /// spin.
 static void VenusLighthouseAerie_UpdateDriftingParticle(struct Actor *actor) {
-  s32 velocityX = ((struct FieldEffect *)actor)->velocity.x;
+  struct FieldEffect *effect = (struct FieldEffect *)actor;
+  s32 velocityX = effect->velocity.x;
   s32 velocityZ;
 
-  ((struct FieldEffect *)actor)->x += velocityX;
-  ((struct FieldEffect *)actor)->y += ((struct FieldEffect *)actor)->velocity.y;
-  velocityZ = ((struct FieldEffect *)actor)->velocity.z;
-  ((struct FieldEffect *)actor)->z += velocityZ;
-  ((struct FieldEffect *)actor)->velocity.x = velocityX - velocityX / 22;
-  ((struct FieldEffect *)actor)->velocity.z = velocityZ - velocityZ / 20;
-  ((struct FieldEffect *)actor)->scaleX +=
-      ((struct FieldEffect *)actor)->scaleRateX;
-  ((struct FieldEffect *)actor)->scaleY +=
-      ((struct FieldEffect *)actor)->scaleRateY;
-  ((struct FieldEffect *)actor)->sprite->rotation +=
-      ((struct FieldEffect *)actor)->spin;
+  effect->x += velocityX;
+  effect->y += effect->velocity.y;
+  velocityZ = effect->velocity.z;
+  effect->z += velocityZ;
+  effect->velocity.x = velocityX - velocityX / 22;
+  effect->velocity.z = velocityZ - velocityZ / 20;
+  effect->scaleX += effect->scaleRateX;
+  effect->scaleY += effect->scaleRateY;
+  effect->sprite->rotation += effect->spin;
 }
 
 /// Turns the falling actor sprite until its rotation leaves the negative
 /// half-turn.
-static void VenusLighthouseAerie_StepSpriteRotation(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+static void VenusLighthouseAerie_StepSpriteRotation(struct Actor *actor) {
   struct Sprite *sprite = actor->sprite;
   u16 rotation = sprite->rotation;
 
@@ -1865,8 +1861,7 @@ static void VenusLighthouseAerie_FlashScreen(void) {
 
 /// Orbits a particle around the upper beam and keeps its target at that
 /// position.
-static void VenusLighthouseAerie_UpdateUpperOrbit(struct Actor *actor) {
-  struct Actor *effect = actor;
+static void VenusLighthouseAerie_UpdateUpperOrbit(struct Actor *effect) {
   struct Actor *center = Actor_Get(ACTOR_BEAM_BOTTOM);
   u16 angle = effect->timer;
 
@@ -1879,8 +1874,7 @@ static void VenusLighthouseAerie_UpdateUpperOrbit(struct Actor *actor) {
 }
 
 /// Orbits a particle around the rising beam using its rise counter as a radius.
-static void VenusLighthouseAerie_UpdateRisingOrbit(struct Actor *updated) {
-  struct Actor *actor = updated;
+static void VenusLighthouseAerie_UpdateRisingOrbit(struct Actor *actor) {
   struct Actor *anchor = Actor_Get(ACTOR_BEACON_ORB);
   s32 angle = (u16)actor->timer;
   s32 cosine;
@@ -3181,17 +3175,17 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
 /// Moves an attached particle along its horizontal ellipse and preserves its
 /// target.
 static void VenusLighthouseAerie_UpdateOrbitingEffect(struct Actor *actor) {
+  struct FieldEffect *effect = (struct FieldEffect *)actor;
   struct Actor *anchor;
   s32 spin;
 
   anchor = actor->watchedActor;
-  spin = ((struct FieldEffect *)actor)->spin;
-  ((struct FieldEffect *)actor)->x =
-      anchor->x.fixed + Trig_Cos(spin) * (actor->speedLimit + 28);
-  ((struct FieldEffect *)actor)->z = Trig_Sin(spin) * 16 + px(164);
-  actor->targetX = ((struct FieldEffect *)actor)->x;
-  actor->targetZ = ((struct FieldEffect *)actor)->z;
-  ((struct FieldEffect *)actor)->spin -= TRIG_TURN / 128;
+  spin = effect->spin;
+  effect->x = anchor->x.fixed + Trig_Cos(spin) * (actor->speedLimit + 28);
+  effect->z = Trig_Sin(spin) * 16 + px(164);
+  actor->targetX = effect->x;
+  actor->targetZ = effect->z;
+  effect->spin -= TRIG_TURN / 128;
 }
 
 #include "shared/field_effect_duration_scripts.h"
@@ -3440,7 +3434,7 @@ struct Trigger gVenusLighthouseAerieTriggers[] = {
      FLAG_VENUS_AERIE_ON_PLATFORM, EVENT(VenusLighthouseAerie_LandOnPlatform)},
     {TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON,
      CONDITION_ALWAYS, EVENT(VenusLighthouseAerie_ConfrontSaturosAndMenardi)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s32 gVenusLighthouseAerie_BesideParticleScript[] = {

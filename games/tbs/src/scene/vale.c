@@ -167,11 +167,7 @@ static void Vale_CycleOpeningPillarPalette(void);
 static void Vale_CycleFirstBoardPalette(void);
 static void Vale_CycleSecondBoardPalette(void);
 static void Vale_CycleThirdBoardPalette(void);
-#ifdef UBFIX
-static void Vale_HaveGuardWatchTheLeader(struct Actor *actor);
-#else
-static s32 Vale_HaveGuardWatchTheLeader(struct Actor *actor);
-#endif
+static UNREAD_RESULT Vale_HaveGuardWatchTheLeader(struct Actor *actor);
 static void Vale_TrailSparkles(struct Actor *actor);
 static void Vale_VanishMoveHand(struct Actor *emitter);
 static void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
@@ -405,6 +401,7 @@ enum ValeAnimation {
 /// (MsgValeMtAlephIsASacredPeak)
 #define FLAG_VALE_MT_ALEPH_GUARD_PAUSED FLAG_SCENE_TEMP_41
 /// Back from Kalay, Garet has met his sister.
+/// ★ Named from the game: "Ah!" (MsgValeAh)
 #define FLAG_VALE_GARET_MET_SISTER FLAG_AREA_TEMP_03
 /// Back from Kalay, Garet has asked his brother to protect the family while he
 /// is gone.
@@ -422,6 +419,7 @@ enum ValeAnimation {
 #define FLAG_VALE_ASKED_ABOUT_TRAVELERS FLAG_AREA_TEMP_07
 /// Vale_RoofMended has played, in which Dora praises the roof and sends
 /// the three off to Mt. Aleph.
+/// ★ Named from the game: "Good job" (MsgValeGoodJob)
 #define FLAG_VALE_ROOF_MENDED_EVENT_PLAYED FLAG_AREA_TEMP_08
 /// The stone pillar below the cliff stands in its west column.
 /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
@@ -949,11 +947,7 @@ static void Vale_WarnAgainstSneakingUpMtAleph(void) {
   // No: "Well, I'll overlook it this time... But I've got my eye on..."
   Event_AskYesNo(ACTOR_MAN_GUARDING_MT_ALEPH, 0);
   actor = Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH);
-#ifdef UBFIX
-  actor->update = Vale_HaveGuardWatchTheLeader;
-#else
   actor->update = (void (*)(struct Actor *))Vale_HaveGuardWatchTheLeader;
-#endif
   Actor_SetScript(ACTOR_MAN_GUARDING_MT_ALEPH, gVale_AlephGuardPatrol);
   GameFlag_Set(FLAG_VALE_WARNED_AGAINST_MT_ALEPH);
   Event_End();
@@ -1004,11 +998,7 @@ static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
   // No: "Well, I'll overlook it this time... But I've got my eye on..."
   Event_AskYesNo(ACTOR_MAN_GUARDING_MT_ALEPH, 0);
   actor = Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH);
-#ifdef UBFIX
-  actor->update = Vale_HaveGuardWatchTheLeader;
-#else
   actor->update = (void (*)(struct Actor *))Vale_HaveGuardWatchTheLeader;
-#endif
   Actor_SetScript(ACTOR_MAN_GUARDING_MT_ALEPH, gVale_AlephGuardPatrol);
   Event_End();
 }
@@ -2427,7 +2417,6 @@ static void Vale_RoofMended(void) {
   s32 turnBack;
   s32 turnSide;
   struct Actor *turned;
-  s32 none;
   s32 flag;
   TaskFunc funcA;
   TaskFunc funcB;
@@ -2820,7 +2809,6 @@ static void Vale_RoofMended(void) {
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Event_OpenMessage(ACTOR_DORA, 0);
-  none = 0;
 
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
     gFieldWork->message++;
@@ -2838,10 +2826,10 @@ static void Vale_RoofMended(void) {
   // "Ahhh!"
   // "Be careful, ma'am!"
   FieldEvent_ShowTwoMessagesAndWait(ACTOR_DORA, 14, 2, 24, 2, ACTOR_GARET, 10,
-                                    14, 4, 14, none);
+                                    14, 4, 14, 0);
   Sound_Play(SE_RATTLE);
   actor = Actor_Get(ACTOR_DORA);
-  actor->sprite->flags = none;
+  actor->sprite->flags = 0;
   actor->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetSpeed(ACTOR_DORA, 3);
   Actor_WalkToAndWait(ACTOR_DORA, 364, 815);
@@ -3166,33 +3154,17 @@ static s32 Vale_TestFacing(struct Actor *actor, struct Actor *target, s32 range,
 
 /// The update routine of the man guarding Mt. Aleph. While he walks, he stops
 /// when the leader comes within 18 pixels in front of him (Vale_TestFacing).
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void changes 48 to 44 bytes in tbs-en.
-#ifdef UBFIX
-static void Vale_HaveGuardWatchTheLeader(struct Actor *updated) {
-#else
-static s32 Vale_HaveGuardWatchTheLeader(struct Actor *updated) {
-#endif
-  struct Actor *guard = updated;
+static UNREAD_RESULT Vale_HaveGuardWatchTheLeader(struct Actor *guard) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (guard->targetX == ACTOR_NO_TARGET && guard->targetZ == ACTOR_NO_TARGET)
-#ifdef UBFIX
-    return;
-#else
-    return 0;
-#endif
+    RETURN_UNREAD(0);
   Vale_TestFacing(guard, leader, 18, 0);
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 /// The Move hand's update routine in the opening. Each frame it sheds a sparkle
 /// (SPRITE_SPARKLE) just below and around it, with SE_ITEM_BREAK.
-static void Vale_TrailSparkles(struct Actor *updated) {
-  struct Actor *source = updated;
+static void Vale_TrailSparkles(struct Actor *source) {
   s32 spawnPosition[3];
   s32 randomDistance;
   struct Actor *particle;
@@ -3787,7 +3759,7 @@ struct Trigger gVale_Triggers[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT(Vale_PushPillar) },
     { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT(Vale_PushPillar) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 24, CONDITION_ALWAYS, EVENT(Vale_SearchTheLockedDoor) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gVale_TriggersAfterLeaving[] = {
@@ -3837,7 +3809,7 @@ struct Trigger gVale_TriggersAfterLeaving[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT(Vale_PushPillar) },
     { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT(Vale_PushPillar) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 24, CONDITION_ALWAYS, EVENT(Vale_SearchTheLockedDoor) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gVale_TriggersAfterKalay[] = {
@@ -3884,7 +3856,7 @@ struct Trigger gVale_TriggersAfterKalay[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT(Vale_PushPillar) },
     { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT(Vale_PushPillar) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 24, CONDITION_ALWAYS, EVENT(Vale_SearchTheLockedDoor) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 

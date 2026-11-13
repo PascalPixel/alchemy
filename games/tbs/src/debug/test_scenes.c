@@ -118,5 +118,5 @@ struct Trigger gTest_Triggers[] = {
     {TRIGGER_TALK, ACTOR_FIZZ, CONDITION_ALWAYS, EVENT(Test_ReceiveFizz)},
     {TRIGGER_TALK, ACTOR_FORGE, CONDITION_ALWAYS, EVENT(Test_ReceiveForge)},
     {TRIGGER_TALK, ACTOR_GUST, CONDITION_ALWAYS, EVENT(Test_ReceiveGust)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

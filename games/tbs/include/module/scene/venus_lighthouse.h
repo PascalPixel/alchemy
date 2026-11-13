@@ -1,13 +1,9 @@
-#ifndef ALCHEMY_MODULE_MAP_VENUS_LIGHTHOUSE_H
-#define ALCHEMY_MODULE_MAP_VENUS_LIGHTHOUSE_H
+#ifndef ALCHEMY_MODULE_SCENE_VENUS_LIGHTHOUSE_H
+#define ALCHEMY_MODULE_SCENE_VENUS_LIGHTHOUSE_H
 
 #include "types.h"
 #include "field.h"
 #include "scene_tables.h"
-
-struct SceneEntrance;
-struct Trigger;
-struct ActorPlacement;
 
 const struct SceneEntrance *VenusLighthouse_GetEntrances(void);
 const struct SceneExitRegion *VenusLighthouse_GetRegions(void);
@@ -15,9 +11,6 @@ const u32 *VenusLighthouse_GetExits(void);
 const struct ActorPlacement *VenusLighthouse_GetActorPlacements(void);
 const struct Trigger *VenusLighthouse_GetTriggers(void);
 s32 VenusLighthouse_Initialize(void);
-extern s32 gFieldEffect_ShortScript[];
-extern s32 gFieldEffect_MediumScript[];
-extern s32 gFieldEffect_LongScript[];
 extern u32 gPushedActor_DirectionSteps[];
 extern struct SwitchCell gVenusThirdFloorSockets[];
 extern u32 gVenusBalancePlatformHeights[];
@@ -28,7 +21,6 @@ extern u8 gVenusTracksMovingNorth[];
 extern u8 gVenusTracksMovingSouth[];
 extern u8 gVenusThirdFloorTrackLists[];
 extern u8 gVenusFourthFloorTrackLists[];
-extern const s32 *gFieldEffect_DurationScripts[];
 extern s32 gVenusGreyStatueScript[];
 extern s32 gVenusGreyPillarScript[];
 extern s32 gVenusLeaderDazedScript[];

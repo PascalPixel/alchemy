@@ -988,7 +988,7 @@ struct Trigger gMenuTest_Triggers[] = {
      EVENT(MenuTest_IgnorePsynergy)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_IVY, CONDITION_ALWAYS, EVENT(MenuTest_EnableEffectChildMode)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 /// The level MenuTest_RaisePartyLevels levels the four to next: 10 at first,

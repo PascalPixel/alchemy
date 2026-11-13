@@ -87,6 +87,5 @@ extern s16 gCharacter_ChildSpriteTable[];
 extern const u8 gSummon_OrderList[16];
 /// Ends a list of summon ids (Summon_ListLearned).
 #define SUMMON_END 32
-s32 Sound_GetBgmRestoreDelayFar(void);
 
 #endif

@@ -179,18 +179,11 @@ static s32 MercuryLighthouseEntrance_PlayStepSound(struct Actor *interpreter) {
   return 0;
 }
 
-// Mia's update while she waits by the Lizard Man: she turns to watch the
-// leader while the leader is north of 184 pixels, and looks back north at
-// the doorway otherwise.
-// UB: the field updater invokes a void update routine. Plain void removes the
-// zero result and changes the native return register (three instructions in
-// EN).
-#ifdef UBFIX
-static void MercuryLighthouseEntrance_MiaWatchesLeader(struct Actor *updated) {
-#else
-static s32 MercuryLighthouseEntrance_MiaWatchesLeader(struct Actor *updated) {
-#endif
-  struct Actor *actor = (struct Actor *)updated;
+// Mia's update while she waits by the Lizard Man: she turns to watch the leader
+// while the leader is north of 184 pixels, and looks back north at the doorway
+// otherwise.
+static UNREAD_RESULT
+MercuryLighthouseEntrance_MiaWatchesLeader(struct Actor *actor) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   if ((leader->z.fixed >> 19) <= 22) {
@@ -953,7 +946,7 @@ struct Trigger gMercuryLighthouseEntrance_Triggers[] = {
     { PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT(MercuryLighthouse_RemoveColumnOnRetreat) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_MERCURY_LIGHTHOUSE_PSYNERGY_ARMOR, FIND_ITEM(ITEM_PSYNERGY_ARMOR) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_MERCURY_LIGHTHOUSE_MIMIC_BEATEN, FIND_MIMIC },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 #include "shared/glint_twinkle_script.h"

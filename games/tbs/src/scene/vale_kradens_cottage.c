@@ -1360,7 +1360,7 @@ struct Trigger gValeKradensCottage_Triggers[] = {
     { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(ValeKradensCottage_MeetSaturosAndMenardi) },
     { PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_FENCE_BOULDER, CONDITION_ALWAYS, 0 },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 100, FLAG_VALE_KRADENS_COTTAGE_JAR_ELIXIR, FIND_ITEM(ITEM_ELIXIR) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gValeKradensCottage_StormTriggers[] = {
@@ -1373,7 +1373,7 @@ struct Trigger gValeKradensCottage_StormTriggers[] = {
     { TRIGGER_STEP, 10, FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT, EVENT(ValeKradensCottage_FightFirstMonster) },
     { TRIGGER_STEP, 11, FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT, EVENT(ValeKradensCottage_FightSecondMonster) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 100, CONDITION_ALWAYS, 0 },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gValeKradensCottage_TriggersAfterKalay[] = {
@@ -1390,7 +1390,7 @@ struct Trigger gValeKradensCottage_TriggersAfterKalay[] = {
 #if TBS_PATCH_3
     { EXAMINE_TRIGGER(EXAMINE_JAR), 100, FLAG_VALE_KRADENS_COTTAGE_JAR_ELIXIR, FIND_ITEM(ITEM_ELIXIR) },
 #endif
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 

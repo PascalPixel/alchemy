@@ -9,8 +9,7 @@
 /// Per-frame update: spins by FACING_STEP + timer * 80 a frame, speeding up
 /// (timer counts up) until timer * 80 reaches FACING_STEP: from 1/16 turn a
 /// frame to just over 1/8 in 52 frames, as FieldEffect_AdvanceAngleWithRamp.
-void FieldEffect_UpdateSpinAngle(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+void FieldEffect_UpdateSpinAngle(struct Actor *actor) {
   u32 step;
 
   step = actor->timer * 80;
@@ -23,8 +22,7 @@ void FieldEffect_UpdateSpinAngle(struct Actor *updated) {
 /// pixel a frame; once its scale falls below Q16_ONE * 3 / 16 (84 frames from
 /// full size) its sprites are hidden (spriteStorageKind 0), but it is not
 /// released. Retreat gives it to the caster.
-void FieldEffect_UpdateRetreatCaster(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+void FieldEffect_UpdateRetreatCaster(struct Actor *actor) {
   u32 scale;
 
   actor->scaleY -= 640;
@@ -176,10 +174,7 @@ void FieldPsynergy_Retreat(void) {
 /// as it falls 2 pixels a frame on the actor it follows, 9 pixels in front
 /// of it and up to 5 pixels further while small; released 10 pixels above
 /// the ground (4 on the World Map, MAP_INDEX_WORLD).
-void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *actor) {
-  // One shared inline kernel with constant inversion grows the positive and
-  // negative update routines 116 -> 124 and 120 -> 124 bytes in native English.
-  struct Actor *particle = (struct Actor *)actor;
+void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
   struct Actor *source;
   s32 y;
   s32 limit;
@@ -208,8 +203,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *actor) {
 
 /// As FieldEffect_UpdateDescendingParticlePositiveArc for the arc drawn upside
 /// down, 16 pixels in front of the actor and up to 5 pixels nearer.
-void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *actor) {
-  struct Actor *particle = (struct Actor *)actor;
+void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
   struct Actor *source;
   s32 y;
   s32 limit;
@@ -287,7 +281,6 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *arc) {
   struct Actor *actor;
   struct DescendingArcSprite *sprite;
   s32 arcIndex;
-  u8 zero;
 
   for (arcIndex = 0; arcIndex <= 1; arcIndex++) {
     actor = Actor_CreateFar(SPRITE_GOLDEN_RINGS, source->x.fixed,
@@ -299,14 +292,13 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *arc) {
     sprite = (struct DescendingArcSprite *)actor->sprite;
     actor->motionFlags = 0;
     actor->timer = 0;
-    zero = 0;
     actor->watchedActor = source;
     actor->scaleY = Q16_ONE * 2 / 5;
     actor->scaleX = Q16_ONE * 2 / 5;
     if (sprite == NULL)
       continue;
     Sprite_StartAnimationFar((struct Sprite *)sprite, 0);
-    sprite->flags = zero;
+    sprite->flags = 0;
     VramCache_FreeEntry(sprite->slot);
     sprite->slot = effectWork->arcTileSlot;
     sprite->retainCacheEntry = 1;
@@ -314,7 +306,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *arc) {
     sprite->fullColor = 0;
     sprite->shape = 1;
     sprite->size = 2;
-    sprite->firstEntry->picture = zero;
+    sprite->firstEntry->picture = 0;
   }
   // BUG: failed allocations above leave a missing arc or sprite here.
   // Preserve the original partial-pair behavior until recovery is established.

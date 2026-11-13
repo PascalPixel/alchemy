@@ -75,7 +75,7 @@
 /// (MsgLobbyLinkDisconnected)
 #define FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED FLAG_SCENE_TEMP_05
 /// The first of eight flags, one per character from Isaac, each set while that
-/// character is in the battle party (BattleArena_RunRoundResult).
+/// character is in the battle party (BattleArena_Initialize).
 #define FLAG_BATTLE_ARENA_IN_PARTY_FIRST FLAG_SCENE_TEMP_F0
 /// The attendant has explained the Battle Arena once. Talking to her again
 /// offers to apply.
@@ -398,11 +398,6 @@ static void BattleArena_WriteSlotValue(s32 slot) {
   dst[gBattleArena_SlotColumns[slot]] = *src;
 }
 
-// The task runner ignores this result. Keep the native status calculation in
-// matching builds: making the function void removes eight instructions. The
-// modern build uses the task's actual function type to avoid an
-// incompatible indirect call.
-#ifdef UBFIX
 /// The task that watches the partner each frame in the Battle Arena.
 ///
 /// - It forgets the partner after LOBBY_PEER_WAIT_FRAMES without a link.
@@ -411,12 +406,9 @@ static void BattleArena_WriteSlotValue(s32 slot) {
 /// - It raises LOBBY_EVENT_DISCONNECTED when the link is lost while a battle is
 ///   being arranged.
 ///
-/// BattleArena_RunRoundResult schedules it on every arrival, and
+/// BattleArena_Initialize schedules it on every arrival, and
 /// BattleArena_EnterBattle removes it.
-static void BattleArena_PollPeerReady(void) {
-#else
-static s32 BattleArena_PollPeerReady(void) {
-#endif
+static UNREAD_RESULT BattleArena_PollPeerReady(void) {
   struct FieldWork *work;
   s32 result;
   s32 i;
@@ -482,11 +474,7 @@ static s32 BattleArena_PollPeerReady(void) {
   if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED)) {
     work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
   }
-#ifdef UBFIX
-  (void)result;
-#else
-  return result;
-#endif
+  RETURN_UNREAD(result);
 }
 
 /// Calls of BattleArena_PromptToParticipate towards asking again, at 300. It is
@@ -706,8 +694,6 @@ static s32 BattleArena_CopyPartyOwnerIds(u16 *memberIds) {
     s32 remaining;
 #ifdef UBFIX
     // The original short-pointer addition traverses a struct as an array.
-    // The actual member avoids that UB; used plainly, it removes four native
-    // bytes (68 to 64), so matching builds retain the old address form.
     source = gMainRoutineWork.party;
 #else
     partyAddress += 252;
@@ -742,8 +728,6 @@ static s32 BattleArena_CopyPartyOwnerIds(u16 *memberIds) {
 /// Returns 0, or -1 when a send fails or runs out of time. The copies go
 /// through an EWRAM pool buffer freed before returning.
 static s32 BattleArena_SendPartyRecords(void) {
-  // Measured plain form: replacing only the final wait and test polling
-  // region with while(active transfers) adds 8 bytes in tbs-en.
   s32 result;
   u8 *slotMap;
   u16 memberIds[8];
@@ -770,7 +754,7 @@ static s32 BattleArena_SendPartyRecords(void) {
   }
   for (i = 0; i < memberCount; i++) {
     Iwram_CopyWords(heap, Unit_Get(memberIds[i]), size);
-    heap[0x12a] = 2;
+    ((struct Unit *)heap)->side = BATTLE_SIDE_PARTY;
     // As a u8, i - 128 is 128 + i: this party member's unit on the partner's
     // side.
     slotMap[memberIds[i]] = i - 128;
@@ -809,9 +793,9 @@ test:
   wait(2);
   i++;
 next:
-  // Pad to three records with the last copy marked absent (side 0).
+  // Pad to three records with the last copy marked absent (BATTLE_SIDE_NONE).
   if (i <= 2) {
-    heap[0x12a] = tries = 0;
+    ((struct Unit *)heap)->side = tries = 0;
     if ((transferResult = Serial_StartSend(heap, size)) != -1) {
       goto test;
     }
@@ -999,12 +983,13 @@ static s32 BattleArena_EnterBattle(void) {
   // Suspend peer polling while transferring the party and entering battle.
   if (!failed) {
     // HEAP_SLOT_ENEMY_UNITS is gEnemyUnits, the battle's enemy
-    // units (LINK_OWNER_STATES_SIZE, battle/battle/run.c). While it is
+    // units (ENEMY_UNITS_SIZE, battle/battle/run.c). While it is
     // allocated, the exchange below receives the partner's party members and
     // Djinn into units 128 to 131. The copy to gActorSpriteSlots
-    // (gMapGridCellBuffer
-    // + 0x8000) hands them to Battle_Run, which copies them back.
-    savedWork = HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, 1992);
+    // (gMapGridCellBuffer + 0x8000) hands them to Battle_Run, which copies
+    // them back.
+    savedWork =
+        HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, 6 * BATTLE_UNIT_SIZE);
     Task_Remove((TaskFunc)BattleArena_PollPeerReady);
     // Run the map's tileset animation 5 for eight frames.
     TilesetAnim_Resume(5);
@@ -1527,10 +1512,8 @@ u8 *BattleArena_GetTriggers(void) { return (u8 *)gBattleArenaTriggers; }
 ///
 /// It saves through Save_ProcessSelectedFile, which writes the first 16 bytes
 /// of the save stamp (gBattleArenaRecord) into the current file.
-/// BattleArena_RunRoundResult calls it after each linked battle won or lost.
+/// BattleArena_Initialize calls it after each linked battle won or lost.
 static s32 BattleArena_SaveBattleResults(void) {
-  // A shared inline message-pair helper grows each save routine from 108 to
-  // 112 bytes in the native build, so retain the two copies.
   struct Window *window;
 
   Sound_Play(MUS_SAVED);
@@ -1574,7 +1557,7 @@ static s32 BattleArena_SaveMonsterBattleResults(void) {
 /// Shows value, at most 999, on the wall board.
 ///
 /// The board is three map cells at row 8, columns 14 to 16, each copied from
-/// column 27 at the row of its digit. BattleArena_RunRoundResult shows the most
+/// column 27 at the row of its digit. BattleArena_Initialize shows the most
 /// linked battles won in a row.
 static s32 BattleArena_DrawThreeDigitValue(s32 value) {
   s32 digit;
@@ -1602,7 +1585,7 @@ static s32 BattleArena_DrawThreeDigitValue(s32 value) {
 /// Updates gMainRoutineWork.linkTallies, saves after linked battles and new
 /// monster records, and restores the party's HP, PP and Djinn unless a monster
 /// series goes on. Returns 0.
-s32 BattleArena_RunRoundResult(void) {
+s32 BattleArena_Initialize(void) {
   s32 i;
   struct FieldWork *work;
   void (*func)(void);
@@ -1973,5 +1956,5 @@ struct Trigger gBattleArenaTriggers[] = {
      EVENT(BattleArena_PromptToParticipate)},
     {TRIGGER_RAISED, 2, CONDITION_ALWAYS,
      EVENT(BattleArena_ReportDisconnection)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

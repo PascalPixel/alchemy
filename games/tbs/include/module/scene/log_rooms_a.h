@@ -1,13 +1,10 @@
-#ifndef ALCHEMY_MODULE_MAP_LOG_ROOMS_A_H
-#define ALCHEMY_MODULE_MAP_LOG_ROOMS_A_H
+#ifndef ALCHEMY_MODULE_SCENE_LOG_ROOMS_A_H
+#define ALCHEMY_MODULE_SCENE_LOG_ROOMS_A_H
 
 #include "types.h"
 #include "scene_tables.h"
 #include "scene.h"
 #include "static_assert.h"
-
-struct Trigger;
-struct ActorPlacement;
 
 /// Each stop links to up to three others, with a heading for each connection.
 struct LogRoomsAStopConnection {
@@ -27,12 +24,6 @@ struct LogRoomsAStop {
 STATIC_ASSERT(sizeof(struct LogRoomsAStopConnection) == 4);
 STATIC_ASSERT(sizeof(struct LogRoomsAStop) == 16);
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneExitRegion *Scene_GetExitRegions(void);
-const u32 *Scene_GetExits(void);
-const struct ActorPlacement *Scene_GetActorPlacements(void);
-const struct Trigger *Scene_GetTriggers(void);
-s32 Scene_Initialize(void);
 extern struct LogRoomsAStop gLogRoomsA_Stops[];
 extern s32 gLogRoomsA_ActionTable[];
 extern s32 gLogRoomsA_FirstThiefEntryScript[];

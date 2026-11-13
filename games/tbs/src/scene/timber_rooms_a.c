@@ -764,7 +764,7 @@ struct Trigger gTimberRoomsATriggers[] = {
     // Unused: this oven's item row answers first (see the maps README).
     { EXAMINE_TRIGGER(EXAMINE_OVEN), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgSuhallaInteriorsItsACactusSteakIWonder)) },
     { EXAMINE_TRIGGER(EXAMINE_OVEN), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgSuhallaInteriorsHesMakingMulukhiyaSoupItTastes)) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gTimberRoomsATriggersAfterAudience[] = {
@@ -808,6 +808,6 @@ struct Trigger gTimberRoomsATriggersAfterAudience[] = {
     // Unused: this oven's item row answers first (see the maps README).
     { EXAMINE_TRIGGER(EXAMINE_OVEN), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgSuhallaInteriorsItsACactusSteakIWonder)) },
     { EXAMINE_TRIGGER(EXAMINE_OVEN), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgSuhallaInteriorsHesMakingMulukhiyaSoupItTastes)) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on

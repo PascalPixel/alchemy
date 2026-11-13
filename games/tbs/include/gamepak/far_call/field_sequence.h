@@ -78,7 +78,7 @@ void Actor_WalkToByIdFar(u32 actorId, s32 x, s32 z);
 void Actor_WalkToAndWaitByIdFar(u32 actorId, s32 x, s32 z);
 /// Steps an actor sideways to the middle of its 16-pixel column, fixes
 /// its sprite priority, then sends it z_offset pixels along z. Kalay's
-/// interiors use it.
+/// rooms use it.
 void Actor_CenterOnColumnFar(u32 actorId, s32 action, s32 z_offset);
 /// Sends an actor toward a point offset in pixels from where it stands.
 void Actor_SetDestinationOffsetByIdFar(u32 actorId, s32 x_offset, s32 z_offset);

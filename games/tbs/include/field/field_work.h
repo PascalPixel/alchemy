@@ -137,6 +137,9 @@ struct FieldWork {
   s8 psynergyActing; ///< set while Psynergy takes effect
   s8 castStarted;    ///< set once a cast has been announced
   s16 queuedSound;   ///< a sound Scene_PlayQueuedMusic plays; -1 for none
+  /// Set while the field menu is open (FieldMenu_Run), which pauses Reveal's
+  /// sparkles; only the German, Spanish, French and Italian editions keep it.
+  s8 menuOpen;
 };
 
 STATIC_ASSERT(sizeof(struct FieldWork) == 0xccc);

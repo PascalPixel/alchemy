@@ -7,10 +7,8 @@
 /// Restarts the game from the cartridge entry point. The marker word it leaves
 /// in IWRAM is cleared again by System_Initialize; nothing else reads it.
 static __inline__ void System_SoftReset(void) {
-  // The entry is called as returning s32, which builds its address in r0 as
-  // the ROM does at both resets. Through a void (*)(void) local one reset
-  // moves to r1 (3 of 403 instructions differ); cast and called with no
-  // local, 10 differ.
+  // The entry is called as returning s32, which builds its address in r0 as the
+  // ROM does at both resets.
   s32 (*reset)(void) = (s32 (*)(void))Cart_Start;
 
   gCartridgeResetMarker = 0x19670704;

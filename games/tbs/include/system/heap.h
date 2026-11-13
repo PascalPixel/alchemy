@@ -70,6 +70,9 @@ enum HeapSlot {
   HEAP_SLOT_BATTLE = 9,
   /// The battle background's scanline work (struct BattleAffineHdma).
   HEAP_SLOT_BATTLE_SCANLINES = 10,
+  /// Unused: 640 bytes Battle_Run allocates with the battle's other blocks,
+  /// which nothing reads or writes.
+  HEAP_SLOT_BATTLE_UNUSED = 11,
   /// The 3D camera (struct BattleCamera, gBattleCamera) of a battle, the world
   /// map or Lucky Dice.
   HEAP_SLOT_CAMERA = 12,
@@ -163,7 +166,7 @@ enum HeapSlot {
   /// A RAM copy of Tile_CopyStrided, which uploads field sprite pictures to
   /// VRAM; loaded with the animation pools.
   HEAP_SLOT_PICTURE_UPLOADER = 53,
-  /// Each linked console's party (LINK_OWNER_STATES_SIZE bytes), from the
+  /// Each linked console's party (ENEMY_UNITS_SIZE bytes), from the
   /// Battle Arena and Battle_Run.
   HEAP_SLOT_ENEMY_UNITS = 54,
   /// The menu work (MENU_WORK_SIZE bytes) shared by the field menu's screens

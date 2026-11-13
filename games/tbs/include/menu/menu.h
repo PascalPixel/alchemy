@@ -149,12 +149,7 @@ extern u8 gDebugMenu_StatusTitle[];
 extern const u16 gSettingsMenu_SliderPalette[];
 /// The settings menu's slider, 32 by 8 (slider.4bpp32x8).
 extern const u8 gSettingsMenu_SliderTiles[];
-struct AbilityDefinition *Ability_GetData(s32 abilityId);
-s32 Item_FindSlot(s32 unitId, s32 item_id);
 void Import_TitleShowCamelotLogo(s32 mode);
 void Import_CreditsRun(s32 mode);
-void Text_DrawAt(s32, s32, s32, s32);
-void Window_Clear(s32 window);
-void Window_Commit(s32 window);
 
 #endif

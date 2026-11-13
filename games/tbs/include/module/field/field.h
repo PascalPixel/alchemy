@@ -405,11 +405,7 @@ void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
 void MapGrid_SetShownLayers(u32 layerFlags);
 
 s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
-#ifdef UBFIX
-void WorldMap_InitializePerspective(void);
-#else
-s32 WorldMap_InitializePerspective(void);
-#endif
+UNREAD_RESULT WorldMap_InitializePerspective(void);
 void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 cellX, s32 cellY);
 void WorldMap_LoadGraphics(s32 x, s32 z);
 void WorldMap_ApplyAffinePage(void);

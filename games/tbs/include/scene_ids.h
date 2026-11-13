@@ -35,7 +35,7 @@ extern char SceneId_ValePlaza;
 /// (MsgValeDontGoBeyondKradensCottage)
 extern char SceneId_ValeKradensCottage;
 /// A sheet of rooms drawn as cottages, all of them Vale's.
-/// ★ Named from what the player sees: rooms drawn as cottages, the interiors of
+/// ★ Named from what the player sees: rooms drawn as cottages, the insides of
 /// Vale's houses and its shops, Garet's house and Jenna's grandparents' house
 /// among them (its render)
 extern char SceneId_CottageRoomsA;
@@ -504,12 +504,12 @@ extern char SceneId_RoadToBabiLighthouse;
 /// ★ Named from its area name: Lalivero
 extern char SceneId_Lalivero;
 /// The first of two sheets of Lalivero's rooms, drawn in timber.
-/// ★ Named from what the player sees: rooms drawn in timber, the interiors of
+/// ★ Named from what the player sees: rooms drawn in timber, the insides of
 /// Lalivero's weapon and armor shop, item shop and Sanctum, with three houses
 /// (its render)
 extern char SceneId_TimberRoomsB;
 /// The second of two sheets of Lalivero's rooms, drawn in timber.
-/// ★ Named from what the player sees: rooms drawn in timber, the interiors of
+/// ★ Named from what the player sees: rooms drawn in timber, the insides of
 /// Faran's house, Lalivero's inn and the way out to the wharf (its render)
 extern char SceneId_TimberRoomsC;
 /// ★ Named from its area name: Venus Lighthouse Entry

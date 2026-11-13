@@ -174,18 +174,10 @@ void FieldCamera_WaitForArrival(void);
 struct Actor *FieldCamera_GetActor(void);
 void FieldCamera_Follow(struct Actor *target, s32 keepCurrentPosition);
 void MapGrid_SetCameraBounds(s32 minX, s32 minY, s32 maxX, s32 maxY);
-#ifdef UBFIX
-void WorldMap_StepZoom(void);
-#else
-s32 WorldMap_StepZoom(void);
-#endif
+UNREAD_RESULT WorldMap_StepZoom(void);
 void WorldMap_StartZoom(s32 zoom, s32 frames);
 void Event_WaitForZoomTransition(void);
-#ifdef UBFIX
-void FieldEffect_CopyWatchedActorPosition(struct Actor *actor);
-#else
-s32 FieldEffect_CopyWatchedActorPosition(struct Actor *actor);
-#endif
+UNREAD_RESULT FieldEffect_CopyWatchedActorPosition(struct Actor *actor);
 void Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames);
 /// Actor_ShowEmoteById's emote flag: the bubble takes sprite priority 1
 /// instead of its actor's. The low four bits pick the bubble (enum
@@ -230,11 +222,7 @@ s32 Field_ClimbDown(void);
 s32 Field_ClimbUp(void);
 s32 Actor_GetScreenPosition(s32 actorId, s32 *position);
 void Exit_NoOp(void);
-#ifdef UBFIX
-void Field_StartEncounterTransition(s32 unused);
-#else
-s32 Field_StartEncounterTransition(s32 unused);
-#endif
+UNREAD_RESULT Field_StartEncounterTransition(s32 unused);
 void Exit_PrepareAnimation(s32 animation);
 void Exit_StartStairsUp(void);
 void Exit_StartStairsDown(void);

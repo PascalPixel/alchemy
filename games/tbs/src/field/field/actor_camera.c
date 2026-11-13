@@ -68,7 +68,6 @@ void ActorSystem_PlaceSprites(void) {
 
   // MapGridScrollWork owns all three layer cell pointers at their 48-byte
   // stride. UB: map and system work are separate globals, beyond gActors.
-  // Reading their named slots adds eight bytes in the forced EN build.
 #ifdef UBFIX
   grid = gMapGridWork[0];
 #else
@@ -220,7 +219,6 @@ void ActorSystem_ProjectSprites(void) {
   UNUSED struct ActorCameraPoint unusedPoints[2];
 
   // UB: camera and system work are separate globals, beyond gActors.
-  // Reading their named slots adds four bytes in the forced EN build.
 #ifdef UBFIX
   camera = (struct ActorCameraFixed *)gBattleCamera;
   system = gActorSystemWork;

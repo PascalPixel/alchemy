@@ -1,13 +1,8 @@
-#ifndef ALCHEMY_MODULE_MAP_SOL_SANCTUM_LUNA_SOL_ROOMS_H
-#define ALCHEMY_MODULE_MAP_SOL_SANCTUM_LUNA_SOL_ROOMS_H
+#ifndef ALCHEMY_MODULE_SCENE_SOL_SANCTUM_LUNA_SOL_ROOMS_H
+#define ALCHEMY_MODULE_SCENE_SOL_SANCTUM_LUNA_SOL_ROOMS_H
 
 #include "types.h"
 #include "scene_tables.h"
-
-struct SceneEntrance;
-struct Trigger;
-struct ActorPlacement;
-struct SceneExitRegion;
 
 const struct SceneEntrance *SolSanctumLunaSolRooms_GetEntrances(void);
 const struct SceneExitRegion *SolSanctumLunaSolRooms_GetRegions(void);

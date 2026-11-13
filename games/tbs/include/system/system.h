@@ -12,9 +12,6 @@
 
 void Bios_SoundBiasOff(void);
 void Bios_SoundBiasOn(void);
-/// No code in the tree defines or reads it; Random16's seed is gRandomSeed.
-extern u32 gRandomState;
-
 /// 1 while the CPU is stopped for sleep, until L and R wake it.
 extern u16 gSleepActive;
 
@@ -63,8 +60,6 @@ extern s16 gSaveSlot;
 extern u8 IwramSoundReverbCodes[];
 /// The size of Oam_BuildBufferKernel (decompress_byte_lz.s).
 extern u8 LoadedRuntime_Size[];
-/// No code in the tree defines or reads it.
-extern const u16 gMath_ArcTanTable[];
 /// The ARM OAM list builder, run from a heap copy by Oam_BuildBuffer.
 extern const u8 Oam_BuildBufferKernel[];
 /// The ARM register-write executor, run from a stack copy by
@@ -85,7 +80,6 @@ extern u8 Tile_CopyStrided[];
 extern u8 Tile_CopyStridedCodeSize[];
 /// The size of Resource_ExecuteTransfer (decompress_tagged_lz.s).
 extern u8 TransferCommandExecutor_Size[];
-void _call_via_r2(s32 first, s32 second, s32 target);
 void Iwram_Halt(void);
 void Mixer_Enter(void);
 

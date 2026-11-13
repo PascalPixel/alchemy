@@ -16,8 +16,7 @@ s32 Input_GetDpadAngle(u32 unused) {
 /// Per-frame update of Move's hand (FieldEffect_SpawnMoveHand): turns it
 /// toward the actor it watches, at most 1/16 turn a frame, and sheds a
 /// particle (SPRITE_SPARKLE) round it.
-void FieldEffect_UpdateMoveHand(struct Actor *actor) {
-  struct Actor *source = (struct Actor *)actor;
+void FieldEffect_UpdateMoveHand(struct Actor *source) {
   struct Actor *target;
   struct Vector3 position;
   struct Actor *fragment;
@@ -247,9 +246,6 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
 /// pixels a frame and comes back turning at most 1/64 turn a frame, so it
 /// curves home.
 void FieldEffect_UpdateOutAndBack(struct FieldParticle *effect) {
-  // Forward OUT_AND_BACK_FLYING_OUT fallthrough keeps the callback extent but
-  // changes native instructions; retain the immediate retry until a plain form
-  // matches.
   struct Vector3 position;
   s8 *statePtr = &effect->state;
   s32 state;

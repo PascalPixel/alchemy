@@ -276,47 +276,32 @@ static s32 Xian_UpdateCarrierTracking(struct Actor *actor, struct Actor *target,
 }
 
 // Ask the carrier to move after the leader blocks her route for two seconds.
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void changes 154 to 150 bytes in tbs-en.
-#ifdef UBFIX
-static void Xian_WatchWaterCarrierPath(struct Actor *updated) {
-#else
-static s32 Xian_WatchWaterCarrierPath(struct Actor *updated) {
-#endif
-  struct Actor *self = (struct Actor *)updated;
+static UNREAD_RESULT Xian_WatchWaterCarrierPath(struct Actor *updated) {
   struct Actor *leader;
   s32 near = 0;
 
-  if (self->targetX == ACTOR_NO_TARGET && self->targetZ == ACTOR_NO_TARGET)
-#ifdef UBFIX
-    return;
-#else
-    return 0;
-#endif
+  if (updated->targetX == ACTOR_NO_TARGET &&
+      updated->targetZ == ACTOR_NO_TARGET)
+    RETURN_UNREAD(0);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if ((u32)(FIELD_CELL(leader->x.fixed) - 17) <= 1 &&
-      FIELD_CELL(leader->z.fixed) == 14 && self->x.fixed >> 20 <= 19 &&
-      self->velocityX <= 0) {
-    if (leader->x.fixed <= self->x.fixed) {
-      self->riseCounter++;
+      FIELD_CELL(leader->z.fixed) == 14 && updated->x.fixed >> 20 <= 19 &&
+      updated->velocityX <= 0) {
+    if (leader->x.fixed <= updated->x.fixed) {
+      updated->riseCounter++;
       near = 1;
     }
   } else {
-    self->riseCounter = 0;
+    updated->riseCounter = 0;
   }
-  if (near && self->riseCounter > XIAN_CARRIER_BLOCKED_FRAMES - 1) {
+  if (near && updated->riseCounter > XIAN_CARRIER_BLOCKED_FRAMES - 1) {
     gFieldWork->raisedTrigger = RAISED_CARRIER_BLOCKED;
-    self->riseCounter = 0;
+    updated->riseCounter = 0;
   }
-  Xian_UpdateCarrierTracking(self, leader, 18, near);
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  Xian_UpdateCarrierTracking(updated, leader, 18, near);
+  RETURN_UNREAD(0);
 }
 
-// Keep the native callback representation beside its modern signature choice.
 #ifdef UBFIX
 #define XIAN_WATER_CARRIER_UPDATE Xian_WatchWaterCarrierPath
 #else
@@ -1146,6 +1131,6 @@ struct Trigger gXian_Triggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_XIAN_LUCKY_MEDAL_JAR, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { TRIGGER_TALK, ACTOR_MIST, CONDITION_ALWAYS, EVENT(Xian_MistJoins) },
     { TRIGGER_RAISED, RAISED_CARRIER_BLOCKED, CONDITION_ALWAYS, EVENT(Xian_MoveAsideForWaterCarrier) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on

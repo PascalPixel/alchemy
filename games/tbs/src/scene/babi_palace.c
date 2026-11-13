@@ -1262,8 +1262,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   work->transitionFrames = 12;
   wait(1);
   ScreenTransition_InitializeBattleEffectState(WINDOW_TRANSITION_LEADER);
-  // UB: HEAP_SLOT_SCREEN_TRANSITION lies past scalar gFieldWork. Its named load
-  // adds four bytes in the native English trial (2,092 to 2,096 bytes).
+  // UB: HEAP_SLOT_SCREEN_TRANSITION lies past scalar gFieldWork.
 #ifdef UBFIX
   state = gScreenTransitionWork;
 #else
@@ -2756,7 +2755,7 @@ s32 BabiPalace_ApplyEntryState(void) {
         sprite->image.palette = 0;
         // The icon is drawn 1,024 bytes into the glyph buffer, as the 128 bytes
         // of a 16 by 16 sprite.
-        buf = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 1544);
+        buf = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
         Item_LoadIcon(ITEM_CLOAK_BALL);
         Vram_Load(sprite->slot, 128, buf + 1024);
         HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
@@ -3116,7 +3115,7 @@ struct Trigger gBabiPalace_TriggersBabiMissing[] = {
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresABookEntitledBecomeA)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceHeyItsBabisDiaryItReads)) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), 100, FLAG_BABI_PALACE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gBabiPalace_TriggersFinals[] = {
@@ -3182,7 +3181,7 @@ struct Trigger gBabiPalace_TriggersFinals[] = {
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresABookEntitledBecomeA)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceHeyItsBabisDiaryItReads)) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), 100, FLAG_BABI_PALACE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gBabiPalace_TriggersAfterColosso[] = {
@@ -3257,7 +3256,7 @@ struct Trigger gBabiPalace_TriggersAfterColosso[] = {
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresABookEntitledBecomeA)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceHeyItsBabisDiaryItReads)) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), 100, FLAG_BABI_PALACE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gBabiPalace_OutsideTriggersBabiMissing[] = {
@@ -3268,7 +3267,7 @@ struct Trigger gBabiPalace_OutsideTriggersBabiMissing[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceShouldThePalaceReallyBeOpen) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIWonderHowManyPeopleWill) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_BABI_PALACE_WELL, CONDITION_ALWAYS, EVENT(BabiPalace_ExamineWell) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gBabiPalace_OutsideTriggersFinals[] = {
@@ -3283,7 +3282,7 @@ struct Trigger gBabiPalace_OutsideTriggersFinals[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceSureTheySavedBabiButIm) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabiIsADeliberateManHe) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_BABI_PALACE_WELL, CONDITION_ALWAYS, EVENT(BabiPalace_ExamineWell) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gBabiPalace_OutsideTriggersAfterColosso[] = {
@@ -3294,6 +3293,6 @@ struct Trigger gBabiPalace_OutsideTriggersAfterColosso[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceTheEndOfAFestivalIs) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceAllTheHeroicWarriorsWhoTook) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_BABI_PALACE_WELL, CONDITION_ALWAYS, EVENT(BabiPalace_ExamineWell) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on

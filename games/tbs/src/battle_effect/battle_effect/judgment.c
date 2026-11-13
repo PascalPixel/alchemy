@@ -357,8 +357,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       if (n > 6) {
         n = 6;
       }
-      // Four explicit draws: a shared load, draw and release helper grew
-      // this runner by eight bytes in English (5756 to 5764 bytes).
       high = gJudgment_BurstHeights[n];
       picture = gJudgment_BurstPictures[n] + JUDGMENT_SHEET_BURST;
 

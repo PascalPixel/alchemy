@@ -269,7 +269,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
        frame++) {
     // Frame loop: the strike, then glints, then smoke, motes and sparks,
     // each drawn over the last. Hit n lights particle group n, found as
-    // frame / (6 * PICTURE_FRAMES).
+    // frame / (6 * TARGET_STRIKE_PICTURE_FRAMES).
     s32 span = TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_HITS) *
                TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_FRAMES);
     s32 length = span * 4;

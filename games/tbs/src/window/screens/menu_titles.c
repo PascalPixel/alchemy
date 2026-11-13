@@ -4,8 +4,6 @@
 
 #include "../screens_internal.h"
 
-extern const u8 *gMenuTitlePictures[];
-
 /// Decompresses picture `picture` of gMenuTitlePictures, a 64x16
 /// heading (Save, Continue, Copy, Erase, Battle, Link, Pause, Setup) of 512
 /// bytes, into VRAM slot `slot`, through a 1 KB staging block in
@@ -138,21 +136,15 @@ static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 /// draws as tilemap entries.
 #define RANGE_ICON_FIRST_TILE 788
 
-// Builds the twelve range icons Window_DrawThreeTileColumn draws, as
-// the 24 BG tiles from RANGE_ICON_FIRST_TILE: icon n is a centre tile and an
-// end tile, filled with WINDOW_BACKGROUND_COLOR, then marked row by row by XOR
-// with gMenu_BarPatternRows (its colour 5 turns the fill to colour 1). Rows 1
-// to 7 are marked; the first set grows its pattern with the row, the second
-// skips row 1. Battle_CollectPartyCommands builds them as the command menus
-// open. Icon 10's tiles, the two from DJINN_MENU_ARROW_TILE, are also where
-// BattleDjinnMenu_Run puts its blinking arrow (gDjinnMenu_BlinkTile). It is
-// declared to return s32 but returns no value, and no caller reads one; UBFIX
-// makes it void, which changes the register its epilogue returns through.
-#ifdef UBFIX
-void Menu_BuildLocalizedPatternTiles(void) {
-#else
-s32 Menu_BuildLocalizedPatternTiles(void) {
-#endif
+// Builds the twelve range icons Window_DrawThreeTileColumn draws, as the 24 BG
+// tiles from RANGE_ICON_FIRST_TILE: icon n is a centre tile and an end tile,
+// filled with WINDOW_BACKGROUND_COLOR, then marked row by row by XOR with
+// gMenu_BarPatternRows (its colour 5 turns the fill to colour 1). Rows 1 to 7
+// are marked; the first set grows its pattern with the row, the second skips
+// row 1. Battle_CollectPartyCommands builds them as the command menus open.
+// Icon 10's tiles, the two from DJINN_MENU_ARROW_TILE, are also where
+// BattleDjinnMenu_Run puts its blinking arrow (gDjinnMenu_BlinkTile).
+UNREAD_RESULT Menu_BuildLocalizedPatternTiles(void) {
   u32 *vram =
       (u32 *)(BG_CHAR_BLOCK(0) + RANGE_ICON_FIRST_TILE * TILE_SIZE_4BPP);
   s32 patternSet;
@@ -192,16 +184,8 @@ s32 Menu_BuildLocalizedPatternTiles(void) {
 // UI palette. Callers pass an ability's range less one (the aimed unit and
 // range - 1 either side), or 11 for ABILITY_RANGE_ALL: the Psynergy list and
 // the Djinn preview.
-// It is declared to return int but returns no value, and no caller reads
-// one; UBFIX makes it void, which changes its epilogue and the argument
-// setup of one call in the Djinn preview.
-#ifdef UBFIX
-void Window_DrawThreeTileColumn(struct Window *window, s32 x, s32 y,
-                                s32 pattern, s32 unused) {
-#else
-int Window_DrawThreeTileColumn(struct Window *window, s32 x, s32 y, s32 pattern,
-                               s32 unused) {
-#endif
+UNREAD_RESULT Window_DrawThreeTileColumn(struct Window *window, s32 x, s32 y,
+                                         s32 pattern, s32 unused) {
   s32 patternOffset = pattern * 2;
   s32 rightTile = patternOffset + WINDOW_TILE(RANGE_ICON_FIRST_TILE + 1);
 

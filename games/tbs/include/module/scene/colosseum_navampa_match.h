@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_MODULE_MAP_COLOSSEUM_NAVAMPA_MATCH_H
-#define ALCHEMY_MODULE_MAP_COLOSSEUM_NAVAMPA_MATCH_H
+#ifndef ALCHEMY_MODULE_SCENE_COLOSSEUM_NAVAMPA_MATCH_H
+#define ALCHEMY_MODULE_SCENE_COLOSSEUM_NAVAMPA_MATCH_H
 
 #include "types.h"
 #include "scene_tables.h"
@@ -40,5 +40,6 @@ extern s16 gColosso_LetteringWin[];
 extern s16 gColosso_MarkerSlot;
 extern s32 gColosso_OpponentFinishScript[];
 extern s32 gColosso_LeaderFinishScript[];
+extern s32 gColossoParticleCount;
 
 #endif

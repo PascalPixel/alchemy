@@ -1021,8 +1021,7 @@ static void KolimaForestTree_PlayGesture(s32 blankActorId, s32 gesture) {
 
 /// Expands a spark along its spiral for 120 frames, then releases its cache
 /// slot.
-static void KolimaForestTree_UpdateOrbitSpark(struct Actor *actor) {
-  struct Actor *spark = actor;
+static void KolimaForestTree_UpdateOrbitSpark(struct Actor *spark) {
   s32 position[3];
   s32 age = spark->timer;
   s32 heading;
@@ -1190,7 +1189,7 @@ struct Trigger gKolimaForestTreeTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LAUREL_STAND_IN, CONDITION_ALWAYS, EVENT(KolimaForestTree_ReadLaurelThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_TRET_STAND_IN, FLAG_TRET_DEFEATED, EVENT(KolimaForestTree_TalkToTret) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRET_STAND_IN, CONDITION_ALWAYS, EVENT(KolimaForestTree_ReadTretThoughts) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 

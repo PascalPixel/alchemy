@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_MODULE_MAP_TOLBI_H
-#define ALCHEMY_MODULE_MAP_TOLBI_H
+#ifndef ALCHEMY_MODULE_SCENE_TOLBI_H
+#define ALCHEMY_MODULE_SCENE_TOLBI_H
 
 #include "types.h"
 #include "event.h"

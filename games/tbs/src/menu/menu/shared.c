@@ -518,18 +518,17 @@ void Menu_ReloadMemberPortrait(const void *unused, s32 unit) {
 struct Window *MenuCursor_Create(void *source) {
   struct PsynergyMenuWork *menu = source;
   struct Window *window;
-  s32 zero = 0;
   s32 sentinel;
   struct WindowSprite *cursor;
 
   menu->auxiliaryWindow = NULL;
-  Window_UpdateOrCreate(&menu->auxiliaryWindow, zero, zero, 13, 5, 2);
+  Window_UpdateOrCreate(&menu->auxiliaryWindow, 0, 0, 13, 5, 2);
   window = menu->auxiliaryWindow;
   cursor =
       (struct WindowSprite *)Icon_CreateWithResourceVariant(window, -8, 11);
   cursor->motion = ICON_HIDDEN;
   menu->tabIndex[0] = 255;
-  menu->tabIndex[1] = zero;
+  menu->tabIndex[1] = 0;
   menu->sideIcon[0] = cursor;
   // sentinel is the depth slot an icon is drawn at: the hand at 254, with
   // the glyphs.

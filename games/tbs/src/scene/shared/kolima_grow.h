@@ -8,8 +8,7 @@
 
 /// An actor script call: widen the actor by 3/25 of its size a frame, and
 /// release it once it has reached its destination.
-static s32 FieldEffect_StretchUntilArrived(struct Actor *interpreter) {
-  struct Actor *streak = interpreter;
+static s32 FieldEffect_StretchUntilArrived(struct Actor *streak) {
   streak->scaleX += 3 * Q16_ONE / 25;
   if (streak->targetX == ACTOR_NO_TARGET &&
       streak->targetY == ACTOR_NO_TARGET &&

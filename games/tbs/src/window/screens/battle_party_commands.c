@@ -99,7 +99,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   parameter = 0;
   largeIconSlot = VramCache_AllocEntry(1024);
   smallIconSlot = VramCache_AllocEntry(512);
-  state = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MENU, 260);
+  state =
+      HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MENU, sizeof(struct BattleMenuWork));
   Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
   Graphics_ExpandVramTilesByColorTable(
       (u16 *)(BG_CHAR_BLOCK(0) + LIST_PAGE_DIGITS_TILE * TILE_SIZE_4BPP));

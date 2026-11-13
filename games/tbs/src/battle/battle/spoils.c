@@ -52,8 +52,6 @@ void BattleSpoils_Clear(void) {
 /// Used by BattleEnemy_RecordDefeat.
 static __inline__ s32 BattleEnemy_CalculateCoinReward(struct Unit *unit,
                                                       u16 *reward) {
-  // These reward rolls retain separate inline bodies: a die-size parameter adds
-  // eight bytes to BattleEnemy_RecordDefeat in EN.
   s32 rollIndex;
   s32 bonus = 0;
   s32 base;

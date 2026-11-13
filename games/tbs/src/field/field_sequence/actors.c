@@ -80,7 +80,7 @@ extern const struct ActorPlacement gField_DefaultActorPlacements[2];
 /// the table in work->tables and each actor in work->actors.
 void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
   struct FieldWork *work;
-  struct Actor *object;
+  struct Actor *actor;
   struct Actor *previous;
   struct Sprite *sprite;
   s32 tableIndex;
@@ -121,9 +121,9 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
         !GameFlag_IsConditionActive(condition + ACTOR_DJINNI_FLAG_COUNT))
       continue;
     spriteId = Party_GetCharacterSprite(entry->sprite);
-    object = Actor_Lookup(actorIndex);
-    if (object == 0) {
-      object = Actor_CreateFar(spriteId, entry->x, entry->y, entry->z);
+    actor = Actor_Lookup(actorIndex);
+    if (actor == 0) {
+      actor = Actor_CreateFar(spriteId, entry->x, entry->y, entry->z);
       // ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE: share the previous
       // actor's sprite resource. The new sprite draws from the previous one's
       // VRAM cache entry, its own entry is freed, and both are marked to keep
@@ -131,11 +131,11 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
       if (entry->flags & ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE) {
         previous = Actor_Lookup(actorIndex - 1);
         if (previous->spriteStorageKind == ACTOR_SPRITE_ONE &&
-            object->spriteStorageKind == ACTOR_SPRITE_ONE) {
+            actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
           sprite = previous->sprite;
           sprite->retainCacheEntry = 1;
           spriteSlot = sprite->slot;
-          sprite = object->sprite;
+          sprite = actor->sprite;
           sprite->retainCacheEntry = 1;
           VramCache_FreeEntry(sprite->slot);
           sprite->slot = spriteSlot;
@@ -145,13 +145,13 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
       if (GameFlag_GetFar(FLAG_ISAAC_WEARS_TUNIC) &&
           (u32)(spriteId - SPRITE_ISAAC_CHILD) <=
               SPRITE_GARET_CHILD - SPRITE_ISAAC_CHILD)
-        Actor_RegisterSpriteMetadataFar(object, SPRITE_TUNIC);
+        Actor_RegisterSpriteMetadataFar(actor, SPRITE_TUNIC);
     } else if (!GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION)) {
-      Actor_SetPositionAndResetMotionFar(object, entry->x, entry->y, entry->z);
+      Actor_SetPositionAndResetMotionFar(actor, entry->x, entry->y, entry->z);
     }
 
-    if (object) {
-      Actor_SelectAnimationFar(object, ANIM_STAND);
+    if (actor) {
+      Actor_SelectAnimationFar(actor, ANIM_STAND);
       // lastNo is the animation last selected, which selecting again skips: a
       // random 0 to 29 makes the second selection below restart ANIM_STAND
       // from its first frame, unless it happens to be ANIM_STAND. The first
@@ -159,47 +159,45 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
       // same either way.
       // XXX (no evidence): why the value is random when only whether it is 1
       // matters; nothing else reads lastNo before the selection.
-      if (object->spriteStorageKind == ACTOR_SPRITE_ONE &&
-          (sprite = object->sprite) != 0)
+      if (actor->spriteStorageKind == ACTOR_SPRITE_ONE &&
+          (sprite = actor->sprite) != 0)
         sprite->lastNo = ((u32)(Random16()) % (u32)30);
-      object->facing = entry->facing;
+      actor->facing = entry->facing;
       // Solid.
-      object->collisionFlags = ACTOR_SOLID;
-      Actor_SetMovementType(object, entry->movement);
-      Actor_SelectAnimationFar(object, ANIM_STAND);
-      (object)->homeX = object->x.fixed / Q16_ONE;
-      (object)->homeZ = object->z.fixed / Q16_ONE;
+      actor->collisionFlags = ACTOR_SOLID;
+      Actor_SetMovementType(actor, entry->movement);
+      Actor_SelectAnimationFar(actor, ANIM_STAND);
+      (actor)->homeX = actor->x.fixed / Q16_ONE;
+      (actor)->homeZ = actor->z.fixed / Q16_ONE;
       // An actor placement with a height is lifted half a pixel more and
       // takes motion flags 4, floating: it neither follows the ground nor
       // falls. Outside the World Map every height is then counted from the
       // ground below.
-      if (object->y.fixed != 0) {
-        object->motionFlags = ACTOR_FLOATS;
-        object->y.fixed += px(1) / 2;
+      if (actor->y.fixed != 0) {
+        actor->motionFlags = ACTOR_FLOATS;
+        actor->y.fixed += px(1) / 2;
       }
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
         // World Map actor placements use single sprites and do not follow
         // the ground. While the tunic flag is set, all keep their native
         // scale; otherwise they draw at 3/4 size.
-        object->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
+        actor->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
         if (!GameFlag_GetFar(FLAG_ISAAC_WEARS_TUNIC)) {
-          // UB: sprite creation can fail while the actor slot stays
-          // live. The native local is then indeterminate or from an earlier
-          // row. Checking the sprite grows tbs-en from 608 to 628 bytes.
+          // UB: sprite creation can fail while the actor slot stays live.
 #ifdef UBFIX
-          if (object->spriteStorageKind == ACTOR_SPRITE_ONE &&
-              (sprite = object->sprite) != NULL)
+          if (actor->spriteStorageKind == ACTOR_SPRITE_ONE &&
+              (sprite = actor->sprite) != NULL)
 #endif
             sprite->scale = Iwram_MulQ16(sprite->scale, 3 * Q16_ONE / 4);
         }
       } else {
-        object->groundHeight =
-            MapGrid_GetTerrainHeightFar(0, object->x.fixed, object->z.fixed);
-        object->y.fixed += object->groundHeight;
+        actor->groundHeight =
+            MapGrid_GetTerrainHeightFar(0, actor->x.fixed, actor->z.fixed);
+        actor->y.fixed += actor->groundHeight;
       }
-      object->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+      actor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     }
-    work->actors[actorIndex] = object;
+    work->actors[actorIndex] = actor;
   }
 }
 
@@ -243,7 +241,7 @@ void Actor_ReleaseAtIndex(s32 actorIndex) {
 void Actor_ResetForLeader(struct ActorPlacement *table) {
   struct FieldWork *work;
   struct ActorPlacement *entry;
-  struct Actor *object;
+  struct Actor *actor;
   struct Actor *camera;
   struct MapGridCell *cell;
   struct MapGridCell *above;
@@ -270,38 +268,38 @@ void Actor_ResetForLeader(struct ActorPlacement *table) {
   Event_SpawnActorPlacements(entry, leader);
   Event_SpawnActorPlacements(table, ACTOR_FIRST_PLACED);
 
-  object = work->actors[leader];
+  actor = work->actors[leader];
   // gMainRoutineWork.layer keeps the leader's map grid layer
   // (FieldSequence_Run saves its layer there). Its cell: 16 pixels square, 128
   // to a row, so above is the cell north of it.
-  object->layer = gMainRoutineWork.layer;
-  pos = (object->x.fixed / px(16)) + (object->z.fixed / px(16)) * 128;
+  actor->layer = gMainRoutineWork.layer;
+  pos = (actor->x.fixed / px(16)) + (actor->z.fixed / px(16)) * 128;
   cell = &MAPGRID_CELLS[pos];
   above = &MAPGRID_CELLS[pos - 128];
   if (gMainRoutineWork.y != 0 && cell->behavior == CELL_BEHAVIOR_CLIMB &&
       above->behavior == CELL_BEHAVIOR_CLIMB) {
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_CLIMB;
-    height = MapGrid_GetTerrainHeightFar(0, object->x.fixed,
-                                         object->z.fixed - px(16)) -
+    height = MapGrid_GetTerrainHeightFar(0, actor->x.fixed,
+                                         actor->z.fixed - px(16)) -
              px(32);
-    object->y.fixed += height;
-    object->groundHeight = object->y.fixed;
-    object->motionFlags = 0;
-    Actor_SetSpriteFlagsFar(object, 0);
-    Actor_SelectAnimationFar(object, ANIM_LEADER_CLING);
+    actor->y.fixed += height;
+    actor->groundHeight = actor->y.fixed;
+    actor->motionFlags = 0;
+    Actor_SetSpriteFlagsFar(actor, 0);
+    Actor_SelectAnimationFar(actor, ANIM_LEADER_CLING);
   } else {
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
   }
 
   // The camera follows this leader and starts at its resolved ground height;
   // the map scrolls by the camera's position. It takes no sprite.
-  camera = Actor_CreateFar(ACTOR_CREATE_NO_SPRITE << 12, object->x.fixed,
-                           object->y.fixed, object->z.fixed);
-  camera->groundHeight = object->groundHeight;
-  Actor_StartCameraFar(camera, (s32)object);
+  camera = Actor_CreateFar(ACTOR_CREATE_NO_SPRITE << 12, actor->x.fixed,
+                           actor->y.fixed, actor->z.fixed);
+  camera->groundHeight = actor->groundHeight;
+  Actor_StartCameraFar(camera, (s32)actor);
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     struct SpriteAnimation *meta =
-        (struct SpriteAnimation *)Sprite_AddAnimationFar(object->sprite,
+        (struct SpriteAnimation *)Sprite_AddAnimationFar(actor->sprite,
                                                          SPRITE_BLANK_32);
     meta->colorMode = SPRITE_COLOR_HIDDEN;
     meta->priority = 9;
@@ -536,7 +534,7 @@ void Actor_Snapshot(void) {
   u8 *indices = gActorSnapshot.slots;
   u32 savedCount = 0;
   s32 actorLimit = sizeof(work->actors) / sizeof(work->actors[0]);
-  struct Actor *object;
+  struct Actor *actor;
   s32 actorIndex;
   u32 animation;
   u32 spriteFlagBits;
@@ -548,15 +546,15 @@ void Actor_Snapshot(void) {
   // Keep each actor and its three sprite-state bytes at matching save
   // indices.
   for (actorIndex = 0; actorIndex < actorLimit; actorIndex++) {
-    object = Actor_Lookup(actorIndex);
-    if (object == NULL)
+    actor = Actor_Lookup(actorIndex);
+    if (actor == NULL)
       continue;
     *indices++ = actorIndex;
-    Dma_Set(object, snapshot,
+    Dma_Set(actor, snapshot,
             (DMA_ENABLE | DMA_32BIT) << 16 | (sizeof(struct Actor) / 4),
             REG_DMA3);
-    if (object->spriteStorageKind == ACTOR_SPRITE_ONE) {
-      struct Sprite *sprite = object->sprite;
+    if (actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
+      struct Sprite *sprite = actor->sprite;
       animation = sprite->lastNo;
       spriteFlagBits = sprite->flags;
       priority = sprite->image.priority;
@@ -592,7 +590,7 @@ void Actor_Restore(void) {
   u8 *spriteFlags = gActorSnapshot.spriteFlags;
   u8 *priorities = gActorSnapshot.priorities;
   s32 restoredCount;
-  struct Actor *object;
+  struct Actor *actor;
   struct Sprite *sprite;
   struct Actor *camera;
   s32 *cameraPosition;
@@ -607,34 +605,34 @@ void Actor_Restore(void) {
   restoredCount = 0;
   actorIndex = *indices++;
   while (actorIndex != ACTOR_SNAPSHOT_EMPTY) {
-    object = Actor_Lookup(actorIndex);
-    if (object != NULL) {
+    actor = Actor_Lookup(actorIndex);
+    if (actor != NULL) {
       // The copy also brings back the sprite pointer saved with the
       // actor. The animation and sprite flags below are set through that
       // pointer; the priorities go to the sprite the actor has now,
       // which is then put back.
-      sprite = object->sprite;
-      Dma_Set(snapshot, object,
+      sprite = actor->sprite;
+      Dma_Set(snapshot, actor,
               (DMA_ENABLE | DMA_32BIT) << 16 | (sizeof(struct Actor) / 4),
               REG_DMA3);
       animation = *animations;
       if (animation != 0)
-        Actor_SelectAnimationFar(object, animation);
-      Actor_SetSpriteFlagsFar(object, *spriteFlags);
+        Actor_SelectAnimationFar(actor, animation);
+      Actor_SetSpriteFlagsFar(actor, *spriteFlags);
       priority = *priorities;
       sprite->image.priority = priority;
       sprite->shadow.priority = priority;
       // Through the sprite union this store moves.
-      *(struct Sprite **)&object->sprite = sprite;
+      *(struct Sprite **)&actor->sprite = sprite;
       // Re-anchor the camera only when restoring the selected leader.
       if (actorIndex == *leaderId) {
         camera = (*work)->camera;
         cameraPosition = (*grid)->origin;
-        y = object->y.fixed;
+        y = actor->y.fixed;
         camera->groundHeight = y;
         camera->y.fixed = y;
         cameraPosition[1] = y;
-        Actor_StartIdleFar(object);
+        Actor_StartIdleFar(actor);
       }
     }
     snapshot++;

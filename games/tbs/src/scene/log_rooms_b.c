@@ -3,7 +3,7 @@
 /// Vault's rooms: the town's houses, shops and inn once the party has reached
 /// Kalay.
 ///
-/// They replace the first visit's interiors (log_rooms_a.c), as
+/// They replace the first visit's rooms (log_rooms_a.c), as
 /// SceneId_VaultRevisit (vault_revisit.c) replaces the town. Each of its six
 /// house doors leads to the entrance here named for the same door, and
 /// each room leads back out through it.
@@ -606,6 +606,6 @@ struct Trigger gLogRoomsB_Triggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), CELL_BEHAVIOR_LOG_ROOMS_A_WOODEN_BOX, FLAG_LOG_ROOMS_A_BOX_MINT, FIND_ITEM(ITEM_MINT) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, CELL_BEHAVIOR_LOG_ROOMS_A_HISTORY_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledHistoryOf)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_LOG_ROOMS_A_GEMS_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledGemsOfAngara)) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on

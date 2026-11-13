@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_MODULE_MAP_SHIP_ROOMS_H
-#define ALCHEMY_MODULE_MAP_SHIP_ROOMS_H
+#ifndef ALCHEMY_MODULE_SCENE_SHIP_ROOMS_H
+#define ALCHEMY_MODULE_SCENE_SHIP_ROOMS_H
 
 #include "types.h"
 #include "scene_tables.h"

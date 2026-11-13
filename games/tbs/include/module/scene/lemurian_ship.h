@@ -1,10 +1,8 @@
-#ifndef ALCHEMY_MODULE_MAP_LEMURIAN_SHIP_H
-#define ALCHEMY_MODULE_MAP_LEMURIAN_SHIP_H
+#ifndef ALCHEMY_MODULE_SCENE_LEMURIAN_SHIP_H
+#define ALCHEMY_MODULE_SCENE_LEMURIAN_SHIP_H
 
 #include "types.h"
 #include "scene_tables.h"
-
-struct SceneExitRegion;
 
 const struct SceneEntrance *LemurianShip_GetEntrances(void);
 const struct SceneExitRegion *LemurianShip_GetRegions(void);

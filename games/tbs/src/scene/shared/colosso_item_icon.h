@@ -31,6 +31,8 @@ void Colosso_ShowItemIcon(s32 id, s32 item) {
   struct Sprite *sprite;
   s32 base;
   s32 tile;
+  /* FAKEMATCH(temporary): none holds the 0 its stores take; as 0 at each, 14 of
+   * 83 instructions differ in tbs-en. */
   s32 none;
 
   actor = Actor_GetById(id);

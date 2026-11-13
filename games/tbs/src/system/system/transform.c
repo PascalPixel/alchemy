@@ -244,6 +244,8 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   u32 code[7];
   s32 dx, dy, dz;
   s32 ux;
+  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 16 of
+   * 215 instructions differ in tbs-en. */
   s32 zero = 0;
   s32 ex;
   Dot3Fn dot;

@@ -254,8 +254,7 @@ s32 TretTreeBranch_Initialize(void) {
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(4, 12);
 
-  // UB: HEAP_SLOT_SCREEN_TRANSITION lies past scalar gFieldWork. Its named load
-  // adds six bytes in the native EN trial (106 to 112 bytes).
+  // UB: HEAP_SLOT_SCREEN_TRANSITION lies past scalar gFieldWork.
 #ifdef UBFIX
   state = gScreenTransitionWork;
 #else
@@ -383,7 +382,7 @@ struct Trigger gTretTreeBranch_Triggers[] = {
      EVENT(TretTreeBranch_TalkToBreeze)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_AFTER_END), 0,
      CONDITION_ALWAYS, EVENT(TretTreeBranch_CastReveal)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 /// Unused: the two steps of a door opening, as Vale's doors have them

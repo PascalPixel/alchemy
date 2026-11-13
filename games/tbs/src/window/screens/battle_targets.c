@@ -95,8 +95,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   conditionWindow = (struct Window *)((u32)(u16)selection >> 16);
   if (spread == 0)
     spread = 1;
-  // UB: slot 57 is outside the scalar gBattleWork pointer. Named accesses
-  // add 12 bytes here in EN; using gHeapSlots adds 16 bytes.
+  // UB: slot 57 is outside the scalar gBattleWork pointer.
 #ifdef UBFIX
   if (mode == ABILITY_TARGET_ALLIES || mode == ABILITY_TARGET_SELF)
     gBattleMenuWork->targetViewOffset = -2;

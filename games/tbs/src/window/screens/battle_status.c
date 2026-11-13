@@ -816,8 +816,6 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   PartyStatus_Draw(gBattleWork->partyStatus);
   // UB: the indexed scalar pointer steps outside gBattleWork to
   // HEAP_SLOT_BATTLE_MENU.
-  // The named slot changes native instructions at the same 3320-byte EN
-  // extent; using gHeapSlots instead adds eight bytes.
 #ifdef UBFIX
   gBattleMenuWork->timerHidden = 0;
 #else

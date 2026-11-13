@@ -140,11 +140,7 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
 /// Frees every enemy sprite slot unit unitId holds, unloading its sprite.
 /// Called by BattleObject_MarkForRelease. Clears those
 /// gBattleWork->spriteSlots.
-#ifdef UBFIX
-void BattleObject_ReleaseSpriteSlots(s32 unitId) {
-#else
-s32 BattleObject_ReleaseSpriteSlots(s32 unitId) {
-#endif
+UNREAD_RESULT BattleObject_ReleaseSpriteSlots(s32 unitId) {
   struct BattleWork *battle = gBattleWork;
   s32 spriteSlot;
 

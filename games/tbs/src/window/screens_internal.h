@@ -292,9 +292,8 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define ENTRY19_COMMAND_LABEL_WIDTH 8
 #endif
 
-// The two portrait slots of the UI work (WindowWork.portraitPictures and
-// portraitSprites), and their palette.
-#define PORTRAIT_SLOT_COUNT 2
+// The palette of the two portrait slots of the UI work
+// (WindowWork.portraitPictures and portraitSprites).
 #define PORTRAIT_PALETTE 14 ///< sprite palette of slot 0; slot 1 uses 15
 
 // The battle menus' message buffers, in halfwords, and the copier that fills

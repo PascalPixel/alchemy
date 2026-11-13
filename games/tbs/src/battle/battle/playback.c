@@ -454,11 +454,7 @@ void BattlePlayback_Reset(void) {
 /// Called after the effect by the staging runners in staging.c, and after a
 /// Djinn's effect by BattleActionRun_Build and turn_end.c. Playback still
 /// idle (the effect never called EFFECT_SHOW_DAMAGE) is started here.
-#ifdef UBFIX
-void BattlePlayback_WaitForReady(void) {
-#else
-s32 BattlePlayback_WaitForReady(void) {
-#endif
+UNREAD_RESULT BattlePlayback_WaitForReady(void) {
   s32 state;
   struct BattlePlaybackWork *events;
 

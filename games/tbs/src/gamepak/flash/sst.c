@@ -6,8 +6,6 @@
 #include "../../../include/gamepak/flash_data.h"
 #include "../../../include/system/io_reg.h"
 
-extern FlashWaitProc gWaitForFlashWrite;
-
 u16 _call_via_r3(s32 mode, u8 *address, u8 expected,
                  FlashWaitProc waitForWrite);
 

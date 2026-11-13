@@ -198,26 +198,14 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY, s32 fixedZ);
 static void Sanctum_SpawnActorSpark(s32 id);
 static void Sanctum_RestoreQuestFloor(void);
 
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void changes 44 to 42 bytes in tbs-en.
-#ifdef UBFIX
 /// Faces the actor whose ID this update routine stores in the timer field.
-static void Sanctum_FaceActorNamedByTimer(struct Actor *updated) {
-#else
-/// Faces the actor whose ID this update routine stores in the timer field.
-static s32 Sanctum_FaceActorNamedByTimer(struct Actor *updated) {
-#endif
-  struct Actor *actor = (struct Actor *)updated;
+static UNREAD_RESULT Sanctum_FaceActorNamedByTimer(struct Actor *actor) {
   struct Actor *target;
 
   target = Actor_Get((s16)actor->timer);
   actor->facing = ArcTan2(target->z.fixed - actor->z.fixed,
                           target->x.fixed - actor->x.fixed);
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 /// Returns the entrances, shared by all six places.
@@ -588,25 +576,13 @@ static void Sanctum_LeaveAfterRefusing(void) {
   }
 }
 
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void changes 66 to 64 bytes in tbs-en.
-#ifdef UBFIX
 /// Keeps this actor at the party leader's drawing priority.
-static void Sanctum_MatchLeaderPriority(struct Actor *updated) {
-#else
-/// Keeps this actor at the party leader's drawing priority.
-static s32 Sanctum_MatchLeaderPriority(struct Actor *updated) {
-#endif
-  struct Actor *actor = (struct Actor *)updated;
+static UNREAD_RESULT Sanctum_MatchLeaderPriority(struct Actor *actor) {
   actor->sprite->image.priority =
       Actor_Get(ACTOR_PARTY_LEADER)->sprite->image.priority;
   actor->sprite->shadow.priority =
       Actor_Get(ACTOR_PARTY_LEADER)->sprite->image.priority;
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 /// Has Isaac, Garet, Dora, the Mayor and the two healers nod, waiting for the
@@ -1204,12 +1180,8 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     Event_Wait(20);
     Actor_Get(ACTOR_EAST_HEALER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-#ifdef UBFIX
-    Actor_Get(ACTOR_EAST_HEALER)->update = Sanctum_MatchLeaderPriority;
-#else
     Actor_Get(ACTOR_EAST_HEALER)->update =
         (void (*)(struct Actor *))Sanctum_MatchLeaderPriority;
-#endif
   }
   Event_End();
 }
@@ -1643,8 +1615,7 @@ static void Sanctum_HideHealerAfterimage(void) {
 }
 
 /// Cycles the afterimage through four offsets from the healer.
-static void Sanctum_UpdateHealerAfterimage(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+static void Sanctum_UpdateHealerAfterimage(struct Actor *actor) {
   struct Actor *healer;
 
   healer = Actor_Get(ACTOR_HEALER);
@@ -1668,8 +1639,7 @@ static void Sanctum_UpdateHealerAfterimage(struct Actor *updated) {
 }
 
 /// Advances an effect around its watched actor on an elliptical path.
-static void Sanctum_UpdateOrbitingEffect(struct Actor *updated) {
-  struct Actor *effect = (struct Actor *)updated;
+static void Sanctum_UpdateOrbitingEffect(struct Actor *effect) {
   struct Actor *anchor = effect->watchedActor;
   u16 *angle = &effect->timer;
   u16 orbitAngle = *angle;
@@ -1706,10 +1676,9 @@ static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep) {
       sprite = effect->sprite;
       Actor_StartScript(effect, gSanctum_OwnerEffectScript);
       {
-        s32 zero = 0;
 
-        effect->motionFlags = zero;
-        effect->timer = zero;
+        effect->motionFlags = 0;
+        effect->timer = 0;
       }
       effect->userValue = orbitStep;
       effect->update = Sanctum_UpdateOrbitingEffect;
@@ -1882,19 +1851,11 @@ static void Sanctum_ReenactSolSanctum(void) {
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(10);
   Actor_Get(ACTOR_HEALER)->timer = GARET;
-#ifdef UBFIX
-  Actor_Get(ACTOR_HEALER)->update = Sanctum_FaceActorNamedByTimer;
-#else
   Actor_Get(ACTOR_HEALER)->update =
       (void (*)(struct Actor *))Sanctum_FaceActorNamedByTimer;
-#endif
   Actor_Get(ACTOR_GARETS_GRANDFATHER)->timer = GARET;
-#ifdef UBFIX
-  Actor_Get(ACTOR_GARETS_GRANDFATHER)->update = Sanctum_FaceActorNamedByTimer;
-#else
   Actor_Get(ACTOR_GARETS_GRANDFATHER)->update =
       (void (*)(struct Actor *))Sanctum_FaceActorNamedByTimer;
-#endif
   Actor_WalkToAndWait(ACTOR_GARET, 196, 180);
   Actor_WalkToAndWait(ACTOR_GARET, 184, 184);
   Actor_WalkToAndWait(ACTOR_GARET, 180, 180);
@@ -2024,6 +1985,8 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
   struct Sprite *sprite;
   u8 *transferBuffer;
   u32 frame;
+  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 15 of
+   * 74 instructions differ in tbs-en. */
   u8 zero;
 
   icon = FieldActor_Create(SPRITE_BLANK, fixedX, fixedY, fixedZ);
@@ -2052,8 +2015,7 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
 }
 
 /// Moves a spark upward, cycles its scale, and expires its lifetime.
-static void Sanctum_UpdateRisingSpark(struct Actor *updated) {
-  struct Actor *spark = updated;
+static void Sanctum_UpdateRisingSpark(struct Actor *spark) {
   s32 scale;
   s32 timer;
 
@@ -2411,7 +2373,7 @@ struct Trigger gSanctum_ValeTriggers[] = {
     { TRIGGER_TALK, ACTOR_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumOurPsynergyWasGivenToUs) },
     { TRIGGER_TALK, ACTOR_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumPsynergyIsAPowerThatShould) },
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VALE },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gSanctum_VaultTriggers[] = {
@@ -2421,7 +2383,7 @@ struct Trigger gSanctum_VaultTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumGoOnIfThatEasesThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SANCTUM_MEMBER, CONDITION_ALWAYS, EVENT(Sanctum_ReadMindAboutGoldenStatue) },
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_VAULT },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gSanctum_VaultRevisitTriggers[] = {
@@ -2430,7 +2392,7 @@ struct Trigger gSanctum_VaultRevisitTriggers[] = {
     { TRIGGER_TALK, ACTOR_SANCTUM_MEMBER, CONDITION_ALWAYS, EVENT(Sanctum_TalkAboutGoldenStatue) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumIHopeTheEarthquakesArentA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SANCTUM_MEMBER, CONDITION_ALWAYS, EVENT(Sanctum_ReadMindAboutGoldenStatue) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gSanctum_QuestTriggers[] = {
@@ -2442,7 +2404,7 @@ struct Trigger gSanctum_QuestTriggers[] = {
     { TRIGGER_TALK, ACTOR_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumItsClearThatTheGreatHealer) },
     { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Sanctum_LeaveAfterRefusing) },
     { TRIGGER_STEP, 2, FLAG_SANCTUM_WARNED_BEFORE_LEAVING, EVENT(Sanctum_WarnBeforeLeaving) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gSanctum_ValeTriggersAfterLeaving[] = {
@@ -2453,7 +2415,7 @@ struct Trigger gSanctum_ValeTriggersAfterLeaving[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumThePowerOfMyPsynergyHas) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumTheAngaranContinentWillCertainlySee) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumMyPsynergyHasntChangedAtAll) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gSanctum_ValeTriggersAfterKalay[] = {
@@ -2464,7 +2426,7 @@ struct Trigger gSanctum_ValeTriggersAfterKalay[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumItllBeDifficultToReachSol) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumISeeABeautifulGirlHas) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumItsNotFairIWantTo) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gSanctum_AltinTriggers[] = {
@@ -2474,7 +2436,7 @@ struct Trigger gSanctum_AltinTriggers[] = {
     { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(Sanctum_TalkAboutAltinMonsters) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgSanctumPleaseSaveTheHelplessInAltin) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumAlmightyFateMustHaveHeardMe) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gSanctum_BilibinTriggers[] = {
@@ -2486,14 +2448,14 @@ struct Trigger gSanctum_BilibinTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumTheSignsOfDangerAreActually) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SANCTUM_MEMBER, CONDITION_ALWAYS, MSGNO(MsgSanctumPeaceWillBeKeptAsLong) },
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_BILIBIN },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gSanctum_XianTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, SANCTUM_TO_XIAN },
     { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(Sanctum_TalkAboutJourneyFromXian) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgSanctumWhenYouStayInXianFor) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 

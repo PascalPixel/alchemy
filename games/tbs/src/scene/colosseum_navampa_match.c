@@ -298,18 +298,6 @@ enum {
 
 enum { PISTON_COUNT = 5 };
 
-/// Sets the leader speed for the shared solo-party placement routine.
-static inline void InitializeActorZero(void) {
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
-}
-
-/// Sets a companion speed for the shared solo-party placement routine.
-static inline void InitializeSelectedActor(s32 actorId) {
-  Actor_SetSpeed(actorId, 1);
-}
-
-extern s32 gColossoParticleCount;
-
 const struct SceneEntrance *ColosseumNavampaMatch_GetEntrances(void) {
   return gColosseumNavampaMatchEntrances;
 }
@@ -1269,9 +1257,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
 /// last match.
 ///
 /// Its timer and work hold signed 1/256-pixel steps.
-static s32
-ColosseumNavampaMatch_AdvanceParticleMotion(struct Actor *interpreter) {
-  struct Actor *particle = interpreter;
+static s32 ColosseumNavampaMatch_AdvanceParticleMotion(struct Actor *particle) {
   particle->x.fixed += particle->timer * 256;
   particle->y.fixed += (s16)particle->userValue * 256;
   particle->scaleX += Q16_ONE / 40;
@@ -2276,7 +2262,7 @@ struct Trigger gColosseumNavampaMatchTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MOVING_SIDEWALK_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogIWasUpAllNightTrying) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogSomeTouristToldMeILook) },
     { TRIGGER_RAISED, 99, CONDITION_ALWAYS, EVENT(Colosso_TakePlaceForMatch) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 /// Navampa after the last battle

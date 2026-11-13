@@ -509,8 +509,7 @@ static void WorldMap_MeetHail(void) {
 
 /// The update routine of a sparkle around the Black Orb. It releases the
 /// sparkle on its second frame.
-static void WorldMap_ReleaseSparkAfterDelay(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+static void WorldMap_ReleaseSparkAfterDelay(struct Actor *actor) {
   if (actor->timer <= 0) {
     actor->timer++;
   } else {
@@ -520,8 +519,7 @@ static void WorldMap_ReleaseSparkAfterDelay(struct Actor *updated) {
 
 /// The update routine of the Black Orb held up over the wreck. It swells and
 /// shrinks every four frames and gives off a sparkle every other frame.
-static void WorldMap_PulseOrbAndSpawnSparks(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+static void WorldMap_PulseOrbAndSpawnSparks(struct Actor *actor) {
   struct Actor *spark;
   s32 x;
   s32 y;
@@ -556,8 +554,7 @@ static void WorldMap_PulseOrbAndSpawnSparks(struct Actor *updated) {
 /// He flickers white and red and circles 16 pixels around his spot, bobbing 4
 /// pixels up and down, facing the way he goes. WorldMap_MeetFlint stops him
 /// by setting his work to 1.
-static void WorldMap_CircleFlint(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+static void WorldMap_CircleFlint(struct Actor *actor) {
   s16 *angle;
 
   if (gFrameCount & 2)
@@ -577,8 +574,7 @@ static void WorldMap_CircleFlint(struct Actor *updated) {
 
 /// Flint's actor script (gWorldMapFlintScript). Until he is caught or his
 /// lesson has begun (FLAG_DJINN_LESSON), he circles his spot at half size.
-static s32 WorldMap_SetUpFlint(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 WorldMap_SetUpFlint(struct Actor *actor) {
   if (GameFlag_Get(FLAG_DJINNI(DJINNI_FLINT)) != 0) {
     return 0;
   }
@@ -616,8 +612,7 @@ static s32 WorldMap_SetUpKolimaBridge(struct Actor *interpreter) {
 
 /// The actor script of every picture on the map (gWorldMapAlignToMapScript).
 /// It turns the sprite with the map's rotation.
-static s32 WorldMap_AlignToMap(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 WorldMap_AlignToMap(struct Actor *actor) {
   struct WorldMapRenderWork *work = gMapGridWork[0];
   struct Sprite *sprite = actor->sprite;
 
@@ -628,8 +623,7 @@ static s32 WorldMap_AlignToMap(struct Actor *interpreter) {
 
 /// Iodem's actor script (gWorldMapIodemScript). He turns with the map and
 /// blocks the way, so the leader cannot walk through him.
-static s32 WorldMap_SetUpIodem(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 WorldMap_SetUpIodem(struct Actor *actor) {
   struct WorldMapRenderWork *work = gMapGridWork[0];
   struct Sprite *sprite = actor->sprite;
 
@@ -645,8 +639,7 @@ static s32 WorldMap_SetUpIodem(struct Actor *interpreter) {
 /// and FLAG_WORLD_MAP_STORM_GONE keeps it from catching the party.
 ///
 /// Called by its actor script.
-static s32 WorldMap_SetUpStorm(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 WorldMap_SetUpStorm(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
   Actor_SetColorMode(actor, SPRITE_COLOR_RED_TINT);
   actor->collisionFlags = 0;
@@ -661,8 +654,7 @@ static s32 WorldMap_SetUpStorm(struct Actor *interpreter) {
 /// Called each frame by the storm's actor script (gWorldMapStormScript). It
 /// hides the storm on odd frames, and WorldMap_UpdateAreaContacts shows it
 /// again on the next, so it flickers.
-static s32 WorldMap_BlinkActorSprite(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 WorldMap_BlinkActorSprite(struct Actor *actor) {
   if ((actor->spriteStorageKind & 1) && (gFrameCount & 1))
     actor->spriteStorageKind ^= 1;
   return 1;
@@ -2075,7 +2067,7 @@ static void WorldMap_BlockGatewayCaveExit(s32 actorId) {
       gWorldTriggers[i].kind = TRIGGER_STEP;
       gWorldTriggers[i].value = (u32)WorldMap_IodemCallsIsaacBack;
     }
-    if (gWorldTriggers[i].kind == TRIGGERS_END)
+    if (gWorldTriggers[i].kind == TRIGGER_TABLE_END)
       break;
     i++;
   }
@@ -2103,7 +2095,7 @@ static void WorldMap_RestoreGatewayCaveExit(void) {
       gWorldTriggers[i].value = WORLD_MAP_TO_GATEWAY_CAVE;
       break;
     }
-    if (gWorldTriggers[i].kind == TRIGGERS_END)
+    if (gWorldTriggers[i].kind == TRIGGER_TABLE_END)
       break;
     i++;
   }
@@ -2556,7 +2548,7 @@ static void WorldMap_UpdateLighthouseQuake(void) {
 /// A leg of the Tolbi-bound Ship's crossing, in which the ship sails north to
 /// its anchorage off the island.
 ///
-/// The party comes out of the ship's interior (SHIP_ROOMS_TO_WORLD_MAP). The
+/// The party comes out of the ship's rooms (SHIP_ROOMS_TO_WORLD_MAP). The
 /// ship sails to where ACTOR_TOLBI_SHIP stands, and the party goes back into
 /// it (WORLD_MAP_TO_SHIP_ROOMS_ROWING_DECK_ISLAND).
 ///
@@ -3925,7 +3917,7 @@ struct Trigger gWorldTriggers[] = {
     { PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_STORM, IF_FLAG_SET(FLAG_WORLD_MAP_CAUGHT_IN_STORM), EVENT(WorldMap_StartDousingStorm) },
     { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_STORM, IF_FLAG_SET(FLAG_WORLD_MAP_CAUGHT_IN_STORM), EVENT(WorldMap_DouseMapStorm) },
     { TRIGGER_RAISED, RAISED_STORM_TIME_UP, CONDITION_ALWAYS, EVENT(WorldMap_StormDropsParty) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 /// Each passenger's rowing value, the World Map's copy of

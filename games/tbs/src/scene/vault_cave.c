@@ -301,34 +301,22 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Finds a placed actor with collision enabled at the requested map
 /// cell.
 static struct Actor *VaultCave_FindCollidableActorAtCell(s32 column, s32 row) {
-  // UB: map creation leaves unused actor slots NULL. The plain safe
-  // lookup adds four native bytes in EN; retain the original reads for
-  // matching.
-#ifdef UBFIX
   struct FieldWork *work = gFieldWork;
   u32 actorSlot;
 
   for (actorSlot = ACTOR_FIRST_PLACED; actorSlot <= 65; actorSlot++) {
     struct Actor *actor = work->actors[actorSlot];
 
-    if (actor != NULL && column == FIELD_CELL(actor->x.fixed) &&
+    // UB: map creation leaves unused actor slots NULL.
+    if (
+#ifdef UBFIX
+        actor != NULL &&
+#endif
+        column == FIELD_CELL(actor->x.fixed) &&
         row == FIELD_CELL(actor->z.fixed) && actor->collisionFlags != 0) {
       return actor;
     }
   }
-#else
-  s32 **slots = (s32 **)((u8 *)gFieldWork + 0x14);
-  u32 actorSlot;
-
-  for (actorSlot = 8; actorSlot <= 65; actorSlot++) {
-    s32 *actorWords = slots[actorSlot];
-
-    if (column == (actorWords[2] >> 20) && row == (actorWords[4] >> 20) &&
-        *((u8 *)actorWords + 0x59) != 0) {
-      return (struct Actor *)actorWords;
-    }
-  }
-#endif
   return NULL;
 }
 
@@ -574,8 +562,6 @@ static void VaultCave_MoveNorthernPillar(void) {
 /// The puddle is in VaultCaveVambrace's puddle room. Freezing it changes its
 /// map cell, and arriving again re-freezes every puddle whose flag is set.
 static void VaultCave_FreezeWestUpperPuddle(void) {
-  // An ordinary shared Frost helper keeps the extents but saves r5-r7 instead
-  // of r5 alone and changes the map-copy argument registers in native English.
   struct Actor *target = Actor_Get(ACTOR_WEST_UPPER_PUDDLE);
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 23, 32);
@@ -1333,7 +1319,7 @@ struct ActorPlacement gVaultCaveMouth_ActorPlacements[] = {
 };
 
 struct Trigger gVaultCave_FallbackTriggers[] = {
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gVaultCavePassage_Triggers[] = {
@@ -1353,7 +1339,7 @@ struct Trigger gVaultCavePassage_Triggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VAULT_CAVE_SWITCH, CONDITION_ALWAYS, EVENT(VaultCave_FlipSwitch) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VAULT_CAVE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(VaultCave_ShowLockedDoor) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_VAULT_CAVE_CHEST, FLAG_VAULT_CAVE_PASSAGE_MIMIC_BEATEN, FIND_MIMIC | 3 },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gVaultCaveVambrace_Triggers[] = {
@@ -1381,7 +1367,7 @@ struct Trigger gVaultCaveVambrace_Triggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_EAST_LOWER_PUDDLE, FLAG_VAULT_CAVE_EAST_LOWER_PUDDLE_FROZEN, EVENT(VaultCave_FreezeEastLowerPuddle) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FAR_EAST_PUDDLE, FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN, EVENT(VaultCave_FreezeFarEastPuddle) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, FLAG_VAULT_CAVE_IVY_BLOWN_AWAY, EVENT(VaultCave_UseWhirlwind) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gVaultCaveMouth_Triggers[] = {
@@ -1395,7 +1381,7 @@ struct Trigger gVaultCaveMouth_Triggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_NORTHERN_PILLAR, FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH, EVENT(VaultCave_MoveNorthernPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH, CONDITION_ALWAYS, EVENT(VaultCave_IgnoreMove) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VAULT_CAVE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(VaultCave_ShowLockedDoor) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 u32 gVaultCave_ScheduleFrames[] = {

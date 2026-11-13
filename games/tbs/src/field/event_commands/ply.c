@@ -8,11 +8,10 @@
 /// frames. The update of each spark FieldEffect_RunSparkEmitter sheds; it
 /// writes the spark's x and advances its phase.
 void FieldEffect_SwayParticle(struct Actor *actor) {
-  struct Actor *obj = (struct Actor *)actor;
   s16 *phase;
 
-  phase = &obj->timer;
-  obj->x.fixed = obj->targetX + Iwram_MulQ16(px(4), Trig_Sin(*phase << 9));
+  phase = &actor->timer;
+  actor->x.fixed = actor->targetX + Iwram_MulQ16(px(4), Trig_Sin(*phase << 9));
   (*phase)++;
   *phase = (*phase + 128) % 128;
 }
@@ -21,8 +20,7 @@ void FieldEffect_SwayParticle(struct Actor *actor) {
 /// position, at a radius of as many pixels as frames are left; released when
 /// timer reaches 0. The update of FieldPsynergy_Ply's eight spiralling
 /// particles; each one's work holds its starting angle.
-void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *actor) {
-  struct Actor *particle = (struct Actor *)actor;
+void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *particle) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Vector3 pos;
   s16 remainingFrames;
@@ -54,8 +52,7 @@ void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *actor) {
 /// as it slowly falls. With phase -1 it stays where it is. The update
 /// FieldPsynergy_Ply gives the centre particle; spawns SPRITE_SPARKLE for each
 /// spark.
-void FieldEffect_RunSparkEmitter(struct Actor *actor) {
-  struct Actor *emitter = (struct Actor *)actor;
+void FieldEffect_RunSparkEmitter(struct Actor *emitter) {
   struct FieldEffectWork *effectWork;
   s16 *phase;
   struct Actor *spark;

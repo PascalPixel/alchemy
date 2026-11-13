@@ -7,7 +7,7 @@
 /// The getters pick each scene's tables by gMainRoutineWork.next, and three
 /// story flags choose among them. FLAG_TOLBI_SHIP_REACHED_TOLBI says whether
 /// the ship has made its crossing (set on the World Map,
-/// WorldMap_CompleteTransfer). FLAG_KALAY_COLOSSO_TOUR_LEFT says whether the
+/// WorldMap_SailIntoTolbi). FLAG_KALAY_COLOSSO_TOUR_LEFT says whether the
 /// Colosso Tour's group has left Kalay. FLAG_COLOSSO_OVER says whether the
 /// Colosso finals have been fought.
 ///
@@ -230,11 +230,11 @@ enum TolbiDocksStrandedActorId {
 };
 
 /// The people of the two dock rooms, numbering the rows of
-/// gKalayTolbiDocks_InteriorActorPlacements from ACTOR_FIRST_PLACED: the
+/// gKalayTolbiDocks_RoomActorPlacements from ACTOR_FIRST_PLACED: the
 /// Kalay room's three, then the Tolbi room's. Once the ship has crossed
-/// (gKalayTolbiDocks_InteriorActorPlacementsShipGone) the Kalay room's two
+/// (gKalayTolbiDocks_RoomActorPlacementsShipGone) the Kalay room's two
 /// travellers stand off the map.
-enum KalayTolbiDocksInteriorActorId {
+enum KalayTolbiDocksRoomActorId {
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR) in the Kalay room.
   /// ★ Named from the game: "Are you looking for tickets for boarding?"
   /// (MsgKalayLookingForTickets)
@@ -266,9 +266,9 @@ enum KalayTolbiDocksInteriorActorId {
 };
 
 /// The dock rooms after Colosso
-/// (gKalayTolbiDocks_InteriorActorPlacementsStranded): the Tolbi room's
+/// (gKalayTolbiDocks_RoomActorPlacementsStranded): the Tolbi room's
 /// last two rows hold other people.
-enum KalayTolbiDocksInteriorStrandedActorId {
+enum KalayTolbiDocksRoomStrandedActorId {
   /// A burly grey-haired man (SPRITE_BURLY_MAN_WITH_GREY_HAIR). "Some rich
   /// guy was here throwing money around, but they still said no."
   /// ★ Named from the game: "Yeah...the ship's not going anywhere for now."
@@ -282,7 +282,7 @@ enum KalayTolbiDocksInteriorStrandedActorId {
 
 static void KalayTolbiDocks_PrepareKalayDocks(void);
 static void KalayTolbiDocks_PrepareTolbiDocks(void);
-static void KalayTolbiDocks_PrepareInterior(void);
+static void KalayTolbiDocks_PrepareRoom(void);
 static void KalayTolbiDocks_UpdateCrateCells(void);
 static void KalayTolbiDocks_SettleCrates(s32 actorId);
 static void KalayTolbiDocks_GaretSeesTheKaragol(void);
@@ -304,7 +304,7 @@ const struct SceneEntrance *KalayTolbiDocks_GetEntrances(void) {
     return gKalayTolbiDocks_TolbiEntrances;
   }
   if (sceneId == (s32)&SceneId_CottageRoomsE) {
-    return gKalayTolbiDocks_InteriorEntrances;
+    return gKalayTolbiDocks_RoomEntrances;
   }
   return gKalayTolbiDocks_NoEntrances;
 }
@@ -339,12 +339,12 @@ const struct ActorPlacement *KalayTolbiDocks_GetActorPlacements(void) {
 
   if (sceneId == (s32)&SceneId_CottageRoomsE) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
-      return gKalayTolbiDocks_InteriorActorPlacementsStranded;
+      return gKalayTolbiDocks_RoomActorPlacementsStranded;
     }
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
-      return gKalayTolbiDocks_InteriorActorPlacementsShipGone;
+      return gKalayTolbiDocks_RoomActorPlacementsShipGone;
     }
-    return gKalayTolbiDocks_InteriorActorPlacements;
+    return gKalayTolbiDocks_RoomActorPlacements;
   }
 
   return gKalayTolbiDocks_NoActorPlacements;
@@ -386,12 +386,12 @@ const struct Trigger *KalayTolbiDocks_GetTriggers(void) {
 
   if (sceneId == (s32)&SceneId_CottageRoomsE) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
-      return gKalayTolbiDocks_InteriorTriggersStranded;
+      return gKalayTolbiDocks_RoomTriggersStranded;
     }
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
-      return gKalayTolbiDocks_InteriorTriggersShipGone;
+      return gKalayTolbiDocks_RoomTriggersShipGone;
     }
-    return gKalayTolbiDocks_InteriorTriggers;
+    return gKalayTolbiDocks_RoomTriggers;
   }
 
   return gKalayTolbiDocks_NoTriggers;
@@ -745,7 +745,7 @@ s32 KalayTolbiDocks_Initialize(void) {
   } else if (gMainRoutineWork.next == (s32)&SceneId_TolbiDocks) {
     KalayTolbiDocks_PrepareTolbiDocks();
   } else if (gMainRoutineWork.next == (s32)&SceneId_CottageRoomsE) {
-    KalayTolbiDocks_PrepareInterior();
+    KalayTolbiDocks_PrepareRoom();
   }
   return 0;
 }
@@ -780,7 +780,6 @@ static void KalayTolbiDocks_PrepareKalayDocks(void) {
 /// left them, the angry one still lying on the ground.
 static void KalayTolbiDocks_PrepareTolbiDocks(void) {
   struct Actor *actor;
-  u8 zero;
 
   KalayTolbiDocks_UpdateCrateCells();
   if (Event_GetFlag(FLAG_COLOSSO_OVER)) {
@@ -808,14 +807,13 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
     actor = Actor_Get(ACTOR_ANGRY_YOUNG_MAN);
     actor->collisionFlags = 0;
     actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    ((u8 *)actor->sprite)[9] |= 12;
-    ((u8 *)actor->sprite)[38] = 0;
-    zero = 0;
+    actor->sprite->image.priority = 3;
+    actor->sprite->flags = 0;
     actor->sprite->rotation = TRIG_TURN * 3 / 4;
     actor = Actor_Get(ACTOR_STRANDED_WOMAN);
-    actor->priorityFlags = zero;
-    ((u8 *)actor->sprite)[9] |= 12;
-    ((u8 *)actor->sprite)[21] |= 12;
+    actor->priorityFlags = 0;
+    actor->sprite->image.priority = 3;
+    actor->sprite->shadow.priority = 3;
   }
   // Once Colosso is over, the passengers stranded at Tolbi's docks gather
   // here, and the two cells just north of where they stand take a wall's
@@ -828,7 +826,7 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
 
 /// The rooms at the docks open with a window transition and no area
 /// name.
-static void KalayTolbiDocks_PrepareInterior(void) {
+static void KalayTolbiDocks_PrepareRoom(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
@@ -986,8 +984,8 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Event_SetMessageId(MsgKalayReturnedTicketCost);
   actor = Actor_Get(ACTOR_STRANDED_WOMAN);
   actor->priorityFlags = 0;
-  ((u8 *)actor->sprite)[9] |= 12;
-  ((u8 *)actor->sprite)[21] |= 12;
+  actor->sprite->image.priority = 3;
+  actor->sprite->shadow.priority = 3;
   FieldCamera_MoveTo(232, CAMERA_KEEP, 304, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 216, 272);
@@ -1141,8 +1139,8 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   actor = Actor_Get(ACTOR_ANGRY_YOUNG_MAN);
   actor->collisionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  ((u8 *)actor->sprite)[9] |= 12;
-  ((u8 *)actor->sprite)[38] = 0;
+  actor->sprite->image.priority = 3;
+  actor->sprite->flags = 0;
   actor->sprite->rotation = TRIG_TURN * 3 / 4;
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, -12, 4);
   Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_SOUTH, 0);
@@ -1239,7 +1237,7 @@ struct SceneEntrance gKalayTolbiDocks_TolbiEntrances[] = {
 
 /// CottageRoomsE's entrances, each into the room at the dock it is
 /// entered from.
-struct SceneEntrance gKalayTolbiDocks_InteriorEntrances[] = {
+struct SceneEntrance gKalayTolbiDocks_RoomEntrances[] = {
     {0, CONDITION_ALWAYS, 96, 0, 248, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {COTTAGE_ROOMS_E_FROM_KALAY_DOCKS, CONDITION_ALWAYS, 96, 0, 248,
      FACING_NORTH, 0, 32, 32, 272, 272, 0},
@@ -1363,7 +1361,7 @@ struct ActorPlacement gKalayTolbiDocks_KalayActorPlacementsShipGone[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorPlacement gKalayTolbiDocks_InteriorActorPlacements[] = {
+struct ActorPlacement gKalayTolbiDocks_RoomActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         152, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1379,7 +1377,7 @@ struct ActorPlacement gKalayTolbiDocks_InteriorActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorPlacement gKalayTolbiDocks_InteriorActorPlacementsShipGone[] = {
+struct ActorPlacement gKalayTolbiDocks_RoomActorPlacementsShipGone[] = {
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         152, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1395,7 +1393,7 @@ struct ActorPlacement gKalayTolbiDocks_InteriorActorPlacementsShipGone[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorPlacement gKalayTolbiDocks_InteriorActorPlacementsStranded[] = {
+struct ActorPlacement gKalayTolbiDocks_RoomActorPlacementsStranded[] = {
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         152, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1412,7 +1410,7 @@ struct ActorPlacement gKalayTolbiDocks_InteriorActorPlacementsStranded[] = {
 };
 
 struct Trigger gKalayTolbiDocks_NoTriggers[] = {
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gKalayTolbiDocks_KalayTriggers[] = {
@@ -1443,7 +1441,7 @@ struct Trigger gKalayTolbiDocks_KalayTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHECKING_TICKETS, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSilkRoadIsBlockedSoThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DOCK_WORKER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheReplacementShipHasntArrivedSo) },
     { TRIGGER_TALK, ACTOR_GROUND, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_GroundJoins) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gKalayTolbiDocks_KalayTriggersShipGone[] = {
@@ -1456,7 +1454,7 @@ struct Trigger gKalayTolbiDocks_KalayTriggersShipGone[] = {
     { TRIGGER_TALK, ACTOR_DOCK_WORKER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksImGladIOnlyWorkOn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DOCK_WORKER, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIWonderIfMonstersGotEveryone) },
     { TRIGGER_TALK, ACTOR_GROUND, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_GroundJoins) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gKalayTolbiDocks_TolbiTriggers[] = {
@@ -1481,7 +1479,7 @@ struct Trigger gKalayTolbiDocks_TolbiTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_CRATES, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_UpdateCrateCells) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_TOLBI_DOCKS_POTION_CHEST, FIND_ITEM(ITEM_POTION) },
     { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), 101, FLAG_TOLBI_DOCKS_COINS_BOX, FIND_COINS(35) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gKalayTolbiDocks_TolbiTriggersStranded[] = {
@@ -1509,10 +1507,10 @@ struct Trigger gKalayTolbiDocks_TolbiTriggersStranded[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_CRATES, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_UpdateCrateCells) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_TOLBI_DOCKS_POTION_CHEST, FIND_ITEM(ITEM_POTION) },
     { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), 101, FLAG_TOLBI_DOCKS_COINS_BOX, FIND_COINS(35) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
-struct Trigger gKalayTolbiDocks_InteriorTriggers[] = {
+struct Trigger gKalayTolbiDocks_RoomTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_KALAY_DOCKS },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_TOLBI_DOCKS },
     { TRIGGER_TALK, ACTOR_SELLING_TICKETS, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_TalkToTicketSeller) },
@@ -1528,10 +1526,10 @@ struct Trigger gKalayTolbiDocks_InteriorTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SELLING_NO_TICKETS, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSighWeCouldHaveMadeLots) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_WHO_RENTED_OUT_HIS_HOUSE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksMaybeWellStayHereUntilThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_WITH_NOWHERE_TO_SLEEP, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAreWeSupposedToSleepOn) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
-struct Trigger gKalayTolbiDocks_InteriorTriggersShipGone[] = {
+struct Trigger gKalayTolbiDocks_RoomTriggersShipGone[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_KALAY_DOCKS },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_TOLBI_DOCKS },
     { TRIGGER_TALK, ACTOR_SELLING_TICKETS, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheShipWontBeLeavingHere) },
@@ -1542,10 +1540,10 @@ struct Trigger gKalayTolbiDocks_InteriorTriggersShipGone[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SELLING_NO_TICKETS, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksSighWeCouldHaveMadeLots) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_WHO_RENTED_OUT_HIS_HOUSE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksMaybeWellStayHereUntilThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_WITH_NOWHERE_TO_SLEEP, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksAreWeSupposedToSleepOn) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
-struct Trigger gKalayTolbiDocks_InteriorTriggersStranded[] = {
+struct Trigger gKalayTolbiDocks_RoomTriggersStranded[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_KALAY_DOCKS },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_TOLBI_DOCKS },
     { TRIGGER_TALK, ACTOR_SELLING_TICKETS, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheShipWontBeLeavingHere) },
@@ -1556,6 +1554,6 @@ struct Trigger gKalayTolbiDocks_InteriorTriggersStranded[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SELLING_NO_TICKETS, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksWeveGotPassengersButNobodysSailing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_SHIP_GOING_NOWHERE, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheCaptainMustBeAStubborn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_SAYING_THE_SEA_LOOKS_CALM, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksTheMarineBlueKaragolSeaIs) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on

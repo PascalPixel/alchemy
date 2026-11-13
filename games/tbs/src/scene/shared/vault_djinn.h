@@ -11,13 +11,7 @@
 /// holds DJINNI_FLINT, gives it back to Isaac and recalculates both.
 ///
 /// Called before Ivan leaves the party, at Vault's gates and in the loft.
-// UB: declared s32 with no return value, as the epilogue shows; UBFIX gives
-// the void form.
-#ifdef UBFIX
-static void Vault_ReturnIsaacsDjinni(void) {
-#else
-static s32 Vault_ReturnIsaacsDjinni(void) {
-#endif
+static UNREAD_RESULT Vault_ReturnIsaacsDjinni(void) {
   DjinnRecovery_CountDownTwenty();
   if ((Unit_Get(IVAN)->djinnHeld[ELEMENT_VENUS] & 1) != 0) {
     Djinn_Transfer(IVAN, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_FLINT), ISAAC);

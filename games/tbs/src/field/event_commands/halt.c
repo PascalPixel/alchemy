@@ -11,7 +11,6 @@
 /// straight at up to 4 pixels a frame and come back turning at most 1/16 turn a
 /// frame.
 void FieldEffect_UpdateHaltParticle(struct FieldParticle *effect) {
-  // A for/continue retry grows the native English callback 256 -> 260 bytes.
   // Retain the immediate OUT_AND_BACK_FLYING_OUT to OUT_AND_BACK_AIM_BACK
   // transition on arrival.
   struct FieldEffectWork *effectWork;

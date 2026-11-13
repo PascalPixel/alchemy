@@ -651,21 +651,13 @@ static void VenusLighthouse_RestoreScriptedChildValues(void) {
 
 /// Called by gVenusGreyStatueScript and gVenusGreyPillarScript. It draws the
 /// actor in the colour mode of its VENUS_COLOR_MARK.
-static s32 VenusLighthouse_UpdateChildFromTimer(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 VenusLighthouse_UpdateChildFromTimer(struct Actor *actor) {
   Actor_SetSpriteColor(actor, actor->timer & 15);
   return 0;
 }
 
 // Pulse the child effect and play its timed sound.
-// UB: update routines return void. In tbs-en venus_lighthouse, plain
-// void differs in 6 bytes of the 56-byte function. Keep the unused
-// native result in matching builds.
-#ifdef UBFIX
-static void VenusLighthouse_PulseChildEffect(struct Actor *updated) {
-#else
-static s32 VenusLighthouse_PulseChildEffect(struct Actor *updated) {
-#endif
+static UNREAD_RESULT VenusLighthouse_PulseChildEffect(struct Actor *updated) {
   void *actor = (void *)updated;
   if ((gFrameCount & 3) == 0)
     Actor_SetSpriteColor(actor, SPRITE_COLOR_WHITE);
@@ -674,23 +666,11 @@ static s32 VenusLighthouse_PulseChildEffect(struct Actor *updated) {
 
   if ((gFrameCount & 7) == 0)
     Sound_Play(SE_ITEM_BREAK);
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 // Emit a rising particle near the actor every eight frames.
-// UB: update routines return void. In tbs-en venus_lighthouse, plain
-// void differs in 14 bytes of the 172-byte function. Keep the unused
-// native result in matching builds.
-#ifdef UBFIX
-static void VenusLighthouse_EmitRisingParticles(struct Actor *updated) {
-#else
-static s32 VenusLighthouse_EmitRisingParticles(struct Actor *updated) {
-#endif
-  struct Actor *actor = (struct Actor *)updated;
+static UNREAD_RESULT VenusLighthouse_EmitRisingParticles(struct Actor *actor) {
   struct EffectOptions options;
   s32 framePhase, particleX, particleY, riseSpeed;
   framePhase = gFrameCount & 7;
@@ -710,11 +690,7 @@ static s32 VenusLighthouse_EmitRisingParticles(struct Actor *updated) {
         EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE,
         &options);
   }
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 /// Clears the scripted actor's sprite flags and advances its script.
@@ -725,15 +701,8 @@ static s32 VenusLighthouse_ClearScriptedSpriteFlags(struct Actor *interpreter) {
 }
 
 // Emit the two particle patterns used by the leader's passage trail.
-// UB: update routines return void. In tbs-en venus_lighthouse, plain
-// void differs in 14 bytes of the 180-byte function. Keep the unused
-// native result in matching builds.
-#ifdef UBFIX
-static void VenusLighthouse_EmitPassageSparkTrail(struct Actor *updated) {
-#else
-static s32 VenusLighthouse_EmitPassageSparkTrail(struct Actor *updated) {
-#endif
-  struct Actor *actor = (struct Actor *)updated;
+static UNREAD_RESULT
+VenusLighthouse_EmitPassageSparkTrail(struct Actor *actor) {
   struct EffectOptions options;
   s32 fallSpeed;
   s32 framePhase;
@@ -759,13 +728,8 @@ static s32 VenusLighthouse_EmitPassageSparkTrail(struct Actor *updated) {
                       actor->y.fixed, actor->z.fixed, 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE, &options);
   }
-#ifdef UBFIX
 
-  return;
-#else
-
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 /// Walking north into a sparkling passage, on VenusLighthouseSecondFloor or
@@ -780,12 +744,8 @@ static void VenusLighthouse_EnterSparklingPassage(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Event_Start();
   Sound_Play(SE_SPARKLING_PASSAGE);
-#ifdef UBFIX
-  leader->update = VenusLighthouse_EmitPassageSparkTrail;
-#else
   leader->update =
       (void (*)(struct Actor *))VenusLighthouse_EmitPassageSparkTrail;
-#endif
   leader->speedLimit = px(1) / 5;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -6);
@@ -816,12 +776,8 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Sound_Play(SE_SPARKLING_PASSAGE);
-#ifdef UBFIX
-    leader->update = VenusLighthouse_EmitPassageSparkTrail;
-#else
     leader->update =
         (void (*)(struct Actor *))VenusLighthouse_EmitPassageSparkTrail;
-#endif
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.4);
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
     Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
@@ -919,15 +875,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
 
 // A light's update routine: every four frames a shrinking particle around it,
 // and now and then a sound while it moves.
-// UB: update routines return void. In tbs-en venus_lighthouse, plain
-// void differs in 172 bytes (extent 196 to 192 bytes). Keep the
-// unused native result in matching builds.
-#ifdef UBFIX
-static void VenusLighthouse_TrailLight(struct Actor *updated) {
-#else
-static s32 VenusLighthouse_TrailLight(struct Actor *updated) {
-#endif
-  struct Actor *actor = (struct Actor *)updated;
+static UNREAD_RESULT VenusLighthouse_TrailLight(struct Actor *actor) {
   struct EffectOptions options;
   s32 velocityY;
   s32 velocityX;
@@ -935,11 +883,7 @@ static s32 VenusLighthouse_TrailLight(struct Actor *updated) {
   s32 random;
 
   if ((gFrameCount & 3) != 0) {
-#ifdef UBFIX
-    return;
-#else
-    return 0;
-#endif
+    RETURN_UNREAD(0);
   }
   if ((u32)(Import_RandomNext() * 6) >> 16 == 0) {
     if (actor->targetX != ACTOR_NO_TARGET ||
@@ -962,11 +906,7 @@ static s32 VenusLighthouse_TrailLight(struct Actor *updated) {
                     EFFECT_SCALE_TO_TARGET | EFFECT_USE_START_SCALE |
                         EFFECT_USE_TYPE | EFFECT_SCRIPT_MEDIUM,
                     &options);
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 /// Creates a light at a lady statue, at pixel x and z, and starts it along its
@@ -991,11 +931,7 @@ static struct Actor *VenusLighthouse_CreateLight(s32 x, s32 z,
   effect->y.fixed = 0;
   effect->collisionFlags = 0;
   effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-#ifdef UBFIX
-  effect->update = VenusLighthouse_TrailLight;
-#else
   effect->update = (void (*)(struct Actor *))VenusLighthouse_TrailLight;
-#endif
   effect->riseEnabled = 0;
   Actor_StartScript(effect, script);
   return effect;
@@ -1306,12 +1242,8 @@ static void VenusLighthouse_JumpDown(void) {
   SetFlagBits(&Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags,
               ACTOR_FACES_MOTION);
   Event_Wait(20);
-#ifdef UBFIX
-  leader->update = VenusLighthouse_EmitRisingParticles;
-#else
   leader->update =
       (void (*)(struct Actor *))VenusLighthouse_EmitRisingParticles;
-#endif
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
@@ -1573,6 +1505,8 @@ static void VenusLighthouse_TalkToScholarByDoor(void) {
 static void VenusLighthouse_FallThroughFloor(void) {
   struct Actor *leader;
   struct Actor *leaderActor;
+  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 9 of
+   * 100 instructions differ in tbs-es. */
   s32 zero;
 #if TBS_PATCH_3
   u8 *motionFlags;
@@ -1749,19 +1683,17 @@ static void VenusLighthouse_FixPillarAtDestination(struct Actor *pillar) {
 /// pillars.
 static void VenusLighthouse_ReleaseFallenCarryPillar(struct Actor *pillar) {
   struct Sprite *sprite;
-  s32 zero;
   struct Actor *passageEffect;
 
   sprite = pillar->sprite;
   if (sprite->image.priority == 3) {
     sprite->image.priority = 1;
-    zero = 0;
-    pillar->bounce = zero;
+    pillar->bounce = 0;
     passageEffect = VenusLighthouse_CreateBlendedPassageEffect(
         pillar->x.fixed, 0, px(512), SPRITE_CRATE);
     Actor_WaitUntilIdle(pillar);
-    pillar->x.fixed = zero;
-    pillar->z.fixed = zero;
+    pillar->x.fixed = 0;
+    pillar->z.fixed = 0;
     Actor_Release(passageEffect);
   } else {
     VenusLighthouse_MoveCarryPillar();
@@ -2124,25 +2056,13 @@ static void VenusLighthouse_JumpOrPushSwitchPillar(void) {
 }
 
 // Keep a stacked pillar sixteen pixels above its supporting actor.
-// UB: update routines return void. In tbs-en venus_lighthouse, plain
-// void differs in 7 bytes (extent 34 to 32 bytes). Keep the
-// unused native result in matching builds.
-#ifdef UBFIX
-static void
-VenusLighthouse_FollowSupportingPillarHeight(struct Actor *updated) {
-#else
-static s32 VenusLighthouse_FollowSupportingPillarHeight(struct Actor *updated) {
-#endif
-  struct Actor *pillar = (struct Actor *)updated;
+static UNREAD_RESULT
+VenusLighthouse_FollowSupportingPillarHeight(struct Actor *pillar) {
   struct Actor *support;
 
   support = Actor_Get(pillar->timer);
   pillar->y.fixed = support->y.fixed + px(16);
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 /// Moves the floating supports to the heights selected by their timers.
@@ -2784,7 +2704,7 @@ s32 VenusLighthouse_Initialize(void) {
   GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_LIT);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   sceneId = gMainRoutineWork.next;
-  // Restore the scholars and soldiers outside and each interior puzzle by its
+  // Restore the scholars and soldiers outside and each room's puzzle by its
   // entrance.
   if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -2957,11 +2877,7 @@ s32 VenusLighthouse_Initialize(void) {
         actor->collisionFlags = 0;
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         Actor_SetPosition(ACTOR_GATE_SPARKLE, 743, 696);
-#ifdef UBFIX
-        actor->update = VenusLighthouse_TrailLight;
-#else
         actor->update = (void (*)(struct Actor *))VenusLighthouse_TrailLight;
-#endif
       }
       VenusLighthouse_MoveGatePillar();
       break;
@@ -3082,11 +2998,7 @@ s32 VenusLighthouse_Initialize(void) {
         actor->collisionFlags = 0;
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         Actor_SetPosition(ACTOR_SWITCH_GATE_SPARKLE, 727, 632);
-#ifdef UBFIX
-        actor->update = VenusLighthouse_TrailLight;
-#else
         actor->update = (void (*)(struct Actor *))VenusLighthouse_TrailLight;
-#endif
       }
       VenusLighthouse_MoveSwitchPillar();
       break;
@@ -3252,11 +3164,7 @@ s32 VenusLighthouse_Initialize(void) {
         actor->collisionFlags = 0;
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         Actor_SetPosition(ACTOR_SOCKET_GATE_SPARKLE, 215, 600);
-#ifdef UBFIX
-        actor->update = VenusLighthouse_TrailLight;
-#else
         actor->update = (void (*)(struct Actor *))VenusLighthouse_TrailLight;
-#endif
       }
       VenusLighthouse_MoveSocketPillar();
       break;
@@ -3635,15 +3543,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
 }
 
 // Emit rising particles around the actor every four frames.
-// UB: update routines return void. In tbs-en venus_lighthouse, plain
-// void differs in 14 bytes of the 196-byte function. Keep the unused
-// native result in matching builds.
-#ifdef UBFIX
-static void VenusLighthouse_UpdateRisingSpray(struct Actor *updated) {
-#else
-static s32 VenusLighthouse_UpdateRisingSpray(struct Actor *updated) {
-#endif
-  struct Actor *actor = (struct Actor *)updated;
+static UNREAD_RESULT VenusLighthouse_UpdateRisingSpray(struct Actor *actor) {
   struct EffectOptions options;
   s32 framePhase;
   s32 particleX, particleY, particleZ, riseSpeed;
@@ -3669,11 +3569,7 @@ static s32 VenusLighthouse_UpdateRisingSpray(struct Actor *updated) {
                           EFFECT_USE_TYPE | EFFECT_USE_SCRIPT,
                       &options);
   }
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 /// Lands the leader on ACTOR_RISING_PLATFORM, then raises both in a rising
@@ -3773,8 +3669,7 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
 /// one of the two lights' edge check before any search. On the fourth floor
 /// only the middle socket has more than one piece, and only the light from
 /// the south-east socket reaches it.
-static s32 VenusLighthouse_RouteLight(struct Actor *interpreter) {
-  struct Actor *light = interpreter;
+static s32 VenusLighthouse_RouteLight(struct Actor *light) {
   struct FieldPosition pillarPosition;
   struct Actor *pillar;
   struct Sprite *sprite;
@@ -4734,7 +4629,7 @@ struct Trigger gVenusLighthouseEntryTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SOLDIER_OPENED_DOOR, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseTheYoungBoySeemedToGlow) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SOLDIER_HEADED_FOR_BABI, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseTheyWerentInVenusLighthouseVery) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SOLDIER_COLOSSO_VICTORS, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseIThoughtIRecognizedOneOf) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gVenusLighthouseGroundFloorTriggers[] = {
@@ -4789,7 +4684,7 @@ struct Trigger gVenusLighthouseGroundFloorTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_WALL_PILLAR, CONDITION_ALWAYS, EVENT(VenusLighthouse_CarryPillarPastWall) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(VenusLighthouse_RevealPath) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(VenusLighthouse_HidePath) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gVenusLighthouseFirstFloorTriggers[] = {
@@ -4832,7 +4727,7 @@ struct Trigger gVenusLighthouseFirstFloorTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CARRY_PILLAR + 1, CONDITION_ALWAYS, EVENT(VenusLighthouse_MoveCarryPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_FIRST_CARRY_PILLAR, CONDITION_ALWAYS, EVENT(VenusLighthouse_CarryPillarAcrossGap) },
     { PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_FIRST_CARRY_PILLAR + 1, CONDITION_ALWAYS, EVENT(VenusLighthouse_CarryPillarAcrossGap) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gVenusLighthouseSecondFloorTriggers[] = {
@@ -4850,7 +4745,7 @@ struct Trigger gVenusLighthouseSecondFloorTriggers[] = {
     { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_GATE_PILLAR, FLAG_VENUS_LIGHTHOUSE_GATE_OPEN, EVENT(VenusLighthouse_JumpOrPushGatePillar) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(VenusLighthouse_SearchLockedDoor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GATE_PILLAR, FLAG_VENUS_LIGHTHOUSE_GATE_OPEN, EVENT(VenusLighthouse_MoveGatePillar) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gVenusLighthouseThirdFloorTriggers[] = {
@@ -4880,7 +4775,7 @@ struct Trigger gVenusLighthouseThirdFloorTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_SWITCH_PILLAR, CONDITION_ALWAYS, EVENT(VenusLighthouse_MoveSwitchPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_SWITCH_PILLAR + 1, CONDITION_ALWAYS, EVENT(VenusLighthouse_MoveSwitchPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_SWITCH_PILLAR + 2, CONDITION_ALWAYS, EVENT(VenusLighthouse_MoveSwitchPillar) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gVenusLighthouseFourthFloorTriggers[] = {
@@ -4930,7 +4825,7 @@ struct Trigger gVenusLighthouseFourthFloorTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_SOCKET_PILLAR + 1, CONDITION_ALWAYS, EVENT(VenusLighthouse_MoveSocketPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_SOCKET_PILLAR + 2, CONDITION_ALWAYS, EVENT(VenusLighthouse_MoveSocketPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_SOCKET_PILLAR + 3, CONDITION_ALWAYS, EVENT(VenusLighthouse_MoveSocketPillar) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 

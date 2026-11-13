@@ -1305,8 +1305,7 @@ static void CottageRoomsB_CyclePaletteAndSpawnPair(struct Actor *actor) {
 
 /// Copies the parent's ground height into two oppositely moving vertical
 /// effects.
-static void CottageRoomsB_SpawnEffectPair(struct Actor *actor) {
-  struct Actor *parent = actor;
+static void CottageRoomsB_SpawnEffectPair(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
   struct Sprite *part;
@@ -1727,7 +1726,7 @@ struct Trigger gCottageRoomsB_StormTriggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLegendOfAleph)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookBeingAdept)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, 212, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookTravelersEtiquette)) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gCottageRoomsB_Triggers[] = {
@@ -1758,7 +1757,7 @@ struct Trigger gCottageRoomsB_Triggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLegendOfAleph)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookBeingAdept)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, 212, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookTravelersEtiquette)) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gCottageRoomsB_TriggersAfterLeaving[] = {
@@ -1793,7 +1792,7 @@ struct Trigger gCottageRoomsB_TriggersAfterLeaving[] = {
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLegendOfAleph)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookBeingAdept)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, 212, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookTravelersEtiquette)) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gCottageRoomsB_TriggersAfterKalay[] = {
@@ -1843,7 +1842,7 @@ struct Trigger gCottageRoomsB_TriggersAfterKalay[] = {
     { EXAMINE_TRIGGER(EXAMINE_JAR), 108, FLAG_VALE_JAR_VIAL, FIND_ITEM(ITEM_VIAL) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), 107, FLAG_VALE_BARREL_COINS, FIND_COINS(123) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 109, FLAG_VALE_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gCottageRoomsB_BabiScholarsTriggers[] = {
@@ -1862,7 +1861,7 @@ struct Trigger gCottageRoomsB_BabiScholarsTriggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresABookEntitledEncyclopediaOf)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresANotebookEntitledExperimentsIn)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresANotebookEntitledStudyOf)) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gCottageRoomsB_BabiScholarsLaterTriggers[] = {
@@ -1881,6 +1880,6 @@ struct Trigger gCottageRoomsB_BabiScholarsLaterTriggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresABookEntitledEncyclopediaOf)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresANotebookEntitledExperimentsIn)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeTheresANotebookEntitledStudyOf)) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on

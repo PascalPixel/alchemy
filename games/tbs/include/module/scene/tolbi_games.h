@@ -1,11 +1,8 @@
-#ifndef ALCHEMY_MODULE_MAP_TOLBI_GAMES_H
-#define ALCHEMY_MODULE_MAP_TOLBI_GAMES_H
+#ifndef ALCHEMY_MODULE_SCENE_TOLBI_GAMES_H
+#define ALCHEMY_MODULE_SCENE_TOLBI_GAMES_H
 
 #include "types.h"
 #include "scene_tables.h"
-
-struct Trigger;
-struct ActorPlacement;
 
 const struct SceneEntrance *TolbiSpring_GetEntrances(void);
 const struct SceneExitRegion *TolbiSpring_GetRegions(void);

@@ -34,9 +34,7 @@
 // removes the column.
 
 /// Raises the spark while its scale follows a half-sine pulse.
-static s32
-MercuryLighthouse_AdvanceAnchoredRiseFrame(struct Actor *interpreter) {
-  struct Actor *effect = interpreter;
+static s32 MercuryLighthouse_AdvanceAnchoredRiseFrame(struct Actor *effect) {
   struct Actor *anchor = effect->watchedActor;
   s16 step = ++effect->timer;
   s32 scale;
@@ -55,8 +53,7 @@ MercuryLighthouse_AdvanceAnchoredRiseFrame(struct Actor *interpreter) {
 }
 
 /// Grows the moving light over the first sixteen script frames.
-static s32 MercuryLighthouse_GrowLight(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 MercuryLighthouse_GrowLight(struct Actor *actor) {
   s16 frame;
 
   frame = ++actor->timer;
@@ -69,8 +66,7 @@ static s32 MercuryLighthouse_GrowLight(struct Actor *interpreter) {
 }
 
 /// Expands the released light before its script removes it.
-static s32 Actor_AdvanceScaleCounter(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 Actor_AdvanceScaleCounter(struct Actor *actor) {
   s16 frame;
 
   frame = ++actor->timer;
@@ -84,8 +80,7 @@ static s32 Actor_AdvanceScaleCounter(struct Actor *interpreter) {
 
 /// Follows the watched actor and alternates the light's animation
 /// parameter.
-static s32 MercuryLighthouse_FollowLeader(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 MercuryLighthouse_FollowLeader(struct Actor *actor) {
   struct Actor *leader;
   s32 targetZ;
   s32 targetX;
@@ -293,7 +288,6 @@ void MercuryLighthouse_HopAcrossPool(void) {
   u32 keys;
   s32 n;
   s32 i;
-  u8 zero;
   union FieldCoordinate pos[3];
 
   state = *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
@@ -344,8 +338,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
                                     pos[2].fixed);
       if (sprite != NULL) {
         Sprite_StartAnimation(sprite, 6);
-        zero = 0;
-        sprite->flags = zero;
+        sprite->flags = 0;
       }
       state->stepEffect = obj;
     }

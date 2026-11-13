@@ -223,14 +223,7 @@ static void LamakanDesert_TalkToSmog(void) {
 
 // The update a leader pulled into an Ant Lion's pit runs: sand sounds every 8
 // frames and a spray of sand every 16.
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void changes 104 to 100 bytes in tbs-en.
-#ifdef UBFIX
-static void LamakanDesert_LeaderSpraySand(struct Actor *updated) {
-#else
-static s32 LamakanDesert_LeaderSpraySand(struct Actor *updated) {
-#endif
-  struct Actor *actor = (struct Actor *)updated;
+static UNREAD_RESULT LamakanDesert_LeaderSpraySand(struct Actor *actor) {
   struct EffectOptions params;
   s32 phase;
 
@@ -239,11 +232,7 @@ static s32 LamakanDesert_LeaderSpraySand(struct Actor *updated) {
   }
   phase = gFrameCount & 15;
   if (phase != 0) {
-#ifdef UBFIX
-    return;
-#else
-    return 0;
-#endif
+    RETURN_UNREAD(0);
   }
   params.startScaleX = 4 * Q16_ONE / 5;
   params.startScaleY = 4 * Q16_ONE / 5;
@@ -251,11 +240,7 @@ static s32 LamakanDesert_LeaderSpraySand(struct Actor *updated) {
   FieldEffect_Spawn(
       actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, phase, phase,
       EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | EFFECT_SCRIPT_MEDIUM, &params);
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 /// Where the party can enter each of the four scenes.
@@ -333,19 +318,11 @@ const struct Trigger *LamakanDesert_GetTriggers(void) {
   return gLamakanDesertTriggers;
 }
 
-#ifdef UBFIX
 /// Reveal wears off, and the desert's secrets sink under the sand again. It
 /// also runs on every entry to Lamakan Desert. The pits, the Manticore and Smog
 /// vanish under the sand (cells 70, 68 or 69, 99 over the saved patches), the
 /// chests and Psynergy Stones hide and the heat haze shimmers.
-static void Reveal_HideSecrets(void) {
-#else
-/// Reveal wears off, and the desert's secrets sink under the sand again. It
-/// also runs on every entry to Lamakan Desert. The pits, the Manticore and Smog
-/// vanish under the sand (cells 70, 68 or 69, 99 over the saved patches), the
-/// chests and Psynergy Stones hide and the heat haze shimmers.
-static s32 Reveal_HideSecrets(void) {
-#endif
+static UNREAD_RESULT Reveal_HideSecrets(void) {
   s32 markerId;
 
   GameFlag_Clear(FLAG_SECRETS_REVEALED);
@@ -408,17 +385,10 @@ static s32 Reveal_HideSecrets(void) {
   }
 }
 
-#ifdef UBFIX
 /// Casting Reveal uncovers what the desert's sand hides. In Lamakan Desert, the
 /// saved patches of sand come back, the pits, the Manticore and Smog stand
 /// where they are, the chests and Psynergy Stones show and the haze stops.
-static void Reveal_ShowSecrets(void) {
-#else
-/// Casting Reveal uncovers what the desert's sand hides. In Lamakan Desert, the
-/// saved patches of sand come back, the pits, the Manticore and Smog stand
-/// where they are, the chests and Psynergy Stones show and the haze stops.
-static s32 Reveal_ShowSecrets(void) {
-#endif
+static UNREAD_RESULT Reveal_ShowSecrets(void) {
   s32 i;
 
   GameFlag_Clear(FLAG_DESERT_EVENT_RUNNING);
@@ -775,7 +745,7 @@ static void HeatGauge_CountStep(void) {
     if (phase != 0) {
       return;
     }
-    // Reads the frame counter again and drops the value, as the native does.
+    // Reads the frame counter again and drops the value.
     gFrameCount;
     params.startScaleX = 4 * Q16_ONE / 5;
     params.startScaleY = 4 * Q16_ONE / 5;
@@ -846,11 +816,7 @@ static void LamakanDesert_FallIntoPit(void) {
   Actor_SetAnimationSpeedById(ACTOR_PARTY_LEADER, 24);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.1);
   record = Actor_Get(ACTOR_PARTY_LEADER);
-#ifdef UBFIX
-  record->update = LamakanDesert_LeaderSpraySand;
-#else
   record->update = (void (*)(struct Actor *))LamakanDesert_LeaderSpraySand;
-#endif
   record = Actor_Get(best);
   if (record != 0) {
     Actor_SetDestination(ACTOR_PARTY_LEADER, record->x.part.pixel,
@@ -1408,7 +1374,7 @@ struct Trigger gLamakanDesertTriggers[] = {
     { TRIGGER_STEP, 105, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
     { TRIGGER_STEP, 106, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
     { TRIGGER_STEP, 107, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 

@@ -37,10 +37,9 @@ void SelectionMenu_Create(void) {
     screen->records[i + SELECTION_RECORD_CHOSEN].kind = ICON_KIND_NONE;
     i++;
   } while (i != 5);
-  /* FAKEMATCH(temporary): i, left at 5 by the loop, indexes records 7 and 8;
-   * as records[7] and records[8], 6 of 124 instructions differ in tbs-en. */
+  // The row has two icons more than the chosen ones; i is 5.
   screen->records[i + SELECTION_RECORD_ROW].kind = ICON_KIND_NONE;
-  screen->records[i + 3].kind = ICON_KIND_NONE;
+  screen->records[i + SELECTION_RECORD_ROW + 1].kind = ICON_KIND_NONE;
   screen->records[0].kind = FALSE;
   screen->records[1].kind = FALSE;
   screen->records[0].y = 0;
@@ -846,8 +845,7 @@ void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
     } else {
       node = state->head;
       i = 64;
-      /* FAKEMATCH(temporary): kind holds the 0; as records[1].kind = FALSE,
-       * 28 of 184 instructions differ in tbs-en. */
+      // kind, which later takes the head's kind, carries the 0 first.
       kind = 0;
       state->records[1].kind = kind;
       while (node->next != NULL) {
@@ -1381,11 +1379,6 @@ void Resource_ResetPendingTransfer(void) {
   }
 }
 
-#if TBS_PATCH_2
-
-#define HAS_LOCALIZED_MENU_GUARD 1
-#endif
-
 /// Runs the field menu until the player picks something that leaves it, and
 /// returns the chosen screen's result. Cancelling the menu returns an
 /// undefined value, the missing result of PartyStatus_CloseWithMenu (0 under
@@ -1403,11 +1396,10 @@ s32 FieldMenu_Run(void) {
   for (;;) {
     PartyStatus_OpenAndWait();
     selection = FieldMenu_SelectCommand(selection);
-    // German, Spanish, French and Italian: mark a menu open (field work byte
-    // 0xcca, which pauses Reveal's sparkles) and, while Reveal is active
-    // (FieldWork.revealActive), clear its sparkles.
-#if defined(HAS_LOCALIZED_MENU_GUARD)
-    state[0xcca] = 1;
+    // German, Spanish, French and Italian: mark the menu open, which pauses
+    // Reveal's sparkles, and, while Reveal is active, clear its sparkles.
+#if TBS_PATCH_2
+    ((struct FieldWork *)state)->menuOpen = 1;
     if (((struct FieldWork *)state)->revealActive != 0) {
       FieldEffect_ReleaseRevealSparklesFar();
       wait(1);
@@ -1459,8 +1451,8 @@ s32 FieldMenu_Run(void) {
     break;
   }
 
-#if defined(HAS_LOCALIZED_MENU_GUARD)
-  state[0xcca] = 0;
+#if TBS_PATCH_2
+  ((struct FieldWork *)state)->menuOpen = 0;
 #endif
   return ret;
 }

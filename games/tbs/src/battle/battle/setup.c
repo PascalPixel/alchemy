@@ -19,8 +19,7 @@
 /// transform state, and through BattleCamera_SetRange the background's affine
 /// page.
 void BattleCamera_Update(void) {
-  // UB: indexing past scalar gBattleCamera reaches other heap slots. Named
-  // slots add four bytes in the native EN trial (248 to 252 bytes).
+  // UB: indexing past scalar gBattleCamera reaches other heap slots.
 #ifdef UBFIX
   struct BattleCamera *camera = gBattleCamera;
   struct BattleBackgroundWork *view =
@@ -184,6 +183,8 @@ s32 Battle_ShiftVramTiles(void) {
 
 /// Nothing in the source calls it.
 void Battle_ClearBg0Vofs(void) {
+  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 4 of
+   * 4 instructions differ in tbs-en. */
   u32 zero = 0;
 
   REG_BG0VOFS = zero;
@@ -197,11 +198,7 @@ void Party_BattleSetupNoOp(s32 unused) {}
 /// their turns, statuses, Djinn element boosts, the countdowns) and
 /// recalculates their stats, as a battle ends. Called by Battle_Run
 /// on every way out of the battle.
-#ifdef UBFIX
-void BattleParty_ResetActiveRuntimeFields(void) {
-#else
-s32 BattleParty_ResetActiveRuntimeFields(void) {
-#endif
+UNREAD_RESULT BattleParty_ResetActiveRuntimeFields(void) {
   u16 unitIds[10];
   s32 count;
   s32 i;
@@ -260,11 +257,7 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
 /// unit has no battle object is Set again and leaves the list. Called by
 /// Battle_Run once the unit lists and battle objects are in place.
 /// Changes the party's and the opponent's recovery lists and Djinn states.
-#ifdef UBFIX
-void DjinnRecovery_Reconcile(void) {
-#else
-s32 DjinnRecovery_Reconcile(void) {
-#endif
+UNREAD_RESULT DjinnRecovery_Reconcile(void) {
   u16 unitIds[10];
   s32 count;
   s32 i;

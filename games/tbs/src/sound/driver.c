@@ -4,6 +4,8 @@
 /// volume, pitch, pan and modulation) and the songs' extended commands.
 
 #include "../../include/sound/sound_driver.h"
+#include "../../include/sound/sound.h"
+#include "fixed_math.h"
 #include "types.h"
 #include "../../include/system/io_reg.h"
 
@@ -22,29 +24,6 @@ void Clear64byte(void *block) {
   MPLAY_FUNC_CAST(void (*)(void *),
                   *(&gMPlayJumpTable[MPLAY_JUMP_CLEAR_64BYTE]))(block);
 }
-
-s32 __divsi3(s32 numerator, s32 denominator);
-void MPlayJumpTableCopy(MPlayFunc *table);
-void ply_note(u32 command, struct MusicPlayerInfo *player,
-              struct MusicPlayerTrack *track);
-void DummyFunc(void);
-void SampleFreqSet(u32 mode);
-void m4aSoundVSyncOff(void);
-void m4aSoundVSyncOn(void);
-extern const u16 gPcmSamplesPerVBlankTable[];
-
-void MPlayMain(struct MusicPlayerInfo *player);
-void TrackStop(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
-
-struct MusicPlayerInfo;
-
-extern const u8 gCgbScaleTable[];
-extern const s16 gCgbFreqTable[];
-extern const u8 gNoiseTable[];
-
-void CgbOscOff(u8 channel);
-
-extern const u8 gCgb3Vol[];
 
 /// The VBlank rate in ten-thousandths of a hertz: 59.7275 VBlanks a second.
 #define SOUND_VBLANK_RATE_E4 597275
@@ -181,7 +160,6 @@ void m4aSoundMode(u32 mode) {
 /// Unused: silences every PCM and CGB channel with the sound work's ident
 /// raised. Nothing in the game calls it.
 UNUSED void SoundClear(void) {
-  // Splitting the counter or typed iterators changes the native EN registers.
   struct SoundInfo *work = SOUND_INFO_PTR;
   s32 channelCounter;
   void *channel;

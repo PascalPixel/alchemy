@@ -622,9 +622,8 @@ void Portrait_CloseWindow(u32 speaker) {
   for (windowIndex = 0; windowIndex != WINDOW_COUNT; windowIndex++, window++) {
     portraitSprite = window->sprites.head;
 #ifdef UBFIX
-    // Window_Create and the closing update leave empty heads NULL. Skip
-    // them before reading kind: dereferencing that NULL pointer is undefined.
-    // The plain guard adds four bytes to the native English object.
+    // Window_Create and the closing update leave empty heads NULL. Skip them
+    // before reading kind: dereferencing that NULL pointer is undefined.
     if (portraitSprite == NULL)
       continue;
 #endif

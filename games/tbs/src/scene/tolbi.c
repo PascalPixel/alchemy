@@ -143,24 +143,16 @@ static s32 Tolbi_KidStopForTarget(struct Actor *kid, struct Actor *target,
   return stopped;
 }
 
-// The update of the two children running their loop. Each stops when
-// it runs up behind the other, and otherwise when the party leader is in its
-// way. While the party talks to someone or Mind Read shows thoughts (the range
-// widens to 26 pixels), the child being talked to stops whatever the
-// direction.
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void removes its zero result; its aligned extent stays 152 bytes.
-#ifdef UBFIX
-static void Tolbi_UpdateKid(struct Actor *updated) {
-#else
-static s32 Tolbi_UpdateKid(struct Actor *updated) {
-#endif
-  struct Actor *self = updated;
+// The update of the two children running their loop. Each stops when it runs up
+// behind the other, and otherwise when the party leader is in its way. While
+// the party talks to someone or Mind Read shows thoughts (the range widens to
+// 26 pixels), the child being talked to stops whatever the direction.
+static UNREAD_RESULT Tolbi_UpdateKid(struct Actor *updated) {
   u8 **workAreas = gWindowWork;
   struct WindowWork *ui = (struct WindowWork *)workAreas[0];
   struct FieldWork *work =
       (struct FieldWork *)workAreas[HEAP_SLOT_FIELD - HEAP_SLOT_WINDOW];
-  u16 *kidFlags = (u16 *)&self->timer;
+  u16 *kidFlags = (u16 *)&updated->timer;
   s32 force = 0;
   s32 range = 18;
   struct Actor *other;
@@ -171,12 +163,8 @@ static s32 Tolbi_UpdateKid(struct Actor *updated) {
   } else {
     other = Actor_Get(ACTOR_TOLBI_OLDER_BROTHER);
   }
-  if (Tolbi_KidStopForTarget(self, other, 32, 0) != 0) {
-#ifdef UBFIX
-    return;
-#else
-    return 0;
-#endif
+  if (Tolbi_KidStopForTarget(updated, other, 32, 0) != 0) {
+    RETURN_UNREAD(0);
   }
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -188,12 +176,8 @@ static s32 Tolbi_UpdateKid(struct Actor *updated) {
     }
   }
 
-  Tolbi_KidStopForTarget(self, leader, range, force);
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  Tolbi_KidStopForTarget(updated, leader, range, force);
+  RETURN_UNREAD(0);
 }
 
 const struct SceneEntrance *Tolbi_GetEntrances(void) { return gTolbiEntrances; }
@@ -507,11 +491,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   Actor_SetPosition(ACTOR_TOLBI_OLDER_BROTHER, 352, 352);
   Actor_SetScript(ACTOR_TOLBI_OLDER_BROTHER, gTolbiOlderBrotherRun);
   actor = Actor_Get(ACTOR_TOLBI_OLDER_BROTHER);
-#ifdef UBFIX
-  kidUpdate = Tolbi_UpdateKid;
-#else
   kidUpdate = (void (*)(struct Actor *))Tolbi_UpdateKid;
-#endif
   actor->timer = KID_CHASES_YOUNGER;
   actor->update = kidUpdate;
   clearFlags = 0;
@@ -978,7 +958,7 @@ struct Trigger gTolbiTriggersFestival[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_TOLBI_PUDDLE, FLAG_TOLBI_PUDDLE_FROZEN, EVENT(Tolbi_FreezePuddle) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Tolbi_RevealHiddenChest) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Tolbi_HideRevealedChest) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 /// On finals day.
@@ -1049,7 +1029,7 @@ struct Trigger gTolbiTriggersFinalsDay[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_TOLBI_PUDDLE, FLAG_TOLBI_PUDDLE_FROZEN, EVENT(Tolbi_FreezePuddle) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Tolbi_RevealHiddenChest) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Tolbi_HideRevealedChest) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 /// After Colosso has ended.
@@ -1102,7 +1082,7 @@ struct Trigger gTolbiTriggersAfterColosso[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_TOLBI_PUDDLE, FLAG_TOLBI_PUDDLE_FROZEN, EVENT(Tolbi_FreezePuddle) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Tolbi_RevealHiddenChest) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Tolbi_HideRevealedChest) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 

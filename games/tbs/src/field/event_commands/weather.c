@@ -259,8 +259,7 @@ void FieldMotes_Start(void) {
   size = sizeof(struct WeatherWork);
   work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
   mote = work->particles;
-  /* FAKEMATCH(temporary): size takes the fill's 0; as 0 in the fill, 4 of 83
-   * instructions differ in tbs-en. */
+  // size, done with once the work is allocated, carries the fill's 0.
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
@@ -356,10 +355,8 @@ void FieldEffect_UpdateSparkles(void) {
 #ifdef UBFIX
         frames = gFrameCount;
 #else
-        // UB: this drops volatile and reads a u32 as unsigned long.
-        // The unsigned long alias combines the size and flip stores; as
-        // gFrameCount or a u32 alias, 3 of 235 instructions differ in tbs-en.
-        // UBFIX reads the declared type.
+        // UB: this drops volatile and reads a u32 as unsigned long. UBFIX reads
+        // the declared type.
         frames = *(unsigned long *)&gFrameCount;
 #endif
         sparkle->y = sy;
@@ -413,8 +410,7 @@ void FieldEffect_InitializeSparkles(void) {
   u8 *tiles;
   u32 i;
 
-  /* FAKEMATCH(temporary): size takes the fill's 0; as 0 in the fill, 4 of 74
-   * instructions differ in tbs-en. */
+  // size, done with once the work is allocated, carries the fill's 0.
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);

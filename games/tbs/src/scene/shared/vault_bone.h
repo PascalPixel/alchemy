@@ -1,5 +1,5 @@
 /// @file
-/// Vault's interiors, before and after the thieves are caught: the Bone left
+/// Vault's rooms, before and after the thieves are caught: the Bone left
 /// on the floor of the house where the dog's owner offers bones. They are
 /// "leftover bones from dinner".
 #include "types.h"

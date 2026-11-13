@@ -409,8 +409,8 @@ static void CrossboneIsleSteppingStones_SetCellAttributes(
   struct MapGridScrollWork *grid = gMapGridWork[0];
 
   if (grid != 0) {
-    // UB: the native bitfield view aliases MapGridCell storage. Byte writes
-    // keep its fields separate without that alias (tbs-en: 88 to 84 bytes).
+    // UB: the bitfield view aliases MapGridCell storage; UBFIX writes the
+    // bytes.
 #ifdef UBFIX
     u8 *cell = (u8 *)grid->layers[layer].cells;
 
@@ -626,35 +626,29 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
 /// rotation.
 static void
 CrossboneIsleSteppingStones_UpdateDampedParticle(struct Actor *actor) {
+  struct FieldEffect *effect = (struct FieldEffect *)actor;
   s32 velocityX;
   s32 velocityY;
   s32 velocityZ;
 
-  ((struct FieldEffect *)actor)->x += ((struct FieldEffect *)actor)->velocity.x;
-  ((struct FieldEffect *)actor)->y += ((struct FieldEffect *)actor)->velocity.y;
-  ((struct FieldEffect *)actor)->z += ((struct FieldEffect *)actor)->velocity.z;
-  velocityX = ((struct FieldEffect *)actor)->velocity.x;
-  velocityY = ((struct FieldEffect *)actor)->velocity.y;
-  velocityZ = ((struct FieldEffect *)actor)->velocity.z;
-  ((struct FieldEffect *)actor)->velocity.x =
-      velocityX - Math_Divide(velocityX, 10);
-  ((struct FieldEffect *)actor)->velocity.y =
-      velocityY - Math_Divide(velocityY, 3);
-  ((struct FieldEffect *)actor)->velocity.z =
-      velocityZ - Math_Divide(velocityZ, 10);
-  ((struct FieldEffect *)actor)->scaleX +=
-      ((struct FieldEffect *)actor)->scaleRateX;
-  ((struct FieldEffect *)actor)->scaleY +=
-      ((struct FieldEffect *)actor)->scaleRateY;
-  ((struct FieldEffect *)actor)->sprite->rotation +=
-      ((struct FieldEffect *)actor)->spin;
+  effect->x += effect->velocity.x;
+  effect->y += effect->velocity.y;
+  effect->z += effect->velocity.z;
+  velocityX = effect->velocity.x;
+  velocityY = effect->velocity.y;
+  velocityZ = effect->velocity.z;
+  effect->velocity.x = velocityX - Math_Divide(velocityX, 10);
+  effect->velocity.y = velocityY - Math_Divide(velocityY, 3);
+  effect->velocity.z = velocityZ - Math_Divide(velocityZ, 10);
+  effect->scaleX += effect->scaleRateX;
+  effect->scaleY += effect->scaleRateY;
+  effect->sprite->rotation += effect->spin;
 }
 
 /// Sets the actor's sprite to the colour mode (enum SpriteColorMode) in
 /// the low four bits of its timer.
 static s32
-CrossboneIsleSteppingStones_SetChildValueFromTimer(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+CrossboneIsleSteppingStones_SetChildValueFromTimer(struct Actor *actor) {
   Actor_SetSpriteColor(actor, actor->timer & 15);
   return 0;
 }
@@ -947,20 +941,10 @@ CrossboneIsleSteppingStones_SyncPriorityIfAhead(struct Actor *front,
   return result;
 }
 
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void changes 320 to 316 bytes in tbs-en.
-#ifdef UBFIX
 /// Keeps each moving pillar's priority and collision flags consistent with the
 /// leader.
-static void
-CrossboneIsleSteppingStones_UpdateActorPriority(struct Actor *updated) {
-#else
-/// Keeps each moving pillar's priority and collision flags consistent with the
-/// leader.
-static s32
-CrossboneIsleSteppingStones_UpdateActorPriority(struct Actor *updated) {
-#endif
-  struct Actor *actor = (struct Actor *)updated;
+static UNREAD_RESULT
+CrossboneIsleSteppingStones_UpdateActorPriority(struct Actor *actor) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 hit;
   u32 id;
@@ -968,11 +952,7 @@ CrossboneIsleSteppingStones_UpdateActorPriority(struct Actor *updated) {
   if (gFieldWork->castStarted == 1) {
     actor->sprite->image.priority = leader->sprite->image.priority;
     actor->collisionFlags |= ACTOR_SOLID;
-#ifdef UBFIX
-    return;
-#else
-    return 0;
-#endif
+    RETURN_UNREAD(0);
   }
   hit = CrossboneIsleSteppingStones_SyncPriorityIfBehind(actor, leader);
   for (id = ACTOR_FIRST_PILLAR; id <= ACTOR_FIRST_PILLAR + 3; id++) {
@@ -1000,11 +980,7 @@ CrossboneIsleSteppingStones_UpdateActorPriority(struct Actor *updated) {
   if (hit == 0) {
     actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   }
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 /// Sorts the four pillars by height and depth, carrying their saved cell state
@@ -1019,7 +995,6 @@ static void CrossboneIsleSteppingStones_SortPillarActors(void) {
   struct PillarPlacement savedPlacement;
 #else
   // UB: the original 12-byte scratch receives a 16-byte DMA transfer.
-  // A complete placement array adds four native stack bytes.
   s32 savedPlacement[3];
 #endif
 
@@ -1228,20 +1203,10 @@ static void CrossboneIsleSteppingStones_StopRising(void) {
   leader->riseCounter = 0;
 }
 
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void changes 54 to 52 bytes in tbs-en.
-#ifdef UBFIX
-/// Keeps the frozen puddle's underfoot flag consistent with the leader's height
-/// and depth.
-static void
-CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority(struct Actor *updated) {
-#else
 /// Puts the frozen puddle under the leader when it is behind and below the
 /// leader.
-static s32
-CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority(struct Actor *updated) {
-#endif
-  struct Actor *actor = (struct Actor *)updated;
+static UNREAD_RESULT
+CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority(struct Actor *actor) {
   struct Actor *ref = Actor_Get(ACTOR_PARTY_LEADER);
 
   if (actor->z.fixed > ref->z.fixed) {
@@ -1250,11 +1215,7 @@ CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority(struct Actor *updated) {
       actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   }
 
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 /// Remembers the frozen puddle, installs its priority update routine, and
@@ -1363,18 +1324,9 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
                     &options);
 }
 
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void changes 172 to 168 bytes in tbs-en.
-#ifdef UBFIX
 /// Emits a randomized particle from the thawing puddle every eight frames.
-static void
-CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *updated) {
-#else
-/// Emits a randomized particle from the thawing puddle every eight frames.
-static s32
-CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *updated) {
-#endif
-  struct Actor *actor = (struct Actor *)updated;
+static UNREAD_RESULT
+CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *actor) {
   struct EffectOptions options;
   u32 phase = gFrameCount & 7;
   s32 x;
@@ -1383,11 +1335,7 @@ CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *updated) {
   s32 scale;
 
   if (phase != 0)
-#ifdef UBFIX
-    return;
-#else
-    return 0;
-#endif
+    RETURN_UNREAD(0);
 
   options.palette = 7;
   options.startScaleX = 7 * Q16_ONE / 10;
@@ -1402,11 +1350,7 @@ CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *updated) {
                     EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
                         EFFECT_SCRIPT_MEDIUM,
                     &options);
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 /// Frost ends on the third puddle in CrossboneIsleDragonStatue: it freezes,
@@ -1575,12 +1519,8 @@ static void CrossboneIsleSteppingStones_InitializePillarPriority(s32 id) {
 
   actor->layer = 2;
   actor->motionFlags = 0;
-#ifdef UBFIX
-  actor->update = CrossboneIsleSteppingStones_UpdateActorPriority;
-#else
   actor->update =
       (void (*)(struct Actor *))CrossboneIsleSteppingStones_UpdateActorPriority;
-#endif
 }
 
 /// Matches the leader's draw priority to a nearby pillar in front.
@@ -1917,7 +1857,7 @@ struct ActorPlacement gCrossboneIsleDragonStatueActorPlacements[] = {
 };
 
 struct Trigger gCrossboneIsleSteppingStonesTriggersOther[] = {
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gCrossboneIsleSteppingStonesTriggers[] = {
@@ -1932,7 +1872,7 @@ struct Trigger gCrossboneIsleSteppingStonesTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR + 1, CONDITION_ALWAYS, 0 },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR + 2, CONDITION_ALWAYS, 0 },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR + 3, CONDITION_ALWAYS, 0 },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gCrossboneIsleIcePillarsTriggers[] = {
@@ -1943,7 +1883,7 @@ struct Trigger gCrossboneIsleIcePillarsTriggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_CROSSBONE_ISLE_ICE_PILLARS_MYSTERY_BLADE, FIND_ITEM(ITEM_MYSTERY_BLADE) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_CROSSBONE_ISLE_ICE_PILLARS_222_COINS, FIND_COINS(222) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 103, FLAG_CROSSBONE_ISLE_ICE_PILLARS_ELIXIR, FIND_ITEM(ITEM_ELIXIR) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gCrossboneIsleFloodgateTriggers[] = {
@@ -1957,7 +1897,7 @@ struct Trigger gCrossboneIsleFloodgateTriggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_CROSSBONE_ISLE_FLOODGATE_POTION, FIND_ITEM(ITEM_POTION) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 103, FLAG_CROSSBONE_ISLE_FLOODGATE_NINJA_GARB, FIND_ITEM(ITEM_NINJA_GARB) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 20, CONDITION_ALWAYS, EVENT(CrossboneIsleSteppingStones_FlipWaterSwitch) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gCrossboneIsleStackedPillarsTriggers[] = {
@@ -1981,7 +1921,7 @@ struct Trigger gCrossboneIsleStackedPillarsTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_FIRST_PILLAR + 1, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER + 1, EVENT(CrossboneIsleSteppingStones_MovePillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_FIRST_PILLAR + 2, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER + 2, EVENT(CrossboneIsleSteppingStones_MovePillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_FIRST_PILLAR + 3, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER + 3, EVENT(CrossboneIsleSteppingStones_MovePillar) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 
@@ -2024,5 +1964,5 @@ struct Trigger gCrossboneIsleDragonStatueTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_THIRD_PUDDLE,
      FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN + 2,
      EVENT(CrossboneIsleSteppingStones_FreezeThirdPuddle)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

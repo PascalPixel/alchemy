@@ -74,8 +74,6 @@ enum SoundReverbCode {
   SOUND_REVERB_NONE
 };
 
-s32 Sound_LoadReverbCode(s32 code);
-
 void Bios_CpuSet(const void *source, void *destination, u32 control);
 
 struct MusicPlayerInfo;

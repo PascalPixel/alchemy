@@ -76,7 +76,7 @@ enum {
 /// The residents, numbering gLogRoomsC_ActorPlacements' rows from
 /// ACTOR_FIRST_PLACED.
 /// Their notes quote what they say once the curse is lifted.
-enum KolimaInteriorActorId {
+enum KolimaRoomActorId {
   /// An old man with a cane.
   /// ★ Named from the game: "I heard that traveling warriors from the Goma
   /// Range saved the village."
@@ -499,6 +499,6 @@ struct Trigger gLogRoomsC_Triggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKolimaInteriorsTheresABookEntitledTheHoly)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKolimaInteriorsTheresABookEntitledDictionaryOf)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKolimaInteriorsTheresABookEntitledTheArt)) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on

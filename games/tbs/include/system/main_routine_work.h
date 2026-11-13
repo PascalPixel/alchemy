@@ -13,7 +13,7 @@
 /// A scene's type (Scene.sceneType, copied to MainRoutineWork.sceneType).
 enum SceneType {
   SCENE_TYPE_OTHER = 1, ///< every other scene: dungeons, the world map
-  /// Towns and their interiors, where walking restores no PP, recovers no
+  /// Towns and their rooms, where walking restores no PP, recovers no
   /// Djinn and does no poison damage, Retreat is blocked, Avoid does not wear
   /// off and FLAG_IN_TOWN is set.
   SCENE_TYPE_TOWN = 2

@@ -5,7 +5,6 @@
 #include "scene_tables.h"
 
 u8 *Title_GetEntrances(void);
-s32 Scene_GetExitRegions(void);
 u8 *Title_GetExits(void);
 u8 *Title_GetActorPlacements(void);
 u8 *Title_GetTriggers(void);

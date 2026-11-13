@@ -36,7 +36,7 @@ struct MindReadWork {
 void FieldPsynergy_StartMindReadWave(s32 x, s32 y) {
   struct MindReadWork *work;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ, 664);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ, sizeof(struct MindReadWork));
   FieldPsynergy_FadeToCastColor();
   Dma_Fill32(0, work, 664);
   work->hue = ((u32)(gFrameCount << 1) % (u32)360);
@@ -239,16 +239,15 @@ s32 FixedPoint_Remainder(s32 value, s32 divisor) {
 /// axis), releases it: gFieldEffect_UntargetedActorScript is a lone SC_RELEASE.
 /// Mind Read's particles end this way at the caster.
 void FieldEffect_ReleaseOnArrival(struct Actor *actor) {
-  struct Actor *object = (struct Actor *)actor;
   s32 targetY;
   s32 targetX;
 
-  targetX = object->targetX;
+  targetX = actor->targetX;
   if (targetX == ACTOR_NO_TARGET) // no destination
   {
-    targetY = object->targetY;
-    if ((targetY == targetX) && (object->targetZ == targetY)) {
-      Actor_StartScriptFar(object, gFieldEffect_UntargetedActorScript);
+    targetY = actor->targetY;
+    if ((targetY == targetX) && (actor->targetZ == targetY)) {
+      Actor_StartScriptFar(actor, gFieldEffect_UntargetedActorScript);
     }
   }
 }

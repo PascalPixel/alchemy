@@ -104,8 +104,7 @@ void WorldPicture_Initialize(void) {
 #ifdef UBFIX
   marker = work->markers;
 #else
-  // UB: the flat word view runs across sprite entries. Typed word/sprite
-  // unions change tbs-en setup from 368 to 364 bytes.
+  // UB: the flat word view runs across sprite entries.
   oam = (u32 *)work->markers;
 #endif
   actor = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -267,9 +266,8 @@ void WorldPicture_UpdateMarkers(void) {
     // L or R: the current area.
     areaActor = Actor_Lookup(gMainRoutineWork.leaderActorId);
 #ifdef UBFIX
-    // The native null branch leaves this frame's cursor coordinates unset.
-    // A missing selected actor violates the screen's lifetime contract;
-    // skipping that frame changes tbs-en from 1088 to 1092 bytes.
+    // UB: with no selected actor the ROM leaves this frame's cursor
+    // coordinates unset; UBFIX skips the frame.
     if (areaActor == NULL)
       return;
 #endif
@@ -354,8 +352,7 @@ void WorldPicture_UpdateMarkers(void) {
     width = x - cursorX;
     height = y - cursorY;
     if (width * width + height * height < nearestDistanceSquared) {
-      // UB: marker 0 has no table message. Its unused native read keeps the
-      // 1088-byte tbs-en body; skip the read for that marker with UBFIX.
+      // UB: marker 0 has no table message.
 #ifdef UBFIX
       if (markerIndex != 0)
 #endif
@@ -527,7 +524,7 @@ void WorldPicture_Show(s32 picture) {
 /// On the World Map, shows only the scene's actors within 320 pixels
 /// sideways, 600 above and 400 below the camera.
 void Field_UpdateActorVisibilityBounds(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 x;
   s32 y;
   s32 left;
@@ -539,26 +536,26 @@ void Field_UpdateActorVisibilityBounds(void) {
   // The selected actor lookup has no used result; the bounds follow the
   // camera.
   Actor_GetById(gMainRoutineWork.leaderActorId);
-  object = gFieldWork->camera;
-  x = object->x.fixed;
+  actor = gFieldWork->camera;
+  x = actor->x.fixed;
   left = x - px(320);
   right = x + px(320);
-  y = object->z.fixed;
+  y = actor->z.fixed;
   top = y - px(600);
   bottom = y + px(400);
 
   id = ACTOR_FIRST_PLACED;
   do {
-    object = Actor_Lookup(id);
+    actor = Actor_Lookup(id);
 
-    if (object != 0) {
-      s32 ox = object->x.fixed;
-      s32 oy = object->z.fixed;
+    if (actor != 0) {
+      s32 ox = actor->x.fixed;
+      s32 oy = actor->z.fixed;
 
       if (ox < left || ox > right || oy < top || oy > bottom) {
-        object->spriteStorageKind = ACTOR_SPRITE_NONE;
+        actor->spriteStorageKind = ACTOR_SPRITE_NONE;
       } else {
-        object->spriteStorageKind = ACTOR_SPRITE_ONE;
+        actor->spriteStorageKind = ACTOR_SPRITE_ONE;
       }
     }
     id++;

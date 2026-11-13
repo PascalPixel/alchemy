@@ -286,23 +286,13 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 static void CrossboneIsleKeys_HaltPursuer(void) {}
 
 // Turn the Djinni toward the party leader each frame.
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void changes 38 to 36 bytes in tbs-en.
-#ifdef UBFIX
-static void CrossboneIsleKeys_FaceBaneTowardLeader(struct Actor *updated) {
-#else
-static s32 CrossboneIsleKeys_FaceBaneTowardLeader(struct Actor *updated) {
-#endif
-  struct Actor *actor = updated;
+static UNREAD_RESULT
+CrossboneIsleKeys_FaceBaneTowardLeader(struct Actor *actor) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   actor->facing = ArcTan2(leader->z.fixed - actor->z.fixed,
                           leader->x.fixed - actor->x.fixed);
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 /// In CrossboneIsleBane, the first time the party comes near
@@ -439,12 +429,8 @@ static void CrossboneIsleKeys_BaneLastEscape(void) {
     Actor_SetAttachedEffect(ACTOR_BANE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
     djinni = Actor_Get(ACTOR_BANE);
-#ifdef UBFIX
-    djinni->update = CrossboneIsleKeys_FaceBaneTowardLeader;
-#else
     djinni->update =
         (void (*)(struct Actor *))CrossboneIsleKeys_FaceBaneTowardLeader;
-#endif
     Event_End();
   }
 }
@@ -1464,12 +1450,8 @@ static void CrossboneIsleKeys_InitializeBane(void) {
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
       Actor_SetPosition(ACTOR_BANE, 856, 824);
       djinni = Actor_Get(ACTOR_BANE);
-#ifdef UBFIX
-      djinni->update = CrossboneIsleKeys_FaceBaneTowardLeader;
-#else
       djinni->update =
           (void (*)(struct Actor *))CrossboneIsleKeys_FaceBaneTowardLeader;
-#endif
     } else if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) != 0) {
       Actor_SetPosition(ACTOR_BANE, 888, 664);
       djinni = Actor_Get(ACTOR_BANE);
@@ -1619,7 +1601,7 @@ struct ActorPlacement gCrossboneIsleBaneActorPlacements[] = {
 };
 
 struct Trigger gCrossboneIsleKeysTriggersOther[] = {
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gCrossboneIsleKeysRoomTriggers[] = {
@@ -1644,7 +1626,7 @@ struct Trigger gCrossboneIsleKeysRoomTriggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_CROSSBONE_ISLE_KEYS_FAIRY_RING, FIND_ITEM(ITEM_FAIRY_RING) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_CROSSBONE_ISLE_KEYS_COOKIE, FIND_ITEM(ITEM_COOKIE) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 103, FLAG_CROSSBONE_ISLE_KEYS_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gCrossboneIsleStatuesTriggers[] = {
@@ -1668,7 +1650,7 @@ struct Trigger gCrossboneIsleStatuesTriggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_CROSSBONE_ISLE_STATUES_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_CROSSBONE_ISLE_STATUES_STORM_GEAR, FIND_ITEM(ITEM_STORM_GEAR) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 103, FLAG_CROSSBONE_ISLE_STATUES_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 
@@ -1751,7 +1733,7 @@ struct Trigger gCrossboneIsleBaneTriggers[] = {
      FIND_ITEM(ITEM_ELIXIR)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 107, FLAG_CROSSBONE_ISLE_DEMON_AXE,
      FIND_ITEM(ITEM_DEMON_AXE)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 u32 gCrossboneIsleKeys_SlotColumns[] = {

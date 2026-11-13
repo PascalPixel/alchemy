@@ -5,7 +5,6 @@
 #include "scene_tables.h"
 
 u8 *IncreaseItemAndLevel_GetEntrances(void);
-s32 Scene_GetExitRegions(void);
 u8 *IncreaseItemAndLevel_GetExits(void);
 u8 *IncreaseItemAndLevel_GetActorPlacements(void);
 u8 *IncreaseItemAndLevel_GetTriggers(void);

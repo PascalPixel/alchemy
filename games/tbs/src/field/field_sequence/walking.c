@@ -139,8 +139,6 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 /// Called by Field_UpdateWalking when the leader steps on a cell with a
 /// non-zero cell behavior. Sets work->exit and stops the leader.
 void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
-  // A do/while or while scan changes register allocation (51 text bytes in
-  // tbs-en); keep the sentinel backedge until that form matches.
   s32 exitValue;
   struct FieldWork *work;
   s32 fixedZ;
@@ -502,7 +500,8 @@ void WorldMap_Freeze(void) {
 
   work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(*work));
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    state = HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, 1344);
+    state = HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION,
+                                sizeof(struct ScreenTransitionState));
     if ((state != NULL) && (state->step != 0)) {
       state->start = 0;
       state->end = 0;

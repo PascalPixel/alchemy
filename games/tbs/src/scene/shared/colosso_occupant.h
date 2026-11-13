@@ -16,7 +16,6 @@ static void Colosso_PushActorAhead(void) {
   u32 step;
   u32 direction;
   struct FieldPosition position;
-  s32 zero;
   s32 leaderId;
 
   leaderId = gMainRoutineWork.leaderActorId;
@@ -56,7 +55,6 @@ static void Colosso_PushActorAhead(void) {
   }
 
   pushed->layer = 2;
-  zero = 0;
 
   step = gPushedActor_DirectionSteps[direction];
   position.x = pushed->x.fixed + (step & 0xffff0000);
@@ -85,8 +83,8 @@ static void Colosso_PushActorAhead(void) {
 
   pushed->x.fixed = position.x;
   pushed->z.fixed = position.z;
-  pushed->velocityX = zero;
-  pushed->velocityZ = zero;
+  pushed->velocityX = 0;
+  pushed->velocityZ = 0;
 
   Actor_SelectAnimation(leader, ANIM_STAND);
 }

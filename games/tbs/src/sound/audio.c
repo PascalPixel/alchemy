@@ -5,12 +5,9 @@
 
 #include "types.h"
 #include "../../include/sound/sound_driver.h"
+#include "../../include/sound/sound.h"
 #include "../../include/system/ram_buffer.h"
 #include "../../include/system/io_reg.h"
-
-u32 umul3232H32(u32 left, u32 right);
-extern u8 gScaleTable[];
-extern u32 gFreqTable[];
 
 /// Interpolates adjacent key frequencies and scales them by the wave sample
 /// frequency. Called by ply_note for each PCM note. Returns the wave's
@@ -47,38 +44,10 @@ s32 MidiKeyToFreq(void *wave, u8 key, u8 pitch) {
 /// is DummyFunc (empty_callback.c).
 void UnusedDummyFunc(void) {}
 
-// The music player table supplies the music player count and the mixer's line
-// limit.
-extern char gNumMusicPlayers[];
-extern char gMaxLines[];
+/// The music player count and the mixer's line limit, as the music player
+/// table supplies them.
 #define NUM_MUSIC_PLAYERS ((u16)(u32)gNumMusicPlayers)
 #define MAX_LINES ((u32)gMaxLines)
-
-void SoundMainRAM_Rom(void);
-void SoundInit(struct SoundInfo *work);
-void m4aSoundMode(u32 mode);
-void SoundMain(void);
-void MPlayOpen(struct MusicPlayerInfo *player, struct MusicPlayerTrack *tracks,
-               u8 count);
-void MPlayStart(struct MusicPlayerInfo *player,
-                const struct SongHeader *header);
-void m4aMPlayStop(struct MusicPlayerInfo *player);
-extern struct SoundInfo gSoundInfo;
-extern struct CgbChannel gCgbChans[4];
-extern u8 gMPlayMemAccArea[];
-
-void ply_memacc(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
-void ply_lfos(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
-void ply_mod(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
-void ply_endtie(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
-void SampleFreqSet(u32 mode);
-void TrackStop(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
-void FadeOutBody(struct MusicPlayerInfo *player);
-void TrkVolPitSet(struct MusicPlayerInfo *player,
-                  struct MusicPlayerTrack *track);
-void CgbSound(void);
-void CgbOscOff(u8 channel);
-s32 MidiKeyToCgbFreq(u8 kind, u8 key, u8 fine);
 
 /// Clears the music player's paused flag, raising its ident while it works.
 /// Called by the resume and play-or-resume commands.

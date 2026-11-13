@@ -51,8 +51,7 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
 
   win = (struct WindowWork *)gWindowWork[0];
   // UB: the fabricated HeapSlotsFromWindowView aggregate reaches from the
-  // window slot into HEAP_SLOT_FIELD. Its named load adds eight bytes in native
-  // EN (836 to 844 bytes).
+  // window slot into HEAP_SLOT_FIELD.
 #ifdef UBFIX
   work = gFieldWork;
 #else
@@ -337,10 +336,10 @@ void Event_EmptyCallback(void) {}
 /// screen, before passing it to a window routine that takes tiles; with no
 /// caller, the units it expected can't be told.
 void Event_ShowSpeakerMessage(s32 speaker) {
-  // BUG: the native lookup discards its result and leaves pos unset.
+  // BUG: the lookup's result is discarded, and pos is left unset.
 #ifdef UBFIX
   s32 pos[3];
-  struct Actor *object;
+  struct Actor *actor;
 #else
   struct {
     s32 x, y;
@@ -354,9 +353,9 @@ void Event_ShowSpeakerMessage(s32 speaker) {
   // Actor_Lookup's legacy range also exposes the event fields after
   // them.
   if ((u32)speaker < sizeof(state->actors) / sizeof(state->actors[0]))
-    object = Actor_Lookup(speaker);
+    actor = Actor_Lookup(speaker);
   else
-    object = NULL;
+    actor = NULL;
 #else
   Actor_Lookup(speaker);
 #endif
@@ -368,11 +367,11 @@ void Event_ShowSpeakerMessage(s32 speaker) {
     // Supply the actual speaker position as FieldMessage_ShowAtActor does.
     // A missing actor or failed projection has no position to open
     // around; still consume the message, as the fast-forward path does.
-    if (object != NULL) {
+    if (actor != NULL) {
       if (state->mode == ACTOR_SYSTEM_WORLD_MAP)
         positionFound =
             Transform_ProjectPoint(
-                (const u8 *)object + offsetof(struct Actor, x), pos) != 0;
+                (const u8 *)actor + offsetof(struct Actor, x), pos) != 0;
       else
         positionFound = Actor_GetScreenPosition(speaker, pos) != -1;
     }
@@ -501,7 +500,6 @@ void Message_SetVoiceFromActor(s32 actorId) {
   u8 rate;
   s32 voice;
 
-  // Direct u16 stores shrink the English function from 88 to 84 bytes.
   // Keep the original signed stores; the corresponding u16 alias is legal.
   if (actorId == 0x80000000) {
     *(s16 *)&state->voiceSound = (rate = 0);

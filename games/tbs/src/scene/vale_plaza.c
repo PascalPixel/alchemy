@@ -2661,7 +2661,7 @@ struct Trigger gValePlaza_Triggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SECOND_IVY, (FLAG_VALE_SECOND_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwaySecondIvy) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_THIRD_IVY, (FLAG_VALE_THIRD_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwayThirdIvy) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 100, CONDITION_ALWAYS, EVENT(ValePlaza_UsePsynergyStone) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gValePlaza_StormTriggers[] = {
@@ -2681,11 +2681,11 @@ struct Trigger gValePlaza_StormTriggers[] = {
     { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(ValePlaza_LeaveThroughWestPassage) },
     { TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(ValePlaza_SentToAidElders) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 100, CONDITION_ALWAYS, EVENT(ValePlaza_UsePsynergyStone) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gValePlaza_DepartureTriggers[] = {
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gValePlaza_TriggersAfterLeaving[] = {
@@ -2724,7 +2724,7 @@ struct Trigger gValePlaza_TriggersAfterLeaving[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SECOND_IVY, (FLAG_VALE_SECOND_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwaySecondIvy) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_THIRD_IVY, (FLAG_VALE_THIRD_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwayThirdIvy) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 100, CONDITION_ALWAYS, EVENT(ValePlaza_UsePsynergyStone) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gValePlaza_TriggersAfterKalay[] = {
@@ -2765,7 +2765,7 @@ struct Trigger gValePlaza_TriggersAfterKalay[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SECOND_IVY, (FLAG_VALE_SECOND_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwaySecondIvy) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_THIRD_IVY, (FLAG_VALE_THIRD_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwayThirdIvy) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 100, CONDITION_ALWAYS, EVENT(ValePlaza_UsePsynergyStone) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 u16 gValePlaza_DoorOpens[] = {

@@ -227,24 +227,15 @@ enum { TREASURE_SPOT_PASSAGE = 100 };
 /// Draws the actor behind the background, on sprite priority 3 with
 /// automatic priority off. The first worker from Xian at the Alpine Crossing
 /// runs it from his actor placement.
-static s32 Actor_DrawBehindScenery(struct Actor *interpreter) {
-  struct Actor *actor = (struct Actor *)interpreter;
+static s32 Actor_DrawBehindScenery(struct Actor *actor) {
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->sprite->image.priority = 3;
   actor->sprite->shadow.priority = 3;
   return 0;
 }
 
-// Update routine that turns the party leader toward Feizhi while she runs
-// past.
-// UB: update routines return void. Plain void removes the native zero result
-// and changes its return instructions (three in tbs-en).
-#ifdef UBFIX
-static void AlpineCrossing_LeaderFaceFeizhi(struct Actor *updated) {
-#else
-static s32 AlpineCrossing_LeaderFaceFeizhi(struct Actor *updated) {
-#endif
-  struct Actor *leader = (struct Actor *)updated;
+// Update routine that turns the party leader toward Feizhi while she runs past.
+static UNREAD_RESULT AlpineCrossing_LeaderFaceFeizhi(struct Actor *leader) {
   struct Actor *feizhi;
 
   feizhi = Actor_Get(ACTOR_FEIZHI);
@@ -938,17 +929,10 @@ static void AlpineCrossing_HidePath(void) {
   Event_Wait(1);
 }
 
-// Update routine of the frozen pillar: it draws under the party leader
-// while the leader stands higher than its top, so the leader can climb onto
-// it, and over the leader otherwise.
-// UB: this update routine has no result. Plain void changes the native return
-// from pop {r1}; bx r1 to pop {r0}; bx r0 (tbs-en).
-#ifdef UBFIX
-static void Pillar_SortAgainstLeader(struct Actor *updated) {
-#else
-static s32 Pillar_SortAgainstLeader(struct Actor *updated) {
-#endif
-  struct Actor *pillar = (struct Actor *)updated;
+// Update routine of the frozen pillar: it draws under the party leader while
+// the leader stands higher than its top, so the leader can climb onto it, and
+// over the leader otherwise. bx r1 to pop {r0};
+static UNREAD_RESULT Pillar_SortAgainstLeader(struct Actor *pillar) {
   if (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed > pillar->y.fixed) {
     pillar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   } else {
@@ -984,12 +968,8 @@ static void AlpineCrossing_FreezePuddle(void) {
       (u8)~ACTOR_PRIORITY_UNDERFOOT;
   Actor_Get(ACTOR_WATER_FOR_FROST)->collisionFlags &= (u8)~ACTOR_PUSHABLE;
   Actor_Get(ACTOR_WATER_FOR_FROST)->motionFlags = 0;
-#ifdef UBFIX
-  Actor_Get(ACTOR_WATER_FOR_FROST)->update = Pillar_SortAgainstLeader;
-#else
   Actor_Get(ACTOR_WATER_FOR_FROST)->update =
       (void (*)(struct Actor *))Pillar_SortAgainstLeader;
-#endif
 
   MapGrid_CopyCellAttributes(55, 16, 1, 1, 56, 18);
   MapGrid_CopyCellAttributes(55, 16, 1, 1, 20, 18);
@@ -1325,7 +1305,7 @@ struct Trigger gLamaTemple_Triggers[] = {
     { EXAMINE_TRIGGER_FACING(FACING_NORTHWEST), CELL_BEHAVIOR_LAMA_TEMPLE_PSYNERGY_STONE, FLAG_LAMA_TEMPLE_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { EXAMINE_TRIGGER_FACING(FACING_WEST), CELL_BEHAVIOR_LAMA_TEMPLE_PSYNERGY_STONE, FLAG_LAMA_TEMPLE_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_LAMA_TEMPLE_CHEST, FLAG_LAMA_TEMPLE_WATER_OF_LIFE, FIND_ITEM(ITEM_WATER_OF_LIFE) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gAlpineCrossing_Triggers[] = {
@@ -1356,6 +1336,6 @@ struct Trigger gAlpineCrossing_Triggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_PLANT, FLAG_ALPINE_CROSSING_SPROUT_GROWN, EVENT(AlpineCrossing_GrowSprout) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_ALPINE_CROSSING_SIGNPOST, CONDITION_ALWAYS, EVENT(AlpineCrossing_ReadSignpost) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_ALPINE_CROSSING_CHEST, FLAG_ALPINE_CROSSING_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on

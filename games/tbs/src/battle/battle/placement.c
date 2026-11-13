@@ -69,10 +69,8 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
       palette = 1;
   }
 
-  // The enemies drawn larger or smaller than their sprites, in 16.16.
-  // Grouping equal scale cases shortens the matching EN function by 148
-  // bytes, so each case keeps its own store.
-  // Bandit and Orc Captain are set to 1.0 again.
+  // The enemies drawn larger or smaller than their sprites, in 16.16. Bandit
+  // and Orc Captain are set to 1.0 again.
   actor->scale = Q16_ONE;
   switch (unit->id) {
   case ENEMY_KILLER_APE:
@@ -348,11 +346,7 @@ s32 Enemy_GetFreeUnitId(void) {
 /// Lays the enemies out again and moves each one's battle object anchor to its
 /// new place. Called by BattleAbility_ApplyToTarget after an enemy joins.
 /// Writes the anchorX and anchorZ of every enemy's battle object.
-#ifdef UBFIX
-void BattlePlacement_RelayoutEnemies(void) {
-#else
-s32 BattlePlacement_RelayoutEnemies(void) {
-#endif
+UNREAD_RESULT BattlePlacement_RelayoutEnemies(void) {
   struct BattleWork *battle = gBattleWork;
   u16 unitIds[UNIT_MAX];
   s32 xPositions[ENEMY_BATTLE_SIZE];

@@ -503,7 +503,6 @@ void FieldMessage_Show(s32 message, s32 flags) {
   s32 y;
   s32 x;
   struct Window *window = NULL;
-  s32 zero;
 
   y = x = 0;
   zoom = flags & FIELD_MESSAGE_ZOOM;
@@ -555,10 +554,9 @@ void FieldMessage_Show(s32 message, s32 flags) {
     }
   }
 
-  zero = 0;
-  state->waitingForSound = zero;
-  state->voiceSound = zero;
-  state->voiceCountdown = zero;
+  state->waitingForSound = 0;
+  state->voiceSound = 0;
+  state->voiceCountdown = 0;
   wait(3);
 }
 

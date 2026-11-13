@@ -102,6 +102,8 @@ void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
   s32 verticalSquared;
   s32 diagonal;
   s32 vertical;
+  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 8 of
+   * 127 instructions differ in tbs-en. */
   s32 zero;
   s32 horizontal;
 

@@ -39,7 +39,7 @@ s32 Iwram_RatioMulQ14FarArm(s32 divisor, s32 value);
 /// Actor_RunUpdateAllFromHeap copies and runs it, and nothing calls that;
 /// the field runs Actor_UpdateAllThumb instead.
 void Actor_UpdateAll(void) {
-  struct ActorArmView *object;
+  struct ActorArmView *actor;
   s32 y;
   s32 arrived;
   struct ActorArmView *nextActor;
@@ -57,70 +57,70 @@ void Actor_UpdateAll(void) {
   s32 turnDelta;
   u16 travelAngle;
 
-  for (slot = 0, object = gActors; slot < ACTOR_SLOTS;
-       slot = nextSlot, object = nextActor) {
+  for (slot = 0, actor = gActors; slot < ACTOR_SLOTS;
+       slot = nextSlot, actor = nextActor) {
     nextSlot = slot + 1;
-    nextActor = object + 1;
-    if (object->script == NULL)
+    nextActor = actor + 1;
+    if (actor->script == NULL)
       continue;
-    if (object->update != NULL)
-      object->update((struct Actor *)object);
-    if (object->script == NULL)
+    if (actor->update != NULL)
+      actor->update((struct Actor *)actor);
+    if (actor->script == NULL)
       continue;
-    if (object->paused != 0)
+    if (actor->paused != 0)
       continue;
 
     // Count down a wait, or run commands until one waits for this frame.
     // Words above 63 are labels (SC_LABEL), which the cursor steps over; a
     // command moves the cursor past its own operands.
-    if (object->wait != 0) {
-      object->wait--;
+    if (actor->wait != 0) {
+      actor->wait--;
     } else {
       for (;;) {
-        s32 cursor = (s16)object->scriptCursor;
+        s32 cursor = (s16)actor->scriptCursor;
 #ifdef UBFIX
-        u32 command = object->script[cursor];
+        u32 command = actor->script[cursor];
 #else
-        u32 command = object->script->word[cursor];
+        u32 command = actor->script->word[cursor];
 #endif
 
         if (command <= 63) {
-          if (gActorScript_CommandTable[command]((struct Actor *)object) == 0)
+          if (gActorScript_CommandTable[command]((struct Actor *)actor) == 0)
             break;
         } else {
-          object->scriptCursor++;
+          actor->scriptCursor++;
         }
       }
-      if (object->script == NULL)
+      if (actor->script == NULL)
         continue;
     }
 
-    x = object->x;
-    y = object->y;
-    z = object->z;
+    x = actor->x;
+    y = actor->y;
+    z = actor->z;
 // UB: frozen actors skip the initialization below, but still test arrival.
 #ifdef UBFIX
     arrived = 0;
 #endif
-    if (object->frozen == 0) {
+    if (actor->frozen == 0) {
       arrived = 0;
-      if (object->targetX != TARGET_UNSET) {
+      if (actor->targetX != TARGET_UNSET) {
         // Accelerate towards the target. The first distance is in whole
         // pixels, to stay in range; under 256 pixels it is measured again in
         // 16.16, where the root of a 16.16 square is 8.8 and << 8 makes it
         // 16.16 again.
-        deltaX = (object->targetX - x) / 65536;
-        deltaZ = (object->targetZ - z) / 65536;
+        deltaX = (actor->targetX - x) / 65536;
+        deltaZ = (actor->targetZ - z) / 65536;
         distance = px(IwramSqrt(deltaX * deltaX + deltaZ * deltaZ));
         if (distance <= px(256) - 1) {
-          deltaX = object->targetX - x;
-          deltaZ = object->targetZ - z;
+          deltaX = actor->targetX - x;
+          deltaZ = actor->targetZ - z;
           distance = IwramSqrt(MulQ16(deltaX, deltaX) + MulQ16(deltaZ, deltaZ))
                      << 8;
         }
         if (distance == 0) {
-          x = object->targetX;
-          z = object->targetZ;
+          x = actor->targetX;
+          z = actor->targetZ;
         } else {
           // speedRatio is acceleration / distance in 16.16. Under 256 pixels
           // deltaX and deltaZ are 16.16 too, so each axis gains its share of
@@ -130,21 +130,21 @@ void Actor_UpdateAll(void) {
           // whole-pixel offsets by the ratio without MulQ16, so the two
           // updates would steer towards a far target differently; nothing
           // runs this one, so the player never sees it.
-          speedRatio = IwramRatioMulQ14(distance, object->acceleration);
-          velocityX = object->velocityX + MulQ16(deltaX, speedRatio);
-          object->velocityX = velocityX;
+          speedRatio = IwramRatioMulQ14(distance, actor->acceleration);
+          velocityX = actor->velocityX + MulQ16(deltaX, speedRatio);
+          actor->velocityX = velocityX;
           // Limit the combined horizontal velocity after accelerating both
           // axes.
-          velocityZ = object->velocityZ + MulQ16(deltaZ, speedRatio);
-          object->velocityZ = velocityZ;
+          velocityZ = actor->velocityZ + MulQ16(deltaZ, speedRatio);
+          actor->velocityZ = velocityZ;
           distance = IwramSqrt(MulQ16(velocityX, velocityX) +
                                MulQ16(velocityZ, velocityZ))
                      << 8;
-          if (distance > object->speedLimit) {
+          if (distance > actor->speedLimit) {
             // Too fast: scale the velocity back to the speed limit.
-            speedRatio = IwramRatioMulQ14(distance, object->speedLimit);
-            object->velocityX = MulQ16(velocityX, speedRatio);
-            object->velocityZ = MulQ16(velocityZ, speedRatio);
+            speedRatio = IwramRatioMulQ14(distance, actor->speedLimit);
+            actor->velocityX = MulQ16(velocityX, speedRatio);
+            actor->velocityZ = MulQ16(velocityZ, speedRatio);
           }
         }
       } else {
@@ -152,100 +152,99 @@ void Actor_UpdateAll(void) {
         // XXX (no evidence): why this branch calls the far-call stubs where
         // the steering above calls the IWRAM routines by address; both reach
         // the same routines, and nothing runs this copy to show a difference.
-        deltaX = object->velocityX;
-        deltaZ = object->velocityZ;
+        deltaX = actor->velocityX;
+        deltaZ = actor->velocityZ;
         distance =
             Iwram_SqrtFarArm(MulQ16(deltaX, deltaX) + MulQ16(deltaZ, deltaZ))
             << 8;
         if (distance != 0) {
-          if (distance - object->acceleration < 0) {
-            object->velocityX = 0;
-            object->velocityZ = 0;
+          if (distance - actor->acceleration < 0) {
+            actor->velocityX = 0;
+            actor->velocityZ = 0;
           } else {
             speedRatio = Iwram_RatioMulQ14FarArm(
-                distance, distance - object->acceleration);
-            object->velocityX = MulQ16(deltaX, speedRatio);
-            object->velocityZ = MulQ16(deltaZ, speedRatio);
+                distance, distance - actor->acceleration);
+            actor->velocityX = MulQ16(deltaX, speedRatio);
+            actor->velocityZ = MulQ16(deltaZ, speedRatio);
           }
         } else {
-          object->velocityX = 0;
-          object->velocityZ = 0;
+          actor->velocityX = 0;
+          actor->velocityZ = 0;
         }
       }
 
       // Gravity, and a bounce that loses energy on landing.
-      if (object->motionFlags & 2) {
-        groundY = object->groundHeight;
+      if (actor->motionFlags & 2) {
+        groundY = actor->groundHeight;
         if (y > groundY)
-          object->velocityY -= object->gravity;
-        if (y <= groundY && object->velocityY < 0) {
+          actor->velocityY -= actor->gravity;
+        if (y <= groundY && actor->velocityY < 0) {
           y = groundY;
-          object->velocityY =
-              -MulQ16(object->velocityY, object->vertical.bounce);
-          if ((object->velocityY < 0 ? -object->velocityY
-                                     : object->velocityY) <= object->gravity)
-            object->velocityY = 0;
+          actor->velocityY = -MulQ16(actor->velocityY, actor->vertical.bounce);
+          if ((actor->velocityY < 0 ? -actor->velocityY : actor->velocityY) <=
+              actor->gravity)
+            actor->velocityY = 0;
         }
       }
     }
 
     // Integrate velocity even when the acceleration and gravity step is frozen.
-    x += object->velocityX;
-    y += object->velocityY;
-    z += object->velocityZ;
+    x += actor->velocityX;
+    y += actor->velocityY;
+    z += actor->velocityZ;
 
     // Arrived: the watched axis reached the target, or crossed it this frame
     // (the sign of the offset changed).
-    switch (object->arrivalAxis) {
+    switch (actor->arrivalAxis) {
     case ARRIVAL_AXIS_X:
-      if (x == object->targetX ||
-          ((object->x - object->targetX) ^ (x - object->targetX)) < 0)
+      if (x == actor->targetX ||
+          ((actor->x - actor->targetX) ^ (x - actor->targetX)) < 0)
         arrived = 1;
       break;
     case ARRIVAL_AXIS_Y:
-      if (y == object->targetY ||
-          ((object->y - object->targetY) ^ (y - object->targetY)) < 0)
+      if (y == actor->targetY ||
+          ((actor->y - actor->targetY) ^ (y - actor->targetY)) < 0)
         arrived = 1;
       break;
     case ARRIVAL_AXIS_Z:
-      if (z == object->targetZ ||
-          ((object->z - object->targetZ) ^ (z - object->targetZ)) < 0)
+      if (z == actor->targetZ ||
+          ((actor->z - actor->targetZ) ^ (z - actor->targetZ)) < 0)
         arrived = 1;
       break;
     }
     // Snapping stops the actor on the target; it takes the target's height
     // too only when its motion flags are all clear.
     if (arrived) {
-      if (object->snapToTarget) {
-        x = object->targetX;
-        object->velocityX = 0;
-        z = object->targetZ;
-        object->velocityZ = 0;
-        if (object->motionFlags == 0) {
-          y = object->targetY;
-          object->velocityY = 0;
+      if (actor->snapToTarget) {
+        x = actor->targetX;
+        actor->velocityX = 0;
+        z = actor->targetZ;
+        actor->velocityZ = 0;
+        if (actor->motionFlags == 0) {
+          y = actor->targetY;
+          actor->velocityY = 0;
         }
       }
-      object->targetX = TARGET_UNSET;
-      object->targetY = TARGET_UNSET;
-      object->targetZ = TARGET_UNSET;
-      object->arrivalAxis = 0;
+      actor->targetX = TARGET_UNSET;
+      actor->targetY = TARGET_UNSET;
+      actor->targetZ = TARGET_UNSET;
+      actor->arrivalAxis = 0;
     }
-    SET_POSITION(object, x, y, z);
+    SET_POSITION(actor, x, y, z);
 
     // Turn to face the direction of travel.
-    if (object->steeringFlags & 1) {
-      x = object->velocityX;
-      z = object->velocityZ;
+    if (actor->steeringFlags & 1) {
+      x = actor->velocityX;
+      z = actor->velocityZ;
       if (x != 0 || z != 0) {
         travelAngle = ArcTan2FarArm(z, x);
         // As a signed halfword the difference is the shorter way round.
-        turnDelta = (s16)(travelAngle - object->facing);
+        turnDelta = (s16)(travelAngle - actor->facing);
         if (turnDelta > TURN_MAX)
           turnDelta = TURN_MAX;
         if (turnDelta < -TURN_MAX)
           turnDelta = -TURN_MAX;
-        object->facing += turnDelta;
+        actor->facing += turnDelta;
       }
     }
   }

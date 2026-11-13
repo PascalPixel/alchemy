@@ -1,14 +1,9 @@
-#ifndef ALCHEMY_MODULE_MAP_STUCCO_ROOMS_A_H
-#define ALCHEMY_MODULE_MAP_STUCCO_ROOMS_A_H
+#ifndef ALCHEMY_MODULE_SCENE_STUCCO_ROOMS_A_H
+#define ALCHEMY_MODULE_SCENE_STUCCO_ROOMS_A_H
 
 #include "types.h"
 #include "event.h"
 #include "scene_tables.h"
-
-struct SceneEntrance;
-struct Trigger;
-struct ActorPlacement;
-struct SceneExitRegion;
 
 const struct SceneEntrance *StuccoRoomsA_GetEntrances(void);
 const struct SceneExitRegion *StuccoRoomsA_GetRegions(void);

@@ -1,14 +1,9 @@
-#ifndef ALCHEMY_MODULE_MAP_IMIL_FUCHIN_FALLS_H
-#define ALCHEMY_MODULE_MAP_IMIL_FUCHIN_FALLS_H
+#ifndef ALCHEMY_MODULE_SCENE_IMIL_FUCHIN_FALLS_H
+#define ALCHEMY_MODULE_SCENE_IMIL_FUCHIN_FALLS_H
 
 #include "types.h"
 #include "scene_tables.h"
 #include "field_effect.h"
-
-struct SceneEntrance;
-struct Trigger;
-struct ActorPlacement;
-struct SceneExitRegion;
 
 extern s32 gImilFuchinFalls_TrackLeader;
 const struct SceneEntrance *ImilFuchinFalls_GetEntrances(void);

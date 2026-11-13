@@ -63,9 +63,8 @@ struct ScreenPoint {
 };
 
 /// Returns the position's three coordinates as an array.
-// UB: indexing from &x crosses separate scalar members of the point.
-// UBFIX provides a real array while keeping the animations' named coordinates.
-// An always-on union changes native alias analysis in the effect/window code.
+// UB: indexing from &x crosses separate scalar members of the point. UBFIX
+// provides a real array while keeping the animations' named coordinates.
 static inline s32 *ScreenPoint_Coordinates(struct ScreenPoint *position) {
 #ifdef UBFIX
   return position->coordinates;

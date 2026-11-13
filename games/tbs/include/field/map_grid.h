@@ -176,5 +176,7 @@ struct MapResources {
   /// (gMapGridAnimTiles).
   u16 resources[6];
 };
+/// Every layout's resources, by map number (maps.c).
+extern const struct MapResources gMaps[];
 
 #endif

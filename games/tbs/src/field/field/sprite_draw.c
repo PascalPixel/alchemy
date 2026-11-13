@@ -50,8 +50,7 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
   system = gActorSystemWork;
   decoderWasLoaded = 1;
   // UB: gActorSystemWork is one pointer, not an array reaching the decoder
-  // cell. The native form derives both cell addresses from this one base; using
-  // HEAP_SLOT_BLOCK directly changes allocation and adds a literal-pool entry.
+  // cell.
 #ifdef UBFIX
   decodePicture = (SpriteDrawFn)HEAP_SLOT_BLOCK(HEAP_SLOT_FRAME_SCRATCH);
 #else

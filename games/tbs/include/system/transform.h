@@ -18,8 +18,6 @@ extern s32 gTransformStackDepth;
 /// HEAP_SLOT_TRANSFORM_STACK, or just past it while a matrix is saved.
 extern u8 *gTransformStackTop;
 
-void Transform_RewindStack(void);
-
 /// Sets a twelve-word matrix to identity: Q16_ONE (1.0) on the rotation's
 /// diagonal, the rest 0.
 static __inline__ void Transform_SetIdentity(void *matrix) {

@@ -218,9 +218,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   SolSanctumEruption_PlaceHostageGroup();
   Actor_SetSpritePriority(ACTOR_WISE_ONE, 1);
 #ifndef UBFIX
-  // UB: these are separate work-pointer globals. The native code reaches
-  // the field heap slot through the particle heap slot; named globals add
-  // four bytes and change this event's register allocation in tbs-en.
+  // UB: these are separate work-pointer globals.
   fieldWorkSlot = (struct FieldWork **)((u8 *)particleWorkSlot - 8);
 #endif
   FieldCamera_MoveTo(232, CAMERA_KEEP, 156, 0);
@@ -658,8 +656,7 @@ s32 SolSanctumEruption_Initialize(void) {
 /// Keeps a flying ember sprite rotated a quarter-turn from its facing.
 ///
 /// Run by each ember's actor script, gEruption_EmberScript.
-static s32 SolSanctumEruption_AlignEmberToHeading(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 SolSanctumEruption_AlignEmberToHeading(struct Actor *actor) {
   actor->sprite->rotation = actor->facing + TRIG_TURN / 4;
   return 1;
 }
@@ -1990,7 +1987,7 @@ struct ActorPlacement gSolSanctumEruption_ActorPlacements[] = {
 };
 
 struct Trigger gSolSanctumEruption_Triggers[] = {
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 /// Unused: a copy of the Elemental Star room's cell animation

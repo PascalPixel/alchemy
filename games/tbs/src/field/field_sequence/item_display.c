@@ -14,9 +14,7 @@ STATIC_ASSERT(offsetof(struct Actor, sprite) == 0x50);
 #ifdef UBFIX
 #define EFFECT_OBJECT_POOL gActors
 #else
-// UB: gActors and gFieldWork are separate globals. The named pool load
-// changes register allocation and shrinks StartRandomParticleEmitter from 344
-// to 342 bytes in tbs-en; keep the native read here.
+// UB: gActors and gFieldWork are separate globals.
 #define EFFECT_OBJECT_POOL (*(struct Actor **)((u8 *)&gFieldWork - 88))
 #endif
 
@@ -81,8 +79,7 @@ static inline void Actor_InitializeSparkle(struct Actor *actor) {
 /// within 16 pixels of it. Installed as the picture's update routine by
 /// ItemDisplay_ShowItemInFront, ItemDisplay_ShowPicture
 /// and ItemDisplay_ShowItem.
-void ItemDisplay_EmitSparkles(struct Actor *actor) {
-  struct Actor *emitter = (struct Actor *)actor;
+void ItemDisplay_EmitSparkles(struct Actor *emitter) {
   union PolarOffsetPosition position;
   struct Actor *object;
   u32 randomRadius;
@@ -184,7 +181,8 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
 
     // Draw the item's icon into HEAP_SLOT_GLYPH_TRANSFER, then send it to the
     // sprite's tiles: 128 bytes from byte 1,024 of the block.
-    iconBuffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 1544);
+    iconBuffer =
+        HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Icon_DrawItemFar(item);
 
     sprite->image.tile =
@@ -266,7 +264,8 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
 /// heap reset frees it).
 void ItemDisplay_ShowItem(s32 item, s32 flags) {
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  void *iconBuffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 1544);
+  void *iconBuffer =
+      HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   struct Actor *actor = Actor_CreateFar(
       SPRITE_BLANK, leader->x.fixed, leader->y.fixed + px(36), leader->z.fixed);
 
@@ -298,15 +297,6 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
 // while a menu is open.
 #if TBS_PATCH_2
 
-#define REVEAL_SPARKLES_PAUSE_FOR_MENU 1
-#endif
-
-#if defined(REVEAL_SPARKLES_PAUSE_FOR_MENU)
-/// In gFieldWork, the byte after queuedSound: FieldMenu_Run sets it
-/// once FieldMenu_SelectCommand first returns, a cancel included, and clears it
-/// as it returns.
-#define MENU_OPEN_OFFSET 0xcca
-
 /// While Reveal is active, releases all its sparkles, leaving its marks. Called
 /// by the field menu (FieldMenu_Run, window/selection.c) each time
 /// FieldMenu_SelectCommand returns, a cancel included, while Reveal is active.
@@ -337,8 +327,8 @@ void Reveal_EmitSparkles(struct Actor *actor) {
   struct Actor *object;
   u32 randomRadius;
 
-#if defined(REVEAL_SPARKLES_PAUSE_FOR_MENU)
-  if (*(s8 *)((u8 *)gFieldWork + MENU_OPEN_OFFSET) != 0)
+#if TBS_PATCH_2
+  if (gFieldWork->menuOpen != 0)
     return;
 #endif
   if ((100 * Random16() >> 16) > 9)
@@ -443,5 +433,3 @@ void FieldEffect_SpawnRevealMarkers(void) {
 
 #undef EFFECT_OBJECT_COUNT
 #undef EFFECT_OBJECT_POOL
-#undef REVEAL_SPARKLES_PAUSE_FOR_MENU
-#undef MENU_OPEN_OFFSET

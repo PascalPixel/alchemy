@@ -263,24 +263,13 @@ static void ValeCave_WaitForActorLanding(struct Actor *actor) {
 ///
 /// Kite's update routine once it has run behind the ledge, set by
 /// ValeCave_KiteRunsBehindLedge and again by ValeCave_ApplyEntryState.
-// UB: calling this s32 function through a void update routine is incompatible.
-// Plain void changes 38 to 36 bytes in tbs-en.
-#ifdef UBFIX
-static void ValeCave_FaceActorTowardLeader(struct Actor *updated) {
-#else
-static s32 ValeCave_FaceActorTowardLeader(struct Actor *updated) {
-#endif
-  struct Actor *actor = (struct Actor *)updated;
+static UNREAD_RESULT ValeCave_FaceActorTowardLeader(struct Actor *actor) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 distanceZ = leader->z.fixed - actor->z.fixed;
   s32 distanceX = leader->x.fixed - actor->x.fixed;
 
   actor->facing = ArcTan2(distanceZ, distanceX);
-#ifdef UBFIX
-  return;
-#else
-  return 0;
-#endif
+  RETURN_UNREAD(0);
 }
 
 #ifdef UBFIX
@@ -607,8 +596,7 @@ static void ValeCave_KiteKeepsAway(void) {
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       djinni->acceleration = leader->acceleration;
       routeIndex -= CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE;
-      // X/Z pairs occupy eight bytes. Plain pair indexing changes six
-      // instruction words in the English build, so keep separate offsets.
+      // X/Z pairs occupy eight bytes.
       walkTargetBytes = (const u8 *)gValeCave_WalkTargets;
       routeIndex <<= 3;
       targetZOffset = routeIndex + sizeof(s32);
@@ -1142,14 +1130,14 @@ struct ActorPlacement gValeCave_LogsActorPlacements[] = {
 };
 
 struct Trigger gValeCave_TriggersOther[] = {
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gValeCave_MouthTriggers[] = {
     { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(ValeCave_LeaveRoom) },
     { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(ValeCave_LeaveRoom) },
     { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(ValeCave_LeaveRoom) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gValeCave_KiteTriggers[] = {
@@ -1191,7 +1179,7 @@ struct Trigger gValeCave_KiteTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_CRATES, FLAG_VALE_CAVE_WEST_CRATES_SUNK, EVENT(ValeCave_MoveWestCratesIntoWater) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_CRATES, FLAG_VALE_CAVE_EAST_CRATES_SUNK, EVENT(ValeCave_MoveEastCratesIntoWater) },
     { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_KITE, CONDITION_ALWAYS, EVENT(ValeCave_HaltKite) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 
@@ -1207,5 +1195,5 @@ struct Trigger gValeCave_LogsTriggers[] = {
      EVENT(ValeCave_PushLogOffLedge)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 22, CONDITION_ALWAYS,
      EVENT(ValeCave_PushLogNorth)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

@@ -276,8 +276,6 @@ s32 Party_CheckItemLimit(s32 item) {
 /// FieldSequence_Run gives the pending item and the debug test menu gives items
 /// through it. The field work's message is restored afterwards.
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
-  // A for/continue retry loop shrinks native English 452 -> 424 bytes;
-  // retain the original backedges until a plain form matches.
   struct FieldWork *work;
   s32 savedMessage;
   s32 owner;

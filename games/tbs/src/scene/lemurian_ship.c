@@ -102,10 +102,7 @@ enum {
 #define SHIP_NOT_ON_DECK (-px(1))
 
 /// The sprite of a gangway piece or a party actor.
-// ACTOR_SPRITE reads actor->sprite through an s32, so each store
-// reloads it as the native does; read as the field, the two stores share one
-// load. UB: the s32 read aliases the pointer field. UBFIX reads the field
-// itself.
+// UB: the s32 read aliases the pointer field. UBFIX reads the field itself.
 #ifdef UBFIX
 #define ACTOR_SPRITE(actor) ((actor)->sprite)
 #else
@@ -116,8 +113,6 @@ enum {
   ((void)(ACTOR_SPRITE(actor)->image.priority = (level)))
 #define SET_SHADOW_PRIORITY(actor, level)                                      \
   ((void)(ACTOR_SPRITE(actor)->shadow.priority = (level)))
-
-s32 Math_DivideUnsigned();
 
 const struct SceneEntrance *LemurianShip_GetEntrances(void) {
   return gLemurianShipEntrances;
@@ -192,8 +187,7 @@ enum { ANIM_DROP_BURST = 1 };
 /// of spray and is released 20 frames later by gSprayFallScript.
 ///
 /// This is the update routine Ship_UpdateSwell gives each drop it creates.
-static void LemurianShip_SprayUpdate(struct Actor *actor) {
-  struct Actor *drop = (struct Actor *)actor;
+static void LemurianShip_SprayUpdate(struct Actor *drop) {
 
   if (drop->timer != 0) {
     s32 drift;
@@ -239,8 +233,8 @@ static void OrbGlow_Fade(void) {
 /// part runs while its flag (gOrbGlowActive, gSwellActive, gSprayActive) is
 /// set.
 static void Ship_UpdateSwell(void) {
-  // volatile: blend kept at sp+18 and loaded again with ldrh for the register
-  // write; as a plain u16, 5 of 225 instructions differ in tbs-en.
+  /* FAKEMATCH(volatile): blend kept at sp+18 and loaded again for the
+   * register write; as a plain u16, 5 of 225 instructions differ in tbs-en. */
   volatile u16 blend;
   struct FixedPointPosition sprayPosition;
   struct MapGridScrollWork *grid;
@@ -668,8 +662,8 @@ static void LemurianShip_RaiseTheShip(void) {
   s32 white;
   s32 dark;
   s32 risen;
-  // volatile: each BGxCNT value stored at sp+6 with strh on its way to the
-  // register; as a plain u16, 6 of 231 instructions differ in tbs-en.
+  /* FAKEMATCH(volatile): each BGxCNT value stored at sp+6 on its way to the
+   * register; as a plain u16, 6 of 231 instructions differ in tbs-en. */
   volatile u16 cnt;
 
   grid = gMapGridWork[0];
@@ -766,8 +760,8 @@ static void LemurianShip_RaiseTheShip(void) {
 /// Orb.
 s32 LemurianShip_SetupMap(void) {
   struct MapGridScrollWork *grid;
-  // volatile: each step stored at sp+2 with strh; as a plain u16, 2 of 165
-  // instructions differ in tbs-en.
+  /* FAKEMATCH(volatile): each step stored at sp+2; as a plain u16, 2 of 165
+   * instructions differ in tbs-en. */
   volatile u16 cnt;
 
   grid = gMapGridWork[0];
@@ -936,7 +930,7 @@ static void Curtain_Close(void) {
   tile = gVramCacheEntries[sCurtainVramSlot].offset >> 5;
   // Each part is written whole as three words: the queue link, attributes 0
   // and 1, and attribute 2.
-  // UB: the native word cursor crosses the parts' members. UBFIX builds the
+  // UB: the word cursor crosses the parts' members. UBFIX builds the
   // same words in a word array and copies them.
 #ifdef UBFIX
   entry = words;
@@ -1081,7 +1075,7 @@ struct Trigger gLemurianShipTriggers[] = {
      CONDITION_ALWAYS, EVENT(Ripple_Start)},
     {USE_ITEM(ITEM_BLACK_ORB), 10, CONDITION_ALWAYS,
      EVENT(LemurianShip_RaiseTheShip)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s32 gOrbGlowActive = 0;

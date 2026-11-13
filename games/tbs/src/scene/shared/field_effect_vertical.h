@@ -12,49 +12,47 @@
 /// Rises beside the watched actor, expanding and shrinking over half a
 /// sine wave.
 static void FieldEffect_AnimateVerticalPositive(struct Actor *actor) {
-  struct Actor *self = actor;
   struct Actor *anchor;
   s32 frame;
   s32 amplitude;
 
-  anchor = self->watchedActor;
-  self->timer = (self->timer + 1);
-  frame = self->timer;
+  anchor = actor->watchedActor;
+  actor->timer = (actor->timer + 1);
+  frame = actor->timer;
 
   if (frame > 31) {
-    Actor_Release(self);
+    Actor_Release(actor);
     return;
   }
 
   amplitude = Trig_Sin(frame << 10);
-  self->scaleX = amplitude;
-  self->scaleY = amplitude;
-  self->x.fixed = anchor->x.fixed;
-  self->y.fixed += px(1);
-  self->z.fixed = anchor->z.fixed + (Q16_ONE - amplitude) * 5 + px(8);
+  actor->scaleX = amplitude;
+  actor->scaleY = amplitude;
+  actor->x.fixed = anchor->x.fixed;
+  actor->y.fixed += px(1);
+  actor->z.fixed = anchor->z.fixed + (Q16_ONE - amplitude) * 5 + px(8);
 }
 
 /// Mirrors the rising particle vertically and passes behind the watched
 /// actor.
 static void FieldEffect_AnimateVerticalNegative(struct Actor *actor) {
-  struct Actor *self = actor;
   struct Actor *anchor;
   s32 frame;
   s32 amplitude;
 
-  anchor = self->watchedActor;
-  self->timer = (self->timer + 1);
-  frame = self->timer;
+  anchor = actor->watchedActor;
+  actor->timer = (actor->timer + 1);
+  frame = actor->timer;
 
   if (frame > 31) {
-    Actor_Release(self);
+    Actor_Release(actor);
     return;
   }
 
   amplitude = Trig_Sin(frame << 10);
-  self->scaleX = amplitude;
-  self->scaleY = -amplitude;
-  self->x.fixed = anchor->x.fixed;
-  self->y.fixed += px(1);
-  self->z.fixed = anchor->z.fixed - (Q16_ONE - amplitude) * 5 + px(16);
+  actor->scaleX = amplitude;
+  actor->scaleY = -amplitude;
+  actor->x.fixed = anchor->x.fixed;
+  actor->y.fixed += px(1);
+  actor->z.fixed = anchor->z.fixed - (Q16_ONE - amplitude) * 5 + px(16);
 }

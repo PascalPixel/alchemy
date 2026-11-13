@@ -1,11 +1,9 @@
-#ifndef ALCHEMY_MODULE_MAP_ALTMILLER_CAVE_H
-#define ALCHEMY_MODULE_MAP_ALTMILLER_CAVE_H
+#ifndef ALCHEMY_MODULE_SCENE_ALTMILLER_CAVE_H
+#define ALCHEMY_MODULE_SCENE_ALTMILLER_CAVE_H
 
 #include "types.h"
 #include "scene_tables.h"
 
-struct Trigger;
-struct ActorPlacement;
 struct LightWheel;
 
 const struct SceneEntrance *AltmillerCave_GetEntrances(void);
@@ -14,9 +12,6 @@ const u32 *AltmillerCave_GetExits(void);
 const struct ActorPlacement *AltmillerCave_GetActorPlacements(void);
 const struct Trigger *AltmillerCave_GetTriggers(void);
 s32 AltmillerCave_Initialize(void);
-extern s32 gPushedActor_DirectionSteps[];
-extern u32 gPushedActor_FootprintKinds[];
-extern s32 gPushedActor_FootprintBounds[];
 extern struct LightWheel *gAltmillerCave_LightWheel;
 extern struct SceneEntrance gAltmillerCave_Entrances[];
 extern u32 gAltmillerCave_Exits[];

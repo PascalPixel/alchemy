@@ -1,12 +1,8 @@
-#ifndef ALCHEMY_MODULE_MAP_IMIL_H
-#define ALCHEMY_MODULE_MAP_IMIL_H
+#ifndef ALCHEMY_MODULE_SCENE_IMIL_H
+#define ALCHEMY_MODULE_SCENE_IMIL_H
 
 #include "types.h"
 #include "scene_tables.h"
-
-struct SceneEntrance;
-struct Trigger;
-struct ActorPlacement;
 
 const struct SceneEntrance *Imil_GetEntrances(void);
 const struct SceneExitRegion *Imil_GetRegions(void);
@@ -27,15 +23,15 @@ extern s32 gImil_MiaRunOutScript[];
 extern s32 gImil_FaceTargetScript[];
 extern s32 gImil_FollowMiaOutScript[];
 extern struct SceneEntrance gImil_TownEntrances[];
-extern struct SceneEntrance gImil_InteriorEntrances[];
+extern struct SceneEntrance gImil_RoomEntrances[];
 extern u32 gImil_Exits[];
 extern struct ActorPlacement gImil_TownActorPlacements[];
 extern struct ActorPlacement gImil_TownActorPlacementsCured[];
-extern struct ActorPlacement gImil_InteriorActorPlacements[];
+extern struct ActorPlacement gImil_RoomActorPlacements[];
 extern struct Trigger gImil_TownTriggers[];
-extern struct Trigger gImil_InteriorTriggers[];
+extern struct Trigger gImil_RoomTriggers[];
 extern u16 gImil_SanctumDoorSteps[];
-extern u16 gImil_InteriorsEastDoorSteps[];
+extern u16 gImil_RoomsEastDoorSteps[];
 extern u16 gImil_InnDoorSteps[];
 extern u16 gImil_HouseSouthwestDoorSteps[];
 extern u16 gImil_HouseWestDoorSteps[];
@@ -44,5 +40,7 @@ extern u16 *gImil_DoorCellSteps[];
 extern s16 gImil_DoorCellPoints[][2];
 extern u16 gImil_CellStepsA[];
 extern u16 gImil_CellStepsB[];
+/// The position (x, y, z) the unused arc and sway effects move around.
+extern s32 gImil_ArcOrigin[];
 
 #endif

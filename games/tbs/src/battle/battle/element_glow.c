@@ -52,17 +52,11 @@ typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width,
 
 // Draws the star field's next frame on the canvas (HEAP_SLOT_BATTLE_CANVAS):
 // each spark falls towards the centre and is drawn smaller as its life runs
-// out, a spent one starts again on a ring of random radius during the first
-// 25 frames, and the three rings move outward through four frames. Sets
-// SparkWork.ready for ElementGlow_UploadStarField. Runs each frame as a
-// task added by ElementGlow_InitializeStarField.
-// UB: the task runner invokes a void task. Plain void changes the native
-// return register from r1 to r0 in tbs-en; matching builds keep the old type.
-#ifdef UBFIX
-void ElementGlow_UpdateStarField(void) {
-#else
-s32 ElementGlow_UpdateStarField(void) {
-#endif
+// out, a spent one starts again on a ring of random radius during the first 25
+// frames, and the three rings move outward through four frames. Sets
+// SparkWork.ready for ElementGlow_UploadStarField. Runs each frame as a task
+// added by ElementGlow_InitializeStarField.
+UNREAD_RESULT ElementGlow_UpdateStarField(void) {
   s32 ringIndex;
   s32 picture;
   u32 size;
@@ -175,12 +169,10 @@ s32 ElementGlow_UpdateStarField(void) {
   work->ready = 1;
 }
 
-// Copies the canvas, once a frame is drawn, to BG2's tiles in character block
-// 1 through PaletteFade_BackupAndScaleThreeQuarters, and clears
-// SparkWork.ready. Runs each frame as a task added by
-// ElementGlow_InitializeStarField. UB: the task runner invokes a void task.
-// Plain void changes the native return register from r1 to r0 in tbs-en;
-// matching builds keep the old type.
+// Copies the canvas, once a frame is drawn, to BG2's tiles in character block 1
+// through PaletteFade_BackupAndScaleThreeQuarters, and clears SparkWork.ready.
+// Runs each frame as a task added by ElementGlow_InitializeStarField. UB: the
+// task runner invokes a void task.
 #ifdef UBFIX
 void ElementGlow_UploadStarField(void) {
 #else

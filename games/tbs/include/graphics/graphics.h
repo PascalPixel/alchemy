@@ -159,6 +159,9 @@ struct TileMask {
 /// The six row patterns that mark the battle menus' range icons, colour 5
 /// over a colour-4 fill, read by Menu_BuildLocalizedPatternTiles.
 extern const struct TileMask gMenu_BarPatternRows[];
+/// The row masks Menu_BuildPatternTiles XORs into the range icons' tile
+/// pairs (menu_strings.s).
+extern const struct TileMask gMenu_PatternRowMasks[];
 /// The credits' 8x8 one-bit font, ASCII 32 to 127.
 extern const u8 gCredits_Font[];
 extern const u8 gScreenTransition_DitherTable[];

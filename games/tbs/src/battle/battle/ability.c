@@ -128,11 +128,8 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 /// and its targets, each with its distance from the aimed position, damage
 /// multiplier, critical hit and any hit roll made in advance
 /// @param slot which of the action's targets (0 to plan->targetCount - 1)
-#ifdef UBFIX
-void BattleAbility_ApplyToTarget(struct BattleActionRun *plan, s32 slot) {
-#else
-s32 BattleAbility_ApplyToTarget(struct BattleActionRun *plan, s32 slot) {
-#endif
+UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
+                                          s32 slot) {
   s32 distance; // steps from the aimed position, 0 to 5
   struct AbilityDefinition *ability;
   struct Unit *actor;

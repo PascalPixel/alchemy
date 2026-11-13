@@ -9,11 +9,7 @@
 /// TASK_PASS_FRAME is a task priority, not a number of frames to wait.
 /// Nothing in the game calls it.
 UNUSED void DebugSceneSelect_Schedule(void) {
-#ifdef UBFIX
-  Task_Add(DebugSceneSelect_Run, TASK_PASS_FRAME);
-#else
   Task_Add((TaskFunc)DebugSceneSelect_Run, TASK_PASS_FRAME);
-#endif
 }
 
 /// Draws the debug scene and entrance numbers with their scene code and area
@@ -33,14 +29,12 @@ void DebugSceneSelect_DrawRow(struct Window *window, s32 sceneId,
   Text_DrawMessage(label, window, MENU_LABEL_X, 0);
 }
 
-// The debug scene selector: a scene and an entrance number, starting from
-// the scene being run (DebugSceneSelect_HandleRowInput has the keys). An exits
-// there (Event_SetDestinationFar), B closes it. The field opens it in
-// debug mode when the Start button's menu (Save your quest, Sleep, Change
-// settings) is opened with B held (field/field_sequence/run.c).
-// The task runner and the debug menu's far call ignore this selection result.
-// Plain void removes two result moves (252 to 248 bytes in tbs-en) and
-// reorders Event_SetDestinationFar's argument setup.
+// The debug scene selector: a scene and an entrance number, starting from the
+// scene being run (DebugSceneSelect_HandleRowInput has the keys). An exits
+// there (Event_SetDestinationFar), B closes it. The field opens it in debug
+// mode when the Start button's menu (Save your quest, Sleep, Change settings)
+// is opened with B held (field/field_sequence/run.c). The task runner and the
+// debug menu's far call ignore this selection result.
 #ifdef UBFIX
 void DebugSceneSelect_Run(void) {
 #else
@@ -73,20 +67,12 @@ s16 DebugSceneSelect_Run(void) {
       MenuArrow_Release(cursorSlot);
       Window_Close(window, 2);
       Event_SetDestinationFar(sceneId, entrance);
-#ifdef UBFIX
-      return;
-#else
-      return result;
-#endif
+      RETURN_UNREAD(result);
     }
     if (result == -2) {
       MenuArrow_Release(cursorSlot);
       Window_Close(window, 2);
-#ifdef UBFIX
-      return;
-#else
-      return result;
-#endif
+      RETURN_UNREAD(result);
     }
 
     MenuArrow_SetPosition(&cursor, MENU_TEXT_X,

@@ -18,8 +18,8 @@ extern const s16 gCgbFreqTable[];
 extern const u8 gCgbScaleTable[];
 extern const u16 gPcmSamplesPerVBlankTable[];
 extern const u8 gNoiseTable[];
-extern u32 gFreqTable[];
-extern u8 gScaleTable[];
+extern const u32 gFreqTable[];
+extern const u8 gScaleTable[];
 /// The sound driver's work, which m4aSoundInit sets up through
 /// SoundInit.
 extern struct SoundInfo gSoundInfo;
@@ -55,6 +55,48 @@ void ply_lfos(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
 void ply_mod(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
 void TrackStop(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
 void SoundMainRAM_Rom(void);
+void DummyFunc(void);
+void MPlayJumpTableCopy(MPlayFunc *table);
+void RealClearChain(struct SoundChannel *note);
+void SoundMainBTM(void *block);
+/// The CGB channels' notes, which SoundInit hands the driver
+/// (SoundInfo.cgbNotes).
+extern struct CgbChannel gCgbChans[4];
+
+// The music player table (sound/music_player_table.s) supplies the music
+// player count and the mixer's line limit as the addresses of these symbols.
+extern char gNumMusicPlayers[];
+extern char gMaxLines[];
+
+// The song commands (gMPlayJumpTableTemplate) and the extended commands
+// (gXcmdTable), each called with the music player and the track.
+void ply_fine(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_goto(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_patt(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_pend(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_rept(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_prio(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_tempo(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_keysh(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_voice(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_vol(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_pan(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_bend(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_bendr(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_lfodl(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_modt(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_tune(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_port(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_xxx(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_xtype(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_xatta(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_xdeca(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_xsust(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_xrele(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_xiecv(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_xiecl(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_xleng(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_xswee(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
 
 /// The build stamp System_CopyBuildStamp copies to IWRAM at power-on: twelve
 /// digits and a zero word, at the bottom of the frame-wait stack.

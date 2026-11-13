@@ -1,25 +1,14 @@
-#ifndef ALCHEMY_MODULE_MAP_ROCK_ROOMS_H
-#define ALCHEMY_MODULE_MAP_ROCK_ROOMS_H
+#ifndef ALCHEMY_MODULE_SCENE_ROCK_ROOMS_H
+#define ALCHEMY_MODULE_SCENE_ROCK_ROOMS_H
 
 #include "types.h"
 #include "scene_tables.h"
 
-struct SceneEntrance;
-struct Trigger;
-struct ActorPlacement;
-struct SceneExitRegion;
-
-extern const struct SceneEntrance gInteriorEntrances[];
-extern const u32 gInteriorExits[];
-extern const struct ActorPlacement gInteriorActorPlacements[];
-extern const struct Trigger gInteriorSealedTriggers[];
-extern const struct Trigger gInteriorReopenedTriggers[];
-extern const struct Trigger gGateToSuhallaTriggers[];
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneExitRegion *Scene_GetExitRegions(void);
-const u32 *Scene_GetExits(void);
-const struct ActorPlacement *Scene_GetActorPlacements(void);
-const struct Trigger *Scene_GetTriggers(void);
-s32 Scene_Initialize(void);
+extern const struct SceneEntrance gRockRooms_Entrances[];
+extern const u32 gRockRooms_Exits[];
+extern const struct ActorPlacement gRockRooms_ActorPlacements[];
+extern const struct Trigger gRockRooms_SealedTriggers[];
+extern const struct Trigger gRockRooms_ReopenedTriggers[];
+extern const struct Trigger gRockRooms_GateToSuhallaTriggers[];
 
 #endif

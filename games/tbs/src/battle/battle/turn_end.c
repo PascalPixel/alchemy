@@ -31,17 +31,15 @@ s32 BattleUnit_CountDownAttackStage(s32 unitId) {
   struct Unit *unit = Unit_GetFar(unitId);
 
   if (unit->attackTurns != 0) {
-    s32 cleared;
     unit->attackTurns--;
-    cleared = 0;
     if (unit->attackTurns == 0) {
-      unit->attackStage = cleared;
+      unit->attackStage = 0;
       return 1;
     }
     if (unit->attackStage < 0) {
       if (BattleUnit_RollCounterEarlyEnd(unitId, unit->attackTurns, 30) != 0) {
-        unit->attackStage = cleared;
-        unit->attackTurns = cleared;
+        unit->attackStage = 0;
+        unit->attackTurns = 0;
         return 1;
       }
     }
@@ -299,11 +297,7 @@ struct BattleSideOrder {
 /// Called by Battle_Run once every unit has acted. Changes HP, PP,
 /// Unit.ready, the Djinn recovery lists and the counters the CountDown
 /// functions clear, and puts the background back in BATTLE_BACKGROUND_ZOOMED.
-#ifdef UBFIX
-void Battle_ProcessTurnEnd(void) {
-#else
-s32 Battle_ProcessTurnEnd(void) {
-#endif
+UNREAD_RESULT Battle_ProcessTurnEnd(void) {
   struct BattleWork *battle;
   s32 side;
   s32 sideCount;
@@ -532,11 +526,7 @@ s32 Battle_ProcessTurnEnd(void) {
 /// summonBoost, HP and grimReaper, and works out its stats again
 /// (Unit_Calculate); the messages are queued and played at once
 /// (BattlePlayback_RunAll).
-#ifdef UBFIX
-void BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
-#else
-s32 BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
-#endif
+UNREAD_RESULT BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
   s32 unitId;
   struct Unit *unit;
   s32 battleContinues;

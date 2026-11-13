@@ -159,7 +159,7 @@ void Actor_WalkToAndWaitById(u32 actorId, s32 x, s32 z) {
 /// The event command "center actor and walk": walks the actor
 /// sideways to the middle of its 16-pixel column, sets its sprite priority to
 /// priority (Actor_SetSpritePriority), then sends it zOffset pixels along
-/// z. Kalay's interiors reach it.
+/// z. Kalay's rooms reach it.
 void Actor_CenterOnColumn(u32 actorId, s32 priority, s32 zOffset) {
   struct Actor *actor;
   s16 pixelX;
@@ -276,20 +276,20 @@ void Actor_WaitForMoveById(u32 actorId) {
 /// Import_ActorSetPosition (ACTOR_POSITION_SET,
 /// Actor_SetPosition); Actor_LaunchFromLeader calls it too.
 void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 groundHeight;
   s32 tileX;
   s32 tileZ;
   s32 terrainId;
 
-  object = Actor_Lookup(actorId);
-  if (object != NULL) {
-    Actor_StartIdleFar(object);
-    SET_VELOCITY(object, 0, 0, 0);
-    object->targetY = ACTOR_NO_TARGET;
-    object->targetX = ACTOR_NO_TARGET;
-    object->x.fixed = x;
-    object->z.fixed = z;
+  actor = Actor_Lookup(actorId);
+  if (actor != NULL) {
+    Actor_StartIdleFar(actor);
+    SET_VELOCITY(actor, 0, 0, 0);
+    actor->targetY = ACTOR_NO_TARGET;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->x.fixed = x;
+    actor->z.fixed = z;
     // Swap the old ground's height for the new one, so the actor's
     // height above the ground is kept. The coordinates are whole pixels,
     // rounded toward zero. MapGrid_GetTerrainHeight takes 16.16 coordinates and
@@ -299,8 +299,8 @@ void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z) {
     // from 0, for the rest of this frame; before it is drawn,
     // Actor_UpdateAllThumb's ground following adds the new ground's height,
     // so one standing on the ground lands on it there.
-    if (1 & object->motionFlags) {
-      terrainId = object->layer;
+    if (1 & actor->motionFlags) {
+      terrainId = actor->layer;
       tileX = x;
       if (tileX < 0) {
         tileX += 0xFFFF;
@@ -312,8 +312,8 @@ void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z) {
       }
       tileZ >>= 16;
       groundHeight = px(MapGrid_GetTerrainHeightFar(terrainId, tileX, tileZ));
-      object->y.fixed = (object->y.fixed - object->groundHeight) + groundHeight;
-      object->groundHeight = groundHeight;
+      actor->y.fixed = (actor->y.fixed - actor->groundHeight) + groundHeight;
+      actor->groundHeight = groundHeight;
     }
   }
 }
@@ -383,9 +383,9 @@ void Actor_SetAnimationSpeedById(u32 actorId, s32 steps) {
 void Actor_WaitForAnimationChange(u32 actorId) {
   struct Actor *actor;
   struct Sprite *sprite;
-  // volatile: saved lives in a 4-byte stack frame, stored once and loaded again
-  // for each compare, as the bytes have it; as a plain s32, 29 of 31
-  // instructions differ in tbs-en.
+  /* FAKEMATCH(volatile): saved kept on the stack, stored once and loaded
+   * again for each compare; as a plain s32, 29 of 31 instructions differ in
+   * tbs-en. */
   volatile s32 saved;
   s32 elapsedFrames;
 
@@ -473,8 +473,7 @@ void Actor_RunRepeatedMotion(u32 actorId, s32 count) {
 /// and z velocity (kept in speed and acceleration), which drag slows by 1/18
 /// and 1/16 each frame, and rises 1/64 pixel a frame. Runs each frame as the
 /// puff's update routine.
-void FieldEffect_UpdateDustPuff(struct Actor *actor) {
-  struct Actor *particle = (struct Actor *)actor;
+void FieldEffect_UpdateDustPuff(struct Actor *particle) {
   s32 velocityX;
   s32 x;
   s32 velocityZ;
@@ -743,16 +742,15 @@ void Actor_ConfigureSpriteColor(s32 actorId, s32 param) {
 /// from gActor_BlinkSpriteColors (7 for two frames out of eight, otherwise 0).
 /// Actor_ConfigureSpriteColor installs it.
 void Actor_UpdateBlink(struct Actor *actor) {
-  struct Actor *object = (struct Actor *)actor;
 
-  if ((object->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
+  if ((actor->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
     u8 param;
     struct Sprite *container;
     u8 partCount;
 
     // The table's four entries each last two frames.
     param = gActor_BlinkSpriteColors[(gFrameCount >> 1) & 3];
-    container = object->sprite;
+    container = actor->sprite;
     partCount = container->count;
     if (partCount != 0) {
       struct SpriteAnimation **entries = container->entries;
@@ -774,10 +772,9 @@ void Actor_UpdateBlink(struct Actor *actor) {
 /// Marks the sprite dirty. Called by Actor_ConfigureSpriteColor,
 /// FieldEffect_SpawnDustPuff and about 40 event sites.
 void Actor_SetSpriteColor(struct Actor *actor, s32 param) {
-  struct Actor *object = actor;
 
-  if ((object->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
-    struct Sprite *container = object->sprite;
+  if ((actor->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
+    struct Sprite *container = actor->sprite;
     u8 partCount = container->count;
 
     if (partCount != 0) {

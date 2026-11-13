@@ -29,7 +29,6 @@ void Scene_FloatNut(s32 id) {
   OrbitingMapActor *actor;
   OrbitingMapActorSprite *sprite;
   u8 *transfer;
-  s32 zero;
 
   actor = (OrbitingMapActor *)Actor_GetById(id);
   sprite = actor->sprite;
@@ -37,11 +36,10 @@ void Scene_FloatNut(s32 id) {
   sprite->fullColor = 0;
   sprite->paletteNumber = 0;
 
-  zero = 0;
-  sprite->state = zero;
-  Actor_SetSpriteFlags((struct Actor *)actor, zero);
-  actor->active = zero;
-  actor->mode = zero;
+  sprite->state = 0;
+  Actor_SetSpriteFlags((struct Actor *)actor, 0);
+  actor->active = 0;
+  actor->mode = 0;
 
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0)
     actor->y += px(32);
@@ -56,9 +54,9 @@ void Scene_FloatNut(s32 id) {
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 
   actor->orbitCenterX = actor->x;
-  actor->orbitAngle = zero;
+  actor->orbitAngle = 0;
   actor->orbitCenterY = actor->y;
   actor->active = 1;
   actor->callback = (u32)Scene_UpdateFloatingNut;
-  actor->state = zero;
+  actor->state = 0;
 }

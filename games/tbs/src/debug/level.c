@@ -234,8 +234,6 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
 /// with every bag full, closes the browser.
 static void IncreaseItemAndLevel_SelectItem(void) {
   // Preserve independent key tests and the direction-specific empty-icon scans.
-  // Ordinary while scans grow the native function from 668 to 672; retain
-  // its current polling edges.
   struct Window *window;
   struct Window *details;
   s32 selectedItemId;
@@ -369,8 +367,6 @@ static void IncreaseItemAndLevel_SelectItem(void) {
 /// Italian the scene keeps the function and the actor but no event, and
 /// moves the actor to x 80.
 UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
-  // Ordinary while scans grow the native function from 584 to 608; retain
-  // the original polling edges.
   struct Window *window;
 #ifndef UBFIX
   struct Window *details;
@@ -678,5 +674,5 @@ struct Trigger gIncreaseItemAndLevel_Triggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
      EVENT(IncreaseItemAndLevel_EnableEffectChildMode)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

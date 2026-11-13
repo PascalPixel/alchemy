@@ -272,8 +272,7 @@ static s32 sShakeShift;
 /// The step of gValePrologue_LookAroundScript. The actor faces a random way
 /// every 20 to 39 frames, as everyone looks about once the Boulder has gone
 /// by.
-static s32 ValePrologue_RerollHeadingOnCountdown(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 ValePrologue_RerollHeadingOnCountdown(struct Actor *actor) {
   s32 timer = actor->timer;
   s32 countdown = (s16)timer;
 
@@ -3552,7 +3551,7 @@ struct Trigger gValePrologue_Triggers[] = {
      EVENT(ValePrologue_SearchBrokenDoor)},
     {EXAMINE_TRIGGER(EXAMINE_SILENT), 19, CONDITION_ALWAYS,
      EVENT(ValePrologue_SearchValuablesChest)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 // The doors' cell animations: two pictures of a door opening, from the map's

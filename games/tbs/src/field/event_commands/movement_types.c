@@ -90,7 +90,7 @@ s32 Actor_TurnTowardWatchedActor(struct Actor *actor) {
 /// scripts.s (field.h). Reached from an actor placement's behavior column
 /// (field_sequence/actors.c), from Scene_TalkToActor after a talk
 /// (field_sequence/triggers.c), from the actor commands and from Lalivero's
-/// interiors.
+/// rooms.
 void Actor_SetMovementType(struct Actor *actor, s32 action) {
   switch (action) {
   case MOVEMENT_TYPE_STAND:

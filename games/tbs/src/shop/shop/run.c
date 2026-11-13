@@ -221,8 +221,6 @@ struct TileQuantityBarSegmentView {
 /// warriors' shops say theirs, at the same distance from their own welcome.
 /// Called by every counter.
 void Shop_ShowKeeperMessage(s32 messageId) {
-  // A shared message-resolution inline added four bytes to each dialogue caller
-  // in the English native build; both callers retain their direct resolution.
   struct ShopWork *shop = gMenuWork;
   s32 portraitResource = Speaker_GetVoiceFar(shop->keeperGraphics);
   s32 resolvedMessage = messageId;

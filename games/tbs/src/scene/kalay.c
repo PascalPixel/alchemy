@@ -374,8 +374,7 @@ static void Kalay_ScorchJoins(void) {
 
 /// In Kalay, while the tour waits, a tourist now and then nods, shakes his head
 /// or turns.
-static s32 Kalay_UpdateTouristFidget(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 Kalay_UpdateTouristFidget(struct Actor *actor) {
   u32 action;
   u32 nextTimer;
 
@@ -1310,7 +1309,7 @@ static void Kalay_PrepareTown(void) {
     nut->mode = found;
     nut->y = px(10);
     nut->visible = 1;
-    heap = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 1544);
+    heap = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Icon_DrawItem(ITEM_NUT);
     VramCache_Load(sprite->palette, 128, heap + 1024);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
@@ -1423,8 +1422,7 @@ static void Kalay_PrepareTunnel(void) {
     }
     effectWork->actor = actor;
 #else
-    // The original integer temporary carries an actor pointer too. The
-    // typed branch adds a jump and a zero load in the native English trial.
+    // The original integer temporary carries an actor pointer too.
     if (trackingValue != 0) {
       trackingValue = Actor_Get(ACTOR_PARTY_LEADER);
     }
@@ -2361,16 +2359,15 @@ static void Kalay_UpdateTunnelPassages(void) {
   }
 }
 
-// UB: the native void epilogue returns through r0, leaving the nonzero return
-// address as SC_CALL's status. Repeat once per frame until the actor is
+// UB: the void routine's epilogue returns through r0, leaving the nonzero
+// return address as SC_CALL's status. Repeat once per frame until the actor is
 // released, with an explicit status in the modern build.
 // Advance a particle, damp its velocity, and expire its lifetime.
 #ifdef UBFIX
-static s32 Kalay_UpdateTunnelParticle(struct Actor *interpreter) {
+static s32 Kalay_UpdateTunnelParticle(struct Actor *particle) {
 #else
-static void Kalay_UpdateTunnelParticle(struct Actor *interpreter) {
+static void Kalay_UpdateTunnelParticle(struct Actor *particle) {
 #endif
-  struct Actor *particle = interpreter;
   s16 *lifetime;
   s32 remainingFrames;
   s32 velocityX;
@@ -2975,7 +2972,7 @@ struct ActorPlacement gKalay_TunnelActorPlacements[] = {
 };
 
 struct Trigger gKalay_NoTriggers[] = {
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gKalay_TownTriggers[] = {
@@ -3033,7 +3030,7 @@ struct Trigger gKalay_TownTriggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_JAR), 100, FLAG_KALAY_SLEEP_BOMB_JAR, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_KALAY_VIAL_JAR, FIND_ITEM(ITEM_VIAL) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 90, CONDITION_ALWAYS, EVENT(Kalay_SearchWell) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gKalay_HammetPalaceTriggers[] = {
@@ -3043,7 +3040,7 @@ struct Trigger gKalay_HammetPalaceTriggers[] = {
     { TRIGGER_TALK, ACTOR_SECOND_PALACE_GUARD, CONDITION_ALWAYS, MSGNO(MsgKalaySoldiersRescueHammet) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PALACE_GUARD, CONDITION_ALWAYS, MSGNO(MsgKalayPrayForHammetSafety) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_PALACE_GUARD, CONDITION_ALWAYS, MSGNO(MsgKalayWarriorsWillSaveHammet) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gKalay_TunnelEntranceTriggers[] = {
@@ -3052,14 +3049,14 @@ struct Trigger gKalay_TunnelEntranceTriggers[] = {
     { TRIGGER_TALK, ACTOR_TUNNEL_GUARD, CONDITION_ALWAYS, EVENT(Kalay_AskAboutCaveAccess) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TUNNEL_GUARD, CONDITION_ALWAYS, MSGNO(MsgKalayPassageClosedByOrders) },
     { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_TUNNEL_ENTRANCE_NUT, FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT, EVENT(Kalay_CatchTunnelEntranceNut) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gKalay_TunnelCaveTriggers[] = {
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_PASSAGE },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, KALAY_TUNNEL_CAVE_TO_KALAY_TUNNEL_ENTRANCE },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_KALAY_TUNNEL_APPLE_CHEST, FIND_ITEM(ITEM_APPLE) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gKalay_TunnelPassageTriggers[] = {
@@ -3068,7 +3065,7 @@ struct Trigger gKalay_TunnelPassageTriggers[] = {
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_LONG_PATH_TO_NORTHEAST_ROOM },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_NORTHEAST_ROOM_TO_LONG_PATH },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS, KALAY_TUNNEL_PASSAGE_TO_KALAY_TUNNEL_CAVE },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gKalay_TunnelTriggers[] = {
@@ -3096,7 +3093,7 @@ struct Trigger gKalay_TunnelTriggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 103, FLAG_KALAY_TUNNEL_LUCKY_MEDAL_CHEST, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 104, FLAG_KALAY_TUNNEL_COINS_CHEST, FIND_COINS(200) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 105, FLAG_KALAY_TUNNEL_POTION_CHEST, FIND_ITEM(ITEM_POTION) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 

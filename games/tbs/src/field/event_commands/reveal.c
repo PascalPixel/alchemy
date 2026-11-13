@@ -137,15 +137,13 @@ void FieldPsynergy_EndReveal(void) {
   struct ScreenTransitionState *transition = gScreenTransitionWork;
   struct FieldWork *state = gFieldWork;
 #else
-  // Named slots avoid stepping outside gFieldEffectWork. They add 8 bytes to
-  // this function in the forced native EN build (232 -> 240 bytes).
+  // Named slots avoid stepping outside gFieldEffectWork.
   struct FieldEffectWork **cell = &gFieldEffectWork;
   struct FieldEffectWork *effectWork = *cell;
   struct ScreenTransitionState *transition =
       *(struct ScreenTransitionState **)((u8 *)cell - 0x64);
   struct FieldWork *state = *(struct FieldWork **)((u8 *)cell - 0x74);
 #endif
-  s16 zero;
   s32 eventTarget;
   void *event;
 
@@ -153,9 +151,8 @@ void FieldPsynergy_EndReveal(void) {
     Sound_PlayFar(SE_MAP_TRANSITION);
     Task_Remove(FieldPsynergy_WatchLeaderDistance);
 
-    zero = 0;
-    state->revealActive = zero;
-    state->revealFrames = zero;
+    state->revealActive = 0;
+    state->revealFrames = 0;
     Actor_SetRevealSpriteColor(0);
 
     PaletteFade_SetTarget(PALETTE_TINT_NONE, 1);

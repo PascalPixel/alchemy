@@ -4,7 +4,7 @@
 
 #include "../event_commands_internal.h"
 
-// The dispatchers use the common field effect. Individual update routines use
+// The dispatchers use the shared field effect. Individual update routines use
 // their actor or FieldParticle contract; neither is an
 // event.
 

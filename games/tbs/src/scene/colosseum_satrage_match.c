@@ -320,16 +320,6 @@ enum FallingLogAnimation {
   FALLING_LOG_ANIMATION_FALLEN = 4
 };
 
-/// Sets the party leader's walking speed and acceleration.
-static inline void InitializeActorZero(void) {
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
-}
-
-/// Sets the specified actor's walking speed and acceleration.
-static inline void InitializeSelectedActor(s32 actorId) {
-  Actor_SetSpeed(actorId, 1);
-}
-
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gColosseumSatrageMatchEntrances;
 }
@@ -998,7 +988,6 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   s32 liftId;
   s32 columnOffset;
   s32 row;
-  s32 zero;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_FADE, 0);
   // Restore the cell behavior templates before applying saved puzzle
@@ -1028,7 +1017,6 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     actor->y.fixed = px(16);
   }
   Actor_Get(ACTOR_WALL_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  zero = 0;
   // With the wall pillar moved, the cell it stood on takes the ground of the
   // cell south of it. The map stores the two alike, open ground, so the copy
   // only matters where the cell has been changed since the map loaded.
@@ -1040,25 +1028,25 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     MapGrid_CopyCellAttributes(32, 37, 1, 4, 32, 77);
   }
   if (GameFlag_Get(FLAG_WEST_TARGET_FROZEN)) {
-    Actor_Get(ACTOR_PUDDLE_WEST)->motionFlags = zero;
+    Actor_Get(ACTOR_PUDDLE_WEST)->motionFlags = 0;
     Actor_Get(ACTOR_PUDDLE_WEST)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetAnimation(ACTOR_PUDDLE_WEST, PUDDLE_ANIMATION_PILLAR);
     MapGrid_CopyCellAttributes(46, 17, 1, 1, 44, 17);
   }
   if (GameFlag_Get(FLAG_EAST_TARGET_FROZEN)) {
-    Actor_Get(ACTOR_PUDDLE_EAST)->motionFlags = zero;
+    Actor_Get(ACTOR_PUDDLE_EAST)->motionFlags = 0;
     Actor_Get(ACTOR_PUDDLE_EAST)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetAnimation(ACTOR_PUDDLE_EAST, PUDDLE_ANIMATION_PILLAR);
     MapGrid_CopyCellAttributes(46, 17, 1, 1, 50, 17);
   }
   actor = Actor_Get(ACTOR_RIDING_LOG_NORTH);
   column = FIELD_CELL(actor->x.fixed);
-  actor->motionFlags = zero;
+  actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(52, 28, 1, 3, column, 10);
   actor = Actor_Get(ACTOR_RIDING_LOG_SOUTH);
   column = FIELD_CELL(actor->x.fixed);
-  actor->motionFlags = zero;
+  actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(52, 28, 1, 3, column, 13);
 
@@ -1070,7 +1058,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   }
   actor = Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR);
   actor->x.fixed = (x << 20) + px(8);
-  actor->motionFlags = zero;
+  actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(71, 16, 1, 1, x, 16);
   x = FieldGameFlag_GetByte(FLAG_MINI_MAZE_SECOND_PILLAR_COLUMN);
@@ -1079,7 +1067,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   }
   actor = Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR + 1);
   actor->x.fixed = (x << 20) + px(8);
-  actor->motionFlags = zero;
+  actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(71, 16, 1, 1, x, 16);
   x = FieldGameFlag_GetByte(FLAG_MINI_MAZE_THIRD_PILLAR_COLUMN);
@@ -1088,7 +1076,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   }
   actor = Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR + 2);
   actor->x.fixed = (x << 20) + px(8);
-  actor->motionFlags = zero;
+  actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(71, 16, 1, 1, x, 16);
 
@@ -1828,7 +1816,7 @@ struct Trigger gColosseumSatrageMatchTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WALL_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallBoyThatBitOverThereMust) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOARD_WALK_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallIHeardBabiGotTheLog) },
     { TRIGGER_RAISED, 99, CONDITION_ALWAYS, EVENT(Colosso_TakePlaceForMatch) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 s16 gColosso_LetteringSlot = -1;

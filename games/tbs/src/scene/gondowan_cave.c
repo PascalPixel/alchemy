@@ -685,7 +685,7 @@ struct ActorPlacement gGondowanCaveActorPlacements[] = {
 };
 
 struct Trigger gGondowanCaveTriggersOther[] = {
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gGondowanPassageTriggers[] = {
@@ -699,7 +699,7 @@ struct Trigger gGondowanPassageTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIRD_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveYoudThinkYouCouldGetThrough) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_GONDOWAN_CAVE_APPLE, FIND_ITEM(ITEM_APPLE) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_GONDOWAN_CAVE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gGondowanPassageTriggersWithIodem[] = {
@@ -717,7 +717,7 @@ struct Trigger gGondowanPassageTriggersWithIodem[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_IODEM, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWeHaveToHeadForThe) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_GONDOWAN_CAVE_APPLE, FIND_ITEM(ITEM_APPLE) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_GONDOWAN_CAVE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gGondowanCaveRiverTriggers[] = {
@@ -728,7 +728,7 @@ struct Trigger gGondowanCaveRiverTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_RIVER_BOULDER, CONDITION_ALWAYS, 0 },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_GONDOWAN_CAVE_APPLE, FIND_ITEM(ITEM_APPLE) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_GONDOWAN_CAVE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 /// FLAG_SCENE_TEMP_05 ends Move on the pillar.
@@ -747,6 +747,6 @@ struct Trigger gGondowanCaveTriggers[] = {
     { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 50, CONDITION_ALWAYS, EVENT(GondowanCave_PushPillar) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_GONDOWAN_CAVE_APPLE, FIND_ITEM(ITEM_APPLE) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_GONDOWAN_CAVE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on

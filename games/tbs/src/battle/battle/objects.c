@@ -13,8 +13,6 @@
 /// the battle ends. Writes each battle object's icon state and its sprites'
 /// priorities.
 void BattleObject_UpdateSpritePriorities(void) {
-  // The two side walks stay separate: a shared priority helper changes EN
-  // register allocation despite the same 428-byte extent.
   u16 unitIds[UNIT_MAX];
   // The party's, then the enemies': sprite priority 1 for the side in front,
   // 2 behind (the lower number draws over the higher).
@@ -149,12 +147,8 @@ void BattleObject_UpdateSpritePriorities(void) {
 /// wherever a unit's statuses may have changed: BattlePlayback_RunAll,
 /// BattlePlayback_Run, Battle_ProcessTurnEnd,
 /// BattleUnit_ClearStatuses and BattleObject_SpawnObjectsForList.
-#ifdef UBFIX
-void BattleUnit_BuildStatusFlags(s32 unitId,
-                                 struct BattleObject *battleObject) {
-#else
-s32 BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObject *battleObject) {
-#endif
+UNREAD_RESULT BattleUnit_BuildStatusFlags(s32 unitId,
+                                          struct BattleObject *battleObject) {
   struct Unit *unit = Unit_GetFar(unitId);
   s8 poison = unit->poison;
   u32 flags = 0;
@@ -199,11 +193,7 @@ s32 BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObject *battleObject) {
 /// unit by BattleObject_UpdateSpritePriorities. Changes the battle object's
 /// cycleTimer, shownStatus, animation and animationEntry, and
 /// registers or unregisters the icon on its first sprite.
-#ifdef UBFIX
-void BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
-#else
-s32 BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
-#endif
+UNREAD_RESULT BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
   struct SpriteAnimation *shownIcon;
   struct SpriteAnimation *icon;
   struct Sprite *record;
@@ -291,11 +281,7 @@ s32 BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
 /// units side by side, even two of one kind, sway out of step.
 /// Called by BattleObject_SpawnObjectsForList, BattlePlayback_RunAll,
 /// BattlePlayback_Run and Battle_ProcessTurnEnd.
-#ifdef UBFIX
-void BattleObject_UpdatePose(s32 unitId) {
-#else
-s32 BattleObject_UpdatePose(s32 unitId) {
-#endif
+UNREAD_RESULT BattleObject_UpdatePose(s32 unitId) {
   struct Unit *unit;
   s32 pose;
 
@@ -603,11 +589,7 @@ s32 Battle_GetWorkEntryPair(s32 place, struct FixedPointPosition *position) {
 /// gBattleCamera_CommandMatrix first. Called by the three projections,
 /// BattleMotion_ProjectPosition, BattleMotion_ProjectScaledPosition and
 /// BattleMotion_ProjectConditionalPosition. Replaces the transform state.
-#ifdef UBFIX
-void BattleCamera_ApplyTransform(void) {
-#else
-s32 BattleCamera_ApplyTransform(void) {
-#endif
+UNREAD_RESULT BattleCamera_ApplyTransform(void) {
   struct BattleCamera *camera = gBattleCamera;
   Transform_Reset();
   if (GameFlag_GetFar(FLAG_CHOOSING_COMMANDS) != 0) {

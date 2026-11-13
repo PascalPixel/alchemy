@@ -1,20 +1,9 @@
-#ifndef ALCHEMY_MODULE_MAP_LUNPA_FORTRESS_H
-#define ALCHEMY_MODULE_MAP_LUNPA_FORTRESS_H
+#ifndef ALCHEMY_MODULE_SCENE_LUNPA_FORTRESS_H
+#define ALCHEMY_MODULE_SCENE_LUNPA_FORTRESS_H
 
 #include "types.h"
 #include "scene_tables.h"
 
-struct SceneEntrance;
-struct SceneExitRegion;
-struct Trigger;
-struct ActorPlacement;
-
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneExitRegion *Scene_GetExitRegions(void);
-const u32 *Scene_GetExits(void);
-const struct ActorPlacement *Scene_GetActorPlacements(void);
-const struct Trigger *Scene_GetTriggers(void);
-s32 Scene_Initialize(void);
 extern s32 gLunpaFortressRandomPick;
 extern s32 gSecondPatrolRoute[];
 extern s32 gFirstPatrolRoute[];

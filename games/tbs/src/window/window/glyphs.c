@@ -69,9 +69,8 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
   // The second character follows the first, starting width pixels along.
   if ((u16)secondIndex != 0) {
 #ifdef UBFIX
-    // Form only the actual glyph address: &glyphs[-32] is already outside
-    // the array before the later byte offset is added. The direct index
-    // changes native instruction selection (EN: text grows by 8 bytes).
+    // Form only the actual glyph address: &glyphs[-32] is already outside the
+    // array before the later byte offset is added.
     glyph = (const u8 *)&gFont_Glyphs[(u16)secondIndex - 32];
 #else
     glyph = (const u8 *)&gFont_Glyphs[-32] + ((u16)secondIndex << 5);

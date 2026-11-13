@@ -188,8 +188,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   // direction is 1 when that user stands on EFFECT_SIDE_PARTY, otherwise -1.
   work->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
-  /* FAKEMATCH(temporary): direction holds mode for this test; as mode there,
-   * 2 of 1532 instructions differ in tbs-en. */
+  // direction holds mode for this test before it takes the direction.
   direction = mode;
   if (direction == PARTICLE_STREAMS_OUTER_SPACE) {
     struct Actor *actor = GetBattleObjectSlotFar(work->args->user)->actor;

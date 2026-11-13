@@ -92,8 +92,7 @@ void FieldEffect_UpdateDouseDrop(struct Actor *actor) {
 /// Per-frame update: drifts from side to side, up to a pixel a frame, as it
 /// falls 0.3 pixels a frame, and is released on reaching its ground height.
 /// Douse's swaying particles in Mercury Lighthouse.
-void FieldEffect_UpdateDriftingFallActor(struct Actor *actor) {
-  struct Actor *particle = (struct Actor *)actor;
+void FieldEffect_UpdateDriftingFallActor(struct Actor *particle) {
   s32 drift;
 
   particle->y.fixed -= px(3) / 10;

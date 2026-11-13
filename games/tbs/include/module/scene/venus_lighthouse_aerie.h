@@ -1,13 +1,8 @@
-#ifndef ALCHEMY_MODULE_MAP_VENUS_LIGHTHOUSE_AERIE_H
-#define ALCHEMY_MODULE_MAP_VENUS_LIGHTHOUSE_AERIE_H
+#ifndef ALCHEMY_MODULE_SCENE_VENUS_LIGHTHOUSE_AERIE_H
+#define ALCHEMY_MODULE_SCENE_VENUS_LIGHTHOUSE_AERIE_H
 
 #include "types.h"
 #include "scene_tables.h"
-
-struct SceneEntrance;
-struct Trigger;
-struct ActorPlacement;
-struct SceneExitRegion;
 
 const struct SceneEntrance *VenusLighthouseAerie_GetEntrances(void);
 const struct SceneExitRegion *VenusLighthouseAerie_GetRegions(void);
@@ -15,10 +10,6 @@ const u32 *VenusLighthouseAerie_GetExits(void);
 const struct ActorPlacement *VenusLighthouseAerie_GetActorPlacements(void);
 const struct Trigger *VenusLighthouseAerie_GetTriggers(void);
 s32 VenusLighthouseAerie_Initialize(void);
-extern s32 gFieldEffect_ShortScript[];
-extern s32 gFieldEffect_MediumScript[];
-extern s32 gFieldEffect_LongScript[];
-extern const s32 *gFieldEffect_DurationScripts[];
 extern s32 gVenusLighthouseAerie_JoinLeaderAction[];
 extern s32 gVenusLighthouseAerie_StepBackWestAction[];
 extern s32 gVenusLighthouseAerie_StepBackEastAction[];

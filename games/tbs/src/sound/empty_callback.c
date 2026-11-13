@@ -1,7 +1,7 @@
 /// @file
 /// The sound driver's empty callback.
 
-#include "module/sound/empty_callback.h"
+#include "sound/sound.h"
 #include "types.h"
 
 /// Provides the default empty callback before the sound driver installs its

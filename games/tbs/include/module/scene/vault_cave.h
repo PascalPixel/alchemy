@@ -1,20 +1,10 @@
-#ifndef ALCHEMY_MODULE_MAP_VAULT_CAVE_H
-#define ALCHEMY_MODULE_MAP_VAULT_CAVE_H
+#ifndef ALCHEMY_MODULE_SCENE_VAULT_CAVE_H
+#define ALCHEMY_MODULE_SCENE_VAULT_CAVE_H
 
 #include "types.h"
 #include "scene_tables.h"
 #include "scene.h"
 
-struct SceneEntrance;
-struct Trigger;
-struct ActorPlacement;
-
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneExitRegion *Scene_GetExitRegions(void);
-const u32 *Scene_GetExits(void);
-const struct ActorPlacement *Scene_GetActorPlacements(void);
-const struct Trigger *Scene_GetTriggers(void);
-s32 Scene_Initialize(void);
 extern const s16 gVaultCave_DirectionSteps[];
 extern const s32 gVaultCave_PuffScript[];
 extern struct SceneEntrance gVaultCave_FallbackEntrances[];

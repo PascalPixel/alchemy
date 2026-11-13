@@ -206,7 +206,7 @@ s32 BattleActionRun_Build(struct BattleAction *request,
       }
     }
 #ifdef UBFIX
-    // Callers test only -1. A plain success return shortens EN by four bytes.
+    // Callers test only -1.
     return plan->targetCount;
 #endif
   }

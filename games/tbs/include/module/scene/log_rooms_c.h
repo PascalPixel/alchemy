@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_MODULE_MAP_LOG_ROOMS_C_H
-#define ALCHEMY_MODULE_MAP_LOG_ROOMS_C_H
+#ifndef ALCHEMY_MODULE_SCENE_LOG_ROOMS_C_H
+#define ALCHEMY_MODULE_SCENE_LOG_ROOMS_C_H
 
 #include "types.h"
 #include "scene_tables.h"

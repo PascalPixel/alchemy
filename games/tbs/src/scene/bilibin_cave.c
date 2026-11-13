@@ -206,9 +206,7 @@ enum {
 
 /// Clears the scripted actor's sprite flags and completes this script
 /// command.
-static s32
-BilibinCave_ClearScriptedActorSpriteFlags(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 BilibinCave_ClearScriptedActorSpriteFlags(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
@@ -835,7 +833,7 @@ struct ActorPlacement gBilibinCaveIceActorPlacements[] = {
 };
 
 struct Trigger gBilibinCaveTriggersOther[] = {
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gBilibinCaveEntranceTriggers[] = {
@@ -845,7 +843,7 @@ struct Trigger gBilibinCaveEntranceTriggers[] = {
     { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(BilibinCave_WalkOntoLedgeOverCaveMouth) },
     { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(BilibinCave_WalkOffLedgeOverCaveMouth) },
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN, EVENT(BilibinCave_GrowPlant) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gBilibinCaveRapierTriggers[] = {
@@ -859,7 +857,7 @@ struct Trigger gBilibinCaveRapierTriggers[] = {
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(BilibinCave_RevealHiddenPath) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(BilibinCave_HideRevealedPath) },
     { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_RAPIER_ROOM_FIRE, FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED, EVENT(BilibinCave_DouseRapierRoomFire) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gBilibinCaveIceTriggers[] = {
@@ -881,7 +879,7 @@ struct Trigger gBilibinCaveIceTriggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_BILIBIN_CAVE_VIAL, FIND_ITEM(ITEM_VIAL) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_BILIBIN_CAVE_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_BILIBIN_CAVE_WATER_OF_LIFE, FIND_ITEM(ITEM_WATER_OF_LIFE) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 

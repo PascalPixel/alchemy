@@ -683,5 +683,5 @@ struct Trigger gKolimaForestFloodgateTriggers[] = {
      EVENT(KolimaForestFloodgate_FlipFloodgateSwitch)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_KOLIMA_FOREST_FUR_COAT,
      FIND_ITEM(ITEM_FUR_COAT)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

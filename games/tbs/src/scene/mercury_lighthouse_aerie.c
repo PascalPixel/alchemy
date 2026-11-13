@@ -1869,8 +1869,7 @@ UNUSED static void MercuryLighthouseAerie_UnusedAlexCastsPly(void) {
 ///
 /// Its angle (its timer, in 1/65536 turns) steps back each frame. Its speed
 /// holds the swing's radius in pixels, less 28.
-static void MercuryLighthouseAerie_UpdateBeaconSpark(struct Actor *actor) {
-  struct Actor *spark = actor;
+static void MercuryLighthouseAerie_UpdateBeaconSpark(struct Actor *spark) {
   struct Actor *beacon;
   u16 angle;
 
@@ -2035,7 +2034,7 @@ struct Trigger gMercuryLighthouseAerieTriggers[] = {
      FIND_PSYNERGY_STONE},
     {TRIGGER_STEP, 12, CONDITION_ALWAYS,
      EVENT(MercuryLighthouseAerie_RideLiftDown)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s32 gMercuryLighthouseAerie_PlatformUnderfoot = 0;

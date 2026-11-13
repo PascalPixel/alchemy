@@ -60,8 +60,7 @@ void Palette_UpdatePulseBrightness(void) {
 /// task leaves the background alone), gProjection and the background's
 /// affine page.
 void BattleCamera_SetCommandView(s32 verticalOffset) {
-  // UB: indexing past scalar gBattleCamera reaches another heap slot. Named
-  // slots add four bytes in the native EN trial (216 to 220 bytes).
+  // UB: indexing past scalar gBattleCamera reaches another heap slot.
 #ifdef UBFIX
   struct BattleCamera *camera = gBattleCamera;
   struct BattleBackgroundWork *view =
@@ -406,7 +405,8 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
   s32 result = 0;
   s32 allocationSize = LINK_ACTIONS_BYTES(count);
   struct BattleLinkedActionState *state =
-      (struct BattleLinkedActionState *)Heap_AllocEwram(40);
+      (struct BattleLinkedActionState *)Heap_AllocEwram(
+          sizeof(struct BattleLinkedActionState));
   s32 index;
 
   // Sends the header, then this console's actions. Both transfers share one

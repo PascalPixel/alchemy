@@ -549,8 +549,7 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
 
 /// The leaping stump's update routine turns its sprite a fixed amount per
 /// frame.
-static void GomaCaveEntrance_SpinStump(struct Actor *updated) {
-  struct Actor *actor = updated;
+static void GomaCaveEntrance_SpinStump(struct Actor *actor) {
   struct Sprite *state = actor->sprite;
   s32 v = state->rotation - TRIG_TURN / 32;
 
@@ -603,8 +602,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   Actor_SetDestination(stumpId, 139, 196);
   Actor_WaitForMoveById(stumpId);
   Actor_WaitBelowHeight(stump, px(32));
-  // UB: the native integer store aliases the update pointer. A typed clear
-  // swaps this store with the following sprite-pointer load.
+  // UB: the integer store aliases the update pointer.
 #ifdef UBFIX
   stump->update = NULL;
 #else
@@ -750,6 +748,6 @@ struct Trigger gGomaCaveEntranceTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_PILLAR, CONDITION_ALWAYS, EVENT(GomaCaveEntrance_MoveWestPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_PILLAR, FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE, EVENT(GomaCaveEntrance_MoveEastPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY, EVENT(GomaCaveEntrance_BlowAwayIvy) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on

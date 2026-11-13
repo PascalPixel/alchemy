@@ -7,8 +7,7 @@
 /// An actor script call, each frame: when the actor's countdown (work)
 /// runs out, it turns by a random amount up to half a turn and waits a random 0
 /// to 79 frames.
-static s32 Scene_LookAboutRandomly(struct Actor *interpreter) {
-  struct Actor *actor = interpreter;
+static s32 Scene_LookAboutRandomly(struct Actor *actor) {
   s32 cnt = actor->userValue;
   s32 loaded = (s16)actor->userValue;
   s32 amount;

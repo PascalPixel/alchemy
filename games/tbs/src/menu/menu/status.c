@@ -1262,8 +1262,6 @@ s32 PagedList_Build(struct PagedList *result, s32 index) {
 
 static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 
-extern const struct TileMask gMenu_PatternRowMasks[];
-
 /// Builds the Psynergy range icons' tiles in the window tile area: two sets of
 /// six tile pairs (24 8x8 tiles), each a fill of WINDOW_BACKGROUND_COLOR with
 /// the rows of gMenu_PatternRowMasks XORed in, the first set growing row by row

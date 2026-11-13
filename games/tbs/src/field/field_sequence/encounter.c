@@ -149,8 +149,6 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
 
   work = gFieldWork;
   // UB: FLAG_IGNORE_ENCOUNTER_CHECKS reaches the draw without setting entry.
-  // Hoisting the zone lookup changes native instructions at the same 440-byte
-  // size in tbs-en.
 #ifdef UBFIX
   entry = (struct EncounterZone *)gEncounterZones + zone;
 #endif

@@ -95,8 +95,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
   // The leader stops pulsing.
   wait(10);
-  /* FAKEMATCH(temporary): effect takes the NULL stored; as leader->update =
-   * NULL, 9 of 179 instructions differ in tbs-en. */
+  // effect, done with the sparks, carries the NULL.
   effect = NULL;
   leader->update = (void *)effect;
   leader->scaleX = Q16_ONE;
@@ -115,8 +114,7 @@ DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkActorAndDestroyFast, -1024)
 /// leader on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a
 /// pixel a frame, and is released 20 pixels above the leader's feet. Set by
 /// Djinn_RunVenusJoinEffect in venus.c.
-void FieldEffect_UpdateDescendingOrbitActor(struct Actor *actor) {
-  struct Actor *mote = (struct Actor *)actor;
+void FieldEffect_UpdateDescendingOrbitActor(struct Actor *mote) {
   struct Vector3 position;
   struct Actor *leader;
   s32 timer;

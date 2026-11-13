@@ -428,7 +428,6 @@ static void AltmillerCave_InitializeDarkness(void) {
   wait(1);
   ScreenTransition_InitializeBattleEffectState(WINDOW_TRANSITION_LEADER_LOW);
   // UB: the fourth following pointer cell lies past scalar gFieldWork.
-  // Its named load adds eight bytes in the native EN trial (152 to 160).
 #ifdef UBFIX
   state = gScreenTransitionWork;
 #else
@@ -646,8 +645,7 @@ static void AltmillerCave_PushFallenColumn(void) {
 
 /// Update routine of the light at the top of the stopped ring. It pulses
 /// through four sizes.
-static void AltmillerCave_PulseLight(struct Actor *actor) {
-  struct Actor *light = (struct Actor *)actor;
+static void AltmillerCave_PulseLight(struct Actor *light) {
   s32 scale = gAltmillerCave_PulseScales[(light->timer >> 2) & 3];
 
   light->scaleX = scale;
@@ -896,9 +894,6 @@ static void AltmillerCave_TurnRock(s32 rock) {
     Task_Remove(AltmillerCave_SpinLights);
   }
 }
-
-/// Divides the nonnegative random value for wall-fragment scaling.
-s32 Math_DivideUnsigned(s32 value, s32 divisor);
 
 /// The party turns north, toward Babi.
 static __inline__ void AltmillerCave_FacePartyNorth(void) {
@@ -2123,8 +2118,7 @@ const struct Trigger *AltmillerCave_GetTriggers(void) {
 
 /// Update routine of AltmillerCaveDraught's obstacles. They are drawn on the
 /// leader's sprite priority.
-static void AltmillerCave_MatchLeaderPriority(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+static void AltmillerCave_MatchLeaderPriority(struct Actor *actor) {
   if (actor != NULL) {
     actor->priorityFlags = 0;
     actor->sprite->image.priority =
@@ -2637,7 +2631,7 @@ struct Trigger gAltmillerCave_TriggersOther[] = {
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
         EVENT(AltmillerCave_EndReveal)},
     {PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT(AltmillerCave_StartRetreat)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltmillerCave_BabiTriggers[] = {
@@ -2656,7 +2650,7 @@ struct Trigger gAltmillerCave_BabiTriggers[] = {
         EVENT(AltmillerCave_EndReveal)},
     {PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT(AltmillerCave_StartRetreat)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTMILLER_CAVE_MIMIC_BEATEN, FIND_MIMIC | 5},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltmillerCave_VialChestTriggers[] = {
@@ -2666,7 +2660,7 @@ struct Trigger gAltmillerCave_VialChestTriggers[] = {
         EVENT(AltmillerCave_EndReveal)},
     {PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT(AltmillerCave_StartRetreat)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTMILLER_CAVE_VIAL, FIND_ITEM(ITEM_VIAL)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltmillerCave_SquallTriggers[] = {
@@ -2682,7 +2676,7 @@ struct Trigger gAltmillerCave_SquallTriggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_SQUALL_ROOM_PUDDLE, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT(AltmillerCave_CheckFrostTargetCollision)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SQUALL_ROOM_PUDDLE, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT(AltmillerCave_FreezePuddle)},
     {TRIGGER_TALK, ACTOR_SQUALL, CONDITION_ALWAYS, EVENT(AltmillerCave_StartDjinnBattle)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltmillerCave_CookieChestTriggers[] = {
@@ -2692,7 +2686,7 @@ struct Trigger gAltmillerCave_CookieChestTriggers[] = {
         EVENT(AltmillerCave_EndReveal)},
     {PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT(AltmillerCave_StartRetreat)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTMILLER_CAVE_COOKIE, FIND_ITEM(ITEM_COOKIE)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 // clang-format on
 
@@ -2722,5 +2716,5 @@ struct Trigger gAltmillerCave_DraughtTriggers[] = {
      CONDITION_ALWAYS, EVENT(AltmillerCave_StartReveal)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
      CONDITION_ALWAYS, EVENT(AltmillerCave_EndReveal)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

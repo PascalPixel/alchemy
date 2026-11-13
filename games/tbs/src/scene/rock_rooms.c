@@ -20,9 +20,9 @@
 /// door (ROOM_DOOR).
 ///
 /// Scene_GetTriggers gives the house at Suhalla Gate its own table. Lunpa's
-/// rooms take the sealed town's table (gInteriorSealedTriggers) until Donpa's
+/// rooms take the sealed town's table (gRockRooms_SealedTriggers) until Donpa's
 /// judgment sets FLAG_DODONPA_LOCKED_UP, and the reopened town's
-/// (gInteriorReopenedTriggers) after it.
+/// (gRockRooms_ReopenedTriggers) after it.
 ///
 /// While the town is sealed, the merchants neither buy nor sell and the
 /// innkeeper offers only his home. Talking to the inn's chef or reading his
@@ -61,7 +61,7 @@ static void RockRooms_TalkToArmorMerchant(void);
 static void RockRooms_TalkToTravelingHealer(void);
 
 // clang-format off
-const struct SceneEntrance gInteriorEntrances[] = {
+const struct SceneEntrance gRockRooms_Entrances[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { ROOM_FIRST_HOME, CONDITION_ALWAYS, 192, 0, 184, FACING_NORTH, 0, 16, 0, 256, 224, 0 },
     { ROOM_SECOND_HOME, CONDITION_ALWAYS, 432, 0, 264, FACING_NORTH, 0, 296, 48, 536, 288, 0 },
@@ -80,7 +80,7 @@ const struct SceneEntrance gInteriorEntrances[] = {
     { SCENE_TABLE_END },
 };
 
-const u32 gInteriorExits[] = {
+const u32 gRockRooms_Exits[] = {
     SCENE_EXITS(RockRooms),
     SCENE_EXIT(ROOM_FIRST_HOME, Lunpa, LUNPA_FROM_FIRST_HOME),
     SCENE_EXIT(ROOM_SECOND_HOME, Lunpa, LUNPA_FROM_SECOND_HOME),
@@ -94,7 +94,7 @@ const u32 gInteriorExits[] = {
     SCENE_EXITS_END,
 };
 
-const struct ActorPlacement gInteriorActorPlacements[] = {
+const struct ActorPlacement gRockRooms_ActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
       144, 0, 168, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -134,7 +134,7 @@ const struct ActorPlacement gInteriorActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-const struct Trigger gInteriorSealedTriggers[] = {
+const struct Trigger gRockRooms_SealedTriggers[] = {
     ROOM_DOOR(ROOM_FIRST_HOME),
     ROOM_DOOR(ROOM_SECOND_HOME),
     ROOM_DOOR(ROOM_THIRD_HOME),
@@ -200,10 +200,10 @@ const struct Trigger gInteriorSealedTriggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_ROCK_ROOMS_BARREL, FLAG_LUNPA_BARREL_VIAL, FIND_ITEM(ITEM_VIAL) },
     { EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_ROCK_ROOMS_FIRST_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLunpaInteriorsFirstOven)) },
     { EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_ROCK_ROOMS_SECOND_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLunpaInteriorsSecondOven)) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
-const struct Trigger gInteriorReopenedTriggers[] = {
+const struct Trigger gRockRooms_ReopenedTriggers[] = {
     ROOM_DOOR(ROOM_FIRST_HOME),
     ROOM_DOOR(ROOM_SECOND_HOME),
     ROOM_DOOR(ROOM_THIRD_HOME),
@@ -268,42 +268,42 @@ const struct Trigger gInteriorReopenedTriggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_ROCK_ROOMS_BARREL, FLAG_LUNPA_BARREL_VIAL, FIND_ITEM(ITEM_VIAL) },
     { EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_ROCK_ROOMS_FIRST_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLunpaInteriorsFirstOven)) },
     { EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_ROCK_ROOMS_SECOND_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLunpaInteriorsSecondOven)) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 
-const struct Trigger gGateToSuhallaTriggers[] = {
+const struct Trigger gRockRooms_GateToSuhallaTriggers[] = {
     ROOM_DOOR(ROOM_GATE_TO_SUHALLA),
     {TRIGGER_TALK, ACTOR_TRAVELING_HEALER, CONDITION_ALWAYS,
      EVENT(RockRooms_TalkToTravelingHealer)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELING_HEALER,
      CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsTravelingPriestThoughts)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  return gInteriorEntrances;
+  return gRockRooms_Entrances;
 }
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Scene_GetExits(void) { return gInteriorExits; }
+const u32 *Scene_GetExits(void) { return gRockRooms_Exits; }
 
 /// The townsfolk, shopkeepers and counters of all three areas.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  return gInteriorActorPlacements;
+  return gRockRooms_ActorPlacements;
 }
 
 /// The triggers of Gate to Suhalla, or those of Lunpa's buildings before and
 /// after Donpa's judgment.
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.entrance == ROOM_GATE_TO_SUHALLA) {
-    return gGateToSuhallaTriggers;
+    return gRockRooms_GateToSuhallaTriggers;
   }
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
-    return gInteriorReopenedTriggers;
+    return gRockRooms_ReopenedTriggers;
   }
-  return gInteriorSealedTriggers;
+  return gRockRooms_SealedTriggers;
 }
 
 /// Lunpa, the inn: across the counter after Donpa's judgment, a room at the

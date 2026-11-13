@@ -214,8 +214,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
   Actor_SetDestination(stumpId, 346, 292);
   Actor_WaitForMoveById(stumpId);
   Actor_WaitBelowHeight(stump, 0);
-  // UB: the native integer store aliases the update pointer. A typed clear
-  // swaps this store with the following sprite-pointer load.
+  // UB: the integer store aliases the update pointer.
 #ifdef UBFIX
   stump->update = NULL;
 #else
@@ -315,11 +314,11 @@ struct Trigger gGomaCaveStreamTriggers[] = {
      FIND_ITEM(ITEM_POWER_BREAD)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP,
      FLAG_GOMA_CAVE_STREAM_STUMP_MOVED, EVENT(GomaCaveStream_MoveStump)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gGomaCaveBridgeTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, GOMA_CAVE_BRIDGE_TO_GOMA_CAVE_STREAM},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, GOMA_CAVE_BRIDGE_TO_WORLD_MAP},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

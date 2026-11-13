@@ -1159,7 +1159,7 @@ struct ActorPlacement gGateActorPlacements[] = {
       {EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_LUNPA_WELL,              \
        CONDITION_ALWAYS, EVENT(Lunpa_SearchWell)},                             \
   {                                                                            \
-    TRIGGERS_END                                                               \
+    TRIGGER_TABLE_END                                                          \
   }
 
 struct Trigger gLunpaSealedTriggers[] = {
@@ -1259,7 +1259,7 @@ struct Trigger gGateTriggers[] = {
     MIND_READ(ACTOR_LEFT_GUARD, EVENT(Lunpa_ReadLeftGuardsThoughts)),
     MIND_READ(ACTOR_RIGHT_GUARD, EVENT(Lunpa_ReadRightGuardsThoughts)),
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_WELL, CONDITION_ALWAYS, EVENT(Lunpa_SearchWell) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on
 

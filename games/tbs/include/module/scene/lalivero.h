@@ -1,10 +1,8 @@
-#ifndef ALCHEMY_MODULE_MAP_LALIVERO_H
-#define ALCHEMY_MODULE_MAP_LALIVERO_H
+#ifndef ALCHEMY_MODULE_SCENE_LALIVERO_H
+#define ALCHEMY_MODULE_SCENE_LALIVERO_H
 
 #include "types.h"
 #include "scene_tables.h"
-
-struct SceneExitRegion;
 
 const struct SceneEntrance *Lalivero_GetEntrances(void);
 const struct SceneExitRegion *Lalivero_GetRegions(void);

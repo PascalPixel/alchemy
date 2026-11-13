@@ -357,8 +357,6 @@ u8 Serial_CollectReceivedPayloads(void *payload) {
 /// packet (0xfefe between packets) and stores the halfword received from each
 /// console; a console's fourteenth halfword completes its packet.
 void Serial_HandleTransferInterrupt(void) {
-  // The receive channels share one backedge; a do/while for each adds 50 bytes
-  // in tbs-en.
   u16 recv[4];
   volatile u32 *sioControl;
   s32 channel;
@@ -684,8 +682,6 @@ void Serial_StepBlockTransfer(void) {
   }
 }
 
-extern const u8 Rom_Start[];
-
 /// An empty routine the link test calls to waste time.
 void SerialTest_Delay(void) {}
 
@@ -694,8 +690,6 @@ void SerialTest_Delay(void) {}
 /// the ROM when A or B is held. It never returns. Nothing in the game reaches
 /// it.
 void SerialTest_Run(void) {
-  // An outer receive loop with an inner completion break changes 9 bytes in
-  // tbs-en: the key-address load is hoisted and the restart retargeted.
   u16 *tile;
   s32 value;
   s32 n;

@@ -824,9 +824,6 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
 
   MapGrid_CopyCellsTo(78, 59, 110, 36, 1, 1);
   MapGrid_CopyCellsTo(76, 59, 109, 36, 1, 1);
-  // The shared initializer grows this path from 336 to 340 bytes and
-  // moves its palette store after the scales; the stop path also reorders
-  // stores. Keep the ordinary assignments, without a new steering wrapper.
   options.palette = 7;
   options.startScaleX = Q16_ONE / 2;
   options.startScaleY = Q16_ONE / 2;
@@ -1075,9 +1072,6 @@ enum { STONE_DOOR_WEST = 0, STONE_DOOR_SOUTH = 1, STONE_DOOR_NORTH = 2 };
 
 /// Chooses the random speed component used by stone-door particles.
 static __inline__ s32 MercuryLighthouse_RandomDoorParticleSpeed(void) {
-  // Sharing a centered-velocity helper with other sprays shrinks the fountain
-  // from 336 to 296 bytes and grows this door from 636 to 644 bytes in
-  // English.
   u32 drift = Import_RandomNext();
 
   return ((drift << 3) >> 16) * (px(1) / 5);
@@ -1243,8 +1237,7 @@ static s32 MercuryLighthouse_StartStatueSpray(struct Actor *interpreter) {
 }
 
 // The sparkles stop when the statue halts; slide scripts and code call it.
-// SC_CALL passes the interpreter. The native no-argument form also has two
-// direct callers; adding NULL to those calls inserts two r0 = 0 instructions.
+// SC_CALL passes the interpreter.
 #ifdef UBFIX
 static s32 MercuryLighthouse_StopStatueSpray(struct Actor *interpreter) {
 #else
@@ -1847,7 +1840,6 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
 static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   s32 rowOffset;
   u32 random;
-  s32 zero;
   s32 wave;
   s32 particleIndex;
   s32 particleX;
@@ -1865,8 +1857,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   options.palette = 5;
   options.type = SPRITE_GLINT;
   options.script = gGlint_TwinkleScript;
-  zero = 0;
-  wave = zero;
+  wave = 0;
   // Two bursts spread sparks across the water before it begins to part.
   do {
     u32 particleX, z;
@@ -1893,8 +1884,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     wave = (wave + 1);
   } while ((u32)wave <= 15);
   Event_Wait(40);
-  zero = 0;
-  wave = zero;
+  wave = 0;
   do {
     u32 particleX, z;
     s32 particleSpeed;
@@ -1931,8 +1921,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   options.startScaleY = 7 * Q16_ONE / 10;
   options.targetScaleX = 6 * Q16_ONE / 5;
   options.targetScaleY = 6 * Q16_ONE / 5;
-  zero = 0;
-  wave = zero;
+  wave = 0;
   // Reveal the opening one map row at a time, trailing a stream of particles.
   do {
     s32 particleSpeed;
@@ -3376,7 +3365,7 @@ struct Trigger gMercuryLighthouseLowerTriggers[] = {
     { PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT(MercuryLighthouse_RemoveColumnOnRetreat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STATUE_BLOCKING_MIA, FLAG_MIA_JOINED_PARTY, EVENT(MercuryLighthouse_MiaJoinsAfterRescue) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_CHEST_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gMercuryLighthouseMiddleTriggers[] = {
@@ -3407,7 +3396,7 @@ struct Trigger gMercuryLighthouseMiddleTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GATE_STATUE, FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN, EVENT(MercuryLighthouse_OpenGateWithMovedStatue) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_CHEST_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_CHEST_NUT, FIND_ITEM(ITEM_NUT) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gMercuryLighthouseUpperTriggers[] = {
@@ -3440,7 +3429,7 @@ struct Trigger gMercuryLighthouseUpperTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_ROW_STATUE + 3, CONDITION_ALWAYS, EVENT(MercuryLighthouse_SyncRowStatueFlags) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LAST_ROW_STATUE, CONDITION_ALWAYS, EVENT(MercuryLighthouse_SyncRowStatueFlags) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GAP_STATUE, CONDITION_ALWAYS, EVENT(MercuryLighthouse_ChangeCellForGapStatue) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gMercuryLighthouseTriggersOther[] = {
@@ -3471,6 +3460,6 @@ struct Trigger gMercuryLighthouseTriggersOther[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_PLY), ACTOR_WATERFALL_STATUE, CONDITION_ALWAYS, EVENT(MercuryLighthouse_PlyOpensWaterfallPassage) },
     { PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT(MercuryLighthouse_RemoveColumnOnRetreat) },
     { USE_ITEM(ITEM_EMPTY_BOTTLE), 5, IF_FLAG_SET(FLAG_SATUROS_BEATEN_AT_MERCURY), EVENT(MercuryLighthouse_FillHermesWaterBottle) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 // clang-format on

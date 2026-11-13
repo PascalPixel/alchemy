@@ -141,8 +141,8 @@ void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
       // centre; as gProjection.centerX it loads gProjection and reads at
       // offset 12 (1 of 157 instructions differ in tbs-en).
       centerX = *&gProjection.centerX;
-      // UB: affine coefficients can be negative. Multiplication by 256 is
-      // representable for every signed halfword; retain native shifts below.
+      // UB: affine coefficients can be negative, and shifting a negative
+      // value left is undefined; UBFIX multiplies by 256.
 #ifdef UBFIX
       horizontalOffset = (horizontalOffset * 256) * centerX;
       depthOffset = ((s16)affinePc * 256) * -centerX;

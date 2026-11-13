@@ -115,8 +115,7 @@ void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
 
 /// Per-frame update of an afterimage: closes half the distance to the actor
 /// it watches, on all three axes.
-static inline void FieldEffect_MoveAfterimageHalfway(struct Actor *actor) {
-  struct Actor *afterimage = (struct Actor *)actor;
+static inline void FieldEffect_MoveAfterimageHalfway(struct Actor *afterimage) {
   struct Actor *target = afterimage->watchedActor;
 
   afterimage->x.fixed += (target->x.fixed - afterimage->x.fixed) / 2;
@@ -177,8 +176,7 @@ struct WaveEffectSprite {
 /// frames.
 static inline void
 FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
-  // Spawn and choose its position at the call site: combining the spawn here
-  // moves the kind load after the coordinate loads in the native English build.
+  // The caller spawns the fragment and places it.
   if (fragment != NULL) {
     fragment->motionFlags = ACTOR_FALLS;
     fragment->gravity = px(1) / 10;

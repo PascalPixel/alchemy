@@ -123,9 +123,7 @@ struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
 /// origin in a random direction, then gathers beside the main actor and is
 /// freed. Set on Force's 12 flashes by FieldPsynergy_Force in force.c.
 void FieldEffect_UpdateRadialBurst(struct FieldParticle *effect) {
-  // A for/continue retry keeps the same states but grows the native English
-  // callback from 248 to 252 bytes. OUT_AND_BACK_FLYING_OUT must enter
-  // OUT_AND_BACK_AIM_BACK immediately.
+  // OUT_AND_BACK_FLYING_OUT must enter OUT_AND_BACK_AIM_BACK immediately.
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Vector3 pos;
   s32 state;
@@ -184,8 +182,7 @@ again:
 /// gFieldEffect_HeavyImpactScript (field_sequence_tables.c), where the
 /// interpreter is the actor running the script, which Force's thrown actor runs
 /// (force.c). Returns 0, so the script moves on and releases the actor.
-s32 SpawnHeavyImpactEffect(struct Actor *interpreter) {
-  struct Actor *source = interpreter;
+s32 SpawnHeavyImpactEffect(struct Actor *source) {
   struct Vector3 pos;
   struct Actor *impact;
   struct Actor *fragment;

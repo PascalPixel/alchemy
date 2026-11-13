@@ -396,7 +396,7 @@ enum {
 #define LUNPA_FORTRESS_ROOM_LAYERS (DISPCNT_BG2_ON | DISPCNT_BG3_ON)
 
 /// The paired patrol's layer origin across: 136 pixels, in 16.16 fixed point.
-// The native paired patrol computes this layer offset in floating point.
+// The paired patrol computes this layer offset in floating point.
 #define PAIRED_PATROL_LAYER_ORIGIN_X (136.0 * 65536)
 
 static s32 LunpaFortress_TryTakeChestItem(s32 actorId, s32 itemId);
@@ -855,8 +855,7 @@ static s32 LunpaFortress_IsLeaderInPatrolSafeZone(void) {
 }
 
 // UB: these patrols formerly reached gFieldWork through gMapGridWork[19] and
-// treated its request members as a halfword array. Named owner access adds
-// eight bytes to each of the three patrol tasks in the EN trial.
+// treated its request members as a halfword array.
 #ifdef UBFIX
 #define PATROL_PSYNERGY_REQUEST(work) ((work)->psynergy)
 #define PATROL_ITEM_REQUEST(work) ((work)->item)
@@ -4160,7 +4159,7 @@ struct ActorPlacement gLunpaFortressToadonpaActorPlacements[] = {
 
 /// Unused: an empty trigger table nothing returns.
 struct Trigger gLunpaFortressNoTriggers[] = {
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gLunpaFortressGroundFloorTriggers[] = {
@@ -4214,7 +4213,7 @@ struct Trigger gLunpaFortressGroundFloorTriggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_LUNPA_FORTRESS_CHEST_MYTHRIL_CIRCLET, FIND_ITEM(ITEM_MYTHRIL_CIRCLET) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 103, FLAG_LUNPA_FORTRESS_CHEST_COINS, FIND_COINS(100) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), 104, FLAG_LUNPA_FORTRESS_BARREL_VIAL, FIND_ITEM(ITEM_VIAL) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gLunpaFortressUpperFloorTriggers[] = {
@@ -4277,7 +4276,7 @@ struct Trigger gLunpaFortressUpperFloorTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_UPPER_FLOOR_ATTENDANT, CONDITION_ALWAYS, EVENT(LunpaFortress_ReadAttendantsThoughts) },
     { TRIGGER_RAISED, RAISED_PATROL_PAIR_SPOTTED, CONDITION_ALWAYS, EVENT(LunpaFortress_PatrolPairThrowsPartyOut) },
     { TRIGGER_RAISED, RAISED_HALL_PATROL_SPOTTED, CONDITION_ALWAYS, EVENT(LunpaFortress_HallPatrolThrowsPartyOut) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gLunpaFortressCaveTriggers[] = {
@@ -4303,7 +4302,7 @@ struct Trigger gLunpaFortressCaveTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_CAVE_PASSAGE_IVY, CONDITION_ALWAYS, EVENT(LunpaFortress_BlowAwayPassageIvy) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_CAVE_SECOND_SWITCH_IVY, CONDITION_ALWAYS, EVENT(LunpaFortress_BlowAwaySecondSwitchIvy) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CAVE_CRATES, FLAG_LUNPA_FORTRESS_CRATES_MOVED, EVENT(LunpaFortress_MoveCrates) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 struct Trigger gLunpaFortressTriggersOther[] = {
@@ -4334,7 +4333,7 @@ struct Trigger gLunpaFortressTriggersOther[] = {
     { TRIGGER_TALK, ACTOR_INVISIBLE_TOADONPA_DODONPA, CONDITION_ALWAYS, EVENT(LunpaFortress_TalkToJailedDodonpa) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INVISIBLE_TOADONPA_DODONPA, CONDITION_ALWAYS, EVENT(LunpaFortress_ReadJailedDodonpasThoughts) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_LUNPA_FORTRESS_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
-    { TRIGGERS_END },
+    { TRIGGER_TABLE_END },
 };
 
 u32 gLunpaFortressToadonpaDoorCells[] = {

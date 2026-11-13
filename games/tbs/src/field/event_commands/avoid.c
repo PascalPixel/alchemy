@@ -33,8 +33,7 @@ void FieldEffect_BlinkAvoidCaster(void) {
 /// FieldPsynergy_Avoid makes it the caster's update routine; it counts the
 /// caster's step and turns its angle. The arcs draw with the tiles
 /// FieldPsynergy_Avoid loads into effectWork->arcTileSlot.
-void FieldEffect_UpdateAvoidCaster(struct Actor *actor) {
-  struct Actor *caster = (struct Actor *)actor;
+void FieldEffect_UpdateAvoidCaster(struct Actor *caster) {
   s16 phase;
   s32 elapsedFrames;
 
@@ -103,6 +102,8 @@ void FieldPsynergy_Avoid(void) {
   slot = VramCache_FindFreeEntry();
   {
     s16 *tileSlot = &effectWork->arcTileSlot;
+    /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 75
+     * of 147 instructions differ in tbs-en. */
     s32 zero = 0;
 
     // The arcs' tiles (256 bytes) stay loaded until the Psynergy's end; the

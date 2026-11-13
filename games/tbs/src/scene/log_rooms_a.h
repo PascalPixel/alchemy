@@ -6,7 +6,7 @@
 /// SceneId_LogRoomsA (log_rooms_a.c) and SceneId_LogRoomsB
 /// (log_rooms_b.c) both answer.
 
-/// The cells the interiors' step triggers and examine triggers answer; the
+/// The cells the rooms' step triggers and examine triggers answer; the
 /// exits have cell behaviors of their own.
 enum LogRoomsACellBehavior {
   /// The stairs down from the inn's guests' room.

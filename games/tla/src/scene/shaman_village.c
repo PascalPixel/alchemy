@@ -1,3 +1,7 @@
+
+#include "../field/object/set_sprite_priority.c"
+
+#include "../field/field_effect/move.c"
 /// @file
 /// The Shaman Village, whose people will not talk to outsiders: Moapa, shown
 /// the Shaman's Rod, sends the party to Trial Road, where Sheba's Whirlwind

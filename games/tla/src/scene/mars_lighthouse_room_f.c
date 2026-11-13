@@ -1959,3 +1959,975 @@ DEFINE_ACTOR_PARK(Func_0200351c, Func_02003304)
 
 #undef RideSlot
 #undef RideWork
+#include "../field/field_effect/move.c"
+
+// ---- scene/mars_lighthouse_room_f/s35b8.c ----
+// @file
+// Scene code of overlay 0x6ad, in ROM order.
+
+#include "shared/cracked_tile.h"
+#include "types.h"
+#include "main_routine_work.h"
+#include "field_sprite.h"
+#include "field_effect.h"
+#include "event_inline.h"
+#include "field.h"
+#include "heap_release.h"
+#include "item_icon.h"
+#include "module/scene/scene.h"
+
+void Actor_StartScript(struct Actor *object, const void *script);
+extern const s32 *gData_02007058[];
+void Func_020035b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                   s32 velocityZ, u32 flags,
+                   const struct EffectOptions *options) {
+  struct FieldEffect *party =
+      (struct FieldEffect *)Actor_GetById(gMainRoutineWork.currentOwner);
+  struct FieldEffect *effect;
+  struct FieldSprite *sprite;
+  const s32 *script;
+  u32 start;
+
+  if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
+    effect = (struct FieldEffect *)Import_ActorCreate(options->type, x, y, z);
+  else
+    effect = (struct FieldEffect *)Import_ActorCreate(285, x, y, z);
+  if (effect == 0)
+    return;
+
+  sprite = effect->sprite;
+  Func_02005480(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Actor_StartScript(effect, gData_02007058[flags & EFFECT_SCRIPT_MASK]);
+  effect->motionFlags = 0;
+  Actor_SetSpriteFlags(effect, 0);
+  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
+  effect->velocity.x = velocityX;
+  effect->velocity.y = velocityY;
+  effect->velocity.z = velocityZ;
+  Scene_SetActorSpritePriority(effect, party->sprite->priority);
+  effect->scaleRateX = 0;
+  effect->scaleRateY = 0;
+  effect->spin = 0;
+
+  if ((flags & 0xffff0000) == 0 || options == 0)
+    return;
+  if ((flags & EFFECT_USE_PALETTE) != 0)
+    FieldActor_SetSpriteColor(effect, options->palette);
+  if ((flags & EFFECT_USE_PRIORITY) != 0) {
+    effect->priorityFlags &= ~1;
+    Scene_SetActorSpritePriority(effect, options->priority);
+  }
+  start = flags & EFFECT_USE_START_SCALE;
+  if (start != 0) {
+    effect->scaleX = options->startScaleX;
+    effect->scaleY = options->startScaleY;
+  }
+  if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
+    s32 targetX;
+    s32 count;
+
+    script = gData_02007058[flags & EFFECT_SCRIPT_MASK];
+    targetX = options->targetScaleX;
+    count = script[3];
+    if (start != 0) {
+      effect->scaleRateX = (targetX - effect->scaleX) / count;
+      effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
+    } else {
+      effect->scaleRateX = (targetX - 0x10000) / count;
+      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
+    }
+  }
+  if ((flags & EFFECT_USE_SCRIPT) != 0) {
+    Func_02005480(effect, 1);
+    Actor_StartScript(effect, options->script);
+  }
+  if ((flags & EFFECT_USE_ROTATION) != 0)
+    sprite->rotation = options->rotation;
+  if ((flags & EFFECT_USE_SPIN) != 0)
+    effect->spin = options->spin;
+  if ((flags & EFFECT_USE_UPDATE) != 0)
+    effect->update = options->update;
+}
+
+#define CELL_TABLE gData_020070a8
+#define CELL_SPRITE_DRAW CrackedTiles_Update
+#define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
+#include "../field/map/cell_sprite.c"
+
+#include "ram_buffer.h"
+#include "actor.h"
+#include "iwram_call.h"
+#include "cell_target.h"
+
+DEFINE_CRACKED_TILES_FIND(Func_020038ac, gData_020070a8, CrackedTiles_Update)
+
+#include "scene_tables.h"
+
+DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
+
+// Map_CopyCellsRect through this overlay's import.
+
+// Centers the leader on its cell, plays sound 161 and copies the cell below
+// the table's source cell over the leader's, keeping the source column's and
+// row's 64 bit; Func_02003f18 calls it the first time the leader steps on
+// one of the table's cells.
+DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
+
+#include "io_reg.h"
+
+DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
+
+#include "../field/field_effect/advance_motion.c"
+
+// ---- scene/mars_lighthouse_room_f/s3d80.c ----
+// @file
+// Scene code of overlay 0x6ad, in ROM order.
+
+#include "shared/cracked_tile.h"
+#include "shared/jupiter_lighthouse.h"
+#include "shared/mars_lighthouse.h"
+#include "shared/push.h"
+#include "shared/tables.h"
+#include "types.h"
+#include "system.h"
+#include "ram_buffer.h"
+#include "actor.h"
+#include "main_routine_work.h"
+#include "field_effect.h"
+#include "event_inline.h"
+#include "event_work.h"
+#include "heap_release.h"
+#include "item_icon.h"
+#include "module/field/field.h"
+#include "module/field/field_effect.h"
+#include "module/scene/mars_lighthouse_room_f.h"
+#include "module/scene/scene.h"
+#include "module/system/system.h"
+
+static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
+  FieldCamera_MoveTo(x, y, z, mode);
+}
+
+static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
+  MapGrid_SetShake(a, b, c);
+}
+
+DEFINE_CRACKED_TILE_DROP_IN(Func_02003d80, Func_020035b8)
+
+#include "mars_lighthouse_room_f.h"
+
+void GameFlag_SetByte(s32 flag, s32 value);
+void CrackedTile_Crack(struct WarpWork *work, struct WarpEntry *entry);
+void CrackedTile_FallEvent(struct WarpWork *work, struct WarpEntry *entry);
+
+s32 Func_02003f18(void) {
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 x = object->x >> 20;
+  s32 z = object->z >> 20;
+  struct WarpWork *work = &gData_020070a8;
+  struct WarpEntry *entry = work->entries;
+  s32 index;
+
+  index = 0;
+  if (index >= work->count)
+    goto end;
+top:
+  if (entry->x == x && entry->z == z) {
+    if (!Event_GetFlag(entry->flag)) {
+      CrackedTile_Crack(work, entry);
+      Event_SetFlag(entry->flag);
+      work->current = index;
+      goto end;
+    }
+    if (index == work->current)
+      goto end;
+    work->current = index;
+    CrackedTile_FallEvent(work, entry);
+    GameFlag_SetByte(work->positionFlag, x);
+    GameFlag_SetByte(work->positionFlag + 8, z);
+    return 1;
+  }
+  index++;
+  entry++;
+  if (index < work->count)
+    goto top;
+end:
+  return 0;
+}
+
+void Func_02003fc8(s32 dx, s32 dz, s32 value) {
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  u8 *event = Ram_HeapSlots->eventWork;
+  struct WarpWork *work = &gData_020070a8;
+  s32 x = FieldGameFlag_GetByte(work->positionFlag);
+  s32 z = FieldGameFlag_GetByte(work->positionFlag + 8);
+
+  if (x != 0 || z != 0) {
+    struct Actor *other;
+
+    GameFlag_SetByte(work->positionFlag, 0);
+    GameFlag_SetByte(work->positionFlag + 8, 0);
+    object->x = ((x + dx) << 20) + 0x80000;
+    object->z = ((z + dz) << 20) + 0x80000;
+    other = *(struct Actor **)(event + 460);
+    other->x = object->x;
+    other->z = object->z;
+    Map_CenterOnFollowedPoint();
+    Func_02003d80();
+    WORD_AT(Ram_HeapSlots->eventWork, 428) = value;
+  }
+}
+
+#include "input.h"
+
+/* VIEW(s3d80): variable gData_02005ef8 as extern const s16 gData_02005ef8[];
+ * the definition has s32 gData_02005ef8[] = { 0xffff, - 0x8000, (s32)
+ * 0xe000c000, (s32) 0xc000a000, 0x20004000, 0x40006000, 0xffff, - 0x8000, };
+ * tried as the definition's extern
+ * DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_02005e44, 22)
+ * DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_02005e80, 44)
+ * DEFINE_FIELD_EFFECT_D..., it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:101: initializer element
+ * is not constant. */
+extern const s16 gData_02005ef8__s3d80[] __asm__("gData_02005ef8");
+
+DEFINE_ACTOR_STEER_BY_PAD(Func_02004080, gData_02005ef8__s3d80, Func_02005480)
+
+DEFINE_LEADER_STOP_IF_PENDING(Func_0200410c)
+
+#include "fixed_math.h"
+#include "scene_tables.h"
+#include "system/iwram_call.h"
+
+// A point on the map: 16.16 fixed-point pixels.
+struct Position {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+/* VIEW(s3d80): variable gData_02005f38 as extern s16 gData_02005f38[]; the
+ * definition has s32 gData_02005f38[] = { 0xffff, - 0x8000, 0xc000, (s32)
+ * 0xc0008000, 0x4000, 0x40008000, 0xffff, - 0x8000, }; tried as the
+ * definition's extern s32 gData_02005f38[], Func_02004140 moves: 4 of 302
+ * instructions, Func_020043ec moves: 1 of 330 instructions in tla-ja. */
+extern s16 gData_02005f38__s3d80[] __asm__("gData_02005f38");
+
+DEFINE_LEADER_SLIDE_ON_ICE(Func_02004140, Func_0200410c, gData_02005f38__s3d80,
+                           Func_02005480, Func_02004080,
+                           Import_FieldCheckSpheresOverlap)
+
+#include "version.h"
+
+#include "call.h"
+
+#define SHARED_F02003070_NAME Func_020043ec
+#define SHARED_F02003070_ID2 gData_020074c8
+#define SHARED_F02003070_ID3 Func_0200410c
+#define SHARED_F02003070_ID4 gData_02005f38__s3d80
+#define SHARED_F02003070_ID5 Func_02005480
+#define SHARED_F02003070_ID6 Actor_HasArrived
+#define SHARED_F02003070_ID7 Func_02004080
+#define SHARED_F02003070_ID8 Import_FieldCheckSpheresOverlap
+#include "shared/func_02003070.c"
+#undef SHARED_F02003070_NAME
+#undef SHARED_F02003070_ID2
+#undef SHARED_F02003070_ID3
+#undef SHARED_F02003070_ID4
+#undef SHARED_F02003070_ID5
+#undef SHARED_F02003070_ID6
+#undef SHARED_F02003070_ID7
+#undef SHARED_F02003070_ID8
+
+void Func_02004700(s32 value) { gData_020074c8 = value; }
+
+#include "system/main_routine_work.h"
+
+DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_0200470c, Func_0200410c, Func_02005480,
+                                 Func_02004080, Import_FieldCheckSpheresOverlap)
+
+#include "field_sprite.h"
+
+extern u16 gData_02005f58[];
+/* VIEW(s4700): variable gData_02005f64 as extern s8 gData_02005f64[][4]; the
+ * definition has u32 gData_02005f64[] = { 0x820f8e0, 0x2008e0f8, 0x20f0e0,
+ * 0x2008e0f8, 0x820f8e0, 0x2008e0f8, }; tried as the definition's extern u32
+ * gData_02005f64[], it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:188: subscripted value is
+ * neither array nor pointer. */
+extern s8 gData_02005f64__s4700[][4] __asm__("gData_02005f64");
+
+#define ABS(x) ((x) < 0 ? -(x) : (x))
+
+s32 Func_02004938(s32 id) {
+  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  struct Actor *object = Actor_Get(id);
+  s16 shape = *(s16 *)((struct FieldSprite *)object->sprite)->record;
+  s16 i = 0;
+  u32 j;
+  s32 width;
+  s32 height;
+  s32 x;
+  s32 z;
+  s32 mapX;
+  s32 mapZ;
+  s32 toX;
+  s32 toZ;
+
+  if ((u16)shape != gData_02005f58[(u16)i]) {
+  next:
+    j = (u16)((i << 16) + 0x10000 >> 16);
+    i = j;
+    if (j <= 5 && (u16)shape != gData_02005f58[j])
+      goto next;
+  }
+  j = (u16)i;
+  if (j == 6)
+    return 0;
+  width =
+      (ABS(gData_02005f64__s4700[j][0]) + ABS(gData_02005f64__s4700[j][2])) >>
+      4;
+  height =
+      (ABS(gData_02005f64__s4700[j][1]) + ABS(gData_02005f64__s4700[j][3])) >>
+      4;
+  x = (object->x + (gData_02005f64__s4700[j][0] << 16)) >> 20;
+  z = (object->z + (gData_02005f64__s4700[j][1] << 16)) >> 20;
+  mapX = *(s32 *)(map + 328) >> 20;
+  i = mapX;
+  mapZ = *(s32 *)(map + 332) >> 20;
+  toX = x + (u16)i;
+  toZ = z + (u16)mapZ;
+  MapGrid_CopyCellAttributes(x, z, width, height, toX, toZ);
+  Func_02004a44(0, x, z, width, height, 255);
+  Func_02004a44(2, x, z, width, height, 255);
+  return 1;
+}
+
+void Func_02004a44(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value) {
+  struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
+  u8 *cells = map->layers[layer].cells;
+  u32 row;
+  u32 column;
+
+  cells += (x + (z << 7)) << 2;
+  for (row = 0; row < height; row++) {
+    u8 *cell = cells + (row << 9);
+
+    for (column = 0; column < width; column++) {
+      cell[2] = value;
+      cell += 4;
+    }
+  }
+}
+
+extern s32 gData_02005f7c[];
+
+static inline s32 Func_020054f8_(struct Actor *object, s32 *position) {
+  return MapGrid_CheckCollision(object, position);
+}
+
+// Finds the object the leader is pushing and steps its footprint, one cell
+// at a time in the leader's direction, until a cell of it is blocked
+// (MapGrid_CheckCollision returns 2). Leaves the object's resting place in
+// target and returns 1, or 0 when nothing is pushed or it cannot move at all.
+DEFINE_PUSH_TARGET_FIND_SLIDE(PushTarget_FindSlide, PushTarget_FindAhead,
+                              gData_02005f64__s4700, gData_02005f7c,
+                              Func_020054f8_)
+
+#undef PIXELS
+// The whole-pixel half of a 16.16 coordinate.
+#define PIXELS(v) (((s16 *)&(v))[1])
+
+DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gData_02005f58,
+                              gData_02005f7c, gData_02005f64__s4700)
+
+#undef PIXELS
+
+DEFINE_PUSH_TARGET_PUSH(Func_02004d10, gData_02005f64__s4700, Func_02004a44,
+                        Actor_StopAtPushTarget, Func_02005480, gData_02005f7c)
+
+DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Actor_StopAtPushTarget, Actor_FindAtCell,
+                                 gData_02005f58, MapGrid_CheckCollision)
+#undef ABS
+#undef PIXELS
+#define PIXELS(value) ((value) << 16)
+
+#define MapLayer MapLayer__s5048
+#include "map.h"
+#undef MapLayer
+/* VIEW(s5048): tag struct MapLayer as struct MapLayer__s5048; room.h has
+ * another definition; not tried: struct MapLayer__s5048 was not found. */
+#include "field_event.h"
+#include "vram_tab.h"
+
+// Queues the lit actors' sprites: for each listed actor with a position,
+// projects it from the map's view, skips it off screen, and writes a 16 by 16
+// sprite, or a 32 by 64 one when the big switch is set, at its animation
+// picture and depth.
+DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gData_020074cc, Data_0200f510,
+                          gData_020074ce, gData_020074d0, gData_020075d0,
+                          gData_020075d2, BattleEffect_GetObjectPriority,
+                          Oam_AddSpriteAtDepthClamped)
+
+#include "iwram_call.h"
+#include "task.h"
+
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
+
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_020074d0, gData_020074cc,
+                            LightSprites_Draw, gData_020074ce, gData_020075d0,
+                            gData_020075d2)
+
+DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_020074d0, gData_020074cc,
+                            LightSprites_Draw, gData_020074ce, gData_020075d0,
+                            gData_020075d2)
+
+DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_020074d0, gData_020074cc,
+                            LightSprites_Draw, gData_020074ce, gData_020075d0,
+                            gData_020075d2)
+
+DEFINE_LIGHT_SPRITES_ADD(Func_0200538c, gData_020074ce, gData_020074d0)
+
+void Func_020053bc(s32 value) { gData_020075d2 = value; }
+
+#include "objcmd.h"
+
+void Func_0200004c(void);
+void Func_020006f4(void);
+void Func_02003478(void);
+void Func_0200351c(void);
+
+s32 gData_020056c8[] = {
+    SC_CALL(Func_0200004c),
+    SC_END,
+};
+
+// clang-format off
+DEFINE_G_DATA_020056D4(gData_020056d4, 680, 760)
+
+DEFINE_G_DATA_020056D4(gData_02005748, 584, 664)
+
+u32 gData_020057bc[] = {
+    SC_SET(SW_STEERING, 0),
+    SC_SET(SW_MOTION, 2),
+    SC_SET(SW_Y, PIXELS(48)),
+    SC_SET(SW_GROUND, PIXELS(48)),
+    SC_SET(SW_SPEED, 0x8000),
+    SC_SET(SW_ACCEL, 0x800),
+    SC_LABEL(1),
+    SC_WAIT(1),
+    SC_FLAG_CHECK(0x220),
+    SC_IFNOT(SC_TO(1)),
+    SC_LABEL(2),
+    SC_MOVE(PIXELS(176), 0, PIXELS(576)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(248), 0, PIXELS(576)),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_MOVE(PIXELS(176), 0, PIXELS(576)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(104), 0, PIXELS(576)),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_LOOP(SC_FOREVER, SC_TO(2)),
+};
+
+u32 gData_02005890[] = {
+    SC_SET(SW_STEERING, 0),
+    SC_SET(SW_MOTION, 2),
+    SC_SET(SW_Y, PIXELS(32)),
+    SC_SET(SW_GROUND, PIXELS(32)),
+    SC_SET(SW_SPEED, 0x8000),
+    SC_SET(SW_ACCEL, 0x800),
+    SC_MOVE(PIXELS(88), 0, PIXELS(112)),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_LABEL(1),
+    SC_MOVE(PIXELS(168), 0, PIXELS(112)),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_MOVE(PIXELS(88), 0, PIXELS(112)),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_LOOP(SC_FOREVER, SC_TO(1)),
+};
+
+u32 gData_0200593c[] = {
+    SC_SET(SW_STEERING, 0),
+    SC_SET(SW_MOTION, 0),
+    SC_SET(SW_Y, PIXELS(32)),
+    SC_SET(SW_GROUND, PIXELS(32)),
+    SC_SET(SW_SPEED, 0x8000),
+    SC_SET(SW_ACCEL, 0x800),
+    SC_LABEL(1),
+    SC_MOVE(PIXELS(264), PIXELS(32), PIXELS(112)),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_MOVE(PIXELS(264), PIXELS(80), PIXELS(112)),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_MOVE(PIXELS(232), PIXELS(80), PIXELS(112)),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_MOVE(PIXELS(264), PIXELS(80), PIXELS(112)),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_MOVE(PIXELS(264), PIXELS(32), PIXELS(112)),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_MOVE(PIXELS(360), PIXELS(32), PIXELS(112)),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_LOOP(SC_FOREVER, SC_TO(1)),
+};
+
+DEFINE_G_DATA_02004FF0(gData_02005a3c, 2)
+
+u32 gData_02005a88[] = {
+    SC_SET(SW_STEERING, 0),
+    SC_SET(SW_MOTION, 2),
+    SC_SET(SW_Y, PIXELS(48)),
+    SC_SET(SW_GROUND, PIXELS(48)),
+    SC_SET(SW_SPEED, 0x8000),
+    SC_SET(SW_ACCEL, 0x800),
+    SC_MOVE(PIXELS(968), 0, PIXELS(80)),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_LABEL(1),
+    SC_MOVE(PIXELS(872), 0, PIXELS(80)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(776), 0, PIXELS(80)),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_MOVE(PIXELS(872), 0, PIXELS(80)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(968), 0, PIXELS(80)),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_LOOP(SC_FOREVER, SC_TO(1)),
+};
+
+s16 gData_02005b5c[] = {
+    24, 25, 26, 24, 25, 0,
+};
+
+u32 gData_02005b68[] = {
+    0, 40, 0x80010000, 22, 25, 0,
+    0, 1, 22, 25, 1, 0,
+    1, 13, 10, 0xc0010000, 38,
+};
+
+u32 gData_02005bac[] = {
+    0, 42, 0x80010000, 22, 25, 0,
+    0, 1, 22, 25, 1, 0,
+    1, 13, 10, 0xc0010000, 38,
+};
+
+u16 gData_02005bf0[] = {
+    8, 67, 0,
+};
+
+u16 gData_02005bf6[] = {
+    10, 1, 0,
+};
+
+u16 gData_02005bfc[] = {
+    18, 17, 19, 49, 20, 19, 21, 3,
+    0,
+};
+
+u16 gData_02005c0e[] = {
+    22, 0, 0,
+};
+
+u16 gData_02005c14[] = {
+    13, 17, 14, 33, 15, 49, 16, 131,
+    0,
+};
+
+u16 gData_02005c26[] = {
+    19, 1, 0,
+};
+
+u16 gData_02005c2c[] = {
+    13, 3, 0,
+};
+
+u16 gData_02005c32[] = {
+    14, 1, 0,
+};
+
+u16 gData_02005c38[] = {
+    8, 3, 9, 3, 10, 3, 0,
+};
+
+u16 gData_02005c46[] = {
+    12, 0, 0,
+};
+
+u16 gData_02005c4c[] = {
+    13, 3, 14, 3, 15, 3, 0,
+};
+
+u16 gData_02005c5a[] = {
+    10, 0, 0,
+};
+
+u16 gData_02005c60[] = {
+    24, 3, 25, 3, 26, 3, 0,
+};
+
+u16 gData_02005c6e[] = {
+    18, 0, 19, 0, 20, 0, 21, 0,
+    22, 0, 0,
+};
+
+DEFINE_G_DATA_020054CC(gData_02005c84, Func_02003478, 0xf80000, 0x200000,
+    0x2a00000, 0x160000, 0xf80000, 0x2b00000, Func_020006f4, Func_0200351c)
+
+DEFINE_G_DATA_020054CC(gData_02005ce0, Func_02003478, 0xb80000, 0x400000,
+    0x2300000, 0x360000, 0xb80000, 0x2400000, Func_02000d80, Func_0200351c)
+
+DEFINE_G_DATA_0200547C(gData_02005d3c, Func_02003478, 872, 128, 22, 872, 144,
+    Func_0200351c)
+
+DEFINE_G_DATA_02001540(gData_02005d8c, 30)
+
+u32 gData_02005dbc[] = {
+    0, 20, 0x80010000, 22, 25, 0,
+    0, 1, 22, 25, 1, 0,
+    1, 13, 10, 0xc0010000, 38,
+};
+
+u32 gData_02005e00[] = {
+    0, 20, 0x80010000, 22, 25, 0,
+    0, 1, 22, 25, 1, 0,
+    1, 13, 10, 0xc0010000, 38,
+};
+
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_02005e44, 22)
+
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_02005e80, 44)
+
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gData_02005ebc, 126)
+
+s32 gData_02005ef8[] = {
+    0xffff, -0x8000, (s32)0xe000c000, (s32)0xc000a000, 0x20004000, 0x40006000,
+    0xffff, -0x8000,
+};
+
+s16 gData_02005f18[] = {
+    -1, 0, -0x8000, -1, -0x4000, -1, -1, -0x4000,
+    0x4000, -1, -1, 0x4000, -1, 0, -0x8000, -1,
+};
+
+s32 gData_02005f38[] = {
+    0xffff, -0x8000, 0xc000, (s32)0xc0008000, 0x4000, 0x40008000,
+    0xffff, -0x8000,
+};
+
+u16 gData_02005f58[] = {
+    258, 259, 293, 294, 332, 331,
+};
+
+u32 gData_02005f64[] = {
+    0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8,
+};
+
+DEFINE_PUSH_LEADER_STEPS(gData_02005f7c)
+// clang-format on
+
+// ---- scene/data/mars_lighthouse_room_f.c ----
+
+#include "macros.h"
+#include "shared/tables.h"
+#include "types.h"
+#include "scene_tables.h"
+#include "version.h"
+#include "objcmd.h"
+#include "module/scene/airs_rock.h"
+#include "module/scene/mars_lighthouse_room_f.h"
+
+void Func_020000d0(void);
+void Func_020001f4(void);
+void Func_02000248(void);
+void Func_0200025c(void);
+void Func_02000280(void);
+void Func_020002b8(void);
+void Func_020002ec(void);
+// Func_020002ec is from patch 1; the Japanese table contains 0.
+#if !TLA_PATCH_1
+#define MARS_LIGHTHOUSE_ROOM_F_FUNC_020002EC 0
+#else
+#define MARS_LIGHTHOUSE_ROOM_F_FUNC_020002EC ((s32)Func_020002ec)
+#endif
+void Func_02000444(void);
+void Func_02000480(void);
+void Func_020004bc(void);
+void Func_02000670(void);
+void Func_02000778(void);
+void Func_02000784(void);
+void Func_0200079c(void);
+void Func_020007b4(void);
+void Func_020007cc(void);
+void Func_020007f0(void);
+void Func_020008a0(void);
+void Func_02000900(void);
+void Func_02000aac(void);
+void Func_02000cf4(void);
+void Func_02000d38(void);
+void Func_0200297c(void);
+void MarsLighthouseRoomF_ContinueSlide(void);
+
+extern u8 gData_020056c8[];
+extern u8 gData_020056d4[];
+extern u8 gData_02005748[];
+extern u8 gData_020057bc[];
+extern u8 gData_02005890[];
+extern u8 gData_0200593c[];
+extern u8 gData_02005a3c[];
+extern u8 gData_02005a88[];
+extern u8 gData_02005e44[];
+extern u8 gData_02005e80[];
+extern u8 gData_02005ebc[];
+
+LATE_DATA struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 192, 0, 192, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA u32 gSceneExits[] = {
+    SCENE_EXITS(292),        SCENE_EXIT(1, 290, 2),   SCENE_EXIT(2, 292, 3),
+    SCENE_EXIT(3, 292, 2),   SCENE_EXIT(4, 296, 3),   SCENE_EXITS(293),
+    SCENE_EXIT(1, 288, 2),   SCENE_EXIT(2, 293, 3),   SCENE_EXIT(3, 293, 2),
+    SCENE_EXIT(4, 293, 5),   SCENE_EXIT(5, 293, 4),   SCENE_EXIT(6, 293, 7),
+    SCENE_EXIT(7, 293, 6),   SCENE_EXIT(8, 296, 2),   SCENE_EXIT(9, 293, 9),
+    SCENE_EXITS(294),        SCENE_EXIT(1, 289, 2),   SCENE_EXIT(2, 294, 3),
+    SCENE_EXIT(3, 294, 2),   SCENE_EXIT(4, 294, 5),   SCENE_EXIT(5, 294, 4),
+    SCENE_EXIT(6, 294, 6),   SCENE_EXIT(7, 294, 7),   SCENE_EXIT(8, 294, 9),
+    SCENE_EXIT(9, 294, 8),   SCENE_EXIT(10, 294, 10), SCENE_EXIT(11, 294, 12),
+    SCENE_EXIT(12, 294, 11), SCENE_EXIT(13, 294, 14), SCENE_EXIT(14, 294, 13),
+    SCENE_EXIT(15, 296, 4),  SCENE_EXIT(16, 294, 16), SCENE_EXITS(295),
+    SCENE_EXIT(1, 291, 2),   SCENE_EXIT(6, 295, 7),   SCENE_EXIT(7, 295, 6),
+    SCENE_EXIT(8, 295, 9),   SCENE_EXIT(9, 295, 8),   SCENE_EXIT(10, 295, 11),
+    SCENE_EXIT(11, 295, 10), SCENE_EXIT(12, 295, 13), SCENE_EXIT(13, 295, 12),
+    SCENE_EXIT(14, 295, 15), SCENE_EXIT(15, 295, 14), SCENE_EXIT(5, 296, 1),
+    SCENE_EXITS_END,
+};
+
+// clang-format off
+LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_Placements[] = {
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_Room4Placements[] = {
+    {407, CONDITION_ALWAYS, 1, PIXELS(776), 0, PIXELS(296), FACING_SOUTH, 2, 0},
+    {407, CONDITION_ALWAYS, 1, PIXELS(776), 0, PIXELS(136), FACING_SOUTH, 2, 0},
+    {315, CONDITION_ALWAYS, 1, PIXELS(600), 0, PIXELS(136), FACING_SOUTH, 2, 0},
+    {315, CONDITION_ALWAYS, 1, PIXELS(632), 0, PIXELS(168), FACING_SOUTH, 2, 0},
+    {315, CONDITION_ALWAYS, 1, PIXELS(680), 0, PIXELS(168), FACING_SOUTH, 2, 0},
+    {414, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(128), FACING_SOUTH, 2, 0},
+    {414, CONDITION_ALWAYS, (s32)gData_02005748, PIXELS(664), 0, PIXELS(304), FACING_SOUTH, 2, 0},
+    {414, CONDITION_ALWAYS, (s32)gData_020056d4, PIXELS(760), 0, PIXELS(304), FACING_SOUTH, 2, 0},
+    {254, CONDITION_ALWAYS, 1, PIXELS(792), 0, PIXELS(312), FACING_SOUTH, 2, 0},
+    {254, CONDITION_ALWAYS, 1, PIXELS(552), 0, PIXELS(552), FACING_SOUTH, 2, 0},
+    {254, CONDITION_ALWAYS, 1, PIXELS(616), 0, PIXELS(552), FACING_SOUTH, 2, 0},
+    {254, CONDITION_ALWAYS, 1, PIXELS(680), 0, PIXELS(552), FACING_SOUTH, 2, 0},
+    {254, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(552), FACING_SOUTH, 2, 0},
+    {254, CONDITION_ALWAYS, 1, PIXELS(552), 0, PIXELS(712), FACING_SOUTH, 2, 0},
+    {254, CONDITION_ALWAYS, 1, PIXELS(616), 0, PIXELS(712), FACING_SOUTH, 2, 0},
+    {254, CONDITION_ALWAYS, 1, PIXELS(680), 0, PIXELS(712), FACING_SOUTH, 2, 0},
+    {414, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {414, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {414, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_Room1Placements[] = {
+    {414, CONDITION_ALWAYS, (s32)gData_020057bc, PIXELS(104), 0, PIXELS(576), FACING_SOUTH, 2, 0},
+    {418, CONDITION_ALWAYS, (s32)gData_020056c8, PIXELS(248), 0, PIXELS(616), FACING_SOUTH, 2, 0},
+    {419, CONDITION_ALWAYS, (s32)gData_020056c8, PIXELS(248), 0, PIXELS(616), FACING_SOUTH, 2, 0},
+    {419, CONDITION_ALWAYS, (s32)gData_020056c8, PIXELS(248), 0, PIXELS(664), FACING_SOUTH, 2, 0},
+    {673, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {412, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {489, CONDITION_ALWAYS, 7, PIXELS(248), 0, PIXELS(848), FACING_SOUTH, 2, 0},
+    {293, CONDITION_ALWAYS, 7, PIXELS(144), 0, PIXELS(256), FACING_SOUTH, 2, 0},
+    {294, CONDITION_ALWAYS, 7, PIXELS(104), 0, PIXELS(352), FACING_SOUTH, 2, 0},
+    {295, CONDITION_ALWAYS, 7, PIXELS(104), 0, PIXELS(408), FACING_SOUTH, 2, 0},
+    {489, CONDITION_ALWAYS, 1, PIXELS(112), 0, PIXELS(216), FACING_SOUTH, 2, 0},
+    {489, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(376), FACING_SOUTH, 2, 0},
+    {415, CONDITION_ALWAYS, 1, PIXELS(368), 0, PIXELS(168), FACING_SOUTH, 2, 0},
+    {414, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(304), FACING_SOUTH, 2, 0},
+    {413, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(312), FACING_WEST, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_Room3Placements[] = {
+    {414, CONDITION_ALWAYS, (s32)gData_02005890, PIXELS(88), 0, PIXELS(112), FACING_SOUTH, 2, 0},
+    {414, CONDITION_ALWAYS, (s32)gData_0200593c, PIXELS(360), 0, PIXELS(112), FACING_SOUTH, 2, 0},
+    {414, CONDITION_ALWAYS, (s32)gData_02005a3c, PIXELS(120), 0, PIXELS(288), FACING_SOUTH, 2, 0},
+    {428, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(120), FACING_SOUTH, 2, 0},
+    {413, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(296), FACING_EAST, 2, 0},
+    {414, CONDITION_ALWAYS, (s32)gData_02005a88, PIXELS(968), 0, PIXELS(80), FACING_SOUTH, 2, 0},
+    {419, CONDITION_ALWAYS, (s32)gData_020056c8, PIXELS(872), 0, PIXELS(120), FACING_SOUTH, 2, 0},
+    {673, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {412, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+DEFINE_G_DATA_02004EB8(gData_02006980, 80, 216, 512, 152)
+
+LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_Room2Placements[] = {
+    {294, CONDITION_ALWAYS, 7, PIXELS(568), 0, PIXELS(144), FACING_SOUTH, 2, 0},
+    {293, CONDITION_ALWAYS, 7, PIXELS(544), 0, PIXELS(240), FACING_SOUTH, 2, 0},
+    {293, CONDITION_ALWAYS, 7, PIXELS(544), 0, PIXELS(272), FACING_SOUTH, 2, 0},
+    {290, CONDITION_ALWAYS, 1, PIXELS(616), 0, PIXELS(168), FACING_SOUTH, 2, 0},
+    {290, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(216), FACING_SOUTH, 2, 0},
+    {489, CONDITION_ALWAYS, 1, PIXELS(512), 0, PIXELS(200), FACING_EAST, 2, 0},
+    {489, CONDITION_ALWAYS, 1, PIXELS(576), 0, PIXELS(232), FACING_WEST, 2, 0},
+    {489, CONDITION_ALWAYS, 1, PIXELS(600), 0, PIXELS(176), FACING_WEST, 2, 0},
+    {414, CONDITION_ALWAYS, (s32)gData_02006980, PIXELS(152), 0, PIXELS(512), FACING_SOUTH, 2, 0},
+    {418, CONDITION_ALWAYS, (s32)gData_020056c8, PIXELS(264), 0, PIXELS(520), FACING_SOUTH, 2, 0},
+    {419, CONDITION_ALWAYS, (s32)gData_020056c8, PIXELS(264), 0, PIXELS(520), FACING_SOUTH, 2, 0},
+    {419, CONDITION_ALWAYS, (s32)gData_020056c8, PIXELS(184), 0, PIXELS(552), FACING_SOUTH, 2, 0},
+    {295, CONDITION_ALWAYS, 7, PIXELS(600), 0, PIXELS(204), FACING_SOUTH, 2, 0},
+    {673, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {412, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct Trigger gMarsLighthouseRoomF_Triggers[] = {
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA struct Trigger gMarsLighthouseRoomF_Room4Triggers[] = {
+    {0x202, 30, CONDITION_ALWAYS, EVENT(Func_020000d0)},
+    {0x8602, 31, CONDITION_ALWAYS, EVENT(Func_02000168)},
+    {0x202, 31, CONDITION_ALWAYS, EVENT(Func_02000170)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {0x31, 6, CONDITION_ALWAYS, 6},
+    {0x21, 7, CONDITION_ALWAYS, 7},
+    {0x31, 8, CONDITION_ALWAYS, 8},
+    {0x21, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {0x51, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
+    {0x51, 13, CONDITION_ALWAYS, 13},
+    {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
+    {0x51, 15, CONDITION_ALWAYS, 15},
+    {8, 0, CONDITION_ALWAYS, EVENT(Func_02000248)},
+    {9, 0, CONDITION_ALWAYS, EVENT(Func_0200025c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, CONDITION_ALWAYS, EVENT(Func_02000248)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(Func_0200025c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, MARS_LIGHTHOUSE_ROOM_F_FUNC_020002EC},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, MARS_LIGHTHOUSE_ROOM_F_FUNC_020002EC},
+    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), 10, CONDITION_ALWAYS, MARS_LIGHTHOUSE_ROOM_F_FUNC_020002EC},
+    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), 11, CONDITION_ALWAYS, MARS_LIGHTHOUSE_ROOM_F_FUNC_020002EC},
+    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), 12, CONDITION_ALWAYS, MARS_LIGHTHOUSE_ROOM_F_FUNC_020002EC},
+    {0x602, 33, 0xa38, EVENT(Func_0200021c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0xa38, EVENT(Func_020001f4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, 0},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 18, CONDITION_ALWAYS, EVENT(Func_02000280)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 19, CONDITION_ALWAYS, EVENT(Func_02000280)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 20, CONDITION_ALWAYS, EVENT(Func_02000280)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, CONDITION_ALWAYS, EVENT(Func_020002b8)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, CONDITION_ALWAYS, EVENT(Func_020002b8)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 20, CONDITION_ALWAYS, EVENT(Func_020002b8)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 21, CONDITION_ALWAYS, EVENT(Func_02000280)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 22, CONDITION_ALWAYS, EVENT(Func_02000280)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 21, CONDITION_ALWAYS, EVENT(Func_020002b8)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 22, CONDITION_ALWAYS, EVENT(Func_020002b8)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 23, CONDITION_ALWAYS, 0},
+    {TRIGGER_STEP, 88, CONDITION_ALWAYS, EVENT(Func_0200297c)},
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA struct Trigger gMarsLighthouseRoomF_Room1Triggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {0x21, 2, CONDITION_ALWAYS, 2},
+    {0x31, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_STEP, 33, 0x220, EVENT(Func_020004f8)},
+    {0x202, 30, CONDITION_ALWAYS, EVENT(Func_02000418)},
+    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Func_02002b88)},
+    {TRIGGER_STEP, 88, CONDITION_ALWAYS, EVENT(Func_0200297c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 22, CONDITION_ALWAYS, 0},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 20, 0xa44, EVENT(Func_02000444)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 21, 0xa45, EVENT(Func_02000480)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 22, 0xa46, EVENT(Func_020004bc)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 9, CONDITION_ALWAYS, EVENT(Func_020000bc)},
+    {0x60009a15, 11, CONDITION_ALWAYS, EVENT(Func_02000554)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 11, CONDITION_ALWAYS, EVENT(Func_02000670)},
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA struct Trigger gMarsLighthouseRoomF_Room3Triggers[] = {
+    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Func_02000944)},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
+    {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 2, CONDITION_ALWAYS, EVENT(Func_02000754)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 3, CONDITION_ALWAYS, EVENT(Func_02000760)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 4, CONDITION_ALWAYS, EVENT(Func_0200076c)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 5, CONDITION_ALWAYS, EVENT(Func_02000778)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 6, CONDITION_ALWAYS, EVENT(Func_02000784)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 7, CONDITION_ALWAYS, EVENT(Func_02000790)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 8, CONDITION_ALWAYS, EVENT(Func_0200079c)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 9, CONDITION_ALWAYS, EVENT(Func_020007a8)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 10, CONDITION_ALWAYS, EVENT(Func_020007b4)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 11, CONDITION_ALWAYS, EVENT(Func_020007c0)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 12, CONDITION_ALWAYS, EVENT(Func_020007cc)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 13, CONDITION_ALWAYS, EVENT(Func_020007d8)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 14, CONDITION_ALWAYS, EVENT(Func_020007e4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x358, EVENT(Func_020007f0)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0xa37, EVENT(Func_020008a0)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_020008bc)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_02000900)},
+    {TRIGGER_STEP, 88, CONDITION_ALWAYS, EVENT(Func_0200297c)},
+    {TRIGGER_STEP, 90, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_SlideOnIce)},
+    {TRIGGER_STEP, 14, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_ContinueSlide)},
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA struct Trigger gMarsLighthouseRoomF_Room2Triggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {0x21, 2, CONDITION_ALWAYS, 2},
+    {0x31, 3, CONDITION_ALWAYS, 3},
+    {0x21, 4, CONDITION_ALWAYS, 4},
+    {0x31, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {0x51, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Func_02004140)},
+    {0x202, 33, CONDITION_ALWAYS, EVENT(Func_02000b40)},
+    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(Func_02002b88)},
+    {TRIGGER_STEP, 88, CONDITION_ALWAYS, EVENT(Func_0200297c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 17, CONDITION_ALWAYS, EVENT(Func_020000bc)},
+    {0x60009a15, 16, CONDITION_ALWAYS, EVENT(Func_02000aac)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 16, CONDITION_ALWAYS, EVENT(Func_02000ad8)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x220, EVENT(Func_02000cf4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 12, 0x221, EVENT(Func_02000d38)},
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA s32 gData_0200703c[] = {
+    -1,
+};
+
+LATE_DATA u32 gData_02007040[] = {
+    1,
+};
+
+LATE_DATA u32 gData_02007044[] = {
+    39, 5, 0, 12, 38,
+};
+// clang-format on
+
+LATE_DATA s32 gData_02007058[] = {
+    (s32)gData_02005e44,
+    (s32)gData_02005e80,
+    (s32)gData_02005ebc,
+};

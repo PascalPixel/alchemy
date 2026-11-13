@@ -1,15 +1,40 @@
+
+#include "../field/object/set_sprite_priority.c"
+
+#include "../field/object/prepare_object.c"
+#include "ankohl_ruins/ankohl_ruins.h"
+#include "field.h"
+
+struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 type) {
+  struct Actor *object = FieldActor_Create(type, x, y, z);
+
+  if (object != NULL) {
+    Scene_SetActorSpritePriority(object, 1);
+    object->motionFlags = 0;
+    object->collisionFlags = 8;
+    Actor_SetSpriteFlags(object, 0);
+    FieldActor_SetSpriteColor(object, 15);
+    object->priorityFlags |= 0x22;
+    return object;
+  }
+  return NULL;
+}
+
+#include "../field/field_effect/move.c"
+
+// ---- scene/ankohl_ruins.c ----
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
-#include "../../../../games/tla/src/field/field_effect/spawn.c"
+#include "../../games/tla/src/field/field_effect/spawn.c"
 
 // ---- scene/ankohl_ruins.c ----
 
-/// The scene code of overlay 0x686 that its scene tables belong to, in ROM
-/// order; the rest of the overlay is in ankohl_ruins/.
+// The scene code of overlay 0x686 that its scene tables belong to, in ROM
+// order; the rest of the overlay is in ankohl_ruins/.
 
 #include "flags.h"
 #include "battle.h"
@@ -216,9 +241,9 @@ void Func_020006b4(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->terrainId = 0;
 }
 
-/// Copies the cells under the object with the given id in the rooms that have
-/// them (rooms 1, 3, 4 and 5); in room 5 the object with id 9 also copies the
-/// rows that flag 0x205 opens (always, in Japanese).
+// Copies the cells under the object with the given id in the rooms that have
+// them (rooms 1, 3, 4 and 5); in room 5 the object with id 9 also copies the
+// rows that flag 0x205 opens (always, in Japanese).
 void Func_020006d0(s32 unused, s32 id) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1) {
     if (id == 8) {
@@ -257,9 +282,9 @@ void Func_020006d0(s32 unused, s32 id) {
   }
 }
 
-/// Copies the cells the object with the given id has pushed open in rooms 1,
-/// 3, 4 and 5, and sets flags 0x9c6 to 0x9cb when it stands at the end of its
-/// track.
+// Copies the cells the object with the given id has pushed open in rooms 1,
+// 3, 4 and 5, and sets flags 0x9c6 to 0x9cb when it stands at the end of its
+// track.
 void Func_02000850(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
@@ -343,9 +368,9 @@ void Func_02000a68(s32 unused, s32 objectId) {
   }
 }
 
-/// Runs the cue, if any, and sets the object's motion flags to 3 while it
-/// moves, for at most 60 frames until its vertical speed is 0, then clears
-/// them ten frames later; Func_02000100 of Gaia Rock is the same function.
+// Runs the cue, if any, and sets the object's motion flags to 3 while it
+// moves, for at most 60 frames until its vertical speed is 0, then clears
+// them ten frames later; Func_02000100 of Gaia Rock is the same function.
 void Func_02000b30(s32 id, s32 cue) {
   struct Actor *object = Actor_Get(id);
   /* FAKEMATCH(pin): the flags' address built in r2 with 85 in it first; as a
@@ -379,8 +404,8 @@ void Func_02000b30(s32 id, s32 cue) {
   *held = 0;
 }
 
-/// Places count effects in a row, rows times, each row two pixels further down,
-/// waiting between rows.
+// Places count effects in a row, rows times, each row two pixels further down,
+// waiting between rows.
 void Func_02000b78(s32 rows, s32 frames, s32 x, s32 y, s32 startZ, s32 count) {
   struct EffectOptions params;
   s32 row;
@@ -414,10 +439,10 @@ void Func_02000b78(s32 rows, s32 frames, s32 x, s32 y, s32 startZ, s32 count) {
   }
 }
 
-/// When the objects with ids 9 and 10 stand on cells (12, 45) and (14, 45),
-/// each sets its flag (0x9d9, 0x9da); once both are set, shakes the screen,
-/// copies the cells of rows 2 to 6 and 13 in two columns and has Func_02000b78
-/// place five objects between them, as Func_02000e60 does for object 8.
+// When the objects with ids 9 and 10 stand on cells (12, 45) and (14, 45),
+// each sets its flag (0x9d9, 0x9da); once both are set, shakes the screen,
+// copies the cells of rows 2 to 6 and 13 in two columns and has Func_02000b78
+// place five objects between them, as Func_02000e60 does for object 8.
 void Func_02000c24(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
   s32 column = object->x >> 20;
@@ -474,9 +499,9 @@ void Func_02000c24(s32 unused, s32 id) {
   Event_End();
 }
 
-/// When the object with id 8 stands on cell (12, 5): sets flag 0x9dc, shakes
-/// the screen, copies the cells of rows 2 to 6 and 16 in two columns and has
-/// Func_02000b78 place four objects between them.
+// When the object with id 8 stands on cell (12, 5): sets flag 0x9dc, shakes
+// the screen, copies the cells of rows 2 to 6 and 16 in two columns and has
+// Func_02000b78 place four objects between them.
 void Func_02000e60(s32 unused, s32 id) {
   struct Actor *pillar = Actor_GetById(id);
   s32 column = pillar->x >> 20;
@@ -625,10 +650,10 @@ void Func_02001264(s32 a, s32 id) {
     Event_SetFlag(id + 0x996);
 }
 
-/// Draws eight sprites while flag 0x205 is clear and the level is below
-/// 0x200000: each moves by the level as its kind says, is placed relative to
-/// the view and is drawn when it is on screen. Then sets a word in map layer 1
-/// to the level plus a base.
+// Draws eight sprites while flag 0x205 is clear and the level is below
+// 0x200000: each moves by the level as its kind says, is placed relative to
+// the view and is drawn when it is on screen. Then sets a word in map layer 1
+// to the level plus a base.
 void Func_020012c4(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 *view = &map->viewX;
@@ -1051,11 +1076,11 @@ void Func_02001e54(void) {
 
 DEFINE_ANKOHL_RUINS_OPEN_ONCE(Func_02001f04, 0x9e3, 2, 83, 1, 23)
 
-/// Each frame, moves the raft (object 9) down by 0xcccc and carries the leader
-/// and the event work's unk1cc object with it while the leader stands on it;
-/// copies the cells it passes in rows 31 to 37 (flag 0x146), and past row 41
-/// removes itself, stops the shaking, copies the landing cells and sets flag
-/// 0x201.
+// Each frame, moves the raft (object 9) down by 0xcccc and carries the leader
+// and the event work's unk1cc object with it while the leader stands on it;
+// copies the cells it passes in rows 31 to 37 (flag 0x146), and past row 41
+// removes itself, stops the shaking, copies the landing cells and sets flag
+// 0x201.
 void Func_02001f7c(void) {
   struct Actor *rider =
       ((struct AnkohlRuinsEventWork *)Ram_HeapSlots->eventWork)->unk1cc;

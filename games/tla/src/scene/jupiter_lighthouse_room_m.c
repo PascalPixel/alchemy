@@ -1755,3 +1755,561 @@ DEFINE_LIGHT_SPRITES_ADD(LightSprites_Add, gLightSpriteCount,
 void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 #include "../field/object/set_sprite_priority.c"
+
+#include "../field/field_effect/move.c"
+
+// ---- scene/jupiter_lighthouse_room_m/s3b7c.c ----
+// @file
+// Scene code of overlay 0x6a3, in ROM order.
+
+#include "shared/cracked_tile.h"
+#include "types.h"
+#include "field_effect.h"
+#include "main_routine_work.h"
+#include "event_inline.h"
+#include "heap_release.h"
+#include "item_icon.h"
+#include "module/scene/jupiter_lighthouse_room_m.h"
+#include "module/scene/scene.h"
+
+extern const s32 *gFieldEffect_DurationScripts[];
+
+void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
+void Actor_SetSpriteFlags(struct Actor *object, u32 value);
+
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options) {
+  struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct FieldEffect *effect;
+  struct FieldSprite *sprite;
+  const s32 *script;
+
+  if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
+    effect = ((struct FieldEffect *)Import_ActorCreate(options->type, x, y, z));
+  else
+    effect = ((struct FieldEffect *)Import_ActorCreate(285, x, y, z));
+  if (effect == 0)
+    return;
+
+  sprite = effect->sprite;
+  Import_ActorSelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Actor_StartScript(effect,
+                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
+  effect->motionFlags = 0;
+  Actor_SetSpriteFlags(effect, 0);
+  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
+  effect->velocity.x = velocityX;
+  effect->velocity.y = velocityY;
+  effect->velocity.z = velocityZ;
+  Scene_SetActorSpritePriority(effect,
+                               ((struct FieldSprite *)party->sprite)->priority);
+  effect->scaleRateX = 0;
+  effect->scaleRateY = 0;
+  effect->spin = 0;
+
+  if ((flags & 0xffff0000) == 0 || options == 0)
+    return;
+  if ((flags & EFFECT_USE_PALETTE) != 0)
+    FieldActor_SetSpriteColor(effect, options->palette);
+  if ((flags & EFFECT_USE_PRIORITY) != 0) {
+    effect->priorityFlags &= ~1;
+    Scene_SetActorSpritePriority(effect, options->priority);
+  }
+  if ((flags & EFFECT_USE_START_SCALE) != 0) {
+    effect->scaleX = options->startScaleX;
+    effect->scaleY = options->startScaleY;
+  }
+  if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
+    s32 target;
+    s32 frames;
+
+    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
+    target = options->targetScaleX;
+    frames = script[3];
+    if ((flags & EFFECT_USE_START_SCALE) != 0) {
+      effect->scaleRateX = (target - effect->scaleX) / frames;
+      effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
+    } else {
+      effect->scaleRateX = (target - 0x10000) / frames;
+      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
+    }
+  }
+  if ((flags & EFFECT_USE_SCRIPT) != 0) {
+    Import_ActorSelectAnimation(effect, 1);
+    Actor_StartScript(effect, options->script);
+  }
+  if ((flags & EFFECT_USE_ROTATION) != 0)
+    sprite->rotation = options->rotation;
+  if ((flags & EFFECT_USE_SPIN) != 0)
+    effect->spin = options->spin;
+  if ((flags & EFFECT_USE_UPDATE) != 0)
+    effect->update = options->update;
+}
+
+// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+// leader steps on.
+#define CELL_TABLE gCrackedTiles
+#define CELL_SPRITE_DRAW CrackedTiles_Update
+#define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
+#include "../field/map/cell_sprite.c"
+
+#include "ram_buffer.h"
+#include "actor.h"
+#include "iwram_call.h"
+#include "jupiter_lighthouse_room_m.h"
+#include "scene_tables.h"
+#include "cell_target.h"
+
+DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find, gCrackedTiles, CrackedTiles_Update)
+
+DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
+
+// Centers the leader on its cell, plays sound 161 and copies the cell below
+// the table's source cell over the leader's, keeping the source column's and
+// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// one of the table's cells.
+DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
+
+// ---- scene/jupiter_lighthouse_room_m/s41ac.c ----
+
+// Scene code of overlay 0x6a3, in ROM order.
+
+#include "io_reg.h"
+#include "field.h"
+#include "event_work.h"
+
+struct CellTargetEntry;
+
+/* VIEW(s41ac): tag struct CellTarget as struct CellTarget__s41ac; cell_target.h
+ * has another definition; tried with the definition the rest of the object has,
+ * CrackedTile_Fall moves: 2 of 131 instructions in tla-ja. */
+struct CellTarget__s41ac {
+  s16 firstFlag;
+  s16 flagByte;
+  s16 kind;
+  s16 x;
+  s16 z;
+  s16 count;
+  s16 current;
+  s16 shown;
+  s16 tile;
+};
+
+#include "io_write.h"
+
+/* VIEW(s41ac): routine CrackedTile_Fall as void CrackedTile_Fall(struct
+ * CellTarget__s41ac *table, struct CellTargetEntry *entry);
+ * module/scene/jupiter_lighthouse_room_m.h has void CrackedTile_Fall(struct
+ * CellTarget *table, struct CellTargetEntry *entry); tried as the definition's
+ * DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell) void
+ * CrackedTile_Fall(struct PushEvent *event), it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_m/s3b7c.c:146: conflicting types
+ * for `CrackedTile_Fall'. */
+void CrackedTile_Fall__s41ac(
+    struct CellTarget__s41ac *table,
+    struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
+#define CrackedTile_Fall CrackedTile_Fall__s41ac
+DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s41ac,
+                         Leader_CenterInCell)
+
+#undef CrackedTile_Fall
+
+#include "../field/field_effect/advance_motion.c"
+
+// ---- scene/jupiter_lighthouse_room_m/s4344.c ----
+// @file
+// Scene code of overlay 0x6a3, in ROM order.
+
+#include "shared/tables.h"
+#include "shared/cracked_tile.h"
+#include "types.h"
+#include "system.h"
+#include "ram_buffer.h"
+#include "actor.h"
+#include "main_routine_work.h"
+#include "field_effect.h"
+#include "event_inline.h"
+#include "cell_target.h"
+#include "event_work.h"
+#include "module/field/field_effect.h"
+#include "module/scene/jupiter_lighthouse_room_m.h"
+#include "module/scene/scene.h"
+
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options);
+
+static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
+  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
+}
+
+static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
+  MapGrid_SetScreenShake(a, b, c);
+}
+
+DEFINE_CRACKED_TILE_DROP_IN(CrackedTile_DropIn, FieldEffect_Spawn)
+
+void GameFlag_SetByte(s32 flag, s32 value);
+
+DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
+                          CrackedTile_Fall)
+
+DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
+                                  CrackedTile_DropIn)
+
+#include "scene_tables.h"
+#include "objcmd.h"
+
+// clang-format off
+u32 gData_020049cc[] = {
+    1, 39, 1, 17,
+};
+
+u32 gData_020049dc[] = {
+    1, 39, 1, 17,
+};
+
+u32 gData_020049ec[] = {
+    1, 39, 1, 17,
+};
+
+u32 gData_020049fc[] = {
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_SOUTH),
+    SC_END,
+};
+
+u32 gData_02004a18[] = {
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_END,
+};
+
+u32 gData_02004a34[] = {
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_END,
+};
+
+u32 gData_02004a50[] = {
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_NORTH),
+    SC_END,
+};
+
+u32 gData_02004a6c[] = {
+    SC_SYNC,
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_ARG(1),
+    SC_END,
+};
+
+u32 gData_02004a90[] = {
+    SC_SYNC,
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_ARG(1),
+    SC_END,
+};
+
+DEFINE_G_DATA_02004AB4(gData_02004ab4, 699)
+
+DEFINE_G_DATA_02004AB4(gData_02004ae8, 679)
+
+DEFINE_G_DATA_02004AB4(gData_02004b1c, 659)
+// clang-format on
+
+// ---- scene/data/jupiter_lighthouse_room_m.c ----
+
+#include "macros.h"
+#include "shared/tables.h"
+#include "types.h"
+#include "scene_tables.h"
+#include "version.h"
+#include "objcmd.h"
+#include "module/scene/jupiter_lighthouse_room_m.h"
+
+void Func_02000038(void);
+void Func_0200039c(void);
+void Func_020003b8(void);
+void Func_02000970(void);
+void Func_02000ad0(void);
+void Func_02000b38(void);
+
+extern u32 gFieldEffect_LongScript[];
+extern s32 gData_02005078[];
+
+// clang-format off
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
+
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
+
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
+
+LATE_DATA s32 gData_02005078[] = {
+    SC_CALL(Func_02000038),
+    SC_END,
+};
+
+LATE_DATA struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+DEFINE_G_SCENE_EXITS_6(263, 256, 3, 256, 4, 4, 258, 261, 7, 260, 8, 257)
+
+LATE_DATA struct ActorPlacement gActorPlacements[] = {
+    {373, CONDITION_ALWAYS, 1, PIXELS(24), 0, PIXELS(280), FACING_SOUTH, 2, 0},
+    {373, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(280), FACING_SOUTH, 2, 0},
+    {373, CONDITION_ALWAYS, 1, PIXELS(792), 0, PIXELS(184), FACING_SOUTH, 2, 0},
+    {373, CONDITION_ALWAYS, 1, PIXELS(840), 0, PIXELS(184), FACING_SOUTH, 2, 0},
+    {373, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(424), FACING_SOUTH, 2, 0},
+    {373, CONDITION_ALWAYS, 1, PIXELS(888), 0, PIXELS(424), FACING_SOUTH, 2, 0},
+    {373, CONDITION_ALWAYS, 1, PIXELS(1464), 0, PIXELS(280), FACING_SOUTH, 2, 0},
+    {373, CONDITION_ALWAYS, 1, PIXELS(1608), 0, PIXELS(280), FACING_SOUTH, 2, 0},
+    {317, CONDITION_ALWAYS, (s32)gData_02005078, PIXELS(648), 0, PIXELS(184), FACING_SOUTH, 2, 0},
+    {317, CONDITION_ALWAYS, (s32)gData_02005078, PIXELS(680), 0, PIXELS(312), FACING_SOUTH, 2, 1},
+    {317, CONDITION_ALWAYS, (s32)gData_02005078, PIXELS(936), 0, PIXELS(232), FACING_SOUTH, 2, 1},
+    {317, CONDITION_ALWAYS, (s32)gData_02005078, PIXELS(952), 0, PIXELS(312), FACING_SOUTH, 2, 1},
+    {428, CONDITION_ALWAYS, (s32)gData_02005078, PIXELS(968), 0, PIXELS(248), FACING_SOUTH, 2, 0},
+    {407, CONDITION_ALWAYS, (s32)gData_02005078, PIXELS(1144), 0, PIXELS(184), FACING_SOUTH, 2, 0},
+    {407, CONDITION_ALWAYS, (s32)gData_02005078, PIXELS(1064), 0, PIXELS(184), FACING_SOUTH, 2, 1},
+    {316, CONDITION_ALWAYS, 1, PIXELS(776), 0, PIXELS(200), FACING_EAST, 2, 0},
+    {489, CONDITION_ALWAYS, (s32)gData_02005078, PIXELS(200), 0, PIXELS(152), FACING_EAST, 2, 0},
+    {489, CONDITION_ALWAYS, (s32)gData_02005078, PIXELS(1016), 0, PIXELS(168), FACING_EAST, 2, 0},
+    {0, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {1, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {2, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {3, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {4, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {7, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {5, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {6, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {33, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {23, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {489, CONDITION_ALWAYS, (s32)gData_02005078, 0, 0, 0, FACING_NORTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct Trigger gSceneEvents[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Func_02000060)},
+    {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(Func_02000080)},
+    {TRIGGER_STEP, 32, 0x202, EVENT(Func_0200060c)},
+    {TRIGGER_STEP, 33, IF_FLAG_SET(0x202), EVENT(Func_020008c8)},
+    {TRIGGER_TALK, 0, IF_FLAG_SET(0xa23), EVENT(Func_02000970)},
+    {TRIGGER_TALK, 2, IF_FLAG_SET(0xa23), EVENT(Func_02000970)},
+    {TRIGGER_TALK, 6, IF_FLAG_SET(0xa23), EVENT(Func_02000970)},
+    {TRIGGER_TALK, 5, IF_FLAG_SET(0xa23), EVENT(Func_02000970)},
+    {TRIGGER_TALK, 28, IF_FLAG_SET(0xa23), EVENT(Func_02000970)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 20, CONDITION_ALWAYS, EVENT(Func_0200039c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 20, CONDITION_ALWAYS, EVENT(Func_020003b8)},
+    {8, -1, CONDITION_ALWAYS, EVENT(Func_0200039c)},
+    {9, -1, CONDITION_ALWAYS, EVENT(Func_020003b8)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 23, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 21, 0x200, 0},
+    {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Whirlwind_CarryLeader)},
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA u32 gData_02005524[] = {
+#if !TLA_PATCH_1
+    39, 14, 22, 26, 0, 23,
+#else
+    39, 14, 22, 26, 0, 22,
+#endif
+    6, 0xc0000, 17,
+};
+
+LATE_DATA u32 gData_02005548[] = {
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_ARG(9),
+    SC_WAIT(120),
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_NORTHWEST),
+    SC_WAIT(120),
+    SC_LOOP(SC_FOREVER, SC_TOP),
+};
+
+LATE_DATA s32 gData_0200558c[] = {
+    SC_ARG(2),
+    SC_CALL(Func_02000b38),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(60),
+    SC_MOVE_XZ(PIXELS(737), PIXELS(202)),
+    SC_ARG(2),
+    SC_WAIT(4),
+    SC_MOVE_XZ(PIXELS(776), PIXELS(202)),
+    SC_CALL(Func_02000ad0),
+    SC_LOOP(SC_FOREVER, SC_TOP),
+};
+
+LATE_DATA s32 gData_020055ec[] = {
+    SC_ARG(2),
+    SC_CALL(Func_02000b38),
+    SC_SYNC,
+    SC_ARG(9),
+    SC_WAIT(60),
+    SC_MOVE_XZ(PIXELS(776), PIXELS(202)),
+    SC_ARG(2),
+    SC_WAIT(4),
+    SC_MOVE_XZ(PIXELS(737), PIXELS(202)),
+    SC_LOOP(SC_FOREVER, SC_TOP),
+};
+
+LATE_DATA s32 gData_02005644[] = {
+    SC_CALL(Func_02000b38),
+    SC_MOVE_XZ(PIXELS(731), PIXELS(213)),
+    SC_ARG(2),
+    SC_WAIT(4),
+    SC_MOVE_XZ(PIXELS(731), PIXELS(232)),
+    SC_CALL(Func_02000ad0),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(53),
+    SC_LOOP(SC_FOREVER, SC_TOP),
+};
+
+LATE_DATA s32 gData_0200569c[] = {
+    SC_ARG(2),
+    SC_CALL(Func_02000b38),
+    SC_MOVE_XZ(PIXELS(731), PIXELS(232)),
+    SC_WAIT(4),
+    SC_MOVE_XZ(PIXELS(731), PIXELS(213)),
+    SC_SYNC,
+    SC_ARG(8),
+    SC_WAIT(53),
+    SC_LOOP(SC_FOREVER, SC_TOP),
+};
+
+DEFINE_G_DATA_0200218C(gData_020056ec, 20, 20, 20, 20)
+
+LATE_DATA u32 gData_02005748[] = {
+    SC_ARG(5),
+    SC_MOVE_BY(0, 0, PIXELS(32)),
+    SC_SYNC,
+    SC_MOVE_XZ(PIXELS(744), PIXELS(328)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
+    SC_END,
+};
+
+LATE_DATA s32 gData_0200578c[] = {
+    SC_ARG(5),
+    SC_MOVE_BY(PIXELS(-8), 0, PIXELS(32)),
+    SC_SYNC,
+    SC_MOVE_XZ(PIXELS(896), PIXELS(328)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
+    SC_END,
+};
+
+DEFINE_G_DATA_020057D0(gData_020057d0, 2, 740, 312)
+
+DEFINE_G_DATA_02005800(gData_02005800, 2, 900)
+
+DEFINE_G_DATA_020057D0(gData_0200d830, 5, 724, 312)
+
+DEFINE_G_DATA_02005800(gData_02005860, 5, 916)
+
+LATE_DATA u32 gData_02005890[] = {
+    SC_ARG(5),
+    SC_MOVE_XZ(PIXELS(677), PIXELS(287)),
+    SC_SYNC,
+    SC_ARG(5),
+    SC_MOVE_XZ(PIXELS(740), PIXELS(344)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
+    SC_END,
+};
+
+LATE_DATA u32 gData_020058d8[] = {
+    SC_ARG(5),
+    SC_MOVE_XZ(PIXELS(950), PIXELS(287)),
+    SC_SYNC,
+    SC_ARG(5),
+    SC_MOVE_XZ(PIXELS(900), PIXELS(344)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
+    SC_END,
+};
+
+DEFINE_G_DATA_020057D0(gData_02005920, 5, 708, 328)
+
+LATE_DATA s32 gData_02005950[] = {
+    SC_ARG(5),
+    SC_MOVE_BY(PIXELS(-8), 0, 0),
+    SC_SYNC,
+    SC_ARG(5),
+    SC_MOVE_XZ(PIXELS(924), PIXELS(328)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
+    SC_END,
+};
+
+LATE_DATA u32 gData_0200599c[] = {
+    1, 38,
+};
+
+LATE_DATA u32 gData_020059a4[] = {
+    SC_ARG(2),
+    SC_MOVE_XZ(PIXELS(706), PIXELS(172)),
+    SC_SYNC,
+    SC_MOVE_XZ(PIXELS(682), PIXELS(151)),
+    SC_SYNC,
+    SC_MOVE_XZ(PIXELS(682), PIXELS(120)),
+    SC_SYNC,
+    SC_MOVE_XZ(PIXELS(664), PIXELS(106)),
+    SC_SYNC,
+    SC_MOVE_XZ(PIXELS(664), PIXELS(100)),
+    SC_SYNC,
+    SC_END,
+};
+
+LATE_DATA u32 gData_02005a00[] = {
+    SC_MOVE_XZ(PIXELS(664), PIXELS(80)),
+    SC_SYNC,
+    SC_FREE,
+};
+
+LATE_DATA s32 gPaletteCycleFrame[] = {
+    -1,
+};
+
+LATE_DATA u32 gPaletteCyclePausesInEvents[] = {
+    1,
+};
+
+LATE_DATA u32 gWhirlwindEndScript[] = {
+    39, 5, 0, 12, 38,
+};
+// clang-format on
+
+LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
+};

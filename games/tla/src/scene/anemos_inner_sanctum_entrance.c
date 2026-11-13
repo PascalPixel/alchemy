@@ -1,3 +1,18 @@
+
+#include "../field/object/set_sprite_priority.c"
+
+#include "../field/object/prepare_object.c"
+#include "shared/actors.h"
+#include "anemos_inner_sanctum_entrance/anemos_inner_sanctum_entrance.h"
+#include "field.h"
+
+struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
+
+DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
+
+#include "../field/field_effect/move.c"
+
+// ---- scene/anemos_inner_sanctum_entrance.c ----
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -268,10 +283,10 @@ static __inline__ void SetObjectValue(s32 id, s32 value) {
   Func_02000ba4(id, v);
 }
 
-/// Sets the event route to 0x204. In the first room, gives objects 9 to 14
-/// their values and priority bits, and under flag 0x200 runs Func_02000494.
-/// Under flag 0x201, runs a screen transition and Func_02000408, then clears
-/// the flag.
+// Sets the event route to 0x204. In the first room, gives objects 9 to 14
+// their values and priority bits, and under flag 0x200 runs Func_02000494.
+// Under flag 0x201, runs a screen transition and Func_02000408, then clears
+// the flag.
 s32 Scene_Initialize(void) {
   s32 *route =
       &((struct AnemosInnerSanctumEntranceEventWork *)Ram_HeapSlots->eventWork)
@@ -489,4 +504,106 @@ u32 gData_02000ee0[] = {
 
 s8 gData_02000eec[] = {
     12, 14, 9, 11, 13, 10,
+};
+
+// ---- scene/anemos_inner_sanctum_entrance/data2.c ----
+
+#include "macros.h"
+#include "shared/tables.h"
+#include "types.h"
+#include "scene_tables.h"
+#include "module/scene/anemos_inner_sanctum_entrance.h"
+
+void Func_0200033c(void);
+void Func_020004e4(void);
+void Func_02000534(void);
+
+extern u8 gData_02000d6c[];
+extern u8 gData_02000da8[];
+extern u8 gData_02000de4[];
+
+LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
+    gData_02000d6c,
+    gData_02000da8,
+    gData_02000de4,
+};
+
+LATE_DATA s32 gData_02001970[] = {
+    46,
+    (s32)Func_0200033c,
+    17,
+};
+
+LATE_DATA struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+DEFINE_G_SCENE_EXITS(308, 239, 23, 303, 1, 239, 22, 24, 306, 5)
+
+LATE_DATA struct ActorPlacement gData_020019dc[] = {
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gData_020019f4[] = {
+    {180, 0xa9f, 1, PIXELS(200), 0, PIXELS(104), FACING_EAST, 1, 0},
+    {430, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(424), FACING_EAST, 1, 0},
+    {430, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(456), FACING_EAST, 1, 1},
+    {430, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(472), FACING_EAST, 1, 1},
+    {430, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(424), FACING_EAST, 1, 1},
+    {430, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(456), FACING_EAST, 1, 1},
+    {430, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(472), FACING_EAST, 1, 1},
+    {303, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(152), 0, PIXELS(168),
+     FACING_WEST, 1, 0},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(152), 0, PIXELS(216),
+     FACING_WEST, 1, 1},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(248), 0, PIXELS(168),
+     FACING_EAST, 1, 1},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(248), 0, PIXELS(216),
+     FACING_EAST, 1, 1},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(696), 0, PIXELS(240),
+     FACING_WEST, 1, 0},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(744), 0, PIXELS(240),
+     FACING_EAST, 1, 0},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0, PIXELS(232),
+     FACING_WEST, 1, 0},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0, PIXELS(288),
+     FACING_WEST, 1, 0},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0, PIXELS(232),
+     FACING_EAST, 1, 0},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0, PIXELS(288),
+     FACING_EAST, 1, 0},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0, PIXELS(712),
+     FACING_WEST, 1, 0},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0, PIXELS(768),
+     FACING_WEST, 1, 0},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0, PIXELS(712),
+     FACING_EAST, 1, 0},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0, PIXELS(768),
+     FACING_EAST, 1, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct Trigger gData_02001c1c[] = {
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA struct Trigger gData_02001c28[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {0x202, 33, CONDITION_ALWAYS, EVENT(Func_02000534)},
+    {0x202, 77, CONDITION_ALWAYS, EVENT(Func_02000534)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x200, EVENT(Func_020004e4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x200, EVENT(Func_020004e4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x200, EVENT(Func_020004e4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x200, EVENT(Func_020004e4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0x200, EVENT(Func_020004e4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, 0x200, EVENT(Func_020004e4)},
+    {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_AFTER_CAST), 77,
+     IF_FLAG_SET(0x200), EVENT(Func_02000588)},
+    {TRIGGER_TABLE_END},
 };

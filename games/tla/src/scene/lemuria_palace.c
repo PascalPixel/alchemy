@@ -1333,3 +1333,17 @@ u32 gLemuriaPalace_GlowColors[] = {
 // clang-format on
 #undef BLEND_SET_ALPHA
 #undef FIELD_AT
+
+// ---- scene/data/lemuria_palace.c ----
+
+#include "macros.h"
+#include "types.h"
+#include "scene_tables.h"
+
+// clang-format off
+LATE_DATA u32 gLemuriaPalace_MapCrossfade[] = {
+    0xc040e02, 0x8080a06, 0x40c060a, 0x100010, 0x60a040c, 0xa060808,
+    0xe020c04, 0xc040e02, 0x8080a06, 0x40c060a, 0x100010, 0x60a040c,
+    0xa060808, 0xe020c04,
+};
+// clang-format on

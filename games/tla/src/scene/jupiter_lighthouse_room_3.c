@@ -479,3 +479,292 @@ s8 gPushFootprints[][4] = {
 
 DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
 // clang-format on
+
+#include "../field/field_effect/move.c"
+
+// ---- scene/jupiter_lighthouse_room_3/cracked_tiles.c ----
+// @file
+// The room of gaps and logs in Jupiter Lighthouse: its copy of the effect
+// spawner, and the cracked tiles, found, cracked and fallen through.
+
+#include "types.h"
+#include "field_effect.h"
+#include "main_routine_work.h"
+#include "event_inline.h"
+#include "shared/cracked_tile.h"
+#include "ram_buffer.h"
+#include "actor.h"
+#include "iwram_call.h"
+#include "io_reg.h"
+#include "cell_target.h"
+#include "event_work.h"
+#include "field.h"
+#include "heap_release.h"
+#include "item_icon.h"
+#include "module/scene/scene.h"
+
+#include "field/cell_target.h"
+
+// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+// leader steps on.
+extern struct CellTarget gCrackedTiles;
+
+void CrackedTiles_Update(void);
+
+extern const s32 *gFieldEffect_DurationScripts[];
+
+void Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
+void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
+
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options) {
+  struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct FieldEffect *effect;
+  struct FieldSprite *sprite;
+  const s32 *script;
+
+  if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
+    effect = ((struct FieldEffect *)Import_ActorCreate(options->type, x, y, z));
+  else
+    effect = ((struct FieldEffect *)Import_ActorCreate(285, x, y, z));
+  if (effect == 0)
+    return;
+
+  sprite = effect->sprite;
+  Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Actor_StartScript(effect,
+                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
+  effect->motionFlags = 0;
+  Actor_SetSpriteFlags(effect, 0);
+  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
+  effect->velocity.x = velocityX;
+  effect->velocity.y = velocityY;
+  effect->velocity.z = velocityZ;
+  Scene_SetActorSpritePriority(effect,
+                               ((struct FieldSprite *)party->sprite)->priority);
+  effect->scaleRateX = 0;
+  effect->scaleRateY = 0;
+  effect->spin = 0;
+
+  if ((flags & 0xffff0000) == 0 || options == 0)
+    return;
+  if ((flags & EFFECT_USE_PALETTE) != 0)
+    FieldActor_SetSpriteColor(effect, options->palette);
+  if ((flags & EFFECT_USE_PRIORITY) != 0) {
+    effect->priorityFlags &= ~1;
+    Scene_SetActorSpritePriority(effect, options->priority);
+  }
+  if ((flags & EFFECT_USE_START_SCALE) != 0) {
+    effect->scaleX = options->startScaleX;
+    effect->scaleY = options->startScaleY;
+  }
+  if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
+    s32 target;
+    s32 frames;
+
+    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
+    target = options->targetScaleX;
+    frames = script[3];
+    if ((flags & EFFECT_USE_START_SCALE) != 0) {
+      effect->scaleRateX = (target - effect->scaleX) / frames;
+      effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
+    } else {
+      effect->scaleRateX = (target - 0x10000) / frames;
+      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
+    }
+  }
+  if ((flags & EFFECT_USE_SCRIPT) != 0) {
+    Actor_SelectAnimation(effect, 1);
+    Actor_StartScript(effect, options->script);
+  }
+  if ((flags & EFFECT_USE_ROTATION) != 0)
+    sprite->rotation = options->rotation;
+  if ((flags & EFFECT_USE_SPIN) != 0)
+    effect->spin = options->spin;
+  if ((flags & EFFECT_USE_UPDATE) != 0)
+    effect->update = options->update;
+}
+
+#define CELL_TABLE gCrackedTiles
+#define CELL_SPRITE_DRAW CrackedTiles_Update
+#define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
+#include "../field/map/cell_sprite.c"
+
+DEFINE_CRACKED_TILES_FIND_LOWER(CrackedTiles_FindLower, gCrackedTiles,
+                                CrackedTiles_Update)
+
+DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
+
+// Centers the leader on its cell, plays sound 161 and copies the cell below
+// the table's source cell over the leader's, keeping the source column's and
+// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// one of the table's cells.
+DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
+
+DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
+
+#include "../field/field_effect/advance_motion.c"
+
+// ---- scene/jupiter_lighthouse_room_3/cracked_tile_steps.c ----
+// @file
+// The room of gaps and logs in Jupiter Lighthouse: the cracked tiles' steps
+// and the fall to the floor below.
+
+#include "shared/cracked_tile.h"
+#include "shared/tables.h"
+#include "types.h"
+#include "cell_target.h"
+#include "ram_buffer.h"
+#include "actor.h"
+#include "main_routine_work.h"
+#include "field_effect.h"
+#include "event_inline.h"
+#include "system.h"
+#include "frame.h"
+void GameFlag_SetByte(s32 flag, s32 value);
+void Map_CenterOnFollowedPoint(void);
+#include "event_work.h"
+#include "module/field/field_effect.h"
+#include "module/scene/scene.h"
+
+extern u16 gPushKinds[];
+
+// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+// leader steps on.
+extern struct CellTarget gCrackedTiles;
+
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options);
+
+static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
+  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
+}
+
+static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
+  MapGrid_SetScreenShake(a, b, c);
+}
+
+DEFINE_CRACKED_TILE_DROP_IN(CrackedTile_DropIn, FieldEffect_Spawn)
+
+void CrackedTile_Crack();
+void CrackedTile_FallEvent();
+
+DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
+                          CrackedTile_FallEvent)
+
+DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
+                                  CrackedTile_DropIn)
+
+// ---- scene/data/jupiter_lighthouse_room_3.c ----
+
+#include "macros.h"
+// @file
+// The tables of Jupiter Lighthouse's room of gaps and logs that the scene's
+// getters return.
+
+#include "shared/tables.h"
+#include "types.h"
+#include "scene_tables.h"
+#include "objcmd.h"
+
+#include "field/cell_target.h"
+#include "module/scene/scene.h"
+void JupiterLighthouse_StartMovingPillar(void);
+void JupiterLighthouse_LeaveByCyclone(void);
+void JupiterLighthouse_JumpForward(void);
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
+extern u32 gFieldEffect_LongScript[];
+
+void JupiterLighthouse_PushLogOffTheLedge(void);
+void JupiterLighthouse_FinishMovingPillar(void);
+
+// clang-format off
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
+
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
+
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
+
+LATE_DATA struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA u32 gSceneExits[] = {
+    SCENE_EXITS(256),
+    SCENE_EXIT(1, 263, 1),
+    SCENE_EXIT(2, 257, 2),
+    SCENE_EXIT(3, 263, 3),
+    SCENE_EXIT(4, 263, 4),
+    SCENE_EXIT(6, 255, 6),
+    SCENE_EXIT(7, 255, 7),
+    SCENE_EXIT(8, 255, 8),
+    SCENE_EXIT(9, 255, 9),
+    SCENE_EXIT(10, 255, 10),
+    SCENE_EXIT(11, 255, 11),
+    SCENE_EXIT(12, 257, 12),
+    SCENE_EXITS_END,
+};
+
+LATE_DATA struct ActorPlacement gActorPlacements[] = {
+    {332, CONDITION_ALWAYS, 1, PIXELS(144), 0, PIXELS(120), FACING_SOUTH, 2, 0},
+    {332, CONDITION_ALWAYS, 1, PIXELS(128), 0, PIXELS(200), FACING_SOUTH, 2, 0},
+    {331, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(192), FACING_SOUTH, 2, 0},
+    {332, CONDITION_ALWAYS, 1, PIXELS(208), 0, PIXELS(216), FACING_SOUTH, 2, 0},
+    {373, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(568), FACING_SOUTH, 2, 0},
+    {373, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(568), FACING_SOUTH, 2, 0},
+    {312, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(584), FACING_SOUTH, 2, 0},
+    {312, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(584), FACING_SOUTH, 2, 0},
+    {341, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(680), FACING_SOUTHWEST, 2, 0},
+    {341, CONDITION_ALWAYS, 1, PIXELS(600), 0, PIXELS(680), FACING_SOUTHEAST, 2, 1},
+    {341, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(840), FACING_SOUTHWEST, 2, 1},
+    {341, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(840), FACING_SOUTHEAST, 2, 1},
+    {341, CONDITION_ALWAYS, 1, PIXELS(728), 0, PIXELS(840), FACING_SOUTHEAST, 2, 1},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct Trigger gSceneEvents[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {33, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {49, 6, CONDITION_ALWAYS, 6},
+    {49, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
+    {514, 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PushLogOffTheLedge)},
+    {0x8602, 31, CONDITION_ALWAYS, EVENT(JupiterLighthouse_JumpForward)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 12, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 13, CONDITION_ALWAYS, 0},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 14, CONDITION_ALWAYS, (u32)((u8 *)JupiterLighthouse_StartMovingPillar + 1)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FinishMovingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, CONDITION_ALWAYS, (u32)((u8 *)JupiterLighthouse_StartMovingPillar + 1)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FinishMovingPillar)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 40, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LeaveByCyclone)},
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA s32 gPaletteCycleFrame[] = {
+    -1,
+};
+
+LATE_DATA u32 gPaletteCyclePausesInEvents[] = {
+    1,
+};
+
+LATE_DATA u32 gWhirlwindEndScript[] = {
+    39, 5, 0, 12, 38,
+};
+// clang-format on
+
+LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
+};

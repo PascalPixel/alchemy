@@ -1,3 +1,15 @@
+
+#include "../field/object/set_sprite_priority.c"
+
+#include "../field/object/prepare_object.c"
+#include "shared/actors.h"
+#include "sea_of_time/sea_of_time.h"
+
+DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 34)
+
+#include "../field/field_effect/move.c"
+
+// ---- scene/sea_of_time.c ----
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -8,10 +20,10 @@
 
 // ---- scene/sea_of_time.c ----
 
-/// The Sea of Time, east of Lemuria: currents and swirls that carry the ship
-/// round and sweep it back to the entrance, the laps and waves Yepp's songs
-/// tell the way by, and rocks Grind breaks; the rest of the overlay is in
-/// sea_of_time/.
+// The Sea of Time, east of Lemuria: currents and swirls that carry the ship
+// round and sweep it back to the entrance, the laps and waves Yepp's songs
+// tell the way by, and rocks Grind breaks; the rest of the overlay is in
+// sea_of_time/.
 
 #include "shared/actors.h"
 #include "sea_of_time/sea_of_time.h"
@@ -277,8 +289,8 @@ void SeaOfTime_RideCurrent(void) {
 #include "frame.h"
 #include "system/field_effect.h"
 
-/// Walks actor 8 along a run of cells in the facing the event work names,
-/// throwing sparks from both sides of it every fourth frame.
+// Walks actor 8 along a run of cells in the facing the event work names,
+// throwing sparks from both sides of it every fourth frame.
 void SeaOfTime_FollowChannel(void) {
   s32 pos[4];
   struct EffectOptions spark;
@@ -402,8 +414,8 @@ extern struct Spots
  * tla-ja. */
 extern u8 gSeaOfTime_LapsNeeded__sea_of_time[] __asm__("gSeaOfTime_LapsNeeded");
 
-/// Tracks actor 8 around the ring of cells: counts steps made in one direction,
-/// spawning an effect every fourth frame once past 3, and rewards a full count.
+// Tracks actor 8 around the ring of cells: counts steps made in one direction,
+// spawning an effect every fourth frame once past 3, and rewards a full count.
 void SeaOfTime_CountLaps(void) {
   u8 *work = (u8 *)Ram_HeapSlots->eventWork;
   struct Actor *actor = Actor_GetById(8);
@@ -511,9 +523,9 @@ extern u32 gSeaOfTime_WaveState;
  * be. */
 extern s32 Event_End__s0c94(void) __asm__("Event_End");
 
-/// Fades BG palette 3's entries 1 to 13 toward RGB(11, 6, 23), one unit per
-/// channel every 10 frames, then hands the rest of the event to
-/// SeaOfTime_TrackWaves's task.
+// Fades BG palette 3's entries 1 to 13 toward RGB(11, 6, 23), one unit per
+// channel every 10 frames, then hands the rest of the event to
+// SeaOfTime_TrackWaves's task.
 s32 SeaOfTime_StartWaves(void) {
   volatile u16 *palette;
   s32 changed;
@@ -642,8 +654,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-/// Sends actor 8 to a point 8 pixels along z and, until Actor_HasArrived says
-/// it is done, raises a pair of effects at its two sides every fourth frame.
+// Sends actor 8 to a point 8 pixels along z and, until Actor_HasArrived says
+// it is done, raises a pair of effects at its two sides every fourth frame.
 void SeaOfTime_SinkIntoWhirlpool(void) {
   s32 sides[4];
   struct EffectOptions options;
@@ -939,9 +951,9 @@ const struct Trigger *Scene_GetEvents(void) {
 
 #include "map.h"
 
-/// The Sea of Time's frame callback: rotates two runs of the background
-/// palette, pulses the red of colour 15 (or steps it with the alarm), copies
-/// the palette and ripples the layer's horizontal scroll line by line.
+// The Sea of Time's frame callback: rotates two runs of the background
+// palette, pulses the red of colour 15 (or steps it with the alarm), copies
+// the palette and ripples the layer's horizontal scroll line by line.
 void SeaOfTime_AnimateSea(void) {
   u16 *line = gSeaOfTime_RippleLines;
   struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[2];
@@ -1078,9 +1090,9 @@ void SeaOfTime_RaiseRock(s32 x, s32 z, s32 actor) {
   Event_Wait(20);
 }
 
-/// The Sea of Time's opening: places the camera and the first effects, showers
-/// sparks for 360 frames and larger effects for 16, then fades BG palette 3 to
-/// RGB(11, 6, 23).
+// The Sea of Time's opening: places the camera and the first effects, showers
+// sparks for 360 frames and larger effects for 16, then fades BG palette 3 to
+// RGB(11, 6, 23).
 void SeaOfTime_Open(void) {
   struct Actor *actor;
   u32 i;
@@ -1205,9 +1217,9 @@ void SeaOfTime_Open(void) {
 // in the first room, draws the unlit cells in the second, and schedules the
 // frame callback.
 
-/// The overlay's start: sets the screen effect, restores the clock and palette
-/// in the first room, draws the unlit cells in the second, and schedules the
-/// frame callback.
+// The overlay's start: sets the screen effect, restores the clock and palette
+// in the first room, draws the unlit cells in the second, and schedules the
+// frame callback.
 s32 Scene_Initialize(void) {
   ((struct SeaOfTimeEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 256;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room1) {

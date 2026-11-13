@@ -949,3 +949,303 @@ DEFINE_LIGHT_SPRITES_ADD(LightSprites_Add, gLightSpriteCount,
 void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 #include "../field/object/set_sprite_priority.c"
+
+#include "../field/field_effect/move.c"
+
+// ---- scene/jupiter_lighthouse_room_5/s1c88.c ----
+// @file
+// Scene code of overlay 0x69e, in ROM order.
+
+#include "shared/cracked_tile.h"
+#include "types.h"
+#include "field_effect.h"
+#include "field_sprite.h"
+#include "main_routine_work.h"
+#include "event_inline.h"
+#include "heap_release.h"
+#include "item_icon.h"
+#include "module/scene/jupiter_lighthouse_room_5.h"
+#include "module/scene/scene.h"
+
+extern const s32 *gFieldEffect_DurationScripts[];
+
+void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
+void Actor_SetSpriteFlags(struct Actor *object, u32 value);
+
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options) {
+  struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct FieldEffect *effect;
+  struct FieldSprite *sprite;
+  const s32 *script;
+  s32 target;
+  s32 count;
+
+  if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
+    effect = ((struct FieldEffect *)Import_ActorCreate(options->type, x, y, z));
+  else
+    effect = ((struct FieldEffect *)Import_ActorCreate(EFFECT_DEFAULT_TYPE, x,
+                                                       y, z));
+  if (effect == 0)
+    return;
+
+  sprite = effect->sprite;
+  Import_ActorSelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Actor_StartScript(effect,
+                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
+  effect->motionFlags = 0;
+  Actor_SetSpriteFlags(effect, 0);
+  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
+  effect->velocity.x = velocityX;
+  effect->velocity.y = velocityY;
+  effect->velocity.z = velocityZ;
+  Scene_SetActorSpritePriority(effect,
+                               ((struct FieldSprite *)party->sprite)->priority);
+  effect->scaleRateX = 0;
+  effect->scaleRateY = 0;
+  effect->spin = 0;
+
+  if ((flags & EFFECT_OPTION_MASK) == 0 || options == 0)
+    return;
+  if ((flags & EFFECT_USE_PALETTE) != 0)
+    FieldActor_SetSpriteColor(effect, options->palette);
+  if ((flags & EFFECT_USE_PRIORITY) != 0) {
+    effect->priorityFlags &= ~1;
+    Scene_SetActorSpritePriority(effect, options->priority);
+  }
+  if ((flags & EFFECT_USE_START_SCALE) != 0) {
+    effect->scaleX = options->startScaleX;
+    effect->scaleY = options->startScaleY;
+  }
+  if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
+    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
+    target = options->targetScaleX;
+    count = script[EFFECT_SCRIPT_REPEAT_COUNT];
+    if ((flags & EFFECT_USE_START_SCALE) != 0) {
+      effect->scaleRateX = (target - effect->scaleX) / count;
+      effect->scaleRateY = (options->targetScaleY - effect->scaleY) /
+                           script[EFFECT_SCRIPT_REPEAT_COUNT];
+    } else {
+      effect->scaleRateX = (target - EFFECT_SCALE_ONE) / count;
+      effect->scaleRateY = (options->targetScaleY - EFFECT_SCALE_ONE) /
+                           script[EFFECT_SCRIPT_REPEAT_COUNT];
+    }
+  }
+  if ((flags & EFFECT_USE_SCRIPT) != 0) {
+    Import_ActorSelectAnimation(effect, 1);
+    Actor_StartScript(effect, options->script);
+  }
+  if ((flags & EFFECT_USE_ROTATION) != 0)
+    sprite->rotation = options->rotation;
+  if ((flags & EFFECT_USE_SPIN) != 0)
+    effect->spin = options->spin;
+  if ((flags & EFFECT_USE_UPDATE) != 0)
+    effect->update = options->update;
+}
+
+// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+// leader steps on.
+#define CELL_TABLE gCrackedTiles
+#define CELL_SPRITE_DRAW CrackedTiles_Update
+#define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
+#include "../field/map/cell_sprite.c"
+
+#include "ram_buffer.h"
+#include "actor.h"
+#include "iwram_call.h"
+#include "scene_tables.h"
+#include "cell_target.h"
+
+DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find, gCrackedTiles, CrackedTiles_Update)
+
+DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
+
+// Centers the leader on its cell, plays sound 161 and copies the cell below
+// the table's source cell over the leader's, keeping the source column's and
+// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// one of the table's cells.
+DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
+
+// ---- scene/jupiter_lighthouse_room_5/s22b8.c ----
+
+// Scene code of overlay 0x69e, in ROM order.
+
+#include "io_reg.h"
+#include "field.h"
+#include "event_work.h"
+
+/* VIEW(s22b8): tag struct CellTarget as struct CellTarget__s22b8; cell_target.h
+ * has another definition; tried with the definition the rest of the object has,
+ * CrackedTile_Fall moves: 2 of 131 instructions in tla-ja. */
+struct CellTarget__s22b8 {
+  s16 firstFlag;
+  s16 flagByte;
+  s16 kind;
+  s16 x;
+  s16 z;
+  s16 count;
+  s16 current;
+  s16 shown;
+  s16 tile;
+};
+
+#include "io_write.h"
+
+DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s22b8,
+                         Leader_CenterInCell)
+
+#include "../field/field_effect/advance_motion.c"
+
+// ---- scene/jupiter_lighthouse_room_5/s2450.c ----
+// @file
+// Scene code of overlay 0x69e, in ROM order.
+
+#include "shared/cracked_tile.h"
+#include "shared/tables.h"
+#include "types.h"
+#include "system.h"
+#include "ram_buffer.h"
+#include "actor.h"
+#include "main_routine_work.h"
+#include "field_effect.h"
+#include "event_inline.h"
+#include "cell_target.h"
+#include "event_work.h"
+#include "module/field/field_effect.h"
+#include "module/scene/jupiter_lighthouse_room_5.h"
+#include "module/scene/scene.h"
+
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options);
+
+DEFINE_CRACKED_TILE_DROP_IN(CrackedTile_DropIn, FieldEffect_Spawn)
+
+void GameFlag_SetByte(s32 flag, s32 value);
+void CrackedTile_Fall(struct CellTarget *work, struct CellTargetEntry *entry);
+
+DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
+                          CrackedTile_Fall)
+
+DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
+                                  CrackedTile_DropIn)
+
+#include "scene_tables.h"
+#include "text/msg_ids.h"
+#include "objcmd.h"
+
+void Func_02000054(void);
+void Func_02000064(void);
+void Func_020002b8(void);
+
+// clang-format off
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
+
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
+
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
+
+u32 gData_02002f70[] = {
+    SC_ADD(SW_SCALE_X, 0x1000),
+    SC_WAIT(1),
+    SC_LOOP(32, SC_TOP),
+    SC_END,
+};
+
+DEFINE_G_DATA_02002F94(gData_02002f94, 960, 140)
+
+s16 gData_02002fb8[] = {
+    17, 18, 19, -1,
+};
+
+struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+DEFINE_G_SCENE_EXITS_6(258, 257, 2, 258, 3, 2, 263, 258, 8, 258, 7, 259)
+
+struct ActorPlacement gActorPlacements[] = {
+    {341, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(608), FACING_SOUTHWEST, 2, 0},
+    {341, CONDITION_ALWAYS, 1, PIXELS(824), 0, PIXELS(608), FACING_SOUTHEAST, 2, 1},
+    {316, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(552), FACING_SOUTHEAST, 2, 0},
+    {316, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(600), FACING_EAST, 2, 1},
+    {316, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(552), FACING_EAST, 2, 1},
+    {316, CONDITION_ALWAYS, 1, PIXELS(616), 0, PIXELS(664), FACING_EAST, 2, 0},
+    {316, CONDITION_ALWAYS, 1, PIXELS(648), 0, PIXELS(664), FACING_EAST, 2, 1},
+    {316, CONDITION_ALWAYS, 1, PIXELS(712), 0, PIXELS(664), FACING_EAST, 2, 1},
+    {316, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(664), FACING_EAST, 2, 1},
+    {312, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(280), FACING_SOUTH, 2, 0},
+    {312, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(296), FACING_SOUTH, 2, 0},
+    {312, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(232), FACING_SOUTH, 2, 0},
+    {341, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(328), FACING_SOUTHWEST, 2, 0},
+    {341, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(328), FACING_SOUTHEAST, 2, 1},
+    {57, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 1, 0},
+    {294, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {294, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 1},
+    {294, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 1},
+    {294, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 1},
+    {294, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 1},
+    {SCENE_TABLE_END},
+};
+
+DEFINE_G_DATA_02003214(gOrbScript)
+
+u32 gData_02003274[] = {
+    0,
+};
+
+u32 gData_02003278[] = {
+    1,
+};
+
+struct Trigger gSceneEvents[] = {
+    {49, 1, CONDITION_ALWAYS, 1},
+    {33, 2, CONDITION_ALWAYS, 2},
+    {49, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
+    {33, 9, CONDITION_ALWAYS, 9},
+    {33, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_STEP, 21, 0xa00, EVENT(Func_020006ac)},
+    {TRIGGER_STEP, 22, 0xa00, EVENT(Func_02000724)},
+    {TRIGGER_STEP, 100, CONDITION_ALWAYS, EVENT(Func_020008a4)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgFieldFollowTrueFeelings)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgFieldPartWithAgatio)},
+    {8, -1, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {9, -1, CONDITION_ALWAYS, EVENT(Func_02000064)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 17, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, EVENT(Func_02000064)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 18, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, CONDITION_ALWAYS, EVENT(Func_02000064)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 19, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, CONDITION_ALWAYS, EVENT(Func_02000064)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 11, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT(Func_02000064)},
+    {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_ACTS), 0, 0xa00, EVENT(Func_020002b8)},
+    {TRIGGER_TABLE_END},
+};
+
+s32 gPaletteCycleFrame[] = {
+    -1,
+};
+
+u32 gPaletteCyclePausesInEvents[] = {
+    1,
+};
+
+u32 gData_020033e0[] = {
+    39, 5, 0, 12, 38,
+};
+// clang-format on
+
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
+};

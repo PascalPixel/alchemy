@@ -1,3 +1,7 @@
+
+#include "../field/object/set_sprite_priority.c"
+
+#include "../field/field_effect/move.c"
 /// @file
 /// The scene code of overlay 0x6a8, in ROM order.
 

@@ -1658,7 +1658,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
       x += r;
       x -= px(12);
       FieldEffect_Spawn(
-          x, left->y.fixed + (((u32)Random_Next() * 32 >> 16) << 16) + -px(16),
+          x, left->y.fixed + (((u32)Random_Next() * 32 >> 16) << 16) - px(16),
           left->z.fixed, 0, px(4), 0,
           EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
               EFFECT_USE_PALETTE,
@@ -1669,7 +1669,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
       x += r;
       x -= px(12);
       FieldEffect_Spawn(
-          x, right->y.fixed + (((u32)Random_Next() * 32 >> 16) << 16) + -px(16),
+          x, right->y.fixed + (((u32)Random_Next() * 32 >> 16) << 16) - px(16),
           right->z.fixed, 0, px(4), 0,
           EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
               EFFECT_USE_PALETTE,

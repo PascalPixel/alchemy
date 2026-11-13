@@ -1104,20 +1104,20 @@ static void MercuryLighthouse_OpenStoneDoor(s32 side) {
         if (side == STONE_DOOR_WEST) {
           FieldEffect_Spawn(
               px(792), 0, px(704) + (row * 16 + particleIndex) * px(1),
-              MercuryLighthouse_RandomDoorParticleSpeed() + -px(4) / 5, 0,
-              MercuryLighthouse_RandomDoorParticleSpeed() + -px(4) / 5,
+              MercuryLighthouse_RandomDoorParticleSpeed() - px(4) / 5, 0,
+              MercuryLighthouse_RandomDoorParticleSpeed() - px(4) / 5,
               EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         } else if (side == STONE_DOOR_SOUTH) {
           FieldEffect_Spawn(
               px(800) + (row * 16 + particleIndex) * px(1), 0, px(746),
-              MercuryLighthouse_RandomDoorParticleSpeed() + -px(4) / 5, 0,
-              MercuryLighthouse_RandomDoorParticleSpeed() + -px(4) / 5,
+              MercuryLighthouse_RandomDoorParticleSpeed() - px(4) / 5, 0,
+              MercuryLighthouse_RandomDoorParticleSpeed() - px(4) / 5,
               EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         } else {
           FieldEffect_Spawn(
               px(812) + (row * 16 + particleIndex) * -px(1), 0, px(714),
-              MercuryLighthouse_RandomDoorParticleSpeed() + -px(4) / 5, 0,
-              MercuryLighthouse_RandomDoorParticleSpeed() + -px(4) / 5,
+              MercuryLighthouse_RandomDoorParticleSpeed() - px(4) / 5, 0,
+              MercuryLighthouse_RandomDoorParticleSpeed() - px(4) / 5,
               EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         }
         Event_Wait(1);
@@ -1154,11 +1154,11 @@ static void MercuryLighthouse_CloseStoneDoor(s32 side) {
         if (side == STONE_DOOR_WEST) {
           FieldEffect_Spawn(
               (793 - (((u32)Random_Next() * 5) >> 16)) << 16, 0,
-              (((row << 2) + particleIndex) << 17) + px(695), 0, side,
-              px(1) / 4, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
+              ((row * 4 + particleIndex) << 17) + px(695), 0, side, px(1) / 4,
+              EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         } else if (side == STONE_DOOR_SOUTH) {
           FieldEffect_Spawn(
-              (((row << 2) + particleIndex) << 17) + px(786), 0,
+              ((row * 4 + particleIndex) << 17) + px(786), 0,
               ((((u32)Random_Next() * 5) >> 16) << 16) + px(744), px(1) / 4, 0,
               0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         } else {
@@ -1797,9 +1797,9 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
     if (frame & 1) {
       Sound_Play(SE_GLITTER);
       particleX =
-          actor->x.fixed + ((((u32)Random_Next() * 24) >> 16) << 16) + -px(12);
+          actor->x.fixed + ((((u32)Random_Next() * 24) >> 16) << 16) - px(12);
       particleY =
-          actor->y.fixed + (((u32)Random_Next() * 32 >> 16) << 16) + -px(16);
+          actor->y.fixed + (((u32)Random_Next() * 32 >> 16) << 16) - px(16);
       riseSpeed = (((u32)Random_Next() * 4 >> 16) << 15) + px(1) / 2;
       FieldEffect_Spawn(particleX, particleY, actor->z.fixed, 0, riseSpeed, 0,
                         EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
@@ -1916,7 +1916,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     rowOffset = (wave << 4);
     do {
       random = Random_Next();
-      particleX = ((((((random << 1) + random) << 4) >> 16) << 16) + px(768));
+      particleX = ((random * 48 >> 16) << 16) + px(768);
       particleVelocityX =
           ((px(1) / 10) * ((u32)Random_Next() * 8 >> 16)) - 4 * (px(1) / 10);
       particleSpeed = (px(1) / 10) * ((u32)Random_Next() * 8 >> 16);
@@ -2186,7 +2186,7 @@ static void MercuryLighthouse_LowerStairsWithSparkles(void) {
                             &options);
         } else {
           FieldEffect_Spawn(
-              (((row << 2) + particleIndex) << 17) + px(183), 0,
+              ((row * 4 + particleIndex) << 17) + px(183), 0,
               (620 - (((u32)Random_Next() * 5) >> 16)) << 16, px(1) / 4, 0, 0,
               EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         }

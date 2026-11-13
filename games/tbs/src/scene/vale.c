@@ -3107,8 +3107,7 @@ static void Vale_TrailSparkles(struct Actor *source) {
   SET_VECTOR(spawnPosition, source->x.fixed,
              source->y.fixed - (Random_Next() << 4) - px(8), source->z.fixed);
   randomDistance = Random_Next();
-  Vector_AddPolarOffset(((randomDistance << 1) + randomDistance) << 4,
-                        Random_Next(), spawnPosition);
+  Vector_AddPolarOffset(randomDistance * 48, Random_Next(), spawnPosition);
   particle = FieldActor_Create(SPRITE_SPARKLE, spawnPosition[0],
                                spawnPosition[1], spawnPosition[2]);
   if (particle != 0) {

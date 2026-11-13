@@ -2048,7 +2048,7 @@ static void Sanctum_SpawnActorSpark(s32 id) {
   x += randomOffset << 16;
   x -= px(10);
   spark = FieldActor_Create(
-      SPRITE_GLINT, x, actor->y.fixed + ((Random_Next() & 15) << 16) + -px(8),
+      SPRITE_GLINT, x, actor->y.fixed + ((Random_Next() & 15) << 16) - px(8),
       actor->z.fixed);
   if (spark == 0)
     return;

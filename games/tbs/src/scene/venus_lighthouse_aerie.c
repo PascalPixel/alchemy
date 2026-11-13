@@ -3069,7 +3069,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
   if (spawnParticles) {
     randomHeight = ((u32)(Random_Next() * 80) >> 16) << 16;
     effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
-                               center->y.fixed - randomHeight + -px(8),
+                               center->y.fixed - randomHeight - px(8),
                                center->z.fixed);
     if (effect != 0) {
       sprite = effect->sprite;

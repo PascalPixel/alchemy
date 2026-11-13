@@ -405,6 +405,7 @@ enum ValeAnimation {
 /// (MsgValeMtAlephIsASacredPeak)
 #define FLAG_VALE_MT_ALEPH_GUARD_PAUSED FLAG_SCENE_TEMP_41
 /// Back from Kalay, Garet has met his sister.
+/// ★ Named from the game: "Ah!" (MsgValeAh)
 #define FLAG_VALE_GARET_MET_SISTER FLAG_AREA_TEMP_03
 /// Back from Kalay, Garet has asked his brother to protect the family while he
 /// is gone.
@@ -422,6 +423,7 @@ enum ValeAnimation {
 #define FLAG_VALE_ASKED_ABOUT_TRAVELERS FLAG_AREA_TEMP_07
 /// Vale_RoofMended has played, in which Dora praises the roof and sends
 /// the three off to Mt. Aleph.
+/// ★ Named from the game: "Good job" (MsgValeGoodJob)
 #define FLAG_VALE_ROOF_MENDED_EVENT_PLAYED FLAG_AREA_TEMP_08
 /// The stone pillar below the cliff stands in its west column.
 /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)

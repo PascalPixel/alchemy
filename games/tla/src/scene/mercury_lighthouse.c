@@ -82,9 +82,9 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 void Actor_StartScript(struct Actor *object, const void *script);
 
-/// The task Mercury Lighthouse runs while the lighthouses are lit: every 16
-/// frames it starts a sparkle above the beacon, and it counts the frames in
-/// gMercuryLighthouse_MoteFrames.
+/// The task MercuryLighthouse_HearVoices starts: every 16 frames it starts a
+/// flickering mote (sprite 0x2a2) at a random spot in front of the
+/// lighthouse, and it counts the frames in gMercuryLighthouse_MoteFrames.
 void MercuryLighthouse_SpawnMotes(void) {
   struct Actor *object;
   struct FieldSprite *sprite;

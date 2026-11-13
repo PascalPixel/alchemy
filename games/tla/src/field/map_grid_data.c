@@ -7,7 +7,7 @@
 #include "types.h"
 #include "module/field/field.h"
 #include "curve.h"
-#include "script.h"
+#include "field/script.h"
 
 //--------------------------------------------------------------------------
 // Map terrain: the height curve of each cell kind, the world map's

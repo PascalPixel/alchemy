@@ -4,29 +4,60 @@
 /// and Psynergy hurls two of them skyward on columns of rising earth before the
 /// party heads west for the meeting spot.
 
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "actor.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "event_work.h"
 #include "gamepak/far_call/system.h"
 #include "item_icon.h"
 #include "module/field/event_commands.h"
 #include "module/scene/scene.h"
-#include "module/scene/venus_lighthouse_entrance.h"
 #include "module/tla.h"
-#include "resource.h"
+#include "graphics/resource.h"
 #include "scene_ids.h"
 #include "module/game/game.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "call.h"
+#include "system/iwram_call.h"
+#include "system/heap_release.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+struct Actor;
+struct GlowSprite;
+struct GlowState;
+
+void VenusLighthouseEntrance_EmitDust(struct Actor *object, s32 x, s32 y,
+                                      s32 z);
+void VenusLighthouseEntrance_StartDust(void);
+void VenusLighthouseEntrance_StopDust(void);
+extern u32 gVenusLighthouseEntrance_BirdLands[];
+
+void EffectSprite_DrawAtWorldPosition(struct GlowSprite *sprite,
+                                      struct GlowState *state);
+
+void VenusLighthouseEntrance_UpdateBlastColumn(void);
+void VenusLighthouseEntrance_UpdateDust(void);
+
+void VenusLighthouseEntrance_BirdsFlyOff(void);
+
+void VenusLighthouseEntrance_ThievesAttack(void);
+
+void VenusLighthouseEntrance_ThiefWaitsForBackup(void);
+
+void VenusLighthouseEntrance_PointToMeetingSpot(void);
+
 #include "text/msg_ids.h"
 
 /// The dust puffs' work, kept in Ram_HeapSlots' menu runtime while they play.
@@ -120,8 +151,6 @@ void VenusLighthouseEntrance_RunWithDustTrail(s32 actor) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-#include "ram_buffer.h"
-#include "main_routine_work.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -206,8 +235,6 @@ s32 Scene_Initialize(void) {
   }
   return 0;
 }
-
-#include "call.h"
 
 s32 Scene_PrepareMap(void) { return 0; }
 
@@ -1032,8 +1059,6 @@ void VenusLighthouseEntrance_PointToMeetingSpot(void) {
   Event_End();
 }
 
-#include "iwram_call.h"
-
 /// ★ Named from the game: " ... Are... Are you all right?" (MsgAreAreYou)
 void VenusLighthouseEntrance_WakeUp(void) {
   s32 t96;
@@ -1494,9 +1519,6 @@ void VenusLighthouseEntrance_StartDust(void) {
   }
   Task_AddFrame(VenusLighthouseEntrance_UpdateDust, (s32)(0x480));
 }
-
-#include "resource.h"
-#include "heap_release.h"
 
 /* VIEW(sparks): tag struct SparkWork as struct SparkWork__sparks;
  * venus_lighthouse_entrance.c has another definition; tried with the definition

@@ -1,3 +1,66 @@
+
+#include "../field/object/set_sprite_priority.c"
+
+#include "../field/object/prepare_object.c"
+#include "shared/actors.h"
+#include "types.h"
+#include "system/ram_buffer.h"
+#include "actor.h"
+#include "system/main_routine_work.h"
+#include "scene_tables.h"
+#include "scene_ids.h"
+
+struct AnemosInnerSanctumEntranceParty {
+  u8 unk000[0x24b];
+  u8 battleRule;
+  u8 unk24c[8];
+  u16 battleGroup;
+};
+
+void Func_02000494(void);
+void Func_02000be0(u16 value);
+void Actor_MoveToObject(s32 id, s32 a);
+void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
+s32 Field_FindNearbyTalkTarget(s32 id);
+void Field_TryJumpForward(void);
+s32 Leader_CanPushObjectAhead(void);
+void Leader_PushObjectAhead(void);
+#include "field/field.h"
+#include "shared/jupiter_lighthouse.h"
+#include "types.h"
+#include "actor.h"
+#include "field/event_inline.h"
+#include "field/event.h"
+#include "event_work.h"
+#include "item_icon.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "scene_call.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_tables.h"
+#include "version.h"
+#include "system/ram_buffer.h"
+#include "map.h"
+#include "field_event.h"
+#include "graphics/vram_tab.h"
+#include "system/frame.h"
+#include "system/iwram_call.h"
+#include "system/task.h"
+#include "macros.h"
+#include "shared/tables.h"
+
+struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
+
+DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
+
+#include "../field/field_effect/move.c"
+
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -9,18 +72,29 @@
 // ---- scene/anemos_inner_sanctum_entrance.c ----
 
 // ---- games/tla/src/scene/anemos_inner_sanctum_entrance/hide.c ----
-#include "shared/jupiter_lighthouse.h"
-#include "types.h"
-#include "actor.h"
-#include "event_inline.h"
-#include "field.h"
-#include "event.h"
-#include "event_work.h"
-#include "item_icon.h"
-#include "module/scene/anemos_inner_sanctum_entrance.h"
-#include "module/scene/scene.h"
-#include "module/tla.h"
-#include "scene_call.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+extern s32 gData_02000e20[];
+extern s32 gData_02000e5c[];
+extern s32 gData_02000ea4[];
+extern s8 gData_02000eec[];
+void Func_02000b18(void);
+void Func_02000ba4(s32 id, s32 value);
+void Func_02000bd4(u16 value);
+void Func_02000588(void);
+
+extern s32 gData_02001970[];
+
+struct Actor;
+
+extern s16 gData_02001cde;
+extern struct Actor *gLightSpriteActors[];
+extern u16 gData_02001de2;
+extern u16 gData_02001de4;
+extern s16 gLightSpriteTile;
+extern s16 gData_02001de0;
+
 #include "text/msg_ids.h"
 
 s32 Func_0200033c(struct Actor *object) {
@@ -28,22 +102,11 @@ s32 Func_0200033c(struct Actor *object) {
   return 0;
 }
 
-#include "battle.h"
-#include "game.h"
-#include "graphics.h"
-#include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "scene_tables.h"
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-#include "anemos_inner_sanctum_entrance/anemos_inner_sanctum_entrance.h"
 
 extern struct ActorPlacement gData_020019dc[];
 extern struct ActorPlacement gData_020019f4[];
@@ -166,7 +229,6 @@ void Func_02000534(s32 a) {
 }
 
 // ---- games/tla/src/scene/anemos_inner_sanctum_entrance/s0588.c ----
-#include "version.h"
 
 void Func_02000588(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -268,10 +330,10 @@ static __inline__ void SetObjectValue(s32 id, s32 value) {
   Func_02000ba4(id, v);
 }
 
-/// Sets the event route to 0x204. In the first room, gives objects 9 to 14
-/// their values and priority bits, and under flag 0x200 runs Func_02000494.
-/// Under flag 0x201, runs a screen transition and Func_02000408, then clears
-/// the flag.
+// Sets the event route to 0x204. In the first room, gives objects 9 to 14
+// their values and priority bits, and under flag 0x200 runs Func_02000494.
+// Under flag 0x201, runs a screen transition and Func_02000408, then clears
+// the flag.
 s32 Scene_Initialize(void) {
   s32 *route =
       &((struct AnemosInnerSanctumEntranceEventWork *)Ram_HeapSlots->eventWork)
@@ -314,12 +376,6 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
-
-#include "ram_buffer.h"
-#include "map.h"
-#include "field_event.h"
-#include "vram_tab.h"
-#include "frame.h"
 
 extern struct LightOam gData_02001d20[];
 /* VIEW(s0588): variable gData_02001de2 as extern s16 gData_02001de2; hide has
@@ -402,9 +458,6 @@ void LightSprites_Draw(void) {
     }
   }
 }
-
-#include "iwram_call.h"
-#include "task.h"
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -490,3 +543,128 @@ u32 gData_02000ee0[] = {
 s8 gData_02000eec[] = {
     12, 14, 9, 11, 13, 10,
 };
+
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
+#undef EFFECT_SPRITE_PRIORITY
+
+/* VIEW(data2): routine Func_0200033c as this part declared it; the joined file
+ * has another. */
+void Func_0200033c__data2(void) __asm__("Func_0200033c");
+#define Func_0200033c Func_0200033c__data2
+/* VIEW(data2): routine Func_020004e4 as this part declared it; the joined file
+ * has another. */
+void Func_020004e4__data2(void) __asm__("Func_020004e4");
+#define Func_020004e4 Func_020004e4__data2
+/* VIEW(data2): routine Func_02000534 as this part declared it; the joined file
+ * has another. */
+void Func_02000534__data2(void) __asm__("Func_02000534");
+#define Func_02000534 Func_02000534__data2
+
+/* VIEW(data2): routine gData_02000d6c as this part declared it; the joined file
+ * has another. */
+extern u8 gData_02000d6c__data2[] __asm__("gData_02000d6c");
+#define gData_02000d6c gData_02000d6c__data2
+/* VIEW(data2): routine gData_02000da8 as this part declared it; the joined file
+ * has another. */
+extern u8 gData_02000da8__data2[] __asm__("gData_02000da8");
+#define gData_02000da8 gData_02000da8__data2
+/* VIEW(data2): routine gData_02000de4 as this part declared it; the joined file
+ * has another. */
+extern u8 gData_02000de4__data2[] __asm__("gData_02000de4");
+#define gData_02000de4 gData_02000de4__data2
+
+LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
+    gData_02000d6c,
+    gData_02000da8,
+    gData_02000de4,
+};
+
+LATE_DATA s32 gData_02001970[] = {
+    46,
+    (s32)Func_0200033c,
+    17,
+};
+
+LATE_DATA struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA DEFINE_G_SCENE_EXITS(308, 239, 23, 303, 1, 239, 22, 24, 306, 5)
+
+    LATE_DATA struct ActorPlacement gData_020019dc[] = {
+        {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gData_020019f4[] = {
+    {180, 0xa9f, 1, PIXELS(200), 0, PIXELS(104), FACING_EAST, 1, 0},
+    {430, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(424), FACING_EAST, 1, 0},
+    {430, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(456), FACING_EAST, 1, 1},
+    {430, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(472), FACING_EAST, 1, 1},
+    {430, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(424), FACING_EAST, 1, 1},
+    {430, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(456), FACING_EAST, 1, 1},
+    {430, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(472), FACING_EAST, 1, 1},
+    {303, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(152), 0, PIXELS(168),
+     FACING_WEST, 1, 0},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(152), 0, PIXELS(216),
+     FACING_WEST, 1, 1},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(248), 0, PIXELS(168),
+     FACING_EAST, 1, 1},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(248), 0, PIXELS(216),
+     FACING_EAST, 1, 1},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(696), 0, PIXELS(240),
+     FACING_WEST, 1, 0},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(744), 0, PIXELS(240),
+     FACING_EAST, 1, 0},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0, PIXELS(232),
+     FACING_WEST, 1, 0},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0, PIXELS(288),
+     FACING_WEST, 1, 0},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0, PIXELS(232),
+     FACING_EAST, 1, 0},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0, PIXELS(288),
+     FACING_EAST, 1, 0},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0, PIXELS(712),
+     FACING_WEST, 1, 0},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(424), 0, PIXELS(768),
+     FACING_WEST, 1, 0},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0, PIXELS(712),
+     FACING_EAST, 1, 0},
+    {429, CONDITION_ALWAYS, (s32)gData_02001970, PIXELS(504), 0, PIXELS(768),
+     FACING_EAST, 1, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct Trigger gData_02001c1c[] = {
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA struct Trigger gData_02001c28[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {0x202, 33, CONDITION_ALWAYS, EVENT(Func_02000534)},
+    {0x202, 77, CONDITION_ALWAYS, EVENT(Func_02000534)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x200, EVENT(Func_020004e4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x200, EVENT(Func_020004e4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x200, EVENT(Func_020004e4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x200, EVENT(Func_020004e4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0x200, EVENT(Func_020004e4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, 0x200, EVENT(Func_020004e4)},
+    {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_AFTER_CAST), 77,
+     IF_FLAG_SET(0x200), EVENT(Func_02000588)},
+    {TRIGGER_TABLE_END},
+};
+#undef Func_0200033c
+#undef Func_020004e4
+#undef Func_02000534
+#undef gData_02000d6c
+#undef gData_02000da8
+#undef gData_02000de4

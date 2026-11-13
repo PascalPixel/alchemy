@@ -4,26 +4,26 @@
 /// portraits. Through entrances 96 to 99 the same scene is instead one of four
 /// rooms of people in rows, each of whom says their name when talked to.
 
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
-#include "ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "input.h"
+#include "system/input.h"
 #include "text/msg_ids.h"
-#include "item.h"
-#include "dma.h"
-#include "battle_unit.h"
-#include "character_ids.h"
+#include "game/item.h"
+#include "system/dma.h"
+#include "battle/battle_unit.h"
+#include "game/character_ids.h"
 
 extern struct ActorPlacement gIncreaseItemAndLevel_ActorPlacements[];
 extern struct ActorPlacement gIncreaseItemAndLevel_FirstNamePlacements[];
@@ -70,8 +70,8 @@ enum IncreaseItemAndLevelActorId {
 #include "module/game/game.h"
 #include "module/window/screens.h"
 #include "module/window/window.h"
-#include "text_render.h"
-#include "uiflow.h"
+#include "graphics/text_render.h"
+#include "graphics/uiflow.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

@@ -3,25 +3,27 @@
 /// rare materials the party brings him into weapons and armor once rain has
 /// let him reach Taopo Swamp.
 
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "types.h"
-#include "system.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
 #include "scene_ids.h"
-#include "text/msg_ids.h"
 #include "field_sprite.h"
-#include "event_inline.h"
-#include "frame.h"
+#include "field/event_inline.h"
+#include "system/frame.h"
+#include "inventory.h"
+#include "version.h"
+#include "module/game/game.h"
+#include "module/scene/scene.h"
+#include "text/msg_ids.h"
 
 struct YallamInteriorsObject {
   u8 unk00[6];
@@ -90,13 +92,14 @@ extern struct ActorPlacement gYallamInteriors_Room2Placements[];
 extern struct Trigger gYallamInteriors_Triggers[];
 extern struct Trigger gYallamInteriors_Room1Triggers[];
 extern struct Trigger gYallamInteriors_Room2Triggers[];
-#include "inventory.h"
-#include "version.h"
-#include "event_inline.h"
-#include "main_routine_work.h"
-#include "module/game/game.h"
-#include "module/scene/scene.h"
-#include "module/scene/yallam_interiors.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+void Forge_Run(s32 actor);
+
+void Forge_SetItem(s32 value);
+
+void ItemDisplay_ShowItem(s32 item, s32 mode);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

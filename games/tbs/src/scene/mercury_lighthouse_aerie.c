@@ -108,7 +108,7 @@ enum MercuryLighthouseAerieActorId {
   /// Flickers between two sizes and sheds sparks while in view
   /// (MercuryLighthouseAerie_FlickerBeacon).
   /// ★ Named from what the player sees: the swirling blue ball of light the
-  /// lit beacon shows, spr_244.png (its render)
+  /// lit beacon shows, blue_orb.png (its render)
   ACTOR_BEACON = ACTOR_FIRST_PLACED,
   /// A statue, drawn as the lighthouse's statues all are, standing on the lift.
   /// It rides up and down with it.
@@ -146,7 +146,7 @@ enum MercuryLighthouseAerieActorId {
 /// animation tables and frames under graphics/sprite draw them.
 enum MercuryLighthouseAerieAnimation {
   /// Mia seen side-on, her head bowed and her hands clasped at her chest
-  /// (spr_003.png).
+  /// (mia.png).
   ANIM_MIA_HEAD_BOWED = 16
 };
 

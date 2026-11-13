@@ -264,7 +264,7 @@ enum IceRoomsCellBehavior {
    FACING_NORTHEAST - FACING_NORTHWEST - 2)
 
 /// The item merchant lying in bed, only her head above the covers
-/// (SPRITE_WOMAN_IN_GREEN_DRESS, spr_115.png).
+/// (SPRITE_WOMAN_IN_GREEN_DRESS, woman_in_green_dress.png).
 enum { IMIL_ANIMATION_LIE_IN_BED = 5 };
 
 static void Imil_MeetMiaAtOldCouplesHouse(void);

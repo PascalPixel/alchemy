@@ -76,8 +76,10 @@ one of the console's four built-in tone generators. A mixer adds every
 sounding note together.
 
 The songs and samples are ordinary files you can open, in
-[`games/tla/sound`](../../sound): each song is a MIDI file in `sequence/`,
-such as `bgm_007.mid`, and each sample a WAV in `sample/`.
+[`games/tla/sound`](../../sound): each song is a MIDI file in `songs/`,
+such as `mus_007.mid`, and each sample a WAV in `direct_sound_samples/`. A
+sequence The Broken Seal holds note for note takes its name there, such as
+`se_jump.mid`; the rest keep their row in `gSongTable`.
 
 ## Where the code is
 

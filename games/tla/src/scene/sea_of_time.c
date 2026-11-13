@@ -1,3 +1,92 @@
+
+#include "../field/object/set_sprite_priority.c"
+
+#include "../field/object/prepare_object.c"
+#include "shared/actors.h"
+#include "types.h"
+#include "system/system.h"
+#include "system/ram_buffer.h"
+#include "system/iwram_call.h"
+#include "system/dma.h"
+#include "field/event_inline.h"
+#include "system/frame.h"
+#include "actor.h"
+#include "system/field_effect.h"
+
+struct SeaOfTimeSprite {
+  u8 unk00[0x1a];
+  u8 visible;
+};
+
+struct SeaOfTimeMapLayer {
+  u8 unk00[0x30];
+  u8 *cells;
+  u8 unk34[4];
+};
+
+struct SeaOfTimeMapWork {
+  u8 unk000[0x108];
+  struct SeaOfTimeMapLayer layers[3];
+};
+
+struct SeaOfTimeEventWork {
+  u8 unk000[0x16a];
+  s16 alarm;
+  u8 unk16c[0x40];
+  s32 screenEffect;
+};
+
+extern volatile u32 gSeaOfTime_WaveStartFrame;
+extern u32 gSeaOfTime_WaveState;
+extern u32 gSceneState[];
+extern u8 gMapCellBuffer[];
+
+void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
+void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
+s32 Trig_Cos(s32 angle);
+void Event_End(void);
+void FieldCamera_WaitForArrival(void);
+
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
+s32 SeaOfTime_GetCellCode(u32 layer, s32 x, s32 y);
+s32 SeaOfTime_SetCellCode(u32 layer, s32 x, s32 y, s32 value);
+s32 Position_FlatDistance(s32 *a, s32 *b);
+void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor);
+void SeaOfTime_PlaceRock(s32 x, s32 z, s32 actor);
+
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static inline s32 SeaOfTime_Cos(s32 angle) { return Trig_Cos(angle); }
+#include "event_work.h"
+#include "module/field/event_commands.h"
+#include "module/scene/scene.h"
+#include "types.h"
+#include "scene_tables.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_ids.h"
+#include "actor.h"
+#include "system/ram_buffer.h"
+#include "field/event_inline.h"
+#include "system/frame.h"
+#include "system/field_effect.h"
+#include "system/iwram_call.h"
+#include "system/main_routine_work.h"
+#include "system/io_reg.h"
+#include "map.h"
+
+DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 34)
+
+#include "../field/field_effect/move.c"
+
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -8,17 +97,42 @@
 
 // ---- scene/sea_of_time.c ----
 
-/// The Sea of Time, east of Lemuria: currents and swirls that carry the ship
-/// round and sweep it back to the entrance, the laps and waves Yepp's songs
-/// tell the way by, and rocks Grind breaks; the rest of the overlay is in
-/// sea_of_time/.
+// The Sea of Time, east of Lemuria: currents and swirls that carry the ship
+// round and sweep it back to the entrance, the laps and waves Yepp's songs
+// tell the way by, and rocks Grind breaks; the rest of the overlay is in
+// sea_of_time/.
 
-#include "shared/actors.h"
-#include "sea_of_time/sea_of_time.h"
-#include "event_work.h"
-#include "module/field/event_commands.h"
-#include "module/scene/scene.h"
-#include "module/scene/sea_of_time.h"
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+// The Sea of Time's frame callback: rotates two runs of the background palette,
+// pulses the red of colour 15 (or steps it with the alarm), copies the palette
+// and ripples the layer's horizontal scroll line by line.
+/// The event work's fields this function reads that SeaOfTimeEventWork lacks.
+struct EventWork_02001650 {
+  u8 unk000[0x166];
+  s16 unk166;
+  u8 unk168[0x4a];
+  u16 unk1b2;
+};
+
+extern struct ActorPlacement gSeaOfTime_Room2Placements[];
+extern u32 gSeaOfTime_LapStamp[];
+
+void SeaOfTime_TrackWaves(void);
+
+extern struct Trigger gSeaOfTime_Room1Triggers[];
+
+extern struct Trigger gSeaOfTime_EntranceTriggers[];
+extern struct Trigger gSeaOfTime_Triggers[];
+extern s16 gSeaOfTime_RedPulseStep[1];
+void SeaOfTime_RideCurrent(void);
+
+void SeaOfTime_CountLaps(void);
+
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
+extern u32 gFieldEffect_LongScript[];
+extern s32 gSeaOfTime_ShipRests[];
 
 s32 Actor_HasArrived(struct Actor *actor);
 void Actor_SelectAnimation(struct Actor *object, s32 value);
@@ -65,18 +179,6 @@ s32 SeaOfTime_SetCellCode(u32 layer, s32 x, s32 y, s32 value) {
 }
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
-
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "types.h"
-#include "scene_tables.h"
-#include "scene_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -271,14 +373,8 @@ void SeaOfTime_RideCurrent(void) {
   }
 }
 
-#include "actor.h"
-#include "ram_buffer.h"
-#include "event_inline.h"
-#include "frame.h"
-#include "system/field_effect.h"
-
-/// Walks actor 8 along a run of cells in the facing the event work names,
-/// throwing sparks from both sides of it every fourth frame.
+// Walks actor 8 along a run of cells in the facing the event work names,
+// throwing sparks from both sides of it every fourth frame.
 void SeaOfTime_FollowChannel(void) {
   s32 pos[4];
   struct EffectOptions spark;
@@ -364,8 +460,6 @@ void SeaOfTime_FollowChannel(void) {
   Event_End();
 }
 
-#include "iwram_call.h"
-#include "main_routine_work.h"
 #include "text/msg_ids.h"
 
 /* VIEW(sea_of_time): variable gSeaOfTime_LapCount as extern u16
@@ -402,8 +496,8 @@ extern struct Spots
  * tla-ja. */
 extern u8 gSeaOfTime_LapsNeeded__sea_of_time[] __asm__("gSeaOfTime_LapsNeeded");
 
-/// Tracks actor 8 around the ring of cells: counts steps made in one direction,
-/// spawning an effect every fourth frame once past 3, and rewards a full count.
+// Tracks actor 8 around the ring of cells: counts steps made in one direction,
+// spawning an effect every fourth frame once past 3, and rewards a full count.
 void SeaOfTime_CountLaps(void) {
   u8 *work = (u8 *)Ram_HeapSlots->eventWork;
   struct Actor *actor = Actor_GetById(8);
@@ -501,7 +595,6 @@ void SeaOfTime_TrackWaves(void) {
 
 // Two fades of BG palette 3: toward RGB(11, 6, 23), then, in
 // SeaOfTime_StopWaves, back to its saved colours.
-#include "system/io_reg.h"
 
 extern u32 gSeaOfTime_WaveState;
 /* VIEW(s0c94): routine Event_End as s32 Event_End(void); sea_of_time.h has void
@@ -511,9 +604,9 @@ extern u32 gSeaOfTime_WaveState;
  * be. */
 extern s32 Event_End__s0c94(void) __asm__("Event_End");
 
-/// Fades BG palette 3's entries 1 to 13 toward RGB(11, 6, 23), one unit per
-/// channel every 10 frames, then hands the rest of the event to
-/// SeaOfTime_TrackWaves's task.
+// Fades BG palette 3's entries 1 to 13 toward RGB(11, 6, 23), one unit per
+// channel every 10 frames, then hands the rest of the event to
+// SeaOfTime_TrackWaves's task.
 s32 SeaOfTime_StartWaves(void) {
   volatile u16 *palette;
   s32 changed;
@@ -642,8 +735,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-/// Sends actor 8 to a point 8 pixels along z and, until Actor_HasArrived says
-/// it is done, raises a pair of effects at its two sides every fourth frame.
+// Sends actor 8 to a point 8 pixels along z and, until Actor_HasArrived says
+// it is done, raises a pair of effects at its two sides every fourth frame.
 void SeaOfTime_SinkIntoWhirlpool(void) {
   s32 sides[4];
   struct EffectOptions options;
@@ -708,8 +801,6 @@ void SeaOfTime_SinkIntoWhirlpool(void) {
   }
   Event_End();
 }
-
-#include "io_reg.h"
 
 void SeaOfTime_SweptBack(void) {
   Event_Start();
@@ -937,11 +1028,9 @@ const struct Trigger *Scene_GetEvents(void) {
   return gSeaOfTime_Triggers;
 }
 
-#include "map.h"
-
-/// The Sea of Time's frame callback: rotates two runs of the background
-/// palette, pulses the red of colour 15 (or steps it with the alarm), copies
-/// the palette and ripples the layer's horizontal scroll line by line.
+// The Sea of Time's frame callback: rotates two runs of the background
+// palette, pulses the red of colour 15 (or steps it with the alarm), copies
+// the palette and ripples the layer's horizontal scroll line by line.
 void SeaOfTime_AnimateSea(void) {
   u16 *line = gSeaOfTime_RippleLines;
   struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[2];
@@ -1078,9 +1167,9 @@ void SeaOfTime_RaiseRock(s32 x, s32 z, s32 actor) {
   Event_Wait(20);
 }
 
-/// The Sea of Time's opening: places the camera and the first effects, showers
-/// sparks for 360 frames and larger effects for 16, then fades BG palette 3 to
-/// RGB(11, 6, 23).
+// The Sea of Time's opening: places the camera and the first effects, showers
+// sparks for 360 frames and larger effects for 16, then fades BG palette 3 to
+// RGB(11, 6, 23).
 void SeaOfTime_Open(void) {
   struct Actor *actor;
   u32 i;
@@ -1205,9 +1294,9 @@ void SeaOfTime_Open(void) {
 // in the first room, draws the unlit cells in the second, and schedules the
 // frame callback.
 
-/// The overlay's start: sets the screen effect, restores the clock and palette
-/// in the first room, draws the unlit cells in the second, and schedules the
-/// frame callback.
+// The overlay's start: sets the screen effect, restores the clock and palette
+// in the first room, draws the unlit cells in the second, and schedules the
+// frame callback.
 s32 Scene_Initialize(void) {
   ((struct SeaOfTimeEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 256;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room1) {
@@ -1453,3 +1542,9 @@ struct Trigger gSeaOfTime_Triggers[] = {
 s16 gSeaOfTime_RedPulseStep[] = {
     1,
 };
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
+#undef EFFECT_SPRITE_PRIORITY

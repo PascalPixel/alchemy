@@ -23,33 +23,34 @@
 /// While the island drifts, BG3's rows sway in a sine wave
 /// (Idejima_ComputeWaves, Idejima_ScrollWaves).
 
-#include "battle.h"
+#include "battle/battle.h"
 #include "event_work.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "field_event.h"
 #include "scene_tables.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "text/msg_ids.h"
-#include "event_inline.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "field/event_inline.h"
 #include "call.h"
-#include "io_reg.h"
-#include "dma.h"
+#include "system/io_reg.h"
+#include "system/dma.h"
 #include "map.h"
 #include "shared/tables.h"
-#include "input.h"
-#include "task.h"
+#include "system/input.h"
+#include "system/task.h"
 #include "scene_ids.h"
 #include "flags.h"
 #include "module/scene/scene.h"
+#include "objcmd.h"
+#include "text/msg_ids.h"
 
 /// Set once the leader has been walked back from the edge of the map by
 /// Idejima_CatchUpWithFelix, so the next one to catch up finds him there.
@@ -1594,8 +1595,6 @@ void Idejima_PlaceTheSleepers(void) {
   if (!Event_GetFlag(FLAG_IDEJIMA_FELIX_WOKE))
     Idejima_FelixWakes();
 }
-
-#include "objcmd.h"
 
 // clang-format off
 DEFINE_G_DATA_0200200C(gIdejima_KradenToTheShipScript, 216, 172, 264, 164)

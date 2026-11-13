@@ -18,9 +18,9 @@ taking two. So one formation is a family of line-ups, not one. Each enemy
 becomes a unit filled in from its row of the enemy table. It is
 `BattleFormation_BuildEnemyList`.
 
-The Lost Age has 660 formations. Here they are still a TSV file,
-`formatn.tsv`, which the build packs into the table the ROM holds; The
-Broken Seal writes its formations as a C array. With one game flag set, the
+The Lost Age has 660 formations. Here they are still assembly rows in
+[`battle_tables.s`](battle_tables.s), `gBattleFormation_Records`; The Broken
+Seal writes its formations as a C array. With one game flag set, the
 battle passes over the number it was given: it picks among the formations
 whose enemies are near the party's average level, and moves the enemies'
 levels by the difference.
@@ -81,9 +81,9 @@ aimed at, and each point more adds a place on either side.
 How an action is shown is its [staging](../../glossary.md#staging). Most
 abilities are staged by what they are: an Attack is a run and a blow,
 anything that costs PP is a cast, an item is raised. The rest name a
-staging of their own in a table, `actstat.tsv`. Beside it `actflags.tsv`
-names each ability's battle effect. Both are TSV here too, packed by the
-build.
+staging of their own in a table, and beside it a second names each
+ability's battle effect. Both are assembly rows in `battle_tables.s` here
+too.
 
 ## Staging an action
 
@@ -161,5 +161,5 @@ is switched from one to the other partway down the screen as it is drawn.
 - `LinkBattle_SyncTurn` and its neighbours are a battle against another
   console: the parties exchanged and the handshake after every action.
 - The bank's C is two objects, written as parts cut where The Broken
-  Seal's are. Its tables are the TSV files above and
-  `debug_parameter_sets.tsv`, for the debug battles.
+  Seal's are. Its tables are the assembly rows of `battle_tables.s`, the
+  debug battles' `gDebug_ParameterSets` among them.

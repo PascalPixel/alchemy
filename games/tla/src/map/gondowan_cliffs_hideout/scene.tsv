@@ -1,0 +1,14 @@
+id:u8	x:u16	z:u16
+1	248	202
+2	199	220
+3	216	165
+4	180	181
+0xff
+
+id:u8	x:u16	z:u16	flags:u8
+1	182	454	12
+0xff
+
+left:s8	top:s8	right:s8	bottom:s8
+3	5	20	30
+-1

@@ -11,29 +11,86 @@
 #include "shared/actors.h"
 #include "shared/tables.h"
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "map.h"
-#include "iwram_call.h"
-#include "event_inline.h"
+#include "system/iwram_call.h"
+#include "field/event_inline.h"
 #include "field_sprite.h"
-#include "field.h"
+#include "field/field.h"
 #include "scene_tables.h"
 #include "event_work.h"
 #include "module/field/field.h"
-#include "module/scene/madra_catacombs.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
-#include "text/msg_ids.h"
 #include "objcmd.h"
-#include "battle.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+
+/// What The Lost Age's code declares for the files that use it, written once.
+
+struct Actor;
+
+s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
+
+extern struct SceneEntrance gMadraCatacombs_Entrances[];
+extern struct SceneEntrance gMadraCatacombs_Room4Entrances[];
+
+extern struct SceneEntrance gMadraCatacombs_Room5Entrances[];
+
+extern s16 gMadraCatacombs_LadderRoomRegions[];
+
+extern struct ActorPlacement gMadraCatacombs_Placements[];
+
+extern struct ActorPlacement gMadraCatacombs_Room1Placements[];
+
+extern struct ActorPlacement gMadraCatacombs_Room3Placements[];
+
+extern struct ActorPlacement gMadraCatacombs_Room5Placements[];
+extern struct ActorPlacement gMadraCatacombs_Room6Placements[];
+extern struct Trigger gMadraCatacombs_Room1Triggers[];
+extern struct Trigger gMadraCatacombs_Room2Triggers[];
+extern struct Trigger gMadraCatacombs_Room3Triggers[];
+extern struct Trigger gMadraCatacombs_Room4Triggers[];
+extern struct Trigger gMadraCatacombs_Room5Triggers[];
+extern struct Trigger gMadraCatacombs_Room6Triggers[];
+
+void MadraCatacombs_SetUpVillage(void);
+
+void MadraCatacombs_SetUpChampaTunnel(void);
+
+void MadraCatacombs_SetUpBookshelfRoom(void);
+
+void MadraCatacombs_SetUpTabletRoom(void);
+
+extern s16 gMadraCatacombs_PushedPillar[];
+extern s16 gMadraCatacombs_Puddles[];
+
+extern u32 gMadraCatacombs_FlameFlaresUp[];
+
+extern s32 gMadraCatacombs_GreatFlameFlaresUp[];
+extern s16 gMadraCatacombs_ClimbablePillar[];
+extern s32 gMadraCatacombs_WalkIntoDoorway[];
+
+void Actor_DisableById(s32 id);
+
+s32 Field_FindNearbyTalkTarget(s32 owner);
+
+s32 Leader_CanPushObjectAhead(void);
+
+void MadraCatacombs_RockChestWithBookshelf(void);
+
+void MadraCatacombs_LeaveBlockedVillage(void);
+
+void Rope_Place(s32 a, s32 b, s32 c, s32 d);
+
+#include "text/msg_ids.h"
 
 struct Actor *Leader_FindActorAhead(void);
 void Actor_PlaceMovedBlock(void);

@@ -6,12 +6,12 @@
 /// import of Oam_AddSpriteAtDepth (CELL_PUSH_SLOT_ENTRY).
 
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "map.h"
-#include "vram_tab.h"
-#include "cell_target.h"
+#include "graphics/vram_tab.h"
+#include "field/cell_target.h"
 
 extern struct CellTarget CELL_TABLE;
 

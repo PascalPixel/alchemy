@@ -32,4 +32,13 @@
 /// The magnitude of v. v is read twice.
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
+/// A scene's data that its overlay places after pictures linked between its
+/// tables: the overlay's linker script places .data.late after the first
+/// of them and .data.last after the next.
+#define LATE_DATA __attribute__((section(".data.late")))
+#define LAST_DATA __attribute__((section(".data.last")))
+
+/// Data aligned as the ROM places it, where its own type would not.
+#define ALIGNED(n) __attribute__((aligned(n)))
+
 #endif

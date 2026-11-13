@@ -3,37 +3,50 @@
 /// its row of sprites revealed under the logo, and the starts it leads to, the
 /// prologue with Jenna or the game with Felix; entrance 8 plays the credits.
 
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "resource.h"
-#include "dma.h"
-#include "heap_release.h"
-#include "io_reg.h"
-#include "vram_tab.h"
-#include "input.h"
+#include "graphics/resource.h"
+#include "system/dma.h"
+#include "system/heap_release.h"
+#include "system/io_reg.h"
+#include "graphics/vram_tab.h"
+#include "system/input.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_ids.h"
-#include "event_inline.h"
-#include "task.h"
-#include "io_write_queue.h"
-#include "ram_buffer.h"
+#include "field/event_inline.h"
+#include "system/task.h"
+#include "system/io_write_queue.h"
+#include "system/ram_buffer.h"
 #include "bg_scroll.h"
-#include "frame.h"
+#include "system/frame.h"
 #include "event_work.h"
 #include "module/game/game.h"
 #include "module/scene/scene.h"
-#include "module/scene/title.h"
 #include "module/system/system.h"
 #include "resource_ids.h"
+
+/// What The Lost Age's code declares for the files that use it, written once.
+
+extern s16 gTitleVramBlock;
+
+void Credits_Run(s32 value);
+
+s32 Title_ShowIntro(s32 value);
+
+void TitleIntro_Run(s32 value);
+
+void Title_LoadBackground(void);
+
+struct TitleSprite__title;
 
 extern s16 gTitle_RevealStep;
 

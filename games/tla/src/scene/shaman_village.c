@@ -1,3 +1,7 @@
+
+#include "../field/object/set_sprite_priority.c"
+
+#include "../field/field_effect/move.c"
 /// @file
 /// The Shaman Village, whose people will not talk to outsiders: Moapa, shown
 /// the Shaman's Rod, sends the party to Trial Road, where Sheba's Whirlwind
@@ -6,15 +10,139 @@
 
 #include "shared/actors.h"
 #include "types.h"
-#include "field_effect.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
-#include "event.h"
+#include "system/field_effect.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
+#include "field/event.h"
 #include "module/scene/scene.h"
-#include "module/scene/shaman_village.h"
 #include "module/system/system.h"
-#include "resource.h"
+#include "graphics/resource.h"
 #include "module/window/window.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_tables.h"
+#include "system/iwram_call.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "field_event.h"
+#include "system/frame.h"
+#include "actor.h"
+#include "field_sprite.h"
+#include "game/item.h"
+#include "item_icon.h"
+#include "system/task.h"
+#include "system/affine.h"
+#include "graphics/vram_tab.h"
+#include "system/io_write_queue.h"
+#include "edition.h"
+#include "system/heap_release.h"
+#include "system/input.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+struct ItemDefinition;
+
+struct ShamanVillageSceneBlock {
+  u8 unk00[22];
+  u8 field16;
+};
+
+extern s16 gShamanVillage_WaveLines[];
+
+void ShamanVillage_WaveWhirlwindLines(void);
+
+extern u32 gShamanVillage_KradenStandsByRodScript[];
+extern u32 gShamanVillage_PiersStandsByRodScript[];
+extern u32 gShamanVillage_ShebaStandsByRodScript[];
+extern u32 gShamanVillage_MoapaLeavesHouseScript[];
+extern u32 gShamanVillage_OtherGuardLeavesHouseScript[];
+extern u32 gShamanVillage_RejoinLeaderAtHouseScript[];
+
+struct ItemDefinition *Item_GetDirect(s32 item);
+
+extern u32 gShamanVillage_LetteringSprites[];
+
+extern s16 gShamanVillage_LetteringVramEntry[];
+
+extern s16 gShamanVillage_LetteringWait;
+extern s16 *gShamanVillage_LetteringCursor;
+extern s32 gShamanVillage_LetteringX;
+extern s16 gShamanVillage_LetteringSpeed;
+extern s16 gShamanVillage_LetteringSpeedFrames;
+extern s16 gShamanVillage_LetteringSpeedFrame;
+extern s16 gShamanVillage_LetteringScale;
+extern s16 gShamanVillage_LetteringScaleFrom;
+extern s16 gShamanVillage_LetteringScaleFrames;
+extern s16 gShamanVillage_LetteringScaleFrame;
+extern s16 gShamanVillage_LetteringBlend;
+extern s16 gShamanVillage_LetteringBlendFrom;
+extern s16 gShamanVillage_LetteringBlendFrames;
+extern s16 gShamanVillage_LetteringBlendFrame;
+extern s16 gShamanVillage_LetteringMode;
+extern s16 gShamanVillage_LetteringTileOffset;
+
+extern s16 gShamanVillage_LetteringSlideScript[];
+extern s16 gShamanVillage_LetteringCountScript[];
+extern s16 gShamanVillage_LetteringGoScript[];
+extern s16 gShamanVillage_LetteringThrobScript[];
+extern u32 gShamanVillage_LetteringThrobFadeScript[];
+extern u8 gShamanVillage_LetteringPalettes[];
+extern char ResourceId_LetteringBanner;
+
+void ShamanVillage_CastWhirlwindOnSand(void);
+extern u32 gShamanVillage_KradenWatchesShebaScript[];
+extern u32 gShamanVillage_LeaderWatchesShebaScript[];
+
+extern u32 gShamanVillage_JennaWatchesShebaScript[];
+
+extern u32 gShamanVillage_PiersWatchesShebaScript[];
+extern u32 gShamanVillage_HeadForTrialRoadScript[];
+extern u32 gShamanVillage_RejoinLeaderAtSandScript[];
+void ShamanVillage_SetUpVillage(void);
+void ShamanVillage_SetUpRoom3(void);
+void ShamanVillage_SetUpRoom2(void);
+
+void ShamanVillage_SetUpRoom4(void);
+
+void ShamanVillage_SetUpRoom6(void);
+
+void Party_RestoreHpPp(s32 mode);
+
+void ShamanVillage_TalkToGuard(void);
+
+void ShamanVillage_TellOutsidersToLeave(void);
+
+void ShamanVillage_WarnOfMoapasPower(void);
+
+void ShamanVillage_SendToMoapa(void);
+
+void ShamanVillage_TalkToPriest(void);
+
+void ShamanVillage_AskAboutOtherSide(void);
+
+void ShamanVillage_TalkToMoapa(void);
+
+void ShamanVillage_TalkToShopkeeper(void);
+
+void ShamanVillage_TellFortune(void);
+
+void ShamanVillage_OfferToGiveUp(void);
+
+void ShamanVillage_ChallengeMoapa(void);
+void ShamanVillage_TakeLeftPath(void);
+
+void ShamanVillage_TakeRightPath(void);
+
+void ShamanVillage_DropPillar(void);
+
+void ShamanVillage_MeetMoapa(void);
+
+void ShamanVillage_TalkToInnkeeper(void);
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -111,14 +239,14 @@ extern void Import_ActorSetMode__s0280(struct ShamanVillageObject *object,
 #define TLA_SHAMAN_VILLAGE_H
 
 #include "types.h"
-#include "system.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
+#include "system/system.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 #include "field_sprite.h"
-#include "event_inline.h"
-#include "frame.h"
+#include "field/event_inline.h"
+#include "system/frame.h"
 #include "scene_tables.h"
 #include "event_work.h"
 
@@ -235,7 +363,6 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gShamanVillage_Entrances;
 }
 
-#include "battle.h"
 /* VIEW(scene_tables): routine Actor_SetSpriteFlags as void
  * Actor_SetSpriteFlags(struct Actor *object, u32 flags); shaman_village.h has
  * void Actor_SetSpriteFlags(struct ShamanVillageObject *object, u32 value); not
@@ -252,16 +379,9 @@ extern void
 Animation_SetStateFlags__scene_tables(struct Actor *object,
                                       u32 value) __asm__("Actor_SetBlendMode");
 #define Actor_SetBlendMode Animation_SetStateFlags__scene_tables
-#include "field.h"
+#include "field/field.h"
 #undef Actor_SetBlendMode
 #undef Actor_SetSpriteFlags
-#include "game.h"
-#include "graphics.h"
-#include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "scene_tables.h"
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
@@ -315,10 +435,6 @@ void *Scene_GetPlacements(void) {
   return gShamanVillage_Placements;
 }
 
-#include "iwram_call.h"
-#include "dma.h"
-#include "io_reg.h"
-
 /// Fills BG0's line scroll table with a jittered sine wave and streams it
 /// to BG0HOFS by HBlank DMA 0.
 void ShamanVillage_WaveWhirlwindLines(void) {
@@ -370,9 +486,6 @@ void ShamanVillage_FlickerRock(struct ShamanVillageObject *object) {
   FieldActor_SetSpriteColor(object, (u8)(bit * *((u8 *)object + 98)));
 }
 
-#include "field_event.h"
-#include "frame.h"
-
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
 /// Circles the object around the centre in words 68 and 76, twice as wide
@@ -414,12 +527,6 @@ void ShamanVillage_SwirlSandGrain(struct ShamanVillageObject *object) {
     Scene_SetActorSpritePriority(object, 2);
   object->sprite->rotation += 0x1800;
 }
-
-#include "actor.h"
-#include "field_sprite.h"
-#include "system/dma.h"
-#include "system/io_reg.h"
-#include "system/field_effect.h"
 
 /* VIEW(s00b8): variable gFieldEffect_MediumScript as const s32
  * gFieldEffect_MediumScript[]; scene/shaman_village/s1fec has u32
@@ -1395,14 +1502,6 @@ void ShamanVillage_MeetMoapa(void) {
 /// The Shaman Village's events after Moapa's house: the rod, the trial's
 /// rules and paths, the race's lettering, and each room's set-up and tables.
 
-#include "event_inline.h"
-#include "scene_tables.h"
-#include "game/item.h"
-#include "item_icon.h"
-#include "module/scene/scene.h"
-#include "module/scene/shaman_village.h"
-#include "task.h"
-
 /// The Shaman's Rod (item 65) drawn as an actor over the leader.
 struct ShamanVillageObject *ShamanVillage_CreateRodIcon(void) {
   struct ShamanVillageObject *object =
@@ -1791,11 +1890,6 @@ void ShamanVillage_CheckTrialEntry(void) {
 
 // The portrait mode task: reads its command script, eases the portrait's scale,
 // blend and position, and queues its sprites.
-#include "affine.h"
-#include "vram_tab.h"
-#include "io_reg.h"
-#include "io_write_queue.h"
-#include "edition.h"
 
 struct Sprite {
   u32 words[3];
@@ -2030,12 +2124,6 @@ void ShamanVillage_StartLettering(s32 modeArg, s32 paramArg) {
   gShamanVillage_LetteringSpeedFrames = 0;
   gShamanVillage_LetteringX = 0;
 }
-
-#include "heap_release.h"
-#include "resource.h"
-#include "dma.h"
-#include "types.h"
-#include "input.h"
 
 // The European editions' lettering sheet has one more palette row.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
@@ -3550,3 +3638,15 @@ u32 gDriftScene_SpawnScript[] = {
     46,
     38,
 };
+#undef TLA_SHAMAN_VILLAGE_H
+#undef SHAMAN_VILLAGE_EMOTE
+#undef Actor_SetSpriteFlags
+#undef Actor_SetBlendMode
+#undef WORD_AT
+#undef OBJ14_BYTE
+#undef gShamanVillage_WalkToLeftStartScript
+#undef gShamanVillage_WalkToRightStartScript
+#undef Import_ActorSetMode
+#undef gShamanVillage_Placements
+#undef gShamanVillage_Room2Placements
+#undef gFieldEffect_MediumScript

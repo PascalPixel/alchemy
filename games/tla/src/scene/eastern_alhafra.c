@@ -4,27 +4,137 @@
 // ---- games/tla/src/scene/eastern_alhafra.c ----
 
 #include "shared/effects.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "flags.h"
 #include "scene_tables.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
-#include "module/scene/eastern_alhafra.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
-#include "particle.h"
+#include "field/particle.h"
+#include "system/ram_buffer.h"
+#include "event_work.h"
+#include "actor.h"
+#include "system/io_reg.h"
+#include "system/dma.h"
+#include "map.h"
+#include "system/frame.h"
+#include "call.h"
+#include "field_sprite.h"
+#include "scene_ids.h"
+#include "shared/push.h"
+#include "system/task.h"
+#include "system/heap_release.h"
+#include "item_icon.h"
+#include "graphics/resource.h"
+#include "system/vector3.h"
+#include "shared/map_cells.h"
+#include "module/field/field.h"
+#include "field_event.h"
 
-extern u8 gData_02004d0c[];
-extern u8 gData_02004dbc[];
-extern u8 gData_02004fe4[];
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+struct Actor;
+struct RockSprite;
+struct Vector3;
+
+struct Unk_02004240 {
+  s32 value[6];
+};
+
+struct EasternAlhafraSparkWork {
+  u8 unk0000[0x1604];
+  s16 resource;
+};
+
+struct PushState {
+  s32 x;
+  s32 y;
+  s32 z;
+  s32 kind;
+  s32 number;
+  s32 unk14;
+};
+
+void Func_02000fa4(void);
+void Rocks_Spawn(s32, s32, s32, s32);
+
+void Func_02004004(void);
+void Func_020040c0(void);
+
+void Func_020017ec(void);
+void Func_02001cb0(void);
+void Func_02003274(void);
+
+extern s32 gData_020054f4[];
+extern s32 gData_0200556c[];
+extern u32 gData_0200d5d0[];
+extern u32 gData_02005620[];
+extern s32 gData_02005670[];
+
+void Func_02000514(void);
+
+void Func_02000730(void);
+
+void Func_02000838(void);
+
+void Func_02000954(void);
+void Func_02000968(void);
+void Func_02001574(void);
+void Func_02002048(void);
+void Func_02002a08(void);
+
+extern s16 gData_02005284[];
+
+void Func_02004c64(struct RockSprite *sprite, s32 width, s32 height,
+                   u32 attributes, s32 tile);
+
+void Particles_UpdateFalling(void);
+
+extern u16 gPushKinds[];
+
+struct Actor *PushTarget_FindAhead(s32 *direction, s32 *number, s32 *kind);
+
+s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *cell);
+
+void Actor_StopAtPushTarget(struct Actor *object);
+
+struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
+
+void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
+
+s32 Actor_GetCellIndex(struct Actor *object);
+
+s32 Tightrope_Place();
+s32 Tightrope_Release();
+s32 Leader_CanPushObjectAhead();
+s32 Func_02004c4c();
+extern u16 gData_020056e0[2][160];
+void Actor_FallOverWithAnimationById();
+void Rope_Initialize(void);
+void Tightrope_Initialize(void);
+void MapGrid_SetAttributeBAt();
+
+/* VIEW(eastern_alhafra): routine gData_02004d0c as this part declared it; the
+ * joined file has another. */
+extern u8 gData_02004d0c__eastern_alhafra[] __asm__("gData_02004d0c");
+#define gData_02004d0c gData_02004d0c__eastern_alhafra
+/* VIEW(eastern_alhafra): routine gData_02004dbc as this part declared it; the
+ * joined file has another. */
+extern u8 gData_02004dbc__eastern_alhafra[] __asm__("gData_02004dbc");
+#define gData_02004dbc gData_02004dbc__eastern_alhafra
+/* VIEW(eastern_alhafra): routine gData_02004fe4 as this part declared it; the
+ * joined file has another. */
+extern u8 gData_02004fe4__eastern_alhafra[] __asm__("gData_02004fe4");
+#define gData_02004fe4 gData_02004fe4__eastern_alhafra
 
 s32 Actor_HasArrived();
 
@@ -109,11 +219,12 @@ void Func_02000190(s32 unused, s32 id) {
   }
 }
 
-#include "ram_buffer.h"
-#include "event_work.h"
 #include "text/msg_ids.h"
 
-extern u8 gData_02005290[];
+/* VIEW(eastern_alhafra): routine gData_02005290 as this part declared it; the
+ * joined file has another. */
+extern u8 gData_02005290__eastern_alhafra[] __asm__("gData_02005290");
+#define gData_02005290 gData_02005290__eastern_alhafra
 
 /* VIEW(eastern_alhafra): routine Actor_SelectAnimation as s32
  * Actor_SelectAnimation(); module/scene/scene.h has void
@@ -198,8 +309,6 @@ void Func_02000200(s32 mode, s32 id) {
   }
 }
 
-#include "actor.h"
-
 void Func_02000394(s32 unused, s32 id) {
   Func_02000190(unused, id);
   FieldMapGrid_SetCellBehavior(0x1400000, 0x1d00000, 2, 255);
@@ -244,8 +353,6 @@ void Func_0200042c(s32 mode, s32 id) {
 // ---- games/tla/src/scene/eastern_alhafra/s0514.c ----
 // Scene code of overlay 0x668, in ROM order, from s0514's offset up to the next
 // object the overlay links.
-
-#include "field/field.h"
 
 void Func_0200112c(void);
 /* VIEW(s0514): routine Func_020044c4 as void Func_020044c4(struct
@@ -438,12 +545,10 @@ check:
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-#include "io_reg.h"
-#include "dma.h"
-#include "map.h"
-#include "frame.h"
-
-extern u8 gData_020054f0[];
+/* VIEW(s0514): routine gData_020054f0 as this part declared it; the joined file
+ * has another. */
+extern u8 gData_020054f0__s0514[] __asm__("gData_020054f0");
+#define gData_020054f0 gData_020054f0__s0514
 
 // BG1's wave: each frame the finished table of scanline offsets is handed to
 // an HBlank DMA, while the other table is filled for the next frame.
@@ -485,8 +590,6 @@ void Func_02000af8(void) {
   Task_AddFrame(Func_02000a98, 0x480);
   Task_AddFrame(Func_02000a44, 0xc80);
 }
-
-#include "call.h"
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 #define OBJECT(id) (Actor_Get((id)))
@@ -706,8 +809,6 @@ L_02009100:
   MapGrid_CopyCells(32, 24, 2, 2, 30, 24);
 L_02009122:
 }
-
-#include "field_sprite.h"
 
 void Func_0200112c(void) {
   struct Actor *object0;
@@ -1092,7 +1193,10 @@ L_02009b74:
   return;
 }
 
-extern const u8 gData_020056d4[];
+/* VIEW(s0514): routine gData_020056d4 as this part declared it; the joined file
+ * has another. */
+extern const u8 gData_020056d4__s0514[] __asm__("gData_020056d4");
+#define gData_020056d4 gData_020056d4__s0514
 
 void Actor_StartScript(struct SpawnObject *object, const void *script);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority);
@@ -1158,8 +1262,6 @@ void Func_02001bf4(s32 id) {
   Event_PlaySound(151);
   FieldEvent_Wait(15);
 }
-
-#include "scene_ids.h"
 
 static __inline__ void Func_02004b6c_(s32 actor, s32 a, s32 b) {
   Actor_ShowEmoteById(actor, a, b);
@@ -2133,12 +2235,6 @@ DEFINE_ROCKS_SPAWN(Rocks_Spawn)
 
 /// Scene code of overlay 0x668, in ROM order.
 
-#include "shared/push.h"
-#include "system/task.h"
-#include "heap_release.h"
-#include "item_icon.h"
-#include "resource.h"
-
 static __inline__ void StartTask(void (*func)(void), s32 priority) {
   /* FAKEMATCH(wrapper): Task_Add forwarded inline; as a direct call, 6 of 83
    * instructions differ in tla-en. */
@@ -2192,7 +2288,10 @@ void Func_020040c0(void) {
 // layers there is filled with 255. Returns 1, or 0 for a shape with no
 // footprint.
 
-extern s8 gPushFootprints[][4];
+/* VIEW(s4004): routine gPushFootprints as this part declared it; the joined
+ * file has another. */
+extern s8 gPushFootprints__s4004[][4] __asm__("gPushFootprints");
+#define gPushFootprints gPushFootprints__s4004
 
 static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 
@@ -2244,9 +2343,10 @@ s32 Func_020040ec(s32 id) {
 
 #include "../field/map/cellfill.c"
 
-#include "system/vector3.h"
-
-extern s32 gPushDirectionSteps[];
+/* VIEW(s4004): routine gPushDirectionSteps as this part declared it; the joined
+ * file has another. */
+extern s32 gPushDirectionSteps__s4004[] __asm__("gPushDirectionSteps");
+#define gPushDirectionSteps gPushDirectionSteps__s4004
 
 static __inline__ s32 CallFunc_02004a64(struct Actor *actor,
                                         struct Vector3 *cell) {
@@ -2325,9 +2425,6 @@ DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gPushKinds,
 // ---- scene/eastern_alhafra/s44c4.c ----
 
 /// Scene code of overlay 0x668, in ROM order.
-
-#include "shared/map_cells.h"
-#include "module/field/field.h"
 
 struct PushTarget {
   s32 x; ///< 16.16 fixed-point pixels
@@ -2469,7 +2566,292 @@ next:
 // Finds the current target's table row and shrinks it.
 DEFINE_STATUE_SINK(Statue_Sink, Actor_SetCellOpen)
 
-#include "field_event.h"
-
 DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
                            Actor_SelectAnimation)
+
+#undef ABS
+#undef EVENT_WORK
+#undef OBJECT
+#undef FIELD_AT
+#undef PIXELS
+#define PIXELS(value) ((value) << 16)
+#undef gData_02004d0c
+#undef gData_02004dbc
+#undef gData_02004fe4
+#undef gData_02005290
+#undef gData_020054f0
+#undef gData_020056d4
+#undef gPushFootprints
+#undef gPushDirectionSteps
+#include "text/msg_ids.h"
+
+/* VIEW(data): routine Func_0200006c as this part declared it; the joined file
+ * has another. */
+void Func_0200006c__data(void) __asm__("Func_0200006c");
+#define Func_0200006c Func_0200006c__data
+/* VIEW(data): routine Func_020000c8 as this part declared it; the joined file
+ * has another. */
+void Func_020000c8__data(void) __asm__("Func_020000c8");
+#define Func_020000c8 Func_020000c8__data
+/* VIEW(data): routine Func_02000190 as this part declared it; the joined file
+ * has another. */
+void Func_02000190__data(void) __asm__("Func_02000190");
+#define Func_02000190 Func_02000190__data
+/* VIEW(data): routine Func_02000200 as this part declared it; the joined file
+ * has another. */
+void Func_02000200__data(void) __asm__("Func_02000200");
+#define Func_02000200 Func_02000200__data
+/* VIEW(data): routine Func_02000394 as this part declared it; the joined file
+ * has another. */
+void Func_02000394__data(void) __asm__("Func_02000394");
+#define Func_02000394 Func_02000394__data
+/* VIEW(data): routine Func_0200042c as this part declared it; the joined file
+ * has another. */
+void Func_0200042c__data(void) __asm__("Func_0200042c");
+#define Func_0200042c Func_0200042c__data
+/* VIEW(data): routine Func_020006ec as this part declared it; the joined file
+ * has another. */
+void Func_020006ec__data(void) __asm__("Func_020006ec");
+#define Func_020006ec Func_020006ec__data
+/* VIEW(data): routine Func_02000940 as this part declared it; the joined file
+ * has another. */
+void Func_02000940__data(void) __asm__("Func_02000940");
+#define Func_02000940 Func_02000940__data
+void Func_02000958(void);
+
+// clang-format off
+u16 gPushKinds[] = {
+    258, 259, 293, 294, 332, 331,
+};
+
+u32 gPushFootprints[] = {
+    0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8,
+};
+
+s16 gPushDirectionSteps[] = {
+    0, 16, 0, 16, 0, 16, 16, 0,
+    16, 0, 16, 0, 16, 0, 0, -16,
+    0, -16, 0, -16, 0, -16, -16, 0,
+    -16, 0, -16, 0, -16, 0, 0, 16,
+    10, -1,
+};
+
+s16 gData_02004d0c[] = {
+    14, 1, 0x8a2, -1,
+};
+
+struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 488, 0, 424, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {10, CONDITION_ALWAYS, 520, 0, 520, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {11, CONDITION_ALWAYS, 264, 0, 424, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {12, CONDITION_ALWAYS, 440, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {99, CONDITION_ALWAYS, 136, 0, 568, FACING_NORTH, 0, 32, 0, 608, 704, 0},
+    {SCENE_TABLE_END},
+};
+
+u32 gSceneExits[] = {
+    SCENE_EXITS(98),
+    SCENE_EXIT_IF(1, 95, 11, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(2, 99, 1, CONDITION_ALWAYS),
+    SCENE_EXITS_END,
+};
+
+s16 gData_02004dbc[] = {
+    407, -1, 1, 0, 0, 280, 0, 0,
+    0, 232, FACING_SOUTH, 2, 407, -1, 1, 0,
+    0, 376, 0, 0, 0, 232, FACING_SOUTH, 258,
+    287, -1, 1, 0, 0, 552, 0, 0,
+    0, 520, FACING_SOUTH, 2, 287, -1, 1, 0,
+    0, 408, 0, 0, 0, 520, FACING_SOUTH, 2,
+    489, -1, 1, 0, 0, 344, 0, 0,
+    0, 312, FACING_SOUTH, 2, 489, -1, 1, 0,
+    0, 440, 0, 0, 0, 312, FACING_SOUTH, 2,
+    406, -1, 1, 0, 0, 488, 0, 0,
+    0, 312, FACING_SOUTH, 2, 258, -1, 7, 0,
+    0, 336, 0, 0, 0, 456, FACING_SOUTH, 2,
+    467, -1, 1, 0, 0, 344, 0, 0,
+    0, 472, FACING_SOUTH, 2, 467, -1, 1, 0,
+    0, 440, 0, 0, 0, 456, FACING_SOUTH, 2,
+    489, -1, 7, 0, 0, 444, 0, 0,
+    0, 312, FACING_SOUTH, 2, 489, -1, 7, 0,
+    0, 482, 0, 0, 0, 312, FACING_SOUTH, 2,
+    489, -1, 7, 0, 0, 444, 0, 0,
+    0, 376, FACING_SOUTH, 2, 489, -1, 7, 0,
+    0, 492, 0, 0, 0, 312, FACING_SOUTH, 2,
+    39, -1, 1, 0, 0, 312, 0, 0,
+    0, 440, 0, 2, 39, -1, 1, 0,
+    0, 440, 0, 0, 0, 424, 0x5000, 1,
+    39, -1, 1, 0, 0, 344, 0, 0,
+    0, 488, FACING_NORTH, 1, 39, -1, 1, 0,
+    0, 440, 0, 0, 0, 376, FACING_NORTHEAST, 1,
+    5, -1, 1, 0, 0, 8, 0, 0,
+    0, 8, FACING_NORTH, 2, 6, -1, 1, 0,
+    0, 8, 0, 0, 0, 8, FACING_NORTH, 2,
+    7, -1, 1, 0, 0, 8, 0, 0,
+    0, 8, FACING_NORTH, 2, 56, -1, 1, 0,
+    0, 8, 0, 0, 0, 8, FACING_NORTH, 2,
+    -1, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0,
+};
+
+s16 gData_02004fe4[] = {
+    407, -1, 1, 0, 0, 280, 0, 0,
+    0, 232, FACING_SOUTH, 2, 407, -1, 1, 0,
+    0, 376, 0, 0, 0, 232, FACING_SOUTH, 258,
+    287, -1, 1, 0, 0, 552, 0, 0,
+    0, 520, FACING_SOUTH, 2, 287, -1, 1, 0,
+    0, 408, 0, 0, 0, 520, FACING_SOUTH, 2,
+    489, -1, 1, 0, 0, 344, 0, 0,
+    0, 312, FACING_SOUTH, 2, 489, -1, 1, 0,
+    0, 440, 0, 0, 0, 312, FACING_SOUTH, 2,
+    406, -1, 1, 0, 0, 488, 0, 0,
+    0, 312, FACING_SOUTH, 2, 258, -1, 7, 0,
+    0, 336, 0, 0, 0, 456, FACING_SOUTH, 2,
+    467, -1, 1, 0, 0, 344, 0, 0,
+    0, 472, FACING_SOUTH, 2, 467, -1, 1, 0,
+    0, 440, 0, 0, 0, 456, FACING_SOUTH, 2,
+    489, -1, 7, 0, 0, 444, 0, 0,
+    0, 312, FACING_SOUTH, 2, 489, -1, 7, 0,
+    0, 482, 0, 0, 0, 312, FACING_SOUTH, 2,
+    489, -1, 7, 0, 0, 444, 0, 0,
+    0, 376, FACING_SOUTH, 2, 489, -1, 7, 0,
+    0, 492, 0, 0, 0, 312, FACING_SOUTH, 2,
+    16, -1, 10, 0, 0, -56, 0, 0,
+    0, -56, FACING_SOUTH, 1, 37, -1, 10, 0,
+    0, -56, 0, 0, 0, -56, FACING_SOUTH, 1,
+    38, -1, 10, 0, 0, -56, 0, 0,
+    0, -56, FACING_WEST, 1, 24, -1, 10, 0,
+    0, -56, 0, 0, 0, -56, FACING_SOUTH, 2,
+    5, -1, 1, 0, 0, 8, 0, 0,
+    0, 8, FACING_NORTH, 2, 6, -1, 1, 0,
+    0, 8, 0, 0, 0, 8, FACING_NORTH, 2,
+    7, -1, 1, 0, 0, 8, 0, 0,
+    0, 8, FACING_NORTH, 2, 56, -1, 1, 0,
+    0, 8, 0, 0, 0, 8, FACING_NORTH, 2,
+    112, -1, 10, 0, 0, -56, 0, 0,
+    0, -56, FACING_SOUTH, 2, 195, -1, 10, 0,
+    0, -56, 0, 0, 0, -56, FACING_SOUTH, 2,
+    187, -1, 10, 0, 0, -56, 0, 0,
+    0, -56, 0, 2, 115, -1, 10, 0,
+    0, -56, 0, 0, 0, -56, FACING_SOUTH, 2,
+    114, -1, 10, 0, 0, -56, 0, 0,
+    0, -56, FACING_SOUTH, 2, -1, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+};
+
+s16 gData_02005284[] = {
+    0, 0, 1, 2, 6, -1,
+};
+
+s32 gData_02005290[] = {
+    (s32)gData_02005284,
+    0x110010,
+};
+
+struct Trigger gSceneEvents[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_02000940)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_02000730)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1046, 0x8a8, EVENT(Func_02000730)},
+    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgWePaidBig)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgWeSentMy)},
+    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgIfWeCould)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgPeopleCallUs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgIThoughtIt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgThatLousyRat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgWhenIThink)},
+    {TRIGGER_TALK, 30, CONDITION_ALWAYS, MSGNO(MsgOooogOw2)},
+    {TRIGGER_TALK, 31, CONDITION_ALWAYS, MSGNO(MsgWhyDoThese)},
+    {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgStupidBriggs2)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgBriggsSPirates)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS, MSGNO(MsgIJustCame)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgBriggsSaidTheBoat)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 10, FLAG_ALHAFRA_MAST_CLEARED, EVENT(Func_0200006c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x8a3, 0},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 14, 0x8a2, EVENT(Func_020000c8)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, 0x8a0, EVENT(Func_02000190)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x8a0, EVENT(Func_02000200)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 11, 0x8a1, EVENT(Func_02000190)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x8a1, EVENT(Func_02000200)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, 0x8a4, EVENT(Func_02000394)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0x8a4, EVENT(Func_0200042c)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 17, 0x8a5, EVENT(Func_02000190)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, 0x8a5, EVENT(Func_02000200)},
+    {8, 0, CONDITION_ALWAYS, EVENT(Func_02000190)},
+    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000200)},
+    {0xc602, 12, CONDITION_ALWAYS, EVENT(Func_020006ec)},
+    {0x4602, 12, CONDITION_ALWAYS, EVENT(Func_020006ec)},
+    {0xc602, 13, CONDITION_ALWAYS, EVENT(Func_020006ec)},
+    {0xc602, 11, CONDITION_ALWAYS, EVENT(Func_02000514)},
+    {0x4602, 11, CONDITION_ALWAYS, EVENT(Func_02000514)},
+    {0xa602, 12, CONDITION_ALWAYS, EVENT(Func_02000954)},
+    {0xb602, 12, CONDITION_ALWAYS, EVENT(Func_02000954)},
+    {0x2602, 12, CONDITION_ALWAYS, EVENT(Func_02000954)},
+    {0x3602, 12, CONDITION_ALWAYS, EVENT(Func_02000954)},
+    {0xa602, 11, CONDITION_ALWAYS, EVENT(Func_02000954)},
+    {0xb602, 11, CONDITION_ALWAYS, EVENT(Func_02000954)},
+    {0x2602, 11, CONDITION_ALWAYS, EVENT(Func_02000954)},
+    {0x3602, 11, CONDITION_ALWAYS, EVENT(Func_02000954)},
+    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Func_02000838)},
+    {TRIGGER_STEP, 21, 0x905, EVENT(Func_02002048)},
+    {TRIGGER_STEP, 22, FLAG_ALHAFRA_SHIP_GONE, EVENT(Func_02002a08)},
+    {TRIGGER_STEP, 23, 0x8ac, EVENT(Func_02001574)},
+    {TRIGGER_STEP, 24, 0x8bf, EVENT(Func_02000968)},
+    {TRIGGER_STEP, 25, 0x8be, EVENT(Func_02000958)},
+    {TRIGGER_TABLE_END},
+};
+
+u32 gData_020054f0[] = {
+    0,
+};
+
+s32 gData_020054f4[] = {
+    39, 2, 5, 0, 0, 0x80000,
+    1, 5, 0x100000, 0, 0x100000, 1,
+    5, 0x100000, 0, -0x100000, 1, 5,
+    0, 0, -0x100000, 1, 39, 1,
+    22, 3, 0x8000, 0, 1, 17,
+};
+
+s32 gData_0200556c[] = {
+    39, 2, 5, 0x200000, 0, 0x200000,
+    1, 5, 0x100000, 0, -0x100000, 1,
+    5, 0x20000, 0, -0x60000, 1, 39,
+    1, 22, 3, 0x8000, 0, 1,
+    17,
+};
+
+u32 gData_0200d5d0[] = {
+    39, 2, 5, 0x300000, 0, 0,
+    1, 4, 0xa80000, 0, 0x2480000, 1,
+    39, 1, 22, 3, 0xe000, 0,
+    1, 17,
+};
+
+u32 gData_02005620[] = {
+    39, 2, 5, 0x300000, 0, 0,
+    1, 4, 0xb80000, 0, 0x2480000, 1,
+    39, 1, 22, 3, 0xe000, 0,
+    1, 17,
+};
+
+s32 gData_02005670[] = {
+    39, 2, 4, 0x980000, 0, 0x2800000,
+    1, 5, -0x500000, 0, 0, 1,
+    5, -0x200000, 0, -0x200000, 1, 5,
+    -0x180000, 0, 0, 1, 0, 1,
+    17,
+};
+// clang-format on
+
+u32 gData_020056d4[] = {
+    38,
+};
+#undef Func_0200006c
+#undef Func_020000c8
+#undef Func_02000190
+#undef Func_02000200
+#undef Func_02000394
+#undef Func_0200042c
+#undef Func_020006ec
+#undef Func_02000940

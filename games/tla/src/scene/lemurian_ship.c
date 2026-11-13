@@ -2,19 +2,27 @@
 /// The scene code of overlay 0x656, in ROM order.
 
 #include "shared/tables.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
 #include "module/scene/lemurian_ship.h"
 #include "module/scene/scene.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "field_sprite.h"
+#include "field/event_inline.h"
+#include "system/frame.h"
+#include "version.h"
+#include "macros.h"
+#include "objcmd.h"
 
 /* VIEW(scene_tables): variable gData_0200312c as extern u8 gData_0200312c[];
  * the definition has s16 gData_0200312c[] = { 0, - 1, 72, 0, 72, 0x4000, 0, -
@@ -67,15 +75,7 @@ extern void
 Animation_SetStateFlags__s00b8(struct LemurianShipObject *object,
                                s32 flags) __asm__("Actor_SetBlendMode");
 #define Actor_SetBlendMode Animation_SetStateFlags__s00b8
-#include "types.h"
-#include "system.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "scene_ids.h"
 #include "text/msg_ids.h"
-#include "field_sprite.h"
-#include "event_inline.h"
-#include "frame.h"
 
 struct LemurianShipObject {
   u8 unk00[6];
@@ -175,9 +175,6 @@ void Actor_PlaceBlocks(const void *script);
 extern u32 gData_02003ef8[];
 #undef Actor_SetBlendMode
 #undef Actor_SetSpriteFlags
-#include "event_inline.h"
-#include "version.h"
-#include "macros.h"
 
 extern struct ActorPlacement gData_02003560[];
 extern struct ActorPlacement gData_02003590[];
@@ -1636,7 +1633,6 @@ void Func_02002b98(void) {
 }
 
 #include "text/msg_ids.h"
-#include "objcmd.h"
 
 // clang-format off
 DEFINE_G_DATA_0200121C(gData_02002de8)

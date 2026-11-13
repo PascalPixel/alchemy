@@ -4,25 +4,39 @@
 
 #include "shared/tables.h"
 #include "shared/actors.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_ids.h"
 #include "actor.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "event_work.h"
-#include "text/msg_ids.h"
-#include "event_inline.h"
-#include "module/scene/mikasalla_interiors.h"
+#include "field/event_inline.h"
 #include "module/scene/scene.h"
+#include "objcmd.h"
+#include "text/msg_ids.h"
+
+/// What The Lost Age's code declares for the files that use it, written once.
+
+extern struct ActorPlacement gMikasallaInteriors_InnPlacements[];
+extern struct ActorPlacement gMikasallaInteriors_SanctumPlacements[];
+extern struct Trigger gMikasallaInteriors_InnTriggers[];
+extern struct Trigger gMikasallaInteriors_SanctumTriggers[];
+
+void Shop_Run();
+
+void MikasallaInteriors_FadeInAndClearFlag(void);
+
+extern u32 gMikasallaInteriors_ExplorersWidowPaces[];
+extern u32 gMikasallaInteriors_ClimbersWifePaces[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -268,8 +282,6 @@ void MikasallaInteriors_MeetGalahad(void) {
   Event_SetFlag(0x341);
   Event_End();
 }
-
-#include "objcmd.h"
 
 // clang-format off
 /// Two women pace the inn: the explorer's widow, whose father-in-law and husband

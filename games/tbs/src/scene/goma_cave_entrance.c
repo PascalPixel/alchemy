@@ -91,20 +91,20 @@ enum GomaCaveEntranceActorId {
   /// A second stump, always sunk until only its top shows, that the party
   /// walks over.
   /// ★ Named from what the player sees: a stump sunk to its cut top, the last
-  /// frame of STUMP_ANIMATION_SINK in spr_212.png (its render)
+  /// frame of STUMP_ANIMATION_SINK in stump.png (its render)
   ACTOR_SUNKEN_STUMP,
   /// Unused: two Move hands and a third stump, placed at the map's origin
   /// outside the camera's bounds.
   ///
   /// Nothing in the overlay addresses them, and Move spawns its own hand
   /// (FieldEffect_SpawnMoveHand), so the player never sees them.
-  /// ★ Named from what the player sees: a large open hand, spr_215.png (its
+  /// ★ Named from what the player sees: a large open hand, move_hand.png (its
   /// render)
   ACTOR_UNUSED_FIRST_MOVE_HAND,
-  /// ★ Named from what the player sees: a large open hand, spr_215.png (its
+  /// ★ Named from what the player sees: a large open hand, move_hand.png (its
   /// render)
   ACTOR_UNUSED_SECOND_MOVE_HAND,
-  /// ★ Named from what the player sees: a tree stump, spr_212.png (its render)
+  /// ★ Named from what the player sees: a tree stump, stump.png (its render)
   ACTOR_UNUSED_STUMP,
   /// The ivy holding the stump, until Ivan blows it away.
   /// ★ Named from the game: "It looks like it's trapped in the ivy."

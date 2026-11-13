@@ -5,7 +5,7 @@
 
 #include "../menus_internal.h"
 #include "gamepak/far_call/battle.h"
-#include "motobj.h"
+#include "battle/motobj.h"
 
 /// Classifies an ability's effect for target selection.
 /// 0 other, 1 restore HP, 2 restore PP, 3 cure poison, 4 cure an ailment,

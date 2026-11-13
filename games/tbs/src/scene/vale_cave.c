@@ -855,7 +855,7 @@ static void ValeCave_ApplyEntryState(void) {
     case VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST:
       Actor_SetSpritePriority(ACTOR_SECOND_STANDING_LOG, 3);
       Actor_SetSpritePriority(ACTOR_SECOND_STANDING_CRATES, 3);
-      // A still actor of sprite 223 (spr_223.png, a wooden crate) that shows
+      // A still actor of sprite 223 (crate.png, a wooden crate) that shows
       // nothing. XXX (no evidence): what it and the chest below were meant to
       // show; the sprites alone hold neither, and neither actor is solid or a
       // target.

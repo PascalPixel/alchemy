@@ -2,20 +2,20 @@
 /// Overlay 0x6ba's scene: its code up to Func_02000520, then its tables, in ROM
 /// order.
 
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "input.h"
+#include "system/input.h"
 #include "text/msg_ids.h"
-#include "event_inline.h"
-#include "main_routine_work.h"
+#include "field/event_inline.h"
+#include "system/main_routine_work.h"
 
 #include "inventory.h"
 
@@ -423,10 +423,10 @@ struct Trigger gSceneEvents[] = {
 
 #include "owner_state.h"
 #include "version.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "event_work.h"
-#include "dma.h"
-#include "io_reg.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
 #include "actor.h"
 
 #include "fixed_math.h"

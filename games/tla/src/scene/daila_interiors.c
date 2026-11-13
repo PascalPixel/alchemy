@@ -10,23 +10,32 @@
 
 #include "shared/tables.h"
 #include "shared/actors.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "flags.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
 #include "field_event.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_call.h"
+#include "system/ram_buffer.h"
+#include "actor.h"
+#include "event_work.h"
+#include "inventory.h"
+#include "module/game/game.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "module/window/window.h"
+#include "game/item.h"
+#include "version.h"
 #include "text/msg_ids.h"
-#include "types.h"
 
 void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
 void Actor_ShowEmoteById(s32 actor, s32 jump, s32 frames);
@@ -62,11 +71,6 @@ static inline void Daila_CopyCells(s32 srcX, s32 srcY, s32 destX, s32 destY,
                                    s32 width, s32 height) {
   Map_CopyCellsRect(srcX, srcY, destX, destY, width, height);
 }
-#include "ram_buffer.h"
-#include "actor.h"
-#include "event_work.h"
-#include "inventory.h"
-#include "module/game/game.h"
 
 /// The sanctuary's actors, numbering the rows of gDailaInteriors2Placements.
 enum DailaSanctuaryActorId {
@@ -75,7 +79,7 @@ enum DailaSanctuaryActorId {
   /// ★ Named from the game: "Sea God's Tear" (MsgItemName)
   ACTOR_SEA_GODS_TEAR = ACTOR_FIRST_PLACED + 1,
   /// ★ Named from what the player sees: a puddle that Frost turns into a
-  /// pillar of ice (spr_290.png)
+  /// pillar of ice (puddle.png)
   ACTOR_FIRST_PILLAR,
   ACTOR_SECOND_PILLAR,
   ACTOR_THIRD_PILLAR,
@@ -119,10 +123,6 @@ void DailaInteriors_TakeSeaGodsTear(void);
 
 s32 FieldYesNo_Ask(s32 mode);
 void Field_TryJumpForward(void);
-
-#include "module/scene/scene.h"
-#include "module/tla.h"
-#include "module/window/window.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -433,8 +433,6 @@ DEFINE_SCENE_RAISE_HELD_ACTOR(Scene_RaiseHeldActor, FlagBlock_ApplyFlags,
 // Scene code of overlay 0x652, in ROM order, from item's offset up to the next
 // object the overlay links.
 
-#include "item.h"
-
 /* VIEW(item): tag struct DailaActor as struct DailaActor__item;
  * daila_interiors.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
@@ -602,7 +600,6 @@ s32 DailaInteriors_GiveItem(s32 item, s32 unused) {
 }
 
 // ---- games/tla/src/scene/daila_interiors/arrival.c ----
-#include "event_work.h"
 
 void Map_SetLayerEntryFlag(s32 mode);
 
@@ -694,8 +691,6 @@ DEFINE_SCENE_FADE_IN_AND_CLEAR_FLAG(Scene_FadeInAndClearFlag)
 
 /// The step triggers of the cells to jump from, one for each heading.
 void DailaInteriors_JumpForward(void) { Field_TryJumpForward(); }
-
-#include "version.h"
 
 // clang-format off
 s16 gDailaInteriors_PillarFrozenFlags[] = {

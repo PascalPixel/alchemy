@@ -15,25 +15,25 @@
 
 #include "shared/actors.h"
 #include "event_work.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "field_event.h"
 #include "scene_tables.h"
-#include "event_inline.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
+#include "field/event_inline.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
 #include "scene_ids.h"
-#include "text/msg_ids.h"
 #include "actor.h"
 #include "flags.h"
 #include "module/scene/scene.h"
+#include "text/msg_ids.h"
 
 // Daila2's puddles dried by Parch for this visit, one flag each, in the order
 // of the puddles' rows, and frozen into pillars by Frost.
@@ -64,7 +64,7 @@ enum DailaActorId {
   /// (MsgDailaTaviRikiWorry)
   ACTOR_INNKEEPER = ACTOR_FIRST_PLACED + 13,
   /// ★ Named from what the player sees: a puddle of seawater that Frost turns
-  /// into a pillar of ice (spr_290.png)
+  /// into a pillar of ice (puddle.png)
   ACTOR_FIRST_PUDDLE,
   ACTOR_SECOND_PUDDLE,
   ACTOR_THIRD_PUDDLE,

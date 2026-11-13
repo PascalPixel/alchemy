@@ -9,17 +9,65 @@
 #include "shared/actors.h"
 #include "shared/effects.h"
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "map.h"
 #include "actor.h"
 #include "macros.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "event_work.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
-#include "module/scene/yampi_desert_cave.h"
 #include "scene_ids.h"
+#include "field/field.h"
+#include "system/main_routine_work.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "system/task.h"
+#include "field_event.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_tables.h"
+#include "version.h"
+#include "shared/tables.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+struct Actor;
+
+extern u16 gYampiDesertCave_LogSprites[];
+
+void YampiDesertCave_StopLeaderAtLog(struct Actor *object);
+
+void Actor_SelectAnimation(struct Actor *object, s32 mode);
+
+void YampiDesertCave_ArriveByTeleport(void);
+
+extern u16 gYampiDesertCave_MarkCycle[];
+
+void FieldEffect_StartBlankOverlay(s32 value);
+
+void YampiDesertCave_FightCrystal(void);
+
+void YampiDesertCave_WonderAtRipple(void);
+
+void YampiDesertCave_TryPushLog(void);
+
+void YampiDesertCave_TeleportFromFirstMark(void);
+
+void YampiDesertCave_TeleportFromSecondMark(void);
+
+void YampiDesertCave_CastSand(void);
+void YampiDesertCave_EndSand(void);
+
+extern u32 gYampiDesertCave_Settle[];
+
+void Teleport_PlayWhirl(void);
 
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 extern u16 *gYampiDesertCave_MarkColors;
@@ -27,7 +75,11 @@ extern u16 *gYampiDesertCave_MarkDimColors;
 extern u16 *gYampiDesertCave_MarkCycleSlots;
 void Actor_DisableById(s32 id);
 
-extern s8 gYampiDesertCave_LogFootprints[];
+/* VIEW(first): routine gYampiDesertCave_LogFootprints as this part declared it;
+ * the joined file has another. */
+extern s8 gYampiDesertCave_LogFootprints__first[] __asm__(
+    "gYampiDesertCave_LogFootprints");
+#define gYampiDesertCave_LogFootprints gYampiDesertCave_LogFootprints__first
 
 /// Makes a log's cells solid where it lies: its footprint's cells take the
 /// raised layers' attributes and block the ground; returns 0 for an actor that
@@ -175,11 +227,7 @@ s32 YampiDesertCave_FindLogSlide(s32 *position) {
   }
 }
 
-#include "field/field.h"
 #include "text/msg_ids.h"
-#include "system/main_routine_work.h"
-
-#include "event_work.h"
 
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])
@@ -235,11 +283,6 @@ inner:
   return NULL;
 }
 
-#include "types.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "event_inline.h"
-
 extern char SceneId_Ov662Room1;
 extern char SceneId_Ov662Room2;
 extern char SceneId_Ov662Room3;
@@ -254,13 +297,41 @@ extern u16 gYampiDesertCave_MarkPeriod;
 extern u16 *gYampiDesertCave_MarkSlots;
 extern u16 gYampiDesertCave_MarkCount;
 extern u16 gYampiDesertCave_MarkCycleIndex;
-extern u32 gYampiDesertCave_Placements[];
-extern s32 gYampiDesertCave_Room2Placements[];
-extern s32 gYampiDesertCave_Room3Placements[];
-extern const u8 gYampiDesertCave_Room3Stakes[];
-extern const u8 gYampiDesertCave_Triggers[];
-extern const u8 gYampiDesertCave_Room2Triggers[];
-extern const u8 gYampiDesertCave_Room3Triggers[];
+/* VIEW(first): routine gYampiDesertCave_Placements as this part declared it;
+ * the joined file has another. */
+extern u32
+    gYampiDesertCave_Placements__first[] __asm__("gYampiDesertCave_Placements");
+#define gYampiDesertCave_Placements gYampiDesertCave_Placements__first
+/* VIEW(first): routine gYampiDesertCave_Room2Placements as this part declared
+ * it; the joined file has another. */
+extern s32 gYampiDesertCave_Room2Placements__first[] __asm__(
+    "gYampiDesertCave_Room2Placements");
+#define gYampiDesertCave_Room2Placements gYampiDesertCave_Room2Placements__first
+/* VIEW(first): routine gYampiDesertCave_Room3Placements as this part declared
+ * it; the joined file has another. */
+extern s32 gYampiDesertCave_Room3Placements__first[] __asm__(
+    "gYampiDesertCave_Room3Placements");
+#define gYampiDesertCave_Room3Placements gYampiDesertCave_Room3Placements__first
+/* VIEW(first): routine gYampiDesertCave_Room3Stakes as this part declared it;
+ * the joined file has another. */
+extern const u8 gYampiDesertCave_Room3Stakes__first[] __asm__(
+    "gYampiDesertCave_Room3Stakes");
+#define gYampiDesertCave_Room3Stakes gYampiDesertCave_Room3Stakes__first
+/* VIEW(first): routine gYampiDesertCave_Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gYampiDesertCave_Triggers__first[] __asm__("gYampiDesertCave_Triggers");
+#define gYampiDesertCave_Triggers gYampiDesertCave_Triggers__first
+/* VIEW(first): routine gYampiDesertCave_Room2Triggers as this part declared it;
+ * the joined file has another. */
+extern const u8 gYampiDesertCave_Room2Triggers__first[] __asm__(
+    "gYampiDesertCave_Room2Triggers");
+#define gYampiDesertCave_Room2Triggers gYampiDesertCave_Room2Triggers__first
+/* VIEW(first): routine gYampiDesertCave_Room3Triggers as this part declared it;
+ * the joined file has another. */
+extern const u8 gYampiDesertCave_Room3Triggers__first[] __asm__(
+    "gYampiDesertCave_Room3Triggers");
+#define gYampiDesertCave_Room3Triggers gYampiDesertCave_Room3Triggers__first
 
 s32 YampiDesertCave_FindLogSlide(s32 *position);
 /// The leader pushes a log to where YampiDesertCave_FindLogSlide stopped it,
@@ -404,9 +475,6 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *object) {
     Actor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
 }
 
-#include "dma.h"
-#include "io_reg.h"
-
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
@@ -416,8 +484,6 @@ DEFINE_PALETTE_SET_COLORS(YampiDesertCave_SetMarkColors,
                           gYampiDesertCave_MarkDimColors,
                           gYampiDesertCave_MarkCycleSlots,
                           YampiDesertCave_ArriveByTeleport)
-
-#include "task.h"
 
 DEFINE_PALETTE_CYCLE_START_VBLANK(
     YampiDesertCave_StartMarkGlow, gYampiDesertCave_MarkCycleIndex,
@@ -537,21 +603,10 @@ loop:
 // Finds the current target's table row and shrinks it.
 DEFINE_STATUE_SINK(Statue_Sink, YampiDesertCave_SetStakeCell)
 
-#include "field_event.h"
-
 s32 Actor_GetCellIndex(struct Actor *object);
 
 DEFINE_ACTOR_SET_CELL_OPEN(YampiDesertCave_SetStakeCell, Actor_GetCellIndex,
                            Actor_SelectAnimation)
-
-#include "battle.h"
-#include "game.h"
-#include "graphics.h"
-#include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "scene_tables.h"
 
 /// Talking to Crystal, the Venus Djinni Scoop dug up, starts its battle
 /// (flag 0x271).
@@ -735,7 +790,11 @@ void YampiDesertCave_PoundStake(s32 a, s32 b) {
   MapGrid_CopyCellAttributes(47, 12, 1, 1, 46, 12);
 }
 
-extern const s16 gYampiDesertCave_RipplePath[];
+/* VIEW(first): routine gYampiDesertCave_RipplePath as this part declared it;
+ * the joined file has another. */
+extern const s16
+    gYampiDesertCave_RipplePath__first[] __asm__("gYampiDesertCave_RipplePath");
+#define gYampiDesertCave_RipplePath gYampiDesertCave_RipplePath__first
 
 static __inline__ s32 GameFlag_GetByte_(s32 flag) {
   return ((s32)GameFlag_GetByte(flag));
@@ -756,8 +815,6 @@ void YampiDesertCave_MoveSandRipple(void) {
     GameFlag_SetByte(0x278, step);
   }
 }
-
-#include "version.h"
 
 /// The chest that follows the step count: when the tracked object stands on
 /// its cell, mode 1 stops the follower and mode 2 drops the chest.
@@ -863,9 +920,22 @@ const u8 *Scene_GetEvents(void) {
 // room's palette cycle and Retreat destination, the third room's background
 // priorities, and in each room the objects its flags place.
 
-extern u16 gYampiDesertCave_MarkPaletteSlots[];
-extern u16 gYampiDesertCave_MarkColorsLit[];
-extern u16 gYampiDesertCave_MarkColorsDim[];
+/* VIEW(first): routine gYampiDesertCave_MarkPaletteSlots as this part declared
+ * it; the joined file has another. */
+extern u16 gYampiDesertCave_MarkPaletteSlots__first[] __asm__(
+    "gYampiDesertCave_MarkPaletteSlots");
+#define gYampiDesertCave_MarkPaletteSlots                                      \
+  gYampiDesertCave_MarkPaletteSlots__first
+/* VIEW(first): routine gYampiDesertCave_MarkColorsLit as this part declared it;
+ * the joined file has another. */
+extern u16 gYampiDesertCave_MarkColorsLit__first[] __asm__(
+    "gYampiDesertCave_MarkColorsLit");
+#define gYampiDesertCave_MarkColorsLit gYampiDesertCave_MarkColorsLit__first
+/* VIEW(first): routine gYampiDesertCave_MarkColorsDim as this part declared it;
+ * the joined file has another. */
+extern u16 gYampiDesertCave_MarkColorsDim__first[] __asm__(
+    "gYampiDesertCave_MarkColorsDim");
+#define gYampiDesertCave_MarkColorsDim gYampiDesertCave_MarkColorsDim__first
 
 void Actor_SetWideSprite(s32 id, s32 wide);
 
@@ -977,3 +1047,266 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
+
+#undef PIXELS
+#define PIXELS(value) ((value) << 16)
+#undef DEFINE_TELEPORT_FROM_MARK
+#undef DEFINE_BURST_PILLAR
+#undef FIELD_AT
+#undef gYampiDesertCave_LogFootprints
+#undef gYampiDesertCave_Placements
+#undef gYampiDesertCave_Room2Placements
+#undef gYampiDesertCave_Room3Placements
+#undef gYampiDesertCave_Room3Stakes
+#undef gYampiDesertCave_Triggers
+#undef gYampiDesertCave_Room2Triggers
+#undef gYampiDesertCave_Room3Triggers
+#undef gYampiDesertCave_RipplePath
+#undef gYampiDesertCave_MarkPaletteSlots
+#undef gYampiDesertCave_MarkColorsLit
+#undef gYampiDesertCave_MarkColorsDim
+
+/* VIEW(data): routine YampiDesertCave_BurstRoom1Pillar as this part declared
+ * it; the joined file has another. */
+void YampiDesertCave_BurstRoom1Pillar__data(void) __asm__(
+    "YampiDesertCave_BurstRoom1Pillar");
+#define YampiDesertCave_BurstRoom1Pillar YampiDesertCave_BurstRoom1Pillar__data
+/* VIEW(data): routine YampiDesertCave_BurstRoom3Pillar as this part declared
+ * it; the joined file has another. */
+void YampiDesertCave_BurstRoom3Pillar__data(void) __asm__(
+    "YampiDesertCave_BurstRoom3Pillar");
+#define YampiDesertCave_BurstRoom3Pillar YampiDesertCave_BurstRoom3Pillar__data
+/* VIEW(data): routine YampiDesertCave_StartMovingPillar as this part declared
+ * it; the joined file has another. */
+void YampiDesertCave_StartMovingPillar__data(void) __asm__(
+    "YampiDesertCave_StartMovingPillar");
+#define YampiDesertCave_StartMovingPillar                                      \
+  YampiDesertCave_StartMovingPillar__data
+/* VIEW(data): routine YampiDesertCave_FinishMovingPillar as this part declared
+ * it; the joined file has another. */
+void YampiDesertCave_FinishMovingPillar__data(void) __asm__(
+    "YampiDesertCave_FinishMovingPillar");
+#define YampiDesertCave_FinishMovingPillar                                     \
+  YampiDesertCave_FinishMovingPillar__data
+/* VIEW(data): routine YampiDesertCave_PoundStake as this part declared it; the
+ * joined file has another. */
+void YampiDesertCave_PoundStake__data(void) __asm__(
+    "YampiDesertCave_PoundStake");
+#define YampiDesertCave_PoundStake YampiDesertCave_PoundStake__data
+/* VIEW(data): routine YampiDesertCave_ScoopDjinni as this part declared it; the
+ * joined file has another. */
+void YampiDesertCave_ScoopDjinni__data(void) __asm__(
+    "YampiDesertCave_ScoopDjinni");
+#define YampiDesertCave_ScoopDjinni YampiDesertCave_ScoopDjinni__data
+void YampiDesertCave_MeetGuardianOfFire(void);
+/* VIEW(data): routine YampiDesertCave_ScoopTreasure as this part declared it;
+ * the joined file has another. */
+void YampiDesertCave_ScoopTreasure__data(void) __asm__(
+    "YampiDesertCave_ScoopTreasure");
+#define YampiDesertCave_ScoopTreasure YampiDesertCave_ScoopTreasure__data
+
+// clang-format off
+u16 gYampiDesertCave_LogSprites[] = {
+    258, 259, 293, 294, 332, 331,
+};
+
+u32 gYampiDesertCave_LogFootprints[] = {
+    0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8,
+};
+
+DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
+
+u32 gYampiDesertCave_RipplePath[] = {
+    0x270065, 0, 0x230061, 0, 0x250063, 0,
+    0x21005f, 0,
+};
+
+s16 gYampiDesertCave_MarkPaletteSlots[] = {
+    9, 10, 11, 12, 13, 14, 15, -1,
+};
+
+s16 gYampiDesertCave_MarkColorsLit[] = {
+    23, 25, 22, 23, 25, 22, 23, 25,
+    22, 23, 25, 22, 23, 25, 22, 23,
+    25, 22, 23, 25, 22, -1,
+};
+
+s16 gYampiDesertCave_MarkColorsDim[] = {
+    30, 27, 31, 22, 21, 31, 20, 18,
+    31, 13, 11, 27, 11, 8, 24, 8,
+    5, 21, 31, 31, 31, -1,
+};
+
+DEFINE_G_DATA_020013B4(gYampiDesertCave_MarkCycle, 14, 9, 10, 11, 12, 13)
+
+struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+u32 gSceneExits[] = {
+    SCENE_EXITS(79),
+    SCENE_EXIT(1, 74, 4),
+    SCENE_EXIT(2, 81, 1),
+    SCENE_EXIT(3, 79, 6),
+    SCENE_EXIT(4, 79, 5),
+    SCENE_EXIT(5, 79, 4),
+    SCENE_EXIT(6, 79, 3),
+    SCENE_EXIT(7, 81, 8),
+    SCENE_EXIT(8, 80, 1),
+    SCENE_EXITS(80),
+    SCENE_EXIT(1, 79, 8),
+    SCENE_EXIT(2, 80, 17),
+    SCENE_EXIT(14, 81, 13),
+    SCENE_EXIT(15, 81, 12),
+    SCENE_EXIT(16, 81, 11),
+    SCENE_EXIT(17, 80, 2),
+    SCENE_EXITS(81),
+    SCENE_EXIT(1, 79, 2),
+    SCENE_EXIT(2, 81, 3),
+    SCENE_EXIT(3, 81, 2),
+    SCENE_EXIT(4, 81, 7),
+    SCENE_EXIT(5, 81, 6),
+    SCENE_EXIT(6, 81, 5),
+    SCENE_EXIT(7, 81, 4),
+    SCENE_EXIT(8, 79, 7),
+    SCENE_EXIT(9, 81, 10),
+    SCENE_EXIT(10, 81, 9),
+    SCENE_EXIT(11, 80, 16),
+    SCENE_EXIT(12, 80, 15),
+    SCENE_EXIT(13, 80, 14),
+    SCENE_EXITS_END,
+};
+
+u32 gYampiDesertCave_Settle[] = {
+    22, 26, 0, 17,
+};
+
+struct ActorPlacement gYampiDesertCave_Placements[] = {
+    {331, CONDITION_ALWAYS, 7, PIXELS(888), 0, PIXELS(336), FACING_SOUTH, 2, 0},
+    {332, CONDITION_ALWAYS, 7, PIXELS(832), 0, PIXELS(312), FACING_SOUTH, 2, 0},
+    {332, CONDITION_ALWAYS, 7, PIXELS(912), 0, PIXELS(168), FACING_SOUTH, 2, 0},
+    {404, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(712), FACING_SOUTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+// clang-format on
+
+struct ActorPlacement gYampiDesertCave_Room2Placements[] = {
+    {272, CONDITION_ALWAYS, (s32)gYampiDesertCave_Settle, PIXELS(552), 0,
+     PIXELS(200), FACING_SOUTH, 2, 0},
+    {177, 0x9cd, 1, PIXELS(200), 0, PIXELS(152), FACING_SOUTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gYampiDesertCave_Room3Placements[] = {
+    {331, CONDITION_ALWAYS, 7, PIXELS(712), 0, PIXELS(752), FACING_SOUTH, 2, 0},
+    {332, CONDITION_ALWAYS, 7, PIXELS(752), 0, PIXELS(744), FACING_SOUTH, 2, 0},
+    {331, CONDITION_ALWAYS, 7, PIXELS(728), 0, PIXELS(784), FACING_SOUTH, 2, 0},
+    {332, CONDITION_ALWAYS, 7, PIXELS(800), 0, PIXELS(760), FACING_SOUTH, 2, 0},
+    {272, CONDITION_ALWAYS, (s32)gYampiDesertCave_Settle, PIXELS(632), 0,
+     PIXELS(264), FACING_SOUTH, 2, 0},
+    {272, CONDITION_ALWAYS, (s32)gYampiDesertCave_Settle, PIXELS(136), 0,
+     PIXELS(168), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, (s32)gYampiDesertCave_Settle, PIXELS(744), 0,
+     PIXELS(200), FACING_SOUTH, 2, 0},
+    {404, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(632), FACING_SOUTH, 2, 0},
+    {251, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {243, 0x41, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {SCENE_TABLE_END},
+};
+
+u32 gYampiDesertCave_Room3Stakes[] = {
+    14,
+    0xffff0206,
+};
+
+struct Trigger gYampiDesertCave_Triggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {49, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {49, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
+    {0x202, 42, CONDITION_ALWAYS, EVENT(YampiDesertCave_TryPushLog)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 33, 0x300,
+     EVENT(YampiDesertCave_BurstRoom1Pillar)},
+    {0x9c05, 30, CONDITION_ALWAYS,
+     EVENT(YampiDesertCave_TeleportFromFirstMark)},
+    {0x9c05, 31, CONDITION_ALWAYS,
+     EVENT(YampiDesertCave_TeleportFromSecondMark)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0,
+     CONDITION_ALWAYS, EVENT(YampiDesertCave_CastSand)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
+     EVENT(YampiDesertCave_EndSand)},
+    {TRIGGER_TABLE_END},
+};
+
+struct Trigger gYampiDesertCave_Room2Triggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {49, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
+    {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
+    {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
+    {33, 17, CONDITION_ALWAYS, 17},
+    {TRIGGER_STEP, 52, 0x9cd, EVENT(YampiDesertCave_MeetGuardianOfFire)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8,
+     0x303, EVENT(YampiDesertCave_StartMovingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x303,
+     EVENT(YampiDesertCave_FinishMovingPillar)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0,
+     CONDITION_ALWAYS, EVENT(YampiDesertCave_CastSand)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
+     EVENT(YampiDesertCave_EndSand)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 100, 0x302,
+     EVENT(YampiDesertCave_ScoopTreasure)},
+    {TRIGGER_TABLE_END},
+};
+
+struct Trigger gYampiDesertCave_Room3Triggers[] = {
+    {33, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {33, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(YampiDesertCave_WonderAtRipple)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(YampiDesertCave_FightCrystal)},
+    {0x202, 42, CONDITION_ALWAYS, EVENT(YampiDesertCave_TryPushLog)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 33, 0x301,
+     EVENT(YampiDesertCave_BurstRoom3Pillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12,
+     0x305, EVENT(YampiDesertCave_StartMovingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x305,
+     EVENT(YampiDesertCave_FinishMovingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13,
+     0x304, EVENT(YampiDesertCave_StartMovingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0x304,
+     EVENT(YampiDesertCave_FinishMovingPillar)},
+    {8, 0, CONDITION_ALWAYS, EVENT(YampiDesertCave_StartMovingPillar)},
+    {9, 0, CONDITION_ALWAYS, EVENT(YampiDesertCave_FinishMovingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 14, 0x206,
+     EVENT(YampiDesertCave_PoundStake)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0,
+     CONDITION_ALWAYS, EVENT(YampiDesertCave_CastSand)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
+     EVENT(YampiDesertCave_EndSand)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 33,
+     IF_FLAG_SET(0x270), EVENT(YampiDesertCave_ScoopDjinni)},
+    {TRIGGER_TABLE_END},
+};
+#undef YampiDesertCave_BurstRoom1Pillar
+#undef YampiDesertCave_BurstRoom3Pillar
+#undef YampiDesertCave_StartMovingPillar
+#undef YampiDesertCave_FinishMovingPillar
+#undef YampiDesertCave_PoundStake
+#undef YampiDesertCave_ScoopDjinni
+#undef YampiDesertCave_ScoopTreasure

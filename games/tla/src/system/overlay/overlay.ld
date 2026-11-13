@@ -3,11 +3,46 @@
    block for that number is the overlay. The build finds the overlays from the
    lines that test OVERLAY, and each overlay's objects from its statements.
 
-   A scene's .text opens with its entry table, DIR/entry/NAME.s, and its
-   import table, DIR/import/NAME.s, follows its code, where DIR is src/scene
-   (or src/debug); each statement names the section it places, so the objects
-   keep their order. Where its globals are written in assembly, its .bss is
-   DIR/bss/NAME.s. */
+   A scene's .text opens with its entry table, src/scene/entry.s, which every
+   scene links (each resolves its names against its own code), or
+   DIR/entry/NAME.s for the few whose routines are named otherwise, where DIR
+   is src/scene (or src/debug). Its import table, imports.o, follows its
+   code: the build writes it for each overlay from imports.inc, a stub for
+   each main-image routine the overlay's code calls. Each statement names the
+   section it places, so the objects keep their order. Where its globals are
+   written in assembly, its .bss is DIR/bss/NAME.s. */
+
+/* Most scenes are one overlay of one shape: the entry table, the scene's
+   code, its import table, then the scene's tables; SCENE_WITH_BSS adds the
+   globals the scene's bss/NAME.s defines. A scene of another shape writes
+   its block out. */
+#define SCENE(name) \
+SECTIONS \
+{ \
+    .text 0x2008000 : \
+    { \
+        */games/tla/src/scene/entry.o(.text) \
+        */games/tla/src/scene/name.o(.text) \
+        */imports.o(.text) \
+        */games/tla/src/scene/name.o(.data) \
+    } \
+}
+#define SCENE_WITH_BSS(name) \
+SECTIONS \
+{ \
+    .text 0x2008000 : \
+    { \
+        */games/tla/src/scene/entry.o(.text) \
+        */games/tla/src/scene/name.o(.text) \
+        */imports.o(.text) \
+        */games/tla/src/scene/name.o(.data) \
+    } \
+    .bss : \
+    { \
+        */games/tla/src/scene/bss/name.o(.bss) \
+    } \
+}
+
 #if OVERLAY == 0x649
 SECTIONS
 {
@@ -15,7 +50,7 @@ SECTIONS
     {
         "*/games/tla/src/scene/entry/title.o"(.text)
         "*/games/tla/src/scene/title.o"(.text)
-        "*/games/tla/src/scene/import/title.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/scene/title.o"(.data)
     }
     .bss :
@@ -28,12 +63,12 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/clear.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/clear.o"(.text)
-        "*/games/tla/src/scene/import/clear.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/scene/clear.o"(.data)
         "*/games/tla/src/graphics/clear/tilemap.o"(.rodata)
-        "*/games/tla/src/scene/data/clear.o"(.data)
+        "*/games/tla/src/scene/clear.o"(.data.late)
     }
     .bss :
     {
@@ -45,14 +80,14 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/world_map.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/world_map.o"(.text)
-        "*/games/tla/src/scene/import/world_map.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/scene/world_map.o"(.data)
         "*/games/tla/src/graphics/world_map/story.o"(.rodata)
         "*/games/tla/src/graphics/world_map/storyb.o"(.rodata)
         "*/games/tla/src/graphics/world_map/storyc.o"(.rodata)
-        "*/games/tla/src/scene/data/world_map.o"(.data)
+        "*/games/tla/src/scene/world_map.o"(.data.late)
     }
     .bss :
     {
@@ -64,14 +99,14 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/staff_credit.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/staff_credit.o"(.text)
-        "*/games/tla/src/scene/import/staff_credit.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/graphics/staff_credit/graphics.o"(.rodata)
         "*/games/tla/src/scene/staff_credit.o"(.data)
         "*/games/tla/src/graphics/world_map/story.o"(.rodata)
         "*/games/tla/src/graphics/world_map/storyc.o"(.rodata)
-        "*/games/tla/src/scene/data/staff_credit.o"(.data)
+        "*/games/tla/src/scene/staff_credit.o"(.data.late)
     }
     .bss :
     {
@@ -83,9 +118,9 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/venus_lighthouse_entrance.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse_entrance.o"(.text)
-        "*/games/tla/src/scene/import/venus_lighthouse_entrance.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/graphics/field/tiles64d.o"(.rodata)
         "*/games/tla/src/scene/venus_lighthouse_entrance.o"(.data)
     }
@@ -96,51 +131,17 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/entry/venus_lighthouse.o"(.text)
-        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/scene/venus_lighthouse/objects.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse.o"(.text)
-        "*/games/tla/src/scene/import/venus_lighthouse.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse.o"(.data)
     }
 }
 #elif OVERLAY == 0x64f
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/suhalla_gate.o"(.text)
-        "*/games/tla/src/scene/suhalla_gate.o"(.text)
-        "*/games/tla/src/scene/import/suhalla_gate.o"(.text)
-        "*/games/tla/src/scene/suhalla_gate.o"(.data)
-    }
-}
+SCENE(suhalla_gate)
 #elif OVERLAY == 0x650
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/idejima.o"(.text)
-        "*/games/tla/src/scene/idejima.o"(.text)
-        "*/games/tla/src/scene/import/idejima.o"(.text)
-        "*/games/tla/src/scene/idejima.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/idejima.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(idejima)
 #elif OVERLAY == 0x651
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/daila.o"(.text)
-        "*/games/tla/src/scene/daila.o"(.text)
-        "*/games/tla/src/scene/import/daila.o"(.text)
-        "*/games/tla/src/scene/daila.o"(.data)
-    }
-}
+SCENE(daila)
 #elif OVERLAY == 0x652
 SECTIONS
 {
@@ -148,359 +149,80 @@ SECTIONS
     {
         "*/games/tla/src/scene/entry/daila_interiors.o"(.text)
         "*/games/tla/src/scene/daila_interiors.o"(.text)
-        "*/games/tla/src/scene/import/daila_interiors.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/scene/daila_interiors.o"(.data)
     }
 }
 #elif OVERLAY == 0x653
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/kandorean_temple.o"(.text)
-        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/kandorean_temple.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/kandorean_temple/events.o"(.text)
-        "*/games/tla/src/scene/import/kandorean_temple.o"(.text)
-        "*/games/tla/src/scene/kandorean_temple/events.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/kandorean_temple.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(kandorean_temple)
 #elif OVERLAY == 0x654
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/shrine_of_the_sea_god.o"(.text)
-        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/shrine_of_the_sea_god.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/shrine_of_the_sea_god/s1340.o"(.text)
-        "*/games/tla/src/scene/import/shrine_of_the_sea_god.o"(.text)
-        "*/games/tla/src/scene/data/shrine_of_the_sea_god.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/shrine_of_the_sea_god.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(shrine_of_the_sea_god)
 #elif OVERLAY == 0x655
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/dehkan_plateau.o"(.text)
-        "*/games/tla/src/scene/dehkan_plateau.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/dehkan_plateau/dehkan_plateau.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/dehkan_plateau/s2698.o"(.text)
-        "*/games/tla/src/scene/import/dehkan_plateau.o"(.text)
-        "*/games/tla/src/scene/data/dehkan_plateau.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/dehkan_plateau.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(dehkan_plateau)
 #elif OVERLAY == 0x656
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/lemurian_ship.o"(.text)
-        "*/games/tla/src/scene/lemurian_ship.o"(.text)
-        "*/games/tla/src/scene/import/lemurian_ship.o"(.text)
-        "*/games/tla/src/scene/lemurian_ship.o"(.data)
-    }
-}
+SCENE(lemurian_ship)
 #elif OVERLAY == 0x657
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/lemurian_ship_deck.o"(.text)
-        "*/games/tla/src/scene/lemurian_ship_deck.o"(.text)
-        "*/games/tla/src/scene/import/lemurian_ship_deck.o"(.text)
-        "*/games/tla/src/scene/lemurian_ship_deck.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/lemurian_ship_deck.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(lemurian_ship_deck)
 #elif OVERLAY == 0x658
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/madra.o"(.text)
-        "*/games/tla/src/scene/madra.o"(.text)
-        "*/games/tla/src/scene/import/madra.o"(.text)
-        "*/games/tla/src/scene/madra.o"(.data)
-    }
-}
+SCENE(madra)
 #elif OVERLAY == 0x659
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/madra_interiors.o"(.text)
-        "*/games/tla/src/scene/madra_interiors.o"(.text)
-        "*/games/tla/src/scene/import/madra_interiors.o"(.text)
-        "*/games/tla/src/scene/madra_interiors.o"(.data)
-    }
-}
+SCENE(madra_interiors)
 #elif OVERLAY == 0x65a
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/madra_catacombs.o"(.text)
-        "*/games/tla/src/scene/madra_catacombs.o"(.text)
-        "*/games/tla/src/scene/import/madra_catacombs.o"(.text)
-        "*/games/tla/src/scene/madra_catacombs.o"(.data)
-    }
-}
+SCENE(madra_catacombs)
 #elif OVERLAY == 0x65b
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/madra_drawbridge.o"(.text)
-        "*/games/tla/src/scene/madra_drawbridge.o"(.text)
-        "*/games/tla/src/scene/import/madra_drawbridge.o"(.text)
-        "*/games/tla/src/scene/madra_drawbridge.o"(.data)
-    }
-}
+SCENE(madra_drawbridge)
 #elif OVERLAY == 0x65c
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/osenia_cliffs.o"(.text)
-        "*/games/tla/src/scene/osenia_cliffs.o"(.text)
-        "*/games/tla/src/scene/import/osenia_cliffs.o"(.text)
-        "*/games/tla/src/scene/osenia_cliffs.o"(.data)
-    }
-}
+SCENE(osenia_cliffs)
 #elif OVERLAY == 0x65d
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/mikasalla.o"(.text)
-        "*/games/tla/src/scene/mikasalla.o"(.text)
-        "*/games/tla/src/scene/import/mikasalla.o"(.text)
-        "*/games/tla/src/scene/mikasalla.o"(.data)
-    }
-}
+SCENE(mikasalla)
 #elif OVERLAY == 0x65e
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/mikasalla_interiors.o"(.text)
-        "*/games/tla/src/scene/mikasalla_interiors.o"(.text)
-        "*/games/tla/src/scene/import/mikasalla_interiors.o"(.text)
-        "*/games/tla/src/scene/mikasalla_interiors.o"(.data)
-    }
-}
+SCENE(mikasalla_interiors)
 #elif OVERLAY == 0x65f
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/garoh.o"(.text)
-        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/garoh.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/garoh/s12a8.o"(.text)
-        "*/games/tla/src/scene/import/garoh.o"(.text)
-        "*/games/tla/src/scene/garoh/s12a8.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/garoh.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(garoh)
 #elif OVERLAY == 0x660
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/garoh_interiors.o"(.text)
-        "*/games/tla/src/scene/garoh_interiors.o"(.text)
-        "*/games/tla/src/scene/import/garoh_interiors.o"(.text)
-        "*/games/tla/src/scene/garoh_interiors.o"(.data)
-    }
-}
+SCENE(garoh_interiors)
 #elif OVERLAY == 0x661
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/yampi_desert.o"(.text)
-        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/yampi_desert/placements.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion_priority.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/yampi_desert.o"(.text)
-        "*/games/tla/src/scene/import/yampi_desert.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/scene/yampi_desert.o"(.data)
         "*/games/tla/src/graphics/field/tiles64d.o"(.rodata)
-        "*/games/tla/src/scene/yampi_desert/data2.o"(.data)
+        "*/games/tla/src/scene/yampi_desert.o"(.data.late)
     }
 }
 #elif OVERLAY == 0x662
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/yampi_desert_cave.o"(.text)
-        "*/games/tla/src/scene/yampi_desert_cave.o"(.text)
-        "*/games/tla/src/scene/import/yampi_desert_cave.o"(.text)
-        "*/games/tla/src/scene/data/yampi_desert_cave.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/yampi_desert_cave.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(yampi_desert_cave)
 #elif OVERLAY == 0x663
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/airs_rock.o"(.text)
-        "*/games/tla/src/scene/airs_rock.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/airs_rock/airs_rock.o"(.text)
-        "*/games/tla/src/scene/import/airs_rock.o"(.text)
-        "*/games/tla/src/scene/data/airs_rock.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/airs_rock.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(airs_rock)
 #elif OVERLAY == 0x664
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/airs_rock_inside.o"(.text)
-        "*/games/tla/src/scene/airs_rock_inside.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/airs_rock_inside/airs_rock_inside.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/airs_rock_inside/s505c.o"(.text)
-        "*/games/tla/src/scene/import/airs_rock_inside.o"(.text)
-        "*/games/tla/src/scene/airs_rock_inside/s505c.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/airs_rock_inside.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(airs_rock_inside)
 #elif OVERLAY == 0x665
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/alhafra.o"(.text)
-        "*/games/tla/src/scene/alhafra.o"(.text)
-        "*/games/tla/src/scene/import/alhafra.o"(.text)
-        "*/games/tla/src/scene/alhafra.o"(.data)
-    }
-}
+SCENE(alhafra)
 #elif OVERLAY == 0x666
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/alhafra_interiors.o"(.text)
-        "*/games/tla/src/scene/alhafra_interiors.o"(.text)
-        "*/games/tla/src/scene/import/alhafra_interiors.o"(.text)
-        "*/games/tla/src/scene/alhafra_interiors.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/alhafra_interiors.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(alhafra_interiors)
 #elif OVERLAY == 0x667
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/alhafra_manor.o"(.text)
-        "*/games/tla/src/scene/alhafra_manor.o"(.text)
-        "*/games/tla/src/scene/import/alhafra_manor.o"(.text)
-        "*/games/tla/src/scene/alhafra_manor.o"(.data)
-    }
-}
+SCENE(alhafra_manor)
 #elif OVERLAY == 0x668
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/eastern_alhafra.o"(.text)
-        "*/games/tla/src/scene/eastern_alhafra.o"(.text)
-        "*/games/tla/src/scene/import/eastern_alhafra.o"(.text)
-        "*/games/tla/src/scene/data/eastern_alhafra.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/eastern_alhafra.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(eastern_alhafra)
 #elif OVERLAY == 0x669
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/eastern_alhafra_ship.o"(.text)
-        "*/games/tla/src/scene/eastern_alhafra_ship.o"(.text)
-        "*/games/tla/src/scene/import/eastern_alhafra_ship.o"(.text)
-        "*/games/tla/src/scene/eastern_alhafra_ship.o"(.data)
-    }
-}
+SCENE(eastern_alhafra_ship)
 #elif OVERLAY == 0x66a
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/alhafran_cave.o"(.text)
-        "*/games/tla/src/scene/alhafran_cave.o"(.text)
-        "*/games/tla/src/scene/import/alhafran_cave.o"(.text)
-        "*/games/tla/src/scene/alhafran_cave.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/alhafran_cave.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(alhafran_cave)
 #elif OVERLAY == 0x66b
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/gondowan_cliffs.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/gondowan_cliffs.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/gondowan_cliffs/effect_spawn.o"(.text)
-        "*/games/tla/src/scene/import/gondowan_cliffs.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/scene/gondowan_cliffs.o"(.data)
         "*/games/tla/src/graphics/field/tiles64d.o"(.rodata)
-        "*/games/tla/src/scene/data/gondowan_cliffs.o"(.data)
+        "*/games/tla/src/scene/gondowan_cliffs.o"(.data.late)
     }
     .bss :
     {
@@ -508,81 +230,26 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x66c
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/gondowan_cliffs_hideout.o"(.text)
-        "*/games/tla/src/scene/gondowan_cliffs_hideout.o"(.text)
-        "*/games/tla/src/scene/import/gondowan_cliffs_hideout.o"(.text)
-        "*/games/tla/src/scene/gondowan_cliffs_hideout.o"(.data)
-    }
-}
+SCENE(gondowan_cliffs_hideout)
 #elif OVERLAY == 0x66d
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/naribwe.o"(.text)
-        "*/games/tla/src/scene/naribwe.o"(.text)
-        "*/games/tla/src/scene/import/naribwe.o"(.text)
-        "*/games/tla/src/scene/data/naribwe.o"(.data)
-    }
-}
+SCENE(naribwe)
 #elif OVERLAY == 0x66e
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/naribwe_interiors.o"(.text)
-        "*/games/tla/src/scene/naribwe_interiors.o"(.text)
-        "*/games/tla/src/scene/import/naribwe_interiors.o"(.text)
-        "*/games/tla/src/scene/naribwe_interiors.o"(.data)
-    }
-}
+SCENE(naribwe_interiors)
 #elif OVERLAY == 0x66f
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/kibombo_mountains.o"(.text)
-        "*/games/tla/src/scene/kibombo_mountains.o"(.text)
-        "*/games/tla/src/scene/import/kibombo_mountains.o"(.text)
-        "*/games/tla/src/scene/data/kibombo_mountains.o"(.data)
-    }
-}
+SCENE(kibombo_mountains)
 #elif OVERLAY == 0x670
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/kibombo.o"(.text)
-        "*/games/tla/src/scene/kibombo.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/kibombo/s2f34.o"(.text)
-        "*/games/tla/src/scene/import/kibombo.o"(.text)
-        "*/games/tla/src/scene/kibombo/s2f34.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/kibombo.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(kibombo)
 #elif OVERLAY == 0x671
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/gabomba_statue.o"(.text)
-        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/gabomba_statue.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/gabomba_statue/s2394.o"(.text)
-        "*/games/tla/src/scene/import/gabomba_statue.o"(.text)
-        "*/games/tla/src/scene/gabomba_statue/s2394.o"(.data)
+        "*/imports.o"(.text)
+        "*/games/tla/src/scene/gabomba_statue.o"(.data)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
-        "*/games/tla/src/scene/data/gabomba_statue.o"(.data)
+        "*/games/tla/src/scene/gabomba_statue.o"(.data.late)
     }
     .bss :
     {
@@ -590,105 +257,28 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x672
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/gabomba_statue_chamber.o"(.text)
-        "*/games/tla/src/scene/gabomba_statue_chamber.o"(.text)
-        "*/games/tla/src/scene/import/gabomba_statue_chamber.o"(.text)
-        "*/games/tla/src/scene/data/gabomba_statue_chamber.o"(.data)
-    }
-}
+SCENE(gabomba_statue_chamber)
 #elif OVERLAY == 0x673
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/gabomba_catacombs.o"(.text)
-        "*/games/tla/src/scene/gabomba_catacombs.o"(.text)
-        "*/games/tla/src/scene/import/gabomba_catacombs.o"(.text)
-        "*/games/tla/src/scene/gabomba_catacombs.o"(.data)
-    }
-}
+SCENE(gabomba_catacombs)
 #elif OVERLAY == 0x674
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/islets.o"(.text)
-        "*/games/tla/src/scene/islets.o"(.text)
-        "*/games/tla/src/scene/import/islets.o"(.text)
-        "*/games/tla/src/scene/data/islets.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/islets.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(islets)
 #elif OVERLAY == 0x675
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/islet_cave.o"(.text)
-        "*/games/tla/src/scene/islet_cave.o"(.text)
-        "*/games/tla/src/scene/import/islet_cave.o"(.text)
-        "*/games/tla/src/scene/data/islet_cave.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/islet_cave.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(islet_cave)
 #elif OVERLAY == 0x676
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/yallam.o"(.text)
-        "*/games/tla/src/scene/yallam.o"(.text)
-        "*/games/tla/src/scene/import/yallam.o"(.text)
-        "*/games/tla/src/scene/data/yallam.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/yallam.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(yallam)
 #elif OVERLAY == 0x677
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/yallam_interiors.o"(.text)
-        "*/games/tla/src/scene/yallam_interiors.o"(.text)
-        "*/games/tla/src/scene/import/yallam_interiors.o"(.text)
-        "*/games/tla/src/scene/yallam_interiors.o"(.data)
-    }
-}
+SCENE(yallam_interiors)
 #elif OVERLAY == 0x678
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/taopo_swamp.o"(.text)
-        "*/games/tla/src/scene/taopo_swamp.o"(.text)
-        "*/games/tla/src/scene/import/taopo_swamp.o"(.text)
-        "*/games/tla/src/scene/data/taopo_swamp.o"(.data)
-    }
-}
+SCENE(taopo_swamp)
 #elif OVERLAY == 0x679
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/apojii_islands.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/apojii_islands.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/apojii_islands/apojii_islands.o"(.text)
-        "*/games/tla/src/scene/import/apojii_islands.o"(.text)
-        "*/games/tla/src/scene/apojii_islands/apojii_islands.o"(.data)
+        "*/imports.o"(.text)
+        "*/games/tla/src/scene/apojii_islands.o"(.data)
         "*/games/tla/src/graphics/field/tiles679.o"(.rodata)
     }
     .bss :
@@ -697,29 +287,18 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x67a
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/apojii_islands_cave.o"(.text)
-        "*/games/tla/src/scene/apojii_islands_cave.o"(.text)
-        "*/games/tla/src/scene/import/apojii_islands_cave.o"(.text)
-        "*/games/tla/src/scene/apojii_islands_cave.o"(.data)
-    }
-}
+SCENE(apojii_islands_cave)
 #elif OVERLAY == 0x67b
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/aqua_rock.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/aqua_rock.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/aqua_rock/aqua_rock.o"(.text)
-        "*/games/tla/src/scene/import/aqua_rock.o"(.text)
-        "*/games/tla/src/scene/aqua_rock/aqua_rock.o"(.data)
+        "*/imports.o"(.text)
+        "*/games/tla/src/scene/aqua_rock.o"(.data)
         "*/games/tla/src/graphics/aqua_rock/tiles.o"(.rodata)
-        "*/games/tla/src/scene/data/aqua_rock.o"(.data)
+        "*/games/tla/src/scene/aqua_rock.o"(.data.late)
         "*/games/tla/src/graphics/field/tiles679.o"(.rodata)
     }
     .bss :
@@ -732,14 +311,12 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/aqua_rock_inside.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/aqua_rock_inside.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.o"(.text)
-        "*/games/tla/src/scene/import/aqua_rock_inside.o"(.text)
-        "*/games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.o"(.data)
+        "*/imports.o"(.text)
+        "*/games/tla/src/scene/aqua_rock_inside.o"(.data)
         "*/games/tla/src/graphics/aqua_rock_inside/tiles.o"(.rodata)
-        "*/games/tla/src/scene/data/aqua_rock_inside.o"(.data)
+        "*/games/tla/src/scene/aqua_rock_inside.o"(.data.late)
     }
     .bss :
     {
@@ -747,224 +324,59 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x67d
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/izumo_interiors.o"(.text)
-        "*/games/tla/src/scene/izumo_interiors.o"(.text)
-        "*/games/tla/src/scene/import/izumo_interiors.o"(.text)
-        "*/games/tla/src/scene/izumo_interiors.o"(.data)
-    }
-}
+SCENE(izumo_interiors)
 #elif OVERLAY == 0x67e
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/izumo.o"(.text)
-        "*/games/tla/src/scene/izumo.o"(.text)
-        "*/games/tla/src/scene/import/izumo.o"(.text)
-        "*/games/tla/src/scene/izumo.o"(.data)
-    }
-}
+SCENE(izumo)
 #elif OVERLAY == 0x67f
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/izumo_ruins.o"(.text)
-        "*/games/tla/src/scene/izumo_ruins/pillars.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion_priority.o"(.text)
-        "*/games/tla/src/scene/izumo_ruins/rubble.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/izumo_ruins.o"(.text)
-        "*/games/tla/src/scene/import/izumo_ruins.o"(.text)
-        "*/games/tla/src/scene/izumo_ruins.o"(.data)
-    }
-}
+SCENE(izumo_ruins)
 #elif OVERLAY == 0x680
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/gaia_rock.o"(.text)
-        "*/games/tla/src/scene/gaia_rock.o"(.text)
-        "*/games/tla/src/scene/import/gaia_rock.o"(.text)
-        "*/games/tla/src/scene/gaia_rock.o"(.data)
-    }
-}
+SCENE(gaia_rock)
 #elif OVERLAY == 0x681
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/gaia_rock_inside.o"(.text)
-        "*/games/tla/src/scene/gaia_rock_inside.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.o"(.text)
-        "*/games/tla/src/scene/import/gaia_rock_inside.o"(.text)
-        "*/games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/gaia_rock_inside.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(gaia_rock_inside)
 #elif OVERLAY == 0x682
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/champa.o"(.text)
-        "*/games/tla/src/scene/champa.o"(.text)
-        "*/games/tla/src/scene/import/champa.o"(.text)
-        "*/games/tla/src/scene/champa.o"(.data)
-    }
-}
+SCENE(champa)
 #elif OVERLAY == 0x683
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/champa_interiors.o"(.text)
-        "*/games/tla/src/scene/champa_interiors.o"(.text)
-        "*/games/tla/src/scene/import/champa_interiors.o"(.text)
-        "*/games/tla/src/scene/champa_interiors.o"(.data)
-    }
-}
+SCENE(champa_interiors)
 #elif OVERLAY == 0x684
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/champa_sanctum.o"(.text)
-        "*/games/tla/src/scene/champa_sanctum.o"(.text)
-        "*/games/tla/src/scene/import/champa_sanctum.o"(.text)
-        "*/games/tla/src/scene/champa_sanctum.o"(.data)
-    }
-}
+SCENE(champa_sanctum)
 #elif OVERLAY == 0x685
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/champa_cliff_caves.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves.o"(.text)
-        "*/games/tla/src/scene/import/champa_cliff_caves.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves.o"(.data)
         "*/games/tla/src/graphics/field/pal685.o"(.rodata)
-        "*/games/tla/src/scene/data/champa_cliff_caves.o"(.data)
+        "*/games/tla/src/scene/champa_cliff_caves.o"(.data.late)
     }
 }
 #elif OVERLAY == 0x686
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/ankohl_ruins.o"(.text)
-        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/object/prepare_object.o"(.text)
-        "*/games/tla/src/scene/ankohl_ruins/spawn.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/ankohl_ruins.o"(.text)
-        "*/games/tla/src/scene/import/ankohl_ruins.o"(.text)
-        "*/games/tla/src/scene/ankohl_ruins.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/ankohl_ruins.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(ankohl_ruins)
 #elif OVERLAY == 0x687
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/sea_of_time.o"(.text)
-        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/object/prepare_object.o"(.text)
-        "*/games/tla/src/scene/sea_of_time/object.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/sea_of_time.o"(.text)
-        "*/games/tla/src/scene/import/sea_of_time.o"(.text)
-        "*/games/tla/src/scene/sea_of_time.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/sea_of_time.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(sea_of_time)
 #elif OVERLAY == 0x688
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/lemuria_entrance.o"(.text)
-        "*/games/tla/src/scene/lemuria_entrance.o"(.text)
-        "*/games/tla/src/scene/import/lemuria_entrance.o"(.text)
-        "*/games/tla/src/scene/lemuria_entrance.o"(.data)
-    }
-}
+SCENE(lemuria_entrance)
 #elif OVERLAY == 0x689
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/lemuria_dock.o"(.text)
-        "*/games/tla/src/scene/lemuria_dock.o"(.text)
-        "*/games/tla/src/scene/import/lemuria_dock.o"(.text)
-        "*/games/tla/src/scene/lemuria_dock.o"(.data)
-    }
-}
+SCENE(lemuria_dock)
 #elif OVERLAY == 0x68a
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/ancient_lemuria.o"(.text)
-        "*/games/tla/src/scene/ancient_lemuria.o"(.text)
-        "*/games/tla/src/scene/import/ancient_lemuria.o"(.text)
-        "*/games/tla/src/scene/ancient_lemuria.o"(.data)
-    }
-}
+SCENE(ancient_lemuria)
 #elif OVERLAY == 0x68b
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/lemuria.o"(.text)
-        "*/games/tla/src/scene/lemuria.o"(.text)
-        "*/games/tla/src/scene/import/lemuria.o"(.text)
-        "*/games/tla/src/scene/lemuria.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/lemuria.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(lemuria)
 #elif OVERLAY == 0x68c
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/lemuria_interiors.o"(.text)
-        "*/games/tla/src/scene/lemuria_interiors.o"(.text)
-        "*/games/tla/src/scene/import/lemuria_interiors.o"(.text)
-        "*/games/tla/src/scene/lemuria_interiors.o"(.data)
-    }
-}
+SCENE(lemuria_interiors)
 #elif OVERLAY == 0x68d
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/lemuria_palace.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/lemuria_palace.o"(.text)
-        "*/games/tla/src/scene/import/lemuria_palace.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/scene/lemuria_palace.o"(.data)
         "*/games/tla/src/graphics/lemuria_palace/tiles.o"(.rodata)
-        "*/games/tla/src/scene/data/lemuria_palace.o"(.data)
+        "*/games/tla/src/scene/lemuria_palace.o"(.data.late)
     }
     .bss :
     {
@@ -972,33 +384,16 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x68e
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/lemuria_spring.o"(.text)
-        "*/games/tla/src/scene/lemuria_spring.o"(.text)
-        "*/games/tla/src/scene/import/lemuria_spring.o"(.text)
-        "*/games/tla/src/scene/lemuria_spring.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/lemuria_spring.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(lemuria_spring)
 #elif OVERLAY == 0x68f
 SECTIONS
 {
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/entry/tundaria_tower.o"(.text)
-        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/tundaria_tower.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/tundaria_tower/events_f.o"(.text)
-        "*/games/tla/src/scene/import/tundaria_tower.o"(.text)
-        "*/games/tla/src/scene/tundaria_tower/events_f.o"(.data)
+        "*/imports.o"(.text)
+        "*/games/tla/src/scene/tundaria_tower.o"(.data)
     }
     .bss :
     {
@@ -1006,127 +401,32 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x690
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/settlements.o"(.text)
-        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/settlements.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/settlements/settlements.o"(.text)
-        "*/games/tla/src/scene/import/settlements.o"(.text)
-        "*/games/tla/src/scene/settlements/settlements.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/settlements.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(settlements)
 #elif OVERLAY == 0x691
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/magma_rock.o"(.text)
-        "*/games/tla/src/scene/magma_rock/create.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/magma_rock.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/magma_rock/s22ac.o"(.text)
-        "*/games/tla/src/scene/import/magma_rock.o"(.text)
-        "*/games/tla/src/scene/magma_rock/s22ac.o"(.data)
-    }
-}
+SCENE(magma_rock)
 #elif OVERLAY == 0x692
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/magma_rock_inside.o"(.text)
-        "*/games/tla/src/scene/magma_rock_inside.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/magma_rock_inside/magma_rock_inside.o"(.text)
-        "*/games/tla/src/scene/import/magma_rock_inside.o"(.text)
-        "*/games/tla/src/scene/magma_rock_inside/magma_rock_inside.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/magma_rock_inside.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(magma_rock_inside)
 #elif OVERLAY == 0x693
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/atteka_inlet.o"(.text)
-        "*/games/tla/src/scene/atteka_inlet.o"(.text)
-        "*/games/tla/src/scene/import/atteka_inlet.o"(.text)
-        "*/games/tla/src/scene/atteka_inlet.o"(.data)
-    }
-}
+SCENE(atteka_inlet)
 #elif OVERLAY == 0x694
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/contigo.o"(.text)
-        "*/games/tla/src/scene/contigo.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/contigo/contigo.o"(.text)
-        "*/games/tla/src/scene/import/contigo.o"(.text)
-        "*/games/tla/src/scene/contigo/contigo.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/contigo.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(contigo)
 #elif OVERLAY == 0x695
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/shaman_village_cave.o"(.text)
-        "*/games/tla/src/scene/shaman_village_cave.o"(.text)
-        "*/games/tla/src/scene/import/shaman_village_cave.o"(.text)
-        "*/games/tla/src/scene/shaman_village_cave.o"(.data)
-    }
-}
+SCENE(shaman_village_cave)
 #elif OVERLAY == 0x696
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/shaman_village.o"(.text)
-        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/shaman_village.o"(.text)
-        "*/games/tla/src/scene/import/shaman_village.o"(.text)
-        "*/games/tla/src/scene/shaman_village.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/shaman_village.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(shaman_village)
 #elif OVERLAY == 0x697
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/trial_road.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/trial_road.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/trial_road/s129c.o"(.text)
-        "*/games/tla/src/scene/import/trial_road.o"(.text)
-        "*/games/tla/src/scene/trial_road/s129c.o"(.data)
+        "*/imports.o"(.text)
+        "*/games/tla/src/scene/trial_road.o"(.data)
         "*/games/tla/src/graphics/field/tiles64d.o"(.rodata)
-        "*/games/tla/src/scene/data/trial_road.o"(.data)
+        "*/games/tla/src/scene/trial_road.o"(.data.late)
         "*/games/tla/src/graphics/trial_road/picture.o"(.rodata)
-        "*/games/tla/src/scene/data/trial_road_2.o"(.data)
+        "*/games/tla/src/scene/trial_road.o"(.data.last)
     }
     .bss :
     {
@@ -1138,13 +438,9 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/jupiter_lighthouse_entrance.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_entrance.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_entrance/cracked_tiles.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_entrance/cracked_tile_steps.o"(.text)
-        "*/games/tla/src/scene/import/jupiter_lighthouse_entrance.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
@@ -1160,17 +456,13 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/jupiter_lighthouse_basement.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_basement.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_basement/s1094.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_basement/s185c.o"(.text)
-        "*/games/tla/src/scene/import/jupiter_lighthouse_basement.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
-        "*/games/tla/src/scene/jupiter_lighthouse_basement/s185c.o"(.data)
+        "*/games/tla/src/scene/jupiter_lighthouse_basement.o"(.data)
     }
     .bss :
     {
@@ -1182,13 +474,9 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/jupiter_lighthouse_room_1.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_1.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_1/cracked_tiles.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_1/cracked_tile_steps.o"(.text)
-        "*/games/tla/src/scene/import/jupiter_lighthouse_room_1.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
@@ -1204,17 +492,13 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/jupiter_lighthouse_room_2.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_2.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_2/s165c.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_2/s1e24.o"(.text)
-        "*/games/tla/src/scene/import/jupiter_lighthouse_room_2.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_2/s1e24.o"(.data)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_2.o"(.data)
     }
     .bss :
     {
@@ -1226,18 +510,14 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/jupiter_lighthouse_room_3.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_3.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_3/cracked_tiles.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_3/cracked_tile_steps.o"(.text)
-        "*/games/tla/src/scene/import/jupiter_lighthouse_room_3.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_3.o"(.data)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
-        "*/games/tla/src/scene/data/jupiter_lighthouse_room_3.o"(.data)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_3.o"(.data.late)
     }
     .bss :
     {
@@ -1249,13 +529,9 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/jupiter_lighthouse_room_4.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_4.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_4/cracked_tiles.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_4/cracked_tile_steps.o"(.text)
-        "*/games/tla/src/scene/import/jupiter_lighthouse_room_4.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
@@ -1271,17 +547,13 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/jupiter_lighthouse_room_5.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_5.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_5/s1c88.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_5/s2450.o"(.text)
-        "*/games/tla/src/scene/import/jupiter_lighthouse_room_5.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_5/s2450.o"(.data)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_5.o"(.data)
     }
     .bss :
     {
@@ -1293,13 +565,9 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/jupiter_lighthouse_room_6.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_6.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_6/cracked_tiles.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_6/cracked_tile_steps.o"(.text)
-        "*/games/tla/src/scene/import/jupiter_lighthouse_room_6.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
@@ -1315,18 +583,14 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/jupiter_lighthouse_room_7.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_7.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_7/s1f74.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_7/s273c.o"(.text)
-        "*/games/tla/src/scene/import/jupiter_lighthouse_room_7.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_7/s273c.o"(.data)
+        "*/imports.o"(.text)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_7.o"(.data)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
-        "*/games/tla/src/scene/data/jupiter_lighthouse_room_7.o"(.data)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_7.o"(.data.late)
     }
     .bss :
     {
@@ -1338,18 +602,14 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/jupiter_lighthouse_room_8.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_8.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_8/cracked_tiles.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_8/cracked_tile_steps.o"(.text)
-        "*/games/tla/src/scene/import/jupiter_lighthouse_room_8.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_8.o"(.data)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
-        "*/games/tla/src/scene/data/jupiter_lighthouse_room_8.o"(.data)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_8.o"(.data.late)
     }
     .bss :
     {
@@ -1361,13 +621,9 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/jupiter_lighthouse_room_9.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_9.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_9/cracked_tiles.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_9/cracked_tile_steps.o"(.text)
-        "*/games/tla/src/scene/import/jupiter_lighthouse_room_9.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
@@ -1383,18 +639,14 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/jupiter_lighthouse_room_m.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_m.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_m/s3b7c.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_m/s4344.o"(.text)
-        "*/games/tla/src/scene/import/jupiter_lighthouse_room_m.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_m/s4344.o"(.data)
+        "*/imports.o"(.text)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_m.o"(.data)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
-        "*/games/tla/src/scene/data/jupiter_lighthouse_room_m.o"(.data)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_m.o"(.data.late)
     }
     .bss :
     {
@@ -1406,17 +658,13 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/jupiter_lighthouse_aerie.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_aerie.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_aerie/s1e78.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_aerie/s2640.o"(.text)
-        "*/games/tla/src/scene/import/jupiter_lighthouse_aerie.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
-        "*/games/tla/src/scene/jupiter_lighthouse_aerie/s2640.o"(.data)
+        "*/games/tla/src/scene/jupiter_lighthouse_aerie.o"(.data)
     }
     .bss :
     {
@@ -1428,20 +676,14 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/jupiter_lighthouse_aerie_beacon.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon.o"(.text)
-        "*/games/tla/src/field/object/step_angle.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s4bd4.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s539c.o"(.text)
-        "*/games/tla/src/scene/import/jupiter_lighthouse_aerie_beacon.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s539c.o"(.data)
+        "*/imports.o"(.text)
+        "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon.o"(.data)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
-        "*/games/tla/src/scene/data/jupiter_lighthouse_aerie_beacon.o"(.data)
+        "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon.o"(.data.late)
     }
     .bss :
     {
@@ -1453,9 +695,9 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/loho.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/loho.o"(.text)
-        "*/games/tla/src/scene/import/loho.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/graphics/field/pal685.o"(.rodata)
         "*/games/tla/src/scene/loho.o"(.data)
     }
@@ -1465,113 +707,36 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/northern_reaches.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/northern_reaches.o"(.text)
-        "*/games/tla/src/scene/import/northern_reaches.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/graphics/field/pal685.o"(.rodata)
         "*/games/tla/src/scene/northern_reaches.o"(.data)
     }
 }
 #elif OVERLAY == 0x6a8
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/prox.o"(.text)
-        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/prox.o"(.text)
-        "*/games/tla/src/scene/import/prox.o"(.text)
-        "*/games/tla/src/scene/prox.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/prox.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(prox)
 #elif OVERLAY == 0x6a9
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/caverns.o"(.text)
-        "*/games/tla/src/scene/caverns.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/caverns/caverns.o"(.text)
-        "*/games/tla/src/scene/import/caverns.o"(.text)
-        "*/games/tla/src/scene/caverns/caverns.o"(.data)
-    }
-}
+SCENE(caverns)
 #elif OVERLAY == 0x6aa
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/mars_lighthouse_entrance.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_entrance.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_entrance/s3b30.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_entrance/s42f8.o"(.text)
-        "*/games/tla/src/scene/import/mars_lighthouse_entrance.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_entrance/s42f8.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/mars_lighthouse_entrance.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(mars_lighthouse_entrance)
 #elif OVERLAY == 0x6ab
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/mars_lighthouse_star_room.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_star_room.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_star_room/s363c.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_star_room/s3e04.o"(.text)
-        "*/games/tla/src/scene/import/mars_lighthouse_star_room.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_star_room/s3e04.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/mars_lighthouse_star_room.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(mars_lighthouse_star_room)
 #elif OVERLAY == 0x6ac
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/mars_lighthouse_room_m.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_room_m.o"(.text)
-        "*/games/tla/src/scene/import/mars_lighthouse_room_m.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_room_m.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/mars_lighthouse_room_m.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(mars_lighthouse_room_m)
 #elif OVERLAY == 0x6ad
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/mars_lighthouse_room_f.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_room_f/s35b8.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_room_f/s3d80.o"(.text)
-        "*/games/tla/src/scene/import/mars_lighthouse_room_f.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_room_f/s3d80.o"(.data)
+        "*/imports.o"(.text)
+        "*/games/tla/src/scene/mars_lighthouse_room_f.o"(.data)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
-        "*/games/tla/src/scene/data/mars_lighthouse_room_f.o"(.data)
+        "*/games/tla/src/scene/mars_lighthouse_room_f.o"(.data.late)
     }
     .bss :
     {
@@ -1579,72 +744,23 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x6ae
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/mars_lighthouse_aerie.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_aerie.o"(.text)
-        "*/games/tla/src/scene/import/mars_lighthouse_aerie.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_aerie.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/mars_lighthouse_aerie.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(mars_lighthouse_aerie)
 #elif OVERLAY == 0x6af
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/treasure_isle.o"(.text)
-        "*/games/tla/src/scene/treasure_isle.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/treasure_isle/treasure_isle.o"(.text)
-        "*/games/tla/src/scene/import/treasure_isle.o"(.text)
-        "*/games/tla/src/scene/treasure_isle/treasure_isle.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/treasure_isle.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(treasure_isle)
 #elif OVERLAY == 0x6b0
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/anemos_inner_sanctum.o"(.text)
-        "*/games/tla/src/scene/anemos_inner_sanctum.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/anemos_inner_sanctum/scene_tables.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/anemos_inner_sanctum/s2f48.o"(.text)
-        "*/games/tla/src/scene/import/anemos_inner_sanctum.o"(.text)
-        "*/games/tla/src/scene/anemos_inner_sanctum/s2f48.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/anemos_inner_sanctum.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(anemos_inner_sanctum)
 #elif OVERLAY == 0x6b1
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/anemos_inner_sanctum_entrance.o"(.text)
-        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/object/prepare_object.o"(.text)
-        "*/games/tla/src/scene/anemos_inner_sanctum_entrance/spawn.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum_entrance.o"(.text)
-        "*/games/tla/src/scene/import/anemos_inner_sanctum_entrance.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum_entrance.o"(.data)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_d.o"(.rodata)
-        "*/games/tla/src/scene/anemos_inner_sanctum_entrance/data2.o"(.data)
+        "*/games/tla/src/scene/anemos_inner_sanctum_entrance.o"(.data.late)
     }
     .bss :
     {
@@ -1652,28 +768,15 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x6b2
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/mercury_lighthouse.o"(.text)
-        "*/games/tla/src/scene/mercury_lighthouse.o"(.text)
-        "*/games/tla/src/scene/import/mercury_lighthouse.o"(.text)
-        "*/games/tla/src/scene/mercury_lighthouse.o"(.data)
-    }
-    .bss :
-    {
-        "*/games/tla/src/scene/bss/mercury_lighthouse.o"(.bss)
-    }
-}
+SCENE_WITH_BSS(mercury_lighthouse)
 #elif OVERLAY == 0x6b3
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/scene/entry/epilogue.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/epilogue.o"(.text)
-        "*/games/tla/src/scene/import/epilogue.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/graphics/epilogue/pal.o"(.rodata)
         "*/games/tla/src/scene/epilogue.o"(.data)
     }
@@ -1683,20 +786,7 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x6b4
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/mt_aleph_summit.o"(.text)
-        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/mt_aleph_summit.o"(.text)
-        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/mt_aleph_summit/s0478.o"(.text)
-        "*/games/tla/src/scene/import/mt_aleph_summit.o"(.text)
-        "*/games/tla/src/scene/mt_aleph_summit.o"(.data)
-    }
-}
+SCENE(mt_aleph_summit)
 #elif OVERLAY == 0x6b5
 SECTIONS
 {
@@ -1704,7 +794,7 @@ SECTIONS
     {
         "*/games/tla/src/scene/entry/lobby.o"(.text)
         "*/games/tla/src/scene/lobby.o"(.text)
-        "*/games/tla/src/scene/import/lobby.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/scene/lobby.o"(.data)
     }
     .bss :
@@ -1719,7 +809,7 @@ SECTIONS
     {
         "*/games/tla/src/debug/entry/rooms.o"(.text)
         "*/games/tla/src/debug/test_scenes.o"(.text)
-        "*/games/tla/src/debug/import/rooms.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/debug/test_scenes.o"(.data)
     }
 }
@@ -1730,7 +820,7 @@ SECTIONS
     {
         "*/games/tla/src/debug/entry/level.o"(.text)
         "*/games/tla/src/debug/level.o"(.text)
-        "*/games/tla/src/debug/import/level.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/debug/level.o"(.data)
     }
 }
@@ -1741,7 +831,7 @@ SECTIONS
     {
         "*/games/tla/src/debug/entry/psynergy_test.o"(.text)
         "*/games/tla/src/debug/psynergy_test.o"(.text)
-        "*/games/tla/src/debug/import/psynergy_test.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/debug/psynergy_test.o"(.data)
     }
     .bss :
@@ -1756,7 +846,7 @@ SECTIONS
     {
         "*/games/tla/src/debug/entry/psynergy_test_2.o"(.text)
         "*/games/tla/src/debug/psynergy_test_2.o"(.text)
-        "*/games/tla/src/debug/import/psynergy_test_2.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/debug/psynergy_test_2.o"(.data)
     }
 }
@@ -1767,7 +857,7 @@ SECTIONS
     {
         "*/games/tla/src/debug/entry/shop_test.o"(.text)
         "*/games/tla/src/debug/shop_test.o"(.text)
-        "*/games/tla/src/debug/import/shop_test.o"(.text)
+        "*/imports.o"(.text)
         "*/games/tla/src/debug/shop_test.o"(.data)
     }
 }

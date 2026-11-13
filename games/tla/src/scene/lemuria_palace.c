@@ -3,31 +3,45 @@
 /// show it two maps, the ancient world and the one Lunpa had.
 
 #include "shared/tables.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
-#include "frame.h"
-#include "io_reg.h"
-#include "ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
+#include "system/frame.h"
+#include "system/io_reg.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "iwram_call.h"
-#include "text/msg_ids.h"
+#include "system/iwram_call.h"
 #include "system/vector3.h"
-#include "heap_release.h"
+#include "system/heap_release.h"
 #include "item_icon.h"
 #include "module/field/event_commands.h"
-#include "module/scene/lemuria_palace.h"
 #include "module/scene/scene.h"
 #include "module/game/game.h"
+#include "system/task.h"
+#include "call.h"
+#include "system/io_write.h"
+#include "macros.h"
+#include "text/msg_ids.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+extern s32 gLemuriaPalace_Doors[];
+extern s32 gLemuriaPalace_InnerDoor[];
+
+void LemuriaPalace_DrawMaps(void);
+
+void Field_StartColorTransition();
+
+extern s16 gLemuriaPalace_DoorOpening[];
 
 /// The sprite each of the two maps is drawn as.
 struct LemuriaPalaceMapSprite {
@@ -202,7 +216,11 @@ void LemuriaPalace_CastMapSparks(void) {
 }
 
 extern u8 gLemuriaPalace_MapMode[];
-extern u8 gLemuriaPalace_MapCrossfade[];
+/* VIEW(first): routine gLemuriaPalace_MapCrossfade as this part declared it;
+ * the joined file has another. */
+extern u8
+    gLemuriaPalace_MapCrossfade__first[] __asm__("gLemuriaPalace_MapCrossfade");
+#define gLemuriaPalace_MapCrossfade gLemuriaPalace_MapCrossfade__first
 s32 __modsi3();
 
 /// A task: draws the maps the hall shows, fading between them by the map mode
@@ -272,10 +290,6 @@ void LemuriaPalace_DrawMaps(void) {
     EffectSprite_Draw(gLemuriaPalace_SecondMapSprite);
   }
 }
-
-#include "task.h"
-#include "call.h"
-#include "system/io_write.h"
 
 extern s32 gLemuriaPalace_FirstMapVram;
 /* VIEW(s03a0): variable gLemuriaPalace_FirstMapSprite as extern struct
@@ -1333,3 +1347,15 @@ u32 gLemuriaPalace_GlowColors[] = {
 // clang-format on
 #undef BLEND_SET_ALPHA
 #undef FIELD_AT
+
+#undef BLEND_SET_ALPHA
+#undef FIELD_AT
+#undef gLemuriaPalace_MapCrossfade
+
+// clang-format off
+LATE_DATA u32 gLemuriaPalace_MapCrossfade[] = {
+    0xc040e02, 0x8080a06, 0x40c060a, 0x100010, 0x60a040c, 0xa060808,
+    0xe020c04, 0xc040e02, 0x8080a06, 0x40c060a, 0x100010, 0x60a040c,
+    0xa060808, 0xe020c04,
+};
+// clang-format on

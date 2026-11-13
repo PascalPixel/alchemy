@@ -3,23 +3,33 @@
 /// link, trade their parties' records and fight, or fight the monster record;
 /// a visitor takes song requests.
 
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
+#include "system/io_reg.h"
+#include "field/event_inline.h"
+#include "system/serial.h"
+#include "system/ram_buffer.h"
+#include "system/iwram_call.h"
+#include "actor.h"
+#include "edition.h"
+#include "owner_state.h"
+#include "system/main_routine_work.h"
+#include "system/heap_release.h"
+#include "system/task.h"
+#include "system/input.h"
+#include "scene_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
-
-#include "io_reg.h"
-#include "event_inline.h"
 
 void Serial_RemoveIrqHandlers(void);
 void Serial_Initialize(void);
@@ -42,8 +52,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
-
-#include "serial.h"
 
 struct LinkPeer {
   s32 values[6];
@@ -80,10 +88,6 @@ s32 LinkLobby_PeerSlotMatches(s32 slot) {
   }
   return 0;
 }
-
-#include "ram_buffer.h"
-#include "iwram_call.h"
-#include "actor.h"
 
 void LinkLobby_WriteSlotValue(s32 slot) {
   s32 *dst = (s32 *)gSerialTransfer.payload;
@@ -209,9 +213,6 @@ s32 LinkLobby_ReportDisconnection(void) {
   Event_End();
 }
 
-#include "edition.h"
-#include "owner_state.h"
-
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define LOBBY_PREFIX_LIMIT 7
@@ -319,8 +320,6 @@ done:
   return result;
 }
 
-#include "main_routine_work.h"
-
 /// Writes up to three active party owners to out, ending the list with 0xff.
 s32 LinkLobby_CopyPartyOwnerIds(u16 *out) {
   struct MainRoutineWork *party;
@@ -350,8 +349,6 @@ done:
     *out = 0xff;
   return count;
 }
-
-#include "heap_release.h"
 
 /// The list inside a sent recovery table, as ☀️'s DjinnRecoveryList.
 struct OfferList {
@@ -576,8 +573,6 @@ check:
   }
   return result;
 }
-
-#include "task.h"
 
 void Map_ClearLayerEntryFlag(s32 layer);
 void Map_SetLayerEntryFlag(s32 layer);
@@ -862,8 +857,6 @@ s32 LinkLobby_ReportWinTallies(s32 actor) {
   }
 }
 
-#include "input.h"
-
 s32 Window_Create();
 void WindowSprite_PrepareForRedraw();
 void Text_DrawNumber();
@@ -1051,8 +1044,6 @@ void LinkLobby_TakeSongRequest(s32 actor) {
   wait(10);
   Event_End();
 }
-
-#include "scene_ids.h"
 
 s32 LinkLobby_PartyContains(s32 id);
 void Serial_RemoveIrqHandlers(void);

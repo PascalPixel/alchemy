@@ -6,7 +6,7 @@
 #include "types.h"
 #include "sound_driver_symbols.h"
 #include "module/sound/sound.h"
-#include "sound.h"
+#include "sound/sound.h"
 
 /// Does nothing; the far-call table exports it and nothing calls it.
 void Sound_NoOp(void) {}
@@ -191,15 +191,15 @@ void Sound_SetBgmPitch(u16 pitch) {
   m4aMPlayPitchControl(&gMPlayInfo_BGM, TRACKS_ALL, pitch);
 }
 
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 
 /// Sets the target and per-VBlank step of the combined BGM tempo/pitch ramp
 /// (BGM_UNITY_SCALE the music's own).

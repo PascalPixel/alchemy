@@ -6,19 +6,27 @@
 
 #include "system/main_routine_work.h"
 #include "event_work.h"
-
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "flags.h"
 #include "scene_tables.h"
 #include "module/scene/scene.h"
+#include "system/ram_buffer.h"
+#include "scene_ids.h"
+#include "field_sprite.h"
+#include "system/frame.h"
+#include "field/event_inline.h"
+#include "actor.h"
+#include "call.h"
+#include "version.h"
+
 extern u8 gAlhafraInteriors_FirstGuestSprite[];
 extern u8 gAlhafraInteriors_SecondGuestSprite[];
 
@@ -28,15 +36,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-#include "types.h"
-#include "system.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "scene_ids.h"
 #include "text/msg_ids.h"
-#include "field_sprite.h"
-#include "field/field.h"
-#include "frame.h"
 
 struct AlhafraInteriorsEventWork {
   u8 unk000[0x154];
@@ -72,7 +72,6 @@ extern s16 gAlhafraInteriors_ActorPlacementsOnceTheMastIsCleared[];
 extern struct Trigger gAlhafraInteriors_Triggers[];
 extern struct Trigger gAlhafraInteriors_TriggersOnceBriggsIsCaught[];
 extern struct Trigger gAlhafraInteriors_TriggersOnceTheMastIsCleared[];
-#include "event_inline.h"
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED))
@@ -290,11 +289,6 @@ s32 AlhafraInteriors_DrawSecondGuestSprite(s32 a0) {
       (FIELD_AT(a0, s32, 12) + 0x80000), FIELD_AT(a0, s32, 16));
   return 0;
 }
-
-#include "actor.h"
-#include "ram_buffer.h"
-#include "call.h"
-#include "version.h"
 
 // The Japanese edition sets no flag 0x200 by the leader's position and places
 // no actors 31 and 32.

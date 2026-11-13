@@ -15,16 +15,16 @@
 /// own still resolves. It places no bytes.
 
 #include "types.h"
-#include "scene.h"
-#include "sprite.h"
-#include "ram_buffer.h"
-#include "io_reg.h"
-#include "dma.h"
-#include "heap_release.h"
-#include "iwram_call.h"
-#include "resource.h"
-#include <affine.h>
-#include "sprite_metadata.h"
+#include "system/scene.h"
+#include "field/sprite.h"
+#include "system/ram_buffer.h"
+#include "system/io_reg.h"
+#include "system/dma.h"
+#include "system/heap_release.h"
+#include "system/iwram_call.h"
+#include "graphics/resource.h"
+#include <system/affine.h>
+#include "system/sprite_metadata.h"
 #include "actor_view.h"
 
 // The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
@@ -111,11 +111,11 @@ dispatch:
   return start;
 }
 #include "actor.h"
-#include "affine.h"
+#include "system/affine.h"
 #include "fixed_math.h"
 #include "module/field/object.h"
 #include "module/system/system.h"
-#include "task.h"
+#include "system/task.h"
 
 /// Runs each of the player's animation channels on to its next stop (a
 /// wait, end or jump: 0xef, 0xf1, 0xfd or 0xfe), taking the frames and
@@ -899,7 +899,7 @@ void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *record,
 /// map, as The Broken Seal's tile_animation.c and terrain.c have them.
 
 #include "map.h"
-#include "graphics.h"
+#include "graphics/graphics.h"
 #include "module/field/map.h"
 
 /* VIEW(tile_animation): variable gWorldMapWork as u8 gWorldMapWork[];
@@ -1031,8 +1031,8 @@ void WorldMap_PreloadCurrentTileBlock(void) {
   Heap_Release(buffer);
 }
 
-#include "system.h"
-#include "frame.h"
+#include "system/system.h"
+#include "system/frame.h"
 
 void MapAnimation_PresentPicture(void) {
   s32 control;
@@ -1336,7 +1336,7 @@ void BlendScript_Suspend(void) { Task_SuspendAll((u32)BlendScript_Run); }
 
 void BlendScript_Resume(void) { Task_ResumeAll((u32)BlendScript_Run); }
 
-#include "palette_snapshots.h"
+#include "graphics/palette_snapshots.h"
 
 void PaletteCycle_Initialize(void) {
   struct PaletteSnapshotWork *queue;
@@ -1401,7 +1401,7 @@ void PaletteCycle_Step(void) {
   }
 }
 
-#include "io_write_queue.h"
+#include "system/io_write_queue.h"
 #include "flag_call.h"
 
 /// Tints the world map for the encounter region under the party: region 9
@@ -2137,13 +2137,13 @@ s32 WorldMap_IsFlyable(struct WorldMover *mover,
 #undef gWorldMapWork
 // ---- field/map/terrain.c ----
 
-#include "battle.h"
-#include "field.h"
-#include "game.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "ram_code.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/ram_code.h"
 #include "module/field/resource_slot.h"
 
 extern u32 Data_02018000[];
@@ -2300,7 +2300,7 @@ void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
 
 // The debug sprite viewer.
 
-#include "input.h"
+#include "system/input.h"
 
 // The native reads the held keys afresh at each test.
 #define HELD (*(volatile u32 *)&gInput.held)
@@ -2610,7 +2610,7 @@ s32 SpriteViewer_FindNextSpriteWithPictures(s32 value, s32 delta) {
 #endif
 }
 
-#include "render_placement.h"
+#include "graphics/render_placement.h"
 
 /// Lays out the sprite viewer's ring around pixel (x, z): one position per
 /// facing of the first sprite's facing kind (6, 8, 10 or 4, or two opposite

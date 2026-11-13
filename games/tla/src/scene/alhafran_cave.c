@@ -10,19 +10,26 @@
 /// leader stands on the ledge above it (AlhafranCave_OpenWayToJail).
 
 #include "flags.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "event_work.h"
 #include "module/field/event_commands.h"
 #include "module/scene/scene.h"
+#include "system/ram_buffer.h"
+#include "actor.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
+#include "version.h"
+#include "system/task.h"
+#include "call.h"
 #include "text/msg_ids.h"
 
 void Pillars_Place(const u16 *table);
@@ -63,12 +70,6 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-#include "ram_buffer.h"
-#include "actor.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
-#include "field/field.h"
 
 extern char SceneId_AlhafranCave;
 extern char SceneId_AlhafraJail;
@@ -153,7 +154,6 @@ static __inline__ void MapGrid_CopyCellPictureCellsRect_(s32 a, s32 b, s32 c,
                                                          s32 d, s32 e, s32 f) {
   MapGrid_CopyCellPictureCellsRect(a, b, c, d, e, f);
 }
-#include "version.h"
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -272,8 +272,6 @@ s32 Scene_Initialize(void) {
 #endif
 }
 
-#include "task.h"
-
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 void AlhafranCave_SetUpCave(void) {
@@ -342,8 +340,6 @@ void AlhafranCave_SetUpCave(void) {
     MapGrid_CopyCellPictureCellsRect_(0, 58, 10, 5, 15, 74);
   }
 }
-
-#include "call.h"
 
 void FieldEffect_StartBlankOverlay(s32 value);
 void Rope_Initialize(void);

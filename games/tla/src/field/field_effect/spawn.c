@@ -7,9 +7,9 @@
 /// sprite the requested priority themselves before
 /// Scene_SetActorSpritePriority, as overlays 663, 664, 66b, 679 and 67b do.
 #include "types.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "field_sprite.h"
-#include "field_effect.h"
+#include "system/field_effect.h"
 #include "fixed_math.h"
 
 // The spawner sees its callees through its own views, as every copy did on

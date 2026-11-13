@@ -3,7 +3,7 @@
 // Part of system.c.
 
 #include "../system_internal.h"
-#include "ram_code.h"
+#include "system/ram_code.h"
 #include "gamepak/far_call/field_sequence.h"
 #include "gamepak/far_call/sound.h"
 #include "resource_ids.h"

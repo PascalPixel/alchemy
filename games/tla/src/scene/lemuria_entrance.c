@@ -4,26 +4,36 @@
 /// sail out.
 
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "scene_tables.h"
 #include "event_work.h"
 #include "call.h"
-#include "module/scene/lemuria_entrance.h"
 #include "module/scene/scene.h"
 #include "module/window/window.h"
+#include "graphics/uiflow.h"
+#include "objcmd.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+extern u32 gLemuriaEntrance_ShipSailsOut[];
+void LemuriaEntrance_ShowPortraitLine(s32 kind, s32 frames);
+
+void LemuriaEntrance_ShebaAsksPiersAge(void);
+
+extern s32 gLemuriaEntrance_ShipAtRest[];
+
 #include "text/msg_ids.h"
-#include "uiflow.h"
 
 void Text_GetMessageSize(s32 id, s32 *a, s32 *b, s32 *c, s32 *d);
 void Message_OpenWindow(s32 id, s32 x, s32 y, u32 flags);
@@ -244,8 +254,6 @@ void LemuriaEntrance_ShebaAsksPiersAge(void) {
   gMainRoutineWork.eventMode = saved;
   Event_End();
 }
-
-#include "objcmd.h"
 
 // clang-format off
 /// The ship's course out of the harbour.

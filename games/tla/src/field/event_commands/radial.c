@@ -10,47 +10,47 @@
 // world_map.h first: battle.h names struct WorldMapWork, and a struct declared
 // before its definition keeps a smaller alignment, which world_picture.c's
 // copies of it show.
-#include "world_map.h"
-#include "iwram_call.h"
-#include "objdisp.h"
-#include "system.h"
+#include "field/world_map.h"
+#include "system/iwram_call.h"
+#include "field/objdisp.h"
+#include "system/system.h"
 #include "fixed_math.h"
 #include "types.h"
-#include "motobj.h"
+#include "battle/motobj.h"
 #include "scene_tables.h"
-#include "field_effect.h"
-#include "battle.h"
+#include "system/field_effect.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
 #include "actor.h"
-#include "ram_buffer.h"
-#include "field_psynergy_work.h"
-#include "sprite.h"
+#include "system/ram_buffer.h"
+#include "field/field_psynergy_work.h"
+#include "field/sprite.h"
 #include "field_event.h"
-#include "field_particle.h"
+#include "field/field_particle.h"
 #include "actor_view.h"
-#include "object_lookup.h"
-#include "main_routine_work.h"
+#include "system/object_lookup.h"
+#include "system/main_routine_work.h"
 #include "effect_sprite.h"
-#include "vector3.h"
+#include "system/vector3.h"
 #include "graphics/resource.h"
 #include "system/task.h"
 #include "system/heap_release.h"
-#include "scene.h"
-#include "frame.h"
+#include "system/scene.h"
+#include "system/frame.h"
 #include "scene_ids.h"
-#include "resource.h"
-#include "vram_tab.h"
+#include "graphics/resource.h"
+#include "graphics/vram_tab.h"
 #include "arc_effect.h"
-#include "heap_release.h"
-#include "task.h"
+#include "system/heap_release.h"
+#include "system/task.h"
 #include "canvas_sprite.h"
-#include "io_reg.h"
+#include "system/io_reg.h"
 #include "map.h"
 
 // The parts, in ROM order.
@@ -946,7 +946,7 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *slot) {
       FieldEffect_ClearOwnedSlot(slot);
   }
 }
-#include "event.h"
+#include "field/event.h"
 #include "event_work.h"
 #include "scene_call.h"
 
@@ -2527,7 +2527,7 @@ void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
   sprite->oam.index = tile;
 }
 
-#include <affine.h>
+#include <system/affine.h>
 
 #define Q16_ONE 0x10000
 
@@ -2814,7 +2814,7 @@ void ColorBuffer_MapToFadeStep3(u8 *buffer, s32 count) {
   }
 }
 
-#include "dma.h"
+#include "system/dma.h"
 
 #define OBJ_TILES ((u8 *)0x06010000)
 #define BG_VRAM ((void *)0x06000000)
@@ -3599,8 +3599,8 @@ void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
 #undef PLACE_SCREEN_X
 #undef PLACE_SCREEN_Y
 
-#include "input.h"
-#include "io_write_queue.h"
+#include "system/input.h"
+#include "system/io_write_queue.h"
 #include "edition.h"
 
 // The scrolled name's left edge, in pixels left of its place.
@@ -3968,8 +3968,8 @@ void WorldPicture_UpdateMarkers(void) {
 #undef WORLD_MAP_HIGH
 #undef WORLD_MAP_SCALE
 
-#include "dma.h"
-#include "resource.h"
+#include "system/dma.h"
+#include "graphics/resource.h"
 #include "bg_scroll.h"
 #include "field/world_map.h"
 
@@ -4061,7 +4061,7 @@ void WorldMapPicture_Draw(void) {
   }
 }
 
-#include "io_reg.h"
+#include "system/io_reg.h"
 
 /// Set while the world map shows its alternative picture, which does not
 /// scroll.
@@ -4227,7 +4227,7 @@ void WorldMapPicture_UpdateScroll(void) {
   SCROLL_Y = y;
 }
 
-#include "io_write.h"
+#include "system/io_write.h"
 #include "scene_ids.h"
 #include "event_work.h"
 #include "actor.h"

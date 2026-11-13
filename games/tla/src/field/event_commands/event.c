@@ -4,7 +4,7 @@
 
 #include "../event_commands_internal.h"
 #include "flag_call.h"
-#include "frame.h"
+#include "system/frame.h"
 #include "gamepak/far_call/game.h"
 #include "gamepak/far_call/window.h"
 #include "module/field/event_commands.h"

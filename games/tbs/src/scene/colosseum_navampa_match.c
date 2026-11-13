@@ -203,7 +203,8 @@ enum {
   /// ground past the Wall Wedge (its render)
   ACTOR_GROWTH_PLANT = 29,
   /// The log Force knocks off the Moving Sidewalk Stage's conveyor belt.
-  /// ★ Named from what the player sees: a log (spr_294.png) at the conveyor
+  /// ★ Named from what the player sees: a log (standing_log.png) at the
+  /// conveyor
   /// belt of the Moving Sidewalk Stage (its render)
   ACTOR_SIDEWALK_LOG = 30,
   /// The log-rolling area's long log.
@@ -243,7 +244,7 @@ enum {
   ACTOR_PRIZE_B = 40,
   /// The first of the three particles that rise from the sleeping Isaac after
   /// the last match (ColosseumNavampaMatch_SpawnPeriodicParticle).
-  /// ★ Named from what the player sees: a "z" (spr_280.png) rising from Isaac
+  /// ★ Named from what the player sees: a "z" (letter_z.png) rising from Isaac
   /// as he sleeps (its render)
   ACTOR_FIRST_SLEEP_PARTICLE = 41
 };

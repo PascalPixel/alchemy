@@ -211,15 +211,16 @@ enum HamasRoomActorId {
 
 /// Animations of these scenes' own sprites beyond enum ActorAnimation.
 enum {
-  /// Seated cross-legged with his eyes shut (spr_051.png's frame 33).
+  /// Seated cross-legged with his eyes shut (nyunpa.png's frame 33).
   ANIM_NYUNPA_MEDITATE = 5,
   /// Seated as he meditated, shrunken and darkened, once he has died
-  /// enlightened (spr_051.png's frame 34).
+  /// enlightened (nyunpa.png's frame 34).
   ANIM_NYUNPA_WITHERED = 6,
   /// A drill of kicks, a knee raised, a kick and a leaping kick, from a
-  /// fighting stance (spr_130.tsv).
+  /// fighting stance (youth_with_headband.tsv).
   ANIM_STUDENT_KICKS = 5,
-  /// A drill of quick punches with one kick among them (spr_131.tsv).
+  /// A drill of quick punches with one kick among them
+  /// (youth_with_tied_hair.tsv).
   ANIM_STUDENT_PUNCHES = 5
 };
 

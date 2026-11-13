@@ -44,7 +44,7 @@ s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
  * bg_scroll.h has struct BgScroll gBgScroll[]; not tried: gBgScroll's
  * declaration holds a FAKEMATCH tag. */
 extern struct BgScrollPair gBgScroll__screens[] __asm__("gBgScroll");
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 
 /// Runs a battle command row: the commands as icons along the bottom of the
 /// screen, the selected one pulsing as a sprite and named in a window, until

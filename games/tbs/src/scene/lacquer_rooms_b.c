@@ -131,7 +131,7 @@ enum {
 };
 
 /// Hsu on his back with his arms at his sides, as he lies in the bed in the
-/// room behind the school (spr_041.png's frame 36; the room's render).
+/// room behind the school (hsu.png's frame 36; the room's render).
 enum { ANIM_HSU_IN_BED = 6 };
 
 #include "shared/field_effect_create.h"

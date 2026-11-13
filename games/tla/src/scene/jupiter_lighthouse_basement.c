@@ -6,33 +6,87 @@
 #include "shared/jupiter_lighthouse.h"
 #include "shared/actors.h"
 #include "shared/effects.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "macros.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_ids.h"
-#include "event_inline.h"
-#include "frame.h"
+#include "field/event_inline.h"
+#include "system/frame.h"
 #include "field_sprite.h"
 #include "debug.h"
-#include "cell_target.h"
+#include "field/cell_target.h"
 #include "event_work.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
-#include "module/scene/jupiter_lighthouse_basement.h"
-#include "module/scene/mars_lighthouse_entrance.h"
 #include "module/scene/scene.h"
+#include "module/scene/mars_lighthouse_entrance.h"
 #include "module/tla.h"
+#include "shared/jupiter_lighthouse_aerie.h"
+#include "system/iwram_call.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "field_event.h"
+#include "system/irq.h"
+#include "call.h"
+#include "system/field_effect.h"
+#include "item_icon.h"
+#include "field/field_coordinate.h"
+#include "system/task.h"
+#include "map.h"
+#include "graphics/vram_tab.h"
+#include "shared/cracked_tile.h"
+#include "system/heap_release.h"
+#include "system/io_write.h"
+#include "shared/tables.h"
+#include "module/field/field_effect.h"
+#include "objcmd.h"
+
+/// What The Lost Age's code declares for the files that use it, written once.
+
+struct EffectOptions;
+
+void Actor_DepartInRing(s32 id);
+
+void MapGrid_SetAttributeBAt();
+
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
+
+extern s16 gLightSpriteTile;
+extern s16 gLightSpriteCount;
+extern struct Actor *gLightSpriteActors[];
+extern struct LightOam Data_02002434[];
+
+void Leader_CenterInCell(void);
+
+void Func_02000074(void);
+
+void Func_020000f8(void);
+
+void Func_02000118(void);
+
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
+extern u32 gFieldEffect_LongScript[];
+
+void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
+                                 s32 g);
+extern u16 gPaletteCycleColors[];
+extern u16 gPaletteCycleUnlitPalette[];
+extern u16 gPaletteCycleUnlitColors[];
+extern s32 Data_020023ac;
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
@@ -51,8 +105,14 @@ struct MainRoutineWork254 {
   u16 value;
 };
 
-extern const u8 gData_020022e8[];
-extern const u8 gData_0200236c[];
+/* VIEW(first): routine gData_020022e8 as this part declared it; the joined file
+ * has another. */
+extern const u8 gData_020022e8__first[] __asm__("gData_020022e8");
+#define gData_020022e8 gData_020022e8__first
+/* VIEW(first): routine gData_0200236c as this part declared it; the joined file
+ * has another. */
+extern const u8 gData_0200236c__first[] __asm__("gData_0200236c");
+#define gData_0200236c gData_0200236c__first
 
 void FieldItem_JumpToLeader(s32 a, s32 b, s32 c);
 
@@ -213,21 +273,22 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-#include "shared/scene_set_arrival_flags.h"
+#include "shared/scene_set_arrival_flags.c"
 
-#include "shared/jupiter_lighthouse_aerie.h"
-#include "iwram_call.h"
-#include "dma.h"
-#include "io_reg.h"
-#include "field_event.h"
-
-extern s32 gPaletteCyclePausesInEvents;
+/* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it;
+ * the joined file has another. */
+extern s32
+    gPaletteCyclePausesInEvents__first __asm__("gPaletteCyclePausesInEvents");
+#define gPaletteCyclePausesInEvents gPaletteCyclePausesInEvents__first
 
 void PaletteCycle_SetPausesInEvents(s32 value) {
   gPaletteCyclePausesInEvents = value;
 }
 
-extern s32 gPaletteCycleFrame;
+/* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined
+ * file has another. */
+extern s32 gPaletteCycleFrame__first __asm__("gPaletteCycleFrame");
+#define gPaletteCycleFrame gPaletteCycleFrame__first
 
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
@@ -248,11 +309,12 @@ DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02001c74,
 
 DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Whirlwind_CarryLeaderLower)
 
-#include "irq.h"
-
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-extern const s32 gWhirlwindEndScript[];
+/* VIEW(first): routine gWhirlwindEndScript as this part declared it; the joined
+ * file has another. */
+extern const s32 gWhirlwindEndScript__first[] __asm__("gWhirlwindEndScript");
+#define gWhirlwindEndScript gWhirlwindEndScript__first
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
@@ -264,19 +326,12 @@ DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, MapGrid_GetCellBehavior,
 
 /// Scene code of overlay 0x699, in ROM order.
 
-#include "call.h"
-#include "field_effect.h"
-#include "item_icon.h"
-
 extern s16 gData_020024f6;
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation,
                        Whirlwind_UpdateLower, FieldEffect_Spawn)
-
-#include "field_coordinate.h"
-#include "task.h"
 
 s32 Func_02000a64(struct Actor *object) {
   struct EffectOptions params;
@@ -305,8 +360,6 @@ DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
 // projects it from the map's view, skips it off screen, and writes a 16 by 16
 // sprite, or a 32 by 64 one when the big switch is set, at its animation
 // picture and depth.
-#include "map.h"
-#include "vram_tab.h"
 
 /* VIEW(s098c): variable gData_020024f4 as s16 gData_020024f4;
  * module/scene/clear.h has u16 gData_020024f4[]; tried as the definition's
@@ -315,7 +368,11 @@ DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
  * dereferencing pointer to incomplete type. */
 extern s16 gData_020024f4__s098c __asm__("gData_020024f4");
 
-void Oam_AddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
+/* VIEW(s098c): routine Oam_AddSpriteAtDepthClamped as this part declared it;
+ * the joined file has another. */
+void Oam_AddSpriteAtDepthClamped__s098c(
+    struct LightOam *oam, s32 depth) __asm__("Oam_AddSpriteAtDepthClamped");
+#define Oam_AddSpriteAtDepthClamped Oam_AddSpriteAtDepthClamped__s098c
 
 void LightSprites_Draw(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -414,3 +471,256 @@ DEFINE_LIGHT_SPRITES_ADD(LightSprites_Add, gLightSpriteCount,
 void Func_02001008(s32 value) { gData_020024f6 = value; }
 
 #include "../field/object/set_sprite_priority.c"
+
+#include "../field/field_effect/move.c"
+
+#undef OBJECT_BYTE
+#undef gData_020022e8
+#undef gData_0200236c
+#undef gPaletteCyclePausesInEvents
+#undef gPaletteCycleFrame
+#undef gWhirlwindEndScript
+#undef Oam_AddSpriteAtDepthClamped
+// @file
+// Scene code of overlay 0x699, in ROM order.
+
+extern const s32 *gFieldEffect_DurationScripts[];
+
+/* VIEW(s1094): routine Actor_StartScript as this part declared it; the joined
+ * file has another. */
+void Actor_StartScript__s1094(struct FieldEffect *effect,
+                              const s32 *script) __asm__("Actor_StartScript");
+#define Actor_StartScript Actor_StartScript__s1094
+
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options) {
+  struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct FieldEffect *effect;
+  struct FieldSprite *sprite;
+  const s32 *script;
+
+  if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
+    effect = ((struct FieldEffect *)Import_ActorCreate(options->type, x, y, z));
+  else
+    effect = ((struct FieldEffect *)Import_ActorCreate(285, x, y, z));
+  if (effect == 0)
+    return;
+
+  sprite = effect->sprite;
+  Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Actor_StartScript(effect,
+                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
+  effect->motionFlags = 0;
+  Actor_SetSpriteFlags(effect, 0);
+  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
+  effect->velocity.x = velocityX;
+  effect->velocity.y = velocityY;
+  effect->velocity.z = velocityZ;
+  Scene_SetActorSpritePriority(effect,
+                               ((struct FieldSprite *)party->sprite)->priority);
+  effect->scaleRateX = 0;
+  effect->scaleRateY = 0;
+  effect->spin = 0;
+
+  if ((flags & 0xffff0000) == 0 || options == 0)
+    return;
+  if ((flags & EFFECT_USE_PALETTE) != 0)
+    FieldActor_SetSpriteColor(effect, options->palette);
+  if ((flags & EFFECT_USE_PRIORITY) != 0) {
+    effect->priorityFlags &= ~1;
+    Scene_SetActorSpritePriority(effect, options->priority);
+  }
+  if ((flags & EFFECT_USE_START_SCALE) != 0) {
+    effect->scaleX = options->startScaleX;
+    effect->scaleY = options->startScaleY;
+  }
+  if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
+    s32 target;
+    s32 frames;
+
+    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
+    target = options->targetScaleX;
+    frames = script[3];
+    if ((flags & EFFECT_USE_START_SCALE) != 0) {
+      effect->scaleRateX = (target - effect->scaleX) / frames;
+      effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
+    } else {
+      effect->scaleRateX = (target - 0x10000) / frames;
+      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
+    }
+  }
+  if ((flags & EFFECT_USE_SCRIPT) != 0) {
+    Actor_SelectAnimation(effect, 1);
+    Actor_StartScript(effect, options->script);
+  }
+  if ((flags & EFFECT_USE_ROTATION) != 0)
+    sprite->rotation = options->rotation;
+  if ((flags & EFFECT_USE_SPIN) != 0)
+    effect->spin = options->spin;
+  if ((flags & EFFECT_USE_UPDATE) != 0)
+    effect->update = options->update;
+}
+
+#define CELL_TABLE gCrackedTiles
+#define CELL_SPRITE_DRAW CrackedTiles_Update
+#define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
+#include "../field/map/cell_sprite.c"
+
+DEFINE_CRACKED_TILES_FIND_LOWER(CrackedTiles_FindLower, gCrackedTiles,
+                                CrackedTiles_Update)
+
+void TilesetAnim_SuspendAll(void);
+void TilesetAnim_ResumeAll(void);
+void Func_0200015c(struct Actor *object);
+void JupiterLighthouse_LoadPalettes(s32 mode);
+
+#define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
+
+void Leader_CenterInCell(void) {
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 x = leader->x;
+  s32 z = leader->z;
+
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
+
+  x >>= 20;
+  z >>= 20;
+  Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, (x << 4) + 8,
+                          (z << 4) + 8);
+  System_Wait(1);
+  FieldActor_SetPositionAndResetMotion(leader, (x << 20) + PIXELS(8), leader->y,
+                                       (z << 20) + PIXELS(8));
+  FieldEvent_Wait(4);
+  FieldCamera_GetActor()->y -= 0x80000;
+}
+
+// Centers the leader on its cell, plays sound 161 and copies the cell below
+// the table's source cell over the leader's, keeping the source column's and
+// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// one of the table's cells.
+DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
+
+// ---- scene/jupiter_lighthouse_basement/s16c4.c ----
+
+// Scene code of overlay 0x699, in ROM order.
+
+struct CellTargetEntry;
+
+/* VIEW(s16c4): tag struct CellTarget as struct CellTarget__s16c4; cell_target.h
+ * has another definition; tried with the definition the rest of the object has,
+ * CrackedTile_Fall moves: 2 of 131 instructions in tla-ja. */
+struct CellTarget__s16c4 {
+  s16 firstFlag;
+  s16 flagByte;
+  s16 kind;
+  s16 x;
+  s16 z;
+  s16 count;
+  s16 current;
+  s16 shown;
+  s16 tile;
+};
+
+DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s16c4,
+                         Leader_CenterInCell)
+
+#include "../field/field_effect/advance_motion.c"
+
+#undef CELL_TABLE
+#undef CELL_SPRITE_DRAW
+#undef CELL_PUSH_SLOT_ENTRY
+#undef OBJECT_BYTE
+#undef Actor_StartScript
+// @file
+// Scene code of overlay 0x699, in ROM order.
+
+static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
+  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
+}
+
+static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
+  MapGrid_SetScreenShake(a, b, c);
+}
+
+DEFINE_CRACKED_TILE_DROP_IN_LOWER(CrackedTile_DropInLower, FieldEffect_Spawn)
+
+extern struct CellTarget gCrackedTiles;
+void CrackedTile_Crack();
+void CrackedTile_Fall();
+
+DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
+                          CrackedTile_Fall)
+
+DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
+                                  CrackedTile_DropInLower)
+
+void Func_02000054(void);
+void Func_02000094(void);
+void Func_02000124(void);
+
+// clang-format off
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
+
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44)
+
+DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_LongScript, 126)
+
+struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+u32 gSceneExits[] = {
+    SCENE_EXITS(252),
+    SCENE_EXIT(1, 253, 1),
+    SCENE_EXIT(2, 252, 3),
+    SCENE_EXIT(3, 252, 2),
+    SCENE_EXIT(4, 251, 4),
+    SCENE_EXIT(6, 254, 6),
+    SCENE_EXITS(253),
+    SCENE_EXIT(1, 252, 1),
+    SCENE_EXITS_END,
+};
+
+struct ActorPlacement gActorPlacements[] = {
+    {SCENE_TABLE_END},
+};
+
+struct Trigger gData_020022e8[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 31, CONDITION_ALWAYS, EVENT(Func_02000074)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 32, CONDITION_ALWAYS, EVENT(Func_020000f8)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 33, CONDITION_ALWAYS, EVENT(Func_02000118)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 34, CONDITION_ALWAYS, EVENT(Func_02000124)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 38, CONDITION_ALWAYS, EVENT(Func_02000094)},
+    {TRIGGER_TABLE_END},
+};
+
+struct Trigger gData_0200236c[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_TABLE_END},
+};
+
+s32 gPaletteCycleFrame[] = {
+    -1,
+};
+
+u32 gPaletteCyclePausesInEvents[] = {
+    1,
+};
+
+u32 gWhirlwindEndScript[] = {
+    39, 5, 0, 12, 38,
+};
+// clang-format on
+
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
+};

@@ -2,14 +2,14 @@
 /// Overlay 0x6b6's scene: its code, then its tables, in the order the ROM has
 /// them.
 
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 
@@ -17,7 +17,7 @@ void Test_ReceiveFizz(void);
 
 void Test_ReceiveForge(void);
 
-#include "event_inline.h"
+#include "field/event_inline.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

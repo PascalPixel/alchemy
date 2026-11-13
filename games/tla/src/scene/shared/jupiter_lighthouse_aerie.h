@@ -2,12 +2,12 @@
 #define TLA_JUPITER_LIGHTHOUSE_AERIE_H
 
 #include "types.h"
-#include "system.h"
-#include "ram_buffer.h"
-#include "main_routine_work.h"
+#include "system/system.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
 #include "actor.h"
-#include "frame.h"
-#include "cell_target.h"
+#include "system/frame.h"
+#include "field/cell_target.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))

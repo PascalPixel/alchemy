@@ -41,16 +41,16 @@
 // ---- field/event_commands/scene.c ----
 
 #include "types.h"
-#include "task.h"
-#include "ram_buffer.h"
-#include "field_particle.h"
-#include "battle.h"
-#include "battle_system.h"
-#include "event.h"
-#include "field.h"
+#include "system/task.h"
+#include "system/ram_buffer.h"
+#include "field/field_particle.h"
+#include "battle/battle.h"
+#include "battle/battle_system.h"
+#include "field/event.h"
+#include "field/field.h"
 #include "flag_call.h"
 #include "gamepak/far_call/window.h"
-#include "heap_release.h"
+#include "system/heap_release.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/field/object.h"
@@ -113,10 +113,10 @@ void BattleEffect_UpdateAllEffectSlots(void) {
 }
 
 #include "map.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_ids.h"
-#include "iwram_call.h"
-#include "battle_unit.h"
+#include "system/iwram_call.h"
+#include "battle/battle_unit.h"
 
 struct EffectWork {
   u8 unk000[0x1c];
@@ -206,7 +206,7 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   Task_Add(BattleEffect_UpdateAllEffectSlots, 0x480);
 }
 
-#include "sprite.h"
+#include "field/sprite.h"
 #include "actor.h"
 
 void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
@@ -294,7 +294,7 @@ void EventObject_Initialize(void) {
   event[0xcb7] = 1;
 }
 
-#include "frame.h"
+#include "system/frame.h"
 #include "actor_view.h"
 
 void BattleEffect_StopMainActor(void) {
@@ -368,7 +368,7 @@ void Func_080dc954(void) {
     *((u8 *)slots->mapWork + 0x970) = mode;
 }
 
-#include "dma.h"
+#include "system/dma.h"
 
 #define WAVE_FX_SLOT 88
 
@@ -476,25 +476,25 @@ void FieldPsynergy_RestoreMindReadPalette(void) {
 /// event_commands.c has them in its parts mind_read.c to cloak.c: Mind Read's
 /// wave, Move, Reveal, Growth, Lift, Force, Frost, Ply and the start of Cloak.
 
-#include "io_reg.h"
-#include "game.h"
-#include "graphics.h"
+#include "system/io_reg.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "objdisp.h"
-#include "input.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/objdisp.h"
+#include "system/input.h"
 #include "edition.h"
 #include "fixed_math.h"
-#include "object_effect_scripts.h"
+#include "battle/object_effect_scripts.h"
 #include "field_event.h"
 #include "field/field_psynergy_work.h"
 #include "debug.h"
-#include "field_psynergy_work.h"
-#include "display_transition.h"
+#include "field/field_psynergy_work.h"
+#include "graphics/display_transition.h"
 #include "event_work.h"
-#include "scene.h"
+#include "system/scene.h"
 #include "macros.h"
 
 // The parts, in ROM order.
@@ -1214,7 +1214,7 @@ void FieldPsynergy_WatchLeaderDistance(void) {
   }
 }
 #undef SE_ITEM_BREAK
-#include "event.h"
+#include "field/event.h"
 #include "module/field/event_commands.h"
 #include "module/field/object.h"
 
@@ -2346,16 +2346,16 @@ s32 BattleEffect_GetCycledTableWord__cloak() __asm__(
 /// The end of Cloak, and Douse.
 
 #include "types.h"
-#include "ram_buffer.h"
-#include "field_psynergy_work.h"
-#include "main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "field/field_psynergy_work.h"
+#include "system/main_routine_work.h"
 #include "actor.h"
-#include "sprite.h"
+#include "field/sprite.h"
 #include "system/task.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/system/system.h"
-#include "system.h"
+#include "system/system.h"
 #include "module/field/object.h"
 
 #define SE_CLOAK 130
@@ -2410,17 +2410,17 @@ void FieldPsynergy_StartCloak(void) {
   }
 }
 
-#include "battle.h"
+#include "battle/battle.h"
 #include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "objdisp.h"
-#include "object_effect_scripts.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/objdisp.h"
+#include "battle/object_effect_scripts.h"
 
 void BattleEffect_LandFallingObject(struct FallingObject *object) {
   if (object->y <= object->floor) {
@@ -2648,9 +2648,9 @@ void FieldEffect_SpawnFallingParticles(void) {
 }
 
 #include "actor_view.h"
-#include "input.h"
-#include "battle_effect.h"
-#include "frame.h"
+#include "system/input.h"
+#include "battle/battle_effect.h"
+#include "system/frame.h"
 
 /* VIEW(f0decb8): tag struct EffectWork as struct EffectWork__f0decb8;
  * module/tla.h has another definition; tried with the definition the rest of
@@ -2895,13 +2895,13 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
 /// Carry.
 
 #include "types.h"
-#include "system.h"
-#include "objdisp.h"
+#include "system/system.h"
+#include "field/objdisp.h"
 #include "actor_view.h"
 #include "actor.h"
-#include "field_psynergy_work.h"
-#include "ram_buffer.h"
-#include "battle.h"
+#include "field/field_psynergy_work.h"
+#include "system/ram_buffer.h"
+#include "battle/battle.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/field/object.h"

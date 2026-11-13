@@ -6,21 +6,23 @@
 #include "types.h"
 #include "flags.h"
 #include "actor.h"
-#include "event_inline.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "field/event_inline.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "scene_tables.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "text/msg_ids.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
 #include "event_work.h"
 #include "module/field/event_commands.h"
+#include "module/scene/scene.h"
+#include "objcmd.h"
+#include "text/msg_ids.h"
 
 extern struct ActorPlacement gIzumoInteriors_ActorPlacements[];
 extern struct ActorPlacement gIzumoInteriors_SusasHouseActorPlacements[];
@@ -38,7 +40,6 @@ void IzumoInteriors_ShowMove(void);
 extern s32 gIzumoInteriors_FirstPacerScript[];
 extern s32 gIzumoInteriors_SecondPacerScript[];
 extern s32 gIzumoInteriors_RockingScript[];
-#include "module/scene/scene.h"
 
 /// Whether the other of the two men pacing in Susa's house is clear of the
 /// spot by the doorway this one walks to; their scripts wait on it.
@@ -1132,8 +1133,6 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
-
-#include "objcmd.h"
 
 extern s32 gIzumoInteriors_BounceScript[];
 

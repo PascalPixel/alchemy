@@ -4,28 +4,36 @@
 /// heroes, motes of light drifting round them.
 
 #include "types.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
 #include "actor.h"
 #include "scene_tables.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "field_sprite.h"
-#include "ram_buffer.h"
-#include "task.h"
-#include "io_reg.h"
-
+#include "system/ram_buffer.h"
+#include "system/task.h"
+#include "system/io_reg.h"
 #include "objcmd.h"
-#include "frame.h"
+#include "system/frame.h"
 #include "event_work.h"
-#include "module/scene/mercury_lighthouse.h"
 #include "module/scene/scene.h"
+
+/// What The Lost Age's code declares for the files that use it, written once.
+
+void MercuryLighthouse_HearVoices(void);
+
+extern s32 gMercuryLighthouse_MoteScript[];
+extern u32 gMercuryLighthouse_MoteFrames;
+
+void FieldPsynergy_StopMindReadWave(void);
+
 #include "text/msg_ids.h"
 
 /// A mote's script call: it flickers between colours 15 and 7 every other

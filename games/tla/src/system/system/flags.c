@@ -3,9 +3,9 @@
 // Part of system.c.
 
 #include "../system_internal.h"
-#include "battle_unit.h"
+#include "battle/battle_unit.h"
 #include "owner_state.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 
 void *Unit_Get(s32 owner) {
   struct BattleUnit *states;

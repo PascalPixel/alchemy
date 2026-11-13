@@ -4,7 +4,7 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
-#include "field_work.h"
+#include "field/field_work.h"
 #include "gamepak/far_call/field.h"
 #include "gamepak/far_call/sound.h"
 #include "gamepak/far_call/window.h"

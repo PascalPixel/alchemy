@@ -239,7 +239,8 @@ enum ColosseumTrialActorId {
   ACTOR_TRIAL_PILLAR = ACTOR_FIRST_PLACED + 13
 };
 
-/// The flag bearers' animations (SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, spr_165.tsv).
+/// The flag bearers' animations (SPRITE_YOUNG_MAN_WITH_FAIR_HAIR,
+/// young_man_with_fair_hair.tsv).
 enum FlagBearerAnimation {
   FLAG_BEARER_ANIMATION_RED_FLAG = 5, ///< raises a red flag: the warrior failed
   FLAG_BEARER_ANIMATION_WHITE_FLAG = 6 ///< raises a white flag: he cleared it

@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "static_assert.h"
-#include "render_input.h"
+#include "graphics/render_input.h"
 
 /// A field effect's sprite, drawn by EffectSprite_Draw: an OAM entry linked
 /// into the bucket of its depth, with the screen position (16.16), scale

@@ -1,5 +1,5 @@
 #include "types.h"
-#include "system.h"
+#include "system/system.h"
 #include "actor.h"
 
 /// Waits until the actor stops rising or falling, a second at most.

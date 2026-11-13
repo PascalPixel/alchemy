@@ -3,34 +3,41 @@
 
 #include "shared/actors.h"
 #include "shared/flight.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "io_write_queue.h"
-#include "io_reg.h"
-#include "iwram_call.h"
-#include "ram_buffer.h"
-#include "main_routine_work.h"
+#include "system/io_write_queue.h"
+#include "system/io_reg.h"
+#include "system/iwram_call.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
 #include "actor.h"
 #include "event_work.h"
 #include "bg_scroll.h"
-#include "event_inline.h"
-#include "frame.h"
+#include "field/event_inline.h"
+#include "system/frame.h"
 #include "module/field/field.h"
 #include "module/scene/gabomba_statue.h"
 #include "module/scene/scene.h"
 #include "module/scene/staff_credit.h"
 #include "module/system/system.h"
 #include "module/tla.h"
-#include "resource.h"
+#include "graphics/resource.h"
 #include "scene_ids.h"
+#include "field_sprite.h"
+#include "graphics/vram_tab.h"
+#include "actor_view.h"
+#include "call.h"
+#include "system/task.h"
+#include "macros.h"
+#include "shared/tables.h"
 
 extern s32 gData_0200215c[];
 
@@ -151,15 +158,42 @@ void Func_02000138(u8 *grid, s32 count, s32 scale) {
   } while (i != count - 1);
 }
 
-extern s16 gData_02003d20[][2];
-extern s16 gData_02003d34[][2];
-extern s16 gData_02003d48[][2];
-extern s32 gData_02003d5c[];
-extern s32 gData_02003d70[];
-extern u8 gData_02003d84[];
-extern u8 gData_02003d88[];
-extern u16 gData_02003d8e[];
-extern s8 gData_02003d9c[][2];
+/* VIEW(first): routine gData_02003d20 as this part declared it; the joined file
+ * has another. */
+extern s16 gData_02003d20__first[][2] __asm__("gData_02003d20");
+#define gData_02003d20 gData_02003d20__first
+/* VIEW(first): routine gData_02003d34 as this part declared it; the joined file
+ * has another. */
+extern s16 gData_02003d34__first[][2] __asm__("gData_02003d34");
+#define gData_02003d34 gData_02003d34__first
+/* VIEW(first): routine gData_02003d48 as this part declared it; the joined file
+ * has another. */
+extern s16 gData_02003d48__first[][2] __asm__("gData_02003d48");
+#define gData_02003d48 gData_02003d48__first
+/* VIEW(first): routine gData_02003d5c as this part declared it; the joined file
+ * has another. */
+extern s32 gData_02003d5c__first[] __asm__("gData_02003d5c");
+#define gData_02003d5c gData_02003d5c__first
+/* VIEW(first): routine gData_02003d70 as this part declared it; the joined file
+ * has another. */
+extern s32 gData_02003d70__first[] __asm__("gData_02003d70");
+#define gData_02003d70 gData_02003d70__first
+/* VIEW(first): routine gData_02003d84 as this part declared it; the joined file
+ * has another. */
+extern u8 gData_02003d84__first[] __asm__("gData_02003d84");
+#define gData_02003d84 gData_02003d84__first
+/* VIEW(first): routine gData_02003d88 as this part declared it; the joined file
+ * has another. */
+extern u8 gData_02003d88__first[] __asm__("gData_02003d88");
+#define gData_02003d88 gData_02003d88__first
+/* VIEW(first): routine gData_02003d8e as this part declared it; the joined file
+ * has another. */
+extern u16 gData_02003d8e__first[] __asm__("gData_02003d8e");
+#define gData_02003d8e gData_02003d8e__first
+/* VIEW(first): routine gData_02003d9c as this part declared it; the joined file
+ * has another. */
+extern s8 gData_02003d9c__first[][2] __asm__("gData_02003d9c");
+#define gData_02003d9c gData_02003d9c__first
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 z, s32 mode) {
   FieldCamera_MoveTo(x, -1, z, mode);
@@ -527,7 +561,7 @@ DEFINE_TILE_SPRITE_RESET(TileSprite_Reset)
 #define Func_02003654 Func_02000d10
 #define Func_02004e30 Sound_Play
 #define gData_02006c08 gData_02003dc0
-#include "shared/world_map_s3600.h"
+#include "shared/world_map_s3600.c"
 
 /// The world map's placed objects (overlay 64b), shown and hidden as the view
 /// moves, under this overlay's names.
@@ -540,13 +574,13 @@ DEFINE_TILE_SPRITE_RESET(TileSprite_Reset)
 #define Func_02004b18 Import_ActorSelectAnimation
 #define Func_02004b38 Actor_Release
 #define gData_02006bd4 gData_02003da8
-#include "shared/world_map_s36a8.h"
+#include "shared/world_map_s36a8.c"
 
 /// The blend queue and the cell table reset the world map (overlay 64b) also
 /// has, under this overlay's names.
 #define Func_020038e4 Func_02000fa0
 #define Func_02003960 Func_0200101c
-#include "shared/world_map_s3960.h"
+#include "shared/world_map_s3960.c"
 
 s32 Func_02001044(s32 x, s32 z) { return x / 0x100000 + (z / 0x100000) * 128; }
 
@@ -574,11 +608,14 @@ s32 Func_02001064(struct Actor *object) {
 #define Func_02003aac Func_02001168
 #define gData_02004f90 gData_02002e74
 #define gData_02004f9c gData_02002e80
-#include "shared/world_map_s39f4.h"
+#include "shared/world_map_s39f4.c"
 
 DEFINE_ACTOR_FLICKER(Func_020011f4, Func_020010b0)
 
-extern s32 gData_02003db8;
+/* VIEW(first): routine gData_02003db8 as this part declared it; the joined file
+ * has another. */
+extern s32 gData_02003db8__first __asm__("gData_02003db8");
+#define gData_02003db8 gData_02003db8__first
 
 DEFINE_ACTOR_CYCLE_CHILD_VALUES(Func_0200122c, gData_02002eac, gData_02003db8,
                                 Func_02001168)
@@ -748,13 +785,6 @@ DEFINE_ACTOR_GROW_UP(Func_02001a34, Actor_Release)
 
 DEFINE_ACTOR_GROW_DOWN(Func_02001a80, Actor_Release)
 
-#include "field_sprite.h"
-#include "vram_tab.h"
-#include "actor_view.h"
-#include "graphics/resource.h"
-#include "call.h"
-#include "task.h"
-
 void Func_02001ad0(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
@@ -867,3 +897,191 @@ u32 gData_02002eac[] = {
     0, 9, 0, 6,
 };
 // clang-format on
+
+#undef Func_02003600
+#undef Func_02003654
+#undef Func_02004e30
+#undef gData_02006c08
+#undef Func_020036a8
+#undef Func_02004e08
+#undef Func_02004e10
+#undef Func_02004b30
+#undef Func_02004b20
+#undef Func_02004b18
+#undef Func_02004b38
+#undef gData_02006bd4
+#undef Func_020038e4
+#undef Func_02003960
+#undef Func_020039f4
+#undef Func_02003aac
+#undef gData_02004f90
+#undef gData_02004f9c
+#undef PUSH_PICTURE
+#undef gData_02003d20
+#undef gData_02003d34
+#undef gData_02003d48
+#undef gData_02003d5c
+#undef gData_02003d70
+#undef gData_02003d84
+#undef gData_02003d88
+#undef gData_02003d8e
+#undef gData_02003d9c
+#undef gData_02003db8
+
+/* VIEW(data): routine TileSprite_Reset as this part declared it; the joined
+ * file has another. */
+void TileSprite_Reset__data(void) __asm__("TileSprite_Reset");
+#define TileSprite_Reset TileSprite_Reset__data
+
+LATE_DATA struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 9850, 0, 9748, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {1, CONDITION_ALWAYS, 10150, 0, 8180, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {2, CONDITION_ALWAYS, 10144, 0, 8330, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {3, CONDITION_ALWAYS, 10144, 0, 8240, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {4, CONDITION_ALWAYS, 10137, 0, 8602, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {5, CONDITION_ALWAYS, 10423, 0, 8354, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {6, CONDITION_ALWAYS, 10190, 0, 8883, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {7, CONDITION_ALWAYS, 10578, 0, 8952, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {8, CONDITION_ALWAYS, 10635, 0, 9040, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {9, CONDITION_ALWAYS, 10168, 0, 9630, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {10, CONDITION_ALWAYS, 10271, 0, 9540, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {11, CONDITION_ALWAYS, 10271, 0, 9420, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {12, CONDITION_ALWAYS, 10380, 0, 9370, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {13, CONDITION_ALWAYS, 10460, 0, 9400, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {14, CONDITION_ALWAYS, 11125, 0, 10695, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {15, CONDITION_ALWAYS, 12070, 0, 10470, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {16, CONDITION_ALWAYS, 11880, 0, 10090, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {17, CONDITION_ALWAYS, 10976, 0, 9960, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {18, CONDITION_ALWAYS, 11736, 0, 9530, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {19, CONDITION_ALWAYS, 11910, 0, 9748, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {20, CONDITION_ALWAYS, 11633, 0, 9406, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {21, CONDITION_ALWAYS, 9240, 0, 9532, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {22, CONDITION_ALWAYS, 9344, 0, 9530, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {23, CONDITION_ALWAYS, 9148, 0, 9048, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {24, CONDITION_ALWAYS, 9148, 0, 8988, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {25, CONDITION_ALWAYS, 9200, 0, 8440, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {26, CONDITION_ALWAYS, 9060, 0, 8290, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {27, CONDITION_ALWAYS, 9256, 0, 7950, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {28, CONDITION_ALWAYS, 9546, 0, 8316, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {29, CONDITION_ALWAYS, 12770, 0, 11570, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {30, CONDITION_ALWAYS, 11724, 0, 8064, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {31, CONDITION_ALWAYS, 11680, 0, 6678, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {32, CONDITION_ALWAYS, 13486, 0, 7482, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {33, CONDITION_ALWAYS, 12921, 0, 9639, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {34, CONDITION_ALWAYS, 12921, 0, 9752, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {35, CONDITION_ALWAYS, 12770, 0, 10220, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {36, CONDITION_ALWAYS, 14478, 0, 8410, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {37, CONDITION_ALWAYS, 14250, 0, 8728, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {38, CONDITION_ALWAYS, 13370, 0, 6070, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {39, CONDITION_ALWAYS, 13452, 0, 6204, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {40, CONDITION_ALWAYS, 10898, 0, 6300, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {41, CONDITION_ALWAYS, 11198, 0, 6132, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {42, CONDITION_ALWAYS, 12472, 0, 7592, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {43, CONDITION_ALWAYS, 12090, 0, 7165, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {44, CONDITION_ALWAYS, 12972, 0, 1240, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {45, CONDITION_ALWAYS, 13088, 0, 1090, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {46, CONDITION_ALWAYS, 9490, 0, 10960, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {47, CONDITION_ALWAYS, 5836, 0, 10120, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {48, CONDITION_ALWAYS, 8582, 0, 7420, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {49, CONDITION_ALWAYS, 6314, 0, 6223, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {50, CONDITION_ALWAYS, 8848, 0, 4650, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {51, CONDITION_ALWAYS, 8970, 0, 7500, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {52, CONDITION_ALWAYS, 7256, 0, 8325, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {53, CONDITION_ALWAYS, 7280, 0, 8180, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {54, CONDITION_ALWAYS, 7714, 0, 7760, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {55, CONDITION_ALWAYS, 7275, 0, 7365, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {56, CONDITION_ALWAYS, 7383, 0, 5753, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {57, CONDITION_ALWAYS, 7504, 0, 5650, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {58, CONDITION_ALWAYS, 7662, 0, 5558, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {59, CONDITION_ALWAYS, 8960, 0, 5856, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {60, CONDITION_ALWAYS, 8933, 0, 3800, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {61, CONDITION_ALWAYS, 8916, 0, 1640, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {62, CONDITION_ALWAYS, 9000, 0, 1307, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {63, CONDITION_ALWAYS, 9040, 0, 1245, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {64, CONDITION_ALWAYS, 1992, 0, 7272, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {65, CONDITION_ALWAYS, 2032, 0, 7600, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {67, CONDITION_ALWAYS, 11633, 0, 9406, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {68, CONDITION_ALWAYS, 10640, 0, 9075, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {69, CONDITION_ALWAYS, 10640, 0, 9075, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {71, CONDITION_ALWAYS, 10720, 0, 9075, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {72, CONDITION_ALWAYS, 7279, 0, 7307, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {80, CONDITION_ALWAYS, 11754, 0, 8030, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {81, CONDITION_ALWAYS, 11700, 0, 8034, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {82, CONDITION_ALWAYS, 11596, 0, 10204, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {83, CONDITION_ALWAYS, 10240, 0, 9142, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {84, CONDITION_ALWAYS, 9020, 0, 882, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {85, CONDITION_ALWAYS, 9288, 0, 9434, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {86, CONDITION_ALWAYS, 9288, 0, 9640, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {87, CONDITION_ALWAYS, 12640, 0, 4390, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {88, CONDITION_ALWAYS, 7868, 0, 9120, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {89, CONDITION_ALWAYS, 9479, 0, 5060, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {98, CONDITION_ALWAYS, 8916, 0, 1640, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {99, CONDITION_ALWAYS, 10271, 0, 9540, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {100, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {101, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {102, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {103, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA u32 gSceneExits[] = {
+    SCENE_EXITS_END,
+};
+
+LATE_DATA struct ActorPlacement gActorPlacements[] = {
+    {666, CONDITION_ALWAYS, 1, PIXELS(9020), 0, PIXELS(882), FACING_NORTHWEST,
+     0, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct Trigger gSceneEvents[] = {
+    {TRIGGER_TABLE_END},
+};
+
+// clang-format off
+LATE_DATA u32 gData_02003d20[] = {
+    0x6f6243c, 0xc412a02, 0x187c27b0, 0x1ca62033, 0x13ec22de,
+};
+
+LATE_DATA u32 gData_02003d34[] = {
+    0x30e233c, 0x10bc2775, 0x1c6627c3, 0x1c891c57, 0x13ec2649,
+};
+
+LATE_DATA u32 gData_02003d48[] = {
+    0xa0d2562, 0x121f2f93, 0x1c952217, 0x1aad2617, 0x14642617,
+};
+
+LATE_DATA u32 gData_02003d5c[] = {
+    0x8000, 0xcccc, 0x18000, 0x9999, 0xe666,
+};
+
+LATE_DATA u32 gData_02003d70[] = {
+    0x10000, 0xcccc, 0xb333, 0x14ccc, 0x9999,
+};
+
+LATE_DATA u32 gData_02003d84[] = {
+    0x7e78aa82,
+};
+
+LATE_DATA u16 gData_02003d88[] = {
+    0x6c6b, 0x6c40, 0x6c6c,
+};
+
+LATE_DATA u8 gData_02003d8e[] = {
+    0, 14, 0, 13, 0, 12, 0, 11,
+    0, 10, 0, 9, 0, 8,
+};
+// clang-format on
+
+LATE_DATA u32 gData_02003d9c[] = {
+    0xf808fc16,
+    0xc0ee402,
+    0x808,
+};
+
+LATE_DATA DEFINE_G_DATA_02003584(gData_02003da8, TileSprite_Reset, 17, 0)
+
+    LATE_DATA u32 gData_02003db8[] = {
+        0,
+};
+#undef TileSprite_Reset

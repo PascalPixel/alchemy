@@ -1,15 +1,15 @@
 #include "types.h"
-#include "event.h"
+#include "field/event.h"
 #include "module/sound/sound.h"
-#include "system.h"
-#include "sound.h"
+#include "system/system.h"
+#include "sound/sound.h"
 
 /// An empty function in the sound driver.
 // As ☀️'s UnusedDummyFunc (games/tbs/src/sound/audio.c).
 void UnusedDummyFunc2(void) {}
 
-#include "io_reg.h"
-#include "input.h"
+#include "system/io_reg.h"
+#include "system/input.h"
 
 #include "sound_driver_symbols.h"
 
@@ -102,14 +102,14 @@ void Sound_UpdateCommandMask(u32 command) {
     gSoundCommandMask = command;
 }
 
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 
 u16 Sound_GetCurrentBgm(void) { return gCurrentBgm; }
 
@@ -149,7 +149,7 @@ void SoundFlag_Clear(s32 sound) {
   bytes[sound] = (u8)(bytes[sound] & ~mask);
 }
 
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 
 s32 __divsi3(s32 numerator, s32 denominator);
 

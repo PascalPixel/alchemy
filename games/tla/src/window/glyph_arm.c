@@ -4,11 +4,11 @@
 
 #include "module/window/glyph_arm.h"
 #include "types.h"
-#include "uiwindow.h"
-#include "glyph.h"
-#include "text_font.h"
+#include "graphics/uiwindow.h"
+#include "graphics/glyph.h"
+#include "graphics/text_font.h"
 #include "edition.h"
-#include "graphics.h"
+#include "graphics/graphics.h"
 
 /// The pixel rows text may reach: four tiles; a glyph is cut off below it.
 #define TEXT_CANVAS_PIXEL_HEIGHT 32

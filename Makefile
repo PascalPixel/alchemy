@@ -1,5 +1,3 @@
-	new=$(@:.stamp=.ld).$$$$.new; $(CPP) $(LD_CPPFLAGS) -DOVERLAY=0x$* $< $$new && { cmp -s $$new $(@:.stamp=.ld) && rm $$new || mv $$new $(@:.stamp=.ld); }
-	new=$(@:.stamp=.ld).$$$$.new; $(CPP) $(LD_CPPFLAGS) $< $$new && { cmp -s $$new $(@:.stamp=.ld) && rm $$new || mv $$new $(@:.stamp=.ld); }
 # Golden Sun: The Broken Seal ☀️ (tbs) and The Lost Age ⚓️ (tla), in six
 # languages each: ja en de es fr it. `make tbs-en` builds one edition into
 # out/tbs-en/tbs-en.gba; `make compare-tbs-en` also checks it against
@@ -111,7 +109,7 @@ ENUMS   := $(TOOLS)/ags-enums
 
 PICTURE_FORMS := 1bpp 4bpp 4bpp16x16 4bpp16x32 4bpp32x8 4bpp32x16 4bpp32x32 4bpp64x64 \
                  8bpp 8bpp8x16 8bpp16x16 8bpp64x64 bitmap font gbapal glyphs icon4 icons pictures strips
-TABLE_FORMS   := blocks delta0 delta1 delta2 icons4 parts plane script spriteblocks sprites table
+TABLE_FORMS   := blocks delta0 delta1 delta2 icons4 parts plane scene script spriteblocks sprites table
 CODECS        := lz plz mtf d7 hlz
 FORMS         := $(PICTURE_FORMS) $(TABLE_FORMS)
 ASSET_SUFFIXES := $(FORMS) $(foreach form,$(FORMS),$(addprefix $(form).,$(CODECS))) \
@@ -173,8 +171,11 @@ DEFINE := $(UPPER_$(GAME))_EDITION_$(UPPER_$(LANG))
 ROM_END_tbs := 0x08800000
 ROM_END_tla := 0x09000000
 
-INCLUDES := -Igames/$(GAME)/include \
-            $(addprefix -Igames/$(GAME)/include/,battle field game gamepak graphics menu shop sound system window)
+# One include path, as pret has: a header names its bank folder in its
+# path (#include "field/actor.h"). The Broken Seal still finds its headers
+# through each bank folder too.
+INCLUDES_tbs := $(addprefix -Igames/tbs/include/,battle field game gamepak graphics menu shop sound system window)
+INCLUDES := -Igames/$(GAME)/include $(INCLUDES_$(GAME))
 
 # Game C (K1, K2): alchemy-gcc's GCC of July 2000, one option set per game;
 # ⚓️'s overlays swap -O2 for -Os below, by file and place in the build.
@@ -232,7 +233,7 @@ $(BUILD)/ld/overlay_%.stamp: games/$(GAME)/ld_script.ld $(OVERLAY_LD) $(LD_HEADE
 .PHONY: FORCE
 FORCE:
 # The objects each script names, first mention first, as make variables.
-object_list = sed -n 's|^ *"\*/\(games/[^"]*\)\.o"(.*|\1|p' $(2) | \
+object_list = grep -o '\*/games/[^"( ]*\.o' $(2) | sed 's|^\*/||; s|\.o$$||' | \
               awk -v name=$(1) '!seen[$$0]++ { list = list " \\\n\t$$(BUILD)/obj/" $$0 ".o" } END { print name " :=" list }'
 $(BUILD)/objects.mk: $(LD_SCRIPT) $(OVERLAY_IDS:%=$(BUILD)/ld/overlay_%.ld)
 	@{ echo '# Written by the Makefile from the linker script: do not edit.'; \
@@ -283,14 +284,30 @@ $(ELF): $(LINKED) $(STREAM) $(LIBGCC) $(LD_SCRIPT) $(BUILD)/objects.mk
 $(BUILD)/symbols.elf: $(LINKED) $(LIBGCC) $(LD_SCRIPT) $(BUILD)/objects.mk
 	$(LD) --unresolved-symbols=ignore-all --no-warn-mismatch $(LDFLAGS) -o $@ $(LINKED) $(LIBGCC)
 
+# An overlay's import table (⚓️): a far-call stub for each main-image routine
+# its code calls and does not define, copied from the game's list of them,
+# imports.inc, in the list's order. The overlay's script places it as
+# "*/imports.o".
+IMPORT_LIST_tla := games/tla/src/system/overlay/imports.inc
+IMPORT_LIST := $(IMPORT_LIST_$(GAME))
+OVERLAY_IMPORTS = $(if $(IMPORT_LIST),$(BUILD)/overlays/$*/imports.o)
+.SECONDEXPANSION:
+$(BUILD)/overlays/%/imports.s: $$(OVERLAY_OBJS_$$*) $(IMPORT_LIST)
+	@mkdir -p $(@D)
+	{ $(NM) -g --defined-only $(OVERLAY_OBJS_$*) | awk 'NF == 3 { print "own", $$3 }'; \
+	  $(NM) -u $(OVERLAY_OBJS_$*) | awk '{ print "calls", $$NF }'; } | \
+	awk 'NR == FNR { seen[$$1 " " $$2] = 1; next } $$1 == "export" { name = $$2; sub(/,$$/, "", name); \
+	     if (!(("calls " name) in seen) || ("own " name) in seen) next } { print }' - $(IMPORT_LIST) > $@
+$(BUILD)/overlays/%/imports.o: $(BUILD)/overlays/%/imports.s games/$(GAME)/src/gamepak/far_call/veneer.s
+	$(AS) $(EDITION_ASFLAGS) -o $@ $<
+
 # An overlay links at 0x2008000 against the main image's symbols, less the
 # names it defines itself; its image is packed as Camelot's packer did.
-.SECONDEXPANSION:
-$(BUILD)/overlays/resource_%.elf: $$(OVERLAY_OBJS_$$*) $$(OVERLAY_DEPS) $(BUILD)/symbols.elf $(LIBGCC)
+$(BUILD)/overlays/resource_%.elf: $$(OVERLAY_OBJS_$$*) $$(OVERLAY_IMPORTS) $$(OVERLAY_DEPS) $(BUILD)/symbols.elf $(LIBGCC)
 	@mkdir -p $(@D)
-	$(NM) -g --defined-only $(OVERLAY_OBJS_$*) $(LIBGCC) | awk 'NF == 3 { print $$3 }' > $(@:.elf=.own)
+	$(NM) -g --defined-only $(OVERLAY_OBJS_$*) $(OVERLAY_IMPORTS) $(LIBGCC) | awk 'NF == 3 { print $$3 }' > $(@:.elf=.own)
 	$(OBJCOPY) --extract-symbol --strip-symbols=$(@:.elf=.own) $(BUILD)/symbols.elf $(@:.elf=.symbols.elf)
-	$(LD) --no-warn-mismatch -n $(OVERLAY_SCRIPT) -Map $(@:.elf=.map) -R $(@:.elf=.symbols.elf) -o $@ $(OVERLAY_OBJS_$*) $(LIBGCC)
+	$(LD) --no-warn-mismatch -n $(OVERLAY_SCRIPT) -Map $(@:.elf=.map) -R $(@:.elf=.symbols.elf) -o $@ $(OVERLAY_OBJS_$*) $(OVERLAY_IMPORTS) $(LIBGCC)
 
 $(BUILD)/overlays/resource_%.lz: $(BUILD)/overlays/resource_%.elf $(OVLPACK)
 	$(OBJCOPY) -O binary $< $(@:.lz=.bin)

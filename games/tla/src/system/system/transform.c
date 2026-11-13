@@ -3,7 +3,7 @@
 // Part of system.c.
 
 #include "../system_internal.h"
-#include "projection.h"
+#include "system/projection.h"
 
 struct ProjectedPoint {
   s32 x;

@@ -1,7 +1,7 @@
 #include "types.h"
-#include "main_routine_work.h"
-#include "field_effect.h"
-#include "event.h"
+#include "system/main_routine_work.h"
+#include "system/field_effect.h"
+#include "field/event.h"
 
 /// FieldEffect_AdvanceMotion with a fixed spin: moves the effect by its
 /// velocity, damps the X and Z velocity, steps the scale and turns the sprite

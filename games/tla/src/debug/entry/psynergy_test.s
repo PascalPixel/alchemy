@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.include "games/tla/src/system/overlay/imports.inc"
+	.include "games/tla/src/gamepak/far_call/veneer.s"
 	.balign 4
 	overlay_veneer Func_0200079c
 	overlay_veneer Scene_GetEntrances

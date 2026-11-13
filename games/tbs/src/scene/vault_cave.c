@@ -166,7 +166,7 @@ enum {
   FLAG_VAULT_CAVE_IVY_BLOWN_AWAY = FLAG_AREA_TEMP_00
 };
 
-/// SPRITE_FLAME_PILLAR's animations (spr_299.tsv).
+/// SPRITE_FLAME_PILLAR's animations (flame_pillar.tsv).
 enum FlamePillarAnimation {
   FLAME_PILLAR_ANIMATION_UNLIT = 1,  ///< the pillar, no flame on top
   FLAME_PILLAR_ANIMATION_BURNING = 2 ///< a flame flickering on top

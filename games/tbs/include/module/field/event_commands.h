@@ -182,7 +182,7 @@ void Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames);
 #define EMOTE_IN_FRONT 0x100
 
 /// The bubbles Actor_ShowEmoteById can show, by the animation they pick
-/// in the bubble's sprite sheet (SPR_021).
+/// in the bubble's sprite sheet (EMOTE).
 enum Emote {
   EMOTE_EXCLAMATION = 0, ///< "!"
   EMOTE_QUESTION = 1,    ///< "?"

@@ -5,7 +5,7 @@
 
 #include "../psynergy_internal.h"
 
-#include "input.h"
+#include "system/input.h"
 
 struct FxScene {
   u16 angleFraction;
@@ -327,10 +327,10 @@ s32 Actor_CheckBlocked(struct Actor *object) {
   return result;
 }
 
-#include "iwram_call.h"
-#include "dma.h"
-#include "io_reg.h"
-#include "heap_release.h"
+#include "system/iwram_call.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "system/heap_release.h"
 
 struct CueEvent {
   u8 unk000[358];

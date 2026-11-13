@@ -170,7 +170,7 @@ static void ShipGlow_CyclePalette(void) {
     *frame = 0;
 }
 
-/// The water drop's burst into a ring of spray (spr_503.png), beyond enum
+/// The water drop's burst into a ring of spray (water_drop.png), beyond enum
 /// ActorAnimation.
 /// ★ Named from what the player sees: drops bursting into rings of spray as
 /// the ship rises (LemurianShip_RaiseTheShip's render)

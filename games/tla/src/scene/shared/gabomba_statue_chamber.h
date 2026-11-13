@@ -2,15 +2,15 @@
 #define TLA_GABOMBA_STATUE_CHAMBER_H
 
 #include "types.h"
-#include "system.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
+#include "system/system.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 #include "field_sprite.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "field/field.h"
-#include "frame.h"
+#include "system/frame.h"
 
 struct GabombaStatueChamberObject {
   u8 unk00[6];

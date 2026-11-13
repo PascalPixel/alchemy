@@ -1,5 +1,5 @@
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "map.h"
 
 /// Sets the collision code of each cell in a layer rectangle to value.

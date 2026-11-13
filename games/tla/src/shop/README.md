@@ -17,8 +17,8 @@ runs until the player backs out, and B on the icons ends the visit.
 Three ideas carry the whole folder:
 
 - **A shop is a row.** Every shop in the game is one row of the stock table
-  in [`stock.tsv`](stock.tsv): its ordinary stock, its rare stock, and its
-  kind. That is the file to open to see or change what a shop sells.
+  in [`shop_tables.c`](shop_tables.c): its ordinary stock, its rare stock,
+  and its kind. That is the file to open to see or change what a shop sells.
 - **One shop, four voices.** A weapon shop, an armor shop, an item shop and
   a general store word every line differently, yet the code is written
   once. Each kind has its own set of the same lines in the same order in
@@ -54,8 +54,8 @@ Sunshine, Yallam's blacksmith, turns materials into equipment. Talk to him
 with a material in the pack and he offers to make something; his counter
 is the selling screen, aimed at your materials (`Forge_Run`).
 
-The recipes are a table, [`forge.tsv`](forge.tsv): an item, then up to
-eight results with a weight each. The nine materials, such as a Tear
+The recipes are a table in [`shop_tables.c`](shop_tables.c): an item, then
+up to eight results with a weight each. The nine materials, such as a Tear
 Stone, roll for one of four to seven results; a Tear Stone can come back as
 a Cloud Wand or a Spirit Ring. The eleven rusty weapons each have one sure
 result, and Sunshine asks about them in other words.
@@ -75,5 +75,5 @@ away, which is why it lives here (`ItemPicker_Run`).
 
 `Shop_Run` is the visit's loop, with buying, selling and repairing as its
 three trades in `shop/`, beside the sanctum, the inn, the forge and the
-item picker. [`stock.tsv`](stock.tsv) is the stock table and
-[`forge.tsv`](forge.tsv) the forge's recipes.
+item picker. [`shop_tables.c`](shop_tables.c) holds the stock table and
+the forge's recipes.

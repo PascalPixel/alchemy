@@ -4,7 +4,7 @@
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"
-#include "render_placement.h"
+#include "graphics/render_placement.h"
 
 /// AnimationEntry.param: how Render_DecodePicture colours a layer's pixels.
 /// Modes 1 to 6 and 9 to 11 run them through a 256-byte table (the five

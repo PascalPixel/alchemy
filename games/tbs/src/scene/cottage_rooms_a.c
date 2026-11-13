@@ -163,19 +163,21 @@ enum CottageRoomsAActorId {
   ACTOR_ARMOR_MERCHANT,
   /// Three letters Z that drift up from Garet's grandfather as he sleeps.
   /// ★ Named from what the player sees: a white letter Z,
-  /// spr_280.png (its render)
+  /// letter_z.png (its render)
   ACTOR_FIRST_SLEEP_Z
 };
 
 /// Animations of the houses' sprites beyond enum ActorAnimation, as their
 /// animation tables and frames under graphics/sprite draw them.
 enum CottageRoomsAAnimation {
-  /// Garet's grandfather standing with his eyes shut, asleep (spr_117.png).
+  /// Garet's grandfather standing with his eyes shut, asleep
+  /// (old_man_with_white_hair.png).
   ANIM_GRANDFATHER_ASLEEP = 5,
-  /// Garet's grandfather glancing quickly from side to side (spr_117.png).
+  /// Garet's grandfather glancing quickly from side to side
+  /// (old_man_with_white_hair.png).
   ANIM_GRANDFATHER_LOOK_ABOUT = 6,
   /// Jenna's grandmother lying in bed, only her head on the pillow
-  /// (spr_111.png).
+  /// (old_woman.png).
   ANIM_GRANDMOTHER_IN_BED = 5
 };
 

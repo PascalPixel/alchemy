@@ -8,7 +8,7 @@
 #include "module/field/resource_slot.h"
 #include "module/system/system.h"
 #include "module/tla.h"
-#include "scene.h"
+#include "system/scene.h"
 
 #define TARGET_UNSET ((s32)0x80000000)
 
@@ -435,7 +435,7 @@ struct Actor *ActorScript_FindOverlappingEntry(struct Actor *object,
 }
 #undef TARGET_UNSET
 
-#include "actor_script_view.h"
+#include "field/actor_script_view.h"
 
 s32 ActorScript_SetPositionAndResetMotion(struct ActorScriptView *object) {
   const s32 *argument = object->script + (s16)object->scriptCursor + 1;
@@ -1647,8 +1647,8 @@ void ScriptObject_SetValue(struct ScriptObject *object, s32 value) {
     object->value = value;
 }
 
-#include "input.h"
-#include "frame.h"
+#include "system/input.h"
+#include "system/frame.h"
 #include "event_work.h"
 
 // The heading of each direction-pad combination, -1 for none.

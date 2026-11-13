@@ -3,7 +3,7 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
-#include "encounter_zone.h"
+#include "field/encounter_zone.h"
 #include "gamepak/far_call/game.h"
 #include "module/field/field_sequence.h"
 #include "gamepak/far_call/field.h"

@@ -5,28 +5,56 @@
 
 #include "shared/tables.h"
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "event_inline.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "field/event_inline.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "scene_tables.h"
-#include "main_routine_work.h"
-#include "dma.h"
-#include "text/msg_ids.h"
+#include "system/main_routine_work.h"
+#include "system/dma.h"
 #include "event_work.h"
 #include "item_icon.h"
-#include "module/scene/loho.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
 #include "scene_ids.h"
-#include "resource.h"
+#include "graphics/resource.h"
+#include "objcmd.h"
+#include "text/msg_ids.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+extern u32 gLoho_VillagerMovesNorth[];
+extern u32 gLoho_VillagerMovesWest[];
+
+extern u32 gLoho_VillagerReturns[];
+
+void Loho_ClimbDownLadder(void);
+extern u32 gLoho_Regions[];
+extern struct ActorPlacement gLoho_Placements[];
+extern struct ActorPlacement gLoho_Room2Placements[];
+extern u32 gLoho_FirstMinerGoesToWall[];
+extern s32 gLoho_SecondMinerStepsUp[];
+
+extern s32 gLoho_ThirdMinerStepsUp[];
+
+extern u32 gLoho_FirstMinerWalksBack[];
+extern u32 gLoho_FirstMinerFetchesCannon[];
+extern u32 gLoho_FirstMinerReturns[];
+extern s32 gLoho_ForemanComes[];
+extern struct Trigger gLoho_Triggers[];
+extern struct Trigger gLoho_Room1Triggers[];
+extern struct Trigger gLoho_Room2Triggers[];
+extern struct LohoPicture gLoho_HouseDoor;
+extern u32 gLoho_VillagerPaces[];
+
+extern s16 gLoho_DoorOpening[];
 
 s32 Oam_AddSpriteAtDepthClamped();
 
@@ -752,8 +780,6 @@ s32 Scene_PrepareMap(void) {
     Loho_DrawBrokenWall();
   return 0;
 }
-
-#include "objcmd.h"
 
 // clang-format off
 u32 gLoho_FirstMinerGoesToWall[] = {

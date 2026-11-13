@@ -2,8 +2,8 @@
 /// FieldEffect_SpawnResident, an object of its own between the event commands.
 
 #include "types.h"
-#include "field_effect.h"
-#include "objdisp.h"
+#include "system/field_effect.h"
+#include "field/objdisp.h"
 #include "gamepak/far_call/field.h"
 
 /// The effect's sprite as the projection draft lays it out: FieldSprite with

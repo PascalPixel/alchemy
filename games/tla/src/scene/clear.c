@@ -2,38 +2,99 @@
 /// The scene code of overlay 0x64a, in ROM order.
 
 #include "flags.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "bg_scroll.h"
-#include "dma.h"
-#include "io_reg.h"
-#include "io_write_queue.h"
-#include "main_routine_work.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "system/io_write_queue.h"
+#include "system/main_routine_work.h"
 #include "actor.h"
-#include "ram_buffer.h"
-#include "resource.h"
-#include "event_inline.h"
-#include "input.h"
+#include "system/ram_buffer.h"
+#include "graphics/resource.h"
+#include "field/event_inline.h"
+#include "system/input.h"
 #include "scene_ids.h"
 #include "event_work.h"
-#include "frame.h"
-#include "heap_slots.h"
+#include "system/frame.h"
+#include "system/heap_slots.h"
 #include "module/game/game.h"
-#include "module/scene/clear.h"
 #include "module/scene/scene.h"
 #include "module/system/system.h"
 #include "module/tla.h"
 #include "module/window/screens.h"
 #include "module/window/window.h"
-#include "serial.h"
+#include "system/serial.h"
+#include "edition.h"
+#include "version.h"
+#include "system/iwram_call.h"
+#include "call.h"
+#include "field/event_work.h"
+#include "window.h"
+#include "graphics/uiwindow.h"
+#include "graphics/oam.h"
+#include "fixed_math.h"
+#include "system/heap_release.h"
+#include "battle/battle_unit.h"
+#include "owner_state.h"
+#include "macros.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+// The two secret button codes: unlocked, held and progress of each.
+extern s16 gData_020024f6;
+
+extern u16 gData_0200271c[];
+
+struct Panel_02001804 {
+  u8 unk00[8];
+  u16 stride;
+  u8 unk0a[2];
+  s16 x;
+  s16 y;
+};
+
+extern u16 gData_020024f4[];
+extern s16 gData_020024f8;
+extern s16 gData_020024fa;
+extern s16 gData_020024fc;
+extern s16 gData_020024fe;
+extern s16 gData_02002500;
+extern u16 gData_02002410[];
+extern u16 gData_02002418[];
+
+s32 Func_02000b24(void);
+
+s32 Func_02000e44(void);
+
+extern s8 gData_02002438[];
+void Func_020018e0(s32 mode, u8 *data);
+s32 Func_02002068(u8 *src, s32 length, u8 *dst);
+extern u16 gData_02002490[];
+
+struct Window;
+
+s32 Save_ScanFileSummaries(void);
+void MainRoutineWork_InitializeDefaults(void);
+void DataTransfer_Apply(void *data, s32 a, s32 b);
+void DataTransfer_GiveDefaultDjinn(void);
+void ClearData_Apply(void *data);
+void WorldMap_SetReturnLeavingScene(s32 scene, s32 entrance);
+extern u8 gData_02002440[];
+extern u8 gData_02002454[];
+extern u8 gData_02002468[];
+extern u8 Data_0200274a[];
+extern u8 Data_0200288a[];
+extern u8 Data_0200284e[];
+void *Glyph_AddBlankSprite(struct Window *window, void *glyph, s32 x, s32 y);
 
 extern u8 gData_0200265e[];
 extern u8 Data_02012f94[];
@@ -225,14 +286,7 @@ s32 Func_020002e0(void) {
   return -((u32)(-mode | mode) >> 31);
 }
 
-#include "edition.h"
-#include "version.h"
 #include "text/msg_ids.h"
-#include "iwram_call.h"
-#include "frame.h"
-#include "call.h"
-#include "field/event_work.h"
-#include "window.h"
 
 /* VIEW(clear): variable gData_02003860 as s16 gData_02003860; module/tla.h has
  * u16 gData_02003860; tried as the rest of the object declares it,
@@ -838,13 +892,6 @@ void Func_02000db4(const struct Window *object, s32 x, s32 y, s32 width,
   }
 }
 
-#include "uiwindow.h"
-#include "oam.h"
-#include "fixed_math.h"
-#include "heap_release.h"
-#include "battle/battle_unit.h"
-#include "owner_state.h"
-
 extern u8 gData_0200247c[];
 
 extern u8 MsgFieldPasswordKana[];
@@ -1385,9 +1432,18 @@ next_column:
   Heap_Release(work);
 }
 
-extern s32 gData_020026a0[];
-extern u16 gData_020026b0[];
-extern u16 gData_020026c0[];
+/* VIEW(first): routine gData_020026a0 as this part declared it; the joined file
+ * has another. */
+extern s32 gData_020026a0__first[] __asm__("gData_020026a0");
+#define gData_020026a0 gData_020026a0__first
+/* VIEW(first): routine gData_020026b0 as this part declared it; the joined file
+ * has another. */
+extern u16 gData_020026b0__first[] __asm__("gData_020026b0");
+#define gData_020026b0 gData_020026b0__first
+/* VIEW(first): routine gData_020026c0 as this part declared it; the joined file
+ * has another. */
+extern u16 gData_020026c0__first[] __asm__("gData_020026c0");
+#define gData_020026c0 gData_020026c0__first
 
 s32 Unit_GetExperienceForLevel(s32 id, s32 level);
 
@@ -1542,9 +1598,18 @@ void Func_020018e0(s32 mode, u8 *in) {
   }
 }
 
-extern u16 gData_02002700[];
-extern s32 gData_020026f0[];
-extern u16 gData_0200270c[];
+/* VIEW(first): routine gData_02002700 as this part declared it; the joined file
+ * has another. */
+extern u16 gData_02002700__first[] __asm__("gData_02002700");
+#define gData_02002700 gData_02002700__first
+/* VIEW(first): routine gData_020026f0 as this part declared it; the joined file
+ * has another. */
+extern s32 gData_020026f0__first[] __asm__("gData_020026f0");
+#define gData_020026f0 gData_020026f0__first
+/* VIEW(first): routine gData_0200270c as this part declared it; the joined file
+ * has another. */
+extern u16 gData_0200270c__first[] __asm__("gData_0200270c");
+#define gData_0200270c gData_0200270c__first
 
 s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
   s32 size;
@@ -1908,3 +1973,67 @@ s16 gData_020024fc = 0;
 s16 gData_020024fe = 0;
 
 s16 gData_02002500 = 0;
+
+#undef FIELD_AT
+#undef PARTY_WORD
+#undef MAP_CELL_BACKUP
+#undef YEAH_WIDTH
+#undef COPY_CELLS
+#undef SAVE_CELLS
+#undef RESTORE_CELLS
+#undef RETURN_TO_SAVED
+#undef RECEIVED_FLAGS
+#undef RECEIVED_UNITS
+#undef REQUEST_EDITION
+#undef MSGNO
+#undef RECEIVE_WINDOW_X
+#undef RECEIVE_WINDOW_WIDTH
+#undef STATUS_WINDOW_X
+#undef STATUS_WINDOW_WIDTH
+#undef SIDE_COLUMN
+#undef SIDE_HIGHLIGHT_WIDTH
+#undef CHECK_WINDOW_X
+#undef CHECK_WINDOW_WIDTH
+#undef DECODED_PASSWORD
+#undef CURSOR_ON_SIDE_COLUMN
+#undef DRAW_TITLE
+#undef WORD
+#undef gData_020026a0
+#undef gData_020026b0
+#undef gData_020026c0
+#undef gData_02002700
+#undef gData_020026f0
+#undef gData_0200270c
+
+// clang-format off
+LATE_DATA u32 gData_020026a0[] = {
+    0, 1, 2, 3,
+};
+
+LATE_DATA u32 gData_020026b0[] = {
+    0xc900c8, 0xcb00ca, 0xcd00cc, 0xcf00ce,
+};
+
+LATE_DATA u32 gData_020026c0[] = {
+    0xb500b4, 0xb700b6, 0xbb00ba, 0xbd00bc, 0xc000bf, 0xc200c1,
+    0xc400c3, 0xe300e2, 0xe500e4, 0xee00ec, 0xf000ef, 241,
+};
+
+LATE_DATA u32 gData_020026f0[] = {
+    0, 1, 2, 3,
+};
+
+LATE_DATA u32 gData_02002700[] = {
+    0x9510941, 0x8d108b3, 0x868081e,
+};
+
+LATE_DATA u32 gData_0200270c[] = {
+    0xc900c8, 0xcb00ca, 0xcd00cc, 0xcf00ce,
+};
+
+LATE_DATA u16 gData_0200271c[] = {
+    180, 181, 182, 183, 186, 187, 188, 189,
+    191, 192, 193, 194, 195, 196, 226, 227,
+    228, 229, 236, 238, 239, 240, 241,
+};
+// clang-format on

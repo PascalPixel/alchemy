@@ -3,42 +3,146 @@
 
 #include "shared/actors.h"
 #include "types.h"
-#include "ram_buffer.h"
-#include "main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
 #include "version.h"
-#include "event_inline.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "field/event_inline.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "scene_tables.h"
-#include "frame.h"
-#include "iwram_call.h"
+#include "system/frame.h"
+#include "system/iwram_call.h"
 #include "actor.h"
-#include "field_coordinate.h"
-#include "text/msg_ids.h"
+#include "field/field_coordinate.h"
 #include "owner_state.h"
 #include "event_work.h"
 #include "field_sprite.h"
 #include "call.h"
-#include "task.h"
+#include "system/task.h"
 #include "fixed_math.h"
-#include "input.h"
+#include "system/input.h"
 #include "item_icon.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/scene/scene.h"
 #include "module/scene/staff_credit.h"
-#include "module/scene/world_map.h"
 #include "module/system/system.h"
 #include "module/tla.h"
 #include "module/window/window.h"
 #include "module/game/game.h"
 #include "scene_ids.h"
+#include "system/io_reg.h"
+#include "shared/flight.h"
+#include "system/io_write_queue.h"
+#include "graphics/resource.h"
+#include "bg_scroll.h"
+#include "field/sprite.h"
+#include "graphics/vram_tab.h"
+#include "macros.h"
+#include "shared/tables.h"
+#include "text/msg_ids.h"
+
+/// What The Lost Age's code declares for the files that use it, written once.
+
+struct Actor;
+
+/// FieldSprite's byte 0x11 read as its bits.
+struct SpriteCacheBits {
+  u8 retainCacheEntry : 1; ///< keeps the VRAM cache entry when it is released
+};
+
+struct WorldMapOam {
+  u8 unk00[6];
+  u16 x : 9;
+  u16 affineIndex : 5;
+  u16 size : 2;
+};
+
+void Func_020048f4(void);
+
+void Func_02003654(s32 a, s32 b, s32 c);
+
+void Func_02003bb8(struct Actor *object, s32 mode);
+
+void Func_020049bc(void);
+void Func_02003c3c(void);
+void Func_02004a1c(void);
+
+void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
+
+void WorldMap_FightBanditAndThieves(s32 entrance);
+
+void WorldMap_DeliverLohoCannon(void);
+
+void WorldMap_MeetEcho(void);
+
+void Func_020029a4(void);
+
+void WorldMap_DriftNorthOfContinent(void);
+
+void Func_02002e00(void);
+
+void WorldMap_TakeTheTiller(void);
+void Func_0200310c(void);
+void Func_02003490(void);
+
+void Func_02003d44(s32 mode);
+
+void Func_0200009c(void);
+
+void Func_02000100(void);
+
+void Func_02000164(void);
+
+void Func_020001c8(void);
+
+void Func_0200022c(void);
+
+void WorldMap_SetUpFlyingShip(void);
+
+void WorldMap_SetUpShip(void);
+void Func_02000918(void);
+
+void WorldMap_RefuseToRunAway(void);
+
+void WorldMap_GazeIntoPond(void);
+
+void Func_02000d1c(void);
+
+void WorldMap_TakeOff(void);
+
+extern s32 gData_02006320[];
+extern s32 gData_02006578[];
+extern s32 gData_02006584[];
+
+extern u32 gData_02004fc8[];
+
+s32 WorldMap_GetBlockPlace(s32 *position);
+
+extern u16 gData_02006e08;
+
+extern u8 gWorldMapPackedTilesB[];
+extern u8 gWorldMapPackedPicturesB[];
+extern u8 gWorldMapPalettesB[];
+
+void Func_02004634(struct Actor *object);
+
+void Actor_Release(struct Actor *object);
+
+extern u8 Data_02006e20[][32];
+extern s16 gData_02006e10;
+extern u32 Data_02006e14[3];
+
+void Party_DrainPp(s32 value);
+s32 Party_GetPpRatio(void);
+
+void WorldMap_WatchVenusLighthouseCollapse(void);
 
 s32 Event_PickUpItem(s32 a, s32 b, s32 c);
 void Actor_StartRenderModeScript(void);
@@ -200,11 +304,26 @@ s32 Func_020003b4(struct Actor *object) {
   return 0;
 }
 
-extern u8 gData_02006338[];
-extern u8 gData_02006500[];
-extern u8 gData_02006598[];
-extern u8 gData_02006700[];
-extern u8 gData_02006790[];
+/* VIEW(first): routine gData_02006338 as this part declared it; the joined file
+ * has another. */
+extern u8 gData_02006338__first[] __asm__("gData_02006338");
+#define gData_02006338 gData_02006338__first
+/* VIEW(first): routine gData_02006500 as this part declared it; the joined file
+ * has another. */
+extern u8 gData_02006500__first[] __asm__("gData_02006500");
+#define gData_02006500 gData_02006500__first
+/* VIEW(first): routine gData_02006598 as this part declared it; the joined file
+ * has another. */
+extern u8 gData_02006598__first[] __asm__("gData_02006598");
+#define gData_02006598 gData_02006598__first
+/* VIEW(first): routine gData_02006700 as this part declared it; the joined file
+ * has another. */
+extern u8 gData_02006700__first[] __asm__("gData_02006700");
+#define gData_02006700 gData_02006700__first
+/* VIEW(first): routine gData_02006790 as this part declared it; the joined file
+ * has another. */
+extern u8 gData_02006790__first[] __asm__("gData_02006790");
+#define gData_02006790 gData_02006790__first
 
 void Func_02003bf0(void);
 
@@ -622,7 +741,10 @@ void Func_02000db0(s32 id) { Func_02003654(id, 3, 2); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-extern u8 gData_0200632c[];
+/* VIEW(first): routine gData_0200632c as this part declared it; the joined file
+ * has another. */
+extern u8 gData_0200632c__first[] __asm__("gData_0200632c");
+#define gData_0200632c gData_0200632c__first
 
 s32 Scene_Initialize(void) {
   struct EventWork *work;
@@ -1437,7 +1559,10 @@ refused:
   Event_ClearFlag(0x171);
 }
 
-extern const u8 gData_02006bc8[];
+/* VIEW(first): routine gData_02006bc8 as this part declared it; the joined file
+ * has another. */
+extern const u8 gData_02006bc8__first[] __asm__("gData_02006bc8");
+#define gData_02006bc8 gData_02006bc8__first
 
 /// Spawns object 285 at a random spot with a random scale and starts its
 /// script.
@@ -1599,8 +1724,6 @@ void Func_020028cc(void) {
   Import_ActorSelectAnimation(obj, 2);
   Actor_StartScript(obj, gData_02004f10);
 }
-
-#include "io_reg.h"
 
 extern u32 gData_02004eb8[];
 
@@ -2010,26 +2133,26 @@ DEFINE_TILE_SPRITE_RESET(Func_020035e0)
 /* VIEW(s3600): variable gData_02006c08 as struct Actor *gData_02006c08[];
  * module/scene/scene.h has u8 gData_02006c08[]. The three parts after see it so
  * too; tried as the rest of the object declares it, it does not compile in
- * tla-ja: games/tla/src/scene/shared/world_map_s3600.h:8: conflicting types for
+ * tla-ja: games/tla/src/scene/shared/world_map_s3600.c:8: conflicting types for
  * `gData_02006c08'. */
 extern struct Actor *gData_02006c08__s3600[] __asm__("gData_02006c08");
 #define gData_02006c08 gData_02006c08__s3600
 
 /// Scene code of overlay 0x64b, in ROM order.
 
-#include "shared/world_map_s3600.h"
+#include "shared/world_map_s3600.c"
 
 // ---- scene/world_map/s36a8.c ----
 
 /// Scene code of overlay 0x64b, in ROM order.
 
-#include "shared/world_map_s36a8.h"
+#include "shared/world_map_s36a8.c"
 
 // ---- scene/world_map/s3960.c ----
 
 /// Scene code of overlay 0x64b, in ROM order.
 
-#include "shared/world_map_s3960.h"
+#include "shared/world_map_s3960.c"
 
 #undef gData_02006c08
 
@@ -2059,15 +2182,11 @@ s32 Func_020039a8(struct Actor *object) {
 
 /// Scene code of overlay 0x64b, in ROM order.
 
-#include "shared/world_map_s39f4.h"
+#include "shared/world_map_s39f4.c"
 
 // ---- scene/world_map/s3b38.c ----
 
 /// Scene code of overlay 0x64b, in ROM order.
-
-#include "shared/flight.h"
-#include "io_write_queue.h"
-#include "resource.h"
 
 extern u8 gData_02006f20[];
 extern u8 gData_02006e0e[];
@@ -2075,7 +2194,10 @@ extern u8 gData_02006e0c[];
 
 DEFINE_ACTOR_FLICKER(Func_02003b38, Func_020039f4)
 
-extern s32 gData_02006be4;
+/* VIEW(s3b38): routine gData_02006be4 as this part declared it; the joined file
+ * has another. */
+extern s32 gData_02006be4__s3b38 __asm__("gData_02006be4");
+#define gData_02006be4 gData_02006be4__s3b38
 
 DEFINE_ACTOR_CYCLE_CHILD_VALUES(Func_02003b70, gData_02004fc8, gData_02006be4,
                                 Func_02003aac)
@@ -2119,10 +2241,6 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
 
 /// Shakes the camera diagonally by one pixel every three frames.
 DEFINE_CAMERA_JITTER(WorldMap_JitterTransitionCamera)
-
-#include "bg_scroll.h"
-#include "sprite.h"
-#include "vram_tab.h"
 
 #define PUSH_PICTURE(offset)                                                   \
   IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + (offset)), 0x84000140)
@@ -2484,3 +2602,450 @@ u32 gData_02004fc8[] = {
 
 #undef Animation_ApplyChildArgument
 #undef Func_02003418
+#undef PUSH_PICTURE
+#undef WORLD_MAP_TRY_ENCOUNTER
+#undef ARM_WEST
+#undef TUTORIAL_SET_MESSAGE
+#undef TUTORIAL_MESSAGE
+#undef Actor_SetSpriteColorMode
+#undef gData_02006338
+#undef gData_02006500
+#undef gData_02006598
+#undef gData_02006700
+#undef gData_02006790
+#undef gData_0200632c
+#undef gData_02006bc8
+#undef gData_02006c08
+#undef gData_02006be4
+#undef Animation_ApplyChildArgument
+#undef Func_02003418
+
+void Func_02000038(void);
+/* VIEW(data): routine TileSprite_Reset as this part declared it; the joined
+ * file has another. */
+void TileSprite_Reset__data(void) __asm__("TileSprite_Reset");
+#define TileSprite_Reset TileSprite_Reset__data
+/* VIEW(data): routine Func_02000388 as this part declared it; the joined file
+ * has another. */
+void Func_02000388__data(void) __asm__("Func_02000388");
+#define Func_02000388 Func_02000388__data
+/* VIEW(data): routine Func_020003a8 as this part declared it; the joined file
+ * has another. */
+void Func_020003a8__data(void) __asm__("Func_020003a8");
+#define Func_020003a8 Func_020003a8__data
+/* VIEW(data): routine Func_020003b4 as this part declared it; the joined file
+ * has another. */
+void Func_020003b4__data(void) __asm__("Func_020003b4");
+#define Func_020003b4 Func_020003b4__data
+void WorldMap_BoardShip(void);
+void WorldMap_LeaveShip(void);
+/* VIEW(data): routine Func_02000d98 as this part declared it; the joined file
+ * has another. */
+void Func_02000d98__data(void) __asm__("Func_02000d98");
+#define Func_02000d98 Func_02000d98__data
+/* VIEW(data): routine Func_02000da4 as this part declared it; the joined file
+ * has another. */
+void Func_02000da4__data(void) __asm__("Func_02000da4");
+#define Func_02000da4 Func_02000da4__data
+/* VIEW(data): routine Func_02000db0 as this part declared it; the joined file
+ * has another. */
+void Func_02000db0__data(void) __asm__("Func_02000db0");
+#define Func_02000db0 Func_02000db0__data
+/* VIEW(data): routine Func_020035e0 as this part declared it; the joined file
+ * has another. */
+void Func_020035e0__data(void) __asm__("Func_020035e0");
+#define Func_020035e0 Func_020035e0__data
+/* VIEW(data): routine StoryActor_Initialize as this part declared it; the
+ * joined file has another. */
+void StoryActor_Initialize__data(void) __asm__("StoryActor_Initialize");
+#define StoryActor_Initialize StoryActor_Initialize__data
+
+LATE_DATA struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 9850, 0, 9748, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {1, CONDITION_ALWAYS, 10240, 0, 7974, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {2, CONDITION_ALWAYS, 10144, 0, 8330, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {3, CONDITION_ALWAYS, 10144, 0, 8240, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {4, CONDITION_ALWAYS, 10137, 0, 8602, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {5, CONDITION_ALWAYS, 10423, 0, 8354, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {6, CONDITION_ALWAYS, 10190, 0, 8883, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {7, CONDITION_ALWAYS, 10578, 0, 8952, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {8, CONDITION_ALWAYS, 10635, 0, 9040, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {9, CONDITION_ALWAYS, 10168, 0, 9630, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {10, CONDITION_ALWAYS, 10270, 0, 9522, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {11, CONDITION_ALWAYS, 10271, 0, 9425, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {12, CONDITION_ALWAYS, 10380, 0, 9370, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {13, CONDITION_ALWAYS, 10440, 0, 9399, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {14, CONDITION_ALWAYS, 11125, 0, 10695, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {15, CONDITION_ALWAYS, 12070, 0, 10470, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {16, CONDITION_ALWAYS, 11880, 0, 10090, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {17, CONDITION_ALWAYS, 10976, 0, 9960, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {18, CONDITION_ALWAYS, 11736, 0, 9530, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {19, CONDITION_ALWAYS, 11910, 0, 9729, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {20, CONDITION_ALWAYS, 11633, 0, 9406, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {21, CONDITION_ALWAYS, 9244, 0, 9528, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {22, CONDITION_ALWAYS, 9328, 0, 9528, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {23, CONDITION_ALWAYS, 9148, 0, 9048, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {24, CONDITION_ALWAYS, 9148, 0, 8988, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {25, CONDITION_ALWAYS, 9199, 0, 8410, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {26, CONDITION_ALWAYS, 9060, 0, 8290, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {27, CONDITION_ALWAYS, 9256, 0, 7950, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {28, CONDITION_ALWAYS, 9546, 0, 8316, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {29, CONDITION_ALWAYS, 12770, 0, 11570, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {30, CONDITION_ALWAYS, 11724, 0, 8064, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {31, CONDITION_ALWAYS, 11680, 0, 6678, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {32, CONDITION_ALWAYS, 13486, 0, 7482, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {33, CONDITION_ALWAYS, 12923, 0, 9681, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {34, CONDITION_ALWAYS, 12921, 0, 9752, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {35, CONDITION_ALWAYS, 12680, 0, 10297, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {36, CONDITION_ALWAYS, 14478, 0, 8410, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {37, CONDITION_ALWAYS, 14250, 0, 8728, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {38, CONDITION_ALWAYS, 13376, 0, 6068, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {39, CONDITION_ALWAYS, 13452, 0, 6204, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {40, CONDITION_ALWAYS, 10903, 0, 6285, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {41, CONDITION_ALWAYS, 11201, 0, 6105, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {42, CONDITION_ALWAYS, 12461, 0, 7566, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {43, CONDITION_ALWAYS, 12090, 0, 7165, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {44, CONDITION_ALWAYS, 13010, 0, 1240, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {45, CONDITION_ALWAYS, 13088, 0, 1090, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {46, CONDITION_ALWAYS, 9490, 0, 10960, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {47, CONDITION_ALWAYS, 5836, 0, 10120, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {48, CONDITION_ALWAYS, 8582, 0, 7420, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {49, CONDITION_ALWAYS, 6314, 0, 6223, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {50, CONDITION_ALWAYS, 8847, 0, 4629, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {51, CONDITION_ALWAYS, 8970, 0, 7500, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {52, CONDITION_ALWAYS, 7256, 0, 8325, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {53, CONDITION_ALWAYS, 7280, 0, 8180, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {54, CONDITION_ALWAYS, 7714, 0, 7760, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {55, CONDITION_ALWAYS, 7277, 0, 7330, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {56, CONDITION_ALWAYS, 7383, 0, 5753, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {57, CONDITION_ALWAYS, 7504, 0, 5650, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {58, CONDITION_ALWAYS, 7663, 0, 5535, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {59, CONDITION_ALWAYS, 8960, 0, 5856, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {60, CONDITION_ALWAYS, 8933, 0, 3704, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {61, CONDITION_ALWAYS, 8916, 0, 1640, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {62, CONDITION_ALWAYS, 9056, 0, 1250, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {63, CONDITION_ALWAYS, 9056, 0, 1175, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {64, CONDITION_ALWAYS, 1992, 0, 7272, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {65, CONDITION_ALWAYS, 10239, 0, 7884, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {67, CONDITION_ALWAYS, 11633, 0, 9406, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {68, CONDITION_ALWAYS, 7256, 0, 8325, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {69, CONDITION_ALWAYS, 10640, 0, 9075, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {71, CONDITION_ALWAYS, 10720, 0, 9075, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {72, CONDITION_ALWAYS, 7279, 0, 7307, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {73, CONDITION_ALWAYS, 10168, 0, 9630, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {74, CONDITION_ALWAYS, 10168, 0, 9630, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {77, CONDITION_ALWAYS, 12096, 0, 8325, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {78, CONDITION_ALWAYS, 14558, 0, 8457, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {80, CONDITION_ALWAYS, 11754, 0, 8030, FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {81, CONDITION_ALWAYS, 11700, 0, 8034, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {82, CONDITION_ALWAYS, 11596, 0, 10204, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {83, CONDITION_ALWAYS, 10240, 0, 9142, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {84, CONDITION_ALWAYS, 9020, 0, 882, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {85, CONDITION_ALWAYS, 9288, 0, 9434, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {86, CONDITION_ALWAYS, 9288, 0, 9640, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {87, CONDITION_ALWAYS, 12640, 0, 4390, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {88, CONDITION_ALWAYS, 7868, 0, 9120, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {89, CONDITION_ALWAYS, 9479, 0, 5060, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {98, CONDITION_ALWAYS, 8916, 0, 1640, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {99, CONDITION_ALWAYS, 10271, 0, 9540, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA u32 gSceneExits[] = {
+    SCENE_EXITS(2),
+    SCENE_EXIT(64, 2, 77),
+    SCENE_EXIT(65, 9, 2),
+    SCENE_EXIT(66, 42, 10),
+    SCENE_EXIT(77, 9, 12),
+    SCENE_EXIT(78, 158, 5),
+    SCENE_EXIT(1, 9, 4),
+    SCENE_EXIT_IF(2, 10, 8, 0x873),
+    SCENE_EXIT_IF(3, 10, 9, 0x873),
+    SCENE_EXIT(2, 13, 8),
+    SCENE_EXIT(3, 13, 9),
+    SCENE_EXIT(4, 21, 1),
+    SCENE_EXIT(5, 23, 3),
+    SCENE_EXIT(6, 34, 1),
+    SCENE_EXIT(7, 36, 6),
+    SCENE_EXIT(8, 43, 2),
+    SCENE_EXIT(9, 44, 11),
+    SCENE_EXIT(10, 53, 1),
+    SCENE_EXIT(11, 53, 2),
+    SCENE_EXIT(12, 54, 1),
+    SCENE_EXIT(13, 54, 2),
+    SCENE_EXIT(14, 55, 6),
+    SCENE_EXIT(15, 61, 1),
+    SCENE_EXIT(16, 82, 1),
+    SCENE_EXIT(17, 67, 1),
+    SCENE_EXIT(18, 74, 2),
+    SCENE_EXIT(19, 75, 2),
+    SCENE_EXIT(20, 95, 9),
+    SCENE_EXIT(21, 102, 1),
+    SCENE_EXIT(22, 102, 2),
+    SCENE_EXIT(23, 105, 6),
+    SCENE_EXIT(25, 108, 1),
+    SCENE_EXIT(26, 107, 1),
+    SCENE_EXIT_IF(27, 113, 1, 0x8ff),
+    SCENE_EXIT_IF(27, 110, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT(28, 131, 1),
+    SCENE_EXIT(29, 132, 1),
+    SCENE_EXIT(30, 133, 1),
+    SCENE_EXIT(31, 134, 10),
+    SCENE_EXIT(32, 135, 1),
+    SCENE_EXIT(33, 139, 10),
+    SCENE_EXIT(34, 139, 11),
+    SCENE_EXIT(35, 143, 1),
+    SCENE_EXIT(36, 154, 1),
+    SCENE_EXIT(37, 158, 1),
+    SCENE_EXIT(38, 171, 1),
+    SCENE_EXIT(39, 174, 5),
+    SCENE_EXIT(40, 182, 9),
+    SCENE_EXIT(41, 195, 1),
+    SCENE_EXIT(42, 197, 1),
+    SCENE_EXIT(43, 198, 5),
+    SCENE_EXIT(44, 198, 3),
+    SCENE_EXIT(45, 199, 1),
+    SCENE_EXIT(46, 206, 1),
+    SCENE_EXIT(47, 221, 1),
+    SCENE_EXIT(48, 213, 1),
+    SCENE_EXIT(49, 216, 1),
+    SCENE_EXIT(50, 219, 1),
+    SCENE_EXIT(51, 223, 1),
+    SCENE_EXIT(52, 234, 1),
+    SCENE_EXIT(53, 235, 2),
+    SCENE_EXIT(54, 236, 1),
+    SCENE_EXIT(55, 251, 1),
+    SCENE_EXIT(56, 240, 1),
+    SCENE_EXIT(57, 240, 10),
+    SCENE_EXIT(58, 242, 1),
+    SCENE_EXIT(59, 266, 7),
+    SCENE_EXIT(60, 268, 1),
+    SCENE_EXIT(61, 268, 4),
+    SCENE_EXIT(62, 269, 1),
+    SCENE_EXIT(63, 271, 3),
+    SCENE_EXIT(82, 276, 1),
+    SCENE_EXIT(83, 275, 1),
+    SCENE_EXIT(84, 279, 1),
+    SCENE_EXIT(85, 103, 1),
+    SCENE_EXIT(86, 103, 2),
+    SCENE_EXIT(87, 298, 1),
+    SCENE_EXIT(88, 277, 5),
+    SCENE_EXIT(89, 278, 1),
+    SCENE_EXITS_END,
+};
+
+LATE_DATA s32 gData_02006320[] = {
+    46,
+    (s32)TileSprite_Reset,
+    17,
+};
+
+LATE_DATA s32 gData_0200632c[] = {
+    46,
+    (s32)StoryActor_Initialize,
+    17,
+};
+
+LATE_DATA struct ActorPlacement gData_02006338[] = {
+    {8, CONDITION_ALWAYS, (s32)gData_02006320, PIXELS(10640), 0, PIXELS(9075),
+     FACING_EAST, 2, 0},
+    {243, 0x37, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {243, 0x38, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {244, 0x4c, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {244, 0x4f, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {246, 0x78, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {243, 0x3d, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {245, 0x65, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {5, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {7, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {221, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTHWEST, 2, 0},
+    {154, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_EAST, 2, 0},
+    {221, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_WEST, 2, 0},
+    {489, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTH, 2, 0},
+    {240, IF_FLAG_SET(0xa76), 1, 0, 0, 0, FACING_NORTH, 2, 0},
+    {241, IF_FLAG_SET(0xa76), 1, 0, 0, 0, FACING_NORTH, 2, 0},
+    {241, IF_FLAG_SET(0xa76), 1, 0, 0, 0, FACING_NORTH, 2, 0},
+    {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gData_02006500[] = {
+    {56, CONDITION_ALWAYS, 1, PIXELS(1968), 0, PIXELS(7488), FACING_NORTH, 2,
+     0},
+    {5, CONDITION_ALWAYS, 1, PIXELS(1936), 0, PIXELS(7472), FACING_NORTH, 2, 0},
+    {57, CONDITION_ALWAYS, 1, PIXELS(1904), 0, PIXELS(7488), FACING_NORTH, 2,
+     0},
+    {8, CONDITION_ALWAYS, (s32)gData_02006320, PIXELS(1946), 0, PIXELS(7557),
+     FACING_EAST, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA s32 gData_02006578[] = {
+    46,
+    (s32)Func_02000388,
+    17,
+};
+
+LATE_DATA s32 gData_02006584[] = {
+    46, (s32)Func_020003a8, 46, (s32)Func_020003b4, 17,
+};
+
+LATE_DATA struct ActorPlacement gData_02006598[] = {
+    {56, CONDITION_ALWAYS, 1, PIXELS(11000), 0, PIXELS(7500), FACING_EAST, 2,
+     0},
+    {5, CONDITION_ALWAYS, 1, PIXELS(10000), 0, PIXELS(7500), FACING_EAST, 2, 0},
+    {57, CONDITION_ALWAYS, 1, PIXELS(10000), 0, PIXELS(8000), FACING_EAST, 2,
+     0},
+    {6, CONDITION_ALWAYS, 1, PIXELS(11000), 0, PIXELS(8000), FACING_EAST, 2, 0},
+    {433, CONDITION_ALWAYS, (s32)gData_02006578, PIXELS(10207), 0, PIXELS(7900),
+     FACING_SOUTH, 2, 0},
+    {277, CONDITION_ALWAYS, (s32)gData_02006584, PIXELS(10524), 0, PIXELS(7450),
+     FACING_SOUTH, 2, 0},
+    {277, CONDITION_ALWAYS, (s32)gData_02006584, PIXELS(10532), 0, PIXELS(7480),
+     FACING_SOUTH, 2, 1},
+    {277, CONDITION_ALWAYS, (s32)gData_02006584, PIXELS(10540), 0, PIXELS(7510),
+     FACING_SOUTH, 2, 1},
+    {277, CONDITION_ALWAYS, (s32)gData_02006584, PIXELS(10548), 0, PIXELS(7540),
+     FACING_SOUTH, 2, 1},
+    {277, CONDITION_ALWAYS, (s32)gData_02006584, PIXELS(10556), 0, PIXELS(7570),
+     FACING_SOUTH, 2, 1},
+    {277, CONDITION_ALWAYS, (s32)gData_02006584, PIXELS(10564), 0, PIXELS(7600),
+     FACING_SOUTH, 2, 1},
+    {277, CONDITION_ALWAYS, (s32)gData_02006584, PIXELS(10572), 0, PIXELS(7630),
+     FACING_SOUTH, 2, 1},
+    {277, CONDITION_ALWAYS, (s32)gData_02006584, PIXELS(10580), 0, PIXELS(7660),
+     FACING_SOUTH, 2, 1},
+    {8, CONDITION_ALWAYS, (s32)gData_02006320, PIXELS(3515), 0, PIXELS(7621),
+     FACING_EAST, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gData_02006700[] = {
+    {9, CONDITION_ALWAYS, (s32)gData_02006320, PIXELS(10640), 0, PIXELS(9075),
+     FACING_EAST, 2, 0},
+    {56, CONDITION_ALWAYS, 1, PIXELS(10550), 0, PIXELS(8682), FACING_SOUTH, 2,
+     0},
+    {5, CONDITION_ALWAYS, 1, PIXELS(10550), 0, PIXELS(9282), FACING_SOUTH, 2,
+     0},
+    {7, CONDITION_ALWAYS, 1, PIXELS(10850), 0, PIXELS(8682), FACING_SOUTH, 2,
+     0},
+    {6, CONDITION_ALWAYS, 1, PIXELS(10850), 0, PIXELS(9282), FACING_SOUTH, 2,
+     0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gData_02006790[] = {
+    {433, CONDITION_ALWAYS, (s32)gData_02006578, PIXELS(12096), 0, PIXELS(8325),
+     FACING_SOUTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct Trigger gSceneEvents[] = {
+    {TRIGGER_RAISED, 251, CONDITION_ALWAYS, EVENT(WorldMap_BoardShip)},
+    {TRIGGER_RAISED, 252, CONDITION_ALWAYS, EVENT(WorldMap_LeaveShip)},
+    {TRIGGER_RAISED, 253, CONDITION_ALWAYS, EVENT(WorldMap_SetUpFlyingShip)},
+    {TRIGGER_RAISED, 254, CONDITION_ALWAYS, EVENT(WorldMap_SetUpShip)},
+    {TRIGGER_STEP, 92, 0x38, EVENT(Func_02000038)},
+    {TRIGGER_STEP, 93, 0x4c, EVENT(Func_0200009c)},
+    {TRIGGER_STEP, 94, 0x4f, EVENT(Func_02000100)},
+    {TRIGGER_STEP, 95, 0x78, EVENT(Func_02000164)},
+    {TRIGGER_STEP, 96, 0x3d, EVENT(Func_020001c8)},
+    {TRIGGER_STEP, 97, 0x65, EVENT(Func_0200022c)},
+    {TRIGGER_EXAMINE, 1123, CONDITION_ALWAYS, EVENT(WorldMap_GazeIntoPond)},
+    {TRIGGER_STEP, 100, CONDITION_ALWAYS, EVENT(Func_02000db0)},
+    {TRIGGER_EXIT, 101, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 102, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 103, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 104, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 105, 0x8de, 8},
+    {TRIGGER_EXIT, 106, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT, 107, CONDITION_ALWAYS, 12},
+    {TRIGGER_EXIT, 108, CONDITION_ALWAYS, 13},
+    {TRIGGER_EXIT, 109, CONDITION_ALWAYS, 14},
+    {TRIGGER_EXIT, 110, CONDITION_ALWAYS, 15},
+    {TRIGGER_EXIT, 111, CONDITION_ALWAYS, 16},
+    {TRIGGER_EXIT, 112, CONDITION_ALWAYS, 19},
+    {TRIGGER_EXIT, 113, CONDITION_ALWAYS, 20},
+    {TRIGGER_EXIT, 114, CONDITION_ALWAYS, 21},
+    {TRIGGER_EXIT, 115, CONDITION_ALWAYS, 22},
+    {TRIGGER_EXIT, 116, CONDITION_ALWAYS, 23},
+    {TRIGGER_EXIT, 117, CONDITION_ALWAYS, 25},
+    {TRIGGER_EXIT, 118, CONDITION_ALWAYS, 26},
+    {TRIGGER_EXIT, 119, CONDITION_ALWAYS, 27},
+    {TRIGGER_EXIT, 120, CONDITION_ALWAYS, 28},
+    {TRIGGER_EXIT, 121, CONDITION_ALWAYS, 29},
+    {TRIGGER_EXIT, 122, CONDITION_ALWAYS, 30},
+    {TRIGGER_EXIT, 123, CONDITION_ALWAYS, 31},
+    {TRIGGER_EXIT, 124, CONDITION_ALWAYS, 32},
+    {TRIGGER_STEP, 125, CONDITION_ALWAYS, EVENT(Func_02000da4)},
+    {TRIGGER_EXIT, 126, CONDITION_ALWAYS, 35},
+    {TRIGGER_EXIT, 127, CONDITION_ALWAYS, 36},
+    {TRIGGER_EXIT, 128, CONDITION_ALWAYS, 37},
+    {TRIGGER_EXIT, 129, CONDITION_ALWAYS, 38},
+    {TRIGGER_EXIT, 130, CONDITION_ALWAYS, 39},
+    {TRIGGER_EXIT, 131, CONDITION_ALWAYS, 40},
+    {TRIGGER_EXIT, 132, CONDITION_ALWAYS, 41},
+    {TRIGGER_EXIT, 133, CONDITION_ALWAYS, 42},
+    {TRIGGER_EXIT, 134, CONDITION_ALWAYS, 43},
+    {TRIGGER_EXIT, 136, CONDITION_ALWAYS, 45},
+    {TRIGGER_EXIT, 137, CONDITION_ALWAYS, 46},
+    {TRIGGER_EXIT, 138, CONDITION_ALWAYS, 47},
+    {TRIGGER_EXIT, 139, CONDITION_ALWAYS, 48},
+    {TRIGGER_EXIT, 140, CONDITION_ALWAYS, 49},
+    {TRIGGER_EXIT, 141, CONDITION_ALWAYS, 50},
+    {TRIGGER_EXIT, 142, CONDITION_ALWAYS, 51},
+    {TRIGGER_EXIT, 143, CONDITION_ALWAYS, 54},
+    {TRIGGER_EXIT, 144, CONDITION_ALWAYS, 55},
+    {TRIGGER_EXIT, 145, CONDITION_ALWAYS, 56},
+    {TRIGGER_EXIT, 146, CONDITION_ALWAYS, 57},
+    {TRIGGER_EXIT, 147, CONDITION_ALWAYS, 58},
+    {TRIGGER_EXIT, 148, CONDITION_ALWAYS, 59},
+    {TRIGGER_STEP, 150, CONDITION_ALWAYS, EVENT(Func_02000d98)},
+    {TRIGGER_EXIT, 151, CONDITION_ALWAYS, 82},
+    {TRIGGER_EXIT, 152, CONDITION_ALWAYS, 83},
+    {TRIGGER_EXIT, 153, CONDITION_ALWAYS, 84},
+    {TRIGGER_EXIT, 154, CONDITION_ALWAYS, 84},
+    {TRIGGER_EXIT, 155, CONDITION_ALWAYS, 87},
+    {TRIGGER_EXIT, 156, CONDITION_ALWAYS, 88},
+    {TRIGGER_EXIT, 157, CONDITION_ALWAYS, 89},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
+    {TRIGGER_EXIT, 18, CONDITION_ALWAYS, 18},
+    {TRIGGER_EXIT, 42, CONDITION_ALWAYS, 42},
+    {TRIGGER_EXIT, 43, CONDITION_ALWAYS, 43},
+    {TRIGGER_EXIT, 44, CONDITION_ALWAYS, 44},
+    {TRIGGER_EXIT, 45, CONDITION_ALWAYS, 45},
+    {TRIGGER_STEP, 52, CONDITION_ALWAYS, EVENT(Func_02000918)},
+    {TRIGGER_STEP, 53, CONDITION_ALWAYS, EVENT(WorldMap_RefuseToRunAway)},
+    {TRIGGER_STEP, 40, 0xa78, EVENT(WorldMap_TakeOff)},
+    {TRIGGER_EXIT, 60, CONDITION_ALWAYS, 60},
+    {TRIGGER_EXIT, 61, CONDITION_ALWAYS, 61},
+    {TRIGGER_EXIT, 85, CONDITION_ALWAYS, 85},
+    {TRIGGER_EXIT, 86, CONDITION_ALWAYS, 86},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_02000d1c)},
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA u32 gData_02006bc8[] = {
+    0,
+    16,
+    38,
+};
+
+LATE_DATA DEFINE_G_DATA_02003584(gData_02006bd4, Func_020035e0, 17, 0)
+
+    LATE_DATA u32 gData_02006be4[] = {
+        0,
+};
+#undef TileSprite_Reset
+#undef Func_02000388
+#undef Func_020003a8
+#undef Func_020003b4
+#undef Func_02000d98
+#undef Func_02000da4
+#undef Func_02000db0
+#undef Func_020035e0
+#undef StoryActor_Initialize

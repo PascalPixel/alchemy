@@ -7,15 +7,24 @@
 #include "shared/actors.h"
 #include "shared/vents.h"
 #include "types.h"
-#include "system.h"
-#include "ram_buffer.h"
+#include "system/system.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_tables.h"
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "field_sprite.h"
-#include "event_inline.h"
-#include "frame.h"
+#include "field/event_inline.h"
+#include "system/frame.h"
+#include "system/vector3.h"
+#include "version.h"
+#include "event_work.h"
+#include "call.h"
+#include "field/field.h"
+#include "graphics/graphics.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "module/scene/lemurian_ship.h"
 
 extern u32 gSceneExits[];
 
@@ -45,10 +54,23 @@ void FieldItem_JumpToLeader(s32 a, s32 b, s32 c);
 void Actor_StartScript(struct Actor *object, const void *data);
 void Actor_SetBlendMode(struct Actor *object, u32 value);
 
-extern s32 gTaopoSwamp_SteamPuffs;
-extern s32 gTaopoSwamp_PassageRows;
-extern s32 gTaopoSwamp_PoolFrames;
-extern const u8 gTaopoSwamp_PuffSteamScript[];
+/* VIEW(first): routine gTaopoSwamp_SteamPuffs as this part declared it; the
+ * joined file has another. */
+extern s32 gTaopoSwamp_SteamPuffs__first __asm__("gTaopoSwamp_SteamPuffs");
+#define gTaopoSwamp_SteamPuffs gTaopoSwamp_SteamPuffs__first
+/* VIEW(first): routine gTaopoSwamp_PassageRows as this part declared it; the
+ * joined file has another. */
+extern s32 gTaopoSwamp_PassageRows__first __asm__("gTaopoSwamp_PassageRows");
+#define gTaopoSwamp_PassageRows gTaopoSwamp_PassageRows__first
+/* VIEW(first): routine gTaopoSwamp_PoolFrames as this part declared it; the
+ * joined file has another. */
+extern s32 gTaopoSwamp_PoolFrames__first __asm__("gTaopoSwamp_PoolFrames");
+#define gTaopoSwamp_PoolFrames gTaopoSwamp_PoolFrames__first
+/* VIEW(first): routine gTaopoSwamp_PuffSteamScript as this part declared it;
+ * the joined file has another. */
+extern const u8
+    gTaopoSwamp_PuffSteamScript__first[] __asm__("gTaopoSwamp_PuffSteamScript");
+#define gTaopoSwamp_PuffSteamScript gTaopoSwamp_PuffSteamScript__first
 void Field_TryJumpForward(void);
 void TaopoSwamp_DarkenRoom(s32 a);
 void Func_020029a0(s32 message);
@@ -113,8 +135,14 @@ extern u8 gInventorySnapshot[];
 
 s32 Trig_Cos(s32 angle);
 void Vent_Bounce(struct Actor *object);
-extern const u8 gTaopoSwamp_PuffRises[];
-extern s32 gTaopoSwamp_SparkleFrame;
+/* VIEW(first): routine gTaopoSwamp_PuffRises as this part declared it; the
+ * joined file has another. */
+extern const u8 gTaopoSwamp_PuffRises__first[] __asm__("gTaopoSwamp_PuffRises");
+#define gTaopoSwamp_PuffRises gTaopoSwamp_PuffRises__first
+/* VIEW(first): routine gTaopoSwamp_SparkleFrame as this part declared it; the
+ * joined file has another. */
+extern s32 gTaopoSwamp_SparkleFrame__first __asm__("gTaopoSwamp_SparkleFrame");
+#define gTaopoSwamp_SparkleFrame gTaopoSwamp_SparkleFrame__first
 extern u8 gMapShapeGrid[];
 void Map_CenterOnFollowedPoint(void);
 void BlendScript_Suspend(void);
@@ -122,12 +150,28 @@ void TaopoSwamp_TwinkleStarDust(void);
 void TaopoSwamp_FocusMapOn(s32 x, s32 z);
 void TaopoSwamp_SaveFirmGround(void);
 void TaopoSwamp_FillDripSpot(s32 a, s32 id);
-extern const u8 gTaopoSwamp_DripFromCeilingScript[];
-extern const u8 gTaopoSwamp_DropFalls[];
+/* VIEW(first): routine gTaopoSwamp_DripFromCeilingScript as this part declared
+ * it; the joined file has another. */
+extern const u8 gTaopoSwamp_DripFromCeilingScript__first[] __asm__(
+    "gTaopoSwamp_DripFromCeilingScript");
+#define gTaopoSwamp_DripFromCeilingScript                                      \
+  gTaopoSwamp_DripFromCeilingScript__first
+/* VIEW(first): routine gTaopoSwamp_DropFalls as this part declared it; the
+ * joined file has another. */
+extern const u8 gTaopoSwamp_DropFalls__first[] __asm__("gTaopoSwamp_DropFalls");
+#define gTaopoSwamp_DropFalls gTaopoSwamp_DropFalls__first
 void TaopoSwamp_ShatterIcePillar(s32 id);
 void TaopoSwamp_BlowAwayPuddle(s32 id);
-extern const u8 gTaopoSwamp_SparkFades[];
-extern const u8 gTaopoSwamp_DripAtRandomScript[];
+/* VIEW(first): routine gTaopoSwamp_SparkFades as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gTaopoSwamp_SparkFades__first[] __asm__("gTaopoSwamp_SparkFades");
+#define gTaopoSwamp_SparkFades gTaopoSwamp_SparkFades__first
+/* VIEW(first): routine gTaopoSwamp_DripAtRandomScript as this part declared it;
+ * the joined file has another. */
+extern const u8 gTaopoSwamp_DripAtRandomScript__first[] __asm__(
+    "gTaopoSwamp_DripAtRandomScript");
+#define gTaopoSwamp_DripAtRandomScript gTaopoSwamp_DripAtRandomScript__first
 extern u8 MsgIThoughtI;
 void TaopoSwamp_PuffSteam(void);
 void TaopoSwamp_OpenPassage(void);
@@ -160,23 +204,27 @@ static __inline__ struct Actor *TaopoSwamp_CreateActor(s32 type, s32 x, s32 y,
 static __inline__ void Func_020029a8_(s32 a, s32 b, s32 c) {
   FieldItem_JumpToLeader(a, b, c);
 }
-#include "types.h"
-#include "actor.h"
-#include "field_sprite.h"
-#include "event_inline.h"
-#include "main_routine_work.h"
-#include "system/vector3.h"
-#include "iwram_call.h"
-#include "version.h"
-#include "event_work.h"
-#include "ram_buffer.h"
-#include "call.h"
-#include "scene_tables.h"
-#include "field.h"
-#include "graphics.h"
-#include "module/scene/scene.h"
-#include "module/scene/taopo_swamp.h"
-#include "module/tla.h"
+
+/// What The Lost Age's code declares for the files that use it, written once.
+
+s32 Vent_IsActive(s32 hole);
+
+void TaopoSwamp_FocusMapMiddle();
+void TaopoSwamp_JumpForward(void);
+
+void TaopoSwamp_GrowVine(void);
+
+void TaopoSwamp_DigHoleUnderfoot(void);
+
+void TaopoSwamp_StartMadPlantBattle(void);
+
+void TaopoSwamp_TremorPillar(void);
+
+void TaopoSwamp_SinkInMud(void);
+
+void TaopoSwamp_RiseOnBubble(void);
+
+void TaopoSwamp_StepOnFirmGround(void);
 
 s32 MapGrid_CheckCollision(struct Actor *object, struct Vector3 *position);
 void FieldEffect_StartBlankOverlay(s32 a);
@@ -191,15 +239,51 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern const u8 gTaopoSwamp_Placements[];
-extern const u8 gTaopoSwamp_Room2Placements[];
-extern const u8 gTaopoSwamp_Room4Placements[];
-extern const u8 gTaopoSwamp_Room5Placements[];
-extern const u8 gTaopoSwamp_Room7Placements[];
-extern const u8 gTaopoSwamp_Room8Placements[];
-extern const u8 gTaopoSwamp_Room10Placements[];
-extern const u8 gTaopoSwamp_Room9Placements[];
-extern const u8 gTaopoSwamp_Room11Placements[];
+/* VIEW(first): routine gTaopoSwamp_Placements as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gTaopoSwamp_Placements__first[] __asm__("gTaopoSwamp_Placements");
+#define gTaopoSwamp_Placements gTaopoSwamp_Placements__first
+/* VIEW(first): routine gTaopoSwamp_Room2Placements as this part declared it;
+ * the joined file has another. */
+extern const u8
+    gTaopoSwamp_Room2Placements__first[] __asm__("gTaopoSwamp_Room2Placements");
+#define gTaopoSwamp_Room2Placements gTaopoSwamp_Room2Placements__first
+/* VIEW(first): routine gTaopoSwamp_Room4Placements as this part declared it;
+ * the joined file has another. */
+extern const u8
+    gTaopoSwamp_Room4Placements__first[] __asm__("gTaopoSwamp_Room4Placements");
+#define gTaopoSwamp_Room4Placements gTaopoSwamp_Room4Placements__first
+/* VIEW(first): routine gTaopoSwamp_Room5Placements as this part declared it;
+ * the joined file has another. */
+extern const u8
+    gTaopoSwamp_Room5Placements__first[] __asm__("gTaopoSwamp_Room5Placements");
+#define gTaopoSwamp_Room5Placements gTaopoSwamp_Room5Placements__first
+/* VIEW(first): routine gTaopoSwamp_Room7Placements as this part declared it;
+ * the joined file has another. */
+extern const u8
+    gTaopoSwamp_Room7Placements__first[] __asm__("gTaopoSwamp_Room7Placements");
+#define gTaopoSwamp_Room7Placements gTaopoSwamp_Room7Placements__first
+/* VIEW(first): routine gTaopoSwamp_Room8Placements as this part declared it;
+ * the joined file has another. */
+extern const u8
+    gTaopoSwamp_Room8Placements__first[] __asm__("gTaopoSwamp_Room8Placements");
+#define gTaopoSwamp_Room8Placements gTaopoSwamp_Room8Placements__first
+/* VIEW(first): routine gTaopoSwamp_Room10Placements as this part declared it;
+ * the joined file has another. */
+extern const u8 gTaopoSwamp_Room10Placements__first[] __asm__(
+    "gTaopoSwamp_Room10Placements");
+#define gTaopoSwamp_Room10Placements gTaopoSwamp_Room10Placements__first
+/* VIEW(first): routine gTaopoSwamp_Room9Placements as this part declared it;
+ * the joined file has another. */
+extern const u8
+    gTaopoSwamp_Room9Placements__first[] __asm__("gTaopoSwamp_Room9Placements");
+#define gTaopoSwamp_Room9Placements gTaopoSwamp_Room9Placements__first
+/* VIEW(first): routine gTaopoSwamp_Room11Placements as this part declared it;
+ * the joined file has another. */
+extern const u8 gTaopoSwamp_Room11Placements__first[] __asm__(
+    "gTaopoSwamp_Room11Placements");
+#define gTaopoSwamp_Room11Placements gTaopoSwamp_Room11Placements__first
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -237,7 +321,10 @@ struct AnimationGroup;
 struct ActorSpriteView;
 struct ChildGroup;
 
-extern u8 gTaopoSwamp_SplashFades[];
+/* VIEW(first): routine gTaopoSwamp_SplashFades as this part declared it; the
+ * joined file has another. */
+extern u8 gTaopoSwamp_SplashFades__first[] __asm__("gTaopoSwamp_SplashFades");
+#define gTaopoSwamp_SplashFades gTaopoSwamp_SplashFades__first
 s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags);
 void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *record,
                                         u32 value);
@@ -399,8 +486,16 @@ void TaopoSwamp_PushPillarOverVent(s32 a, s32 id) {
   }
 }
 
-extern u8 gTaopoSwamp_Room5HoleVents[];
-extern u8 gTaopoSwamp_Room7HoleVents[];
+/* VIEW(first): routine gTaopoSwamp_Room5HoleVents as this part declared it; the
+ * joined file has another. */
+extern u8
+    gTaopoSwamp_Room5HoleVents__first[] __asm__("gTaopoSwamp_Room5HoleVents");
+#define gTaopoSwamp_Room5HoleVents gTaopoSwamp_Room5HoleVents__first
+/* VIEW(first): routine gTaopoSwamp_Room7HoleVents as this part declared it; the
+ * joined file has another. */
+extern u8
+    gTaopoSwamp_Room7HoleVents__first[] __asm__("gTaopoSwamp_Room7HoleVents");
+#define gTaopoSwamp_Room7HoleVents gTaopoSwamp_Room7HoleVents__first
 
 /// Stepping on a working vent: the gust pushes the leader back until a wall
 /// stops them, or down the hole.
@@ -721,7 +816,11 @@ void TaopoSwamp_FlickerPool(void) {
     FieldTask_Remove(TaopoSwamp_FlickerPool);
 }
 
-extern u8 gTaopoSwamp_TremorPillarScript[];
+/* VIEW(first): routine gTaopoSwamp_TremorPillarScript as this part declared it;
+ * the joined file has another. */
+extern u8 gTaopoSwamp_TremorPillarScript__first[] __asm__(
+    "gTaopoSwamp_TremorPillarScript");
+#define gTaopoSwamp_TremorPillarScript gTaopoSwamp_TremorPillarScript__first
 
 /// Tremor on the pillar with the huge rock on top, actor 19: the rock rolls off
 /// and lands, a red rock pops out, clods burst, the pool drains and the passage
@@ -886,18 +985,65 @@ void TaopoSwamp_ScoopStarDust(s32 a) { TaopoSwamp_ReturnHome(a, 64, 0x348); }
 
 void TaopoSwamp_ShowSparkleMessage(void) { Func_020029a0((s32)&MsgIThoughtI); }
 
-extern const u8 gTaopoSwamp_Triggers[];
-extern const u8 gTaopoSwamp_Room1Triggers[];
-extern const u8 gTaopoSwamp_Room2Triggers[];
-extern const u8 gTaopoSwamp_Room3Triggers[];
-extern const u8 gTaopoSwamp_Room4Triggers[];
-extern const u8 gTaopoSwamp_Room5Triggers[];
-extern const u8 gTaopoSwamp_Room6Triggers[];
-extern const u8 gTaopoSwamp_Room7Triggers[];
-extern const u8 gTaopoSwamp_Room8Triggers[];
-extern const u8 gTaopoSwamp_Room10Triggers[];
-extern const u8 gTaopoSwamp_Room9Triggers[];
-extern const u8 gTaopoSwamp_Room11Triggers[];
+/* VIEW(first): routine gTaopoSwamp_Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8 gTaopoSwamp_Triggers__first[] __asm__("gTaopoSwamp_Triggers");
+#define gTaopoSwamp_Triggers gTaopoSwamp_Triggers__first
+/* VIEW(first): routine gTaopoSwamp_Room1Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gTaopoSwamp_Room1Triggers__first[] __asm__("gTaopoSwamp_Room1Triggers");
+#define gTaopoSwamp_Room1Triggers gTaopoSwamp_Room1Triggers__first
+/* VIEW(first): routine gTaopoSwamp_Room2Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gTaopoSwamp_Room2Triggers__first[] __asm__("gTaopoSwamp_Room2Triggers");
+#define gTaopoSwamp_Room2Triggers gTaopoSwamp_Room2Triggers__first
+/* VIEW(first): routine gTaopoSwamp_Room3Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gTaopoSwamp_Room3Triggers__first[] __asm__("gTaopoSwamp_Room3Triggers");
+#define gTaopoSwamp_Room3Triggers gTaopoSwamp_Room3Triggers__first
+/* VIEW(first): routine gTaopoSwamp_Room4Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gTaopoSwamp_Room4Triggers__first[] __asm__("gTaopoSwamp_Room4Triggers");
+#define gTaopoSwamp_Room4Triggers gTaopoSwamp_Room4Triggers__first
+/* VIEW(first): routine gTaopoSwamp_Room5Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gTaopoSwamp_Room5Triggers__first[] __asm__("gTaopoSwamp_Room5Triggers");
+#define gTaopoSwamp_Room5Triggers gTaopoSwamp_Room5Triggers__first
+/* VIEW(first): routine gTaopoSwamp_Room6Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gTaopoSwamp_Room6Triggers__first[] __asm__("gTaopoSwamp_Room6Triggers");
+#define gTaopoSwamp_Room6Triggers gTaopoSwamp_Room6Triggers__first
+/* VIEW(first): routine gTaopoSwamp_Room7Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gTaopoSwamp_Room7Triggers__first[] __asm__("gTaopoSwamp_Room7Triggers");
+#define gTaopoSwamp_Room7Triggers gTaopoSwamp_Room7Triggers__first
+/* VIEW(first): routine gTaopoSwamp_Room8Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gTaopoSwamp_Room8Triggers__first[] __asm__("gTaopoSwamp_Room8Triggers");
+#define gTaopoSwamp_Room8Triggers gTaopoSwamp_Room8Triggers__first
+/* VIEW(first): routine gTaopoSwamp_Room10Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gTaopoSwamp_Room10Triggers__first[] __asm__("gTaopoSwamp_Room10Triggers");
+#define gTaopoSwamp_Room10Triggers gTaopoSwamp_Room10Triggers__first
+/* VIEW(first): routine gTaopoSwamp_Room9Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gTaopoSwamp_Room9Triggers__first[] __asm__("gTaopoSwamp_Room9Triggers");
+#define gTaopoSwamp_Room9Triggers gTaopoSwamp_Room9Triggers__first
+/* VIEW(first): routine gTaopoSwamp_Room11Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gTaopoSwamp_Room11Triggers__first[] __asm__("gTaopoSwamp_Room11Triggers");
+#define gTaopoSwamp_Room11Triggers gTaopoSwamp_Room11Triggers__first
 
 const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -1181,9 +1327,24 @@ DEFINE_DRIP_AT_RANDOM(TaopoSwamp_DripInRoom7, 0x1800000, 0x1900000)
 
 DEFINE_DRIP_AT_RANDOM(TaopoSwamp_DripInRoom8, 0x1a00000, 0x1600000)
 
-extern const u8 gTaopoSwamp_Room5Vents[], gTaopoSwamp_Room5VentPair[],
-    gTaopoSwamp_Room7Vents[], gTaopoSwamp_Room8Vents[],
-    gTaopoSwamp_RockRoomVents[];
+/* VIEW(first): variables gTaopoSwamp_Room5Vents, Room5VentPair, Room7Vents,
+ * Room8Vents and RockRoomVents as this part declared them; the joined file has
+ * others. */
+extern const u8
+    gTaopoSwamp_Room5Vents__first[] __asm__("gTaopoSwamp_Room5Vents");
+extern const u8
+    gTaopoSwamp_Room5VentPair__first[] __asm__("gTaopoSwamp_Room5VentPair");
+extern const u8
+    gTaopoSwamp_Room7Vents__first[] __asm__("gTaopoSwamp_Room7Vents");
+extern const u8
+    gTaopoSwamp_Room8Vents__first[] __asm__("gTaopoSwamp_Room8Vents");
+extern const u8
+    gTaopoSwamp_RockRoomVents__first[] __asm__("gTaopoSwamp_RockRoomVents");
+#define gTaopoSwamp_Room5Vents gTaopoSwamp_Room5Vents__first
+#define gTaopoSwamp_Room5VentPair gTaopoSwamp_Room5VentPair__first
+#define gTaopoSwamp_Room7Vents gTaopoSwamp_Room7Vents__first
+#define gTaopoSwamp_Room8Vents gTaopoSwamp_Room8Vents__first
+#define gTaopoSwamp_RockRoomVents gTaopoSwamp_RockRoomVents__first
 void TaopoSwamp_ResetMud(void);
 void Actor_SetWideSprite(s32 id, s32 wide);
 void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg);
@@ -1946,3 +2107,622 @@ void Vent_SetGust(s32 index, s32 value) {
 }
 
 DEFINE_VENTS_SET_ID(Vents_SetId)
+
+#undef REG_BLDALPHA
+#define REG_BLDALPHA (*(volatile u16 *)0x04000052)
+#undef VENT_WORK
+#undef DIFF
+#undef DEFINE_TAOPO_SWAMP_FREEZE_SPOT
+#undef DEFINE_DRIP_AT_RANDOM
+#undef VENT_TOUCHING
+#undef VENT_BOUNCE
+#undef VENT_AT
+#undef gTaopoSwamp_SteamPuffs
+#undef gTaopoSwamp_PassageRows
+#undef gTaopoSwamp_PoolFrames
+#undef gTaopoSwamp_PuffSteamScript
+#undef gTaopoSwamp_PuffRises
+#undef gTaopoSwamp_SparkleFrame
+#undef gTaopoSwamp_DripFromCeilingScript
+#undef gTaopoSwamp_DropFalls
+#undef gTaopoSwamp_SparkFades
+#undef gTaopoSwamp_DripAtRandomScript
+#undef gTaopoSwamp_Placements
+#undef gTaopoSwamp_Room2Placements
+#undef gTaopoSwamp_Room4Placements
+#undef gTaopoSwamp_Room5Placements
+#undef gTaopoSwamp_Room7Placements
+#undef gTaopoSwamp_Room8Placements
+#undef gTaopoSwamp_Room10Placements
+#undef gTaopoSwamp_Room9Placements
+#undef gTaopoSwamp_Room11Placements
+#undef gTaopoSwamp_SplashFades
+#undef gTaopoSwamp_Room5HoleVents
+#undef gTaopoSwamp_Room7HoleVents
+#undef gTaopoSwamp_TremorPillarScript
+#undef gTaopoSwamp_Triggers
+#undef gTaopoSwamp_Room1Triggers
+#undef gTaopoSwamp_Room2Triggers
+#undef gTaopoSwamp_Room3Triggers
+#undef gTaopoSwamp_Room4Triggers
+#undef gTaopoSwamp_Room5Triggers
+#undef gTaopoSwamp_Room6Triggers
+#undef gTaopoSwamp_Room7Triggers
+#undef gTaopoSwamp_Room8Triggers
+#undef gTaopoSwamp_Room10Triggers
+#undef gTaopoSwamp_Room9Triggers
+#undef gTaopoSwamp_Room11Triggers
+#undef gTaopoSwamp_Room7Vents
+#undef gTaopoSwamp_RockRoomVents
+#undef gTaopoSwamp_Room5Vents
+#undef gTaopoSwamp_Room8Vents
+#undef gTaopoSwamp_Room5VentPair
+
+void TaopoSwamp_FightFlower(void);
+/* VIEW(data): routine TaopoSwamp_BlowAwayBush as this part declared it; the
+ * joined file has another. */
+void TaopoSwamp_BlowAwayBush__data(void) __asm__("TaopoSwamp_BlowAwayBush");
+#define TaopoSwamp_BlowAwayBush TaopoSwamp_BlowAwayBush__data
+/* VIEW(data): routine TaopoSwamp_SinkPillar as this part declared it; the
+ * joined file has another. */
+void TaopoSwamp_SinkPillar__data(void) __asm__("TaopoSwamp_SinkPillar");
+#define TaopoSwamp_SinkPillar TaopoSwamp_SinkPillar__data
+/* VIEW(data): routine TaopoSwamp_ScoopHiddenItem as this part declared it; the
+ * joined file has another. */
+void TaopoSwamp_ScoopHiddenItem__data(void) __asm__(
+    "TaopoSwamp_ScoopHiddenItem");
+#define TaopoSwamp_ScoopHiddenItem TaopoSwamp_ScoopHiddenItem__data
+/* VIEW(data): routine TaopoSwamp_ScoopOtherHiddenItem as this part declared it;
+ * the joined file has another. */
+void TaopoSwamp_ScoopOtherHiddenItem__data(void) __asm__(
+    "TaopoSwamp_ScoopOtherHiddenItem");
+#define TaopoSwamp_ScoopOtherHiddenItem TaopoSwamp_ScoopOtherHiddenItem__data
+void TaopoSwamp_DigHole(void);
+/* VIEW(data): routine TaopoSwamp_FallThroughHole as this part declared it; the
+ * joined file has another. */
+void TaopoSwamp_FallThroughHole__data(void) __asm__(
+    "TaopoSwamp_FallThroughHole");
+#define TaopoSwamp_FallThroughHole TaopoSwamp_FallThroughHole__data
+/* VIEW(data): routine TaopoSwamp_PushPillarOverVent as this part declared it;
+ * the joined file has another. */
+void TaopoSwamp_PushPillarOverVent__data(void) __asm__(
+    "TaopoSwamp_PushPillarOverVent");
+#define TaopoSwamp_PushPillarOverVent TaopoSwamp_PushPillarOverVent__data
+/* VIEW(data): routine TaopoSwamp_StepOnVent as this part declared it; the
+ * joined file has another. */
+void TaopoSwamp_StepOnVent__data(void) __asm__("TaopoSwamp_StepOnVent");
+#define TaopoSwamp_StepOnVent TaopoSwamp_StepOnVent__data
+void TaopoSwamp_BlowFlowerOffLedge(void);
+/* VIEW(data): routine TaopoSwamp_DropPillarIntoGap as this part declared it;
+ * the joined file has another. */
+void TaopoSwamp_DropPillarIntoGap__data(void) __asm__(
+    "TaopoSwamp_DropPillarIntoGap");
+#define TaopoSwamp_DropPillarIntoGap TaopoSwamp_DropPillarIntoGap__data
+/* VIEW(data): routine TaopoSwamp_DouseVentSpot as this part declared it; the
+ * joined file has another. */
+void TaopoSwamp_DouseVentSpot__data(void) __asm__("TaopoSwamp_DouseVentSpot");
+#define TaopoSwamp_DouseVentSpot TaopoSwamp_DouseVentSpot__data
+/* VIEW(data): routine TaopoSwamp_FreezeVentSpot as this part declared it; the
+ * joined file has another. */
+void TaopoSwamp_FreezeVentSpot__data(void) __asm__("TaopoSwamp_FreezeVentSpot");
+#define TaopoSwamp_FreezeVentSpot TaopoSwamp_FreezeVentSpot__data
+/* VIEW(data): routine TaopoSwamp_FillDripSpot as this part declared it; the
+ * joined file has another. */
+void TaopoSwamp_FillDripSpot__data(void) __asm__("TaopoSwamp_FillDripSpot");
+#define TaopoSwamp_FillDripSpot TaopoSwamp_FillDripSpot__data
+/* VIEW(data): routine TaopoSwamp_FreezeDripSpot as this part declared it; the
+ * joined file has another. */
+void TaopoSwamp_FreezeDripSpot__data(void) __asm__("TaopoSwamp_FreezeDripSpot");
+#define TaopoSwamp_FreezeDripSpot TaopoSwamp_FreezeDripSpot__data
+/* VIEW(data): routine TaopoSwamp_CoolLavaRock as this part declared it; the
+ * joined file has another. */
+void TaopoSwamp_CoolLavaRock__data(void) __asm__("TaopoSwamp_CoolLavaRock");
+#define TaopoSwamp_CoolLavaRock TaopoSwamp_CoolLavaRock__data
+/* VIEW(data): routine TaopoSwamp_PushLavaRockIn as this part declared it; the
+ * joined file has another. */
+void TaopoSwamp_PushLavaRockIn__data(void) __asm__("TaopoSwamp_PushLavaRockIn");
+#define TaopoSwamp_PushLavaRockIn TaopoSwamp_PushLavaRockIn__data
+/* VIEW(data): routine TaopoSwamp_CoolPillarRock as this part declared it; the
+ * joined file has another. */
+void TaopoSwamp_CoolPillarRock__data(void) __asm__("TaopoSwamp_CoolPillarRock");
+#define TaopoSwamp_CoolPillarRock TaopoSwamp_CoolPillarRock__data
+/* VIEW(data): routine TaopoSwamp_PushPillarRockIn as this part declared it; the
+ * joined file has another. */
+void TaopoSwamp_PushPillarRockIn__data(void) __asm__(
+    "TaopoSwamp_PushPillarRockIn");
+#define TaopoSwamp_PushPillarRockIn TaopoSwamp_PushPillarRockIn__data
+/* VIEW(data): routine TaopoSwamp_CoolChestRock as this part declared it; the
+ * joined file has another. */
+void TaopoSwamp_CoolChestRock__data(void) __asm__("TaopoSwamp_CoolChestRock");
+#define TaopoSwamp_CoolChestRock TaopoSwamp_CoolChestRock__data
+/* VIEW(data): routine TaopoSwamp_PushChestRockIn as this part declared it; the
+ * joined file has another. */
+void TaopoSwamp_PushChestRockIn__data(void) __asm__(
+    "TaopoSwamp_PushChestRockIn");
+#define TaopoSwamp_PushChestRockIn TaopoSwamp_PushChestRockIn__data
+/* VIEW(data): routine TaopoSwamp_CoolExitRock as this part declared it; the
+ * joined file has another. */
+void TaopoSwamp_CoolExitRock__data(void) __asm__("TaopoSwamp_CoolExitRock");
+#define TaopoSwamp_CoolExitRock TaopoSwamp_CoolExitRock__data
+/* VIEW(data): routine TaopoSwamp_PushExitRockIn as this part declared it; the
+ * joined file has another. */
+void TaopoSwamp_PushExitRockIn__data(void) __asm__("TaopoSwamp_PushExitRockIn");
+#define TaopoSwamp_PushExitRockIn TaopoSwamp_PushExitRockIn__data
+/* VIEW(data): routine TaopoSwamp_CoolDarkRock as this part declared it; the
+ * joined file has another. */
+void TaopoSwamp_CoolDarkRock__data(void) __asm__("TaopoSwamp_CoolDarkRock");
+#define TaopoSwamp_CoolDarkRock TaopoSwamp_CoolDarkRock__data
+/* VIEW(data): routine TaopoSwamp_CoolLastRock as this part declared it; the
+ * joined file has another. */
+void TaopoSwamp_CoolLastRock__data(void) __asm__("TaopoSwamp_CoolLastRock");
+#define TaopoSwamp_CoolLastRock TaopoSwamp_CoolLastRock__data
+/* VIEW(data): routine TaopoSwamp_ScoopStarDust as this part declared it; the
+ * joined file has another. */
+void TaopoSwamp_ScoopStarDust__data(void) __asm__("TaopoSwamp_ScoopStarDust");
+#define TaopoSwamp_ScoopStarDust TaopoSwamp_ScoopStarDust__data
+void TaopoSwamp_ShowSparkleMessage(void);
+/* VIEW(data): routine TaopoSwamp_LandDrop as this part declared it; the joined
+ * file has another. */
+void TaopoSwamp_LandDrop__data(void) __asm__("TaopoSwamp_LandDrop");
+#define TaopoSwamp_LandDrop TaopoSwamp_LandDrop__data
+/* VIEW(data): routine TaopoSwamp_LandDrip as this part declared it; the joined
+ * file has another. */
+void TaopoSwamp_LandDrip__data(void) __asm__("TaopoSwamp_LandDrip");
+#define TaopoSwamp_LandDrip TaopoSwamp_LandDrip__data
+/* VIEW(data): routine TaopoSwamp_IsDropFalling as this part declared it; the
+ * joined file has another. */
+void TaopoSwamp_IsDropFalling__data(void) __asm__("TaopoSwamp_IsDropFalling");
+#define TaopoSwamp_IsDropFalling TaopoSwamp_IsDropFalling__data
+
+u32 gTaopoSwamp_Room5HoleVents[] = {
+    0x6090200,
+    0x1050604,
+};
+
+u32 gTaopoSwamp_Room7HoleVents[] = {
+    0x10003,
+    1,
+};
+
+// clang-format off
+u32 gTaopoSwamp_PuffSteamScript[] = {
+    22, 26, 0, 39, 2, 0x80010000,
+    23, 6, 0x10000, 0, 1, 13,
+    30, 0xc0010000, 38,
+};
+
+u32 gTaopoSwamp_TremorPillarScript[] = {
+    0, 40, 0x80010000, 22, 25, 0,
+    0, 1, 22, 25, 1, 0,
+    1, 13, 10, 0xc0010000, 38,
+};
+
+u32 gTaopoSwamp_SparkFades[] = {
+    0, 30, 38,
+};
+
+s32 gTaopoSwamp_DripAtRandomScript[] = {
+    46,
+    (s32)TaopoSwamp_LandDrop,
+    38,
+};
+
+s32 gTaopoSwamp_DripFromCeilingScript[] = {
+    46,
+    (s32)TaopoSwamp_LandDrip,
+    38,
+};
+
+s32 gTaopoSwamp_DropFalls[] = {
+    46,
+    (s32)TaopoSwamp_IsDropFalling,
+    38,
+};
+
+u16 gTaopoSwamp_Room5Vents[] = {
+    200, 200, 4, 264, 200, 4, 232, 216,
+    4, 280, 216, 4, 568, 200, 4, 632,
+    200, 4, 536, 216, 4, 600, 216, 4,
+    408, 232, 4, 472, 232, 4, 0,
+};
+
+u16 gTaopoSwamp_Room5VentPair[] = {
+    9, 10, 0,
+};
+
+u16 gTaopoSwamp_Room7Vents[] = {
+    424, 104, 4, 536, 136, 4, 0,
+};
+
+u16 gTaopoSwamp_Room8Vents[] = {
+    408, 408, 4, 472, 360, 4, 0,
+};
+
+u16 gTaopoSwamp_RockRoomVents[] = {
+    216, 184, 4, 312, 136, 4, 0, 0,
+};
+
+u32 gTaopoSwamp_SplashFades[] = {
+    0, 32, 38,
+};
+
+u32 gTaopoSwamp_PuffRises[] = {
+    0, 44, 22, 38, 0, 2,
+    0, 0, 0, 0, 1, 38,
+};
+
+struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+u32 gSceneExits[] = {
+    SCENE_EXITS(143),
+    SCENE_EXIT(1, 2, 35),
+    SCENE_EXIT(2, 144, 1),
+    SCENE_EXIT(3, 144, 2),
+    SCENE_EXITS(144),
+    SCENE_EXIT(1, 143, 2),
+    SCENE_EXIT(2, 143, 3),
+    SCENE_EXIT(3, 145, 3),
+    SCENE_EXIT(4, 148, 4),
+    SCENE_EXIT(5, 145, 5),
+    SCENE_EXITS(145),
+    SCENE_EXIT(3, 144, 3),
+    SCENE_EXIT(5, 144, 5),
+    SCENE_EXIT(6, 147, 2),
+    SCENE_EXIT(7, 147, 3),
+    SCENE_EXIT(8, 145, 9),
+    SCENE_EXIT(9, 145, 8),
+    SCENE_EXITS(146),
+    SCENE_EXIT(1, 147, 1),
+    SCENE_EXIT(2, 147, 4),
+    SCENE_EXITS(147),
+    SCENE_EXIT(1, 146, 1),
+    SCENE_EXIT(2, 145, 6),
+    SCENE_EXIT(3, 145, 7),
+    SCENE_EXIT(4, 146, 2),
+    SCENE_EXIT(10, 146, 10),
+    SCENE_EXIT(11, 146, 11),
+    SCENE_EXIT(12, 146, 12),
+    SCENE_EXIT(13, 146, 13),
+    SCENE_EXIT(14, 146, 14),
+    SCENE_EXIT(15, 146, 15),
+    SCENE_EXIT(16, 146, 16),
+    SCENE_EXITS(148),
+    SCENE_EXIT(1, 149, 1),
+    SCENE_EXIT(4, 144, 4),
+    SCENE_EXITS(149),
+    SCENE_EXIT(1, 148, 1),
+    SCENE_EXIT(2, 150, 2),
+    SCENE_EXIT(3, 150, 3),
+    SCENE_EXIT(4, 149, 5),
+    SCENE_EXIT(5, 149, 4),
+    SCENE_EXIT(10, 150, 9),
+    SCENE_EXIT(12, 150, 9),
+    SCENE_EXITS(150),
+    SCENE_EXIT(1, 152, 1),
+    SCENE_EXIT(2, 149, 2),
+    SCENE_EXIT(3, 149, 3),
+    SCENE_EXIT(4, 150, 5),
+    SCENE_EXIT(5, 150, 4),
+    SCENE_EXITS(152),
+    SCENE_EXIT(1, 150, 1),
+    SCENE_EXIT(2, 153, 2),
+    SCENE_EXIT(3, 151, 3),
+    SCENE_EXIT(4, 151, 4),
+    SCENE_EXITS(151),
+    SCENE_EXIT(3, 152, 3),
+    SCENE_EXIT(4, 152, 4),
+    SCENE_EXITS(153),
+    SCENE_EXIT(2, 152, 2),
+    SCENE_EXIT(3, 153, 4),
+    SCENE_EXIT(4, 153, 3),
+    SCENE_EXIT(5, 153, 6),
+    SCENE_EXIT(6, 153, 5),
+    SCENE_EXITS_END,
+};
+
+struct ActorPlacement gTaopoSwamp_Placements[] = {
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gTaopoSwamp_Room2Placements[] = {
+    {307, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(128), FACING_NORTH, 2, 0},
+    {307, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(112), FACING_NORTH, 2, 0},
+    {307, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(112), FACING_NORTH, 2, 0},
+    {307, CONDITION_ALWAYS, 1, PIXELS(600), 0, PIXELS(176), FACING_NORTH, 2, 0},
+    {307, CONDITION_ALWAYS, 1, PIXELS(712), 0, PIXELS(256), FACING_NORTH, 2, 0},
+    {299, CONDITION_ALWAYS, 1, PIXELS(760), 0, PIXELS(272), FACING_NORTH, 2, 0},
+    {273, 0x8e5, 1, PIXELS(216), 0, PIXELS(264), FACING_NORTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gTaopoSwamp_Room4Placements[] = {
+    {243, 0x3b, 1, PIXELS(440), 0, PIXELS(632), FACING_SOUTH, 0, 0},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gTaopoSwamp_Room5Placements[] = {
+    {243, 0x3b, 1, PIXELS(408), 0, PIXELS(312), FACING_SOUTH, 0, 0},
+    {272, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(232), FACING_NORTH, 2, 0},
+    {272, CONDITION_ALWAYS, 1, PIXELS(440), 0, PIXELS(248), FACING_NORTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gTaopoSwamp_Room7Placements[] = {
+    {290, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(136), FACING_NORTH, 2, 0},
+    {272, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(424), FACING_NORTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gTaopoSwamp_Room8Placements[] = {
+    {407, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(200), FACING_NORTH, 2, 0},
+    {407, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(200), FACING_NORTH, 2, 0},
+    {290, CONDITION_ALWAYS, 1, PIXELS(408), 0, PIXELS(440), FACING_NORTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gTaopoSwamp_Room10Placements[] = {
+    {489, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTH, 2, 0},
+    {292, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(248), FACING_NORTH, 2, 0},
+    {292, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTH, 2, 0},
+    {272, CONDITION_ALWAYS, 1, PIXELS(504), 0, PIXELS(248), FACING_NORTH, 2, 0},
+    {272, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(296), FACING_NORTH, 2, 1},
+    {272, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(312), FACING_NORTH, 2, 1},
+    {272, CONDITION_ALWAYS, 1, PIXELS(552), 0, PIXELS(360), FACING_NORTH, 2, 1},
+    {272, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(376), FACING_NORTH, 2, 1},
+    {328, CONDITION_ALWAYS, 1, PIXELS(384), 0, PIXELS(320), FACING_NORTH, 2, 0},
+    {328, CONDITION_ALWAYS, 1, PIXELS(416), 0, PIXELS(336), FACING_NORTH, 2, 1},
+    {328, CONDITION_ALWAYS, 1, PIXELS(368), 0, PIXELS(352), FACING_NORTH, 2, 1},
+    {328, CONDITION_ALWAYS, 1, PIXELS(504), 0, PIXELS(248), FACING_NORTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gTaopoSwamp_Room9Placements[] = {
+    {292, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(360), FACING_NORTH, 2, 0},
+    {292, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(216), FACING_NORTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gTaopoSwamp_Room11Placements[] = {
+    {292, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(632), FACING_NORTH, 2, 0},
+    {292, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(632), FACING_NORTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+struct Trigger gTaopoSwamp_Triggers[] = {
+    {TRIGGER_TABLE_END},
+};
+
+struct Trigger gTaopoSwamp_Room1Triggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_TABLE_END},
+};
+
+struct Trigger gTaopoSwamp_Room2Triggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {0xce01, 3, IF_FLAG_SET(0x8e0), 3},
+    {0xce01, 4, IF_FLAG_SET(0x8e3), 4},
+    {0xce01, 5, IF_FLAG_SET(0x8e4), 5},
+    {TRIGGER_STEP, 60, CONDITION_ALWAYS, EVENT(TaopoSwamp_SinkInMud)},
+    {TRIGGER_STEP, 61, CONDITION_ALWAYS, EVENT(TaopoSwamp_RiseOnBubble)},
+    {TRIGGER_STEP, 62, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnFirmGround)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS, EVENT(TaopoSwamp_BlowAwayBush)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 9, CONDITION_ALWAYS, EVENT(TaopoSwamp_BlowAwayBush)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, EVENT(TaopoSwamp_BlowAwayBush)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, CONDITION_ALWAYS, EVENT(TaopoSwamp_BlowAwayBush)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 12, CONDITION_ALWAYS, EVENT(TaopoSwamp_BlowAwayBush)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 13, CONDITION_ALWAYS, EVENT(TaopoSwamp_GrowVine)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT(TaopoSwamp_SinkPillar)},
+    {TRIGGER_TABLE_END},
+};
+
+struct Trigger gTaopoSwamp_Room3Triggers[] = {
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {49, 6, CONDITION_ALWAYS, 6},
+    {33, 7, CONDITION_ALWAYS, 7},
+    {49, 8, CONDITION_ALWAYS, 8},
+    {33, 9, CONDITION_ALWAYS, 9},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 51, 0x301, EVENT(TaopoSwamp_ScoopHiddenItem)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 50, 0x300, EVENT(TaopoSwamp_ScoopOtherHiddenItem)},
+    {TRIGGER_TABLE_END},
+};
+
+struct Trigger gTaopoSwamp_Room4Triggers[] = {
+    {33, 1, CONDITION_ALWAYS, 1},
+    {33, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(TaopoSwamp_FightFlower)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30, CONDITION_ALWAYS, EVENT(TaopoSwamp_DigHole)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 31, CONDITION_ALWAYS, EVENT(TaopoSwamp_DigHoleUnderfoot)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 32, CONDITION_ALWAYS, EVENT(TaopoSwamp_StartMadPlantBattle)},
+    {TRIGGER_TABLE_END},
+};
+
+struct Trigger gTaopoSwamp_Room5Triggers[] = {
+    {49, 1, CONDITION_ALWAYS, 1},
+    {33, 2, CONDITION_ALWAYS, 2},
+    {49, 3, CONDITION_ALWAYS, 3},
+    {49, 4, CONDITION_ALWAYS, 4},
+    {0x4602, 10, CONDITION_ALWAYS, EVENT(TaopoSwamp_FallThroughHole)},
+    {0x4602, 11, CONDITION_ALWAYS, EVENT(TaopoSwamp_FallThroughHole)},
+    {0x4602, 12, CONDITION_ALWAYS, EVENT(TaopoSwamp_FallThroughHole)},
+    {0x4602, 13, CONDITION_ALWAYS, EVENT(TaopoSwamp_FallThroughHole)},
+    {0x4602, 14, CONDITION_ALWAYS, EVENT(TaopoSwamp_FallThroughHole)},
+    {0x4602, 15, CONDITION_ALWAYS, EVENT(TaopoSwamp_FallThroughHole)},
+    {0x4602, 16, CONDITION_ALWAYS, EVENT(TaopoSwamp_FallThroughHole)},
+    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {TRIGGER_STEP, 14, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {TRIGGER_STEP, 15, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {TRIGGER_STEP, 16, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {TRIGGER_STEP, 17, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {TRIGGER_STEP, 18, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0xa6d, EVENT(TaopoSwamp_PushPillarOverVent)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0xa6e, EVENT(TaopoSwamp_PushPillarOverVent)},
+    {9, 0, CONDITION_ALWAYS, EVENT(TaopoSwamp_PushPillarOverVent)},
+    {TRIGGER_RAISED, 100, 0x310, EVENT(TaopoSwamp_BlowFlowerOffLedge)},
+    {TRIGGER_TABLE_END},
+};
+
+struct Trigger gTaopoSwamp_Room6Triggers[] = {
+    {49, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_TABLE_END},
+};
+// clang-format on
+
+struct Trigger gTaopoSwamp_Room7Triggers[] = {
+    {33, 1, CONDITION_ALWAYS, 1},
+    {49, 2, CONDITION_ALWAYS, 2},
+    {49, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {0x4602, 10, CONDITION_ALWAYS, EVENT(TaopoSwamp_FallThroughHole)},
+    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0xa6f,
+     EVENT(TaopoSwamp_DropPillarIntoGap)},
+    {9, 0, CONDITION_ALWAYS, EVENT(TaopoSwamp_DropPillarIntoGap)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, PSYNERGY_PHASE_ACTS), 8, 0x220,
+     EVENT(TaopoSwamp_DouseVentSpot)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, IF_FLAG_SET(0x222),
+     EVENT(TaopoSwamp_FreezeVentSpot)},
+    {TRIGGER_TABLE_END},
+};
+
+struct Trigger gTaopoSwamp_Room8Triggers[] = {
+    {49, 1, CONDITION_ALWAYS, 1},
+    {33, 2, CONDITION_ALWAYS, 2},
+    {33, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x308, 0},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, PSYNERGY_PHASE_ACTS), 10, 0x220,
+     EVENT(TaopoSwamp_FillDripSpot)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 10, IF_FLAG_SET(0x222),
+     EVENT(TaopoSwamp_FreezeDripSpot)},
+    {TRIGGER_TABLE_END},
+};
+
+u32 gTaopoSwamp_SteamPuffs[] = {
+    112,
+};
+
+u32 gTaopoSwamp_PassageRows[] = {
+    120,
+};
+
+u32 gTaopoSwamp_PoolFrames[] = {
+    24,
+};
+
+struct Trigger gTaopoSwamp_Room10Triggers[] = {
+    {33, 1, CONDITION_ALWAYS, 1},
+    {49, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0x331,
+     EVENT(TaopoSwamp_CoolLavaRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 10, 0x334,
+     EVENT(TaopoSwamp_CoolPillarRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x332,
+     EVENT(TaopoSwamp_PushLavaRockIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x335,
+     EVENT(TaopoSwamp_PushPillarRockIn)},
+    {9, 0, 0x335, EVENT(TaopoSwamp_PushPillarRockIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 11, 0x330,
+     EVENT(TaopoSwamp_TremorPillar)},
+    {TRIGGER_TABLE_END},
+};
+
+s32 gTaopoSwamp_Room9Triggers[] = {
+    1,
+    (s32)0xffff0003,
+    3,
+    1,
+    (s32)0xffff0004,
+    4,
+    2,
+    (s32)0xffff000a,
+    (s32)TaopoSwamp_StepOnVent,
+    2,
+    (s32)0xffff000b,
+    (s32)TaopoSwamp_StepOnVent,
+#if TLA_PATCH_1 /* Absent from the Japanese edition. */
+    0x602,
+    (s32)0xffff0040,
+    (s32)TaopoSwamp_JumpForward,
+#endif
+    0x2115,
+    0x3380008,
+    (s32)TaopoSwamp_CoolChestRock,
+    0x2115,
+    0x33b0009,
+    (s32)TaopoSwamp_CoolExitRock,
+    0x8c15,
+    0x3390008,
+    (s32)TaopoSwamp_PushChestRockIn,
+    0x8c15,
+    0x33c0009,
+    (s32)TaopoSwamp_PushExitRockIn,
+    -1,
+    0,
+    0,
+};
+
+struct Trigger gTaopoSwamp_Room11Triggers[] = {
+    {33, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {83, 50, 0x348, EVENT(TaopoSwamp_ShowSparkleMessage)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0x340,
+     EVENT(TaopoSwamp_CoolDarkRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0x342,
+     EVENT(TaopoSwamp_CoolLastRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x341, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x343, 0},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 50, 0x348,
+     EVENT(TaopoSwamp_ScoopStarDust)},
+    {TRIGGER_TABLE_END},
+};
+
+u32 gTaopoSwamp_SparkleFrame[] = {
+    0,
+};
+#undef TaopoSwamp_BlowAwayBush
+#undef TaopoSwamp_SinkPillar
+#undef TaopoSwamp_ScoopHiddenItem
+#undef TaopoSwamp_ScoopOtherHiddenItem
+#undef TaopoSwamp_FallThroughHole
+#undef TaopoSwamp_PushPillarOverVent
+#undef TaopoSwamp_StepOnVent
+#undef TaopoSwamp_DropPillarIntoGap
+#undef TaopoSwamp_DouseVentSpot
+#undef TaopoSwamp_FreezeVentSpot
+#undef TaopoSwamp_FillDripSpot
+#undef TaopoSwamp_FreezeDripSpot
+#undef TaopoSwamp_CoolLavaRock
+#undef TaopoSwamp_PushLavaRockIn
+#undef TaopoSwamp_CoolPillarRock
+#undef TaopoSwamp_PushPillarRockIn
+#undef TaopoSwamp_CoolChestRock
+#undef TaopoSwamp_PushChestRockIn
+#undef TaopoSwamp_CoolExitRock
+#undef TaopoSwamp_PushExitRockIn
+#undef TaopoSwamp_CoolDarkRock
+#undef TaopoSwamp_CoolLastRock
+#undef TaopoSwamp_ScoopStarDust
+#undef TaopoSwamp_LandDrop
+#undef TaopoSwamp_LandDrip
+#undef TaopoSwamp_IsDropFalling

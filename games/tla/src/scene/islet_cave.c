@@ -5,16 +5,94 @@
 #include "shared/effects.h"
 #include "field/field.h"
 #include "system/main_routine_work.h"
-
 #include "types.h"
-#include "ram_buffer.h"
-#include "dma.h"
-#include "io_reg.h"
-#include "event_inline.h"
+#include "system/ram_buffer.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "field/event_inline.h"
 #include "event_work.h"
 #include "module/scene/garoh.h"
-#include "module/scene/islet_cave.h"
 #include "module/scene/scene.h"
+#include "system/task.h"
+#include "actor.h"
+#include "scene_tables.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_ids.h"
+#include "stddef.h"
+#include "shared/tables.h"
+#include "objcmd.h"
+
+/// What The Lost Age's code declares for the files that use it, written once.
+
+void Func_02000328(void);
+
+s32 List_CountEntries(u16 *list);
+
+void PaletteCycle_Fade(void);
+
+void Func_020008c8(void);
+
+void Func_020003b0(void);
+
+void Func_020003bc(void);
+
+void Func_02000508(void);
+
+void Func_02000544(void);
+
+void Func_020005fc(void);
+
+void Func_020009a4(void);
+
+void Func_020009b0(void);
+
+void Func_020009bc(void);
+
+void Func_020009c8(void);
+
+void Func_020009d4(void);
+
+void Func_020009e0(void);
+
+void Func_020009ec(void);
+void Func_02000aec(void);
+void Func_02000bb0(void);
+void Func_02000c1c(void);
+
+void Func_02000c8c(void);
+
+void Func_02000d54(void);
+void Func_02000db8(void);
+void Func_02000e1c(void);
+void Func_02000e7c(void);
+void Func_02000ee0(void);
+void Func_02000f44(void);
+void Func_02000fa8(void);
+void Func_02001034(void);
+void Func_020010ac(void);
+
+void Func_0200115c(void);
+
+extern u32 gData_020013fc[];
+
+extern s32 gData_02001418[];
+extern s16 gData_020019d4[];
+
+extern u16 *gData_02001a24;
+extern u16 *Data_02001a2c;
+extern u16 gData_02001a14;
+extern u16 gData_02001a20;
+extern u16 gData_02001a30;
+extern u16 gData_02001a34;
+void Teleport_PlaySparks(void);
+void FieldEffect_StartBlankOverlay(s32 mode);
+void BattleEffect_PackTargetBuffer(void);
 
 extern u16 *gPaletteColors;
 extern u16 *gPaletteCycleSlots;
@@ -24,8 +102,6 @@ extern u16 *gPaletteCycleSlots;
 /// blend.
 DEFINE_PALETTE_SET_COLORS(Palette_SetColors, gData_02001a24, gPaletteColors,
                           Data_02001a2c, gPaletteCycleSlots, Func_02000328)
-
-#include "task.h"
 
 extern u16 gPaletteCycleTimer;
 
@@ -53,8 +129,6 @@ DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gPaletteCycleTimer, gData_02001a20,
                           gData_02001a34, gData_02001a24, gData_02001a14,
                           gPaletteColors)
 
-#include "actor.h"
-
 void Func_02000328(void) {
   struct IsletCaveEventWork *work = Ram_HeapSlots->eventWork;
   s32 saved;
@@ -80,7 +154,6 @@ void Func_02000328(void) {
   work->value1ac = saved;
 }
 
-#include "event_work.h"
 #include "text/msg_ids.h"
 
 void Func_020003b0(void) {
@@ -98,8 +171,6 @@ s32 Func_020003c8(s32 arg0) {
   return 0;
 }
 
-#include "scene_tables.h"
-
 s32 Func_020003d4(struct Actor *object) {
   u8 *phase = (u8 *)object + 0x62;
   s32 step = *phase & 63;
@@ -115,28 +186,36 @@ s32 Func_020003d4(struct Actor *object) {
   return -1;
 }
 
-#include "battle.h"
-#include "game.h"
-#include "graphics.h"
-#include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-#include "scene_ids.h"
-
-extern const u8 gData_02001548[];
-extern const u8 gData_02001668[];
-extern const u8 gData_02001740[];
-extern const u8 gData_02001788[];
-extern const u8 gData_02001914[];
-extern const u8 gData_020019b0[];
+/* VIEW(first): routine gData_02001548 as this part declared it; the joined file
+ * has another. */
+extern const u8 gData_02001548__first[] __asm__("gData_02001548");
+#define gData_02001548 gData_02001548__first
+/* VIEW(first): routine gData_02001668 as this part declared it; the joined file
+ * has another. */
+extern const u8 gData_02001668__first[] __asm__("gData_02001668");
+#define gData_02001668 gData_02001668__first
+/* VIEW(first): routine gData_02001740 as this part declared it; the joined file
+ * has another. */
+extern const u8 gData_02001740__first[] __asm__("gData_02001740");
+#define gData_02001740 gData_02001740__first
+/* VIEW(first): routine gData_02001788 as this part declared it; the joined file
+ * has another. */
+extern const u8 gData_02001788__first[] __asm__("gData_02001788");
+#define gData_02001788 gData_02001788__first
+/* VIEW(first): routine gData_02001914 as this part declared it; the joined file
+ * has another. */
+extern const u8 gData_02001914__first[] __asm__("gData_02001914");
+#define gData_02001914 gData_02001914__first
+/* VIEW(first): routine gData_020019b0 as this part declared it; the joined file
+ * has another. */
+extern const u8 gData_020019b0__first[] __asm__("gData_020019b0");
+#define gData_020019b0 gData_020019b0__first
 
 const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -225,9 +304,11 @@ void Func_02000580(s32 scale) {
   } while (i < count);
 }
 
-#include "stddef.h"
-
-extern const struct IsletCaveEntry gData_020019ec[];
+/* VIEW(first): routine gData_020019ec as this part declared it; the joined file
+ * has another. */
+extern const struct IsletCaveEntry
+    gData_020019ec__first[] __asm__("gData_020019ec");
+#define gData_020019ec gData_020019ec__first
 
 void Func_020005fc(void) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -274,9 +355,19 @@ loop:
   Event_End();
 }
 
-extern u16 gData_0200134c[], gData_0200135c[], gData_02001388[],
-    gData_020013b4[];
-extern u8 gData_02001454[];
+/* VIEW(first): variables gData_0200134c, gData_0200135c and gData_02001388 as
+ * this part declared them; the joined file has others. */
+extern u16 gData_0200134c__first[] __asm__("gData_0200134c");
+extern u16 gData_0200135c__first[] __asm__("gData_0200135c");
+extern u16 gData_02001388__first[] __asm__("gData_02001388");
+extern u16 gData_020013b4[];
+#define gData_0200134c gData_0200134c__first
+#define gData_0200135c gData_0200135c__first
+#define gData_02001388 gData_02001388__first
+/* VIEW(first): routine gData_02001454 as this part declared it; the joined file
+ * has another. */
+extern u8 gData_02001454__first[] __asm__("gData_02001454");
+#define gData_02001454 gData_02001454__first
 
 s32 Scene_Initialize(void) {
   s32 scene, dim;
@@ -660,3 +751,206 @@ void Func_0200115c(void) {
     Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, 9, 0);
   }
 }
+
+#undef DEFINE_ISLET_CAVE_ARRIVE_AT
+#undef DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS
+#undef FIELD_AT
+#undef gData_02001548
+#undef gData_02001668
+#undef gData_02001740
+#undef gData_02001788
+#undef gData_02001914
+#undef gData_020019b0
+#undef gData_020019ec
+#undef gData_0200134c
+#undef gData_0200135c
+#undef gData_02001388
+#undef gData_02001454
+
+/* VIEW(data): routine Func_020003c8 as this part declared it; the joined file
+ * has another. */
+void Func_020003c8__data(void) __asm__("Func_020003c8");
+#define Func_020003c8 Func_020003c8__data
+/* VIEW(data): routine Func_020003d4 as this part declared it; the joined file
+ * has another. */
+void Func_020003d4__data(void) __asm__("Func_020003d4");
+#define Func_020003d4 Func_020003d4__data
+void Func_02000b4c(void);
+void Func_02000cf0(void);
+
+// clang-format off
+s16 gData_0200134c[] = {
+    9, 10, 11, 12, 13, 14, 15, -1,
+};
+
+s16 gData_0200135c[] = {
+    23, 25, 22, 23, 25, 22, 23, 25,
+    22, 23, 25, 22, 23, 25, 22, 23,
+    25, 22, 23, 25, 22, -1,
+};
+
+s16 gData_02001388[] = {
+    30, 27, 31, 22, 21, 31, 20, 18,
+    31, 13, 11, 27, 11, 8, 24, 8,
+    5, 21, 31, 31, 31, -1,
+};
+
+DEFINE_G_DATA_020013B4(gData_020013b4, 14, 9, 10, 11, 12, 13)
+
+u32 gData_020013fc[] = {
+    SC_SET(SW_SCALE_Y, 0x14ccc),
+    SC_SET(SW_SCALE_X, 0x14ccc),
+    SC_END,
+};
+
+s32 gData_02001418[] = {
+    SC_SET(SW_MOTION, 0),
+    SC_ADD(SW_Y, PIXELS(-4)),
+    SC_SET(SW_SCALE_X, 0xcccc),
+    SC_SET(SW_SCALE_Y, 0xcccc),
+    SC_CALL(Func_020003c8),
+    SC_END,
+};
+
+s32 gData_02001454[] = {
+    SC_CALL(Func_020003d4),
+    SC_END,
+};
+
+struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+u32 gSceneExits[] = {
+    SCENE_EXITS(136),
+    SCENE_EXIT_IF(1, 135, 5, -1),
+    SCENE_EXIT_IF(2, 136, 3, -1),
+    SCENE_EXIT_IF(3, 136, 2, -1),
+    SCENE_EXIT_IF(4, 136, 5, -1),
+    SCENE_EXIT_IF(5, 136, 4, -1),
+    SCENE_EXIT_IF(6, 136, 7, -1),
+    SCENE_EXIT_IF(7, 136, 6, -1),
+    SCENE_EXIT_IF(8, 137, 1, -1),
+    SCENE_EXIT_IF(9, 136, 10, -1),
+    SCENE_EXIT_IF(10, 136, 9, -1),
+    SCENE_EXITS(137),
+    SCENE_EXIT_IF(1, 136, 8, -1),
+    SCENE_EXIT_IF(2, 137, 3, -1),
+    SCENE_EXIT_IF(3, 137, 2, -1),
+    SCENE_EXIT_IF(4, 137, 5, -1),
+    SCENE_EXIT_IF(5, 137, 4, -1),
+    SCENE_EXIT_IF(6, 137, 7, -1),
+    SCENE_EXIT_IF(7, 137, 6, -1),
+    SCENE_EXIT_IF(8, 137, 9, -1),
+    SCENE_EXIT_IF(9, 137, 8, -1),
+    SCENE_EXIT_IF(10, 138, 1, -1),
+    SCENE_EXITS(138),
+    SCENE_EXIT_IF(1, 137, 10, -1),
+    SCENE_EXITS_END,
+};
+
+struct ActorPlacement gData_02001548[] = {
+    {170, 0x9cf, (s32)gData_020013fc, PIXELS(184), 0, PIXELS(184), FACING_SOUTH, 2, 0},
+    {306, CONDITION_ALWAYS, (s32)gData_02001418, PIXELS(152), 0, PIXELS(144), FACING_NORTH, 2, 0},
+    {306, CONDITION_ALWAYS, (s32)gData_02001418, PIXELS(216), 0, PIXELS(144), FACING_NORTH, 2, 1},
+    {306, CONDITION_ALWAYS, (s32)gData_02001418, PIXELS(136), 0, PIXELS(176), FACING_NORTH, 2, 1},
+    {306, CONDITION_ALWAYS, (s32)gData_02001418, PIXELS(232), 0, PIXELS(176), FACING_NORTH, 2, 1},
+    {306, CONDITION_ALWAYS, (s32)gData_02001418, PIXELS(152), 0, PIXELS(224), FACING_NORTH, 2, 1},
+    {306, CONDITION_ALWAYS, (s32)gData_02001418, PIXELS(216), 0, PIXELS(224), FACING_NORTH, 2, 1},
+    {306, CONDITION_ALWAYS, (s32)gData_02001418, PIXELS(136), 0, PIXELS(256), FACING_NORTH, 2, 1},
+    {306, CONDITION_ALWAYS, (s32)gData_02001418, PIXELS(232), 0, PIXELS(256), FACING_NORTH, 2, 1},
+    {306, CONDITION_ALWAYS, (s32)gData_02001418, PIXELS(136), 0, PIXELS(304), FACING_NORTH, 2, 1},
+    {306, CONDITION_ALWAYS, (s32)gData_02001418, PIXELS(232), 0, PIXELS(304), FACING_NORTH, 2, 1},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gData_02001668[] = {
+    {298, CONDITION_ALWAYS, 7, PIXELS(168), 0, PIXELS(504), FACING_SOUTH, 2, 0},
+    {298, CONDITION_ALWAYS, 7, PIXELS(344), 0, PIXELS(232), FACING_SOUTH, 2, 0},
+    {298, CONDITION_ALWAYS, 7, PIXELS(776), 0, PIXELS(152), FACING_SOUTH, 2, 0},
+    {298, CONDITION_ALWAYS, 7, PIXELS(872), 0, PIXELS(152), FACING_SOUTH, 2, 0},
+    {298, CONDITION_ALWAYS, 7, PIXELS(776), 0, PIXELS(376), FACING_SOUTH, 2, 0},
+    {298, CONDITION_ALWAYS, 7, PIXELS(872), 0, PIXELS(376), FACING_SOUTH, 2, 0},
+    {297, CONDITION_ALWAYS, 7, PIXELS(824), 0, PIXELS(472), FACING_SOUTH, 2, 0},
+    {243, 0x3c, 1, PIXELS(824), 0, PIXELS(88), FACING_SOUTH, 0, 0},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gData_02001740[] = {
+    {252, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(184), FACING_SOUTH, 2, 0},
+    {244, 0x55, 1, PIXELS(336), 0, PIXELS(184), FACING_SOUTH, 0, 0},
+    {SCENE_TABLE_END},
+};
+
+struct Trigger gData_02001788[] = {
+    {0x21, 1, CONDITION_ALWAYS, 1},
+    {0x31, 2, CONDITION_ALWAYS, 2},
+    {0x21, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
+    {0x602, 20, CONDITION_ALWAYS, EVENT(Func_02000aec)},
+    {0x8602, 20, CONDITION_ALWAYS, EVENT(Func_02000b4c)},
+    {0x602, 21, CONDITION_ALWAYS, EVENT(Func_02000bb0)},
+    {0x8602, 21, CONDITION_ALWAYS, EVENT(Func_02000c1c)},
+    {0x602, 22, CONDITION_ALWAYS, EVENT(Func_02000c8c)},
+    {0x8602, 22, CONDITION_ALWAYS, EVENT(Func_02000cf0)},
+    {0x602, 23, CONDITION_ALWAYS, EVENT(Func_02000d54)},
+    {0x8602, 23, CONDITION_ALWAYS, EVENT(Func_02000db8)},
+    {0x602, 24, CONDITION_ALWAYS, EVENT(Func_02000e1c)},
+    {0x8602, 24, CONDITION_ALWAYS, EVENT(Func_02000e7c)},
+    {0x602, 25, CONDITION_ALWAYS, EVENT(Func_02000ee0)},
+    {0x8602, 25, CONDITION_ALWAYS, EVENT(Func_02000f44)},
+    {0xc602, 26, CONDITION_ALWAYS, EVENT(Func_02000fa8)},
+    {0x4602, 26, CONDITION_ALWAYS, EVENT(Func_02001034)},
+    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Func_020009a4)},
+    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Func_020009b0)},
+    {TRIGGER_STEP, 22, CONDITION_ALWAYS, EVENT(Func_020009bc)},
+    {TRIGGER_STEP, 23, CONDITION_ALWAYS, EVENT(Func_020009c8)},
+    {TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT(Func_020009d4)},
+    {TRIGGER_STEP, 25, CONDITION_ALWAYS, EVENT(Func_020009e0)},
+    {TRIGGER_STEP, 26, CONDITION_ALWAYS, EVENT(Func_020009ec)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_020003b0)},
+    {0x9c05, 50, CONDITION_ALWAYS, EVENT(Func_02000508)},
+    {0x9c05, 51, CONDITION_ALWAYS, EVENT(Func_02000544)},
+    {TRIGGER_TABLE_END},
+};
+
+struct Trigger gData_02001914[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
+    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_020005fc)},
+    {0xc602, 4, CONDITION_ALWAYS, EVENT(Func_020005fc)},
+    {0xc602, 6, CONDITION_ALWAYS, EVENT(Func_020005fc)},
+    {0xc602, 8, CONDITION_ALWAYS, EVENT(Func_020005fc)},
+    {0xc602, 10, CONDITION_ALWAYS, EVENT(Func_020005fc)},
+    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 8, 0x230, EVENT(Func_0200115c)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_020003bc)},
+    {TRIGGER_TABLE_END},
+};
+
+struct Trigger gData_020019b0[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_STEP, 10, 0x9cf, EVENT(Func_020010ac)},
+    {TRIGGER_TABLE_END},
+};
+
+s16 gData_020019d4[] = {
+    72, 4, 2, 2, 2, 73, 4, 2,
+    2, 2, -1, 0,
+};
+// clang-format on
+
+s32 gData_020019ec[] = {
+    (s32)gData_020019d4, 0x40048, (s32)gData_020019d4, 0x40054,
+    (s32)gData_020019d4, 0x40060, (s32)gData_020019d4, 0x4006b,
+    (s32)gData_020019d4, 0x40076,
+};
+#undef Func_020003c8
+#undef Func_020003d4

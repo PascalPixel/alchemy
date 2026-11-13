@@ -4,12 +4,12 @@
 /// after naming the function (WAVE_SCROLL) and its 160-line table
 /// (WAVE_SCROLL_LINES).
 #include "types.h"
-#include "system.h"
-#include "ram_buffer.h"
-#include "iwram_call.h"
-#include "dma.h"
-#include "io_reg.h"
-#include "frame.h"
+#include "system/system.h"
+#include "system/ram_buffer.h"
+#include "system/iwram_call.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "system/frame.h"
 
 extern s16 WAVE_SCROLL_LINES[];
 

@@ -231,7 +231,7 @@ enum TimberRoomsBCActorId {
 };
 
 /// The napping worker's pose, from his sprite's animation table
-/// (graphics/sprite/spr_114.tsv).
+/// (graphics/sprite/bald_muscular_man.tsv).
 ///
 /// It is one frame held, lying asleep on his side.
 enum { ANIM_WORKER_LIE_ASLEEP = 6 };

@@ -19,38 +19,48 @@
 #include "shared/jupiter_lighthouse.h"
 #include "shared/actors.h"
 #include "shared/effects.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
-#include "ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
 #include "event_work.h"
 #include "module/field/field.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+#include "call.h"
+#include "system/field_effect.h"
+#include "field/field_coordinate.h"
+#include "map.h"
+#include "graphics/vram_tab.h"
+#include "system/task.h"
+#include "item_icon.h"
+#include "field/cell_target.h"
+#include "objcmd.h"
+#include "system/iwram_call.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "field_event.h"
+#include "system/frame.h"
+#include "field_sprite.h"
+#include "shared/cracked_tile.h"
+#include "system/heap_release.h"
+#include "system/io_write.h"
+#include "module/field/field_effect.h"
 
 /// Where a stone face's whirlwind starts: an unseen actor moved to the face
 /// that blows, which the whirlwind takes its place and heading from.
 enum { ACTOR_WHIRLWIND_SOURCE = ACTOR_FIRST_PLACED };
-#include "module/scene/scene.h"
-#include "module/tla.h"
-#include "call.h"
-#include "field_effect.h"
-#include "field_coordinate.h"
-#include "map.h"
-#include "vram_tab.h"
-#include "task.h"
-#include "item_icon.h"
 
-#include "field/cell_target.h"
-#include "objcmd.h"
 struct Actor;
 struct LightOam;
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
@@ -58,7 +68,11 @@ void JupiterLighthouse_LoadPalettes(s32 mode);
 extern s16 gLightSpriteTile;
 extern struct Actor *gLightSpriteActors[];
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
-void Oam_AddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
+/* VIEW(first): routine Oam_AddSpriteAtDepthClamped as this part declared it;
+ * the joined file has another. */
+void Oam_AddSpriteAtDepthClamped__first(
+    struct LightOam *oam, s32 depth) __asm__("Oam_AddSpriteAtDepthClamped");
+#define Oam_AddSpriteAtDepthClamped Oam_AddSpriteAtDepthClamped__first
 void JupiterLighthouse_StopHovering(void);
 void Whirlwind_CarryLeader(void);
 extern s32 gWhirlwindRiding;
@@ -192,7 +206,11 @@ void JupiterLighthouse_StepOnCrackedTileOrWhirlwind(s32 arg) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-void CrackedTiles_Find(s32 kind, s32 x, s32 z, s32 a, s32 b);
+/* VIEW(first): routine CrackedTiles_Find as this part declared it; the joined
+ * file has another. */
+void CrackedTiles_Find__first(s32 kind, s32 x, s32 z, s32 a,
+                              s32 b) __asm__("CrackedTiles_Find");
+#define CrackedTiles_Find CrackedTiles_Find__first
 
 /// The scene's set-up: screen effect 0x204, actor 64's action variant 3 and
 /// actor 8 held still, then CrackedTiles_Find and CrackedTile_PlaceLanding by
@@ -224,14 +242,10 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-#include "shared/scene_set_arrival_flags.h"
+#include "shared/scene_set_arrival_flags.c"
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void Map_CenterOnFollowedPoint(void);
-#include "iwram_call.h"
-#include "dma.h"
-#include "io_reg.h"
-#include "field_event.h"
 
 extern s32 gPaletteCyclePausesInEvents;
 
@@ -257,9 +271,6 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
                              MapGrid_SetAttributeBAt)
 
-#include "frame.h"
-#include "field_sprite.h"
-
 DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
@@ -275,8 +286,12 @@ DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
 
 extern u8 gLightSpriteCount[];
 
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags, struct EffectOptions *options);
+/* VIEW(first): routine FieldEffect_Spawn as this part declared it; the joined
+ * file has another. */
+void FieldEffect_Spawn__first(
+    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
+    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
+#define FieldEffect_Spawn FieldEffect_Spawn__first
 
 DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper, Actor_SelectAnimation,
                              Whirlwind_Update, FieldEffect_Spawn)
@@ -435,3 +450,176 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_MediumScript,
     gFieldEffect_LongScript,
 };
+
+#include "../field/field_effect/move.c"
+
+#undef Oam_AddSpriteAtDepthClamped
+#undef CrackedTiles_Find
+#undef FieldEffect_Spawn
+// @file
+// The hover-tile hall of Jupiter Lighthouse's right tower: its copy of the
+// effect spawner, and the cracked tiles, found, cracked and fallen through.
+
+extern const s32 *gFieldEffect_DurationScripts[];
+
+/* VIEW(cracked_tiles): routine Actor_SelectAnimation as this part declared it;
+ * the joined file has another. */
+void Actor_SelectAnimation__cracked_tiles(
+    struct FieldEffect *effect, s32 mode) __asm__("Actor_SelectAnimation");
+#define Actor_SelectAnimation Actor_SelectAnimation__cracked_tiles
+/* VIEW(cracked_tiles): routine Actor_StartScript as this part declared it; the
+ * joined file has another. */
+void Actor_StartScript__cracked_tiles(
+    struct FieldEffect *effect, const s32 *script) __asm__("Actor_StartScript");
+#define Actor_StartScript Actor_StartScript__cracked_tiles
+
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options) {
+  struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct FieldEffect *effect;
+  struct FieldSprite *sprite;
+  const s32 *script;
+
+  if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
+    effect = ((struct FieldEffect *)Import_ActorCreate(options->type, x, y, z));
+  else
+    effect = ((struct FieldEffect *)Import_ActorCreate(285, x, y, z));
+  if (effect == 0)
+    return;
+
+  sprite = effect->sprite;
+  Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Actor_StartScript(effect,
+                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
+  effect->motionFlags = 0;
+  Actor_SetSpriteFlags(effect, 0);
+  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
+  effect->velocity.x = velocityX;
+  effect->velocity.y = velocityY;
+  effect->velocity.z = velocityZ;
+  Scene_SetActorSpritePriority(effect,
+                               ((struct FieldSprite *)party->sprite)->priority);
+  effect->scaleRateX = 0;
+  effect->scaleRateY = 0;
+  effect->spin = 0;
+
+  if ((flags & 0xffff0000) == 0 || options == 0)
+    return;
+  if ((flags & EFFECT_USE_PALETTE) != 0)
+    FieldActor_SetSpriteColor(effect, options->palette);
+  if ((flags & EFFECT_USE_PRIORITY) != 0) {
+    effect->priorityFlags &= ~1;
+    Scene_SetActorSpritePriority(effect, options->priority);
+  }
+  if ((flags & EFFECT_USE_START_SCALE) != 0) {
+    effect->scaleX = options->startScaleX;
+    effect->scaleY = options->startScaleY;
+  }
+  if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
+    s32 target;
+    s32 frames;
+
+    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
+    target = options->targetScaleX;
+    frames = script[3];
+    if ((flags & EFFECT_USE_START_SCALE) != 0) {
+      effect->scaleRateX = (target - effect->scaleX) / frames;
+      effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
+    } else {
+      effect->scaleRateX = (target - 0x10000) / frames;
+      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
+    }
+  }
+  if ((flags & EFFECT_USE_SCRIPT) != 0) {
+    Actor_SelectAnimation(effect, 1);
+    Actor_StartScript(effect, options->script);
+  }
+  if ((flags & EFFECT_USE_ROTATION) != 0)
+    sprite->rotation = options->rotation;
+  if ((flags & EFFECT_USE_SPIN) != 0)
+    effect->spin = options->spin;
+  if ((flags & EFFECT_USE_UPDATE) != 0)
+    effect->update = options->update;
+}
+
+// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+// leader steps on.
+#define CELL_TABLE gCrackedTiles
+#define CELL_SPRITE_DRAW CrackedTiles_Update
+#define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
+#include "../field/map/cell_sprite.c"
+
+DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find, gCrackedTiles, CrackedTiles_Update)
+
+DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
+
+// Centers the leader on its cell, plays sound 161 and copies the cell below
+// the table's source cell over the leader's, keeping the source column's and
+// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// one of the table's cells.
+DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
+
+/* VIEW(s1648): tag struct CellTarget as struct CellTarget__s1648; cell_target.h
+ * has another definition; tried with the definition the rest of the object has,
+ * CrackedTile_Fall moves: 2 of 131 instructions in tla-ja. */
+struct CellTarget__s1648 {
+  s16 firstFlag;
+  s16 flagByte;
+  s16 kind;
+  s16 x;
+  s16 z;
+  s16 count;
+  s16 current;
+  s16 shown;
+  s16 tile;
+};
+
+DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1648,
+                         Leader_CenterInCell)
+
+#include "../field/field_effect/advance_motion.c"
+
+#undef CELL_TABLE
+#undef CELL_SPRITE_DRAW
+#undef CELL_PUSH_SLOT_ENTRY
+#undef Actor_SelectAnimation
+#undef Actor_StartScript
+// @file
+// The hover-tile hall of Jupiter Lighthouse's right tower: the cracked tiles'
+// steps and landings.
+
+struct CellTarget;
+struct CellTargetEntry;
+void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
+extern struct CellTarget gCrackedTiles;
+void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
+void JupiterLighthouse_StopHovering(void);
+void Whirlwind_CarryLeader(void);
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
+
+/* VIEW(cracked_tile_steps): routine FieldEffect_Spawn as this part declared it;
+ * the joined file has another. */
+void FieldEffect_Spawn__cracked_tile_steps(
+    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
+    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
+#define FieldEffect_Spawn FieldEffect_Spawn__cracked_tile_steps
+
+DEFINE_CRACKED_TILE_DROP_IN(CrackedTile_DropIn, FieldEffect_Spawn)
+
+void GameFlag_SetByte(s32 flag, s32 value);
+/* VIEW(cracked_tile_steps): routine CrackedTile_Fall as this part declared it;
+ * the joined file has another. */
+void CrackedTile_Fall__cracked_tile_steps(
+    struct CellTarget *work,
+    struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
+#define CrackedTile_Fall CrackedTile_Fall__cracked_tile_steps
+
+DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
+                          CrackedTile_Fall)
+
+DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
+                                  CrackedTile_DropIn)
+#undef FieldEffect_Spawn
+#undef CrackedTile_Fall

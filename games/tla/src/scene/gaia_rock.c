@@ -2,35 +2,69 @@
 /// The scene code of overlay 0x680, in ROM order.
 
 #include "shared/tables.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "flags.h"
 #include "scene_tables.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_ids.h"
 #include "actor.h"
 #include "version.h"
-#include "event_inline.h"
-#include "ram_buffer.h"
+#include "field/event_inline.h"
+#include "system/ram_buffer.h"
 #include "call.h"
 #include "event_work.h"
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "worka0.h"
-#include "frame.h"
+#include "system/frame.h"
 #include "field/event_work.h"
-#include "text/msg_ids.h"
 #include "map.h"
-#include "task.h"
+#include "system/task.h"
 #include "actor_view.h"
 #include "module/field/event_commands.h"
-#include "module/scene/gaia_rock.h"
+#include "objcmd.h"
+#include "text/msg_ids.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+struct Actor;
+
+extern s16 gData_02000f5c[];
+extern u32 gData_02000f8c[];
+
+void Func_02000bc0(s32 id, s32 flag);
+
+extern struct ActorPlacement gData_0200102c[];
+extern struct ActorPlacement gData_02001044[];
+
+extern struct ActorPlacement gData_02001194[];
+extern s16 gData_020012cc[];
+
+void Scene_TalkToActor(s32 a);
+
+extern struct Trigger gData_020013c8[];
+extern struct Trigger gData_020014b8[];
+extern struct Trigger gData_02001554[];
+extern u32 gData_020015c0[];
+
+void Actor_SelectAnimation(struct Actor *object, s32 a);
+
+extern s32 gData_020015c4[];
+
+void Func_02000dd0(void);
+void Func_02000b2c(s32 id, s32 x, s32 y, s32 z);
+
+extern s32 gData_020016cc[];
+
+extern u32 gData_02001688[];
+extern u32 gData_0200101c[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -629,8 +663,6 @@ fall:
 }
 
 void Func_02000dd0(void) { Task_AddFrame(Func_02000ab4, TASK_PASS_VBLANK); }
-
-#include "objcmd.h"
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 24, 0, 408, FACING_EAST, 0, -1, -1, -1, -1, 0},

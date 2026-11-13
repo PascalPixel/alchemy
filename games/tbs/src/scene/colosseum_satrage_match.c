@@ -197,7 +197,7 @@ enum ColosseumSatrageMatchActorId {
   /// (MsgColossoPlaceCalledBoard)
   ACTOR_ROLLING_LOG_CENTER,
   /// The log Force strikes to knock ACTOR_FALLING_LOG down.
-  /// ★ Named from what the player sees: a log (spr_259.png) above the Board
+  /// ★ Named from what the player sees: a log (falling_log.png) above the Board
   /// Walk, which Force strikes (its render)
   ACTOR_FORCE_TARGET,
   /// The plant Growth grows up The Wall.
@@ -229,7 +229,7 @@ enum ColosseumSatrageMatchActorId {
   /// channel (its render)
   ACTOR_BOARD_WALK_FIRST_PLATFORM,
   /// Knocked down onto the Board Walk by Force on ACTOR_FORCE_TARGET.
-  /// ★ Named from what the player sees: a log (spr_259.png) that spins down
+  /// ★ Named from what the player sees: a log (falling_log.png) that spins down
   /// onto the Board Walk when Force strikes (its render)
   ACTOR_FALLING_LOG = ACTOR_BOARD_WALK_FIRST_PLATFORM + 4,
   /// A young man with fair hair who works the shifting floor stage's lifts.
@@ -311,7 +311,7 @@ enum {
   FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11
 };
 
-/// SPRITE_FALLING_LOG's animations (spr_259.tsv).
+/// SPRITE_FALLING_LOG's animations (falling_log.tsv).
 enum FallingLogAnimation {
   FALLING_LOG_ANIMATION_STANDING = 3, ///< standing on end
   /// Lying across the water, bobbing.

@@ -1,0 +1,96 @@
+grid:128x128	at:0,0	fill:0:0:0
+fff
+
+
+
+
+
+0 0 0 0 0 0 0 0 0 fff fff fff fff fff fff 5 fff fff 5 6 5 2 fff
+0 0 0 0 0 fff 1 6 5 fff fff fff fff fff fff f fff fff fff fff f 13 fff
+0 0 0 0 0 fff b fff 13 fff fff fff fff fff fff 1c fff fff 1c 1d 1c 1c fff
+0 0 0 0 0 1 fff fff 1c fff fff fff fff fff fff 27 fff fff 27 fff 27 fff fff
+0 0 0 0 16 b b fff 27 fff 29 2a fff:10 fff fff fff:255 fff:0:128 fff fff:255 fff fff fff fff
+0 0 0 0 16 21 18 fff fff:255 fff d 2c fff 36:255 33:255 3c:255 fff fff fff fff fff fff fff
+0 0 0 0 fff b fff fff fff fff fff fff 3c:255 fff fff fff fff fff fff fff fff fff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0:0:128
+0 0 0 0 fff 18 fff fff fff 33:255 fff:255 fff fff fff fff 58 fff 55 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0:0:64
+0 0 0 0 0 fff fff 33:255 55 4f fff fff fff 33:255 fff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0:0:64
+0 0 0 0 0 fff fff fff fff fff fff fff 5a:255 fff fff
+0 0 0 0 0 0 58 58 5c fff fff fff fff fff
+0 0 0 0 0 0 0 0 58 55 0 16 fff fff fff:255 0 1 4 fff fff
+0 0 0 0 0 0 0 0 0 0 0 fff:255 fff fff fff:255 3 b 2c fff fff
+0 0 0 0 0 0 0 0 0 0 0 b:255 fff 3c:255 fff:255 14 18 fff 5a fff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 fff
+0 0 0 0 0 0 0 0 0 0 0 21:255 fff fff fff fff fff 67 fff 3f
+0 0 0 0 0 0 0 0 0 0 0 b 36:255 58 3d fff 2d 29 fff:255 29
+0 0 0 0 0 0 0 0 0 0 0 18 fff fff fff fff fff d e d
+0 0 fff 0 0 0 0 0 0 0 55 fff fff 58 fff 6f fff 33:255 fff fff
+0 0 fff 0 0 0 0 0 0 0 0 5c fff 6f fff fff 6f fff 6c fff
+0 0 0 0 0 0 0 0 0 fff 0 0 0 0 0 0 fff 58 fff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 fff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 fff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 fff fff fff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 fff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 fff fff 6c 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 fff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 58 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 fff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 58:1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 fff
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 fff
+
+
+
+
+
+
+
+
+
+
+
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 fff 91
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 fff 98 0 0 0 0 9e fff
+
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 9e af 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 a1 0 0 0 0 ad 91
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ad 91 0 83 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ae 98
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ae 98 0 fff
+0 0 0 0 ad 83 83 83 83 83 83 83 83 83 83 83 83 83 fff af
+
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 83 0 0 0 0 ad 91
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 b0 0 0 0 0 ae 98
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 83 0 0 ad 91
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 b0 0 0 ae 98
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 a1 0 0 0 0 9e af
+
+
+
+
+
+
+
+
+
+
+0 0 0 0 0 0 0 0 0 0 0 0 0 b0
+
+0 0 0 fff fff b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3
+0 0 0 b2 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3
+0 0 0 b2 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3
+0 0 0 b2 b3 b3 b3 b3 b3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 b3 b3
+0 0 0 b2 b3 fff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 fff b3
+0 0 0 b2 b3 fff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 fff b3
+0 0 0 b2 b3 fff 0 0 0 0 0 0 0:255 0:255 0:255 0:255 0 0 0 0 0 0 fff b5 b3
+0 0 0 b2 fff 0 0 0 0 0 0 0 0:255 0 0 0:255 0 0 0 0 0 0 fff b7 b3
+0 0 0 b2 fff fff 0 0 0 0 0 0 0:255 0:255 0:255 0:255 0 0 0 0 0 0 fff fff b3
+0 0 0 b2 ba fff 0 0 0 0 0 0 0 0 0 0 0 0 be fff fff c1 bf b3 b3
+0 0 0 b2 bc fff 0 0 0 0 0 0 0 0 0 be c1 c2 bf b3 b3 b3 b3 b3 b3
+0 0 0 b2 fff fff 0 0 0 0 0 0 0 0 0 b5 b3 b3 b3 b3 b3 b3 b3 b3 b3
+0 0 0 b2 b3 c4 c5 0 0 0 0 0 0 0 be bf b3 b3 b3 b3 b3 b3 b3 b3 b3
+0 0 0 b2 b3 b3 c4 c2 c1 c2 c1 c5 0 fff b7 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3
+0 0 0 b2 b3 b3 b3 b3 b3 b3 b3 ba c0 fff 0 b3 0 0 0 0 b3 b3 b3 b3 b3
+0 0 0 b2 b3 b3 b3 b3 b3 b3 b3 fff 0 fff 0 0 0 0 0 0 b5 b3 b3 b3 b3
+0 0 0 b2 b3 b3 b3 b3 b3 b3 ba c0 0 0 0 0 0 0 0 b9 b7 b3 b3 b3 b3
+0 0 0 b2 b3 b3 b3 b3 b3 b3 bc c3 0 0 0 0 0 0 0 bb b5 b3 b3 b3 b3
+0 0 0 b2 b3 b3 b3 b3 b3 b3 ba c0 0 0 0 0 0 0 0 b9 b7 b3 b3 b3 b3
+0 0 0 b2 b3 b3 b3 b3 b3 b3 bc c3 0 0 0 0 0 0 0 bb b5 b3 b3 b3 b3
+0 0 0 b2 b3 b3 b3 b3 b3 b3 c4 c5 0 0 0 0 0 0 0 fff b7 b3 b3 b3 b3
+0 0 0 b2 b3 b3 b3 b3 b3 b3 b3 c4 c1 c2 c1 c5 0 0 0 be bf b3 b3 b3 b3
+0 0 0 b2 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 ba c0 0 ca b5 b3 b3 b3 b3 b3
+0 0 0 b2 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 bc c3 0 fff b7 b3 b3 b3 b3 b3
+0 0 0 b2 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 c4 c5 0 be bf b3 b3 b3 b3 b3
+0 0 0 b2 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 ba c0 b7 b3 b3 b3 b3 b3 b3
+0 0 0 b2 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 c4 c1 bf b3 b3 b3 b3 b3 b3
+0 0 0 b2 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3 b3

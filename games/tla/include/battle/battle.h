@@ -6,7 +6,7 @@
 
 #include "types.h"
 #include "edition.h"
-#include "vector3.h"
+#include "system/vector3.h"
 
 struct BattleActionRecord;
 struct BattleEffectArgument;

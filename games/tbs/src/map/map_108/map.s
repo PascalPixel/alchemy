@@ -22,7 +22,7 @@ Field_Map108:
 	.incbin "games/tbs/src/map/map_108/map.grid.lz"
 	.balign 4, 0
 .LField_Map108_ANIMATION:
-	.incbin "games/tbs/src/map/map_037/tileset_anims.script.lz"
+	.incbin "games/tbs/src/map/kolima/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_Map108_BLEND:
 	.incbin "games/tbs/src/map/map_108/blend.script.lz"

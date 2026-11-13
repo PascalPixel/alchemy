@@ -2,12 +2,12 @@
 #define TLA_MARS_LIGHTHOUSE_ENTRANCE_ROOM_H
 
 #include "types.h"
-#include "system.h"
-#include "ram_buffer.h"
-#include "main_routine_work.h"
+#include "system/system.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
 #include "actor.h"
 #include "flag_call.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "map.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))

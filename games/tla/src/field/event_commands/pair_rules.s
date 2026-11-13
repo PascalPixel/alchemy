@@ -2,7 +2,28 @@
 @ 16-byte rows, terminated by key -1.
 	.global gParty_PairResolveRules
 gParty_PairResolveRules:
-	.incbin "games/tla/src/field/event_commands/pair_rules.table"
+	.2byte 9, -1, 9, 2, 0, 0; .4byte 49152
+	.2byte 10, -1, 12, 1, 10085, 8126; .4byte 16384
+	.2byte 13, -1, 12, 1, 10085, 8126; .4byte 16384
+	.2byte 44, -1, 45, 9, 10591, 9119; .4byte 16384
+	.2byte 55, -1, 58, 1, 12226, 11002; .4byte 16384
+	.2byte 61, -1, 66, 2, 12226, 11002; .4byte 16384
+	.2byte 95, -1, 96, 7, 11051, 9317; .4byte 24576
+	.2byte 105, -1, 105, 6, 9282, 9162; .4byte 16384
+	.2byte 113, -1, 113, 19, 9386, 7896; .4byte 32768
+	.2byte 110, -1, 112, 20, 9386, 7896; .4byte 32768
+	.2byte 139, -1, 58, 4, 12882, 9865; .4byte 16384
+	.2byte 154, -1, 58, 5, 14401, 8348; .4byte 57344
+	.2byte 171, -1, 170, 6, 13313, 6018; .4byte 57344
+	.2byte 182, -1, 184, 1, 10888, 6375; .4byte 57344
+	.2byte 202, -1, 202, 18, 13074, 1176; .4byte 16384
+	.2byte 236, -1, 237, 6, 7271, 8269; .4byte 0
+	.2byte 242, -1, 246, 6, 7262, 5678; .4byte 32768
+	.2byte 266, -1, 267, 5, 8830, 5957; .4byte 24576
+	.2byte 270, -1, 274, 7, 8975, 1543; .4byte 49152
+	.2byte 132, -1, 132, 7, 12844, 11740; .4byte 32768
+	.2byte 312, -1, 312, 1, 0, 0; .4byte 49152
+	.2byte -1, -1, -1, -1, -1, -1; .4byte -1
 @ BattleBackground_SelectForMap reads one word at a time; 0 terminates (bit 31 is a marker).
 	.global gScene_BattleBackgroundRules
 gScene_BattleBackgroundRules:

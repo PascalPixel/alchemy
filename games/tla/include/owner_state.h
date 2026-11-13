@@ -2,7 +2,7 @@
 #define ALCHEMY_OWNER_STATE_H
 
 #include "types.h"
-#include "battle_unit.h"
+#include "battle/battle_unit.h"
 #include "static_assert.h"
 
 struct OwnerInventoryState {

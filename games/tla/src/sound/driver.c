@@ -1,6 +1,6 @@
 #include "sound_driver.h"
 #include "types.h"
-#include "../../include/system/io_reg.h"
+#include "system/io_reg.h"
 
 s32 __divsi3(s32 numerator, s32 denominator);
 void Sound_LoadCommandTable(SoundCommand *table);

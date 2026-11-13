@@ -5,14 +5,14 @@
 
 #include "../battle_internal.h"
 #include "flag_call.h"
-#include "frame.h"
+#include "system/frame.h"
 #include "gamepak/far_call/window.h"
 #include "module/battle/battle.h"
 #include "gamepak/far_call/battle_effect.h"
 #include "gamepak/far_call/field_sequence.h"
 #include "module/battle/presentation.h"
 #include "module/system/system.h"
-#include "range_falloff.h"
+#include "battle/range_falloff.h"
 
 /// With the front line down and someone living, sends the reserve members in
 /// to take the fallen ones' places, as many as there are of both.

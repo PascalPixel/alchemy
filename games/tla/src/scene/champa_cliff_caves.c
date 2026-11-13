@@ -3,13 +3,38 @@
 
 // ---- games/tla/src/scene/champa_cliff_caves.c ----
 
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "types.h"
 #include "flags.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
 #include "field_event.h"
 #include "scene_call.h"
+#include "field/event.h"
+#include "event_work.h"
+#include "field/field.h"
+#include "system/heap_release.h"
+#include "item_icon.h"
+#include "module/field/event_commands.h"
+#include "scene_tables.h"
+#include "module/scene/scene.h"
+#include "module/system/system.h"
+#include "graphics/resource.h"
+#include "system/system.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "scene_ids.h"
+#include "version.h"
+#include "call.h"
+#include "actor.h"
+#include "flag_call.h"
+#include "system/dma.h"
+#include "system/task.h"
+#include "macros.h"
 #include "text/msg_ids.h"
 
 struct WarpTarget {
@@ -26,7 +51,11 @@ struct RiseObject {
   s32 update;
 };
 
-extern const struct WarpTarget gData_02003d10;
+/* VIEW(champa_cliff_caves): routine gData_02003d10 as this part declared it;
+ * the joined file has another. */
+extern const struct WarpTarget
+    gData_02003d10__champa_cliff_caves __asm__("gData_02003d10");
+#define gData_02003d10 gData_02003d10__champa_cliff_caves
 
 void ChampaCliffCaves_OpenDoorAndEnter(const struct WarpTarget *warp, s32 door,
                                        s32 mode);
@@ -47,17 +76,51 @@ static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
 static __inline__ void Func_02003534_(s32 actor, s32 angle) {
   Actor_FaceDirectionById(actor, angle);
 }
-#include "event.h"
-#include "event_work.h"
-#include "field.h"
-#include "heap_release.h"
-#include "item_icon.h"
-#include "module/field/event_commands.h"
-#include "module/scene/champa_cliff_caves.h"
-#include "module/scene/scene.h"
-#include "module/system/system.h"
-#include "resource.h"
-#include "system.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+extern struct ActorPlacement gData_0200375c[];
+extern struct ActorPlacement gData_020037a4[];
+extern struct ActorPlacement gData_020038ac[];
+extern struct ActorPlacement gData_0200390c[];
+extern struct ActorPlacement gData_02003984[];
+extern struct ActorPlacement gData_02003aec[];
+extern struct ActorPlacement gData_02003b94[];
+extern struct ActorPlacement gData_02003c0c[];
+extern struct Trigger gData_02003e7c[];
+extern struct Trigger gData_02003ffc[];
+extern struct Trigger gData_02004104[];
+
+void Func_02001774(void);
+void Func_02001868(void);
+void Func_020005e8(s32 value);
+void Func_0200067c(s32 mode);
+
+void FieldCamera_WaitForArrival(void);
+
+void Func_020032a4(void);
+void Func_02000804(s32 item);
+void Func_02000978(s32 item);
+void Func_020029f8(s32 id, s32 mode);
+void Func_02002c88(void);
+void Func_02002de4(void);
+void Func_02002d34(void);
+
+void Func_02000208(void);
+
+void Func_020003bc(void);
+
+void Func_020003ec(void);
+void Func_0200115c(void);
+
+extern s16 gData_02003ce4[];
+extern s16 gData_02003cfa[];
+
+struct FlashSprite;
+
+void FieldEffect_StartBlankOverlay(s32 a);
+void Field_StartColorTransition(s32 a, s32 b);
+extern char ResourceId_FireColumn;
 
 #define DEFINE_CHAMPA_CLIFF_CAVES_GROW(name, n1)                               \
   void name(struct RiseObject *object) {                                       \
@@ -71,26 +134,22 @@ static __inline__ void Func_02003534_(s32 actor, s32 angle) {
 
 DEFINE_CHAMPA_CLIFF_CAVES_GROW(Func_02000038, 0x1000)
 
-#include "battle.h"
-#include "game.h"
-#include "graphics.h"
-#include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "scene_tables.h"
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-#include "scene_ids.h"
-
 extern struct ActorPlacement gData_0200381c[];
 extern struct ActorPlacement gData_02003864[];
-extern u32 gData_020039cc[];
-extern u32 gData_02003c84[];
+/* VIEW(champa_cliff_caves): routine gData_020039cc as this part declared it;
+ * the joined file has another. */
+extern u32 gData_020039cc__champa_cliff_caves[] __asm__("gData_020039cc");
+#define gData_020039cc gData_020039cc__champa_cliff_caves
+/* VIEW(champa_cliff_caves): routine gData_02003c84 as this part declared it;
+ * the joined file has another. */
+extern u32 gData_02003c84__champa_cliff_caves[] __asm__("gData_02003c84");
+#define gData_02003c84 gData_02003c84__champa_cliff_caves
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s32 scene;
@@ -160,7 +219,11 @@ void Func_020001f4(s32 door) {
   ChampaCliffCaves_OpenDoorAndEnter(&gData_02003d10, door, 0);
 }
 
-extern const struct WarpTarget gData_02003d18;
+/* VIEW(champa_cliff_caves): routine gData_02003d18 as this part declared it;
+ * the joined file has another. */
+extern const struct WarpTarget
+    gData_02003d18__champa_cliff_caves __asm__("gData_02003d18");
+#define gData_02003d18 gData_02003d18__champa_cliff_caves
 
 static __inline__ void Actor_CommitPositionAndActivate_(s32 actor, s32 dx,
                                                         s32 dz) {
@@ -274,8 +337,6 @@ const struct Trigger *Scene_GetEvents(void) {
     return gData_02004104;
   return gData_02003d20;
 }
-
-#include "version.h"
 
 s32 Scene_Initialize(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
@@ -466,8 +527,6 @@ void Func_02000978(s32 actor) {
 }
 
 // ---- games/tla/src/scene/champa_cliff_caves/s0a34.c ----
-#include "call.h"
-#include "actor.h"
 #include "text/msg_ids.h"
 
 #define FIELD_AT(base, type, off)                                              \
@@ -729,8 +788,6 @@ chosen:
 
 DEFINE_CHAMPA_CLIFF_CAVES_GROW(Func_02001138, 0xc00)
 
-#include "flag_call.h"
-
 #define PALETTE ((u16 *)0x05000000)
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
@@ -979,10 +1036,22 @@ void Func_02001774(void) {
                        (s16)gMainRoutineWork.savedEntrance);
 }
 
-extern const u8 gData_020041e8[];
-extern const u8 gData_02004254[];
-extern const u8 gData_0200432c[];
-extern const u8 gData_020042d4[];
+/* VIEW(s0a34): routine gData_020041e8 as this part declared it; the joined file
+ * has another. */
+extern const u8 gData_020041e8__s0a34[] __asm__("gData_020041e8");
+#define gData_020041e8 gData_020041e8__s0a34
+/* VIEW(s0a34): routine gData_02004254 as this part declared it; the joined file
+ * has another. */
+extern const u8 gData_02004254__s0a34[] __asm__("gData_02004254");
+#define gData_02004254 gData_02004254__s0a34
+/* VIEW(s0a34): routine gData_0200432c as this part declared it; the joined file
+ * has another. */
+extern const u8 gData_0200432c__s0a34[] __asm__("gData_0200432c");
+#define gData_0200432c gData_0200432c__s0a34
+/* VIEW(s0a34): routine gData_020042d4 as this part declared it; the joined file
+ * has another. */
+extern const u8 gData_020042d4__s0a34[] __asm__("gData_020042d4");
+#define gData_020042d4 gData_020042d4__s0a34
 
 /// The scene that opens with MsgMySalamanderYou: persons 8 and 11 talk and
 /// move with the party through three yes-or-no answers (each counted in the
@@ -1473,8 +1542,6 @@ void Func_02001868(void) {
   Event_End();
 }
 
-#include "system/dma.h"
-
 /* VIEW(champa_cliff_caves): routine Decompress_TaggedLz as void
  * Decompress_TaggedLz(void *entry, void *destination); resource.h has s32
  * Decompress_TaggedLz(const void *source, void *destination); not tried:
@@ -1861,7 +1928,6 @@ void Func_02003078(void) {
 #undef FIELD_AT
 
 // ---- games/tla/src/scene/champa_cliff_caves/s3164.c ----
-#include "task.h"
 
 /* VIEW(s3164): tag struct ChampaCliffCavesWork as struct
  * ChampaCliffCavesWork__s3164; champa_cliff_caves.c has another definition;
@@ -2017,3 +2083,541 @@ u32 gData_02003634[] = {
     441,
 };
 #undef FIELD_AT
+
+#undef FIELD_AT
+#undef DEFINE_CHAMPA_CLIFF_CAVES_GROW
+#undef FIELD_AT
+#undef PALETTE
+#undef BYTE_AT
+#undef WORD_AT
+#undef FIELD_AT
+#undef gData_02003d10
+#undef gData_020039cc
+#undef gData_02003c84
+#undef gData_02003d18
+#undef gData_020041e8
+#undef gData_02004254
+#undef gData_0200432c
+#undef gData_020042d4
+
+#include "text/msg_ids.h"
+
+/* VIEW(data): routine Func_020001f4 as this part declared it; the joined file
+ * has another. */
+void Func_020001f4__data(void) __asm__("Func_020001f4");
+#define Func_020001f4 Func_020001f4__data
+/* VIEW(data): routine Func_02000304 as this part declared it; the joined file
+ * has another. */
+void Func_02000304__data(void) __asm__("Func_02000304");
+#define Func_02000304 Func_02000304__data
+/* VIEW(data): routine Func_02000350 as this part declared it; the joined file
+ * has another. */
+void Func_02000350__data(void) __asm__("Func_02000350");
+#define Func_02000350 Func_02000350__data
+/* VIEW(data): routine Func_0200038c as this part declared it; the joined file
+ * has another. */
+void Func_0200038c__data(void) __asm__("Func_0200038c");
+#define Func_0200038c Func_0200038c__data
+/* VIEW(data): routine Func_02000464 as this part declared it; the joined file
+ * has another. */
+void Func_02000464__data(void) __asm__("Func_02000464");
+#define Func_02000464 Func_02000464__data
+/* VIEW(data): routine Func_02000f48 as this part declared it; the joined file
+ * has another. */
+void Func_02000f48__data(void) __asm__("Func_02000f48");
+#define Func_02000f48 Func_02000f48__data
+
+LATE_DATA struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 440, 0, 520, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA u32 gSceneExits[] = {
+    SCENE_EXITS(185),
+    SCENE_EXIT_IF(1, 182, 8, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(2, 186, 12, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(3, 185, 4, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(4, 185, 3, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(5, 185, 6, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(6, 185, 5, CONDITION_ALWAYS),
+    SCENE_EXITS(186),
+    SCENE_EXIT_IF(7, 182, 10, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(8, 186, 9, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(9, 186, 8, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(10, 186, 11, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(11, 186, 10, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(12, 185, 2, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(13, 187, 14, CONDITION_ALWAYS),
+    SCENE_EXITS(187),
+    SCENE_EXIT_IF(14, 186, 13, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(15, 187, 16, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(16, 187, 15, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(17, 187, 18, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(18, 187, 17, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(19, 182, 11, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(20, 188, 21, CONDITION_ALWAYS),
+    SCENE_EXITS(188),
+    SCENE_EXIT_IF(21, 187, 20, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(22, 188, 23, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(23, 188, 22, CONDITION_ALWAYS),
+    SCENE_EXITS_END,
+};
+
+LATE_DATA struct ActorPlacement gData_0200375c[] = {
+    {116, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(568),
+     FACING_SOUTHEAST + FACING_STEP, 1, 0},
+    {116, CONDITION_ALWAYS, 2, PIXELS(216), 0, PIXELS(224), FACING_SOUTH, 0, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gData_020037a4[] = {
+    {115, CONDITION_ALWAYS, 1, PIXELS(192), 0, PIXELS(184),
+     FACING_SOUTHEAST + FACING_STEP, 1, 0},
+    {116, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(216),
+     FACING_SOUTHEAST + FACING_STEP, 1, 0},
+    {136, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(248), FACING_WEST, 0, 0},
+    {138, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(248),
+     FACING_NORTH + FACING_STEP, 0, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gData_0200381c[] = {
+    {36, CONDITION_ALWAYS, 1, PIXELS(-56), 0, PIXELS(-56),
+     FACING_SOUTHEAST + FACING_STEP, 0, 0},
+    {115, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(424),
+     FACING_SOUTH + FACING_STEP, 1, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gData_02003864[] = {
+    {36, CONDITION_ALWAYS, 1, PIXELS(-56), 0, PIXELS(-56),
+     FACING_SOUTHEAST + FACING_STEP, 0, 0},
+    {115, CONDITION_ALWAYS, 1, PIXELS(616), 0, PIXELS(216),
+     FACING_SOUTHEAST + FACING_STEP, 1, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gData_020038ac[] = {
+    {39, CONDITION_ALWAYS, 1, PIXELS(344), 0, PIXELS(552), FACING_WEST, 3, 0},
+    {39, CONDITION_ALWAYS, 8, PIXELS(344), 0, PIXELS(568), FACING_WEST, 0, 0},
+    {116, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(504),
+     FACING_SOUTHEAST + FACING_STEP, 3, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gData_0200390c[] = {
+    {39, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(728),
+     FACING_NORTH + FACING_STEP, 3, 0},
+    {39, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(728),
+     FACING_NORTHWEST + FACING_STEP, 3, 0},
+    {136, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(248), FACING_WEST, 3, 0},
+    {138, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(248),
+     FACING_NORTH + FACING_STEP, 3, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gData_02003984[] = {
+    {39, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(392),
+     FACING_SOUTH + FACING_STEP, 3, 0},
+    {39, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(424),
+     FACING_SOUTHEAST + FACING_STEP, 3, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA s16 gData_020039cc[] = {
+    36,
+    -1,
+    1,
+    0,
+    0,
+    736,
+    0,
+    0,
+    0,
+    248,
+    FACING_WEST,
+    2,
+    115,
+    -1,
+    8,
+    0,
+    0,
+    216,
+    0,
+    0,
+    0,
+    464,
+    0xd000,
+    1,
+    489,
+    -1,
+    1,
+    0,
+    0,
+    -56,
+    0,
+    0,
+    0,
+    -56,
+    FACING_SOUTH,
+    2,
+    16,
+    -1,
+    1,
+    0,
+    0,
+    752,
+    0,
+    0,
+    0,
+    264,
+    FACING_WEST,
+    2,
+    338,
+    -1,
+    1,
+    0,
+    0,
+    -56,
+    0,
+    0,
+    0,
+    -56,
+    FACING_WEST,
+    2,
+    158,
+    -1,
+    1,
+    0,
+    0,
+    -56,
+    0,
+    0,
+    0,
+    -56,
+    FACING_WEST,
+    2,
+    37,
+    -1,
+    1,
+    0,
+    0,
+    -56,
+    0,
+    0,
+    0,
+    -56,
+    FACING_WEST,
+    1,
+    56,
+    -1,
+    1,
+    0,
+    0,
+    -56,
+    0,
+    0,
+    0,
+    -56,
+    FACING_NORTH,
+    2,
+    5,
+    -1,
+    1,
+    0,
+    0,
+    -56,
+    0,
+    0,
+    0,
+    -56,
+    FACING_SOUTH,
+    2,
+    6,
+    -1,
+    1,
+    0,
+    0,
+    -56,
+    0,
+    0,
+    0,
+    -56,
+    FACING_SOUTH,
+    2,
+    7,
+    -1,
+    1,
+    0,
+    0,
+    -56,
+    0,
+    0,
+    0,
+    -56,
+    FACING_NORTH,
+    2,
+    -1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+};
+
+LATE_DATA struct ActorPlacement gData_02003aec[] = {
+    {116, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(568),
+     FACING_SOUTHEAST + FACING_STEP, 3, 0},
+    {116, CONDITION_ALWAYS, 2, PIXELS(216), 0, PIXELS(224), FACING_SOUTH, 0, 0},
+    {39, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(208),
+     FACING_SOUTHEAST + FACING_STEP, 0, 0},
+    {39, CONDITION_ALWAYS, 1, PIXELS(600), 0, PIXELS(216),
+     FACING_SOUTH + FACING_STEP, 0, 0},
+    {39, CONDITION_ALWAYS, 2, PIXELS(576), 0, PIXELS(248), FACING_SOUTH, 0, 0},
+    {39, CONDITION_ALWAYS, 1, PIXELS(504), 0, PIXELS(264), FACING_EAST, 0, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gData_02003b94[] = {
+    {115, CONDITION_ALWAYS, 1, PIXELS(192), 0, PIXELS(184),
+     FACING_SOUTHEAST + FACING_STEP, 1, 0},
+    {116, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(216),
+     FACING_SOUTHEAST + FACING_STEP, 0, 0},
+    {136, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(248), FACING_WEST, 0, 0},
+    {138, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(248), FACING_EAST, 0, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gData_02003c0c[] = {
+    {16, CONDITION_ALWAYS, 1, PIXELS(560), 0, PIXELS(704), FACING_SOUTH, 2, 0},
+    {489, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_WEST, 1, 0},
+    {38, CONDITION_ALWAYS, 1, PIXELS(480), 0, PIXELS(704), FACING_EAST, 3, 0},
+    {37, CONDITION_ALWAYS, 1, PIXELS(504), 0, PIXELS(712), FACING_WEST, 1, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA s16 gData_02003c84[] = {
+    36,  -1,     1,   0,      0,  648, 0,
+    0,   0,      188, 0x5000, 2,  115, -1,
+    1,   0,      0,   216,    0,  0,   0,
+    464, 0x5000, 3,   489,    -1, 1,   0,
+    0,   -56,    0,   0,      0,  -56, FACING_SOUTH,
+    2,   -1,     0,   0,      0,  0,   0,
+    0,   0,      0,   0,      0,  0,
+};
+
+LATE_DATA s16 gData_02003ce4[] = {
+    1, 64, 1, 2, 6, 2, 64, 1, 2, 6, -1,
+};
+
+LATE_DATA s16 gData_02003cfa[] = {
+    1, 64, 1, 2, 6, 0, 64, 1, 2, 6, -1,
+};
+
+LATE_DATA s32 gData_02003d10[] = {
+    (s32)gData_02003ce4,
+    0x58000b,
+};
+
+LATE_DATA s32 gData_02003d18[] = {
+    (s32)gData_02003cfa,
+    0x58000b,
+};
+
+LATE_DATA struct Trigger gData_02003d20[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {0x21, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_TALK, 8, IF_FLAG_SET(0x97e), MSGNO(MsgArenTYou)},
+    {TRIGGER_TALK, 9, IF_FLAG_SET(0x97e), MSGNO(MsgIThinkThose)},
+    {TRIGGER_TALK, 10, IF_FLAG_SET(0x97e), MSGNO(MsgWeReGoing)},
+    {TRIGGER_TALK, 11, IF_FLAG_SET(0x97e), MSGNO(MsgThereWerePlenty)},
+    {TRIGGER_TALK, 12, IF_FLAG_SET(0x97e), MSGNO(MsgWeReallyWant)},
+    {TRIGGER_TALK, 13, IF_FLAG_SET(0x97e), MSGNO(MsgItSAll)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(0x97e),
+     MSGNO(MsgThatSureComes)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(0x97e),
+     MSGNO(MsgAllThoseSailors)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x97e),
+     MSGNO(MsgSupposeWeWent)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, IF_FLAG_SET(0x97e),
+     MSGNO(MsgBriggsIsJust)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, IF_FLAG_SET(0x97e),
+     MSGNO(MsgIWasAs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, IF_FLAG_SET(0x97e),
+     MSGNO(MsgAtLeastWe)},
+    {TRIGGER_TALK, 8, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
+     MSGNO(MsgWhyDoYou)},
+    {TRIGGER_TALK, 9, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
+     EVENT(Func_02000350)},
+    {TRIGGER_TALK, 10, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
+     EVENT(Func_02000304)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8,
+     IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA), MSGNO(MsgMaybeIfI)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9,
+     IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA), MSGNO(MsgHeSAfter)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10,
+     IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA), MSGNO(MsgToughOrNot)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAllOfOurMen)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgTheChampaSailors)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgBriggsIsThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgIfYouLive)},
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA struct Trigger gData_02003e7c[] = {
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {0x31, 12, CONDITION_ALWAYS, 12},
+    {0x21, 13, CONDITION_ALWAYS, 13},
+    {TRIGGER_TALK, 8, IF_FLAG_SET(0x97e), MSGNO(MsgWhyDidYou)},
+    {TRIGGER_TALK, 9, IF_FLAG_SET(0x97e), MSGNO(MsgWeHaveSo)},
+    {TRIGGER_TALK, 10, IF_FLAG_SET(0x97e), MSGNO(MsgBriggsCameDown)},
+    {TRIGGER_TALK, 11, IF_FLAG_SET(0x97e), MSGNO(MsgEoleoStillWon)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(0x97e),
+     MSGNO(MsgIJustKnow)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(0x97e),
+     MSGNO(MsgBriggsSaysHe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x97e),
+     MSGNO(MsgBriggsSNever)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, IF_FLAG_SET(0x97e),
+     MSGNO(MsgEoleoIsYounger)},
+    {TRIGGER_TALK, 8, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
+     MSGNO(MsgIDRatherFight)},
+    {TRIGGER_TALK, 9, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
+     MSGNO(MsgYouReAren)},
+    {TRIGGER_TALK, 10, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
+     MSGNO(MsgWhySEveryone)},
+    {TRIGGER_TALK, 11, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
+     MSGNO(MsgIfYouSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8,
+     IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA), MSGNO(MsgItWouldBe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9,
+     IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA), MSGNO(MsgBriggsSaidThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10,
+     IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA), MSGNO(MsgHeSNot)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11,
+     IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA), MSGNO(MsgWhatSHe)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgBeforeHeLeft)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMyHusbandWants)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgSomedayIWant)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgMomSHad)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgBriggsMayBe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgWhenIMarried)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgHasMomForgotten)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgEoleoIsThe)},
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA struct Trigger gData_02003ffc[] = {
+    {0xc602, 15, IF_FLAG_SET(0x97e), EVENT(Func_020001f4)},
+    {0x31, 14, CONDITION_ALWAYS, 14},
+    {0xc602, 15, CONDITION_ALWAYS, EVENT(Func_02000208)},
+    {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
+    {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
+    {TRIGGER_EXIT, 18, CONDITION_ALWAYS, 18},
+    {TRIGGER_EXIT, 19, CONDITION_ALWAYS, 19},
+    {0x21, 20, CONDITION_ALWAYS, 20},
+    {TRIGGER_TALK, 8, IF_FLAG_SET(0x97e), MSGNO(MsgOnceIM)},
+    {0xc400, 11, IF_FLAG_SET(0x97e), MSGNO(MsgIWonderWhatS)},
+    {TRIGGER_TALK, 10, IF_FLAG_SET(0x97e), MSGNO(MsgBabuBaBubabu)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(0x97e),
+     MSGNO(MsgIMCertain)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, IF_FLAG_SET(0x97e),
+     MSGNO(MsgThereIsAbsolutely)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x97e),
+     MSGNO(MsgOneOfPapa)},
+    {TRIGGER_TALK, 8, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
+     MSGNO(MsgLeaveTheWomen)},
+    {TRIGGER_TALK, 9, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
+     MSGNO(MsgDidYouReally)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8,
+     IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA), MSGNO(MsgWhatAreThey)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9,
+     IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA), MSGNO(MsgWhyWouldBriggs)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgObabaSNot)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgIVeNeverSeen)},
+    {TRIGGER_EXAMINE, 40, 0x97e, EVENT(Func_02000208)},
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA struct Trigger gData_02004104[] = {
+    {0x31, 21, CONDITION_ALWAYS, 21},
+    {TRIGGER_EXIT, 22, CONDITION_ALWAYS, 22},
+    {TRIGGER_EXIT, 23, CONDITION_ALWAYS, 23},
+    {TRIGGER_STEP, 30, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
+     EVENT(Func_0200115c)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000f48)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x975, MSGNO(MsgNowIVe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x976, MSGNO(MsgAllOfMy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x977, MSGNO(MsgSoonILl)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgAllOfMyTraining)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_02000464)},
+    {TRIGGER_TALK, 9, IF_FLAG_SET(0x97e), MSGNO(MsgYouGuysDon)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(0x97e),
+     MSGNO(MsgMustBeIncredibly)},
+    {TRIGGER_TALK, 9, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
+     EVENT(Func_0200038c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9,
+     IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA), MSGNO(MsgBriggsIsPretty)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgThatPitIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgIWonderHow)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
+     CONDITION_ALWAYS, EVENT(Func_020003bc)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
+     CONDITION_ALWAYS, EVENT(Func_020003ec)},
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA u32 gData_020041e8[] = {
+    39,       2, 4,  0x2680000, 0, 0xdc0000, 1,  4, 0x2780000, 0,
+    0xce0000, 1, 4,  0x2880000, 0, 0xc80000, 1,  4, 0x2980000, 0,
+    0xc60000, 1, 39, 1,         0, 1,        17,
+};
+
+LATE_DATA u32 gData_02004254[] = {
+    39,       2,  4, 0x2a80000, 0, 0xc80000, 1, 4,  0x2b60000, 0,
+    0xce0000, 1,  4, 0x2c60000, 0, 0xd80000, 1, 4,  0x2d00000, 0,
+    0xe80000, 1,  4, 0x2d00000, 0, 0xf60000, 1, 39, 1,         0,
+    1,        17,
+};
+
+LATE_DATA u32 gData_020042d4[] = {
+    39,        2,  4,         0x2c60000, 0, 0x1080000, 1, 4,
+    0x2ba0000, 0,  0x1160000, 1,         4, 0x2980000, 0, 0x1220000,
+    1,         39, 1,         0,         1, 17,
+};
+
+LATE_DATA u32 gData_0200432c[] = {
+    39,        2, 4,  0x2780000, 0, 0x1180000, 1,  4, 0x2680000, 0,
+    0x10a0000, 1, 4,  0x2600000, 0, 0xf80000,  1,  4, 0x2600000, 0,
+    0xe60000,  1, 39, 1,         0, 1,         17,
+};
+// clang-format on
+#undef Func_020001f4
+#undef Func_02000304
+#undef Func_02000350
+#undef Func_0200038c
+#undef Func_02000464
+#undef Func_02000f48

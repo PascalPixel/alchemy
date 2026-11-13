@@ -9,7 +9,7 @@
 #include "field/ground_mask.h"
 #include "field/particle.h"
 #include "module/scene/scene.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 
 struct AnimationEntry;
 struct RenderInput;

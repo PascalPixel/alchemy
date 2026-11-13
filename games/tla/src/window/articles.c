@@ -1,6 +1,6 @@
 #include "types.h"
 #include "edition.h"
-#include "text_font.h"
+#include "graphics/text_font.h"
 
 //--------------------------------------------------------------------------
 // Window tables: each edition's articles, the kana marks and sprite motion.

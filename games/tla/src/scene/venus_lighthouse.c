@@ -1,8 +1,80 @@
+
+#include "../field/object/set_sprite_priority.c"
+#include "battle/battle.h"
+#include "debug.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
-#include "main_routine_work.h"
+#include "field_event.h"
+#include "field/event_inline.h"
+#include "system/main_routine_work.h"
 #include "field_sprite.h"
-#include "field_effect.h"
-#include "event_inline.h"
+#include "system/field_effect.h"
+#include "shared/push.h"
+#include "field/field_coordinate.h"
+#include "module/field/field.h"
+#include "module/scene/scene.h"
+#include "system/scene.h"
+#include "scene_tables.h"
+#include "system/frame.h"
+#include "shared/tables.h"
+#include "system/ram_buffer.h"
+#include "event_work.h"
+#include "field/event.h"
+#include "flag_call.h"
+#include "module/field/event_commands.h"
+#include "module/game/game.h"
+#include "tla_edition.h"
+#include "scene_ids.h"
+#include "version.h"
+
+#define Actor_SetSpriteFlags                                                   \
+  ((void (*)(struct Actor *, s32))Actor_SetSpriteFlags)
+
+#define Actor_SetSpriteColor                                                   \
+  ((void (*)(struct Actor *, s32))Actor_SetSpriteColor)
+
+void ConfigureOverlayObject(struct Actor *object, s32 parameter) {
+  object->motionFlags = 0;
+  object->collisionFlags = 8;
+  Actor_SetSpriteFlags(object, 0);
+  FieldActor_SetSpriteColor(object, parameter);
+}
+
+struct Actor *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 kind) {
+  struct Actor *object = FieldActor_Create(kind, x, y, z);
+
+  if (object != 0) {
+    Scene_SetActorSpritePriority(object, 0);
+    ConfigureOverlayObject(object, 14);
+    Actor_SetBlendMode(object, 1);
+    return object;
+  }
+  return 0;
+}
+
+struct Actor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z,
+                                                       s32 kind) {
+  struct Actor *object = FieldActor_Create(kind, x, y, z);
+
+  if (object != 0) {
+    Scene_SetActorSpritePriority(object, 1);
+    ConfigureOverlayObject(object, 15);
+    object->priorityFlags |= 2;
+    return object;
+  }
+  return 0;
+}
+
+#include "../field/field_effect/move.c"
+
+#undef Actor_SetSpriteFlags
+#undef Actor_SetSpriteColor
 
 extern void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
@@ -81,23 +153,17 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-#include "venus_lighthouse/distance.c"
+#include "shared/distance.c"
 
 #include "../field/object/find_in_cell.c"
 
 // ---- scene/venus_lighthouse.c ----
 
-/// The Venus Lighthouse, as the prologue opens on it: Felix moves a statue
-/// with Psynergy and goes on alone, and Jenna and Kraden, doubting they should
-/// leave, meet Alex and set off for Idejima. This file holds the scene's entry
-/// routines and the block push; the rest of the overlay is in
-/// venus_lighthouse/.
-
-#include "shared/push.h"
-#include "field_coordinate.h"
-#include "module/field/field.h"
-#include "module/scene/scene.h"
-#include "scene.h"
+// The Venus Lighthouse, as the prologue opens on it: Felix moves a statue
+// with Psynergy and goes on alone, and Jenna and Kraden, doubting they should
+// leave, meet Alex and set off for Idejima. This file holds the scene's entry
+// routines and the block push; the rest of the overlay is in
+// venus_lighthouse/.
 
 extern s32 gPushLeaderSteps[];
 
@@ -109,20 +175,7 @@ DEFINE_BLOCK_PUSH_ONTO(VenusLighthouse_PushBlockOnto, gPushLeaderSteps,
 
 #include "../field/map/cell_fill_byte.c"
 
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "field_event.h"
-#include "scene_tables.h"
-#include "frame.h"
-
-/// Unused: does nothing; nothing calls it.
+// Unused: does nothing; nothing calls it.
 UNUSED void VenusLighthouse_Nothing(void) {}
 
 #define FieldActor_SetSpriteColor ((void (*)(void *, s32))Actor_SetSpriteColor)
@@ -138,7 +191,7 @@ s32 OverlayObject_UpdateEveryFourFrames(void *obj) {
   return 0;
 }
 
-/// Emits a rising particle near the actor every eight frames.
+// Emits a rising particle near the actor every eight frames.
 s32 VenusLighthouse_EmitRisingParticles(struct SceneEffectSource *actor) {
   struct SceneEffectParams options;
   s32 framePhase, particleX, particleY, riseSpeed;
@@ -188,18 +241,64 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 // ---- scene/venus_lighthouse/floor.c ----
 
-/// The Venus Lighthouse's floor events and data: Felix moving the statue and
-/// leaving Jenna and Kraden, their talk of leaving, the floor switch, the
-/// statue that repels the leader, the reliefs and the paths Reveal shows.
+// The Venus Lighthouse's floor events and data: Felix moving the statue and
+// leaving Jenna and Kraden, their talk of leaving, the floor switch, the
+// statue that repels the leader, the reliefs and the paths Reveal shows.
 
-#include "shared/tables.h"
-#include "ram_buffer.h"
-#include "event_work.h"
-#include "event.h"
-#include "flag_call.h"
-#include "module/field/event_commands.h"
-#include "module/scene/venus_lighthouse.h"
-#include "module/game/game.h"
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+struct VenusActor {
+  u8 unk00[6];
+  u16 facing;
+  s16 xLow;
+  s16 xPixel;
+  s32 y;
+  s16 zLow;
+  s16 zPixel;
+  s32 terrainHeight;
+  u8 unk18[0xa];
+  u8 terrainId;
+  u8 unk23;
+  s32 velocityX;
+  s32 speed;
+  s32 velocityZ;
+  s32 moveRateX;
+  s32 moveRateZ;
+  s32 targetX;
+  s32 targetY;
+  s32 targetZ;
+  u8 unk44[0x11];
+  u8 motionFlags;
+  u8 unk56[3];
+  u8 collisionFlags;
+  u8 selectFlags;
+  u8 unk5b[7];
+  u8 busy;
+  u8 unk63[9];
+  void *update;
+};
+
+enum { ENTRANCE_OPENING = 99 };
+
+struct SetupWork {
+  u8 unk00[0x24];
+  s32 (*idle)(void);
+};
+
+extern s32 gPushLeaderSteps[];
+
+void VenusLighthouse_FelixLeaves(void);
+
+void Actor_VanishInSparks(s32 actor);
+
+void VenusLighthouse_RepelLeader(void);
+
+void VenusLighthouse_StepOnFloorSwitch(void);
+
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
+extern s32 gVenusLighthouse_StatueGlows[];
+extern s32 gVenusLighthouse_ShrinkAndHide[];
 
 void Exit_PrepareActorAnimation(s32 actor, s32 value);
 
@@ -255,8 +354,8 @@ Actor_ShowEmoteById__floor(s32 actor, s32 height,
 s32 VenusLighthouse_EmitRisingParticles__floor(
     struct VenusActor *object) __asm__("VenusLighthouse_EmitRisingParticles");
 
-/// Until the statue has sunk (flag 0x200), stepping by it throws the leader
-/// back in a flash of sparks.
+// Until the statue has sunk (flag 0x200), stepping by it throws the leader
+// back in a flash of sparks.
 void VenusLighthouse_RepelLeader(void) {
   s32 leader = Party_GetLeaderActor();
   struct VenusActor *actor = Actor_GetById__floor(leader);
@@ -331,25 +430,10 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
   }
 }
 
-#include "field_event.h"
 #include "text/msg_ids.h"
-#include "event_inline.h"
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "scene_tables.h"
-#include "tla_edition.h"
-#include "scene_ids.h"
-#include "version.h"
 
-/// The statue Felix moved sinks into the floor in column 42 (flag 0x200), and
-/// the way past it opens.
+// The statue Felix moved sinks into the floor in column 42 (flag 0x200), and
+// the way past it opens.
 void VenusLighthouse_SinkStatue(void) {
   struct Actor *obj;
   s32 val;
@@ -390,7 +474,7 @@ void VenusLighthouse_ReadTrueHeart(void) {
   Event_End();
 }
 
-/// Reveal fades: the paths it showed hide again.
+// Reveal fades: the paths it showed hide again.
 void VenusLighthouse_HidePaths(void) {
   s32 x;
   s32 y;
@@ -411,7 +495,7 @@ void VenusLighthouse_HidePaths(void) {
   MapGrid_CopyCellsTo(121, 55, 110, 55, a, a);
 }
 
-/// Reveal shows the hidden paths.
+// Reveal shows the hidden paths.
 void VenusLighthouse_RevealPaths(void) {
   s32 x;
   s32 y;
@@ -439,7 +523,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 s32 VenusLighthouse_Idle(void) { return 0; }
 
-/// Felix casts Move on the statue.
+// Felix casts Move on the statue.
 void VenusLighthouse_FelixMovesStatue(void) {
   BattleEffect_LoadActionEffectResources(140, 1);
   FieldPsynergy_SetupActorPair(4, 10);
@@ -528,8 +612,8 @@ static inline void Venus_ObjEffectSet(s32 actor, s32 value) {
   Exit_PrepareActorAnimation(actor, value);
 }
 
-/// The prologue's opening: Felix moves the statue aside with Psynergy and
-/// climbs off alone, leaving Jenna and Kraden.
+// The prologue's opening: Felix moves the statue aside with Psynergy and
+// climbs off alone, leaving Jenna and Kraden.
 void VenusLighthouse_FelixLeaves(void) {
   struct EventWork *work;
 
@@ -587,8 +671,8 @@ void VenusLighthouse_FelixLeaves(void) {
   Actor_SetPosition(4, 0, 0);
 }
 
-/// ★ Named from the game: "Are you sure we should be leaving like this?"
-/// (MsgVenusLighthouseAreYouSureWeShouldBeLeaving)
+// ★ Named from the game: "Are you sure we should be leaving like this?"
+// (MsgVenusLighthouseAreYouSureWeShouldBeLeaving)
 void VenusLighthouse_DoubtLeaving(void) {
   struct VenusActor *actor;
   struct EventWork *work;
@@ -1223,3 +1307,5 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 #undef Actor_SetSpriteColor
+#undef FieldActor_SetSpriteColor
+#undef Actor_SetSpriteFlags

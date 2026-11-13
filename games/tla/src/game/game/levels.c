@@ -3,7 +3,7 @@
 // Part of game.c.
 
 #include "../game_internal.h"
-#include "character.h"
+#include "game/character.h"
 #include "module/game/game.h"
 #include "text/msg_ids.h"
 

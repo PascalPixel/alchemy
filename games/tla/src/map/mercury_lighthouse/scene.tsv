@@ -1,0 +1,11 @@
+id:u8	x:u16	z:u16
+0xff
+
+id:u8	x:u16	z:u16	flags:u8
+1	840	696	12
+2	840	712	12
+0xff
+
+left:s8	top:s8	right:s8	bottom:s8
+36	21	60	57
+-1

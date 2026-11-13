@@ -2,7 +2,7 @@
 #define ALCHEMY_ACTOR_VIEW_H
 
 #include "types.h"
-#include "system.h"
+#include "system/system.h"
 #include "actor.h"
 
 struct AnimationObject;

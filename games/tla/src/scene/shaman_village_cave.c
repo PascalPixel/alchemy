@@ -3,24 +3,41 @@
 /// pushes into a gap, rocks Lift raises, Eddy the Mercury Djinni who runs from
 /// the party, and in a linked game the three gladiators from Colosso.
 
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
 #include "event_work.h"
-#include "text/msg_ids.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
 #include "module/scene/scene.h"
-#include "module/scene/shaman_village_cave.h"
+#include "field_sprite.h"
+#include "call.h"
+#include "scene_ids.h"
+#include "edition.h"
+#include "version.h"
+#include "text/msg_ids.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+extern u32 gShamanVillageCave_GladiatorLeaves[];
+
+extern s32 gShamanVillageCave_GladiatorFollowsOut[];
+
+void Field_TryJumpForward();
+
+extern s32 gShamanVillageCave_OvergrowthRests[];
+extern u32 gShamanVillageCave_Settle[];
+
+void FieldCamera_WaitForArrival();
 
 void WorldMap_SetReturnLeavingScene();
 s32 Event_PickUpItem();
@@ -46,13 +63,6 @@ notFirst:
 done:
   return;
 }
-
-#include "types.h"
-#include "ram_buffer.h"
-#include "actor.h"
-#include "main_routine_work.h"
-#include "field_sprite.h"
-#include "event_inline.h"
 
 struct ShamanVillageCaveEventWork {
   u8 unk000[0x154];
@@ -220,8 +230,6 @@ void ShamanVillageCave_LiftFourthRock(void) {
   return;
 }
 
-#include "call.h"
-
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 /// The Golden Shirt the gladiators leave goes to the party, if there is room.
@@ -260,10 +268,6 @@ void ShamanVillageCave_PlaceGoldenShirt(void) {
   Event_SetFlag(0xa73);
   return;
 }
-
-#include "scene_ids.h"
-#include "edition.h"
-#include "version.h"
 
 /// The fighters from Colosso, after a linked game, find the party and challenge
 /// it.

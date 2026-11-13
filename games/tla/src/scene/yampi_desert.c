@@ -1,33 +1,834 @@
-/// @file
-/// The Yampi Desert, between Osenia's south and Alhafra: twelve rooms of sand.
-/// Pound sinks its wooden stakes and Sand lets the party slip under them; a
-/// group of Madra's travelers hunting Briggs is stuck halfway (Room2); the King
-/// Scorpion moves under the sand through Room4 and Room5, stirred out by Pound
-/// and trapped between stakes, until it Scoops the leader down into its pit
-/// (Room10), where its battle is fought, the Scoop Gem is won, and a column of
-/// rising sand carries the party out. Rooms 8 and 12 are the cave's sand
-/// slides, and Reveal shows the rocks' hints and a hidden Lucky Medal.
 
+#include "../field/object/set_sprite_priority.c"
+
+#include "../field/field_effect/move.c"
+/// @file
+/// The Yampi Desert's tables of entrances, placements and triggers by room, its
+/// travelers' talk, and the stakes Pound sinks and Sand slips under; linked
+/// apart from yampi_desert.c, with the field's shared effect code between.
+
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Actor_SelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#include "../field/field_effect/spawn.c"
+
+/* VIEW(placements): routines Statue_Sink and PartyInventory_GiveItem as
+ * yampi_desert/scene.h declares them; the joined file defines and declares
+ * them otherwise. */
+void Statue_Sink__placements(const void *script, s32 a,
+                             s32 b) __asm__("Statue_Sink");
+void PartyInventory_GiveItem__placements(s32 item, s32 flags) __asm__(
+    "PartyInventory_GiveItem");
+#define Statue_Sink Statue_Sink__placements
+#define PartyInventory_GiveItem PartyInventory_GiveItem__placements
+#include "types.h"
+#include "system/task.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "field_event.h"
+#include "scene_ids.h"
+#include "system/frame.h"
+
+struct SceneEventWork {
+  u8 unk000[0x16a];
+  u16 unk16a;
+  u8 unk16c[0x40];
+  s32 screenEffect;
+};
+
+extern const u8 gYampiDesert_Room1Stakes[];
+extern const u8 gYampiDesert_Room3Stakes[];
+extern const u8 gYampiDesert_Room4Stakes[];
+extern const u8 gYampiDesert_Room5Stakes[];
+extern const u8 gYampiDesert_Room12Stakes[];
+extern s32 gYampiDesert_RaisedEvent;
+
+struct Actor *Actor_GetById(u32 objectId);
+s32 GameFlag_Get(s32 flag);
+void GameFlag_Set(s32 flag);
+void GameFlag_Clear(s32 flag);
+void FieldMessage_Show(s32 message, s32 position);
+void Actor_SetSpriteColor(struct Actor *object, s32 attribute);
+void Actor_SetWideSprite(s32 actor, s32 value);
+void FieldPsynergy_RunHandler(s32 type);
+
+void YampiDesert_StepOntoStakeTops(void);
+void YampiDesert_OpenLadderPit(void);
+void YampiDesert_SetSlideActorsShown(s32 show);
+void YampiDesert_HideSlideActors(void);
+void YampiDesert_SetActorsHidden(s32 show, s32 first, u32 count);
+void YampiDesert_UpdateSandSlide(void);
+void YampiDesert_TrackUpperLevel(void);
+void YampiDesert_OpenScoopHole(void);
+void Actor_Hide(s32 id);
+void Scene_RunUnlessFlag(void);
+void YampiDesert_SetUpRoom12SlideActors(void);
+void YampiDesert_ClimbOut(struct Actor *object, s32 x, s32 z, s32 mode);
+void YampiDesert_MatchStakePriority(void);
+void YampiDesert_PlaceStakes(const void *script);
+void Statue_Sink(const void *script, s32 a, s32 b);
+void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
+                                        s32 f);
+void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
+void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z,
+                                                    s32 angle);
+s32 Event_AskYesNoAndShowResponse(s32 speaker, s32 flags);
+void Actor_DisableById(s32 actor);
+void Field_RequestDjinnBattle(s32 a, s32 b);
+void Actor_ReturnHome(s32 a, s32 b, s32 c);
+void FieldEffect_StartBlankOverlay(s32 value);
+void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
+void FieldPsynergy_SetupActorPair(s32 a, s32 b);
+void BattleEffect_StopMainActor(void);
+void BattleEffect_CleanupSceneObjects(void);
+void Scene_QueueMusic(s32 cue);
+void Rope_Initialize(void);
+void Rope_Place(s32 a, s32 b, s32 c, s32 d);
+s32 Actor_GetCellIndex(struct Actor *object);
+void YampiDesert_ElderRefusesToQuit(void);
+void YampiDesert_BlockPoundedStakes(u16 *list);
+void YampiDesert_UnblockStakes(u16 *list);
+void Actor_FaceActorById(s32 id, s32 target, s32 flags);
+void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
+void FieldCamera_FollowActor(s32 id, s32 mode);
+void Actor_WatchAndSetScript(s32 id, s32 target);
+void FieldEvent_Wait(s32 frames);
+void PartyInventory_GiveItem(s32 item, s32 flags);
+struct Actor *YampiDesert_CreateScoopGem(void);
+void Actor_Release(struct Actor *object);
+void Sound_Play(s32 cue);
+extern struct Actor *gYampiDesert_SandRipple;
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
+void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
+void Actor_WaitForMove(struct Actor *object);
+void Actor_FaceDirectionById(s32 actor, s32 angle);
+void Import_EventSetExitRequest(s32 mode);
+void Camera_SetSpeedParameters(s32 a, s32 b);
+void FieldCamera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
+void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
+void Actor_Stop(s32 id);
+void YampiDesert_ClearRaisedEvent(void);
+void YampiDesert_PlayScorpionRumble(void);
+void YampiDesert_SetUpRoom4Scorpion(void);
+void YampiDesert_ReadyStake(s32 id);
+void YampiDesert_TrackUpperLevelFromBelow(void);
+void YampiDesert_SetStakeCell(s32 id, u32 kind, s32 flag, s32 layer);
+
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static inline void Scene_TaskAdd(void (*func)(void), s32 priority) {
+  Task_Add(func, priority);
+}
+
+static inline s32 Scene_FlagTest(s32 flag) { return GameFlag_Get(flag); }
+
+static inline void Scene_ArmCallback(s32 id, s32 angle, s32 flags) {
+  Actor_ArmCallback(id, angle, flags);
+}
+
+static inline void Scene_Call4090(s32 actor, s32 x, s32 z) {
+  Actor_SetHorizontalPositionWithTerrain(actor, x, z);
+}
+
+static inline void Scene_Call4098(s32 actor, s32 x, s32 z, s32 angle) {
+  Actor_SetHorizontalPositionAndAngleWithTerrain(actor, x, z, angle);
+}
+
+static inline void Scene_Call4000(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
+  Map_CopyCellAttributeRect(a, b, c, d, e, f);
+}
+
+static inline void Scene_Call41d8(s32 a, s32 b, s32 c, s32 d) {
+  Rope_Place(a, b, c, d);
+}
+
+static inline void Scene_SetSpeed(s32 id, s32 speed, s32 acceleration) {
+  Actor_SetSpeedParameters(id, speed, acceleration);
+}
+
+static inline void Scene_CamBounds(s32 x, s32 a, s32 z, s32 b) {
+  FieldCamera_MoveWithinMapBounds(x, a, z, b);
+}
+
+static inline void Scene_SetPositionAndCommit(s32 id, s32 x, s32 z) {
+  Actor_MoveToAndWaitById(id, x, z);
+}
+
+static inline void Scene_Call4178(s32 a, s32 b, s32 c) {
+  Actor_ReturnHome(a, b, c);
+}
+
+static inline void Scene_SetPositionAndReset(s32 id, s32 x, s32 z) {
+  Actor_WalkToAndWaitById(id, x, z);
+}
+#include "types.h"
+#include "module/tla.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "scene_tables.h"
+#include "system/ram_buffer.h"
+#include "actor.h"
+#include "system/main_routine_work.h"
+#include "map.h"
 #include "shared/map_cells.h"
 #include "shared/actors.h"
-#include "types.h"
-#include "system.h"
-#include "field_effect.h"
+#include "system/field_effect.h"
 #include "event_work.h"
 #include "flag_call.h"
-#include "heap_release.h"
+#include "system/heap_release.h"
 #include "item_icon.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/field/field_effect.h"
 #include "module/scene/scene.h"
-#include "module/scene/yampi_desert.h"
-#include "module/tla.h"
-#include "resource.h"
+#include "graphics/resource.h"
+#include "call.h"
+#include "system/input.h"
+#include "system/frame.h"
+#include "system/task.h"
+#include "fixed_math.h"
+#include "version.h"
+#include "system/iwram_call.h"
+#include "macros.h"
+
+/// What The Lost Age's code declares for the files that use it, written once.
+
+void YampiDesert_RippleFollowsScorpion(void);
+
+extern u32 gYampiDesert_SandCloudCells[];
+
+extern u32 gYampiDesert_SandCloudDrifts[];
+
+void YampiDesert_ScorpionUsesScoop(void);
+// Const: the cell helper only computes from its argument.
+s32 YampiDesert_CellCenter(s32 cell) __attribute__((const));
+extern u32 gYampiDesert_SlideDust[];
+void YampiDesert_SetUpRoom1(void);
+void YampiDesert_SetUpRoom2(void);
+void YampiDesert_SetUpRoom3(void);
+void YampiDesert_SetUpRoom4(void);
+void YampiDesert_SetUpRoom5(void);
+
+void YampiDesert_SetUpRoom6(void);
+
+void YampiDesert_SetUpRoom8(void);
+void YampiDesert_SetUpRoom9(void);
+void YampiDesert_SetUpRoom10(void);
+void YampiDesert_SetUpRoom11(void);
+void YampiDesert_SetUpRoom12(void);
+
+void YampiDesert_DropScoopGem(void);
+
+void YampiDesert_TalkToElder(void);
+
+void YampiDesert_ReadSignpost(void);
+
+void YampiDesert_StepOffStakeTops(void);
+
+void YampiDesert_CastSand(void);
+
+void YampiDesert_EndSand(void);
+
+void YampiDesert_WatchScorpionStop(void);
+
+void YampiDesert_StirScorpion(void);
+
+void YampiDesert_StirScorpionAgain(void);
+
+void YampiDesert_CornerScorpion(void);
+
+void YampiDesert_TrapKingScorpion(void);
+
+void YampiDesert_RevealRockHint(void);
+
+void YampiDesert_HideRockHint(void);
+
+void YampiDesert_RevealMedalSpot(void);
+
+void YampiDesert_ShowSlideActors(void);
+
+void YampiDesert_ClimbRevealedLadder(void);
+void YampiDesert_ClimbOutOfRoom11(void);
+
+extern u32 gYampiDesert_TravelerLooksAround[];
+
+extern u32 gYampiDesert_OtherTravelerLooksAround[];
+
+s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
+s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
+
+void YampiDesert_StartRisingSand(s32 unused, s32 value);
+
+void Icon_DrawItem(s32 item);
+void FieldEffect_SetAttached(s32 actor, s32 a);
+void FieldCamera_WaitForArrival();
+
+/* VIEW(first): routine gYampiDesert_Entrances as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gYampiDesert_Entrances__first[] __asm__("gYampiDesert_Entrances");
+#define gYampiDesert_Entrances gYampiDesert_Entrances__first
+/* VIEW(first): routine gYampiDesert_Room11Entrances as this part declared it;
+ * the joined file has another. */
+extern const u8 gYampiDesert_Room11Entrances__first[] __asm__(
+    "gYampiDesert_Room11Entrances");
+#define gYampiDesert_Room11Entrances gYampiDesert_Room11Entrances__first
+/* VIEW(first): routine gYampiDesert_Room10Regions as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gYampiDesert_Room10Regions__first[] __asm__("gYampiDesert_Room10Regions");
+#define gYampiDesert_Room10Regions gYampiDesert_Room10Regions__first
+/* VIEW(first): routine gYampiDesert_Room11Regions as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gYampiDesert_Room11Regions__first[] __asm__("gYampiDesert_Room11Regions");
+#define gYampiDesert_Room11Regions gYampiDesert_Room11Regions__first
+
+void YampiDesert_FightBlitz(void) { Field_RequestDjinnBattle(19, 68); }
+
+const u8 *Scene_GetEntrances(void) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room11)
+    return gYampiDesert_Room11Entrances;
+  return gYampiDesert_Entrances;
+}
+
+const u8 *Scene_GetRegions(void) {
+  s16 scene = gMainRoutineWork.scene;
+
+  if (scene == (s32)&SceneId_Ov661Room10)
+    return gYampiDesert_Room10Regions;
+  if (scene == (s32)&SceneId_Ov661Room11)
+    return gYampiDesert_Room11Regions;
+  return 0;
+}
+
+const u32 *Scene_GetExits(void) { return gSceneExits; }
+
 #include "text/msg_ids.h"
 
-void Actor_ShowEmoteById(s32 actor, s32 a, s32 b);
-s32 FieldCamera_GetActor();
+/* VIEW(first): routine gYampiDesert_Placements as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gYampiDesert_Placements__first[] __asm__("gYampiDesert_Placements");
+#define gYampiDesert_Placements gYampiDesert_Placements__first
+/* VIEW(first): routine gYampiDesert_Room1Placements as this part declared it;
+ * the joined file has another. */
+extern const u8 gYampiDesert_Room1Placements__first[] __asm__(
+    "gYampiDesert_Room1Placements");
+#define gYampiDesert_Room1Placements gYampiDesert_Room1Placements__first
+/* VIEW(first): routine gYampiDesert_Room2Placements as this part declared it;
+ * the joined file has another. */
+extern const u8 gYampiDesert_Room2Placements__first[] __asm__(
+    "gYampiDesert_Room2Placements");
+#define gYampiDesert_Room2Placements gYampiDesert_Room2Placements__first
+/* VIEW(first): routine gYampiDesert_Room2PlacementsAfterMeeting as this part
+ * declared it; the joined file has another. */
+extern const u8 gYampiDesert_Room2PlacementsAfterMeeting__first[] __asm__(
+    "gYampiDesert_Room2PlacementsAfterMeeting");
+#define gYampiDesert_Room2PlacementsAfterMeeting                               \
+  gYampiDesert_Room2PlacementsAfterMeeting__first
+/* VIEW(first): routine gYampiDesert_Room3Placements as this part declared it;
+ * the joined file has another. */
+extern const u8 gYampiDesert_Room3Placements__first[] __asm__(
+    "gYampiDesert_Room3Placements");
+#define gYampiDesert_Room3Placements gYampiDesert_Room3Placements__first
+/* VIEW(first): routine gYampiDesert_Room4Placements as this part declared it;
+ * the joined file has another. */
+extern const u8 gYampiDesert_Room4Placements__first[] __asm__(
+    "gYampiDesert_Room4Placements");
+#define gYampiDesert_Room4Placements gYampiDesert_Room4Placements__first
+/* VIEW(first): routine gYampiDesert_Room5Placements as this part declared it;
+ * the joined file has another. */
+extern const u8 gYampiDesert_Room5Placements__first[] __asm__(
+    "gYampiDesert_Room5Placements");
+#define gYampiDesert_Room5Placements gYampiDesert_Room5Placements__first
+/* VIEW(first): routine gYampiDesert_Room8Placements as this part declared it;
+ * the joined file has another. */
+extern const u8 gYampiDesert_Room8Placements__first[] __asm__(
+    "gYampiDesert_Room8Placements");
+#define gYampiDesert_Room8Placements gYampiDesert_Room8Placements__first
+/* VIEW(first): routine gYampiDesert_Room10Placements as this part declared it;
+ * the joined file has another. */
+extern const u8 gYampiDesert_Room10Placements__first[] __asm__(
+    "gYampiDesert_Room10Placements");
+#define gYampiDesert_Room10Placements gYampiDesert_Room10Placements__first
+/* VIEW(first): routine gYampiDesert_Room12Placements as this part declared it;
+ * the joined file has another. */
+extern const u8 gYampiDesert_Room12Placements__first[] __asm__(
+    "gYampiDesert_Room12Placements");
+#define gYampiDesert_Room12Placements gYampiDesert_Room12Placements__first
+
+const u8 *Scene_GetPlacements(void) {
+  s16 scene = gMainRoutineWork.scene;
+
+  if (scene == (s32)&SceneId_Ov661Room1)
+    return gYampiDesert_Room1Placements;
+  if (scene == (s32)&SceneId_Ov661Room2) {
+    if (GameFlag_Get(0x8f0))
+      return gYampiDesert_Room2PlacementsAfterMeeting;
+    return gYampiDesert_Room2Placements;
+  }
+  if (scene == (s32)&SceneId_Ov661Room3)
+    return gYampiDesert_Room3Placements;
+  if (scene == (s32)&SceneId_Ov661Room4)
+    return gYampiDesert_Room4Placements;
+  if (scene == (s32)&SceneId_Ov661Room5)
+    return gYampiDesert_Room5Placements;
+  if (scene == (s32)&SceneId_Ov661Room8)
+    return gYampiDesert_Room8Placements;
+  if (scene == (s32)&SceneId_Ov661Room10)
+    return gYampiDesert_Room10Placements;
+  if (scene == (s32)&SceneId_Ov661Room12)
+    return gYampiDesert_Room12Placements;
+  return gYampiDesert_Placements;
+}
+
+void YampiDesert_ScoopTreasurePit(s32 a) { Scene_Call4178(a, 64, 0x302); }
+
+/* VIEW(first): routine gYampiDesert_Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8 gYampiDesert_Triggers__first[] __asm__("gYampiDesert_Triggers");
+#define gYampiDesert_Triggers gYampiDesert_Triggers__first
+/* VIEW(first): routine gYampiDesert_Room1Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gYampiDesert_Room1Triggers__first[] __asm__("gYampiDesert_Room1Triggers");
+#define gYampiDesert_Room1Triggers gYampiDesert_Room1Triggers__first
+/* VIEW(first): routine gYampiDesert_Room2Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gYampiDesert_Room2Triggers__first[] __asm__("gYampiDesert_Room2Triggers");
+#define gYampiDesert_Room2Triggers gYampiDesert_Room2Triggers__first
+/* VIEW(first): routine gYampiDesert_Room3Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gYampiDesert_Room3Triggers__first[] __asm__("gYampiDesert_Room3Triggers");
+#define gYampiDesert_Room3Triggers gYampiDesert_Room3Triggers__first
+/* VIEW(first): routine gYampiDesert_Room4Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gYampiDesert_Room4Triggers__first[] __asm__("gYampiDesert_Room4Triggers");
+#define gYampiDesert_Room4Triggers gYampiDesert_Room4Triggers__first
+/* VIEW(first): routine gYampiDesert_Room5Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gYampiDesert_Room5Triggers__first[] __asm__("gYampiDesert_Room5Triggers");
+#define gYampiDesert_Room5Triggers gYampiDesert_Room5Triggers__first
+/* VIEW(first): routine gYampiDesert_Room6Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gYampiDesert_Room6Triggers__first[] __asm__("gYampiDesert_Room6Triggers");
+#define gYampiDesert_Room6Triggers gYampiDesert_Room6Triggers__first
+/* VIEW(first): routine gYampiDesert_Room7Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gYampiDesert_Room7Triggers__first[] __asm__("gYampiDesert_Room7Triggers");
+#define gYampiDesert_Room7Triggers gYampiDesert_Room7Triggers__first
+/* VIEW(first): routine gYampiDesert_Room8Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gYampiDesert_Room8Triggers__first[] __asm__("gYampiDesert_Room8Triggers");
+#define gYampiDesert_Room8Triggers gYampiDesert_Room8Triggers__first
+/* VIEW(first): routine gYampiDesert_Room9Triggers as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gYampiDesert_Room9Triggers__first[] __asm__("gYampiDesert_Room9Triggers");
+#define gYampiDesert_Room9Triggers gYampiDesert_Room9Triggers__first
+/* VIEW(first): routine gYampiDesert_Room10Triggers as this part declared it;
+ * the joined file has another. */
+extern const u8
+    gYampiDesert_Room10Triggers__first[] __asm__("gYampiDesert_Room10Triggers");
+#define gYampiDesert_Room10Triggers gYampiDesert_Room10Triggers__first
+/* VIEW(first): routine gYampiDesert_Room11Triggers as this part declared it;
+ * the joined file has another. */
+extern const u8
+    gYampiDesert_Room11Triggers__first[] __asm__("gYampiDesert_Room11Triggers");
+#define gYampiDesert_Room11Triggers gYampiDesert_Room11Triggers__first
+/* VIEW(first): routine gYampiDesert_Room12Triggers as this part declared it;
+ * the joined file has another. */
+extern const u8
+    gYampiDesert_Room12Triggers__first[] __asm__("gYampiDesert_Room12Triggers");
+#define gYampiDesert_Room12Triggers gYampiDesert_Room12Triggers__first
+
+/// Returns the current room's table.
+// As ☀️'s Scene_GetEntrances picks one.
+const u8 *Scene_GetEvents(void) {
+  s16 scene = gMainRoutineWork.scene;
+
+  if (scene == (s32)&SceneId_Ov661Room1)
+    return gYampiDesert_Room1Triggers;
+  if (scene == (s32)&SceneId_Ov661Room2)
+    return gYampiDesert_Room2Triggers;
+  if (scene == (s32)&SceneId_Ov661Room3)
+    return gYampiDesert_Room3Triggers;
+  if (scene == (s32)&SceneId_Ov661Room4)
+    return gYampiDesert_Room4Triggers;
+  if (scene == (s32)&SceneId_Ov661Room5)
+    return gYampiDesert_Room5Triggers;
+  if (scene == (s32)&SceneId_Ov661Room6)
+    return gYampiDesert_Room6Triggers;
+  if (scene == (s32)&SceneId_Ov661Room7)
+    return gYampiDesert_Room7Triggers;
+  if (scene == (s32)&SceneId_Ov661Room8)
+    return gYampiDesert_Room8Triggers;
+  if (scene == (s32)&SceneId_Ov661Room9)
+    return gYampiDesert_Room9Triggers;
+  if (scene == (s32)&SceneId_Ov661Room10)
+    return gYampiDesert_Room10Triggers;
+  if (scene == (s32)&SceneId_Ov661Room11)
+    return gYampiDesert_Room11Triggers;
+  if (scene == (s32)&SceneId_Ov661Room12)
+    return gYampiDesert_Room12Triggers;
+  return gYampiDesert_Triggers;
+}
+
+/// ★ Named from the game: "We followed the pirates here from Madra... Are you
+/// going to Alhafra, too?" (MsgWeFollowedThe)
+void YampiDesert_TalkToTraveler(void) {
+  Event_Start();
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)MsgWeFollowedThe);
+  Event_AskYesNoAndShowResponse(8, 0);
+  Event_End();
+}
+
+void YampiDesert_ElderRefusesToQuit(void) {
+  Event_SetMessageId((s32)MsgCanTWe);
+  Actor_SetModeById(12, 4);
+  Event_ShowMessageAndWait(12, 0);
+  Scene_ArmCallback(13, FACING_WEST, 20);
+  Actor_SetModeById(13, 4);
+  Event_ShowMessageAndWait(13, 0);
+  Actor_ArmCallback(13, 0, 20);
+  Scene_ArmCallback(13, 0x3000, 20);
+  Actor_ArmCallback(13, 0, 20);
+  Scene_ArmCallback(13, 0x3000, 0);
+  Event_ShowMessageAndWait(13, 0);
+}
+
+/// ★ Named from the game: "As you can see, the elder is quite insistent on
+/// finding a way through." (MsgAsYouCan)
+void YampiDesert_TalkToElderAboutWay(void) {
+  Event_Start();
+  Event_ResolvePendingActions(0);
+  if (!Scene_FlagTest(0x88f))
+    YampiDesert_ElderRefusesToQuit();
+  Actor_FaceActorById(12, gMainRoutineWork.currentOwner, 0);
+  Event_SetMessageId((s32)MsgAsYouCan);
+  Event_ShowMessageAndWait(12, 0);
+  GameFlag_Set(0x88f);
+  Event_End();
+}
+
+/// ★ Named from the game: "This is where my son must prove himself as mayor..."
+/// (MsgThisIsWhere)
+void YampiDesert_TalkToElder(void) {
+  Event_Start();
+  Event_ResolvePendingActions(0);
+  if (!Scene_FlagTest(0x88f))
+    YampiDesert_ElderRefusesToQuit();
+  Actor_FaceActorById(13, gMainRoutineWork.currentOwner, 0);
+  Event_SetMessageId((s32)MsgThisIsWhere);
+  Event_ShowMessageAndWait(13, 0);
+  GameFlag_Set(0x88f);
+  Event_End();
+}
+
+/// ★ Named from the game: "North: Alhafra South: Air's Rock Warning: Beyond
+/// this point, there is no route back." (MsgNorthAlhafraSouth)
+void YampiDesert_ReadSignpost(void) {
+  Event_Start();
+  Event_ResolvePendingActions(0);
+  FieldMessage_Show((s32)MsgNorthAlhafraSouth, 1);
+  Event_End();
+}
+
+void YampiDesert_PoundRoom1Stake(s32 a, s32 b) {
+  Statue_Sink(gYampiDesert_Room1Stakes, a, b);
+}
+
+void YampiDesert_PoundRoom3Stake(s32 a, s32 b) {
+  Statue_Sink(gYampiDesert_Room3Stakes, a, b);
+}
+
+#define DEFINE_POUND_STAKE_STOPPING_SCORPION(name, data1)                      \
+  void name(s32 a, s32 b) {                                                    \
+    Statue_Sink(data1, a, b);                                                  \
+    if (a == 1) {                                                              \
+      if (gYampiDesert_RaisedEvent == 0)                                       \
+        gYampiDesert_RaisedEvent = 210;                                        \
+    }                                                                          \
+  }
+
+DEFINE_POUND_STAKE_STOPPING_SCORPION(YampiDesert_PoundRoom4Stake,
+                                     gYampiDesert_Room4Stakes)
+
+void YampiDesert_PoundRoom12Stake(s32 a, s32 b) {
+  Statue_Sink(gYampiDesert_Room12Stakes, a, b);
+}
+
+DEFINE_POUND_STAKE_STOPPING_SCORPION(YampiDesert_PoundRoom5Stake,
+                                     gYampiDesert_Room5Stakes)
+
+void YampiDesert_StepOntoStakeTops(void) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  u16 *list = NULL;
+  u8 *grid = gMapShapeGrid;
+
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room3)
+    list = gYampiDesert_Room3Stakes;
+  else if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room4)
+    list = gYampiDesert_Room4Stakes;
+  else if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room5)
+    list = gYampiDesert_Room5Stakes;
+  if (list == NULL)
+    return;
+  while (*list != 0xffff) {
+    struct Actor *object = Actor_GetById(*list);
+
+    list += 2;
+    if (!GameFlag_Get(*list)) {
+      s32 layer = object->terrainId;
+      struct MapCell *cells = map->layers[layer].cells;
+      u8 *shapes =
+          (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
+      s32 index = Actor_GetCellIndex(object);
+      s32 shape = MapGrid_GetTerrainKind(layer, object->x, object->z);
+      s32 height = Map_GetTerrainHeight(layer, object->x, object->z);
+
+      cells += index;
+      shapes += index;
+      object->motionFlags = 0;
+      cells->collisionCode = 0;
+      cells->attributeB |= 128;
+      *shapes = MapCollision_FindOrAddTag(layer, shape, (height >> 19) + 4);
+    }
+    list++;
+  }
+  GameFlag_Set(0x20b);
+}
+
+void YampiDesert_StepOffStakeTops(void) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  u16 *list = NULL;
+  u8 *grid = gMapShapeGrid;
+
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room3)
+    list = gYampiDesert_Room3Stakes;
+  else if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room4)
+    list = gYampiDesert_Room4Stakes;
+  else if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room5)
+    list = gYampiDesert_Room5Stakes;
+  if (list == NULL)
+    return;
+  if (*list == 0xffff)
+    goto done;
+next:
+  {
+    struct Actor *object = Actor_GetById(*list);
+    s32 set;
+
+    list += 2;
+    set = GameFlag_Get(*list);
+    if (!set) {
+      s32 layer = object->terrainId;
+      struct MapCell *cells = map->layers[layer].cells;
+      u8 *shapes =
+          (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
+      /* FAKEMATCH(pin): the index in r10; as a plain local, 32 of 130
+       * instructions differ in tla-en. */
+      register s32 index asm("r10") = Actor_GetCellIndex(object);
+      s32 shape = MapGrid_GetTerrainKind(layer, object->x, object->z);
+      s32 height = Map_GetTerrainHeight(layer, object->x, object->z);
+      struct MapCell *cell = cells + index;
+
+      object->motionFlags = set;
+      cell->collisionCode = 255;
+      cell->attributeB &= 127;
+      shapes[index] =
+          MapCollision_FindOrAddTag(layer, shape, (height >> 19) - 4);
+    }
+  }
+  list++;
+  if (*list != 0xffff)
+    goto next;
+done:
+  GameFlag_Clear(0x20b);
+}
+
+/// For each six-byte record (actor, unused, flag) up to an actor of 0xffff:
+/// when the record's flag is set, the cell under the actor in map layer 2 takes
+/// collision code 255.
+void YampiDesert_BlockPoundedStakes(u16 *list) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct Actor *object;
+  /* FAKEMATCH(pin): the limit in r2, so the next id takes r3; as a plain
+   * local, 10 of 31 instructions differ in tla-en. */
+  register s32 limit asm("r2");
+
+  goto next;
+  do {
+    /* FAKEMATCH(barrier): the record pointer passed through an empty asm, so
+     * the id is read again and the pointer outranks the actor for r5; without
+     * it, 19 of 31 instructions differ in tla-en. */
+    asm("" : "+l"(list));
+    object = Actor_GetById(list[0]);
+    if (GameFlag_Get(list[2]))
+      *(u8 *)((u32)map->layers[2].cells + (Actor_GetCellIndex(object) << 2) +
+              2) = 255;
+    list += 3;
+  next:
+    limit = 0xff;
+  } while (list[0] != (limit << 8) + 0xff);
+}
+
+/// For each six-byte record up to an actor of 0xffff, the cell under the actor
+/// in map layer 2 takes collision code 232.
+void YampiDesert_UnblockStakes(u16 *list) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapCell *cell;
+  s32 collisionCode;
+
+  if (*list != 0xffff) {
+  loop:
+    cell = &map->layers[2].cells[Actor_GetCellIndex(Actor_GetById(*list))];
+    collisionCode = 232;
+    /* FAKEMATCH(dead): the advance in a once-only block, so the store waits for
+     * it; as list += 3, 2 of 25 instructions differ in tla-en. */
+    do {
+      list += 3;
+    } while (0);
+    cell->collisionCode = collisionCode;
+    if (*list != 0xffff)
+      goto loop;
+  }
+}
+
+void YampiDesert_CastSand(void) {
+  s16 scene;
+
+  Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 2;
+  scene = gMainRoutineWork.scene;
+  if (scene == (s32)&SceneId_Ov661Room1)
+    YampiDesert_BlockPoundedStakes((u16 *)gYampiDesert_Room1Stakes);
+  else if (scene == (s32)&SceneId_Ov661Room3)
+    YampiDesert_BlockPoundedStakes((u16 *)gYampiDesert_Room3Stakes);
+  else if (scene == (s32)&SceneId_Ov661Room4)
+    YampiDesert_BlockPoundedStakes((u16 *)gYampiDesert_Room4Stakes);
+  else if (scene == (s32)&SceneId_Ov661Room5)
+    YampiDesert_BlockPoundedStakes((u16 *)gYampiDesert_Room5Stakes);
+}
+
+void YampiDesert_EndSand(void) {
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  s16 scene;
+
+  leader->terrainId = 0;
+  scene = gMainRoutineWork.scene;
+  if (scene == (s32)&SceneId_Ov661Room1)
+    YampiDesert_UnblockStakes((u16 *)gYampiDesert_Room1Stakes);
+  else if (scene == (s32)&SceneId_Ov661Room3)
+    YampiDesert_UnblockStakes((u16 *)gYampiDesert_Room3Stakes);
+  else if (scene == (s32)&SceneId_Ov661Room4)
+    YampiDesert_UnblockStakes((u16 *)gYampiDesert_Room4Stakes);
+  else if (scene == (s32)&SceneId_Ov661Room5)
+    YampiDesert_UnblockStakes((u16 *)gYampiDesert_Room5Stakes);
+}
+
+void YampiDesert_WatchScorpionStop(void) {
+  s16 scene;
+
+  Event_Start();
+  Event_ResolvePendingActions(0);
+  scene = gMainRoutineWork.scene;
+  if (scene == (s32)&SceneId_Ov661Room4) {
+    FieldCamera_FollowActor(16, 1);
+    Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 16);
+  } else if (scene == (s32)&SceneId_Ov661Room5) {
+    FieldCamera_FollowActor(21, 1);
+    Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 21);
+  }
+  // Entered at its test, which keeps the test single and the address load
+  // inside the loop: as a while loop the test is copied above it and the
+  // address kept in r5.
+  goto test;
+  do {
+    wait(1);
+  test:;
+  } while (gYampiDesert_RaisedEvent == 210);
+  Event_End();
+}
+
+#undef Statue_Sink
+#undef PartyInventory_GiveItem
+#include "../field/field_effect/advance_motion_priority.c"
+
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
+#undef DEFINE_POUND_STAKE_STOPPING_SCORPION
+#undef gYampiDesert_Entrances
+#undef gYampiDesert_Room11Entrances
+#undef gYampiDesert_Room10Regions
+#undef gYampiDesert_Room11Regions
+#undef gYampiDesert_Placements
+#undef gYampiDesert_Room1Placements
+#undef gYampiDesert_Room2Placements
+#undef gYampiDesert_Room2PlacementsAfterMeeting
+#undef gYampiDesert_Room3Placements
+#undef gYampiDesert_Room4Placements
+#undef gYampiDesert_Room5Placements
+#undef gYampiDesert_Room8Placements
+#undef gYampiDesert_Room10Placements
+#undef gYampiDesert_Room12Placements
+#undef gYampiDesert_Triggers
+#undef gYampiDesert_Room1Triggers
+#undef gYampiDesert_Room2Triggers
+#undef gYampiDesert_Room3Triggers
+#undef gYampiDesert_Room4Triggers
+#undef gYampiDesert_Room5Triggers
+#undef gYampiDesert_Room6Triggers
+#undef gYampiDesert_Room7Triggers
+#undef gYampiDesert_Room8Triggers
+#undef gYampiDesert_Room9Triggers
+#undef gYampiDesert_Room10Triggers
+#undef gYampiDesert_Room11Triggers
+#undef gYampiDesert_Room12Triggers
+// @file
+// The Yampi Desert, between Osenia's south and Alhafra: twelve rooms of sand.
+// Pound sinks its wooden stakes and Sand lets the party slip under them; a
+// group of Madra's travelers hunting Briggs is stuck halfway (Room2); the King
+// Scorpion moves under the sand through Room4 and Room5, stirred out by Pound
+// and trapped between stakes, until it Scoops the leader down into its pit
+// (Room10), where its battle is fought, the Scoop Gem is won, and a column of
+// rising sand carries the party out. Rooms 8 and 12 are the cave's sand
+// slides, and Reveal shows the rocks' hints and a hidden Lucky Medal.
+
+#include "text/msg_ids.h"
+
+/* VIEW(yampi_desert): routine Actor_ShowEmoteById as this part declared it; the
+ * joined file has another. */
+void Actor_ShowEmoteById__yampi_desert(s32 actor, s32 a,
+                                       s32 b) __asm__("Actor_ShowEmoteById");
+#define Actor_ShowEmoteById Actor_ShowEmoteById__yampi_desert
+/* VIEW(yampi_desert): routine FieldCamera_GetActor as this part declared it;
+ * the joined file has another. */
+s32 FieldCamera_GetActor__yampi_desert() __asm__("FieldCamera_GetActor");
+#define FieldCamera_GetActor FieldCamera_GetActor__yampi_desert
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Oam_AddSpriteAtDepthClamped(u32 *oam, s32 depth);
 /* VIEW(s0b84): routine Statue_Sink as void Statue_Sink(const void *script, s32
@@ -38,12 +839,7 @@ void Oam_AddSpriteAtDepthClamped(u32 *oam, s32 depth);
 extern void Statue_Sink__s0b84(const void *script, s32 a,
                                s32 b) __asm__("Statue_Sink");
 #define Statue_Sink Statue_Sink__s0b84
-#include "yampi_desert/scene.h"
 #undef Statue_Sink
-#include "scene_tables.h"
-#include "actor.h"
-#include "call.h"
-#include "main_routine_work.h"
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -71,8 +867,8 @@ void YampiDesert_BurstSand(s32 x, s32 y, s32 z) {
   }
 }
 
-/// Pound on the first screen's wooden column: the scorpion moving under the
-/// sand bursts out and flees to the next screen (flag 0x889).
+// Pound on the first screen's wooden column: the scorpion moving under the
+// sand bursts out and flees to the next screen (flag 0x889).
 void YampiDesert_StirScorpion(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -104,7 +900,7 @@ void YampiDesert_StirScorpion(void) {
   Event_End();
 }
 
-/// As YampiDesert_StirScorpion, on the second screen (flag 0x88a).
+// As YampiDesert_StirScorpion, on the second screen (flag 0x88a).
 void YampiDesert_StirScorpionAgain(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -158,8 +954,8 @@ void YampiDesert_CornerScorpion(void) {
 
 void Actor_StartScript(struct Actor *object, const void *script);
 
-/// Spawns an object of kind 285 at each of the fifteen cells of
-/// gYampiDesert_SandCloudCells, twice, each moved by -2 to +1 pixels at random.
+// Spawns an object of kind 285 at each of the fifteen cells of
+// gYampiDesert_SandCloudCells, twice, each moved by -2 to +1 pixels at random.
 void YampiDesert_RaiseSandCloud(void) {
   u32 pass;
   u32 i;
@@ -188,8 +984,8 @@ void YampiDesert_RaiseSandCloud(void) {
 
 #define OBJ(p) ((struct Actor *)(p))
 
-/// The trapped scorpion uses Scoop, the leader falls with it, and the King
-/// Scorpion's battle begins.
+// The trapped scorpion uses Scoop, the leader falls with it, and the King
+// Scorpion's battle begins.
 void YampiDesert_TrapKingScorpion(void) {
   struct Actor *leader = OBJ(Actor_GetById(gMainRoutineWork.currentOwner));
   struct Actor *partner = OBJ(Actor_GetById(21));
@@ -283,7 +1079,7 @@ step_5:
   Import_EventSetExitRequest(4);
 }
 
-/// Scoop on the sand pit between the four rocks (flag 0x8ed).
+// Scoop on the sand pit between the four rocks (flag 0x8ed).
 void YampiDesert_ScoopCenterPit(s32 mode) {
   struct Actor *object;
   s32 height;
@@ -301,7 +1097,7 @@ void YampiDesert_ScoopCenterPit(s32 mode) {
 
 s32 YampiDesert_CellCenter(s32 cell) { return cell * 16 + 8; }
 
-/// Moves the leader to the centre of a cell, in pixels.
+// Moves the leader to the centre of a cell, in pixels.
 #define MOVE_LEADER_TO(column, row)                                            \
   {                                                                            \
     s32 x_ = YampiDesert_CellCenter(column);                                   \
@@ -340,7 +1136,7 @@ void YampiDesert_RevealRockHint(void) {
   }
 }
 
-/// Moves the leader to the centre of a cell, in pixels.
+// Moves the leader to the centre of a cell, in pixels.
 #define MOVE_LEADER_TO(column, row)                                            \
   {                                                                            \
     struct MainRoutineWork *work = &gMainRoutineWork;                          \
@@ -398,7 +1194,7 @@ void YampiDesert_OpenLadderPit(void) {
   Map_CopyCellAttributeRect(64, 64, 1, 1, 8, 96);
 }
 
-/// Scoop on the sand pit that hides the ladder (flag 0x88d).
+// Scoop on the sand pit that hides the ladder (flag 0x88d).
 void YampiDesert_ScoopLadderPit(s32 mode) {
   if (mode == 1) {
     YampiDesert_OpenLadderPit();
@@ -427,18 +1223,48 @@ void YampiDesert_HideSlideActors(void) {
 
 DEFINE_ACTORS_SET_HIDDEN(YampiDesert_SetActorsHidden)
 
-s32 Actor_Jump();
-s32 Motion_SetModeAndWaitAnimation();
+/* VIEW(yampi_desert): routine Actor_Jump as this part declared it; the joined
+ * file has another. */
+s32 Actor_Jump__yampi_desert() __asm__("Actor_Jump");
+#define Actor_Jump Actor_Jump__yampi_desert
+/* VIEW(yampi_desert): routine Motion_SetModeAndWaitAnimation as this part
+ * declared it; the joined file has another. */
+s32 Motion_SetModeAndWaitAnimation__yampi_desert() __asm__(
+    "Motion_SetModeAndWaitAnimation");
+#define Motion_SetModeAndWaitAnimation                                         \
+  Motion_SetModeAndWaitAnimation__yampi_desert
 
-s32 Actor_SetMovementTypeById();
+/* VIEW(yampi_desert): routine Actor_SetMovementTypeById as this part declared
+ * it; the joined file has another. */
+s32 Actor_SetMovementTypeById__yampi_desert() __asm__(
+    "Actor_SetMovementTypeById");
+#define Actor_SetMovementTypeById Actor_SetMovementTypeById__yampi_desert
 
-s32 Actor_SetMovementTypeAndWaitById();
+/* VIEW(yampi_desert): routine Actor_SetMovementTypeAndWaitById as this part
+ * declared it; the joined file has another. */
+s32 Actor_SetMovementTypeAndWaitById__yampi_desert() __asm__(
+    "Actor_SetMovementTypeAndWaitById");
+#define Actor_SetMovementTypeAndWaitById                                       \
+  Actor_SetMovementTypeAndWaitById__yampi_desert
 
-extern u8 gYampiDesert_FinderRunsAhead[];
-extern u8 gYampiDesert_TravelersFollow[];
-extern u8 gYampiDesert_LastTravelersFollow[];
+/* VIEW(yampi_desert): routine gYampiDesert_FinderRunsAhead as this part
+ * declared it; the joined file has another. */
+extern u8 gYampiDesert_FinderRunsAhead__yampi_desert[] __asm__(
+    "gYampiDesert_FinderRunsAhead");
+#define gYampiDesert_FinderRunsAhead gYampiDesert_FinderRunsAhead__yampi_desert
+/* VIEW(yampi_desert): routine gYampiDesert_TravelersFollow as this part
+ * declared it; the joined file has another. */
+extern u8 gYampiDesert_TravelersFollow__yampi_desert[] __asm__(
+    "gYampiDesert_TravelersFollow");
+#define gYampiDesert_TravelersFollow gYampiDesert_TravelersFollow__yampi_desert
+/* VIEW(yampi_desert): routine gYampiDesert_LastTravelersFollow as this part
+ * declared it; the joined file has another. */
+extern u8 gYampiDesert_LastTravelersFollow__yampi_desert[] __asm__(
+    "gYampiDesert_LastTravelersFollow");
+#define gYampiDesert_LastTravelersFollow                                       \
+  gYampiDesert_LastTravelersFollow__yampi_desert
 
-/// ★ Named from the game: "Hey! Look! Up there!" (MsgHeyLookUp)
+// ★ Named from the game: "Hey! Look! Up there!" (MsgHeyLookUp)
 void YampiDesert_SeeTravelersAbove(s32 p0) {
   s32 *owner;
   s32 angle;
@@ -602,9 +1428,9 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Event_End();
 }
 
-/// The Scoop Gem (item 209's icon) as an actor, after the King Scorpion's
-/// battle (flag 0x88c).
-/// ★ Named from the game: "Scoop Gem" (item 209's name)
+// The Scoop Gem (item 209's icon) as an actor, after the King Scorpion's
+// battle (flag 0x88c).
+// ★ Named from the game: "Scoop Gem" (item 209's name)
 struct Actor *YampiDesert_CreateScoopGem(void) {
   struct Actor *object =
       Import_ActorCreate(489, 232 << 16, 32 << 16, 200 << 16);
@@ -688,10 +1514,6 @@ void YampiDesert_RippleFollowsScorpion(void) {
 #undef OBJ
 #undef MOVE_LEADER_TO
 
-#include "input.h"
-#include "frame.h"
-#include "field.h"
-
 #define FIELD32(object, offset) (*(s32 *)((u8 *)(object) + (offset)))
 
 struct Actor *Actor_GetById(u32 objectId);
@@ -759,13 +1581,6 @@ void YampiDesert_SlideLeader(struct Actor *object, s32 dx, s32 dz) {
     }
   }
 }
-
-#include "ram_buffer.h"
-#include "map.h"
-#include "task.h"
-#include "event_work.h"
-#include "fixed_math.h"
-#include "version.h"
 
 void TilesetAnim_SuspendAll(void);
 void TilesetAnim_ResumeAll(void);
@@ -992,8 +1807,8 @@ void YampiDesert_ScorpionRoamsRoom4(struct Actor *object) {
   }
 }
 
-/// Readies actors 16 and 17 and the room's callbacks; actor 17 becomes the
-/// followed actor (gYampiDesert_SandRipple).
+// Readies actors 16 and 17 and the room's callbacks; actor 17 becomes the
+// followed actor (gYampiDesert_SandRipple).
 void YampiDesert_SetUpRoom4Scorpion(void) {
   struct Actor *leader = Actor_GetById(16);
   struct Actor *object;
@@ -1022,14 +1837,14 @@ void YampiDesert_SetUpRoom4Scorpion(void) {
   Task_Add(YampiDesert_RippleFollowsScorpion, TASK_PASS_VBLANK);
 }
 
-/// Sends the object toward a point and moves to the next state.
+// Sends the object toward a point and moves to the next state.
 #define WALK(state_, x, z)                                                     \
   case state_:                                                                 \
     Call4((void (*)())Actor_SetMoveTarget, (s32)object, x, 0, z);              \
     *state = state_ + 1;                                                       \
     break;
 
-/// Waits for the object to arrive before moving to the given state.
+// Waits for the object to arrive before moving to the given state.
 #define ARRIVE(state_, next)                                                   \
   case state_:                                                                 \
     if (YampiDesert_HasArrived(object))                                        \
@@ -1092,9 +1907,9 @@ void YampiDesert_ScorpionRoamsRoom5(struct Actor *object) {
   }
 }
 
-/// YampiDesert_SetUpRoom4Scorpion's counterpart for actors 21 and 22: actor 22
-/// becomes the followed actor, and until flag 0x109 actor 21 is placed and
-/// given the update YampiDesert_ScorpionRoamsRoom5.
+// YampiDesert_SetUpRoom4Scorpion's counterpart for actors 21 and 22: actor 22
+// becomes the followed actor, and until flag 0x109 actor 21 is placed and
+// given the update YampiDesert_ScorpionRoamsRoom5.
 void YampiDesert_SetUpRoom5Scorpion(void) {
   struct Actor *leader = Actor_GetById(21);
   struct Actor *object;
@@ -1124,9 +1939,9 @@ void YampiDesert_SetUpRoom5Scorpion(void) {
   Task_Add(YampiDesert_RippleFollowsScorpion, TASK_PASS_VBLANK);
 }
 
-/// Sends the object toward a point and moves to the next state.
+// Sends the object toward a point and moves to the next state.
 
-/// As WALK, after YampiDesert_ClearRaisedEvent.
+// As WALK, after YampiDesert_ClearRaisedEvent.
 #define WALK_ON(state_, x, z)                                                  \
   case state_:                                                                 \
     YampiDesert_ClearRaisedEvent();                                            \
@@ -1134,9 +1949,9 @@ void YampiDesert_SetUpRoom5Scorpion(void) {
     *state = state_ + 1;                                                       \
     break;
 
-/// Waits for the object to arrive before moving to the given state.
+// Waits for the object to arrive before moving to the given state.
 
-/// Waits for the object to arrive, then turns off by a flag.
+// Waits for the object to arrive, then turns off by a flag.
 #define ARRIVE_OR(state_, flag, turn, next)                                    \
   case state_:                                                                 \
     if (YampiDesert_HasArrived(object)) {                                      \
@@ -1203,9 +2018,9 @@ void YampiDesert_ScorpionRoamsToTrap(struct Actor *object) {
   }
 }
 
-/// YampiDesert_SetUpRoom4Scorpion's counterpart for actors 21 and 22 in Room 5:
-/// after flag 0x88b actor 21 is placed facing 0x4000; otherwise, until flag
-/// 0x109, it is placed and given the update YampiDesert_ScorpionRoamsToTrap.
+// YampiDesert_SetUpRoom4Scorpion's counterpart for actors 21 and 22 in Room 5:
+// after flag 0x88b actor 21 is placed facing 0x4000; otherwise, until flag
+// 0x109, it is placed and given the update YampiDesert_ScorpionRoamsToTrap.
 void YampiDesert_SetUpTrappedScorpion(void) {
   struct Actor *leader = Actor_GetById(21);
   struct Actor *object;
@@ -1395,8 +2210,8 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   Field_RequestBattleFromEncounterTable(10, 0);
 }
 
-/// Clears the scorpion's sand ripple and runs the entered room's setup; Room7
-/// has none.
+// Clears the scorpion's sand ripple and runs the entered room's setup; Room7
+// has none.
 s32 Scene_Initialize(void) {
   s16 scene;
 
@@ -1440,7 +2255,7 @@ void YampiDesert_SetUpRoom1(void) {
   }
 }
 
-/// Clears actors 8 to 14 after flag 0x8b3, or places them after flag 0x8f0.
+// Clears actors 8 to 14 after flag 0x8b3, or places them after flag 0x8f0.
 void YampiDesert_SetUpRoom2(void) {
   s32 angleA;
   s32 angleB;
@@ -1524,8 +2339,8 @@ void YampiDesert_SetUpRoom4(void) {
     Task_Add(YampiDesert_TrackUpperLevelFromBelow, TASK_PASS_VBLANK);
 }
 
-/// Room 5's setup: from entrances other than 1 and 2 it places actors 11 to
-/// 20 and copies the map cells flags 0x88c and 0x8ed select.
+// Room 5's setup: from entrances other than 1 and 2 it places actors 11 to
+// 20 and copies the map cells flags 0x88c and 0x8ed select.
 void YampiDesert_SetUpRoom5(void) {
   FieldEffect_StartBlankOverlay(0);
   YampiDesert_PlaceStakes(gYampiDesert_Room5Stakes);
@@ -1568,7 +2383,7 @@ void YampiDesert_SetUpRoom5(void) {
   }
 }
 
-/// A halfword of gMainRoutineWork that has no field name yet.
+// A halfword of gMainRoutineWork that has no field name yet.
 #define MAIN_ROUTINE_WORK_U16(offset)                                          \
   (*(u16 *)((u8 *)&gMainRoutineWork + (offset)))
 
@@ -1586,8 +2401,8 @@ static inline void Scene_StoreU16(u16 *field, s32 value) {
   *field = value;
 }
 
-/// Room 8's setup. Entered at entrance 4 (not in the Japanese edition), it
-/// sets gMainRoutineWork's pair at 0x260 to the room whose flag is set.
+// Room 8's setup. Entered at entrance 4 (not in the Japanese edition), it
+// sets gMainRoutineWork's pair at 0x260 to the room whose flag is set.
 void YampiDesert_SetUpRoom8(void) {
   struct Actor *object = Actor_GetById(64);
   s32 scene;
@@ -1640,7 +2455,7 @@ void YampiDesert_SetUpRoom9(void) {
 struct RideEntry *YampiDesert_AddRisingSand(s32 slot, s32 id, s32 timer,
                                             s32 low, s32 high);
 
-/// Room 10's setup.
+// Room 10's setup.
 void YampiDesert_SetUpRoom10(void) {
   ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   GameFlag_Set(0x144);
@@ -1702,18 +2517,16 @@ loop:
 // Finds the current target's table row and shrinks it.
 DEFINE_STATUE_SINK(Statue_Sink, YampiDesert_SetStakeCell)
 
-#include "iwram_call.h"
-
 DEFINE_ACTOR_SET_CELL_OPEN(YampiDesert_SetStakeCell, Actor_GetCellIndex,
                            Actor_SelectAnimation)
 
-/// The whole-pixel half of a 16.16 coordinate.
+// The whole-pixel half of a 16.16 coordinate.
 /* VIEW(s3910): macro PIXELS as PIXELS__s3910; another part or header has
  * another definition; tried with the definition the rest of the object has,
  * YampiDesert_UpdateRisingSand moves: 33 of 212 instructions in tla-ja. */
 #define PIXELS__s3910(v) (((s16 *)&(v))[1])
 
-/// One rising platform and what rides it.
+// One rising platform and what rides it.
 struct RideEntry {
   s16 id;
   s16 timer;
@@ -1996,3 +2809,566 @@ u32 gYampiDesert_SlideDust[] = {
     0, 1, 38,
 };
 // clang-format on
+
+#undef OBJ
+#undef MOVE_LEADER_TO
+#undef FIELD32
+#undef WALK
+#undef ARRIVE
+#undef WALK_ON
+#undef ARRIVE_OR
+#undef MAIN_ROUTINE_WORK_U16
+#undef PIXELS__s3910
+#undef Actor_ShowEmoteById
+#undef FieldCamera_GetActor
+#undef Statue_Sink
+#undef Actor_Jump
+#undef Motion_SetModeAndWaitAnimation
+#undef Actor_SetMovementTypeById
+#undef Actor_SetMovementTypeAndWaitById
+#undef gYampiDesert_FinderRunsAhead
+#undef gYampiDesert_TravelersFollow
+#undef gYampiDesert_LastTravelersFollow
+
+// @file
+// The Yampi Desert's data: its effect and travelers' scripts, stake lists,
+// rooms' tables and triggers.
+
+#include "text/msg_ids.h"
+
+void YampiDesert_FightBlitz(void);
+/* VIEW(data2): routine YampiDesert_ScoopTreasurePit as this part declared it;
+ * the joined file has another. */
+void YampiDesert_ScoopTreasurePit__data2(void) __asm__(
+    "YampiDesert_ScoopTreasurePit");
+#define YampiDesert_ScoopTreasurePit YampiDesert_ScoopTreasurePit__data2
+void YampiDesert_TalkToTraveler(void);
+void YampiDesert_TalkToElderAboutWay(void);
+/* VIEW(data2): routine YampiDesert_PoundRoom1Stake as this part declared it;
+ * the joined file has another. */
+void YampiDesert_PoundRoom1Stake__data2(void) __asm__(
+    "YampiDesert_PoundRoom1Stake");
+#define YampiDesert_PoundRoom1Stake YampiDesert_PoundRoom1Stake__data2
+/* VIEW(data2): routine YampiDesert_PoundRoom3Stake as this part declared it;
+ * the joined file has another. */
+void YampiDesert_PoundRoom3Stake__data2(void) __asm__(
+    "YampiDesert_PoundRoom3Stake");
+#define YampiDesert_PoundRoom3Stake YampiDesert_PoundRoom3Stake__data2
+/* VIEW(data2): routine YampiDesert_PoundRoom4Stake as this part declared it;
+ * the joined file has another. */
+void YampiDesert_PoundRoom4Stake__data2(void) __asm__(
+    "YampiDesert_PoundRoom4Stake");
+#define YampiDesert_PoundRoom4Stake YampiDesert_PoundRoom4Stake__data2
+/* VIEW(data2): routine YampiDesert_PoundRoom12Stake as this part declared it;
+ * the joined file has another. */
+void YampiDesert_PoundRoom12Stake__data2(void) __asm__(
+    "YampiDesert_PoundRoom12Stake");
+#define YampiDesert_PoundRoom12Stake YampiDesert_PoundRoom12Stake__data2
+/* VIEW(data2): routine YampiDesert_PoundRoom5Stake as this part declared it;
+ * the joined file has another. */
+void YampiDesert_PoundRoom5Stake__data2(void) __asm__(
+    "YampiDesert_PoundRoom5Stake");
+#define YampiDesert_PoundRoom5Stake YampiDesert_PoundRoom5Stake__data2
+void YampiDesert_StepOntoStakeTops(void);
+/* VIEW(data2): routine YampiDesert_ScoopCenterPit as this part declared it; the
+ * joined file has another. */
+void YampiDesert_ScoopCenterPit__data2(void) __asm__(
+    "YampiDesert_ScoopCenterPit");
+#define YampiDesert_ScoopCenterPit YampiDesert_ScoopCenterPit__data2
+void YampiDesert_HideMedalSpot(void);
+/* VIEW(data2): routine YampiDesert_ScoopLadderPit as this part declared it; the
+ * joined file has another. */
+void YampiDesert_ScoopLadderPit__data2(void) __asm__(
+    "YampiDesert_ScoopLadderPit");
+#define YampiDesert_ScoopLadderPit YampiDesert_ScoopLadderPit__data2
+void YampiDesert_HideSlideActors(void);
+/* VIEW(data2): routine YampiDesert_SeeTravelersAbove as this part declared it;
+ * the joined file has another. */
+void YampiDesert_SeeTravelersAbove__data2(void) __asm__(
+    "YampiDesert_SeeTravelersAbove");
+#define YampiDesert_SeeTravelersAbove YampiDesert_SeeTravelersAbove__data2
+
+/* VIEW(data2): routine gFieldEffect_ShortScript as this part declared it; the
+ * joined file has another. */
+extern u8 gFieldEffect_ShortScript__data2[] __asm__("gFieldEffect_ShortScript");
+#define gFieldEffect_ShortScript gFieldEffect_ShortScript__data2
+/* VIEW(data2): routine gFieldEffect_MediumScript as this part declared it; the
+ * joined file has another. */
+extern u8
+    gFieldEffect_MediumScript__data2[] __asm__("gFieldEffect_MediumScript");
+#define gFieldEffect_MediumScript gFieldEffect_MediumScript__data2
+/* VIEW(data2): routine gFieldEffect_LongScript as this part declared it; the
+ * joined file has another. */
+extern u8 gFieldEffect_LongScript__data2[] __asm__("gFieldEffect_LongScript");
+#define gFieldEffect_LongScript gFieldEffect_LongScript__data2
+
+LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
+};
+
+// clang-format off
+LATE_DATA u32 gYampiDesert_TravelerLooksAround[] = {
+    22, 3, 0xb000, 0, 80, 22,
+    3, 0, 0, 80, 22, 3,
+    0xd000, 0, 20, 22, 3, 0,
+    0, 40, 13, 0xffff, 0,
+};
+
+LATE_DATA u32 gYampiDesert_OtherTravelerLooksAround[] = {
+    22, 3, 0xd000, 0, 20, 22,
+    3, 0, 0, 40, 22, 3,
+    0xb000, 0, 80, 22, 3, 0,
+    0, 80, 13, 0xffff, 0,
+};
+
+LATE_DATA u32 gYampiDesert_FinderRunsAhead[] = {
+    39, 2, 4, 0xf80000, 0, 0xf80000,
+    1, 4, 0xf80000, 0, 0x1180000, 1,
+    4, 0x1080000, 0, 0x1900000, 1, 39,
+    1, 17,
+};
+
+LATE_DATA u32 gYampiDesert_TravelersFollow[] = {
+    39, 2, 4, 0xf00000, 0, 0x1180000,
+    1, 4, 0x1080000, 0, 0x1900000, 1,
+    39, 1, 17,
+};
+
+LATE_DATA u32 gYampiDesert_LastTravelersFollow[] = {
+    39, 2, 4, 0xd80000, 0, 0xe80000,
+    1, 4, 0xf00000, 0, 0x1180000, 1,
+    4, 0x1080000, 0, 0x1900000, 1, 39,
+    1, 17,
+};
+
+/* VIEW(data2): variable gYampiDesert_Room1Stakes as this part defines it; a header the joined file includes has another. */
+LATE_DATA s16 gYampiDesert_Room1Stakes__data2[] __asm__("gYampiDesert_Room1Stakes") = {
+    8, 0, 512, 9, 0, 513, 10, 0,
+    514, 11, 0, 515, 12, 0, 516, 13,
+    0, 517, -1,
+};
+
+/* VIEW(data2): variable gYampiDesert_Room3Stakes as this part defines it; a header the joined file includes has another. */
+LATE_DATA s16 gYampiDesert_Room3Stakes__data2[] __asm__("gYampiDesert_Room3Stakes") = {
+    8, 0, 512, 9, 0, 513, 10, 0,
+    514, 11, 0, 515, 12, 0, 516, 13,
+    0, 517, 14, 0, 518, 15, 0, 519,
+    16, 0, 520, 17, 0, 521, 18, 0,
+    522, -1,
+};
+
+/* VIEW(data2): variable gYampiDesert_Room4Stakes as this part defines it; a header the joined file includes has another. */
+LATE_DATA s16 gYampiDesert_Room4Stakes__data2[] __asm__("gYampiDesert_Room4Stakes") = {
+    8, 0, 512, 9, 0, 513, 10, 0,
+    514, 11, 0, 515, -1,
+};
+
+/* VIEW(data2): variable gYampiDesert_Room5Stakes as this part defines it; a header the joined file includes has another. */
+LATE_DATA s16 gYampiDesert_Room5Stakes__data2[] __asm__("gYampiDesert_Room5Stakes") = {
+    8, 0, 512, 9, 0, 513, 10, 0,
+    514, -1,
+};
+
+/* VIEW(data2): variable gYampiDesert_Room12Stakes as this part defines it; a header the joined file includes has another. */
+LATE_DATA s32 gYampiDesert_Room12Stakes__data2[] __asm__("gYampiDesert_Room12Stakes") = {
+    8, -0xfe00,
+};
+
+/* VIEW(data2): variable gYampiDesert_RaisedEvent as this part defines it; a header the joined file includes has another. */
+LATE_DATA u32 gYampiDesert_RaisedEvent__data2[] __asm__("gYampiDesert_RaisedEvent") = {
+    0,
+};
+
+/* VIEW(data2): variable gYampiDesert_SandRipple as this part defines it; a header the joined file includes has another. */
+LATE_DATA u32 gYampiDesert_SandRipple__data2[] __asm__("gYampiDesert_SandRipple") = {
+    0,
+};
+
+LATE_DATA struct SceneEntrance gYampiDesert_Entrances[] = {
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct SceneEntrance gYampiDesert_Room11Entrances[] = {
+    {1, CONDITION_ALWAYS, 408, 0, 480, FACING_NORTH, 0, 288, 376, 528, 536, 0},
+    {2, CONDITION_ALWAYS, 408, 0, 456, FACING_SOUTH, 0, 288, 376, 528, 536, 0},
+    {3, CONDITION_ALWAYS, 120, 0, 424, FACING_SOUTH, 0, 0, 16, 448, 496, 0},
+    {4, CONDITION_ALWAYS, 376, 0, 88, FACING_SOUTH, 0, 0, 16, 448, 496, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA u32 gYampiDesert_Room10Regions[] = {
+    0x2c00d8, 0xf800b8, 0xd8004c, 0x1ffff, 0xffff, 0,
+    0, 0,
+};
+
+LATE_DATA s16 gYampiDesert_Room11Regions[] = {
+    112, 24, 416, 128, 40, 432, -1, 3,
+    368, 24, 80, 384, 40, 96, -1, 4,
+    -1, 0, 0, 0, 0, 0, 0, 0,
+};
+
+LATE_DATA u32 gSceneExits[] = {
+    SCENE_EXITS(67),
+    SCENE_EXIT(1, 2, 17),
+    SCENE_EXIT(2, 68, 1),
+    SCENE_EXITS(68),
+    SCENE_EXIT(1, 67, 2),
+    SCENE_EXIT(2, 72, 1),
+    SCENE_EXIT(3, 77, 1),
+    SCENE_EXIT(4, 69, 1),
+    SCENE_EXIT(5, 77, 3),
+    SCENE_EXITS(69),
+    SCENE_EXIT(1, 68, 4),
+    SCENE_EXIT(2, 70, 1),
+    SCENE_EXITS(70),
+    SCENE_EXIT(1, 69, 2),
+    SCENE_EXIT(2, 70, 3),
+    SCENE_EXIT(3, 70, 2),
+    SCENE_EXIT(4, 71, 1),
+    SCENE_EXITS(71),
+    SCENE_EXIT(1, 70, 4),
+    SCENE_EXIT(2, 71, 3),
+    SCENE_EXIT(3, 71, 2),
+    SCENE_EXIT(4, 76, 1),
+    SCENE_EXITS(72),
+    SCENE_EXIT(1, 68, 2),
+    SCENE_EXIT(2, 78, 1),
+    SCENE_EXITS(73),
+    SCENE_EXIT(1, 78, 2),
+    SCENE_EXIT(2, 74, 1),
+    SCENE_EXITS(74),
+    SCENE_EXIT(1, 73, 2),
+    SCENE_EXIT(2, 2, 18),
+    SCENE_EXIT(3, 75, 1),
+    SCENE_EXIT(4, 79, 1),
+    SCENE_EXITS(75),
+    SCENE_EXIT(1, 74, 3),
+    SCENE_EXIT(2, 2, 19),
+    SCENE_EXITS(76),
+    SCENE_EXIT(1, 71, 4),
+    SCENE_EXITS(77),
+    SCENE_EXIT(1, 68, 3),
+    SCENE_EXIT(2, 77, 4),
+    SCENE_EXIT(3, 68, 5),
+    SCENE_EXIT(4, 77, 2),
+    SCENE_EXITS(78),
+    SCENE_EXIT(1, 72, 2),
+    SCENE_EXIT(2, 73, 1),
+    SCENE_EXITS_END,
+};
+
+LATE_DATA struct ActorPlacement gYampiDesert_Placements[] = {
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gYampiDesert_Room1Placements[] = {
+    {406, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(216), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(168), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(136), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, 1, PIXELS(616), 0, PIXELS(168), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, 1, PIXELS(632), 0, PIXELS(392), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, 1, PIXELS(680), 0, PIXELS(424), FACING_SOUTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gYampiDesert_Room2Placements[] = {
+    {88, CONDITION_ALWAYS, (s32)gYampiDesert_TravelerLooksAround, PIXELS(200), 0, PIXELS(216),
+     0xd000, 0, 0},
+    {88, CONDITION_ALWAYS, (s32)gYampiDesert_OtherTravelerLooksAround, PIXELS(216), 0, PIXELS(200),
+     0xd000, 0, 0},
+    {114, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(200), 0x3000, 2, 0},
+    {93, CONDITION_ALWAYS, 1, PIXELS(162), 0, PIXELS(232), FACING_EAST, 2, 0},
+    {112, CONDITION_ALWAYS, 1, PIXELS(212), 0, PIXELS(246), FACING_EAST, 2, 0},
+    {19, CONDITION_ALWAYS, 1, PIXELS(230), 0, PIXELS(248), FACING_EAST, 2, 0},
+    {20, CONDITION_ALWAYS, 1, PIXELS(234), 0, PIXELS(230), FACING_EAST, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gYampiDesert_Room2PlacementsAfterMeeting[] = {
+    {88, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(242), 0xb000, 1, 0},
+    {88, CONDITION_ALWAYS, 1, PIXELS(533), 0, PIXELS(271), FACING_WEST, 0, 0},
+    {114, CONDITION_ALWAYS, 1, PIXELS(435), 0, PIXELS(323), 0x3000, 1, 0},
+    {93, CONDITION_ALWAYS, 1, PIXELS(467), 0, PIXELS(248), 0x5000, 2, 0},
+    {112, CONDITION_ALWAYS, 1, PIXELS(462), 0, PIXELS(340), 0xd000, 1, 0},
+    {19, CONDITION_ALWAYS, 1, PIXELS(482), 0, PIXELS(340), 0xd000, 1, 0},
+    {20, CONDITION_ALWAYS, 1, PIXELS(489), 0, PIXELS(320), 0xb000, 1, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gYampiDesert_Room3Placements[] = {
+    {406, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, 1, PIXELS(376), 0, PIXELS(216), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(344), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(376), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(520), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(456), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(456), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, 1, PIXELS(344), 0, PIXELS(552), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(616), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, 1, PIXELS(504), 0, PIXELS(376), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(728), FACING_SOUTH, 2, 0},
+    {246, 0x74, 1, PIXELS(504), 0, PIXELS(568), FACING_SOUTH, 0, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gYampiDesert_Room4Placements[] = {
+    {406, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(568), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(600), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(568), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(232), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(184), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(200), FACING_SOUTH, 2, 1},
+    {406, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(264), FACING_SOUTH, 2, 1},
+    {406, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(280), FACING_SOUTH, 2, 1},
+    {103, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(200), FACING_SOUTH, 2, 0},
+    {251, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gYampiDesert_Room5Placements[] = {
+    {406, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(728), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(296), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(344), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(648), FACING_SOUTH, 2, 0},
+    {406, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(696), FACING_SOUTH, 2, 1},
+    {406, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(728), FACING_SOUTH, 2, 1},
+    {406, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(760), FACING_SOUTH, 2, 1},
+    {406, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(664), FACING_SOUTH, 2, 1},
+    {406, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(712), FACING_SOUTH, 2, 1},
+    {406, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(744), FACING_SOUTH, 2, 1},
+    {406, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(776), FACING_SOUTH, 2, 1},
+    {406, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(776), FACING_SOUTH, 2, 1},
+    {406, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 1},
+    {103, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {251, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {354, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gYampiDesert_Room8Placements[] = {
+    {407, CONDITION_ALWAYS, 1, PIXELS(408), 0, PIXELS(360), FACING_SOUTH, 2, 0},
+    {407, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(360), FACING_SOUTH, 2, 1},
+    {450, CONDITION_ALWAYS, 1, PIXELS(768), 0, PIXELS(616), FACING_SOUTH, 2, 0},
+    {337, CONDITION_ALWAYS, 1, PIXELS(824), 0, PIXELS(440), FACING_SOUTH, 2, 0},
+    {337, CONDITION_ALWAYS, 1, PIXELS(824), 0, PIXELS(424), FACING_SOUTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gYampiDesert_Room10Placements[] = {
+    {103, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {489, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct ActorPlacement gYampiDesert_Room12Placements[] = {
+    {406, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(152), FACING_SOUTH, 2, 0},
+    {337, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(184), FACING_SOUTH, 2, 0},
+    {337, CONDITION_ALWAYS, 1, PIXELS(504), 0, PIXELS(184), FACING_SOUTH, 2, 1},
+    {337, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(184), FACING_SOUTH, 2, 1},
+    {337, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(200), FACING_SOUTH, 2, 1},
+    {337, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(216), FACING_SOUTH, 2, 1},
+    {337, CONDITION_ALWAYS, 1, PIXELS(584), 0, PIXELS(264), FACING_SOUTH, 2, 1},
+    {337, CONDITION_ALWAYS, 1, PIXELS(776), 0, PIXELS(264), FACING_SOUTH, 2, 1},
+    {SCENE_TABLE_END},
+};
+
+LATE_DATA struct Trigger gYampiDesert_Triggers[] = {
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA struct Trigger gYampiDesert_Room1Triggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8, 0x200, EVENT(YampiDesert_PoundRoom1Stake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 9, 0x201, EVENT(YampiDesert_PoundRoom1Stake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 10, 0x202, EVENT(YampiDesert_PoundRoom1Stake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 11, 0x203, EVENT(YampiDesert_PoundRoom1Stake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 12, 0x204, EVENT(YampiDesert_PoundRoom1Stake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 13, 0x205, EVENT(YampiDesert_PoundRoom1Stake)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA struct Trigger gYampiDesert_Room2Triggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {0x202, 5, CONDITION_ALWAYS, EVENT(YampiDesert_ClimbRevealedLadder)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 10, 0x88d, EVENT(YampiDesert_ScoopLadderPit)},
+    {TRIGGER_TALK, 8, 0x8f0, EVENT(YampiDesert_TalkToTraveler)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAtLastWe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x8f0, MSGNO(MsgBriggsAndThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgOhNotAgain)},
+    {TRIGGER_TALK, 9, 0x8f0, MSGNO(MsgIfThatAccursed)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgIWasCertain)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x8f0, MSGNO(MsgThatIsSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMyJobIs)},
+    {TRIGGER_TALK, 10, 0x8f0, MSGNO(MsgOooohThisDesert)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgIMJust)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x8f0, MSGNO(MsgSureItS)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgMaybeWeShould)},
+    {TRIGGER_TALK, 11, 0x8f0, MSGNO(MsgWaterMyThroat)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgOhManThis)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x8f0, MSGNO(MsgThereSA)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgIDonTWant)},
+    {TRIGGER_TALK, 12, 0x8f0, EVENT(YampiDesert_TalkToElderAboutWay)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgOseniaIsSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1036, 0x88f, EVENT(YampiDesert_TalkToElderAboutWay)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x8f0, MSGNO(MsgWeVeReached)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgHowMuchLonger)},
+    {TRIGGER_TALK, 13, 0x8f0, EVENT(YampiDesert_TalkToElder)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgMySonHas)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1037, 0x88f, EVENT(YampiDesert_TalkToElder)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x8f0, MSGNO(MsgMySonIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgRegardlessOfWhat)},
+    {TRIGGER_TALK, 14, 0x8f0, MSGNO(MsgFatherHowAm)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgIfWeRemain)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x8f0, MSGNO(MsgMyFatherS)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgHoooICan)},
+    {TRIGGER_STEP, 15, 0x8f0, EVENT(YampiDesert_SeeTravelersAbove)},
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA struct Trigger gYampiDesert_Room3Triggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8, 0x200, EVENT(YampiDesert_PoundRoom3Stake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 9, 0x201, EVENT(YampiDesert_PoundRoom3Stake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 10, 0x202, EVENT(YampiDesert_PoundRoom3Stake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 11, 0x203, EVENT(YampiDesert_PoundRoom3Stake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 12, 0x204, EVENT(YampiDesert_PoundRoom3Stake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 13, 0x205, EVENT(YampiDesert_PoundRoom3Stake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 14, 0x206, EVENT(YampiDesert_PoundRoom3Stake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 15, 0x207, EVENT(YampiDesert_PoundRoom3Stake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 16, 0x208, EVENT(YampiDesert_PoundRoom3Stake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 17, 0x209, EVENT(YampiDesert_PoundRoom3Stake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 18, 0x20a, EVENT(YampiDesert_PoundRoom3Stake)},
+    {TRIGGER_STEP, 11, 0x20b, EVENT(YampiDesert_StepOntoStakeTops)},
+    {TRIGGER_STEP, 10, 0x120b, EVENT(YampiDesert_StepOffStakeTops)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(YampiDesert_FightBlitz)},
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA struct Trigger gYampiDesert_Room4Triggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8, 0x200, EVENT(YampiDesert_PoundRoom4Stake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 9, 0x201, EVENT(YampiDesert_PoundRoom4Stake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 10, 0x202, EVENT(YampiDesert_PoundRoom4Stake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 11, 0x203, EVENT(YampiDesert_PoundRoom4Stake)},
+    {TRIGGER_STEP, 11, 0x20b, EVENT(YampiDesert_StepOntoStakeTops)},
+    {TRIGGER_STEP, 10, 0x120b, EVENT(YampiDesert_StepOffStakeTops)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
+    {TRIGGER_RAISED, 210, CONDITION_ALWAYS, EVENT(YampiDesert_WatchScorpionStop)},
+    {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(YampiDesert_StirScorpion)},
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA struct Trigger gYampiDesert_Room5Triggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8, 0x200, EVENT(YampiDesert_PoundRoom5Stake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 9, 0x201, EVENT(YampiDesert_PoundRoom5Stake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 10, 0x202, EVENT(YampiDesert_PoundRoom5Stake)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
+    {TRIGGER_RAISED, 210, 0x88b, EVENT(YampiDesert_WatchScorpionStop)},
+    {TRIGGER_RAISED, 201, CONDITION_ALWAYS, EVENT(YampiDesert_StirScorpionAgain)},
+    {TRIGGER_RAISED, 202, CONDITION_ALWAYS, EVENT(YampiDesert_CornerScorpion)},
+    {TRIGGER_STEP, 10, 0x88c, EVENT(YampiDesert_TrapKingScorpion)},
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA struct Trigger gYampiDesert_Room6Triggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 12, 0x302, EVENT(YampiDesert_ScoopTreasurePit)},
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA struct Trigger gYampiDesert_Room7Triggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA struct Trigger gYampiDesert_Room8Triggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x20c, 0},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(YampiDesert_RevealRockHint)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_HideRockHint)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(YampiDesert_ReadSignpost)},
+    {TRIGGER_STEP, 7, 0x120d, EVENT(YampiDesert_HideSlideActors)},
+    {TRIGGER_STEP, 8, 0x20d, EVENT(YampiDesert_ShowSlideActors)},
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA struct Trigger gYampiDesert_Room9Triggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(YampiDesert_RevealMedalSpot)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_HideMedalSpot)},
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA struct Trigger gYampiDesert_Room10Triggers[] = {
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 10, 0x8ed, EVENT(YampiDesert_ScoopCenterPit)},
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA struct Trigger gYampiDesert_Room11Triggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {0xc602, 2, CONDITION_ALWAYS, EVENT(YampiDesert_ClimbOutOfRoom11)},
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA struct Trigger gYampiDesert_Room12Triggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8, 0x200, EVENT(YampiDesert_PoundRoom12Stake)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
+    {TRIGGER_TABLE_END},
+};
+
+LATE_DATA u32 gYampiDesert_SandCloudDrifts[] = {
+    0, 1, 4, 0xe80000, 0, 0xba0000,
+    1, 38,
+};
+// clang-format on
+#undef YampiDesert_ScoopTreasurePit
+#undef YampiDesert_PoundRoom1Stake
+#undef YampiDesert_PoundRoom3Stake
+#undef YampiDesert_PoundRoom4Stake
+#undef YampiDesert_PoundRoom12Stake
+#undef YampiDesert_PoundRoom5Stake
+#undef YampiDesert_ScoopCenterPit
+#undef YampiDesert_ScoopLadderPit
+#undef YampiDesert_SeeTravelersAbove
+#undef gFieldEffect_ShortScript
+#undef gFieldEffect_MediumScript
+#undef gFieldEffect_LongScript

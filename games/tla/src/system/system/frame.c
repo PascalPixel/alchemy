@@ -4,7 +4,7 @@
 
 #include "../system_internal.h"
 #include "gamepak/far_call/sound.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 
 void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler) {
   if (irq <= 13) {

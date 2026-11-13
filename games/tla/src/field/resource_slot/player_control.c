@@ -5,7 +5,7 @@
 
 #include "../resource_slot_internal.h"
 #include "flag_call.h"
-#include "frame.h"
+#include "system/frame.h"
 #include "module/field/field.h"
 #include "module/field/object.h"
 #include "module/field/resource_slot.h"
@@ -433,7 +433,7 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
 #undef SAME_CELL
 
 #include "version.h"
-#include "frame.h"
+#include "system/frame.h"
 #include "module/field/field.h"
 #include "module/field/object.h"
 #include "module/field/resource_slot.h"

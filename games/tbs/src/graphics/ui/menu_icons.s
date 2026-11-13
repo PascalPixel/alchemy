@@ -3,197 +3,197 @@
 	.global gItemIcons
 gItemIcons:
 	.4byte Icon_Item000
-	.4byte Icon_Item001
-	.4byte Icon_Item002
-	.4byte Icon_Item003
-	.4byte Icon_Item004
-	.4byte Icon_Item005
-	.4byte Icon_Item006
-	.4byte Icon_Item007
-	.4byte Icon_Item008
-	.4byte Icon_Item009
-	.4byte Icon_Item010
-	.4byte Icon_Item011
-	.4byte Icon_Item012
-	.4byte Icon_Item013
-	.4byte Icon_Item014
-	.4byte Icon_Item015
-	.4byte Icon_Item016
-	.4byte Icon_Item017
-	.4byte Icon_Item018
-	.4byte Icon_Item019
-	.4byte Icon_Item020
-	.4byte Icon_Item021
-	.4byte Icon_Item022
-	.4byte Icon_Item023
-	.4byte Icon_Item024
-	.4byte Icon_Item025
-	.4byte Icon_Item026
-	.4byte Icon_Item027
-	.4byte Icon_Item028
-	.4byte Icon_Item029
-	.4byte Icon_Item030
-	.4byte Icon_Item031
-	.4byte Icon_Item032
-	.4byte Icon_Item033
-	.4byte Icon_Item034
-	.4byte Icon_Item035
-	.4byte Icon_Item036
-	.4byte Icon_Item037
-	.4byte Icon_Item038
-	.4byte Icon_Item039
-	.4byte Icon_Item040
-	.4byte Icon_Item041
-	.4byte Icon_Item042
-	.4byte Icon_Item043
-	.4byte Icon_Item044
-	.4byte Icon_Item045
-	.4byte Icon_Item046
-	.4byte Icon_Item047
-	.4byte Icon_Item048
-	.4byte Icon_Item049
-	.4byte Icon_Item050
-	.4byte Icon_Item051
-	.4byte Icon_Item052
-	.4byte Icon_Item053
-	.4byte Icon_Item054
-	.4byte Icon_Item055
-	.4byte Icon_Item056
-	.4byte Icon_Item057
-	.4byte Icon_Item058
-	.4byte Icon_Item059
-	.4byte Icon_Item060
-	.4byte Icon_Item061
-	.4byte Icon_Item062
-	.4byte Icon_Item063
-	.4byte Icon_Item064
-	.4byte Icon_Item065
-	.4byte Icon_Item066
-	.4byte Icon_Item067
-	.4byte Icon_Item068
-	.4byte Icon_Item069
-	.4byte Icon_Item070
-	.4byte Icon_Item071
-	.4byte Icon_Item072
-	.4byte Icon_Item073
-	.4byte Icon_Item074
-	.4byte Icon_Item075
-	.4byte Icon_Item076
-	.4byte Icon_Item077
-	.4byte Icon_Item078
-	.4byte Icon_Item079
-	.4byte Icon_Item080
-	.4byte Icon_Item081
-	.4byte Icon_Item082
-	.4byte Icon_Item083
-	.4byte Icon_Item084
-	.4byte Icon_Item085
-	.4byte Icon_Item086
-	.4byte Icon_Item087
-	.4byte Icon_Item088
-	.4byte Icon_Item089
-	.4byte Icon_Item090
-	.4byte Icon_Item091
-	.4byte Icon_Item092
-	.4byte Icon_Item093
-	.4byte Icon_Item094
-	.4byte Icon_Item095
-	.4byte Icon_Item096
-	.4byte Icon_Item097
-	.4byte Icon_Item098
-	.4byte Icon_Item099
-	.4byte Icon_Item100
-	.4byte Icon_Item101
-	.4byte Icon_Item102
-	.4byte Icon_Item103
-	.4byte Icon_Item104
-	.4byte Icon_Item105
-	.4byte Icon_Item106
-	.4byte Icon_Item107
-	.4byte Icon_Item108
-	.4byte Icon_Item109
-	.4byte Icon_Item110
-	.4byte Icon_Item111
-	.4byte Icon_Item112
-	.4byte Icon_Item113
-	.4byte Icon_Item114
-	.4byte Icon_Item115
-	.4byte Icon_Item116
-	.4byte Icon_Item117
-	.4byte Icon_Item118
-	.4byte Icon_Item119
-	.4byte Icon_Item120
-	.4byte Icon_Item121
-	.4byte Icon_Item122
-	.4byte Icon_Item123
-	.4byte Icon_Item124
-	.4byte Icon_Item125
-	.4byte Icon_Item126
-	.4byte Icon_Item127
-	.4byte Icon_Item128
-	.4byte Icon_Item129
-	.4byte Icon_Item130
-	.4byte Icon_Item131
-	.4byte Icon_Item132
-	.4byte Icon_Item133
-	.4byte Icon_Item134
-	.4byte Icon_Item135
-	.4byte Icon_Item136
-	.4byte Icon_Item137
-	.4byte Icon_Item138
-	.4byte Icon_Item139
-	.4byte Icon_Item140
-	.4byte Icon_Item141
-	.4byte Icon_Item142
-	.4byte Icon_Item143
-	.4byte Icon_Item144
-	.4byte Icon_Item145
-	.4byte Icon_Item146
-	.4byte Icon_Item147
-	.4byte Icon_Item148
-	.4byte Icon_Item149
-	.4byte Icon_Item150
-	.4byte Icon_Item151
-	.4byte Icon_Item152
-	.4byte Icon_Item153
-	.4byte Icon_Item154
-	.4byte Icon_Item155
-	.4byte Icon_Item156
-	.4byte Icon_Item157
-	.4byte Icon_Item158
-	.4byte Icon_Item159
-	.4byte Icon_Item160
-	.4byte Icon_Item161
-	.4byte Icon_Item162
-	.4byte Icon_Item163
-	.4byte Icon_Item164
-	.4byte Icon_Item165
-	.4byte Icon_Item166
-	.4byte Icon_Item167
-	.4byte Icon_Item168
-	.4byte Icon_Item169
-	.4byte Icon_Item170
-	.4byte Icon_Item171
-	.4byte Icon_Item172
-	.4byte Icon_Item173
-	.4byte Icon_Item174
-	.4byte Icon_Item175
-	.4byte Icon_Item176
-	.4byte Icon_Item177
-	.4byte Icon_Item178
-	.4byte Icon_Item179
-	.4byte Icon_Item180
-	.4byte Icon_Item181
-	.4byte Icon_Item182
-	.4byte Icon_Item183
-	.4byte Icon_Item184
-	.4byte Icon_Item185
-	.4byte Icon_Item186
-	.4byte Icon_Item187
-	.4byte Icon_Item188
-	.4byte Icon_Item189
-	.4byte Icon_Item190
-	.4byte Icon_Item191
+	.4byte Icon_ItemLongSword
+	.4byte Icon_ItemBroadSword
+	.4byte Icon_ItemClaymore
+	.4byte Icon_ItemGreatSword
+	.4byte Icon_ItemShamshir
+	.4byte Icon_ItemSilverBlade
+	.4byte Icon_ItemMasamune
+	.4byte Icon_ItemArcticBlade
+	.4byte Icon_ItemGaiaBlade
+	.4byte Icon_ItemSolBlade
+	.4byte Icon_ItemMuramasa
+	.4byte Icon_ItemShortSword
+	.4byte Icon_ItemHuntersSword
+	.4byte Icon_ItemBattleRapier
+	.4byte Icon_ItemMasterRapier
+	.4byte Icon_ItemNinjaBlade
+	.4byte Icon_ItemSwiftSword
+	.4byte Icon_ItemElvenRapier
+	.4byte Icon_ItemAssassinBlade
+	.4byte Icon_ItemMysteryBlade
+	.4byte Icon_ItemKikuichimonji
+	.4byte Icon_ItemKusanagi
+	.4byte Icon_ItemBattleAxe
+	.4byte Icon_ItemBroadAxe
+	.4byte Icon_ItemGreatAxe
+	.4byte Icon_ItemDragonAxe
+	.4byte Icon_ItemGiantAxe
+	.4byte Icon_ItemVulcanAxe
+	.4byte Icon_ItemBurningAxe
+	.4byte Icon_ItemDemonAxe
+	.4byte Icon_ItemMace
+	.4byte Icon_ItemHeavyMace
+	.4byte Icon_ItemBattleMace
+	.4byte Icon_ItemWarMace
+	.4byte Icon_ItemRighteousMace
+	.4byte Icon_ItemGrievousMace
+	.4byte Icon_ItemBlessedMace
+	.4byte Icon_ItemWickedMace
+	.4byte Icon_ItemWoodenStick
+	.4byte Icon_ItemMagicRod
+	.4byte Icon_ItemWitchsWand
+	.4byte Icon_ItemBlessedAnkh
+	.4byte Icon_ItemPsynergyRod
+	.4byte Icon_ItemFrostWand
+	.4byte Icon_ItemAngelicAnkh
+	.4byte Icon_ItemDemonicStaff
+	.4byte Icon_ItemCrystalRod
+	.4byte Icon_ItemLeatherArmor
+	.4byte Icon_ItemPsynergyArmor
+	.4byte Icon_ItemChainMail
+	.4byte Icon_ItemArmoredShell
+	.4byte Icon_ItemPlateMail
+	.4byte Icon_ItemSteelArmor
+	.4byte Icon_ItemSpiritArmor
+	.4byte Icon_ItemDragonScales
+	.4byte Icon_ItemDemonMail
+	.4byte Icon_ItemAsurasArmor
+	.4byte Icon_ItemCottonShirt
+	.4byte Icon_ItemTravelVest
+	.4byte Icon_ItemFurCoat
+	.4byte Icon_ItemAdeptsClothes
+	.4byte Icon_ItemElvenShirt
+	.4byte Icon_ItemSilverVest
+	.4byte Icon_ItemWaterJacket
+	.4byte Icon_ItemStormGear
+	.4byte Icon_ItemKimono
+	.4byte Icon_ItemNinjaGarb
+	.4byte Icon_ItemOnePieceDress
+	.4byte Icon_ItemTravelRobe
+	.4byte Icon_ItemSilkRobe
+	.4byte Icon_ItemChinaDress
+	.4byte Icon_ItemJerkin
+	.4byte Icon_ItemCocktailDress
+	.4byte Icon_ItemBlessedRobe
+	.4byte Icon_ItemMagicalCassock
+	.4byte Icon_ItemMysteriousRobe
+	.4byte Icon_ItemFeatheredRobe
+	.4byte Icon_ItemOraclesRobe
+	.4byte Icon_ItemWoodenShield
+	.4byte Icon_ItemBronzeShield
+	.4byte Icon_ItemIronShield
+	.4byte Icon_ItemKnightsShield
+	.4byte Icon_ItemMirroredShield
+	.4byte Icon_ItemDragonShield
+	.4byte Icon_ItemPaddedGloves
+	.4byte Icon_ItemLeatherGloves
+	.4byte Icon_ItemGauntlets
+	.4byte Icon_ItemVambrace
+	.4byte Icon_ItemWarGloves
+	.4byte Icon_ItemSpiritGloves
+	.4byte Icon_ItemLeatherArmlet
+	.4byte Icon_ItemArmlet
+	.4byte Icon_ItemHeavyArmlet
+	.4byte Icon_ItemSilverArmlet
+	.4byte Icon_ItemSpiritArmlet
+	.4byte Icon_ItemVirtuousArmlet
+	.4byte Icon_ItemOpenHelm
+	.4byte Icon_ItemBronzeHelm
+	.4byte Icon_ItemIronHelm
+	.4byte Icon_ItemSteelHelm
+	.4byte Icon_ItemSilverHelm
+	.4byte Icon_ItemKnightsHelm
+	.4byte Icon_ItemWarriorsHelm
+	.4byte Icon_ItemAdeptsHelm
+	.4byte Icon_ItemLeatherCap
+	.4byte Icon_ItemWoodenCap
+	.4byte Icon_ItemMailCap
+	.4byte Icon_ItemJeweledCrown
+	.4byte Icon_ItemNinjaHood
+	.4byte Icon_ItemLuckyCap
+	.4byte Icon_ItemThunderCrown
+	.4byte Icon_ItemCirclet
+	.4byte Icon_ItemSilverCirclet
+	.4byte Icon_ItemGuardianCirclet
+	.4byte Icon_ItemPlatinumCirclet
+	.4byte Icon_ItemMythrilCirclet
+	.4byte Icon_ItemHerb
+	.4byte Icon_ItemAntidote
+	.4byte Icon_ItemVenusStar
+	.4byte Icon_ItemMercuryStar
+	.4byte Icon_ItemMarsStar
+	.4byte Icon_ItemJupiterStar
+	.4byte Icon_ItemSmallJewel
+	.4byte Icon_ItemOrbOfForce
+	.4byte Icon_ItemDouseDrop
+	.4byte Icon_ItemFrostJewel
+	.4byte Icon_ItemLiftingGem
+	.4byte Icon_ItemHaltGem
+	.4byte Icon_ItemCloakBall
+	.4byte Icon_ItemCarryStone
+	.4byte Icon_ItemCatchBeads
+	.4byte Icon_ItemNut
+	.4byte Icon_ItemVial
+	.4byte Icon_ItemPotion
+	.4byte Icon_ItemHermesWater
+	.4byte Icon_ItemEmptyBottle
+	.4byte Icon_ItemPsyCrystal
+	.4byte Icon_ItemElixir
+	.4byte Icon_ItemWaterOfLife
+	.4byte Icon_ItemPowerBread
+	.4byte Icon_ItemCookie
+	.4byte Icon_ItemApple
+	.4byte Icon_ItemHardNut
+	.4byte Icon_ItemMint
+	.4byte Icon_ItemLuckyPepper
+	.4byte Icon_ItemSmokeBomb
+	.4byte Icon_ItemSleepBomb
+	.4byte Icon_ItemMythrilBag
+	.4byte Icon_ItemGameTicket
+	.4byte Icon_ItemLuckyMedal
+	.4byte Icon_ItemDragonsEye
+	.4byte Icon_ItemMachete
+	.4byte Icon_ItemShamansRod
+	.4byte Icon_ItemBone
+	.4byte Icon_ItemAnchorCharm
+	.4byte Icon_ItemMythrilShirt
+	.4byte Icon_ItemSilkShirt
+	.4byte Icon_ItemRunningShirt
+	.4byte Icon_ItemHyperBoots
+	.4byte Icon_ItemQuickBoots
+	.4byte Icon_ItemFurBoots
+	.4byte Icon_ItemAdeptRing
+	.4byte Icon_ItemWarRing
+	.4byte Icon_ItemSleepRing
+	.4byte Icon_ItemGlitteringTiara
+	.4byte Icon_ItemEarthShield
+	.4byte Icon_ItemGuardianArmlet
+	.4byte Icon_ItemBattleGloves
+	.4byte Icon_ItemBanditsSword
+	.4byte Icon_ItemHealingRing
+	.4byte Icon_ItemUnicornRing
+	.4byte Icon_ItemFairyRing
+	.4byte Icon_ItemCorn
+	.4byte Icon_ItemCellKey
+	.4byte Icon_ItemBoatTicket
+	.4byte Icon_ItemSacredFeather
+	.4byte Icon_ItemMysticDraught
+	.4byte Icon_ItemAuraGloves
+	.4byte Icon_ItemProphetsHat
+	.4byte Icon_ItemSpikedArmor
+	.4byte Icon_ItemOilDrop
+	.4byte Icon_ItemWeaselsClaw
+	.4byte Icon_ItemBrambleSeed
+	.4byte Icon_ItemCrystalPowder
+	.4byte Icon_ItemZodiacWand
+	.4byte Icon_ItemClericsRing
+	.4byte Icon_ItemBlackOrb
+	.4byte Icon_ItemTurtleBoots
+	.4byte Icon_ItemLureCap
+	.4byte Icon_ItemRedKey
+	.4byte Icon_ItemBlueKey
 	.4byte Icon_Item192
 	.4byte Icon_Item193
 	.4byte Icon_Item194
@@ -262,396 +262,396 @@ gItemIconsEnd:
 	.4byte -1
 Icon_Item000:
 	.incbin "games/tbs/src/graphics/ui/menu_icons/item_000.icon4"
-Icon_Item001:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_001.icon4"
-Icon_Item002:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_002.icon4"
-Icon_Item003:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_003.icon4"
-Icon_Item004:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_004.icon4"
-Icon_Item005:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_005.icon4"
-Icon_Item006:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_006.icon4"
-Icon_Item007:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_007.icon4"
-Icon_Item008:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_008.icon4"
-Icon_Item009:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_009.icon4"
-Icon_Item010:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_010.icon4"
-Icon_Item011:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_011.icon4"
-Icon_Item012:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_012.icon4"
-Icon_Item013:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_013.icon4"
-Icon_Item014:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_014.icon4"
-Icon_Item015:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_015.icon4"
-Icon_Item016:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_016.icon4"
-Icon_Item017:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_017.icon4"
-Icon_Item018:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_018.icon4"
-Icon_Item019:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_019.icon4"
-Icon_Item020:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_020.icon4"
-Icon_Item021:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_021.icon4"
-Icon_Item022:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_022.icon4"
-Icon_Item023:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_023.icon4"
-Icon_Item024:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_024.icon4"
-Icon_Item025:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_025.icon4"
-Icon_Item026:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_026.icon4"
-Icon_Item027:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_027.icon4"
-Icon_Item028:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_028.icon4"
-Icon_Item029:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_029.icon4"
-Icon_Item030:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_030.icon4"
-Icon_Item031:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_031.icon4"
-Icon_Item032:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_032.icon4"
-Icon_Item033:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_033.icon4"
-Icon_Item034:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_034.icon4"
-Icon_Item035:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_035.icon4"
-Icon_Item036:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_036.icon4"
-Icon_Item037:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_037.icon4"
-Icon_Item038:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_038.icon4"
-Icon_Item039:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_039.icon4"
-Icon_Item040:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_040.icon4"
-Icon_Item041:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_041.icon4"
-Icon_Item042:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_042.icon4"
-Icon_Item043:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_043.icon4"
-Icon_Item044:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_044.icon4"
-Icon_Item045:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_045.icon4"
-Icon_Item046:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_046.icon4"
-Icon_Item047:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_047.icon4"
-Icon_Item048:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_048.icon4"
-Icon_Item049:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_049.icon4"
-Icon_Item050:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_050.icon4"
-Icon_Item051:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_051.icon4"
-Icon_Item052:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_052.icon4"
-Icon_Item053:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_053.icon4"
-Icon_Item054:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_054.icon4"
-Icon_Item055:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_055.icon4"
-Icon_Item056:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_056.icon4"
-Icon_Item057:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_057.icon4"
-Icon_Item058:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_058.icon4"
-Icon_Item059:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_059.icon4"
-Icon_Item060:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_060.icon4"
-Icon_Item061:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_061.icon4"
-Icon_Item062:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_062.icon4"
-Icon_Item063:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_063.icon4"
-Icon_Item064:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_064.icon4"
-Icon_Item065:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_065.icon4"
-Icon_Item066:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_066.icon4"
-Icon_Item067:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_067.icon4"
-Icon_Item068:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_068.icon4"
-Icon_Item069:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_069.icon4"
-Icon_Item070:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_070.icon4"
-Icon_Item071:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_071.icon4"
-Icon_Item072:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_072.icon4"
-Icon_Item073:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_073.icon4"
-Icon_Item074:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_074.icon4"
-Icon_Item075:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_075.icon4"
-Icon_Item076:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_076.icon4"
-Icon_Item077:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_077.icon4"
-Icon_Item078:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_078.icon4"
-Icon_Item079:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_079.icon4"
-Icon_Item080:
+Icon_ItemLongSword:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_long_sword.icon4"
+Icon_ItemBroadSword:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_broad_sword.icon4"
+Icon_ItemClaymore:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_claymore.icon4"
+Icon_ItemGreatSword:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_great_sword.icon4"
+Icon_ItemShamshir:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_shamshir.icon4"
+Icon_ItemSilverBlade:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_silver_blade.icon4"
+Icon_ItemMasamune:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_masamune.icon4"
+Icon_ItemArcticBlade:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_arctic_blade.icon4"
+Icon_ItemGaiaBlade:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_gaia_blade.icon4"
+Icon_ItemSolBlade:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_sol_blade.icon4"
+Icon_ItemMuramasa:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_muramasa.icon4"
+Icon_ItemShortSword:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_short_sword.icon4"
+Icon_ItemHuntersSword:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_hunters_sword.icon4"
+Icon_ItemBattleRapier:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_battle_rapier.icon4"
+Icon_ItemMasterRapier:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_master_rapier.icon4"
+Icon_ItemNinjaBlade:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_ninja_blade.icon4"
+Icon_ItemSwiftSword:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_swift_sword.icon4"
+Icon_ItemElvenRapier:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_elven_rapier.icon4"
+Icon_ItemAssassinBlade:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_assassin_blade.icon4"
+Icon_ItemMysteryBlade:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_mystery_blade.icon4"
+Icon_ItemKikuichimonji:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_kikuichimonji.icon4"
+Icon_ItemKusanagi:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_kusanagi.icon4"
+Icon_ItemBattleAxe:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_battle_axe.icon4"
+Icon_ItemBroadAxe:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_broad_axe.icon4"
+Icon_ItemGreatAxe:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_great_axe.icon4"
+Icon_ItemDragonAxe:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_dragon_axe.icon4"
+Icon_ItemGiantAxe:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_giant_axe.icon4"
+Icon_ItemVulcanAxe:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_vulcan_axe.icon4"
+Icon_ItemBurningAxe:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_burning_axe.icon4"
+Icon_ItemDemonAxe:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_demon_axe.icon4"
+Icon_ItemMace:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_mace.icon4"
+Icon_ItemHeavyMace:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_heavy_mace.icon4"
+Icon_ItemBattleMace:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_battle_mace.icon4"
+Icon_ItemWarMace:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_war_mace.icon4"
+Icon_ItemRighteousMace:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_righteous_mace.icon4"
+Icon_ItemGrievousMace:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_grievous_mace.icon4"
+Icon_ItemBlessedMace:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_blessed_mace.icon4"
+Icon_ItemWickedMace:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_wicked_mace.icon4"
+Icon_ItemWoodenStick:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_wooden_stick.icon4"
+Icon_ItemMagicRod:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_magic_rod.icon4"
+Icon_ItemWitchsWand:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_witchs_wand.icon4"
+Icon_ItemBlessedAnkh:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_blessed_ankh.icon4"
+Icon_ItemPsynergyRod:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_psynergy_rod.icon4"
+Icon_ItemFrostWand:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_frost_wand.icon4"
+Icon_ItemAngelicAnkh:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_angelic_ankh.icon4"
+Icon_ItemDemonicStaff:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_demonic_staff.icon4"
+Icon_ItemCrystalRod:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_crystal_rod.icon4"
+Icon_ItemLeatherArmor:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_leather_armor.icon4"
+Icon_ItemPsynergyArmor:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_psynergy_armor.icon4"
+Icon_ItemChainMail:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_chain_mail.icon4"
+Icon_ItemArmoredShell:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_armored_shell.icon4"
+Icon_ItemPlateMail:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_plate_mail.icon4"
+Icon_ItemSteelArmor:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_steel_armor.icon4"
+Icon_ItemSpiritArmor:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_spirit_armor.icon4"
+Icon_ItemDragonScales:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_dragon_scales.icon4"
+Icon_ItemDemonMail:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_demon_mail.icon4"
+Icon_ItemAsurasArmor:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_asuras_armor.icon4"
+Icon_ItemCottonShirt:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_cotton_shirt.icon4"
+Icon_ItemTravelVest:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_travel_vest.icon4"
+Icon_ItemFurCoat:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_fur_coat.icon4"
+Icon_ItemAdeptsClothes:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_adepts_clothes.icon4"
+Icon_ItemElvenShirt:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_elven_shirt.icon4"
+Icon_ItemSilverVest:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_silver_vest.icon4"
+Icon_ItemWaterJacket:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_water_jacket.icon4"
+Icon_ItemStormGear:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_storm_gear.icon4"
+Icon_ItemKimono:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_kimono.icon4"
+Icon_ItemNinjaGarb:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_ninja_garb.icon4"
+Icon_ItemOnePieceDress:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_one_piece_dress.icon4"
+Icon_ItemTravelRobe:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_travel_robe.icon4"
+Icon_ItemSilkRobe:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_silk_robe.icon4"
+Icon_ItemChinaDress:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_china_dress.icon4"
+Icon_ItemJerkin:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_jerkin.icon4"
+Icon_ItemCocktailDress:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_cocktail_dress.icon4"
+Icon_ItemBlessedRobe:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_blessed_robe.icon4"
+Icon_ItemMagicalCassock:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_magical_cassock.icon4"
+Icon_ItemMysteriousRobe:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_mysterious_robe.icon4"
+Icon_ItemFeatheredRobe:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_feathered_robe.icon4"
+Icon_ItemOraclesRobe:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_oracles_robe.icon4"
+Icon_ItemWoodenShield:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_wooden_shield.icon4"
+Icon_ItemBronzeShield:
 	.ifdef TBS_EDITION_JA
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_080_ja.icon4"
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_bronze_shield_ja.icon4"
 	.else
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_080.icon4"
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_bronze_shield.icon4"
 	.endif
-Icon_Item081:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_081.icon4"
-Icon_Item082:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_082.icon4"
-Icon_Item083:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_083.icon4"
-Icon_Item084:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_084.icon4"
-Icon_Item085:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_085.icon4"
-Icon_Item086:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_086.icon4"
-Icon_Item087:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_087.icon4"
-Icon_Item088:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_088.icon4"
-Icon_Item089:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_089.icon4"
-Icon_Item090:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_090.icon4"
-Icon_Item091:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_091.icon4"
-Icon_Item092:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_092.icon4"
-Icon_Item093:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_093.icon4"
-Icon_Item094:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_094.icon4"
-Icon_Item095:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_095.icon4"
-Icon_Item096:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_096.icon4"
-Icon_Item097:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_097.icon4"
-Icon_Item098:
+Icon_ItemIronShield:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_iron_shield.icon4"
+Icon_ItemKnightsShield:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_knights_shield.icon4"
+Icon_ItemMirroredShield:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_mirrored_shield.icon4"
+Icon_ItemDragonShield:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_dragon_shield.icon4"
+Icon_ItemPaddedGloves:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_padded_gloves.icon4"
+Icon_ItemLeatherGloves:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_leather_gloves.icon4"
+Icon_ItemGauntlets:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_gauntlets.icon4"
+Icon_ItemVambrace:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_vambrace.icon4"
+Icon_ItemWarGloves:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_war_gloves.icon4"
+Icon_ItemSpiritGloves:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_spirit_gloves.icon4"
+Icon_ItemLeatherArmlet:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_leather_armlet.icon4"
+Icon_ItemArmlet:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_armlet.icon4"
+Icon_ItemHeavyArmlet:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_heavy_armlet.icon4"
+Icon_ItemSilverArmlet:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_silver_armlet.icon4"
+Icon_ItemSpiritArmlet:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_spirit_armlet.icon4"
+Icon_ItemVirtuousArmlet:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_virtuous_armlet.icon4"
+Icon_ItemOpenHelm:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_open_helm.icon4"
+Icon_ItemBronzeHelm:
 	.ifdef TBS_EDITION_JA
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_098_ja.icon4"
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_bronze_helm_ja.icon4"
 	.else
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_098.icon4"
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_bronze_helm.icon4"
 	.endif
-Icon_Item099:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_099.icon4"
-Icon_Item100:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_100.icon4"
-Icon_Item101:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_101.icon4"
-Icon_Item102:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_102.icon4"
-Icon_Item103:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_103.icon4"
-Icon_Item104:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_104.icon4"
-Icon_Item105:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_105.icon4"
-Icon_Item106:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_106.icon4"
-Icon_Item107:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_107.icon4"
-Icon_Item108:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_108.icon4"
-Icon_Item109:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_109.icon4"
-Icon_Item110:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_110.icon4"
-Icon_Item111:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_111.icon4"
-Icon_Item112:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_112.icon4"
-Icon_Item113:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_113.icon4"
-Icon_Item114:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_114.icon4"
-Icon_Item115:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_115.icon4"
-Icon_Item116:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_116.icon4"
-Icon_Item117:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_117.icon4"
-Icon_Item118:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_118.icon4"
-Icon_Item119:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_119.icon4"
-Icon_Item120:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_120.icon4"
-Icon_Item121:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_121.icon4"
-Icon_Item122:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_122.icon4"
-Icon_Item123:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_123.icon4"
-Icon_Item124:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_124.icon4"
-Icon_Item125:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_125.icon4"
-Icon_Item126:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_126.icon4"
-Icon_Item127:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_127.icon4"
-Icon_Item128:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_128.icon4"
-Icon_Item129:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_129.icon4"
-Icon_Item130:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_130.icon4"
-Icon_Item131:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_131.icon4"
-Icon_Item132:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_132.icon4"
-Icon_Item133:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_133.icon4"
-Icon_Item134:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_134.icon4"
-Icon_Item135:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_135.icon4"
-Icon_Item136:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_136.icon4"
-Icon_Item137:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_137.icon4"
-Icon_Item138:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_138.icon4"
-Icon_Item139:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_139.icon4"
-Icon_Item140:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_140.icon4"
-Icon_Item141:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_141.icon4"
-Icon_Item142:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_142.icon4"
-Icon_Item143:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_143.icon4"
-Icon_Item144:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_144.icon4"
-Icon_Item145:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_145.icon4"
-Icon_Item146:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_146.icon4"
-Icon_Item147:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_147.icon4"
-Icon_Item148:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_148.icon4"
-Icon_Item149:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_149.icon4"
-Icon_Item150:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_150.icon4"
-Icon_Item151:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_151.icon4"
-Icon_Item152:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_152.icon4"
-Icon_Item153:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_153.icon4"
-Icon_Item154:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_154.icon4"
-Icon_Item155:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_155.icon4"
-Icon_Item156:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_156.icon4"
-Icon_Item157:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_157.icon4"
-Icon_Item158:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_158.icon4"
-Icon_Item159:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_159.icon4"
-Icon_Item160:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_160.icon4"
-Icon_Item161:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_161.icon4"
-Icon_Item162:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_162.icon4"
-Icon_Item163:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_163.icon4"
-Icon_Item164:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_164.icon4"
-Icon_Item165:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_165.icon4"
-Icon_Item166:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_166.icon4"
-Icon_Item167:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_167.icon4"
-Icon_Item168:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_168.icon4"
-Icon_Item169:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_169.icon4"
-Icon_Item170:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_170.icon4"
-Icon_Item171:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_171.icon4"
-Icon_Item172:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_172.icon4"
-Icon_Item173:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_173.icon4"
-Icon_Item174:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_174.icon4"
-Icon_Item175:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_175.icon4"
-Icon_Item176:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_176.icon4"
-Icon_Item177:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_177.icon4"
-Icon_Item178:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_178.icon4"
-Icon_Item179:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_179.icon4"
-Icon_Item180:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_180.icon4"
-Icon_Item181:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_181.icon4"
-Icon_Item182:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_182.icon4"
-Icon_Item183:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_183.icon4"
-Icon_Item184:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_184.icon4"
-Icon_Item185:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_185.icon4"
-Icon_Item186:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_186.icon4"
-Icon_Item187:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_187.icon4"
-Icon_Item188:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_188.icon4"
-Icon_Item189:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_189.icon4"
-Icon_Item190:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_190.icon4"
-Icon_Item191:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_191.icon4"
+Icon_ItemIronHelm:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_iron_helm.icon4"
+Icon_ItemSteelHelm:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_steel_helm.icon4"
+Icon_ItemSilverHelm:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_silver_helm.icon4"
+Icon_ItemKnightsHelm:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_knights_helm.icon4"
+Icon_ItemWarriorsHelm:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_warriors_helm.icon4"
+Icon_ItemAdeptsHelm:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_adepts_helm.icon4"
+Icon_ItemLeatherCap:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_leather_cap.icon4"
+Icon_ItemWoodenCap:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_wooden_cap.icon4"
+Icon_ItemMailCap:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_mail_cap.icon4"
+Icon_ItemJeweledCrown:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_jeweled_crown.icon4"
+Icon_ItemNinjaHood:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_ninja_hood.icon4"
+Icon_ItemLuckyCap:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_lucky_cap.icon4"
+Icon_ItemThunderCrown:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_thunder_crown.icon4"
+Icon_ItemCirclet:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_circlet.icon4"
+Icon_ItemSilverCirclet:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_silver_circlet.icon4"
+Icon_ItemGuardianCirclet:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_guardian_circlet.icon4"
+Icon_ItemPlatinumCirclet:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_platinum_circlet.icon4"
+Icon_ItemMythrilCirclet:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_mythril_circlet.icon4"
+Icon_ItemHerb:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_herb.icon4"
+Icon_ItemAntidote:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_antidote.icon4"
+Icon_ItemVenusStar:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_venus_star.icon4"
+Icon_ItemMercuryStar:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_mercury_star.icon4"
+Icon_ItemMarsStar:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_mars_star.icon4"
+Icon_ItemJupiterStar:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_jupiter_star.icon4"
+Icon_ItemSmallJewel:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_small_jewel.icon4"
+Icon_ItemOrbOfForce:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_orb_of_force.icon4"
+Icon_ItemDouseDrop:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_douse_drop.icon4"
+Icon_ItemFrostJewel:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_frost_jewel.icon4"
+Icon_ItemLiftingGem:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_lifting_gem.icon4"
+Icon_ItemHaltGem:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_halt_gem.icon4"
+Icon_ItemCloakBall:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_cloak_ball.icon4"
+Icon_ItemCarryStone:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_carry_stone.icon4"
+Icon_ItemCatchBeads:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_catch_beads.icon4"
+Icon_ItemNut:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_nut.icon4"
+Icon_ItemVial:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_vial.icon4"
+Icon_ItemPotion:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_potion.icon4"
+Icon_ItemHermesWater:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_hermes_water.icon4"
+Icon_ItemEmptyBottle:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_empty_bottle.icon4"
+Icon_ItemPsyCrystal:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_psy_crystal.icon4"
+Icon_ItemElixir:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_elixir.icon4"
+Icon_ItemWaterOfLife:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_water_of_life.icon4"
+Icon_ItemPowerBread:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_power_bread.icon4"
+Icon_ItemCookie:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_cookie.icon4"
+Icon_ItemApple:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_apple.icon4"
+Icon_ItemHardNut:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_hard_nut.icon4"
+Icon_ItemMint:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_mint.icon4"
+Icon_ItemLuckyPepper:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_lucky_pepper.icon4"
+Icon_ItemSmokeBomb:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_smoke_bomb.icon4"
+Icon_ItemSleepBomb:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_sleep_bomb.icon4"
+Icon_ItemMythrilBag:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_mythril_bag.icon4"
+Icon_ItemGameTicket:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_game_ticket.icon4"
+Icon_ItemLuckyMedal:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_lucky_medal.icon4"
+Icon_ItemDragonsEye:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_dragons_eye.icon4"
+Icon_ItemMachete:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_machete.icon4"
+Icon_ItemShamansRod:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_shamans_rod.icon4"
+Icon_ItemBone:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_bone.icon4"
+Icon_ItemAnchorCharm:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_anchor_charm.icon4"
+Icon_ItemMythrilShirt:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_mythril_shirt.icon4"
+Icon_ItemSilkShirt:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_silk_shirt.icon4"
+Icon_ItemRunningShirt:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_running_shirt.icon4"
+Icon_ItemHyperBoots:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_hyper_boots.icon4"
+Icon_ItemQuickBoots:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_quick_boots.icon4"
+Icon_ItemFurBoots:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_fur_boots.icon4"
+Icon_ItemAdeptRing:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_adept_ring.icon4"
+Icon_ItemWarRing:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_war_ring.icon4"
+Icon_ItemSleepRing:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_sleep_ring.icon4"
+Icon_ItemGlitteringTiara:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_glittering_tiara.icon4"
+Icon_ItemEarthShield:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_earth_shield.icon4"
+Icon_ItemGuardianArmlet:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_guardian_armlet.icon4"
+Icon_ItemBattleGloves:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_battle_gloves.icon4"
+Icon_ItemBanditsSword:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_bandits_sword.icon4"
+Icon_ItemHealingRing:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_healing_ring.icon4"
+Icon_ItemUnicornRing:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_unicorn_ring.icon4"
+Icon_ItemFairyRing:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_fairy_ring.icon4"
+Icon_ItemCorn:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_corn.icon4"
+Icon_ItemCellKey:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_cell_key.icon4"
+Icon_ItemBoatTicket:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_boat_ticket.icon4"
+Icon_ItemSacredFeather:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_sacred_feather.icon4"
+Icon_ItemMysticDraught:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_mystic_draught.icon4"
+Icon_ItemAuraGloves:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_aura_gloves.icon4"
+Icon_ItemProphetsHat:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_prophets_hat.icon4"
+Icon_ItemSpikedArmor:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_spiked_armor.icon4"
+Icon_ItemOilDrop:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_oil_drop.icon4"
+Icon_ItemWeaselsClaw:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_weasels_claw.icon4"
+Icon_ItemBrambleSeed:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_bramble_seed.icon4"
+Icon_ItemCrystalPowder:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_crystal_powder.icon4"
+Icon_ItemZodiacWand:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_zodiac_wand.icon4"
+Icon_ItemClericsRing:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_clerics_ring.icon4"
+Icon_ItemBlackOrb:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_black_orb.icon4"
+Icon_ItemTurtleBoots:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_turtle_boots.icon4"
+Icon_ItemLureCap:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_lure_cap.icon4"
+Icon_ItemRedKey:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_red_key.icon4"
+Icon_ItemBlueKey:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_blue_key.icon4"
 Icon_Item192:
 	.incbin "games/tbs/src/graphics/ui/menu_icons/item_192.icon4"
 Icon_Item193:
@@ -783,510 +783,510 @@ Icon_Item254:
 	.global gPsynergyIcons
 gPsynergyIcons:
 	.4byte Icon_Psynergy000
-	.4byte Icon_Psynergy001
-	.4byte Icon_Psynergy002
-	.4byte Icon_Psynergy003
-	.4byte Icon_Psynergy004
-	.4byte Icon_Psynergy005
-	.4byte Icon_Psynergy006
-	.4byte Icon_Psynergy007
-	.4byte Icon_Psynergy008
-	.4byte Icon_Psynergy009
-	.4byte Icon_Psynergy010
-	.4byte Icon_Psynergy011
-	.4byte Icon_Psynergy012
-	.4byte Icon_Psynergy013
-	.4byte Icon_Psynergy014
-	.4byte Icon_Psynergy015
-	.4byte Icon_Psynergy016
-	.4byte Icon_Psynergy017
-	.4byte Icon_Psynergy018
-	.4byte Icon_Psynergy019
-	.4byte Icon_Psynergy020
-	.4byte Icon_Psynergy021
-	.4byte Icon_Psynergy022
-	.4byte Icon_Psynergy023
-	.4byte Icon_Psynergy024
-	.4byte Icon_Psynergy025
-	.4byte Icon_Psynergy026
-	.4byte Icon_Psynergy027
-	.4byte Icon_Psynergy028
-	.4byte Icon_Psynergy029
-	.4byte Icon_Psynergy030
-	.4byte Icon_Psynergy031
-	.4byte Icon_Psynergy032
-	.4byte Icon_Psynergy033
-	.4byte Icon_Psynergy034
-	.4byte Icon_Psynergy035
-	.4byte Icon_Psynergy036
-	.4byte Icon_Psynergy037
-	.4byte Icon_Psynergy038
-	.4byte Icon_Psynergy039
+	.4byte Icon_PsynergyQuake
+	.4byte Icon_PsynergyEarthquake
+	.4byte Icon_PsynergyQuakeSphere
+	.4byte Icon_PsynergySpire
+	.4byte Icon_PsynergyClaySpire
+	.4byte Icon_PsynergyStoneSpire
+	.4byte Icon_PsynergyGaia
+	.4byte Icon_PsynergyMotherGaia
+	.4byte Icon_PsynergyGrandGaia
+	.4byte Icon_PsynergyGrowth
+	.4byte Icon_PsynergyMadGrowth
+	.4byte Icon_PsynergyWildGrowth
+	.4byte Icon_PsynergyThorn
+	.4byte Icon_PsynergyBriar
+	.4byte Icon_PsynergyNettle
+	.4byte Icon_PsynergyFrost
+	.4byte Icon_PsynergyTundra
+	.4byte Icon_PsynergyGlacier
+	.4byte Icon_PsynergyIce
+	.4byte Icon_PsynergyIceHorn
+	.4byte Icon_PsynergyIceMissile
+	.4byte Icon_PsynergyPrism
+	.4byte Icon_PsynergyHailPrism
+	.4byte Icon_PsynergyFreezePrism
+	.4byte Icon_PsynergyFroth
+	.4byte Icon_PsynergyFrothSphere
+	.4byte Icon_PsynergyFrothSpiral
+	.4byte Icon_PsynergyDouse
+	.4byte Icon_PsynergyDrench
+	.4byte Icon_PsynergyDeluge
+	.4byte Icon_PsynergyFlare
+	.4byte Icon_PsynergyFlareWall
+	.4byte Icon_PsynergyFlareStorm
+	.4byte Icon_PsynergyFire
+	.4byte Icon_PsynergyFireball
+	.4byte Icon_PsynergyInferno
+	.4byte Icon_PsynergyVolcano
+	.4byte Icon_PsynergyEruption
+	.4byte Icon_PsynergyPyroclasm
 	.4byte Icon_Psynergy040
-	.4byte Icon_Psynergy041
-	.4byte Icon_Psynergy042
+	.4byte Icon_PsynergyMadBlast
+	.4byte Icon_PsynergyFieryBlast
 	.4byte Icon_Psynergy043
-	.4byte Icon_Psynergy044
-	.4byte Icon_Psynergy045
-	.4byte Icon_Psynergy046
-	.4byte Icon_Psynergy047
-	.4byte Icon_Psynergy048
-	.4byte Icon_Psynergy049
-	.4byte Icon_Psynergy050
-	.4byte Icon_Psynergy051
-	.4byte Icon_Psynergy052
-	.4byte Icon_Psynergy053
-	.4byte Icon_Psynergy054
-	.4byte Icon_Psynergy055
-	.4byte Icon_Psynergy056
-	.4byte Icon_Psynergy057
-	.4byte Icon_Psynergy058
-	.4byte Icon_Psynergy059
-	.4byte Icon_Psynergy060
-	.4byte Icon_Psynergy061
-	.4byte Icon_Psynergy062
-	.4byte Icon_Psynergy063
-	.4byte Icon_Psynergy064
-	.4byte Icon_Psynergy065
-	.4byte Icon_Psynergy066
-	.4byte Icon_Psynergy067
-	.4byte Icon_Psynergy068
-	.4byte Icon_Psynergy069
-	.4byte Icon_Psynergy070
-	.4byte Icon_Psynergy071
-	.4byte Icon_Psynergy072
-	.4byte Icon_Psynergy073
-	.4byte Icon_Psynergy074
-	.4byte Icon_Psynergy075
-	.4byte Icon_Psynergy076
-	.4byte Icon_Psynergy077
-	.4byte Icon_Psynergy078
-	.4byte Icon_Psynergy079
-	.4byte Icon_Psynergy080
-	.4byte Icon_Psynergy081
-	.4byte Icon_Psynergy082
-	.4byte Icon_Psynergy083
-	.4byte Icon_Psynergy084
-	.4byte Icon_Psynergy085
-	.4byte Icon_Psynergy086
-	.4byte Icon_Psynergy087
-	.4byte Icon_Psynergy088
-	.4byte Icon_Psynergy089
-	.4byte Icon_Psynergy090
-	.4byte Icon_Psynergy091
-	.4byte Icon_Psynergy092
-	.4byte Icon_Psynergy093
-	.4byte Icon_Psynergy094
-	.4byte Icon_Psynergy095
-	.4byte Icon_Psynergy096
-	.4byte Icon_Psynergy097
-	.4byte Icon_Psynergy098
-	.4byte Icon_Psynergy099
-	.4byte Icon_Psynergy100
-	.4byte Icon_Psynergy101
-	.4byte Icon_Psynergy102
-	.4byte Icon_Psynergy103
-	.4byte Icon_Psynergy104
-	.4byte Icon_Psynergy105
-	.4byte Icon_Psynergy106
-	.4byte Icon_Psynergy107
-	.4byte Icon_Psynergy108
-	.4byte Icon_Psynergy109
-	.4byte Icon_Psynergy110
-	.4byte Icon_Psynergy111
-	.4byte Icon_Psynergy112
-	.4byte Icon_Psynergy113
-	.4byte Icon_Psynergy114
-	.4byte Icon_Psynergy115
-	.4byte Icon_Psynergy116
-	.4byte Icon_Psynergy117
-	.4byte Icon_Psynergy118
-	.4byte Icon_Psynergy119
-	.4byte Icon_Psynergy120
-	.4byte Icon_Psynergy121
-	.4byte Icon_Psynergy122
-	.4byte Icon_Psynergy123
-	.4byte Icon_Psynergy124
-	.4byte Icon_Psynergy125
-	.4byte Icon_Psynergy126
-	.4byte Icon_Psynergy127
-	.4byte Icon_Psynergy128
-	.4byte Icon_Psynergy129
-	.4byte Icon_Psynergy130
-	.4byte Icon_Psynergy131
-	.4byte Icon_Psynergy132
-	.4byte Icon_Psynergy133
-	.4byte Icon_Psynergy134
-	.4byte Icon_Psynergy135
-	.4byte Icon_Psynergy136
-	.4byte Icon_Psynergy137
-	.4byte Icon_Psynergy138
-	.4byte Icon_Psynergy139
-	.4byte Icon_Psynergy140
-	.4byte Icon_Psynergy141
-	.4byte Icon_Psynergy142
-	.4byte Icon_Psynergy143
-	.4byte Icon_Psynergy144
-	.4byte Icon_Psynergy145
-	.4byte Icon_Psynergy146
-	.4byte Icon_Psynergy147
-	.4byte Icon_Psynergy148
-	.4byte Icon_Psynergy149
-	.4byte Icon_Psynergy150
-	.4byte Icon_Psynergy151
-	.4byte Icon_Psynergy152
-	.4byte Icon_Psynergy153
-	.4byte Icon_Psynergy154
-	.4byte Icon_Psynergy155
-	.4byte Icon_Psynergy156
-	.4byte Icon_Psynergy157
-	.4byte Icon_Psynergy158
+	.4byte Icon_PsynergyNova
+	.4byte Icon_PsynergySupernova
+	.4byte Icon_PsynergyBolt
+	.4byte Icon_PsynergyFlashBolt
+	.4byte Icon_PsynergyBlueBolt
+	.4byte Icon_PsynergyRay
+	.4byte Icon_PsynergyStormRay
+	.4byte Icon_PsynergyDestructRay
+	.4byte Icon_PsynergyPlasma
+	.4byte Icon_PsynergyShinePlasma
+	.4byte Icon_PsynergySparkPlasma
+	.4byte Icon_PsynergySlash
+	.4byte Icon_PsynergyWindSlash
+	.4byte Icon_PsynergySonicSlash
+	.4byte Icon_PsynergyWhirlwind
+	.4byte Icon_PsynergyTornado
+	.4byte Icon_PsynergyTempest
+	.4byte Icon_PsynergyCure
+	.4byte Icon_PsynergyCureWell
+	.4byte Icon_PsynergyPotentCure
+	.4byte Icon_PsynergyPly
+	.4byte Icon_PsynergyPlyWell
+	.4byte Icon_PsynergyPurePly
+	.4byte Icon_PsynergyWish
+	.4byte Icon_PsynergyWishWell
+	.4byte Icon_PsynergyPureWish
+	.4byte Icon_PsynergyCurePoison
+	.4byte Icon_PsynergyRestore
+	.4byte Icon_PsynergyRevive
+	.4byte Icon_PsynergyImpact
+	.4byte Icon_PsynergyHighImpact
+	.4byte Icon_PsynergyDull
+	.4byte Icon_PsynergyBlunt
+	.4byte Icon_PsynergyGuard
+	.4byte Icon_PsynergyProtect
+	.4byte Icon_PsynergyImpair
+	.4byte Icon_PsynergyDebilitate
+	.4byte Icon_PsynergyWard
+	.4byte Icon_PsynergyResist
+	.4byte Icon_PsynergyWeaken
+	.4byte Icon_PsynergyEnfeeble
+	.4byte Icon_PsynergyDelude
+	.4byte Icon_PsynergySleep
+	.4byte Icon_PsynergyBind
+	.4byte Icon_PsynergyHaunt
+	.4byte Icon_PsynergyCondemn
+	.4byte Icon_PsynergyCurse
+	.4byte Icon_PsynergyDrain
+	.4byte Icon_PsynergyPsyDrain
+	.4byte Icon_PsynergyBreak
+	.4byte Icon_PsynergyReflect
+	.4byte Icon_PsynergyMove
+	.4byte Icon_PsynergyMindRead
+	.4byte Icon_PsynergyForce
+	.4byte Icon_PsynergyLift
+	.4byte Icon_PsynergyReveal
+	.4byte Icon_PsynergyHalt
+	.4byte Icon_PsynergyCloak
+	.4byte Icon_PsynergyCarry
+	.4byte Icon_PsynergyCatch
+	.4byte Icon_PsynergyRockfall
+	.4byte Icon_PsynergyRockslide
+	.4byte Icon_PsynergyAvalanche
+	.4byte Icon_PsynergyLavaShower
+	.4byte Icon_PsynergyMoltenBath
+	.4byte Icon_PsynergyMagmaStorm
+	.4byte Icon_PsynergyDemonSpear
+	.4byte Icon_PsynergyAngelSpear
+	.4byte Icon_PsynergyMagicShell
+	.4byte Icon_PsynergyMagicShield
+	.4byte Icon_PsynergyGuardian
+	.4byte Icon_PsynergyProtector
+	.4byte Icon_PsynergyHelmSplitter
+	.4byte Icon_PsynergyDragonCloud
+	.4byte Icon_PsynergyQuickStrike
+	.4byte Icon_PsynergyDemonNight
+	.4byte Icon_PsynergyPunji
+	.4byte Icon_PsynergyPunjiTrap
+	.4byte Icon_PsynergyPunjiStrike
+	.4byte Icon_PsynergyFireBomb
+	.4byte Icon_PsynergyClusterBomb
+	.4byte Icon_PsynergyCarpetBomb
+	.4byte Icon_PsynergyGale
+	.4byte Icon_PsynergyTyphoon
+	.4byte Icon_PsynergyHurricane
+	.4byte Icon_PsynergyThunderclap
+	.4byte Icon_PsynergyThunderbolt
+	.4byte Icon_PsynergyThunderstorm
+	.4byte Icon_PsynergyMist
+	.4byte Icon_PsynergyAnnihilation
+	.4byte Icon_PsynergyDeathPlunge
+	.4byte Icon_PsynergyShuriken
+	.4byte Icon_PsynergyCuttingEdge
+	.4byte Icon_PsynergyRagnarok
+	.4byte Icon_PsynergyHeatWave
+	.4byte Icon_PsynergyPlanetDiver
+	.4byte Icon_PsynergyVenus
+	.4byte Icon_PsynergyRamses
+	.4byte Icon_PsynergyCybele
+	.4byte Icon_PsynergyJudgment
+	.4byte Icon_PsynergyMercury
+	.4byte Icon_PsynergyNereid
+	.4byte Icon_PsynergyNeptune
+	.4byte Icon_PsynergyBoreas
+	.4byte Icon_PsynergyMars
+	.4byte Icon_PsynergyKirin
+	.4byte Icon_PsynergyTiamat
+	.4byte Icon_PsynergyMeteor
+	.4byte Icon_PsynergyJupiter
+	.4byte Icon_PsynergyAtalanta
+	.4byte Icon_PsynergyProcne
+	.4byte Icon_PsynergyThor
+	.4byte Icon_PsynergyRetreat
+	.4byte Icon_PsynergyAvoid
+	.4byte Icon_PsynergyAstralBlast
 	.4byte Icon_Psynergy159
 	.global gPsynergyIconsEnd
 gPsynergyIconsEnd:
 	.4byte -1
 Icon_Psynergy000:
 	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_000.icon4"
-Icon_Psynergy001:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_001.icon4"
-Icon_Psynergy002:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_002.icon4"
-Icon_Psynergy003:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_003.icon4"
-Icon_Psynergy004:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_004.icon4"
-Icon_Psynergy005:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_005.icon4"
-Icon_Psynergy006:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_006.icon4"
-Icon_Psynergy007:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_007.icon4"
-Icon_Psynergy008:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_008.icon4"
-Icon_Psynergy009:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_009.icon4"
-Icon_Psynergy010:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_010.icon4"
-Icon_Psynergy011:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_011.icon4"
-Icon_Psynergy012:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_012.icon4"
-Icon_Psynergy013:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_013.icon4"
-Icon_Psynergy014:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_014.icon4"
-Icon_Psynergy015:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_015.icon4"
-Icon_Psynergy016:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_016.icon4"
-Icon_Psynergy017:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_017.icon4"
-Icon_Psynergy018:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_018.icon4"
-Icon_Psynergy019:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_019.icon4"
-Icon_Psynergy020:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_020.icon4"
-Icon_Psynergy021:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_021.icon4"
-Icon_Psynergy022:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_022.icon4"
-Icon_Psynergy023:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_023.icon4"
-Icon_Psynergy024:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_024.icon4"
-Icon_Psynergy025:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_025.icon4"
-Icon_Psynergy026:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_026.icon4"
-Icon_Psynergy027:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_027.icon4"
-Icon_Psynergy028:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_028.icon4"
-Icon_Psynergy029:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_029.icon4"
-Icon_Psynergy030:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_030.icon4"
-Icon_Psynergy031:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_031.icon4"
-Icon_Psynergy032:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_032.icon4"
-Icon_Psynergy033:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_033.icon4"
-Icon_Psynergy034:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_034.icon4"
-Icon_Psynergy035:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_035.icon4"
-Icon_Psynergy036:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_036.icon4"
-Icon_Psynergy037:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_037.icon4"
-Icon_Psynergy038:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_038.icon4"
-Icon_Psynergy039:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_039.icon4"
+Icon_PsynergyQuake:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_quake.icon4"
+Icon_PsynergyEarthquake:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_earthquake.icon4"
+Icon_PsynergyQuakeSphere:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_quake_sphere.icon4"
+Icon_PsynergySpire:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_spire.icon4"
+Icon_PsynergyClaySpire:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_clay_spire.icon4"
+Icon_PsynergyStoneSpire:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_stone_spire.icon4"
+Icon_PsynergyGaia:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_gaia.icon4"
+Icon_PsynergyMotherGaia:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_mother_gaia.icon4"
+Icon_PsynergyGrandGaia:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_grand_gaia.icon4"
+Icon_PsynergyGrowth:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_growth.icon4"
+Icon_PsynergyMadGrowth:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_mad_growth.icon4"
+Icon_PsynergyWildGrowth:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_wild_growth.icon4"
+Icon_PsynergyThorn:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_thorn.icon4"
+Icon_PsynergyBriar:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_briar.icon4"
+Icon_PsynergyNettle:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_nettle.icon4"
+Icon_PsynergyFrost:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_frost.icon4"
+Icon_PsynergyTundra:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_tundra.icon4"
+Icon_PsynergyGlacier:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_glacier.icon4"
+Icon_PsynergyIce:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_ice.icon4"
+Icon_PsynergyIceHorn:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_ice_horn.icon4"
+Icon_PsynergyIceMissile:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_ice_missile.icon4"
+Icon_PsynergyPrism:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_prism.icon4"
+Icon_PsynergyHailPrism:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_hail_prism.icon4"
+Icon_PsynergyFreezePrism:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_freeze_prism.icon4"
+Icon_PsynergyFroth:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_froth.icon4"
+Icon_PsynergyFrothSphere:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_froth_sphere.icon4"
+Icon_PsynergyFrothSpiral:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_froth_spiral.icon4"
+Icon_PsynergyDouse:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_douse.icon4"
+Icon_PsynergyDrench:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_drench.icon4"
+Icon_PsynergyDeluge:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_deluge.icon4"
+Icon_PsynergyFlare:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_flare.icon4"
+Icon_PsynergyFlareWall:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_flare_wall.icon4"
+Icon_PsynergyFlareStorm:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_flare_storm.icon4"
+Icon_PsynergyFire:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_fire.icon4"
+Icon_PsynergyFireball:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_fireball.icon4"
+Icon_PsynergyInferno:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_inferno.icon4"
+Icon_PsynergyVolcano:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_volcano.icon4"
+Icon_PsynergyEruption:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_eruption.icon4"
+Icon_PsynergyPyroclasm:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_pyroclasm.icon4"
 Icon_Psynergy040:
 	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_040.icon4"
-Icon_Psynergy041:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_041.icon4"
-Icon_Psynergy042:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_042.icon4"
+Icon_PsynergyMadBlast:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_mad_blast.icon4"
+Icon_PsynergyFieryBlast:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_fiery_blast.icon4"
 Icon_Psynergy043:
 	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_043.icon4"
-Icon_Psynergy044:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_044.icon4"
-Icon_Psynergy045:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_045.icon4"
-Icon_Psynergy046:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_046.icon4"
-Icon_Psynergy047:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_047.icon4"
-Icon_Psynergy048:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_048.icon4"
-Icon_Psynergy049:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_049.icon4"
-Icon_Psynergy050:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_050.icon4"
-Icon_Psynergy051:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_051.icon4"
-Icon_Psynergy052:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_052.icon4"
-Icon_Psynergy053:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_053.icon4"
-Icon_Psynergy054:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_054.icon4"
-Icon_Psynergy055:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_055.icon4"
-Icon_Psynergy056:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_056.icon4"
-Icon_Psynergy057:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_057.icon4"
-Icon_Psynergy058:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_058.icon4"
-Icon_Psynergy059:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_059.icon4"
-Icon_Psynergy060:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_060.icon4"
-Icon_Psynergy061:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_061.icon4"
-Icon_Psynergy062:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_062.icon4"
-Icon_Psynergy063:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_063.icon4"
-Icon_Psynergy064:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_064.icon4"
-Icon_Psynergy065:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_065.icon4"
-Icon_Psynergy066:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_066.icon4"
-Icon_Psynergy067:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_067.icon4"
-Icon_Psynergy068:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_068.icon4"
-Icon_Psynergy069:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_069.icon4"
-Icon_Psynergy070:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_070.icon4"
-Icon_Psynergy071:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_071.icon4"
-Icon_Psynergy072:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_072.icon4"
-Icon_Psynergy073:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_073.icon4"
-Icon_Psynergy074:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_074.icon4"
-Icon_Psynergy075:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_075.icon4"
-Icon_Psynergy076:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_076.icon4"
-Icon_Psynergy077:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_077.icon4"
-Icon_Psynergy078:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_078.icon4"
-Icon_Psynergy079:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_079.icon4"
-Icon_Psynergy080:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_080.icon4"
-Icon_Psynergy081:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_081.icon4"
-Icon_Psynergy082:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_082.icon4"
-Icon_Psynergy083:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_083.icon4"
-Icon_Psynergy084:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_084.icon4"
-Icon_Psynergy085:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_085.icon4"
-Icon_Psynergy086:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_086.icon4"
-Icon_Psynergy087:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_087.icon4"
-Icon_Psynergy088:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_088.icon4"
-Icon_Psynergy089:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_089.icon4"
-Icon_Psynergy090:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_090.icon4"
-Icon_Psynergy091:
+Icon_PsynergyNova:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_nova.icon4"
+Icon_PsynergySupernova:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_supernova.icon4"
+Icon_PsynergyBolt:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_bolt.icon4"
+Icon_PsynergyFlashBolt:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_flash_bolt.icon4"
+Icon_PsynergyBlueBolt:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_blue_bolt.icon4"
+Icon_PsynergyRay:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_ray.icon4"
+Icon_PsynergyStormRay:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_storm_ray.icon4"
+Icon_PsynergyDestructRay:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_destruct_ray.icon4"
+Icon_PsynergyPlasma:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_plasma.icon4"
+Icon_PsynergyShinePlasma:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_shine_plasma.icon4"
+Icon_PsynergySparkPlasma:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_spark_plasma.icon4"
+Icon_PsynergySlash:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_slash.icon4"
+Icon_PsynergyWindSlash:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_wind_slash.icon4"
+Icon_PsynergySonicSlash:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_sonic_slash.icon4"
+Icon_PsynergyWhirlwind:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_whirlwind.icon4"
+Icon_PsynergyTornado:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_tornado.icon4"
+Icon_PsynergyTempest:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_tempest.icon4"
+Icon_PsynergyCure:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_cure.icon4"
+Icon_PsynergyCureWell:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_cure_well.icon4"
+Icon_PsynergyPotentCure:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_potent_cure.icon4"
+Icon_PsynergyPly:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_ply.icon4"
+Icon_PsynergyPlyWell:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_ply_well.icon4"
+Icon_PsynergyPurePly:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_pure_ply.icon4"
+Icon_PsynergyWish:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_wish.icon4"
+Icon_PsynergyWishWell:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_wish_well.icon4"
+Icon_PsynergyPureWish:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_pure_wish.icon4"
+Icon_PsynergyCurePoison:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_cure_poison.icon4"
+Icon_PsynergyRestore:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_restore.icon4"
+Icon_PsynergyRevive:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_revive.icon4"
+Icon_PsynergyImpact:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_impact.icon4"
+Icon_PsynergyHighImpact:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_high_impact.icon4"
+Icon_PsynergyDull:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_dull.icon4"
+Icon_PsynergyBlunt:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_blunt.icon4"
+Icon_PsynergyGuard:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_guard.icon4"
+Icon_PsynergyProtect:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_protect.icon4"
+Icon_PsynergyImpair:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_impair.icon4"
+Icon_PsynergyDebilitate:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_debilitate.icon4"
+Icon_PsynergyWard:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_ward.icon4"
+Icon_PsynergyResist:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_resist.icon4"
+Icon_PsynergyWeaken:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_weaken.icon4"
+Icon_PsynergyEnfeeble:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_enfeeble.icon4"
+Icon_PsynergyDelude:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_delude.icon4"
+Icon_PsynergySleep:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_sleep.icon4"
+Icon_PsynergyBind:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_bind.icon4"
+Icon_PsynergyHaunt:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_haunt.icon4"
+Icon_PsynergyCondemn:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_condemn.icon4"
+Icon_PsynergyCurse:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_curse.icon4"
+Icon_PsynergyDrain:
 	.ifdef TBS_EDITION_DE
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_091_de.icon4"
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_drain_de.icon4"
 	.else
 	.ifdef TBS_EDITION_ES
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_091_es.icon4"
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_drain_es.icon4"
 	.else
 	.ifdef TBS_EDITION_FR
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_091_es.icon4"
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_drain_es.icon4"
 	.else
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_091.icon4"
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_drain.icon4"
 	.endif
 	.endif
 	.endif
-Icon_Psynergy092:
+Icon_PsynergyPsyDrain:
 	.ifdef TBS_EDITION_DE
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_092_de.icon4"
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_psy_drain_de.icon4"
 	.else
 	.ifdef TBS_EDITION_ES
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_092_es.icon4"
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_psy_drain_es.icon4"
 	.else
 	.ifdef TBS_EDITION_FR
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_092_es.icon4"
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_psy_drain_es.icon4"
 	.else
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_092.icon4"
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_psy_drain.icon4"
 	.endif
 	.endif
 	.endif
-Icon_Psynergy093:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_093.icon4"
-Icon_Psynergy094:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_094.icon4"
-Icon_Psynergy095:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_095.icon4"
-Icon_Psynergy096:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_096.icon4"
-Icon_Psynergy097:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_097.icon4"
-Icon_Psynergy098:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_098.icon4"
-Icon_Psynergy099:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_099.icon4"
-Icon_Psynergy100:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_100.icon4"
-Icon_Psynergy101:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_101.icon4"
-Icon_Psynergy102:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_102.icon4"
-Icon_Psynergy103:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_103.icon4"
-Icon_Psynergy104:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_104.icon4"
-Icon_Psynergy105:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_105.icon4"
-Icon_Psynergy106:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_106.icon4"
-Icon_Psynergy107:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_107.icon4"
-Icon_Psynergy108:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_108.icon4"
-Icon_Psynergy109:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_109.icon4"
-Icon_Psynergy110:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_110.icon4"
-Icon_Psynergy111:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_111.icon4"
-Icon_Psynergy112:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_112.icon4"
-Icon_Psynergy113:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_113.icon4"
-Icon_Psynergy114:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_114.icon4"
-Icon_Psynergy115:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_115.icon4"
-Icon_Psynergy116:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_116.icon4"
-Icon_Psynergy117:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_117.icon4"
-Icon_Psynergy118:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_118.icon4"
-Icon_Psynergy119:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_119.icon4"
-Icon_Psynergy120:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_120.icon4"
-Icon_Psynergy121:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_121.icon4"
-Icon_Psynergy122:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_122.icon4"
-Icon_Psynergy123:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_123.icon4"
-Icon_Psynergy124:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_124.icon4"
-Icon_Psynergy125:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_125.icon4"
-Icon_Psynergy126:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_126.icon4"
-Icon_Psynergy127:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_127.icon4"
-Icon_Psynergy128:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_128.icon4"
-Icon_Psynergy129:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_129.icon4"
-Icon_Psynergy130:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_130.icon4"
-Icon_Psynergy131:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_131.icon4"
-Icon_Psynergy132:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_132.icon4"
-Icon_Psynergy133:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_133.icon4"
-Icon_Psynergy134:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_134.icon4"
-Icon_Psynergy135:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_135.icon4"
-Icon_Psynergy136:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_136.icon4"
-Icon_Psynergy137:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_137.icon4"
-Icon_Psynergy138:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_138.icon4"
-Icon_Psynergy139:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_139.icon4"
-Icon_Psynergy140:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_140.icon4"
-Icon_Psynergy141:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_141.icon4"
-Icon_Psynergy142:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_142.icon4"
-Icon_Psynergy143:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_143.icon4"
-Icon_Psynergy144:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_144.icon4"
-Icon_Psynergy145:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_145.icon4"
-Icon_Psynergy146:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_146.icon4"
-Icon_Psynergy147:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_147.icon4"
-Icon_Psynergy148:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_148.icon4"
-Icon_Psynergy149:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_149.icon4"
-Icon_Psynergy150:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_150.icon4"
-Icon_Psynergy151:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_151.icon4"
-Icon_Psynergy152:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_152.icon4"
-Icon_Psynergy153:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_153.icon4"
-Icon_Psynergy154:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_154.icon4"
-Icon_Psynergy155:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_155.icon4"
-Icon_Psynergy156:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_156.icon4"
-Icon_Psynergy157:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_157.icon4"
-Icon_Psynergy158:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_158.icon4"
+Icon_PsynergyBreak:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_break.icon4"
+Icon_PsynergyReflect:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_reflect.icon4"
+Icon_PsynergyMove:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_move.icon4"
+Icon_PsynergyMindRead:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_mind_read.icon4"
+Icon_PsynergyForce:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_force.icon4"
+Icon_PsynergyLift:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_lift.icon4"
+Icon_PsynergyReveal:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_reveal.icon4"
+Icon_PsynergyHalt:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_halt.icon4"
+Icon_PsynergyCloak:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_cloak.icon4"
+Icon_PsynergyCarry:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_carry.icon4"
+Icon_PsynergyCatch:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_catch.icon4"
+Icon_PsynergyRockfall:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_rockfall.icon4"
+Icon_PsynergyRockslide:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_rockslide.icon4"
+Icon_PsynergyAvalanche:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_avalanche.icon4"
+Icon_PsynergyLavaShower:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_lava_shower.icon4"
+Icon_PsynergyMoltenBath:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_molten_bath.icon4"
+Icon_PsynergyMagmaStorm:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_magma_storm.icon4"
+Icon_PsynergyDemonSpear:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_demon_spear.icon4"
+Icon_PsynergyAngelSpear:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_angel_spear.icon4"
+Icon_PsynergyMagicShell:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_magic_shell.icon4"
+Icon_PsynergyMagicShield:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_magic_shield.icon4"
+Icon_PsynergyGuardian:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_guardian.icon4"
+Icon_PsynergyProtector:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_protector.icon4"
+Icon_PsynergyHelmSplitter:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_helm_splitter.icon4"
+Icon_PsynergyDragonCloud:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_dragon_cloud.icon4"
+Icon_PsynergyQuickStrike:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_quick_strike.icon4"
+Icon_PsynergyDemonNight:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_demon_night.icon4"
+Icon_PsynergyPunji:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_punji.icon4"
+Icon_PsynergyPunjiTrap:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_punji_trap.icon4"
+Icon_PsynergyPunjiStrike:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_punji_strike.icon4"
+Icon_PsynergyFireBomb:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_fire_bomb.icon4"
+Icon_PsynergyClusterBomb:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_cluster_bomb.icon4"
+Icon_PsynergyCarpetBomb:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_carpet_bomb.icon4"
+Icon_PsynergyGale:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_gale.icon4"
+Icon_PsynergyTyphoon:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_typhoon.icon4"
+Icon_PsynergyHurricane:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_hurricane.icon4"
+Icon_PsynergyThunderclap:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_thunderclap.icon4"
+Icon_PsynergyThunderbolt:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_thunderbolt.icon4"
+Icon_PsynergyThunderstorm:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_thunderstorm.icon4"
+Icon_PsynergyMist:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_mist.icon4"
+Icon_PsynergyAnnihilation:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_annihilation.icon4"
+Icon_PsynergyDeathPlunge:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_death_plunge.icon4"
+Icon_PsynergyShuriken:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_shuriken.icon4"
+Icon_PsynergyCuttingEdge:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_cutting_edge.icon4"
+Icon_PsynergyRagnarok:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_ragnarok.icon4"
+Icon_PsynergyHeatWave:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_heat_wave.icon4"
+Icon_PsynergyPlanetDiver:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_planet_diver.icon4"
+Icon_PsynergyVenus:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_venus.icon4"
+Icon_PsynergyRamses:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_ramses.icon4"
+Icon_PsynergyCybele:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_cybele.icon4"
+Icon_PsynergyJudgment:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_judgment.icon4"
+Icon_PsynergyMercury:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_mercury.icon4"
+Icon_PsynergyNereid:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_nereid.icon4"
+Icon_PsynergyNeptune:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_neptune.icon4"
+Icon_PsynergyBoreas:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_boreas.icon4"
+Icon_PsynergyMars:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_mars.icon4"
+Icon_PsynergyKirin:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_kirin.icon4"
+Icon_PsynergyTiamat:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_tiamat.icon4"
+Icon_PsynergyMeteor:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_meteor.icon4"
+Icon_PsynergyJupiter:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_jupiter.icon4"
+Icon_PsynergyAtalanta:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_atalanta.icon4"
+Icon_PsynergyProcne:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_procne.icon4"
+Icon_PsynergyThor:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_thor.icon4"
+Icon_PsynergyRetreat:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_retreat.icon4"
+Icon_PsynergyAvoid:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_avoid.icon4"
+Icon_PsynergyAstralBlast:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_astral_blast.icon4"
 Icon_Psynergy159:
 	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_159.icon4"
 	.balign 4, 0

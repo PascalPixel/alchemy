@@ -1,35 +1,120 @@
+
+#include "../field/object/set_sprite_priority.c"
+
+#include "../field/object/prepare_object.c"
+#include "types.h"
+#include "system/system.h"
+#include "system/ram_buffer.h"
+#include "actor.h"
+#include "system/main_routine_work.h"
+#include "scene_tables.h"
+#include "scene_ids.h"
+#include "field_sprite.h"
+#include "field/event_inline.h"
+
+/// The overlay's view of the event work heap slot.
+struct AnkohlRuinsEventWork {
+  u8 unk000[0x154];
+  s16 unk154; ///< 66 when Func_020010f4's step is refused; 40 lets it run
+  u8 unk156[0x14];
+  s16 alarm;
+  u8 unk16c[0x60];
+  /// Moved with the leader while the raft (object 9) carries them.
+  struct Actor *unk1cc;
+};
+
+void Func_02000b30(s32 id, s32 cue);
+void Func_0200160c(void);
+void Func_020019a0(void);
+void Func_02001f7c(void);
+
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static inline s32 AnkohlRuins_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
+
+static inline void AnkohlRuins_Call2e24(s32 a, s32 b, s32 c) {
+  MapGrid_SetScreenShake(a, b, c);
+}
+
+static inline void AnkohlRuins_CamBounds(s32 x, s32 y, s32 z, s32 mode) {
+  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
+}
+
+static inline void AnkohlRuins_Call2df4(s32 a, s32 b, s32 c, s32 d, s32 e,
+                                        s32 f) {
+  Map_CopyCellsRect(a, b, c, d, e, f);
+}
+
+static inline void AnkohlRuins_Call2dfc(s32 a, s32 b, s32 c, s32 d, s32 e,
+                                        s32 f) {
+  Map_CopyCellAttributeRect(a, b, c, d, e, f);
+}
+
+void Actor_SetSpritePriorityDirect(struct Actor *object, s32 a);
+#include "field/field.h"
+#include "flags.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "types.h"
+#include "scene_tables.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/scene/scene.h"
+#include "version.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "actor.h"
+#include "field/event_inline.h"
+#include "call.h"
+#include "system/field_effect.h"
+#include "map.h"
+#include "scene_ids.h"
+#include "graphics/vram_tab.h"
+#include "system/iwram_call.h"
+#include "graphics/resource.h"
+#include "system/heap_release.h"
+#include "system/io_reg.h"
+#include "system/task.h"
+#include "system/frame.h"
+
+struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 type) {
+  struct Actor *object = FieldActor_Create(type, x, y, z);
+
+  if (object != NULL) {
+    Scene_SetActorSpritePriority(object, 1);
+    object->motionFlags = 0;
+    object->collisionFlags = 8;
+    Actor_SetSpriteFlags(object, 0);
+    FieldActor_SetSpriteColor(object, 15);
+    object->priorityFlags |= 0x22;
+    return object;
+  }
+  return NULL;
+}
+
+#include "../field/field_effect/move.c"
+
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
-#include "../../../../games/tla/src/field/field_effect/spawn.c"
+#include "../field/field_effect/spawn.c"
 
 // ---- scene/ankohl_ruins.c ----
 
-/// The scene code of overlay 0x686 that its scene tables belong to, in ROM
-/// order; the rest of the overlay is in ankohl_ruins/.
+// The scene code of overlay 0x686 that its scene tables belong to, in ROM
+// order; the rest of the overlay is in ankohl_ruins/.
 
-#include "flags.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "types.h"
-#include "scene_tables.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/scene/scene.h"
 extern struct AnkohlRuinsSpriteWork Data_02004030;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
-
-#include "ankohl_ruins/ankohl_ruins.h"
 
 /* VIEW(ankohl_ruins): variable gData_02003780 as s16 gData_02003780;
  * scene/ankohl_ruins/s2438 has u16 gData_02003780[] = {; tried as the
@@ -74,8 +159,6 @@ const struct ActorPlacement *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-#include "version.h"
-
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_Start(s32 id, s32 a, s32 b) {
@@ -95,13 +178,6 @@ void Func_02000384(void) {
 #if TLA_PATCH_1
 #include "../field/field_effect/advance_motion.c"
 #endif
-
-#include "ram_buffer.h"
-#include "main_routine_work.h"
-#include "actor.h"
-#include "event_inline.h"
-#include "call.h"
-#include "system/field_effect.h"
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -216,9 +292,9 @@ void Func_020006b4(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->terrainId = 0;
 }
 
-/// Copies the cells under the object with the given id in the rooms that have
-/// them (rooms 1, 3, 4 and 5); in room 5 the object with id 9 also copies the
-/// rows that flag 0x205 opens (always, in Japanese).
+// Copies the cells under the object with the given id in the rooms that have
+// them (rooms 1, 3, 4 and 5); in room 5 the object with id 9 also copies the
+// rows that flag 0x205 opens (always, in Japanese).
 void Func_020006d0(s32 unused, s32 id) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1) {
     if (id == 8) {
@@ -257,9 +333,9 @@ void Func_020006d0(s32 unused, s32 id) {
   }
 }
 
-/// Copies the cells the object with the given id has pushed open in rooms 1,
-/// 3, 4 and 5, and sets flags 0x9c6 to 0x9cb when it stands at the end of its
-/// track.
+// Copies the cells the object with the given id has pushed open in rooms 1,
+// 3, 4 and 5, and sets flags 0x9c6 to 0x9cb when it stands at the end of its
+// track.
 void Func_02000850(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
@@ -343,9 +419,9 @@ void Func_02000a68(s32 unused, s32 objectId) {
   }
 }
 
-/// Runs the cue, if any, and sets the object's motion flags to 3 while it
-/// moves, for at most 60 frames until its vertical speed is 0, then clears
-/// them ten frames later; Func_02000100 of Gaia Rock is the same function.
+// Runs the cue, if any, and sets the object's motion flags to 3 while it
+// moves, for at most 60 frames until its vertical speed is 0, then clears
+// them ten frames later; Func_02000100 of Gaia Rock is the same function.
 void Func_02000b30(s32 id, s32 cue) {
   struct Actor *object = Actor_Get(id);
   /* FAKEMATCH(pin): the flags' address built in r2 with 85 in it first; as a
@@ -379,8 +455,8 @@ void Func_02000b30(s32 id, s32 cue) {
   *held = 0;
 }
 
-/// Places count effects in a row, rows times, each row two pixels further down,
-/// waiting between rows.
+// Places count effects in a row, rows times, each row two pixels further down,
+// waiting between rows.
 void Func_02000b78(s32 rows, s32 frames, s32 x, s32 y, s32 startZ, s32 count) {
   struct EffectOptions params;
   s32 row;
@@ -414,10 +490,10 @@ void Func_02000b78(s32 rows, s32 frames, s32 x, s32 y, s32 startZ, s32 count) {
   }
 }
 
-/// When the objects with ids 9 and 10 stand on cells (12, 45) and (14, 45),
-/// each sets its flag (0x9d9, 0x9da); once both are set, shakes the screen,
-/// copies the cells of rows 2 to 6 and 13 in two columns and has Func_02000b78
-/// place five objects between them, as Func_02000e60 does for object 8.
+// When the objects with ids 9 and 10 stand on cells (12, 45) and (14, 45),
+// each sets its flag (0x9d9, 0x9da); once both are set, shakes the screen,
+// copies the cells of rows 2 to 6 and 13 in two columns and has Func_02000b78
+// place five objects between them, as Func_02000e60 does for object 8.
 void Func_02000c24(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
   s32 column = object->x >> 20;
@@ -474,9 +550,9 @@ void Func_02000c24(s32 unused, s32 id) {
   Event_End();
 }
 
-/// When the object with id 8 stands on cell (12, 5): sets flag 0x9dc, shakes
-/// the screen, copies the cells of rows 2 to 6 and 16 in two columns and has
-/// Func_02000b78 place four objects between them.
+// When the object with id 8 stands on cell (12, 5): sets flag 0x9dc, shakes
+// the screen, copies the cells of rows 2 to 6 and 16 in two columns and has
+// Func_02000b78 place four objects between them.
 void Func_02000e60(s32 unused, s32 id) {
   struct Actor *pillar = Actor_GetById(id);
   s32 column = pillar->x >> 20;
@@ -541,8 +617,6 @@ void Func_0200104c(s32 unused, s32 id) {
   }
 }
 
-#include "map.h"
-
 extern struct MapCell gMapCellBuffer[];
 
 void Func_020010f4(void) {
@@ -580,9 +654,6 @@ void Func_020010f4(void) {
   leader->z += 0x8000;
   companion->z += 0x8000;
 }
-
-#include "scene_ids.h"
-#include "vram_tab.h"
 
 void Func_020011c0(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
@@ -625,10 +696,10 @@ void Func_02001264(s32 a, s32 id) {
     Event_SetFlag(id + 0x996);
 }
 
-/// Draws eight sprites while flag 0x205 is clear and the level is below
-/// 0x200000: each moves by the level as its kind says, is placed relative to
-/// the view and is drawn when it is on screen. Then sets a word in map layer 1
-/// to the level plus a base.
+// Draws eight sprites while flag 0x205 is clear and the level is below
+// 0x200000: each moves by the level as its kind says, is placed relative to
+// the view and is drawn when it is on screen. Then sets a word in map layer 1
+// to the level plus a base.
 void Func_020012c4(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 *view = &map->viewX;
@@ -700,12 +771,6 @@ void Func_020012c4(void) {
     ((s32 *)layer->unk08)[1] = work->unk0c + work->level;
   }
 }
-
-#include "iwram_call.h"
-#include "graphics/resource.h"
-#include "system/heap_release.h"
-#include "system/io_reg.h"
-#include "system/task.h"
 
 void Func_02001420(void) {
   struct AnkohlRuinsSpriteWork *work = &Data_02004030;
@@ -809,8 +874,6 @@ void Func_020015ac(void) {
     }
   }
 }
-
-#include "frame.h"
 
 /* VIEW(ankohl_ruins): variable gData_02002fa8 as struct AnkohlRuinsWaterRow
  * gData_02002fa8[]; scene/ankohl_ruins/s2438 has u32 gData_02002fa8[] = {;
@@ -1051,11 +1114,11 @@ void Func_02001e54(void) {
 
 DEFINE_ANKOHL_RUINS_OPEN_ONCE(Func_02001f04, 0x9e3, 2, 83, 1, 23)
 
-/// Each frame, moves the raft (object 9) down by 0xcccc and carries the leader
-/// and the event work's unk1cc object with it while the leader stands on it;
-/// copies the cells it passes in rows 31 to 37 (flag 0x146), and past row 41
-/// removes itself, stops the shaking, copies the landing cells and sets flag
-/// 0x201.
+// Each frame, moves the raft (object 9) down by 0xcccc and carries the leader
+// and the event work's unk1cc object with it while the leader stands on it;
+// copies the cells it passes in rows 31 to 37 (flag 0x146), and past row 41
+// removes itself, stops the shaking, copies the landing cells and sets flag
+// 0x201.
 void Func_02001f7c(void) {
   struct Actor *rider =
       ((struct AnkohlRuinsEventWork *)Ram_HeapSlots->eventWork)->unk1cc;
@@ -1241,19 +1304,38 @@ void Func_020023d0(struct Actor *object) {
 
 // ---- scene/ankohl_ruins/s2438.c ----
 
-#include "flags.h"
-#include "version.h"
-#include "event_inline.h"
-#include "module/scene/ankohl_ruins.h"
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+void Func_020006b4(void);
+void Func_020011c0(void);
+void Func_02001d34(void);
+void Func_02001ddc(void);
+void Func_02001e54(void);
+void Func_02001f04(void);
+void Func_020020fc(void);
+void Func_020021d4(void);
+void Func_02002260(void);
+void Func_020022a8(void);
+void Func_02002318(void);
+void Func_02002328(void);
+
+extern u32 gData_02002ef4[];
+extern u32 gData_02002f30[];
+extern u32 gData_02002f6c[];
+extern s32 gData_02003268[];
+extern u32 gData_02003280[];
+extern u32 gData_02003290[];
+
+struct AnkohlRuinsSpriteWork;
 
 #if TLA_PATCH_1
 
 #include "types.h"
 #include "call.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_ids.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "text/msg_ids.h"
 
 struct AnkohlRuinsFloatWork {
@@ -1552,9 +1634,9 @@ s32 Scene_Initialize(s32 a0) {
 #include "types.h"
 #include "call.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_ids.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "text/msg_ids.h"
 
 struct AnkohlRuinsFloatWork {
@@ -1823,9 +1905,6 @@ s32 Scene_Initialize(s32 a0) {
 }
 
 #endif
-
-#include "types.h"
-#include "scene_tables.h"
 
 s32 Scene_PrepareMap(void) { return 0; }
 
@@ -2317,3 +2396,10 @@ struct Trigger gData_02003f4c[] = {
 struct Trigger gData_02004018[] = {
     {TRIGGER_TABLE_END},
 };
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
+#undef EFFECT_SPRITE_PRIORITY
+#undef DEFINE_ANKOHL_RUINS_OPEN_ONCE

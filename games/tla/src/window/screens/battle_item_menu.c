@@ -3,19 +3,19 @@
 // Part of window.c.
 
 #include "../screens_internal.h"
-#include "item.h"
+#include "game/item.h"
 #include "actor.h"
 
 /// @file
 /// Items: summon-selection menu and battle item-use eligibility.
 
-#include "battle_system.h"
-#include "item.h"
+#include "battle/battle_system.h"
+#include "game/item.h"
 #include "types.h"
-#include "scene.h"
+#include "system/scene.h"
 #include "edition.h"
-#include "graphics.h"
-#include "uiwindow.h"
+#include "graphics/graphics.h"
+#include "graphics/uiwindow.h"
 #include "module/battle_effect/battle_effect.h"
 #include "module/field/object.h"
 #include "module/shop/shop.h"

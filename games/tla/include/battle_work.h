@@ -4,8 +4,8 @@
 #include "types.h"
 #include "static_assert.h"
 #include "battle_type.h"
-#include "battle_event.h"
-#include "ram_buffer.h"
+#include "battle/battle_event.h"
+#include "system/ram_buffer.h"
 #include "battle/battle_action.h"
 
 /// The battle event queue and the state of its playback.

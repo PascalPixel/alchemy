@@ -4,26 +4,34 @@
 /// party sights a ship, reaches Piers' ship, sets the Black Crystal back in it
 /// and sets out for Madra (Room2).
 
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_ids.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "event_inline.h"
-#include "io_reg.h"
+#include "field/event_inline.h"
+#include "system/io_reg.h"
 #include "map.h"
-#include "frame.h"
+#include "system/frame.h"
 #include "event_work.h"
 #include "module/scene/scene.h"
+#include "shared/effects.h"
+#include "shared/tables.h"
+#include "version.h"
+#include "macros.h"
+#include "field_sprite.h"
+#include "system/task.h"
+#include "call.h"
+#include "objcmd.h"
 #include "text/msg_ids.h"
 
 extern s32 gLemurianShipDeck_WaveScroll;
@@ -178,15 +186,55 @@ void LemurianShipDeck_BobDeck(void) {
   gLemurianShipDeck_BobPhase += 0x200;
 }
 
-#include "shared/effects.h"
-#include "shared/tables.h"
 #include "text/msg_ids.h"
-#include "version.h"
-#include "macros.h"
-#include "field_sprite.h"
-#include "task.h"
-#include "call.h"
-#include "module/scene/lemurian_ship_deck.h"
+
+/// What The Lost Age's code declares for the files that use it, written once.
+
+struct Actor;
+
+struct MapMode {
+  u8 unk00[23];
+  struct MapModeBits {
+    u8 low : 2;
+    u8 mode : 2;
+  } __attribute__((packed)) bits;
+};
+
+extern u32 gLemurianShipDeck_FirstCrewLooksAround[];
+
+extern u32 gLemurianShipDeck_SecondCrewLooksAround[];
+
+extern u32 gLemurianShipDeck_ThirdCrewLooksAround[];
+
+void LemurianShipDeck_RotateColors12To15(void);
+
+void LemurianShipDeck_ScrollWaves(void);
+
+void LemurianShipDeck_BobDeck(void);
+
+void LemurianShipDeck_TakeTheTiller(void);
+
+void FieldCamera_WaitForArrival(void);
+
+extern s16 gLemurianShipDeck_Puddles[];
+
+void FlagBlock_PlaceAll(const void *data);
+
+void LemurianShipDeck_ShowArrival(void);
+
+void FlagBlock_ApplyFlags(const void *data);
+
+extern u32 gLemurianShipDeck_SparkleFades[];
+extern u32 gLemurianShipDeck_ReturnToShipScript[];
+
+void Actor_Release(struct Actor *object);
+
+extern u32 gLemurianShipDeck_ReachPiersShipScript[];
+extern u32 gLemurianShipDeck_SmokePuff[];
+
+void LemurianShipDeck_EnterCabin(void);
+
+void LemurianShipDeck_TryHeldDoor(void);
 
 void LemurianShipDeck_RotateColors4To9(void);
 void LemurianShipDeck_HoldOnToTiller(void);
@@ -1029,8 +1077,6 @@ void LemurianShipDeck_SetOutForMadra(void) {
     Event_End();
   }
 }
-
-#include "objcmd.h"
 
 // clang-format off
 s16 gLemurianShipDeck_Puddles[] = {

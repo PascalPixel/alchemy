@@ -7,7 +7,7 @@
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/field/object.h"
-#include "object_effect_scripts.h"
+#include "battle/object_effect_scripts.h"
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 

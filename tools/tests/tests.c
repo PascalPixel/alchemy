@@ -273,6 +273,17 @@ graphics(void)
 	Buffer gridReference = {gridBytes, sizeof(gridBytes), 0};
 	equal(&grid, &gridReference, "a grid writes behaviors, shapes, cell pictures");
 	free(grid.data);
+	textFile("scene.tsv", "id:u8\tx:u16\n1\t2\n0xff\n\nid:u8\tz:u16\n3\t4\n0xff\n\nleft:s8\n-1\n");
+	RUN("graphics", true, "scene.tsv", "scene.scene");
+	Buffer sceneTable = readFile("scene.scene");
+	uint8_t sceneBytes[] = {12, 0, 16, 0, 18, 0, 0, 0, 1, 2, 0, 255,
+							3, 4, 0, 255, 255, 255, 255};
+	Buffer sceneReference = {sceneBytes, sizeof(sceneBytes), 0};
+	equal(&sceneTable, &sceneReference,
+		  "a scene writes its header, its tables and an empty edit list");
+	free(sceneTable.data);
+	textFile("twoscene.tsv", "id:u8\n1\n\nid:u8\n2\n");
+	RUN("graphics", false, "twoscene.tsv", "twoscene.scene");
 	textFile("bases.txt", "grid:1x1\tat:0,0\tfill:0:0:0\n8fff:255:12\n");
 	RUN("graphics", true, "bases.txt", "bases.grid");
 	Buffer bases = readFile("bases.grid");

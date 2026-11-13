@@ -7,13 +7,13 @@
 #include "gamepak/far_call/game.h"
 #include "gamepak/far_call/window.h"
 #include "item_icon.h"
-#include "menu_list.h"
+#include "window/menu_list.h"
 #include "module/battle/battle.h"
 #include "module/battle/presentation.h"
 #include "module/battle/presentation.h"
-#include "mul_q16.h"
-#include "resource.h"
-#include "game_flags.h"
+#include "system/mul_q16.h"
+#include "graphics/resource.h"
+#include "game/game_flags.h"
 
 #define TARGET_MODE_NONE 0
 #define TARGET_MODE_FOES 1

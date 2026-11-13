@@ -8,7 +8,7 @@
 #include "module/field/map.h"
 #include "module/field/object.h"
 #include "module/field/resource_slot.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 
 /* VIEW(f0298c0): tag struct PlayerSprite as struct PlayerSprite__f0298c0;
  * resource_slot.c has another definition; tried with the definition the rest of

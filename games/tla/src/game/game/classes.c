@@ -4,7 +4,7 @@
 
 #include "../game_internal.h"
 #include "module/game/game.h"
-#include "mul_q16.h"
+#include "system/mul_q16.h"
 
 struct OwnerGrowthRecord;
 

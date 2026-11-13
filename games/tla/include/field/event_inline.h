@@ -14,7 +14,7 @@
 /// place of a Field the routine's name already has (EventCamera_GetActor).
 
 #include "event.h"
-#include "system_call.h"
+#include "system/system_call.h"
 
 /// Turns two actors toward each other, as a conversation between them
 /// begins.

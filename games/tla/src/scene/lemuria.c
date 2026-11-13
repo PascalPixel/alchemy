@@ -6,32 +6,46 @@
 #include "shared/tables.h"
 #include "shared/actors.h"
 #include "types.h"
-#include "iwram_call.h"
+#include "system/iwram_call.h"
 #include "actor.h"
-#include "ram_buffer.h"
-#include "main_routine_work.h"
-#include "event_inline.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
 #include "call.h"
-#include "text/msg_ids.h"
-#include "battle.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
 #include "lib.h"
-#include "menu.h"
-#include "sound.h"
-#include "system.h"
-#include "dma.h"
-#include "frame.h"
-#include "io_reg.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "system/dma.h"
+#include "system/frame.h"
+#include "system/io_reg.h"
 #include "map.h"
 #include "event_work.h"
 #include "actor_view.h"
 #include "module/field/field.h"
-#include "module/scene/lemuria.h"
 #include "module/system/system.h"
+#include "objcmd.h"
+#include "text/msg_ids.h"
+
+/// What games/tla/src/scene/ declares for the files that use it, written once.
+
+void FieldCamera_WaitForArrival();
+
+void Rope_Lash();
+
+void Rope_Place();
+
+void Lemuria_TakeLeaderLayer(void);
+extern u32 gLemuria_FirstWalkerPaces[];
+extern u32 gLemuria_SecondWalkerPaces[];
+extern s16 gLemuria_DoorOpening[];
+extern s16 gLemuria_WideDoorOpening[];
 
 DEFINE_POSITION_DISTANCE(Lemuria_Distance)
 
@@ -1013,8 +1027,6 @@ void Actor_TakeLeaderLayer(void);
 
 /// An actor's per-frame hook: it is drawn on the party leader's layer.
 void Lemuria_TakeLeaderLayer(void) { Actor_TakeLeaderLayer(); }
-
-#include "objcmd.h"
 
 extern s16 gLemuria_ThirdDoorOpening[];
 

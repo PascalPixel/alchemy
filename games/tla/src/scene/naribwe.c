@@ -4,11 +4,13 @@
 /// shows the stone that hides the Unicorn Ring.
 
 #include "types.h"
-#include "ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "system/main_routine_work.h"
 #include "scene_tables.h"
-#include "event_inline.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "shared/tables.h"
 
 extern u32 gSceneExits[];
 
@@ -28,23 +30,70 @@ void Shop_Run(s32 a, s32 b);
 void Sanctum_Run(s32 a);
 void Naribwe_HideStone(void);
 
-extern const u8 gNaribwe_Placements[];
-extern const u8 gNaribwe_Entrance10Placements[];
-extern const u8 gNaribwe_PlacementsOnReturn[];
-extern const u8 gNaribwe_Triggers[];
-extern const u8 gNaribwe_TriggersOnReturn[];
-extern const struct WarpEntry gNaribwe_Doors[];
+/* VIEW(first): routine gNaribwe_Placements as this part declared it; the joined
+ * file has another. */
+extern const u8 gNaribwe_Placements__first[] __asm__("gNaribwe_Placements");
+#define gNaribwe_Placements gNaribwe_Placements__first
+/* VIEW(first): routine gNaribwe_Entrance10Placements as this part declared it;
+ * the joined file has another. */
+extern const u8 gNaribwe_Entrance10Placements__first[] __asm__(
+    "gNaribwe_Entrance10Placements");
+#define gNaribwe_Entrance10Placements gNaribwe_Entrance10Placements__first
+/* VIEW(first): routine gNaribwe_PlacementsOnReturn as this part declared it;
+ * the joined file has another. */
+extern const u8
+    gNaribwe_PlacementsOnReturn__first[] __asm__("gNaribwe_PlacementsOnReturn");
+#define gNaribwe_PlacementsOnReturn gNaribwe_PlacementsOnReturn__first
+/* VIEW(first): routine gNaribwe_Triggers as this part declared it; the joined
+ * file has another. */
+extern const u8 gNaribwe_Triggers__first[] __asm__("gNaribwe_Triggers");
+#define gNaribwe_Triggers gNaribwe_Triggers__first
+/* VIEW(first): routine gNaribwe_TriggersOnReturn as this part declared it; the
+ * joined file has another. */
+extern const u8
+    gNaribwe_TriggersOnReturn__first[] __asm__("gNaribwe_TriggersOnReturn");
+#define gNaribwe_TriggersOnReturn gNaribwe_TriggersOnReturn__first
+/* VIEW(first): routine gNaribwe_Doors as this part declared it; the joined file
+ * has another. */
+extern const struct WarpEntry gNaribwe_Doors__first[] __asm__("gNaribwe_Doors");
+#define gNaribwe_Doors gNaribwe_Doors__first
 
-extern u8 MsgNaribwe02;
-extern u8 MsgNaribwe03;
-extern u8 MsgNaribwe07;
-extern u8 MsgNaribwe08;
-extern u8 MsgNaribwe09;
-extern u8 MsgNaribwe21;
-extern u8 MsgNaribwe43;
-extern u8 MsgNaribwe23;
-extern u8 MsgNaribwe45;
-#include "field.h"
+/* VIEW(first): routine MsgNaribwe02 as this part declared it; the joined file
+ * has another. */
+extern u8 MsgNaribwe02__first __asm__("MsgNaribwe02");
+#define MsgNaribwe02 MsgNaribwe02__first
+/* VIEW(first): routine MsgNaribwe03 as this part declared it; the joined file
+ * has another. */
+extern u8 MsgNaribwe03__first __asm__("MsgNaribwe03");
+#define MsgNaribwe03 MsgNaribwe03__first
+/* VIEW(first): routine MsgNaribwe07 as this part declared it; the joined file
+ * has another. */
+extern u8 MsgNaribwe07__first __asm__("MsgNaribwe07");
+#define MsgNaribwe07 MsgNaribwe07__first
+/* VIEW(first): routine MsgNaribwe08 as this part declared it; the joined file
+ * has another. */
+extern u8 MsgNaribwe08__first __asm__("MsgNaribwe08");
+#define MsgNaribwe08 MsgNaribwe08__first
+/* VIEW(first): routine MsgNaribwe09 as this part declared it; the joined file
+ * has another. */
+extern u8 MsgNaribwe09__first __asm__("MsgNaribwe09");
+#define MsgNaribwe09 MsgNaribwe09__first
+/* VIEW(first): routine MsgNaribwe21 as this part declared it; the joined file
+ * has another. */
+extern u8 MsgNaribwe21__first __asm__("MsgNaribwe21");
+#define MsgNaribwe21 MsgNaribwe21__first
+/* VIEW(first): routine MsgNaribwe43 as this part declared it; the joined file
+ * has another. */
+extern u8 MsgNaribwe43__first __asm__("MsgNaribwe43");
+#define MsgNaribwe43 MsgNaribwe43__first
+/* VIEW(first): routine MsgNaribwe23 as this part declared it; the joined file
+ * has another. */
+extern u8 MsgNaribwe23__first __asm__("MsgNaribwe23");
+#define MsgNaribwe23 MsgNaribwe23__first
+/* VIEW(first): routine MsgNaribwe45 as this part declared it; the joined file
+ * has another. */
+extern u8 MsgNaribwe45__first __asm__("MsgNaribwe45");
+#define MsgNaribwe45 MsgNaribwe45__first
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -59,8 +108,6 @@ const u8 *Scene_GetPlacements(void) {
     return gNaribwe_PlacementsOnReturn;
   return gNaribwe_Placements;
 }
-
-#include "event_inline.h"
 
 /// Before Blaze is cast on the central fire, the event work notes whether the
 /// party came in by entrance 10.
@@ -279,3 +326,275 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
+
+#undef gNaribwe_Placements
+#undef gNaribwe_Entrance10Placements
+#undef gNaribwe_PlacementsOnReturn
+#undef gNaribwe_Triggers
+#undef gNaribwe_TriggersOnReturn
+#undef gNaribwe_Doors
+#undef MsgNaribwe02
+#undef MsgNaribwe03
+#undef MsgNaribwe07
+#undef MsgNaribwe08
+#undef MsgNaribwe09
+#undef MsgNaribwe21
+#undef MsgNaribwe43
+#undef MsgNaribwe23
+#undef MsgNaribwe45
+// @file
+// Naribwe's data: its scripts, door, placements and triggers.
+
+#include "text/msg_ids.h"
+
+/// What The Lost Age's code declares for the files that use it, written once.
+
+void Naribwe_PrepareBlaze(void);
+void Naribwe_AskAboutKibomboExpedition(void);
+
+void Naribwe_AskWhereFrom(void);
+
+void Naribwe_AskGoingToKibombo(void);
+
+void Naribwe_EnterDoor(void);
+
+void Naribwe_BlowAwayIvy(void);
+
+void Naribwe_RevealStone(void);
+
+extern u32 gNaribwe_BrazierBurns[];
+extern u32 gNaribwe_FlameRises[];
+
+extern u32 gNaribwe_IvyAnimation[];
+extern s16 gNaribwe_DoorOpening[];
+
+/* VIEW(data): routine Naribwe_PraiseFortuneTeller as this part declared it; the
+ * joined file has another. */
+void Naribwe_PraiseFortuneTeller__data(void) __asm__(
+    "Naribwe_PraiseFortuneTeller");
+#define Naribwe_PraiseFortuneTeller Naribwe_PraiseFortuneTeller__data
+/* VIEW(data): routine Naribwe_PraiseFortuneTellerOnReturn as this part declared
+ * it; the joined file has another. */
+void Naribwe_PraiseFortuneTellerOnReturn__data(void) __asm__(
+    "Naribwe_PraiseFortuneTellerOnReturn");
+#define Naribwe_PraiseFortuneTellerOnReturn                                    \
+  Naribwe_PraiseFortuneTellerOnReturn__data
+/* VIEW(data): routine Naribwe_TalkToPilgrim as this part declared it; the
+ * joined file has another. */
+void Naribwe_TalkToPilgrim__data(void) __asm__("Naribwe_TalkToPilgrim");
+#define Naribwe_TalkToPilgrim Naribwe_TalkToPilgrim__data
+/* VIEW(data): routine Naribwe_TalkToPilgrimOnReturn as this part declared it;
+ * the joined file has another. */
+void Naribwe_TalkToPilgrimOnReturn__data(void) __asm__(
+    "Naribwe_TalkToPilgrimOnReturn");
+#define Naribwe_TalkToPilgrimOnReturn Naribwe_TalkToPilgrimOnReturn__data
+void Naribwe_HideStone(void);
+
+// The village's placements, the same before and after the return with Piers.
+#define DEFINE_NARIBWE_PLACEMENTS(name)                                        \
+  struct ActorPlacement name[] = {                                             \
+      {365, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(246), FACING_SOUTH, 0, \
+       0},                                                                     \
+      {304, CONDITION_ALWAYS, (s32)gNaribwe_BrazierBurns, PIXELS(316), 0,      \
+       PIXELS(132), FACING_SOUTH, 0, 0},                                       \
+      {304, CONDITION_ALWAYS, (s32)gNaribwe_BrazierBurns, PIXELS(372), 0,      \
+       PIXELS(132), FACING_SOUTH, 0, 0},                                       \
+      {410, CONDITION_ALWAYS, (s32)gNaribwe_FlameRises, PIXELS(316), 0,        \
+       PIXELS(132), FACING_SOUTH, 0, 0},                                       \
+      {410, CONDITION_ALWAYS, (s32)gNaribwe_FlameRises, PIXELS(372), 0,        \
+       PIXELS(132), FACING_SOUTH, 0, 0},                                       \
+      {115, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(344), FACING_SOUTH, 1, \
+       0},                                                                     \
+      {116, CONDITION_ALWAYS, 3, PIXELS(200), 0, PIXELS(296), FACING_EAST, 0,  \
+       0},                                                                     \
+      {114, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(152), FACING_SOUTH, 1, \
+       0},                                                                     \
+      {128, CONDITION_ALWAYS, 3, PIXELS(88), 0, PIXELS(376), FACING_NORTHEAST, \
+       0, 0},                                                                  \
+      {112, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(88), FACING_SOUTHEAST, \
+       1, 0},                                                                  \
+      {113, CONDITION_ALWAYS, 1, PIXELS(368), 0, PIXELS(224),                  \
+       FACING_SOUTHEAST, 1, 0},                                                \
+      {136, CONDITION_ALWAYS, 2, PIXELS(200), 0, PIXELS(200),                  \
+       FACING_NORTHEAST, 0, 0},                                                \
+      {147, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(232),                  \
+       FACING_SOUTHWEST, 1, 0},                                                \
+      {112, CONDITION_ALWAYS, 2, PIXELS(56), 0, PIXELS(232), FACING_EAST, 0,   \
+       0},                                                                     \
+      {110, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(360), FACING_EAST, 1,  \
+       0},                                                                     \
+      {307, CONDITION_ALWAYS, (s32)gNaribwe_IvyAnimation, PIXELS(40), 0,       \
+       PIXELS(168), FACING_SOUTH, 2, 0},                                       \
+      {407, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(376), FACING_SOUTH, 2, \
+       0},                                                                     \
+      {489, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(376), FACING_SOUTH, 2, \
+       0},                                                                     \
+      {201, CONDITION_ALWAYS, 1, PIXELS(376), 0, PIXELS(168), FACING_SOUTH, 1, \
+       0},                                                                     \
+      {328, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(104), FACING_SOUTH, 1, \
+       0},                                                                     \
+      {SCENE_TABLE_END},                                                       \
+  };
+
+// clang-format off
+// Unused: a list of actor 26 and flag 0x200; nothing reads it.
+s16 gNaribwe_UnusedList[] = {
+    26, 512, -1, 0,
+};
+
+// The braziers burn, the fire's flames rising above them.
+u32 gNaribwe_BrazierBurns[] = {
+    39, 2, 17,
+};
+
+u32 gNaribwe_FlameRises[] = {
+    39, 0, 22, 26, 0, 23,
+    6, 0x180000, 17,
+};
+
+u32 gNaribwe_IvyAnimation[] = {
+    39, 3, 17,
+};
+
+// The cell animation of the village's doors.
+s16 gNaribwe_DoorOpening[] = {
+    8, 42, 1, 2, 6, -1,
+};
+
+DEFINE_G_DATA_0200064C(gNaribwe_Doors, gNaribwe_DoorOpening, 0x330012, gNaribwe_DoorOpening,
+    0x220015)
+
+struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 224, 0, 190, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+DEFINE_G_SCENE_EXITS_4(105, 106, 2, 23, 24)
+
+DEFINE_NARIBWE_PLACEMENTS(gNaribwe_Placements)
+
+struct ActorPlacement gNaribwe_Entrance10Placements[] = {
+    {364, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(246), FACING_SOUTH, 0, 0},
+    {305, CONDITION_ALWAYS, 1, PIXELS(316), 0, PIXELS(132), FACING_SOUTH, 0, 0},
+    {305, CONDITION_ALWAYS, 1, PIXELS(372), 0, PIXELS(132), FACING_SOUTH, 0, 0},
+    {410, CONDITION_ALWAYS, 1, PIXELS(316), 0, PIXELS(132), FACING_SOUTH, 0, 0},
+    {410, CONDITION_ALWAYS, 1, PIXELS(372), 0, PIXELS(132), FACING_SOUTH, 0, 0},
+    {SCENE_TABLE_END},
+};
+// clang-format on
+
+DEFINE_NARIBWE_PLACEMENTS(gNaribwe_PlacementsOnReturn)
+
+struct Trigger gNaribwe_Triggers[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {0xc602, 4, CONDITION_ALWAYS, EVENT(Naribwe_EnterDoor)},
+    {0xc602, 5, CONDITION_ALWAYS, EVENT(Naribwe_EnterDoor)},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgNaribwe01)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS,
+     EVENT(Naribwe_AskAboutKibomboExpedition)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgNaribwe04)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgNaribwe05)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgNaribwe06)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Naribwe_AskWhereFrom)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Naribwe_AskGoingToKibombo)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgNaribwe10)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgNaribwe19)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Naribwe_PraiseFortuneTeller)},
+    {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(Naribwe_TalkToPilgrim)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgNaribwe11)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     MSGNO(MsgNaribwe12)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     MSGNO(MsgNaribwe13)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+     MSGNO(MsgNaribwe14)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+     MSGNO(MsgNaribwe15)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
+     MSGNO(MsgNaribwe16)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
+     MSGNO(MsgNaribwe17)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
+     MSGNO(MsgNaribwe18)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
+     MSGNO(MsgNaribwe20)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
+     MSGNO(MsgNaribwe22)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS,
+     MSGNO(MsgNaribwe24)},
+    {0x1f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgNaribwe47))},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8,
+     CONDITION_ALWAYS, EVENT(Naribwe_PrepareBlaze)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 23, 0x201,
+     EVENT(Naribwe_BlowAwayIvy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 24, 0x202, 0},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
+     CONDITION_ALWAYS, EVENT(Naribwe_RevealStone)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
+     CONDITION_ALWAYS, EVENT(Naribwe_HideStone)},
+    {TRIGGER_TABLE_END},
+};
+
+struct Trigger gNaribwe_TriggersOnReturn[] = {
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {0xc602, 4, CONDITION_ALWAYS, EVENT(Naribwe_EnterDoor)},
+    {0xc602, 5, CONDITION_ALWAYS, EVENT(Naribwe_EnterDoor)},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgNaribwe25)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgNaribwe26)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgNaribwe27)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgNaribwe28)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgNaribwe29)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgNaribwe30)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgNaribwe31)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgNaribwe32)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgNaribwe41)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS,
+     EVENT(Naribwe_PraiseFortuneTellerOnReturn)},
+    {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(Naribwe_TalkToPilgrimOnReturn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgNaribwe33)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     MSGNO(MsgNaribwe34)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     MSGNO(MsgNaribwe35)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+     MSGNO(MsgNaribwe36)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+     MSGNO(MsgNaribwe37)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
+     MSGNO(MsgNaribwe38)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
+     MSGNO(MsgNaribwe39)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
+     MSGNO(MsgNaribwe40)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
+     MSGNO(MsgNaribwe42)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
+     MSGNO(MsgNaribwe44)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS,
+     MSGNO(MsgNaribwe46)},
+    {0x1f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgNaribwe47))},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8,
+     CONDITION_ALWAYS, EVENT(Naribwe_PrepareBlaze)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 23, 0x201,
+     EVENT(Naribwe_BlowAwayIvy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 24, 0x202, 0},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
+     CONDITION_ALWAYS, EVENT(Naribwe_RevealStone)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
+     CONDITION_ALWAYS, EVENT(Naribwe_HideStone)},
+    {TRIGGER_TABLE_END},
+};
+#undef Naribwe_PraiseFortuneTeller
+#undef Naribwe_PraiseFortuneTellerOnReturn
+#undef Naribwe_TalkToPilgrim
+#undef Naribwe_TalkToPilgrimOnReturn

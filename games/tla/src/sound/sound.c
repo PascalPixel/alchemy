@@ -1,7 +1,7 @@
 #include "types.h"
 #include "sound_driver.h"
-#include "../../include/system/ram_buffer.h"
-#include "../../include/system/io_reg.h"
+#include "system/ram_buffer.h"
+#include "system/io_reg.h"
 
 u32 umul3232H32(u32 left, u32 right);
 extern u8 gSound_PcmPitchCodes[];

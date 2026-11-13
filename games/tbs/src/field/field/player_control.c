@@ -51,7 +51,7 @@ enum PlayerStepBlock {
 };
 
 /// The footprints left in snow such as Imil's (FIELD_SPRITE_FOOTPRINT,
-/// spr_025.png), and the leader's userValue that asks for the pair next.
+/// footprints.png), and the leader's userValue that asks for the pair next.
 enum FootprintAnimation {
   FOOTPRINT_ONE_FOOT = 1, ///< one print, fading
   /// Two prints side by side, fading: laid first after a stop.

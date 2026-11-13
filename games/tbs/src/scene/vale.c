@@ -262,13 +262,13 @@ enum ValeActorId {
   /// The boards on the roof, SPRITE_ROOF_BOARDS, which Isaac moves into place
   /// with Psynergy at the roof's end (Vale_RoofMended).
   /// ★ Named from what the player sees: a short plank of yellow wood,
-  /// spr_206.png (its render)
+  /// roof_boards.png (its render)
   ACTOR_FIRST_BOARD,
   /// ★ Named from what the player sees: a short plank of yellow wood,
-  /// spr_206.png (its render)
+  /// roof_boards.png (its render)
   ACTOR_SECOND_BOARD,
   /// ★ Named from what the player sees: a short plank of yellow wood,
-  /// spr_206.png (its render)
+  /// roof_boards.png (its render)
   ACTOR_THIRD_BOARD,
   /// ★ Named from the game: "Nut" (MsgItemName), the item Catch takes
   ACTOR_NUT ///< the Nut for Catch, until FLAG_VALE_NUT_CAUGHT is set
@@ -303,7 +303,7 @@ enum ValeAfterKalayActorId {
   /// The row after them places the woman with fair hair of
   /// ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN at the origin, and nothing names her.
   /// ★ Named from what the player sees: a spout of white water spraying up,
-  /// spr_214.png (its render)
+  /// splash.png (its render)
   ACTOR_FIRST_WATER,
   /// An old woman. "Mt. Aleph's eruption was so powerful, it caused the
   /// continent to crack!"
@@ -349,18 +349,18 @@ enum ValeOpeningActorId {
   ACTOR_OPENING_DORA, ///< calls up to Isaac on the roof
   /// The boards on the roof, as ACTOR_FIRST_BOARD.
   /// ★ Named from what the player sees: a short plank of yellow wood,
-  /// spr_206.png (its render)
+  /// roof_boards.png (its render)
   ACTOR_OPENING_FIRST_BOARD,
   /// ★ Named from what the player sees: a short plank of yellow wood,
-  /// spr_206.png (its render)
+  /// roof_boards.png (its render)
   ACTOR_OPENING_SECOND_BOARD,
   /// ★ Named from what the player sees: a short plank of yellow wood,
-  /// spr_206.png (its render)
+  /// roof_boards.png (its render)
   ACTOR_OPENING_THIRD_BOARD,
   /// SPRITE_MOVE_HAND, the hand of Move (event_commands/catch.c). It pushes the
   /// pillar for Garet, shedding sparkles.
   /// ★ Named from what the player sees: a large open hand,
-  /// spr_215.png (its render)
+  /// move_hand.png (its render)
   ACTOR_OPENING_MOVE_HAND
 };
 
@@ -372,7 +372,7 @@ enum { ANIM_HAMMER = 11 };
 /// table and frames under graphics/sprite draw them.
 enum ValeAnimation {
   /// Garet throwing up his arms, then crouching, as he jumps in fright
-  /// (spr_001.png).
+  /// (garet.png).
   ANIM_GARET_STARTLED = 13
 };
 
@@ -742,7 +742,7 @@ static void Vale_EnterCottageRoomsAWest(void) {
 }
 
 /// Unused: its row answers cell behavior 11, which no cell of Vale's layout
-/// (map/map_000, the stormy night's too) carries, as
+/// (map/vale_prologue, the stormy night's too) carries, as
 /// ValePrologue_UnusedLeaveToCottageRoomsAWestByWestBankDoor in
 /// vale_prologue.c.
 ///

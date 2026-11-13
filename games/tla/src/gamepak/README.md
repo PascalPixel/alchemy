@@ -8,11 +8,11 @@ explains them for The Broken Seal.
 
 ## What differs from The Broken Seal
 
-- The far-call tables are 105 files under `far_call/`, named by the family of
-  their exports (`sound_driver.s`, `object_dispatch_3.s`), where The Broken
-  Seal has one file per [bank](../../../tbs/glossary.md#bank); in the
-  linker script (`games/tla/ld_script.ld`) most banks open with the run of
-  these files that makes up their table. The banks start at fixed addresses,
+- The far-call tables are one file per [bank](../../../tbs/glossary.md#bank)
+  under `far_call/` (`FIELD.S`, `SOUND.S`), as in The Broken Seal, apart
+  from `resource_f.s`, the table of a bank The Broken Seal does not have; in
+  the linker script (`games/tla/ld_script.ld`) each bank opens with its
+  table. The banks start at fixed addresses,
   written in the script where each begins; the four that differ by edition
   (the game, field sequence, menu and shop banks) are named at its top, one
   macro each. The far-call stub (`far_call/veneer.s`) works as it does in The

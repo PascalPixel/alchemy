@@ -1,0 +1,49 @@
+	.syntax unified
+	.thumb
+	.include "games/tla/src/gamepak/far_call/veneer.s"
+	.global Resource_FarCall009
+Resource_FarCall009:
+	export Func_08118000, Func_08118958
+	export Func_08118008, BattleTransition_RunMosaicFadeOut
+	export BattleActor_SpawnObjectsForListFar, BattleActor_SpawnObjectsForList
+	export Func_08118018, BattleBackground_FadeAlphaOut
+	export Func_08118020, BattleBackground_FadeAlphaIn
+	export BattleCamera_SetViewFar, BattleCamera_SetView
+	export BattleCamera_SetViewAtPairMidpointFar, BattleCamera_SetViewAtPairMidpoint
+	export BattleStaging_ConfigurePaletteFadeFar, Func_0812628c
+	export BattleBackground_LoadFar, Func_081263fc
+	export BattleBackground_SetPaletteLevelFar, BattleBackground_SetPaletteLevel
+	export BattleClass_GetEffectHeightFar, BattleClass_GetEffectHeight
+	export Summon_IsEntrySecondaryFlaggedFar, Summon_IsEntrySecondaryFlagged
+	export BattleClass_GetAttackHopFar, BattleClass_GetAttackHop
+	export BattleClass_IsSmallFar, BattleClass_IsSmall
+	export BattleUnit_GetEffectHeightFar, Func_0811c37c
+	export BattleMotion_ApproachTargetFar, BattleMotion_ApproachTarget
+	export Func_08118080, Func_0811c01c
+	export Func_08118088, Func_0811c074
+	export BattleParty_ListActorIdsFar, BattleParty_ListActorIds
+	export GetBattleObjectSlotFar, BattleObject_Get
+	export Battle_RunEncounterFar, Func_081197f0
+	export BattleMotion_ProjectPositionFar, BattleMotion_ProjectPosition
+	export BattleMotion_ProjectScaledPositionFar, Func_0811c2b4
+	export BattleMotion_ProjectConditionalPositionFar, Func_0811c314
+	export BattleParty_ListLivingUnitsFar, BattleParty_ListLivingUnits
+	export BattleParty_PrepareActiveOwnersFar, BattleParty_PrepareActiveOwners
+	export Camera_ConfigureSceneFar, Camera_ConfigureScene
+	export GetMotionRecordFar, GetMotionRecord
+	export BattleHighlight_SetModesFar, BattleHighlight_SetModes
+	export Func_081180e8, BattlePlayback_Start
+	export ColorBuffer_ScaleFar, ColorBuffer_Scale
+	export DjinnRecovery_CountDownFar, DjinnRecovery_CountDown
+	export BattleMotion_GetSlotPaletteFar, BattleMotion_GetSlotPalette
+	export DjinnRecovery_CountDownTwentyFar, DjinnRecovery_CountDownTwenty
+	export DebugParty_LoadPresetFar, DebugParty_LoadPreset
+	export BattleActor_CommitPlacementFar, BattleObject_Put
+	export ReleaseBattleObjectRecordsFar, ReleaseBattleObjectRecords
+	export Func_08118128, Func_08120060
+	export Func_08118130, BattleParty_CountStandbyDjinn
+	export BattleParty_PrepareReserveOwnersFar, BattleParty_PrepareReserveOwners
+	export Func_08118140, Func_0811a39c
+	export Func_08118148, Func_0811b75c
+	export Func_08118150, Func_08119734
+	export Func_08118158, Func_08118f6c

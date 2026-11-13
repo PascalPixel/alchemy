@@ -444,11 +444,7 @@ static void ColosseumSatrageMatch_KnockDownObstacle(void) {
   Actor_WaitForMove(obstacle);
   Event_Wait(2);
   Sound_Play(SE_LOG_FALL);
-  {
-    s32 rotation = 0;
-
-    sprite->rotation = rotation;
-  }
+  sprite->rotation = 0;
   Actor_SetAnimation(ACTOR_FALLING_LOG, FALLING_LOG_ANIMATION_FALLEN);
   obstacle->x.fixed = px(336);
   obstacle->y.fixed = -px(8);

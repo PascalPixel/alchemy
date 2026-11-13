@@ -27,35 +27,27 @@
 /// loaded into the sprite's VRAM block and its animation is stopped.
 void Colosso_ShowItemIcon(s32 id, s32 item) {
   struct Actor *actor;
-  s32 one;
   struct Sprite *sprite;
-  s32 base;
+  u8 *icon;
   s32 tile;
-  /* FAKEMATCH(temporary): none holds the 0 its stores take; as 0 at each, 14 of
-   * 83 instructions differ in tbs-en. */
-  s32 none;
 
   actor = Actor_GetById(id);
-  if (actor != 0) {
-    one = actor->spriteStorageKind;
-    if (one == 1) {
-      sprite = (struct Sprite *)actor->sprite;
-      base =
-          (s32)HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
-      none = 0;
-      base += 1024;
-      Dma_Fill32(none, (void *)base, 128);
-      Icon_DrawItem(item);
-      tile = VramCache_Load(sprite->slot, 128, (const void *)base);
-      HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
-      actor->retainSpriteCache = one;
-      SpriteAnimation_Clear(sprite->entries[0]);
-      sprite->entries[0] = (void *)none;
-      sprite->count = none;
-      sprite->image.fullColor = none;
-      sprite->image.tile = tile;
-      sprite->dirty = none;
-      sprite->flags = none;
-    }
+  if (actor != 0 && actor->spriteStorageKind == 1) {
+    sprite = actor->sprite;
+    icon =
+        (u8 *)HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer)) +
+        1024;
+    Dma_Fill32(0, icon, 128);
+    Icon_DrawItem(item);
+    tile = VramCache_Load(sprite->slot, 128, icon);
+    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    actor->retainSpriteCache = 1;
+    SpriteAnimation_Clear(sprite->entries[0]);
+    sprite->entries[0] = NULL;
+    sprite->count = 0;
+    sprite->image.fullColor = 0;
+    sprite->image.tile = tile;
+    sprite->dirty = 0;
+    sprite->flags = 0;
   }
 }

@@ -1180,11 +1180,7 @@ static void LunpaFortress_CheckEntranceGuard(void) {
 
     Task_Remove(LunpaFortress_CheckEntranceGuard);
     raisedTrigger = &work->raisedTrigger;
-    {
-      s32 caughtTrigger = RAISED_ENTRANCE_GUARD_SPOTTED;
-
-      *raisedTrigger = caughtTrigger;
-    }
+    *raisedTrigger = RAISED_ENTRANCE_GUARD_SPOTTED;
   }
 }
 

@@ -91,10 +91,6 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
 void Colosso_RestoreWarrior(s32 id) {
   struct ActorSystemWork *system;
   struct Actor *actor;
-  /* FAKEMATCH(temporary): zero holds the five stores' 0; as 0 in each store, 13
-   * of 73 instructions differ in tbs-en. */
-  s32 zero;
-  u8 *control;
 
   system = gActorSystemWork;
   actor = Actor_GetById(id);
@@ -106,26 +102,19 @@ void Colosso_RestoreWarrior(s32 id) {
     Import_ActorSetAnimation(id, ANIM_NOD);
     Event_Wait(30);
   }
-  zero = 0;
-  // Stored as bytes through a pointer, the plain-C form of system->fill and
-  // system->edge this site matches with (scene/README.md): a struct-field
-  // store at a varying address may pass the load of gColosso_WarriorStartX
-  // (fixed_scalar_and_varying_struct_p), and a byte store is no struct
-  // reference.
-  control = (u8 *)system;
-  control[offsetof(struct ActorSystemWork, fill)] = zero;
-  control[offsetof(struct ActorSystemWork, edge)] = 15;
+  system->fill = 0;
+  system->edge = 15;
   actor->x.fixed = gColosso_WarriorStartX;
   actor->z.fixed = gColosso_WarriorStartZ;
   actor->facing = gColosso_WarriorStartAngle;
   actor->targetX = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;
-  actor->velocityX = zero;
-  actor->velocityZ = zero;
+  actor->velocityX = 0;
+  actor->velocityZ = 0;
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   actor->layer = 0;
-  actor->y.fixed = zero;
-  (actor)->groundHeight = zero;
+  actor->y.fixed = 0;
+  actor->groundHeight = 0;
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   Actor_SelectAnimation(actor, ANIM_STILL);
   Actor_SelectAnimation(actor, ANIM_STAND);
@@ -262,13 +251,10 @@ void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z) {
 
   if (actor != 0) {
     s32 speed = px(2);
-    /* FAKEMATCH(temporary): zero holds the paused flag's 0; as paused = 0, 8
-     * of 28 instructions differ in tbs-en. */
-    s32 zero = 0;
 
     actor->speedLimit = speed;
     actor->acceleration = speed >> 1;
-    actor->paused = zero;
+    actor->paused = 0;
     Actor_StartIdle(actor);
     Actor_SelectAnimation(actor, 5);
     Actor_SetMoveTarget(actor, px(x), actor->y.fixed, px(z));
@@ -282,13 +268,10 @@ void Colosso_WalkActorToAndStand(s32 actorId, s32 x, s32 z) {
 
   if (actor != 0) {
     s32 speed = px(5) / 4;
-    /* FAKEMATCH(temporary): zero holds the paused flag's 0; as paused = 0, 8
-     * of 33 instructions differ in tbs-en. */
-    s32 zero = 0;
 
     actor->speedLimit = speed;
     actor->acceleration = speed >> 1;
-    actor->paused = zero;
+    actor->paused = 0;
     Actor_StartIdle(actor);
     Actor_SelectAnimation(actor, 5);
     Actor_SetMoveTarget(actor, px(x), actor->y.fixed, px(z));

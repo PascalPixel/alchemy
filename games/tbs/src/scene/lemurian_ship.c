@@ -668,11 +668,7 @@ static void LemurianShip_RaiseTheShip(void) {
     Io_Write16(RGB(0, i, i * 2), &PLTT_BACKDROP);
     Event_Wait(10);
   }
-  {
-    u16 color = RGB(0, 16, 31);
-
-    PLTT_BACKDROP = color;
-  }
+  PLTT_BACKDROP = RGB(0, 16, 31);
   {
     u16 bright = BLEND_ALPHA(16, 16);
 

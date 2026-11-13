@@ -1342,11 +1342,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Actor_SetScript(ACTOR_OPPONENT, gColosseumNavampaMatch_OpponentAfterBattle);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 1504, 192);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  {
-    u16 shown = 0;
-
-    actor->facing = shown;
-  }
+  actor->facing = FACING_EAST;
   Actor_SetScript(ACTOR_PARTY_LEADER, gColosseumNavampaMatch_LeaderActionA);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CROUCH);
   Actor_SetSpeed(ACTOR_GARET, 1);
@@ -1356,23 +1352,11 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Actor_SetPosition(ACTOR_IVAN, 1464, 200);
   Actor_SetPosition(ACTOR_MIA, 1448, 192);
   actor = Actor_Get(ACTOR_GARET);
-  {
-    u16 shown = 0;
-
-    actor->facing = shown;
-  }
+  actor->facing = FACING_EAST;
   actor = Actor_Get(ACTOR_IVAN);
-  {
-    u16 shown = 0;
-
-    actor->facing = shown;
-  }
+  actor->facing = FACING_EAST;
   actor = Actor_Get(ACTOR_MIA);
-  {
-    u16 shown = 0;
-
-    actor->facing = shown;
-  }
+  actor->facing = FACING_EAST;
   wait(1);
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);

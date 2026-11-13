@@ -404,11 +404,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   wait(40);
-  {
-    s32 facing = FACING_NORTH;
-
-    leader->facing = facing;
-  }
+  leader->facing = FACING_NORTH;
   leader->gravity = px(1);
   leader->bounce = Q16_ONE / 4;
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);

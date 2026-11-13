@@ -1223,11 +1223,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     *slot = value;
   }
   for (eva = 0, evb = 16; eva <= 16; eva++, evb--) {
-    {
-      s32 control = ALTMILLER_CAVE_DARKNESS_BLEND;
-
-      REG_BLDCNT = control;
-    }
+    REG_BLDCNT = ALTMILLER_CAVE_DARKNESS_BLEND;
     REG_BLDALPHA = BLEND_ALPHA(evb, eva);
     wait(7);
   }
@@ -1534,11 +1530,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   // With Babi gone the darkness returns: BG1 fades back in, then the light
   // shrinks around the party again.
   for (eva = 0, evb = 16; eva <= 16; eva++, evb--) {
-    {
-      s32 control = ALTMILLER_CAVE_DARKNESS_BLEND;
-
-      REG_BLDCNT = control;
-    }
+    REG_BLDCNT = ALTMILLER_CAVE_DARKNESS_BLEND;
     REG_BLDALPHA = BLEND_ALPHA(eva, evb);
     wait(7);
   }

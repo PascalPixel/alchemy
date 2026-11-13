@@ -923,7 +923,6 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       if (frame >= 0 && frame <= 23) {
         DrawRectangle *draw;
         s32 width;
-        s32 tileHeight;
         s32 columnX;
         s32 columnY;
         s32 top;
@@ -944,9 +943,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         columnY = fall + scroll;
         top = columnY - 104;
         width = 17;
-        tileHeight = 104;
-        (*draw)(canvas, pictures, columnX, top, width, tileHeight);
-        (*draw)(canvas, pictures, columnX, columnY, width, tileHeight - scroll);
+        (*draw)(canvas, pictures, columnX, top, width, 104);
+        (*draw)(canvas, pictures, columnX, columnY, width, 104 - scroll);
         (*draw)(canvas, pictures + (17 * 104), originX - width, fall + 47,
                 width * 2, 65);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);

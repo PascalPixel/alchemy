@@ -323,10 +323,9 @@ s32 Title_ShowIntro(s32 prompt) {
   u16 tile;
   u32 j;
   u32 holdFrames;
-  s32 blankTile;
+  s32 blankTile = 511;
 
   result = 0;
-  blankTile = 511;
   savedCpuLoadDisplay = gCpuLoadDisplayEnabled;
   work = HeapSlot_Alloc(HEAP_SLOT_TITLE_INTRO, 224);
   DebugText_Clear();
@@ -541,13 +540,12 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   u32 column;
   u32 rowOrHoldFrame;
   u16 tileIndex;
-  s32 blankTile;
+  s32 blankTile = 511;
   s32 resourceId;
 
   Sound_PlayFar(SE_CHIME);
   gOamCopyEnabled = 1;
   resourceId = (s32)&ResourceId_NintendoLogo;
-  blankTile = 511;
   Task_ResetAll();
   ScreenFade_ToBlack(1);
   DebugText_Clear();
@@ -1025,7 +1023,6 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
 /// Title_ShowIntro.
 void TitlePaletteFade_Initialize(void) {
   struct TitlePaletteFade *buffer;
-  s32 priority;
 
   buffer = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_FADE, sizeof(*buffer));
   Dma_Fill32(0, buffer, sizeof(*buffer));
@@ -1034,8 +1031,7 @@ void TitlePaletteFade_Initialize(void) {
           REG_DMA3);
   TitlePaletteFade_BuildColors(PALETTE_TINT_NONE, buffer->palette,
                                buffer->target, PALETTES_ALL);
-  priority = TASK_PASS_FRAME;
-  Task_Add(TitlePaletteFade_Update, priority);
+  Task_Add(TitlePaletteFade_Update, TASK_PASS_FRAME);
 }
 
 /// Unused: removes the palette fade's task and frees its buffers. Nothing

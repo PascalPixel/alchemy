@@ -2115,7 +2115,6 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   struct Actor *actor;
   s32 captainSpeech;
   s32 seanSpeech;
-  s32 value;
   s32 captainAboveSpeech;
   const s32 *action;
 
@@ -2261,11 +2260,10 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_SECOND_GUIDE, 1);
   ShipRooms_Say(ACTOR_QUARTERS_SECOND_GUIDE);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_CAPTAIN, 1);
-  value = 176;
   ShipRooms_Turn(ACTOR_QUARTERS_CAPTAIN, FACING_SOUTH_SOUTHWEST);
   ShipRooms_Say(ACTOR_QUARTERS_CAPTAIN);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_SECOND_GUIDE, 1);
-  ShipRooms_Turn(ACTOR_QUARTERS_SECOND_GUIDE, (value << 8));
+  ShipRooms_Turn(ACTOR_QUARTERS_SECOND_GUIDE, (176 << 8));
   Event_ShowMessageThenWait(ACTOR_QUARTERS_SECOND_GUIDE, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, ANIM_NOD);
   Actor_SetSpeed(ACTOR_QUARTERS_CAPTAIN, 0.8);
@@ -2279,13 +2277,13 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   Actor_SetAnimation(ACTOR_QUARTERS_CAPTAIN, ANIM_SHAKE_HEAD);
   Event_ShowMessageThenWait(captainAboveSpeech, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_OURANOS, 1);
-  ShipRooms_Turn(ACTOR_QUARTERS_OURANOS, (value << 8));
+  ShipRooms_Turn(ACTOR_QUARTERS_OURANOS, (176 << 8));
   ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_OURANOS, SPEAKER_PORTRAIT_LEFT));
   Actor_ShowEmote(ACTOR_QUARTERS_CREWMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
   Actor_SetSpeed(ACTOR_QUARTERS_CREWMAN, 2.4);
   Actor_Jump(ACTOR_QUARTERS_CREWMAN, 2, 0);
   Actor_WalkToAndWait(ACTOR_QUARTERS_CREWMAN, 462, 674);
-  ShipRooms_Turn(ACTOR_QUARTERS_CREWMAN, (value << 8));
+  ShipRooms_Turn(ACTOR_QUARTERS_CREWMAN, (176 << 8));
   Actor_StartRepeatedMotion(ACTOR_QUARTERS_CREWMAN, 2);
   ShipRooms_Say(ACTOR_QUARTERS_CREWMAN);
   ShipRooms_Turn(ACTOR_QUARTERS_KAJA, FACING_SOUTH_SOUTHWEST);
@@ -2302,9 +2300,9 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   ShipRooms_Turn(ACTOR_QUARTERS_SEAN, 0);
   Actor_FaceDirection(ACTOR_QUARTERS_CAPTAIN, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_QUARTERS_KAJA, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirection(ACTOR_QUARTERS_OURANOS, (value << 8), 0);
-  Actor_FaceDirection(ACTOR_QUARTERS_SECOND_GUIDE, (value << 8), 0);
-  Actor_FaceDirection(ACTOR_QUARTERS_CREWMAN, (value << 8), 20);
+  Actor_FaceDirection(ACTOR_QUARTERS_OURANOS, (176 << 8), 0);
+  Actor_FaceDirection(ACTOR_QUARTERS_SECOND_GUIDE, (176 << 8), 0);
+  Actor_FaceDirection(ACTOR_QUARTERS_CREWMAN, (176 << 8), 20);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_SEAN, 1);
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_QUARTERS_SEAN, 0, 20);
   Actor_ShowEmote(ACTOR_QUARTERS_CAPTAIN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
@@ -2533,8 +2531,6 @@ static void ShipRooms_SetUpCaptainsQuarters(void) {
   struct Actor *actor;
   struct Actor *other;
   s32 done;
-  s32 x;
-  s32 heading;
 
   if (!GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT)) {
     ShipRooms_PlaceAnchorCharm();
@@ -2551,8 +2547,7 @@ static void ShipRooms_SetUpCaptainsQuarters(void) {
     actor = Actor_Get(ACTOR_QUARTERS_KAJA);
     ShipRooms_RunEventCommand(SHIP_HIDE_QUARTERS_CREW, 0, 0);
     ShipRooms_PlaceActor(ACTOR_QUARTERS_CAPTAIN, 456, 652, FACING_EAST);
-    x = 480;
-    ShipRooms_PlaceActor(ACTOR_QUARTERS_KAJA, x, 600, FACING_NORTH_NORTHWEST);
+    ShipRooms_PlaceActor(ACTOR_QUARTERS_KAJA, 480, 600, FACING_NORTH_NORTHWEST);
     Actor_SetSpeed(ACTOR_QUARTERS_KAJA, 0.8);
     actor->userValue = done;
     actor->riseEnabled = 0;
@@ -2562,7 +2557,7 @@ static void ShipRooms_SetUpCaptainsQuarters(void) {
     other->riseCounter = 0;
     other->update = ShipRooms_WatchPacer;
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-      ShipRooms_PlaceActor(ACTOR_PARTY_LEADER, x, 666, FACING_NORTHWEST);
+      ShipRooms_PlaceActor(ACTOR_PARTY_LEADER, 480, 666, FACING_NORTHWEST);
     }
   } else if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF)) {
     ShipRooms_PlaceActor(ACTOR_QUARTERS_CAPTAIN, 444, 614,
@@ -2572,14 +2567,14 @@ static void ShipRooms_SetUpCaptainsQuarters(void) {
     ShipRooms_PlaceActor(ACTOR_QUARTERS_CAPTAIN, 456, 648, FACING_EAST);
     ShipRooms_RunEventCommand(SHIP_HIDE_QUARTERS_CREW, 0, 0);
   } else if (GameFlag_Get(FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL)) {
-    heading = FACING_NORTH_NORTHWEST;
     ShipRooms_PlaceActor(ACTOR_QUARTERS_CAPTAIN, 475, 598, FACING_WEST);
-    ShipRooms_PlaceActor(ACTOR_QUARTERS_KAJA, 462, 618, heading);
+    ShipRooms_PlaceActor(ACTOR_QUARTERS_KAJA, 462, 618, FACING_NORTH_NORTHWEST);
     Actor_Get(ACTOR_QUARTERS_SEAN)->facing = FACING_SOUTH_SOUTHEAST;
-    Actor_Get(ACTOR_QUARTERS_OURANOS)->facing = heading;
+    Actor_Get(ACTOR_QUARTERS_OURANOS)->facing = FACING_NORTH_NORTHWEST;
     ShipRooms_PlaceActor(ACTOR_QUARTERS_SECOND_GUIDE, 438, 659,
                          FACING_NORTH_NORTHEAST);
-    ShipRooms_PlaceActor(ACTOR_QUARTERS_CREWMAN, 488, 688, heading);
+    ShipRooms_PlaceActor(ACTOR_QUARTERS_CREWMAN, 488, 688,
+                         FACING_NORTH_NORTHWEST);
   }
 }
 
@@ -2735,7 +2730,7 @@ static void ShipRooms_PlaceFoundActors(s32 gated) {
 /// (FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT).
 static void ShipRooms_AskForReplacementOarsmen(void) {
   struct Actor *actor;
-  s32 mode;
+  s32 mode = 128;
 
   // Bring Isaac to the crewman who explains the shortage of rowers.
   Event_Start();
@@ -2747,7 +2742,6 @@ static void ShipRooms_AskForReplacementOarsmen(void) {
   ShipRooms_PlaceActor(ACTOR_ROWING_CREWMAN, 428, 190, FACING_NORTH_NORTHEAST);
   ShipRooms_PlaceActor(ACTOR_ROWING_DRUMMER, 452, 190, FACING_NORTH_NORTHWEST);
   Actor_SetAnimation(ACTOR_ROWING_DRUMMER, ANIM_STAND);
-  mode = 128;
   ShipRooms_PlaceActor(ACTOR_PARTY_LEADER, 440, 134, FACING_WEST);
   gFieldWork->transition = (mode << 1);
   Event_StartScreenTransition();

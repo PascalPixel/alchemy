@@ -984,7 +984,6 @@ static void LamakanDesert_MeetManticore(void) {
 /// LamakanDesertCave. The patches Reveal uncovers are saved to the spare cells
 /// at 64, 126 or 64, 124, and the secrets are hidden.
 s32 LamakanDesert_Initialize(void) {
-  s32 spareRow;
 
   gMainRoutineWork.hazardLimit = 600;
   gMainRoutineWork.hazardMode = HAZARD_COUNT_ON_CELLS;
@@ -1016,11 +1015,10 @@ s32 LamakanDesert_Initialize(void) {
       SAVE_SECRET(12, 27, 55);
       SAVE_SECRET(13, 43, 56);
     } else if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertManticore) {
-      spareRow = 124;
       Scene_QueueMusic(SE_AMBIENT_WIND);
-      MapGrid_CopyCells(8, 14, 4, 4, 64, spareRow);
-      MapGrid_CopyCells(6, 18, 4, 4, 68, spareRow);
-      MapGrid_CopyCells(10, 21, 4, 4, 72, spareRow);
+      MapGrid_CopyCells(8, 14, 4, 4, 64, 124);
+      MapGrid_CopyCells(6, 18, 4, 4, 68, 124);
+      MapGrid_CopyCells(10, 21, 4, 4, 72, 124);
     }
     Reveal_HideSecrets();
   }

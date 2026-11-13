@@ -890,9 +890,7 @@ static void ColosseumSatrageMatch_HaltLifts(void) {
 static void ColosseumSatrageMatch_ReachArena(void) {
   s32 opponentFinishedFirst;
   s32 refreshCount;
-  s32 resultBase;
-
-  resultBase = 2;
+  s32 resultBase = 2;
   Colosso_NoOp();
   Event_Start();
   opponentFinishedFirst = Colosso_TakePrize(ITEM_CHAIN_MAIL, ITEM_COTTON_SHIRT);

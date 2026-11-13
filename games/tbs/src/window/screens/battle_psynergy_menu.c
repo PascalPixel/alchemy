@@ -30,7 +30,6 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   s32 selectedRow;
   s32 encodedAction;
   s32 iconTile;
-  s32 pageTile;
   s32 rangePattern;
   s32 result;
   s32 i;
@@ -177,12 +176,11 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
             window, iconTile,
             window->width - (count + 4) / BATTLE_LIST_ROWS + i - 2, -1, 0);
       }
-      pageTile = -1;
       Window_SetTilemapEntry(window, LIST_TILE_PAGES_LEFT,
                              window->width - (count + 4) / BATTLE_LIST_ROWS - 3,
-                             pageTile, 0);
+                             -1, 0);
       Window_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
-                             pageTile, 0);
+                             -1, 0);
       Window_MarkTilemapRow(work, window->y - 1);
     }
 

@@ -109,7 +109,6 @@ void FieldPsynergy_Retreat(void) {
   struct Actor *actor = effectWork->mainActor;
   struct Vector3 pos;
   struct FieldParticle *effect;
-  u8 last;
   u32 i;
 
   Event_Start();
@@ -159,10 +158,9 @@ void FieldPsynergy_Retreat(void) {
 
   // The flying particles vanish once they arrive.
   i = 0;
-  last = RETREAT_PARTICLE_LAST_FLIGHT;
   do {
     if (effectWork->particles[i].active != 0)
-      effectWork->particles[i].state = last;
+      effectWork->particles[i].state = RETREAT_PARTICLE_LAST_FLIGHT;
     i++;
   } while (i < PSYNERGY_EFFECT_SLOT_COUNT);
   wait(40);

@@ -250,7 +250,6 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
   s32 stockIndex;
   s32 pageSlot;
   s32 priceX;
-  s32 highlightFrame;
   s16 itemId;
   struct ItemDefinition *item;
   struct WindowSprite *icon;
@@ -290,8 +289,7 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
         icon->sentinel = 252;
         if (stockIndex == selected) {
           icon->motion = WINDOW_SPRITE_MOTION_SWELL;
-          highlightFrame = 10;
-          icon->animationStep = highlightFrame;
+          icon->animationStep = 10;
           icon->sentinel = 253;
         }
         icon = Shop_CreatePriceSprite(item->price, window, priceX, 0);
@@ -488,7 +486,7 @@ void Shop_DrawCarriedItem(struct Window *window, s32 unitId, s32 itemId) {
   s32 itemIndex;
   s32 slot;
   s32 quantityOffset;
-  s32 firstOffset;
+  s32 firstOffset = SHOP_INVENTORY_OFFSET;
   s32 itemOffset;
   s32 nextOffset;
   u8 *icon;
@@ -510,7 +508,6 @@ void Shop_DrawCarriedItem(struct Window *window, s32 unitId, s32 itemId) {
       Text_DrawMessageAsTilesFar(MsgShopNoneInStock, window, 0, 0);
     }
     itemIndex = 0;
-    firstOffset = SHOP_INVENTORY_OFFSET;
     if (*(u16 *)(unitBytes + firstOffset) != 0) {
       for (;;) {
         itemOffset = itemIndex * 2 + SHOP_INVENTORY_OFFSET;

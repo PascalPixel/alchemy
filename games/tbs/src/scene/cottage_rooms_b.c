@@ -1231,7 +1231,7 @@ static void CottageRoomsB_ShowMythrilBag(void) {
   struct Actor *actor;
   struct Sprite *sprite;
   GlyphTransfer *glyph;
-  u8 clear;
+  u8 clear = 0;
 
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -1240,7 +1240,6 @@ static void CottageRoomsB_ShowMythrilBag(void) {
   Actor_SetPosition(ACTOR_KRADEN, 480, 202);
   wait(1);
   FieldCamera_FollowActor(ACTOR_KRADEN, 1);
-  clear = 0;
   actor = FieldActor_Create(SPRITE_BLANK, px(328), px(2), px(195));
   actor->motionFlags = clear;
   sprite = actor->sprite;

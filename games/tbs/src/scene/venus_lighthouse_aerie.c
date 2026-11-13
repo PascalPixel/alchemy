@@ -402,11 +402,10 @@ static void VenusLighthouseAerie_LandOnPlatform(void) {
 /// bobbing, as they do until the leader lands on one
 /// (VenusLighthouseAerie_LandOnPlatform).
 static void VenusLighthouseAerie_FloatPlatforms(void) {
-  s32 flags;
+  s32 flags = ACTOR_FLOATS;
 
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  flags = ACTOR_FLOATS;
   Actor_Get(ACTOR_FIRST_PLATFORM)->motionFlags = flags;
   Actor_Get(ACTOR_FIRST_PLATFORM + 1)->motionFlags = flags;
   Actor_Get(ACTOR_FIRST_PLATFORM + 2)->motionFlags = flags;
@@ -430,7 +429,7 @@ const struct Trigger *VenusLighthouseAerie_GetTriggers(void) {
 s32 VenusLighthouseAerie_Initialize(void) {
   s32 mirroredScale;
   u32 platformId;
-  s32 clear;
+  s32 clear = 0;
   s16 entrance;
   struct Actor *platform;
 
@@ -445,7 +444,6 @@ s32 VenusLighthouseAerie_Initialize(void) {
   Actor_Get(ACTOR_BEACON_STATUE_NORTHEAST)->scaleX = mirroredScale;
   Actor_Get(ACTOR_BEACON_STATUE_SOUTHEAST)->scaleX = mirroredScale;
   platformId = ACTOR_FIRST_PLATFORM;
-  clear = 0;
   do {
     platform = Actor_Get(platformId);
     Actor_SetSpriteFlags(Actor_Get(platformId), clear);

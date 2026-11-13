@@ -877,7 +877,6 @@ static void VenusLighthouse_LandWithRadialDust(void) {
 // and now and then a sound while it moves.
 static UNREAD_RESULT VenusLighthouse_TrailLight(struct Actor *actor) {
   struct EffectOptions options;
-  s32 velocityY;
   s32 velocityX;
   s32 velocityZ;
   s32 random;
@@ -891,7 +890,6 @@ static UNREAD_RESULT VenusLighthouse_TrailLight(struct Actor *actor) {
       Sound_Play(SE_GLITTER);
     }
   }
-  velocityY = 0;
   options.type = SPRITE_GLINT;
   options.startScaleX = Q16_ONE;
   options.startScaleY = Q16_ONE;
@@ -902,7 +900,7 @@ static UNREAD_RESULT VenusLighthouse_TrailLight(struct Actor *actor) {
   random = Import_RandomNext();
   velocityZ = Math_Divide(((((u32)(random * 9)) >> 16) - 4) << 16, 10);
   FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed - px(1),
-                    velocityX, velocityY, velocityZ,
+                    velocityX, 0, velocityZ,
                     EFFECT_SCALE_TO_TARGET | EFFECT_USE_START_SCALE |
                         EFFECT_USE_TYPE | EFFECT_SCRIPT_MEDIUM,
                     &options);
@@ -1357,17 +1355,14 @@ static void VenusLighthouse_SearchStatue(void) {
 static void VenusLighthouse_MovePillarTowardWall(void) {
   struct Actor *actor;
   struct Actor *leader;
-  s32 conversationFlag;
+  s32 conversationFlag = FLAG_VENUS_LIGHTHOUSE_PILLAR_AT_WALL;
   s32 walkSpeed;
   s32 walkAcceleration;
   s32 emote;
-  s32 garetX;
-
-  conversationFlag = FLAG_VENUS_LIGHTHOUSE_PILLAR_AT_WALL;
+  s32 garetX = 824;
   walkSpeed = px(4) / 5;
   walkAcceleration = px(2) / 5;
   emote = EMOTE_IN_FRONT | EMOTE_EXCLAMATION;
-  garetX = 824;
   Event_Start();
   actor = Actor_Get(ACTOR_WALL_PILLAR);
   if (FIELD_CELL(actor->x.fixed) == 53) {

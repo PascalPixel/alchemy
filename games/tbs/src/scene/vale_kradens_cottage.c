@@ -554,14 +554,13 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
 /// so the door stays open. Removes Kraden, Garet, Jenna, Saturos and Menardi.
 static void ValeKradensCottage_KradenSetsOff(void) {
   struct Actor *actor;
-  s32 facing;
+  s32 facing = FACING_NORTH;
 
   Event_Start();
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_SetPosition(ACTOR_GARET, 216, 264);
   Actor_SetPosition(ACTOR_JENNA, 248, 264);
   actor = Actor_Get(ACTOR_GARET);
-  facing = FACING_NORTH;
   actor->facing = facing;
   actor = Actor_Get(ACTOR_JENNA);
   actor->facing = facing;
@@ -989,7 +988,6 @@ static void ValeKradensCottage_OverhearKraden(void) {
 /// Clears FLAG_VALE_KRADENS_DOOR_OPEN when the party keeps its position.
 s32 ValeKradensCottage_Initialize(void) {
   struct Actor *actor;
-  s32 debrisRow;
 
   if (gMainRoutineWork.entrance ==
           VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_UNUSED ||
@@ -1029,10 +1027,9 @@ s32 ValeKradensCottage_Initialize(void) {
     if (GameFlag_Get(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) != 0) {
       Actor_SetPosition(ACTOR_ROCKSLIDE_SURVIVOR, 0, 0);
     }
-    debrisRow = 21;
     Event_End();
-    MapGrid_CopyCellAttributes(9, 24, 1, 1, 14, debrisRow);
-    MapGrid_CopyCellAttributes(9, 24, 1, 1, 15, debrisRow);
+    MapGrid_CopyCellAttributes(9, 24, 1, 1, 14, 21);
+    MapGrid_CopyCellAttributes(9, 24, 1, 1, 15, 21);
     MapGrid_CopyCellAttributes(9, 24, 1, 1, 23, 19);
     MapGrid_CopyCellAttributes(9, 24, 1, 1, 24, 19);
     MapGrid_CopyCellAttributes(9, 24, 1, 1, 23, 20);

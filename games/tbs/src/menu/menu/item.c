@@ -93,7 +93,7 @@ s32 ItemMenu_Run(void) {
   s32 member;
   s32 result;
 #if TBS_PATCH_1
-  s32 size;
+  s32 size = 8192;
 #endif
   void **process;
   void **cache;
@@ -102,7 +102,6 @@ s32 ItemMenu_Run(void) {
   // editions keep 8 KB of the field's window tiles aside while the menu is up
   // and free the copy after putting the tiles back.
 #if TBS_PATCH_1
-  size = 8192;
   backup = Heap_AllocEwram(size);
 #endif
   screen = HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
@@ -1914,41 +1913,39 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
 
 /// Writes the six command names into window, the disabled ones in grey.
 void ItemMenu_DrawCommands(const s8 *commandStates, struct Window *window) {
-  s32 disabled;
   s32 useState;
   u32 firstCommandMessage;
 
   Text_SetColorFar(TEXT_COLOR_NORMAL);
   useState = commandStates[ITEM_COMMAND_USE];
-  disabled = ITEM_COMMAND_STATE_DISABLED;
-  if (useState == disabled)
+  if (useState == ITEM_COMMAND_STATE_DISABLED)
     Text_SetColorFar(TEXT_COLOR_DISABLED);
 
   firstCommandMessage = MsgItemCommandUse;
   Text_DrawMessageAsTilesFar(firstCommandMessage, window, 0, 24); // "Use"
   Text_SetColorFar(TEXT_COLOR_NORMAL);
-  if (commandStates[ITEM_COMMAND_EQUIP] == disabled)
+  if (commandStates[ITEM_COMMAND_EQUIP] == ITEM_COMMAND_STATE_DISABLED)
     Text_SetColorFar(TEXT_COLOR_DISABLED);
   Text_DrawMessageAsTilesFar(firstCommandMessage + 1, window,
                              ITEM_COMMAND_TEXT_X,
                              24); // "Equip"
   Text_SetColorFar(TEXT_COLOR_NORMAL);
-  if (commandStates[ITEM_COMMAND_GIVE] == disabled)
+  if (commandStates[ITEM_COMMAND_GIVE] == ITEM_COMMAND_STATE_DISABLED)
     Text_SetColorFar(TEXT_COLOR_DISABLED);
   Text_DrawMessageAsTilesFar(firstCommandMessage + 2, window, 0,
                              32); // "Give"
   Text_SetColorFar(TEXT_COLOR_NORMAL);
-  if (commandStates[ITEM_COMMAND_DROP] == disabled)
+  if (commandStates[ITEM_COMMAND_DROP] == ITEM_COMMAND_STATE_DISABLED)
     Text_SetColorFar(TEXT_COLOR_DISABLED);
   Text_DrawMessageAsTilesFar(firstCommandMessage + 3, window, 80,
                              32); // "Drop"
   Text_SetColorFar(TEXT_COLOR_NORMAL);
-  if (commandStates[ITEM_COMMAND_INSPECT] == disabled)
+  if (commandStates[ITEM_COMMAND_INSPECT] == ITEM_COMMAND_STATE_DISABLED)
     Text_SetColorFar(TEXT_COLOR_DISABLED);
   Text_DrawMessageAsTilesFar(firstCommandMessage + 4, window, 80,
                              24); // "Details"
   Text_SetColorFar(TEXT_COLOR_NORMAL);
-  if (commandStates[ITEM_COMMAND_REMOVE] == disabled)
+  if (commandStates[ITEM_COMMAND_REMOVE] == ITEM_COMMAND_STATE_DISABLED)
     Text_SetColorFar(TEXT_COLOR_DISABLED);
   // "Remove"
   Text_DrawMessageAsTilesFar(firstCommandMessage + 5, window,

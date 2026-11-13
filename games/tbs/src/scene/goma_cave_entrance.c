@@ -635,9 +635,7 @@ static void GomaCaveEntrance_GiveShamansRod(void) {
   struct ItemDefinition *item;
   s32 tries;
   s32 i;
-  s32 id;
-
-  id = ITEM_SHAMANS_ROD;
+  s32 id = ITEM_SHAMANS_ROD;
   member = Unit_Get(IVAN);
   tries = 0;
 retry:

@@ -871,10 +871,8 @@ enum ScreenTransitionIrqPhase {
 };
 
 void ScreenTransition_UpdateScanline(void) {
-  u32 scanline;
+  u32 scanline = REG_VCOUNT;
   struct ScreenTransitionWin *state;
-
-  scanline = REG_VCOUNT;
   state = gMapGridWork[0];
 
   // Keep the same VCount sample across phase changes.

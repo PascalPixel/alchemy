@@ -380,10 +380,8 @@ UNREAD_RESULT BattleEnemy_LetterFirstOfKind(s32 classId) {
   s32 nameIndex;
   s32 terminatorIndex;
   u8 nameByte;
-  u8 firstSuffix;
 
   enemyIndex = 0;
-  firstSuffix = LIST_MARKER_CHAR;
   for (; enemyIndex <= 5; enemyIndex++) {
     unit = Unit_GetFar(enemyIndex + FIRST_ENEMY_UNIT);
     nameByte = unit->side;
@@ -395,7 +393,7 @@ UNREAD_RESULT BattleEnemy_LetterFirstOfKind(s32 classId) {
     // the letter; nameIndex holds the terminator, 0.
     nameIndex = 0;
     if (unit->name[0] == 0) {
-      unit->name[0] = firstSuffix;
+      unit->name[0] = LIST_MARKER_CHAR;
       unit->name[nameByte] = nameIndex;
       return;
     }
@@ -409,7 +407,7 @@ UNREAD_RESULT BattleEnemy_LetterFirstOfKind(s32 classId) {
     if (nameByte != 0)
       goto scan_slots;
     terminatorIndex = nameIndex + 1;
-    unit->name[nameIndex] = firstSuffix;
+    unit->name[nameIndex] = LIST_MARKER_CHAR;
     unit->name[terminatorIndex] = nameByte;
     return;
   }

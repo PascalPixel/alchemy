@@ -11,14 +11,13 @@
 /// (its action lacks BATTLE_OK). A broken item (INVENTORY_BROKEN) is not
 /// tested here. The item command lists the usable items first by it.
 s32 Item_ClassifyUseAbility(s32 unit, s32 itemId) {
-  s32 itemUseStatus;
+  s32 itemUseStatus = 1;
   struct ItemDefinition *item;
 
   if (itemId == 0) {
     return 1;
   }
   item = Item_GetDirectFar(itemId);
-  itemUseStatus = 1;
   // Equipment that grants Psynergy.
   if (item->useType == 3) {
     return itemUseStatus;
@@ -74,7 +73,6 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   s32 selectedRow;
   s32 item;
   s32 iconTile;
-  s32 pageTile;
   s32 unusableReason;
   s32 result;
   s32 i;
@@ -199,12 +197,11 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
             window, iconTile,
             window->width - (count + 4) / BATTLE_LIST_ROWS + i - 2, -1, 0);
       }
-      pageTile = -1;
       Window_SetTilemapEntry(window, LIST_TILE_PAGES_LEFT,
                              window->width - (count + 4) / BATTLE_LIST_ROWS - 3,
-                             pageTile, 0);
+                             -1, 0);
       Window_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
-                             pageTile, 0);
+                             -1, 0);
       Window_MarkTilemapRow(work, window->y - 1);
     }
 

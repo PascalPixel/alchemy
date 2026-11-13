@@ -121,7 +121,6 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
   s32 level;
   s32 paletteId;
   s32 width;
-  s32 height;
 
   // The slots are read from the canvas's, not the work block's.
   slots = (u32 *)&gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
@@ -293,7 +292,6 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
     // mirrored on EFFECT_SIDE_PARTY.
     i = 0;
     width = 32;
-    height = 64;
     do {
       struct Particle *spark = &work->particles[i];
       // A burst shows from its third frame, or its seventh for the faces
@@ -301,10 +299,10 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
       if (spark->variant >= 0) {
         if (mode == BURST_SHOWER_MODE_FACES) {
           if (spark->variant > 5) {
-            draw[work->args->side](
-                canvas, (work->sheet + BURST_SHOWER_PICTURES),
-                Q_16_16_TO_INT(spark->x) - 16, Q_16_16_TO_INT(spark->y) - 32,
-                width, height);
+            draw[work->args->side](canvas,
+                                   (work->sheet + BURST_SHOWER_PICTURES),
+                                   Q_16_16_TO_INT(spark->x) - 16,
+                                   Q_16_16_TO_INT(spark->y) - 32, width, 64);
           }
         } else if (mode == BURST_SHOWER_MODE_DJINNI) {
           if (spark->variant > 5) {
@@ -312,7 +310,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
                     (work->sheet + BURST_SHOWER_PICTURES) +
                         ((spark->variant / 4) << 11),
                     Q_16_16_TO_INT(spark->x) - 16,
-                    Q_16_16_TO_INT(spark->y) - 32, width, height);
+                    Q_16_16_TO_INT(spark->y) - 32, width, 64);
           }
         } else if (mode != BURST_SHOWER_MODE_LIGHTNING) {
           if (spark->variant > 1) {
@@ -320,7 +318,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
                     (work->sheet + BURST_SHOWER_PICTURES) +
                         ((spark->variant / 4) << 11),
                     Q_16_16_TO_INT(spark->x) - 16,
-                    Q_16_16_TO_INT(spark->y) - 32, width, height);
+                    Q_16_16_TO_INT(spark->y) - 32, width, 64);
           }
         }
         spark->x += spark->velocityX;

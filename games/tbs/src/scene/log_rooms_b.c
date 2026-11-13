@@ -446,7 +446,6 @@ const struct Trigger *Scene_GetTriggers(void) { return gLogRoomsB_Triggers; }
 /// beside the girl and starts Vault_UpdateBoneProximityFlag.
 s32 Scene_Initialize(void) {
   s32 entrance;
-  s32 clearedState;
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -456,10 +455,9 @@ s32 Scene_Initialize(void) {
     // Draw the table bare, its stone gone, and set the gem owner back on the
     // floor.
     MapGrid_CopyCellsTo(0, 120, 8, 67, 4, 3);
-    clearedState = 0;
-    Actor_Get(ACTOR_GEM_OWNER)->motionFlags = clearedState;
-    Actor_Get(ACTOR_GEM_OWNER)->y.fixed = clearedState;
-    Actor_Get(ACTOR_GEM_OWNER)->groundHeight = clearedState;
+    Actor_Get(ACTOR_GEM_OWNER)->motionFlags = 0;
+    Actor_Get(ACTOR_GEM_OWNER)->y.fixed = 0;
+    Actor_Get(ACTOR_GEM_OWNER)->groundHeight = 0;
   } else if (entrance == LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST ||
              entrance == LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS) {
     // Show the Bone lying in the room, and track whether the leader stands

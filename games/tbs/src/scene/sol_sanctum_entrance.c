@@ -366,7 +366,6 @@ static inline void SolSanctumEntrance_ReactToOpeningPassage(void) {
 /// the jewel.
 static void SolSanctumEntrance_SetFirstSmallJewel(void) {
   s32 message;
-  s32 oneCell;
   s32 reliefWidth;
 
   if (GameFlag_Get(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND) != 0) {
@@ -374,9 +373,8 @@ static void SolSanctumEntrance_SetFirstSmallJewel(void) {
       Event_Start();
       Field_EndBusyAndReveal();
       // The eye sparkles, then the wall opens.
-      oneCell = 1;
       Sound_Play(SE_GEM_SET);
-      MapGrid_CopyCellsTo(0, 70, 30, 42, oneCell, oneCell);
+      MapGrid_CopyCellsTo(0, 70, 30, 42, 1, 1);
       MapGrid_CenterOnFollowedPoint();
       Event_Wait(40);
       message = MsgSolSanctumSetSmallGem;
@@ -385,8 +383,8 @@ static void SolSanctumEntrance_SetFirstSmallJewel(void) {
       reliefWidth = 3;
       Sound_Play(SE_STONE_RUMBLE);
       MapGrid_CopyCellsTo(0, 29, 3, 1, reliefWidth, 2);
-      MapGrid_CopyCellAttributes(0, 29, 3, 2, reliefWidth, oneCell);
-      MapGrid_CopyCellsTo(1, 109, 4, 81, oneCell, oneCell);
+      MapGrid_CopyCellAttributes(0, 29, 3, 2, reliefWidth, 1);
+      MapGrid_CopyCellsTo(1, 109, 4, 81, 1, 1);
       MapGrid_CenterOnFollowedPoint();
       SolSanctumEntrance_ReactToOpeningPassage();
       FieldMessage_Show(message + 1, 1);

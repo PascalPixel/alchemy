@@ -625,8 +625,6 @@ static void ValeCave_HaltKite(void) {
 /// clears the cells it held.
 static void ValeCave_PushLogOverEdge(void) {
   struct Actor *movedLog;
-  s32 stationaryMotion;
-  s32 clearedRows;
   struct PushedActorProbe probe;
 
   Event_Start();
@@ -635,10 +633,9 @@ static void ValeCave_PushLogOverEdge(void) {
     // At the ledge's edge (column 17) the log slides west and drops.
     if (FIELD_CELL(probe.position.x) == 17) {
       Actor_SetAnimation(probe.actorSlot, 3);
-      stationaryMotion = 0;
-      Actor_Get(probe.actorSlot)->motionFlags = stationaryMotion;
+      Actor_Get(probe.actorSlot)->motionFlags = 0;
       movedLog = Actor_Get(probe.actorSlot);
-      movedLog->bounce = stationaryMotion;
+      movedLog->bounce = 0;
       Actor_SetDestinationOffset(probe.actorSlot, -12, 0);
       Actor_WaitForMoveById(probe.actorSlot);
       Actor_SetAnimation(probe.actorSlot, 3);
@@ -654,16 +651,14 @@ static void ValeCave_PushLogOverEdge(void) {
         movedLog->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       }
       // The cells it held on the ledge, and its landing, become open floor.
-      clearedRows = 4;
       PushedActor_FillGridAttributeRectangle(0, FIELD_CELL(probe.position.x),
                                              (FIELD_CELL(probe.position.z) - 2),
-                                             1, clearedRows, stationaryMotion);
+                                             1, 4, 0);
       PushedActor_FillGridAttributeRectangle(2, FIELD_CELL(probe.position.x),
                                              (FIELD_CELL(probe.position.z) - 2),
-                                             1, clearedRows, stationaryMotion);
-      PushedActor_FillGridAttributeRectangle(2, 16, 18, 1, 2, stationaryMotion);
-      PushedActor_FillGridAttributeRectangle(0, 16, 16, 1, clearedRows,
-                                             stationaryMotion);
+                                             1, 4, 0);
+      PushedActor_FillGridAttributeRectangle(2, 16, 18, 1, 2, 0);
+      PushedActor_FillGridAttributeRectangle(0, 16, 16, 1, 4, 0);
       GameFlag_Set(FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE);
       Sound_Play(SE_LOG_FALL);
     }
@@ -679,7 +674,7 @@ static void ValeCave_PushLogOverEdge(void) {
 static void ValeCave_PushLogOffLedge(void) {
 
   struct Actor *pushedLog;
-  s32 stationaryMotion;
+  s32 stationaryMotion = 0;
 
   Event_Start();
   Event_Wait(10);
@@ -692,7 +687,6 @@ static void ValeCave_PushLogOffLedge(void) {
   Sound_Play(SE_HEAVY_MOVE);
   Actor_SetSpeedAndAcceleration(ACTOR_WEST_LOG, 0.5, 0.1);
   Actor_SetAnimation(ACTOR_WEST_LOG, 2);
-  stationaryMotion = 0;
   Actor_Get(ACTOR_WEST_LOG)->motionFlags = stationaryMotion;
   pushedLog = Actor_Get(ACTOR_WEST_LOG);
   pushedLog->bounce = stationaryMotion;

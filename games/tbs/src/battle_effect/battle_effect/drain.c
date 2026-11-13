@@ -232,12 +232,11 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
               &PARTICLES[member * DRAIN_MOTES_PER_TARGET + i];
 
           if (mote->variant >= 0) {
-            s32 size;
+            s32 size = 6;
 
             // The canvas is shown at double width, so halve x.
             Projection_Point(mote, &screen);
             screen.x >>= 1;
-            size = 6;
             EFFECT_DRAW_MOTE(draw, canvas, sheet, screen.x, screen.y, size);
             Particle_AdvanceWithGravity3D(mote, 62, 0);
 

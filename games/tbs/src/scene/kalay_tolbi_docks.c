@@ -566,11 +566,9 @@ static void KalayTolbiDocks_TalkToDockWorker(void) {
 static void KalayTolbiDocks_TalkToTicketSeller(void) {
   struct Window *coinsWindow;
   struct MainRoutineWork *state;
-  s32 ticketPrice;
+  s32 ticketPrice = 600;
 
   s32 coinLabel;
-
-  ticketPrice = 600;
   Event_Start();
   if (Event_GetFlag(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
     Event_SetMessageId(MsgKalayHandInTicketPlank);

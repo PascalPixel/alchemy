@@ -399,7 +399,6 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     if (page <= DJINN_COMPARE_PAGE_RECEIVER) {
       list = menu->secondWindow;
       if (pageCounts[page] > 1) {
-        s32 top;
 
         for (index = 0; index < pageCounts[page]; index++) {
           s32 tile;
@@ -414,10 +413,9 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           Window_SetTilemapEntryFar(
               list, tile, list->width - pageCounts[page] + index - 2, -1, 0);
         }
-        top = -1;
         Window_SetTilemapEntryFar(list, PAGE_ARROW_LEFT,
-                                  list->width - pageCounts[page] - 3, top, 0);
-        Window_SetTilemapEntryFar(list, PAGE_ARROW_RIGHT, list->width - 2, top,
+                                  list->width - pageCounts[page] - 3, -1, 0);
+        Window_SetTilemapEntryFar(list, PAGE_ARROW_RIGHT, list->width - 2, -1,
                                   0);
         Window_MarkTilemapRow(work, list->y);
       }
@@ -472,10 +470,9 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     // turn every 4 frames.
     if ((frame & 3) == 0) {
       void *tile;
-      u32 fill;
+      u32 fill = TEXT_CANVAS_BACKGROUND_WORD;
 
       tile = (void *)DJINN_BACKDROP_BORDER_VRAM;
-      fill = TEXT_CANVAS_BACKGROUND_WORD;
       if ((frame & 4) != 0) {
         Iwram_CopyWords(tile, gMenu_BackdropBorderTile, 32);
       } else {

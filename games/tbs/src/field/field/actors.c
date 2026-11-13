@@ -18,7 +18,6 @@ void SpriteDissolve_Step(u8 *obj, u32 pos) {
   const u8 *order;
   u32 highMask;
   u32 indexMask;
-  u8 offsetMask;
 
   struct Sprite *sprite = (struct Sprite *)obj;
 
@@ -31,7 +30,6 @@ void SpriteDissolve_Step(u8 *obj, u32 pos) {
     order = gSpriteDissolve_PixelOrder;
     highMask = 0xff00;
     indexMask = 0x3f;
-    offsetMask = 0x3e;
 
     // A tile is 64 bytes (32 halfwords) at 8 bits a pixel. The unsigned
     // test passes only steps 64 to 127, so later tiles start clearing
@@ -49,7 +47,7 @@ void SpriteDissolve_Step(u8 *obj, u32 pos) {
         // takes no byte writes: rewrite the pixel pair, clearing one; the
         // odd pixel is the pair's high byte.
         pixel = order[(pos + i * 16) & indexMask];
-        pixelPair = (u16 *)((u8 *)tile + (pixel & offsetMask));
+        pixelPair = (u16 *)((u8 *)tile + (pixel & 0x3e));
         isOdd = 1;
         isOdd &= pixel;
         if (isOdd != 0)

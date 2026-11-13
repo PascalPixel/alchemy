@@ -21,9 +21,8 @@ struct UnitHpPoisonView {
 ///
 /// Called by FieldSequence_Run while it sets a scene up.
 void Field_ClearRequests(void) {
-  s16 noRequest;
+  s16 noRequest = 0;
   struct FieldWork *work;
-  noRequest = 0;
   work = gFieldWork;
   work->stepTrigger = noRequest;
   work->pushCell = 0;

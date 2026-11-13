@@ -893,7 +893,6 @@ static void ValePrologue_FirstRockFalls(void) {
   struct Actor *rock;
   struct Actor *leader;
   s32 targetHeight;
-  s32 walkZ;
   struct Sprite *rockSprite;
 
   if (Event_GetFlag(FLAG_VALE_STORM_FIRST_ROCK_PASSED) == 0) {
@@ -937,9 +936,8 @@ static void ValePrologue_FirstRockFalls(void) {
           // stands.
           leader = Actor_Get(ACTOR_PARTY_LEADER);
           if (leader->y.fixed > px(128)) {
-            walkZ = 918;
-            ValePrologue_GaretCommentsOnBlockedPath(326, walkZ);
-            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 291, walkZ);
+            ValePrologue_GaretCommentsOnBlockedPath(326, 918);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 291, 918);
           } else {
             ValePrologue_GaretCommentsOnBlockedPath(335, 957);
           }
@@ -2196,7 +2194,7 @@ static void ValePrologue_TalkAboutSavingFelix(void) {
 static void ValePrologue_BoulderSweepsThemAway(void) {
   struct Actor *leader;
   struct Actor *actor;
-  s32 automaticPriority;
+  s32 automaticPriority = ACTOR_PRIORITY_AUTOMATIC;
   struct Sprite *sprite;
 
   if (GameFlag_Get(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) != 0) {
@@ -2302,7 +2300,6 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
       Actor_SetAnimation(ACTOR_JENNA_CHILD, ANIM_NOD);
       Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_NOD);
-      automaticPriority = ACTOR_PRIORITY_AUTOMATIC;
       Actor_SetAnimationAndWait(ACTOR_EXHAUSTED_STRONGMAN, ANIM_NOD);
       leader->priorityFlags |= automaticPriority;
       actor = Actor_Get(ACTOR_EXHAUSTED_STRONGMAN);
@@ -2357,10 +2354,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   struct Actor *currentActor;
   u32 random;
   const s32 *entryActions;
-  s32 stoppedVelocity;
-  u8 stoppedMotion;
   const s32 *lookAroundActions;
-  s32 resetValue;
   const s32 *departureActions;
 
   actor = Actor_Get(ACTOR_BOULDER);
@@ -2413,8 +2407,6 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   random = Random_Next();
   random = Math_RemainderUnsigned(random, 20) + 20;
   lookingActor->timer = random;
-  stoppedVelocity = 0;
-  stoppedMotion = 0;
   lookingActor = Actor_Get(ACTOR_GARET_CHILD);
   random = Random_Next();
   lookingActor->timer = (Math_RemainderUnsigned(random, 20) + 20);
@@ -2468,7 +2460,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   boulderShadow->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   boulderShadowSprite->image.priority = 1;
   ValePrologue_PlaceActor(actor, px(200), px(898));
-  actor->motionFlags = stoppedMotion;
+  actor->motionFlags = 0;
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actorVisual->image.priority = 0;
   currentActor = FieldCamera_GetActor();
@@ -2478,11 +2470,11 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   currentActor = FieldCamera_GetActor();
   currentActor->targetZ = ACTOR_NO_TARGET;
   currentActor = FieldCamera_GetActor();
-  currentActor->velocityX = stoppedVelocity;
+  currentActor->velocityX = 0;
   currentActor = FieldCamera_GetActor();
-  currentActor->velocityY = stoppedVelocity;
+  currentActor->velocityY = 0;
   currentActor = FieldCamera_GetActor();
-  currentActor->velocityZ = stoppedVelocity;
+  currentActor->velocityZ = 0;
   wait(1);
   FieldCamera_MoveTo(247, 128, 917, 0);
   MapGrid_CenterOnFollowedPoint();
@@ -2509,13 +2501,12 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   currentActor->targetY = ACTOR_NO_TARGET;
   currentActor = FieldCamera_GetActor();
   currentActor->targetZ = ACTOR_NO_TARGET;
-  resetValue = 0;
   currentActor = FieldCamera_GetActor();
-  currentActor->velocityX = resetValue;
+  currentActor->velocityX = 0;
   currentActor = FieldCamera_GetActor();
-  currentActor->velocityY = resetValue;
+  currentActor->velocityY = 0;
   currentActor = FieldCamera_GetActor();
-  currentActor->velocityZ = resetValue;
+  currentActor->velocityZ = 0;
   Task_Remove(ValePrologue_UpdateBoulderShadow);
   Actor_Stop(ACTOR_BOULDER);
   wait(1);
@@ -2526,10 +2517,10 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   boulderShadowSprite->scale = 5 * Q16_ONE / 4;
   actor->scaleX = 2 * Q16_ONE;
   actor->scaleY = 2 * Q16_ONE;
-  actor->x.fixed = resetValue;
-  actor->z.fixed = resetValue;
-  actor->targetX = resetValue;
-  actor->targetZ = resetValue;
+  actor->x.fixed = 0;
+  actor->z.fixed = 0;
+  actor->targetX = 0;
+  actor->targetZ = 0;
   wait(1);
   // Stage the riverbank reactions between lightning flashes.
   Actor_SetAnimation(ACTOR_FELIX_CHILD, ANIM_FELIX_CLING_STILL);
@@ -2550,7 +2541,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_STILL);
   FieldCamera_MoveTo(166, 0, 1337, 0);
   MapGrid_CenterOnFollowedPoint();
-  actor->motionFlags = resetValue;
+  actor->motionFlags = 0;
   actor->targetX = ACTOR_NO_TARGET;
   actor->targetY = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;

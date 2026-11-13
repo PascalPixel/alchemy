@@ -101,7 +101,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   s32 cx;
   s32 cy;
   s32 squash;
-  s32 sx;
+  s32 sx = 8;
   s32 ring;
   s32 rings;
   s32 shift;
@@ -502,7 +502,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   squash = 6;
   shift = 0;
   ring = 0;
-  sx = 8;
   rings = 2;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 

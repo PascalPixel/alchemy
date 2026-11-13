@@ -225,7 +225,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
   if (x > (win->width - 2))
     return;
   if (mode == GLYPH_DRAW_PAGE_ARROW) {
-    s32 column;
+    s32 column = 0xfffe;
     work = WindowSprite_AcquireFree();
     if (work == NULL)
       return;
@@ -239,7 +239,6 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
       *slot = VramCache_FindFreeEntry();
     // 0xfffe and 254 are -2: the arrow sits on the interior's last tile, 4
     // pixels right and 1 up.
-    column = 0xfffe;
     attr->x = (win->x + (column + *(u16 *)&win->width)) * 8 + 4;
 #ifdef UBFIX
     // Write row twice, in order.

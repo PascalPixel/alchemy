@@ -130,11 +130,9 @@ s32 VramCache_ReleaseVram(u32 no) {
   if (no >= VRAM_CACHE_ENTRY_COUNT)
     return -1;
   if (entry->size > 16) {
-    s32 one;
 
     VramCache_FreeBlocks(no);
-    one = 1;
-    entry->size = one;
+    entry->size = 1;
   }
   return 0;
 }

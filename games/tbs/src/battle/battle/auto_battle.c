@@ -190,7 +190,7 @@ s32 BattleFlee_PlayRun(struct BattleAction *action) {
 /// Called by AutoBattle_RunAction.
 s32 AutoBattle_ShowDefend(const struct BattleAction *action) {
   s32 unitId;
-  s32 result;
+  s32 result = 0;
   struct Unit *unit;
 
   unitId = action->unitId;
@@ -198,7 +198,6 @@ s32 AutoBattle_ShowDefend(const struct BattleAction *action) {
   if (BattleObject_IsValidId(unitId) < 0) {
     return -1;
   }
-  result = 0;
   if (unit->hp <= 0) {
     return result;
   }

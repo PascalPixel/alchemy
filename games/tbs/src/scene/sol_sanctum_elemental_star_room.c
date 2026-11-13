@@ -594,7 +594,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   s32 i;
   /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 29 of
    * 464 instructions differ in tbs-en. */
-  u8 zero;
+  u8 zero = 0;
 
   Sound_Play(MUS_OMINOUS);
   Actor_SetAnimation(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
@@ -623,7 +623,6 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   felix = Actor_Get(ACTOR_FELIX_MASKED);
   shadow = Actor_Get(ACTOR_PLATFORM_SHADOW);
   spriteFlags = &felix->sprite->flags;
-  zero = 0;
   *spriteFlags = zero;
   felix->scaleX = Q16_ONE / 10;
   felix->scaleY = Q16_ONE / 10;
@@ -1494,9 +1493,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   struct Actor *shadow;
   struct Actor *leader;
   u8 *kradenSteeringFlags;
-  s32 kradenSpeaker;
-  s32 height;
-  s32 kradenMessageSpeaker;
+  s32 height = 192;
 
   Event_Start();
   MapGrid_CopyCellAttributes(27, 16, 5, 1, 27, 17);
@@ -1728,10 +1725,10 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 20);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(30);
-  kradenSpeaker = 0x4009;
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_Wait(40);
-  SolSanctumElementalStarRoom_ShowMessageAndWait(kradenSpeaker, 30);
+  SolSanctumElementalStarRoom_ShowMessageAndWait(
+      SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 30);
   Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JENNA, 0);
   Event_Wait(40);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -1739,13 +1736,15 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_GARET, 40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 20);
-  SolSanctumElementalStarRoom_ShowMessageAndWait(kradenSpeaker, 20);
+  SolSanctumElementalStarRoom_ShowMessageAndWait(
+      SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
-  SolSanctumElementalStarRoom_ShowMessageAndWait(kradenSpeaker, 10);
+  SolSanctumElementalStarRoom_ShowMessageAndWait(
+      SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 10);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1980,7 +1979,6 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
       SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 40);
   rising = Actor_Get(ACTOR_KRADEN);
   // Kraden demonstrates reaching the platforms, then asks the party to help.
-  height = 192;
   wait(6);
   rising->speedLimit = px(3);
   rising->acceleration = px(2);
@@ -2096,10 +2094,10 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_SetSpeed(ACTOR_KRADEN, 0.2);
   Actor_WalkToAndWait(ACTOR_KRADEN, 471, 352);
   Event_Wait(20);
-  kradenMessageSpeaker = 0x8009;
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(20);
-  SolSanctumElementalStarRoom_ShowMessageAndWait(kradenMessageSpeaker, 60);
+  SolSanctumElementalStarRoom_ShowMessageAndWait(
+      SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 60);
   *kradenSteeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_KRADEN, 456, 360);
   Event_Wait(20);
@@ -2114,18 +2112,21 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_GARET, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
-  SolSanctumElementalStarRoom_ShowMessageAndWait(kradenMessageSpeaker, 20);
+  SolSanctumElementalStarRoom_ShowMessageAndWait(
+      SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 40);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
-  SolSanctumElementalStarRoom_ShowMessageAndWait(kradenMessageSpeaker, 10);
+  SolSanctumElementalStarRoom_ShowMessageAndWait(
+      SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 30);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
-  SolSanctumElementalStarRoom_ShowMessageAndWait(kradenMessageSpeaker, 30);
+  SolSanctumElementalStarRoom_ShowMessageAndWait(
+      SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 30);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);

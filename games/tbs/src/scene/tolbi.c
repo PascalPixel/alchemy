@@ -483,7 +483,7 @@ static void Tolbi_CopyLeaderPriority(struct Actor *updated) {
 s32 Tolbi_ApplyEntryState(s32 unused) {
   struct Actor *actor;
   void (*kidUpdate)(struct Actor *);
-  s32 clearFlags;
+  s32 clearFlags = 0;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
@@ -494,7 +494,6 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   kidUpdate = (void (*)(struct Actor *))Tolbi_UpdateKid;
   actor->timer = KID_CHASES_YOUNGER;
   actor->update = kidUpdate;
-  clearFlags = 0;
   Actor_SetPosition(ACTOR_TOLBI_YOUNGER_SISTER, 368, 320);
   Actor_SetScript(ACTOR_TOLBI_YOUNGER_SISTER, gTolbiYoungerSisterRun);
   actor = Actor_Get(ACTOR_TOLBI_YOUNGER_SISTER);

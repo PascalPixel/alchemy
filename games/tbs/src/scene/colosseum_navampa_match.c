@@ -960,9 +960,7 @@ ColosseumNavampaMatch_UnusedAskToControlCharacter(s32 characterId) {
 static void ColosseumNavampaMatch_ReachArena(void) {
   s32 place;
   s32 i;
-  s32 last;
-
-  last = 4;
+  s32 last = 4;
   Colosso_NoOp();
   Event_Start();
   place = Colosso_TakePrize(ITEM_CLAYMORE, ITEM_HUNTERS_SWORD);
@@ -1689,7 +1687,6 @@ static void ColosseumNavampaMatch_TalkToScalesAttendant(s32 guideId) {
 /// and a place for a friend to cheer.
 static void ColosseumNavampaMatch_TalkToSteppingStoneAttendant(s32 guideId) {
   s32 promptResult;
-  s32 x;
 
   if (gMainRoutineWork.entrance ==
       COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
@@ -1702,14 +1699,13 @@ static void ColosseumNavampaMatch_TalkToSteppingStoneAttendant(s32 guideId) {
     Event_SetMessageId(MsgColossoSteppingStoneStage);
     FieldCamera_SetSpeed(3);
     FieldCamera_MoveTo(376, CAMERA_KEEP, 152, 1);
-    x = 280;
     FieldCamera_WaitForMove();
     Event_Wait(30);
     // "This is the Stepping- Stone Stage."
     Event_ShowMessage(guideId, 0);
-    Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, x, 200);
+    Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 280, 200);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
-    Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, x, 152);
+    Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 280, 152);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 296, 152);
     Event_Wait(10);
     Field_TryJumpForward();

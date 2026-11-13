@@ -654,7 +654,6 @@ static __inline__ void Kolima_NodTogether(void) {
 static void Kolima_WitnessForestCurse(void) {
   struct Actor *actor;
   s32 *partyLayout;
-  s32 motionFacingFlag;
   // One staging word is reused for facing bytes, jump values and flags.
   s32 stagingValue;
   const s32 *squashActions;
@@ -762,9 +761,8 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetSpeed(ACTOR_IVAN, 1);
   Actor_Get(ACTOR_IVAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_IVAN, 80, 310);
-  motionFacingFlag = ACTOR_FACES_MOTION;
   Event_Wait(1);
-  Actor_Get(ACTOR_IVAN)->steeringFlags |= motionFacingFlag;
+  Actor_Get(ACTOR_IVAN)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Kolima_ShowMessageAndWait(ACTOR_GARET, 20);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
@@ -784,7 +782,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_Get(ACTOR_IVAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_IVAN, 72, 286);
   Event_Wait(1);
-  Actor_Get(ACTOR_IVAN)->steeringFlags |= motionFacingFlag;
+  Actor_Get(ACTOR_IVAN)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_SetScript(ACTOR_IVAN, gKolima_IvanWalksIn);
   if (*partyLayout != 0) {
     Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);

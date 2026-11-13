@@ -620,9 +620,7 @@ UNUSED static void ColosseumAzartMatch_SetCourseFlag(void) {
 static void ColosseumAzartMatch_ReachArena(void) {
   s32 approach;
   s32 n;
-  s32 base;
-
-  base = 0;
+  s32 base = 0;
   Colosso_NoOp();
   Event_Start();
   approach = Colosso_TakePrize(ITEM_IRON_SHIELD, ITEM_PADDED_GLOVES);

@@ -622,7 +622,7 @@ static inline void CottageRoomsA_PlayRepeatedAnimationAndWait(s32 actorId,
 static void CottageRoomsA_GaretComesHome(void) {
   struct Actor *sleepZ;
   struct Actor *actor;
-  s32 motionFlags;
+  s32 motionFlags = 0;
   TaskFunc timedUpdate;
   const s32 *partyScript;
 
@@ -644,7 +644,6 @@ static void CottageRoomsA_GaretComesHome(void) {
   Actor_SetSpriteFlags(sleepZ, 0);
   sleepZ = Actor_Get(ACTOR_FIRST_SLEEP_Z + 2);
   Actor_SetSpriteFlags(sleepZ, 0);
-  motionFlags = 0;
   Actor_Get(ACTOR_FIRST_SLEEP_Z)->motionFlags = motionFlags;
   Actor_Get(ACTOR_FIRST_SLEEP_Z + 1)->motionFlags = motionFlags;
   Actor_Get(ACTOR_FIRST_SLEEP_Z + 2)->motionFlags = motionFlags;

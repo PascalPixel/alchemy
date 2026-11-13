@@ -152,13 +152,11 @@ static void LogRoomsC_TurnVillagersIntoTrees(struct ActorPlacement *placement) {
   u8 talkFacing;
   s32 behavior;
   u16 treeSprite;
-  u16 alternateTreeSprite;
 
   villagerIndex = 0;
   talkFacing = TALK_FACING_KEEP;
   behavior = MOVEMENT_TYPE_STAND;
   treeSprite = SPRITE_TREE;
-  alternateTreeSprite = SPRITE_SMALL_TREE;
   do {
     placement->talkFacing = talkFacing;
     placement->movement = behavior;
@@ -166,7 +164,7 @@ static void LogRoomsC_TurnVillagersIntoTrees(struct ActorPlacement *placement) {
     // The two residents drawn as SPRITE_BOY_WITH_FAIR_HAIR take the small tree.
     if (villagerIndex == ACTOR_CHILD_TOLD_THE_SECRET - ACTOR_FIRST_VILLAGER ||
         villagerIndex == ACTOR_LUMBERJACKS_HUNGRY_SON - ACTOR_FIRST_VILLAGER) {
-      placement->sprite = alternateTreeSprite;
+      placement->sprite = SPRITE_SMALL_TREE;
     }
     villagerIndex++;
     placement++;

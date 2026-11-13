@@ -11,10 +11,9 @@
 void Palette_UpdatePulseBrightness(void) {
   u16 *palette;
   s32 remainingColors;
-  s32 channelMask;
+  s32 channelMask = 31;
 
   palette = (u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
-  channelMask = 31;
   remainingColors = 15;
   do {
     u32 color;
@@ -569,12 +568,10 @@ void Palette_CopyWithBrightnessOffset(s32 offset) {
   s32 bankIndex;
   s32 sourceBank;
   s32 colorIndex;
-  s32 channelMask;
   s32 paletteIndex;
 
   sourceBank = 15;
   bankIndex = 0;
-  channelMask = 31;
   do {
     for (colorIndex = 0; colorIndex <= 15; colorIndex++) {
       u32 color;
@@ -585,9 +582,9 @@ void Palette_CopyWithBrightnessOffset(s32 offset) {
 
       paletteIndex = sourceBank * 16 + colorIndex;
       color = ((u16 *)BG_PLTT)[paletteIndex];
-      blue = (color >> 10) & channelMask;
-      green = (color >> 5) & channelMask;
-      red = color & channelMask;
+      blue = (color >> 10) & 31;
+      green = (color >> 5) & 31;
+      red = color & 31;
       blue += offset;
       green += offset;
       red += offset;

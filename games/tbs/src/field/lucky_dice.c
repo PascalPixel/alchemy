@@ -508,11 +508,10 @@ void LuckyDice_Run(void) {
       if (resultTimer >= DICE_RESULT_FRAMES && resultKind >= 0) {
         for (index = 0; index != gLuckyDice_LabelCounts[resultKind]; index++) {
           s32 labelX;
-          s32 labelY;
+          s32 labelY = 96;
 
           labelX = DICE_KIND_X - gLuckyDice_LabelCounts[resultKind] * 16 +
                    index * 32;
-          labelY = 96;
           sprites->oam[spriteCount].attr01 =
               (((labelX & 0x1ff) << 16) | labelY) | OBJ_SIZE_32X32 |
               OBJ_256_COLORS;

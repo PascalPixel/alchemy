@@ -69,6 +69,8 @@ void Func_080151e4(s32 x, s32 y, s32 z);
 void Func_080150e4(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+/* VIEW(f188714): routine Render_DrawModelList as void Render_DrawModelList(struct Model__f188714 *model); f186dfc has void Render_DrawModelList(struct Model *model). */
+extern void Render_DrawModelList__f188714(struct Model__f188714 *model) __asm__("Render_DrawModelList");
 void Heap_Release(void *block);
 void Func_081180e8(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
@@ -274,7 +276,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
             Func_080150e4(angle);
             SceneTransform_ApplyPitch(-0x1000);
             Render_TransformVertices(gData_08199210, vertices, 4);
-            Render_DrawModelList(model);
+            Render_DrawModelList__f188714(model);
           }
         }
       }

@@ -345,6 +345,8 @@ void Func_0200092c(s32, s32, s32, s32, s32, s32, s32);
 void Func_02000950(s32, s32, s32, s32);
 void Func_020009c0(s32, s32, s32, s32);
 void Func_02000a10(s32, s32, s32, s32, s32);
+/* VIEW(psynergy_test): routine Func_02000c4c as void Func_02000c4c(struct Actor *, void *); the definition has void Func_02000c4c(struct Actor *object, struct SparkleWork *work). */
+extern void Func_02000c4c__psynergy_test(struct Actor *, void *) __asm__("Func_02000c4c");
 void Func_02000d4c(struct Actor *);
 
 void Func_02000660(void) {
@@ -391,8 +393,8 @@ void Func_02000740(void) {}
 void Func_02000744(void) {}
 
 void Func_02000748(s32 actor) {
-  Func_02000c4c(Actor_Get(actor), gData_02001860);
-  Func_02000c4c(Actor_Get(gMainRoutineWork.currentOwner), gData_020017b0);
+  Func_02000c4c__psynergy_test(Actor_Get(actor), gData_02001860);
+  Func_02000c4c__psynergy_test(Actor_Get(gMainRoutineWork.currentOwner), gData_020017b0);
   System_Wait(100);
   Func_02000d4c(Actor_Get(actor));
   Func_02000d4c(Actor_Get(gMainRoutineWork.currentOwner));
@@ -840,6 +842,8 @@ s32 Resource_FindFreeEntry(void);
 void Func_02000ee4(struct SparkleSprite__s0c4c *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 s32 Func_02000ef4(struct Actor *object);
+/* VIEW(s0c4c): routine Func_02000ad0 as void Func_02000ad0(void); the definition has void Func_02000ad0(struct Actor *object). */
+extern void Func_02000ad0__s0c4c(void) __asm__("Func_02000ad0");
 
 void Func_02000c4c(struct Actor *object, struct SparkleWork__s0c4c *work) {
   struct SparkleSprite__s0c4c *sprite;
@@ -856,7 +860,7 @@ void Func_02000c4c(struct Actor *object, struct SparkleWork__s0c4c *work) {
   work->object = object;
   ((u8 *)object)[0x62] = 0;
   ((u8 *)object)[0x63] = 0;
-  object->update = Func_02000ad0;
+  object->update = Func_02000ad0__s0c4c;
   tile = gResourceTableEntries[work->vramEntry].offset >> 5;
   object->watchedObject = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {

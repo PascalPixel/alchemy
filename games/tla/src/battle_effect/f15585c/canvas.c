@@ -64,24 +64,11 @@ void Func_08163c2c(s32 mode, s32 value) {
     } while (front <= 191);
   }
 }
-#undef ALTERNATE_BLITTER_SLOT
-#undef BLITTER_SLOT
 #undef HEAP_BLITTER
 #undef HEAP_BLITTER_ALTERNATE
 #undef BLITTER
 #undef SPARK_COUNT
 #undef IWRAM
 #undef PLTT
-#undef BG_VRAM
 #undef SPARKS
-#undef RINGS
-#undef IWRAM_SLOT_68
-#undef IWRAM_SLOT_BC
-#undef RELEASE_BLITTERS
-#undef DISC_SIZE
-#undef DISC_RINGS
-#undef RIPPLE_FRAMES
-#undef RIPPLE_FADE_IN_FRAMES
-#undef RIPPLE_FADE_OUT_FRAME
-#undef RIPPLE_HIT_FRAME
 #undef PHASE_RESULTS

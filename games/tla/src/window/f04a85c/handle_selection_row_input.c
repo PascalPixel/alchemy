@@ -10,6 +10,8 @@
 // the field, Left and Right step the value (0 to 324) or the second number
 // (0 to 99) by one, R and L by ten, and the row is redrawn after a step.
 
+/* VIEW(handle_selection_row_input): routine Menu_DrawSelectionRow as void Menu_DrawSelectionRow(s32 arg, s32 value, s16 *sub); the definition has void Menu_DrawSelectionRow(void *window, s16 first, const s16 *second). */
+extern void Menu_DrawSelectionRow__handle_selection_row_input(s32 arg, s32 value, s16 *sub) __asm__("Menu_DrawSelectionRow");
 
 s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
   if (gInput.repeat & KEY_A)
@@ -30,7 +32,7 @@ s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
     }
     if (value > 324)
       value = 0;
-    Menu_DrawSelectionRow(arg, value, sub);
+    Menu_DrawSelectionRow__handle_selection_row_input(arg, value, sub);
   } else if (gInput.repeat & KEY_LEFT) {
     if (*mode == 0) {
       value--;
@@ -41,7 +43,7 @@ s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
     }
     if (value < 0)
       value = 324;
-    Menu_DrawSelectionRow(arg, value, sub);
+    Menu_DrawSelectionRow__handle_selection_row_input(arg, value, sub);
   } else if (gInput.repeat & KEY_R) {
     if (*mode == 0) {
       *sub = 0;
@@ -53,7 +55,7 @@ s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
     }
     if (value > 324)
       value = 0;
-    Menu_DrawSelectionRow(arg, value, sub);
+    Menu_DrawSelectionRow__handle_selection_row_input(arg, value, sub);
   } else if (gInput.repeat & KEY_L) {
     if (*mode == 0) {
       *sub = 0;
@@ -65,7 +67,7 @@ s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
     }
     if (value < 0)
       value = 324;
-    Menu_DrawSelectionRow(arg, value, sub);
+    Menu_DrawSelectionRow__handle_selection_row_input(arg, value, sub);
   }
   return value;
 }

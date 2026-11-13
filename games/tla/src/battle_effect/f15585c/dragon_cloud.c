@@ -405,4 +405,3 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
 #undef HEAP_SLOT_BLITTER_ALTERNATE
 #undef SPARKS
 #undef SPARK_COUNT
-#undef PILLAR_CELL_SIZE

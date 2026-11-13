@@ -262,6 +262,8 @@ void Func_02001cb0(void);
 void Func_02003f48(s32, s32, s32, s32);
 void Func_02004004(void);
 void Func_020040c0(void);
+/* VIEW(s0514): routine Func_02004240 as s32 Func_02004240(struct Unk_02004240 *); eastern_alhafra has s32 Func_02004240(struct DoorPlan *). */
+extern s32 Func_02004240__s0514(struct Unk_02004240 *) __asm__("Func_02004240");
 /* VIEW(s0514): routine Func_020044c4 as void Func_020044c4(struct Unk_02004240); eastern_alhafra has void Func_020044c4(struct DoorPlan); tried as the definition's void Func_020044c4(struct PushTarget target), it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:265: conflicting types for `Func_020044c4'. */
 extern void Func_020044c4__s0514(struct Unk_02004240) __asm__("Func_020044c4");
 void Func_02004868(void *, s32, s32);
@@ -288,7 +290,7 @@ void Func_02000514(void) {
       (Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
   if (actor16 != NULL && Event_GetFlag(0x8a4) == 0)
     Func_080dbdd4(actor16->x, actor16->z, 2, 255);
-  if (Func_02004240(&unk) != 0) {
+  if (Func_02004240__s0514(&unk) != 0) {
     if (Event_GetFlag(0x8a4) == 0 || facing == 0xc000) {
       Func_020044c4__s0514(unk);
     } else {
@@ -333,6 +335,8 @@ struct DoorStep {
   u16 z;
 };
 
+/* VIEW(s0514): variable gData_02005290 as extern struct DoorStep gData_02005290[]; eastern_alhafra has extern u8 gData_02005290[]. */
+extern struct DoorStep gData_02005290__s0514[] __asm__("gData_02005290");
 
 void Func_02000394(s32, s32);
 void Func_0200042c(s32, s32);
@@ -426,7 +430,7 @@ void Func_020008cc(struct DoorStep *step, s32 countdown, s32 unused) {
 }
 
 void Func_02000940(s32 countdown) {
-  Func_020008cc(gData_02005290, countdown, 0);
+  Func_020008cc(gData_02005290__s0514, countdown, 0);
 }
 
 void Func_02000954(void) {}

@@ -19,6 +19,17 @@ struct ModelTexture__f179f18 {
   u8 *pixels;
 };
 
+/* VIEW(f179f18): tag struct RenderModel as struct RenderModel__f179f18; f15585c.c has another definition. */
+struct RenderModel__f179f18 {
+  s32 kind;
+  s32 unk04;
+  const void *mesh;
+  void *vertices;
+  struct ModelTexture__f179f18 *texture;
+  s32 shade;
+  u8 scrollU;
+  u8 scrollV;
+};
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
@@ -142,6 +153,9 @@ extern u16 Data_0201401e[];
 extern u16 Data_02014002[];
 extern u16 Data_02014260[];
 
+/* VIEW(f179f18): routine Func_0815b290 as struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); f175f74 has struct SpriteObject__f175f74 *Func_0815b290(s32, s32, u32, u32). */
+extern struct SpriteObject *Func_0815b290__f179f18(s32 width, s32 height, u32 shape,
+                                   u32 attributes) __asm__("Func_0815b290");
 /* VIEW(f179f18): routine Func_0815b3b0 as struct FloraObject *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode); f175f74 has struct SpriteObject *Func_0815b3b0(s32, s32, u32, u32); tried as the definition's struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value), which the object already declares, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:26593: too many arguments to function `Func_0815b3b0'. */
 extern struct FloraObject *Func_0815b3b0__f179f18(s32 width, s32 height, u32 shape, s32 mode) __asm__("Func_0815b3b0");
 
@@ -204,7 +218,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   s32 place[4];
   struct WordPair req;
   struct ModelTexture__f179f18 texture;
-  struct RenderModel *model;
+  struct RenderModel__f179f18 *model;
   void *verts;
   struct EffectStep *p;
   u8 *cells;
@@ -250,7 +264,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       Resource_DecodeType01(e, source);
       cells = Ram_MapCellBuffer;
       for (i = 0; i != 15; i++) {
-        struct FloraObject *obj = Func_0815b290(16, 16, 0x40000000, 0xf000);
+        struct FloraObject *obj = Func_0815b290__f179f18(16, 16, 0x40000000, 0xf000);
         work->objects[12 + i] = obj;
         obj->flags = 2;
         Iwram_CopyWords((void *)OBJ_TILES(obj), cells + i * 128, 128);
@@ -273,7 +287,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       Resource_DecodeType01(e, source);
       cells = Ram_MapCellBuffer;
       for (i = 0; i != 12; i++) {
-        struct FloraObject *obj = Func_0815b290(32, 32, 0x80002000, 0);
+        struct FloraObject *obj = Func_0815b290__f179f18(32, 32, 0x80002000, 0);
         obj->flags = 2;
         work->objects[i] = obj;
         Iwram_CopyWords((void *)OBJ_TILES(obj), cells + i * 0x400, 0x400);

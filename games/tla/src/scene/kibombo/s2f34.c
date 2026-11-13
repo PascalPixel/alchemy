@@ -268,6 +268,8 @@ extern struct Actor *Func_080d4568__s3308(void) __asm__("Func_080d4568");
 extern s32 Task_Add__s3308(TaskFunc func, s32 order) __asm__("Task_Add");
 
 s32 Resource_ResetEntry(u32 slot);
+/* VIEW(s3308): routine Func_02005a3c as void Func_02005a3c(struct Actor *object); kibombo.h has void Func_02005a3c(struct KibomboObject *object). */
+extern void Func_02005a3c__s3308(struct Actor *object) __asm__("Func_02005a3c");
 
 union Whirl {
   struct Actor actor;
@@ -369,7 +371,7 @@ void Func_02003308(struct Actor *actor) {
   case 7:
     Resource_ResetEntry(
         ((struct FieldSprite *)object->actor.sprite)->vramBlock);
-    Func_02005a3c(&object->actor);
+    Func_02005a3c__s3308(&object->actor);
     break;
   }
 }
@@ -379,6 +381,8 @@ void Func_02003308(struct Actor *actor) {
 
 
 s32 Func_02005c44(struct FieldSprite *sprite, s32 previous);
+/* VIEW(s3504): routine Func_02003308 as void Func_02003308(struct KibomboObject *object); the definition has void Func_02003308(struct Actor *actor). */
+extern void Func_02003308__s3504(struct KibomboObject *object) __asm__("Func_02003308");
 
 void Func_02003504(void) {
   struct KibomboObject *center = Actor_GetById(17);
@@ -418,7 +422,7 @@ void Func_02003504(void) {
       spark->targetX = center->x;
       spark->targetY = center->y + 0x180000;
       spark->targetZ = center->z;
-      spark->update = Func_02003308;
+      spark->update = Func_02003308__s3504;
     }
     angle += 0x160000;
     i++;

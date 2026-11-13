@@ -25,10 +25,18 @@ void Sound_PlayFar(s32 cue);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void wait(s32 frames);
 void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
+/* VIEW(mars_join): routine Camera_WorldToScreen as void Camera_WorldToScreen(struct EffectVector *position); ground_particles has void Camera_WorldToScreen(union FieldCoordinate *position). */
+extern void Camera_WorldToScreen__mars_join(struct EffectVector *position) __asm__("Camera_WorldToScreen");
+/* VIEW(mars_join): routine FieldParticle_Initialize as void FieldParticle_Initialize(void *slot, s32 kind, s32 x, s32 z); motes has void FieldParticle_Initialize(struct FieldParticle *slot, s32 kind, s32 x, s32 z). */
+extern void FieldParticle_Initialize__mars_join(void *slot, s32 kind, s32 x, s32 z) __asm__("FieldParticle_Initialize");
+/* VIEW(mars_join): routine Animation_ApplyChildValuesToRecordFar as void Animation_ApplyChildValuesToRecordFar(s32 object, s32 value); motes has void Animation_ApplyChildValuesToRecordFar(void *object, u32 value). */
+extern void Animation_ApplyChildValuesToRecordFar__mars_join(s32 object, s32 value) __asm__("Animation_ApplyChildValuesToRecordFar");
 void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x, s32 z);
 u32 Random16(void);
 void Shop_InitializeEffectFar(void);
 void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void);
+/* VIEW(mars_join): routine Actor_Destroy as void Actor_Destroy(void *object); battle.h has void Actor_Destroy(struct Actor *object). */
+extern void Actor_Destroy__mars_join(void *object) __asm__("Actor_Destroy");
 void BattleEffect_SetObjectAlternatingWords(u8 *object);
 void BattleEffect_SpinUpAngle(void *obj);
 void BattleEffect_ShrinkObjectAndDestroySlow(void *obj);
@@ -85,17 +93,17 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
     remaining = 23;
     position.y = y;
     position.z = djinni->z;
-    Camera_WorldToScreen(p);
+    Camera_WorldToScreen__mars_join(p);
   }
 
   slot = (u8 *)effectSlots + 80;
   do {
-    FieldParticle_Initialize(slot, 672, position.x, position.z);
+    FieldParticle_Initialize__mars_join(slot, 672, position.x, position.z);
     FieldParticle_SetCallback(slot, BattleEffect_UpdatePhasedRadialParticle);
     FieldParticle_SetActorMode(slot, 7);
     objectPointer = slot;
     value = *(s32 *)objectPointer;
-    Animation_ApplyChildValuesToRecordFar(value, 10);
+    Animation_ApplyChildValuesToRecordFar__mars_join(value, 10);
     value = Random16() / 3 + Q16_ONE; // 1.0 to 1.33
     ((struct FieldParticle *)slot)->scaleY = value;
     ((struct FieldParticle *)slot)->scaleX = value;
@@ -173,15 +181,15 @@ void BattleEffect_ShrinkObjectAndDestroyFast(void *obj) {
   ((struct MotionObject *)obj)->angle = angle + 0x2000;
   ((struct MotionObject *)obj)->scaleX = scale;
   if (scale < 0x3000)
-    Actor_Destroy(obj);
+    Actor_Destroy__mars_join(obj);
 }
 
 
 struct BattleFxScene;
 
 #define Actor_SetChildValueUnlessFifteenFar                                    \
-  ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar)
-#define Actor_ReleaseFar Actor_Destroy
+  ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar__mars_join)
+#define Actor_ReleaseFar Actor_Destroy__mars_join
 #define gBattleEffect_PulseScales gData_080f0bfc
 #define gEffectWork Ram_HeapSlots->effectWork
 
@@ -190,6 +198,9 @@ extern u32 gData_080f0bfc[];
 
 
 void BattleEffect_ClearOwnedSlot(struct FieldParticle *effect);
+/* VIEW(mars_join): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *position); f0d489c has void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position). */
+extern void Vector_AddPolarOffset__mars_join(s32 magnitude, s32 angle,
+                           struct EffectVector *position) __asm__("Vector_AddPolarOffset");
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 void BattleEffect_AdvanceSpinAngle();
 void Map_SetScreenShakeFar(s32, s32, s32);
@@ -203,6 +214,8 @@ extern const s32 gBattleEffect_SharedParticleScript[];
 
 void Actor_Jump(s32 id, s32 height, s32 frames);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
+/* VIEW(mars_join): routine Animation_ApplyChildValuesFar as void Animation_ApplyChildValuesFar(struct CaptureObject *object, s32 value); motes has void Animation_ApplyChildValuesFar(struct Actor *object, u32 value). */
+extern void Animation_ApplyChildValuesFar__mars_join(struct CaptureObject *object, s32 value) __asm__("Animation_ApplyChildValuesFar");
 
 
 /// Per-frame update of a Venus Djinni's falling motes: each circles the
@@ -224,7 +237,7 @@ void FieldEffect_UpdateDescendingOrbitActor(
   value = actor->timer;
   local.x = other->x;
   local.z = other->z;
-  Vector_AddPolarOffset(value * 0x6666, (value << 11) + actor->angle, &local);
+  Vector_AddPolarOffset__mars_join(value * 0x6666, (value << 11) + actor->angle, &local);
   actor->x = local.x;
   actor->z = local.z;
   y = actor->y + 0xFFFF0000;
@@ -260,8 +273,8 @@ void BattleEffect_UpdateRadialSpread(struct FieldParticle *effect) {
     position.z = source->z;
 
     random = Random16() * 10 + 0xa0000;
-    Vector_AddPolarOffset(random, Random16(), &position);
-    Camera_WorldToScreen(&position);
+    Vector_AddPolarOffset__mars_join(random, Random16(), &position);
+    Camera_WorldToScreen__mars_join(&position);
 
     x = position.x;
     magnitude = 240;
@@ -273,7 +286,7 @@ void BattleEffect_UpdateRadialSpread(struct FieldParticle *effect) {
     position.x = effect->x;
     position.z = effect->z;
 
-    Vector_AddPolarOffset(magnitude << 15, angle << 8, &position);
+    Vector_AddPolarOffset__mars_join(magnitude << 15, angle << 8, &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->acceleration = Q16_ONE;

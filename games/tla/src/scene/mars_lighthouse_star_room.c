@@ -559,6 +559,8 @@ void Func_02000ab4(struct Actor *object) {
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s0ae4.c ----
 extern struct Actor *Data_02004cec;
 
+/* VIEW(s0ae4): routine Func_02000ab4 as void Func_02000ab4(void); the definition has void Func_02000188(void) { struct Actor *object = Actor_Get(10); if(Event_GetFlag(0xa4b) == 0) { if(Event_GetFlag(0x238) == 0 || Event_GetFl.... */
+extern void Func_02000ab4__s0ae4(void) __asm__("Func_02000ab4");
 u8 *HeapSlot_AllocFar(s32 slot, s32 size);
 
 void Func_02000ae4(s32 rise) {
@@ -580,7 +582,7 @@ void Func_02000ae4(s32 rise) {
   sprite->priority = 1;
   object->motionFlags = 3;
   object->unk5c[0] = 1;
-  object->update = Func_02000ab4;
+  object->update = Func_02000ab4__s0ae4;
   size = 0x608;
   sprite->nextFrame = zero;
   sprite->unk1b[0] = zero;
@@ -752,6 +754,8 @@ void Func_02000e50(void) {
 extern char SceneId_Ov6ACRoom3;
 extern char SceneId_Ov66d;
 
+/* VIEW(s0ae4): routine Func_02004294 as void Func_02004294(s32 map, void *destination); the definition has void Func_02000188(void) { struct Actor *object = Actor_Get(10); if(Event_GetFlag(0xa4b) == 0) { if(Event_GetFlag(0x238) == 0 || Event_GetFl.... */
+extern void Func_02004294__s0ae4(s32 map, void *destination) __asm__("Func_02004294");
 void Func_0200445c(void);
 void Func_02001424(void);
 
@@ -823,7 +827,7 @@ void Func_02000e80(void) {
   MapGrid_CopyCellsLayered(65, 65, 9, 21, 38, 24);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 38, 87);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 102, 23);
-  Func_02004294(gMainRoutineWork.map +
+  Func_02004294__s0ae4(gMainRoutineWork.map +
                     ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),
                 screen);
   // The zero sits in a local: as a plain `*screen = 0` 21 instructions differ.
@@ -1002,7 +1006,7 @@ L_0200905c:
   MapGrid_CopyCellsLayered(65, 65, 9, 21, 38, 24);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 38, 87);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 102, 23);
-  Func_02004294(gMainRoutineWork.map +
+  Func_02004294__s0ae4(gMainRoutineWork.map +
                     ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),
                 screen);
   *screen = 0;
@@ -1074,6 +1078,8 @@ void Func_020013e4(struct Actor *object) {
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 void Animation_SetStateFlags(struct Actor *object, u32 value);
 
+/* VIEW(s1424): routine Func_020013e4 as void Func_020013e4(void); the definition has void Func_020013e4(struct Actor *object). */
+extern void Func_020013e4__s1424(void) __asm__("Func_020013e4");
 
 void Func_02001424(void) {
   u32 frame = gFrameCount;
@@ -1125,7 +1131,7 @@ void Func_02001424(void) {
     object->scaleX = 0x8000;
     object->scaleY = 0x8000;
     *(s32 *)&object->watchedObject = 60;
-    object->update = Func_020013e4;
+    object->update = Func_020013e4__s1424;
     Func_020041cc(object, 5);
     Animation_SetStateFlags(object, 1);
   }
@@ -1257,6 +1263,8 @@ extern const u8 gData_02004744[];
 
 void Func_020041cc(struct Actor *object, s32 mode);
 void Func_020041dc(struct Actor *object, const void *script);
+/* VIEW(spawn): routine Func_020015ec as void Func_020015ec(void); the definition has void Func_020015ec(struct Actor *object). */
+extern void Func_020015ec__spawn(void) __asm__("Func_020015ec");
 
 void Func_02001750(struct Actor *object) {
   object->motionFlags = 0;
@@ -1276,7 +1284,7 @@ void Func_02001780(s32 *position, s32 speed, s32 flag) {
     object->gravity = 0;
     object->unk4c = speed;
     ((void (*)())Func_02001750)(object, 2);
-    object->update = Func_020015ec;
+    object->update = Func_020015ec__spawn;
     if (flag != 0)
       object->unk5c[0] = 2;
     Func_020041cc(object, 2);
@@ -1397,7 +1405,7 @@ void Func_0200196c(s32 *position, s32 speed, s32 flag) {
     object->gravity = 0;
     object->unk4c = -speed;
     Func_02001928(object, 3);
-    object->update = Func_020015ec;
+    object->update = Func_020015ec__spawn;
     if (flag != 0)
       object->unk5c[0] = 2;
     Func_020041cc(object, 2);
@@ -1405,6 +1413,8 @@ void Func_0200196c(s32 *position, s32 speed, s32 flag) {
 }
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s19b4.c ----
+/* VIEW(s19b4): routine Func_020017c8 as void Func_020017c8(void); the definition has void Func_020017c8(struct Actor *object). */
+extern void Func_020017c8__s19b4(void) __asm__("Func_020017c8");
 
 void Func_020019b4(s32 *position, s32 speed, s32 flag) {
   struct Actor *object = FieldActor_Create(366, position[0], position[1], position[2]);
@@ -1414,7 +1424,7 @@ void Func_020019b4(s32 *position, s32 speed, s32 flag) {
     object->gravity = 0;
     object->unk4c = speed;
     Func_02001928(object, 3);
-    object->update = Func_020017c8;
+    object->update = Func_020017c8__s19b4;
     if (flag != 0)
       object->unk5c[0] = 2;
     Func_020041cc(object, 2);
@@ -1429,7 +1439,7 @@ void Func_020019fc(s32 *position, s32 speed, s32 flag) {
     object->gravity = 0;
     object->unk4c = -speed;
     Func_02001928(object, 3);
-    object->update = Func_020017c8;
+    object->update = Func_020017c8__s19b4;
     if (flag != 0)
       object->unk5c[0] = 2;
     Func_020041cc(object, 2);

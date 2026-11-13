@@ -58,6 +58,8 @@ extern char ResourceId_WaterSplash;
 void *HeapSlot_Alloc(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 s32 Func_080ce31c(s32 kind);
+/* VIEW(f0e92b4): routine Func_080ce458 as struct PendingEvent__f0e92b4 *Func_080ce458(u32 kind, s32 entry, s32 arg); f0e5d5c has void *Func_080ce458(u32 kind, s32 entry, s32 arg). */
+extern struct PendingEvent__f0e92b4 *Func_080ce458__f0e92b4(u32 kind, s32 entry, s32 arg) __asm__("Func_080ce458");
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 s32 Func_08020330(struct Actor *object);
 void BattleEffect_InitializeSharedScene(void);
@@ -74,6 +76,9 @@ void wait(s32 frames);
 u32 Random16(void);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
+/* VIEW(f0e92b4): routine EffectSprite_DrawAtWorldPosition as void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct SplashParticle *particle); f0e4a34 has void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct GlowParticle *particle). */
+extern void EffectSprite_DrawAtWorldPosition__f0e92b4(struct EffectSprite *sprite,
+                                      struct SplashParticle *particle) __asm__("EffectSprite_DrawAtWorldPosition");
 void BattleEffect_ShiftRowsDown(u8 *base, s32 stride, s32 rows);
 void BattleEffect_PrepareBufferInterpolation(void);
 
@@ -113,7 +118,7 @@ void Func_080e92b4(void) {
   next = 0;
   mode = 0;
   selector = Func_080ce31c(scene->fieldKind);
-  pending = Func_080ce458(0x50000005, scene->fieldKind, selector);
+  pending = Func_080ce458__f0e92b4(0x50000005, scene->fieldKind, selector);
   if (child != NULL) {
     if (animation != NULL) {
       if (animation->width * animation->height <= 0x800) {
@@ -212,7 +217,7 @@ void Func_080e92b4(void) {
           sprite->oam.index = tile + 16;
         if (particle->timer == 22)
           sprite->oam.index = tile + 24;
-        EffectSprite_DrawAtWorldPosition(sprite, particle);
+        EffectSprite_DrawAtWorldPosition__f0e92b4(sprite, particle);
         particle->timer++;
       }
     }

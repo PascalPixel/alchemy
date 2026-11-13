@@ -22,6 +22,14 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
+/* VIEW(apojii_islands): variable gData_02002200 as extern const u8 gData_02002200[]; the definition has u32 gData_02002200[] = { 0xffff, 0, 0, 0, 0, 0, }. */
+extern const u8 gData_02002200__apojii_islands[] __asm__("gData_02002200");
+/* VIEW(apojii_islands): variable gData_02002218 as extern const u8 gData_02002218[]; the definition has u32 gData_02002218[] = { 0xffff0073, 1, 0x380000, 0, 0xa80000, 0x1a000, 0xffff0074, 1, 0x1c80000, 0, 0x580000, 0x3e000, 0xffff0072, 1, 0x238.... */
+extern const u8 gData_02002218__apojii_islands[] __asm__("gData_02002218");
+/* VIEW(apojii_islands): variable gData_02002320 as extern const u8 gData_02002320[]; the definition has s32 gData_02002320[] = { (s32) 0xffff0074, 1, 0x980000, 0, 0x980000, 0x10000, (s32) 0xffff0088, 1, 0x780000, 0, 0x680000, 0x22000, (s32) 0xf.... */
+extern const u8 gData_02002320__apojii_islands[] __asm__("gData_02002320");
+/* VIEW(apojii_islands): variable gData_02002458 as extern const u8 gData_02002458[]; the definition has u32 gData_02002458[] = { 0xffff0197, 1, 0x1080000, 0, 0x1180000, 0x2c000, 0xffff0197, 1, 0xd80000, 0, 0x1180000, 0x2c000, 0x7700f6, 1, 0x178.... */
+extern const u8 gData_02002458__apojii_islands[] __asm__("gData_02002458");
 extern u32 gData_02002200[];
 extern u32 gData_02002218[];
 extern s32 gData_02002320[];
@@ -31,12 +39,12 @@ const u8 *Func_02000360(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov679Room1)
-    return gData_02002218;
+    return gData_02002218__apojii_islands;
   if (scene == (s32)&SceneId_Ov679Room3)
-    return gData_02002320;
+    return gData_02002320__apojii_islands;
   if (scene == (s32)&SceneId_Ov679Room2)
-    return gData_02002458;
-  return gData_02002200;
+    return gData_02002458__apojii_islands;
+  return gData_02002200__apojii_islands;
 }
 
 void Func_020003b0(void) {
@@ -168,6 +176,8 @@ void Func_02000780(struct Actor *object) {
 struct Actor *Actor_GetById(u32 objectId);
 void Func_02001cc4(void);
 void Event_ResolvePendingActions(s32 skip);
+/* VIEW(s07a4): routine Func_02000780 as void Func_02000780(void); the definition has void Func_02000780(struct Actor *object). */
+extern void Func_02000780__s07a4(void) __asm__("Func_02000780");
 void Sound_Play(s32 cue);
 void wait(s32 frames);
 void Func_02001ad8(void);
@@ -211,7 +221,7 @@ void Func_020007a4(s32 unused, s32 id) {
 
   Func_02001cc4();
   Event_ResolvePendingActions(0);
-  actor->update = Func_02000780;
+  actor->update = Func_02000780__s07a4;
   Sound_Play(78);
   wait(30);
   Sound_Play(21);
@@ -407,6 +417,14 @@ s32 Func_02000d20(void) {
 
 void Func_02000d74(void) { Func_02001d2c(gMainRoutineWork.currentOwner, 1, 5); }
 
+/* VIEW(events_d): variable gData_020024b8 as extern const u8 gData_020024b8[]; the definition has s32 gData_020024b8[] = { - 1, 0, 0, }. */
+extern const u8 gData_020024b8__events_d[] __asm__("gData_020024b8");
+/* VIEW(events_d): variable gData_020024d0 as extern const u8 gData_020024d0[]; the definition has s32 gData_020024d0[] = { 1, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 1, (s32) 0xffff0003, 3, 2, (s32) 0xffff0004, (s32) Func_02000c38, 2.... */
+extern const u8 gData_020024d0__events_d[] __asm__("gData_020024d0");
+/* VIEW(events_d): variable gData_02002698 as extern const u8 gData_02002698[]; the definition has s32 gData_02002698[] = { 1, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 1, (s32) 0xffff0003, 3, 1, (s32) 0xffff0004, 4, 1, (s32) 0xffff0005.... */
+extern const u8 gData_02002698__events_d[] __asm__("gData_02002698");
+/* VIEW(events_d): variable gData_0200280c as extern const u8 gData_0200280c[]; the definition has s32 gData_0200280c[] = { 1, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 2, (s32) 0xffff0003, (s32) Func_02001464, 2, (s32) 0xffff0004, (s32.... */
+extern const u8 gData_0200280c__events_d[] __asm__("gData_0200280c");
 extern s32 gData_020024b8[];
 extern s32 gData_020024d0[];
 extern s32 gData_02002698[];
@@ -416,12 +434,12 @@ const u8 *Func_02000d90(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov679Room1)
-    return gData_020024d0;
+    return gData_020024d0__events_d;
   if (scene == (s32)&SceneId_Ov679Room3)
-    return gData_02002698;
+    return gData_02002698__events_d;
   if (scene == (s32)&SceneId_Ov679Room2)
-    return gData_0200280c;
-  return gData_020024b8;
+    return gData_0200280c__events_d;
+  return gData_020024b8__events_d;
 }
 
 void Func_02000de0(s32 actor) {

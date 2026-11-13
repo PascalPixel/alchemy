@@ -191,11 +191,3 @@ s32 BattleEffect_GetAnimationValue(u32 objectId) {
   }
   return *object->animation->value28;
 }
-#undef MAP_LAYER_FLAGS
-#undef COLOR_MAX
-#undef COLOR_HALF
-#undef gColorBuffer_ChannelCurve
-#undef gColorBuffer_ChannelCurveLight
-#undef gColorBuffer_ChannelCurveContrast
-#undef PaletteFade_ClampComponent
-#undef PaletteFade_ClampShiftedComponent

@@ -23,6 +23,10 @@ struct ChainWork__f0d9b80 {
   struct ChainSlot__f0d9b80 slots[8];
 };
 
+/* VIEW(f0d9b80): routine AffineMatrix_BuildForEffect as s32 AffineMatrix_BuildForEffect(struct ChainTransform *source); affine.h has s32 AffineMatrix_BuildForEffect(struct AffineTransform *source). */
+extern s32 AffineMatrix_BuildForEffect__f0d9b80(struct ChainTransform *source) __asm__("AffineMatrix_BuildForEffect");
+/* VIEW(f0d9b80): routine Func_080140d8 as void Func_080140d8(void *entry, s32 slot); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32 depth). */
+extern void Func_080140d8__f0d9b80(void *entry, s32 slot) __asm__("Func_080140d8");
 
 void Func_080d9b80(void) {
   struct ChainWork__f0d9b80 *work = Ram_HeapSlots->unk84[7];
@@ -50,7 +54,7 @@ void Func_080d9b80(void) {
       transform.scaleX = 0x100;
       transform.scaleY = 0x100;
       affine = 1;
-      matrix = AffineMatrix_BuildForEffect(&transform);
+      matrix = AffineMatrix_BuildForEffect__f0d9b80(&transform);
     } else {
       affine = 0;
       matrix = 0;
@@ -81,7 +85,7 @@ void Func_080d9b80(void) {
           ((u32 *)&node->sprite)[2] = tile | 0x800;
           node->sprite.affine = affine;
           node->sprite.affineIndex = matrix;
-          Func_080140d8(&node->sprite, key);
+          Func_080140d8__f0d9b80(&node->sprite, key);
         }
       }
       prevX = x;
@@ -319,6 +323,8 @@ void Func_080da1b8(s32 index, s32 from, s32 to) {
 
 // Builds a chain of nodes around a point.
 
+/* VIEW(f0d9b80): routine Func_080d8d40 as struct LineNode *Func_080d8d40(void); f0d9194 has struct ChainNode__f0d9194 *Func_080d8d40(void). */
+extern struct LineNode *Func_080d8d40__f0d9b80(void) __asm__("Func_080d8d40");
 
 /// Builds a slot's chain of nodes, one for each 6 units of the distance between
 /// two points, laid out as a flat spiral around the first point, every node of
@@ -339,7 +345,7 @@ s32 Func_080da22c(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   s32 kind = 2; // One constant for its whole life.
 
   for (i = 0; i <= segments; i++) {
-    struct LineNode *node = Func_080d8d40();
+    struct LineNode *node = Func_080d8d40__f0d9b80();
     u16 step;
 
     if (node == NULL) {
@@ -362,13 +368,16 @@ s32 Func_080da22c(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
 
 
 extern s32 gData_080f3948;
+/* VIEW(f0d9b80): routine Func_080da3bc as void Func_080da3bc(s32 arg, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2, s32 wave); the definition has s32 Func_080da3bc(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ). */
+extern void Func_080da3bc__f0d9b80(s32 arg, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
+                   s32 wave) __asm__("Func_080da3bc");
 
 void Func_080da334(s32 arg, s32 firstId, s32 secondId) {
   struct Actor *first = ObjectTable_Get(firstId);
   struct Actor *second = ObjectTable_Get(secondId);
 
   if (first != NULL && second != NULL) {
-    Func_080da3bc(arg, first->x, first->y + 0x80000, first->z, second->x,
+    Func_080da3bc__f0d9b80(arg, first->x, first->y + 0x80000, first->z, second->x,
                   second->y + 0x80000, second->z,
                   Trig_Sin(gData_080f3948) << 2);
     gData_080f3948 += 0x1000;

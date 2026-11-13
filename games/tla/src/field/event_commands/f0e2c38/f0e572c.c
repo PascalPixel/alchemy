@@ -189,6 +189,9 @@ struct BlendWork {
   u8 mode;
 };
 
+/* VIEW(f0e572c): routine BattleEffect_IntegrateVector2 as void BattleEffect_IntegrateVector2(struct ShineParticle *particle, s32 frames, s32 flags); f0e4a34 has void BattleEffect_IntegrateVector2(s32 *vector, s32 damping, s32 gravity). */
+extern void BattleEffect_IntegrateVector2__f0e572c(struct ShineParticle *particle, s32 frames,
+                                   s32 flags) __asm__("BattleEffect_IntegrateVector2");
 void Map_SetScreenShakeFar(s32 a, s32 b, s32 c);
 
 void Func_080e5a64(void) {
@@ -239,7 +242,7 @@ void Func_080e5a64(void) {
         sprite->x = particle->x;
         sprite->y = particle->y;
         Func_080eb01c(sprite);
-        BattleEffect_IntegrateVector2(particle, 64, 0);
+        BattleEffect_IntegrateVector2__f0e572c(particle, 64, 0);
       }
       particle->timer++;
     }

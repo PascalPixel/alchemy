@@ -187,6 +187,8 @@ extern const u8 gData_02007734[];
 
 void Func_02000924(s32 id);
 void Func_0200095c(s32 id);
+/* VIEW(s15a8): routine Func_020042f0 as void Func_020042f0(const void *data); the definition has void Func_020042f0(const u16 *table). */
+extern void Func_020042f0__s15a8(const void *data) __asm__("Func_020042f0");
 void Func_02000d70(void);
 
 void Func_02001afc(void) {
@@ -224,7 +226,7 @@ void Func_02001afc(void) {
   }
 }
 
-void Func_02001bdc(void) { Func_020042f0(gData_02007734); }
+void Func_02001bdc(void) { Func_020042f0__s15a8(gData_02007734); }
 
 /// Copies two blocks of map cells, sets byte 98 of objects 16 to 18 and clears
 /// their collision flags; then runs Func_02000d70, and Func_020006b4 and
@@ -2281,6 +2283,12 @@ void Func_02004a14(union FieldObject *object) {
 extern const s32 gData_02006254[];
 
 u32 Func_020059f0(struct FieldSprite *sprite, u32 frame);
+/* VIEW(s4a94): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
+extern void Actor_SetSingleChildFlags__s4a94(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
+/* VIEW(s4a94): routine Func_020057c8 as void Func_020057c8(struct FieldEffect *effect, s32 mode); trial_road.h has void Func_020057c8(struct Actor *object, s32 a). */
+extern void Func_020057c8__s4a94(struct FieldEffect *effect, s32 mode) __asm__("Func_020057c8");
+/* VIEW(s4a94): routine Func_020057d0 as void Func_020057d0(struct FieldEffect *effect, const s32 *script); trial_road.h has void Func_020057d0(struct Actor *object, const void *script). */
+extern void Func_020057d0__s4a94(struct FieldEffect *effect, const s32 *script) __asm__("Func_020057d0");
 s32 Math_Cosine(s32 angle);
 void Func_02004a14(union FieldObject *object);
 
@@ -2303,9 +2311,9 @@ void Func_02004a94(s32 spread) {
       frame = Func_020059f0(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSingleChildFlags(effect, 0);
-      Func_020057c8(effect, 2);
-      Func_020057d0(effect, gData_02006254);
+      Actor_SetSingleChildFlags__s4a94(effect, 0);
+      Func_020057c8__s4a94(effect, 2);
+      Func_020057d0__s4a94(effect, gData_02006254);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
       if (spread != 0) {
@@ -2344,9 +2352,9 @@ void Func_02004bc8(void) {
       frame = Func_020059f0(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSingleChildFlags(effect, 0);
-      Func_020057c8(effect, 2);
-      Func_020057d0(effect, gData_02006284);
+      Actor_SetSingleChildFlags__s4a94(effect, 0);
+      Func_020057c8__s4a94(effect, 2);
+      Func_020057d0__s4a94(effect, gData_02006284);
       effect->velocity.x = Math_Cosine(i << 12);
       effect->velocity.y = 0;
       effect->velocity.z = Math_Sine(i << 12);
@@ -2462,6 +2470,8 @@ struct TrialRoadLinkWork {
   s16 path[0x1c20];
 };
 
+/* VIEW(s4ddc): variable gSceneState as extern struct TrialRoadReplay gSceneState; s4d6c has extern u8 gSceneState[]. */
+extern struct TrialRoadReplay gSceneState__s4ddc __asm__("gSceneState");
 extern u8 gLinkPeerSignatures[][24];
 extern volatile u16 gLinkStatus;
 
@@ -2477,7 +2487,7 @@ void Func_020057f0(struct Actor *object);
 void Func_02004ddc(void) {
   struct TrialRoadLinkWork *work =
       *(struct TrialRoadLinkWork **)((u8 *)Ram_HeapSlots + 236);
-  struct TrialRoadReplay *state = &gSceneState;
+  struct TrialRoadReplay *state = &gSceneState__s4ddc;
   struct Actor *rival = Actor_GetById(state->id);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 x, z, turn, dx, dz;

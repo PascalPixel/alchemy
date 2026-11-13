@@ -347,6 +347,7 @@ void BattleCamera_SetViewAtPairMidpoint(s32 first, s32 second, s32 scale);
 void BattleParty_ListAllUnitsAndSubmit(void);
 void Func_08138008(struct BattlePresentationWork *work);
 void Func_08138018(struct BattlePresentationWork *work);
+s32 BattlePlayback_WaitForReady(void);
 
 s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
   struct BattlePresentationWork work;

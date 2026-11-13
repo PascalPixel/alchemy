@@ -538,6 +538,8 @@ void Func_02000ef0(struct Actor *object) {
 
 
 
+/* VIEW(s0f00): variable gData_02002058 as extern struct GabombaStatueChamberObject *gData_02002058; gabomba_statue_chamber has extern struct Actor *gData_02002058. */
+extern struct GabombaStatueChamberObject *gData_02002058__s0f00 __asm__("gData_02002058");
 void *HeapSlot_AllocFar(s32 slot, s32 size);
 void Func_02000ef0();
 
@@ -552,7 +554,7 @@ void Func_02000f00(void) {
   s32 zero = 0;
   struct GabombaStatueChamberObject *object;
 
-  if ((gData_02002058 = object =
+  if ((gData_02002058__s0f00 = object =
            ((struct GabombaStatueChamberObject *)Import_ActorCreate(
                489, x, 0x120000, z))) != NULL) {
     struct FieldSprite *sprite = object->sprite;
@@ -584,7 +586,7 @@ void Func_02000f88(void) {
   s32 zero = 0;
   struct GabombaStatueChamberObject *object;
 
-  if ((gData_02002058 = object =
+  if ((gData_02002058__s0f00 = object =
            ((struct GabombaStatueChamberObject *)Import_ActorCreate(
                489, x, 0x120000, z))) != NULL) {
     struct FieldSprite *sprite = object->sprite;

@@ -370,6 +370,8 @@ struct Spots {
   struct Spot spot[6];
 };
 
+/* VIEW(sea_of_time): variable gData_020022c4 as extern u32 gData_020022c4; the definition has u32 gData_020022c4[] = { 0, }. */
+extern u32 gData_020022c4__sea_of_time __asm__("gData_020022c4");
 extern u32 gData_020022c4[];
 /* VIEW(sea_of_time): variable gData_020022be as extern u16 gData_020022be; the definition has u16 gData_020022be[] = { 0, }; tried as the definition's extern u16 gData_020022be[], it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:407: `gData_020022be' has an incomplete type. */
 extern u16 gData_020022be__sea_of_time __asm__("gData_020022be");
@@ -402,7 +404,7 @@ void Func_02000a80(void) {
 
   index = (Func_0200034c(0, actor->x >> 20, actor->z >> 20) >> 8) - 1;
   frame = &gFrameCount;
-  stamp = &gData_020022c4;
+  stamp = &gData_020022c4__sea_of_time;
 
   if (*frame - *stamp > 50) {
     gData_020022be__sea_of_time = 0;

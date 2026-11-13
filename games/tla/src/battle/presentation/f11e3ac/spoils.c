@@ -356,44 +356,6 @@ void Battle_AwardSpoils(void) {
     spoils->items[bestSlot] = 0;
   }
 }
-#undef TARGET_MODE_NONE
-#undef TARGET_MODE_FOES
-#undef TARGET_MODE_ALLIES
-#undef TARGET_MODE_SELF
-#undef PLACE_PARTY
-#undef PLACE_ENEMY
-#undef COUNT_PARTIAL_CURES
-#undef COUNT_ALL_CURES
-#undef COUNT_POSITIVE_MODIFIERS
-#undef CHECK_EFFECT_TARGET
-#undef STRATEGY_MOST_HP
-#undef STRATEGY_MOST_MAX_HP
-#undef STRATEGY_RANDOM
-#undef ALLY
-#undef STEP_LIM
-#undef ALLY_CHECK
-#undef ELEMENT_BONUS
-#undef MESSAGE_PUSH
-#undef MESSAGE_SIDE
-#undef GUARD_CUT
-#undef RES_STEP
-#undef STAT_SET
-#undef AI_BATTLE
-#undef OBJ_VRAM
-#undef KEYS_HELD
-#undef MSG_WAKES
-#undef MSG_AGI_NORMAL
-#undef MSG_CONSCIOUS
-#undef MSG_CURE_DELUSION
-#undef MSG_CURE_SEAL
-#undef MSG_CURE_STUN
-#undef MSG_REFLECT_END
-#undef ANNOUNCE_END
-#undef ANNOUNCE_END_POSE
-#undef DMA3
-#undef DEBUG_VALUE_SELECT
-#undef CH_CNT
-#undef LIST_MARKER_CHAR
 #undef FIRST_DIGIT_BASE
 #undef FIRST_DIGIT_COUNT
 #undef ACTION_ID_MASK

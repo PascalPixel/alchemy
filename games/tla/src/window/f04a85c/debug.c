@@ -5,7 +5,11 @@
 #include "../f04a85c_internal.h"
 
 s32 Scene_GetAreaNameIndexFar(s32 scene, s32 entrance);
+/* VIEW(selrow): routine WindowSprite_PrepareForRedraw as void WindowSprite_PrepareForRedraw(void *window); resource_work has void WindowSprite_PrepareForRedraw(struct Window *). */
+extern void WindowSprite_PrepareForRedraw__selrow(void *window) __asm__("WindowSprite_PrepareForRedraw");
 void Text_DrawNumber(s32 value, s32 digits, void *window, s32 x, s32 y);
+/* VIEW(selrow): routine Text_DrawString as void Text_DrawString(const u8 *text, void *window, s32 x, s32 y); graphics.h has void Text_DrawString(u8 *text, s32 window, s32 x, s32 y). */
+extern void Text_DrawString__selrow(const u8 *text, void *window, s32 x, s32 y) __asm__("Text_DrawString");
 void Text_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3);
 void Text_DrawMessage(s32 message, void *window, s32 x, s32 y);
 extern const u8 gMenu_ColonString[];
@@ -25,12 +29,12 @@ void Menu_DrawSelectionRow(void *window, s16 first, const s16 *second) {
   s32 label =
       Scene_GetAreaNameIndexFar(selected, *second) + (s32)MsgDebugAreaName;
 
-  WindowSprite_PrepareForRedraw(window);
+  WindowSprite_PrepareForRedraw__selrow(window);
   Text_DrawNumber(selected, 3, window, 0, 14);
   Text_DrawNumber(*second, 3, window, SELROW_LABEL_X, 14);
-  Text_DrawString(gMenu_ColonString, window, SELROW_TEXT_X, 0);
+  Text_DrawString__selrow(gMenu_ColonString, window, SELROW_TEXT_X, 0);
   Text_DrawMessage(selected + (s32)MsgDebugSceneCode, window, 0, 0);
-  Text_DrawString(gMenu_ColonString, window, SELROW_TEXT_X, 14);
+  Text_DrawString__selrow(gMenu_ColonString, window, SELROW_TEXT_X, 14);
   Text_DrawMessage(label, window, SELROW_LABEL_X, 0);
 }
 
@@ -43,6 +47,14 @@ struct TextObject {
 
 void Event_SetDestinationFar(s16 primary, s16 secondary);
 void UiTextResource_Release(s32 resource);
+/* VIEW(selrow): routine UiTextResource_Initialize as void UiTextResource_Initialize(struct TextObject *object, s32 *resource); menu.h has void UiTextResource_Initialize(struct Actor_0801c0dc *obj, s32 *slot). */
+extern void UiTextResource_Initialize__selrow(struct TextObject *object, s32 *resource) __asm__("UiTextResource_Initialize");
+/* VIEW(selrow): routine UiTextResource_SetPosition as void UiTextResource_SetPosition(struct TextObject *object, s32 x, s32 y); menu.h has void UiTextResource_SetPosition(struct Obj *obj, s32 arg1, s32 arg2). */
+extern void UiTextResource_SetPosition__selrow(struct TextObject *object, s32 x, s32 y) __asm__("UiTextResource_SetPosition");
+/* VIEW(selrow): routine Window_Create as struct Work *Window_Create(s32 kind, s32 x, s32 y, s32 width, s32 layer); resource_work has struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style). */
+extern struct Work *Window_Create__selrow(s32 kind, s32 x, s32 y, s32 width, s32 layer) __asm__("Window_Create");
+/* VIEW(selrow): routine Window_Close as void Window_Close(struct Work *work, s32 release); uiflow.h has void Window_Close(struct Window *window, s32 release). */
+extern void Window_Close__selrow(struct Work *work, s32 release) __asm__("Window_Close");
 void Window_Close(struct Window *work, s32 release);
 /* VIEW(selrow): routine Menu_HandleSelectionRowInput as s32 Menu_HandleSelectionRowInput(struct Work *work, s16 value, s16 *sub, s16 *mode); the definition has s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode); tried as the rest of the object declares it, it does not compile in tla-ja (make modern): games/tla/src/window/f04a85c.c:129:74: note: expected 'struct TargetWindow *' but argument is of type 's32' {aka 'int'}. */
 extern s32 Menu_HandleSelectionRowInput__selrow(struct Work *work, s16 value, s16 *sub,
@@ -63,9 +75,9 @@ s16 Menu_RunSelection(void) {
   mode = 0;
   primary = gMainRoutineWork.primary;
   secondary = gMainRoutineWork.secondary;
-  work = Window_Create(0, 7, 30, 5, 2);
+  work = Window_Create__selrow(0, 7, 30, 5, 2);
   Menu_DrawSelectionRow(work, primary, &secondary);
-  UiTextResource_Initialize(&object, &resource);
+  UiTextResource_Initialize__selrow(&object, &resource);
 
   while (gInput.held != 0)
     wait(1);
@@ -75,17 +87,17 @@ s16 Menu_RunSelection(void) {
         (s16)Menu_HandleSelectionRowInput__selrow(work, primary, &secondary, &mode);
     if (result == -1) {
       UiTextResource_Release(resource);
-      Window_Close(work, 2);
+      Window_Close__selrow(work, 2);
       Event_SetDestinationFar(primary, secondary);
       return result;
     }
     if (result == -2) {
       UiTextResource_Release(resource);
-      Window_Close(work, 2);
+      Window_Close__selrow(work, 2);
       return result;
     }
 
-    UiTextResource_SetPosition(&object, MENU_TEXT_X, mode * 14 + MENU_TEXT_Y);
+    UiTextResource_SetPosition__selrow(&object, MENU_TEXT_X, mode * 14 + MENU_TEXT_Y);
     primary = result;
     wait(1);
   }

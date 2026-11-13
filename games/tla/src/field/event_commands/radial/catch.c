@@ -23,7 +23,7 @@ void Func_080e03cc(void) {
     target.x = mainObject->x;
     target.y = mainObject->y + 0x200000;
     target.z = mainObject->z;
-    Vector_AddPolarOffset(0x200000, scene->angle, &target.x);
+    Vector_AddPolarOffset__age_and_cue(0x200000, scene->angle, &target.x);
   } else {
     target.x = scene->x;
     target.y = scene->y + 0x200000;
@@ -149,12 +149,12 @@ void Func_080e0618(void) {
     particle->y = object->y;
     particle->z = object->z;
     distance = Random16() * 12 + 0x40000;
-    Vector_AddPolarOffset(distance, Random16(), particle);
+    Vector_AddPolarOffset__age_and_cue(distance, Random16(), particle);
     particle->velocityX = 0;
     particle->velocityY = 0x20000 - Random16() * 2;
     particle->velocityZ = 0;
     speed = Random16() + 0x18000;
-    Vector_AddPolarOffset(speed, Random16(), &particle->velocityX);
+    Vector_AddPolarOffset__age_and_cue(speed, Random16(), &particle->velocityX);
     particle->timer = 0;
     work->next++;
     work->next &= 63;
@@ -330,7 +330,7 @@ void Func_080e09c0(void) {
       particle->x = object->x;
       particle->y = object->y;
       particle->z = object->z;
-      Vector_AddPolarOffset(0xc0000, Random16(), particle);
+      Vector_AddPolarOffset__age_and_cue(0xc0000, Random16(), particle);
       particle->timer = -1;
       sprite++;
       particle++;
@@ -446,7 +446,7 @@ void Func_080e0cec(struct FieldParticle *slot) {
     slot->z = slot->originZ = pos.z + (8 << 16);
 
     r = Random16();
-    Vector_AddPolarOffset(
+    Vector_AddPolarOffset__age_and_cue(
         120 << 16, ((r << 13) >> 16) - ((Random16() << 13) >> 16) + 0xc000,
         &pos);
 
@@ -467,4 +467,3 @@ void Func_080e0cec(struct FieldParticle *slot) {
       BattleEffect_ClearOwnedSlot(slot);
   }
 }
-#undef Actor_SetAnimationSpeedFar

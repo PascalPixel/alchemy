@@ -27,12 +27,19 @@ struct ChainSlot__f0d9194 {
   struct ChainNode__f0d9194 *head;
 };
 
+/* VIEW(f0d9194): tag struct ChainWork as struct ChainWork__f0d9194; visual_attributes.c has another definition. */
+struct ChainWork__f0d9194 {
+  u8 unk00[12];
+  struct ChainSlot__f0d9194 slots[8];
+};
 
+/* VIEW(f0d9194): routine Func_080d8d40 as struct ChainNode__f0d9194 *Func_080d8d40(void); the definition has struct Work9cItem *Func_080d8d40(void). */
+extern struct ChainNode__f0d9194 *Func_080d8d40__f0d9194(void) __asm__("Func_080d8d40");
 
 /// Builds a slot's chain of nodes, one for each 6 units of the distance between
 /// two points, laid out as a flat spiral around the first point.
 s32 Func_080d9194(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
-  struct ChainWork *work = Ram_HeapSlots->unk84[6];
+  struct ChainWork__f0d9194 *work = Ram_HeapSlots->unk84[6];
   s32 result = 0;
   s32 dx = (toX - x) >> 8;
   s32 dy = (toY - y) >> 8;
@@ -49,7 +56,7 @@ s32 Func_080d9194(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
 
   slot->segments = segments;
   for (i = 0; i <= segments; i++) {
-    struct ChainNode__f0d9194 *node = Func_080d8d40();
+    struct ChainNode__f0d9194 *node = Func_080d8d40__f0d9194();
     u16 step;
 
     if (node == NULL) {

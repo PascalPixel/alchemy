@@ -724,6 +724,9 @@ extern const u16 Data_08198ac2[];
 extern const u8 gData_08199364[];
 extern const u8 gData_08199210[];
 
+/* VIEW(actor_move_random): routine Func_0815b290 as struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags). */
+extern struct SpriteObject *Func_0815b290__actor_move_random(s32 width, s32 height, u32 shape,
+                                   u32 attributes) __asm__("Func_0815b290");
 
 void Palette_LoadBasicObjColors(void);
 void BattleStaging_ConfigurePaletteFadeFar(s32 mode, s32 background, s32 speed);

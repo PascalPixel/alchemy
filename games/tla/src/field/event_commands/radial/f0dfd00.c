@@ -11,6 +11,23 @@ struct EffectVector {
 };
 
 // An orbiting mote: radial.c's OrbitEffect.
+/* VIEW(f0dfd00): tag struct OrbitEffect as struct OrbitEffect__f0dfd00; radial.c has another definition. */
+struct OrbitEffect__f0dfd00 {
+  u8 unk00[6];
+  u16 angle;
+  s32 x;
+  s32 y;
+  s32 z;
+  u8 unk14[20];
+  s32 scale;
+  u8 unk2c[28];
+  s32 speed;
+  u8 unk4c[24];
+  u16 timer;
+  s16 pause;
+  struct Actor *anchor;
+  void (*update)(struct OrbitEffect__f0dfd00 *);
+};
 
 // ⚓️'s composite sprite, as far as this reads it.
 struct OrbTargetSprite {
@@ -22,12 +39,17 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void BattleEffect_InitializeSharedScene(void);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *p);
 void BattleEffect_ShrinkObjectScaleUntilHalf(struct Actor *object);
+/* VIEW(f0dfd00): routine BattleEffect_WanderAroundAnchor as void BattleEffect_WanderAroundAnchor(struct OrbitEffect__f0dfd00 *mote); the definition has void BattleEffect_WanderAroundAnchor(struct OrbitEffect *effect). */
+extern void BattleEffect_WanderAroundAnchor__f0dfd00(struct OrbitEffect__f0dfd00 *mote) __asm__("BattleEffect_WanderAroundAnchor");
+/* VIEW(f0dfd00): routine BattleEffect_CircleAnchor as void BattleEffect_CircleAnchor(struct OrbitEffect__f0dfd00 *mote); the definition has void BattleEffect_CircleAnchor(struct OrbitEffect *effect). */
+extern void BattleEffect_CircleAnchor__f0dfd00(struct OrbitEffect__f0dfd00 *mote) __asm__("BattleEffect_CircleAnchor");
 /* VIEW(f0dfd00): routine BattleEffect_AgeAndCueAtEighty as void BattleEffect_AgeAndCueAtEighty(struct Actor *object); the definition has void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object); tried as the definition's void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object), which the object already declares, it does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:311: `BattleEffect_AgeAndCueAtEighty' undeclared (first use in this function). */
 extern void BattleEffect_AgeAndCueAtEighty__f0dfd00(struct Actor *object) __asm__("BattleEffect_AgeAndCueAtEighty");
 void BattleEffect_PrepareBufferInterpolation(void);
 void Func_080db0b0(s32 objectId);
 void Func_08020340(struct Actor *object);
 void Actor_Destroy(struct Actor *object);
+void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 
 #define ORB_OBJECT 280
 #define MOTE_OBJECT 308
@@ -56,7 +78,7 @@ void FieldEffect_RunWhirlwind(void) {
   struct EffectVector from;
   struct EffectVector to;
   struct Actor *orb;
-  struct OrbitEffect *mote;
+  struct OrbitEffect__f0dfd00 *mote;
   s32 kind = ORB_PLAIN;
   s32 step;
   s32 i;
@@ -124,10 +146,10 @@ void FieldEffect_RunWhirlwind(void) {
       position.z = orb->z;
       distance = Random16() * 5 + (3 << 16);
       Vector_AddPolarOffset(distance, Random16(), &position);
-      mote = (struct OrbitEffect *)Actor_Spawn(MOTE_OBJECT, position.x,
+      mote = (struct OrbitEffect__f0dfd00 *)Actor_Spawn(MOTE_OBJECT, position.x,
                                                position.y, position.z);
       if (mote != 0) {
-        mote->update = BattleEffect_CircleAnchor;
+        mote->update = BattleEffect_CircleAnchor__f0dfd00;
         mote->anchor = orb;
         mote->timer = 0;
         mote->pause = 0;
@@ -156,10 +178,10 @@ void FieldEffect_RunWhirlwind(void) {
         distance = Random16() * 5;
         distance += 3 << 16;
         Vector_AddPolarOffset(distance, Random16(), &position);
-        mote = (struct OrbitEffect *)Actor_Spawn(MOTE_OBJECT, position.x,
+        mote = (struct OrbitEffect__f0dfd00 *)Actor_Spawn(MOTE_OBJECT, position.x,
                                                  position.y, position.z);
         if (mote != 0) {
-          mote->update = BattleEffect_WanderAroundAnchor;
+          mote->update = BattleEffect_WanderAroundAnchor__f0dfd00;
           mote->timer = 20 + i * -2;
           mote->pause = 0;
           mote->speed = 0x1999;
@@ -170,7 +192,7 @@ void FieldEffect_RunWhirlwind(void) {
     }
     BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
     BattleEffect_PrepareBufferInterpolation();
-    ((struct OrbitEffect *)orb)->timer = 0;
+    ((struct OrbitEffect__f0dfd00 *)orb)->timer = 0;
     orb->update = (void (*)(void))BattleEffect_AgeAndCueAtEighty__f0dfd00;
     Func_080db0b0(scene->secondObjectId);
     Func_08020340(orb);

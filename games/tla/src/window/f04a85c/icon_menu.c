@@ -977,6 +977,8 @@ struct AffineTransform {
   u16 unk06;
 };
 
+/* VIEW(battle_party_commands): routine AffineMatrix_BuildForEffect as s32 AffineMatrix_BuildForEffect(struct AffineTransform *transform); f04a85c has s32 AffineMatrix_BuildForEffect(struct TargetAffine *affine). */
+extern s32 AffineMatrix_BuildForEffect__battle_party_commands(struct AffineTransform *transform) __asm__("AffineMatrix_BuildForEffect");
 
 extern const u16 gWindowSprite_BounceScales[];
 
@@ -1017,7 +1019,7 @@ void Func_0804cda8(void) {
   effect.scaleX = scale;
   effect.scaleY = scale;
   effect.angle = 0;
-  matrix = AffineMatrix_BuildForEffect(&effect);
+  matrix = AffineMatrix_BuildForEffect__battle_party_commands(&effect);
   for (i = 0; i < work->count; i++, sprite++) {
     u32 *attr;
     s32 slot;
@@ -1288,6 +1290,8 @@ s32 Menu_SelectResource(s32 start, s32 goal) {
   ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
 
 extern char ResourceId_CommandIcons;
+/* VIEW(resource_work): routine Window_Create as struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style); f04a85c has struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags). */
+extern struct Window *Window_Create__resource_work(s32 x, s32 y, s32 width, s32 height, s32 style) __asm__("Window_Create");
 
 void Menu_LoadResourceSlot(s32 slot, s32 index) {
   s32 size = 1024;
@@ -1340,7 +1344,7 @@ void Menu_CenterResourceEntries(s32 row, s32 width, s32 resourceBase) {
     entry->y = row * 8;
     x += 3;
   }
-  menu->window = Window_Create(x, row, menu->width, 3, 2);
+  menu->window = Window_Create__resource_work(x, row, menu->width, 3, 2);
 }
 
 
@@ -1364,7 +1368,7 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resourceBase) {
     entry->x = x << 3;
     x += 3;
   }
-  work->window = Window_Create(x, y, *widthp, 3, 2);
+  work->window = Window_Create__resource_work(x, y, *widthp, 3, 2);
 }
 
 static __inline__ s32 TableGet(s8 *table, s32 index) { return table[index]; }
@@ -1734,12 +1738,12 @@ s32 Func_0804d7fc(s32 mode) {
   if (mode != 0) {
     Task_Add(Menu_DrawModeLabel, TASK_PASS_VBLANK - 10);
     work->previousMode = 0xffff;
-    window = Window_Create(PASSWORD_UPPER_X, 0, PASSWORD_UPPER_WIDTH, 4, 2);
+    window = Window_Create__resource_work(PASSWORD_UPPER_X, 0, PASSWORD_UPPER_WIDTH, 4, 2);
     msg = (s32)MsgPasswordEntry;
     upper = &work->upperWindow;
     *upper = window;
     Text_DrawMessage(msg, window, 0, 4);
-    window = Window_Create(PASSWORD_LOWER_X, 4, PASSWORD_LOWER_WIDTH, 12, 2);
+    window = Window_Create__resource_work(PASSWORD_LOWER_X, 4, PASSWORD_LOWER_WIDTH, 12, 2);
     work->lowerWindow = window;
     Text_DrawMessage(msg + 1, window, PASSWORD_TEXT_X, PASSWORD_TEXT_Y);
 #if LANGUAGE == LANGUAGE_FRENCH
@@ -1757,12 +1761,12 @@ s32 Func_0804d7fc(s32 mode) {
   } else {
     Task_Add(Menu_DrawModeIndicator, TASK_PASS_VBLANK - 10);
     work->previousMode = 0xffff;
-    window = Window_Create(TRANSFER_UPPER_X, 0, TRANSFER_UPPER_WIDTH, 4, 2);
+    window = Window_Create__resource_work(TRANSFER_UPPER_X, 0, TRANSFER_UPPER_WIDTH, 4, 2);
     upper = &work->upperWindow;
     *upper = window;
     Text_DrawMessage((s32)MsgTransferMethod, window, TRANSFER_TITLE_X, 4);
     work->lowerWindow =
-        Window_Create(TRANSFER_LOWER_X, 5, TRANSFER_LOWER_WIDTH, 7, 2);
+        Window_Create__resource_work(TRANSFER_LOWER_X, 5, TRANSFER_LOWER_WIDTH, 7, 2);
   }
   result = Menu_RunResourceSelectionLoop(0);
   if (mode != 0)

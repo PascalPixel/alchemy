@@ -584,6 +584,8 @@ struct ResourceSprite {
   struct AnimationEntry *entries[4];
 };
 
+/* VIEW(vram_block_93): routine ResourceMetadata_Register as s32 ResourceMetadata_Register(struct ResourceSprite *sprite, s32 id); the definition has s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id). */
+extern s32 ResourceMetadata_Register__vram_block_93(struct ResourceSprite *sprite, s32 id) __asm__("ResourceMetadata_Register");
 
 /// Creates an animated sprite object for animation id, using one of 64 free
 /// objects and a VRAM cache entry. Returns the object, or NULL on failure.
@@ -668,7 +670,7 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
   *attribute++ = 0;
   *attribute++ = 0x6000;
   *attribute = (gResourceTableEntries[93].offset >> 5) | 0x800;
-  if (ResourceMetadata_Register(sprite, id) == -1) {
+  if (ResourceMetadata_Register__vram_block_93(sprite, id) == -1) {
     /* FAKEMATCH(dead): a store of the byte it reloads keeps the -1 built after
      * the call and never used; with the call alone, 20 of 154 instructions
      * differ in tla-en. */

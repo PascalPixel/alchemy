@@ -465,12 +465,14 @@ void Func_02000734(void) {
 void Func_02002a00(void);
 void Func_02002a08(void);
 void Func_02002a10(void);
+/* VIEW(jupiter_lighthouse_room_5): routine Func_02002a18 as void Func_02002a18(struct Actor *object, s32 value); jupiter_lighthouse_aerie.h has void Func_02002a18(void). */
+extern void Func_02002a18__jupiter_lighthouse_room_5(struct Actor *object, s32 value) __asm__("Func_02002a18");
 
 void Func_02000810(s32 actor, s32 target) {
   s32 i;
 
   Func_02002a00();
-  Func_02002a18(Actor_Get(actor), 2);
+  Func_02002a18__jupiter_lighthouse_room_5(Actor_Get(actor), 2);
   Event_PlaySound(201);
   System_Wait(50);
   Event_PlaySound(82);
@@ -486,7 +488,7 @@ void Func_02000810(s32 actor, s32 target) {
   }
   Actor_Get(target)->facing = 0xc000;
   Actor_SetSpriteColor(Actor_Get(target), 0);
-  Func_02002a18(Actor_Get(actor), 0);
+  Func_02002a18__jupiter_lighthouse_room_5(Actor_Get(actor), 0);
   Func_02002a10();
   Func_02002a08();
   Actor_SetAnimation(target, 1);
@@ -842,6 +844,8 @@ extern s32 gData_02003400;
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 s32 Func_02002a20(s32 x, s32 z, s32 layer);
 void Func_020029b0(s32 *position);
+/* VIEW(s0cb8): routine Func_02002820 as void Func_02002820(struct Actor *object, const s32 *script); jupiter_lighthouse_room_5 has void Func_02002820(struct OrbitEffect *object, const void *script). */
+extern void Func_02002820__s0cb8(struct Actor *object, const s32 *script) __asm__("Func_02002820");
 
 void Func_02001070(struct Actor *self) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -916,7 +920,7 @@ stop:
     s32 zero = 0;
     *((u8 *)self + 0x63) = zero;
     self->update = zero;
-    Func_02002820(self, gData_020033e0);
+    Func_02002820__s0cb8(self, gData_020033e0);
     Event_PlaySound(228);
     gData_02003400 = zero;
   }
@@ -950,6 +954,13 @@ struct GustObject {
 };
 
 void Func_02002810(struct GustObject *object, s32 mode);
+/* VIEW(s1230): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct GustObject *object, u32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
+extern void Actor_SetSingleChildFlags__s1230(struct GustObject *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
+/* VIEW(s1230): routine Func_02001070 as void Func_02001070(struct GustObject *object); the definition has void Func_02001070(struct Actor *self). */
+extern void Func_02001070__s1230(struct GustObject *object) __asm__("Func_02001070");
+/* VIEW(s1230): routine Func_02001c88 as void Func_02001c88(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct EffectOptions *options); jupiter_lighthouse_room_5 has void Func_02001c88(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 a5, s32 a6, struct EffectParams *params). */
+extern void Func_02001c88__s1230(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                   s32 velocityZ, u32 flags, struct EffectOptions *options) __asm__("Func_02001c88");
 
 struct GustObject *Func_02001230(struct GustObject *source) {
   /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
@@ -967,18 +978,18 @@ struct GustObject *Func_02001230(struct GustObject *source) {
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                     position.z));
   Func_02002810(object, 2);
-  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetSingleChildFlags__s1230(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->angle = source->angle;
   object->unk64 = 0;
   object->unk62 = 0;
   object->unk63 = 0;
-  object->update = Func_02001070;
+  object->update = Func_02001070__s1230;
   object->unk30 = 0x18000;
   options.priority = 1;
   options.palette = 7;
-  Func_02001c88(position.x, source->y, position.z - 0x60000, 0, 0, 0, 0x30000,
+  Func_02001c88__s1230(position.x, source->y, position.z - 0x60000, 0, 0, 0, 0x30000,
                 &options);
   return object;
 }
@@ -997,7 +1008,7 @@ s32 Func_02001308(struct Actor *object) {
   x = object->x + (((s32)((u32)(Random16Far() * 9) >> 16) - 4) << 16);
   y = object->y + ((32 - (s32)((u32)(Random16Far() * 20) >> 16)) << 16);
   speed = (((s32)((u32)(Random16Far() * 5) >> 16) << 16) + 0x50000) / 10;
-  Func_02001c88(x, y, object->z, 0, speed, phase,
+  Func_02001c88__s1230(x, y, object->z, 0, speed, phase,
                 EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                     EFFECT_USE_START_SCALE,
                 &options);
@@ -1020,6 +1031,8 @@ struct PositionedActor {
   u8 motionFlags;
 };
 
+/* VIEW(s1230): routine Animation_ApplyChildValues as void Animation_ApplyChildValues(struct PositionedActor *object, s32 value); jupiter_lighthouse_aerie.h has void Animation_ApplyChildValues(struct Actor *object, s32 value). */
+extern void Animation_ApplyChildValues__s1230(struct PositionedActor *object, s32 value) __asm__("Animation_ApplyChildValues");
 
 void Func_020013a8(void) {
   struct PositionedActor *actor9 = ((struct PositionedActor *)Actor_Get(9));
@@ -1049,8 +1062,8 @@ void Func_020013a8(void) {
     }
     actor23->x.fixed -= 0x28f40;
     sprite->rotation += 0x800;
-    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(9)), 4);
-    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(11)),
+    Animation_ApplyChildValues__s1230(((struct PositionedActor *)Actor_Get(9)), 4);
+    Animation_ApplyChildValues__s1230(((struct PositionedActor *)Actor_Get(11)),
                                4);
   }
   if (Event_GetFlag(0xa0b)) {
@@ -1062,9 +1075,9 @@ void Func_020013a8(void) {
     }
     actor23->x.fixed += 0x28f40;
     sprite->rotation -= 0x800;
-    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(10)),
+    Animation_ApplyChildValues__s1230(((struct PositionedActor *)Actor_Get(10)),
                                4);
-    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(12)),
+    Animation_ApplyChildValues__s1230(((struct PositionedActor *)Actor_Get(12)),
                                4);
   }
   if (Event_GetFlag(0xa0a) && Event_GetFlag(0xa0b)) {

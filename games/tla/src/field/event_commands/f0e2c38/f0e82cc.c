@@ -48,6 +48,8 @@ void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 void Func_080e807c(void);
+/* VIEW(f0e82cc): routine Func_080e7f94 as void Func_080e7f94(u8 *canvas, s32 radius, s32 angle, s32 color); the definition has void Func_080e7f94(s32 unused, s32 radius, s32 angle, s32 color). */
+extern void Func_080e7f94__f0e82cc(u8 *canvas, s32 radius, s32 angle, s32 color) __asm__("Func_080e7f94");
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 u32 Random16(void);
 void BattleEffect_PrepareBufferInterpolation(void);
@@ -162,10 +164,10 @@ void Func_080e82cc(void) {
       if (drawing) {
         radius = spin;
         for (i = 0; i < 8; i++) {
-          Func_080e7f94(picture, 0x340000, radius, 243);
-          Func_080e7f94(picture, 0x350000, radius, 247);
-          Func_080e7f94(picture, 0x360000, radius, 251);
-          Func_080e7f94(picture, 0x370000, radius, 255);
+          Func_080e7f94__f0e82cc(picture, 0x340000, radius, 243);
+          Func_080e7f94__f0e82cc(picture, 0x350000, radius, 247);
+          Func_080e7f94__f0e82cc(picture, 0x360000, radius, 251);
+          Func_080e7f94__f0e82cc(picture, 0x370000, radius, 255);
           radius += 128;
         }
         canvas->command = CANVAS_UPLOAD_TO_BG;

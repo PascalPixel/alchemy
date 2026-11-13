@@ -44,6 +44,8 @@ extern s32 gData_02004fec[];
 
 struct StagedActor *Actor_FindInCell(struct FieldPosition *position,
                                      struct StagedActor *self);
+/* VIEW(s03b4): routine Func_02004c98 as void Func_02004c98(struct StagedActor *object, s32 mode); local.h has void Func_02004c98(struct Actor *object, s32 a). */
+extern void Func_02004c98__s03b4(struct StagedActor *object, s32 mode) __asm__("Func_02004c98");
 s32 Func_02004cf8(struct StagedActor *object, struct FieldPosition *position);
 void Func_02004eb8(void);
 
@@ -95,7 +97,7 @@ void Func_020003b4(void) {
   if (next->transitionBusy != 0)
     return;
 
-  Func_02004c98(lead, 8);
+  Func_02004c98__s03b4(lead, 8);
   rate = 0x3333;
   System_Wait(15);
   Event_PlaySound(185);
@@ -123,7 +125,7 @@ void Func_020003b4(void) {
   lead->velocityZ = 0;
   lead->x.fixed = lead->x.part.pixel << 16;
   lead->z.fixed = lead->z.part.pixel << 16;
-  Func_02004c98(lead, 1);
+  Func_02004c98__s03b4(lead, 1);
 }
 
 #include "ram_buffer.h"
@@ -424,6 +426,8 @@ extern s16 gData_02005520[];
 extern s16 gData_02005528[];
 extern s16 gData_0200552e[];
 
+/* VIEW(magma_rock_inside): routine Func_0200075c as void Func_0200075c(s32 value); the definition has void Func_0200075c(struct Object0200074c *object). */
+extern void Func_0200075c__magma_rock_inside(s32 value) __asm__("Func_0200075c");
 void Func_02004ee0(s16 *cells);
 
 u8 *Func_020008f8(void) {
@@ -464,7 +468,7 @@ void Func_0200099c(void) {
     Func_02004ee0(gData_02005528);
   else if (scene == (s32)&SceneId_Ov692Room7)
     Func_02004ee0(gData_0200552e);
-  Func_0200075c(*(s32 *)(work + 0xcbc));
+  Func_0200075c__magma_rock_inside(*(s32 *)(work + 0xcbc));
 }
 
 #include "io_reg.h"
@@ -647,6 +651,7 @@ void Func_02000da4(struct Actor *object) {
 // layout, which rebuilds 0xffff on every pass, where loop.c would hoist it out
 // of a C loop.
 
+/// The cell watch's work: the object found on the leader's cell.
 struct CellWatch {
   u8 unk00[4];
   s32 x;
@@ -931,6 +936,8 @@ void Func_02001190(s32 mode, s32 cue) {
     Func_02004c98(work->target, 3);
 }
 
+/* VIEW(s0e20): routine Actor_FindInCell as struct Actor *Actor_FindInCell(s32 *position, struct Actor *self); s03b4 has struct StagedActor *Actor_FindInCell(struct FieldPosition *position, struct StagedActor *self). */
+extern struct Actor *Actor_FindInCell__s0e20(s32 *position, struct Actor *self) __asm__("Actor_FindInCell");
 
 void Func_020011fc(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -945,7 +952,7 @@ void Func_020011fc(void) {
   position[1] = leader->y - 0x100000;
   position[2] = (leader->z & 0xfff00000) + 0x80000;
   FieldVector_AddPolarOffset(0x200000, angle, position);
-  target = Actor_FindInCell(position, leader);
+  target = Actor_FindInCell__s0e20(position, leader);
   if (target == 0)
     return;
   Func_02004d40();
@@ -1406,7 +1413,12 @@ struct EffectConfig {
   u8 unk20[8];
 };
 
+/* VIEW(s1ca0): variable gData_0200502c as extern const u8 gData_0200502c[]; s0e20 has extern const s32 gData_0200502c[]. */
+extern const u8 gData_0200502c__s1ca0[] __asm__("gData_0200502c");
 
+/* VIEW(s1ca0): routine Func_0200015c as void Func_0200015c(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 d, struct EffectConfig *config); s0e20 has void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct EffectOptions *options). */
+extern void Func_0200015c__s1ca0(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 d,
+                   struct EffectConfig *config) __asm__("Func_0200015c");
 
 void Func_02001d04(struct Actor *object) {
   if (++object->timer > 64)
@@ -1417,8 +1429,8 @@ void Func_02001d04(struct Actor *object) {
     config.id = 403;
     config.kind = 2;
     config.variant = 10;
-    config.data = gData_0200502c;
-    Func_0200015c(object->x, object->y, object->z, 0, 0x1000, 0, 0x330000,
+    config.data = gData_0200502c__s1ca0;
+    Func_0200015c__s1ca0(object->x, object->y, object->z, 0, 0x1000, 0, 0x330000,
                   &config);
   }
 }
@@ -1429,6 +1441,8 @@ extern const s32 gData_02005050[];
 void Func_02004d40(void);
 void Func_02004d48(void);
 void Func_02004e20(void);
+/* VIEW(s1d64): routine Func_02001d04 as void Func_02001d04(void); the definition has void Func_02001d04(struct Actor *object). */
+extern void Func_02001d04__s1d64(void) __asm__("Func_02001d04");
 
 static __inline__ void Arrive(s32 id, s32 x, s32 z) {
   Actor_SetHorizontalPositionWithTerrain(id, 194 << 18, 248 << 16);
@@ -1436,7 +1450,7 @@ static __inline__ void Arrive(s32 id, s32 x, s32 z) {
   Actor_GetById(id)->velocityY = 0xc0000;
   Actor_GetById(id)->gravity = 0x8000;
   Actor_GetById(id)->timer = 0;
-  Actor_GetById(id)->update = Func_02001d04;
+  Actor_GetById(id)->update = Func_02001d04__s1d64;
 }
 
 void Func_02001d64(void) {
@@ -1489,7 +1503,7 @@ loop:
     Actor_GetById(12)->velocityY = 0xd0000;
     Actor_GetById(12)->gravity = 0x8000;
     Actor_GetById(12)->timer = 0;
-    Actor_GetById(12)->update = Func_02001d04;
+    Actor_GetById(12)->update = Func_02001d04__s1d64;
     MapGrid_SetShake(-1, -1, 0xe666);
   }
   wait(3);
@@ -2390,6 +2404,8 @@ extern s16 gData_020052bc[];
 extern s16 gData_0200531c[];
 extern s16 gData_0200537c[];
 
+/* VIEW(s1d64): routine Func_02000800 as void Func_02000800(s32 id, s16 *script, s32 flag); the definition has void Func_02000800(s32 a0, s32 a1, s32 a2). */
+extern void Func_02000800__s1d64(s32 id, s16 *script, s32 flag) __asm__("Func_02000800");
 
 void Func_02003548(void) {
   // Event_SetFlag, event.h's command, keeps 0x302 from being shared with the
@@ -2399,14 +2415,14 @@ void Func_02003548(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room4) {
     s16 *script = gData_0200525c;
 
-    Func_02000800(15, script, 0x302);
-    Func_02000800(16, gData_0200525c, 0x302);
-    Func_02000800(17, gData_020052bc, 0x302);
-    Func_02000800(18, gData_020052bc, 0x302);
-    Func_02000800(19, gData_0200531c, 0x302);
-    Func_02000800(20, gData_0200531c, 0x302);
-    Func_02000800(21, gData_0200537c, 0x302);
-    Func_02000800(22, gData_0200537c, 0x302);
+    Func_02000800__s1d64(15, script, 0x302);
+    Func_02000800__s1d64(16, gData_0200525c, 0x302);
+    Func_02000800__s1d64(17, gData_020052bc, 0x302);
+    Func_02000800__s1d64(18, gData_020052bc, 0x302);
+    Func_02000800__s1d64(19, gData_0200531c, 0x302);
+    Func_02000800__s1d64(20, gData_0200531c, 0x302);
+    Func_02000800__s1d64(21, gData_0200537c, 0x302);
+    Func_02000800__s1d64(22, gData_0200537c, 0x302);
     if (Actor_Get(16)->step == 0) {
       Actor_Get(16)->step = 10;
       Actor_Get(18)->step = 10;

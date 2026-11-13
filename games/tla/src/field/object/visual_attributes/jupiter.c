@@ -50,7 +50,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   position.x = object->x;
   position.y = object->y;
   position.z = object->z;
-  Camera_WorldToScreen(&position);
+  Camera_WorldToScreen__motes(&position);
   Actor_Destroy(object);
   Sound_PlayFar(164);
   slot = scene->slots;
@@ -215,7 +215,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect) {
     effect->z = effect->originZ;
     position.x = effect->x;
     position.z = effect->z;
-    Vector_AddPolarOffset(0x780000,
+    Vector_AddPolarOffset__motes(0x780000,
                           ((Random16() * 3 << 11) >> 16) -
                               ((Random16() * 3 << 11) >> 16) + 0xc000,
                           &position);
@@ -256,8 +256,8 @@ void BattleEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect) {
     position.x = owner->position.x;
     position.y = owner->position.y + 0x140000;
     position.z = owner->position.z;
-    Camera_WorldToScreen(&position);
-    Vector_AddPolarOffset(0x40000, Random16(), &position);
+    Camera_WorldToScreen__motes(&position);
+    Vector_AddPolarOffset__motes(0x40000, Random16(), &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->state++;
@@ -282,9 +282,6 @@ void BattleEffect_UpdateRadialSpread(struct FieldParticle *effect);
 void BattleEffect_RunVenusDjinnCapture(s32 arg);
 
 void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect);
-#undef Resource_DecodeByteLzInRam
-#undef LEAP_SOUND
-#undef BATTLE_EFFECT_SLOT
 #undef Actor_SetChildValueUnlessFifteenFar
 #undef Actor_ReleaseFar
 #undef gBattleEffect_PulseScales

@@ -56,16 +56,20 @@ void Func_02000054(struct DoorStep *step, s32 countdown, s32 unused) {
   Func_02001fd4();
 }
 
+/* VIEW(lemuria_palace): variable gData_02002368 as extern u8 gData_02002368[]; the definition has s32 gData_02002368[] = { (s32) gData_0200233c, 0x170005, (s32) gData_0200233c, 0x17001e, }. */
+extern u8 gData_02002368__lemuria_palace[] __asm__("gData_02002368");
+/* VIEW(lemuria_palace): variable gData_02002378 as extern u8 gData_02002378[]; the definition has s32 gData_02002378[] = { (s32) gData_0200233c, 0x40038, }. */
+extern u8 gData_02002378__lemuria_palace[] __asm__("gData_02002378");
 extern s32 gData_02002368[];
 extern s32 gData_02002378[];
 
 void Func_020000c8(s32 kind) {
-  const u8 *data = gData_02002368;
+  const u8 *data = gData_02002368__lemuria_palace;
 
   if (kind == 3)
     data += 8;
   if (kind == 16)
-    data = gData_02002378;
+    data = gData_02002378__lemuria_palace;
   Func_02000054(data, kind, 0);
 }
 

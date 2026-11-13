@@ -71,6 +71,8 @@ struct MapScrollWork {
   struct MapLayerScroll layers[3];
 };
 
+/* VIEW(f02a6b8): variable gData_0802f380 as extern struct LayeredSceneEntry gData_0802f380[]; f0298c0 has extern const u16 gData_0802f380[][6]. */
+extern struct LayeredSceneEntry gData_0802f380__f02a6b8[] __asm__("gData_0802f380");
 extern char ResourceId_Map000;
 extern u8 gMapShapeGrid[];
 extern u8 gData_02028000[];
@@ -102,7 +104,7 @@ s32 Func_0802a6b8(s32 index) {
   REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
                    DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
   Fade_FromBlack(0);
-  sceneResources = &gData_0802f380[index];
+  sceneResources = &gData_0802f380__f02a6b8[index];
   work = HeapSlot_AllocEwram(32, sizeof(struct MapScrollWork));
   Iwram_ClearWords(work, sizeof(struct MapScrollWork));
   sceneHeader = (struct LayeredSceneHeader *)Resource_GetTableEntry(

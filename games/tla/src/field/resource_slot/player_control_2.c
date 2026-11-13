@@ -41,6 +41,8 @@ void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 s32 FixedSqrt(s32 value);
 struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
 void Actor_StartScript(struct Actor *, const s32 *);
+/* VIEW(f0279b0): routine Animation_ApplyChildArgument as s32 Animation_ApplyChildArgument(struct PlayerSprite__f0279b0 *, s32); f027064 has s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32). */
+extern s32 Animation_ApplyChildArgument__f0279b0(struct PlayerSprite__f0279b0 *, s32) __asm__("Animation_ApplyChildArgument");
 s32 Field_CheckConfiguredKeys(void);
 
 s32 Func_080279b0(struct Actor *object) {
@@ -203,7 +205,7 @@ update_object:
         ripple->motionFlags = collision;
         ripple->terrainId = 1;
         if (rippleSprite != 0) {
-          Animation_ApplyChildArgument(rippleSprite, 1);
+          Animation_ApplyChildArgument__f0279b0(rippleSprite, 1);
           rippleSprite->flags = collision;
           rippleSprite->objectMode = 1;
           rippleSprite->priority = 2;

@@ -10,6 +10,7 @@
 
 /* VIEW(f0d8ff8): routine ArcTan2 as s16 ArcTan2(s32 y, s32 x); f0d8740 has s32 ArcTan2(s32 y, s32 x); tried as the definition's s32 ArcTan2(s32 x, s32 y), which the object already declares, Func_080d8ff8 moves: 1 of 120 instructions in tla-ja. */
 extern s16 ArcTan2__f0d8ff8(s32 y, s32 x) __asm__("ArcTan2");
+s32 Func_080d9194(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ);
 
 /* VIEW(f0d8ff8): tag struct ChainNode as struct ChainNode__f0d8ff8; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5333: structure has no member named `visible'. */
 struct ChainNode__f0d8ff8 {
@@ -29,12 +30,17 @@ struct ChainSlot__f0d8ff8 {
   struct ChainNode__f0d8ff8 *head;
 };
 
+/* VIEW(f0d8ff8): tag struct ChainWork as struct ChainWork__f0d8ff8; visual_attributes.c has another definition. */
+struct ChainWork__f0d8ff8 {
+  u8 unk00[12];
+  struct ChainSlot__f0d8ff8 slots[8];
+};
 
 /// Lays a slot's chain of nodes along the line between two points, bowed
 /// sideways by a half sine of the given height.
 s32 Func_080d8ff8(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
                   s32 height) {
-  struct ChainWork *work = Ram_HeapSlots->unk84[6];
+  struct ChainWork__f0d8ff8 *work = Ram_HeapSlots->unk84[6];
   s32 dx = toX - x;
   s32 ax = dx >> 8;
   s32 dy = toY - y;

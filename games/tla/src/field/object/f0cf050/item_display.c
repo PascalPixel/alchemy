@@ -193,6 +193,8 @@ void Func_080cf34c(void) {}
 
 
 s32 Party_GetLeaderActor(void);
+/* VIEW(rising): routine Marker_MoveLeaderAwayFromEmitter as void Marker_MoveLeaderAwayFromEmitter(void); the definition has void Marker_MoveLeaderAwayFromEmitter(struct ParticleEmitter *emitter). */
+extern void Marker_MoveLeaderAwayFromEmitter__rising(void) __asm__("Marker_MoveLeaderAwayFromEmitter");
 void Actor_SetSpritePriorityDirectFar(struct Actor *object, s32 priority);
 extern const u8 gData_080effd8[];
 extern const u8 gData_080f0074[];
@@ -231,7 +233,7 @@ void BattleEffect_RunActorRiseAndDescent(struct Actor *object, s32 flags) {
       Actor_StartScriptFar(object, gData_080effd8);
       object->velocityY = 0x20000;
       object->gravity = 0x4000;
-      object->update = Marker_MoveLeaderAwayFromEmitter;
+      object->update = Marker_MoveLeaderAwayFromEmitter__rising;
     }
     if (flags == 3)
       wait(60);
@@ -291,7 +293,7 @@ void BattleEffect_StartEffectObject22(s32 item, s32 flags) {
     HeapSlot_Release(68);
 
     if (flags & 1)
-      object->update = Marker_MoveLeaderAwayFromEmitter;
+      object->update = Marker_MoveLeaderAwayFromEmitter__rising;
     if (flags & 2)
       Func_080cf350(object);
 
@@ -353,6 +355,8 @@ s16 *Func_080ceba8(void);
 s32 Func_080cec24(s32 value, s32 *out);
 struct Actor *ObjectEvent_GetObject(u32 objectId);
 
+/* VIEW(rising): variable Data_080f01b8 as extern const s32 Data_080f01b8[]; emitter has extern const u8 Data_080f01b8[]. */
+extern const s32 Data_080f01b8__rising[] __asm__("Data_080f01b8");
 
 /// Places a marker at each waiting scene item event that is on screen.
 void Func_080cf554(void) {
@@ -421,7 +425,7 @@ void Func_080cf554(void) {
     object = Func_080200c0(673, x, y, z);
     if (object != NULL) {
       object->motionFlags = 0;
-      Actor_StartScriptFar((struct Actor *)object, Data_080f01b8);
+      Actor_StartScriptFar((struct Actor *)object, Data_080f01b8__rising);
       Actor_SetSingleChildFlagsFar((struct Actor *)object, 0);
       Actor_SetMode(object, 1);
       ((struct FieldSprite *)object->sprite)->priority = 1;

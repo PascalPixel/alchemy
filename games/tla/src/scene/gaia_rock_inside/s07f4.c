@@ -573,6 +573,14 @@ void Func_020012ac(void) {
   Func_02004e64();
 }
 
+/* VIEW(s12ac): routine Scene_SetActorSpritePriority as s32 Scene_SetActorSpritePriority(); field.h has void Scene_SetActorSpritePriority(struct Actor *object, s32 priority). */
+extern s32 Scene_SetActorSpritePriority__s12ac() __asm__("Scene_SetActorSpritePriority");
+/* VIEW(s12ac): routine Func_02004d9c as s32 Func_02004d9c(); s07f4 has void Func_02004d9c(struct Actor *object, s32 mode). */
+extern s32 Func_02004d9c__s12ac() __asm__("Func_02004d9c");
+/* VIEW(s12ac): routine Animation_SetStateFlags as s32 Animation_SetStateFlags(); field.h has void Animation_SetStateFlags(struct Actor *object, u32 value). */
+extern s32 Animation_SetStateFlags__s12ac() __asm__("Animation_SetStateFlags");
+/* VIEW(s12ac): routine Func_02004dac as s32 Func_02004dac(); s07f4 has void Func_02004dac(struct Actor *object, const s32 *script). */
+extern s32 Func_02004dac__s12ac() __asm__("Func_02004dac");
 extern u8 gData_02005208[];
 
 void Func_02001314(s32 a0) {
@@ -584,11 +592,11 @@ void Func_02001314(s32 a0) {
   FIELD_AT(t0, s32, 24) = 0x6666;
   FIELD_AT((t0 + 0x55), u8, 0) = 0;
   Actor_SetSpriteColor(t0, 2);
-  Scene_SetActorSpritePriority(t0, 1);
-  Func_02004d9c(t0, 1);
+  Scene_SetActorSpritePriority__s12ac(t0, 1);
+  Func_02004d9c__s12ac(t0, 1);
   Actor_SetSingleChildFlags(t0, 0);
-  Animation_SetStateFlags(t0, 1);
-  Func_02004dac(t0, (s32)gData_02005208);
+  Animation_SetStateFlags__s12ac(t0, 1);
+  Func_02004dac__s12ac(t0, (s32)gData_02005208);
 }
 #undef FIELD_AT
 
@@ -613,6 +621,8 @@ struct Orbiter {
   struct Actor *anchor;
 };
 
+/* VIEW(s136c): routine Func_02001314 as void Func_02001314(struct Orbiter *orbiter); the definition has void Func_02001314(s32 a0). */
+extern void Func_02001314__s136c(struct Orbiter *orbiter) __asm__("Func_02001314");
 
 // Steps an orbiting object around its anchor: turns it by half its speed, puts
 // it on the anchor (raised 8 pixels) and pushes it out by its radius; when its
@@ -637,14 +647,14 @@ s32 Func_0200136c(struct Orbiter *orbiter) {
     return 0;
   if (orbiter->radius == 0x20000)
     return 1;
-  Func_02001314(orbiter);
+  Func_02001314__s136c(orbiter);
   orbiter->radius -= 0x40000;
   orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
   orbiter->x = anchor->x;
   orbiter->y = anchor->y + 0x80000;
   orbiter->z = anchor->z;
   FieldVector_AddPolarOffset(orbiter->radius, *angle, &orbiter->x);
-  Func_02001314(orbiter);
+  Func_02001314__s136c(orbiter);
   orbiter->radius -= 0x40000;
   return 1;
 }

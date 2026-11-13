@@ -101,6 +101,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 #include "main_routine_work.h"
 
 s32 Event_StartScreenTransition();
+void Func_020010f4(void);
 
 /// Starts the scene: sets the colour blend, puts objects 24 and 25 in mode 2
 /// and starts the screen transition; when gMainRoutineWork's 0x1e2 halfword is

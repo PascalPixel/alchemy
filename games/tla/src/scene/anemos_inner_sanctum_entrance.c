@@ -161,6 +161,8 @@ void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 extern s8 gData_02000eec[];
 
 void Func_02000388(void);
+/* VIEW(s0588): routine Func_020004b4 as void Func_020004b4(void); the definition has void Func_020004b4(struct Actor *object). */
+extern void Func_020004b4__s0588(void) __asm__("Func_020004b4");
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Script_WaitForEventTimeout(struct Actor *actor);
 s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
@@ -208,7 +210,7 @@ next:
     object->speedLimit = 0x20000;
     Actor_SetSingleChildFlags(object, 1);
     Actor_SetMoveTarget(object, object->x, 0xfff80000, object->z);
-    object->update = Func_020004b4;
+    object->update = Func_020004b4__s0588;
     Sound_Play(152);
     wait((Random16Far() * 4 >> 16) + 3);
   }

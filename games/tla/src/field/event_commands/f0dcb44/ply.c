@@ -51,7 +51,7 @@ void BattleEffect_UpdateShrinkingOrbitObject(struct Actor *object) {
       radius = life << 16;
 
       pos.z = scene->z;
-      Vector_AddPolarOffset(radius, (s16)object->unk66 + (life << 11), &pos);
+      Vector_AddPolarOffset__f0de21c(radius, (s16)object->unk66 + (life << 11), &pos);
       SET_POSITION(object, pos.x, pos.y, pos.z);
     } else {
       Actor_StartScriptFar((struct Actor *)object,
@@ -103,8 +103,8 @@ void Func_080de8d0(struct SparkObject *obj) {
     pos[0] = obj->x;
     pos[1] = obj->y + (2 << 16);
     pos[2] = obj->z;
-    Vector_AddPolarOffset(Random16() * 6, Random16(), pos);
-    spark = Actor_Spawn(673, pos[0], pos[1], pos[2]);
+    Vector_AddPolarOffset__f0de21c(Random16() * 6, Random16(), pos);
+    spark = Actor_Spawn__f0de21c(673, pos[0], pos[1], pos[2]);
     if (spark != 0) {
       spark->update = BattleEffect_SwayParticle;
       spark->scaleX = spark->scaleY = 0x9999;
@@ -144,7 +144,7 @@ void FieldEffect_RunPly(void) {
 
   last = 0;
   for (i = 0; i < 8; i++) {
-    object = Actor_Spawn(296, target->x, target->y + 0x200000, target->z);
+    object = Actor_Spawn__f0de21c(296, target->x, target->y + 0x200000, target->z);
     if (object != 0) {
       object->scaleY = 0xb333;
       object->scaleX = 0xb333;
@@ -161,7 +161,7 @@ void FieldEffect_RunPly(void) {
   Sound_PlayFar(130);
   wait(110);
 
-  target = Actor_Spawn(296, 0, 0, 0);
+  target = Actor_Spawn__f0de21c(296, 0, 0, 0);
   object = target;
   if (target != 0) {
     target->scaleY = 0xb333;

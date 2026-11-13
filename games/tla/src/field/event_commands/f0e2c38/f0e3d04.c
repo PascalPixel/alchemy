@@ -57,6 +57,7 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Actor_Destroy(struct Actor *object);
 void wait(s32 frames);
 void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
+s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target);
 void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);

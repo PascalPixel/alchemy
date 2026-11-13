@@ -190,8 +190,3 @@ s32 Actor_IsOutsideAnimation108(struct Actor *object) {
     return 1;
   return 0;
 }
-#undef SPEAKER_PORTRAIT_LEFT
-#undef SPEAKER_PORTRAIT_RIGHT
-#undef SPEAKER_WINDOW_ABOVE
-#undef SPEAKER_WINDOW_BELOW
-#undef HELD

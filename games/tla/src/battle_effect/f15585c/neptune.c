@@ -86,7 +86,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     sheet += 0x200;
     Resource_DecodeType01(sheet, tiles);
     for (i = 0; i != 8; i++) {
-      struct SpriteObject *object = Func_0815b290(32, 32, 0x80002000, 0);
+      struct SpriteObject *object = Func_0815b290__actor_move_random(32, 32, 0x80002000, 0);
 
       object->priority = 1;
       work->objects[i] = object;

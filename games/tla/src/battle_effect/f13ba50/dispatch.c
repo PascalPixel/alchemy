@@ -39,6 +39,8 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect);
 void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect);
 
 void BattleEffect_RunNeptune(struct BattleEffectArgument *effect);
+/* VIEW(f14b9e8): routine BattleEffect_RunTiamat as void BattleEffect_RunTiamat(s32 *arg); the definition has DEFINE_EFFECT_KIND(BattleEffect_RunDragonDriver, Func_08147aec, 1) DEFINE_EFFECT_KIND(BattleEffect_RunTiamat, Func_08147aec, 0) void Func_08.... */
+extern void BattleEffect_RunTiamat__f14b9e8(s32 *arg) __asm__("BattleEffect_RunTiamat");
 void BattleEffect_RunProcne(struct BattleEffectArgument *effect);
 void BattleEffect_RunJudgment(struct BattleEffectArgument *effect);
 void BattleEffect_RunBoreas(struct BattleEffectArgument *effect);
@@ -97,7 +99,7 @@ void BattleEffect_RunSceneEffect(s32 *arg) {
       BattleEffect_RunNeptune(arg);
       break;
     case 7:
-      BattleEffect_RunTiamat(arg);
+      BattleEffect_RunTiamat__f14b9e8(arg);
       break;
     case 8:
       BattleEffect_RunProcne(arg);
@@ -256,12 +258,3 @@ void BattleEffect_SelectLivingTargets(struct FxPartyList *party) {
   list[count] = 0xff;
   BattleActor_SpawnObjectsForListFar(list, 0);
 }
-#undef HEAP_BLITTER
-#undef QUAD_FRAMES
-#undef QUAD_COUNT
-#undef SHEET_TEXTURE
-#undef SHEET_DJINN
-#undef SLOT_BLITTER
-#undef BLITTER
-#undef HI
-#undef ZAGAN_PARTS

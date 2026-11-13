@@ -17,6 +17,18 @@ struct ArcGroup {
   struct ArcEntry *entries[1];
 };
 
+/* VIEW(launch): tag struct ArcEffectObject as struct ArcEffectObject__launch; field_psynergy_work.h has another definition. */
+struct ArcEffectObject__launch {
+  u8 unk00[6];
+  u16 angle;
+  u8 unk08[0x48];
+  struct ArcGroup *records;
+  u8 unk54[0x10];
+  s16 phase;
+  u16 step;
+  u8 unk68[4];
+  void (*callback)(struct ArcEffectObject__launch *);
+};
 
 extern char MsgAbilityWoreOff;
 extern char MsgItemWoreOff;
@@ -29,7 +41,7 @@ void FieldMessage_ShowFar(s32 message, s32 flags);
 /// The caster during Avoid (BattleEffect_RunEffect16): sheds a pair of falling
 /// arcs every 5 frames (7 in scene Ov64a), and spins in phase 1.
 // As ☀️'s function of the same name.
-void BattleEffect_UpdatePairedArcSpawner(struct ArcEffectObject *caster) {
+void BattleEffect_UpdatePairedArcSpawner(struct ArcEffectObject__launch *caster) {
   s16 phase;
   s32 elapsedFrames;
   struct MainRoutineWork *party;
@@ -64,7 +76,7 @@ void FieldEvent_ShowStatusMessage(void) {
 
 struct ArcScene {
   u8 unk00[0x10];
-  struct ArcEffectObject *mainObject;
+  struct ArcEffectObject__launch *mainObject;
   u8 unk14[0x6fc];
   s16 arcTileSlot;
 };
@@ -77,7 +89,7 @@ s32 GameFlag_Test(s32 flag);
 /// Psynergy effect 16: the user spins, rains arc particles, then flashes.
 void BattleEffect_RunEffect16(void) {
   struct ArcScene *scene;
-  struct ArcEffectObject *object;
+  struct ArcEffectObject__launch *object;
   struct ArcGroup *group;
   struct ArcEntry *entry;
   const u8 *tiles;
@@ -101,7 +113,7 @@ void BattleEffect_RunEffect16(void) {
   VramCache_Load((s16)slot, 0x100, tiles);
   gMainRoutineWork.avoidDistance = 0x09600000;
   gMainRoutineWork.avoidByItem = GameFlag_Test(0x145);
-  Animation_ApplyChildValuesFar(object, 0);
+  Animation_ApplyChildValuesFar__launch(object, 0);
   object->callback = BattleEffect_UpdatePairedArcSpawner;
   object->phase = 0;
   object->step = 0;
@@ -155,4 +167,3 @@ void BattleEffect_RunEffect16(void) {
   Resource_ResetEntry(scene->arcTileSlot);
   FieldMessage_ShowFar((s32)&MsgMonstersAttackLess, 1);
 }
-#undef SLOT_MAX

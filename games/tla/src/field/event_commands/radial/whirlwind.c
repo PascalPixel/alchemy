@@ -25,6 +25,7 @@ struct OrbitEffect {
 };
 
 void Effect_AdvanceMotion(struct FieldEffect *effect);
+void FieldEffect_RunWhirlwind(void);
 void Func_080df8e0(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);

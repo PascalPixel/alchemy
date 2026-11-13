@@ -20,6 +20,13 @@ struct Work080e6400 {
 };
 
 void Func_080e62f4(u8 *source, u8 *destination, s32 phase);
+/* VIEW(f0e6400): routine BattleEffect_UpdateGrowingParticleSprite as void BattleEffect_UpdateGrowingParticleSprite(struct EffectSprite *sprite, struct EffectParticle *particle, s32 tiles); the definition has void BattleEffect_UpdateGrowingParticleSprite(struct EffectSprite__psynergy_effects_11 *sprite, struct EffectParticle *particle, s32 tiles). */
+extern void BattleEffect_UpdateGrowingParticleSprite__f0e6400(struct EffectSprite *sprite,
+                                              struct EffectParticle *particle,
+                                              s32 tiles) __asm__("BattleEffect_UpdateGrowingParticleSprite");
+/* VIEW(f0e6400): routine EffectSprite_DrawAtWorldPosition as void EffectSprite_DrawAtWorldPosition(struct ScreenSprite *sprite, s32 *position); f0e4a34 has void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct GlowParticle *particle). */
+extern void EffectSprite_DrawAtWorldPosition__f0e6400(struct ScreenSprite *sprite,
+                                      s32 *position) __asm__("EffectSprite_DrawAtWorldPosition");
 u32 Random16(void);
 
 #define NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
@@ -77,7 +84,7 @@ void Func_080e6400(void) {
       for (i = 0, particle = work->particles; i < 18; i++, particle++) {
         sprite = &work->sprites[i];
         if (particle->timer >= 0 && particle->timer < 32)
-          BattleEffect_UpdateGrowingParticleSprite(sprite, particle,
+          BattleEffect_UpdateGrowingParticleSprite__f0e6400(sprite, particle,
                                                    work->particleTile);
         particle->timer++;
       }
@@ -109,7 +116,7 @@ void Func_080e6400(void) {
       for (i = 0, particle = work->particles; i < 64; i++, particle++) {
         if (particle->timer >= 0 && particle->timer < 45) {
           sprite = &work->sprites[i];
-          EffectSprite_DrawAtWorldPosition(sprite, particle);
+          EffectSprite_DrawAtWorldPosition__f0e6400(sprite, particle);
           if (particle->timer < 42) {
             particle->y -= Q16_ONE;
             jitter = Random16();
@@ -159,7 +166,7 @@ void Func_080e6400(void) {
     sprite = work->sprites;
     for (i = 0; i < 20; i++, sprite++, particle++) {
       if (particle->timer >= 0 && particle->timer < 32)
-        BattleEffect_UpdateGrowingParticleSprite(sprite, particle,
+        BattleEffect_UpdateGrowingParticleSprite__f0e6400(sprite, particle,
                                                  work->particleTile);
       particle->timer++;
     }
@@ -880,7 +887,7 @@ void Func_080e74d8(void) {
       age = particle->age;
       if (age >= 0) {
         if ((u32)age < 20) {
-          EffectSprite_DrawAtWorldPosition(sprite, particle);
+          EffectSprite_DrawAtWorldPosition__f0e6400(sprite, particle);
           // Reread in each arm: the two calls share one bl only this way.
           if (i & 1) {
             BattleEffect_IntegrateVector3(&particle->x, 63, 0x8000);
@@ -1493,7 +1500,7 @@ void Func_080e807c(void) {
         pos[0] = actor->x + entry->x;
         pos[1] = actor->y + entry->y;
         pos[2] = actor->z + entry->z;
-        EffectSprite_DrawAtWorldPosition(sprite, pos);
+        EffectSprite_DrawAtWorldPosition__f0e6400(sprite, pos);
         timer = entry->timer;
       }
       if ((entry->timer = timer + 1) == 16)

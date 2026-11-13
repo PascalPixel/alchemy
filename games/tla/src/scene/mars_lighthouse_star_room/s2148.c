@@ -658,6 +658,8 @@ void Func_0200274c(struct Actor *actor) {
 #undef ABS
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s2a58.c ----
+/* VIEW(s2a58): routine Func_02002738 as void Func_02002738(void); the definition has void Func_02002738(struct Actor *object). */
+extern void Func_02002738__s2a58(void) __asm__("Func_02002738");
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
@@ -675,7 +677,7 @@ void Func_02002a58(s32 sourceId, s32 id, s32 kind, s32 value,
   object->timer = 0;
   *(s16 *)((u8 *)object + 0x66) = value;
   *(u8 *)((u8 *)object + 0x62) = kind;
-  object->update = Func_02002738;
+  object->update = Func_02002738__s2a58;
 }
 
 #include "field_sprite.h"
@@ -857,8 +859,12 @@ struct Position {
 };
 
 s32 ArcTan2(s32 y, s32 x);
+/* VIEW(s2dc4): routine Func_02002d04 as void Func_02002d04(void); the definition has void Func_02002d04(struct Actor *object). */
+extern void Func_02002d04__s2dc4(void) __asm__("Func_02002d04");
 void Func_02002d90(void);
 void Func_020041cc(struct Actor *actor, s32 mode);
+/* VIEW(s2dc4): routine Func_0200428c as s32 Func_0200428c(s32 *a, s32 radiusA, struct Position *b, s32 radiusB); s2148 has s32 Func_0200428c(s32 *from, s32 radius, struct Vector3 *to, s32 radius2). */
+extern s32 Func_0200428c__s2dc4(s32 *a, s32 radiusA, struct Position *b, s32 radiusB) __asm__("Func_0200428c");
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Actor_SetAnimationSpeed(struct Actor *actor, s32 speed);
 extern s16 gData_0200483c[];
@@ -938,7 +944,7 @@ top:
   Func_020041cc(actor, 2);
   Actor_SetAnimationSpeed(actor, 48);
   Actor_WaitForMove(actor);
-  actor->update = Func_02002d04;
+  actor->update = Func_02002d04__s2dc4;
   goto test;
 body:
   if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > PIXELS(8)) {
@@ -956,7 +962,7 @@ body:
           : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),
             "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor)
           : SFP_CLOBBER, "r4");
-      if (Func_0200428c(&other->x, radius, &probe, other->radius - 2) >= 0) {
+      if (Func_0200428c__s2dc4(&other->x, radius, &probe, other->radius - 2) >= 0) {
         goto stop;
       }
     }

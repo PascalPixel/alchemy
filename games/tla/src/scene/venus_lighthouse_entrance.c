@@ -17,6 +17,8 @@
 #include "actor.h"
 #include "event_inline.h"
 
+/* VIEW(venus_lighthouse_entrance): routine Func_020023a4 as void Func_020023a4(void *object); the definition has void Func_020023a4(s32 id). */
+extern void Func_020023a4__venus_lighthouse_entrance(void *object) __asm__("Func_020023a4");
 void Func_0200260c(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02002a34(s32 a, s32 b);
 void Func_02002a44(void);
@@ -39,7 +41,7 @@ void VenusLighthouseEntrance_RunActorSparkBurst(void *object) {
   Func_02002a44();
   Func_02002a5c(Actor_Get(5), 2);
   FieldEvent_Wait(20);
-  Func_020023a4(object);
+  Func_020023a4__venus_lighthouse_entrance(object);
   Func_02002a5c(Actor_Get(5), 0);
   Func_02002a54();
   Func_02002a4c();
@@ -562,7 +564,7 @@ void Func_02000510(void) {
   FieldEvent_Wait(60);
   Event_PlaySound(0x186);
   FieldActor_SetSpritePriority(12, 0);
-  Func_020023a4(12);
+  Func_020023a4__venus_lighthouse_entrance(12);
   Actor_ShowEmote(17, 0x100, 0);
   Actor_ShowEmote(18, 0x100, 0);
   Actor_ShowEmote(19, 0x100, 0);
@@ -571,7 +573,7 @@ void Func_02000510(void) {
   Actor_ShowEmote(14, 0x100, 0);
   Actor_ShowEmote(15, 0x100, 50);
   FieldActor_SetSpritePriority(13, 1);
-  Func_020023a4(13);
+  Func_020023a4__venus_lighthouse_entrance(13);
   FieldEvent_Wait(30);
   record = ((u8 *)Actor_GetById(9));
   Func_02002a5c((s32)record, 0);
@@ -1425,6 +1427,8 @@ struct Unk_0200258cWork {
   u16 unk2182;
 };
 
+/* VIEW(s23a4): routine Func_02002a14 as void Func_02002a14(struct Unk_0200258cSprite *sprite, struct Unk_0200258cState *state); venus_lighthouse_entrance has void Func_02002a14(struct GlowSprite *sprite, struct GlowState *state). */
+extern void Func_02002a14__s23a4(struct Unk_0200258cSprite *sprite, struct Unk_0200258cState *state) __asm__("Func_02002a14");
 void Func_02002a1c(struct Unk_0200258cState *state, s32 a, s32 b);
 
 void Func_0200258c(void) {
@@ -1438,7 +1442,7 @@ void Func_0200258c(void) {
     value = state->frame;
     if ((u32)value < 16) {
       sprite->tile = work->unk2182 + ((value >> 1) & 7) * 8;
-      Func_02002a14(sprite, state);
+      Func_02002a14__s23a4(sprite, state);
       Func_02002a1c(state, 64, 0);
       state->frame++;
     }
@@ -1528,6 +1532,9 @@ void *HeapSlot_AllocFar(s32 slot, s32 size);
 void *Resource_GetTableEntry(s32 id);
 void Func_02002824(void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
+/* VIEW(s26f4): routine Func_02002a0c as void Func_02002a0c(struct SparkSprite__s26f4 *sprite, s32 width, s32 height, s32 attr, s32 tile); s23a4 has void Func_02002a0c(struct GlowSprite *sprite, s32 width, s32 height, s32 attr, s32 tile). */
+extern void Func_02002a0c__s26f4(struct SparkSprite__s26f4 *sprite, s32 width, s32 height, s32 attr,
+                   s32 tile) __asm__("Func_02002a0c");
 void Func_0200258c(void);
 
 void Func_020026f4(void) {
@@ -1544,7 +1551,7 @@ void Func_020026f4(void) {
   state = work->states;
   sprite = work->sprites;
   for (i = 95; i >= 0; i--) {
-    Func_02002a0c(sprite, 8, 8, 0x40000000, tileBase);
+    Func_02002a0c__s26f4(sprite, 8, 8, 0x40000000, tileBase);
     sprite->fullColor = 1;
     sprite->palette = 0;
     sprite->priority = 0;

@@ -659,6 +659,8 @@ void Func_02000e68(void) {
 void Func_020015a4(s32 mode);
 void Func_020025b0(void);
 void Func_02002604(void);
+/* VIEW(mars_lighthouse_room_f): routine Func_02002624 as s32 Func_02002624(const void *targets, const void *stops, void *a2, s32 a3); the definition has void Func_02002624(u16 *targets, u16 *stops, s32 a2, s32 a3). */
+extern s32 Func_02002624__mars_lighthouse_room_f(const void *targets, const void *stops, void *a2, s32 a3) __asm__("Func_02002624");
 void Func_020027cc(s32 index, s16 value);
 void Func_02003d80(void);
 s32 Func_02004938(s32 id);
@@ -709,7 +711,7 @@ s32 Func_02000e7c(void) {
     Func_02005638(0);
     ((struct SceneWork *)heap->eventWork)->unk1ac = value;
     if (entrance - 1 <= 1U) {
-      Func_02002624(gData_02005bf0, gData_02005bf6, Func_02000514, 88);
+      Func_02002624__mars_lighthouse_room_f(gData_02005bf0, gData_02005bf6, Func_02000514, 88);
       if (Flag_IsSet(0xa42))
         Func_02005598_(10, 0, 0);
       else
@@ -723,7 +725,7 @@ s32 Func_02000e7c(void) {
       if (Flag_IsSet(0xa46))
         Func_020004bc(1, 0);
     } else {
-      Func_02002624(gData_02005bfc, gData_02005c0e, 0, 88);
+      Func_02002624__mars_lighthouse_room_f(gData_02005bfc, gData_02005c0e, 0, 88);
       Func_020055b8(15);
       Func_020055b8(16);
       Func_02004938(15);
@@ -733,7 +735,7 @@ s32 Func_02000e7c(void) {
   } else if (scene == (s32)&SceneId_Ov6adRoom2) {
     Func_02005638(0);
     ((struct SceneWork *)heap->eventWork)->unk1ac = value;
-    Func_02002624(gData_02005c14, gData_02005c26, Func_02001468, 88);
+    Func_02002624__mars_lighthouse_room_f(gData_02005c14, gData_02005c26, Func_02001468, 88);
     Func_020027cc(3, 1);
     if (entrance == 2)
       Func_02002604();
@@ -803,10 +805,10 @@ s32 Func_02000e7c(void) {
     if (Flag_IsSet(0xa37))
       Func_02005598_(12, 0x780000, 0x1280000);
     if (entrance - 14 <= 1U) {
-      Func_02002624(gData_02005c2c, gData_02005c32, Func_02001490, 88);
+      Func_02002624__mars_lighthouse_room_f(gData_02005c2c, gData_02005c32, Func_02001490, 88);
       Func_020027cc(0, 1);
     } else {
-      Func_02002624(gData_02005c38, gData_02005c46, 0, 88);
+      Func_02002624__mars_lighthouse_room_f(gData_02005c38, gData_02005c46, 0, 88);
     }
     if (!Flag_IsSet(0x109)) {
       if (entrance == 2 || entrance == 4 || entrance == 6 || entrance == 7 ||
@@ -826,13 +828,13 @@ s32 Func_02000e7c(void) {
     BYTE_AT(Actor_GetById(8), 98) = 1;
     BYTE_AT(Actor_GetById(9), 98) = 1;
     if (entrance - 5 <= 1U || entrance == 8) {
-      Func_02002624(gData_02005c4c, gData_02005c5a, 0, 88);
+      Func_02002624__mars_lighthouse_room_f(gData_02005c4c, gData_02005c5a, 0, 88);
 #if TLA_PATCH_1
       Func_020002ec();
 #endif
     } else if (entrance == 11 || entrance == 13 || entrance == 14 ||
                entrance == 1 || entrance == 15) {
-      Func_02002624(gData_02005c60, gData_02005c6e, 0, 88);
+      Func_02002624__mars_lighthouse_room_f(gData_02005c60, gData_02005c6e, 0, 88);
     }
     if (!Flag_IsSet(0x109)) {
       if (entrance == 15)

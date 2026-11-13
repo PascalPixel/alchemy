@@ -254,6 +254,8 @@ void Func_0200533c(void);
 void Func_02005364(void);
 void Func_02001b38(void);
 void Func_02001b68(void);
+/* VIEW(s2394): routine Func_020053bc as void Func_020053bc(const u8 *data); the definition has void Func_020053bc(const u16 *entry). */
+extern void Func_020053bc__s2394(const u8 *data) __asm__("Func_020053bc");
 void Func_02005824(void);
 void Func_0200583c(s32 index, s32 flag, s32 a, s32 b);
 void Func_0200582c(s32 index, s32 a, s32 b);
@@ -599,7 +601,7 @@ void Func_020034f4(void) {
     Actor_SetScript(28, gData_02005944);
     MapGrid_CopyCellAttributes(33, 24, 3, 3, 27, 29);
   }
-  Func_020053bc(gData_02005d7c);
+  Func_020053bc__s2394(gData_02005d7c);
   if (!Event_GetFlag(0x8ce) || !Event_GetFlag(0x8cf))
     Actor_Get(26)->y = PIXELS(16);
   Func_02005824();

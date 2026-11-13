@@ -105,6 +105,8 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Func_080150e4(s32 angle);
 void Func_0801521c(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+/* VIEW(f18ad40): routine Render_DrawModelList as void Render_DrawModelList(struct Model__f18ad40 *model); f188714 has void Render_DrawModelList(struct Model__f188714 *model). */
+extern void Render_DrawModelList__f18ad40(struct Model__f18ad40 *model) __asm__("Render_DrawModelList");
 void Heap_Release(void *block);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
@@ -363,7 +365,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       Func_0801521c(scale);
       Func_080151e4(0x10000, 0x20000, 0x10000);
       Render_TransformVertices(Data_081991e0, vertices, 4);
-      Render_DrawModelList(model);
+      Render_DrawModelList__f18ad40(model);
       Heap_Release(model);
       Heap_Release(vertices);
     }

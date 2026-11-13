@@ -198,6 +198,8 @@ void Palette_LoadBasicObjColors(void);
 void BattleBackground_LoadFar(s32, s32, s32);
 void Func_08164b2c(s32, s32, s32);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
+/* VIEW(f175f74): routine Func_0815b290 as struct SpriteObject__f175f74 *Func_0815b290(s32, s32, u32, u32); the definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags). */
+extern struct SpriteObject__f175f74 *Func_0815b290__f175f74(s32, s32, u32, u32) __asm__("Func_0815b290");
 /* VIEW(f175f74): routine Func_0815b3b0 as struct SpriteObject__f175f74 *Func_0815b3b0(s32, s32, u32, u32); the definition has struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value); tried as the definition's struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value), which the object already declares, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:23681: too many arguments to function `Func_0815b3b0'. */
 extern struct SpriteObject__f175f74 *Func_0815b3b0__f175f74(s32, s32, u32, u32) __asm__("Func_0815b3b0");
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
@@ -217,6 +219,8 @@ void Func_080150e4(s32);
 void SceneTransform_ApplyYaw(s32);
 void Func_0801521c(s32);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+/* VIEW(f175f74): routine Render_DrawModelList as void Render_DrawModelList(struct Model__f175f74 *); f173aac has void Render_DrawModelList(struct Model *model). */
+extern void Render_DrawModelList__f175f74(struct Model__f175f74 *) __asm__("Render_DrawModelList");
 void Graphics_LoadGreyRamp(void);
 void Func_0815b434(u8 *map, s32 size, s32 scale);
 void Func_0818caa8(void *, s32, s32, s32);
@@ -343,7 +347,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     }
   }
   {
-    struct SpriteObject__f175f74 *object = Func_0815b290(64, 64, 0xc0002000, 0);
+    struct SpriteObject__f175f74 *object = Func_0815b290__f175f74(64, 64, 0xc0002000, 0);
 
     work->objects[0] = object;
     object->priority = 3;
@@ -358,7 +362,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   source += 32;
   Resource_DecodeType01(source, work->buffer);
   for (i = 0; i != 16; i++) {
-    struct SpriteObject__f175f74 *object = Func_0815b290(16, 16, 0, 0xf000);
+    struct SpriteObject__f175f74 *object = Func_0815b290__f175f74(16, 16, 0, 0xf000);
     SPRITES[i] = object;
     object->priority = 1;
     CpuCopy(OBJ_VRAM + slots[object->slot].offset, work->buffer + i * 32, 32);
@@ -680,7 +684,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         source += 0x180;
         Resource_DecodeType01(source, work->buffer + 0x2400);
         for (i = 0, objectSlots = TILE_SLOTS; i != 12; i++) {
-          struct SpriteObject__f175f74 *object = Func_0815b290(32, 32, 0x80002000, 0);
+          struct SpriteObject__f175f74 *object = Func_0815b290__f175f74(32, 32, 0x80002000, 0);
 
           object->priority = 3;
           work->objects[i] = object;
@@ -694,7 +698,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Resource_DecodeType01(source, work->buffer + 0x2400);
         {
           struct SpriteObject__f175f74 *object =
-              Func_0815b290(64, 64, 0xc0000000, 0xe000);
+              Func_0815b290__f175f74(64, 64, 0xc0000000, 0xe000);
           struct TileSlot *tileSlots;
 
           work->objects[12] = object;
@@ -709,7 +713,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             vram += tileSlots[object->slot].offset;
             CpuCopy(vram, work->buffer + 0x2400, 0x800);
           }
-          object = Func_0815b290(64, 64, 0xc0002000, 0);
+          object = Func_0815b290__f175f74(64, 64, 0xc0002000, 0);
           work->objects[13] = object;
           object->priority = 2;
           object->unk17 = 32;
@@ -836,7 +840,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           Func_080150e4(0x4000 - t * 256);
           SceneTransform_ApplyYaw(-t << 10);
           Render_TransformVertices(gData_08199210, texture, 4);
-          Render_DrawModelList(model);
+          Render_DrawModelList__f175f74(model);
         }
         if (frame > 231) {
           t = frame - 232;
@@ -862,7 +866,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           SceneTransform_ApplyPitch(0xc000);
           SceneTransform_ApplyYaw(-t << 10);
           Render_TransformVertices(gData_08199210, texture, 4);
-          Render_DrawModelList(model);
+          Render_DrawModelList__f175f74(model);
         }
         Heap_Release(model);
         Heap_Release(texture);
@@ -1017,7 +1021,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
               }
               SceneTransform_ApplyPitch(0x800);
               Render_TransformVertices(gData_08199210, texture, 4);
-              Render_DrawModelList(model);
+              Render_DrawModelList__f175f74(model);
             }
           }
           Heap_Release(model);
@@ -1289,7 +1293,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           SceneTransform_ApplyYaw(-frame << 10);
         }
         Render_TransformVertices(gData_08199210, texture, 4);
-        Render_DrawModelList(model);
+        Render_DrawModelList__f175f74(model);
       }
       if (frame > 95) {
         depth = 568 - frame * 6;
@@ -1302,7 +1306,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         SceneTransform_ApplyPitch(0x2000);
         SceneTransform_ApplyYaw(-frame << 9);
         Render_TransformVertices(gData_08199210, texture, 4);
-        Render_DrawModelList(model);
+        Render_DrawModelList__f175f74(model);
       }
       if (frame > 55) {
         s32 last = frame * 2 - 208;
@@ -1318,7 +1322,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         SceneTransform_ApplyPitch(0x2000);
         SceneTransform_ApplyYaw(frame << 10);
         Render_TransformVertices(gData_08199210, texture, 4);
-        Render_DrawModelList(model);
+        Render_DrawModelList__f175f74(model);
         /* FAKEMATCH(dead): twice raised to frame though nothing reads it again;
          * flow deletes the store and its test; as no test, 290 of 4354
          * instructions differ in tla-en. */
@@ -1332,7 +1336,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           SceneTransform_ApplyPitch(0x2000);
           SceneTransform_ApplyYaw(-frame << 10);
           Render_TransformVertices(gData_08199210, texture, 4);
-          Render_DrawModelList(model);
+          Render_DrawModelList__f175f74(model);
         }
       }
       Heap_Release(model);
@@ -1784,7 +1788,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             Func_080151e4(size / 3, size, size);
             SceneTransform_ApplyPitch(0xc000);
             Render_TransformVertices(gData_08199210, texture, 4);
-            Render_DrawModelList(model);
+            Render_DrawModelList__f175f74(model);
           }
           Heap_Release(model);
           Heap_Release(texture);

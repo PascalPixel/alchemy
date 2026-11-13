@@ -247,6 +247,8 @@ struct SparklePicture {
 
 extern const struct SparklePicture gData_080f0b7c[];
 
+/* VIEW(motes): routine Func_080140d8 as void Func_080140d8(void *entry, s32 priority); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32 depth). */
+extern void Func_080140d8__motes(void *entry, s32 priority) __asm__("Func_080140d8");
 
 void FieldEffect_UpdateSparkles(void) {
   struct SparkleWork *work;
@@ -310,7 +312,7 @@ void FieldEffect_UpdateSparkles(void) {
 #endif
         sparkle->y = sy;
         sparkle->matrix = ((frames >> 1) & 1) << 3;
-        Func_080140d8(sparkle, 240);
+        Func_080140d8__motes(sparkle, 240);
       }
       sparkle->timer--;
     }

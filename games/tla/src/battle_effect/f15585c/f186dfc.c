@@ -134,6 +134,9 @@ extern char ResourceId_SmokeBandSheet;
 extern char ResourceId_Data134;
 
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
+/* VIEW(f186dfc): routine Func_0815b290 as struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags). */
+extern struct SpriteObject *Func_0815b290__f186dfc(s32 width, s32 height, u32 shape,
+                                   u32 attributes) __asm__("Func_0815b290");
 void BattleEffect_ConfigureEffectDisplay(void);
 void Func_08163c2c(s32 a, s32 b);
 void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
@@ -246,7 +249,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       }
     }
   }
-  sprite = Func_0815b290(64, 64, 0xc0002000, 0);
+  sprite = Func_0815b290__f186dfc(64, 64, 0xc0002000, 0);
   ((struct FieldSprite **)work->objects)[18] = sprite;
   sprite->blendMode = 1;
   STAMP_TILES(work) =
@@ -1129,7 +1132,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
 #define COLUMN_WIDTH 8
 #define COLUMN_HEIGHT 16
 
-
+/// A mesh triangle: its three vertex numbers and their texture coordinates.
 struct MeshTriangle {
   u8 vertex[3];
   u8 unk03;

@@ -33,9 +33,14 @@ struct ChainSlot__f0d9498 {
   struct ChainNode__f0d9498 *head;
 };
 
+/* VIEW(f0d9498): tag struct ChainWork as struct ChainWork__f0d9498; visual_attributes.c has another definition. */
+struct ChainWork__f0d9498 {
+  u8 unk00[12];
+  struct ChainSlot__f0d9498 slots[8];
+};
 
 s32 Func_080d9498(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
-  struct ChainWork *work = Ram_HeapSlots->unk84[6];
+  struct ChainWork__f0d9498 *work = Ram_HeapSlots->unk84[6];
   s32 dx = toX - x;
   s32 ex = dx >> 8;
   s32 dy = toY - y;

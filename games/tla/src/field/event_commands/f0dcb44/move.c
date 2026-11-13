@@ -208,6 +208,8 @@ void BattleEffect_InitializeSharedScene(void);
 void BattleEffect_PrepareBufferInterpolation(void);
 void BattleEffect_SnapScaleToFull(struct Actor *object);
 s32 Func_080ce31c(s32 kind);
+/* VIEW(f0dd054): routine Func_080ce458 as struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector); battle.h has struct TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector). */
+extern struct PendingEvent *Func_080ce458__f0dd054(u32 filter, s32 kind, s32 selector) __asm__("Func_080ce458");
 /* VIEW(f0dd054): routine BattleEffect_GetCycledTableWord as u32 BattleEffect_GetCycledTableWord(u32 keys); the definition has u16 BattleEffect_GetCycledTableWord(void); tried as the definition's u16 BattleEffect_GetCycledTableWord(void), which the object already declares, it does not compile in tla-ja: games/tla/src/field/event_commands/f0dcb44.c:463: too many arguments to function `BattleEffect_GetCycledTableWord'. */
 extern u32 BattleEffect_GetCycledTableWord__f0dd054(u32 keys) __asm__("BattleEffect_GetCycledTableWord");
 s32 Func_08020210(struct Actor *object, struct Vec3 *position);
@@ -274,7 +276,7 @@ void Func_080dd054(void) {
     return;
   }
 
-  event = Func_080ce458(0x50000005, scene->fieldKind,
+  event = Func_080ce458__f0dd054(0x50000005, scene->fieldKind,
                         Func_080ce31c(scene->fieldKind));
   pusher->watchedObject = target;
   position.x = target->x;
@@ -511,8 +513,12 @@ void FieldEffect_RunMove(void) {
 
 extern const s32 gData_080f0e78[];
 
+/* VIEW(item_break): routine Actor_Spawn as struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z); hue has extern struct ItemBreakFragmentObject *Actor_Spawn(s32, s32, s32, s32). */
+extern struct Actor *Actor_Spawn__item_break(s32 kind, s32 x, s32 y, s32 z) __asm__("Actor_Spawn");
 void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
                                                 s32 magnitude, s32 angle);
+/* VIEW(item_break): routine BattleEffect_UpdateItemBreakFragment as void BattleEffect_UpdateItemBreakFragment(void); the definition has void BattleEffect_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src). */
+extern void BattleEffect_UpdateItemBreakFragment__item_break(void) __asm__("BattleEffect_UpdateItemBreakFragment");
 
 #define SE_ITEM_BREAK 138
 
@@ -531,12 +537,12 @@ void *BattleEffect_StartItemBreak(void *object) {
   u32 jitter;
 
   angle = (source->facing + 0x2000) & 0xc000;
-  parent = Actor_Spawn(278, source->x, source->y + (16 << 16), source->z);
+  parent = Actor_Spawn__item_break(278, source->x, source->y + (16 << 16), source->z);
   if (parent == 0)
     return 0;
   parent->scaleY = 0x4000;
   parent->scaleX = 0x4000;
-  parent->update = BattleEffect_UpdateItemBreakFragment;
+  parent->update = BattleEffect_UpdateItemBreakFragment__item_break;
   parent->speedLimit = 2 << 16;
   parent->acceleration = 2 << 16;
   parent->motionFlags = 0;
@@ -544,7 +550,7 @@ void *BattleEffect_StartItemBreak(void *object) {
   Motion_SetTargetPositionFromMagnitudeAngle(parent, 16 << 16, angle);
 
   for (fragmentIndex = 7; fragmentIndex >= 0; fragmentIndex--) {
-    child = Actor_Spawn(673, source->x, source->y + (16 << 16), source->z);
+    child = Actor_Spawn__item_break(673, source->x, source->y + (16 << 16), source->z);
     if (child != 0) {
       Actor_StartScriptFar(child, gData_080f0e78);
       speed = Random16() + Q16_ONE;
@@ -603,7 +609,7 @@ void UpdateRisingParticleBurst(void *object) {
     wait(1);
   }
   for (i = 7; i >= 0; i--) {
-    child = Actor_Spawn(673, src->x, src->y, src->z);
+    child = Actor_Spawn__item_break(673, src->x, src->y, src->z);
     if (child != 0) {
       s32 speed;
       // One 1.0 for both uses, set before the block's calls; a literal at

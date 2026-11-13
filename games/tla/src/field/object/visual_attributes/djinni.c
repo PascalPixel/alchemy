@@ -47,6 +47,8 @@ void Event_End(void);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
 void Actor_Jump(s32 id, s32 speed, s32 frames);
+/* VIEW(motes): routine Func_080200c0 as struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
+extern struct Actor *Func_080200c0__motes(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_080200c0");
 void Animation_ApplyChildValuesFar(struct Actor *object, u32 value);
 void *Sprite_ShareVramCacheEntry(void *sprite, void *last);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
@@ -115,7 +117,7 @@ void Func_080d7524(s32 djinniId) {
   sharedSprite = NULL;
   prev = djinni;
   for (i = 0; i < 8; i++) {
-    copy = Func_080200c0(sprite, djinni->x, djinni->y, djinni->z);
+    copy = Func_080200c0__motes(sprite, djinni->x, djinni->y, djinni->z);
     // DEAD: nothing reads copies; the source keeps the store.
     copies[i] = copy;
     if (copy != NULL) {
@@ -385,6 +387,11 @@ struct EffectVector {
   s32 z;
 };
 
+/* VIEW(motes): routine Camera_WorldToScreen as void Camera_WorldToScreen(struct EffectVector *position); ground_particles has void Camera_WorldToScreen(union FieldCoordinate *position). */
+extern void Camera_WorldToScreen__motes(struct EffectVector *position) __asm__("Camera_WorldToScreen");
+/* VIEW(motes): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *position); f0d489c has void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position). */
+extern void Vector_AddPolarOffset__motes(s32 magnitude, s32 angle,
+                           struct EffectVector *position) __asm__("Vector_AddPolarOffset");
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 
 /// Field effect sprite callback of a Jupiter Djinni's light particles: each
@@ -418,7 +425,7 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
     position.x = owner->x;
     position.y = owner->y + 20 * Q16_ONE;
     position.z = owner->z;
-    Camera_WorldToScreen(&position);
+    Camera_WorldToScreen__motes(&position);
     particle->originX += (position.x - particle->originX) / 8;
     particle->originZ += (position.z - particle->originZ) / 8;
     if ((s16)particle->age == 40) {
@@ -437,7 +444,7 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   }
   position.x = particle->originX;
   position.z = particle->originZ;
-  Vector_AddPolarOffset(particle->orbitRadius << 16, particle->orbitAngle << 11,
+  Vector_AddPolarOffset__motes(particle->orbitRadius << 16, particle->orbitAngle << 11,
                         &position);
   particle->x = position.x;
   particle->z = position.z;

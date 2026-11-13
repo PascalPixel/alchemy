@@ -290,6 +290,9 @@ struct MoteWork {
 };
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
+/* VIEW(f0e9af4): routine EffectSprite_DrawAtWorldPosition as void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct Mote *mote); f0e92b4 has void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct SplashParticle *particle). */
+extern void EffectSprite_DrawAtWorldPosition__f0e9af4(struct EffectSprite *sprite,
+                                      struct Mote *mote) __asm__("EffectSprite_DrawAtWorldPosition");
 
 void Func_080e9f68(void) {
   struct MoteWork *work = Ram_HeapSlots->battleFxWork[0];
@@ -353,7 +356,7 @@ void Func_080e9f68(void) {
   for (i = 31; i >= 0; i--, sprite++, mote++) {
     if ((u32)mote->timer < 20) {
       sprite->oam.index = *tile + (mote->timer / 5 & 7) * 8;
-      EffectSprite_DrawAtWorldPosition(sprite, mote);
+      EffectSprite_DrawAtWorldPosition__f0e9af4(sprite, mote);
       BattleEffect_IntegrateVector3(&mote->x, 63, -0x8000);
       mote->timer++;
     }

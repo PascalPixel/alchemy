@@ -12,6 +12,9 @@ struct ChainWork__f0d9710 {
 
 extern s32 gData_080f3940;
 
+/* VIEW(f0d9710): routine Func_080d9790 as void Func_080d9790(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ, s32 wobble); the definition has s32 Func_080d9790(s32 index, s32 x, s32 y, s32 z). */
+extern void Func_080d9790__f0d9710(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
+                   s32 wobble) __asm__("Func_080d9790");
 
 void Func_080d9710(s32 index, s32 fromId, s32 toId) {
   struct ChainWork__f0d9710 *work;
@@ -25,7 +28,7 @@ void Func_080d9710(s32 index, s32 fromId, s32 toId) {
   if (from != NULL && to != NULL) {
     work->from = from;
     work->to = to;
-    Func_080d9790(index, from->x, from->y + 0x80000, from->z, to->x,
+    Func_080d9790__f0d9710(index, from->x, from->y + 0x80000, from->z, to->x,
                   to->y + 0x80000, to->z, Trig_Sin(gData_080f3940) * 4);
     gData_080f3940 += 0x1000;
   }

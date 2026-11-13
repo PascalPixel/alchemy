@@ -59,6 +59,11 @@ s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 s32 Resource_ResetEntry(u32 slot);
+/* VIEW(growing_particle): routine Func_080e45a8 as void Func_080e45a8(void *sprite, void *particle, s32 index, s32 tiles, s32 high); the definition has void Func_080e45a8(struct EffectSprite__f0e446c *sprite, struct EffectParticle *particle, s32 unused, s32 tiles, s32 high). */
+extern void Func_080e45a8__growing_particle(void *sprite, void *particle, s32 index, s32 tiles,
+                   s32 high) __asm__("Func_080e45a8");
+/* VIEW(growing_particle): routine Func_080e4510 as void Func_080e4510(void *sprite, s32 tiles); the definition has void Func_080e4510(struct EffectSprite__f0e446c *sprite, s32 tiles). */
+extern void Func_080e4510__growing_particle(void *sprite, s32 tiles) __asm__("Func_080e4510");
 void Func_080e446c(u8 *source, u8 *destination, s32 phase);
 void Func_080e45a0(void *sprite);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
@@ -69,6 +74,8 @@ void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
 struct Actor *Actor_GetById(u32 objectId);
 void Camera_FollowActor(s32 actor, s32 mode);
 s32 Func_080ce31c(s32 kind);
+/* VIEW(growing_particle): routine Func_080ce458 as struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector); battle.h has struct TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector). */
+extern struct PendingEvent *Func_080ce458__growing_particle(u32 filter, s32 kind, s32 selector) __asm__("Func_080ce458");
 s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 argument);
 
 void Func_080e4730(void) {
@@ -107,7 +114,7 @@ void Func_080e4730(void) {
   delay = 0;
   particleSprite = work + 0x800;
   for (; i < 64; i++) {
-    Func_080e45a8(particleSprite, particle, i, particleTiles,
+    Func_080e45a8__growing_particle(particleSprite, particle, i, particleTiles,
                   *(s16 *)(event + 0xd48));
     *(s32 *)(particle + 24) = delay;
     particleSprite += 40;
@@ -154,7 +161,7 @@ void Func_080e4730(void) {
   asm("" : : "r"(party));
   pictureEntry = Resource_FindFreeEntry();
   sprite = VramCache_Load(pictureEntry, sprite, NULL);
-  Func_080e4510(work + 0x1900, sprite);
+  Func_080e4510__growing_particle(work + 0x1900, sprite);
   wait(1);
 
   frame = 0;
@@ -185,7 +192,7 @@ void Func_080e4730(void) {
       }
       if (*(s16 *)(event + 0xd48) == 0)
         Field_RunPsynergyEvent(
-            Func_080ce458(0x40000005, *(s16 *)(effect + 30),
+            Func_080ce458__growing_particle(0x40000005, *(s16 *)(effect + 30),
                           Func_080ce31c(*(s16 *)(effect + 30))),
             *(s16 *)(effect + 24), -1);
     }

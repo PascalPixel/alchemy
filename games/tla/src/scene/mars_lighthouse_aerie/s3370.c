@@ -15,6 +15,8 @@ struct MarsLighthouseAerieSprite {
 
 extern u32 Data_02006ccc;
 extern u32 Data_02006b68;
+/* VIEW(s3370): variable gData_02006180 as extern const u8 gData_02006180[]; the definition has s32 gData_02006180[] = { 22, 9, 0xcccc, 22, 10, 0xcccc, 39, 1, (s32) 0x80010000, 23, 6, - 0x10000, 0, 1, 13, 16, (s32) 0xc0010000, 3, 0, 1, .... */
+extern const u8 gData_02006180__s3370[] __asm__("gData_02006180");
 extern s32 gData_02005b54[];
 extern s32 gData_02006180[];
 
@@ -93,7 +95,7 @@ void Func_02003370(void) {
       s32 mask;
 
       sprite = object->sprite;
-      Func_0200556c(object, gData_02006180);
+      Func_0200556c(object, gData_02006180__s3370);
       Actor_SetSpriteColor(object, 1);
       object->motionFlags = 0;
       {

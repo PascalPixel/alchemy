@@ -2567,6 +2567,8 @@ struct EventWork6a5 {
   s16 unk16a;
 };
 
+/* VIEW(s3f54): routine Func_02005764 as void Func_02005764(struct Object6a5 *object, const void *script); s0198 has void Func_02005764(struct Actor *object, const void *script). */
+extern void Func_02005764__s3f54(struct Object6a5 *object, const void *script) __asm__("Func_02005764");
 void Func_02005994(struct Vector3 *position);
 s32 Func_020059e4();
 s32 Math_Cosine(s32 angle);
@@ -2633,7 +2635,7 @@ void Func_0200430c(struct Object6a5 *object) {
   }
   object->unk63 = 0;
   object->update = 0;
-  Func_02005764(object, gData_020069fc);
+  Func_02005764__s3f54(object, gData_020069fc);
   Event_PlaySound(228);
   Data_02006a28 = 0;
 }

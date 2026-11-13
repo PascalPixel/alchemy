@@ -295,6 +295,8 @@ struct TileEffectWork *Func_080da9a8(s32 kind) {
 }
 
 
+/* VIEW(f0da3bc): routine Func_080140d8 as void Func_080140d8(void *entry, s32 slot); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32 depth). */
+extern void Func_080140d8__f0da3bc(void *entry, s32 slot) __asm__("Func_080140d8");
 
 // The transform as this function builds it, a word at a time.
 
@@ -379,7 +381,7 @@ void Func_080daab0(void) {
                 (struct AffineTransform *)&transform);
           }
           link->angle = angle;
-          Func_080140d8(sprite, priority);
+          Func_080140d8__f0da3bc(sprite, priority);
         }
       }
       prevX = x;

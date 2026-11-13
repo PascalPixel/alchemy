@@ -45,12 +45,22 @@ void BattleEffect_InitializeSharedScene(void);
 void wait(s32 frames);
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Sound_PlayFar(s32 cue);
+/* VIEW(launch): routine Animation_ApplyChildValuesFar as void Animation_ApplyChildValuesFar(void *object, s32 value); actor_view.h has void Animation_ApplyChildValuesFar(struct Actor *, u32). */
+extern void Animation_ApplyChildValuesFar__launch(void *object, s32 value) __asm__("Animation_ApplyChildValuesFar");
+/* VIEW(launch): routine Actor_SetSingleChildFlagsFar as void Actor_SetSingleChildFlagsFar(void *object, s32 flags); actor_view.h has void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags). */
+extern void Actor_SetSingleChildFlagsFar__launch(void *object, s32 flags) __asm__("Actor_SetSingleChildFlagsFar");
+/* VIEW(launch): routine Camera_WorldToScreen as void Camera_WorldToScreen(struct SpinVector *position); age_and_cue has void Camera_WorldToScreen(struct EffectVector *pos). */
+extern void Camera_WorldToScreen__launch(struct SpinVector *position) __asm__("Camera_WorldToScreen");
 void Camera_WorldToScreen(struct EffectVector *position);
 void FieldParticle_Initialize(struct FieldParticle *slot, s32 kind, s32 x,
                               s32 z);
 u32 Random16(void);
 void BattleEffect_PrepareBufferInterpolation(void);
 void Actor_ApplyRandomChildValues(struct SpinObject *owner);
+/* VIEW(launch): routine BattleEffect_AdvanceAngleWithRamp as void BattleEffect_AdvanceAngleWithRamp(struct SpinObject *object); the definition has void BattleEffect_AdvanceAngleWithRamp(struct Actor *object). */
+extern void BattleEffect_AdvanceAngleWithRamp__launch(struct SpinObject *object) __asm__("BattleEffect_AdvanceAngleWithRamp");
+/* VIEW(launch): routine BattleEffect_UpdateDescendingObject as void BattleEffect_UpdateDescendingObject(struct SpinObject *obj); the definition has void BattleEffect_UpdateDescendingObject(struct Actor *obj). */
+extern void BattleEffect_UpdateDescendingObject__launch(struct SpinObject *obj) __asm__("BattleEffect_UpdateDescendingObject");
 void Func_080e0cec(struct FieldParticle *slot);
 
 void FieldEffect_RunRetreat(void) {
@@ -74,20 +84,20 @@ void FieldEffect_RunRetreat(void) {
   wait(40);
 
   Sound_PlayFar(220);
-  Animation_ApplyChildValuesFar(obj, 0);
+  Animation_ApplyChildValuesFar__launch(obj, 0);
   Actor_SetMode(obj, 3);
-  obj->update = BattleEffect_AdvanceAngleWithRamp;
+  obj->update = BattleEffect_AdvanceAngleWithRamp__launch;
   obj->timer = 0;
   wait(70);
 
-  Actor_SetSingleChildFlagsFar(obj, 0);
+  Actor_SetSingleChildFlagsFar__launch(obj, 0);
   obj->motionFlags = 0;
-  obj->update = BattleEffect_UpdateDescendingObject;
+  obj->update = BattleEffect_UpdateDescendingObject__launch;
   obj->targetX = EFFECT_NO_TARGET;
   pos.x = obj->x;
   pos.y = obj->y;
   pos.z = obj->z;
-  Camera_WorldToScreen(&pos);
+  Camera_WorldToScreen__launch(&pos);
   i = 0;
   slot = scene->slots;
   slots = slot;

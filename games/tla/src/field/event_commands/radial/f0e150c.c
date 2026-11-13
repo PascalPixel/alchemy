@@ -16,12 +16,22 @@ struct ArcSprite__f0e150c {
   u8 unk20[8];
 };
 
+/* VIEW(f0e150c): tag struct ArcWork as struct ArcWork__f0e150c; radial.c has another definition. */
+struct ArcWork__f0e150c {
+  struct ArcSprite__f0e150c sprites[2][2];
+  s16 age[2];
+  s16 resource;
+  s16 group;
+  struct Actor *target;
+};
 
+/* VIEW(f0e150c): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); launch has void Camera_WorldToScreen(struct SpinVector *position). */
+extern void Camera_WorldToScreen__f0e150c(s32 *position) __asm__("Camera_WorldToScreen");
 void Camera_WorldToScreen(struct EffectVector *position);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 
 void BattleEffect_UpdateArcEffect(void) {
-  struct ArcWork *work = Ram_HeapSlots->block62;
+  struct ArcWork__f0e150c *work = Ram_HeapSlots->block62;
   struct Actor *target = work->target;
   s32 group;
   s32 position[3];
@@ -39,7 +49,7 @@ void BattleEffect_UpdateArcEffect(void) {
       position[0] = target->x;
       position[1] = target->y + (work->age[group] << 16);
       position[2] = target->z;
-      Camera_WorldToScreen(position);
+      Camera_WorldToScreen__f0e150c(position);
       x = position[0];
       y = position[2];
       for (i = 0; i < 2; i++) {
@@ -136,6 +146,8 @@ extern const s32 Data_080f0f34[8];
 extern const s32 Data_080f0f54[4];
 extern const u8 Data_080eda0c[];
 
+/* VIEW(f0e150c): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position); f0dfd00 has void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *p). */
+extern void Vector_AddPolarOffset__f0e150c(s32 distance, s32 angle, s32 *position) __asm__("Vector_AddPolarOffset");
 s32 Func_08020210(struct Actor *object, s32 *position);
 s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 void BattleEffect_DrawCanvasBlock(const u8 *src, s32 x, s32 y, s32 width,
@@ -182,7 +194,7 @@ again:
       sprite->scaleX = sprite->scaleY = 0x10000;
       motion = &work->arrowMotion;
       pos[0] = pos[1] = pos[2] = 0;
-      Vector_AddPolarOffset(0x2666, scene->angle + 0x8000, pos);
+      Vector_AddPolarOffset__f0e150c(0x2666, scene->angle + 0x8000, pos);
       motion->velocityX = pos[0];
       motion->velocityY = pos[1];
       motion->velocityZ = pos[2];
@@ -193,7 +205,7 @@ again:
     if (work->timer == 56) {
       motion = &work->arrowMotion;
       pos[0] = pos[1] = pos[2] = 0;
-      Vector_AddPolarOffset(0x50000, scene->angle, pos);
+      Vector_AddPolarOffset__f0e150c(0x50000, scene->angle, pos);
       motion->velocityX = pos[0];
       motion->velocityY = pos[1];
       motion->velocityZ = pos[2];
@@ -253,7 +265,7 @@ again:
     }
     motion = &work->arrowMotion;
     pos[0] = pos[1] = pos[2] = 0;
-    Vector_AddPolarOffset(0x20000, scene->angle, pos);
+    Vector_AddPolarOffset__f0e150c(0x20000, scene->angle, pos);
     motion->velocityX = pos[0];
     motion->velocityY = pos[1];
     motion->velocityZ = pos[2];
@@ -355,7 +367,7 @@ again:
   pos[1] = motion->y;
   pos[2] = motion->z;
   sprite = &work->bow;
-  Camera_WorldToScreen(pos);
+  Camera_WorldToScreen__f0e150c(pos);
   sprite->x = pos[0];
   sprite->y = pos[2];
   Func_080eb01c(sprite);
@@ -363,7 +375,7 @@ again:
   pos[0] = motion->x;
   pos[1] = motion->y;
   pos[2] = motion->z;
-  Camera_WorldToScreen(pos);
+  Camera_WorldToScreen__f0e150c(pos);
   sprite = &work->arrow;
   sprite->x = pos[0];
   sprite->y = pos[2];
@@ -407,8 +419,8 @@ again:
   pos[0] = motion->x;
   pos[1] = motion->y;
   pos[2] = motion->z;
-  Vector_AddPolarOffset(-0x240000, scene->angle, pos);
-  Camera_WorldToScreen(pos);
+  Vector_AddPolarOffset__f0e150c(-0x240000, scene->angle, pos);
+  Camera_WorldToScreen__f0e150c(pos);
   canvas->x = (s16)(pos[0] >> 16);
   canvas->y = (s16)(pos[2] >> 16);
   canvas->command = CANVAS_UPLOAD_AND_FADE3;
@@ -473,7 +485,7 @@ void Func_080e1f2c(void) {
   pos[0] = scene->mainObject->x;
   pos[2] = scene->mainObject->z;
   motion = &work->bowMotion;
-  Vector_AddPolarOffset(0x80000, scene->angle, pos);
+  Vector_AddPolarOffset__f0e150c(0x80000, scene->angle, pos);
   motion->x = pos[0];
   motion->y = 0x100000;
   motion->z = pos[2];
@@ -495,7 +507,7 @@ void Func_080e1f2c(void) {
   pos[0] = scene->mainObject->x;
   pos[2] = scene->mainObject->z;
   motion = &work->arrowMotion;
-  Vector_AddPolarOffset(0x120000, scene->angle, pos);
+  Vector_AddPolarOffset__f0e150c(0x120000, scene->angle, pos);
   motion->x = pos[0];
   motion->y = 0x100000;
   motion->z = pos[2];
@@ -515,7 +527,7 @@ void Func_080e1f2c(void) {
   work->target[0] = scene->mainObject->x;
   work->target[1] = scene->mainObject->y;
   work->target[2] = scene->mainObject->z;
-  Vector_AddPolarOffset(0x500000, scene->angle, work->target);
+  Vector_AddPolarOffset__f0e150c(0x500000, scene->angle, work->target);
 
   palette = (u16 *)&OBJ_PLTT_COLOR(14, 0);
   for (i = 0; i < 16; i++) {
@@ -648,6 +660,8 @@ struct TouchCell {
 };
 
 s32 Func_080dbdc8(s32 x, s32 z, s32 layer);
+/* VIEW(f0e150c): routine Field_RunPsynergyEvent as void Field_RunPsynergyEvent(s32 event, s32 argument0, s32 argument1); event_work.h has s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target). */
+extern void Field_RunPsynergyEvent__f0e150c(s32 event, s32 argument0, s32 argument1) __asm__("Field_RunPsynergyEvent");
 
 // Only for the compiler: see the FAKEMATCH tag in Func_080e249c.
 static inline s32 Index(s32 i) { return i; }
@@ -696,7 +710,7 @@ void Func_080e249c(void) {
     s32 event = Func_080ce458(0x50000005, work->kind, ids[Index(i)]);
 
     if (event != 0)
-      Field_RunPsynergyEvent(event, work->argument0, work->argument1);
+      Field_RunPsynergyEvent__f0e150c(event, work->argument0, work->argument1);
   }
 }
 

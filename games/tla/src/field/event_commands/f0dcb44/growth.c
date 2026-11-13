@@ -120,6 +120,10 @@ struct BurstParticleVector {
 extern const s32 gData_080f0ee8[];
 
 void Func_080ddbd8(void);
+/* VIEW(f0dd820): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position); hue has extern void Vector_AddPolarOffset(s32, s32, struct ItemBreakFragmentPosition *). */
+extern void Vector_AddPolarOffset__f0dd820(s32 radius, s32 angle, s32 *position) __asm__("Vector_AddPolarOffset");
+/* VIEW(f0dd820): routine Actor_Spawn as struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z); hue has extern struct ItemBreakFragmentObject *Actor_Spawn(s32, s32, s32, s32). */
+extern struct Actor *Actor_Spawn__f0dd820(s32 kind, s32 x, s32 y, s32 z) __asm__("Actor_Spawn");
 void BattleEffect_PrepareBufferInterpolation(void);
 // Far call to the target classifier Func_080237c8.
 s32 Func_08020330(struct Actor *object);
@@ -168,9 +172,9 @@ void Func_080dda30(s32 unused) {
       p->values[0] = scene->x;
       p->values[2] = scene->z;
       distance = Random16() * 6 + 0x40000;
-      Vector_AddPolarOffset(distance, Random16(), p->values);
+      Vector_AddPolarOffset__f0dd820(distance, Random16(), p->values);
       p->values[1] = scene->y;
-      piece = Actor_Spawn(BURST_FALL_OBJECT, p->values[0], p->values[1],
+      piece = Actor_Spawn__f0dd820(BURST_FALL_OBJECT, p->values[0], p->values[1],
                           p->values[2]);
       if (piece != 0) {
         Actor_StartScriptFar(piece, gData_080f0ee8);
@@ -204,9 +208,9 @@ void FieldEffect_RunGrowth(void) {
     p->values[0] = *(s32 *)(state + 4);
     p->values[2] = *(s32 *)(state + 12);
     randomValue = (Random16() * 6) + 0x40000;
-    Vector_AddPolarOffset(randomValue, Random16(), p->values);
+    Vector_AddPolarOffset__f0dd820(randomValue, Random16(), p->values);
     p->values[1] = *(s32 *)(state + 8);
-    object = Actor_Spawn(0x119, p->values[0], p->values[1], p->values[2]);
+    object = Actor_Spawn__f0dd820(0x119, p->values[0], p->values[1], p->values[2]);
     if (object != 0) {
       Actor_StartScriptFar(object, gData_080f0ee8);
       *((u8 *)object + 0x55) = 2;
@@ -279,10 +283,10 @@ void Func_080ddbd8(void) {
       pos[0] = user->x;
       pos[1] = user->y + 0xa0000;
       pos[2] = user->z;
-      Vector_AddPolarOffset(0xa0000, *(u16 *)&work->angle, pos);
+      Vector_AddPolarOffset__f0dd820(0xa0000, *(u16 *)&work->angle, pos);
     }
 
-    obj = Actor_Spawn(672, pos[0], pos[1], pos[2]);
+    obj = Actor_Spawn__f0dd820(672, pos[0], pos[1], pos[2]);
     visual = &((struct BurstParticleVisualGroup *)obj->sprite)->primary;
     child = &((struct BurstParticleVisualGroup *)obj->sprite)->child;
     child->flip = visual->flip;
@@ -307,9 +311,9 @@ void Func_080ddbd8(void) {
       p[1] = work->y;
       p[2] = work->z;
       if (*(u16 *)&work->angle == 0xc000)
-        Vector_AddPolarOffset(0xe0000, *(u16 *)&work->angle, p);
+        Vector_AddPolarOffset__f0dd820(0xe0000, *(u16 *)&work->angle, p);
       dist = Random16() * 6 + 0x40000;
-      Vector_AddPolarOffset(dist, Random16(), p);
+      Vector_AddPolarOffset__f0dd820(dist, Random16(), p);
       Actor_SetTargetPosition(obj, p[0], p[1], p[2]);
     }
     Sound_PlayFar(131);

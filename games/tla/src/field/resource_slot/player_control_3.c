@@ -4,6 +4,10 @@
 
 #include "../resource_slot_internal.h"
 
+/// The heading of each direction-pad combination, 0xffff for none.
+/* VIEW(move_by_keys): variable gData_0802ec5c as extern const u16 gData_0802ec5c[16]; f028aac has extern const s16 gData_0802ec5c[16]. */
+extern const u16 gData_0802ec5c__move_by_keys[16] __asm__("gData_0802ec5c");
+
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
 s32 Func_080c8710(struct Actor *object);
@@ -46,7 +50,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
     keys = INPUT_HELD;
   keys = INPUT_HELD;
   {
-    const u16 *table = gData_0802ec5c;
+    const u16 *table = gData_0802ec5c__move_by_keys;
 
     angle = *(const u16 *)((const u8 *)table + (((keys >> 4) & 15) << 1));
   }
@@ -181,7 +185,7 @@ s32 Func_080292fc(struct Actor *object) {
   object->speedLimit = 0x8000;
   object->acceleration = 0x8000;
   object->motionFlags = 0;
-  angle = gData_0802ec5c[(INPUT_HELD >> 4) & 15];
+  angle = gData_0802ec5c__move_by_keys[(INPUT_HELD >> 4) & 15];
   if (angle == 0xffff) {
     best = (struct ChainNode *)object->watchedObject;
     value = 0;
@@ -312,7 +316,7 @@ s32 Func_08029570(struct Actor *object) {
   object->speedLimit = 0x8000;
   object->acceleration = 0x8000;
   object->motionFlags = 0;
-  angle = gData_0802ec5c[(gInput.held >> 4) & 15];
+  angle = gData_0802ec5c__move_by_keys[(gInput.held >> 4) & 15];
   if (angle == 0xffff) {
     collisionFlags = 4;
     best = (struct WorkA0Node *)object->watchedObject;

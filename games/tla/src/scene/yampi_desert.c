@@ -697,6 +697,8 @@ struct Actor *Actor_GetById(u32 objectId);
 struct Actor *Func_02003fc0(s32 kind, s32 x, s32 y, s32 z);
 void Func_02003fa8(struct Actor *object, s32 mode);
 void Func_02003fb8(struct Actor *object, const void *script);
+/* VIEW(s1cc4): routine Effect_AdvanceMotionAtLeaderPriority as void Effect_AdvanceMotionAtLeaderPriority(void); s0b84 has void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object). */
+extern void Effect_AdvanceMotionAtLeaderPriority__s1cc4(void) __asm__("Effect_AdvanceMotionAtLeaderPriority");
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 
@@ -750,7 +752,7 @@ void Func_02001cc4(struct Actor *object, s32 dx, s32 dz) {
         dust->timer = ((Random16Far() << 9) >> 16) - 256;
         dust->speedLimit = 0;
         dust->acceleration = 0;
-        dust->update = Effect_AdvanceMotionAtLeaderPriority;
+        dust->update = Effect_AdvanceMotionAtLeaderPriority__s1cc4;
       }
     }
   }

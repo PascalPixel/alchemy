@@ -32,8 +32,17 @@ s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 s32 Resource_ResetEntry(u32 slot);
+/* VIEW(f0e4a34): routine Func_080e45a8 as void Func_080e45a8(void *sprite, void *particle, s32 index, s32 tiles, s32 high); the definition has void Func_080e45a8(struct EffectSprite__f0e446c *sprite, struct EffectParticle *particle, s32 unused, s32 tiles, s32 high). */
+extern void Func_080e45a8__f0e4a34(void *sprite, void *particle, s32 index, s32 tiles,
+                   s32 high) __asm__("Func_080e45a8");
+/* VIEW(f0e4a34): routine Func_080e4510 as void Func_080e4510(void *sprite, s32 tiles); the definition has void Func_080e4510(struct EffectSprite__f0e446c *sprite, s32 tiles). */
+extern void Func_080e4510__f0e4a34(void *sprite, s32 tiles) __asm__("Func_080e4510");
 void Func_080e446c(u8 *source, u8 *destination, s32 phase);
 void Func_080e45a0(void *sprite);
+/* VIEW(f0e4a34): routine Func_080e46ac as void Func_080e46ac(void *sprite, void *particle, s32 index, s32 tiles); the definition has void Func_080e46ac(struct EffectSprite *sprite, struct EffectParticle *particle, s32 unused, s32 tiles). */
+extern void Func_080e46ac__f0e4a34(void *sprite, void *particle, s32 index, s32 tiles) __asm__("Func_080e46ac");
+/* VIEW(f0e4a34): routine Func_080e43a4 as void Func_080e43a4(void *source, void *buffer, s32 size); the definition has void Func_080e43a4(struct PictureSource *source, void *buffer, s32 size). */
+extern void Func_080e43a4__f0e4a34(void *source, void *buffer, s32 size) __asm__("Func_080e43a4");
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Actor_SetPositionAndResetMotionFar(struct Actor *actor, s32 x, s32 y,
                                         s32 z);
@@ -82,7 +91,7 @@ void Func_080e4a34(void) {
   delay = -12;
   sprite = work + 0x800;
   for (; i < 64; i++) {
-    Func_080e45a8(sprite, particle, i, particleTiles, event->standing);
+    Func_080e45a8__f0e4a34(sprite, particle, i, particleTiles, event->standing);
     *(s32 *)(particle + 24) = delay;
     sprite += 40;
     delay -= 2;
@@ -103,10 +112,10 @@ void Func_080e4a34(void) {
   }
   owner->facing = 0x4000;
   wait(1);
-  Func_080e43a4(*(void **)((u8 *)owner->sprite + 40), work, 0x400);
+  Func_080e43a4__f0e4a34(*(void **)((u8 *)owner->sprite + 40), work, 0x400);
   pictureEntry = Resource_FindFreeEntry();
   pictureTiles = VramCache_Load(pictureEntry, 0x400, NULL);
-  Func_080e4510(work + 0x1900, pictureTiles);
+  Func_080e4510__f0e4a34(work + 0x1900, pictureTiles);
   frame = 15;
   for (; frame <= 92; frame++) {
     Func_080e446c(work, work + 0x400, frame * 3 / 2);
@@ -117,7 +126,7 @@ void Func_080e4a34(void) {
     particle = work + 0x1200;
     sprite = work + 0x800;
     for (; i <= 32; i++) {
-      Func_080e46ac(sprite, particle, i, particleTiles);
+      Func_080e46ac__f0e4a34(sprite, particle, i, particleTiles);
       sprite += 40;
       particle += 28;
     }
@@ -192,6 +201,9 @@ s32 Trig_Sin(s32 angle);
 void Camera_WorldToScreen(s32 *position);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 void BattleEffect_IntegrateVector2(s32 *vector, s32 damping, s32 gravity);
+/* VIEW(f0e4a34): routine EffectSprite_DrawAtWorldPosition as void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct GlowParticle *particle); f0e2c38 has void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct SprayParticle *particle). */
+extern void EffectSprite_DrawAtWorldPosition__f0e4a34(struct EffectSprite *sprite,
+                                      struct GlowParticle *particle) __asm__("EffectSprite_DrawAtWorldPosition");
 void Map_SetScreenShakeFar(s32 x, s32 y, s32 decay);
 
 #define GLOW_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
@@ -298,7 +310,7 @@ void Func_080e4d9c(void) {
         sprite->oam.index = work->burstTile + 28;
         break;
       }
-      EffectSprite_DrawAtWorldPosition(sprite, particle);
+      EffectSprite_DrawAtWorldPosition__f0e4a34(sprite, particle);
       particle->timer++;
     }
     switch (work->phase) {
@@ -419,7 +431,7 @@ void Func_080e4d9c(void) {
         sprite->oam.index = work->burstTile + 28;
         break;
       }
-      EffectSprite_DrawAtWorldPosition(sprite, particle);
+      EffectSprite_DrawAtWorldPosition__f0e4a34(sprite, particle);
       particle->timer++;
     }
     switch (work->phase) {

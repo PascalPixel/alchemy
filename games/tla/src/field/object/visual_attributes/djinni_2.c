@@ -11,7 +11,3 @@ void Actor_MoveHalfwayTowardTargetCopy(struct Actor *object) {
   object->y += (target->y - object->y) / 2;
   object->z += (target->z - object->z) / 2;
 }
-#undef Actor_SetChildValueUnlessFifteenFar
-#undef Actor_ReleaseFar
-#undef gBattleEffect_PulseScales
-#undef gEffectWork

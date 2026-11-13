@@ -5,6 +5,9 @@
 
 #include "../visual_attributes_internal.h"
 
+/* VIEW(f0d8740): routine FieldEffect_UpdateRandomTargetParticle as void FieldEffect_UpdateRandomTargetParticle(void); the definition has void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect). */
+extern void FieldEffect_UpdateRandomTargetParticle__f0d8740(void) __asm__("FieldEffect_UpdateRandomTargetParticle");
+
 struct CaptureSprite {
   u8 unk00[40];
   s16 *resource;
@@ -39,11 +42,25 @@ struct CaptureResource {
   u8 id;
 };
 
+/* VIEW(f0d8740): routine Actor_GetById as struct CaptureObject__f0d8740 *Actor_GetById(s32 id); mars_join has struct Actor *Actor_GetById(u32 objectId). */
+extern struct CaptureObject__f0d8740 *Actor_GetById__f0d8740(s32 id) __asm__("Actor_GetById");
 void BattleEffect_InitializeSlots(void);
 void Shop_RestoreSceneTilesFar(s32 value);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Actor_Jump(s32 id, s32 height, s32 frames);
+/* VIEW(f0d8740): routine Func_080200c0 as struct CaptureObject__f0d8740 *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
+extern struct CaptureObject__f0d8740 *Func_080200c0__f0d8740(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_080200c0");
+/* VIEW(f0d8740): routine Actor_Destroy as void Actor_Destroy(struct CaptureObject__f0d8740 *object); battle.h has void Actor_Destroy(struct Actor *object). */
+extern void Actor_Destroy__f0d8740(struct CaptureObject__f0d8740 *object) __asm__("Actor_Destroy");
 void Actor_ArmCallback(s32 id, s32 value, s32 flags);
+/* VIEW(f0d8740): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); mars_join has void Camera_WorldToScreen(struct EffectVector *position). */
+extern void Camera_WorldToScreen__f0d8740(s32 *position) __asm__("Camera_WorldToScreen");
+/* VIEW(f0d8740): routine FieldParticle_Initialize as void FieldParticle_Initialize(void *slot, s32 kind, s32 x, s32 y); motes has void FieldParticle_Initialize(struct FieldParticle *slot, s32 kind, s32 x, s32 z). */
+extern void FieldParticle_Initialize__f0d8740(void *slot, s32 kind, s32 x, s32 y) __asm__("FieldParticle_Initialize");
+/* VIEW(f0d8740): routine FieldParticle_SetCallback as void FieldParticle_SetCallback(void *slot, void *callback); field_particle.h has void FieldParticle_SetCallback(struct FieldParticle *, EffectCallback). */
+extern void FieldParticle_SetCallback__f0d8740(void *slot, void *callback) __asm__("FieldParticle_SetCallback");
+/* VIEW(f0d8740): routine FieldParticle_SetActorMode as void FieldParticle_SetActorMode(void *slot, s32 mode); field_particle.h has void FieldParticle_SetActorMode(struct FieldParticle *, s32). */
+extern void FieldParticle_SetActorMode__f0d8740(void *slot, s32 mode) __asm__("FieldParticle_SetActorMode");
 void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x, s32 z);
 void FieldParticle_SetCallback(struct FieldParticle *effect, EffectCallback callback);
 void FieldParticle_SetActorMode(struct FieldParticle *effect, s32 mode);
@@ -70,7 +87,7 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
     s32 z;
   } position;
 
-  djinni = Actor_GetById(arg);
+  djinni = Actor_GetById__f0d8740(arg);
   if (djinni == NULL)
     return;
 
@@ -97,7 +114,7 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
   previous = djinni;
   cursor = copies;
   for (remaining = 7; remaining >= 0; remaining--) {
-    copy = Func_080200c0(kind, djinni->x, djinni->y, djinni->z);
+    copy = Func_080200c0__f0d8740(kind, djinni->x, djinni->y, djinni->z);
     *cursor++ = copy;
     if (copy != NULL) {
       copy->scaleY = 0xf000;
@@ -123,30 +140,30 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
     djinni->y += 0x80000;
     wait(1);
   }
-  Actor_Destroy(djinni);
+  Actor_Destroy__f0d8740(djinni);
   list = copies;
   for (remaining = 7; remaining >= 0; remaining--)
-    Actor_Destroy(*list++);
+    Actor_Destroy__f0d8740(*list++);
   if (resourceId != 96)
     Resource_ResetEntry(resourceId);
   wait(10);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x4000, 0);
   wait(20);
-  Actor_SetMode(Actor_GetById(gMainRoutineWork.currentOwner), 28);
+  Actor_SetMode(Actor_GetById__f0d8740(gMainRoutineWork.currentOwner), 28);
   wait(20);
 
   position.x = djinni->x;
   position.y = djinni->y;
   position.z = djinni->z;
-  Camera_WorldToScreen(&position.x);
+  Camera_WorldToScreen__f0d8740(&position.x);
 
   slot = (u8 *)effectSlots + 80;
   remaining = 23;
   do {
-    FieldParticle_Initialize(slot, 301, position.x, position.z);
-    FieldParticle_SetCallback(slot,
-                              (void *)FieldEffect_UpdateRandomTargetParticle);
-    FieldParticle_SetActorMode(slot, 7);
+    FieldParticle_Initialize__f0d8740(slot, 301, position.x, position.z);
+    FieldParticle_SetCallback__f0d8740(slot,
+                              (void *)FieldEffect_UpdateRandomTargetParticle__f0d8740);
+    FieldParticle_SetActorMode__f0d8740(slot, 7);
     Animation_ApplyChildValuesToRecordFar(*(struct ActorSpriteView **)slot, 9);
     remaining--;
     wait(1);
@@ -233,6 +250,10 @@ struct ChainWork {
 };
 
 s32 ArcTan2(s32 y, s32 x);
+/* VIEW(f0d8740): routine AffineMatrix_BuildForEffect as s32 AffineMatrix_BuildForEffect(struct ChainTransform *source); affine.h has s32 AffineMatrix_BuildForEffect(struct AffineTransform *source). */
+extern s32 AffineMatrix_BuildForEffect__f0d8740(struct ChainTransform *source) __asm__("AffineMatrix_BuildForEffect");
+/* VIEW(f0d8740): routine Func_080140d8 as void Func_080140d8(void *entry, s32 slot); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32 depth). */
+extern void Func_080140d8__f0d8740(void *entry, s32 slot) __asm__("Func_080140d8");
 
 /// The heap slot 0x9c work's per-frame callback (Func_080d897c schedules it).
 /// For each of the eight slots it draws a sprite at the midpoint of each pair
@@ -296,11 +317,11 @@ void Func_080d8a00(void) {
             transform.scaleX = 0x100;
             transform.scaleY = 0x100;
             node->sprite.affine = 1;
-            node->sprite.affineIndex = AffineMatrix_BuildForEffect(&transform);
+            node->sprite.affineIndex = AffineMatrix_BuildForEffect__f0d8740(&transform);
           }
           node->sprite.priority = priority;
           node->angle = angle;
-          Func_080140d8(sprite, prevY);
+          Func_080140d8__f0d8740(sprite, prevY);
         }
       }
       prevX = x;

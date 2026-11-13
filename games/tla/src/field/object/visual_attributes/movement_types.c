@@ -28,7 +28,15 @@ struct LinkedEffectObject {
   void (*callback)(void);
 };
 
+/* VIEW(f0d489c): routine Func_080200c0 as struct LinkedEffectObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
+extern struct LinkedEffectObject *Func_080200c0__f0d489c(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_080200c0");
 void Actor_StartScriptFar(struct Actor *object, const s32 *script);
+/* VIEW(f0d489c): routine Actor_Destroy as void Actor_Destroy(struct LinkedEffectObject *object); battle.h has void Actor_Destroy(struct Actor *object). */
+extern void Actor_Destroy__f0d489c(struct LinkedEffectObject *object) __asm__("Actor_Destroy");
+/* VIEW(f0d489c): routine Actor_IsOutsideAnimation108 as s32 Actor_IsOutsideAnimation108(struct LinkedEffectObject *object); the definition has s32 Actor_IsOutsideAnimation108(struct Actor *object). */
+extern s32 Actor_IsOutsideAnimation108__f0d489c(struct LinkedEffectObject *object) __asm__("Actor_IsOutsideAnimation108");
+/* VIEW(f0d489c): routine BattleEffect_CopyWatchedObjectPosition as void BattleEffect_CopyWatchedObjectPosition(void); the definition has s32 BattleEffect_CopyWatchedObjectPosition(struct Actor *object). */
+extern void BattleEffect_CopyWatchedObjectPosition__f0d489c(void) __asm__("BattleEffect_CopyWatchedObjectPosition");
 extern const u8 gData_080f341c[];
 
 /// The Broken Seal's BattleEffect_ConfigureWatchedObject with this game's
@@ -49,14 +57,14 @@ void Func_080d489c(s32 id, s32 flags) {
     return;
 
   if ((flags & 3) != 0) {
-    if ((flags & 3) == 2 || Actor_IsOutsideAnimation108(object->resource)) {
-      child = Func_080200c0(264, object->x, object->y, object->z);
+    if ((flags & 3) == 2 || Actor_IsOutsideAnimation108__f0d489c(object->resource)) {
+      child = Func_080200c0__f0d489c(264, object->x, object->y, object->z);
     }
   } else {
     child = object->resource;
     if (child == 0)
       return;
-    Actor_Destroy(child);
+    Actor_Destroy__f0d489c(child);
     object->resource = NULL;
     return;
   }
@@ -80,7 +88,7 @@ void Func_080d489c(s32 id, s32 flags) {
 
   child->resourceId = id;
   child->value55 = 0;
-  child->callback = BattleEffect_CopyWatchedObjectPosition;
+  child->callback = BattleEffect_CopyWatchedObjectPosition__f0d489c;
   visual = child->visual;
   visual->value26 = 0;
   child->resource = object;

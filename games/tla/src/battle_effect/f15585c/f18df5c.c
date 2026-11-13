@@ -22,6 +22,17 @@ struct PointPair {
   s32 y;
 };
 
+/* VIEW(f18df5c): tag struct RenderModel as struct RenderModel__f18df5c; render_model.h has another definition. */
+struct RenderModel__f18df5c {
+  s32 kind;
+  s32 unk04;
+  const void *mesh;
+  void *vertices;
+  struct ModelTexture__f18df5c *texture;
+  s32 shade;
+  u8 scrollU;
+  u8 scrollV;
+};
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
@@ -365,7 +376,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
     }
 
     if (frame > 115) {
-      struct RenderModel *model;
+      struct RenderModel__f18df5c *model;
       s32 shade;
       s32 scroll;
       s32 angle;
@@ -544,7 +555,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
 
   // The impact: the meteor lands, rings of fire and shards fly.
   for (frame = 0; frame != 50; frame++) {
-    struct RenderModel *model;
+    struct RenderModel__f18df5c *model;
     s32 angle;
     s32 back;
     s32 shade;

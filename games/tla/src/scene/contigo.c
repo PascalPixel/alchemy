@@ -33,6 +33,8 @@ extern void Func_02003f54__contigo(struct ContigoObject *object) __asm__("Func_0
 #include "event_work.h"
 #include "version.h"
 
+/* VIEW(contigo): variable gData_0200474c as extern const s32 *gData_0200474c[]; the definition has s32 gData_0200474c[] = { (s32) gData_0200457c, (s32) gData_020045b8, (s32) gData_020045f4, }. */
+extern const s32 *gData_0200474c__contigo[] __asm__("gData_0200474c");
 extern s32 gData_0200474c[];
 
 void Func_02003fdc(struct Actor *object, s32 mode);
@@ -55,7 +57,7 @@ void Func_02000430(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Func_02003fdc(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Func_02003fe4(effect, gData_0200474c[flags & EFFECT_SCRIPT_MASK]);
+  Func_02003fe4(effect, gData_0200474c__contigo[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags(effect, 0);
   effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
@@ -84,7 +86,7 @@ void Func_02000430(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     s32 target;
     s32 frames;
 
-    script = gData_0200474c[flags & EFFECT_SCRIPT_MASK];
+    script = gData_0200474c__contigo[flags & EFFECT_SCRIPT_MASK];
     target = options->targetScaleX;
     frames = script[3];
     if ((flags & EFFECT_USE_START_SCALE) != 0) {
@@ -203,6 +205,18 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 /* VIEW(contigo): variable gData_02004c70 as extern u8 gData_02004c70[]; the definition has u32 gData_02004c70[] = { 0xffff, 0, 0, 0, 0, 0, }; tried as the definition's extern s32 gData_02004c70[], it does not compile in tla-ja: games/tla/src/scene/contigo.c:2601: conflicting types for `gData_02004c70'. */
 extern u8 gData_02004c70__contigo[] __asm__("gData_02004c70");
+/* VIEW(contigo): variable gData_02004c88 as extern u8 gData_02004c88[]; the definition has s32 gData_02004c88[] = { (s32) 0xffff0073, 3, 0x1540000, 0, 0x3a80000, 0x4000, (s32) 0xffff0074, 3, 0x580000, 0, 0x3ae0000, 0xc000, (s32) 0x.... */
+extern u8 gData_02004c88__contigo[] __asm__("gData_02004c88");
+/* VIEW(contigo): variable gData_02004d90 as extern u8 gData_02004d90[]; the definition has s32 gData_02004d90[] = { (s32) 0xffff0073, 3, 0x34e0000, 0, 0x2940000, 0x4000, (s32) 0xffff0074, 1, 0x2e80000, 0, 0x2680000, 0x1d000, (s32) .... */
+extern u8 gData_02004d90__contigo[] __asm__("gData_02004d90");
+/* VIEW(contigo): variable gData_02005018 as extern u8 gData_02005018[]; the definition has u32 gData_02005018[] = { 0xffff0072, 1, 0x680000, 0, 0x540000, 0x5000, 0xffff006b, 1, 0x480000, 0, 0x580000, 0x3000, 0xffff0088, 2, 0x700000.... */
+extern u8 gData_02005018__contigo[] __asm__("gData_02005018");
+/* VIEW(contigo): variable gData_02005228 as extern u8 gData_02005228[]; the definition has s16 gData_02005228[] = { 59, - 1, 1, 0, 0, 0, 0, 0, 0, 0, FACING_NORTH, 2, 5, - 1, 1, 0, 0, 0, 0, 0, 0, 0, FACING_WEST, 2, 7, - 1, 1, 0, 0, .... */
+extern u8 gData_02005228__contigo[] __asm__("gData_02005228");
+/* VIEW(contigo): variable gData_02005318 as extern u8 gData_02005318[]; the definition has s32 gData_02005318[] = { (s32) 0xffff003b, 1, 0x9e0000, 0, 0x1600000, 0x34000, (s32) 0xffff0002, 1, 0, 0, 0, 0x24000, - 0x10000, 1, 0, 0, 0,.... */
+extern u8 gData_02005318__contigo[] __asm__("gData_02005318");
+/* VIEW(contigo): variable gData_02005390 as extern u8 gData_02005390[]; the definition has u32 gData_02005390[] = { 0xffff00ec, 1, 0x780000, 0, 0x3480000, 0x3000, 0xffff00ec, 1, 0x880000, 0, 0x3480000, 0x5000, 0xffff0072, 1, 0x5c00.... */
+extern u8 gData_02005390__contigo[] __asm__("gData_02005390");
 extern s32 gData_02004c88[];
 extern s32 gData_02004d90[];
 extern u32 gData_02005018[];
@@ -214,23 +228,35 @@ u8 *Func_020007cc(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov694Room1)
-    return gData_02004c88;
+    return gData_02004c88__contigo;
   if (scene == (s32)&SceneId_Ov694Room4)
-    return gData_02004d90;
+    return gData_02004d90__contigo;
   if (scene == (s32)&SceneId_Ov694Room2) {
     if (gMainRoutineWork.entrance == 4) {
       if (GameFlag_Test(0x9b2) != 0)
-        return gData_02005318;
+        return gData_02005318__contigo;
       if (GameFlag_Test(0xa21) != 0 && GameFlag_Test(0x9d0) == 0)
-        return gData_02005228;
+        return gData_02005228__contigo;
     }
-    return gData_02005018;
+    return gData_02005018__contigo;
   }
   if (scene == (s32)&SceneId_Ov694Room3)
-    return gData_02005390;
+    return gData_02005390__contigo;
   return gData_02004c70__contigo;
 }
 
+/* VIEW(contigo): variable gData_020054e0 as extern u8 gData_020054e0[]; the definition has s32 gData_020054e0[] = { - 1, 0, 0, }. */
+extern u8 gData_020054e0__contigo[] __asm__("gData_020054e0");
+/* VIEW(contigo): variable gData_020054ec as extern u8 gData_020054ec[]; the definition has s32 gData_020054ec[] = { 1, (s32) 0xffff0001, 1, 0xce01, (s32) 0xffff0002, 2, 0xce01, (s32) 0xffff0003, 3, 0xce01, (s32) 0xffff0004, 4, 0xce.... */
+extern u8 gData_020054ec__contigo[] __asm__("gData_020054ec");
+/* VIEW(contigo): variable gData_02005870 as extern u8 gData_02005870[]; the definition has s32 gData_02005870[] = { 1, (s32) 0xffff000c, 21, 0xc602, (s32) 0xffff000d, (s32) Func_02001d08, 0xce01, (s32) 0xffff000e, 23, 0xc602, (s32).... */
+extern u8 gData_02005870__contigo[] __asm__("gData_02005870");
+/* VIEW(contigo): variable gData_02005a44 as extern u8 gData_02005a44[]; the definition has s32 gData_02005a44[] = { 1, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 1, (s32) 0xffff0003, 3, 1, (s32) 0xffff0005, 5, 1, (s32) 0xffff0006.... */
+extern u8 gData_02005a44__contigo[] __asm__("gData_02005a44");
+/* VIEW(contigo): variable gData_02005e70 as extern u8 gData_02005e70[]; the definition has s32 gData_02005e70[] = { 1, (s32) 0xffff0004, 4, 0, (s32) 0xffff0008, MSGNO(MsgContigo170), 0x8d15, (s32) 0xffff0008, MSGNO(MsgContigo171), .... */
+extern u8 gData_02005e70__contigo[] __asm__("gData_02005e70");
+/* VIEW(contigo): variable gData_02005ed0 as extern u8 gData_02005ed0[]; the definition has s32 gData_02005ed0[] = { 1, (s32) 0xffff0008, 8, 1, (s32) 0xffff0009, 9, 1, (s32) 0xffff000a, 10, 0, (s32) 0xffff0008, (s32) Func_02001b84, .... */
+extern u8 gData_02005ed0__contigo[] __asm__("gData_02005ed0");
 extern s32 gData_020054e0[];
 extern s32 gData_020054ec[];
 extern s32 gData_02005870[];
@@ -242,17 +268,17 @@ u8 *Func_02000874(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov694Room1)
-    return gData_020054ec;
+    return gData_020054ec__contigo;
   if (scene == (s32)&SceneId_Ov694Room4)
-    return gData_02005870;
+    return gData_02005870__contigo;
   if (scene == (s32)&SceneId_Ov694Room2) {
     if (gMainRoutineWork.entrance == 4)
-      return gData_02005e70;
-    return gData_02005a44;
+      return gData_02005e70__contigo;
+    return gData_02005a44__contigo;
   }
   if (scene == (s32)&SceneId_Ov694Room3)
-    return gData_02005ed0;
-  return gData_020054e0;
+    return gData_02005ed0__contigo;
+  return gData_020054e0__contigo;
 }
 
 void Func_020008ec(void) {
@@ -1857,6 +1883,14 @@ void Func_020036f0(void) {
   }
 }
 
+/* VIEW(contigo): variable gData_0200469c as extern const u8 gData_0200469c[]; the definition has s16 gData_0200469c[] = { 89, 90, 91, 92, 93, 94, 95, - 1, }. */
+extern const u8 gData_0200469c__contigo[] __asm__("gData_0200469c");
+/* VIEW(contigo): variable gData_020046ac as extern const u8 gData_020046ac[]; the definition has s16 gData_020046ac[] = { 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, - 1, }. */
+extern const u8 gData_020046ac__contigo[] __asm__("gData_020046ac");
+/* VIEW(contigo): variable gData_020046d8 as extern const u8 gData_020046d8[]; the definition has s16 gData_020046d8[] = { 30, 27, 31, 22, 21, 31, 20, 18, 31, 13, 11, 27, 11, 8, 24, 8, 5, 21, 31, 31, 31, - 1, }. */
+extern const u8 gData_020046d8__contigo[] __asm__("gData_020046d8");
+/* VIEW(contigo): variable gData_02004704 as extern const u8 gData_02004704[]; the definition has u16 gData_02004704[] = { 94, 89, 90, 91, 92, 93, 93, 94, 89, 90, 91, 92, 92, 93, 94, 89, 90, 91, 91, 92, 93, 94, 89, 90, 90, 91, 92, 93, 94,.... */
+extern const u8 gData_02004704__contigo[] __asm__("gData_02004704");
 extern s16 gData_0200469c[];
 extern s16 gData_020046ac[];
 extern s16 gData_020046d8[];
@@ -1918,7 +1952,7 @@ void Func_02003720(void) {
     Func_02003ffc();
     wait(1);
   }
-  Func_02000038(gData_0200469c, gData_020046ac, gData_020046d8, gData_02004704);
+  Func_02000038(gData_0200469c__contigo, gData_020046ac__contigo, gData_020046d8__contigo, gData_02004704__contigo);
 }
 
 void Func_02003880(void) {
@@ -2263,6 +2297,8 @@ s32 Resource_FindFreeEntry(void);
 void Func_02004244(struct SparkleSprite__s3e54 *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 s32 Func_02004254(struct Actor *object);
+/* VIEW(s3e54): routine Func_02003cd8 as void Func_02003cd8(void); the definition has void Func_02003cd8(struct Actor *object). */
+extern void Func_02003cd8__s3e54(void) __asm__("Func_02003cd8");
 
 /// Sets up the sparkle: loads its picture and its four 16 by 16 sprites, and
 /// hands the object to its update, Func_02003cd8.
@@ -2280,7 +2316,7 @@ void Func_02003e54(struct Actor *object, struct SparkleWork__s3e54 *work) {
   work->object = object;
   ((u8 *)object)[0x62] = 0;
   ((u8 *)object)[0x63] = 0;
-  object->update = Func_02003cd8;
+  object->update = Func_02003cd8__s3e54;
   tile = gResourceTableEntries[work->vramEntry].offset >> 5;
   object->watchedObject = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {

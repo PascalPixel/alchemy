@@ -18,6 +18,17 @@ struct ModelTexture__f171bb0 {
   const u8 *pixels;
 };
 
+/* VIEW(f171bb0): tag struct RenderModel as struct RenderModel__f171bb0; f15585c.c has another definition. */
+struct RenderModel__f171bb0 {
+  s32 kind;
+  s32 unk04;
+  const void *mesh;
+  void *vertices;
+  struct ModelTexture__f171bb0 *texture;
+  s32 shade;
+  u8 scrollU;
+  u8 scrollV;
+};
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
@@ -113,7 +124,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
   s32 frames;
   u8 *unit;
   s32 *target;
-  struct RenderModel *model;
+  struct RenderModel__f171bb0 *model;
   struct ModelTexture__f171bb0 texture;
   s32 columns;
   s32 shade;

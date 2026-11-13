@@ -130,7 +130,7 @@ void Func_080ddea8(void) {
     pos.x = work->x;
     pos.y = work->y + 0x100000;
     pos.z = work->z;
-    obj = Actor_Spawn(673, pos.x, pos.y, pos.z);
+    obj = Actor_Spawn__f0dd820(673, pos.x, pos.y, pos.z);
     if (obj != 0) {
       Actor_StartScriptFar(obj, gData_080f0e78);
       obj->speedLimit = Random16() + 0x20000;
@@ -154,7 +154,7 @@ struct Actor *BattleEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle) {
   s32 scale;
 
   Sound_PlayFar(138);
-  object = Actor_Spawn(278, x, y, z);
+  object = Actor_Spawn__f0dd820(278, x, y, z);
   if (object != NULL) {
     object->scaleX = object->scaleY = 0x4000;
     object->acceleration = object->speedLimit = 0x30000;
@@ -213,6 +213,8 @@ struct RadialBurstEffect {
 };
 
 void Camera_WorldToScreen(struct EffectPosition *value);
+/* VIEW(f0dd820): routine BattleEffect_ClearOwnedSlot as void BattleEffect_ClearOwnedSlot(struct RadialBurstEffect *effect); f0dd054 has void BattleEffect_ClearOwnedSlot(struct FieldParticle *). */
+extern void BattleEffect_ClearOwnedSlot__f0dd820(struct RadialBurstEffect *effect) __asm__("BattleEffect_ClearOwnedSlot");
 void BattleEffect_ClearOwnedSlot(struct FieldParticle *slot);
 
 void Func_080de060(struct RadialBurstEffect *effect) {
@@ -225,7 +227,7 @@ again:
   if (state == 0) {
     value.x = effect->sourceX;
     value.z = effect->sourceZ;
-    Vector_AddPolarOffset(0x190000, (u16)Random16(), &value);
+    Vector_AddPolarOffset__f0dd820(0x190000, (u16)Random16(), &value);
     effect->x = value.x;
     effect->z = value.z;
     effect->velocityZ = 0x30000;
@@ -249,9 +251,9 @@ again:
     value.x = target->x;
     value.y = target->y + 0x100000;
     value.z = target->z;
-    Vector_AddPolarOffset(0x80000, work->angle, &value);
+    Vector_AddPolarOffset__f0dd820(0x80000, work->angle, &value);
     Camera_WorldToScreen(&value);
-    Vector_AddPolarOffset(0x40000, Random16(), &value);
+    Vector_AddPolarOffset__f0dd820(0x40000, Random16(), &value);
     effect->x = value.x;
     effect->z = value.z;
     effect->scale = 0x800;
@@ -261,7 +263,7 @@ again:
   }
 
   if (state == 3 && FieldParticle_HasPendingTarget(effect) == 0)
-    BattleEffect_ClearOwnedSlot(effect);
+    BattleEffect_ClearOwnedSlot__f0dd820(effect);
 }
 
 struct ImpactVector {
@@ -285,7 +287,7 @@ s32 Func_080de154(struct Actor *src) {
   pos.x = src->x;
   pos.y = src->y;
   pos.z = src->z;
-  obj = Actor_Spawn(671, pos.x, pos.y - (32 << 16), pos.z);
+  obj = Actor_Spawn__f0dd820(671, pos.x, pos.y - (32 << 16), pos.z);
   if (obj != NULL) {
     obj->motionFlags = 0;
     ((struct ParticleTimer *)obj)->timer = 20;
@@ -293,7 +295,7 @@ s32 Func_080de154(struct Actor *src) {
   }
 
   for (i = 0; i < 12; i++) {
-    frag = Actor_Spawn(673, pos.x, pos.y, pos.z);
+    frag = Actor_Spawn__f0dd820(673, pos.x, pos.y, pos.z);
     if (frag != NULL) {
       Actor_StartScriptFar(frag, gData_080f0e78);
       frag->speedLimit = Random16() + (1 << 16);
@@ -308,15 +310,10 @@ s32 Func_080de154(struct Actor *src) {
 
 struct BattleEffectArgument;
 
+/* VIEW(f0dd820): routine Func_080de21c as void Func_080de21c(struct BattleEffectArgument *effect); the definition has void Func_080de21c(void). */
+extern void Func_080de21c__f0dd820(struct BattleEffectArgument *effect) __asm__("Func_080de21c");
 
 /// Runs field Psynergy animation 4; the target is unused.
 void FieldEffect_RunForceOnTarget(struct BattleEffectArgument *effect) {
-  Func_080de21c(effect);
+  Func_080de21c__f0dd820(effect);
 }
-#undef FIELD_FX_REVEAL
-#undef REVEAL_EVENT_START
-#undef REVEAL_FRAMES
-#undef SE_REVEAL
-#undef BURST_FALL_OBJECT
-#undef TARGET_KIND_SCATTERS
-#undef TARGET_KIND_STAYS

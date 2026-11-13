@@ -4,6 +4,16 @@
 
 #include "../visual_attributes_internal.h"
 
+/* VIEW(f0daecc): tag struct ChainLink as struct ChainLink__f0daecc; visual_attributes.c has another definition. */
+struct ChainLink__f0daecc {
+  struct ChainLink__f0daecc *next;
+  s32 x;
+  s32 y;
+  s32 z;
+  u8 unk10[2];
+  s8 kind;
+};
+
 /* VIEW(f0daecc): tag struct ChainSlot as struct ChainSlot__f0daecc; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:6916: structure has no member named `root'. */
 struct ChainSlot__f0daecc {
   s16 objectId;
@@ -13,7 +23,7 @@ struct ChainSlot__f0daecc {
   u8 unk0c[4];
   s32 phase;
   s32 active;
-  struct ChainLink *root;
+  struct ChainLink__f0daecc *root;
 };
 
 struct ChainObject {
@@ -33,7 +43,13 @@ struct ChainObject {
 };
 
 struct Actor *Actor_GetById(u32 objectId);
+/* VIEW(f0daecc): routine Func_080da9a8 as void *Func_080da9a8(s32 kind); the definition has struct TileEffectWork *Func_080da9a8(s32 kind). */
+extern void *Func_080da9a8__f0daecc(s32 kind) __asm__("Func_080da9a8");
 struct WorkA4Slot *Func_080dae70(s32 id);
+/* VIEW(f0daecc): routine Func_080dae3c as struct ChainSlot__f0daecc *Func_080dae3c(void); the definition has struct WorkA4Slot *Func_080dae3c(void). */
+extern struct ChainSlot__f0daecc *Func_080dae3c__f0daecc(void) __asm__("Func_080dae3c");
+/* VIEW(f0daecc): routine Func_080daea8 as struct ChainLink__f0daecc *Func_080daea8(void); the definition has struct WorkA4Item *Func_080daea8(void). */
+extern struct ChainLink__f0daecc *Func_080daea8__f0daecc(void) __asm__("Func_080daea8");
 
 #define CELL_MASK 0xfff00000 // 16-pixel cells
 
@@ -41,8 +57,8 @@ void Func_080daecc(s32 objectId, s32 grow) {
   struct ChainObject *object;
   struct MapWork *map;
   struct ChainSlot__f0daecc *slot;
-  struct ChainLink *link;
-  struct ChainLink **tail;
+  struct ChainLink__f0daecc *link;
+  struct ChainLink__f0daecc **tail;
   struct MapCell *cells;
   struct MapCell *cell;
   s32 i;
@@ -62,11 +78,11 @@ void Func_080daecc(s32 objectId, s32 grow) {
   if (running == 0) {
     if (object->sprite != 0 && object->sprite->entries[0] != 0)
       kind = *object->sprite->entries[0];
-    Func_080da9a8(kind);
+    Func_080da9a8__f0daecc(kind);
   }
   if (Func_080dae70(objectId) != 0)
     return;
-  slot = Func_080dae3c();
+  slot = Func_080dae3c__f0daecc();
   if (slot == 0)
     return;
 
@@ -95,7 +111,7 @@ void Func_080daecc(s32 objectId, s32 grow) {
   // Hang the links.
   last = 6;
   tail = &slot->root;
-  for (i = 0; i <= last && (link = Func_080daea8()) != 0; i++) {
+  for (i = 0; i <= last && (link = Func_080daea8__f0daecc()) != 0; i++) {
     link->x = x;
     link->y = y + (15 << 16) - i * (14 << 16);
     link->z = z;
@@ -811,6 +827,8 @@ struct DepthScene {
 };
 
 void Func_080eaf98(struct DepthSprite *sprite, s32 a, s32 b, u32 c, s32 tiles);
+/* VIEW(f0daecc): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); ground_particles has void Camera_WorldToScreen(union FieldCoordinate *position). */
+extern void Camera_WorldToScreen__f0daecc(s32 *position) __asm__("Camera_WorldToScreen");
 
 void Func_080dba5c(void) {
   struct DepthScene *scene = Ram_HeapSlots->effectWork;
@@ -844,7 +862,7 @@ void Func_080dba5c(void) {
     position[0] = scene->x;
     position[1] = mainObject->y + 0x1c0000;
     position[2] = mainObject->z;
-    Camera_WorldToScreen(position);
+    Camera_WorldToScreen__f0daecc(position);
     sprite->x = position[0];
     sprite->y = position[2];
     Task_Add(BattleEffect_DrawSceneSprite, TASK_PASS_VBLANK);

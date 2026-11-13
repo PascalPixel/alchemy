@@ -80,6 +80,8 @@ extern const MotionCommand gData_0802f204[];
 extern const s32 gData_0802ebc8[];
 
 s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
+/* VIEW(f023680): routine ScriptObject_CheckOverlap as s32 ScriptObject_CheckOverlap(struct MotionObject *object, s32 *values); the definition has s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values). */
+extern s32 ScriptObject_CheckOverlap__f023680(struct MotionObject *object, s32 *values) __asm__("ScriptObject_CheckOverlap");
 
 #define TARGET_UNSET ((s32)0x80000000)
 
@@ -355,7 +357,7 @@ void Func_08023f9c(void) {
       pos[0] = x;
       pos[1] = y;
       pos[2] = z;
-      if (ScriptObject_CheckOverlap(object, pos) != 0) {
+      if (ScriptObject_CheckOverlap__f023680(object, pos) != 0) {
         object->refused++;
         continue;
       }
@@ -551,8 +553,5 @@ void ObjectList_CollectActive(u8 *object, u8 **out) {
   } while (object != end);
   *out = NULL;
 }
-#undef BASE_PRIORITY
-#undef CELL_PRIORITY
-#undef CELL_LAYER
 #undef TARGET_UNSET
 #undef WORD_AT

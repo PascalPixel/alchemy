@@ -17,6 +17,17 @@ struct ModelTexture__f16c274 {
   const u8 *pixels;
 };
 
+/* VIEW(f16c274): tag struct RenderModel as struct RenderModel__f16c274; f15585c.c has another definition. */
+struct RenderModel__f16c274 {
+  s32 kind;
+  s32 unk04;
+  const void *mesh;
+  void *vertices;
+  struct ModelTexture__f16c274 *texture;
+  s32 shade;
+  u8 scrollU;
+  u8 scrollV;
+};
 
 struct BattleObjectPosition {
   u8 unk00[8];
@@ -212,7 +223,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
       gCameraSceneParameters[4] = 104;
       {
         void *vertices = Heap_AllocEwram(32);
-        struct RenderModel *model = Render_AllocateModelList(1);
+        struct RenderModel__f16c274 *model = Render_AllocateModelList(1);
 
         model->kind = 6;
         model->texture = &texture;

@@ -46,6 +46,8 @@ void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 s32 FixedSqrt(s32 value);
 struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
 void Actor_StartScript(struct Actor *, const s32 *);
+/* VIEW(s28534): routine Animation_ApplyChildArgument as s32 Animation_ApplyChildArgument(struct PlayerSprite__s28534 *, s32); f027064 has s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32). */
+extern s32 Animation_ApplyChildArgument__s28534(struct PlayerSprite__s28534 *, s32) __asm__("Animation_ApplyChildArgument");
 s32 Field_CheckConfiguredKeys(void);
 
 /// Script command 0x20, a sibling of Func_080279b0 in The Broken Seal's later
@@ -257,7 +259,7 @@ update_object:
         ripple->motionFlags = 0;
         ripple->terrainId = kind;
         if (rippleSprite != 0) {
-          Animation_ApplyChildArgument(rippleSprite, 2);
+          Animation_ApplyChildArgument__s28534(rippleSprite, 2);
           rippleSprite->flags = 0;
           rippleSprite->objectMode = 0;
           rippleSprite->priority = 2;

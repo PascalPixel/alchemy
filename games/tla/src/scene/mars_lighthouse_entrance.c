@@ -1465,6 +1465,8 @@ void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
 extern const u8 gData_020056a0[];
 
+/* VIEW(s1c44): routine Func_02001ae0 as void Func_02001ae0(void); the definition has void Func_02001ae0(struct Actor *object). */
+extern void Func_02001ae0__s1c44(void) __asm__("Func_02001ae0");
 void Func_02001f90(struct Actor *object);
 
 void Func_02001c44(struct Actor *object, s32 unused) {
@@ -1486,7 +1488,7 @@ void Func_02001c74(s32 *position, s32 speed, s32 mode) {
     object->gravity = 0;
     object->unk4c = speed;
     Func_02001c44(object, 2);
-    object->update = Func_02001ae0;
+    object->update = Func_02001ae0__s1c44;
     if (mode)
       object->unk5c[0] = 2;
     Func_02004bc0(object, 2);
@@ -1583,6 +1585,10 @@ void Animation_SetStateFlags(struct Actor *object, u32 value);
 
 extern const u8 gData_020056a0[];
 
+/* VIEW(s1e60): routine Func_02001ae0 as void Func_02001ae0(void); the definition has void Func_02001ae0(struct Actor *object). */
+extern void Func_02001ae0__s1e60(void) __asm__("Func_02001ae0");
+/* VIEW(s1e60): routine Func_02001cbc as void Func_02001cbc(void); the definition has void Func_02001cbc(struct Actor *object). */
+extern void Func_02001cbc__s1e60(void) __asm__("Func_02001cbc");
 void Func_02001f90(struct Actor *object);
 
 /// Stops the object and sets its sprite part, then restarts its script at
@@ -1609,7 +1615,7 @@ void Func_02001e60(s32 *position, s32 speed, s32 mode) {
     object->gravity = 0;
     object->unk4c = -speed;
     Func_02001e1c(object, 3);
-    object->update = Func_02001ae0;
+    object->update = Func_02001ae0__s1e60;
     if (mode)
       object->unk5c[0] = 2;
     Func_02004bc0(object, 2);
@@ -1625,7 +1631,7 @@ void Func_02001ea8(s32 *position, s32 speed, s32 mode) {
     object->gravity = 0;
     object->unk4c = speed;
     Func_02001e1c(object, 3);
-    object->update = Func_02001cbc;
+    object->update = Func_02001cbc__s1e60;
     if (mode)
       object->unk5c[0] = 2;
     Func_02004bc0(object, 2);
@@ -1641,7 +1647,7 @@ void Func_02001ef0(s32 *position, s32 speed, s32 mode) {
     object->gravity = 0;
     object->unk4c = -speed;
     Func_02001e1c(object, 3);
-    object->update = Func_02001cbc;
+    object->update = Func_02001cbc__s1e60;
     if (mode)
       object->unk5c[0] = 2;
     Func_02004bc0(object, 2);

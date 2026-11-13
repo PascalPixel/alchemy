@@ -939,6 +939,8 @@ void Effect_AdvanceMotionAtLeaderPriority(struct Actor *object);
 void Func_02000fc4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
+/* VIEW(s3284): routine Effect_AdvanceMotion as void Effect_AdvanceMotion(union FieldObject *object); s2698 has void Effect_AdvanceMotion(struct Actor *object). */
+extern void Effect_AdvanceMotion__s3284(union FieldObject *object) __asm__("Effect_AdvanceMotion");
 void Func_02003bc8(void);
 
 void Func_02003764(void) {
@@ -965,7 +967,7 @@ void Func_02003764(void) {
   Event_Wait(24);
   opts = &options;
   opts->palette = 7;
-  opts->update = Effect_AdvanceMotion;
+  opts->update = Effect_AdvanceMotion__s3284;
   opts->startScaleX = 0xa3d7;
   opts->startScaleY = 0xa3d7;
   opts = &options;

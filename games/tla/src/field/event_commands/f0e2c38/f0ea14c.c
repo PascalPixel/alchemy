@@ -26,6 +26,8 @@ void Actor_StartScriptFar(struct Actor *object, const void *script);
 void Actor_ArmCallback(s32 id, s32 value, s32 flags);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 void BattleEffect_PrepareBufferInterpolation(void);
+/* VIEW(f0ea14c): routine Func_080e9e8c as void Func_080e9e8c(void); the definition has void Func_080e9e8c(struct Actor *object). */
+extern void Func_080e9e8c__f0ea14c(void) __asm__("Func_080e9e8c");
 void Func_080e9f68(void);
 
 void Func_080ea14c(s32 targetId) {
@@ -111,7 +113,7 @@ void Func_080ea14c(s32 targetId) {
   Actor_SetMode(target, 2);
   Event_Wait(60);
   target->timer = 0;
-  target->update = Func_080e9e8c;
+  target->update = Func_080e9e8c__f0ea14c;
   Sound_PlayFar(142);
   Event_Wait(80);
   Actor_StartScriptFar(target, Data_080f1040);

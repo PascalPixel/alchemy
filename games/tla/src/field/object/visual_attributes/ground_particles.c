@@ -107,6 +107,8 @@ struct RisingParticleWork {
 
 u32 Random16(void);
 void Camera_WorldToScreen(union FieldCoordinate *position);
+/* VIEW(ground_particles): routine Func_080140d8 as void Func_080140d8(void *sprite, s32 depth); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32 depth). */
+extern void Func_080140d8__ground_particles(void *sprite, s32 depth) __asm__("Func_080140d8");
 
 extern const u8 gData_080f385e[];
 
@@ -155,7 +157,7 @@ void Func_080d69f4(void) {
       particle->sprite.attributes.priority = 3;
       particle->sprite.attributes.blendMode = 1;
       particle->sprite.attributes.y = y;
-      Func_080140d8(particle, 240);
+      Func_080140d8__ground_particles(particle, 240);
     }
     particle->timer--;
   }
@@ -280,7 +282,7 @@ void Func_080d6c60(void) {
         mote->y = y - (mote->delay >> 2);
         mote->shape = 0;
         mote->size = 1;
-        Func_080140d8(mote, 240);
+        Func_080140d8__ground_particles(mote, 240);
       } else {
         mote->timer = 0;
       }

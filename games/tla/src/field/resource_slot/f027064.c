@@ -50,6 +50,8 @@ void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 s32 FixedSqrt(s32 value);
 struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
 void Actor_StartScript(struct Actor *, const s32 *);
+/* VIEW(f027064): routine Animation_ApplyChildArgument as s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32); the definition has s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags). */
+extern s32 Animation_ApplyChildArgument__f027064(struct PlayerSprite *, s32) __asm__("Animation_ApplyChildArgument");
 void Func_08026fc8(struct Actor *object, s32 kind);
 s32 Field_CheckConfiguredKeys(void);
 
@@ -400,13 +402,13 @@ counted:
       effect->priorityFlags = 2;
       effect->motionFlags = collision;
       if (effectSprite != NULL) {
-        Animation_ApplyChildArgument(effectSprite, 1);
+        Animation_ApplyChildArgument__f027064(effectSprite, 1);
         effectSprite->flags = collision;
         effectSprite->rotation = footprintAngle + 0x4000;
         effectSprite->priority = 3;
       }
       if (*(s16 *)&object->unk66 == 2) {
-        Animation_ApplyChildArgument(effectSprite, 2);
+        Animation_ApplyChildArgument__f027064(effectSprite, 2);
         object->unk66 = collision;
       }
       if (*(s16 *)&object->unk66 != 0)

@@ -39,6 +39,8 @@ struct MotionObject__f02493c {
   u8 unk62[0x1e];
 };
 
+/* VIEW(f02493c): routine ObjectList_CollectActive as void ObjectList_CollectActive(void *objects, struct MotionObject__f02493c **out); the definition has void ObjectList_CollectActive(u8 *object, u8 **out). */
+extern void ObjectList_CollectActive__f02493c(void *objects, struct MotionObject__f02493c **out) __asm__("ObjectList_CollectActive");
 s32 ArcTan2(s32 y, s32 x);
 
 void Func_0802493c(void) {
@@ -56,7 +58,7 @@ void Func_0802493c(void) {
   s32 facingStep;
 
   object = Ram_HeapSlots->scriptObjects;
-  ObjectList_CollectActive(object, list);
+  ObjectList_CollectActive__f02493c(object, list);
   object = list[0];
   next = &list[1];
   while (object != NULL) {
@@ -340,6 +342,8 @@ s32 Script_TestFlag(struct ScriptInterpreter *interpreter) {
   return done;
 }
 
+/* VIEW(f02493c): routine GameFlag_SetBit as s32 GameFlag_SetBit(s32); flag_call.h has void GameFlag_SetBit(s32 flag). */
+extern s32 GameFlag_SetBit__f02493c(s32) __asm__("GameFlag_SetBit");
 void GameFlag_ClearBit(s32);
 
 s32 Script_SetFlagAndTest(struct ScriptInterpreter *interpreter) {
@@ -347,7 +351,7 @@ s32 Script_SetFlagAndTest(struct ScriptInterpreter *interpreter) {
 
   value = interpreter->script[interpreter->cursor + 1];
   interpreter->conditionResult = GameFlag_Test(value);
-  GameFlag_SetBit(value);
+  GameFlag_SetBit__f02493c(value);
   interpreter->cursor += 2;
   return 1;
 }
@@ -370,7 +374,7 @@ s32 Script_ToggleFlag(struct ScriptInterpreter *interpreter) {
   if (interpreter->conditionResult == 1)
     GameFlag_ClearBit(value);
   else
-    GameFlag_SetBit(value);
+    GameFlag_SetBit__f02493c(value);
   interpreter->cursor += 2;
   return 1;
 }
@@ -447,6 +451,10 @@ struct Actor *ScriptObject_FindOverlappingEntry(struct Actor *object,
 
 #include "actor_script_view.h"
 
+/* VIEW(apply_relative_position): routine Actor_SetMoveTarget as void Actor_SetMoveTarget(void *, s32, s32, s32); the definition has void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z). */
+extern void Actor_SetMoveTarget__apply_relative_position(void *, s32, s32, s32) __asm__("Actor_SetMoveTarget");
+/* VIEW(apply_relative_position): routine Actor_SetPositionAndResetMotion as void Actor_SetPositionAndResetMotion(void *, s32, s32, s32); the definition has void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z). */
+extern void Actor_SetPositionAndResetMotion__apply_relative_position(void *, s32, s32, s32) __asm__("Actor_SetPositionAndResetMotion");
 s32 Func_0802d45c(s32 terrainId, s32 x, s32 z);
 
 s32 Func_08024fe0(struct ActorScriptView *object) {
@@ -456,7 +464,7 @@ s32 Func_08024fe0(struct ActorScriptView *object) {
   s32 z = *argument;
   s32 height;
 
-  Actor_SetPositionAndResetMotion(object, x, y, z);
+  Actor_SetPositionAndResetMotion__apply_relative_position(object, x, y, z);
   if (y == -1 && (object->flags & 1)) {
     height = Func_0802d45c(object->terrainId, object->x, object->z);
     object->y = object->y - object->terrainHeight + height;
@@ -469,7 +477,7 @@ s32 Func_08024fe0(struct ActorScriptView *object) {
 s32 Func_08025038(struct ActorScriptView *object) {
   s32 height;
 
-  Actor_SetPositionAndResetMotion(object, 0, object->y, 0);
+  Actor_SetPositionAndResetMotion__apply_relative_position(object, 0, object->y, 0);
   if (object->flags & 1) {
     height = Func_0802d45c(object->terrainId, object->x, object->z);
     object->y = object->y - object->terrainHeight + height;
@@ -486,7 +494,7 @@ s32 ActorScript_ApplyAbsolutePosition(struct ActorScriptView *object) {
   s32 y = *argument++;
   s32 z = *argument;
 
-  Actor_SetMoveTarget(object, x, y, z);
+  Actor_SetMoveTarget__apply_relative_position(object, x, y, z);
   object->scriptCursor += 4;
   return 1;
 }
@@ -496,7 +504,7 @@ s32 Func_0802509c(struct ActorScriptView *object) {
   s32 x = *argument++;
   s32 z = *argument;
 
-  Actor_SetMoveTarget(object, x, object->y, z);
+  Actor_SetMoveTarget__apply_relative_position(object, x, object->y, z);
   object->scriptCursor += 3;
   return 1;
 }
@@ -507,7 +515,7 @@ s32 Script_ApplyRelativePosition(struct ActorScriptView *object) {
   s32 second = *cursor++;
   s32 third = *cursor;
 
-  Actor_SetMoveTarget(object, object->x + first, object->y + second,
+  Actor_SetMoveTarget__apply_relative_position(object, object->x + first, object->y + second,
                        object->z + third);
   object->scriptCursor += 4;
   return 1;
@@ -528,7 +536,7 @@ s32 Script_ApplyWatchedObjectPosition(struct ActorScriptView *object) {
   struct ActorScriptView *target;
 
   target = object->watchedObject;
-  Actor_SetMoveTarget(object, target->x, target->y, target->z);
+  Actor_SetMoveTarget__apply_relative_position(object, target->x, target->y, target->z);
   object->scriptCursor++;
   return 1;
 }
@@ -782,6 +790,8 @@ struct FieldPosition {
 
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
+/* VIEW(offset): routine ScriptObject_CheckOverlap as s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *position); the definition has s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values). */
+extern s32 ScriptObject_CheckOverlap__offset(struct ScriptObjectEntry *object, s32 *position) __asm__("ScriptObject_CheckOverlap");
 
 s32 Func_08025698(struct ActorScriptView *object) {
   struct FieldPosition pos;
@@ -813,7 +823,7 @@ retry:
     radius = base + Iwram_MulQ16(Random16(), range);
     heading = object->scriptValue + (Random16() >> 2) - (Random16() >> 2);
     Vector_AddPolarOffset(radius, heading, &pos);
-    if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object,
+    if (ScriptObject_CheckOverlap__offset((struct ScriptObjectEntry *)object,
                                   (s32 *)&pos) != 0)
       goto retry;
     if (Func_0802d87c((struct Actor *)object, &pos) != 0)
@@ -911,7 +921,7 @@ s32 Func_08025830(struct ActorScriptView *object) {
       candidatePosition.y = object->y;
       candidatePosition.z = object->z;
       Vector_AddPolarOffset(0x80000, heading, &candidatePosition);
-      if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object,
+      if (ScriptObject_CheckOverlap__offset((struct ScriptObjectEntry *)object,
                                     (s32 *)&candidatePosition) != 0)
         goto roam;
       candidatePosition.x = object->x;
@@ -972,7 +982,7 @@ back:
     candidatePosition.y = object->y;
     candidatePosition.z = object->z;
     Vector_AddPolarOffset(0x80000, heading, &candidatePosition);
-    if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object,
+    if (ScriptObject_CheckOverlap__offset((struct ScriptObjectEntry *)object,
                                   (s32 *)&candidatePosition) != 0)
       goto back;
     candidatePosition.x = object->x;

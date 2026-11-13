@@ -107,6 +107,8 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Func_080150e4(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+/* VIEW(f18bc98): routine Render_DrawModelList as void Render_DrawModelList(struct Model__f18bc98 *model); f18ad40 has void Render_DrawModelList(struct Model__f18ad40 *model). */
+extern void Render_DrawModelList__f18bc98(struct Model__f18bc98 *model) __asm__("Render_DrawModelList");
 void Heap_Release(void *block);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
@@ -422,7 +424,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
                 scale /= 2;
               Func_080151e4(scale / 2, scale, scale / 2);
               Render_TransformVertices(gData_08199210, vertices, 4);
-              Render_DrawModelList(model);
+              Render_DrawModelList__f18bc98(model);
             }
           }
         }
@@ -470,7 +472,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
                 SceneTransform_ApplyPitch(0x4000);
                 SceneTransform_ApplyYaw(frame << 10);
                 Render_TransformVertices(Data_08198cac, vertices, 32);
-                Render_DrawModelList(model);
+                Render_DrawModelList__f18bc98(model);
               }
             }
           }
@@ -500,7 +502,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
           Func_080150e4(angle);
           Func_080151e4(0x40000, 0x20000, 0x10000);
           Render_TransformVertices(Data_081991c0, vertices, 4);
-          Render_DrawModelList(model);
+          Render_DrawModelList__f18bc98(model);
         }
         Heap_Release(model);
         Heap_Release(vertices);

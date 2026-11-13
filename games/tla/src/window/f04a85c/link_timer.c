@@ -48,6 +48,9 @@ extern struct LinkCountdownState *gLinkCountdownWork;
 extern struct LinkRuntimeState *gBattleWork;
 extern struct LinkSignature gLinkPeerSignatures[];
 
+/* VIEW(countdown): routine Text_DrawNumberInWindow as void Text_DrawNumberInWindow(s32 value, s32 width, s32 handle, s32 arg3, s32 arg4); f04a85c has void Text_DrawNumberInWindow(s32 value, s32 digits, struct TargetWindow *window, s32 x, s32 y). */
+extern void Text_DrawNumberInWindow__countdown(s32 value, s32 width, s32 handle, s32 arg3,
+                             s32 arg4) __asm__("Text_DrawNumberInWindow");
 
 void Sound_PlayFar(s32 soundId);
 
@@ -146,7 +149,7 @@ void UpdateLinkSessionCountdown(void) {
       Sound_PlayFar(108);
 
     if (state->displayHandle != 0)
-      Text_DrawNumberInWindow(seconds, 2, state->displayHandle, 16, 8);
+      Text_DrawNumberInWindow__countdown(seconds, 2, state->displayHandle, 16, 8);
   }
 
 done:
@@ -154,6 +157,8 @@ done:
 }
 
 unsigned char Vram_FillWindowBlockPattern(void);
+/* VIEW(countdown): routine Text_DrawWideStringAtOffset as void Text_DrawWideStringAtOffset(s16 *, s32, s32, s32); f04a85c has void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x, s32 y). */
+extern void Text_DrawWideStringAtOffset__countdown(s16 *, s32, s32, s32) __asm__("Text_DrawWideStringAtOffset");
 
 // The Japanese edition decodes the message (Message_DecodeRaw) into at most 32
 // halfwords; the others copy its text (Message_CopyExpanded) into at most 52.
@@ -165,11 +170,15 @@ unsigned char Vram_FillWindowBlockPattern(void);
 #define BATTLE_MENU_MESSAGE_COPY Message_DecodeRaw
 #endif
 
+/* VIEW(countdown): routine Window_Create as s32 Window_Create(s32, s32, s32, s32, s32); f04a85c has struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags). */
+extern s32 Window_Create__countdown(s32, s32, s32, s32, s32) __asm__("Window_Create");
 
 /* VIEW(countdown): routine Message_CopyExpanded as s32 Message_CopyExpanded(s32, s16 *, s32); f04a85c has void Message_CopyExpanded(s32 message, u16 *text, s32 capacity); tried as the definition's s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity), it does not compile in tla-ja: games/tla/src/window/f04a85c.c:977: conflicting types for `Message_CopyExpanded'. */
 extern s32 Message_CopyExpanded__countdown(s32, s16 *, s32) __asm__("Message_CopyExpanded");
 
 extern s32 gKeyState;
+/* VIEW(countdown): variable MsgNoTimeToRun as extern char MsgNoTimeToRun; msg_ids.h has extern u8 MsgNoTimeToRun[]. */
+extern char MsgNoTimeToRun__countdown __asm__("MsgNoTimeToRun");
 extern u8 MsgNoTimeToRun[];
 
 s32 Message_ShowLocalizedAndWait(void) {
@@ -193,11 +202,11 @@ s32 Message_ShowLocalizedAndWait(void) {
   }
   if (result != 0) {
     attrs = 42;
-    work = Window_Create(0, 7, 30, 4, attrs);
+    work = Window_Create__countdown(0, 7, 30, 4, attrs);
     Vram_FillWindowBlockPattern();
-    BATTLE_MENU_MESSAGE_COPY((s32)&MsgNoTimeToRun, buffer,
+    BATTLE_MENU_MESSAGE_COPY((s32)&MsgNoTimeToRun__countdown, buffer,
                              BATTLE_MENU_MESSAGE_CAPACITY);
-    Text_DrawWideStringAtOffset(buffer, work, 0, 4);
+    Text_DrawWideStringAtOffset__countdown(buffer, work, 0, 4);
     do {
       wait(1);
     } while ((gInput.pressed & (KEY_A | KEY_B)) == 0 &&

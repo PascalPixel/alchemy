@@ -30,6 +30,8 @@ struct EffectScene {
   struct Actor *mainObject;
 };
 
+/// A particle's position and velocity (16.16), integrated each frame, and its
+/// age in frames.
 struct EffectParticle {
   s32 x;
   s32 y;
@@ -40,6 +42,9 @@ struct EffectParticle {
   s32 timer;
 };
 
+/* VIEW(f0e446c): routine Func_080eaf98 as void Func_080eaf98(struct EffectSprite__f0e446c *sprite, s32 width, s32 height, u32 shape, s32 tiles); effect_sprite.h has void Func_080eaf98(struct EffectSprite *sprite, s32 pivotX, s32 pivotY, u32 attributes, s32 tile). */
+extern void Func_080eaf98__f0e446c(struct EffectSprite__f0e446c *sprite, s32 width, s32 height,
+                   u32 shape, s32 tiles) __asm__("Func_080eaf98");
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Camera_WorldToScreen(s32 *position);
@@ -86,7 +91,7 @@ void Func_080e4510(struct EffectSprite__f0e446c *sprite, s32 tiles) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 position[3];
 
-  Func_080eaf98(sprite, 16, 30, 0x80000000, tiles);
+  Func_080eaf98__f0e446c(sprite, 16, 30, 0x80000000, tiles);
   sprite->depth = BattleEffect_GetObjectDepth(scene->mainObject);
   sprite->priority = BattleEffect_GetObjectPriority(scene->mainObject);
   sprite->color = 1;
@@ -137,7 +142,7 @@ void Func_080e45a8(struct EffectSprite__f0e446c *sprite, struct EffectParticle *
   particle->velocityX = position[0];
   particle->velocityY = 0;
   particle->velocityZ = position[2];
-  Func_080eaf98(sprite, 8, 8, 0x40000000, tiles);
+  Func_080eaf98__f0e446c(sprite, 8, 8, 0x40000000, tiles);
   sprite->scaleX = 0x3333;
   sprite->scaleY = 0x3333;
   sprite->priority = BattleEffect_GetObjectPriority(mainObject);

@@ -21,6 +21,17 @@ struct ModelTexture__f14153c {
   const u8 *pixels;
 };
 
+/* VIEW(f14153c): tag struct RenderModel as struct RenderModel__f14153c; render_model.h has another definition. */
+struct RenderModel__f14153c {
+  s32 kind;
+  s32 unk04;
+  const void *mesh;
+  void *vertices;
+  struct ModelTexture__f14153c *texture;
+  s32 shade;
+  u8 scrollU;
+  u8 scrollV;
+};
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
@@ -205,7 +216,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   struct ModelTexture__f14153c texture;
   struct ModelTexture__f14153c texture2;
   struct ModelTexture__f14153c texture3;
-  struct RenderModel *model;
+  struct RenderModel__f14153c *model;
   struct EffectStep *p;
   struct EclipseObject *obj;
 
@@ -417,7 +428,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         }
       }
       if (frame > 47) {
-        struct RenderModel *model;
+        struct RenderModel__f14153c *model;
         void *verts;
         s32 modelShade;
 
@@ -606,7 +617,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
     }
     if (frame <= 109) {
       // Default: set for real below.
-      struct RenderModel *model = 0;
+      struct RenderModel__f14153c *model = 0;
       void *verts = 0;
 
       verts = Heap_AllocEwram(32);

@@ -21,6 +21,8 @@ void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object) {
 
 
 
+/* VIEW(age_and_cue): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position); f0dfd00 has void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *p). */
+extern void Vector_AddPolarOffset__age_and_cue(s32 radius, s32 angle, s32 *position) __asm__("Vector_AddPolarOffset");
 void Camera_WorldToScreen(struct EffectVector *pos);
 void BattleEffect_ClearOwnedSlot(struct FieldParticle *slot);
 
@@ -39,7 +41,7 @@ top:
     pos.x = effect->originX;
     pos.z = effect->originZ;
     angle = Random16();
-    Vector_AddPolarOffset(Random16() * 30 + (40 << 16), (u16)angle, &pos);
+    Vector_AddPolarOffset__age_and_cue(Random16() * 30 + (40 << 16), (u16)angle, &pos);
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
     effect->acceleration = 4 << 16;
@@ -59,7 +61,7 @@ top:
     pos.y = scene->y + (8 << 16);
     pos.z = scene->z;
     Camera_WorldToScreen(&pos);
-    Vector_AddPolarOffset(4 << 16, Random16(), &pos);
+    Vector_AddPolarOffset__age_and_cue(4 << 16, Random16(), &pos);
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
     effect->maxTurnStep = 0x1000;
@@ -150,7 +152,7 @@ void Func_080e0134(void) {
     pos.y = obj->y + (8 << 16);
     pos.z = obj->z;
     Camera_WorldToScreen(&pos);
-    Vector_AddPolarOffset(4 << 16, Random16(), &pos);
+    Vector_AddPolarOffset__age_and_cue(4 << 16, Random16(), &pos);
     FieldParticle_Initialize(slot, 673, pos.x, pos.z);
     FieldParticle_SetCallback(slot, Func_080e0020);
     Animation_ApplyChildValuesToRecordFar(slot->object, 7);

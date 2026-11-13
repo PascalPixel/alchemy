@@ -78,6 +78,8 @@ void Func_080150e4(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Func_0801521c(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+/* VIEW(f18b868): routine Render_DrawModelList as void Render_DrawModelList(struct Model__f18b868 *model); f18ad40 has void Render_DrawModelList(struct Model *model). */
+extern void Render_DrawModelList__f18b868(struct Model__f18b868 *model) __asm__("Render_DrawModelList");
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void Heap_Release(void *block);
@@ -205,7 +207,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyPitch(-0x1000);
           Func_0801521c(scale);
           Render_TransformVertices(gData_08199210, vertices, 4);
-          Render_DrawModelList(model);
+          Render_DrawModelList__f18b868(model);
         }
       }
     }

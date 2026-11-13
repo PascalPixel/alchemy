@@ -195,8 +195,4 @@ s32 Func_0804babc(u16 *ready, struct BattleActionRecord **cursor,
   *cursor = entries;
   return readyCount;
 }
-#undef COUNTDOWN_START_FRAMES
-#undef FRAMES_PER_SECOND
-#undef BATTLE_MENU_MESSAGE_CAPACITY
-#undef BATTLE_MENU_MESSAGE_COPY
 #undef INPUT

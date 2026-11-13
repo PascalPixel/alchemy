@@ -281,6 +281,10 @@ void *Resource_GetTableEntry(s32 id);
 void Func_02005d24(void *resource, void *dest);
 void Func_02005f94(s32 cue);
 struct Actor *Actor_GetById(u32 objectId);
+/* VIEW(s2cf0): routine Func_02002cc0 as void Func_02002cc0(void); the definition has void Func_02002cc0(struct Actor *object). */
+extern void Func_02002cc0__s2cf0(void) __asm__("Func_02002cc0");
+/* VIEW(s2cf0): routine Func_02002c40 as void Func_02002c40(void); the definition has void Func_02002c40(struct Actor *object). */
+extern void Func_02002c40__s2cf0(void) __asm__("Func_02002c40");
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Func_02005d5c(struct Actor *object, s32 mode);
 void Func_02005d6c(struct Actor *object, const u8 *script);
@@ -353,7 +357,7 @@ row:
   Func_02005f94(246);
   ((u8 *)Actor_GetById(11))[98] = 9;
   ((u8 *)Actor_GetById(11))[99] = 1;
-  Actor_GetById(11)->update = Func_02002cc0;
+  Actor_GetById(11)->update = Func_02002cc0__s2cf0;
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
       spark = Import_ActorCreate(0x2a0, Actor_GetById(11)->x,
@@ -378,7 +382,7 @@ row:
       Func_02005d6c(spark, gData_02005fd8);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetPartAttribute(spark, 2);
-      spark->update = Func_02002c40;
+      spark->update = Func_02002c40__s2cf0;
     }
     FieldEvent_Wait(1);
   }
@@ -682,7 +686,7 @@ row:
   Func_02005f94(246);
   ((u8 *)Actor_GetById(10))[98] = 9;
   ((u8 *)Actor_GetById(10))[99] = 1;
-  Actor_GetById(10)->update = Func_02002cc0;
+  Actor_GetById(10)->update = Func_02002cc0__s2cf0;
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
       spark = Import_ActorCreate(0x2a0, Actor_GetById(10)->x,
@@ -707,7 +711,7 @@ row:
       Func_02005d6c(spark, gData_02005fd8);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetPartAttribute(spark, 2);
-      spark->update = Func_02002c40;
+      spark->update = Func_02002c40__s2cf0;
     }
     FieldEvent_Wait(1);
   }

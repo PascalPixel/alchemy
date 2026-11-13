@@ -59,7 +59,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   pal += 512;
   Resource_DecodeType01(pal, cells);
   for (i = 0; i != 16; i++) {
-    struct JudgmentObject *obj = Func_0815b290(32, 32, 0x80002000, 0);
+    struct JudgmentObject *obj = Func_0815b290__actor_move_random(32, 32, 0x80002000, 0);
 
     obj->priority = 2;
     work->objects[i] = obj;

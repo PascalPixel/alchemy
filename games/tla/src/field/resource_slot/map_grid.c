@@ -44,6 +44,12 @@ void Actor_SelectAnimation(struct Actor *actor, s32 argument);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
 void Actor_StartScript(struct Actor *, const s32 *);
+/* VIEW(f0298c0): routine Animation_ApplyChildArgument as s32 Animation_ApplyChildArgument(struct PlayerSprite__f0298c0 *, s32); s28534 has s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32). */
+extern s32 Animation_ApplyChildArgument__f0298c0(struct PlayerSprite__f0298c0 *, s32) __asm__("Animation_ApplyChildArgument");
+/* VIEW(f0298c0): routine Func_08029810 as void Func_08029810(void); the definition has void Func_08029810(struct Actor *object). */
+extern void Func_08029810__f0298c0(void) __asm__("Func_08029810");
+/* VIEW(f0298c0): routine Func_08029838 as s32 Func_08029838(struct Actor *actor); the definition has s32 Func_08029838(s32 arg). */
+extern s32 Func_08029838__f0298c0(struct Actor *actor) __asm__("Func_08029838");
 
 s32 Func_080298c0(struct Actor *actor) {
   struct FieldPosition position;
@@ -194,7 +200,7 @@ s32 Func_080298c0(struct Actor *actor) {
         effect->terrainHeight = actor->terrainHeight;
         sprite = effect->sprite;
         Actor_StartScript(effect, gData_0802ed28);
-        effect->update = Func_08029810;
+        effect->update = Func_08029810__f0298c0;
         effect->motionFlags = 2;
         if (collision == 0)
           Sound_PlayFar(596);
@@ -203,13 +209,13 @@ s32 Func_080298c0(struct Actor *actor) {
         effect->scaleX = 0x4ccc;
         effect->scaleY = 0x4ccc;
         if (sprite != NULL) {
-          Animation_ApplyChildArgument(sprite, 2);
+          Animation_ApplyChildArgument__f0298c0(sprite, 2);
           sprite->flags = 0;
           sprite->priority = 0;
         }
       }
     }
-    Func_08029838(actor);
+    Func_08029838__f0298c0(actor);
     goto done;
   }
 
@@ -403,7 +409,7 @@ counted:
       if (sprite != NULL) {
         struct Unk_ClimbEventWork *work = Ram_HeapSlots->eventWork;
 
-        Animation_ApplyChildArgument(sprite, 1);
+        Animation_ApplyChildArgument__f0298c0(sprite, 1);
         sprite->flags = 0;
         // DEAD: overwritten by the next line.
         sprite->priority = 2;
@@ -412,7 +418,7 @@ counted:
       *wakeTimer = 5;
     }
   }
-  Func_08029838(actor);
+  Func_08029838__f0298c0(actor);
 
 done:
   actor->step++;
@@ -599,7 +605,7 @@ update_object:
       ((struct Unk0802a124Actor *)ripple)->unk63 = 100;
       ripple->motionFlags = collision;
       if (rippleSprite != 0) {
-        Animation_ApplyChildArgument(rippleSprite, 1);
+        Animation_ApplyChildArgument__f0298c0(rippleSprite, 1);
         rippleSprite->flags = collision;
         rippleSprite->priority = 2;
         rippleSprite->priority = 1;
@@ -607,7 +613,7 @@ update_object:
       *timer = 5;
     }
   }
-  Func_08029838(object);
+  Func_08029838__f0298c0(object);
   object->step++;
   return 1;
 }

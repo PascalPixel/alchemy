@@ -308,6 +308,8 @@ void *Sprite_ShareVramCacheEntry(void *src, void *alt) {
 #define Actor_SetAnimationSpeedFar                                             \
   ((void (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
+/* VIEW(depthend): routine Func_080200c0 as struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); f0d8740 has struct CaptureObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
+extern struct Actor *Func_080200c0__depthend(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_080200c0");
 
 struct SpawnScene {
   u8 unk00[0x10];
@@ -320,7 +322,7 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   u8 *part;
   s32 mask;
 
-  object = Func_080200c0(kind, x, y, z);
+  object = Func_080200c0__depthend(kind, x, y, z);
   if (object != NULL) {
     if (object->animationKind == 0) {
       Actor_Destroy(object);
@@ -358,6 +360,8 @@ void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
 }
 
 
+/* VIEW(depthend): routine BattleEffect_ApplyColorToTargetBuffer as void BattleEffect_ApplyColorToTargetBuffer(s32 colors, s32 mode); f0d6674 has void BattleEffect_ApplyColorToTargetBuffer(void *buffer, s32 mode). */
+extern void BattleEffect_ApplyColorToTargetBuffer__depthend(s32 colors, s32 mode) __asm__("BattleEffect_ApplyColorToTargetBuffer");
 void GameFlag_ClearBit(s32 flag);
 
 void GameFlag_SetBit(s32 flag);
@@ -371,7 +375,7 @@ void Field_StartColorTransition(s32 frames, s32 color) {
   if (*(s8 *)(state + 0xca4) == 0)
     Dma_Set(buffers->target, state + 0x222, DMA_COPY_WORDS(0x150), REG_DMA3);
   Dma_Set(buffers->target, buffers->current, DMA_COPY_WORDS(0x2a0), REG_DMA3);
-  BattleEffect_ApplyColorToTargetBuffer(0x200000 | color, 1);
+  BattleEffect_ApplyColorToTargetBuffer__depthend(0x200000 | color, 1);
   GameFlag_SetBit(0x108);
   BattleEffect_StartBufferInterpolation(frames);
 }
@@ -380,11 +384,11 @@ void Field_StartPaletteTransition(s32 frames) {
   u8 *state = Ram_HeapSlots->eventWork;
   s32 colors = (s32)(state + 0x222);
 
-  BattleEffect_ApplyColorToTargetBuffer(colors, 2);
+  BattleEffect_ApplyColorToTargetBuffer__depthend(colors, 2);
   if (*(s8 *)(state + 0xca4) != 0)
-    BattleEffect_ApplyColorToTargetBuffer(0x10001, 1);
+    BattleEffect_ApplyColorToTargetBuffer__depthend(0x10001, 1);
   else
-    BattleEffect_ApplyColorToTargetBuffer(colors, 1);
+    BattleEffect_ApplyColorToTargetBuffer__depthend(colors, 1);
   GameFlag_ClearBit(0x108);
   BattleEffect_StartBufferInterpolation(frames);
 }

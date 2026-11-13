@@ -3,6 +3,8 @@
 // Part of f11e3ac.c.
 
 #include "../f11e3ac_internal.h"
+/* VIEW(f11f66c): routine ColorBuffer_Scale as void ColorBuffer_Scale(u16 *source, u16 *destination, s32 scale, s32 count); f11e3ac has void ColorBuffer_Scale(u16 *source, u32 destination, s32 value, s32 size). */
+extern void ColorBuffer_Scale__f11f66c(u16 *source, u16 *destination, s32 scale, s32 count) __asm__("ColorBuffer_Scale");
 
 /// Sets the palette brightness. Level 0 transfers the original colours
 /// unchanged.
@@ -36,7 +38,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
     Dma_Set(palette, (void *)&BG_PLTT_COLOR(6, 0), DMA_COPY_HALFWORDS(128),
             REG_DMA3);
   } else {
-    ColorBuffer_Scale(palette, (u16 *)0x050000c0,
+    ColorBuffer_Scale__f11f66c(palette, (u16 *)0x050000c0,
                       screen->brightness = 0x10000 - level * 1092, 128);
   }
   {
@@ -171,7 +173,7 @@ void Func_081263fc(s32 mode, s32 resource, s32 level) {
   palette = session->palette;
   Dma_Set(data, palette, 0x84000040, REG_DMA3);
   if (level >= 0)
-    ColorBuffer_Scale(palette, (u16 *)0x050000c0,
+    ColorBuffer_Scale__f11f66c(palette, (u16 *)0x050000c0,
                       session->brightness = 0x10000 - level * 1092, 128);
   if (session->keepBackdropPalette == 0) {
     Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010, REG_DMA3);
@@ -1040,7 +1042,7 @@ void Func_08127308(s32 unit, s32 kind, s32 mode, s32 variant) {
       ime = &REG_IME;
       work = (struct SparkWork *)Ram_HeapSlots->battleFxWork[0];
       if (frame <= 24)
-        ColorBuffer_Scale(session->palette, (u16 *)0x050000c0,
+        ColorBuffer_Scale__f11f66c(session->palette, (u16 *)0x050000c0,
                           *brightness = 0x10000 - frame * 1092, 128);
       Func_0811c2b4(unit, (s32 *)pos);
       work->originX = (64 - pos->x) << 8;

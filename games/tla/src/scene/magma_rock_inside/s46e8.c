@@ -8,10 +8,16 @@
 #include "field_effect.h"
 #include "event_inline.h"
 
+/* VIEW(s46e8): variable gData_02005638 as extern const s32 gData_02005638[]; the definition has u32 gData_02005638[] = { SC_WAIT(33), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1), SC_FREE, }. */
+extern const s32 gData_02005638__s46e8[] __asm__("gData_02005638");
 extern u32 gData_02005638[];
 
 u32 Func_02004e98(struct FieldSprite *sprite, u32 frame);
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
+/* VIEW(s46e8): routine Func_02004c98 as void Func_02004c98(struct FieldEffect *effect, s32 mode); local.h has void Func_02004c98(struct Actor *object, s32 a). */
+extern void Func_02004c98__s46e8(struct FieldEffect *effect, s32 mode) __asm__("Func_02004c98");
+/* VIEW(s46e8): routine Func_02004ca0 as void Func_02004ca0(struct FieldEffect *effect, const s32 *script); local.h has void Func_02004ca0(struct Actor *object, const void *data). */
+extern void Func_02004ca0__s46e8(struct FieldEffect *effect, const s32 *script) __asm__("Func_02004ca0");
 void Func_02004c98(struct Actor *object, s32 a);
 void Func_02004ca0(struct Actor *object, const void *data);
 s32 Math_Cosine(s32 angle);
@@ -37,8 +43,8 @@ void Func_020046e8(s32 spread) {
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
       Actor_SetSingleChildFlags(effect, 0);
-      Func_02004c98(effect, 2);
-      Func_02004ca0(effect, gData_02005638);
+      Func_02004c98__s46e8(effect, 2);
+      Func_02004ca0__s46e8(effect, gData_02005638__s46e8);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
       if (spread != 0) {
@@ -58,6 +64,8 @@ void Func_020046e8(s32 spread) {
   } while (i <= 7);
 }
 
+/* VIEW(s46e8): variable gData_02005668 as extern const s32 gData_02005668[]; the definition has u32 gData_02005668[] = { SC_WAIT(44), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1), SC_FREE, }. */
+extern const s32 gData_02005668__s46e8[] __asm__("gData_02005668");
 extern u32 gData_02005668[];
 
 void Func_0200481c(void) {
@@ -78,8 +86,8 @@ void Func_0200481c(void) {
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
       Actor_SetSingleChildFlags(effect, 0);
-      Func_02004c98(effect, 2);
-      Func_02004ca0(effect, gData_02005668);
+      Func_02004c98__s46e8(effect, 2);
+      Func_02004ca0__s46e8(effect, gData_02005668__s46e8);
       effect->velocity.x = Math_Cosine(i << 12);
       effect->velocity.y = 0;
       effect->velocity.z = Math_Sin(i << 12);
@@ -258,6 +266,11 @@ void Func_02004a5c(s32 x, s32 y, s32 z, s32 count) {
 
 extern char ResourceId_FallingRock;
 
+/* VIEW(s4b18): tag struct Rock as struct Rock__s4b18; s46e8.c has another definition. */
+struct Rock__s4b18 {
+  u8 unk00[24];
+  s32 timer;
+};
 
 /* VIEW(s4b18): tag struct RockSprite as struct RockSprite__s4b18; s46e8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/magma_rock_inside/s46e8.c:295: structure has no member named `unk05_5'. */
 struct RockSprite__s4b18 {
@@ -274,8 +287,17 @@ struct RockSprite__s4b18 {
   u8 unk20[8];
 };
 
+/* VIEW(s4b18): tag struct RockWork as struct RockWork__s4b18; s46e8.c has another definition. */
+struct RockWork__s4b18 {
+  u8 tiles[0x500];
+  struct Rock__s4b18 rocks[64];
+  struct RockSprite__s4b18 sprites[64];
+  s16 next;
+  u16 tileBase;
+  u16 resource;
+};
 
-struct RockWork *HeapSlot_AllocFar(s32 slot, s32 size);
+struct RockWork__s4b18 *HeapSlot_AllocFar(s32 slot, s32 size);
 void *Resource_GetTableEntry(s32 id);
 void Func_02004c58(void *entry, void *destination);
 s32 Resource_FindFreeEntry(void);
@@ -290,11 +312,11 @@ static __inline__ void StartTask(void (*func)(void), s32 priority) {
 }
 
 void Func_02004b18(void) {
-  struct RockWork *work = HeapSlot_AllocFar(220, sizeof(struct RockWork));
+  struct RockWork__s4b18 *work = HeapSlot_AllocFar(220, sizeof(struct RockWork__s4b18));
   s32 entry;
   s32 tile;
   s32 i;
-  struct Rock *rock;
+  struct Rock__s4b18 *rock;
   struct RockSprite__s4b18 *sprite;
 
   Func_02004c58(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);

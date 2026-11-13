@@ -43,6 +43,15 @@ struct BurstTexture {
 };
 
 // One entry of the list Render_DrawModelList draws; kind 6 is a textured quad.
+/* VIEW(f17e698): tag struct RenderPrimitive as struct RenderPrimitive__f17e698; f15585c.c has another definition. */
+struct RenderPrimitive__f17e698 {
+  s32 kind;
+  s32 unk04;
+  const void *faces;
+  void *vertices;
+  struct BurstTexture *texture;
+  s32 unk14;
+};
 
 extern char ResourceId_EarthWallSheet;
 extern char ResourceId_OrangePaletteB;
@@ -112,7 +121,7 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   struct BurstTexture texture;
   struct EffectPosition target;
-  struct RenderPrimitive *quad;
+  struct RenderPrimitive__f17e698 *quad;
   void *vertices;
   s32 frame;
   s32 cel;

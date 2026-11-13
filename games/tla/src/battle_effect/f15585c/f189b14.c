@@ -77,6 +77,8 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Func_080150e4(s32 angle);
 void Func_0801521c(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+/* VIEW(f189b14): routine Render_DrawModelList as void Render_DrawModelList(struct Model__f189b14 *model); f188714 has void Render_DrawModelList(struct Model *model). */
+extern void Render_DrawModelList__f189b14(struct Model__f189b14 *model) __asm__("Render_DrawModelList");
 void Heap_Release(void *block);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
@@ -271,7 +273,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
         Func_0801521c(scale);
         Func_080151e4(0x10000, 0x10000, 0x10000);
         Render_TransformVertices(Data_081991e0, vertices, 4);
-        Render_DrawModelList(model);
+        Render_DrawModelList__f189b14(model);
       }
 
       // Each sword's flash grows where it lands and fades over 16 frames.
@@ -297,7 +299,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
             Func_080150e4(frame << 9);
             Func_0801521c(scale);
             Render_TransformVertices(Data_081991e0, vertices, 4);
-            Render_DrawModelList(model);
+            Render_DrawModelList__f189b14(model);
           }
         }
       }
@@ -323,7 +325,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
           Func_080151e4(0x8000, 0x10000,
                         (Trig_Sin((frame + i * 8) << 9) / 8 + scale) * 2);
           Render_TransformVertices(Data_08199200, vertices, 4);
-          Render_DrawModelList(model);
+          Render_DrawModelList__f189b14(model);
         }
       }
       Heap_Release(model);
@@ -678,7 +680,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
       Func_0801521c(scale);
       Func_080151e4(0x10000, 0x20000, 0x10000);
       Render_TransformVertices(Data_081991e0, vertices, 4);
-      Render_DrawModelList(model);
+      Render_DrawModelList__f189b14(model);
       if (mode == CARD_BRAMBLE || mode == CARD_THUNDER) {
         Func_0801521c(0x4000);
         Render_TransformVertices(Data_081991e0, vertices, 4);
@@ -758,7 +760,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
           Func_080151e4(0x20000, 0x20000, 0x10000);
         }
         Render_TransformVertices(Data_081991c0, vertices, 4);
-        Render_DrawModelList(model);
+        Render_DrawModelList__f189b14(model);
       }
     }
     Heap_Release(model);

@@ -508,6 +508,10 @@ void Actor_StartRepeatedMotion(u32 objectId, s32 variant);
 void Func_080d489c(s32 id, s32 animation);
 void Func_0200360c(s32 a, s32 b);
 void Map_SetScreenShake(s32 x, s32 y, s32 z);
+/* VIEW(s0a34): routine Func_02003164 as void Func_02003164(s32 *position); the definition has void Func_02003164(const struct Vec3 *origin). */
+extern void Func_02003164__s0a34(s32 *position) __asm__("Func_02003164");
+/* VIEW(s0a34): routine Func_0200320c as void Func_0200320c(s32 *position); the definition has void Func_0200320c(void). */
+extern void Func_0200320c__s0a34(s32 *position) __asm__("Func_0200320c");
 void Field_StartPaletteTransition(s32 mode);
 void Field_EndActorSpriteEffect(s32 mode);
 void Func_020032a4(void);
@@ -515,6 +519,8 @@ void wait(s32 frames);
 void Func_020035bc(void);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Func_02003464(void);
+/* VIEW(s0a34): routine Func_02000038 as void Func_02000038(void); the definition has void Func_02000038(struct RiseObject *object). */
+extern void Func_02000038__s0a34(void) __asm__("Func_02000038");
 
 void Func_02000a34(s32 value) {
   /* FAKEMATCH(wrapper): calls forwarded through call.h's CallN and ValueN; as
@@ -624,7 +630,7 @@ void Func_02000a34(s32 value) {
   Func_080d47b4(8, 0x101, 60);
   Call2((void (*)())Func_0200360c, 16, 0x1090);
   Call3((void (*)())Map_SetScreenShake, 0x20000, 0x20000, 0x10000);
-  Func_02003164(glow);
+  Func_02003164__s0a34(glow);
   Actor_SetModeById(8, 1);
   Actor_Jump(4, 6, 0);
   Sound_Play(194);
@@ -638,7 +644,7 @@ void Func_02000a34(s32 value) {
   Event_Wait(30);
   Call3((void (*)())Event_ShowMessageThenWait, 0x2008, 0, 5);
   Call3((void (*)())Map_SetScreenShake, 0x40000, 0x40000, 0x10000);
-  Func_0200320c(glow);
+  Func_0200320c__s0a34(glow);
   Sound_Play(194);
   Event_Wait(10);
   Actor_Jump(8, 6, 15);
@@ -652,7 +658,7 @@ void Func_02000a34(s32 value) {
   Actor_SetSpritePriority(10, 1);
   thrown->motionFlags = 2;
   thrown->y = 0x180000;
-  thrown->update = Func_02000038;
+  thrown->update = Func_02000038__s0a34;
   thrown->terrainHeight = 0;
   thrown->scaleX = 0;
   thrown->scaleY = 0;
@@ -794,6 +800,8 @@ struct Position {
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 void Func_0200357c(s32 actor, s32 value);
+/* VIEW(s0a34): routine Func_02002f58 as void Func_02002f58(struct Position *position); the definition has void Func_02002f58(const s32 *position). */
+extern void Func_02002f58__s0a34(struct Position *position) __asm__("Func_02002f58");
 
 static __inline__ void Func_0200351c_(s32 actor, s32 value, s32 frames) {
   /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 44 of
@@ -999,7 +1007,7 @@ void Func_0200115c(void) {
     position.x = 0x02960000;
     position.y = 0;
     position.z = 0xee0000;
-    Func_02002f58(&position);
+    Func_02002f58__s0a34(&position);
     Sound_Play(147);
     Func_020034d4___s0a34(13, 664 << 16, 248 << 16);
     WORD_AT(object, 72) = 0x10000;
@@ -1748,6 +1756,9 @@ void *Resource_GetTableEntry(s32 id);
 void Func_020033dc(void *resource, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
+/* VIEW(s2c88): routine Func_020035fc as void Func_020035fc(struct ChampaCliffCavesSprite *sprite, s32 width, s32 height, u32 attributes, s32 vram); s0a34 has void Func_020035fc(struct FlashSprite *sprite, s32 width, s32 height, u32 attributes, s32 tile). */
+extern void Func_020035fc__s2c88(struct ChampaCliffCavesSprite *sprite, s32 width, s32 height,
+                   u32 attributes, s32 vram) __asm__("Func_020035fc");
 
 extern char ResourceId_GlowDisc;
 
@@ -1756,7 +1767,7 @@ static __inline__ void Place__s2c88(struct ChampaCliffCavesSprite *a, s32 b, s32
                              u32 d, s32 e) {
   /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 4 of 78
    * instructions differ in tla-en. */
-  Func_020035fc(a, b, c, d, e);
+  Func_020035fc__s2c88(a, b, c, d, e);
 }
 
 void Func_02002c88(void) {
@@ -1819,6 +1830,9 @@ struct ChampaCliffCavesWork__s2d34 {
 void *Resource_GetTableEntry(s32 id);
 void Func_020033dc(void *resource, void *destination);
 s32 Resource_FindFreeEntry(void);
+/* VIEW(s2d34): routine Func_020035fc as void Func_020035fc(struct ChampaCliffCavesSprite *sprite, s32 width, s32 height, u32 attributes, s32 vram); s0a34 has void Func_020035fc(struct FlashSprite *sprite, s32 width, s32 height, u32 attributes, s32 tile). */
+extern void Func_020035fc__s2d34(struct ChampaCliffCavesSprite *sprite, s32 width, s32 height,
+                   u32 attributes, s32 vram) __asm__("Func_020035fc");
 
 extern char ResourceId_FireColumn;
 
@@ -1827,7 +1841,7 @@ static __inline__ void Place__s2d34(struct ChampaCliffCavesSprite *a, s32 b, s32
                              u32 d, s32 e) {
   /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 4 of 78
    * instructions differ in tla-en. */
-  Func_020035fc(a, b, c, d, e);
+  Func_020035fc__s2d34(a, b, c, d, e);
 }
 
 void Func_02002d34(void) {
@@ -1886,6 +1900,8 @@ struct Glow {
 };
 
 void Func_020035c4(s32 *position);
+/* VIEW(s2d34): routine Func_02003604 as void Func_02003604(struct GlowSprite *sprite); s0a34 has void Func_02003604(struct FlashSprite *sprite). */
+extern void Func_02003604__s2d34(struct GlowSprite *sprite) __asm__("Func_02003604");
 
 /// Cycles thirty-two colours of the object palettes through a wave of greens
 /// and blues, places the glow's two sprites at its spot with their scales, and
@@ -1928,7 +1944,7 @@ loop:
   sprite->z = position[2];
   sprite->scale = work->scale;
   sprite->trailingScale = work->trailingScale;
-  Func_02003604(sprite);
+  Func_02003604__s2d34(sprite);
   position[0] = work->position[0];
   position[1] = work->position[1];
   position[2] = work->position[2];
@@ -1938,7 +1954,7 @@ loop:
   sprite->z = position[2];
   sprite->scale = work->scale2;
   sprite->trailingScale = work->trailingScale2;
-  Func_02003604(sprite);
+  Func_02003604__s2d34(sprite);
   work->trailingScale = work->scale * 31 / 40;
   work->trailingScale2 = work->scale2 * 31 / 40;
   work->frame++;
@@ -1951,10 +1967,12 @@ loop:
    } *)(base))                                                                 \
        ->v)
 
+/* VIEW(s2d34): routine HeapSlot_AllocFar as u8 *HeapSlot_AllocFar(s32 slot, s32 size); s0a34 has struct FlashWork *HeapSlot_AllocFar(s32 slot, s32 size). */
+extern u8 *HeapSlot_AllocFar__s2d34(s32 slot, s32 size) __asm__("HeapSlot_AllocFar");
 void Func_02002c88(void);
 
 void Func_02002f58(const s32 *position) {
-  u8 *work = HeapSlot_AllocFar(220, 0x1078);
+  u8 *work = HeapSlot_AllocFar__s2d34(220, 0x1078);
   s32 time;
   s32 state;
 
@@ -2081,13 +2099,15 @@ struct Vec3 {
   s32 z;
 };
 
+/* VIEW(s3164): routine HeapSlot_AllocFar as void *HeapSlot_AllocFar(s32 slot, s32 size); s2d34 has u8 *HeapSlot_AllocFar(s32 slot, s32 size). */
+extern void *HeapSlot_AllocFar__s3164(s32 slot, s32 size) __asm__("HeapSlot_AllocFar");
 void wait(s32 frames);
 void Func_02002c88(void);
 void Func_02002de4(void);
 
 void Func_02003164(const struct Vec3 *origin) {
   struct ChampaCliffCavesWork__s3164 *work =
-      HeapSlot_AllocFar(220, sizeof(struct ChampaCliffCavesWork__s3164));
+      HeapSlot_AllocFar__s3164(220, sizeof(struct ChampaCliffCavesWork__s3164));
   s32 state;
 
   work->originX = origin->x;
@@ -2117,13 +2137,29 @@ void Func_02003164(const struct Vec3 *origin) {
 }
 
 // ---- games/tla/src/scene/champa_cliff_caves/s320c.c ----
+/* VIEW(s320c): tag struct ChampaCliffCavesWork as struct ChampaCliffCavesWork__s320c; champa_cliff_caves.c has another definition. */
+struct ChampaCliffCavesWork__s320c {
+  u8 unk0000[0x1000];
+  s32 field1000;
+  s32 field1004;
+  s32 field1008;
+  u8 unk100c[0x58];
+  s32 field1064;
+  u8 unk1068[4];
+  s32 field106c;
+  s32 field1070;
+  u16 field1074;
+  u8 unk1076[2];
+};
 
+/* VIEW(s320c): routine HeapSlot_AllocFar as void *HeapSlot_AllocFar(s32 slot, s32 size); s2d34 has u8 *HeapSlot_AllocFar(s32 slot, s32 size). */
+extern void *HeapSlot_AllocFar__s320c(s32 slot, s32 size) __asm__("HeapSlot_AllocFar");
 void Func_02002d34(void);
 void Func_02002de4(void);
 
 void Func_0200320c(void) {
-  struct ChampaCliffCavesWork *work =
-      HeapSlot_AllocFar(220, sizeof(struct ChampaCliffCavesWork));
+  struct ChampaCliffCavesWork__s320c *work =
+      HeapSlot_AllocFar__s320c(220, sizeof(struct ChampaCliffCavesWork__s320c));
   s32 state;
 
   Func_02002d34();

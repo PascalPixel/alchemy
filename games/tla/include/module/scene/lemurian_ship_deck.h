@@ -28,7 +28,7 @@ void Func_02000258(void);
 
 void Func_02000288(void);
 
-void Func_020002cc(void);
+void LemurianShipDeck_TakeTheTiller(void);
 
 void FieldCamera_WaitForArrival(void);
 
@@ -50,6 +50,6 @@ extern u32 gData_02002498[];
 
 void Func_02000078(void);
 
-void Func_02000168(void);
+void LemurianShipDeck_TryHeldDoor(void);
 
 #endif

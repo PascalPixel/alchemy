@@ -91,7 +91,9 @@ const u8 *Scene_GetEvents(void) {
   return gData_020023ec;
 }
 
-void Func_02000168(void) {
+/// ★ Named from the game: "The door is held closed by a powerful force."
+/// (MsgTheDoorIsHeld)
+void LemurianShipDeck_TryHeldDoor(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered(MsgTheDoorIsHeld, 1);

@@ -158,7 +158,7 @@ extern s16 gData_02003034[];
 extern s16 gData_0200304e[];
 
 void Func_02001a04(void);
-void Func_02001650(void);
+void LemurianShip_FindMonstersAboard(void);
 void Actor_StartScript(struct LemurianShipObject *object, const void *script);
 void Func_02002dc8(const void *script);
 extern u32 gData_02003ef8[];
@@ -396,7 +396,7 @@ struct Trigger *Scene_GetEvents(void) {
 /// A switch that toggles flag 0x207 and its map edits once flag 0x983 is set;
 /// before that, it does nothing. "There's no reaction... It doesn't seem to be
 /// running."
-void Func_0200065c(void) {
+void LemurianShip_ExamineEngine(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (Event_GetFlag(0x983)) {
@@ -889,7 +889,7 @@ void Func_020015c8(void) {
 
 /// The scene that clears the ship and sets its flags.
 /// "How did all these monsters get on board?"
-void Func_02001650(void) {
+void LemurianShip_FindMonstersAboard(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLemurianShip01);
@@ -1548,7 +1548,7 @@ void Func_02002970(void) {
 
 void Func_02002b98(void) {
   if (Event_GetFlag(0x983) == 0)
-    Func_02001650();
+    LemurianShip_FindMonstersAboard();
 }
 
 #include "text/msg_ids.h"
@@ -1864,7 +1864,7 @@ struct Trigger gData_02003ae4[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT(Func_02000780)},
     {8, 0, CONDITION_ALWAYS, EVENT(Func_02000770)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02000780)},
-    {TRIGGER_EXAMINE, 40, CONDITION_ALWAYS, EVENT(Func_0200065c)},
+    {TRIGGER_EXAMINE, 40, CONDITION_ALWAYS, EVENT(LemurianShip_ExamineEngine)},
     {TRIGGER_STEP, 41, 0x212, EVENT(Func_02000870)},
     {TRIGGER_STEP, 43, 0x212, EVENT(Func_02000af4)},
     {TRIGGER_STEP, 42, 0x201, EVENT(Func_020019e0)},

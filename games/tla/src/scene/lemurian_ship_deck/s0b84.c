@@ -24,11 +24,11 @@
 #include "module/scene/scene.h"
 
 void Func_020001cc(void);
-void Func_020006e4(void);
+void LemurianShipDeck_HoldOnToTiller(void);
 
 /// The scene run from entrance 10: the crew takes its places on deck and the
 /// leader is asked to take the tiller; it ends by setting flag 0x8de.
-void Func_020002cc(void) {
+void LemurianShipDeck_TakeTheTiller(void) {
   s32 angle;
   s32 turn;
 
@@ -157,7 +157,7 @@ static inline void RunToActor4(s32 id) {
 /// The scene run from entrance 20: the camera frames actors 4 to 9 around the
 /// spot, two callbacks start the bobbing, and after the exchange of looks and
 /// emotes the four actors run to actor 4.
-void Func_020006e4(void) {
+void LemurianShipDeck_HoldOnToTiller(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -278,9 +278,9 @@ void Func_02000b84(void) {
   FieldTask_AddFrame(Func_02000188, 0x480);
   FieldTask_AddFrame(Func_020001cc, 0x480);
   if (gMainRoutineWork.entrance == 10)
-    Func_020002cc();
+    LemurianShipDeck_TakeTheTiller();
   if (gMainRoutineWork.entrance == 20)
-    Func_020006e4();
+    LemurianShipDeck_HoldOnToTiller();
 }
 
 s32 Scene_Initialize(void) {
@@ -331,7 +331,7 @@ s32 Scene_PrepareMap(void) {
 
 /// Unless flag 0x8ff is set: the crew sights the ship from the deck and the
 /// leader is asked about it. Either way flag 0x980 is set.
-void Func_02000ce0(void) {
+void LemurianShipDeck_SightMenardisShip(void) {
   s32 answer;
   s32 owner;
 
@@ -440,7 +440,9 @@ void Func_02001064(void) { Func_020020cc(gData_020020dc); }
 
 void Actor_MoveToObject(s32 id, s32 target);
 
-void Func_02001074(void) {
+/// ★ Named from the game: "Well, there's no point in hanging around here all
+/// day." (MsgWellThereS)
+void LemurianShipDeck_LeaveToFindCrew(void) {
   struct Actor *object;
 
   if (Event_GetFlag(0x212))
@@ -523,7 +525,7 @@ struct Actor *Func_02001210(void) {
 
 /// Once flag 7 is set, and only until flag 0x985 is: a scene of actor 7 and the
 /// leader, which ends by setting flags 0x201 and 0x985.
-void Func_0200128c(void) {
+void LemurianShipDeck_ReturnToShip(void) {
   struct Actor *handle;
   void (*func)(void);
   struct Actor *object;
@@ -595,7 +597,7 @@ void Func_0200128c(void) {
 /// Once flag 0x8ff is set, and only until flag 0x989 is: the crew talks
 /// over the ship, the leader answers two prompts, and everyone leaves by
 /// script gData_020020e4; it sets flag 0x981.
-void Func_020014c0(void) {
+void LemurianShipDeck_ReachPiersShip(void) {
   if (Event_GetFlag(0x8ff) == 0)
     return;
   if (Event_GetFlag(0x989) != 0)
@@ -816,7 +818,9 @@ void Func_020014c0(void) {
 
 DEFINE_FUNC_02000DF8(Func_02001d60, 7, Func_02001efc, gData_02002498)
 
-void Func_02001da0(void) {
+/// ★ Named from the game: "Then let's waste no time! We should set out for
+/// Madra at once!" (MsgThenLetS)
+void LemurianShipDeck_SetOutForMadra(void) {
   if (Event_GetFlag(7)) {
     struct Actor *object;
 
@@ -942,12 +946,12 @@ struct Trigger gData_020023ec[] = {
 struct Trigger gData_020023f8[] = {
     {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_02000078)},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 10, 0x980, EVENT(Func_02000ce0)},
-    {TRIGGER_STEP, 11, 0x981, EVENT(Func_020014c0)},
-    {TRIGGER_STEP, 12, 0x989, EVENT(Func_02001da0)},
-    {TRIGGER_STEP, 1, 0x985, EVENT(Func_0200128c)},
-    {TRIGGER_EXAMINE, 14, 0x985, EVENT(Func_02000168)},
-    {TRIGGER_STEP, 15, 0x985, EVENT(Func_02001074)},
+    {TRIGGER_STEP, 10, 0x980, EVENT(LemurianShipDeck_SightMenardisShip)},
+    {TRIGGER_STEP, 11, 0x981, EVENT(LemurianShipDeck_ReachPiersShip)},
+    {TRIGGER_STEP, 12, 0x989, EVENT(LemurianShipDeck_SetOutForMadra)},
+    {TRIGGER_STEP, 1, 0x985, EVENT(LemurianShipDeck_ReturnToShip)},
+    {TRIGGER_EXAMINE, 14, 0x985, EVENT(LemurianShipDeck_TryHeldDoor)},
+    {TRIGGER_STEP, 15, 0x985, EVENT(LemurianShipDeck_LeaveToFindCrew)},
     {TRIGGER_STEP, 16, 0x985, EVENT(Func_02001178)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, 0x200, EVENT(Func_02001064)},
     {TRIGGERS_END},

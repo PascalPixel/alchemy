@@ -3266,9 +3266,9 @@ LogRoomsA_SnapToNearestStop(struct LogRoomsAStop *node, s16 *requestedFacing) {
     angleDifference = (s16)(connectionFacing - *requestedFacing);
     if (angleDifference < 0)
       angleDifference = -angleDifference;
-    // The used-stop test reads stopIndex through a volatile lvalue, so the
-    // stopIndex assignment loads it again; as a plain test, 1 of 49
-    // instructions differ in tbs-en.
+    /* FAKEMATCH(volatile): the used-stop test reads stopIndex through a
+     * volatile lvalue, so the assignment below loads it again; as a plain
+     * test, 9 of 49 instructions differ in tbs-en. */
     if (*(volatile u8 *)&connection->stopIndex != 0xff &&
         angleDifference < nearestDifference) {
       nearestDifference = angleDifference;

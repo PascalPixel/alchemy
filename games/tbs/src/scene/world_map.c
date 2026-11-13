@@ -3020,6 +3020,9 @@ UNUSED static void WorldMap_UpdateCyclingLinkedEffects(struct Actor *actor) {
 #include "shared/field_effect_vertical.h"
 #include "shared/world_map_attached_effects.h"
 
+/// Hammet's caravan outside Vault (WorldMap_ShowHammetsCaravan): each of
+/// the four wagons, at one and a half times its size, rolls up to the party
+/// and stops in its own place.
 s32 gCaravanFirstWagonArrives[] = {
     SC_POSITION(5848, 0, 1576),
     SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
@@ -3038,6 +3041,8 @@ s32 gCaravanFirstWagonArrives[] = {
     SC_END,
 };
 
+/// Each wagon rolls south for the bridge and, out of sight, is put down where
+/// it waits at the broken bridge.
 s32 gCaravanFirstWagonDeparts[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE(5868, 0, 1624),
@@ -3049,6 +3054,7 @@ s32 gCaravanFirstWagonDeparts[] = {
     SC_END,
 };
 
+/// Each wagon rolls back from the broken bridge and leaves the stage.
 s32 gCaravanFirstWagonReturns[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE(5800, 0, 1800),
@@ -3057,6 +3063,8 @@ s32 gCaravanFirstWagonReturns[] = {
     SC_END,
 };
 
+/// Every wagon in turn: from the road south of Vault it rolls north for Lunpa
+/// and leaves the stage.
 s32 gCaravanWagonHeadsNorth[] = {
     SC_POSITION(5868, 0, 1704),
     SC_WAIT(1),
@@ -3181,6 +3189,9 @@ s32 gCaravanFourthWagonReturns[] = {
     SC_SYNC,         SC_POSITION(0, 0, 0),   SC_END,
 };
 
+/// The invisible guide of the rock that falls beside the caravan: it grows
+/// from a tenth of its size over 160 frames as it moves to where the rock
+/// lands.
 s32 gCaravanRockGuideScript[] = {
     SC_SET(SW_SCALE_X, Q16_ONE / 10),
     SC_SET(SW_SCALE_Y, Q16_ONE / 10),
@@ -3194,6 +3205,8 @@ s32 gCaravanRockGuideScript[] = {
     SC_END,
 };
 
+/// The leader's walk in WorldMap_RunBlackOrbEvent: SW_TIMER turns 1 when he
+/// has stopped.
 s32 gBlackOrbLeaderScript[] = {
     SC_SET(SW_TIMER, 0),
     SC_ANIMATION(ANIM_WALK),
@@ -3207,6 +3220,9 @@ s32 gBlackOrbLeaderScript[] = {
     SC_END,
 };
 
+/// The walks of the ending (WorldMap_ShowEndingEvent): Alex, Kraden and Jenna
+/// follow one path and stop side by side; Jenna's turns SW_TIMER to 1 when
+/// she has stopped.
 s32 gEndingAlexWalk[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE(7564, 0, 3476),
@@ -3265,11 +3281,16 @@ s32 gEndingJennaWalk[] = {
     SC_END,
 };
 
+/// A puff of dust in the lighthouse quake (WorldMap_UpdateLighthouseQuake):
+/// it lasts 16 frames.
 s32 gQuakeDustScript[] = {
     SC_WAIT(16),
     SC_RELEASE,
 };
 
+/// The ship crossing the sea (WorldMap_SailToFirstMonsterAttack,
+/// WorldMap_SailUntilLandSighted): 8 pixels west a step for 40 steps, then
+/// SW_TIMER turns 1 while it sails on two more.
 s32 gCrossingShipSailsWest[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE_BY(-8, 0, 0),
@@ -3283,6 +3304,7 @@ s32 gCrossingShipSailsWest[] = {
     SC_END,
 };
 
+/// As gCrossingShipSailsWest, drifting 2 pixels north with each step.
 s32 gCrossingShipVeersNorth[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE_BY(-8, 0, -2),
@@ -3296,6 +3318,8 @@ s32 gCrossingShipVeersNorth[] = {
     SC_END,
 };
 
+/// The island drifting east (WorldMap_ShowIslandDrifting): 24 pixels a step
+/// for 10 steps, then SW_TIMER turns 1 while it drifts on two more.
 s32 gIslandDriftsEast[] = {
     SC_MOVE_BY(24, 0, 0),
     SC_SYNC,
@@ -3308,6 +3332,8 @@ s32 gIslandDriftsEast[] = {
     SC_END,
 };
 
+/// Flint's actor script on the map: it sets him up
+/// (WorldMap_SetUpFlint).
 s32 gWorldMapFlintScript[] = {
     SC_CALL(WorldMap_SetUpFlint),
     SC_END,

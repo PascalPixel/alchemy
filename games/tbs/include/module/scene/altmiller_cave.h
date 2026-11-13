@@ -1,11 +1,9 @@
-#ifndef ALCHEMY_MODULE_MAP_ALTMILLER_CAVE_H
-#define ALCHEMY_MODULE_MAP_ALTMILLER_CAVE_H
+#ifndef ALCHEMY_MODULE_SCENE_ALTMILLER_CAVE_H
+#define ALCHEMY_MODULE_SCENE_ALTMILLER_CAVE_H
 
 #include "types.h"
 #include "scene_tables.h"
 
-struct Trigger;
-struct ActorPlacement;
 struct LightWheel;
 
 const struct SceneEntrance *AltmillerCave_GetEntrances(void);

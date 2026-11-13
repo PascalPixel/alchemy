@@ -1,12 +1,8 @@
-#ifndef ALCHEMY_MODULE_MAP_MOGALL_FOREST_H
-#define ALCHEMY_MODULE_MAP_MOGALL_FOREST_H
+#ifndef ALCHEMY_MODULE_SCENE_MOGALL_FOREST_H
+#define ALCHEMY_MODULE_SCENE_MOGALL_FOREST_H
 
 #include "types.h"
 #include "scene_tables.h"
-
-struct SceneEntrance;
-struct Trigger;
-struct ActorPlacement;
 
 const struct SceneEntrance *MogallForest_GetEntrances(void);
 const struct SceneExitRegion *MogallForest_GetRegions(void);

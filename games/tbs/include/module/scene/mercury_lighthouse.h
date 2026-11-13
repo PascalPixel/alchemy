@@ -1,12 +1,8 @@
-#ifndef ALCHEMY_MODULE_MAP_MERCURY_LIGHTHOUSE_H
-#define ALCHEMY_MODULE_MAP_MERCURY_LIGHTHOUSE_H
+#ifndef ALCHEMY_MODULE_SCENE_MERCURY_LIGHTHOUSE_H
+#define ALCHEMY_MODULE_SCENE_MERCURY_LIGHTHOUSE_H
 
 #include "types.h"
 #include "scene_tables.h"
-
-struct SceneEntrance;
-struct Trigger;
-struct ActorPlacement;
 
 const struct SceneEntrance *MercuryLighthouse_GetEntrances(void);
 const struct SceneExitRegion *MercuryLighthouse_GetRegions(void);

@@ -6,7 +6,6 @@
 
 extern const s32 gBattleArena_SlotValues[];
 u8 *BattleArena_GetEntrances(void);
-s32 Scene_GetExitRegions(void);
 u8 *BattleArena_GetExits(void);
 s32 BattleArena_SelectActorPlacements(void);
 extern u32 gBattleArenaCallFrames;

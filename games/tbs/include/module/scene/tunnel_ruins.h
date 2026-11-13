@@ -1,13 +1,10 @@
-#ifndef ALCHEMY_MODULE_MAP_TUNNEL_RUINS_H
-#define ALCHEMY_MODULE_MAP_TUNNEL_RUINS_H
+#ifndef ALCHEMY_MODULE_SCENE_TUNNEL_RUINS_H
+#define ALCHEMY_MODULE_SCENE_TUNNEL_RUINS_H
 
 #include "types.h"
 #include "scene_tables.h"
 #include "field_coordinate.h"
 #include "scene.h"
-
-struct SceneEntrance;
-struct SceneExitRegion;
 
 const struct SceneEntrance *TunnelRuins_GetEntrances(void);
 const struct SceneExitRegion *TunnelRuins_GetRegions(void);

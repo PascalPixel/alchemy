@@ -1,13 +1,8 @@
-#ifndef ALCHEMY_MODULE_MAP_KALAY_TOLBI_DOCKS_H
-#define ALCHEMY_MODULE_MAP_KALAY_TOLBI_DOCKS_H
+#ifndef ALCHEMY_MODULE_SCENE_KALAY_TOLBI_DOCKS_H
+#define ALCHEMY_MODULE_SCENE_KALAY_TOLBI_DOCKS_H
 
 #include "types.h"
 #include "scene_tables.h"
-
-struct SceneEntrance;
-struct Trigger;
-struct ActorPlacement;
-struct SceneExitRegion;
 
 const struct SceneEntrance *KalayTolbiDocks_GetEntrances(void);
 const struct SceneExitRegion *KalayTolbiDocks_GetRegions(void);

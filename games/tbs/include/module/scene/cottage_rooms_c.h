@@ -1,10 +1,8 @@
-#ifndef ALCHEMY_MODULE_MAP_COTTAGE_ROOMS_C_H
-#define ALCHEMY_MODULE_MAP_COTTAGE_ROOMS_C_H
+#ifndef ALCHEMY_MODULE_SCENE_COTTAGE_ROOMS_C_H
+#define ALCHEMY_MODULE_SCENE_COTTAGE_ROOMS_C_H
 
 #include "types.h"
 #include "scene_tables.h"
-
-struct SceneExitRegion;
 
 const struct SceneEntrance *CottageRoomsC_GetEntrances(void);
 const struct SceneExitRegion *CottageRoomsC_GetRegions(void);

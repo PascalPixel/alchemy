@@ -5,7 +5,6 @@
 #include "scene_tables.h"
 
 u8 *Test_GetEntrances(void);
-s32 Scene_GetExitRegions(void);
 u8 *Test_GetExits(void);
 u8 *Test_GetActorPlacements(void);
 u8 *Test_GetTriggers(void);

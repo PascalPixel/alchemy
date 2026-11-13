@@ -1,13 +1,8 @@
-#ifndef ALCHEMY_MODULE_MAP_COLOSSEUM_ENTRANCE_H
-#define ALCHEMY_MODULE_MAP_COLOSSEUM_ENTRANCE_H
+#ifndef ALCHEMY_MODULE_SCENE_COLOSSEUM_ENTRANCE_H
+#define ALCHEMY_MODULE_SCENE_COLOSSEUM_ENTRANCE_H
 
 #include "types.h"
 #include "scene_tables.h"
-
-struct SceneEntrance;
-struct Trigger;
-struct ActorPlacement;
-struct SceneExitRegion;
 
 const struct SceneEntrance *ColosseumEntrance_GetEntrances(void);
 const struct SceneExitRegion *ColosseumEntrance_GetRegions(void);

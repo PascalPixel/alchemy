@@ -1,12 +1,8 @@
-#ifndef ALCHEMY_MODULE_MAP_IMIL_H
-#define ALCHEMY_MODULE_MAP_IMIL_H
+#ifndef ALCHEMY_MODULE_SCENE_IMIL_H
+#define ALCHEMY_MODULE_SCENE_IMIL_H
 
 #include "types.h"
 #include "scene_tables.h"
-
-struct SceneEntrance;
-struct Trigger;
-struct ActorPlacement;
 
 const struct SceneEntrance *Imil_GetEntrances(void);
 const struct SceneExitRegion *Imil_GetRegions(void);

@@ -1,13 +1,9 @@
-#ifndef ALCHEMY_MODULE_MAP_VENUS_LIGHTHOUSE_H
-#define ALCHEMY_MODULE_MAP_VENUS_LIGHTHOUSE_H
+#ifndef ALCHEMY_MODULE_SCENE_VENUS_LIGHTHOUSE_H
+#define ALCHEMY_MODULE_SCENE_VENUS_LIGHTHOUSE_H
 
 #include "types.h"
 #include "field.h"
 #include "scene_tables.h"
-
-struct SceneEntrance;
-struct Trigger;
-struct ActorPlacement;
 
 const struct SceneEntrance *VenusLighthouse_GetEntrances(void);
 const struct SceneExitRegion *VenusLighthouse_GetRegions(void);

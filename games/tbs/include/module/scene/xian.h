@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_MODULE_MAP_XIAN_H
-#define ALCHEMY_MODULE_MAP_XIAN_H
+#ifndef ALCHEMY_MODULE_SCENE_XIAN_H
+#define ALCHEMY_MODULE_SCENE_XIAN_H
 
 #include "types.h"
 #include "scene_tables.h"

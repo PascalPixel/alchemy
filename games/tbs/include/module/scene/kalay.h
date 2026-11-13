@@ -1,14 +1,9 @@
-#ifndef ALCHEMY_MODULE_MAP_KALAY_H
-#define ALCHEMY_MODULE_MAP_KALAY_H
+#ifndef ALCHEMY_MODULE_SCENE_KALAY_H
+#define ALCHEMY_MODULE_SCENE_KALAY_H
 
 #include "types.h"
 #include "event.h"
 #include "scene_tables.h"
-
-struct SceneEntrance;
-struct Trigger;
-struct ActorPlacement;
-struct SceneExitRegion;
 
 const struct SceneEntrance *Kalay_GetEntrances(void);
 const struct SceneExitRegion *Kalay_GetRegions(void);

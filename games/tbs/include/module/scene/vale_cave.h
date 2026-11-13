@@ -1,13 +1,8 @@
-#ifndef ALCHEMY_MODULE_MAP_VALE_CAVE_H
-#define ALCHEMY_MODULE_MAP_VALE_CAVE_H
+#ifndef ALCHEMY_MODULE_SCENE_VALE_CAVE_H
+#define ALCHEMY_MODULE_SCENE_VALE_CAVE_H
 
 #include "types.h"
 #include "scene_tables.h"
-
-struct SceneEntrance;
-struct Trigger;
-struct ActorPlacement;
-struct SceneExitRegion;
 
 const struct SceneEntrance *ValeCave_GetEntrances(void);
 const struct SceneExitRegion *ValeCave_GetRegions(void);

@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_MODULE_MAP_SANCTUM_H
-#define ALCHEMY_MODULE_MAP_SANCTUM_H
+#ifndef ALCHEMY_MODULE_SCENE_SANCTUM_H
+#define ALCHEMY_MODULE_SCENE_SANCTUM_H
 
 #include "types.h"
 #include "scene_tables.h"

@@ -1,13 +1,8 @@
-#ifndef ALCHEMY_MODULE_MAP_LAMAKAN_DESERT_H
-#define ALCHEMY_MODULE_MAP_LAMAKAN_DESERT_H
+#ifndef ALCHEMY_MODULE_SCENE_LAMAKAN_DESERT_H
+#define ALCHEMY_MODULE_SCENE_LAMAKAN_DESERT_H
 
 #include "types.h"
 #include "scene_tables.h"
-
-struct SceneEntrance;
-struct Trigger;
-struct ActorPlacement;
-struct SceneExitRegion;
 
 const struct SceneEntrance *LamakanDesert_GetEntrances(void);
 const struct SceneExitRegion *LamakanDesert_GetRegions(void);

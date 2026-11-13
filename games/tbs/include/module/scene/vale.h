@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_MODULE_MAP_VALE_H
-#define ALCHEMY_MODULE_MAP_VALE_H
+#ifndef ALCHEMY_MODULE_SCENE_VALE_H
+#define ALCHEMY_MODULE_SCENE_VALE_H
 
 #include "types.h"
 #include "scene_tables.h"

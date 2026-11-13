@@ -1,16 +1,10 @@
-#ifndef ALCHEMY_MODULE_MAP_GOMA_CAVE_PILLAR_H
-#define ALCHEMY_MODULE_MAP_GOMA_CAVE_PILLAR_H
+#ifndef ALCHEMY_MODULE_SCENE_GOMA_CAVE_PILLAR_H
+#define ALCHEMY_MODULE_SCENE_GOMA_CAVE_PILLAR_H
 
 #include "types.h"
 #include "scene_tables.h"
 #include "field_effect.h"
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneExitRegion *Scene_GetExitRegions(void);
-const u32 *Scene_GetExits(void);
-const struct ActorPlacement *Scene_GetActorPlacements(void);
-const struct Trigger *Scene_GetTriggers(void);
-s32 Scene_Initialize(void);
 extern s32 gGomaCavePillar_WitnessFrames;
 extern s32 gPushedActor_DirectionSteps[];
 extern u32 gPushedActor_FootprintKinds[];

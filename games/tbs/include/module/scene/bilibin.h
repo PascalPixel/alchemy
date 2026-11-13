@@ -1,13 +1,8 @@
-#ifndef ALCHEMY_MODULE_MAP_BILIBIN_H
-#define ALCHEMY_MODULE_MAP_BILIBIN_H
+#ifndef ALCHEMY_MODULE_SCENE_BILIBIN_H
+#define ALCHEMY_MODULE_SCENE_BILIBIN_H
 
 #include "types.h"
 #include "scene_tables.h"
-
-struct SceneEntrance;
-struct Trigger;
-struct ActorPlacement;
-struct SceneExitRegion;
 
 const struct SceneEntrance *Bilibin_GetEntrances(void);
 const struct SceneExitRegion *Bilibin_GetRegions(void);

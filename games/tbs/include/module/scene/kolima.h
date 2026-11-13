@@ -1,14 +1,9 @@
-#ifndef ALCHEMY_MODULE_MAP_KOLIMA_H
-#define ALCHEMY_MODULE_MAP_KOLIMA_H
+#ifndef ALCHEMY_MODULE_SCENE_KOLIMA_H
+#define ALCHEMY_MODULE_SCENE_KOLIMA_H
 
 #include "types.h"
 #include "scene_tables.h"
 #include "scene.h"
-
-struct SceneEntrance;
-struct Trigger;
-struct ActorPlacement;
-struct SceneExitRegion;
 
 const struct SceneEntrance *Kolima_GetEntrances(void);
 const struct SceneExitRegion *Kolima_GetRegions(void);

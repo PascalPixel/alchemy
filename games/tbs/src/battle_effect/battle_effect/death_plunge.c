@@ -296,12 +296,12 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 #ifdef UBFIX
         width = gDeathPlunge_SwordWidths[picture];
         height = gDeathPlunge_SwordHeights[picture];
-        blit[(u32)drift >> 31](
-            canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
-            (blade->x >> 16) - (width >> 1), (blade->y >> 16) - (height >> 1),
-            width, height);
+        blit[drift < 0](canvas,
+                        work->sheet + gDeathPlunge_SwordPictures[picture],
+                        (blade->x >> 16) - (width >> 1),
+                        (blade->y >> 16) - (height >> 1), width, height);
 #else
-        blit[(u32)drift >> 31](
+        blit[drift < 0](
             canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
             (blade->x >> 16) -
                 ((width = gDeathPlunge_SwordWidths[picture]) >> 1),
@@ -320,12 +320,12 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 #ifdef UBFIX
         width = gDeathPlunge_SwordWidths[picture];
         height = gDeathPlunge_SwordHeights[picture];
-        blit[(u32)drift >> 31](
-            canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
-            (blade->x >> 16) - (width >> 1), (blade->y >> 16) - (height >> 1),
-            width, height - 4);
+        blit[drift < 0](canvas,
+                        work->sheet + gDeathPlunge_SwordPictures[picture],
+                        (blade->x >> 16) - (width >> 1),
+                        (blade->y >> 16) - (height >> 1), width, height - 4);
 #else
-        blit[(u32)drift >> 31](
+        blit[drift < 0](
             canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
             (blade->x >> 16) -
                 ((width = gDeathPlunge_SwordWidths[picture]) >> 1),
@@ -1046,10 +1046,6 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
           s32 x = (mote->y * Trig_Sin(mote->x) >> 16) + 64;
           s32 y = (mote->y * Trig_Cos(mote->x) >> 16) + ground.y;
 
-          /* FAKEMATCH(dead): size is at least 1 here; without this test, 224
-           * of 349 instructions differ in tbs-en. */
-          if (size <= 0)
-            size = 1;
           EFFECT_DRAW_FLARE(draw[0], canvas, sheet, x, y, size);
           mote->y -= 2;
           mote->variant--;

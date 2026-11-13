@@ -211,16 +211,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   s32 scrollPos;
   s32 scrollSpeed;
   s32 duration;
-  struct ScreenPoint *targetScreen;
-  struct ScreenPoint *casterScreen;
-  DrawRectangle *drawPair;
   s32 savedVelocityX;
   s32 savedVelocityY;
   s32 savedVelocityZ;
   s32 savedAcceleration;
   s32 savedVerticalStrength;
   struct Actor *targetActor;
-  struct FixedPointPosition *position;
   struct Actor *casterActor;
   struct Particle *particle;
   s32 pairX;
@@ -361,13 +357,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     work->transferValue = CANVAS_FADE_HALF;
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
-  /* FAKEMATCH(temporary): targetScreen holds &targetPos, casterScreen
-   * &casterPos and drawPair blitters, each set inside the call that fills
-   * what it names; as &targetPos, &casterPos and blitters used directly, 118
-   * of 3070 instructions differ in tbs-en. */
-  Projection_ScaledUnit(work->args->targets[0], targetScreen = &targetPos);
-  Projection_ScaledUnit(work->args->user, casterScreen = &casterPos);
-  BattleEffect_FetchRectangleBlitters(work->args->side, drawPair = blitters);
+  Projection_ScaledUnit(work->args->targets[0], &targetPos);
+  Projection_ScaledUnit(work->args->user, &casterPos);
+  BattleEffect_FetchRectangleBlitters(work->args->side, blitters);
   // The background palette fade over 24 frames (Palette_StepFadeTransfer,
   // added by BattleEffect_StartCanvasLayer).
   work->fadeFrames = 24;
@@ -387,8 +379,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   // Stop the acting unit, saving its motion for after the gathering, and
   // place the Djinni 80 pixels overhead.
   Actor_SetAnimationSpeedFar(casterActor, 0);
-  position = &djinnPos;
-  SET_POSITION(position, casterActor->x.fixed, casterActor->y.fixed + px(80),
+  SET_POSITION(&djinnPos, casterActor->x.fixed, casterActor->y.fixed + px(80),
                casterActor->z.fixed);
   savedVelocityX = casterActor->velocityX;
   savedVelocityY = casterActor->velocityY;
@@ -398,8 +389,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   SET_VELOCITY(casterActor, 0, 0, 0);
   casterActor->acceleration = 0;
   casterActor->gravity = 0;
-  Projection_ScaledUnit(work->args->user, casterScreen);
-  casterScreen->x = casterScreen->x / 2;
+  Projection_ScaledUnit(work->args->user, &casterPos);
+  casterPos.x = casterPos.x / 2;
   Sound_PlayFar(SE_POWER_UP);
 
   // Phase 1, the gathering (CASTING_IMPACT_GATHER_FRAMES): four more sparks
@@ -420,15 +411,15 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
             Transform_ApplyPitch(step->velocityX);
             Transform_ApplyYaw(step->velocityY);
             Projection_Point(step, &sparkScreen);
-            sparkScreen.x = sparkScreen.x / 2 + casterScreen->x;
+            sparkScreen.x = sparkScreen.x / 2 + casterPos.x;
             // Djinni kinds circle the caster's chest; the rest circle lower,
             // Severe Blow lowest.
             if (mode <= CASTING_IMPACT_IMPACT_SAP)
-              sparkScreen.y = sparkScreen.y + casterScreen->y - 8;
+              sparkScreen.y = sparkScreen.y + casterPos.y - 8;
             else if (mode == CASTING_IMPACT_IMPACT_SEVERE_BLOW)
-              sparkScreen.y = sparkScreen.y + casterScreen->y + 44;
+              sparkScreen.y = sparkScreen.y + casterPos.y + 44;
             else
-              sparkScreen.y = sparkScreen.y + casterScreen->y + 12;
+              sparkScreen.y = sparkScreen.y + casterPos.y + 12;
             // DEAD: the depth is clamped to -60..60 and moved to 0..120 but
             // never read; the ROM keeps the clamp and the move.
             CLAMP(sparkScreen.depth, -60, 60);
@@ -454,10 +445,6 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     EFFECT_PRESENT_CANVAS(work);
     frame++;
   } while (frame != CASTING_IMPACT_GATHER_FRAMES);
-  /* FAKEMATCH(dead): position set again to the &djinnPos it holds, so the
-   * gathering's projection takes the address from sp, not a spill; as one
-   * assignment, 150 of 3070 instructions differ in tbs-en. */
-  position = &djinnPos;
 
   // Phase 2: place BG2 for the impacts that need it, at its unstretched
   // scale with the impact over the target: canvas x 32 (96 on
@@ -468,9 +455,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     REG_BG2PA = Q_8_8(1);
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
       // frame is 32 here, the gathering's length.
-      REG_BG2X = (frame - targetScreen->x) << 8;
+      REG_BG2X = (frame - targetPos.x) << 8;
     } else {
-      REG_BG2X = (96 - targetScreen->x) << 8;
+      REG_BG2X = (96 - targetPos.x) << 8;
     }
   } else {
     if (mode == CASTING_IMPACT_IMPACT_ASURA) {
@@ -488,7 +475,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   }
   if (mode == CASTING_IMPACT_IMPACT_TERRA_STRIKE) {
     REG_BG2PA = Q_8_8(1);
-    REG_BG2X = (64 - targetScreen->x) << 8;
+    REG_BG2X = (64 - targetPos.x) << 8;
     work->transferMode = CANVAS_COPY_AND_CLEAR;
     work->transferValue = 0;
     Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
@@ -498,9 +485,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   if (mode == CASTING_IMPACT_IMPACT_PSYPHON_SEAL) {
     REG_BG2PA = Q_8_8(1);
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
-      REG_BG2X = (32 - targetScreen->x) << 8;
+      REG_BG2X = (32 - targetPos.x) << 8;
     } else {
-      REG_BG2X = (96 - targetScreen->x) << 8;
+      REG_BG2X = (96 - targetPos.x) << 8;
     }
   }
   // The four unused impacts clear the canvas and hand off to another effect
@@ -542,9 +529,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   // The Djinni's step a frame, to reach 30 pixels above the target in six
   // frames.
   targetActor = GetBattleObjectSlotFar(work->args->targets[0])->actor;
-  SET_POSITION(&velocity, (targetActor->x.fixed - position->x) / 6,
-               (targetActor->y.fixed - position->y + px(30)) / 6,
-               (targetActor->z.fixed - position->z) / 6);
+  SET_POSITION(&velocity, (targetActor->x.fixed - djinnPos.x) / 6,
+               (targetActor->y.fixed - djinnPos.y + px(30)) / 6,
+               (targetActor->z.fixed - djinnPos.z) / 6);
   for (i = 0; i != CASTING_IMPACT_SPARKS; i++) {
     particle = &work->particles[i];
     particle->variant = 0;
@@ -692,9 +679,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     // Follow the caster for the first three frames, anchoring 16 pixels
     // lower.
     if (frame <= 2) {
-      Projection_ScaledUnit(work->args->user, casterScreen);
-      casterScreen->x = casterScreen->x / 2;
-      casterScreen->y += 16;
+      Projection_ScaledUnit(work->args->user, &casterPos);
+      casterPos.x = casterPos.x / 2;
+      casterPos.y += 16;
     }
     // The caster's overlay: six pictures, two frames each.
     if (mode != CASTING_IMPACT_IMPACT_MORTAL_DANGER &&
@@ -705,10 +692,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       if (frame <= 11) {
         if (work->args->side == EFFECT_SIDE_ENEMIES) {
           blitters[0](canvas, work->sheet + frame / 2 * (48 * 72),
-                      casterScreen->x - 32, casterScreen->y - 40, 48, 72);
+                      casterPos.x - 32, casterPos.y - 40, 48, 72);
         } else {
-          blitters[0](canvas, work->sheet + frame / 2 * (48 * 72),
-                      casterScreen->x, casterScreen->y - 40, 48, 72);
+          blitters[0](canvas, work->sheet + frame / 2 * (48 * 72), casterPos.x,
+                      casterPos.y - 40, 48, 72);
         }
       }
     }
@@ -764,15 +751,15 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       break;
     }
     // The orb on frames 4 to 15, at the target's x but the caster's height
-    // (casterScreen->y), and the 32 scattering sparks from frame 4.
+    // (casterPos.y), and the 32 scattering sparks from frame 4.
     if (mode != CASTING_IMPACT_IMPACT_MORTAL_DANGER &&
         mode != CASTING_IMPACT_IMPACT_TERRA_STRIKE &&
         mode != CASTING_IMPACT_IMPACT_ASURA) {
       if (frame >= 4 && frame <= 15) {
-        drawPair[1](canvas,
+        blitters[1](canvas,
                     work->sheet + (frame - 4) / 2 * (20 * 48) +
                         CASTING_IMPACT_ORB_PICTURES,
-                    targetScreen->x / 2 - 8, casterScreen->y - 24, 20, 48);
+                    targetPos.x / 2 - 8, casterPos.y - 24, 20, 48);
       }
       EFFECT_VIEW_FROM_CAMERA(camera);
       // Each spark is visited twice a frame, so it moves and ages twice; even
@@ -870,7 +857,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           blitters[0](canvas,
                       ((phase / 2) & 3) * LIGHTNING_BOLT_PICTURE_BYTES +
                           (pictures + GLINT_SET_BYTES),
-                      targetScreen->x / 2 - 8, 0, 24, 104);
+                      targetPos.x / 2 - 8, 0, 24, 104);
           i++;
           phase += 3;
         } while (i != 2);
@@ -885,7 +872,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           imageX = Trig_Sin(angle);
           imageX <<= 3;
           imageX >>= 16;
-          imageX += targetScreen->x / 2;
+          imageX += targetPos.x / 2;
           imageX -= gBattleEffect_GlintPictureWidths[image] / 2;
           imageY = Trig_Cos(angle);
           imageY <<= 5;
@@ -922,7 +909,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         s32 top;
         s32 originX;
 
-        originX = targetScreen->x / 2;
+        originX = targetPos.x / 2;
         fall = frame * 32 - 232;
         scroll = frame * 16 - 48;
         if (fall > 0)
@@ -971,7 +958,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       // From frame 4 to 23 the rune's two halves are drawn brightest-wins,
       // the second mirrored, each with a blitter of its own.
       if (frame >= 4 && frame <= 23) {
-        pairX = targetScreen->x / 2;
+        pairX = targetPos.x / 2;
         height = 48;
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_LIGHTEN);
@@ -996,7 +983,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         REG_BLDALPHA = BLEND_ALPHA(32 - frame, 16);
       }
       if (frame > 5) {
-        stripX = targetScreen->x / 2 - 20;
+        stripX = targetPos.x / 2 - 20;
         image = frame / 2 % 3;
         pictureOffset = image * (2 * 40 * 32);
         blitters[0](canvas, pictures + GLINT_SET_BYTES + pictureOffset, stripX,
@@ -1043,9 +1030,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       sway = Trig_Cos(frame * (TRIG_TURN / 128));
       sway <<= 2;
       sway >>= 16;
-      // targetScreen->y is in whole pixels, so the shift leaves 0 for any
+      // targetPos.y is in whole pixels, so the shift leaves 0 for any
       // target on the screen: the pictures stand at a fixed height.
-      imageY = (targetScreen->y >> 16) + sway + 16;
+      imageY = (targetPos.y >> 16) + sway + 16;
       if (frame <= 3) {
         blitters[0](canvas, work->sheet,
                     CASTING_IMPACT_PICTURE_X(work->args->side, 0),
@@ -1158,8 +1145,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       for (i = 0; i != 12; i++) {
         if (frame >= i + 6 && frame < i + 18) {
           s32 image = (frame - i - 6) / 2;
-          s32 imageX = targetScreen->x / 2 -
-                       gBattleEffect_PuffArcPictureWidths[image] / 2;
+          s32 imageX =
+              targetPos.x / 2 - gBattleEffect_PuffArcPictureWidths[image] / 2;
           s32 mirrored;
           if (i & 1)
             imageX += (1 + i) / 2 * 3;
@@ -1240,28 +1227,16 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     } else if (mode == CASTING_IMPACT_IMPACT_FORCIBLE_ARM ||
                mode == CASTING_IMPACT_IMPACT_TRUNCHEON_FIST) {
       // A 32x64 flame falls diagonally onto the target over six frames.
-      s32 offset;
-      s32 imageX;
-      s32 imageY;
       if (frame <= 5) {
-        // targetScreen->x / 2 is written out, so that its last shift can
-        // follow the offset: as / 2 in each arm, 57 of 3070 instructions
-        // differ; as imageX /= 2, 6.
-        if (work->args->side == EFFECT_SIDE_ENEMIES) {
-          imageX = targetScreen->x;
-          imageX += (u32)imageX >> 31;
-          imageX >>= 1;
-          offset = (6 - frame) * 3;
+        s32 offset = (6 - frame) * 3;
+        s32 imageX = targetPos.x / 2;
+        s32 imageY = targetPos.y - offset * 4 + 24;
+
+        // It falls towards the side the caster faces.
+        if (work->args->side == EFFECT_SIDE_ENEMIES)
           imageX += offset * 2;
-          imageY = targetScreen->y - offset * 4 + 24;
-        } else {
-          imageX = targetScreen->x;
-          imageX += (u32)imageX >> 31;
-          imageX >>= 1;
-          offset = (6 - frame) * 3;
+        else
           imageX -= offset * 2;
-          imageY = targetScreen->y - offset * 4 + 24;
-        }
         blitters[1](canvas, pictures, imageX - 16, imageY - 32, 32, 64);
       }
     } else if (mode == CASTING_IMPACT_IMPACT_BAD_OMEN) {
@@ -1309,14 +1284,14 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     // From Bane to Sap the Djinni flies to the target in six frames.
     if (mode <= CASTING_IMPACT_IMPACT_SAP) {
       if (frame <= 5) {
-        Projection_Point(position, &projected);
+        Projection_Point(&djinnPos, &projected);
         projected.x /= 2;
         djinnX = projected.x;
-        drawPair[1](canvas, pictures + CASTING_IMPACT_DJINNI_PICTURE,
+        blitters[1](canvas, pictures + CASTING_IMPACT_DJINNI_PICTURE,
                     djinnX - 10, projected.y - 4, 20, 40);
-        position->x += velocity.x;
-        position->y += velocity.y;
-        position->z += velocity.z;
+        djinnPos.x += velocity.x;
+        djinnPos.y += velocity.y;
+        djinnPos.z += velocity.z;
       }
     }
     // The cues: the damage shows on frame 3 with no sound of its own (a sound

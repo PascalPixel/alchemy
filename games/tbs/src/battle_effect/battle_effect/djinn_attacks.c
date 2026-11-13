@@ -232,7 +232,6 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   void *canvas;
   u8 *sheet;
   BlitterPair blit;
-  DrawRectangle *draw;
   struct Particle *ball;
   struct Particle *mote;
   s32 frame;
@@ -246,10 +245,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  /* FAKEMATCH(temporary): draw stands in for blit; as blit used directly, 14
-   * of 348 instructions differ in tbs-en. */
-  draw = blit;
-  BattleEffect_FetchRectangleBlitters(0, draw);
+  BattleEffect_FetchRectangleBlitters(0, blit);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                              work->sheet, 1, 1);
@@ -322,7 +318,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
       if (mote->variant != -1) {
         s32 size = mote->variant / 16 + 1;
 
-        EFFECT_DRAW_MOTE(draw[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
+        EFFECT_DRAW_MOTE(blit[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
                          Q_16_16_TO_INT(mote->y), size);
         Particle_AdvanceWithGravity2D(mote, 62, px(1) / 8);
         mote->variant--;

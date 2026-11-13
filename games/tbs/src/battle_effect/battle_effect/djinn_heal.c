@@ -23,7 +23,6 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   void *canvas;
   s32 member;
   u8 *sheet;
-  DrawRectangle *draw;
   struct Actor *actor;
   struct Actor *goal;
   s32 frame;
@@ -45,9 +44,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                              work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  /* FAKEMATCH(temporary): draw stands in for callbacks; as callbacks used
-   * directly, 10 of 747 instructions differ in tbs-en. */
-  BattleEffect_FetchRectangleBlitters(work->args->side ^ 1, draw = callbacks);
+  BattleEffect_FetchRectangleBlitters(work->args->side ^ 1, callbacks);
   actor = GetBattleObjectSlotFar(work->args->user)->actor;
   goal = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   // The swirl's motes start 20 to 51 pixels up and fly out level at 4 to 12
@@ -141,7 +138,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
       SET_VECTOR(djinniPoint, 0, (Trig_Sin(frame << 10) * 4), 0);
       Projection_Point(djinniPoint, &screen);
       screen.x >>= 1;
-      draw[1](canvas, work->sheet, screen.x - 10, screen.y - 17, 20, 34);
+      callbacks[1](canvas, work->sheet, screen.x - 10, screen.y - 17, 20, 34);
     }
     EFFECT_PRESENT_CANVAS(work);
   }
@@ -219,8 +216,8 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
                 u32 edge = gBattleEffect_SparkleSizes[pictureIndex];
                 u32 half = edge >> 1;
 
-                draw[1](canvas, picture, view.x - half, view.y - half, edge,
-                        edge);
+                callbacks[1](canvas, picture, view.x - half, view.y - half,
+                             edge, edge);
               }
               spark->x -= spark->x / distance;
               spark->y -= spark->y / distance;

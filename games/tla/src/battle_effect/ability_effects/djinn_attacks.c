@@ -112,7 +112,7 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
   do {
     // The battle resumes and resolves the targets, hit cue 133.
     if (frame == 56)
-      Func_081180e8(133);
+      BattlePlayback_StartFar(133);
 
     // Flames fly 12 pixels left a frame and shatter on their fifth frame.
     for (i = 0; i != FLAME_COUNT; i++) {
@@ -253,7 +253,7 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
   do {
     // The battle resumes and resolves the targets, hit cue 133.
     if (frame == 56)
-      Func_081180e8(133);
+      BattlePlayback_StartFar(133);
 
     // The Djinn circles on a radius that shrinks through the middle.
     if (frame <= 95) {
@@ -412,7 +412,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
     }
     // The battle resumes and resolves the targets, hit cue 133.
     if (frame == 56)
-      Func_081180e8(133);
+      BattlePlayback_StartFar(133);
 
     // Column i starts at frame 16 + 4i and climbs 12 pixels a frame.
     for (i = 0, start = 16; i != COLUMN_COUNT; start += 4, i++) {
@@ -553,7 +553,7 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
   do {
     // The battle resumes and resolves the targets, hit cue 0x85.
     if (frame == 56)
-      Func_081180e8(0x85);
+      BattlePlayback_StartFar(0x85);
 
     // The orb swells, a cel every four frames.
     if (frame <= 23)

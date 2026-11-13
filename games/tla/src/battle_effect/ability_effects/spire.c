@@ -90,13 +90,13 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != Data_081985ab[rocks - 1] + 65; frame++) {
     // 48 frames after the last drop the battle resumes, hit cue 133.
     if (frame == Data_081985ab[rocks - 1] + 48)
-      Func_081180e8(133);
+      BattlePlayback_StartFar(133);
     for (i = 0; i != rocks; i++) {
       rock = &work->particles[i];
       // The crash: the first one resumes the battle, the others sound.
       if (frame == Data_081985ab[i] + FALL_FRAMES) {
         if (i == 0)
-          Func_081180e8(134);
+          BattlePlayback_StartFar(134);
         else
           Sound_PlayFar(134);
         work->shakeFrames = 4;

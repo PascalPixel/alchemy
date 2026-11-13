@@ -48,7 +48,7 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
@@ -70,8 +70,8 @@ struct StarTarget {
   s32 z;
 };
 void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase); // BattlePlayback_StartFar
+    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
+void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
@@ -181,7 +181,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
     }
     if (frame == 22) {
       Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
-      Func_081180e8(144);
+      BattlePlayback_StartFar(144);
       work->shakeFrames = 8;
       BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x40000,
                                     0x20000, 120);
@@ -298,7 +298,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
           Render_ResetTransformState();
           Func_08015160((caster.x / 2 - 64) << 16,
                         (caster.y << 16) + 0xffc00000, 0);
-          Func_080151e4(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           if (effect->side == 1) {
             SceneTransform_ApplyYaw(0x8000);
           }

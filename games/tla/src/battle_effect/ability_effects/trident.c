@@ -27,7 +27,7 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
@@ -39,8 +39,8 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase); // BattlePlayback_StartFar
+    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
+void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
@@ -62,7 +62,7 @@ void Transform_Pop(void);
 
 void Func_0815e22c(
     struct EffectPosition *position); // the targets' centre on screen
-void Func_0815f0a0(s32 palette);
+void BattleEffect_StepPaletteToResource(s32 palette);
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode);
 
@@ -201,13 +201,13 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
                            128);
     }
     if (frame > 76) {
-      Func_0815f0a0(palette);
+      BattleEffect_StepPaletteToResource(palette);
     } else if (frame > 64) {
-      Func_0815f0a0(orange);
+      BattleEffect_StepPaletteToResource(orange);
     } else if (frame > 23) {
-      Func_0815f0a0(palette);
+      BattleEffect_StepPaletteToResource(palette);
     } else if (frame > 8) {
-      Func_0815f0a0(orange);
+      BattleEffect_StepPaletteToResource(orange);
     }
     if (frame == 8) {
       work->shakeFrames = frame;
@@ -220,7 +220,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
     }
     if (frame == 64) {
       work->shakeFrames = 16;
-      Func_081180e8(144);
+      BattlePlayback_StartFar(144);
       for (i = 0; i != effect->count; i++) {
         BattleEffect_StartActorMotion(effect->actors[i], 1, 0x20000, 0x80000,
                                       0x80000, 120);
@@ -351,7 +351,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
         model->shade = shade;
         Render_ResetTransformState();
         Func_08015160((centerX - 64) << 16, Data_08199ddb[i] << 16, 0);
-        Func_080151e4(scale, scale * 2, scale);
+        SceneTransform_ApplyScale3(scale, scale * 2, scale);
         model->scrollU = ((frame + i * 5) & 7) << 4;
         SceneTransform_ApplyPitch(3000);
         Render_TransformVertices(Data_08198cac, vertices, 32);
@@ -403,7 +403,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
             SceneTransform_ApplyYaw(0x8000);
           }
           spinner->z += spinner->velocityZ;
-          Func_080151e4(0x20000, 0x12710, 0x10000);
+          SceneTransform_ApplyScale3(0x20000, 0x12710, 0x10000);
           Render_TransformVertices(Data_08199e24 + x * 16, vertices, 4);
           Render_DrawModelList(model);
         }
@@ -707,7 +707,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
           }
           work->shakeFrames = 4;
           if (mode == 0) {
-            Func_081180e8(145);
+            BattlePlayback_StartFar(145);
             BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
             Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
           } else {
@@ -750,7 +750,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
         if (frame <= 45) {
           Render_ResetTransformState();
           Func_08015160((pos.x - 60) << 16, (pos.y - 80) << 16, 0);
-          Func_080151e4(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           if (effect->side == 0) {
             SceneTransform_ApplyRoll(-0x3388);
           } else {
@@ -786,7 +786,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
               Render_ResetTransformState();
               model->scrollV = (frame * 8 + i * 16) & 63;
               Func_08015160((pos.x - 60) << 16, Data_08199e60[i] << 16, 0);
-              Func_080151e4(scale >> 1, scale << 2, scale / 4);
+              SceneTransform_ApplyScale3(scale >> 1, scale << 2, scale / 4);
               SceneTransform_ApplyPitch(1000);
               if (i & 1)
                 SceneTransform_ApplyYaw((i * 4 + frame) << 11);
@@ -831,7 +831,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
               model->scrollU = scroll << 4;
               Render_ResetTransformState();
               Func_08015160((base->x - 60) << 16, Data_08199e6c[i] << 16, 0);
-              Func_080151e4(scale, scale * 2, scale);
+              SceneTransform_ApplyScale3(scale, scale * 2, scale);
               SceneTransform_ApplyPitch(2000);
               Render_TransformVertices(Data_08198cac, projected, 32);
               Render_DrawModelList(model);
@@ -844,7 +844,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     if (mode == 1 && frame == 50) {
-      Func_081180e8(134);
+      BattlePlayback_StartFar(134);
       for (i = 0; i != effect->count; i++)
         BattleEffect_StartActorMotion(effect->actors[i], 1, 0x40000, 0x100000,
                                       0x10000, 250);

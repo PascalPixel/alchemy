@@ -79,7 +79,7 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
         camera->yaw += speed;
     }
     if (frame == Data_081979b7[effect->variant * 3 + 2])
-      Func_081180e8(134);
+      BattlePlayback_StartFar(134);
 
     // Darken over the last eight frames.
     if (frame == Data_081979b7[effect->variant * 3 + 1] - 8) {

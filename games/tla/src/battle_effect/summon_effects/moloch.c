@@ -42,15 +42,15 @@ void Graphics_LoadGreyRamp(void);
 void BattleEffect_SelectLivingTargets(struct FxPartyList *party);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
 void Func_0816442c(s32 formation, s32 x, s32 y);
-void Func_0816467c(s32 formation, s32 x, s32 y);
+void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y);
 void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer,
                    s32 frames); // BattleEffect_TintBattler
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
-void Func_08164a4c(s32 blue, s32 green, s32 red);
+void Palette_BrightenBgEntries(s32 blue, s32 green, s32 red);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
-void Func_081180e8(s32 phase); // BattlePlayback_StartFar
+void BattlePlayback_StartFar(s32 phase);
 void Sound_PlayFar(s32 cue);
 
 void wait(s32 frames);
@@ -58,7 +58,7 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
-void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
@@ -310,7 +310,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
           model->shade = shade;
           Render_ResetTransformState();
           Func_08015160(16 << 16, Data_08199f3c[i] << 16, 0);
-          Func_080151e4(scale, scale, scale);
+          SceneTransform_ApplyScale3(scale, scale, scale);
           SceneTransform_ApplyPitch(0xbb8);
           model->scrollU = ((frame + i * 5) & 7) << 4;
           Render_TransformVertices(Data_08198cac, projected, 32);
@@ -350,7 +350,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
       // Frames 256-271 brighten the whole screen to white; at 272 the battle
       // phase resumes and the canvas fades back.
       if (frame == 272) {
-        Func_081180e8(134);
+        BattlePlayback_StartFar(134);
         work->transferMode = 3;
         work->transferValue = 0x02020202;
         Graphics_LoadGreyRamp();
@@ -359,7 +359,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
         work->transferValue = 0x10101010;
         if (frame > 269)
           work->transferValue = 0x3f3f3f3f;
-        Func_08164a4c(2, 2, 2);
+        Palette_BrightenBgEntries(2, 2, 2);
       }
 
       BattleCamera_Shake(4, 8);
@@ -372,7 +372,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
     HeapSlot_Release(188);
     HeapSlot_Release(104);
-    Func_0816467c(5, focus.x, focus.y);
+    BattleEffect_RunImpactBurst(5, focus.x, focus.y);
     for (i = 0; i != 12; i++)
       ResourceObject_ReleaseFar(work->objects[i]);
   }

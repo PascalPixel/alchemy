@@ -170,7 +170,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
           else
             Actor_SetTargetPosition(target, target->x + 0x280000, 0, target->z);
           if (i == 2) {
-            Func_081180e8(134);
+            BattlePlayback_StartFar(134);
           } else {
             Sound_PlayFar(134);
             Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
@@ -263,7 +263,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 128; frame++) {
     Func_081496c8(frame, 0xaaab, 0x5555, 0);
     if (frame == 96)
-      Func_081180e8(134);
+      BattlePlayback_StartFar(134);
     for (i = 0; i != STAR_COUNT; i++) {
       star = &work->particles[i];
       if (frame >= star->variant) {

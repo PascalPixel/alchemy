@@ -140,7 +140,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
     // the swirl bursts into sparks.
     if (frame == 18) {
       EffectPosition_ProjectBattler(effect->actors[0], &position);
-      Func_081180e8(134);
+      BattlePlayback_StartFar(134);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 6);
       work->shakeFrames = 4;

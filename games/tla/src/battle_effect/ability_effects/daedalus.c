@@ -72,7 +72,7 @@ void Resource_LoadAndDecompress(s32 resourceId, void *target, s32 unpack,
                                 s32 wait);
 
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
-void Func_081180e8(s32 phase);
+void BattlePlayback_StartFar(s32 phase);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 blitter); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer,
@@ -151,7 +151,7 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
         Func_0814cd48(effect->actors[0], 10, -1, 0, 32);
     }
     if (frame == 24)
-      Func_081180e8(0);
+      BattlePlayback_StartFar(0);
     if (frame == 8 && mode == 0)
       Sound_PlayFar(126);
 
@@ -414,7 +414,7 @@ extern Sprite *Func_0815b3b0__f17e698(s32, s32, u32,
 void BattleEffect_FetchRectangleBlitters(s32, void **);
 s32 Trig_Cos(s32);
 s32 Trig_Sin(s32);
-void Func_0815f0a0(s32);
+void BattleEffect_StepPaletteToResource(s32);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
@@ -423,12 +423,12 @@ void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 void SceneTransform_ApplyRoll(s32 angle);
 void SceneTransform_ApplyPitch(s32);
 
-void Func_0814cca8(void);
+void BattleEffect_SetupBlendedDisplay(void);
 void Palette_LoadBasicObjColors(void);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 
-void Func_0813baec(void);
+void BattleEffect_AdvanceScrollOnInterval(void);
 
 #define ALCHEMY_TYPES_H
 
@@ -528,7 +528,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       work->unk7794 = 5;
       work->unk7798 = -1;
       work->unk779c = 0;
-      Task_Add(Func_0813baec, 0x480);
+      Task_Add(BattleEffect_AdvanceScrollOnInterval, 0x480);
       ctl[4] = 1;
       Resource_LoadAndDecompress((s32)&ResourceId_Data134, work->frames, 0, 0);
       off = 0x700;
@@ -1000,7 +1000,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         Render_ApplyProjectedPlacementFar(work->sprites[20], &pos2, &scale2, 0);
         p = &work->particles[22];
         if (frame > 602)
-          Func_0815f0a0((s32)&ResourceId_OrangePaletteB);
+          BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
         if (frame == 570) {
           p->x = 0x980000;
           p->y = ((92 - Data_081994f0[work->shake]) << 16) + swayY;
@@ -1352,10 +1352,10 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         goto phase2;
     }
 
-    Task_Remove(Func_0813baec);
+    Task_Remove(BattleEffect_AdvanceScrollOnInterval);
     gBgScroll[1].x = savedY;
     ctl[4] = 0;
-    Func_0814cca8();
+    BattleEffect_SetupBlendedDisplay();
     for (i = 0; i != 57; i++)
       ResourceObject_ReleaseFar(work->sprites[i]);
     bank[21] = VramCache_AllocEntry(128);
@@ -1547,7 +1547,7 @@ void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 
 void SceneTransform_ApplyYaw(s32 angle);
 
-void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
@@ -1818,10 +1818,10 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
           k = i & 3;
           Func_08015160((k << 17) + ringX + ringOffset,
                         discY - ((k + 2) << 16) + ringOffset, 0);
-          Func_080151e4(0x8000, 0x10000, 0x10000);
+          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
           SceneTransform_ApplyRoll(ring->x);
-          Func_080151e4(Trig_Sin(ring->variant * 682) + 0x10000, 0x20000,
-                        0x10000);
+          SceneTransform_ApplyScale3(Trig_Sin(ring->variant * 682) + 0x10000,
+                                     0x20000, 0x10000);
           Render_TransformVertices(gData_081991b0, vertices, 4);
           Render_DrawModelList(model);
         }

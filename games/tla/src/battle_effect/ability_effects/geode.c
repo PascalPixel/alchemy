@@ -10,22 +10,30 @@ struct Model;
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames); // BattleEffect_TintBattler
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world);
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
+                   s32 *world);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void Func_081180e8(s32 phase);                      // BattlePlayback_StartFar
+void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-/* VIEW(f16c6f8): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); f16c274 has struct BattleObjectPosition **GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:16275: conflicting types for `GetBattleObjectSlotFar'. */
-extern void **GetBattleObjectSlotFar__f16c6f8(s32 objectId) __asm__("GetBattleObjectSlotFar");
+/* VIEW(f16c6f8): routine GetBattleObjectSlotFar as void
+ * **GetBattleObjectSlotFar(s32 objectId); f16c274 has struct
+ * BattleObjectPosition **GetBattleObjectSlotFar(s32 objectId); tried as the 11
+ * declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not
+ * compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:16275:
+ * conflicting types for `GetBattleObjectSlotFar'. */
+extern void **
+GetBattleObjectSlotFar__f16c6f8(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
@@ -36,7 +44,8 @@ void *Resource_GetTableEntry(s32 resource);
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
 void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
                           s32 count);
-void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows, s32 cellWidth, s32 cellHeight); // builds a grid's mesh
+void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows,
+                   s32 cellWidth, s32 cellHeight); // builds a grid's mesh
 void Func_08143354(void);
 void BattleEffect_ConfigureEffectDisplay(void);
 void Display_ApplyBg2Affine(void);
@@ -148,7 +157,8 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, work->sheet + 0x4710, 0,
                              0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                       128);
   IO_WRITE_QUEUE_PUSH(0x04000020, 128, 0x20000);
   Actor_SetAnimationSpeedFar(caster, 48);
   Func_0818de3c(mesh, DOME_COLUMNS, DOME_ROWS, 16, 8);
@@ -336,7 +346,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
       Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
     }
     if (frame == 64) {
-      Func_081180e8(134);
+      BattlePlayback_StartFar(134);
     }
 
     // Rings of dust.
@@ -372,7 +382,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
         rings->shade = shade;
         Render_ResetTransformState();
         Func_08015160((target.x / 2 - 64) << 16, Data_08198b5a[i] << 16, 0);
-        Func_080151e4(scale >> 1, scale << 2, scale >> 1);
+        SceneTransform_ApplyScale3(scale >> 1, scale << 2, scale >> 1);
         SceneTransform_ApplyPitch(1000);
         if (i & 1) {
           SceneTransform_ApplyYaw((i * 4 + frame) << 11);

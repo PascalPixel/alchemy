@@ -17,7 +17,7 @@ void BattleEffect_EndCanvasLayer(void);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 blitter); // BattleEffect_BuildBlitter, packed
-void Func_081180e8(s32 phase);
+void BattlePlayback_StartFar(s32 phase);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames); // BattleEffect_TintBattler
 void Transform_Pop(void);
@@ -73,7 +73,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
     s32 userHalf = BattleUnit_GetEffectHeightFar(effect->actor) / 2;
 
     if (frame == 64)
-      Func_081180e8(134);
+      BattlePlayback_StartFar(134);
     Render_ResetTransformState();
     Transform_SetLookAt(view->eye, view->pos);
     if (frame == 72)
@@ -446,7 +446,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
     if (frame == 40)
       Sound_PlayFar(142);
     if (frame == 32)
-      Func_081180e8(134);
+      BattlePlayback_StartFar(134);
     if (frame == 64)
       Func_0814cd48(effect->actor, 7, -1, -1, 0);
     if (frame == 88)
@@ -621,7 +621,7 @@ void Render_DrawModelList(struct Model *model);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyYaw(s32 angle);
 
-void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
@@ -902,7 +902,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
       }
       if (frame == 64) {
         Sound_PlayFar(134);
-        Func_081180e8(-1);
+        BattlePlayback_StartFar(-1);
       }
       if (frame == 30) {
         Func_0814cd48(effect->actors[0], 9, 5, -1, 0);
@@ -1024,7 +1024,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
           }
           model->shade = (const void *)spireShade;
           Func_08015160(target->x, -0x40000, target->z);
-          Func_080151e4(scale, scale, scale);
+          SceneTransform_ApplyScale3(scale, scale, scale);
           Render_ProjectVertices((const u8 *)gMapCellBuffer, vertices, 64);
           Render_DrawModelList(model);
           spireShade = -32;
@@ -1066,7 +1066,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
             Transform_Push();
             model->shade = (const void *)shade;
             Func_08015160(target->x, Data_08198b92[i] << 16, target->z);
-            Func_080151e4(size, size, size);
+            SceneTransform_ApplyScale3(size, size, size);
             model->scrollU = ((frame + i * 5) & 7) << 4;
             Render_ProjectVertices(Data_08198cac, vertices, 32);
             Render_DrawModelList(model);

@@ -319,8 +319,8 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
     wait(1);
   }
 
-  Func_081180e8(PHASE_SUMMON_RESULTS);
-  Func_0814cca8();
+  BattlePlayback_StartFar(PHASE_SUMMON_RESULTS);
+  BattleEffect_SetupBlendedDisplay();
   for (i = 0; i != FIRST_ROCK + ROCK_COUNT; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

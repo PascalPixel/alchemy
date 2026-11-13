@@ -32,7 +32,7 @@ Resource_FarCall009:
 	export Camera_ConfigureSceneFar, Camera_ConfigureScene
 	export GetMotionRecordFar, GetMotionRecord
 	export BattleHighlight_SetModesFar, BattleHighlight_SetModes
-	export Func_081180e8, BattlePlayback_Start
+	export BattlePlayback_StartFar, BattlePlayback_Start
 	export ColorBuffer_ScaleFar, ColorBuffer_Scale
 	export DjinnRecovery_CountDownFar, DjinnRecovery_CountDown
 	export BattleMotion_GetSlotPaletteFar, BattleMotion_GetSlotPalette

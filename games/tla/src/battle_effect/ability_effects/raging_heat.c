@@ -26,7 +26,7 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
@@ -38,8 +38,8 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase); // BattlePlayback_StartFar
+    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
+void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
@@ -61,7 +61,7 @@ void Transform_Pop(void);
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1]) // the pixel half of a 16.16 value
 
-void Func_0815f0a0(s32 palette);
+void BattleEffect_StepPaletteToResource(s32 palette);
 
 extern char ResourceId_CornerRuneBSheet;
 extern char ResourceId_Data134;
@@ -146,7 +146,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
       Sound_PlayFar(140);
     }
     if ((u32)(frame - 40) <= 15) {
-      Func_0815f0a0((s32)&ResourceId_OrangePaletteB);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
     }
     if (frame == 56) {
       Sound_PlayFar(144);
@@ -181,7 +181,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
           EMBERS[i].velocityY = (Trig_Cos(angle) * speed) >> 5;
           EMBERS[i].variant = (Random16() & 15) + 16;
         }
-        Func_081180e8(145);
+        BattlePlayback_StartFar(145);
         for (i = 0; i != effect->count; i++) {
           BattleMotion_ApplyKnockbackFar(effect->actors[i], 0);
           Func_0814cd48(effect->actors[i], 7, 5, i, 16);
@@ -250,7 +250,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
         s32 scale;
 
         Render_ResetTransformState();
-        Func_080151e4(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         if (i == 0) {
           Func_08015160((centerX << 16) - 0x800000, (baseY << 16) - 0x400000,
                         0);
@@ -452,7 +452,7 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
 
     // The strike: sparks burst from every target.
     if (frame == RING_HIT_FRAME) {
-      Func_081180e8(134);
+      BattlePlayback_StartFar(134);
       for (i = 0; i != effect->count; i++) {
         EffectPosition_ProjectSprite(effect->actors[i], &target);
         BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);

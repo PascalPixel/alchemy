@@ -41,7 +41,7 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
@@ -54,8 +54,8 @@ void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase); // BattlePlayback_StartFar
+    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
+void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
@@ -126,7 +126,7 @@ extern char ResourceId_MarsDjinnSheet;
 extern char ResourceId_JupiterDjinnSheet;
 extern char ResourceId_MercuryDjinnSheet;
 
-void Func_0815f0a0(s32 resource); // BattleEffect_StepPaletteToResource
+void BattleEffect_StepPaletteToResource(s32 resource);
 void Func_08164b2c(s32 red, s32 green, s32 blue);
 void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase, s32 bluePhase);
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
@@ -152,7 +152,7 @@ void Palette_LoadBasicObjColors(void);
   do {                                                                         \
     Render_ResetTransformState();                                              \
     Func_08015160((p)->x - 0x400000, (p)->y - 0x400000, 0);                    \
-    Func_080151e4(0x8000, 0x10000, 0x10000);                                   \
+    SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);                      \
     SceneTransform_ApplyRoll((p)->z);                                          \
   } while (0)
 // DEAD: each test reads the count twice and drops the first read; both loads
@@ -433,7 +433,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
             p->velocityY = Trig_Cos(a) * s >> 7;
             p->variant = (Random16() & 15) + 16;
           }
-          Func_081180e8(134);
+          BattlePlayback_StartFar(134);
           BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
           work->shakeFrames = 8;
           Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
@@ -563,7 +563,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
 
         flash->x = pos.x;
         flash->y = pos.y;
-        Func_081180e8(145);
+        BattlePlayback_StartFar(145);
         BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 24);
         work->shakeFrames = 16;
@@ -606,7 +606,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 4)
         Sound_PlayFar(147);
       if (frame == 48)
-        Func_081180e8(-1);
+        BattlePlayback_StartFar(-1);
       texture.logWidth = 5;
       texture.logHeight = 5;
       model->kind = 7;
@@ -632,7 +632,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           p->x += p->velocityX;
           Func_08015160((Trig_Sin(p->x) << 4) + ((screen[0] / 2 - 64) << 16),
                         p->y, 0);
-          Func_080151e4(size >> 1, size, size >> 1);
+          SceneTransform_ApplyScale3(size >> 1, size, size >> 1);
           SceneTransform_ApplyPitch(-0x4000);
           Render_TransformVertices(gData_08199210, verts, 4);
           Render_DrawModelList(model);
@@ -665,7 +665,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           model->shade = shade;
           half = scale >> 1;
           Render_ResetTransformState();
-          Func_080151e4(half, scale, scale);
+          SceneTransform_ApplyScale3(half, scale, scale);
           SceneTransform_ApplyRoll((frame << 8) + 0xc000);
           SceneTransform_ApplyPitch((frame << 6) - 0x4770);
           for (i = 0; i != 12; i++) {
@@ -673,7 +673,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
             Transform_Push();
             SceneTransform_ApplyRoll(frame * 356 + i * 5461);
             Func_08015160(0, 0x740000, 0);
-            Func_080151e4(half, half, half);
+            SceneTransform_ApplyScale3(half, half, half);
             Render_TransformVertices(gData_08199210, verts, 4);
             Transform_Pop();
             Render_DrawModelList(model);
@@ -695,7 +695,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         Func_08015160((pos.x / 2 - 64) << 16, (pos.y - 48) << 16, 0);
         SceneTransform_ApplyPitch(0x4000);
         SceneTransform_ApplyYaw((frame << 9) - 0x1000);
-        Func_080151e4(frame * 2596 >> 1, frame * 2596 >> 1, frame * 2596 >> 1);
+        SceneTransform_ApplyScale3(frame * 2596 >> 1, frame * 2596 >> 1,
+                                   frame * 2596 >> 1);
         Render_TransformVertices(gData_08199210, verts, 4);
         Render_DrawModelList(model);
       }
@@ -734,10 +735,10 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
             Render_ResetTransformState();
             Func_08015160((ball->x << 16) - 0x400000,
                           (ball->y << 16) - 0x400000, 0);
-            Func_080151e4(0x8000, 0x10000, 0x10000);
+            SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
             SceneTransform_ApplyRoll(p->x);
-            Func_080151e4(Trig_Sin(p->variant * 682) * 3 + 0xc000, 0x20000,
-                          0x10000);
+            SceneTransform_ApplyScale3(Trig_Sin(p->variant * 682) * 3 + 0xc000,
+                                       0x20000, 0x10000);
             Render_TransformVertices(gData_081991b0, verts, 4);
             Render_DrawModelList(model);
           }
@@ -767,7 +768,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
             if (shade > -64) {
               Render_ResetTransformState();
               Func_08015160((pos.x / 2 - 64) << 16, (pos.y - 64) << 16, 0);
-              Func_080151e4(0x8000, 0x10000, 0x8000);
+              SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
               SceneTransform_ApplyRoll((i << 14) + 0x2000);
               SceneTransform_ApplyPitch(-0x1000);
               Func_0801521c(scale);
@@ -803,7 +804,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
             Render_ResetTransformState();
             Func_08015160((pos.x / 2 - 64) << 16, (pos.y - 48) << 16, 0);
             SceneTransform_ApplyPitch(0xc000);
-            Func_080151e4(scale, scale, scale);
+            SceneTransform_ApplyScale3(scale, scale, scale);
             Render_TransformVertices(gData_08199210, verts, 4);
             Render_DrawModelList(model);
           }
@@ -912,13 +913,13 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           texture.pixels = work->sheet + 0x3080;
           Render_ResetTransformState();
           Func_08015160((ball->x / 2 - 64) << 16, (ball->y - 48) << 16, 0);
-          Func_080151e4(scale / 4, scale, scale / 2);
+          SceneTransform_ApplyScale3(scale / 4, scale, scale / 2);
           Render_TransformVertices(Data_081991e0, verts, 4);
           Render_DrawModelList(model);
         }
       }
       if (frame == 10) {
-        Func_081180e8(134);
+        BattlePlayback_StartFar(134);
         work->shakeFrames = effect->variant * 2 + 8;
         BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 12);
@@ -1042,7 +1043,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 22)
         Sound_PlayFar(212);
       if (frame == 26) {
-        Func_081180e8(144);
+        BattlePlayback_StartFar(144);
         work->shakeFrames = 8;
         Func_0814cd48(effect->actors[0], 7, 5, 0, 12);
         BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
@@ -1095,7 +1096,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       model->mesh = gData_08199268;
       model->vertices = verts;
       Render_ResetTransformState();
-      Func_080151e4(0x8000, 0x10000, 0x10000);
+      SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
       if (effect->side == 0)
         Func_08015160((pos.x - 136) << 16, (pos.y - 48) << 16, 0);
       else
@@ -1136,7 +1137,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         else
           scale = 0x10000;
         if (scale > 0) {
-          Func_080151e4(scale * 6, scale * 2, 0x10000);
+          SceneTransform_ApplyScale3(scale * 6, scale * 2, 0x10000);
           Render_TransformVertices(Data_081991d0, verts, 4);
           Render_DrawModelList(model);
           Transform_Pop();
@@ -1164,7 +1165,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
             Render_ResetTransformState();
             Func_08015160((pos.x / 2 + i * 16 - 72) << 16, (pos.y - 64) << 16,
                           0);
-            Func_080151e4(scale / 2, scale, scale / 2);
+            SceneTransform_ApplyScale3(scale / 2, scale, scale / 2);
             SceneTransform_ApplyRoll(0x2000);
             Render_TransformVertices(Data_081991e0, verts, 4);
             Render_DrawModelList(model);
@@ -1199,7 +1200,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       texture.logHeight = 4;
       if (frame == 26) {
         work->shakeFrames = 8;
-        Func_081180e8(134);
+        BattlePlayback_StartFar(134);
       }
       for (i = 0; i != 8; i++) {
         s32 scale = 0x20000;
@@ -1211,11 +1212,11 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           model->scrollU = ((frame + i * 5) & 7) << 4;
           Render_ResetTransformState();
           Func_08015160((pos.x / 2 - 60) << 16, 0x80000, 0);
-          Func_080151e4(scale >> 1, scale, 0x10000);
+          SceneTransform_ApplyScale3(scale >> 1, scale, 0x10000);
           SceneTransform_ApplyPitch((i << 13) + 4000);
           SceneTransform_ApplyYaw(frame << 9);
           SceneTransform_ApplyRoll((frame + i * 16) << 9);
-          Func_080151e4(0x10000, 0x8000, 0x10000);
+          SceneTransform_ApplyScale3(0x10000, 0x8000, 0x10000);
           Render_TransformVertices(Data_08198cac, verts, 32);
           Render_DrawModelList(model);
         }
@@ -1236,7 +1237,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         s32 scale = 0x30000 - (frame * 3 << 12);
 
         model->shade = 0;
-        Func_080151e4(scale >> 1, scale, scale >> 1);
+        SceneTransform_ApplyScale3(scale >> 1, scale, scale >> 1);
         Render_TransformVertices(Data_081991e0, verts, 4);
         Render_DrawModelList(model);
       }
@@ -1246,7 +1247,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         s32 scale = Trig_Sin((frame << 10) - 0x3000) * 3;
 
         texture.pixels = work->sheet;
-        Func_080151e4(scale / 2, scale, scale / 2);
+        SceneTransform_ApplyScale3(scale / 2, scale, scale / 2);
         SceneTransform_ApplyRoll((frame << 9) + 0x2000);
         Render_TransformVertices(Data_081991e0, verts, 4);
         Render_DrawModelList(model);
@@ -1280,11 +1281,13 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       for (i = 0; i != 3; i++) {
         if (frame > 7) {
           if (frame <= 15)
-            Func_0815f0a0((s32)&ResourceId_MercuryDjinnSheet);
+            BattleEffect_StepPaletteToResource(
+                (s32)&ResourceId_MercuryDjinnSheet);
           else if (frame <= 23)
-            Func_0815f0a0((s32)&ResourceId_MarsDjinnSheet);
+            BattleEffect_StepPaletteToResource((s32)&ResourceId_MarsDjinnSheet);
           else
-            Func_0815f0a0((s32)&ResourceId_JupiterDjinnSheet);
+            BattleEffect_StepPaletteToResource(
+                (s32)&ResourceId_JupiterDjinnSheet);
         }
       }
       if (frame == 16) {
@@ -1292,7 +1295,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         Func_0814cd48(effect->actors[0], 7, -1, 0, 30);
       }
       if (frame == 28)
-        Func_081180e8(-1);
+        BattlePlayback_StartFar(-1);
     } else if (mode == 15) {
       struct EffectPosition pos;
 
@@ -1314,7 +1317,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           if (t <= 7)
             shade = t * 8 - 64;
           model->shade = shade;
-          Func_080151e4(scale / 2, scale, scale / 2);
+          SceneTransform_ApplyScale3(scale / 2, scale, scale / 2);
           SceneTransform_ApplyRoll((i << 14) + 0x2000);
           SceneTransform_ApplyPitch(-0x1000);
           Render_TransformVertices(gData_08199210, verts, 4);
@@ -1327,7 +1330,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         s32 scale = Trig_Sin((frame << 10) - 0x3000) * 2;
 
         texture.pixels = work->sheet;
-        Func_080151e4(scale / 2, scale, scale / 2);
+        SceneTransform_ApplyScale3(scale / 2, scale, scale / 2);
         SceneTransform_ApplyRoll((frame << 9) + 0x2000);
         Render_TransformVertices(Data_081991e0, verts, 4);
         Render_DrawModelList(model);
@@ -1339,7 +1342,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         Func_0814cd48(effect->actors[0], 7, -1, 0, 30);
       }
       if (frame == 28)
-        Func_081180e8(-1);
+        BattlePlayback_StartFar(-1);
     } else {
       s32 scale;
 
@@ -1374,7 +1377,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         Render_ResetTransformState();
         Func_08015160((pos.x / 2 - 64) << 16, (pos.y - 48) << 16, 0);
         SceneTransform_ApplyPitch(0x4000);
-        Func_080151e4(scale / 3, scale, scale);
+        SceneTransform_ApplyScale3(scale / 3, scale, scale);
         if (mode == 2)
           SceneTransform_ApplyYaw(-frame << 10);
         else

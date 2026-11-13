@@ -208,7 +208,7 @@ void SceneTransform_ApplyScale(const s32 *scale) {
 }
 
 /// Applies a scale by x, y and z in Q16.
-void Func_080151e4(s32 x, s32 y, s32 z) {
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z) {
   s32 m[12];
 
   CAMELOT_ASM("the fixed-register identity store above")

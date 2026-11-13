@@ -231,7 +231,7 @@ s32 Trig_Sin(s32);
 s32 Trig_Cos(s32);
 s32 __divsi3(s32, s32);
 struct PoolEntry *Render_AllocateModelList(s32 count);
-void Func_080151e4(s32, s32, s32);
+void SceneTransform_ApplyScale3(s32, s32, s32);
 void Func_08015160(s32, s32, s32);
 void SceneTransform_ApplyPitch(s32);
 void SceneTransform_ApplyRoll(s32);
@@ -257,7 +257,7 @@ void ColorBuffer_ScaleFar(void *, void *, s32, s32);
 extern struct ActorPos **
 GetBattleObjectSlotFar__f175f74(s32) __asm__("GetBattleObjectSlotFar");
 void Func_0814cd48(s32, s32, s32, s32, s32);
-void Func_081180e8(s32);
+void BattlePlayback_StartFar(s32);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
@@ -854,7 +854,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         model->texture = texture;
         if (frame <= 282) {
           Render_ResetTransformState();
-          Func_080151e4(scale * 2, scale * 2, scale * 2);
+          SceneTransform_ApplyScale3(scale * 2, scale * 2, scale * 2);
           Func_08015160(-0x100000, -0x80000, 0);
           SceneTransform_ApplyPitch(0xe000);
           SceneTransform_ApplyRoll(0x4000 - t * 256);
@@ -882,7 +882,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           model->texture = texture;
           Render_ResetTransformState();
           Func_08015160(-0x80000, -0x80000, 0);
-          Func_080151e4(scale, scale, scale);
+          SceneTransform_ApplyScale3(scale, scale, scale);
           SceneTransform_ApplyPitch(0xc000);
           SceneTransform_ApplyYaw(-t << 10);
           Render_TransformVertices(gData_08199210, texture, 4);
@@ -1032,7 +1032,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
               model->depth = depth2;
               Render_ResetTransformState();
               Func_08015160(-0x80000, -0x80000, 0);
-              Func_080151e4(size / 2, size, size / 2);
+              SceneTransform_ApplyScale3(size / 2, size, size / 2);
               if (k == 0) {
                 SceneTransform_ApplyRoll(0xf000);
               } else if (k == 1) {
@@ -1306,7 +1306,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         model->depth = depth;
         Render_ResetTransformState();
         Func_08015160(0x40000, 0, 0);
-        Func_080151e4(scale112, scale112, scale112);
+        SceneTransform_ApplyScale3(scale112, scale112, scale112);
         SceneTransform_ApplyPitch(0x2000);
         if (frame > 55) {
           SceneTransform_ApplyYaw(frame << 10);
@@ -1505,7 +1505,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       }
     }
     if (frame == 160) {
-      Func_081180e8(134);
+      BattlePlayback_StartFar(134);
     }
     if (frame >= 140) {
       if (frame == 140) {
@@ -1810,7 +1810,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             Render_ResetTransformState();
             Func_08015160((member->x / 2 - 56) << 16, (member->y - 56) << 16,
                           0);
-            Func_080151e4(size / 3, size, size);
+            SceneTransform_ApplyScale3(size / 3, size, size);
             SceneTransform_ApplyPitch(0xc000);
             Render_TransformVertices(gData_08199210, texture, 4);
             Render_DrawModelList__f175f74(model);

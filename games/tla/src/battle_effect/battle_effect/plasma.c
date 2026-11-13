@@ -84,7 +84,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
         camera->scroll += speed;
     }
     if (frame == 24)
-      Func_081180e8(134);
+      BattlePlayback_StartFar(134);
 
     // Pillar i strikes at frame 8i: a flash, then its first cel for one
     // frame and its second for two.
@@ -317,13 +317,13 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
     if (kind == SPARKS_ORANGE || kind == SPARKS_FROM_ACTOR) {
       if (frame == 2) {
         Sound_PlayFar(145);
-        Func_081180e8(145);
+        BattlePlayback_StartFar(145);
       }
     } else {
       if (frame == 2)
         Sound_PlayFar(145);
       if (frame == 24)
-        Func_081180e8(134);
+        BattlePlayback_StartFar(134);
     }
 
     for (i = 0; i != GROUP_COUNT; i++) {

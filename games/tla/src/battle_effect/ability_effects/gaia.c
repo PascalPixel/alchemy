@@ -223,7 +223,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
       Sound_PlayFar(145);
     // The battle resumes and resolves the targets, hit cue 134.
     if (frame == 120)
-      Func_081180e8(134);
+      BattlePlayback_StartFar(134);
 
     // The ground heaves up (frames 0-81), then pulses between two cels.
     if (frame <= 81) {

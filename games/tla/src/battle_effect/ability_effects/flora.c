@@ -52,7 +52,7 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
@@ -64,8 +64,8 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase); // BattlePlayback_StartFar
+    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
+void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
@@ -170,12 +170,12 @@ Func_0815b3b0__f179f18(s32 width, s32 height, u32 shape,
 
 void BattleEffect_ConfigureEffectDisplay(void);
 void Func_08179e6c(void);
-void Func_0813baec(void);
-void Func_0814cca8(void);
+void BattleEffect_AdvanceScrollOnInterval(void);
+void BattleEffect_SetupBlendedDisplay(void);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 void Palette_LoadBasicObjColors(void);
 void Graphics_LoadGreyRamp(void);
-void Func_0815f0a0(s32 palette);
+void BattleEffect_StepPaletteToResource(s32 palette);
 void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
 
 #define SLOT_ALT 188 // unkb8[1]
@@ -257,7 +257,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       work->scrollInterval = 1;
       work->scrollStepX = -3;
       work->scrollStepY = 0;
-      Task_Add(Func_0813baec, 3200);
+      Task_Add(BattleEffect_AdvanceScrollOnInterval, 3200);
       transition[4] = 1;
       e = Resource_GetTableEntry((s32)&ResourceId_PinkPetalsTiles);
       Iwram_CopyWordsEntry((void *)0x050003e0, e, 32);
@@ -358,11 +358,11 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       REG_BG2X = -0x3c00;
     }
     if (frame > 285) {
-      Func_0815f0a0((s32)&ResourceId_CyanPalette);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_CyanPalette);
     } else if (frame > 199) {
-      Func_0815f0a0((s32)&ResourceId_TanPalette);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_TanPalette);
     } else if (frame > 180) {
-      Func_0815f0a0((s32)&ResourceId_MarsDjinnSheet);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_MarsDjinnSheet);
     }
     if (frame == 108) {
       REG_BG2PA = 0x80;
@@ -675,7 +675,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         if (sh > -64) {
           Render_ResetTransformState();
           Func_08015160(Data_08199446[i] << 16, Data_0819944a[i] << 16, 0);
-          Func_080151e4(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           SceneTransform_ApplyRoll(Data_08199436[i]);
           SceneTransform_ApplyPitch(Data_0819943e[i]);
           Func_0801521c(scale);
@@ -841,10 +841,10 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     wait(1);
   }
-  Task_Remove(Func_0813baec);
+  Task_Remove(BattleEffect_AdvanceScrollOnInterval);
   gBgScroll[1].x = savedScroll;
   transition[4] = 0;
-  Func_0814cca8();
+  BattleEffect_SetupBlendedDisplay();
   for (i = 0; i != 44; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
@@ -937,7 +937,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 56) {
-      Func_081180e8(134);
+      BattlePlayback_StartFar(134);
     }
     if ((u32)(frame - 57) <= 50) {
       for (i = 0; i != effect->count; i++) {
@@ -1091,7 +1091,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
     }
     if (frame == DAGGER_LAST_HIT) {
       work->shakeFrames = 4;
-      Func_081180e8(134);
+      BattlePlayback_StartFar(134);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 10);
       BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 3 << 16, 100);
     }
@@ -1308,7 +1308,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
         step->velocityY = (Trig_Cos(angle) * speed) >> 5;
       }
       work->shakeFrames = 4;
-      Func_081180e8(134);
+      BattlePlayback_StartFar(134);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
       BattleEffect_StartActorMotion(effect->actors[0], 1, 8 << 16, 20 << 16,
                                     6 << 16, 10);

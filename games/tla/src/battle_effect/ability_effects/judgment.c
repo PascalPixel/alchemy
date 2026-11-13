@@ -405,7 +405,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         Func_0814cd48(effect->actors[i], 7, 5, i, 8);
         BattleMotion_ApplyKnockbackFar(effect->actors[i], 1);
       }
-      Func_081180e8(145);
+      BattlePlayback_StartFar(145);
     }
     if (gInput.repeat & 3) {
       if ((u32)(frame - 5) <= 144) {
@@ -478,7 +478,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 280) {
-      Func_0814cca8();
+      BattleEffect_SetupBlendedDisplay();
       FILL__actor_move_random(work->sheet, 0x3840, 0);
       FILL__actor_move_random(canvas, 0x4000, 0x01010101);
       transition[4] = 0;

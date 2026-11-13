@@ -83,13 +83,13 @@ void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
-void Func_080151e4(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
-void Func_08164a4c(s32 blue, s32 green, s32 red);
+void Palette_BrightenBgEntries(s32 blue, s32 green, s32 red);
 void Camera_ApplyVerticalShake(s32 range);
 void BattleEffect_CountDownBattlerTints(void);
 
@@ -378,7 +378,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
           model->look.shade = shade;
           Render_ResetTransformState();
           Func_08015160((from.x / 2 - 64) << 16, 0, 0);
-          Func_080151e4(scale, scale * 2, scale);
+          SceneTransform_ApplyScale3(scale, scale * 2, scale);
           SceneTransform_ApplyPitch(Data_08199f2a[i]);
           SceneTransform_ApplyYaw(Data_08199f2e[i]);
           Render_TransformVertices(Data_081991e0, projected, 4);
@@ -402,7 +402,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         model->look.shade = 0;
         Render_ResetTransformState();
         Func_08015160((from.x / 2 - 64) << 16, 0, 0);
-        Func_080151e4(scale, scale * 2, scale);
+        SceneTransform_ApplyScale3(scale, scale * 2, scale);
         SceneTransform_ApplyPitch(Data_08199f2a[i]);
         SceneTransform_ApplyYaw(Data_08199f2e[i]);
         Render_TransformVertices(Data_081991e0, projected, 4);
@@ -423,7 +423,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
           model->look.shade = shade;
           Render_ResetTransformState();
           Func_08015160((to.x / 2 - 64) << 16, 0, 0);
-          Func_080151e4(scale, scale * 2, scale);
+          SceneTransform_ApplyScale3(scale, scale * 2, scale);
           SceneTransform_ApplyPitch(Data_08199f2a[i]);
           SceneTransform_ApplyYaw(Data_08199f2e[i]);
           Render_TransformVertices(Data_081991e0, projected, 4);
@@ -447,7 +447,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       if (frame > 99) {
         work->transferMode = fillMode;
         work->transferValue = 0x02020202;
-        Func_08164a4c(2, 2, 2);
+        Palette_BrightenBgEntries(2, 2, 2);
       }
       for (i = 0, step = Data_02016000; i != 128; i++) {
         color[0] = (i & 7) + 32;
@@ -457,7 +457,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         y = step->y;
         center = -(64 << 16);
         Func_08015160(x + center, y + center, 0);
-        Func_080151e4(step->variant * 3, step->variant * 6, step->variant);
+        SceneTransform_ApplyScale3(step->variant * 3, step->variant * 6,
+                                   step->variant);
         SceneTransform_ApplyPitch(step->z);
         SceneTransform_ApplyYaw(step->z);
         Render_TransformVertices(Data_081991a4, projected, 3);
@@ -499,7 +500,7 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
 
 void BattleEffect_FlushPendingGraphicsTransfer(void);
 
-void Func_0815f0a0(s32 resource);
+void BattleEffect_StepPaletteToResource(s32 resource);
 
 void *Resource_GetTableEntry(s32 id);
 
@@ -599,9 +600,9 @@ void Func_08191530(struct BattleEffectArgument *effect) {
     if (frame == 0)
       Iwram_FillWordsEntry((void *)BG_PLTT, 128, 0x7fff7fff);
     if (frame > 119)
-      Func_08164a4c(-1, -1, -1);
+      Palette_BrightenBgEntries(-1, -1, -1);
     else if ((frame & 3) == 1)
-      Func_0815f0a0((s32)&ResourceId_BlueFlameSheet);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_BlueFlameSheet);
     gBgScroll[1].x = frame / 2;
 
     // BG2 turns a 1024th of a circle a frame, at 1/532 of the sine's scale

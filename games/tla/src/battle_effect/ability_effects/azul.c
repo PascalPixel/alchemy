@@ -29,7 +29,7 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
@@ -41,8 +41,8 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase); // BattlePlayback_StartFar
+    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
+void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
@@ -605,7 +605,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         model->mesh = &faces[i * 3];
         Render_ResetTransformState();
         Func_08015160(p->x + -0x400000, p->y + -0x400000, 0);
-        Func_080151e4(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         switch (i & 3) {
         case 0:
           SceneTransform_ApplyPitch(p->z);
@@ -727,7 +727,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       model->scrollV = shade;
       Render_ResetTransformState();
       Func_08015160(pos.x / 2 + -0x440000, pos.y + -0x500000, 0);
-      Func_080151e4(scale, scale * 2, scale);
+      SceneTransform_ApplyScale3(scale, scale * 2, scale);
       Func_08015160(-0x280000, 0, 0);
       SceneTransform_ApplyPitch(frame << 10);
       SceneTransform_ApplyYaw(frame << 10);
@@ -769,7 +769,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         model->mesh = gData_08199340;
         Render_ResetTransformState();
         Func_08015160(-0x100000, pos.y + -0x500000, 0);
-        Func_080151e4(size >> 1, size, size >> 1);
+        SceneTransform_ApplyScale3(size >> 1, size, size >> 1);
         SceneTransform_ApplyRoll(frame << 11);
         Render_TransformVertices(Data_081991e0, verts, 4);
         Render_DrawModelList(model);
@@ -821,7 +821,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       work->shakeFrames = 16;
     }
     if (frame == 214) {
-      Func_081180e8(134);
+      BattlePlayback_StartFar(134);
     }
     if (frame > 185) {
       BattleCamera_Shake(8, 8);

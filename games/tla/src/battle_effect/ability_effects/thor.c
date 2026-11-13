@@ -105,7 +105,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
   work->scrollStepX = 1;
   work->scrollStepY = 0;
   view->busy = 1;
-  Task_Add(Func_0813baec, 0xc80);
+  Task_Add(BattleEffect_AdvanceScrollOnInterval, 0xc80);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   work->transferMode = 0;
   BattleEffect_WipeCanvas(0, 0);
@@ -154,13 +154,13 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
     }
     for (i = 0; i != 2; i++) {
       if ((frame & 63) <= 15) {
-        Func_0815f0a0((s32)&ResourceId_BlastSheet);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
       } else if ((frame & 63) <= 31) {
-        Func_0815f0a0((s32)&ResourceId_MercuryDjinnSheet);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_MercuryDjinnSheet);
       } else if ((frame & 63) <= 47) {
-        Func_0815f0a0((s32)&ResourceId_MarsDjinnSheet);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_MarsDjinnSheet);
       } else {
-        Func_0815f0a0((s32)&ResourceId_JupiterDjinnSheet);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_JupiterDjinnSheet);
       }
     }
     if (frame == 150) {
@@ -317,8 +317,8 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
 
   // The lightning part.
   view->busy = 0;
-  Task_Remove(Func_0813baec);
-  Func_0814cca8();
+  Task_Remove(BattleEffect_AdvanceScrollOnInterval);
+  BattleEffect_SetupBlendedDisplay();
   BattleEffect_SelectLivingTargets(work->effect);
   BattleEffect_SpawnObjects(9, 0x282, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, Ram_MapCellBuffer,
@@ -363,7 +363,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
         Sound_PlayFar(134);
       }
       if (frame == 120) {
-        Func_081180e8(134);
+        BattlePlayback_StartFar(134);
       }
       for (j = 0; j != 1; j++) {
         s32 start = j * 128 + 8;
@@ -562,7 +562,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
 
     HeapSlot_Release(104);
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    Func_0816467c(0, formationX, formationY);
+    BattleEffect_RunImpactBurst(0, formationX, formationY);
   }
   for (i = 0; i != 9; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);

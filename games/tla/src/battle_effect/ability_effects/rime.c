@@ -18,7 +18,11 @@ struct Model;
 
 // A texture for the ARM polygon kernels: 1 << logWidth by 1 << logHeight
 // pixels.
-/* VIEW(f173588): tag struct Texture as struct Texture__f173588; ability_effects.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:21770: structure has no member named `logWidth'. */
+/* VIEW(f173588): tag struct Texture as struct Texture__f173588;
+ * ability_effects.c has another definition; tried with the definition the rest
+ * of the object has, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:21770: structure has no member
+ * named `logWidth'. */
 struct Texture__f173588 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -27,7 +31,11 @@ struct Texture__f173588 {
 };
 
 // One model for Render_DrawModelList, the polygon kernel runner.
-/* VIEW(f173588): tag struct RenderModel as struct RenderModel__f173588; ability_effects.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:21784: structure has no member named `brightness'. */
+/* VIEW(f173588): tag struct RenderModel as struct RenderModel__f173588;
+ * ability_effects.c has another definition; tried with the definition the rest
+ * of the object has, it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:21784: structure has no member
+ * named `brightness'. */
 struct RenderModel__f173588 {
   s32 kind;
   s32 unk04;
@@ -53,14 +61,14 @@ s32 BattleEffect_LoadBlitter(
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames); // BattleEffect_TintBattler
 void BattleEffect_CountDownBattlerTints(void);
-void Func_081180e8(s32 phase);    // BattlePlayback_StartFar
-void Func_0815f0a0(s32 resource); // BattleEffect_StepPaletteToResource
+void BattlePlayback_StartFar(s32 phase);
+void BattleEffect_StepPaletteToResource(s32 resource);
 void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
                    s32 *world); // BattleEffect_RunDjinniEntrance
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Func_080151e4(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
@@ -150,13 +158,13 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
     if (frame == 38)
-      Func_081180e8(-1);
+      BattlePlayback_StartFar(-1);
     if (mode == 0) {
       if (frame == 32)
         Sound_PlayFar(212);
     } else {
       if (frame > 7)
-        Func_0815f0a0((s32)&ResourceId_StarCrossSheet);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_StarCrossSheet);
       if (frame == 32)
         Func_0814cd48(effect->actors[0], 7, -1, 0, 24);
     }
@@ -209,7 +217,7 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
           else
             SceneTransform_ApplyYaw((frame << 9) - 0x4000);
         }
-        Func_080151e4(scale >> 1, scale >> 1, scale >> 1);
+        SceneTransform_ApplyScale3(scale >> 1, scale >> 1, scale >> 1);
         Render_TransformVertices(gData_08199210, vertices, 4);
         Render_DrawModelList(model);
       }
@@ -233,7 +241,7 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
           SceneTransform_ApplyPitch(0x4000);
           SceneTransform_ApplyYaw(frame << 9);
           size /= 2;
-          Func_080151e4(size, size, size);
+          SceneTransform_ApplyScale3(size, size, size);
           Render_TransformVertices(gData_08199210, vertices, 4);
           Render_DrawModelList(model);
         }

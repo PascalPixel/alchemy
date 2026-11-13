@@ -27,7 +27,7 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
@@ -39,8 +39,8 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase); // BattlePlayback_StartFar
+    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
+void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
@@ -136,7 +136,7 @@ Func_0815b290__f186dfc(s32 width, s32 height, u32 shape,
                        u32 attributes) __asm__("Func_0815b290");
 void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_WipeCanvas(s32 a, s32 b);
-void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
+void BattleEffect_SetupBlendedDisplay(void);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 void Func_08164abc(s32 r, s32 g, s32 b);
 void Func_08164b2c(s32 r, s32 g, s32 b);
@@ -656,7 +656,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         if (frame > 268) {
           s = (frame << 12) - 0xef710;
         }
-        Func_080151e4(s >> 1, s, s >> 1);
+        SceneTransform_ApplyScale3(s >> 1, s, s >> 1);
         Render_TransformVertices(Data_081991e0, verts, 4);
         Render_DrawModelList(model);
         if ((u32)cut <= 5) {
@@ -677,7 +677,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             model->mesh = Data_08199388;
             Render_ResetTransformState();
             Func_08015160(0, -0x40000, 0);
-            Func_080151e4(0x1b1e0, 0x29c40, 0x20000);
+            SceneTransform_ApplyScale3(0x1b1e0, 0x29c40, 0x20000);
             Render_TransformVertices(Data_081991e0, verts, 4);
             Render_DrawModelList(model);
           }
@@ -812,7 +812,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
                 (p->y >> 16) <= 136) {
               Render_ResetTransformState();
               Func_08015160(p->x + -0x400000, p->y + -0x400000, 0);
-              Func_080151e4(0x8000, 0x10000, 0x8000);
+              SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
               switch (i & 3) {
               case 0:
                 SceneTransform_ApplyPitch(p->z);
@@ -867,7 +867,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   }
   transition[4] = 0;
   Task_Remove(BattleEffect_ProcessPendingStampTransfer);
-  Func_0814cca8();
+  BattleEffect_SetupBlendedDisplay();
   gCameraSceneParameters[4] = 120;
   BattleEffect_SpawnObjects(11, 0x293, 2);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
@@ -1057,7 +1057,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             Func_08015160((x - 16) << 16, y << 16, 0);
             SceneTransform_ApplyRoll(0x27d0);
           }
-          Func_080151e4(0x30000, amp, 0x20000);
+          SceneTransform_ApplyScale3(0x30000, amp, 0x20000);
           Render_TransformVertices(Data_081991e0, verts, 4);
           Render_DrawModelList(model);
         }

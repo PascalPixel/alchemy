@@ -35,7 +35,7 @@ extern u8 gData_08198a98[]; // ☀️ gPlasma_FlashCells
 
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 
-void Func_0815f0a0(s32 resourceId); // BattleEffect_StepPaletteToResource
+void BattleEffect_StepPaletteToResource(s32 resourceId);
 
 // A blade of fire swings down over the targets and strikes twice, each
 // strike a flash and a fountain of sparks that bounce on the ground.
@@ -130,7 +130,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
     if (frame == 18)
       Sound_PlayFar(SE_STRIKE);
     if (frame == RESULTS_FRAME)
-      Func_081180e8(PHASE_RESULTS);
+      BattlePlayback_StartFar(PHASE_RESULTS);
 
     // The blade: down 16 pixels a frame, held, then creeping on; nothing
     // below y = 104 is drawn.
@@ -170,7 +170,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
     }
 
     if (frame > FIRST_STRIKE_FRAME)
-      Func_0815f0a0((s32)&ResourceId_BlastSheet);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
 
     col = 0;
     do {
@@ -409,7 +409,7 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
   do {
     if (mode == 0) {
       if (frame >= 41 && frame <= 63)
-        Func_0815f0a0((s32)&ResourceId_BlastSheet);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
     } else if (mode == 1) {
       if (frame == 61) {
         Iwram_CopyWordsEntry(
@@ -432,9 +432,9 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
       Sound_PlayFar(SE_SPRAY);
     if (frame == 60) {
       if (mode == 1)
-        Func_081180e8(144);
+        BattlePlayback_StartFar(144);
       else
-        Func_081180e8(145);
+        BattlePlayback_StartFar(145);
     }
 
     // The flashes, from frame 56.
@@ -663,7 +663,7 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 
-void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);

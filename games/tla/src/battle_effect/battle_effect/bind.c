@@ -163,7 +163,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != effect->count * 20 + 72; frame++) {
     if (frame == 64)
-      Func_081180e8(0);
+      BattlePlayback_StartFar(0);
     Func_081496c8(frame, 0xaaab, 0x5555, 0);
 
     // The prelude: the Djinn circles where the effect was prepared, and
@@ -316,7 +316,7 @@ void BattleEffect_RunTriangleStrike(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != effect->count * 20 + 72; frame++) {
     if (frame == 64)
-      Func_081180e8(0);
+      BattlePlayback_StartFar(0);
     if (frame == 46)
       BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16, 0);
     Func_081496c8(frame, 0xaaab, 0x5555, 0);

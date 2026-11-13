@@ -27,7 +27,7 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
@@ -39,8 +39,8 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase); // BattlePlayback_StartFar
+    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
+void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
@@ -234,9 +234,9 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
       if (mode == 0) {
-        Func_081180e8(145);
+        BattlePlayback_StartFar(145);
       } else {
-        Func_081180e8(-1);
+        BattlePlayback_StartFar(-1);
         Sound_PlayFar(145);
       }
     }
@@ -353,10 +353,10 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
         SceneTransform_ApplyRoll(bolt->z);
         bolt->z += bolt->velocityZ;
         if (mode == 0) {
-          Func_080151e4(0x40000, 0x10000, 0x10000);
+          SceneTransform_ApplyScale3(0x40000, 0x10000, 0x10000);
           Render_TransformVertices(gData_081991b0, vertices, 4);
         } else {
-          Func_080151e4(radius << 11, radius * 312, 0x10000);
+          SceneTransform_ApplyScale3(radius << 11, radius * 312, 0x10000);
           Render_TransformVertices(Data_081991c0, vertices, 4);
         }
         Render_DrawModelList(model);
@@ -376,10 +376,11 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
 
 #define HI(v) (((s16 *)&(v))[1])
 
-void Func_0815f0a0(s32 palette);
+void BattleEffect_StepPaletteToResource(s32 palette);
 
 void Func_0816442c(s32 formation, s32 x, s32 y); // ..PlaceFormationObjects
-void Func_0816467c(s32 formation, s32 x, s32 y); // ..RunImpactBurst
+void BattleEffect_RunImpactBurst(s32 formation, s32 x,
+                                 s32 y); // ..RunImpactBurst
 
 extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_WhirlBeamSheet;
@@ -482,7 +483,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
     }
   skipped:
     if (frame == 148) {
-      Func_081180e8(134);
+      BattlePlayback_StartFar(134);
     }
     if (frame == 0) {
       position.x = 0x200000;
@@ -539,7 +540,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
       Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
     }
     if (frame > 103) {
-      Func_0815f0a0((s32)&ResourceId_TanPalette);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_TanPalette);
     }
     if (frame == 64) {
       Iwram_CopyWordsEntry(
@@ -743,7 +744,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(188);
   HeapSlot_Release(104);
-  Func_0816467c(4, position.x, position.y);
+  BattleEffect_RunImpactBurst(4, position.x, position.y);
   for (i = 0; i != 11; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
@@ -960,7 +961,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
         }
         if (frame == 72) {
           work->shakeFrames = 8;
-          Func_081180e8(145);
+          BattlePlayback_StartFar(145);
           BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
           Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
         }

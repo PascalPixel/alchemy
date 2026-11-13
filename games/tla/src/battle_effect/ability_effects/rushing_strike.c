@@ -16,7 +16,7 @@ void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 
-void Func_081180e8(s32 phase);
+void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
@@ -205,7 +205,7 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
         drop->velocityY = (Trig_Cos(angle) * speed) >> 5;
         drop->variant = (Random16() & 15) + 16;
       }
-      Func_081180e8(134);
+      BattlePlayback_StartFar(134);
       Sound_PlayFar(145);
       BattleEffect_StartActorMotion(effect->actors[member], 1, 0x20000, 0x80000,
                                     0x20000, i * 5 + 110);
@@ -302,7 +302,7 @@ void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 
-void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
@@ -326,7 +326,7 @@ void Transform_Pop(void);
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
-void Func_08164a4c(s32 red, s32 green, s32 blue); // Palette_BrightenBgEntries
+void Palette_BrightenBgEntries(s32 red, s32 green, s32 blue);
 
 extern char ResourceId_SmokeBandSheet;
 
@@ -469,7 +469,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
     }
     if (frame == 179) {
-      Func_081180e8(134);
+      BattlePlayback_StartFar(134);
       work->shakeFrames = 8;
     }
     if (frame > 165) {
@@ -572,7 +572,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       if (frame > 162) {
         work->transferValue = 0x3f3f3f3f;
       }
-      Func_08164a4c(2, 2, 2);
+      Palette_BrightenBgEntries(2, 2, 2);
     }
     // DEAD: frame is never negative.
     if (frame < 0) {
@@ -611,7 +611,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       model->scrollU = 127 & ~u;
     }
     Render_ResetTransformState();
-    Func_080151e4(0x8000, 0x10000, 0x8000);
+    SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
     Transform_Push();
     Func_08015160((source.x - 128) << 16, height << 16, 0);
     if (effect->side == 1) {
@@ -630,7 +630,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       tex->pixels = work->sheet + 0x4000;
       Func_08015160((target.x - 124) << 16, (height - 144) << 16, 0);
       SceneTransform_ApplyRoll(0x4000);
-      Func_080151e4(0x19c40, 0x14e20, 0x10000);
+      SceneTransform_ApplyScale3(0x19c40, 0x14e20, 0x10000);
       Render_TransformVertices(Data_081991e0, vertices, 4);
       Render_DrawModelList(model);
     }

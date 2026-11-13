@@ -82,13 +82,13 @@ void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
-void Func_080151e4(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void BattleMotion_ApplyKnockbackFar(s32 actor, s32 motion);
-void Func_081180e8(s32 phase);
+void BattlePlayback_StartFar(s32 phase);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
@@ -224,10 +224,10 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
     quad->brightness = brightness;
     if (frame < LUNGE_STREAK_FRAMES) {
       Render_ResetTransformState();
-      Func_080151e4(0x8000, 0x10000, 0x8000);
+      SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
       Func_08015160((caster.x - 128) << 16, (caster.y - 88) << 16, 0);
-      Func_080151e4(Data_081994b8[mode] << 1, Data_081994b8[mode] << 1,
-                    Data_081994b8[mode]);
+      SceneTransform_ApplyScale3(Data_081994b8[mode] << 1,
+                                 Data_081994b8[mode] << 1, Data_081994b8[mode]);
       if (effect->side == 1)
         SceneTransform_ApplyYaw(0x8000);
       Render_TransformVertices(Data_081991e0, vertices, 4);
@@ -253,12 +253,12 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
       quad->kind = 7;
       quad->faces = gData_08199364;
       Render_ResetTransformState();
-      Func_080151e4(0x8000, 0x10000, 0x8000);
+      SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
       if (effect->side == 0)
         Func_08015160((target.x - 144) << 16, (target.y - 84) << 16, 0);
       else
         Func_08015160((target.x - 112) << 16, (target.y - 84) << 16, 0);
-      Func_080151e4(scale, scale << 2, scale);
+      SceneTransform_ApplyScale3(scale, scale << 2, scale);
       Render_TransformVertices(Data_081991e0, vertices, 4);
       Render_DrawModelList(quad);
     }
@@ -270,9 +270,9 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
       Func_0814cd48(effect->actors[0], 7, 5, 0, LUNGE_HIT_FRAME);
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
       if (mode == 5)
-        Func_081180e8(145);
+        BattlePlayback_StartFar(145);
       else
-        Func_081180e8(134);
+        BattlePlayback_StartFar(134);
       work->shakeFrames = 8;
     }
 

@@ -216,7 +216,7 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
             if (frame == k * 32 + 24) {
               Sound_PlayFar(133);
               if (k == 0)
-                Func_081180e8(-1);
+                BattlePlayback_StartFar(-1);
               Func_0814cd48(effect->actors[k], 7, 5, k, 8);
             }
             if (frame == k * 32 + 40)
@@ -406,7 +406,7 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
     if (mode == MODE_SLEEP_STAR) {
       for (i = 0; i != effect->count; i++) {
         if (frame == i * 8 + 48) {
-          Func_081180e8(-1);
+          BattlePlayback_StartFar(-1);
           Func_0814cd48(effect->actors[i], 7, 5, i, 8);
         }
       }
@@ -414,7 +414,7 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
       for (i = 0; i != effect->count; i++) {
         if (frame == i * 8 + 48) {
           Sound_PlayFar(126);
-          Func_081180e8(-1);
+          BattlePlayback_StartFar(-1);
           Func_0814cd48(effect->actors[i], 7, -1, i, 8);
         }
       }

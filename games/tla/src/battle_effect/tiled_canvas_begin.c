@@ -64,7 +64,7 @@ void BattleEffect_InitializeTilemapAndFlushQueue(void) {
 #define FORMATION_THORN_VINES 645 // eight objects
 
 static __inline__ void BurstAt_(s32 formation, s32 x, s32 y) {
-  Func_0816467c(formation, x, y);
+  BattleEffect_RunImpactBurst(formation, x, y);
 }
 
 // Summon 5, the thorn vines:thorns fly in, vines grow up under the targets
@@ -543,11 +543,11 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
   HeapSlot_Release(HEAP_BLITTER);
-  Func_081180e8(134);
+  BattlePlayback_StartFar(134);
   // Tear down.
   /* FAKEMATCH(wrapper): the burst through BurstAt_, whose parameter sets 128 <<
-   * 16 in argument order; as a direct Func_0816467c call, 2 of 1490
-   * instructions differ in tla-en. */
+   * 16 in argument order; as a direct BattleEffect_RunImpactBurst call, 2 of
+   * 1490 instructions differ in tla-en. */
   BurstAt_(2, 128 << 16, height);
   for (i = 0; i != 8; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
@@ -872,7 +872,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   // The second half: ice rains on the targets, boulders pile up and burst.
   for (i = 0; i != 9; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
-  Func_0814cca8();
+  BattleEffect_SetupBlendedDisplay();
   REG_BLDALPHA = 0x1010;
   Sound_PlayFar(390);
 
@@ -893,7 +893,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 146; frame++) {
     count = 0;
     if (frame == 96)
-      Func_081180e8(134);
+      BattlePlayback_StartFar(134);
     if (frame == 16)
       work->shakeFrames = 32;
     // One boulder every two frames, up to 16.
@@ -1099,7 +1099,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != effect->count * 20 + 56; frame++) {
     if (frame == 32)
-      Func_081180e8(0);
+      BattlePlayback_StartFar(0);
     for (member = 0; member != effect->count; member++) {
       s32 offset;
 
@@ -1254,7 +1254,7 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
     user = GetBattleObjectSlotFar(effect->actor)->object;
     half = BattleUnit_GetEffectHeightFar(effect->actor) / 2;
     if (frame == 64)
-      Func_081180e8(133);
+      BattlePlayback_StartFar(133);
     Render_ResetTransformState();
     Transform_SetLookAt(camera->eye, camera->pos);
     if (frame == 40)
@@ -1617,9 +1617,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
     if (frame == 40)
-      Func_081180e8(0);
+      BattlePlayback_StartFar(0);
     if (mode == 7 && (frame & 3) == 0)
-      Func_0815f0a0((s32)&ResourceId_CyanPalette);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_CyanPalette);
 
     // The Djinni sways, and after frame 32 rises two pixels a frame; for
     // the first four frames it is drawn ADDITIVE as well.
@@ -2022,11 +2022,11 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
     if (frame == 0)
       Sound_PlayFar(142);
     if (mode == 6 && (frame & 3) == 0)
-      Func_0815f0a0((s32)&ResourceId_EffectPalette01);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_EffectPalette01);
     if (mode == 11 && (frame & 3) == 0)
-      Func_0815f0a0((s32)&ResourceId_JupiterDjinnSheet);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_JupiterDjinnSheet);
     if (frame == 80)
-      Func_081180e8(0);
+      BattlePlayback_StartFar(0);
 
     // The Djinni sways, and after frame 32 rises two pixels a frame; for
     // the first four frames it is drawn ADDITIVE as well.
@@ -2342,7 +2342,7 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect,
   for (frame = 0; frame != effect->count * 4 + 64; frame++) {
     camera = Ram_HeapSlots->cameraWork;
     if (frame == 72)
-      Func_081180e8(0);
+      BattlePlayback_StartFar(0);
     for (j = 0; j != effect->count; j++) {
       struct MotionObject *object;
       s32 time;
@@ -2487,7 +2487,7 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
   frame = 0;
   do {
     if (frame == 24)
-      Func_081180e8(133);
+      BattlePlayback_StartFar(133);
 
     // A flame moves to its next picture every four frames and goes out
     // after the sixth.
@@ -2634,7 +2634,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
     Transform_SetLookAt(camera->eye, camera->pos);
     // The results begin 16 frames before the end.
     if (frame == Data_081982f7[effect->variant][TIMING_FRAMES] - 16)
-      Func_081180e8(133);
+      BattlePlayback_StartFar(133);
 
     // The pillars rise from frames 16, 20 and 24.
     for (column = 0; column != 3; column++) {
@@ -2780,7 +2780,7 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
     else
       work->cameraDelta = 0;
     if (frame == (Data_08198300[effect->variant] >> 1) + 108)
-      Func_081180e8(133);
+      BattlePlayback_StartFar(133);
     BattleCamera_SetViewFar(0, 0, 0, 100);
     Render_ResetTransformState();
     Transform_SetLookAt(camera->eye, camera->pos);
@@ -2935,7 +2935,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
     ymin = 120 << 16;
     ymax = 0;
     if (frame == TIMING(RISE_FRAME) + 11)
-      Func_081180e8(133);
+      BattlePlayback_StartFar(133);
     point[0] = 0;
     point[1] = 0;
     point[2] = 512 << 16;
@@ -3198,7 +3198,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != 64; frame++) {
     if (frame == 20)
-      Func_081180e8(133);
+      BattlePlayback_StartFar(133);
     if (frame < 16) {
       // Wipe the canvas every five frames.
       if (frame % 5 == 2)
@@ -3381,7 +3381,7 @@ void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == 2)
       Sound_PlayFar(144);
     if (frame == Data_081983a2[variant][FIELD_FRAMES] - 48)
-      Func_081180e8(133);
+      BattlePlayback_StartFar(133);
 
     // The motes: depth 160-799 gives sizes 9 down to 1.
     for (i = 0; i != Data_081983a2[variant][FIELD_MOTES]; i++) {
@@ -4028,9 +4028,9 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       if (frame >= shots - 8)
         REG_BLDALPHA = -((frame - shots) * 2) | 0x1000;
       if (mode == 8 && frame > 15)
-        Func_0815f0a0((s32)&ResourceId_CyanPalette);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_CyanPalette);
       if (mode == 10 && frame > 31)
-        Func_0815f0a0((s32)&ResourceId_BlastSheet);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
       if (frame == 4) {
         if (mode == 9 || mode == 17)
           Sound_PlayFar(92);
@@ -4040,12 +4040,12 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       if (mode == 8) {
       } else if (mode == 6) {
         if (frame == 60)
-          Func_081180e8(134);
+          BattlePlayback_StartFar(134);
       } else if (mode == 24) {
         if (frame == 48)
-          Func_081180e8(134);
+          BattlePlayback_StartFar(134);
       } else if (frame == 24) {
-        Func_081180e8(134);
+        BattlePlayback_StartFar(134);
       }
 
       // The Djinni sways, and after frame 56 rises two pixels a frame.
@@ -4675,7 +4675,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   work->scrollInterval = 4;
   work->scrollStepX = -1;
   work->scrollStepY = 0;
-  Task_Add(Func_0813baec, TASK_PASS_FRAME);
+  Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_FRAME);
   presentation->active = 1;
   BattleEffect_WipeCanvas(0, 1);
   REG_DISPCNT = 0x7741;
@@ -4817,10 +4817,10 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
 
   // The giant leaves: the sky stops, the palette is restored and the
   // pieces go.
-  Task_Remove(Func_0813baec);
+  Task_Remove(BattleEffect_AdvanceScrollOnInterval);
   presentation->active = 0;
   gBgScroll[1].x = scrollX;
-  Func_0814cca8();
+  BattleEffect_SetupBlendedDisplay();
   Palette_LoadBasicObjColors();
   Dma_Set(OBJ_PLTT, (void *)(BG_PLTT + 80), 0x80000010,
           (volatile u32 *)0x040000d4);
@@ -4925,7 +4925,7 @@ void BattleEffect_RunPunji(void *object) { Func_081548d0(object, 1); }
 #define COLUMN_INTERVAL 4
 #define PUFF_COUNT 512
 #define PUFF_LIFE 14      // seven cels, two frames each
-#define PHASE_RESULTS 133 // Func_081180e8: the results phase begins
+#define PHASE_RESULTS 133 // BattlePlayback_StartFar: the results phase begins
 #define CUE_COLUMN 133
 
 // BattleEffect_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap
@@ -5026,7 +5026,7 @@ void Func_081548d0(struct BattleEffectArgument *effect, s32 mode) {
     fadeEnd = duration - 4;
     do {
       if (frame == cueFrame) {
-        Func_081180e8(PHASE_RESULTS);
+        BattlePlayback_StartFar(PHASE_RESULTS);
       }
       if (frame >= fadeStart && frame < fadeEnd) {
         // Fade the canvas out over the last 16 frames.
@@ -5345,7 +5345,7 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != total; frame++) {
     if (frame == total - 64) {
-      Func_081180e8(PHASE_RESULTS);
+      BattlePlayback_StartFar(PHASE_RESULTS);
     }
     if (frame >= total - 16) {
       // Fade the canvas out over the last 16 frames.
@@ -5512,7 +5512,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != effect->count * BOLT_INTERVAL + 40; frame++) {
     if (frame == 24)
-      Func_081180e8(PHASE_RESULTS);
+      BattlePlayback_StartFar(PHASE_RESULTS);
 
     // The sky flashes as each bolt starts.
     for (i = 0; i != effect->count; i++) {

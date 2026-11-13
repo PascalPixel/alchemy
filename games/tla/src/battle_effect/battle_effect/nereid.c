@@ -94,7 +94,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
       if ((gInput.repeat & 3) && frame > 32 && frame <= 97)
         frame = 98;
       if (frame == 120)
-        Func_081180e8(134);
+        BattlePlayback_StartFar(134);
       if (frame <= 15)
         rise += 2;
 
@@ -242,7 +242,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
     HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
     HeapSlot_Release(HEAP_BLITTER);
-    Func_0816467c(1, focus.x, focus.y);
+    BattleEffect_RunImpactBurst(1, focus.x, focus.y);
     for (k = 0; k != FORMATION_SIZE; k++)
       ResourceObject_ReleaseFar(work->objects[k]);
   }

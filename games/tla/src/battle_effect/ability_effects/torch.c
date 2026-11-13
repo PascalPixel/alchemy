@@ -137,7 +137,7 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
 
     // The hit: results phase, shake, and the target knocked back.
     if (frame == RIPPLE_HIT_FRAME) {
-      Func_081180e8(PHASE_RESULTS);
+      BattlePlayback_StartFar(PHASE_RESULTS);
       work->shakeFrames = 8;
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
     }

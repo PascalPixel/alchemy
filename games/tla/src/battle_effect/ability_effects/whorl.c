@@ -53,7 +53,7 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
@@ -65,8 +65,8 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase); // BattlePlayback_StartFar
+    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
+void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
@@ -307,7 +307,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
               target[3] = 0x7c0000;
             } else {
               work->shakeFrames = 8;
-              Func_081180e8(134);
+              BattlePlayback_StartFar(134);
               target[6] = work->particles[63].velocityX;
               target[7] = work->particles[63].velocityY;
               BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000,
@@ -460,7 +460,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
       if (mode == 2 || mode == 4) {
         EffectPosition_ProjectBattler(effect->actors[0], &apos);
         if (frame == 16) {
-          Func_081180e8(144);
+          BattlePlayback_StartFar(144);
           BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 0x70000,
                                         100);
           work->shakeFrames = 8;
@@ -509,7 +509,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           }
           SceneTransform_ApplyRoll((i << 10) + 256);
           SceneTransform_ApplyPitch((i << 13) - (frame << 11));
-          Func_080151e4(0x21770, 0x10000, 0x10000);
+          SceneTransform_ApplyScale3(0x21770, 0x10000, 0x10000);
           Render_TransformVertices(gMapCellBuffer, vertices, 66);
           Render_DrawModelList(model);
           Transform_Pop();
@@ -536,7 +536,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
             if (shade > -64) {
               Render_ResetTransformState();
               Func_08015160((apos.x / 2 - 64) << 16, (apos.y - 64) << 16, 0);
-              Func_080151e4(0x8000, 0x10000, 0x8000);
+              SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
               SceneTransform_ApplyRoll((i << 14) + 0x2000);
               SceneTransform_ApplyPitch(-0x1000);
               SceneTransform_ApplyYaw(frame << 12);
@@ -552,7 +552,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           Sound_PlayFar(144);
         }
         if (frame == 16) {
-          Func_081180e8(134);
+          BattlePlayback_StartFar(134);
         }
         for (i = 0; i != effect->count; i++) {
           if (frame == i * 4 + 16) {
@@ -581,7 +581,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           SceneTransform_ApplyPitch(i << 15);
           SceneTransform_ApplyRoll((Trig_Sin((frame + i * 8) << 11) << 11) >>
                                    16);
-          Func_080151e4(0x14e20, 0x8000, 0x10000);
+          SceneTransform_ApplyScale3(0x14e20, 0x8000, 0x10000);
           Render_TransformVertices(gMapCellBuffer, vertices, 66);
           Render_DrawModelList(model);
         }
@@ -596,7 +596,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
         }
         if (shade > -64) {
           model->shade = shade;
-          Func_080151e4(0x8000, 0x10000, 0x10000);
+          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
           gCameraSceneParameters[3] = 60;
           if (mode == 0) {
             model->scrollU = (frame << 3) & 127;
@@ -617,7 +617,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
             } else {
               SceneTransform_ApplyPitch((i << 13) - (frame << 11));
             }
-            Func_080151e4(0x40000, 0x10000, 0x10000);
+            SceneTransform_ApplyScale3(0x40000, 0x10000, 0x10000);
             Render_ProjectVertices(gMapCellBuffer, vertices, 66);
             Render_DrawModelList(model);
             Transform_Pop();

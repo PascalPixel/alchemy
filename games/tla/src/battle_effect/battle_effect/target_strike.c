@@ -329,24 +329,24 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
             if (frame / RECORD(mode, RECORD_RATE) / 6 <= 2)
               Sound_PlayFar(133);
             else
-              Func_081180e8(133);
+              BattlePlayback_StartFar(133);
           } else if (mode == 7) {
             if (frame <= 8)
               Sound_PlayFar(133);
             else
-              Func_081180e8(133);
+              BattlePlayback_StartFar(133);
           } else if (mode == 13) {
             if (frame / RECORD(mode, RECORD_RATE) / 6 > 6)
-              Func_081180e8(134);
+              BattlePlayback_StartFar(134);
             else
               Sound_PlayFar(134);
           } else if ((RECORD(mode, RECORD_FLAGS) & FLAG_STAR) ||
                      (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH)) {
-            Func_081180e8(144);
+            BattlePlayback_StartFar(144);
           } else if (mode == 8) {
-            Func_081180e8(134);
+            BattlePlayback_StartFar(134);
           } else {
-            Func_081180e8(133);
+            BattlePlayback_StartFar(133);
           }
 
           if (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH) {
@@ -427,10 +427,10 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
         work->shakeFrames = 4;
         if ((RECORD(mode, RECORD_FLAGS) & FLAG_FLASH) ||
             (RECORD(mode, RECORD_FLAGS) & FLAG_HEAVY))
-          Func_081180e8(144);
+          BattlePlayback_StartFar(144);
         else if (frame > (RECORD(mode, RECORD_COUNT) * 4 - 4) *
                              RECORD(mode, RECORD_RATE))
-          Func_081180e8(133);
+          BattlePlayback_StartFar(133);
         else
           Sound_PlayFar(133);
         if (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH) {
@@ -618,7 +618,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
                       (targetPosition.y - 64) << 16, 0);
         SceneTransform_ApplyPitch(0x4000);
         SceneTransform_ApplyYaw(0x2000);
-        Func_080151e4(scale, scale / 2, scale / 2);
+        SceneTransform_ApplyScale3(scale, scale / 2, scale / 2);
         Render_TransformVertices(gData_08199210, corners, 4);
         Render_DrawModelList(model);
       }

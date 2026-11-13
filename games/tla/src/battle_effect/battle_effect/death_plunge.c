@@ -1069,7 +1069,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
 
               Render_ResetTransformState();
               Func_08015160(-0x40000, -0x2c0000, 0);
-              Func_080151e4(sc / 2, sc, sc);
+              SceneTransform_ApplyScale3(sc / 2, sc, sc);
               SceneTransform_ApplyYaw(Data_081976f8[i]);
               SceneTransform_ApplyPitch(Data_081976f0[i]);
               Render_TransformVertices(Data_081991e0, verts, 4);
@@ -1088,7 +1088,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           model->shade = shade;
           Render_ResetTransformState();
           Func_08015160(-0x40000, -0x2c0000, 0);
-          Func_080151e4(sc >> 1, sc, sc);
+          SceneTransform_ApplyScale3(sc >> 1, sc, sc);
           Render_TransformVertices(Data_081991e0, verts, 4);
           Render_DrawModelList(model);
         }
@@ -1113,7 +1113,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             t <<= 9;
             Render_ResetTransformState();
             Func_08015160(-0x40000, -0x2c0000, 0);
-            Func_080151e4(sc, sc / 3, sc >> 1);
+            SceneTransform_ApplyScale3(sc, sc / 3, sc >> 1);
             SceneTransform_ApplyRoll(t);
             if (shade > -64) {
               Render_TransformVertices(Data_081991e0, verts, 4);
@@ -1131,7 +1131,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
               model->shade = shade;
               Render_ResetTransformState();
               Func_08015160(-0x40000, -0x2c0000, 0);
-              Func_080151e4(sc, sc >> 1, sc >> 1);
+              SceneTransform_ApplyScale3(sc, sc >> 1, sc >> 1);
               SceneTransform_ApplyRoll(t);
               Render_TransformVertices(Data_081991e0, verts, 4);
               Render_DrawModelList(model);
@@ -1157,9 +1157,9 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
               }
               Render_ResetTransformState();
               Func_08015160(-0x40000, -0x2c0000, 0);
-              Func_080151e4(0x8000, 0x10000, 0x8000);
+              SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
               SceneTransform_ApplyRoll(p->z);
-              Func_080151e4(30384, sy, 0x8000);
+              SceneTransform_ApplyScale3(30384, sy, 0x8000);
               Render_TransformVertices(Data_081991c0, verts, 4);
               Render_DrawModelList(model);
             }
@@ -1168,7 +1168,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           if (frame > 163) {
             work->transferMode = 1;
             work->transferValue = 0x01010101;
-            Func_08164a4c(2, 2, 2);
+            Palette_BrightenBgEntries(2, 2, 2);
           }
           if (frame > 159) {
             struct EffectStep *q = &work->particles[63];
@@ -1193,9 +1193,9 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             texture.pixels = work->sheet + 0x3688;
             Render_ResetTransformState();
             Func_08015160(q->x + -0x3f0000, q->y + -0x400000, 0);
-            Func_080151e4(0x8000, 0x10000, 0x8000);
+            SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
             SceneTransform_ApplyRoll(0xa000);
-            Func_080151e4(r * 9400, 0x20000, 0x8000);
+            SceneTransform_ApplyScale3(r * 9400, 0x20000, 0x8000);
             Render_TransformVertices(Data_081976e0, verts, 4);
             Render_DrawModelList(model);
           }
@@ -1445,11 +1445,11 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           px = p->x + -0x400000;
           py = p->y + -0x400000;
           Func_08015160(px, py, 0);
-          Func_080151e4(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           angle = Data_08197734[i];
           SceneTransform_ApplyRoll(angle);
           scale = size * 9400;
-          Func_080151e4(scale, 0x20000, 0x8000);
+          SceneTransform_ApplyScale3(scale, 0x20000, 0x8000);
           Render_TransformVertices(Data_081976e0, verts, 4);
           Func_0815b434(work->sheet, size, 0x10000);
           Func_0818caa8(work->sheet, HI(p->x) - 1, HI(p->y), size);
@@ -1516,7 +1516,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
               x += (t * 7 - 112) << 16;
             }
             Func_08015160(x, -0x100000, 0);
-            Func_080151e4(45536, 0x10000, 0x8000);
+            SceneTransform_ApplyScale3(45536, 0x10000, 0x8000);
             if (i == 0) {
               SceneTransform_ApplyRoll(-0xbe8);
             } else {
@@ -1676,7 +1676,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         }
       }
       if (frame == 127) {
-        Func_081180e8(134);
+        BattlePlayback_StartFar(134);
       }
       if (frame == 107) {
         Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
@@ -1756,9 +1756,9 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           }
           Render_ResetTransformState();
           Func_08015160(q->x + -0x3f0000, q->y + -0x400000, 0);
-          Func_080151e4(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           SceneTransform_ApplyRoll(0xa000);
-          Func_080151e4(r * 9400, 0x20000, 0x8000);
+          SceneTransform_ApplyScale3(r * 9400, 0x20000, 0x8000);
           Render_TransformVertices(Data_081976e0, verts, 4);
           Render_DrawModelList(model);
         }

@@ -65,7 +65,7 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
-void Func_080151e4(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyRoll(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
@@ -75,7 +75,7 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 extern void Render_DrawModelList__f188714(struct Model__f188714 *model) __asm__(
     "Render_DrawModelList");
 void Heap_Release(void *block);
-void Func_081180e8(s32 phase);
+void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_EndCanvasLayer(void);
 
@@ -273,7 +273,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
           for (i = 0, angle = 0x2000; i != 2; angle += 0x4000, i++) {
             Render_ResetTransformState();
             Func_08015160((targetScreen.x / 2 - 64) << 16, 32 << 16, 0);
-            Func_080151e4(scale, scale, scale);
+            SceneTransform_ApplyScale3(scale, scale, scale);
             SceneTransform_ApplyRoll(angle);
             SceneTransform_ApplyPitch(-0x1000);
             Render_TransformVertices(gData_08199210, vertices, 4);
@@ -295,9 +295,9 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
     }
     if (frame == 54) {
       if (effect->variant == 0)
-        Func_081180e8(134);
+        BattlePlayback_StartFar(134);
       else
-        Func_081180e8(145);
+        BattlePlayback_StartFar(145);
     }
     if (frame == 0) {
       Sound_PlayFar(136);

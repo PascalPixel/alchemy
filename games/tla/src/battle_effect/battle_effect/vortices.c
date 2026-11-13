@@ -92,7 +92,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
     else
       work->cameraDelta = 0;
     if (frame == gData_081979a8[effect->variant * 2 + 1] - 16)
-      Func_081180e8(133);
+      BattlePlayback_StartFar(133);
     Render_ResetTransformState();
     Transform_SetLookAt(camera->eye, camera->pos);
 
@@ -217,7 +217,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != TORNADO_FRAMES; frame++) {
     wave = Trig_Sin(frame << 10) << 4;
     if (frame == 32)
-      Func_081180e8(133);
+      BattlePlayback_StartFar(133);
 
     // Wipe the canvas every eight frames from frame 16, leaving a trail.
     for (i = 0; i != 7; i++) {

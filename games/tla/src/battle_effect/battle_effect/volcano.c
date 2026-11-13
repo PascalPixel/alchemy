@@ -92,7 +92,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
         camera->yaw = (s16)camera->yaw - 192;
     }
     if (frame == 16)
-      Func_081180e8(134);
+      BattlePlayback_StartFar(134);
     Render_ResetTransformState();
     Transform_SetLookAt(camera->eye, camera->pos);
 

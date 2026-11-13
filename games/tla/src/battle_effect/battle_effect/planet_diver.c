@@ -39,7 +39,8 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_SkullSheet, work->sheet, 1, 1);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet), 128);
+                       Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet),
+                       128);
   BattleEffect_FetchRectangleBlitters(0, draw);
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, 0xc80);
   work->transferMode = 3;
@@ -59,7 +60,7 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
 
     camera = Ram_HeapSlots->cameraWork;
     if (frame == 92)
-      Func_081180e8(0);
+      BattlePlayback_StartFar(0);
 
     // The background waves sideways, one sine step per line.
     row = work->bg2xLines;
@@ -345,11 +346,11 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
 
     if (frame == 80) {
       if (mode == 0)
-        Func_081180e8(134);
+        BattlePlayback_StartFar(134);
       else if (mode == 3)
-        Func_081180e8(134);
+        BattlePlayback_StartFar(134);
       else
-        Func_081180e8(133);
+        BattlePlayback_StartFar(133);
     }
     Render_ResetTransformState();
     Transform_SetLookAt(camera, camera + 3);

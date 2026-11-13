@@ -94,7 +94,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != SHARDS_FRAMES; frame++) {
     if (frame == HIT_FRAME)
-      Func_081180e8(PHASE_RESULTS);
+      BattlePlayback_StartFar(PHASE_RESULTS);
     if (effect->variant != 0 && frame == HIT_FRAME)
       Sound_PlayFar(SE_HIT);
 

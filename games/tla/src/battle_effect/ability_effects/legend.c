@@ -61,14 +61,14 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
-void Func_081180e8(s32 phase);
+void BattlePlayback_StartFar(s32 phase);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 struct PoolEntry *Render_AllocateModelList(s32 count);
-void Func_080151e4(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
@@ -169,7 +169,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
       // from it. The last sword ends the action.
       if (frame == i * 16 + 59) {
         if (i == effect->variant)
-          Func_081180e8(144);
+          BattlePlayback_StartFar(144);
         else
           Sound_PlayFar(144);
         BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 0, 100);
@@ -260,7 +260,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
           scale = 0x20000;
         model->alpha = alpha;
         Render_ResetTransformState();
-        Func_080151e4(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         Func_08015160((start.x - 128) << 16, height << 16, 0);
         SceneTransform_ApplyPitch(0x5900);
         if (effect->side == 0)
@@ -269,7 +269,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyYaw(-0x1900);
         SceneTransform_ApplyRoll(frame << 9);
         Func_0801521c(scale);
-        Func_080151e4(0x10000, 0x10000, 0x10000);
+        SceneTransform_ApplyScale3(0x10000, 0x10000, 0x10000);
         Render_TransformVertices(Data_081991e0, vertices, 4);
         Render_DrawModelList__f189b14(model);
       }
@@ -287,7 +287,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
             scale = age * 12384 + 0x8000;
             model->alpha = alpha;
             Render_ResetTransformState();
-            Func_080151e4(0x8000, 0x10000, 0x8000);
+            SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
             Func_08015160((start.x - 128) << 16, -48 << 16, 0);
             SceneTransform_ApplyPitch(0x5900);
             if (effect->side == 0)
@@ -311,7 +311,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
         for (i = 0; i != 8; i++) {
           model->alpha = 0;
           Render_ResetTransformState();
-          Func_080151e4(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           Func_08015160((start.x - 128) << 16, -80 << 16, 0);
           SceneTransform_ApplyPitch(0x47d0);
           SceneTransform_ApplyRoll((frame + i * 16) << 9);
@@ -320,8 +320,9 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
             scale = 0x10000;
           if (frame > 31)
             scale = 0x30000 - (frame << 12);
-          Func_080151e4(0x8000, 0x10000,
-                        (Trig_Sin((frame + i * 8) << 9) / 8 + scale) * 2);
+          SceneTransform_ApplyScale3(
+              0x8000, 0x10000,
+              (Trig_Sin((frame + i * 8) << 9) / 8 + scale) * 2);
           Render_TransformVertices(Data_08199200, vertices, 4);
           Render_DrawModelList__f189b14(model);
         }
@@ -395,7 +396,7 @@ extern const u8 gData_08199268[];
 extern const u8 Data_081991c0[];
 
 void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position);
-void Func_0815f0a0(s32 resource);
+void BattleEffect_StepPaletteToResource(s32 resource);
 
 // The four cards (Bramble, Frost, Flame and Thunder Card): a card rises from
 // the user, spinning and growing, for 48 frames, then shows its picture.
@@ -515,11 +516,11 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
       // The background steps toward the card's colours.
       if (mode != CARD_BRAMBLE) {
         if (mode == CARD_FROST)
-          Func_0815f0a0((s32)&ResourceId_CrystalSheet);
+          BattleEffect_StepPaletteToResource((s32)&ResourceId_CrystalSheet);
         else if (mode == CARD_THUNDER)
-          Func_0815f0a0((s32)&ResourceId_EffectPalette02);
+          BattleEffect_StepPaletteToResource((s32)&ResourceId_EffectPalette02);
         else
-          Func_0815f0a0((s32)&ResourceId_OrangePaletteB);
+          BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
       }
 
       // The Frost and Flame cards throw one particle a frame at a target in
@@ -618,7 +619,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
           else
             Sound_PlayFar(133);
           if (i == 0)
-            Func_081180e8(134);
+            BattlePlayback_StartFar(134);
           BattleEffect_StartActorMotion(effect->actors[i], 1, 0x20000, 0x80000,
                                         0x10000, 100 + speed);
           Func_0814cd48(effect->actors[i], 7, -1, i, 8);
@@ -663,7 +664,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
     if (frame >= 0) {
       // The card: it swings from side to side as it rises, tilted back.
       Render_ResetTransformState();
-      Func_080151e4(0x8000, 0x10000, 0x8000);
+      SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
       Func_08015160((card.x << 16) - (128 << 16), (card.y << 16) - (64 << 16),
                     0);
       if (frame <= 47) {
@@ -676,7 +677,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
       SceneTransform_ApplyYaw(0x1770);
       SceneTransform_ApplyRoll(frame << 10);
       Func_0801521c(scale);
-      Func_080151e4(0x10000, 0x20000, 0x10000);
+      SceneTransform_ApplyScale3(0x10000, 0x20000, 0x10000);
       Render_TransformVertices(Data_081991e0, vertices, 4);
       Render_DrawModelList__f189b14(model);
       if (mode == CARD_BRAMBLE || mode == CARD_THUNDER) {
@@ -742,7 +743,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
         texture.pixels = work->sheet + step->z;
         Render_ResetTransformState();
         Func_08015160((step->x - 60) << 16, (step->y - 64) << 16, 0);
-        Func_080151e4(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         if (effect->side == 1)
           SceneTransform_ApplyYaw(0x8000);
         SceneTransform_ApplyRoll(step->velocityZ);
@@ -753,9 +754,9 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
             length = 0x20000;
           if (frame > 95)
             length = length - (frame << 13) + 0xc0000;
-          Func_080151e4(0x40000, length, 0x10000);
+          SceneTransform_ApplyScale3(0x40000, length, 0x10000);
         } else {
-          Func_080151e4(0x20000, 0x20000, 0x10000);
+          SceneTransform_ApplyScale3(0x20000, 0x20000, 0x10000);
         }
         Render_TransformVertices(Data_081991c0, vertices, 4);
         Render_DrawModelList__f189b14(model);

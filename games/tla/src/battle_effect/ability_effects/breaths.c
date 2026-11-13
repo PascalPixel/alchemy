@@ -102,7 +102,7 @@ void Func_0815b510(u8 *map, s32 size, s32 scale);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 struct PoolEntry *Render_AllocateModelList(s32 count);
-void Func_080151e4(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
@@ -114,7 +114,7 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 extern void Render_DrawModelList__f18bc98(struct Model__f18bc98 *model) __asm__(
     "Render_DrawModelList");
 void Heap_Release(void *block);
-void Func_081180e8(s32 phase);
+void BattlePlayback_StartFar(s32 phase);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
@@ -409,7 +409,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
               Render_ResetTransformState();
               if (mode == BREATH_BLAST) {
                 Func_08015160((mouthX - 64) << 16, (mouthY - 64) << 16, 0);
-                Func_080151e4(0x10000, 0x20000, 0x10000);
+                SceneTransform_ApplyScale3(0x10000, 0x20000, 0x10000);
                 SceneTransform_ApplyRoll((i << 14) + 0x2000);
                 SceneTransform_ApplyPitch(-0x1000);
               } else {
@@ -422,7 +422,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
               }
               if (mode == BREATH_PIKE)
                 scale /= 2;
-              Func_080151e4(scale / 2, scale, scale / 2);
+              SceneTransform_ApplyScale3(scale / 2, scale, scale / 2);
               Render_TransformVertices(gData_08199210, vertices, 4);
               Render_DrawModelList__f18bc98(model);
             }
@@ -467,7 +467,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
                                       << 16,
                                   (mouthY - 64) << 16, 0);
                 }
-                Func_080151e4(scale, scale, scale);
+                SceneTransform_ApplyScale3(scale, scale, scale);
                 SceneTransform_ApplyYaw(0x36b0);
                 SceneTransform_ApplyPitch(0x4000);
                 SceneTransform_ApplyYaw(frame << 10);
@@ -494,13 +494,13 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
           texture.pixels = work->sheet;
           Render_ResetTransformState();
           Func_08015160((mouthX - 64) << 16, (mouthY - 64) << 16, 0);
-          Func_080151e4(0x8000, 0x10000, 0x10000);
+          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x10000);
           if (frame > 7)
             angle = (frame << 7) + 0x2c60;
           if (effect->side == 1)
             angle = -angle;
           SceneTransform_ApplyRoll(angle);
-          Func_080151e4(0x40000, 0x20000, 0x10000);
+          SceneTransform_ApplyScale3(0x40000, 0x20000, 0x10000);
           Render_TransformVertices(Data_081991c0, vertices, 4);
           Render_DrawModelList__f18bc98(model);
         }
@@ -524,7 +524,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
         }
         if (frame == 16) {
           Sound_PlayFar(134);
-          Func_081180e8(134);
+          BattlePlayback_StartFar(134);
         }
         for (i = 0; i != effect->count; i++) {
           if (frame >= i * 4 + Data_08199d9b[mode] &&
@@ -546,7 +546,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
           Func_0814cd48(effect->actors[i], 7, 5, i, 16);
         }
         work->shakeFrames = 8;
-        Func_081180e8(144);
+        BattlePlayback_StartFar(144);
         Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
       }
       BattleCamera_Shake(8, 8);
@@ -655,9 +655,9 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
     // Frame 12: the hit. Echo Cut throws the target up.
     if (frame == 12) {
       if (mode == 1)
-        Func_081180e8(144);
+        BattlePlayback_StartFar(144);
       else
-        Func_081180e8(134);
+        BattlePlayback_StartFar(134);
       BattleEffect_StartActorMotion(effect->actors[0], 1, 0x40000, 0x100000,
                                     0x40000, 250);
       work->shakeFrames = 4;

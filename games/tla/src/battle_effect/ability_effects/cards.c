@@ -90,15 +90,15 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
 
 void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position);
 void Func_0815e22c(struct EffectPosition *middle);
-void Func_0815f0a0(s32 resource);
-void Func_081180e8(s32 phase);
+void BattleEffect_StepPaletteToResource(s32 resource);
+void BattlePlayback_StartFar(s32 phase);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 struct PoolEntry *Render_AllocateModelList(s32 count);
-void Func_080151e4(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
@@ -299,12 +299,13 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
 
         if ((mode == CARD_DEATH || mode == CARD_SWORD) &&
             (frame >= 40 && frame <= 47))
-          Func_0815f0a0((s32)&ResourceId_SmokeSheet);
+          BattleEffect_StepPaletteToResource((s32)&ResourceId_SmokeSheet);
         if (frame > 51) {
           if (mode == CARD_DEATH)
-            Func_0815f0a0((s32)&ResourceId_RedCrescentSheetA);
+            BattleEffect_StepPaletteToResource(
+                (s32)&ResourceId_RedCrescentSheetA);
           else
-            Func_0815f0a0((s32)&ResourceId_DaggerSheet);
+            BattleEffect_StepPaletteToResource((s32)&ResourceId_DaggerSheet);
         }
         if (frame == 48) {
           for (i = 0; i != 256; i++)
@@ -345,7 +346,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       model->texture = &texture;
       model->mesh = Data_081992b0;
       Render_ResetTransformState();
-      Func_080151e4(0x10000, 0x10000, 0x10000);
+      SceneTransform_ApplyScale3(0x10000, 0x10000, 0x10000);
       Func_08015160(overflow << 16, (card.y << 16) - (64 << 16), 0);
       if (frame <= 47) {
         if (effect->side == 0)
@@ -362,7 +363,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       }
       SceneTransform_ApplyYaw(0x1770);
       Func_0801521c(scale);
-      Func_080151e4(0x10000, 0x20000, 0x10000);
+      SceneTransform_ApplyScale3(0x10000, 0x20000, 0x10000);
       Render_TransformVertices(Data_081991e0, vertices, 4);
       Render_DrawModelList__f18ad40(model);
       Heap_Release(model);
@@ -373,7 +374,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       // Frame 48: the butterflies take flight, two a frame for 32 frames;
       // each flutters to the ground and skims along it.
       if (frame == 48) {
-        Func_081180e8(136);
+        BattlePlayback_StartFar(136);
         work->transferMode = 2;
         work->transferValue = 50;
         REG_BLDALPHA = 0x1010;
@@ -412,7 +413,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 48)
         Sound_PlayFar(212);
       if (frame == 64)
-        Func_081180e8(-1);
+        BattlePlayback_StartFar(-1);
       if (frame >= 48 && frame <= 79) {
         struct EffectStep *sheep;
         u32 mask = 127; // Holds one constant for its whole life.
@@ -449,7 +450,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       // Frame 72: it strikes; the screen flashes and 64 shards burst.
       if (time == 24) {
         Sound_PlayFar(212);
-        Func_081180e8(-1);
+        BattlePlayback_StartFar(-1);
         work->shakeFrames = 4;
         Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
         Func_0814cd48(effect->actors[0], 7, -1, 0, 16);
@@ -501,7 +502,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
         Sound_PlayFar(212);
       if (frame == 64) {
         Sound_PlayFar(144);
-        Func_081180e8(-1);
+        BattlePlayback_StartFar(-1);
         BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x80000,
                                       0x20000, 110);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 8);

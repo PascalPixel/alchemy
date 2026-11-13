@@ -115,8 +115,8 @@ void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 
 void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase); // BattlePlayback_StartFar
+    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
+void BattlePlayback_StartFar(s32 phase);
 
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 
@@ -149,7 +149,7 @@ extern const u8 gData_08199340[]; // the quad's face
 
 void Func_08179e6c(void);
 
-void Func_0813baec(void);
+void BattleEffect_AdvanceScrollOnInterval(void);
 
 void VramBlock_Reset93Far(void);
 
@@ -176,7 +176,7 @@ extern const u8 gData_08199090[];
 
 extern char ResourceId_Data0DA;
 
-void Func_08164a4c(s32 red, s32 green, s32 blue); // Palette_BrightenBgEntries
+void Palette_BrightenBgEntries(s32 red, s32 green, s32 blue);
 
 void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
                           s32 count);
@@ -274,12 +274,13 @@ extern u8 gData_0819781a[];  // ☀️ gPrism_ShardWidths
 extern u8 gData_08197826[];  // ☀️ gPrism_ShardHeights
 extern u8 gData_081977f8[];  // ☀️ gPrism_ShardStarts: x, y for each shard
 
-void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
+void BattleEffect_SetupBlendedDisplay(void);
 
 void Func_08147aec(struct BattleEffectArgument *effect, s32 mode);
 
 void Func_0816442c(s32 formation, s32 x, s32 y); // ..PlaceFormationObjects
-void Func_0816467c(s32 formation, s32 x, s32 y); // ..RunImpactBurst
+void BattleEffect_RunImpactBurst(s32 formation, s32 x,
+                                 s32 y); // ..RunImpactBurst
 
 void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode);
 void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode);
@@ -400,7 +401,7 @@ extern u8 gData_0819749e[];
 extern u8 gData_081974ad[]; // the shard heights
 extern u16 gData_081974bc[];
 
-void Func_0815f0a0(s32);
+void BattleEffect_StepPaletteToResource(s32);
 
 extern char ResourceId_Data0C9;
 

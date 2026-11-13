@@ -30,7 +30,7 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
@@ -41,8 +41,8 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase); // BattlePlayback_StartFar
+    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
+void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
@@ -259,7 +259,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
           focus[1] += work->particles[63].y / 2;
           focus[2] += work->particles[63].z / 2;
           if (frame == 72) {
-            Func_081180e8(134);
+            BattlePlayback_StartFar(134);
             work->shakeFrames = 8;
           } else {
             Sound_PlayFar(138);
@@ -296,7 +296,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
         }
         if (frame == 15) {
           work->shakeFrames = 6;
-          Func_081180e8(134);
+          BattlePlayback_StartFar(134);
           Func_0814cd48(effect->actors[0], 7, 5, 0, 6);
           BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
           for (i = 0; i != 63; i++) {
@@ -427,7 +427,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
         texture.logWidth = 5;
         texture.logHeight = 5;
         texture.pixels = work->sheet;
-        Func_080151e4(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         gCameraSceneParameters[3] = 60;
         SceneTransform_ApplyPosition(focus);
         Func_08015160(0, 0x100000, 0);

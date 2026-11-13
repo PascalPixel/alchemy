@@ -8,19 +8,28 @@
 #include "module/battle_effect/battle_effect.h"
 #include "module/tla.h"
 
-/* VIEW(f14cca8): variable gBgScroll as extern struct FxBgScroll gBgScroll[]; bg_scroll.h has extern struct BgScroll gBgScroll[]; tried as the rest of the object declares it, Func_0814cca8 moves: 1 of 57 instructions in tla-ja. */
+/* VIEW(f14cca8): variable gBgScroll as extern struct FxBgScroll gBgScroll[];
+ * bg_scroll.h has extern struct BgScroll gBgScroll[]; tried as the rest of the
+ * object declares it, BattleEffect_SetupBlendedDisplay moves: 1 of 57
+ * instructions in tla-ja. */
 extern struct FxBgScroll gBgScroll__f14cca8[] __asm__("gBgScroll");
 
-/* VIEW(f14cca8): static FillWords_ as FillWords___f14cca8; f13eb70 has static __inline__ void FillWords_(void *destination, s32 size, u32 value) { Iwram_FillWords(destination, size, value); }; tried with the definition the rest of the object has, Func_0814cca8 moves: 3 of 57 instructions in tla-ja. */
-static __inline__ void FillWords___f14cca8(void *destination, s32 size, u32 value) {
+/* VIEW(f14cca8): static FillWords_ as FillWords___f14cca8; f13eb70 has static
+ * __inline__ void FillWords_(void *destination, s32 size, u32 value) {
+ * Iwram_FillWords(destination, size, value); }; tried with the definition the
+ * rest of the object has, BattleEffect_SetupBlendedDisplay moves: 3 of 57
+ * instructions in tla-ja. */
+static __inline__ void FillWords___f14cca8(void *destination, s32 size,
+                                           u32 value) {
   // The call in a once-only block, so the entry loads before the size; as
-  // the plain call, 6 of 59 instructions of Func_0814cca8 differ in tla-en.
+  // the plain call, 6 of 59 instructions of BattleEffect_SetupBlendedDisplay
+  // differ in tla-en.
   do {
     Iwram_FillWordsEntry(destination, size, value);
   } while (0);
 }
 
-void Func_0814cca8(void) {
+void BattleEffect_SetupBlendedDisplay(void) {
   u8 *battle = Ram_HeapSlots->battleWork;
   void *buffer = Ram_HeapSlots->battleFxWork[1];
 

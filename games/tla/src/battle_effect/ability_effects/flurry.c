@@ -280,7 +280,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
         if (i == blows - 1) {
           BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
           work->shakeFrames = 8;
-          Func_081180e8(134);
+          BattlePlayback_StartFar(134);
         } else {
           if (i & 1)
             BattleMotion_ApplyKnockbackFar(effect->actors[0], 7);

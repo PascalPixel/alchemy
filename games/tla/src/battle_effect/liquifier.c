@@ -241,11 +241,11 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           model->shade = 0;
           age = frame - start;
           Render_ResetTransformState();
-          Func_080151e4(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           Func_08015160((from.x - 128) << 16, (from.y - 74) << 16, 0);
           SceneTransform_ApplyRoll((i << 12) - 0x3800);
-          Func_080151e4(0x5555, Trig_Sin(age << 11) * Data_08199ebc[i] / 64 * 2,
-                        0x8000);
+          SceneTransform_ApplyScale3(
+              0x5555, Trig_Sin(age << 11) * Data_08199ebc[i] / 64 * 2, 0x8000);
           Render_TransformVertices(Data_08199ea4, projected, 4);
           Render_DrawModelList(model);
         }
@@ -268,10 +268,10 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           scale = 0x20000 - ((frame - start) << 13);
           model->shade = zero;
           Render_ResetTransformState();
-          Func_080151e4(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           Func_08015160(step->x - (128 << 16), step->y - (64 << 16), 0);
           SceneTransform_ApplyRoll(step->z);
-          Func_080151e4(scale, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(scale, 0x10000, 0x8000);
           Render_TransformVertices(Data_081991c0, projected, 4);
           Render_DrawModelList(model);
         }
@@ -298,10 +298,10 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           }
           model->shade = shade;
           Render_ResetTransformState();
-          Func_080151e4(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           Func_08015160(step->x - (128 << 16), step->y - (64 << 16), 0);
           SceneTransform_ApplyPitch(0x3c00);
-          Func_080151e4(scale, scale, scale);
+          SceneTransform_ApplyScale3(scale, scale, scale);
           Render_TransformVertices(Data_081991e0, projected, 4);
           Render_DrawModelList(model);
         }
@@ -318,9 +318,9 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
             shade = 0;
           model->shade = shade;
           Render_ResetTransformState();
-          Func_080151e4(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           Func_08015160((from.x - 128) << 16, (from.y - 80) << 16, 0);
-          Func_080151e4(scale * 2, scale * 2, scale);
+          SceneTransform_ApplyScale3(scale * 2, scale * 2, scale);
           SceneTransform_ApplyRoll(0x6000 - (i << 14));
           SceneTransform_ApplyPitch(-0x1000);
           Render_TransformVertices(gData_08199210, projected, 4);
@@ -332,7 +332,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       for (i = 0; i != 8; i++) {
         if (frame == i * 4 + 54) {
           if (i == 7)
-            Func_081180e8(144);
+            BattlePlayback_StartFar(144);
           else
             Sound_PlayFar(144);
           BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 0, 100);
@@ -605,11 +605,11 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
       if (frame == hitFrame) {
         // The hit: the targets recoil (mode 1 keeps them still) and flash.
         if (mode == 0 || mode == 2 || mode == 3) {
-          Func_081180e8(145);
+          BattlePlayback_StartFar(145);
           for (i = 0; i != effect->count; i++)
             BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);
         } else {
-          Func_081180e8(133);
+          BattlePlayback_StartFar(133);
           for (i = 0; i != effect->count; i++)
             BattleMotion_ApplyKnockbackFar(effect->actors[i], 0);
         }

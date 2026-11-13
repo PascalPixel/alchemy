@@ -29,7 +29,7 @@ void BattleEffect_ConfigureEffectDisplay(void) {
   wait(1);
 }
 
-void Func_0813baec(void) {
+void BattleEffect_AdvanceScrollOnInterval(void) {
   struct ScrollStepWork *work;
 
   work = (struct ScrollStepWork *)Ram_HeapSlots->battleFxWork[0];

@@ -130,7 +130,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != FRAME_COUNT(effect->variant); frame++) {
     if (frame == FRAME_COUNT(effect->variant) - 16)
-      Func_081180e8(PHASE_RESULTS);
+      BattlePlayback_StartFar(PHASE_RESULTS);
 
     for (i = 0; i != SHARD_COUNT(effect->variant); i++) {
       shard = &work->particles[i];
@@ -336,7 +336,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != FRAME_COUNT(effect->variant); frame++) {
     if (frame == FRAME_COUNT(effect->variant) - 64)
-      Func_081180e8(PHASE_RESULTS);
+      BattlePlayback_StartFar(PHASE_RESULTS);
 
     for (i = 0; i != DROP_COUNT(effect->variant); i++) {
       s32 x;

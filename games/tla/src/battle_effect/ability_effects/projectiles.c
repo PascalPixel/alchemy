@@ -532,7 +532,7 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode);
 
 /// BattlePlayback_Start through its far call.
-void Func_081180e8(s32 phase);
+void BattlePlayback_StartFar(s32 phase);
 /// An actor's recoil motion, through a far call.
 void BattleMotion_ApplyKnockbackFar(s32 actor, s32 motion);
 /// Shakes the camera while work->shakeFrames lasts.
@@ -559,7 +559,7 @@ void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *pos);
 
 #define CUE_FIRE 136
 #define CUE_IMPACT 132
-#define PHASE_RESULTS 133 // Func_081180e8: the results phase begins
+#define PHASE_RESULTS 133 // BattlePlayback_StartFar: the results phase begins
 #define PHASE_LATE_RESULTS 134
 
 void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
@@ -852,16 +852,16 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
         if (frame == 4)
           Sound_PlayFar(CUE_FIRE);
         if (frame == 32)
-          Func_081180e8(PHASE_LATE_RESULTS);
+          BattlePlayback_StartFar(PHASE_LATE_RESULTS);
       } else if (mode == 2) {
         if (frame == 32)
-          Func_081180e8(PHASE_RESULTS);
+          BattlePlayback_StartFar(PHASE_RESULTS);
       } else if (mode == 7) {
         if (frame == 48)
-          Func_081180e8(PHASE_RESULTS);
+          BattlePlayback_StartFar(PHASE_RESULTS);
       } else if (mode != 5) {
         if (frame == 16)
-          Func_081180e8(PHASE_RESULTS);
+          BattlePlayback_StartFar(PHASE_RESULTS);
       }
 
       // The prelude: a small Mercury Djinn circles, then from frame 70
@@ -961,7 +961,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
 
               shot->variant = 1;
               if (mode == 5) {
-                Func_081180e8(PHASE_LATE_RESULTS);
+                BattlePlayback_StartFar(PHASE_LATE_RESULTS);
               } else if (mode != 6 && mode != 12 && mode != 13 && mode != 14 &&
                          seWait == 0) {
                 seWait = 8;

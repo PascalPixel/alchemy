@@ -409,7 +409,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   gBgScroll[1].x = savedScrollX;
   transition[4] = 0;
   Irq_SetHandler(2, 0, 0);
-  Func_0814cca8();
+  BattleEffect_SetupBlendedDisplay();
   Palette_LoadBasicObjColors();
   Dma_Set((const void *)0x05000200, (void *)0x050000a0, 0x80000010,
           (volatile u32 *)0x040000d4);
@@ -439,7 +439,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   frame = 0;
   do {
     if (frame == 96)
-      Func_081180e8(134);
+      BattlePlayback_StartFar(134);
     // Each pillar falls 16 pixels a frame and splashes where it lands.
     for (i = 0; i != 5; i++) {
       pillar = &work->particles[i];

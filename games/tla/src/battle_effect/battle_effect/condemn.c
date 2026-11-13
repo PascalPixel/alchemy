@@ -197,7 +197,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
     if (frame == 72) {
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
       work->shakeFrames = 8;
-      Func_081180e8(144);
+      BattlePlayback_StartFar(144);
     }
     BattleCamera_Shake(8, 8);
     BattleEffect_CountDownBattlerTints();

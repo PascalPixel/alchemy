@@ -107,7 +107,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
     // flashes for sixteen frames and recoils.
     if (frame == 8) {
       work->shakeFrames = frame;
-      Func_081180e8(0x86);
+      BattlePlayback_StartFar(0x86);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 3);
     }
@@ -187,7 +187,7 @@ extern const u8 Data_08198528[];
 extern const u8 Data_08198531[];
 
 // Steps the background colours one shade toward a resource's palette.
-void Func_0815f0a0(s32 resource);
+void BattleEffect_StepPaletteToResource(s32 resource);
 
 void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
@@ -248,7 +248,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
     for (frame = 0; frame != 96; frame++) {
       // The background takes on the portal's colours from frame 17.
       if (frame > 16)
-        Func_0815f0a0((s32)&ResourceId_PortalSheet);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_PortalSheet);
 
       // With its Djinn prelude, the Djinn hovers over the anchor and rises
       // off from frame 17; the first four frames add a bright copy.
@@ -442,12 +442,12 @@ void Camera_ApplyVerticalShake(s32 range) {
 
 struct FxPartyList;
 
-void Func_0813baec(void); // BattleEffect_AdvanceScrollOnInterval
+void BattleEffect_AdvanceScrollOnInterval(void);
 void BattleEffect_ConfigureEffectDisplay(void);
 
 void BattleEffect_WipeCanvas(s32 page, s32 value);
 
-void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
+void BattleEffect_SetupBlendedDisplay(void);
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
@@ -455,7 +455,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
 
 void Func_0816442c(s32 group, s32 x,
                    s32 y); // BattleEffect_PlaceFormationObjects
-void Func_0816467c(s32 group, s32 x, s32 y); // BattleEffect_RunImpactBurst
+void BattleEffect_RunImpactBurst(s32 group, s32 x, s32 y);
 
 void Func_0818caa8(void *source, s32 x, s32 y, s32 size); // four motes
 void SceneTransform_ApplyScale(s32 *scale);

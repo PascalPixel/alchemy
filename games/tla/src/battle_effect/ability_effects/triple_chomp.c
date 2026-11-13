@@ -65,11 +65,11 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 packed);
 void *Resource_GetTableEntry(s32 id);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
-void Func_081180e8(s32 phase);
+void BattlePlayback_StartFar(s32 phase);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
-void Func_080151e4(s32 x, s32 y, s32 z);
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyRoll(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -179,7 +179,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
           spark->variant = (Random16() & 7) + 16;
         }
         if (i == 2)
-          Func_081180e8(134);
+          BattlePlayback_StartFar(134);
         else
           Sound_PlayFar(134);
         BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x80000, 0,
@@ -199,7 +199,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
         if (alpha > -64) {
           model->alpha = alpha;
           Render_ResetTransformState();
-          Func_080151e4(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
           Func_08015160((BITE_ANCHOR(i)->x - 128) << 16,
                         (BITE_ANCHOR(i)->y - 64) << 16, 0);
           SceneTransform_ApplyRoll((i << 14) + 0x2000);

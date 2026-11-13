@@ -232,7 +232,7 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
     if ((u32)(frame - FLOOD_FRAME) <= 3)
       Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
     if (frame == RESULTS_FRAME)
-      Func_081180e8(PHASE_RESULTS);
+      BattlePlayback_StartFar(PHASE_RESULTS);
     if (frame == HIT_FRAME) {
       work->shakeFrames = 8;
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);

@@ -89,7 +89,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
     // The hit: results phase, shake, knock-back and a flash.
     if (frame == BURST_HIT_FRAME) {
       work->shakeFrames = 8;
-      Func_081180e8(PHASE_HIT);
+      BattlePlayback_StartFar(PHASE_HIT);
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
     }
@@ -252,7 +252,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
       work->shakeFrames = 8;
-      Func_081180e8(145);
+      BattlePlayback_StartFar(145);
       Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
     }
 
@@ -544,7 +544,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
 
     if (mode == 0) {
       if (frame == 17) {
-        Func_081180e8(144);
+        BattlePlayback_StartFar(144);
         BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 0x80000, 100);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
         work->shakeFrames = 8;
@@ -559,7 +559,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
         work->shakeFrames = 8;
       }
       if (frame == 46) {
-        Func_081180e8(134);
+        BattlePlayback_StartFar(134);
         for (i = 0; i != effect->count; i++) {
           BattleEffect_StartActorMotion(effect->actors[i], 1, 0, 0, 0x80000,
                                         100);
@@ -731,7 +731,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
         }
         Render_ResetTransformState();
         Func_08015160((target.x / 2 - 64) << 16, (target.y - 64) << 16, 0);
-        Func_080151e4(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         SceneTransform_ApplyRoll((i << 14) + 0x2000);
         SceneTransform_ApplyPitch(0x1000);
         SceneTransform_ApplyYaw(angle);
@@ -876,9 +876,9 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
     }
     if (frame > 19) {
       if (mode == 0) {
-        Func_0815f0a0((s32)&ResourceId_CyanPalette);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_CyanPalette);
       } else if (mode == 1) {
-        Func_0815f0a0((s32)&ResourceId_TanPalette);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_TanPalette);
       }
     }
 
@@ -938,12 +938,12 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
     if (mode == 0) {
       if (frame == 28) {
         work->shakeFrames = 6;
-        Func_081180e8(133);
+        BattlePlayback_StartFar(133);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
       }
     } else {
       if (frame == 12) {
-        Func_081180e8(-1);
+        BattlePlayback_StartFar(-1);
       }
       for (k = 0; k != effect->count; k++) {
         if (frame == k * 4 + 12) {
@@ -992,7 +992,7 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
         if (frame > 27) {
           scale = scale + (frame << 11) - 0xe000;
         }
-        Func_080151e4(scale * 3 / 2, 0x10000, scale * 3 / 2);
+        SceneTransform_ApplyScale3(scale * 3 / 2, 0x10000, scale * 3 / 2);
       } else {
         s32 scale;
 
@@ -1003,7 +1003,7 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
         if (frame > 27) {
           scale = scale + (frame << 11) - 0xe000;
         }
-        Func_080151e4(scale * 2, 0x10000, scale * 2);
+        SceneTransform_ApplyScale3(scale * 2, 0x10000, scale * 2);
       }
       Render_TransformVertices(funnel, Data_02010108, 66);
       Render_DrawModelList(model);
@@ -1125,7 +1125,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
                                            70);
           } else {
             BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
-            Func_081180e8(144);
+            BattlePlayback_StartFar(144);
             Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
           }
           Func_0814cd48(effect->actors[0], 7, 5, 0, 6);
@@ -1241,7 +1241,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
         model->shade = shade;
         Render_ResetTransformState();
         Func_08015160((centerX - 64) << 16, Data_08198b2e[k] << 16, 0);
-        Func_080151e4(scale, scale, scale);
+        SceneTransform_ApplyScale3(scale, scale, scale);
         model->scrollU = ((frame + k * 5) & 7) << 4;
         SceneTransform_ApplyPitch(3000);
         Render_TransformVertices(Data_08198cac, vertices, 32);
@@ -1274,7 +1274,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
         }
         Render_ResetTransformState();
         Func_08015160((target.x / 2 - 64) << 16, (target.y - 80) << 16, 0);
-        Func_080151e4(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         SceneTransform_ApplyYaw((effect->side << 15) + 0x8000);
         SceneTransform_ApplyRoll(Data_08198b32[k]);
         SceneTransform_ApplyPitch(Data_08198b42[k]);

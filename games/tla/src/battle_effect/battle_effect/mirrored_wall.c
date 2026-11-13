@@ -139,7 +139,7 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == 64)
       Sound_PlayFar(212);
     if (frame == 80)
-      Func_081180e8(0);
+      BattlePlayback_StartFar(0);
 
     // The Djinn sways 20 pixels either way and rises from frame 32.
     prelude = effect->prelude;
@@ -424,7 +424,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
 
           if (frame == start + 17) {
             Func_0814cd48(effect->actors[k % effect->count], 7, 5, k, 16);
-            Func_081180e8(133);
+            BattlePlayback_StartFar(133);
           }
           if (shot->variant >= 0) {
             s32 step = (frame - start) / 3;

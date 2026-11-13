@@ -272,7 +272,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   // Act two: the charge.
   gBgScroll[1].x = savedX;
   control->busy = 0;
-  Func_0814cca8();
+  BattleEffect_SetupBlendedDisplay();
   REG_WIN0H = 0xf0;
 
   i = 0;
@@ -429,7 +429,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
     } while (frame != 96);
   }
 
-  Func_081180e8(PHASE_SUMMON_RESULTS);
+  BattlePlayback_StartFar(PHASE_SUMMON_RESULTS);
   i = 0;
   do {
     ResourceObject_ReleaseFar(work->objects[i]);

@@ -37,7 +37,7 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
@@ -50,8 +50,8 @@ void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase); // BattlePlayback_StartFar
+    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
+void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
@@ -121,8 +121,8 @@ void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
 void BattleActor_CommitPlacementFar(void);
 void BattleEffect_BuildRepeatingTilemap(void);
 void Func_08164abc(s32 red, s32 green, s32 blue);
-void Func_08164a4c(s32 blue, s32 green, s32 red);
-void Func_0815f0a0(s32 palette);
+void Palette_BrightenBgEntries(s32 blue, s32 green, s32 red);
+void BattleEffect_StepPaletteToResource(s32 palette);
 void Graphics_LoadGreyRamp(void);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 
@@ -355,7 +355,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     }
     if ((u32)(frame - 42) <= 37) {
       z += 0x20000;
-      Func_0815f0a0((s32)&ResourceId_OrangePaletteB);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
     }
     if ((u32)(frame - 84) <= 58) {
       if (!effect->side) {
@@ -433,7 +433,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
      * of 1361 instructions differ in tla-en. */
     f = frame;
     if (frame > 174) {
-      Func_08164a4c(2, 2, 2);
+      Palette_BrightenBgEntries(2, 2, 2);
     }
 
     if (frame > 1) {
@@ -507,7 +507,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
          * 1361 instructions differ in tla-en. */
         asm("" : "+r"(half));
         Render_ResetTransformState();
-        Func_080151e4(half, 0x10000, half);
+        SceneTransform_ApplyScale3(half, 0x10000, half);
       }
       Func_08015160(x - 0x7e0000, z - 0x4c0000, 0);
       Func_0801521c(46536);
@@ -546,7 +546,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
           model->scrollU = ~scroll & 127;
           Render_ResetTransformState();
           Func_08015160(-0x20000, -0x200000, 0);
-          Func_080151e4(82000, 0x35208, 0x10000);
+          SceneTransform_ApplyScale3(82000, 0x35208, 0x10000);
           Func_0801521c(scale);
           SceneTransform_ApplyRoll(0x8000);
           scroll += 20;
@@ -644,7 +644,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
           } else {
             Func_08015160(0, 0x100000, 0);
           }
-          Func_080151e4(s, s * 2, s);
+          SceneTransform_ApplyScale3(s, s * 2, s);
           SceneTransform_ApplyPitch(Data_08199ecc[i]);
           SceneTransform_ApplyYaw(Data_08199ed6[i]);
           Render_TransformVertices(Data_081991e0, verts, 4);
@@ -683,7 +683,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
           Func_08015160((pos.x / 2 - Data_08199f1a[i] - 62) << 16,
                         (Data_08199f22[i] + pos.y - 54) << 16, 0);
         }
-        Func_080151e4(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         if (!effect->side) {
           SceneTransform_ApplyRoll(Data_08199f0a[i]);
         } else {
@@ -691,7 +691,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         }
         SceneTransform_ApplyPitch(Data_08199eea[i]);
         SceneTransform_ApplyYaw(Data_08199efa[i]);
-        Func_080151e4(s / 4, s * 4, s / 2);
+        SceneTransform_ApplyScale3(s / 4, s * 4, s / 2);
         Render_TransformVertices(gData_081991f0, verts, 4);
         Render_DrawModelList(model);
       }

@@ -121,7 +121,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
     // Frame 56: the next phase, and every target flashes.
     if (frame == 56) {
       Sound_PlayFar(212);
-      Func_081180e8(-1);
+      BattlePlayback_StartFar(-1);
       for (i = 0; i != effect->count; i++)
         Func_0814cd48(effect->actors[i], 7, -1, i, 8);
     }
@@ -202,7 +202,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
           deep = Trig_Cos(quad->x) * ((s16 *)&quad->z)[1];
           quad->x += 0x200;
           Func_08015160(across, quad->y, deep);
-          Func_080151e4(scale, scale, scale);
+          SceneTransform_ApplyScale3(scale, scale, scale);
           SceneTransform_ApplyPitch(quad->velocityX);
           SceneTransform_ApplyRoll(quad->velocityZ);
           quad->velocityX += 0x400;
@@ -351,7 +351,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = 0x1010;
     }
     if (frame == 157) {
-      Func_081180e8(145);
+      BattlePlayback_StartFar(145);
       goto strike;
     }
     if (frame == 161 || frame == 165 || frame == 169) {
@@ -587,7 +587,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
         model->shade = shade;
         Render_ResetTransformState();
         Func_08015160(-0x100000, Data_08197a9c[k] << 16, 0);
-        Func_080151e4(scale, scale * 4 / 3, scale);
+        SceneTransform_ApplyScale3(scale, scale * 4 / 3, scale);
         SceneTransform_ApplyPitch(3000);
         model->scrollU = ((frame + k * 5) & 7) * 16;
         Render_TransformVertices(Data_08198cac, vertices, 32);

@@ -138,12 +138,12 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
       if (frame == total - 46)
         BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16, 0);
       if (frame == total - 32) {
-        Func_081180e8(134);
+        BattlePlayback_StartFar(134);
         BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
         work->shakeFrames = 8;
       }
     } else if (frame == total - 32) {
-      Func_081180e8(133);
+      BattlePlayback_StartFar(133);
     }
 
     // Ripple the canvas: one horizontal offset for each line.
@@ -376,7 +376,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
 
     camera = Ram_HeapSlots->cameraWork;
     if (frame == 80)
-      Func_081180e8(0);
+      BattlePlayback_StartFar(0);
 
     // Place each target, and from frame 64 restore its palette, one
     // target every 16 frames.
@@ -479,7 +479,7 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
   frame = 0;
   while (frame != (effect->count << 5) + 32) {
     if (frame == 32) {
-      Func_081180e8(0);
+      BattlePlayback_StartFar(0);
     }
     i = 0;
     if (effect->count != 0) {

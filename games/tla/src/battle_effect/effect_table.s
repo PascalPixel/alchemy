@@ -1741,15 +1741,15 @@ gData_081989cc:
 	.global gData_081989d7
 gData_081989d7:
 	.byte 0, 0, 0, 32, 32, 32, 50, 64, 64, 64, 96
-@ The Broken Seal's gHelmSplitter_ImpactBurstCellWidths; read by Func_0816467c
+@ The Broken Seal's gHelmSplitter_ImpactBurstCellWidths; read by BattleEffect_RunImpactBurst
 	.global gData_081989e2
 gData_081989e2:
 	.byte 48, 48, 46, 36, 36, 32, 26, 6
-@ The Broken Seal's gHelmSplitter_ImpactBurstCellHeights; read by Func_0816467c
+@ The Broken Seal's gHelmSplitter_ImpactBurstCellHeights; read by BattleEffect_RunImpactBurst
 	.global gData_081989ea
 gData_081989ea:
 	.byte 96, 96, 90, 74, 74, 62, 52, 12
-@ The Broken Seal's gHelmSplitter_ImpactBurstCells; read by Func_0816467c
+@ The Broken Seal's gHelmSplitter_ImpactBurstCells; read by BattleEffect_RunImpactBurst
 	.global gData_081989f2
 gData_081989f2:
 	.2byte 0, 4608, 9216, 13356, 16020, 18684, 20668, 22020

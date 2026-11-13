@@ -129,7 +129,7 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void);
 // flags, mode), whose result it returns.
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 // BattlePlayback_Start through its far call.
-void Func_081180e8(s32 hitCue);
+void BattlePlayback_StartFar(s32 hitCue);
 // An actor's recoil motion, through a far call.
 void BattleMotion_ApplyKnockbackFar(s32 actor, s32 motion);
 
@@ -280,9 +280,9 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
     // The battle resumes: hit cue 134 for a flagged summon entry, else 133.
     if (frame == 5) {
       if (Summon_IsEntrySecondaryFlaggedFar(unit->enemyId))
-        Func_081180e8(134);
+        BattlePlayback_StartFar(134);
       else
-        Func_081180e8(133);
+        BattlePlayback_StartFar(133);
     }
     // The target recoils, harder for some kinds.
     if (frame == 4) {
@@ -587,7 +587,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 32; frame++) {
     // The battle resumes, hit cue 134; the target recoils a frame before.
     if (frame == 5)
-      Func_081180e8(134);
+      BattlePlayback_StartFar(134);
     if (frame == 4)
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 0);
     EffectPosition_ProjectScaledBattler(effect->actor, &pos);

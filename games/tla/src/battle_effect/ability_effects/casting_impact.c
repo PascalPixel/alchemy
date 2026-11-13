@@ -6,7 +6,7 @@
 #include "../ability_effects_internal.h"
 
 // Steps the 64 background colours one shade toward the resource's palette.
-void Func_0815f0a0(s32 resource) {
+void BattleEffect_StepPaletteToResource(s32 resource) {
   u16 dst[64];
   u16 *col = (u16 *)BG_PLTT;
   s32 i;
@@ -208,7 +208,7 @@ s32 Trig_Cos(s32);
 s32 Trig_Sin(s32);
 
 void Func_08015160(s32, s32, s32);
-void Func_080151e4(s32, s32, s32);
+void SceneTransform_ApplyScale3(s32, s32, s32);
 void Func_0801521c(s32);
 
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
@@ -927,81 +927,81 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
       }
       switch (kind) {
       case 10:
-        Func_0815f0a0((s32)&ResourceId_CloudPuffSheet);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_CloudPuffSheet);
         break;
       case 66:
-        Func_0815f0a0((s32)&ResourceId_FireballSheet);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_FireballSheet);
         break;
       case 69:
-        Func_0815f0a0((s32)&ResourceId_EffectPalette01);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_EffectPalette01);
         break;
       case 63:
-        Func_0815f0a0((s32)&ResourceId_FlameSheetA);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_FlameSheetA);
         break;
       case 44:
       case 68:
-        Func_0815f0a0((s32)&ResourceId_BlueFlameSheet);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_BlueFlameSheet);
         break;
       case 61:
-        Func_0815f0a0((s32)&ResourceId_RuneSheet);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_RuneSheet);
         break;
       case 38:
-        Func_0815f0a0((s32)&ResourceId_RockSpireSheet);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_RockSpireSheet);
         break;
       case 0:
       case 40:
       case 74:
-        Func_0815f0a0((s32)&ResourceId_MarsDjinnSheet);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_MarsDjinnSheet);
         break;
       case 42:
       case 43:
       case 55:
-        Func_0815f0a0((s32)&ResourceId_PinkBurstSheet);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_PinkBurstSheet);
         break;
       case 48:
       case 77:
-        Func_0815f0a0((s32)&ResourceId_IceBlockSheet);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_IceBlockSheet);
         break;
       case 49:
-        Func_0815f0a0((s32)&ResourceId_BlastSheet);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
         break;
       case 2:
       case 59:
       case 75:
       case 82:
       case 91:
-        Func_0815f0a0((s32)&ResourceId_TanPalette);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_TanPalette);
         break;
       case 1:
       case 13:
       case 58:
       case 89:
-        Func_0815f0a0((s32)&ResourceId_CyanPalette);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_CyanPalette);
         break;
       case 3:
       case 50:
       case 52:
       case 78:
-        Func_0815f0a0((s32)&ResourceId_EmberStreakSheet);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_EmberStreakSheet);
         break;
       case 39:
       case 83:
-        Func_0815f0a0((s32)&ResourceId_LimePalette);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_LimePalette);
         break;
       case 5:
       case 53:
-        Func_0815f0a0((s32)&ResourceId_FlashBurstSheet);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_FlashBurstSheet);
         break;
       case 81:
       case 90:
       case 98:
-        Func_0815f0a0((s32)&ResourceId_OrangePaletteB);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
         break;
       case 73:
-        Func_0815f0a0((s32)&ResourceId_RedPaletteB);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_RedPaletteB);
         break;
       case 84:
-        Func_0815f0a0((s32)&ResourceId_EffectPalette05);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_EffectPalette05);
         break;
       }
       if (frame < 6) {
@@ -1960,7 +1960,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
                             0);
               SceneTransform_ApplyRoll(p->z);
               p->z += p->vz;
-              Func_080151e4(0x40000, 0x10000, 0x10000);
+              SceneTransform_ApplyScale3(0x40000, 0x10000, 0x10000);
               Render_TransformVertices(gData_081991b0, matrix, 4);
               Render_DrawModelList(model);
             }
@@ -1989,7 +1989,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
         model->fade = fade;
         Render_ResetTransformState();
         Func_08015160((target[0] / 2 - 64) << 16, (target[1] - 64) << 16, 0);
-        Func_080151e4(0x8000, 0x10000, 0x8000);
+        SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
         if (frame == 8)
           Sound_PlayFar(104);
         if (fade >= -63) {
@@ -2055,7 +2055,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
                 Render_ResetTransformState();
                 Func_08015160((target[0] / 2 - 64) << 16,
                               (target[1] - 64) << 16, 0);
-                Func_080151e4(0x8000, 0x10000, 0x8000);
+                SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
                 SceneTransform_ApplyRoll((i << 14) + 0x2000);
                 SceneTransform_ApplyPitch(-0x1000);
                 Func_0801521c(angle >> 1);
@@ -2078,7 +2078,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
               Render_ResetTransformState();
               Func_08015160((target[0] / 2 - 64) << 16, (target[1] - 64) << 16,
                             0);
-              Func_080151e4(0x8000, 0x10000, 0x8000);
+              SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
               SceneTransform_ApplyPitch(0x4000);
               Func_0801521c(angle);
               Render_TransformVertices(gData_08199210, matrix, 4);
@@ -2098,7 +2098,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
                 Render_ResetTransformState();
                 Func_08015160((target[0] / 2 - 64) << 16,
                               (target[1] - 64) << 16, 0);
-                Func_080151e4(0x8000, 0x10000, 0x8000);
+                SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
                 SceneTransform_ApplyRoll((i << 14) + 0x2000);
                 SceneTransform_ApplyPitch(-0x1000);
                 Func_0801521c(t * 3 << 12);
@@ -2166,7 +2166,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
           if (fade >= -63) {
             Render_ResetTransformState();
             Func_08015160((target[0] / 2 - 64) << 16, 0x280000, 0);
-            Func_080151e4(0x8000, 0x10000, 0x8000);
+            SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
             SceneTransform_ApplyPitch(1000);
             Func_0801521c(angle);
             Render_TransformVertices(gData_08199210, matrix, 4);
@@ -2190,7 +2190,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
               Render_ResetTransformState();
               Func_08015160((target[0] / 2 - 60) << 16, gData_0819895a[i] << 16,
                             0);
-              Func_080151e4(scale * 2, scale * 4, scale / 4);
+              SceneTransform_ApplyScale3(scale * 2, scale * 4, scale / 4);
               SceneTransform_ApplyPitch(1000);
               if (i & 1)
                 SceneTransform_ApplyYaw((i * 2 + frame) << 12);
@@ -2234,7 +2234,8 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
               model->fade = fade;
               Render_ResetTransformState();
               Func_08015160((target[0] / 2 - 60) << 16, 0x280000, 0);
-              Func_080151e4(scale, gData_08198966[i] * scale * 2, scale / 4);
+              SceneTransform_ApplyScale3(scale, gData_08198966[i] * scale * 2,
+                                         scale / 4);
               SceneTransform_ApplyPitch(1000);
               if (i & 1)
                 SceneTransform_ApplyYaw((i * 8 + frame) << 10);
@@ -2436,7 +2437,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
           BattleEffect_StartActorMotion(action->actors[0], 1, 0, 0, 0x90000,
                                         100);
           Func_0814cd48(action->actors[0], 7, 5, 0, 4);
-          Func_081180e8(134);
+          BattlePlayback_StartFar(134);
           work->unk77a8 = 8;
         }
         if (frame >= 24 && frame < 36)
@@ -2463,7 +2464,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
         origin[2] += center[2];
       }
       if (kind != 8 && frame == 3)
-        Func_081180e8(-1);
+        BattlePlayback_StartFar(-1);
       if (frame == 4) {
         if (kind == 91)
           Sound_PlayFar(145);

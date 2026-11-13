@@ -78,13 +78,13 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleEffect_SelectLivingTargets(struct FxPartyList *party);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
-void Func_081180e8(s32 phase); // BattlePlayback_StartFar
+void BattlePlayback_StartFar(s32 phase);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames); // BattleEffect_TintBattler
 void Func_0816442c(s32 formation, s32 x,
                    s32 y); // BattleEffect_PlaceFormationObjects
-void Func_0816467c(s32 formation, s32 x,
-                   s32 y); // BattleEffect_RunImpactBurst
+void BattleEffect_RunImpactBurst(s32 formation, s32 x,
+                                 s32 y); // BattleEffect_RunImpactBurst
 void BattleEffect_EndCanvasLayer(void);
 
 struct Point2D {
@@ -174,7 +174,7 @@ UNUSED void Func_08163e14(struct BattleEffectArgument *effect) {
           frame < SKIP_TO_FRAME)
         frame = SKIP_TO_FRAME;
       if (frame == RESULTS_FRAME)
-        Func_081180e8(PHASE_SUMMON_RESULTS);
+        BattlePlayback_StartFar(PHASE_SUMMON_RESULTS);
       if (frame <= 15)
         rise += 2;
 
@@ -318,7 +318,7 @@ UNUSED void Func_08163e14(struct BattleEffectArgument *effect) {
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
     HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
     HeapSlot_Release(HEAP_BLITTER);
-    Func_0816467c(1, focus.x, focus.y);
+    BattleEffect_RunImpactBurst(1, focus.x, focus.y);
     for (k = 0; k != FORMATION_SIZE; k++)
       ResourceObject_ReleaseFar(work->objects[k]);
   }
@@ -428,7 +428,7 @@ s32 BattleEffect_LoadBlitter(
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 
-void Func_0816467c(s32 formation, s32 x, s32 y) {
+void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   struct BattleFxWork *work;
   void *canvas;
   DrawRectangle additive;
@@ -570,9 +570,9 @@ void Func_0816467c(s32 formation, s32 x, s32 y) {
   HeapSlot_Release(104);
 }
 
-/// The Broken Seal's Palette_BrightenBgEntries over BG palette entries 1 to
-/// 63, with The Lost Age's clamp at 0.
-void Func_08164a4c(s32 blue_delta, s32 green_delta, s32 red_delta) {
+/// Adds the deltas to BG palette entries 1 to 63, as The Broken Seal does, but
+/// clamped at 0.
+void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta) {
   u16 *color = (u16 *)0x05000002;
   s32 i;
 
@@ -600,7 +600,8 @@ void Func_08164a4c(s32 blue_delta, s32 green_delta, s32 red_delta) {
   }
 }
 
-/// As Func_08164a4c over BG palette entries 96 to 223, the deltas red first.
+/// As Palette_BrightenBgEntries over BG palette entries 96 to 223, the deltas
+/// red first.
 void Func_08164abc(s32 red_delta, s32 green_delta, s32 blue_delta) {
   u16 *color = (u16 *)0x050000c0;
   s32 i;
@@ -756,7 +757,7 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
 void SceneTransform_ApplyPosition(const s32 *pos);
 void SceneTransform_ApplyRoll(s32 roll); // SceneTransform_ApplyRoll
 void SceneTransform_ApplyYaw(s32 yaw);
-void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
+void BattleEffect_SetupBlendedDisplay(void);
 void BattleActor_CommitPlacementFar(void);
 
 void Transform_SetLookAt(s32 *eye, s32 *position);
@@ -1181,7 +1182,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
 
   // Act two: the blast.
   HeapSlot_Release(HEAP_BLITTER);
-  Func_0814cca8();
+  BattleEffect_SetupBlendedDisplay();
   REG_BG2PA = 0x80;
   REG_BG2X = 0;
   REG_BG2Y = 0xfffff000;
@@ -1233,7 +1234,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     s32 grow;
 
     if (elapsed > 19)
-      Func_08164a4c(2, 2, 2);
+      Palette_BrightenBgEntries(2, 2, 2);
     if (frame == 0)
       Sound_PlayFar(SE_BLAST);
     if (frame == 40)
@@ -1244,7 +1245,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
         ResourceObject_ReleaseFar(work->objects[1]);
         BattleActor_CommitPlacementFar();
       }
-      Func_081180e8(PHASE_SUMMON_RESULTS);
+      BattlePlayback_StartFar(PHASE_SUMMON_RESULTS);
     }
 
     // The embers fountain up from the ground in front of the camera.

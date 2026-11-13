@@ -57,7 +57,7 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
@@ -69,8 +69,8 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase); // BattlePlayback_StartFar
+    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
+void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
@@ -130,8 +130,8 @@ void BattleEffect_ArmMeteorBlowPaletteDma(void);
 void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_WipeCanvas(s32 mode, s32 value);
 void Graphics_LoadGreyRamp(void);
-void Func_0814cca8(void);
-void Func_0815f0a0(s32 palette);
+void BattleEffect_SetupBlendedDisplay(void);
+void BattleEffect_StepPaletteToResource(s32 palette);
 void Func_08164abc(s32 red, s32 green, s32 blue);
 void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows,
                    s32 cellWidth, s32 cellHeight);
@@ -328,7 +328,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       IO_WRITE_QUEUE_PUSH(0x0400000c, 0x784, 0x20000);
     }
     if (frame > 128) {
-      Func_0815f0a0((s32)&ResourceId_OrangePaletteB);
+      BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
     }
     if (frame == 117) {
       work->frame = 45;
@@ -402,7 +402,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
           d = 1024;
         }
         scale += d;
-        Func_080151e4(scale, scale, scale);
+        SceneTransform_ApplyScale3(scale, scale, scale);
       }
       i = 0;
       angle = -0x4000;
@@ -411,8 +411,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
         model->scrollV = ~scroll & 127;
         Render_ResetTransformState();
         Func_08015160(-0x20000, -0x400000, 0);
-        Func_080151e4(42000, 0x24650, 0x10000);
-        Func_080151e4(scale, scale, scale);
+        SceneTransform_ApplyScale3(42000, 0x24650, 0x10000);
+        SceneTransform_ApplyScale3(scale, scale, scale);
         SceneTransform_ApplyRoll(0x8000);
         SceneTransform_ApplyYaw(angle);
         Render_TransformVertices(meshA, projected, 32);
@@ -517,7 +517,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   }
   HeapSlot_Release(SLOT_BLITTER);
-  Func_0814cca8();
+  BattleEffect_SetupBlendedDisplay();
   // DEAD: frame 0 sets hx and hz again before any read.
   hx = 200;
   hz = 0;
@@ -582,7 +582,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
                                         0);
     }
     if (frame == 34) {
-      Func_081180e8(134);
+      BattlePlayback_StartFar(134);
     }
     if (frame == 16) {
       struct EffectStep *p;
@@ -653,7 +653,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
           model->shade = shade;
           Render_ResetTransformState();
           Func_08015160(x0 << 16, 0x280000, 0);
-          Func_080151e4(s, s * Data_08199e94[i], s / 4);
+          SceneTransform_ApplyScale3(s, s * Data_08199e94[i], s / 4);
           SceneTransform_ApplyPitch(1000);
           if (i & 1) {
             SceneTransform_ApplyYaw(angle);
@@ -688,7 +688,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
           model->scrollU = ((frame + i * 5) & 7) << 4;
           Render_ResetTransformState();
           Func_08015160(half << 16, Data_08199ea0[i] << 16, 0);
-          Func_080151e4(s, s * 2, s);
+          SceneTransform_ApplyScale3(s, s * 2, s);
           SceneTransform_ApplyPitch(2000);
           Render_TransformVertices(Data_08198cac, verts, 32);
           Render_DrawModelList(model);

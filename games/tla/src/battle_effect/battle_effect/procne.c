@@ -525,7 +525,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
     } while (frame != 400);
 
     // The results; the enemies go back where they stood, facing as before.
-    Func_081180e8(134);
+    BattlePlayback_StartFar(134);
     for (index = 0; index != effect->count; index++) {
       struct MotionObject *enemy;
 
@@ -536,7 +536,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
       enemy->angle = baseAngle[index];
     }
     gCameraSceneParameters[3] = 120;
-    Func_0814cca8();
+    BattleEffect_SetupBlendedDisplay();
 
     index = 0;
     do {
@@ -689,7 +689,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
       Render_ResetTransformState();
       Transform_SetLookAt(camera, camera + 3);
       if (frame == 178)
-        Func_081180e8(134);
+        BattlePlayback_StartFar(134);
 
       // From frame 128 the trails halve; from 160 to 175 the canvas is filled
       // and the palette brightens; from 176 the canvas fades by 2 a frame.
@@ -706,7 +706,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
         work->transferValue = 0x10101010;
         if (frame > 173)
           work->transferValue = 0x3f3f3f3f;
-        Func_08164a4c(2, 2, 2);
+        Palette_BrightenBgEntries(2, 2, 2);
       }
 
       // Grains rise from y = 112: one a frame from 33, eight from 104.
@@ -947,9 +947,9 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
     HeapSlot_Release(104);
     if (mode == 0) {
       if (alternate == 1)
-        Func_0816467c(6, focus.x, focus.y);
+        BattleEffect_RunImpactBurst(6, focus.x, focus.y);
       else
-        Func_0816467c(3, focus.x, focus.y);
+        BattleEffect_RunImpactBurst(3, focus.x, focus.y);
     }
     if (mode == 0) {
       for (i = 0; i != 8; i++)

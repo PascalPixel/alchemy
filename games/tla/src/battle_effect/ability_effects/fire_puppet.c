@@ -53,7 +53,7 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
@@ -65,8 +65,8 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase); // BattlePlayback_StartFar
+    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
+void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
@@ -191,7 +191,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
     if (frame == 54) {
       Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
       Sound_PlayFar(212);
-      Func_081180e8(212);
+      BattlePlayback_StartFar(212);
       work->shakeFrames = 8;
       for (i = 0; i != effect->count; i++) {
         BattleEffect_StartActorMotion(effect->actors[i], 1, 0x20000, 0x40000,
@@ -259,7 +259,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       model->scrollU = 127 & ~(frame << 2);
       Render_ResetTransformState();
       Func_08015160((pos.x / 2 - 64) << 16, (pos.y << 16) + 0xffd60000, 0);
-      Func_080151e4(0x8000, 0x10000, 0x8000);
+      SceneTransform_ApplyScale3(0x8000, 0x10000, 0x8000);
       if (effect->side == 1) {
         SceneTransform_ApplyYaw(0x8000);
       }
@@ -414,7 +414,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
     if (frame == SWING_HIT_FRAME) {
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 1);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
-      Func_081180e8(134);
+      BattlePlayback_StartFar(134);
       work->shakeFrames = 8;
       for (i = 0; i != SPARK_COUNT; i++) {
         s32 angle;

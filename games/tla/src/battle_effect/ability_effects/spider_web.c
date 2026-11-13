@@ -272,7 +272,7 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
+void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
@@ -285,8 +285,8 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 // An actor's recoil motion, through a far call.
 void BattleMotion_ApplyKnockbackFar(
-    s32 actor, s32 motion);    // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase); // BattlePlayback_StartFar
+    s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
+void BattlePlayback_StartFar(s32 phase);
 // Shakes the camera while work->shakeFrames lasts.
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
@@ -342,7 +342,7 @@ extern const u8 gData_08199210[];
 void BattleEffect_ProcessPendingBlock2Transfer(void);
 void Display_ApplyBg2Affine(void);
 // Steps the background palette fade.
-void Func_0815f0a0(s32 palette);
+void BattleEffect_StepPaletteToResource(s32 palette);
 
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 
@@ -665,7 +665,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       shade = 0;
       sparks = (struct EffectStep *)(work->sheet + 0x4b98);
       if (frame > 196) {
-        Func_0815f0a0((s32)&ResourceId_MarsDjinnSheet);
+        BattleEffect_StepPaletteToResource((s32)&ResourceId_MarsDjinnSheet);
       }
       texture.logWidth = 6;
       texture.logHeight = 6;
@@ -928,7 +928,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
     }
   }
 
-  Func_081180e8(134);
+  BattlePlayback_StartFar(134);
   REG_BG1CNT = 0x1f83;
   wait(1);
   // Once-only blocks: the listing loads each fill's destination before its
@@ -1111,7 +1111,7 @@ void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {
     // The hit.
     if (frame == 8) {
       if (mode == 0) {
-        Func_081180e8(0x85);
+        BattlePlayback_StartFar(0x85);
         BattleMotion_ApplyKnockbackFar(effect->actors[0], 1);
       } else {
         Sound_PlayFar(0x86);
@@ -1128,7 +1128,7 @@ void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {
       }
       if (frame == 65) {
         work->shakeFrames = 4;
-        Func_081180e8(0x86);
+        BattlePlayback_StartFar(0x86);
       }
     }
     BattleCamera_Shake(8, 8);
@@ -1224,7 +1224,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
 
     // The battle resumes, hit cue 143; every target flashes at frame 10.
     if (frame == 32)
-      Func_081180e8(143);
+      BattlePlayback_StartFar(143);
     for (i = 0; i != effect->count; i++) {
       if (frame == 10)
         Func_0814cd48(effect->actors[i], 7, -1, i, 8);

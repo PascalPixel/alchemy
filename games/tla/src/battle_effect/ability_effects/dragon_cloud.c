@@ -133,9 +133,9 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
 
     if (frame == 83) {
       if (effect->variant == 0)
-        Func_081180e8(134);
+        BattlePlayback_StartFar(134);
       else
-        Func_081180e8(145);
+        BattlePlayback_StartFar(145);
     }
     if (frame == 0)
       Sound_PlayFar(136);

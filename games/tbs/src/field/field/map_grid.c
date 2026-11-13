@@ -239,6 +239,10 @@ s32 MapGrid_LoadMap(s32 index) {
   s32 layerIndex;
   u8 *graphicsBuffer;
   s32 backdrop;
+  u8 *packed;
+  s32 *viewX;
+  s32 *viewY;
+  u32 control;
 
   // Hide the map layers and sprites while their memory is replaced.
   REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
@@ -251,21 +255,23 @@ s32 MapGrid_LoadMap(s32 index) {
   mapHeader = MAPGRID_RESOURCE(mapResources, 0);
   // The header's offsets count from the header itself. The cell pictures are
   // staged in the cell buffer, which the cell planes then overwrite.
-  TileMap_DecodeStagedBuffer(Decompress_TaggedLz(
-      (u8 *)mapHeader + mapHeader->cellPictures, Ram_MapGridCellBuffer + 1));
-  Decompress_TaggedLz((u8 *)mapHeader + mapHeader->shapes, Ram_MapGridShapes);
-  Decompress_TaggedLz((u8 *)mapHeader + mapHeader->cells,
-                      Ram_MapGridCellBuffer);
+  packed = (u8 *)mapHeader + mapHeader->cellPictures;
+  TileMap_DecodeStagedBuffer(
+      Decompress_TaggedLz(packed, Ram_MapGridCellBuffer + 1));
+  packed = (u8 *)mapHeader + mapHeader->shapes;
+  Decompress_TaggedLz(packed, Ram_MapGridShapes);
+  packed = (u8 *)mapHeader + mapHeader->cells;
+  Decompress_TaggedLz(packed, Ram_MapGridCellBuffer);
   TileMap_ConvertBuffer();
   // The tileset animation and blend scripts are optional (offset 0).
   if (mapHeader->animation != 0) {
-    Decompress_TaggedLz((u8 *)mapHeader + mapHeader->animation,
-                        MAPGRID_ANIMATION_SCRIPT);
+    packed = (u8 *)mapHeader + mapHeader->animation;
+    Decompress_TaggedLz(packed, MAPGRID_ANIMATION_SCRIPT);
     TilesetAnim_StartAll((const u16 *)MAPGRID_ANIMATION_SCRIPT);
   }
   if (mapHeader->blend != 0) {
-    Decompress_TaggedLz((u8 *)mapHeader + mapHeader->blend,
-                        MAPGRID_BLEND_SCRIPT);
+    packed = (u8 *)mapHeader + mapHeader->blend;
+    Decompress_TaggedLz(packed, MAPGRID_BLEND_SCRIPT);
     BlendScript_Start((u16 *)MAPGRID_BLEND_SCRIPT);
   }
   // The treasure spot list is not decoded: Field_PlaceTreasureSpots reads it in
@@ -277,8 +283,10 @@ s32 MapGrid_LoadMap(s32 index) {
   grid->minY = px(mapHeader->cameraBounds[1] * 8);
   grid->maxX = px(mapHeader->cameraBounds[2] * 8);
   grid->maxY = px(mapHeader->cameraBounds[3] * 8);
-  grid->view[0] = 0;
-  grid->view[1] = 0;
+  viewX = &grid->view[0];
+  *viewX = 0;
+  viewY = &grid->view[1];
+  *viewY = 0;
   grid->enabled[0] = mapHeader->priority[0];
   grid->enabled[1] = mapHeader->priority[1];
   grid->enabled[2] = mapHeader->priority[2];
@@ -287,12 +295,16 @@ s32 MapGrid_LoadMap(s32 index) {
   for (layerIndex = 0; layerIndex < 3; layerIndex++) {
     u32 x = layerSource->x;
     u32 y = layerSource->y;
+    s32 scaleX, scaleY;
+    s32 offsetX, offsetY;
 
-    layer->offsetX = px(x * 8);
-    layer->offsetY = px(y * 8);
+    layer->offsetX = offsetX = px(x * 8);
+    layer->offsetY = offsetY = px(y * 8);
     // Parallax and drift are signed sixteenths; * 4096 makes them 16.16.
-    layer->scaleX = layerSource->scrollX * 4096;
-    layer->scaleY = layerSource->scrollY * 4096;
+    scaleX = layerSource->scrollX * 4096;
+    scaleY = layerSource->scrollY * 4096;
+    layer->scaleX = scaleX;
+    layer->scaleY = scaleY;
     layer->speedX = layerSource->speedX * 4096;
     layer->speedY = layerSource->speedY * 4096;
     layer->maskX = layerSource->periodX;
@@ -303,8 +315,8 @@ s32 MapGrid_LoadMap(s32 index) {
     // 2x2 tiles, 128 cells to a row).
     layer->cells =
         (struct MapGridCell *)Ram_MapGridCellBuffer + (y / 2) * 128 + x / 2;
-    layer->x = Iwram_MulQ16(grid->view[0], layer->scaleX) + layer->offsetX;
-    layer->y = Iwram_MulQ16(grid->view[1], layer->scaleY) + layer->offsetY;
+    layer->x = Iwram_MulQ16(*viewX, scaleX) + offsetX;
+    layer->y = Iwram_MulQ16(*viewY, scaleY) + offsetY;
     layerSource++;
     layer++;
   }
@@ -318,8 +330,9 @@ s32 MapGrid_LoadMap(s32 index) {
     grid->flags |= DISPCNT_BG2_ON;
   if (grid->enabled[2] != 0)
     grid->flags |= DISPCNT_BG1_ON;
-  REG_BG3CNT = grid->enabled[0] | BGCNT_CHAR_BASE(mapHeader->charBase[0]) |
-               BGCNT_SCREEN_BASE(5);
+  control = grid->enabled[0] | BGCNT_CHAR_BASE(mapHeader->charBase[0]) |
+            BGCNT_SCREEN_BASE(5);
+  REG_BG3CNT = control;
   Io_Write16(grid->enabled[1] | BGCNT_CHAR_BASE(mapHeader->charBase[1]) |
                  BGCNT_SCREEN_BASE(6),
              &REG_BG2CNT);
@@ -338,7 +351,7 @@ s32 MapGrid_LoadMap(s32 index) {
     graphicsBuffer = Heap_Alloc(BG_CHAR_SIZE);
     if (graphicsBuffer != NULL) {
       // Colour 0 of BG palette 0 is the backdrop; it survives the new palette.
-      backdrop = BG_PLTT[0];
+      backdrop = *(s16 *)PLTT;
       Decompress_TaggedLz(MAPGRID_RESOURCE(mapResources, 1), graphicsBuffer);
       *(s16 *)graphicsBuffer = backdrop;
       // These four copies call the IWRAM routine at its fixed address, not
@@ -360,10 +373,15 @@ s32 MapGrid_LoadMap(s32 index) {
   }
   // Only BG0, the windows, is shown here; ScreenTransition_Start ORs
   // map->flags into REG_DISPCNT when the map fades in.
-  REG_MOSAIC = 0;
-  REG_BLDCNT = 0;
-  REG_DISPCNT = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
-  Task_Add(MapGrid_UpdateLayerScroll, TASK_PASS_FRAME + 5);
+  control = 0;
+  REG_MOSAIC = control;
+  REG_BLDCNT = control;
+  control = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
+  REG_DISPCNT = control;
+  /* FAKEMATCH(type): called as returning nothing; through its own type,
+   * which returns a value, 3 of 376 instructions differ in tbs-en. */
+  ((void (*)(TaskFunc, s32))Task_Add)(MapGrid_UpdateLayerScroll,
+                                      TASK_PASS_FRAME + 5);
   return 2;
 }
 

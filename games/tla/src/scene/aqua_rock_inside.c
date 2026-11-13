@@ -1265,17 +1265,15 @@ column:
 void Actor_MoveToObject();
 
 void AquaRockInside_ReadParchTablet(void) {
-  s32 t4, t59;
+  s32 t59;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered((s32)&MsgCheckedTheTabletIt, 1);
-  t4 = Event_GetFlag(0x9ae);
-  if (t4 == 0)
-    goto L_02009a46;
-  Event_End();
-  goto L_02009c56;
-L_02009a46:
+  if (Event_GetFlag(0x9ae)) {
+    Event_End();
+    goto L_02009c56;
+  }
   FieldEvent_SetMessageId((s32)&MsgCheckedTheTabletIt);
   FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), s16, 0) =
       (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
@@ -1332,10 +1330,9 @@ L_02009a46:
   Actor_SetSpeed(7, 0x13333, 0x9999);
   Actor_SetAnimation(7, 2);
   t59 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
-  if (t59 == 0)
-    goto L_02009c42;
-  Actor_SetDestination(7, FIELD_AT(t59, s16, 10), FIELD_AT(t59, s16, 18));
-L_02009c42:
+  if (t59 != 0) {
+    Actor_SetDestination(7, FIELD_AT(t59, s16, 10), FIELD_AT(t59, s16, 18));
+  }
   FieldActor_WaitForMoveById(7);
   Actor_SetPosition(7, 0, 0);
   Event_End();

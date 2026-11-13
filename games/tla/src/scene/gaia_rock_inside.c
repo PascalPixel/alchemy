@@ -1576,10 +1576,9 @@ L_0200a1f8:
   Actor_SetAnimation(9, 4);
   FieldEvent_Wait(30);
   t50 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
-  if (t50 == 0)
-    goto L_0200a22e;
-  Actor_SetDestination(13, FIELD_AT(t50, s16, 10), FIELD_AT(t50, s16, 18));
-L_0200a22e:
+  if (t50 != 0) {
+    Actor_SetDestination(13, FIELD_AT(t50, s16, 10), FIELD_AT(t50, s16, 18));
+  }
   v_r10->velocityY = 0x60000;
   FieldActor_WaitForMoveById(13);
   Actor_SetPosition(13, 0, 0);

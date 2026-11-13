@@ -125,12 +125,10 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 /// Sunshine the blacksmith thinks of the swamp he cannot reach without rain,
 /// and once the party has had him forge, of his joy at working (flag 0x301).
 s32 YallamInteriors_MindReadSunshine(void) {
-  s32 t2;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  t2 = Event_GetFlag(0x301);
-  if (t2 != 0) {
+  if (Event_GetFlag(0x301)) {
     Event_SetMessageId((s32)MsgYallamInteriors37);
   } else {
     Event_SetMessageId((s32)MsgYallamInteriors33);
@@ -141,12 +139,10 @@ s32 YallamInteriors_MindReadSunshine(void) {
 }
 
 s32 YallamInteriors_MindReadSunshinesWife(void) {
-  s32 t2;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  t2 = Event_GetFlag(0x301);
-  if (t2 != 0) {
+  if (Event_GetFlag(0x301)) {
     Event_SetMessageId((s32)MsgYallamInteriors38);
   } else {
     Event_SetMessageId((s32)MsgYallamInteriors34);
@@ -157,12 +153,10 @@ s32 YallamInteriors_MindReadSunshinesWife(void) {
 }
 
 s32 YallamInteriors_MindReadSunshinesChild(void) {
-  s32 t2;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  t2 = Event_GetFlag(0x301);
-  if (t2 != 0) {
+  if (Event_GetFlag(0x301)) {
     Event_SetMessageId((s32)MsgYallamInteriors39);
   } else {
     Event_SetMessageId((s32)MsgYallamInteriors35);
@@ -175,12 +169,10 @@ s32 YallamInteriors_MindReadSunshinesChild(void) {
 /// "Dad's not doing any work right now, but I'm making some basic things for
 /// the villagers."
 s32 YallamInteriors_TalkToSunshinesChild(void) {
-  s32 t2;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  t2 = Event_GetFlag(0x301);
-  if (t2 != 0) {
+  if (Event_GetFlag(0x301)) {
     Event_SetMessageId((s32)MsgYallamInteriors36);
   } else {
     Event_SetMessageId((s32)MsgYallamInteriors32);

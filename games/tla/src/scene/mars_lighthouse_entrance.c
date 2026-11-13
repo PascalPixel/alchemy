@@ -195,7 +195,7 @@ s32 Map_GetTerrainHeight();
 void Scene_SetActorSpritePriority();
 
 void MarsLighthouseEntrance_SetIceConeCells(struct Actor *object) {
-  s32 t1, t2, t3, t4, v10, v6, v7, v8, v9;
+  s32 t1, t2, t3, v10, v6, v7, v8, v9;
   struct Actor *v5;
   u8 *v11;
 
@@ -209,16 +209,14 @@ void MarsLighthouseEntrance_SetIceConeCells(struct Actor *object) {
   v11 = &v5->terrainId;
   t3 = Map_GetTerrainHeight(v5->terrainId, v5->x, v5->z);
   v7 = (t3 >> 19);
-  t4 = Event_GetFlag(v5->timer);
-  if (t4 == 0)
-    goto L_02008268;
-  v6 = (v6 & -0xff01);
-  v8 = (v8 & -129);
-  if ((v5->terrainHeight >> 19) == v7)
+  if (Event_GetFlag(v5->timer)) {
+    v6 = (v6 & -0xff01);
+    v8 = (v8 & -129);
+    if ((v5->terrainHeight >> 19) == v7)
+      goto L_02008282;
+    v7 = (v7 + -4);
     goto L_02008282;
-  v7 = (v7 + -4);
-  goto L_02008282;
-L_02008268:
+  }
   v6 = (v6 & 255);
   v6 = (v6 | 0xff00);
   v8 = (v8 | 128);

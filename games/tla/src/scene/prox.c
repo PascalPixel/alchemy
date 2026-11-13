@@ -438,17 +438,13 @@ DEFINE_LEADER_IS_FACING_NORTH(Leader_IsFacingNorth)
 /// ★ Named from the game: ", your parents have gone away... They were very
 /// worried about you." (MsgProx56)
 void Prox_TalkAboutParents(void) {
-  s32 t0;
-  s32 t4;
 
-  t0 = Leader_IsFacingNorth();
-  if (t0 != 0) {
+  if (Leader_IsFacingNorth()) {
     Inn_CheckIn(0xe, 0x16);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    t4 = Event_GetFlag(0xa3d);
-    if (t4 != 0) {
+    if (Event_GetFlag(0xa3d)) {
       FieldEvent_SetMessageId((s32)MsgProx135);
     } else {
       FieldEvent_SetMessageId((s32)MsgProx56);
@@ -463,17 +459,13 @@ s32 Shop_Run();
 /// ★ Named from the game: "You go away for a little while, and you come back a
 /// strong and mighty warrior!" (MsgProx53)
 void Prox_PraiseReturnedWarrior(void) {
-  s32 t0;
-  s32 t4;
 
-  t0 = Leader_IsFacingNorth();
-  if (t0 != 0) {
+  if (Leader_IsFacingNorth()) {
     Shop_Run(0x1f, 0xa);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    t4 = Event_GetFlag(0xa3d);
-    if (t4 != 0) {
+    if (Event_GetFlag(0xa3d)) {
       FieldEvent_SetMessageId((s32)MsgProx132);
     } else {
       FieldEvent_SetMessageId((s32)MsgProx53);
@@ -488,17 +480,13 @@ s32 Sanctum_Run();
 /// ★ Named from the game: "Now that the lighthouse has been lit, I fear for
 /// what will happen to Weyard." (MsgProx139)
 void Prox_FearForWeyard(void) {
-  s32 t0;
-  s32 t4;
 
-  t0 = Leader_IsFacingNorth();
-  if (t0 != 0) {
+  if (Leader_IsFacingNorth()) {
     Sanctum_Run(8);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    t4 = Event_GetFlag(0xa3d);
-    if (t4 != 0) {
+    if (Event_GetFlag(0xa3d)) {
       FieldEvent_SetMessageId((s32)MsgProx139);
     } else {
       FieldEvent_SetMessageId((s32)MsgProx60);
@@ -1209,7 +1197,6 @@ s32 Func_0200446c();
 
 /// ★ Named from the game: "Thank you, . And you, too, and Kraden." (MsgProx80)
 void Prox_GiveThanksForBeacon(void) {
-  s32 t83;
   s32 t144;
   s32 t159;
   s32 t202;
@@ -1309,8 +1296,8 @@ void Prox_GiveThanksForBeacon(void) {
   Actor_ShowEmote(0, 0x108, 0);
   Event_OpenMessage(0x4000, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
-  t83 = FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
-  if (t83 == 0) {
+  if (!FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner,
+                                             0)) {
     Actor_SetAnimationAndWait(26, 3);
     Event_ShowMessage(26, 0);
     EVENT_WORK->messageId++;
@@ -1557,13 +1544,9 @@ void Func_0200279c(s32 actor, s32 x, s32 z, s32 frames) {
 }
 
 void Func_020027e4(void) {
-  s32 t0;
-  s32 t1;
 
-  t0 = Event_GetFlag(0xa3d);
-  if (t0 != 0) {
-    t1 = Event_GetFlag(0x109);
-    if (t1 == 0) {
+  if (Event_GetFlag(0xa3d)) {
+    if (!Event_GetFlag(0x109)) {
       Func_0200279c(0x10, 0x218, 0x168, 0);
       Func_0200279c(0x11, 0x218, 0x1a8, 1);
       Func_0200279c(0x12, 0x244, 0x1a4, 2);
@@ -1580,47 +1563,33 @@ void Func_020027e4(void) {
 
 void Prox_InitializeRoom3(void) {
   s32 t9;
-  s32 t3;
-  s32 t4;
-  s32 t6;
-  s32 t8;
-  s32 t11;
-  s32 t16;
-  s32 t20;
 
   FieldActor_SetSpritePriority(19, 1);
   FieldActor_SetSpriteColor(((s32)Actor_Get(19)), 0xf);
-  t3 = Event_GetFlag(0xa3d);
-  if (t3 == 0) {
-    t4 = Event_GetFlag(0x9c0);
-    if (t4 == 0) {
+  if (!Event_GetFlag(0xa3d)) {
+    if (!Event_GetFlag(0x9c0)) {
       Actor_SetPosition(8, 0, 0);
     }
-    t6 = Event_GetFlag(0x200);
-    if (t6 != 0) {
+    if (Event_GetFlag(0x200)) {
       MapGrid_CopyCellsTo(0x59, 0, 0x4d, 0x10, 1, 2);
     }
-    t8 = Event_GetFlag(0x9c1);
-    if (t8 != 0) {
+    if (Event_GetFlag(0x9c1)) {
       t9 = ((s32)Actor_Get(10));
       FIELD_AT(t9, u16, 6) = 0xb000;
       System_Wait(1);
     }
   }
-  t11 = Event_GetFlag(0xa3d);
-  if (t11 != 0) {
+  if (Event_GetFlag(0xa3d)) {
     MapGrid_CopyCellsTo(0x48, 3, 0x45, 3, 3, 3);
     MapGrid_CopyCellsTo(0x30, 0x24, 0x45, 8, 3, 2);
     MapGrid_CopyCellAttributes(0x48, 0xd, 1, 3, 0x46, 0x14);
     Actor_SetPosition(20, 0, 0);
   } else {
-    t16 = Event_GetFlag(0xa2d);
-    if (t16 != 0) {
+    if (Event_GetFlag(0xa2d)) {
       MapGrid_CopyCellsTo(0x48, 3, 0x45, 3, 3, 3);
       MapGrid_CopyCellsTo(0x30, 0x24, 0x45, 8, 3, 2);
       MapGrid_CopyCellAttributes(0x48, 0xd, 1, 3, 0x46, 0x14);
-      t20 = Event_GetFlag(0x40);
-      if (t20 == 0) {
+      if (!Event_GetFlag(0x40)) {
         Actor_SetPosition(20, 0, 0);
       }
     }
@@ -1636,13 +1605,11 @@ void Func_020029a4(void) {
 }
 
 void Func_020029c8(void) {
-  s32 t2;
 
   FieldEffect_StartBlankOverlay(0);
   Task_AddFrame((s32)Func_020029a4, 0x480);
   if (gMainRoutineWork.entrance == 0x14) {
-    t2 = Event_GetFlag(0x9c5);
-    if (t2 == 0) {
+    if (!Event_GetFlag(0x9c5)) {
       Prox_GiveThanksForBeacon();
     }
   }

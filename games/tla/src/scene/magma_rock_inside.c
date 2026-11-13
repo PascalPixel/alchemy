@@ -346,7 +346,7 @@ s32 GameFlag_Get();
 extern s32 Actor_GetById__s0800() __asm__("Actor_GetById");
 
 void MagmaRockInside_StartLavaPlatform(s32 a0, s32 a1, s32 a2) {
-  s32 t1, t4, t5, v5, v6, v7;
+  s32 t1, t4, v5, v6, v7;
 
   v5 = (a2 << 16);
   v7 = a1;
@@ -375,8 +375,7 @@ void MagmaRockInside_StartLavaPlatform(s32 a0, s32 a1, s32 a2) {
     goto sunk;
   FIELD_AT(v6, s32, 20) = 0x100000;
   FIELD_AT(v6, s32, 12) = 0x100000;
-  t5 = Event_GetFlag(0x109);
-  if (t5 != 0)
+  if (Event_GetFlag(0x109))
     goto hook;
   Actor_StartScript(v6, v7);
   goto hook;

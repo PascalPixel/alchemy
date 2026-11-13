@@ -167,7 +167,7 @@ void NorthernReaches_FireMagmaBall(void) {
   s32 from[3];
   s32 to[3];
   s32 v_r5, v_r8, v_r6, v_r7, v_r10, t0, t1, t2, t3, t10;
-  s32 t11, t12, t13, t14, t16, t18, t20, t26, t31, t36;
+  s32 t11, t12, t13, t14, t16, t18, t20, t26, t36;
   s32 t37, t40, t41, t45, t52, t53, t59, t60, t61, t66;
   s32 t70, t79, t82, t85, t88, t91, t96;
 
@@ -218,8 +218,7 @@ fire:
 ask:
   FieldEvent_SetMessageId((v_r10 + 1));
   Event_OpenMessage(11, 0);
-  t31 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-  if (t31 == 0)
+  if (!FieldEvent_AskYesNoWithActorAnimation(4, 0))
     goto ready;
   FieldEvent_ShowMessageThenWait(11, 0, 5);
   Actor_SetDestinationOffset(8, 0, 16);

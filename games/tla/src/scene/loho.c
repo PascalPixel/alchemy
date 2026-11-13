@@ -150,7 +150,7 @@ void Loho_FireCannon(void) {
   struct LohoSpark *table;
   s32 tiles, entry, i, value, zero;
   s32 t38, t47, t48, t49, t50, t51;
-  s32 t147, t186, t189;
+  s32 t147, t189;
   s32 t190, t193, t194, t226, t233, t234;
   u8 unused[4]; // Unused: gives the stack frame its 4 bytes.
 
@@ -427,8 +427,7 @@ askCannon:
   FieldCamera_MoveTo(0x21e0000, -1, 0x15e0000, 1);
   FieldCamera_WaitForArrival();
   Event_OpenMessage(17, 0);
-  t186 = Event_AskYesNoWithActorAnimation(4, 0);
-  if (t186 != 0)
+  if (Event_AskYesNoWithActorAnimation(4, 0))
     goto answeredNo;
   Actor_SetAnimation(18, 3);
   Event_ShowMessage(18, 0);

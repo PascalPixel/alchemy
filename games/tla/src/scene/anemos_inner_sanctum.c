@@ -1393,8 +1393,8 @@ extern s16 gData_02003888[];
 extern u16 gData_020038b4[];
 
 s32 Scene_Initialize(void) {
-  s32 v_r1, v_r6, v_r7, v_r2, v_r5, v_r3, v_r0, t0, t1, t3;
-  s32 t6, t9, t12, t15, t27;
+  s32 v_r1, v_r6, v_r7, v_r2, v_r5, v_r3, v_r0, t0, t1;
+  s32 t27;
   s32 t30, t35, t36, t38, t42;
   s32 t59;
   s32 t60, t61, t64;
@@ -1412,28 +1412,23 @@ s32 Scene_Initialize(void) {
   if (v_r1 == (s32)&SceneId_Ov6B0Room1) {
     Call4((void (*)())Func_02000038, (s32)gData_0200384c, (s32)gData_0200385c,
           (s32)gData_02003888, (s32)gData_020038b4);
-    t3 = Event_GetFlag(0xa87);
-    if (t3 != 0) {
+    if (Event_GetFlag(0xa87)) {
       Call3((void (*)())Func_02000a78, 0x208, 48, 0);
       MapGrid_CopyCellsTo(85, 34, 85, 8, 9, 8);
     }
-    t6 = Event_GetFlag(0xa88);
-    if (t6 != 0) {
+    if (Event_GetFlag(0xa88)) {
       Call3((void (*)())Func_02000a78, 0x228, 48, 3);
       MapGrid_CopyCellsTo(101, 34, 101, 8, 9, 8);
     }
-    t9 = Event_GetFlag(0xa89);
-    if (t9 != 0) {
+    if (Event_GetFlag(0xa89)) {
       Call3((void (*)())Func_02000a78, 0x1f8, 40, 10);
       MapGrid_CopyCellsTo(85, 46, 85, 20, 9, 8);
     }
-    t12 = Event_GetFlag(0xa8a);
-    if (t12 != 0) {
+    if (Event_GetFlag(0xa8a)) {
       Call3((void (*)())Func_02000a78, 0x238, 40, 2);
       MapGrid_CopyCellsTo(101, 46, 101, 20, 9, 8);
     }
-    t15 = Event_GetFlag(0xa8b);
-    if (t15 == 0)
+    if (!Event_GetFlag(0xa8b))
       goto L_0200a6e6;
     MapGrid_CopyCellsTo(54, 7, 33, 7, 1, 2);
     MapGrid_SetCellHeight(0x2180000, 0x880000, 0, 0);

@@ -562,36 +562,30 @@ void Func_02000be4(void) {
 }
 
 void Garoh_InitializeRoom2(void) {
-  s32 t4;
 
   Task_AddFrame(Func_02000a68, 0x480);
   Tightrope_Initialize();
   Tightrope_Place(0, 10, 11);
-  t4 = Event_GetFlag(FLAG_GAROH_NIGHT);
-  if (t4 == 0)
-    goto L_02008da6;
-  if (gMainRoutineWork.entrance != 12)
-    goto L_02008d72;
-  PaletteFade_ApplyTarget(0x2048c9, 1);
-  goto L_02008d7e;
-L_02008d72:
-  PaletteFade_ApplyTarget(0x10007, 1);
-L_02008d7e:
-  PaletteFade_Interpolate(1);
-  Event_WaitTransitionFrames();
-  BattleEffect_PackTargetBuffer();
-  Func_020003d8();
-  PaletteFade_ApplyTarget(0x10000, 1);
-  Task_AddFrame((s32)Func_020002a4, 0xc80);
-  goto L_02008dea;
-L_02008da6:
-  MapGrid_CopyCellsTo(20, 7, 9, 7, 5, 5);
-  MapGrid_CopyCellsTo(20, 71, 9, 71, 5, 5);
-  MapGrid_CopyCellsTo(84, 7, 73, 7, 5, 5);
-  Func_02000390();
-  PaletteFade_ApplyTarget(0x10000, 1);
-  Func_02000280();
-L_02008dea:
+  if (Event_GetFlag(FLAG_GAROH_NIGHT)) {
+    if (gMainRoutineWork.entrance == 12) {
+      PaletteFade_ApplyTarget(0x2048c9, 1);
+    } else {
+      PaletteFade_ApplyTarget(0x10007, 1);
+    }
+    PaletteFade_Interpolate(1);
+    Event_WaitTransitionFrames();
+    BattleEffect_PackTargetBuffer();
+    Func_020003d8();
+    PaletteFade_ApplyTarget(0x10000, 1);
+    Task_AddFrame((s32)Func_020002a4, 0xc80);
+  } else {
+    MapGrid_CopyCellsTo(20, 7, 9, 7, 5, 5);
+    MapGrid_CopyCellsTo(20, 71, 9, 71, 5, 5);
+    MapGrid_CopyCellsTo(84, 7, 73, 7, 5, 5);
+    Func_02000390();
+    PaletteFade_ApplyTarget(0x10000, 1);
+    Func_02000280();
+  }
 }
 
 extern s16 gData_02005450[];
@@ -1396,10 +1390,9 @@ void Func_020022f4(void) {
   Actor_SetSpeed(9, 0x13333, 0x9999);
   Actor_SetAnimation(9, 2);
   t3 = ((s32)Actor_Get(*(s32 *)(v5)));
-  if (t3 == 0)
-    goto L_0200a66c;
-  Actor_SetDestination(9, *(s16 *)(t3 + 10), *(s16 *)(t3 + 18));
-L_0200a66c:;
+  if (t3 != 0) {
+    Actor_SetDestination(9, *(s16 *)(t3 + 10), *(s16 *)(t3 + 18));
+  }
   FieldActor_WaitForMoveById(9);
   Actor_SetPosition(9, 0, 0);
   Event_End();
@@ -1407,24 +1400,13 @@ L_0200a66c:;
 
 void Func_02002694(void) {
   s32 v5;
-  s32 t2;
   s32 t3;
-  s32 t4;
-  s32 t6;
-  s32 t8;
-  s32 t9;
-  s32 t10;
   s32 t12;
   s32 t13;
   s32 t14;
-  s32 t15;
-  s32 t16;
-  s32 t17;
-  s32 t19;
   s32 t20;
   s32 t21;
   s32 t22;
-  s32 t23;
   s32 t24;
   s32 b1;
   s32 p1;
@@ -1470,21 +1452,19 @@ void Func_02002694(void) {
   FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(0x18000, 0x3000);
   Event_OpenMessage(9, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(4, 0) != 0)
-    goto L_0200a818;
-  FieldEvent_Wait(20);
-  Actor_ShowEmote(9, 0x109, 30);
-  FieldEvent_ShowMessageThenWait(9, 0, 0);
-  *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
-      (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
-  goto L_0200a846;
-L_0200a818:;
-  FieldEvent_Wait(30);
-  Actor_ShowEmote(9, 0x109, 30);
-  *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
-      (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
-  FieldEvent_ShowMessageThenWait(9, 0, 0);
-L_0200a846:;
+  if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
+    FieldEvent_Wait(20);
+    Actor_ShowEmote(9, 0x109, 30);
+    FieldEvent_ShowMessageThenWait(9, 0, 0);
+    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
+        (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
+  } else {
+    FieldEvent_Wait(30);
+    Actor_ShowEmote(9, 0x109, 30);
+    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
+        (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
+    FieldEvent_ShowMessageThenWait(9, 0, 0);
+  }
   FieldEvent_ShowMessageThenWait(8, 0, 0);
   Actor_RunRepeatedMotion(4, 2);
   FieldEvent_Wait(10);
@@ -1493,11 +1473,9 @@ L_0200a846:;
   FieldEvent_Wait(20);
   FieldActor_LaunchFromLeader(5, 16, 0, FACING_NORTH);
   FieldActor_LaunchFromLeader(6, 32, 0, FACING_NORTH);
-  t2 = Event_GetFlag(7);
-  if (t2 == 0)
-    goto L_0200a8b2;
-  FieldActor_LaunchFromLeader(7, 48, -8, FACING_NORTHWEST);
-L_0200a8b2:;
+  if (Event_GetFlag(7)) {
+    FieldActor_LaunchFromLeader(7, 48, -8, FACING_NORTHWEST);
+  }
   FieldActor_WaitForMoveById(6);
   FieldEvent_Wait(20);
   Actor_ShowEmote(5, 0x100, 30);
@@ -1583,11 +1561,9 @@ L_0200a8b2:;
   FieldActor_StartRepeatedMotion(9, 2);
   FieldActor_StartRepeatedMotion(6, 2);
   FieldActor_StartRepeatedMotion(5, 2);
-  t4 = Event_GetFlag(7);
-  if (t4 == 0)
-    goto L_0200ab98;
-  FieldActor_StartRepeatedMotion(7, 2);
-L_0200ab98:;
+  if (Event_GetFlag(7)) {
+    FieldActor_StartRepeatedMotion(7, 2);
+  }
   Actor_RunRepeatedMotion(4, 2);
   FieldEvent_Wait(20);
   {
@@ -1626,46 +1602,42 @@ L_0200ab98:;
   Actor_ShowEmote(4, 0x101, 0);
   Actor_ShowEmote(5, 0x101, 0);
   Actor_ShowEmote(6, 0x101, 0);
-  if (Event_GetFlag(7) == 0)
-    goto L_0200ac86;
-  Actor_ShowEmote(7, 0x101, 0);
-L_0200ac86:;
+  if (Event_GetFlag(7)) {
+    Actor_ShowEmote(7, 0x101, 0);
+  }
   Actor_ShowEmote(9, 0x101, 60);
   Actor_RunRepeatedMotion(10, 2);
   FieldEvent_Wait(10);
   Event_OpenMessage(10, 0);
-  t6 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-  if (t6 == 0)
-    goto L_0200ace6;
-  FieldEvent_Wait(40);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 2 of 1799 instructions differ in
-     * tla-en. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 4);
+  if (FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
+    FieldEvent_Wait(40);
+    {
+      s32 a0 = 10;
+      /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
+       * before the others; as the plain call, 2 of 1799 instructions differ in
+       * tla-en. */
+      asm volatile("" : "+l"(a0));
+      FieldActor_SetAnimation(a0, 4);
+    }
+    FieldEvent_Wait(33);
+    {
+      s32 a0 = 10;
+      /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
+       * before the others; as the plain call, 2 of 1799 instructions differ in
+       * tla-en. */
+      asm volatile("" : "+l"(a0));
+      FieldEvent_ShowMessageThenWait(a0, 0, 0);
+    }
+    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
+        (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
+  } else {
+    FieldEvent_Wait(30);
+    Actor_RunRepeatedMotion(10, 2);
+    FieldEvent_Wait(10);
+    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
+        (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
+    FieldEvent_ShowMessageThenWait(10, 0, 0);
   }
-  FieldEvent_Wait(33);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 2 of 1799 instructions differ in
-     * tla-en. */
-    asm volatile("" : "+l"(a0));
-    FieldEvent_ShowMessageThenWait(a0, 0, 0);
-  }
-  *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
-      (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
-  goto L_0200ad16;
-L_0200ace6:;
-  FieldEvent_Wait(30);
-  Actor_RunRepeatedMotion(10, 2);
-  FieldEvent_Wait(10);
-  *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
-      (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
-  FieldEvent_ShowMessageThenWait(10, 0, 0);
-L_0200ad16:;
   Actor_RunRepeatedMotion(8, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(8, 0, 0);
@@ -1708,10 +1680,9 @@ L_0200ad16:;
   Actor_ShowEmote(4, 0x101, 0);
   Actor_ShowEmote(5, 0x101, 0);
   Actor_ShowEmote(6, 0x101, 0);
-  if (Event_GetFlag(7) == 0)
-    goto L_0200ae32;
-  Actor_ShowEmote(7, 0x101, 0);
-L_0200ae32:;
+  if (Event_GetFlag(7)) {
+    Actor_ShowEmote(7, 0x101, 0);
+  }
   Actor_ShowEmote(9, 0x101, 60);
   {
     s32 a0 = 10;
@@ -1726,38 +1697,33 @@ L_0200ae32:;
   Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(5, FACING_WEST, 0);
   Actor_FaceDirection(6, FACING_WEST, 0);
-  t8 = Event_GetFlag(7);
-  if (t8 == 0)
-    goto L_0200ae8e;
-  Actor_FaceDirection(7, FACING_WEST, 0);
-L_0200ae8e:;
-  FieldEvent_Wait(20);
-  t9 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-  if (t9 == 0)
-    goto L_0200aed2;
-  FieldEvent_Wait(40);
-  Actor_RunRepeatedMotion(5, 2);
-  FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(5, 0, 0);
-  *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
-      (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
-  goto L_0200af08;
-L_0200aed2:;
-  FieldEvent_Wait(30);
-  {
-    s32 a0 = 5;
-    /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
-     * before the others; as the plain call, 2 of 1799 instructions differ in
-     * tla-en. */
-    asm volatile("" : "+l"(a0));
-    FieldActor_SetAnimation(a0, 3);
+  if (Event_GetFlag(7)) {
+    Actor_FaceDirection(7, FACING_WEST, 0);
   }
   FieldEvent_Wait(20);
-  FieldEvent_Wait(20);
-  *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
-      (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
-  FieldEvent_ShowMessageThenWait(5, 0, 0);
-L_0200af08:;
+  if (FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
+    FieldEvent_Wait(40);
+    Actor_RunRepeatedMotion(5, 2);
+    FieldEvent_Wait(20);
+    FieldEvent_ShowMessageThenWait(5, 0, 0);
+    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
+        (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
+  } else {
+    FieldEvent_Wait(30);
+    {
+      s32 a0 = 5;
+      /* FAKEMATCH(barrier): an empty asm on a0, so the first argument is loaded
+       * before the others; as the plain call, 2 of 1799 instructions differ in
+       * tla-en. */
+      asm volatile("" : "+l"(a0));
+      FieldActor_SetAnimation(a0, 3);
+    }
+    FieldEvent_Wait(20);
+    FieldEvent_Wait(20);
+    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
+        (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
+    FieldEvent_ShowMessageThenWait(5, 0, 0);
+  }
   Actor_FaceDirection(10, FACING_NORTHEAST, 0);
   Actor_FaceDirection(8, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(30);
@@ -1765,11 +1731,9 @@ L_0200af08:;
   Actor_FaceDirection(9, FACING_NORTHEAST, 0);
   Actor_FaceDirection(5, FACING_NORTH, 0);
   Actor_FaceDirection(6, FACING_NORTH, 0);
-  t10 = Event_GetFlag(7);
-  if (t10 == 0)
-    goto L_0200af6a;
-  Actor_FaceDirection(7, FACING_NORTHWEST, 0);
-L_0200af6a:;
+  if (Event_GetFlag(7)) {
+    Actor_FaceDirection(7, FACING_NORTHWEST, 0);
+  }
   FieldEvent_Wait(30);
   Actor_RunRepeatedMotion(6, 2);
   FieldEvent_Wait(10);
@@ -1792,10 +1756,9 @@ L_0200af6a:;
   Actor_SetAnimation(4, 3);
   Actor_SetAnimation(5, 3);
   FieldActor_SetAnimation(6, 3);
-  if (Event_GetFlag(7) == 0)
-    goto L_0200affc;
-  FieldActor_SetAnimation(7, 3);
-L_0200affc:;
+  if (Event_GetFlag(7)) {
+    FieldActor_SetAnimation(7, 3);
+  }
   FieldActor_SetAnimation(9, 3);
   FieldEvent_Wait(20);
   FieldEvent_Wait(20);
@@ -2016,11 +1979,9 @@ L_0200affc:;
   FieldActor_WatchAndSetScript(5, 8);
   FieldActor_WatchAndSetScript(6, 8);
   FieldActor_WatchAndSetScript(10, 8);
-  t15 = Event_GetFlag(7);
-  if (t15 == 0)
-    goto L_0200b46e;
-  FieldActor_WatchAndSetScript(7, 8);
-L_0200b46e:;
+  if (Event_GetFlag(7)) {
+    FieldActor_WatchAndSetScript(7, 8);
+  }
   Actor_WalkToAndWait(8, 376, 208);
   Actor_WalkByAndWait(8, 0, 16);
   Actor_WalkByAndWait(8, -16, 24);
@@ -2032,11 +1993,9 @@ L_0200b46e:;
   FieldActor_Stop(5);
   FieldActor_Stop(6);
   FieldActor_Stop(10);
-  t16 = Event_GetFlag(7);
-  if (t16 == 0)
-    goto L_0200b4da;
-  FieldActor_Stop(7);
-L_0200b4da:;
+  if (Event_GetFlag(7)) {
+    FieldActor_Stop(7);
+  }
   Actor_SetPosition(8, 0, 0);
   Actor_RunRepeatedMotion(10, 2);
   FieldEvent_Wait(10);
@@ -2045,11 +2004,9 @@ L_0200b4da:;
   Actor_FaceDirection(5, FACING_NORTH, 0);
   Actor_FaceDirection(6, FACING_NORTH, 0);
   Actor_FaceDirection(4, FACING_NORTH, 0);
-  t17 = Event_GetFlag(7);
-  if (t17 == 0)
-    goto L_0200b542;
-  Actor_FaceDirection(7, FACING_NORTHWEST, 0);
-L_0200b542:;
+  if (Event_GetFlag(7)) {
+    Actor_FaceDirection(7, FACING_NORTHWEST, 0);
+  }
   FieldEvent_Wait(30);
   {
     s32 a0 = 10;
@@ -2131,18 +2088,15 @@ L_0200b542:;
   Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(5, FACING_WEST, 0);
   Actor_FaceDirection(6, FACING_WEST, 0);
-  if (Event_GetFlag(7) == 0)
-    goto L_0200b6f4;
-  Actor_FaceDirection(7, FACING_WEST, 0);
-L_0200b6f4:;
+  if (Event_GetFlag(7)) {
+    Actor_FaceDirection(7, FACING_WEST, 0);
+  }
   FieldEvent_Wait(20);
   Actor_SetAnimation(5, 3);
   FieldActor_SetAnimation(6, 3);
-  t19 = Event_GetFlag(7);
-  if (t19 == 0)
-    goto L_0200b71c;
-  FieldActor_SetAnimation(7, 3);
-L_0200b71c:;
+  if (Event_GetFlag(7)) {
+    FieldActor_SetAnimation(7, 3);
+  }
   FieldActor_SetAnimation(9, 3);
   FieldEvent_Wait(20);
   FieldEvent_Wait(20);
@@ -2161,43 +2115,37 @@ L_0200b71c:;
   p1 = (s32)&gMainRoutineWork;
   v5 = (p1 + 0x214);
   t20 = Actor_Get(*(s32 *)(v5));
-  if (t20 == 0)
-    goto L_0200b77a;
-  Actor_SetDestination(9, *(s16 *)(t20 + 10), *(s16 *)(t20 + 18));
-L_0200b77a:;
+  if (t20 != 0) {
+    Actor_SetDestination(9, *(s16 *)(t20 + 10), *(s16 *)(t20 + 18));
+  }
   FieldActor_WaitForMoveById(9);
   Actor_SetPosition(9, 0, 0);
   Actor_SetSpeed(5, 0x13333, 0x9999);
   FieldActor_SetAnimation(5, 2);
   t21 = Actor_Get(*(s32 *)(v5));
-  if (t21 == 0)
-    goto L_0200b7b8;
-  Actor_SetDestination(5, *(s16 *)(t21 + 10), *(s16 *)(t21 + 18));
-L_0200b7b8:;
+  if (t21 != 0) {
+    Actor_SetDestination(5, *(s16 *)(t21 + 10), *(s16 *)(t21 + 18));
+  }
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
   Actor_SetSpeed(6, 0x13333, 0x9999);
   FieldActor_SetAnimation(6, 2);
   t22 = Actor_Get(*(s32 *)(v5));
-  if (t22 == 0)
-    goto L_0200b7f6;
-  Actor_SetDestination(6, *(s16 *)(t22 + 10), *(s16 *)(t22 + 18));
-L_0200b7f6:;
+  if (t22 != 0) {
+    Actor_SetDestination(6, *(s16 *)(t22 + 10), *(s16 *)(t22 + 18));
+  }
   FieldActor_WaitForMoveById(6);
   Actor_SetPosition(6, 0, 0);
-  t23 = Event_GetFlag(7);
-  if (t23 == 0)
-    goto L_0200b84e;
-  Actor_SetSpeed(7, 0x13333, 0x9999);
-  FieldActor_SetAnimation(7, 2);
-  t24 = Actor_Get(*(s32 *)(v5));
-  if (t24 == 0)
-    goto L_0200b83e;
-  Actor_SetDestination(7, *(s16 *)(t24 + 10), *(s16 *)(t24 + 18));
-L_0200b83e:;
-  FieldActor_WaitForMoveById(7);
-  Actor_SetPosition(7, 0, 0);
-L_0200b84e:;
+  if (Event_GetFlag(7)) {
+    Actor_SetSpeed(7, 0x13333, 0x9999);
+    FieldActor_SetAnimation(7, 2);
+    t24 = Actor_Get(*(s32 *)(v5));
+    if (t24 != 0) {
+      Actor_SetDestination(7, *(s16 *)(t24 + 10), *(s16 *)(t24 + 18));
+    }
+    FieldActor_WaitForMoveById(7);
+    Actor_SetPosition(7, 0, 0);
+  }
   p2 = (s32)&gMainRoutineWork;
   EventCamera_FollowActor(*(s32 *)((p2 + 0x214)), 1);
   Func_02001344();
@@ -2219,36 +2167,16 @@ void Func_02003878(void) {
   s32 v6;
   s32 v7;
   s32 v8;
-  s32 t1;
   s32 t2;
-  s32 t3;
-  s32 t4;
-  s32 t5;
-  s32 t6;
-  s32 t7;
-  s32 t8;
-  s32 t9;
-  s32 t10;
-  s32 t11;
-  s32 t12;
-  s32 t13;
-  s32 t14;
   s32 t15;
   s32 t16;
   s32 t17;
   s32 t18;
-  s32 t19;
-  s32 t20;
-  s32 t21;
   s32 t22;
   s32 t23;
-  s32 t24;
-  s32 t25;
-  s32 t26;
   s32 t27;
   s32 t28;
   s32 t29;
-  s32 t30;
   s32 t31;
   s32 b1;
   s32 p1;
@@ -2266,11 +2194,9 @@ void Func_02003878(void) {
   FieldActor_LaunchFromLeader(9, -16, 0, 0xc000);
   FieldActor_LaunchFromLeader(5, 16, 0, 0xc000);
   FieldActor_LaunchFromLeader(6, 32, 0, 0xc000);
-  t1 = Event_GetFlag(7);
-  if (t1 == 0)
-    goto L_0200b920;
-  FieldActor_LaunchFromLeader(7, 48, 0, 0xc000);
-L_0200b920:;
+  if (Event_GetFlag(7)) {
+    FieldActor_LaunchFromLeader(7, 48, 0, 0xc000);
+  }
   Actor_FaceDirection(4, 0xc000, 0);
   FieldActor_WaitForMoveById(6);
   FieldEvent_Wait(20);
@@ -2296,11 +2222,9 @@ L_0200b920:;
   Actor_FaceDirection(4, 0xc000, 0);
   Actor_FaceDirection(5, 0xc000, 0);
   Actor_FaceDirection(6, 0xa000, 0);
-  t3 = Event_GetFlag(7);
-  if (t3 == 0)
-    goto L_0200ba1e;
-  Actor_FaceDirection(7, 0xa000, 0);
-L_0200ba1e:;
+  if (Event_GetFlag(7)) {
+    Actor_FaceDirection(7, 0xa000, 0);
+  }
   FieldCamera_MoveTo(0x1480000, -1, 0xb80000, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
@@ -2310,8 +2234,7 @@ L_0200ba1e:;
   Actor_SetAnimation(4, 3);
   Actor_SetAnimation(5, 3);
   Actor_SetAnimation(6, 3);
-  t4 = Event_GetFlag(7);
-  if (t4 == 0)
+  if (!Event_GetFlag(7))
     goto L_0200ba8c;
   Actor_SetAnimation(7, 3);
   goto L_0200ba8c;
@@ -2429,8 +2352,7 @@ L_0200ba8c:;
   Actor_FaceDirection(4, 0xa000, 0);
   Actor_FaceDirection(6, 0x8000, 0);
   Actor_FaceDirection(5, 0, 0);
-  t5 = Event_GetFlag(7);
-  if (t5 == 0)
+  if (!Event_GetFlag(7))
     goto L_0200bf32;
   Actor_FaceDirection(7, 0x8000, 0);
 L_0200bf32:;
@@ -2438,8 +2360,7 @@ L_0200bf32:;
   Actor_RunRepeatedMotion(10, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
-  t6 = Event_GetFlag(7);
-  if (t6 == 0)
+  if (!Event_GetFlag(7))
     goto L_0200bf6a;
   Actor_FaceDirection(7, 0xa000, 0);
 L_0200bf6a:;
@@ -2509,8 +2430,7 @@ L_0200bf6a:;
   Actor_FaceDirection(10, 0x3000, 0);
   Actor_FaceDirection(5, 0xe000, 0);
   Actor_FaceDirection(6, 0xc000, 0);
-  t7 = Event_GetFlag(7);
-  if (t7 == 0)
+  if (!Event_GetFlag(7))
     goto L_0200c216;
   Actor_FaceDirection(7, 0xc000, 0);
 L_0200c216:;
@@ -2528,8 +2448,7 @@ L_0200c216:;
   FieldEvent_ShowMessageThenWait(10, 0, 0);
   ACTOR_MODE_THEN_WAIT(9, 3, 20);
   FieldEvent_Wait(10);
-  t8 = Event_GetFlag(7);
-  if (t8 == 0)
+  if (!Event_GetFlag(7))
     goto L_0200c2bc;
   Actor_FaceDirection(7, 0xa000, 0);
 L_0200c2bc:;
@@ -2565,29 +2484,24 @@ L_0200c2bc:;
   Actor_FaceDirection(9, 0x5000, 0);
   Actor_FaceDirection(4, 0, 0);
   Actor_FaceDirection(5, 0, 0);
-  t9 = Event_GetFlag(7);
-  if (t9 == 0)
+  if (!Event_GetFlag(7))
     goto L_0200c400;
   Actor_FaceDirection(7, 0x8000, 0);
 L_0200c400:;
-  t10 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-  if (t10 != 0)
-    goto L_0200c434;
-  FieldEvent_Wait(25);
-  FieldEvent_ShowMessageThenWait(6, 0, 0);
-  *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
-      (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
-  goto L_0200c456;
-L_0200c434:;
-  FieldEvent_Wait(40);
-  *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
-      (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
-  FieldEvent_ShowMessageThenWait(6, 0, 0);
-L_0200c456:;
+  if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
+    FieldEvent_Wait(25);
+    FieldEvent_ShowMessageThenWait(6, 0, 0);
+    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
+        (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
+  } else {
+    FieldEvent_Wait(40);
+    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
+        (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
+    FieldEvent_ShowMessageThenWait(6, 0, 0);
+  }
   Actor_ShowEmote(9, 0x101, 0);
   Actor_ShowEmote(5, 0x101, 0);
-  t11 = Event_GetFlag(7);
-  if (t11 == 0)
+  if (!Event_GetFlag(7))
     goto L_0200c484;
   Actor_ShowEmote(7, 0x101, 0);
 L_0200c484:;
@@ -2616,8 +2530,7 @@ L_0200c484:;
   Actor_SetAnimation(4, 3);
   Actor_SetAnimation(5, 3);
   Actor_SetAnimation(10, 3);
-  t12 = Event_GetFlag(7);
-  if (t12 == 0)
+  if (!Event_GetFlag(7))
     goto L_0200c596;
   Actor_SetAnimation(7, 3);
 L_0200c596:;
@@ -2645,8 +2558,7 @@ L_0200c596:;
   FieldEvent_Wait(10);
   v5 = 0;
   FieldEvent_ShowTwoMessagesAndWait(10, 9, 2, 9, 5, 9, 17, 14, 20, 9, v5);
-  t13 = Event_GetFlag(7);
-  if (t13 == 0)
+  if (!Event_GetFlag(7))
     goto L_0200c694;
   Actor_FaceDirection(7, 0xa000, 0);
 L_0200c694:;
@@ -2692,23 +2604,20 @@ L_0200c694:;
   FieldEvent_Wait(20);
   ACTOR_MODE_THEN_WAIT(5, 3, 20);
   FieldEvent_Wait(10);
-  t14 = Event_GetFlag(7);
-  if (t14 == 0)
-    goto L_0200c880;
-  Actor_FaceDirection(9, 0x2000, 0);
-  FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
-  Actor_FaceDirection(10, 0x5000, 0);
-  FieldEvent_Wait(20);
-  ACTOR_MODE_THEN_WAIT(10, 3, 20);
-  FieldEvent_Wait(20);
-  Actor_SetAnimation(7, 3);
-  FieldEvent_Wait(20);
-  FieldEvent_Wait(10);
-  goto L_0200c892;
-L_0200c880:;
-  *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
-      (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
-L_0200c892:;
+  if (Event_GetFlag(7)) {
+    Actor_FaceDirection(9, 0x2000, 0);
+    FieldEvent_ShowMessageThenWait(0x2009, 0, 0);
+    Actor_FaceDirection(10, 0x5000, 0);
+    FieldEvent_Wait(20);
+    ACTOR_MODE_THEN_WAIT(10, 3, 20);
+    FieldEvent_Wait(20);
+    Actor_SetAnimation(7, 3);
+    FieldEvent_Wait(20);
+    FieldEvent_Wait(10);
+  } else {
+    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
+        (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
+  }
   Actor_WalkByAndWait(9, -42, 0);
   Actor_FaceDirection(4, 0xc000, 0);
   Actor_FaceDirection(9, 0x3000, 0);
@@ -2839,34 +2748,29 @@ L_0200caf6:;
   Actor_FaceDirection(9, 0x3000, 0);
   Actor_FaceDirection(5, 0x8000, 0);
   Actor_FaceDirection(6, 0x8000, 0);
-  t19 = Event_GetFlag(7);
-  if (t19 == 0)
+  if (!Event_GetFlag(7))
     goto L_0200cc42;
   Actor_FaceDirection(7, 0x8000, 0);
 L_0200cc42:;
   FieldEvent_Wait(20);
-  t20 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-  if (t20 != 0)
-    goto L_0200cc7c;
-  FieldEvent_Wait(30);
-  FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
-  *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
-      (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
-  goto L_0200cca2;
-L_0200cc7c:;
-  FieldEvent_Wait(40);
-  *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
-      (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
-  {
-    s32 a0 = 0x200a;
-    FieldEvent_ShowMessageThenWait(a0, 0, 0);
+  if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
+    FieldEvent_Wait(30);
+    FieldEvent_ShowMessageThenWait(0x200a, 0, 0);
+    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
+        (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
+  } else {
+    FieldEvent_Wait(40);
+    *(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) =
+        (*(u16 *)(((s32)Ram_HeapSlots->eventWork + 0x1c4)) + 1);
+    {
+      s32 a0 = 0x200a;
+      FieldEvent_ShowMessageThenWait(a0, 0, 0);
+    }
   }
-L_0200cca2:;
   Actor_FaceDirection(5, 0xc000, 0);
   Actor_FaceDirection(9, 0xe000, 0);
   Actor_FaceDirection(6, 0xa000, 0);
-  t21 = Event_GetFlag(7);
-  if (t21 == 0)
+  if (!Event_GetFlag(7))
     goto L_0200ccdc;
   Actor_FaceDirection(7, 0xa000, 0);
 L_0200ccdc:;
@@ -2892,8 +2796,7 @@ L_0200ccdc:;
   Actor_FaceDirection(10, 0x5000, 0);
   Actor_FaceDirection(9, 0x3000, 0);
   Actor_FaceDirection(5, 0x8000, 0);
-  t24 = Event_GetFlag(7);
-  if (t24 == 0)
+  if (!Event_GetFlag(7))
     goto L_0200cda2;
   Actor_FaceDirection(7, 0x8000, 0);
 L_0200cda2:;
@@ -2946,8 +2849,7 @@ L_0200cda2:;
   Actor_SetAnimation(4, 3);
   Actor_SetAnimation(5, 3);
   Actor_SetAnimation(6, 3);
-  t25 = Event_GetFlag(7);
-  if (t25 == 0)
+  if (!Event_GetFlag(7))
     goto L_0200cf2a;
   Actor_SetAnimation(7, 3);
 L_0200cf2a:;
@@ -2965,8 +2867,7 @@ L_0200cf2a:;
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   ACTOR_MODE_THEN_WAIT(4, 3, 20);
   FieldEvent_Wait(20);
-  t26 = Event_GetFlag(7);
-  if (t26 == 0)
+  if (!Event_GetFlag(7))
     goto L_0200cfbc;
   Actor_SetAnimation(7, 3);
 L_0200cfbc:;
@@ -3003,8 +2904,7 @@ L_0200d054:;
 L_0200d092:;
   FieldActor_WaitForMoveById(6);
   Actor_SetPosition(6, 0, 0);
-  t30 = Event_GetFlag(7);
-  if (t30 == 0)
+  if (!Event_GetFlag(7))
     goto L_0200d0fa;
   Actor_SetSpeed(7, 0x13333, 0x9999);
   Actor_SetAnimation(7, 2);

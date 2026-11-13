@@ -122,11 +122,9 @@ void LemuriaSpring_RiseAndFadeIn(void) {
 /// Searching the spring lets the party toss a coin into it. The spring rises
 /// into view the first time in the visit (flag 0x200), as Tolbi's does.
 void LemuriaSpring_TossCoin(void) {
-  s32 t0;
   s32 actor = FIELD_AT(&gMainRoutineWork, s32, 532);
 
-  t0 = Event_GetFlag(0x200);
-  if (t0 == 0) {
+  if (!Event_GetFlag(0x200)) {
     Event_SetFlag(0x200);
     LemuriaSpring_RiseAndFadeIn();
   }
@@ -149,7 +147,6 @@ s32 Scene_Initialize(void) {
   s32 t0;
   s32 t3;
   s32 t4;
-  s32 t7;
   s32 blend;
   s32 alpha;
 
@@ -173,8 +170,7 @@ s32 Scene_Initialize(void) {
   Event_StartScreenTransition();
   if (gMainRoutineWork.entrance == 1) {
     LemuriaSpring_InitializeTossSimulation();
-    t7 = Event_GetFlag(0x200);
-    if (t7 != 0) {
+    if (Event_GetFlag(0x200)) {
       FIELD_AT(0x4000050, u16, 0) = blend;
       FIELD_AT(0x4000052, u16, 0) = 0x1000;
     }

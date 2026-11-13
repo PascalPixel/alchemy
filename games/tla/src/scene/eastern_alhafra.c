@@ -693,77 +693,65 @@ s32 Scene_PrepareMap(void) { return 0; }
        ->v)
 
 void Func_02000fa4(void) {
-  s32 t1, t2, t8, t10, t12, t13, t18, t19, t24, v_r5;
+  s32 t2, t13, t19, v_r5;
 
-  t1 = Event_GetFlag(0x8a6);
-  if (t1 == 0)
-    goto L_02009022;
-  t2 = ((s32)Actor_Get(15));
-  v_r5 = t2;
-  Actor_SetPosition(15, PIXELS(336), PIXELS(536));
-  Actor_SetAnimation(15, 4);
-  FIELD_AT(v_r5, u8, 35) = (2 | FIELD_AT(v_r5, u8, 35));
-  FIELD_AT(v_r5, u8, 85) = 2;
-  FIELD_AT(v_r5, s32, 40) = 0;
-  FIELD_AT(v_r5, s32, 12) = -0x40000;
-  FIELD_AT(v_r5, s32, 20) = -0x40000;
-  FieldMapGrid_SetCellBehavior(0x1500000, 0x2100000, 2, 0);
-  FieldMapGrid_SetCellBehavior(0x1500000, 0x2100000, 0, 0);
-  FieldMapGrid_SetCellBehavior(0x1600000, 0x2100000, 0, 0);
-L_02009022:
-  t8 = Event_GetFlag(0x8a4);
-  if (t8 == 0)
-    goto L_0200903a;
-  Actor_SetPosition(16, 0, 0);
-L_0200903a:
-  t10 = Event_GetFlag(0x8a5);
-  if (t10 == 0)
-    goto L_02009052;
-  Actor_SetPosition(17, 0, 0);
-L_02009052:
-  t12 = Event_GetFlag(0x8a0);
-  if (t12 == 0)
-    goto L_020090a8;
-  t13 = ((s32)Actor_Get(10));
-  v_r5 = t13;
-  Actor_SetPosition(10, PIXELS(504), PIXELS(520));
-  Actor_SetAnimation(10, 2);
-  FIELD_AT(v_r5, u8, 89) = 0;
-  /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here,
-   * as the listing orders it; without it, 4 of 168 instructions differ in
-   * tla-en. */
-  do {
-  } while (0);
-  FIELD_AT(v_r5, u8, 35) = (2 | FIELD_AT(v_r5, u8, 35));
-  FieldMapGrid_SetCellBehavior(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16),
-                               0, 0);
-  MapGrid_SetAttributeBAt(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0,
-                          128);
-L_020090a8:
-  t18 = Event_GetFlag(0x8a1);
-  if (t18 == 0)
-    goto L_02009100;
-  t19 = ((s32)Actor_Get(11));
-  v_r5 = t19;
-  Actor_SetPosition(11, PIXELS(408), PIXELS(536));
-  Actor_SetAnimation(11, 2);
-  FIELD_AT(v_r5, u8, 89) = 0;
-  /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here,
-   * as the listing orders it; without it, 4 of 168 instructions differ in
-   * tla-en. */
-  do {
-  } while (0);
-  FIELD_AT(v_r5, u8, 35) = (2 | FIELD_AT(v_r5, u8, 35));
-  FieldMapGrid_SetCellBehavior(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16),
-                               0, 0);
-  MapGrid_SetAttributeBAt(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0,
-                          128);
-L_02009100:
-  t24 = Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED);
-  if (t24 == 0)
-    goto L_02009122;
-  MapGrid_CopyCells(32, 24, 2, 2, 30, 24);
-L_02009122:
+  if (Event_GetFlag(0x8a6)) {
+    t2 = ((s32)Actor_Get(15));
+    v_r5 = t2;
+    Actor_SetPosition(15, PIXELS(336), PIXELS(536));
+    Actor_SetAnimation(15, 4);
+    FIELD_AT(v_r5, u8, 35) = (2 | FIELD_AT(v_r5, u8, 35));
+    FIELD_AT(v_r5, u8, 85) = 2;
+    FIELD_AT(v_r5, s32, 40) = 0;
+    FIELD_AT(v_r5, s32, 12) = -0x40000;
+    FIELD_AT(v_r5, s32, 20) = -0x40000;
+    FieldMapGrid_SetCellBehavior(0x1500000, 0x2100000, 2, 0);
+    FieldMapGrid_SetCellBehavior(0x1500000, 0x2100000, 0, 0);
+    FieldMapGrid_SetCellBehavior(0x1600000, 0x2100000, 0, 0);
+  }
+  if (Event_GetFlag(0x8a4)) {
+    Actor_SetPosition(16, 0, 0);
+  }
+  if (Event_GetFlag(0x8a5)) {
+    Actor_SetPosition(17, 0, 0);
+  }
+  if (Event_GetFlag(0x8a0)) {
+    t13 = ((s32)Actor_Get(10));
+    v_r5 = t13;
+    Actor_SetPosition(10, PIXELS(504), PIXELS(520));
+    Actor_SetAnimation(10, 2);
+    FIELD_AT(v_r5, u8, 89) = 0;
+    /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here,
+     * as the listing orders it; without it, 4 of 168 instructions differ in
+     * tla-en. */
+    do {
+    } while (0);
+    FIELD_AT(v_r5, u8, 35) = (2 | FIELD_AT(v_r5, u8, 35));
+    FieldMapGrid_SetCellBehavior(FIELD_AT(v_r5, s32, 8),
+                                 FIELD_AT(v_r5, s32, 16), 0, 0);
+    MapGrid_SetAttributeBAt(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0,
+                            128);
+  }
+  if (Event_GetFlag(0x8a1)) {
+    t19 = ((s32)Actor_Get(11));
+    v_r5 = t19;
+    Actor_SetPosition(11, PIXELS(408), PIXELS(536));
+    Actor_SetAnimation(11, 2);
+    FIELD_AT(v_r5, u8, 89) = 0;
+    /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here,
+     * as the listing orders it; without it, 4 of 168 instructions differ in
+     * tla-en. */
+    do {
+    } while (0);
+    FIELD_AT(v_r5, u8, 35) = (2 | FIELD_AT(v_r5, u8, 35));
+    FieldMapGrid_SetCellBehavior(FIELD_AT(v_r5, s32, 8),
+                                 FIELD_AT(v_r5, s32, 16), 0, 0);
+    MapGrid_SetAttributeBAt(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0,
+                            128);
+  }
+  if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
+    MapGrid_CopyCells(32, 24, 2, 2, 30, 24);
+  }
 }
 
 void Func_0200112c(void) {
@@ -875,31 +863,28 @@ void Func_0200112c(void) {
   Actor_SetSpeed(5, 0x13333, 0x9999);
   Actor_SetAnimation(5, 2);
   object0 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object0 == 0)
-    goto L_020094c6;
-  Actor_SetDestination(5, *(s16 *)((u8 *)object0 + 10),
-                       *(s16 *)((u8 *)object0 + 18));
-L_020094c6:
+  if (object0 != 0) {
+    Actor_SetDestination(5, *(s16 *)((u8 *)object0 + 10),
+                         *(s16 *)((u8 *)object0 + 18));
+  }
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
   Actor_SetSpeed(6, 0x13333, 0x9999);
   Actor_SetAnimation(6, 2);
   object1 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object1 == 0)
-    goto L_02009504;
-  Actor_SetDestination(6, *(s16 *)((u8 *)object1 + 10),
-                       *(s16 *)((u8 *)object1 + 18));
-L_02009504:
+  if (object1 != 0) {
+    Actor_SetDestination(6, *(s16 *)((u8 *)object1 + 10),
+                         *(s16 *)((u8 *)object1 + 18));
+  }
   FieldActor_WaitForMoveById(6);
   Actor_SetPosition(6, 0, 0);
   Actor_SetSpeed(26, 0x13333, 0x9999);
   Actor_SetAnimation(26, 2);
   object2 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object2 == 0)
-    goto L_02009550;
-  Actor_SetDestination(26, *(s16 *)((u8 *)object2 + 10),
-                       *(s16 *)((u8 *)object2 + 18));
-L_02009550:
+  if (object2 != 0) {
+    Actor_SetDestination(26, *(s16 *)((u8 *)object2 + 10),
+                         *(s16 *)((u8 *)object2 + 18));
+  }
   FieldActor_WaitForMoveById(26);
   Actor_SetPosition(26, 0, 0);
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
@@ -919,15 +904,13 @@ void Func_02001574(void) {
   struct Actor *object7;
 
   result0 = Event_GetFlag(FLAG_BRIGGS_CAUGHT);
-  if (result0 != 0)
-    goto L_02009586;
-  goto L_020097dc;
-L_02009586:
+  if (result0 == 0) {
+    goto L_020097dc;
+  }
   result1 = Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED);
-  if (result1 == 0)
-    goto L_02009596;
-  goto L_020097dc;
-L_02009596:
+  if (result1 != 0) {
+    goto L_020097dc;
+  }
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgYouDoPlan);
@@ -937,10 +920,9 @@ L_02009596:
   FieldActor_LaunchFromLeader(5, 16, 0, 0x8000);
   FieldActor_LaunchFromLeader(6, 16, -16, 0x6000);
   result2 = Event_GetFlag(7);
-  if (result2 == 0)
-    goto L_02009604;
-  FieldActor_LaunchFromLeader(7, 8, 16, 0xc000);
-L_02009604:
+  if (result2 != 0) {
+    FieldActor_LaunchFromLeader(7, 8, 16, 0xc000);
+  }
   FieldActor_WaitForMoveById(6);
   Actor_FaceDirection(4, FACING_EAST, 0);
   FieldEvent_Wait(20);
@@ -964,47 +946,42 @@ L_02009604:
   Actor_ShowEmote(26, 0x106, 30);
   FieldEvent_ShowMessageThenWait(26, 0, 10);
   result3 = Event_GetFlag(7);
-  if (result3 == 0)
-    goto L_02009716;
-  Actor_SetSpeed(7, 0x13333, 0x9999);
-  Actor_SetAnimation(7, 2);
-  object4 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object4 == 0)
-    goto L_02009706;
-  Actor_SetDestination(7, *(s16 *)((u8 *)object4 + 10),
-                       *(s16 *)((u8 *)object4 + 18));
-L_02009706:
-  FieldActor_WaitForMoveById(7);
-  Actor_SetPosition(7, 0, 0);
-L_02009716:
+  if (result3 != 0) {
+    Actor_SetSpeed(7, 0x13333, 0x9999);
+    Actor_SetAnimation(7, 2);
+    object4 = Actor_GetById(gMainRoutineWork.currentOwner);
+    if (object4 != 0) {
+      Actor_SetDestination(7, *(s16 *)((u8 *)object4 + 10),
+                           *(s16 *)((u8 *)object4 + 18));
+    }
+    FieldActor_WaitForMoveById(7);
+    Actor_SetPosition(7, 0, 0);
+  }
   Actor_SetSpeed(5, 0x13333, 0x9999);
   Actor_SetAnimation(5, 2);
   object5 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object5 == 0)
-    goto L_0200974c;
-  Actor_SetDestination(5, *(s16 *)((u8 *)object5 + 10),
-                       *(s16 *)((u8 *)object5 + 18));
-L_0200974c:
+  if (object5 != 0) {
+    Actor_SetDestination(5, *(s16 *)((u8 *)object5 + 10),
+                         *(s16 *)((u8 *)object5 + 18));
+  }
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
   Actor_SetSpeed(6, 0x13333, 0x9999);
   Actor_SetAnimation(6, 2);
   object6 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object6 == 0)
-    goto L_0200978a;
-  Actor_SetDestination(6, *(s16 *)((u8 *)object6 + 10),
-                       *(s16 *)((u8 *)object6 + 18));
-L_0200978a:
+  if (object6 != 0) {
+    Actor_SetDestination(6, *(s16 *)((u8 *)object6 + 10),
+                         *(s16 *)((u8 *)object6 + 18));
+  }
   FieldActor_WaitForMoveById(6);
   Actor_SetPosition(6, 0, 0);
   Actor_SetSpeed(26, 0x13333, 0x9999);
   Actor_SetAnimation(26, 2);
   object7 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object7 == 0)
-    goto L_020097c8;
-  Actor_SetDestination(26, *(s16 *)((u8 *)object7 + 10),
-                       *(s16 *)((u8 *)object7 + 18));
-L_020097c8:
+  if (object7 != 0) {
+    Actor_SetDestination(26, *(s16 *)((u8 *)object7 + 10),
+                         *(s16 *)((u8 *)object7 + 18));
+  }
   FieldActor_WaitForMoveById(26);
   Actor_SetPosition(26, 0, 0);
   Event_End();
@@ -1030,10 +1007,9 @@ void Func_020017ec(void) {
   FieldActor_LaunchFromLeader(5, 16, 0, 0x8000);
   FieldActor_LaunchFromLeader(6, 16, -16, 0x6000);
   result0 = Event_GetFlag(7);
-  if (result0 == 0)
-    goto L_02009850;
-  FieldActor_LaunchFromLeader(7, 8, 16, 0xc000);
-L_02009850:
+  if (result0 != 0) {
+    FieldActor_LaunchFromLeader(7, 8, 16, 0xc000);
+  }
   FieldActor_WaitForMoveById(6);
   Actor_FaceDirection(4, 0xc000, 0);
   FieldEvent_Wait(20);
@@ -1041,57 +1017,53 @@ L_02009850:
   FieldEvent_Wait(10);
   Event_OpenMessage(26, 0);
   result1 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-  if (result1 != 0)
-    goto L_020098ea;
-  FieldEvent_Wait(20);
-  Actor_ShowEmote(6, 0x100, 30);
-  FieldEvent_ShowMessageThenWait(6, 0, 10);
-  Actor_FaceDirection(4, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(5, FACING_NORTH, 0);
-  FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(5, 4);
-  FieldEvent_ShowMessageThenWait(5, 0, 10);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
-  goto L_02009938;
-L_020098ea:
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
-  FieldEvent_Wait(40);
-  Actor_SetAnimationAndWait(6, 3);
-  Actor_FaceDirection(4, FACING_NORTHEAST, 0);
-  FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(6, 0, 10);
-  Actor_SetAnimationAndWait(5, 4);
-  FieldEvent_ShowMessageThenWait(5, 0, 10);
-L_02009938:
+  if (result1 == 0) {
+    FieldEvent_Wait(20);
+    Actor_ShowEmote(6, 0x100, 30);
+    FieldEvent_ShowMessageThenWait(6, 0, 10);
+    Actor_FaceDirection(4, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(5, FACING_NORTH, 0);
+    FieldEvent_Wait(10);
+    Actor_SetAnimationAndWait(5, 4);
+    FieldEvent_ShowMessageThenWait(5, 0, 10);
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
+  } else {
+    ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 2;
+    FieldEvent_Wait(40);
+    Actor_SetAnimationAndWait(6, 3);
+    Actor_FaceDirection(4, FACING_NORTHEAST, 0);
+    FieldEvent_Wait(20);
+    FieldEvent_ShowMessageThenWait(6, 0, 10);
+    Actor_SetAnimationAndWait(5, 4);
+    FieldEvent_ShowMessageThenWait(5, 0, 10);
+  }
   result2 = ((s32 (*)())GameFlag_Get)(7);
-  if (result2 == 0)
-    goto L_0200996c;
-  Actor_FaceDirection(4, FACING_NORTH, 0);
-  Actor_FaceDirection(5, FACING_NORTHWEST, 0);
-  Actor_FaceDirectionAndWait(6, 0x8000);
-  FieldEvent_Wait(10);
-  goto L_02009a2e;
-L_0200996c:
-  ((s32 (*)())Actor_ShowEmoteById)(26, 0x102, 30);
-  FieldEvent_ShowMessageThenWait(26, 0, 10);
-  Actor_FaceDirection(4, FACING_NORTH, 0);
-  Actor_FaceDirection(5, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(6, 0x8000, 0);
-  FieldEvent_Wait(30);
-  Actor_ShowEmote(26, 0x101, 30);
-  Actor_SetAnimationAndWait(26, 4);
-  FieldEvent_ShowMessageThenWait(26, 0, 10);
-  ((s32 (*)())Actor_ShowEmoteById)(26, 0x109, 30);
-  FieldEvent_ShowMessageThenWait(26, 0, 10);
-  Actor_FaceDirection(5, FACING_NORTH, 0);
-  Actor_FaceDirection(6, 0x4000, 0);
-  FieldEvent_Wait(40);
-  Actor_FaceDirection(5, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(6, 0x8000, 0);
-  FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(26, 4);
-  FieldEvent_ShowMessageThenWait(26, 0, 10);
-L_02009a2e:
+  if (result2 != 0) {
+    Actor_FaceDirection(4, FACING_NORTH, 0);
+    Actor_FaceDirection(5, FACING_NORTHWEST, 0);
+    Actor_FaceDirectionAndWait(6, 0x8000);
+    FieldEvent_Wait(10);
+  } else {
+    ((s32 (*)())Actor_ShowEmoteById)(26, 0x102, 30);
+    FieldEvent_ShowMessageThenWait(26, 0, 10);
+    Actor_FaceDirection(4, FACING_NORTH, 0);
+    Actor_FaceDirection(5, FACING_NORTHWEST, 0);
+    Actor_FaceDirection(6, 0x8000, 0);
+    FieldEvent_Wait(30);
+    Actor_ShowEmote(26, 0x101, 30);
+    Actor_SetAnimationAndWait(26, 4);
+    FieldEvent_ShowMessageThenWait(26, 0, 10);
+    ((s32 (*)())Actor_ShowEmoteById)(26, 0x109, 30);
+    FieldEvent_ShowMessageThenWait(26, 0, 10);
+    Actor_FaceDirection(5, FACING_NORTH, 0);
+    Actor_FaceDirection(6, 0x4000, 0);
+    FieldEvent_Wait(40);
+    Actor_FaceDirection(5, FACING_NORTHWEST, 0);
+    Actor_FaceDirection(6, 0x8000, 0);
+    FieldEvent_Wait(10);
+    Actor_SetAnimationAndWait(26, 4);
+    FieldEvent_ShowMessageThenWait(26, 0, 10);
+  }
   FieldEvent_SetMessageId((s32)MsgSoIThink);
   Actor_SetAnimationAndWait(26, 3);
   FieldEvent_Wait(10);
@@ -1102,47 +1074,42 @@ L_02009a2e:
   Actor_SetAnimationAndWait(4, 3);
   FieldEvent_Wait(10);
   result3 = Event_GetFlag(7);
-  if (result3 == 0)
-    goto L_02009ac2;
-  Actor_SetSpeed(7, 0x13333, 0x9999);
-  Actor_SetAnimation(7, 2);
-  object4 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object4 == 0)
-    goto L_02009ab2;
-  Actor_SetDestination(7, *(s16 *)((u8 *)object4 + 10),
-                       *(s16 *)((u8 *)object4 + 18));
-L_02009ab2:
-  FieldActor_WaitForMoveById(7);
-  Actor_SetPosition(7, 0, 0);
-L_02009ac2:
+  if (result3 != 0) {
+    Actor_SetSpeed(7, 0x13333, 0x9999);
+    Actor_SetAnimation(7, 2);
+    object4 = Actor_GetById(gMainRoutineWork.currentOwner);
+    if (object4 != 0) {
+      Actor_SetDestination(7, *(s16 *)((u8 *)object4 + 10),
+                           *(s16 *)((u8 *)object4 + 18));
+    }
+    FieldActor_WaitForMoveById(7);
+    Actor_SetPosition(7, 0, 0);
+  }
   Actor_SetSpeed(5, 0x13333, 0x9999);
   Actor_SetAnimation(5, 2);
   object5 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object5 == 0)
-    goto L_02009af8;
-  Actor_SetDestination(5, *(s16 *)((u8 *)object5 + 10),
-                       *(s16 *)((u8 *)object5 + 18));
-L_02009af8:
+  if (object5 != 0) {
+    Actor_SetDestination(5, *(s16 *)((u8 *)object5 + 10),
+                         *(s16 *)((u8 *)object5 + 18));
+  }
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
   Actor_SetSpeed(6, 0x13333, 0x9999);
   Actor_SetAnimation(6, 2);
   object6 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object6 == 0)
-    goto L_02009b36;
-  Actor_SetDestination(6, *(s16 *)((u8 *)object6 + 10),
-                       *(s16 *)((u8 *)object6 + 18));
-L_02009b36:
+  if (object6 != 0) {
+    Actor_SetDestination(6, *(s16 *)((u8 *)object6 + 10),
+                         *(s16 *)((u8 *)object6 + 18));
+  }
   FieldActor_WaitForMoveById(6);
   Actor_SetPosition(6, 0, 0);
   Actor_SetSpeed(26, 0x13333, 0x9999);
   Actor_SetAnimation(26, 2);
   object7 = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (object7 == 0)
-    goto L_02009b74;
-  Actor_SetDestination(26, *(s16 *)((u8 *)object7 + 10),
-                       *(s16 *)((u8 *)object7 + 18));
-L_02009b74:
+  if (object7 != 0) {
+    Actor_SetDestination(26, *(s16 *)((u8 *)object7 + 10),
+                         *(s16 *)((u8 *)object7 + 18));
+  }
   FieldActor_WaitForMoveById(26);
   Actor_SetPosition(26, 0, 0);
   Event_End();

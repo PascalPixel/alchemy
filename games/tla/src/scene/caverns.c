@@ -527,10 +527,9 @@ void Func_02000d10(void) {
   s32 result0;
 
   result0 = Event_GetFlag(0x9af);
-  if (result0 == 0)
-    goto L_02008d24;
-  Func_02000d28();
-L_02008d24:
+  if (result0 != 0) {
+    Func_02000d28();
+  }
   return;
 }
 
@@ -587,11 +586,10 @@ void Func_02000e6c(void) {
 }
 
 void Func_02000e88(s32 arg0) {
-  if (arg0 != 1)
-    goto L_02008e9c;
-  Func_02000d28();
-  GameFlag_Set(0x9af);
-L_02008e9c:
+  if (arg0 == 1) {
+    Func_02000d28();
+    GameFlag_Set(0x9af);
+  }
   return;
 }
 
@@ -599,12 +597,11 @@ void Func_02000ea0(void) {
   s32 result0;
 
   result0 = Event_GetFlag(0x917);
-  if (result0 == 0)
-    goto L_02008eee;
-  MapGrid_CopyCellAttributes(31, 43, 9, 12, 48, 47);
-  MapGrid_CopyCellsTo(30, 110, 48, 110, 9, 13);
-  MapGrid_CopyCellAttributes(52, 110, 1, 1, 52, 111);
-L_02008eee:
+  if (result0 != 0) {
+    MapGrid_CopyCellAttributes(31, 43, 9, 12, 48, 47);
+    MapGrid_CopyCellsTo(30, 110, 48, 110, 9, 13);
+    MapGrid_CopyCellAttributes(52, 110, 1, 1, 52, 111);
+  }
   return;
 }
 

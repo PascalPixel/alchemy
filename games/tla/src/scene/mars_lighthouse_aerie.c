@@ -412,7 +412,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   s32 t100, t102, t112, t114, t118, t120, t122, t123, t125;
   s32 t127, t129, t132, t134, t136, t137, t141, t144, t166;
   s32 t182, t191, t194, t206, t278, t298, t334, t356, t406;
-  s32 t414, t415, t419, t420, t423, t424, t433, t451, t461, t462;
+  s32 t414, t419, t420, t423, t424, t433, t451, t461;
   s32 t463, t465, t466, t469, t471, t473, t482, t484, t490, t492;
   s32 t494, t496, t497, t499, t502, t503, t523, t528;
   s32 t531, t540, t545, t562, t628, t670, t679;
@@ -845,24 +845,21 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_SetAnimation(0, 4);
   Event_OpenMessage(0x4000, 0);
   t414 = gMainRoutineWork.currentOwner;
-  t415 = FieldEvent_AskYesNoWithActorAnimation(t414, 0);
-  if (t415 != 0)
-    goto L_02009464;
-  Actor_SetAnimation(6, 3);
-  FieldActor_Jump(6, 4, 10);
-  Event_ShowMessage(6, 0);
-  t419 = (s32)Ram_HeapSlots->eventWork;
-  t420 = FIELD_AT(t419, u16, 452);
-  FIELD_AT(t419, u16, 452) = (t420 + 1);
-  goto L_02009490;
-L_02009464:
-  Actor_SetAnimation(6, 4);
-  FieldActor_Jump(6, 4, 10);
-  t423 = (s32)Ram_HeapSlots->eventWork;
-  t424 = FIELD_AT(t423, u16, 452);
-  FIELD_AT(t423, u16, 452) = (t424 + 1);
-  Event_ShowMessage(6, 0);
-L_02009490:
+  if (!FieldEvent_AskYesNoWithActorAnimation(t414, 0)) {
+    Actor_SetAnimation(6, 3);
+    FieldActor_Jump(6, 4, 10);
+    Event_ShowMessage(6, 0);
+    t419 = (s32)Ram_HeapSlots->eventWork;
+    t420 = FIELD_AT(t419, u16, 452);
+    FIELD_AT(t419, u16, 452) = (t420 + 1);
+  } else {
+    Actor_SetAnimation(6, 4);
+    FieldActor_Jump(6, 4, 10);
+    t423 = (s32)Ram_HeapSlots->eventWork;
+    t424 = FIELD_AT(t423, u16, 452);
+    FIELD_AT(t423, u16, 452) = (t424 + 1);
+    Event_ShowMessage(6, 0);
+  }
   Actor_FaceDirection(0, 0xc000, 0);
   Actor_FaceDirection(1, 0xc000, 0);
   Actor_FaceDirection(2, 0xc000, 0);
@@ -899,19 +896,16 @@ L_02009490:
   Actor_FaceDirectionAndWait(0, 0x8000);
   Event_OpenMessage(0x4000, 0);
   t461 = gMainRoutineWork.currentOwner;
-  t462 = FieldEvent_AskYesNoWithActorAnimation(t461, 0);
-  if (t462 != 0)
-    goto L_02009624;
-  t463 = gMainRoutineWork.currentOwner;
-  Actor_WaitForAnimationChange(t463);
-  t465 = (s32)Ram_HeapSlots->eventWork;
-  t466 = FIELD_AT(t465, u16, 452);
-  FIELD_AT(t465, u16, 452) = (t466 + 1);
-  goto L_02009638;
-L_02009624:
-  Actor_SetAnimation(1, 4);
-  Event_ShowMessage(0x4001, 0);
-L_02009638:
+  if (!FieldEvent_AskYesNoWithActorAnimation(t461, 0)) {
+    t463 = gMainRoutineWork.currentOwner;
+    Actor_WaitForAnimationChange(t463);
+    t465 = (s32)Ram_HeapSlots->eventWork;
+    t466 = FIELD_AT(t465, u16, 452);
+    FIELD_AT(t465, u16, 452) = (t466 + 1);
+  } else {
+    Actor_SetAnimation(1, 4);
+    Event_ShowMessage(0x4001, 0);
+  }
   work = &gMainRoutineWork;
   t469 = work->currentOwner;
   Actor_FaceDirectionAndWait(t469, 0);
@@ -1926,40 +1920,39 @@ void MarsLighthouseAerie_LightBeacon(void) {
   spawned = FieldActor_Create(0x1e9, x, y, z);
   created = spawned;
   object = spawned;
-  if (created == 0)
-    goto L_0200b8ac;
-  sprite = (struct OverlaySprite *)A(object)->animation;
-  sprite->unk5_5 = 0;
-  sprite->unk1b = zero;
-  sprite->unk9_4 = 0;
-  sprite->unk9_2 = 2;
-  A(object)->priorityFlags &= 254;
-  A(object)->motionFlags = zero;
-  A(object)->unk5c = 1;
-  A(object)->priorityFlags |= 2;
-  Actor_SetSpriteFlags(created, 0);
-  A(object)->speedLimit = 0x6666;
-  A(object)->acceleration = 0xccc;
-  A(object)->gravity = 0x8000;
-  block = HeapSlot_Alloc(68, 0x608);
-  Item_LoadIcon(247);
-  tiles = (block + 0x400);
-  Vram_Load(sprite->vramBlock, 128, tiles);
-  HeapSlot_Release(68);
-  A(object)->motionFlags = zero;
-  FieldActor_SetMoveTarget(object, 0x2000000, 0x800000, 0x1180000);
-  FieldActor_WaitForMove(object);
-  A(object)->motionFlags = 4;
-  FieldEvent_Wait(60);
-  A(object)->motionFlags = zero;
-  FieldActor_SetMoveTarget(object, 0x2000000, 0x800000, 0x1080000);
-  FieldActor_WaitForMove(object);
-  FieldEvent_Wait(20);
-  FieldActor_SetMoveTarget(object, 0x2000000, 0x500000, 0xfc0000);
-  FieldActor_WaitForMove(object);
-  FieldEvent_Wait(20);
-  Actor_Release(object);
-L_0200b8ac:
+  if (created != 0) {
+    sprite = (struct OverlaySprite *)A(object)->animation;
+    sprite->unk5_5 = 0;
+    sprite->unk1b = zero;
+    sprite->unk9_4 = 0;
+    sprite->unk9_2 = 2;
+    A(object)->priorityFlags &= 254;
+    A(object)->motionFlags = zero;
+    A(object)->unk5c = 1;
+    A(object)->priorityFlags |= 2;
+    Actor_SetSpriteFlags(created, 0);
+    A(object)->speedLimit = 0x6666;
+    A(object)->acceleration = 0xccc;
+    A(object)->gravity = 0x8000;
+    block = HeapSlot_Alloc(68, 0x608);
+    Item_LoadIcon(247);
+    tiles = (block + 0x400);
+    Vram_Load(sprite->vramBlock, 128, tiles);
+    HeapSlot_Release(68);
+    A(object)->motionFlags = zero;
+    FieldActor_SetMoveTarget(object, 0x2000000, 0x800000, 0x1180000);
+    FieldActor_WaitForMove(object);
+    A(object)->motionFlags = 4;
+    FieldEvent_Wait(60);
+    A(object)->motionFlags = zero;
+    FieldActor_SetMoveTarget(object, 0x2000000, 0x800000, 0x1080000);
+    FieldActor_WaitForMove(object);
+    FieldEvent_Wait(20);
+    FieldActor_SetMoveTarget(object, 0x2000000, 0x500000, 0xfc0000);
+    FieldActor_WaitForMove(object);
+    FieldEvent_Wait(20);
+    Actor_Release(object);
+  }
   FieldEvent_Wait(40);
   FieldActor_SetSpritePriority(23, 2);
   FieldActor_SetSpritePriority(24, 2);
@@ -2405,34 +2398,33 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   FieldActor_SetPositionAndResetMotion(actor, 0x2000000, 0x400000, 0xcc0000);
   i = 0;
 L_0200c66c:
-  if (i != 20)
-    goto L_0200c72a;
-  MapGrid_SetShake(0x20000, 0x20000, 0x10000);
-  {
-    struct MainRoutineWork *party = &gMainRoutineWork;
-    ownerInLoop = (s32)&party->currentOwner;
+  if (i == 20) {
+    MapGrid_SetShake(0x20000, 0x20000, 0x10000);
+    {
+      struct MainRoutineWork *party = &gMainRoutineWork;
+      ownerInLoop = (s32)&party->currentOwner;
+    }
+    t195 = *(s32 *)ownerInLoop;
+    FieldActor_ShowEmote(t195, 0x100, 0);
+    FieldActor_ShowEmote(5, 0x100, 0);
+    FieldActor_ShowEmote(6, 0x100, 0);
+    FieldActor_ShowEmote(7, 0x100, 0);
+    FieldActor_ShowEmote(19, 0x100, 0);
+    FieldActor_ShowEmote(0, 0x100, 0);
+    FieldActor_ShowEmote(1, 0x100, 0);
+    FieldActor_ShowEmote(2, 0x100, 0);
+    Actor_ShowEmote(3, 0x100, 0);
+    t205 = *(s32 *)ownerInLoop;
+    Func_02000640(t205);
+    Func_02000640(5);
+    Func_02000640(6);
+    Func_02000640(7);
+    Func_02000640(19);
+    Func_02000640(0);
+    Func_02000640(1);
+    Func_02000640(2);
+    Func_02000640(3);
   }
-  t195 = *(s32 *)ownerInLoop;
-  FieldActor_ShowEmote(t195, 0x100, 0);
-  FieldActor_ShowEmote(5, 0x100, 0);
-  FieldActor_ShowEmote(6, 0x100, 0);
-  FieldActor_ShowEmote(7, 0x100, 0);
-  FieldActor_ShowEmote(19, 0x100, 0);
-  FieldActor_ShowEmote(0, 0x100, 0);
-  FieldActor_ShowEmote(1, 0x100, 0);
-  FieldActor_ShowEmote(2, 0x100, 0);
-  Actor_ShowEmote(3, 0x100, 0);
-  t205 = *(s32 *)ownerInLoop;
-  Func_02000640(t205);
-  Func_02000640(5);
-  Func_02000640(6);
-  Func_02000640(7);
-  Func_02000640(19);
-  Func_02000640(0);
-  Func_02000640(1);
-  Func_02000640(2);
-  Func_02000640(3);
-L_0200c72a:
   t215 = ((struct Actor *)actor)->scaleX;
   ((struct Actor *)actor)->scaleX = (t215 + 0x400);
   System_Wait(1);

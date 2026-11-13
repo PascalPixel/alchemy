@@ -384,15 +384,11 @@ extern u32 gAlhafraInteriors_TravelersWalkOffScript[];
 /// (FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE), while
 /// FLAG_ISAAC_CLEARED_CROSSBONE_ISLE is set.
 void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
-  s32 t0;
-  s32 t1;
 
-  t0 = Event_GetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE);
-  if (t0 != 0) {
+  if (Event_GetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE)) {
   } else {
 #if TLA_PATCH_1 /* The Japanese edition does not check 0x200. */
-    t1 = Event_GetFlag(0x200);
-    if (t1 == 0) {
+    if (!Event_GetFlag(0x200)) {
     } else
 #endif
     {

@@ -359,14 +359,10 @@ void Func_02000198(void) {
        ->v)
 
 void Func_0200045c(void) {
-  s32 t0;
-  s32 t2;
 
-  t0 = Event_GetFlag(0xa23);
-  if (t0 != 0) {
+  if (Event_GetFlag(0xa23)) {
     Event_SetFlag(0x200);
-    t2 = Event_GetFlag(0xa21);
-    if (t2 == 0) {
+    if (!Event_GetFlag(0xa21)) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       FieldEvent_SetMessageId((s32)MsgYouReLate);
@@ -764,8 +760,8 @@ static __inline__ void Func_0200593c_(s32 a, s32 b) {
   } while (0)
 
 void Func_02000cd0(void) {
-  s32 t2, t4, t75, t77, t78, t79, t80;
-  s32 t101, t102, t135, t139, t140, t143, t144;
+  s32 t2, t4, t77, t78, t79, t80;
+  s32 t101, t102, t139, t140, t143, t144;
   s32 slot;
   s32 facing;
 
@@ -841,20 +837,17 @@ void Func_02000cd0(void) {
   Motion_SetVarCbAndRefresh_(28, 2);
   FieldEvent_Wait_(5);
   FieldMessage_ShowAtActor_(0x101c, 0);
-  t75 = Event_AskYesNoWithActorAnimation_(4, 0);
-  if (t75 != 0)
-    goto L_02008fc4;
-  Func_020058d4_(0x101c, 0, 0);
-  t77 = (s32)Ram_HeapSlots->eventWork;
-  t78 = FIELD_AT(t77, u16, 452);
-  FIELD_AT(t77, u16, 452) = (t78 + 1);
-  goto L_02008fe0;
-L_02008fc4:
-  t79 = (s32)Ram_HeapSlots->eventWork;
-  t80 = FIELD_AT(t79, u16, 452);
-  FIELD_AT(t79, u16, 452) = (t80 + 1);
-  Func_020058d4_(0x101c, 0, 0);
-L_02008fe0:
+  if (!Event_AskYesNoWithActorAnimation_(4, 0)) {
+    Func_020058d4_(0x101c, 0, 0);
+    t77 = (s32)Ram_HeapSlots->eventWork;
+    t78 = FIELD_AT(t77, u16, 452);
+    FIELD_AT(t77, u16, 452) = (t78 + 1);
+  } else {
+    t79 = (s32)Ram_HeapSlots->eventWork;
+    t80 = FIELD_AT(t79, u16, 452);
+    FIELD_AT(t79, u16, 452) = (t80 + 1);
+    Func_020058d4_(0x101c, 0, 0);
+  }
   Func_020058fc_(7, 0x100, 0);
   ((void *)Actor_ShowEmote(4, 0x100, 30));
   Actor_ArmCallback_(7, 0x8000, 0);
@@ -907,22 +900,19 @@ L_02008fe0:
   ((void *)Actor_ShowEmote(28, 0x108, 30));
   Actor_ArmCallback_(28, 0xb000, 0);
   Event_OpenMessage(28, 0);
-  t135 = Event_AskYesNoWithActorAnimation_(4, 0);
-  if (t135 != 0)
-    goto L_02009236;
-  ACTOR_SET_MODE_AND_WAIT(28, 3, 20);
-  Func_020058d4_(28, 0, 0);
-  t139 = (s32)Ram_HeapSlots->eventWork;
-  t140 = FIELD_AT(t139, u16, 452);
-  FIELD_AT(t139, u16, 452) = (t140 + 1);
-  goto L_02009260;
-L_02009236:
-  ACTOR_SET_MODE_AND_WAIT(28, 3, 20);
-  t143 = (s32)Ram_HeapSlots->eventWork;
-  t144 = FIELD_AT(t143, u16, 452);
-  FIELD_AT(t143, u16, 452) = (t144 + 1);
-  Func_020058d4_(28, 0, 0);
-L_02009260:
+  if (!Event_AskYesNoWithActorAnimation_(4, 0)) {
+    ACTOR_SET_MODE_AND_WAIT(28, 3, 20);
+    Func_020058d4_(28, 0, 0);
+    t139 = (s32)Ram_HeapSlots->eventWork;
+    t140 = FIELD_AT(t139, u16, 452);
+    FIELD_AT(t139, u16, 452) = (t140 + 1);
+  } else {
+    ACTOR_SET_MODE_AND_WAIT(28, 3, 20);
+    t143 = (s32)Ram_HeapSlots->eventWork;
+    t144 = FIELD_AT(t143, u16, 452);
+    FIELD_AT(t143, u16, 452) = (t144 + 1);
+    Func_020058d4_(28, 0, 0);
+  }
   Motion_SetVarCbAndRefresh_(7, 2);
   FieldEvent_Wait_(5);
   Func_020058d4_(7, 0, 0);
@@ -1235,7 +1225,7 @@ void Func_02001bc4(void) {
   s32 slow;
   s32 mid;
   struct Actor *actor;
-  s32 two, v_r5, t302, t310, t311, t438;
+  s32 two, v_r5, t310, t311, t438;
 
   void Func_02001b04(s32 clearStatus) {
     s32 count;
@@ -1534,48 +1524,42 @@ void Func_02001bc4(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(0, fast);
   Actor_FaceDirectionAndWait(4, slow);
-  t302 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-  if (t302 != 0)
-    goto L_0200a678;
-  ACTOR_SET_MODE_AND_WAIT(0, 3, 20);
-  FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0, 0, 0);
-  goto L_0200a6fe;
-L_0200a678:
-  Actor_ShowEmote(0, 0x107, 30);
-  ACTOR_SET_MODE_AND_WAIT(5, 4, 33);
-  t310 = (s32)Ram_HeapSlots->eventWork;
-  t311 = FIELD_AT(t310, u16, 452);
-  FIELD_AT(t310, u16, 452) = (t311 + 2);
-  Actor_FaceDirectionAndWait(5, 0x8000);
-  FieldEvent_ShowMessageThenWait(5, 0, 0);
-  Actor_FaceDirectionAndWait(5, 0x4000);
-  FieldEvent_Wait(10);
-  Actor_RunRepeatedMotion(5, 2);
-  FieldEvent_Wait(5);
-  FieldEvent_ShowMessageThenWait(5, 0, 0);
-  ACTOR_SET_MODE_AND_WAIT(0, 3, 20);
-  FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(0, 0, 0);
-L_0200a6fe:
+  if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
+    ACTOR_SET_MODE_AND_WAIT(0, 3, 20);
+    FieldEvent_Wait(10);
+    FieldEvent_ShowMessageThenWait(0, 0, 0);
+  } else {
+    Actor_ShowEmote(0, 0x107, 30);
+    ACTOR_SET_MODE_AND_WAIT(5, 4, 33);
+    t310 = (s32)Ram_HeapSlots->eventWork;
+    t311 = FIELD_AT(t310, u16, 452);
+    FIELD_AT(t310, u16, 452) = (t311 + 2);
+    Actor_FaceDirectionAndWait(5, 0x8000);
+    FieldEvent_ShowMessageThenWait(5, 0, 0);
+    Actor_FaceDirectionAndWait(5, 0x4000);
+    FieldEvent_Wait(10);
+    Actor_RunRepeatedMotion(5, 2);
+    FieldEvent_Wait(5);
+    FieldEvent_ShowMessageThenWait(5, 0, 0);
+    ACTOR_SET_MODE_AND_WAIT(0, 3, 20);
+    FieldEvent_Wait(10);
+    FieldEvent_ShowMessageThenWait(0, 0, 0);
+  }
   Actor_SetAnimation(2, 2);
   actor = Actor_Get(0);
-  if (actor == 0)
-    goto L_0200a71e;
-  Actor_SetDestination(2, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
-L_0200a71e:
+  if (actor != 0) {
+    Actor_SetDestination(2, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
+  }
   Actor_SetAnimation(3, 2);
   actor = Actor_Get(0);
-  if (actor == 0)
-    goto L_0200a73e;
-  Actor_SetDestination(3, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
-L_0200a73e:
+  if (actor != 0) {
+    Actor_SetDestination(3, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
+  }
   Actor_SetAnimation(1, 2);
   actor = Actor_Get(0);
-  if (actor == 0)
-    goto L_0200a75e;
-  Actor_SetDestination(1, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
-L_0200a75e:
+  if (actor != 0) {
+    Actor_SetDestination(1, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
+  }
   Actor_SetScript(2, (s32)gData_02005ff0);
   Actor_SetScript(3, (s32)gData_02005ff0);
   Actor_SetScript(1, (s32)gData_02005ff0);
@@ -1635,28 +1619,25 @@ L_0200a75e:
   actor = Actor_Get(4);
   two = 2;
   v_r5 = (s32)gData_02005ff0;
-  if (actor == 0)
-    goto L_0200a980;
-  Actor_SetDestination(7, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
-L_0200a980:
+  if (actor != 0) {
+    Actor_SetDestination(7, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
+  }
   Actor_SetAnimation(6, 2);
   actor = Actor_Get(4);
-  if (actor == 0)
-    goto L_0200a9a0;
-  Actor_SetDestination(6, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
-L_0200a9a0:
+  if (actor != 0) {
+    Actor_SetDestination(6, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
+  }
   Actor_SetAnimation(5, 2);
   actor = Actor_Get(4);
-  if (actor == 0)
-    goto L_0200a9c0;
-  Actor_SetDestination(5, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
-L_0200a9c0:
+  if (actor != 0) {
+    Actor_SetDestination(5, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
+  }
   Actor_SetAnimation(30, 2);
   actor = Actor_Get(4);
-  if (actor == 0)
-    goto L_0200a9e0;
-  Actor_SetDestination(30, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
-L_0200a9e0:
+  if (actor != 0) {
+    Actor_SetDestination(30, FIELD_AT(actor, s16, 10),
+                         FIELD_AT(actor, s16, 18));
+  }
   Actor_SetScript(7, v_r5);
   Actor_SetScript(6, v_r5);
   Actor_SetScript(5, v_r5);
@@ -1728,7 +1709,6 @@ void Func_02002ae4(void) {
   s32 t11;
   s32 t12;
   s32 t13;
-  s32 t67;
   s32 t166;
   s32 t167;
   s32 t168;
@@ -1736,7 +1716,6 @@ void Func_02002ae4(void) {
   s32 t184;
   s32 t185;
   s32 t186;
-  s32 t269;
   s32 t292;
   s32 t295;
   s32 t298;
@@ -1829,8 +1808,7 @@ void Func_02002ae4(void) {
   Actor_FaceDirection(6, 0x6000, 0);
   Actor_FaceDirectionAndWait(5, 0x8000);
   Actor_FaceDirection(4, 0x8000, 0);
-  t67 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-  if (t67 == 0) {
+  if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
     FieldEvent_ShowMessageThenWait(0x1d, 0, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
         (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
@@ -2037,8 +2015,7 @@ void Func_02002ae4(void) {
   Actor_FaceDirectionAndWait(0, 0xc000);
   FieldEvent_Wait(0x1e);
   Actor_FaceDirectionAndWait(4, 0x4000);
-  t269 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-  if (t269 == 0) {
+  if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
     SET_MODE_AND_WAIT(0, 3, 0x14);
     FieldEvent_Wait(0xa);
     FieldEvent_ShowMessageThenWait(0, 0, 0);
@@ -2386,8 +2363,6 @@ s32 Scene_Initialize(void) {
   s32 t6;
   s32 t7;
   s32 t8;
-  s32 t9;
-  s32 t25;
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x201;
   Call2(HangingVine_Place, 0xf, 1);
@@ -2406,8 +2381,7 @@ s32 Scene_Initialize(void) {
   FIELD_AT((t7 + 0x23), u8, 0) = (FIELD_AT((t7 + 0x23), u8, 0) | 0x80);
   t8 = Actor_Get(22);
   FIELD_AT((t8 + 0x23), u8, 0) = (0x80 | FIELD_AT((t8 + 0x23), u8, 0));
-  t9 = Event_GetFlag(0xa21);
-  if (t9 == 0) {
+  if (!Event_GetFlag(0xa21)) {
     Func_02004644();
   } else {
     t11 = Actor_Get(24);
@@ -2439,8 +2413,7 @@ s32 Scene_Initialize(void) {
           if (gMainRoutineWork.entrance == 0xd) {
             Func_02001bc4();
           } else {
-            t25 = Event_GetFlag(0xa21);
-            if (t25 != 0) {
+            if (Event_GetFlag(0xa21)) {
               Actor_SetPosition(27, 0, 0);
               Actor_SetPosition(28, 0, 0);
             }

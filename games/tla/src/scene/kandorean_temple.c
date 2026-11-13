@@ -1885,37 +1885,32 @@ void KandoreanTemple_RiseOnLeftVent();
 void KandoreanTemple_RiseOnRightVent();
 
 void KandoreanTemple_StartVentRoom(void) {
-  s32 t1, t2, t9, t19, t21, t39, t44, p_r3;
+  s32 t2, t9, p_r3;
 
-  t1 = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
-  if (t1 == 0)
-    goto L_0200acd2;
-  t2 = ((s32)Actor_GetById(9));
-  FieldActor_SetPositionAndResetMotion(t2, PIXELS(216), 0, PIXELS(216));
-  Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
-  t9 = ((s32)Actor_GetById(10));
-  Actor_SetPositionAndResetMotion(t9, PIXELS(376), 0, PIXELS(248));
-  Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
-  Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
-  GameFlag_Clear(0x20e);
-  GameFlag_Clear(0x20c);
-  GameFlag_Clear(0x20d);
-L_0200acd2:
-  t19 = GameFlag_Get(0x300);
-  if (t19 == 0)
-    goto L_0200acee;
-  Actor_SetPosition(8, PIXELS(216), PIXELS(216));
-  goto L_0200ad0a;
-L_0200acee:
-  t21 = GameFlag_Get(0x301);
-  if (t21 == 0)
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
+    t2 = ((s32)Actor_GetById(9));
+    FieldActor_SetPositionAndResetMotion(t2, PIXELS(216), 0, PIXELS(216));
+    Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
+    t9 = ((s32)Actor_GetById(10));
+    Actor_SetPositionAndResetMotion(t9, PIXELS(376), 0, PIXELS(248));
+    Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
+    GameFlag_Clear(0x20e);
+    GameFlag_Clear(0x20c);
+    GameFlag_Clear(0x20d);
+  }
+  if (GameFlag_Get(0x300)) {
+    Actor_SetPosition(8, PIXELS(216), PIXELS(216));
+    goto L_0200ad0a;
+  }
+  if (!GameFlag_Get(0x301))
     goto L_0200ad0a;
   Actor_SetPosition(8, PIXELS(376), PIXELS(248));
 L_0200ad0a:
@@ -1939,8 +1934,7 @@ L_0200ad0a:
   KandoreanTemple_PrepareLiftBase(19);
   KandoreanTemple_PrepareLiftBase(20);
   Actor_PlaceBlocks(gKandoreanTemple_PillarActors);
-  t39 = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
-  if (t39 != 0)
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
     goto L_0200adda;
   if (gMainRoutineWork.entrance != 3) {
     p_r3 = gMainRoutineWork.entrance;
@@ -1959,8 +1953,7 @@ L_0200adda:
   gKandoreanTemple_RightBobPhase = 0;
   Task_AddFrame(KandoreanTemple_RunLeftVent, 0x480);
   Task_Add((s32)KandoreanTemple_RunRightVent, 0x480);
-  t44 = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
-  if (t44 != 0)
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
     goto L_0200ae24;
   if (gMainRoutineWork.entrance != 5)
     goto L_0200ae24;

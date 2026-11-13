@@ -379,7 +379,7 @@ void Field_StartPaletteTransition();
 /// "You are Lord Felix, correct?"
 s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 r5_1, r7_1, r8_1, r5_3, r5_4, r5_5;
-  s32 v0, v2, r0, v10, v14, v17, v18, r2, r3, v29;
+  s32 v0, v2, r0, v10, v14, v17, r2, r3, v29;
   struct Actor *v3, *v6, *v7, *v12, *v13, *v19, *v20, *v22, *v23, *v24, *v25,
       *v26, *v27;
 
@@ -792,8 +792,7 @@ waitForCycle:
   Event_Wait(10);
   Actor_ShowEmote(15, 0x103, 30);
   Event_OpenMessage(15, 0);
-  v18 = Event_AskYesNoWithActorAnimation(4, 0);
-  if (v18 == 0) {
+  if (!Event_AskYesNoWithActorAnimation(4, 0)) {
     Event_Wait(15);
     Event_ShowMessageThenWait(15, 0, 5);
     FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452) =

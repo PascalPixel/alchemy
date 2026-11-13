@@ -296,27 +296,23 @@ void Func_02000210(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   result0 = Event_GetFlag(0xaa2);
-  if (result0 == 0)
-    goto L_02008260;
-  result1 = Event_GetFlag(0x200);
-  if (result1 == 0)
-    goto L_02008250;
-  Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
-  FieldEvent_SetMessageId((s32)MsgPenPenPen);
-  goto L_02008256;
-L_02008250:
-  FieldEvent_SetMessageId((s32)MsgPenPen2);
-L_02008256:
-  Event_ShowMessage(9, 0);
-  goto L_02008294;
-L_02008260:
-  FieldActor_Stop(9);
-  System_Wait(1);
-  Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
-  FieldEvent_SetMessageId((s32)MsgPenPen3);
-  Event_ShowMessage(9, 0);
-  FieldActor_WatchAndSetScript(9, 19);
-L_02008294:
+  if (result0 != 0) {
+    result1 = Event_GetFlag(0x200);
+    if (result1 != 0) {
+      Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
+      FieldEvent_SetMessageId((s32)MsgPenPenPen);
+    } else {
+      FieldEvent_SetMessageId((s32)MsgPenPen2);
+    }
+    Event_ShowMessage(9, 0);
+  } else {
+    FieldActor_Stop(9);
+    System_Wait(1);
+    Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
+    FieldEvent_SetMessageId((s32)MsgPenPen3);
+    Event_ShowMessage(9, 0);
+    FieldActor_WatchAndSetScript(9, 19);
+  }
   Event_End();
   return;
 }
@@ -328,22 +324,18 @@ void Func_020002ac(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   result0 = Event_GetFlag(0xaa2);
-  if (result0 == 0)
-    goto L_020082ea;
-  result1 = Event_GetFlag(0x200);
-  if (result1 == 0)
-    goto L_020082da;
-  FieldEvent_SetMessageId((s32)MsgThereIsNothing);
-  goto L_020082e0;
-L_020082da:
-  FieldEvent_SetMessageId((s32)MsgIMSoHappy);
-L_020082e0:
-  Event_ShowMessage(9, 0);
-  goto L_020082f8;
-L_020082ea:
-  FieldEvent_SetMessageId((s32)MsgMyDarlingPengulina);
-  Event_ShowMessage(9, 0);
-L_020082f8:
+  if (result0 != 0) {
+    result1 = Event_GetFlag(0x200);
+    if (result1 != 0) {
+      FieldEvent_SetMessageId((s32)MsgThereIsNothing);
+    } else {
+      FieldEvent_SetMessageId((s32)MsgIMSoHappy);
+    }
+    Event_ShowMessage(9, 0);
+  } else {
+    FieldEvent_SetMessageId((s32)MsgMyDarlingPengulina);
+    Event_ShowMessage(9, 0);
+  }
   Event_End();
   return;
 }
@@ -355,23 +347,19 @@ void Func_0200030c(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   result0 = Event_GetFlag(0xaa2);
-  if (result0 == 0)
-    goto L_0200835c;
-  result1 = Event_GetFlag(0x200);
-  if (result1 == 0)
-    goto L_0200834c;
-  Actor_FaceActor(19, gMainRoutineWork.currentOwner, 0);
-  FieldEvent_SetMessageId((s32)MsgPenPenPehnnnn);
-  goto L_02008352;
-L_0200834c:
-  FieldEvent_SetMessageId((s32)MsgPenPen2);
-L_02008352:
-  Event_ShowMessage(19, 0);
-  goto L_0200836a;
-L_0200835c:
-  FieldEvent_SetMessageId((s32)MsgPenPenPehnnn);
-  Event_ShowMessage(19, 0);
-L_0200836a:
+  if (result0 != 0) {
+    result1 = Event_GetFlag(0x200);
+    if (result1 != 0) {
+      Actor_FaceActor(19, gMainRoutineWork.currentOwner, 0);
+      FieldEvent_SetMessageId((s32)MsgPenPenPehnnnn);
+    } else {
+      FieldEvent_SetMessageId((s32)MsgPenPen2);
+    }
+    Event_ShowMessage(19, 0);
+  } else {
+    FieldEvent_SetMessageId((s32)MsgPenPenPehnnn);
+    Event_ShowMessage(19, 0);
+  }
   Event_End();
   return;
 }
@@ -383,22 +371,18 @@ void Func_02000380(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   result0 = Event_GetFlag(0xaa2);
-  if (result0 == 0)
-    goto L_020083be;
-  result1 = Event_GetFlag(0x200);
-  if (result1 == 0)
-    goto L_020083ae;
-  FieldEvent_SetMessageId((s32)MsgPengusIsPretty);
-  goto L_020083b4;
-L_020083ae:
-  FieldEvent_SetMessageId((s32)MsgIMSoGlad);
-L_020083b4:
-  Event_ShowMessage(19, 0);
-  goto L_020083cc;
-L_020083be:
-  FieldEvent_SetMessageId((s32)MsgOhhMyLeg);
-  Event_ShowMessage(19, 0);
-L_020083cc:
+  if (result0 != 0) {
+    result1 = Event_GetFlag(0x200);
+    if (result1 != 0) {
+      FieldEvent_SetMessageId((s32)MsgPengusIsPretty);
+    } else {
+      FieldEvent_SetMessageId((s32)MsgIMSoGlad);
+    }
+    Event_ShowMessage(19, 0);
+  } else {
+    FieldEvent_SetMessageId((s32)MsgOhhMyLeg);
+    Event_ShowMessage(19, 0);
+  }
   return;
 }
 
@@ -408,17 +392,15 @@ void Islets_TalkToHealer(void) {
   s32 result0;
 
   result0 = Leader_IsFacingNorth();
-  if (result0 == 0)
-    goto L_0200841e;
-  Sanctum_Run(21);
-  goto L_0200843a;
-L_0200841e:
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId((s32)MsgIAmHere);
-  Event_ShowMessage(21, 0);
-  Event_End();
-L_0200843a:
+  if (result0 != 0) {
+    Sanctum_Run(21);
+  } else {
+    Event_Start();
+    FieldEvent_ResolvePendingActions(0);
+    FieldEvent_SetMessageId((s32)MsgIAmHere);
+    Event_ShowMessage(21, 0);
+    Event_End();
+  }
   return;
 }
 
@@ -428,20 +410,19 @@ void Func_02000440(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   result0 = Event_GetFlag(0x214);
-  if (result0 != 0)
-    goto L_020084b6;
-  FieldEvent_SetMessageId((s32)MsgWeLikeThis);
-  Event_ShowMessage(8, 0);
-  Actor_SetAttachedEffect(9, 0x102);
-  Actor_FaceDirection(9, FACING_WEST, 0);
-  Event_ShowMessage(9, 0);
-  Actor_FaceDirectionAndWait(8, FACING_EAST);
-  FieldActor_Jump(9, 4, 10);
-  Event_ShowMessage(9, 0);
-  Actor_SetAttachedEffect(9, 0x102);
-  FieldEvent_Wait(20);
-  Event_SetFlag(0x214);
-L_020084b6:
+  if (result0 == 0) {
+    FieldEvent_SetMessageId((s32)MsgWeLikeThis);
+    Event_ShowMessage(8, 0);
+    Actor_SetAttachedEffect(9, 0x102);
+    Actor_FaceDirection(9, FACING_WEST, 0);
+    Event_ShowMessage(9, 0);
+    Actor_FaceDirectionAndWait(8, FACING_EAST);
+    FieldActor_Jump(9, 4, 10);
+    Event_ShowMessage(9, 0);
+    Actor_SetAttachedEffect(9, 0x102);
+    FieldEvent_Wait(20);
+    Event_SetFlag(0x214);
+  }
   Actor_FaceActor(8, gMainRoutineWork.currentOwner, 0);
   FieldEvent_SetMessageId((s32)MsgLookWeRe);
   Event_ShowMessage(8, 0);
@@ -466,10 +447,9 @@ void Func_02000520(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   result0 = Event_GetFlag(0xaa4);
-  if (result0 == 0)
-    goto L_0200854a;
-  FieldActor_WatchAndSetScript(10, gMainRoutineWork.currentOwner);
-L_0200854a:
+  if (result0 != 0) {
+    FieldActor_WatchAndSetScript(10, gMainRoutineWork.currentOwner);
+  }
   FieldEvent_SetMessageId((s32)MsgChirpChirp2);
   Event_ShowMessage(10, 0);
   Event_End();

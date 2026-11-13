@@ -1566,7 +1566,7 @@ extern u8 MsgIfYouWant[];
 
 /// "If you want to go to the moon, if you want to go to the moon."
 void Yallam_SingMoonSong(void) {
-  s32 t1, t33, v5, v6, v7;
+  s32 t1, v5, v6, v7;
 
   t1 = ((s32)Actor_Get(8));
   v7 = t1;
@@ -1627,8 +1627,7 @@ waitFourthVerse:
   Actor_FaceDirection(9, 0xd000, 0);
   Actor_FaceDirectionAndWait(11, 0xd000);
   Event_OpenMessage(8, 0);
-  t33 = FieldEvent_AskYesNoWithActorAnimation(FIELD_AT(v5, s32, 0), 0);
-  if (t33 != 0)
+  if (FieldEvent_AskYesNoWithActorAnimation(FIELD_AT(v5, s32, 0), 0) != 0)
     goto declined;
   Yallam_SingSunSong();
   goto done;

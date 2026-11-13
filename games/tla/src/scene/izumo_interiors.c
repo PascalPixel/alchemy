@@ -1013,7 +1013,7 @@ void IzumoInteriors_ShowMove(void) {
 }
 
 void IzumoInteriors_GiveUzumeTheDoll(void) {
-  s32 t9, t21, t31;
+  s32 t21, t31;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1023,16 +1023,13 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   Event_Wait(15);
   Actor_ShowEmote(15, 0x100, 60);
   Event_OpenMessage(15, 0);
-  t9 = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
-  if (t9 != 0)
-    goto L_02009e3a;
-  Event_SetMessageId(((s32)&MsgAhCouldIt + 1));
-  Event_ShowMessageAndWait(15, 0);
-  goto L_02009e48;
-L_02009e3a:
-  Event_SetMessageId(((s32)&MsgAhCouldIt + 2));
-  Event_ShowMessageAndWait(15, 0);
-L_02009e48:
+  if (!Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0)) {
+    Event_SetMessageId(((s32)&MsgAhCouldIt + 1));
+    Event_ShowMessageAndWait(15, 0);
+  } else {
+    Event_SetMessageId(((s32)&MsgAhCouldIt + 2));
+    Event_ShowMessageAndWait(15, 0);
+  }
   Actor_ShowEmoteById(15, 0x109, 60);
   Event_SetMessageId((s32)&MsgAgainYouHave);
   Event_ShowMessageAndWait(15, 0);

@@ -265,10 +265,8 @@ void Champa_AskAboutAnkohlRuins(s32 actor) {
 }
 
 void Champa_TellOfObaba(s32 a0) {
-  s32 t0;
 
-  t0 = Event_GetFlag(FLAG_TOLD_OF_OBABA);
-  if (t0 == 0) {
+  if (!Event_GetFlag(FLAG_TOLD_OF_OBABA)) {
     Event_SetFlag(FLAG_TOLD_OF_OBABA);
     FieldEvent_SetMessageId((s32)MsgChampa35);
   } else {
@@ -294,12 +292,10 @@ void Champa_SailorsNotWelcome(s32 actor) {
 }
 
 void Champa_TakeFeizhisGift(s32 a0) {
-  s32 t2;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  t2 = Value3(Event_PickUpItem, a0, 0x19f, -1);
-  if (t2 == 0) {
+  if (!Value3(Event_PickUpItem, a0, 0x19f, -1)) {
     Event_ClearFlag(FLAG_FEIZHIS_GIFT_WAITING);
   }
   Event_End();
@@ -316,19 +312,14 @@ void Champa_FeizhiHoldsHerGift(void) {
 }
 
 void Champa_FeizhiArrives(void) {
-  s32 t0;
 #if TLA_PATCH_1
-  s32 t1;
 #endif
-  s32 t17;
 
-  t0 = Event_GetFlag(0x822);
-  if (t0 == 0) {
+  if (!Event_GetFlag(0x822)) {
   } else {
 #if TLA_PATCH_1
     // The Japanese edition has no flag 0 test.
-    t1 = Event_GetFlag(0);
-    if (t1 != 0) {
+    if (Event_GetFlag(0)) {
     } else
 #endif
     {
@@ -351,8 +342,7 @@ void Champa_FeizhiArrives(void) {
       Actor_WalkToAndWait(29, 314, 624);
       Actor_ShowEmote(0x1d, 0x101, 0x1e);
       Event_OpenMessage(0x1d, 0);
-      t17 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-      if (t17 == 0) {
+      if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
         FieldEvent_ShowMessageThenWait(0x1d, 0, 5);
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId =
             (((struct EventWork *)Ram_HeapSlots->eventWork)->messageId + 1);
@@ -522,9 +512,6 @@ void Champa_RotatePaletteColors(void) {
 s32 Tightrope_Initialize();
 
 s32 Scene_Initialize(void) {
-  s32 t12;
-  s32 t19;
-  s32 t23;
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
   Task_AddFrame((s32)Champa_RotatePaletteColors, 0xc80);
@@ -537,32 +524,27 @@ s32 Scene_Initialize(void) {
   Tightrope_Initialize();
   Tightrope_Place(0, 8, 9);
   Map_SetLayerEntryFlag(3);
-  t12 = Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA);
-  if (t12 != 0) {
+  if (Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA)) {
     FieldActor_SetSpritePriority(20, 2);
     FieldActor_SetSpritePriority(21, 3);
     FieldActor_SetSpritePriority(22, 3);
     FieldActor_SetSpritePriority(19, 3);
     Actor_SetActionCallback(Actor_Get(18), 9);
-    t19 = Event_GetFlag(FLAG_SAILORS_SPOTTED_FELIX);
-    if (t19 != 0) {
+    if (Event_GetFlag(FLAG_SAILORS_SPOTTED_FELIX)) {
       Actor_SetPosition(32, 0, 0);
       Actor_SetPosition(33, 0, 0);
       Actor_SetPosition(34, 0, 0);
     }
   }
-  t23 = Event_GetFlag(FLAG_FEIZHIS_GIFT_WAITING);
-  if (t23 != 0) {
+  if (Event_GetFlag(FLAG_FEIZHIS_GIFT_WAITING)) {
     Champa_FeizhiHoldsHerGift();
   }
   return 0;
 }
 
 s32 Scene_PrepareMap(void) {
-  s32 t0;
 
-  t0 = Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA);
-  if (t0 != 0) {
+  if (Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA)) {
     MapGrid_CopyCellsLayered(0xb, 0x33, 5, 4, 0x10, 0x17);
     MapGrid_CopyCellAttributes(11, 51, 5, 6, 16, 23);
   }
@@ -667,10 +649,8 @@ static __inline__ void Champa_MessageOpen(s32 speaker, s32 flags) {
 }
 
 void Champa_CatchUpWithBriggs(void) {
-  s32 t0;
 
-  t0 = Event_GetFlag(FLAG_NEAR_THE_CLIFF);
-  if (t0 == 0) {
+  if (!Event_GetFlag(FLAG_NEAR_THE_CLIFF)) {
     return;
   }
   Event_SetFlag(FLAG_CAUGHT_UP_WITH_BRIGGS);

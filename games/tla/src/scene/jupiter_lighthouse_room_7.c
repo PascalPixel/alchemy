@@ -116,7 +116,7 @@ void Func_02000184(void) {
        ->v)
 
 s32 Func_02000194(void) {
-  s32 t1, t2, t3, t5, t7, t9, t11, t13, v5, v6, v7, v8;
+  s32 t1, t2, v5, v6, v7, v8;
 
   t1 = ((s32)Actor_Get(18));
   v5 = t1;
@@ -130,8 +130,7 @@ s32 Func_02000194(void) {
     goto L_020081d6;
   if (v5 != 15)
     goto L_020081d6;
-  t3 = Event_GetFlag(0xa11);
-  if (t3 != 0)
+  if (Event_GetFlag(0xa11))
     goto L_020081d6;
   Event_SetFlag(0xa10);
   v7 = 0;
@@ -140,8 +139,7 @@ L_020081d6:
     goto L_020081f8;
   if (v5 != 16)
     goto L_020081f8;
-  t5 = Event_GetFlag(0xa13);
-  if (t5 != 0)
+  if (Event_GetFlag(0xa13))
     goto L_020081f8;
   Event_SetFlag(0xa12);
   v7 = 2;
@@ -150,8 +148,7 @@ L_020081f8:
     goto L_0200821a;
   if (v5 != 10)
     goto L_0200821a;
-  t7 = Event_GetFlag(0xa15);
-  if (t7 != 0)
+  if (Event_GetFlag(0xa15))
     goto L_0200821a;
   Event_SetFlag(0xa14);
   v7 = 4;
@@ -162,8 +159,7 @@ L_0200821a:
     goto L_02008244;
   if (v5 != 15)
     goto L_02008244;
-  t9 = Event_GetFlag(0xa10);
-  if (t9 != 0)
+  if (Event_GetFlag(0xa10))
     goto L_02008244;
   Event_SetFlag(0xa11);
   v7 = 1;
@@ -172,8 +168,7 @@ L_02008244:
     goto L_02008266;
   if (v5 != 16)
     goto L_02008266;
-  t11 = Event_GetFlag(0xa12);
-  if (t11 != 0)
+  if (Event_GetFlag(0xa12))
     goto L_02008266;
   Event_SetFlag(0xa13);
   v7 = 3;
@@ -182,8 +177,7 @@ L_02008266:
     goto L_02008288;
   if (v5 != 10)
     goto L_02008288;
-  t13 = Event_GetFlag(0xa14);
-  if (t13 != 0)
+  if (Event_GetFlag(0xa14))
     goto L_02008288;
   Event_SetFlag(0xa15);
   v7 = 5;
@@ -603,16 +597,14 @@ L_02008e6e:
   FIELD_AT(t3, s32, 28) = 0xc000;
   Actors_SetCellsOpen((s32)&gData_020031c4);
   t5 = Event_GetFlag(0xa1b);
-  if (t5 == 0)
-    goto L_02008eaa;
-  Actor_SetPosition(16, PIXELS(136), PIXELS(600));
-  JupiterLighthouse_OpenDoor(0);
-L_02008eaa:
+  if (t5 != 0) {
+    Actor_SetPosition(16, PIXELS(136), PIXELS(600));
+    JupiterLighthouse_OpenDoor(0);
+  }
   t8 = Event_GetFlag(0x202);
-  if (t8 == 0)
-    goto L_02008ebe;
-  JupiterLighthouse_OpenDoor(0);
-L_02008ebe:
+  if (t8 != 0) {
+    JupiterLighthouse_OpenDoor(0);
+  }
   LightSprites_InitB();
   LightSprites_SetPriority(2);
   LightSprites_AddCounted(18, 2);

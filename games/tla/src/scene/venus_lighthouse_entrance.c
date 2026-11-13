@@ -162,10 +162,6 @@ void VenusLighthouseEntrance_WakeUp(void);
 s32 Scene_Initialize(void) {
   s32 t37;
   s32 t0;
-  s32 t7;
-  s32 t10;
-  s32 t21;
-  s32 t33;
 
   FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x100;
   t0 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
@@ -176,13 +172,11 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpritePriority(11, 1);
   FieldActor_SetSpritePriority(14, 2);
   FieldActor_SetSpritePriority(19, 2);
-  t7 = Event_GetFlag(0x892);
-  if (t7 != 0) {
+  if (Event_GetFlag(0x892)) {
     Actor_SetPosition(10, 0, 0);
     Actor_SetPosition(11, 0, 0);
   }
-  t10 = Event_GetFlag(0x890);
-  if (t10 != 0) {
+  if (Event_GetFlag(0x890)) {
     Actor_SetPosition(12, 0, 0);
     Actor_SetPosition(13, 0, 0);
     Actor_SetPosition(14, 0, 0);
@@ -195,8 +189,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(21, 0, 0);
   }
   if (gMainRoutineWork.entrance == 9) {
-    t21 = Event_GetFlag(0x891);
-    if (t21 == 0) {
+    if (!Event_GetFlag(0x891)) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       VenusLighthouseEntrance_BirdsLand();
@@ -219,8 +212,7 @@ s32 Scene_Initialize(void) {
     Party_RemoveMember(7);
     Event_SetDestination((s32)&SceneId_VenusLighthouseEntrance, 1);
   }
-  t33 = Event_GetFlag(0x893);
-  if (t33 == 0) {
+  if (!Event_GetFlag(0x893)) {
     Actor_SetAnimation(22, 5);
     FieldActor_SetSpritePriority(22, 1);
   } else {

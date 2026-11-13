@@ -545,26 +545,24 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   Actor_ShowEmote(13, 0x100, 20);
   Event_OpenMessage(13, 0);
   t87 = FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
-  if (t87 != 0)
-    goto L_02008a04;
-  Actor_WaitForAnimationChange(gMainRoutineWork.currentOwner);
-  Actor_SetAnimation(13, 7);
-  Event_ShowMessage(13, 0);
-  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), s16, 0) =
-      (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
-  goto L_02008a2c;
-L_02008a04:
-  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), s16, 0) =
-      (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
-  /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here,
-   * as the listing orders it; without it, 2 of 343 instructions differ in
-   * tla-en. */
-  do {
-  } while (0);
-  Actor_WaitForAnimationChange(gMainRoutineWork.currentOwner);
-  Actor_SetAnimation(13, 6);
-  Event_ShowMessage(13, 0);
-L_02008a2c:
+  if (t87 == 0) {
+    Actor_WaitForAnimationChange(gMainRoutineWork.currentOwner);
+    Actor_SetAnimation(13, 7);
+    Event_ShowMessage(13, 0);
+    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), s16, 0) =
+        (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
+  } else {
+    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), s16, 0) =
+        (FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1c4), u16, 0) + 1);
+    /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here,
+     * as the listing orders it; without it, 2 of 343 instructions differ in
+     * tla-en. */
+    do {
+    } while (0);
+    Actor_WaitForAnimationChange(gMainRoutineWork.currentOwner);
+    Actor_SetAnimation(13, 6);
+    Event_ShowMessage(13, 0);
+  }
   FieldEvent_Wait(40);
   Event_ShowMessage(13, 0);
   FieldActor_StartRepeatedMotion(14, 2);
@@ -917,70 +915,68 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   u16 *screen;
 
   flag = Event_GetFlag(0xa9e);
-  if (flag != 0)
-    goto L_02008ea2;
-  goto L_0200905c;
-L_02008ea2:
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  Message_ShowCentered((s32)MsgMarsStar09, 1);
-  Event_PlaySound(78);
-  System_Wait(1);
-  Event_PlaySound(182);
-  slot = &gMarsLighthouseStarRoom_MarsStar;
-  object =
-      (struct Actor *)FieldActor_Create(0x1e9, 0x2a80000, 0x80000, 0x930000);
-  *slot = object;
-  if (object != 0) {
-    sprite = object->sprite;
-    sprite->nextFrame = 0;
-    sprite->fullColor = 0;
-    sprite->palette = 0;
-    sprite->priority = 2;
-    object->motionFlags = 0;
-    object->unk5c[0] = 1;
-    sprite->unk1b[0] = 0;
-    object->priorityFlags |= 2;
-    buffer = HeapSlot_Alloc(68, 0x608);
-    Item_LoadIcon(247);
-    Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
-    HeapSlot_Release(68);
-  }
-  FieldEvent_Wait(20);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x2a8, 186);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xc000, 80);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner, 0x101, 40);
-  object = *slot;
-  if (object != 0) {
-    object->motionFlags = 3;
-    object->velocityY = 0x20000;
-    object->speedLimit = 0x20000;
-    object->acceleration = 0x10000;
-    FieldActor_SetMoveTarget(object, 0x2a00000, 0, 0xa00000);
-    FieldActor_WaitForMove((s32)*slot);
-    Event_PlaySound(135);
+  if (flag == 0) {
+  } else {
+    Event_Start();
+    FieldEvent_ResolvePendingActions(0);
+    Message_ShowCentered((s32)MsgMarsStar09, 1);
+    Event_PlaySound(78);
+    System_Wait(1);
+    Event_PlaySound(182);
+    slot = &gMarsLighthouseStarRoom_MarsStar;
+    object =
+        (struct Actor *)FieldActor_Create(0x1e9, 0x2a80000, 0x80000, 0x930000);
+    *slot = object;
+    if (object != 0) {
+      sprite = object->sprite;
+      sprite->nextFrame = 0;
+      sprite->fullColor = 0;
+      sprite->palette = 0;
+      sprite->priority = 2;
+      object->motionFlags = 0;
+      object->unk5c[0] = 1;
+      sprite->unk1b[0] = 0;
+      object->priorityFlags |= 2;
+      buffer = HeapSlot_Alloc(68, 0x608);
+      Item_LoadIcon(247);
+      Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
+      HeapSlot_Release(68);
+    }
+    FieldEvent_Wait(20);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x2a8, 186);
+    Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xc000, 80);
+    Actor_ShowEmote(gMainRoutineWork.currentOwner, 0x101, 40);
     object = *slot;
-    object->acceleration = 0x8000;
-    object->velocityY = 0x40000;
-    object->speedLimit = 0x10000;
-    FieldActor_SetMoveTarget(object, 0x2980000, 0, 0x9e0000);
-    FieldActor_WaitForMove((s32)*slot);
+    if (object != 0) {
+      object->motionFlags = 3;
+      object->velocityY = 0x20000;
+      object->speedLimit = 0x20000;
+      object->acceleration = 0x10000;
+      FieldActor_SetMoveTarget(object, 0x2a00000, 0, 0xa00000);
+      FieldActor_WaitForMove((s32)*slot);
+      Event_PlaySound(135);
+      object = *slot;
+      object->acceleration = 0x8000;
+      object->velocityY = 0x40000;
+      object->speedLimit = 0x10000;
+      FieldActor_SetMoveTarget(object, 0x2980000, 0, 0x9e0000);
+      FieldActor_WaitForMove((s32)*slot);
+    }
+    FieldEvent_Wait(20);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+    Actor_Get(gMainRoutineWork.currentOwner)->actionFlags &= 0xfe;
+    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x29e, 170);
+    FieldEvent_Wait(1);
+    Actor_Get(gMainRoutineWork.currentOwner)->actionFlags |= 1;
+    object = *slot;
+    if (object != 0)
+      Actor_Release(object);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
+    Scene_PlayMusic();
+    Event_End();
+    goto L_020093b0;
   }
-  FieldEvent_Wait(20);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
-  Actor_Get(gMainRoutineWork.currentOwner)->actionFlags &= 0xfe;
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 0x29e, 170);
-  FieldEvent_Wait(1);
-  Actor_Get(gMainRoutineWork.currentOwner)->actionFlags |= 1;
-  object = *slot;
-  if (object != 0)
-    Actor_Release(object);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
-  Scene_PlayMusic();
-  Event_End();
-  goto L_020093b0;
-L_0200905c:
   screen = (u16 *)Ram_HeapSlots->block32;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);

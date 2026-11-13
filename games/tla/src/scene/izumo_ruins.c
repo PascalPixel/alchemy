@@ -784,10 +784,9 @@ void IzumoRuins_SinkIntoSand(void) {
   object0 = Actor_Get(gMainRoutineWork.currentOwner);
   result1 = Value3((s32 (*)())MapGrid_GetCellWord, 2, (object0->x >> 20),
                    (object0->z >> 20));
-  if ((result1 >> 8) != 232)
-    goto L_020091b2;
-  object0->terrainId = 2;
-L_020091b2:
+  if (!((result1 >> 8) != 232)) {
+    object0->terrainId = 2;
+  }
   return;
 }
 

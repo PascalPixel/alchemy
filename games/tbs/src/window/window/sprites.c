@@ -47,8 +47,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     s32 mark;
 
     font = NULL;
-    if (((struct BattleMessageWork *)
-             gWindowWork[HEAP_SLOT_BATTLE_MESSAGE - HEAP_SLOT_WINDOW])
+    if (((struct BattleMessageWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_MESSAGE))
             ->window == window) {
       font = Resource_GetTableEntry((s32)&ResourceId_SmallFont);
       width = 3;
@@ -59,8 +58,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     character &= (1 << TEXT_CODE_MARK_SHIFT) - 1;
     width = 4;
 #else
-    if (((struct BattleMessageWork *)
-             gWindowWork[HEAP_SLOT_BATTLE_MESSAGE - HEAP_SLOT_WINDOW])
+    if (((struct BattleMessageWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_MESSAGE))
             ->window == window) {
       Resource_GetTableEntry((s32)&ResourceId_SmallFont);
       Resource_GetTableEntry((s32)&ResourceId_WindowTiles);

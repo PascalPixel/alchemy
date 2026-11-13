@@ -14,7 +14,7 @@
 /// (vale_plaza.c).
 void Weather_UpdateRain(void) {
   struct MapGridScrollWork *view = gMapGridWork[0];
-  struct WeatherWork *work = gMapGridWork[21];
+  struct WeatherWork *work = gWeatherWork;
   s32 *camera = &view->viewX;
   s32 cameraX = camera[0];
   s32 cameraZ = camera[1];
@@ -72,10 +72,7 @@ void Weather_UpdateRain(void) {
 /// 0 stops the lightning.
 void Weather_UpdateLightning(void) {
   struct FieldBlendWork *work = gFieldBlendWork[0];
-  // The palette fade is reached from the neighbouring lightning slot, the
-  // spelling this site matched with; gPaletteFadeWork is not measured here.
-  struct PaletteFade *target =
-      gFieldBlendWork[HEAP_SLOT_PALETTE_FADE - HEAP_SLOT_FIELD_BLEND];
+  struct PaletteFade *target = gPaletteFadeWork;
   s16 *timer = &work->timer;
 
   if (*timer < 0)

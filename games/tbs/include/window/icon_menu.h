@@ -7,6 +7,7 @@
 #include "types.h"
 #include "static_assert.h"
 #include "window.h"
+#include "heap.h"
 
 /// A command icon of the icon menu: its OAM attributes, its place and its
 /// VRAM cache slot.
@@ -58,6 +59,7 @@ STATIC_ASSERT(offsetof(struct IconMenuWork, labelBase) == 0x92);
 STATIC_ASSERT(offsetof(struct IconMenuWork, previousMode) == 0x96);
 
 /// Heap slot 58: the icon menu while one is open.
-extern struct IconMenuWork *gIconMenuWork;
+#define gIconMenuWork                                                          \
+  (*(struct IconMenuWork **)&gHeapSlots[HEAP_SLOT_ICON_MENU])
 
 #endif

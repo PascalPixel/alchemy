@@ -10,6 +10,7 @@
 #include "static_assert.h"
 #include "palette_buffers.h"
 #include "sounds.h"
+#include "heap.h"
 
 /// An actor's animated sprite (struct Sprite), as far as the
 /// pointer to its sprite id.
@@ -45,6 +46,7 @@ struct SpeakerDefinition {
 };
 
 /// The palette fade, heap slot HEAP_SLOT_PALETTE_FADE under its own name.
-extern struct PaletteFade *gPaletteFadeWork;
+#define gPaletteFadeWork                                                       \
+  (*(struct PaletteFade **)&gHeapSlots[HEAP_SLOT_PALETTE_FADE])
 
 #endif

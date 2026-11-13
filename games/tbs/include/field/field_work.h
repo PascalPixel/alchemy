@@ -8,6 +8,7 @@
 #include "types.h"
 #include "edition.h"
 #include "static_assert.h"
+#include "heap.h"
 
 struct ActorPlacement;
 struct Trigger;
@@ -184,6 +185,6 @@ STATIC_ASSERT(offsetof(struct FieldWork, queuedSound) == 0xcc8);
 
 /// The running field scene's work, heap slot HEAP_SLOT_FIELD; FieldSequence_Run
 /// takes it and frees it.
-extern struct FieldWork *gFieldWork;
+#define gFieldWork (*(struct FieldWork **)&gHeapSlots[HEAP_SLOT_FIELD])
 
 #endif

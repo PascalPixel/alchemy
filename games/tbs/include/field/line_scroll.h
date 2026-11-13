@@ -6,6 +6,7 @@
 
 #include "map_grid_scroll.h"
 #include "static_assert.h"
+#include "heap.h"
 
 /// The line scroll's work: two pages of BG1 to BG3 scroll offsets for each
 /// of the 160 scanlines, and the sine wave that bends them on each axis.
@@ -29,7 +30,8 @@ STATIC_ASSERT(offsetof(struct LineScrollWork, freqX) == 0xf08);
 
 /// The line scroll's work, HEAP_SLOT_LINE_SCROLL under its own name,
 /// which LineScroll_InitWave takes for a scene's wave.
-extern struct LineScrollWork *gLineScroll;
+#define gLineScroll                                                            \
+  (*(struct LineScrollWork **)&gHeapSlots[HEAP_SLOT_LINE_SCROLL])
 /// One cycle of sine in 256 entries, 4.12 fixed point (4096 at the peak).
 extern const s16 gLineScroll_WaveSine[];
 

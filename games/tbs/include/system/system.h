@@ -9,6 +9,7 @@
 #include "heap_release.h"
 #include "edition.h"
 #include "far_call.h"
+#include "heap.h"
 
 void Bios_SoundBiasOff(void);
 void Bios_SoundBiasOn(void);
@@ -44,7 +45,8 @@ struct Sprite;
 extern u8 IwramSoundReverbCode[];
 /// HEAP_SLOT_SPRITE_ANIMATIONS: the sprite animations (struct
 /// SpriteAnimation) that SpriteAnimation_Alloc takes from.
-extern struct SpriteAnimation *gSpriteAnimations[];
+#define gSpriteAnimations                                                      \
+  ((struct SpriteAnimation **)&gHeapSlots[HEAP_SLOT_SPRITE_ANIMATIONS])
 /// Where the debug text writes next on its 32 by 20 screen in BG0.
 extern u16 *gDebugTextCursor;
 /// Nonzero lets DebugText_Print write; the power-on set-up and the credits

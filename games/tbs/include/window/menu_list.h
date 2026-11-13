@@ -17,6 +17,7 @@
 #include "input.h"
 #include "far_call.h"
 #include "frame.h"
+#include "heap.h"
 
 enum { BATTLE_LIST_ROWS = 5 };
 
@@ -174,7 +175,8 @@ STATIC_ASSERT(offsetof(struct BattleMenuWork, chosenDjinn) == 0xe4);
     gBattleMenuWork->preferredRow = (preferred_);                              \
   } while (0)
 
-extern struct BattleMenuWork *gBattleMenuWork;
+#define gBattleMenuWork                                                        \
+  (*(struct BattleMenuWork **)&gHeapSlots[HEAP_SLOT_BATTLE_MENU])
 extern const u8 gMenu_AnimatedCursorTiles[];
 
 #endif

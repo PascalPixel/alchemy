@@ -121,23 +121,13 @@ void SpriteDissolve_RunMany(u8 **sprites, s32 count) {
 s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
                                       s32 *screenPosition) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
-#ifndef UBFIX
-  s32 *viewCoordinates = &grid->viewX;
-#endif
   s32 viewX;
   s32 viewZ;
   s32 x;
   s32 y;
 
-  // UB: viewY is a separate member, not a second element of viewX.
-  // Direct member loads change the EN save set and load order (96 bytes each).
-#ifdef UBFIX
-  viewX = grid->viewX & 0xffff0000;
-  viewZ = grid->viewY & 0xffff0000;
-#else
-  viewX = viewCoordinates[0] & 0xffff0000;
-  viewZ = viewCoordinates[1] & 0xffff0000;
-#endif
+  viewX = grid->viewX & FIELD_PIXEL_MASK;
+  viewZ = grid->viewY & FIELD_PIXEL_MASK;
   x = actor->x.fixed - viewX;
   y = actor->z.fixed - viewZ;
   // Across, from 32 pixels left of the screen to 32 past its 240; down,

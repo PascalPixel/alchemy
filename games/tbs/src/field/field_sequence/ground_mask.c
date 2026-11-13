@@ -21,21 +21,9 @@ struct MapGridScrollCameraView {
 /// HEAP_SLOT_FADE_OVERLAY and queues the marks with Oam_AddSpriteAtDepth.
 void FadeOverlay_DrawMarks(void) {
   struct FadeOverlayWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY);
-#ifdef UBFIX
   struct MapGridScrollWork *grid = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   s32 cameraX = grid->viewX >> 16;
   s32 cameraZ = grid->viewY >> 16;
-#else
-  // UB: the legacy halfword overlay aliases the map's s32 coordinates.
-  // Named-member high halves keep 474 bytes but change load scheduling
-  // from .text+0x6cce in English; the actor's named fields match
-  // plainly.
-  s16 *camera =
-      ((struct MapGridScrollCameraView *)HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID))
-          ->camera;
-  s32 cameraX = camera[1];
-  s32 cameraZ = camera[3];
-#endif
   struct AnimationSpritePart *mark = work->marks;
   struct Actor *actor = work->actor;
   s32 x;

@@ -53,12 +53,7 @@ enum {
 void Field_PlaceTreasureSpots(void) {
   u32 id;
   struct MapGridMarkers *grid = gMapGridWork[0];
-#ifdef UBFIX
   struct FieldWork *work = gFieldWork;
-#else
-  // UB: the event cell is a separate global, beyond gMapGridWork's one pointer.
-  struct FieldWork *work = gMapGridWork[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID];
-#endif
   s32 markerCount = 0;
   u8 *list = grid->markers;
   struct TreasureSpot *marker = work->treasureSpots;

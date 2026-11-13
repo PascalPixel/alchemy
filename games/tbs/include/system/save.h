@@ -12,6 +12,7 @@
 #include "heap_slots.h"
 #include "fixed_math.h"
 #include "flash.h"
+#include "heap.h"
 
 /// The header of a save sector in flash: its signature, the part it holds,
 /// its checksum and its counter.
@@ -95,7 +96,7 @@ STATIC_ASSERT(offsetof(struct SaveFileSummary, secondPartPlayTime) == 0x38);
 
 /// The save work, heap slot HEAP_SLOT_SAVE under its own name; null between
 /// save operations.
-extern struct SaveWork *gSaveWork;
+#define gSaveWork (*(struct SaveWork **)&gHeapSlots[HEAP_SLOT_SAVE])
 
 /// DMA 3's enable bit in its count and control word, which the hardware
 /// clears when the transfer is done.

@@ -30,15 +30,8 @@
 /// right-aligned on the 30-tile screen row at the top. It is four tiles high
 /// outside battle and three in battle, plus one with the PP row.
 void PartyStatus_BuildLayoutBounds(s32 flags) {
-  // UB: slot[-1] steps before the single party-status heap slot.
-#ifdef UBFIX
   struct PartyStatusWindow *layout = HEAP_SLOT_BLOCK(HEAP_SLOT_PARTY_STATUS);
   struct WindowWork *work = WINDOW_WORK;
-#else
-  void **slot = (void **)&gPartyStatusWork;
-  struct PartyStatusWindow *layout = *slot;
-  struct WindowWork *work = slot[-1];
-#endif
   s32 height = 4;
   s32 members;
   s32 width;
@@ -224,19 +217,10 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
 /// TEXT_COLOR_YELLOW at a quarter or less. When the flags change, the window is
 /// erased and laid out again first.
 void PartyStatus_Draw(s32 flags) {
-  // UB: the negative indices leave the single party-status heap slot.
-#ifdef UBFIX
   struct PartyStatusWindow *layout = HEAP_SLOT_BLOCK(HEAP_SLOT_PARTY_STATUS);
   struct BattleWork *battle = gBattleWork;
   struct Window *window = layout->window;
   struct WindowWork *work = WINDOW_WORK;
-#else
-  void **slot = (void **)gPartyStatusWork;
-  struct PartyStatusWindow *layout = slot[0];
-  struct BattleWork *battle = slot[-7];
-  struct Window *window = layout->window;
-  struct WindowWork *work = slot[-1];
-#endif
   s32 x = 0;
   u32 count;
   s32 y = 0;

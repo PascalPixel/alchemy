@@ -13,11 +13,7 @@
 /// window above or below the leader.
 s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   struct Actor *actor = Actor_Lookup(actorId);
-#ifdef UBFIX
   struct MapGridScrollWork *grid;
-#else
-  s32 *view; // the view's top left, x then y
-#endif
   s32 cameraX;
   s32 cameraZ;
   s32 x;
@@ -25,16 +21,9 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
 
   if (actor == 0)
     return -1;
-  // UB: view[1] crosses the viewX scalar; UBFIX reads the named pair.
-#ifdef UBFIX
   grid = gMapGridWork[0];
   cameraX = grid->viewX & FIELD_PIXEL_MASK;
   cameraZ = grid->viewY & FIELD_PIXEL_MASK;
-#else
-  view = &((struct MapGridScrollWork *)gMapGridWork[0])->viewX;
-  cameraX = view[0] & FIELD_PIXEL_MASK;
-  cameraZ = view[1] & FIELD_PIXEL_MASK;
-#endif
   x = actor->x.fixed - cameraX;
   z = actor->z.fixed - cameraZ - actor->y.fixed;
   *position++ = x / Q16_ONE;

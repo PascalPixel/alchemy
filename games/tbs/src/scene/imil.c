@@ -1276,13 +1276,14 @@ static void Imil_InitializeRisingEffect(struct Actor *work) {
 /// Moves and enlarges an ambient effect, then releases it when its timer
 /// expires.
 static void Imil_UpdateRisingEffect(struct Actor *actor) {
-  ((struct FieldEffect *)actor)->x += (s16)((struct FieldEffect *)actor)->spin
-                                      << 8;
-  ((struct FieldEffect *)actor)->y += px(1) / 2;
-  ((struct FieldEffect *)actor)->scaleX += 3 * Q16_ONE / 100;
-  ((struct FieldEffect *)actor)->scaleY += 3 * Q16_ONE / 100;
-  ((struct FieldEffect *)actor)->spin += 2;
-  if (--((struct FieldEffect *)actor)->countdown == 0) {
+  struct FieldEffect *effect = (struct FieldEffect *)actor;
+
+  effect->x += (s16)effect->spin << 8;
+  effect->y += px(1) / 2;
+  effect->scaleX += 3 * Q16_ONE / 100;
+  effect->scaleY += 3 * Q16_ONE / 100;
+  effect->spin += 2;
+  if (--effect->countdown == 0) {
     Actor_Release(actor);
   }
 }

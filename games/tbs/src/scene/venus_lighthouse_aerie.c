@@ -3175,17 +3175,17 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
 /// Moves an attached particle along its horizontal ellipse and preserves its
 /// target.
 static void VenusLighthouseAerie_UpdateOrbitingEffect(struct Actor *actor) {
+  struct FieldEffect *effect = (struct FieldEffect *)actor;
   struct Actor *anchor;
   s32 spin;
 
   anchor = actor->watchedActor;
-  spin = ((struct FieldEffect *)actor)->spin;
-  ((struct FieldEffect *)actor)->x =
-      anchor->x.fixed + Trig_Cos(spin) * (actor->speedLimit + 28);
-  ((struct FieldEffect *)actor)->z = Trig_Sin(spin) * 16 + px(164);
-  actor->targetX = ((struct FieldEffect *)actor)->x;
-  actor->targetZ = ((struct FieldEffect *)actor)->z;
-  ((struct FieldEffect *)actor)->spin -= TRIG_TURN / 128;
+  spin = effect->spin;
+  effect->x = anchor->x.fixed + Trig_Cos(spin) * (actor->speedLimit + 28);
+  effect->z = Trig_Sin(spin) * 16 + px(164);
+  actor->targetX = effect->x;
+  actor->targetZ = effect->z;
+  effect->spin -= TRIG_TURN / 128;
 }
 
 #include "shared/field_effect_duration_scripts.h"

@@ -327,11 +327,6 @@ DEFINE_ACTOR_FLICKER_CHILD(Actor_FlickerChild, 7)
 
 // ---- games/tla/src/scene/apojii_islands/s07a4.c ----
 
-/* VIEW(s07a4): routine Random16 as u16 Random16(void); system.h has u32
- * Random16(void); tried as the definition's u32 Random16(void), which the
- * object already declares, Func_020007a4 moves: 1 of 188 instructions in
- * tla-ja. */
-extern u16 Random16__s07a4(void) __asm__("Random16");
 /* VIEW(s07a4): routine BattleEffect_ApplyColorToTargetBuffer as s32
  * BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b); event.h has void
  * BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode); tried as the
@@ -376,7 +371,7 @@ void Func_020007a4(s32 unused, s32 id) {
    * returning s32, though its target returns nothing; as void, 2 of 188
    * instructions differ in tla-en. */
 flash:
-  ApojiiIslands_Flash(Random16__s07a4() & 0x7fff, 0);
+  ApojiiIslands_Flash(Random16() & 0x7fff, 0);
   PaletteFade_StartInterpolation(15);
   wait(10);
   ApojiiIslands_Flash(0x10000, 0);

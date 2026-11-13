@@ -341,24 +341,9 @@ struct ContigoEventWork {
   s32 value1ac;
 };
 
-struct DailaActor {
-  u8 unk00[6];
-  u16 facing;
-};
-
 struct DailaEventWork {
   u8 unk000[0x1c4];
   s16 message;
-};
-
-struct DailaStartActor {
-  u8 unk00[0x18];
-  s32 speed18;
-  s32 speed1c;
-  u8 unk20[3];
-  u8 priorityFlags;
-  u8 unk24[0x35];
-  u8 collisionFlags;
 };
 
 struct DailaMapWork {

@@ -148,7 +148,7 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 /* VIEW(s00b8): routine Actor_SetSpriteFlags as void Actor_SetSpriteFlags(struct
  * FieldEffect *effect, s32 flags); shaman_village.h has void
- * Actor_SetSpriteFlags(struct ShamanVillageObject *object, u32 value); not
+ * Actor_SetSpriteFlags(struct Actor *object, u32 value); not
  * tried: Actor_SetSpriteFlags's bound declaration was not found. */
 extern void
 Actor_SetSingleChildFlags__s00b8(struct FieldEffect *effect,
@@ -225,16 +225,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-/* VIEW(s0280): routine Import_ActorSetMode as void Import_ActorSetMode(struct
- * ShamanVillageObject *object, s32 mode); field_event.h has void
- * Import_ActorSetMode(struct Actor *object, s32 mode); tried as the rest of the
- * object declares it, it does not compile in tla-ja:
- * games/tla/src/scene/shaman_village.c:278: conflicting types for
- * `Import_ActorSetMode'. */
-struct ShamanVillageObject;
-extern void Import_ActorSetMode__s0280(struct ShamanVillageObject *object,
-                                       s32 mode) __asm__("Import_ActorSetMode");
-#define Import_ActorSetMode Import_ActorSetMode__s0280
 #ifndef TLA_SHAMAN_VILLAGE_H
 #define TLA_SHAMAN_VILLAGE_H
 
@@ -250,46 +240,12 @@ extern void Import_ActorSetMode__s0280(struct ShamanVillageObject *object,
 #include "scene_tables.h"
 #include "event_work.h"
 
-struct ShamanVillageObject {
-  u8 unk00[6];
-  u16 facing;
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 height;
-  s32 scaleX;
-  s32 scaleY;
-  u8 unk20[3];
-  u8 priorityFlags;
-  s32 velocityX;
-  s32 velocityY;
-  u8 unk2c[0x18];
-  s32 field44;
-  s32 field48;
-  u8 unk4c[4];
-  struct FieldSprite *sprite;
-  u8 unk54;
-  u8 motionFlags;
-  u8 unk56[3];
-  u8 collisionFlags;
-  u8 actionFlags;
-  u8 unk5b;
-  u8 field5c;
-  u8 unk5d[5];
-  u8 timer;
-  u8 unk63;
-  s16 field64;
-  s16 field66;
-  s32 field68;
-  void *update;
-};
-
 void Event_End(void);
 void Shop_Run(s32 shop, s32 keeper);
 void Sanctum_Run(s32 keeper);
 void Inn_CheckIn(s32 shop, s32 keeper);
-void Import_ActorSetMode(struct ShamanVillageObject *object, s32 mode);
-void Actor_Release(struct ShamanVillageObject *object);
+void Import_ActorSetMode(struct Actor *object, s32 mode);
+void Actor_Release(struct Actor *object);
 void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 void Actor_SetBlendMode(struct Actor *object, u32 value);
 void FieldPsynergy_RunHandler(s32 type);
@@ -306,8 +262,7 @@ void Actor_MoveToObject(s32 actor, s32 target);
 void BattleEffect_StartArcEffect(void);
 void BattleEffect_EndArcEffect(void);
 void BattleEffect_WaitForArcGroups(void);
-void BattleEffect_SetObjectUpdateMode(struct ShamanVillageObject *object,
-                                      s32 value);
+void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 value);
 void Scene_PlayMusic(void);
 void InventorySnapshot_Save(void);
 
@@ -349,8 +304,6 @@ extern struct SceneEntrance gShamanVillage_Room6Entrances[];
 
 #endif
 
-#undef Import_ActorSetMode
-
 void ShamanVillage_MeetAroma(void) { Djinn_JoinParty(18, 3, 13); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -363,14 +316,6 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gShamanVillage_Entrances;
 }
 
-/* VIEW(scene_tables): routine Actor_SetSpriteFlags as void
- * Actor_SetSpriteFlags(struct Actor *object, u32 flags); shaman_village.h has
- * void Actor_SetSpriteFlags(struct ShamanVillageObject *object, u32 value); not
- * tried: Actor_SetSpriteFlags's bound declaration was not found. */
-struct Actor;
-extern void Actor_SetSingleChildFlags__scene_tables(
-    struct Actor *object, u32 flags) __asm__("Actor_SetSpriteFlags");
-#define Actor_SetSpriteFlags Actor_SetSingleChildFlags__scene_tables
 #include "field/field.h"
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
@@ -462,7 +407,7 @@ void ShamanVillage_ScrollSandLayer(void) {
   }
 }
 
-void ShamanVillage_FlickerRock(struct ShamanVillageObject *object) {
+void ShamanVillage_FlickerRock(struct Actor *object) {
   s32 bit = (((u32)gFrameCount & 3) >> *((u8 *)object + 99)) & 1;
 
   FieldActor_SetSpriteColor(object, (u8)(bit * *((u8 *)object + 98)));
@@ -492,22 +437,22 @@ void Effect_CircleAndBlink(struct Actor *object) {
 /// Swings an object about x = 168: left of it the object speeds up rightward
 /// and grows, right of it leftward and shrinks. It takes sprite priority 1
 /// while it moves right, 2 otherwise, and spins.
-void ShamanVillage_SwirlSandGrain(struct ShamanVillageObject *object) {
-  object->x += object->field44;
-  object->y += object->field48;
+void ShamanVillage_SwirlSandGrain(struct Actor *object) {
+  object->x += object->bounce;
+  object->y += object->gravity;
   object->z += *(s32 *)((u8 *)object + 76);
   if (object->x >> 16 < 168) {
-    object->field44 += 0x18000;
+    object->bounce += 0x18000;
     object->scaleY = object->scaleX += 0xccc;
   } else {
-    object->field44 -= 0x18000;
+    object->bounce -= 0x18000;
     object->scaleY = object->scaleX -= 0x51e;
   }
-  if (object->field44 > 0)
+  if (object->bounce > 0)
     Scene_SetActorSpritePriority(object, 1);
   else
     Scene_SetActorSpritePriority(object, 2);
-  object->sprite->rotation += 0x1800;
+  ((struct FieldSprite *)object->sprite)->rotation += 0x1800;
 }
 
 extern u32 gFieldEffect_MediumScript[];
@@ -897,10 +842,9 @@ s32 ShamanVillage_IsFacingCounter(void) {
   u16 turn;
   s32 facing;
 
-  turn = ((struct ShamanVillageObject *)Actor_GetById(
-              gMainRoutineWork.currentOwner))
-             ->facing +
-         0x5fff;
+  turn =
+      ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner))->facing +
+      0x5fff;
   facing = 1;
   if (turn >= 0x3fff)
     facing = 0;
@@ -1235,13 +1179,12 @@ extern u32 gShamanVillage_WalkToRightStartScript[];
 /// ★ Named from the game: "If you have chosen, then we shall take the other
 /// path." (MsgShamanGuardsTakeOtherPath)
 void ShamanVillage_TakeLeftPath(void) {
-  struct ShamanVillageObject *owner;
-  struct ShamanVillageObject *shaman;
-  struct ShamanVillageObject *target;
+  struct Actor *owner;
+  struct Actor *shaman;
+  struct Actor *target;
 
-  owner = ((struct ShamanVillageObject *)Actor_GetById(
-      gMainRoutineWork.currentOwner));
-  shaman = ((struct ShamanVillageObject *)Actor_GetById(15));
+  owner = ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner));
+  shaman = ((struct Actor *)Actor_GetById(15));
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_Stop(16);
@@ -1252,7 +1195,7 @@ void ShamanVillage_TakeLeftPath(void) {
   Actor_SetAnimationAndWait(16, 3);
   Actor_SetSpeed(16, 0x19999, 0xcccc);
   Actor_SetAnimation(16, 2);
-  target = ((struct ShamanVillageObject *)Actor_GetById(15));
+  target = ((struct Actor *)Actor_GetById(15));
   if (target != NULL)
     Actor_SetDestination(16, ((s16 *)target)[5], ((s16 *)target)[9]);
   Actor_WaitForMoveById(16);
@@ -1265,7 +1208,7 @@ void ShamanVillage_TakeLeftPath(void) {
   Actor_FaceDirectionAndWait(15, FACING_NORTHEAST);
   Actor_SetAnimationAndWait(17, 3);
   Actor_SetAnimation(17, 2);
-  target = ((struct ShamanVillageObject *)Actor_GetById(15));
+  target = ((struct Actor *)Actor_GetById(15));
   if (target != NULL)
     Actor_SetDestination(17, ((s16 *)target)[5], ((s16 *)target)[9]);
   Actor_WaitForMoveById(17);
@@ -1275,14 +1218,14 @@ void ShamanVillage_TakeLeftPath(void) {
   FieldCamera_MoveTo(-1, -1, -1, 0);
   FieldCamera_SetSpeed(0x19999, 0x3333);
   FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(200), 1);
-  owner->unk63 = 0;
-  shaman->unk63 = 0;
+  owner->blockMarked = 0;
+  shaman->blockMarked = 0;
   Actor_SetScript(gMainRoutineWork.currentOwner,
                   gShamanVillage_WalkToLeftStartScript);
   Actor_SetScript(15, gShamanVillage_WalkToRightStartScript);
   do {
     wait(1);
-  } while (owner->unk63 == 0 || shaman->unk63 == 0);
+  } while (owner->blockMarked == 0 || shaman->blockMarked == 0);
   ShamanVillage_CountDownToStart();
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(168), 1);
@@ -1304,13 +1247,12 @@ void ShamanVillage_TakeLeftPath(void) {
 /// ★ Named from the game: "If you have chosen, then we shall take the other
 /// path." (MsgShamanGuardsTakeOtherPath)
 void ShamanVillage_TakeRightPath(void) {
-  struct ShamanVillageObject *owner;
-  struct ShamanVillageObject *shaman;
-  struct ShamanVillageObject *target;
+  struct Actor *owner;
+  struct Actor *shaman;
+  struct Actor *target;
 
-  owner = ((struct ShamanVillageObject *)Actor_GetById(
-      gMainRoutineWork.currentOwner));
-  shaman = ((struct ShamanVillageObject *)Actor_GetById(15));
+  owner = ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner));
+  shaman = ((struct Actor *)Actor_GetById(15));
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_Stop(16);
@@ -1321,7 +1263,7 @@ void ShamanVillage_TakeRightPath(void) {
   Actor_SetAnimationAndWait(17, 3);
   Actor_SetSpeed(17, 0x19999, 0xcccc);
   Actor_SetAnimation(17, 2);
-  target = ((struct ShamanVillageObject *)Actor_GetById(15));
+  target = ((struct Actor *)Actor_GetById(15));
   if (target != NULL)
     Actor_SetDestination(17, ((s16 *)target)[5], ((s16 *)target)[9]);
   Actor_WaitForMoveById(17);
@@ -1334,7 +1276,7 @@ void ShamanVillage_TakeRightPath(void) {
   Actor_FaceDirectionAndWait(15, FACING_NORTHWEST);
   Actor_SetAnimationAndWait(16, 3);
   Actor_SetAnimation(16, 2);
-  target = ((struct ShamanVillageObject *)Actor_GetById(15));
+  target = ((struct Actor *)Actor_GetById(15));
   if (target != NULL)
     Actor_SetDestination(16, ((s16 *)target)[5], ((s16 *)target)[9]);
   Actor_WaitForMoveById(16);
@@ -1344,14 +1286,14 @@ void ShamanVillage_TakeRightPath(void) {
   FieldCamera_MoveTo(-1, -1, -1, 0);
   FieldCamera_SetSpeed(0x19999, 0x3333);
   FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(200), 1);
-  owner->unk63 = 0;
-  shaman->unk63 = 0;
+  owner->blockMarked = 0;
+  shaman->blockMarked = 0;
   Actor_SetScript(15, gShamanVillage_WalkToLeftStartScript);
   Actor_SetScript(gMainRoutineWork.currentOwner,
                   gShamanVillage_WalkToRightStartScript);
   do {
     wait(1);
-  } while (owner->unk63 == 0 || shaman->unk63 == 0);
+  } while (owner->blockMarked == 0 || shaman->blockMarked == 0);
   ShamanVillage_CountDownToStart();
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(168), 1);
@@ -1372,8 +1314,7 @@ void ShamanVillage_TakeRightPath(void) {
 /// Move on the pillar, actor 14, to cell (32, 11): it drops into place as a
 /// bridge (flag 0x94e).
 void ShamanVillage_DropPillar(void) {
-  struct ShamanVillageObject *object =
-      ((struct ShamanVillageObject *)Actor_GetById(14));
+  struct Actor *object = ((struct Actor *)Actor_GetById(14));
 
   if (object->x >> 20 == 32 && object->z >> 20 == 11) {
     Event_Start();
@@ -1403,13 +1344,12 @@ void ShamanVillage_MeetMoapa(void) {
   Actor_SetPosition(15, PIXELS(120), PIXELS(194));
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x26666, 0x13333);
   Actor_Jump(gMainRoutineWork.currentOwner, 4, 0);
-  ((struct ShamanVillageObject *)Actor_GetById(gMainRoutineWork.currentOwner))
-      ->actionFlags &= ~1;
+  ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner))->actionFlags &=
+      ~1;
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 120, 220);
   Event_Wait(1);
   {
-    u8 *flags = &((struct ShamanVillageObject *)Actor_GetById(
-                      gMainRoutineWork.currentOwner))
+    u8 *flags = &((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner))
                      ->actionFlags;
 
     *flags |= 1;
@@ -1430,18 +1370,18 @@ void ShamanVillage_MeetMoapa(void) {
   Event_SetMessageId((s32)MsgShamanMoapaGiveMeRoom);
   Event_ShowMessage(15, 0);
   FieldCamera_SetSpeed(0xcccc, 0x1999);
-  ((struct ShamanVillageObject *)FieldCamera_GetActor())->motionFlags = 0;
+  ((struct Actor *)FieldCamera_GetActor())->motionFlags = 0;
   FieldCamera_MoveTo(PIXELS(120), 0x320000, PIXELS(224), 1);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 120, 256);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x6666, 0x3333);
-  ((struct ShamanVillageObject *)Actor_GetById(gMainRoutineWork.currentOwner))
-      ->actionFlags &= ~1;
+  ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner))->actionFlags &=
+      ~1;
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 120, 264);
   Event_Wait(1);
-  ((struct ShamanVillageObject *)Actor_GetById(gMainRoutineWork.currentOwner))
-      ->actionFlags |= 1;
+  ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner))->actionFlags |=
+      1;
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
    * frames load before the actor; as a plain call, 13 of 246 instructions
    * differ in tla-en (see the macro). */
@@ -1475,10 +1415,9 @@ void ShamanVillage_MeetMoapa(void) {
 /// rules and paths, the race's lettering, and each room's set-up and tables.
 
 /// The Shaman's Rod (item 65) drawn as an actor over the leader.
-struct ShamanVillageObject *ShamanVillage_CreateRodIcon(void) {
-  struct ShamanVillageObject *object =
-      ((struct ShamanVillageObject *)Import_ActorCreate(489, 0x780000, 0x400000,
-                                                        0x1080000));
+struct Actor *ShamanVillage_CreateRodIcon(void) {
+  struct Actor *object =
+      ((struct Actor *)Import_ActorCreate(489, 0x780000, 0x400000, 0x1080000));
   u8 *buffer = NULL;
 
   if (object == NULL)
@@ -1490,7 +1429,7 @@ struct ShamanVillageObject *ShamanVillage_CreateRodIcon(void) {
     sprite->palette = 0;
     sprite->priority = 1;
     object->motionFlags = 0;
-    object->field5c = 1;
+    object->unk5c[0] = 1;
     sprite->nextFrame = 0;
     sprite->unk1b[0] = 0;
     buffer = HeapSlot_Alloc(68, 0x608);
@@ -1507,19 +1446,19 @@ extern u32 gShamanVillage_GuardLeavesHouseScript[];
 /// ★ Named from the game: "That's the Shaman's Rod!"
 /// (MsgShamanRecognizeShamanRod)
 void ShamanVillage_ShowShamansRod(void) {
-  struct ShamanVillageObject *rod;
-  struct ShamanVillageObject *object;
+  struct Actor *rod;
+  struct Actor *object;
   s32 angle;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_PlaySound(78);
   angle = 0xc000;
-  ((struct ShamanVillageObject *)Actor_GetById(gMainRoutineWork.currentOwner))
-      ->facing = angle;
+  ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner))->facing =
+      angle;
   wait(1);
   FieldCamera_SetSpeed(0xcccc, 0x1999);
-  ((struct ShamanVillageObject *)FieldCamera_GetActor())->motionFlags = 0;
+  ((struct Actor *)FieldCamera_GetActor())->motionFlags = 0;
   FieldCamera_MoveTo(PIXELS(120), 0x280000, PIXELS(246), 1);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x13333, 0x9999);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 120, 264);
@@ -1681,8 +1620,8 @@ void ShamanVillage_ShowShamansRod(void) {
     FieldCamera_SetSpeed(0x6666, 0xccc);
     FieldCamera_MoveTo(PIXELS(180), 0x200000, z, 1);
   }
-  object = ((struct ShamanVillageObject *)Actor_GetById(16));
-  object->unk63 = 0;
+  object = ((struct Actor *)Actor_GetById(16));
+  object->blockMarked = 0;
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 15);
   Actor_WatchAndSetScript(5, 15);
   Actor_WatchAndSetScript(6, 15);
@@ -1698,7 +1637,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Event_PlaySound(78);
   do {
     wait(1);
-  } while (object->unk63 == 0);
+  } while (object->blockMarked == 0);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Actor_Stop(18);
   Actor_Stop(7);
@@ -2172,8 +2111,7 @@ void ShamanVillage_CountDownToStart(void) {
 /// ★ Named from the game: "You can do it, !" (MsgShamanCheerForCompanion)
 void ShamanVillage_ShebaClearsSand(void) {
   u8 *work = Ram_HeapSlots->effectWork;
-  struct ShamanVillageObject *object =
-      ((struct ShamanVillageObject *)Actor_GetById(16));
+  struct Actor *object = ((struct Actor *)Actor_GetById(16));
 
   s32 result;
   s32 owner;
@@ -2410,7 +2348,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_FaceDirection(18, 0, 0);
   Actor_FaceDirection(7, FACING_NORTHWEST, 0);
   result = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
-  done = &object->unk63;
+  done = &object->blockMarked;
   owner = gMainRoutineWork.currentOwner;
   if (result == 0) {
     Actor_WaitForAnimationChange(owner);
@@ -2468,12 +2406,11 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_Stop(5);
   Actor_Stop(7);
   Actor_Stop(6);
-  ((struct ShamanVillageObject *)Actor_GetById(gMainRoutineWork.currentOwner))
-      ->update = NULL;
-  ((struct ShamanVillageObject *)Actor_GetById(18))->update = NULL;
-  ((struct ShamanVillageObject *)Actor_GetById(5))->update = NULL;
-  ((struct ShamanVillageObject *)Actor_GetById(7))->update = NULL;
-  ((struct ShamanVillageObject *)Actor_GetById(6))->update = NULL;
+  ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner))->update = NULL;
+  ((struct Actor *)Actor_GetById(18))->update = NULL;
+  ((struct Actor *)Actor_GetById(5))->update = NULL;
+  ((struct Actor *)Actor_GetById(7))->update = NULL;
+  ((struct Actor *)Actor_GetById(6))->update = NULL;
   wait(1);
   Actor_SetSpeed(6, 0x10000, 0x8000);
   Actor_SetScript(7, gShamanVillage_RejoinLeaderAtSandScript);
@@ -2488,11 +2425,9 @@ void ShamanVillage_CastWhirlwindOnSand(void) {
   Actor_SetSpritePriority(6, 1);
   Event_PlaySound(131);
   BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(
-      ((struct ShamanVillageObject *)Actor_GetById(6)), 2);
+  BattleEffect_SetObjectUpdateMode(((struct Actor *)Actor_GetById(6)), 2);
   Event_Wait(40);
-  BattleEffect_SetObjectUpdateMode(
-      ((struct ShamanVillageObject *)Actor_GetById(6)), 0);
+  BattleEffect_SetObjectUpdateMode(((struct Actor *)Actor_GetById(6)), 0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   ShamanVillage_BlowAwaySand();
@@ -2501,7 +2436,7 @@ void ShamanVillage_CastWhirlwindOnSand(void) {
 
 void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct ShamanVillageObject *object;
+  struct Actor *object;
   s32 cell;
 
   Event_Start();
@@ -2514,8 +2449,7 @@ void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   Event_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   if (mode == 1) {
-    object = ((struct ShamanVillageObject *)Actor_GetById(
-        gMainRoutineWork.currentOwner));
+    object = ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner));
     cell = object->x >> 16;
     Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
                         object->z);
@@ -2575,7 +2509,7 @@ void ShamanVillage_RestartTrial(void) {
   Event_ResolvePendingActions(0);
   Actor_SetPosition(16, 0, 0);
   Actor_SetPosition(17, 0, 0);
-  ((struct ShamanVillageObject *)Actor_GetById(15))->facing = 0xc000;
+  ((struct Actor *)Actor_GetById(15))->facing = 0xc000;
   FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(182), 0);
   wait(1);
   Map_CenterOnFollowedPoint();
@@ -2640,9 +2574,9 @@ void ShamanVillage_AdviseQuitting(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanMoapaAdvisesLeaving);
-  ((struct ShamanVillageObject *)Actor_GetById(15))->facing = 0x8000;
-  ((struct ShamanVillageObject *)Actor_GetById(16))->facing = 0x8000;
-  ((struct ShamanVillageObject *)Actor_GetById(17))->facing = 0x8000;
+  ((struct Actor *)Actor_GetById(15))->facing = 0x8000;
+  ((struct Actor *)Actor_GetById(16))->facing = 0x8000;
+  ((struct Actor *)Actor_GetById(17))->facing = 0x8000;
   FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(280), 0);
   wait(1);
   Map_CenterOnFollowedPoint();
@@ -2678,8 +2612,7 @@ void ShamanVillage_SetUpVillage(void) {
   if (Event_GetFlag(0x94c)) {
     MapGrid_CopyCellsTo(47, 19, 38, 19, 9, 11);
     MapGrid_CopyCellAttributes(1, 5, 9, 1, 6, 29);
-    FieldActor_SetSpriteColor(((struct ShamanVillageObject *)Actor_GetById(14)),
-                              6);
+    FieldActor_SetSpriteColor(((struct Actor *)Actor_GetById(14)), 6);
   } else if (!Event_GetFlag(0x109)) {
     s32 angle = 0x4000;
 
@@ -2713,7 +2646,7 @@ void ShamanVillage_SetUpVillage(void) {
 }
 
 void ShamanVillage_SetUpRoom3(void) {
-  struct ShamanVillageObject *object;
+  struct Actor *object;
 
   Actor_SetAnimation(8, 2);
   Actor_SetAnimation(9, 2);
@@ -2721,11 +2654,10 @@ void ShamanVillage_SetUpRoom3(void) {
   Actor_SetAnimation(11, 2);
   Actor_SetAnimation(12, 2);
   Actor_SetAnimation(13, 2);
-  ((struct ShamanVillageObject *)Actor_GetById(14))->motionFlags = 0;
+  ((struct Actor *)Actor_GetById(14))->motionFlags = 0;
   if (Event_GetFlag(0x94e)) {
-    Actor_SetPositionAndResetMotion(
-        ((struct ShamanVillageObject *)Actor_GetById(14)), PIXELS(520),
-        PIXELS(32), PIXELS(184));
+    Actor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(14)),
+                                    PIXELS(520), PIXELS(32), PIXELS(184));
     wait(1);
     MapGrid_CopyCellAttributes(30, 11, 1, 1, 32, 11);
     wait(10);
@@ -2738,44 +2670,43 @@ void ShamanVillage_SetUpRoom3(void) {
     MapGrid_CopyCellsTo(48, 40, 101, 11, 1, 2);
   else
     Actor_SetPosition(17, 0, 0);
-  object = ((struct ShamanVillageObject *)Actor_GetById(16));
+  object = ((struct Actor *)Actor_GetById(16));
   object->collisionFlags = 8;
   object->scaleX = 0xcccc;
   object->scaleY = 0xcccc;
-  Actor_SetSpriteFlags(((struct ShamanVillageObject *)Actor_GetById(16)), 0);
+  Actor_SetSpriteFlags(((struct Actor *)Actor_GetById(16)), 0);
 }
 
-void ShamanVillage_DriftSmoke(struct ShamanVillageObject *object) {
+void ShamanVillage_DriftSmoke(struct Actor *object) {
   s32 step;
 
-  object->x += object->field64 << 8;
+  object->x += object->timer << 8;
 
   object->y += 0x8000;
 
   step = 0x51e;
   object->scaleX += step;
   object->scaleY += step;
-  object->field64 += 2;
-  if (--object->field68 == 0)
+  object->timer += 2;
+  if (--*(s32 *)&object->watchedObject == 0)
     Actor_Release(object);
 }
 
 void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
-  struct ShamanVillageObject *object =
-      ((struct ShamanVillageObject *)Import_ActorCreate(285, x, y, z));
+  struct Actor *object = ((struct Actor *)Import_ActorCreate(285, x, y, z));
 
   if (object != NULL) {
-    object->field5c = 2;
+    object->unk5c[0] = 2;
     object->motionFlags = 0;
-    object->field64 = 0;
+    object->timer = 0;
     object->priorityFlags &= ~1;
     FieldActor_SetSpriteColor(object, 7);
-    object->sprite->priority = 1;
+    ((struct FieldSprite *)object->sprite)->priority = 1;
     object->priorityFlags |= 2;
     Actor_SetSpriteFlags(object, 0);
     object->scaleX = 0x8000;
     object->scaleY = 0x8000;
-    object->field68 = 60;
+    *(s32 *)&object->watchedObject = 60;
     object->update = ShamanVillage_DriftSmoke;
     Import_ActorSetMode(object, 5);
     Actor_SetBlendMode(object, 1);
@@ -2791,9 +2722,9 @@ void ShamanVillage_PuffChimneySmoke(void) {
 
 #define DEFINE_LEADER_LAYER_TASK(name, n1, n2)                                 \
   void name(void) {                                                            \
-    s32 variant = ((struct ShamanVillageObject *)Actor_GetById(                \
-                       gMainRoutineWork.currentOwner))                         \
-                      ->sprite->priority;                                      \
+    struct FieldSprite *sprite =                                               \
+        Actor_GetById(gMainRoutineWork.currentOwner)->sprite;                  \
+    s32 variant = sprite->priority;                                            \
                                                                                \
     Actor_SetSpritePriority(n1, variant);                                      \
     Actor_SetSpritePriority(n2, variant);                                      \
@@ -2853,7 +2784,7 @@ void ShamanVillage_SetUpRoom4(void) {
   u32 i;
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
-  ((struct ShamanVillageObject *)Actor_GetById(12))->collisionFlags = 8;
+  ((struct Actor *)Actor_GetById(12))->collisionFlags = 8;
   if (Event_GetFlag(0x9fe)) {
     s32 angle = 0x3000;
 
@@ -2870,9 +2801,8 @@ void ShamanVillage_SetUpRoom4(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 41);
-    Actor_SetSpriteFlags(((struct ShamanVillageObject *)Actor_GetById(
-                             gMainRoutineWork.currentOwner)),
-                         0);
+    Actor_SetSpriteFlags(
+        ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner)), 0);
     wait(1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -2903,9 +2833,8 @@ void ShamanVillage_SetUpRoom4(void) {
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
     Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 813, 120);
-    Actor_SetSpriteFlags(((struct ShamanVillageObject *)Actor_GetById(
-                             gMainRoutineWork.currentOwner)),
-                         1);
+    Actor_SetSpriteFlags(
+        ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner)), 1);
     Event_End();
     if (gMainRoutineWork.entrance == 30) {
       Event_SetFlag(0x9fe);

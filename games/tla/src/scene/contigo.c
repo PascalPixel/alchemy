@@ -268,27 +268,7 @@ void Func_02000328(void) {
 // Scene code of overlay 0x694, in ROM order.
 
 // ---- games/tla/src/scene/contigo.c ----
-/* VIEW(contigo): routine Func_02003e54 as void Func_02003e54(struct
- * ContigoObject *object, const void *effect); the definition has void
- * Func_02003e54(struct Actor *object, struct SparkleWork *work); tried as the
- * definition's void Func_02003e54(struct Actor *object, struct
- * SparkleWork__s3e54 *work), which the object already declares, Func_02001d50
- * moves: 2 of 1701 instructions in tla-ja. */
-struct ContigoObject;
-extern void Func_02003e54__contigo(struct ContigoObject *object,
-                                   const void *effect) __asm__("Func_02003e54");
-#define Func_02003e54 Func_02003e54__contigo
-/* VIEW(contigo): routine Func_02003f54 as void Func_02003f54(struct
- * ContigoObject *object); the definition has void Func_02003f54(struct
- * ContigoObject__s3e54 *object); tried as the definition's void
- * Func_02003f54(struct ContigoObject__s3e54 *object), which the object already
- * declares, Func_02001d50 moves: 2 of 1701 instructions in tla-ja. */
-struct ContigoObject;
-extern void
-Func_02003f54__contigo(struct ContigoObject *object) __asm__("Func_02003f54");
-#define Func_02003f54 Func_02003f54__contigo
 #undef Func_02003f54
-#undef Func_02003e54
 #include "text/msg_ids.h"
 
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
@@ -1670,16 +1650,16 @@ void Func_02001d50(void) {
   Actor_SetModeById(8, 4);
   Event_ShowMessageAndWait(8, 0);
   Event_ShowMessageThenWait(5, 0, 10);
-  Func_02003e54__contigo(object, gData_02006030);
+  Func_02003e54(object, gData_02006030);
   Event_Wait(80);
-  Func_02003f54__contigo(object);
+  Func_02003f54(object);
   Motion_SetModeAndWaitAnimation(8, 4);
   Event_ShowMessageAndWait(8, 0);
   Actor_SetAttachedEffect(7, 258);
   Event_ShowMessageThenWait(7, 0, 10);
-  Func_02003e54__contigo(object, gData_02006030);
+  Func_02003e54(object, gData_02006030);
   Event_Wait(80);
-  Func_02003f54__contigo(object);
+  Func_02003f54(object);
   Actor_FaceDirectionAndWait(8, 0xd000);
   Actor_SetModeById(8, 4);
   Event_ShowMessageAndWait(8, 0);
@@ -3068,7 +3048,6 @@ struct Trigger gContigo_Room3Triggers[] = {
 #undef MSG_NEXT_PRIZE
 #undef MSG_COME_AGAIN
 #undef Func_02003e54
-#undef Func_02003f54
 #undef Palette_SetColors
 #undef ContigoEventWork
 #undef TalkActor

@@ -222,8 +222,7 @@ const struct Trigger *Scene_GetEvents(void) {
   return gDailaInteriors1Events;
 }
 
-struct DailaActor *Actor_GetById(s32 id);
-
+struct Actor *Actor_GetById(u32 objectId);
 s32 Inn_CheckIn(s32 mode, s32 objectId);
 
 void DailaInteriors_TalkToWeaponMerchant(s32 actor) {
@@ -433,40 +432,9 @@ DEFINE_SCENE_RAISE_HELD_ACTOR(Scene_RaiseHeldActor, FlagBlock_ApplyFlags,
 // Scene code of overlay 0x652, in ROM order, from item's offset up to the next
 // object the overlay links.
 
-/* VIEW(item): tag struct DailaActor as struct DailaActor__item;
- * daila_interiors.c has another definition; tried with the definition the rest
- * of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/daila_interiors.c:452: structure has no member named
- * `unk48'. */
-struct DailaActor__item {
-  u8 unk00[0xc];
-  s32 y;
-  u8 unk10[8];
-  s32 speed18;
-  s32 speed1c;
-  u8 unk20[8];
-  s32 unk28;
-  u8 unk2c[0x1c];
-  s32 unk48;
-  u8 unk4c[9];
-  u8 kind55;
-  u8 unk56[3];
-  u8 flags59;
-  u8 unk5a[0x12];
-  s32 unk6c;
-};
-
-/* VIEW(item): routine Actor_GetById as struct DailaActor__item
- * *Actor_GetById(s32 id); daila_interiors has struct DailaActor
- * *Actor_GetById(s32 id); tried as the definition's struct Actor
- * *Actor_GetById(u32 objectId), which the object already declares, it does not
- * compile in tla-ja: games/tla/src/scene/daila_interiors.c:467: structure has
- * no member named `unk48'. */
-extern struct DailaActor__item *
-Actor_GetById__item(s32 id) __asm__("Actor_GetById");
-void ItemDisplay_ShowPicture(struct DailaActor__item *object, s32 mode);
+void ItemDisplay_ShowPicture(struct Actor *object, s32 mode);
 void Sound_Play(s32 cue);
-void Actor_StartIdle(struct DailaActor__item *object);
+void Actor_StartIdle(struct Actor *object);
 
 /// Takes the Sea God's Tear from the top of the pillars, or, when the bags are
 /// full and nothing is dropped for it, puts it back.
@@ -476,14 +444,14 @@ void DailaInteriors_TakeSeaGodsTear(void) {
   s32 savedY;
   s32 item;
 
-  saved48 = Actor_GetById__item(ACTOR_SEA_GODS_TEAR)->unk48;
+  saved48 = Actor_GetById(ACTOR_SEA_GODS_TEAR)->gravity;
   item = 458;
-  saved28 = Actor_GetById__item(ACTOR_SEA_GODS_TEAR)->unk28;
-  savedY = Actor_GetById__item(ACTOR_SEA_GODS_TEAR)->y;
+  saved28 = Actor_GetById(ACTOR_SEA_GODS_TEAR)->velocityY;
+  savedY = Actor_GetById(ACTOR_SEA_GODS_TEAR)->y;
   Event_Start();
   Event_ResolvePendingActions(0);
   if (PartyInventory_FindRoom(item) >= 0) {
-    ItemDisplay_ShowPicture(Actor_GetById__item(ACTOR_SEA_GODS_TEAR), 3);
+    ItemDisplay_ShowPicture(Actor_GetById(ACTOR_SEA_GODS_TEAR), 3);
     Sound_Play(83);
     MessageArgument_Push(item, 2);
     FieldMessage_Show((s32)MsgItemReceived, 1);
@@ -493,7 +461,7 @@ void DailaInteriors_TakeSeaGodsTear(void) {
                                            194 << 16);
     GameFlag_Set(FLAG_SEA_GODS_TEAR_TAKEN);
   } else {
-    ItemDisplay_ShowPicture(Actor_GetById__item(ACTOR_SEA_GODS_TEAR), 3);
+    ItemDisplay_ShowPicture(Actor_GetById(ACTOR_SEA_GODS_TEAR), 3);
     Sound_Play(83);
     if (DailaInteriors_GiveItem(item, 0) != -1) {
       Actor_SetHorizontalPositionWithTerrain(ACTOR_SEA_GODS_TEAR, 0, 0);
@@ -503,16 +471,16 @@ void DailaInteriors_TakeSeaGodsTear(void) {
     } else {
       Actor_SetHorizontalPositionWithTerrain(ACTOR_SEA_GODS_TEAR, 0, 0);
       FieldEvent_Wait(1);
-      Actor_GetById__item(ACTOR_SEA_GODS_TEAR)->unk28 = saved28;
-      Actor_GetById__item(ACTOR_SEA_GODS_TEAR)->y = savedY;
-      Actor_GetById__item(ACTOR_SEA_GODS_TEAR)->unk48 = saved48;
-      Actor_GetById__item(ACTOR_SEA_GODS_TEAR)->unk6c = 0;
-      Actor_StartIdle(Actor_GetById__item(ACTOR_SEA_GODS_TEAR));
+      Actor_GetById(ACTOR_SEA_GODS_TEAR)->velocityY = saved28;
+      Actor_GetById(ACTOR_SEA_GODS_TEAR)->y = savedY;
+      Actor_GetById(ACTOR_SEA_GODS_TEAR)->gravity = saved48;
+      Actor_GetById(ACTOR_SEA_GODS_TEAR)->update = NULL;
+      Actor_StartIdle(Actor_GetById(ACTOR_SEA_GODS_TEAR));
       Actor_SetSpritePriority(ACTOR_SEA_GODS_TEAR, 1);
-      Actor_GetById__item(ACTOR_SEA_GODS_TEAR)->kind55 = 2;
-      Actor_GetById__item(ACTOR_SEA_GODS_TEAR)->speed1c = 0x13333;
-      Actor_GetById__item(ACTOR_SEA_GODS_TEAR)->speed18 = 0x13333;
-      Actor_GetById__item(ACTOR_SEA_GODS_TEAR)->flags59 |= 4;
+      Actor_GetById(ACTOR_SEA_GODS_TEAR)->motionFlags = 2;
+      Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleY = 0x13333;
+      Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleX = 0x13333;
+      Actor_GetById(ACTOR_SEA_GODS_TEAR)->collisionFlags |= 4;
       Daila_ObjPlace(ACTOR_SEA_GODS_TEAR, 232 << 16, 196 << 16);
     }
   }
@@ -603,15 +571,7 @@ s32 DailaInteriors_GiveItem(s32 item, s32 unused) {
 
 void Map_SetLayerEntryFlag(s32 mode);
 
-/* VIEW(arrival): routine Actor_GetById as struct DailaStartActor
- * *Actor_GetById(s32 id); item has struct DailaActor__item *Actor_GetById(s32
- * id); tried as the definition's struct Actor *Actor_GetById(u32 objectId),
- * which the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/daila_interiors.c:616: structure has no member named
- * `priorityFlags'. */
-extern struct DailaStartActor *
-Actor_GetById__arrival(s32 id) __asm__("Actor_GetById");
-void Actor_SetItemIcon(struct DailaStartActor *object, s32 item);
+void Actor_SetItemIcon(struct Actor *object, s32 item);
 void FlagBlock_PlaceAll(const s16 *flags);
 
 s32 DailaInteriors_Start(void) {
@@ -626,34 +586,33 @@ s32 DailaInteriors_Start(void) {
     } else {
       if (GameFlag_Get(FLAG_TAVI_RESCUED)) {
         Actor_SetModeById(24, 5);
-        Actor_SetSpriteFlags(Actor_GetById__arrival(24), 0);
+        Actor_SetSpriteFlags(Actor_GetById(24), 0);
         Actor_SetModeById(25, 5);
-        Actor_SetSpriteFlags(Actor_GetById__arrival(25), 0);
+        Actor_SetSpriteFlags(Actor_GetById(25), 0);
       }
-      Actor_GetById__arrival(gMainRoutineWork.currentOwner)->priorityFlags |=
-          32;
-      Actor_GetById__arrival(13)->priorityFlags |= 32;
-      Actor_GetById__arrival(19)->priorityFlags |= 32;
+      Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+      Actor_GetById(13)->priorityFlags |= 32;
+      Actor_GetById(19)->priorityFlags |= 32;
       Actor_SetSpritePriority(19, 2);
-      Actor_GetById__arrival(19)->collisionFlags |= 4;
+      Actor_GetById(19)->collisionFlags |= 4;
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_DailaInteriors2) {
     map = (struct DailaMapWork *)Ram_HeapSlots->mapWork;
     Event_Start();
     Event_ResolvePendingActions(0);
-    Actor_SetSpriteFlags(Actor_GetById__arrival(ACTOR_TEAR_SPOT), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_TEAR_SPOT), 0);
     FieldEffect_StartBlankOverlay(0);
     if (!GameFlag_Get(FLAG_SEA_GODS_TEAR_TAKEN)) {
-      Actor_SetItemIcon(Actor_GetById__arrival(ACTOR_SEA_GODS_TEAR), 458);
-      Actor_SetSpriteFlags(Actor_GetById__arrival(ACTOR_SEA_GODS_TEAR), 0);
+      Actor_SetItemIcon(Actor_GetById(ACTOR_SEA_GODS_TEAR), 458);
+      Actor_SetSpriteFlags(Actor_GetById(ACTOR_SEA_GODS_TEAR), 0);
       Actor_SetSpritePriority(ACTOR_SEA_GODS_TEAR, 1);
-      Actor_GetById__arrival(ACTOR_SEA_GODS_TEAR)->speed1c = 0x13333;
-      Actor_GetById__arrival(ACTOR_SEA_GODS_TEAR)->speed18 = 0x13333;
-      Actor_GetById__arrival(ACTOR_SEA_GODS_TEAR)->collisionFlags |= 4;
-      Actor_GetById__arrival(ACTOR_TEAR_SPOT)->collisionFlags |= 4;
+      Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleY = 0x13333;
+      Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleX = 0x13333;
+      Actor_GetById(ACTOR_SEA_GODS_TEAR)->collisionFlags |= 4;
+      Actor_GetById(ACTOR_TEAR_SPOT)->collisionFlags |= 4;
     } else {
-      Actor_GetById__arrival(ACTOR_SEA_GODS_TEAR)->collisionFlags |= 4;
-      Actor_SetSpriteFlags(Actor_GetById__arrival(ACTOR_SEA_GODS_TEAR), 0);
+      Actor_GetById(ACTOR_SEA_GODS_TEAR)->collisionFlags |= 4;
+      Actor_SetSpriteFlags(Actor_GetById(ACTOR_SEA_GODS_TEAR), 0);
     }
     if (!GameFlag_Get(FLAG_TAVI_RESCUED)) {
       Actor_SetHorizontalPositionWithTerrain(ACTOR_FIRST_PILLAR, 0, 0);

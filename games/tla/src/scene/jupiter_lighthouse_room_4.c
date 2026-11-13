@@ -259,6 +259,9 @@ extern s32 gData_020026f4;
 void Func_020005d8(s32 value) { gData_020026f4 = value; }
 
 extern s32 gData_020026f0;
+
+/// Sets the counter, its value built as a word.
+static inline void Counter_Set(s32 value) { gData_020026f0 = value; }
 extern u16 gData_0200271c[];
 
 void Func_020005e4(void) {
@@ -314,12 +317,7 @@ void Func_020006a0(s32 mode) {
     Iwram_CopyWords(gData_0200273c, (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
   if (Event_GetFlag(0xa00) || mode == 1) {
-    /* FAKEMATCH(temporary): a local holding 0, so the zero is built in r2
-     * and the counter's address in r3; as the 0 stored directly, 6 of 44
-     * instructions differ in tla-en. */
-    s32 zero = 0;
-
-    gData_020026f0 = zero;
+    Counter_Set(0);
     Task_Add(Func_020005e4, 1152);
   } else {
     Dma_Set(gData_02002740, (void *)&BG_PLTT_COLOR(12, 2), DMA_COPY_WORDS(2),

@@ -163,6 +163,7 @@ void Func_02003b74(void) {
   FieldEvent_Wait(4);
   FieldCamera_GetActor()->y -= 0x80000;
 }
+#include "../shared/cell_with_bit.h"
 
 /// Map_CopyCellsRect through this overlay's import.
 
@@ -174,7 +175,6 @@ void Func_02003bfc(struct CellTarget *table, struct CellTargetEntry *entry) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s16 sourceX;
   s32 leaderX = leader->x;
-  s16 sourceZBit;
   s32 x;
   s32 z;
 
@@ -184,11 +184,7 @@ void Func_02003bfc(struct CellTarget *table, struct CellTargetEntry *entry) {
    * tla-en. */
   asm("" : "=r"(sourceX) : "0"(table->x), "r"(leaderX));
   x = (leaderX >> 20) | (s16)(sourceX & 64);
-  /* FAKEMATCH(temporary): the row's 64 bit in a local of its own; as
-   * (s16)(table->z & 64) in the expression, 16 of 49 instructions differ in
-   * tla-en. */
-  sourceZBit = table->z & 64;
-  z = (leader->z >> 20) | sourceZBit;
+  z = CellTarget_CellWithBit(leader->z, table->z & 64);
   Func_02003b74();
   Event_PlaySound(161);
   MapGrid_CopyCells(table->x, table->z + 1, 1, 1, x, z);

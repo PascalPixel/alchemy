@@ -97,7 +97,7 @@ Func_02000e04:
 	.global Func_02000e0c
 	.thumb_func
 Func_02000e0c:
-	overlay_veneer Func_08038318
+	overlay_veneer DebugBrowser_IconsFar
 	.global Unit_Calculate
 	.thumb_func
 Unit_Calculate:

@@ -97,9 +97,9 @@ extern const struct WordPair Data_08196f08;
 extern const struct WordPair Data_08196f10;
 extern u16 gBattleEffect_MoteCells[];
 extern u8 gData_08197467[];
-extern u8 gData_0819746d[];
-extern u8 gData_08197473[];
-extern u16 gData_0819747a[];
+extern u8 gBattleEffect_PuffArcCellHeights[];
+extern u8 gBattleEffect_PuffArcCellBiasY[];
+extern u16 gBattleEffect_PuffArcCells[];
 extern const u8 Data_081991e0[];
 extern const u8 gData_08199210[];
 extern const u8 Data_08199244[];
@@ -578,11 +578,12 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
               for (i = 0; i != 8; i++) {
                 struct EffectStep *p = &work->particles[i + 4];
                 s32 n = (p->variant / 4) % 6;
-                u8 *src = work->sheet + gData_0819747a[n];
+                u8 *src = work->sheet + gBattleEffect_PuffArcCells[n];
                 u32 w = gData_08197467[n];
 
                 draw[1](STAMP_CANVAS(work), src, p->x - (w >> 1),
-                        p->y + gData_08197473[n], w, gData_0819746d[n]);
+                        p->y + gBattleEffect_PuffArcCellBiasY[n], w,
+                        gBattleEffect_PuffArcCellHeights[n]);
                 if (++p->variant == 24) {
                   p->variant = 0;
                   p->x = (Random16() & 15) + 24;

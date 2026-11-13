@@ -158,16 +158,18 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
       s32 width;
       s32 offset;
 
-      offset = gData_0819747a[cell];
+      offset = gBattleEffect_PuffArcCells[cell];
       /* FAKEMATCH(dead): width, read from the puff table and never used; as no
        * width, 523 of 1123 instructions differ in tla-en. */
       width = gData_08197467[cell];
       draw[0](canvas, &work->sheet[offset + 0x3c00],
-              56 - gData_08197467[cell] / 2, gData_08197473[cell] + 60,
-              gData_08197467[cell], gData_0819746d[cell]);
-      draw[1](canvas, &work->sheet[gData_0819747a[cell] + 0x3c00],
-              64 - gData_08197467[cell] / 2, gData_08197473[cell] + 60,
-              gData_08197467[cell], gData_0819746d[cell]);
+              56 - gData_08197467[cell] / 2,
+              gBattleEffect_PuffArcCellBiasY[cell] + 60, gData_08197467[cell],
+              gBattleEffect_PuffArcCellHeights[cell]);
+      draw[1](canvas, &work->sheet[gBattleEffect_PuffArcCells[cell] + 0x3c00],
+              64 - gData_08197467[cell] / 2,
+              gBattleEffect_PuffArcCellBiasY[cell] + 60, gData_08197467[cell],
+              gBattleEffect_PuffArcCellHeights[cell]);
     }
 
     // Variant 1: 128 sparks thrown up from the user's side at the start.
@@ -379,10 +381,11 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
         if (step->variant >= 0 && step->variant <= 11) {
           s32 cell = step->variant / 2;
 
-          draw[1](canvas, &work->sheet[gData_0819747a[cell] + 0x3c00],
+          draw[1](canvas,
+                  &work->sheet[gBattleEffect_PuffArcCells[cell] + 0x3c00],
                   step->x - gData_08197467[cell] / 2,
-                  step->y + gData_08197473[cell], gData_08197467[cell],
-                  gData_0819746d[cell]);
+                  step->y + gBattleEffect_PuffArcCellBiasY[cell],
+                  gData_08197467[cell], gBattleEffect_PuffArcCellHeights[cell]);
         }
         step->variant++;
       }

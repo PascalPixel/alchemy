@@ -154,9 +154,9 @@ extern char ResourceId_CrystalSheet;
 
 extern u16 gBattleEffect_MoteCells[];
 extern u8 gData_08197467[];
-extern u8 gData_0819746d[];
-extern u8 gData_08197473[];
-extern u16 gData_0819747a[];
+extern u8 gBattleEffect_PuffArcCellHeights[];
+extern u8 gBattleEffect_PuffArcCellBiasY[];
+extern u16 gBattleEffect_PuffArcCells[];
 extern u16 gBattleEffect_GlintCells[];
 extern u8 gData_08197492[];
 extern u8 gData_08197498[];
@@ -1681,9 +1681,10 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
               which = 1;
               if (i != 0)
                 which = ((i - 1) & 3) > 1;
-              drawFuncs.draw[which](screen, buffer + gData_0819747a[m], x,
-                                    gData_08197473[m] + 48, gData_08197467[m],
-                                    gData_0819746d[m]);
+              drawFuncs.draw[which](
+                  screen, buffer + gBattleEffect_PuffArcCells[m], x,
+                  gBattleEffect_PuffArcCellBiasY[m] + 48, gData_08197467[m],
+                  gBattleEffect_PuffArcCellHeights[m]);
             }
           }
         }

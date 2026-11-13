@@ -396,9 +396,9 @@ extern char ResourceId_EffectPalette01;
 extern char ResourceId_Data0C2;
 
 extern u8 gData_08197467[];
-extern u8 gData_0819746d[];  // gBattleEffect_PuffArcCellHeights
-extern u8 gData_08197473[];  // gBattleEffect_PuffArcCellBiasY
-extern u16 gData_0819747a[]; // gBattleEffect_PuffArcCells
+extern u8 gBattleEffect_PuffArcCellHeights[];
+extern u8 gBattleEffect_PuffArcCellBiasY[];
+extern u16 gBattleEffect_PuffArcCells[];
 extern u8 gSpire_ShardWidths[];
 extern u8 gData_081974ad[]; // the shard heights
 extern u16 gSpire_ShardCells[];
@@ -474,35 +474,35 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode);
 
 extern u8 gQuake_Timings[][3];
 
-extern struct RockWallHeights Data_08196e1c; // gRockWall_Heights
+extern struct RockWallHeights gRockWall_Heights;
 
 extern u8 gFire_Counts[];
-extern u16 Data_08198316[]; // gFire_FlareCells
-extern u8 Data_08198303[];  // gFire_FlareWidths
-extern u8 Data_0819830f[];  // gFire_FlareBiasY
-extern u8 Data_08198309[];  // gFire_FlareHeights
+extern u16 gFire_FlareCells[];
+extern u8 gFire_FlareWidths[];
+extern u8 gFire_FlareBiasY[];
+extern u8 gFire_FlareHeights[];
 extern u8 gFrost_Timings[];
 extern u8 gFrost_ColumnSpots[];
-extern u16 Data_08198362[]; // gFrost_MoteCells
-extern u8 Data_08198351[];  // gFrost_MoteWidths
-extern u8 Data_08198359[];  // gFrost_MoteHeights
+extern u16 gFrost_MoteCells[];
+extern u8 gFrost_MoteWidths[];
+extern u8 gFrost_MoteHeights[];
 extern u16 gFrost_ColumnCells[];
 extern u8 gFrost_ColumnHeights[];
-extern u16 Data_0819838c[]; // gFrost_ChipCells
-extern u8 Data_0819837b[];  // gFrost_ChipWidths
-extern u8 Data_08198383[];  // gFrost_ChipHeights
+extern u16 gFrost_ChipCells[];
+extern u8 gFrost_ChipWidths[];
+extern u8 gFrost_ChipHeights[];
 extern u8 gRay_Sparks[][2];
 
 void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode);
 
 extern u8 gEruption_Counts[][3];
-extern u16 Data_081983ac[]; // gEruption_PuffCells
-extern u16 Data_081983ba[]; // gEruption_PuffSizes
-extern u8 Data_081983c8[];  // gTargetStrike_GlintDrawFlags
+extern u16 gEruption_PuffCells[];
+extern u16 gEruption_PuffSizes[];
+extern u8 gTargetStrike_GlintDrawFlags[];
 
 extern char ResourceId_LeafWarriorTiles;
 
-extern s32 Data_081983cc[]; // gAtalanta_UnitScale
+extern s32 gAtalanta_UnitScale[];
 
 void Func_081548d0(struct BattleEffectArgument *effect, s32 mode);
 

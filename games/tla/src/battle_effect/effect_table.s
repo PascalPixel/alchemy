@@ -32,17 +32,17 @@ gBattleEffect_PuffSizes:
 gData_08197467:
 	.byte 24, 29, 30, 27, 24, 16
 @ The Broken Seal's gBattleEffect_PuffArcCellHeights; read by 7 functions
-	.global gData_0819746d
-gData_0819746d:
+	.global gBattleEffect_PuffArcCellHeights
+gBattleEffect_PuffArcCellHeights:
 	.byte 23, 32, 37, 49, 53, 52
 @ The Broken Seal's gBattleEffect_PuffArcCellBiasY; read by 7 functions
-	.global gData_08197473
-gData_08197473:
+	.global gBattleEffect_PuffArcCellBiasY
+gBattleEffect_PuffArcCellBiasY:
 	.byte 41, 32, 26, 11, 4, 2
 	.balign 2
 @ The Broken Seal's gBattleEffect_PuffArcCells; read by 7 functions
-	.global gData_0819747a
-gData_0819747a:
+	.global gBattleEffect_PuffArcCells
+gBattleEffect_PuffArcCells:
 	.2byte 0, 552, 1480, 2590, 3913, 5185
 @ The Broken Seal's gBattleEffect_GlintCells; read by 14 functions
 	.global gBattleEffect_GlintCells
@@ -1150,21 +1150,21 @@ gQuake_Timings:
 gFire_Counts:
 	.byte 16, 32, 64
 @ The Broken Seal's gBattleEffect_PuffArcCellWidths; read by BattleEffect_RunFire
-	.global Data_08198303
-Data_08198303:
+	.global gFire_FlareWidths
+gFire_FlareWidths:
 	.byte 24, 29, 30, 27, 24, 16
 @ The Broken Seal's gBattleEffect_PuffArcCellHeights; read by BattleEffect_RunFire
-	.global Data_08198309
-Data_08198309:
+	.global gFire_FlareHeights
+gFire_FlareHeights:
 	.byte 23, 32, 37, 49, 53, 52
 @ The Broken Seal's gBattleEffect_PuffArcCellBiasY; read by BattleEffect_RunFire
-	.global Data_0819830f
-Data_0819830f:
+	.global gFire_FlareBiasY
+gFire_FlareBiasY:
 	.byte 41, 32, 26, 11, 4, 2
 	.balign 2
 @ The Broken Seal's gBattleEffect_PuffArcCells; read by BattleEffect_RunFire
-	.global Data_08198316
-Data_08198316:
+	.global gFire_FlareCells
+gFire_FlareCells:
 	.2byte 0, 552, 1480, 2590, 3913, 5185
 @ The Broken Seal's gFrost_ColumnSpots; read by BattleEffect_RunFrost
 	.global gFrost_ColumnSpots
@@ -1177,17 +1177,17 @@ gFrost_ColumnSpots:
 gFrost_Timings:
 	.byte 32, 8, 85, 48, 12, 97, 64, 19, 109
 @ The Broken Seal's gFrost_MoteWidths; read by BattleEffect_RunFrost
-	.global Data_08198351
-Data_08198351:
+	.global gFrost_MoteWidths
+gFrost_MoteWidths:
 	.byte 12, 10, 7, 10, 8, 8, 8, 8
 @ The Broken Seal's gFrost_MoteHeights; read by BattleEffect_RunFrost
-	.global Data_08198359
-Data_08198359:
+	.global gFrost_MoteHeights
+gFrost_MoteHeights:
 	.byte 9, 16, 14, 15, 8, 8, 8, 8
 	.balign 2
 @ The Broken Seal's gFrost_MoteCells; read by BattleEffect_RunFrost
-	.global Data_08198362
-Data_08198362:
+	.global gFrost_MoteCells
+gFrost_MoteCells:
 	.2byte 1792, 1900, 2060, 2158, 2308, 2372, 2436, 2500
 @ The Broken Seal's gFrost_ColumnCells; read by BattleEffect_RunFrost
 	.global gFrost_ColumnCells
@@ -1198,17 +1198,17 @@ gFrost_ColumnCells:
 gFrost_ColumnHeights:
 	.byte 24, 16, 16
 @ The Broken Seal's gFrost_MoteWidths; read by BattleEffect_RunFrost
-	.global Data_0819837b
-Data_0819837b:
+	.global gFrost_ChipWidths
+gFrost_ChipWidths:
 	.byte 12, 10, 7, 10, 8, 8, 8, 8
 @ The Broken Seal's gFrost_MoteHeights; read by BattleEffect_RunFrost
-	.global Data_08198383
-Data_08198383:
+	.global gFrost_ChipHeights
+gFrost_ChipHeights:
 	.byte 9, 16, 14, 15, 8, 8, 8, 8
 	.balign 2
 @ The Broken Seal's gFrost_MoteCells; read by BattleEffect_RunFrost
-	.global Data_0819838c
-Data_0819838c:
+	.global gFrost_ChipCells
+gFrost_ChipCells:
 	.2byte 1792, 1900, 2060, 2158, 2308, 2372, 2436, 2500
 @ The Broken Seal's gRay_Sparks; read by BattleEffect_RunRay
 	.global gRay_Sparks
@@ -1220,20 +1220,20 @@ gEruption_Counts:
 	.byte 16, 8, 72, 32, 16, 80, 128, 32, 88
 	.balign 2
 @ The Broken Seal's gEruption_PuffCells; read by Func_08151ff0
-	.global Data_081983ac
-Data_081983ac:
+	.global gEruption_PuffCells
+gEruption_PuffCells:
 	.2byte 0, 256, 1280, 3584, 5888, 8192, 10496
 @ The Broken Seal's gCybele_EmberSizes; read by Func_08151ff0
-	.global Data_081983ba
-Data_081983ba:
+	.global gEruption_PuffSizes
+gEruption_PuffSizes:
 	.2byte 16, 32, 48, 48, 48, 48, 48
 @ The Broken Seal's gTargetStrike_GlintDrawFlags; read by BattleEffect_RunProjectileVolleyB
-	.global Data_081983c8
-Data_081983c8:
+	.global gTargetStrike_GlintDrawFlags
+gTargetStrike_GlintDrawFlags:
 	.byte 0, 4, 8, 12
 @ The Broken Seal's gWorldMap_UnitScale; read by BattleEffect_RunAtalanta
-	.global Data_081983cc
-Data_081983cc:
+	.global gAtalanta_UnitScale
+gAtalanta_UnitScale:
 	.4byte 0x10000, 0x10000
 @ The Broken Seal's table of this name; read by Func_081548d0
 	.global gGrowth_VineWidths
@@ -1410,8 +1410,8 @@ gHail_ChipY:
 gThor_TargetPalettes:
 	.byte 7, 14, 10, 4
 @ The Broken Seal's gTargetStrike_GlintDrawFlags; read by BattleEffect_RunThor
-	.global Data_08198562
-Data_08198562:
+	.global gThor_SmokeFlips
+gThor_SmokeFlips:
 	.byte 0, 4, 8, 12
 @ A copy of The Broken Seal's gSpire_ShardOffsets
 	.global Data_08198566

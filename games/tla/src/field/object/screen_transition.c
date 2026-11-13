@@ -1847,10 +1847,10 @@ s32 Graphics_ClampRgb555Component(s32 val) {
   return val;
 }
 
-// ☀️'s FadeOverlay_DrawMarks: each frame, on the two cells beside the actor
+// Each frame, on the two cells beside the actor
 // where the ground one or two cells south rises above the actor's floor,
 // draws a 16-pixel-wide mark at the height of that ground.
-void Func_080d1840(void) {
+void FadeOverlay_DrawMarks(void) {
   struct FadeOverlayWork *work = Ram_HeapSlots->unk84[3];
   s16 *camera = ((struct FadeView *)Ram_HeapSlots->mapWork)->camera;
   s32 cameraX = camera[1];
@@ -1912,8 +1912,8 @@ void Func_080d1840(void) {
 }
 
 /// Clears the overlay tiles to colour 1, sets the blend registers and starts
-/// Func_080d1840 at priority 0x480 on a 28-byte work block whose last word is
-/// the object (the selected owner's when none is given).
+/// FadeOverlay_DrawMarks at priority 0x480 on a 28-byte work block whose last
+/// word is the object (the selected owner's when none is given).
 void BattleEffect_StartFadeOverlay(void *object) {
   u32 *work;
   u8 *tiles;
@@ -1924,7 +1924,7 @@ void BattleEffect_StartFadeOverlay(void *object) {
   Dma_Fill32Cell(fill, 0x11111111, tiles, 0x200);
   VramCache_Load(94, 0x200, tiles);
   HeapSlot_Release(56);
-  Task_Add(Func_080d1840, TASK_PASS_VBLANK);
+  Task_Add(FadeOverlay_DrawMarks, TASK_PASS_VBLANK);
   Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
                  BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
              &REG_BLDCNT);
@@ -1938,10 +1938,10 @@ void BattleEffect_StartFadeOverlay(void *object) {
 #include "module/field/screen_transition.h"
 
 /// Suspends the fade overlay's drawing callback.
-void FadeOverlay_Suspend(void) { Task_SuspendAll(Func_080d1840); }
+void FadeOverlay_Suspend(void) { Task_SuspendAll(FadeOverlay_DrawMarks); }
 
 /// Resumes the fade overlay's drawing callback.
-void FadeOverlay_Resume(void) { Task_ResumeAll(Func_080d1840); }
+void FadeOverlay_Resume(void) { Task_ResumeAll(FadeOverlay_DrawMarks); }
 
 /// The blank overlay's task, which Func_080d1cc0 starts: each frame it draws
 /// a 16-pixel mark beside the actor where the map's third layer flags a cell

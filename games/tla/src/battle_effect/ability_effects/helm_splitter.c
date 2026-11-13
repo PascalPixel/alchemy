@@ -212,9 +212,9 @@ extern char ResourceId_DualStreamPath;
 
 // The puff arc's six cells, cut from the ember streak sheet.
 extern u8 gData_08197467[];
-extern u8 gData_0819746d[];
-extern u8 gData_08197473[];
-extern u16 gData_0819747a[];
+extern u8 gBattleEffect_PuffArcCellHeights[];
+extern u8 gBattleEffect_PuffArcCellBiasY[];
+extern u16 gBattleEffect_PuffArcCells[];
 
 // The spark cells: offsets into the particle sheet by size.
 extern u16 gBattleEffect_MoteCells[];

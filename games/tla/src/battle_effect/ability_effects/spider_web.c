@@ -319,10 +319,10 @@ extern char ResourceId_EmberStreakSheet;
 extern u8 gMapCellBuffer[];
 extern u8 Data_02010200[];
 extern u16 Data_08197424[];
-extern u16 gData_0819747a[];
+extern u16 gBattleEffect_PuffArcCells[];
 extern u8 gData_08197467[];
-extern u8 gData_08197473[];
-extern u8 gData_0819746d[];
+extern u8 gBattleEffect_PuffArcCellBiasY[];
+extern u8 gBattleEffect_PuffArcCellHeights[];
 extern const u16 Data_08198686[];
 extern const u8 Data_08198662[];
 extern const u8 Data_08198674[];
@@ -522,11 +522,12 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
         if ((u32)p->variant <= 17) {
           s32 k = p->variant / 3;
           s32 side = i & 1;
-          u8 *source = work->sheet + gData_0819747a[k];
+          u8 *source = work->sheet + gBattleEffect_PuffArcCells[k];
           u8 w = gData_08197467[k];
 
           blit[side](canvas, source, p->x - (w >> 1),
-                     p->y + gData_08197473[k] - 32, w, gData_0819746d[k]);
+                     p->y + gBattleEffect_PuffArcCellBiasY[k] - 32, w,
+                     gBattleEffect_PuffArcCellHeights[k]);
         }
         p->variant++;
       }
@@ -693,11 +694,12 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
         }
         if ((u32)t <= 35) {
           s32 k = (t / 6) % 6;
-          u8 *source = work->sheet + gData_0819747a[k];
+          u8 *source = work->sheet + gBattleEffect_PuffArcCells[k];
           u8 w = gData_08197467[k];
 
           blits[0](canvas, source, HI(step->x) - (w >> 1),
-                   HI(step->y) + gData_08197473[k] - 36, w, gData_0819746d[k]);
+                   HI(step->y) + gBattleEffect_PuffArcCellBiasY[k] - 36, w,
+                   gBattleEffect_PuffArcCellHeights[k]);
           t = step->variant;
         }
         if ((u32)(t - 12) <= 31) {
@@ -903,11 +905,12 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       for (i = 0, step = work->particles; i != 32; i++, step++) {
         if ((u32)step->variant <= 23 && draw) {
           s32 k = (step->variant / 4) % 6;
-          u8 *source = work->sheet + gData_0819747a[k];
+          u8 *source = work->sheet + gBattleEffect_PuffArcCells[k];
           u8 w = gData_08197467[k];
 
           blits[0](canvas, source, step->x - (w >> 1),
-                   step->y + gData_08197473[k] - 48, w, gData_0819746d[k]);
+                   step->y + gBattleEffect_PuffArcCellBiasY[k] - 48, w,
+                   gBattleEffect_PuffArcCellHeights[k]);
         }
         step->variant++;
       }

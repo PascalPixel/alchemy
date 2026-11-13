@@ -2507,17 +2507,20 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
     do {
       if (p->variant >= 0 && p->variant <= 23) {
         cell = p->variant / 4;
-        draw(canvas, work->sheet + gData_0819747a[cell],
+        draw(canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
              p->x - ((w = gData_08197467[cell]) >> 1),
-             p->y + gData_08197473[cell], w, gData_0819746d[cell]);
+             p->y + gBattleEffect_PuffArcCellBiasY[cell], w,
+             gBattleEffect_PuffArcCellHeights[cell]);
         if (effect->variant != 0)
-          draw(canvas, work->sheet + gData_0819747a[cell],
+          draw(canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
                p->x - ((w = gData_08197467[cell]) >> 1),
-               (p->y + gData_08197473[cell]) - 16, w, gData_0819746d[cell]);
+               (p->y + gBattleEffect_PuffArcCellBiasY[cell]) - 16, w,
+               gBattleEffect_PuffArcCellHeights[cell]);
         if (effect->variant == 2)
-          draw(canvas, work->sheet + gData_0819747a[cell],
+          draw(canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
                p->x - ((w = gData_08197467[cell]) >> 1),
-               (p->y + gData_08197473[cell]) - 32, w, gData_0819746d[cell]);
+               (p->y + gBattleEffect_PuffArcCellBiasY[cell]) - 32, w,
+               gBattleEffect_PuffArcCellHeights[cell]);
       }
       i += 1;
       p->variant += 1;
@@ -2635,7 +2638,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   work->transferMode = 1;                // clear the canvas on each transfer
   work->transferValue = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  heights = Data_08196e1c;
+  heights = gRockWall_Heights;
   work->shakeFrames = 128;
   Sound_PlayFar(141);
 
@@ -2866,9 +2869,10 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
         u32 width;
 
         cel = ember->variant / 2;
-        draw[1](canvas, work->sheet + Data_08198316[cel],
-                ember->x - ((width = Data_08198303[cel]) >> 1),
-                ember->y + Data_0819830f[cel] - 56, width, Data_08198309[cel]);
+        draw[1](canvas, work->sheet + gFire_FlareCells[cel],
+                ember->x - ((width = gFire_FlareWidths[cel]) >> 1),
+                ember->y + gFire_FlareBiasY[cel] - 56, width,
+                gFire_FlareHeights[cel]);
         ember->variant++;
       }
     }
@@ -2985,9 +2989,9 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
             EffectPosition_ProjectPoint(xyz, pos = &screen);
             pos->x = (pos->x >> 17) + 64;
             pos->y = HI(pos->y) + 60;
-            draw[1](canvas, work->sheet + Data_08198362[cel],
-                    pos->x - ((width = Data_08198351[cel]) >> 1),
-                    pos->y - ((height = Data_08198359[cel]) >> 1), width,
+            draw[1](canvas, work->sheet + gFrost_MoteCells[cel],
+                    pos->x - ((width = gFrost_MoteWidths[cel]) >> 1),
+                    pos->y - ((height = gFrost_MoteHeights[cel]) >> 1), width,
                     height);
           }
           if (frame < TIMING(RISE_FRAME)) {
@@ -3056,8 +3060,8 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
         if (chip->variant >= 0) {
           s32 cel = i % 8;
 
-          draw[1](canvas, work->sheet + Data_0819838c[cel], HI(chip->x),
-                  HI(chip->y), Data_0819837b[cel], Data_08198383[cel]);
+          draw[1](canvas, work->sheet + gFrost_ChipCells[cel], HI(chip->x),
+                  HI(chip->y), gFrost_ChipWidths[cel], gFrost_ChipHeights[cel]);
           chip->x += chip->velocityX;
           chip->y += chip->velocityY;
           chip->variant--;
@@ -3434,8 +3438,8 @@ void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
             s32 cel = puff->variant / 3;
             u32 width;
 
-            draw[0](canvas, work->sheet + Data_081983ac[cel],
-                    screen.x - ((width = Data_081983ba[cel]) >> 1),
+            draw[0](canvas, work->sheet + gEruption_PuffCells[cel],
+                    screen.x - ((width = gEruption_PuffSizes[cel]) >> 1),
                     screen.y - (width >> 1), width, width);
           }
           if (puff->variant <= 20)
@@ -4238,7 +4242,8 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
 
               HeapSlot_Release(188);
               HeapSlot_Release(104);
-              Func_08196404(188, 7, 7, Data_081983c8[Random16() & 3] | CLIP,
+              Func_08196404(188, 7, 7,
+                            gTargetStrike_GlintDrawFlags[Random16() & 3] | CLIP,
                             BLIT_ADDITIVE);
               ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
                   canvas, work->sheet + gBattleEffect_GlintCells[cel], x, y,
@@ -4745,7 +4750,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
             if (row == 3)
               position.x = (pathX + 80 + column * 32 + 32) * 65536;
             Render_ApplyProjectedPlacementFar(work->objects[row * 3 + column],
-                                              &position, Data_081983cc, 0);
+                                              &position, gAtalanta_UnitScale,
+                                              0);
           }
         }
       }
@@ -4875,10 +4881,11 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
             s32 cell = slash->variant / 4;
             u32 width;
 
-            draw[i & 1](canvas, Ram_MapCellBuffer + gData_0819747a[cell],
+            draw[i & 1](canvas,
+                        Ram_MapCellBuffer + gBattleEffect_PuffArcCells[cell],
                         slash->x - ((width = gData_08197467[cell]) >> 1) - 8,
-                        slash->y + gData_08197473[cell] - 40, width,
-                        gData_0819746d[cell]);
+                        slash->y + gBattleEffect_PuffArcCellBiasY[cell] - 40,
+                        width, gBattleEffect_PuffArcCellHeights[cell]);
             if (slash->variant <= 11) {
               draw[0](canvas, work->sheet + SLASH_TOP, slash->x + 4,
                       slash->y - 40, 16, 21);

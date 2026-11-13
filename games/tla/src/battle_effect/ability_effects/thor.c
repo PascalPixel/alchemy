@@ -26,7 +26,7 @@ extern char ResourceId_VioletMoteSheet;
 extern const s16 Data_08196e2c[6][2]; // the three lines' end points
 
 extern const u8 gThor_TargetPalettes[];
-extern const u8 Data_08198562[]; // gThor_SmokeFlips
+extern const u8 gThor_SmokeFlips[];
 
 #define STORM_PARTICLES ((struct EffectStep *)(Ram_MapCellBuffer + 0xc58))
 #define STORM_MOTE_CELLS 0x6000
@@ -545,7 +545,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
           if (never || neverToo) {
             y = 0;
           }
-          Func_08196404(188, 7, 7, 3 | Data_08198562[Random16() & 3], 1);
+          Func_08196404(188, 7, 7, 3 | gThor_SmokeFlips[Random16() & 3], 1);
           BLITTER_ALTERNATE(
               canvas, Ram_MapCellBuffer + gBattleEffect_GlintCells[cell], x,
               y + 56, gData_08197492[cell], gData_08197498[cell]);

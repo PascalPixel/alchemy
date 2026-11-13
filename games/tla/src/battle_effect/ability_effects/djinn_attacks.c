@@ -487,9 +487,9 @@ extern char ResourceId_EmberStreakSheet;
 // The ember puff's six cels: ☀️'s gBattleEffect_PuffArcCellWidths, _CellHeights,
 // _CellBiasY and _CellSourceOffsets.
 extern u8 gData_08197467[];
-extern u8 gData_0819746d[];
-extern u8 gData_08197473[];
-extern u16 gData_0819747a[];
+extern u8 gBattleEffect_PuffArcCellHeights[];
+extern u8 gBattleEffect_PuffArcCellBiasY[];
+extern u16 gBattleEffect_PuffArcCells[];
 
 void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
@@ -586,9 +586,10 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
           s32 cel = puff->variant / 8;
           u32 width;
 
-          blit[0](canvas, work->sheet + gData_0819747a[cel],
+          blit[0](canvas, work->sheet + gBattleEffect_PuffArcCells[cel],
                   puff->x - ((width = gData_08197467[cel]) >> 1),
-                  puff->y + gData_08197473[cel], width, gData_0819746d[cel]);
+                  puff->y + gBattleEffect_PuffArcCellBiasY[cel], width,
+                  gBattleEffect_PuffArcCellHeights[cel]);
         }
         member++;
         puff->variant++;

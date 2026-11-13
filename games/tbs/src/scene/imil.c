@@ -1210,7 +1210,7 @@ static void Imil_UpdateFootprints(void) {
   x = actor->x.fixed;
   // In units of 8 pixels.
   column = x >> 19;
-  if ((u32)(column - 24) <= 7 ||
+  if ((column >= 24 && column <= 31) ||
       ((u32)((actor->z.fixed >> 19) - 36) <= 9 && (u32)(column - 22) <= 9)) {
     isSet = GameFlag_Get(zoneFlag);
     if (isSet != 0)

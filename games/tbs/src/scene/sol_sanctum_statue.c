@@ -969,7 +969,7 @@ static void SolSanctumStatue_PrepareMoveOnCenterStatue(void) {
   column = FIELD_CELL(leaderPosition->x.fixed);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (FIELD_CELL(leader->z.fixed) == 8) {
-    if ((u32)(column - 17) <= 1) {
+    if (column >= 17 && column <= 18) {
       Field_SetCellBehaviorAt(2, 272, 128, CELL_BEHAVIOR_WALL);
       Field_SetCellBehaviorAt(2, 288, 128, CELL_BEHAVIOR_WALL);
     }

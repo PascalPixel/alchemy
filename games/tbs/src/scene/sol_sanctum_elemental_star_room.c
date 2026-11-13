@@ -654,7 +654,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
     shadow->scaleY += Q16_ONE / 100;
     Event_Wait(1);
   }
-  *motionFlags = 5;
+  *motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
   Event_Wait(80);
   for (i = 0; i != 60; i++) {
     felix->y.fixed -= px(1) / 2;
@@ -1115,7 +1115,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
     actor->y.fixed += px(1);
     Event_Wait(1);
   }
-  actor->motionFlags = 5;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_GARET, 10);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);

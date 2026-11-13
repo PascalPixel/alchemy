@@ -19,7 +19,7 @@ UNUSED static void *Actor_PrepareFixed(s32 x, s32 y, s32 z, s32 type) {
   if (actor != 0) {
     actor->sprite->image.priority = 0;
     actor->motionFlags = 0;
-    actor->collisionFlags = 8;
+    actor->collisionFlags = ACTOR_NOT_TARGETED;
     Actor_SetSpriteFlags(actor, 0);
     Actor_SetSpriteColor(actor, SPRITE_COLOR_BLACK);
     Actor_SetBlendMode(actor, ACTOR_BLEND_TRANSLUCENT);
@@ -41,7 +41,7 @@ UNUSED static void *Actor_CreateConfiguredFixed(s32 x, s32 y, s32 z, s32 type) {
   if (actor != 0) {
     actor->sprite->image.priority = 1;
     actor->motionFlags = 0;
-    actor->collisionFlags = 8;
+    actor->collisionFlags = ACTOR_NOT_TARGETED;
     Actor_SetSpriteFlags(actor, 0);
     Actor_SetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
     actor->priorityFlags = (actor->priorityFlags & ~ACTOR_PRIORITY_AUTOMATIC) |

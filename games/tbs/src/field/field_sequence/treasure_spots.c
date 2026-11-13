@@ -110,7 +110,7 @@ void Field_PlaceTreasureSpots(void) {
           markerActor->homeX = markerActor->x.fixed / Q16_ONE;
           markerActor->homeZ = markerActor->z.fixed / Q16_ONE;
           markerActor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
-          markerActor->collisionFlags = 1;
+          markerActor->collisionFlags = ACTOR_SOLID;
           marker->id = trigger->subject;
           marker->actor = markerActor;
           // Plain words: through .fixed, the union moves the store above.
@@ -137,7 +137,7 @@ void Field_PlaceTreasureSpots(void) {
           Actor_SelectAnimationFar(markerActor, 1);
           markerActor->homeX = markerActor->x.fixed / Q16_ONE;
           markerActor->homeZ = markerActor->z.fixed / Q16_ONE;
-          markerActor->collisionFlags = 1;
+          markerActor->collisionFlags = ACTOR_SOLID;
           markerActor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
           marker->actor = markerActor;
           marker->id = trigger->subject;

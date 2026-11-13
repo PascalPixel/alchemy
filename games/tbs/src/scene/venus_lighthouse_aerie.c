@@ -2618,7 +2618,7 @@ static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
 
   Actor_Get(ACTOR_FELIX)->riseCounter = 0;
   Actor_Get(ACTOR_SHEBA)->riseCounter = 0;
-  Actor_Get(ACTOR_BEACON_ORB)->motionFlags |= 4;
+  Actor_Get(ACTOR_BEACON_ORB)->motionFlags |= ACTOR_FLOATS;
   Actor_SetSpriteColorById(ACTOR_BEACON_ORB, SPRITE_COLOR_GBR);
   Task_AddFrame(VenusLighthouseAerie_SpawnSideOrbitParticles, TASK_PASS_FRAME);
   gFieldWork->transitionFrames = 1;

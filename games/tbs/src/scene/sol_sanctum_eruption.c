@@ -288,7 +288,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Actor_SetSpriteFlags(actor, 0);
   Actor_SetPosition(ACTOR_WISE_ONE, 325, 302);
   actor = Actor_Get(ACTOR_WISE_ONE);
-  actor->motionFlags = 5;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
   sparkles->stopped = 1;
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);

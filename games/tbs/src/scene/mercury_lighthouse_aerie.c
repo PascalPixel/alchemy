@@ -255,7 +255,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
     Actor_SetSpritePriority(ACTOR_FIRST_BEACON_STATUE + 3, 1);
     for (i = ACTOR_FIRST_PLATFORM; i < ACTOR_FIRST_PLATFORM + 6; i++) {
       Actor_SetSpritePriority(i, 1);
-      Actor_Get(i)->motionFlags = 4;
+      Actor_Get(i)->motionFlags = ACTOR_FLOATS;
       Actor_Get(i)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       Actor_Get(i)->y.fixed = -(px(50) + px(1) / 2);
     }
@@ -485,13 +485,14 @@ static void MercuryLighthouseAerie_StepOntoPlatform(void) {
 ///
 /// The leader walks normally again and the platforms stop following.
 static void MercuryLighthouseAerie_SettlePlatforms(void) {
-  Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 3;
-  Actor_Get(ACTOR_FIRST_PLATFORM)->motionFlags = 4;
-  Actor_Get(ACTOR_FIRST_PLATFORM + 1)->motionFlags = 4;
-  Actor_Get(ACTOR_FIRST_PLATFORM + 2)->motionFlags = 4;
-  Actor_Get(ACTOR_FIRST_LIFT_PLATFORM)->motionFlags = 4;
-  Actor_Get(ACTOR_SECOND_LIFT_PLATFORM)->motionFlags = 4;
-  Actor_Get(ACTOR_FIRST_PLATFORM + 5)->motionFlags = 4;
+  Actor_Get(ACTOR_PARTY_LEADER)->motionFlags =
+      ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+  Actor_Get(ACTOR_FIRST_PLATFORM)->motionFlags = ACTOR_FLOATS;
+  Actor_Get(ACTOR_FIRST_PLATFORM + 1)->motionFlags = ACTOR_FLOATS;
+  Actor_Get(ACTOR_FIRST_PLATFORM + 2)->motionFlags = ACTOR_FLOATS;
+  Actor_Get(ACTOR_FIRST_LIFT_PLATFORM)->motionFlags = ACTOR_FLOATS;
+  Actor_Get(ACTOR_SECOND_LIFT_PLATFORM)->motionFlags = ACTOR_FLOATS;
+  Actor_Get(ACTOR_FIRST_PLATFORM + 5)->motionFlags = ACTOR_FLOATS;
 }
 
 /// Lighthouse Aerie: touching cell behavior 5 before the confrontation.
@@ -869,10 +870,10 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Sound_Play(SE_JUMP);
   Actor_Get(ACTOR_MENARDI)->motionFlags &= 0x7e;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MENARDI), 0);
-  Actor_Get(ACTOR_FIRST_LIFT_PLATFORM)->motionFlags = 4;
+  Actor_Get(ACTOR_FIRST_LIFT_PLATFORM)->motionFlags = ACTOR_FLOATS;
   Actor_MoveToAndWait(ACTOR_MENARDI, 104, 168);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MENARDI), SPRITE_FLAG_SHADOW);
-  Actor_Get(ACTOR_MENARDI)->motionFlags = 3;
+  Actor_Get(ACTOR_MENARDI)->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 30);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 10);
   // "Isaac and Garet shouldn't have come after us..."

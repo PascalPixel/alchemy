@@ -633,7 +633,7 @@ static s32 WorldMap_SetUpIodem(struct Actor *interpreter) {
   struct WorldMapRenderWork *work = gMapGridWork[0];
   struct Sprite *sprite = actor->sprite;
 
-  actor->collisionFlags |= 1;
+  actor->collisionFlags |= ACTOR_SOLID;
   sprite->rotation = work->rotation;
   return 1;
 }

@@ -737,7 +737,7 @@ s32 ActorScript_WanderNearHome(struct Actor *interpreter) {
       dz = candidatePosition.z / Q16_ONE - actor->homeZ;
       if (dx * dx + dz * dz > homeRadiusSquared)
         goto roam;
-      actor->collisionFlags |= 2;
+      actor->collisionFlags |= ACTOR_PUSHABLE;
       Actor_SetMoveTarget(actor, candidatePosition.x, candidatePosition.y,
                           candidatePosition.z);
       goto done;

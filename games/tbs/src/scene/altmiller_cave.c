@@ -540,7 +540,7 @@ static void AltmillerCave_UpdateMovedObstacle(void) {
   struct Actor *actor = Actor_Get(ACTOR_SQUALL_ROOM_PILLAR);
 
   if (actor->x.fixed >> 20 == 30 && actor->z.fixed >> 20 == 20) {
-    actor->motionFlags = 2;
+    actor->motionFlags = ACTOR_FALLS;
     actor->groundHeight = 0;
     actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(30, 20, 1, 1, 32, 20);

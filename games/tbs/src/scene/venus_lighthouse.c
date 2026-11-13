@@ -487,7 +487,7 @@ static __inline__ void SetFlagBits(u8 *flags, u8 bits) { *flags |= bits; }
 static void VenusLighthouse_ConfigurePassageEffect(struct Actor *actor,
                                                    s32 childValue) {
   actor->motionFlags = 0;
-  actor->collisionFlags = 8;
+  actor->collisionFlags = ACTOR_NOT_TARGETED;
   Actor_SetSpriteFlags(actor, 0);
   Actor_SetSpriteColor(actor, childValue);
 }

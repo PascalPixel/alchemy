@@ -2644,7 +2644,8 @@ s32 MercuryLighthouse_Initialize(void) {
       gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
-      Actor_Get(ACTOR_FALLEN_STATUE)->motionFlags = 3;
+      Actor_Get(ACTOR_FALLEN_STATUE)->motionFlags =
+          ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       Sound_Play(SE_STONE_GRIND);
       Event_Wait(32);
       Sound_Play(SE_THUMP);
@@ -2921,7 +2922,8 @@ static void MercuryLighthouse_RideLift(void) {
   liftLayer->offsetY = px(1024);
   MapGrid_CenterOnFollowedPoint();
   wait(2);
-  Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 3;
+  Actor_Get(ACTOR_PARTY_LEADER)->motionFlags =
+      ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_Get(ACTOR_LIFT_STATUE)->z.fixed = px(440);
   Actor_Get(ACTOR_LIFT_STATUE)->targetZ = Actor_Get(ACTOR_LIFT_STATUE)->z.fixed;
   Event_Wait(30);

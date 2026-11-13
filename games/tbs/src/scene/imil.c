@@ -909,7 +909,7 @@ s32 Imil_Initialize(void) {
     entrance = gMainRoutineWork.entrance;
     if (entrance == ICE_ROOMS_HOUSE_SOUTHWEST) {
       Actor_SetSpriteColorById(ACTOR_INVISIBLE_CRATE, SPRITE_COLOR_HIDDEN);
-      Actor_Get(ACTOR_INVISIBLE_CRATE)->collisionFlags |= 8;
+      Actor_Get(ACTOR_INVISIBLE_CRATE)->collisionFlags |= ACTOR_NOT_TARGETED;
       Actor_SetSpritePriority(ACTOR_INVISIBLE_CRATE, 1);
       if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         MapGrid_CopyCellAttributes(10, 7, 1, 1, 10, 8);
@@ -953,11 +953,11 @@ s32 Imil_Initialize(void) {
       if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         Actor_SetPosition(ACTOR_WEAPON_MERCHANT, 364, 578);
         Actor_SetSpritePriority(ACTOR_WEAPON_MERCHANT, 2);
-        Actor_Get(ACTOR_WEAPON_MERCHANT)->collisionFlags |= 4;
+        Actor_Get(ACTOR_WEAPON_MERCHANT)->collisionFlags |= ACTOR_NEAR_TALK;
         MapGrid_CopyCellsTo(6, 125, 22, 88, 3, 3);
         Actor_SetPosition(ACTOR_ARMOR_MERCHANT, 492, 578);
         Actor_SetSpritePriority(ACTOR_ARMOR_MERCHANT, 2);
-        Actor_Get(ACTOR_ARMOR_MERCHANT)->collisionFlags |= 4;
+        Actor_Get(ACTOR_ARMOR_MERCHANT)->collisionFlags |= ACTOR_NEAR_TALK;
         MapGrid_CopyCellsTo(9, 125, 28, 88, 3, 3);
       } else {
         Actor_Get(ACTOR_WEAPON_MERCHANT)->scaleX = -Q16_ONE;
@@ -972,7 +972,7 @@ s32 Imil_Initialize(void) {
       if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         Actor_SetPosition(ACTOR_ITEM_MERCHANT, 460, 258);
         Actor_SetSpritePriority(ACTOR_ITEM_MERCHANT, 2);
-        Actor_Get(ACTOR_ITEM_MERCHANT)->collisionFlags |= 4;
+        Actor_Get(ACTOR_ITEM_MERCHANT)->collisionFlags |= ACTOR_NEAR_TALK;
         Actor_SetPosition(ACTOR_ITEM_MERCHANTS_DAUGHTER, 408, 264);
         Actor_Get(ACTOR_ITEM_MERCHANTS_DAUGHTER)->facing =
             FACING_EAST_SOUTHEAST;
@@ -980,7 +980,8 @@ s32 Imil_Initialize(void) {
       } else {
         Actor_SetPosition(ACTOR_ITEM_MERCHANTS_DAUGHTER, 460, 258);
         Actor_SetSpritePriority(ACTOR_ITEM_MERCHANTS_DAUGHTER, 2);
-        Actor_Get(ACTOR_ITEM_MERCHANTS_DAUGHTER)->collisionFlags |= 4;
+        Actor_Get(ACTOR_ITEM_MERCHANTS_DAUGHTER)->collisionFlags |=
+            ACTOR_NEAR_TALK;
         Actor_Get(ACTOR_ITEM_MERCHANT)->scaleX = -Q16_ONE;
         Actor_SetSpriteFlags(Actor_Get(ACTOR_ITEM_MERCHANT), 0);
         Actor_SetAnimation(ACTOR_ITEM_MERCHANT, IMIL_ANIMATION_LIE_IN_BED);

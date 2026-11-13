@@ -2869,15 +2869,6 @@ extern char SceneId_Ov681Room2;
 extern char SceneId_Ov681Room3;
 extern char SceneId_Ov681Room4;
 extern char SceneId_Ov681Room5;
-/* VIEW(s2cb4): variable gData_0200530c as s16 gData_0200530c[][2];
- * scene/gaia_rock_inside/s4d00 has u16 gData_0200530c[] = {; tried as the
- * definition's extern DEFINE_G_DATA_02005244(gData_02005244, Orbit_Update,
- * Actor_AimAtWatched, Actor_StepToWatched)
- * DEFINE_G_DATA_02005264(gData_02005264, ..., it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside.c:3453: `gData_0200530c' undeclared
- * (first use in this function). */
-extern s16 gData_0200530c__s2cb4[][2] __asm__("gData_0200530c");
-#define gData_0200530c gData_0200530c__s2cb4
 extern u32 gData_02005360[];
 extern u32 gData_0200539c[];
 extern u32 gData_020053d8[];

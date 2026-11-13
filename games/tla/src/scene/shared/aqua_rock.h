@@ -13,8 +13,6 @@
 #include "field_sprite.h"
 #include "frame.h"
 
-extern u32 gSceneExits[];
-
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -27,16 +25,13 @@ void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Animation_ApplyChildArgument(void *animation, s32 value);
 u8 *ResourceMetadata_Register(void *animation, s32 id);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_CenterOnColumn(u32 objectId, s32 action, s32 z_offset);
 void Actor_OffsetPositionAndResetMotion(s32 id, s32 x, s32 z);
 void Actor_WaitForMoveById(s32 id);
-void Actor_CommitPositionAndActivate(u32 objectId, s32 x_offset, s32 z_offset);
 void Actor_SetSpritePriority(u32 id, s32 variant);
 void Actor_SetAngleToward(s32 id, s32 target, s32 flags);
 void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
 void Actor_Jump(s32 id, s32 a, s32 b);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
-void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Camera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
 s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
@@ -85,7 +80,6 @@ void Import_EventSetExitRequest(s32 a);
 void Event_ResolvePendingActions(s32 a);
 void Event_NoOp(void);
 void Sound_Play(s32 cue);
-void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
 s32 Func_02002030(struct Actor *object);
 
 void Func_02000468(struct Actor *object);

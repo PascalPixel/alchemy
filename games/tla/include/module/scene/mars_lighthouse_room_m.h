@@ -18,7 +18,6 @@ void Func_02001608(void);
 
 void Func_0200055c(void);
 
-void Func_0200170c(void);
 void Func_02001324(s32 x, s32 z, s32 c, s32 d, s32 e, s32 f);
 
 void Func_020000c0(void);

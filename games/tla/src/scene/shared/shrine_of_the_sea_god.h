@@ -62,7 +62,6 @@ struct ShrineOfTheSeaGodMapWork {
 };
 
 struct ShrineOfTheSeaGodObject *Actor_GetById(s32 id);
-void wait(s32 frames);
 void Event_Wait(s32 frames);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);

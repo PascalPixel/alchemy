@@ -25,7 +25,6 @@ void Event_WaitTransitionFrames(void);
 
 void Func_02003de4(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const void *script);
-void Event_Start(void);
 void Event_End(void);
 void Func_020034ec(void);
 

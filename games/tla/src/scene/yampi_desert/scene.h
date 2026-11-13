@@ -24,7 +24,6 @@ extern const u8 gData_02004800[];
 extern s32 gData_02004808;
 
 struct Actor *Actor_GetById(u32 objectId);
-void wait(s32 frames);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -62,7 +61,6 @@ void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
 void BattleEffect_SetupObjectPair(s32 a, s32 b);
 void BattleEffect_StopMainActor(void);
 void BattleEffect_CleanupSceneObjects(void);
-void EventObject_Initialize(void);
 void Func_020041c8(s32 cue);
 void Func_020041d0(void);
 void Func_020041d8(s32 a, s32 b, s32 c, s32 d);
@@ -97,7 +95,6 @@ void Func_02002180(void);
 void Func_02002318(void);
 void Func_02003338(s32 id);
 void Func_020020a8(void);
-void Func_02003fa8(struct Actor *object, s32 mode);
 void Func_02003910(s32 id, u32 kind, s32 flag, s32 layer);
 
 // The scene's own event inlines: a habit of the whole game written once, as

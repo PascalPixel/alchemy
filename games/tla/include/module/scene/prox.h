@@ -79,8 +79,6 @@ void Func_02001b0c(void);
 
 void Func_02001b28(void);
 
-void Func_02001b44(void);
-
 void Func_02001b60(void);
 void Func_02001b7c(void);
 void Func_02002a8c(void);

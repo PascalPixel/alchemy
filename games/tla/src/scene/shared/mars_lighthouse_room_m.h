@@ -91,11 +91,9 @@ void Func_02001e38(struct Actor *object);
 void Func_02001ed4(struct Actor *object);
 void Func_020012a4(s32 x, s32 z, s32 kind);
 void Func_02002ad4(struct Actor *object);
-void Event_Start(void);
 void Event_End(void);
 void Func_020032a0(void);
 s32 Math_Cosine(s32 angle);
-void Animation_SetStateFlags(struct Actor *object, u32 value);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 

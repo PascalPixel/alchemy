@@ -12,14 +12,12 @@
 struct Trigger;
 
 u32 Random16Far(void);
-s32 Math_Cosine(s32 angle);
 void Func_02000038(struct Actor *object);
 void Func_02004d24(s32 id);
 void Func_02004d50(s32 id);
 void Func_02004fac(void);
 void Func_02005010(void);
 void Func_020050b0(void);
-void Event_End(void);
 void Func_020057cc(void);
 
 extern u8 MsgUhhhhnnnICan[];

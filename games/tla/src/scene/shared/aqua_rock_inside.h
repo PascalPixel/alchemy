@@ -13,8 +13,6 @@
 #include "event_inline.h"
 #include "frame.h"
 
-extern u32 gSceneExits[];
-
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Animation_ApplyChildArgument(void *animation, s32 value);
@@ -116,7 +114,6 @@ struct FieldSpriteFlags {
 
 s32 Math_Cosine(s32 angle);
 void Heap_Release(void *block);
-void Animation_SetStateFlags(struct Actor *object, u32 value);
 void Resource_DecodeType01(const void *source, void *destination);
 void Func_02003cc4(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *data);

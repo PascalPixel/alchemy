@@ -14,15 +14,10 @@
 #include "frame.h"
 #include "text/msg_ids.h"
 
-extern u32 gSceneExits[];
-
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Animation_ApplyChildArgument(void *animation, s32 value);
 u8 *ResourceMetadata_Register(void *animation, s32 id);
-void Event_StartScreenTransition(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 s32 Resource_FindFreeEntry(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02001bf4(void *callback);
@@ -32,7 +27,6 @@ void Func_02001c24(const void *source, void *destination);
 void Func_02001c6c(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *data);
 s32 Func_02001c9c(struct Actor *object, s32 *position);
-void Event_End(void);
 void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
 void Func_02001d8c(void);
 void Func_02001d9c(void);

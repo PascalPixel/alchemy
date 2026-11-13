@@ -63,10 +63,8 @@ struct KibomboEventWork {
   u16 field1c4;
 };
 
-s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void Event_Wait(s32 frames);
 struct KibomboObject *Actor_GetById(s32 id);
 void Actor_SetPositionAndResetMotion(struct KibomboObject *object, s32 x,
                                       s32 y, s32 z);
@@ -77,15 +75,10 @@ void Actor_SetSpritePriority(s32 actor, s32 variant);
 
 void Map_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Event_Start(void);
-void Event_End(void);
-void Event_SetMessageId(s32 message);
 void Event_ShowMessageThenWait(s32 actor, s32 a, s32 b);
 void Event_ShowMessageAndWait(s32 speaker, s32 flags);
-s32 Event_AskYesNoAndShowResponse(s32 speaker, s32 flags);
 void Actor_ArmCallbackAndRefresh(s32 actor, s32 angle);
 void Func_02005b8c(s32 actor);
-void Event_ResolvePendingActions(s32 skip);
 void Func_02005c6c(const void *script);
 void Func_02005c84(s32 shop, s32 keeper);
 void Func_02005c8c(s32 keeper);
@@ -102,14 +95,11 @@ void Actor_SetModeById(u32 actorId, s32 animation);
 void Task_Add(void (*func)(void), s32 priority);
 void Task_RemoveFar(void (*func)(void));
 void Field_DispatchTypeHandler(s32 type);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 void Func_02005bb4(void);
 void Import_EventSetExitRequest(s32 countdown);
 void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
 s32 Func_02005c1c(s32 a, s32 b);
 void BattleEffect_StopMainActor(void);
-void BattleEffect_CleanupSceneObjects(void);
 void EventObject_Initialize(void);
 
 void Func_02005bcc(void);
@@ -119,7 +109,6 @@ void Func_02005c5c(s32 a, s32 b, s32 c, s32 d);
 void Func_02005c64(const void *script);
 void Actor_SetMoveTarget(struct KibomboObject *object, s32 x, s32 y, s32 z);
 void Script_WaitForEventTimeout(struct KibomboObject *object);
-void Event_StartScreenTransition(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -156,13 +145,10 @@ void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void Actor_MoveToObject(s32 actor, s32 target);
 void Actor_SetMovementTypeById(s32 actor, const void *callback);
 void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);
-s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
-s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
 void FieldEffect_SetAttached(s32 actor, s32 emote);
 void Actor_Jump(s32 actor, s32 speed, s32 frames);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
 void Actor_WaitForMoveById(s32 actor);
 void Event_PrepareObjectAndApplyValue(s32 actor, s32 value);
 
@@ -245,7 +231,6 @@ void Func_020000a0(struct KibomboObject *object);
 void Func_02000524(s32 show);
 void Func_0200057c(void);
 void Func_02000590(s32 show, s32 first, u32 count);
-void Func_020005e0(void);
 void Func_02000624(void);
 void Func_02000668(void);
 void Func_020006ac(void);

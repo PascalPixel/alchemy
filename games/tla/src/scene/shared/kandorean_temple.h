@@ -33,7 +33,6 @@ void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
 void BattleEffect_SetupObjectPair(s32 a, s32 b);
 void BattleEffect_StopMainActor(void);
 void BattleEffect_CleanupSceneObjects(void);
-void EventObject_Initialize(void);
 void Field_DispatchTypeHandler(s32 type);
 void Func_0200098c(s32 *position, s32 value);
 void Func_02000adc(void);

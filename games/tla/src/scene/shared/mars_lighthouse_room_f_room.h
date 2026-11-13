@@ -48,19 +48,15 @@ struct PushTarget {
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 
 s32 Func_020027ac(s32 index, s32 value);
 s32 Func_020027dc(s32 index);
 s32 Func_02004a8c(struct PushTarget *target);
 void Func_02004d10(struct PushTarget target);
 void Actor_StartScript(struct Actor *object, const void *script);
-void Event_End(void);
 void Func_020055e0(void);
 s32 Func_020055f8(s32 id);
 void Func_02005600(void);
-void Leader_StopMoving(void);
 void ObjectTable_Snapshot(void);
 struct Actor *Func_02005680(s32 *position, s32 mode);
 void Func_02005688(void);

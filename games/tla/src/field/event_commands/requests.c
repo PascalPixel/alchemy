@@ -70,11 +70,11 @@ void Field_SetDestination(s16 scene, s16 entrance) {
   event->countdown = 999;
 }
 
-void Scene_QueueMusic(s32 cue) {
+void Scene_QueueMusic(s32 soundId) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 state;
 
-  state = cue;
+  state = soundId;
   event->cueState = state;
   if ((s16)state == -1)
     state = 0x186;

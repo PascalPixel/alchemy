@@ -260,13 +260,13 @@ void MessageArgument_Push(u32 value, u32 kind) {
   } while (no != limit);
 }
 
-u32 MessageArgument_Lookup(u32 name, u32 clear) {
+u32 MessageArgument_Lookup(u32 kind, u32 clear) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u32 index;
   u32 value = 0;
 
   for (index = 0; index < 8; index++) {
-    if (work->names[index] == name) {
+    if (work->names[index] == kind) {
       value = work->values[index];
       if (clear != 0) {
         work->values[index] = 0;
@@ -803,14 +803,14 @@ s32 Portrait_GetForSpeaker(u32 value) {
   return result;
 }
 
-struct Window *Portrait_OpenWindow(s32 arg0, s32 arg1, s32 x, s32 y) {
+struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x, s32 y) {
   struct Window *win;
   s32 minusFour;
   s32 offset;
   struct WindowWork *work;
 
   work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
-  if (Portrait_GetForSpeaker(arg0) == -1) {
+  if (Portrait_GetForSpeaker(speaker) == -1) {
     return 0;
   }
   minusFour = -4;
@@ -822,7 +822,7 @@ struct Window *Portrait_OpenWindow(s32 arg0, s32 arg1, s32 x, s32 y) {
     win = Window_Create(x, y, 5, 5, 2);
   }
   if (win != 0) {
-    CreateSideObject(arg0, arg1, -1, win, offset, minusFour);
+    CreateSideObject(speaker, portraitOption, -1, win, offset, minusFour);
   }
   return win;
 }

@@ -17,7 +17,7 @@
 /// direction: CANVAS_WIPE_ACROSS sweeps left to right, anything else top to
 ///            bottom (enum CanvasWipeDirection).
 /// fill: what the wipe leaves (enum CanvasWipeFill).
-void BattleEffect_WipeCanvas(s32 mode, s32 value) {
+void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
   struct BattleFxWork *work;
   u8 *canvas;
   u8 delay[128];
@@ -30,7 +30,7 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value) {
   for (x = 0; x != 128; x++)
     delay[x] = Random16() & 0x3f;
 
-  if (mode == 1) {
+  if (direction == 1) {
     s32 front;
     s32 speed;
 
@@ -46,13 +46,13 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value) {
           if (pos >= 0)
             if (pos <= 127)
               canvas[(((y / 8) * 16 + pos / 8) * 8 + (y & 7)) * 8 + (pos & 7)] =
-                  1 - value;
+                  1 - fill;
         }
       }
       work->transferPending = 1;
       wait(1);
     } while (front <= 256);
-  } else if (mode != 3) {
+  } else if (direction != 3) {
     s32 front;
     s32 speed;
 
@@ -68,7 +68,7 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value) {
           if (pos >= 0)
             if (pos <= 127)
               canvas[(((pos / 8) * 16 + x / 8) * 8 + (pos & 7)) * 8 + (x & 7)] =
-                  1 - value;
+                  1 - fill;
         }
       }
       work->transferPending = 1;

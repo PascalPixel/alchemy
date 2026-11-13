@@ -468,32 +468,32 @@ struct OutputSprite {
 };
 extern u16 gWindowSprite_BounceScales[];
 
-void WindowSprite_UpdateScaleAnimation(struct WindowSprite *output) {
+void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
   s32 scale = 256;
-  struct OutputSprite *sprite = (struct OutputSprite *)&output->sprite;
+  struct OutputSprite *sprite = (struct OutputSprite *)&windowSprite->sprite;
   struct AffineTransform effect;
 
-  switch ((u8)output->active) {
+  switch ((u8)windowSprite->active) {
   case 9:
-    scale = gWindowSprite_BounceScales[output->animStep++ & 31];
+    scale = gWindowSprite_BounceScales[windowSprite->animStep++ & 31];
     break;
   case 10:
-    scale = gWindowSprite_BounceScales[output->animStep++ & 31] >> 1;
+    scale = gWindowSprite_BounceScales[windowSprite->animStep++ & 31] >> 1;
     break;
   case 11:
-    if (output->animStep <= 7)
-      scale = gWindowSprite_BounceScales[output->animStep++ * 2 + 16];
+    if (windowSprite->animStep <= 7)
+      scale = gWindowSprite_BounceScales[windowSprite->animStep++ * 2 + 16];
     break;
   case 12:
-    if (output->animStep <= 7)
-      scale = gWindowSprite_BounceScales[output->animStep++ * 2 + 16] >> 1;
+    if (windowSprite->animStep <= 7)
+      scale = gWindowSprite_BounceScales[windowSprite->animStep++ * 2 + 16] >> 1;
     break;
   }
   if (scale == 256) {
     sprite->affineIndex = 0;
     sprite->affine = 0;
-    sprite->x = (u16)output->x;
-    sprite->y = (u16)output->y;
+    sprite->x = (u16)windowSprite->x;
+    sprite->y = (u16)windowSprite->y;
   } else {
     effect.scaleX = scale;
     effect.scaleY = scale;
@@ -502,13 +502,13 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *output) {
     if (scale > 256) {
       sprite->affine = 3;
       // x read through a u16 pointer, which loads it after the -8 is built;
-      // as (u16)output->x the two loads swap.
-      sprite->x = *(u16 *)&output->x - 8;
-      sprite->y = (u16)output->y - 8;
+      // as (u16)windowSprite->x the two loads swap.
+      sprite->x = *(u16 *)&windowSprite->x - 8;
+      sprite->y = (u16)windowSprite->y - 8;
     } else {
       sprite->affine = 1;
-      sprite->x = (u16)output->x;
-      sprite->y = (u16)output->y;
+      sprite->x = (u16)windowSprite->x;
+      sprite->y = (u16)windowSprite->y;
     }
   }
 }

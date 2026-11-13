@@ -204,13 +204,13 @@ void Sound_WaitForJingle(void) {
 
 s32 BattleEffect_GetResourceIdFar(u16 id);
 
-void Shop_ShowKeeperMessage(s32 first) {
+void Shop_ShowKeeperMessage(s32 messageId) {
   struct ShopRuntime *state = Ram_HeapSlots->menuRuntime;
   s32 message;
   s32 value;
   s8 mode;
 
-  message = first;
+  message = messageId;
   value = BattleEffect_GetResourceIdFar(state->keeperResource);
   Message_CloseFinishedWindowsFar();
   mode = state->shopType;
@@ -259,7 +259,7 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
 /// for Yes, 1 for No or B. `choice` is where the cursor starts. Keeps the
 /// hand cursor's motion. Called by the counters before they buy, sell, equip
 /// or repair, and by the inn.
-s32 Shop_AskYesNo(s32 arg0) {
+s32 Shop_AskYesNo(s32 choice) {
   struct WindowSprite **slot =
       &((struct ShopRuntime *)Ram_HeapSlots->menuRuntime)->cursor.anchor;
   u8 saved = (*slot)->active;
@@ -267,26 +267,26 @@ s32 Shop_AskYesNo(s32 arg0) {
   Icon_PrepareActorFar(*slot);
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||                      \
     (LANGUAGE == LANGUAGE_ITALIAN)
-  arg0 = Menu_RunConfirmSelectionAtFar(6, 5, arg0);
+  choice = Menu_RunConfirmSelectionAtFar(6, 5, choice);
 #else
-  arg0 = Menu_RunConfirmSelectionAtFar(7, 5, arg0);
+  choice = Menu_RunConfirmSelectionAtFar(7, 5, choice);
 #endif
   (*slot)->active = saved;
-  return arg0;
+  return choice;
 }
 
 /// Runs the Yes or No choice at the sanctum's place on the screen and
 /// returns it, keeping the hand cursor's motion. Called by
 /// Sanctum_RunPartyService.
-s32 Sanctum_AskYesNo(s32 arg0) {
+s32 Sanctum_AskYesNo(s32 choice) {
   struct WindowSprite **slot =
       &((struct ShopRuntime *)Ram_HeapSlots->menuRuntime)->cursor.anchor;
   u8 saved = (*slot)->active;
 
   Icon_PrepareActorFar(*slot);
-  arg0 = Menu_RunConfirmSelectionAtFar(7, 7, arg0);
+  choice = Menu_RunConfirmSelectionAtFar(7, 7, choice);
   (*slot)->active = saved;
-  return arg0;
+  return choice;
 }
 
 s32 Func_08108690(s32 *cursor, s32 count, s32 columns) {

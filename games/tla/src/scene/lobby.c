@@ -868,16 +868,16 @@ void WindowSprite_PrepareForRedraw();
 void Text_DrawNumber();
 s32 DebugParty_LoadPreset();
 
-s32 LinkLobby_ChooseDebugParameterSet(s32 id) {
+s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
   s32 window;
   s32 choice;
   s32 shown;
 
   Func_02001a14();
   Event_ResolvePendingActions(0);
-  Actor_SetAngleToward(id, gMainRoutineWork.currentOwner, 0);
+  Actor_SetAngleToward(actorId, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgChooseYourParameters);
-  Event_ShowMessageAndWait(id, 0);
+  Event_ShowMessageAndWait(actorId, 0);
   window = Window_Create(0, 0, 6, 4, 2);
   choice = 0;
   shown = -1;

@@ -647,7 +647,7 @@ s32 Func_0810498c(s32 self, s32 other);
 /// of sourceMemberColumn's Djinn without two party members' totals differing by
 /// more than one (Djinn_CheckGiveBalance), else 0. The second Djinn chooser
 /// offers such a party member only Trade.
-s32 Djinn_MarkTradeOnlyRecipients(s8 *table, s32 self) {
+s32 Djinn_MarkTradeOnlyRecipients(s8 *requiresTrade, s32 sourceMemberColumn) {
   s32 cnt;
   s32 i;
   s8 *p;
@@ -657,11 +657,11 @@ s32 Djinn_MarkTradeOnlyRecipients(s8 *table, s32 self) {
   cnt = 0;
   i = 0;
   if (cnt < state->memberCount) {
-    p = table;
+    p = requiresTrade;
     do {
       *p = 0;
-      if (i != self) {
-        if (Func_0810498c(self, i) == 0) {
+      if (i != sourceMemberColumn) {
+        if (Func_0810498c(sourceMemberColumn, i) == 0) {
           *p = 1;
           cnt += 1;
         }

@@ -43,8 +43,8 @@ extern const u8 gData_080f341c[];
 /// otherwise (mode 2, or when the linked effect is outside animation 0x108)
 /// it creates effect object 264 at the object and links it, mode 1 keeping it
 /// as the object's resource and mode 2 running gData_080f341c on it.
-void FieldEffect_SetAttached(s32 id, s32 flags) {
-  struct LinkedEffectObject *object = ObjectTable_Get(id);
+void FieldEffect_SetAttached(s32 actorId, s32 flags) {
+  struct LinkedEffectObject *object = ObjectTable_Get(actorId);
   struct LinkedEffectObject *child;
   struct LinkedEffectVisual *visual;
   s32 mode;
@@ -85,7 +85,7 @@ void FieldEffect_SetAttached(s32 id, s32 flags) {
     break;
   }
 
-  child->resourceId = id;
+  child->resourceId = actorId;
   child->value55 = 0;
   child->callback = BattleEffect_CopyWatchedObjectPosition__f0d489c;
   visual = child->visual;

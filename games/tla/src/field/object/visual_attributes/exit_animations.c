@@ -7,8 +7,8 @@
 /// Writes the object's position on screen, in pixels, to position[0] and
 /// position[1]; an animated object is raised by its frame box. Returns -1 when
 /// the object does not exist.
-s32 Actor_GetScreenPosition(s32 objectId, s32 *position) {
-  struct Actor *object = ObjectTable_Get(objectId);
+s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
+  struct Actor *object = ObjectTable_Get(actorId);
 #ifdef UBFIX
   struct MapWork *map;
 #else

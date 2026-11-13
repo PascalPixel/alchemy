@@ -199,7 +199,7 @@ void Func_0803a1c0(s32 x, s32 y, u32 width, u32 height) {
   canvas->dirty = 1;
 }
 
-void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height, s32 whole) {
+void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height, s32 fullWidth) {
   struct WindowWork *canvas =
       (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u16 *cursor = &canvas->tilemap[y][x];
@@ -209,7 +209,7 @@ void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height, s32 whole) {
   if (width <= 1 || height <= 1 || width > 30 || height > 30)
     return;
   cursor += 32;
-  if (whole == 0) {
+  if (fullWidth == 0) {
     for (row = 1; row < height - 1; row++) {
       cursor++;
       for (column = 1; column < width - 1; column++)

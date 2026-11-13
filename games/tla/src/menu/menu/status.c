@@ -1980,7 +1980,7 @@ struct EntryIconMenu {
 
 /// Places each of the 32 entry icons on the grid.
 // The Broken Seal's Menu_PlaceEntryObjectsInGrid.
-void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 phase) {
+void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
   s32 i;
   struct WindowSprite *obj;
   struct WindowSprite **table;
@@ -1990,7 +1990,7 @@ void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 phase) {
   do {
     obj = *table++;
     if (obj != NULL)
-      Menu_PlaceEntryObjectInGrid(obj, i, originX, originY, phase);
+      Menu_PlaceEntryObjectInGrid(obj, i, originX, originY, columns);
     i += 1;
   } while (i <= 0x1F);
 }

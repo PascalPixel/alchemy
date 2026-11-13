@@ -132,7 +132,7 @@ void BattleEffect_CleanupSceneObjects(void);
 /// FieldSequence_Run for the item request (work->item and work->itemSlot).
 /// Retreat sets gMainRoutineWork.next and .entrance to the Retreat point
 /// and raises work->exit.
-s32 Field_UseItem(s32 arg, s32 slot) {
+s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 result;
   s32 itemId;
   s32 actor;
@@ -150,8 +150,8 @@ s32 Field_UseItem(s32 arg, s32 slot) {
   // The mask is assigned first, as games/tbs/src/MATCHING.md describes.
   itemId = 0x3ff;
   actorMask = 0xf;
-  itemId &= arg;
-  actor = (arg >> 10) & actorMask;
+  itemId &= packedItem;
+  actor = (packedItem >> 10) & actorMask;
   {
     best = 0;
     count = Party_CountActiveOwnersFar();

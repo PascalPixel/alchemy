@@ -201,24 +201,24 @@ extern const u8 gData_080f0074[];
 /// Places the object 36 pixels above the controlled owner, gives it its
 /// sprite priority and, three frames on, the descent script, and turns the
 /// owner to face a quarter turn.
-void ItemDisplay_RaiseAboveLeader(struct Actor *object) {
+void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
   struct Actor *owner;
 
-  if (object == 0)
+  if (actor == 0)
     return;
 
   {
     struct Actor *found = ObjectTable_Get(Party_GetLeaderActor());
-    object->acceleration = Q16_ONE;
-    object->speedLimit = 0x20000;
-    object->motionFlags = 0;
+    actor->acceleration = Q16_ONE;
+    actor->speedLimit = 0x20000;
+    actor->motionFlags = 0;
     owner = found;
   }
-  Actor_SetTargetPosition(object, owner->x, owner->y + 0x240000, owner->z);
-  Actor_SetSpritePriorityDirectFar(object, 1);
+  Actor_SetTargetPosition(actor, owner->x, owner->y + 0x240000, owner->z);
+  Actor_SetSpritePriorityDirectFar(actor, 1);
   wait(3);
   Actor_SetMode(owner, 28);
-  Actor_StartScriptFar(object, gData_080f0074);
+  Actor_StartScriptFar(actor, gData_080f0074);
   owner->facing = 0x4000;
 }
 

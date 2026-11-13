@@ -438,10 +438,10 @@ extern char ResourceId_DesertBackdrop;
 extern const s16 Data_080efd1c[];
 
 /// Chooses the battle backdrop for a terrain; the ship deck's is the default.
-void BattleBackground_SelectForEnvironment(s32 terrain) {
+void BattleBackground_SelectForEnvironment(s32 behavior) {
   u16 value;
 
-  switch (terrain - 1) {
+  switch (behavior - 1) {
   case 0:
     value = (u32)&ResourceId_GrasslandBBackdrop;
     break;

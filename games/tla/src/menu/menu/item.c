@@ -2532,8 +2532,8 @@ extern const u8 gMenu_QuantityTiles[];
 
 void Shop_FillSelectorFar(s32 value, s32 column, void *tiles);
 
-s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 mode) {
-  s32 value = base;
+s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange, s32 dropMode) {
+  s32 value = baseQuantity;
   struct QuantityMenu *menu = Ram_HeapSlots->menuRuntime;
   u8 *tiles = HeapSlot_AllocEwram(56, 0x400);
   s32 entry;
@@ -2545,7 +2545,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 mode) {
 
   ItemMenu_SetMessageWindowHeight7();
   WindowSprite_RedrawSavedRectFar(window);
-  if (mode == 0)
+  if (dropMode == 0)
     targetCount = InventoryMenu_GetItemQuantity(menu->paneOwner[1],
                                                 menu->selectedItems[0] & 0x1ff);
   ownerCount = InventoryMenu_GetItemQuantity(menu->paneOwner[0],
@@ -2560,16 +2560,16 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 mode) {
     while (!GameFlag_Test(0x150)) {
       if (changed) {
         changed = 0;
-        value = (value + range) % range;
+        value = (value + quantityRange) % quantityRange;
         WindowSprite_RedrawSavedRectFar(window);
         Text_DrawCharacterAtOffsetFar(MSG_HOW_MANY, window, HOW_MANY_X,
                                       HOW_MANY_Y);
         Dma_Set(gMenu_QuantityTiles, tiles, (DMA_ENABLE | DMA_32BIT) << 16 | 64,
                 REG_DMA3);
         Shop_FillSelectorFar(30, 14, tiles);
-        Shop_FillSelectorFar(base + range, 0, tiles);
-        Shop_FillSelectorFar(base + value + 1, 10, tiles);
-        Shop_FillSelectorFar(base, 2, tiles);
+        Shop_FillSelectorFar(baseQuantity + quantityRange, 0, tiles);
+        Shop_FillSelectorFar(baseQuantity + value + 1, 10, tiles);
+        Shop_FillSelectorFar(baseQuantity, 2, tiles);
         VramCache_Load(entry, 0x100, tiles);
         Text_DrawNumberInWindowFar(value + 1, 2, window, 32, 32);
         Text_DrawCharacterAtOffsetFar(
@@ -2578,7 +2578,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 mode) {
 #if LANGUAGE == LANGUAGE_JAPANESE
         Text_DrawCharacterAtOffsetFar(MSG_PIECE, window, 32, 24);
 #endif
-        if (mode == 0) {
+        if (dropMode == 0) {
           Text_DrawNumberInWindowFar(targetCount + value + 1, 2, window, 80,
                                      24);
 #if LANGUAGE == LANGUAGE_JAPANESE
@@ -2587,7 +2587,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 mode) {
         }
         Text_DrawStringAtOffsetFar(Unit_Get(menu->paneOwner[0]), window, 16,
                                    16);
-        if (mode == 0)
+        if (dropMode == 0)
           Text_DrawStringAtOffsetFar(Unit_Get(menu->paneOwner[1]), window, 80,
                                      16);
       }

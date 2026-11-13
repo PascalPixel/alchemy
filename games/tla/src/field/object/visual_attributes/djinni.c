@@ -289,13 +289,13 @@ struct MapActor {
 /// The Broken Seal's Djinn_ResolvePendingEvent, with this game's actors up to
 /// 79, the plain flag calls, the event at gMainRoutineWork's 0x254 and its
 /// 0x1000 kind tested like the first, falling into the common clear.
-void Djinn_ResolvePending(s32 capture) {
+void Djinn_ResolvePending(s32 shown) {
   struct MainRoutineWork *st = &gMainRoutineWork;
   s16 *pending = &st->pendingDjinnEvent;
   s32 kind = *pending & 0xf000;
   s32 flag = *pending & 0xfff;
 
-  if (capture == 0) {
+  if (shown == 0) {
     if (kind == 0) {
       flag &= 0x7ff;
       if (flag < 300 || flag > 380)

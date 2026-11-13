@@ -202,17 +202,17 @@ void Actor_CommitPositionAndActivate(u32 objectId, s32 xOffset,
 
 extern const s32 gData_080f32e0[];
 
-void Actor_LaunchFromLeader(u32 objectId, s32 xOffset, s32 zOffset, s32 action) {
-  struct Actor *object = ObjectTable_Get(objectId);
+void Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 action) {
+  struct Actor *object = ObjectTable_Get(actorId);
 
   if (object != NULL) {
-    Actor_SetSpeedParameters(objectId, 0xcccc, 0x6666);
-    Actor_MoveToObject(objectId, gMainRoutineWork.currentOwner);
+    Actor_SetSpeedParameters(actorId, 0xcccc, 0x6666);
+    Actor_MoveToObject(actorId, gMainRoutineWork.currentOwner);
     Actor_SetPositionAndResetMotionFar(object, object->x, object->y,
                                         object->z - 0x10000);
     object->movementState = 0;
     Actor_SetMode(object, 2);
-    Actor_OffsetPositionAndResetMotion(objectId, xOffset, zOffset);
+    Actor_OffsetPositionAndResetMotion(actorId, xOffset, zOffset);
     Actor_StartScriptFar(object, gData_080f32e0);
     object->timer = action;
   }

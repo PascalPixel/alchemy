@@ -5,7 +5,7 @@
 
 #include "../menu_internal.h"
 
-s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
+s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
   struct InventoryMenuState *menu;
   s32 useResult;
   s32 itemId;
@@ -13,7 +13,7 @@ s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
   struct OwnerInventoryState *unit;
   struct ItemDefinition *item;
 
-  unit = Unit_Get(ownerId);
+  unit = Unit_Get(memberId);
   menu = Ram_HeapSlots->menuRuntime;
   /* FAKEMATCH(temporary): the inventory entry read into its own local first, so
    * the barrier sits between the mask and the and; as itemId &=
@@ -24,11 +24,11 @@ s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
   itemId &= entry;
   item = Item_Get(itemId);
   useResult = BattleEffect_ApplyToTargets(OWNER_ACTION_ID_MASK & item->actionId,
-                                          ownerId, targetId, 1);
+                                          memberId, targetId, 1);
   if (useResult != -1) {
     item = Item_Get(unit->inventory[slot]);
     if (item->useType == 1) {
-      Inventory_RemoveFar(ownerId, slot);
+      Inventory_RemoveFar(memberId, slot);
       menu->itemCount = ItemMenu_CollectItems(unit, menu->items, 0);
     }
     if (item->useType == 4) {

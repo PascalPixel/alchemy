@@ -85,15 +85,15 @@ void Graphics_ExpandVramTilesByColorTable(u16 *tiles);
 extern void Link_DrawShiftedTilePair__battle_party_commands(
     u32 address) __asm__("Link_DrawPageArrows");
 void Menu_BuildLocalizedPatternTiles(void);
-/* VIEW(battle_party_commands): routine Func_0804babc as s32 Func_0804babc(u16
- * *actors, struct BattleAction **cursor, s32 *forcedCount); the definition has
- * s32 BattleParty_ChooseReserve(s32 slot) { u16 owners[6]; u16 selected[2];
- * struct BattleWork *battle; s32 count; count =
+/* VIEW(battle_party_commands): routine BattleParty_SplitChoosers as s32
+ * BattleParty_SplitChoosers(u16 *actors, struct BattleAction **cursor, s32
+ * *forcedCount); the definition has s32 BattleParty_ChooseReserve(s32 slot) {
+ * u16 owners[6]; u16 selected[2]; struct BattleWork *battle; s32 count; count =
  * BattleParty_PrepareReserveOwners...; tried as the rest of the object declares
  * it, Battle_CollectPartyCommands moves: 1 of 1909 instructions in tla-ja. */
-extern s32
-Func_0804babc__battle_party_commands(u16 *actors, struct BattleAction **cursor,
-                                     s32 *forcedCount) __asm__("Func_0804babc");
+extern s32 Func_0804babc__battle_party_commands(
+    u16 *actors, struct BattleAction **cursor,
+    s32 *forcedCount) __asm__("BattleParty_SplitChoosers");
 /* VIEW(battle_party_commands): routine PartyStatus_HighlightMembers as void
  * PartyStatus_HighlightMembers(u16 *units); countdown has s32
  * PartyStatus_HighlightMembers(u16 *ids); tried as the definition's s32
@@ -205,11 +205,11 @@ extern void Text_DrawWideStringAtOffset__battle_party_commands(
 /// the `commandCount` units in `actors`, with two nested functions: the party
 /// panels' clear and the link wait's message (Link_DrawWaitingForOpponent).
 /// Unlike The Broken Seal's, each round first appends the forced actions of
-/// statused members (Func_0804babc), whose count is added to the result; B on
-/// the party's row undoes a reserve swap; command 49 swaps a reserve member in
-/// (BattleParty_ChooseReserve after choosing the slot); Status lists the
-/// reserve as well; Flee is command 99; and the Djinn tutorial's hint follows
-/// an unleash.
+/// statused members (BattleParty_SplitChoosers), whose count is added to the
+/// result; B on the party's row undoes a reserve swap; command 49 swaps a
+/// reserve member in (BattleParty_ChooseReserve after choosing the slot);
+/// Status lists the reserve as well; Flee is command 99; and the Djinn
+/// tutorial's hint follows an unleash.
 s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                                 s32 commandCount) {
   u16 signatureHeader[2];

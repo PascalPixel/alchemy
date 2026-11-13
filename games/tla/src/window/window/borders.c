@@ -171,7 +171,10 @@ void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
   canvas->dirty = 1;
 }
 
-void Func_0803a1c0(s32 x, s32 y, u32 width, u32 height) {
+/// Window_DrawBorder in the flash border's tiles (8 to 15), which
+/// Window_ShowFlashFrame loads: the frame a window flashes with as it
+/// swells.
+void Window_DrawFlashBorder(s32 x, s32 y, u32 width, u32 height) {
   struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u16 *cursor = &canvas->tilemap[y][x];
   u32 row;

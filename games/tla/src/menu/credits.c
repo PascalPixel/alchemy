@@ -743,8 +743,8 @@ s32 Credits_DrawLine(const u8 *text, s32 slot, s32 align) {
   return 0;
 }
 
-// Unused: an empty function nothing calls, after the pool.
-UNUSED void Func_081a1284(void) {}
+/// Unused: an empty function nothing calls, after the pool.
+UNUSED void Credits_ReservedNoOp(void) {}
 
 void SceneState_SetScrollTarget(u16 value) { gScrollTarget = value; }
 

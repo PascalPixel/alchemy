@@ -181,7 +181,10 @@ struct Rect_0803cba8 {
 
 extern char ResourceId_WindowBorderFlash;
 
-void Func_0803cba8(struct Rect_0803cba8 **window, s32 offset) {
+/// Loads frame `offset` of the flash border picture
+/// (ResourceId_WindowBorderFlash) into tiles 8 to 15 and draws the window's
+/// rectangle with it.
+void Window_ShowFlashFrame(struct Rect_0803cba8 **window, s32 offset) {
   u8 *source =
       (u8 *)Resource_GetTableEntry((s32)&ResourceId_WindowBorderFlash) + offset;
   struct Rect_0803cba8 *rect = *window;
@@ -191,7 +194,7 @@ void Func_0803cba8(struct Rect_0803cba8 **window, s32 offset) {
   s32 height = rect->height;
 
   Dma_Set(source, (void *)0x06000100, DMA_COPY_WORDS(64), REG_DMA3);
-  Func_0803a1c0(x, y, width, height);
+  Window_DrawFlashBorder(x, y, width, height);
 }
 
 struct Window_0803cbf8 {
@@ -203,15 +206,15 @@ struct Window_0803cbf8 {
 void Window_StepSwellEffect(struct Window_0803cbf8 *window) {
   if (window->rect->state == 4) {
     if (window->timer == 10)
-      Func_0803cba8(&window->rect, 0x300);
+      Window_ShowFlashFrame(&window->rect, 0x300);
     else if (window->timer == 9)
-      Func_0803cba8(&window->rect, 0x200);
+      Window_ShowFlashFrame(&window->rect, 0x200);
     else if (window->timer == 8)
-      Func_0803cba8(&window->rect, 0x100);
+      Window_ShowFlashFrame(&window->rect, 0x100);
     else if (window->timer == 6)
-      Func_0803cba8(&window->rect, 0x200);
+      Window_ShowFlashFrame(&window->rect, 0x200);
     else if (window->timer == 4)
-      Func_0803cba8(&window->rect, 0x300);
+      Window_ShowFlashFrame(&window->rect, 0x300);
     if (window->timer == 2) {
       struct Rect_0803cba8 *rect = window->rect;
 

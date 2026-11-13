@@ -195,7 +195,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   for (;;) {
     keys = gInput.repeat;
     sprite = &nameSprite;
-    Func_0804537c(0x060066c0);
+    BattleStatus_DrawPageArrows(0x060066c0);
     if (redraw != 0)
       Portrait_Load(member, portraitSlot);
     sprite->oam.word.attr01 = 0x80000400;

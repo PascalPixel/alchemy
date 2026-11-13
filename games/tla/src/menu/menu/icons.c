@@ -279,7 +279,10 @@ struct FigureMenuState {
 
 s32 Party_GetCharacterSpriteFar(s32 id);
 
-void Func_08104e38(s32 first, s32 second) {
+/// Menu_CreateOwnerEntryObjects for two characters (-1 for none): their
+/// figures in entries 0 and 1, as the Djinn preview shows the pair a Djinni
+/// passes between.
+void Menu_CreatePairEntryObjects(s32 first, s32 second) {
   struct FigureMenuState *menu =
       (struct FigureMenuState *)Ram_HeapSlots->menuRuntime;
   struct AnimationObject *figure;

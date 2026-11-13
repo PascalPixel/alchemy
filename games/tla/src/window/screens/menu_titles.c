@@ -251,7 +251,9 @@ void Link_DrawPageArrows(s32 offset) {
                                 (u32 *)(offset + 32), phase);
 }
 
-void Func_0804537c(s32 offset) {
+/// Link_DrawPageArrows with both arrows merged into the one tile at VRAM
+/// 0x06000400; the battle's status screen calls it each frame.
+void BattleStatus_DrawPageArrows(s32 offset) {
   s32 phase = (gFrameCount >> 2) & 3;
 
   if (phase > 2) {

@@ -42,7 +42,7 @@ void CrackedTile_Crack();
 void CrackedTile_FallEvent();
 
 DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
-                        CrackedTile_FallEvent)
+                          CrackedTile_FallEvent)
 
 DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
-                                CrackedTile_DropIn)
+                                  CrackedTile_DropIn)

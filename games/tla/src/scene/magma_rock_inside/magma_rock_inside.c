@@ -33,9 +33,8 @@ extern s32 gMagmaRockInside_StepCellZ;
 
 extern s32 gPushLeaderSteps[];
 
-DEFINE_BLOCK_PUSH_ONTO(MagmaRockInside_PushBlockOnto,
-                       gPushLeaderSteps, MapGrid_CheckCollision,
-                       Func_02004c98)
+DEFINE_BLOCK_PUSH_ONTO(MagmaRockInside_PushBlockOnto, gPushLeaderSteps,
+                       MapGrid_CheckCollision, Func_02004c98)
 
 #include "ram_buffer.h"
 #include "map.h"
@@ -581,8 +580,7 @@ spark:
     options.script = gMagmaRockInside_EmberScript;
     FieldEffect_Spawn(position[0], position[1], position[2],
                       ((Random16() & 31) - 16) << 13,
-                      ((Random16() & 31) - 16) << 13, bit, 0x1320000,
-                      &options);
+                      ((Random16() & 31) - 16) << 13, bit, 0x1320000, &options);
   }
   System_Wait(1);
   id++;

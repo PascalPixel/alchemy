@@ -642,8 +642,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-/// Sends actor 8 to a point 8 pixels along z and, until Actor_HasArrived says it
-/// is done, raises a pair of effects at its two sides every fourth frame.
+/// Sends actor 8 to a point 8 pixels along z and, until Actor_HasArrived says
+/// it is done, raises a pair of effects at its two sides every fourth frame.
 void SeaOfTime_SinkIntoWhirlpool(void) {
   s32 sides[4];
   struct EffectOptions options;
@@ -901,7 +901,7 @@ void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor) {
     Event_ResolvePendingActions(0);                                            \
     object = Actor_GetById(n1);                                                \
     SeaOfTime_RemoveRock(object->x, Actor_GetById(n1)->z, n1);                 \
-    GameFlag_Set(n2);                                                       \
+    GameFlag_Set(n2);                                                          \
     Event_End();                                                               \
   }
 

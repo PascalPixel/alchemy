@@ -828,7 +828,8 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
 
   replaced = Inventory_FindEquippedFar(unitId, info->type);
   if (replaced != -1) {
-    struct ItemDefinition *oldInfo = Item_GetDirectFar(unit->inventory[replaced]);
+    struct ItemDefinition *oldInfo =
+        Item_GetDirectFar(unit->inventory[replaced]);
 
     if (oldInfo->flags & 2)
       return 0;

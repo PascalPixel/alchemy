@@ -1311,8 +1311,9 @@ s32 Scene_Initialize(void) {
         &((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect;
     /* FAKEMATCH(pin): the call's argument pinned to the r0 it is passed in, so
      * it loads before the store as the native does; in the plain order the
-     * store comes first; as ...->screenEffect = 0x209 and FieldEffect_StartBlankOverlay(0), as
-     * the other rooms write it, 2 of 147 instructions differ in tla-en. */
+     * store comes first; as ...->screenEffect = 0x209 and
+     * FieldEffect_StartBlankOverlay(0), as the other rooms write it, 2 of 147
+     * instructions differ in tla-en. */
     register s32 skip __asm__("r0");
     s32 value = 0x209;
 
@@ -1988,8 +1989,7 @@ s32 Actor_HasArrived(struct Actor *object);
 void Func_02003edc(s32 a0) { gData_020062a4 = a0; }
 
 DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003ee8, Func_020038e8,
-                                 Actor_SelectAnimation,
-                                 Func_0200385c__s391c,
+                                 Actor_SelectAnimation, Func_0200385c__s391c,
                                  Field_CheckSpheresOverlap)
 
 struct ParticleSprite {

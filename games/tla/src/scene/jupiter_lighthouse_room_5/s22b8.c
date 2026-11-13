@@ -29,4 +29,5 @@ struct CellTarget__s22b8 {
 
 #include "io_write.h"
 
-DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s22b8, Leader_CenterInCell)
+DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s22b8,
+                         Leader_CenterInCell)

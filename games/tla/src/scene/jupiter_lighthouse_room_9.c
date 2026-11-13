@@ -6,7 +6,8 @@
 /// (JupiterLighthouse_RaiseWhirlwind, JupiterLighthouse_RaiseUpperWhirlwind).
 /// Cracked tiles give way under a second step
 /// (JupiterLighthouse_StepOnLowerCrackedTile,
-/// JupiterLighthouse_StepOnUpperCrackedTile); the way on leads out to the aerie.
+/// JupiterLighthouse_StepOnUpperCrackedTile); the way on leads out to the
+/// aerie.
 ///
 /// The cracked tiles' code is in
 /// jupiter_lighthouse_room_9/, in two parts the shared field effect objects
@@ -194,8 +195,8 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 void CrackedTiles_Find(s32 kind, s32 x, s32 z, s32 a, s32 b);
 
 /// The scene's set-up: screen effect 0x204, actor 64's action variant 3 and
-/// actor 8 held still, then CrackedTiles_Find and CrackedTile_PlaceLanding by the
-/// entrance.
+/// actor 8 held still, then CrackedTiles_Find and CrackedTile_PlaceLanding by
+/// the entrance.
 s32 Scene_Initialize(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
@@ -253,7 +254,8 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
                                         PaletteCycle_Step,
                                         gPaletteCycleUnlitColors)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight, MapGrid_SetAttributeBAt)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
+                             MapGrid_SetAttributeBAt)
 
 #include "frame.h"
 #include "field_sprite.h"
@@ -267,8 +269,9 @@ extern s32 gWhirlwindEndScript[];
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior, Position_FlatDistance,
-                        gWhirlwindEndScript, gWhirlwindRiding)
+DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
+                        Position_FlatDistance, gWhirlwindEndScript,
+                        gWhirlwindRiding)
 
 extern u8 gLightSpriteCount[];
 

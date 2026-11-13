@@ -890,7 +890,8 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(JupiterLighthouse_LoadPalettesZero,
 
 #include "event_inline.h"
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight, MapGrid_SetAttributeBAt)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
+                             MapGrid_SetAttributeBAt)
 
 #include "actor.h"
 #include "main_routine_work.h"
@@ -989,8 +990,8 @@ DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 extern const s32 gData_02007044[];
 
-DEFINE_WHIRLWIND_UPDATE(Func_02001894, MapGrid_GetCellBehavior, Position_FlatDistance,
-                        gData_02007044, Data_02007064)
+DEFINE_WHIRLWIND_UPDATE(Func_02001894, MapGrid_GetCellBehavior,
+                        Position_FlatDistance, gData_02007044, Data_02007064)
 
 #include "field_effect.h"
 

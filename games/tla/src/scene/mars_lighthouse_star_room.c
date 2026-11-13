@@ -1268,7 +1268,7 @@ DEFINE_ACTOR_SETUP_SCRIPTED_PART(Func_02001928, gData_02004744)
       object->update = call1;                                                  \
       if (flag != 0)                                                           \
         object->unk5c[0] = 2;                                                  \
-      Actor_SelectAnimation(object, 2);                                  \
+      Actor_SelectAnimation(object, 2);                                        \
     }                                                                          \
   }
 

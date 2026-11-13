@@ -32,13 +32,13 @@ DEFINE_CRACKED_TILE_DROP_IN(Func_02003e04, Func_0200363c)
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void CrackedTile_FallEvent(struct CellTarget *work,
-                          struct CellTargetEntry *entry);
+                           struct CellTargetEntry *entry);
 
 DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gData_02004cf4, Func_02003bfc,
-                        CrackedTile_FallEvent)
+                          CrackedTile_FallEvent)
 
 DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gData_02004cf4,
-                                Func_02003e04)
+                                  Func_02003e04)
 
 #include "scene_tables.h"
 #include "text/msg_ids.h"
@@ -343,7 +343,8 @@ struct Trigger gSceneEvents[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 9,
      CONDITION_ALWAYS, (u32)(Func_0200007c)},
     {TRIGGER_RAISED, 20, CONDITION_ALWAYS, EVENT(Func_020005b0)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 20, 0x1233, EVENT(MarsLighthouseStarRoom_BurstIce)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 20, 0x1233,
+     EVENT(MarsLighthouseStarRoom_BurstIce)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS,
      EVENT(MarsLighthouseStarRoom_HoldWarmHand)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,

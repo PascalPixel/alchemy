@@ -10,7 +10,7 @@
 /// Finds the room's cracked tiles: every cell whose event is `kind` (whole) or
 /// `kind + 1` (cracked), each given the next flag from `flag`; returns how
 /// many.
-#define DEFINE_CRACKED_TILES_FIND(name, data1, call1)                            \
+#define DEFINE_CRACKED_TILES_FIND(name, data1, call1)                          \
   s32 name(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {                   \
     struct CellTarget *table = &data1;                                         \
     struct CellTargetEntry *entry = table->entries;                            \
@@ -120,7 +120,7 @@
 /// Run each frame: when the leader steps onto a whole tile it cracks,
 /// and onto a cracked one other than the one it cracked last, the leader falls
 /// through it; 1 when it falls.
-#define DEFINE_CRACKED_TILES_STEP(name, data1, call1, call2)                     \
+#define DEFINE_CRACKED_TILES_STEP(name, data1, call1, call2)                   \
   s32 name(void) {                                                             \
     struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);           \
     s32 x = object->x >> 20;                                                   \
@@ -171,7 +171,7 @@
 
 /// On landing below a cracked tile, puts the leader on the cell the flag bytes
 /// saved, offset from (x, z), and starts the screen effect.
-#define DEFINE_CRACKED_TILE_PLACE_LANDING(name, data1, call1)                    \
+#define DEFINE_CRACKED_TILE_PLACE_LANDING(name, data1, call1)                  \
   void name(s32 x, s32 z, s32 effect) {                                        \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
     struct JupiterLighthouseRoom8EventWork *work = Ram_HeapSlots->eventWork;   \
@@ -197,7 +197,7 @@
 
 /// The leader drops in from above through a cracked tile, lands with a burst of
 /// dust and a shake.
-#define DEFINE_CRACKED_TILE_DROP_IN(name, call1)                                 \
+#define DEFINE_CRACKED_TILE_DROP_IN(name, call1)                               \
   void name(void) {                                                            \
     struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);            \
     u32 i;                                                                     \
@@ -232,8 +232,8 @@
       velocity[1] = 0;                                                         \
       velocity[2] = Math_Sin(angle);                                           \
       velocity[0] += velocity[0] >> 1;                                         \
-      velocity[0] += (Random16() * 0xc000 >> 16) - 0x6000;                  \
-      velocity[2] += (Random16() * 0x6000 >> 16) - 0x3000;                  \
+      velocity[0] += (Random16() * 0xc000 >> 16) - 0x6000;                     \
+      velocity[2] += (Random16() * 0x6000 >> 16) - 0x3000;                     \
       call1(actor->x, actor->y, actor->z, velocity[0], velocity[1],            \
             velocity[2], 0x1090001, &options);                                 \
       i++;                                                                     \
@@ -254,7 +254,7 @@
 
 /// Drops the leader through a cracked tile: it gives way and the leader spins
 /// down into it while the screen fades.
-#define DEFINE_CRACKED_TILE_FALL(name, id1, call1)                               \
+#define DEFINE_CRACKED_TILE_FALL(name, id1, call1)                             \
   void name(struct id1 *table, struct CellTargetEntry *entry) {                \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
     s32 x = (leader->x >> 20) | (s16)(table->x & 64);                          \
@@ -290,7 +290,7 @@
   }
 
 /// CrackedTiles_Find as the lower floors' copies compile it.
-#define DEFINE_CRACKED_TILES_FIND_LOWER(name, data1, call1)                      \
+#define DEFINE_CRACKED_TILES_FIND_LOWER(name, data1, call1)                    \
   s32 name(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {                   \
     struct CellTarget *table = &data1;                                         \
     struct CellTargetEntry *entry = table->entries;                            \
@@ -434,7 +434,7 @@
   }
 
 /// CrackedTile_DropIn as the lower floors' copies compile it.
-#define DEFINE_CRACKED_TILE_DROP_IN_LOWER(name, call1)                           \
+#define DEFINE_CRACKED_TILE_DROP_IN_LOWER(name, call1)                         \
   void name(void) {                                                            \
     struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);            \
     u32 i;                                                                     \
@@ -481,8 +481,8 @@
         velocity[1] = 0;                                                       \
         velocity[2] = Math_Sin(angle);                                         \
         velocity[0] += velocity[0] >> 1;                                       \
-        velocity[0] += (Random16() * 0xc000 >> 16) - 0x6000;                \
-        velocity[2] += (Random16() * 0x6000 >> 16) - 0x3000;                \
+        velocity[0] += (Random16() * 0xc000 >> 16) - 0x6000;                   \
+        velocity[2] += (Random16() * 0x6000 >> 16) - 0x3000;                   \
         call1(actor->x, actor->y, actor->z, velocity[0], velocity[1],          \
               velocity[2], 0x1090001, &options);                               \
       }                                                                        \
@@ -505,7 +505,7 @@
   }
 
 /// CrackedTile_Fall for a push event's cracked tile.
-#define DEFINE_CRACKED_TILE_FALL_EVENT(name, call1)                              \
+#define DEFINE_CRACKED_TILE_FALL_EVENT(name, call1)                            \
   void name(struct PushEvent *event) {                                         \
     struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);           \
     s32 x;                                                                     \

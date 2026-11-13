@@ -213,10 +213,10 @@ void Func_020007b4(s32 mode, s32 step) {
     second->y = second->terrainHeight;
     GameFlag_Set(first->timer);
     GameFlag_Clear(second->timer);
-    Actor_SelectAnimation(
-        first, ((struct FieldSprite *)first->sprite)->frame + 1);
-    Actor_SelectAnimation(
-        second, ((struct FieldSprite *)second->sprite)->frame - 1);
+    Actor_SelectAnimation(first,
+                          ((struct FieldSprite *)first->sprite)->frame + 1);
+    Actor_SelectAnimation(second,
+                          ((struct FieldSprite *)second->sprite)->frame - 1);
     Func_020006cc(first);
     Func_020006cc(second);
   }
@@ -377,8 +377,7 @@ void Func_02000988(void) {
     *motion = 2;
     *priority = 1;
     leader->terrainId = ((u8 *)rider)[98];
-    Actor_SetMoveTarget(leader, leader->x + dx, leader->y,
-                              leader->z + dz);
+    Actor_SetMoveTarget(leader, leader->x + dx, leader->y, leader->z + dz);
     OverlayObject_WaitUntilIdle(leader);
     Actor_WaitForMove(leader);
     Actor_SetSpriteFlags(leader, 1);
@@ -399,8 +398,8 @@ void Func_02000988(void) {
     dust->acceleration = 0x10000;
     dust->motionFlags = noFlags;
     Actor_SetMoveTarget(dust, leader->x,
-                              Map_GetTerrainHeight(0, leader->x, leader->z),
-                              leader->z);
+                        Map_GetTerrainHeight(0, leader->x, leader->z),
+                        leader->z);
     OverlayObject_WaitUntilIdle(leader);
     Actor_WaitForMove(dust);
     break;
@@ -907,7 +906,7 @@ void Func_02001828(void) {
       ((struct FieldSprite *)((struct Actor *)*(long *)&effect->target)->sprite)
           ->priority;
   Actor_SetMoveTarget(gust, TARGET(effect)->x, TARGET(effect)->y,
-                            TARGET(effect)->z + 0xffff0000);
+                      TARGET(effect)->z + 0xffff0000);
   gust->terrainHeight = Map_GetTerrainHeight(0, gust->x, gust->z);
   while (gust->scaleY <= 0x14ccb) {
     gust->scaleY += 0x1999;
@@ -1059,8 +1058,8 @@ void Func_02001828(void) {
     cell.z = (gust->z >> 16) + dir.z * 48;
     gust->speedLimit = 0x8000;
     gust->acceleration = 0x8000;
-    Call4((void (*)())Actor_SetMoveTarget, (s32)(gust),
-          (s32)(cell.x << 16), (s32)(gust->y), (s32)(cell.z << 16));
+    Call4((void (*)())Actor_SetMoveTarget, (s32)(gust), (s32)(cell.x << 16),
+          (s32)(gust->y), (s32)(cell.z << 16));
     hit -= 30;
     i = 0;
     while (Actor_HasArrived(gust) == 0) {
@@ -1073,8 +1072,7 @@ void Func_02001828(void) {
       if ((gFrameCount & 1) == 0) {
         dust.priority = 1;
         {
-          dust.startScaleX = dust.startScaleY =
-              (Random16() & 0xffff) + 0x10000;
+          dust.startScaleX = dust.startScaleY = (Random16() & 0xffff) + 0x10000;
         }
         velocity.x = Trig_Cos((gFrameCount & 0x1ff) << 12) << 1;
         velocity.y = 0x10000;
@@ -1167,9 +1165,8 @@ shrink:
         for (i = 0; i != 8; i++) {
           dust.priority = 1;
           FieldEffect_Spawn(velocity.x + ((Random16() & 15) << 16),
-                            velocity.y + ((Random16() & 31) << 16),
-                            velocity.z, 0, 0, -0x8000, EFFECT_USE_PRIORITY,
-                            &dust);
+                            velocity.y + ((Random16() & 31) << 16), velocity.z,
+                            0, 0, -0x8000, EFFECT_USE_PRIORITY, &dust);
         }
         wait(30);
         SHAKE();
@@ -1192,8 +1189,7 @@ shrink:
         velocity.z = Actor_GetById(8)->z;
         for (i = 0; i != 8; i++) {
           dust.priority = 1;
-          FieldEffect_Spawn(velocity.x + ((Random16() & 15) << 16),
-                            velocity.y,
+          FieldEffect_Spawn(velocity.x + ((Random16() & 15) << 16), velocity.y,
                             velocity.z - ((Random16() & 31) << 16), 0, 0,
                             -0x8000, EFFECT_USE_PRIORITY, &dust);
         }

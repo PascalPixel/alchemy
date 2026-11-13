@@ -181,7 +181,7 @@ DEFINE_ROCKS_SPAWN(Rocks_Spawn)
 // frees their picture and heap slot.
 
 void EffectSprite_Init(struct RockSprite__s29d0 *sprite, s32 width, s32 height,
-                   u32 attr, s32 tile);
+                       u32 attr, s32 tile);
 
 /// The falling rocks' setup: loads their picture, sets up 64 small sprites,
 /// marks each rock idle and starts the task that spawns them.
@@ -193,8 +193,8 @@ void Func_02002e00(void) {
   struct RockSprite__s29d0 *sprite;
   s32 i;
 
-  Decompress_TaggedLz(
-      Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_FallingRock),
+                      work);
   resource = VramCache_FindFreeEntry();
   tile = Vram_Load(resource, sizeof(work->tiles), work);
   work->tileBase = tile;
@@ -439,10 +439,14 @@ struct Trigger gData_0200381c[] = {
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
     {TRIGGER_EXIT, 18, CONDITION_ALWAYS, 18},
     {TRIGGER_EXAMINE, 52, CONDITION_ALWAYS, EVENT(Func_02000920)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 50, 0x942, EVENT(Func_02000548)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 51, 0x943, EVENT(Func_0200058c)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 52, 0x944, EVENT(Func_020007dc)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST), 52, 0x944, EVENT(Func_020008a8)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 50, 0x942,
+     EVENT(Func_02000548)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 51, 0x943,
+     EVENT(Func_0200058c)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 52, 0x944,
+     EVENT(Func_020007dc)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST), 52,
+     0x944, EVENT(Func_020008a8)},
     {TRIGGER_TABLE_END},
 };
 
@@ -540,7 +544,8 @@ struct Trigger gData_02003b28[] = {
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
      CONDITION_ALWAYS, EVENT(Func_02000de4)},
     {0x80009705, 52, CONDITION_ALWAYS, EVENT(Func_02000fac)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 52, 0x94b, EVENT(Func_02000f0c)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 52, 0x94b,
+     EVENT(Func_02000f0c)},
     {TRIGGER_TABLE_END},
 };
 
@@ -550,6 +555,7 @@ struct Trigger gData_02003c90[] = {
      CONDITION_ALWAYS, EVENT(Func_02000bfc)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS,
      EVENT(Func_02000d2c)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 50, 0x948, EVENT(Func_02000fb8)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 50, 0x948,
+     EVENT(Func_02000fb8)},
     {TRIGGER_TABLE_END},
 };

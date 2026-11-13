@@ -373,15 +373,15 @@ void Func_02000568(void) {
       Event_Wait(20);                                                          \
     }                                                                          \
     STEP(10, 116, 164);                                                        \
-    FieldPsynergy_RestoreMindReadPalette();                              \
+    FieldPsynergy_RestoreMindReadPalette();                                    \
     PartyInventory_Remove(453);                                                \
     PartyInventory_GiveItem(454, 0);                                           \
     if (given != 0) {                                                          \
-      Actor_Release(given);                                              \
+      Actor_Release(given);                                                    \
       Actor_SetModeById(gMainRoutineWork.currentOwner, 1);                     \
     }                                                                          \
-    FieldPsynergy_GreyMindReadPalette();                                 \
-    GameFlag_Set(0xaa3);                                                    \
+    FieldPsynergy_GreyMindReadPalette();                                       \
+    GameFlag_Set(0xaa3);                                                       \
   }
 
 /// The Islets' trade of item 453 with object 10. With the item in the party, if
@@ -538,8 +538,7 @@ struct Actor *Func_02000da0(struct Actor *object, s32 value) {
   return spawned;
 }
 
-DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 3, Actor_SelectAnimation,
-                        gSmokeScript)
+DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 3, Actor_SelectAnimation, gSmokeScript)
 
 #include "call.h"
 
@@ -759,7 +758,7 @@ void Func_0200129c(struct Actor *gift) {
     if (b != 0) {                                                              \
       b->scaleY = 0x20000;                                                     \
       Actor_SetSpriteFlags(b, 0);                                              \
-      Actor_SelectAnimation(b, 1);                                       \
+      Actor_SelectAnimation(b, 1);                                             \
       Actor_StartScript(b, gSmokeScript);                                      \
     }                                                                          \
   }
@@ -1876,7 +1875,8 @@ void Func_0200329c(void) {
     PaletteCycle_Add(a0, a1, a2, a3);
   }
   PaletteCycle_Add(4, 12, 5, 4);
-  if (Event_GetFlag(0xaa5) && (done = Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) == 0) {
+  if (Event_GetFlag(0xaa5) &&
+      (done = Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) == 0) {
     Actor_SetPosition(10, 0x1180000, 0x1d40000);
     Actor_Get(10)->motionFlags = done;
     {
@@ -1947,7 +1947,8 @@ void Func_0200329c(void) {
   Func_02003410();
   PaletteCycle_Add(3, 12, 5, 4);
   PaletteCycle_Add(4, 12, 5, 4);
-  if (Event_GetFlag(0xaa5) && (done = Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) == 0) {
+  if (Event_GetFlag(0xaa5) &&
+      (done = Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) == 0) {
     Actor_SetPosition(10, 0x1180000, 0x1d40000);
     Actor_Get(10)->motionFlags = done;
     {

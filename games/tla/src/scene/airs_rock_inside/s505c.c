@@ -156,7 +156,8 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_GetById(8), 0);
     Actor_SetSpriteFlags(Actor_GetById(9), 0);
     Actor_SetSpriteFlags(Actor_GetById(12), 0);
-    if (gMainRoutineWork.entrance == 11 && !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
+    if (gMainRoutineWork.entrance == 11 &&
+        !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
       Func_0200505c();
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room2) {
     REG_BLDALPHA = 0x1008;
@@ -177,7 +178,8 @@ s32 Scene_Initialize(void) {
       Call6(MapGrid_CopyCellPictureIndicesRect, 68, 84, 12, 77, 3, 6);
     }
     Actor_SetSpriteFlags(Actor_GetById(8), 0);
-    if (gMainRoutineWork.entrance == 3 && !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
+    if (gMainRoutineWork.entrance == 3 &&
+        !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
       Func_02004cc8();
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room3) {
     Func_02002770();

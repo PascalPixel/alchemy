@@ -166,16 +166,15 @@ void Func_020000c4(void) {
 }
 
 /* VIEW(jupiter_lighthouse_room_m): routine MapGrid_SetCellHeight as void
- * MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b); module/scene/eastern_alhafra.h has
- * void MapGrid_SetCellHeight(struct Actor *object); tried as the definition's void
- * MapGrid_SetCellHeight(struct Actor *object), which the object already declares, it
- * does not compile in tla-ja:
+ * MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
+ * module/scene/eastern_alhafra.h has void MapGrid_SetCellHeight(struct Actor
+ * *object); tried as the definition's void MapGrid_SetCellHeight(struct Actor
+ * *object), which the object already declares, it does not compile in tla-ja:
  * games/tla/src/scene/jupiter_lighthouse_room_m.c:183:
  * `Func_02004774__jupiter_lighthouse_room_m' undeclared (first use in this
  * function). */
-extern void
-Func_02004774__jupiter_lighthouse_room_m(s32 x, s32 z, s32 a,
-                                         s32 b) __asm__("MapGrid_SetCellHeight");
+extern void Func_02004774__jupiter_lighthouse_room_m(
+    s32 x, s32 z, s32 a, s32 b) __asm__("MapGrid_SetCellHeight");
 
 void Func_0200039c(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
@@ -1669,5 +1668,6 @@ extern const s32 gWhirlwindEndScript[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior, Position_FlatDistance,
-                        gWhirlwindEndScript, gWhirlwindRiding)
+DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
+                        Position_FlatDistance, gWhirlwindEndScript,
+                        gWhirlwindRiding)

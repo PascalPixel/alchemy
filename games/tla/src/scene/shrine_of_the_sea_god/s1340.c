@@ -682,14 +682,14 @@ DEFINE_FUNC_020027F8(Func_020027f8, 392, 216, 1)
     Func_0200279c();                                                           \
     ShrineOfTheSeaGod_CamMove(n1 << 16, 16 << 16, 216 << 16, 1);               \
     ShrineOfTheSeaGod_ObjWalk(14, n1, 216);                                    \
-    flag = GameFlag_Get(0x207);                                               \
+    flag = GameFlag_Get(0x207);                                                \
     state = &block->state;                                                     \
     if (flag) {                                                                \
       block->facing = n2;                                                      \
       ShrineOfTheSeaGod_ObjEmote(14, 258);                                     \
       Event_Wait(20);                                                          \
       *state = n3;                                                             \
-      GameFlag_Set(0x206);                                                  \
+      GameFlag_Set(0x206);                                                     \
     } else {                                                                   \
       Event_Wait(5);                                                           \
       FieldCamera_MoveWithinMapBounds(n4 << 16, 16 << 16, 216 << 16, 1);       \
@@ -739,14 +739,14 @@ DEFINE_FUNC_020027F8(Func_02002b18, 392, 296, 0)
     s32 flag;                                                                  \
                                                                                \
     Func_0200279c();                                                           \
-    flag = GameFlag_Get(0x207);                                               \
+    flag = GameFlag_Get(0x207);                                                \
     state = &block->state;                                                     \
     if (flag) {                                                                \
       block->facing = n1;                                                      \
       ShrineOfTheSeaGod_ObjEmote(14, 258);                                     \
       Event_Wait(20);                                                          \
       *state = n2;                                                             \
-      GameFlag_Set(0x206);                                                  \
+      GameFlag_Set(0x206);                                                     \
     } else {                                                                   \
       FieldCamera_MoveWithinMapBounds(n3 << 16, 16 << 16, 216 << 16, 1);       \
       Sound_Play(153);                                                         \

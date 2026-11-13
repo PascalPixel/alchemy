@@ -35,9 +35,7 @@ void Func_02001f7c(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static inline s32 AnkohlRuins_FlagCheck(s32 flag) {
-  return GameFlag_Get(flag);
-}
+static inline s32 AnkohlRuins_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
 
 static inline void AnkohlRuins_Call2e24(s32 a, s32 b, s32 c) {
   MapGrid_SetScreenShake(a, b, c);

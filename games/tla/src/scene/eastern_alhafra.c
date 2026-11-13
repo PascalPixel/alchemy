@@ -505,10 +505,11 @@ void Func_020040ec();
 extern void Func_02004c2c__eastern_alhafra() __asm__("Rope_Place");
 void Func_020047fc();
 /* VIEW(eastern_alhafra): routine Tightrope_Settle as void Tightrope_Settle();
- * module/scene/mars_lighthouse_aerie.h has void Tightrope_Settle(void); tried as
- * the definition's void Tightrope_Settle(void), which the object already declares,
- * it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:595: too
- * many arguments to function `Tightrope_Settle'. */
+ * module/scene/mars_lighthouse_aerie.h has void Tightrope_Settle(void); tried
+ * as the definition's void Tightrope_Settle(void), which the object already
+ * declares, it does not compile in tla-ja:
+ * games/tla/src/scene/eastern_alhafra.c:595: too many arguments to function
+ * `Tightrope_Settle'. */
 extern void Func_02004c94__eastern_alhafra() __asm__("Tightrope_Settle");
 
 s32 Scene_Initialize(void) {
@@ -688,7 +689,8 @@ L_02009052:
   FIELD_AT(v_r5, u8, 35) = (2 | FIELD_AT(v_r5, u8, 35));
   FieldMapGrid_SetCellBehavior(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16),
                                0, 0);
-  MapGrid_SetAttributeBAt(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0, 128);
+  MapGrid_SetAttributeBAt(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0,
+                          128);
 L_020090a8:
   t18 = Event_GetFlag(0x8a1);
   if (t18 == 0)
@@ -706,7 +708,8 @@ L_020090a8:
   FIELD_AT(v_r5, u8, 35) = (2 | FIELD_AT(v_r5, u8, 35));
   FieldMapGrid_SetCellBehavior(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16),
                                0, 0);
-  MapGrid_SetAttributeBAt(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0, 128);
+  MapGrid_SetAttributeBAt(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0,
+                          128);
 L_02009100:
   t24 = Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED);
   if (t24 == 0)

@@ -187,7 +187,9 @@ void AlhafranCave_TalkToBriggs(s32 id) {
   Event_ShowMessage(id, 0);
 }
 
-void AlhafranCave_FreezePuddle(void) { FlagBlock_ApplyFlags(gAlhafranCave_Puddles); }
+void AlhafranCave_FreezePuddle(void) {
+  FlagBlock_ApplyFlags(gAlhafranCave_Puddles);
+}
 
 void AlhafranCave_OpenWayToJail(void) {
   Event_SetFlag(FLAG_WAY_TO_JAIL_OPEN);

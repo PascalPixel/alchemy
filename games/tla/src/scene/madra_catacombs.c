@@ -359,7 +359,8 @@ void MadraCatacombs_SettleClimbablePillar(struct Actor *object) {
 DEFINE_SCENE_RUN_IF_HELD(Scene_RunIfHeld, Leader_CanPushObjectAhead,
                          Field_FindNearbyTalkTarget,
                          MadraCatacombs_LowerHeldPillarCells,
-                         gMadraCatacombs_ClimbablePillar, Leader_PushObjectAhead,
+                         gMadraCatacombs_ClimbablePillar,
+                         Leader_PushObjectAhead,
                          MadraCatacombs_SettleClimbablePillar)
 
 void MadraCatacombs_StartMovingClimbablePillar(void) {

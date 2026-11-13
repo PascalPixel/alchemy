@@ -82,7 +82,8 @@ void Func_02000db0(s32 value);
 void Actor_PlaceBlocks(const s16 *data);
 void Actor_LiftTargetBlock(const s16 *data);
 void Actor_PlaceMovedBlock(void);
-void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
+                                 s32 g);
 void Sound_Play(s32 cue);
 void Izumo_RotateWaterColors(void);
 void Izumo_StopThePartyToThankThem(void);
@@ -104,7 +105,9 @@ void Izumo_TellTheCloudBrandLegend(void);
 #include "version.h"
 #include "frame.h"
 
-void Izumo_StartMovingStone(void) { Actor_LiftTargetBlock(gIzumo_MovableStones); }
+void Izumo_StartMovingStone(void) {
+  Actor_LiftTargetBlock(gIzumo_MovableStones);
+}
 
 void Izumo_FinishMovingStone(void) {
   struct Actor *actor = Actor_GetById(12);
@@ -850,8 +853,10 @@ struct Trigger gIzumo_TriggersOnceTheSerpentIsSlain[] = {
      EVENT(Izumo_FinishMovingStone)},
     {0x8, 0, CONDITION_ALWAYS, EVENT(Izumo_StartMovingStone)},
     {0x9, 0, CONDITION_ALWAYS, EVENT(Izumo_FinishMovingStone)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Izumo_RevealTheStoneCircle)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Izumo_HideTheStoneCircle)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
+     CONDITION_ALWAYS, EVENT(Izumo_RevealTheStoneCircle)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
+     CONDITION_ALWAYS, EVENT(Izumo_HideTheStoneCircle)},
 #if TLA_PATCH_1 /* From patch 1. */
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 21,
      CONDITION_ALWAYS, EVENT(Izumo_CycloneFirstPatch)},

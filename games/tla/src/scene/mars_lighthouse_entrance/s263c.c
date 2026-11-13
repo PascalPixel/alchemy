@@ -301,7 +301,8 @@ struct WorkEvent {
   s16 unk166;
 };
 
-DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_02002c40, Work020023c4__s2860, MapGrid_GetCellAttributeLowNibbleOrBump,
+DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_02002c40, Work020023c4__s2860,
+                              MapGrid_GetCellAttributeLowNibbleOrBump,
                               Func_02002b4c, Func_020029c8)
 #undef WORK
 #undef ABS

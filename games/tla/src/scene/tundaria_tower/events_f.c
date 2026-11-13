@@ -87,8 +87,8 @@ walkNext:
   flags = &entry->collisionFlags;
 overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
-    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x,
-               radius, (s32)position, entry->radius - 2) >= 0)
+    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius,
+               (s32)position, entry->radius - 2) >= 0)
       goto blocked;
   }
   j++;
@@ -237,7 +237,8 @@ next:
     height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
     Actor_DisableById(id);
     cell->attributeB = 128;
-    *slot = MapCollision_FindOrAddTag(object->terrainId, shape, (height >> 19) + 4);
+    *slot =
+        MapCollision_FindOrAddTag(object->terrainId, shape, (height >> 19) + 4);
     if (GameFlag_Get(flag))
       Actor_SelectAnimation(object, 0);
   }
@@ -427,7 +428,8 @@ next:
     height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
     Actor_DisableById(id);
     cell->attributeB = 128;
-    *slot = MapCollision_FindOrAddTag(object->terrainId, shape, (height >> 19) + 4);
+    *slot =
+        MapCollision_FindOrAddTag(object->terrainId, shape, (height >> 19) + 4);
     if (GameFlag_Get(flag))
       Actor_CopyGraphics(id, 9);
   }

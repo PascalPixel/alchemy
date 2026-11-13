@@ -272,8 +272,8 @@ void MarsLighthouseEntrance_Teleport(void) {
   }
 }
 
-DEFINE_SCENE_LEAVE_BY_EXIT(Func_02000648, Func_020046b4, Teleport_PlaySparks, 17,
-                           Func_02004718)
+DEFINE_SCENE_LEAVE_BY_EXIT(Func_02000648, Func_020046b4, Teleport_PlaySparks,
+                           17, Func_02004718)
 
 /// Burst on the cracked ice sheet, actor 18: a flash, the sheet gone, chips
 /// flying (flag 0xa3f).
@@ -373,8 +373,8 @@ void MarsLighthouseEntrance_PushStatueIntoFlames(s32 unused, s32 id) {
 
 void Func_02000930(void) { GameFlag_Set(0x144); }
 
-DEFINE_SCENE_LEAVE_BY_EXIT(Func_0200093c, Func_020046b4, Teleport_PlaySparks, 14,
-                           Func_02004718)
+DEFINE_SCENE_LEAVE_BY_EXIT(Func_0200093c, Func_020046b4, Teleport_PlaySparks,
+                           14, Func_02004718)
 
 /// Sends object id from column 11 to x 152, then from column 10 to x 200,
 /// both at z 792, through Actor_SetMoveTarget.
@@ -456,8 +456,8 @@ void Func_02000a7c(void) {
   Event_End();
 }
 
-DEFINE_SCENE_LEAVE_BY_EXIT(Func_02000af4, Func_020046b4, Teleport_PlaySparks, 14,
-                           Func_02004718)
+DEFINE_SCENE_LEAVE_BY_EXIT(Func_02000af4, Func_020046b4, Teleport_PlaySparks,
+                           14, Func_02004718)
 
 void Func_02000b24(void) {
   MapGrid_CopyCells(53, 30, 4, 3, 53, 48);
@@ -480,11 +480,11 @@ void Func_02000c1c(void) {
 
 void Func_02000c68(void) { MapGrid_CopyCellAttributes(25, 9, 11, 3, 26, 9); }
 
-DEFINE_SCENE_LEAVE_BY_EXIT(Func_02000c84, Func_020046b4, Teleport_PlaySparks, 12,
-                           Func_02004718)
+DEFINE_SCENE_LEAVE_BY_EXIT(Func_02000c84, Func_020046b4, Teleport_PlaySparks,
+                           12, Func_02004718)
 
-DEFINE_SCENE_LEAVE_BY_EXIT(Func_02000cb4, Func_020046b4, Teleport_PlaySparks, 13,
-                           Func_02004718)
+DEFINE_SCENE_LEAVE_BY_EXIT(Func_02000cb4, Func_020046b4, Teleport_PlaySparks,
+                           13, Func_02004718)
 
 void Func_02000ce4(s32 unused, s32 id) {
   if (id == 8) {

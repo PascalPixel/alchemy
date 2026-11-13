@@ -182,7 +182,8 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
                                         PaletteCycle_StepAt,
                                         gPaletteCycleUnlitColors)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight, MapGrid_SetAttributeBAt)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
+                             MapGrid_SetAttributeBAt)
 
 #include "actor.h"
 #include "frame.h"

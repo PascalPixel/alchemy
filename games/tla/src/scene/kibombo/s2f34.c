@@ -362,7 +362,7 @@ void Func_02003308(struct Actor *actor) {
   spin = (s16)object->actor.unk66;
   turn = *action;
   Vector_AddPolarOffset((radius << 16) + wobble, turn * 3 * 256 + spin,
-                           &centre);
+                        &centre);
   object->actor.x = centre.x;
   object->actor.y = centre.y;
   object->actor.z = centre.z;

@@ -397,7 +397,8 @@ s32 Scene_Initialize(void) {
   Io_Write16(0x3f06, &REG_BLDCNT);
   Io_Write16(0x1000, &REG_BLDALPHA);
   BattleEffect_FillOverlayTiles(0);
-  Call4((void (*)())EffectSprite_InitFromSlot94Blended, (s32)gData_02002b60, 0, 0, 0x80000000);
+  Call4((void (*)())EffectSprite_InitFromSlot94Blended, (s32)gData_02002b60, 0,
+        0, 0x80000000);
   Func_02000054();
   Func_020007d0();
   if (Event_GetFlag(0xa02)) {
@@ -461,11 +462,13 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
 
 void MapGrid_SetCellHeight();
 /* VIEW(jupiter_lighthouse_room_2): routine MapGrid_SetAttributeBAt as void
- * MapGrid_SetAttributeBAt(); module/scene/scene.h has void MapGrid_SetAttributeBAt(s32 actor);
- * tried as the rest of the object declares it, it does not compile in tla-ja:
+ * MapGrid_SetAttributeBAt(); module/scene/scene.h has void
+ * MapGrid_SetAttributeBAt(s32 actor); tried as the rest of the object declares
+ * it, it does not compile in tla-ja:
  * games/tla/src/scene/jupiter_lighthouse_room_2.c:525: too many arguments to
  * function `MapGrid_SetAttributeBAt'. */
-extern void Func_0200230c__jupiter_lighthouse_room_2() __asm__("MapGrid_SetAttributeBAt");
+extern void
+Func_0200230c__jupiter_lighthouse_room_2() __asm__("MapGrid_SetAttributeBAt");
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
                              Func_0200230c__jupiter_lighthouse_room_2)

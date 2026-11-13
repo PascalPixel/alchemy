@@ -241,8 +241,7 @@ void Func_020004c8(void) {
     effect->timer = angle;
     effect->unk66 = 0;
     effect->update = Func_02000090;
-    effect->speedLimit =
-        Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24 >> 16;
+    effect->speedLimit = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24 >> 16;
     sprite->nextFrame = 0;
     sprite->priority = 1;
   }
@@ -2298,8 +2297,8 @@ DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame,
                           gPaletteCyclePausesInEvents, gPaletteCycleColors)
 
 /* VIEW(s0198): routine MapGrid_SetCellHeight as void MapGrid_SetCellHeight();
- * module/scene/scene.h has void MapGrid_SetCellHeight(void); tried as the rest of the
- * object declares it, it does not compile in tla-ja:
+ * module/scene/scene.h has void MapGrid_SetCellHeight(void); tried as the rest
+ * of the object declares it, it does not compile in tla-ja:
  * games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2369: too many
  * arguments to function `MapGrid_SetCellHeight'. */
 extern void Func_020057c4__s0198() __asm__("MapGrid_SetCellHeight");

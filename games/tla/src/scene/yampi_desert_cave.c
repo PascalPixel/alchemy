@@ -202,12 +202,8 @@ outer:
 inner:
   if (((struct ObjectAnimationState *)object->sprite)->value28[0] ==
       gYampiDesertCave_LogSprites[k]) {
-    x = (PIXELS(leader->x) +
-         (gPushLeaderSteps[*direction] >> 16)) >>
-        4;
-    z = (PIXELS(leader->z) +
-         (s16)gPushLeaderSteps[*direction]) >>
-        4;
+    x = (PIXELS(leader->x) + (gPushLeaderSteps[*direction] >> 16)) >> 4;
+    z = (PIXELS(leader->z) + (s16)gPushLeaderSteps[*direction]) >> 4;
     left = (PIXELS(object->x) + gYampiDesertCave_LogFootprints[k * 4]) >> 4;
     top = (PIXELS(object->z) + gYampiDesertCave_LogFootprints[k * 4 + 1]) >> 4;
     right =
@@ -602,7 +598,7 @@ void YampiDesertCave_TryPushLog(void) {
 #define DEFINE_TELEPORT_FROM_MARK(name, n1)                                    \
   void name(void) {                                                            \
     YampiDesertCave_StartMarkGlow();                                           \
-    Teleport_PlaySparks();                                                           \
+    Teleport_PlaySparks();                                                     \
     {                                                                          \
       u8 *party = (u8 *)&gMainRoutineWork;                                     \
                                                                                \
@@ -628,7 +624,7 @@ DEFINE_TELEPORT_FROM_MARK(YampiDesertCave_TeleportFromSecondMark, 9)
     if (arg0 != 3)                                                             \
       goto done;                                                               \
     Actor_SetHorizontalPositionWithTerrain(n2, 0, 0);                          \
-    GameFlag_Set(n1);                                                       \
+    GameFlag_Set(n1);                                                          \
   done:                                                                        \
     return;                                                                    \
   }

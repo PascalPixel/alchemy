@@ -283,11 +283,11 @@ void Func_0200092c(struct Actor *object) {
 
 extern s16 gData_02004674[][4];
 void Actor_StartScript(struct Actor *object, const u8 *script);
-/* VIEW(airs_rock): routine Actor_HasArrived as s32 Actor_HasArrived(struct Actor
- * *object); module/scene/scene.h has void Actor_HasArrived(struct Actor *object,
- * const void *script); tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/scene/airs_rock.c:411: too few arguments to
- * function `Actor_HasArrived'. */
+/* VIEW(airs_rock): routine Actor_HasArrived as s32 Actor_HasArrived(struct
+ * Actor *object); module/scene/scene.h has void Actor_HasArrived(struct Actor
+ * *object, const void *script); tried as the rest of the object declares it, it
+ * does not compile in tla-ja: games/tla/src/scene/airs_rock.c:411: too few
+ * arguments to function `Actor_HasArrived'. */
 extern s32
 Func_02003ba8__airs_rock(struct Actor *object) __asm__("Actor_HasArrived");
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -413,8 +413,7 @@ void Func_0200095c(void) {
     while (Func_02003ba8__airs_rock(gust) == 0) {
       if ((gFrameCount & 1) == 0) {
         dust.priority = 1;
-        dust.startScaleX = dust.startScaleY =
-            (Random16() & 0xffff) + 0x10000;
+        dust.startScaleX = dust.startScaleY = (Random16() & 0xffff) + 0x10000;
         velocity.x = Trig_Cos((gFrameCount & 0x1ff) << 12) << 1;
         velocity.y = 0x10000;
         velocity.z = Trig_Sin((gFrameCount & 0x1ff) << 12);
@@ -632,9 +631,9 @@ glow:
       velocity.y = 0;
       velocity.z = 0xfffe0000;
       x = ((Random16() % 144) << 16) + 0x1000000;
-      FieldEffect_Spawn(x, 0, (Random16() % 144) << 16, velocity.x,
-                        velocity.y, velocity.z,
-                        EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY | 1, &options);
+      FieldEffect_Spawn(x, 0, (Random16() % 144) << 16, velocity.x, velocity.y,
+                        velocity.z, EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY | 1,
+                        &options);
     }
     REG_BLDALPHA = (((j >> 4) & 15) << 8) | (16 - ((j >> 4) & 15));
     ((u8 *)Actor_Get(8))[98] = Random16() & 7;
@@ -975,11 +974,11 @@ void Func_02001ca4(void) {
   Func_02000468(work->valueCbc);
 }
 
-/* VIEW(airs_rock): routine Actor_PlaceMovedBlock as void Actor_PlaceMovedBlock(void);
- * module/scene/scene.h has void Actor_PlaceMovedBlock(s32 id); tried as the rest of the
- * object declares it, it does not compile in tla-ja:
- * games/tla/src/scene/airs_rock.c:1014: too few arguments to function
- * `Actor_PlaceMovedBlock'. */
+/* VIEW(airs_rock): routine Actor_PlaceMovedBlock as void
+ * Actor_PlaceMovedBlock(void); module/scene/scene.h has void
+ * Actor_PlaceMovedBlock(s32 id); tried as the rest of the object declares it,
+ * it does not compile in tla-ja: games/tla/src/scene/airs_rock.c:1014: too few
+ * arguments to function `Actor_PlaceMovedBlock'. */
 extern void Func_02003cc0__airs_rock(void) __asm__("Actor_PlaceMovedBlock");
 
 void Func_02001cc8(void) {

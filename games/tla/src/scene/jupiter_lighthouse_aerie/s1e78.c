@@ -96,7 +96,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "iwram_call.h"
 #include "cell_target.h"
 
-DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find, gData_02003488, CrackedTiles_Update)
+DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find, gData_02003488,
+                          CrackedTiles_Update)
 
 #include "../shared/jupiter_lighthouse_aerie.h"
 

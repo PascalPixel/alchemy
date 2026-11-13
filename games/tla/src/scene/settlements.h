@@ -50,7 +50,8 @@ void Layer_TrackScroll(void);
 void Irq_SetHandler(s32 a, s32 b, void (*callback)(void));
 void Event_End(void);
 void ItemDisplay_ShowItem(s32 a, s32 b);
-void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
+                                 s32 g);
 
 extern u32 gSettlements_Room5Regions[];
 extern u32 gSettlements_Room3Regions[];

@@ -120,7 +120,8 @@ void CrumblingPillars_Place(u16 *list) {
 
       Actor_DisableById(id);
       cell->attributeB = 128;
-      *slot = MapCollision_FindOrAddTag(object->terrainId, shape, (ground >> 19) + 4);
+      *slot = MapCollision_FindOrAddTag(object->terrainId, shape,
+                                        (ground >> 19) + 4);
       if (Event_GetFlag(flag))
         Actor_SelectAnimation(object, 0);
     }
@@ -294,7 +295,8 @@ void CrumblingPillars_PlaceWithStandIns(u16 *list) {
       cell->attributeB = 128;
       // Read through the actor, not actor->terrainId: the native reloads it
       // after the cell store.
-      *shape = MapCollision_FindOrAddTag(actor->terrainId, kind, (ground >> 19) + 4);
+      *shape =
+          MapCollision_FindOrAddTag(actor->terrainId, kind, (ground >> 19) + 4);
       if (Event_GetFlag(flag))
         Actor_CopyGraphics(id, 9);
     }

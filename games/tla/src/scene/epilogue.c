@@ -22,7 +22,6 @@ struct EpilogueSprite;
 
 void EffectSprite_Draw(struct EpilogueSprite *sprite);
 
-
 s32 EndingPicture_LowerTopStrip();
 
 extern s32 gEpilogueMessage; ///< the next line to show
@@ -94,7 +93,7 @@ struct Trigger gSceneEvents[] = {
 #include "system/ram_buffer.h"
 
 void EffectSprite_Init(struct EpilogueSprite *sprite, s32 a, s32 b, u32 c,
-                   s32 tile);
+                       s32 tile);
 
 static __inline__ void Set(struct EpilogueSprite *sprite, s32 a, s32 b, u32 c,
                            s32 tile) {
@@ -328,8 +327,8 @@ s32 Scene_Initialize(void) {
   System_Wait(1);
   EndingPicture_WaitForScroll();
   FieldEvent_Wait(30);
-  Call3((void (*)())EndingPicture_Show, (s32)&ResourceId_EndingCliffSunsetPicture,
-        (s32)Ram_MapCellBuffer, 120);
+  Call3((void (*)())EndingPicture_Show,
+        (s32)&ResourceId_EndingCliffSunsetPicture, (s32)Ram_MapCellBuffer, 120);
   FieldEvent_Wait(120);
   Call3((void (*)())Epilogue_ShowLine, 5, 2, 30);
   Call3((void (*)())Epilogue_ShowLine, 7, 2, 30);
@@ -363,8 +362,8 @@ s32 Scene_Initialize(void) {
   Call3((void (*)())Epilogue_ShowLine, 0, 2, 30);
   Call3((void (*)())Epilogue_ShowLine, 0x8045, 2, 30);
   Call3((void (*)())Epilogue_ShowLine, 1, 2, 30);
-  Call3((void (*)())EndingPicture_Show, (s32)&ResourceId_EndingVillagersPictureA,
-        (s32)Ram_MapCellBuffer, 0);
+  Call3((void (*)())EndingPicture_Show,
+        (s32)&ResourceId_EndingVillagersPictureA, (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
   Event_PlaySound(73);
   FieldEvent_Wait(30);
@@ -394,8 +393,8 @@ s32 Scene_Initialize(void) {
   scroll[3].y = zero;
   scroll[2].y = zero;
   EndingPicture_LowerTopStrip(0);
-  EndingPicture_Show((s32)&ResourceId_EndingEmbracePicture, (s32)Ram_MapCellBuffer,
-                0);
+  EndingPicture_Show((s32)&ResourceId_EndingEmbracePicture,
+                     (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
   goto L_02008692;
 L_0200868c:
@@ -411,11 +410,11 @@ L_02008692:
   System_Wait(1);
   EndingPicture_WaitForScroll();
   FieldEvent_Wait(180);
-  Call3((void (*)())EndingPicture_Show, (s32)&ResourceId_EndingSunsetPlainPicture,
-        (s32)Ram_MapCellBuffer, 0);
+  Call3((void (*)())EndingPicture_Show,
+        (s32)&ResourceId_EndingSunsetPlainPicture, (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(300);
-  EndingPicture_Show((s32)&ResourceId_EndingTheEndPicture, (s32)Ram_MapCellBuffer,
-                0);
+  EndingPicture_Show((s32)&ResourceId_EndingTheEndPicture,
+                     (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(180);
   Event_PlaySound(78);
   p = &gMainRoutineWork;

@@ -79,13 +79,13 @@ void CrackedTile_DropIn(void) {
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void CrackedTile_FallEvent(struct CellTarget *work,
-                          struct CellTargetEntry *entry);
+                           struct CellTargetEntry *entry);
 
 DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
-                        CrackedTile_FallEvent)
+                          CrackedTile_FallEvent)
 
 DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
-                                CrackedTile_DropIn)
+                                  CrackedTile_DropIn)
 
 #include "scene_tables.h"
 

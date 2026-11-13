@@ -35,8 +35,9 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 terrain, s32 height);
 /// Sets the cell under the object by the flag its action names: with the flag
 /// set, bit 7 of the layer 0 attribute and the high byte of the layer 2
 /// attribute are cleared and the sprite goes to priority 3; without it they are
-/// set and the sprite goes to priority 2. MapGrid_SetCellHeight then gets the cell, the
-/// object's terrain and the terrain height in half cells, 4 lower or higher.
+/// set and the sprite goes to priority 2. MapGrid_SetCellHeight then gets the
+/// cell, the object's terrain and the terrain height in half cells, 4 lower or
+/// higher.
 void Func_02000338(struct Actor *object) {
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
@@ -91,8 +92,7 @@ loop:
   flag = row[2];
 
   Actor_SetSpriteFlags(object, 0);
-  Actor_SelectAnimation(object,
-                              (u16)animation + GameFlag_Get((u16)flag));
+  Actor_SelectAnimation(object, (u16)animation + GameFlag_Get((u16)flag));
   object->motionFlags = 0;
   object->collisionFlags &= 0xfe;
   object->timer = flag;
@@ -273,7 +273,7 @@ void Func_02000708(struct TundariaTowerPosition *position, s32 count,
     velocityY <<= 14;
     x = position->x - ((Random16() & 31) << 16) + 0xf0000;
     FieldEffect_Spawn(x, position->y + ((Random16() & mask) << 16), position->z,
-                  velocityX, velocityY, 0, 0x15e0000, &options);
+                      velocityX, velocityY, 0, 0x15e0000, &options);
   }
 }
 
@@ -314,8 +314,9 @@ void Func_02000840(struct Actor *object) {
     }
     dy = Random16() & 7;
     params.type = 673;
-    FieldEffect_Spawn(object->x + ((dx - 8) << 16), object->y + ((dy - 8) << 16),
-                  object->z, 0, 0x8000, phase, 0x100000, &params);
+    FieldEffect_Spawn(object->x + ((dx - 8) << 16),
+                      object->y + ((dy - 8) << 16), object->z, 0, 0x8000, phase,
+                      0x100000, &params);
   }
 }
 
@@ -398,7 +399,7 @@ void Func_02000a48(s32 arg0, s32 arg1) {
     options.rotation = (Random16() & 15) << 12;
     velocityX = ((Random16() & 15) - 8) << 13;
     FieldEffect_Spawn(object->x, object->y - ((arg1 * 3) << 16) + 0x100000,
-                  object->z, velocityX, 0, 0, 0x5a0000, &options);
+                      object->z, velocityX, 0, 0, 0x5a0000, &options);
     object->scaleY -= 7936;
   }
   if (arg0 == 1) {

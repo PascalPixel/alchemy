@@ -20,9 +20,8 @@ void Import_ActorSelectAnimation(struct StagedActor *object, s32 mode);
 s32 MapGrid_CheckCollision(struct StagedActor *object,
                            struct FieldPosition *position);
 
-DEFINE_BLOCK_PUSH_ONTO(VenusLighthouse_PushBlockOnto,
-                       gPushLeaderSteps, MapGrid_CheckCollision,
-                       Import_ActorSelectAnimation)
+DEFINE_BLOCK_PUSH_ONTO(VenusLighthouse_PushBlockOnto, gPushLeaderSteps,
+                       MapGrid_CheckCollision, Import_ActorSelectAnimation)
 
 #include "../field/map/cell_fill_byte.c"
 
@@ -71,8 +70,7 @@ s32 VenusLighthouse_EmitRisingParticles(struct SceneEffectSource *actor) {
   options.palette = 14;
   particleX = actor->x + (((s32)((u32)(Random16() * 9) >> 16) - 4) << 16);
   particleY = actor->y + ((32 - (s32)((u32)(Random16() * 32) >> 16)) << 16);
-  riseSpeed =
-      ((((s32)((u32)(Random16() * 5) >> 16)) << 16) + 0x00050000) / 10;
+  riseSpeed = ((((s32)((u32)(Random16() * 5) >> 16)) << 16) + 0x00050000) / 10;
   FieldEffect_Spawn(particleX, particleY, actor->z, 0, riseSpeed, framePhase,
                     0x000b0000, &options);
 done:

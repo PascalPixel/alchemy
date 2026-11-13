@@ -311,10 +311,10 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpritePriority(14, 3);
   FieldActor_SetSpritePriority(15, 3);
   BattleEffect_FillOverlayTiles(0);
-  Call4(EffectSprite_InitFromSlot94, (s32)gAlhafraInteriors_FirstGuestSprite, 8, 15,
-        0x40000000);
-  Call4(EffectSprite_InitFromSlot94, (s32)gAlhafraInteriors_SecondGuestSprite, 8, 15,
-        0x40000000);
+  Call4(EffectSprite_InitFromSlot94, (s32)gAlhafraInteriors_FirstGuestSprite, 8,
+        15, 0x40000000);
+  Call4(EffectSprite_InitFromSlot94, (s32)gAlhafraInteriors_SecondGuestSprite,
+        8, 15, 0x40000000);
   *(s32 *)(gAlhafraInteriors_SecondGuestSprite + 24) = 0x18000;
   Actor_Get(14)->update = AlhafraInteriors_DrawFirstGuestSprite;
   Actor_Get(15)->update = AlhafraInteriors_DrawSecondGuestSprite;
@@ -356,10 +356,10 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpritePriority(14, 3);
   FieldActor_SetSpritePriority(15, 3);
   BattleEffect_FillOverlayTiles(0);
-  Call4(EffectSprite_InitFromSlot94, (s32)gAlhafraInteriors_FirstGuestSprite, 8, 15,
-        0x40000000);
-  Call4(EffectSprite_InitFromSlot94, (s32)gAlhafraInteriors_SecondGuestSprite, 8, 15,
-        0x40000000);
+  Call4(EffectSprite_InitFromSlot94, (s32)gAlhafraInteriors_FirstGuestSprite, 8,
+        15, 0x40000000);
+  Call4(EffectSprite_InitFromSlot94, (s32)gAlhafraInteriors_SecondGuestSprite,
+        8, 15, 0x40000000);
   *(s32 *)(gAlhafraInteriors_SecondGuestSprite + 24) = 0x18000;
   Actor_Get(14)->update = AlhafraInteriors_DrawFirstGuestSprite;
   Actor_Get(15)->update = AlhafraInteriors_DrawSecondGuestSprite;

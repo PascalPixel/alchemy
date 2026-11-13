@@ -840,8 +840,7 @@ s32 Scene_PrepareMap(void) {
           // same one GCSE moves the load into both predecessors (11 more of
           // gap).
           if (road->stage[0] < road->leaderBest || GameFlag_Get(642)) {
-            TrialRoad_OpenLeaderDoor(
-                road->mirrored, road->stage[0]);
+            TrialRoad_OpenLeaderDoor(road->mirrored, road->stage[0]);
             GameFlag_Set(642);
             GameFlag_Set(644);
           }
@@ -1669,13 +1668,15 @@ struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
 /// other marks its cell, writes a shape for its height into the shape grid, and
 /// takes mode 0 when its first flag is set. Then the leader is lifted onto the
 /// ground if it stands below it.
-DEFINE_PILLARS_RESTORE_RAISED(TrialRoad_RestoreCrumblingPillars, Actor_GetCellIndex,
-                              MapGrid_GetTerrainKind, Actor_DisableById,
-                              MapCollision_FindOrAddTag, Actor_SelectAnimation)
+DEFINE_PILLARS_RESTORE_RAISED(TrialRoad_RestoreCrumblingPillars,
+                              Actor_GetCellIndex, MapGrid_GetTerrainKind,
+                              Actor_DisableById, MapCollision_FindOrAddTag,
+                              Actor_SelectAnimation)
 
 DEFINE_TRAPS_CHECK(TrialRoad_CheckCrumblingStep, Field_TryJumpForward,
-                   Actor_FindAtCell, Actor_SelectAnimation, TrialRoad_SpawnRubble,
-                   TrialRoad_SetLeaderCellShape, TrialRoad_SpawnDustRing)
+                   Actor_FindAtCell, Actor_SelectAnimation,
+                   TrialRoad_SpawnRubble, TrialRoad_SetLeaderCellShape,
+                   TrialRoad_SpawnDustRing)
 
 void TrialRoad_CrumblePillar(const void *data, s32 id) {
   const struct TrapEntry *entry = data;
@@ -1726,8 +1727,8 @@ void Actor_MoveToObject(s32 id, s32 owner);
 /// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
 /// it copy actor 9's visual attributes.
 DEFINE_PILLARS_RESTORE(TrialRoad_RestorePillars, TrialRoad_SetPillarMode3,
-                       Actor_GetCellIndex, MapGrid_GetTerrainKind, Actor_DisableById,
-                       MapCollision_FindOrAddTag)
+                       Actor_GetCellIndex, MapGrid_GetTerrainKind,
+                       Actor_DisableById, MapCollision_FindOrAddTag)
 
 void TrialRoad_TakePlaceOf(struct Actor *object, struct Actor *target) {
   Actor_SetPositionAndResetMotion(object, target->x, target->y, target->z);
@@ -2100,8 +2101,7 @@ void TrialRoad_MoveRival(void) {
     Actor_SelectAnimation(rival, ok);
   } else if (state->mode == 1) {
     if (state->resource != work->resource) {
-      Decompress_TaggedLz(Resource_GetTableEntry(state->resource),
-                                work->path);
+      Decompress_TaggedLz(Resource_GetTableEntry(state->resource), work->path);
       work->resource = state->resource;
     }
     x = work->path[state->point];

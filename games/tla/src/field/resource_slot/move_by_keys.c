@@ -76,7 +76,8 @@ s32 Actor_MoveByKeys(struct Actor *object) {
     position.y = object->y - position.z;
     position.z = object->z;
     map = Ram_HeapSlots->mapWork;
-    sourceCell = &map->layers[object->terrainId].cells[Actor_GetCellIndexFar(object)];
+    sourceCell =
+        &map->layers[object->terrainId].cells[Actor_GetCellIndexFar(object)];
     destinationCell =
         &map->layers[object->terrainId]
              .cells[position.x / 0x100000 + (position.z / 0x100000) * 128];

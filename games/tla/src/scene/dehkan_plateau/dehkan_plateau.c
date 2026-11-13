@@ -327,8 +327,8 @@ loop:
     const u16 *dest;                                                           \
                                                                                \
     for (i = 0; i <= n1; i++) {                                                \
-      if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {                                         \
-        if (GameFlag_Get(flag) != 0) {                                        \
+      if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {                       \
+        if (GameFlag_Get(flag) != 0) {                                         \
           s32 x;                                                               \
           s32 y;                                                               \
                                                                                \
@@ -343,12 +343,12 @@ loop:
         }                                                                      \
       } else {                                                                 \
         if (*cell != 0)                                                        \
-          GameFlag_Set(flag);                                               \
+          GameFlag_Set(flag);                                                  \
         cell += 6;                                                             \
       }                                                                        \
       flag++;                                                                  \
     }                                                                          \
-    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0)                                             \
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0)                           \
       Func_02001804();                                                         \
   }
 

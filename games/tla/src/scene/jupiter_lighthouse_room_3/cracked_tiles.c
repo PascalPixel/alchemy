@@ -107,7 +107,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "../../field/map/cell_sprite.c"
 
 DEFINE_CRACKED_TILES_FIND_LOWER(CrackedTiles_FindLower, gCrackedTiles,
-                              CrackedTiles_Update)
+                                CrackedTiles_Update)
 
 DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 

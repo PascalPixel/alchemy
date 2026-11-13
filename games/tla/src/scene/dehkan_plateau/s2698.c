@@ -80,8 +80,7 @@ void Func_02002698(s32 id, s32 center, s32 flag) {
       effect->sprite->priority = 1;
       effect->velocityX = 0;
       effect->velocityZ = 0;
-      effect->velocityY =
-          -((((u32)Random16() << 14) >> 16) + Q16_ONE * 3 / 8);
+      effect->velocityY = -((((u32)Random16() << 14) >> 16) + Q16_ONE * 3 / 8);
       effect->spin = (((u32)Random16() << 9) >> 16) - 256;
       effect->scaleRateX = -(Q16_ONE / 32);
       effect->scaleRateY = -(Q16_ONE * 3 / 128);
@@ -555,9 +554,9 @@ extern s32 gData_02005678;
 
 void Pillars_Raise(const void *data);
 void Func_02001ee8(void);
-/* VIEW(s3284): routine Actor_GetCellIndex as s32 Actor_GetCellIndex(void); s2c14 has s32
- * Actor_GetCellIndex(struct Actor *object); tried as the rest of the object declares
- * it, it does not compile in tla-ja:
+/* VIEW(s3284): routine Actor_GetCellIndex as s32 Actor_GetCellIndex(void);
+ * s2c14 has s32 Actor_GetCellIndex(struct Actor *object); tried as the rest of
+ * the object declares it, it does not compile in tla-ja:
  * games/tla/src/scene/dehkan_plateau/s2698.c:617: too few arguments to function
  * `Actor_GetCellIndex'. */
 extern s32 Func_02003db0__s3284(void) __asm__("Actor_GetCellIndex");
@@ -667,7 +666,7 @@ extern const u16 gData_02004276[];
     s32 offset = 0;                                                            \
                                                                                \
     while (1) {                                                                \
-      if (GameFlag_Get(flag)) {                                               \
+      if (GameFlag_Get(flag)) {                                                \
         u16 *entry = (u16 *)((u8 *)gData_02004276 + offset);                   \
         s32 y;                                                                 \
         s32 x;                                                                 \

@@ -463,6 +463,7 @@ struct Trigger gMikasalla_TunnelTriggers[] = {
     {0x8602, 32, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingWest)},
     {0xc602, 33, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingNorth)},
     {0xc602, 34, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderAhead)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 60, 0x200, EVENT(Mikasalla_CastParch)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 60, 0x200,
+     EVENT(Mikasalla_CastParch)},
     {TRIGGER_TABLE_END},
 };

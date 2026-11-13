@@ -137,7 +137,8 @@ next:
   System_Wait(1);
   i++;
 test:
-  if (i <= 179 && Actor_HasArrived(object) == 0 && gSettlements_SlideStopped == 0)
+  if (i <= 179 && Actor_HasArrived(object) == 0 &&
+      gSettlements_SlideStopped == 0)
     goto next;
   if (gSettlements_SlideStopped != 0)
     goto end;
@@ -297,7 +298,8 @@ next:
   System_Wait(1);
   i++;
 test:
-  if (i <= 179 && Actor_HasArrived(object) == 0 && gSettlements_SlideStopped == 0)
+  if (i <= 179 && Actor_HasArrived(object) == 0 &&
+      gSettlements_SlideStopped == 0)
     goto next;
   if (gSettlements_SlideStopped != 0)
     goto end;

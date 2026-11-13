@@ -20,7 +20,6 @@
 #include "module/scene/naribwe_interiors.h"
 #include "module/scene/scene.h"
 
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }

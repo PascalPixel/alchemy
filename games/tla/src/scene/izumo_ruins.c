@@ -82,7 +82,8 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 /// the map's and the sprite takes priority 3; clear, the upper cell's high byte
 /// becomes 232 where the lower cell's is 232 and 0xff otherwise, the lower cell
 /// gains bit 7, the height rises 4 and the sprite takes priority 2. Both cells
-/// are written back and MapGrid_SetCellHeight is given the cell's position and height.
+/// are written back and MapGrid_SetCellHeight is given the cell's position and
+/// height.
 void IzumoRuins_ShowPillarState(struct Actor *object) {
   s32 column = object->x >> 20;
   s32 row = object->z >> 20;

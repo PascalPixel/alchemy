@@ -22,8 +22,7 @@ s32 CrackedTiles_Step(void);
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 void Leader_CenterInCell(void);
 extern struct CellTarget gCrackedTiles;
-void CrackedTile_Crack(struct CellTarget *table,
-                        struct CellTargetEntry *entry);
+void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -139,4 +138,5 @@ struct CellTarget__s1c30 {
 
 #include "io_write.h"
 
-DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1c30, Leader_CenterInCell)
+DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1c30,
+                         Leader_CenterInCell)

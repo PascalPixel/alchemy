@@ -813,8 +813,8 @@ end:
 #else
 
 // The Japanese release's older form: room 1's entrances 11 and 12 end without
-// WorldMap_SetReturnLeavingScene, room 3 has no flag 0x109 check calling Func_0200042c, and the
-// room pointer is a plain local.
+// WorldMap_SetReturnLeavingScene, room 3 has no flag 0x109 check calling
+// Func_0200042c, and the room pointer is a plain local.
 
 #include "call.h"
 #include "main_routine_work.h"
@@ -1899,9 +1899,9 @@ void Func_0200485c(s32 direction) {
 
 extern s8 gData_020053fc[][2];
 
-/// From the third state on, for each of the two map layers: Map_CopyRawCellsRect
-/// with the state's origin plus the layer's cell, a 15 by 10 size and the
-/// layer's cell plus one.
+/// From the third state on, for each of the two map layers:
+/// Map_CopyRawCellsRect with the state's origin plus the layer's cell, a 15 by
+/// 10 size and the layer's cell plus one.
 void Func_020048a0(void) {
   s32 state = *(s32 *)(gInventorySnapshot + 0x288);
   s8 *origin = gData_020053fc[state];

@@ -516,7 +516,7 @@ s32 CrackedTiles_Step();
   void name(void) {                                                            \
     s32 t0;                                                                    \
                                                                                \
-    t0 = CrackedTiles_Step();                                                   \
+    t0 = CrackedTiles_Step();                                                  \
     if (t0 != 0) {                                                             \
       FieldEvent_SetExitRequest(n1);                                           \
     }                                                                          \

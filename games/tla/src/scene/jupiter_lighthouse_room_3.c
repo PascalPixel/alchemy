@@ -264,7 +264,8 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(
     gPaletteCycleColors, gPaletteCycleUnlitPalette, gPaletteCycleFrame,
     PaletteCycle_StepAt, gPaletteCycleUnlitColors)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight, MapGrid_SetAttributeBAt)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
+                             MapGrid_SetAttributeBAt)
 
 #include "frame.h"
 
@@ -391,8 +392,8 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 
 /// Stops the object where it stands (Actor_SetPositionAndResetMotion) when
 /// the point a cell ahead along its facing holds another object
-/// (Actor_FindAtCell) whose sprite shape is not in the footprint table, and again
-/// when its own cell test (MapGrid_CheckCollision) is positive.
+/// (Actor_FindAtCell) whose sprite shape is not in the footprint table, and
+/// again when its own cell test (MapGrid_CheckCollision) is positive.
 void PushTarget_UpdatePusher(struct Actor *object) {
   s32 position[3];
   struct Actor *other;

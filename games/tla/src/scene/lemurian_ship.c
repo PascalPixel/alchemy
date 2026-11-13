@@ -613,7 +613,7 @@ void Func_02000af4(void) {
     Event_Wait(20);                                                            \
     gMainRoutineWork.battleRule24b = 2;                                        \
     Field_RequestBattleFromEncounterTable(11, 0);                              \
-    GameFlag_Set(id + n1);                                                  \
+    GameFlag_Set(id + n1);                                                     \
   }
 
 DEFINE_FUNC_02000BF0(Func_02000bf0, 0x2f8)
@@ -771,7 +771,7 @@ void Func_020010cc(void) {
   void name(void) {                                                            \
     Sound_Play(106);                                                           \
     Actor_SetModeById(n1, 2);                                                  \
-    GameFlag_Set(n2);                                                       \
+    GameFlag_Set(n2);                                                          \
     Func_02000e2c();                                                           \
   }
 
@@ -799,8 +799,8 @@ void Func_02001128(void) {
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
     work->field16a = 0;                                                        \
-    GameFlag_Clear(n2);                                                     \
-    GameFlag_Clear(n3);                                                     \
+    GameFlag_Clear(n2);                                                        \
+    GameFlag_Clear(n3);                                                        \
     Event_Wait(20);                                                            \
     Sound_Play(186);                                                           \
     for (i = 0; i <= 63; i++) {                                                \
@@ -812,7 +812,7 @@ void Func_02001128(void) {
     MapGrid_CopyCellAttributes(36, 0, 1, 1, n4, 9);                            \
     Sound_Play(188);                                                           \
     MapGrid_CopyCellsTo(7, 124, 31, 64, 3, 2);                                 \
-    GameFlag_Clear(0x982);                                                  \
+    GameFlag_Clear(0x982);                                                     \
     Event_Wait(20);                                                            \
     Event_End();                                                               \
   }

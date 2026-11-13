@@ -19,8 +19,7 @@
 struct CellTarget;
 struct CellTargetEntry;
 extern struct CellTarget gCrackedTiles;
-void CrackedTile_Crack(struct CellTarget *table,
-                        struct CellTargetEntry *entry);
+void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 void JupiterLighthouse_HideThePassage(void);
 void JupiterLighthouse_LeaveByFirstCyclone(void);
 void JupiterLighthouse_LeaveBySecondCyclone(void);

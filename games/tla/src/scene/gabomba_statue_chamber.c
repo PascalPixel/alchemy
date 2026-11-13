@@ -563,7 +563,7 @@ void Func_02000ef0(struct Actor *object) { object->x = Actor_GetById(8)->x; }
       object->update = Func_02000ef0;                                          \
       sprite->nextFrame = zero;                                                \
       sprite->unk1b[0] = zero;                                                 \
-      block = HeapSlot_Alloc(68, 0x608);                                    \
+      block = HeapSlot_Alloc(68, 0x608);                                       \
       Icon_DrawItem(n1);                                                       \
       VramCache_Load(sprite->vramBlock, 128, block + 0x400);                   \
       HeapSlot_Release(68);                                                    \
@@ -996,9 +996,9 @@ void Func_02001ba8(void) {
 
 #include "version.h"
 
-/// Gives actors 15 to 32 action variant 2, runs Actor_DisableById for actor 8 and
-/// grounds it, then Func_02001094 with actor 10 placed when flag 0x8ff is set,
-/// else Func_02000f88; arriving by entrance 2 it sets the retreat to
+/// Gives actors 15 to 32 action variant 2, runs Actor_DisableById for actor 8
+/// and grounds it, then Func_02001094 with actor 10 placed when flag 0x8ff is
+/// set, else Func_02000f88; arriving by entrance 2 it sets the retreat to
 /// Ov671Room7's entrance 1 (flag 0xa27) or Ov672Room1's entrance 3 (flag
 /// 0xa28).
 void Func_02001c44(void) {

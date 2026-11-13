@@ -85,10 +85,10 @@ extern struct CellTarget gCrackedTiles;
 void GameFlag_SetByte(s32 flag, s32 value);
 
 DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
-                        CrackedTile_Fall)
+                          CrackedTile_Fall)
 
 DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
-                                CrackedTile_DropIn)
+                                  CrackedTile_DropIn)
 
 #include "scene_tables.h"
 

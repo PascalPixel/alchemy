@@ -317,8 +317,8 @@ void ShamanVillage_BlowAwaySand(void) {
 
   buffer = Heap_Alloc(0x680);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
-  Decompress_TaggedLz(
-      Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles), buffer);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
+                      buffer);
   Dma_Set(buffer, (void *)0x0600e800, 0x840000d0, REG_DMA3);
   Dma_Set(buffer + 0x1a0, (void *)0x0600ec00, 0x840000d0, REG_DMA3);
   Heap_Release(buffer);
@@ -333,8 +333,8 @@ void ShamanVillage_BlowAwaySand(void) {
   REG_BG0CNT |= 1;
   Dma_Fill16(16, (void *)0x06002000, 0x500);
   buffer = Heap_Alloc(576);
-  Decompress_TaggedLz(
-      Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap),
+                      buffer);
   i = 0;
   cell = buffer;
 mask:

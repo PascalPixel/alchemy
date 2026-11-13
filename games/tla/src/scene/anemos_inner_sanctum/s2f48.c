@@ -94,10 +94,10 @@ void GameFlag_SetByte(s32 flag, s32 value);
 void CrackedTile_Fall(struct CellTarget *work, struct CellTargetEntry *entry);
 
 DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
-                        CrackedTile_Fall)
+                          CrackedTile_Fall)
 
 DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
-                                CrackedTile_DropIn)
+                                  CrackedTile_DropIn)
 
 #include "scene_tables.h"
 

@@ -21,8 +21,7 @@
 struct CellTarget;
 void Leader_CenterInCell(void);
 extern struct CellTarget gCrackedTiles;
-void CrackedTile_Crack(struct CellTarget *table,
-                        struct CellTargetEntry *entry);
+void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -158,4 +157,5 @@ struct CellTarget__s1888 {
 
 #include "io_write.h"
 
-DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1888, Leader_CenterInCell)
+DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1888,
+                         Leader_CenterInCell)

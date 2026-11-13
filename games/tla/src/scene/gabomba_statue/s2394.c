@@ -529,7 +529,8 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov671Room7 &&
-      gMainRoutineWork.entrance == 1 && !Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
+      gMainRoutineWork.entrance == 1 &&
+      !Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     Event_ClearFlag(0x8cd);
     Event_ClearFlag(0x8ce);
     Event_ClearFlag(0x8cf);
@@ -1982,8 +1983,8 @@ void Func_020052a4(s32 mode) {
     clock->ringing = 1;
   }
   tiles = Heap_AllocEwram(0x400);
-  Decompress_TaggedLz(
-      Resource_GetTableEntry((s32)&ResourceId_ClockDigits), tiles);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ClockDigits),
+                      tiles);
   clock->tiles = tiles;
   clock->digits = tiles + 0x2c0;
   clock->tileEntry = VramCache_FindFreeEntry();

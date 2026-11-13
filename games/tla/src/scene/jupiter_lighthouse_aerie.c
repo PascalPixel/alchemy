@@ -153,8 +153,8 @@ void Func_02000314(s32 unused, s32 actor) {
 // (waited on for at most 30 frames), copies cells
 // (MapGrid_CopyCellPictureCellsRect, Map_CopyCellAttributeRect) with sounds 134
 // and 167 and runs its part (Func_020001b4, Func_02000264); off its cell it
-// only marks the cell it stands on (MapGrid_SetCellHeight). With both flags set, flag
-// 2591 is set. The fall wait is an if around a do-while.
+// only marks the cell it stands on (MapGrid_SetCellHeight). With both flags
+// set, flag 2591 is set. The fall wait is an if around a do-while.
 
 void Func_0200032c(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
@@ -346,7 +346,8 @@ DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(
     gPaletteCycleColors, gPaletteCycleUnlitPalette, gPaletteCycleFrame,
     PaletteCycle_Step, gPaletteCycleUnlitColors)
 
-DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight, MapGrid_SetAttributeBAt)
+DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
+                             MapGrid_SetAttributeBAt)
 
 #include "frame.h"
 #include "field_sprite.h"

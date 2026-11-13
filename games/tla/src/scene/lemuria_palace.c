@@ -347,7 +347,7 @@ void LemuriaPalace_LoadMaps(void) {
   firstTile = &gLemuriaPalace_FirstMapTile;
   *firstTile = Vram_Load(gLemuriaPalace_FirstMapVram, 0x1000, buffer);
   EffectSprite_Init(&gLemuriaPalace_FirstMapSprite__s03a0, 0, 0, 0xc0000000,
-                gLemuriaPalace_FirstMapTile);
+                    gLemuriaPalace_FirstMapTile);
   gLemuriaPalace_FirstMapSprite__s03a0.unk1e = 1;
   gLemuriaPalace_FirstMapSprite__s03a0.priority = 2;
   gLemuriaPalace_FirstMapSprite__s03a0.shape = 1;
@@ -359,7 +359,7 @@ void LemuriaPalace_LoadMaps(void) {
   secondTile = &gLemuriaPalace_SecondMapTile;
   *secondTile = Vram_Load(gLemuriaPalace_SecondMapVram, 0x1000, buffer);
   EffectSprite_Init(&gLemuriaPalace_SecondMapSprite__s03a0, 0, 0, 0xc0000000,
-                gLemuriaPalace_SecondMapTile);
+                    gLemuriaPalace_SecondMapTile);
   gLemuriaPalace_SecondMapSprite__s03a0.unk1e = 2;
   gLemuriaPalace_SecondMapSprite__s03a0.priority = 2;
   gLemuriaPalace_SecondMapSprite__s03a0.shape = 1;

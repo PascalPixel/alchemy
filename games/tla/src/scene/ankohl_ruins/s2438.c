@@ -162,7 +162,8 @@ s32 Scene_Initialize(s32 a0) {
       MapGrid_CopyCells(16, 27, 3, 13, width, 47);
       MapGrid_CopyCells(16, 91, 3, 13, width, 111);
     }
-    if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) && gMainRoutineWork.entrance == 17) {
+    if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
+        gMainRoutineWork.entrance == 17) {
       Func_02000418();
 #if TLA_PATCH_4
       Event_ClearFlag(0x122);

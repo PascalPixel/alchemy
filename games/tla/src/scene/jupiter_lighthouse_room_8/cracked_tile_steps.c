@@ -22,8 +22,7 @@ s32 CrackedTiles_Step(void);
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
 extern u16 gPushKinds[];
 extern struct CellTarget gCrackedTiles;
-void CrackedTile_Crack(struct CellTarget *table,
-                        struct CellTargetEntry *entry);
+void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags, struct EffectOptions *options);
@@ -34,7 +33,7 @@ void GameFlag_SetByte(s32 flag, s32 value);
 void CrackedTile_Fall(struct CellTarget *work, struct CellTargetEntry *entry);
 
 DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
-                        CrackedTile_Fall)
+                          CrackedTile_Fall)
 
 DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
-                                CrackedTile_DropIn)
+                                  CrackedTile_DropIn)

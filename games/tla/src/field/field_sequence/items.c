@@ -181,7 +181,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
     GameFlag_Clear(0x143);
     GameFlag_Set(0x142);
-    actionId = ((struct ItemDefinitionView *)Item_GetDirectFar(itemId))->actionId;
+    actionId =
+        ((struct ItemDefinitionView *)Item_GetDirectFar(itemId))->actionId;
     runtime = Ram_HeapSlots->eventWork;
 
     if (actionId != 0) {

@@ -1141,7 +1141,7 @@ void YampiDesert_SetUpRoom5Scorpion(void) {
 #define ARRIVE_OR(state_, flag, turn, next)                                    \
   case state_:                                                                 \
     if (YampiDesert_HasArrived(object)) {                                      \
-      if (GameFlag_Get(flag))                                                 \
+      if (GameFlag_Get(flag))                                                  \
         *state = turn;                                                         \
       else                                                                     \
         *state = next;                                                         \

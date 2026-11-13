@@ -30,8 +30,8 @@ void GameFlag_Set(s32 flag);
 void GameFlag_Clear(s32 flag);
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 void Func_020006d4(union FieldObject *object);
 void Func_02000708(struct TundariaTowerPosition *position, s32 count,
                    s32 scale);

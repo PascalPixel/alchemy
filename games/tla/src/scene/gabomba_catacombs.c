@@ -210,7 +210,7 @@ void Func_0200069c(void) {
   void name(void) {                                                            \
     struct Actor *object = Actor_GetById(n1);                                  \
                                                                                \
-    GameFlag_Set(n2);                                                       \
+    GameFlag_Set(n2);                                                          \
     object->motionFlags = 0;                                                   \
     object->priorityFlags = 0;                                                 \
     MapGrid_CopyCellAttributes(n3, n4, 1, 1, n5, n6);                          \
@@ -504,11 +504,11 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(518))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 15);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room5 &&
-      GameFlag_Get(0x200))
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room5 && GameFlag_Get(0x200))
     MapGrid_CopyCellAttributes(15, 18, 1, 1, 17, 18);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room4 &&
-      GameFlag_Get(0x9ce) && !GameFlag_Get(0xf93) && !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
+      GameFlag_Get(0x9ce) && !GameFlag_Get(0xf93) &&
+      !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     statue = Actor_GetById(0x40);
     Actor_SetPosition(0x40, 0xa80000, 0x980000);
     statue->motionFlags = 6;

@@ -1139,7 +1139,8 @@ void Func_02001e38(struct Actor *object) {
   }
 }
 
-DEFINE_ACTOR_SETUP_SCRIPTED(Func_02001ed4, Actor_SelectAnimation, gData_020032d4)
+DEFINE_ACTOR_SETUP_SCRIPTED(Func_02001ed4, Actor_SelectAnimation,
+                            gData_020032d4)
 
 void Func_02001f14(struct MarsLighthouseRoomMVector *position, s32 value) {
   struct Actor *object = FieldActor_Create(285, position->x, position->y,

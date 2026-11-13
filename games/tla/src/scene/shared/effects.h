@@ -20,9 +20,9 @@
       spark.startScaleX = 0xb333;                                              \
       spark.startScaleY = 0xb333;                                              \
       spark.palette = 14;                                                      \
-      x = object->x + (((((u32)Random16() * 9) >> 16) - 4) << 16);          \
-      y = object->y + ((32 - (((u32)Random16() * 20) >> 16)) << 16);        \
-      speed = (s32)(((((u32)Random16() * 5) >> 16) << 16) + 0x50000) / 10;  \
+      x = object->x + (((((u32)Random16() * 9) >> 16) - 4) << 16);             \
+      y = object->y + ((32 - (((u32)Random16() * 20) >> 16)) << 16);           \
+      speed = (s32)(((((u32)Random16() * 5) >> 16) << 16) + 0x50000) / 10;     \
       call1(x, y, object->z, 0, speed, frame,                                  \
             EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE, \
             &spark);                                                           \
@@ -77,7 +77,7 @@
                                                                                \
       if (--particle->timer == 0xffff)                                         \
         continue;                                                              \
-      if (GameFlag_Get(0x166))                                                \
+      if (GameFlag_Get(0x166))                                                 \
         particle->timer++;                                                     \
       frame = &data1[5 * particle->timer];                                     \
       x = (particle->posX - cameraX) / 0x10000 + *frame++;                     \
@@ -96,8 +96,8 @@
         s32 *leader = work->leader;                                            \
                                                                                \
         if (leader != NULL) {                                                  \
-          x = leader[0] + Random16() * 240 - 0x780000;                      \
-          y = leader[2] + Random16() * 160 - 0x500000;                      \
+          x = leader[0] + Random16() * 240 - 0x780000;                         \
+          y = leader[2] + Random16() * 160 - 0x500000;                         \
           particle->posX = x;                                                  \
           particle->posZ = y;                                                  \
           particle->posY = Map_GetTerrainHeight(0, x, y);                      \
@@ -153,7 +153,7 @@
       params[2] = 0xcccc;                                                      \
       params[3] = 0xcccc;                                                      \
       params[0] = 0;                                                           \
-      drift = ((u32)(Random16() << 3) >> 16) * 0x3333;                      \
+      drift = ((u32)(Random16() << 3) >> 16) * 0x3333;                         \
       x = object->x;                                                           \
       y = object->y;                                                           \
       FieldEffect_Spawn(x + ((8 - (gFrameCount & 15)) << 16), y + 0x1a0000,    \
@@ -175,10 +175,10 @@
       params[2] = 0xb333;                                                      \
       params[3] = 0xb333;                                                      \
       params[1] = 14;                                                          \
-      x = object->x + ((((Random16() * 9) >> 16) - 4) << 16);               \
-      y = object->y + ((32 - ((Random16() * 20) >> 16)) << 16);             \
+      x = object->x + ((((Random16() * 9) >> 16) - 4) << 16);                  \
+      y = object->y + ((32 - ((Random16() * 20) >> 16)) << 16);                \
       call1(x, y, object->z, 0,                                                \
-            (s32)((((Random16() * 5) >> 16) << 16) + 0x50000) / 10, 0,      \
+            (s32)((((Random16() * 5) >> 16) << 16) + 0x50000) / 10, 0,         \
             0xb0000, params);                                                  \
     }                                                                          \
     return 0;                                                                  \
@@ -196,8 +196,8 @@
       options.palette = 7;                                                     \
       options.type = 0x2a1;                                                    \
       options.priority = 1;                                                    \
-      position[0] = object->x + (((Random16() & 31) - 16) << 16);           \
-      position[1] = object->y + ((Random16() & 31) << 16) + 0x80000;        \
+      position[0] = object->x + (((Random16() & 31) - 16) << 16);              \
+      position[1] = object->y + ((Random16() & 31) << 16) + 0x80000;           \
       position[2] = object->z;                                                 \
       call1(position[0], position[1], position[2] + 0x40000, 0, 0x8000, phase, \
             EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,        \
@@ -411,7 +411,7 @@
     if (Event_GetFlag(n1) != 0) {                                              \
       u32 random;                                                              \
                                                                                \
-      random = Random16();                                                  \
+      random = Random16();                                                     \
       effect = CreateOrbitEffect(0x2a0, center->x,                             \
                                  (s32)((u32)(random << 8) >> 16 << 16) +       \
                                      center->y - 0x1c0000,                     \
@@ -419,7 +419,7 @@
     } else {                                                                   \
       u32 random;                                                              \
                                                                                \
-      random = Random16();                                                  \
+      random = Random16();                                                     \
       effect = CreateOrbitEffect(0x2a0, center->x,                             \
                                  (s32)((u32)(random << 6) >> 16 << 16) +       \
                                      center->y - 0x1c0000,                     \
@@ -430,12 +430,11 @@
       Actor_StartScript(effect, data1);                                        \
       FieldActor_SetSpriteColor(effect, 1);                                    \
       effect->motionFlags = 0;                                                 \
-      angle = Random16() & 0xffff000;                                       \
+      angle = Random16() & 0xffff000;                                          \
       effect->angle = angle;                                                   \
       effect->unk66 = 0;                                                       \
       effect->update = (void (*)(struct OrbitEffect *))call1;                  \
-      effect->radius =                                                         \
-          Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24 >> 16;            \
+      effect->radius = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24 >> 16;  \
       sprite->nextFrame = 0;                                                   \
       sprite->priority = n2;                                                   \
     }                                                                          \
@@ -474,19 +473,19 @@
       i = count;                                                               \
     loop:;                                                                     \
       {                                                                        \
-        s32 angle = Random16();                                             \
+        s32 angle = Random16();                                                \
         struct Rock *rock = &work->rocks[work->next];                          \
                                                                                \
         rock->timer = 0;                                                       \
         rock->position[0] = x;                                                 \
         rock->position[1] = y;                                                 \
         rock->position[2] = z;                                                 \
-        FieldVector_AddPolarOffset((Random16() << 3) + 0x80000, angle,      \
+        FieldVector_AddPolarOffset((Random16() << 3) + 0x80000, angle,         \
                                    rock->position);                            \
         rock->velocity[0] = 0;                                                 \
         rock->velocity[1] = 0x50000;                                           \
         rock->velocity[2] = 0;                                                 \
-        FieldVector_AddPolarOffset((Random16() << 1) + 0x20000, angle,      \
+        FieldVector_AddPolarOffset((Random16() << 1) + 0x20000, angle,         \
                                    rock->velocity);                            \
         work->next++;                                                          \
         work->next &= 63;                                                      \

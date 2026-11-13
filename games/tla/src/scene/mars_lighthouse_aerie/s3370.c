@@ -84,8 +84,8 @@ void Func_02003370(void) {
   }
   if (spawn) {
     object = FieldActor_Create(
-        0x2a0, anchor->x,
-        anchor->y - ((Random16() * 80 >> 16) << 16) - 0x80000, anchor->z);
+        0x2a0, anchor->x, anchor->y - ((Random16() * 80 >> 16) << 16) - 0x80000,
+        anchor->z);
     if (object != NULL) {
       u8 zero;
       s32 mask;

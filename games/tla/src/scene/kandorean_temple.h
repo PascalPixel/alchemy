@@ -40,7 +40,8 @@ void Event_WaitTransitionFrames(void);
 s32 Actor_GetCellIndex(void);
 void Actor_LiftTargetBlock(const void *data);
 void Actor_PlaceMovedBlock(void);
-void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
+                                 s32 g);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void FieldEffect_StartBlankOverlay(s32 a);
 void KandoreanTemple_StartLiftRoom(void);
@@ -104,8 +105,9 @@ static __inline__ void Func_020053d0_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
   /* FAKEMATCH(wrapper): the call through this inline, whose parameters give
    * each stack argument its own register, as in The Broken Seal's scene layer;
-   * as a direct call to TileCopies_CopyTouchedCells, which builds them all in r3, 8 of
-   * 15 instructions differ in tla-en (KandoreanTemple_CycloneFirstPatch). */
+   * as a direct call to TileCopies_CopyTouchedCells, which builds them all in
+   * r3, 8 of 15 instructions differ in tla-en
+   * (KandoreanTemple_CycloneFirstPatch). */
   TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 

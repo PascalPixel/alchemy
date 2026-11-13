@@ -160,12 +160,13 @@ void Window_PutGlyph(struct Window *window, s32 character, s32 x, s32 y,
                      s32 mode);
 s32 BattleDjinnMenu_Run(s32 member, s32 unused);
 void *Message_ShowAndWait(s32 message, s32 x, s32 y);
-/* VIEW(battle_party_commands): routine Item_GetDirectFar as u16 *Item_GetDirectFar(s32 item);
- * item.h has struct ItemDefinition *Item_GetDirectFar(s32 item); tried as the rest of
- * the object declares it, it does not compile in tla-ja:
- * games/tla/src/window/menus.c:2047: subscripted value is neither array nor
- * pointer. */
-extern u16 *Item_Get__battle_party_commands(s32 item) __asm__("Item_GetDirectFar");
+/* VIEW(battle_party_commands): routine Item_GetDirectFar as u16
+ * *Item_GetDirectFar(s32 item); item.h has struct ItemDefinition
+ * *Item_GetDirectFar(s32 item); tried as the rest of the object declares it, it
+ * does not compile in tla-ja: games/tla/src/window/menus.c:2047: subscripted
+ * value is neither array nor pointer. */
+extern u16 *
+Item_Get__battle_party_commands(s32 item) __asm__("Item_GetDirectFar");
 /* VIEW(battle_party_commands): routine Text_FillCanvasBackground as void
  * Text_FillCanvasBackground(void); countdown has unsigned char
  * Text_FillCanvasBackground(void); tried as the definition's void

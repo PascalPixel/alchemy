@@ -15,8 +15,8 @@ void FieldCamera_WaitForArrival(void);
 void Party_AddIsaacsParty(void);
 void Func_02001938(s32 mode);
 void Func_02001c5c(s32 a, s32 b, s32 c, s32 d);
-void TileCopies_CopyTouchedCells(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY, s32 mode);
+void TileCopies_CopyTouchedCells(s32 srcX, s32 srcY, s32 width, s32 height,
+                                 s32 destX, s32 destY, s32 mode);
 
 static inline void Contigo_Jump(s32 actor, s32 height, s32 frames) {
   /* FAKEMATCH(pin): the height pinned to r1, so that the actor loads after the

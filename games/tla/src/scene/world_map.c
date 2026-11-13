@@ -65,7 +65,7 @@ extern s32 Data_02006be8[8];
     work = Ram_HeapSlots->eventWork;                                           \
     party = &gMainRoutineWork;                                                 \
     if (party->encounterSteps >= work->threshold * 9 / 10) {                   \
-      if (Random16() < 0x8000) {                                            \
+      if (Random16() < 0x8000) {                                               \
         Event_RequestDjinnBattle(a, b);                                        \
         work->bias = 0;                                                        \
       } else {                                                                 \
@@ -83,7 +83,7 @@ extern s32 Data_02006be8[8];
     work = Ram_HeapSlots->eventWork;                                           \
     if (party->renderMode == 1) {                                              \
       if (party->encounterSteps >= work->threshold * 9 / 10) {                 \
-        if (Random16() < 0x8000) {                                          \
+        if (Random16() < 0x8000) {                                             \
           Event_RequestDjinnBattle(a, b);                                      \
           work->bias = 0;                                                      \
         } else {                                                               \

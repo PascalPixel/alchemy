@@ -100,7 +100,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "iwram_call.h"
 
 DEFINE_CRACKED_TILES_FIND_LOWER(CrackedTiles_FindLower, gCrackedTiles,
-                              CrackedTiles_Update)
+                                CrackedTiles_Update)
 
 #include "scene_tables.h"
 
@@ -134,7 +134,7 @@ struct CellTarget__s14dc {
 #include "io_write.h"
 
 void CrackedTile_Fall(struct CellTarget__s14dc *table,
-                     struct CellTargetEntry *entry) {
+                      struct CellTargetEntry *entry) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = (leader->x >> 20) | (s16)(table->x & 64);
   s32 z = (leader->z >> 20) | (s16)(table->z & 64);

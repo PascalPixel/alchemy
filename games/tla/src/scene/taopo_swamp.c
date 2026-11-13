@@ -39,7 +39,8 @@ void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
 void FieldCamera_WaitForArrival(void);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void Actor_ReturnHome(s32 a, s32 b, s32 c);
-void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
+                                 s32 g);
 void FieldItem_JumpToLeader(s32 a, s32 b, s32 c);
 void Actor_StartScript(struct Actor *object, const void *data);
 void Actor_SetBlendMode(struct Actor *object, u32 value);
@@ -1156,8 +1157,8 @@ s32 TaopoSwamp_IsDropFalling(struct Actor *object) {
 /// A task: now and then a drop falls from the ceiling near (n1, n2).
 #define DEFINE_DRIP_AT_RANDOM(name, n1, n2)                                    \
   void name(void) {                                                            \
-    if ((gFrameCount & 7) == 0 && (u32)Random16() < 0x4000) {               \
-      s32 offset = Random16() << 5;                                         \
+    if ((gFrameCount & 7) == 0 && (u32)Random16() < 0x4000) {                  \
+      s32 offset = Random16() << 5;                                            \
       s32 x = offset + n1;                                                     \
       s32 z = n2 - offset;                                                     \
       s32 y = 0xa00000;                                                        \

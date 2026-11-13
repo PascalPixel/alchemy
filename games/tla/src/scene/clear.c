@@ -281,8 +281,8 @@ void StatusScreen_Run(void);
   {                                                                            \
     (party)->scene = (party)->savedScene;                                      \
     (party)->entrance = (party)->savedEntrance;                                \
-    WorldMap_SetReturnLeavingScene((party)->scene, (party)->entrance);                          \
-    Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);                                                    \
+    WorldMap_SetReturnLeavingScene((party)->scene, (party)->entrance);         \
+    Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);                                 \
   }
 
 s32 Scene_Initialize(void) {

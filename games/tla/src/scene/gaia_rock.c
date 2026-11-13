@@ -164,7 +164,8 @@ void Func_02000164(s32 unused, s32 id) {
   }
 }
 
-void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
+                                 s32 g);
 
 void Func_02000258(void) {
   MapGrid_CopyCellAttributes(13, 18, 1, 1, 13, Actor_Get(8)->z >> 20);

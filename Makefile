@@ -481,17 +481,11 @@ device-check:
 	    ':!games/tbs/include/system/dma.h' ':!games/tbs/include/system/iwram_call.h'; then \
 	  echo "device-check: The Broken Seal takes no pin or signature devices (S2, in alchemy-devtools/AGENTS.md)" >&2; exit 1; fi
 
-# ☀️'s C is as clang-format writes it (AGENTS.md S3), and so is the C ⚓️ took
-# from it: the headers in include's folders, the sound library, the save code
-# and a few files beside them. Without clang-format installed the check says so
+# Both games' C is as clang-format writes it (AGENTS.md S3). Without
+# clang-format installed the check says so
 # and is skipped.
 CLANG_FORMAT ?= clang-format
-FORMATTED := $(shell git ls-files 'games/tbs/*.c' 'games/tbs/*.h' 'games/tla/include/*/*.h' \
-               $(addprefix games/tla/include/,call.h ed_asm.h edition.h fixed_math.h lib.h macros.h static_assert.h stddef.h string.h) \
-               games/tla/src/sound/sound.c games/tla/src/sound/tables.c games/tla/src/system/savedata.c games/tla/src/system/system/save.c 'games/tla/src/gamepak/flash/*.c' \
-               $(addprefix games/tla/src/window/screens/,party_status.c save.c) \
-               games/tla/src/graphics/credits/glyph_widths.h \
-               games/tla/src/graphics/lucky_dice/tables.h games/tla/src/graphics/lucky_wheels/reel_tables.h)
+FORMATTED := $(shell git ls-files 'games/*.c' 'games/*.h')
 .PHONY: format-check
 format-check:
 	@if command -v $(CLANG_FORMAT) >/dev/null; then \

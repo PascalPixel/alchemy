@@ -242,7 +242,7 @@ void Func_02000740(void) {
   (g)->unk0E = (i);                                                            \
   (g)->unk10 = (height);                                                       \
   (g)->unk12 = (flag);                                                         \
-  (g)->unk14 = GameFlag_Get(flag) ^ 1;                                        \
+  (g)->unk14 = GameFlag_Get(flag) ^ 1;                                         \
   (g)->unk1E = 0;                                                              \
   (g)->unk16[1] = 9999;                                                        \
   (g)->unk16[0] = 9999
@@ -573,7 +573,7 @@ void Func_0200106c(void) {
     object->priorityFlags = 0;                                                 \
     object->motionFlags = 0;                                                   \
     Func_02002960_(n1, n2, 1, 1, n3, n2);                                      \
-    GameFlag_Set(n4);                                                       \
+    GameFlag_Set(n4);                                                          \
   }
 
 DEFINE_AQUA_ROCK_SET_MOVED(Func_020010f4, 42, 32, 44, 0x221)
@@ -590,7 +590,7 @@ DEFINE_AQUA_ROCK_SET_MOVED(Func_02001164, 44, 44, 46, 0x223)
     if (column == 53) {                                                        \
       wait(30);                                                                \
       object->z += 0x10000;                                                    \
-      GameFlag_Set(n1);                                                     \
+      GameFlag_Set(n1);                                                        \
       Map_CopyCellAttributeRect(54, 58, 1, 1, column, n2);                     \
     }                                                                          \
   }

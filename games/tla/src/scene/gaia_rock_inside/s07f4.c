@@ -260,7 +260,9 @@ void Func_02000c74(void) {
   }
 }
 
-void Func_02000cd8(void) { Call7(Cyclone_CopyTouchedCells, 0x13, 0x18, 0, 4, 3, 0x1f, 4); }
+void Func_02000cd8(void) {
+  Call7(Cyclone_CopyTouchedCells, 0x13, 0x18, 0, 4, 3, 0x1f, 4);
+}
 
 #include "iwram_call.h"
 

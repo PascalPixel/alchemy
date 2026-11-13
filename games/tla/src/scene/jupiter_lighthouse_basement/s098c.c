@@ -42,8 +42,8 @@ s32 Func_02000a64(struct Actor *object) {
     x = object->x + ((((Random16() * 9) >> 16) - 4) << 16);
     y = object->y + ((32 - ((Random16() * 20) >> 16)) << 16);
     FieldEffect_Spawn(x, y, object->z, 0,
-                      (s32)((((Random16() * 5) >> 16) << 16) + 0x50000) / 10,
-                      0, 0xb0000, &params);
+                      (s32)((((Random16() * 5) >> 16) << 16) + 0x50000) / 10, 0,
+                      0xb0000, &params);
   }
   return 0;
 }

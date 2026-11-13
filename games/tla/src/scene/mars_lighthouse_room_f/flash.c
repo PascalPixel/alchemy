@@ -115,7 +115,8 @@ s32 Func_0200297c(void) {
     actor->facing = TRIG_TURN / 4;
     Func_02005480(actor, 49);
     for (;;) {
-      if (MapGrid_GetCellAttributeLowNibbleOrBump(actor->terrainId, actor->x, actor->z) == 7) {
+      if (MapGrid_GetCellAttributeLowNibbleOrBump(actor->terrainId, actor->x,
+                                                  actor->z) == 7) {
         s32 i;
 
         /* FAKEMATCH(temporary): velocityX stored through a union; as the plain
@@ -455,6 +456,7 @@ void Func_02002d08(struct Actor *actor);
 void Func_02002e8c(s32 x, s32 y, s32 z, s32 speed);
 extern u8 gInventorySnapshot[];
 
-DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_02002f80, Work020023c4__s2f80, MapGrid_GetCellAttributeLowNibbleOrBump,
+DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_02002f80, Work020023c4__s2f80,
+                              MapGrid_GetCellAttributeLowNibbleOrBump,
                               Func_02002e8c, Func_02002d08)
 #undef ABS

@@ -342,7 +342,8 @@ struct WorkEvent {
   s16 unk166;
 };
 
-DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_0200274c, Work020023c4__s236c, MapGrid_GetCellAttributeLowNibbleOrBump,
+DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_0200274c, Work020023c4__s236c,
+                              MapGrid_GetCellAttributeLowNibbleOrBump,
                               Func_02002658, Func_020024d4)
 #undef WORK
 #undef ABS
@@ -390,8 +391,7 @@ extern u16 gData_02004cf0[];
 
 DEFINE_ACTOR_PARK(Func_02002ce8, Func_02002ad0)
 
-DEFINE_ACTOR_STEER_BY_PAD(Func_02002d04, gData_020047fc,
-                          Actor_SelectAnimation)
+DEFINE_ACTOR_STEER_BY_PAD(Func_02002d04, gData_020047fc, Actor_SelectAnimation)
 
 void Func_02002d90(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;

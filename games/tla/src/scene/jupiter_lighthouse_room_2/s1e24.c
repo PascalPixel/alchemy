@@ -32,12 +32,12 @@ void CrackedTile_Crack();
 void CrackedTile_Fall();
 
 DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
-                        CrackedTile_Fall)
+                          CrackedTile_Fall)
 
 #include "cell_target.h"
 
 DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
-                                CrackedTile_DropIn)
+                                  CrackedTile_DropIn)
 
 #include "scene_tables.h"
 #include "objcmd.h"

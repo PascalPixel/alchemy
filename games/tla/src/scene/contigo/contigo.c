@@ -2242,7 +2242,6 @@ struct SparkleWork__s3e54 {
   struct Actor *object;
 };
 
-
 /// Sets up the sparkle: loads its picture and its four 16 by 16 sprites, and
 /// hands the object to its update, Func_02003cd8.
 void Func_02003e54(struct Actor *object, struct SparkleWork__s3e54 *work) {

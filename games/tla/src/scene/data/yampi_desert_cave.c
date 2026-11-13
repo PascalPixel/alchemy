@@ -137,7 +137,8 @@ struct Trigger gYampiDesertCave_Triggers[] = {
     {49, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {0x202, 42, CONDITION_ALWAYS, EVENT(YampiDesertCave_TryPushLog)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 33, 0x300, EVENT(YampiDesertCave_BurstRoom1Pillar)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 33, 0x300,
+     EVENT(YampiDesertCave_BurstRoom1Pillar)},
     {0x9c05, 30, CONDITION_ALWAYS,
      EVENT(YampiDesertCave_TeleportFromFirstMark)},
     {0x9c05, 31, CONDITION_ALWAYS,
@@ -165,7 +166,8 @@ struct Trigger gYampiDesertCave_Room2Triggers[] = {
      CONDITION_ALWAYS, EVENT(YampiDesertCave_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
      EVENT(YampiDesertCave_EndSand)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 100, 0x302, EVENT(YampiDesertCave_ScoopTreasure)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 100, 0x302,
+     EVENT(YampiDesertCave_ScoopTreasure)},
     {TRIGGER_TABLE_END},
 };
 
@@ -186,7 +188,8 @@ struct Trigger gYampiDesertCave_Room3Triggers[] = {
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(YampiDesertCave_WonderAtRipple)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(YampiDesertCave_FightCrystal)},
     {0x202, 42, CONDITION_ALWAYS, EVENT(YampiDesertCave_TryPushLog)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 33, 0x301, EVENT(YampiDesertCave_BurstRoom3Pillar)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 33, 0x301,
+     EVENT(YampiDesertCave_BurstRoom3Pillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12,
      0x305, EVENT(YampiDesertCave_StartMovingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x305,
@@ -203,6 +206,7 @@ struct Trigger gYampiDesertCave_Room3Triggers[] = {
      CONDITION_ALWAYS, EVENT(YampiDesertCave_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
      EVENT(YampiDesertCave_EndSand)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 33, IF_FLAG_SET(0x270), EVENT(YampiDesertCave_ScoopDjinni)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 33,
+     IF_FLAG_SET(0x270), EVENT(YampiDesertCave_ScoopDjinni)},
     {TRIGGER_TABLE_END},
 };

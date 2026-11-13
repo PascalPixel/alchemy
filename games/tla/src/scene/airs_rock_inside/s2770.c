@@ -1175,7 +1175,7 @@ void Func_02004740(void) {
 
 #define DEFINE_AIRS_ROCK_INSIDE_READ_TABLET(name, n1)                          \
   void name(void) {                                                            \
-    if (GameFlag_Get(0x8d4)) {                                                \
+    if (GameFlag_Get(0x8d4)) {                                                 \
       Event_Start();                                                           \
       Event_ResolvePendingActions(0);                                          \
       FieldMessage_Show(MsgCheckedTheTablet, 1);                               \
@@ -1279,9 +1279,9 @@ step:
   GameFlag_Set(first->timer);
   GameFlag_Clear(second->timer);
   Actor_SelectAnimation(first,
-                              ((struct FieldSprite *)first->sprite)->frame + 1);
-  Actor_SelectAnimation(
-      second, ((struct FieldSprite *)second->sprite)->frame - 1);
+                        ((struct FieldSprite *)first->sprite)->frame + 1);
+  Actor_SelectAnimation(second,
+                        ((struct FieldSprite *)second->sprite)->frame - 1);
   Func_020006cc(first);
   Func_020006cc(second);
   FieldEvent_Wait(10);

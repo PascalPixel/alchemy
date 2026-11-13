@@ -129,4 +129,5 @@ struct CellTarget__s1648 {
 
 #include "io_write.h"
 
-DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1648, Leader_CenterInCell)
+DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1648,
+                         Leader_CenterInCell)

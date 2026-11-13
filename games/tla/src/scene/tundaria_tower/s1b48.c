@@ -119,8 +119,8 @@ overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
     /* FAKEMATCH(wrapper): the overlap call goes through Value4; as a direct
      * call, 2 of 347 instructions differ in tla-en. */
-    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x,
-               radius, (s32)position, entry->radius - 2) >= 0)
+    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius,
+               (s32)position, entry->radius - 2) >= 0)
       goto blocked;
   }
   j++;
@@ -287,8 +287,8 @@ overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
     /* FAKEMATCH(wrapper): the overlap call goes through Value4; as a direct
      * call, 2 of 332 instructions differ in tla-ja. */
-    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x,
-               radius, (s32)position, entry->radius - 2) >= 0)
+    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius,
+               (s32)position, entry->radius - 2) >= 0)
       goto blocked;
   }
   j++;

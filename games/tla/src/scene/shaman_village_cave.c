@@ -461,7 +461,8 @@ void ShamanVillageCave_LoseToColossoFans(void) {
   Event_SetDestination((s16)gMainRoutineWork.savedScene,
                        (s16)gMainRoutineWork.savedEntrance);
 #if TLA_PATCH_1
-  WorldMap_SetReturnLeavingScene(gMainRoutineWork.scene, gMainRoutineWork.entrance);
+  WorldMap_SetReturnLeavingScene(gMainRoutineWork.scene,
+                                 gMainRoutineWork.entrance);
 #endif
   ((struct {
      u8 unk000[0x1ac];

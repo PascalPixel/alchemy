@@ -296,7 +296,8 @@ next:
       object->motionFlags = set;
       cell->collisionCode = 255;
       cell->attributeB &= 127;
-      shapes[index] = MapCollision_FindOrAddTag(layer, shape, (height >> 19) - 4);
+      shapes[index] =
+          MapCollision_FindOrAddTag(layer, shape, (height >> 19) - 4);
     }
   }
   list++;
@@ -324,8 +325,8 @@ void YampiDesert_BlockPoundedStakes(u16 *list) {
     asm("" : "+l"(list));
     object = Actor_GetById(list[0]);
     if (GameFlag_Get(list[2]))
-      *(u8 *)((u32)map->layers[2].cells + (Actor_GetCellIndex(object) << 2) + 2) =
-          255;
+      *(u8 *)((u32)map->layers[2].cells + (Actor_GetCellIndex(object) << 2) +
+              2) = 255;
     list += 3;
   next:
     limit = 0xff;

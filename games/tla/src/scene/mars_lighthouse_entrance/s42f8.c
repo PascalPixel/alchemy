@@ -83,10 +83,10 @@ void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02004160(struct CellTarget *work, struct CellTargetEntry *entry);
 
 DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, Data_020068b4, Func_020040f0,
-                        Func_02004160)
+                          Func_02004160)
 
 DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, Data_020068b4,
-                                Func_020042f8)
+                                  Func_020042f8)
 
 #include "dma.h"
 #include "io_reg.h"
@@ -789,8 +789,10 @@ struct Trigger gMarsLighthouseEntrance_Room3Triggers[] = {
      EVENT(MarsLighthouseEntrance_PushStatueIntoFlames)},
     {9, 0, CONDITION_ALWAYS,
      EVENT(MarsLighthouseEntrance_PushStatueIntoFlames)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 80, 0x1230, EVENT(MarsLighthouseEntrance_BurstIceSheet)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 81, 0x1231, EVENT(Func_0200085c)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 80, 0x1230,
+     EVENT(MarsLighthouseEntrance_BurstIceSheet)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 81, 0x1231,
+     EVENT(Func_0200085c)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 15,
      CONDITION_ALWAYS, 0},
     {0x60009a15, 13, CONDITION_ALWAYS, EVENT(Func_02000710)},
@@ -862,7 +864,8 @@ struct Trigger gMarsLighthouseEntrance_Room5Triggers[] = {
     {0x60009a15, 11, CONDITION_ALWAYS, EVENT(Func_02000a74)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 11,
      CONDITION_ALWAYS, EVENT(Func_02000a7c)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 80, 0x1232, EVENT(Func_02000b84)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 80, 0x1232,
+     EVENT(Func_02000b84)},
     {0x9c05, 14, CONDITION_ALWAYS, EVENT(Func_02000af4)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(Func_02000b24)},

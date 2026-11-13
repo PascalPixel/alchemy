@@ -24,7 +24,8 @@ s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
 void Field_TryJumpForward(void);
 void Rope_Initialize(void);
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
-void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
+                                 s32 g);
 void Shop_Run(s32 a, s32 b);
 void Inn_CheckIn(s32 a, s32 b);
 

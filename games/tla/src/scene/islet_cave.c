@@ -178,7 +178,7 @@ void Func_020004ac(void) {
 #define DEFINE_ISLET_CAVE_ARRIVE_AT(name, n1, n2)                              \
   void name(void) {                                                            \
     IsletCave_StartSlowPaletteCycle();                                         \
-    Teleport_PlaySparks();                                                           \
+    Teleport_PlaySparks();                                                     \
                                                                                \
     gMainRoutineWork.unk2c2 = 1;                                               \
     Event_Wait(40);                                                            \
@@ -475,8 +475,7 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
     flagCall(flag);                                                            \
   }
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000aec, 8, 32, GameFlag_Clear,
-                                  0x280)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000aec, 8, 32, GameFlag_Clear, 0x280)
 
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000b4c, 8, -32, GameFlag_Set, 0x280)
 
@@ -526,25 +525,19 @@ void Func_02000c1c(void) {
 
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000c8c, 10, 80, GameFlag_Set, 0x282)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000cf0, 10, -80, GameFlag_Clear,
-                                  0x282)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000cf0, 10, -80, GameFlag_Clear, 0x282)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000d54, 11, 80, GameFlag_Clear,
-                                  0x283)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000d54, 11, 80, GameFlag_Clear, 0x283)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000db8, 11, -80, GameFlag_Clear,
-                                  0x283)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000db8, 11, -80, GameFlag_Clear, 0x283)
 
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000e1c, 12, 80, GameFlag_Set, 0x284)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000e7c, 12, -80, GameFlag_Clear,
-                                  0x284)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000e7c, 12, -80, GameFlag_Clear, 0x284)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000ee0, 13, 80, GameFlag_Clear,
-                                  0x285)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000ee0, 13, 80, GameFlag_Clear, 0x285)
 
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000f44, 13, -80, GameFlag_Set,
-                                  0x285)
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(Func_02000f44, 13, -80, GameFlag_Set, 0x285)
 
 void Func_02000fa8(void) {
   struct Actor *object0;

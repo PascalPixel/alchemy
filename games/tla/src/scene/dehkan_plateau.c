@@ -151,8 +151,8 @@ void CrumblingPillars_Place(const void *data) {
 
         Actor_DisableById(id);
         cell->attributeB = 128;
-        *shapeCell =
-            MapCollision_FindOrAddTag(object->terrainId, shape, (terrainHeight >> 19) + 4);
+        *shapeCell = MapCollision_FindOrAddTag(object->terrainId, shape,
+                                               (terrainHeight >> 19) + 4);
         if (GameFlag_Get(flag))
           Func_02003ba0(object, 0);
       }
@@ -313,7 +313,8 @@ void Actor_MoveToObject(s32 id, s32 target);
 /// pairs ended by 0xffff: an actor whose flag + 1 is set is put back with
 /// Actor_SetHorizontalPositionWithTerrain; any other has the cell under it
 /// marked and its shape grid entry set from the terrain there, and copies
-/// attributes 9 when its flag is set. The twin of overlay 67f's CrumblingPillars_PlaceWithStandIns.
+/// attributes 9 when its flag is set. The twin of overlay 67f's
+/// CrumblingPillars_PlaceWithStandIns.
 void CrumblingPillars_PlaceWithStandIns(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   // Holds the grid's address for the whole function.
@@ -357,7 +358,8 @@ void CrumblingPillars_PlaceWithStandIns(u16 *list) {
 
       Actor_DisableById(id);
       cell->attributeB = 128;
-      *slot = MapCollision_FindOrAddTag(actor->terrainId, shape, (ground >> 19) + 4);
+      *slot = MapCollision_FindOrAddTag(actor->terrainId, shape,
+                                        (ground >> 19) + 4);
       if (GameFlag_Get(flag))
         Actor_CopyGraphics(id, 9);
     }

@@ -42,7 +42,6 @@ void Rope_Coil(s32 a, s32 b, s32 c);
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -111,7 +110,8 @@ s32 Func_02000104(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void EffectSprite_DrawAtWorldPosition(struct ParticleSprite *sprite, struct Particle *particle);
+void EffectSprite_DrawAtWorldPosition(struct ParticleSprite *sprite,
+                                      struct Particle *particle);
 
 void Func_0200015c(void) {
   struct ParticleWork *work = Ram_HeapSlots->menuRuntime;
@@ -164,12 +164,16 @@ struct ActorPlacement gActorPlacements[] = {
 struct Trigger gSceneEvents[] = {
     {0, 9, CONDITION_ALWAYS, EVENT(Func_020000d8)},
     {2, 30, CONDITION_ALWAYS, EVENT(Func_020000b8)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8, CONDITION_ALWAYS, EVENT(Func_02000064)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, CONDITION_ALWAYS,
+     EVENT(Test_ReceiveFlint)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8,
+     CONDITION_ALWAYS, EVENT(Func_02000064)},
     {0x8715, 9, CONDITION_ALWAYS, (u32)(Func_02000078)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 9, CONDITION_ALWAYS, EVENT(Test_ReceiveForge)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 9, CONDITION_ALWAYS,
+     EVENT(Test_ReceiveForge)},
     {0x8515, 10, CONDITION_ALWAYS, 0},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 50, CONDITION_ALWAYS, EVENT(Func_02000088)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 50,
+     CONDITION_ALWAYS, EVENT(Func_02000088)},
     {TRIGGER_TABLE_END},
 };
 
@@ -230,7 +234,7 @@ struct RockWork {
 };
 
 void EffectSprite_Init(struct RockSprite *sprite, s32 width, s32 height,
-                   u32 attributes, s32 tile);
+                       u32 attributes, s32 tile);
 
 static __inline__ void StartTask(void (*func)(void), s32 priority) {
   /* FAKEMATCH(wrapper): Task_Add forwarded inline; as a direct call, 6 of 83
@@ -246,7 +250,8 @@ void Func_0200029c(void) {
   struct Rock *rock;
   struct RockSprite *sprite;
 
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
+  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_FallingRock),
+                      work);
   entry = VramCache_FindFreeEntry();
   tile = Vram_Load(entry, 0x500, work);
   work->tileBase = tile;

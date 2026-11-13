@@ -295,7 +295,8 @@ s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value);
 /// leader onto the ground under it.
 DEFINE_PILLARS_RESTORE_RAISED(MagmaRockInside_RestoreCrumblingPillars,
                               Actor_GetCellIndex, MapGrid_GetTerrainKind,
-                              Actor_DisableById, MapCollision_FindOrAddTag, Func_02004c98)
+                              Actor_DisableById, MapCollision_FindOrAddTag,
+                              Func_02004c98)
 
 #include "../shared/trial_road.h"
 
@@ -356,7 +357,8 @@ void Actor_MoveToObject(s32 id, s32 owner);
 /// it copy actor 9's visual attributes.
 DEFINE_PILLARS_RESTORE(MagmaRockInside_RestorePillars,
                        MagmaRockInside_SetPillarMode3, Actor_GetCellIndex,
-                       MapGrid_GetTerrainKind, Actor_DisableById, MapCollision_FindOrAddTag)
+                       MapGrid_GetTerrainKind, Actor_DisableById,
+                       MapCollision_FindOrAddTag)
 
 void MagmaRockInside_TakePlaceOf(struct Actor *object, struct Actor *target) {
   FieldActor_SetPositionAndResetMotion(object, target->x, target->y, target->z);

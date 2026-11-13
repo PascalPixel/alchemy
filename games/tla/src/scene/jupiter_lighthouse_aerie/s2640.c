@@ -33,7 +33,7 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
 DEFINE_CRACKED_TILE_DROP_IN(CrackedTile_DropIn, FieldEffect_Spawn)
 
 DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gData_02003488, CrackedTile_Crack,
-                        CrackedTile_Fall)
+                          CrackedTile_Fall)
 
 void Func_02002888(s32 dx, s32 dz, s32 value) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);

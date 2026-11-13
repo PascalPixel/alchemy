@@ -445,12 +445,12 @@ void Daila_MeetAlex(void) {
 /// set.
 #define DEFINE_DAILA_PARCH_PUDDLE(name, fromX, y, toX, actor, flag)            \
   void name(void) {                                                            \
-    Event_Start();                                                       \
+    Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
     MapGrid_CopyCellAttributes(fromX, y, 1, 1, toX, y);                        \
     Actor_SetHorizontalPositionWithTerrain(actor, 0, 0);                       \
-    GameFlag_Set(flag);                                                     \
-    Event_End();                                                         \
+    GameFlag_Set(flag);                                                        \
+    Event_End();                                                               \
   }
 
 DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchFirstPuddle, 10, 19, 11,

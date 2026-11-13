@@ -304,7 +304,8 @@ static void StuccoRoomsA_AskAboutSouthernContinent(void) {
 static void StuccoRoomsA_TalkToInnkeeper(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  if ((u16)(leader->facing - 0x6001) <= 0x3FFE) {
+  if ((u16)(leader->facing - (FACING_SOUTHWEST + 1)) <
+      FACING_NORTHWEST - (FACING_SOUTHWEST + 1)) {
     Inn_CheckIn(KALAY_INN, ACTOR_INNKEEPER);
   } else {
     Event_Start();
@@ -334,7 +335,8 @@ static void StuccoRoomsA_TalkToHealer(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   // Keep the original unsigned-halfword arithmetic.
-  if ((u16)(leader->facing + 0x5fff) <= 0x3ffe) {
+  if ((u16)(leader->facing - (FACING_NORTHWEST + 1)) <
+      FACING_NORTHEAST - (FACING_NORTHWEST + 1)) {
     Sanctum_Run(ACTOR_HEALER);
   } else {
     Event_Start();

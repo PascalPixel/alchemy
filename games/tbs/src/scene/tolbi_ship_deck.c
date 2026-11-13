@@ -100,7 +100,6 @@
 #include "fixed_math.h"
 #include "tolbi_ship.h"
 
-
 // The scene's routines, defined below.
 static void TolbiShipDeck_ConfrontCrewman(void);
 static void TolbiShipDeck_ApplyEntryState(void);
@@ -699,10 +698,13 @@ const struct ActorPlacement *TolbiShipDeck_GetActorPlacements(void) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED)) {
       KALAY_TALK_FACING(ACTOR_KALAY_CREW_MEMBER) = TALK_FACING_PARTY;
       KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_WAITING_LONG) = TALK_FACING_KEEP;
-      KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_SEEING_COLOSSO) = TALK_FACING_KEEP;
+      KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_SEEING_COLOSSO) =
+          TALK_FACING_KEEP;
     } else if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN)) {
-      KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_WAITING_LONG) = TALK_FACING_PARTY_AND_BACK;
-      KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_SEEING_COLOSSO) = TALK_FACING_PARTY_AND_BACK;
+      KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_WAITING_LONG) =
+          TALK_FACING_PARTY_AND_BACK;
+      KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_SEEING_COLOSSO) =
+          TALK_FACING_PARTY_AND_BACK;
     }
     return gTolbiShipDeckActorPlacementsWaiting;
   }
@@ -873,7 +875,8 @@ static void TolbiShipDeck_GoBelow(void) {
 /// The leader goes below only while facing west, after walking onto the
 /// hatch.
 static void TolbiShipDeck_GoBelowWhileFacingWest(void) {
-  if ((u16)(Actor_Get(ACTOR_PARTY_LEADER)->facing - 0x6001) <= 0x3ffe) {
+  if ((u16)(Actor_Get(ACTOR_PARTY_LEADER)->facing - (FACING_SOUTHWEST + 1)) <
+      FACING_NORTHWEST - (FACING_SOUTHWEST + 1)) {
     Event_Start();
     Actor_WalkTo(ACTOR_PARTY_LEADER, 214, 664);
     Actor_WaitForMoveById(ACTOR_PARTY_LEADER);

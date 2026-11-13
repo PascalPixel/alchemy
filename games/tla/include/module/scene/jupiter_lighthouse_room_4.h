@@ -26,13 +26,13 @@ extern struct CellTarget gTeleporters;
 void Teleporter_Uncover(struct CellTarget *table,
                         struct CellTargetEntry *entry);
 
-void Func_020000c0(void);
+void JupiterLighthouse_HideThePassage(void);
 
-void Func_02000164(void);
+void JupiterLighthouse_LeaveByFirstCyclone(void);
 
-void Func_02000170(void);
+void JupiterLighthouse_LeaveBySecondCyclone(void);
 
-void Func_0200021c(void);
+void JupiterLighthouse_TryLockedDoor(void);
 
 extern u32 gFieldEffect_LongLifeScript[];
 
@@ -41,6 +41,6 @@ void LightSprites_InitA(void);
 extern u16 gPaletteCycleUnlitPalette[];
 extern u16 gPaletteCycleUnlitColors[];
 void Func_02001e28();
-extern s32 gData_02002718;
+extern s32 gWhirlwindRiding;
 
 #endif

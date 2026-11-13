@@ -78,11 +78,11 @@ void Func_02001c68(s32 dx, s32 dz, s32 value) {
 #include "scene_tables.h"
 #include "objcmd.h"
 
-void Func_02000054(void);
-void Func_02000108(void);
-void Func_02000114(void);
-void Func_020001dc(void);
-void Func_020001fc(void);
+void JupiterLighthouse_RevealThePassage(void);
+void JupiterLighthouse_StartMovingPillar(void);
+void JupiterLighthouse_FinishMovingPillar(void);
+void JupiterLighthouse_UseRedKey(void);
+void JupiterLighthouse_UseBlueKey(void);
 
 extern u32 gFieldEffect_ShortLifeScript[];
 extern u32 gFieldEffect_MediumLifeScript[];
@@ -146,16 +146,16 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {TRIGGER_EXAMINE, 20, 0xa07, EVENT(Func_0200021c)},
-    {TRIGGER_EXAMINE, 21, 0xa08, EVENT(Func_0200021c)},
-    {0xf304, 20, 0xa07, EVENT(Func_020001dc)},
-    {0xf404, 21, 0xa08, EVENT(Func_020001fc)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_020000c0)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, CONDITION_ALWAYS, EVENT(Func_02000108)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT(Func_02000114)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 40, CONDITION_ALWAYS, EVENT(Func_02000164)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41, CONDITION_ALWAYS, EVENT(Func_02000170)},
+    {TRIGGER_EXAMINE, 20, 0xa07, EVENT(JupiterLighthouse_TryLockedDoor)},
+    {TRIGGER_EXAMINE, 21, 0xa08, EVENT(JupiterLighthouse_TryLockedDoor)},
+    {USE_ITEM(243), 20, 0xa07, EVENT(JupiterLighthouse_UseRedKey)}, // the Red Key
+    {USE_ITEM(244), 21, 0xa08, EVENT(JupiterLighthouse_UseBlueKey)}, // the Blue Key
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RevealThePassage)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(JupiterLighthouse_HideThePassage)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FinishMovingPillar)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 40, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LeaveByFirstCyclone)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LeaveBySecondCyclone)},
     {TRIGGER_TABLE_END},
 };
 

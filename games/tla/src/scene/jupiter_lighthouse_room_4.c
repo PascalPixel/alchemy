@@ -48,11 +48,12 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 static inline void SetCollisionCode(s32 x, s32 z, s32 layer, s32 value) {
   /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
    * scene layer, so each call keeps its own constants; as a direct call, 12
-   * of 47 instructions of Func_02000054 differ in tla-en. */
+   * of 47 instructions of JupiterLighthouse_RevealThePassage differ in tla-en.
+   */
   ((u8)MapGrid_SetCellBehavior(x, z, layer, value));
 }
 
-void Func_02000054(void) {
+void JupiterLighthouse_RevealThePassage(void) {
   MapGrid_CopyCellsLayered(17, 10, 1, 4, 19, 10);
   MapGrid_CopyCellAttributes(17, 10, 1, 1, 19, 10);
   SetCollisionCode(0x1300000, 0xa00000, 0, 254);
@@ -63,16 +64,18 @@ void Func_02000054(void) {
   }
 }
 
-void Func_020000c0(void) {
+void JupiterLighthouse_HideThePassage(void) {
   MapGrid_CopyCellsLayered(16, 10, 1, 4, 19, 10);
   MapGrid_CopyCellAttributes(16, 10, 1, 1, 19, 10);
   Actor_SetPosition(14, 0, 0);
   MapGrid_CopyCellAttributes(30, 10, 1, 1, 31, 10);
 }
 
-void Func_02000108(s32 unused, s32 id) { Actor_SetSpritePriority(id, 2); }
+void JupiterLighthouse_StartMovingPillar(s32 unused, s32 id) {
+  Actor_SetSpritePriority(id, 2);
+}
 
-void Func_02000114(s32 unused, s32 id) {
+void JupiterLighthouse_FinishMovingPillar(s32 unused, s32 id) {
   struct Actor *object;
   s32 i;
 
@@ -88,16 +91,20 @@ void Func_02000114(s32 unused, s32 id) {
   }
 }
 
-void Func_02000164(void) { Import_EventSetExitRequest(12); }
+void JupiterLighthouse_LeaveByFirstCyclone(void) {
+  Import_EventSetExitRequest(12);
+}
 
-void Func_02000170(void) { Import_EventSetExitRequest(13); }
+void JupiterLighthouse_LeaveBySecondCyclone(void) {
+  Import_EventSetExitRequest(13);
+}
 
-void Func_0200017c(void) {
+void JupiterLighthouse_OpenRedDoor(void) {
   MapGrid_CopyCellsLayered(73, 18, 1, 4, 74, 18);
   MapGrid_CopyCellAttributes(10, 9, 1, 1, 10, 20);
 }
 
-void Func_020001ac(void) {
+void JupiterLighthouse_OpenBlueDoor(void) {
   MapGrid_CopyCellsLayered(103, 18, 1, 4, 104, 18);
   MapGrid_CopyCellAttributes(40, 9, 1, 1, 40, 20);
 }
@@ -110,11 +117,13 @@ void Func_020001ac(void) {
     PartyInventory_Remove(item);                                               \
   }
 
-DEFINE_JUPITER_LIGHTHOUSE_ROOM_4_USE_KEY(Func_020001dc, 0xa07, Func_0200017c)
+DEFINE_JUPITER_LIGHTHOUSE_ROOM_4_USE_KEY(JupiterLighthouse_UseRedKey, 0xa07,
+                                         JupiterLighthouse_OpenRedDoor)
 
-DEFINE_JUPITER_LIGHTHOUSE_ROOM_4_USE_KEY(Func_020001fc, 0xa08, Func_020001ac)
+DEFINE_JUPITER_LIGHTHOUSE_ROOM_4_USE_KEY(JupiterLighthouse_UseBlueKey, 0xa08,
+                                         JupiterLighthouse_OpenBlueDoor)
 
-void Func_0200021c(void) {
+void JupiterLighthouse_TryLockedDoor(void) {
   ((struct EventWorkLock *)Ram_HeapSlots->eventWork)->locked = 1;
   Message_ShowCentered(MsgFieldDoorLocked, 1);
 }
@@ -126,7 +135,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 /// phase (unk66) from 120 pixels down, taking mode 7 at phase 1 and mode 2 at
 /// phase 38 and starting over once above the ground; drawn in front while the
 /// sine is negative and behind otherwise.
-void Func_02000244(struct Actor *object) {
+void JupiterLighthouse_CircleTheMote(struct Actor *object) {
   s16 angle = object->timer;
   s16 height = object->unk66;
 
@@ -147,7 +156,7 @@ void Func_02000244(struct Actor *object) {
   object->unk66++;
 }
 
-void Func_02000300(void) {
+void JupiterLighthouse_SpawnCirclingMotes(void) {
   struct Actor *object;
   s32 i;
   s32 phase;
@@ -159,7 +168,7 @@ void Func_02000300(void) {
     object->priorityFlags = 0;
     object->speedLimit = (Random16Far() << 2) + 0x60000;
     object->acceleration = ((Random16Far() << 11) >> 16) + 0x800;
-    object->update = (void (*)(void))Func_02000244;
+    object->update = (void (*)(void))JupiterLighthouse_CircleTheMote;
     object->timer = Random16Far();
     object->unk66 = phase;
     Actor_SetSpriteFlags(object, 0);
@@ -175,12 +184,12 @@ s32 Scene_Initialize(void) {
   s32 i;
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 516;
-  Func_020000c0();
+  JupiterLighthouse_HideThePassage();
   if (Event_GetFlag(2567))
-    Func_0200017c();
+    JupiterLighthouse_OpenRedDoor();
   if (Event_GetFlag(2568))
-    Func_020001ac();
-  Func_02000300();
+    JupiterLighthouse_OpenBlueDoor();
+  JupiterLighthouse_SpawnCirclingMotes();
   flag = Event_GetFlag(265);
   if (flag == 0 && gMainRoutineWork.entrance == 11) {
     leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -285,4 +294,4 @@ s32 Func_02001ee8(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_02001ee8, Position_FlatDistance,
-                        gWhirlwindEndScript, gData_02002718)
+                        gWhirlwindEndScript, gWhirlwindRiding)

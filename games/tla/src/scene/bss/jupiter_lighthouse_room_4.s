@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
 	.section .bss,"aw",%nobits
-	.global gData_02002718
-gData_02002718:
+	.global gWhirlwindRiding
+gWhirlwindRiding:
 	.space 0x00000004
 	.global gPaletteCycleColors
 gPaletteCycleColors:

@@ -51,8 +51,12 @@ struct MainRoutineWork254 {
   u16 value;
 };
 
-extern const u8 gData_020022e8[];
-extern const u8 gData_0200236c[];
+/* VIEW(first): routine gData_020022e8 as this part declared it; the joined file has another. */
+extern const u8 gData_020022e8__first[] __asm__("gData_020022e8");
+#define gData_020022e8 gData_020022e8__first
+/* VIEW(first): routine gData_0200236c as this part declared it; the joined file has another. */
+extern const u8 gData_0200236c__first[] __asm__("gData_0200236c");
+#define gData_0200236c gData_0200236c__first
 
 void FieldItem_JumpToLeader(s32 a, s32 b, s32 c);
 
@@ -221,13 +225,17 @@ s32 Scene_PrepareMap(void) {
 #include "io_reg.h"
 #include "field_event.h"
 
-extern s32 gPaletteCyclePausesInEvents;
+/* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it; the joined file has another. */
+extern s32 gPaletteCyclePausesInEvents__first __asm__("gPaletteCyclePausesInEvents");
+#define gPaletteCyclePausesInEvents gPaletteCyclePausesInEvents__first
 
 void PaletteCycle_SetPausesInEvents(s32 value) {
   gPaletteCyclePausesInEvents = value;
 }
 
-extern s32 gPaletteCycleFrame;
+/* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined file has another. */
+extern s32 gPaletteCycleFrame__first __asm__("gPaletteCycleFrame");
+#define gPaletteCycleFrame gPaletteCycleFrame__first
 
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
@@ -252,7 +260,9 @@ DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Whirlwind_CarryLeaderLower)
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-extern const s32 gWhirlwindEndScript[];
+/* VIEW(first): routine gWhirlwindEndScript as this part declared it; the joined file has another. */
+extern const s32 gWhirlwindEndScript__first[] __asm__("gWhirlwindEndScript");
+#define gWhirlwindEndScript gWhirlwindEndScript__first
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
@@ -260,6 +270,17 @@ DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, MapGrid_GetCellBehavior,
                               Position_FlatDistance, gWhirlwindEndScript,
                               Data_020023ac)
 
+#undef gWhirlwindEndScript
+#undef gPaletteCycleFrame
+#undef gPaletteCyclePausesInEvents
+#undef gData_0200236c
+#undef gData_020022e8
+#undef OBJECT_BYTE
+#undef gWhirlwindEndScript
+#undef gPaletteCycleFrame
+#undef gPaletteCyclePausesInEvents
+#undef gData_0200236c
+#undef gData_020022e8
 // ---- scene/jupiter_lighthouse_basement/s098c.c ----
 
 /// Scene code of overlay 0x699, in ROM order.
@@ -315,7 +336,9 @@ DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
  * dereferencing pointer to incomplete type. */
 extern s16 gData_020024f4__s098c __asm__("gData_020024f4");
 
-void Oam_AddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
+/* VIEW(s098c): routine Oam_AddSpriteAtDepthClamped as this part declared it; the joined file has another. */
+void Oam_AddSpriteAtDepthClamped__s098c(struct LightOam *oam, s32 depth) __asm__("Oam_AddSpriteAtDepthClamped");
+#define Oam_AddSpriteAtDepthClamped Oam_AddSpriteAtDepthClamped__s098c
 
 void LightSprites_Draw(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -417,6 +440,8 @@ void Func_02001008(s32 value) { gData_020024f6 = value; }
 
 #include "../field/field_effect/move.c"
 
+#undef Oam_AddSpriteAtDepthClamped
+#undef Oam_AddSpriteAtDepthClamped
 // ---- scene/jupiter_lighthouse_basement/s1094.c ----
 // @file
 // Scene code of overlay 0x699, in ROM order.
@@ -435,7 +460,9 @@ void Func_02001008(s32 value) { gData_020024f6 = value; }
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
+/* VIEW(s1094): routine Actor_StartScript as this part declared it; the joined file has another. */
+void Actor_StartScript__s1094(struct FieldEffect *effect, const s32 *script) __asm__("Actor_StartScript");
+#define Actor_StartScript Actor_StartScript__s1094
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -561,6 +588,12 @@ void Leader_CenterInCell(void) {
 // one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
+#undef Actor_StartScript
+#undef CELL_TABLE
+#undef CELL_SPRITE_DRAW
+#undef CELL_PUSH_SLOT_ENTRY
+#undef OBJECT_BYTE
+#undef Actor_StartScript
 // ---- scene/jupiter_lighthouse_basement/s16c4.c ----
 
 // Scene code of overlay 0x699, in ROM order.

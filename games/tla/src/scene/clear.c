@@ -1385,9 +1385,15 @@ next_column:
   Heap_Release(work);
 }
 
-extern s32 gData_020026a0[];
-extern u16 gData_020026b0[];
-extern u16 gData_020026c0[];
+/* VIEW(first): routine gData_020026a0 as this part declared it; the joined file has another. */
+extern s32 gData_020026a0__first[] __asm__("gData_020026a0");
+#define gData_020026a0 gData_020026a0__first
+/* VIEW(first): routine gData_020026b0 as this part declared it; the joined file has another. */
+extern u16 gData_020026b0__first[] __asm__("gData_020026b0");
+#define gData_020026b0 gData_020026b0__first
+/* VIEW(first): routine gData_020026c0 as this part declared it; the joined file has another. */
+extern u16 gData_020026c0__first[] __asm__("gData_020026c0");
+#define gData_020026c0 gData_020026c0__first
 
 s32 Unit_GetExperienceForLevel(s32 id, s32 level);
 
@@ -1542,9 +1548,15 @@ void Func_020018e0(s32 mode, u8 *in) {
   }
 }
 
-extern u16 gData_02002700[];
-extern s32 gData_020026f0[];
-extern u16 gData_0200270c[];
+/* VIEW(first): routine gData_02002700 as this part declared it; the joined file has another. */
+extern u16 gData_02002700__first[] __asm__("gData_02002700");
+#define gData_02002700 gData_02002700__first
+/* VIEW(first): routine gData_020026f0 as this part declared it; the joined file has another. */
+extern s32 gData_020026f0__first[] __asm__("gData_020026f0");
+#define gData_020026f0 gData_020026f0__first
+/* VIEW(first): routine gData_0200270c as this part declared it; the joined file has another. */
+extern u16 gData_0200270c__first[] __asm__("gData_0200270c");
+#define gData_0200270c gData_0200270c__first
 
 s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
   s32 size;
@@ -1909,6 +1921,42 @@ s16 gData_020024fe = 0;
 
 s16 gData_02002500 = 0;
 
+#undef gData_0200270c
+#undef gData_020026f0
+#undef gData_02002700
+#undef gData_020026c0
+#undef gData_020026b0
+#undef gData_020026a0
+#undef FIELD_AT
+#undef PARTY_WORD
+#undef MAP_CELL_BACKUP
+#undef YEAH_WIDTH
+#undef COPY_CELLS
+#undef SAVE_CELLS
+#undef RESTORE_CELLS
+#undef RETURN_TO_SAVED
+#undef RECEIVED_FLAGS
+#undef RECEIVED_UNITS
+#undef REQUEST_EDITION
+#undef MSGNO
+#undef RECEIVE_WINDOW_X
+#undef RECEIVE_WINDOW_WIDTH
+#undef STATUS_WINDOW_X
+#undef STATUS_WINDOW_WIDTH
+#undef SIDE_COLUMN
+#undef SIDE_HIGHLIGHT_WIDTH
+#undef CHECK_WINDOW_X
+#undef CHECK_WINDOW_WIDTH
+#undef DECODED_PASSWORD
+#undef CURSOR_ON_SIDE_COLUMN
+#undef DRAW_TITLE
+#undef WORD
+#undef gData_0200270c
+#undef gData_020026f0
+#undef gData_02002700
+#undef gData_020026c0
+#undef gData_020026b0
+#undef gData_020026a0
 // ---- scene/data/clear.c ----
 
 #include "macros.h"

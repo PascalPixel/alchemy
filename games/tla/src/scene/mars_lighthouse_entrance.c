@@ -86,14 +86,30 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "shared/mars_lighthouse_entrance_room.h"
 
-extern const u8 gMarsLighthouseEntrance_Placements[];
-extern const u8 gMarsLighthouseEntrance_Room1Placements[];
-extern const u8 gMarsLighthouseEntrance_Room2Placements[];
-extern const u8 gMarsLighthouseEntrance_Room3Placements[];
-extern const u8 gMarsLighthouseEntrance_Room4Placements[];
-extern const u8 gMarsLighthouseEntrance_Room5Placements[];
-extern const u8 gMarsLighthouseEntrance_Room6Placements[];
-extern const u8 gMarsLighthouseEntrance_Room7Placements[];
+/* VIEW(first): routine gMarsLighthouseEntrance_Placements as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Placements__first[] __asm__("gMarsLighthouseEntrance_Placements");
+#define gMarsLighthouseEntrance_Placements gMarsLighthouseEntrance_Placements__first
+/* VIEW(first): routine gMarsLighthouseEntrance_Room1Placements as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room1Placements__first[] __asm__("gMarsLighthouseEntrance_Room1Placements");
+#define gMarsLighthouseEntrance_Room1Placements gMarsLighthouseEntrance_Room1Placements__first
+/* VIEW(first): routine gMarsLighthouseEntrance_Room2Placements as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room2Placements__first[] __asm__("gMarsLighthouseEntrance_Room2Placements");
+#define gMarsLighthouseEntrance_Room2Placements gMarsLighthouseEntrance_Room2Placements__first
+/* VIEW(first): routine gMarsLighthouseEntrance_Room3Placements as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room3Placements__first[] __asm__("gMarsLighthouseEntrance_Room3Placements");
+#define gMarsLighthouseEntrance_Room3Placements gMarsLighthouseEntrance_Room3Placements__first
+/* VIEW(first): routine gMarsLighthouseEntrance_Room4Placements as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room4Placements__first[] __asm__("gMarsLighthouseEntrance_Room4Placements");
+#define gMarsLighthouseEntrance_Room4Placements gMarsLighthouseEntrance_Room4Placements__first
+/* VIEW(first): routine gMarsLighthouseEntrance_Room5Placements as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room5Placements__first[] __asm__("gMarsLighthouseEntrance_Room5Placements");
+#define gMarsLighthouseEntrance_Room5Placements gMarsLighthouseEntrance_Room5Placements__first
+/* VIEW(first): routine gMarsLighthouseEntrance_Room6Placements as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room6Placements__first[] __asm__("gMarsLighthouseEntrance_Room6Placements");
+#define gMarsLighthouseEntrance_Room6Placements gMarsLighthouseEntrance_Room6Placements__first
+/* VIEW(first): routine gMarsLighthouseEntrance_Room7Placements as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room7Placements__first[] __asm__("gMarsLighthouseEntrance_Room7Placements");
+#define gMarsLighthouseEntrance_Room7Placements gMarsLighthouseEntrance_Room7Placements__first
 
 s32 Func_02000070(void) {
   Func_0200246c(0, 65);
@@ -134,6 +150,24 @@ DEFINE_MAP_CELL_SWAP(Func_02000168)
 
 #include "../field/object/set_sprite_priority.c"
 
+#undef gMarsLighthouseEntrance_Room7Placements
+#undef gMarsLighthouseEntrance_Room6Placements
+#undef gMarsLighthouseEntrance_Room5Placements
+#undef gMarsLighthouseEntrance_Room4Placements
+#undef gMarsLighthouseEntrance_Room3Placements
+#undef gMarsLighthouseEntrance_Room2Placements
+#undef gMarsLighthouseEntrance_Room1Placements
+#undef gMarsLighthouseEntrance_Placements
+#undef TLA_MARS_LIGHTHOUSE_ENTRANCE_RIDE_H
+#undef RIDE_WORK
+#undef gMarsLighthouseEntrance_Room7Placements
+#undef gMarsLighthouseEntrance_Room6Placements
+#undef gMarsLighthouseEntrance_Room5Placements
+#undef gMarsLighthouseEntrance_Room4Placements
+#undef gMarsLighthouseEntrance_Room3Placements
+#undef gMarsLighthouseEntrance_Room2Placements
+#undef gMarsLighthouseEntrance_Room1Placements
+#undef gMarsLighthouseEntrance_Placements
 // ---- scene/mars_lighthouse_entrance/mars_lighthouse_entrance.c ----
 
 /// Scene code of overlay 0x6aa, in ROM order.
@@ -233,8 +267,10 @@ loop:
 
 #include "field_effect.h"
 
-void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags, struct EffectOptions *options);
+/* VIEW(mars_lighthouse_entrance): routine Func_02003b30 as this part declared it; the joined file has another. */
+void Func_02003b30__mars_lighthouse_entrance(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                   s32 velocityZ, u32 flags, struct EffectOptions *options) __asm__("Func_02003b30");
+#define Func_02003b30 Func_02003b30__mars_lighthouse_entrance
 
 /// While index is at most 7, spawns effect type 0x117 index steps below the
 /// object the effect work names and shrinks the object a little; mode 1
@@ -278,7 +314,9 @@ void MarsLighthouseEntrance_StartPoundIceCone(void) {
 
 #include "iwram_call.h"
 
-extern const u8 gData_02005394[];
+/* VIEW(mars_lighthouse_entrance): routine gData_02005394 as this part declared it; the joined file has another. */
+extern const u8 gData_02005394__mars_lighthouse_entrance[] __asm__("gData_02005394");
+#define gData_02005394 gData_02005394__mars_lighthouse_entrance
 
 void Func_02000414(s32 id) {
   struct Actor *source = Actor_Get(id);
@@ -737,22 +775,44 @@ next:
   FieldEvent_SetExitRequest(arg);
 }
 
-extern const u8 gData_0200503c[];
+/* VIEW(mars_lighthouse_entrance): routine gData_0200503c as this part declared it; the joined file has another. */
+extern const u8 gData_0200503c__mars_lighthouse_entrance[] __asm__("gData_0200503c");
+#define gData_0200503c gData_0200503c__mars_lighthouse_entrance
 extern const u8 gData_0200547c[];
 extern const u8 gData_020054cc[];
 extern const u8 gData_02005528[];
 extern const u8 gData_02005578[];
-extern const u8 gData_020055d4[];
+/* VIEW(mars_lighthouse_entrance): routine gData_020055d4 as this part declared it; the joined file has another. */
+extern const u8 gData_020055d4__mars_lighthouse_entrance[] __asm__("gData_020055d4");
+#define gData_020055d4 gData_020055d4__mars_lighthouse_entrance
 extern const u8 gData_02005644[];
-extern const u8 gMarsLighthouseEntrance_Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room1Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room2Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room3Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room4Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room5Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room6Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room7Triggers[];
-extern s16 gData_02006868;
+/* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Triggers");
+#define gMarsLighthouseEntrance_Triggers gMarsLighthouseEntrance_Triggers__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Room1Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room1Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Room1Triggers");
+#define gMarsLighthouseEntrance_Room1Triggers gMarsLighthouseEntrance_Room1Triggers__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Room2Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room2Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Room2Triggers");
+#define gMarsLighthouseEntrance_Room2Triggers gMarsLighthouseEntrance_Room2Triggers__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Room3Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room3Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Room3Triggers");
+#define gMarsLighthouseEntrance_Room3Triggers gMarsLighthouseEntrance_Room3Triggers__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Room4Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room4Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Room4Triggers");
+#define gMarsLighthouseEntrance_Room4Triggers gMarsLighthouseEntrance_Room4Triggers__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Room5Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room5Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Room5Triggers");
+#define gMarsLighthouseEntrance_Room5Triggers gMarsLighthouseEntrance_Room5Triggers__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Room6Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room6Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Room6Triggers");
+#define gMarsLighthouseEntrance_Room6Triggers gMarsLighthouseEntrance_Room6Triggers__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Room7Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room7Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Room7Triggers");
+#define gMarsLighthouseEntrance_Room7Triggers gMarsLighthouseEntrance_Room7Triggers__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_02006868 as this part declared it; the joined file has another. */
+extern s16 gData_02006868__mars_lighthouse_entrance __asm__("gData_02006868");
+#define gData_02006868 gData_02006868__mars_lighthouse_entrance
 
 /* VIEW(mars_lighthouse_entrance): routine Func_02002c2c as void
  * Func_02002c2c(void); scene/mars_lighthouse_entrance/s263c has void
@@ -872,7 +932,9 @@ const u8 *Scene_GetEvents(void) {
 DEFINE_ACTOR_FREEZE(Func_02001234)
 #undef SET_SPRITE_WINDOW_LAYERS
 
-extern s16 gData_02006868;
+/* VIEW(mars_lighthouse_entrance): routine gData_02006868 as this part declared it; the joined file has another. */
+extern s16 gData_02006868__mars_lighthouse_entrance __asm__("gData_02006868");
+#define gData_02006868 gData_02006868__mars_lighthouse_entrance
 
 void Func_02001254(void) {
   s16 *state = &gData_02006868;
@@ -914,22 +976,54 @@ void Func_020012e4(struct Actor *actor) {
   }
 }
 
-extern const u8 gData_0200503c[];
-extern const u8 gData_0200547c[];
-extern const u8 gData_020054cc[];
-extern const u8 gData_02005528[];
-extern const u8 gData_02005578[];
-extern const u8 gData_020055d4[];
-extern const u8 gData_02005644[];
-extern const u8 gMarsLighthouseEntrance_Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room1Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room2Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room3Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room4Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room5Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room6Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room7Triggers[];
-extern s16 gData_02006868;
+/* VIEW(mars_lighthouse_entrance): routine gData_0200503c as this part declared it; the joined file has another. */
+extern const u8 gData_0200503c__mars_lighthouse_entrance[] __asm__("gData_0200503c");
+#define gData_0200503c gData_0200503c__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_0200547c as this part declared it; the joined file has another. */
+extern const u8 gData_0200547c__mars_lighthouse_entrance[] __asm__("gData_0200547c");
+#define gData_0200547c gData_0200547c__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_020054cc as this part declared it; the joined file has another. */
+extern const u8 gData_020054cc__mars_lighthouse_entrance[] __asm__("gData_020054cc");
+#define gData_020054cc gData_020054cc__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_02005528 as this part declared it; the joined file has another. */
+extern const u8 gData_02005528__mars_lighthouse_entrance[] __asm__("gData_02005528");
+#define gData_02005528 gData_02005528__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_02005578 as this part declared it; the joined file has another. */
+extern const u8 gData_02005578__mars_lighthouse_entrance[] __asm__("gData_02005578");
+#define gData_02005578 gData_02005578__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_020055d4 as this part declared it; the joined file has another. */
+extern const u8 gData_020055d4__mars_lighthouse_entrance[] __asm__("gData_020055d4");
+#define gData_020055d4 gData_020055d4__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_02005644 as this part declared it; the joined file has another. */
+extern const u8 gData_02005644__mars_lighthouse_entrance[] __asm__("gData_02005644");
+#define gData_02005644 gData_02005644__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Triggers");
+#define gMarsLighthouseEntrance_Triggers gMarsLighthouseEntrance_Triggers__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Room1Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room1Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Room1Triggers");
+#define gMarsLighthouseEntrance_Room1Triggers gMarsLighthouseEntrance_Room1Triggers__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Room2Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room2Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Room2Triggers");
+#define gMarsLighthouseEntrance_Room2Triggers gMarsLighthouseEntrance_Room2Triggers__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Room3Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room3Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Room3Triggers");
+#define gMarsLighthouseEntrance_Room3Triggers gMarsLighthouseEntrance_Room3Triggers__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Room4Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room4Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Room4Triggers");
+#define gMarsLighthouseEntrance_Room4Triggers gMarsLighthouseEntrance_Room4Triggers__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Room5Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room5Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Room5Triggers");
+#define gMarsLighthouseEntrance_Room5Triggers gMarsLighthouseEntrance_Room5Triggers__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Room6Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room6Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Room6Triggers");
+#define gMarsLighthouseEntrance_Room6Triggers gMarsLighthouseEntrance_Room6Triggers__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Room7Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room7Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Room7Triggers");
+#define gMarsLighthouseEntrance_Room7Triggers gMarsLighthouseEntrance_Room7Triggers__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_02006868 as this part declared it; the joined file has another. */
+extern s16 gData_02006868__mars_lighthouse_entrance __asm__("gData_02006868");
+#define gData_02006868 gData_02006868__mars_lighthouse_entrance
 
 void Func_02002c2c(void);
 
@@ -971,23 +1065,57 @@ s32 Func_0200248c__mars_lighthouse_entrance() __asm__("Func_0200248c");
 #define Func_0200248c Func_0200248c__mars_lighthouse_entrance
 s32 Func_020045f8();
 void Func_0200196c(void);
-extern u8 gData_02005314[];
-extern u8 gData_020053d8[];
-extern u8 gData_020053e6[];
-extern u8 gData_020053f8[];
-extern u8 gData_020053fe[];
-extern u8 gData_0200540c[];
-extern u8 gData_02005412[];
-extern u8 gData_02005418[];
-extern u8 gData_02005438[];
-extern u8 gData_0200543e[];
-extern u8 gData_02005448[];
-extern u8 gData_0200544e[];
-extern u8 gData_02005454[];
-extern u8 gData_0200586c[];
-extern u8 gData_0200587c[];
-extern u8 gData_020058a8[];
-extern u8 gData_020058d4[];
+/* VIEW(mars_lighthouse_entrance): routine gData_02005314 as this part declared it; the joined file has another. */
+extern u8 gData_02005314__mars_lighthouse_entrance[] __asm__("gData_02005314");
+#define gData_02005314 gData_02005314__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_020053d8 as this part declared it; the joined file has another. */
+extern u8 gData_020053d8__mars_lighthouse_entrance[] __asm__("gData_020053d8");
+#define gData_020053d8 gData_020053d8__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_020053e6 as this part declared it; the joined file has another. */
+extern u8 gData_020053e6__mars_lighthouse_entrance[] __asm__("gData_020053e6");
+#define gData_020053e6 gData_020053e6__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_020053f8 as this part declared it; the joined file has another. */
+extern u8 gData_020053f8__mars_lighthouse_entrance[] __asm__("gData_020053f8");
+#define gData_020053f8 gData_020053f8__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_020053fe as this part declared it; the joined file has another. */
+extern u8 gData_020053fe__mars_lighthouse_entrance[] __asm__("gData_020053fe");
+#define gData_020053fe gData_020053fe__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_0200540c as this part declared it; the joined file has another. */
+extern u8 gData_0200540c__mars_lighthouse_entrance[] __asm__("gData_0200540c");
+#define gData_0200540c gData_0200540c__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_02005412 as this part declared it; the joined file has another. */
+extern u8 gData_02005412__mars_lighthouse_entrance[] __asm__("gData_02005412");
+#define gData_02005412 gData_02005412__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_02005418 as this part declared it; the joined file has another. */
+extern u8 gData_02005418__mars_lighthouse_entrance[] __asm__("gData_02005418");
+#define gData_02005418 gData_02005418__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_02005438 as this part declared it; the joined file has another. */
+extern u8 gData_02005438__mars_lighthouse_entrance[] __asm__("gData_02005438");
+#define gData_02005438 gData_02005438__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_0200543e as this part declared it; the joined file has another. */
+extern u8 gData_0200543e__mars_lighthouse_entrance[] __asm__("gData_0200543e");
+#define gData_0200543e gData_0200543e__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_02005448 as this part declared it; the joined file has another. */
+extern u8 gData_02005448__mars_lighthouse_entrance[] __asm__("gData_02005448");
+#define gData_02005448 gData_02005448__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_0200544e as this part declared it; the joined file has another. */
+extern u8 gData_0200544e__mars_lighthouse_entrance[] __asm__("gData_0200544e");
+#define gData_0200544e gData_0200544e__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_02005454 as this part declared it; the joined file has another. */
+extern u8 gData_02005454__mars_lighthouse_entrance[] __asm__("gData_02005454");
+#define gData_02005454 gData_02005454__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_0200586c as this part declared it; the joined file has another. */
+extern u8 gData_0200586c__mars_lighthouse_entrance[] __asm__("gData_0200586c");
+#define gData_0200586c gData_0200586c__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_0200587c as this part declared it; the joined file has another. */
+extern u8 gData_0200587c__mars_lighthouse_entrance[] __asm__("gData_0200587c");
+#define gData_0200587c gData_0200587c__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_020058a8 as this part declared it; the joined file has another. */
+extern u8 gData_020058a8__mars_lighthouse_entrance[] __asm__("gData_020058a8");
+#define gData_020058a8 gData_020058a8__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_020058d4 as this part declared it; the joined file has another. */
+extern u8 gData_020058d4__mars_lighthouse_entrance[] __asm__("gData_020058d4");
+#define gData_020058d4 gData_020058d4__mars_lighthouse_entrance
 /* VIEW(s138c): variable gMainRoutineWork as extern u8 gMainRoutineWork[];
  * main_routine_work.h has extern struct MainRoutineWork gMainRoutineWork; tried
  * as the 4 declarations' extern u8 gMainRoutineWork[], it does not compile in
@@ -1266,22 +1394,54 @@ L_020098d0:
 }
 #undef FIELD_AT
 
-extern const u8 gData_0200503c[];
-extern const u8 gData_0200547c[];
-extern const u8 gData_020054cc[];
-extern const u8 gData_02005528[];
-extern const u8 gData_02005578[];
-extern const u8 gData_020055d4[];
-extern const u8 gData_02005644[];
-extern const u8 gMarsLighthouseEntrance_Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room1Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room2Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room3Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room4Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room5Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room6Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room7Triggers[];
-extern s16 gData_02006868;
+/* VIEW(mars_lighthouse_entrance): routine gData_0200503c as this part declared it; the joined file has another. */
+extern const u8 gData_0200503c__mars_lighthouse_entrance[] __asm__("gData_0200503c");
+#define gData_0200503c gData_0200503c__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_0200547c as this part declared it; the joined file has another. */
+extern const u8 gData_0200547c__mars_lighthouse_entrance[] __asm__("gData_0200547c");
+#define gData_0200547c gData_0200547c__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_020054cc as this part declared it; the joined file has another. */
+extern const u8 gData_020054cc__mars_lighthouse_entrance[] __asm__("gData_020054cc");
+#define gData_020054cc gData_020054cc__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_02005528 as this part declared it; the joined file has another. */
+extern const u8 gData_02005528__mars_lighthouse_entrance[] __asm__("gData_02005528");
+#define gData_02005528 gData_02005528__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_02005578 as this part declared it; the joined file has another. */
+extern const u8 gData_02005578__mars_lighthouse_entrance[] __asm__("gData_02005578");
+#define gData_02005578 gData_02005578__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_020055d4 as this part declared it; the joined file has another. */
+extern const u8 gData_020055d4__mars_lighthouse_entrance[] __asm__("gData_020055d4");
+#define gData_020055d4 gData_020055d4__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_02005644 as this part declared it; the joined file has another. */
+extern const u8 gData_02005644__mars_lighthouse_entrance[] __asm__("gData_02005644");
+#define gData_02005644 gData_02005644__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Triggers");
+#define gMarsLighthouseEntrance_Triggers gMarsLighthouseEntrance_Triggers__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Room1Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room1Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Room1Triggers");
+#define gMarsLighthouseEntrance_Room1Triggers gMarsLighthouseEntrance_Room1Triggers__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Room2Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room2Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Room2Triggers");
+#define gMarsLighthouseEntrance_Room2Triggers gMarsLighthouseEntrance_Room2Triggers__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Room3Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room3Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Room3Triggers");
+#define gMarsLighthouseEntrance_Room3Triggers gMarsLighthouseEntrance_Room3Triggers__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Room4Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room4Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Room4Triggers");
+#define gMarsLighthouseEntrance_Room4Triggers gMarsLighthouseEntrance_Room4Triggers__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Room5Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room5Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Room5Triggers");
+#define gMarsLighthouseEntrance_Room5Triggers gMarsLighthouseEntrance_Room5Triggers__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Room6Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room6Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Room6Triggers");
+#define gMarsLighthouseEntrance_Room6Triggers gMarsLighthouseEntrance_Room6Triggers__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gMarsLighthouseEntrance_Room7Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room7Triggers__mars_lighthouse_entrance[] __asm__("gMarsLighthouseEntrance_Room7Triggers");
+#define gMarsLighthouseEntrance_Room7Triggers gMarsLighthouseEntrance_Room7Triggers__mars_lighthouse_entrance
+/* VIEW(mars_lighthouse_entrance): routine gData_02006868 as this part declared it; the joined file has another. */
+extern s16 gData_02006868__mars_lighthouse_entrance __asm__("gData_02006868");
+#define gData_02006868 gData_02006868__mars_lighthouse_entrance
 
 /* VIEW(s1930): routine Func_02002f4c as s32 Func_02002f4c(s32 id, s32 a1, s32
  * a2, s32 a3, const void *script); s1344 has void Func_02002f4c(s32 id, s32 a1,
@@ -1322,7 +1482,9 @@ void Func_02001a00(void) {
   Func_02002f4c__s1930(13, 21, 22, 0, gData_02005644);
 }
 
-extern const u8 gData_020056a0[];
+/* VIEW(mars_lighthouse_entrance): routine gData_020056a0 as this part declared it; the joined file has another. */
+extern const u8 gData_020056a0__mars_lighthouse_entrance[] __asm__("gData_020056a0");
+#define gData_020056a0 gData_020056a0__mars_lighthouse_entrance
 
 void Func_02001f90(struct Actor *object);
 
@@ -1363,7 +1525,9 @@ struct RideWork__s1930 {
 DEFINE_RIDE_UPDATE_CARRIED(Func_02001ae0, RideWork__s1930, Func_02001a1c,
                            Func_02001a80)
 
-extern const u8 gData_020056a0[];
+/* VIEW(mars_lighthouse_entrance): routine gData_020056a0 as this part declared it; the joined file has another. */
+extern const u8 gData_020056a0__mars_lighthouse_entrance[] __asm__("gData_020056a0");
+#define gData_020056a0 gData_020056a0__mars_lighthouse_entrance
 
 void Func_02001f90(struct Actor *object);
 
@@ -1407,7 +1571,9 @@ struct RideWork__s1c44 {
 DEFINE_RIDE_UPDATE_LANDING(Func_02001cbc, RideWork__s1c44, Func_02001a1c,
                            Func_02001a80)
 
-extern const u8 gData_020056a0[];
+/* VIEW(mars_lighthouse_entrance): routine gData_020056a0 as this part declared it; the joined file has another. */
+extern const u8 gData_020056a0__mars_lighthouse_entrance[] __asm__("gData_020056a0");
+#define gData_020056a0 gData_020056a0__mars_lighthouse_entrance
 
 void Func_02001f90(struct Actor *object);
 
@@ -1502,6 +1668,116 @@ DEFINE_BEAM_DRAW_TARGETS(Func_020020ec, Func_0200206c__s20ec, Func_02001e60,
 #undef Oam_AddSpriteAtDepthClamped
 #undef Func_02002c2c
 #undef Func_020022e4
+#undef gData_020058d4
+#undef gData_020058a8
+#undef gData_0200587c
+#undef gData_0200586c
+#undef gData_02005454
+#undef gData_0200544e
+#undef gData_02005448
+#undef gData_0200543e
+#undef gData_02005438
+#undef gData_02005418
+#undef gData_02005412
+#undef gData_0200540c
+#undef gData_020053fe
+#undef gData_020053f8
+#undef gData_020053e6
+#undef gData_020053d8
+#undef gData_02005314
+#undef gData_02005394
+#undef Func_02003b30
+#undef gData_02006868
+#undef gMarsLighthouseEntrance_Room7Triggers
+#undef gMarsLighthouseEntrance_Room6Triggers
+#undef gMarsLighthouseEntrance_Room5Triggers
+#undef gMarsLighthouseEntrance_Room4Triggers
+#undef gMarsLighthouseEntrance_Room3Triggers
+#undef gMarsLighthouseEntrance_Room2Triggers
+#undef gMarsLighthouseEntrance_Room1Triggers
+#undef gMarsLighthouseEntrance_Triggers
+#undef gData_020055d4
+#undef gData_0200503c
+#undef gData_02006868
+#undef gMarsLighthouseEntrance_Room7Triggers
+#undef gMarsLighthouseEntrance_Room6Triggers
+#undef gMarsLighthouseEntrance_Room5Triggers
+#undef gMarsLighthouseEntrance_Room4Triggers
+#undef gMarsLighthouseEntrance_Room3Triggers
+#undef gMarsLighthouseEntrance_Room2Triggers
+#undef gMarsLighthouseEntrance_Room1Triggers
+#undef gMarsLighthouseEntrance_Triggers
+#undef gData_020055d4
+#undef gData_0200503c
+#undef gData_02006868
+#undef gMarsLighthouseEntrance_Room7Triggers
+#undef gMarsLighthouseEntrance_Room6Triggers
+#undef gMarsLighthouseEntrance_Room5Triggers
+#undef gMarsLighthouseEntrance_Room4Triggers
+#undef gMarsLighthouseEntrance_Room3Triggers
+#undef gMarsLighthouseEntrance_Room2Triggers
+#undef gMarsLighthouseEntrance_Room1Triggers
+#undef gMarsLighthouseEntrance_Triggers
+#undef gData_020055d4
+#undef gData_0200503c
+#undef gData_02006868
+#undef gData_020056a0
+#undef gData_020056a0
+#undef gData_02005644
+#undef gData_02005578
+#undef gData_02005528
+#undef gData_020054cc
+#undef gData_0200547c
+#undef gData_020056a0
+#undef gData_02005644
+#undef gData_02005578
+#undef gData_02005528
+#undef gData_020054cc
+#undef gData_0200547c
+#undef DEFINE_FUNC_0200085C
+#undef Oam_AddSpriteAtDepthClamped
+#undef SET_SPRITE_WINDOW_LAYERS
+#undef FIELD_AT
+#undef IWRAM
+#undef Func_0200248c
+#undef Func_02002c2c
+#undef Func_020022e4
+#undef gData_020058d4
+#undef gData_020058a8
+#undef gData_0200587c
+#undef gData_0200586c
+#undef gData_02005454
+#undef gData_0200544e
+#undef gData_02005448
+#undef gData_0200543e
+#undef gData_02005438
+#undef gData_02005418
+#undef gData_02005412
+#undef gData_0200540c
+#undef gData_020053fe
+#undef gData_020053f8
+#undef gData_020053e6
+#undef gData_020053d8
+#undef gData_02005314
+#undef gData_02005394
+#undef Func_02003b30
+#undef gData_02006868
+#undef gMarsLighthouseEntrance_Room7Triggers
+#undef gMarsLighthouseEntrance_Room6Triggers
+#undef gMarsLighthouseEntrance_Room5Triggers
+#undef gMarsLighthouseEntrance_Room4Triggers
+#undef gMarsLighthouseEntrance_Room3Triggers
+#undef gMarsLighthouseEntrance_Room2Triggers
+#undef gMarsLighthouseEntrance_Room1Triggers
+#undef gMarsLighthouseEntrance_Triggers
+#undef gData_020055d4
+#undef gData_0200503c
+#undef gData_020056a0
+#undef gData_02005644
+#undef gData_02005578
+#undef gData_02005528
+#undef gData_020054cc
+#undef gData_0200547c
 // ---- scene/mars_lighthouse_entrance/s2270.c ----
 
 /// Scene code of overlay 0x6aa, in ROM order.
@@ -1627,6 +1903,9 @@ DEFINE_PARTY_TAKE_FALL_DAMAGE(Func_020024c0)
 
 DEFINE_ACTOR_BLINK(Func_02002614, 10, 4, 0)
 
+#undef Func_020022e4
+#undef Unit_Get
+#undef Func_0200246c
 #undef Func_020022e4
 #undef Unit_Get
 #undef Func_0200246c
@@ -1842,7 +2121,9 @@ struct Work {
   struct Actor *owner;
 };
 
-extern u8 gData_020056d0[];
+/* VIEW(s263c): routine gData_020056d0 as this part declared it; the joined file has another. */
+extern u8 gData_020056d0__s263c[] __asm__("gData_020056d0");
+#define gData_020056d0 gData_020056d0__s263c
 
 #define WORK ((struct Work *)(gInventorySnapshot + 0x188))
 
@@ -1904,7 +2185,9 @@ void Func_020029c8(struct Actor *actor) {
   }
 }
 
-extern const u8 gData_02005714[];
+/* VIEW(s263c): routine gData_02005714 as this part declared it; the joined file has another. */
+extern const u8 gData_02005714__s263c[] __asm__("gData_02005714");
+#define gData_02005714 gData_02005714__s263c
 
 /// Throws two sparks (object kind 325) from (x, y, z), each upward at about
 /// speed plus 0x14000 with a random spread, at a random angle and size.
@@ -1953,22 +2236,54 @@ extern char SceneId_Ov6aaRoom4;
 extern char SceneId_Ov6aaRoom5;
 extern char SceneId_Ov6aaRoom6;
 extern char SceneId_Ov6aaRoom7;
-extern const u8 gData_0200503c[];
-extern const u8 gData_0200547c[];
-extern const u8 gData_020054cc[];
-extern const u8 gData_02005528[];
-extern const u8 gData_02005578[];
-extern const u8 gData_020055d4[];
-extern const u8 gData_02005644[];
-extern const u8 gMarsLighthouseEntrance_Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room1Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room2Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room3Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room4Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room5Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room6Triggers[];
-extern const u8 gMarsLighthouseEntrance_Room7Triggers[];
-extern s16 gData_02006868;
+/* VIEW(s263c): routine gData_0200503c as this part declared it; the joined file has another. */
+extern const u8 gData_0200503c__s263c[] __asm__("gData_0200503c");
+#define gData_0200503c gData_0200503c__s263c
+/* VIEW(s263c): routine gData_0200547c as this part declared it; the joined file has another. */
+extern const u8 gData_0200547c__s263c[] __asm__("gData_0200547c");
+#define gData_0200547c gData_0200547c__s263c
+/* VIEW(s263c): routine gData_020054cc as this part declared it; the joined file has another. */
+extern const u8 gData_020054cc__s263c[] __asm__("gData_020054cc");
+#define gData_020054cc gData_020054cc__s263c
+/* VIEW(s263c): routine gData_02005528 as this part declared it; the joined file has another. */
+extern const u8 gData_02005528__s263c[] __asm__("gData_02005528");
+#define gData_02005528 gData_02005528__s263c
+/* VIEW(s263c): routine gData_02005578 as this part declared it; the joined file has another. */
+extern const u8 gData_02005578__s263c[] __asm__("gData_02005578");
+#define gData_02005578 gData_02005578__s263c
+/* VIEW(s263c): routine gData_020055d4 as this part declared it; the joined file has another. */
+extern const u8 gData_020055d4__s263c[] __asm__("gData_020055d4");
+#define gData_020055d4 gData_020055d4__s263c
+/* VIEW(s263c): routine gData_02005644 as this part declared it; the joined file has another. */
+extern const u8 gData_02005644__s263c[] __asm__("gData_02005644");
+#define gData_02005644 gData_02005644__s263c
+/* VIEW(s263c): routine gMarsLighthouseEntrance_Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Triggers__s263c[] __asm__("gMarsLighthouseEntrance_Triggers");
+#define gMarsLighthouseEntrance_Triggers gMarsLighthouseEntrance_Triggers__s263c
+/* VIEW(s263c): routine gMarsLighthouseEntrance_Room1Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room1Triggers__s263c[] __asm__("gMarsLighthouseEntrance_Room1Triggers");
+#define gMarsLighthouseEntrance_Room1Triggers gMarsLighthouseEntrance_Room1Triggers__s263c
+/* VIEW(s263c): routine gMarsLighthouseEntrance_Room2Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room2Triggers__s263c[] __asm__("gMarsLighthouseEntrance_Room2Triggers");
+#define gMarsLighthouseEntrance_Room2Triggers gMarsLighthouseEntrance_Room2Triggers__s263c
+/* VIEW(s263c): routine gMarsLighthouseEntrance_Room3Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room3Triggers__s263c[] __asm__("gMarsLighthouseEntrance_Room3Triggers");
+#define gMarsLighthouseEntrance_Room3Triggers gMarsLighthouseEntrance_Room3Triggers__s263c
+/* VIEW(s263c): routine gMarsLighthouseEntrance_Room4Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room4Triggers__s263c[] __asm__("gMarsLighthouseEntrance_Room4Triggers");
+#define gMarsLighthouseEntrance_Room4Triggers gMarsLighthouseEntrance_Room4Triggers__s263c
+/* VIEW(s263c): routine gMarsLighthouseEntrance_Room5Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room5Triggers__s263c[] __asm__("gMarsLighthouseEntrance_Room5Triggers");
+#define gMarsLighthouseEntrance_Room5Triggers gMarsLighthouseEntrance_Room5Triggers__s263c
+/* VIEW(s263c): routine gMarsLighthouseEntrance_Room6Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room6Triggers__s263c[] __asm__("gMarsLighthouseEntrance_Room6Triggers");
+#define gMarsLighthouseEntrance_Room6Triggers gMarsLighthouseEntrance_Room6Triggers__s263c
+/* VIEW(s263c): routine gMarsLighthouseEntrance_Room7Triggers as this part declared it; the joined file has another. */
+extern const u8 gMarsLighthouseEntrance_Room7Triggers__s263c[] __asm__("gMarsLighthouseEntrance_Room7Triggers");
+#define gMarsLighthouseEntrance_Room7Triggers gMarsLighthouseEntrance_Room7Triggers__s263c
+/* VIEW(s263c): routine gData_02006868 as this part declared it; the joined file has another. */
+extern s16 gData_02006868__s263c __asm__("gData_02006868");
+#define gData_02006868 gData_02006868__s263c
 extern s16 gData_020068a0;
 extern u16 gData_020068a2;
 
@@ -1999,7 +2314,9 @@ DEFINE_ACTOR_PARK(Func_020031dc, Func_02002fc4)
 
 #include "input.h"
 
-extern const s16 gData_02005758[];
+/* VIEW(s263c): routine gData_02005758 as this part declared it; the joined file has another. */
+extern const s16 gData_02005758__s263c[] __asm__("gData_02005758");
+#define gData_02005758 gData_02005758__s263c
 
 DEFINE_ACTOR_STEER_BY_PAD(Func_020031f8, gData_02005758, Func_02004bc0)
 
@@ -2024,13 +2341,17 @@ struct Position {
 
 void Func_02004bc0(struct Actor *actor, s32 mode);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-extern s16 gData_02005798[];
+/* VIEW(s263c): routine gData_02005798 as this part declared it; the joined file has another. */
+extern s16 gData_02005798__s263c[] __asm__("gData_02005798");
+#define gData_02005798 gData_02005798__s263c
 
 DEFINE_LEADER_SLIDE_ON_ICE(Func_020032b8, Func_02003284, gData_02005798,
                            Func_02004bc0, Func_020031f8, Func_02004c78)
 
 extern volatile s16 gData_020068b0;
-extern s16 gData_02005798[];
+/* VIEW(s263c): routine gData_02005798 as this part declared it; the joined file has another. */
+extern s16 gData_02005798__s263c[] __asm__("gData_02005798");
+#define gData_02005798 gData_02005798__s263c
 void Func_020031f8(struct Actor *object);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02004bc0(struct Actor *object, s32 mode);
@@ -2057,6 +2378,66 @@ void Func_02003878(s32 value) { gData_020068b0 = value; }
 
 #undef Func_02002614
 #undef Position
+#undef gData_02005798
+#undef gData_02005758
+#undef gData_02006868
+#undef gMarsLighthouseEntrance_Room7Triggers
+#undef gMarsLighthouseEntrance_Room6Triggers
+#undef gMarsLighthouseEntrance_Room5Triggers
+#undef gMarsLighthouseEntrance_Room4Triggers
+#undef gMarsLighthouseEntrance_Room3Triggers
+#undef gMarsLighthouseEntrance_Room2Triggers
+#undef gMarsLighthouseEntrance_Room1Triggers
+#undef gMarsLighthouseEntrance_Triggers
+#undef gData_020055d4
+#undef gData_0200503c
+#undef gData_02005714
+#undef gData_020056d0
+#undef gData_02005798
+#undef gData_02005644
+#undef gData_02005578
+#undef gData_02005528
+#undef gData_020054cc
+#undef gData_0200547c
+#undef SHARED_F02002148_NAME
+#undef SHARED_F02002148_ID2
+#undef SHARED_F02002148_ID3
+#undef SHARED_F02002148_ID4
+#undef SHARED_F02002148_ID5
+#undef SHARED_F02002148_ID6
+#undef SHARED_F02002148_ID7
+#undef WORK
+#undef ABS
+#undef SHARED_F02003070_NAME
+#undef SHARED_F02003070_ID2
+#undef SHARED_F02003070_ID3
+#undef SHARED_F02003070_ID4
+#undef SHARED_F02003070_ID5
+#undef SHARED_F02003070_ID6
+#undef SHARED_F02003070_ID7
+#undef SHARED_F02003070_ID8
+#undef Func_02002614
+#undef Position
+#undef gData_02005798
+#undef gData_02005758
+#undef gData_02006868
+#undef gMarsLighthouseEntrance_Room7Triggers
+#undef gMarsLighthouseEntrance_Room6Triggers
+#undef gMarsLighthouseEntrance_Room5Triggers
+#undef gMarsLighthouseEntrance_Room4Triggers
+#undef gMarsLighthouseEntrance_Room3Triggers
+#undef gMarsLighthouseEntrance_Room2Triggers
+#undef gMarsLighthouseEntrance_Room1Triggers
+#undef gMarsLighthouseEntrance_Triggers
+#undef gData_020055d4
+#undef gData_0200503c
+#undef gData_02005714
+#undef gData_020056d0
+#undef gData_02005644
+#undef gData_02005578
+#undef gData_02005528
+#undef gData_020054cc
+#undef gData_0200547c
 // ---- scene/mars_lighthouse_entrance/s3884.c ----
 
 /// Scene code of overlay 0x6aa, in ROM order.
@@ -2095,6 +2476,7 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003884, Func_02003284, Func_02004bc0,
 #undef Position
 #include "../field/field_effect/move.c"
 
+#undef Position
 // ---- scene/mars_lighthouse_entrance/s3b30.c ----
 // @file
 // Scene code of overlay 0x6aa, in ROM order.
@@ -2105,11 +2487,17 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003884, Func_02003284, Func_02004bc0,
 #include "event_inline.h"
 #include "module/scene/scene.h"
 
-extern const s32 *gData_0200686c[];
+/* VIEW(s3b30): routine gData_0200686c as this part declared it; the joined file has another. */
+extern const s32 *gData_0200686c__s3b30[] __asm__("gData_0200686c");
+#define gData_0200686c gData_0200686c__s3b30
 
-void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
+/* VIEW(s3b30): routine Actor_StartScript as this part declared it; the joined file has another. */
+void Actor_StartScript__s3b30(struct FieldEffect *effect, const s32 *script) __asm__("Actor_StartScript");
+#define Actor_StartScript Actor_StartScript__s3b30
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
-void Actor_SetSpritePriorityB(struct FieldEffect *effect, s32 priority);
+/* VIEW(s3b30): routine Actor_SetSpritePriorityB as this part declared it; the joined file has another. */
+void Actor_SetSpritePriorityB__s3b30(struct FieldEffect *effect, s32 priority) __asm__("Actor_SetSpritePriorityB");
+#define Actor_SetSpritePriorityB Actor_SetSpritePriorityB__s3b30
 
 void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -2266,6 +2654,15 @@ void Func_02004160(struct PushEvent *event) {
 
 #include "../field/field_effect/advance_motion.c"
 
+#undef Actor_SetSpritePriorityB
+#undef Actor_StartScript
+#undef gData_0200686c
+#undef CELL_TABLE
+#undef CELL_SPRITE_DRAW
+#undef CELL_PUSH_SLOT_ENTRY
+#undef Actor_SetSpritePriorityB
+#undef Actor_StartScript
+#undef gData_0200686c
 // ---- scene/mars_lighthouse_entrance/s42f8.c ----
 // @file
 // Scene code of overlay 0x6aa, in ROM order.
@@ -2283,8 +2680,10 @@ void Func_02004160(struct PushEvent *event) {
 
 void Teleport_PlayWhirl(void);
 
-void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags, struct EffectOptions *options);
+/* VIEW(s42f8): routine Func_02003b30 as this part declared it; the joined file has another. */
+void Func_02003b30__s42f8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                   s32 velocityZ, u32 flags, struct EffectOptions *options) __asm__("Func_02003b30");
+#define Func_02003b30 Func_02003b30__s42f8
 
 void Func_020042f8(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -2349,7 +2748,9 @@ next:
 #include "cell_target.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Func_02004160(struct CellTarget *work, struct CellTargetEntry *entry);
+/* VIEW(s42f8): routine Func_02004160 as this part declared it; the joined file has another. */
+void Func_02004160__s42f8(struct CellTarget *work, struct CellTargetEntry *entry) __asm__("Func_02004160");
+#define Func_02004160 Func_02004160__s42f8
 
 DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, Data_020068b4, Func_020040f0,
                           Func_02004160)
@@ -2363,15 +2764,17 @@ DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, Data_020068b4,
 extern u16 *gData_0200e88c;
 extern u16 *gData_02006890;
 
+/* VIEW(s42f8): routine Func_020045f8 as this part declared it; the joined file has another. */
 // Records the four palette lists, writes each listed palette entry from its
 // red, green and blue, then copies two palettes from block32 and starts the
 // blend.
-DEFINE_PALETTE_SET_COLORS_FADE(Func_020045f8, gData_0200e88c, gData_02006890,
+DEFINE_PALETTE_SET_COLORS_FADE(Func_020045f8__s42f8, gData_0200e88c, gData_02006890,
                                Data_02006894, Data_02006880, Func_020048e8)
 
 #include "task.h"
 
-extern u16 gData_02006898;
+extern u16 gData_02006898 __asm__("Func_020045f8");
+#define Func_020045f8 Func_020045f8__s42f8
 
 DEFINE_PALETTE_CYCLE_START(Func_020046b4, gData_0200689c, gData_02006898,
                            Func_02004794, gData_0200e88c, gData_0200e888, 15,
@@ -2467,11 +2870,21 @@ DEFINE_ACTOR_SET_CELL_OPEN(Func_02004a60, Actor_GetCellIndex, Func_02004bc0)
 #include "version.h"
 #include "objcmd.h"
 
-void Func_02000038(void);
-void Func_02000070(void);
-void Func_0200308c(void);
-void Func_02003138(void);
-void Func_020031dc(void);
+/* VIEW(s42f8): routine Func_02000038 as this part declared it; the joined file has another. */
+void Func_02000038__s42f8(void) __asm__("Func_02000038");
+#define Func_02000038 Func_02000038__s42f8
+/* VIEW(s42f8): routine Func_02000070 as this part declared it; the joined file has another. */
+void Func_02000070__s42f8(void) __asm__("Func_02000070");
+#define Func_02000070 Func_02000070__s42f8
+/* VIEW(s42f8): routine Func_0200308c as this part declared it; the joined file has another. */
+void Func_0200308c__s42f8(void) __asm__("Func_0200308c");
+#define Func_0200308c Func_0200308c__s42f8
+/* VIEW(s42f8): routine Func_02003138 as this part declared it; the joined file has another. */
+void Func_02003138__s42f8(void) __asm__("Func_02003138");
+#define Func_02003138 Func_02003138__s42f8
+/* VIEW(s42f8): routine Func_020031dc as this part declared it; the joined file has another. */
+void Func_020031dc__s42f8(void) __asm__("Func_020031dc");
+#define Func_020031dc Func_020031dc__s42f8
 
 // clang-format off
 DEFINE_G_DATA_02004DE8(gData_02004de8, 200, 104)
@@ -2899,14 +3312,28 @@ void Func_02000044(void);
 void Func_02000050(void);
 void MarsLighthouseEntrance_GrindIce(void);
 void Func_02000648(void);
-void MarsLighthouseEntrance_BurstIceSheet(void);
+/* VIEW(s42f8): routine MarsLighthouseEntrance_BurstIceSheet as this part declared it; the joined file has another. */
+void MarsLighthouseEntrance_BurstIceSheet__s42f8(void) __asm__("MarsLighthouseEntrance_BurstIceSheet");
+#define MarsLighthouseEntrance_BurstIceSheet MarsLighthouseEntrance_BurstIceSheet__s42f8
 void Func_02000718(void);
-void Func_0200085c(void);
-void MarsLighthouseEntrance_PushStatueIntoFlames(void);
-void Func_0200096c(void);
-void Func_02000b84(void);
-void Func_02000ce4(void);
-void Func_02000e3c(void);
+/* VIEW(s42f8): routine Func_0200085c as this part declared it; the joined file has another. */
+void Func_0200085c__s42f8(void) __asm__("Func_0200085c");
+#define Func_0200085c Func_0200085c__s42f8
+/* VIEW(s42f8): routine MarsLighthouseEntrance_PushStatueIntoFlames as this part declared it; the joined file has another. */
+void MarsLighthouseEntrance_PushStatueIntoFlames__s42f8(void) __asm__("MarsLighthouseEntrance_PushStatueIntoFlames");
+#define MarsLighthouseEntrance_PushStatueIntoFlames MarsLighthouseEntrance_PushStatueIntoFlames__s42f8
+/* VIEW(s42f8): routine Func_0200096c as this part declared it; the joined file has another. */
+void Func_0200096c__s42f8(void) __asm__("Func_0200096c");
+#define Func_0200096c Func_0200096c__s42f8
+/* VIEW(s42f8): routine Func_02000b84 as this part declared it; the joined file has another. */
+void Func_02000b84__s42f8(void) __asm__("Func_02000b84");
+#define Func_02000b84 Func_02000b84__s42f8
+/* VIEW(s42f8): routine Func_02000ce4 as this part declared it; the joined file has another. */
+void Func_02000ce4__s42f8(void) __asm__("Func_02000ce4");
+#define Func_02000ce4 Func_02000ce4__s42f8
+/* VIEW(s42f8): routine Func_02000e3c as this part declared it; the joined file has another. */
+void Func_02000e3c__s42f8(void) __asm__("Func_02000e3c");
+#define Func_02000e3c Func_02000e3c__s42f8
 void Func_0200112c(void);
 void Func_02001138(void);
 
@@ -3213,3 +3640,18 @@ s32 gData_0200686c[] = {
     (s32)gData_020057f4,
     (s32)gData_02005830,
 };
+#undef Func_02000e3c
+#undef Func_02000ce4
+#undef Func_02000b84
+#undef Func_0200096c
+#undef MarsLighthouseEntrance_PushStatueIntoFlames
+#undef Func_0200085c
+#undef MarsLighthouseEntrance_BurstIceSheet
+#undef Func_020031dc
+#undef Func_02003138
+#undef Func_0200308c
+#undef Func_02000070
+#undef Func_02000038
+#undef Func_020045f8
+#undef Func_02004160
+#undef Func_02003b30

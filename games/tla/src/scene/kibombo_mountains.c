@@ -41,9 +41,15 @@ DEFINE_ACTOR_BOB(Actor_Bob)
 
 #include "scene_ids.h"
 
-extern const u8 gData_02001294[];
-extern const u8 gData_020015f0[];
-extern const u8 gData_020018c8[];
+/* VIEW(first): routine gData_02001294 as this part declared it; the joined file has another. */
+extern const u8 gData_02001294__first[] __asm__("gData_02001294");
+#define gData_02001294 gData_02001294__first
+/* VIEW(first): routine gData_020015f0 as this part declared it; the joined file has another. */
+extern const u8 gData_020015f0__first[] __asm__("gData_020015f0");
+#define gData_020015f0 gData_020015f0__first
+/* VIEW(first): routine gData_020018c8 as this part declared it; the joined file has another. */
+extern const u8 gData_020018c8__first[] __asm__("gData_020018c8");
+#define gData_020018c8 gData_020018c8__first
 
 const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -73,7 +79,9 @@ void Func_02000190(s32 unused, s32 id) {
 #include "iwram_call.h"
 #include "call.h"
 
-extern const u8 gData_02001404[];
+/* VIEW(first): routine gData_02001404 as this part declared it; the joined file has another. */
+extern const u8 gData_02001404__first[] __asm__("gData_02001404");
+#define gData_02001404 gData_02001404__first
 
 void Actor_StartScript(struct Actor *object, const u8 *script);
 void Actor_StartIdle(struct Actor *object);
@@ -237,10 +245,18 @@ void Func_0200051c(s32 unused, s32 cell) {
   }
 }
 
-extern const u8 gData_02001ad8[];
-extern const u8 gData_02001ae4[];
-extern const u8 gData_02001c58[];
-extern const u8 gData_02001db4[];
+/* VIEW(first): routine gData_02001ad8 as this part declared it; the joined file has another. */
+extern const u8 gData_02001ad8__first[] __asm__("gData_02001ad8");
+#define gData_02001ad8 gData_02001ad8__first
+/* VIEW(first): routine gData_02001ae4 as this part declared it; the joined file has another. */
+extern const u8 gData_02001ae4__first[] __asm__("gData_02001ae4");
+#define gData_02001ae4 gData_02001ae4__first
+/* VIEW(first): routine gData_02001c58 as this part declared it; the joined file has another. */
+extern const u8 gData_02001c58__first[] __asm__("gData_02001c58");
+#define gData_02001c58 gData_02001c58__first
+/* VIEW(first): routine gData_02001db4 as this part declared it; the joined file has another. */
+extern const u8 gData_02001db4__first[] __asm__("gData_02001db4");
+#define gData_02001db4 gData_02001db4__first
 
 const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -583,6 +599,23 @@ void Func_02000ff4(void) {
     Func_02000e28(10);
 }
 
+#undef gData_02001db4
+#undef gData_02001c58
+#undef gData_02001ae4
+#undef gData_02001ad8
+#undef gData_02001404
+#undef gData_020018c8
+#undef gData_020015f0
+#undef gData_02001294
+#undef EVENT_WORK_VALUE
+#undef gData_02001db4
+#undef gData_02001c58
+#undef gData_02001ae4
+#undef gData_02001ad8
+#undef gData_02001404
+#undef gData_020018c8
+#undef gData_020015f0
+#undef gData_02001294
 // ---- scene/data/kibombo_mountains.c ----
 #include "shared/tables.h"
 #include "types.h"
@@ -592,14 +625,24 @@ void Func_02000ff4(void) {
 #include "module/scene/kibombo_mountains.h"
 
 void Func_02000038(void);
-void Actor_Bob(void);
+/* VIEW(data): routine Actor_Bob as this part declared it; the joined file has another. */
+void Actor_Bob__data(void) __asm__("Actor_Bob");
+#define Actor_Bob Actor_Bob__data
 void Pillar_SetMoved(void);
 void Func_02000124(void);
-void Func_02000190(void);
-void Func_020001a0(void);
+/* VIEW(data): routine Func_02000190 as this part declared it; the joined file has another. */
+void Func_02000190__data(void) __asm__("Func_02000190");
+#define Func_02000190 Func_02000190__data
+/* VIEW(data): routine Func_020001a0 as this part declared it; the joined file has another. */
+void Func_020001a0__data(void) __asm__("Func_020001a0");
+#define Func_020001a0 Func_020001a0__data
 void Func_02000428(void);
-void Func_020004b0(void);
-void Func_0200051c(void);
+/* VIEW(data): routine Func_020004b0 as this part declared it; the joined file has another. */
+void Func_020004b0__data(void) __asm__("Func_020004b0");
+#define Func_020004b0 Func_020004b0__data
+/* VIEW(data): routine Func_0200051c as this part declared it; the joined file has another. */
+void Func_0200051c__data(void) __asm__("Func_0200051c");
+#define Func_0200051c Func_0200051c__data
 void Func_02000f9c(void);
 
 extern u32 gData_02001728[];
@@ -842,3 +885,8 @@ s16 gData_02001db4[] = {
     3, 0, -1, -1, 0, 0, 0, 0,
 };
 // clang-format on
+#undef Func_0200051c
+#undef Func_020004b0
+#undef Func_020001a0
+#undef Func_02000190
+#undef Actor_Bob

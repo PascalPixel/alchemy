@@ -101,6 +101,7 @@ void Func_02000290(void) { Djinn_JoinParty(0x18, 1, 0x13); }
 
 #undef FIELD_AT
 
+#undef FIELD_AT
 // ---- scene/prox/prox.c ----
 
 /// Scene code of overlay 0x6a8, in ROM order.

@@ -128,8 +128,12 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 #include "scene_ids.h"
 
-extern const u8 gData_020033d0[];
-extern const u8 gData_020033f0[];
+/* VIEW(first): routine gData_020033d0 as this part declared it; the joined file has another. */
+extern const u8 gData_020033d0__first[] __asm__("gData_020033d0");
+#define gData_020033d0 gData_020033d0__first
+/* VIEW(first): routine gData_020033f0 as this part declared it; the joined file has another. */
+extern const u8 gData_020033f0__first[] __asm__("gData_020033f0");
+#define gData_020033f0 gData_020033f0__first
 
 const struct ActorPlacement *Func_02000488(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom6)
@@ -141,12 +145,24 @@ const struct ActorPlacement *Func_02000488(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern const u8 gData_02003618[];
-extern const u8 gData_02003648[];
-extern const u8 gData_02003660[];
-extern const u8 gData_02003690[];
-extern const u8 gData_02003708[];
-extern const u8 gData_020037c8[];
+/* VIEW(first): routine gData_02003618 as this part declared it; the joined file has another. */
+extern const u8 gData_02003618__first[] __asm__("gData_02003618");
+#define gData_02003618 gData_02003618__first
+/* VIEW(first): routine gData_02003648 as this part declared it; the joined file has another. */
+extern const u8 gData_02003648__first[] __asm__("gData_02003648");
+#define gData_02003648 gData_02003648__first
+/* VIEW(first): routine gData_02003660 as this part declared it; the joined file has another. */
+extern const u8 gData_02003660__first[] __asm__("gData_02003660");
+#define gData_02003660 gData_02003660__first
+/* VIEW(first): routine gData_02003690 as this part declared it; the joined file has another. */
+extern const u8 gData_02003690__first[] __asm__("gData_02003690");
+#define gData_02003690 gData_02003690__first
+/* VIEW(first): routine gData_02003708 as this part declared it; the joined file has another. */
+extern const u8 gData_02003708__first[] __asm__("gData_02003708");
+#define gData_02003708 gData_02003708__first
+/* VIEW(first): routine gData_020037c8 as this part declared it; the joined file has another. */
+extern const u8 gData_020037c8__first[] __asm__("gData_020037c8");
+#define gData_020037c8 gData_020037c8__first
 
 const struct Trigger *Func_020004c8(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom2)
@@ -372,7 +388,9 @@ void Func_02000920(void) {
 
 void Func_0200095c(void) { Func_0200189c(); }
 
-extern const u8 gData_02003370[];
+/* VIEW(first): routine gData_02003370 as this part declared it; the joined file has another. */
+extern const u8 gData_02003370__first[] __asm__("gData_02003370");
+#define gData_02003370 gData_02003370__first
 
 /// Actor 8 is placed and given its script while the screen flashes, and three
 /// map cells change.
@@ -680,6 +698,30 @@ void Func_020010d4(struct Actor *object) {
 
 #include "../field/field_effect/advance_motion.c"
 
+#undef gData_02003370
+#undef gData_020037c8
+#undef gData_02003660
+#undef gData_02003648
+#undef gData_02003618
+#undef gData_020033f0
+#undef gData_020033d0
+#undef gData_02003708
+#undef gData_02003690
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
+#undef FIELD_AT
+#undef gData_02003370
+#undef gData_020037c8
+#undef gData_02003660
+#undef gData_02003648
+#undef gData_02003618
+#undef gData_020033f0
+#undef gData_020033d0
+#undef gData_02003708
+#undef gData_02003690
 // ---- scene/tundaria_tower/events_f.c ----
 // ---- games/tla/src/scene/tundaria_tower/s11e0.c ----
 #include "types.h"
@@ -1970,6 +2012,7 @@ void Func_02002764(const u16 *table) {
 
 #include "../field/field_effect/advance_motion_priority.c"
 
+#undef BYTE_AT
 // ---- scene/tundaria_tower/s29d0.c ----
 
 #include "shared/effects.h"
@@ -2215,7 +2258,9 @@ void Func_020005d0(void);
 void Func_020008a8(void);
 void Func_02000b3c(void);
 void Func_02000bfc(void);
-void Func_02000c64(void);
+/* VIEW(s29d0): routine Func_02000c64 as this part declared it; the joined file has another. */
+void Func_02000c64__s29d0(void) __asm__("Func_02000c64");
+#define Func_02000c64 Func_02000c64__s29d0
 
 // clang-format off
 u32 gData_020031b0[] = {
@@ -2540,3 +2585,4 @@ struct Trigger gData_02003c90[] = {
      EVENT(Func_02000fb8)},
     {TRIGGER_TABLE_END},
 };
+#undef Func_02000c64

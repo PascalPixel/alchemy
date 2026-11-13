@@ -67,7 +67,9 @@ extern s16 gLightSpriteCount;
 extern struct Actor *gLightSpriteActors[];
 extern s16 gLightSpritesLarge;
 extern s16 gLightSpritePriority;
-void Oam_AddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
+/* VIEW(first): routine Oam_AddSpriteAtDepthClamped as this part declared it; the joined file has another. */
+void Oam_AddSpriteAtDepthClamped__first(struct LightOam *oam, s32 depth) __asm__("Oam_AddSpriteAtDepthClamped");
+#define Oam_AddSpriteAtDepthClamped Oam_AddSpriteAtDepthClamped__first
 void JupiterLighthouse_StepOnButton(void);
 void JupiterLighthouse_StepOffButton(void);
 extern u16 gPaletteCycleColors[];
@@ -201,8 +203,10 @@ DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, MapGrid_GetCellBehavior,
                               Position_FlatDistance, gWhirlwindEndScript,
                               gWhirlwindRiding)
 
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags, struct EffectOptions *options);
+/* VIEW(first): routine FieldEffect_Spawn as this part declared it; the joined file has another. */
+void FieldEffect_Spawn__first(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options) __asm__("FieldEffect_Spawn");
+#define FieldEffect_Spawn FieldEffect_Spawn__first
 
 DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation,
                        Whirlwind_UpdateLower, FieldEffect_Spawn)
@@ -313,6 +317,11 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 #include "../field/field_effect/move.c"
 
+#undef FieldEffect_Spawn
+#undef Oam_AddSpriteAtDepthClamped
+#undef FLAG_GATES_BUTTON_HELD
+#undef FieldEffect_Spawn
+#undef Oam_AddSpriteAtDepthClamped
 // ---- scene/jupiter_lighthouse_room_1/cracked_tiles.c ----
 // @file
 // Jupiter Lighthouse's ground floor: its copy of the effect spawner, and the
@@ -332,8 +341,12 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-void Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
-void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
+/* VIEW(cracked_tiles): routine Actor_SelectAnimation as this part declared it; the joined file has another. */
+void Actor_SelectAnimation__cracked_tiles(struct FieldEffect *effect, s32 mode) __asm__("Actor_SelectAnimation");
+#define Actor_SelectAnimation Actor_SelectAnimation__cracked_tiles
+/* VIEW(cracked_tiles): routine Actor_StartScript as this part declared it; the joined file has another. */
+void Actor_StartScript__cracked_tiles(struct FieldEffect *effect, const s32 *script) __asm__("Actor_StartScript");
+#define Actor_StartScript Actor_StartScript__cracked_tiles
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -453,6 +466,13 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s156c,
 
 #include "../field/field_effect/advance_motion.c"
 
+#undef Actor_StartScript
+#undef Actor_SelectAnimation
+#undef CELL_TABLE
+#undef CELL_SPRITE_DRAW
+#undef CELL_PUSH_SLOT_ENTRY
+#undef Actor_StartScript
+#undef Actor_SelectAnimation
 // ---- scene/jupiter_lighthouse_room_1/cracked_tile_steps.c ----
 // @file
 // Jupiter Lighthouse's ground floor: the cracked tiles' steps and landings.
@@ -480,8 +500,10 @@ extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags, struct EffectOptions *options);
+/* VIEW(cracked_tile_steps): routine FieldEffect_Spawn as this part declared it; the joined file has another. */
+void FieldEffect_Spawn__cracked_tile_steps(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options) __asm__("FieldEffect_Spawn");
+#define FieldEffect_Spawn FieldEffect_Spawn__cracked_tile_steps
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   FieldCamera_MoveWithinMapBounds(x, y, z, mode);
@@ -502,3 +524,4 @@ DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
 
 DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
                                   CrackedTile_DropInLower)
+#undef FieldEffect_Spawn

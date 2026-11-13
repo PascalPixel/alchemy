@@ -22,8 +22,12 @@
 #include "event_work.h"
 #include "module/field/field.h"
 
-extern const u8 gData_020031c4[];
-extern s32 gPaletteCyclePausesInEvents;
+/* VIEW(first): routine gData_020031c4 as this part declared it; the joined file has another. */
+extern const u8 gData_020031c4__first[] __asm__("gData_020031c4");
+#define gData_020031c4 gData_020031c4__first
+/* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it; the joined file has another. */
+extern s32 gPaletteCyclePausesInEvents__first __asm__("gPaletteCyclePausesInEvents");
+#define gPaletteCyclePausesInEvents gPaletteCyclePausesInEvents__first
 extern s16 gLightSpriteCount;
 extern u16 gLightSpritePriority;
 void JupiterLighthouse_OpenDoor(s32 value);
@@ -683,7 +687,9 @@ void PaletteCycle_SetPausesInEvents(s32 value) {
   gPaletteCyclePausesInEvents = value;
 }
 
-extern s32 gPaletteCycleFrame;
+/* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined file has another. */
+extern s32 gPaletteCycleFrame__first __asm__("gPaletteCycleFrame");
+#define gPaletteCycleFrame gPaletteCycleFrame__first
 
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
@@ -718,7 +724,9 @@ DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-extern const s32 gWhirlwindEndScript[];
+/* VIEW(first): routine gWhirlwindEndScript as this part declared it; the joined file has another. */
+extern const s32 gWhirlwindEndScript__first[] __asm__("gWhirlwindEndScript");
+#define gWhirlwindEndScript gWhirlwindEndScript__first
 extern s32 gWhirlwindRiding;
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
@@ -729,6 +737,15 @@ DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
                         Position_FlatDistance, gWhirlwindEndScript,
                         gWhirlwindRiding)
 
+#undef gWhirlwindEndScript
+#undef gPaletteCycleFrame
+#undef gPaletteCyclePausesInEvents
+#undef gData_020031c4
+#undef FIELD_AT
+#undef gWhirlwindEndScript
+#undef gPaletteCycleFrame
+#undef gPaletteCyclePausesInEvents
+#undef gData_020031c4
 // ---- scene/jupiter_lighthouse_room_7/s16d4.c ----
 
 /// Scene code of overlay 0x6a0, in ROM order.
@@ -745,8 +762,10 @@ DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void Whirlwind_Update(struct Actor *self);
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags, struct EffectOptions *options);
+/* VIEW(s16d4): routine FieldEffect_Spawn as this part declared it; the joined file has another. */
+void FieldEffect_Spawn__s16d4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options) __asm__("FieldEffect_Spawn");
+#define FieldEffect_Spawn FieldEffect_Spawn__s16d4
 
 DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation, Whirlwind_Update,
                        FieldEffect_Spawn)
@@ -848,6 +867,8 @@ void LightSprites_SetPriority(u16 value) {
 
 #include "../field/field_effect/move.c"
 
+#undef FieldEffect_Spawn
+#undef FieldEffect_Spawn
 // ---- scene/jupiter_lighthouse_room_7/s1f74.c ----
 // @file
 // Scene code of overlay 0x6a0, in ROM order.
@@ -863,8 +884,12 @@ void LightSprites_SetPriority(u16 value) {
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-void Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
-void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
+/* VIEW(s1f74): routine Actor_SelectAnimation as this part declared it; the joined file has another. */
+void Actor_SelectAnimation__s1f74(struct FieldEffect *effect, s32 mode) __asm__("Actor_SelectAnimation");
+#define Actor_SelectAnimation Actor_SelectAnimation__s1f74
+/* VIEW(s1f74): routine Actor_StartScript as this part declared it; the joined file has another. */
+void Actor_StartScript__s1f74(struct FieldEffect *effect, const s32 *script) __asm__("Actor_StartScript");
+#define Actor_StartScript Actor_StartScript__s1f74
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -960,6 +985,13 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 // one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
+#undef Actor_StartScript
+#undef Actor_SelectAnimation
+#undef CELL_TABLE
+#undef CELL_SPRITE_DRAW
+#undef CELL_PUSH_SLOT_ENTRY
+#undef Actor_StartScript
+#undef Actor_SelectAnimation
 // ---- scene/jupiter_lighthouse_room_7/s25a4.c ----
 
 // Scene code of overlay 0x6a0, in ROM order.
@@ -988,7 +1020,8 @@ struct CellTarget__s25a4 {
 
 #include "io_write.h"
 
-DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s25a4,
+/* VIEW(s25a4): routine CrackedTile_Fall as this part declared it; the joined file has another. */
+DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall__s25a4, CellTarget__s25a4,
                          Leader_CenterInCell)
 
 #include "../field/field_effect/advance_motion.c"
@@ -1011,8 +1044,11 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s25a4,
 #include "module/scene/jupiter_lighthouse_room_7.h"
 #include "module/scene/scene.h"
 
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags, struct EffectOptions *options);
+/* VIEW(s273c): routine FieldEffect_Spawn as this part declared it; the joined file has another. */
+void FieldEffect_Spawn__s273c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options) __asm__("FieldEffect_Spawn") __asm__("CrackedTile_Fall");
+#define CrackedTile_Fall CrackedTile_Fall__s25a4
+#define FieldEffect_Spawn FieldEffect_Spawn__s273c
 
 void CrackedTile_DropIn(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1097,6 +1133,10 @@ s16 gData_02002c64[] = {
 };
 // clang-format on
 
+#undef FieldEffect_Spawn
+#undef CrackedTile_Fall
+#undef FieldEffect_Spawn
+#undef CrackedTile_Fall
 // ---- scene/data/jupiter_lighthouse_room_7.c ----
 
 #include "macros.h"
@@ -1108,9 +1148,15 @@ s16 gData_02002c64[] = {
 
 void Func_02000038(void);
 void JupiterLighthouse_StepOnButton(void);
-void Func_02000778(void);
-void Func_020007a4(void);
-void Func_020009e4(void);
+/* VIEW(data_7): routine Func_02000778 as this part declared it; the joined file has another. */
+void Func_02000778__data_7(void) __asm__("Func_02000778");
+#define Func_02000778 Func_02000778__data_7
+/* VIEW(data_7): routine Func_020007a4 as this part declared it; the joined file has another. */
+void Func_020007a4__data_7(void) __asm__("Func_020007a4");
+#define Func_020007a4 Func_020007a4__data_7
+/* VIEW(data_7): routine Func_020009e4 as this part declared it; the joined file has another. */
+void Func_020009e4__data_7(void) __asm__("Func_020009e4");
+#define Func_020009e4 Func_020009e4__data_7
 void Func_02000e20(void);
 
 // clang-format off
@@ -1211,3 +1257,6 @@ LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_MediumScript,
     gFieldEffect_LongScript,
 };
+#undef Func_020009e4
+#undef Func_020007a4
+#undef Func_02000778

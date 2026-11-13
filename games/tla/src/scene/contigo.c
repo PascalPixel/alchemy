@@ -1933,7 +1933,9 @@ void Func_020036f0(void) {
   }
 }
 
-void Palette_SetColors(const u8 *a, const u8 *b, const u8 *c, const u8 *d);
+/* VIEW(contigo): routine Palette_SetColors as this part declared it; the joined file has another. */
+void Palette_SetColors__contigo(const u8 *a, const u8 *b, const u8 *c, const u8 *d) __asm__("Palette_SetColors");
+#define Palette_SetColors Palette_SetColors__contigo
 void Map_CenterOnFollowedPoint(void);
 
 // Schedules Func_020036f0 and gives objects 14 and 15 their flag bytes and
@@ -2291,6 +2293,18 @@ void Func_02003cd8(struct Actor *object) {
 #undef MSG_NEXT_PRIZE
 #undef MSG_COME_AGAIN
 
+#undef Palette_SetColors
+#undef Func_02003f54
+#undef Func_02003e54
+#undef BYTE_AT
+#undef MSG_COINS_WON
+#undef MSG_COINS_LOST
+#undef MSG_READ_SIGN
+#undef MSG_CONGRATULATIONS
+#undef MSG_FIRST_PRIZE
+#undef MSG_NEXT_PRIZE
+#undef MSG_COME_AGAIN
+#undef Palette_SetColors
 // ---- games/tla/src/scene/contigo/s3e54.c ----
 // The sparkle's setup, Func_02003f54, which sets byte 0x62 of an object, and
 // the overlay's data.

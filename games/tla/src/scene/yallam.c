@@ -35,11 +35,21 @@ s32 Yallam_HideSprite(struct Actor *object) {
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-extern const u8 MsgDoYouWant[];
-extern const u8 MsgRunningAroundIn[];
-extern const u8 MsgThereSALot[];
-extern const u8 MsgThereSAGame[];
-extern const u8 MsgIOnceHeard[];
+/* VIEW(first): routine MsgDoYouWant as this part declared it; the joined file has another. */
+extern const u8 MsgDoYouWant__first[] __asm__("MsgDoYouWant");
+#define MsgDoYouWant MsgDoYouWant__first
+/* VIEW(first): routine MsgRunningAroundIn as this part declared it; the joined file has another. */
+extern const u8 MsgRunningAroundIn__first[] __asm__("MsgRunningAroundIn");
+#define MsgRunningAroundIn MsgRunningAroundIn__first
+/* VIEW(first): routine MsgThereSALot as this part declared it; the joined file has another. */
+extern const u8 MsgThereSALot__first[] __asm__("MsgThereSALot");
+#define MsgThereSALot MsgThereSALot__first
+/* VIEW(first): routine MsgThereSAGame as this part declared it; the joined file has another. */
+extern const u8 MsgThereSAGame__first[] __asm__("MsgThereSAGame");
+#define MsgThereSAGame MsgThereSAGame__first
+/* VIEW(first): routine MsgIOnceHeard as this part declared it; the joined file has another. */
+extern const u8 MsgIOnceHeard__first[] __asm__("MsgIOnceHeard");
+#define MsgIOnceHeard MsgIOnceHeard__first
 
 void Yallam_RunSongPath(s32 id);
 void Yallam_ShowSongGame(void);
@@ -59,7 +69,9 @@ struct YallamStop {
 };
 
 extern struct YallamSaved gYallam_SavedSongGame[5];
-extern const struct YallamStop gYallam_Doors[];
+/* VIEW(first): routine gYallam_Doors as this part declared it; the joined file has another. */
+extern const struct YallamStop gYallam_Doors__first[] __asm__("gYallam_Doors");
+#define gYallam_Doors gYallam_Doors__first
 
 s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b);
 s32 ArcTan2(s32 y, s32 x);
@@ -192,9 +204,15 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern const u8 gYallam_Placements[];
-extern const u8 gYallam_Room2Placements[];
-extern const u8 gYallam_SongGamePlacements[];
+/* VIEW(first): routine gYallam_Placements as this part declared it; the joined file has another. */
+extern const u8 gYallam_Placements__first[] __asm__("gYallam_Placements");
+#define gYallam_Placements gYallam_Placements__first
+/* VIEW(first): routine gYallam_Room2Placements as this part declared it; the joined file has another. */
+extern const u8 gYallam_Room2Placements__first[] __asm__("gYallam_Room2Placements");
+#define gYallam_Room2Placements gYallam_Room2Placements__first
+/* VIEW(first): routine gYallam_SongGamePlacements as this part declared it; the joined file has another. */
+extern const u8 gYallam_SongGamePlacements__first[] __asm__("gYallam_SongGamePlacements");
+#define gYallam_SongGamePlacements gYallam_SongGamePlacements__first
 
 const u8 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room1 &&
@@ -301,9 +319,15 @@ void Yallam_DigFifthHole(void) {
 
 void Yallam_DigSixthHole(void) { Yallam_EditMap(67, 25, 2, 2, 87, 8, 1); }
 
-extern const u8 gYallam_Triggers[];
-extern const u8 gYallam_RoomTwoTriggers[];
-extern const u8 gYallam_EntranceFifteenTriggers[];
+/* VIEW(first): routine gYallam_Triggers as this part declared it; the joined file has another. */
+extern const u8 gYallam_Triggers__first[] __asm__("gYallam_Triggers");
+#define gYallam_Triggers gYallam_Triggers__first
+/* VIEW(first): routine gYallam_RoomTwoTriggers as this part declared it; the joined file has another. */
+extern const u8 gYallam_RoomTwoTriggers__first[] __asm__("gYallam_RoomTwoTriggers");
+#define gYallam_RoomTwoTriggers gYallam_RoomTwoTriggers__first
+/* VIEW(first): routine gYallam_EntranceFifteenTriggers as this part declared it; the joined file has another. */
+extern const u8 gYallam_EntranceFifteenTriggers__first[] __asm__("gYallam_EntranceFifteenTriggers");
+#define gYallam_EntranceFifteenTriggers gYallam_EntranceFifteenTriggers__first
 
 const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room1 &&
@@ -1360,16 +1384,36 @@ void Yallam_StartRunner(s32 id) {
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
-extern const u8 MsgHereLetMe[];
-extern const u8 gYallam_SongGameGather9[];
-extern const u8 gYallam_SongGameGather10[];
-extern const u8 gYallam_SongGameForm8[];
-extern const u8 gYallam_SongGameForm9[];
-extern const u8 gYallam_SongGameForm10[];
-extern const u8 gYallam_SongGameForm11[];
-extern const u8 gYallam_SongGameStart8[];
-extern const u8 gYallam_SongGameStart10[];
-extern const u8 gYallam_SongGameStart9[];
+/* VIEW(first): routine MsgHereLetMe as this part declared it; the joined file has another. */
+extern const u8 MsgHereLetMe__first[] __asm__("MsgHereLetMe");
+#define MsgHereLetMe MsgHereLetMe__first
+/* VIEW(first): routine gYallam_SongGameGather9 as this part declared it; the joined file has another. */
+extern const u8 gYallam_SongGameGather9__first[] __asm__("gYallam_SongGameGather9");
+#define gYallam_SongGameGather9 gYallam_SongGameGather9__first
+/* VIEW(first): routine gYallam_SongGameGather10 as this part declared it; the joined file has another. */
+extern const u8 gYallam_SongGameGather10__first[] __asm__("gYallam_SongGameGather10");
+#define gYallam_SongGameGather10 gYallam_SongGameGather10__first
+/* VIEW(first): routine gYallam_SongGameForm8 as this part declared it; the joined file has another. */
+extern const u8 gYallam_SongGameForm8__first[] __asm__("gYallam_SongGameForm8");
+#define gYallam_SongGameForm8 gYallam_SongGameForm8__first
+/* VIEW(first): routine gYallam_SongGameForm9 as this part declared it; the joined file has another. */
+extern const u8 gYallam_SongGameForm9__first[] __asm__("gYallam_SongGameForm9");
+#define gYallam_SongGameForm9 gYallam_SongGameForm9__first
+/* VIEW(first): routine gYallam_SongGameForm10 as this part declared it; the joined file has another. */
+extern const u8 gYallam_SongGameForm10__first[] __asm__("gYallam_SongGameForm10");
+#define gYallam_SongGameForm10 gYallam_SongGameForm10__first
+/* VIEW(first): routine gYallam_SongGameForm11 as this part declared it; the joined file has another. */
+extern const u8 gYallam_SongGameForm11__first[] __asm__("gYallam_SongGameForm11");
+#define gYallam_SongGameForm11 gYallam_SongGameForm11__first
+/* VIEW(first): routine gYallam_SongGameStart8 as this part declared it; the joined file has another. */
+extern const u8 gYallam_SongGameStart8__first[] __asm__("gYallam_SongGameStart8");
+#define gYallam_SongGameStart8 gYallam_SongGameStart8__first
+/* VIEW(first): routine gYallam_SongGameStart10 as this part declared it; the joined file has another. */
+extern const u8 gYallam_SongGameStart10__first[] __asm__("gYallam_SongGameStart10");
+#define gYallam_SongGameStart10 gYallam_SongGameStart10__first
+/* VIEW(first): routine gYallam_SongGameStart9 as this part declared it; the joined file has another. */
+extern const u8 gYallam_SongGameStart9__first[] __asm__("gYallam_SongGameStart9");
+#define gYallam_SongGameStart9 gYallam_SongGameStart9__first
 
 /// The child shows the party the song's game.
 /// "Here, let me show you!"
@@ -1801,6 +1845,53 @@ void Yallam_StartWatchers(void) {
   other->update = Yallam_WatchSongGame;
 }
 
+#undef gYallam_SongGameStart9
+#undef gYallam_SongGameStart10
+#undef gYallam_SongGameStart8
+#undef gYallam_SongGameForm11
+#undef gYallam_SongGameForm10
+#undef gYallam_SongGameForm9
+#undef gYallam_SongGameForm8
+#undef gYallam_SongGameGather10
+#undef gYallam_SongGameGather9
+#undef MsgHereLetMe
+#undef gYallam_EntranceFifteenTriggers
+#undef gYallam_RoomTwoTriggers
+#undef gYallam_Triggers
+#undef gYallam_SongGamePlacements
+#undef gYallam_Room2Placements
+#undef gYallam_Placements
+#undef gYallam_Doors
+#undef MsgIOnceHeard
+#undef MsgThereSAGame
+#undef MsgThereSALot
+#undef MsgRunningAroundIn
+#undef MsgDoYouWant
+#undef BYTE_AT
+#undef EVENT_WORK
+#undef FIELD_AT
+#undef gYallam_SongGameStart9
+#undef gYallam_SongGameStart10
+#undef gYallam_SongGameStart8
+#undef gYallam_SongGameForm11
+#undef gYallam_SongGameForm10
+#undef gYallam_SongGameForm9
+#undef gYallam_SongGameForm8
+#undef gYallam_SongGameGather10
+#undef gYallam_SongGameGather9
+#undef MsgHereLetMe
+#undef gYallam_EntranceFifteenTriggers
+#undef gYallam_RoomTwoTriggers
+#undef gYallam_Triggers
+#undef gYallam_SongGamePlacements
+#undef gYallam_Room2Placements
+#undef gYallam_Placements
+#undef gYallam_Doors
+#undef MsgIOnceHeard
+#undef MsgThereSAGame
+#undef MsgThereSALot
+#undef MsgRunningAroundIn
+#undef MsgDoYouWant
 // ---- scene/data/yallam.c ----
 #include "shared/tables.h"
 #include "types.h"
@@ -1809,7 +1900,9 @@ void Yallam_StartWatchers(void) {
 #include "version.h"
 #include "module/scene/yallam.h"
 
-void Yallam_HideSprite(void);
+/* VIEW(data): routine Yallam_HideSprite as this part declared it; the joined file has another. */
+void Yallam_HideSprite__data(void) __asm__("Yallam_HideSprite");
+#define Yallam_HideSprite Yallam_HideSprite__data
 void Yallam_EnterDoor(void);
 void Yallam_DigThirdHole(void);
 void Yallam_DigFifthHole(void);
@@ -2129,3 +2222,4 @@ struct Trigger gYallam_EntranceFifteenTriggers[] = {
      MSGNO(MsgTheStoryIs)},
     {TRIGGER_TABLE_END},
 };
+#undef Yallam_HideSprite

@@ -77,7 +77,9 @@ DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gPaletteCycleTimer,
                           gPaletteCycleIndex, gPaletteSlots,
                           gPaletteCycleBright, gPaletteColors)
 
-void Func_020017b4(void);
+/* VIEW(first): routine Func_020017b4 as this part declared it; the joined file has another. */
+void Func_020017b4__first(void) __asm__("Func_020017b4");
+#define Func_020017b4 Func_020017b4__first
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -117,6 +119,9 @@ void Func_02000328(void) {
 
 #include "../field/field_effect/move.c"
 
+#undef Func_020017b4
+#undef BG_PLTT_SET_RGB
+#undef Func_020017b4
 // ---- scene/anemos_inner_sanctum/scene_tables.c ----
 // @file
 // Scene code of overlay 0x6b0, in ROM order.
@@ -135,7 +140,9 @@ void Func_02000328(void) {
 
 void Actor_SelectAnimation(struct Actor *, s32);
 void Actor_StartScript(struct Actor *object, const s32 *script);
-extern const s32 *gData_02003840[];
+/* VIEW(scene_tables): routine gData_02003840 as this part declared it; the joined file has another. */
+extern const s32 *gData_02003840__scene_tables[] __asm__("gData_02003840");
+#define gData_02003840 gData_02003840__scene_tables
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -229,7 +236,9 @@ s32 Func_02000660(struct Actor *object) {
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-extern const u8 gData_02003674[];
+/* VIEW(scene_tables): routine gData_02003674 as this part declared it; the joined file has another. */
+extern const u8 gData_02003674__scene_tables[] __asm__("gData_02003674");
+#define gData_02003674 gData_02003674__scene_tables
 
 void Func_020006a4(struct Actor *source) {
   struct Actor *object =
@@ -285,6 +294,11 @@ s32 Func_02000794(struct Actor *object) {
 
 #include "../field/object/wait_until_idle.c"
 
+#undef gData_02003674
+#undef gData_02003840
+#undef BYTE_AT
+#undef gData_02003674
+#undef gData_02003840
 // ---- scene/anemos_inner_sanctum/scene_tables.c ----
 
 // Scene code of overlay 0x6b0, in ROM order.
@@ -309,7 +323,9 @@ extern struct ActorPlacement gData_02003b38[];
 extern struct ActorPlacement gData_02003b50[];
 extern struct ActorPlacement gData_02003b68[];
 extern struct ActorPlacement gData_02003bc8[];
-extern const u8 gData_02003c88[];
+/* VIEW(scene_tables): routine gData_02003c88 as this part declared it; the joined file has another. */
+extern const u8 gData_02003c88__scene_tables[] __asm__("gData_02003c88");
+#define gData_02003c88 gData_02003c88__scene_tables
 extern struct ActorPlacement gData_02003ce8[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
@@ -349,7 +365,9 @@ struct Work {
 };
 
 void Actor_StartScript();
-extern u8 gData_02003684[];
+/* VIEW(scene_tables): routine gData_02003684 as this part declared it; the joined file has another. */
+extern u8 gData_02003684__scene_tables[] __asm__("gData_02003684");
+#define gData_02003684 gData_02003684__scene_tables
 
 void Func_0200088c(struct Vector3 *from, struct Vector3 *to, s16 part) {
   struct Work *actor;
@@ -418,6 +436,11 @@ void Func_02000a78(s32 a0, s32 a1, s16 a2) {
   Actor_SetSpriteFlags(t0, 0);
 }
 
+#undef gData_02003684
+#undef gData_02003c88
+#undef BYTE_AT
+#undef gData_02003684
+#undef gData_02003c88
 // ---- scene/anemos_inner_sanctum/s0ac8.c ----
 
 // Scene code of overlay 0x6b0, in ROM order.
@@ -462,9 +485,15 @@ void Func_020009b8__s0ac8() __asm__("Func_020009b8");
 void Func_02000a78__s0ac8() __asm__("Func_02000a78");
 #define Func_02000a78 Func_02000a78__s0ac8
 void BlendScript_Resume(void);
-extern u8 gData_020035cc[];
-extern u8 gData_02003620[];
-extern s32 gData_020036fc[][2];
+/* VIEW(s0ac8): routine gData_020035cc as this part declared it; the joined file has another. */
+extern u8 gData_020035cc__s0ac8[] __asm__("gData_020035cc");
+#define gData_020035cc gData_020035cc__s0ac8
+/* VIEW(s0ac8): routine gData_02003620 as this part declared it; the joined file has another. */
+extern u8 gData_02003620__s0ac8[] __asm__("gData_02003620");
+#define gData_02003620 gData_02003620__s0ac8
+/* VIEW(s0ac8): routine gData_020036fc as this part declared it; the joined file has another. */
+extern s32 gData_020036fc__s0ac8[][2] __asm__("gData_020036fc");
+#define gData_020036fc gData_020036fc__s0ac8
 
 void Func_02000ac8(void) {
   struct Work__s0ac8 *work = ((struct Globals *)Ram_HeapSlots)->work;
@@ -691,9 +720,15 @@ void Func_02000ac8(void) {
 
 void Func_02001090(void) { GameFlag_Clear(0x200); }
 
-extern u8 gData_020036e4[];
-extern u8 gData_020036ea[];
-extern u8 gData_020036f6[];
+/* VIEW(s0ac8): routine gData_020036e4 as this part declared it; the joined file has another. */
+extern u8 gData_020036e4__s0ac8[] __asm__("gData_020036e4");
+#define gData_020036e4 gData_020036e4__s0ac8
+/* VIEW(s0ac8): routine gData_020036ea as this part declared it; the joined file has another. */
+extern u8 gData_020036ea__s0ac8[] __asm__("gData_020036ea");
+#define gData_020036ea gData_020036ea__s0ac8
+/* VIEW(s0ac8): routine gData_020036f6 as this part declared it; the joined file has another. */
+extern u8 gData_020036f6__s0ac8[] __asm__("gData_020036f6");
+#define gData_020036f6 gData_020036f6__s0ac8
 
 void Func_0200109c(void) {
   if (gMainRoutineWork.scene == (s32)MsgHat) {
@@ -785,7 +820,9 @@ void Func_02001160(void) {
 
 #include "field/event_work.h"
 
-extern const s32 gData_02003574[];
+/* VIEW(s0ac8): routine gData_02003574 as this part declared it; the joined file has another. */
+extern const s32 gData_02003574__s0ac8[] __asm__("gData_02003574");
+#define gData_02003574 gData_02003574__s0ac8
 
 // An event handler from the sanctum's event table (in s2f48.c):
 // changes the cells at the leader's place, spawns an effect of type 0x15d
@@ -951,7 +988,9 @@ DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(Func_020017a0, 0xc)
 
 #include "frame.h"
 
-extern const s32 gData_02003594[];
+/* VIEW(s0ac8): routine gData_02003594 as this part declared it; the joined file has another. */
+extern const s32 gData_02003594__s0ac8[] __asm__("gData_02003594");
+#define gData_02003594 gData_02003594__s0ac8
 
 // The update of an object that moves with the leader: once the leader is past
 // z 248 it settles on its cell and clears flag 0x200; otherwise it repeats the
@@ -1018,6 +1057,27 @@ void Func_020017b4(struct Actor *self) {
 #undef Func_020009b8
 #undef Func_02000a78
 
+#undef gData_02003594
+#undef gData_02003574
+#undef gData_020036f6
+#undef gData_020036ea
+#undef gData_020036e4
+#undef gData_020036fc
+#undef gData_02003620
+#undef gData_020035cc
+#undef FIELD_AT
+#undef DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF
+#undef Func_0200088c
+#undef Func_020009b8
+#undef Func_02000a78
+#undef gData_02003594
+#undef gData_02003574
+#undef gData_020036f6
+#undef gData_020036ea
+#undef gData_020036e4
+#undef gData_020036fc
+#undef gData_02003620
+#undef gData_020035cc
 // ---- scene/anemos_inner_sanctum/s1938.c ----
 
 // Scene code of overlay 0x6b0, in ROM order.
@@ -1206,8 +1266,12 @@ struct EventWork154__s1938 {
   s16 value;
 };
 
-extern const s16 gData_020043e4[];
-extern const struct AnemosInnerSanctumPicture gData_02004410[];
+/* VIEW(s1938): routine gData_020043e4 as this part declared it; the joined file has another. */
+extern const s16 gData_020043e4__s1938[] __asm__("gData_020043e4");
+#define gData_020043e4 gData_020043e4__s1938
+/* VIEW(s1938): routine gData_02004410 as this part declared it; the joined file has another. */
+extern const struct AnemosInnerSanctumPicture gData_02004410__s1938[] __asm__("gData_02004410");
+#define gData_02004410 gData_02004410__s1938
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -1298,13 +1362,23 @@ void Func_02001df4(void) {
 }
 
 #include "call.h"
-s32 Func_02000038();
+/* VIEW(s1938): routine Func_02000038 as this part declared it; the joined file has another. */
+s32 Func_02000038__s1938() __asm__("Func_02000038");
+#define Func_02000038 Func_02000038__s1938
 s32 CrackedTiles_Find();
 s32 CrackedTile_PlaceLanding();
-extern u8 gData_0200384c[];
-extern u8 gData_0200385c[];
-extern u8 gData_02003888[];
-extern u8 gData_020038b4[];
+/* VIEW(s1938): routine gData_0200384c as this part declared it; the joined file has another. */
+extern u8 gData_0200384c__s1938[] __asm__("gData_0200384c");
+#define gData_0200384c gData_0200384c__s1938
+/* VIEW(s1938): routine gData_0200385c as this part declared it; the joined file has another. */
+extern u8 gData_0200385c__s1938[] __asm__("gData_0200385c");
+#define gData_0200385c gData_0200385c__s1938
+/* VIEW(s1938): routine gData_02003888 as this part declared it; the joined file has another. */
+extern u8 gData_02003888__s1938[] __asm__("gData_02003888");
+#define gData_02003888 gData_02003888__s1938
+/* VIEW(s1938): routine gData_020038b4 as this part declared it; the joined file has another. */
+extern u8 gData_020038b4__s1938[] __asm__("gData_020038b4");
+#define gData_020038b4 gData_020038b4__s1938
 
 s32 Scene_Initialize(void) {
   s32 v_r1, v_r6, v_r7, v_r2, v_r5, v_r3, v_r0, t0, t1, t3;
@@ -1628,6 +1702,21 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 #include "../field/object/set_sprite_priority_b.c"
 
+#undef gData_02003888
+#undef gData_0200385c
+#undef gData_0200384c
+#undef Func_02000038
+#undef gData_02004410
+#undef gData_020043e4
+#undef gData_020038b4
+#undef FIELD_AT
+#undef gData_02003888
+#undef gData_0200385c
+#undef gData_0200384c
+#undef Func_02000038
+#undef gData_02004410
+#undef gData_020043e4
+#undef gData_020038b4
 // ---- scene/anemos_inner_sanctum/move.c ----
 
 // Scene code of overlay 0x6b0, in ROM order.
@@ -1654,7 +1743,9 @@ void Effect_MoveLocal(union FieldObject *object) {
   sprite->rotation += object->effect.spin;
 }
 
-extern const s32 *gData_02004428[];
+/* VIEW(move): routine gData_02004428 as this part declared it; the joined file has another. */
+extern const s32 *gData_02004428__move[] __asm__("gData_02004428");
+#define gData_02004428 gData_02004428__move
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void Actor_SetSpritePriorityB(struct Actor *object, s32 priority);
 void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -1764,6 +1855,11 @@ void Leader_CenterInCell(void) {
 // one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
+#undef gData_02004428
+#undef CELL_TABLE
+#undef CELL_SPRITE_DRAW
+#undef CELL_PUSH_SLOT_ENTRY
+#undef gData_02004428
 // ---- scene/anemos_inner_sanctum/s2db0.c ----
 
 // Scene code of overlay 0x6b0, in ROM order.
@@ -1842,9 +1938,11 @@ void CrackedTile_Fall(struct PushEvent *event) {
 #include "module/scene/anemos_inner_sanctum.h"
 #include "module/scene/scene.h"
 
-void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+/* VIEW(s2f48): routine FieldEffect_SpawnLocal as this part declared it; the joined file has another. */
+void FieldEffect_SpawnLocal__s2f48(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                             s32 velocityZ, u32 flags,
-                            struct EffectOptions *options);
+                            struct EffectOptions *options) __asm__("FieldEffect_SpawnLocal");
+#define FieldEffect_SpawnLocal FieldEffect_SpawnLocal__s2f48
 
 void CrackedTile_DropIn(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1918,22 +2016,34 @@ loop:
 #include "cell_target.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void CrackedTile_Fall(struct CellTarget *work, struct CellTargetEntry *entry);
+/* VIEW(s2f48): routine CrackedTile_Fall as this part declared it; the joined file has another. */
+void CrackedTile_Fall__s2f48(struct CellTarget *work, struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
+#define CrackedTile_Fall CrackedTile_Fall__s2f48
 
 DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
                           CrackedTile_Fall)
 
-DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
+/* VIEW(s2f48): routine CrackedTile_PlaceLanding as this part declared it; the joined file has another. */
+DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding__s2f48, gCrackedTiles,
                                   CrackedTile_DropIn)
 
 #include "scene_tables.h"
 
-void Func_02000654(void);
-void Func_02000660(void);
-void Func_020006f8(void);
-void Func_02000794(void);
+/* VIEW(s2f48): routine Func_02000654 as this part declared it; the joined file has another. */
+void Func_02000654__s2f48(void) __asm__("Func_02000654");
+#define Func_02000654 Func_02000654__s2f48
+/* VIEW(s2f48): routine Func_02000660 as this part declared it; the joined file has another. */
+void Func_02000660__s2f48(void) __asm__("Func_02000660");
+#define Func_02000660 Func_02000660__s2f48
+/* VIEW(s2f48): routine Func_020006f8 as this part declared it; the joined file has another. */
+void Func_020006f8__s2f48(void) __asm__("Func_020006f8");
+#define Func_020006f8 Func_020006f8__s2f48
+/* VIEW(s2f48): routine Func_02000794 as this part declared it; the joined file has another. */
+void Func_02000794__s2f48(void) __asm__("Func_02000794");
+#define Func_02000794 Func_02000794__s2f48
 
-extern u32 gData_0200378c[];
+extern u32 gData_0200378c[] __asm__("CrackedTile_PlaceLanding");
+#define CrackedTile_PlaceLanding CrackedTile_PlaceLanding__s2f48
 extern u32 gData_020037c8[];
 
 // clang-format off
@@ -2367,3 +2477,10 @@ s32 gData_02004428[] = {
     (s32)gData_020037c8,
     (s32)gData_02003804,
 };
+#undef Func_02000794
+#undef Func_020006f8
+#undef Func_02000660
+#undef Func_02000654
+#undef CrackedTile_PlaceLanding
+#undef CrackedTile_Fall
+#undef FieldEffect_SpawnLocal

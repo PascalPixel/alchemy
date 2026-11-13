@@ -284,23 +284,49 @@ test:
     goto loop;
 }
 
-extern const u8 gData_02003f44[];
-extern const u8 gData_02003f52[];
-extern const u8 gData_02003f80[];
-extern const u8 gData_02003f92[];
-extern const u8 gData_02003f98[];
-extern const u8 gData_02003fa0[];
-extern const u8 gData_02003fa8[];
-extern const u8 gData_02003fb0[];
-extern const u8 gData_02003fb8[];
-extern const u8 gData_02003fc0[];
-extern const u8 gData_02003fc4[];
+/* VIEW(first): routine gData_02003f44 as this part declared it; the joined file has another. */
+extern const u8 gData_02003f44__first[] __asm__("gData_02003f44");
+#define gData_02003f44 gData_02003f44__first
+/* VIEW(first): routine gData_02003f52 as this part declared it; the joined file has another. */
+extern const u8 gData_02003f52__first[] __asm__("gData_02003f52");
+#define gData_02003f52 gData_02003f52__first
+/* VIEW(first): routine gData_02003f80 as this part declared it; the joined file has another. */
+extern const u8 gData_02003f80__first[] __asm__("gData_02003f80");
+#define gData_02003f80 gData_02003f80__first
+/* VIEW(first): routine gData_02003f92 as this part declared it; the joined file has another. */
+extern const u8 gData_02003f92__first[] __asm__("gData_02003f92");
+#define gData_02003f92 gData_02003f92__first
+/* VIEW(first): routine gData_02003f98 as this part declared it; the joined file has another. */
+extern const u8 gData_02003f98__first[] __asm__("gData_02003f98");
+#define gData_02003f98 gData_02003f98__first
+/* VIEW(first): routine gData_02003fa0 as this part declared it; the joined file has another. */
+extern const u8 gData_02003fa0__first[] __asm__("gData_02003fa0");
+#define gData_02003fa0 gData_02003fa0__first
+/* VIEW(first): routine gData_02003fa8 as this part declared it; the joined file has another. */
+extern const u8 gData_02003fa8__first[] __asm__("gData_02003fa8");
+#define gData_02003fa8 gData_02003fa8__first
+/* VIEW(first): routine gData_02003fb0 as this part declared it; the joined file has another. */
+extern const u8 gData_02003fb0__first[] __asm__("gData_02003fb0");
+#define gData_02003fb0 gData_02003fb0__first
+/* VIEW(first): routine gData_02003fb8 as this part declared it; the joined file has another. */
+extern const u8 gData_02003fb8__first[] __asm__("gData_02003fb8");
+#define gData_02003fb8 gData_02003fb8__first
+/* VIEW(first): routine gData_02003fc0 as this part declared it; the joined file has another. */
+extern const u8 gData_02003fc0__first[] __asm__("gData_02003fc0");
+#define gData_02003fc0 gData_02003fc0__first
+/* VIEW(first): routine gData_02003fc4 as this part declared it; the joined file has another. */
+extern const u8 gData_02003fc4__first[] __asm__("gData_02003fc4");
+#define gData_02003fc4 gData_02003fc4__first
 
 void Func_02002180(void);
 void Func_02001804(void);
 
-extern const u16 gData_02003fd2[];
-extern const struct CellRecord gData_02004066[];
+/* VIEW(first): routine gData_02003fd2 as this part declared it; the joined file has another. */
+extern const u16 gData_02003fd2__first[] __asm__("gData_02003fd2");
+#define gData_02003fd2 gData_02003fd2__first
+/* VIEW(first): routine gData_02004066 as this part declared it; the joined file has another. */
+extern const struct CellRecord gData_02004066__first[] __asm__("gData_02004066");
+#define gData_02004066 gData_02004066__first
 
 void CrumblingPillar_Prepare(s32 id) {
   Actor_GetById(id)->unk5c[0] = 3;
@@ -465,7 +491,9 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
 #include "field_effect.h"
 #include "module/field/field_effect.h"
 
-extern const s32 gData_02003e00[];
+/* VIEW(first): routine gData_02003e00 as this part declared it; the joined file has another. */
+extern const s32 gData_02003e00__first[] __asm__("gData_02003e00");
+#define gData_02003e00 gData_02003e00__first
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
@@ -512,7 +540,9 @@ void Rubble_Spray(s32 spread) {
   } while (i <= 7);
 }
 
-extern const u8 gData_02003e30[];
+/* VIEW(first): routine gData_02003e30 as this part declared it; the joined file has another. */
+extern const u8 gData_02003e30__first[] __asm__("gData_02003e30");
+#define gData_02003e30 gData_02003e30__first
 
 void Rubble_Burst(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -623,6 +653,37 @@ DEFINE_HELD_ACTOR_RAISE_CELL(HeldActor_RaiseCell, MapGrid_GetTerrainKind,
 
 #include "../field/field_effect/move.c"
 
+#undef gData_02003e30
+#undef gData_02003e00
+#undef gData_02004066
+#undef gData_02003fd2
+#undef gData_02003fc4
+#undef gData_02003fc0
+#undef gData_02003fb8
+#undef gData_02003fb0
+#undef gData_02003fa8
+#undef gData_02003fa0
+#undef gData_02003f98
+#undef gData_02003f92
+#undef gData_02003f80
+#undef gData_02003f52
+#undef gData_02003f44
+#undef HELD_OBJECT
+#undef gData_02003e30
+#undef gData_02003e00
+#undef gData_02004066
+#undef gData_02003fd2
+#undef gData_02003fc4
+#undef gData_02003fc0
+#undef gData_02003fb8
+#undef gData_02003fb0
+#undef gData_02003fa8
+#undef gData_02003fa0
+#undef gData_02003f98
+#undef gData_02003f92
+#undef gData_02003f80
+#undef gData_02003f52
+#undef gData_02003f44
 // ---- scene/dehkan_plateau/dehkan_plateau.c ----
 // @file
 // Scene code of overlay 0x655, in ROM order.
@@ -636,6 +697,11 @@ DEFINE_HELD_ACTOR_RAISE_CELL(HeldActor_RaiseCell, MapGrid_GetTerrainKind,
 
 #undef EFFECT_SET_SCRIPT
 
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
 // ---- scene/dehkan_plateau/dehkan_plateau.c ----
 
 // Scene code of overlay 0x655, in ROM order.
@@ -674,20 +740,46 @@ DEFINE_HELD_ACTOR_RAISE_CELL(HeldActor_RaiseCell, MapGrid_GetTerrainKind,
 
 void Actor_DisableById(s32 id);
 
-extern const u16 gData_02003fd2[];
-extern const struct CellRecord gData_02004066[];
+/* VIEW(dehkan_plateau): routine gData_02003fd2 as this part declared it; the joined file has another. */
+extern const u16 gData_02003fd2__dehkan_plateau[] __asm__("gData_02003fd2");
+#define gData_02003fd2 gData_02003fd2__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_02004066 as this part declared it; the joined file has another. */
+extern const struct CellRecord gData_02004066__dehkan_plateau[] __asm__("gData_02004066");
+#define gData_02004066 gData_02004066__dehkan_plateau
 
-extern const u8 gData_02003f44[];
-extern const u8 gData_02003f52[];
-extern const u8 gData_02003f80[];
-extern const u8 gData_02003f92[];
-extern const u8 gData_02003f98[];
-extern const u8 gData_02003fa0[];
-extern const u8 gData_02003fa8[];
-extern const u8 gData_02003fb0[];
-extern const u8 gData_02003fb8[];
-extern const u8 gData_02003fc0[];
-extern const u8 gData_02003fc4[];
+/* VIEW(dehkan_plateau): routine gData_02003f44 as this part declared it; the joined file has another. */
+extern const u8 gData_02003f44__dehkan_plateau[] __asm__("gData_02003f44");
+#define gData_02003f44 gData_02003f44__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_02003f52 as this part declared it; the joined file has another. */
+extern const u8 gData_02003f52__dehkan_plateau[] __asm__("gData_02003f52");
+#define gData_02003f52 gData_02003f52__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_02003f80 as this part declared it; the joined file has another. */
+extern const u8 gData_02003f80__dehkan_plateau[] __asm__("gData_02003f80");
+#define gData_02003f80 gData_02003f80__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_02003f92 as this part declared it; the joined file has another. */
+extern const u8 gData_02003f92__dehkan_plateau[] __asm__("gData_02003f92");
+#define gData_02003f92 gData_02003f92__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_02003f98 as this part declared it; the joined file has another. */
+extern const u8 gData_02003f98__dehkan_plateau[] __asm__("gData_02003f98");
+#define gData_02003f98 gData_02003f98__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_02003fa0 as this part declared it; the joined file has another. */
+extern const u8 gData_02003fa0__dehkan_plateau[] __asm__("gData_02003fa0");
+#define gData_02003fa0 gData_02003fa0__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_02003fa8 as this part declared it; the joined file has another. */
+extern const u8 gData_02003fa8__dehkan_plateau[] __asm__("gData_02003fa8");
+#define gData_02003fa8 gData_02003fa8__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_02003fb0 as this part declared it; the joined file has another. */
+extern const u8 gData_02003fb0__dehkan_plateau[] __asm__("gData_02003fb0");
+#define gData_02003fb0 gData_02003fb0__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_02003fb8 as this part declared it; the joined file has another. */
+extern const u8 gData_02003fb8__dehkan_plateau[] __asm__("gData_02003fb8");
+#define gData_02003fb8 gData_02003fb8__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_02003fc0 as this part declared it; the joined file has another. */
+extern const u8 gData_02003fc0__dehkan_plateau[] __asm__("gData_02003fc0");
+#define gData_02003fc0 gData_02003fc0__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_02003fc4 as this part declared it; the joined file has another. */
+extern const u8 gData_02003fc4__dehkan_plateau[] __asm__("gData_02003fc4");
+#define gData_02003fc4 gData_02003fc4__dehkan_plateau
 
 void Func_0200118c(void) {
   GameFlag_Set(0x209);
@@ -700,20 +792,48 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern const u8 gData_020045e0[];
-extern const u8 gData_020045f8[];
-extern const u8 gData_020047d8[];
-extern const u8 gData_02004ac0[];
-extern const u8 gData_02004d78[];
-extern const u8 gData_02004dd8[];
-extern const u8 gData_02004e20[];
-extern const u8 gData_02004f10[];
-extern const u8 gData_02004f1c[];
-extern const u8 gData_02005078[];
-extern const u8 gData_020051bc[];
-extern const u8 gData_020053b4[];
-extern const u8 gData_02005450[];
-extern const u8 gData_020055b8[];
+/* VIEW(dehkan_plateau): routine gData_020045e0 as this part declared it; the joined file has another. */
+extern const u8 gData_020045e0__dehkan_plateau[] __asm__("gData_020045e0");
+#define gData_020045e0 gData_020045e0__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_020045f8 as this part declared it; the joined file has another. */
+extern const u8 gData_020045f8__dehkan_plateau[] __asm__("gData_020045f8");
+#define gData_020045f8 gData_020045f8__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_020047d8 as this part declared it; the joined file has another. */
+extern const u8 gData_020047d8__dehkan_plateau[] __asm__("gData_020047d8");
+#define gData_020047d8 gData_020047d8__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_02004ac0 as this part declared it; the joined file has another. */
+extern const u8 gData_02004ac0__dehkan_plateau[] __asm__("gData_02004ac0");
+#define gData_02004ac0 gData_02004ac0__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_02004d78 as this part declared it; the joined file has another. */
+extern const u8 gData_02004d78__dehkan_plateau[] __asm__("gData_02004d78");
+#define gData_02004d78 gData_02004d78__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_02004dd8 as this part declared it; the joined file has another. */
+extern const u8 gData_02004dd8__dehkan_plateau[] __asm__("gData_02004dd8");
+#define gData_02004dd8 gData_02004dd8__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_02004e20 as this part declared it; the joined file has another. */
+extern const u8 gData_02004e20__dehkan_plateau[] __asm__("gData_02004e20");
+#define gData_02004e20 gData_02004e20__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_02004f10 as this part declared it; the joined file has another. */
+extern const u8 gData_02004f10__dehkan_plateau[] __asm__("gData_02004f10");
+#define gData_02004f10 gData_02004f10__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_02004f1c as this part declared it; the joined file has another. */
+extern const u8 gData_02004f1c__dehkan_plateau[] __asm__("gData_02004f1c");
+#define gData_02004f1c gData_02004f1c__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_02005078 as this part declared it; the joined file has another. */
+extern const u8 gData_02005078__dehkan_plateau[] __asm__("gData_02005078");
+#define gData_02005078 gData_02005078__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_020051bc as this part declared it; the joined file has another. */
+extern const u8 gData_020051bc__dehkan_plateau[] __asm__("gData_020051bc");
+#define gData_020051bc gData_020051bc__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_020053b4 as this part declared it; the joined file has another. */
+extern const u8 gData_020053b4__dehkan_plateau[] __asm__("gData_020053b4");
+#define gData_020053b4 gData_020053b4__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_02005450 as this part declared it; the joined file has another. */
+extern const u8 gData_02005450__dehkan_plateau[] __asm__("gData_02005450");
+#define gData_02005450 gData_02005450__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_020055b8 as this part declared it; the joined file has another. */
+extern const u8 gData_020055b8__dehkan_plateau[] __asm__("gData_020055b8");
+#define gData_020055b8 gData_020055b8__dehkan_plateau
 
 const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -994,14 +1114,22 @@ loop:
 DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(Func_02001820, gData_02004066, 13,
                                     gData_02003fd2)
 
-extern const u16 gData_02003fda[];
-extern const struct CellRecord gData_0200410e[];
+/* VIEW(dehkan_plateau): routine gData_02003fda as this part declared it; the joined file has another. */
+extern const u16 gData_02003fda__dehkan_plateau[] __asm__("gData_02003fda");
+#define gData_02003fda gData_02003fda__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_0200410e as this part declared it; the joined file has another. */
+extern const struct CellRecord gData_0200410e__dehkan_plateau[] __asm__("gData_0200410e");
+#define gData_0200410e gData_0200410e__dehkan_plateau
 
 DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(Func_020018a8, gData_0200410e, 7,
                                     gData_02003fda)
 
-extern const u16 gData_02003fe2[];
-extern const struct CellRecord gData_0200416e[];
+/* VIEW(dehkan_plateau): routine gData_02003fe2 as this part declared it; the joined file has another. */
+extern const u16 gData_02003fe2__dehkan_plateau[] __asm__("gData_02003fe2");
+#define gData_02003fe2 gData_02003fe2__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_0200416e as this part declared it; the joined file has another. */
+extern const struct CellRecord gData_0200416e__dehkan_plateau[] __asm__("gData_0200416e");
+#define gData_0200416e gData_0200416e__dehkan_plateau
 
 DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(Func_02001930, gData_0200416e, 5,
                                     gData_02003fe2)
@@ -1034,7 +1162,9 @@ void Func_020019b8(void) {
 void Actor_TakePlaceOf(struct Actor *object, struct Actor *other);
 void Actor_MoveToObject(s32 id, s32 target);
 
-extern struct Actor *gData_02004420;
+/* VIEW(dehkan_plateau): routine gData_02004420 as this part declared it; the joined file has another. */
+extern struct Actor *gData_02004420__dehkan_plateau __asm__("gData_02004420");
+#define gData_02004420 gData_02004420__dehkan_plateau
 extern s32 gData_02005678;
 
 #define SCENE(name) ((s32)&SceneId_##name)
@@ -1245,7 +1375,9 @@ DEFINE_ACTORS_FOR_RANGE(Func_02001fdc, 2, Actor_Hide, 8, Scene_RunUnlessFlag)
 
 DEFINE_ACTORS_FOR_RANGE(Func_02001ff4, 5, Actor_Hide, 10, Scene_RunUnlessFlag)
 
-void HeldActor_RaiseCell(struct Actor *object);
+/* VIEW(dehkan_plateau): routine HeldActor_RaiseCell as this part declared it; the joined file has another. */
+void HeldActor_RaiseCell__dehkan_plateau(struct Actor *object) __asm__("HeldActor_RaiseCell");
+#define HeldActor_RaiseCell HeldActor_RaiseCell__dehkan_plateau
 
 void Func_0200200c(struct Actor *object) {
   s32 x;
@@ -1276,8 +1408,12 @@ void Func_0200200c(struct Actor *object) {
   }
 }
 
-void Func_02000d78(const void *data);
-extern const u8 gData_02003fc8[];
+/* VIEW(dehkan_plateau): routine Func_02000d78 as this part declared it; the joined file has another. */
+void Func_02000d78__dehkan_plateau(const void *data) __asm__("Func_02000d78");
+#define Func_02000d78 Func_02000d78__dehkan_plateau
+/* VIEW(dehkan_plateau): routine gData_02003fc8 as this part declared it; the joined file has another. */
+extern const u8 gData_02003fc8__dehkan_plateau[] __asm__("gData_02003fc8");
+#define gData_02003fc8 gData_02003fc8__dehkan_plateau
 
 DEFINE_SCENE_RUN_IF_HELD(Scene_RunIfHeld, Leader_CanPushObjectAhead,
                          Field_FindNearbyTalkTarget, Func_02000d78,
@@ -1327,6 +1463,78 @@ void Func_020021b4(void) {
 }
 #undef SCENE
 
+#undef Func_02000d78
+#undef HeldActor_RaiseCell
+#undef gData_0200416e
+#undef gData_02003fe2
+#undef gData_0200410e
+#undef gData_02003fda
+#undef gData_020055b8
+#undef gData_02005450
+#undef gData_020053b4
+#undef gData_020051bc
+#undef gData_02005078
+#undef gData_02004f1c
+#undef gData_02004f10
+#undef gData_02004e20
+#undef gData_02004dd8
+#undef gData_02004d78
+#undef gData_02004ac0
+#undef gData_020047d8
+#undef gData_020045f8
+#undef gData_020045e0
+#undef gData_02003fc8
+#undef gData_02004420
+#undef gData_02003fc4
+#undef gData_02003fc0
+#undef gData_02003fb8
+#undef gData_02003fb0
+#undef gData_02003fa8
+#undef gData_02003fa0
+#undef gData_02003f98
+#undef gData_02003f92
+#undef gData_02003f80
+#undef gData_02003f52
+#undef gData_02003f44
+#undef gData_02004066
+#undef gData_02003fd2
+#undef DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS
+#undef SCENE
+#undef Func_02000d78
+#undef HeldActor_RaiseCell
+#undef gData_0200416e
+#undef gData_02003fe2
+#undef gData_0200410e
+#undef gData_02003fda
+#undef gData_020055b8
+#undef gData_02005450
+#undef gData_020053b4
+#undef gData_020051bc
+#undef gData_02005078
+#undef gData_02004f1c
+#undef gData_02004f10
+#undef gData_02004e20
+#undef gData_02004dd8
+#undef gData_02004d78
+#undef gData_02004ac0
+#undef gData_020047d8
+#undef gData_020045f8
+#undef gData_020045e0
+#undef gData_02003fc8
+#undef gData_02004420
+#undef gData_02003fc4
+#undef gData_02003fc0
+#undef gData_02003fb8
+#undef gData_02003fb0
+#undef gData_02003fa8
+#undef gData_02003fa0
+#undef gData_02003f98
+#undef gData_02003f92
+#undef gData_02003f80
+#undef gData_02003f52
+#undef gData_02003f44
+#undef gData_02004066
+#undef gData_02003fd2
 // ---- games/tla/src/scene/dehkan_plateau/events_g.c ----
 // Scene code of overlay 0x655, in ROM order, from events_g's offset up to the
 // next object the overlay links.
@@ -1334,8 +1542,12 @@ void Func_020021b4(void) {
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
 
-void CrumblingPillars_Step(const void *data);
-void CrumblingPillars_StepWithStandIn(const void *data);
+/* VIEW(events_g): routine CrumblingPillars_Step as this part declared it; the joined file has another. */
+void CrumblingPillars_Step__events_g(const void *data) __asm__("CrumblingPillars_Step");
+#define CrumblingPillars_Step CrumblingPillars_Step__events_g
+/* VIEW(events_g): routine CrumblingPillars_StepWithStandIn as this part declared it; the joined file has another. */
+void CrumblingPillars_StepWithStandIn__events_g(const void *data) __asm__("CrumblingPillars_StepWithStandIn");
+#define CrumblingPillars_StepWithStandIn CrumblingPillars_StepWithStandIn__events_g
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
@@ -1501,6 +1713,10 @@ void Func_02002604(void) {
 
 #include "../field/field_effect/advance_motion.c"
 
+#undef CrumblingPillars_StepWithStandIn
+#undef CrumblingPillars_Step
+#undef CrumblingPillars_StepWithStandIn
+#undef CrumblingPillars_Step
 // ---- scene/dehkan_plateau/s2698.c ----
 // @file
 // Scene code of overlay 0x655, in ROM order.
@@ -1530,7 +1746,9 @@ void Func_02002604(void) {
 #include "scene_call.h"
 
 void Actor_DisableById(s32 id);
-extern struct Actor *gData_02004420;
+/* VIEW(s2698): routine gData_02004420 as this part declared it; the joined file has another. */
+extern struct Actor *gData_02004420__s2698 __asm__("gData_02004420");
+#define gData_02004420 gData_02004420__s2698
 
 void Actor_StartScript(struct Actor *object, const void *script);
 /* VIEW(s2698): routine FieldEffect_AdvanceMotion as void
@@ -1540,7 +1758,9 @@ void Actor_StartScript(struct Actor *object, const void *script);
 extern void Effect_AdvanceMotion__s2698(struct Actor *object) __asm__(
     "FieldEffect_AdvanceMotion");
 
-extern const u8 gData_02003f14[];
+/* VIEW(s2698): routine gData_02003f14 as this part declared it; the joined file has another. */
+extern const u8 gData_02003f14__s2698[] __asm__("gData_02003f14");
+#define gData_02003f14 gData_02003f14__s2698
 
 // Flashes actor id, then raises eight puffs over actor center, then sets
 // flag and waits 20 frames.
@@ -1706,29 +1926,59 @@ void Func_02002b68(void) {
   }
 }
 
+/* VIEW(events_i): routine gData_02003f44 as this part declared it; the joined file has another. */
 // ---- games/tla/src/scene/dehkan_plateau/events_i.c ----
-extern const u8 gData_02003f44[];
-extern const u8 gData_02003f52[];
-extern const u8 gData_02003f80[];
-extern const u8 gData_02003f92[];
-extern const u8 gData_02003f98[];
-extern const u8 gData_02003fa0[];
-extern const u8 gData_02003fa8[];
-extern const u8 gData_02003fb0[];
-extern const u8 gData_02003fb8[];
-extern const u8 gData_02003fc0[];
-extern const u8 gData_02003fc4[];
+extern const u8 gData_02003f44__events_i[] __asm__("gData_02003f44");
+#define gData_02003f44 gData_02003f44__events_i
+/* VIEW(events_i): routine gData_02003f52 as this part declared it; the joined file has another. */
+extern const u8 gData_02003f52__events_i[] __asm__("gData_02003f52");
+#define gData_02003f52 gData_02003f52__events_i
+/* VIEW(events_i): routine gData_02003f80 as this part declared it; the joined file has another. */
+extern const u8 gData_02003f80__events_i[] __asm__("gData_02003f80");
+#define gData_02003f80 gData_02003f80__events_i
+/* VIEW(events_i): routine gData_02003f92 as this part declared it; the joined file has another. */
+extern const u8 gData_02003f92__events_i[] __asm__("gData_02003f92");
+#define gData_02003f92 gData_02003f92__events_i
+/* VIEW(events_i): routine gData_02003f98 as this part declared it; the joined file has another. */
+extern const u8 gData_02003f98__events_i[] __asm__("gData_02003f98");
+#define gData_02003f98 gData_02003f98__events_i
+/* VIEW(events_i): routine gData_02003fa0 as this part declared it; the joined file has another. */
+extern const u8 gData_02003fa0__events_i[] __asm__("gData_02003fa0");
+#define gData_02003fa0 gData_02003fa0__events_i
+/* VIEW(events_i): routine gData_02003fa8 as this part declared it; the joined file has another. */
+extern const u8 gData_02003fa8__events_i[] __asm__("gData_02003fa8");
+#define gData_02003fa8 gData_02003fa8__events_i
+/* VIEW(events_i): routine gData_02003fb0 as this part declared it; the joined file has another. */
+extern const u8 gData_02003fb0__events_i[] __asm__("gData_02003fb0");
+#define gData_02003fb0 gData_02003fb0__events_i
+/* VIEW(events_i): routine gData_02003fb8 as this part declared it; the joined file has another. */
+extern const u8 gData_02003fb8__events_i[] __asm__("gData_02003fb8");
+#define gData_02003fb8 gData_02003fb8__events_i
+/* VIEW(events_i): routine gData_02003fc0 as this part declared it; the joined file has another. */
+extern const u8 gData_02003fc0__events_i[] __asm__("gData_02003fc0");
+#define gData_02003fc0 gData_02003fc0__events_i
+/* VIEW(events_i): routine gData_02003fc4 as this part declared it; the joined file has another. */
+extern const u8 gData_02003fc4__events_i[] __asm__("gData_02003fc4");
+#define gData_02003fc4 gData_02003fc4__events_i
 
-void CrumblingPillars_Step(const void *data);
-void CrumblingPillars_StepWithStandIn(const void *data);
+/* VIEW(events_i): routine CrumblingPillars_Step as this part declared it; the joined file has another. */
+void CrumblingPillars_Step__events_i(const void *data) __asm__("CrumblingPillars_Step");
+#define CrumblingPillars_Step CrumblingPillars_Step__events_i
+/* VIEW(events_i): routine CrumblingPillars_StepWithStandIn as this part declared it; the joined file has another. */
+void CrumblingPillars_StepWithStandIn__events_i(const void *data) __asm__("CrumblingPillars_StepWithStandIn");
+#define CrumblingPillars_StepWithStandIn CrumblingPillars_StepWithStandIn__events_i
 void Func_02002180(void);
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Func_02001804(void);
 
-extern const u16 gData_02003fd2[];
-extern const struct CellRecord gData_02004066[];
+/* VIEW(events_i): routine gData_02003fd2 as this part declared it; the joined file has another. */
+extern const u16 gData_02003fd2__events_i[] __asm__("gData_02003fd2");
+#define gData_02003fd2 gData_02003fd2__events_i
+/* VIEW(events_i): routine gData_02004066 as this part declared it; the joined file has another. */
+extern const struct CellRecord gData_02004066__events_i[] __asm__("gData_02004066");
+#define gData_02004066 gData_02004066__events_i
 
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);
@@ -1762,6 +2012,40 @@ void Func_02002bcc(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
+#undef gData_02004066
+#undef gData_02003fd2
+#undef gData_02003fc4
+#undef gData_02003fc0
+#undef gData_02003fb8
+#undef gData_02003fb0
+#undef gData_02003fa8
+#undef gData_02003fa0
+#undef gData_02003f98
+#undef gData_02003f92
+#undef gData_02003f80
+#undef gData_02003f52
+#undef gData_02003f44
+#undef gData_02003f14
+#undef gData_02004420
+#undef CrumblingPillars_StepWithStandIn
+#undef CrumblingPillars_Step
+#undef gData_02004066
+#undef gData_02003fd2
+#undef gData_02003fc4
+#undef gData_02003fc0
+#undef gData_02003fb8
+#undef gData_02003fb0
+#undef gData_02003fa8
+#undef gData_02003fa0
+#undef gData_02003f98
+#undef gData_02003f92
+#undef gData_02003f80
+#undef gData_02003f52
+#undef gData_02003f44
+#undef gData_02003f14
+#undef gData_02004420
+#undef CrumblingPillars_StepWithStandIn
+#undef CrumblingPillars_Step
 // ---- games/tla/src/scene/dehkan_plateau/s2c14.c ----
 // Scene code of overlay 0x655, in ROM order, from s2c14's offset up to the next
 // object the overlay links.
@@ -1956,7 +2240,9 @@ void Func_020030c0(void) {
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 
-void Pillars_Place(const void *data);
+/* VIEW(s2c14): routine Pillars_Place as this part declared it; the joined file has another. */
+void Pillars_Place__s2c14(const void *data) __asm__("Pillars_Place");
+#define Pillars_Place Pillars_Place__s2c14
 void Func_02001820(void);
 
 void Func_020030e4(void) {
@@ -1979,9 +2265,13 @@ void Func_020030e4(void) {
   }
 }
 
+#undef Pillars_Place
+#undef Pillars_Place
 // ---- games/tla/src/scene/dehkan_plateau/s3164.c ----
 
-void CrumblingPillars_PlaceWithStandIns(const void *data);
+/* VIEW(s3164): routine CrumblingPillars_PlaceWithStandIns as this part declared it; the joined file has another. */
+void CrumblingPillars_PlaceWithStandIns__s3164(const void *data) __asm__("CrumblingPillars_PlaceWithStandIns");
+#define CrumblingPillars_PlaceWithStandIns CrumblingPillars_PlaceWithStandIns__s3164
 void Func_020018a8(void);
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
@@ -2033,6 +2323,8 @@ void Func_02003164(void) {
   Func_02001fac();
 }
 
+#undef CrumblingPillars_PlaceWithStandIns
+#undef CrumblingPillars_PlaceWithStandIns
 // ---- games/tla/src/scene/dehkan_plateau/s3284.c ----
 // Scene code of overlay 0x655, in ROM order, from s3284's offset up to the next
 // object the overlay links.
@@ -2040,10 +2332,14 @@ void Func_02003164(void) {
 #include "task.h"
 #include "field_effect.h"
 
-extern const u8 gData_02003fc8[];
+/* VIEW(s3284): routine gData_02003fc8 as this part declared it; the joined file has another. */
+extern const u8 gData_02003fc8__s3284[] __asm__("gData_02003fc8");
+#define gData_02003fc8 gData_02003fc8__s3284
 extern s32 gData_02005678;
 
-void Pillars_Raise(const void *data);
+/* VIEW(s3284): routine Pillars_Raise as this part declared it; the joined file has another. */
+void Pillars_Raise__s3284(const void *data) __asm__("Pillars_Raise");
+#define Pillars_Raise Pillars_Raise__s3284
 void Func_02001ee8(void);
 /* VIEW(s3284): routine Actor_GetCellIndex as s32 Actor_GetCellIndex(void);
  * s2c14 has s32 Actor_GetCellIndex(struct Actor *object); not tried:
@@ -2145,7 +2441,9 @@ void Func_02003284(void) {
   Task_Add(Func_02001ee8, TASK_PASS_VBLANK);
 }
 
-extern const u16 gData_02004276[];
+/* VIEW(s3284): routine gData_02004276 as this part declared it; the joined file has another. */
+extern const u16 gData_02004276__s3284[] __asm__("gData_02004276");
+#define gData_02004276 gData_02004276__s3284
 
 #define DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(name, n1, n2, n3, n4, n5, n6)      \
   void name(void) {                                                            \
@@ -2284,6 +2582,13 @@ loop:
   Event_End();
 }
 
+#undef gData_02004276
+#undef Pillars_Raise
+#undef gData_02003fc8
+#undef DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG
+#undef gData_02004276
+#undef Pillars_Raise
+#undef gData_02003fc8
 // ---- games/tla/src/scene/dehkan_plateau/s390c.c ----
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -2383,11 +2688,21 @@ s32 Scene_PrepareMap(void) { return 0; }
 #include "scene_tables.h"
 #include "module/scene/dehkan_plateau.h"
 
-void Func_02001554(void);
-void Func_02001568(void);
-void Func_0200157c(void);
-void Func_02001590(void);
-void Func_020015a4(void);
+/* VIEW(data): routine Func_02001554 as this part declared it; the joined file has another. */
+void Func_02001554__data(void) __asm__("Func_02001554");
+#define Func_02001554 Func_02001554__data
+/* VIEW(data): routine Func_02001568 as this part declared it; the joined file has another. */
+void Func_02001568__data(void) __asm__("Func_02001568");
+#define Func_02001568 Func_02001568__data
+/* VIEW(data): routine Func_0200157c as this part declared it; the joined file has another. */
+void Func_0200157c__data(void) __asm__("Func_0200157c");
+#define Func_0200157c Func_0200157c__data
+/* VIEW(data): routine Func_02001590 as this part declared it; the joined file has another. */
+void Func_02001590__data(void) __asm__("Func_02001590");
+#define Func_02001590 Func_02001590__data
+/* VIEW(data): routine Func_020015a4 as this part declared it; the joined file has another. */
+void Func_020015a4__data(void) __asm__("Func_020015a4");
+#define Func_020015a4 Func_020015a4__data
 void Func_020016b0(void);
 void Func_02001788(void);
 void Func_02002180(void);
@@ -3032,3 +3347,8 @@ struct Trigger gData_020055b8[] = {
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_0200118c)},
     {TRIGGER_TABLE_END},
 };
+#undef Func_020015a4
+#undef Func_02001590
+#undef Func_0200157c
+#undef Func_02001568
+#undef Func_02001554

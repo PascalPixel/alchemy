@@ -77,6 +77,12 @@ s32 Func_02000384(u32 layer, s32 x, s32 y, s32 value) {
 
 #undef EFFECT_SET_SCRIPT
 
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
+#undef EFFECT_SPRITE_PRIORITY
 // ---- scene/airs_rock/airs_rock.c ----
 
 // Scene code of overlay 0x663, in ROM order.
@@ -356,7 +362,9 @@ void Func_0200092c(struct Actor *object) {
 #include "system/field_effect.h"
 #include "system/vector3.h"
 
-extern s16 gData_02004674[][4];
+/* VIEW(airs_rock): routine gData_02004674 as this part declared it; the joined file has another. */
+extern s16 gData_02004674__airs_rock[][4] __asm__("gData_02004674");
+#define gData_02004674 gData_02004674__airs_rock
 void Actor_StartScript(struct Actor *object, const s32 *script);
 /* VIEW(airs_rock): routine Actor_HasArrived as s32 Actor_HasArrived(struct
  * Actor *object); module/scene/scene.h has void Actor_HasArrived(struct Actor
@@ -911,8 +919,12 @@ DEFINE_POSITION_DISTANCE_ABOVE(Position_DistanceAbove)
 
 #include "field/event_work.h"
 
-extern u8 gData_02003de0[];
-extern u8 gData_02003dcc[];
+/* VIEW(airs_rock): routine gData_02003de0 as this part declared it; the joined file has another. */
+extern u8 gData_02003de0__airs_rock[] __asm__("gData_02003de0");
+#define gData_02003de0 gData_02003de0__airs_rock
+/* VIEW(airs_rock): routine gData_02003dcc as this part declared it; the joined file has another. */
+extern u8 gData_02003dcc__airs_rock[] __asm__("gData_02003dcc");
+#define gData_02003dcc gData_02003dcc__airs_rock
 
 void Func_02001908(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -1097,7 +1109,9 @@ void Func_02001da8(void) {
   Event_End();
 }
 
-extern u8 gData_02003dfc[];
+/* VIEW(airs_rock): routine gData_02003dfc as this part declared it; the joined file has another. */
+extern u8 gData_02003dfc__airs_rock[] __asm__("gData_02003dfc");
+#define gData_02003dfc gData_02003dfc__airs_rock
 
 void Func_02001dc4(s32 x, s32 z) {
   struct Actor *first, *rock;
@@ -1533,7 +1547,9 @@ void Func_020026b8(void) {
   Event_End();
 }
 
-extern s32 gData_02004698;
+/* VIEW(airs_rock): routine gData_02004698 as this part declared it; the joined file has another. */
+extern s32 gData_02004698__airs_rock __asm__("gData_02004698");
+#define gData_02004698 gData_02004698__airs_rock
 
 void Func_02002b88(void) {
   struct Actor *actor = Actor_Get(FieldParty_GetLeaderActor());
@@ -1864,12 +1880,32 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
+#undef gData_02004698
+#undef gData_02003dfc
+#undef gData_02003dcc
+#undef gData_02003de0
+#undef gData_02004674
+#undef FIELD_AT
+#undef WORD_AT
+#undef WAVE_SCROLL
+#undef WAVE_SCROLL_LINES
+#undef LEADER
+#undef BEAM
+#undef SWAY
+#undef HANG
+#undef gData_02004698
+#undef gData_02003dfc
+#undef gData_02003dcc
+#undef gData_02003de0
+#undef gData_02004674
 // ---- scene/data/airs_rock.c ----
 #include "types.h"
 #include "scene_tables.h"
 #include "module/scene/airs_rock.h"
 
-void Func_0200033c(void);
+/* VIEW(data): routine Func_0200033c as this part declared it; the joined file has another. */
+void Func_0200033c__data(void) __asm__("Func_0200033c");
+#define Func_0200033c Func_0200033c__data
 void Func_02000620(void);
 
 // clang-format off
@@ -2125,3 +2161,4 @@ s8 gData_02004697 = 1;
 s32 gData_02004698[] = {
     -1,
 };
+#undef Func_0200033c

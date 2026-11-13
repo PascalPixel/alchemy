@@ -151,15 +151,33 @@ void Func_02000138(u8 *grid, s32 count, s32 scale) {
   } while (i != count - 1);
 }
 
-extern s16 gData_02003d20[][2];
-extern s16 gData_02003d34[][2];
-extern s16 gData_02003d48[][2];
-extern s32 gData_02003d5c[];
-extern s32 gData_02003d70[];
-extern u8 gData_02003d84[];
-extern u8 gData_02003d88[];
-extern u16 gData_02003d8e[];
-extern s8 gData_02003d9c[][2];
+/* VIEW(first): routine gData_02003d20 as this part declared it; the joined file has another. */
+extern s16 gData_02003d20__first[][2] __asm__("gData_02003d20");
+#define gData_02003d20 gData_02003d20__first
+/* VIEW(first): routine gData_02003d34 as this part declared it; the joined file has another. */
+extern s16 gData_02003d34__first[][2] __asm__("gData_02003d34");
+#define gData_02003d34 gData_02003d34__first
+/* VIEW(first): routine gData_02003d48 as this part declared it; the joined file has another. */
+extern s16 gData_02003d48__first[][2] __asm__("gData_02003d48");
+#define gData_02003d48 gData_02003d48__first
+/* VIEW(first): routine gData_02003d5c as this part declared it; the joined file has another. */
+extern s32 gData_02003d5c__first[] __asm__("gData_02003d5c");
+#define gData_02003d5c gData_02003d5c__first
+/* VIEW(first): routine gData_02003d70 as this part declared it; the joined file has another. */
+extern s32 gData_02003d70__first[] __asm__("gData_02003d70");
+#define gData_02003d70 gData_02003d70__first
+/* VIEW(first): routine gData_02003d84 as this part declared it; the joined file has another. */
+extern u8 gData_02003d84__first[] __asm__("gData_02003d84");
+#define gData_02003d84 gData_02003d84__first
+/* VIEW(first): routine gData_02003d88 as this part declared it; the joined file has another. */
+extern u8 gData_02003d88__first[] __asm__("gData_02003d88");
+#define gData_02003d88 gData_02003d88__first
+/* VIEW(first): routine gData_02003d8e as this part declared it; the joined file has another. */
+extern u16 gData_02003d8e__first[] __asm__("gData_02003d8e");
+#define gData_02003d8e gData_02003d8e__first
+/* VIEW(first): routine gData_02003d9c as this part declared it; the joined file has another. */
+extern s8 gData_02003d9c__first[][2] __asm__("gData_02003d9c");
+#define gData_02003d9c gData_02003d9c__first
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 z, s32 mode) {
   FieldCamera_MoveTo(x, -1, z, mode);
@@ -578,7 +596,9 @@ s32 Func_02001064(struct Actor *object) {
 
 DEFINE_ACTOR_FLICKER(Func_020011f4, Func_020010b0)
 
-extern s32 gData_02003db8;
+/* VIEW(first): routine gData_02003db8 as this part declared it; the joined file has another. */
+extern s32 gData_02003db8__first __asm__("gData_02003db8");
+#define gData_02003db8 gData_02003db8__first
 
 DEFINE_ACTOR_CYCLE_CHILD_VALUES(Func_0200122c, gData_02002eac, gData_02003db8,
                                 Func_02001168)
@@ -868,6 +888,45 @@ u32 gData_02002eac[] = {
 };
 // clang-format on
 
+#undef gData_02003db8
+#undef gData_02003d9c
+#undef gData_02003d8e
+#undef gData_02003d88
+#undef gData_02003d84
+#undef gData_02003d70
+#undef gData_02003d5c
+#undef gData_02003d48
+#undef gData_02003d34
+#undef gData_02003d20
+#undef Func_02003600
+#undef Func_02003654
+#undef Func_02004e30
+#undef gData_02006c08
+#undef Func_020036a8
+#undef Func_02004e08
+#undef Func_02004e10
+#undef Func_02004b30
+#undef Func_02004b20
+#undef Func_02004b18
+#undef Func_02004b38
+#undef gData_02006bd4
+#undef Func_020038e4
+#undef Func_02003960
+#undef Func_020039f4
+#undef Func_02003aac
+#undef gData_02004f90
+#undef gData_02004f9c
+#undef PUSH_PICTURE
+#undef gData_02003db8
+#undef gData_02003d9c
+#undef gData_02003d8e
+#undef gData_02003d88
+#undef gData_02003d84
+#undef gData_02003d70
+#undef gData_02003d5c
+#undef gData_02003d48
+#undef gData_02003d34
+#undef gData_02003d20
 // ---- scene/data/staff_credit.c ----
 
 #include "macros.h"
@@ -875,7 +934,9 @@ u32 gData_02002eac[] = {
 #include "types.h"
 #include "scene_tables.h"
 
-void TileSprite_Reset(void);
+/* VIEW(data): routine TileSprite_Reset as this part declared it; the joined file has another. */
+void TileSprite_Reset__data(void) __asm__("TileSprite_Reset");
+#define TileSprite_Reset TileSprite_Reset__data
 
 LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 9850, 0, 9748, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -1028,3 +1089,4 @@ DEFINE_G_DATA_02003584(gData_02003da8, TileSprite_Reset, 17, 0)
 LATE_DATA u32 gData_02003db8[] = {
     0,
 };
+#undef TileSprite_Reset

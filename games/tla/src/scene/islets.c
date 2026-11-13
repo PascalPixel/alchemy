@@ -53,7 +53,9 @@ void Func_020034ec(void);
 void Func_02001cac(void);
 void Func_02001cfc(void);
 
-extern const u8 gSmokeScript[];
+/* VIEW(first): routine gSmokeScript as this part declared it; the joined file has another. */
+extern const u8 gSmokeScript__first[] __asm__("gSmokeScript");
+#define gSmokeScript gSmokeScript__first
 extern struct Trigger gData_02004b14[];
 extern struct Trigger gData_02004b20[];
 extern struct Trigger gData_02004bb0[];
@@ -106,8 +108,12 @@ extern s32 gData_02005190;
 extern s32 gData_02005194;
 extern s32 gData_02005198;
 extern s32 gData_0200519c;
-extern const u8 gData_02004028[];
-extern const struct IsletsExit gData_020046bc[];
+/* VIEW(first): routine gData_02004028 as this part declared it; the joined file has another. */
+extern const u8 gData_02004028__first[] __asm__("gData_02004028");
+#define gData_02004028 gData_02004028__first
+/* VIEW(first): routine gData_020046bc as this part declared it; the joined file has another. */
+extern const struct IsletsExit gData_020046bc__first[] __asm__("gData_020046bc");
+#define gData_020046bc gData_020046bc__first
 extern u16 gData_02004070[];
 
 void Func_020020ec(s32 x, s32 z, s32 layers, s32 value);
@@ -645,8 +651,12 @@ DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 3, Actor_SelectAnimation, gSmokeScript)
 
 #include "call.h"
 
-extern const u8 gData_020043f8[];
-extern const u8 gData_02004300[];
+/* VIEW(first): routine gData_020043f8 as this part declared it; the joined file has another. */
+extern const u8 gData_020043f8__first[] __asm__("gData_020043f8");
+#define gData_020043f8 gData_020043f8__first
+/* VIEW(first): routine gData_02004300 as this part declared it; the joined file has another. */
+extern const u8 gData_02004300__first[] __asm__("gData_02004300");
+#define gData_02004300 gData_02004300__first
 
 #define STEP(actor, x, z)                                                      \
   (Actor_GetById(actor)->actionFlags &= ~1, Actor_WalkToAndWait(actor, x, z),  \
@@ -778,7 +788,9 @@ void Func_02001278(struct Actor *object) {
 #define ISLETS_GIFT_TRANSITION 513
 #endif
 
-extern struct ActionScript gData_02004004;
+/* VIEW(first): routine gData_02004004 as this part declared it; the joined file has another. */
+extern struct ActionScript gData_02004004__first __asm__("gData_02004004");
+#define gData_02004004 gData_02004004__first
 
 void Func_0200129c(struct Actor *gift) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1005,8 +1017,12 @@ void Func_020014e0(void) {
   Event_End();
 }
 
-extern const u8 gData_020045a4[];
-extern const u8 gData_020045f0[];
+/* VIEW(first): routine gData_020045a4 as this part declared it; the joined file has another. */
+extern const u8 gData_020045a4__first[] __asm__("gData_020045a4");
+#define gData_020045a4 gData_020045a4__first
+/* VIEW(first): routine gData_020045f0 as this part declared it; the joined file has another. */
+extern const u8 gData_020045f0__first[] __asm__("gData_020045f0");
+#define gData_020045f0 gData_020045f0__first
 
 void Func_02001a68(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1604,8 +1620,12 @@ void Func_02002830(void) {
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 #define OBJECT(id) ((struct Actor *)((s32)Actor_Get((id))))
 
-extern const u8 gData_02004508[];
-extern const u8 gData_02004554[];
+/* VIEW(first): routine gData_02004508 as this part declared it; the joined file has another. */
+extern const u8 gData_02004508__first[] __asm__("gData_02004508");
+#define gData_02004508 gData_02004508__first
+/* VIEW(first): routine gData_02004554 as this part declared it; the joined file has another. */
+extern const u8 gData_02004554__first[] __asm__("gData_02004554");
+#define gData_02004554 gData_02004554__first
 
 /// The Islets' arrival by entrance 4: actor 9 joins the leader and actor 10
 /// is placed, the screen fades in, both run their action scripts
@@ -1806,7 +1826,9 @@ void Func_02002d7c(void) {
   } while (--*owed != 0);
 }
 
-extern const u8 gData_02004274[];
+/* VIEW(first): routine gData_02004274 as this part declared it; the joined file has another. */
+extern const u8 gData_02004274__first[] __asm__("gData_02004274");
+#define gData_02004274 gData_02004274__first
 
 /// The room's setup: flags, the objects' places and the scene state.
 void Func_02002f1c(void) {
@@ -2108,6 +2130,36 @@ void Func_0200329c(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
+#undef gData_02004274
+#undef gData_02004004
+#undef gData_02004300
+#undef gData_020043f8
+#undef gSmokeScript
+#undef gData_02004554
+#undef gData_02004508
+#undef gData_020045f0
+#undef gData_020045a4
+#undef gData_020046bc
+#undef gData_02004028
+#undef TLA_ISLETS_H
+#undef STEP
+#undef HAND_BACK
+#undef ISLETS_GIFT_TRANSITION
+#undef STORED_AT_1AC
+#undef SPAWN
+#undef EVENT_WORK
+#undef OBJECT
+#undef gData_02004274
+#undef gData_02004004
+#undef gData_02004300
+#undef gData_020043f8
+#undef gSmokeScript
+#undef gData_02004554
+#undef gData_02004508
+#undef gData_020045f0
+#undef gData_020045a4
+#undef gData_020046bc
+#undef gData_02004028
 // ---- scene/islets/s3410.c ----
 
 /// Scene code of overlay 0x674, in ROM order.
@@ -2249,7 +2301,9 @@ void Func_0200367c(void) {
 // layers there is filled with 255 (Func_02003790). Returns 1, or 0 for a shape
 // with no footprint. The twin of overlay 668's Func_020040ec.
 
-extern s8 gPushFootprints[][4];
+/* VIEW(s3410): routine gPushFootprints as this part declared it; the joined file has another. */
+extern s8 gPushFootprints__s3410[][4] __asm__("gPushFootprints");
+#define gPushFootprints gPushFootprints__s3410
 
 static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 
@@ -2457,6 +2511,12 @@ DEFINE_PUSH_TARGET_PUSH(PushTarget_Push, gPushFootprints, Func_02003790,
                         Actor_StopAtPushTarget, Actor_SelectAnimation,
                         gPushLeaderSteps)
 
+#undef gPushFootprints
+#undef gPaletteWork
+#undef EVENT_S16
+#undef HI
+#undef ABS
+#undef gPushFootprints
 // ---- scene/islets/s3d0c.c ----
 
 /// Scene code of overlay 0x674, in ROM order.

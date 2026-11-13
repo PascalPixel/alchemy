@@ -131,12 +131,24 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "scene_ids.h"
 
-extern const u8 gData_02001548[];
-extern const u8 gData_02001668[];
-extern const u8 gData_02001740[];
-extern const u8 gData_02001788[];
-extern const u8 gData_02001914[];
-extern const u8 gData_020019b0[];
+/* VIEW(first): routine gData_02001548 as this part declared it; the joined file has another. */
+extern const u8 gData_02001548__first[] __asm__("gData_02001548");
+#define gData_02001548 gData_02001548__first
+/* VIEW(first): routine gData_02001668 as this part declared it; the joined file has another. */
+extern const u8 gData_02001668__first[] __asm__("gData_02001668");
+#define gData_02001668 gData_02001668__first
+/* VIEW(first): routine gData_02001740 as this part declared it; the joined file has another. */
+extern const u8 gData_02001740__first[] __asm__("gData_02001740");
+#define gData_02001740 gData_02001740__first
+/* VIEW(first): routine gData_02001788 as this part declared it; the joined file has another. */
+extern const u8 gData_02001788__first[] __asm__("gData_02001788");
+#define gData_02001788 gData_02001788__first
+/* VIEW(first): routine gData_02001914 as this part declared it; the joined file has another. */
+extern const u8 gData_02001914__first[] __asm__("gData_02001914");
+#define gData_02001914 gData_02001914__first
+/* VIEW(first): routine gData_020019b0 as this part declared it; the joined file has another. */
+extern const u8 gData_020019b0__first[] __asm__("gData_020019b0");
+#define gData_020019b0 gData_020019b0__first
 
 const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -227,7 +239,9 @@ void Func_02000580(s32 scale) {
 
 #include "stddef.h"
 
-extern const struct IsletCaveEntry gData_020019ec[];
+/* VIEW(first): routine gData_020019ec as this part declared it; the joined file has another. */
+extern const struct IsletCaveEntry gData_020019ec__first[] __asm__("gData_020019ec");
+#define gData_020019ec gData_020019ec__first
 
 void Func_020005fc(void) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -274,9 +288,17 @@ loop:
   Event_End();
 }
 
-extern u16 gData_0200134c[], gData_0200135c[], gData_02001388[],
-    gData_020013b4[];
-extern u8 gData_02001454[];
+/* VIEW(first): routine gData_02001388 as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_0200135c as this part declared it; the joined file has another. */
+/* VIEW(first): routine gData_0200134c as this part declared it; the joined file has another. */
+extern u16 gData_0200134c__first[], gData_0200135c__first[], gData_02001388__first[],
+    gData_020013b4[] __asm__("gData_02001388") __asm__("gData_0200135c") __asm__("gData_0200134c");
+#define gData_0200134c gData_0200134c__first
+#define gData_0200135c gData_0200135c__first
+#define gData_02001388 gData_02001388__first
+/* VIEW(first): routine gData_02001454 as this part declared it; the joined file has another. */
+extern u8 gData_02001454__first[] __asm__("gData_02001454");
+#define gData_02001454 gData_02001454__first
 
 s32 Scene_Initialize(void) {
   s32 scene, dim;
@@ -661,6 +683,31 @@ void Func_0200115c(void) {
   }
 }
 
+#undef gData_02001454
+#undef gData_02001388
+#undef gData_020019ec
+#undef gData_020019b0
+#undef gData_02001914
+#undef gData_02001788
+#undef gData_02001740
+#undef gData_02001668
+#undef gData_02001548
+#undef gData_0200135c
+#undef gData_0200134c
+#undef DEFINE_ISLET_CAVE_ARRIVE_AT
+#undef DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS
+#undef FIELD_AT
+#undef gData_02001454
+#undef gData_02001388
+#undef gData_020019ec
+#undef gData_020019b0
+#undef gData_02001914
+#undef gData_02001788
+#undef gData_02001740
+#undef gData_02001668
+#undef gData_02001548
+#undef gData_0200135c
+#undef gData_0200134c
 // ---- scene/data/islet_cave.c ----
 #include "shared/tables.h"
 #include "types.h"
@@ -668,8 +715,12 @@ void Func_0200115c(void) {
 #include "objcmd.h"
 #include "module/scene/islet_cave.h"
 
-void Func_020003c8(void);
-void Func_020003d4(void);
+/* VIEW(data): routine Func_020003c8 as this part declared it; the joined file has another. */
+void Func_020003c8__data(void) __asm__("Func_020003c8");
+#define Func_020003c8 Func_020003c8__data
+/* VIEW(data): routine Func_020003d4 as this part declared it; the joined file has another. */
+void Func_020003d4__data(void) __asm__("Func_020003d4");
+#define Func_020003d4 Func_020003d4__data
 void Func_02000b4c(void);
 void Func_02000cf0(void);
 
@@ -847,3 +898,5 @@ s32 gData_020019ec[] = {
     (s32)gData_020019d4, 0x40060, (s32)gData_020019d4, 0x4006b,
     (s32)gData_020019d4, 0x40076,
 };
+#undef Func_020003d4
+#undef Func_020003c8

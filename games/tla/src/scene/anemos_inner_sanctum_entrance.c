@@ -21,6 +21,12 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 0x22)
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect/spawn.c"
 
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
+#undef EFFECT_SPRITE_PRIORITY
 // ---- scene/anemos_inner_sanctum_entrance.c ----
 
 // ---- games/tla/src/scene/anemos_inner_sanctum_entrance/hide.c ----
@@ -514,13 +520,25 @@ s8 gData_02000eec[] = {
 #include "scene_tables.h"
 #include "module/scene/anemos_inner_sanctum_entrance.h"
 
-void Func_0200033c(void);
-void Func_020004e4(void);
-void Func_02000534(void);
+/* VIEW(data2): routine Func_0200033c as this part declared it; the joined file has another. */
+void Func_0200033c__data2(void) __asm__("Func_0200033c");
+#define Func_0200033c Func_0200033c__data2
+/* VIEW(data2): routine Func_020004e4 as this part declared it; the joined file has another. */
+void Func_020004e4__data2(void) __asm__("Func_020004e4");
+#define Func_020004e4 Func_020004e4__data2
+/* VIEW(data2): routine Func_02000534 as this part declared it; the joined file has another. */
+void Func_02000534__data2(void) __asm__("Func_02000534");
+#define Func_02000534 Func_02000534__data2
 
-extern u8 gData_02000d6c[];
-extern u8 gData_02000da8[];
-extern u8 gData_02000de4[];
+/* VIEW(data2): routine gData_02000d6c as this part declared it; the joined file has another. */
+extern u8 gData_02000d6c__data2[] __asm__("gData_02000d6c");
+#define gData_02000d6c gData_02000d6c__data2
+/* VIEW(data2): routine gData_02000da8 as this part declared it; the joined file has another. */
+extern u8 gData_02000da8__data2[] __asm__("gData_02000da8");
+#define gData_02000da8 gData_02000da8__data2
+/* VIEW(data2): routine gData_02000de4 as this part declared it; the joined file has another. */
+extern u8 gData_02000de4__data2[] __asm__("gData_02000de4");
+#define gData_02000de4 gData_02000de4__data2
 
 LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gData_02000d6c,
@@ -607,3 +625,9 @@ LATE_DATA struct Trigger gData_02001c28[] = {
      IF_FLAG_SET(0x200), EVENT(Func_02000588)},
     {TRIGGER_TABLE_END},
 };
+#undef gData_02000de4
+#undef gData_02000da8
+#undef gData_02000d6c
+#undef Func_02000534
+#undef Func_020004e4
+#undef Func_0200033c

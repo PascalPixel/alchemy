@@ -18,6 +18,12 @@ DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Scene_CreateImportedActor, 34)
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect/spawn.c"
 
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
+#undef EFFECT_SPRITE_PRIORITY
 // ---- scene/sea_of_time.c ----
 
 // The Sea of Time, east of Lemuria: currents and swirls that carry the ship

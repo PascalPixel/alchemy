@@ -24,6 +24,12 @@ DEFINE_SCENE_CREATE_ACTOR(Scene_CreateActor)
 #define EFFECT_SPRITE_PRIORITY
 #include "../../../../games/tla/src/field/field_effect/spawn.c"
 
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
+#undef EFFECT_SPRITE_PRIORITY
 // ---- scene/aqua_rock_inside/aqua_rock_inside.c ----
 
 // Scene code of overlay 0x67c, in ROM order.
@@ -65,17 +71,39 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern const u8 gData_02004688[];
-extern const u8 gData_020046a0[];
-extern const u8 gData_02004748[];
-extern const u8 gData_020047a8[];
-extern const u8 gData_02004808[];
-extern const u8 gData_020048c8[];
-extern const u8 gData_02004910[];
-extern const u8 gData_020049e8[];
-extern const u8 gData_02004a00[];
-extern const u8 gData_02004a48[];
-extern const u8 gData_02004b98[];
+/* VIEW(aqua_rock_inside): routine gData_02004688 as this part declared it; the joined file has another. */
+extern const u8 gData_02004688__aqua_rock_inside[] __asm__("gData_02004688");
+#define gData_02004688 gData_02004688__aqua_rock_inside
+/* VIEW(aqua_rock_inside): routine gData_020046a0 as this part declared it; the joined file has another. */
+extern const u8 gData_020046a0__aqua_rock_inside[] __asm__("gData_020046a0");
+#define gData_020046a0 gData_020046a0__aqua_rock_inside
+/* VIEW(aqua_rock_inside): routine gData_02004748 as this part declared it; the joined file has another. */
+extern const u8 gData_02004748__aqua_rock_inside[] __asm__("gData_02004748");
+#define gData_02004748 gData_02004748__aqua_rock_inside
+/* VIEW(aqua_rock_inside): routine gData_020047a8 as this part declared it; the joined file has another. */
+extern const u8 gData_020047a8__aqua_rock_inside[] __asm__("gData_020047a8");
+#define gData_020047a8 gData_020047a8__aqua_rock_inside
+/* VIEW(aqua_rock_inside): routine gData_02004808 as this part declared it; the joined file has another. */
+extern const u8 gData_02004808__aqua_rock_inside[] __asm__("gData_02004808");
+#define gData_02004808 gData_02004808__aqua_rock_inside
+/* VIEW(aqua_rock_inside): routine gData_020048c8 as this part declared it; the joined file has another. */
+extern const u8 gData_020048c8__aqua_rock_inside[] __asm__("gData_020048c8");
+#define gData_020048c8 gData_020048c8__aqua_rock_inside
+/* VIEW(aqua_rock_inside): routine gData_02004910 as this part declared it; the joined file has another. */
+extern const u8 gData_02004910__aqua_rock_inside[] __asm__("gData_02004910");
+#define gData_02004910 gData_02004910__aqua_rock_inside
+/* VIEW(aqua_rock_inside): routine gData_020049e8 as this part declared it; the joined file has another. */
+extern const u8 gData_020049e8__aqua_rock_inside[] __asm__("gData_020049e8");
+#define gData_020049e8 gData_020049e8__aqua_rock_inside
+/* VIEW(aqua_rock_inside): routine gData_02004a00 as this part declared it; the joined file has another. */
+extern const u8 gData_02004a00__aqua_rock_inside[] __asm__("gData_02004a00");
+#define gData_02004a00 gData_02004a00__aqua_rock_inside
+/* VIEW(aqua_rock_inside): routine gData_02004a48 as this part declared it; the joined file has another. */
+extern const u8 gData_02004a48__aqua_rock_inside[] __asm__("gData_02004a48");
+#define gData_02004a48 gData_02004a48__aqua_rock_inside
+/* VIEW(aqua_rock_inside): routine gData_02004b98 as this part declared it; the joined file has another. */
+extern const u8 gData_02004b98__aqua_rock_inside[] __asm__("gData_02004b98");
+#define gData_02004b98 gData_02004b98__aqua_rock_inside
 
 const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -499,6 +527,29 @@ void Func_02000ca8(void) {
 }
 
 #undef gData_02003fb8
+#undef gData_02004b98
+#undef gData_02004a48
+#undef gData_02004a00
+#undef gData_020049e8
+#undef gData_02004910
+#undef gData_020048c8
+#undef gData_02004808
+#undef gData_020047a8
+#undef gData_02004748
+#undef gData_020046a0
+#undef gData_02004688
+#undef gData_02003fb8
+#undef gData_02004b98
+#undef gData_02004a48
+#undef gData_02004a00
+#undef gData_020049e8
+#undef gData_02004910
+#undef gData_020048c8
+#undef gData_02004808
+#undef gData_020047a8
+#undef gData_02004748
+#undef gData_020046a0
+#undef gData_02004688
 // ---- games/tla/src/scene/aqua_rock_inside/s0cc8.c ----
 // Scene code of overlay 0x67c, in ROM order, from s0cc8's offset up to the next
 // object the overlay links.
@@ -869,6 +920,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, FieldEffect_Spawn)
 #undef BYTE_AT
 
+#undef BYTE_AT
 // ---- games/tla/src/scene/aqua_rock_inside/s1620.c ----
 // Scene code of overlay 0x67c, in ROM order, from s1620's offset up to the
 // next object the overlay links.
@@ -1177,17 +1229,39 @@ DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(Func_02001cd8, 280)
 
 DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(Func_02001d40, 248)
 
-extern const u8 gData_02004c70[];
-extern const u8 gData_02004c7c[];
-extern const u8 gData_02004d88[];
-extern const u8 gData_02004e48[];
-extern const u8 gData_02004ed8[];
-extern const u8 gData_02004fb0[];
-extern const u8 gData_0200507c[];
-extern const u8 gData_020051b4[];
-extern const u8 gData_020051fc[];
-extern const u8 gData_02005268[];
-extern const u8 gData_020052f8[];
+/* VIEW(s1620): routine gData_02004c70 as this part declared it; the joined file has another. */
+extern const u8 gData_02004c70__s1620[] __asm__("gData_02004c70");
+#define gData_02004c70 gData_02004c70__s1620
+/* VIEW(s1620): routine gData_02004c7c as this part declared it; the joined file has another. */
+extern const u8 gData_02004c7c__s1620[] __asm__("gData_02004c7c");
+#define gData_02004c7c gData_02004c7c__s1620
+/* VIEW(s1620): routine gData_02004d88 as this part declared it; the joined file has another. */
+extern const u8 gData_02004d88__s1620[] __asm__("gData_02004d88");
+#define gData_02004d88 gData_02004d88__s1620
+/* VIEW(s1620): routine gData_02004e48 as this part declared it; the joined file has another. */
+extern const u8 gData_02004e48__s1620[] __asm__("gData_02004e48");
+#define gData_02004e48 gData_02004e48__s1620
+/* VIEW(s1620): routine gData_02004ed8 as this part declared it; the joined file has another. */
+extern const u8 gData_02004ed8__s1620[] __asm__("gData_02004ed8");
+#define gData_02004ed8 gData_02004ed8__s1620
+/* VIEW(s1620): routine gData_02004fb0 as this part declared it; the joined file has another. */
+extern const u8 gData_02004fb0__s1620[] __asm__("gData_02004fb0");
+#define gData_02004fb0 gData_02004fb0__s1620
+/* VIEW(s1620): routine gData_0200507c as this part declared it; the joined file has another. */
+extern const u8 gData_0200507c__s1620[] __asm__("gData_0200507c");
+#define gData_0200507c gData_0200507c__s1620
+/* VIEW(s1620): routine gData_020051b4 as this part declared it; the joined file has another. */
+extern const u8 gData_020051b4__s1620[] __asm__("gData_020051b4");
+#define gData_020051b4 gData_020051b4__s1620
+/* VIEW(s1620): routine gData_020051fc as this part declared it; the joined file has another. */
+extern const u8 gData_020051fc__s1620[] __asm__("gData_020051fc");
+#define gData_020051fc gData_020051fc__s1620
+/* VIEW(s1620): routine gData_02005268 as this part declared it; the joined file has another. */
+extern const u8 gData_02005268__s1620[] __asm__("gData_02005268");
+#define gData_02005268 gData_02005268__s1620
+/* VIEW(s1620): routine gData_020052f8 as this part declared it; the joined file has another. */
+extern const u8 gData_020052f8__s1620[] __asm__("gData_020052f8");
+#define gData_020052f8 gData_020052f8__s1620
 
 const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -2093,7 +2167,9 @@ s32 Func_02003688(s32 x, s32 y, s32 z, s32 kind) {
   entry->direction = kind;
 }
 
-extern const s8 gData_0200534c[];
+/* VIEW(s1620): routine gData_0200534c as this part declared it; the joined file has another. */
+extern const s8 gData_0200534c__s1620[] __asm__("gData_0200534c");
+#define gData_0200534c gData_0200534c__s1620
 
 // Advances Aqua Rock's two water streams one cell along the map: each stream
 // follows the turn its cell's kind gives, leaves a splash on every open cell
@@ -2188,6 +2264,36 @@ s32 Func_020036b8(s32 first, s32 target) {
 
 #undef gData_02004004
 #undef gData_02004014
+#undef gData_0200534c
+#undef gData_020052f8
+#undef gData_02005268
+#undef gData_020051fc
+#undef gData_020051b4
+#undef gData_0200507c
+#undef gData_02004fb0
+#undef gData_02004ed8
+#undef gData_02004e48
+#undef gData_02004d88
+#undef gData_02004c7c
+#undef gData_02004c70
+#undef FIELD_AT
+#undef DEFINE_AQUA_ROCK_INSIDE_READ_TABLET
+#undef BG1_SET_PRIORITY_1
+#undef LAYER_S32
+#undef gData_02004004
+#undef gData_02004014
+#undef gData_0200534c
+#undef gData_020052f8
+#undef gData_02005268
+#undef gData_020051fc
+#undef gData_020051b4
+#undef gData_0200507c
+#undef gData_02004fb0
+#undef gData_02004ed8
+#undef gData_02004e48
+#undef gData_02004d88
+#undef gData_02004c7c
+#undef gData_02004c70
 // ---- scene/aqua_rock_inside/s3844.c ----
 
 // Scene code of overlay 0x67c, in ROM order.
@@ -2430,6 +2536,10 @@ u32 gWaterDropScript[] = {
 
 #undef Func_02003ab0
 #undef Orbiter_Spiral
+#undef VENT_TOUCHING
+#undef VENT_BOUNCE
+#undef Func_02003ab0
+#undef Orbiter_Spiral
 // ---- scene/data/aqua_rock_inside.c ----
 
 #include "macros.h"
@@ -2438,27 +2548,59 @@ u32 gWaterDropScript[] = {
 #include "module/scene/aqua_rock_inside.h"
 
 void Func_0200033c(void);
-void Func_0200042c(void);
-void Func_020004bc(void);
-void Func_02000574(void);
+/* VIEW(data): routine Func_0200042c as this part declared it; the joined file has another. */
+void Func_0200042c__data(void) __asm__("Func_0200042c");
+#define Func_0200042c Func_0200042c__data
+/* VIEW(data): routine Func_020004bc as this part declared it; the joined file has another. */
+void Func_020004bc__data(void) __asm__("Func_020004bc");
+#define Func_020004bc Func_020004bc__data
+/* VIEW(data): routine Func_02000574 as this part declared it; the joined file has another. */
+void Func_02000574__data(void) __asm__("Func_02000574");
+#define Func_02000574 Func_02000574__data
 void Func_020005f8(void);
-void Func_02000644(void);
-void Func_02000958(void);
+/* VIEW(data): routine Func_02000644 as this part declared it; the joined file has another. */
+void Func_02000644__data(void) __asm__("Func_02000644");
+#define Func_02000644 Func_02000644__data
+/* VIEW(data): routine Func_02000958 as this part declared it; the joined file has another. */
+void Func_02000958__data(void) __asm__("Func_02000958");
+#define Func_02000958 Func_02000958__data
 void Func_02000b84(void);
-void Func_02000c28(void);
-void Func_02000cc8(void);
-void Func_02000e18(void);
-void Func_02000ecc(void);
-void Func_0200101c(void);
-void Func_02001138(void);
-void Func_020011d4(void);
+/* VIEW(data): routine Func_02000c28 as this part declared it; the joined file has another. */
+void Func_02000c28__data(void) __asm__("Func_02000c28");
+#define Func_02000c28 Func_02000c28__data
+/* VIEW(data): routine Func_02000cc8 as this part declared it; the joined file has another. */
+void Func_02000cc8__data(void) __asm__("Func_02000cc8");
+#define Func_02000cc8 Func_02000cc8__data
+/* VIEW(data): routine Func_02000e18 as this part declared it; the joined file has another. */
+void Func_02000e18__data(void) __asm__("Func_02000e18");
+#define Func_02000e18 Func_02000e18__data
+/* VIEW(data): routine Func_02000ecc as this part declared it; the joined file has another. */
+void Func_02000ecc__data(void) __asm__("Func_02000ecc");
+#define Func_02000ecc Func_02000ecc__data
+/* VIEW(data): routine Func_0200101c as this part declared it; the joined file has another. */
+void Func_0200101c__data(void) __asm__("Func_0200101c");
+#define Func_0200101c Func_0200101c__data
+/* VIEW(data): routine Func_02001138 as this part declared it; the joined file has another. */
+void Func_02001138__data(void) __asm__("Func_02001138");
+#define Func_02001138 Func_02001138__data
+/* VIEW(data): routine Func_020011d4 as this part declared it; the joined file has another. */
+void Func_020011d4__data(void) __asm__("Func_020011d4");
+#define Func_020011d4 Func_020011d4__data
 void Func_02001a1c(void);
-void Leader_SinkAway(void);
+/* VIEW(data): routine Leader_SinkAway as this part declared it; the joined file has another. */
+void Leader_SinkAway__data(void) __asm__("Leader_SinkAway");
+#define Leader_SinkAway Leader_SinkAway__data
 
 extern u8 Data_020005f4[];
-extern u8 gData_02003f04[];
-extern u8 gData_02003f40[];
-extern u8 gData_02003f7c[];
+/* VIEW(data): routine gData_02003f04 as this part declared it; the joined file has another. */
+extern u8 gData_02003f04__data[] __asm__("gData_02003f04");
+#define gData_02003f04 gData_02003f04__data
+/* VIEW(data): routine gData_02003f40 as this part declared it; the joined file has another. */
+extern u8 gData_02003f40__data[] __asm__("gData_02003f40");
+#define gData_02003f40 gData_02003f40__data
+/* VIEW(data): routine gData_02003f7c as this part declared it; the joined file has another. */
+extern u8 gData_02003f7c__data[] __asm__("gData_02003f7c");
+#define gData_02003f7c gData_02003f7c__data
 
 // clang-format off
 LATE_DATA u32 gData_020044c8[] = {
@@ -2847,3 +2989,19 @@ LATE_DATA u32 gData_0200534c[] = {
     0x8080008, 0x8ff0108,
 };
 // clang-format on
+#undef gData_02003f7c
+#undef gData_02003f40
+#undef gData_02003f04
+#undef Leader_SinkAway
+#undef Func_020011d4
+#undef Func_02001138
+#undef Func_0200101c
+#undef Func_02000ecc
+#undef Func_02000e18
+#undef Func_02000cc8
+#undef Func_02000c28
+#undef Func_02000958
+#undef Func_02000644
+#undef Func_02000574
+#undef Func_020004bc
+#undef Func_0200042c

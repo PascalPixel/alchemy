@@ -94,8 +94,12 @@ void Func_020002a4(void) {
   }
 }
 
-extern const u16 gData_020054ee[];
-extern const u16 gData_020054b8[];
+/* VIEW(first): routine gData_020054ee as this part declared it; the joined file has another. */
+extern const u16 gData_020054ee__first[] __asm__("gData_020054ee");
+#define gData_020054ee gData_020054ee__first
+/* VIEW(first): routine gData_020054b8 as this part declared it; the joined file has another. */
+extern const u16 gData_020054b8__first[] __asm__("gData_020054b8");
+#define gData_020054b8 gData_020054b8__first
 
 // Build BG palette 1 colors 8-15 from the table.
 #define DEFINE_GAROH_LOAD_PALETTE(name, data1, n1, n2)                         \
@@ -149,14 +153,28 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "main_routine_work.h"
 
-extern u32 gData_020056dc[];
-extern u32 gData_020056f4[];
-extern u32 gData_020059dc[];
-extern s32 gData_02005a54[];
-extern u32 gData_02005b5c[];
-extern s32 gData_02005c1c[];
+/* VIEW(first): routine gData_020056dc as this part declared it; the joined file has another. */
+extern u32 gData_020056dc__first[] __asm__("gData_020056dc");
+#define gData_020056dc gData_020056dc__first
+/* VIEW(first): routine gData_020056f4 as this part declared it; the joined file has another. */
+extern u32 gData_020056f4__first[] __asm__("gData_020056f4");
+#define gData_020056f4 gData_020056f4__first
+/* VIEW(first): routine gData_020059dc as this part declared it; the joined file has another. */
+extern u32 gData_020059dc__first[] __asm__("gData_020059dc");
+#define gData_020059dc gData_020059dc__first
+/* VIEW(first): routine gData_02005a54 as this part declared it; the joined file has another. */
+extern s32 gData_02005a54__first[] __asm__("gData_02005a54");
+#define gData_02005a54 gData_02005a54__first
+/* VIEW(first): routine gData_02005b5c as this part declared it; the joined file has another. */
+extern u32 gData_02005b5c__first[] __asm__("gData_02005b5c");
+#define gData_02005b5c gData_02005b5c__first
+/* VIEW(first): routine gData_02005c1c as this part declared it; the joined file has another. */
+extern s32 gData_02005c1c__first[] __asm__("gData_02005c1c");
+#define gData_02005c1c gData_02005c1c__first
 
-extern const struct GarohPicture gData_02005de0[];
+/* VIEW(first): routine gData_02005de0 as this part declared it; the joined file has another. */
+extern const struct GarohPicture gData_02005de0__first[] __asm__("gData_02005de0");
+#define gData_02005de0 gData_02005de0__first
 
 /// Return the table for the current room.
 const void *Scene_GetPlacements(void) {
@@ -397,14 +415,28 @@ void Func_02000808(void) {
   }
 }
 
-extern s32 gData_02005e10[];
-extern s32 gData_02005e34[];
-extern s32 gData_02005f78[];
-extern s32 gData_020060d4[];
-extern s32 gData_020061d0[];
-extern s32 gData_02006278[];
+/* VIEW(first): routine gData_02005e10 as this part declared it; the joined file has another. */
+extern s32 gData_02005e10__first[] __asm__("gData_02005e10");
+#define gData_02005e10 gData_02005e10__first
+/* VIEW(first): routine gData_02005e34 as this part declared it; the joined file has another. */
+extern s32 gData_02005e34__first[] __asm__("gData_02005e34");
+#define gData_02005e34 gData_02005e34__first
+/* VIEW(first): routine gData_02005f78 as this part declared it; the joined file has another. */
+extern s32 gData_02005f78__first[] __asm__("gData_02005f78");
+#define gData_02005f78 gData_02005f78__first
+/* VIEW(first): routine gData_020060d4 as this part declared it; the joined file has another. */
+extern s32 gData_020060d4__first[] __asm__("gData_020060d4");
+#define gData_020060d4 gData_020060d4__first
+/* VIEW(first): routine gData_020061d0 as this part declared it; the joined file has another. */
+extern s32 gData_020061d0__first[] __asm__("gData_020061d0");
+#define gData_020061d0 gData_020061d0__first
+/* VIEW(first): routine gData_02006278 as this part declared it; the joined file has another. */
+extern s32 gData_02006278__first[] __asm__("gData_02006278");
+#define gData_02006278 gData_02006278__first
 
-extern s32 gData_0200632c;
+/* VIEW(first): routine gData_0200632c as this part declared it; the joined file has another. */
+extern s32 gData_0200632c__first __asm__("gData_0200632c");
+#define gData_0200632c gData_0200632c__first
 
 void Func_02000960(void) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
@@ -572,7 +604,9 @@ L_02008da6:
 L_02008dea:
 }
 
-extern u8 gData_02005450[];
+/* VIEW(first): routine gData_02005450 as this part declared it; the joined file has another. */
+extern u8 gData_02005450__first[] __asm__("gData_02005450");
+#define gData_02005450 gData_02005450__first
 
 void Func_02000e00(void) {
   FieldTask_AddFrame(Func_02000a68, 1152);
@@ -764,6 +798,47 @@ void Func_020011c8(void) {
 
 #include "../field/field_effect/advance_motion.c"
 
+#undef gData_02005450
+#undef gData_0200632c
+#undef gData_02006278
+#undef gData_020061d0
+#undef gData_020060d4
+#undef gData_02005f78
+#undef gData_02005e34
+#undef gData_02005e10
+#undef gData_02005de0
+#undef gData_02005c1c
+#undef gData_02005b5c
+#undef gData_02005a54
+#undef gData_020059dc
+#undef gData_020056f4
+#undef gData_020056dc
+#undef gData_020054b8
+#undef gData_020054ee
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
+#undef DEFINE_GAROH_LOAD_PALETTE
+#undef DEFINE_GAROH_TRIGGER_AT_CELL
+#undef gData_02005450
+#undef gData_0200632c
+#undef gData_02006278
+#undef gData_020061d0
+#undef gData_020060d4
+#undef gData_02005f78
+#undef gData_02005e34
+#undef gData_02005e10
+#undef gData_02005de0
+#undef gData_02005c1c
+#undef gData_02005b5c
+#undef gData_02005a54
+#undef gData_020059dc
+#undef gData_020056f4
+#undef gData_020056dc
+#undef gData_020054b8
+#undef gData_020054ee
 // ---- scene/garoh/s12a8.c ----
 // @file
 // Scene code of overlay 0x65f, in ROM order.
@@ -3034,18 +3109,32 @@ L_0200d0fa:;
 
 #include "objcmd.h"
 
-void Func_02000420(void);
-void Func_02000580(void);
-void Func_020005cc(void);
-void Func_02000618(void);
-void Func_02000664(void);
-void Func_02000698(void);
+/* VIEW(push): routine Func_02000420 as this part declared it; the joined file has another. */
+void Func_02000420__push(void) __asm__("Func_02000420");
+#define Func_02000420 Func_02000420__push
+/* VIEW(push): routine Func_02000580 as this part declared it; the joined file has another. */
+void Func_02000580__push(void) __asm__("Func_02000580");
+#define Func_02000580 Func_02000580__push
+/* VIEW(push): routine Func_020005cc as this part declared it; the joined file has another. */
+void Func_020005cc__push(void) __asm__("Func_020005cc");
+#define Func_020005cc Func_020005cc__push
+/* VIEW(push): routine Func_02000618 as this part declared it; the joined file has another. */
+void Func_02000618__push(void) __asm__("Func_02000618");
+#define Func_02000618 Func_02000618__push
+/* VIEW(push): routine Func_02000664 as this part declared it; the joined file has another. */
+void Func_02000664__push(void) __asm__("Func_02000664");
+#define Func_02000664 Func_02000664__push
+/* VIEW(push): routine Func_02000698 as this part declared it; the joined file has another. */
+void Func_02000698__push(void) __asm__("Func_02000698");
+#define Func_02000698 Func_02000698__push
 void Func_020006ec(void);
 void Func_02000e58(void);
 void Func_02000e68(void);
 void Func_02000fbc(void);
 void Func_0200101c(void);
-void Func_0200108c(void);
+/* VIEW(push): routine Func_0200108c as this part declared it; the joined file has another. */
+void Func_0200108c__push(void) __asm__("Func_0200108c");
+#define Func_0200108c Func_0200108c__push
 
 extern u32 gFieldEffect_MediumScript[];
 
@@ -3445,3 +3534,10 @@ u32 gData_02006330[] = {
 #undef ACTOR_MODE_THEN_WAIT
 #undef FOLLOW_LEADER
 #undef FIELD_AT
+#undef Func_0200108c
+#undef Func_02000698
+#undef Func_02000664
+#undef Func_02000618
+#undef Func_020005cc
+#undef Func_02000580
+#undef Func_02000420

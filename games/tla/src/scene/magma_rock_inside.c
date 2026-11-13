@@ -39,6 +39,12 @@ struct Actor *MagmaRockInside_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect/spawn.c"
 
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
+#undef EFFECT_SPRITE_PRIORITY
 // ---- scene/magma_rock_inside/s033c.c ----
 
 // Scene code of overlay 0x692, in ROM order.
@@ -2260,6 +2266,38 @@ void MagmaRockInside_LayerWithLeader(struct Actor *arg) {
 #undef gMagmaRockInside_BlazeWatcherScript
 #undef gMagmaRockInside_BlazeCasterReturnScript
 #undef gMagmaRockInside_BlazeWatcherReturnScript
+#undef FIELD_AT
+#undef gMagmaRockInside_Placements
+#undef gMagmaRockInside_Room2Placements
+#undef gMagmaRockInside_Room3Placements
+#undef gMagmaRockInside_Room4Placements
+#undef gMagmaRockInside_Room5Placements
+#undef gMagmaRockInside_Room6Placements
+#undef gMagmaRockInside_Room7Placements
+#undef gMagmaRockInside_Room8Placements
+#undef gMagmaRockInside_EmberScript
+#undef gMagmaRockInside_Room4Statues
+#undef gMagmaRockInside_FlameEmberScript
+#undef DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR
+#undef DEFINE_MAGMA_ROCK_INSIDE_LIGHT_TORCH
+#undef BYTE_AT
+#undef gMagmaRockInside_BlazeCasterScript
+#undef gMagmaRockInside_TorchScript
+#undef gMagmaRockInside_SparkScript
+#undef gMagmaRockInside_BlazeWatcherScript
+#undef gMagmaRockInside_OrbitScript
+#undef gMagmaRockInside_BlazeCasterReturnScript
+#undef gMagmaRockInside_BlazeWatcherReturnScript
+#undef EVENT_WORK
+#undef DEFINE_MAGMA_ROCK_INSIDE_READ_TABLET_FROM
+#undef gMagmaRockInside_Room2Triggers
+#undef gMagmaRockInside_Room3Triggers
+#undef gMagmaRockInside_Room4Triggers
+#undef gMagmaRockInside_Room5Triggers
+#undef gMagmaRockInside_Room6Triggers
+#undef gMagmaRockInside_Room7Triggers
+#undef gMagmaRockInside_Room8Triggers
+#undef gMagmaRockInside_Statues
 // ---- scene/magma_rock_inside/s3678.c ----
 
 // Magma Rock's inside: its crumbling pillars and traps.
@@ -2818,6 +2856,16 @@ test:
 #undef MagmaRockInside_StartLavaPlatform
 #undef gMagmaRockInside_Statues
 
+#undef gMagmaRockInside_PlatformPath1
+#undef gMagmaRockInside_PlatformPath2
+#undef gMagmaRockInside_PlatformPath4
+#undef gMagmaRockInside_PlatformPath5
+#undef gMagmaRockInside_PlatformPath10
+#undef gMagmaRockInside_PlatformPath11
+#undef gMagmaRockInside_PlatformPath12
+#undef MagmaRockInside_StartLavaPlatform
+#undef CLOSED_BLEND
+#undef gMagmaRockInside_Statues
 #undef gMagmaRockInside_PlatformPath1
 #undef gMagmaRockInside_PlatformPath2
 #undef gMagmaRockInside_PlatformPath4

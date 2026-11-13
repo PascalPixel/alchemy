@@ -22,9 +22,15 @@
 #include "module/tla.h"
 #include "particle.h"
 
-extern u8 gData_02004d0c[];
-extern u8 gData_02004dbc[];
-extern u8 gData_02004fe4[];
+/* VIEW(eastern_alhafra): routine gData_02004d0c as this part declared it; the joined file has another. */
+extern u8 gData_02004d0c__eastern_alhafra[] __asm__("gData_02004d0c");
+#define gData_02004d0c gData_02004d0c__eastern_alhafra
+/* VIEW(eastern_alhafra): routine gData_02004dbc as this part declared it; the joined file has another. */
+extern u8 gData_02004dbc__eastern_alhafra[] __asm__("gData_02004dbc");
+#define gData_02004dbc gData_02004dbc__eastern_alhafra
+/* VIEW(eastern_alhafra): routine gData_02004fe4 as this part declared it; the joined file has another. */
+extern u8 gData_02004fe4__eastern_alhafra[] __asm__("gData_02004fe4");
+#define gData_02004fe4 gData_02004fe4__eastern_alhafra
 
 s32 Actor_HasArrived();
 
@@ -113,7 +119,9 @@ void Func_02000190(s32 unused, s32 id) {
 #include "event_work.h"
 #include "text/msg_ids.h"
 
-extern u8 gData_02005290[];
+/* VIEW(eastern_alhafra): routine gData_02005290 as this part declared it; the joined file has another. */
+extern u8 gData_02005290__eastern_alhafra[] __asm__("gData_02005290");
+#define gData_02005290 gData_02005290__eastern_alhafra
 
 /* VIEW(eastern_alhafra): routine Actor_SelectAnimation as s32
  * Actor_SelectAnimation(); module/scene/scene.h has void
@@ -241,6 +249,14 @@ void Func_0200042c(s32 mode, s32 id) {
     EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
 }
 
+#undef gData_02005290
+#undef gData_02004fe4
+#undef gData_02004dbc
+#undef gData_02004d0c
+#undef gData_02005290
+#undef gData_02004fe4
+#undef gData_02004dbc
+#undef gData_02004d0c
 // ---- games/tla/src/scene/eastern_alhafra/s0514.c ----
 // Scene code of overlay 0x668, in ROM order, from s0514's offset up to the next
 // object the overlay links.
@@ -443,7 +459,9 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 #include "map.h"
 #include "frame.h"
 
-extern u8 gData_020054f0[];
+/* VIEW(s0514): routine gData_020054f0 as this part declared it; the joined file has another. */
+extern u8 gData_020054f0__s0514[] __asm__("gData_020054f0");
+#define gData_020054f0 gData_020054f0__s0514
 
 // BG1's wave: each frame the finished table of scanline offsets is handed to
 // an HBlank DMA, while the other table is filled for the next frame.
@@ -1092,7 +1110,9 @@ L_02009b74:
   return;
 }
 
-extern const u8 gData_020056d4[];
+/* VIEW(s0514): routine gData_020056d4 as this part declared it; the joined file has another. */
+extern const u8 gData_020056d4__s0514[] __asm__("gData_020056d4");
+#define gData_020056d4 gData_020056d4__s0514
 
 void Actor_StartScript(struct SpawnObject *object, const void *script);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority);
@@ -1126,6 +1146,13 @@ void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer) {
 #undef OBJECT
 #undef FIELD_AT
 
+#undef gData_020056d4
+#undef gData_020054f0
+#undef EVENT_WORK
+#undef OBJECT
+#undef FIELD_AT
+#undef gData_020056d4
+#undef gData_020054f0
 // ---- games/tla/src/scene/eastern_alhafra/s1bf4.c ----
 // Scene code of overlay 0x668, in ROM order, from s1bf4's offset up to the next
 // object the overlay links.
@@ -2192,7 +2219,9 @@ void Func_020040c0(void) {
 // layers there is filled with 255. Returns 1, or 0 for a shape with no
 // footprint.
 
-extern s8 gPushFootprints[][4];
+/* VIEW(s4004): routine gPushFootprints as this part declared it; the joined file has another. */
+extern s8 gPushFootprints__s4004[][4] __asm__("gPushFootprints");
+#define gPushFootprints gPushFootprints__s4004
 
 static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 
@@ -2246,7 +2275,9 @@ s32 Func_020040ec(s32 id) {
 
 #include "system/vector3.h"
 
-extern s32 gPushDirectionSteps[];
+/* VIEW(s4004): routine gPushDirectionSteps as this part declared it; the joined file has another. */
+extern s32 gPushDirectionSteps__s4004[] __asm__("gPushDirectionSteps");
+#define gPushDirectionSteps gPushDirectionSteps__s4004
 
 static __inline__ s32 CallFunc_02004a64(struct Actor *actor,
                                         struct Vector3 *cell) {
@@ -2322,6 +2353,12 @@ s32 Func_02004240(struct PushState *push) {
 DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gPushKinds,
                               gPushDirectionSteps, gPushFootprints)
 
+#undef gPushDirectionSteps
+#undef gPushFootprints
+#undef PIXELS
+#define PIXELS(value) ((value) << 16)
+#undef gPushDirectionSteps
+#undef gPushFootprints
 // ---- scene/eastern_alhafra/s44c4.c ----
 
 /// Scene code of overlay 0x668, in ROM order.
@@ -2474,6 +2511,7 @@ DEFINE_STATUE_SINK(Statue_Sink, Actor_SetCellOpen)
 DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
                            Actor_SelectAnimation)
 
+#undef ABS
 // ---- scene/data/eastern_alhafra.c ----
 #include "types.h"
 #include "flags.h"
@@ -2481,14 +2519,30 @@ DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
 #include "text/msg_ids.h"
 #include "module/scene/eastern_alhafra.h"
 
-void Func_0200006c(void);
-void Func_020000c8(void);
-void Func_02000190(void);
-void Func_02000200(void);
-void Func_02000394(void);
-void Func_0200042c(void);
-void Func_020006ec(void);
-void Func_02000940(void);
+/* VIEW(data): routine Func_0200006c as this part declared it; the joined file has another. */
+void Func_0200006c__data(void) __asm__("Func_0200006c");
+#define Func_0200006c Func_0200006c__data
+/* VIEW(data): routine Func_020000c8 as this part declared it; the joined file has another. */
+void Func_020000c8__data(void) __asm__("Func_020000c8");
+#define Func_020000c8 Func_020000c8__data
+/* VIEW(data): routine Func_02000190 as this part declared it; the joined file has another. */
+void Func_02000190__data(void) __asm__("Func_02000190");
+#define Func_02000190 Func_02000190__data
+/* VIEW(data): routine Func_02000200 as this part declared it; the joined file has another. */
+void Func_02000200__data(void) __asm__("Func_02000200");
+#define Func_02000200 Func_02000200__data
+/* VIEW(data): routine Func_02000394 as this part declared it; the joined file has another. */
+void Func_02000394__data(void) __asm__("Func_02000394");
+#define Func_02000394 Func_02000394__data
+/* VIEW(data): routine Func_0200042c as this part declared it; the joined file has another. */
+void Func_0200042c__data(void) __asm__("Func_0200042c");
+#define Func_0200042c Func_0200042c__data
+/* VIEW(data): routine Func_020006ec as this part declared it; the joined file has another. */
+void Func_020006ec__data(void) __asm__("Func_020006ec");
+#define Func_020006ec Func_020006ec__data
+/* VIEW(data): routine Func_02000940 as this part declared it; the joined file has another. */
+void Func_02000940__data(void) __asm__("Func_02000940");
+#define Func_02000940 Func_02000940__data
 void Func_02000958(void);
 
 // clang-format off
@@ -2719,3 +2773,11 @@ s32 gData_02005670[] = {
 u32 gData_020056d4[] = {
     38,
 };
+#undef Func_02000940
+#undef Func_020006ec
+#undef Func_0200042c
+#undef Func_02000394
+#undef Func_02000200
+#undef Func_02000190
+#undef Func_020000c8
+#undef Func_0200006c

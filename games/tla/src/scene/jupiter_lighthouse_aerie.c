@@ -418,7 +418,9 @@ void Func_02000930(void) {
 
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
-extern const s32 gData_0200331c[];
+/* VIEW(jupiter_lighthouse_aerie): routine gData_0200331c as this part declared it; the joined file has another. */
+extern const s32 gData_0200331c__jupiter_lighthouse_aerie[] __asm__("gData_0200331c");
+#define gData_0200331c gData_0200331c__jupiter_lighthouse_aerie
 extern s32 gData_0200333c;
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
@@ -512,6 +514,8 @@ stop:
   }
 }
 
+#undef gData_0200331c
+#undef gData_0200331c
 // ---- games/tla/src/scene/jupiter_lighthouse_aerie/s0d08.c ----
 #include "call.h"
 #include "field_effect.h"
@@ -762,6 +766,7 @@ void Func_02001080(void) {
 }
 #undef LERP
 
+#undef LERP
 // ---- scene/jupiter_lighthouse_aerie/s17a8.c ----
 
 /// Scene code of overlay 0x6a4, in ROM order.
@@ -959,7 +964,9 @@ void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
+/* VIEW(s1e78): routine Actor_StartScript as this part declared it; the joined file has another. */
+void Actor_StartScript__s1e78(struct FieldEffect *effect, const s32 *script) __asm__("Actor_StartScript");
+#define Actor_StartScript Actor_StartScript__s1e78
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -1063,6 +1070,11 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 // one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
+#undef Actor_StartScript
+#undef CELL_TABLE
+#undef CELL_SPRITE_DRAW
+#undef CELL_PUSH_SLOT_ENTRY
+#undef Actor_StartScript
 // ---- scene/jupiter_lighthouse_aerie/s24a8.c ----
 
 // Scene code of overlay 0x6a4, in ROM order.
@@ -1091,7 +1103,8 @@ struct CellTarget__s24a8 {
 void Leader_CenterInCell(void);
 #include "io_write.h"
 
-DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s24a8,
+/* VIEW(s24a8): routine CrackedTile_Fall as this part declared it; the joined file has another. */
+DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall__s24a8, CellTarget__s24a8,
                          Leader_CenterInCell)
 
 #include "../field/field_effect/advance_motion.c"
@@ -1110,7 +1123,8 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s24a8,
 #include "event_inline.h"
 #include "shared/jupiter_lighthouse_aerie.h"
 
-extern s32 gPaletteCycleFrame;
+extern s32 gPaletteCycleFrame __asm__("CrackedTile_Fall");
+#define CrackedTile_Fall CrackedTile_Fall__s24a8
 extern s32 gPaletteCyclePausesInEvents;
 extern u16 gPaletteCycleColors[];
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -1160,8 +1174,12 @@ void Func_02002888(s32 dx, s32 dz, s32 value) {
 #include "scene_tables.h"
 #include "objcmd.h"
 
-void Func_02000314(void);
-void Func_0200032c(void);
+/* VIEW(s2640): routine Func_02000314 as this part declared it; the joined file has another. */
+void Func_02000314__s2640(void) __asm__("Func_02000314");
+#define Func_02000314 Func_02000314__s2640
+/* VIEW(s2640): routine Func_0200032c as this part declared it; the joined file has another. */
+void Func_0200032c__s2640(void) __asm__("Func_0200032c");
+#define Func_0200032c Func_0200032c__s2640
 
 extern u32 gFieldEffect_ShortScript[];
 
@@ -1228,3 +1246,6 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_MediumScript,
     gFieldEffect_LongScript,
 };
+#undef Func_0200032c
+#undef Func_02000314
+#undef CrackedTile_Fall

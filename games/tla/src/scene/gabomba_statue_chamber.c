@@ -84,11 +84,21 @@ void Func_02000100(void) {
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
-extern struct Actor *gData_02002058;
-extern const u8 gData_02001f78[];
-extern const u8 gData_02001f9c[];
-extern const u8 gData_02001fe4[];
-extern const u8 gData_0200200c[];
+/* VIEW(first): routine gData_02002058 as this part declared it; the joined file has another. */
+extern struct Actor *gData_02002058__first __asm__("gData_02002058");
+#define gData_02002058 gData_02002058__first
+/* VIEW(first): routine gData_02001f78 as this part declared it; the joined file has another. */
+extern const u8 gData_02001f78__first[] __asm__("gData_02001f78");
+#define gData_02001f78 gData_02001f78__first
+/* VIEW(first): routine gData_02001f9c as this part declared it; the joined file has another. */
+extern const u8 gData_02001f9c__first[] __asm__("gData_02001f9c");
+#define gData_02001f9c gData_02001f9c__first
+/* VIEW(first): routine gData_02001fe4 as this part declared it; the joined file has another. */
+extern const u8 gData_02001fe4__first[] __asm__("gData_02001fe4");
+#define gData_02001fe4 gData_02001fe4__first
+/* VIEW(first): routine gData_0200200c as this part declared it; the joined file has another. */
+extern const u8 gData_0200200c__first[] __asm__("gData_0200200c");
+#define gData_0200200c gData_0200200c__first
 #define OBJECT(id) (Actor_Get((id)))
 void ActorSystem_ResumeProjectionAndHideLayers(void);
 
@@ -595,7 +605,9 @@ void Func_02001094(void) {
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
-extern const u8 gData_02001f18[];
+/* VIEW(first): routine gData_02001f18 as this part declared it; the joined file has another. */
+extern const u8 gData_02001f18__first[] __asm__("gData_02001f18");
+#define gData_02001f18 gData_02001f18__first
 
 /// Places the party around the statue object (its sprite reloaded with item
 /// 242's picture), raises and moves the statue while the camera follows, has
@@ -779,7 +791,9 @@ void Func_020010d4(void) {
   Import_EventSetExitRequest(2);
 }
 
-extern u8 gData_02001f4c[];
+/* VIEW(first): routine gData_02001f4c as this part declared it; the joined file has another. */
+extern u8 gData_02001f4c__first[] __asm__("gData_02001f4c");
+#define gData_02001f4c gData_02001f4c__first
 
 void Func_02001710(void) {
   s32 *owner;
@@ -1033,6 +1047,23 @@ void Func_02001c44(void) {
 }
 #undef EVENT_WORK
 
+#undef gData_02001f4c
+#undef gData_02001f18
+#undef gData_02001fe4
+#undef gData_02001f9c
+#undef gData_02001f78
+#undef gData_02002058
+#undef gData_0200200c
+#undef EVENT_WORK
+#undef OBJECT
+#undef DEFINE_GABOMBA_STATUE_CHAMBER_SHOW_ITEM
+#undef gData_02001f4c
+#undef gData_02001f18
+#undef gData_02001fe4
+#undef gData_02001f9c
+#undef gData_02001f78
+#undef gData_02002058
+#undef gData_0200200c
 // ---- scene/data/gabomba_statue_chamber.c ----
 #include "shared/tables.h"
 #include "types.h"

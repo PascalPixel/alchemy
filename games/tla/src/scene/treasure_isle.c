@@ -28,6 +28,12 @@ DEFINE_SCENE_CREATE_ACTOR(TreasureIsle_CreateActor)
 
 #undef EFFECT_SPAWN
 
+#undef EFFECT_SPAWN
+#undef EFFECT_CREATE
+#undef EFFECT_SET_MODE
+#undef EFFECT_SET_SCRIPT
+#undef EFFECT_SCRIPTS
+#undef EFFECT_SPRITE_PRIORITY
 // ---- scene/treasure_isle/treasure_isle.c ----
 
 // Treasure Isle, the dungeon in the north-east of the world: buttons that

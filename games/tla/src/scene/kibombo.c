@@ -22,7 +22,9 @@ s32 Func_02000048(struct KibomboObject *object) {
   return 0;
 }
 
-extern u8 gData_0200635c[];
+/* VIEW(s0038): routine gData_0200635c as this part declared it; the joined file has another. */
+extern u8 gData_0200635c__s0038[] __asm__("gData_0200635c");
+#define gData_0200635c gData_0200635c__s0038
 
 struct KibomboWork90 {
   u8 unk00[0x18];
@@ -62,6 +64,8 @@ s32 Func_020000c4(struct KibomboObject *object) {
   return 1;
 }
 
+#undef gData_0200635c
+#undef gData_0200635c
 // ---- games/tla/src/scene/kibombo.c ----
 // The scene code of overlay 0x670 that its scene tables belong to, in ROM
 // order; the rest of the overlay is in kibombo/.
@@ -143,22 +147,51 @@ u8 *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
+#undef Actor_SetSpriteFlags
+#undef Actor_SetBlendMode
+#undef Actor_SetSpriteColor
+#undef Actor_SetSpritePriority
+#undef Actor_SetPositionAndResetMotion
 // ---- games/tla/src/scene/kibombo/events_a.c ----
 // Scene code of overlay 0x670, in ROM order, from events_a's offset up to the
 // next object the overlay links.
 
-extern u8 gData_02006510[];
-extern u8 gData_020066d8[];
-extern u8 gData_020069a8[];
-extern u8 gData_02006a98[];
-extern u8 gData_02006cd8[];
-extern u8 gData_020064f8[];
-extern u8 gData_02006ef4[];
-extern u8 gData_020070d4[];
-extern u8 gData_02007434[];
-extern u8 gData_020074dc[];
-extern u8 gData_02007698[];
-extern u8 gData_02006ee8[];
+/* VIEW(events_a): routine gData_02006510 as this part declared it; the joined file has another. */
+extern u8 gData_02006510__events_a[] __asm__("gData_02006510");
+#define gData_02006510 gData_02006510__events_a
+/* VIEW(events_a): routine gData_020066d8 as this part declared it; the joined file has another. */
+extern u8 gData_020066d8__events_a[] __asm__("gData_020066d8");
+#define gData_020066d8 gData_020066d8__events_a
+/* VIEW(events_a): routine gData_020069a8 as this part declared it; the joined file has another. */
+extern u8 gData_020069a8__events_a[] __asm__("gData_020069a8");
+#define gData_020069a8 gData_020069a8__events_a
+/* VIEW(events_a): routine gData_02006a98 as this part declared it; the joined file has another. */
+extern u8 gData_02006a98__events_a[] __asm__("gData_02006a98");
+#define gData_02006a98 gData_02006a98__events_a
+/* VIEW(events_a): routine gData_02006cd8 as this part declared it; the joined file has another. */
+extern u8 gData_02006cd8__events_a[] __asm__("gData_02006cd8");
+#define gData_02006cd8 gData_02006cd8__events_a
+/* VIEW(events_a): routine gData_020064f8 as this part declared it; the joined file has another. */
+extern u8 gData_020064f8__events_a[] __asm__("gData_020064f8");
+#define gData_020064f8 gData_020064f8__events_a
+/* VIEW(events_a): routine gData_02006ef4 as this part declared it; the joined file has another. */
+extern u8 gData_02006ef4__events_a[] __asm__("gData_02006ef4");
+#define gData_02006ef4 gData_02006ef4__events_a
+/* VIEW(events_a): routine gData_020070d4 as this part declared it; the joined file has another. */
+extern u8 gData_020070d4__events_a[] __asm__("gData_020070d4");
+#define gData_020070d4 gData_020070d4__events_a
+/* VIEW(events_a): routine gData_02007434 as this part declared it; the joined file has another. */
+extern u8 gData_02007434__events_a[] __asm__("gData_02007434");
+#define gData_02007434 gData_02007434__events_a
+/* VIEW(events_a): routine gData_020074dc as this part declared it; the joined file has another. */
+extern u8 gData_020074dc__events_a[] __asm__("gData_020074dc");
+#define gData_020074dc gData_020074dc__events_a
+/* VIEW(events_a): routine gData_02007698 as this part declared it; the joined file has another. */
+extern u8 gData_02007698__events_a[] __asm__("gData_02007698");
+#define gData_02007698 gData_02007698__events_a
+/* VIEW(events_a): routine gData_02006ee8 as this part declared it; the joined file has another. */
+extern u8 gData_02006ee8__events_a[] __asm__("gData_02006ee8");
+#define gData_02006ee8 gData_02006ee8__events_a
 
 u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -754,6 +787,30 @@ void Func_02001218(void) {
   Event_End();
 }
 
+#undef gData_02006ee8
+#undef gData_02007698
+#undef gData_020074dc
+#undef gData_02007434
+#undef gData_020070d4
+#undef gData_02006ef4
+#undef gData_020064f8
+#undef gData_02006cd8
+#undef gData_02006a98
+#undef gData_020069a8
+#undef gData_020066d8
+#undef gData_02006510
+#undef gData_02006ee8
+#undef gData_02007698
+#undef gData_020074dc
+#undef gData_02007434
+#undef gData_020070d4
+#undef gData_02006ef4
+#undef gData_020064f8
+#undef gData_02006cd8
+#undef gData_02006a98
+#undef gData_020069a8
+#undef gData_020066d8
+#undef gData_02006510
 // ---- games/tla/src/scene/kibombo/s1318.c ----
 // Scene code of overlay 0x670, in ROM order, from s1318's offset up to the next
 // object the overlay links.
@@ -857,12 +914,24 @@ extern s32 Task_Add__s1318(TaskFunc func, s32 order) __asm__("Task_Add");
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
 void Party_GivePiersDjinn(void);
-extern const u8 gData_02005e88[];
-extern const u8 gData_02005eec[];
-extern const u8 gData_02005f14[];
-extern const u8 gData_02005f58[];
-extern const u8 gData_02005f9c[];
-extern const u8 gData_02005fe0[];
+/* VIEW(s1318): routine gData_02005e88 as this part declared it; the joined file has another. */
+extern const u8 gData_02005e88__s1318[] __asm__("gData_02005e88");
+#define gData_02005e88 gData_02005e88__s1318
+/* VIEW(s1318): routine gData_02005eec as this part declared it; the joined file has another. */
+extern const u8 gData_02005eec__s1318[] __asm__("gData_02005eec");
+#define gData_02005eec gData_02005eec__s1318
+/* VIEW(s1318): routine gData_02005f14 as this part declared it; the joined file has another. */
+extern const u8 gData_02005f14__s1318[] __asm__("gData_02005f14");
+#define gData_02005f14 gData_02005f14__s1318
+/* VIEW(s1318): routine gData_02005f58 as this part declared it; the joined file has another. */
+extern const u8 gData_02005f58__s1318[] __asm__("gData_02005f58");
+#define gData_02005f58 gData_02005f58__s1318
+/* VIEW(s1318): routine gData_02005f9c as this part declared it; the joined file has another. */
+extern const u8 gData_02005f9c__s1318[] __asm__("gData_02005f9c");
+#define gData_02005f9c gData_02005f9c__s1318
+/* VIEW(s1318): routine gData_02005fe0 as this part declared it; the joined file has another. */
+extern const u8 gData_02005fe0__s1318[] __asm__("gData_02005fe0");
+#define gData_02005fe0 gData_02005fe0__s1318
 
 /// A scene in Kibombo: actor 7 speaks, the camera pans, actors 26, 5, 6 and 7
 /// move, turn and speak around the controlled character, two yes-or-no
@@ -1180,11 +1249,21 @@ void Func_02001318(void) {
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
-extern const u8 gData_02006014[];
-extern const u8 gData_02006058[];
-extern const u8 gData_0200609c[];
-extern const u8 gData_020060e0[];
-extern const u8 gData_02006108[];
+/* VIEW(s1318): routine gData_02006014 as this part declared it; the joined file has another. */
+extern const u8 gData_02006014__s1318[] __asm__("gData_02006014");
+#define gData_02006014 gData_02006014__s1318
+/* VIEW(s1318): routine gData_02006058 as this part declared it; the joined file has another. */
+extern const u8 gData_02006058__s1318[] __asm__("gData_02006058");
+#define gData_02006058 gData_02006058__s1318
+/* VIEW(s1318): routine gData_0200609c as this part declared it; the joined file has another. */
+extern const u8 gData_0200609c__s1318[] __asm__("gData_0200609c");
+#define gData_0200609c gData_0200609c__s1318
+/* VIEW(s1318): routine gData_020060e0 as this part declared it; the joined file has another. */
+extern const u8 gData_020060e0__s1318[] __asm__("gData_020060e0");
+#define gData_020060e0 gData_020060e0__s1318
+/* VIEW(s1318): routine gData_02006108 as this part declared it; the joined file has another. */
+extern const u8 gData_02006108__s1318[] __asm__("gData_02006108");
+#define gData_02006108 gData_02006108__s1318
 void Func_0200384c(void);
 
 void Func_02002050(void) {
@@ -1453,6 +1532,38 @@ ask:
 
 #undef EVENT_WORK
 
+#undef gData_02006108
+#undef gData_02005fe0
+#undef gData_02005e88
+#undef gData_020060e0
+#undef gData_0200609c
+#undef gData_02006058
+#undef gData_02006014
+#undef gData_02005f9c
+#undef gData_02005f58
+#undef gData_02005f14
+#undef gData_02005eec
+#undef Actor_SetSpriteColor
+#undef Actor_WaitForMove
+#undef FieldCamera_GetActor
+#undef Actor_SetPositionAndResetMotion
+#undef Actor_SetSpritePriority
+#undef Import_ActorCreate
+#undef Actor_SetMoveTarget
+#undef Actor_GetById
+#undef Task_Add
+#undef EVENT_WORK
+#undef gData_02006108
+#undef gData_02005fe0
+#undef gData_02005e88
+#undef gData_020060e0
+#undef gData_0200609c
+#undef gData_02006058
+#undef gData_02006014
+#undef gData_02005f9c
+#undef gData_02005f58
+#undef gData_02005f14
+#undef gData_02005eec
 // ---- games/tla/src/scene/kibombo/s2ad8.c ----
 // Scene code of overlay 0x670, in ROM order, from s2ad8's offset up to the next
 // object the overlay links.
@@ -1598,6 +1709,7 @@ void Func_02002eb0(void) {
 
 #include "../field/field_effect/advance_motion.c"
 
+#undef DEFINE_KIBOMBO_WOBBLE
 // ---- scene/kibombo/s2f34.c ----
 // @file
 // Scene code of overlay 0x670, in ROM order.
@@ -1801,6 +1913,7 @@ void Func_020032e0(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
+#undef DEFINE_KIBOMBO_SET_CROWD_MODE
 // ---- games/tla/src/scene/kibombo/s3308.c ----
 #include "types.h"
 /* VIEW(s3308): routine Actor_SetPositionAndResetMotion as void
@@ -2030,6 +2143,15 @@ void Func_02003308(struct Actor *actor) {
   }
 }
 
+#undef Actor_SetSpritePriority
+#undef Actor_SetPositionAndResetMotion
+#undef Actor_SetSpriteColor
+#undef Actor_WaitForMove
+#undef FieldCamera_GetActor
+#undef Import_ActorCreate
+#undef Actor_SetMoveTarget
+#undef Actor_GetById
+#undef Task_Add
 // ---- games/tla/src/scene/kibombo/s3504.c ----
 // Scene code of overlay 0x670, in ROM order, from s3504's offset up to the next
 // object the overlay links.
@@ -3011,6 +3133,7 @@ void Func_02005114(void) {
   Func_02003184();
 }
 
+#undef DEFINE_KIBOMBO_STEP_WHEN_HELD
 // ---- games/tla/src/scene/kibombo/s516c.c ----
 // Kibombo's setup.
 #include "main_routine_work.h"
@@ -3147,6 +3270,9 @@ void Func_0200516c(void) {
   Event_End();
 }
 
+#undef Actor_SetSpriteFlags
+#undef Actor_SetBlendMode
+#undef Actor_SetSpriteColor
 // ---- games/tla/src/scene/kibombo/s538c.c ----
 // Scene code of overlay 0x670, in ROM order, from s538c's offset up to the next
 // object the overlay links and the overlay's data.
@@ -3386,10 +3512,18 @@ void Func_02005994(void) { Field_TryJumpForward(); }
 #include "text/msg_ids.h"
 #include "objcmd.h"
 
-void Func_02000038(void);
-void Func_02000048(void);
-void Func_02000054(void);
-void Func_020000c4(void);
+/* VIEW(s538c): routine Func_02000038 as this part declared it; the joined file has another. */
+void Func_02000038__s538c(void) __asm__("Func_02000038");
+#define Func_02000038 Func_02000038__s538c
+/* VIEW(s538c): routine Func_02000048 as this part declared it; the joined file has another. */
+void Func_02000048__s538c(void) __asm__("Func_02000048");
+#define Func_02000048 Func_02000048__s538c
+/* VIEW(s538c): routine Func_02000054 as this part declared it; the joined file has another. */
+void Func_02000054__s538c(void) __asm__("Func_02000054");
+#define Func_02000054 Func_02000054__s538c
+/* VIEW(s538c): routine Func_020000c4 as this part declared it; the joined file has another. */
+void Func_020000c4__s538c(void) __asm__("Func_020000c4");
+#define Func_020000c4 Func_020000c4__s538c
 void Func_02000228(void);
 void Func_0200024c(void);
 void Func_02000270(void);
@@ -3403,11 +3537,21 @@ void Func_0200042c(void);
 void Func_020004dc(void);
 void Func_02000500(void);
 void Func_020005d0(void);
-void Func_02000618(void);
-void Func_0200065c(void);
-void Func_020006a0(void);
-void Func_020006e4(void);
-void Func_02000728(void);
+/* VIEW(s538c): routine Func_02000618 as this part declared it; the joined file has another. */
+void Func_02000618__s538c(void) __asm__("Func_02000618");
+#define Func_02000618 Func_02000618__s538c
+/* VIEW(s538c): routine Func_0200065c as this part declared it; the joined file has another. */
+void Func_0200065c__s538c(void) __asm__("Func_0200065c");
+#define Func_0200065c Func_0200065c__s538c
+/* VIEW(s538c): routine Func_020006a0 as this part declared it; the joined file has another. */
+void Func_020006a0__s538c(void) __asm__("Func_020006a0");
+#define Func_020006a0 Func_020006a0__s538c
+/* VIEW(s538c): routine Func_020006e4 as this part declared it; the joined file has another. */
+void Func_020006e4__s538c(void) __asm__("Func_020006e4");
+#define Func_020006e4 Func_020006e4__s538c
+/* VIEW(s538c): routine Func_02000728 as this part declared it; the joined file has another. */
+void Func_02000728__s538c(void) __asm__("Func_02000728");
+#define Func_02000728 Func_02000728__s538c
 void Func_02000734(void);
 void Func_020007c8(void);
 void Func_02000c90(void);
@@ -4133,3 +4277,12 @@ struct Trigger gData_02007698[] = {
     {TRIGGER_TABLE_END},
 };
 #undef PALETTE_WORD
+#undef Func_02000728
+#undef Func_020006e4
+#undef Func_020006a0
+#undef Func_0200065c
+#undef Func_02000618
+#undef Func_020000c4
+#undef Func_02000054
+#undef Func_02000048
+#undef Func_02000038

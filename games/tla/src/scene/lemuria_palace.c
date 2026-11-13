@@ -202,7 +202,9 @@ void LemuriaPalace_CastMapSparks(void) {
 }
 
 extern u8 gLemuriaPalace_MapMode[];
-extern u8 gLemuriaPalace_MapCrossfade[];
+/* VIEW(first): routine gLemuriaPalace_MapCrossfade as this part declared it; the joined file has another. */
+extern u8 gLemuriaPalace_MapCrossfade__first[] __asm__("gLemuriaPalace_MapCrossfade");
+#define gLemuriaPalace_MapCrossfade gLemuriaPalace_MapCrossfade__first
 s32 __modsi3();
 
 /// A task: draws the maps the hall shows, fading between them by the map mode
@@ -1334,6 +1336,10 @@ u32 gLemuriaPalace_GlowColors[] = {
 #undef BLEND_SET_ALPHA
 #undef FIELD_AT
 
+#undef gLemuriaPalace_MapCrossfade
+#undef BLEND_SET_ALPHA
+#undef FIELD_AT
+#undef gLemuriaPalace_MapCrossfade
 // ---- scene/data/lemuria_palace.c ----
 
 #include "macros.h"

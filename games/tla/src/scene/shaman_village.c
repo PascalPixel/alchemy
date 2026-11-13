@@ -1390,6 +1390,18 @@ void ShamanVillage_MeetMoapa(void) {
 #undef gShamanVillage_WalkToRightStartScript
 #undef gShamanVillage_Placements
 #undef gShamanVillage_Room2Placements
+#undef TLA_SHAMAN_VILLAGE_H
+#undef SHAMAN_VILLAGE_EMOTE
+#undef Import_ActorSetMode
+#undef Actor_SetSpriteFlags
+#undef Actor_SetBlendMode
+#undef WORD_AT
+#undef OBJ14_BYTE
+#undef gShamanVillage_WalkToLeftStartScript
+#undef gShamanVillage_WalkToRightStartScript
+#undef gFieldEffect_MediumScript
+#undef gShamanVillage_Placements
+#undef gShamanVillage_Room2Placements
 // ---- scene/shared/drift_spawn.c ----
 
 #include "shared/drift_spawn.c"

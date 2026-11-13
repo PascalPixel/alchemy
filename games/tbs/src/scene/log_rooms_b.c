@@ -159,7 +159,6 @@ enum {
 /// (MsgVaultIsaacYouveComeBackVault)
 enum { FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK = FLAG_AREA_TEMP_00 };
 
-// Shared scene routines stay in their linked order.
 #include "shared/vault_bone_proximity_flag.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -337,7 +336,6 @@ static void LogRoomsB_ReadMindAndWelcomeIsaacBack(void) {
   Actor_SetMovementTypeById(ACTOR_MAYOR, 2);
 }
 
-// Shared Bone-item dialogue follows the actor conversations.
 #include "shared/vault_bone.h"
 
 /// Across the counter the weapon shop opens.
@@ -468,7 +466,6 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-// Shared item-object routines follow the scene initializer.
 #include "shared/vault_item_icon.h"
 
 struct SceneEntrance gLogRoomsB_Entrances[] = {

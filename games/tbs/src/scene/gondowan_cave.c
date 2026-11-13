@@ -159,10 +159,8 @@ enum GondowanCaveActorId {
 static void GondowanCave_MovePillar(void);
 static void GondowanCave_RunSpinningLeap(s32 actorId);
 
-// Shared effect routines retain their position before the scene's events.
 #include "shared/field_effect_create.h"
 
-// Particle and movable-actor routines precede this scene's entry points.
 #include "shared/field_effect_spawn.h"
 #include "shared/staged_actor.h"
 #include "ability_ids.h"

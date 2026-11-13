@@ -584,7 +584,6 @@ static void BilibinCave_RestoreIceRoom(void) {
   }
 }
 
-// The shared cell lookup retains its position before the push handler.
 #include "shared/actor_find_at_cell.h"
 
 /// Pushing one of the two movable torches in Bilibin Cave

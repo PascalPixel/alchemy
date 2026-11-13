@@ -120,7 +120,6 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void);
 static void GomaCaveEntrance_LeapStump(s32 stumpId);
 static void GomaCaveEntrance_GiveShamansRod(void);
 
-// Shared effects stay at their native positions in the overlay.
 #include "shared/field_effect_create.h"
 #include "shared/field_effect_spawn.h"
 
@@ -555,7 +554,6 @@ static void GomaCaveEntrance_SpinStump(struct Actor *actor) {
   state->rotation = v;
 }
 
-// Shared height-wait code stays at its native position in the overlay.
 #include "shared/actor_wait_below_height.h"
 
 /// The stump leaps out of the way and sinks in the pool.
@@ -621,7 +619,6 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   MapGrid_WaitForShakeToSettle();
 }
 
-// Shared inventory equipment code stays at its native overlay position.
 #include "shared/item_equip.h"
 
 /// Gives Ivan the Shaman's Rod and equips it.

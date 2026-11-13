@@ -154,7 +154,6 @@ static void CottageRoomsB_ShowMythrilBag(void);
 static void CottageRoomsB_SpawnEffectPair(struct Actor *actor);
 static void CottageRoomsB_DemonstrateCatch(void);
 
-// Shared facing code retains its position before the overlay entry points.
 #include "shared/actor_facing.h"
 
 /// Back from Kalay, Dora has got out of her sickbed on this visit to show Isaac
@@ -1296,7 +1295,6 @@ static void CottageRoomsB_CyclePaletteAndSpawnPair(struct Actor *actor) {
 
 #include "shared/color_mode_cycle.h"
 
-// Shared vertical-effect update routines precede their paired-effect creator.
 #include "shared/field_effect_vertical.h"
 
 /// Copies the parent's ground height into two oppositely moving vertical
@@ -1352,7 +1350,6 @@ static void CottageRoomsB_SpawnEffectPair(struct Actor *parent) {
   }
 }
 
-// Shared Psynergy setup precedes the scene's Psynergy wrappers.
 #include "shared/event_psynergy.h"
 
 /// Cycles Dora's palette and gives off pairs of effects.

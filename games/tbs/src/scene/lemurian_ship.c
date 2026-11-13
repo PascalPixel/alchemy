@@ -301,37 +301,25 @@ static void Ship_UpdateSwell(void) {
 /// Called by gLeaderBoardsShip as he steps on deck. The other party members'
 /// boarding scripts call their own copies below.
 static s32 LemurianShip_LeaderStepOnDeck(struct Actor *interpreter) {
-  s32 *deckY;
-
-  deckY = &gLeaderDeckY;
-  *deckY = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
+  gLeaderDeckY = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
   return 0;
 }
 
 /// Remembers Garet's boarding height for the swell task.
 static s32 LemurianShip_GaretStepOnDeck(struct Actor *interpreter) {
-  s32 *deckY;
-
-  deckY = &gGaretDeckY;
-  *deckY = Actor_Get(ACTOR_GARET)->y.fixed;
+  gGaretDeckY = Actor_Get(ACTOR_GARET)->y.fixed;
   return 0;
 }
 
 /// Remembers Mia's boarding height for the swell task.
 static s32 LemurianShip_MiaStepOnDeck(struct Actor *interpreter) {
-  s32 *deckY;
-
-  deckY = &gMiaDeckY;
-  *deckY = Actor_Get(ACTOR_MIA)->y.fixed;
+  gMiaDeckY = Actor_Get(ACTOR_MIA)->y.fixed;
   return 0;
 }
 
 /// Remembers Ivan's boarding height for the swell task.
-static s32 Ivan_StepOnDeck(struct Actor *interpreter) {
-  s32 *deckY;
-
-  deckY = &gIvanDeckY;
-  *deckY = Actor_Get(ACTOR_IVAN)->y.fixed;
+static s32 LemurianShip_IvanStepOnDeck(struct Actor *interpreter) {
+  gIvanDeckY = Actor_Get(ACTOR_IVAN)->y.fixed;
   return 0;
 }
 
@@ -1153,7 +1141,7 @@ s32 gIvanBoardsShip[] = {
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(1),
-    SC_CALL(Ivan_StepOnDeck),
+    SC_CALL(LemurianShip_IvanStepOnDeck),
     SC_END,
 };
 

@@ -399,7 +399,6 @@ static s32 Kalay_UpdateTouristFidget(struct Actor *actor) {
   return 1;
 }
 
-// Shared source, included in link order.
 #include "shared/actor_heading.h"
 
 /// The party has heard in Lunpa that Hammet is held there, or he is already
@@ -2108,7 +2107,6 @@ static void Kalay_HammetReturnsToPalace(void) {
   Event_End();
 }
 
-// Shared source, included in link order.
 #include "shared/actor_find_at_cell.h"
 
 /// In the Kalay Tunnel (KalayTunnelTreasureRoom), walking into a statue pushes
@@ -2403,7 +2401,6 @@ static void Kalay_FreezePuddle(void) {
   GameFlag_Set(FLAG_TUNNEL_PUDDLE_FROZEN);
 }
 
-// Shared source, included in link order.
 #include "shared/actor_orbit.h"
 
 // One cell in each facing direction: x in the high 16 bits, z in the low 16.

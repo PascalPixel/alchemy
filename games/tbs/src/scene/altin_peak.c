@@ -333,7 +333,6 @@ static void AltinPeak_TalkToDjinni(void) {
   Field_RequestDjinnBattle(ACTOR_SPRITZ, DJINNI_SPRITZ);
 }
 
-// Shared source, included where its bytes sit in the ROM.
 #include "shared/actor_facing.h"
 
 // Update routine of AltinPeakFallingRocks's boulder shadow: it stays under the

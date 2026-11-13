@@ -839,7 +839,8 @@ static void ColosseumNavampaMatch_PassNorthWallOpening(void) {
 #ifdef UBFIX
   actorId = &gMainRoutineWork.leaderActorId;
 #else
-  // The original word-indexed address takes three more instructions here.
+  // UB: the leader's id is found by indexing the main routine's work as
+  // halfwords and reading a word there.
   gameWords = (s16 *)&gMainRoutineWork;
   actorId = (s32 *)&gameWords[offsetof(struct MainRoutineWork, leaderActorId) /
                               sizeof(s16)];
@@ -869,7 +870,8 @@ static void ColosseumNavampaMatch_PassSouthWallOpening(void) {
 #ifdef UBFIX
   actorId = &gMainRoutineWork.leaderActorId;
 #else
-  // The original word-indexed address takes three more instructions here.
+  // UB: the leader's id is found by indexing the main routine's work as
+  // halfwords and reading a word there.
   gameWords = (s16 *)&gMainRoutineWork;
   actorId = (s32 *)&gameWords[offsetof(struct MainRoutineWork, leaderActorId) /
                               sizeof(s16)];

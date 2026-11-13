@@ -149,7 +149,6 @@ enum { ENTRANCE_STUMP_FALL = 99 };
 /// (GomaCavePillar_FidgetWhileForgeFights).
 enum GomaCavePillarRaisedTrigger { RAISED_FORGE_JOINED = 99 };
 
-// Shared movement routines stay in their linked order.
 #include "shared/staged_actor.h"
 
 /// Talking to Forge, a Mars Djinni, in Goma Cave: the man beside it jumps in

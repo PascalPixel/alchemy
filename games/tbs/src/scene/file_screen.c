@@ -433,8 +433,6 @@ s32 FileScreen_Run(void) {
   s32 windowHandle;
   s32 passwordColumn;
   s32 tileValue;
-  // These three scalars each serve several phases: separate per-phase
-  // variables reorder the instructions or shorten the function.
   s32 limit;
   s32 index;
   s32 result;

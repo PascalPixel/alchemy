@@ -231,7 +231,6 @@ static void FuchinTemple_FinishMindReadDemonstration(void);
 static void FuchinTemple_SpawnNyunpasParticles(void);
 static void FuchinTemple_AnimateRevealLesson(void);
 
-// Shared source, included in link order.
 #include "shared/field_effect_create.h"
 #include "shared/field_effect_spawn.h"
 

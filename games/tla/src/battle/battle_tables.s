@@ -171,8 +171,8 @@ Data_08129830:
 	.2byte 69, 76
 	.2byte -1, -1
 	.section .rodata.a
-	.global Data_0812a16c
-Data_0812a16c:
+	.global gScriptedBattle_Units
+gScriptedBattle_Units:
 	.byte 4, 7, 5, 0x80, 0x81
 	.balign 4, 0
 @ Debug party members (separated by owner -1).

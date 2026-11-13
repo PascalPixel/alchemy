@@ -124,7 +124,8 @@ void Func_0811d914(struct ActionTargets *targets) {
   }
 }
 
-void Func_0811d9a4(void) {
+/// Sends every battler back to its spot.
+void BattleParty_ReturnAllToSpots(void) {
   u16 ids[14];
   s32 count = BattleParty_ListActorIds(3, ids);
   s32 i;
@@ -304,7 +305,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
   BattleUnit_ProcessActionEnd(&battle->plan);
   BattleObject_Put();
   Enemy_Update();
-  Func_0811d9a4();
+  BattleParty_ReturnAllToSpots();
   request->unitId = 255;
 finish:
   BattleBackground_SetMode(

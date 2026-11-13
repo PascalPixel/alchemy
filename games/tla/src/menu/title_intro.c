@@ -127,7 +127,7 @@ s32 TitlePaletteFade_ClampShiftedComponent(s32 value);
 /// Blanks the display, loads resource 0x18's palette into the BG palette with
 /// colour 0 black, and unpacks its tiles through the map cell buffer into BG
 /// character block 0.
-void Func_081a6030(void) {
+void TitleIntro_LoadPictureTiles(void) {
   u8 *source;
   u8 *cells;
 
@@ -177,7 +177,9 @@ s32 Title_RunScrollStep(struct TitleScrollStep *step) {
    step.mask[1] = (m1), step.mask[2] = (m2), step.mask[3] = (m3),              \
    Title_RunScrollStep(&step))
 
-s32 Func_081a6154(s32 mode) {
+/// Shows the intro's picture of step mode (0 to 2) and runs its scroll steps;
+/// returns 0 when a key cuts it short.
+s32 TitleIntro_ScrollPicture(s32 mode) {
   struct TitleScrollStep step;
   u16 *map;
   u16 tile;
@@ -310,7 +312,9 @@ s32 Func_081a6154(s32 mode) {
 #define NUMBERED_ROWS 2
 #endif
 
-s32 Func_081a6638(void) {
+/// Fades in a card of the picture's numbered rows on BG3, holds it 150 frames
+/// and fades it out; returns 0 when a key cuts it short.
+s32 TitleIntro_ShowCard(void) {
   u16 *map;
   u16 tile;
   s32 i;
@@ -348,7 +352,8 @@ s32 Func_081a6638(void) {
   return 1;
 }
 
-// This picture's tiles follow Func_081a6638's, 32 for each row it numbers.
+// This picture's tiles follow TitleIntro_ShowCard's, 32 for each row it
+// numbers.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_ITALIAN
 #define FIRST_TILE 96
@@ -356,7 +361,9 @@ s32 Func_081a6638(void) {
 #define FIRST_TILE 64
 #endif
 
-s32 Func_081a6724(void) {
+/// As TitleIntro_ShowCard, with a second layer of rows blended in over 16
+/// steps of 3 frames.
+s32 TitleIntro_ShowBlendedCard(void) {
   u16 *map;
   u16 tile;
   s32 i;
@@ -422,7 +429,7 @@ s32 Func_081a6724(void) {
 /// rows' tiles when scrolling down and takes them back when scrolling up, and
 /// starts the fade to white or back when its countdown reaches 1. A key press
 /// cuts the scroll short.
-s32 Func_081a68b4(struct TitleScroll *s) {
+s32 TitleIntro_ScrollLighthouse(struct TitleScroll *s) {
   struct TitleFadeTimers *timers = Ram_HeapSlots->unk84[10];
   s32 i;
   s32 j;
@@ -540,7 +547,9 @@ extern s16 gData_081a84e6[];
             (DMA_ENABLE | DMA_32BIT) << 16 | 0xc00, REG_DMA3);                 \
   }
 
-void Func_081a6b50(void) {
+/// The logo's per-frame task while the lighthouse scrolls: places its pieces
+/// and loads their next tiles as its timer runs.
+void TitleIntro_UpdateLogo(void) {
   struct TitleLogoState *logo;
   struct OamEntry sprite;
   volatile u32 fill;
@@ -643,7 +652,11 @@ void Func_081a6b50(void) {
 
 extern u8 gMapCellBuffer[];
 
-s32 Func_081a6ea0(void) {
+/// Shows the lighthouse picture with its gulls
+/// (ResourceId_IntroLighthousePicture, ResourceId_IntroGullSprites), scrolls it
+/// with TitleIntro_ScrollLighthouse while TitleIntro_UpdateLogo runs, and
+/// returns 0 when a key cuts it short.
+s32 TitleIntro_ShowLighthouse(void) {
   struct TitleScroll scroll;
   volatile u32 fill;
   struct TitleLogoState *logo;
@@ -719,15 +732,15 @@ s32 Func_081a6ea0(void) {
   scroll.frames = 1;
   logo->white = 10;
   logo->back = 25;
-  if (Func_081a68b4(&scroll))
+  if (TitleIntro_ScrollLighthouse(&scroll))
     goto stopped;
   scroll.limit = 200;
   scroll.step = 3;
-  if (Func_081a68b4(&scroll))
+  if (TitleIntro_ScrollLighthouse(&scroll))
     goto stopped;
   scroll.limit = 216;
   scroll.step = 2;
-  map = (u16 *)Func_081a68b4(&scroll);
+  map = (u16 *)TitleIntro_ScrollLighthouse(&scroll);
   if (map)
     goto stopped;
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_IntroGullSprites),
@@ -739,10 +752,10 @@ s32 Func_081a6ea0(void) {
   logo->delay = 0;
   scroll.step = 1;
   scroll.limit = 224;
-  i = Func_081a68b4(&scroll);
+  i = TitleIntro_ScrollLighthouse(&scroll);
   if (i)
     goto stopped;
-  Task_Add(Func_081a6b50, 0x480);
+  Task_Add(TitleIntro_UpdateLogo, 0x480);
   scroll.limit = 160;
   scroll.step = -1;
   scroll.scroll = 0;
@@ -752,7 +765,7 @@ s32 Func_081a6ea0(void) {
   scroll.tile = 450;
   scroll.rows = 11;
   scroll.frames = 8;
-  i = Func_081a68b4(&scroll);
+  i = TitleIntro_ScrollLighthouse(&scroll);
   if (i)
     goto stopped;
   PaletteFade_SetTarget(0x7fff, 0);
@@ -760,7 +773,7 @@ s32 Func_081a6ea0(void) {
   scroll.limit = 0;
   scroll.step = -5;
   scroll.frames = 1;
-  if (!Func_081a68b4(&scroll))
+  if (!TitleIntro_ScrollLighthouse(&scroll))
     Title_WaitOrPress(120);
   goto done;
 stopped:
@@ -769,7 +782,7 @@ stopped:
   wait(10);
 done:
   Dma_Fill32Cell(fill, 0, (void *)0x07000000, 0x400);
-  Task_Remove(Func_081a6b50);
+  Task_Remove(TitleIntro_UpdateLogo);
   HeapSlot_Release(172);
   wait(1);
   return 1;
@@ -799,11 +812,12 @@ done:
 #define PROMPT_TILE_BLOCKS 5
 #endif
 
-/// Runs the intro's pictures in turn (Func_081a6154's steps
-/// 0 to 2 between the pictures of Func_081a6638 and Func_081a6724), fading
-/// out early when a key cuts one short and running Func_081a6ea0 when all
-/// finish, then restores the display and the CPU-load flag it saved.
-s32 Func_081a71c8(void) {
+/// Runs the intro's pictures in turn (TitleIntro_ScrollPicture's steps
+/// 0 to 2 between the pictures of TitleIntro_ShowCard and
+/// TitleIntro_ShowBlendedCard), fading out early when a key cuts one short and
+/// running TitleIntro_ShowLighthouse when all finish, then restores the display
+/// and the CPU-load flag it saved.
+s32 TitleIntro_Run(void) {
   /* FAKEMATCH(volatile): the saved flag lives in a stack byte across the
    * calls; as a plain u8 local, 28 of 78 instructions differ in tla-en. */
   volatile u8 cpuLoad;
@@ -820,16 +834,18 @@ s32 Func_081a71c8(void) {
   Task_ResetAll();
   gRenderOamEnabled = 0;
   gCpuLoadDisplayEnabled = 0;
-  Func_081a6030();
-  if ((result = Func_081a6154(0)) == 0 || (result = Func_081a6638()) == 0 ||
-      (result = Func_081a6154(1)) == 0 || (result = Func_081a6724()) == 0 ||
-      (result = Func_081a6154(2)) == 0) {
+  TitleIntro_LoadPictureTiles();
+  if ((result = TitleIntro_ScrollPicture(0)) == 0 ||
+      (result = TitleIntro_ShowCard()) == 0 ||
+      (result = TitleIntro_ScrollPicture(1)) == 0 ||
+      (result = TitleIntro_ShowBlendedCard()) == 0 ||
+      (result = TitleIntro_ScrollPicture(2)) == 0) {
     PaletteFade_SetTarget(0, 0);
     TitlePaletteFade_Start(10);
     wait(10);
   }
   if (result)
-    Func_081a6ea0();
+    TitleIntro_ShowLighthouse();
   gRenderOamEnabled = 1;
   wait(1);
   // The result's register counts the backgrounds (a separate counter takes

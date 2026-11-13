@@ -509,7 +509,8 @@ static __inline__ s32 Owner_GetPpRatio(s32 owner) {
   return (unit->pp << 16) / unit->maxPp;
 }
 
-s32 Func_080adc90(void) {
+/// Returns the party's PP over its maximum PP, in 16.16; 0 with no members.
+s32 Party_GetPpRatio(void) {
   s32 pp = 0;
   s32 max = 0;
   s32 count = Party_CountMembers();
@@ -528,7 +529,8 @@ s32 Func_080adc90(void) {
   return (pp << 16) / max;
 }
 
-s32 Func_080adcec(void) {
+/// Takes 1 PP from the member whose PP is fullest for its maximum.
+s32 Party_DrainPpFromFullest(void) {
   s32 best = 0;
   s32 bestOwner = -1;
   s32 count = Party_CountMembers();
@@ -550,12 +552,13 @@ s32 Func_080adcec(void) {
   return ((s32 (*)(s32, s32))Unit_AddPp)(bestOwner, -1);
 }
 
-void Func_080add5c(s32 count) {
+/// Takes count PP from the party, one at a time from the fullest member.
+void Party_DrainPp(s32 count) {
   s32 i;
 
   for (i = 0; i < count; i++)
-    Func_080adcec();
-  Func_080adc90();
+    Party_DrainPpFromFullest();
+  Party_GetPpRatio();
 }
 
 u16 BuildStamp_GetTime(void) {
@@ -744,7 +747,10 @@ void Party_SetLeaderFelix(void) {
   Party_RemoveMember(6);
 }
 
-void Func_080ae118(void) {
+/// Gives Piers his two Mercury Djinn, Spring and Shade (Mercury 9 and 10),
+/// set, then evens out the party's Djinn and recalculates its members.
+/// Kibombo calls it when Piers joins.
+void Party_GivePiersDjinn(void) {
   s32 i;
   s32 count;
 
@@ -754,7 +760,7 @@ void Func_080ae118(void) {
     Djinn_Set(7, 1, i - 1);
   }
   // Called with an argument it does not take.
-  ((void (*)(s32))Func_080ae358)(0);
+  ((void (*)(s32))Party_BalanceDjinn)(0);
   count = Party_CountMembers();
   for (i = 0; i < count; i++)
     Unit_Calculate(gMainRoutineWork.activeOwners[i]);
@@ -903,8 +909,9 @@ void Party_RestorePpOfLitElements(void) {
   }
 }
 
-/// Element and index of the last owned Djinni.
-s32 Func_080ae2fc(s32 unit, s32 *element_out, s32 *index_out) {
+/// Writes the element and index of unit's last Djinni and returns 0, or
+/// returns -1 when it has none.
+s32 Unit_FindLastDjinn(s32 unit, s32 *element_out, s32 *index_out) {
   u32 *sets = ((struct UnitDjinnSets *)Unit_Get(unit))->djinn;
   s32 element = -1;
   s32 index = -1;
@@ -928,7 +935,7 @@ s32 Func_080ae2fc(s32 unit, s32 *element_out, s32 *index_out) {
 
 /// Until the Djinn counts of the active owners are within one, moves the last
 /// Djinni of the owner holding most to the one holding least.
-void Func_080ae358(void) {
+void Party_BalanceDjinn(void) {
   s32 count = Party_CountMembers();
 
   for (;;) {
@@ -967,7 +974,7 @@ void Func_080ae358(void) {
     }
     if (high - low <= 1)
       break;
-    sum = Func_080ae2fc(highNo, &element, &index);
+    sum = Unit_FindLastDjinn(highNo, &element, &index);
     if (sum != 0)
       break;
     Djinn_Transfer(highNo, element, index, lowNo);
@@ -984,9 +991,10 @@ s32 FlagBits_Test(u8 *bytes, s32 flag) {
   return (bytes[flag] >> bit) & 1;
 }
 
-/// Copies a The Broken Seal save's djinn, flags, coins, options (unless
-/// keepSettings) and units into this game's state.
-void Func_080ae410(u8 *save, s32 keepSettings) {
+/// The data transfer from Golden Sun ("Transfer data from Golden Sun",
+/// MsgTransferDataFromGoldenSun): copies a The Broken Seal save's djinn, flags,
+/// coins, options (unless keepSettings) and units into this game's state.
+void DataTransfer_Apply(u8 *save, s32 keepSettings) {
   u8 *flags = save + 0x40;
   struct MainRoutineWork *party = (struct MainRoutineWork *)(save + 0x240);
   struct BattleUnit *units = (struct BattleUnit *)(save + 0x520);
@@ -1061,7 +1069,9 @@ void Func_080ae410(u8 *save, s32 keepSettings) {
   gFrameWaitCount = gMainRoutineWork.playTime;
 }
 
-void Func_080ae5fc(u8 *save) {
+/// Carries Clear Data over to a new quest: the options, coins and each unit's
+/// base stats, level and experience.
+void ClearData_Apply(u8 *save) {
   struct MainRoutineWork *party = (struct MainRoutineWork *)(save + 0x240);
   struct BattleUnit *units = (struct BattleUnit *)(save + 0x520);
   u8 unused[16]; // Unused: gives the stack frame its 16 bytes.
@@ -1095,12 +1105,17 @@ void Func_080ae5fc(u8 *save) {
   gMainRoutineWork.coins = party->coins;
 }
 
-void Func_080ae6c8(s32 item, s32 owner) {
+/// Gives owner item unless a party member already has it.
+void Party_GiveItemIfMissing(s32 item, s32 owner) {
   if (PartyInventory_FindMember(item) == -1)
     Inventory_AddItem(owner, item);
 }
 
-void Func_080ae6e4(void) {
+/// Isaac's party joins: the transferred Djinn flags move to their places,
+/// Isaac, Garet, Ivan and Mia join with their Djinn evened out and restored,
+/// a missing Djinni of each element is picked, and the transferred items and
+/// coins are given. Contigo calls it.
+void Party_AddIsaacsParty(void) {
   s32 i;
   s32 djinni;
   s8 missing[8];
@@ -1129,7 +1144,7 @@ void Func_080ae6e4(void) {
   Party_AddMember(2);
   Party_AddMember(3);
   // Called with an argument it does not take.
-  ((void (*)(s32))Func_080ae358)(0);
+  ((void (*)(s32))Party_BalanceDjinn)(0);
   Djinn_ActivateOfferedForParty();
   for (i = 0; i < 8; i++)
     Unit_Calculate(i);
@@ -1148,11 +1163,11 @@ void Func_080ae6e4(void) {
       djinni = 0;
     gData_02001000__game[0x1950 + i] = djinni;
   }
-  Func_080ae6c8(202, 3);
-  Func_080ae6c8(201, 3);
-  Func_080ae6c8(203, 1);
-  Func_080ae6c8(206, 0);
-  Func_080ae6c8(207, 2);
+  Party_GiveItemIfMissing(202, 3);
+  Party_GiveItemIfMissing(201, 3);
+  Party_GiveItemIfMissing(203, 1);
+  Party_GiveItemIfMissing(206, 0);
+  Party_GiveItemIfMissing(207, 2);
   gMainRoutineWork.coins += *(s32 *)&gMainRoutineWork.unk284[8];
 #if TLA_PATCH_4
   if ((u32)gMainRoutineWork.coins > 999999)
@@ -1178,7 +1193,7 @@ extern const s16 Data_080b1290[4][7];
 /// still unowned, keeping the elements' counts within one, each with the
 /// table's percentage chance; then moves the djinn flags to 0x800 (seven per
 /// element) and puts the party back.
-void Func_080ae868(void) {
+void DataTransfer_GiveDefaultDjinn(void) {
   s8 saved[8];
   s8 counts[4];
   s32 count;

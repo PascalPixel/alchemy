@@ -24,7 +24,7 @@ void BattlePlayback_StartFar(s32 phase);
 void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
                           s32 count);
 void BattleBackground_SetModeFar(s32 mode, s32 background, s32 value);
-void Func_08118150(s32 kind);
+void Battle_ChangeEnemyFormFar(s32 kind);
 s32 BattleMotion_GetSlotPaletteFar(s32 id);
 s32 BattleParty_PrepareReserveOwnersFar(u16 *owners);
 s32 BattleUnit_ListIdsFar(s32, s32);

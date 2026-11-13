@@ -278,7 +278,7 @@ extern struct SnapshotCopy Data_0200ff6c[];
 
 extern struct SnapshotVitals Data_0200ffec[];
 
-extern u8 Data_0812a16c[];
+extern u8 gScriptedBattle_Units[];
 
 extern struct DebugPartyEntry gDebug_ParameterSets[];
 

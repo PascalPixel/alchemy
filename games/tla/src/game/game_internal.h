@@ -50,8 +50,8 @@ extern s32 GameFlag_SetBit__game(s32 flag) __asm__("GameFlag_SetBit");
 struct AbilityDefinition *Ability_GetDirect(s32 actionId);
 
 /// Keeps occupied slots in order and clears the unused inventory tail, for
-/// Func_080af0e4 and Inventory_Remove (inventory.c) and InventorySnapshot_Save
-/// (snapshot.c). A slot is empty when it is 0.
+/// Inventory_ClearSlot and Inventory_Remove (inventory.c) and
+/// InventorySnapshot_Save (snapshot.c). A slot is empty when it is 0.
 static inline void Inventory_CompactSlots(s16 *inventory) {
   s32 usedSlots = 0;
   s32 slot;

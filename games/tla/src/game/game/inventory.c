@@ -327,7 +327,7 @@ s32 Inventory_GetEquippedItem(struct OwnerInventoryState *inv, s32 type) {
 
 /// Empties an inventory slot outright, closes the inventory up and
 /// recalculates the unit; returns 2, as Inventory_Remove does for a last item.
-s32 Func_080af0e4(s32 owner, s32 slot) {
+s32 Inventory_ClearSlot(s32 owner, s32 slot) {
   struct OwnerInventoryState *unit = Unit_Get(owner);
 
   unit->inventory[slot] = 0;

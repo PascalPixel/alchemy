@@ -24,7 +24,7 @@ s32 Unit_LearnPsynergy(s32 owner, s32 ability);
 s32 Party_RemoveMember(s32 owner);
 void Djinn_ActivateOfferedForParty(void);
 extern const u16 Data_080b1284[6];
-void Func_080ae358(void);
+void Party_BalanceDjinn(void);
 s16 Unit_AddPp(s32 owner, s32 delta);
 s32 PartyInventory_Remove(s32 item_id);
 s32 PartyInventory_CountItem(s32 itemId);

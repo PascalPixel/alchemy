@@ -829,9 +829,9 @@ struct ModelDraw__f14153c {
 // spinning rings rise around it, four abreast. From frame 48 the screen
 // shakes, flashes burst upward and four crystals grow out of the ground one
 // after another, spinning. The user flashes at frames 32 to 68. Kinds 78
-// and 79 stand to either side and hand over to the battle (Func_08118150)
-// at frame 62; kind 80 runs 100 frames, fades to white and restores the
-// scene's view itself.
+// and 79 stand to either side and hand over to the battle
+// (Battle_ChangeEnemyFormFar) at frame 62; kind 80 runs 100 frames, fades to
+// white and restores the scene's view itself.
 
 void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
   struct EffectPosition center;
@@ -913,7 +913,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
         Palette_BrightenBgEntries(2, 2, 2);
       }
     } else if (frame == 62) {
-      Func_08118150(kind);
+      Battle_ChangeEnemyFormFar(kind);
     }
 
     // From frame 48: shake, clear the canvas, and for 8 frames burst two

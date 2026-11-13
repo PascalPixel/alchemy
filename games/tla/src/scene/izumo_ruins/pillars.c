@@ -1,4 +1,7 @@
-// ---- games/tla/src/scene/izumo_ruins/s0038.c ----
+/// @file
+/// The Izumo Ruins' pillars: those Pound sinks into the floor (Pillars_Place,
+/// Pillars_Pound) and the grey ones that crack under a first step and crumble
+/// under a second (CrumblingPillars_Step).
 #include "../shared/map_cells.h"
 #include "iwram_call.h"
 #include "actor.h"
@@ -9,73 +12,48 @@
 #include "event_inline.h"
 #include "field.h"
 #include "module/field/object.h"
-#include "module/scene/izumo_ruins.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+struct Actor;
+s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
+s32 Import_FieldTryJumpForward(void);
+struct Actor *Func_02001530(s32 *position, s32 flags);
+void Leader_SetCellShapeAt(s32 a, s32 b);
 
-s32 Func_02000038(s32 a0, s32 a1, s32 a2, s32 a3) {
-  s32 r0, r3, r7, r8, v0, r5, r6, r4, v1;
-  s32 stack[1];
+void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
-  /* sub (s32)stack, #4 */
-  r0 = a0;
-  r3 = FIELD_AT(a0, u16, 0);
-  if ((FIELD_AT(a0, u16, 0)) == 0xffff)
-    goto L_0200809c;
-  r7 = r0;
-L_0200804e:
-  r8 = FIELD_AT(r7, u16, 0);
-  v0 = ((s32)Actor_Get(r8));
-  r5 = v0;
-  r6 = *(s16 *)(r7 + 2);
-  r4 = *(s16 *)(r7 + 4);
-  FIELD_AT(r5, u8, 89) = 254 & (FIELD_AT(r5, u8, 89));
-  stack[0] = r4;
-  Actor_SetSpriteFlags(v0, 0);
-  r4 = stack[0];
-  r6 = r6 << 16;
-  r4 = r4 << 16;
-  r4 = (u32)r4 >> 16;
-  r6 = (u32)r6 >> 16;
-  r5 = r5 + 34;
-  v1 = Func_02000128(r8, r6, r4, FIELD_AT(r5, u8, 0));
-  r7 = r7 + 6;
-  r0 = v1;
-  r3 = FIELD_AT(r7, u16, 0);
-  if ((FIELD_AT(r7, u16, 0)) != 0xffff)
-    goto L_0200804e;
-L_0200809c:
-  /* add (s32)stack, #4 */
-  return r0;
+/// Places each pillar of a list of three-halfword entries (actor, kind,
+/// flag) ended by 0xffff, its collision bit cleared, raised or sunk by its
+/// flag (Actor_SetCellOpen).
+void Pillars_Place(const u16 *list) {
+  const u16 *entry;
+
+  if (list[0] == 0xffff)
+    return;
+  entry = list;
+loop:
+  {
+    u32 id = entry[0];
+    struct Actor *object = Actor_Get(id);
+    s16 kind = entry[1];
+    s16 flag = entry[2];
+
+    object->collisionFlags &= ~1;
+    Actor_SetSpriteFlags(object, 0);
+    Actor_SetCellOpen(id, (u16)kind, (u16)flag, object->terrainId);
+    entry += 3;
+  }
+  if (entry[0] != 0xffff)
+    goto loop;
 }
-#undef FIELD_AT
-
-// ---- games/tla/src/scene/izumo_ruins/s00a4.c ----
-// The overlay code of scene/izumo_ruins between two shared objects, in ROM
-// order.
 
 #include "izumo_ruins.h"
 #include "map.h"
 #include "../shared/trial_road.h"
 
-/* VIEW(s00a4): routine Func_02000128 as void Func_02000128(s32 id, u32 kind,
- * s32 flag, s32 layer); s0038 has s32 Func_02000128(); tried as the
- * definition's void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer), which
- * the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/izumo_ruins/s0038.c:102: conflicting types for
- * `Func_02000128'. */
-extern void Actor_SetCellOpen(s32 id, u32 kind, s32 flag,
-                              s32 layer) __asm__("Func_02000128");
-
 // Finds the current target's table row and shrinks it.
-void Func_020000a4(u16 *list, s32 mode, s32 count) {
+void Pillars_Pound(u16 *list, s32 mode, s32 count) {
   struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
 
   if (*list == 0xffff)
@@ -114,7 +92,7 @@ DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Func_02001508,
 
 s32 Func_02001528(s32 layer, s32 shape, s32 height);
 
-void Func_020001d0(u16 *list) {
+void CrumblingPillars_Place(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct Actor *leader;
   s32 height;
@@ -156,7 +134,7 @@ void Func_020001d0(u16 *list) {
   }
 }
 
-void Func_020002f8(u16 *list) {
+void CrumblingPillars_Step(u16 *list) {
   struct Actor *leader;
   struct Actor *pillar;
   s32 position[3];
@@ -193,7 +171,7 @@ body:
         Actor_SetSpriteColor(Actor_GetById(id), 7);
         wait(4);
         Actor_SetSpriteColor(Actor_GetById(id), 0);
-        Func_02000974(0);
+        Rubble_Spray(0);
         GameFlag_SetBit(flag);
       } else if (!GameFlag_Test(flag + 1)) {
         u8 *flags = &leader->motionFlags;
@@ -201,13 +179,13 @@ body:
         *flags = 0;
         Sound_Play(185);
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
-        Func_02000974(0);
+        Rubble_Spray(0);
         wait(8);
         Actor_SelectAnimation(pillar, 2);
-        Func_02000c4c(-2, pillar->terrainId);
-        Func_02000974(1);
+        Leader_SetCellShapeAt(-2, pillar->terrainId);
+        Rubble_Spray(1);
         wait(16);
-        Func_02000c4c(-2, pillar->terrainId);
+        Leader_SetCellShapeAt(-2, pillar->terrainId);
         wait(4);
         MapGrid_SetShake(-1, -1, 0xe666);
         wait(8);
@@ -216,7 +194,7 @@ body:
         Actor_SetPositionAndResetMotion(pillar, 0, 0, 0);
         wait(2);
         Sound_Play(188);
-        Func_02000aa8();
+        Rubble_Burst();
         wait(20);
         GameFlag_SetBit(flag + 1);
       }
@@ -229,7 +207,7 @@ test:
     goto body;
 }
 
-void Func_0200048c(const void *data, s32 id) {
+void CrumblingPillar_Collapse(const void *data, s32 id) {
   const struct TrapEntry *entry = data;
   struct Actor *object = Actor_Get(id);
   s32 flag;
@@ -245,18 +223,18 @@ void Func_0200048c(const void *data, s32 id) {
       if (!Event_GetFlag(flag + 1)) {
         Event_PlaySound(185);
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
-        Func_02000974(0);
+        Rubble_Spray(0);
         System_Wait(8);
         Actor_SelectAnimation(object, 2);
         Actor_SetCellShapeAt(-4, OBJECT_BYTE(object, 34), id);
-        Func_02000974(1);
+        Rubble_Spray(1);
         System_Wait(16);
         MapGrid_SetShake(-1, -1, 0xe666);
         System_Wait(8);
         FieldActor_SetPositionAndResetMotion(object, 0, 0, 0);
         System_Wait(2);
         Event_PlaySound(188);
-        Func_02000aa8();
+        Rubble_Burst();
         System_Wait(20);
         Event_SetFlag(flag);
         Event_SetFlag(flag + 1);
@@ -267,14 +245,14 @@ void Func_0200048c(const void *data, s32 id) {
   }
 }
 
-void Func_0200056c(s32 id) {
+void CrumblingPillar_Prepare(s32 id) {
   Actor_Get(id)->unk5c[0] = 3;
   Func_020014c0(id);
 }
 
 void Actor_MoveToObject(s32 id, s32 target);
 
-void Func_02000584(u16 *list) {
+void CrumblingPillars_PlaceWithStandIns(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   u8 *grid;
 
@@ -282,9 +260,9 @@ void Func_02000584(u16 *list) {
   Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
   Actor_MoveToObject(10, gMainRoutineWork.currentOwner);
   System_Wait(1);
-  Func_0200056c(8);
-  Func_0200056c(9);
-  Func_0200056c(10);
+  CrumblingPillar_Prepare(8);
+  CrumblingPillar_Prepare(9);
+  CrumblingPillar_Prepare(10);
   Actor_SetAnimation(9, 0);
   System_Wait(1);
   Actor_SetPosition(8, 0, 0);
@@ -325,12 +303,12 @@ void Func_02000584(u16 *list) {
   System_Wait(10);
 }
 
-void Func_020006ec(struct Actor *object, struct Actor *target) {
+void Actor_TakePlaceOf(struct Actor *object, struct Actor *target) {
   FieldActor_SetPositionAndResetMotion(object, target->x, target->y, target->z);
   FieldActor_SetPositionAndResetMotion(target, 0, 0, 0);
 }
 
-void Func_02000708(u16 *list) {
+void CrumblingPillars_StepWithStandIn(u16 *list) {
   struct Actor *leader;
   struct Actor *helper;
   struct Actor *pillar;
@@ -361,7 +339,7 @@ body:
       Event_Start();
       if (!GameFlag_Test(flag)) {
         Actor_SelectAnimation(helper, 1);
-        Func_020006ec(helper, pillar);
+        Actor_TakePlaceOf(helper, pillar);
         wait(1);
         Sound_Play(125);
         Actor_SetSpriteColor(Actor_GetById(8), 7);
@@ -373,27 +351,27 @@ body:
         Actor_SetSpriteColor(Actor_GetById(8), 7);
         wait(4);
         Actor_SetSpriteColor(Actor_GetById(8), 0);
-        Func_02000974(0);
-        Func_020006ec(pillar, helper);
+        Rubble_Spray(0);
+        Actor_TakePlaceOf(pillar, helper);
         wait(1);
         GameFlag_SetBit(flag);
       } else if (!GameFlag_Test(flag + 1)) {
         u8 *flags;
 
         Actor_SelectAnimation(helper, 0);
-        Func_020006ec(helper, pillar);
+        Actor_TakePlaceOf(helper, pillar);
         wait(1);
         flags = &leader->motionFlags;
         *flags = 0;
         Sound_Play(185);
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
-        Func_02000974(0);
+        Rubble_Spray(0);
         wait(8);
         Actor_SelectAnimation(helper, 2);
-        Func_02000c4c(-2, pillar->terrainId);
-        Func_02000974(1);
+        Leader_SetCellShapeAt(-2, pillar->terrainId);
+        Rubble_Spray(1);
         wait(16);
-        Func_02000c4c(-2, pillar->terrainId);
+        Leader_SetCellShapeAt(-2, pillar->terrainId);
         wait(4);
         MapGrid_SetShake(-1, -1, 0xe666);
         wait(8);
@@ -402,7 +380,7 @@ body:
         Actor_SetPositionAndResetMotion(helper, 0, 0, 0);
         wait(2);
         Sound_Play(188);
-        Func_02000aa8();
+        Rubble_Burst();
         wait(20);
         GameFlag_SetBit(flag + 1);
       }

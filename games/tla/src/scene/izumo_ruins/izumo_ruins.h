@@ -51,14 +51,14 @@ struct IzumoRuinsEffectWork {
 };
 
 extern u8 gMapCellBuffer[];
-extern char SceneId_Ov67FRoom1;
-extern char SceneId_Ov67FRoom2;
+extern char SceneId_IzumoRuinsFirstRoom;
+extern char SceneId_IzumoRuinsSecondRoom;
 
-void Func_020000a4(u16 *list, s32 mode, s32 count);
+void Pillars_Pound(u16 *list, s32 mode, s32 count);
 void Actor_SetCellShapeAt(s32 a, s32 b, s32 owner);
-s32 Func_02000eac(u32 layer, s32 x, s32 y);
-s32 Func_02000ee8(u32 layer, s32 x, s32 y, s32 value);
-void Func_02000f30(struct Actor *object);
+s32 MapGrid_GetCellWord(u32 layer, s32 x, s32 y);
+s32 MapGrid_SetCellWord(u32 layer, s32 x, s32 y, s32 value);
+void IzumoRuins_ShowPillarState(struct Actor *object);
 void Actor_SelectAnimation(struct Actor *object, s32 value);
 void Event_End(void);
 void Func_020014c0(s32 id);
@@ -66,22 +66,22 @@ void Func_02001500(const void *data);
 void Func_02001518(const void *data);
 void Func_02001520(void);
 
-extern s16 gData_02001654[];
-extern s16 gData_02001658[];
-extern s16 gData_02001674[];
-extern s16 gData_02001688[];
-extern s16 gData_02001696[];
-extern u32 gData_020016d0[];
-extern u32 gData_020016f0[];
-extern struct ActorPlacement gData_02001754[];
-extern struct ActorPlacement gData_0200176c[];
-extern struct ActorPlacement gData_02001814[];
-extern struct Trigger gData_020018ec[];
-extern struct Trigger gData_020019ac[];
+extern s16 gIzumoRuins_FirstRoomMovablePillars[];
+extern s16 gIzumoRuins_SecondRoomMovablePillars[];
+extern s16 gIzumoRuins_FirstRoomPoundPillars[];
+extern s16 gIzumoRuins_SecondRoomPoundPillars[];
+extern s16 gIzumoRuins_Puddles[];
+extern u32 gIzumoRuins_FirstRoomRegions[];
+extern u32 gIzumoRuins_SecondRoomRegions[];
+extern struct ActorPlacement gIzumoRuins_ActorPlacements[];
+extern struct ActorPlacement gIzumoRuins_FirstRoomActorPlacements[];
+extern struct ActorPlacement gIzumoRuins_SecondRoomActorPlacements[];
+extern struct Trigger gIzumoRuins_FirstRoomTriggers[];
+extern struct Trigger gIzumoRuins_SecondRoomTriggers[];
 
-void Func_0200100c(u16 *list);
-void Func_02000974(s32 mode);
-void Func_02000aa8(void);
+void IzumoRuins_PlacePillars(u16 *list);
+void Rubble_Spray(s32 mode);
+void Rubble_Burst(void);
 void Map_CenterOnFollowedPoint(void);
 s32 Func_02001508(struct Actor *object);
 void Func_02001510(const void *data);

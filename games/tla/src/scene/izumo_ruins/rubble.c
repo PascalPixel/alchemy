@@ -1,6 +1,6 @@
 /// @file
-/// The overlay code of scene/izumo_ruins between two shared objects, in ROM
-/// order.
+/// The Izumo Ruins' rubble, sprayed and burst from the leader as a pillar
+/// crumbles (Rubble_Spray, Rubble_Burst).
 
 #include "../shared/map_cells.h"
 #include "types.h"
@@ -16,15 +16,20 @@
 #include "izumo_ruins.h"
 #include "field.h"
 #include "module/field/field_effect.h"
-#include "module/scene/izumo_ruins.h"
 #include "module/scene/scene.h"
 #include "module/tla.h"
 
-extern const s32 gData_02001540[];
+struct Actor;
+struct FieldSprite;
+s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
+void Leader_SetCellShapeAt(s32 a, s32 b);
+u32 Sprite_ShareVramCacheEntry(struct FieldSprite *sprite, u32 frame);
+
+extern const s32 gIzumoRuins_RubbleSprayScript[];
 
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 
-void Func_02000974(s32 spread) {
+void Rubble_Spray(s32 spread) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   u32 frame = 0;
@@ -45,7 +50,7 @@ void Func_02000974(s32 spread) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags((struct Actor *)effect, 0);
       Actor_SelectAnimation((struct Actor *)effect, 2);
-      Actor_StartScript(effect, gData_02001540);
+      Actor_StartScript(effect, gIzumoRuins_RubbleSprayScript);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
       if (spread != 0) {
@@ -65,9 +70,9 @@ void Func_02000974(s32 spread) {
   } while (i <= 7);
 }
 
-extern const s32 gData_02001570[];
+extern const s32 gIzumoRuins_RubbleBurstScript[];
 
-void Func_02000aa8(void) {
+void Rubble_Burst(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   u32 frame;
@@ -86,7 +91,7 @@ void Func_02000aa8(void) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags((struct Actor *)effect, 0);
       Actor_SelectAnimation((struct Actor *)effect, 2);
-      Actor_StartScript(effect, gData_02001570);
+      Actor_StartScript(effect, gIzumoRuins_RubbleBurstScript);
       effect->velocity.x = Trig_Cos(i << 12);
       effect->velocity.y = 0;
       effect->velocity.z = Math_Sin(i << 12);
@@ -109,7 +114,7 @@ s32 Func_02001528(s32 terrainId, s32 value, s32 height);
 DEFINE_ACTOR_SET_CELL_SHAPE_AT(Actor_SetCellShapeAt, MapGrid_GetTerrainKind,
                                Func_02001528)
 
-void Func_02000c4c(s32 a, s32 b) {
+void Leader_SetCellShapeAt(s32 a, s32 b) {
   Actor_SetCellShapeAt(a, b, gMainRoutineWork.currentOwner);
 }
 

@@ -801,11 +801,11 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/entry/izumo_ruins.o"(.text)
-        "*/games/tla/src/scene/izumo_ruins/s0038.o"(.text)
+        "*/games/tla/src/scene/izumo_ruins/pillars.o"(.text)
         "*/games/tla/src/field/field_effect/advance_motion_priority.o"(.text)
-        "*/games/tla/src/scene/izumo_ruins/s0974.o"(.text)
+        "*/games/tla/src/scene/izumo_ruins/rubble.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/games/tla/src/scene/izumo_ruins/s0ce4.o"(.text)
+        "*/games/tla/src/scene/izumo_ruins/effect_spawn.o"(.text)
         "*/games/tla/src/scene/izumo_ruins.o"(.text)
         "*/games/tla/src/scene/import/izumo_ruins.o"(.text)
         "*/games/tla/src/scene/izumo_ruins.o"(.data)

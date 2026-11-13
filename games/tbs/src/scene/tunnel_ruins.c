@@ -1856,7 +1856,7 @@ s32 gTunnelRuins_StretchScript[] = {
 s32 gTunnelRuins_DouseSplashScript[] = {
     SC_WAIT(35),     SC_SET(SW_HOOK, (s32)TunnelRuins_SplashDousedPillar),
     SC_WAIT(130),    SC_SET(SW_HOOK, 0),
-    SC_ANIMATION(2), SC_END,
+    SC_ANIMATION(ANIM_WALK), SC_END,
 };
 
 u16 gTunnelRuins_DoorOpenSteps[] = {

@@ -780,11 +780,11 @@ s32 gMercuryLighthouseEntrance_LizardManStepCentre[] = {
     SC_SPEED(2),
     SC_ACCELERATION(2),
     SC_SET(SW_STEERING, 0),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(136, 0, 152),
     SC_CALL(MercuryLighthouseEntrance_PlayStepSound),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
@@ -792,11 +792,11 @@ s32 gMercuryLighthouseEntrance_LizardManStepWest[] = {
     SC_SPEED(2),
     SC_ACCELERATION(2),
     SC_SET(SW_STEERING, 0),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(120, 0, 152),
     SC_CALL(MercuryLighthouseEntrance_PlayStepSound),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
@@ -804,11 +804,11 @@ s32 gMercuryLighthouseEntrance_LizardManStepEast[] = {
     SC_SPEED(2),
     SC_ACCELERATION(2),
     SC_SET(SW_STEERING, 0),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(152, 0, 152),
     SC_CALL(MercuryLighthouseEntrance_PlayStepSound),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 

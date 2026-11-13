@@ -2047,7 +2047,7 @@ s32 gMercuryLighthouseAerie_PlatformUnderfoot = 0;
 s32 gMercuryLighthouseAerie_SparkScript[] = {
     SC_SET(SW_SCALE_Y, 7 * Q16_ONE / 5),
     SC_SET(SW_SCALE_X, 7 * Q16_ONE / 5),
-    SC_ANIMATION(4),
+    SC_ANIMATION(ANIM_SHAKE_HEAD),
     SC_WAIT(30),
     SC_RELEASE,
 };

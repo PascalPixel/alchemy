@@ -1233,7 +1233,7 @@ static void ValeKradensCottage_TalkToCottageVisitor(void) {
 
 /// Leads the party away from the broken fence, then leaves the scene.
 s32 gValeKradensCottage_RockslideSurvivorEscapeActions[] = {
-    SC_ANIMATION(2), SC_MOVE(72, 0, 294), SC_SYNC, SC_MOVE(77, 0, 329),
+    SC_ANIMATION(ANIM_WALK), SC_MOVE(72, 0, 294), SC_SYNC, SC_MOVE(77, 0, 329),
     SC_SYNC,         SC_MOVE(70, 0, 415), SC_SYNC, SC_POSITION(0, 0, 0),
     SC_END,
 };

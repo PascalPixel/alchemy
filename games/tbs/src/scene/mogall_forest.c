@@ -1699,7 +1699,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 /// The script of each rock moved with Move, which draws it in greys.
 s32 gMogallForest_RockScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_SET(SW_TIMER, SPRITE_COLOR_GREY),
     SC_CALL(MogallForest_CopyTimerToChild),
     SC_END,

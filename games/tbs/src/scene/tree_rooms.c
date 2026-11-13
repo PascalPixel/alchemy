@@ -1280,34 +1280,34 @@ const s32 *gFieldEffect_DurationScripts[] = {
 /// The party gathers in front of Tret before the battle (TreeRooms_FightTret),
 /// each walking to its own place.
 s32 gTreeRooms_LeaderGathersActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(166, 0, 80),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gTreeRooms_GaretGathersActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(148, 0, 90),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gTreeRooms_IvanGathersActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(182, 0, 90),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gTreeRooms_MiaGathersActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(166, 0, 104),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
@@ -1330,7 +1330,7 @@ s32 gTreeRooms_FaceSinksActions[] = {
 
 /// Garet, Ivan and Mia walk back to the leader and are put away.
 s32 gTreeRooms_RejoinLeaderActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(166, 0, 80),
     SC_SYNC,
     SC_POSITION(0, 0, 0),

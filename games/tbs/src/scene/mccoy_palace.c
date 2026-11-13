@@ -1612,14 +1612,14 @@ s32 gPalace_FacingActions[] = {
 };
 
 s32 gPalace_PacingActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(842, 0, 696),
     SC_SYNC,
     SC_MOVE(842, 0, 636),
     SC_SYNC,
     SC_MOVE(876, 0, 634),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
     SC_WAIT(1),
     SC_END,

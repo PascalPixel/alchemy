@@ -2208,7 +2208,7 @@ static void Sanctum_TalkAboutJourneyFromXian(void) {
 
 // clang-format off
 u32 gSanctum_LeaderCircleScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_SPEED(2.5),
     SC_ACCELERATION(0.5),
     SC_LABEL(1),
@@ -2229,12 +2229,12 @@ u32 gSanctum_LeaderCircleScript[] = {
     SC_MOVE(192, 0, 168),
     SC_SYNC,
     SC_LOOP(4, SC_LABEL(1)),
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 u32 gSanctum_GaretCircleScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_SPEED(2.5),
     SC_ACCELERATION(0.5),
     SC_LABEL(1),
@@ -2255,7 +2255,7 @@ u32 gSanctum_GaretCircleScript[] = {
     SC_MOVE(208, 0, 168),
     SC_SYNC,
     SC_LOOP(4, SC_LABEL(1)),
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 

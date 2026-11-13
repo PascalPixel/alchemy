@@ -3165,7 +3165,7 @@ s32 gCaravanFourthWagonDeparts[] = {
 };
 
 s32 gCaravanFourthWagonReturns[] = {
-    SC_ANIMATION(3), SC_MOVE(5672, 0, 1795), SC_SYNC, SC_MOVE(5800, 0, 1800),
+    SC_ANIMATION(ANIM_NOD), SC_MOVE(5672, 0, 1795), SC_SYNC, SC_MOVE(5800, 0, 1800),
     SC_SYNC,         SC_POSITION(0, 0, 0),   SC_END,
 };
 

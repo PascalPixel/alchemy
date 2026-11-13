@@ -3259,7 +3259,7 @@ s32 gVenusLighthouseAerie_BeamEndAction[] = {
 s32 gVenusLighthouseAerie_OrbitParticleScript[] = {
     SC_SET(SW_SCALE_X, 4 * Q16_ONE / 5),
     SC_SET(SW_SCALE_Y, 4 * Q16_ONE / 5),
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_LABEL(1),
     SC_ADD(SW_Y, px(1)),
     SC_WAIT(1),
@@ -3272,7 +3272,7 @@ s32 gVenusLighthouseAerie_OrbitParticleScript[] = {
 s32 gVenusLighthouseAerie_RiseParticleScript[] = {
     SC_SET(SW_SCALE_X, 4 * Q16_ONE / 5),
     SC_SET(SW_SCALE_Y, 4 * Q16_ONE / 5),
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_LABEL(1),
     SC_ADD(SW_Y, -px(1)),
     SC_WAIT(1),
@@ -3436,7 +3436,7 @@ struct Trigger gVenusLighthouseAerieTriggers[] = {
 s32 gVenusLighthouseAerie_BesideParticleScript[] = {
     SC_SET(SW_SCALE_Y, 7 * Q16_ONE / 5),
     SC_SET(SW_SCALE_X, 7 * Q16_ONE / 5),
-    SC_ANIMATION(4),
+    SC_ANIMATION(ANIM_SHAKE_HEAD),
     SC_WAIT(30),
     SC_RELEASE,
 };

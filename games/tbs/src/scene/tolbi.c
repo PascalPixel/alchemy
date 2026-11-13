@@ -720,7 +720,7 @@ s32 gTolbiMirroredActor[] = {
 /// The older brother runs a loop of eight points, 32 pixels across, south-east
 /// of the fountain.
 s32 gTolbiOlderBrotherRun[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_SPEED(0.8),
     SC_ACCELERATION(0.2),
     SC_LABEL(1),
@@ -745,7 +745,7 @@ s32 gTolbiOlderBrotherRun[] = {
 
 /// The younger sister runs the same loop half a lap ahead.
 s32 gTolbiYoungerSisterRun[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_SPEED(0.8),
     SC_ACCELERATION(0.2),
     SC_LABEL(1),

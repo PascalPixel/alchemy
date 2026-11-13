@@ -2145,18 +2145,18 @@ u8 gValePlaza_UnusedPaletteSteps[] = {
 };
 
 s32 gValePlaza_ChargedUpStrongmanActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(214, 0, 721),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(40),
     SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_MOTION, 3),
     SC_SET(SW_VELOCITY_Y, px(8)),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(214, 0, 763),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
@@ -2298,7 +2298,7 @@ s32 gValePlaza_FarewellChaseActions[] = {
 };
 
 s32 gValePlaza_FarewellFirstChildActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(137, 0, 639),
     SC_SYNC,
     SC_MOVE(122, 0, 692),
@@ -2309,12 +2309,12 @@ s32 gValePlaza_FarewellFirstChildActions[] = {
     SC_ACCELERATION(0.6),
     SC_MOVE(148, 0, 770),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gValePlaza_FarewellSecondChildActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(137, 0, 639),
     SC_SYNC,
     SC_MOVE(122, 0, 692),
@@ -2325,12 +2325,12 @@ s32 gValePlaza_FarewellSecondChildActions[] = {
     SC_ACCELERATION(0.6),
     SC_MOVE(164, 0, 758),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gValePlaza_PartyDepartureActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(216, 0, 854),
     SC_SYNC,
     SC_MOVE(215, 0, 921),
@@ -2344,51 +2344,51 @@ s32 gValePlaza_HutOwnerSearchActions[] = {
     SC_ACCELERATION(0.05),
     SC_SET(SW_COLLISION, 3),
     SC_LABEL(1),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_WANDER_HOME(4, 8, 16),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(20),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_WANDER_HOME(4, 8, 16),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(20),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_WANDER_HOME(4, 8, 16),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(60),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,
 };
 
 s32 gValePlaza_AideRunActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(148, 0, 758),
     SC_SYNC,
     SC_MOVE(128, 0, 709),
     SC_SYNC,
     SC_MOVE(129, 0, 647),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_POSITION(0, 0, 0),
     SC_END,
 };
 
 s32 gValePlaza_LeaderStepActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(196, 0, 774),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gValePlaza_StormGaretStepActions[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(196, 0, 790),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 

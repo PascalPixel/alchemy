@@ -592,10 +592,7 @@ static s32 ShipRooms_LookAround(struct Actor *actor) {
 /// Counts the frames of a pause in riseCounter and moves the pacing
 /// actor to its next step after 80 frames.
 static void ShipRooms_WaitThenAdvance(struct Actor *actor) {
-  s32 frame = actor->riseCounter + 1;
-
-  actor->riseCounter = frame;
-  if ((u8)frame > 80) {
+  if (++actor->riseCounter > 80) {
     actor->userValue += 1;
   }
 }
@@ -604,15 +601,13 @@ static void ShipRooms_WaitThenAdvance(struct Actor *actor) {
 ///
 /// Returns 1 once the time is up or the actor has reached its target, else 0.
 static s32 ShipRooms_HasArrived(struct Actor *actor) {
-  s32 remaining = actor->riseBaseY;
-
-  if (remaining != 0) {
-    actor->riseBaseY = remaining - 1;
+  if (actor->riseBaseY != 0) {
+    actor->riseBaseY--;
   } else {
     return 1;
   }
-  if (actor->targetX == ACTOR_NO_TARGET && actor->targetY == actor->targetX &&
-      actor->targetZ == actor->targetY) {
+  if (actor->targetX == ACTOR_NO_TARGET && actor->targetY == ACTOR_NO_TARGET &&
+      actor->targetZ == ACTOR_NO_TARGET) {
     return 1;
   }
   return 0;
@@ -1244,7 +1239,7 @@ static struct Actor *ShipRooms_FindActorNear(s32 x, s32 z) {
   top = z - 12;
   bottom = z + 12;
   actor = &work->actors[ACTOR_FIRST_PLACED];
-  while (i <= 65) {
+  while (i <= ACTOR_LAST_ID) {
     current = *actor++;
     actorX = current->x.part.pixel;
     actorZ = current->z.part.pixel;
@@ -1260,9 +1255,8 @@ static struct Actor *ShipRooms_FindActorNear(s32 x, s32 z) {
 /// leader faces.
 static void ShipRooms_StepBesideLeader(s32 passengerId) {
   struct Actor *leader;
-  struct Actor *leaderPosition;
-  s32 blocked;
   s32 direction;
+  s32 blocked;
   struct Actor *passenger;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1273,25 +1267,26 @@ static void ShipRooms_StepBesideLeader(s32 passengerId) {
   passenger->priorityFlags =
       ACTOR_PRIORITY_AUTOMATIC | passenger->priorityFlags;
   // Try the leader's right, then left, then the space behind.
-  direction = (((leader->facing + TRIG_TURN / 4) & 0xf000) >> 12);
-  if (ShipRooms_IsSpotFree(
-          (((leader->facing + TRIG_TURN / 4) & 0xf000) >> 12)) != 0) {
+  direction = ((leader->facing + TRIG_TURN / 4) & 0xf000) >> 12;
+  if (ShipRooms_IsSpotFree(direction) != 0) {
     blocked = 0;
   }
   if (blocked != 0) {
-    direction = (((leader->facing - TRIG_TURN / 4) & 0xf000) >> 12);
-    if (ShipRooms_IsSpotFree(
-            (((leader->facing - TRIG_TURN / 4) & 0xf000) >> 12)) != 0) {
+    direction = ((leader->facing - TRIG_TURN / 4) & 0xf000) >> 12;
+    if (ShipRooms_IsSpotFree(direction) != 0) {
       blocked = 0;
     }
     if (blocked != 0) {
-      direction = (((leader->facing + TRIG_TURN / 2) & 0xf000) >> 12);
+      direction = ((leader->facing + TRIG_TURN / 2) & 0xf000) >> 12;
     }
   }
-  leaderPosition = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leaderPosition != 0) {
-    Actor_SetPositionFixed(passengerId, leaderPosition->x.fixed,
-                           leaderPosition->z.fixed);
+  // Start from where the leader stands.
+  {
+    struct Actor *start = Actor_Get(ACTOR_PARTY_LEADER);
+
+    if (start != 0) {
+      Actor_SetPositionFixed(passengerId, start->x.fixed, start->z.fixed);
+    }
   }
   Actor_SetSpeed(passengerId, 1.6);
   Actor_SetAnimation(passengerId, ANIM_WALK);
@@ -1339,17 +1334,17 @@ static s32 ShipRooms_IsSpotFree(s32 bucket) {
 /// Returns the passenger chosen to row at the open seat, which the attacks
 /// fought off number.
 static s32 ShipRooms_GetChosenOarsman(void) {
-  s32 ret = 0;
+  s32 seat = 0;
 
   if (GameFlag_Get(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
-    ret = 3;
+    seat = 3;
   } else if (GameFlag_Get(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) != 0) {
-    ret = 2;
+    seat = 2;
   } else if (GameFlag_Get(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) != 0) {
-    ret = 1;
+    seat = 1;
   }
 
-  return ShipRooms_FindFirstSetFlag(ret, 1);
+  return ShipRooms_FindFirstSetFlag(seat, 1);
 }
 
 /// What a passenger at the oars says, or thinks under Mind Read, by the round
@@ -4324,18 +4319,25 @@ s32 gShipRooms_TurnSteps[] = {
 
 /// The warriors walk out of the hold.
 s32 gShipRooms_LeaveHold[] = {
-    SC_ANIMATION(2), SC_MOVE(168, 0, 500),
-    SC_SYNC,         SC_MOVE(168, 0, 584),
-    SC_SYNC,         SC_CALL(ShipRooms_ResetActor),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(168, 0, 500),
+    SC_SYNC,
+    SC_MOVE(168, 0, 584),
+    SC_SYNC,
+    SC_CALL(ShipRooms_ResetActor),
     SC_END,
 };
 
 /// Those gathered in the captain's quarters walk out.
 s32 gShipRooms_LeaveCaptainsQuarters[] = {
-    SC_SPEED(1),     SC_ACCELERATION(0.5),
-    SC_ANIMATION(2), SC_MOVE(456, 0, 674),
-    SC_SYNC,         SC_MOVE(456, 0, 712),
-    SC_SYNC,         SC_CALL(ShipRooms_ResetActor),
+    SC_SPEED(1),
+    SC_ACCELERATION(0.5),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(456, 0, 674),
+    SC_SYNC,
+    SC_MOVE(456, 0, 712),
+    SC_SYNC,
+    SC_CALL(ShipRooms_ResetActor),
     SC_END,
 };
 
@@ -4359,22 +4361,28 @@ s32 gShipRooms_AnchorCharmPulse[] = {
 
 /// The party's followers walk into the leader by the rowing deck's stairs.
 s32 gShipRooms_FollowersRejoinByStairs[] = {
-    SC_ANIMATION(2), SC_MOVE(434, 0, 166),
-    SC_SYNC,         SC_CALL(ShipRooms_ResetActor),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(434, 0, 166),
+    SC_SYNC,
+    SC_CALL(ShipRooms_ResetActor),
     SC_END,
 };
 
 /// The same, in the middle of the rowing deck.
 s32 gShipRooms_FollowersRejoinMidDeck[] = {
-    SC_ANIMATION(2), SC_MOVE(438, 0, 300),
-    SC_SYNC,         SC_CALL(ShipRooms_ResetActor),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(438, 0, 300),
+    SC_SYNC,
+    SC_CALL(ShipRooms_ResetActor),
     SC_END,
 };
 
 /// The same, by the first row of seats.
 s32 gShipRooms_FollowersRejoinBySeats[] = {
-    SC_ANIMATION(2), SC_MOVE(432, 0, 168),
-    SC_SYNC,         SC_CALL(ShipRooms_ResetActor),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(432, 0, 168),
+    SC_SYNC,
+    SC_CALL(ShipRooms_ResetActor),
     SC_END,
 };
 
@@ -4406,13 +4414,17 @@ s32 gShipRooms_MonsterBob[] = {
 
 /// A rower walks up the stairs and is released.
 s32 gShipRooms_LeaveByStairs[] = {
-    SC_ANIMATION(2), SC_MOVE(408, 0, 132), SC_SYNC, SC_MOVE(444, 0, 132),
-    SC_SYNC,         SC_RELEASE,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(408, 0, 132),
+    SC_SYNC,
+    SC_MOVE(444, 0, 132),
+    SC_SYNC,
+    SC_RELEASE,
 };
 
 /// A rower steps into the aisle.
 s32 gShipRooms_StepIntoAisle[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(416, 0, 186),
     SC_SYNC,
     SC_END,

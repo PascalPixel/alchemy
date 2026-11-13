@@ -508,7 +508,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       scale160.v[0] = scale160.v[1] = Trig_Sin(t56 << 7) * 2 + TRIG_TURN / 4;
       pos232[3] = 0;
       pos232[1] = 0xff0000;
-      pos232[0] = 114 << 16;
+      pos232[0] = px(114);
       pos232[2] = (t56 >= 0 ? 78 : 100) << 16;
       Render_ApplyProjectedPlacementFar(work->objects[0], pos232, scale160.v,
                                         0);
@@ -776,7 +776,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         scale152[0] = Q16_ONE * 5 / 4;
         scale152[0] = scale152[1] = posZ / 48 + Q16_ONE / 4;
         pos216[0] = posX + 0x400000;
-        pos216[2] = 144 << 16;
+        pos216[2] = px(144);
         Render_ApplyProjectedPlacementFar(work->objects[12], pos216, scale152,
                                           0);
         scale152[1] = Q16_ONE;
@@ -1665,7 +1665,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           BattleEffect_TintBattler(arg->actors[i], 15, -1, i, 32);
         }
         if (member->timer == 8) {
-          SET_POSITION(actor, 0, 148 << 16, 0);
+          SET_POSITION(actor, 0, px(148), 0);
         }
       }
       if (frame >= 0) {

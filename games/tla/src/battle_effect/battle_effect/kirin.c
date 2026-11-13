@@ -170,10 +170,10 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
           work->shakeFrames = 4;
       }
       place.unk0c = 0;
-      place.y = 255 << 16;
+      place.y = px(255);
       i = 0;
       do {
-        place.x = ((baseX + gKirin_Columns[i] - lift) << 16) + (224 << 16);
+        place.x = ((baseX + gKirin_Columns[i] - lift) << 16) + px(224);
         place.z = ((gKirin_Rows[i] - wave) << 16) + (144 << 15);
         Render_ApplyProjectedPlacementFar(work->objects[i], &place.x, &pair.a,
                                           0);
@@ -322,7 +322,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
           rise = (Trig_Sin(ang) << 5) >> 16;
         }
         place2.unk0c = 0;
-        place2.y = 255 << 16;
+        place2.y = px(255);
         i = 0;
         do {
           place2.x = (rowX + gKirin_Columns[i]) << 16;

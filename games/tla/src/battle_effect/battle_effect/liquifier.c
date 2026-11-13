@@ -273,8 +273,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           model->shade = zero;
           Transform_Reset();
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          SceneTransform_ApplyPosition3(step->x - (128 << 16),
-                                        step->y - (64 << 16), 0);
+          SceneTransform_ApplyPosition3(step->x - px(128), step->y - px(64), 0);
           Transform_ApplyRoll(step->z);
           SceneTransform_ApplyScale3(scale, Q16_ONE, Q16_ONE / 2);
           Render_TransformVertices(Data_081991c0, projected, 4);
@@ -304,8 +303,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           model->shade = shade;
           Transform_Reset();
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          SceneTransform_ApplyPosition3(step->x - (128 << 16),
-                                        step->y - (64 << 16), 0);
+          SceneTransform_ApplyPosition3(step->x - px(128), step->y - px(64), 0);
           Transform_ApplyPitch(0x3c00);
           SceneTransform_ApplyScale3(scale, scale, scale);
           Render_TransformVertices(Data_081991e0, projected, 4);

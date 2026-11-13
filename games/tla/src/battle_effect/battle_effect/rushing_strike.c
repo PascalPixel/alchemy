@@ -542,7 +542,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
     }
     victim[18] = 0;
     if ((u32)(frame - 4) <= 55) {
-      victim[3] = (frame * 9 << 16) - (18 << 16);
+      victim[3] = (frame * 9 << 16) - px(18);
     } else if (frame > 59) {
       victim[2] = 0;
       victim[3] = (294 - height) << 16;

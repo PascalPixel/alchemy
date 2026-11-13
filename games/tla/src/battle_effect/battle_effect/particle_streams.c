@@ -140,10 +140,10 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *effect) {
 
     // The formation starts off the right edge, gliding left.
     rise = 0;
-    focus.x = 256 << 16;
-    focus.y = 88 << 16;
-    velocity.x = -(16 << 16);
-    velocity.y = -(4 << 16);
+    focus.x = px(256);
+    focus.y = px(88);
+    velocity.x = -px(16);
+    velocity.y = -px(4);
     for (k = 0; k != 64; k++)
       work->particles[k].variant = -1;
     for (k = 0; k != 16; k++) {
@@ -178,7 +178,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *effect) {
         focus.y += velocity.y;
         velocity.x = velocity.x * 58 / 64;
         velocity.y = velocity.y * 56 / 64;
-        if (focus.x < 120 << 16)
+        if (focus.x < px(120))
           velocity.x += px(1) / 2;
       }
       BattleEffect_PlaceFormationObjects(1, focus.x, focus.y);
@@ -353,7 +353,7 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   void **objects;
 
   pos[3] = 0;
-  pos[1] = 255 << 16;
+  pos[1] = px(255);
   switch (formation) {
   case 0:
     objects = work->objects;
@@ -372,14 +372,14 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
     break;
   case 1:
     for (i = 0; i != 12; i++) {
-      pos[0] = (gHelmSplitter_TwelveX[i] << 16) + x - (16 << 16);
-      pos[2] = (gHelmSplitter_TwelveZ[i] << 16) + z - (32 << 16);
+      pos[0] = (gHelmSplitter_TwelveX[i] << 16) + x - px(16);
+      pos[2] = (gHelmSplitter_TwelveZ[i] << 16) + z - px(32);
       Render_ApplyProjectedPlacementFar(work->objects[i], pos, &normal.x, 0);
     }
     break;
   case 2:
     for (i = 0; i != 8; i++) {
-      pos[0] = (gHelmSplitter_RightEightX[i] << 16) + x + (16 << 16);
+      pos[0] = (gHelmSplitter_RightEightX[i] << 16) + x + px(16);
       pos[2] = (gHelmSplitter_RightEightZ[i] << 16) + z;
       Render_ApplyProjectedPlacementFar(work->objects[i], pos, &normal.x, 0);
     }
@@ -437,7 +437,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
   orgX = x;
-  x += 40 << 16;
+  x += px(40);
   x /= 2;
   REG_BG2PA = 0x80;
   REG_BG2X = 0;

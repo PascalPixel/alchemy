@@ -637,11 +637,11 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
 
     // The formation enters from above the right edge.
     if (alternate == 1) {
-      focus.x = 220 << 16;
-      focus.y = -(52 << 16);
+      focus.x = px(220);
+      focus.y = -px(52);
     } else {
-      focus.x = 212 << 16;
-      focus.y = -(60 << 16);
+      focus.x = px(212);
+      focus.y = -px(60);
     }
     for (i = 0; i != 64; i++)
       work->particles[i].variant = -1;
@@ -712,7 +712,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
 
           if (grain->variant == -1) {
             grain->x = ((Random16() & 255) - 32) << 16;
-            grain->y = 112 << 16;
+            grain->y = px(112);
             grain->velocityX = ((Random16() & 127) + gTiamat_DropSpeeds[i & 3])
                                << 9;
             grain->velocityY = -((Random16() & 127) + gTiamat_DropSpeeds[i & 3])
@@ -740,10 +740,10 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
               if (mode == 0) {
                 if (alternate == 1) {
                   spark->x = ((Random16() & 7) + 78) << 16;
-                  spark->y = 78 << 16;
+                  spark->y = px(78);
                 } else {
                   spark->x = ((Random16() & 7) + 78) << 16;
-                  spark->y = 70 << 16;
+                  spark->y = px(70);
                 }
               } else {
                 spark->x = ((Random16() & 7) + origin.x - 8) << 16;
@@ -777,11 +777,11 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
 
             if (mode == 0) {
               if (alternate == 1) {
-                flash->x = 72 << 16;
-                flash->y = 72 << 16;
+                flash->x = px(72);
+                flash->y = px(72);
               } else {
-                flash->x = 68 << 16;
-                flash->y = 64 << 16;
+                flash->x = px(68);
+                flash->y = px(64);
               }
             } else {
               flash->x = origin.x << 16;
@@ -867,8 +867,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
       if (mode == 0 && frame == 48)
         work->shakeFrames = 8;
       if (frame >= 40 && frame <= 47) {
-        focus.x += -(8 << 16);
-        focus.y += 16 << 16;
+        focus.x += -px(8);
+        focus.y += px(16);
       }
       if (mode == 0) {
         if (frame == 128) {

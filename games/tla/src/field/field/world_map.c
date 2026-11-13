@@ -225,8 +225,8 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   buffer = Heap_Alloc(512);
   view = (struct MapViewWork *)Ram_HeapSlots->mapWork;
   block =
-      &((struct Data02020000 *)Ram_MapBlocks)[((x / (32 << 16)) & 31) +
-                                              (((z / (32 << 16)) & 31) << 5)];
+      &((struct Data02020000 *)
+            Ram_MapBlocks)[((x / px(32)) & 31) + (((z / px(32)) & 31) << 5)];
   WorldMap_UpdateRegionTint(block->region, 0);
   // Reused: the region, then its group of ten.
   region = block->region;

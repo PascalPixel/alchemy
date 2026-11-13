@@ -246,7 +246,7 @@ void Djinn_RestoreActorAfterBattle(void) {
           struct Actor *selection = ObjectTable_Get(*owner);
 
           Actor_SetPositionAndResetMotionFar(obj, selection->x, selection->y,
-                                             selection->z - (32 << 16));
+                                             selection->z - px(32));
         }
         Actor_SelectAnimationFar(obj, 1);
       }

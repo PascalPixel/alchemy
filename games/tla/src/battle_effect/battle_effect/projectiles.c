@@ -821,7 +821,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
     for (i = 0; i != 64; i++) {
       struct EffectStep *p = &PARTICLES[PTCL_STREAKS + i];
 
-      SET_POSITION(p, (origin.x / 2) << 16, 80 << 16, 0);
+      SET_POSITION(p, (origin.x / 2) << 16, px(80), 0);
       p->velocityX = ((Random16() & 255) - 128) << 9;
       p->velocityY = ((Random16() & 255) - 128) << 9;
       p->velocityZ = 0;

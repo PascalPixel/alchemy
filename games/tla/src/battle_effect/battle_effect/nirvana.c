@@ -298,8 +298,8 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
         cueTimer = 8;
         Sound_PlayFar(SE_HEAVY_IMPACT);
       }
-      BattleEffect_StartActorMotion(effect->actors[0], 1, 2 << 16, 4 << 16,
-                                    2 << 16, 150);
+      BattleEffect_StartActorMotion(effect->actors[0], 1, px(2), px(4), px(2),
+                                    150);
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 4);
       work->shakeFrames = 2;
     }
@@ -417,7 +417,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
           s32 speed = (Random16() & 127) + 128;
           s32 angle = Random16() & 0x7fff;
 
-          SET_POSITION(mote, target->x, 52 << 16, target->z);
+          SET_POSITION(mote, target->x, px(52), target->z);
           mote->velocityY = ((Random16() & 0xff) - 128) << 9;
           mote->velocityX = (Trig_Sin(angle) * speed) >> 7;
           mote->velocityZ = (Trig_Cos(angle) * speed) >> 7;
@@ -435,7 +435,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
       Sound_PlayFar(SE_CLATTER);
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 80);
       target->verticalMotionStrength = 0;
-      target->y = 32 << 16;
+      target->y = px(32);
     }
     if (frame == 80)
       target->verticalMotionStrength = 0xab85;

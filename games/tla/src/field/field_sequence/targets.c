@@ -43,9 +43,9 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
         continue;
 
       if (obj->y - src->y >= 0) {
-        if (obj->y - src->y >= 48 << 16)
+        if (obj->y - src->y >= px(48))
           continue;
-      } else if (src->y - obj->y >= 48 << 16) {
+      } else if (src->y - obj->y >= px(48)) {
         continue;
       }
 

@@ -445,9 +445,9 @@ s32 Func_0200079c(void) {
   if (Event_GetFlag(FLAG_DAILA_PSY_CRYSTAL_DUG))
     MapGrid_CopyCells(36, 28, 1, 1, 10, 10);
   if (Event_GetFlag(0x301))
-    Actor_SetPosition(18, 184 << 16, 184 << 16);
+    Actor_SetPosition(18, px(184), px(184));
   if (Event_GetFlag(0x302) && !Event_GetFlag(FLAG_GAROH_NIGHT))
-    Actor_SetPosition(19, 200 << 16, 200 << 16);
+    Actor_SetPosition(19, px(200), px(200));
   Actor_SetItemIcon(Actor_Get(19), 50);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;

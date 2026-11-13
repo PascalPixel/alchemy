@@ -122,7 +122,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
           screen.x += xOffset;
           if (screen.x >= column * PILLAR_W + 8 &&
               screen.x <= column * PILLAR_W + 8 + PILLAR_W && screen.y >= top) {
-            object->velocityY = 12 << 16; // 12 pixels a frame upward
+            object->velocityY = px(12); // 12 pixels a frame upward
             object->verticalMotionStrength = 0xab85;
           }
           if (object->y < 0)

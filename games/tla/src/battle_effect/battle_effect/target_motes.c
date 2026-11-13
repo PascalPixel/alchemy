@@ -308,7 +308,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
 
 #define SHEEP_COUNT 12
 #define SHEEP_FRAMES 98
-#define GROUND_Y (92 << 16)
+#define GROUND_Y px(92)
 
 // A flock of sheep cards drops in over the targets, one every four frames,
 // and bounces on the ground, tumbling through eight cels; at frame 80 the

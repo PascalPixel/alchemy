@@ -1720,7 +1720,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
         request[0] = (136 - t / 16) << 16;
         request[2] = ((t / 2) << 16) + 0x400000;
       } else {
-        request[0] = 136 << 16;
+        request[0] = px(136);
         request[2] = 0x400000;
       }
       Render_ApplyProjectedPlacementFar(work->objects[0], request, &source.x,

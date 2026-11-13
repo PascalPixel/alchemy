@@ -845,7 +845,7 @@ void BattleEffect_RunGeyser(struct BattleEffectArgument *effect, s32 mode) {
         speed = (Random16() & 1023) + 32;
         angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
         drop->x = (midpoint.x / 2) << 16;
-        drop->y = 108 << 16;
+        drop->y = px(108);
         if (mode == 2)
           drop->velocityX = (Trig_Sin(angle) * speed) >> 8;
         else
@@ -889,8 +889,7 @@ void BattleEffect_RunGeyser(struct BattleEffectArgument *effect, s32 mode) {
         column->scrollU = (frame << 2) & 31;
         column->scrollV = (frame << 1) & 31;
         Transform_Reset();
-        SceneTransform_ApplyPosition3((midpoint.x / 2 - 64) << 16, -16 << 16,
-                                      0);
+        SceneTransform_ApplyPosition3((midpoint.x / 2 - 64) << 16, -px(16), 0);
         Transform_ApplyPitch(2000);
         if (mode == 0) {
           // Up on a sine in 16 frames, held, and down again from frame 24.
@@ -918,7 +917,7 @@ void BattleEffect_RunGeyser(struct BattleEffectArgument *effect, s32 mode) {
         column->faces = Data_08198df8;
         column->texture = &texture;
         column->vertices = vertices;
-        SceneTransform_ApplyScale3(scale * 2, 7 << 16, scale * 2);
+        SceneTransform_ApplyScale3(scale * 2, Q16_ONE * 7, scale * 2);
         Render_TransformVertices(gData_08198c6c, vertices, 16);
         Render_DrawModelList(column);
         Heap_Release(column);
@@ -1009,7 +1008,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectArgument *effect, s32 mode) {
           work->particles[i].velocityY = px(1) / 2;
         } else {
           work->particles[i].velocityX = -object->x / 40;
-          work->particles[i].velocityY = 3 << 16;
+          work->particles[i].velocityY = px(3);
         }
         work->particles[i].velocityZ = 0;
       }

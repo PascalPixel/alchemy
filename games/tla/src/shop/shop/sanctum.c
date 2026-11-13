@@ -509,7 +509,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   Task_Add(Sanctum_UpdateBurst, callbackPriority);
 
   position.x = shop->partyMemberX[member] << 16;
-  position.z = (shop->partyMemberY[member] << 16) - (12 << 16);
+  position.z = (shop->partyMemberY[member] << 16) - px(12);
 
   effectIndex = 0;
   effect = shop->effects;

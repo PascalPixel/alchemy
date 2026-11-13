@@ -252,7 +252,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
       if (visible > 0) {
         source = Data_08196f18;
         placement[3] = 0;
-        placement[1] = 255 << 16;
+        placement[1] = px(255);
         for (i = 0; i != 4; i++) {
           placement[0] = (left << 17) + 0x100000;
           placement[2] = (rise + 40 + i * 32) << 16;
@@ -641,11 +641,11 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
     if (frame == 4) {
       caster->autoFaceMotion = 0;
       caster->verticalMotionStrength = 0x9999;
-      caster->velocityY = 15 << 16;
+      caster->velocityY = px(15);
       if (caster->x < 0)
-        caster->velocityX = -8 << 16;
+        caster->velocityX = -px(8);
       else
-        caster->velocityX = 8 << 16;
+        caster->velocityX = px(8);
       if (mode == 1)
         caster->velocityX = -caster->velocityX;
       Actor_SelectAnimationFar(caster, 2);
@@ -854,9 +854,9 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
       if (spark->variant > 0) {
         spark->variant--;
         BattleEffectKernels_IntegrateVector2(spark, 56, 0x2000);
-        if (spark->y > 112 << 16) {
+        if (spark->y > px(112)) {
           spark->velocityY = -spark->velocityY / 2;
-        } else if ((u32)spark->x < 127 << 16 && spark->y >= 0) {
+        } else if ((u32)spark->x < px(127) && spark->y >= 0) {
           s32 size = spark->variant / 8 + 1;
 
           draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],

@@ -177,7 +177,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
         for (i = 0; i != MOTES; i++) {
           struct EffectStep *mote = &PARTICLES[k * 64 + i];
 
-          if (frame > i * 8 + start && mote->y > 8 << 16) {
+          if (frame > i * 8 + start && mote->y > px(8)) {
             s32 sway;
 
             EffectPosition_ProjectPoint((s32 *)mote, &pos);
@@ -193,7 +193,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
                                 576 +
                             PIC_MOTE,
                         pos.x - 12, pos.y - 12, 24, 24);
-            mote->y -= 1 << 16;
+            mote->y -= px(1);
             mote->variant++;
           }
         }

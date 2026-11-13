@@ -161,7 +161,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
     scale.x = Q16_ONE;
     scale.y = Q16_ONE;
     pos[3] = 0;
-    pos[1] = 255 << 16;
+    pos[1] = px(255);
     for (row = 0; row != 3; row++) {
       for (j = 0; j != 3; j++) {
         pos[0] = (j * 32 + 144 - ox) << 16;
@@ -253,8 +253,8 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
     if (frame > 223) {
       if (frame == 224) {
         for (i = 0; i != 128; i++) {
-          PARTICLES[i].x = 72 << 16;
-          PARTICLES[i].y = 56 << 16;
+          PARTICLES[i].x = px(72);
+          PARTICLES[i].y = px(56);
           PARTICLES[i].velocityX = (-(Random16() & 127) - 64) << 11;
           PARTICLES[i].velocityY = ((Random16() & 127) + 16) << 11;
           PARTICLES[i].variant = Random16();
@@ -272,8 +272,8 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
           PARTICLES[i].x += PARTICLES[i].velocityX;
           PARTICLES[i].y += PARTICLES[i].velocityY;
           if ((PARTICLES[i].x >> 16) < -16 || (PARTICLES[i].y >> 16) > 120) {
-            PARTICLES[i].x = 72 << 16;
-            PARTICLES[i].y = 56 << 16;
+            PARTICLES[i].x = px(72);
+            PARTICLES[i].y = px(56);
           }
           PARTICLES[i].variant++;
         }
@@ -316,7 +316,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
 
   for (i = 0; i != 64; i++) {
     work->particles[i].x = ((Random16() & 127) + 64) << 16;
-    work->particles[i].z = -(16 << 16);
+    work->particles[i].z = -px(16);
     work->particles[i].y = (-(Random16() & 127) - 64) << 16;
     work->particles[i].velocityX = (-(Random16() & 63) - 127) << 12;
     work->particles[i].velocityY = ((Random16() & 63) + 127) << 12;
@@ -382,10 +382,10 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
 
           draw(canvas, work->sheet + gBoreas_FallPictures[n], HI(q->x),
                y - Data_081982db[n], Data_081982d8[n], Data_081982db[n]);
-          BattleEffectKernels_IntegrateVector2(q, 64, 1 << 16);
-          if (HI(q->y) > 120 && q->velocityY > 8 << 16) {
+          BattleEffectKernels_IntegrateVector2(q, 64, px(1));
+          if (HI(q->y) > 120 && q->velocityY > px(8)) {
             q->velocityY = -q->velocityY / 4;
-            q->y = 120 << 16;
+            q->y = px(120);
             work->shakeFrames = 1;
           }
         }
@@ -400,7 +400,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
         work->particles[i].y += work->particles[i].velocityY;
         if ((work->particles[i].y >> 16) > 120 && frame <= 47) {
           work->particles[i].x = ((Random16() & 127) + 64) << 16;
-          work->particles[i].y = -(16 << 16);
+          work->particles[i].y = -px(16);
         }
       }
     }

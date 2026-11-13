@@ -103,8 +103,8 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
     struct Point2D focus;
     s32 frame;
 
-    focus.x = 128 << 16;
-    focus.y = 64 << 16;
+    focus.x = px(128);
+    focus.y = px(64);
     BattleEffect_SelectLivingTargets(work->effect);
     wait(1);
     BattleEffect_SpawnObjects(12, 654, 2);
@@ -136,7 +136,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
         for (i = 0; i != 16; i++) {
           flame = &work->particles[i];
           flame->x = (i * 3 + i + 44) << 16;
-          flame->y = 72 << 16;
+          flame->y = px(72);
           flame->velocityX = 0;
           flame->velocityY = -((Random16() & 3) + 2) << 16;
           flame->velocityZ = 0;
@@ -146,10 +146,10 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
         // The embers of the closing glow start at (54, 56).
         for (i = 0; i != 16; i++) {
           flame = &work->particles[24 + i];
-          flame->x = 54 << 16;
-          flame->y = 56 << 16;
+          flame->x = px(54);
+          flame->y = px(56);
           flame->variant = i * -2;
-          flame->velocityX = -(((Random16() & 3) << 16) + (2 << 16));
+          flame->velocityX = -(((Random16() & 3) << 16) + px(2));
           flame->velocityY = -(Random16() & 3) << 15;
         }
       }
@@ -171,42 +171,42 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
                 HI(mote->y) <= 113) {
               s32 dx;
 
-              mote->velocityX = ((Random16() & 63) << 16) + (56 << 16);
+              mote->velocityX = ((Random16() & 63) << 16) + px(56);
               dx = mote->velocityX - mote->x;
-              mote->velocityX = dx / (((114 << 16) - mote->y) / (size << 14));
+              mote->velocityX = dx / ((px(114) - mote->y) / (size << 14));
             }
 
             // Frames 142-161: they swirl about the centre line.
             if ((u32)(frame - 142) <= 19) {
-              s32 distance = mote->x - (96 << 16);
+              s32 distance = mote->x - px(96);
               s32 pull;
 
               if (distance < 0)
                 distance = -distance;
               pull = (mote->y / 2 - distance + (s32)((Random16() & 31) << 16) +
-                      (96 << 16)) /
+                      px(96)) /
                      32;
-              if (mote->x < 96 << 16 && pull > 0)
+              if (mote->x < px(96) && pull > 0)
                 pull = -pull;
-              if (mote->x > 96 << 16 && pull < 0)
+              if (mote->x > px(96) && pull < 0)
                 pull = -pull;
               mote->velocityX += pull / 8;
             }
 
             mote->x += mote->velocityX + Trig_Sin(mote->y >> 5) / 5;
             mote->y += mote->velocityY + (size << 14);
-            if (mote->y > 114 << 16) {
+            if (mote->y > px(114)) {
               if (frame > 215) {
                 // Late motes fly back in from the right.
                 mote->variant = 0;
-                mote->x = 120 << 16;
+                mote->x = px(120);
                 mote->y = ((Random16() & 127) - 32) << 16;
                 mote->velocityX = ((Random16() & 3) - 8) << 16;
                 mote->velocityY = 0;
               } else {
                 mote->variant = Random16() & 255;
                 mote->x = ((Random16() & 255) - 64) << 16;
-                mote->y = -8 << 16;
+                mote->y = -px(8);
                 mote->velocityX = 0;
                 mote->velocityY = 0;
               }
@@ -237,7 +237,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
             }
             if (++flame->variant == 24) {
               flame->x = (i * 3 + i + 44) << 16;
-              flame->y = 72 << 16;
+              flame->y = px(72);
               flame->variant = 0;
               flame->velocityY = -((Random16() & 3) + 2) << 16;
               flame->velocityZ = 0;
@@ -247,10 +247,10 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
                 flame->velocityZ = 2;
             }
             if (frame == 136) {
-              if (flame->x < 80 << 16)
-                flame->velocityX -= 4 << 16;
+              if (flame->x < px(80))
+                flame->velocityX -= px(4);
               else
-                flame->velocityX += 4 << 16;
+                flame->velocityX += px(4);
             }
           }
         }
@@ -268,9 +268,9 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
               flame->y += flame->velocityY;
             }
             if (++flame->variant == 24) {
-              flame->x = 54 << 16;
-              flame->y = 56 << 16;
-              flame->velocityX = -(((Random16() & 3) << 16) + (2 << 16));
+              flame->x = px(54);
+              flame->y = px(56);
+              flame->velocityX = -(((Random16() & 3) << 16) + px(2));
               flame->variant = 0;
             }
           }
@@ -306,7 +306,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
             continue;
           model->shade = shade;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(16 << 16, Data_08199f3c[i] << 16, 0);
+          SceneTransform_ApplyPosition3(px(16), Data_08199f3c[i] << 16, 0);
           SceneTransform_ApplyScale3(scale, scale, scale);
           Transform_ApplyPitch(0xbb8);
           model->scrollU = ((frame + i * 5) & 7) << 4;
@@ -519,7 +519,7 @@ void Iris_DrawPillar(s32 halfWidth, s32 x, s32 height) {
   vertices[4].y = height;
 
   Transform_Reset();
-  SET_POSITION(&position, (x << 16) - (63 << 16), (63 - height) << 16, 0);
+  SET_POSITION(&position, (x << 16) - px(63), (63 - height) << 16, 0);
   SceneTransform_ApplyPosition(&position);
 
   model->kind = 4;

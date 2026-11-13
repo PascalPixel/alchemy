@@ -155,15 +155,15 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
   for (i = 0; i != 16; i++) {
     struct EffectStep *thorn = &work->particles[32 + i];
 
-    thorn->x = 128 << 16;
-    thorn->y = 64 << 16;
+    thorn->x = px(128);
+    thorn->y = px(64);
     thorn->velocityX = -((Random16() & 255) + 200) << 9;
     thorn->velocityY = 0;
     thorn->variant = 0;
   }
   BattleEffect_SelectLivingTargets(work->effect);
 
-  height = -(64 << 16);
+  height = -px(64);
   speed = 0;
   for (frame = 0; frame != 366; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
@@ -191,9 +191,9 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
     // Drop the formation's objects to 64 pixels up.
     speed += 0x4000;
     height += speed;
-    if (height > 64 << 16)
-      height = 64 << 16;
-    BattleEffect_PlaceFormationObjects(2, 128 << 16, height);
+    if (height > px(64))
+      height = px(64);
+    BattleEffect_PlaceFormationObjects(2, px(128), height);
     if (frame >= 48 && frame <= 96) {
       s32 pose = (frame - 48) / 24 % 3;
 
@@ -213,7 +213,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
       for (i = 0; i != 16; i++) {
         struct EffectStep *thorn = &work->particles[32 + i];
 
-        if (frame >= i + 72 && thorn->y < (104 << 16)) {
+        if (frame >= i + 72 && thorn->y < px(104)) {
           s32 cel = (frame + i) / 4 % 5;
           s32 x = HI(thorn->x);
           s32 y = thorn->y >> 16;
@@ -422,9 +422,9 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
           void *record;
           s32 n;
 
-          object->y += 8 << 16;
-          if (object->y > 128 << 16)
-            object->y = 128 << 16;
+          object->y += px(8);
+          if (object->y > px(128))
+            object->y = px(128);
           object->verticalMotionStrength = 0;
           for (n = 0; (record = GetMotionRecordFar(slot->object, n)) != 0; n++)
             Animation_ApplyChildArgumentFar(record, 5);
@@ -438,7 +438,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
         struct MotionObject *object =
             BattleObject_GetFar(effect->actors[i])->object;
 
-        object->y = 96 << 16;
+        object->y = px(96);
         object->verticalMotionStrength = 0xab85;
       }
       if (frame == i * 5 + 302) {
@@ -477,9 +477,9 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
         for (j = 0; j != 10; j++) {
           struct EffectStep *ember = &work->particles[i * 10 + j];
 
-          SET_POSITION(ember, object->x, 20 << 16, object->z);
+          SET_POSITION(ember, object->x, px(20), object->z);
           ember->velocityX = Trig_Sin(j * 0x3334) << 2;
-          ember->velocityY = (Random16() & 0x7fff) + (1 << 16);
+          ember->velocityY = (Random16() & 0x7fff) + px(1);
           ember->velocityZ = Trig_Cos(j * 0x3334) << 2;
           ember->variant = 0;
         }
@@ -544,7 +544,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
   BattlePlayback_StartFar(134);
   // Tear down.
   /* FAKEMATCH(wrapper): the burst through BurstAt_. */
-  BurstAt_(2, 128 << 16, height);
+  BurstAt_(2, px(128), height);
   for (i = 0; i != 8; i++)
     Sprite_DestroyFar(work->objects[i]);
   BattleEffect_EndCanvasLayer();

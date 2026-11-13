@@ -142,7 +142,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
         BattleEffectKernels_IntegrateVector2(spark, 60, 0x1000);
         if (spark->y > GROUND_Y << 16) {
           spark->velocityY = -spark->velocityY / 2;
-        } else if ((spark->x >= 0 && spark->x < 127 << 16) && spark->y >= 0) {
+        } else if ((spark->x >= 0 && spark->x < px(127)) && spark->y >= 0) {
           s32 size = spark->variant / 16 + 1;
           s32 x = spark->x >> 16;
           s32 y = spark->y >> 16;

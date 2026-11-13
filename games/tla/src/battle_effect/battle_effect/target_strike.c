@@ -740,7 +740,7 @@ void BattleEffect_RunBladeRain(struct BattleEffectArgument *effect) {
     else
       dagger->velocityX = -3;
     dagger->velocityX <<= 17;
-    dagger->velocityY = 8 << 16;
+    dagger->velocityY = px(8);
     dagger->x <<= 16;
   }
   Sound_PlayFar(SE_POWER_UP);
@@ -939,7 +939,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
         point[2] = -(fleck->z * Trig_Cos(fleck->x) >> 4);
         point[1] = fleck->y;
         fleck->x += 0x400;
-        fleck->y += 5 << 16;
+        fleck->y += px(5);
         fleck->z += 64;
         EffectPosition_ProjectPoint(point, &pos);
         pos.x /= 2;

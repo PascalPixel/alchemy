@@ -79,7 +79,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
   s32 frame;
   s32 j;
   s32 streaks = STREAK_MAX;
-  s32 lift = 20 << 16;
+  s32 lift = px(20);
 
   heap = Ram_HeapSlots;
   /* FAKEMATCH(barrier): an empty asm through heap hides that it holds the heap

@@ -1001,9 +1001,9 @@ s32 MapGrid_CheckCollisionAt(s32 px, s32 pz, s32 layer, s32 height) {
   code = Ram_MapCollision + *shapes * 4;
   rise = gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
          height;
-  if (rise > 8 << 16)
+  if (rise > px(8))
     return 1;
-  if (rise < -(12 << 16))
+  if (rise < -px(12))
     return -1;
   return 0;
 }
@@ -1040,9 +1040,9 @@ s32 MapGrid_CheckCollision(struct Actor *actor, s16 *position) {
   code = Ram_MapCollision + *shapes * 4;
   rise = gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
          actor->terrainHeight;
-  if (rise > 8 << 16)
+  if (rise > px(8))
     return 1;
-  if (rise < -(12 << 16))
+  if (rise < -px(12))
     return -1;
   return 0;
 }
@@ -1079,7 +1079,7 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor, s16 *position) {
   code = Ram_MapCollision + *shapes * 4;
   if (gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
           actor->y >
-      8 << 16)
+      px(8))
     return 1;
   return 0;
 }

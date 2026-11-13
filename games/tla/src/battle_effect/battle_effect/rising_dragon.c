@@ -468,12 +468,12 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
         work->particles[0].x = (target.x + 40) << 16;
       else
         work->particles[0].x = (target.x - 168) << 16;
-      work->particles[0].y = -100 << 16;
+      work->particles[0].y = -px(100);
       if (effect->side == 0)
-        work->particles[0].velocityX = -6 << 16;
+        work->particles[0].velocityX = -px(6);
       else
-        work->particles[0].velocityX = 6 << 16;
-      work->particles[0].velocityY = 8 << 16;
+        work->particles[0].velocityX = px(6);
+      work->particles[0].velocityY = px(8);
       REG_BLDALPHA = 0x1000;
     }
     if (frame < 32)

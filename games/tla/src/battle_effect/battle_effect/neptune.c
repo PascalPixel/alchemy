@@ -110,7 +110,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   REG_BLDCNT = 0x3f44;
   openStep = 1;
   serpentX = 140 << 17;
-  serpentY = 200 << 16;
+  serpentY = px(200);
   serpentVX = -0x40000;
   serpentVY = -0x80000;
   savedScrollX = gBgScroll[1].x;

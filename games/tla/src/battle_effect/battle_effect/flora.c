@@ -1030,7 +1030,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
       s32 y;
       s32 zero;
 
-      for (i = 0, zero = 0, y = 128 << 16, dagger = work->particles; i != 32;
+      for (i = 0, zero = 0, y = px(128), dagger = work->particles; i != 32;
            i++, dagger++) {
         SET_POSITION(dagger, ((Random16() & 63) + 32) << 16, y, Random16());
         dagger->velocityX = zero;
@@ -1039,7 +1039,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
         if (i & 1)
           dagger->velocityZ = -dagger->velocityZ;
         dagger->variant = zero;
-        y += 8 << 16;
+        y += px(8);
       }
     }
     Transform_Reset();
@@ -1051,14 +1051,14 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
         work->shakeFrames = 4;
         Sound_PlayFar(SE_IMPACT);
         BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 6);
-        BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 3 << 16, 100);
+        BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, px(3), 100);
       }
     }
     if (frame == DAGGER_LAST_HIT) {
       work->shakeFrames = 4;
       BattlePlayback_StartFar(134);
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 10);
-      BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 3 << 16, 100);
+      BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, px(3), 100);
     }
 
     // One textured quad, drawn once for each dagger.
@@ -1079,18 +1079,17 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
         s32 angle;
         s32 drift;
 
-        dagger->y = -48 << 16;
+        dagger->y = -px(48);
         angle = (i << 10) + (Random16() & 0x3ff) - 0x1200;
-        dagger->x = (angle << 10) + (64 << 16);
+        dagger->x = (angle << 10) + px(64);
         dagger->z = angle;
         drift = -angle << 5;
-        dagger->velocityY = 12 << 16;
+        dagger->velocityY = px(12);
         dagger->velocityX = drift;
         dagger->velocityZ = 0;
       }
       Transform_Reset();
-      SceneTransform_ApplyPosition3(dagger->x - (64 << 16),
-                                    dagger->y - (64 << 16), 0);
+      SceneTransform_ApplyPosition3(dagger->x - px(64), dagger->y - px(64), 0);
       SceneTransform_ApplyUniformScale(Q16_ONE / 2);
       Transform_ApplyRoll(dagger->z);
       Render_TransformVertices(gData_08199474, vertices, 4);
@@ -1249,7 +1248,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
 
     if (frame == STAR_LEAP_FRAME) {
       BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 16, 120);
-      casterObject->velocityY = 7 << 16;
+      casterObject->velocityY = px(7);
     }
 
     // The strike: pink palette, the caster lands at 120 percent and the
@@ -1279,8 +1278,8 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
       work->shakeFrames = 4;
       BattlePlayback_StartFar(134);
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
-      BattleEffect_StartActorMotion(effect->actors[0], 1, 8 << 16, 20 << 16,
-                                    6 << 16, 10);
+      BattleEffect_StartActorMotion(effect->actors[0], 1, px(8), px(20), px(6),
+                                    10);
     }
 
     // The stars twinkle through their six cels as they fly.

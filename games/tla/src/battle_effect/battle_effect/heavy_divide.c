@@ -399,7 +399,7 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
           s32 angle = Random16() & 0xffff;
 
           spark->x = ((Random16() & 63) + 32) << 16;
-          spark->y = 96 << 16;
+          spark->y = px(96);
           spark->velocityX = (Trig_Sin(angle) * speed) >> 8;
           spark->velocityY = (Trig_Cos(angle) * speed) >> 8;
           spark->variant = 8;
@@ -881,8 +881,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
         angle = Random16() & 0xffff;
         radius = (Random16() & 7) + i * 4;
         SET_POSITION(flame, target->x + Trig_Sin(angle) * radius * 2,
-                     target->y + Trig_Cos(angle) * radius + (48 << 16),
-                     target->z);
+                     target->y + Trig_Cos(angle) * radius + px(48), target->z);
         EffectPosition_ProjectPoint(&flame->x, &screen);
         flame->x = screen.x / 2;
         flame->y = screen.y;
@@ -1061,18 +1060,18 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
         streak->y = ((Random16() & 31) - 64) << 16;
         if (effect->side == 0) {
           streak->x = ((Random16() & 63) + 40) << 16;
-          streak->velocityX = -(1 << 16);
+          streak->velocityX = -px(1);
         } else {
           streak->x = ((Random16() & 63) + 24) << 16;
-          streak->velocityX = 1 << 16;
+          streak->velocityX = px(1);
         }
-        streak->velocityY = 16 << 16;
+        streak->velocityY = px(16);
         streak->variant = -1;
       }
     }
     if (frame == 32)
       BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 8,
-                                     3 << 16);
+                                     px(3));
     if (frame == 46) {
       BattlePlayback_StartFar(134);
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
@@ -1125,7 +1124,7 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
 
         landing += i;
         if (landing->variant == -1) {
-          landing->y = 112 << 16;
+          landing->y = px(112);
           landing->variant = 0;
           landing->x = x;
           landing->velocityX = (Random16() % 12 - 6) << 15;

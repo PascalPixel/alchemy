@@ -457,7 +457,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         Transform_Reset();
         x = step->x;
         y = step->y;
-        center = -(64 << 16);
+        center = -px(64);
         SceneTransform_ApplyPosition3(x + center, y + center, 0);
         SceneTransform_ApplyScale3(step->variant * 3, step->variant * 6,
                                    step->variant);
@@ -844,7 +844,7 @@ void Iris_RestoreBattle(void) {
     struct MotionObject *object =
         BattleObject_GetFar(work->effect->actors[i])->object;
 
-    SET_POSITION(object, 0, 120 << 16, 0);
+    SET_POSITION(object, 0, px(120), 0);
     object->verticalMotionStrength = 0xab85;
     BattleMotion_ApplyKnockbackFar(work->effect->actors[i], 1);
   }

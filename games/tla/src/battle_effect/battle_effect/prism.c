@@ -12,7 +12,7 @@
 #undef GROUND_Y
 
 #define SHARDS_PER_CRYSTAL 16
-#define GROUND_Y (56 << 16)
+#define GROUND_Y px(56)
 #define SHATTERED 1 // a crystal's z once it has hit the ground
 
 // Crystals fall one after another, eight frames apart, onto the targets'

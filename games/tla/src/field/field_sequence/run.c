@@ -622,10 +622,10 @@ s32 Scene_ApplyEntrance(s32 findEntrance) {
   if (entry->cameraBottom != -1)
     map->maxZ = entry->cameraBottom << 16;
 
-  if (map->minX + (240 << 16) > map->maxX)
-    map->minX = map->maxX - (240 << 16);
-  if (map->minZ + (160 << 16) > map->maxZ)
-    map->minZ = map->maxZ - (160 << 16);
+  if (map->minX + px(240) > map->maxX)
+    map->minX = map->maxX - px(240);
+  if (map->minZ + px(160) > map->maxZ)
+    map->minZ = map->maxZ - px(160);
   return 1;
 }
 
@@ -709,10 +709,10 @@ s32 Field_PlaceAtEntrance(void) {
             map->minZ = top << 20;
             map->maxX = right << 20;
             map->maxZ = bottom << 20;
-            if (map->minX + (240 << 16) > map->maxX)
-              map->minX = map->maxX - (240 << 16);
-            if (map->minZ + (160 << 16) > map->maxZ)
-              map->minZ = map->maxZ - (160 << 16);
+            if (map->minX + px(240) > map->maxX)
+              map->minX = map->maxX - px(240);
+            if (map->minZ + px(160) > map->maxZ)
+              map->minZ = map->maxZ - px(160);
             break;
           }
         }

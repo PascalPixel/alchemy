@@ -64,22 +64,22 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
     cell->collisionCode = 0;
   }
 
-  x = (object->x & CELL_MASK) + (8 << 16);
+  x = (object->x & CELL_MASK) + px(8);
   y = object->y & CELL_MASK;
-  top = y + (8 << 16);
-  z = (object->z & CELL_MASK) + (16 << 16);
+  top = y + px(8);
+  z = (object->z & CELL_MASK) + px(16);
   Actor_SelectAnimationFar((struct Actor *)object, 0);
   object->motionFlags = 0;
   object->collisionFlags = 0;
-  object->z += 16 << 16;
-  object->y -= 64 << 16;
+  object->z += px(16);
+  object->y -= px(64);
   Actor_SetSpriteFlagsFar(object, 0);
 
   // Hang the links.
   last = 6;
   tail = &slot->root;
   for (i = 0; i <= last && (link = HangingVine_AllocLink()) != 0; i++) {
-    SET_POSITION(link, x, y + (15 << 16) - i * (14 << 16), z);
+    SET_POSITION(link, x, y + px(15) - i * px(14), z);
     if (i == 0)
       link->kind = 1;
     else if (i == 1)
@@ -116,7 +116,7 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
   slot->phase = 0;
   slot->swing = 0x100;
   slot->id = objectId;
-  slot->spacing = 14 << 16;
+  slot->spacing = px(14);
 }
 
 // The half turn on the leader's side of the anchor: 0 on its right, 1 on its

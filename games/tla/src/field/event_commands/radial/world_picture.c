@@ -53,18 +53,18 @@ void WorldPicture_Initialize(void) {
   }
   Heap_Release(markerTiles);
   if (GameFlag_Get(284)) {
-    work->x = 264 << 16;
-    work->z = 16 << 16;
+    work->x = px(264);
+    work->z = px(16);
   } else {
     WorldPicture_GetLeaderPoint(&screenX, &screenY);
     work->x = screenX << 16;
     work->z = screenY << 16;
   }
-  screenX = work->x - (120 << 16);
-  screenY = work->z - (80 << 16);
+  screenX = work->x - px(120);
+  screenY = work->z - px(80);
   left = 0;
-  right = 272 << 16;
-  bottom = 224 << 16;
+  right = px(272);
+  bottom = px(224);
   if (screenX < left)
     screenX = left;
   if (screenX > right)

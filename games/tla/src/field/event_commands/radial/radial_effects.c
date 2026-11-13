@@ -172,7 +172,7 @@ void FieldPsynergy_Whirlwind(void) {
   }
 
   SET_POSITION(&from, caster->x, caster->y, caster->z);
-  SET_POSITION(&to, scene->x, scene->y - (4 << 16), scene->z);
+  SET_POSITION(&to, scene->x, scene->y - px(4), scene->z);
   orb = Actor_Spawn(ORB_OBJECT, 0, 0, 0);
   if (orb == 0)
     return;
@@ -211,8 +211,8 @@ void FieldPsynergy_Whirlwind(void) {
     for (i = 0; i <= 15; i++) {
       s32 distance;
 
-      SET_POSITION(&position, orb->x, orb->y + i * 0xcccc + (4 << 16), orb->z);
-      distance = Random16() * 5 + (3 << 16);
+      SET_POSITION(&position, orb->x, orb->y + i * 0xcccc + px(4), orb->z);
+      distance = Random16() * 5 + px(3);
       Vector_AddPolarOffset(distance, Random16(), &position);
       mote = (struct OrbitEffect *)Actor_Spawn(MOTE_OBJECT, position.x,
                                                position.y, position.z);
@@ -240,10 +240,9 @@ void FieldPsynergy_Whirlwind(void) {
       for (i = 0; i <= 15; i++) {
         s32 distance;
 
-        SET_POSITION(&position, orb->x, orb->y + i * 0xcccc + (4 << 16),
-                     orb->z);
+        SET_POSITION(&position, orb->x, orb->y + i * 0xcccc + px(4), orb->z);
         distance = Random16() * 5;
-        distance += 3 << 16;
+        distance += px(3);
         Vector_AddPolarOffset(distance, Random16(), &position);
         mote = (struct OrbitEffect *)Actor_Spawn(MOTE_OBJECT, position.x,
                                                  position.y, position.z);
@@ -252,7 +251,7 @@ void FieldPsynergy_Whirlwind(void) {
           mote->timer = 20 + i * -2;
           mote->pause = 0;
           mote->speed = 0x1999;
-          mote->scale = 3 << 16;
+          mote->scale = Q16_ONE * 3;
           mote->angle = Random16();
         }
       }
@@ -295,11 +294,11 @@ top:
     pos.x = effect->originX;
     pos.z = effect->originZ;
     angle = Random16();
-    Vector_AddPolarOffset(Random16() * 30 + (40 << 16), (u16)angle, &pos);
+    Vector_AddPolarOffset(Random16() * 30 + px(40), (u16)angle, &pos);
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
-    effect->acceleration = 4 << 16;
-    effect->maxSpeed = 4 << 16;
+    effect->acceleration = px(4);
+    effect->maxSpeed = px(4);
     effect->limitTurnStep = state;
     *st = *st + 1;
     return;
@@ -311,9 +310,9 @@ top:
     goto top;
   }
   if (state == 2) {
-    SET_POSITION(&pos, scene->x, scene->y + (8 << 16), scene->z);
+    SET_POSITION(&pos, scene->x, scene->y + px(8), scene->z);
     Camera_WorldToScreen(&pos);
-    Vector_AddPolarOffset(4 << 16, Random16(), &pos);
+    Vector_AddPolarOffset(px(4), Random16(), &pos);
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
     effect->maxTurnStep = 0x1000;
@@ -350,8 +349,8 @@ void FieldPsynergy_Halt(void) {
     return;
 
   FieldPsynergy_FadeToCastColor();
-  SET_POSITION(&from, user->x, user->y + (16 << 16), user->z);
-  SET_POSITION(&to, scene->x, scene->y + (8 << 16), scene->z);
+  SET_POSITION(&from, user->x, user->y + px(16), user->z);
+  SET_POSITION(&to, scene->x, scene->y + px(8), scene->z);
   for (;;) {
     s32 steps = 11;
     s32 scale;
@@ -380,16 +379,16 @@ void FieldPsynergy_Halt(void) {
 
   slot = &((struct FallbackScene *)scene)->slots[0];
   for (i = 0; i < 16; i++) {
-    SET_POSITION(&pos, obj->x, obj->y + (8 << 16), obj->z);
+    SET_POSITION(&pos, obj->x, obj->y + px(8), obj->z);
     Camera_WorldToScreen(&pos);
-    Vector_AddPolarOffset(4 << 16, Random16(), &pos);
+    Vector_AddPolarOffset(px(4), Random16(), &pos);
     FieldParticle_Initialize(slot, 673, pos.x, pos.z);
     FieldParticle_SetCallback(slot, FieldEffect_UpdateHaltParticle);
     Animation_ApplyChildValuesToRecordFar(slot->object, 7);
     slot++;
   }
 
-  SET_POSITION(&pos, obj->x, obj->y + (8 << 16), obj->z);
+  SET_POSITION(&pos, obj->x, obj->y + px(8), obj->z);
   wait(8);
   Actor_ReleaseFar(obj);
   wait(4);
@@ -795,7 +794,7 @@ void FieldEffect_UpdateRetreatCaster(struct Actor *obj) {
   scaleX = obj->scaleX;
   scale = scaleX + step;
   obj->facing += TRIG_TURN / 8;
-  obj->y += 1 << 16;
+  obj->y += px(1);
   obj->scaleX = scale;
   if ((s32)scale < 0x3000) {
     obj->animationKind = 0;
@@ -821,7 +820,7 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *slot) {
     Camera_WorldToScreen(arg);
 
     slot->x = slot->originX = pos.x;
-    slot->z = slot->originZ = pos.z + (8 << 16);
+    slot->z = slot->originZ = pos.z + px(8);
 
     r = Random16();
     Vector_AddPolarOffset(
@@ -830,8 +829,8 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *slot) {
 
     slot->targetX = pos.x;
     slot->targetZ = pos.z;
-    slot->acceleration = 5 << 16;
-    slot->maxSpeed = 5 << 16;
+    slot->acceleration = px(5);
+    slot->maxSpeed = px(5);
     slot->limitTurnStep = state;
     slot->state++;
 

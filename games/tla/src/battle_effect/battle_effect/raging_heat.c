@@ -428,8 +428,7 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
       s32 y;
 
       Transform_Reset();
-      SceneTransform_ApplyPosition3(ring->x - (128 << 16), ring->y - (64 << 16),
-                                    0);
+      SceneTransform_ApplyPosition3(ring->x - px(128), ring->y - px(64), 0);
       Transform_ApplyRoll(frame * 256);
       Transform_ApplyPitch(frame * 256 + 500);
       if (i > 7)

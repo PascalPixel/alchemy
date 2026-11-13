@@ -152,8 +152,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
   Actor_SelectAnimationFar(user, 2);
   user->snapToTarget = 1;
   user->actionFlags = 1;
-  user->acceleration = 2 << 16;
-  user->speedLimit = 8 << 16;
+  user->acceleration = px(2);
+  user->speedLimit = px(8);
   wait(20);
 
   for (frame = 0; frame != 96; frame++) {
@@ -161,9 +161,9 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
 
     // Frame 0: both leap. Frame 11: both turn upside down.
     if (frame == 0) {
-      target->velocityY = 15 << 16;
+      target->velocityY = px(15);
       target->gravity = 0x91eb;
-      user->velocityY = 15 << 16;
+      user->velocityY = px(15);
       user->gravity = 0x91eb;
     }
     if (frame == 11) {
@@ -177,12 +177,12 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
     // user to where he started.
     if (frame == 54) {
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 10);
-      target->velocityY = 8 << 16;
+      target->velocityY = px(8);
       target->gravity = 0xab85;
-      user->velocityY = 5 << 16;
+      user->velocityY = px(5);
       user->gravity = 0x7851;
-      user->acceleration = 1 << 16;
-      user->speedLimit = 2 << 16;
+      user->acceleration = px(1);
+      user->speedLimit = px(2);
       user->actionFlags = 0;
       Actor_StartIdleFar(user);
       Actor_SetMoveTargetFar(user, 0, 0, user->z);
@@ -267,7 +267,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
                angle += TRIG_TURN / 4, i++) {
             Transform_Reset();
             SceneTransform_ApplyPosition3((targetScreen.x / 2 - 64) << 16,
-                                          32 << 16, 0);
+                                          px(32), 0);
             SceneTransform_ApplyScale3(scale, scale, scale);
             Transform_ApplyRoll(angle);
             Transform_ApplyPitch(-TRIG_TURN / 16);

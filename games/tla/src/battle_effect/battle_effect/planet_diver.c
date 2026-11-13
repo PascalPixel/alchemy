@@ -83,7 +83,7 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
       Transform_Reset();
       Transform_SetLookAt(camera, camera + 3);
       point[0] = target->x;
-      point[1] = 20 << 16;
+      point[1] = px(20);
       point[2] = target->z;
       SceneTransform_ApplyPosition(point);
       if (frame > k * 32) {
@@ -216,7 +216,7 @@ void BattleEffect_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
           if (frame == (member * 16) + 32)
             BattleEffect_TintBattler(effect->actors[member], 0, 5, -1, 0);
           point[0] = target->x;
-          point[1] = 40 << 16;
+          point[1] = px(40);
           point[2] = target->z;
           EffectPosition_ProjectPoint(point, &screen);
 

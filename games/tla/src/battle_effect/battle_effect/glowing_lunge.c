@@ -182,10 +182,10 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
       for (i = 0; i != SPARK_COUNT; i++, spark++) {
         spark->x = targetObject->x;
         if (spark->x < 0)
-          spark->x += -8 << 16;
+          spark->x += -px(8);
         else
-          spark->x += 8 << 16;
-        spark->y = targetObject->y + (14 << 16);
+          spark->x += px(8);
+        spark->y = targetObject->y + px(14);
         spark->z = targetObject->z;
         spark->velocityX = (Random16() & 511) << 11;
         spark->velocityY = ((Random16() & 255) - 64) << 11;
@@ -198,10 +198,10 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
         struct EffectStep *burst = &work->particles[i];
         burst->x = targetObject->x;
         if (burst->x < 0)
-          burst->x += -8 << 16;
+          burst->x += -px(8);
         else
-          burst->x += 8 << 16;
-        burst->y = targetObject->y + (14 << 16);
+          burst->x += px(8);
+        burst->y = targetObject->y + px(14);
         burst->z = targetObject->z;
         burst->velocityX = ((Random16() & 511) - 256) << 10;
         burst->velocityY = ((Random16() & 255) - 64) << 10;

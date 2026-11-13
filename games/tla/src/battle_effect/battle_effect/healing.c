@@ -211,7 +211,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
     for (i = 0; i != 512; i++) {
       struct EffectStep *spark = &SPARKS[i];
 
-      spark->y = 48 << 16;
+      spark->y = px(48);
       spark->x = 0;
       spark->z = 0;
       spark->velocityX = ((Random16() & 0xff) - 127) << 8;
@@ -259,7 +259,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
       s32 heading = Random16() & 0xffff;
       s32 radius = (Random16() & 63) + 32;
 
-      SET_POSITION(spark, Trig_Sin(heading) * radius, -50 << 16,
+      SET_POSITION(spark, Trig_Sin(heading) * radius, -px(50),
                    Trig_Cos(heading) * radius);
       spark->velocityY = ((Random16() & 31) + 32) << 13;
       spark->variant = 0;
@@ -345,7 +345,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->pos);
       point[0] = object->x;
-      point[1] = 40 << 16;
+      point[1] = px(40);
       point[2] = object->z;
       SceneTransform_ApplyPosition(point);
       if (frame == start + 20)

@@ -1198,8 +1198,8 @@ void HangingVine_Update(void) {
     // deep, and between 8 above and 80 below the anchor.
     if ((x - leader->x >= 0 ? x - leader->x <= 0x7ffff
                             : leader->x - x <= 0x7ffff) &&
-        (u32)(z - leader->z + 0xfffff) <= 0xffffe &&
-        y + (8 << 16) > leader->y && y - (80 << 16) < leader->y)
+        (u32)(z - leader->z + 0xfffff) <= 0xffffe && y + px(8) > leader->y &&
+        y - px(80) < leader->y)
       target = 32;
 
     // Hang the five links below the anchor.

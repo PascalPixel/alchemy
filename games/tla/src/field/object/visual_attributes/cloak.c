@@ -149,20 +149,19 @@ void FieldPsynergy_Douse(void) {
   if (work->anchor == 0) {
     work->x = target->x;
     work->z = target->z;
-    Vector_AddPolarOffset(16 << 16, work->angle,
-                          (struct EffectVector *)&work->x);
+    Vector_AddPolarOffset(px(16), work->angle, (struct EffectVector *)&work->x);
   }
   from = &start;
-  SET_POSITION(from, target->x, target->y + (16 << 16), target->z);
+  SET_POSITION(from, target->x, target->y + px(16), target->z);
   to = &end;
   to->x = work->x;
   y = work->y;
-  to->y = y + (32 << 16);
+  to->y = y + px(32);
   to->z = work->z;
   if ((s8)work->variant != 0)
-    to->y = y + (80 << 16);
+    to->y = y + px(80);
   if (Actor_GetSpriteIdFar(anchor) == 380) {
-    to->y += 32 << 16;
+    to->y += px(32);
     raised = 1;
   }
 
@@ -200,7 +199,7 @@ void FieldPsynergy_Douse(void) {
       count = 24;
     for (n = 0; n < count; n++) {
       SET_POSITION(&pos, orb->x, orb->y, orb->z);
-      Vector_AddPolarOffset(Random16() * 5 + (3 << 16), Random16(), &pos);
+      Vector_AddPolarOffset(Random16() * 5 + px(3), Random16(), &pos);
       if (n == count - 1) {
         wait(20);
         SET_POSITION(&pos, orb->x, orb->y, orb->z);
@@ -212,9 +211,9 @@ void FieldPsynergy_Douse(void) {
         if (ground != 0) {
           mote->terrainHeight = ground->y;
           if (raised == 1)
-            mote->terrainHeight = ground->y + (32 << 16);
+            mote->terrainHeight = ground->y + px(32);
         } else {
-          mote->terrainHeight = pos.y - (32 << 16);
+          mote->terrainHeight = pos.y - px(32);
         }
         mote->update = (void (*)(void))BattleEffect_LandFallingObject;
         mote->motionFlags = 2;
@@ -237,7 +236,7 @@ void FieldPsynergy_Douse(void) {
       count = 30;
     for (n = 0; n < count; n++) {
       SET_POSITION(&pos, orb->x, orb->y, orb->z);
-      Vector_AddPolarOffset(Random16() * 5 + (3 << 16), Random16(), &pos);
+      Vector_AddPolarOffset(Random16() * 5 + px(3), Random16(), &pos);
       mote = Actor_Spawn(672, pos.x, pos.y, pos.z);
       if (mote != 0) {
         mote->update = (void (*)(void))FieldEffect_UpdateDriftingFallActor;
@@ -292,7 +291,7 @@ void FieldEffect_SpawnFallingParticles(void) {
   u32 dist;
 
   src = ((struct BattleFxScene *)Ram_HeapSlots->effectWork)->child;
-  SET_POSITION(&pos, src->x, src->y - Random16() * 16 + (24 << 16), src->z);
+  SET_POSITION(&pos, src->x, src->y - Random16() * 16 + px(24), src->z);
 
   dist = Random16() * 3;
   Vector_AddPolarOffset(dist * 16, Random16(), &pos);

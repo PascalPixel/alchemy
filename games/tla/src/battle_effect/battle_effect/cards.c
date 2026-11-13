@@ -341,8 +341,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
       model->mesh = Data_081992b0;
       Transform_Reset();
       SceneTransform_ApplyScale3(Q16_ONE, Q16_ONE, Q16_ONE);
-      SceneTransform_ApplyPosition3(overflow << 16, (card.y << 16) - (64 << 16),
-                                    0);
+      SceneTransform_ApplyPosition3(overflow << 16, (card.y << 16) - px(64), 0);
       if (frame <= 47) {
         if (effect->side == 0)
           Transform_ApplyRoll((frame << 10) - 0xd000);
@@ -380,8 +379,8 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
         slot = time * 2;
         for (i = 0; i != 2; i++) {
           step = &work->particles[slot + i];
-          step->x = 64 << 16;
-          step->y = 48 << 16;
+          step->x = px(64);
+          step->y = px(48);
           step->velocityX = ((Random16() & 127) - 64) << 11;
           step->velocityY = ((Random16() & 127) + 64) << 11;
           step->variant = 0;
@@ -393,9 +392,9 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
           draw[0](canvas, work->sheet + (step->variant / 4 << 10),
                   overflow + HI(step->x) - 16, HI(step->y) - 16, 32, 32);
           BattleEffectKernels_IntegrateVector2(step, 62, -0x1000);
-          if (step->y > 96 << 16) {
+          if (step->y > px(96)) {
             step->velocityY = 0;
-            step->y = 96 << 16;
+            step->y = px(96);
             step->velocityX *= 2;
           }
           step->variant++;
@@ -415,8 +414,8 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
 
         slot = frame - 48;
         sheep = (struct EffectStep *)(slot * 28 + (s32)work->particles);
-        sheep->x = 64 << 16;
-        sheep->y = 48 << 16;
+        sheep->x = px(64);
+        sheep->y = px(48);
         sheep->velocityX = ((Random16() & mask) - 64) << 11;
         sheep->velocityY = ((Random16() & mask) - 64) << 11;
         sheep->variant = mode;
@@ -455,7 +454,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
           force &= Random16();
 
           step = &work->particles[i];
-          step->x = 64 << 16;
+          step->x = px(64);
           step->y = (i + 48) << 16;
           step->velocityX = (Trig_Cos(angle) * (force + 64)) >> 6;
           step->velocityY = (Trig_Sin(angle) * (force + 64)) >> 6;

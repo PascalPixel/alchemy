@@ -175,7 +175,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
           s32 force;
 
           spark->x = target.x << 15;
-          spark->y = 96 << 16;
+          spark->y = px(96);
           angle = Random16() % (TRIG_TURN * 3 / 4) + TRIG_TURN / 8;
           force = Random16() & 127;
           spark->velocityX = (Trig_Sin(angle) * force) >> 4;
@@ -212,8 +212,8 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
 
         draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
                 HI(step->x) - size / 2, HI(step->y) - size, size, size * 2);
-        if (step->y > 104 << 16) {
-          step->y = 104 << 16;
+        if (step->y > px(104)) {
+          step->y = px(104);
           step->velocityY = -step->velocityY / 2;
         }
         BattleEffectKernels_IntegrateVector2(step, 62, 0x4000);
@@ -282,7 +282,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
             model->alpha = alpha;
             Transform_Reset();
             SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-            SceneTransform_ApplyPosition3((start.x - 128) << 16, -48 << 16, 0);
+            SceneTransform_ApplyPosition3((start.x - 128) << 16, -px(48), 0);
             Transform_ApplyPitch(0x5900);
             if (effect->side == 0)
               Transform_ApplyYaw(0x1900);
@@ -306,7 +306,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
           model->alpha = 0;
           Transform_Reset();
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          SceneTransform_ApplyPosition3((start.x - 128) << 16, -80 << 16, 0);
+          SceneTransform_ApplyPosition3((start.x - 128) << 16, -px(80), 0);
           Transform_ApplyPitch(0x47d0);
           Transform_ApplyRoll((frame + i * 16) << 9);
           scale = (frame << 12) - Q16_ONE / 4;
@@ -554,7 +554,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
                     HI(step->y) - gData_08197826[cell] / 2,
                     gPrism_ShardWidths[cell], gData_08197826[cell]);
             BattleEffectKernels_IntegrateVector2(step, 64, 0);
-            if (step->y > 96 << 16)
+            if (step->y > px(96))
               step->velocityY = -step->velocityY / 2;
             step->variant += step->z;
             if (step->z > 1 && (frame & 1))
@@ -572,8 +572,8 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
                       HI(step->x) - 12, HI(step->y) - 24, 24, 48);
             step->x += step->velocityX;
             step->y += step->velocityY;
-            if (step->y > 96 << 16) {
-              step->y = 96 << 16;
+            if (step->y > px(96)) {
+              step->y = px(96);
               step->velocityY = 0;
             }
             step->variant++;
@@ -661,8 +661,8 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
       // The card: it swings from side to side as it rises, tilted back.
       Transform_Reset();
       SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-      SceneTransform_ApplyPosition3((card.x << 16) - (128 << 16),
-                                    (card.y << 16) - (64 << 16), 0);
+      SceneTransform_ApplyPosition3((card.x << 16) - px(128),
+                                    (card.y << 16) - px(64), 0);
       if (frame <= 47) {
         Transform_ApplyPitch((48 - frame) << 10);
         if (effect->side == 0)
@@ -777,8 +777,8 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
         for (j = 0; j != Data_08199d64[mode].steps; j++) {
           draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
                   HI(step->x) - size / 2, HI(step->y) - size, size, size * 2);
-          if (step->y > 104 << 16) {
-            step->y = 104 << 16;
+          if (step->y > px(104)) {
+            step->y = px(104);
             step->velocityY = -step->velocityY / 2;
           }
           BattleEffectKernels_IntegrateVector2(

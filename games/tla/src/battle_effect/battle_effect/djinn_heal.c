@@ -119,9 +119,9 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
         quad = &work->particles[i];
         quad->x = Random16() & 0xffff;
         Random16();
-        quad->z = 1 << 16;
+        quad->z = px(1);
         if (mode == QUADS_RISING)
-          quad->y = 32 << 16;
+          quad->y = px(32);
         else
           quad->y = height;
         quad->velocityY = ((Random16() & 0xffff) << 1) + 0x10000;
@@ -377,7 +377,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
     }
     if (frame == 0) {
       transition[4] = 1;
-      position.x = 240 << 16;
+      position.x = px(240);
       position.y = px(64);
       velocity.x = -px(20);
       velocity.y = 0;

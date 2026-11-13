@@ -69,10 +69,10 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
 
     // The formation enters from (256, 88), moving left and up.
     rise = 0;
-    focus.x = 256 << 16;
-    focus.y = 88 << 16;
-    velocity.x = -(16 << 16);
-    velocity.y = -(4 << 16);
+    focus.x = px(256);
+    focus.y = px(88);
+    velocity.x = -px(16);
+    velocity.y = -px(4);
     for (k = 0; k != 64; k++)
       work->particles[k].variant = -1;
     for (k = 0; k != 16; k++) {
@@ -108,7 +108,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
         focus.y += velocity.y;
         velocity.x = velocity.x * 58 / 64;
         velocity.y = velocity.y * 56 / 64;
-        if (focus.x < 120 << 16)
+        if (focus.x < px(120))
           velocity.x += px(1) / 2;
       }
       BattleEffect_PlaceFormationObjects(1, focus.x, focus.y);

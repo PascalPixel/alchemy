@@ -503,8 +503,8 @@ void WorldMapPicture_Draw(void) {
   u8 *buffer;
   s32 resource = (s32)&ResourceId_Data024;
   s32 *cursor = work->cursor;
-  s32 x = *cursor++ - (120 << 16);
-  s32 z = *cursor - (80 << 16);
+  s32 x = *cursor++ - px(120);
+  s32 z = *cursor - px(80);
   u32 *graphics;
   u32 column;
   u32 firstRow;
@@ -526,8 +526,8 @@ void WorldMapPicture_Draw(void) {
           (volatile u32 *)0x040000d4);
   *(u16 *)BG_PLTT = 0;
   buffer = Ram_MapCellBuffer;
-  right = 272 << 16;
-  bottom = 224 << 16;
+  right = px(272);
+  bottom = px(224);
   if (x < 0)
     x = 0;
   if (x > right)
@@ -671,8 +671,8 @@ extern s32 *Data_0202a62c;
 /// values are 16.16 pixels.
 void WorldMapPicture_UpdateScroll(void) {
   s32 *cursor = Data_0202a62c;
-  s32 x = *cursor++ - (120 << 16);
-  s32 y = *cursor - (80 << 16);
+  s32 x = *cursor++ - px(120);
+  s32 y = *cursor - px(80);
   s32 dx;
   s32 dy;
   s32 distance;

@@ -187,7 +187,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunDynamite, BattleEffect_RunSparkGroups, 1)
 #define FLASH_POINTS 16 // flash points kept for each group
 #define FLASH_DRAWN 12  // of which the first 12 are drawn
 #define FLASH_FRAMES 18 // six cels of three frames
-#define GROUND_Y (108 << 16)
+#define GROUND_Y px(108)
 
 #define SHAPE(n) Data_081979de[effect->variant][n]
 #define SPARK_COUNT SHAPE(0)

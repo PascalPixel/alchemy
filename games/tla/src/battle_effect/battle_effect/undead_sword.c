@@ -262,12 +262,12 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
     // The target is pushed down 2 pixels a frame for the first 24 frames,
     // while the user closes in on it.
     if (frame >= 0 && frame < 24)
-      target->y += 2 << 16;
+      target->y += px(2);
     if (frame == 18)
       BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 8, 80);
     if (frame == 21)
       BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 12,
-                                     8 << 16);
+                                     px(8));
 
     // Sparks fall and shrink: a spark is drawn at its life / 6 pixels wide,
     // two pixels at the least.

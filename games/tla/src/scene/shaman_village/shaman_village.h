@@ -119,8 +119,8 @@ void ShamanVillage_StepBackFromTrial(void);
 void ShamanVillage_CheckTrialEntry(void);
 void ShamanVillage_CountDownToStart(void);
 
-extern s32 gData_02004c08[];
-extern s32 gData_020050f8[];
+extern s32 gShamanVillage_EnterDoorScript[];
+extern s32 gShamanVillage_HopFortuneTellerScript[];
 extern struct SceneEntrance gShamanVillage_Entrances[];
 extern struct SceneEntrance gShamanVillage_Room5Entrances[];
 extern struct SceneEntrance gShamanVillage_Room6Entrances[];

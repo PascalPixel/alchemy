@@ -24,7 +24,7 @@ extern struct Trigger gProx_Room6Triggers[];
 extern u32 gData_02004980[];
 
 extern u32 gData_02004a08[];
-extern s32 gData_020046f8[];
+extern s32 gProx_EnterDoorScript[];
 
 void Func_020027e4(void);
 

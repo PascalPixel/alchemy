@@ -796,7 +796,7 @@ void ShamanVillage_HopFortuneTeller(void) {
   Actor_Jump(17, 4, 20);
   Event_PlaySound(229);
   wait(2);
-  Actor_RunScriptAndWait(16, gData_020050f8);
+  Actor_RunScriptAndWait(16, gShamanVillage_HopFortuneTellerScript);
 }
 
 /// The fortune-teller, actor 17, reads the party's fortune once (flag 0x301).

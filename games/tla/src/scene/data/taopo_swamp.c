@@ -46,13 +46,13 @@ u32 gData_020029c0[] = {
 };
 
 // clang-format off
-u32 gData_020029c8[] = {
+u32 gTaopoSwamp_PuffSteamScript[] = {
     22, 26, 0, 39, 2, 0x80010000,
     23, 6, 0x10000, 0, 1, 13,
     30, 0xc0010000, 38,
 };
 
-u32 gData_02002a04[] = {
+u32 gTaopoSwamp_TremorPillarScript[] = {
     0, 40, 0x80010000, 22, 25, 0,
     0, 1, 22, 25, 1, 0,
     1, 13, 10, 0xc0010000, 38,
@@ -62,13 +62,13 @@ u32 gData_02002a48[] = {
     0, 30, 38,
 };
 
-s32 gData_02002a54[] = {
+s32 gTaopoSwamp_DripAtRandomScript[] = {
     46,
     (s32)TaopoSwamp_LandDrop,
     38,
 };
 
-s32 gData_02002a60[] = {
+s32 gTaopoSwamp_DripFromCeilingScript[] = {
     46,
     (s32)TaopoSwamp_LandDrip,
     38,

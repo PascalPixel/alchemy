@@ -552,7 +552,7 @@ void LemurianShipDeck_ReturnToShip(void) {
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
   Event_ShowMessage(7, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-  Actor_SetScript(gMainRoutineWork.currentOwner, gData_02002120);
+  Actor_SetScript(gMainRoutineWork.currentOwner, gLemurianShipDeck_ReturnToShipScript);
   Actor_SetSpeed(7, 0xcccc, 0x6666);
   Actor_WalkToAndWait(7, 360, 424);
   Actor_FaceDirectionAndWait(7, FACING_NORTH);
@@ -596,7 +596,7 @@ void LemurianShipDeck_ReturnToShip(void) {
 
 /// Once flag 0x8ff is set, and only until flag 0x989 is: the crew talks
 /// over the ship, the leader answers two prompts, and everyone leaves by
-/// script gData_020020e4; it sets flag 0x981.
+/// script gLemurianShipDeck_ReachPiersShipScript; it sets flag 0x981.
 void LemurianShipDeck_ReachPiersShip(void) {
   if (Event_GetFlag(0x8ff) == 0)
     return;
@@ -807,10 +807,10 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_SetSpeed(9, 0x13333, 0x9999);
   Actor_SetSpeed(6, 0x13333, 0x9999);
   Actor_SetSpeed(7, 0x13333, 0x9999);
-  Actor_SetScript(5, gData_020020e4);
-  Actor_SetScript(9, gData_020020e4);
-  Actor_SetScript(6, gData_020020e4);
-  Actor_RunScriptAndWait(7, gData_020020e4);
+  Actor_SetScript(5, gLemurianShipDeck_ReachPiersShipScript);
+  Actor_SetScript(9, gLemurianShipDeck_ReachPiersShipScript);
+  Actor_SetScript(6, gLemurianShipDeck_ReachPiersShipScript);
+  Actor_RunScriptAndWait(7, gLemurianShipDeck_ReachPiersShipScript);
   FieldEvent_Wait(20);
   Event_SetFlag(0x981);
   Event_End();
@@ -861,13 +861,13 @@ s16 gData_020020dc[] = {
     8, 512, -1, 0,
 };
 
-u32 gData_020020e4[] = {
+u32 gLemurianShipDeck_ReachPiersShipScript[] = {
     39, 2, 4, 0x1070000, 0, 0xb00000,
     1, 39, 1, 0, 1, 3,
     0, 1, 17,
 };
 
-u32 gData_02002120[] = {
+u32 gLemurianShipDeck_ReturnToShipScript[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(368), 0, PIXELS(448)),
     SC_SYNC,

@@ -43,7 +43,7 @@ void Animation_SetStateFlags(struct Actor *object, u32 value);
 extern s32 gTaopoSwamp_SteamPuffs;
 extern s32 gTaopoSwamp_PassageRows;
 extern s32 gTaopoSwamp_PoolFrames;
-extern const u8 gData_020029c8[];
+extern const u8 gTaopoSwamp_PuffSteamScript[];
 void Func_02002948(void);
 void TaopoSwamp_DarkenRoom(s32 a);
 void Func_020029a0(s32 message);
@@ -117,12 +117,12 @@ void TaopoSwamp_TwinkleStarDust(void);
 void Func_02001ff0(s32 x, s32 z);
 void TaopoSwamp_SaveFirmGround(void);
 void TaopoSwamp_FillDripSpot(s32 a, s32 id);
-extern const u8 gData_02002a60[];
+extern const u8 gTaopoSwamp_DripFromCeilingScript[];
 extern const u8 gData_02002a6c[];
 void TaopoSwamp_ShatterIcePillar(s32 id);
 void TaopoSwamp_BlowAwayPuddle(s32 id);
 extern const u8 gData_02002a48[];
-extern const u8 gData_02002a54[];
+extern const u8 gTaopoSwamp_DripAtRandomScript[];
 extern u8 MsgIThoughtI;
 void TaopoSwamp_PuffSteam(void);
 void TaopoSwamp_OpenPassage(void);
@@ -665,7 +665,7 @@ void TaopoSwamp_PuffSteam(void) {
   x = Random16Far() * 16 + a + 0x12c0000;
   z = Random16Far() * 16 + a + 0x1040000;
   object = FieldActor_Create(0x11d, x, 0, z);
-  Actor_StartScript(object, gData_020029c8);
+  Actor_StartScript(object, gTaopoSwamp_PuffSteamScript);
   Actor_SetSingleChildFlags(object, 0);
   Animation_SetStateFlags(object, 1);
   if (gTaopoSwamp_SteamPuffs == 0)
@@ -691,7 +691,7 @@ void TaopoSwamp_FlickerPool(void) {
     FieldTask_Remove(TaopoSwamp_FlickerPool);
 }
 
-extern u8 gData_02002a04[];
+extern u8 gTaopoSwamp_TremorPillarScript[];
 
 /// Tremor on the pillar with the huge rock on top, actor 19: the rock rolls off
 /// and lands, a red rock pops out, clods burst, the pool drains and the passage
@@ -739,7 +739,7 @@ burst:
   angle = Random16Far();
   speed = Random16Far();
   scale = (Random16Far() >> 2) + 0x1000;
-  Actor_StartScript(clod, gData_02002a04);
+  Actor_StartScript(clod, gTaopoSwamp_TremorPillarScript);
   Actor_SetSingleChildFlags(clod, 0);
   clod->velocityY = (angle << 2) + 0x20000;
   cosine = Math_Cosine(angle);
@@ -934,7 +934,7 @@ void TaopoSwamp_DripAtRandom(void) {
       object->scaleX = scale;
       object->scaleY = scale;
       object->gravity = 0x7333;
-      Actor_StartScript(object, gData_02002a54);
+      Actor_StartScript(object, gTaopoSwamp_DripAtRandomScript);
       Actor_SetSingleChildFlags(object, 0);
       Actor_SetSpritePriorityDirect(object, 3);
     }
@@ -1111,7 +1111,7 @@ void TaopoSwamp_DripFromCeiling(void) {
       object->scaleX = scale;
       object->scaleY = scale;
       object->gravity = 0x7333;
-      Actor_StartScript(object, gData_02002a60);
+      Actor_StartScript(object, gTaopoSwamp_DripFromCeilingScript);
       Actor_SetSingleChildFlags(object, 0);
     }
   }

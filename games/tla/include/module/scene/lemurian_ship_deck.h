@@ -41,11 +41,11 @@ void Func_02000210(void);
 void Func_020020cc(const void *data);
 
 extern u32 gData_0200247c[];
-extern u32 gData_02002120[];
+extern u32 gLemurianShipDeck_ReturnToShipScript[];
 
 void Actor_Release(struct Actor *object);
 
-extern u32 gData_020020e4[];
+extern u32 gLemurianShipDeck_ReachPiersShipScript[];
 extern u32 gData_02002498[];
 
 void Func_02000078(void);

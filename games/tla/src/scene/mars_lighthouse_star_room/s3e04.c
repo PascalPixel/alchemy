@@ -53,7 +53,7 @@ void Func_02002ce8(void);
 extern s32 gData_02004910[];
 
 // clang-format off
-u32 gData_02004474[] = {
+u32 gMarsLighthouseStarRoom_ScatterIceChipsScript[] = {
     0, 40, 0x80010000, 22, 25, 0,
     0, 1, 22, 25, 1, 0,
     1, 13, 10, 0xc0010000, 38,

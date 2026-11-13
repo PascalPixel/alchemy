@@ -1064,7 +1064,7 @@ void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     Actor_WaitForMove(object);
     object->facing = 0xc000;
   }
-  Actor_SetScript(gMainRoutineWork.currentOwner, gData_02004c08);
+  Actor_SetScript(gMainRoutineWork.currentOwner, gShamanVillage_EnterDoorScript);
   wait(12);
   Event_PlaySound(123);
   Event_FinishScreenTransition();
@@ -1500,7 +1500,7 @@ u8 gData_02004bfe[] = {
 // clang-format on
 
 // clang-format off
-s32 gData_02004c08[] = {
+s32 gShamanVillage_EnterDoorScript[] = {
     22, 26, 0, 23, 7, -0x8000,
     23, 9, -1024, 23, 10, -1024,
     0, 1, 13, 24, 0, 17,
@@ -1615,7 +1615,7 @@ u32 gData_020050bc[] = {
     0, 1, 17,
 };
 
-s32 gData_020050f8[] = {
+s32 gShamanVillage_HopFortuneTellerScript[] = {
     23, 9, 0x2000, 23, 10, 0x4000,
     0, 1, 13, 4, 0, (s32)0x80010000,
     23, 9, -4096, 23, 10, -0x2000,

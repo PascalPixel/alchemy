@@ -711,7 +711,7 @@ L_0200c72a:
   if ((u32)i <= (u32)39)
     goto L_0200c66c;
   Event_PlaySound(63);
-  Actor_SetScript(23, (s32)gData_020061d4);
+  Actor_SetScript(23, (s32)gMarsLighthouseAerie_WatchGoldenSunRiseScript);
   FieldEvent_Wait(80);
   FieldActor_Jump(1, 4, 10);
   FieldActor_Jump(1, 6, 10);
@@ -1368,7 +1368,7 @@ s32 gData_02006180[] = {
     0, 1, 38,
 };
 
-s32 gData_020061d4[] = {
+s32 gMarsLighthouseAerie_WatchGoldenSunRiseScript[] = {
     SC_ADD(SW_SCALE_X, 0x1000),
     SC_WAIT(1),
     SC_LOOP(8, SC_TOP),

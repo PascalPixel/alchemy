@@ -83,7 +83,7 @@ void Func_0200326c(void);
 extern s32 gData_020060b4[];
 extern u32 gData_02006120[];
 extern u32 gData_02006150[];
-extern s32 gData_020061d4[];
+extern s32 gMarsLighthouseAerie_WatchGoldenSunRiseScript[];
 
 extern u16 *Data_02006ce4;
 extern u16 *Data_02006ce8;

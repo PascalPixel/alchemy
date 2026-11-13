@@ -914,7 +914,7 @@ void Prox_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     object->facing = 0xc000;
   }
   Actor_SetScript(gMainRoutineWork.currentOwner,
-                                          gData_020046f8);
+                                          gProx_EnterDoorScript);
   System_Wait(12);
   Event_PlaySound(123);
   Event_FinishScreenTransition();
@@ -2099,7 +2099,7 @@ u32 gData_020046bc[] = {
     1, 38, 17,
 };
 
-s32 gData_020046f8[] = {
+s32 gProx_EnterDoorScript[] = {
     22, 26, 0, 23, 7, -0x8000,
     23, 9, -1024, 23, 10, -1024,
     0, 1, 13, 24, 0, 17,

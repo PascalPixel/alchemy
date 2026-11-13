@@ -89,7 +89,7 @@ void Func_0200007c(void) {}
 #include "mars_lighthouse_star_room.h"
 #include "iwram_call.h"
 
-extern const u8 gData_02004474[];
+extern const u8 gMarsLighthouseStarRoom_ScatterIceChipsScript[];
 
 /// Six chips of ice burst from an actor and bounce away.
 void MarsLighthouseStarRoom_ScatterIceChips(s32 id) {
@@ -112,7 +112,7 @@ next:
       angle = Random16Far();
       radius = Random16Far();
       scale = ((u32)Random16Far() >> 1) + 0x4000;
-      Actor_StartScript(object, gData_02004474);
+      Actor_StartScript(object, gMarsLighthouseStarRoom_ScatterIceChipsScript);
       Actor_SetSingleChildFlags(object, 0);
       /* FAKEMATCH(dead): an empty once-only block holds the order around it; as
        * no block, 2 of 113 instructions differ in tla-en. */

@@ -1,6 +1,6 @@
 /// @file
 /// The Megiddo summon.
-// Part of summon_effects.c.
+// Part of battle_effect.c.
 
 #include "../summon_effects_internal.h"
 
@@ -11,6 +11,9 @@ struct StripQuad;
 // One model vertex: signed byte coordinates, padded to a word. Written
 // through this struct, its stores are not char stores, so a reload of the
 // stack may pass them.
+/* VIEW(summon_effects): tag struct ModelVertex as struct
+ * ModelVertex__summon_effects; battle_effect/ability_effects has another
+ * definition; not tried: struct ModelVertex__summon_effects was not found. */
 struct ModelVertex {
   s8 x;
   s8 y;
@@ -56,10 +59,8 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 /* VIEW(summon_effects): routine BattleObject_GetFar as void
  * **BattleObject_GetFar(s32 objectId); motobj.h has struct BattleObj
- * *BattleObject_GetFar(s32 objectId); tried as the 11 declarations' void
- * **BattleObject_GetFar(s32 objectId), it does not compile in tla-ja:
- * games/tla/include/battle/motobj.h:79: conflicting types for
- * `BattleObject_GetFar'. */
+ * *BattleObject_GetFar(s32 objectId); not tried: BattleObject_GetFar's bound
+ * declaration was not found. */
 extern void **GetBattleObjectSlotFar__summon_effects(s32 objectId) __asm__(
     "BattleObject_GetFar");
 

@@ -55,7 +55,19 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 extern s32 gWhirlwindRiding;
 
-void Whirlwind_SpawnUpper();
+/* VIEW(jupiter_lighthouse_room_m): routine Whirlwind_SpawnUpper as void
+ * Whirlwind_SpawnUpper(); scene/jupiter_lighthouse_room_m/s3474 has
+ * DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper,
+ * Import_ActorSelectAnimation, Whirlwind_Update__s3474, FieldEffect_Spawn)
+ * DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, FieldEffect_Spawn)
+ * DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
+ * JupiterLighthouse_PlaceRaisedActors) extern s16 gLightSpritesLarge; tried as
+ * the one declaration struct GustObject *Whirlwind_SpawnUpper(), it does not
+ * compile in tla-ja (make modern): games/tla/include/field/field.h:25:41: note:
+ * expected 'struct Actor *' but argument is of type 's32' {aka 'int'}. */
+void Whirlwind_SpawnUpper__jupiter_lighthouse_room_m() __asm__(
+    "Whirlwind_SpawnUpper");
+#define Whirlwind_SpawnUpper Whirlwind_SpawnUpper__jupiter_lighthouse_room_m
 
 void Func_02000060(void) {
   if (gWhirlwindRiding == 0) {
@@ -83,11 +95,23 @@ void Func_02000080(void) {
 /* VIEW(jupiter_lighthouse_room_m): variable gBgScroll as s16 gBgScroll[];
  * bg_scroll.h has struct BgScroll gBgScroll[]; tried as the rest of the object
  * declares it, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:134: incompatible types in
+ * games/tla/src/scene/jupiter_lighthouse_room_m.c:125: incompatible types in
  * assignment. */
 extern s16 gBgScroll__jupiter_lighthouse_room_m[] __asm__("gBgScroll");
 
-void Actor_EmitRisingSparks(void);
+/* VIEW(jupiter_lighthouse_room_m): routine Actor_EmitRisingSparks as void
+ * Actor_EmitRisingSparks(void); scene/jupiter_lighthouse_room_m/s3474 has
+ * DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, FieldEffect_Spawn)
+ * DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
+ * JupiterLighthouse_PlaceRaisedActors) extern s16 gLightSpritesLarge; tried as
+ * the definition's DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn,
+ * Actor_SelectAnimation, Whirlwind_Update, FieldEffect_Spawn) UNUSED s32
+ * Actor_EmitRisingSparks(struct..., it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_m.c:141: `Actor_EmitRisingSparks'
+ * undeclared (first use in this function). */
+void Actor_EmitRisingSparks__jupiter_lighthouse_room_m(void) __asm__(
+    "Actor_EmitRisingSparks");
+#define Actor_EmitRisingSparks Actor_EmitRisingSparks__jupiter_lighthouse_room_m
 
 void Func_020000c4(void) {
 
@@ -168,11 +192,8 @@ void Func_020000c4(void) {
 /* VIEW(jupiter_lighthouse_room_m): routine MapGrid_SetCellHeight as void
  * MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
  * module/scene/eastern_alhafra.h has void MapGrid_SetCellHeight(struct Actor
- * *object); tried as the definition's void MapGrid_SetCellHeight(struct Actor
- * *object), which the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:183:
- * `Func_02004774__jupiter_lighthouse_room_m' undeclared (first use in this
- * function). */
+ * *object); not tried: MapGrid_SetCellHeight's bound declaration was not found.
+ */
 extern void Func_02004774__jupiter_lighthouse_room_m(
     s32 x, s32 z, s32 a, s32 b) __asm__("MapGrid_SetCellHeight");
 
@@ -1043,7 +1064,6 @@ void Func_02000cac(s32 arg) {
 #include "version.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "event_work.h"
 
 static __inline__ void JupiterLighthouseRoomM_AddHp(s32 owner, s32 delta) {
   /* FAKEMATCH(wrapper): forwarding through the inline reloads -10000 from
@@ -1671,3 +1691,67 @@ void Actor_StartScript(struct Actor *object, const s32 *script);
 DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
                         Position_FlatDistance, gWhirlwindEndScript,
                         gWhirlwindRiding)
+
+#undef Whirlwind_SpawnUpper
+#undef Actor_EmitRisingSparks
+// ---- scene/jupiter_lighthouse_room_m/s3474.c ----
+
+/// Scene code of overlay 0x6a3, in ROM order.
+
+#include "field_effect.h"
+#include "field_coordinate.h"
+#include "map.h"
+#include "vram_tab.h"
+#include "task.h"
+#include "item_icon.h"
+
+void Actor_SetSpriteFlags(struct Actor *object, u32 value);
+void Whirlwind_Update(struct Actor *self);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options);
+
+DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper, Import_ActorSelectAnimation,
+                             Whirlwind_Update, FieldEffect_Spawn)
+
+DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, FieldEffect_Spawn)
+
+DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
+    JupiterLighthouse_PlaceRaisedActors)
+
+extern s16 gLightSpritesLarge;
+
+/// Queues the lit actors' sprites: for each listed actor with a position,
+/// projects it from the map's view, skips it off screen, and writes a 16 by 16
+/// sprite, or a 32 by 64 one when the big switch is set, at its animation
+/// picture and depth.
+DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
+                          gLightSpriteCount, gLightSpriteActors,
+                          gLightSpritesLarge, gLightSpritePriority,
+                          BattleEffect_GetObjectPriority,
+                          Oam_AddSpriteAtDepthClamped)
+
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
+
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
+                            gLightSpriteTile, LightSprites_Draw,
+                            gLightSpriteCount, gLightSpritesLarge,
+                            gLightSpritePriority)
+
+DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gLightSpriteActors,
+                            gLightSpriteTile, LightSprites_Draw,
+                            gLightSpriteCount, gLightSpritesLarge,
+                            gLightSpritePriority)
+
+DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gLightSpriteActors,
+                            gLightSpriteTile, LightSprites_Draw,
+                            gLightSpriteCount, gLightSpritesLarge,
+                            gLightSpritePriority)
+
+DEFINE_LIGHT_SPRITES_ADD(LightSprites_Add, gLightSpriteCount,
+                         gLightSpriteActors)
+
+void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
+
+#include "../field/object/set_sprite_priority.c"

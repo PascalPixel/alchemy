@@ -1,6 +1,6 @@
 /// @file
 /// The Kirin summon.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 
@@ -475,6 +475,9 @@ void BattleEffect_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 #define SE_PILLARS 390
 #define SE_PILLAR 154
 
+/* VIEW(ability_effects): tag struct SpriteObject as struct
+ * SpriteObject__ability_effects; battle_effect/cybele has another definition;
+ * not tried: struct SpriteObject__ability_effects was not found. */
 struct SpriteObject {
   u16 unk00;
   u16 unk02;

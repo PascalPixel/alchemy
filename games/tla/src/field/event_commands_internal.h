@@ -2,11 +2,11 @@
 #define ALCHEMY_EVENT_COMMANDS_INTERNAL_H
 
 /// @file
-/// What every part of event_commands.c shares: its includes, and the
-/// declarations its parts call before their definitions or once declared
-/// differently. event_commands.c includes it before the parts, and each part
-/// includes it too, so that a part read on its own resolves. It places no
-/// bytes.
+/// What every part under event_commands/ that field_sequence.c holds shares:
+/// its includes, and the declarations its parts call before their definitions
+/// or once declared differently. field_sequence.c includes it before those
+/// parts, and each part includes it too, so that a part read on its own
+/// resolves. It places no bytes.
 
 #include "types.h"
 #include "input.h"

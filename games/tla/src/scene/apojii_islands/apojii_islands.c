@@ -1,6 +1,18 @@
 /// @file
 /// Scene code of overlay 0x679, in ROM order.
 
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Actor_SelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#define EFFECT_SPRITE_PRIORITY
+#include "../../field/field_effect/spawn.c"
+
+// ---- scene/apojii_islands/apojii_islands.c ----
+
+/// Scene code of overlay 0x679, in ROM order.
+
 // ---- games/tla/src/scene/apojii_islands.c ----
 
 #include "../shared/actors.h"
@@ -62,10 +74,13 @@ void Func_020003cc(void) {
 /* VIEW(apojii_islands): variable gData_020024c4 as extern s32 gData_020024c4;
  * the definition has s32 gData_020024c4[] = { - 1, }; tried as the definition's
  * extern s32 gData_020024c4[], it does not compile in tla-ja:
- * games/tla/src/scene/apojii_islands.c:76: `gData_020024c4' has an incomplete
- * type. */
+ * games/tla/src/scene/apojii_islands/apojii_islands.c:95: `gData_020024c4' has
+ * an incomplete type. */
 extern s32 gData_020024c4__apojii_islands __asm__("gData_020024c4");
-extern u16 Data_02002958[], Data_02002978[], gData_02002998[], gData_020029b8[];
+extern u16 Data_02002958[];
+extern u16 Data_02002978[];
+extern u16 gData_02002998[];
+extern u16 gData_020029b8[];
 
 void Func_020003e8(void) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -101,10 +116,13 @@ void Func_020003e8(void) {
 /* VIEW(apojii_islands): variable gData_020024c8 as extern s32 gData_020024c8;
  * the definition has s32 gData_020024c8[] = { - 1, }; tried as the definition's
  * extern s32 gData_020024c8[], it does not compile in tla-ja:
- * games/tla/src/scene/apojii_islands.c:110: `gData_020024c8' has an incomplete
- * type. */
+ * games/tla/src/scene/apojii_islands/apojii_islands.c:132: `gData_020024c8' has
+ * an incomplete type. */
 extern s32 gData_020024c8__apojii_islands __asm__("gData_020024c8");
-extern u16 Data_020029d8[], Data_020029f8[], Data_02002a18[], Data_02002a38[];
+extern u16 Data_020029d8[];
+extern u16 Data_020029f8[];
+extern u16 Data_02002a18[];
+extern u16 Data_02002a38[];
 
 void Func_02000540(void) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -177,11 +195,11 @@ DEFINE_ACTOR_FLICKER_CHILD(Actor_FlickerChild, 7)
 // ---- games/tla/src/scene/apojii_islands/s07a4.c ----
 #include "scene_tables.h"
 #include "actor.h"
-#include "task.h"
 
 /* VIEW(s07a4): routine Random16 as u16 Random16(void); system.h has u32
- * Random16(void); tried as the rest of the object declares it, Func_020007a4
- * moves: 1 of 188 instructions in tla-ja. */
+ * Random16(void); tried as the definition's u32 Random16(void), which the
+ * object already declares, Func_020007a4 moves: 1 of 188 instructions in
+ * tla-ja. */
 extern u16 Random16__s07a4(void) __asm__("Random16");
 /* VIEW(s07a4): routine BattleEffect_ApplyColorToTargetBuffer as s32
  * BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b); event.h has void
@@ -271,7 +289,6 @@ blend:
 // next object the overlay links.
 
 #include "map.h"
-#include "event_work.h"
 
 void Func_02000974(void) {
   Event_Start();
@@ -699,7 +716,6 @@ void Func_020017bc(void) {
   FieldTask_AddFrame(Func_020015f8, 0x480);
 }
 
-#include "system.h"
 #include "heap_release.h"
 #include "io_reg.h"
 #include "resource.h"
@@ -858,10 +874,10 @@ u32 gWaterDropScript[] = {
 
 DEFINE_G_DATA_02001F18(gGroundParticleFrames)
 
-s32 gFieldEffect_DurationScripts[] = {
-    (s32)gData_02001e34,
-    (s32)gData_02001e70,
-    (s32)gData_02001eac,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gData_02001e34,
+    gData_02001e70,
+    gData_02001eac,
 };
 
 s32 gData_02002044[] = {

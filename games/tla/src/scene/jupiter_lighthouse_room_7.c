@@ -31,7 +31,6 @@ void JupiterLighthouse_CloseDoor(void);
 void JupiterLighthouse_CheckBlockOnCell(void);
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 void MapGrid_ClearAttributeBBitsAt(s32 x, s32 z, s32 a, s32 b);
-void Func_02001a48(const u8 *data, s32 a, s32 b);
 void Field_TryJumpForward(void);
 
 void Func_02000038(void) { Field_RequestDjinnBattle(21, 74); }
@@ -552,7 +551,6 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 void Actors_SetCellsOpen();
 void LightSprites_InitB();
 void LightSprites_AddCounted();
-void LightSprites_SetPriority();
 
 s32 Scene_Initialize(void) {
   s32 t1, t2, t3, t5, t8, t15, t16, t17, t19, t20, t21, t23, t24, t25, t26, t27,
@@ -710,7 +708,6 @@ DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, MapGrid_SetCellHeight,
 
 #include "frame.h"
 #include "field_sprite.h"
-#include "event_work.h"
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
                                                    s32 mode) {
@@ -731,3 +728,120 @@ void Actor_StartScript(struct Actor *object, const s32 *script);
 DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
                         Position_FlatDistance, gWhirlwindEndScript,
                         gWhirlwindRiding)
+
+// ---- scene/jupiter_lighthouse_room_7/s16d4.c ----
+
+/// Scene code of overlay 0x6a0, in ROM order.
+
+#include "shared/map_cells.h"
+#include "field_effect.h"
+#include "field_coordinate.h"
+#include "map.h"
+#include "vram_tab.h"
+#include "task.h"
+#include "item_icon.h"
+#include "module/scene/jupiter_lighthouse_room_7.h"
+#include "module/scene/scene.h"
+
+void Actor_SetSpriteFlags(struct Actor *object, u32 value);
+void Whirlwind_Update(struct Actor *self);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options);
+
+DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation, Whirlwind_Update,
+                       FieldEffect_Spawn)
+
+DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, FieldEffect_Spawn)
+
+DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
+    JupiterLighthouse_PlaceRaisedActors)
+
+DEFINE_ACTORS_SET_CELLS_OPEN(Actors_SetCellsOpen, Actor_SetCellOpen)
+
+// Finds the current target's table row and shrinks it.
+void Func_02001a48(u16 *list, s32 mode, s32 count) {
+  struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
+
+  if (*list == 0xffff)
+    return;
+  // A goto loop: as a do-while loop, 42 of 61 instructions differ in tla-en.
+top:
+  {
+    u32 entry = *list;
+    /* FAKEMATCH(dead): the effect work read through its own address; as
+     * work->objectId, 21 of 61 instructions differ in tla-en. */
+    s32 id = (*&work)->objectId;
+
+    if (id == entry) {
+      struct Actor *object = Actor_Get(id);
+      s32 a;
+      s32 flag;
+
+      list++;
+      a = list[0];
+      flag = list[1];
+      if (count < 8)
+        object->scaleY -= 0x1f00;
+      if (mode == 1) {
+        Event_SetFlag(flag);
+        Actor_SetCellOpen(id, a, flag, object->terrainId);
+        object->scaleY = 0x10000;
+      }
+      return;
+    }
+  }
+  list += 3;
+  if (*list != 0xffff)
+    goto top;
+}
+
+DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
+                           Actor_SelectAnimation)
+
+extern u32 gLightSpriteActors[];
+/* VIEW(s16d4): variable gLightSpritePriority as s16 gLightSpritePriority;
+ * scene/jupiter_lighthouse_room_7 has u16 gLightSpritePriority; tried as the
+ * rest of the object declares it, LightSprites_Draw moves: 99 of 200
+ * instructions, LightSprites_InitA moves: 0 of 36 instructions,
+ * LightSprites_InitB moves: 0 of 36 instructions, 1 more in tla-ja. */
+extern s16 gLightSpritePriority__s16d4 __asm__("gLightSpritePriority");
+
+s32 BattleEffect_GetObjectPriority(struct Actor *actor);
+
+/// Queues the lit actors' sprites: for each listed actor with a position,
+/// projects it from the map's view, skips it off screen, and writes a 16 by 16
+/// sprite, or a 32 by 64 one when the big switch is set, at its animation
+/// picture and depth.
+DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, gLightSpriteOams,
+                          gLightSpriteCount, gLightSpriteActors,
+                          gLightSpritesLarge, gLightSpritePriority__s16d4,
+                          BattleEffect_GetObjectPriority,
+                          Oam_AddSpriteAtDepthClamped)
+
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
+
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
+                            gLightSpriteTile, LightSprites_Draw,
+                            gLightSpriteCount, gLightSpritesLarge,
+                            gLightSpritePriority__s16d4)
+
+DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gLightSpriteActors,
+                            gLightSpriteTile, LightSprites_Draw,
+                            gLightSpriteCount, gLightSpritesLarge,
+                            gLightSpritePriority__s16d4)
+
+DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gLightSpriteActors,
+                            gLightSpriteTile, LightSprites_Draw,
+                            gLightSpriteCount, gLightSpritesLarge,
+                            gLightSpritePriority__s16d4)
+
+DEFINE_LIGHT_SPRITES_ADD_COUNTED(LightSprites_AddCounted, gLightSpriteActors,
+                                 gLightSpriteCount)
+
+void LightSprites_SetPriority(u16 value) {
+  gLightSpritePriority__s16d4 = value;
+}
+
+#include "../field/object/set_sprite_priority.c"

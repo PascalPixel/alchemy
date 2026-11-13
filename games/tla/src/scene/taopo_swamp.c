@@ -1702,8 +1702,9 @@ void TaopoSwamp_ResetMud(void) {
 // volatile: the VBlank handler sets the held keys, as gKeysHeld in The Broken
 // Seal.
 /* VIEW(taopo_swamp): variable gInput as volatile u32 gInput; input.h has struct
- * InputState gInput; tried as the 3 declarations' extern u32 gInput,
- * TaopoSwamp_SinkInMud moves: 5 of 159 instructions in tla-ja. */
+ * InputState gInput; tried as the rest of the object declares it, it does not
+ * compile in tla-ja: games/tla/src/scene/taopo_swamp.c:1724: `gInput'
+ * undeclared (first use in this function). */
 extern volatile u32 gInput__taopo_swamp __asm__("gInput");
 
 /// Each step on the mud sinks the leader deeper; sunk to the top, they are

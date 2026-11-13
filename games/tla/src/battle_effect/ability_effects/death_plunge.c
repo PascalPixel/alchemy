@@ -1,6 +1,6 @@
 /// @file
 /// Death Plunge.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 
@@ -33,7 +33,7 @@ struct ModelTexture__f188714 {
 /* VIEW(f188714): tag struct Model as struct Model__f188714; ability_effects.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:37378: structure has no member
+ * games/tla/src/battle_effect/battle_effect.c:54638: structure has no member
  * named `vertices'. */
 struct Model__f188714 {
   s32 kind;
@@ -68,11 +68,6 @@ void SceneTransform_ApplyScale3(s32 x, s32 y, s32 z);
 void Transform_ApplyRoll(s32 angle);
 void Transform_ApplyPitch(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-/* VIEW(f188714): routine Render_DrawModelList as void
- * Render_DrawModelList(struct Model__f188714 *model); f186dfc has void
- * Render_DrawModelList(struct Model *model). */
-extern void Render_DrawModelList__f188714(struct Model__f188714 *model) __asm__(
-    "Render_DrawModelList");
 void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_EndCanvasLayer(void);
@@ -276,7 +271,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
             Transform_ApplyRoll(angle);
             Transform_ApplyPitch(-0x1000);
             Render_TransformVertices(gData_08199210, vertices, 4);
-            Render_DrawModelList__f188714(model);
+            Render_DrawModelList(model);
           }
         }
       }

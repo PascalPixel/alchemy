@@ -1,6 +1,6 @@
 /// @file
 /// Pictures and command icons loaded for the menus, and BG1's priority.
-// Part of screens.c.
+// Part of window.c.
 
 #include "../screens_internal.h"
 #include "system/io_write.h"

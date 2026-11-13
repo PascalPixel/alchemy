@@ -339,8 +339,6 @@ s32 ItemPicker_SelectItem(s32 unitId) {
 }
 
 #undef DETAILS_WINDOW_WIDTH
-#undef DETAILS_WINDOW_WIDTH
-#undef DETAILS_WINDOW_WIDTH
 
 // The note sits under the item's name; the price line reads "Price", the
 // price, then "Coins". Japanese indents the note by 8 pixels; Japanese and
@@ -404,8 +402,6 @@ void ItemPicker_DrawItem(void *window, s32 unitId, s32 slot) {
   }
 }
 
-#undef SHOP_PRICE_COINS_X
-#undef SHOP_PRICE_COINS_X
 #undef SHOP_PRICE_COINS_X
 
 /// The item icon grid: up to 15 item icons drawn as sprites over a window, as

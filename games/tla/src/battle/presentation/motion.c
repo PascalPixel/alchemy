@@ -2,7 +2,7 @@
 /// A unit's motion graphics in battle: setting its records' frames, the flash
 /// when it is hit, its removal from the formations and the graphics of a
 /// defeated unit, with routines around them not yet understood.
-// Part of presentation.c.
+// Part of battle.c.
 
 #include "../presentation_internal.h"
 #include "module/battle/battle.h"
@@ -14,7 +14,14 @@
 #include "module/tla.h"
 #include "text/msg_ids.h"
 
-void BattleObject_Reset();
+/* VIEW(presentation): routine BattleObject_Reset as void BattleObject_Reset();
+ * the definition has another declaration; tried as the definition's void
+ * BattleObject_Reset(struct BattleObj *actor, s32 keep), which the object
+ * already declares, it does not compile in tla-ja:
+ * games/tla/src/battle/battle.c:5440: too few arguments to function
+ * `BattleObject_Reset'. */
+void BattleObject_Reset__presentation() __asm__("BattleObject_Reset");
+#define BattleObject_Reset BattleObject_Reset__presentation
 
 /// The Tamer's calls (abilities 600 to 606, Wild Wolf to Grand Golem): for
 /// a call that lands, saves the battle object it borrows and brings in the
@@ -311,10 +318,8 @@ void BattleMotion_DismissBeast(struct SavedBattleObj *saved) {
  * BattleSprite_GetAttackHop(s32 classId); the definition has void
  * BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) { void
  * BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) { s32 span = 0x01fe0000;
- * s32 zoom; struc...; tried as the one declaration s32
- * BattleSprite_GetAttackHop(s32 classId), it does not compile in tla-ja:
- * games/tla/src/battle/presentation.c:7982: conflicting types for
- * `BattleSprite_GetAttackHop'. */
+ * s32 zoom; struc...; not tried: BattleSprite_GetAttackHop's bound declaration
+ * was not found. */
 extern s32 BattleClass_GetAttackHop__presentation(s32 classId) __asm__(
     "BattleSprite_GetAttackHop");
 

@@ -1,6 +1,14 @@
 /// @file
 /// Scene code of overlay 0x6a9, in ROM order.
 
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Actor_SelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#define EFFECT_SPRITE_PRIORITY
+#include "../../field/field_effect/spawn.c"
+
 #include "flags.h"
 #include "battle.h"
 #include "field.h"
@@ -598,10 +606,10 @@ s16 gData_02001220[] = {
     8, 9, -1, 0,
 };
 
-s32 gFieldEffect_DurationScripts[] = {
-    (s32)gData_0200116c,
-    (s32)gData_020011a8,
-    (s32)gData_020011e4,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gData_0200116c,
+    gData_020011a8,
+    gData_020011e4,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

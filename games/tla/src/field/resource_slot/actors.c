@@ -1,7 +1,7 @@
 /// @file
 /// Animated map tiles, then actors: creating and releasing them, their
 /// animations, and starting scripts.
-// Part of resource_slot.c.
+// Part of field.c.
 
 #include "../resource_slot_internal.h"
 #include "flag_call.h"
@@ -177,54 +177,14 @@ void ActorSystem_ReservedNoOpB(void) {}
 
 #include "objdisp.h"
 #include "actor.h"
-/* VIEW(render_animated_tile_picture): routine Animation_ApplyChildArgument as
- * s32 Animation_ApplyChildArgument(struct ActorSpriteView *, s32); the
- * definition has s32 Animation_ApplyChildArgument(struct AnimationGroup *state,
- * s32 flags); tried as the definition's s32 Animation_ApplyChildArgument(struct
- * AnimationGroup *state, s32 flags), which the object already declares, it does
- * not compile in tla-ja: games/tla/include/actor_view.h:65: conflicting types
- * for `Animation_ApplyChildArgument'. */
 struct ActorSpriteView;
-extern s32 Animation_ApplyChildArgument__render_animated_tile_picture(
-    struct ActorSpriteView *, s32) __asm__("Animation_ApplyChildArgument");
-#define Animation_ApplyChildArgument                                           \
-  Animation_ApplyChildArgument__render_animated_tile_picture
-/* VIEW(render_animated_tile_picture): routine Animation_ApplyChildValue as void
- * Animation_ApplyChildValue(struct ActorSpriteView *, s32); the definition has
- * void Animation_ApplyChildValue(struct ChildGroup *group, s32 value); tried as
- * the definition's void Animation_ApplyChildValue(struct ChildGroup *group, s32
- * value), which the object already declares, it does not compile in tla-ja:
- * games/tla/include/actor_view.h:66: conflicting types for
- * `Animation_ApplyChildValue'. */
+#define Animation_ApplyChildArgument Animation_ApplyChildArgument
 struct ActorSpriteView;
-extern void Animation_ApplyChildValue__render_animated_tile_picture(
-    struct ActorSpriteView *, s32) __asm__("Animation_ApplyChildValue");
-#define Animation_ApplyChildValue                                              \
-  Animation_ApplyChildValue__render_animated_tile_picture
-/* VIEW(render_animated_tile_picture): routine InitializeAnimationObjects as s32
- * InitializeAnimationObjects(struct ActorSpriteView *); the definition has s32
- * InitializeAnimationObjects(struct ActorSpriteView__resource_slot *state);
- * tried as the definition's s32 InitializeAnimationObjects(struct
- * ActorSpriteView__resource_slot *state), which the object already declares, it
- * does not compile in tla-ja: games/tla/include/actor_view.h:67: conflicting
- * types for `InitializeAnimationObjects'. */
+#define Animation_ApplyChildValue Animation_ApplyChildValue
 struct ActorSpriteView;
-extern s32 InitializeAnimationObjects__render_animated_tile_picture(
-    struct ActorSpriteView *) __asm__("InitializeAnimationObjects");
-#define InitializeAnimationObjects                                             \
-  InitializeAnimationObjects__render_animated_tile_picture
-/* VIEW(render_animated_tile_picture): routine ResourceMetadata_Register as s32
- * ResourceMetadata_Register(struct ActorSpriteView *, s32); the definition has
- * s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id); tried
- * as the definition's s32 ResourceMetadata_Register(struct MetadataSlotState
- * *state, s32 id), which the object already declares, it does not compile in
- * tla-ja: games/tla/include/actor_view.h:68: conflicting types for
- * `ResourceMetadata_Register'. */
+#define InitializeAnimationObjects InitializeAnimationObjects
 struct ActorSpriteView;
-extern s32 ResourceMetadata_Register__render_animated_tile_picture(
-    struct ActorSpriteView *, s32) __asm__("ResourceMetadata_Register");
-#define ResourceMetadata_Register                                              \
-  ResourceMetadata_Register__render_animated_tile_picture
+#define ResourceMetadata_Register ResourceMetadata_Register
 #include "actor_view.h"
 #undef ResourceMetadata_Register
 #undef InitializeAnimationObjects
@@ -373,8 +333,8 @@ void Actor_SelectAnimation(struct Actor *object, s32 argument) {
   if (object != 0) {
     switch (object->animationKind & 0xf) {
     case 1:
-      Animation_ApplyChildArgument__render_animated_tile_picture(
-          ((struct ActorSpriteView *)object->sprite), argument);
+      Animation_ApplyChildArgument(((struct ActorSpriteView *)object->sprite),
+                                   argument);
       break;
     case 2:
       items = ((struct ActorSpriteView **)object->sprite);
@@ -382,8 +342,7 @@ void Actor_SelectAnimation(struct Actor *object, s32 argument) {
       do {
         item = *items++;
         if (item != 0)
-          Animation_ApplyChildArgument__render_animated_tile_picture(item,
-                                                                     argument);
+          Animation_ApplyChildArgument(item, argument);
         count--;
       } while (count >= 0);
       break;
@@ -399,8 +358,8 @@ void Actor_SetAnimationSpeed(struct Actor *object, s32 value) {
   if (object != 0) {
     switch (object->animationKind & 0xf) {
     case 1:
-      Animation_ApplyChildValue__render_animated_tile_picture(
-          ((struct ActorSpriteView *)object->sprite), value);
+      Animation_ApplyChildValue(((struct ActorSpriteView *)object->sprite),
+                                value);
       return;
     case 2:
       children = ((struct ActorSpriteView **)object->sprite);
@@ -408,7 +367,7 @@ void Actor_SetAnimationSpeed(struct Actor *object, s32 value) {
       do {
         child = *children++;
         if (child != 0)
-          Animation_ApplyChildValue__render_animated_tile_picture(child, value);
+          Animation_ApplyChildValue(child, value);
         count--;
       } while (count >= 0);
       break;
@@ -424,19 +383,18 @@ void Actor_SetAnimationAndSpeed(struct Actor *object, s32 argument, s32 value) {
   if (object != 0) {
     switch (object->animationKind & 0xf) {
     case 1:
-      Animation_ApplyChildArgument__render_animated_tile_picture(
-          ((struct ActorSpriteView *)object->sprite), argument);
-      Animation_ApplyChildValue__render_animated_tile_picture(
-          ((struct ActorSpriteView *)object->sprite), value);
+      Animation_ApplyChildArgument(((struct ActorSpriteView *)object->sprite),
+                                   argument);
+      Animation_ApplyChildValue(((struct ActorSpriteView *)object->sprite),
+                                value);
       break;
     case 2:
       items = ((struct ActorSpriteView **)object->sprite);
       for (count = 3; count >= 0; count--) {
         item = *items++;
         if (item != 0) {
-          Animation_ApplyChildArgument__render_animated_tile_picture(item,
-                                                                     argument);
-          Animation_ApplyChildValue__render_animated_tile_picture(item, value);
+          Animation_ApplyChildArgument(item, argument);
+          Animation_ApplyChildValue(item, value);
         }
       }
       break;
@@ -456,7 +414,7 @@ void Actor_SetFirstSpriteAnimation(struct Actor *object, s32 index) {
     child = ((struct ActorSpriteView *)object->sprite);
     if (index >= 0) {
       child->entries[0]->animId = index;
-      InitializeAnimationObjects__render_animated_tile_picture(child);
+      InitializeAnimationObjects(child);
     }
   }
 }
@@ -465,7 +423,7 @@ void Actor_RegisterSpriteMetadata(struct Actor *object, s32 value) {
   if (object != 0 && (object->animationKind & 0xf) == 1) {
     struct ActorSpriteView *child = ((struct ActorSpriteView *)object->sprite);
     if (value >= 0)
-      ResourceMetadata_Register__render_animated_tile_picture(child, value);
+      ResourceMetadata_Register(child, value);
   }
 }
 
@@ -600,7 +558,10 @@ void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority) {
 #include "fixed_math.h"
 
 /* VIEW(resource_slot): tag struct IconSprite as struct
- * IconSprite__resource_slot; item_icon.h has another definition. */
+ * IconSprite__resource_slot; item_icon.h has another definition; tried with the
+ * definition the rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/field/field.c:2172: dereferencing pointer to incomplete type.
+ */
 struct IconSprite__resource_slot {
   u8 unk00[4];
   struct RenderOam oam;
@@ -693,10 +654,8 @@ s32 Actor_ReturnTrue(void) { return 1; }
 #include "field/sprite.h"
 #include "field/field.h"
 
-void Render_ApplyProjectedPlacementAtDepth(struct PlacedSprite *sprite,
-                                           struct SpritePlacement *point,
-                                           s32 *scale, s32 facing, s32 depth);
-void Sprite_ComposePicture(struct PlacedSprite *sprite, s32 facing);
+#define Render_ApplyProjectedPlacementAtDepth                                  \
+  Render_ApplyProjectedPlacementAtDepth
 
 #define BASE_PRIORITY(map) (((struct MapPriorityWork *)(map))->basePriority)
 // The priority field (bits 15..14) of a cell's word.
@@ -931,9 +890,6 @@ void ActorSystem_PlaceSprites(void) {
 // by the angle from the eye to the target. The Lost Age places each object in
 // a function of its own, the body of ☀️'s ObjectSystem_UpdateCameraFixed
 // loop.
-
-void Render_PlaceProjectedSprite(void *sprite, s32 *point, const s32 *scale,
-                                 s32 facing, s32 depth);
 
 s32 ActorCamera_ReturnTrue(void) { return 1; }
 

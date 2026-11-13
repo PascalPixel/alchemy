@@ -1,7 +1,7 @@
 /// @file
 /// The particle streams of summon 11, the formation objects summons place,
 /// palette brightening, and an unused second copy of the Nereid summon.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 

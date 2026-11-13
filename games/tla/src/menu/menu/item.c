@@ -1260,9 +1260,6 @@ s32 ItemMenu_SelectTarget(s32 mode) {
 }
 
 #undef IN_STOCK_LABEL_X
-#undef IN_STOCK_LABEL_X
-#undef IN_STOCK_LABEL_X
-#undef IN_STOCK_LABEL_X
 
 struct ItemMenuIcons {
   u8 unk000[0xf8];
@@ -1813,7 +1810,6 @@ s32 ItemMenu_ChooseCommand(void) {
 }
 
 #undef COMMAND_CURSOR_Y
-#undef COMMAND_CURSOR_Y
 
 // The item menu work block, as this function reads it.
 
@@ -2018,7 +2014,6 @@ void ItemMenu_TryBreak(void) {
 }
 
 #undef ITEM_COMMAND_TEXT_X
-#undef ITEM_COMMAND_TEXT_X
 
 struct InventoryMenuDetailsState {
   u8 unk000[0x34];
@@ -2141,7 +2136,6 @@ s32 ItemMenu_ShowDetails(s32 value) {
   return counter;
 }
 
-#undef DETAILS_WINDOW_WIDTH
 #undef DETAILS_WINDOW_WIDTH
 
 void ItemMenu_DrawItemDetailsWithCount(s32 a, s32 b, s32 c);
@@ -2429,7 +2423,6 @@ void ItemMenu_DrawItemDetailsWithCount(s32 window, s32 item, s32 count) {
 }
 
 #undef ITEM_DETAILS_MULTIPLIER_X
-#undef ITEM_DETAILS_MULTIPLIER_X
 
 #define Text_DrawStringInWindowFar                                             \
   ((void (*)(u8 *, s32, s32, s32))Text_DrawStringInWindowFar)
@@ -2639,8 +2632,6 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
 
 #undef HOW_MANY_Y
 #undef CURSOR_X
-#undef HOW_MANY_Y
-#undef CURSOR_X
 
 // Draws the selected item's icon, owner and item name in the heading.
 void ItemMenu_DrawItemHead(void) {
@@ -2727,7 +2718,6 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
   return selection;
 }
 
-#undef ITEM_DROP_QUESTION_X
 #undef ITEM_DROP_QUESTION_X
 
 // The question and its answers, as each translation lays them out. English and
@@ -2843,7 +2833,6 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
   return selection;
 }
 
-#undef EQUIP_QUESTION
 #undef EQUIP_QUESTION
 
 /// Item menu workspace (known fields only).
@@ -2993,8 +2982,6 @@ s32 ItemMenu_DrawNamePage(s32 window, s32 unused,
   return 1;
 }
 
-#undef PAGE_X
-#undef ENTRY_X
 #undef PAGE_X
 #undef ENTRY_X
 
@@ -3230,5 +3217,4 @@ s32 ItemMenu_GetCommandCursorY(s32 column, s32 row) {
 }
 #endif
 
-#undef CHANGE_HELP_X
 #undef CHANGE_HELP_X

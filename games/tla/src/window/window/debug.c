@@ -259,14 +259,25 @@ done:
 
 extern char SceneId_Ov69dRoom1;
 
-void Event_SetDestinationFar(s32 scene, s32 entrance);
+/* VIEW(window): routine Event_SetDestinationFar as void
+ * Event_SetDestinationFar(s32 scene, s32 entrance);
+ * gamepak/far_call/field_sequence.h has void Event_SetDestinationFar(s16
+ * primary, s16 secondary); not tried: Event_SetDestinationFar's declaration
+ * holds a FAKEMATCH tag. */
+void Event_SetDestinationFar__window(s32 scene, s32 entrance) __asm__(
+    "Event_SetDestinationFar");
+#define Event_SetDestinationFar Event_SetDestinationFar__window
 
 extern char SceneId_Ov665Room1;
 
 extern char SceneId_Ov668Room1;
 
 extern char SceneId_Ov682Room1;
-void PartyInventory_AddFar(s32 item);
+/* VIEW(window): routine PartyInventory_AddFar as void PartyInventory_AddFar(s32
+ * item); gamepak/far_call/game.h has s32 PartyInventory_AddFar(s32 item); not
+ * tried: PartyInventory_AddFar's declaration holds a FAKEMATCH tag. */
+void PartyInventory_AddFar__window(s32 item) __asm__("PartyInventory_AddFar");
+#define PartyInventory_AddFar PartyInventory_AddFar__window
 
 extern char SceneId_ShamanVillage4;
 

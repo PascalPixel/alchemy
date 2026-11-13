@@ -64,7 +64,7 @@
 #include "module/system/system.h"
 
 // Far calls the parts make, each passing its own view of the record:
-// ResourceMetadata_Register and SpriteAnimation_Start (field/resource_slot.c)
+// ResourceMetadata_Register and SpriteAnimation_Start (field.c, resource_slot/)
 // take the metadata slot state and the animation entry.
 s32 ResourceMetadata_RegisterFar(void *state, s32 id);
 void Sprite_RemoveAnimationFar(void *state, s32 handle);

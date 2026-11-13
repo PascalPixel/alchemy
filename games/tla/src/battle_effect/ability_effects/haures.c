@@ -1,6 +1,6 @@
 /// @file
 /// The Haures summon, and the open cylinder a summon's band is drawn on.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 
@@ -21,7 +21,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
 void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList(struct Model *model);
+void Render_DrawModelList__ability_effects(struct Model *model);
 void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
@@ -66,9 +66,9 @@ struct HalfPair {
 
 /* VIEW(f186dfc): variable gResourceTableEntries as extern struct
  * ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct
- * VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations'
+ * VramBlockCacheEntry gResourceTableEntries[]; tried as the 10 declarations'
  * extern struct ResourceTableEntry gResourceTableEntries[], it does not compile
- * in tla-ja: games/tla/src/battle_effect/ability_effects.c:35991: conflicting
+ * in tla-ja: games/tla/src/battle_effect/battle_effect.c:53344: conflicting
  * types for `gResourceTableEntries'. */
 extern struct ResourceTableEntry
     gResourceTableEntries__f186dfc[] __asm__("gResourceTableEntries");
@@ -124,14 +124,6 @@ extern char ResourceId_SmokeBandSheet;
 extern char ResourceId_Data134;
 
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
-/* VIEW(f186dfc): routine EffectSprite_CreateWithTiles as struct SpriteObject
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape, u32
- * attributes); the definition has struct EffectSprite
- * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
- * flags). */
-extern struct SpriteObject *EffectSprite_CreateWithTiles__f186dfc(
-    s32 width, s32 height, u32 shape,
-    u32 attributes) __asm__("EffectSprite_CreateWithTiles");
 void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_WipeCanvas(s32 a, s32 b);
 void BattleEffect_SetupBlendedDisplay(void);
@@ -237,7 +229,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       }
     }
   }
-  sprite = EffectSprite_CreateWithTiles__f186dfc(64, 64, 0xc0002000, 0);
+  sprite = EffectSprite_CreateWithTiles(64, 64, 0xc0002000, 0);
   ((struct FieldSprite **)work->objects)[18] = sprite;
   sprite->blendMode = 1;
   STAMP_TILES(work) =

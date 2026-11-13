@@ -2,10 +2,9 @@
 #define ALCHEMY_SCREENS_INTERNAL_H
 
 /// @file
-/// What every part of the screens object shares: its includes and the
-/// declarations the parts disagreed on. screens.c includes it before the
-/// parts, and each part includes it too, so that a part read on its own still
-/// resolves.
+/// What every part under screens/ shares: its includes and the declarations
+/// the parts disagreed on. window.c includes it before those parts, and each
+/// part includes it too, so that a part read on its own still resolves.
 
 #include "battle.h"
 #include "debug.h"
@@ -66,7 +65,12 @@
 // The screens object's functions its parts call before their definitions.
 struct BobPairObject;
 
-s32 Message_OpenWindow(s32 message, s32 x, s32 y, s32 style);
+/* VIEW(screens): routine Message_OpenWindow as s32 Message_OpenWindow(s32
+ * message, s32 x, s32 y, s32 style); window/window has struct Window
+ * *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {. */
+s32 Message_OpenWindow__screens(s32 message, s32 x, s32 y,
+                                s32 style) __asm__("Message_OpenWindow");
+#define Message_OpenWindow Message_OpenWindow__screens
 
 struct CommandRowIcon {
   u8 unk00[4];

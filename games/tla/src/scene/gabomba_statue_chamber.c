@@ -1,8 +1,6 @@
 /// @file
 /// The scene code of overlay 0x672, in ROM order.
 
-// ---- games/tla/src/scene/gabomba_statue_chamber.c ----
-
 #include "flags.h"
 #include "text/msg_ids.h"
 
@@ -533,7 +531,6 @@ void Func_02000ef0(struct Actor *object) { object->x = Actor_GetById(8)->x; }
 #undef EVENT_WORK
 #undef OBJECT
 
-// ---- games/tla/src/scene/gabomba_statue_chamber/s0f00.c ----
 // Scene code of overlay 0x672, in ROM order, from s0f00's offset up to the next
 // object the overlay links.
 

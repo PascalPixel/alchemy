@@ -1,21 +1,22 @@
 /// @file
 /// Picking a unit on one side: a random living target, or the living unit with
 /// the highest Attack.
-// Part of presentation.c.
+// Part of battle.c.
 
 #include "../presentation_internal.h"
 
 /* VIEW(strongest_unit): routine Unit_Get as struct BattleUnit *Unit_Get(s32
  * unitId); owner_state.h has void *Unit_Get(s32 owner); tried as the
  * definition's void *Unit_Get(s32 owner), which the object already declares, it
- * does not compile in tla-ja: games/tla/src/battle/presentation.c:1004: request
- * for member `hp' in something not a structure or union. */
+ * does not compile in tla-ja: games/tla/src/battle/battle.c:6206: request for
+ * member `hp' in something not a structure or union. */
 extern struct BattleUnit *
 Unit_Get__strongest_unit(s32 unitId) __asm__("Unit_Get");
 /* VIEW(strongest_unit): routine Battle_RandomFar as u32 Battle_RandomFar(void);
- * battle_system.h has s32 Battle_RandomFar(void); tried as the rest of the
- * object declares it, BattleAI_ChooseRandomTarget moves: 1 of 95 instructions
- * in tla-ja. */
+ * battle_system.h has s32 Battle_RandomFar(void); tried as the 2 declarations'
+ * u32 Battle_RandomFar(void), it does not compile in tla-ja:
+ * games/tla/src/battle/battle.c:6190: conflicting types for `Battle_RandomFar'.
+ */
 extern u32 Battle_RandomFar__strongest_unit(void) __asm__("Battle_RandomFar");
 
 /// Picks a random living target on one side: the party (target codes 0x100 +

@@ -1,11 +1,17 @@
 /// @file
 /// The row of command icons the player picks a command from.
-// Part of screens.c.
+// Part of window.c.
 
 #include "../screens_internal.h"
 #include "module/window/screens.h"
 
-extern const u16 gWindowSprite_BounceScales[32];
+/* VIEW(screens): variable gWindowSprite_BounceScales as const u16
+ * gWindowSprite_BounceScales[32]; window/window has u16
+ * gWindowSprite_BounceScales[]; not tried: gWindowSprite_BounceScales's
+ * declaration holds a FAKEMATCH tag. */
+extern const u16 gWindowSprite_BounceScales__screens[32] __asm__(
+    "gWindowSprite_BounceScales");
+#define gWindowSprite_BounceScales gWindowSprite_BounceScales__screens
 
 struct WindowTiles {
   u8 unk00[3];
@@ -35,7 +41,8 @@ s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
 #define WINDOW_WORK ((struct CommandRowWindowWork *)Ram_HeapSlots->windowTiles)
 
 /* VIEW(screens): variable gBgScroll as struct BgScrollPair gBgScroll[];
- * bg_scroll.h has struct BgScroll gBgScroll[]. */
+ * bg_scroll.h has struct BgScroll gBgScroll[]; not tried: gBgScroll's
+ * declaration holds a FAKEMATCH tag. */
 extern struct BgScrollPair gBgScroll__screens[] __asm__("gBgScroll");
 #include "main_routine_work.h"
 

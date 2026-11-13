@@ -1,6 +1,20 @@
 /// @file
 /// Scene code of overlay 0x67b, in ROM order.
 
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Actor_SelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#define EFFECT_SPRITE_PRIORITY
+#include "../../field/field_effect/spawn.c"
+
+#undef EFFECT_SPAWN
+
+// ---- scene/aqua_rock/aqua_rock.c ----
+
+/// Scene code of overlay 0x67b, in ROM order.
+
 // ---- games/tla/src/scene/aqua_rock.c ----
 
 #include "flags.h"
@@ -186,7 +200,10 @@ void Func_02000580(void) {
   }
 }
 
-extern s32 gData_02003204, gData_02003208, gData_0200320c, gData_02003210;
+extern s32 gData_02003204;
+extern s32 gData_02003208;
+extern s32 gData_0200320c;
+extern s32 gData_02003210;
 
 /// Unless flag 0x104 is set, runs four 240-frame timers (gData_02003204 to
 /// gData_02003210) that hold flags 0x200 to 0x203 set for their last 90
@@ -228,8 +245,6 @@ void Func_02000740(void) {
   if (++gData_02003210 > 239)
     gData_02003210 = 0;
 }
-
-#include "task.h"
 
 #define UNK02003450_SET(g, a, b, c, d, e, f, h, i, height, flag)               \
   (g)->unk00 = (a);                                                            \
@@ -419,9 +434,8 @@ void Func_02000d64(struct Actor *object, s32 limit) {
 
 /* VIEW(aqua_rock): routine MapGrid_CheckCollision as s32
  * MapGrid_CheckCollision(struct Actor *object, struct Vector3 *position);
- * module/scene/lemurian_ship.h has void MapGrid_CheckCollision(void); tried as
- * the definition's void MapGrid_CheckCollision(void), which the object already
- * declares, Func_02001e00 moves: 4 of 151 instructions in tla-ja. */
+ * module/scene/lemurian_ship.h has void MapGrid_CheckCollision(void); not
+ * tried: MapGrid_CheckCollision's bound declaration was not found. */
 extern s32 Func_02002970__aqua_rock(
     struct Actor *object,
     struct Vector3 *position) __asm__("MapGrid_CheckCollision");
@@ -1085,9 +1099,6 @@ void Func_02001f60(s32 id) {
     Actor_SelectAnimation(object, 2);
   }
 }
-
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags,
-                       s32 *params);
 
 void Func_02001f90(s32 arg0) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);

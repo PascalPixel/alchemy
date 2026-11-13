@@ -224,13 +224,6 @@ void BattleParty_ClearGuards(void) {
   }
 }
 
-/* VIEW(battle): routine DjinnRecovery_AddStandbyFar as void
- * DjinnRecovery_AddStandbyFar(s32 owner, s32 element, s32 djinn);
- * gamepak/far_call/game.h has u32 *DjinnRecovery_AddStandbyFar(u32 owner, u32
- * element, u32 djinn). */
-extern void DjinnRecovery_AddStandbyFar__battle(
-    s32 owner, s32 element, s32 djinn) __asm__("DjinnRecovery_AddStandbyFar");
-
 /// Adds to the trade offers every djinn an active owner can offer that is
 /// not offered yet; owners above 7 offer on the second side.
 void DjinnRecovery_Reconcile(void) {
@@ -258,7 +251,7 @@ void DjinnRecovery_Reconcile(void) {
               break;
           }
           if (i == list->count)
-            DjinnRecovery_AddStandbyFar__battle(owner, element, djinn);
+            DjinnRecovery_AddStandbyFar(owner, element, djinn);
         }
       }
     }

@@ -1,4 +1,24 @@
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Actor_SelectAnimation
+#define EFFECT_SET_SCRIPT Func_02002f90
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#include "../../../../games/tla/src/field/field_effect/spawn.c"
+
+#undef EFFECT_SET_SCRIPT
+
 #include "types.h"
+#include "event_inline.h"
+
+void Func_02000280(void) {
+  GameFlag_Set(513);
+  Event_RequestDjinnBattle(8, 52);
+}
+
+#include "../field/object/wait_until_idle.c"
+
+#include "../field/map/cell_get.c"
+
 #include "ram_buffer.h"
 #include "map.h"
 #include "field.h"
@@ -27,7 +47,7 @@ s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value) {
   return old;
 }
 
-#include "../../scene/tundaria_tower/tundaria_tower.h"
+#include "tundaria_tower/tundaria_tower.h"
 
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 terrain, s32 height);
@@ -64,9 +84,7 @@ void Func_02000338(struct Actor *object) {
 }
 
 #include "field_event.h"
-#include "event_inline.h"
 #include "battle.h"
-#include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "lib.h"
@@ -351,8 +369,6 @@ void Func_02000920(void) {
 void Func_0200095c(void) { Func_0200189c(); }
 
 extern const u8 gData_02003370[];
-
-void Func_02002f90(struct Actor *object, const void *script);
 
 /// Actor 8 is placed and given its script while the screen flashes, and three
 /// map cells change.

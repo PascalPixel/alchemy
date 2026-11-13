@@ -25,20 +25,7 @@ struct ModelTexture__f14153c {
   const u8 *pixels;
 };
 
-/* VIEW(f14153c): tag struct RenderModel as struct RenderModel__f14153c;
- * render_model.h has another definition. */
-struct RenderModel__f14153c {
-  s32 kind;
-  s32 unk04;
-  const void *mesh;
-  void *vertices;
-  struct ModelTexture__f14153c *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
-
-void Render_DrawModelList(struct Model *model);
+void Render_DrawModelList__battle_effect(struct Model *model);
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
@@ -56,12 +43,22 @@ extern u8 gMapCellBuffer[];
 /* VIEW(f14153c): variable gData_02014000 as extern struct EffectStep
  * gData_02014000[]; f13eb70 has extern u8 gData_02014000[]; tried as the rest
  * of the object declares it, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:4528: `gData_02014000__f14153c'
+ * games/tla/src/battle_effect/battle_effect.c:4045: `gData_02014000__f14153c'
  * undeclared (first use in this function). */
 extern struct EffectStep gData_02014000__f14153c[] __asm__("gData_02014000");
 
-struct SpriteObject *EffectSprite_CreateWithTiles(s32 width, s32 height,
-                                                  u32 shape, u32 attributes);
+/* VIEW(battle_effect): routine EffectSprite_CreateWithTiles as struct
+ * SpriteObject *EffectSprite_CreateWithTiles(s32 width, s32 height, u32 shape,
+ * u32 attributes); battle_effect/ability_effects has struct EffectSprite
+ * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
+ * flags) {; tried as the definition's struct EffectSprite
+ * *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes, s32
+ * flags), which the object already declares, BattleEffect_RunCruelRuin moves: 1
+ * of 2565 instructions, BattleEffect_RunEclipse moves: 2 of 2142 instructions
+ * in tla-ja. */
+struct SpriteObject *
+EffectSprite_CreateWithTiles__battle_effect(s32 width, s32 height, u32 shape,
+                                            u32 attributes);
 
 #define SLOT_ALT 188 // unkb8[1]
 #define OBJ_TILES(obj) (0x06010000 + gResourceTableEntries[(obj)->slot].offset)
@@ -107,7 +104,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   struct ModelTexture__f14153c texture;
   struct ModelTexture__f14153c texture2;
   struct ModelTexture__f14153c texture3;
-  struct RenderModel__f14153c *model;
+  struct RenderModel *model;
   struct EffectStep *p;
   struct EclipseObject *obj;
 
@@ -314,7 +311,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         }
       }
       if (frame > 47) {
-        struct RenderModel__f14153c *model;
+        struct RenderModel *model;
         void *verts;
         s32 modelShade;
 
@@ -507,7 +504,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
     }
     if (frame <= 109) {
       // Default: set for real below.
-      struct RenderModel__f14153c *model = 0;
+      struct RenderModel *model = 0;
       void *verts = 0;
 
       verts = Heap_AllocEwram(32);
@@ -811,7 +808,7 @@ struct Model;
 /* VIEW(f14153c): tag struct ModelDraw as struct ModelDraw__f14153c;
  * battle_effect.c has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/battle_effect/battle_effect.c:5359: structure has no member
+ * games/tla/src/battle_effect/battle_effect.c:4854: structure has no member
  * named `depthBias'. */
 struct ModelDraw__f14153c {
   s32 kind;

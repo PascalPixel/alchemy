@@ -117,7 +117,7 @@ void Graphics_ClearCharacterBlockAndPalette(s32 alt) {
 /* VIEW(credits): variable gFlash_Handler3 as u16 gFlash_Handler3[];
  * sound_driver_symbols.h has struct LzPackWork *gFlash_Handler3; tried as the 3
  * declarations' extern FlashWaitProc gFlash_Handler3, it does not compile in
- * tla-ja: games/tla/src/menu/credits.c:72: parse error before
+ * tla-ja: games/tla/src/menu/credits.c:117: parse error before
  * `gFlash_Handler3'. */
 extern u16 gFlash_Handler3__credits[] __asm__("gFlash_Handler3");
 

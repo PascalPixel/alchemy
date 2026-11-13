@@ -2,8 +2,8 @@
 #define ALCHEMY_MENUS_INTERNAL_H
 
 /// @file
-/// What every part of the menus object shares: its includes. menus.c
-/// includes it before the parts, and each part includes it too.
+/// What every part under menus/ shares: its includes. window.c includes it
+/// before those parts, and each part includes it too.
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -176,7 +176,10 @@ extern u8 gWorkspace_StatusTitle[];
 extern u8 gWorkspace_PageLabel[];
 extern u8 gWorkspace_RangeDash[];
 
-s32 Portrait_Load(s32 portrait, s32 slot);
+/* VIEW(menus): routine Portrait_Load as s32 Portrait_Load(s32 portrait, s32
+ * slot); window/screens has s32 Portrait_Load(u32 entry, s32 slot) {. */
+s32 Portrait_Load__menus(s32 portrait, s32 slot) __asm__("Portrait_Load");
+#define Portrait_Load Portrait_Load__menus
 
 extern s8 gMenu_SaveSlotActionByPosition[];
 

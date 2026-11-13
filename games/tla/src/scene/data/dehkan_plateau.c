@@ -48,10 +48,10 @@ u32 gData_02003f14[] = {
     0, 1, 38,
 };
 
-s32 gFieldEffect_DurationScripts[] = {
-    (s32)gData_02003e60,
-    (s32)gData_02003e9c,
-    (s32)gData_02003ed8,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gData_02003e60,
+    gData_02003e9c,
+    gData_02003ed8,
 };
 
 s16 gData_02003f44[] = {

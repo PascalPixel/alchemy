@@ -18,7 +18,7 @@ extern s16 ArcTan2__f0d8ff8(s32 y, s32 x) __asm__("ArcTan2");
 /* VIEW(f0d8ff8): tag struct ChainNode as struct ChainNode__f0d8ff8;
  * visual_attributes.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:5333: structure has no member
+ * games/tla/src/field/object/visual_attributes.c:4841: structure has no member
  * named `visible'. */
 struct ChainNode__f0d8ff8 {
   struct ChainNode__f0d8ff8 *next;
@@ -32,7 +32,7 @@ struct ChainNode__f0d8ff8 {
 /* VIEW(f0d8ff8): tag struct ChainSlot as struct ChainSlot__f0d8ff8;
  * visual_attributes.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:5325: structure has no member
+ * games/tla/src/field/object/visual_attributes.c:4833: structure has no member
  * named `segments'. */
 struct ChainSlot__f0d8ff8 {
   u8 unk00[4];
@@ -41,18 +41,11 @@ struct ChainSlot__f0d8ff8 {
   struct ChainNode__f0d8ff8 *head;
 };
 
-/* VIEW(f0d8ff8): tag struct ChainWork as struct ChainWork__f0d8ff8;
- * visual_attributes.c has another definition. */
-struct ChainWork__f0d8ff8 {
-  u8 unk00[12];
-  struct ChainSlot__f0d8ff8 slots[8];
-};
-
 /// Lays a slot's chain of nodes along the line between two points, bowed
 /// sideways by a half sine of the given height.
 s32 Rope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
                   s32 height) {
-  struct ChainWork__f0d8ff8 *work = Ram_HeapSlots->unk84[6];
+  struct ChainWork *work = Ram_HeapSlots->unk84[6];
   s32 dx = toX - x;
   s32 ax = dx >> 8;
   s32 dy = toY - y;
@@ -110,7 +103,7 @@ void Rope_Coil(s32 slot, s32 firstId, s32 secondId) {
 /* VIEW(f0d9194): tag struct ChainNode as struct ChainNode__f0d9194;
  * visual_attributes.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:5445: structure has no member
+ * games/tla/src/field/object/visual_attributes.c:4930: structure has no member
  * named `visible'. */
 struct ChainNode__f0d9194 {
   struct ChainNode__f0d9194 *next;
@@ -124,7 +117,7 @@ struct ChainNode__f0d9194 {
 /* VIEW(f0d9194): tag struct ChainSlot as struct ChainSlot__f0d9194;
  * visual_attributes.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:5435: structure has no member
+ * games/tla/src/field/object/visual_attributes.c:4920: structure has no member
  * named `segments'. */
 struct ChainSlot__f0d9194 {
   u8 unk00[4];
@@ -133,23 +126,10 @@ struct ChainSlot__f0d9194 {
   struct ChainNode__f0d9194 *head;
 };
 
-/* VIEW(f0d9194): tag struct ChainWork as struct ChainWork__f0d9194;
- * visual_attributes.c has another definition. */
-struct ChainWork__f0d9194 {
-  u8 unk00[12];
-  struct ChainSlot__f0d9194 slots[8];
-};
-
-/* VIEW(f0d9194): routine Rope_AllocNode as struct ChainNode__f0d9194
- * *Rope_AllocNode(void); the definition has struct Work9cItem
- * *Rope_AllocNode(void). */
-extern struct ChainNode__f0d9194 *
-Rope_AllocNode__f0d9194(void) __asm__("Rope_AllocNode");
-
 /// Builds a slot's chain of nodes, one for each 6 units of the distance between
 /// two points, laid out as a flat spiral around the first point.
 s32 Rope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
-  struct ChainWork__f0d9194 *work = Ram_HeapSlots->unk84[6];
+  struct ChainWork *work = Ram_HeapSlots->unk84[6];
   s32 result = 0;
   s32 dx = (toX - x) >> 8;
   s32 dy = (toY - y) >> 8;
@@ -166,7 +146,7 @@ s32 Rope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
 
   slot->segments = segments;
   for (i = 0; i <= segments; i++) {
-    struct ChainNode__f0d9194 *node = Rope_AllocNode__f0d9194();
+    struct ChainNode__f0d9194 *node = Rope_AllocNode();
     u16 step;
 
     if (node == NULL) {
@@ -209,7 +189,7 @@ void Rope_GetEndNodePosition(s32 index, s32 *position) {
 /* VIEW(f0d92d4): tag struct ChainSlot as struct ChainSlot__f0d92d4;
  * visual_attributes.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:5515: structure has no member
+ * games/tla/src/field/object/visual_attributes.c:5006: structure has no member
  * named `segments'. */
 struct ChainSlot__f0d92d4 {
   u8 unk00[4];
@@ -219,33 +199,13 @@ struct ChainSlot__f0d92d4 {
   void *head;
 };
 
-/* VIEW(f0d92d4): tag struct ChainWork as struct ChainWork__f0d92d4;
- * visual_attributes.c has another definition. */
-struct ChainWork__f0d92d4 {
-  u8 unk00[12];
-  struct ChainSlot__f0d92d4 slots[8];
-};
-
 extern s32 gRope_LashPhase;
-
-/* VIEW(f0d92d4): routine Rope_Throw as void Rope_Throw(s32 index, s32 x,
- * s32 y, s32 z, s32 toX, s32 toY, s32 toZ, s32 wobble); the definition has s32
- * Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ). */
-extern void Rope_Throw__f0d92d4(s32 index, s32 x, s32 y, s32 z, s32 toX,
-                                s32 toY, s32 toZ,
-                                s32 wobble) __asm__("Rope_Throw");
-/* VIEW(f0d92d4): routine Rope_Recoil as void Rope_Recoil(s32 index, s32 x,
- * s32 y, s32 z, s32 toX, s32 toY, s32 toZ, s32 wobble); the definition has s32
- * Rope_Recoil(s32 index, s32 x, s32 y, s32 z). */
-extern void Rope_Recoil__f0d92d4(s32 index, s32 x, s32 y, s32 z, s32 toX,
-                                 s32 toY, s32 toZ,
-                                 s32 wobble) __asm__("Rope_Recoil");
 
 /// Lash: throws rope index from post fromId to post toId and ties it (both
 /// posts take animation 2). A rope coiled too short to reach falls back to its
 /// post.
 void Rope_Lash(s32 index, s32 fromId, s32 toId) {
-  struct ChainWork__f0d92d4 *work = Ram_HeapSlots->unk84[6];
+  struct ChainWork *work = Ram_HeapSlots->unk84[6];
   struct Actor *from = ObjectTable_Get(fromId);
   struct Actor *to = ObjectTable_Get(toId);
 
@@ -275,16 +235,15 @@ void Rope_Lash(s32 index, s32 fromId, s32 toId) {
       y = toY;
       z = from->z + (toZ - from->z) * count / segments;
 
-      Rope_Throw__f0d92d4(index, from->x, from->y + 0x80000, from->z, x,
-                          y + 0x80000, z, Trig_Sin(gRope_LashPhase) << 2);
+      Rope_Throw(index, from->x, from->y + 0x80000, from->z, x, y + 0x80000, z,
+                 Trig_Sin(gRope_LashPhase) << 2);
       slot->unk18 = 0;
       wait(1);
-      Rope_Recoil__f0d92d4(index, from->x, from->y + 0x80000, from->z, x,
-                           y + 0x80000, z, Trig_Sin(gRope_LashPhase) << 2);
+      Rope_Recoil(index, from->x, from->y + 0x80000, from->z, x, y + 0x80000, z,
+                  Trig_Sin(gRope_LashPhase) << 2);
     } else {
-      Rope_Throw__f0d92d4(index, from->x, from->y + 0x80000, from->z, to->x,
-                          to->y + 0x80000, to->z,
-                          Trig_Sin(gRope_LashPhase) << 2);
+      Rope_Throw(index, from->x, from->y + 0x80000, from->z, to->x,
+                 to->y + 0x80000, to->z, Trig_Sin(gRope_LashPhase) << 2);
       gRope_LashPhase += 0x1000;
       wait(6);
       Actor_SelectAnimationFar(from, 2);
@@ -298,7 +257,7 @@ void Rope_Lash(s32 index, s32 fromId, s32 toId) {
 /* VIEW(f0d9498): tag struct ChainNode as struct ChainNode__f0d9498;
  * visual_attributes.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:5629: structure has no member
+ * games/tla/src/field/object/visual_attributes.c:5114: structure has no member
  * named `visible'. */
 struct ChainNode__f0d9498 {
   struct ChainNode__f0d9498 *next;
@@ -313,7 +272,7 @@ struct ChainNode__f0d9498 {
 /* VIEW(f0d9498): tag struct ChainSlot as struct ChainSlot__f0d9498;
  * visual_attributes.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:5586: structure has no member
+ * games/tla/src/field/object/visual_attributes.c:5071: structure has no member
  * named `active'. */
 struct ChainSlot__f0d9498 {
   u8 unk00[4];
@@ -328,19 +287,12 @@ struct ChainSlot__f0d9498 {
   struct ChainNode__f0d9498 *head;
 };
 
-/* VIEW(f0d9498): tag struct ChainWork as struct ChainWork__f0d9498;
- * visual_attributes.c has another definition. */
-struct ChainWork__f0d9498 {
-  u8 unk00[12];
-  struct ChainSlot__f0d9498 slots[8];
-};
-
 /// Throws rope index from one point to another over twice its node count in
 /// frames: the end flies on an arc and each node follows its neighbour at 6
 /// pixels; then the rope swings and its flag is set. Does nothing to a rope
 /// already thrown.
 s32 Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
-  struct ChainWork__f0d9498 *work = Ram_HeapSlots->unk84[6];
+  struct ChainWork *work = Ram_HeapSlots->unk84[6];
   s32 dx = toX - x;
   s32 ex = dx >> 8;
   s32 dy = toY - y;
@@ -420,7 +372,7 @@ s32 Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
 /* VIEW(f0d9710): tag struct ChainWork as struct ChainWork__f0d9710;
  * visual_attributes.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:5671: structure has no member
+ * games/tla/src/field/object/visual_attributes.c:5151: structure has no member
  * named `from'. */
 struct ChainWork__f0d9710 {
   struct Actor *from;
@@ -428,13 +380,6 @@ struct ChainWork__f0d9710 {
 };
 
 extern s32 gRope_UntiePhase;
-
-/* VIEW(f0d9710): routine Rope_Recoil as void Rope_Recoil(s32 index, s32 x,
- * s32 y, s32 z, s32 toX, s32 toY, s32 toZ, s32 wobble); the definition has s32
- * Rope_Recoil(s32 index, s32 x, s32 y, s32 z). */
-extern void Rope_Recoil__f0d9710(s32 index, s32 x, s32 y, s32 z, s32 toX,
-                                 s32 toY, s32 toZ,
-                                 s32 wobble) __asm__("Rope_Recoil");
 
 /// Unties rope index between posts fromId and toId (Rope_Recoil).
 void Rope_Untie(s32 index, s32 fromId, s32 toId) {
@@ -449,9 +394,8 @@ void Rope_Untie(s32 index, s32 fromId, s32 toId) {
   if (from != NULL && to != NULL) {
     work->from = from;
     work->to = to;
-    Rope_Recoil__f0d9710(index, from->x, from->y + 0x80000, from->z, to->x,
-                         to->y + 0x80000, to->z,
-                         Trig_Sin(gRope_UntiePhase) * 4);
+    Rope_Recoil(index, from->x, from->y + 0x80000, from->z, to->x,
+                to->y + 0x80000, to->z, Trig_Sin(gRope_UntiePhase) * 4);
     gRope_UntiePhase += 0x1000;
   }
 }
@@ -463,7 +407,7 @@ void Rope_Untie(s32 index, s32 fromId, s32 toId) {
 /* VIEW(f0d9790): tag struct ChainNode as struct ChainNode__f0d9790;
  * visual_attributes.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:5764: structure has no member
+ * games/tla/src/field/object/visual_attributes.c:5246: structure has no member
  * named `visible'. */
 struct ChainNode__f0d9790 {
   struct ChainNode__f0d9790 *next;
@@ -478,7 +422,7 @@ struct ChainNode__f0d9790 {
 /* VIEW(f0d9790): tag struct ChainSlot as struct ChainSlot__f0d9790;
  * visual_attributes.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:5725: structure has no member
+ * games/tla/src/field/object/visual_attributes.c:5207: structure has no member
  * named `active'. */
 struct ChainSlot__f0d9790 {
   u8 unk00[4];
@@ -494,7 +438,7 @@ struct ChainSlot__f0d9790 {
 /* VIEW(f0d9790): tag struct ChainWork as struct ChainWork__f0d9790;
  * visual_attributes.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:5749: structure has no member
+ * games/tla/src/field/object/visual_attributes.c:5231: structure has no member
  * named `from'. */
 struct ChainWork__f0d9790 {
   struct Actor *from;
@@ -717,7 +661,7 @@ void Tightrope_Initialize(void) {
 /* VIEW(f0d9b80): tag struct ChainSlot as struct ChainSlot__f0d9b80;
  * visual_attributes.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:5953: structure has no member
+ * games/tla/src/field/object/visual_attributes.c:5443: structure has no member
  * named `angle'. */
 struct ChainSlot__f0d9b80 {
   s16 first;
@@ -733,7 +677,7 @@ struct ChainSlot__f0d9b80 {
 /* VIEW(f0d9b80): tag struct ChainWork as struct ChainWork__f0d9b80;
  * visual_attributes.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:5958: structure has no member
+ * games/tla/src/field/object/visual_attributes.c:5448: structure has no member
  * named `angle'. */
 struct ChainWork__f0d9b80 {
   u8 unk000[8];
@@ -743,12 +687,14 @@ struct ChainWork__f0d9b80 {
 
 /* VIEW(f0d9b80): routine OamMatrix_AllocFromTransform as s32
  * OamMatrix_AllocFromTransform(struct ChainTransform *source); affine.h has s32
- * OamMatrix_AllocFromTransform(struct AffineTransform *source). */
+ * OamMatrix_AllocFromTransform(struct AffineTransform *source); not tried:
+ * OamMatrix_AllocFromTransform's bound declaration was not found. */
 extern s32 AffineMatrix_BuildForEffect__f0d9b80(
     struct ChainTransform *source) __asm__("OamMatrix_AllocFromTransform");
 /* VIEW(f0d9b80): routine Oam_AddSpriteAtDepthClamped as void
  * Oam_AddSpriteAtDepthClamped(void *entry, s32 slot); f0d6674 has void
- * Oam_AddSpriteAtDepthClamped(struct GroundParticle *sprite, s32 depth). */
+ * Oam_AddSpriteAtDepthClamped(struct GroundParticle *sprite, s32 depth); not
+ * tried: Oam_AddSpriteAtDepthClamped's bound declaration was not found. */
 extern void
 Func_080140d8__f0d9b80(void *entry,
                        s32 slot) __asm__("Oam_AddSpriteAtDepthClamped");
@@ -1008,11 +954,6 @@ void Tightrope_Coil(s32 index, s32 from, s32 to) {
 
 // Builds a chain of nodes around a point.
 
-/* VIEW(f0d9b80): routine Rope_AllocNode as struct LineNode
- * *Rope_AllocNode(void); f0d9194 has struct ChainNode__f0d9194
- * *Rope_AllocNode(void). */
-extern struct LineNode *Rope_AllocNode__f0d9b80(void) __asm__("Rope_AllocNode");
-
 /// Builds a slot's chain of nodes, one for each 6 units of the distance between
 /// two points, laid out as a flat spiral around the first point, every node of
 /// kind 2.
@@ -1033,7 +974,7 @@ s32 Tightrope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
   s32 kind = 2; // One constant for its whole life.
 
   for (i = 0; i <= segments; i++) {
-    struct LineNode *node = Rope_AllocNode__f0d9b80();
+    struct LineNode *node = Rope_AllocNode();
     u16 step;
 
     if (node == NULL) {
@@ -1055,13 +996,6 @@ s32 Tightrope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
 }
 
 extern s32 gTightrope_LashPhase;
-/* VIEW(f0d9b80): routine Tightrope_Throw as void Tightrope_Throw(s32 arg, s32
- * x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2, s32 wave); the definition has s32
- * Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ).
- */
-extern void Tightrope_Throw__f0d9b80(s32 arg, s32 x1, s32 y1, s32 z1, s32 x2,
-                                     s32 y2, s32 z2,
-                                     s32 wave) __asm__("Tightrope_Throw");
 
 /// Unused: nothing refers to it. Rope_Lash for a tightrope, without the
 /// short rope's fall.
@@ -1070,9 +1004,9 @@ void Tightrope_Lash(s32 arg, s32 firstId, s32 secondId) {
   struct Actor *second = ObjectTable_Get(secondId);
 
   if (first != NULL && second != NULL) {
-    Tightrope_Throw__f0d9b80(arg, first->x, first->y + 0x80000, first->z,
-                             second->x, second->y + 0x80000, second->z,
-                             Trig_Sin(gTightrope_LashPhase) << 2);
+    Tightrope_Throw(arg, first->x, first->y + 0x80000, first->z, second->x,
+                    second->y + 0x80000, second->z,
+                    Trig_Sin(gTightrope_LashPhase) << 2);
     gTightrope_LashPhase += 0x1000;
     wait(6);
     Actor_SelectAnimationFar(first, 2);
@@ -1363,7 +1297,8 @@ struct TileEffectWork *HangingVine_Initialize(s32 kind) {
 
 /* VIEW(f0da3bc): routine Oam_AddSpriteAtDepthClamped as void
  * Oam_AddSpriteAtDepthClamped(void *entry, s32 slot); f0d6674 has void
- * Oam_AddSpriteAtDepthClamped(struct GroundParticle *sprite, s32 depth). */
+ * Oam_AddSpriteAtDepthClamped(struct GroundParticle *sprite, s32 depth); not
+ * tried: Oam_AddSpriteAtDepthClamped's bound declaration was not found. */
 extern void
 Func_080140d8__f0da3bc(void *entry,
                        s32 slot) __asm__("Oam_AddSpriteAtDepthClamped");
@@ -1373,7 +1308,7 @@ Func_080140d8__f0da3bc(void *entry,
 /* VIEW(f0da3bc): tag struct ChainSlot as struct ChainSlot__f0da3bc;
  * visual_attributes.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:6634: structure has no member
+ * games/tla/src/field/object/visual_attributes.c:6067: structure has no member
  * named `root'. */
 struct ChainSlot__f0da3bc {
   s16 id;
@@ -1384,7 +1319,7 @@ struct ChainSlot__f0da3bc {
 /* VIEW(f0da3bc): tag struct ChainWork as struct ChainWork__f0da3bc;
  * visual_attributes.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:6624: structure has no member
+ * games/tla/src/field/object/visual_attributes.c:6057: structure has no member
  * named `sheet'. */
 struct ChainWork__f0da3bc {
   s32 sheet; ///< the resource entry of the links' tiles
@@ -1471,7 +1406,7 @@ void HangingVine_Draw(void) {
 /* VIEW(f0dacb8): tag struct ChainSlot as struct ChainSlot__f0dacb8;
  * visual_attributes.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:6731: structure has no member
+ * games/tla/src/field/object/visual_attributes.c:6163: structure has no member
  * named `root'. */
 struct ChainSlot__f0dacb8 {
   s16 objectId;
@@ -1487,8 +1422,7 @@ struct ChainSlot__f0dacb8 {
 /* VIEW(f0dacb8): tag struct ChainWork as struct ChainWork__f0dacb8;
  * visual_attributes.c has another definition; tried with the definition the
  * rest of the object has, HangingVine_Update moves: 1 of 173 instructions in
- * tla-ja.
- */
+ * tla-ja. */
 struct ChainWork__f0dacb8 {
   u8 unk00[4];
   struct ChainSlot__f0dacb8 slots[8];

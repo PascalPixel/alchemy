@@ -9,15 +9,16 @@
 #include "gamepak/far_call/field.h"
 
 /* VIEW(f14cca8): variable gBgScroll as extern struct FxBgScroll gBgScroll[];
- * bg_scroll.h has extern struct BgScroll gBgScroll[]; tried as the rest of the
- * object declares it, BattleEffect_SetupBlendedDisplay moves: 1 of 57
- * instructions in tla-ja. */
+ * bg_scroll.h has extern struct BgScroll gBgScroll[]; tried as the 2
+ * declarations' extern struct FxBgScroll gBgScroll[], it does not compile in
+ * tla-ja: games/tla/src/battle_effect/battle_effect.c:11642: conflicting types
+ * for `gBgScroll'. */
 extern struct FxBgScroll gBgScroll__f14cca8[] __asm__("gBgScroll");
 
 /* VIEW(f14cca8): static FillWords_ as FillWords___f14cca8; f13eb70 has static
  * __inline__ void FillWords_(void *destination, s32 size, u32 value) {
  * Iwram_FillWords(destination, size, value); }; tried with the definition the
- * rest of the object has, BattleEffect_SetupBlendedDisplay moves: 3 of 57
+ * rest of the object has, BattleEffect_SetupBlendedDisplay moves: 10 of 57
  * instructions in tla-ja. */
 static __inline__ void FillWords___f14cca8(void *destination, s32 size,
                                            u32 value) {

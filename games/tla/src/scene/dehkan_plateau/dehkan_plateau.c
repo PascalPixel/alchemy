@@ -1,6 +1,19 @@
 /// @file
 /// Scene code of overlay 0x655, in ROM order.
 
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Func_02003ba0
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#include "../../field/field_effect/spawn.c"
+
+#undef EFFECT_SET_SCRIPT
+
+// ---- scene/dehkan_plateau/dehkan_plateau.c ----
+
+/// Scene code of overlay 0x655, in ROM order.
+
 // ---- games/tla/src/scene/dehkan_plateau.c ----
 
 #include "flags.h"
@@ -393,7 +406,6 @@ void Func_020019b8(void) {
 }
 
 void Actor_TakePlaceOf(struct Actor *object, struct Actor *other);
-void Actor_StartScript(struct Actor *object, const void *script);
 void Actor_MoveToObject(s32 id, s32 target);
 
 extern struct Actor *gData_02004420;
@@ -698,21 +710,17 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
 
 void CrumblingPillars_Step(const void *data);
 void CrumblingPillars_StepWithStandIn(const void *data);
-void Func_02002180(void);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
-void Func_02001804(void);
-extern const u16 gData_02003fd2[];
-extern const struct CellRecord gData_02004066[];
 /* VIEW(events_g): routine Actor_SetHorizontalPositionAndAngleWithTerrain as
  * void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 id, s32 x, s32 z, s16
  * angle); event.h has void Actor_SetHorizontalPositionAndAngleWithTerrain(s32
  * actorId, s32 x, s32 z, s32 angle); tried as the definition's void
  * Actor_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x, s32 z,
  * s16 angle), it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau.c:832: conflicting types for
- * `Actor_SetHorizontalPositionAndAngleWithTerrain'. */
+ * games/tla/src/scene/dehkan_plateau/dehkan_plateau.c:720: conflicting types
+ * for `Actor_SetHorizontalPositionAndAngleWithTerrain'. */
 extern void Actor_SetHorizontalPositionAndAngleWithTerrain__events_g(
     u32 id, s32 x, s32 z,
     s16 angle) __asm__("Actor_SetHorizontalPositionAndAngleWithTerrain");

@@ -20,9 +20,8 @@
  * ContigoObject *object, const void *effect); the definition has void
  * Func_02003e54(struct Actor *object, struct SparkleWork *work); tried as the
  * definition's void Func_02003e54(struct Actor *object, struct
- * SparkleWork__s3e54 *work), which the object already declares, it does not
- * compile in tla-ja: games/tla/src/scene/contigo.c:2224: conflicting types for
- * `Func_02003e54'. */
+ * SparkleWork__s3e54 *work), which the object already declares, Func_02001d50
+ * moves: 2 of 1701 instructions in tla-ja. */
 struct ContigoObject;
 extern void Func_02003e54__contigo(struct ContigoObject *object,
                                    const void *effect) __asm__("Func_02003e54");
@@ -31,8 +30,7 @@ extern void Func_02003e54__contigo(struct ContigoObject *object,
  * ContigoObject *object); the definition has void Func_02003f54(struct
  * ContigoObject__s3e54 *object); tried as the definition's void
  * Func_02003f54(struct ContigoObject__s3e54 *object), which the object already
- * declares, it does not compile in tla-ja: games/tla/src/scene/contigo.c:2258:
- * conflicting types for `Func_02003f54'. */
+ * declares, Func_02001d50 moves: 2 of 1701 instructions in tla-ja. */
 struct ContigoObject;
 extern void
 Func_02003f54__contigo(struct ContigoObject *object) __asm__("Func_02003f54");
@@ -198,12 +196,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(contigo): variable gData_02004c70 as extern u8 gData_02004c70[]; the
- * definition has u32 gData_02004c70[] = { 0xffff, 0, 0, 0, 0, 0, }; tried as
- * the definition's extern s32 gData_02004c70[], it does not compile in tla-ja:
- * games/tla/src/scene/contigo.c:2509: conflicting types for `gData_02004c70'.
- */
-extern u8 gData_02004c70__contigo[] __asm__("gData_02004c70");
+extern struct ActorPlacement gData_02004c70[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -223,7 +216,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   }
   if (scene == (s32)&SceneId_Ov694Room3)
     return gData_02005390;
-  return gData_02004c70__contigo;
+  return gData_02004c70;
 }
 
 extern struct Trigger gData_020054e0[];
@@ -1117,37 +1110,39 @@ void Func_02001d38(void) {
 /* VIEW(contigo): variable gData_020048a0 as extern const u8 gData_020048a0[];
  * the definition has u32 gData_020048a0[] = { 39, 2, 4, 0xa40000, 0, 0x1680000,
  * 1, 39, 1, 0, 10, 22, 3, 0xa000, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as
- * the definition's extern u32 gData_020048a0[], it does not compile in tla-ja:
- * games/tla/src/scene/contigo.c:1171: `gData_020048a0__contigo' undeclared
- * (first use in this function). */
+ * the definition's extern DEFINE_G_DATA_02002634(gData_02004758, 0x1520000,
+ * 0x34c0000, 0x13e0000, 0x1300000, 0x3680000, 0x1400000, 0x3740000, 0x1500000,
+ * 0x1600..., it does not compile in tla-ja:
+ * games/tla/src/scene/contigo/contigo.c:1141: `gData_020048a0__contigo'
+ * undeclared (first use in this function). */
 extern const u8 gData_020048a0__contigo[] __asm__("gData_020048a0");
 /* VIEW(contigo): variable gData_020048f8 as extern const u8 gData_020048f8[];
  * the definition has u32 gData_020048f8[] = { 39, 2, 4, 0xbe0000, 0, 0x1600000,
  * 1, 39, 1, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as the definition's
  * extern u32 gData_020048f8[], it does not compile in tla-ja:
- * games/tla/src/scene/contigo.c:1174: `gData_020048f8__contigo' undeclared
- * (first use in this function). */
+ * games/tla/src/scene/contigo/contigo.c:1144: `gData_020048f8__contigo'
+ * undeclared (first use in this function). */
 extern const u8 gData_020048f8__contigo[] __asm__("gData_020048f8");
 /* VIEW(contigo): variable gData_0200493c as extern const u8 gData_0200493c[];
  * the definition has u32 gData_0200493c[] = { 39, 2, 4, 0xbe0000, 0, 0x1860000,
  * 1, 39, 1, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as the definition's
  * extern u32 gData_0200493c[], it does not compile in tla-ja:
- * games/tla/src/scene/contigo.c:1173: `gData_0200493c__contigo' undeclared
- * (first use in this function). */
+ * games/tla/src/scene/contigo/contigo.c:1143: `gData_0200493c__contigo'
+ * undeclared (first use in this function). */
 extern const u8 gData_0200493c__contigo[] __asm__("gData_0200493c");
 /* VIEW(contigo): variable gData_02004980 as extern const u8 gData_02004980[];
  * the definition has u32 gData_02004980[] = { 39, 2, 4, 0xb60000, 0, 0x1700000,
  * 1, 39, 1, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as the definition's
  * extern u32 gData_02004980[], which the object already declares, it does not
- * compile in tla-ja: games/tla/src/scene/contigo.c:1171:
+ * compile in tla-ja: games/tla/src/scene/contigo/contigo.c:1141:
  * `gData_02004980__contigo' undeclared (first use in this function). */
 extern const u8 gData_02004980__contigo[] __asm__("gData_02004980");
 /* VIEW(contigo): variable gData_020049c4 as extern const u8 gData_020049c4[];
  * the definition has u32 gData_020049c4[] = { 39, 2, 4, 0xa00000, 0, 0x17e0000,
  * 1, 39, 1, 0, 1, 3, 0, 1, 17, 39, 2, 0, 10, 13, 0xffff, 0, }; tried as the
  * definition's extern u32 gData_020049c4[], it does not compile in tla-ja:
- * games/tla/src/scene/contigo.c:1576: `gData_020049c4__contigo' undeclared
- * (first use in this function). */
+ * games/tla/src/scene/contigo/contigo.c:1546: `gData_020049c4__contigo'
+ * undeclared (first use in this function). */
 extern const u8 gData_020049c4__contigo[] __asm__("gData_020049c4");
 extern const u8 gData_02006030[];
 
@@ -2216,7 +2211,8 @@ struct ResourceTableEntry {
 /* VIEW(s3e54): tag struct SparkleSprite as struct SparkleSprite__s3e54;
  * contigo.c has another definition; tried with the definition the rest of the
  * object has, it does not compile in tla-ja:
- * games/tla/src/scene/contigo.c:2237: structure has no member named `blend'. */
+ * games/tla/src/scene/contigo/contigo.c:2203: structure has no member named
+ * `blend'. */
 struct SparkleSprite__s3e54 {
   u8 unk00[5];
   u8 unk05_0 : 5;
@@ -2231,7 +2227,7 @@ struct SparkleSprite__s3e54 {
 
 /* VIEW(s3e54): tag struct SparkleWork as struct SparkleWork__s3e54; contigo.c
  * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja: games/tla/src/scene/contigo.c:2229:
+ * it does not compile in tla-ja: games/tla/src/scene/contigo/contigo.c:2195:
  * incompatible types in assignment. */
 struct SparkleWork__s3e54 {
   struct SparkleSprite__s3e54 sprites[4];
@@ -2275,7 +2271,8 @@ void Func_02003e54(struct Actor *object, struct SparkleWork__s3e54 *work) {
 /* VIEW(s3e54): tag struct ContigoObject as struct ContigoObject__s3e54;
  * contigo.c has another definition; tried with the definition the rest of the
  * object has, it does not compile in tla-ja:
- * games/tla/src/scene/contigo.c:2258: structure has no member named `unk62'. */
+ * games/tla/src/scene/contigo/contigo.c:2224: structure has no member named
+ * `unk62'. */
 struct ContigoObject__s3e54 {
   u8 unk00[0x62];
   u8 unk62;

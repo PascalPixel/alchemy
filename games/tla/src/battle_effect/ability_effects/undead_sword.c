@@ -1,7 +1,7 @@
 /// @file
 /// Undead Sword, Plume Edge and Diamond Berg, and the bodies of Dreamtide and
 /// Watery Grave and of Waft and Aroma.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 

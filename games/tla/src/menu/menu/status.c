@@ -835,7 +835,6 @@ s32 StatusScreen_SelectCommand(void) {
 
 #undef KEYS_PRESSED
 #undef SWITCH_CHARACTER_HELP_X
-#undef SWITCH_CHARACTER_HELP_X
 
 struct CursorMenuState {
   u8 padding[40];
@@ -962,7 +961,6 @@ void StatusScreen_ShowMemberProgressMessage(void *window, s32 help, s32 full) {
 }
 
 #undef HELP_LENGTH
-#undef HELP_LENGTH
 
 // The Japanese edition draws the Lv label through Text_DrawStringInWindowFar.
 #if LANGUAGE == LANGUAGE_JAPANESE
@@ -1056,7 +1054,6 @@ void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
 }
 
 #undef DRAW_LEVEL_LABEL
-#undef DRAW_LEVEL_LABEL
 
 struct ItemMenuCursor {
   u8 unk00[5];
@@ -1126,8 +1123,6 @@ void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
 
 #undef STAT_DIGITS
 #undef STAT_X
-#undef STAT_DIGITS
-#undef STAT_X
 
 // The rows one page of the list shows: Japanese fits six, the other editions
 // five.
@@ -1190,7 +1185,6 @@ s32 PagedList_Build(struct MenuPageResult *result, s32 index) {
   return 1;
 }
 
-#undef PAGE_ROWS
 #undef PAGE_ROWS
 
 extern u32 gMenu_PatternRowMasks[][2];
@@ -1393,9 +1387,6 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
 #undef PAGE_ROWS
 #undef USABLE_RIGHT
 #undef USABLE_BOTTOM
-#undef PAGE_ROWS
-#undef USABLE_RIGHT
-#undef USABLE_BOTTOM
 
 // The psynergy menu work block, as this function reads it.
 #define PSY_LIST_OFFSET 0x1c4
@@ -1510,11 +1501,6 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
 #undef COST_X
 #undef FIRST_RANGE_ROW
 #undef EMPTY_MESSAGE_Y
-#undef PAGE_ROWS
-#undef PAGE_ICONS_X
-#undef COST_X
-#undef FIRST_RANGE_ROW
-#undef EMPTY_MESSAGE_Y
 
 // The pressed keys, read again at each test.
 #define KEYS_PRESSED (((struct InputState *)&gInput)->pressed)
@@ -1621,9 +1607,6 @@ s32 PsynergyMenu_SelectAction(void) {
 }
 
 #undef KEYS_PRESSED
-#undef PAGE_ROWS
-#undef CURSOR_X
-#undef CURSOR_Y
 #undef PAGE_ROWS
 #undef CURSOR_X
 #undef CURSOR_Y
@@ -1734,8 +1717,6 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
 }
 
 #undef PAGE_ROWS
-#undef PAGE_ROWS
-#undef EQUIP_SLOT_WIDTH
 #undef EQUIP_SLOT_WIDTH
 
 /// The rows of a page of the item list: six in Japanese.
@@ -1810,10 +1791,7 @@ s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct MenuResult *state) {
 }
 
 #undef PAGE_ROWS
-#undef PAGE_ROWS
 #undef EMPTY_MESSAGE_X
-#undef EMPTY_MESSAGE_X
-#undef STAT_X
 #undef STAT_X
 
 // The pressed keys, read again at each test.
@@ -1942,8 +1920,6 @@ s32 ItemMenu_SelectItem(void) {
 }
 
 #undef PAGE_ROWS
-#undef PAGE_ROWS
-#undef CURSOR_X
 #undef CURSOR_X
 
 struct CategoryMenuState {

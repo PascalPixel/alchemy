@@ -6,7 +6,7 @@
 
 #include "types.h"
 
-extern s32 gFieldEffect_DurationScripts[];
+extern const s32 *gFieldEffect_DurationScripts[];
 
 extern u32 gFieldEffect_ShortScript[];
 

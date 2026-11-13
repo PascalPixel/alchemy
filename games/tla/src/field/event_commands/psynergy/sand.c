@@ -1,6 +1,6 @@
 /// @file
 /// Two routines not yet understood.
-// Part of psynergy.c.
+// Part of radial.c.
 
 #include "../psynergy_internal.h"
 
@@ -28,28 +28,24 @@ void FieldPsynergy_EndSand(void);
 /* VIEW(f0e4a34): routine Sand_SpawnGrain as void Sand_SpawnGrain(void *sprite,
  * void *particle, s32 index, s32 tiles, s32 high); the definition has void
  * Sand_SpawnGrain(struct EffectSprite__f0e446c *sprite, struct EffectParticle
- * *particle, s32 unused, s32 tiles, s32 high). */
+ * *particle, s32 unused, s32 tiles, s32 high); not tried: Sand_SpawnGrain's
+ * bound declaration was not found. */
 extern void Func_080e45a8__f0e4a34(void *sprite, void *particle, s32 index,
                                    s32 tiles,
                                    s32 high) __asm__("Sand_SpawnGrain");
 /* VIEW(f0e4a34): routine Sand_InitLeaderSprite as void
  * Sand_InitLeaderSprite(void *sprite, s32 tiles); the definition has void
- * Sand_InitLeaderSprite(struct EffectSprite__f0e446c *sprite, s32 tiles). */
+ * Sand_InitLeaderSprite(struct EffectSprite__f0e446c *sprite, s32 tiles); not
+ * tried: Sand_InitLeaderSprite's bound declaration was not found. */
 extern void Func_080e4510__f0e4a34(void *sprite,
                                    s32 tiles) __asm__("Sand_InitLeaderSprite");
 void Picture_SinkColumnsByWave(u8 *source, u8 *destination, s32 phase);
 void Sand_DrawLeaderSprite(void *sprite);
-/* VIEW(f0e4a34): routine GrowingParticle_Update as void
- * GrowingParticle_Update(void *sprite, void *particle, s32 index, s32 tiles);
- * the definition has void GrowingParticle_Update(struct EffectSprite *sprite,
- * struct EffectParticle *particle, s32 unused, s32 tiles). */
-extern void
-GrowingParticle_Update__f0e4a34(void *sprite, void *particle, s32 index,
-                                s32 tiles) __asm__("GrowingParticle_Update");
 /* VIEW(f0e4a34): routine FieldPsynergy_DecodePicture as void
  * FieldPsynergy_DecodePicture(void *source, void *buffer, s32 size); the
  * definition has void FieldPsynergy_DecodePicture(struct PictureSource *source,
- * void *buffer, s32 size). */
+ * void *buffer, s32 size); not tried: FieldPsynergy_DecodePicture's bound
+ * declaration was not found. */
 extern void
 Func_080e43a4__f0e4a34(void *source, void *buffer,
                        s32 size) __asm__("FieldPsynergy_DecodePicture");
@@ -134,7 +130,7 @@ void FieldPsynergy_Sand(void) {
     particle = work + 0x1200;
     sprite = work + 0x800;
     for (; i <= 32; i++) {
-      GrowingParticle_Update__f0e4a34(sprite, particle, i, particleTiles);
+      GrowingParticle_Update(sprite, particle, i, particleTiles);
       sprite += 40;
       particle += 28;
     }
@@ -209,7 +205,8 @@ void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
  * EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct
  * GlowParticle *particle); f0e2c38 has void
  * EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct
- * SprayParticle *particle). */
+ * SprayParticle *particle); not tried: EffectSprite_DrawAtWorldPosition's
+ * marker was not found. */
 extern void EffectSprite_DrawAtWorldPosition__f0e4a34(
     struct EffectSprite *sprite,
     struct GlowParticle *particle) __asm__("EffectSprite_DrawAtWorldPosition");

@@ -2,8 +2,8 @@
 #define ALCHEMY_ABILITY_EFFECTS_INTERNAL_H
 
 /// @file
-/// What every part of the ability_effects object shares: its includes.
-/// ability_effects.c includes it before the parts, and each part includes it
+/// What every part under ability_effects/ shares: its includes.
+/// battle_effect.c includes it before those parts, and each part includes it
 /// too.
 
 #include "types.h"

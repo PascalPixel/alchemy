@@ -1,6 +1,69 @@
 /// @file
 /// Scene code of overlay 0x663, in ROM order.
 
+#include "module/scene/airs_rock.h"
+
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Actor_SelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#define EFFECT_SPRITE_PRIORITY
+#include "../../field/field_effect/spawn.c"
+
+#include "types.h"
+
+s32 Func_0200033c(s32 a0) {
+  Actor_SetSpriteFlags(a0, 0);
+  return 0;
+}
+
+#include "ram_buffer.h"
+
+extern u8 gMapCellBuffer[];
+
+s32 Func_02000348(u32 layer, s32 x, s32 y) {
+  struct AirsRockMapWork *map =
+      (struct AirsRockMapWork *)Ram_HeapSlots->mapWork;
+  u8 *cell;
+
+  if (map == NULL)
+    return 0;
+  if (layer <= 2)
+    cell = map->layers[layer].cells;
+  else
+    cell = gMapCellBuffer;
+  cell += (x + (y << 7)) << 2;
+  return (cell[2] << 8) | cell[3];
+}
+
+s32 Func_02000384(u32 layer, s32 x, s32 y, s32 value) {
+  struct AirsRockMapWork *map =
+      (struct AirsRockMapWork *)Ram_HeapSlots->mapWork;
+  u8 *cell;
+  s32 old;
+
+  if (map == NULL)
+    return 0;
+  if (layer <= 2)
+    cell = map->layers[layer].cells;
+  else
+    cell = gMapCellBuffer;
+  cell += (x + (y << 7)) << 2;
+  old = (cell[2] << 8) | cell[3];
+  cell[2] = value >> 8;
+  cell[3] = value;
+  return old;
+}
+
+#include "../../field/object/wait_until_idle.c"
+
+#undef EFFECT_SET_SCRIPT
+
+// ---- scene/airs_rock/airs_rock.c ----
+
+/// Scene code of overlay 0x663, in ROM order.
+
 #include "flags.h"
 #include "../shared/map_cells.h"
 #include "../shared/actors.h"
@@ -12,13 +75,10 @@
 // For each id of a list ended by 0xffff: clears the object's mark and, on a
 // cell with attribute bit 6, blocks the cells ahead of and behind it and sets
 // the mark.
-#include "types.h"
-#include "ram_buffer.h"
 #include "map.h"
 #include "actor.h"
 #include "event_inline.h"
 #include "module/field/field.h"
-#include "module/scene/airs_rock.h"
 #include "module/scene/scene.h"
 #include "module/system/system.h"
 #include "module/tla.h"
@@ -135,8 +195,6 @@ void Func_020005ec(void) {
   }
   Event_End();
 }
-
-s32 Func_02000384();
 
 /// Object 11's column sets or clears flag 0x311 and writes the low byte of the
 /// cell value Func_02000348 returns (its high byte 0xff when the object is
@@ -282,12 +340,11 @@ void Func_0200092c(struct Actor *object) {
 #include "system/vector3.h"
 
 extern s16 gData_02004674[][4];
-void Actor_StartScript(struct Actor *object, const u8 *script);
+void Actor_StartScript(struct Actor *object, const s32 *script);
 /* VIEW(airs_rock): routine Actor_HasArrived as s32 Actor_HasArrived(struct
  * Actor *object); module/scene/scene.h has void Actor_HasArrived(struct Actor
- * *object, const void *script); tried as the rest of the object declares it, it
- * does not compile in tla-ja: games/tla/src/scene/airs_rock.c:411: too few
- * arguments to function `Actor_HasArrived'. */
+ * *object, const void *script); not tried: Actor_HasArrived's bound declaration
+ * was not found. */
 extern s32
 Func_02003ba8__airs_rock(struct Actor *object) __asm__("Actor_HasArrived");
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -837,7 +894,8 @@ DEFINE_POSITION_DISTANCE_ABOVE(Position_DistanceAbove)
 
 #include "field/event_work.h"
 
-extern u8 gData_02003de0[], gData_02003dcc[];
+extern u8 gData_02003de0[];
+extern u8 gData_02003dcc[];
 
 void Func_02001908(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -976,9 +1034,8 @@ void Func_02001ca4(void) {
 
 /* VIEW(airs_rock): routine Actor_PlaceMovedBlock as void
  * Actor_PlaceMovedBlock(void); module/scene/scene.h has void
- * Actor_PlaceMovedBlock(s32 id); tried as the rest of the object declares it,
- * it does not compile in tla-ja: games/tla/src/scene/airs_rock.c:1014: too few
- * arguments to function `Actor_PlaceMovedBlock'. */
+ * Actor_PlaceMovedBlock(s32 id); not tried: Actor_PlaceMovedBlock's bound
+ * declaration was not found. */
 extern void Func_02003cc0__airs_rock(void) __asm__("Actor_PlaceMovedBlock");
 
 void Func_02001cc8(void) {

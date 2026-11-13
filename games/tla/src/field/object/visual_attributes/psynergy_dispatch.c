@@ -10,21 +10,10 @@
 #include "module/field/object.h"
 #include "module/system/system.h"
 
-/* VIEW(f0daecc): tag struct ChainLink as struct ChainLink__f0daecc;
- * visual_attributes.c has another definition. */
-struct ChainLink__f0daecc {
-  struct ChainLink__f0daecc *next;
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk10[2];
-  s8 kind;
-};
-
 /* VIEW(f0daecc): tag struct ChainSlot as struct ChainSlot__f0daecc;
  * visual_attributes.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:6916: structure has no member
+ * games/tla/src/field/object/visual_attributes.c:6354: structure has no member
  * named `root'. */
 struct ChainSlot__f0daecc {
   s16 objectId;
@@ -34,25 +23,10 @@ struct ChainSlot__f0daecc {
   u8 unk0c[4];
   s32 phase;
   s32 active;
-  struct ChainLink__f0daecc *root;
+  struct ChainLink *root;
 };
 
 struct Actor *Actor_GetById(u32 objectId);
-/* VIEW(f0daecc): routine HangingVine_Initialize as void
- * *HangingVine_Initialize(s32 kind); the definition has struct TileEffectWork
- * *HangingVine_Initialize(s32 kind). */
-extern void *
-HangingVine_Initialize__f0daecc(s32 kind) __asm__("HangingVine_Initialize");
-/* VIEW(f0daecc): routine HangingVine_FindFreeSlot as struct ChainSlot__f0daecc
- * *HangingVine_FindFreeSlot(void); the definition has struct WorkA4Slot
- * *HangingVine_FindFreeSlot(void). */
-extern struct ChainSlot__f0daecc *
-HangingVine_FindFreeSlot__f0daecc(void) __asm__("HangingVine_FindFreeSlot");
-/* VIEW(f0daecc): routine HangingVine_AllocLink as struct ChainLink__f0daecc
- * *HangingVine_AllocLink(void); the definition has struct WorkA4Item
- * *HangingVine_AllocLink(void). */
-extern struct ChainLink__f0daecc *
-HangingVine_AllocLink__f0daecc(void) __asm__("HangingVine_AllocLink");
 
 #define CELL_MASK 0xfff00000 // 16-pixel cells
 
@@ -63,8 +37,8 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
   struct ChainObject *object;
   struct MapWork *map;
   struct ChainSlot__f0daecc *slot;
-  struct ChainLink__f0daecc *link;
-  struct ChainLink__f0daecc **tail;
+  struct ChainLink *link;
+  struct ChainLink **tail;
   struct MapCell *cells;
   struct MapCell *cell;
   s32 i;
@@ -84,11 +58,11 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
   if (running == 0) {
     if (object->sprite != 0 && object->sprite->entries[0] != 0)
       kind = *object->sprite->entries[0];
-    HangingVine_Initialize__f0daecc(kind);
+    HangingVine_Initialize(kind);
   }
   if (HangingVine_FindSlot(objectId) != 0)
     return;
-  slot = HangingVine_FindFreeSlot__f0daecc();
+  slot = HangingVine_FindFreeSlot();
   if (slot == 0)
     return;
 
@@ -117,8 +91,7 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
   // Hang the links.
   last = 6;
   tail = &slot->root;
-  for (i = 0; i <= last && (link = HangingVine_AllocLink__f0daecc()) != 0;
-       i++) {
+  for (i = 0; i <= last && (link = HangingVine_AllocLink()) != 0; i++) {
     link->x = x;
     link->y = y + (15 << 16) - i * (14 << 16);
     link->z = z;
@@ -347,19 +320,14 @@ void HangingVine_Place(s32 id, s32 force) {
 
 void FieldPsynergy_HaltOnTarget(s32 id);
 void FieldPsynergy_StartMindReadWave(s32 sourceId, s32 targetId);
-void FieldPsynergy_SteerPushedTarget(s32 targetId);
-void FieldPsynergy_LiftOnTarget(s32 targetId);
-void FieldPsynergy_ForceOnTarget(s32 targetId);
-void FieldPsynergy_DouseOnTarget(s32 targetId);
-void FieldPsynergy_FrostOnTarget(s32 targetId);
-void FieldPsynergy_PlyOnTarget(s32 targetId);
+#define FieldPsynergy_SteerPushedTarget FieldPsynergy_SteerPushedTarget
+#define FieldPsynergy_ForceOnTarget FieldPsynergy_ForceOnTarget
+#define FieldPsynergy_DouseOnTarget FieldPsynergy_DouseOnTarget
+#define FieldPsynergy_FrostOnTarget FieldPsynergy_FrostOnTarget
 /* VIEW(f0daecc): routine FieldPsynergy_WhirlwindOnTarget as void
  * FieldPsynergy_WhirlwindOnTarget(s32 targetId); battle.h has void
- * FieldPsynergy_WhirlwindOnTarget(void); tried as the definition's void
- * FieldPsynergy_WhirlwindOnTarget(void), which the object already declares, it
- * does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes.c:7369: too many arguments to
- * function `FieldPsynergy_WhirlwindOnTarget'. */
+ * FieldPsynergy_WhirlwindOnTarget(void); not tried:
+ * FieldPsynergy_WhirlwindOnTarget's bound declaration was not found. */
 extern void FieldEffect_RunWhirlwindOnTarget__f0daecc(s32 targetId) __asm__(
     "FieldPsynergy_WhirlwindOnTarget");
 void FieldPsynergy_CatchOnTarget(s32 targetId);
@@ -653,13 +621,6 @@ void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
   }
 }
 
-/* VIEW(visual_attributes): routine EffectSprite_Draw as void
- * EffectSprite_Draw(void *work); effect_sprite.h has void
- * EffectSprite_Draw(struct EffectSprite *sprite).
- */
-extern void
-EffectSprite_Draw__visual_attributes(void *work) __asm__("EffectSprite_Draw");
-
 /// The OBJ priority a Psynergy's canvas takes: the caster's own when it
 /// casts facing away (0xc000), else 0, in front of everything.
 s32 FieldPsynergy_GetCanvasPriority(struct Actor *object, s32 kind) {
@@ -703,22 +664,8 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object) {
 
 /// Per-frame callback: draws the effect scene's sprite (effect work +0x7c8).
 void BattleEffect_DrawSceneSprite(void) {
-  EffectSprite_Draw__visual_attributes((u8 *)Ram_HeapSlots->effectWork + 0x7c8);
+  EffectSprite_Draw((u8 *)Ram_HeapSlots->effectWork + 0x7c8);
 }
-
-/* VIEW(visual_attributes): routine EffectSprite_Init as void
- * EffectSprite_Init(struct DepthSprite *sprite, s32 a, s32 b, u32 c, s32
- * tiles); effect_sprite.h has void EffectSprite_Init(struct EffectSprite
- * *sprite, s32 pivotX, s32 pivotY, u32 attributes, s32 tile). */
-extern void
-EffectSprite_Init__visual_attributes(struct DepthSprite *sprite, s32 a, s32 b,
-                                     u32 c,
-                                     s32 tiles) __asm__("EffectSprite_Init");
-/* VIEW(f0daecc): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32
- * *position); ground_particles has void Camera_WorldToScreen(union
- * FieldCoordinate *position). */
-extern void
-Camera_WorldToScreen__f0daecc(s32 *position) __asm__("Camera_WorldToScreen");
 
 void Func_080dba5c(void) {
   struct DepthScene *scene = Ram_HeapSlots->effectWork;
@@ -743,7 +690,7 @@ void Func_080dba5c(void) {
     scene->vramSlot = slot;
     Heap_Release(buffer);
     sprite = &scene->sprite;
-    EffectSprite_Init__visual_attributes(sprite, 16, 31, 0x80000000, tiles);
+    EffectSprite_Init(sprite, 16, 31, 0x80000000, tiles);
     sprite->frame = 0;
     sprite->priority = 0;
     sprite->hidden = 0;
@@ -752,7 +699,7 @@ void Func_080dba5c(void) {
     position[0] = scene->x;
     position[1] = mainObject->y + 0x1c0000;
     position[2] = mainObject->z;
-    Camera_WorldToScreen__f0daecc(position);
+    Camera_WorldToScreen(position);
     sprite->x = position[0];
     sprite->y = position[2];
     Task_Add(BattleEffect_DrawSceneSprite, TASK_PASS_VBLANK);

@@ -231,9 +231,9 @@ void EasternAlhafraShip_SpawnNote(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
  * EasternAlhafraShip_SpawnNote(s32 x, s32 y, s32 z, s32 rotation, s32 timer);
  * the definition has void EasternAlhafraShip_SpawnNote(s32 x, s32 y, s32 z, s16
  * value, s32 fifth); tried as the definition's void
- * EasternAlhafraShip_SpawnNote(u16 *ids), it does not compile in tla-ja:
- * games/tla/src/scene/eastern_alhafra_ship.c:215: conflicting types for
- * `EasternAlhafraShip_SpawnNote'. */
+ * EasternAlhafraShip_SpawnNote(s32 x, s32 y, s32 z, s16 value, s32 fifth),
+ * which the object already declares, Actor_EmitNotes moves: 2 of 79
+ * instructions in tla-ja. */
 extern s32 EasternAlhafraShip_SpawnNote__s0438(
     s32 x, s32 y, s32 z, s32 rotation,
     s32 timer) __asm__("EasternAlhafraShip_SpawnNote");

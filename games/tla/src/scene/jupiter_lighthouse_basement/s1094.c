@@ -140,3 +140,32 @@ void Leader_CenterInCell(void) {
 /// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
 /// one of the table's cells.
 DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
+
+// ---- scene/jupiter_lighthouse_basement/s16c4.c ----
+
+/// Scene code of overlay 0x699, in ROM order.
+
+#include "io_reg.h"
+#include "event_work.h"
+
+struct CellTargetEntry;
+
+/* VIEW(s16c4): tag struct CellTarget as struct CellTarget__s16c4; cell_target.h
+ * has another definition; tried with the definition the rest of the object has,
+ * CrackedTile_Fall moves: 2 of 131 instructions in tla-ja. */
+struct CellTarget__s16c4 {
+  s16 firstFlag;
+  s16 flagByte;
+  s16 kind;
+  s16 x;
+  s16 z;
+  s16 count;
+  s16 current;
+  s16 shown;
+  s16 tile;
+};
+
+#include "io_write.h"
+
+DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s16c4,
+                         Leader_CenterInCell)

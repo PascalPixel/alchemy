@@ -1,6 +1,6 @@
 /// @file
 /// Ransack, the rush bursts and Flying Attack, and the burst scene they play.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 

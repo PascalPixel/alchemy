@@ -30,11 +30,10 @@ void Actor_ShowEmoteById(s32 actor, s32 a, s32 b);
 s32 FieldCamera_GetActor();
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Oam_AddSpriteAtDepthClamped(u32 *oam, s32 depth);
-/* VIEW(s0b84): routine Statue_Sink as void Statue_Sink(const void *script,
- * s32 a, s32 b); the definition has void Statue_Sink(u16 *list, s32 mode, s32
- * count); tried as the definition's void Statue_Sink(u16 *list, s32 mode, s32
- * count), which the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert.c:1695: conflicting types for
+/* VIEW(s0b84): routine Statue_Sink as void Statue_Sink(const void *script, s32
+ * a, s32 b); the definition has void Statue_Sink(u16 *list, s32 mode, s32
+ * count); tried as the rest of the object declares it, it does not compile in
+ * tla-ja: games/tla/src/scene/yampi_desert.c:1694: conflicting types for
  * `Statue_Sink'. */
 extern void Statue_Sink__s0b84(const void *script, s32 a,
                                s32 b) __asm__("Statue_Sink");
@@ -1997,4 +1996,3 @@ u32 gYampiDesert_SlideDust[] = {
     0, 1, 38,
 };
 // clang-format on
-#undef PIXELS__s3910

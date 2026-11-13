@@ -1,6 +1,6 @@
 /// @file
 /// Light Surge.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 
@@ -35,7 +35,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
 void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList(struct Model *model);
+void Render_DrawModelList__ability_effects(struct Model *model);
 void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
@@ -57,12 +57,9 @@ void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f171430): routine BattleObject_GetFar as void
- * **BattleObject_GetFar(s32 objectId); motobj.h has struct BattleObj
- * *BattleObject_GetFar(s32 objectId); tried as the 11 declarations' void
- * **BattleObject_GetFar(s32 objectId), it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:20063: conflicting types for
- * `BattleObject_GetFar'. */
+/* VIEW(f171430): routine BattleObject_GetFar as void **BattleObject_GetFar(s32
+ * objectId); motobj.h has struct BattleObj *BattleObject_GetFar(s32 objectId);
+ * not tried: BattleObject_GetFar's bound declaration was not found. */
 extern void **
 GetBattleObjectSlotFar__f171430(s32 objectId) __asm__("BattleObject_GetFar");
 

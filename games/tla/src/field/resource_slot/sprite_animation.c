@@ -1,6 +1,6 @@
 /// @file
 /// Sprites, their animations and the picture caches they draw from.
-// Part of resource_slot.c.
+// Part of field.c.
 
 #include "../resource_slot_internal.h"
 #include "module/field/field.h"
@@ -43,9 +43,8 @@ struct ResourceSprite {
  * SpriteAnimation_Alloc(s32 id); the definition has struct AnimationEntry
  * *SpriteAnimation_Alloc(s32 id); tried as the definition's struct
  * AnimationEntry *SpriteAnimation_Alloc(s32 id), which the object already
- * declares, it does not compile in tla-ja:
- * games/tla/src/field/resource_slot.c:482: conflicting types for
- * `SpriteAnimation_Alloc'. */
+ * declares, SpriteAnimation_Alloc (gone) moves: 60 of 60 instructions in
+ * tla-ja. */
 extern s32 AnimationObject_Allocate__resource_slot(s32 id) __asm__(
     "SpriteAnimation_Alloc");
 #define SpriteAnimation_Alloc AnimationObject_Allocate__resource_slot
@@ -139,8 +138,8 @@ s32 Animation_LookupValueByKey(s32 key) {
 /* VIEW(resource_slot): tag struct ActorSpriteView as struct
  * ActorSpriteView__resource_slot; actor_view.h has another definition; tried
  * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/resource_slot.c:113: dereferencing pointer to
- * incomplete type. */
+ * tla-ja: games/tla/src/field/field.c:1026: structure has no member named
+ * `width'. */
 struct ActorSpriteView__resource_slot {
   u8 unk00[5];
   u8 unk05Low : 2;
@@ -164,6 +163,17 @@ struct ActorSpriteView__resource_slot {
   u8 unk1c[0x0c];
   struct AnimationEntry *entries[4];
 };
+/* VIEW(resource_slot): routine InitializeAnimationObjects as s32
+ * InitializeAnimationObjects(struct ActorSpriteView__resource_slot *state);
+ * actor_view.h has s32 InitializeAnimationObjects(struct ActorSpriteView *);
+ * tried as the definition's s32 InitializeAnimationObjects(struct
+ * ActorSpriteView__resource_slot *state), which the object already declares, it
+ * does not compile in tla-ja: games/tla/src/field/field.c:1027: conflicting
+ * types for `InitializeAnimationObjects'. */
+s32 InitializeAnimationObjects__resource_slot(
+    struct ActorSpriteView__resource_slot
+        *state) __asm__("InitializeAnimationObjects");
+#define InitializeAnimationObjects InitializeAnimationObjects__resource_slot
 s32 InitializeAnimationObjects(struct ActorSpriteView__resource_slot *state) {
   s32 index;
   struct AnimationEntry **slot;
@@ -246,6 +256,17 @@ void SpriteAnimation_Reset(struct AnimationEntry *work) {
   }
 }
 
+/* VIEW(resource_slot): routine ResourceMetadata_Register as s32
+ * ResourceMetadata_Register(struct MetadataSlotState *state, s32 id);
+ * actor_view.h has s32 ResourceMetadata_Register(struct ActorSpriteView *,
+ * s32); tried as the definition's s32 ResourceMetadata_Register(struct
+ * MetadataSlotState *state, s32 id), which the object already declares, it does
+ * not compile in tla-ja: games/tla/src/field/field.c:1114: conflicting types
+ * for `ResourceMetadata_Register'. */
+s32 ResourceMetadata_Register__resource_slot(
+    struct MetadataSlotState *state,
+    s32 id) __asm__("ResourceMetadata_Register");
+#define ResourceMetadata_Register ResourceMetadata_Register__resource_slot
 s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id) {
   s32 value = state->slots[0];
   s32 index = 0;
@@ -347,6 +368,17 @@ void SpriteAnimation_Start(struct AnimationEntry *work, s32 no) {
   }
 }
 
+/* VIEW(resource_slot): routine Animation_ApplyChildArgument as s32
+ * Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags);
+ * actor_view.h has s32 Animation_ApplyChildArgument(struct ActorSpriteView *,
+ * s32); tried as the definition's s32 Animation_ApplyChildArgument(struct
+ * AnimationGroup *state, s32 flags), which the object already declares, it does
+ * not compile in tla-ja: games/tla/src/field/field.c:1220: conflicting types
+ * for `Animation_ApplyChildArgument'. */
+s32 Animation_ApplyChildArgument__resource_slot(
+    struct AnimationGroup *state,
+    s32 flags) __asm__("Animation_ApplyChildArgument");
+#define Animation_ApplyChildArgument Animation_ApplyChildArgument__resource_slot
 s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags) {
   s32 highBit;
   s32 index;
@@ -416,6 +448,16 @@ s32 Sprite_SetAnimationTimers(struct ChildGroup *group, s32 value) {
   return 0;
 }
 
+/* VIEW(resource_slot): routine Animation_ApplyChildValue as void
+ * Animation_ApplyChildValue(struct ChildGroup *group, s32 value); actor_view.h
+ * has void Animation_ApplyChildValue(struct ActorSpriteView *, s32); tried as
+ * the definition's void Animation_ApplyChildValue(struct ChildGroup *group, s32
+ * value), which the object already declares, it does not compile in tla-ja:
+ * games/tla/src/field/field.c:1294: conflicting types for
+ * `Animation_ApplyChildValue'. */
+void Animation_ApplyChildValue__resource_slot(
+    struct ChildGroup *group, s32 value) __asm__("Animation_ApplyChildValue");
+#define Animation_ApplyChildValue Animation_ApplyChildValue__resource_slot
 void Animation_ApplyChildValue(struct ChildGroup *group, s32 value) {
   s32 i;
 
@@ -476,6 +518,15 @@ void VramBlock_Load93(void) {
   VramCache_Load(93, size, data);
 }
 
+/* VIEW(resource_slot): routine SpriteAnimation_Alloc as struct AnimationEntry
+ * *SpriteAnimation_Alloc(s32 id); system/system.h has s32
+ * SpriteAnimation_Alloc(s32 id); tried as the definition's struct
+ * AnimationEntry *SpriteAnimation_Alloc(s32 id), which the object already
+ * declares, it does not compile in tla-ja: games/tla/src/field/field.c:1358:
+ * conflicting types for `SpriteAnimation_Alloc'. */
+struct AnimationEntry *
+SpriteAnimation_Alloc__resource_slot(s32 id) __asm__("SpriteAnimation_Alloc");
+#define SpriteAnimation_Alloc SpriteAnimation_Alloc__resource_slot
 struct AnimationEntry *SpriteAnimation_Alloc(s32 id) {
   struct AnimationMetadata *metadata;
   struct AnimationEntry *entry;
@@ -548,13 +599,6 @@ typedef char
     ResourceObjectWork_size[sizeof(struct ResourceObjectWork) == 56 ? 1 : -1];
 
 #include "vram_tab.h"
-
-/* VIEW(vram_block_93): routine ResourceMetadata_Register as s32
- * ResourceMetadata_Register(struct ResourceSprite *sprite, s32 id); the
- * definition has s32 ResourceMetadata_Register(struct MetadataSlotState *state,
- * s32 id). */
-extern s32 ResourceMetadata_Register__vram_block_93(
-    struct ResourceSprite *sprite, s32 id) __asm__("ResourceMetadata_Register");
 
 /// Creates an animated sprite object for animation id, using one of 64 free
 /// objects and a VRAM cache entry. Returns the object, or NULL on failure.
@@ -639,7 +683,7 @@ struct ResourceObject *Sprite_Create(s32 id) {
   *attribute++ = 0;
   *attribute++ = 0x6000;
   *attribute = (gResourceTableEntries[93].offset >> 5) | 0x800;
-  if (ResourceMetadata_Register__vram_block_93(sprite, id) == -1) {
+  if (ResourceMetadata_Register(sprite, id) == -1) {
     /* FAKEMATCH(dead): a store of the byte it reloads keeps the -1 built after
      * the call and never used; with the call alone, 20 of 154 instructions
      * differ in tla-en. */

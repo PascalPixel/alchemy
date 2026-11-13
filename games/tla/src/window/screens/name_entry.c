@@ -1,6 +1,6 @@
 /// @file
 /// The name entry screen.
-// Part of screens.c.
+// Part of window.c.
 
 #include "../screens_internal.h"
 #include "module/system/system.h"
@@ -85,8 +85,6 @@ void Window_CopyTilemapRegion(struct Window *window, const void *resource) {
   }
   Heap_Release(buffer);
 }
-
-s32 Text_MeasureDecoded(s32 start, u32 *width, u32 *height, s32 mode);
 
 void Window_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
                                s32 width, s32 height, u32 field) {
@@ -259,11 +257,15 @@ extern u8 gNameEntry_EndKeyLabel[];
 
 #endif
 
-void Portrait_OpenWindow(s32 member, s32 x, s32 y, s32 side);
-void MenuCursor_SetPositionImmediateFar(struct NameCursorMotion *cursor, s32 x,
-                                        s32 y);
-void MenuCursor_SetFar(struct NameCursorMotion *cursor, s32 x, s32 y,
-                       s32 speed);
+/* VIEW(screens): routine Portrait_OpenWindow as void Portrait_OpenWindow(s32
+ * member, s32 x, s32 y, s32 side); window/window has struct Window
+ * *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x, s32 y) {; not
+ * tried: Portrait_OpenWindow's declaration holds a FAKEMATCH tag. */
+void Portrait_OpenWindow__screens(s32 member, s32 x, s32 y,
+                                  s32 side) __asm__("Portrait_OpenWindow");
+#define Portrait_OpenWindow Portrait_OpenWindow__screens
+void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
+#define MenuCursor_SetPositionImmediateFar MenuCursor_SetPositionImmediateFar
 
 // The Japanese form enters kana: a dakuten or handakuten joins the kana before
 // it (NameEntry_AcceptsMark refuses a mark that cannot), takes a byte but is no

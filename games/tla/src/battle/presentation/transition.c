@@ -1,7 +1,7 @@
 /// @file
 /// The battle's screen transitions: the mosaic fade to black, and the rows of
 /// tiles that close in, with the HBlank scroll they run on.
-// Part of presentation.c.
+// Part of battle.c.
 
 #include "../presentation_internal.h"
 #include "gamepak/far_call/window.h"

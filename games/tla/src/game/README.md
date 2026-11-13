@@ -8,6 +8,7 @@ things out from them.
 If you want to know what an item, an enemy or a class is made of, the
 answer is a row in one of these files.
 
+<<<<<<< HEAD
 ## How one number finds a row and its name
 
 Everything in the game is known by a number, and the number is nothing but
@@ -166,3 +167,24 @@ both screens roll the same.
   `Unit_Calculate` works a unit's stats out, `Class_Determine` its class,
   and the rest go by subject, Djinn, levels, items and the party.
 - `Battle_GetElementMultiplier` and its neighbours are the sums.
+=======
+- The tables are C arrays under The Broken Seal's struct names, in the order
+  the ROM keeps them, at the end of `game.c`, the bank's one object, after its
+  code: the experience table, the artifact slots with the item, ability and
+  enemy tables (parts under `artifact_slots/`), and the character, summon,
+  class and element tables. Their globals keep this game's names for now
+  (`gCharacter_DefinitionTable` for The Broken Seal's
+  `gCharacter_DefinitionTable`), and a few readers still view a row through
+  a struct of their own (`EnemyRecord`, `OwnerGrowthRecord`).
+- An enemy's definition lacks the ten bytes The Broken Seal's keeps before
+  its items and ends in two bytes of padding, and a class's abilities are
+  held in a halfword, since this game has more than 255.
+- `game.c` is The Broken Seal's game object, written as parts under `game/`
+  cut where The Broken Seal's are, each function in the part holding its
+  twin, and one of them, `flags.c`, missing: the game flags are read through
+  `GameFlag_` functions that this game links in its first bank, so they are
+  in [The Lost Age: system](../system/README.md) (`system/flags.c`).
+- `classes.c` ends with `Unit_RefreshPsynergy`, which here only calls
+  `Unit_UpdateClass`; The Broken Seal's function of that name rebuilds the
+  Psynergy list, as `Owner_UpdateClassActions` in `levels.c` does here.
+>>>>>>> origin/main

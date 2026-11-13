@@ -1,7 +1,7 @@
 /// @file
 /// The 734 abilities, by ability id. Each name is the English release's
 /// (MsgAbilityNothing plus the ability id).
-// Part of artifact_slots.c.
+// Part of game.c.
 
 #include "../artifact_slots_internal.h"
 

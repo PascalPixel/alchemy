@@ -1,13 +1,13 @@
 /// @file
 /// Two routines not yet understood.
-// Part of psynergy.c.
+// Part of radial.c.
 
 #include "../psynergy_internal.h"
 
 /* VIEW(f0e5d5c): tag struct ShineParticle as struct ShineParticle__f0e5d5c;
  * f0e2c38.c has another definition; tried with the definition the rest of the
  * object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/psynergy.c:2599: structure has no member
+ * games/tla/src/field/event_commands/radial.c:4853: structure has no member
  * named `velocityX'. */
 struct ShineParticle__f0e5d5c {
   s32 x;
@@ -22,7 +22,7 @@ struct ShineParticle__f0e5d5c {
 /* VIEW(f0e5d5c): tag struct ShineWork as struct ShineWork__f0e5d5c; f0e2c38.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/field/event_commands/psynergy.c:2567: structure has no member
+ * games/tla/src/field/event_commands/radial.c:4822: structure has no member
  * named `glow'. */
 struct ShineWork__f0e5d5c {
   u8 tiles[0x1000];
@@ -38,9 +38,8 @@ struct ShineWork__f0e5d5c {
 
 /* VIEW(f0e5d5c): tag struct FxScene as struct FxScene__f0e5d5c; f0e2c38.c has
  * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja:
- * games/tla/src/field/event_commands/psynergy.c:2485: structure has no member
- * named `facing'. */
+ * does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:4739:
+ * structure has no member named `facing'. */
 struct FxScene__f0e5d5c {
   u16 facing;
   u16 angle;

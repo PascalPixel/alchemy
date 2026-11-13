@@ -31,11 +31,8 @@ extern struct Actor *gData_02004420;
 void Actor_StartScript(struct Actor *object, const void *script);
 /* VIEW(s2698): routine FieldEffect_AdvanceMotion as void
  * FieldEffect_AdvanceMotion(struct Actor *object); module/field/field_effect.h
- * has void FieldEffect_AdvanceMotion(union FieldObject *object); tried as the
- * definition's void FieldEffect_AdvanceMotion(union FieldObject *object), which
- * the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau/s2698.c:75: `FieldEffect_AdvanceMotion'
- * undeclared (first use in this function). */
+ * has void FieldEffect_AdvanceMotion(union FieldObject *object); not tried:
+ * FieldEffect_AdvanceMotion's bound declaration was not found. */
 extern void Effect_AdvanceMotion__s2698(struct Actor *object) __asm__(
     "FieldEffect_AdvanceMotion");
 
@@ -233,10 +230,8 @@ void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);
 /* VIEW(s2698): routine ItemDisplay_ShowPicture as void
  * ItemDisplay_ShowPicture(struct Actor *object, s32 mode);
- * module/scene/airs_rock_inside.h has void
- * ItemDisplay_ShowPicture(void); tried as the definition's void
- * ItemDisplay_ShowPicture(void), which the object already declares,
- * Func_02002f9c moves: 1 of 34 instructions in tla-ja. */
+ * module/scene/airs_rock_inside.h has void ItemDisplay_ShowPicture(void); not
+ * tried: ItemDisplay_ShowPicture's bound declaration was not found. */
 extern void Func_02003d40__s2698(struct Actor *object,
                                  s32 mode) __asm__("ItemDisplay_ShowPicture");
 
@@ -270,7 +265,6 @@ void Func_02002bcc(void) {
 #include "map.h"
 #include "iwram_call.h"
 #include "scene_ids.h"
-#include "field.h"
 
 void Actor_TakePlaceOf(struct Actor *object, struct Actor *other);
 void Actor_MoveToObject(s32 id, s32 target);
@@ -487,20 +481,15 @@ void CrumblingPillars_PlaceWithStandIns(const void *data);
 void Func_020018a8(void);
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 
-/* VIEW(s3164): static Actor_SetPosition as Actor_SetPosition__s3164; the
- * definition has static inline void Actor_SetPosition(s32 actorId, s32 fixed_x,
- * s32 fixed_z); tried with the definition the rest of the object has, it does
- * not compile in tla-ja: games/tla/src/scene/dehkan_plateau/s2698.c:527: too
- * many arguments to function `Actor_SetPosition'. */
-static __inline__ void Actor_SetPosition__s3164(struct Actor *object, s32 x,
-                                                s32 y, s32 z) {
+/// Places an actor and resets its motion (Actor_SetPositionAndResetMotion).
+static __inline__ void Actor_PlaceAndResetMotion(struct Actor *object, s32 x,
+                                                 s32 y, s32 z) {
   Actor_SetPositionAndResetMotion(object, x, y, z);
 }
 
@@ -522,7 +511,7 @@ void Func_02003164(void) {
   if (GameFlag_Get(0x840) != 0) {
     Actor_DisableById(23);
     Map_CopyAttributes(50, 7, 1, 1, 52, 7);
-    Actor_SetPosition__s3164(Actor_GetById(23), 210 << 18, 0, 240 << 15);
+    Actor_PlaceAndResetMotion(Actor_GetById(23), 210 << 18, 0, 240 << 15);
   } else {
     Actor_PlaceBlocks(gData_02003fc0);
   }
@@ -547,18 +536,14 @@ void Func_02003164(void) {
 #include "task.h"
 #include "field_effect.h"
 
-extern struct Actor *gData_02004420;
-
 extern const u8 gData_02003fc8[];
 extern s32 gData_02005678;
 
 void Pillars_Raise(const void *data);
 void Func_02001ee8(void);
 /* VIEW(s3284): routine Actor_GetCellIndex as s32 Actor_GetCellIndex(void);
- * s2c14 has s32 Actor_GetCellIndex(struct Actor *object); tried as the rest of
- * the object declares it, it does not compile in tla-ja:
- * games/tla/src/scene/dehkan_plateau/s2698.c:617: too few arguments to function
- * `Actor_GetCellIndex'. */
+ * s2c14 has s32 Actor_GetCellIndex(struct Actor *object); not tried:
+ * Actor_GetCellIndex's bound declaration was not found. */
 extern s32 Func_02003db0__s3284(void) __asm__("Actor_GetCellIndex");
 
 // The room entry written in the scene layer of Func_02003164 and Func_0200390c:
@@ -801,16 +786,6 @@ loop:
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Get(flag); }
 
-/* VIEW(s390c): static Actor_SetPosition as Actor_SetPosition__s390c; the
- * definition has static inline void Actor_SetPosition(s32 actorId, s32 fixed_x,
- * s32 fixed_z); tried with the definition the rest of the object has, it does
- * not compile in tla-ja: games/tla/src/scene/dehkan_plateau/s2698.c:872: too
- * many arguments to function `Actor_SetPosition'. */
-static __inline__ void Actor_SetPosition__s390c(struct Actor *object, s32 x,
-                                                s32 y, s32 z) {
-  Actor_SetPositionAndResetMotion(object, x, y, z);
-}
-
 void Func_0200390c(void) {
   struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 entrance;
@@ -822,7 +797,7 @@ void Func_0200390c(void) {
     if (GameFlag_Get(0x871) != 0) {
       Map_CopyAttributes(0, 0, 1, 1, 15, 5);
       if (gData_02004420 != NULL) {
-        Actor_SetPosition__s390c(gData_02004420, 248 << 16, 0, 176 << 15);
+        Actor_PlaceAndResetMotion(gData_02004420, 248 << 16, 0, 176 << 15);
         wait(1);
       }
     }
@@ -853,7 +828,6 @@ void Func_0200390c(void) {
 // ---- games/tla/src/scene/dehkan_plateau/s3a30.c ----
 // Scene code of overlay 0x655, in ROM order, from s3a30's offset up to the next
 // object the overlay links.
-extern struct Actor *gData_02004420;
 
 void Func_02003a30(void) {
   struct Actor **slot = &gData_02004420;

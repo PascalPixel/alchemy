@@ -1,7 +1,7 @@
 /// @file
 /// Thrash and the spark approaches, and the picture that floods the canvas over
 /// the target.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 

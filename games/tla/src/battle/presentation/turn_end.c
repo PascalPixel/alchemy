@@ -1,7 +1,7 @@
 /// @file
 /// The end of a turn: each unit's modifiers and conditions counted down, the
 /// Djinn recovering, and the extras an action applies.
-// Part of presentation.c.
+// Part of battle.c.
 
 #include "../presentation_internal.h"
 #include "gamepak/far_call/game.h"

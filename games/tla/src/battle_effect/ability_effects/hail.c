@@ -1,6 +1,6 @@
 /// @file
 /// Hail and Ground, and the battle camera's shakes.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 
@@ -462,7 +462,6 @@ void BattleEffect_RunImpactBurst(s32 group, s32 x, s32 y);
 void Canvas_BlitAtFoot(void *source, s32 x, s32 y, s32 size); // four motes
 void SceneTransform_ApplyScale(s32 *scale);
 
-void Projection_Set(s32 a, s32 b, s32 c);
 void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
 
 // The Broken Seal's iwram_call.h forwards these through static inlines; here

@@ -1,7 +1,7 @@
 /// @file
 /// Battle playback: starting it, scheduling its phases, resetting it and
 /// waiting until it is ready.
-// Part of presentation.c.
+// Part of battle.c.
 
 #include "../presentation_internal.h"
 #include "module/battle/presentation.h"
@@ -40,7 +40,8 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
 #define KEYS_HELD (*(volatile u32 *)&gInput.held)
 
 /* VIEW(f11e3ac): tag struct ArrowSprite as struct ArrowSprite__presentation;
- * module/tla.h has another definition. */
+ * module/tla.h has another definition; not tried: struct ArrowSprite__f11e3ac
+ * was not found. */
 struct ArrowSprite__presentation {
   void *next;
   u16 y : 8;

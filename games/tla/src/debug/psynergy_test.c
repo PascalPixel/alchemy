@@ -77,8 +77,8 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object);
 void NameEntry_EditMemberName(s32);
 /* VIEW(psynergy_test): routine MessageArgument_Push as void
  * MessageArgument_Push(s32, s32); module/tla.h has s32 MessageArgument_Push(s32
- * *member, s32 *slot); tried as the rest of the object declares it,
- * MenuTest_BrowseMessageRange moves: 2 of 67 instructions in tla-ja. */
+ * *member, s32 *slot); not tried: MessageArgument_Push's bound declaration was
+ * not found. */
 extern void Func_02000df4__psynergy_test(s32,
                                          s32) __asm__("MessageArgument_Push");
 void Shop_Run(s32, s32);
@@ -819,7 +819,7 @@ struct Trigger gSceneEvents[] = {
 /* VIEW(s0c4c): tag struct SparkleSprite as struct SparkleSprite__s0c4c;
  * psynergy_test.c has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/debug/psynergy_test.c:802: structure has no member named
+ * games/tla/src/debug/psynergy_test.c:852: structure has no member named
  * `flag'. */
 struct SparkleSprite__s0c4c {
   u8 unk00[5];
@@ -837,7 +837,7 @@ struct SparkleSprite__s0c4c {
 /* VIEW(s0c4c): tag struct SparkleWork as struct SparkleWork__s0c4c;
  * psynergy_test.c has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/debug/psynergy_test.c:792: incompatible types in assignment. */
+ * games/tla/src/debug/psynergy_test.c:842: incompatible types in assignment. */
 struct SparkleWork__s0c4c {
   struct SparkleSprite__s0c4c sprites[4];
   u16 unka0;

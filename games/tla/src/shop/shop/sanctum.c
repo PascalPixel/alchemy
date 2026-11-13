@@ -363,8 +363,6 @@ done:
 }
 
 #undef SERVICE_PRICE_WINDOW_WIDTH
-#undef SERVICE_PRICE_WINDOW_WIDTH
-#undef SERVICE_PRICE_WINDOW_WIDTH
 
 #define Item_GetDirectFar ((u8 *(*)(u16))Item_GetDirectFar)
 
@@ -501,12 +499,7 @@ void Sanctum_UpdateBurstSparkle(struct Effect_080b2f4c *effect) {
   }
 }
 
-/* VIEW(shop): routine Animation_ApplyChildValuesToRecordFar as void
- * Animation_ApplyChildValuesToRecordFar(void *child, u32 value); actor_view.h
- * has void Animation_ApplyChildValuesToRecordFar(struct ActorSpriteView *,
- * u32). */
-extern void Animation_ApplyChildValuesToRecordFar__shop(
-    void *child, u32 value) __asm__("Animation_ApplyChildValuesToRecordFar");
+void Animation_ApplyChildValuesToRecordFar(s32 object, s32 value);
 
 void Sanctum_UpdateBurst(void) {
   struct ShopFxWork *work = Ram_HeapSlots->menuRuntime;
@@ -517,8 +510,8 @@ void Sanctum_UpdateBurst(void) {
     FieldParticle_UpdateFar(work->slots[i]);
   selected = work->selected;
   if (selected != -1)
-    Animation_ApplyChildValuesToRecordFar__shop(work->children[selected],
-                                                (Random16() * 7) >> 16);
+    Animation_ApplyChildValuesToRecordFar(work->children[selected],
+                                          (Random16() * 7) >> 16);
 }
 
 void Animation_ApplyChildValueFar(s32 object, s32 arg);
@@ -553,8 +546,8 @@ void Sanctum_RunMemberIconBurst(s32 member) {
     FieldParticle_SetCallbackFar((struct Effect_080b2f4c *)effect,
                                  Sanctum_UpdateBurstSparkle);
     FieldParticle_SetActorModeFar((struct Effect_080b2f4c *)effect, 7);
-    Animation_ApplyChildValuesToRecordFar__shop(effect->object,
-                                                (Random16() * 7) >> 16);
+    Animation_ApplyChildValuesToRecordFar(effect->object,
+                                          (Random16() * 7) >> 16);
     effect->scaleY = Q16_ONE * 7 / 10;
     effect->scaleX = Q16_ONE * 7 / 10;
     wait(3);
@@ -580,8 +573,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   wait(20);
   Sound_PlayFar(126);
   shop->burstMember = -1;
-  Animation_ApplyChildValuesToRecordFar__shop(shop->partyMemberIcons[member],
-                                              0);
+  Animation_ApplyChildValuesToRecordFar(shop->partyMemberIcons[member], 0);
   wait(20);
 
   {

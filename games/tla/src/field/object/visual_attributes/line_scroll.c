@@ -343,7 +343,10 @@ void LineScroll_Stop(void) {
 }
 
 /* VIEW(visual_attributes): tag struct GroundParticle as struct
- * GroundParticle__visual_attributes; ground_mask.h has another definition. */
+ * GroundParticle__visual_attributes; ground_mask.h has another definition;
+ * tried with the definition the rest of the object has, it does not compile in
+ * tla-ja: games/tla/src/field/object/visual_attributes.c:2397: field
+ * `particles' has incomplete type. */
 struct GroundParticle__visual_attributes {
   u8 unk00[4];
   u16 y : 8;
@@ -373,7 +376,8 @@ struct GroundParticleWork {
 /* VIEW(visual_attributes): routine Oam_AddSpriteAtDepthClamped as void
  * Oam_AddSpriteAtDepthClamped(struct GroundParticle *sprite, s32 depth);
  * module/system/system.h has void Oam_AddSpriteAtDepthClamped(void *entry, s32
- * slot). */
+ * slot); not tried: Oam_AddSpriteAtDepthClamped's bound declaration was not
+ * found. */
 extern void Func_080140d8__visual_attributes(
     struct GroundParticle__visual_attributes *sprite,
     s32 depth) __asm__("Oam_AddSpriteAtDepthClamped");

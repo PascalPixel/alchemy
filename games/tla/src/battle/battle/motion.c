@@ -320,7 +320,14 @@ s32 BattleMotion_ProjectConditionalPosition(s32 slot, s32 *screen) {
   return 0;
 }
 
-u8 BattleSprite_GetEffectHeight(s32 index);
+/* VIEW(battle): routine BattleSprite_GetEffectHeight as u8
+ * BattleSprite_GetEffectHeight(s32 index); battle/presentation has u32
+ * BattleSprite_GetEffectHeight(u32 index) {; tried as the definition's u32
+ * BattleSprite_GetEffectHeight(u32 index), BattleUnit_GetEffectHeight moves: 2
+ * of 27 instructions in tla-ja. */
+u8 BattleSprite_GetEffectHeight__battle(s32 index) __asm__(
+    "BattleSprite_GetEffectHeight");
+#define BattleSprite_GetEffectHeight BattleSprite_GetEffectHeight__battle
 
 s32 BattleUnit_GetEffectHeight(s32 unitId) {
   s32 value = BattleSprite_GetEffectHeight(

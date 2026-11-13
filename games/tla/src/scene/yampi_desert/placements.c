@@ -3,6 +3,13 @@
 /// travelers' talk, and the stakes Pound sinks and Sand slips under; linked
 /// apart from yampi_desert.c, with the field's shared effect code between.
 
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Actor_SelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#include "../../field/field_effect/spawn.c"
+
 #include "scene.h"
 #include "module/scene/yampi_desert.h"
 #include "module/tla.h"

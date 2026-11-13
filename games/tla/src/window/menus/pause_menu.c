@@ -1,7 +1,7 @@
 /// @file
 /// The save screen's selection, the portrait browser, and the flag grid drawn
 /// into a tilemap.
-// Part of menus.c.
+// Part of window.c.
 
 #include "../menus_internal.h"
 #include "item_icon.h"
@@ -81,27 +81,43 @@ void Render_SetTilemapFlagBitRect(const struct Window *object, s32 x, s32 y,
 
 /* VIEW(flag_bit_rect): routine Window_Create as struct RenderInput
  * *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style); selrow has
- * struct Work *Window_Create(s32 kind, s32 x, s32 y, s32 width, s32 layer). */
+ * struct Work *Window_Create(s32 kind, s32 x, s32 y, s32 width, s32 layer); not
+ * tried: Window_Create's declaration holds a FAKEMATCH tag. */
 extern struct RenderInput *
 Window_Create__flag_bit_rect(s32 x, s32 y, s32 width, s32 height,
                              s32 style) __asm__("Window_Create");
 /* VIEW(flag_bit_rect): routine Text_DrawStringInWindow as void
  * Text_DrawStringInWindow(u8 *text, struct RenderInput *window, u32 x, u32 y);
  * handle_selection_row_input has void Text_DrawStringInWindow(s32 text, s32
- * window, s32 x, s32 y). */
+ * window, s32 x, s32 y); not tried: Text_DrawStringInWindow's declaration holds
+ * a FAKEMATCH tag. */
 extern void Text_DrawStringInWindow__flag_bit_rect(
     u8 *text, struct RenderInput *window, u32 x,
     u32 y) __asm__("Text_DrawStringInWindow");
 /* VIEW(flag_bit_rect): routine Text_DrawNumberInWindow as void
  * Text_DrawNumberInWindow(s32 value, s32 width, struct RenderInput *window, s32
  * x, s32 y); menus has void Text_DrawNumberInWindow(s32 value, s32 digits,
- * struct TargetWindow *window, s32 x, s32 y). */
+ * struct TargetWindow *window, s32 x, s32 y); not tried:
+ * Text_DrawNumberInWindow's declaration holds a FAKEMATCH tag. */
 extern void Text_DrawNumberInWindow__flag_bit_rect(
     s32 value, s32 width, struct RenderInput *window, s32 x,
     s32 y) __asm__("Text_DrawNumberInWindow");
-void Icon_BuildItemIconTiles(s32 icon, s32 with_base, s32 *slot, s32 *tile,
-                             s32 reuse);
-void Icon_BuildMiscIconTiles(s32 pattern, s32 unused, s32 slot);
+/* VIEW(menus): routine Icon_BuildItemIconTiles as void
+ * Icon_BuildItemIconTiles(s32 icon, s32 with_base, s32 *slot, s32 *tile, s32
+ * reuse); window/window has void Icon_BuildItemIconTiles(u32 glyph, s32
+ * withBase, s32 *cacheSlot, s32 *tileOut, s32 reuse) {; not tried:
+ * Icon_BuildItemIconTiles's declaration holds a FAKEMATCH tag. */
+void Icon_BuildItemIconTiles__menus(
+    s32 icon, s32 with_base, s32 *slot, s32 *tile,
+    s32 reuse) __asm__("Icon_BuildItemIconTiles");
+#define Icon_BuildItemIconTiles Icon_BuildItemIconTiles__menus
+/* VIEW(menus): routine Icon_BuildMiscIconTiles as void
+ * Icon_BuildMiscIconTiles(s32 pattern, s32 unused, s32 slot); window/window has
+ * s32 Icon_BuildMiscIconTiles(s32 no, s32 unused, s32 slot) {; not tried:
+ * Icon_BuildMiscIconTiles's declaration holds a FAKEMATCH tag. */
+void Icon_BuildMiscIconTiles__menus(s32 pattern, s32 unused, s32 slot) __asm__(
+    "Icon_BuildMiscIconTiles");
+#define Icon_BuildMiscIconTiles Icon_BuildMiscIconTiles__menus
 
 /// Browses pages of item, Psynergy and status-pattern icons, suspending the
 /// field's actor system while the browser owns its window and cache entries.
@@ -198,13 +214,30 @@ s32 DebugBrowser_Icons(void) {
   return 0;
 }
 
-extern s16 gPortrait_CharacterMap[];
-extern s16 gPortrait_SpriteMap[];
+/* VIEW(menus): variable gPortrait_CharacterMap as s16 gPortrait_CharacterMap[];
+ * window/window has const s16 gPortrait_CharacterMap[]; not tried:
+ * gPortrait_CharacterMap's declaration holds a FAKEMATCH tag. */
+extern s16 gPortrait_CharacterMap__menus[] __asm__("gPortrait_CharacterMap");
+#define gPortrait_CharacterMap gPortrait_CharacterMap__menus
+/* VIEW(menus): variable gPortrait_SpriteMap as s16 gPortrait_SpriteMap[];
+ * window/window has const s16 gPortrait_SpriteMap[]; not tried:
+ * gPortrait_SpriteMap's declaration holds a FAKEMATCH tag. */
+extern s16 gPortrait_SpriteMap__menus[] __asm__("gPortrait_SpriteMap");
+#define gPortrait_SpriteMap gPortrait_SpriteMap__menus
 
-struct RenderInput *Portrait_OpenWindow(s32 x, s32 y, s32 width, s32 height);
+/* VIEW(menus): routine Portrait_OpenWindow as struct RenderInput
+ * *Portrait_OpenWindow(s32 x, s32 y, s32 width, s32 height); window/window has
+ * struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
+ * s32 y) {; not tried: Portrait_OpenWindow's declaration holds a FAKEMATCH tag.
+ */
+struct RenderInput *
+Portrait_OpenWindow__menus(s32 x, s32 y, s32 width,
+                           s32 height) __asm__("Portrait_OpenWindow");
+#define Portrait_OpenWindow Portrait_OpenWindow__menus
 /* VIEW(flag_bit_rect): routine WindowSprite_PrepareForRedraw as void
  * WindowSprite_PrepareForRedraw(struct RenderInput *window); resource_work has
- * void WindowSprite_PrepareForRedraw(struct Window *). */
+ * void WindowSprite_PrepareForRedraw(struct Window *); not tried:
+ * WindowSprite_PrepareForRedraw's declaration holds a FAKEMATCH tag. */
 extern void WindowSprite_PrepareForRedraw__flag_bit_rect(
     struct RenderInput *window) __asm__("WindowSprite_PrepareForRedraw");
 

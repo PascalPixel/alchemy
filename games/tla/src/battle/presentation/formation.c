@@ -1,7 +1,7 @@
 /// @file
 /// Enemy formations: the enemies chosen, levelled and lettered, and each enemy
 /// class's sprite, palette, size and attack effect.
-// Part of presentation.c.
+// Part of battle.c.
 
 #include "../presentation_internal.h"
 #include "flag_call.h"
@@ -112,7 +112,8 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
 }
 
 /* VIEW(f11e3ac): tag struct OwnerStats as struct OwnerStats__presentation;
- * module/tla.h has another definition. */
+ * module/tla.h has another definition; not tried: struct OwnerStats__f11e3ac
+ * was not found. */
 struct OwnerStats__presentation {
   s16 maxHp;
   s16 maxPp;
@@ -212,7 +213,8 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
 }
 
 /* VIEW(f11e3ac): tag struct UnitBaseStats as struct
- * UnitBaseStats__presentation; module/tla.h has another definition. */
+ * UnitBaseStats__presentation; module/tla.h has another definition; not tried:
+ * struct UnitBaseStats__f11e3ac was not found. */
 struct UnitBaseStats__presentation {
   s16 hp;
   s16 pp;

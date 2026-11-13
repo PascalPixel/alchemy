@@ -1,6 +1,6 @@
 /// @file
 /// Effect positions, projection and id dispatch helpers.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 

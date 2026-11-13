@@ -1,6 +1,18 @@
 /// @file
 /// Scene code of overlay 0x67c, in ROM order.
 
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Actor_SelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#define EFFECT_SPRITE_PRIORITY
+#include "../../../../games/tla/src/field/field_effect/spawn.c"
+
+// ---- scene/aqua_rock_inside/aqua_rock_inside.c ----
+
+/// Scene code of overlay 0x67c, in ROM order.
+
 // ---- games/tla/src/scene/aqua_rock_inside.c ----
 
 #include "flags.h"
@@ -21,7 +33,6 @@ extern u8 Data_0202c001[];
 void Func_0200033c(void) { Field_RequestDjinnBattle(10, 32); }
 
 #include "battle.h"
-#include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "lib.h"
@@ -267,7 +278,13 @@ void Func_020007a8(void) {
   object->y = 0x180000;
 }
 
-extern const u8 gData_02003fb8[];
+/* VIEW(aqua_rock_inside): variable gData_02003fb8 as const u8 gData_02003fb8[];
+ * scene/aqua_rock_inside/s3844 has u32 gData_02003fb8[] = {; tried as the
+ * definition's extern u32 gData_02003fb8[], it does not compile in tla-ja:
+ * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:319: `gData_02003fb8'
+ * undeclared (first use in this function). */
+extern const u8 gData_02003fb8__aqua_rock_inside[] __asm__("gData_02003fb8");
+#define gData_02003fb8 gData_02003fb8__aqua_rock_inside
 
 void Func_020007d4(void) {
   s32 priority;
@@ -466,6 +483,7 @@ void Func_02000ca8(void) {
   Event_End();
 }
 
+#undef gData_02003fb8
 // ---- games/tla/src/scene/aqua_rock_inside/s0cc8.c ----
 // Scene code of overlay 0x67c, in ROM order, from s0cc8's offset up to the next
 // object the overlay links.
@@ -478,8 +496,8 @@ void Func_02000ca8(void) {
 /* VIEW(s0cc8): routine Func_02000ca8 as void Func_02000ca8(); the parts before
  * it has another declaration; tried as the definition's void
  * Func_02000ca8(void), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/scene/aqua_rock_inside.c:503: too many arguments to
- * function `Func_02000ca8'. */
+ * in tla-ja: games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:523: too
+ * many arguments to function `Func_02000ca8'. */
 extern void Func_02000ca8__s0cc8() __asm__("Func_02000ca8");
 
 void Func_02000cc8(s32 trigger) {
@@ -851,8 +869,29 @@ union ActorView {
     u8 unk63;
   } bytes;
 };
-extern const u8 gData_02004034[], gData_02003fe8[], gData_02004004[],
-    gData_02004058[], gData_02004014[], gData_0200407c[], gData_020040ac[];
+extern u32 gData_02004034[];
+extern u32 gData_02003fe8[];
+/* VIEW(s1620): variable gData_02004004 as const u8 gData_02004004[];
+ * scene/aqua_rock_inside/s3844 has DEFINE_G_DATA_02003584(gData_02004004,
+ * Orbiter_Spiral, 38, 17) DEFINE_G_DATA_02004014(gData_02004014, Orbit_Update,
+ * Actor_AimAtWatched, Actor_StepToWatched) u32 gData_02004034[] = {; tried as
+ * the definition's extern u32 gData_02004004[], it does not compile in tla-ja:
+ * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:970: `gData_02004004'
+ * undeclared (first use in this function). */
+extern const u8 gData_02004004__s1620[] __asm__("gData_02004004");
+#define gData_02004004 gData_02004004__s1620
+extern u32 gData_02004058[];
+/* VIEW(s1620): variable gData_02004014 as const u8 gData_02004014[];
+ * scene/aqua_rock_inside/s3844 has DEFINE_G_DATA_02004014(gData_02004014,
+ * Orbit_Update, Actor_AimAtWatched, Actor_StepToWatched) u32 gData_02004034[] =
+ * {; tried as the one declaration extern const u8 gData_02004014[], it does not
+ * compile in tla-ja:
+ * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:1003:
+ * `gData_02004014' undeclared (first use in this function). */
+extern const u8 gData_02004014__s1620[] __asm__("gData_02004014");
+#define gData_02004014 gData_02004014__s1620
+extern s32 gData_0200407c[];
+extern s32 gData_020040ac[];
 
 void Func_02001620(s32 firstId, s32 secondId) {
   struct Actor *first = Actor_GetById(firstId);
@@ -1250,10 +1289,10 @@ void Func_02001fcc(void) {
   Vents_AdvanceCounter(0x34bc0);
 }
 
-extern const u8 gData_020040f4[];
-extern const u8 gData_02004102[];
-extern const u8 gData_02004106[];
-extern const u8 gData_02004114[];
+extern u16 gData_020040f4[];
+extern u16 gData_02004102[];
+extern u16 gData_02004106[];
+extern u32 gData_02004114[];
 
 // Returns what its closing Task_Add call leaves in r0.
 s32 Func_02003ab0(const u8 *a, const u8 *b, void (*handler)(void));
@@ -2131,3 +2170,248 @@ s32 Func_020036b8(s32 first, s32 target) {
 #undef FIELD_AT
 #undef BG1_SET_PRIORITY_1
 #undef LAYER_S32
+
+#undef gData_02004004
+#undef gData_02004014
+// ---- scene/aqua_rock_inside/s3844.c ----
+
+/// Scene code of overlay 0x67c, in ROM order.
+
+#include "flags.h"
+#include "../shared/vents.h"
+#include "../shared/tables.h"
+#include "../aqua_rock_inside.h"
+#include "types.h"
+#include "iwram_call.h"
+#include "system/io_reg.h"
+#include "event_inline.h"
+#include "field.h"
+#include "module/scene/aqua_rock_inside.h"
+
+#define VENT_TOUCHING Func_02003844
+#define VENT_BOUNCE Func_0200389c
+#include "../../field/object/vent_bounce.c"
+
+DEFINE_ACTOR_START_SCRIPTED(Actor_StartScripted, Actor_SelectAnimation,
+                            gData_020044c8)
+
+void Vent_Puff(s32 *position, s32 base) {
+  struct Actor *object = Import_ActorCreate_(0x11d, position[0], position[1],
+                                             position[2] - 0x20000);
+  s32 angle;
+
+  if (object != 0) {
+    object->bounce = Trig_Cos(((u32)(Random16() * 0x3000) >> 16) + 0x3000);
+    object->gravity = (u16)Random16();
+    object->unk4c = (u16)(Random16() << 1) + base;
+    /* FAKEMATCH(temporary): the s32 local keeps the zero extension and the pool
+     * word 0xffff8000; as a direct store, the add narrows to 16 bits (movs,
+     * lsls for 0x8000, no extension), 10 of 50 instructions differ in
+     * tla-en. */
+    angle = (u16)Random16() - 0x8000;
+    object->timer = angle;
+    Actor_StartScripted(object, 3);
+    object->update = (void (*)(void))Func_0200389c;
+    Actor_SetBlendMode(object, 1);
+  }
+}
+
+DEFINE_VENTS_UPDATE(Vents_Update, Vent_Puff)
+
+/* VIEW(s3844): routine Func_02003ab0 as void Func_02003ab0(const u16 *spots,
+ * const u16 *levels, void (*handler)(void));
+ * games/tla/src/scene/aqua_rock_inside/s1620 has s32 Func_02003ab0(const u8 *a,
+ * const u8 *b, void (*handler)(void)); tried as the definition's void
+ * Func_02003ab0(const u16 *spots, const u16 *levels, void(*handler) (void)),
+ * which the object already declares, it does not compile in tla-ja:
+ * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:2227: conflicting
+ * types for `Func_02003ab0'. */
+void Func_02003ab0__s3844(const u16 *spots, const u16 *levels,
+                          void (*handler)(void)) __asm__("Func_02003ab0");
+#define Func_02003ab0 Func_02003ab0__s3844
+void Func_02003ab0(const u16 *spots, const u16 *levels, void (*handler)(void)) {
+  struct WaterWork *work = (struct WaterWork *)(gInventorySnapshot + 0x188);
+  struct WaterOutlet *outlet = work->outlets;
+
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
+    s32 x;
+    s32 i;
+
+    Iwram_ClearWordsEntry(work, 0x150);
+    x = *spots++;
+    i = 0;
+    while (x > 0) {
+      s32 z = spots[0];
+      s32 level = spots[1];
+
+      outlet->state = 0;
+      outlet->x = x << 16;
+      outlet->z = z << 16;
+      outlet->y = Map_GetTerrainHeight(0, x << 16, (z << 16) + 0x100000);
+      outlet->level = level << 16;
+      outlet->index = i++;
+      spots += 2;
+      outlet++;
+      if (i > 15)
+        break;
+      x = *spots++;
+    }
+    if (levels != 0) {
+      x = *levels++;
+      i = 0;
+      if (x > 0) {
+      loop2:
+        work->levels[i++] = x;
+        if (i > 3)
+          goto done2;
+        x = *levels++;
+        if (x > 0)
+          goto loop2;
+      }
+    }
+  done2:;
+  }
+  work->handler = handler;
+  if (REG_BLDCNT == 0) {
+    {
+      s32 alpha = 0xc08;
+      REG_BLDALPHA = alpha;
+    }
+    {
+      s32 cnt = 0x3f10;
+      REG_BLDCNT = cnt;
+    }
+  }
+  Task_AddFrame(Vents_Update, 0x480);
+}
+
+s32 Func_02003ba4(s32 index) {
+  u8 *base = (u8 *)VENT_WORK;
+
+  return ((struct VentRow *)(base + index * 20))->active;
+}
+
+s32 Func_02003bb8(s32 index, s32 value) {
+  u8 *base = (u8 *)VENT_WORK;
+
+  ((struct VentRow *)(base + index * 20))->active = value;
+}
+
+s32 Func_02003bcc(void) { return VENT_WORK->counter; }
+
+DEFINE_VENTS_ADVANCE_COUNTER(Vents_AdvanceCounter)
+
+void Func_02003c00(s32 index, s32 value) {
+  u8 *base = (u8 *)VENT_WORK;
+
+  ((struct VentRow *)(base + index * 20))->value = value;
+}
+
+DEFINE_VENTS_SET_ID(Vents_SetId)
+
+#include "scene_tables.h"
+
+/* VIEW(s3844): routine Orbiter_Spiral as void Orbiter_Spiral(void);
+ * games/tla/src/scene/aqua_rock_inside/s13bc has
+ * DEFINE_ORBITER_SPIRAL(Orbiter_Spiral, Func_02001364) // Moves around in a
+ * circle. DEFINE_ORBIT_UPDATE(Orbit_Update) #define BYTE_AT(base, offset) (*(u8
+ * *)((u8 *)(base) + (offset))) DEFINE_ACTOR_AIM_AT_WATCHED(Actor_AimAtWatched)
+ * DEFINE_ACTOR_STEP_TO_WATCHED(Actor_StepToWatched) #include
+ * "system/field_effect.h" void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32
+ * velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct
+ * EffectOptions *options); tried as the one declaration
+ * DEFINE_VENTS_SET_ID(Vents_SetId) void Orbiter_Spiral(void), Vents_SetId
+ * (gone) moves: 10 of 10 instructions in tla-ja. */
+void Orbiter_Spiral__s3844(void) __asm__("Orbiter_Spiral");
+#define Orbiter_Spiral Orbiter_Spiral__s3844
+
+// clang-format off
+u32 gData_02003f04[] = {
+    0, 1, 13, 22, 0, 0,
+    1, 2, 0, 0, 0, 0,
+    1, 38, 17,
+};
+
+u32 gData_02003f40[] = {
+    0, 1, 13, 44, 0, 0,
+    1, 2, 0, 0, 0, 0,
+    1, 38, 17,
+};
+
+u32 gData_02003f7c[] = {
+    0, 1, 13, 126, 0, 0,
+    1, 2, 0, 0, 0, 0,
+    1, 38, 17,
+};
+
+u32 gData_02003fb8[] = {
+    0x424b4243, 0x425b4253, 0x426b4263, 0x51434273, 0x5153514b, 0x5163515b,
+    0x5173516b, 0x604b6043,
+};
+
+u32 gData_02003fd8[] = {
+    0, 6, 38, 17,
+};
+
+u32 gData_02003fe8[] = {
+    5, 0, 0xa00000, 0, 1, 38,
+    17,
+};
+
+DEFINE_G_DATA_02003584(gData_02004004, Orbiter_Spiral, 38, 17)
+
+DEFINE_G_DATA_02004014(gData_02004014, Orbit_Update, Actor_AimAtWatched,
+    Actor_StepToWatched)
+
+u32 gData_02004034[] = {
+    5, 0, 0x180000, 0, 1, 22,
+    26, 4, 17,
+};
+
+u32 gData_02004058[] = {
+    5, 0, 0x100000, 0, 1, 22,
+    26, 4, 17,
+};
+
+s32 gData_0200407c[] = {
+    22, 26, 0, 5, 0, -0x180000,
+    0, 1, 22, 26, 0, 17,
+};
+
+s32 gData_020040ac[] = {
+    22, 26, 0, 5, 0, -0x100000,
+    0, 1, 22, 26, 3, 17,
+};
+
+u32 gData_020040dc[] = {
+    0, 1, 13, 30, 0, 38,
+};
+
+u16 gData_020040f4[] = {
+    280, 344, 2, 312, 344, 2, 0,
+};
+
+u16 gData_02004102[] = {
+    8, 0,
+};
+
+u16 gData_02004106[] = {
+    152, 536, 2, 216, 536, 2, 0,
+};
+
+u32 gData_02004114[] = {
+    0xb000a, 0,
+};
+
+u32 gData_0200411c[] = {
+    0, 20, 38,
+};
+
+u32 gWaterDropScript[] = {
+    23, 6, 0x4000, 0, 1, 13,
+    30, 0, 38,
+};
+// clang-format on
+
+#undef Func_02003ab0
+#undef Orbiter_Spiral

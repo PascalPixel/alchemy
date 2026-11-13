@@ -1,6 +1,6 @@
 /// @file
 /// Core and Cannon: a Mars Djinni charging the target.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 
@@ -24,7 +24,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
 void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList(struct Model *model);
+void Render_DrawModelList__ability_effects(struct Model *model);
 void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
@@ -45,12 +45,9 @@ void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f172b00): routine BattleObject_GetFar as void
- * **BattleObject_GetFar(s32 objectId); motobj.h has struct BattleObj
- * *BattleObject_GetFar(s32 objectId); tried as the 11 declarations' void
- * **BattleObject_GetFar(s32 objectId), it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:21159: conflicting types for
- * `BattleObject_GetFar'. */
+/* VIEW(f172b00): routine BattleObject_GetFar as void **BattleObject_GetFar(s32
+ * objectId); motobj.h has struct BattleObj *BattleObject_GetFar(s32 objectId);
+ * not tried: BattleObject_GetFar's bound declaration was not found. */
 extern void **
 GetBattleObjectSlotFar__f172b00(s32 objectId) __asm__("BattleObject_GetFar");
 
@@ -71,8 +68,19 @@ void Transform_Pop(void);
 
 void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
                     s32 cellWidth, s32 cellHeight); // builds a grid's mesh
-void Render_ProjectVertices(struct ModelVertex *vertices,
-                            struct ProjectedVertex *screen, s32 count);
+/* VIEW(ability_effects): routine Render_ProjectVertices as void
+ * Render_ProjectVertices(struct ModelVertex *vertices, struct ProjectedVertex
+ * *screen, s32 count); battle_effect/summon_effects has void
+ * Render_ProjectVertices(struct ModelVertex *vertices, struct ProjectedVertex
+ * *screen, s32 count) {; tried as the definition's void
+ * Render_ProjectVertices(struct ModelVertex *vertices, struct ProjectedVertex
+ * *screen, s32 count), which the object already declares, BattleEffect_RunSerac
+ * moves: 5 of 1094 instructions, BattleEffect_RunWaterColumn moves: 1 of 1741
+ * instructions, BattleEffect_RunDjinniCharge moves: 1 of 1209 instructions in
+ * tla-ja. */
+void Render_ProjectVertices__ability_effects(struct ModelVertex *vertices,
+                                             struct ProjectedVertex *screen,
+                                             s32 count);
 void SceneTransform_ApplyPosition(const s32 *pos);
 
 extern char ResourceId_Data134;

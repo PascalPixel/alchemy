@@ -25,7 +25,8 @@ s32 Item_RaisesStat(s32 id) {
 #endif
 
 /* VIEW(game): variable gInventorySnapshot as u16 gInventorySnapshot[];
- * module/tla.h has u8 gInventorySnapshot[]. */
+ * module/tla.h has u8 gInventorySnapshot[]; not tried: gInventorySnapshot's
+ * bound declaration was not found. */
 extern u16 gData_020023c4__game[] __asm__("gInventorySnapshot");
 
 // XXX: what this snapshot puts aside and when; the twin of The Broken Seal's

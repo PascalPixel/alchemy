@@ -1,7 +1,7 @@
 /// @file
 /// A sprite particle that grows as it drifts, and FieldPsynergy_EndSand, which
 /// sets up 64 of them as a dust puff.
-// Part of psynergy.c.
+// Part of radial.c.
 
 #include "../psynergy_internal.h"
 
@@ -45,9 +45,9 @@ struct PendingEvent;
 
 /* VIEW(growing_particle): variable gMainRoutineWork as extern u8
  * gMainRoutineWork[]; main_routine_work.h has extern struct MainRoutineWork
- * gMainRoutineWork; tried as the 3 declarations' extern u8 gMainRoutineWork[],
+ * gMainRoutineWork; tried as the 6 declarations' extern u8 gMainRoutineWork[],
  * it does not compile in tla-ja:
- * games/tla/include/system/main_routine_work.h:123: conflicting types for
+ * games/tla/src/field/event_commands/radial.c:3663: conflicting types for
  * `gMainRoutineWork'. */
 extern u8 gMainRoutineWork__growing_particle[] __asm__("gMainRoutineWork");
 extern u8 Data_02000452;
@@ -60,13 +60,15 @@ extern char ResourceId_DustPuffA;
 /* VIEW(growing_particle): routine Sand_SpawnGrain as void Sand_SpawnGrain(void
  * *sprite, void *particle, s32 index, s32 tiles, s32 high); the definition has
  * void Sand_SpawnGrain(struct EffectSprite__f0e446c *sprite, struct
- * EffectParticle *particle, s32 unused, s32 tiles, s32 high). */
+ * EffectParticle *particle, s32 unused, s32 tiles, s32 high); not tried:
+ * Sand_SpawnGrain's bound declaration was not found. */
 extern void
 Func_080e45a8__growing_particle(void *sprite, void *particle, s32 index,
                                 s32 tiles, s32 high) __asm__("Sand_SpawnGrain");
 /* VIEW(growing_particle): routine Sand_InitLeaderSprite as void
  * Sand_InitLeaderSprite(void *sprite, s32 tiles); the definition has void
- * Sand_InitLeaderSprite(struct EffectSprite__f0e446c *sprite, s32 tiles). */
+ * Sand_InitLeaderSprite(struct EffectSprite__f0e446c *sprite, s32 tiles); not
+ * tried: Sand_InitLeaderSprite's bound declaration was not found. */
 extern void
 Func_080e4510__growing_particle(void *sprite,
                                 s32 tiles) __asm__("Sand_InitLeaderSprite");
@@ -81,7 +83,8 @@ struct Actor *Actor_GetById(u32 objectId);
 /* VIEW(growing_particle): routine Scene_FindPsynergyTrigger as struct
  * PendingEvent *Scene_FindPsynergyTrigger(u32 filter, s32 kind, s32 selector);
  * battle.h has struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32
- * kind, s32 selector). */
+ * kind, s32 selector); not tried: Scene_FindPsynergyTrigger's bound declaration
+ * was not found. */
 extern struct PendingEvent *Func_080ce458__growing_particle(
     u32 filter, s32 kind, s32 selector) __asm__("Scene_FindPsynergyTrigger");
 

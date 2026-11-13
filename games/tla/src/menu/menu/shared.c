@@ -1208,6 +1208,3 @@ void UiPalette_SetColor4(void) { Text_SetColorFar(4); }
 
 #undef DRAW_LEVEL_LABEL
 #undef STATUS_PANEL_LEARN_NOTE_Y
-
-#undef DRAW_LEVEL_LABEL
-#undef STATUS_PANEL_LEARN_NOTE_Y

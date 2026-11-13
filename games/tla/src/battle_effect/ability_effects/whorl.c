@@ -1,7 +1,7 @@
 /// @file
 /// The water-column scene of Whorl, Gale, Lethe Albion, Poison Flow and Raging
 /// Flood.
-// Part of ability_effects.c.
+// Part of battle_effect.c.
 
 #include "../ability_effects_internal.h"
 
@@ -22,19 +22,6 @@ struct ModelTexture__f171bb0 {
   const u8 *pixels;
 };
 
-/* VIEW(f171bb0): tag struct RenderModel as struct RenderModel__f171bb0;
- * ability_effects.c has another definition. */
-struct RenderModel__f171bb0 {
-  s32 kind;
-  s32 unk04;
-  const void *mesh;
-  void *vertices;
-  struct ModelTexture__f171bb0 *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
-
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_CountDownBattlerTints(void);
@@ -48,7 +35,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
 void Canvas_BlitAtFoot(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList(struct Model *model);
+void Render_DrawModelList__ability_effects(struct Model *model);
 void SceneTransform_ApplyPosition3(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyUniformScale(s32 scale);
 void Transform_ApplyPitch(s32 angle);
@@ -70,12 +57,9 @@ void BattlePlayback_StartFar(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f171bb0): routine BattleObject_GetFar as void
- * **BattleObject_GetFar(s32 objectId); motobj.h has struct BattleObj
- * *BattleObject_GetFar(s32 objectId); tried as the 11 declarations' void
- * **BattleObject_GetFar(s32 objectId), it does not compile in tla-ja:
- * games/tla/src/battle_effect/ability_effects.c:20521: conflicting types for
- * `BattleObject_GetFar'. */
+/* VIEW(f171bb0): routine BattleObject_GetFar as void **BattleObject_GetFar(s32
+ * objectId); motobj.h has struct BattleObj *BattleObject_GetFar(s32 objectId);
+ * not tried: BattleObject_GetFar's bound declaration was not found. */
 extern void **
 GetBattleObjectSlotFar__f171bb0(s32 objectId) __asm__("BattleObject_GetFar");
 
@@ -106,8 +90,9 @@ extern u16 gBattleEffect_MoteCells[];
 extern const u8 gData_08199340[];
 extern const u8 gData_08199210[];
 
-void Render_ProjectVertices(struct ModelVertex *vertices,
-                            struct ProjectedVertex *screen, s32 count);
+void Render_ProjectVertices__ability_effects(struct ModelVertex *vertices,
+                                             struct ProjectedVertex *screen,
+                                             s32 count);
 void SceneTransform_ApplyPosition(const s32 *pos);
 
 // The water-column scene shared by Whorl (0), Gale (1), Lethe Albion (2),
@@ -127,7 +112,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
   s32 frames;
   u8 *unit;
   s32 *target;
-  struct RenderModel__f171bb0 *model;
+  struct RenderModel *model;
   struct ModelTexture__f171bb0 texture;
   s32 columns;
   s32 shade;

@@ -1,7 +1,11 @@
 #include "mars_lighthouse_room_m.h"
 #include "event_inline.h"
 
-s32 Func_02002368(s32 a, s32 b);
+#ifdef MODERN
+// Called with no prototype in scope, as its bytes need; a current GCC gets
+// it here.
+void Func_02002368();
+#endif
 void Func_02003240(s32 a, s32 b);
 s32 Func_02003168(s32 layer, s32 x, s32 z);
 void Func_020024bc(struct Actor *object);
@@ -39,8 +43,6 @@ struct RideState {
 };
 
 s32 Func_02002708(void) {
-  /* FAKEMATCH(signature): typed to return s32, which it never sets; as void,
-   * 2 of 138 instructions differ in tla-en. */
   struct RideEvent *event = Ram_HeapSlots->eventWork;
   struct RideState *ride;
   struct Actor *leader;

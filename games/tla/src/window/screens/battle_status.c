@@ -237,8 +237,11 @@ void Func_08118148(u16 *list, s32 count, s32 mode);
 void **GetBattleObjectSlotFar(s32 member);
 s32 Item_ClassifyUseAbility(s32 member, s32 item);
 s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
-// Returns nothing; typed s32 here, see the help window in page 2.
-s32 Func_0803a2b0(s32 x, s32 y, s32 width, s32 height, s32 flags);
+#ifdef MODERN
+// Called with no prototype in scope, as its bytes need; a current GCC gets
+// it here.
+void Func_0803a2b0(s32 x, s32 y, u32 width, u32 height, s32 whole);
+#endif
 void Text_DrawWideStringAtOffset(u16 *text, struct SummaryWindow *window, s32 x,
                                  s32 y);
 // Returns nothing; typed s32 here, see the range column in page 1.
@@ -856,9 +859,6 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       u32 entry;
 
       WindowSprite_RedrawSavedRect(statusWindow);
-      /* FAKEMATCH(signature): Func_0803a2b0 typed s32 though it returns
-       * nothing, so the call sets r0 and y's load leads x's; as void, 6 of
-       * 3111 instructions differ in tla-en. */
       Func_0803a2b0(helpWindow->x, helpWindow->y, helpWindow->width,
                     helpWindow->height, 0);
       Window_DrawDividerLine(statusWindow, 0, 16, 29, 16);

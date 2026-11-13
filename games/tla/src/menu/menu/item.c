@@ -131,7 +131,11 @@ typedef s32 (*ItemWordCopyFn)(void *dst, const void *src, s32 size);
 #define ITEM_IWRAM_COPY_WORDS                                                  \
   ((ItemWordCopyFn)(IwramIrqMain + Iwram_CopyWordsOffset))
 
-s32 Unit_RefreshPsynergyFar(s32 unit);
+#ifdef MODERN
+// Called with no prototype in scope, as its bytes need; a current GCC gets
+// it here.
+void Unit_RefreshPsynergyFar(s32 unit);
+#endif
 void Func_080fae8c(s32 member, s32 slot, s32 mode, s32 target);
 #if TLA_PATCH_2
 void Func_08104484(void);
@@ -361,9 +365,6 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           Inventory_RemoveFar(command, menu->selectedSlots[0]);
           Item_AdjustCounterFar(menu->selectedItems[0] & 0x1ff, 1);
         }
-        /* FAKEMATCH(signature): Unit_RefreshPsynergyFar declared returning s32,
-         * though this game's routine returns nothing, here and below; as void,
-         * 4 of 1355 instructions differ in tla-en. */
         Unit_RefreshPsynergyFar(command);
         Unit_CalculateFar(command);
         ItemMenu_SetItemWindowRow3();

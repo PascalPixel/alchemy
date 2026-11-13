@@ -500,7 +500,11 @@ extern struct TreasureIsleCell gData_020011cc[];
 void Func_020003fc(struct TreasureIsleCell *cells, s16 index);
 void Func_02000ba0(void);
 void Func_0200105c(void);
-s32 Func_02001064(s32 a, s32 b, s32 c);
+#ifdef MODERN
+// Called with no prototype in scope, as its bytes need; a current GCC gets
+// it here.
+void Func_02001064();
+#endif
 
 /// Treasure Isle's setup for each of its four rooms: places the objects whose
 /// flags are set, schedules Func_02000ba0 in rooms 2 and 3 and opens again
@@ -553,9 +557,6 @@ s32 Func_02000cf4(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom4) {
     if (Event_GetFlag(0x30d))
       Actor_SetPosition(8, PIXELS(696), PIXELS(600));
-    /* FAKEMATCH(signature): Func_02001064 declared returning s32, though it
-     * reaches Func_080d9e98, whose draft returns nothing; as void, which sets
-     * r0 first for these calls, 4 of 241 instructions differ in tla-en. */
     Func_02001064(0, 17, 18);
     Func_02001064(1, 19, 20);
     Func_02001064(2, 21, 22);

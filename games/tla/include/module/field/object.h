@@ -41,7 +41,7 @@ void Rope_Lash(s32 index, s32 fromId, s32 toId);
 
 void HangingVine_Swing(s32 id);
 
-s32 Func_080dbda8(s32 x, s32 z, s32 layer);
+s32 MapGrid_GetCycloneCellKind(s32 x, s32 z, s32 layer);
 
 void Djinn_RunBattleStartHop(s32 djinniId);
 

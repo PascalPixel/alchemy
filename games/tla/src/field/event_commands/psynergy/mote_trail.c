@@ -1,5 +1,5 @@
 /// @file
-/// Three routines not yet understood.
+/// A summon tablet's runes flying as it is read, and placing the flag blocks.
 // Part of psynergy.c.
 
 #include "../psynergy_internal.h"
@@ -14,12 +14,18 @@ void Camera_WorldToScreen(s32 *position);
 void Actor_StartScriptFar(struct Actor *object, const void *script);
 void Actor_ArmCallback(s32 id, s32 value, s32 flags);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-/* VIEW(f0ea14c): routine Func_080e9e8c as void Func_080e9e8c(void); the
- * definition has void Func_080e9e8c(struct Actor *object). */
-extern void Func_080e9e8c__f0ea14c(void) __asm__("Func_080e9e8c");
-void Func_080e9f68(void);
+/* VIEW(f0ea14c): routine SummonTablet_CyclePictures as void
+ * SummonTablet_CyclePictures(void); the definition has void
+ * SummonTablet_CyclePictures(struct Actor *object). */
+extern void Func_080e9e8c__f0ea14c(void) __asm__("SummonTablet_CyclePictures");
+void SummonTablet_UpdateMotes(void);
 
-void Func_080ea14c(s32 targetId) {
+/// Plays a summon tablet's reading (a treasure of type 132, "examined the
+/// stone tablet"): the tablet's runes and pebbles fly as motes between it
+/// and the leader, with their sounds, before Summon_ShowLearnedMessage.
+/// ★ Named from the game: "{protagonist_name} examined the stone tablet..."
+/// (MsgKey0dc4 + 26)
+void SummonTablet_PlayRunes(s32 targetId) {
   struct MoteWork *work = HeapSlot_Alloc(92, sizeof(struct MoteWork));
   s32 ownerId = Party_GetLeaderActor();
   struct Actor *owner = ObjectTable_Get(ownerId);
@@ -108,7 +114,7 @@ void Func_080ea14c(s32 targetId) {
   Event_Wait(80);
   Actor_StartScriptFar(target, Data_080f1040);
   work->moving = 0;
-  Task_Add(Func_080e9f68, 0x480);
+  Task_Add(SummonTablet_UpdateMotes, 0x480);
   state = 0;
   timer = 0;
   do {
@@ -258,7 +264,7 @@ void Func_080ea14c(s32 targetId) {
   owner->scaleX = Q16_ONE;
   owner->scaleY = Q16_ONE;
   Event_Wait(10);
-  Task_Remove(Func_080e9f68);
+  Task_Remove(SummonTablet_UpdateMotes);
   FieldPsynergy_FadeFromCastColor();
   VramCache_FreeEntry(moteEntry);
   VramCache_FreeEntry(sparkEntry);
@@ -276,9 +282,17 @@ struct Actor *Actor_GetById(u32 objectId);
 s32 Actor_GetCellIndex(struct Actor *object);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void Func_080eaa14(struct ActorFlag *list);
+void FlagBlock_ApplyFlags(struct ActorFlag *list);
 
-void Func_080ea7c0(struct ActorFlag *actors) {
+/// Sets up a scene's flag blocks (pairs of actor and game flag, ended by
+/// actor 0xffff): each stands still on its cell, which nothing may enter, shown
+/// up (animation 0) or down (1) by its flag; then FlagBlock_ApplyFlags raises
+/// the cells of those up, and a leader below the ground is lifted onto it.
+/// Daila, Kibombo, Madra's catacombs, the Izumo ruins, Air's Rock and the
+/// Lemurian Ship call it as they start.
+// XXX: what the blocks are in the game (pillars, posts?); a render of Daila's
+// would settle it.
+void FlagBlock_PlaceAll(struct ActorFlag *actors) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct ActorFlag *list = actors;
   struct Actor *leader;
@@ -301,7 +315,7 @@ void Func_080ea7c0(struct ActorFlag *actors) {
       Actor_SelectAnimationFar(object, 1);
     }
   }
-  Func_080eaa14(list);
+  FlagBlock_ApplyFlags(list);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   height = MapGrid_GetTerrainHeightFar(leader->terrainId, leader->x, leader->z);
   if (leader->y < height)
@@ -332,7 +346,9 @@ void Shop_InitializeWork(void);
 s32 Inn_RoomPrice(s32 innId);
 void Shop_ReleaseWork(void);
 
-void Func_080ea8a8(s32 x, s32 z, s32 layer) {
+/// Sets attribute bit 0x80 (raised) on the cell at (x, z) where no ground lies
+/// above it.
+void MapGrid_MarkRaisedIfOpen(s32 x, s32 z, s32 layer) {
   if (MapGrid_GetTerrainHeightAboveFar(x, z, layer) == 0)
     MapGrid_SetAttributeBAt(x, z, layer,
                             MapGrid_GetAttributeBAt(x, z, layer) | 0x80);

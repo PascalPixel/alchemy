@@ -283,7 +283,7 @@ s32 Actor_GetSpriteIdFar(struct Actor *object);
 s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *object, s32 *position);
-s32 Func_080dbc04(s32 x, s32 z, s32 layer);
+s32 MapGrid_CanScoop(s32 x, s32 z, s32 layer);
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
@@ -379,7 +379,7 @@ void FieldPsynergy_Scoop(void) {
     failed = 4;
   if (Field_MeasurePsynergyHeight(scene->fieldKind, caster, &scene->x) == -1)
     failed = 2;
-  if (Func_080dbc04(scene->x, scene->z, caster->terrainId) == 0)
+  if (MapGrid_CanScoop(scene->x, scene->z, caster->terrainId) == 0)
     failed = 3;
   if (failed) {
     wait(2);

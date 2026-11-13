@@ -1941,7 +1941,7 @@ void FieldPsynergy_GatherNearbyCells(void) {
   for (i = 0; i <= 20; i++) {
     x = owner->x + (Data_080f0f64[i * 2] << 20);
     z = owner->z + (Data_080f0f64[i * 2 + 1] << 20);
-    kind = Func_080dbda8(x, z, owner->terrainId);
+    kind = MapGrid_GetCycloneCellKind(x, z, owner->terrainId);
     // position[1] is never set: only x and z reach Field_MeasurePsynergyHeight.
     position[0] = x;
     position[2] = z;

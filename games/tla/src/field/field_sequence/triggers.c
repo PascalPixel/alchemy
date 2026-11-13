@@ -291,7 +291,7 @@ s32 Scene_TalkToActor(s32 id) {
       if (type == 132) {
         Event_Start();
         Event_ResolvePendingActions(0);
-        Func_080ea14c(index);
+        SummonTablet_PlayRunes(index);
         Func_08038340(contents);
         Class_GetSeriesFar(contents);
         ObjectEvent_Remove(index);

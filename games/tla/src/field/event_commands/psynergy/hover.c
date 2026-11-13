@@ -208,10 +208,11 @@ struct AnimatedSprite {
   struct SpritePictures *pictures;
 };
 
-/// Steps the sprite through a four-picture cycle on the actor's timer, as
+/// The summon tablet's update while its runes fly: steps the sprite through
+/// a four-picture cycle on the actor's timer, as
 /// overlay 68c's Func_02001398 does, but leaves the next picture alone on the
 /// fourth step.
-void Func_080e9e8c(struct Actor *object) {
+void SummonTablet_CyclePictures(struct Actor *object) {
   struct AnimatedSprite *sprite = (struct AnimatedSprite *)object->sprite;
   struct SpritePictures *pictures = sprite->pictures;
 
@@ -306,7 +307,8 @@ extern void EffectSprite_DrawAtWorldPosition__f0e9af4(
     struct EffectSprite *sprite,
     struct Mote *mote) __asm__("EffectSprite_DrawAtWorldPosition");
 
-void Func_080e9f68(void) {
+/// Task of SummonTablet_PlayRunes: moves and draws the motes.
+void SummonTablet_UpdateMotes(void) {
   struct MoteWork *work = Ram_HeapSlots->battleFxWork[0];
   s32 position[3];
   struct Mote *mote;

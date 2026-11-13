@@ -99,7 +99,7 @@ gData_080f0fe0:
 	.byte 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 	.byte 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31
 
-@ Read by Func_080ea14c: an object script that sets the scale to 1 and
+@ Read by SummonTablet_PlayRunes: an object script that sets the scale to 1 and
 @ then squashes and stretches it for ever, as the variant motion scripts
 @ (gActor_VariantScripts) do; work 9 is the x scale, 10 the y
 	.global Data_080f1040

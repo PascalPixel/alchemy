@@ -226,9 +226,9 @@ Resource_FarCall006:
 	export Func_080c86e0, Rope_GetState
 	export Func_080c86e8, Rope_Place
 	export FlagEntries_GetTableFar, FlagEntries_GetTable
-	export Func_080c86f8, Func_080ea7c0
-	export Func_080c8700, Func_080ea8d4
-	export Func_080c8708, Func_080eaa14
+	export Func_080c86f8, FlagBlock_PlaceAll
+	export Func_080c8700, FlagBlock_PlaceAllMarkingEdges
+	export Func_080c8708, FlagBlock_ApplyFlags
 	export Func_080c8710, Actor_GetCellIndex
 	export Func_080c8718, Actor_PlaceBlocks
 	export Func_080c8720, Actor_LiftTargetBlock
@@ -318,7 +318,7 @@ Func_080c88e8:
 	export FieldMotes_StartFar, FieldMotes_Start
 	export Weather_StartRainFar, Weather_StartRain
 	export Weather_StopRainFar, Weather_StopRain
-	export Func_080c8928, Func_080ea14c
+	export Func_080c8928, SummonTablet_PlayRunes
 	export Func_080c8930, Func_080d2d70
 	export Func_080c8938, Func_080ca368
 	export Func_080c8940, Func_080ca3f4

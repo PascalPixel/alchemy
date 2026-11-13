@@ -109,7 +109,10 @@ struct CarryWork {
   s32 to[3];
 };
 
-void Func_080e2d64(void) {
+/// Task of the Cyclone: the whirlwind carries the leader over 128 frames from
+/// where it stood to the nearby kind 2 cell (a Cyclone teleporter), circling
+/// and arcing up and down on the way, its follower with it.
+void Cyclone_CarryLeader(void) {
   u8 *effect = Ram_HeapSlots->effectWork;
   struct CarryWork *work = (struct CarryWork *)Ram_HeapSlots->battleFxWork[0];
   struct Actor *owner = *(struct Actor **)(effect + 16);
@@ -143,7 +146,9 @@ void Func_080e2d64(void) {
   work->follower->z = owner->z;
 }
 
-void Func_080e2ec0(void) {
+/// Cyclone_CarryLeader for a kind 3 cell: the leader is carried there 32
+/// pixels up, circling, without the arc.
+void Cyclone_LiftLeader(void) {
   u8 *effect = Ram_HeapSlots->effectWork;
   struct CarryWork *work = (struct CarryWork *)Ram_HeapSlots->battleFxWork[0];
   struct Actor *owner = *(struct Actor **)(effect + 16);
@@ -359,7 +364,7 @@ void FieldPsynergy_Cyclone(void) {
     work->to[0] = *(s16 *)(event + 0xd40) << 16;
     work->to[1] = owner->y + 0x200000;
     work->to[2] = *(s16 *)(event + 0xd42) << 16;
-    Task_Add(Func_080e2ec0, 0x480);
+    Task_Add(Cyclone_LiftLeader, 0x480);
     while (work->state != 999) {
       /* FAKEMATCH(barrier): an empty asm that opens the wait loop, which keeps
        * 999's copy to r8 ahead of the state's address; without it, 2 of 713
@@ -370,7 +375,7 @@ void FieldPsynergy_Cyclone(void) {
       wait(1);
       frame++;
     }
-    Task_Remove(Func_080e2ec0);
+    Task_Remove(Cyclone_LiftLeader);
     if (*(s8 *)(effect + 52) == 0)
       owner->scaleX = 0;
     ring->scaleX = 0;
@@ -392,7 +397,7 @@ void FieldPsynergy_Cyclone(void) {
     work->to[0] = *(s16 *)(event + 0xd3c) << 16;
     work->to[1] = owner->y;
     work->to[2] = *(s16 *)(event + 0xd3e) << 16;
-    Task_Add(Func_080e2d64, 0x480);
+    Task_Add(Cyclone_CarryLeader, 0x480);
     frame = 0;
     while (work->state != 999) {
       /* FAKEMATCH(barrier): an empty asm that opens the wait loop, which keeps
@@ -404,7 +409,7 @@ void FieldPsynergy_Cyclone(void) {
       wait(1);
       frame++;
     }
-    Task_Remove(Func_080e2d64);
+    Task_Remove(Cyclone_CarryLeader);
     for (i = 0; i < 16; i++) {
       owner->scaleX += -0x800;
       owner->scaleY = owner->scaleX;

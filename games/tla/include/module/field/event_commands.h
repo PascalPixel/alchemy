@@ -293,7 +293,7 @@ void Teleport_PlayWhirl(void);
 
 void Field_StartEncounterTransition(s32 unused);
 
-void Func_080ea14c(s32 targetId);
+void SummonTablet_PlayRunes(s32 targetId);
 
 void FieldPsynergy_ResumeHaltedActor(s32 id);
 

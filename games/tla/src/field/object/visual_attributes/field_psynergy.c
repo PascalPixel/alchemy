@@ -41,12 +41,15 @@ struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer) {
   return cells;
 }
 
-s32 Func_080dbc04(s32 x, s32 z, s32 layer) {
+/// Whether the Scoop can dig at (x, z): on the world map, sand; elsewhere not
+/// on a Cyclone cell, water or raised ground, and then on sand, or where
+/// attribute bit 1 is set (clear, when the event work's byte 0xd36 is set).
+s32 MapGrid_CanScoop(s32 x, s32 z, s32 layer) {
   u8 *event = Ram_HeapSlots->eventWork;
 
   if (*(s8 *)(event + 394) == 3)
     return MapGrid_IsSandCell(x, z, layer);
-  if (Func_080dbda8(x, z, layer) != 0 ||
+  if (MapGrid_GetCycloneCellKind(x, z, layer) != 0 ||
       MapGrid_IsWaterCell(x, z, layer) != 0 ||
       MapGrid_GetCellAttributeLowNibbleFar(layer, x, z) != 0)
     return 0;
@@ -116,7 +119,10 @@ s32 MapGrid_IsWaterCell(s32 x, s32 z, s32 layer) {
   return (u8)(MapGrid_GetCellAt(x, z, layer)->attributeB & 16);
 }
 
-s32 Func_080dbda8(s32 x, s32 z, s32 layer) {
+/// The Cyclone's kind of the cell at (x, z), from layer 2's collision code:
+/// 1 for 233, 2 for 234 (a teleporter it carries the leader to), 3 for 235,
+/// else 0. FieldPsynergy_GatherNearbyCells lists them.
+s32 MapGrid_GetCycloneCellKind(s32 x, s32 z, s32 layer) {
   u8 code = MapGrid_GetCellAt(x, z, 2)->collisionCode;
 
   if (code == 233)

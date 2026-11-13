@@ -30,24 +30,28 @@ void Colosso_ShowItemIcon(s32 id, s32 item) {
   struct Sprite *sprite;
   u8 *icon;
   s32 tile;
+  /* FAKEMATCH(temporary): one local holds the 0 the icon's clear and the
+   * sprite's resets store; as 0 at each, 14 of 83 instructions differ in
+   * tbs-en. */
+  s32 zero;
 
   actor = Actor_GetById(id);
   if (actor != 0 && actor->spriteStorageKind == 1) {
     sprite = actor->sprite;
-    icon =
-        (u8 *)HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer)) +
-        1024;
-    Dma_Fill32(0, icon, 128);
+    icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    zero = 0;
+    icon += 1024;
+    Dma_Fill32(zero, icon, 128);
     Icon_DrawItem(item);
     tile = VramCache_Load(sprite->slot, 128, icon);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     actor->retainSpriteCache = 1;
     SpriteAnimation_Clear(sprite->entries[0]);
-    sprite->entries[0] = NULL;
-    sprite->count = 0;
-    sprite->image.fullColor = 0;
+    sprite->entries[0] = (void *)zero;
+    sprite->count = zero;
+    sprite->image.fullColor = zero;
     sprite->image.tile = tile;
-    sprite->dirty = 0;
-    sprite->flags = 0;
+    sprite->dirty = zero;
+    sprite->flags = zero;
   }
 }

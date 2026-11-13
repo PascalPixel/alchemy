@@ -342,7 +342,12 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   s32 horizontalExtent;
   s32 verticalExtent;
 
+  // UB: the heap slot is read as a word rather than as the pointer it holds.
+#ifdef UBFIX
   workspace = gMapGridWork[0];
+#else
+  workspace = (void *)((u32 *)gMapGridWork)[0];
+#endif
   direction = (Actor_GetById(ACTOR_PARTY_LEADER))->facing >> 12;
   actor = Actor_GetById(probe.actorSlot);
   footprintTable = (u8 *)gPushedActor_FootprintBounds;

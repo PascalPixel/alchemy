@@ -22,19 +22,26 @@
 /// 15 dimmed by four tenths), so the shimmer runs up the ramp; green and blue
 /// stay those of gPaletteCycleGreen and gPaletteCycleBlue.
 static void MercuryLighthouse_CyclePalette(void) {
+  /* FAKEMATCH(volatile): the red level below passes through a halfword on
+   * the stack; as a plain local, 22 of 65 instructions differ in tbs-en. */
+  volatile u16 below;
   u32 i;
   s32 red;
   s32 greenAndBlue;
+  volatile u16 *color;
 
+  below = 0;
   if (gFrameCount % 5 != 0)
     return;
   gPaletteCycleRed = (gPaletteCycleRed + 4) & 31;
   for (i = 0; i < 6; i++) {
-    red = BG_PLTT_COLOR(6, 14 - i) & 31;
+    below = BG_PLTT_COLOR(6, 14 - i) & 31;
+    red = below;
     if (i <= 2)
       red -= red * 4 / 10;
+    color = &BG_PLTT_COLOR(6, 15 - i);
     greenAndBlue = (gPaletteCycleBlue << 10) | (gPaletteCycleGreen << 5);
-    BG_PLTT_COLOR(6, 15 - i) = red | greenAndBlue;
+    *color = red | greenAndBlue;
   }
   BG_PLTT_COLOR(6, 9) = gPaletteCycleRed | greenAndBlue;
 }

@@ -127,7 +127,10 @@ static s32 MercuryLighthouse_FollowLeader(struct Actor *actor) {
 
   // Alternate the light's draw parameter every two frames and redraw it.
   {
-    struct Sprite *sprite = actor->sprite;
+    /* FAKEMATCH(temporary): the sprite read through a pointer to its slot; as
+     * actor->sprite, 2 of 40 instructions differ in tbs-en. */
+    struct Sprite **slot = &actor->sprite;
+    struct Sprite *sprite = *slot;
     struct SpriteAnimation *entry = sprite->entries[0];
 
     entry->colorMode = ((gFrameCount >> 1) & 1) * 7;
@@ -206,7 +209,9 @@ void MercuryLighthouse_ChargeLights(void) {
       Actor_StartScript(actor, gMercuryLighthouse_PillarScript);
       actor->watchedActor = leader;
       actor->motionFlags = ACTOR_FLOATS;
-      actor->y.fixed -= px(1) / 2;
+      /* FAKEMATCH(temporary): the height lowered as a plain word, outside its
+       * union; as actor->y.fixed, 2 of 80 instructions differ in tbs-en. */
+      *(s32 *)&actor->y -= px(1) / 2;
       if (sprite != 0) {
         sprite->flags = 0;
         sprite->image.priority = 1;

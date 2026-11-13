@@ -66,6 +66,9 @@ enum LinkStatus {
   LINK_STATUS_EXTRA_CONSOLE = 0x2000
 };
 
+/// The bytes of one packet buffer in SerialWork.storage.
+#define SERIAL_PACKET_BYTES 32
+
 /// The link cable's runtime: its mode and phase, the consoles heard from, the
 /// send position and the packet buffers the interrupt handler fills.
 struct SerialWork {
@@ -107,7 +110,7 @@ struct SerialWork {
   u16 *pendingBuffer[4];
   /// The buffers' memory: two 32-byte send buffers, then 96 bytes a console
   /// for its incoming, ready and pending packets.
-  u8 storage[256];
+  u8 storage[SERIAL_PACKET_BYTES * 8];
 };
 
 STATIC_ASSERT(sizeof(struct SerialWork) == 0x160);

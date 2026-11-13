@@ -252,9 +252,11 @@ enum DisplayControl {
 #define SIO_115200_BPS 0x0003 ///< multiplayer's fastest baud rate
 #define SIO_MULTI_SI                                                           \
   0x0004 ///< multiplayer: this console's SI pin, clear on the parent
-#define SIO_MULTI_SD 0x0008    ///< multiplayer: every console is ready
-#define SIO_ID 0x0030          ///< multiplayer: this console's id, 0 the parent
-#define SIO_ID_SHIFT 4         ///< SIO_ID's lowest bit
+#define SIO_MULTI_SD 0x0008 ///< multiplayer: every console is ready
+#define SIO_ID 0x0030       ///< multiplayer: this console's id, 0 the parent
+#define SIO_ID_SHIFT 4      ///< SIO_ID's lowest bit
+/// The multiplayer id (SIO_ID) in a SIOCNT value, taken out by shifts.
+#define SIO_ID_OF(control) (((control) << 26) >> 30)
 #define SIO_ERROR 0x0040       ///< multiplayer: the last transfer failed
 #define SIO_START 0x0080       ///< starts a transfer; set while one runs
 #define SIO_32BIT_MODE 0x1000  ///< normal mode, 32 bits a transfer

@@ -56,7 +56,7 @@ static __inline__ void Lower(s32 id, s32 height) {
   Actor_GetById(id)->y = Actor_GetById(id)->terrainHeight = height;
 }
 
-s32 Func_02003678(void) {
+s32 Scene_Initialize(void) {
   s32 i;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 516;
@@ -261,7 +261,7 @@ s32 Func_02003678(void) {
   return 0;
 }
 
-s32 Func_02003ee0(void) {
+s32 Scene_PrepareMap(void) {
   s32 scene = gMainRoutineWork.scene;
   s32 entrance = gMainRoutineWork.entrance;
 

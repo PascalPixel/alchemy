@@ -299,7 +299,7 @@ static __inline__ s32 GameFlag_Test_(s32 flag) {
   /* FAKEMATCH(wrapper): forwarded inline; as a plain call, 21 of 292
    * instructions differ in tla-en. */
   /* FAKEMATCH(wrapper): forwarded inline; as plain calls, 58 of 203
-   * instructions of Func_02002c54 differ in tla-en. */
+   * instructions of Scene_Initialize differ in tla-en. */
   return GameFlag_Test(flag);
 }
 
@@ -1758,7 +1758,7 @@ void Func_0200498c(s32 a, s32 b, s32 c, s32 d);
 /// and 25 stand at heights 0 and 32, the cells flags 514 and 2591 opened are
 /// stamped again, and with 2591 set the arrival is chosen by flags 2595, 2593
 /// and 2596 and the entrance.
-s32 Func_02002c54(void) {
+s32 Scene_Initialize(void) {
   struct Actor *object;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 516;
@@ -1826,7 +1826,7 @@ void Func_02003a38();
 void Func_02003ac0();
 
 /// The scene's map preparation.
-s32 Func_02002e3c(void) {
+s32 Scene_PrepareMap(void) {
   struct Actor *object;
 
   Scene_SetArrivalFlags(0);

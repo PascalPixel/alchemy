@@ -28,7 +28,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "text/msg_ids.h"
 #include "event_inline.h"
 
-const struct ActorPlacement *Func_0200004c(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room2)
     return gData_02002828;
   if (gMainRoutineWork.entrance == 20)
@@ -234,7 +234,7 @@ void Func_02000428(void) {
   }
 }
 
-const struct Trigger *Func_020004c4(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room2)
     return gData_02002c9c;
   if (gMainRoutineWork.entrance == 20)
@@ -297,7 +297,7 @@ void Func_02001e80(s32 value);
 
 /// The rooms' setup: the leader's sprite priority, the two rooms' actors and
 /// the sprite of actor 10, by the story flags.
-s32 Func_02000624(void) {
+s32 Scene_Initialize(void) {
   struct FieldSprite *sprite;
   void *event;
 

@@ -30,7 +30,7 @@ void Func_020001b4(void);
 void Func_020001bc(void);
 void Func_0200020c(void);
 
-const struct ActorPlacement *Func_0200004c(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (GameFlag_Test(2219))
     return gData_02000318;
   return gData_02000270;
@@ -76,14 +76,14 @@ void Func_02000074(void) {
   GameFlag_SetBit(2447);
 }
 
-s32 Func_02000154(void) {
+s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 513;
   Actor_SetSingleChildFlags(Actor_GetById(8), 0);
   Actor_SetSingleChildFlags(Actor_GetById(9), 0);
   return 0;
 }
 
-s32 Func_02000184(void) {
+s32 Scene_PrepareMap(void) {
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
   return 0;
 }

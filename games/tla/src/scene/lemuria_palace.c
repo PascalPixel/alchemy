@@ -121,7 +121,7 @@ void Func_020000f4(void) {
 }
 
 /// The room's setup: it schedules the palette cycle Func_020000f4.
-s32 Func_02000158(void) {
+s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x201;
   Task_AddFrame(Func_020000f4, 0xc80);
   FieldActor_SetSpritePriority(8, 3);

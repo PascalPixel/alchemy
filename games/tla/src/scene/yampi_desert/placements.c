@@ -16,7 +16,7 @@ const u8 *Func_0200028c(void) {
   return gData_02004810;
 }
 
-const u8 *Func_020002b8(void) {
+const u8 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov661Room10)
@@ -57,7 +57,7 @@ extern const u8 gData_02004fdc[];
 extern const u8 gData_0200506c[];
 extern const u8 gData_020050b4[];
 
-const u8 *Func_020002f8(void) {
+const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov661Room1)
@@ -100,7 +100,7 @@ extern const u8 gData_020057e0[];
 
 /// Returns the current room's table.
 // As ☀️'s Scene_GetEntrances picks one.
-const u8 *Func_020003c8(void) {
+const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov661Room1)

@@ -1254,7 +1254,7 @@ shrink:
 extern const u8 gData_02006238[];
 extern const u8 gData_02006268[];
 
-const u8 *Func_020025cc(void) {
+const u8 *Scene_GetEntrances(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room1)
     return gData_02006268;
   return gData_02006238;
@@ -1273,7 +1273,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-u32 *Func_02002604(void) {
+u32 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room1)
     return gData_02006564;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room2)

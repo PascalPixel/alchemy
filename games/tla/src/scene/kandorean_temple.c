@@ -77,7 +77,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 extern u32 gData_020056a0[];
 extern u32 gData_020056c0[];
 
-u32 *Func_02000390(void) {
+u32 *Scene_GetRegions(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov653Room3)
@@ -105,7 +105,7 @@ extern u32 gData_02005aa8[];
 extern struct ActorPlacement gData_02005b20[];
 extern struct ActorPlacement gData_02005be0[];
 
-void *Func_020003d0(void) {
+void *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov653Room1)
@@ -178,7 +178,7 @@ extern s32 gData_02005f40[];
 extern s32 gData_02005fc4[];
 extern s32 gData_0200615c[];
 
-void *Func_02000580(void) {
+void *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov653Room1)
@@ -1521,7 +1521,7 @@ void Func_02002814(void) { Func_020053d0_(76, 0, 1, 1, 80, 18, 1); }
 
 void Func_02002834(void) { Func_020053d0_(76, 0, 1, 1, 87, 15, 1); }
 
-s32 Func_02002854(void) {
+s32 Scene_Initialize(void) {
   s32 scene;
 
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x204;

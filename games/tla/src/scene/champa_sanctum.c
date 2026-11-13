@@ -32,7 +32,7 @@ void Func_02000054(void) { Func_020000b8(); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-s32 Func_02000064(void) {
+s32 Scene_Initialize(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   work->screenEffect = 513;

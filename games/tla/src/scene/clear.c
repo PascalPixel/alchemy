@@ -316,7 +316,7 @@ void Party_AddActiveOwner(s32 id);
     Event_ClearFlag(0x109);                                                         \
   }
 
-s32 Func_02000328(void) {
+s32 Scene_Initialize(void) {
   s32 started = 0;
   u32 mask;
   s32 result, i, limit, status, message, failure, recovery;

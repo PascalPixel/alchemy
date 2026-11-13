@@ -28,7 +28,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 extern s16 gData_02002c5c[];
 extern s16 gData_02002efc[];
 
-const s16 *Func_0200004c(void) {
+const s16 *Scene_GetPlacements(void) {
   if (Event_GetFlag(0x97f))
     return gData_02002efc;
   return gData_02002c5c;
@@ -474,7 +474,7 @@ void Func_02000638(void) {
 extern s32 gData_0200320c[];
 extern s32 gData_0200b410[];
 
-const s32 *Func_02000a60(void) {
+const s32 *Scene_GetEvents(void) {
   if (Event_GetFlag(0x97f))
     return gData_0200b410;
   return gData_0200320c;
@@ -520,7 +520,7 @@ s32 Func_020029fc();
 s32 Func_02002ba4();
 s32 Func_02002bac();
 
-s32 Func_02000b18(void) {
+s32 Scene_Initialize(void) {
   s32 t7;
   s32 t8;
   s32 t12;
@@ -561,7 +561,7 @@ s32 Func_02000b18(void) {
   return 0;
 }
 
-s32 Func_02000c04(void) {
+s32 Scene_PrepareMap(void) {
   s32 t0;
 
   t0 = Event_GetFlag(0x97f);

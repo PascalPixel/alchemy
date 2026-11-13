@@ -150,7 +150,7 @@ void Animation_ApplyChildValues(struct Actor *object, s32 value);
 u32 Func_02004904(void);
 
 /// Return the table for the current room.
-const void *Func_020009e8(void) {
+const void *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room2)
     return gData_02005a54;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room3)

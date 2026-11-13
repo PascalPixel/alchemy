@@ -174,7 +174,7 @@ void Func_02001e50(void);
 void Func_02001f00(s32 id);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 
-s32 Func_02000384(void) {
+s32 Scene_Initialize(void) {
   struct Actor *leader;
   s32 flag;
   s32 i;
@@ -223,7 +223,7 @@ s32 Func_02000384(void) {
 
 void Func_020006a0(s32 value);
 
-s32 Func_020004fc(void) {
+s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   Func_020006a0(0);
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x40;

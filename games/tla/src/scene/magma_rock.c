@@ -188,7 +188,7 @@ extern const u8 gData_02003ea8[];
 extern const u8 gData_02003ed8[];
 extern const u8 gData_02003f88[];
 
-const struct SceneEntrance *Func_0200088c(void) {
+const struct SceneEntrance *Scene_GetRegions(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2)
     return (const struct SceneEntrance *)gData_02003ed8;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room3)
@@ -205,7 +205,7 @@ extern const u8 gData_020043e4[];
 extern const u8 gData_020044a4[];
 extern const u8 gData_020045c4[];
 
-const struct Trigger *Func_020008d4(void) {
+const struct Trigger *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
     if (gMainRoutineWork.entrance <= 3)
       return (const struct Trigger *)gData_020041a4;

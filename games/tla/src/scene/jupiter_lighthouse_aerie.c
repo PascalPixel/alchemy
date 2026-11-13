@@ -233,7 +233,7 @@ void Func_0200032c(s32 unused, s32 id) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-s32 Func_02000538(void) {
+s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 513;
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1)
     Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
@@ -256,7 +256,7 @@ void Func_02001dbc(s32 actor, s32 mode);
 
 /// The room's setup: actors 13 and 14 by flags 0xa0a and 0xa0b (with the map
 /// cells copied when set), then the terrain under each.
-s32 Func_02000604(void) {
+s32 Scene_PrepareMap(void) {
   struct Actor *object;
 
   Scene_SetArrivalFlags(0);

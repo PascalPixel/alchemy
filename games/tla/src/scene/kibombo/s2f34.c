@@ -1343,7 +1343,7 @@ void Func_02004cf4(void) {
   Func_02005aa4();
 }
 
-s32 Func_02005034(void) {
+s32 Scene_Initialize(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Kibombo1)

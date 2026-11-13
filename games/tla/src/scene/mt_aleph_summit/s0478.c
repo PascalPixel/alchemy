@@ -88,7 +88,7 @@ static __inline__ void CopyToPalette(void *from, void *to, s32 size) {
   Iwram_CopyWords(from, to, size);
 }
 
-s32 Func_02000564(void) {
+s32 Scene_Initialize(void) {
   u8 *block;
   void *buffer;
   s32 mode;

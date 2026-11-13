@@ -111,7 +111,7 @@ void Func_0200100c(u16 *list) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const u32 *Func_02001070(void) {
+const u32 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov67FRoom1)
@@ -123,7 +123,7 @@ const u32 *Func_02001070(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Func_020010b0(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov67FRoom1)
@@ -218,7 +218,7 @@ void Func_02001270(void) {
   Func_02001490();
 }
 
-const struct Trigger *Func_020012b0(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov67FRoom1)
@@ -226,7 +226,7 @@ const struct Trigger *Func_020012b0(void) {
   return gData_020019ac;
 }
 
-s32 Func_020012dc(void) {
+s32 Scene_Initialize(void) {
   struct IzumoRuinsEventWork *work = Ram_HeapSlots->eventWork;
   struct Actor *object;
   s32 height;

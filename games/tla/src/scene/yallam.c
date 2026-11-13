@@ -152,7 +152,7 @@ extern const u8 gData_02002ac4[];
 extern const u8 gData_02002be4[];
 extern const u8 gData_02002bfc[];
 
-const u8 *Func_02000218(void) {
+const u8 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room1 &&
       gMainRoutineWork.entrance == 15)
     return gData_02002bfc;
@@ -261,7 +261,7 @@ extern const u8 gData_02002d24[];
 extern const u8 gData_02002eec[];
 extern const u8 gData_02002f10[];
 
-const u8 *Func_020004ec(void) {
+const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room1 &&
       gMainRoutineWork.entrance == 15)
     return gData_02002f10;
@@ -1693,7 +1693,7 @@ void Func_02002244(void) {
   }
 }
 
-s32 Func_02002278(void) {
+s32 Scene_Initialize(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room1) {
     if (gMainRoutineWork.entrance == 15)
       Func_020023c8();
@@ -1703,7 +1703,7 @@ s32 Func_02002278(void) {
   return 0;
 }
 
-s32 Func_020022b0(void) {
+s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov676Room1 && Event_GetFlag(0x300))
     MapGrid_CopyCellAttributes(8, 12, 1, 1, 10, 12);
   return 0;

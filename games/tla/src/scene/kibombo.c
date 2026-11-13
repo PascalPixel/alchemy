@@ -99,7 +99,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 extern u8 gData_0200635c[];
 
-u8 *Func_020000fc(void) {
+u8 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Kibombo3)
@@ -126,7 +126,7 @@ extern u8 gData_020074dc[];
 extern u8 gData_02007698[];
 extern u8 gData_02006ee8[];
 
-u8 *Func_0200012c(void) {
+u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Kibombo1)
@@ -145,7 +145,7 @@ u8 *Func_0200012c(void) {
   return gData_020064f8;
 }
 
-u8 *Func_020001b4(void) {
+u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Kibombo1)

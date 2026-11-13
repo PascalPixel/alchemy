@@ -48,7 +48,7 @@ extern u32 gData_02003b94[];
 extern u32 gData_02003c0c[];
 extern u32 gData_02003c84[];
 
-u32 *Func_02000070(void) {
+u32 *Scene_GetPlacements(void) {
   s32 scene;
 
   if (GameFlag_Test(0x97e)) {
@@ -126,7 +126,7 @@ static __inline__ void Actor_SetSpeedParameters_(s32 actor, s32 speed,
 static __inline__ void Func_020034d4_(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
    * constants, as ☀️'s scene layer does; as a direct call, 4 of 112
-   * instructions differ in tla-en (Func_020004d4). */
+   * instructions differ in tla-en (Scene_Initialize). */
   Actor_SetHorizontalPositionWithTerrain(actor, x, z);
 }
 
@@ -222,7 +222,7 @@ extern s32 gData_02004104[];
 
 void Func_02000464(s32 a) { Func_02003474(a, 326, 0x978); }
 
-s32 *Func_02000478(void) {
+s32 *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov685Room1)
@@ -250,11 +250,11 @@ void Func_020035ac(s32 a);
 static __inline__ void Func_0200361c_(s32 a, s32 b) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
    * constants, as ☀️'s scene layer does; as a direct call, 2 of 112
-   * instructions differ in tla-en (Func_020004d4). */
+   * instructions differ in tla-en (Scene_Initialize). */
   Func_080d3b28(a, b);
 }
 
-s32 Func_020004d4(void) {
+s32 Scene_Initialize(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
 #if !TLA_PATCH_1

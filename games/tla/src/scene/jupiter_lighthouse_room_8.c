@@ -105,7 +105,7 @@ void Func_02000af0(s32 id);
 void Func_020018f4(s32 a, s32 b, s32 c, s32 d, s32 e);
 void Func_02002010(s32 x, s32 z, s32 a);
 
-s32 Func_02000110(void) {
+s32 Scene_Initialize(void) {
   ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)->screenEffect =
       0x204;
   Actor_Get(8)->scaleX = 0xc000;
@@ -130,7 +130,7 @@ s32 Func_02000110(void) {
   return 0;
 }
 
-s32 Func_020001d4(void) {
+s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   if (Event_GetFlag(0x109) == 0)
     Event_ClearFlag(0xa18);

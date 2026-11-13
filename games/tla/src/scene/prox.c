@@ -172,7 +172,7 @@ extern u32 gData_02005444[];
 extern u32 gData_020054a4[];
 extern u32 gData_0200551c[];
 
-const struct ActorPlacement *Func_0200048c(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6a8Room1 && Event_GetFlag(0x9c5) &&
@@ -236,7 +236,7 @@ extern const u8 gData_02005eac__prox[] __asm__("gData_02005eac");
 extern struct Trigger gData_02005da4[];
 extern struct Trigger gData_02005eac[];
 
-const u8 *Func_02000598(void) {
+const u8 *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6a8Room1)
@@ -1344,7 +1344,7 @@ void Func_0200461c(s32 a);
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Test(flag); }
 
-s32 Func_02002614(void) {
+s32 Scene_Initialize(void) {
   s32 scene;
 
   if (Flag_Test(0xa3d)) {

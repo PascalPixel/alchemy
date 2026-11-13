@@ -98,7 +98,7 @@ void Func_02000224(void) {
   Func_020002c0();
 }
 
-s32 Func_02000280(void) {
+s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
   return 0;
 }

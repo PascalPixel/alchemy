@@ -313,7 +313,7 @@ struct MapMode {
   } __attribute__((packed)) bits;
 };
 
-s32 Func_02000be0(void) {
+s32 Scene_Initialize(void) {
   struct MainRoutineWork *party;
   struct MapMode *map = (struct MapMode *)Ram_HeapSlots->mapWork;
   struct MapModeBits bits = map->bits;
@@ -361,11 +361,11 @@ static __inline__ void Func_02001f2c_(s32 a, s32 b, s32 c, s32 d, s32 e,
   /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
    * scene layer, so the arguments are set up in their own order and each call
    * keeps its constants; as a direct call, the costly constant is built first
-   * or shared, 15 of 40 instructions of Func_02000c80 differ in tla-en. */
+   * or shared, 15 of 40 instructions of Scene_PrepareMap differ in tla-en. */
   Map_CopyCellPictureIndicesRect(a, b, c, d, e, f);
 }
 
-s32 Func_02000c80(void) {
+s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov657Room1) {
     Func_02001f2c_(2, 2, 10, 24, 18, 10);
     Func_02001f2c_(0, 62, 26, 62, 3, 8);

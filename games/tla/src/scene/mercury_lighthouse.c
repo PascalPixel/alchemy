@@ -223,7 +223,7 @@ void Func_020001b0(void) {
   Import_EventSetExitRequest(3);
 }
 
-s32 Func_020004c4(void) {
+s32 Scene_Initialize(void) {
   if (gMainRoutineWork.entrance == 12) {
     Func_02000568();
     Event_ResolvePendingActions(0);

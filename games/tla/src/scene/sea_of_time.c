@@ -554,7 +554,7 @@ s32 Func_02000c94(void) {
 }
 
 /// The 14 colours of BG palette 3 (entries 1 to 14) that the fade returns to,
-/// copied from palette RAM by Func_02001cdc and rotated by Func_02001650 in
+/// copied from palette RAM by Scene_Initialize and rotated by Func_02001650 in
 /// step with BG palette entries 49 to 62.
 struct SavedColors {
   u16 colors[14];
@@ -1291,7 +1291,7 @@ void Func_02000c50(void);
 /// The overlay's start: sets the screen effect, restores the clock and palette
 /// in the first room, draws the unlit cells in the second, and schedules the
 /// frame callback.
-s32 Func_02001cdc(void) {
+s32 Scene_Initialize(void) {
   ((struct SeaOfTimeEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 256;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room1) {
     gData_020022c8 = gFrameCount;
@@ -1354,7 +1354,7 @@ s32 Func_02001cdc(void) {
   return 0;
 }
 
-s32 Func_02001ec8(void) {
+s32 Scene_PrepareMap(void) {
   void *block = Ram_HeapSlots->block32;
 
   Dma_Fill32(-1, block, 0x1c0);

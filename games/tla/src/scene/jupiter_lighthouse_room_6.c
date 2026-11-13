@@ -115,7 +115,7 @@ void Func_02001be4();
 void Func_02001250(s32 a, s32 b, s32 c, s32 d, s32 e);
 void Func_0200196c(s32 a, s32 b, s32 c);
 
-s32 Func_020001e8(void) {
+s32 Scene_Initialize(void) {
   struct JupiterLighthouseRoom6EventWork *work = Ram_HeapSlots->eventWork;
 
   work->screenEffect = 0x204;
@@ -134,7 +134,7 @@ s32 Func_020001e8(void) {
   return 0;
 }
 
-s32 Func_02000288(void) {
+s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   Func_020003a4(0);
   if (!Event_GetFlag(265))

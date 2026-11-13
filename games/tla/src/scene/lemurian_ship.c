@@ -26,7 +26,7 @@ extern u8 gData_02003254__scene_tables[] __asm__("gData_02003254");
 extern u32 gData_02003234[];
 extern u32 gData_02003254[];
 
-u8 *Func_02000038(void) {
+u8 *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov656Room1)
@@ -36,7 +36,7 @@ u8 *Func_02000038(void) {
   return gData_02003054__scene_tables;
 }
 
-u8 *Func_02000078(void) {
+u8 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov656Room1)
@@ -75,7 +75,7 @@ extern struct ActorPlacement gData_02003710[];
 extern struct ActorPlacement gData_020037d0[];
 extern struct ActorPlacement gData_02003848[];
 
-struct ActorPlacement *Func_020000b8(void) {
+struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov656Room1) {
     switch (gMainRoutineWork.entrance) {
     case 3:
@@ -266,7 +266,7 @@ extern struct Trigger gData_02003d9c[];
 extern struct Trigger gData_02003dfc[];
 extern struct Trigger gData_02003ebc[];
 
-struct Trigger *Func_020004f4(void) {
+struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov656Room1) {
     switch (gMainRoutineWork.entrance) {
     case 3:
@@ -1078,7 +1078,7 @@ void Func_02002820(void);
 void Func_02002970(void);
 void Func_02002b98(void);
 
-s32 Func_02001abc(void) {
+s32 Scene_Initialize(void) {
   ((struct LemurianShipEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
       0x209;
   if (GameFlag_Test(0x9b4))
@@ -1141,7 +1141,7 @@ s32 Func_02001abc(void) {
   return 0;
 }
 
-s32 Func_02001c38(void) {
+s32 Scene_PrepareMap(void) {
   u32 i;
 
   i = 0;

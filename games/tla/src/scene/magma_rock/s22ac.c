@@ -229,7 +229,7 @@ void Func_02003be4();
 void Func_02003bfc();
 void Func_0200079c();
 
-s32 Func_02002618(void) {
+s32 Scene_Initialize(void) {
   struct MainRoutineWork *work;
   s32 scene;
   s32 *owner, *leader;

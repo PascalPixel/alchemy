@@ -98,7 +98,7 @@ extern s16 gData_02003e84[];
 extern s16 gData_02003ec4[];
 extern s16 gData_02003f44[];
 
-s16 *Func_020004c0(void) {
+s16 *Scene_GetRegions(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov663Room1)
@@ -114,7 +114,7 @@ extern s32 gData_020040ec[];
 extern u32 gData_02004194[];
 extern u32 gData_02004314[];
 
-void *Func_02000508(void) {
+void *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov663Room1)
@@ -262,7 +262,7 @@ extern s32 gData_020043d4[];
 extern s32 gData_020044d0[];
 extern s32 gData_0200459c[];
 
-s32 *Func_020007e4(void) {
+s32 *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov663Room1)
@@ -1652,7 +1652,7 @@ void Func_02003c80(s32 a);
   (Actor_GetById(id)->motionFlags = 0, Actor_GetById(id)->y = (height),        \
    SWAY(id, phase))
 
-s32 Func_02002ca0(void) {
+s32 Scene_Initialize(void) {
   struct Actor *leader;
   s32 *beam;
   volatile struct DmaRegisters *dma;
@@ -1935,7 +1935,7 @@ s32 Func_02002ca0(void) {
 
 extern u8 MsgCurePoison2[];
 
-s32 Func_02003a7c(void) {
+s32 Scene_PrepareMap(void) {
   if (FIELD_AT(&gMainRoutineWork, s16, 480) == (s32)MsgCurePoison2) {
     Func_02002b88();
   }

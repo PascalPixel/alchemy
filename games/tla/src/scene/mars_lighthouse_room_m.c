@@ -91,7 +91,7 @@ void Func_02000058(s32 id, s32 value) {
 
 #include "mars_lighthouse_room_m/mars_lighthouse_room_m.h"
 
-const struct ActorPlacement *Func_02000080(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6ACRoom6)
@@ -427,7 +427,7 @@ void Func_02000abc(void) {
   FieldTask_Remove(Func_0200055c);
 }
 
-const struct Trigger *Func_02000af4(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6ACRoom6)
@@ -464,7 +464,7 @@ extern u8 gData_0200339c[];
 extern u8 gData_020033c8[];
 extern u8 gData_020033f4[];
 
-s32 Func_02000b64(void) {
+s32 Scene_Initialize(void) {
   s32 entrance;
   s32 scene;
 
@@ -571,7 +571,7 @@ static __inline__ void SetBlend(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g)
   Func_02003270(a, b, c, d, e, f, g);
 }
 
-s32 Func_02000e84(void) {
+s32 Scene_PrepareMap(void) {
   s16 scene = gMainRoutineWork.scene;
   s32 entrance = gMainRoutineWork.entrance;
   struct Actor *object;

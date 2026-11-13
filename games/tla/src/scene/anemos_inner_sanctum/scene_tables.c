@@ -29,7 +29,7 @@ extern const u8 gData_02003bc8[];
 extern const u8 gData_02003c88[];
 extern const u8 gData_02003ce8[];
 
-const u8 *Func_02000818(void) {
+const u8 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room1)
     return gData_02003b50;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room2)

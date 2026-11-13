@@ -1448,7 +1448,7 @@ void Func_020037e8(void);
 
 /// Clears the followed actor and runs the entered room's setup, as overlay
 /// 654's Func_02002ec4 does; Room7 has none.
-s32 Func_02003094(void) {
+s32 Scene_Initialize(void) {
   s16 scene;
 
   Func_020021d4();

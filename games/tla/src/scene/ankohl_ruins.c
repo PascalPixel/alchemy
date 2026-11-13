@@ -20,7 +20,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 extern const u8 gData_0200307c[];
 extern const u8 gData_0200309c[];
 
-const struct ActorPlacement *Func_02000344(void) {
+const struct ActorPlacement *Scene_GetRegions(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room5)
     return (const struct ActorPlacement *)gData_0200307c;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room8)
@@ -151,7 +151,7 @@ extern const u8 gData_02003708[];
 extern const u8 gData_02003750[];
 extern const u8 gData_02003768[];
 
-const u8 *Func_02000600(void) {
+const u8 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1)
     return gData_020032b8;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room2)
@@ -1194,7 +1194,7 @@ void Func_02002318(void) { GameFlag_SetBit(0x205); }
 
 void Func_02002328(void) { GameFlag_ClearBit(0x205); }
 
-const u8 *Func_02002338(void) {
+const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1)
     return gData_020037b4;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room2)

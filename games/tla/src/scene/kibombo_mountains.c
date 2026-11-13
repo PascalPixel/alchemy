@@ -56,7 +56,7 @@ extern const u8 gData_02001294[];
 extern const u8 gData_020015f0[];
 extern const u8 gData_020018c8[];
 
-const u8 *Func_020000ac(void) {
+const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov66fRoom1)
@@ -291,7 +291,7 @@ extern const u8 gData_02001ae4[];
 extern const u8 gData_02001c58[];
 extern const u8 gData_02001db4[];
 
-const u8 *Func_020005ec(void) {
+const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov66fRoom1)
@@ -317,7 +317,7 @@ void Func_0200117c(s32 a, s32 b, s32 c, s32 d);
 #define EVENT_WORK_VALUE 0x204
 #endif
 
-s32 Func_0200063c(void) {
+s32 Scene_Initialize(void) {
   struct Actor *object;
   s16 scene;
   s32 flag;

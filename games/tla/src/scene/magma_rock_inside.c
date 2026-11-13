@@ -430,7 +430,7 @@ extern s16 gData_0200552e[];
 extern void Func_0200075c__magma_rock_inside(s32 value) __asm__("Func_0200075c");
 void Func_02004ee0(s16 *cells);
 
-u8 *Func_020008f8(void) {
+u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene != (s32)&SceneId_Ov692Room1) {
@@ -2356,7 +2356,7 @@ extern u8 gData_02006458[];
 extern u8 gData_0200659c[];
 extern u8 gData_02006714[];
 
-u8 *Func_02003418(void) {
+u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene != (s32)&SceneId_Ov692Room1) {

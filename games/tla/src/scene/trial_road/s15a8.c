@@ -96,7 +96,7 @@ extern const u8 gData_02007d40[];
 extern const u8 gData_02007d94[];
 extern const u8 *const gData_02007e00[];
 
-const u8 *Func_02001890(void) {
+const u8 *Scene_GetEvents(void) {
   s32 pattern = gTrialRoadState->pattern;
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room1)
@@ -543,7 +543,7 @@ void Func_02003900(void);
 void Func_02001dd0(void);
 void Func_02001eb0(void);
 
-s32 Func_020020c4(void) {
+s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
   s32 entrance = gMainRoutineWork.entrance;
   s32 pattern = gTrialRoadState->pattern;
@@ -705,7 +705,7 @@ void Func_0200223c(void) {
 extern const s16 gData_02005bac__s1fc4[][2] __asm__("gData_02005bac");
 /* VIEW(s1fc4): variable gData_02005bcc as extern const s8 gData_02005bcc[]; the definition has u8 gData_02005bcc[] = { 0, 1, 2, 3, 4, 4, 4, 5, 6, 7, }; tried as the definition's extern struct ActorPlacement gData_02005bcc[], it does not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:860: invalid operands to binary !=. */
 extern const s8 gData_02005bcc__s1fc4[] __asm__("gData_02005bcc");
-/* VIEW(s1fc4): variable gData_02005bd6 as extern const s8 gData_02005bd6[]; the definition has u8 gData_02005bd6[] = { 0, 1, 2, 3, 4, 4, 4, 5, 6, 7, }; tried as the definition's extern u8 gData_02005bd6[], Func_0200242c moves: 1 of 868 instructions in tla-ja. */
+/* VIEW(s1fc4): variable gData_02005bd6 as extern const s8 gData_02005bd6[]; the definition has u8 gData_02005bd6[] = { 0, 1, 2, 3, 4, 4, 4, 5, 6, 7, }; tried as the definition's extern u8 gData_02005bd6[], Scene_PrepareMap moves: 1 of 868 instructions in tla-ja. */
 extern const s8 gData_02005bd6__s1fc4[] __asm__("gData_02005bd6");
 
 void *Unit_Get(s32 owner);
@@ -743,7 +743,7 @@ struct TrialRoadDeal {
   words[0] = Iwram_MulQ16(*viewX, words[4]) + words[2];                        \
   words[1] = Iwram_MulQ16(*viewZ, words[5]) + words[3]
 
-s32 Func_0200242c(void) {
+s32 Scene_PrepareMap(void) {
   s32 scene = gMainRoutineWork.scene;
   s32 entrance = gMainRoutineWork.entrance;
 

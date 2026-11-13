@@ -20,7 +20,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
-s32 *Func_02000044(void) {
+s32 *Scene_GetExits(void) {
   if (!GameFlag_Test(0x960))
     return gData_0200057c;
   return gData_0200059c;
@@ -157,7 +157,7 @@ void Func_020002f8(void) {
   }
 }
 
-s32 Func_02000360(void) {
+s32 Scene_Initialize(void) {
   SCENE_WORK->unk1ac = 256;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   Task_Add(Func_020002f8, 0x480);
@@ -171,7 +171,7 @@ s32 Func_02000360(void) {
   return 0;
 }
 
-s32 Func_020003cc(void) {
+s32 Scene_PrepareMap(void) {
   if (!Flag_IsSet(0x8df)) {
     Map_CopyCellPictureIndicesRect(57, 52, 64, 15, 1, 1);
     Map_CopyCellPictureIndicesRect(60, 53, 67, 16, 6, 3);

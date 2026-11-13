@@ -11,7 +11,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const u8 *Func_0200004c(void) {
+const u8 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.entrance == 10)
     return gData_020008c4;
   if (GameFlag_Test(0x8ff))
@@ -31,7 +31,7 @@ void Func_02000088(void) {
     *flag = 0;
 }
 
-const u8 *Func_020000b8(void) {
+const u8 *Scene_GetEvents(void) {
   if (GameFlag_Test(0x8ff))
     return gData_02000cfc;
   return gData_02000b4c;
@@ -201,7 +201,7 @@ void Func_02000464(void) {
   Actor_SetPosition(27, PIXELS(104), PIXELS(104));
 }
 
-s32 Func_02000480(void) {
+s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
   Actor_SetSingleChildFlags(Actor_GetById(9), 0);
   Actor_SetSingleChildFlags(Actor_GetById(10), 0);

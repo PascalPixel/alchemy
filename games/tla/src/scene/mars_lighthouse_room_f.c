@@ -34,7 +34,7 @@ s32 Func_0200004c(struct Actor *object) {
   return 0;
 }
 
-const u8 *Func_02000058(void) {
+const u8 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom4)
     return gData_02006530;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom2)
@@ -639,7 +639,7 @@ void Func_02000df8(void) {
   Func_02002ce0();
 }
 
-const u8 *Func_02000e04(void) {
+const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom4)
     return gData_02006b98;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6adRoom2)
@@ -690,7 +690,7 @@ extern const u16 gData_02005c5a[];
 extern const u16 gData_02005c60[];
 extern const u16 gData_02005c6e[];
 
-s32 Func_02000e7c(void) {
+s32 Scene_Initialize(void) {
   struct MainRoutineWork *work = &gMainRoutineWork;
   s32 scene = work->scene;
   s32 entrance = work->entrance;
@@ -865,7 +865,7 @@ extern const u8 gData_02005d3c[];
 void Func_02005548(s32 scene, s32 a1);
 s32 Func_0200328c(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
 
-s32 Func_0200140c(void) {
+s32 Scene_PrepareMap(void) {
   struct MainRoutineWork *party;
   s32 flag = 0xa30;
 

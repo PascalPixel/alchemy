@@ -992,7 +992,7 @@ void Func_02003740(void);
 void Func_0200377c(void);
 void Func_0200380c(void);
 
-s32 Func_02002ec4(void) {
+s32 Scene_Initialize(void) {
   s16 scene;
 
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
@@ -1397,7 +1397,7 @@ void Func_02003854(s32 id) {
   object->field1c = 0xe666;
 }
 
-s32 Func_02003894(void) {
+s32 Scene_PrepareMap(void) {
   s32 angle;
 
   if (GameFlag_Test(0x340)) {

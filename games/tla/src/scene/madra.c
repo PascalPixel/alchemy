@@ -27,7 +27,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 extern const u8 gData_02002d38[];
 extern const u8 gData_02002ff0[];
 
-const u8 *Func_0200004c(void) {
+const u8 *Scene_GetPlacements(void) {
   if (GameFlag_Test(0x8ff))
     return gData_02002ff0;
   return gData_02002d38;
@@ -479,7 +479,7 @@ static __inline__ void CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
   Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
-const u8 *Func_02000638(void) {
+const u8 *Scene_GetEvents(void) {
   if (GameFlag_Test(0x8ff))
     return gData_0200394c;
   if (GameFlag_Test(0x8ab))
@@ -497,7 +497,7 @@ void Func_0200068c(void) {
 /// Madra's prepare step: sets up actor 26 (larger, its sprite flags set)
 /// and places actors 26 to 28, 33 and 66 by the story flags, then runs
 /// Func_02000f80 on entrance 9 and Func_020019d8 once on entrance 7.
-s32 Func_020006ac(void) {
+s32 Scene_Initialize(void) {
   struct Actor *object;
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;

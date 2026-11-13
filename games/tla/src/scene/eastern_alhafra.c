@@ -35,7 +35,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-void *Func_0200004c(void) {
+void *Scene_GetPlacements(void) {
   if (Event_GetFlag(0x8ab))
     return gData_02004fe4;
   return gData_02004dbc;
@@ -531,7 +531,7 @@ void Func_02004c1c(void);
 void Func_020047fc();
 void Func_02004c94();
 
-s32 Func_02000b18(void) {
+s32 Scene_Initialize(void) {
   struct Actor *object;
   s32 flag;
 

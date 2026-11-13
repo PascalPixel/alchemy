@@ -35,7 +35,7 @@ extern u32 gData_02002218[];
 extern s32 gData_02002320[];
 extern u32 gData_02002458[];
 
-const u8 *Func_02000360(void) {
+const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov679Room1)
@@ -430,7 +430,7 @@ extern s32 gData_020024d0[];
 extern s32 gData_02002698[];
 extern s32 gData_0200280c[];
 
-const u8 *Func_02000d90(void) {
+const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov679Room1)
@@ -532,7 +532,7 @@ struct MapBits {
 
 /// The overlay's entry: sets the map mode and screen effect 0x202, then starts
 /// each room's own setup.
-s32 Func_02000fb8(void) {
+s32 Scene_Initialize(void) {
   s32 *effect;
   s16 scene;
   struct MainRoutineWork *party;

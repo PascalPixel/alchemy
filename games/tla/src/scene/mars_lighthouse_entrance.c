@@ -815,7 +815,7 @@ void Func_02001138(void) {
     Func_02000fe0(cell + 128);
 }
 
-const u8 *Func_0200119c(void) {
+const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom1)
     return gData_02006118;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom2)
@@ -1017,7 +1017,7 @@ extern char SceneId_Ov6aaRoom5;
 extern char SceneId_Ov6aaRoom6;
 extern char SceneId_Ov6aaRoom7;
 
-s32 Func_0200138c(void) {
+s32 Scene_Initialize(void) {
   /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
    * Value, this file's own); as direct calls, 103 of 549 instructions differ in
    * tla-en. */
@@ -1329,7 +1329,7 @@ void Func_02002c2c(void);
 void Func_02004c88(s32 scene, s32 a1);
 void Func_02004d98(void);
 
-s32 Func_02001930(void) {
+s32 Scene_PrepareMap(void) {
   if (Flag_IsSet(0xa30))
     Func_02004c88(gMainRoutineWork.map +
                       ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),

@@ -588,7 +588,7 @@ void Func_020029c8(void *data);
 /// Scene preparation: the event value 0x204, actor 22 placed while flag 0xa22
 /// is set (cleared once 0xa23 is), actors 23 and 24 placed, and with flag
 /// 0xa00 two more and the particle callback.
-s32 Func_02000ae8(void) {
+s32 Scene_Initialize(void) {
   struct Actor *object;
   s32 angle;
 
@@ -622,7 +622,7 @@ s32 Func_02000ae8(void) {
 
 /// Scene setup: the arrival flags and palette, the leader's priority bit 0x40,
 /// and the actors flags 0xa00 and 0xa09 bring in.
-s32 Func_02000bf0(void) {
+s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   Func_02000d80(0);
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x40;

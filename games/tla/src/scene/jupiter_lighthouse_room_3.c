@@ -78,7 +78,7 @@ void Func_020001c0(void) { Import_EventSetExitRequest(12); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-s32 Func_020001d4(void) {
+s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
   Func_02002440(12, 1);
   Func_02002440(13, 1);
@@ -89,7 +89,7 @@ s32 Func_020001d4(void) {
   return 0;
 }
 
-s32 Func_02000250(void) {
+s32 Scene_PrepareMap(void) {
   struct Actor *object;
   s32 i;
   s32 x;

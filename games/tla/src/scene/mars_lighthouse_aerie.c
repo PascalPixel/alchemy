@@ -91,7 +91,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct Trigger *Func_02000164(void) {
+const struct Trigger *Scene_GetPlacements(void) {
   if (gMainRoutineWork.entrance == 2)
     return (const struct Trigger *)gData_0200644c;
   if ((u16)(gMainRoutineWork.entrance - 3) <= 2)
@@ -189,7 +189,7 @@ void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
 /// Sets the scene up for the entrance the party arrived by (5 to 2).
-s32 Func_02000314(void) {
+s32 Scene_Initialize(void) {
   ((struct MarsLighthouseAerieEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 0x204;
   Func_020001d8();
@@ -241,7 +241,7 @@ extern char SceneId_Ov6ACRoom3;
 void Func_020057d4(s32 a);
 void Func_020055dc(s32 scene, s32 a1);
 
-s32 Func_02000450(void) {
+s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.entrance == 1 && Event_GetFlag(0xa3d) == 0)
     Func_020057d4(1);
   Func_020055dc(gMainRoutineWork.map +

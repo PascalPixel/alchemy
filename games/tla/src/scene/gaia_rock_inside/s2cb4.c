@@ -178,7 +178,7 @@ void Event_WaitTransitionFrames(void);
 
 /// Room entry for the five Gaia Rock rooms, chosen by scene, then by entrance
 /// in the first room.
-s32 Func_02002f30(void) {
+s32 Scene_Initialize(void) {
   s32 message;
   struct MainRoutineWork *work;
   /* FAKEMATCH(pin): room in r8, which leaves r7 to the owner pointer; as a
@@ -893,7 +893,7 @@ void Event_WaitTransitionFrames(void);
 
 /// Room entry for the five Gaia Rock rooms, chosen by scene, then by entrance
 /// in the first room.
-s32 Func_02002f30(void) {
+s32 Scene_Initialize(void) {
   struct MainRoutineWork *room;
   struct MainRoutineWork *work;
   s16 *entrance;
@@ -1564,7 +1564,7 @@ static __inline__ void CopyWords_(void *destination, const void *source,
   Iwram_CopyWords(destination, source, size);
 }
 
-s32 Func_02004280(void) {
+s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room1) {
     u8 *map = (u8 *)Ram_HeapSlots->mapWork;
 

@@ -15,7 +15,7 @@ extern struct SceneEntrance gData_02000cd8[];
 extern struct SceneEntrance gData_02000d98[];
 extern struct SceneEntrance gData_02000e40[];
 
-const struct SceneEntrance *Func_02000044(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_SuhallaGate2)
@@ -48,7 +48,7 @@ extern struct Trigger gData_02001078[];
 extern struct Trigger gData_020010e4[];
 extern struct Trigger gData_02001180[];
 
-const struct ActorPlacement *Func_02000090(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_SuhallaGate2)
@@ -58,7 +58,7 @@ const struct ActorPlacement *Func_02000090(void) {
   return gData_02000f10;
 }
 
-const struct Trigger *Func_020000d0(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_SuhallaGate2)
@@ -112,7 +112,7 @@ void Func_02000264(void) {
     Func_02000800();
 }
 
-s32 Func_0200028c(void) {
+s32 Scene_Initialize(void) {
   struct EventWork *work;
   s16 scene;
 

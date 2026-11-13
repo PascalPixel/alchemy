@@ -35,7 +35,7 @@ s32 Func_02000058(struct Actor *object) {
   return 0;
 }
 
-const u8 *Func_02000088(void) {
+const u8 *Scene_GetPlacements(void) {
   s32 pattern = gTrialRoadState->pattern;
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room1)

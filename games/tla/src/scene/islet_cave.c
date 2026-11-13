@@ -246,7 +246,7 @@ extern const u8 gData_02001788[];
 extern const u8 gData_02001914[];
 extern const u8 gData_020019b0[];
 
-const u8 *Func_0200042c(void) {
+const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov675Room1)
@@ -256,7 +256,7 @@ const u8 *Func_0200042c(void) {
   return gData_02001548;
 }
 
-const u8 *Func_0200046c(void) {
+const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov675Room2)
@@ -405,7 +405,7 @@ void Func_0200131c(s32 mode);
 void Func_020008c8(void);
 void Func_0200133c(void);
 
-s32 Func_0200069c(void) {
+s32 Scene_Initialize(void) {
   s32 scene, dim;
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;

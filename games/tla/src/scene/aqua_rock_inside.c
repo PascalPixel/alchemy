@@ -39,7 +39,7 @@ extern const u8 gData_02004a00[];
 extern const u8 gData_02004a48[];
 extern const u8 gData_02004b98[];
 
-const u8 *Func_0200035c(void) {
+const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov67cRoom1)
@@ -1290,7 +1290,7 @@ extern const u8 gData_020051fc[];
 extern const u8 gData_02005268[];
 extern const u8 gData_020052f8[];
 
-const u8 *Func_02001da8(void) {
+const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov67cRoom1)
@@ -1418,7 +1418,7 @@ void Func_0200107c(s32 a, s32 b);
 /// Aqua Rock's entry setup: in each room it shows the statues already filled by
 /// their flags (or dims those still empty), opens what the story has opened and
 /// arms the room's water and cell handlers by entrance.
-s32 Func_02002020(void) {
+s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
   s32 entrance = gMainRoutineWork.entrance;
   struct Actor *object;
@@ -1557,7 +1557,7 @@ void Func_02003ee4();
 /// closes the cells around them, and in the rooms whose water drains it shows
 /// the drained state once its flag is set. Room 6 clears its actors' x and z
 /// where the other rooms clear terrainHeight and y.
-s32 Func_02002340(void) {
+s32 Scene_PrepareMap(void) {
   s32 scene = gMainRoutineWork.scene;
   s32 entrance = gMainRoutineWork.entrance;
   volatile u16 control;

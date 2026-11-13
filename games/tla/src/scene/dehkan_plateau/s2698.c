@@ -552,7 +552,7 @@ void Func_02002ff4(void) {
   Import_EventSetExitRequest(*(s16 *)(work + 0x154));
 }
 
-s32 Func_0200304c(void) {
+s32 Scene_Initialize(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov655Room1)

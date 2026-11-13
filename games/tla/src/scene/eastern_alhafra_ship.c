@@ -27,7 +27,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-s32 Func_0200004c(void) { return (s32)gData_0200345c; }
+s32 Scene_GetPlacements(void) { return (s32)gData_0200345c; }
 
 void Func_02000054(void) {}
 
@@ -140,7 +140,7 @@ struct EventWork1ac {
 
 void Func_02000c5c(void);
 
-s32 Func_02000250(void) {
+s32 Scene_Initialize(void) {
   struct Actor *object;
 
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;

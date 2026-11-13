@@ -236,7 +236,7 @@ void Func_02004ba8(s32 a, s32 b);
 void Func_02004da8(void);
 void Func_02004db0(void);
 
-u8 *Func_020003f8(void) {
+u8 *Scene_GetPlacements(void) {
   switch (gMainRoutineWork.entrance) {
   case 64:
     return gData_02006500;
@@ -686,7 +686,7 @@ void Func_02003d44(s32 mode);
 void Func_02004c00(void);
 void Func_02004d38(s32 scene, s32 entrance);
 
-s32 Func_02000dc4(void) {
+s32 Scene_Initialize(void) {
   struct EventWork *work;
 
   if (GameFlag_Test(0x109) == 0 && GameFlag_Test(0x8de) != 0 &&

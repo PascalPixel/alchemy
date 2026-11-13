@@ -415,7 +415,7 @@ void Func_02000aa4(s32 mode);
 /// The scene's set-up entry: screen effect 0x204, actors 13 and 14 at action
 /// variant 3, the blend registers, the particles, and the map and actors by
 /// flags 0xa02, 0xa00 and 0xa03 and the entrance.
-s32 Func_02000854(void) {
+s32 Scene_Initialize(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   work->screenEffect = 0x204;
@@ -453,7 +453,7 @@ s32 Func_02000854(void) {
   return 0;
 }
 
-s32 Func_0200099c(void) {
+s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   Func_02000aa4(0);
   return 0;

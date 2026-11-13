@@ -167,7 +167,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 void Party_RemoveActiveOwner();
 
-s32 Func_02000284(void) {
+s32 Scene_Initialize(void) {
   struct Actor *object;
 
 #if !TLA_PATCH_1

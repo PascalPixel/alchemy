@@ -43,7 +43,7 @@ s32 Func_020002bc(struct Actor *object) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-u32 *Func_02000318(void) {
+u32 *Scene_GetRegions(void) {
   s32 scene = gMainRoutineWork.scene;
   u32 *placements;
 
@@ -79,7 +79,7 @@ extern u8 gData_020027ac[];
 extern u8 gData_020027dc[];
 extern u8 gData_02002854[];
 
-u8 *Func_02000358(void) {
+u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov690Room1)
@@ -225,7 +225,7 @@ extern u8 gData_02002b3c[];
 extern u8 gData_02002b90[];
 extern u8 gData_02002c2c[];
 
-u8 *Func_02000668(void) {
+u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov690Room1)
@@ -430,7 +430,7 @@ static __inline__ void Place(s32 id, s32 x, s32 z) {
   Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 
-s32 Func_02000988(void) {
+s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x100;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room7)
     Func_02000860();
@@ -473,7 +473,7 @@ s32 Func_02000988(void) {
   return 0;
 }
 
-s32 Func_02000b18(void) {
+s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room9) {
     if (Flag_Test(0x205)) {
       CopyCells2(9, 11, 1, 1, 11, 12);

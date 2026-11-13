@@ -13,7 +13,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 #include "caverns/caverns.h"
 
-const s16 *Func_02000344(void) {
+const s16 *Scene_GetRegions(void) {
   const s16 *result = NULL;
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6a9Room2)
@@ -23,7 +23,7 @@ const s16 *Func_02000344(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const u32 *Func_02000374(void) {
+const u32 *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6a9Room1)
@@ -360,7 +360,7 @@ void Func_0200087c(void) {
   Func_020003f0(0, object->x >> 20, object->z >> 20, value | 128);
 }
 
-const s32 *Func_02000ad0(void) {
+const s32 *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6a9Room1)
@@ -372,7 +372,7 @@ const s32 *Func_02000ad0(void) {
   return gData_02001430;
 }
 
-s32 Func_02000b20(void) {
+s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6a9Room1)
     Func_02000ba8();
@@ -381,7 +381,7 @@ s32 Func_02000b20(void) {
   return 0;
 }
 
-s32 Func_02000b64(void) {
+s32 Scene_PrepareMap(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6a9Room2)

@@ -55,7 +55,7 @@ void Func_02000198(s32 a, s32 b, s32 c);
 void Func_020001a8(s32 a, s32 flag, s32 b, s32 c);
 void Func_020000fc(void);
 
-s32 Func_02000074(void) {
+s32 Scene_Initialize(void) {
   struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapWork;
 
   map->mode = 1;
@@ -102,7 +102,7 @@ s32 Func_02000074(void) {
   return 0;
 }
 
-/// The palette cycle Func_02000074 schedules: every 16 frames it copies four
+/// The palette cycle Scene_Initialize schedules: every 16 frames it copies four
 /// of the eight colours at 0x05000180, starting one further each time, to the
 /// colours at 0x050000c2.
 void Func_020000fc(void) {

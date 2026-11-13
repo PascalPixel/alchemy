@@ -175,7 +175,7 @@ void Func_020002e4(s32 actor) {
 
 void Func_02000454(void);
 
-s32 Func_02000340(void) {
+s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65ERoom1) {

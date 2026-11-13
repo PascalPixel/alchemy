@@ -470,7 +470,7 @@ void Func_020020ac(s32 value);
 /// Chooses where the credits go next by the entrance they were entered from:
 /// entrances 0 to 5 run resource FarCall00A with 2 to 7 and continue, 2 to 6
 /// after Func_0200020c's stage 0 to 4; entrance 6 leaves for SceneId_Ov6b4.
-s32 Func_02000b64(void) {
+s32 Scene_Initialize(void) {
   struct EventWork *work;
 
   Event_SetFlag(0x144);

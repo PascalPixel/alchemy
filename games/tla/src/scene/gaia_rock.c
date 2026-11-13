@@ -32,7 +32,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 extern s16 gData_02000f5c[];
 extern u32 gData_02000f8c[];
 
-const struct ActorPlacement *Func_02000040(void) {
+const struct ActorPlacement *Scene_GetRegions(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room1)
     return (const struct ActorPlacement *)gData_02000f5c;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room2)
@@ -51,7 +51,7 @@ extern struct ActorPlacement gData_02001044[];
 extern struct ActorPlacement gData_02001194[];
 extern s16 gData_020012cc[];
 
-const struct Trigger *Func_02000080(void) {
+const struct Trigger *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room1)
     return (const struct Trigger *)gData_02001044;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room2)
@@ -264,7 +264,7 @@ void Func_020003fc(void) {
   }
 }
 
-const struct SceneEntrance *Func_02000434(void) {
+const struct SceneEntrance *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room1)
     return (const struct SceneEntrance *)gData_020013c8;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room2)
@@ -436,7 +436,7 @@ void Func_02000ed4();
 void Func_02000dd0(void);
 void Func_02000b2c(s32 id, s32 x, s32 y, s32 z);
 
-s32 Func_020006ec(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
   struct EventWork *work;
 
@@ -534,7 +534,7 @@ s32 Func_020006ec(void) {
   return 0;
 }
 
-s32 Func_02000a68(void) {
+s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room2 &&
       (u16)(gMainRoutineWork.entrance - 3) <= 1) {
     s32 *layer = (s32 *)&Ram_HeapSlots->mapWork->layers[1];

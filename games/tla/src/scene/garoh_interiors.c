@@ -20,7 +20,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Func_0200004c(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov660Room1)
@@ -209,7 +209,7 @@ void Func_0200049c(void) {
 
 /// Returns the room's table, chosen by flag 0x91B, the scene and, in the
 /// first room, the entrance.
-const struct Trigger *Func_020004f0(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s32 moved = GameFlag_Test(0x91b);
   struct MainRoutineWork *party = &gMainRoutineWork;
   s32 room1 = (s32)&SceneId_Ov660Room1;
@@ -240,7 +240,7 @@ void Func_02000710(void);
 void Func_020007dc(s32 value);
 void Func_0200087c(s32 value);
 
-s32 Func_02000580(void) {
+s32 Scene_Initialize(void) {
   s32 turn;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;

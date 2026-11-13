@@ -577,7 +577,7 @@ static __inline__ void ShamanVillageCave_ObjPlace(s32 id, s32 x, s32 z) {
   Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 
-s32 Func_02000e04(void) {
+s32 Scene_Initialize(void) {
   struct Actor *object;
 
   ((struct ShamanVillageCaveSceneWork *)Ram_HeapSlots->eventWork)
@@ -631,7 +631,7 @@ s32 Func_02000e04(void) {
 
 void Func_020011c0();
 
-s32 Func_02000fe8(void) {
+s32 Scene_PrepareMap(void) {
   s32 result0;
   s32 result1;
 

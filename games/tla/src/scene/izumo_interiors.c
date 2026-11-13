@@ -76,7 +76,7 @@ static inline void LeaderAnimate(s32 animation, s32 frames) {
   Func_080d47b4(gMainRoutineWork.currentOwner, animation, frames);
 }
 
-const struct ActorPlacement *Func_020000b4(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (GameFlag_Test(0x927))
     return gData_02002d80;
   if (gMainRoutineWork.entrance == 7)
@@ -84,7 +84,7 @@ const struct ActorPlacement *Func_020000b4(void) {
   return gData_02002b40;
 }
 
-const struct Trigger *Func_020000f0(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (GameFlag_Test(0x927))
     return gData_0200323c;
   if (gMainRoutineWork.entrance == 7)
@@ -1097,7 +1097,7 @@ L_02009e48:
   Func_020021cc();
 }
 
-s32 Func_0200200c(void) {
+s32 Scene_Initialize(void) {
   FIELD_AT(Ram_HeapSlots->eventWork, s32, 428) = 0x201;
   if (gMainRoutineWork.entrance != 7)
     Event_ClearFlag(0x350);

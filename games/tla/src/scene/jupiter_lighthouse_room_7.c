@@ -578,7 +578,7 @@ void Func_02001db0();
 void Func_02001eb8();
 void Func_02001ee8();
 
-s32 Func_02000e30(void) {
+s32 Scene_Initialize(void) {
   s32 t1, t2, t3, t5, t8, t15, t16, t17, t19, t20, t21, t23, t24, t25, t26, t27,
       t28, t29, v5;
 
@@ -654,7 +654,7 @@ L_02008f46:
 void Func_02001224(s32 mode);
 s32 Func_02002b5c(s32 x, s32 z, s32 layer);
 
-s32 Func_02000fc0(void) {
+s32 Scene_PrepareMap(void) {
   struct Actor *object;
   s32 value;
 

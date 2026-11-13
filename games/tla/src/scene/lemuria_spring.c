@@ -106,7 +106,7 @@ void Func_020010f4(void);
 /// Starts the scene: sets the colour blend, puts objects 24 and 25 in mode 2
 /// and starts the screen transition; when gMainRoutineWork's 0x1e2 halfword is
 /// 1 and flag 0x200 is set, it sets the blend's weights again.
-s32 Func_0200012c(void) {
+s32 Scene_Initialize(void) {
   s32 t0;
   s32 t3;
   s32 t4;

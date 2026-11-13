@@ -147,7 +147,7 @@ void Func_02000460(s32 mode);
 
 /// The scene's set-up: screen effect 0x204, actor 64's action variant 3 and
 /// actor 8 held still, then Func_0200130c and Func_02001a28 by the entrance.
-s32 Func_02000290(void) {
+s32 Scene_Initialize(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
   work->screenEffect = 0x204;
@@ -168,7 +168,7 @@ s32 Func_02000290(void) {
   return 0;
 }
 
-s32 Func_02000358(void) {
+s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   Func_02000460(0);
   return 0;

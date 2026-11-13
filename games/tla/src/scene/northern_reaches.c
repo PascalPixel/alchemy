@@ -308,7 +308,7 @@ extern char SceneId_Ov6a7Room1;
 void Func_02000af8(s32 scene, s32 entrance);
 void Func_02000b08(void);
 
-s32 Func_02000618(void) {
+s32 Scene_Initialize(void) {
   struct MainRoutineWork *state;
 
   ((struct SceneWork *)Ram_HeapSlots->eventWork)->unk1ac = 256;
@@ -323,7 +323,7 @@ s32 Func_02000618(void) {
   return 0;
 }
 
-s32 Func_02000680(void) {
+s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.entrance == 3)
     Func_02000064();
   if (Event_GetFlag(0x90e))

@@ -21,7 +21,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "alhafran_cave/local.h"
 #include "version.h"
 
-u8 *Func_0200004c(void) {
+u8 *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov66aRoom1)
@@ -80,7 +80,7 @@ void Func_020001d4(void) {
   work->valueD4a = 2;
 }
 
-u8 *Func_020001e8(void) {
+u8 *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov66aRoom1)
@@ -106,7 +106,7 @@ s32 Func_02000258(void) {
   return 0;
 }
 
-s32 Func_0200027c(void) {
+s32 Scene_Initialize(void) {
 #if !TLA_PATCH_1 /* The Japanese edition does not check the entrance. */
   ((struct AlhafranCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x201;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov66aRoom1)
@@ -308,7 +308,7 @@ void Func_0200051c(void) {
   }
 }
 
-s32 Func_020007a4(void) {
+s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov66aRoom2 &&
       Event_GetFlag(0x8a7)) {
     Func_02001408_(23, 46, 4, 5, 21, 14);

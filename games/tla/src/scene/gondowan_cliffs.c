@@ -29,7 +29,7 @@ s32 Func_02000038(struct Actor *object) {
 
 void Func_02000058(void) { Func_080d2b4c(21, 49); }
 
-const u8 *Func_02000064(void) {
+const u8 *Scene_GetEntrances(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov66bRoom2)
     return gData_02001728;
   return gData_02001698;
@@ -52,7 +52,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 extern const u8 gData_0200178c[];
 extern const u8 gData_0200193c[];
 
-const u8 *Func_0200009c(void) {
+const u8 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov66bRoom2)
     return gData_0200193c;
   return gData_0200178c;

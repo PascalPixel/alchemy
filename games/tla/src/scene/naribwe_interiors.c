@@ -56,7 +56,7 @@ extern struct Trigger gData_020014c0[];
 void Func_02001190(s32 slot, s32 actor);
 void Func_02001198(s32 slot, s32 actor);
 
-const struct Trigger *Func_020000a4(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (Event_GetFlag(0x8ff))
     return gData_020014c0;
   return gData_02001370;
@@ -768,7 +768,7 @@ u8 *Func_02000c04(void) {
 
 void Func_02001158(s32 id);
 
-s32 Func_02000f28(void) {
+s32 Scene_Initialize(void) {
   struct Actor *object;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;

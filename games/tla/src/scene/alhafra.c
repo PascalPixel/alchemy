@@ -41,7 +41,7 @@ extern const u8 gData_02002358[];
 extern const u8 gData_020025b0[];
 extern struct DoorStep gData_0200277c[];
 
-const u8 *Func_0200004c(void) {
+const u8 *Scene_GetPlacements(void) {
   if (GameFlag_Test(0x8a7)) {
     if (GameFlag_Test(0x90f) == 0)
       return gData_020025b0;
@@ -446,7 +446,7 @@ extern const u8 gData_02002ad0[];
 extern const u8 gData_02002e48[];
 extern const u8 gData_02003154[];
 
-const u8 *Func_02000788(void) {
+const u8 *Scene_GetEvents(void) {
   if (GameFlag_Test(0x8a7)) {
     if (GameFlag_Test(0x90f) == 0)
       return gData_02003154;
@@ -467,7 +467,7 @@ const u8 *Func_02000788(void) {
 void Func_02001d24();
 void Func_02000a98();
 
-s32 Func_020007d4(void) {
+s32 Scene_Initialize(void) {
   s32 t1, t2, t3, t4, t9, t10, t11, t23, t24, t25, t37, t39, t41, t44, t50, t51,
       t53, t56, t58, t60;
 
@@ -572,7 +572,7 @@ L_02008a0a:
 }
 #undef FIELD_AT
 
-s32 Func_02000a18(void) {
+s32 Scene_PrepareMap(void) {
   if (GameFlag_Test(0x8ab)) {
     u16 *src = (u16 *)0x5000116;
 

@@ -18,7 +18,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 extern s16 gData_02000794[];
 
-s16 *Func_02000040(void) {
+s16 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov65dRoom2)
@@ -31,7 +31,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 extern struct ActorPlacement gData_02000fa0[];
 extern struct ActorPlacement gData_020010c0[];
 
-void *Func_02000070(void) {
+void *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov65dRoom1)
@@ -96,7 +96,7 @@ void Func_0200014c(void) { Func_080d7788(18, 2, 8); }
 extern struct Trigger gData_020012ac[];
 extern struct Trigger gData_020010d8[];
 
-struct Trigger *Func_0200015c(void) {
+struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov65dRoom2)
@@ -147,12 +147,12 @@ void Func_02000218(void) {
   }
 }
 
-s32 Func_020002f8(void) {
+s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
   return 0;
 }
 
-s32 Func_0200030c(void) {
+s32 Scene_PrepareMap(void) {
   struct MainRoutineWork *party;
   struct Actor *object;
   u8 flags;

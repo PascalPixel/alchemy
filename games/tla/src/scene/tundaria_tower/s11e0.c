@@ -107,7 +107,7 @@ void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Animation_SetStateFlags(struct Actor *object, u32 value);
 void Func_02003168(const s16 *data);
 
-s32 Func_020013b8(void) {
+s32 Scene_Initialize(void) {
   struct Actor *object;
   s32 scene;
   s32 flag;

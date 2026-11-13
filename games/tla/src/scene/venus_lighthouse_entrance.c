@@ -114,7 +114,7 @@ s32 Func_02002a04();
 
 extern char SceneId_VenusLighthouseEntrance;
 
-s32 Func_02000128(void) {
+s32 Scene_Initialize(void) {
   s32 t37;
   s32 t0;
   s32 t7;

@@ -58,7 +58,7 @@ s32 Func_02000070(void) {
   return 0;
 }
 
-const u8 *Func_02000080(void) {
+const u8 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom1)
     return gData_02005b0c;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom2)

@@ -240,7 +240,7 @@ void Func_02000fbc(void);
 void Func_02000fd8(void);
 void Func_0200102c(void);
 
-const struct SceneEntrance *Func_02000318(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom4)
     return gData_02001400;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom5)
@@ -248,7 +248,7 @@ const struct SceneEntrance *Func_02000318(void) {
   return gData_020013d0;
 }
 
-const s16 *Func_02000358(void) {
+const s16 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov65aRoom2)
@@ -266,7 +266,7 @@ const s16 *Func_02000358(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Func_02000388(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom1)
     return gData_020015b4;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom3)
@@ -278,7 +278,7 @@ const struct ActorPlacement *Func_02000388(void) {
   return gData_0200159c;
 }
 
-const struct Trigger *Func_020003ec(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom1)
     return gData_02001920;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom2)
@@ -687,7 +687,7 @@ void Func_02000cf4(void) {
   Import_EventSetExitRequest(8);
 }
 
-s32 Func_02000d54(void) {
+s32 Scene_Initialize(void) {
   ((struct SceneWork *)Ram_HeapSlots->eventWork)->unk1ac = 0x204;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom1)
     Func_02000dcc();

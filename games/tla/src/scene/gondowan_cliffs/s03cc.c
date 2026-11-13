@@ -179,7 +179,7 @@ void Func_020006f4(s32 unused, s32 id) {
   Event_SetFlag(0x8e6);
 }
 
-const u8 *Func_0200070c(void) {
+const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov66bRoom2)
     return gData_020019c0;
   return gData_020019f0;
@@ -307,7 +307,7 @@ struct RideEntry *Func_02001068(s32 slot, s32 id, s32 timer, s32 low,
 /// (Func_02001068) and places it by flag 0x886, sets actor 16's mode, places
 /// actor 15 by flag 0x884, saves four palette colours, schedules Func_02000738
 /// and sets BG layer priority. Returns 0.
-s32 Func_02000988(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 height;
 
@@ -371,7 +371,7 @@ done:
 
 extern const u8 gData_02001ac8[];
 
-s32 Func_02000bb4(void) {
+s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov66bRoom1)
     FIELD_AT(Ram_HeapSlots->mapWork, const u8 *, 252) = gData_02001ac8;
   return 0;

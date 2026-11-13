@@ -73,7 +73,7 @@ void Func_02000118(void) { Import_EventSetExitRequest(4); }
 
 void Func_02000124(void) { Import_EventSetExitRequest(6); }
 
-const u8 *Func_02000130(void) {
+const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov699Room2)
     return gData_0200236c;
   return gData_020022e8;
@@ -179,7 +179,7 @@ void Func_02000298(void) {
   } while (i != 16);
 }
 
-s32 Func_02000324(void) {
+s32 Scene_Initialize(void) {
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x204;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov699Room1) {
     Func_020004dc(1);

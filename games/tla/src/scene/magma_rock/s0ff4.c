@@ -1033,7 +1033,7 @@ extern const u8 gData_0200487c[];
 extern const u8 gData_02004930[];
 extern const u8 gData_02004a5c[];
 
-const struct Trigger *Func_020021e8(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
     if (gMainRoutineWork.entrance <= 3)
       return (const struct Trigger *)gData_02004720;

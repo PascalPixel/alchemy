@@ -2258,7 +2258,7 @@ s32 Func_020059b4();
 s32 Func_02004644();
 s32 Party_AddActiveOwner();
 
-s32 Func_02003d9c(void) {
+s32 Scene_Initialize(void) {
   s32 t11;
   s32 t2;
   s32 t3;

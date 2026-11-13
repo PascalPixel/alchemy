@@ -35,7 +35,7 @@ extern u32 gData_0200147c[];
 extern u32 gData_0200159c[];
 extern u32 gData_0200165c[];
 
-void *Func_02000064(void) {
+void *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov693Room1) {
@@ -57,7 +57,7 @@ extern s32 gData_0200171c[];
 extern s32 gData_02001728[];
 extern s32 gData_020018f0[];
 
-s32 *Func_020000e0(void) {
+s32 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov693Room1)
@@ -468,7 +468,7 @@ void Func_02000c8c(void) {
 void Func_02000dc4(void);
 void Func_02000ed0(void);
 
-s32 Func_02000d08(void) {
+s32 Scene_Initialize(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov693Room1)
@@ -478,7 +478,7 @@ s32 Func_02000d08(void) {
   return 0;
 }
 
-s32 Func_02000d3c(void) {
+s32 Scene_PrepareMap(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov693Room1 && GameFlag_Test(0x9d0)) {

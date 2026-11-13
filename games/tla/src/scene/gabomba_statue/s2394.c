@@ -545,7 +545,7 @@ void Func_02003634(void);
 void Func_02003868(void);
 
 /// Prepares the current room.
-s32 Func_02003398(void) {
+s32 Scene_Initialize(void) {
   s16 scene;
 
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 521;
@@ -577,7 +577,7 @@ s32 Func_02003398(void) {
   return 0;
 }
 
-s32 Func_02003494(void) {
+s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov671Room7 &&
       gMainRoutineWork.entrance == 1 && !Event_GetFlag(0x109)) {
     Event_ClearFlag(0x8cd);

@@ -29,7 +29,7 @@ void Event_StartScreenTransition(void);
 void Func_02001420(s32 a0);
 void Func_02002dec(void);
 
-s32 Func_02002438(s32 a0) {
+s32 Scene_Initialize(s32 a0) {
   struct MainRoutineWork *work = &gMainRoutineWork;
   s32 scene = work->scene;
   struct Actor *object;
@@ -311,7 +311,7 @@ void Event_StartScreenTransition(void);
 void Func_02001420(s32 a0);
 void Func_02002dec(void);
 
-s32 Func_02002438(s32 a0) {
+s32 Scene_Initialize(s32 a0) {
   struct MainRoutineWork *work = &gMainRoutineWork;
   s32 scene = work->scene;
   struct Actor *object;

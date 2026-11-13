@@ -224,7 +224,7 @@ extern s16 gData_02005228[];
 extern s32 gData_02005318[];
 extern u32 gData_02005390[];
 
-u8 *Func_020007cc(void) {
+u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov694Room1)
@@ -264,7 +264,7 @@ extern s32 gData_02005a44[];
 extern s32 gData_02005e70[];
 extern s32 gData_02005ed0[];
 
-u8 *Func_02000874(void) {
+u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov694Room1)
@@ -1858,7 +1858,7 @@ void Func_02003880(void);
 void Func_020039d4(void);
 void Func_02003a8c(void);
 
-s32 Func_02003698(void) {
+s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov694Room1)

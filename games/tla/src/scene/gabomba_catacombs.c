@@ -462,7 +462,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 extern u32 gData_02001310[];
 
-const struct SceneRegion *Func_02000db4(void) {
+const struct SceneRegion *Scene_GetRegions(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room1)
     return (const struct SceneRegion *)gData_02001310;
   return 0;
@@ -483,7 +483,7 @@ extern struct Trigger gData_020015c4[];
 extern struct Trigger gData_020016cc[];
 extern struct Trigger gData_02001714[];
 
-const struct ActorPlacement *Func_02000de4(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room1)
     return (const struct ActorPlacement *)gData_02001390;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room2)
@@ -497,7 +497,7 @@ const struct ActorPlacement *Func_02000de4(void) {
   return (const struct ActorPlacement *)gData_02001378;
 }
 
-const struct Trigger *Func_02000e58(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room1)
     return (const struct Trigger *)gData_0200154c;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room2)
@@ -523,7 +523,7 @@ extern char SceneId_Ov671Room7, SceneId_Ov672Room1;
 void Func_02001254(s32 a);
 void Func_0200126c(s32 id);
 
-s32 Func_02000ecc(void) {
+s32 Scene_Initialize(void) {
   s32 entrance;
   struct Actor *statue;
 

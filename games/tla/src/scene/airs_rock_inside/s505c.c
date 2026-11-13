@@ -116,7 +116,7 @@ s32 Func_02005f5c(s32 slot, s32 a, s32 b);
 s32 Func_0200062c(s32 layer, s32 x, s32 z, s32 cell);
 void Func_02000908(u16 *list);
 
-s32 Func_020051f8(void) {
+s32 Scene_Initialize(void) {
   struct Actor *object;
   s32 i, z, one;
 
@@ -365,7 +365,7 @@ s32 Func_020051f8(void) {
 
 #include "airs_rock_inside.h"
 
-s32 Func_02005cb8(void) {
+s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room1)
     Func_02004f3c();
   return 0;

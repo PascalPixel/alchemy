@@ -1220,7 +1220,7 @@ void Func_02003f78(void) {
   Func_020048cc();
 }
 
-s32 Func_02003ff8(void) {
+s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_ShamanVillage1)

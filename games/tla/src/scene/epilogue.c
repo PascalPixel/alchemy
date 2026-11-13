@@ -279,7 +279,7 @@ extern char SceneId_Ov64a;
 #define TILES_FLAG_OFFSET 0x138c
 #endif
 
-s32 Func_02000318(void) {
+s32 Scene_Initialize(void) {
   struct MainRoutineWork *work;
   u8 *eventMode;
   s32 saved;

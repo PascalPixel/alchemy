@@ -34,7 +34,7 @@ void Func_0200014c(void);
 void Func_02000178(s32 a, s32 b);
 void Func_02000180(s32 a, s32 b);
 
-const struct ActorPlacement *Func_0200004c(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov683 &&
       (u16)(gMainRoutineWork.entrance - 8) <= 1)
     return (const struct ActorPlacement *)gData_020003a8;
@@ -45,7 +45,7 @@ void Func_0200008c(s32 value) { Func_02000178(25, value); }
 
 void Func_02000098(s32 value) { Func_02000180(10, value); }
 
-const struct Trigger *Func_020000a4(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov683 &&
       (u16)(gMainRoutineWork.entrance - 8) <= 1)
     return (const struct Trigger *)gData_02000780;
@@ -54,7 +54,7 @@ const struct Trigger *Func_020000a4(void) {
   return (const struct Trigger *)gData_020003d8;
 }
 
-s32 Func_020000fc(void) {
+s32 Scene_Initialize(void) {
   s32 *effect = &((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect;
 #if !TLA_PATCH_1
   s32 value = 0x201;

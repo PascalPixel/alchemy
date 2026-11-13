@@ -23,7 +23,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Func_0200004c(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov677Room1)
@@ -131,7 +131,7 @@ s32 Func_020001dc(void) {
   return 0;
 }
 
-const struct Trigger *Func_02000204(void) {
+const struct Trigger *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov677Room1)
@@ -399,7 +399,7 @@ void Func_0200077c(s32 actor) {
 
 /// The scene's start entry: the screen effect 0x209, then the actors of
 /// rooms 1 and 2.
-s32 Func_0200086c(void) {
+s32 Scene_Initialize(void) {
   s32 scene;
 
   ((struct YallamInteriorsEventWork *)Ram_HeapSlots->eventWork)->screenEffect =

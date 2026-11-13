@@ -34,7 +34,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 extern char SceneId_Ov6A6Room2;
 extern u32 gData_0200183c[];
 
-const u32 *Func_02000050(void) {
+const u32 *Scene_GetRegions(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room2)
     return gData_0200183c;
   return 0;
@@ -50,7 +50,7 @@ struct EventWork15a {
   u16 flag;
 };
 
-const struct ActorPlacement *Func_02000080(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room2)
     return gData_02001a80;
   return gData_02001900;
@@ -563,7 +563,7 @@ void Func_02000c84(void) {
     Func_02001348_(66, PIXELS(520), PIXELS(136));
 }
 
-const struct Trigger *Func_02000cc0(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room1)
     return gData_02001aec;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room2)
@@ -812,7 +812,7 @@ static __inline__ void Func_02001350_(s32 id, s32 x, s32 z, u16 angle) {
   Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle);
 }
 
-s32 Func_020010c0(void) {
+s32 Scene_Initialize(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room1) {
     if (!GameFlag_Test(0x300))
       Actor_SetWideSprite(64, 0);
@@ -844,7 +844,7 @@ s32 Func_020010c0(void) {
   return 0;
 }
 
-s32 Func_020011ec(void) {
+s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room1 && GameFlag_Test(0xa5f))
     Func_020000ac();
   return 0;

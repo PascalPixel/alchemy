@@ -19,7 +19,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 #include "aqua_rock/local.h"
 
-const u8 *Func_02000344(void) {
+const u8 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov67bRoom1)
@@ -104,7 +104,7 @@ s32 Func_02000478(struct Actor *object) {
   return 0;
 }
 
-const u8 *Func_020004a4(void) {
+const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov67bRoom1)
@@ -710,7 +710,7 @@ void Func_02001224(s32 unused, s32 id) {
   Func_020029a0();
 }
 
-const u8 *Func_020013b8(void) {
+const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov67bRoom1)
@@ -927,7 +927,7 @@ extern void Func_02001d98__s17f4(void) __asm__("Func_02001d98");
 void Func_02001460(void);
 void Func_0200153c(void);
 
-s32 Func_020017f4(void) {
+s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
   struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapWork;
   s32 id, x, z;

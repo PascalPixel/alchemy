@@ -631,7 +631,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-u32 *Func_02000d44(void) {
+u32 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room2)
     return (u32 *)gData_02001bd0;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3)
@@ -917,7 +917,7 @@ void Func_0200130c(void) {
 
 void Func_020013c8(s32 a) { YampiDesertCave_Call1920(a, 64, 0x302); }
 
-const u8 *Func_020013d8(void) {
+const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room2)
     return gData_02001ddc;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3)
@@ -944,7 +944,7 @@ void Func_02001928(s32 value);
 /// Sets up Yampi Desert Cave's three rooms as each one loads: the first room's
 /// palette cycle and Retreat destination, the third room's background
 /// priorities, and in each room the objects its flags place.
-s32 Func_02001418(void) {
+s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Func_02001928(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room1) {

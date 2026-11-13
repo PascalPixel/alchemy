@@ -177,7 +177,7 @@ extern const u8 gData_02003fac[];
 extern const u8 gData_02004150[];
 extern const u8 gData_020042c4[];
 
-const u8 *Func_02001bec(void) {
+const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room1)
     return gData_02003dcc;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room2)
@@ -338,7 +338,7 @@ extern u8 gData_0200385c[];
 extern u8 gData_02003888[];
 extern u8 gData_020038b4[];
 
-s32 Func_02001e64(void) {
+s32 Scene_Initialize(void) {
   s32 v_r1, v_r6, v_r7, v_r2, v_r5, v_r3, v_r0, t0, t1, t3;
   s32 t6, t9, t12, t15, t27;
   s32 t30, t35, t36, t38, t42;

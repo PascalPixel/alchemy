@@ -29,7 +29,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 extern const u8 gData_020022cc[];
 extern const u8 gData_0200235c[];
 
-const u8 *Func_0200004c(void) {
+const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov657Room1)
@@ -93,7 +93,7 @@ void Func_02000078(void) {
 extern const u8 gData_020023ec[];
 extern const u8 gData_020023f8[];
 
-const u8 *Func_0200013c(void) {
+const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov657Room2)

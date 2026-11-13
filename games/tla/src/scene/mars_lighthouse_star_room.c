@@ -232,7 +232,7 @@ void Func_0200443c(s32 a);
 extern struct Actor *Data_02004cec;
 extern char SceneId_Ov6abRoom1;
 
-s32 Func_020002f4(void) {
+s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
   s32 entrance = gMainRoutineWork.entrance;
 
@@ -322,7 +322,7 @@ s32 Func_020002f4(void) {
 extern char SceneId_Ov6ACRoom3;
 void Func_02004294(s32 scene, s32 a1);
 
-s32 Func_0200055c(void) {
+s32 Scene_PrepareMap(void) {
   if (Event_GetFlag(0xa30))
     Func_02004294(gMainRoutineWork.map +
                       ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),

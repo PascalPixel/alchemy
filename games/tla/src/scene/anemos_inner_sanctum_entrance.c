@@ -39,7 +39,7 @@ extern s32 gData_02000e5c[];
 extern s32 gData_02000ea4[];
 extern u8 MsgIAmTheShadow;
 
-const u8 *Func_0200035c(void) {
+const u8 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6b1Room1)
     return gData_020019f4;
   return gData_020019dc;
@@ -254,7 +254,7 @@ void Func_02000710(void) {}
 extern const u8 gData_02001c1c[];
 extern const u8 gData_02001c28[];
 
-const u8 *Func_02000714(void) {
+const u8 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6b1Room1)
     return gData_02001c28;
   return gData_02001c1c;
@@ -279,7 +279,7 @@ static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Test(flag); }
 static __inline__ void SetObjectValue(s32 id, s32 value) {
   /* FAKEMATCH(pin): the value pinned to r1, which the ROM loads before the id
    * (movs r1; movs r0); as a direct call or a plain forwarding inline, the id
-   * comes first, 10 of 110 instructions of Func_02000740 differ in tla-en.
+   * comes first, 10 of 110 instructions of Scene_Initialize differ in tla-en.
    */
   register s32 v asm("r1") = value;
 
@@ -290,7 +290,7 @@ static __inline__ void SetObjectValue(s32 id, s32 value) {
 /// their values and priority bits, and under flag 0x200 runs Func_02000494.
 /// Under flag 0x201, runs a screen transition and Func_02000408, then clears
 /// the flag.
-s32 Func_02000740(void) {
+s32 Scene_Initialize(void) {
   s32 *route =
       &((struct AnemosInnerSanctumEntranceEventWork *)Ram_HeapSlots->eventWork)
            ->route;

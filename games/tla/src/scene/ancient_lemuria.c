@@ -277,7 +277,7 @@ s32 Func_02000630(void) {
   }
 }
 
-s32 Func_020006bc(void) {
+s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 513;
   Task_Add(Func_02000630, 0xc80);
   if (gMainRoutineWork.entrance != 1)
@@ -300,7 +300,7 @@ s32 Func_020006bc(void) {
   return 0;
 }
 
-s32 Func_020007a4(void) {
+s32 Scene_PrepareMap(void) {
   s32 entrance = gMainRoutineWork.entrance;
 
   if (entrance == 1)

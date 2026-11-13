@@ -69,7 +69,7 @@ void Func_0200063c(s32 value);
 /// up to 3600 frames for a key before the title scene starts again at
 /// entrance 2; entrances 8, 1, 2 and 3 each lead to their own scene.
 // ☀️'s Title_Run with ⚓️'s entrances.
-s32 Func_0200005c(void) {
+s32 Title_Run(void) {
   s32 frames;
   s32 limit;
 

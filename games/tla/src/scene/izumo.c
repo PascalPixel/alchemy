@@ -75,7 +75,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Func_020001ac(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (GameFlag_Test(2343))
     return gData_02001644;
   return gData_02001494;
@@ -175,7 +175,7 @@ void Func_02000438(void) {
   Func_02000d08();
 }
 
-const void *Func_0200049c(void) {
+const void *Scene_GetEvents(void) {
   if (GameFlag_Test(2343))
     return gData_02001b00;
   return gData_020018b4;
@@ -413,7 +413,7 @@ void Func_02000954(void) {
   }
 }
 
-s32 Func_020009d0(void) {
+s32 Scene_Initialize(void) {
   /* FAKEMATCH(wrapper): Call3 sets Func_02000d40's arguments up in the native's
    * order, as in Func_020006a4; as a direct call, 2 of 123 instructions differ
    * in tla-en. */

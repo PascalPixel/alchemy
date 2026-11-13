@@ -39,14 +39,14 @@ static inline void ReturnHome(s32 mode, s32 actor, s32 flag) {
   Import_ActorReturnHome(mode, actor, flag);
 }
 
-s32 *Func_02000044(void) {
+s32 *Scene_GetExits(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila2)
     return gData_02001068;
   else
     return gData_02001018;
 }
 
-s32 *Func_02000070(void) {
+s32 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila2)
     return gData_02001238;
   else
@@ -73,7 +73,7 @@ void Func_0200009c(void) {
 
 void Func_02000118(s32 mode) { ReturnHome(mode, 66, 0x300); }
 
-s32 *Func_02000128(void) {
+s32 *Scene_GetEvents(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila2)
     return gData_02001664;
   else
@@ -438,7 +438,7 @@ void Func_02000a9c(void) {
   object->priorityFlags = flags;
 }
 
-s32 Func_02000ac8(void) {
+s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila1)
     Func_02000d68(12, 0);
@@ -451,7 +451,7 @@ s32 Func_02000ac8(void) {
   return 0;
 }
 
-s32 Func_02000b44(void) {
+s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila2) {
     if (GameFlag_Test(0x210))
       MapGrid_CopyCellAttributes(10, 19, 1, 1, 11, 19);

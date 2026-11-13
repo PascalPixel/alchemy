@@ -612,7 +612,7 @@ void Func_02001b3c(void);
 extern u32 gData_02001d84[];
 extern u32 gData_02001e04[];
 
-s32 Func_02000bdc(void) {
+s32 Scene_Initialize(void) {
   s32 t3, t7, t11, t12, t15, t16, t17, t19, t20, t23, t25, t26, t27, t32, t33,
       t34, t40, t42, t45, t47, t49, t51, t53, t55, v5, v6;
 

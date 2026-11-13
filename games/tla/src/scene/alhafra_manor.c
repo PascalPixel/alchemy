@@ -23,7 +23,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 extern const u8 gData_02001708[];
 extern const u8 gData_02001840[];
 
-const u8 *Func_0200004c(void) {
+const u8 *Scene_GetPlacements(void) {
   if (GameFlag_Test(0x8a7))
     return gData_02001840;
   return gData_02001708;
@@ -205,7 +205,7 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 void Func_02000658(void);
 void Func_02001488(void);
 
-s32 Func_02000514(void) {
+s32 Scene_Initialize(void) {
   s32 cameraY = -1;
   s32 cameraZ = 160 << 17;
   s16 *entrance;

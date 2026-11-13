@@ -1013,7 +1013,7 @@ void Func_02002988(s32 a, s32 flag, s32 b, s32 c);
 void Func_02002114();
 
 #if !TLA_PATCH_1
-s32 Func_02001774(void) {
+s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   struct Actor *object, *dummy, *piece;
@@ -1210,7 +1210,7 @@ s32 Func_02001774(void) {
   return 0;
 }
 #else
-s32 Func_02001774(void) {
+s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   s32 *effect = (s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac);

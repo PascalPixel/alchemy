@@ -35,7 +35,7 @@ extern struct ActorPlacement gData_02001480[];
 extern struct ActorPlacement gData_02001504[];
 extern struct ActorPlacement gData_0200169c[];
 
-const u8 *Func_02000350(void) {
+const u8 *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6afRoom2)
@@ -431,7 +431,7 @@ extern struct Trigger gData_0200184c[];
 extern s32 gData_020018f4[];
 extern struct Trigger gData_02001a5c[];
 
-const u8 *Func_02000b3c(void) {
+const u8 *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6afRoom2)
@@ -530,7 +530,7 @@ static __inline__ void PlaceObject(s32 id, s32 x, s32 z) {
 /// flags are set, schedules Func_02000ba0 in rooms 2 and 3 and opens again
 /// the cells already opened there (Func_020003fc), and in room 4 raises the
 /// part priority of objects 9 to 16.
-s32 Func_02000cf4(void) {
+s32 Scene_Initialize(void) {
   s32 i;
 
   ((struct TreasureIsleEventWork__s0cf4 *)Ram_HeapSlots->eventWork)->route = 0x204;

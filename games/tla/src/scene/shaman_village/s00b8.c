@@ -91,7 +91,7 @@ extern void Import_ActorSetMode__s0280(struct ShamanVillageObject *object, s32 m
 
 void Func_02000280(void) { Func_080d7788(18, 3, 13); }
 
-const struct SceneEntrance *Func_02000290(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_ShamanVillage5)
@@ -140,7 +140,7 @@ extern u32 gData_02005860[];
 extern u32 gData_02005998[];
 extern u32 gData_02005a40[];
 
-void *Func_020002dc(void) {
+void *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_ShamanVillage1)
@@ -556,7 +556,7 @@ extern u32 gData_02005f98[];
 extern u32 gData_020061f0[];
 extern u32 gData_020062d4[];
 
-void *Func_02000c80(void) {
+void *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_ShamanVillage1)

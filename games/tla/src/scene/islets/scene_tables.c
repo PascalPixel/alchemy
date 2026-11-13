@@ -20,7 +20,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "event_inline.h"
 
-u8 *Func_0200004c(void) {
+u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov674Room1)
@@ -64,7 +64,7 @@ void Func_020000d8(void) {
   }
 }
 
-const u8 *Func_0200019c(void) {
+const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov674Room1)
@@ -1592,7 +1592,7 @@ void Func_020029c4(void) {
 #endif
 }
 
-s32 Func_02002b64(void) {
+s32 Scene_Initialize(void) {
   struct IsletsEventWork *work = Ram_HeapSlots->eventWork;
   s16 scene;
 

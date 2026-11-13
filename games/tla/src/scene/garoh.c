@@ -175,7 +175,7 @@ struct GarohPicture {
 extern const struct GarohPicture gData_02005de0[];
 
 /// Return the table for the current room.
-const void *Func_02000440(void) {
+const void *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov65FRoom1) {
@@ -490,7 +490,7 @@ void Func_020009a4(void) {
 }
 
 /// Return the table for the current room.
-const void *Func_020009dc(void) {
+const void *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov65FRoom1) {
@@ -525,7 +525,7 @@ void Func_02000e00(void);
 void Func_020052f4(s32 value);
 void Func_0200538c(void);
 
-s32 Func_02000aa8(void) {
+s32 Scene_Initialize(void) {
   struct EventWork *work;
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65FRoom4) {

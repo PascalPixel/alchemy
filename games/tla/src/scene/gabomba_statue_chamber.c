@@ -20,7 +20,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 #include "gabomba_statue_chamber/gabomba_statue_chamber.h"
 
-u8 *Func_02000040(void) {
+u8 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov672Room1)
@@ -30,7 +30,7 @@ u8 *Func_02000040(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-u8 *Func_02000070(void) {
+u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov672Room1)
@@ -40,7 +40,7 @@ u8 *Func_02000070(void) {
   return gData_02002458;
 }
 
-u8 *Func_020000b0(void) {
+u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov672Room1)
@@ -955,7 +955,7 @@ void Func_02001b14(void);
 void Func_02001ba8(void);
 void Func_02001c44(void);
 
-s32 Func_02001aa4(void) {
+s32 Scene_Initialize(void) {
   struct GabombaStatueChamberEventWork *work;
   s16 scene;
 

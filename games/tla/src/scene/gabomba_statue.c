@@ -146,7 +146,7 @@ extern const u8 gData_02005e8c[];
 extern const u8 gData_02005ecc[];
 extern const u8 gData_02005eec[];
 
-const u8 *Func_020002dc(void) {
+const u8 *Scene_GetRegions(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov671Room7)
@@ -315,7 +315,7 @@ extern const u8 gData_020067e4[];
 extern const u8 gData_02006898[];
 extern const u8 gData_02006a90[];
 
-const u8 *Func_020004b8(void) {
+const u8 *Scene_GetPlacements(void) {
   s16 scene = gMainRoutineWork.scene;
   const u8 *table = gData_02006b20;
 
@@ -909,7 +909,7 @@ extern const u8 gData_02006d1c[];
 extern const u8 gData_02006db8[];
 extern const u8 gData_02006e78[];
 
-const u8 *Func_02001124(void) {
+const u8 *Scene_GetEvents(void) {
   s16 scene = gMainRoutineWork.scene;
   const u8 *table = gData_02006e9c;
 

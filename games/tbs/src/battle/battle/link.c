@@ -109,7 +109,7 @@ UNREAD_RESULT LinkBattle_SendParty(void) {
   u16 unitIds[8];
 
   size = LINK_PARTY_UNIT_BYTES;
-  buffer = (u8 *)Heap_AllocEwram(size);
+  buffer = Heap_AllocEwram(size);
   {
     s32 noSlot = 0xff;
 
@@ -141,7 +141,7 @@ UNREAD_RESULT LinkBattle_SendParty(void) {
     // The Djinn recovery list, its units renumbered for the opponent.
     size = LINK_PARTY_OFFER_BYTES;
     Heap_Release(buffer);
-    buffer = (u8 *)Heap_AllocEwram(size);
+    buffer = Heap_AllocEwram(size);
     Iwram_CopyWords(buffer, Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY),
                     size);
     list = &((struct DjinnRecoveryTable *)buffer)->list;

@@ -80,7 +80,7 @@ s32 DebugParameterSet_Load(s32 set) {
     Unit_LevelUpToFar(unitId, gDebug_ParameterSets[row].level);
 
     // Start from no Djinn and no abilities.
-    member = (struct Unit *)Unit_GetFar(unitId);
+    member = Unit_GetFar(unitId);
     for (i = 0; i < ELEMENT_COUNT; i++) {
       member->djinnHeldCounts[i] = 0;
       member->djinnSetCounts[i] = 0;

@@ -501,7 +501,7 @@ SECTIONS
         "*/games/tla/src/scene/entry/alhafran_cave.o"(.text)
         "*/games/tla/src/scene/alhafran_cave.o"(.text)
         "*/games/tla/src/scene/import/alhafran_cave.o"(.text)
-        "*/games/tla/src/scene/data/alhafran_cave.o"(.data)
+        "*/games/tla/src/scene/alhafran_cave.o"(.data)
     }
     .bss :
     {

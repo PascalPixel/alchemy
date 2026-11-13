@@ -416,7 +416,9 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
       work = gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
       if (frame <= 24)
         Graphics_ScaleRgb555Clamped(battle->palette, BATTLE_BG_PALETTE,
-                                    *brightness = Q16_ONE - frame * 1092, 128);
+                                    *brightness =
+                                        Q16_ONE - frame * BACKGROUND_LEVEL_STEP,
+                                    BATTLE_BG_PALETTE_COLORS);
       BattleMotion_ProjectScaledPosition(
           unitId, ScreenPoint_Coordinates(projectedPosition));
       work->canvasOrigin.x = (64U - (u32)projectedPosition->x) << 8;

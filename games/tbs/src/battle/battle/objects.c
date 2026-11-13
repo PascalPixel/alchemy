@@ -661,7 +661,7 @@ void BattleCamera_SetDefaultView(void) {
   // BattleCamera_SetView uses.
   camera->yaw = TRIG_TURN * 3 / 16;
   camera->pitch = TRIG_TURN - TRIG_TURN / 128;
-  camera->distance = px(510);
+  camera->distance = BATTLE_CAMERA_DISTANCE;
   SET_VECTOR(camera->focus, 0, 0, 0);
   camera->followPosition = 0;
   camera->followEye = 0;

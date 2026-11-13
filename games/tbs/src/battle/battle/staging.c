@@ -50,7 +50,8 @@ s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   Transform_Reset();
   Transform_SetLookAt(camera->eye, camera->focus);
-  Projection_Set(px(510), Iwram_RatioMulQ14(px(510), Q16_ONE * 3 / 4),
+  Projection_Set(BATTLE_CAMERA_DISTANCE,
+                 Iwram_RatioMulQ14(BATTLE_CAMERA_DISTANCE, Q16_ONE * 3 / 4),
                  0x7fff0000);
   if (delay != 0) {
     view->targetYaw = YAW_PARTY_ACTION;

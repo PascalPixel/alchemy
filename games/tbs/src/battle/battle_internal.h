@@ -102,6 +102,13 @@
 /// The battle background's colours: BG palettes 6 to 13, filled from
 /// BattleWork.palette, darkened or not.
 #define BATTLE_BG_PALETTE ((u16 *)&BG_PLTT_COLOR(6, 0))
+/// The colours in BATTLE_BG_PALETTE, eight palettes of 16.
+#define BATTLE_BG_PALETTE_COLORS (8 * 16)
+
+/// The battle background's darkening step (BattleBackground_SetPaletteLevel,
+/// BattleBackground_Load, the element glow): each level takes 1092 from the
+/// 16.16 brightness, so level 60 is almost black.
+#define BACKGROUND_LEVEL_STEP 1092
 
 /// The opening curtain's tiles: 4-bit tiles 128 to 136 of character block 1,
 /// which BG1 shows from its map in screen block 12.

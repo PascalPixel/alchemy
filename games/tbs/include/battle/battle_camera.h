@@ -37,6 +37,10 @@ STATIC_ASSERT(offsetof(struct BattleCamera, followPosition) == 0x1c);
 STATIC_ASSERT(offsetof(struct BattleCamera, pitch) == 0x34);
 STATIC_ASSERT(offsetof(struct BattleCamera, yaw) == 0x36);
 
+/// The battle camera's distance from its focus in its default view, and the
+/// unzoomed projection's focal length, in 16.16 pixels (BattleCamera_SetView).
+#define BATTLE_CAMERA_DISTANCE (510 << 16)
+
 /// The HEAP_SLOT_CAMERA heap slot during a battle: the battle camera.
 extern struct BattleCamera *gBattleCamera;
 

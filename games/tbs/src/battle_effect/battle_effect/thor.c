@@ -205,7 +205,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     // 128, then sink and shrink into the sky with growing dots (past 22
     // frames the sink holds at 20, not 22); after frame 150 they grow
     // again, with dots of size 5.
-    Projection_Set(px(510), Iwram_RatioMulQ14(px(510), Q16_ONE * 3 / 4),
+    Projection_Set(BATTLE_CAMERA_DISTANCE,
+                   Iwram_RatioMulQ14(BATTLE_CAMERA_DISTANCE, Q16_ONE * 3 / 4),
                    0x7fff0000);
     Transform_Reset();
     if (frame > 128) {

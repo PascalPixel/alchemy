@@ -69,10 +69,11 @@ struct OwnerStats {
   u16 id;
 };
 
-/// Starts a new game: sets up a new game's state (Func_080addf0) and runs the
-/// main routine afresh from mode 0.
+/// Starts a new game: sets up a new game's state
+/// (MainRoutineWork_InitializeDefaults) and runs the main routine afresh from
+/// mode 0.
 void Game_RestartQuest(void) {
-  Func_080addf0();
+  MainRoutineWork_InitializeDefaults();
   MainRoutine_RunFar(0);
 }
 
@@ -625,7 +626,7 @@ extern volatile u8 gAutoSleepEnabled;
 /// button layout, Felix and Jenna in the party, their first Psynergy, 200
 /// coins, the message settings and the play time clock) and fills the work
 /// block's random tables.
-void Func_080addf0(void) {
+void MainRoutineWork_InitializeDefaults(void) {
   volatile s32 zero;
   s32 i;
   s32 j;

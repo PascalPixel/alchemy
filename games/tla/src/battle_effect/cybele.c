@@ -2126,7 +2126,8 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
                 if (screen.depth > 634)
                   screen.depth = 634;
                 size = 6 - (screen.depth - 314) / 64;
-                draw[1](canvas, work->sheet + Data_08197424[size - 1],
+                draw[1](canvas,
+                        work->sheet + gBattleEffect_FlarePictures[size - 1],
                         screen.x - size, screen.y - size, size * 2, size * 2);
                 flare->x -= flare->x / distance;
                 flare->y -= flare->y / distance;
@@ -2782,7 +2783,7 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
 
   work->cameraDelta = 0;
   work->cameraPhase = 0;
-  Task_Add(Camera_ApplyPhasedDelta, TASK_PASS_FRAME);
+  Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PASS_FRAME);
   work->transferMode = 2;
   work->transferValue = 75; // each transfer fades the canvas to 3/4: a trail
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -2886,7 +2887,7 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Task_Remove(Camera_ApplyPhasedDelta);
+  Task_Remove(BattleCamera_ApplyPhasedDelta);
   HeapSlot_Release(188);
   HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
@@ -3541,8 +3542,8 @@ void BattleEffect_ArmBg1HBlankDma(void) {
 
 #include "field_event.h"
 
-#define Actor_SetAnimationSpeedFar                                             \
-  ((s32 (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
+#define Actor_SelectAnimationFar                                               \
+  ((s32 (*)(struct Actor *, s32))Actor_SelectAnimationFar)
 
 DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode0,
                    BattleEffect_RunProjectileVolleyB, 0)
@@ -3616,9 +3617,9 @@ void BattleEffect_RunVolleyBMode10WithAction(
 
   object = (struct Actor *)GetBattleObjectSlotFar(effect->actor)->object;
   Actor_SetMode(object, 2);
-  Actor_SetAnimationSpeedFar(object, 0x30);
+  Actor_SelectAnimationFar(object, 0x30);
   BattleEffect_RunProjectileVolleyB(effect, 10);
-  Actor_SetAnimationSpeedFar(object, 0x10);
+  Actor_SelectAnimationFar(object, 0x10);
 }
 
 void BattleEffect_RunVolleyBMode11WithAction(
@@ -3627,9 +3628,9 @@ void BattleEffect_RunVolleyBMode11WithAction(
 
   object = (struct Actor *)GetBattleObjectSlotFar(effect->actor)->object;
   Actor_SetMode(object, 2);
-  Actor_SetAnimationSpeedFar(object, 0x30);
+  Actor_SelectAnimationFar(object, 0x30);
   BattleEffect_RunProjectileVolleyB(effect, 11);
-  Actor_SetAnimationSpeedFar(object, 0x10);
+  Actor_SelectAnimationFar(object, 0x10);
 }
 
 // BattleEffect_RunProjectileVolleyB, the body behind the 22 wrappers

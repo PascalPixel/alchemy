@@ -34,13 +34,13 @@ struct BattleEffectWork {
   s32 savedBg1Y;      ///< BG1 scroll restored when a shake ends
   s32 shakeFrames;    ///< shake frames left; Camera_ApplyShake counts down
   s32 cameraDelta;    ///< camera yaw turned per effect frame
-  /// The effect sets 1 after a frame; Camera_ApplyPhasedDelta then turns the
-  /// whole cameraDelta and sets 0, else turns half and toggles 0 and 2.
+  /// The effect sets 1 after a frame; BattleCamera_ApplyPhasedDelta then turns
+  /// the whole cameraDelta and sets 0, else turns half and toggles 0 and 2.
   s32 cameraPhase;
   s32 fadeFrames; ///< backdrop fade frames left (Palette_StepFadeTransfer)
   s32 fadeStep;   ///< steps the backdrop has darkened so far
   /// Window, display and blend registers, which
-  /// Graphics_ApplyWindowBlendRegisters writes all at once.
+  /// BattleEffect_ApplyWindowBlendRegisters writes all at once.
   ///@{
   u16 win0h;
   u16 win0v;
@@ -66,7 +66,8 @@ struct BattleEffectWork {
   ///@}
   void *objects[64]; ///< the effect's animation objects
   /// Each target's flash timer in frames, for effect->actors[n]: set by
-  /// BattleEffect_TintBattler, counted down by BattleEffect_CountDownBattlerTints.
+  /// BattleEffect_TintBattler, counted down by
+  /// BattleEffect_CountDownBattlerTints.
   u8 actorTimers[8];
   s32 vblanksSinceTransfer; ///< 1 on a canvas copy's VBlank, then counts up
   /// 1 once the effect has drawn a frame; the canvas transfer callback copies

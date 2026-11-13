@@ -423,7 +423,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 
     for (;;) {
       if (commandIndex == 0) {
-        BattleParty_CountStandbyDjinnFar(0, state->standbyDjinn[0]);
+        BattleDjinn_CountStandbyFar(0, state->standbyDjinn[0]);
       } else {
         s32 k;
 

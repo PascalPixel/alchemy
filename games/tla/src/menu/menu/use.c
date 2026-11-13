@@ -23,8 +23,8 @@ s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
   itemId = ITEM_ID_MASK;
   itemId &= entry;
   item = Item_Get(itemId);
-  useResult = BattleEffect_ApplyToTargets(OWNER_ACTION_ID_MASK & item->actionId,
-                                          memberId, targetId, 1);
+  useResult = Ability_ApplyToTargets(OWNER_ACTION_ID_MASK & item->actionId,
+                                     memberId, targetId, 1);
   if (useResult != -1) {
     item = Item_Get(unit->inventory[slot]);
     if (item->useType == 1) {
@@ -43,8 +43,8 @@ s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
 
 s32 Battle_CalculateRecoveryFar(s32 value, s32 selector, s32 multiplier);
 
-s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
-                                s32 fixedScale) {
+s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
+                           s32 fixedScale) {
   struct BattleAct *effect;
   struct InventoryMenuState *menu;
   struct BattleUnit *target;
@@ -77,7 +77,8 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 
   for (targetIndex = 0; targetIndex < menu->partyCount; targetIndex++) {
     if (effect->range == 0xff) {
-      // Read unsigned (ldrh): the party's ids, as this routine's bytes load them.
+      // Read unsigned (ldrh): the party's ids, as this routine's bytes load
+      // them.
       targetId = (u16)menu->ownerIds[targetIndex];
       target = Unit_Get(targetId);
     }

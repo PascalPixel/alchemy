@@ -22,11 +22,11 @@ extern void Actor_Destroy__f0d489c(struct LinkedEffectObject *object) __asm__(
  * definition has s32 Actor_IsOutsideAnimation108(struct Actor *object). */
 extern s32 Actor_IsOutsideAnimation108__f0d489c(
     struct LinkedEffectObject *object) __asm__("Actor_IsOutsideAnimation108");
-/* VIEW(f0d489c): routine BattleEffect_CopyWatchedObjectPosition as void
- * BattleEffect_CopyWatchedObjectPosition(void); the definition has s32
- * BattleEffect_CopyWatchedObjectPosition(struct Actor *object). */
+/* VIEW(f0d489c): routine FieldEffect_CopyWatchedActorPosition as void
+ * FieldEffect_CopyWatchedActorPosition(void); the definition has s32
+ * FieldEffect_CopyWatchedActorPosition(struct Actor *object). */
 extern void BattleEffect_CopyWatchedObjectPosition__f0d489c(void) __asm__(
-    "BattleEffect_CopyWatchedObjectPosition");
+    "FieldEffect_CopyWatchedActorPosition");
 extern const u8 gData_080f341c[];
 
 /// The Broken Seal's BattleEffect_ConfigureWatchedObject with this game's
@@ -164,7 +164,7 @@ s32 Actor_MoveTowardTarget(struct Actor *object) {
 /// Turns the object toward its facing target, if it has one, by at most
 /// 0x1000 (22.5 degrees).
 /// obj: object to turn.
-s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *obj) {
+s32 Actor_TurnTowardWatchedActor(struct FacingObject *obj) {
   s32 turn;
   u16 old;
   s32 dir;
@@ -191,7 +191,7 @@ s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *obj) {
 /// Makes the object watch target and keeps it facing it.
 void Func_080d4aa8(struct Actor *object, struct Actor *target) {
   object->watchedObject = target;
-  object->update = SceneActor_UpdateFacingTowardTarget;
+  object->update = Actor_TurnTowardWatchedActor;
 }
 
 /// Gives the object the party leader's display layer.
@@ -450,9 +450,9 @@ again:
     leader->velocityY = 0x40000;
     *flags &= 0x7e;
     Actor_SetSingleChildFlagsFar(leader, spriteFlags & 0xfe);
-    Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner,
-                               ((s16 *)positionWords)[1],
-                               ((s16 *)positionWords)[5]);
+    Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner,
+                            ((s16 *)positionWords)[1],
+                            ((s16 *)positionWords)[5]);
     Actor_SetMode(leader, 6);
     Actor_SetSingleChildFlagsFar(leader, spriteFlags);
 
@@ -571,7 +571,7 @@ s32 Func_080d50f8(void) {
     }
 
     // Step to the middle of the tile, face north and climb down a tile.
-    Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, gridX, gridZ);
+    Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, gridX, gridZ);
     leader->speedLimit = 0x10000;
     Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
     Actor_RefreshSelectorById(gMainRoutineWork.currentOwner);
@@ -652,7 +652,7 @@ s32 Func_080d53b8(void) {
 
     // Step to the middle of the tile, crouch, jump and grab the wall.
     leader->actionFlags = result;
-    Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, gridX, gridZ);
+    Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, gridX, gridZ);
     Actor_SetMode(leader, 6);
     wait(4);
     Actor_SetMode(leader, 7);

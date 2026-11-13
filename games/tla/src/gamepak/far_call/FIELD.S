@@ -15,14 +15,14 @@ Resource_FarCall003:
 	export ResourceObject_ReleaseFar, ResourceObject_Release
 	export Func_08020050, Func_08022010
 	export ResourceMetadata_RegisterFar, ResourceMetadata_Register
-	export ResourceMetadata_UnregisterFar, ResourceMetadata_Unregister
-	export ResourceMetadata_ReleaseSlotFar, ResourceMetadata_ReleaseSlot
+	export Sprite_RemoveAnimationFar, Sprite_RemoveAnimation
+	export Sprite_RemoveAnimationAtFar, Sprite_RemoveAnimationAt
 	export ResourceMetadata_ClearRecordFar, ResourceMetadata_ClearRecord
 	export Animation_InitializeWorkFromMetadataFar, Animation_InitializeWorkFromMetadata
 	export Animation_SetWorkEntryFar, Animation_SetWorkEntry
 	export ObjectSystem_InitializeFar, ObjectSystem_Initialize
 	export Actor_SetMode, Actor_SelectAnimation
-	export Actor_SetAnimationSpeedFar, Actor_SetAnimationSpeed
+	export Actor_SelectAnimationFar, Actor_SetAnimationSpeed
 	export Actor_SetAnimationAndSpeedFar, Actor_SetAnimationAndSpeed
 	export Actor_StartScriptFar, Actor_StartScript
 	export Func_080200b0, Func_08023524
@@ -34,10 +34,10 @@ Resource_FarCall003:
 	export Actor_StartApproachWatchedFar, Actor_StartApproachWatched
 	export Actor_SetPositionAndResetMotionFar, Actor_SetPositionAndResetMotion
 	export Map_RenderAnimatedTilePictureFar, Map_RenderAnimatedTilePicture
-	export Map_RenderAnimatedTilePicturesForObjectFar, Map_RenderAnimatedTilePicturesForObject
-	export Map_RenderAllAnimatedTilePicturesFar, Map_RenderAllAnimatedTilePictures
+	export SpriteDissolve_RunFar, SpriteDissolve_Run
+	export SpriteDissolve_RunManyFar, SpriteDissolve_RunMany
 	export MapGrid_LoadMapFar, MapGrid_LoadMap
-	export Func_08020110, Func_0802b998
+	export WorldMap_InitializePerspectiveFar, WorldMap_InitializePerspective
 	export Func_08020118, Func_0802af9c
 	export Map_CenterOnFollowedPointFar, Map_CenterOnFollowedPoint
 	export Map_UpdateCurrentTileBlockFar, Map_UpdateCurrentTileBlock
@@ -46,7 +46,7 @@ Resource_FarCall003:
 	export Actor_RefreshSelector, Actor_WaitForCommandEnd
 	export Actor_SetTargetPosition, Actor_SetMoveTarget
 	export Actor_CommitPosition, Script_WaitForEventTimeout
-	export Map_GetScreenRelativePositionFar, Map_GetScreenRelativePosition
+	export MapGrid_GetScreenRelativePositionFar, MapGrid_GetScreenRelativePosition
 	export WorldMap_UpdateViewFar, WorldMap_UpdateView
 	export Map_LoadDefaultCellsAndUpdateBlockFar, Map_LoadDefaultCellsAndUpdateBlock
 	export Map_PlayMapEditFar, Map_PlayMapEdit
@@ -73,9 +73,9 @@ Resource_FarCall003:
 	export Actor_SetSingleChildFlagsFar, Actor_SetChildByteValue
 	export Animation_SetStateFlagsFar, Animation_SetStateFlags
 	export Map_SetScreenShakeFar, Map_SetScreenShake
-	export Map_WaitForShakeToSettleFar, Map_WaitForShakeToSettle
+	export MapGrid_WaitForShakeToSettleFar, MapGrid_WaitForShakeToSettle
 	export Animation_SetIndexAndInitializeObjectsFar, Animation_SetIndexAndInitializeObjects
-	export Graphics_EnableObjLayerAndCallbacksFar, Graphics_EnableObjLayerAndCallbacks
+	export ActorSystem_SuspendProjectionAndShowSpritesFar, ActorSystem_SuspendProjectionAndShowSprites
 	export ActorSystem_ResumeProjectionAndHideLayersFar, ActorSystem_ResumeProjectionAndHideLayers
 	export Animation_SetDisplayFlagFar, Animation_SetDisplayFlag
 	export MapGrid_IsWallAtFar, MapGrid_IsWallAt
@@ -88,9 +88,9 @@ Resource_FarCall003:
 	export Actor_SetSpritePriorityDirectFar, Actor_SetSpritePriorityDirect
 	export ScriptObject_CheckOverlapFar, ScriptObject_CheckOverlap
 	export Map_SetShownLayersFar, Map_SetShownLayers
-	export ResourceMetadata_SumCommandLengthsFar, ResourceMetadata_SumCommandLengths
+	export SpriteAnimation_SumCommandLengthsFar, SpriteAnimation_SumCommandLengths
 	export GetWorldMapTerrainBehaviorFar, GetWorldMapTerrainBehavior
-	export ResourceSlot_LoadFar, ResourceSlot_Load
+	export SpritePictureCache_LoadFar, SpritePictureCache_Load
 	export SetMapCellCollisionFar, SetMapCellCollision
 	export Animation_ApplyChildValueFar, Animation_ApplyChildValue
 	export SpriteColor_RemapPixelsFar, SpriteColor_RemapPixels
@@ -110,7 +110,7 @@ Resource_FarCall003:
 	export Func_08020340, Func_080237e8
 	export Field_CheckSpheresOverlapFar, Field_CheckSpheresOverlap
 	export Func_08020350, Func_0802da88
-	export GetWorldMapCollisionFar, GetWorldMapCollision
+	export WorldMap_GetCollisionFar, WorldMap_GetCollision
 	export Func_08020360, Func_0802d600
 	export Func_08020368, Func_0802d644
 	export Func_08020370, Func_080219cc

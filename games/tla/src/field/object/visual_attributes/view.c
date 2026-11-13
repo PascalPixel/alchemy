@@ -76,7 +76,7 @@ void Func_080d4714(void) {
   }
 }
 
-s32 BattleEffect_CopyWatchedObjectPosition(struct Actor *object) {
+s32 FieldEffect_CopyWatchedActorPosition(struct Actor *object) {
   struct Actor *link;
 
   link = object->watchedObject;
@@ -120,7 +120,7 @@ struct BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags,
       object->value55 = 0;
       object->counter = 0;
       object->resourceId = resourceId;
-      object->callback = BattleEffect_CopyWatchedObjectPosition;
+      object->callback = FieldEffect_CopyWatchedActorPosition;
       object->resource = resource;
       object->visual->value26 = 0;
 

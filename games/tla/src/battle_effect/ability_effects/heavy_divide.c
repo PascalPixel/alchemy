@@ -163,7 +163,7 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
       }
     } else if (frame == 0) {
       BattleEffect_TintBattler(effect->actor, -1, 2, 0, -1);
-      Actor_SetAnimationSpeedFar(caster, 32);
+      Actor_SelectAnimationFar(caster, 32);
     }
 
     vertices = Heap_AllocEwram(32);
@@ -308,7 +308,7 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
     work->transferPending = 1;
     wait(1);
   }
-  Actor_SetAnimationSpeedFar(caster, 16);
+  Actor_SelectAnimationFar(caster, 16);
   HeapSlot_Release(104);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
@@ -792,7 +792,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     wait(1);
   }
-  Actor_SetAnimationSpeedFar(caster, 16);
+  Actor_SelectAnimationFar(caster, 16);
   HeapSlot_Release(104);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();

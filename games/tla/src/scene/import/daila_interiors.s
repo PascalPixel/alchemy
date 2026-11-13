@@ -102,10 +102,10 @@ Event_AskYesNoWithActorAnimation:
 	.thumb_func
 Actor_GetById:
 	overlay_veneer Actor_GetByIdFar
-	.global Actor_SetPositionAndReset
+	.global Actor_WalkToAndWaitById
 	.thumb_func
-Actor_SetPositionAndReset:
-	overlay_veneer Actor_SetPositionAndResetFar
+Actor_WalkToAndWaitById:
+	overlay_veneer Actor_WalkToAndWaitByIdFar
 	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
 Actor_SetHorizontalPositionWithTerrain:
@@ -118,10 +118,10 @@ Actor_SetModeById:
 	.thumb_func
 Actor_Jump:
 	overlay_veneer Actor_JumpFar
-	.global Actor_SetAngleToward
+	.global Actor_FaceActorById
 	.thumb_func
-Actor_SetAngleToward:
-	overlay_veneer Actor_SetAngleTowardFar
+Actor_FaceActorById:
+	overlay_veneer Actor_FaceActorByIdFar
 	.global Import_EventSetMessageId
 	.thumb_func
 Import_EventSetMessageId:
@@ -153,7 +153,7 @@ Func_02000d9c:
 	.global Func_02000da4
 	.thumb_func
 Func_02000da4:
-	overlay_veneer BattleEffect_RunActorRiseAndDescentFar
+	overlay_veneer ItemDisplay_ShowPictureFar
 	.global Func_02000dac
 	.thumb_func
 Func_02000dac:

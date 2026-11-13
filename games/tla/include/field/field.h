@@ -72,8 +72,8 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
 void BattleEffect_StopMainActor(void);
 struct ActorPlacement;
 void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot);
-void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first,
-                                          struct FacingObject *second);
+void Actor_TurnPairToFaceEachOther(struct FacingObject *first,
+                                   struct FacingObject *second);
 void Field_StartPaletteTransition(s32 mode);
 void FieldPsynergy_RunHandler(s32 kind);
 void Field_EndActorSpriteEffect(s32 mode);
@@ -97,10 +97,10 @@ void Actor_StartCameraFar(void *object, void *effect);
 void ObjectEffect_EndContextEffect(s32 effect);
 void ObjectEffect_PrepareContextEffect(s32 effect);
 void Actor_CenterOnColumn(u32 objectId, s32 action, s32 z_offset);
-void Actor_CommitPositionAndActivate(u32 objectId, s32 x_offset, s32 z_offset);
+void Actor_WalkByAndWaitById(u32 objectId, s32 x_offset, s32 z_offset);
 void Actor_OffsetPositionAndReset(u32 objectId, s32 x_offset, s32 z_offset);
 void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
-void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
+void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
 void Actor_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z);
 void Actor_StartRepeatedMotion(u32 objectId, s32 variant);
 void ObjectSystem_Configure(s32 mode);

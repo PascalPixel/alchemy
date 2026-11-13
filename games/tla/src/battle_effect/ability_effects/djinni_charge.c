@@ -181,7 +181,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
       frames = 50;
     }
     REG_BG2PA = 0x80;
-    Actor_SetAnimationSpeedFar(caster, 240);
+    Actor_SelectAnimationFar(caster, 240);
 
     for (frame = 0; frame != frames; frame++) {
       if (frame == 0) {
@@ -469,7 +469,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
       work->transferPending = 1;
       wait(1);
     }
-    Actor_SetAnimationSpeedFar(caster, 16);
+    Actor_SelectAnimationFar(caster, 16);
     HeapSlot_Release(SLOT_BLITTER);
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   }

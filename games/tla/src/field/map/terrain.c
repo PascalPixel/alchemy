@@ -27,7 +27,7 @@ extern u32 Data_02018000[];
 
 u8 GetWorldMapTerrainBehavior(struct WorldPosition *position,
                               s32 *terrainKind) {
-  s32 selector = GetWorldMapCollision(position);
+  s32 selector = WorldMap_GetCollision(position);
   s32 x = position->x;
   s32 y;
   s32 flag = 0;
@@ -77,7 +77,7 @@ void Map_SetScreenShake(s32 value0, s32 value1, s32 value2) {
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-void Map_WaitForShakeToSettle(void) {
+void MapGrid_WaitForShakeToSettle(void) {
   s32 *work;
   s32 cnt;
 
@@ -235,9 +235,9 @@ restart:
   ring = HeapSlot_AllocEwram(36, 160);
   VramCache_Reset();
   ObjectSystem_Initialize(2);
-  ResourceSlot_Load(0, gMapCellBuffer, layers[0].spriteId, 0);
+  SpritePictureCache_Load(0, gMapCellBuffer, layers[0].spriteId, 0);
   if (Resource_GetMetadataRecordFar(layers[0].spriteId)->drawKind == 20)
-    ResourceSlot_Load(1, Data_02018000, layers[0].spriteId + 1, 0);
+    SpritePictureCache_Load(1, Data_02018000, layers[0].spriteId + 1, 0);
   for (i = 0; i < 10; i++) {
     struct ViewerSprite *sprite;
     s32 part = 0;

@@ -81,7 +81,7 @@ Func_020022e0:
 	.global Actor_SetAnimationSpeed
 	.thumb_func
 Actor_SetAnimationSpeed:
-	overlay_veneer Actor_SetAnimationSpeedFar
+	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func
 Actor_StartScript:
@@ -130,10 +130,10 @@ Actor_SetSingleChildFlags:
 	.thumb_func
 Map_SetScreenShake:
 	overlay_veneer Map_SetScreenShakeFar
-	.global Map_WaitForShakeToSettle
+	.global MapGrid_WaitForShakeToSettle
 	.thumb_func
-Map_WaitForShakeToSettle:
-	overlay_veneer Map_WaitForShakeToSettleFar
+MapGrid_WaitForShakeToSettle:
+	overlay_veneer MapGrid_WaitForShakeToSettleFar
 	.global Animation_ApplyChildValues
 	.thumb_func
 Animation_ApplyChildValues:
@@ -166,14 +166,14 @@ Actor_GetById:
 	.thumb_func
 Actor_SetSpeedParameters:
 	overlay_veneer Actor_SetSpeedParametersFar
-	.global Actor_SetPositionAndCommit
+	.global Actor_MoveToAndWaitById
 	.thumb_func
-Actor_SetPositionAndCommit:
-	overlay_veneer Actor_SetPositionAndCommitFar
-	.global Actor_OffsetPositionAndResetMotion
+Actor_MoveToAndWaitById:
+	overlay_veneer Actor_MoveToAndWaitByIdFar
+	.global Actor_SetDestinationOffsetById
 	.thumb_func
-Actor_OffsetPositionAndResetMotion:
-	overlay_veneer Actor_OffsetPositionAndResetMotionFar
+Actor_SetDestinationOffsetById:
+	overlay_veneer Actor_SetDestinationOffsetByIdFar
 	.global Actor_WaitForMoveById
 	.thumb_func
 Actor_WaitForMoveById:

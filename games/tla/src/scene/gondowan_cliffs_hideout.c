@@ -47,7 +47,7 @@ void GondowanCliffsHideout_WarriorsAreFound(void) {
     Camera_SetSpeedParameters(0x10000, 0x2000);
     Camera_FollowActor(8, 1);
     Func_0200020c();
-    Actor_SetAngleToward(ACTOR_WARRIOR_FROM_KIBOMBO, ACTOR_FELIX, 2);
+    Actor_FaceActorById(ACTOR_WARRIOR_FROM_KIBOMBO, ACTOR_FELIX, 2);
     {
       s32 half = 129;
       s32 id = ACTOR_WARRIOR_FROM_KIBOMBO;
@@ -61,18 +61,18 @@ void GondowanCliffsHideout_WarriorsAreFound(void) {
     Actor_Jump(ACTOR_WARRIOR_FROM_KIBOMBO, 4, 15);
     // "We've been found!"
     Event_ShowMessageAndWait(ACTOR_WARRIOR_FROM_KIBOMBO, 0);
-    Actor_SetAngleToward(ACTOR_WARRIOR_BLAMING_THE_COLLISION, ACTOR_FELIX, 0);
-    Actor_SetAngleToward(ACTOR_WARRIOR_CLAIMING_TO_CAMP, ACTOR_FELIX, 0);
-    Actor_SetAngleToward(ACTOR_WARRIOR_AWAITING_FRIENDS, ACTOR_FELIX, 0);
+    Actor_FaceActorById(ACTOR_WARRIOR_BLAMING_THE_COLLISION, ACTOR_FELIX, 0);
+    Actor_FaceActorById(ACTOR_WARRIOR_CLAIMING_TO_CAMP, ACTOR_FELIX, 0);
+    Actor_FaceActorById(ACTOR_WARRIOR_AWAITING_FRIENDS, ACTOR_FELIX, 0);
     Actor_Jump(ACTOR_WARRIOR_BLAMING_THE_COLLISION, 2, 15);
     // "You wanna fight, punk?"
     Event_ShowMessageAndWait(ACTOR_WARRIOR_BLAMING_THE_COLLISION, 0);
-    Actor_SetAngleToward(ACTOR_WARRIOR_CLAIMING_TO_CAMP,
-                         ACTOR_WARRIOR_BLAMING_THE_COLLISION, 0);
+    Actor_FaceActorById(ACTOR_WARRIOR_CLAIMING_TO_CAMP,
+                        ACTOR_WARRIOR_BLAMING_THE_COLLISION, 0);
     Motion_SetModeAndWaitAnimation(ACTOR_WARRIOR_CLAIMING_TO_CAMP, 4);
     // "No one said anything about fighting yet!"
     Event_ShowMessageAndWait(ACTOR_WARRIOR_CLAIMING_TO_CAMP, 0);
-    Actor_SetAngleToward(ACTOR_WARRIOR_CLAIMING_TO_CAMP, ACTOR_FELIX, 0);
+    Actor_FaceActorById(ACTOR_WARRIOR_CLAIMING_TO_CAMP, ACTOR_FELIX, 0);
     // "We haven't done anything to you!"
     Event_ShowMessageAndWait(ACTOR_WARRIOR_CLAIMING_TO_CAMP, 0);
     Motion_SetModeAndWaitAnimation(ACTOR_WARRIOR_AWAITING_FRIENDS, 3);
@@ -135,15 +135,21 @@ struct ActorPlacement gPlacementsWithoutWarriors[] = {
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_STEP, 10, 2447, EVENT(GondowanCliffsHideout_WarriorsAreFound)},
-    {TRIGGER_TALK, ACTOR_WARRIOR_FROM_KIBOMBO, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorIntroducesHimself)},
+    {TRIGGER_TALK, ACTOR_WARRIOR_FROM_KIBOMBO, CONDITION_ALWAYS,
+     MSGNO(MsgKibomboWarriorIntroducesHimself)},
     {TRIGGER_TALK, ACTOR_WARRIOR_BLAMING_THE_COLLISION, CONDITION_ALWAYS,
      MSGNO(MsgKibomboWarriorsBlameContinentsCollision)},
-    {TRIGGER_TALK, ACTOR_WARRIOR_CLAIMING_TO_CAMP, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsClaimCamping)},
-    {TRIGGER_TALK, ACTOR_WARRIOR_AWAITING_FRIENDS, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsFriendsComing)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_FROM_KIBOMBO, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsRegretMadraRaid)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_BLAMING_THE_COLLISION, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsLostFood)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_CLAIMING_TO_CAMP, CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsThreatenTown)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_AWAITING_FRIENDS, CONDITION_ALWAYS,
-     MSGNO(MsgKibomboWarriorsWonderAboutPrisoners)},
+    {TRIGGER_TALK, ACTOR_WARRIOR_CLAIMING_TO_CAMP, CONDITION_ALWAYS,
+     MSGNO(MsgKibomboWarriorsClaimCamping)},
+    {TRIGGER_TALK, ACTOR_WARRIOR_AWAITING_FRIENDS, CONDITION_ALWAYS,
+     MSGNO(MsgKibomboWarriorsFriendsComing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_FROM_KIBOMBO,
+     CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsRegretMadraRaid)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_BLAMING_THE_COLLISION,
+     CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsLostFood)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_CLAIMING_TO_CAMP,
+     CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsThreatenTown)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_AWAITING_FRIENDS,
+     CONDITION_ALWAYS, MSGNO(MsgKibomboWarriorsWonderAboutPrisoners)},
     {TRIGGERS_END},
 };

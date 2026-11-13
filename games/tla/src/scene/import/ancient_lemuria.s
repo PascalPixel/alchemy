@@ -74,14 +74,14 @@ Actor_SetSpeedParameters:
 	.thumb_func
 Actor_ResetAndSetPosition:
 	overlay_veneer Actor_ResetAndSetPositionFar
-	.global Actor_ResetAndSetPositionInMode2
+	.global Actor_WalkToById
 	.thumb_func
-Actor_ResetAndSetPositionInMode2:
-	overlay_veneer Actor_ResetAndSetPositionInMode2Far
-	.global Actor_SetPositionAndReset
+Actor_WalkToById:
+	overlay_veneer Actor_WalkToByIdFar
+	.global Actor_WalkToAndWaitById
 	.thumb_func
-Actor_SetPositionAndReset:
-	overlay_veneer Actor_SetPositionAndResetFar
+Actor_WalkToAndWaitById:
+	overlay_veneer Actor_WalkToAndWaitByIdFar
 	.global Actor_WaitForMoveById
 	.thumb_func
 Actor_WaitForMoveById:
@@ -182,10 +182,10 @@ Actor_LaunchFromLeader:
 	.thumb_func
 Actor_OffsetPositionAndReset:
 	overlay_veneer Actor_OffsetPositionAndResetFar
-	.global Actor_CommitPositionAndActivate
+	.global Actor_WalkByAndWaitById
 	.thumb_func
-Actor_CommitPositionAndActivate:
-	overlay_veneer Actor_CommitPositionAndActivateFar
+Actor_WalkByAndWaitById:
+	overlay_veneer Actor_WalkByAndWaitByIdFar
 	.global Func_02001a24
 	.thumb_func
 Func_02001a24:

@@ -266,7 +266,7 @@ Actor_Spawn__f0dcb44(s32, s32, s32, s32) __asm__("Actor_Spawn");
 /// it by at most 0x1000 (22.5 degrees), then emits one fragment particle
 /// nearby.
 /// src: main object.
-void BattleEffect_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src) {
+void FieldEffect_UpdateMoveHand(struct ItemBreakFragmentSource *src) {
   struct ItemBreakFragmentSource *target;
   struct ItemBreakFragmentPosition pos;
   struct ItemBreakFragmentObject *obj;
@@ -620,11 +620,11 @@ extern const s32 gFieldEffect_FragmentScript[];
  * *Actor_Spawn(s32, s32, s32, s32). */
 extern struct Actor *Actor_Spawn__item_break(s32 kind, s32 x, s32 y,
                                              s32 z) __asm__("Actor_Spawn");
-/* VIEW(item_break): routine BattleEffect_UpdateItemBreakFragment as void
- * BattleEffect_UpdateItemBreakFragment(void); the definition has void
- * BattleEffect_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src). */
+/* VIEW(item_break): routine FieldEffect_UpdateMoveHand as void
+ * FieldEffect_UpdateMoveHand(void); the definition has void
+ * FieldEffect_UpdateMoveHand(struct ItemBreakFragmentSource *src). */
 extern void BattleEffect_UpdateItemBreakFragment__item_break(void) __asm__(
-    "BattleEffect_UpdateItemBreakFragment");
+    "FieldEffect_UpdateMoveHand");
 
 #define SE_ITEM_BREAK 138
 

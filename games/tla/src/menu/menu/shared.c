@@ -176,7 +176,7 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
       Window_ClearInteriorTilesFar(state->statusWindow, 0, 0, 88, 32);
     }
     Text_DrawStringAtOffsetFar(unit->name, (s32)window, STATUS_PANEL_NAME_X, 0);
-    CharacterMenu_BuildAvailability(ailments, 1, owner);
+    StatusScreen_BuildAvailability(ailments, 1, owner);
     ailmentRows = 0;
     if (ailments[1]) {
       Text_DrawMessageAsTilesFar(MESSAGE_POISON_LABEL, window,
@@ -482,7 +482,7 @@ void Text_DrawStatComparison(const struct BattleUnit *alt,
   }
 }
 
-s32 Icon_CreateWithResourceVariant(struct RenderInput *window, s32 x, s32 y) {
+s32 Icon_CreateWithResource(struct RenderInput *window, s32 x, s32 y) {
   s32 slot;
   s32 icon;
 
@@ -537,7 +537,7 @@ struct RenderInput *MenuCursor_Create(struct OwnerMenuState *work) {
   Window_UpdateOrCreate((s32 *)&work->auxiliaryWindow, 0, 0, 13, 5, 2);
   window = work->auxiliaryWindow;
   Window_DrawDividerLineFar((s32)window, 0, 3, 12, 3);
-  icon = (struct WindowSprite *)Icon_CreateWithResourceVariant(window, -8, 11);
+  icon = (struct WindowSprite *)Icon_CreateWithResource(window, -8, 11);
   icon->active = 13;
   work->tabIndex[0] = 255;
   work->sideIcon[0] = icon;
@@ -678,15 +678,15 @@ void PsynergyMenu_RefreshOwnerEntries(s32 originX, s32 originY, s32 columns) {
   scan = slot;
   do {
     if (*scan++ != NULL) {
-      PsynergyMenu_PositionOwnerEntry(slot, index, originX, originY, columns);
+      PsynergyMenu_PositionMemberEntry(slot, index, originX, originY, columns);
     }
     index++;
     slot++;
   } while (index <= 0x1F);
 }
 
-void PsynergyMenu_PositionOwnerEntry(struct WindowSprite **slot, s32 index,
-                                     s32 originX, s32 originY, s32 columns) {
+void PsynergyMenu_PositionMemberEntry(struct WindowSprite **slot, s32 index,
+                                      s32 originX, s32 originY, s32 columns) {
   struct WindowSprite *object;
 
   if (index > 0x1F) {
@@ -806,7 +806,7 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
 
 void Menu_CopyListOrder(s32 mode, u8 *order);
 
-s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode) {
+s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
   u16 sorted[16];
   u16 items[16];
   u8 order[32];

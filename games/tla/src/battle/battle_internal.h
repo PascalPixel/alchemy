@@ -67,6 +67,6 @@
 // ResourceMetadata_Register and Animation_SetWorkEntry (field/resource_slot.c)
 // take the metadata slot state and the animation entry.
 s32 ResourceMetadata_RegisterFar(void *state, s32 id);
-void ResourceMetadata_UnregisterFar(void *state, s32 handle);
+void Sprite_RemoveAnimationFar(void *state, s32 handle);
 
 #endif

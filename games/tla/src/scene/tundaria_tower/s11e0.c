@@ -71,7 +71,7 @@ void Func_020011e0(void) {
   Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  Map_WaitForShakeToSettle();
+  MapGrid_WaitForShakeToSettle();
   FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
@@ -232,7 +232,10 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/* VIEW(s11e0): variable gInput as extern u32 gInput; input.h has extern struct InputState gInput; tried as the 3 declarations' extern u32 gInput, it does not compile in tla-ja: games/tla/include/system/input.h:37: conflicting types for `gInput'. */
+/* VIEW(s11e0): variable gInput as extern u32 gInput; input.h has extern struct
+ * InputState gInput; tried as the 3 declarations' extern u32 gInput, it does
+ * not compile in tla-ja: games/tla/include/system/input.h:37: conflicting types
+ * for `gInput'. */
 extern u32 gInput__s11e0 __asm__("gInput");
 void Func_02002f80(struct Actor *object, s32 mode);
 
@@ -277,7 +280,11 @@ void Func_02001868(void) {
   }
 }
 
-/* VIEW(events_e): routine Func_020017dc as void Func_020017dc(void); the definition has void Func_020017dc(struct Actor *object); tried as the definition's void Func_020017dc(struct Actor *actor), it does not compile in tla-ja: games/tla/src/scene/tundaria_tower/s11e0.c:355: `Func_020017dc__events_e' undeclared (first use in this function). */
+/* VIEW(events_e): routine Func_020017dc as void Func_020017dc(void); the
+ * definition has void Func_020017dc(struct Actor *object); tried as the
+ * definition's void Func_020017dc(struct Actor *actor), it does not compile in
+ * tla-ja: games/tla/src/scene/tundaria_tower/s11e0.c:355:
+ * `Func_020017dc__events_e' undeclared (first use in this function). */
 extern void Func_020017dc__events_e(void) __asm__("Func_020017dc");
 void Func_02002f80(struct Actor *object, s32 mode);
 

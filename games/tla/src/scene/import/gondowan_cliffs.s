@@ -102,10 +102,10 @@ Animation_SetStateFlags:
 	.thumb_func
 Map_SetScreenShake:
 	overlay_veneer Map_SetScreenShakeFar
-	.global Map_WaitForShakeToSettle
+	.global MapGrid_WaitForShakeToSettle
 	.thumb_func
-Map_WaitForShakeToSettle:
-	overlay_veneer Map_WaitForShakeToSettleFar
+MapGrid_WaitForShakeToSettle:
+	overlay_veneer MapGrid_WaitForShakeToSettleFar
 	.global Event_Wait
 	.thumb_func
 Event_Wait:
@@ -134,10 +134,10 @@ Actor_Stop:
 	.thumb_func
 Actor_ResetAndSetPosition:
 	overlay_veneer Actor_ResetAndSetPositionFar
-	.global Actor_SetPositionAndReset
+	.global Actor_WalkToAndWaitById
 	.thumb_func
-Actor_SetPositionAndReset:
-	overlay_veneer Actor_SetPositionAndResetFar
+Actor_WalkToAndWaitById:
+	overlay_veneer Actor_WalkToAndWaitByIdFar
 	.global Actor_WaitForMoveById
 	.thumb_func
 Actor_WaitForMoveById:
@@ -162,10 +162,10 @@ Motion_SetModeAndWaitAnimation:
 	.thumb_func
 Actor_Jump:
 	overlay_veneer Actor_JumpFar
-	.global Actor_SetAngleToward
+	.global Actor_FaceActorById
 	.thumb_func
-Actor_SetAngleToward:
-	overlay_veneer Actor_SetAngleTowardFar
+Actor_FaceActorById:
+	overlay_veneer Actor_FaceActorByIdFar
 	.global Actor_TurnToFaceEachOther
 	.thumb_func
 Actor_TurnToFaceEachOther:

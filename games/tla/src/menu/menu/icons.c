@@ -640,7 +640,7 @@ void Func_081054e0(struct MenuPanel *panel, s32 x, s32 y, const u8 *enabled) {
     Text_DrawMessageAsTilesFar((s32)MsgStatusNameNormal, panel, x, y);
 }
 
-s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id) {
+s32 StatusScreen_BuildAvailability(u8 *output, s32 requested, s32 id) {
   struct BattleUnit *state;
   s32 i;
   s32 zero;

@@ -142,10 +142,10 @@ Func_02000e5c:
 	.thumb_func
 Actor_GetById:
 	overlay_veneer Actor_GetByIdFar
-	.global Actor_SetPositionAndReset
+	.global Actor_WalkToAndWaitById
 	.thumb_func
-Actor_SetPositionAndReset:
-	overlay_veneer Actor_SetPositionAndResetFar
+Actor_WalkToAndWaitById:
+	overlay_veneer Actor_WalkToAndWaitByIdFar
 	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
 Actor_SetHorizontalPositionWithTerrain:
@@ -158,10 +158,10 @@ Actor_SetModeById:
 	.thumb_func
 Actor_Jump:
 	overlay_veneer Actor_JumpFar
-	.global Actor_SetAngleToward
+	.global Actor_FaceActorById
 	.thumb_func
-Actor_SetAngleToward:
-	overlay_veneer Actor_SetAngleTowardFar
+Actor_FaceActorById:
+	overlay_veneer Actor_FaceActorByIdFar
 	.global Event_SetMessageId
 	.thumb_func
 Event_SetMessageId:

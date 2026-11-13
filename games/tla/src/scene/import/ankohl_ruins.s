@@ -115,10 +115,10 @@ Animation_SetStateFlags:
 Map_SetScreenShake:
 	overlay_veneer Map_SetScreenShakeFar
 	.ifndef TLA_EDITION_JA
-	.global Map_WaitForShakeToSettle
+	.global MapGrid_WaitForShakeToSettle
 	.thumb_func
-Map_WaitForShakeToSettle:
-	overlay_veneer Map_WaitForShakeToSettleFar
+MapGrid_WaitForShakeToSettle:
+	overlay_veneer MapGrid_WaitForShakeToSettleFar
 	.endif
 	.global Actor_SetSpritePriorityDirect
 	.thumb_func
@@ -140,10 +140,10 @@ Event_End:
 	.thumb_func
 Actor_GetById:
 	overlay_veneer Actor_GetByIdFar
-	.global Actor_OffsetPositionAndResetMotion
+	.global Actor_SetDestinationOffsetById
 	.thumb_func
-Actor_OffsetPositionAndResetMotion:
-	overlay_veneer Actor_OffsetPositionAndResetMotionFar
+Actor_SetDestinationOffsetById:
+	overlay_veneer Actor_SetDestinationOffsetByIdFar
 	.global Actor_WaitForMoveById
 	.thumb_func
 Actor_WaitForMoveById:

@@ -1037,7 +1037,7 @@ L_02009638:
   MapGrid_SetShake(0x20000, 0x40000, 0x10000);
   FieldEvent_Wait(10);
   MapGrid_SetShake(-1, -1, 0xe666);
-  MapGrid_WaitForShakeToSettle();
+  FieldMapGrid_WaitForShakeToSettle();
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(17, 1);
   Event_PlaySound(148);

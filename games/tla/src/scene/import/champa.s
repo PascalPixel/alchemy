@@ -102,18 +102,18 @@ Actor_SetSpeedParameters:
 	.thumb_func
 Actor_ResetAndSetPosition:
 	overlay_veneer Actor_ResetAndSetPositionFar
-	.global Actor_SetPositionAndReset
+	.global Actor_WalkToAndWaitById
 	.thumb_func
-Actor_SetPositionAndReset:
-	overlay_veneer Actor_SetPositionAndResetFar
+Actor_WalkToAndWaitById:
+	overlay_veneer Actor_WalkToAndWaitByIdFar
 	.global Actor_CenterOnColumn
 	.thumb_func
 Actor_CenterOnColumn:
 	overlay_veneer Actor_CenterOnColumnFar
-	.global Actor_OffsetPositionAndResetMotion
+	.global Actor_SetDestinationOffsetById
 	.thumb_func
-Actor_OffsetPositionAndResetMotion:
-	overlay_veneer Actor_OffsetPositionAndResetMotionFar
+Actor_SetDestinationOffsetById:
+	overlay_veneer Actor_SetDestinationOffsetByIdFar
 	.global Actor_WaitForMoveById
 	.thumb_func
 Actor_WaitForMoveById:
@@ -234,18 +234,18 @@ Actor_LaunchFromLeader:
 	.thumb_func
 Actor_OffsetPositionAndReset:
 	overlay_veneer Actor_OffsetPositionAndResetFar
-	.global Actor_CommitPositionAndActivate
+	.global Actor_WalkByAndWaitById
 	.thumb_func
-Actor_CommitPositionAndActivate:
-	overlay_veneer Actor_CommitPositionAndActivateFar
+Actor_WalkByAndWaitById:
+	overlay_veneer Actor_WalkByAndWaitByIdFar
 	.global Actor_WatchAndSetScript
 	.thumb_func
 Actor_WatchAndSetScript:
 	overlay_veneer Actor_WatchAndSetScriptFar
-	.global ObjectTable_ReadActiveValue
+	.global Actor_GetSpriteById
 	.thumb_func
-ObjectTable_ReadActiveValue:
-	overlay_veneer ObjectTable_ReadActiveValueFar
+Actor_GetSpriteById:
+	overlay_veneer Actor_GetSpriteByIdFar
 	.global Actor_SetActionCallback
 	.thumb_func
 Actor_SetActionCallback:

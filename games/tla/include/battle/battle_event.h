@@ -51,7 +51,7 @@ enum BattleEventOpcode {
   BATTLE_EVENT_SOUND = 14           ///< plays a sound
 };
 
-s32 BattleActor_DestroyTemporaryObject(s32 unitId);
+s32 BattleObject_DestroyTemporaryObject(s32 unitId);
 
 void BattleEvent_Push(u32 opcode, u32 operand);
 u32 BattleEvent_DispatchQueued(void);

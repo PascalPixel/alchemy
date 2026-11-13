@@ -57,8 +57,8 @@ void Func_020000c8(void) {
     }
     Actor_GetById(8)->actionFlags &= ~1;
     Actor_GetById(9)->actionFlags &= ~1;
-    Actor_ResetAndSetPositionInMode2(9, 148, 252);
-    Actor_SetPositionAndReset(8, 170, 252);
+    Actor_WalkToById(9, 148, 252);
+    Actor_WalkToAndWaitById(8, 170, 252);
     Actor_WaitForMoveById(9);
     Actor_GetById(8)->actionFlags |= 1;
     Actor_GetById(9)->actionFlags |= 1;
@@ -130,9 +130,13 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgMadraMikasallaVillage)},
     {TRIGGER_TALK, 9, 0x913, MSGNO(MsgMadraCanCrossWithPermission)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMadraAvoidYampiDesert)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x913, MSGNO(MsgMadraForTheirSafety)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMadraWouldNeedBoat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x913, MSGNO(MsgMadraElderReturn)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMadraRatherStayHome)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x913,
+     MSGNO(MsgMadraForTheirSafety)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgMadraWouldNeedBoat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x913,
+     MSGNO(MsgMadraElderReturn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgMadraRatherStayHome)},
     {TRIGGERS_END},
 };

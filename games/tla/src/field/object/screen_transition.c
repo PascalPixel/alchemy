@@ -96,7 +96,7 @@ Vector_AddPolarOffset__emitter(s32 radius, s32 angle,
 extern struct ParticleEffectObject *
 Actor_Spawn__f0cf050(s32, s32, s32, s32) __asm__("Actor_Spawn");
 
-void Marker_MoveLeaderAwayFromEmitter(struct ParticleEmitter *emitter) {
+void ItemDisplay_EmitSparkles(struct ParticleEmitter *emitter) {
   struct ParticlePosition position;
   struct ParticleEffectObject *object;
   u32 randomAngle;
@@ -145,17 +145,17 @@ s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
 }
 
 struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-/* VIEW(emitter): routine BattleEffect_SpawnRandomParticleAtPosition as void
- * BattleEffect_SpawnRandomParticleAtPosition(void); the definition has void
- * BattleEffect_SpawnRandomParticleAtPosition(const struct ParticleSource
+/* VIEW(emitter): routine Reveal_EmitSparkles as void
+ * Reveal_EmitSparkles(void); the definition has void
+ * Reveal_EmitSparkles(const struct ParticleSource
  * *source); tried as the definition's void
- * BattleEffect_SpawnRandomParticleAtPosition(const struct ParticleSource
+ * Reveal_EmitSparkles(const struct ParticleSource
  * *source), which the object already declares, it does not compile in tla-ja:
  * games/tla/src/field/object/f0cf050.c:168:
- * `BattleEffect_SpawnRandomParticleAtPosition' undeclared (first use in this
+ * `Reveal_EmitSparkles' undeclared (first use in this
  * function). */
 extern void BattleEffect_SpawnRandomParticleAtPosition__emitter(void) __asm__(
-    "BattleEffect_SpawnRandomParticleAtPosition");
+    "Reveal_EmitSparkles");
 
 /// Shows the picture of item above actor (in front of the controlled owner,
 /// on the centre of the cell), clearing Reveal's sparkles first.
@@ -225,7 +225,7 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
   tile = VramCache_Load(visual->tileSlot, 128, buffer + 0x400);
   visual->tile = tile;
   HeapSlot_Release(68);
-  picture->update = Marker_MoveLeaderAwayFromEmitter;
+  picture->update = ItemDisplay_EmitSparkles;
   if (work->revealActive != 0) {
     struct Actor *marker = Ram_HeapSlots->scriptObjects;
     s32 j;
@@ -251,11 +251,11 @@ void Actor_ReleaseIfPresent(struct Actor *object) {
 /// Nothing in the image calls it.
 void Func_080cf34c(void) {}
 
-/* VIEW(rising): routine Marker_MoveLeaderAwayFromEmitter as void
- * Marker_MoveLeaderAwayFromEmitter(void); the definition has void
- * Marker_MoveLeaderAwayFromEmitter(struct ParticleEmitter *emitter). */
+/* VIEW(rising): routine ItemDisplay_EmitSparkles as void
+ * ItemDisplay_EmitSparkles(void); the definition has void
+ * ItemDisplay_EmitSparkles(struct ParticleEmitter *emitter). */
 extern void Marker_MoveLeaderAwayFromEmitter__rising(void) __asm__(
-    "Marker_MoveLeaderAwayFromEmitter");
+    "ItemDisplay_EmitSparkles");
 
 /// Places the object 36 pixels above the controlled owner, gives it its
 /// sprite priority and, three frames on, the descent script, and turns the
@@ -281,7 +281,7 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
   owner->facing = 0x4000;
 }
 
-void BattleEffect_RunActorRiseAndDescent(struct Actor *object, s32 flags) {
+void ItemDisplay_ShowPicture(struct Actor *object, s32 flags) {
   struct Actor *owner;
 
   if (object != 0) {
@@ -372,8 +372,7 @@ void BattleEffect_StartEffectObject22(s32 item, s32 flags) {
 extern void Vector_AddPolarOffset__rising(
     s32, s32, struct ParticlePosition *) __asm__("Vector_AddPolarOffset");
 
-void BattleEffect_SpawnRandomParticleAtPosition(
-    const struct ParticleSource *source) {
+void Reveal_EmitSparkles(const struct ParticleSource *source) {
   struct ParticlePosition position;
   struct ParticleEffectObject *object;
   u32 random;

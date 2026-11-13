@@ -408,7 +408,7 @@ void Func_020006f4(void) {
       FieldCamera_MoveTo(-1, -1, -1, 0);
       FieldCamera_SetSpeed(0xcccc, 0x1999);
       FieldCamera_MoveTo(0x8c0000, -1, 0xbe0000, 1);
-      Actor_SetAngleToward(10, gMainRoutineWork.currentOwner, 0);
+      Actor_FaceActorById(10, gMainRoutineWork.currentOwner, 0);
       asked = MsgAreYouGiving;
       Event_SetMessageId(asked);
       Event_ShowMessageAndWait(10, 0);

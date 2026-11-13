@@ -5,6 +5,6 @@
 #include "types.h"
 
 void Actor_Place(void *object, s32 unit, s32 x, s32 y);
-void ObjMotRst(s32 slot);
+void BattleMotion_ReturnToSpot(s32 slot);
 
 #endif

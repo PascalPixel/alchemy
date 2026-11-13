@@ -248,10 +248,10 @@ Func_02003278:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global BattleParty_ApplyHealthDelta
+	.global Party_AddHp
 	.thumb_func
-BattleParty_ApplyHealthDelta:
-	overlay_veneer BattleParty_ApplyHealthDeltaFar
+Party_AddHp:
+	overlay_veneer Party_AddHpFar
 	.global Party_PlaySavedMusic
 	.thumb_func
 Party_PlaySavedMusic:

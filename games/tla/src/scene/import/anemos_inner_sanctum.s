@@ -150,10 +150,10 @@ Animation_SetStateFlags:
 	.thumb_func
 Map_SetScreenShake:
 	overlay_veneer Map_SetScreenShakeFar
-	.global Map_WaitForShakeToSettle
+	.global MapGrid_WaitForShakeToSettle
 	.thumb_func
-Map_WaitForShakeToSettle:
-	overlay_veneer Map_WaitForShakeToSettleFar
+MapGrid_WaitForShakeToSettle:
+	overlay_veneer MapGrid_WaitForShakeToSettleFar
 	.global SetMapCellCollision
 	.thumb_func
 SetMapCellCollision:
@@ -186,22 +186,22 @@ Actor_GetById:
 	.thumb_func
 Actor_SetSpeedParameters:
 	overlay_veneer Actor_SetSpeedParametersFar
-	.global Actor_SetPositionAndCommit
+	.global Actor_MoveToAndWaitById
 	.thumb_func
-Actor_SetPositionAndCommit:
-	overlay_veneer Actor_SetPositionAndCommitFar
-	.global Actor_ResetAndSetPositionInMode2
+Actor_MoveToAndWaitById:
+	overlay_veneer Actor_MoveToAndWaitByIdFar
+	.global Actor_WalkToById
 	.thumb_func
-Actor_ResetAndSetPositionInMode2:
-	overlay_veneer Actor_ResetAndSetPositionInMode2Far
-	.global Actor_SetPositionAndReset
+Actor_WalkToById:
+	overlay_veneer Actor_WalkToByIdFar
+	.global Actor_WalkToAndWaitById
 	.thumb_func
-Actor_SetPositionAndReset:
-	overlay_veneer Actor_SetPositionAndResetFar
-	.global Actor_OffsetPositionAndResetMotion
+Actor_WalkToAndWaitById:
+	overlay_veneer Actor_WalkToAndWaitByIdFar
+	.global Actor_SetDestinationOffsetById
 	.thumb_func
-Actor_OffsetPositionAndResetMotion:
-	overlay_veneer Actor_OffsetPositionAndResetMotionFar
+Actor_SetDestinationOffsetById:
+	overlay_veneer Actor_SetDestinationOffsetByIdFar
 	.global Actor_WaitForMoveById
 	.thumb_func
 Actor_WaitForMoveById:

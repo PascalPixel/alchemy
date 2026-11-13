@@ -50,18 +50,18 @@ Actor_SetSpeedParameters:
 	.thumb_func
 Actor_ResetAndSetPosition:
 	overlay_veneer Actor_ResetAndSetPositionFar
-	.global Actor_SetPositionAndReset
+	.global Actor_WalkToAndWaitById
 	.thumb_func
-Actor_SetPositionAndReset:
-	overlay_veneer Actor_SetPositionAndResetFar
+Actor_WalkToAndWaitById:
+	overlay_veneer Actor_WalkToAndWaitByIdFar
 	.global Actor_CenterOnColumn
 	.thumb_func
 Actor_CenterOnColumn:
 	overlay_veneer Actor_CenterOnColumnFar
-	.global Actor_OffsetPositionAndResetMotion
+	.global Actor_SetDestinationOffsetById
 	.thumb_func
-Actor_OffsetPositionAndResetMotion:
-	overlay_veneer Actor_OffsetPositionAndResetMotionFar
+Actor_SetDestinationOffsetById:
+	overlay_veneer Actor_SetDestinationOffsetByIdFar
 	.global Actor_WaitForMoveById
 	.thumb_func
 Actor_WaitForMoveById:
@@ -78,10 +78,10 @@ Actor_SetModeById:
 	.thumb_func
 Actor_Jump:
 	overlay_veneer Actor_JumpFar
-	.global Actor_SetAngleToward
+	.global Actor_FaceActorById
 	.thumb_func
-Actor_SetAngleToward:
-	overlay_veneer Actor_SetAngleTowardFar
+Actor_FaceActorById:
+	overlay_veneer Actor_FaceActorByIdFar
 	.global Event_SetMessageId
 	.thumb_func
 Event_SetMessageId:
@@ -128,10 +128,10 @@ Event_ResolvePendingActions:
 	.thumb_func
 Actor_LaunchFromLeader:
 	overlay_veneer Motion_LaunchFromFocusedObjectFar
-	.global Actor_CommitPositionAndActivate
+	.global Actor_WalkByAndWaitById
 	.thumb_func
-Actor_CommitPositionAndActivate:
-	overlay_veneer Actor_CommitPositionAndActivateFar
+Actor_WalkByAndWaitById:
+	overlay_veneer Actor_WalkByAndWaitByIdFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:

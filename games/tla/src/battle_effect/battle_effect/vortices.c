@@ -78,7 +78,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
 
   work->cameraDelta = 0;
   work->cameraPhase = 0;
-  Task_Add(Camera_ApplyPhasedDelta, TASK_PASS_FRAME);
+  Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PASS_FRAME);
   work->transferMode = 2;
   work->transferValue = 75;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -157,7 +157,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
   }
 
   // Tear down.
-  Task_Remove(Camera_ApplyPhasedDelta);
+  Task_Remove(BattleCamera_ApplyPhasedDelta);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
   HeapSlot_Release(HEAP_BLITTER);

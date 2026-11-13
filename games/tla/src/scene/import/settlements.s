@@ -69,7 +69,7 @@ Func_02001fe0:
 	.global Actor_SetAnimationSpeed
 	.thumb_func
 Actor_SetAnimationSpeed:
-	overlay_veneer Actor_SetAnimationSpeedFar
+	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func
 Actor_StartScript:
@@ -158,18 +158,18 @@ Actor_SetSpeedParameters:
 	.thumb_func
 Actor_SetMovementTypeById:
 	overlay_veneer Actor_SetMovementTypeByIdFar
-	.global Actor_SetPositionAndCommit
+	.global Actor_MoveToAndWaitById
 	.thumb_func
-Actor_SetPositionAndCommit:
-	overlay_veneer Actor_SetPositionAndCommitFar
+Actor_MoveToAndWaitById:
+	overlay_veneer Actor_MoveToAndWaitByIdFar
 	.global Actor_CenterOnColumn
 	.thumb_func
 Actor_CenterOnColumn:
 	overlay_veneer Actor_CenterOnColumnFar
-	.global Actor_OffsetPositionAndResetMotion
+	.global Actor_SetDestinationOffsetById
 	.thumb_func
-Actor_OffsetPositionAndResetMotion:
-	overlay_veneer Actor_OffsetPositionAndResetMotionFar
+Actor_SetDestinationOffsetById:
+	overlay_veneer Actor_SetDestinationOffsetByIdFar
 	.global Actor_WaitForMoveById
 	.thumb_func
 Actor_WaitForMoveById:
@@ -254,10 +254,10 @@ Event_ResolvePendingActions:
 	.thumb_func
 Djinn_JoinParty:
 	overlay_veneer Djinn_JoinPartyFar
-	.global Actor_CommitPositionAndActivate
+	.global Actor_WalkByAndWaitById
 	.thumb_func
-Actor_CommitPositionAndActivate:
-	overlay_veneer Actor_CommitPositionAndActivateFar
+Actor_WalkByAndWaitById:
+	overlay_veneer Actor_WalkByAndWaitByIdFar
 	.global Func_02002168
 	.thumb_func
 Func_02002168:

@@ -346,7 +346,7 @@ void System_VBlankHandler(void) {
   }
   SoundDriver_VSyncRefresh();
   if (gBlendDuration != 0)
-    Fade_Update();
+    ScreenFade_Update();
   if (gFrameRenderPending != 0) {
     gFrameRenderPending = 0;
     if (gOamUsage.used != 0)

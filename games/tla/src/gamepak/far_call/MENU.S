@@ -7,7 +7,7 @@ Resource_FarCall007:
 	export PsynergyMenu_RunFar, PsynergyMenu_Run
 	export StatusScreen_RunFar, StatusScreen_Run
 	export PartyMemberChooser_OpenFar, PartyMemberChooser_Open
-	export Icon_CreateWithResourceVariantFar, Icon_CreateWithResourceVariant
+	export Icon_CreateWithResourceFar, Icon_CreateWithResource
 	export Icon_PrepareActorFar, Icon_PrepareActor
 	export DjinnMenu_RunFar, DjinnMenu_Run
 	export ItemMenu_DrawItemDetailsFar, ItemMenu_DrawItemDetails

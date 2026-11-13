@@ -114,8 +114,8 @@ void Func_02001790(void) {
 
   x >>= 20;
   z >>= 20;
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, (x << 4) + 8,
-                             (z << 4) + 8);
+  Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, (x << 4) + 8,
+                          (z << 4) + 8);
   System_Wait(1);
   FieldActor_SetPositionAndResetMotion(object, (x << 20) + PIXELS(8), object->y,
                                        (z << 20) + PIXELS(8));

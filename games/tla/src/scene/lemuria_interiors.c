@@ -146,7 +146,7 @@ void Func_020001ec(s32 arg0, s32 arg1) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_ShowEmote(arg1, 0x101, 30);
-  Actor_SetAngleToward(arg1, 4, 20);
+  Actor_FaceActorById(arg1, 4, 20);
   Event_SetMessageId((s32)MsgLemuriaInteriors19);
   FieldMessage_ShowAtActor(arg1, 0);
   result2 = FieldParty_GetLeaderActor();
@@ -189,7 +189,7 @@ s32 Scene_Initialize(void) {
   object->terrainHeight = 0;
   object->y = 0;
   if (GameFlag_Test(0x966)) {
-    Actor_SetPositionAndReset(10, 100, 112);
+    Actor_WalkToAndWaitById(10, 100, 112);
     Actor_GetById(10)->facing = FACING_SOUTHEAST + FACING_STEP;
     wait(1);
   }
@@ -213,7 +213,7 @@ void Func_0200031c(void) {
   Event_SetMessageId((s32)MsgLemuriaInteriors07);
   Event_Wait(20);
   Actor_FaceDirection(10, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_SetPositionAndReset(4, 112, 128);
+  Actor_WalkToAndWaitById(4, 112, 128);
   FieldActor_LaunchFromLeader(12, 16, 0, FACING_NORTHWEST + FACING_STEP);
   FieldActor_LaunchFromLeader(7, 16, -16, FACING_WEST);
   Actor_ArmCallback(4, FACING_NORTH, 0);
@@ -281,7 +281,7 @@ void Func_0200031c(void) {
   Motion_SetVarCbAndRefresh(10, 2);
   Event_Wait(20);
   Actor_ShowEmote(10, 0x105, 60);
-  Actor_CommitPositionAndActivate(7, 48, 0);
+  Actor_WalkByAndWaitById(7, 48, 0);
   Event_Wait(10);
   Actor_FaceDirection(7, FACING_NORTHEAST, 0);
   Event_Wait(30);
@@ -291,7 +291,7 @@ void Func_0200031c(void) {
   Event_Wait(30);
   Actor_FaceDirection(7, FACING_NORTHWEST, 0);
   Event_Wait(40);
-  Actor_CommitPositionAndActivate(7, -24, 0);
+  Actor_WalkByAndWaitById(7, -24, 0);
   Event_Wait(10);
   Actor_FaceDirection(7, FACING_SOUTHEAST, 0);
   Event_Wait(30);
@@ -331,7 +331,7 @@ void Func_0200031c(void) {
   Actor_StartRepeatedMotion(7, 3);
   Actor_SetAttachedEffect(7, 0x102);
   Event_Wait(50);
-  Actor_CommitPositionAndActivate(7, -12, 0);
+  Actor_WalkByAndWaitById(7, -12, 0);
   Event_Wait(10);
   Actor_ShowEmote(10, 0x109, 30);
   Event_ShowMessageThenWait(10, 0, 10);
@@ -365,7 +365,7 @@ void Func_0200031c(void) {
   Actor_SetSpeedParameters(7, 0x4ccc, 0x2666);
   object0 = Actor_GetById(7);
   object0->actionFlags &= 254;
-  Actor_CommitPositionAndActivate(7, 12, 0);
+  Actor_WalkByAndWaitById(7, 12, 0);
   Event_Wait(1);
   object1 = Actor_GetById(7);
   object1->actionFlags |= 1;
@@ -377,7 +377,7 @@ void Func_0200031c(void) {
   Actor_WatchAndSetScript(12, 7);
   Actor_WatchAndSetScript(10, 7);
   Actor_SetSpeed(7, 0x23333, 0x11999);
-  Actor_CommitPositionAndActivate(7, -8, 88);
+  Actor_WalkByAndWaitById(7, -8, 88);
   Actor_Stop(4);
   Actor_Stop(12);
   Actor_Stop(10);
@@ -671,8 +671,13 @@ L_02008a86:
 
 #include "field_event.h"
 
-/* VIEW(lemuria_interiors): routine Func_020027f4 as void Func_020027f4(struct Actor *object, s32 mode); module/scene/kandorean_temple.h has void Func_020027f4(void); tried as the definition's void Func_020027f4(void), which the object already declares, Func_0200128c moves: 1 of 32 instructions in tla-ja. */
-extern void Func_020027f4__lemuria_interiors(struct Actor *object, s32 mode) __asm__("Func_020027f4");
+/* VIEW(lemuria_interiors): routine Func_020027f4 as void Func_020027f4(struct
+ * Actor *object, s32 mode); module/scene/kandorean_temple.h has void
+ * Func_020027f4(void); tried as the definition's void Func_020027f4(void),
+ * which the object already declares, Func_0200128c moves: 1 of 32 instructions
+ * in tla-ja. */
+extern void Func_020027f4__lemuria_interiors(struct Actor *object,
+                                             s32 mode) __asm__("Func_020027f4");
 void Actor_StartScript(struct Actor *object, const void *script);
 
 void Func_0200128c(s32 x, s32 y, s32 z, s16 rotation, s32 timer) {

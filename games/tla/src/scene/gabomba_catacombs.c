@@ -96,7 +96,7 @@ void Func_02000100(void) {
     Actor_SetPosition(64, PIXELS(392), PIXELS(344));
     if (leader->x >> 20 == 24 && leader->z >> 20 == 21) {
       LEADER_HOP();
-      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
+      Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, 16, 0);
       leader->velocityY = PIXELS(6);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Event_End();
@@ -129,7 +129,7 @@ void Func_020002e0(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x102);
-    Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, -16, 0);
+    Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, -16, 0);
     leader->velocityY = PIXELS(6);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     Event_End();

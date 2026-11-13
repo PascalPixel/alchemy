@@ -105,7 +105,7 @@ Func_02002810:
 	.global Actor_SetAnimationSpeed
 	.thumb_func
 Actor_SetAnimationSpeed:
-	overlay_veneer Actor_SetAnimationSpeedFar
+	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func
 Actor_StartScript:
@@ -150,10 +150,10 @@ Actor_SetSingleChildFlags:
 	.thumb_func
 Map_SetScreenShake:
 	overlay_veneer Map_SetScreenShakeFar
-	.global Map_WaitForShakeToSettle
+	.global MapGrid_WaitForShakeToSettle
 	.thumb_func
-Map_WaitForShakeToSettle:
-	overlay_veneer Map_WaitForShakeToSettleFar
+MapGrid_WaitForShakeToSettle:
+	overlay_veneer MapGrid_WaitForShakeToSettleFar
 	.global Animation_ApplyChildValues
 	.thumb_func
 Animation_ApplyChildValues:
@@ -206,14 +206,14 @@ Actor_SetMovementTypeById:
 	.thumb_func
 Actor_RefreshSelectorById:
 	overlay_veneer Actor_RefreshSelectorByIdFar
-	.global Actor_SetPositionAndCommit
+	.global Actor_MoveToAndWaitById
 	.thumb_func
-Actor_SetPositionAndCommit:
-	overlay_veneer Actor_SetPositionAndCommitFar
-	.global Actor_SetPositionAndReset
+Actor_MoveToAndWaitById:
+	overlay_veneer Actor_MoveToAndWaitByIdFar
+	.global Actor_WalkToAndWaitById
 	.thumb_func
-Actor_SetPositionAndReset:
-	overlay_veneer Actor_SetPositionAndResetFar
+Actor_WalkToAndWaitById:
+	overlay_veneer Actor_WalkToAndWaitByIdFar
 	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
 Actor_SetHorizontalPositionWithTerrain:
@@ -310,10 +310,10 @@ Event_ResolvePendingActions:
 	.thumb_func
 Camera_WorldToScreen:
 	overlay_veneer Camera_WorldToScreenFar
-	.global Actor_CommitPositionAndActivate
+	.global Actor_WalkByAndWaitById
 	.thumb_func
-Actor_CommitPositionAndActivate:
-	overlay_veneer Actor_CommitPositionAndActivateFar
+Actor_WalkByAndWaitById:
+	overlay_veneer Actor_WalkByAndWaitByIdFar
 	.global Actor_SetActionCallback
 	.thumb_func
 Actor_SetActionCallback:

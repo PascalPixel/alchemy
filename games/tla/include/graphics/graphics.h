@@ -10,14 +10,14 @@
 struct Window;
 
 extern u8 gBlendBrighten;
-// volatile: Fade_Update, which the VBlank handler runs, clears it at the fade's
-// end while Fade_Wait waits on it, so it is no device.
+// volatile: ScreenFade_Update, which the VBlank handler runs, clears it at the
+// fade's end while Fade_Wait waits on it, so it is no device.
 extern volatile u8 gBlendDuration;
 extern u8 gBlendVBlanksLeft;
 extern u16 gBlendLayers;
 extern u8 gBlendStartLevel;
-// volatile: Fade_Start sets it for Fade_Update, which the VBlank handler runs,
-// so it is no device.
+// volatile: Fade_Start sets it for ScreenFade_Update, which the VBlank handler
+// runs, so it is no device.
 extern volatile u8 gBlendTargetLevel;
 extern u8 gRomShiftedTilePair[];
 extern const u32 RelocatedQ16DotProduct[];
@@ -77,7 +77,7 @@ extern char ResourceId_UiIconTiles;
 extern const u8 Text_LookupSymbolCode[];
 extern u8 Text_LookupSymbolCodeSize[];
 void Ability_LoadGlyphFar(s32, s32, s32 *, s32 *, s32);
-s32 BattleParty_PrepareActiveOwnersFar(u16 *owners);
+s32 BattleParty_PrepareMembersFar(u16 *owners);
 s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align);
 void SelectionMenu_Clear(void);
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,

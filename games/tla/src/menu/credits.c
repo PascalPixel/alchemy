@@ -134,7 +134,7 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
 
 /// Fills the HBlank word table: 32 words of 0x01ff01ff, 240 rising steps,
 /// 48 more of 0x01ff01ff and 192 zeros.
-void DisplayScroll_BuildHblankWordTable(u32 *table) {
+void Credits_BuildBackgroundTilemap(u32 *table) {
   s32 i;
   u32 value;
   u32 step;
@@ -179,8 +179,8 @@ s32 Credits_Run(s32 mode) {
   Task_ResetAll();
   Task_Add(DisplayScroll_StepPositionEveryFourVBlanks, TASK_PASS_FRAME);
   Io_Write16(0x40, &REG_DISPCNT);
-  DisplayScroll_BuildHblankWordTable((u32 *)0x06007800);
-  DisplayScroll_BuildHblankWordTable((u32 *)0x0600f800);
+  Credits_BuildBackgroundTilemap((u32 *)0x06007800);
+  Credits_BuildBackgroundTilemap((u32 *)0x0600f800);
   Graphics_ClearCharacterBlockAndPalette(0);
   Graphics_ClearCharacterBlockAndPalette(1);
   Io_Write16(0x1f8a, &REG_BG2CNT);
@@ -367,7 +367,7 @@ void Func_081a0a70(void) {
   Task_Add(Func_081a08c4, TASK_PASS_FRAME);
   Task_Add(DisplayScroll_RenderEnteringLine, TASK_PASS_VBLANK);
   for (i = 0; i < 32; i++)
-    DisplayScroll_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
+    Credits_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
 }
 
 // The clear goes through an inline wrapper, as the Broken Seal's iwram_call.h
@@ -461,18 +461,16 @@ void Func_081a0d78(void) {
   line = position / 8;
   if (gDisplayScroll_Busy != 0) {
     gDisplayScroll_Busy++;
-    DisplayScroll_DrawLine(gDisplayScroll_LineTable[0],
-                           ((position / 8 + 16) & 31) * 24, 1);
+    Credits_DrawLine(gDisplayScroll_LineTable[0],
+                     ((position / 8 + 16) & 31) * 24, 1);
   } else if (position / 8 != gDisplayScroll_LastPosition / 8) {
     gDisplayScroll_LastPosition = current;
     text = gDisplayScroll_LineTable[line];
     if (text == (const u8 *)255) {
       gDisplayScroll_Busy = 1;
-      DisplayScroll_DrawLine(gDisplayScroll_LineTable[0],
-                             ((line + 16) & 31) * 24, 1);
+      Credits_DrawLine(gDisplayScroll_LineTable[0], ((line + 16) & 31) * 24, 1);
     } else {
-      gDisplayScroll_Busy =
-          DisplayScroll_DrawLine(text, ((line + 16) & 31) * 24, 1);
+      gDisplayScroll_Busy = Credits_DrawLine(text, ((line + 16) & 31) * 24, 1);
     }
   }
 }
@@ -573,7 +571,7 @@ void Func_081a0e0c(s32 page) {
   Task_Add(Func_081a0cac, TASK_PASS_FRAME);
   Task_Add(Func_081a0d78, TASK_PASS_VBLANK);
   for (i = 0; i < 32; i++)
-    DisplayScroll_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
+    Credits_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
 }
 
 void Func_081a0fb8(void) {
@@ -581,7 +579,7 @@ void Func_081a0fb8(void) {
   u32 *objects;
 
   for (i = 0; i < 32; i++)
-    DisplayScroll_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
+    Credits_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
   Task_Remove(Func_081a0cac);
   Task_Remove(Func_081a0d78);
   objects = (u32 *)gDisplayScroll_Objects;
@@ -590,7 +588,7 @@ void Func_081a0fb8(void) {
   Dma_Set(gDisplayScroll_Objects, OAM, DMA_COPY_WORDS(256), REG_DMA3);
 }
 
-s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align) {
+s32 Credits_DrawLine(const u8 *text, s32 slot, s32 align) {
   u8 *buf = (u8 *)Heap_AllocEwram(0x900);
   s32 x = 0;
   s32 width = 192;
@@ -827,8 +825,8 @@ void Func_081a150c(void) {
   Data_02007514 = 0;
   Task_Add(Func_081a133c, TASK_PASS_VBLANK);
   Io_Write16(0x40, &REG_DISPCNT);
-  DisplayScroll_BuildHblankWordTable((u32 *)0x06007800);
-  DisplayScroll_BuildHblankWordTable((u32 *)0x0600f800);
+  Credits_BuildBackgroundTilemap((u32 *)0x06007800);
+  Credits_BuildBackgroundTilemap((u32 *)0x0600f800);
   Graphics_ClearCharacterBlockAndPalette(0);
   Graphics_ClearCharacterBlockAndPalette(1);
   Io_Write16(0x1f8a, &REG_BG2CNT);

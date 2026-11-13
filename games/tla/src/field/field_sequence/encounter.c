@@ -229,7 +229,7 @@ u16 Encounter_GetDjinnEnemyGroup(s32 djinni) {
 #endif
 }
 
-void Scene_ResolveInteractionResult(void) {
+void Scene_ChooseMusic(void) {
   s16 cue = 79;
   s16 scene = gMainRoutineWork.scene;
   s16 entrance = gMainRoutineWork.entrance;
@@ -261,7 +261,7 @@ void Scene_ResolveInteractionResult(void) {
   gMainRoutineWork.cue = cue;
 }
 
-s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance) {
+s32 Area_GetNameIndex(s32 scene, s32 entrance) {
   const struct SceneAreaNameRule *entry = gScene_AreaNameRules;
   s32 areaNameIndex = 0;
   s32 group = BattleEffect_GetResourceGroup(scene);

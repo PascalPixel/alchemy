@@ -519,8 +519,8 @@ void FieldPsynergy_Halt(void) {
   FieldPsynergy_FadeFromCastColor();
 }
 
-#define Actor_SetAnimationSpeedFar                                             \
-  ((void (*)(void *, s32))Actor_SetAnimationSpeedFar)
+#define Actor_SelectAnimationFar                                               \
+  ((void (*)(void *, s32))Actor_SelectAnimationFar)
 
 void BattleEffect_SetRandomTableValueOnObject(struct ActorView *object) {
   s8 *table = gBattleEffect_RandomChildValues;
@@ -544,7 +544,7 @@ void FieldPsynergy_HaltActor(s32 id) {
     }
     object->update = BattleEffect_SetRandomTableValueOnObject;
     object->value5b = 1;
-    Actor_SetAnimationSpeedFar(object, 0);
+    Actor_SelectAnimationFar(object, 0);
   }
 }
 
@@ -558,7 +558,7 @@ void FieldPsynergy_ResumeHaltedActor(s32 id) {
       Animation_ApplyChildValuesFar(object, (s8)gMainRoutineWork.savedByte);
     }
     object->value5b = 0;
-    Actor_SetAnimationSpeedFar(object, 16);
+    Actor_SelectAnimationFar(object, 16);
   }
 }
 
@@ -1095,7 +1095,7 @@ void FieldPsynergy_Retreat(void) {
   wait(10);
 }
 
-void BattleEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
+void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
   struct Actor *source;
   s32 y;
   s32 limit;
@@ -1123,7 +1123,7 @@ void BattleEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
   particle->z = source->z + ((0x10000 - scale) * 5) + 0x90000;
 }
 
-void BattleEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
+void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
   struct Actor *source;
   s32 y;
   s32 limit;
@@ -1191,10 +1191,10 @@ void Func_080e1024(struct ArcObject *source) {
     sprite->picture->visible = zero;
   }
   objects[0]->callback =
-      (void *)BattleEffect_UpdateDescendingParticleNegativeArc;
+      (void *)FieldEffect_UpdateDescendingParticleNegativeArc;
   objects[0]->sprite->attr.byte.variant = 0;
   objects[1]->callback =
-      (void *)BattleEffect_UpdateDescendingParticlePositiveArc;
+      (void *)FieldEffect_UpdateDescendingParticlePositiveArc;
   objects[1]->sprite->attr.byte.variant = leader->sprite->attr.byte.variant;
 }
 #include "flag_call.h"

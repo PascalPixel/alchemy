@@ -564,7 +564,7 @@ static __inline__ void Func_020012a0_(const void *data, s32 a, s32 b) {
 }
 
 static __inline__ void Offset_(s32 id, s32 dx, s32 dz) {
-  Actor_OffsetPositionAndResetMotion(id, dx, dz);
+  Actor_SetDestinationOffsetById(id, dx, dz);
 }
 
 void Func_02000e54(void) {
@@ -638,11 +638,11 @@ void Func_02000f38(void) {
   Event_Wait(10);
   Actor_GetById(4)->actionFlags &= 0xfe;
   Func_020012a8_(96, 14, 72, 14, 2, 1);
-  Actor_OffsetPositionAndResetMotion(4, 0, 4);
+  Actor_SetDestinationOffsetById(4, 0, 4);
   Actor_WaitForMoveById(4);
   Actor_SetSingleChildFlags(Actor_GetById(4), 0);
   Actor_SetModeById(4, 13);
-  Actor_OffsetPositionAndResetMotion(4, 0, 16);
+  Actor_SetDestinationOffsetById(4, 0, 16);
   Actor_WaitForMoveById(4);
   Actor_SetModeById(4, 10);
   Event_Wait(14);
@@ -665,8 +665,8 @@ void Func_02000ffc(void) {
    * arguments are set before the step is negated; as constant arguments, 2 of
    * 17 instructions differ in tla-en. */
   asm("" : "+l"(back), "+l"(id), "+l"(x));
-  Actor_CommitPositionAndActivate(id, x, -back);
-  Actor_CommitPositionAndActivate(4, 16, 0);
+  Actor_WalkByAndWaitById(id, x, -back);
+  Actor_WalkByAndWaitById(4, 16, 0);
   Event_Wait(10);
   Func_02000f38();
 }
@@ -685,8 +685,8 @@ void Func_0200102c(void) {
    * arguments are set before the step is negated; as constant arguments, 2 of
    * 18 instructions differ in tla-en. */
   asm("" : "+l"(back), "+l"(id), "+l"(x));
-  Actor_CommitPositionAndActivate(id, x, -back);
-  Actor_CommitPositionAndActivate(4, -16, 0);
+  Actor_WalkByAndWaitById(id, x, -back);
+  Actor_WalkByAndWaitById(4, -16, 0);
   Event_Wait(10);
   Func_02000f38();
 }

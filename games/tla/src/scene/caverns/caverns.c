@@ -427,7 +427,7 @@ s32 Func_02000c38(struct Actor *object, s16 *position) {
       s32 z = position[5];
       s32 owner = party->currentOwner;
 
-      Actor_SetPositionAndCommit(owner, x, z);
+      Actor_MoveToAndWaitById(owner, x, z);
     }
     Func_02001074(object, 6);
     Actor_SetSingleChildFlags(object, 1);
@@ -480,10 +480,10 @@ void Func_02000d68(void) {
   Event_Wait(10);
   BYTE_AT(Actor_GetById(4), 90) &= ~1;
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
-  Actor_OffsetPositionAndResetMotion(4, 0, 4);
+  Actor_SetDestinationOffsetById(4, 0, 4);
   Actor_WaitForMoveById(4);
   Actor_SetSingleChildFlags(Actor_GetById(4), 0);
-  Actor_OffsetPositionAndResetMotion(4, 0, 16);
+  Actor_SetDestinationOffsetById(4, 0, 16);
   Actor_WaitForMoveById(4);
   Actor_SetModeById(4, 13);
   Sound_Play(123);
@@ -493,7 +493,7 @@ void Func_02000d68(void) {
 
 void Func_02000e20(void) {
   Actor_WalkByAndWait(4, 0, -14);
-  Actor_CommitPositionAndActivate(4, 16, 0);
+  Actor_WalkByAndWaitById(4, 16, 0);
   Event_Wait(10);
   Func_02000d68();
   return;
@@ -501,7 +501,7 @@ void Func_02000e20(void) {
 
 void Func_02000e44(void) {
   Actor_WalkByAndWait(4, 0, -14);
-  Actor_CommitPositionAndActivate(4, -16, 0);
+  Actor_WalkByAndWaitById(4, -16, 0);
   Event_Wait(10);
   Func_02000d68();
   return;

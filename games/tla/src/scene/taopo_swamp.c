@@ -131,7 +131,7 @@ static __inline__ s32 GameFlag_GetByte_(s32 flag) {
 
 static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
                                                            s32 dz) {
-  Actor_OffsetPositionAndResetMotion(id, dx, dz);
+  Actor_SetDestinationOffsetById(id, dx, dz);
 }
 
 static __inline__ void Func_02002840_(s32 a, s32 b, s32 c, s32 d, s32 e,
@@ -749,7 +749,7 @@ next:
   i--;
   if (i >= 0)
     goto burst;
-  MapGrid_WaitForShakeToSettle();
+  FieldMapGrid_WaitForShakeToSettle();
   Task_AddFrame(Func_02000ca0, 0x480);
   System_Wait(40);
   FieldCamera_SetSpeed(0xe666, 0x1ccc);

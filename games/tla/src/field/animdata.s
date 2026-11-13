@@ -4,7 +4,7 @@
 gData_0802e89c:
 	.incbin "games/tla/src/field/shadow.8bpp"
 
-@ {sprite resource, metadata number}: ResourceSlot_Load finds the number it
+@ {sprite resource, metadata number}: SpritePictureCache_Load finds the number it
 @ is given and decodes that resource. A zero number ends the table.
 	.global gResourceSlot_NumberTable
 gResourceSlot_NumberTable:

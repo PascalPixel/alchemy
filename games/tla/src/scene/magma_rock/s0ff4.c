@@ -691,7 +691,7 @@ second:
   Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
   Call3((void (*)())Map_SetScreenShake, 0x50000, 0x80000, 0x10000);
   Call3((void (*)())Map_SetScreenShake, -1, -1, 0xe666);
-  Map_WaitForShakeToSettle();
+  MapGrid_WaitForShakeToSettle();
   Func_080d452c__s1c00(gMainRoutineWork.currentOwner, 1);
   Func_02003b6c();
   Actor_SetModeById(gMainRoutineWork.currentOwner, 4);

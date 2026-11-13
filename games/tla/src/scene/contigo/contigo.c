@@ -636,7 +636,7 @@ void Func_02001094(void) {
   Event_ResolvePendingActions(0);
   object->unk63 = 1;
   if (work->unk166 == 0) {
-    Actor_SetAngleToward(14, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActorById(14, gMainRoutineWork.currentOwner, 0);
     if (GameFlag_Test(0x9b2) != 0)
       Event_SetMessageId((s32)MsgContigo203);
     else if (GameFlag_Test(0xa21) != 0)
@@ -674,7 +674,7 @@ void Func_0200118c(void) {
   Event_ResolvePendingActions(0);
   object->unk63 = 1;
   if (event->unk166 == 0) {
-    Actor_SetAngleToward(15, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActorById(15, gMainRoutineWork.currentOwner, 0);
     if (GameFlag_Test(0x9b2) != 0)
       Event_SetMessageId((s32)MsgContigo143);
     else
@@ -712,7 +712,7 @@ void Func_020012a4(void) { Contigo_Tiles(4, 43, 2, 1, 2, 43, 0); }
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
                                                            s32 dz) {
-  Actor_OffsetPositionAndResetMotion(id, dx, dz);
+  Actor_SetDestinationOffsetById(id, dx, dz);
 }
 
 static __inline__ void Func_0200423c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
@@ -777,7 +777,7 @@ void Func_020014d4(void) {
     Event_ResolvePendingActions(1);
     Actor_SetHorizontalPositionWithTerrain(16, 664 << 16, 952 << 16);
     wait(1);
-    Actor_SetAngleToward(16, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActorById(16, gMainRoutineWork.currentOwner, 0);
     work->unk16a = 200;
     Event_End();
   }
@@ -1227,7 +1227,7 @@ void Func_02001d50(void) {
   Actor_FaceDirection(2, FACING_NORTHEAST, 0);
   Actor_FaceDirection(5, FACING_NORTHWEST, 0);
   Actor_FaceDirection(6, FACING_NORTHWEST, 0);
-  Actor_SetPositionAndReset(9, 146, 342);
+  Actor_WalkToAndWaitById(9, 146, 342);
   Actor_FaceDirectionAndWait(9, 0x5000);
   Actor_SetModeById(9, 4);
   Event_ShowMessageAndWait(9, 0);
@@ -1616,7 +1616,7 @@ void Func_02002e18(void) {
     Actor_MoveToObject(2, gMainRoutineWork.currentOwner);
     wait(1);
     Actor_SetSpeed(2, 0xcccc, 0x6666);
-    Actor_SetPositionAndReset(2, 144, 374);
+    Actor_WalkToAndWaitById(2, 144, 374);
     Actor_FaceDirectionAndWait(2, FACING_NORTHEAST);
     Contigo_Jump(8, 265, 20);
     Event_SetMessageId((s32)MsgReturnedToMyNewHome);
@@ -1652,7 +1652,7 @@ void Func_02002e18(void) {
     wait(1);
     Contigo_Jump(0, 256, 0);
     Actor_SetSpeed(0, 0x13333, 0x9999);
-    Actor_SetPositionAndReset(0, 168, 380);
+    Actor_WalkToAndWaitById(0, 168, 380);
     Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
     Event_ShowMessageAndWait(0, 0);
     Contigo_Jump(8, 256, 0);
@@ -1663,7 +1663,7 @@ void Func_02002e18(void) {
     Actor_SetMovementTypeById(gMainRoutineWork.currentOwner, gData_02004ac0);
     Actor_SetSpeed(9, 0xcccc, 0x6666);
     Actor_WalkToAndWait(9, 182, 378);
-    Actor_SetPositionAndReset(9, 182, 360);
+    Actor_WalkToAndWaitById(9, 182, 360);
     Actor_FaceDirectionAndWait(9, FACING_WEST);
     Contigo_Jump(9, 265, 20);
     Event_ShowMessage(0x8009, 0);

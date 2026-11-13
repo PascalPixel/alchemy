@@ -542,7 +542,7 @@ s16 Battle_GetTaggedSlotValue(s32 slot) {
 /// Returns a unit's formation position, or -1 if absent.
 /// Allies use 0x100 | position; enemies use 0x180 | position.
 /// id: unit ID (0-7 allies, all others enemies).
-s32 Battle_FindTaggedSlotByValue(u32 id) {
+s32 Battle_FindUnitPlace(u32 id) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   s32 i;
   s16 unit;

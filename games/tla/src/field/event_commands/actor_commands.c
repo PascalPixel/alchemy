@@ -98,7 +98,7 @@ void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z) {
   }
 }
 
-void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z) {
+void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
@@ -109,7 +109,7 @@ void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z) {
   }
 }
 
-void Actor_ResetAndSetPositionInMode2(u32 objectId, s32 x, s32 z) {
+void Actor_WalkToById(u32 objectId, s32 x, s32 z) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
@@ -120,7 +120,7 @@ void Actor_ResetAndSetPositionInMode2(u32 objectId, s32 x, s32 z) {
   }
 }
 
-void Actor_SetPositionAndReset(u32 objectId, s32 x, s32 z) {
+void Actor_WalkToAndWaitById(u32 objectId, s32 x, s32 z) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
@@ -165,8 +165,7 @@ void Actor_CenterOnColumn(u32 objectId, s32 action, s32 zOffset) {
   }
 }
 
-void Actor_OffsetPositionAndResetMotion(u32 objectId, s32 xOffset,
-                                        s32 zOffset) {
+void Actor_SetDestinationOffsetById(u32 objectId, s32 xOffset, s32 zOffset) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
@@ -189,7 +188,7 @@ void Actor_OffsetPositionAndReset(u32 objectId, s32 xOffset, s32 zOffset) {
   }
 }
 
-void Actor_CommitPositionAndActivate(u32 objectId, s32 xOffset, s32 zOffset) {
+void Actor_WalkByAndWaitById(u32 objectId, s32 xOffset, s32 zOffset) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   Actor_OffsetPositionAndReset(objectId, xOffset, zOffset);
@@ -209,7 +208,7 @@ void Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 action) {
                                        object->z - 0x10000);
     object->movementState = 0;
     Actor_SetMode(object, 2);
-    Actor_OffsetPositionAndResetMotion(actorId, xOffset, zOffset);
+    Actor_SetDestinationOffsetById(actorId, xOffset, zOffset);
     Actor_StartScriptFar(object, gData_080f32e0);
     object->timer = action;
   }
@@ -294,14 +293,14 @@ void Actor_SetModeById(u32 objectId, s32 action) {
     Actor_SetMode(object, action);
 }
 
-#define Actor_SetAnimationSpeedFar                                             \
-  ((void (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
+#define Actor_SelectAnimationFar                                               \
+  ((void (*)(struct Actor *, s32))Actor_SelectAnimationFar)
 
 void Actor_SetActionById(u32 objectId, s32 action) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL)
-    Actor_SetAnimationSpeedFar(object, action);
+    Actor_SelectAnimationFar(object, action);
 }
 
 /// ⚓️'s animation group: the number last applied and its entries.
@@ -511,7 +510,7 @@ void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle) {
   Event_NoOp();
 }
 
-void Actor_SetAngleToward(s32 firstId, s32 secondId, s32 frames) {
+void Actor_FaceActorById(s32 firstId, s32 secondId, s32 frames) {
   struct ObjectPairPosition *first;
   struct ObjectPairPosition *second;
 
@@ -528,13 +527,13 @@ void Actor_TurnToFaceEachOther(s32 firstId, s32 secondId, s32 frames) {
   void *second = ObjectTable_Get(secondId);
 
   if (first != NULL && second != NULL) {
-    FacingObject_TurnPairToFaceEachOther(first, second);
+    Actor_TurnPairToFaceEachOther(first, second);
     Event_Wait(frames);
   }
 }
 
-void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first,
-                                          struct FacingObject *second) {
+void Actor_TurnPairToFaceEachOther(struct FacingObject *first,
+                                   struct FacingObject *second) {
   s32 toward;
   s32 away;
   s32 frame;

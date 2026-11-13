@@ -14,7 +14,7 @@
 
 /// Returns 1 if the unit is in its side's formation.
 /// id: unit ID (0-7 allies, all others enemies).
-u32 BattleParty_IsUnitListed(u32 id) {
+u32 BattleUnit_IsListed(u32 id) {
   u16 list[8];
   s32 side;
   s32 cnt;
@@ -33,7 +33,7 @@ u32 BattleParty_IsUnitListed(u32 id) {
   return i != cnt;
 }
 
-s32 BattleParty_CountStandbyDjinn(u32 arg0, u8 *counts) {
+s32 BattleDjinn_CountStandby(u32 arg0, u8 *counts) {
   u16 values[8];
   struct PlacementList *list;
   s32 total;
@@ -477,7 +477,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
         BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, request->unitId);
         Sound_PlayFar(212);
         Actor_SetMode(BattleObject_Get(request->unitId)->object, 3);
-        Actor_SetAnimationSpeedFar(
+        Actor_SelectAnimationFar(
             (struct Actor *)BattleObject_Get(request->unitId)->object, 32);
         Func_08127308(request->unitId, (request->parameter >> 8) & 15, 3, 0);
         BattlePlayback_WaitForReady();
@@ -514,7 +514,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
     s32 index;
 
     summon = SummonDefinition_Get(request->parameter);
-    BattleParty_CountStandbyDjinn(
+    BattleDjinn_CountStandby(
         ((struct ActionRunBattleWork *)Ram_HeapSlots->battleWork)->twoSided
             ? request->unitId
             : 0,
@@ -544,7 +544,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
     for (index = 0; index != list->count; index++) {
       struct DjinnRecoveryEntryDraft *entry = &list->entries[index];
 
-      if (entry->turns == -1 && BattleParty_IsUnitListed(entry->unitId) &&
+      if (entry->turns == -1 && BattleUnit_IsListed(entry->unitId) &&
           counts[entry->element] != 0) {
         entry->turns = -2;
         counts[entry->element]--;

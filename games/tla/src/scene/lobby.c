@@ -653,24 +653,24 @@ s32 Func_02000864(void) {
     wait(8);
     Func_02001994(5);
     if (Event_GetFlag(0x173)) {
-      Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
+      Actor_FaceActorById(8, gMainRoutineWork.currentOwner, 0);
       Event_SetMessageId((s32)MsgGoodLuck2);
       FieldMessage_ShowAtActor(8, 0);
       wait(45);
       Actor_SetSpeed(4, 0x10000, 0x8000);
-      Actor_ResetAndSetPositionInMode2(4, 216, 184);
+      Actor_WalkToById(4, 216, 184);
       Actor_WaitForMoveById(4);
-      Actor_ResetAndSetPositionInMode2(4, 216, 168);
+      Actor_WalkToById(4, 216, 168);
       Actor_WaitForMoveById(4);
     } else {
       Actor_SetSpeed(4, 0x10000, 0x8000);
-      Actor_ResetAndSetPositionInMode2(4, 216, 200);
+      Actor_WalkToById(4, 216, 200);
       Actor_WaitForMoveById(4);
       Actor_SetSpeed(4, 0x1999, 0xccc);
-      Actor_ResetAndSetPositionInMode2(4, 216, 168);
+      Actor_WalkToById(4, 216, 168);
       if (LinkLobby_ExchangePartyRecords() < 0) {
         Actor_SetSpeed(4, 0x10000, 0x8000);
-        Actor_ResetAndSetPositionInMode2(4, 216, 200);
+        Actor_WalkToById(4, 216, 200);
         Func_0200198c(5);
         wait(8);
         Func_02001994(5);
@@ -742,7 +742,7 @@ s32 Func_02000bb0(void) {
   msg = (s32)MsgPleaseSpeakTo;
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(8, gMainRoutineWork.currentOwner, 0);
   if (Func_0200006c(0) == 0)
     wait(1);
   if (Func_0200006c(0) == 0) {
@@ -833,7 +833,7 @@ s32 Func_02000da0(s32 actor) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetAngleToward(actor, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(actor, gMainRoutineWork.currentOwner, 0);
   if ((facing - 0xa001) <= 0x3ffe) {
     base = (s32)MsgItLooksLikeThisIs;
     count = &gMainRoutineWork.linkTallies[4];
@@ -875,7 +875,7 @@ s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetAngleToward(actorId, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(actorId, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgChooseYourParameters);
   Event_ShowMessageAndWait(actorId, 0);
   window = Window_Create(0, 0, 6, 4, 2);
@@ -997,7 +997,7 @@ void Func_02000fbc(s32 actor) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetAngleToward(actor, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(actor, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgYouHaveA);
   Event_ShowMessageAndWait(actor, 0);
   song = 0;
@@ -1079,7 +1079,7 @@ void Event_End(void);
 extern void Func_080d47b4__talk(s32 actor, s32 animation,
                                 s32 flags) __asm__("Actor_ShowEmoteById");
 s32 Func_02001a84(s32 scene, s32 entrance);
-void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
+void Actor_FaceActorById(s32 actor, s32 target, s32 frames);
 void FieldMessage_Show(s32 no, s32 flags);
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -1092,7 +1092,7 @@ s32 Func_02001130(s32 actor) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetAngleToward(actor, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(actor, gMainRoutineWork.currentOwner, 0);
   if (GameFlag_Test(0x304)) {
     GameFlag_Test(0x2f4);
     base = GameFlag_Test(actor + 0x2f0);
@@ -1177,7 +1177,7 @@ s32 Func_0200122c(s32 actor) {
     Actor_StartRepeatedMotion(14, 1);
     Actor_SetModeById(14, 4);
     Event_Wait(15);
-    Actor_SetAngleToward(14, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActorById(14, gMainRoutineWork.currentOwner, 0);
     Event_Wait(5);
     FieldMessage_ShowAtActor(14, 0);
   }
@@ -1189,7 +1189,7 @@ s32 Func_02001304(s32 actor) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetAngleToward(actor, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(actor, gMainRoutineWork.currentOwner, 0);
   if (!Flag_Test(0x204)) {
     if (Party_CountMembers() == 8)
       message = (s32)MsgUpToThree;
@@ -1213,7 +1213,7 @@ s32 Func_02001388(s32 id) {
   Event_Start();
   Event_ResolvePendingActions(0);
   gs = &gMainRoutineWork;
-  Actor_SetAngleToward(id, gs->currentOwner, 0);
+  Actor_FaceActorById(id, gs->currentOwner, 0);
   if (gs->linkTallies[2] != 0) {
     MessageArgument_Push(gs->linkTallies[2], 5);
     Event_SetMessageId((s32)MsgYouVeWon);
@@ -1355,7 +1355,7 @@ s32 LinkLobby_RunRoundResult(void) {
     } else {
       Flag_SetByte(1000, v + 1);
     }
-    Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActorById(8, gMainRoutineWork.currentOwner, 0);
     Event_SetMessageId((s32)MsgNotBadWould + msg);
     FieldMessage_ShowAtActor(8, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
@@ -1390,7 +1390,7 @@ s32 LinkLobby_RunRoundResult(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     LinkLobby_WriteSlotValue(5);
-    Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActorById(8, gMainRoutineWork.currentOwner, 0);
     /* FAKEMATCH(temporary): one scalar holds the row address, then its score;
      * as the row read directly in entrances 8 and 9, 36 of 438 instructions
      * differ in tla-en. */
@@ -1468,7 +1468,7 @@ s32 LinkLobby_RunRoundResult(void) {
       Event_ResolvePendingActions(0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
-      Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
+      Actor_FaceActorById(8, gMainRoutineWork.currentOwner, 0);
       Event_SetMessageId((s32)MsgNoteYouCan);
       Event_ShowMessageAndWait(8, 0);
       Event_End();

@@ -69,7 +69,7 @@ void Map_RenderAnimatedTilePicture(u8 *object, u32 position) {
   }
 }
 
-void Map_RenderAnimatedTilePicturesForObject(u8 *object) {
+void SpriteDissolve_Run(u8 *object) {
   u32 pos;
 
   pos = 0;
@@ -83,7 +83,7 @@ void Map_RenderAnimatedTilePicturesForObject(u8 *object) {
   } while (pos <= 0x7f);
 }
 
-void Map_RenderAllAnimatedTilePictures(u8 **table, s32 cnt) {
+void SpriteDissolve_RunMany(u8 **table, s32 cnt) {
   u8 **top;
   u8 **p;
   s32 n;
@@ -114,7 +114,7 @@ void Map_RenderAllAnimatedTilePictures(u8 **table, s32 cnt) {
   } while (pos <= 0x7FU);
 }
 
-s32 Map_GetScreenRelativePosition(struct Thing *obj, s32 *out) {
+s32 MapGrid_GetScreenRelativePosition(struct Thing *obj, s32 *out) {
   u8 *state = (u8 *)Ram_HeapSlots->mapWork;
   s32 *org = (s32 *)(state + 228);
   s32 a;
@@ -662,7 +662,7 @@ void Func_080237e8(u8 *object) {
     Animation_WaitForTrackEnd(*(void **)(object + 0x50));
 }
 
-void Graphics_EnableObjLayerAndCallbacks(void) {
+void ActorSystem_SuspendProjectionAndShowSprites(void) {
   u16 dispcnt;
 
   Task_SuspendAll(ActorSystem_PlaceSprites);

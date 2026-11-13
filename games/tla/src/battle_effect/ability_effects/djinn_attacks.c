@@ -8,7 +8,7 @@
 
 /// Rotates w-by-h src clockwise into h-by-w dst.
 /// The top row of src becomes the rightmost column of dst.
-void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
+void BattleEffect_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
   s32 y;
   s32 x;
   s32 col;
@@ -94,8 +94,8 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                              work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, cells, 1, 1);
-  Graphics_TransposeCopy(cells, work->sheet + 0x2a8, 17, 104);
-  Graphics_TransposeCopy(cells + 0x6e8, work->sheet + 0x990, 34, 65);
+  BattleEffect_TransposeCopy(cells, work->sheet + 0x2a8, 17, 104);
+  BattleEffect_TransposeCopy(cells + 0x6e8, work->sheet + 0x990, 34, 65);
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
   work->transferMode = 2;
   work->transferValue = 75;

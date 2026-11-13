@@ -207,7 +207,7 @@ PartyInventory_Add:
 	.global Func_02002350
 	.thumb_func
 Func_02002350:
-	overlay_veneer Func_080ad090
+	overlay_veneer MainRoutineWork_InitializeDefaultsFar
 	.global Party_AddMember
 	.thumb_func
 Party_AddMember:

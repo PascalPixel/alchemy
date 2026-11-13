@@ -730,7 +730,7 @@ s32 StatusScreen_SelectCommand(void) {
   while (done == 0 && !GameFlag_Test(0x150)) {
     Unit_Get(menu->selectedIds[0]);
     StatusScreen_DrawStatusAilments(window, menu->selectedIds[0], 1);
-    count = CharacterMenu_BuildAvailability(entries, 1, menu->selectedIds[0]);
+    count = StatusScreen_BuildAvailability(entries, 1, menu->selectedIds[0]);
     hasAilments = 0;
     if (count == 0)
       count = 1;
@@ -974,7 +974,7 @@ void StatusScreen_ShowMemberProgressMessage(void *window, s32 help, s32 full) {
 extern const u8 gMenu_LvString[];
 extern const u8 gMenu_SlashString[];
 
-void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags);
+void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags);
 
 void Func_081054e0(struct MenuPanel *panel, s32 x, s32 y, const u8 *enabled);
 
@@ -1004,8 +1004,8 @@ void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
   else
     djinnRow = 10;
   menu->statusCursor->active = 1;
-  ItemMenu_DrawOwnerStatus(window, ownerId, mode);
-  CharacterMenu_BuildAvailability(ailments, 1, ownerId);
+  ItemMenu_DrawMemberStatus(window, ownerId, mode);
+  StatusScreen_BuildAvailability(ailments, 1, ownerId);
   keepDrawn = mode & 0x100;
   if (keepDrawn == 0)
     Window_ClearInteriorTilesFar(window, 0, 40, 96, 96);
@@ -1083,7 +1083,7 @@ extern const u8 gMenu_PpString[];
 #define STAT_X 200
 #endif
 
-void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags) {
+void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
   struct ItemMenuState *menu;
   struct BattleUnit *unit;
 
@@ -1870,7 +1870,7 @@ s32 ItemMenu_SelectItem(void) {
         WindowSprite_RedrawSavedRectFar(window);
         for (i = 0; i <= 14; i++)
           savedInventory[i] = owner->inventory[i];
-        InventoryMenu_SortByListOrder(menu->items, 0);
+        ItemMenu_Sort(menu->items, 0);
         PagedList_Build(&state, 0);
         ItemMenu_DrawIcons(menu->items, 0);
         WindowSprite_RedrawSavedRectFar(menu->equipWindow);
@@ -2013,13 +2013,13 @@ void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
   do {
     obj = *table++;
     if (obj != NULL)
-      Menu_PlaceEntryObjectInGrid(obj, i, originX, originY, columns);
+      Menu_PlaceEntryActorInGrid(obj, i, originX, originY, columns);
     i += 1;
   } while (i <= 0x1F);
 }
 
-void Menu_PlaceEntryObjectInGrid(struct WindowSprite *obj, s32 index,
-                                 s32 originX, s32 originY, s32 phase) {
+void Menu_PlaceEntryActorInGrid(struct WindowSprite *obj, s32 index,
+                                s32 originX, s32 originY, s32 phase) {
   s32 no;
 
   no = index;

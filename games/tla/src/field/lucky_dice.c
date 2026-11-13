@@ -109,8 +109,8 @@ s16 Math_ScaleByRatio(s16 arg0, s16 arg1) { return (arg0 << 8) / arg1; }
 
 s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 
-s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
-                               s32 count) {
+s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
+                                s32 count) {
   s32 remaining;
   u32 mask_red;
   u32 mask_green;
@@ -338,8 +338,8 @@ void LuckyDice_Run(void) {
 #endif
   Dma_Set(Ram_MapCellBuffer, (void *)0x06010000,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x1f00, REG_DMA3);
-  Graphics_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, 0, 256);
-  Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, 0, 256);
+  LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, 0, 256);
+  LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, 0, 256);
 
   REG_BG1CNT = 0x686;
   REG_WININ = 0x3737;
@@ -393,7 +393,7 @@ void LuckyDice_Run(void) {
       Window_CreateFar(DICE_COINS_WINDOW_X, 0, DICE_COINS_WINDOW_WIDTH, 3, 6);
   sprites->coinsWindow = window;
   Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins, window,
-                                DICE_COINS_LABEL_X, 0);
+                             DICE_COINS_LABEL_X, 0);
   Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                              (s32)sprites->coinsWindow, 0, 0);
   window =
@@ -402,17 +402,17 @@ void LuckyDice_Run(void) {
   // Throw and Quit: every language's text keeps them ten and eleven messages
   // after the coins label.
   Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins + 10, window, 0, 0);
-  Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins + 11,
-                                sprites->helpWindow, 0, 8);
+  Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins + 11, sprites->helpWindow,
+                             0, 8);
 
   frame = 0;
   for (;;) {
     resetDice = 0;
     if (frame <= 16) {
-      Graphics_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, frame << 12,
-                                 256);
-      Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, frame << 12,
-                                 256);
+      LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, frame << 12,
+                                  256);
+      LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, frame << 12,
+                                  256);
     }
     Render_ResetTransformState();
     Transform_SetLookAt(camera->eye, camera->focus);
@@ -487,8 +487,8 @@ void LuckyDice_Run(void) {
         sprites->winningsWindow = window;
         Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceWinnings, window, 0, 0);
         Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceWinnings - 1,
-                                      sprites->winningsWindow,
-                                      digits * 8 + DICE_WINNINGS_COINS_X, 0);
+                                   sprites->winningsWindow,
+                                   digits * 8 + DICE_WINNINGS_COINS_X, 0);
         Text_DrawNumberInWindowFar(winnings, digits,
                                    (s32)sprites->winningsWindow,
                                    DICE_WINNINGS_NUMBER_X, 0);
@@ -521,10 +521,9 @@ void LuckyDice_Run(void) {
         window = Window_CreateFar(DICE_REOPENED_HELP_WINDOW_X, 16,
                                   DICE_REOPENED_HELP_WINDOW_WIDTH, 4, 6);
         sprites->helpWindow = window;
-        Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins + 10, window, 0,
-                                      0);
+        Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins + 10, window, 0, 0);
         Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins + 11,
-                                      sprites->helpWindow, 0, 8);
+                                   sprites->helpWindow, 0, 8);
         resetDice = 1;
       }
       payoutTimer++;
@@ -881,8 +880,8 @@ void LuckyDice_Run(void) {
 
   for (index = 0; index != 17; index++) {
     scale = 0x10000 - (index << 12);
-    Graphics_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, scale, 256);
-    Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, scale, 256);
+    LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, scale, 256);
+    LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, scale, 256);
     wait(1);
   }
   HeapSlot_Release(48);

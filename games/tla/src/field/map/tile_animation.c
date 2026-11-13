@@ -367,7 +367,7 @@ void Map_DisableUpdateCallback(void) {
     Task_ResumeAll(MapAnimation_Update);
 }
 
-void DisplayBlend_RunScript(void) {
+void BlendScript_Run(void) {
   struct MapWork *work = Ram_HeapSlots->mapWork;
   struct BlendScriptState *state;
   u16 *cursor;
@@ -442,20 +442,20 @@ void DisplayBlend_StartScript(u16 *script) {
     started = 1;
   }
   if (started)
-    Task_Add((s32)(DisplayBlend_RunScript), TASK_PASS_VBLANK);
+    Task_Add((s32)(BlendScript_Run), TASK_PASS_VBLANK);
 }
 
 void DisplayBlend_EnableRunScript(void) {
-  Task_SuspendAll((u32)DisplayBlend_RunScript);
+  Task_SuspendAll((u32)BlendScript_Run);
 }
 
 void DisplayBlend_DisableRunScript(void) {
-  Task_ResumeAll((u32)DisplayBlend_RunScript);
+  Task_ResumeAll((u32)BlendScript_Run);
 }
 
 #include "palette_snapshots.h"
 
-void PaletteQueue_Initialize(void) {
+void PaletteCycle_Initialize(void) {
   struct PaletteSnapshotWork *queue;
   struct PaletteSnapshot *entry;
   u16 i;
@@ -1141,7 +1141,7 @@ s32 Func_0802da88(struct WorldPosition *position) {
   return gMapBlocks__f02c58c[x + z * 32].unk2;
 }
 
-s32 GetWorldMapCollision(struct WorldPosition *position) {
+s32 WorldMap_GetCollision(struct WorldPosition *position) {
   s32 x_step = position->x >> 17;
   s32 y = position->y;
   s32 y_step = y >> 17;
@@ -1181,7 +1181,7 @@ s32 GetWorldMapCollision(struct WorldPosition *position) {
 
 s32 WorldMap_IsWalkable(void *object, struct WorldPosition *position) {
   if (Func_0802da88(position) != 255) {
-    if ((u32)(GetWorldMapCollision(position) - 5) <= 7)
+    if ((u32)(WorldMap_GetCollision(position) - 5) <= 7)
       return 0;
   }
   return -1;
@@ -1189,7 +1189,7 @@ s32 WorldMap_IsWalkable(void *object, struct WorldPosition *position) {
 
 s32 Func_0802db88(void *object, struct WorldPosition *position) {
   if (Func_0802da88(position) != 255) {
-    s32 collision = GetWorldMapCollision(position);
+    s32 collision = WorldMap_GetCollision(position);
     u8 *work = Ram_HeapSlots->eventWork;
     s32 mode;
 
@@ -1210,7 +1210,7 @@ s32 Func_0802db88(void *object, struct WorldPosition *position) {
 
 s32 Func_0802dbd0(struct WorldMover *mover, struct WorldPosition *position) {
   if (Func_0802da88(position) != 255) {
-    s32 collision = GetWorldMapCollision(position);
+    s32 collision = WorldMap_GetCollision(position);
     u8 *work = Ram_HeapSlots->eventWork;
 
     s32 height = mover->height;

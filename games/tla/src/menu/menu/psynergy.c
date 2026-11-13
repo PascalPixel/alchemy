@@ -260,8 +260,8 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
     case PSYNERGY_STEP_APPLY:
       chosenTarget = 0;
       actionEntry = menu->paneAction[0];
-      useResult = BattleEffect_ApplyToTargets(actionEntry, menu->memberIds[0],
-                                              menu->memberIds[1], 0);
+      useResult = Ability_ApplyToTargets(actionEntry, menu->memberIds[0],
+                                         menu->memberIds[1], 0);
       if (menu->memberIds[1] == MENU_TARGET_WHOLE_PARTY) {
         menu->memberIds[1] = menu->memberIds[0];
         chosenTarget = MENU_TARGET_WHOLE_PARTY;

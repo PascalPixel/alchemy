@@ -108,7 +108,7 @@ extern u8 Data_08198860[];
 extern u8 Data_08198866[];
 // Byte offsets of the spark cels in the spark sheet, by size - 1 (☀️'s
 // gLuckyWheels_SparkCellOffsets).
-extern u16 Data_08197424[];
+extern u16 gBattleEffect_FlarePictures[];
 
 void *Resource_GetTableEntry(s32 id);
 
@@ -360,7 +360,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
           point.x += shake;
           size >>= 3;
           size += 2;
-          draw[pair & 1](canvas, sheet + Data_08197424[size - 1],
+          draw[pair & 1](canvas, sheet + gBattleEffect_FlarePictures[size - 1],
                          point.x - size, point.y - size, size * 2, size * 2);
           BattleEffectKernels_IntegrateVector3(spark, 60, -0x400);
           spark->variant--;
@@ -488,7 +488,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
       mote->velocityY = Random16() & 0xffff;
       mote->velocityZ = Random16() & 0xffff;
     }
-    Actor_SetAnimationSpeedFar(object, 0);
+    Actor_SelectAnimationFar(object, 0);
     velocityX = object->velocityX;
     velocityY = object->velocityY;
     velocityZ = object->velocityZ;
@@ -530,8 +530,8 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
           if (point.depth > 60)
             point.depth = 60;
           point.depth += 60;
-          draw[0](canvas, sheet + Data_08197424[size - 1], point.x - size,
-                  point.y - size, size * 2, size * 2);
+          draw[0](canvas, sheet + gBattleEffect_FlarePictures[size - 1],
+                  point.x - size, point.y - size, size * 2, size * 2);
           mote->x -= 4;
         }
       }
@@ -539,7 +539,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
       wait(1);
     }
     Task_Remove(Palette_StepFadeTransfer);
-    Actor_SetAnimationSpeedFar(object, 16);
+    Actor_SelectAnimationFar(object, 16);
     object->velocityX = velocityX;
     object->velocityY = velocityY;
     object->velocityZ = velocityZ;
@@ -618,8 +618,8 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
           size >>= 3;
           size += 2;
           spot.y += 16;
-          draw[pair & 1](canvas, sheet + Data_08197424[size - 1], spot.x - size,
-                         spot.y - size, size * 2, size * 2);
+          draw[pair & 1](canvas, sheet + gBattleEffect_FlarePictures[size - 1],
+                         spot.x - size, spot.y - size, size * 2, size * 2);
           BattleEffectKernels_IntegrateVector3(spark, 60, -0x400);
           spark->variant--;
         }

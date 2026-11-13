@@ -394,7 +394,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
 
         if (size > 6)
           size = 6;
-        draw[1](canvas, work->sheet + Data_08197424[size - 1],
+        draw[1](canvas, work->sheet + gBattleEffect_FlarePictures[size - 1],
                 ((s16 *)&splash->x)[1] - size, ((s16 *)&splash->y)[1] - size,
                 size * 2, size * 2);
         BattleEffectKernels_IntegrateVector2(splash, 60, 0x2000);

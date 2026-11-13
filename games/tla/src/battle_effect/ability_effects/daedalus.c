@@ -200,7 +200,7 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
 /// Copies 288 rows of 40 bytes, reducing each horizontal pair to one byte.
 /// The second byte, from the odd column, survives.
 /// stride: source bytes per row; destination uses half as many.
-void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride) {
+void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride) {
   s32 y = 0;
   s32 h = 288;
   s32 offset = 0;

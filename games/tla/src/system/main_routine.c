@@ -214,7 +214,7 @@ void MainRoutine_Run(s32 mode) {
     gMainRoutineWork.scene = (s32)&SceneId_Title;
     gMainRoutineWork.entrance = 8;
   } else {
-    Func_080ad090();
+    MainRoutineWork_InitializeDefaultsFar();
     gMainRoutineWork.scene = (s32)&SceneId_Title;
     gMainRoutineWork.entrance = 1;
   }
@@ -264,7 +264,7 @@ void MainRoutine_Run(s32 mode) {
     }
 
     Func_080c9c38(gMainRoutineWork.scene, GameFlag_Test(0x109));
-    Scene_ResolveInteractionResult();
+    Scene_ChooseMusic();
     if (!GameFlag_Test(0x109)) {
       if (GameFlag_Test(0x11a) || GameFlag_Test(0x11b))
         GameFlag_ClearBit(0x11a);

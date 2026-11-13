@@ -757,7 +757,7 @@ struct Model;
 struct StripQuad;
 
 void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);
-void Camera_ApplyPhasedDelta(void); // the camera's sway
+void BattleCamera_ApplyPhasedDelta(void); // the camera's sway
 
 extern char ResourceId_EmberStreakSheet;
 extern char ResourceId_CometSheetB;
@@ -854,7 +854,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   work->cameraDelta = 0;
   work->cameraPhase = 0;
-  Task_Add(Camera_ApplyPhasedDelta, 0x480);
+  Task_Add(BattleCamera_ApplyPhasedDelta, 0x480);
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
@@ -1014,7 +1014,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
   HeapSlot_Release(188);
   HeapSlot_Release(104);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Task_Remove(Camera_ApplyPhasedDelta);
+  Task_Remove(BattleCamera_ApplyPhasedDelta);
   BattleEffect_EndCanvasLayer();
 }
 #undef SLOT_BLITTER

@@ -38,9 +38,9 @@ s32 Func_02000330(void) {
     goto L_02008400;
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner,
-                            (((FIELD_AT(v_r5, s32, 8) >> 20) << 4) + 8),
-                            (((FIELD_AT(v_r5, s32, 16) >> 20) << 4) + 8));
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner,
+                          (((FIELD_AT(v_r5, s32, 8) >> 20) << 4) + 8),
+                          (((FIELD_AT(v_r5, s32, 16) >> 20) << 4) + 8));
   Sound_Play(229);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   v_r5 = (s32)&MsgTrialRoadGiveUpPrompt;
@@ -75,9 +75,9 @@ void Func_02000428(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner,
-                            ((leader->x >> 20) << 4) + 8,
-                            ((leader->z >> 20) << 4) + 8);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner,
+                          ((leader->x >> 20) << 4) + 8,
+                          ((leader->z >> 20) << 4) + 8);
   TrialRoad_Idle();
   found = Func_020000fc(0);
   if (found != 0)
@@ -624,8 +624,8 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   Event_Wait(6);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x4ccc, 0x3333);
-  Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, dx << 3,
-                                     dz << 3);
+  Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, dx << 3,
+                                 dz << 3);
   Event_Wait(24);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   Script_WaitForEventTimeout(object);

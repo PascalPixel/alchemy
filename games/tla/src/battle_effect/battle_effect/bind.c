@@ -11,7 +11,7 @@
 
 /// Turns the background canvas into a blue ramp, row by row from the top, each
 /// column starting after its own random delay.
-void Graphics_ConvertBackgroundToBlueRamp(void) {
+void BattleEffect_ConvertBackgroundToBlueRamp(void) {
   s32 i, x, y, row, end, speed;
   s32 red, green, blue;
   u16 color;
@@ -239,7 +239,8 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
                   from->velocityY + k * (to->velocityY - from->velocityY) / 24;
 
               draw[0](canvas,
-                      work->sheet + Data_08197424[size - 1] + FLARE_SHEET,
+                      work->sheet + gBattleEffect_FlarePictures[size - 1] +
+                          FLARE_SHEET,
                       x - size, y - size, size * 2, size * 2);
             }
           }
@@ -375,7 +376,8 @@ void BattleEffect_RunTriangleStrike(struct BattleEffectArgument *effect) {
                   from->velocityY + k * (to->velocityY - from->velocityY) / 24;
 
               draw[0](canvas,
-                      work->sheet + Data_08197424[size - 1] + FLARE_SHEET,
+                      work->sheet + gBattleEffect_FlarePictures[size - 1] +
+                          FLARE_SHEET,
                       x - size, y - size, size * 2, size * 2);
             }
           }

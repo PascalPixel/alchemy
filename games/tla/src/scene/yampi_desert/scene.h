@@ -69,7 +69,7 @@ s32 Func_020041e0(struct Actor *object);
 void Func_020004e0(void);
 void Func_02000918(u16 *list);
 void Func_0200095c(u16 *list);
-void Actor_SetAngleToward(s32 id, s32 target, s32 flags);
+void Actor_FaceActorById(s32 id, s32 target, s32 flags);
 void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
 void Camera_FollowActor(s32 id, s32 mode);
 void Actor_WatchAndSetScript(s32 id, s32 target);
@@ -80,7 +80,7 @@ void Func_02003fc8(struct Actor *object);
 void Sound_Play(s32 cue);
 extern struct Actor *gData_0200480c;
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02003fe0(struct Actor *object, s32 x, s32 y, s32 z);
@@ -89,7 +89,7 @@ void Actor_ArmCallbackAndRefresh(s32 actor, s32 angle);
 void Func_02004138(s32 mode);
 void Camera_SetSpeedParameters(s32 a, s32 b);
 void Camera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
-void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
+void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
 void Actor_Stop(s32 id);
 void Func_020021d4(void);
 void Func_02002180(void);
@@ -135,7 +135,7 @@ static inline void Scene_CamBounds(s32 x, s32 a, s32 z, s32 b) {
 }
 
 static inline void Scene_SetPositionAndCommit(s32 id, s32 x, s32 z) {
-  Actor_SetPositionAndCommit(id, x, z);
+  Actor_MoveToAndWaitById(id, x, z);
 }
 
 static inline void Scene_Call4178(s32 a, s32 b, s32 c) {
@@ -143,7 +143,7 @@ static inline void Scene_Call4178(s32 a, s32 b, s32 c) {
 }
 
 static inline void Scene_SetPositionAndReset(s32 id, s32 x, s32 z) {
-  Actor_SetPositionAndReset(id, x, z);
+  Actor_WalkToAndWaitById(id, x, z);
 }
 
 #endif

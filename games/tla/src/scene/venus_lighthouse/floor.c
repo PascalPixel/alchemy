@@ -53,7 +53,7 @@ extern void
 Actor_SetPartAttribute__floor(struct VenusActor *object,
                               s32 value) __asm__("Actor_SetPartAttribute");
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Func_02001b2c(struct VenusActor *object, s32 mode);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
@@ -107,7 +107,7 @@ void Func_020006ac(void) {
     Actor_GetById__floor(leader)->selectFlags &= ~1;
     z = 238;
   }
-  Actor_SetPositionAndReset(leader, actor->xPixel, z * 4);
+  Actor_WalkToAndWaitById(leader, actor->xPixel, z * 4);
   Event_Wait(1);
   Actor_GetById__floor(leader)->selectFlags |= 1;
   Event_Wait(20);
@@ -348,7 +348,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void Venus_ObjWalk(s32 actor, s32 x, s32 z) {
-  Actor_SetPositionAndReset(actor, x, z);
+  Actor_WalkToAndWaitById(actor, x, z);
 }
 
 static inline void Venus_ObjTurn(s32 actor, s32 angle, s32 frames) {
@@ -356,7 +356,7 @@ static inline void Venus_ObjTurn(s32 actor, s32 angle, s32 frames) {
 }
 
 static inline void Venus_ObjWalk2(s32 actor, s32 x, s32 z) {
-  Actor_ResetAndSetPositionInMode2(actor, x, z);
+  Actor_WalkToById(actor, x, z);
 }
 
 static inline void Venus_Jump(s32 actor, s32 height, s32 frames) {
@@ -380,7 +380,7 @@ static inline void Venus_ObjSpeed(s32 actor, s32 speed, s32 acceleration) {
 }
 
 static inline void Venus_ObjCommit(s32 actor, s32 x, s32 z) {
-  Actor_CommitPositionAndActivate(actor, x, z);
+  Actor_WalkByAndWaitById(actor, x, z);
 }
 
 static inline void Venus_ObjEffectSet(s32 actor, s32 value) {

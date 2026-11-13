@@ -78,10 +78,10 @@ Event_AskYesNoWithActorAnimation:
 	.thumb_func
 Actor_GetById:
 	overlay_veneer Actor_GetByIdFar
-	.global Actor_ResetAndSetPositionInMode2
+	.global Actor_WalkToById
 	.thumb_func
-Actor_ResetAndSetPositionInMode2:
-	overlay_veneer Actor_ResetAndSetPositionInMode2Far
+Actor_WalkToById:
+	overlay_veneer Actor_WalkToByIdFar
 	.global Actor_SetHorizontalPositionWithTerrain
 	.thumb_func
 Actor_SetHorizontalPositionWithTerrain:

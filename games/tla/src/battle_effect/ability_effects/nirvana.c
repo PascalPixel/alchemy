@@ -207,7 +207,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
   scrollSpeed = 0;
   cueTimer = 0;
   user = GetBattleObjectSlotFar(effect->actor)->object;
-  Actor_SetAnimationSpeedFar(user, 48);
+  Actor_SelectAnimationFar(user, 48);
 
   for (frame = 0; frame != 107; frame++) {
     EffectPosition_ProjectScaledBattler(effect->actor, &userPosition);
@@ -311,7 +311,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
     wait(1);
   }
 
-  Actor_SetAnimationSpeedFar(user, 16);
+  Actor_SelectAnimationFar(user, 16);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();

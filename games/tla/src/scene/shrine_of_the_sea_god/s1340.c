@@ -80,7 +80,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 void Map_SetScreenShake(s32 a, s32 b, s32 c);
-void Map_WaitForShakeToSettle(void);
+void MapGrid_WaitForShakeToSettle(void);
 s32 Math_Sine(s32 angle);
 void Task_RemoveFar(void (*func)(void));
 
@@ -95,7 +95,7 @@ void Func_02001474(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 408, 328);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 408, 328);
   Func_02001340(leader, stone);
   ShrineOfTheSeaGod_BlendStart(0, 50, 3, 1, 24, 70);
   GameFlag_SetBit(0x230);
@@ -143,7 +143,7 @@ void Func_02001474(void) {
     i++;
     wait(1);
   }
-  Map_WaitForShakeToSettle();
+  MapGrid_WaitForShakeToSettle();
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
   leader->layer = 0;
   wait(10);
@@ -175,7 +175,7 @@ void Func_020016d8(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 328, 216);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 328, 216);
   Func_02001340(leader, pillar);
   Map_CopyCellAttributeRect(0, 0, 3, 1, 19, 13);
   Map_CopyCellAttributeRect(40, 0, 2, 1, 19, 33);
@@ -192,14 +192,14 @@ void Func_020016d8(void) {
   leader->motionFlags = 0;
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x9999, 0x1999);
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 328, 224);
+  Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, 328, 224);
   ShrineOfTheSeaGod_ObjCommit(gMainRoutineWork.currentOwner, 321, 256);
   Actor_SetHorizontalPositionWithTerrain(21, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(22, 0, 0);
   ShrineOfTheSeaGod_ObjCommit(gMainRoutineWork.currentOwner, 321, 320);
   ShrineOfTheSeaGod_ObjCommit(gMainRoutineWork.currentOwner, 321, 400);
   ShrineOfTheSeaGod_ObjCommit(gMainRoutineWork.currentOwner, 321, 480);
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 321, 536);
+  Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, 321, 536);
   Sound_Play(161);
   Actor_SetSpritePriority(9, 2);
   Actor_GetById(9)->priorityFlags |= 2;
@@ -233,8 +233,8 @@ void Func_020018bc(void) {
   Func_02001658(leader, 2);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x9999, 0x1999);
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 406, 360);
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 400, 392);
+  Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, 406, 360);
+  Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, 400, 392);
   Sound_Play(161);
   Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
@@ -523,7 +523,7 @@ void Func_02002384(void) {
   FieldCamera_GetActor()->motionFlags = off;
   Camera_MoveWithinMapBounds(480 << 16, 32 << 16, 340 << 16, 1);
   Func_02003ac8();
-  Actor_SetAngleToward(15, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(15, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmoteById(15, 0x100, 40);
   Actor_SetSpritePriority(15, 1);
   Actor_GetById(15)->motionFlags = off;
@@ -545,7 +545,7 @@ void Func_02002430(void) {
   FieldCamera_GetActor()->motionFlags = off;
   Camera_MoveWithinMapBounds(564 << 16, 32 << 16, 344 << 16, 1);
   Func_02003ac8();
-  Actor_SetAngleToward(15, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(15, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmoteById(15, 0x100, 40);
   Actor_SetSpritePriority(15, 1);
   Actor_GetById(15)->motionFlags = off;
@@ -583,7 +583,7 @@ void Func_020024e4(void) {
   ShrineOfTheSeaGod_ObjSpeed(14, 0x19999, 0xcccc);
   ShrineOfTheSeaGod_ObjWalk(14, 328, 568);
   ShrineOfTheSeaGod_ObjWalk(14, 328, 496);
-  Actor_SetPositionAndReset(14, 280, 432);
+  Actor_WalkToAndWaitById(14, 280, 432);
   Actor_Stop(gMainRoutineWork.currentOwner);
   wait(1);
   angle = 0x4000;
@@ -615,7 +615,7 @@ void Func_020025fc(void) {
     ShrineOfTheSeaGod_ObjSpeed(14, 0x19999, 0xcccc);
     ShrineOfTheSeaGod_ObjWalk(14, 380, 552);
     ShrineOfTheSeaGod_ObjWalk(14, 264, 552);
-    Actor_SetPositionAndReset(14, 264, 540);
+    Actor_WalkToAndWaitById(14, 264, 540);
     Actor_Stop(gMainRoutineWork.currentOwner);
     wait(1);
     Actor_SetHorizontalPositionWithTerrain(14, 0, 0);

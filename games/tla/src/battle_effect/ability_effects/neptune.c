@@ -9,9 +9,9 @@ extern char ResourceId_SeaSerpentTiles;
 extern char ResourceId_DuskCloudsBackdrop;
 extern char ResourceId_ParticleSpritesD;
 extern char ResourceId_BlueFlameSheet;
-extern struct Scale Data_08196e8c; // the serpent's scale
-extern u16 Data_08197424[];        // the sparkle cells by size
-extern s32 Data_08198aec[];        // the spray's four gravities
+extern struct Scale Data_08196e8c;        // the serpent's scale
+extern u16 gBattleEffect_FlarePictures[]; // the sparkle cells by size
+extern s32 Data_08198aec[];               // the spray's four gravities
 
 void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
                                         s32 width);
@@ -248,8 +248,9 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
           s32 r = (i & 3) + 5;
 
           glintSize = r * 2;
-          draw[0](canvas, work->sheet + Data_08197424[r - 1] + 0x4e20, fx - r,
-                  fy - r, glintSize, glintSize);
+          draw[0](canvas,
+                  work->sheet + gBattleEffect_FlarePictures[r - 1] + 0x4e20,
+                  fx - r, fy - r, glintSize, glintSize);
           glint->x += glint->velocityX;
           glint->y += glint->velocityY;
         }
@@ -280,7 +281,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     }
     if (frame > 221) {
       for (i = 0; i != 64; i++) {
-        u16 *sparkCells = Data_08197424;
+        u16 *sparkCells = gBattleEffect_FlarePictures;
         s32 r = 1;
 
         if (frame >= i / 2 + 222) {
@@ -330,8 +331,8 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
       z = beamFrame / 2 + 1;
       if (z > 4)
         z = 4;
-      draw[1](canvas, work->sheet + Data_08197424[z - 1] + 0x4e20, 108 - z,
-              60 - z, z * 2, z * 2);
+      draw[1](canvas, work->sheet + gBattleEffect_FlarePictures[z - 1] + 0x4e20,
+              108 - z, 60 - z, z * 2, z * 2);
     }
     if (frame >= 192 && frame < 200) {
       s32 z;
@@ -339,8 +340,8 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
       z = (frame - 192) / 2 + 3;
       if (z > 6)
         z = 6;
-      draw[1](canvas, work->sheet + Data_08197424[z - 1] + 0x4e20, 108 - z,
-              60 - z, z * 2, z * 2);
+      draw[1](canvas, work->sheet + gBattleEffect_FlarePictures[z - 1] + 0x4e20,
+              108 - z, 60 - z, z * 2, z * 2);
     }
     if (frame > 199) {
       s32 z;
@@ -349,14 +350,15 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
       z = u / 4 + 5;
       if (z > 8)
         z = 8;
-      draw[1](canvas, work->sheet + Data_08197424[z - 1] + 0x4e20, 108 - z,
-              60 - z, z * 2, z * 2);
+      draw[1](canvas, work->sheet + gBattleEffect_FlarePictures[z - 1] + 0x4e20,
+              108 - z, 60 - z, z * 2, z * 2);
       if (frame <= 213) {
         z = u / 4 + 1;
         if (z > 4)
           z = 4;
-        draw[1](canvas, work->sheet + Data_08197424[z - 1] + 0x4e20, 100 - z,
-                52 - z, z * 2, z * 2);
+        draw[1](canvas,
+                work->sheet + gBattleEffect_FlarePictures[z - 1] + 0x4e20,
+                100 - z, 52 - z, z * 2, z * 2);
       }
     }
     if (frame >= 214 && frame < 222) {

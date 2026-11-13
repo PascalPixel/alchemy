@@ -122,7 +122,7 @@ void IwramSoundRenderVBlank(s32) __attribute__((long_call));
 
 void SoundDriver_VSyncRefresh(void);
 
-void Fade_Update(void);
+void ScreenFade_Update(void);
 
 extern u8 IwramSoundMixWorkspace[];
 

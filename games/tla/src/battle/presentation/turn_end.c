@@ -19,7 +19,7 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
   return 0;
 }
 
-s32 BattleUnit_CountDownAttackModifier(s32 unitId) {
+s32 BattleUnit_CountDownAttackStage(s32 unitId) {
   struct BattleUnit *state = Unit_Get__f11f66c(unitId);
 
   if (state->attackTurns != 0) {
@@ -41,7 +41,7 @@ s32 BattleUnit_CountDownAttackModifier(s32 unitId) {
   return 0;
 }
 
-s32 BattleUnit_CountDownDefenseModifier(s32 unitId) {
+s32 BattleUnit_CountDownDefenseStage(s32 unitId) {
   struct BattleUnit *state = Unit_Get__f11f66c(unitId);
 
   if (state->defenseTurns != 0) {
@@ -60,7 +60,7 @@ s32 BattleUnit_CountDownDefenseModifier(s32 unitId) {
   return 0;
 }
 
-s32 BattleUnit_CountDownResistanceModifier(s32 unitId) {
+s32 BattleUnit_CountDownResistanceStage(s32 unitId) {
   struct BattleUnit *state = Unit_Get__f11f66c(unitId);
 
   if (state->resistanceTurns != 0) {
@@ -150,7 +150,7 @@ s32 BattleUnit_CountDownSleep(s32 unitId) {
   return 0;
 }
 
-s32 Battle_AdvanceCounterAndCheckChance(s32 id) {
+s32 BattleUnit_CountDownPsynergySeal(s32 id) {
   s32 next;
   s32 expired;
   u8 remaining;
@@ -237,7 +237,7 @@ s32 BattleUnit_CountDownReflect(s32 id) {
   return 0;
 }
 
-s32 BattleUnit_CountDownAgilityModifier(s32 id) {
+s32 BattleUnit_CountDownAgilityStage(s32 id) {
   struct BattleUnit *unit = Unit_Get__f11f66c(id);
   u8 *value = &unit->agilityTurns;
   if (*value != 0) {
@@ -326,8 +326,7 @@ s32 Func_08124cc4(s32 side) {
   if (i < list->count) {
     timedEntry = list->entries;
     do {
-      if (timedEntry->turns > 0 &&
-          BattleParty_IsUnitListed(timedEntry->unitId) &&
+      if (timedEntry->turns > 0 && BattleUnit_IsListed(timedEntry->unitId) &&
           ((struct BattleUnit *)Unit_Get__f11f66c(timedEntry->unitId))->hp !=
               0) {
         timedEntry->turns--;
@@ -346,7 +345,7 @@ s32 Func_08124cc4(s32 side) {
       if (entry->turns == 0) {
         u8 id = entry->unitId;
 
-        if (BattleParty_IsUnitListed(id)) {
+        if (BattleUnit_IsListed(id)) {
           u8 element;
 
           result = 2;
@@ -358,16 +357,16 @@ s32 Func_08124cc4(s32 side) {
           BattleEvent_Push(10, 0);
           BattleEvent_Push(4, (u32)&MsgDjinnIsSet);
           BattleEvent_Push(11, id);
-          if (BattleParty_IsUnitListed(id)) {
+          if (BattleUnit_IsListed(id)) {
             Actor_SetMode((struct Actor *)BattleObject_Get(id)->object, 3);
-            Actor_SetAnimationSpeedFar(
+            Actor_SelectAnimationFar(
                 (struct Actor *)BattleObject_Get(id)->object, 32);
           }
           element = entry->element;
           Djinn_SetFar(id, element, entry->index);
           DjinnRecovery_RemoveFar(id, entry->element, entry->index);
           Unit_CalculateFar(id);
-          if (BattleParty_IsUnitListed(id))
+          if (BattleUnit_IsListed(id))
             Func_08127308(id, element, 3, 0);
           BattlePlayback_WaitForReady();
         }
@@ -475,9 +474,9 @@ void Battle_ProcessTurnEnd(void) {
             BattleEvent_Push(4, (u32)&MsgDjinnIsSet);
             BattleEvent_Push(11, unitId);
             Sound_PlayFar(212);
-            if (BattleParty_IsUnitListed(unitId)) {
+            if (BattleUnit_IsListed(unitId)) {
               Actor_SetMode(BattleObject_Get(unitId)->object, 3);
-              Actor_SetAnimationSpeedFar(
+              Actor_SelectAnimationFar(
                   (struct Actor *)BattleObject_Get(unitId)->object, 32);
             }
             element = expiredEntry->element;
@@ -485,7 +484,7 @@ void Battle_ProcessTurnEnd(void) {
             DjinnRecovery_RemoveFar(unitId, expiredEntry->element,
                                     expiredEntry->index);
             Unit_CalculateFar(unitId);
-            if (BattleParty_IsUnitListed(unitId))
+            if (BattleUnit_IsListed(unitId))
               Func_08127308(unitId, element, 3, 0);
             BattlePlayback_WaitForReady();
           }
@@ -570,17 +569,16 @@ void Battle_ProcessTurnEnd(void) {
             BattleMessage_WaitForAdvance();
           }
         }
-        ANNOUNCE_END(BattleUnit_CountDownAgilityModifier, MSG_AGI_NORMAL);
-        ANNOUNCE_END(BattleUnit_CountDownAttackModifier, (s32)&MsgAtkNormal);
-        ANNOUNCE_END(BattleUnit_CountDownDefenseModifier, (s32)&MsgDefNormal);
-        ANNOUNCE_END(BattleUnit_CountDownResistanceModifier,
-                     (s32)&MsgResNormal);
+        ANNOUNCE_END(BattleUnit_CountDownAgilityStage, MSG_AGI_NORMAL);
+        ANNOUNCE_END(BattleUnit_CountDownAttackStage, (s32)&MsgAtkNormal);
+        ANNOUNCE_END(BattleUnit_CountDownDefenseStage, (s32)&MsgDefNormal);
+        ANNOUNCE_END(BattleUnit_CountDownResistanceStage, (s32)&MsgResNormal);
         ANNOUNCE_END(BattleUnit_CountDownDelusion, MSG_CURE_DELUSION);
         ANNOUNCE_END(BattleUnit_CountDownConfusion, MSG_CONSCIOUS);
         ANNOUNCE_END(BattleUnit_CountDownCharm, (s32)&MsgConscious2);
         ANNOUNCE_END_POSE(BattleUnit_CountDownStun, MSG_CURE_STUN);
         ANNOUNCE_END_POSE(BattleUnit_CountDownSleep, MSG_WAKES);
-        ANNOUNCE_END(Battle_AdvanceCounterAndCheckChance, MSG_CURE_SEAL);
+        ANNOUNCE_END(BattleUnit_CountDownPsynergySeal, MSG_CURE_SEAL);
         ANNOUNCE_END(sub_08124af8, (s32)&MsgRefrainEnd);
         ANNOUNCE_END(BattleUnit_CountDownReflect, MSG_REFLECT_END);
       }
@@ -809,7 +807,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
         BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
         Sound_PlayFar(212);
         Actor_SetMode(BattleObject_Get(unitId)->object, 3);
-        Actor_SetAnimationSpeedFar(
+        Actor_SelectAnimationFar(
             (struct Actor *)BattleObject_Get(unitId)->object, 32);
         Func_08127308(unitId, i, 2, -1);
         BattlePlayback_WaitForReady();

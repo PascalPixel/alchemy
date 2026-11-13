@@ -147,7 +147,7 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
   work->actor = saved->unitId;
   actor = BattleObject_Get(plan->actorId)->object;
   Actor_SetMode(actor, 3);
-  Actor_SetAnimationSpeedFar((struct Actor *)actor, 16);
+  Actor_SelectAnimationFar((struct Actor *)actor, 16);
   QueueIoWriteDelay2(0x04000050, 0x3f40);
   Sound_PlayFar(154);
   wait(10);
@@ -171,7 +171,7 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
     count = BattleParty_ListActorIds((saved->unitId != 0) + 1, ids);
     for (i = 0; i < count; i++) {
       ReleaseBattleObjectRecords(ids[i]);
-      BattleMotion_ReleaseObjectSlotByValue(ids[i]);
+      BattleObject_ReleaseSpriteSlots(ids[i]);
     }
   }
   Iwram_CopyWordsEntry(saved, BattleObject_Get(saved->unitId), 44);
@@ -181,9 +181,9 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
     saved->buffer = Heap_AllocEwram(0x8000);
   else
     saved->buffer = Data_02018000;
-  i = ResourceSlot_LoadFar(7, saved->buffer,
-                           BattleClass_GetSprite(saved->classId),
-                           BattleClass_GetPalette(saved->classId));
+  i = SpritePictureCache_LoadFar(7, saved->buffer,
+                                 BattleClass_GetSprite(saved->classId),
+                                 BattleClass_GetPalette(saved->classId));
   if (i != 0) {
     battleObject->resource = BattleClass_GetSprite(saved->classId) + 0x7000;
     if (!single)
@@ -228,7 +228,7 @@ void Func_0811e7dc(struct Work0811e7dc *work) {
 
       record->flags = 0x20 | record->flags;
     }
-    ResourceMetadata_ReleaseSlotFar(GetMotionRecord(object, 0), 0);
+    Sprite_RemoveAnimationAtFar(GetMotionRecord(object, 0), 0);
   }
 }
 
@@ -261,7 +261,7 @@ void Func_0811e830(struct SavedBattleObj *saved) {
     BattleObject_MarkForRelease(unitId);
     BattleMotion_DestroyAllSlotObjects();
   }
-  ResourceSlot_LoadFar(7, 0, 0, 0);
+  SpritePictureCache_LoadFar(7, 0, 0, 0);
   if (saved->single) {
     ids[0] = unitId;
     ids[1] = 255;
@@ -279,7 +279,7 @@ void Func_0811e830(struct SavedBattleObj *saved) {
     for (i = 0; i < count; i++)
       BattleHighlight_SetSpriteMode(ids[i], 1);
   }
-  ObjMotRst(unitId);
+  BattleMotion_ReturnToSpot(unitId);
   object->x = object->targetX;
   object->y = object->targetY;
   object->z = object->targetZ;
@@ -365,7 +365,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
 
   object = BattleObject_Get(plan->actorId)->object;
   animation = GetMotionRecord(object, 0);
-  frames = ResourceMetadata_SumCommandLengthsFar(
+  frames = SpriteAnimation_SumCommandLengthsFar(
       animation->entries[0]->animationId, 2, 1);
   if (work.kind == 10)
     Actor_SetMode(object, 2);
@@ -378,18 +378,18 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     object = BattleObject_Get(plan->actorId2);
 
     animation = GetMotionRecord(((struct BattleObj *)object)->object, 0);
-    frames = ResourceMetadata_SumCommandLengthsFar(
+    frames = SpriteAnimation_SumCommandLengthsFar(
         animation->entries[0]->animationId, 2, 1);
     BattleMotion_ApproachTarget(
         plan->actorId2, work.actors[0], frames,
         BattleClass_GetAttackHop__presentation(
             ((struct BattleUnit *)Unit_Get(plan->actorId2))->enemyId)
             << 16);
-    Actor_SetAnimationSpeedFar(
+    Actor_SelectAnimationFar(
         (struct Actor *)((struct BattleObj *)object)->object, 16);
   }
-  Actor_SetAnimationSpeedFar(
-      (struct Actor *)BattleObject_Get(work.actor)->object, 16);
+  Actor_SelectAnimationFar((struct Actor *)BattleObject_Get(work.actor)->object,
+                           16);
 
   if ((u16)work.actors[0] <= 7)
     work.side = 1;
@@ -413,7 +413,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     BattleEvent_Push(0, plan->targetIds[0]);
     BattleEvent_Push(4, (u32)&MsgNimblyDodgesBlow);
     BattleEvent_DispatchQueued();
-    ObjMotRst(work.actors[0]);
+    BattleMotion_ReturnToSpot(work.actors[0]);
   } else {
     zoomOnCritical = 0;
     work.flags = 0;
@@ -465,10 +465,10 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
       BattleParty_ListAllUnitsAndSubmit();
       BattleCamera_SetView(0, 0, 0, 100);
     }
-    ObjMotRst(work.actors[0]);
+    BattleMotion_ReturnToSpot(work.actors[0]);
   }
   if (!saved)
-    ObjMotRst(work.actor);
+    BattleMotion_ReturnToSpot(work.actor);
   return 0;
 }
 
@@ -525,7 +525,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
     object = slot->object;
     Actor_SetMode(object, *mode);
   }
-  Actor_SetAnimationSpeedFar((struct Actor *)object, 16);
+  Actor_SelectAnimationFar((struct Actor *)object, 16);
   if (plan->targetIds[0] <= 7)
     work.side = 1;
   else
@@ -575,7 +575,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
   Actor_SetMode(object, 1);
   for (targetOrFadeIndex = 0; targetOrFadeIndex != work.count;
        targetOrFadeIndex++)
-    ObjMotRst(work.actors[targetOrFadeIndex]);
+    BattleMotion_ReturnToSpot(work.actors[targetOrFadeIndex]);
 
   unit = Unit_Get(selection->unitId);
   inventoryEntry = unit->inventory[selection->parameter];
@@ -715,7 +715,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   saved = Func_0811e3ac(plan, &work);
   object = BattleObject_Get(work.actor)->object;
   Actor_SetMode(object, ((u8 *)heap->battleWork)[0x869]);
-  Actor_SetAnimationSpeedFar((struct Actor *)object, 16);
+  Actor_SelectAnimationFar((struct Actor *)object, 16);
   Sound_PlayFar(154);
   if (mode & 2)
     Func_08127308(work.actor, plan->element, 1, 0);
@@ -765,7 +765,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
       BattlePlayback_WaitForReady();
     Actor_SetMode(object, 1);
     for (targetIndex = 0; targetIndex != work.count; targetIndex++)
-      ObjMotRst(work.actors[targetIndex]);
+      BattleMotion_ReturnToSpot(work.actors[targetIndex]);
   }
   return 0;
 }
@@ -876,7 +876,7 @@ void BattleMotion_ShowDowned(s32 id) {
     }
     wait(4);
     BattleActor_RemoveFromLists(id);
-    Map_RenderAllAnimatedTilePicturesFar(recs, n); // Erase pixel by pixel.
+    SpriteDissolve_RunManyFar(recs, n); // Erase pixel by pixel.
     BattleObject_MarkForRelease(id);
   }
 }

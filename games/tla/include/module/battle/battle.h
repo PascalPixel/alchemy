@@ -287,7 +287,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *action, s32 delay);
 
 s32 AutoBattle_RunAction(s16 *action);
 
-s32 Battle_FindTaggedSlotByValue(u32 id);
+s32 Battle_FindUnitPlace(u32 id);
 
 void Battle_ProcessTurnEnd(void);
 
@@ -295,7 +295,7 @@ void Battle_AwardSpoils(void);
 
 extern const s8 gData_081287c8[];
 
-s32 ResourceSlot_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
+s32 SpritePictureCache_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
 
 extern const u16 gData_081287d4[];
 extern const u16 gData_081287e2[];

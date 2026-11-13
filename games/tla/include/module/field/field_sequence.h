@@ -378,7 +378,7 @@ extern char ResourceId_BlizzardBackdrop;
 /// encounters that use it as (zone << 4) + slot, ended by 0.
 extern const s16 Data_080efd1c[];
 
-void Func_08020110(void);
+void WorldMap_InitializePerspectiveFar(void);
 void MapGrid_LoadMapFar(s32 map);
 
 void Map_UpdateCurrentTileBlockFar(void);

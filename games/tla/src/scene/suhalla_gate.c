@@ -171,7 +171,7 @@ void Func_020003ac(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWaahhhItS);
-  Actor_ResetAndSetPositionInMode2(gMainRoutineWork.currentOwner, 472, 320);
+  Actor_WalkToById(gMainRoutineWork.currentOwner, 472, 320);
   Camera_MoveWithinMapBounds(PIXELS(456), -1, PIXELS(280), 1);
   Func_02000a30();
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
@@ -262,14 +262,14 @@ void Func_02000650(void) {
   Event_ResolvePendingActions(0);
   Actor_SetHorizontalPositionWithTerrain(8, PIXELS(472), PIXELS(480));
   Event_Wait(16);
-  Actor_SetAngleToward(gMainRoutineWork.currentOwner, 8, 0);
+  Actor_FaceActorById(gMainRoutineWork.currentOwner, 8, 0);
   Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 0x100, 0);
   Camera_FollowActor(8, 1);
   Func_02000a30();
   Actor_Jump(8, 4, 0);
   Event_Wait(16);
   Actor_Jump(8, 4, 0);
-  Actor_SetPositionAndCommit(8, 480, 472);
+  Actor_MoveToAndWaitById(8, 480, 472);
   Event_Wait(30);
   Actor_Jump(8, 2, 0);
   Actor_MoveToAndWait(8, 496, 464);
@@ -287,7 +287,7 @@ void Func_0200071c(void) {
   Event_ResolvePendingActions(0);
   Actor_SetHorizontalPositionWithTerrain(8, PIXELS(472), PIXELS(480));
   Event_Wait(16);
-  Actor_SetAngleToward(gMainRoutineWork.currentOwner, 8, 0);
+  Actor_FaceActorById(gMainRoutineWork.currentOwner, 8, 0);
   x = 0x100;
   z = 0;
   Actor_ShowEmoteById(gMainRoutineWork.currentOwner, x, z);
@@ -299,7 +299,7 @@ void Func_0200071c(void) {
   Actor_Jump(8, 4, 0);
   Event_Wait(16);
   Actor_Jump(8, 4, 0);
-  Actor_SetPositionAndCommit(8, 488, 480);
+  Actor_MoveToAndWaitById(8, 488, 480);
   Event_Wait(30);
   Actor_Jump(8, 2, 0);
   Actor_MoveToAndWait(8, 504, 472);
@@ -358,7 +358,7 @@ void Func_020008cc(void) {
   Actor_WaitForMoveById(16);
   Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
   Event_Wait(10);
-  Actor_CommitPositionAndActivate(gMainRoutineWork.currentOwner, 16, 0);
+  Actor_WalkByAndWaitById(gMainRoutineWork.currentOwner, 16, 0);
   Event_End();
 }
 

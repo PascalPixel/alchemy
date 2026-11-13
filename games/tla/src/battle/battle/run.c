@@ -368,12 +368,11 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
         goto won;
       }
       if (battle->pendingUnit != -1 &&
-          Battle_FindTaggedSlotByValue(battle->pendingTag) != -1) {
+          Battle_FindUnitPlace(battle->pendingTag) != -1) {
         battle->actions[i].unitId = battle->pendingUnit;
         battle->actions[i].command = 9;
         battle->actions[i].parameter = 0;
-        battle->actions[i].target =
-            Battle_FindTaggedSlotByValue(battle->pendingTag);
+        battle->actions[i].target = Battle_FindUnitPlace(battle->pendingTag);
         battle->actions[i].range = 1;
         i--;
       }
@@ -477,7 +476,7 @@ party_lost:
     if (enemyGroup != 76) {
       Sound_PlayFar(59);
       MessageArgument_ClearAllFar();
-      if (BattleParty_PrepareActiveOwners(0) == 1)
+      if (BattleParty_PrepareMembers(0) == 1)
         BattleMessage_ShowAndWaitFar((s32)MsgGoesDownInDefeat);
       else
         BattleMessage_ShowAndWaitFar((s32)MsgPartyDefeated);
@@ -509,7 +508,7 @@ finished:
   return result;
 }
 
-s32 BattleParty_PrepareActiveOwners(u16 *owners) {
+s32 BattleParty_PrepareMembers(u16 *owners) {
   s32 limit;
   s32 count;
   s32 index;
@@ -611,7 +610,7 @@ s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
   }
   if (sideMask & BATTLE_SIDE_PARTY) {
     base = activeMembers;
-    activeCount = BattleParty_PrepareActiveOwners(base);
+    activeCount = BattleParty_PrepareMembers(base);
     if (livingCount < activeCount) {
       member = base;
       remaining = activeCount;
@@ -677,7 +676,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   }
   if (sideMask & BATTLE_SIDE_PARTY) {
     base = members;
-    count = BattleParty_PrepareActiveOwners(base);
+    count = BattleParty_PrepareMembers(base);
     count += BattleParty_PrepareReserveOwners(base + count);
     if (livingCount < count) {
       member = base;

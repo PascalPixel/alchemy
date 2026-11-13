@@ -210,7 +210,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     }
   }
   casterValue = caster[18];
-  Actor_SetAnimationSpeedFar(caster, 0);
+  Actor_SelectAnimationFar(caster, 0);
   caster[9] = 0;
   caster[10] = 0;
   caster[11] = 0;
@@ -415,7 +415,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         }
         IME_RESTORE(ime, saved);
       }
-      Actor_SetAnimationSpeedFar(caster, 128);
+      Actor_SelectAnimationFar(caster, 128);
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       work->transferMode = 3;
       work->transferValue = 0x06060606;

@@ -38,11 +38,11 @@ struct Actor *Actor_GetById(u32 objectId);
 void Actor_SetHorizontalPositionWithTerrain(s32 actorId, s32 x, s32 z);
 void Actor_SetSpeedParameters(s32 actorId, s32 speed, s32 acceleration);
 void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
-void Actor_OffsetPositionAndResetMotion(s32 actorId, s32 dx, s32 dz);
-void Actor_ResetAndSetPositionInMode2(s32 actorId, s32 x, s32 z);
+void Actor_SetDestinationOffsetById(s32 actorId, s32 dx, s32 dz);
+void Actor_WalkToById(s32 actorId, s32 x, s32 z);
 void Actor_OffsetPositionAndReset(u32 objectId, s32 x_offset, s32 z_offset);
 void Actor_ArmCallback(s32 actorId, s32 angle, s32 frames);
-void Actor_SetAngleToward(s32 actorId, s32 target, s32 frames);
+void Actor_FaceActorById(s32 actorId, s32 target, s32 frames);
 s32 Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames);
 void FieldEffect_SetAttached(s32 actorId, s32 effect);
 void Camera_SetSpeedParameters(s32 speed, s32 acceleration);
@@ -61,7 +61,7 @@ struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Map_PlayMapEdit(const void *steps, s32 x, s32 y);
 void ObjectEvent_PlaceOnGround(s32 object, s32 x, s32 z);
 void Actor_CenterOnColumn(u32 objectId, s32 action, s32 z_offset);
-void Actor_CommitPositionAndActivate(u32 objectId, s32 x_offset, s32 z_offset);
+void Actor_WalkByAndWaitById(u32 objectId, s32 x_offset, s32 z_offset);
 void Event_ShowMessageThenWait(s32 speaker, s32 flags, s32 frames);
 void Actor_ConfigureSpriteColor(s32 actorId, s32 value);
 void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 dst_x, s32 dst_y,
@@ -70,8 +70,8 @@ void Func_0802b450(s32 sourceX, s32 sourceY, s32 destinationX, s32 destinationY,
                    s32 width, s32 height);
 void BattleEffect_ApplyColorToSourceBuffer(s32 value, s32 mode);
 void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode);
-void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
-void Actor_SetPositionAndReset(s32 actorId, s32 x, s32 z);
+void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
+void Actor_WalkToAndWaitById(s32 actorId, s32 x, s32 z);
 void Battle_ShowPairedUnitWorkAndWait(s32 speaker, s32 x, s32 y, s32 arg,
                                       s32 extra, s32 otherSpeaker, s32 otherX,
                                       s32 otherY, s32 otherArg, s32 otherExtra,
@@ -127,7 +127,7 @@ void WorldMap_StartZoom(s32 zoom, s32 frames);
 void WindowColor_Apply(s32 phase, s32 brightness);
 void Field_RequestDjinnBattle(s32 flag, s32 no);
 void Event_PrepareObjectAndApplyValue(s32 unit, s32 announce);
-void Map_WaitForShakeToSettle(void);
+void MapGrid_WaitForShakeToSettle(void);
 s32 GetMapCellCollision(s32 layer, s32 x, s32 y);
 void Actor_SetActionById(s32 actorId, s32 steps);
 void Actor_ShowItemIconById(s32 actorId, s32 item);
@@ -181,12 +181,12 @@ static inline void Actor_SetDestination(s32 actorId, s32 x, s32 z) {
 /// Moves an actor some distance from where it stands, without waiting
 /// for it.
 static inline void Actor_SetDestinationOffset(s32 actorId, s32 dx, s32 dz) {
-  Actor_OffsetPositionAndResetMotion(actorId, dx, dz);
+  Actor_SetDestinationOffsetById(actorId, dx, dz);
 }
 
 /// Walks an actor to a point; the event goes on while it walks.
 static inline void Actor_WalkTo(s32 actorId, s32 x, s32 z) {
-  Actor_ResetAndSetPositionInMode2(actorId, x, z);
+  Actor_WalkToById(actorId, x, z);
 }
 
 /// Walks an actor some distance from where it stands, without waiting
@@ -202,7 +202,7 @@ static inline void Actor_FaceDirection(s32 actorId, s32 facing, s32 frames) {
 
 /// Has one actor look at another at once, then pauses the event.
 static inline void Actor_FaceActor(s32 actorId, s32 target, s32 frames) {
-  Actor_SetAngleToward(actorId, target, frames);
+  Actor_FaceActorById(actorId, target, frames);
 }
 
 /// Pops an emote bubble up over an actor, then lets frames pass before
@@ -309,7 +309,7 @@ static inline void Actor_CenterAndWalk(s32 actorId, s32 priority, s32 dz) {
 
 /// Walks an actor some distance and waits until it is there.
 static inline void Actor_WalkByAndWait(s32 actorId, s32 dx, s32 dz) {
-  Actor_CommitPositionAndActivate(actorId, dx, dz);
+  Actor_WalkByAndWaitById(actorId, dx, dz);
 }
 
 /// Shows a line of dialogue, then pauses before the event goes on.
@@ -353,12 +353,12 @@ static inline void PaletteFade_ApplyTarget(s32 value, s32 mode) {
 
 /// Moves an actor to a point in the pose it has and waits for it.
 static inline void Actor_MoveToAndWait(s32 actorId, s32 x, s32 z) {
-  Actor_SetPositionAndCommit(actorId, x, z);
+  Actor_MoveToAndWaitById(actorId, x, z);
 }
 
 /// Walks an actor to a point and waits for it, then stands it still.
 static inline void Actor_WalkToAndWait(s32 actorId, s32 x, s32 z) {
-  Actor_SetPositionAndReset(actorId, x, z);
+  Actor_WalkToAndWaitById(actorId, x, z);
 }
 
 /// Has two actors speak at once, each window placed by the event.

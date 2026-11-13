@@ -1279,7 +1279,7 @@ void Func_08143354(void) {
 // keeps in its work to the hardware.
 
 /// Writes the window, display and blend registers, all at once.
-void Graphics_ApplyWindowBlendRegisters(void) {
+void BattleEffect_ApplyWindowBlendRegisters(void) {
   /* FAKEMATCH(pin): the work pointer kept in r2, so the registers' address
    * takes r1; as a plain local, 31 of 55 instructions differ in tla-en. */
   register struct BattleFxWork *work asm("r2") =

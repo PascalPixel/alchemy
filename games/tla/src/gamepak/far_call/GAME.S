@@ -24,7 +24,7 @@ Unit_CalculateFar:
 	export Ability_Get, Ability_GetDirect
 	export Unit_LearnPsynergyFar, Unit_LearnPsynergy
 	export Unit_KnowsPsynergyFar, Unit_KnowsPsynergy
-	export Func_080ad090, Func_080addf0
+	export MainRoutineWork_InitializeDefaultsFar, MainRoutineWork_InitializeDefaults
 	export Unit_CheckLevelUpFar, Unit_CheckLevelUp
 	export Party_InitializeCharactersFar, Party_InitializeCharacters
 	export Unit_LevelNoOpFar, Unit_LevelNoOp

@@ -25,7 +25,7 @@ Actor_SetSingleChildFlags:
 	.global Func_020007cc
 	.thumb_func
 Func_020007cc:
-	overlay_veneer Graphics_EnableObjLayerAndCallbacksFar
+	overlay_veneer ActorSystem_SuspendProjectionAndShowSpritesFar
 	.global Func_020007d4
 	.thumb_func
 Func_020007d4:
@@ -78,10 +78,10 @@ Motion_SetModeAndWaitAnimation:
 	.thumb_func
 Motion_SetVarCbAndRefresh:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
-	.global Actor_SetAngleToward
+	.global Actor_FaceActorById
 	.thumb_func
-Actor_SetAngleToward:
-	overlay_veneer Actor_SetAngleTowardFar
+Actor_FaceActorById:
+	overlay_veneer Actor_FaceActorByIdFar
 	.global Event_SetMessageId
 	.thumb_func
 Event_SetMessageId:

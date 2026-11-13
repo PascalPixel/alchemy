@@ -43,7 +43,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   work = Ram_HeapSlots->eventWork;
   handle = 0;
   portrait = 0;
-  sprite = ObjectTable_ReadActiveValue(localId);
+  sprite = Actor_GetSpriteById(localId);
   extra = 0;
   portraitTop = 0;
   margin = 4;
@@ -201,7 +201,7 @@ void Func_080d3fb0(s32 object, s32 message) {
 
   frames = 0;
   wait(1);
-  id = ObjectTable_ReadActiveValue(object);
+  id = Actor_GetSpriteById(object);
   if (object <= 7) {
     masked = object & 0x0fff;
     if (Scene_FindActorPlacement(masked) == 0)
@@ -285,10 +285,10 @@ void Event_ShowSpeakerMessage(s32 speaker) {
 }
 
 void Event_ShowCounter(s32 a, s32 b, s32 c, s32 d) {
-  Event_ShowCounterAtPosition(a, b, c, d);
+  Event_ShowMessageAtPosition(a, b, c, d);
 }
 
-void Event_ShowCounterAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
+void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
   s32 x0 = x;
   struct EventWork *state = Ram_HeapSlots->eventWork;
   s32 py = y;
@@ -325,7 +325,7 @@ void Event_ShowCounterAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
 void ObjectTable_RunIfActive(s32 id) {
   s32 no;
 
-  no = ObjectTable_ReadActiveValue(id);
+  no = Actor_GetSpriteById(id);
   if (no != -1)
     Window_CloseMatchingIdFar(no);
 }
@@ -342,8 +342,8 @@ void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
                                       s32 secondPortraitX, s32 secondPortraitY,
                                       s32 delay) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
-  s32 firstSprite = ObjectTable_ReadActiveValue(first);
-  s32 secondSprite = ObjectTable_ReadActiveValue(second);
+  s32 firstSprite = Actor_GetSpriteById(first);
+  s32 secondSprite = Actor_GetSpriteById(second);
   s32 firstWindow;
   s32 secondWindow;
 
@@ -396,7 +396,7 @@ void Message_SetVoiceFromActor(s32 key) {
     *(s16 *)&work->speakerVoiceSound = (value = 0);
     *(s16 *)&work->speakerVoiceCountdown = value;
   } else {
-    id = Speaker_GetVoice(ObjectTable_ReadActiveValue(key));
+    id = Speaker_GetVoice(Actor_GetSpriteById(key));
     value = gData_080f330c[gMainRoutineWork.eventMode];
     *(s16 *)&work->speakerVoiceSound = id;
     *(s16 *)&work->speakerVoiceCountdown = value;

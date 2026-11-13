@@ -482,7 +482,7 @@ void Menu_OpenBackdropScreen(void) {
 
   window = menu->statusWindow;
   WindowSprite_ClearListFar(window);
-  icon = Icon_CreateWithResourceVariant(window, -8, 11);
+  icon = Icon_CreateWithResource(window, -8, 11);
   icon->active = 13;
   menu->cursor = icon;
   entry = Resource_FindFreeEntry();
@@ -580,10 +580,10 @@ struct OwnerList {
   u8 results[8];
 };
 
-s32 Djinn_ListOwnerEntries(u16 *entriesOut, s32 memberId, s32 element);
+s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 memberId, s32 element);
 
 /// For each active party member of the menu work, fills a 20-byte entry of the
-/// list with Djinn_ListOwnerEntries (owner, -1) and keeps its result byte at
+/// list with Djinn_ListUnitEntries (owner, -1) and keeps its result byte at
 /// offset 160 of the list.
 // With the owner read as the argument the two walking pointers swap r5 and
 // r6 (differ 16).
@@ -596,7 +596,7 @@ void DjinnMenu_BuildLists(struct OwnerList *list) {
     // Read unsigned (ldrh): the party's ids, as this routine's bytes load them.
     s32 owner = (u16)menu->ownerIds[i];
 
-    list->results[i] = Djinn_ListOwnerEntries(&list->entries[i], owner, -1);
+    list->results[i] = Djinn_ListUnitEntries(&list->entries[i], owner, -1);
   }
 }
 
@@ -1600,7 +1600,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
 
 #define DJINN_ENTRY_SET (-0x8000)
 
-s32 Djinn_ListOwnerEntries(u16 *entriesOut, s32 memberId, s32 element) {
+s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 memberId, s32 element) {
   struct DjinnUnit *unit = Unit_Get(memberId);
   s32 count = 0;
   s32 elementIndex;

@@ -680,9 +680,9 @@ void Func_02001460(void) {
   up = gInput.held & 0x40;
   state = &gMainRoutineWork;
   if (up)
-    Actor_SetPositionAndCommit(state->currentOwner, 264, 760);
+    Actor_MoveToAndWaitById(state->currentOwner, 264, 760);
   else
-    Actor_SetPositionAndCommit(state->currentOwner, 264, 824);
+    Actor_MoveToAndWaitById(state->currentOwner, 264, 824);
   Event_End();
 }
 
@@ -710,7 +710,7 @@ void Func_0200153c(void) {
   object->motionFlags = saved;
   object->velocityY = 0xc0000;
   Actor_SetSingleChildFlags(object, 1);
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 680, 912);
+  Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, 680, 912);
   Event_End();
 }
 
@@ -1109,7 +1109,7 @@ void Func_020020bc(s32 entrance) {
   leader->motionFlags = 0;
   leader->speedLimit = 0x3333;
   Actor_SetModeById(*owner, 2);
-  Actor_OffsetPositionAndResetMotion(*owner, 0, -8);
+  Actor_SetDestinationOffsetById(*owner, 0, -8);
   Actor_WaitForMoveById(*owner);
   Actor_SetPartAttribute(Actor_GetById(*owner), 9);
   Actor_SetSingleChildFlags(Actor_GetById(*owner), 0);
@@ -1140,12 +1140,12 @@ void Func_02002158(void) {
     Sound_Play(228);
     leader->update = (void (*)(void))Func_02002030;
     Actor_SetSpeedParameters(*owner, 0x6666, 0x3333);
-    Actor_CommitPositionAndActivate(*owner, 0, 8);
+    Actor_WalkByAndWaitById(*owner, 0, 8);
     Actor_SetPartAttribute(Actor_GetById(*owner), 0);
     Actor_SetSingleChildFlags(Actor_GetById(*owner), 1);
     ((struct FieldSprite *)leader->sprite)->priority = 1;
     offset = 10;
-    Actor_CommitPositionAndActivate(*owner, 0, offset);
+    Actor_WalkByAndWaitById(*owner, 0, offset);
     leader->motionFlags = 3;
     leader->update = (void (*)(void))flag;
     Event_NoOp();

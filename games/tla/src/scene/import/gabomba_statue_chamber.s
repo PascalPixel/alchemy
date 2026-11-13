@@ -73,7 +73,7 @@ Actor_SetSingleChildFlags:
 	.global Func_02001d78
 	.thumb_func
 Func_02001d78:
-	overlay_veneer Graphics_EnableObjLayerAndCallbacksFar
+	overlay_veneer ActorSystem_SuspendProjectionAndShowSpritesFar
 	.global Func_02001d80
 	.thumb_func
 Func_02001d80:
@@ -130,18 +130,18 @@ Actor_Stop:
 	.thumb_func
 Actor_SetMovementTypeAndWaitById:
 	overlay_veneer Actor_SetMovementTypeAndWaitByIdFar
-	.global Actor_SetPositionAndCommit
+	.global Actor_MoveToAndWaitById
 	.thumb_func
-Actor_SetPositionAndCommit:
-	overlay_veneer Actor_SetPositionAndCommitFar
-	.global Actor_SetPositionAndReset
+Actor_MoveToAndWaitById:
+	overlay_veneer Actor_MoveToAndWaitByIdFar
+	.global Actor_WalkToAndWaitById
 	.thumb_func
-Actor_SetPositionAndReset:
-	overlay_veneer Actor_SetPositionAndResetFar
-	.global Actor_OffsetPositionAndResetMotion
+Actor_WalkToAndWaitById:
+	overlay_veneer Actor_WalkToAndWaitByIdFar
+	.global Actor_SetDestinationOffsetById
 	.thumb_func
-Actor_OffsetPositionAndResetMotion:
-	overlay_veneer Actor_OffsetPositionAndResetMotionFar
+Actor_SetDestinationOffsetById:
+	overlay_veneer Actor_SetDestinationOffsetByIdFar
 	.global Actor_WaitForMoveById
 	.thumb_func
 Actor_WaitForMoveById:

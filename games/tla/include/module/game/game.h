@@ -164,7 +164,7 @@ struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains);
 
 extern u16 Data_02000458[];
 
-void Func_080addf0(void);
+void MainRoutineWork_InitializeDefaults(void);
 
 extern const u8 Data_080b1f2c[4][5];
 

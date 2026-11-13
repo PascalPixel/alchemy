@@ -604,7 +604,7 @@ void Func_02000af4(void) {
     Event_Wait(20);
     Actor_Jump(gMainRoutineWork.currentOwner, 4, 0);
     Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x33333, 0x19999);
-    Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 812, 88);
+    Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, 812, 88);
     Event_Wait(20);
     Sound_Play(232);
     Map_CopyCellPictureIndicesRect(72, 68, 50, 64, 3, 3);
@@ -1047,7 +1047,7 @@ void Func_02001a04(void) {
   Actor_SetSpritePriority(9, 1);
   Actor_SetSpeed(9, 0xcccc, 0x6666);
   Actor_Jump(9, 6, 0);
-  Actor_SetPositionAndCommit(9, 832, 88);
+  Actor_MoveToAndWaitById(9, 832, 88);
   Event_Wait(20);
   Actor_SetSpeed(9, 0x19999, 0xcccc);
   Actor_SetSpritePriority(9, 3);

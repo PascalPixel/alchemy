@@ -991,7 +991,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
     if (gInput.pressed & 1) {
       if (gInput.held & 0x200) {
         sortMode = (sortMode + 4) % 4;
-        InventoryMenu_SortByListOrder(owner->inventory, sortMode);
+        ItemMenu_Sort(owner->inventory, sortMode);
         sortMode++;
         ItemMenu_RefreshOwner(ownerIds[selection], 0);
         Sound_PlayFar(112);
@@ -1102,13 +1102,13 @@ struct TargetMenu {
   u8 paneOwner[2];
 };
 
-void Func_080fabe0(void);
+void EquipmentMenu_UpdateCompatibilityIndicators(void);
 
 s32 InventoryMenu_GetItemQuantity(s32 owner, s32 item);
 
 s32 ItemMenu_IsSpecial(s32 item);
 
-void Func_080fac58(void);
+void EquipmentMenu_StopCompatibilityIndicators(void);
 
 s32 ItemMenu_SelectTarget(s32 mode) {
   struct TargetMenu *menu = Ram_HeapSlots->menuRuntime;
@@ -1126,7 +1126,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
   Window_SetBounds(window, 13, 5, 17, 12);
   WindowSprite_RedrawSavedRectFar(menu->itemWindow);
   Unit_Get(menu->ownerIds[menu->paneIndex[0]]);
-  Task_Add(Func_080fabe0, 0x480);
+  Task_Add(EquipmentMenu_UpdateCompatibilityIndicators, 0x480);
   redraw = 2;
   while (!GameFlag_Test(0x150)) {
     if (redraw) {
@@ -1217,7 +1217,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
   marker = menu->marker;
   Icon_PrepareActor(marker);
   marker->state = 13;
-  Func_080fac58();
+  EquipmentMenu_StopCompatibilityIndicators();
   wait(1);
   menu->paneIndex[1] = selection;
   menu->selectedOwner = menu->ownerIds[selection];
@@ -1247,7 +1247,7 @@ struct ItemMenuIcons {
   u8 unk216[2];
 };
 
-void Func_080fabe0(void) {
+void EquipmentMenu_UpdateCompatibilityIndicators(void) {
   struct ItemMenuIcons *menu = Ram_HeapSlots->menuRuntime;
   s8 i;
 
@@ -1265,13 +1265,13 @@ void Func_080fabe0(void) {
   }
 }
 
-void Func_080fac58(void) {
+void EquipmentMenu_StopCompatibilityIndicators(void) {
   struct ItemMenuIcons *menu = Ram_HeapSlots->menuRuntime;
   s8 i;
 
   for (i = 0; i < menu->partyCount; i++)
     Animation_ApplyChildArgumentFar(menu->ownerIcons[i], 1);
-  Task_Remove(Func_080fabe0);
+  Task_Remove(EquipmentMenu_UpdateCompatibilityIndicators);
 }
 
 struct ItemListMenu {
@@ -1707,13 +1707,13 @@ s32 ItemMenu_ChooseCommand(void) {
       column = (column + 3) % 3;
       row = (row + 2) % 2;
       commandIndex = row * 3 + column;
-      Func_080fac58();
+      EquipmentMenu_StopCompatibilityIndicators();
       if (commandIndex > 2) {
         menu->equipPreview = 1;
         ItemMenu_DrawEquipPreview(menu->paneOwner[0], menu->selectedSlots[0], 0,
                                   menu->paneOwner[0]);
         if (commandIndex == ITEM_COMMAND_GIVE)
-          Task_Add(Func_080fabe0, 0x480);
+          Task_Add(EquipmentMenu_UpdateCompatibilityIndicators, 0x480);
       } else if (commandIndex != 0) {
         menu->equipPreview = 0;
         ItemMenu_DrawEquipPreview(menu->paneOwner[0], menu->selectedSlots[0], 0,
@@ -1780,7 +1780,7 @@ s32 ItemMenu_ChooseCommand(void) {
   }
 
   menu->equipPreview = 0;
-  Func_080fac58();
+  EquipmentMenu_StopCompatibilityIndicators();
   return commandIndex;
 }
 

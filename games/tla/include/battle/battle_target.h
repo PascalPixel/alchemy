@@ -6,6 +6,6 @@
 
 #include "types.h"
 
-s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action);
+s32 BattleAbility_ReplaceDefeated(const struct BattleActionRecord *action);
 
 #endif

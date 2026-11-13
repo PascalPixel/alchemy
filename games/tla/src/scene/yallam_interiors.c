@@ -404,7 +404,7 @@ void Func_02000524(void) {
       Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
       Actor_SetDestination(14, 504, 408);
       Actor_WaitForMoveById(14);
-      Actor_SetAngleToward(14, gMainRoutineWork.currentOwner, 0);
+      Actor_FaceActorById(14, gMainRoutineWork.currentOwner, 0);
       Func_02000a80(14);
       if (Func_02000a90()) {
         Actor_SetSpeed(14, 0x6666, 0x3333);
@@ -415,7 +415,7 @@ void Func_02000524(void) {
         Actor_WalkTo(16, 632, 346);
         Actor_FaceDirection(16, FACING_SOUTH, 0);
         Actor_SetModeById(16, 0);
-        Actor_ResetAndSetPositionInMode2(14, 600, 360);
+        Actor_WalkToById(14, 600, 360);
         Actor_WaitForMoveById(14);
         Actor_SetModeById(14, 0);
         Actor_ArmCallback(14, FACING_SOUTH, 0);

@@ -90,7 +90,7 @@ void Func_020000d8(s32 unused, s32 id) {
 /// One hop of object 12 by (dx, dz).
 static inline void Hop(s32 dx, s32 dz) {
   Actor_Jump(12, 5, 0);
-  Actor_CommitPositionAndActivate(12, dx, dz);
+  Actor_WalkByAndWaitById(12, dx, dz);
   Event_Wait(3);
 }
 
@@ -139,9 +139,9 @@ void Func_02000110(void) {
   Actor_SetSpritePriority(12, 1);
   Event_Wait(8);
   Actor_Jump(12, 9, 0);
-  Actor_SetPositionAndReset(12, 120, 200);
+  Actor_WalkToAndWaitById(12, 120, 200);
   Actor_GetById(12)->priorityFlags |= 1;
-  Actor_SetPositionAndReset(12, 136, 200);
+  Actor_WalkToAndWaitById(12, 136, 200);
   Event_Wait(3);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
@@ -372,7 +372,7 @@ void Func_02000838(void) {
   Func_020019e4();
   Event_Wait(20);
   Actor_SetSpeed(9, 0xcccc, 0x6666);
-  Actor_CommitPositionAndActivate(9, 24, 0);
+  Actor_WalkByAndWaitById(9, 24, 0);
   Actor_FaceDirection(9, 0x5000, 0);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(9, 2);
@@ -722,7 +722,7 @@ void Func_02000838(void) {
   Camera_FollowActor(10, 1);
   Actor_WalkBy(10, 0, -32);
   Event_Wait(10);
-  Actor_CommitPositionAndActivate(9, 16, 0);
+  Actor_WalkByAndWaitById(9, 16, 0);
   Actor_WalkBy(9, 0, -32);
   Actor_WaitForMoveById(10);
   FieldCamera_MoveTo(-1, -1, -1, 0);

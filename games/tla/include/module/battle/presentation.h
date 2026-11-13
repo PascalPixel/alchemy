@@ -12,7 +12,7 @@
 struct BattleActionRecord;
 struct BattlePlan;
 
-u32 BattleParty_IsUnitListed(u32 id);
+u32 BattleUnit_IsListed(u32 id);
 
 s32 BattleFormation_BuildEnemyList(s32 recordId);
 
@@ -43,7 +43,7 @@ u32 BattleClass_GetDefeatSoundKind(s32 index);
 
 s32 Func_0811f4d4(s32 party);
 
-s32 BattleParty_CountStandbyDjinn(u32 arg0, u8 *counts);
+s32 BattleDjinn_CountStandby(u32 arg0, u8 *counts);
 
 struct BattlePresentationWork;
 
@@ -334,9 +334,9 @@ extern u8 Model_DecodeCodeSize[];
 // Far call to Func_080219cc.
 void Func_08020370(void *record);
 
-void ResourceMetadata_ReleaseSlotFar(void *record, s32 slot);
+void Sprite_RemoveAnimationAtFar(void *record, s32 slot);
 
-s32 ResourceMetadata_SumCommandLengthsFar(s32 animation, s32 a, s32 b);
+s32 SpriteAnimation_SumCommandLengthsFar(s32 animation, s32 a, s32 b);
 
 void ColorBuffer_Scale(u16 *source, u32 destination, s32 value, s32 size);
 

@@ -314,7 +314,7 @@ void Func_02000574(void) {
   System_Wait(6);
   leader->terrainHeight = 0;
   Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
-  Scene_ResolveInteractionResult();
+  Scene_ChooseMusic();
   Party_PlaySavedMusic();
   Event_End();
   *(s16 *)work->unk15c = 0;
@@ -328,7 +328,7 @@ void Func_020006d0(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *ship = Actor_GetById(8);
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  s32 cell = GetWorldMapCollision(&ship->x);
+  s32 cell = WorldMap_GetCollision(&ship->x);
   s32 position[3];
   s32 shore = 0;
   s32 blocked;
@@ -396,7 +396,7 @@ void Func_020006d0(void) {
     Func_02004b18(leader, 6);
     System_Wait(6);
     Event_End();
-    Scene_ResolveInteractionResult();
+    Scene_ChooseMusic();
     Party_PlaySavedMusic();
     *(s16 *)work->unk15c = 0;
   }
@@ -1220,14 +1220,14 @@ void Func_02001e34(void) {
     Djinn_Give(owner, 0, 7);
     DjinnRecovery_AddStandby(owner, 0, 7);
     Func_02004da8();
-    Actor_SetAngleToward(owner, 9, 0);
+    Actor_FaceActorById(owner, 9, 0);
     Event_Wait(10);
     ShowEmote(owner, 0x101, 60);
     {
       s32 one = 1;
       *(u16 *)&djinni->unk66 = one;
     }
-    Actor_SetAngleToward(9, owner, 0);
+    Actor_FaceActorById(9, owner, 0);
     wait(16);
     flag = Event_GetFlag(0x175);
     Event_SetMessageId(TUTORIAL_SET_MESSAGE(flag, MsgHey2));
@@ -1254,8 +1254,8 @@ void Func_02001e34(void) {
       wait(1);
       i--;
     }
-    Actor_SetAngleToward(9, owner, 0);
-    Actor_SetAngleToward(owner, 9, 0);
+    Actor_FaceActorById(9, owner, 0);
+    Actor_FaceActorById(owner, 9, 0);
     wait(16);
     djinni->update = 0;
     Animation_ApplyChildValues(djinni, 0);
@@ -1312,7 +1312,7 @@ void Func_02001e34(void) {
     Actor_SetModeById(owner, 22);
     Event_ShowMessageAndWait(9, 0);
     Actor_ShowEmoteById(9, 0x102, 30);
-    Actor_SetAngleToward(9, owner, 0);
+    Actor_FaceActorById(9, owner, 0);
     Motion_SetVarCbAndRefresh(9, 2);
     Event_ShowMessageAndWait(9, 0);
     Actor_Jump(9, 2, 30);
@@ -1368,8 +1368,8 @@ void Func_02001e34(void) {
   SetMoveTarget(djinni, x, 0, z);
   Event_Wait(30);
   Func_02004da8();
-  Actor_SetAngleToward(9, owner, 0);
-  Actor_SetAngleToward(owner, 9, 0);
+  Actor_FaceActorById(9, owner, 0);
+  Actor_FaceActorById(owner, 9, 0);
   Actor_SetModeById(owner, 22);
   Event_SetMessageId(TUTORIAL_MESSAGE(MsgSeeWeDjinn));
   Actor_Jump(9, 2, 20);
@@ -1386,7 +1386,7 @@ void Func_02001e34(void) {
   SetMoveTarget(djinni, 0x27880000, 0, 0x20a40000);
   Event_Wait(30);
   Event_ShowMessageAndWait(9, 0);
-  Actor_SetAngleToward(9, owner, 0);
+  Actor_FaceActorById(9, owner, 0);
   Event_ShowMessageAndWait(9, 0);
   FieldMessage_ShowAtActor(9, 0);
   if (Event_AskYesNoWithActorAnimation(owner, 0) != 1)
@@ -1986,7 +1986,7 @@ void Func_0200343c(struct Actor *parent) {
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_SetPositionAndCommit_(s32 actor, s32 x, s32 z) {
-  Actor_SetPositionAndCommit(actor, x, z);
+  Actor_MoveToAndWaitById(actor, x, z);
 }
 
 void Func_02003490(void) {

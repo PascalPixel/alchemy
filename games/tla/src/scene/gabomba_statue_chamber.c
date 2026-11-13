@@ -125,7 +125,7 @@ void Func_02000184(void) {
   }
   Actor_SetModeById(8, 1);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 358, 108);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 358, 108);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, 0xe000, 0);
   Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
   wait(1);
@@ -290,7 +290,7 @@ void Func_02000184(void) {
   Event_ShowMessageAndWait(9, 0);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   Actor_FaceDirection(9, 0xd000, 0);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 392, 104);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 392, 104);
   Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, 0xc000);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
   if (gData_02002058 != 0) {
@@ -317,7 +317,7 @@ void Func_02000184(void) {
     Actor_SetModeById(9, 3);
     Event_ShowMessageAndWait(9, 0);
   }
-  Actor_SetPositionAndReset(9, 376, 124);
+  Actor_WalkToAndWaitById(9, 376, 124);
   Event_Wait(20);
   Event_ShowMessageAndWait(9, 0);
   Actor_FaceDirectionAndWait(9, 0xd000);
@@ -374,7 +374,7 @@ void Func_02000a98(s32 x, s32 z) {
   Event_ResolvePendingActions(0);
   object->motionFlags = 0;
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, x, z);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, x, z);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_RefreshSelectorById(gMainRoutineWork.currentOwner);
   Actor_SetSingleChildFlags(((struct GabombaStatueChamberObject *)Actor_GetById(
@@ -443,7 +443,7 @@ void Func_02000be8(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 328, 184);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 328, 184);
   Event_Wait(20);
   Sound_Play(308);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
@@ -478,7 +478,7 @@ void Func_02000d3c(void) {
   Event_ResolvePendingActions(0);
   DisplayBlend_EnableRunScript();
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-  Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 0, -8);
+  Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, 0, -8);
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, 0x4000);
   Sound_Play(308);
@@ -649,7 +649,7 @@ void Func_020010d4(void) {
   Event_Wait(10);
   FieldCamera_MoveTo(PIXELS(392), -1, PIXELS(168), 1);
   Actor_SetSpeed(13, 0xcccc, 0x6666);
-  Actor_SetPositionAndCommit(13, 392, 160);
+  Actor_MoveToAndWaitById(13, 392, 160);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Actor_Stop(5);
   Actor_Stop(6);

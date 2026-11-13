@@ -639,7 +639,7 @@ void Func_02003a08(s32 x, s32 z) {
   Event_ResolvePendingActions(0);
   leader->motionFlags = 0;
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, x, z);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, x, z);
   Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, FACING_NORTH);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 13);
@@ -868,7 +868,7 @@ void Func_020040cc(void) {
   Camera_SetSpeedParameters(0x6666, 0xccc);
   Camera_MoveWithinMapBounds(PIXELS(264), -1, PIXELS(340), 1);
   Kibombo_ObjSpeed(17, 0x3333, 0x1999);
-  Actor_SetPositionAndReset(17, 264, 374);
+  Actor_WalkToAndWaitById(17, 264, 374);
   wait(1);
   Kibombo_TaskAdd(Func_02002eb0, 0x480);
   Event_Wait(20);

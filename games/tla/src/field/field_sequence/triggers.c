@@ -263,7 +263,7 @@ s32 Scene_TalkToActor(s32 id) {
       if (type == 130) {
         struct Actor *trap = ObjectEvent_GetObject(index);
 
-        trap->update = Marker_MoveLeaderAwayFromEmitter;
+        trap->update = ItemDisplay_EmitSparkles;
         ItemDisplay_RaiseAboveLeader(trap);
         Sound_PlayFar(83);
         MessageArgument_PushFar(contents, 5);
@@ -325,7 +325,7 @@ s32 Scene_TalkToActor(s32 id) {
       if (contents & 0x8000) {
         if (type == 131) {
           shown = ObjectEvent_GetObject(index);
-          shown->update = Marker_MoveLeaderAwayFromEmitter;
+          shown->update = ItemDisplay_EmitSparkles;
         } else {
           shown = BattleEffect_StartRandomParticleEmitter(index, 0);
           wait(30);
@@ -355,7 +355,7 @@ s32 Scene_TalkToActor(s32 id) {
       }
       if (type == 131) {
         shown = ObjectEvent_GetObject(index);
-        shown->update = Marker_MoveLeaderAwayFromEmitter;
+        shown->update = ItemDisplay_EmitSparkles;
       } else {
         shown = BattleEffect_StartRandomParticleEmitter(index, contents);
         wait(30);
@@ -429,7 +429,7 @@ s32 Scene_TalkToActor(s32 id) {
     goto resume;
   if (!paused) {
     ((u8 *)object)[91] = 1;
-    Actor_SetAnimationSpeedFar(object, 0);
+    Actor_SelectAnimationFar(object, 0);
     savedAngle = object->facing;
     if ((u8)placement->talkFacing <= 1 || (s8)placement->talkFacing == 3) {
       leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -457,7 +457,7 @@ s32 Scene_TalkToActor(s32 id) {
       }
     }
     ((u8 *)object)[91] = 0;
-    Actor_SetAnimationSpeedFar(object, 16);
+    Actor_SelectAnimationFar(object, 16);
   }
   result = 0;
 resume:
@@ -553,7 +553,7 @@ s32 Scene_RunTouchOrExit(s32 value) {
 /// Func_080cdc74 runs the nearby talk target's kind 8 event and then the kind 9
 /// event for keys (messages under 0x10000, otherwise a routine called with keys
 /// and the target). Always returns 0.
-s32 Func_080cd680(s32 keys) {
+s32 Field_RunPushCell(s32 keys) {
   struct EventWorkView *work = Ram_HeapSlots->eventWork;
   s32 owner = gMainRoutineWork.currentOwner;
   struct SceneEventEntry *event;

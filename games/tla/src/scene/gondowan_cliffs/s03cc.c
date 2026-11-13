@@ -84,7 +84,7 @@ void Func_020003f8(s32 unk0, s32 id) {
                   &options);
     Event_PlaySound(154);
     Actor_SetAnimation(id, 3);
-    MapGrid_WaitForShakeToSettle();
+    FieldMapGrid_WaitForShakeToSettle();
     Actor_GetById(15)->priorityFlags |= 2;
     Event_SetFlag(0x884);
   }

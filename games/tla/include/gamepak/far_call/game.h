@@ -65,7 +65,7 @@ s32 Inventory_CountFar(s32 unit);
 // FileList_SelectFile's twin passes nothing.
 u32 BuildStamp_GetTimeFar();
 
-void Func_080ad090(void);
+void MainRoutineWork_InitializeDefaultsFar(void);
 
 s32 Djinn_GetDefinitionHeaderFar(s32 element, s32 index);
 

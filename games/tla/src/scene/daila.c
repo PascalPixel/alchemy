@@ -212,7 +212,7 @@ void Func_020003a0(void) {
   Event_SetMessageId(msg);
   Actor_SetHorizontalPositionWithTerrain(27, 472 << 16, 264 << 16);
   Event_Wait(30);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 504, 296);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 504, 296);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
   Actor_MoveToAndWait(27, 472, 280);
   Actor_FaceDirection(27, FACING_SOUTHEAST, 0);
@@ -240,7 +240,7 @@ void Func_020003a0(void) {
   Event_Wait(30);
   Event_ShowMessageAndWait(27, 0);
   Event_Wait(30);
-  Actor_SetAngleToward(6, 28, 0);
+  Actor_FaceActorById(6, 28, 0);
   Event_Wait(30);
   Actor_SetModeById(6, 3);
   Event_Wait(30);
@@ -248,12 +248,12 @@ void Func_020003a0(void) {
   Event_Wait(30);
   Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, 28, 0);
   Event_Wait(30);
-  Actor_SetAngleToward(28, 27, 0);
-  Actor_SetAngleToward(gMainRoutineWork.currentOwner, 27, 0);
+  Actor_FaceActorById(28, 27, 0);
+  Actor_FaceActorById(gMainRoutineWork.currentOwner, 27, 0);
   Event_Wait(60);
   Event_ShowMessageAndWait(28, 0);
   Event_Wait(30);
-  Actor_SetAngleToward(6, 27, 0);
+  Actor_FaceActorById(6, 27, 0);
   Actor_SetModeById(27, 4);
   Event_Wait(60);
   Event_ShowMessageAndWait(27, 0);
@@ -261,7 +261,7 @@ void Func_020003a0(void) {
   Actor_ArmCallback(27, FACING_NORTH, 0);
   Event_Wait(60);
   Event_ShowMessageAndWait(27, 0);
-  Actor_SetAngleToward(27, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(27, gMainRoutineWork.currentOwner, 0);
   Event_Wait(60);
   Actor_StartRepeatedMotion(28, 1);
   Event_Wait(60);
@@ -271,7 +271,7 @@ void Func_020003a0(void) {
   Event_Wait(30);
   Event_ShowMessageAndWait(27, 0);
   Event_Wait(30);
-  Actor_SetAngleToward(5, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(5, gMainRoutineWork.currentOwner, 0);
   FieldMessage_ShowAtActor(5, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(30);
@@ -280,7 +280,7 @@ void Func_020003a0(void) {
     Event_Wait(60);
     Actor_ShowEmoteById(5, 259, 0);
     Event_Wait(60);
-    Actor_SetAngleToward(5, 27, 0);
+    Actor_FaceActorById(5, 27, 0);
     Event_ShowMessageAndWait(5, 0);
     Event_SetMessageId(msg + 15);
   } else {
@@ -289,7 +289,7 @@ void Func_020003a0(void) {
     Event_ShowMessageAndWait(27, 0);
     Event_Wait(60);
     Motion_SetVarCbAndRefresh(5, 1);
-    Actor_SetAngleToward(5, 27, 0);
+    Actor_FaceActorById(5, 27, 0);
     Event_ShowMessageAndWait(5, 0);
   }
   Actor_SetModeById(27, 4);
@@ -299,7 +299,7 @@ void Func_020003a0(void) {
   Event_Wait(60);
   Event_ShowMessageAndWait(6, 0);
   Event_Wait(60);
-  Actor_SetAngleToward(27, 6, 0);
+  Actor_FaceActorById(27, 6, 0);
   Event_Wait(60);
   Event_ShowMessageAndWait(27, 0);
   Event_Wait(60);
@@ -311,20 +311,20 @@ void Func_020003a0(void) {
   Event_Wait(60);
   Event_ShowMessageAndWait(27, 0);
   Actor_WalkToAndWait(27, 504, 328);
-  Actor_SetAngleToward(gMainRoutineWork.currentOwner, 27, 0);
-  Actor_SetAngleToward(5, 27, 0);
-  Actor_SetAngleToward(6, 27, 0);
-  Actor_SetAngleToward(28, 27, 0);
+  Actor_FaceActorById(gMainRoutineWork.currentOwner, 27, 0);
+  Actor_FaceActorById(5, 27, 0);
+  Actor_FaceActorById(6, 27, 0);
+  Actor_FaceActorById(28, 27, 0);
   Actor_WalkToAndWait(27, 456, 328);
-  Actor_SetAngleToward(gMainRoutineWork.currentOwner, 27, 0);
-  Actor_SetAngleToward(5, 27, 0);
-  Actor_SetAngleToward(6, 27, 0);
-  Actor_SetAngleToward(28, 27, 0);
+  Actor_FaceActorById(gMainRoutineWork.currentOwner, 27, 0);
+  Actor_FaceActorById(5, 27, 0);
+  Actor_FaceActorById(6, 27, 0);
+  Actor_FaceActorById(28, 27, 0);
   Actor_WalkToAndWait(27, 424, 472);
-  Actor_SetAngleToward(gMainRoutineWork.currentOwner, 27, 0);
-  Actor_SetAngleToward(5, 27, 0);
-  Actor_SetAngleToward(6, 27, 0);
-  Actor_SetAngleToward(28, 27, 0);
+  Actor_FaceActorById(gMainRoutineWork.currentOwner, 27, 0);
+  Actor_FaceActorById(5, 27, 0);
+  Actor_FaceActorById(6, 27, 0);
+  Actor_FaceActorById(28, 27, 0);
   Event_Wait(60);
   Actor_SetHorizontalPositionWithTerrain(27, 0, 0);
   Event_Wait(120);
@@ -339,7 +339,7 @@ void Func_020003a0(void) {
   Event_Wait(60);
   Event_ShowMessageAndWait(6, 0);
   Event_Wait(60);
-  Actor_SetAngleToward(28, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(28, gMainRoutineWork.currentOwner, 0);
   Event_Wait(60);
   Actor_ArmCallback(28, FACING_SOUTH, 0);
   Event_Wait(30);

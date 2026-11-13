@@ -318,7 +318,7 @@ extern char ResourceId_YellowOrbSheet;
 extern char ResourceId_EmberStreakSheet;
 extern u8 gMapCellBuffer[];
 extern u8 Data_02010200[];
-extern u16 Data_08197424[];
+extern u16 gBattleEffect_FlarePictures[];
 extern u16 gBattleEffect_PuffArcCells[];
 extern u8 gData_08197467[];
 extern u8 gBattleEffect_PuffArcCellBiasY[];
@@ -798,8 +798,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
           s32 n = q->variant / 4 + 2;
 
           if (draw) {
-            blit[1](canvas, sprites + Data_08197424[n - 1], HI(q->x) - n,
-                    HI(q->y) - n, n * 2, n * 2);
+            blit[1](canvas, sprites + gBattleEffect_FlarePictures[n - 1],
+                    HI(q->x) - n, HI(q->y) - n, n * 2, n * 2);
           }
           BattleEffectKernels_IntegrateVector2(q, 60, 0x2000);
           q->variant--;

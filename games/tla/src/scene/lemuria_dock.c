@@ -84,7 +84,7 @@ void Func_0200006c(void) {
     } else {
       struct Actor *leader;
 
-      Actor_CommitPositionAndActivate(4, 0, 16);
+      Actor_WalkByAndWaitById(4, 0, 16);
       Actor_SetSpeed(8, 0x20000, 0x10000);
       Actor_WalkToAndWait(8, 440, 440);
       Actor_SetSpeed(8, 0x13333, 0x9999);
@@ -106,7 +106,7 @@ void Func_02000158(void) {
   s32 z;
 
   if (SCENE_WORK->unk166 != 0) {
-    Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActorById(8, gMainRoutineWork.currentOwner, 0);
     Actor_ShowEmote(8, 0x100, 30);
   }
   Event_SetMessageId((s32)MsgAreWeSetting);
@@ -123,9 +123,9 @@ void Func_02000158(void) {
     limit = 0x1880000;
     id = party->currentOwner;
     if (z < limit)
-      Actor_SetPositionAndReset(id, 472, 376);
+      Actor_WalkToAndWaitById(id, 472, 376);
     else
-      Actor_SetPositionAndReset(id, 472, 408);
+      Actor_WalkToAndWaitById(id, 472, 408);
     id = 4;
     Actor_ArmCallbackAndRefresh(id, FACING_EAST);
     Event_Wait(10);
@@ -256,6 +256,7 @@ struct Trigger gSceneEvents[] = {
     {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_020002dc)},
     {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Func_0200006c)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000158)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1032, CONDITION_ALWAYS, EVENT(Func_02000158)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1032, CONDITION_ALWAYS,
+     EVENT(Func_02000158)},
     {TRIGGERS_END},
 };

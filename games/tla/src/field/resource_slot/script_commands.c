@@ -226,7 +226,7 @@ s32 Script_WaitForArrival(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-s32 Script_InvokeCallback(struct ScriptInterpreter *interpreter) {
+s32 ActorScript_InvokeCallback(struct ScriptInterpreter *interpreter) {
   s16 initial = interpreter->cursor;
   ScriptCommand callback = (ScriptCommand)interpreter->script[initial + 1];
 
@@ -292,7 +292,7 @@ s32 Script_JumpToLabel(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-u32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter) {
+u32 ActorScript_JumpIfTrue(struct ScriptInterpreter *interpreter) {
   s32 index = interpreter->cursor;
   const s32 *table = interpreter->script;
   u32 value = table[index + 1];
@@ -305,7 +305,7 @@ u32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-u32 Script_JumpIfFalse(struct ScriptInterpreter *interpreter) {
+u32 ActorScript_JumpIfFalse(struct ScriptInterpreter *interpreter) {
   s32 index = interpreter->cursor;
   const s32 *table = interpreter->script;
   u32 value = table[index + 1];
@@ -360,7 +360,7 @@ s32 Script_ClearFlagAndTest(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-s32 Script_ToggleFlag(struct ScriptInterpreter *interpreter) {
+s32 ActorScript_ToggleFlagAndTest(struct ScriptInterpreter *interpreter) {
   s32 value;
 
   value = interpreter->script[interpreter->cursor + 1];
@@ -507,7 +507,7 @@ s32 Func_0802509c(struct ActorScriptView *object) {
   return 1;
 }
 
-s32 Script_ApplyRelativePosition(struct ActorScriptView *object) {
+s32 ActorScript_ApplyRelativePosition(struct ActorScriptView *object) {
   const s32 *cursor = object->script + (s16)object->scriptCursor + 1;
   s32 first = *cursor++;
   s32 second = *cursor++;
@@ -1006,8 +1006,8 @@ done:
   return 1;
 }
 
-void Script_SetOrCompareAddress(struct ScriptOperands *state, s32 operation,
-                                s32 value) {
+void ActorScript_SetOrCompareScriptAddress(struct ScriptOperands *state,
+                                           s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1025,8 +1025,8 @@ void Script_SetOrCompareAddress(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareCursor(struct ScriptOperands *state, s32 operation,
-                               s32 value) {
+void ActorScript_SetOrCompareCursor(struct ScriptOperands *state, s32 operation,
+                                    s32 value) {
   if (operation == 0) {
     state->cursor = value;
   } else if (operation == 1) {
@@ -1054,8 +1054,8 @@ void Script_SetOrCompareUnsignedHalfword(struct ScriptOperands *state,
   }
 }
 
-void Script_SetOrCompareX(struct ScriptOperands *state, s32 operation,
-                          s32 value) {
+void ActorScript_SetOrCompareX(struct ScriptOperands *state, s32 operation,
+                               s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1073,8 +1073,8 @@ void Script_SetOrCompareX(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareY(struct ScriptOperands *state, s32 operation,
-                          s32 value) {
+void ActorScript_SetOrCompareY(struct ScriptOperands *state, s32 operation,
+                               s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1092,8 +1092,8 @@ void Script_SetOrCompareY(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareZ(struct ScriptOperands *state, s32 operation,
-                          s32 value) {
+void ActorScript_SetOrCompareZ(struct ScriptOperands *state, s32 operation,
+                               s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1131,8 +1131,8 @@ void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareScaleX(struct ScriptOperands *state, s32 operation,
-                               s32 value) {
+void ActorScript_SetOrCompareScaleX(struct ScriptOperands *state, s32 operation,
+                                    s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1150,8 +1150,8 @@ void Script_SetOrCompareScaleX(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareScaleY(struct ScriptOperands *state, s32 operation,
-                               s32 value) {
+void ActorScript_SetOrCompareScaleY(struct ScriptOperands *state, s32 operation,
+                                    s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1169,8 +1169,8 @@ void Script_SetOrCompareScaleY(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareVelocityX(struct ScriptOperands *state, s32 operation,
-                                  s32 value) {
+void ActorScript_SetOrCompareVelocityX(struct ScriptOperands *state,
+                                       s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1188,8 +1188,8 @@ void Script_SetOrCompareVelocityX(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareVelocityY(struct ScriptOperands *state, s32 operation,
-                                  s32 value) {
+void ActorScript_SetOrCompareVelocityY(struct ScriptOperands *state,
+                                       s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1207,8 +1207,8 @@ void Script_SetOrCompareVelocityY(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareVelocityZ(struct ScriptOperands *state, s32 operation,
-                                  s32 value) {
+void ActorScript_SetOrCompareVelocityZ(struct ScriptOperands *state,
+                                       s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1226,8 +1226,8 @@ void Script_SetOrCompareVelocityZ(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareSpeedLimit(struct ScriptOperands *state, s32 operation,
-                                   s32 value) {
+void ActorScript_SetOrCompareSpeedLimit(struct ScriptOperands *state,
+                                        s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1245,8 +1245,8 @@ void Script_SetOrCompareSpeedLimit(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareAcceleration(struct ScriptOperands *state,
-                                     s32 operation, s32 value) {
+void ActorScript_SetOrCompareAcceleration(struct ScriptOperands *state,
+                                          s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1264,8 +1264,8 @@ void Script_SetOrCompareAcceleration(struct ScriptOperands *state,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareTargetX(struct ScriptOperands *state, s32 operation,
-                                s32 value) {
+void ActorScript_SetOrCompareTargetX(struct ScriptOperands *state,
+                                     s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1283,8 +1283,8 @@ void Script_SetOrCompareTargetX(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareTargetY(struct ScriptOperands *state, s32 operation,
-                                s32 value) {
+void ActorScript_SetOrCompareTargetY(struct ScriptOperands *state,
+                                     s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1302,8 +1302,8 @@ void Script_SetOrCompareTargetY(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareTargetZ(struct ScriptOperands *state, s32 operation,
-                                s32 value) {
+void ActorScript_SetOrCompareTargetZ(struct ScriptOperands *state,
+                                     s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1321,8 +1321,8 @@ void Script_SetOrCompareTargetZ(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareVerticalMotion(struct ScriptOperands *state,
-                                       s32 operation, s32 value) {
+void ActorScript_SetOrCompareVerticalMotion(struct ScriptOperands *state,
+                                            s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1340,8 +1340,8 @@ void Script_SetOrCompareVerticalMotion(struct ScriptOperands *state,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareGravity(struct ScriptOperands *state, s32 operation,
-                                s32 value) {
+void ActorScript_SetOrCompareGravity(struct ScriptOperands *state,
+                                     s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1359,8 +1359,8 @@ void Script_SetOrCompareGravity(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareTerrainHeight(struct ScriptOperands *state,
-                                      s32 operation, s32 value) {
+void ActorScript_SetOrCompareTerrainHeight(struct ScriptOperands *state,
+                                           s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1378,8 +1378,8 @@ void Script_SetOrCompareTerrainHeight(struct ScriptOperands *state,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareWord4c(struct ScriptOperands *state, s32 operation,
-                               s32 value) {
+void ActorScript_SetOrCompareRiseBaseY(struct ScriptOperands *state,
+                                       s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1397,8 +1397,8 @@ void Script_SetOrCompareWord4c(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareAddress50(struct ScriptOperands *state, s32 operation,
-                                  s32 value) {
+void ActorScript_SetOrCompareSprite(struct ScriptOperands *state, s32 operation,
+                                    s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1416,8 +1416,8 @@ void Script_SetOrCompareAddress50(struct ScriptOperands *state, s32 operation,
   state->comparisonResult = result;
 }
 
-void Script_SetOrCompareByte54(struct ScriptOperands *state, s32 operation,
-                               s32 value) {
+void ActorScript_SetOrCompareSpriteStorageKind(struct ScriptOperands *state,
+                                               s32 operation, s32 value) {
   if (operation == 0) {
     state->byte54 = value;
   } else if (operation == 1) {
@@ -1427,8 +1427,8 @@ void Script_SetOrCompareByte54(struct ScriptOperands *state, s32 operation,
   }
 }
 
-void Script_SetOrCompareMotionFlags(struct ScriptOperands *state, s32 operation,
-                                    s32 value) {
+void ActorScript_SetOrCompareMotionFlags(struct ScriptOperands *state,
+                                         s32 operation, s32 value) {
   if (operation == 0) {
     state->byte55 = value;
   } else if (operation == 1) {
@@ -1438,8 +1438,8 @@ void Script_SetOrCompareMotionFlags(struct ScriptOperands *state, s32 operation,
   }
 }
 
-void Script_SetOrCompareArrivalAxis(struct ScriptOperands *state, s32 operation,
-                                    s32 value) {
+void ActorScript_SetOrCompareArrivalAxis(struct ScriptOperands *state,
+                                         s32 operation, s32 value) {
   if (operation == 0) {
     state->byte56 = value;
   } else if (operation == 1) {
@@ -1470,8 +1470,8 @@ void Script_SetOrCompareComparisonResult(struct ScriptOperands *state,
 typedef void (*OperandFunc)(struct ScriptOperands *, s32, s32);
 extern OperandFunc gScript_OperandHandlerTable[];
 
-void Script_SetOrCompareSnapToTarget(struct ScriptOperands *state,
-                                     s32 operation, s32 value) {
+void ActorScript_SetOrCompareSnapToTarget(struct ScriptOperands *state,
+                                          s32 operation, s32 value) {
   if (operation == 0) {
     state->byte58 = value;
   } else if (operation == 1) {
@@ -1481,8 +1481,8 @@ void Script_SetOrCompareSnapToTarget(struct ScriptOperands *state,
   }
 }
 
-void Script_SetOrCompareCollisionFlags(struct ScriptOperands *state,
-                                       s32 operation, s32 value) {
+void ActorScript_SetOrCompareCollisionFlags(struct ScriptOperands *state,
+                                            s32 operation, s32 value) {
   if (operation == 0) {
     state->byte59 = value;
   } else if (operation == 1) {
@@ -1492,8 +1492,8 @@ void Script_SetOrCompareCollisionFlags(struct ScriptOperands *state,
   }
 }
 
-void Script_SetOrCompareSteeringFlags(struct ScriptOperands *state,
-                                      s32 operation, s32 value) {
+void ActorScript_SetOrCompareSteeringFlags(struct ScriptOperands *state,
+                                           s32 operation, s32 value) {
   if (operation == 0) {
     state->byte5a = value;
   } else if (operation == 1) {
@@ -1503,8 +1503,8 @@ void Script_SetOrCompareSteeringFlags(struct ScriptOperands *state,
   }
 }
 
-void Script_SetOrComparePaused(struct ScriptOperands *state, s32 operation,
-                               s32 value) {
+void ActorScript_SetOrComparePaused(struct ScriptOperands *state, s32 operation,
+                                    s32 value) {
   if (operation == 0) {
     state->byte5b = value;
   } else if (operation == 1) {
@@ -1514,8 +1514,8 @@ void Script_SetOrComparePaused(struct ScriptOperands *state, s32 operation,
   }
 }
 
-void Script_SetOrCompareRepeatCount(struct ScriptOperands *work, s32 operation,
-                                    s32 value) {
+void ActorScript_SetOrCompareRepeatCount(struct ScriptOperands *work,
+                                         s32 operation, s32 value) {
   s32 result;
 
   if (operation == 0) {
@@ -1530,8 +1530,8 @@ void Script_SetOrCompareRepeatCount(struct ScriptOperands *work, s32 operation,
   }
 }
 
-void Script_SetOrCompareHalfword5e(struct ScriptOperands *work, s32 operation,
-                                   s32 value) {
+void ActorScript_SetOrCompareWait(struct ScriptOperands *work, s32 operation,
+                                  s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1549,8 +1549,8 @@ void Script_SetOrCompareHalfword5e(struct ScriptOperands *work, s32 operation,
   work->comparisonResult = result;
 }
 
-void Script_SetOrCompareSignedHalfword64(struct ScriptOperands *work,
-                                         s32 operation, s32 value) {
+void ActorScript_SetOrCompareTimer(struct ScriptOperands *work, s32 operation,
+                                   s32 value) {
   if (operation == 0) {
     work->signedHalfword64 = value;
   } else if (operation == 1) {
@@ -1560,8 +1560,8 @@ void Script_SetOrCompareSignedHalfword64(struct ScriptOperands *work,
   }
 }
 
-void Script_SetOrCompareSignedHalfword66(struct ScriptOperands *work,
-                                         s32 operation, s32 value) {
+void ActorScript_SetOrCompareUserValue(struct ScriptOperands *work,
+                                       s32 operation, s32 value) {
   if (operation == 0) {
     work->signedHalfword66 = value;
   } else if (operation == 1) {
@@ -1571,8 +1571,8 @@ void Script_SetOrCompareSignedHalfword66(struct ScriptOperands *work,
   }
 }
 
-void Script_SetOrCompareWord68(struct ScriptOperands *work, s32 operation,
-                               s32 value) {
+void ActorScript_SetOrCompareWatchedActor(struct ScriptOperands *work,
+                                          s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1590,8 +1590,8 @@ void Script_SetOrCompareWord68(struct ScriptOperands *work, s32 operation,
   work->comparisonResult = result;
 }
 
-void Script_SetOrCompareUpdateAddress(struct ScriptOperands *work,
-                                      s32 operation, s32 value) {
+void ActorScript_SetOrCompareUpdateAddress(struct ScriptOperands *work,
+                                           s32 operation, s32 value) {
   s8 result;
 
   if (operation == 0) {
@@ -1609,8 +1609,8 @@ void Script_SetOrCompareUpdateAddress(struct ScriptOperands *work,
   work->comparisonResult = result;
 }
 
-void Script_SetOrCompareByte62(struct ScriptOperands *work, s32 operation,
-                               s32 value) {
+void ActorScript_SetOrCompareRiseCounter(struct ScriptOperands *work,
+                                         s32 operation, s32 value) {
   s32 result;
   if (operation == 0) {
     work->byte62 = value;
@@ -1624,8 +1624,8 @@ void Script_SetOrCompareByte62(struct ScriptOperands *work, s32 operation,
   }
 }
 
-void Script_SetOrCompareByte63(struct ScriptOperands *work, s32 operation,
-                               s32 value) {
+void ActorScript_SetOrCompareRiseEnabled(struct ScriptOperands *work,
+                                         s32 operation, s32 value) {
   s32 result;
   if (operation == 0) {
     work->byte63 = value;
@@ -1639,7 +1639,7 @@ void Script_SetOrCompareByte63(struct ScriptOperands *work, s32 operation,
   }
 }
 
-s32 Script_ApplyOperandSet(struct ScriptOperands *work) {
+s32 ActorScript_ApplyOperandSet(struct ScriptOperands *work) {
   s16 index = work->cursor;
   s32 *entry = (s32 *)work->scriptAddress + index + 1;
   OperandFunc callback = gScript_OperandHandlerTable[entry[0]];
@@ -1650,7 +1650,7 @@ s32 Script_ApplyOperandSet(struct ScriptOperands *work) {
   return 1;
 }
 
-s32 Script_ApplyOperandAdd(struct ScriptOperands *work) {
+s32 ActorScript_ApplyOperandAdd(struct ScriptOperands *work) {
   s16 index = work->cursor;
   s32 *entry = (s32 *)work->scriptAddress + index + 1;
   OperandFunc callback = gScript_OperandHandlerTable[entry[0]];
@@ -1661,7 +1661,7 @@ s32 Script_ApplyOperandAdd(struct ScriptOperands *work) {
   return 1;
 }
 
-s32 Script_ApplyOperandCompare(struct ScriptOperands *work) {
+s32 ActorScript_ApplyOperandCompare(struct ScriptOperands *work) {
   s16 index = work->cursor;
   s32 *entry = (s32 *)work->scriptAddress + index + 1;
   OperandFunc callback = gScript_OperandHandlerTable[entry[0]];

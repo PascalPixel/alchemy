@@ -279,9 +279,10 @@ static inline void Event_PrepareActorAndApplyValue(s32 unit, s32 announce) {
   Event_PrepareObjectAndApplyValue(unit, announce);
 }
 
-/// Holds the event until the screen shake dies down (Map_WaitForShakeToSettle).
-static inline void MapGrid_WaitForShakeToSettle(void) {
-  Map_WaitForShakeToSettle();
+/// Holds the event until the screen shake dies down
+/// (MapGrid_WaitForShakeToSettle).
+static inline void FieldMapGrid_WaitForShakeToSettle(void) {
+  MapGrid_WaitForShakeToSettle();
 }
 
 /// The cell behavior of the cell at (x, y) (GetMapCellCollision).

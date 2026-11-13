@@ -77,7 +77,7 @@ void BattleEffect_UpdatePhasePalette(
     s32 frame, s32 redPhase, s32 greenPhase,
     s32 bluePhase); // Graphics_UpdatePhasePalette
 
-extern u16 Data_08197424[]; // flare sizes 1 to 5: cell offsets
+extern u16 gBattleEffect_FlarePictures[]; // flare sizes 1 to 5: cell offsets
 
 /// The canvas layer and its helpers; the comments give The Broken Seal's
 /// names where the twin is known.
@@ -308,7 +308,7 @@ extern char ResourceId_CrossedDaggersSheet;
 
 void Func_08191530(struct BattleEffectArgument *effect);
 
-void Camera_ApplyPhasedDelta(void);
+void BattleCamera_ApplyPhasedDelta(void);
 
 struct EffectPosition;
 

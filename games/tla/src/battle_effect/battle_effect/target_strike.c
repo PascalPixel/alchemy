@@ -910,8 +910,8 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
         EffectPosition_ProjectPoint(point, &pos);
         pos.x /= 2;
         size = (i & 1) + effect->variant;
-        draw[0](canvas, sheet + Data_08197424[size - 1], pos.x - size,
-                pos.y - size, size * 2, size * 2);
+        draw[0](canvas, sheet + gBattleEffect_FlarePictures[size - 1],
+                pos.x - size, pos.y - size, size * 2, size * 2);
       }
       fleck->variant++;
     }

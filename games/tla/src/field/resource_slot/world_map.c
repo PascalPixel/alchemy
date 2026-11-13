@@ -21,7 +21,7 @@ Projection_Set__resource_slot(s32 distance, s32 nearPlane,
  * Render_ResetTransformState(void); graphics.h has void
  * Render_ResetTransformState(void); tried as the definition's void
  * Render_ResetTransformState(void), which the object already declares,
- * Func_0802b998 moves: 1 of 372 instructions in tla-ja. */
+ * WorldMap_InitializePerspective moves: 1 of 372 instructions in tla-ja. */
 extern u32 Render_ResetTransformState__f02b998(void) __asm__(
     "Render_ResetTransformState"); // Returns void; see the tag.
 /* VIEW(resource_slot): routine SceneTransform_ApplyPosition as void
@@ -31,7 +31,7 @@ extern void SceneTransform_ApplyPosition__resource_slot(void *position) __asm__(
     "SceneTransform_ApplyPosition");
 void WorldMap_BuildScanlineTable(s32 ratio, s32 *position, void *affineWork);
 
-void Func_0802b998(void) {
+void WorldMap_InitializePerspective(void) {
   /* FAKEMATCH(signature): Render_ResetTransformState declared returning u32;
    * as void, 2 of 376 instructions differ in tla-en. */
   u8 *perspective;
@@ -147,7 +147,7 @@ void Func_0802b998(void) {
   view->windowTop = 0;
   view->windowBottom = 159;
   Task_Add(WorldMap_UpdateView, 0x485);
-  Task_Add(Func_0802c088, 0xc80);
+  Task_Add(WorldMap_ApplyAffinePage, 0xc80);
   for (tileIndex = 0; tileIndex <= 0x3ff; tileIndex++)
     ((u16 *)(perspective + 0x148))[tileIndex] = tileIndex;
 }
@@ -316,7 +316,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   Heap_Release(buffer);
 }
 
-void Func_0802c088(void) {
+void WorldMap_ApplyAffinePage(void) {
   struct MapAffinePair(*affinePages)[160] =
       ((struct MapAffineWork *)Ram_HeapSlots->unk1c[0])->pages;
   s32 displayControl = (s16)(REG_DISPCNT & 0xfff8);
@@ -382,7 +382,7 @@ static __inline__ void CopyWorldMapTileColumn(u8 *cellBytes, u8 *screenTile) {
 
 /// Draws world map tile row tileRow (two screen rows) into the BG map at
 /// 0x06004000, from the 32 by 32 cell grid in gMapBlocks.
-void Map_RenderPaletteMappedRow(u32 tileRow) {
+void WorldMap_RenderPaletteMappedRow(u32 tileRow) {
   u8 *cellBytes;
   u8 *screenTile;
   u32 column;
@@ -509,9 +509,9 @@ void WorldMap_UpdateView(void) {
     }
     if ((view->viewY ^ y) & 0x100000) {
       if (view->viewY < y)
-        Map_RenderPaletteMappedRow(tileRow + 12);
+        WorldMap_RenderPaletteMappedRow(tileRow + 12);
       else
-        Map_RenderPaletteMappedRow(tileRow - 18);
+        WorldMap_RenderPaletteMappedRow(tileRow - 18);
     }
     view->viewX = x;
     view->viewY = y;

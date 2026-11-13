@@ -214,7 +214,7 @@ void Event_SetMessageId(s32 message) {
   event->messageId = message;
 }
 
-s32 ObjectTable_ReadActiveValue(s32 key) {
+s32 Actor_GetSpriteById(s32 key) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 result = -1;
   struct Actor *object = event->objects[key & 0x0fff];

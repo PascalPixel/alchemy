@@ -518,8 +518,8 @@ void BattleEffect_RunElementBurst(struct BattleEffectArgument *effect) {
 
           if (size <= 0)
             size = 1;
-          draw[0](canvas, sheet + Data_08197424[size - 1], x - size, y - size,
-                  size * 2, size * 2);
+          draw[0](canvas, sheet + gBattleEffect_FlarePictures[size - 1],
+                  x - size, y - size, size * 2, size * 2);
           mote->y -= 2;
           mote->variant--;
         }

@@ -156,7 +156,7 @@ void BattleEvent_Playback(void) {
             MessageArgument_ClearAllFar();
             break;
           case BATTLE_EVENT_REMOVE_UNIT:
-            BattleActor_DestroyTemporaryObject(
+            BattleObject_DestroyTemporaryObject(
                 events->queue.operands[eventIndex]);
             break;
           case BATTLE_EVENT_HIT:

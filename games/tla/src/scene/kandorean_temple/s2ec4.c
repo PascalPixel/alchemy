@@ -60,7 +60,7 @@ void Func_02002ec4(void) {
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  Map_WaitForShakeToSettle();
+  MapGrid_WaitForShakeToSettle();
   FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
@@ -495,7 +495,7 @@ void Func_02003e8c(void) {
                                          0x1900000, 0x31c0000);
   wait(1);
   Event_StartScreenTransition();
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 400, 752);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 400, 752);
   Camera_SetSpeedParameters(0x4cccc, 0x9999);
   Camera_MoveWithinMapBounds(0x1b40000, 0x480000, 0x2980000, 1);
   Func_020052e8();
@@ -647,7 +647,7 @@ fall15:
   Actor_SetModeById(12, 3);
   Event_ShowMessageAndWait(0x800c, 0);
   Actor_WalkToAndWait(12, 326, 664);
-  Actor_SetPositionAndReset(12, 328, 648);
+  Actor_WalkToAndWaitById(12, 328, 648);
   Actor_SetSingleChildFlags(Actor_GetById(12), 0);
   Actor_SetPartAttribute(Actor_GetById(12), 15);
   Actor_SetPosition(12, 0x1b80000, 0x2580000);

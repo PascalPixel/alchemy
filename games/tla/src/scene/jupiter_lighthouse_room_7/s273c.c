@@ -71,7 +71,7 @@ loop:
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  MapGrid_WaitForShakeToSettle();
+  FieldMapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
   actor->gravity = 0x10000;
   actor->bounce = 0x4000;
@@ -85,7 +85,7 @@ extern struct CellTarget gData_02003704;
 void GameFlag_SetByte(s32 flag, s32 value);
 
 DEFINE_FUNC_0200180C(Func_020028d4, gData_02003704, Func_02002534,
-    Func_020025a4)
+                     Func_020025a4)
 
 DEFINE_FUNC_020018BC(Func_02002984, gData_02003704, Func_0200273c)
 

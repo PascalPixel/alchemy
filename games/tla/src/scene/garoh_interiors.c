@@ -144,7 +144,7 @@ void Func_02000298(void) {
 
   facing = ((Actor_GetById(gMainRoutineWork.currentOwner)->facing) + 0x2000) &
            ~0x3fff;
-  Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(8, gMainRoutineWork.currentOwner, 0);
   if ((u16)facing == 0xc000) {
     Func_020008a4(8);
   } else {

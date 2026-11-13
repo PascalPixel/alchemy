@@ -149,7 +149,7 @@ MessageArgument_Push:
 	.global Func_020019ec
 	.thumb_func
 Func_020019ec:
-	overlay_veneer Func_080382e0
+	overlay_veneer Save_ProcessSelectedFileFar
 	.global Djinn_GetRecoveryTable
 	.thumb_func
 Djinn_GetRecoveryTable:
@@ -186,10 +186,10 @@ Actor_GetById:
 	.thumb_func
 Actor_SetSpeedParameters:
 	overlay_veneer Actor_SetSpeedParametersFar
-	.global Actor_ResetAndSetPositionInMode2
+	.global Actor_WalkToById
 	.thumb_func
-Actor_ResetAndSetPositionInMode2:
-	overlay_veneer Actor_ResetAndSetPositionInMode2Far
+Actor_WalkToById:
+	overlay_veneer Actor_WalkToByIdFar
 	.global Actor_WaitForMoveById
 	.thumb_func
 Actor_WaitForMoveById:
@@ -202,10 +202,10 @@ Actor_SetModeById:
 	.thumb_func
 Actor_StartRepeatedMotion:
 	overlay_veneer Actor_StartRepeatedMotionFar
-	.global Actor_SetAngleToward
+	.global Actor_FaceActorById
 	.thumb_func
-Actor_SetAngleToward:
-	overlay_veneer Actor_SetAngleTowardFar
+Actor_FaceActorById:
+	overlay_veneer Actor_FaceActorByIdFar
 	.global Event_SetMessageId
 	.thumb_func
 Event_SetMessageId:

@@ -19,7 +19,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   struct FormationCandidate *pool = Heap_AllocEwram(128);
   u16 party[8];
   s32 targetLevel = 0;
-  s32 unitCount = BattleParty_PrepareActiveOwners(party);
+  s32 unitCount = BattleParty_PrepareMembers(party);
   s32 candidateOrUnitIndex;
   s32 poolIndex;
   s32 result;
@@ -341,7 +341,7 @@ s32 BattleEnemy_ReleaseNameLetter(s32 actorId) {
   state->usedMasks[index] &= ~(1 << bit);
 }
 
-s32 BattleEnemy_LetterFirstOfClass(s32 enemyId) {
+s32 BattleEnemy_LetterFirstOfKind(s32 enemyId) {
   struct BattleUnit *summon;
   s32 objectIndex;
   s32 slot;
@@ -573,7 +573,7 @@ assign_enemy:
     s32 enemyId;
 
     if (suffixCode & 0x8000)
-      BattleEnemy_LetterFirstOfClass(enemyClasses[memberOrEnemyIndex]);
+      BattleEnemy_LetterFirstOfKind(enemyClasses[memberOrEnemyIndex]);
     BattleUnit_SetFar(memberOrEnemyIndex + 128,
                       enemyClasses[memberOrEnemyIndex], suffixCode & 0x7fff);
     unit = Unit_Get__f11f66c(memberOrEnemyIndex + 128);

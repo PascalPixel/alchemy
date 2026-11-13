@@ -39,25 +39,25 @@ struct ResourceSprite {
   struct AnimationEntry *entries[4];
 };
 
-/* VIEW(resource_slot): routine AnimationObject_Allocate as s32
- * AnimationObject_Allocate(s32 id); the definition has struct AnimationEntry
- * *AnimationObject_Allocate(s32 id); tried as the definition's struct
- * AnimationEntry *AnimationObject_Allocate(s32 id), which the object already
+/* VIEW(resource_slot): routine SpriteAnimation_Alloc as s32
+ * SpriteAnimation_Alloc(s32 id); the definition has struct AnimationEntry
+ * *SpriteAnimation_Alloc(s32 id); tried as the definition's struct
+ * AnimationEntry *SpriteAnimation_Alloc(s32 id), which the object already
  * declares, it does not compile in tla-ja:
  * games/tla/src/field/resource_slot.c:482: conflicting types for
- * `AnimationObject_Allocate'. */
+ * `SpriteAnimation_Alloc'. */
 extern s32 AnimationObject_Allocate__resource_slot(s32 id) __asm__(
-    "AnimationObject_Allocate");
-#define AnimationObject_Allocate AnimationObject_Allocate__resource_slot
+    "SpriteAnimation_Alloc");
+#define SpriteAnimation_Alloc AnimationObject_Allocate__resource_slot
 #include "system.h"
-#undef AnimationObject_Allocate
+#undef SpriteAnimation_Alloc
 #include "types.h"
 #include "resource.h"
 #include "sprite.h"
 #include "sprite_metadata.h"
 #include "ram_buffer.h"
 
-s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
+s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   struct AnimationMetadata *metadata;
   struct ObjectSystemWork *work;
   struct ResourceSlot *record;
@@ -281,7 +281,7 @@ s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id) {
   return value;
 }
 
-void ResourceMetadata_Unregister(struct MetadataSlotState *state, s32 handle) {
+void Sprite_RemoveAnimation(struct MetadataSlotState *state, s32 handle) {
   s32 count;
   u32 slot;
   u32 i;
@@ -305,7 +305,7 @@ void ResourceMetadata_Unregister(struct MetadataSlotState *state, s32 handle) {
   }
 }
 
-void ResourceMetadata_ReleaseSlot(struct MetadataSlotState *state, u32 no) {
+void Sprite_RemoveAnimationAt(struct MetadataSlotState *state, u32 no) {
   s32 slot;
   s32 count;
   u32 i;
@@ -476,7 +476,7 @@ void VramBlock_Load93(void) {
   VramCache_Load(93, size, data);
 }
 
-struct AnimationEntry *AnimationObject_Allocate(s32 id) {
+struct AnimationEntry *SpriteAnimation_Alloc(s32 id) {
   struct AnimationMetadata *metadata;
   struct AnimationEntry *entry;
   struct AnimationEntry *found;
@@ -676,7 +676,7 @@ void ResourceObject_Release(struct ResourceObjectWork *work) {
 /// Sums the first cnt frame durations of animation id's entry number `no`.
 /// Commands are two bytes (command, value); 254, 241, 253 and 239 end the
 /// list, and the values of commands 245, 255 and those up to 238 count.
-s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt) {
+s32 SpriteAnimation_SumCommandLengths(s32 id, u32 no, s32 cnt) {
   struct AnimationMetadata *info;
   u8 *p;
   u8 op;

@@ -56,7 +56,7 @@ static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column, s32 offset) {
 
 static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
                                                            s32 dz) {
-  Actor_OffsetPositionAndResetMotion(id, dx, dz);
+  Actor_SetDestinationOffsetById(id, dx, dz);
 }
 
 void Func_02000080(const void *warp, s32 door, s32 mode) {
@@ -619,8 +619,8 @@ void Func_02000d4c(s32 firstId, s32 firstX, s32 firstY, s32 firstA, s32 firstB,
   /* FAKEMATCH(volatile): the frames volatile, read from their stack slot at
    * each use; as s32 frames, 44 of 79 instructions differ in tla-en. */
   struct ChampaEventWork *work = Ram_HeapSlots->eventWork;
-  s32 first = ObjectTable_ReadActiveValue(firstId);
-  s32 second = ObjectTable_ReadActiveValue(secondId);
+  s32 first = Actor_GetSpriteById(firstId);
+  s32 second = Actor_GetSpriteById(secondId);
 
   Message_OpenWindow(work->message++, firstX, firstY,
                      BattleEffect_GetResourceId(first) << 16);
@@ -644,8 +644,8 @@ void Func_02000e04(s32 a0, s32 a1) {
   s32 t0;
   s32 t1;
 
-  t0 = ObjectTable_ReadActiveValue(a0);
-  t1 = ObjectTable_ReadActiveValue(a1);
+  t0 = Actor_GetSpriteById(a0);
+  t1 = Actor_GetSpriteById(a1);
   Window_CloseMatchingId(t0);
   Window_CloseMatchingId(t1);
 }

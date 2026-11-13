@@ -880,7 +880,7 @@ rise:
     wait(1);
     if (t != 160)
       goto frame;
-    MapGrid_WaitForShakeToSettle();
+    FieldMapGrid_WaitForShakeToSettle();
   }
   Sound_Play(288);
   Sound_Play(136);
@@ -902,7 +902,7 @@ last:
   MapGrid_SetShake(0x50000, 0x70000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
   Map_CopyCellPictureIndicesRect(68, 64, srcX, srcZ, 3, 6);
-  MapGrid_WaitForShakeToSettle();
+  FieldMapGrid_WaitForShakeToSettle();
   Event_Wait(30);
   work = &gMainRoutineWork;
   *(s32 *)&layer->unk08[4] = 0;
@@ -1022,7 +1022,7 @@ void Func_02001828(void) {
   rowAbove = i - 1;
   MapGrid_CopyCellsTo(srcX, i, srcX, rowAbove, 3, 4);
   if (open == 0) {
-    MapGrid_WaitForShakeToSettle();
+    FieldMapGrid_WaitForShakeToSettle();
     FieldEvent_Wait(20);
   } else {
     MapGrid_SetShake(0x20000, 0x10000, 0x10000);
@@ -1056,7 +1056,7 @@ void Func_02001828(void) {
   MapGrid_SetShake(0x50000, 0x70000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
   MapGrid_CopyCellsTo(72, 63, srcX, rowAbove, 3, 4);
-  MapGrid_WaitForShakeToSettle();
+  FieldMapGrid_WaitForShakeToSettle();
   Event_PlaySound(584);
   {
     s32 bit = 64;
@@ -1171,7 +1171,7 @@ loop:
   if (i != 128)
     goto loop;
   FieldActor_WaitForMoveById(12);
-  MapGrid_WaitForShakeToSettle();
+  FieldMapGrid_WaitForShakeToSettle();
   Sound_Play(288);
   Event_Wait(40);
   Event_SetFlag(2552);
@@ -1871,7 +1871,7 @@ void Func_020030cc(void) {
 #endif
     MapGrid_SetShake(0x50000, 0x70000, 0x10000);
     MapGrid_SetShake(-1, -1, 0xe666);
-    MapGrid_WaitForShakeToSettle();
+    FieldMapGrid_WaitForShakeToSettle();
     Call2(Func_02002cd0, 8, 5);
     Party_LearnAbility(5, 0x9a);
     Event_SetFlag(0x9fa);

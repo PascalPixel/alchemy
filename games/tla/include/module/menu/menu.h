@@ -105,7 +105,7 @@ extern struct QueuedSprite *gData_0200752c;
 void Func_081a0a70(void);
 void Func_081a0e0c(s32 credits);
 void Func_081a0fb8(void);
-s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align);
+s32 Credits_DrawLine(const u8 *text, s32 slot, s32 align);
 
 extern const u8 BattleEffect_ExpandCode[];
 

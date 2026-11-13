@@ -85,7 +85,7 @@ void ObjectEffect_EndContextEffect(s32 mode) {
 
 void Camera_MoveWithinMapBounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
-s32 ObjectEffect_RunPendingFlagEvent(void) {
+s32 Entrance_PlayArrival(void) {
   s32 result = 0;
   s32 flag = 0x120;
 
@@ -169,7 +169,7 @@ void LineScroll_ArmDma(void) {
       REG_DMA0);
 }
 
-void Func_080d607c(void) {
+void LineScroll_BuildPage(void) {
   struct DisplayScrollWork *work = Ram_HeapSlots->unk84[1];
   u8 mode = work->mode;
   s32 x1 = (s16)gBgScroll[1].x;
@@ -318,14 +318,14 @@ void LineScroll_InitWave(s32 mode, s32 freqX, s32 stepX, s32 ampX, s32 freqY,
   work->unkf1c = ampY;
   work->unkf10 = stepX;
   work->unkf14 = stepY;
-  Task_Add(Func_080d607c, TASK_PASS_VBLANK);
+  Task_Add(LineScroll_BuildPage, TASK_PASS_VBLANK);
   Task_Add(LineScroll_ArmDma, TASK_PASS_FRAME);
 }
 
 /// Stops the line scroll: removes its two tasks and stops DMA 0.
 void LineScroll_Stop(void) {
   Task_Remove(LineScroll_ArmDma);
-  Task_Remove(Func_080d607c);
+  Task_Remove(LineScroll_BuildPage);
   {
     volatile u16 *dma = REG_DMA0;
 

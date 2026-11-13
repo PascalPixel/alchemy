@@ -43,7 +43,7 @@ void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
 
 s32 Func_0804b8b8(s32 slot);
 
-void BattleParty_CountStandbyDjinnFar(s32 kind, u8 *counts);
+void BattleDjinn_CountStandbyFar(s32 kind, u8 *counts);
 
 void Window_MarkVisibleTextTiles(void);
 

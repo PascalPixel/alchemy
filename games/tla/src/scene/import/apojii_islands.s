@@ -150,10 +150,10 @@ Actor_SetSpeedParameters:
 	.thumb_func
 Actor_CenterOnColumn:
 	overlay_veneer Actor_CenterOnColumnFar
-	.global Actor_OffsetPositionAndResetMotion
+	.global Actor_SetDestinationOffsetById
 	.thumb_func
-Actor_OffsetPositionAndResetMotion:
-	overlay_veneer Actor_OffsetPositionAndResetMotionFar
+Actor_SetDestinationOffsetById:
+	overlay_veneer Actor_SetDestinationOffsetByIdFar
 	.global Actor_WaitForMoveById
 	.thumb_func
 Actor_WaitForMoveById:
@@ -182,10 +182,10 @@ Motion_SetVarCbAndRefresh:
 	.thumb_func
 Actor_JumpDownLedge:
 	overlay_veneer Actor_JumpDownLedgeFar
-	.global Actor_SetAngleToward
+	.global Actor_FaceActorById
 	.thumb_func
-Actor_SetAngleToward:
-	overlay_veneer Actor_SetAngleTowardFar
+Actor_FaceActorById:
+	overlay_veneer Actor_FaceActorByIdFar
 	.global Actor_SetPartAttribute
 	.thumb_func
 Actor_SetPartAttribute:
@@ -266,10 +266,10 @@ Event_ResolvePendingActions:
 	.thumb_func
 Djinn_JoinParty:
 	overlay_veneer Djinn_JoinPartyFar
-	.global Actor_CommitPositionAndActivate
+	.global Actor_WalkByAndWaitById
 	.thumb_func
-Actor_CommitPositionAndActivate:
-	overlay_veneer Actor_CommitPositionAndActivateFar
+Actor_WalkByAndWaitById:
+	overlay_veneer Actor_WalkByAndWaitByIdFar
 	.global ObjectTable_Snapshot
 	.thumb_func
 ObjectTable_Snapshot:

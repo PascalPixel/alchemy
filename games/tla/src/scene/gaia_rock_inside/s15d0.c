@@ -241,7 +241,7 @@ s32 Func_020019cc(void) {
   Message_ShowCentered(message + 2, 1);
   MapGrid_SetShake(0x50000, 0x70000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  MapGrid_WaitForShakeToSettle();
+  FieldMapGrid_WaitForShakeToSettle();
   DisplayBlend_EnableRunScript();
   level = REG_BLDALPHA & 0xff;
   while (level != 0) {

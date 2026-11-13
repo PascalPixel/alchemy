@@ -102,7 +102,7 @@ void BattleStatusIcon_Cycle(struct BattleObj *slot) {
       }
 
       if (slot->animationEntry != 0 && changed != 0) {
-        ResourceMetadata_UnregisterFar(rec, (s32)slot->animationEntry);
+        Sprite_RemoveAnimationFar(rec, (s32)slot->animationEntry);
         slot->animationEntry = 0;
       }
 
@@ -143,8 +143,8 @@ void BattleObject_UpdatePose(s32 id) {
   }
 
   Actor_SetMode((struct Actor *)BattleObject_Get(id)->object, value);
-  Actor_SetAnimationSpeedFar((struct Actor *)BattleObject_Get(id)->object,
-                             (id & 3) + 14);
+  Actor_SelectAnimationFar((struct Actor *)BattleObject_Get(id)->object,
+                           (id & 3) + 14);
 }
 
 /// Releases all graphics the object owns and marks it as having none.
@@ -244,14 +244,16 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
         records++;
       }
       record->flags = 0;
-      record = (struct TlaSpriteRecord *)ResourceObject_CreateFar(spriteId + 0x2001);
+      record =
+          (struct TlaSpriteRecord *)ResourceObject_CreateFar(spriteId + 0x2001);
       if (record != 0) {
         record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
         *records = record;
       }
       record->flags = 0;
     } else {
-      record = (struct TlaSpriteRecord *)ResourceObject_CreateFar(battleObject->resource);
+      record = (struct TlaSpriteRecord *)ResourceObject_CreateFar(
+          battleObject->resource);
       if (record != 0) {
         object->recordStorageKind = 1;
         object->records = record;
@@ -260,11 +262,13 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
         entry->palette = battleObject->palette;
         entry->priority = 1;
         if ((spriteId = battleObject->overlay) != 0) {
-          entry = (struct SpriteEntry *)ResourceMetadata_RegisterFar(record, spriteId);
+          entry = (struct SpriteEntry *)ResourceMetadata_RegisterFar(record,
+                                                                     spriteId);
           entry->priority = 1;
         }
         if ((spriteId = battleObject->animation) != 0) {
-          entry = (struct SpriteEntry *)ResourceMetadata_RegisterFar(record, spriteId);
+          entry = (struct SpriteEntry *)ResourceMetadata_RegisterFar(record,
+                                                                     spriteId);
           battleObject->animationEntry = entry;
           Animation_SetWorkEntryFar(entry, 0);
           entry->priority = 3;
@@ -272,7 +276,8 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
         if ((spriteId = battleObject->effect) != 0) {
           if (record->width == 32)
             spriteId = 687;
-          entry = (struct SpriteEntry *)ResourceMetadata_RegisterFar(record, spriteId);
+          entry = (struct SpriteEntry *)ResourceMetadata_RegisterFar(record,
+                                                                     spriteId);
           battleObject->effectEntry = entry;
           entry->priority = 0;
           record->flags = 0;
@@ -287,8 +292,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
     if ((spriteId = unitIds[0]) != 255) {
       for (;;) {
         if (unitIds[unitIndex] != 254 &&
-            (battleObject =
-                 BattleObject_Get(spriteId)) != 0 &&
+            (battleObject = BattleObject_Get(spriteId)) != 0 &&
             (object = battleObject->object) != 0)
           BattleObject_UpdatePose(spriteId);
         unitIndex++;
@@ -397,7 +401,8 @@ void Func_0811b9fc(void) {
       case 1:
         record = object->records;
         record->image.priority = partyPriority;
-        if (((struct BattleUnit *)Unit_Get(unitIds[unitIndex]))->guardLevel == 4)
+        if (((struct BattleUnit *)Unit_Get(unitIds[unitIndex]))->guardLevel ==
+            4)
           record->flags |= 2;
         else
           record->flags &= ~2;
@@ -425,7 +430,8 @@ void Func_0811b9fc(void) {
       case 1:
         record = object->records;
         record->image.priority = enemyPriority;
-        if (((struct BattleUnit *)Unit_Get(unitIds[unitIndex]))->guardLevel == 4)
+        if (((struct BattleUnit *)Unit_Get(unitIds[unitIndex]))->guardLevel ==
+            4)
           record->flags |= 2;
         else
           record->flags &= ~2;
@@ -489,7 +495,7 @@ static __inline__ struct BattleObj *BattleObject_FindSlot(s32 id) {
 s32 BattleObject_MarkForRelease(s32 objectId) {
   struct BattleObj *slot;
 
-  BattleMotion_ReleaseObjectSlotByValue(objectId);
+  BattleObject_ReleaseSpriteSlots(objectId);
   slot = BattleObject_FindSlot(objectId);
   slot->active = 1;
   return 0;
@@ -528,12 +534,17 @@ s32 Battle_GetWorkEntryPair(s32 no, struct FixedPointPosition *out) {
   return result;
 }
 
-/* VIEW(battle): routine Transform_ApplyLookAt as s32 Transform_ApplyLookAt(void *, void *); transform.h has void Transform_ApplyLookAt(s32 *eye, s32 *target). */
-extern s32 Transform_ApplyLookAt__battle(void *, void *) __asm__("Transform_ApplyLookAt");
-/* VIEW(battle): routine Transform_SetLookAt as s32 Transform_SetLookAt(void *, void *); transform.h has void Transform_SetLookAt(s32 *eye, s32 *target). */
-extern s32 Transform_SetLookAt__battle(void *, void *) __asm__("Transform_SetLookAt");
+/* VIEW(battle): routine Transform_ApplyLookAt as s32 Transform_ApplyLookAt(void
+ * *, void *); transform.h has void Transform_ApplyLookAt(s32 *eye, s32
+ * *target). */
+extern s32
+Transform_ApplyLookAt__battle(void *, void *) __asm__("Transform_ApplyLookAt");
+/* VIEW(battle): routine Transform_SetLookAt as s32 Transform_SetLookAt(void *,
+ * void *); transform.h has void Transform_SetLookAt(s32 *eye, s32 *target). */
+extern s32 Transform_SetLookAt__battle(void *,
+                                       void *) __asm__("Transform_SetLookAt");
 
-s32 Camera_ApplyTransformByFlag(void) {
+s32 BattleCamera_ApplyTransform(void) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
 
   Render_ResetTransformState();
@@ -552,7 +563,7 @@ s32 BattleMotion_ProjectPosition(s32 id, s32 *projected) {
   s32 position[3];
   s32 scaled;
 
-  Camera_ApplyTransformByFlag();
+  BattleCamera_ApplyTransform();
   {
     s32 *pos = position;
     s32 *out;

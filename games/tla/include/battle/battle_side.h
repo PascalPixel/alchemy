@@ -47,24 +47,24 @@ struct DjinnRecoveryTable {
   struct DjinnRecoveryList list;
 };
 
-s32 BattleParty_PrepareActiveOwners(u16 *unit_ids);
+s32 BattleParty_PrepareMembers(u16 *unit_ids);
 s32 BattleEnemy_List(s16 *unit_ids);
 s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids);
 s32 BattleParty_AssignMemberSlots(void);
 s32 BattleParty_ListActorIds(s32 side_mask, u16 *unit_ids);
 
 s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias);
-s32 BattleUnit_CountDownAttackModifier(s32 unitId);
-s32 BattleUnit_CountDownDefenseModifier(s32 unitId);
-s32 BattleUnit_CountDownResistanceModifier(s32 unitId);
+s32 BattleUnit_CountDownAttackStage(s32 unitId);
+s32 BattleUnit_CountDownDefenseStage(s32 unitId);
+s32 BattleUnit_CountDownResistanceStage(s32 unitId);
 s32 BattleUnit_CountDownDelusion(s32 unitId);
 s32 BattleUnit_CountDownConfusion(s32 unitId);
 s32 BattleUnit_CountDownCharm(s32 unitId);
 s32 BattleUnit_CountDownStun(s32 unitId);
 s32 BattleUnit_CountDownSleep(s32 unitId);
-s32 Battle_AdvanceCounterAndCheckChance(s32 unitId);
+s32 BattleUnit_CountDownPsynergySeal(s32 unitId);
 s32 BattleUnit_CountDownReflect(s32 unitId);
-s32 BattleUnit_CountDownAgilityModifier(s32 unitId);
+s32 BattleUnit_CountDownAgilityStage(s32 unitId);
 s32 DjinnRecovery_CountDown(void);
 s32 DjinnRecovery_CountDownTwenty(void);
 

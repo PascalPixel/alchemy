@@ -4,8 +4,8 @@
 #include "types.h"
 #include "edition.h"
 
-s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance);
-s32 Scene_GetAreaNameIndexFar(s32 scene, s32 entrance);
+s32 Area_GetNameIndex(s32 scene, s32 entrance);
+s32 Area_GetNameIndexFar(s32 scene, s32 entrance);
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 

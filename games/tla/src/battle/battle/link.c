@@ -38,7 +38,7 @@ s32 LinkBattle_ReceiveParty(void) {
         }
       } while (name_text[i] != 0);
     }
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||                      \
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
     name_text[i] = ' ';
     len = i + 1;
@@ -84,7 +84,7 @@ s32 LinkBattle_SendParty(void) {
   work = Ram_HeapSlots->battleWork;
   for (i = 7; i >= 0; i--)
     work->ownerSlots[i] = mark;
-  count = BattleParty_PrepareActiveOwners(owners);
+  count = BattleParty_PrepareMembers(owners);
   for (i = 0; i < count; i++) {
     Iwram_CopyWordsEntry(buffer, Unit_Get(owners[i]), size);
     ((struct LinkUnit *)buffer)->side = 2;
@@ -303,7 +303,7 @@ s32 LinkBattle_SyncTurn(void) {
 s32 BattleParty_AssignMemberSlots(void) {
   u16 activeMembers[8];
   u8 *battleState = (u8 *)Ram_HeapSlots->battleWork;
-  s32 partySize = BattleParty_PrepareActiveOwners(activeMembers);
+  s32 partySize = BattleParty_PrepareMembers(activeMembers);
   s32 memberSlot;
   s32 unitId;
 

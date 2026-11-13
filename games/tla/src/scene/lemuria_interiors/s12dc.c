@@ -37,7 +37,7 @@ void Func_020013f0(void) {
   Event_SetMessageId((s32)MsgLemuriaInteriors26);
   Actor_FaceDirection(4, FACING_SOUTH, 0);
   Actor_SetSpeed(18, 0x10000, 0x8000);
-  Actor_CommitPositionAndActivate(18, 32, 0);
+  Actor_WalkByAndWaitById(18, 32, 0);
   Actor_WalkByAndWait(18, 0, -32);
   Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(10);
@@ -119,7 +119,7 @@ void Func_020013f0(void) {
   Event_Wait(15);
   Motion_SetModeAndWaitAnimation(18, 4);
   Event_ShowMessageThenWait(18, 0, 20);
-  Actor_CommitPositionAndActivate(18, 12, 0);
+  Actor_WalkByAndWaitById(18, 12, 0);
   Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(20);
   Actor_ShowEmote(18, 0x108, 30);
@@ -163,7 +163,7 @@ void Func_020013f0(void) {
   Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(10);
   Actor_SetSpeed(18, 0xcccc, 0x6666);
-  Actor_CommitPositionAndActivate(18, 12, 0);
+  Actor_WalkByAndWaitById(18, 12, 0);
   Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
@@ -205,7 +205,7 @@ void Func_020013f0(void) {
   Actor_ShowEmote(12, 0x108, 30);
   Event_ShowMessageThenWait(12, 0, 10);
   Actor_SetSpeed(18, 0x20000, 0x10000);
-  Actor_CommitPositionAndActivate(18, 12, 0);
+  Actor_WalkByAndWaitById(18, 12, 0);
   Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(20);
   Actor_ShowEmote(18, 0x107, 30);
@@ -323,10 +323,10 @@ void Func_020013f0(void) {
   Actor_ArmCallback(12, FACING_EAST, 0);
   Event_Wait(20);
   Actor_SetSpeed(12, 0x9999, 0x4ccc);
-  Actor_CommitPositionAndActivate(12, 12, 0);
+  Actor_WalkByAndWaitById(12, 12, 0);
   Actor_ArmCallback(4, FACING_EAST, 0);
   Event_Wait(20);
-  Actor_CommitPositionAndActivate(12, 12, 0);
+  Actor_WalkByAndWaitById(12, 12, 0);
   Event_Wait(10);
   Event_ShowMessageThenWait(12, 0, 10);
   Actor_SetModeById(4, 3);
@@ -362,7 +362,7 @@ void Func_020013f0(void) {
   Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(10);
   Actor_SetSpeed(18, 0x10000, 0x8000);
-  Actor_CommitPositionAndActivate(18, 12, 0);
+  Actor_WalkByAndWaitById(18, 12, 0);
   Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
@@ -456,13 +456,13 @@ void Func_020013f0(void) {
   Actor_SetSpeed(18, 0x19999, 0xcccc);
   Actor_WalkByAndWait(18, -8, 40);
   Actor_FaceDirection(6, FACING_SOUTH, 0);
-  Actor_CommitPositionAndActivate(18, 0, 20);
+  Actor_WalkByAndWaitById(18, 0, 20);
   MapGrid_SetShake(0x10000, 0x10000, 0x10000);
   Actor_SetSpeedParameters(18, 0x1e666, 0xf333);
   Sound_Play(133);
   Actor_Jump(18, 2, 0);
   Actor_GetById(18)->actionFlags &= 0xfe;
-  Actor_CommitPositionAndActivate(18, 0, -12);
+  Actor_WalkByAndWaitById(18, 0, -12);
   Event_Wait(1);
   Actor_GetById(18)->actionFlags |= 1;
   Map_SetScreenShake(0, 0, 0);
@@ -471,7 +471,7 @@ void Func_020013f0(void) {
   FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
   Actor_SetSpeed(18, 0x9999, 0x4ccc);
   Actor_GetById(18)->actionFlags &= 0xfe;
-  Actor_CommitPositionAndActivate(18, 0, -24);
+  Actor_WalkByAndWaitById(18, 0, -24);
   Event_Wait(1);
   Actor_GetById(18)->actionFlags |= 1;
   Event_Wait(20);
@@ -484,12 +484,12 @@ void Func_020013f0(void) {
   object->update = (void (*)(void))Func_02001398;
   FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
   Actor_SetSpeed(18, 0x23333, 0x11999);
-  Actor_CommitPositionAndActivate(18, 0, 32);
+  Actor_WalkByAndWaitById(18, 0, 32);
   target = Actor_GetById(18);
   Sound_Play(134);
   MapGrid_SetShake(0x40000, 0x40000, 0x10000);
   Actor_GetById(18)->actionFlags &= 0xfe;
-  Actor_CommitPositionAndActivate(18, 0, -16);
+  Actor_WalkByAndWaitById(18, 0, -16);
   Event_Wait(1);
   Actor_GetById(18)->actionFlags |= 1;
   target->timer = 3;
@@ -513,7 +513,7 @@ void Func_020013f0(void) {
   Actor_ArmCallback(18, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(25);
   Event_ShowMessageThenWait(0x1012, 0, 10);
-  Actor_CommitPositionAndActivate(18, 0, 48);
+  Actor_WalkByAndWaitById(18, 0, 48);
   Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
   Event_Wait(30);
   Actor_ShowEmote(6, 0x105, 30);

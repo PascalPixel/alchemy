@@ -73,7 +73,7 @@ s32 Func_080dbcd8(s32 x, s32 z, s32 layer) {
     s32 position[3];
 
     SET_VECTOR(position, column, 0, z);
-    column = (u32)(GetWorldMapCollisionFar(position) - 5) <= 1;
+    column = (u32)(WorldMap_GetCollisionFar(position) - 5) <= 1;
   } else {
     s32 code = Func_080dbb78(column, z, 2)->collisionCode;
 
@@ -100,7 +100,7 @@ s32 Func_080dbd5c(s32 x, s32 z, s32 layer) {
     position[1] = 0;
     position[0] = x;
     position[2] = z;
-    collision = GetWorldMapCollisionFar(position);
+    collision = WorldMap_GetCollisionFar(position);
     return (u32)(collision - 2) <= 2;
   }
   return (u8)(Func_080dbb78(x, z, layer)->attributeB & 16);
@@ -281,8 +281,8 @@ void *Sprite_ShareVramCacheEntry(void *src, void *alt) {
   return ret;
 }
 
-#define Actor_SetAnimationSpeedFar                                             \
-  ((void (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
+#define Actor_SelectAnimationFar                                               \
+  ((void (*)(struct Actor *, s32))Actor_SelectAnimationFar)
 
 /* VIEW(depthend): routine Func_080200c0 as struct Actor *Func_080200c0(s32
  * kind, s32 x, s32 y, s32 z); f0d8740 has struct CaptureObject
@@ -327,7 +327,7 @@ void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
     if (objectId != *activeObjectId && object != NULL &&
         object != excludedObject) {
       object->movementState = groupMode;
-      Actor_SetAnimationSpeedFar(object, action);
+      Actor_SelectAnimationFar(object, action);
     }
     objectId++;
   } while (objectId <= 0x50);
@@ -428,5 +428,5 @@ void FieldPsynergy_FadeToCastColor(void) {
     tint = 7;
   Field_StartColorTransition(8, gData_080f3954[tint]);
 }
-#undef Actor_SetAnimationSpeedFar
+#undef Actor_SelectAnimationFar
 #undef FLAG_TINT_FIRST

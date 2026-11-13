@@ -71,7 +71,12 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(sea_of_time): variable gData_020021e4 as extern const u8 gData_020021e4[]; the definition has struct ActorPlacement gData_020021e4[] = { { 8, CONDITION_ALWAYS, (s32) gData_02002154, PIXELS(120), 0, PIXELS(280), FACING_NORTH, 2, 0 }, {...; tried as the definition's extern struct WarpTarget gData_020021e4, it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:83: cannot convert to a pointer type. */
+/* VIEW(sea_of_time): variable gData_020021e4 as extern const u8
+ * gData_020021e4[]; the definition has struct ActorPlacement gData_020021e4[] =
+ * { { 8, CONDITION_ALWAYS, (s32) gData_02002154, PIXELS(120), 0, PIXELS(280),
+ * FACING_NORTH, 2, 0 }, {...; tried as the definition's extern struct
+ * WarpTarget gData_020021e4, it does not compile in tla-ja:
+ * games/tla/src/scene/sea_of_time.c:83: cannot convert to a pointer type. */
 extern const u8 gData_020021e4__sea_of_time[] __asm__("gData_020021e4");
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
@@ -353,15 +358,35 @@ void Func_02000818(void) {
 #include "main_routine_work.h"
 #include "text/msg_ids.h"
 
-/* VIEW(sea_of_time): variable gData_020022be as extern u16 gData_020022be; the definition has u16 gData_020022be[] = { 0, }; tried as the definition's extern u16 gData_020022be[], it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:388: `gData_020022be' has an incomplete type. */
+/* VIEW(sea_of_time): variable gData_020022be as extern u16 gData_020022be; the
+ * definition has u16 gData_020022be[] = { 0, }; tried as the definition's
+ * extern u16 gData_020022be[], it does not compile in tla-ja:
+ * games/tla/src/scene/sea_of_time.c:388: `gData_020022be' has an incomplete
+ * type. */
 extern u16 gData_020022be__sea_of_time __asm__("gData_020022be");
-/* VIEW(sea_of_time): variable gData_020022c0 as extern s16 gData_020022c0; the definition has u32 gData_020022c0[] = { 0, }; tried as the definition's extern u32 gData_020022c0[], it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:389: `gData_020022c0' has an incomplete type. */
+/* VIEW(sea_of_time): variable gData_020022c0 as extern s16 gData_020022c0; the
+ * definition has u32 gData_020022c0[] = { 0, }; tried as the definition's
+ * extern u32 gData_020022c0[], it does not compile in tla-ja:
+ * games/tla/src/scene/sea_of_time.c:389: `gData_020022c0' has an incomplete
+ * type. */
 extern s16 gData_020022c0__sea_of_time __asm__("gData_020022c0");
-/* VIEW(sea_of_time): variable gData_020022bc as extern u16 gData_020022bc; the definition has u16 gData_020022bc[] = { 0, }; tried as the definition's extern u16 gData_020022bc[], it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:424: `gData_020022bc' has an incomplete type. */
+/* VIEW(sea_of_time): variable gData_020022bc as extern u16 gData_020022bc; the
+ * definition has u16 gData_020022bc[] = { 0, }; tried as the definition's
+ * extern u16 gData_020022bc[], it does not compile in tla-ja:
+ * games/tla/src/scene/sea_of_time.c:424: `gData_020022bc' has an incomplete
+ * type. */
 extern u16 gData_020022bc__sea_of_time __asm__("gData_020022bc");
-/* VIEW(sea_of_time): variable gData_02002118 as extern struct Spots gData_02002118; the definition has u16 gData_02002118[] = { 0, 672, 0, 704, 0, 896, 0, 320, 0, 512, 0, 192, 0, 320, 0, 416, 0, 320, 0, 832, 0, 96, 0, 160, }; tried as the definition's extern u16 gData_02002118[], it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:428: invalid initializer. */
+/* VIEW(sea_of_time): variable gData_02002118 as extern struct Spots
+ * gData_02002118; the definition has u16 gData_02002118[] = { 0, 672, 0, 704,
+ * 0, 896, 0, 320, 0, 512, 0, 192, 0, 320, 0, 416, 0, 320, 0, 832, 0, 96, 0,
+ * 160, }; tried as the definition's extern u16 gData_02002118[], it does not
+ * compile in tla-ja: games/tla/src/scene/sea_of_time.c:428: invalid
+ * initializer. */
 extern struct Spots gData_02002118__sea_of_time __asm__("gData_02002118");
-/* VIEW(sea_of_time): variable gData_02002110 as extern u8 gData_02002110[]; the definition has u32 gData_02002110[] = { 0x18101810, 0x1810, }; tried as the definition's extern u32 gData_02002110[], Func_02000a80 moves: 5 of 188 instructions in tla-ja. */
+/* VIEW(sea_of_time): variable gData_02002110 as extern u8 gData_02002110[]; the
+ * definition has u32 gData_02002110[] = { 0x18101810, 0x1810, }; tried as the
+ * definition's extern u32 gData_02002110[], Func_02000a80 moves: 5 of 188
+ * instructions in tla-ja. */
 extern u8 gData_02002110__sea_of_time[] __asm__("gData_02002110");
 
 /// Tracks actor 8 around the ring of cells: counts steps made in one direction,
@@ -466,7 +491,11 @@ void Func_02000c50(void) {
 #include "system/io_reg.h"
 
 extern u32 gData_020022cc;
-/* VIEW(s0c94): routine Func_02001fb4 as s32 Func_02001fb4(void); sea_of_time.h has void Func_02001fb4(void); tried as the definition's void Func_02001fb4(s32 *position, s32 speed, s32 mode), it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:473: conflicting types for `Func_02001fb4'. */
+/* VIEW(s0c94): routine Func_02001fb4 as s32 Func_02001fb4(void); sea_of_time.h
+ * has void Func_02001fb4(void); tried as the definition's void
+ * Func_02001fb4(s32 *position, s32 speed, s32 mode), it does not compile in
+ * tla-ja: games/tla/src/scene/sea_of_time.c:473: conflicting types for
+ * `Func_02001fb4'. */
 extern s32 Func_02001fb4__s0c94(void) __asm__("Func_02001fb4");
 
 /// Fades BG palette 3's entries 1 to 13 toward RGB(11, 6, 23), one unit per
@@ -619,52 +648,52 @@ void Func_02000ef0(void) {
   // A goto loop: as while (Func_02001f9c(actor) == 0), loop.c moves 0xb0000
   // out of the loop and 191 of 165 instructions differ.
   while (Func_02001f9c(actor) == 0) {
-  if ((gFrameCount & 3) == 0) {
-    options.priority = 2;
-    options.palette = 7;
-    options.startScaleX = 0x16666;
-    options.startScaleY = 0x13333;
-    cosine = Math_Cosine(actor->facing);
-    sine = Math_Sine(actor->facing);
-    sides[0] = cosine * 12;
-    sides[1] = sine * 12;
-    sides[2] = -(cosine * 12);
-    sides[3] = -(sine * 12);
-    sides[0] += actor->x;
-    sides[1] += actor->z;
-    sides[2] += actor->x;
-    sides[3] += actor->z;
-    velocity = 0x8000;
-    if (sides[1] != actor->z) {
-      sides[1] -= 0xc0000;
-      sides[3] -= 0xc0000;
+    if ((gFrameCount & 3) == 0) {
+      options.priority = 2;
+      options.palette = 7;
+      options.startScaleX = 0x16666;
+      options.startScaleY = 0x13333;
+      cosine = Math_Cosine(actor->facing);
+      sine = Math_Sine(actor->facing);
+      sides[0] = cosine * 12;
+      sides[1] = sine * 12;
+      sides[2] = -(cosine * 12);
+      sides[3] = -(sine * 12);
+      sides[0] += actor->x;
+      sides[1] += actor->z;
+      sides[2] += actor->x;
+      sides[3] += actor->z;
+      velocity = 0x8000;
+      if (sides[1] != actor->z) {
+        sides[1] -= 0xc0000;
+        sides[3] -= 0xc0000;
+      }
+      alternate = gFrameCount & 4;
+      reverseVelocity = -velocity;
+      x = sides[0];
+      y = actor->y;
+      z = sides[1];
+      if (alternate) {
+        Func_0200015c(x + 0x40000, y, z, velocity, 0, 0,
+                      EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
+                          EFFECT_USE_START_SCALE,
+                      &options);
+        Func_0200015c(
+            sides[2] - 0x40000, actor->y, sides[3], reverseVelocity, 0, 0,
+            EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE,
+            &options);
+      } else {
+        Func_0200015c(x - 0x40000, y, z, reverseVelocity, 0, 0,
+                      EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
+                          EFFECT_USE_START_SCALE,
+                      &options);
+        Func_0200015c(sides[2] + 0x40000, actor->y, sides[3], velocity, 0, 0,
+                      EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
+                          EFFECT_USE_START_SCALE,
+                      &options);
+      }
     }
-    alternate = gFrameCount & 4;
-    reverseVelocity = -velocity;
-    x = sides[0];
-    y = actor->y;
-    z = sides[1];
-    if (alternate) {
-      Func_0200015c(x + 0x40000, y, z, velocity, 0, 0,
-                    EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
-                        EFFECT_USE_START_SCALE,
-                    &options);
-      Func_0200015c(sides[2] - 0x40000, actor->y, sides[3], reverseVelocity, 0, 0,
-                    EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
-                        EFFECT_USE_START_SCALE,
-                    &options);
-    } else {
-      Func_0200015c(x - 0x40000, y, z, reverseVelocity, 0, 0,
-                    EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
-                        EFFECT_USE_START_SCALE,
-                    &options);
-      Func_0200015c(sides[2] + 0x40000, actor->y, sides[3], velocity, 0, 0,
-                    EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
-                        EFFECT_USE_START_SCALE,
-                    &options);
-    }
-  }
-  wait(1);
+    wait(1);
   }
   Func_02001fb4();
 }
@@ -1045,7 +1074,7 @@ void Func_02001a14(void) {
   Func_02001928(37, 17, 10);
   Func_02001928(47, 27, 12);
   Func_02001928(59, 19, 13);
-  Map_WaitForShakeToSettle();
+  MapGrid_WaitForShakeToSettle();
   Camera_MoveWithinMapBounds(0x1600000, -1, 0xc40000, 1);
   Func_02001ffc();
   GameFlag_SetBit(0x200);
@@ -1368,11 +1397,16 @@ struct Trigger gData_0200242c[] = {
     {TRIGGER_STEP, 37, CONDITION_ALWAYS, EVENT(Func_0200054c)},
     {TRIGGER_STEP, 48, CONDITION_ALWAYS, EVENT(Func_02000818)},
     {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(Func_0200043c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 9, CONDITION_ALWAYS, EVENT(Func_02001480)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 10, CONDITION_ALWAYS, EVENT(Func_020014b4)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 11, CONDITION_ALWAYS, EVENT(Func_020014ec)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 12, CONDITION_ALWAYS, EVENT(Func_02001524)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 13, CONDITION_ALWAYS, EVENT(Func_0200155c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 9, CONDITION_ALWAYS,
+     EVENT(Func_02001480)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 10, CONDITION_ALWAYS,
+     EVENT(Func_020014b4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 11, CONDITION_ALWAYS,
+     EVENT(Func_020014ec)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 12, CONDITION_ALWAYS,
+     EVENT(Func_02001524)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 13, CONDITION_ALWAYS,
+     EVENT(Func_0200155c)},
     {TRIGGERS_END},
 };
 
@@ -1383,7 +1417,8 @@ struct Trigger gData_0200251c[] = {
     {TRIGGER_STEP, 46, CONDITION_ALWAYS, EVENT(Func_02000818)},
     {TRIGGER_STEP, 47, CONDITION_ALWAYS, EVENT(Func_02000818)},
     {TRIGGER_STEP, 48, CONDITION_ALWAYS, EVENT(Func_02000818)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 9, CONDITION_ALWAYS, EVENT(Func_02001594)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 9, CONDITION_ALWAYS,
+     EVENT(Func_02001594)},
     {TRIGGERS_END},
 };
 

@@ -192,7 +192,7 @@ void Func_0200225c(void) {
   partner->velocityY = PIXELS(6);
   Actor_WaitForMoveById(12);
   Event_Wait(45);
-  Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(8, gMainRoutineWork.currentOwner, 0);
   Sound_Play(576);
   Actor_SetModeById(8, 5);
   wait(30);
@@ -207,7 +207,7 @@ void Func_0200225c(void) {
       wait(1);
     }
     Actor_SetSpeed(8, 0x4000, 0xccc);
-    Actor_OffsetPositionAndResetMotion(8, 24, 0);
+    Actor_SetDestinationOffsetById(8, 24, 0);
     MapGrid_CopyCellAttributes(27, 23, 1, 1, 28, 22);
     Map_CopyCellAttributeRect(32, 16, 2, 1, 29, 22);
     i = 0;
@@ -280,7 +280,7 @@ void Func_020024b8(void) {
   partner->velocityY = PIXELS(6);
   Actor_WaitForMoveById(12);
   Event_Wait(45);
-  Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(9, gMainRoutineWork.currentOwner, 0);
   Sound_Play(576);
   Actor_SetModeById(9, 5);
   wait(30);
@@ -368,7 +368,7 @@ void Func_02002718(void) {
   partner->velocityY = PIXELS(6);
   Actor_WaitForMoveById(14);
   Event_Wait(45);
-  Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(8, gMainRoutineWork.currentOwner, 0);
   Sound_Play(576);
   Actor_SetModeById(8, 5);
   wait(30);
@@ -508,7 +508,11 @@ const u8 *Scene_GetEvents(void) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(s2ac8): routine Actor_GetById as s32 Actor_GetById(); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s1f68.c:527: too few arguments to function `Actor_GetById'. */
+/* VIEW(s2ac8): routine Actor_GetById as s32 Actor_GetById(); event.h has struct
+ * Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor
+ * *Actor_GetById(u32 objectId), which the object already declares, it does not
+ * compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s1f68.c:527: too few
+ * arguments to function `Actor_GetById'. */
 extern s32 Actor_GetById__s2ac8() __asm__("Actor_GetById");
 s32 Func_02004d9c();
 
@@ -517,7 +521,7 @@ void Func_02002ac8(s32 a0, s32 a1) {
   s32 t0;
 
   t0 = Actor_GetById__s2ac8();
-  Actor_SetAngleToward(a0, a1, 0);
+  Actor_FaceActorById(a0, a1, 0);
   if (t0 != 0) {
     t2 = ResourceMetadata_Register(FIELD_AT(t0, s32, 80), 0x185);
     FIELD_AT(t2, u8, 5) = 0;
@@ -551,7 +555,11 @@ void Func_02002b04(u32 id, s8 mode) {
        ->v)
 
 #include "call.h"
-/* VIEW(s2b58): routine Actor_GetById as s32 Actor_GetById(); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s1f68.c:569: too few arguments to function `Actor_GetById'. */
+/* VIEW(s2b58): routine Actor_GetById as s32 Actor_GetById(); event.h has struct
+ * Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor
+ * *Actor_GetById(u32 objectId), which the object already declares, it does not
+ * compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s1f68.c:569: too few
+ * arguments to function `Actor_GetById'. */
 extern s32 Actor_GetById__s2b58() __asm__("Actor_GetById");
 void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 

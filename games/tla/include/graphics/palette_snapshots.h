@@ -31,7 +31,7 @@ STATIC_ASSERT(offsetof(struct PaletteSnapshot, colors) == 0xc);
 STATIC_ASSERT(sizeof(struct PaletteSnapshotWork) == 0xb4);
 STATIC_ASSERT(offsetof(struct PaletteSnapshotWork, count) == 0xb0);
 
-void PaletteQueue_Initialize(void);
+void PaletteCycle_Initialize(void);
 s32 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count);
 void PaletteQueue_Stop(void);
 void PaletteQueue_StepCycles(void);

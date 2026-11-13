@@ -491,7 +491,7 @@ void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
   }
 }
 
-s32 Enemy_GetFreeSlot(void) {
+s32 Enemy_GetFreeUnitId(void) {
   s32 i;
   s32 id;
 
@@ -562,7 +562,7 @@ void BattleUnit_RefreshPlacement(void) {
   place = 0;
   stand = 0;
   work = Ram_HeapSlots->battleWork;
-  count = BattleParty_PrepareActiveOwners(ids);
+  count = BattleParty_PrepareMembers(ids);
   count += BattleParty_PrepareReserveOwners(ids + count);
   value = 0xff;
   for (i = 13; i >= 0; i--)

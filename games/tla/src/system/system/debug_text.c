@@ -53,7 +53,7 @@ void NumberText_FormatDecimal(s32 value) {
     gNumberTextBuffer[i] = ' ';
 }
 
-void Func_08014aa8(u32 count) {
+void DebugText_PrintBlanks(u32 count) {
   u16 *dst = gDebugTextCursor;
   u32 i;
 

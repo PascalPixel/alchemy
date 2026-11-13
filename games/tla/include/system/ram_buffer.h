@@ -15,7 +15,7 @@
 #define Ram_MapBlocks FIXED_ADDRESS((u8 *), 0x02020000, gMapBlocks)
 #define Ram_MapShapeGrid FIXED_ADDRESS((u8 *), 0x02024000, gMapShapeGrid)
 
-#define Ram_SoundMixer FIXED_ADDRESS((u8 *), 0x03006000, SoundDriver_Mixer)
+#define Ram_SoundMixer FIXED_ADDRESS((u8 *), 0x03006000, SoundMainRAM)
 
 #define Ram_IwramHeapEnd                                                       \
   FIXED_ADDRESS((u8 *), 0x03006fc0, IwramSoundMixWorkspace)

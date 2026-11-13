@@ -209,7 +209,7 @@ void Func_0200049c(void) {
   Actor_FaceDirection(6, FACING_SOUTHWEST, 0);
   Actor_ShowEmoteById(6, 0x100, 20);
   Event_ShowMessageAndWait(6, 0);
-  Actor_SetAngleToward(6, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(6, gMainRoutineWork.currentOwner, 0);
   Event_Wait(20);
   Actor_SetModeById(6, 3);
   Event_ShowMessageAndWait(6, 0);

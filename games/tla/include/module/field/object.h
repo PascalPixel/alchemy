@@ -56,7 +56,7 @@ extern const struct ActorPlacement gData_080f21d4[];
 
 void BattleEffect_InitializeBuffers(void);
 
-s32 ObjectEffect_RunPendingFlagEvent(void);
+s32 Entrance_PlayArrival(void);
 void ObjectEffect_StartContextEffect25(void);
 void ObjectEffect_StartContextEffect26(void);
 void Func_080d5fd4(void);
@@ -65,7 +65,7 @@ s32 Field_TryJumpForward(void);
 s32 Func_080d50f8(void);
 s32 Func_080d53b8(void);
 
-void Marker_MoveLeaderAwayFromEmitter(struct ParticleEmitter *emitter);
+void ItemDisplay_EmitSparkles(struct ParticleEmitter *emitter);
 
 extern const u32 gData_0802ed34[4][9];
 
@@ -159,7 +159,7 @@ s32 Func_080d8ff8(s32 index, s32 x, s32 y, s32 z, s32 to_x, s32 to_y, s32 to_z,
                   s32 mode);
 
 void Message_SetVoiceFromActor(s32 key);
-void Event_ShowCounterAtPosition(s32 unused0, s32 unused1, s32 x, s32 y);
+void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y);
 
 void FieldMotes_Update(void);
 
@@ -179,7 +179,7 @@ extern const s32 gData_0802ec88[];
 
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
 
-s32 ObjectTable_ReadActiveValue(s32 key);
+s32 Actor_GetSpriteById(s32 key);
 void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
 
 s32 ResourceTable_CountFreeBlocks(void);

@@ -27,7 +27,7 @@
  * *Unit_Get(s32 owner), which the object already declares,
  * BattleAI_ChooseTarget moves: 5 of 776 instructions,
  * BattleActor_ResetRuntimeFields moves: 1 of 97 instructions,
- * BattleActor_DestroyTemporaryObject moves: 1 of 24 instructions, 32 more in
+ * BattleObject_DestroyTemporaryObject moves: 1 of 24 instructions, 32 more in
  * tla-ja. */
 extern void *Unit_Get__f11f66c(s32 owner) __asm__("Unit_Get");
 
@@ -518,7 +518,7 @@ void Func_08120158(void) {
   ((s32 *)Ram_HeapSlots->unk84[4])[2] = 1;
 }
 
-s32 BattleActor_DestroyTemporaryObject(s32 arg0) {
+s32 BattleObject_DestroyTemporaryObject(s32 arg0) {
   // UB: declared s32 but returns no value; no caller reads it.
   struct BattleUnit *creature;
   struct BattleObj *runtime;
@@ -569,7 +569,7 @@ u32 BattleEvent_DispatchQueued(void) {
         BattleEvent_GrantDjinnBonus(runtime, queue->operands[i]);
         break;
       case BATTLE_EVENT_REMOVE_UNIT:
-        BattleActor_DestroyTemporaryObject(queue->operands[i]);
+        BattleObject_DestroyTemporaryObject(queue->operands[i]);
         break;
       case BATTLE_EVENT_UNIT_NAME:
         MessageArgument_PushFar(queue->operands[i], 1);
@@ -940,7 +940,7 @@ power_end:
 
     cls = actor->enemyId;
     chg = -1;
-    ent = Enemy_GetFreeSlot();
+    ent = Enemy_GetFreeUnitId();
     if (action->effect == 51) {
       cls = BattleFormation_GetRandomMember(work->enemyGroup);
     } else if (action->effect == 86) {
@@ -955,11 +955,11 @@ power_end:
       } else
         hit = 0;
     }
-    if (hit != 0 && Enemy_CheckRoom(cls) != 0 && ent >= 0) {
+    if (hit != 0 && Enemy_HasSpriteRoom(cls) != 0 && ent >= 0) {
       if (chg == -1) {
         chg = BattleEnemy_ClaimNameLetter(cls, 1);
         if (chg & 0x8000)
-          BattleEnemy_LetterFirstOfClass(cls);
+          BattleEnemy_LetterFirstOfKind(cls);
       }
       BattleUnit_SetFar(ent, cls, chg & 0x7fff);
       if (action->effect == 87) {
@@ -997,7 +997,7 @@ power_end:
 
         num = BattleEnemy_List(list);
         for (cnt = 0; cnt < num; cnt++)
-          ObjMotRst((u16)list[cnt]);
+          BattleMotion_ReturnToSpot((u16)list[cnt]);
       }
       BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, ent);
       if (action->effect == 87)
@@ -2336,15 +2336,15 @@ select_again:
     switch (ability->effect) {
     case ABILITY_EFFECT_DEFEND:
       request->command = COMMAND_DEFEND;
-      request->target = Battle_FindTaggedSlotByValue(request->unitId);
+      request->target = Battle_FindUnitPlace(request->unitId);
       break;
     case ABILITY_EFFECT_TOTAL_DEFENSE:
       request->command = COMMAND_DEFEND2;
-      request->target = Battle_FindTaggedSlotByValue(request->unitId);
+      request->target = Battle_FindUnitPlace(request->unitId);
       break;
     case ABILITY_EFFECT_FLEE:
       request->command = COMMAND_FLEE;
-      request->target = Battle_FindTaggedSlotByValue(request->unitId);
+      request->target = Battle_FindUnitPlace(request->unitId);
       break;
     case 74:
     case 88:
@@ -2384,7 +2384,7 @@ select_again:
         request->command = COMMAND_ATTACK;
       if (abilityId == 729) {
         request->command = COMMAND_SUMMON;
-        BattleParty_CountStandbyDjinn(0, counts);
+        BattleDjinn_CountStandby(0, counts);
         summonIndex = Summon_ListLearnedFar(summons);
         for (summonIndex--; summonIndex >= 0; summonIndex--) {
           summon = SummonDefinition_Get(summons[summonIndex]);
@@ -2436,20 +2436,20 @@ select_again:
       }
       break;
     case 3:
-      request->target = Battle_FindTaggedSlotByValue(request->unitId);
+      request->target = Battle_FindUnitPlace(request->unitId);
       break;
     default:
       if (ability->effect == 86 &&
-          !Enemy_CheckRoom(unit->enemyId == 164 ? 378 : 81))
+          !Enemy_HasSpriteRoom(unit->enemyId == 164 ? 378 : 81))
         break;
       battle = (struct AIBattleWork *)Ram_HeapSlots->battleWork;
       if (ability->effect == 87) {
         if (battle->queueCount == 0)
           break;
-        if (!Enemy_CheckRoom(battle->queuedSummons[battle->queueHead]))
+        if (!Enemy_HasSpriteRoom(battle->queuedSummons[battle->queueHead]))
           break;
       }
-      request->target = Battle_FindTaggedSlotByValue(request->unitId);
+      request->target = Battle_FindUnitPlace(request->unitId);
       needsChoice = 0;
       break;
     }

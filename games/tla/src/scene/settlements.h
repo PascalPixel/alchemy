@@ -53,7 +53,7 @@ extern u32 gData_020023a0[];
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void CommitPos(s32 id, s32 x, s32 z) {
-  Actor_CommitPositionAndActivate(id, x, z);
+  Actor_WalkByAndWaitById(id, x, z);
 }
 
 static __inline__ void Window(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g) {
@@ -69,7 +69,7 @@ static __inline__ void CopyCells2(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
 }
 
 static __inline__ void SetPosCommit(s32 id, s32 x, s32 z) {
-  Actor_SetPositionAndCommit(id, x, z);
+  Actor_MoveToAndWaitById(id, x, z);
 }
 
 static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Test(flag); }

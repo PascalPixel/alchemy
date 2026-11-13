@@ -3,7 +3,7 @@
 	.include "games/tla/src/gamepak/far_call/veneer.s"
 	.global Resource_FarCall009
 Resource_FarCall009:
-	export Func_08118000, Func_08118958
+	export DebugBattle_RunMenuFar, DebugBattle_RunMenu
 	export BattleTransition_RunMosaicFadeOutFar, BattleTransition_RunMosaicFadeOut
 	export BattleActor_SpawnObjectsForListFar, BattleActor_SpawnObjectsForList
 	export BattleBackground_FadeAlphaOutFar, BattleBackground_FadeAlphaOut
@@ -27,8 +27,8 @@ Resource_FarCall009:
 	export BattleMotion_ProjectPositionFar, BattleMotion_ProjectPosition
 	export BattleMotion_ProjectScaledPositionFar, BattleMotion_ProjectScaledPosition
 	export BattleMotion_ProjectConditionalPositionFar, BattleMotion_ProjectConditionalPosition
-	export BattleParty_ListLivingUnitsFar, BattleParty_ListLivingUnits
-	export BattleParty_PrepareActiveOwnersFar, BattleParty_PrepareActiveOwners
+	export BattleUnit_ListLivingFar, BattleParty_ListLivingUnits
+	export BattleParty_PrepareMembersFar, BattleParty_PrepareMembers
 	export Camera_ConfigureSceneFar, Camera_ConfigureScene
 	export GetMotionRecordFar, GetMotionRecord
 	export BattleHighlight_SetModesFar, BattleHighlight_SetModes
@@ -41,7 +41,7 @@ Resource_FarCall009:
 	export BattleActor_CommitPlacementFar, BattleObject_Put
 	export ReleaseBattleObjectRecordsFar, ReleaseBattleObjectRecords
 	export BattleMessage_WaitForAdvanceAtFar, BattleMessage_WaitForAdvanceAt
-	export BattleParty_CountStandbyDjinnFar, BattleParty_CountStandbyDjinn
+	export BattleDjinn_CountStandbyFar, BattleDjinn_CountStandby
 	export BattleParty_PrepareReserveOwnersFar, BattleParty_PrepareReserveOwners
 	export BattleUnit_ListIdsFar, BattleUnit_ListIds
 	export BattleObject_SpawnObjectsForListFar, BattleObject_SpawnObjectsForList

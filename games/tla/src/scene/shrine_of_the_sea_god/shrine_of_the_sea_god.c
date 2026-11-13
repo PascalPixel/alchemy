@@ -192,7 +192,7 @@ void Func_020004e0(void) {
   Event_ResolvePendingActions(0);
   Actor_Stop(11);
   ShrineOfTheSeaGod_Jump(11, 0x100, 20);
-  Actor_SetAngleToward(11, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(11, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgFieldStartledCompanion);
   Event_ShowMessageAndWait(11, 0);
   Event_ShowMessageAndWait(11, 0);
@@ -378,7 +378,7 @@ loop:
     goto loop;
 }
 
-void Map_WaitForShakeToSettle(void);
+void MapGrid_WaitForShakeToSettle(void);
 
 void Func_02000994(void) {
   struct ShrineOfTheSeaGodMapWork *map =
@@ -472,7 +472,7 @@ void Func_02000994(void) {
   ShrineOfTheSeaGod_CopyRect(103, 51, 6, 56, 18, 25);
   ShrineOfTheSeaGod_CopyRect(46, 108, 9, 12, 12, 3);
   wait(10);
-  Map_WaitForShakeToSettle();
+  MapGrid_WaitForShakeToSettle();
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 0x204;
   Func_02003854(8);

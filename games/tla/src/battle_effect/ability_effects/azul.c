@@ -145,7 +145,7 @@ void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 void ReleaseBattleObjectRecordsFar(s32 actor);
 void *GetMotionRecordFar(void *object, s32 index);
-void ResourceMetadata_UnregisterFar(void *record, s32 entry);
+void Sprite_RemoveAnimationFar(void *record, s32 entry);
 void BattleObject_SpawnObjectsForListFar(s16 *actors, s32 a, s32 b);
 
 #define SLOT_ALT 188 // unkb8[1]
@@ -569,7 +569,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         }
         if (frame == 10) {
           for (j = 0; (record = GetMotionRecordFar(slot[0], j)) != 0; j++) {
-            ResourceMetadata_UnregisterFar(record, (s32)slot[9]);
+            Sprite_RemoveAnimationFar(record, (s32)slot[9]);
           }
           BattleEffect_TintBattler(effect->actors[i], 9, 5, i, 8);
           BattleEffect_StartActorMotion(effect->actors[i], 1, 0, 0,

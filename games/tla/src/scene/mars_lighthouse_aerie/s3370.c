@@ -79,7 +79,9 @@ void Func_02003370(void) {
     break;
   }
   if (spawn) {
-    object = FieldActor_Create(0x2a0, anchor->x, anchor->y - ((Random16Far() * 80 >> 16) << 16) - 0x80000, anchor->z);
+    object = FieldActor_Create(
+        0x2a0, anchor->x,
+        anchor->y - ((Random16Far() * 80 >> 16) << 16) - 0x80000, anchor->z);
     if (object != NULL) {
       u8 zero;
       s32 mask;
@@ -124,16 +126,16 @@ void Func_020035ec(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   FieldActor_SetSpritePriority(id, 1);
-  FieldActor_SetPositionAndResetMotion(object, object->x - PIXELS(16), object->y,
-                                  object->z + PIXELS(32));
+  FieldActor_SetPositionAndResetMotion(object, object->x - PIXELS(16),
+                                       object->y, object->z + PIXELS(32));
 }
 
 void Func_0200361c(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   FieldActor_SetSpritePriority(id, 1);
-  FieldActor_SetPositionAndResetMotion(object, object->x + PIXELS(16), object->y,
-                                  object->z + PIXELS(32));
+  FieldActor_SetPositionAndResetMotion(object, object->x + PIXELS(16),
+                                       object->y, object->z + PIXELS(32));
 }
 
 void Func_02003648(s32 id) { Actor_GetById(id)->motionFlags = 3; }
@@ -395,7 +397,7 @@ L_0200bcea:
   Actor_FaceDirectionAndWait(0, 0);
   FieldEvent_ShowMessageThenWait(0x4005, 0, 10);
   MapGrid_SetShake(-1, -1, 0xe666);
-  MapGrid_WaitForShakeToSettle();
+  FieldMapGrid_WaitForShakeToSettle();
   FieldPsynergy_StartMindReadWave(23, 24);
   Message_ShowCentered(((s32)MsgTheBeaconIs + 6), 1);
   Func_02005794();
@@ -865,7 +867,8 @@ void Func_02004c94(void) {
   System_Wait(1);
   FieldEvent_SetMessageId(MsgWillYouCast);
   Event_OpenMessage(18, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
+      0) {
     Actor_SetPosition(18, 0, 0);
     System_Wait(1);
     Func_02003658();
@@ -1019,13 +1022,13 @@ void Func_02004ee4(void) { Func_02004e80(29, 21); }
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
 DEFINE_FUNC_0200154C(Func_02004ef0, gData_02006ce0, Data_02006ce4,
-    Data_02006ce8, Data_02006cd4, Func_020051e0)
+                     Data_02006ce8, Data_02006cd4, Func_020051e0)
 
 #include "task.h"
 
 DEFINE_FUNC_020000F4(Func_02004fac, gData_02006cf0, gData_02006cec,
-    Func_0200508c, gData_02006ce0, gData_02006cdc, 15, gData_02006cd8, 16,
-    gData_02006cd0, Func_020050b0)
+                     Func_0200508c, gData_02006ce0, gData_02006cdc, 15,
+                     gData_02006cd8, 16, gData_02006cd0, Func_020050b0)
 
 void Func_02005010(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 256;
@@ -1033,14 +1036,15 @@ void Func_02005010(void) {
 }
 
 DEFINE_FUNC_020000F4(Func_02005030, gData_02006cf0, gData_02006cec,
-    Func_0200508c, gData_02006ce0, gData_02006cdc, 2, gData_02006cd8, 2,
-    gData_02006cd0, Func_020050b0)
+                     Func_0200508c, gData_02006ce0, gData_02006cdc, 2,
+                     gData_02006cd8, 2, gData_02006cd0, Func_020050b0)
 
 DEFINE_FUNC_020001D4(Func_0200508c)
 
 DEFINE_FUNC_020001F8(Func_020050b0, gData_02006cd8, gData_02006cdc,
-    Data_02006ce8, gData_02006cec, Data_02006cd4, gData_02006cf0,
-    gData_02006ce0, gData_02006cd0, Data_02006ce4)
+                     Data_02006ce8, gData_02006cec, Data_02006cd4,
+                     gData_02006cf0, gData_02006ce0, gData_02006cd0,
+                     Data_02006ce4)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -1055,7 +1059,8 @@ void Func_020051e0(void) {
   saved = work->screenEffect;
   PaletteFade_ApplyTarget(0x202108, 1);
   Func_0200575c_(0x10000, 2);
-  ((struct MarsLighthouseAerieEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  ((struct MarsLighthouseAerieEventWork *)Ram_HeapSlots->eventWork)
+      ->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_02005030();
@@ -1141,7 +1146,11 @@ void Func_02005268(struct Actor *object) {
 #undef A
 #undef FIELD_AT
 
-/* VIEW(s53e4): tag struct SparkleSprite as struct SparkleSprite__s53e4; s3370.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie/s3370.c:1281: structure has no member named `flag'. */
+/* VIEW(s53e4): tag struct SparkleSprite as struct SparkleSprite__s53e4; s3370.c
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_aerie/s3370.c:1281: structure has no
+ * member named `flag'. */
 struct SparkleSprite__s53e4 {
   u8 unk00[5];
   u8 attr5Low : 5;
@@ -1155,7 +1164,11 @@ struct SparkleSprite__s53e4 {
   u8 unk0a[0x1e];
 };
 
-/* VIEW(s53e4): tag struct SparkleWork as struct SparkleWork__s53e4; s3370.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie/s3370.c:1271: incompatible types in assignment. */
+/* VIEW(s53e4): tag struct SparkleWork as struct SparkleWork__s53e4; s3370.c has
+ * another definition; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_aerie/s3370.c:1271: incompatible types in
+ * assignment. */
 struct SparkleWork__s53e4 {
   struct SparkleSprite__s53e4 sprites[4];
   u16 unka0;
@@ -1165,7 +1178,11 @@ struct SparkleWork__s53e4 {
   struct Actor *object;
 };
 
-/* VIEW(s3370): routine Func_020057b4 as s32 Func_020057b4(struct Actor *object); module/scene/scene.h has void Func_020057b4(void); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie/s3370.c:1294: too many arguments to function `Func_020057b4'. */
+/* VIEW(s3370): routine Func_020057b4 as s32 Func_020057b4(struct Actor
+ * *object); module/scene/scene.h has void Func_020057b4(void); tried as the
+ * rest of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_aerie/s3370.c:1294: too many arguments to
+ * function `Func_020057b4'. */
 extern s32 Func_020057b4__s3370(struct Actor *object) __asm__("Func_020057b4");
 
 void Func_020053e4(struct Actor *object, struct SparkleWork__s53e4 *work) {

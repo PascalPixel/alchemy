@@ -69,7 +69,7 @@ void GameFlag_ClearBit(s32 flag);
 void FieldMessage_Show(s32 message, s32 position);
 void Actor_SetSpritePriority(s32 actor, s32 variant);
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Actor_Jump(s32 actor, s32 speed, s32 frames);
 void Actor_SetPositionAndResetMotion(struct ShrineOfTheSeaGodObject *object,
@@ -123,12 +123,12 @@ void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
 void Actor_WaitForMoveById(s32 actor);
 void Actor_Stop(s32 actor);
 void Actor_SetMovementTypeById(s32 actor, const void *callback);
-void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
+void Actor_FaceActorById(s32 actor, s32 target, s32 frames);
 void Actor_WatchAndSetScript(s32 actor, s32 target);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
-void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
+void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
 void Actor_SetSingleChildFlags(struct ShrineOfTheSeaGodObject *object,
                                u32 value);
 
@@ -153,11 +153,11 @@ static inline void ShrineOfTheSeaGod_ObjSpeed(s32 actor, s32 speed,
 }
 
 static inline void ShrineOfTheSeaGod_ObjWalk(s32 actor, s32 x, s32 z) {
-  Actor_SetPositionAndReset(actor, x, z);
+  Actor_WalkToAndWaitById(actor, x, z);
 }
 
 static inline void ShrineOfTheSeaGod_ObjCommit(s32 actor, s32 x, s32 z) {
-  Actor_SetPositionAndCommit(actor, x, z);
+  Actor_MoveToAndWaitById(actor, x, z);
 }
 
 static inline void ShrineOfTheSeaGod_ObjTurn(s32 actor, s32 angle, s32 frames) {

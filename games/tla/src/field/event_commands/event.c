@@ -384,7 +384,7 @@ s32 Func_080d296c(s32 actor, s32 item, s32 flag) {
     // Four messages on: "But <protagonist>'s party can't carry any more".
     FieldMessage_ShowFar((s32)&MsgFoundItem + 4, 1);
     Actor_GetById(actor)->scaleX = Q16_ONE;
-    Actor_SetAngleToward(gMainRoutineWork.currentOwner, actor, 0);
+    Actor_FaceActorById(gMainRoutineWork.currentOwner, actor, 0);
     Event_Wait(20);
     return -1;
   }

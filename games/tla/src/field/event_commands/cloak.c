@@ -86,7 +86,7 @@ void BattleEffect_LandFallingObject(struct FallingObject *object) {
   }
 }
 
-void BattleEffect_UpdateDriftingFallObject(struct Actor *object) {
+void FieldEffect_UpdateDriftingFallActor(struct Actor *object) {
   s32 r;
 
   object->y -= 0x4ccc;
@@ -231,7 +231,7 @@ void FieldPsynergy_Douse(void) {
       Vector_AddPolarOffset(Random16() * 5 + (3 << 16), Random16(), &pos);
       mote = Actor_Spawn(672, pos.x, pos.y, pos.z);
       if (mote != 0) {
-        mote->update = (void (*)(void))BattleEffect_UpdateDriftingFallObject;
+        mote->update = (void (*)(void))FieldEffect_UpdateDriftingFallActor;
         mote->motionFlags = 0;
         ((struct Effect05Sprite *)mote->sprite)->mode = 2;
         Actor_SetMode(mote, 8);

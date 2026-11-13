@@ -167,7 +167,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
 
   // The caster lunges at the target.
   BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 10, 80);
-  Actor_SetAnimationSpeedFar(GetBattleObjectSlotFar(effect->actor)->object, 48);
+  Actor_SelectAnimationFar(GetBattleObjectSlotFar(effect->actor)->object, 48);
   targetObject = GetBattleObjectSlotFar(effect->actors[0])->object;
   EffectPosition_ProjectBattler(effect->actors[0], &target);
 

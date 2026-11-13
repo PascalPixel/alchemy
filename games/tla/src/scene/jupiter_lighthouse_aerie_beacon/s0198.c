@@ -537,14 +537,14 @@ static __inline__ s32 Event_AskYesNoWithActorAnimation_(s32 id, s32 flags) {
   return Event_AskYesNoWithActorAnimation(id, flags);
 }
 static __inline__ void Actor_CommitPositionAndActivate_(s32 id, s32 x, s32 z) {
-  Actor_CommitPositionAndActivate(id, x, z);
+  Actor_WalkByAndWaitById(id, x, z);
 }
 static __inline__ struct Actor *Actor_GetById_(s32 id) {
   return Actor_GetById(id);
 }
 static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 x,
                                                            s32 z) {
-  Actor_OffsetPositionAndResetMotion(id, x, z);
+  Actor_SetDestinationOffsetById(id, x, z);
 }
 static __inline__ void FieldMessage_Show_(s32 message, s32 position) {
   FieldMessage_Show(message, position);
@@ -604,7 +604,7 @@ void Func_02000cd0(void) {
   FieldEvent_Wait_(60);
   Func_020059f4_(0x186);
   Func_020057ac_(-1, -1, 0xe666);
-  MapGrid_WaitForShakeToSettle();
+  FieldMapGrid_WaitForShakeToSettle();
   Func_02005914_(0x6666, 0xccc);
   Camera_MoveWithinMapBounds_(0x2000000, 0x600000, 0x1280000, 1);
   Func_02005924();

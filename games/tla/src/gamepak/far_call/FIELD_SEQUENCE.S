@@ -28,11 +28,11 @@ Resource_FarCall006:
 	export Actor_StopFar, Actor_Stop
 	export Actor_SetMovementTypeAndWaitByIdFar, Actor_SetMovementTypeAndWaitById
 	export Actor_ResetAndSetPositionFar, Actor_ResetAndSetPosition
-	export Actor_SetPositionAndCommitFar, Actor_SetPositionAndCommit
-	export Actor_ResetAndSetPositionInMode2Far, Actor_ResetAndSetPositionInMode2
-	export Actor_SetPositionAndResetFar, Actor_SetPositionAndReset
+	export Actor_MoveToAndWaitByIdFar, Actor_MoveToAndWaitById
+	export Actor_WalkToByIdFar, Actor_WalkToById
+	export Actor_WalkToAndWaitByIdFar, Actor_WalkToAndWaitById
 	export Actor_CenterOnColumnFar, Actor_CenterOnColumn
-	export Actor_OffsetPositionAndResetMotionFar, Actor_OffsetPositionAndResetMotion
+	export Actor_SetDestinationOffsetByIdFar, Actor_SetDestinationOffsetById
 	export Actor_WaitForMoveByIdFar, Actor_WaitForMoveById
 	export Actor_SetHorizontalPositionWithTerrainFar, Actor_SetHorizontalPositionWithTerrain
 	export Actor_SetHorizontalPositionAndAngleWithTerrainFar, Actor_SetHorizontalPositionAndAngleWithTerrain
@@ -46,7 +46,7 @@ Resource_FarCall006:
 	export Actor_StartRepeatedMotionFar, Actor_StartRepeatedMotion
 	export Motion_SetVarCbAndRefreshFar, Motion_SetVarCbAndRefresh
 	export Actor_JumpDownLedgeFar, Actor_JumpDownLedge
-	export Actor_SetAngleTowardFar, Actor_SetAngleToward
+	export Actor_FaceActorByIdFar, Actor_FaceActorById
 	export Actor_TurnToFaceEachOtherFar, Actor_TurnToFaceEachOther
 	export Actor_ConfigureSpriteColorFar, Actor_ConfigureSpriteColor
 	export Actor_SetPartAttributeFar, Actor_SetPartAttribute
@@ -60,7 +60,7 @@ Resource_FarCall006:
 	export Event_NoOpUpdateFar, Event_NoOpUpdate
 	export Event_ShowSpeakerMessageFar, Event_ShowSpeakerMessage
 	export Event_ShowCounterFar, Event_ShowCounter
-	export Event_ShowCounterAtPositionFar, Event_ShowCounterAtPosition
+	export Event_ShowMessageAtPositionFar, Event_ShowMessageAtPosition
 	export Actor_ArmCallbackFar, Actor_ArmCallback
 	export Actor_ArmCallbackAndRefreshFar, Actor_ArmCallbackAndRefresh
 	export Actor_ResetTargetAndSetMode1Far, Actor_ResetTargetAndSetMode1
@@ -125,8 +125,8 @@ Resource_FarCall006:
 	export Event_WaitTransitionFramesFar, Event_WaitTransitionFrames
 	export DisplayScroll_InitializeHBlankDmaFar, LineScroll_InitWave
 	export DisplayScroll_DisarmHBlankDmaFar, LineScroll_Stop
-	export BattleEffect_PlayCueAndStartEmitterOnTargetFar, BattleEffect_PlayCueAndStartEmitterOnTarget
-	export BattleEffect_RunActorRiseAndDescentFar, BattleEffect_RunActorRiseAndDescent
+	export FieldEffect_PlayCueAndStartEmitterOnTargetFar, FieldEffect_PlayCueAndStartEmitterOnTarget
+	export ItemDisplay_ShowPictureFar, ItemDisplay_ShowPicture
 	export BattleEffect_StartEffectObject22Far, BattleEffect_StartEffectObject22
 	export ObjectEvent_GetObjectFar, ObjectEvent_GetObject
 	export ObjectEvent_SetMode4WithCueFar, ObjectEvent_SetMode4WithCue
@@ -172,13 +172,13 @@ Resource_FarCall006:
 	export BattleEffect_SnapScaleToFullFar, BattleEffect_SnapScaleToFull
 	export UpdateRisingParticleBurstFar, UpdateRisingParticleBurst
 	export BattleParty_ApplyDrainFar, BattleParty_ApplyDrain
-	export BattleParty_ApplyHealthDeltaFar, BattleParty_ApplyHealthDelta
+	export Party_AddHpFar, Party_AddHp
 	export ResourceTable_CountFreeBlocksFar, ResourceTable_CountFreeBlocks
 	export FieldYesNo_AskFar, FieldYesNo_Ask
 	export Encounter_GetEnemyGroupAtSlotFar, Encounter_GetEnemyGroupAtSlot
 	export Encounter_GetDjinnEnemyGroupFar, Encounter_GetDjinnEnemyGroup
 	export Party_PlaySavedMusicFar, Party_PlaySavedMusic
-	export Scene_ResolveInteractionResultFar, Scene_ResolveInteractionResult
+	export Scene_ChooseMusicFar, Scene_ChooseMusic
 	export Djinn_JoinPartyFar, Djinn_JoinParty
 	export FieldParticle_UpdateFar, FieldParticle_Update
 	export FieldParticle_HasPendingTargetFar, FieldParticle_HasPendingTarget
@@ -194,17 +194,17 @@ Resource_FarCall006:
 	export BattleEffect_ClearActiveSlotsAndScheduleUpdatesFar, BattleEffect_ClearActiveSlotsAndScheduleUpdates
 	export Motion_LaunchFromFocusedObjectFar, Actor_LaunchFromLeader
 	export Actor_OffsetPositionAndResetFar, Actor_OffsetPositionAndReset
-	export Actor_CommitPositionAndActivateFar, Actor_CommitPositionAndActivate
+	export Actor_WalkByAndWaitByIdFar, Actor_WalkByAndWaitById
 	export Actor_WatchAndSetScriptFar, Actor_WatchAndSetScript
 	export BattleEffect_PauseObjectFar, FieldPsynergy_HaltActor
 	export BattleEffect_ResumeObjectFar, FieldPsynergy_ResumeHaltedActor
 	export ObjectTable_FindActiveByValueFar, ObjectTable_FindActiveByValue
-	export ObjectTable_ReadActiveValueFar, ObjectTable_ReadActiveValue
+	export Actor_GetSpriteByIdFar, Actor_GetSpriteById
 	export ObjectTable_SnapshotFar, ObjectTable_Snapshot
 	export ObjectTable_RestoreFar, ObjectTable_Restore
 	export WorldMap_StartZoomFar, WorldMap_StartZoom
 	export Func_080c8640, Func_080d4714
-	export Scene_GetAreaNameIndexFar, Scene_GetAreaNameIndex
+	export Area_GetNameIndexFar, Area_GetNameIndex
 	export Func_080c8650, Func_080d1ee8
 	export Func_080c8658, Func_080d1f0c
 	export Func_080c8660, Func_080d1f18

@@ -162,7 +162,7 @@ void UpdateMapRegionAtPosition(s32 positionX, s32 positionY, s32 positionZ) {
 s32 DjinnRecovery_CountDownFar(void);
 void FieldEffect_SetAttached(s32 owner, s32 mode);
 
-void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
+void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
   struct StepWork *work = Ram_HeapSlots->eventWork;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 leaderId = Party_GetLeaderActor();
@@ -241,7 +241,7 @@ void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
       if (DjinnRecovery_CountDownFar())
         Sound_PlayFar(139);
       Event_ClearValidPackedIds();
-      partyHurt = BattleParty_ApplyStatusDamage();
+      partyHurt = Party_ApplyPoisonDamage();
     }
 
     if (gPartyStep.hazardMode == 0 && (attributes & 8)) {
@@ -271,7 +271,7 @@ void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
   if ((s16)gPartyStep.hazardSteps >= gPartyStep.hazardLimit) {
     amount = gPartyStep.hazardDamage;
     gPartyStep.hazardSteps = 0;
-    BattleParty_ApplyHealthDelta(-(amount & 255), amount & 0x100);
+    Party_AddHp(-(amount & 255), amount & 0x100);
     partyHurt++;
   }
 
@@ -300,7 +300,7 @@ void BattleParty_ApplyDrain(s32 amount, s32 unused) {
     Unit_AddPpFar(gMainRoutineWork.activeOwners[i], amount);
 }
 
-void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled) {
+void Party_AddHp(s32 amount, s32 scaled) {
   s32 count;
   s32 i;
   s32 value;
@@ -332,7 +332,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled) {
   }
 }
 
-s32 BattleParty_ApplyStatusDamage(void) {
+s32 Party_ApplyPoisonDamage(void) {
   s32 result = 0;
   s32 count = Party_CountMembersFar();
 

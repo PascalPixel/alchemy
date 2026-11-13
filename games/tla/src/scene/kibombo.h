@@ -69,7 +69,7 @@ struct KibomboObject *Actor_GetById(s32 id);
 void Actor_SetPositionAndResetMotion(struct KibomboObject *object, s32 x, s32 y,
                                      s32 z);
 void Actor_SetPartAttribute(struct KibomboObject *object, s32 value);
-void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
+void Actor_FaceActorById(s32 actor, s32 target, s32 frames);
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Actor_SetSpritePriority(s32 actor, s32 variant);
 
@@ -138,7 +138,7 @@ void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 struct KibomboObject *FieldCamera_GetActor(void);
 void Camera_SetSpeedParameters(s32 speed, s32 acceleration);
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
 void Actor_MoveToObject(s32 actor, s32 target);
 void Actor_SetMovementTypeById(s32 actor, const void *callback);
 void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);
@@ -162,7 +162,7 @@ static inline void Kibombo_ObjSpeed(s32 actor, s32 speed, s32 acceleration) {
 }
 
 static inline void Kibombo_ObjWalk(s32 actor, s32 x, s32 z) {
-  Actor_SetPositionAndReset(actor, x, z);
+  Actor_WalkToAndWaitById(actor, x, z);
 }
 
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z,
@@ -172,10 +172,10 @@ static inline void Kibombo_ObjPlaceFacing(s32 actor, s32 x, s32 z, s32 angle) {
   Actor_SetHorizontalPositionAndAngleWithTerrain(actor, x, z, angle);
 }
 
-void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
+void Actor_WalkToById(s32 actor, s32 x, s32 z);
 
 static inline void Kibombo_ObjPlace(s32 actor, s32 x, s32 z) {
-  Actor_ResetAndSetPositionInMode2(actor, x, z);
+  Actor_WalkToById(actor, x, z);
 }
 
 static inline void Kibombo_MapCopy(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {

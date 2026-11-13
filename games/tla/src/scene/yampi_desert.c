@@ -69,8 +69,8 @@ void Func_02000c34(void) {
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 16);
   Camera_SetSpeedParameters(0x26666, 0x4ccc);
   Scene_CamBounds(PIXELS(300), -1, PIXELS(248), 1);
-  Actor_SetPositionAndCommit(16, 254, 248);
-  Actor_SetPositionAndCommit(16, 352, 240);
+  Actor_MoveToAndWaitById(16, 254, 248);
+  Actor_MoveToAndWaitById(16, 352, 240);
   Task_RemoveFar(Func_02002180);
   FieldEvent_Wait(10);
   Task_RemoveFar(Func_02001c5c);
@@ -82,11 +82,11 @@ void Func_02000c34(void) {
   Actor_GetById(16)->velocityY = 0x60000;
   Actor_SetPartAttribute(Actor_GetById(16), 0);
   Actor_SetSingleChildFlags(Actor_GetById(16), 1);
-  Actor_SetPositionAndCommit(16, 380, 248);
+  Actor_MoveToAndWaitById(16, 380, 248);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Sound_Play(241);
   Scene_SetSpeed(16, 0xcccc, 0x6666);
-  Actor_SetPositionAndReset(16, 428, 248);
+  Actor_WalkToAndWaitById(16, 428, 248);
   Sound_Play(390);
   Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
   GameFlag_SetBit(0x889);
@@ -113,7 +113,7 @@ void Func_02000d50(void) {
   Actor_GetById(21)->velocityY = 0x60000;
   Actor_SetPartAttribute(Actor_GetById(21), 0);
   Actor_SetSingleChildFlags(Actor_GetById(21), 1);
-  Actor_SetPositionAndCommit(21, 256, 560);
+  Actor_MoveToAndWaitById(21, 256, 560);
   FieldEvent_Wait(20);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Sound_Play(241);
@@ -135,7 +135,7 @@ void Func_02000e78(void) {
   Scene_SetPositionAndCommit(21, 232, 328);
   Camera_MoveWithinMapBounds(PIXELS(232), -1, PIXELS(200), 1);
   Scene_SetPositionAndCommit(21, 232, 280);
-  Actor_SetPositionAndCommit(21, 232, 168);
+  Actor_MoveToAndWaitById(21, 232, 168);
   Task_RemoveFar(Func_02002180);
   Actor_ArmCallback(21, FACING_SOUTH, 0);
   Actor_Stop(gMainRoutineWork.currentOwner);
@@ -219,7 +219,7 @@ loop_3:
   Scene_CamBounds(PIXELS(232), -1, PIXELS(196), 1);
   Func_02004100(gMainRoutineWork.currentOwner, 0x101, 0);
   Scene_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 232, 164);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 232, 164);
   FieldEvent_Wait(20);
   angle = 0x4000;
   Scene_Call4098(21, 232 << 16, 184 << 16, angle);
@@ -232,7 +232,7 @@ loop_3:
   Actor_SetPartAttribute(Actor_GetById(21), 0);
   Actor_SetSingleChildFlags(Actor_GetById(21), 1);
   Scene_SetSpeed(21, 0x19999, 0xcccc);
-  Actor_SetPositionAndCommit(21, 216, 184);
+  Actor_MoveToAndWaitById(21, 216, 184);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, angle, 0);
   Actor_ArmCallbackAndRefresh(21, 0);
   FieldEvent_Wait(20);
@@ -260,7 +260,7 @@ step_13:
   Sound_Play(153);
   partner->velocityY = 0x80000;
   Actor_SetSingleChildFlags(Actor_GetById(21), 0);
-  Actor_SetPositionAndCommit(21, 232, 168);
+  Actor_MoveToAndWaitById(21, 232, 168);
   FieldEvent_Wait(3);
   Sound_Play(204);
   i = 0;
@@ -1269,7 +1269,7 @@ void Func_02002d6c(struct Actor *object, s32 x, s32 z, s32 mode) {
   party = &gMainRoutineWork;
   *flags = zero;
   Actor_SetSpeedParameters(party->currentOwner, 0x10000, 0x8000);
-  Actor_SetPositionAndReset(party->currentOwner, x, z);
+  Actor_WalkToAndWaitById(party->currentOwner, x, z);
   Actor_ArmCallbackAndRefresh(party->currentOwner, 0xc000);
   Actor_SetSingleChildFlags(Actor_GetById(party->currentOwner), 0);
   Actor_SetModeById(party->currentOwner, 13);
@@ -1374,7 +1374,7 @@ void Func_02002ebc(void) {
   actor8->velocityY = Q16_ONE * 8;
   actor8->gravity = 0xe666;
   Call3(Actor_SetSpeedParameters, 8, 0x19999, 0xcccc);
-  Actor_SetPositionAndCommit(8, 232, 184);
+  Actor_MoveToAndWaitById(8, 232, 184);
   party->battleRule24b = 2;
   Party_SetFields1eeAnd1f0((s32)&SceneId_Ov661Room10, 2);
   Field_RequestBattleFromEncounterTable(10, 0);

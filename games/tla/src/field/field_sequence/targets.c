@@ -187,8 +187,8 @@ s32 Field_FindNearbyPsynergyTarget(s32 self, s32 effect) {
   return found;
 }
 
-s32 BattleEffect_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target,
-                                                s32 mode) {
+s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target,
+                                               s32 mode) {
   s32 object;
   s32 result;
 

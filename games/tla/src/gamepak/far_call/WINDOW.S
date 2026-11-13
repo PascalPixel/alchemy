@@ -95,7 +95,7 @@ Resource_FarCall004:
 	export Save_ChooseAndLoadFileFar, Save_ChooseAndLoadFile
 	export Save_CopyFileFar, Save_CopyFile
 	export Save_EraseSelectedFileFar, Save_EraseSelectedFile
-	export Func_080382e0, Func_08043534
+	export Save_ProcessSelectedFileFar, Save_ProcessSelectedFile
 	export Save_WriteFileFar, Save_WriteFile
 	export Func_080382f0, Func_080432a4
 	export NameEntry_EditMemberNameFar, NameEntry_EditMemberName

@@ -225,7 +225,7 @@ void Func_02000270(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgNowThatAkafubu);
   Event_ShowMessageAndWait(24, 0);
-  Actor_SetAngleToward(24, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(24, gMainRoutineWork.currentOwner, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(24, 0);
   Kibombo_ObjTurn(24, FACING_SOUTHEAST + FACING_STEP);
@@ -306,7 +306,7 @@ void Func_0200042c(void) {
   if (Kibombo_FlagCheck(0x9df)) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    Actor_SetAngleToward(36, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActorById(36, gMainRoutineWork.currentOwner, 0);
     Event_Wait(10);
     Func_02005c8c(36);
     Kibombo_ObjArm(36, FACING_NORTHWEST + FACING_STEP, 0);
@@ -317,7 +317,7 @@ void Func_0200042c(void) {
     Event_SetMessageId((s32)MsgOhOhMy);
     Event_ShowMessageThenWait(36, 0, 40);
     Event_ShowMessageAndWait(36, 0);
-    Actor_SetAngleToward(36, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActorById(36, gMainRoutineWork.currentOwner, 0);
     Event_Wait(10);
     Func_02005c8c(36);
     Kibombo_ObjArm(36, FACING_NORTHWEST + FACING_STEP, 0);
@@ -677,7 +677,7 @@ void Func_02000d74(void) {
   Camera_SetSpeedParameters(0x4cccc, 0x9999);
   Camera_MoveWithinMapBounds(PIXELS(264), PIXELS(16), PIXELS(420), 1);
   Kibombo_ObjSpeed(17, 0x19999, 0xcccc);
-  Actor_SetPositionAndReset(17, 264, 392);
+  Actor_WalkToAndWaitById(17, 264, 392);
   Event_Wait(20);
   Event_ShowMessageAndWait(0x8011, 0);
   Sound_Play(148);
@@ -709,7 +709,7 @@ void Func_02000d74(void) {
   Event_ShowMessageAndWait(5, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 40);
   Kibombo_ObjSpeed(26, 0xcccc, 0x6666);
-  Actor_ResetAndSetPositionInMode2(26, 104, 368);
+  Actor_WalkToById(26, 104, 368);
   Event_Wait(20);
   Camera_SetSpeedParameters(0xcccc, 0x1999);
   Camera_MoveWithinMapBounds(PIXELS(111), -1, PIXELS(356), 1);
@@ -746,7 +746,7 @@ void Func_02001218(void) {
   wait(1);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
   Kibombo_ObjSpeed(7, 0x19999, 0xcccc);
-  Actor_SetPositionAndReset(7, 62, 444);
+  Actor_WalkToAndWaitById(7, 62, 444);
   Actor_ArmCallbackAndRefresh(7, FACING_SOUTHEAST);
   Event_SetMessageId((s32)MsgNowThatIKnow);
   Event_ShowMessageAndWait(7, 0);
@@ -1105,7 +1105,7 @@ void Func_02001318(void) {
   Actor_WatchAndSetScript(6, 7);
   Actor_WatchAndSetScript(26, 7);
   Actor_SetSpeed(7, 0x19999, 0xcccc);
-  Actor_SetPositionAndReset(7, 72, 368);
+  Actor_WalkToAndWaitById(7, 72, 368);
   Actor_SetAttachedEffect(26, 258);
   Actor_WalkToAndWait(7, 40, 348);
   Actor_WalkToAndWait(7, 40, 332);
@@ -1177,7 +1177,7 @@ void Func_02001318(void) {
   Event_ShowMessageAndWait(0x101a, 0);
   Motion_SetModeAndWaitAnimation(7, 3);
   Actor_SetSpeed(7, 0x6666, 0x3333);
-  Actor_SetPositionAndReset(7, 40, 350);
+  Actor_WalkToAndWaitById(7, 40, 350);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
   Actor_SetModeById(5, 3);
   Actor_SetModeById(6, 3);
@@ -1213,8 +1213,8 @@ void Func_02002050(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 344, 208);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 308, 200);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 344, 208);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 308, 200);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 290, 188);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
   Actor_SetSpeed(5, 0xcccc, 0x6666);
@@ -1266,7 +1266,7 @@ void Func_02002050(void) {
   Actor_FaceDirection(26, FACING_SOUTH + FACING_STEP, 40);
   Event_ShowMessageAndWait(0x801a, 0);
   Camera_MoveWithinMapBounds(PIXELS(268), -1, PIXELS(188), 1);
-  Actor_SetPositionAndReset(26, 218, 156);
+  Actor_WalkToAndWaitById(26, 218, 156);
   Actor_ArmCallback(26, FACING_EAST, 40);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Actor_Stop(5);
@@ -1278,7 +1278,7 @@ void Func_02002050(void) {
   Actor_FaceDirection(5, FACING_NORTHEAST, 0);
   Actor_FaceDirection(6, FACING_SOUTHWEST, 20);
   Actor_SetSpeed(26, 0x6666, 0x3333);
-  Actor_SetPositionAndReset(26, 248, 156);
+  Actor_WalkToAndWaitById(26, 248, 156);
   Event_Wait(40);
   Motion_SetModeAndWaitAnimation(26, 3);
   Event_ShowMessageAndWait(26, 0);
@@ -1288,7 +1288,7 @@ void Func_02002050(void) {
   Actor_WatchAndSetScript(7, 26);
   Event_Wait(20);
   Actor_GetById__s1318(26)->actionFlags &= ~1;
-  Actor_SetPositionAndReset(26, 248, 188);
+  Actor_WalkToAndWaitById(26, 248, 188);
   Event_Wait(1);
   Actor_GetById__s1318(26)->actionFlags |= 1;
   Event_Wait(20);
@@ -1309,11 +1309,11 @@ void Func_02002050(void) {
   Actor_ShowEmote(6, 257, 20);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x6666, 0x3333);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 280, 188);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 280, 188);
   Actor_SetModeById(26, 1);
   Event_Wait(10);
   Actor_GetById__s1318(26)->actionFlags &= ~1;
-  Actor_SetPositionAndReset(26, 238, 188);
+  Actor_WalkToAndWaitById(26, 238, 188);
   Event_Wait(1);
   Actor_GetById__s1318(26)->actionFlags |= 1;
   FieldMessage_ShowAtActor(26, 0);
@@ -1362,7 +1362,7 @@ ask:
   Event_SetFlag(0x220);
   Func_0200384c();
   GameFlag_ClearBit(0x220);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 232, 142);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 232, 142);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
   Event_SetFlag(546);
   Func_0200384c();
@@ -1373,7 +1373,7 @@ ask:
   Func_0200384c();
   GameFlag_ClearBit(547);
   FieldCamera_MoveTo(PIXELS(268), -1, PIXELS(188), 1);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 284, 188);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 284, 188);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 10);
   Actor_Stop(5);
   Actor_Stop(6);

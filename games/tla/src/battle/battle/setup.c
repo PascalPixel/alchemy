@@ -111,7 +111,7 @@ void BattleUnit_Collect(void) {
   s32 kind;
 
   battle = Ram_HeapSlots->battleWork;
-  count = BattleParty_PrepareActiveOwners(buf);
+  count = BattleParty_PrepareMembers(buf);
   for (i = 0; i < count; i++)
     battle->partyUnits[i] = buf[i];
   battle->partyUnits[count] = 0xff;
@@ -154,7 +154,7 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
   s32 count;
   s32 i;
 
-  count = BattleParty_PrepareActiveOwners(owners);
+  count = BattleParty_PrepareMembers(owners);
   count += BattleParty_PrepareReserveOwners(owners + count);
 
   i = 0;
@@ -207,7 +207,7 @@ void Func_08118e64(void) {
   u16 *id = ids;
   s32 count;
 
-  count = BattleParty_PrepareActiveOwners(ids);
+  count = BattleParty_PrepareMembers(ids);
   count += BattleParty_PrepareReserveOwners(ids + count);
   count += BattleParty_ListActorIds(2, ids + count);
   if (count > 0) {
@@ -221,8 +221,12 @@ void Func_08118e64(void) {
   }
 }
 
-/* VIEW(battle): routine DjinnRecovery_AddStandbyFar as void DjinnRecovery_AddStandbyFar(s32 owner, s32 element, s32 djinn); gamepak/far_call/game.h has u32 *DjinnRecovery_AddStandbyFar(u32 owner, u32 element, u32 djinn). */
-extern void DjinnRecovery_AddStandbyFar__battle(s32 owner, s32 element, s32 djinn) __asm__("DjinnRecovery_AddStandbyFar");
+/* VIEW(battle): routine DjinnRecovery_AddStandbyFar as void
+ * DjinnRecovery_AddStandbyFar(s32 owner, s32 element, s32 djinn);
+ * gamepak/far_call/game.h has u32 *DjinnRecovery_AddStandbyFar(u32 owner, u32
+ * element, u32 djinn). */
+extern void DjinnRecovery_AddStandbyFar__battle(
+    s32 owner, s32 element, s32 djinn) __asm__("DjinnRecovery_AddStandbyFar");
 
 /// Adds to the trade offers every djinn an active owner can offer that is
 /// not offered yet; owners above 7 offer on the second side.
@@ -236,14 +240,14 @@ void DjinnRecovery_Reconcile(void) {
   s32 i;
   struct DjinnRecoveryList *list;
 
-  count = BattleParty_PrepareActiveOwners(owners);
+  count = BattleParty_PrepareMembers(owners);
   for (n = 0; n < count; n++) {
     owner = owners[n];
     for (element = 0; element <= 3; element++) {
       for (djinn = 0; djinn <= 19; djinn++) {
         if (Djinn_CanSetFar(owner, element, djinn) != 0) {
           list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
-                      owner > 7))
+                       owner > 7))
                       ->list;
           for (i = 0; i < list->count; i++) {
             if (element == list->entries[i].element &&
@@ -281,10 +285,10 @@ void BattleSummon_UpdateAvailability(void) {
   s32 element;
   u32 availableMask;
 
-  partySize = BattleParty_PrepareActiveOwners(partyMembers);
-  availableMask =
-      ((struct BattleSummonState *)Djinn_GetRecoveryTableFar(0))->availableMask &
-      0xffff0000;
+  partySize = BattleParty_PrepareMembers(partyMembers);
+  availableMask = ((struct BattleSummonState *)Djinn_GetRecoveryTableFar(0))
+                      ->availableMask &
+                  0xffff0000;
 
   element = 0;
   do {

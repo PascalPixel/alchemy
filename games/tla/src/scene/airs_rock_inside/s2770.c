@@ -369,7 +369,7 @@ fade:
   Event_End();
 }
 
-void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
+void Actor_WalkToById(s32 actor, s32 x, s32 z);
 
 /// When layer 1's cell at the leader's x and z - 1 reads 30, runs the four
 /// steps 65, 66, 67 and 62 and moves the leader to (312, 792).
@@ -397,7 +397,7 @@ void Func_02003170(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->speedLimit =
       Actor_GetById(gMainRoutineWork.currentOwner)->acceleration = 0x8000;
   Sound_Play(123);
-  Actor_ResetAndSetPositionInMode2(gMainRoutineWork.currentOwner, 312, 792);
+  Actor_WalkToById(gMainRoutineWork.currentOwner, 312, 792);
   FieldEvent_Wait(5);
   Func_02005efc(15);
   Event_End();
@@ -691,7 +691,7 @@ void Func_02003ac4(void) {
 }
 
 void Actor_SetSpeedParameters(u32 objectId, s32 speedLimit, s32 acceleration);
-void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
+void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
 
 /// While the leader is no further than z 653, moves the leader to (376, 668)
 /// with bit 0 of its byte 90 cleared for the move.
@@ -706,7 +706,7 @@ void Func_02003b08(void) {
   Sound_Play(186);
   BYTE_AT(Actor_GetById(gMainRoutineWork.currentOwner), 90) &= ~1;
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 376, 668);
+  Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, 376, 668);
   flags = &BYTE_AT(Actor_GetById(gMainRoutineWork.currentOwner), 90);
   *flags = bit | *flags;
   Event_End();
@@ -1038,7 +1038,7 @@ third:
 
 #include "text/msg_ids.h"
 
-void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
+void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 #include "event_work.h"
 
@@ -1082,9 +1082,8 @@ void Func_02004534(void) {
     Call3(Actor_SetSpeedParameters, 6, 0xb333, 0x5999);
     Actor_MoveToObject(6, gMainRoutineWork.currentOwner);
     FieldEvent_Wait(1);
-    Call3(Actor_ResetAndSetPositionInMode2, gMainRoutineWork.currentOwner, 256,
-          136);
-    Actor_ResetAndSetPositionInMode2(6, 272, 136);
+    Call3(Actor_WalkToById, gMainRoutineWork.currentOwner, 256, 136);
+    Actor_WalkToById(6, 272, 136);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     Actor_WaitForMoveById(6);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
@@ -1093,7 +1092,7 @@ void Func_02004534(void) {
     Call2(Func_02005eac, 6, 0);
     Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
     FieldEvent_Wait(30);
-    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 256, 152);
+    Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 256, 152);
     Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     FieldEvent_Wait(20);
     Actor_ArmCallback(6, FACING_SOUTH, 0);
@@ -1102,7 +1101,7 @@ void Func_02004534(void) {
     FieldEvent_Wait(30);
     Call3(Actor_ArmCallback, 6, FACING_NORTH, 0);
     FieldEvent_Wait(20);
-    Call3(Actor_SetPositionAndReset, 6, 264, 137);
+    Call3(Actor_WalkToAndWaitById, 6, 264, 137);
     Actor_ArmCallback(6, FACING_NORTH, 0);
     FieldEvent_Wait(20);
     FieldMessage_Show(MsgCheckedTheTablet + 2, 1);
@@ -1140,9 +1139,9 @@ void Func_02004740(void) {
     FieldMessage_Show(MsgCheckedTheTablet, 1);
     Event_End();
   } else {
-    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 248, 107);
-    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 248, 136);
-    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 264, 136);
+    Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 248, 107);
+    Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 248, 136);
+    Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 264, 136);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     FieldEvent_Wait(10);
     Func_02004534();
@@ -1293,7 +1292,7 @@ void Func_02004ab8(void) {
     z = 188;
     break;
   }
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, x, z);
+  Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, x, z);
   Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags |= 1;
   Event_End();
 }

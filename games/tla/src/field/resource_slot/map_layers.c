@@ -48,7 +48,7 @@ s32 MapGrid_LoadMap(s32 index) {
   sceneHeader = (struct LayeredSceneHeader *)Resource_GetTableEntry(
       sceneResources->resources[0] + (u32)&ResourceId_Map000);
   encodedData = (u8 *)sceneHeader + sceneHeader->tiles;
-  Tilemap_DecodeStagedBuffer(
+  TileMap_DecodeStagedBuffer(
       Resource_DecodeType01(encodedData, Ram_MapCellBuffer + 1));
   Dma_Fill32(-1, Ram_MapCollision, 0x2000);
   encodedData = (u8 *)sceneHeader + sceneHeader->collision;

@@ -58,7 +58,11 @@ void Func_0200036c(void) {
 
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
-/* VIEW(gaia_rock_inside): routine Func_02004e64 as s32 Func_02004e64(void); module/scene/scene.h has void Func_02004e64(void); tried as the rest of the object declares it, it does not compile in tla-en: games/tla/src/scene/gaia_rock_inside.c:132: void value not ignored as it ought to be. */
+/* VIEW(gaia_rock_inside): routine Func_02004e64 as s32 Func_02004e64(void);
+ * module/scene/scene.h has void Func_02004e64(void); tried as the rest of the
+ * object declares it, it does not compile in tla-en:
+ * games/tla/src/scene/gaia_rock_inside.c:132: void value not ignored as it
+ * ought to be. */
 extern s32 Func_02004e64__gaia_rock_inside(void) __asm__("Func_02004e64");
 
 // The Japanese edition has no form of this function here.
@@ -122,7 +126,7 @@ loop:
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  MapGrid_WaitForShakeToSettle();
+  FieldMapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
   actor->gravity = 0x10000;
   actor->bounce = 0x4000;
@@ -200,8 +204,8 @@ s32 Func_02000678(void) {
   struct Actor *object;
   struct FieldSprite *sprite;
 
-  object = (FieldActor_Create(14, source->x + 0x80000,
-                                               source->y - 0x20000, source->z));
+  object = (FieldActor_Create(14, source->x + 0x80000, source->y - 0x20000,
+                              source->z));
   object->motionFlags = 0;
   Actor_SetSingleChildFlags(object, 0);
   Actor_StartScript(object, gData_020050d0);

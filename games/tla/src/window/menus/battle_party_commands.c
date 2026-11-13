@@ -149,14 +149,14 @@ s32 Func_0804b8b8(s32 slot) {
   }
 }
 
-s32 BattleParty_ListLivingUnitsFar(s32 sideMask, u16 *unitIds);
+s32 BattleUnit_ListLivingFar(s32 sideMask, u16 *unitIds);
 void *Unit_Get(s32 owner);
 
 s32 Func_0804babc(u16 *ready, struct BattleActionRecord **cursor,
                   s32 *forcedCount) {
   u16 *unitIds = Heap_AllocEwram(9);
   struct BattleActionRecord *entries = *cursor;
-  s32 count = BattleParty_ListLivingUnitsFar(1, unitIds);
+  s32 count = BattleUnit_ListLivingFar(1, unitIds);
   s32 readyCount = 0;
   s32 forced = 0;
   s32 i;

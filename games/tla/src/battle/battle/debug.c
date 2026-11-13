@@ -27,7 +27,7 @@ void Func_0811843c(void) {
     struct SnapshotUnit *unit = Unit_Get(ids[i]);
 
     snap->listed[i] = 0;
-    if (BattleParty_IsUnitListed(ids[i])) {
+    if (BattleUnit_IsListed(ids[i])) {
       snap->listed[i] = 1;
       if (i > 2) {
         snap->vitals[i].hp = unit->hp > 0 ? unit->hp : 1;
@@ -102,7 +102,7 @@ void Func_081185c4(void) {
   for (i = 0; i <= 4; i++, copies++) {
     struct SnapshotUnit *unit = Unit_Get(Data_0812a16c[i]);
 
-    if (BattleParty_IsUnitListed(Data_0812a16c[i]) && snap->listed[i] != 0) {
+    if (BattleUnit_IsListed(Data_0812a16c[i]) && snap->listed[i] != 0) {
       if (i <= 2) {
         for (j = 0; j < 4; j++)
           unit->tags[j] = snap->tags[i][j];
@@ -227,9 +227,9 @@ void Func_08118954(void) {}
 
 extern u8 gDebugTextEnabled;
 
-void Func_080ad090(void);
+void MainRoutineWork_InitializeDefaultsFar(void);
 
-void Func_08118958(void) {
+void DebugBattle_RunMenu(void) {
   s32 startModeSet = 0;
   s32 down = gInput.held & 0x80;
   s32 encounter;
@@ -239,7 +239,7 @@ void Func_08118958(void) {
   struct MainRoutineWork *m;
   u16 *backdropId;
 
-  Func_080ad090();
+  MainRoutineWork_InitializeDefaultsFar();
 restart:
   Window_LoadGraphics();
   DebugText_Clear();
@@ -283,7 +283,7 @@ restart:
         wait(1);
       }
       if (preset != loadedPreset) {
-        Func_080ad090();
+        MainRoutineWork_InitializeDefaultsFar();
         DebugParty_LoadPreset(preset);
         loadedPreset = preset;
       }

@@ -401,8 +401,8 @@ void Func_02001a30(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
-  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, cellX << 3,
-                             cellZ << 3);
+  Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, cellX << 3,
+                          cellZ << 3);
   Actor_SetPositionAndResetMotion(leader, cellX << 19, leader->y, cellZ << 19);
   Event_Wait(4);
   FieldCamera_GetActor()->y += -0x80000;
@@ -687,7 +687,7 @@ extern void Actor_SetHorizontalPositionAndAngleWithTerrain__events_g(
     u32 id, s32 x, s32 z,
     s16 angle) __asm__("Actor_SetHorizontalPositionAndAngleWithTerrain");
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
+void Actor_WalkToAndWaitById(s32 id, s32 x, s32 z);
 void Actor_Jump(s32 id, s32 a, s32 b);
 void Actor_WatchAndSetScript(s32 id, s32 target);
 /* VIEW(events_g): routine Task_Add as void Task_Add(void(*func) (void), s32
@@ -705,7 +705,7 @@ static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
 }
 
 static __inline__ void Actor_MoveTo(s32 id, s32 x, s32 z) {
-  Actor_SetPositionAndReset(id, x, z);
+  Actor_WalkToAndWaitById(id, x, z);
 }
 
 static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
@@ -718,7 +718,7 @@ void Func_020021e8(void) {
   FieldCamera_GetActor()->motionFlags = 0;
   Camera_MoveWithinMapBounds(658 << 16, -1, 164 << 16, 1);
   Func_02003cf0();
-  Actor_SetAngleToward(24, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(24, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmoteById(24, 0x100, 40);
   Actor_SetSpeed(24, 0x19999, 0xcccc);
   Actor_MoveTo(24, 664, 136);
@@ -743,7 +743,7 @@ void Func_020022e0(void) {
   Event_ResolvePendingActions(0);
   Camera_MoveWithinMapBounds(245 << 18, -1, 168 << 16, 1);
   Func_02003cf0();
-  Actor_SetAngleToward(24, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(24, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmoteById(24, 0x100, 40);
   Actor_GetById(24)->motionFlags = 0;
   Actor_SetSpritePriority(24, 1);
@@ -762,15 +762,15 @@ void Func_02002390(void) {
   Event_ResolvePendingActions(0);
   Camera_MoveWithinMapBounds(144 << 16, -1, 214 << 15, 1);
   Func_02003cf0();
-  Actor_SetAngleToward(25, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(25, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmoteById(25, 0x100, 40);
   Actor_SetSpeed(25, 0x19999, 0xcccc);
-  Actor_SetPositionAndReset(25, 168, 104);
+  Actor_WalkToAndWaitById(25, 168, 104);
   Event_Wait(10);
   Sound_Play(153);
   Actor_GetById(25)->velocityY = 0x80000;
   Actor_SetSingleChildFlags(Actor_GetById(25), 0);
-  Actor_SetPositionAndReset(25, 200, 104);
+  Actor_WalkToAndWaitById(25, 200, 104);
   Actor_SetSingleChildFlags(Actor_GetById(25), 1);
   Actor_MoveTo(25, 294, 104);
   Actor_PlaceFacing(25, 212 << 17, 208 << 15, FACING_SOUTH);
@@ -785,7 +785,7 @@ void Func_02002458(void) {
   FieldCamera_GetActor()->motionFlags = 0;
   Camera_SetBounds(212 << 17, -1, 208 << 15, 1);
   Func_02003cf0();
-  Actor_SetAngleToward(25, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(25, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmoteById(25, 0x100, 20);
   Camera_MoveWithinMapBounds(212 << 17, -1, 152 << 16, 1);
   Actor_SetSpeed(25, 0x19999, 0xcccc);

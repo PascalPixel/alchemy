@@ -428,7 +428,7 @@
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);                     \
     SetWorkTriple(0x50000, 0x50000, 0x10000);                                  \
     SetWorkTriple(-1, -1, 0xe666);                                             \
-    MapGrid_WaitForShakeToSettle();                                            \
+    FieldMapGrid_WaitForShakeToSettle();                                       \
     Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);             \
     actor->gravity = 0x10000;                                                  \
     actor->bounce = 0x4000;                                                    \
@@ -455,8 +455,8 @@
                                                                                \
     x >>= 20;                                                                  \
     z >>= 20;                                                                  \
-    Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, (x << 4) + 8,    \
-                               (z << 4) + 8);                                  \
+    Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, (x << 4) + 8,       \
+                            (z << 4) + 8);                                     \
     System_Wait(1);                                                            \
     FieldActor_SetPositionAndResetMotion(object, (x << 20) + PIXELS(8),        \
                                          object->y, (z << 20) + PIXELS(8));    \
@@ -642,7 +642,7 @@
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);                     \
     MapGrid_SetShake(0x50000, 0x50000, 0x10000);                               \
     MapGrid_SetShake(-1, -1, 0xe666);                                          \
-    MapGrid_WaitForShakeToSettle();                                            \
+    FieldMapGrid_WaitForShakeToSettle();                                       \
     Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);             \
     actor->gravity = 0x10000;                                                  \
     actor->bounce = 0x4000;                                                    \
@@ -1472,7 +1472,7 @@
     count = Party_CountMembers();                                              \
     for (i = 0; i < count; i++)                                                \
       hp[i] = Unit_Get(gMainRoutineWork.activeOwners[i])->hp;                  \
-    BattleParty_ApplyHealthDelta(-10, 0);                                      \
+    Party_AddHp(-10, 0);                                                       \
     work->downCount = 0;                                                       \
     work->standingCount = 0;                                                   \
     Actor_SetAttachedEffect(leader, 258);                                      \
@@ -3442,8 +3442,7 @@
     Actor_SetPosition(n5, PIXELS(n6), PIXELS(n7));                             \
     if (leader->x >> 20 == n8 && leader->z >> 20 == n9) {                      \
       LEADER_HOP();                                                            \
-      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16,    \
-                                         0);                                   \
+      Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, 16, 0);    \
       leader->velocityY = PIXELS(6);                                           \
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);                    \
       Event_End();                                                             \
@@ -3736,7 +3735,7 @@
   void name(void) {                                                            \
     Func_0200279c();                                                           \
     Camera_MoveWithinMapBounds(n1 << 16, 16 << 16, n2 << 16, 1);               \
-    Actor_SetPositionAndReset(14, n1, n2);                                     \
+    Actor_WalkToAndWaitById(14, n1, n2);                                       \
     Actor_GetById(14)->state = n3;                                             \
     Func_020027d4();                                                           \
   }
@@ -3778,7 +3777,7 @@
       Actor_SetSingleChildFlags(Actor_GetById(14), 0);                         \
       ShrineOfTheSeaGod_ObjSpeed(14, 0x4cccc, 0x26666);                        \
       block->speed = 0x80000;                                                  \
-      Actor_SetPositionAndCommit(14, n5, 216);                                 \
+      Actor_MoveToAndWaitById(14, n5, 216);                                    \
       Actor_SetSingleChildFlags(Actor_GetById(14), 1);                         \
       Event_Wait(10);                                                          \
       ShrineOfTheSeaGod_ObjSpeed(14, 0x19999, 0xcccc);                         \
@@ -3828,7 +3827,7 @@
       Actor_SetSingleChildFlags(Actor_GetById(14), 0);                         \
       ShrineOfTheSeaGod_ObjSpeed(14, 0x4cccc, 0x26666);                        \
       block->speed = 0x80000;                                                  \
-      Actor_SetPositionAndCommit(14, n4, 216);                                 \
+      Actor_MoveToAndWaitById(14, n4, 216);                                    \
       Actor_SetSingleChildFlags(Actor_GetById(14), 1);                         \
       Event_Wait(10);                                                          \
       ShrineOfTheSeaGod_ObjSpeed(14, 0x19999, 0xcccc);                         \
@@ -3909,7 +3908,7 @@
   void name(s32 id) {                                                          \
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
-    Actor_SetAngleToward(id, gMainRoutineWork.currentOwner, 0);                \
+    Actor_FaceActorById(id, gMainRoutineWork.currentOwner, 0);                 \
     Actor_StartRepeatedMotion(id, 2);                                          \
     Actor_SetAttachedEffect(id, 0x102);                                        \
     Event_Wait(20);                                                            \
@@ -4162,8 +4161,8 @@
       FieldMessage_Show(MsgCheckedTheTablet, 1);                               \
       Event_End();                                                             \
     } else {                                                                   \
-      Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, n1, 136);       \
-      Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 264, 136);      \
+      Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, n1, 136);         \
+      Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 264, 136);        \
       Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);       \
       FieldEvent_Wait(10);                                                     \
       Func_02004534();                                                         \
@@ -4505,7 +4504,7 @@
     Camera_MoveWithinMapBounds(n1 << 16, 16 << 16, n2 << 16, 1);               \
     ShrineOfTheSeaGod_ObjWalk(14, n3, 248);                                    \
     ShrineOfTheSeaGod_ObjWalk(14, n1, 248);                                    \
-    Actor_SetPositionAndReset(14, n1, n2);                                     \
+    Actor_WalkToAndWaitById(14, n1, n2);                                       \
     Actor_GetById(14)->state = n4;                                             \
     Func_020027d4();                                                           \
   }
@@ -5586,7 +5585,7 @@
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);                     \
     SetWorkTriple(0x50000, 0x50000, 0x10000);                                  \
     SetWorkTriple(-1, -1, 0xe666);                                             \
-    MapGrid_WaitForShakeToSettle();                                            \
+    FieldMapGrid_WaitForShakeToSettle();                                       \
     Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);             \
     actor->gravity = 0x10000;                                                  \
     actor->bounce = 0x4000;                                                    \

@@ -26,9 +26,11 @@ void BattleParty_ListAllUnitsAndSubmit(void) {
   BattleActor_SpawnObjectsForList(list, 0);
 }
 
-s32 BattleMotion_GetSlotPalette(s32 id) { return BattleObject_Get(id)->palette; }
+s32 BattleMotion_GetSlotPalette(s32 id) {
+  return BattleObject_Get(id)->palette;
+}
 
-s32 Enemy_CheckRoom(s32 arg0) {
+s32 Enemy_HasSpriteRoom(s32 arg0) {
   s32 retval;
   s32 i;
   struct Layout *ptr;
@@ -99,8 +101,8 @@ s32 SummonSlot_RegisterActorSprites(s32 unit) {
       s32 flag = BattleClass_GetPalette(actor->enemyId);
       s32 bufferAddr = (slot << 14) + slotBuffers;
 
-      if (ResourceSlot_LoadFar(slot, (u32 *)bufferAddr, spriteValue + pass,
-                               flag) == 0)
+      if (SpritePictureCache_LoadFar(slot, (u32 *)bufferAddr,
+                                     spriteValue + pass, flag) == 0)
         return 0;
     }
 
@@ -120,14 +122,14 @@ s32 SummonSlot_RegisterActorSprites(s32 unit) {
   return result.value;
 }
 
-void BattleMotion_ReleaseObjectSlotByValue(s32 value) {
+void BattleObject_ReleaseSpriteSlots(s32 value) {
   struct BattleSpriteSlots *work =
       (struct BattleSpriteSlots *)Ram_HeapSlots->battleWork;
   s32 index;
 
   for (index = 0; index <= 5; index++) {
     if (work->spriteSlots[index] == value) {
-      ResourceSlot_LoadFar(index, 0, 0, 0);
+      SpritePictureCache_LoadFar(index, 0, 0, 0);
       work->spriteSlots[index] = 0;
     }
   }

@@ -289,7 +289,7 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 void MessageArgument_ClearAll(void);
 u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width);
 struct BattleUnit *Unit_Get(s32 unitId);
-s32 Scene_GetAreaNameIndexFar(s32 scene, s32 entrance);
+s32 Area_GetNameIndexFar(s32 scene, s32 entrance);
 
 #if LANGUAGE != LANGUAGE_JAPANESE
 
@@ -570,7 +570,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case 23:
             Message_DecodeRaw(
-                Scene_GetAreaNameIndexFar(MessageArgument_Lookup(6, clear), 1) +
+                Area_GetNameIndexFar(MessageArgument_Lookup(6, clear), 1) +
                     (s32)MsgDebugAreaName,
                 name, 24);
             p = name;
@@ -1048,7 +1048,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case 23:
             Message_DecodeRaw(
-                Scene_GetAreaNameIndexFar(MessageArgument_Lookup(6, clear), 1) +
+                Area_GetNameIndexFar(MessageArgument_Lookup(6, clear), 1) +
                     (s32)MsgDebugAreaName,
                 name, 24);
             writePosition = Message_AppendArticleName(mode, name, writePosition,

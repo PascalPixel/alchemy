@@ -369,8 +369,8 @@ s32 Save_BuildFileSummary(void) {
     *destination++ = *source++;
   summary->level = owner->level;
   summary->playTime = SAVE_GAME_WORDS->playTime;
-  summary->area = Scene_GetAreaNameIndexFar(gMainRoutineWork.scene,
-                                            gMainRoutineWork.entrance);
+  summary->area =
+      Area_GetNameIndexFar(gMainRoutineWork.scene, gMainRoutineWork.entrance);
   summary->classId = owner->classIndex;
   summary->coins = gMainRoutineWork.coins;
   summary->djinn[0] = Party_SumDjinnCountsFar(0);
@@ -433,7 +433,7 @@ s32 Save_WriteFile(s32 file) {
   return result;
 }
 
-s32 Func_08043534(void) {
+s32 Save_ProcessSelectedFile(void) {
   void *buffer;
   s32 value;
   s32 result;

@@ -98,7 +98,7 @@ void Func_0811d914(struct ActionTargets *targets) {
   s32 i;
 
   if (targets->side <= 7) {
-    count = BattleParty_PrepareActiveOwners(ids);
+    count = BattleParty_PrepareMembers(ids);
     count += BattleParty_PrepareReserveOwners(&ids[count]);
   } else {
     count = BattleParty_ListActorIds(2, ids);
@@ -128,7 +128,7 @@ void Func_0811d9a4(void) {
   s32 i;
 
   for (i = 0; i < count; i++)
-    ObjMotRst(ids[i]);
+    BattleMotion_ReturnToSpot(ids[i]);
 }
 
 s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
@@ -331,7 +331,7 @@ void Func_0811ddd8(struct BattlePlan *plan,
     inputTarget = plan->targetIds;
     outputTarget = effect->actors;
     do {
-      if (BattleParty_IsUnitListed(*inputTarget) &&
+      if (BattleUnit_IsListed(*inputTarget) &&
           (((struct BattleUnit *)Unit_Get(*inputTarget))->hp != 0 ||
            (plan->presentationFlags & 0x10000))) {
         *outputTarget++ = *inputTarget;

@@ -317,7 +317,7 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     battle = heap->battleWork;
     view->secondMode = 1;
     view->busy = 0;
-    ownerCount = BattleParty_PrepareActiveOwners(owners);
+    ownerCount = BattleParty_PrepareMembers(owners);
     ownerCount += BattleParty_PrepareReserveOwners(owners + ownerCount);
     for (i = 0; i != ownerCount; i++) {
       s32 id = owners[i];

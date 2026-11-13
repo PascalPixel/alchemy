@@ -107,10 +107,8 @@ void Func_02000568(void) {
   MapGrid_CopyCellsTo(64, 64, 83, 35, 1, 2);
   Func_02003b70(0);
   FieldEvent_Wait(45);
-  Actor_SetSpeed(FIELD_AT(&gMainRoutineWork, s32, 532), 0x8000,
-                           0x4000);
-  Actor_WalkTo(FIELD_AT(&gMainRoutineWork, s32, 532), 312,
-                                   680);
+  Actor_SetSpeed(FIELD_AT(&gMainRoutineWork, s32, 532), 0x8000, 0x4000);
+  Actor_WalkTo(FIELD_AT(&gMainRoutineWork, s32, 532), 312, 680);
   FieldEvent_Wait(5);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -261,9 +259,8 @@ void Func_020008ac(struct Actor *object) {
   radius += 0xc0000;
   object->x = WORD_AT(object, 68) +
               Iwram_MulQ16(Math_Cosine((step & 255) << 11), radius) * 2;
-  object->z =
-      WORD_AT(object, 76) +
-      Iwram_MulQ16(Math_Sin((WORD_AT(object, 48) & 255) << 11), radius);
+  object->z = WORD_AT(object, 76) +
+              Iwram_MulQ16(Math_Sin((WORD_AT(object, 48) & 255) << 11), radius);
   object->y += WORD_AT(object, 72);
   WORD_AT(object, 48)++;
   Actor_SetSpriteColor(object, ((gFrameCount & 2) >> 1) * 9);
@@ -284,8 +281,13 @@ void Func_0200092c(struct Actor *object) {
 
 extern s16 gData_02004674[][4];
 void Actor_StartScript(struct Actor *object, const u8 *script);
-/* VIEW(airs_rock): routine Func_02003ba8 as s32 Func_02003ba8(struct Actor *object); module/scene/scene.h has void Func_02003ba8(struct Actor *object, const void *script); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/airs_rock.c:411: too few arguments to function `Func_02003ba8'. */
-extern s32 Func_02003ba8__airs_rock(struct Actor *object) __asm__("Func_02003ba8");
+/* VIEW(airs_rock): routine Func_02003ba8 as s32 Func_02003ba8(struct Actor
+ * *object); module/scene/scene.h has void Func_02003ba8(struct Actor *object,
+ * const void *script); tried as the rest of the object declares it, it does not
+ * compile in tla-ja: games/tla/src/scene/airs_rock.c:411: too few arguments to
+ * function `Func_02003ba8'. */
+extern s32
+Func_02003ba8__airs_rock(struct Actor *object) __asm__("Func_02003ba8");
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
@@ -526,7 +528,7 @@ void Func_02001010(void) {
   FieldEvent_ResolvePendingActions(0);
   REG_DISPCNT &= ~0x100;
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
-                buffer);
+                        buffer);
   Dma_Set(buffer, (void *)0x600e800, 0x840000d0, (volatile u32 *)0x040000d4);
   Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, 0x840000d0,
           (volatile u32 *)0x040000d4);
@@ -542,7 +544,8 @@ void Func_02001010(void) {
   REG_BG1CNT |= 2;
   Dma_Fill16(0x10, (void *)0x6002000, 0x500);
   buffer = Heap_Alloc(0x240);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap),
+                        buffer);
   i = 0;
   cell = buffer;
 offset:
@@ -567,8 +570,8 @@ row:
   Actor_Get(8)->update = Func_0200092c;
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
-      spark = FieldActor_Create(
-          0x2a0, Actor_Get(8)->x, Actor_Get(8)->y, Actor_Get(8)->z);
+      spark = FieldActor_Create(0x2a0, Actor_Get(8)->x, Actor_Get(8)->y,
+                                Actor_Get(8)->z);
       {
         s32 priority = ((s8 *)Actor_Get(8)->sprite)[9] & 12;
 
@@ -628,8 +631,8 @@ glow:
       velocity.z = 0xfffe0000;
       x = ((Random16Far() % 144) << 16) + 0x1000000;
       Func_0200015c(x, 0, (Random16Far() % 144) << 16, velocity.x, velocity.y,
-                   velocity.z, EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY | 1,
-                   &options);
+                    velocity.z, EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY | 1,
+                    &options);
     }
     REG_BLDALPHA = (((j >> 4) & 15) << 8) | (16 - ((j >> 4) & 15));
     ((u8 *)Actor_Get(8))[98] = Random16Far() & 7;
@@ -662,7 +665,7 @@ fade:
     System_Wait(30);
     Actor_Get(8)->update = (void (*)(void))zero;
     Actor_SetSpriteColor(Actor_Get(8), 6);
-    MapGrid_WaitForShakeToSettle();
+    FieldMapGrid_WaitForShakeToSettle();
     FieldEvent_Wait(60);
     REG_BLDCNT = zero;
   }
@@ -733,49 +736,54 @@ void Func_02001560(void) {
     leader->y = (((ride->y >> 19) & ~1) + 3) << 19;
     leader->z = (((leader->z >> 19) & ~1) + 1) << 19;
   waiting:
-      moved = 0;
-      if (gInput.held & 0x40) {
-        dx = 0;
-        dz = 0xfff00000;
-        leader->facing = 0xc000;
-        moved = 1;
-      }
-      if (gInput.held & 0x10) {
-        dx = 0x100000;
-        dz = 0;
-        leader->facing = dz;
-        moved = 1;
-      }
-      if (gInput.held & 0x20) {
-        dx = 0xfff00000;
-        leader->facing = 0x8000;
-        dz = 0;
-        moved = 1;
-      }
-      if (moved && Func_02000348(2, (ride->x + dx) >> 20,
-                                 (ride->z - ride->y + dz) >> 20) >> 8 != 255)
-        goto found;
-      wait(1);
-      if (++i != 60)
-        goto waiting;
+    moved = 0;
+    if (gInput.held & 0x40) {
+      dx = 0;
+      dz = 0xfff00000;
+      leader->facing = 0xc000;
+      moved = 1;
+    }
+    if (gInput.held & 0x10) {
+      dx = 0x100000;
+      dz = 0;
+      leader->facing = dz;
+      moved = 1;
+    }
+    if (gInput.held & 0x20) {
+      dx = 0xfff00000;
+      leader->facing = 0x8000;
+      dz = 0;
+      moved = 1;
+    }
+    if (moved && Func_02000348(2, (ride->x + dx) >> 20,
+                               (ride->z - ride->y + dz) >> 20) >>
+                         8 !=
+                     255)
+      goto found;
+    wait(1);
+    if (++i != 60)
+      goto waiting;
     dx = 0;
     leader->facing = 0xc000;
     dz = 0xfff00000;
     if ((u32)(Func_02000348(2, ride->x >> 20, (ride->z - ride->y + dz) >> 20)
-              << 8) >> 16 != 255)
+              << 8) >>
+            16 !=
+        255)
       goto found;
     dx = 0x100000;
     dz = 0;
     leader->facing = dz;
-    if ((u32)(Func_02000348(2, (ride->x + dx) >> 20,
-                            (ride->z - ride->y) >> 20)
-              << 8) >> 16 != 255)
+    if ((u32)(Func_02000348(2, (ride->x + dx) >> 20, (ride->z - ride->y) >> 20)
+              << 8) >>
+            16 !=
+        255)
       goto found;
     dx = 0xfff00000;
     leader->facing = 0x8000;
   found:
-    height = Map_GetTerrainHeight(((u8 *)rider)[98], ride->x + dx,
-                                  ride->z + dz);
+    height =
+        Map_GetTerrainHeight(((u8 *)rider)[98], ride->x + dx, ride->z + dz);
     leader->y = height;
     leader->terrainHeight = height;
     Func_02003b28(leader, 6);
@@ -808,7 +816,8 @@ void Func_02001560(void) {
     dust->acceleration = 0x10000;
     dust->motionFlags = still;
     FieldActor_SetMoveTarget(dust, leader->x,
-                  Map_GetTerrainHeight(0, leader->x, leader->z), leader->z);
+                             Map_GetTerrainHeight(0, leader->x, leader->z),
+                             leader->z);
     OverlayObject_WaitUntilIdle(leader);
     Actor_WaitForMove(dust);
   }
@@ -930,16 +939,15 @@ void Func_02001b54(struct Actor *object) {
       position.x = object->x;
       position.z = object->z;
     } else {
-      /* FAKEMATCH(wrapper): forwarded, so each product builds its own constant and
-       * they share the routine's address; as direct calls, 106 of 153
+      /* FAKEMATCH(wrapper): forwarded, so each product builds its own constant
+       * and they share the routine's address; as direct calls, 106 of 153
        * instructions differ in tla-en. */
       position.x = object->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
                                       Math_Cosine(object->facing));
       position.z = object->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
                                       Math_Sin(object->facing));
     }
-    shot = FieldActor_Create(280, position.x,
-                                                       object->y, position.z);
+    shot = FieldActor_Create(280, position.x, object->y, position.z);
     Func_02003b28(shot, 2);
     Actor_SetSingleChildFlags(shot, 0);
     ((struct FieldSprite *)shot->sprite)->priority = 1;
@@ -965,7 +973,11 @@ void Func_02001ca4(void) {
   Func_02000468(work->valueCbc);
 }
 
-/* VIEW(airs_rock): routine Func_02003cc0 as void Func_02003cc0(void); module/scene/scene.h has void Func_02003cc0(s32 id); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/airs_rock.c:1014: too few arguments to function `Func_02003cc0'. */
+/* VIEW(airs_rock): routine Func_02003cc0 as void Func_02003cc0(void);
+ * module/scene/scene.h has void Func_02003cc0(s32 id); tried as the rest of the
+ * object declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/airs_rock.c:1014: too few arguments to function
+ * `Func_02003cc0'. */
 extern void Func_02003cc0__airs_rock(void) __asm__("Func_02003cc0");
 
 void Func_02001cc8(void) {
@@ -1057,7 +1069,7 @@ void Func_02001dc4(s32 x, s32 z) {
     scatter.z = Iwram_MulQ16(Math_Sin(scatter.y << 12), radius);
     ((struct FieldSprite *)rock->sprite)->priority = 1;
     FieldActor_SetMoveTarget(rock, rock->x + scatter.x, rock->y,
-                        rock->z + scatter.z);
+                             rock->z + scatter.z);
   }
   MapGrid_SetShake(0x50000, 0x70000, 0x10000);
   MapGrid_SetShake(shakeA, shakeA, shakeC);
@@ -1068,8 +1080,8 @@ void Func_02001dc4(s32 x, s32 z) {
 /// The pillar of light in Air's Rock, overlay 664's Func_02003654 with object
 /// 14 glowing: the camera moves to (0x218, 0xd8), the leader turns, and the
 /// light flashes twice (cue 138), each time copying cells into the map
-/// (Map_CopyCellPictureIndicesRect at (52, 12) and (52, 22)) and lighting a spot
-/// (Func_02001dc4), then (cue 145) three more spots light and the cells at
+/// (Map_CopyCellPictureIndicesRect at (52, 12) and (52, 22)) and lighting a
+/// spot (Func_02001dc4), then (cue 145) three more spots light and the cells at
 /// (62, 2) open; sets flag 0x87b.
 void Func_02001f7c(void) {
   u16 *buffer = Heap_Alloc(0x800);
@@ -1089,12 +1101,13 @@ void Func_02001f7c(void) {
     REG_BG0CNT = control;
   } while (0);
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
-                buffer);
+                        buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 0x800);
   buffer = Heap_Alloc(0x80);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningMap), buffer);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_LightningMap),
+                        buffer);
   i = 0;
   cell = buffer;
 mask:
@@ -1119,8 +1132,8 @@ row:
   Actor_Get(14)->update = Func_0200092c;
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
-      spark = (FieldActor_Create(0x2a0, Actor_Get(14)->x,
-                                  Actor_Get(14)->y, Actor_Get(14)->z));
+      spark = (FieldActor_Create(0x2a0, Actor_Get(14)->x, Actor_Get(14)->y,
+                                 Actor_Get(14)->z));
       {
         s32 priority = ((s8 *)Actor_Get(14)->sprite)[9] & 12;
 
@@ -1224,7 +1237,8 @@ fade2:
   System_Wait(70);
   Window_LoadGraphics();
   DebugText_Clear();
-  WindowColor_Apply(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
+  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
+                    gMainRoutineWork.paletteGlow[1]);
   REG_BLDCNT = 0;
   REG_DISPCNT |= DISPCNT_BG0_ON;
   gBgScroll[0].x = 0;
@@ -1316,7 +1330,7 @@ void Func_020026b8(void) {
   FieldEvent_ResolvePendingActions(0);
   REG_DISPCNT &= ~0x100;
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
-                buffer);
+                        buffer);
   Dma_Set(buffer, (void *)0x600e800, 0x840000d0, (volatile u32 *)0x040000d4);
   Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, 0x840000d0,
           (volatile u32 *)0x040000d4);
@@ -1332,7 +1346,8 @@ void Func_020026b8(void) {
     Dma_Fill16(0x10, (void *)0x6002000, 0x500);
   } while (0);
   buffer = Heap_Alloc(0x240);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap),
+                        buffer);
   cell = buffer;
   for (i = 0; i != 0x120; i++) {
     *cell += 0xff40;
@@ -1353,9 +1368,8 @@ void Func_020026b8(void) {
     s32 low = gFrameCount & 3;
 
     if (low == 0) {
-      spark = (FieldActor_Create(0x2a0, Actor_Get(12)->x,
-                                                  Actor_Get(12)->y,
-                                                  Actor_Get(12)->z));
+      spark = (FieldActor_Create(0x2a0, Actor_Get(12)->x, Actor_Get(12)->y,
+                                 Actor_Get(12)->z));
       {
         s32 priority = ((s8 *)Actor_Get(12)->sprite)[9] & 12;
 
@@ -1430,14 +1444,14 @@ void Func_020026b8(void) {
     System_Wait(30);
     Actor_Get(12)->update = (void (*)(void))zero;
     Actor_SetSpriteColor(Actor_Get(12), 6);
-    MapGrid_WaitForShakeToSettle();
+    FieldMapGrid_WaitForShakeToSettle();
     FieldEvent_Wait(60);
     REG_BLDCNT = zero;
   }
   Window_LoadGraphics();
   DebugText_Clear();
   WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                gMainRoutineWork.paletteGlow[1]);
+                    gMainRoutineWork.paletteGlow[1]);
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 1;
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags &= ~32;
@@ -1459,18 +1473,18 @@ void Func_02002b88(void) {
   level = ((actor->y + 0x200000) >> 16) / 112;
   if (gData_02004698 != level) {
     switch (level) {
-  case 3:
-    MapGrid_CopyCellAttributes(64, 64, 21, 3, 27, 54);
-    break;
-  case 2:
-    MapGrid_CopyCellAttributes(64, 67, 21, 3, 27, 54);
-    break;
-  case 1:
-    MapGrid_CopyCellAttributes(64, 70, 21, 3, 27, 54);
-    break;
-  case 0:
-    MapGrid_CopyCellAttributes(64, 73, 21, 3, 27, 54);
-    break;
+    case 3:
+      MapGrid_CopyCellAttributes(64, 64, 21, 3, 27, 54);
+      break;
+    case 2:
+      MapGrid_CopyCellAttributes(64, 67, 21, 3, 27, 54);
+      break;
+    case 1:
+      MapGrid_CopyCellAttributes(64, 70, 21, 3, 27, 54);
+      break;
+    case 0:
+      MapGrid_CopyCellAttributes(64, 73, 21, 3, 27, 54);
+      break;
     }
     gData_02004698 = level;
   }

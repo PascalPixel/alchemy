@@ -239,7 +239,7 @@ void Func_020002f8(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAlhafra69);
   Event_Wait(10);
-  Actor_SetAngleToward(27, FIELD_AT(&gMainRoutineWork, s32, 532), 0);
+  Actor_FaceActorById(27, FIELD_AT(&gMainRoutineWork, s32, 532), 0);
   Event_Wait(10);
   Event_ShowMessageThenWait(0x1b, 0, 0xa);
   Event_ShowMessageThenWait(-1, 0, 0xa);
@@ -711,7 +711,7 @@ void Func_02000aa0(s32 a0) {
   Motion_SetVarCbAndRefresh(34, 2);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(0x22, 0, 0xa);
-  Actor_CommitPositionAndActivate(34, 0, -16);
+  Actor_WalkByAndWaitById(34, 0, -16);
   Event_Wait(1);
   Actor_SetModeById(34, 5);
   Event_Wait(60);
@@ -746,7 +746,7 @@ void Func_02000aa0(s32 a0) {
   Actor_SetMovementTypeById(29, (s32)gData_020033a0);
   Event_Wait(20);
   Actor_WalkByAndWait(30, 0, -32);
-  Actor_CommitPositionAndActivate(30, -32, 0);
+  Actor_WalkByAndWaitById(30, -32, 0);
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(30, 2);
   Event_Wait(10);
@@ -1051,14 +1051,14 @@ void Func_02001958(s32 a0) {
   FieldEvent_ShowMessageThenWait(0x19, 0, 0xa);
   if (a0 != 1) {
   } else {
-    Actor_CommitPositionAndActivate(25, -8, 0);
+    Actor_WalkByAndWaitById(25, -8, 0);
     Event_Wait(15);
     Actor_StartRepeatedMotion(25, 3);
     FieldEffect_SetAttached(0x19, 0x102);
     Event_Wait(40);
     t22 = ((s32)Actor_GetById(25));
     FIELD_AT((t22 + 0x5a), u8, 0) = (0xfe & FIELD_AT((t22 + 0x5a), u8, 0));
-    Actor_SetPositionAndReset(25, 192, 736);
+    Actor_WalkToAndWaitById(25, 192, 736);
     Event_Wait(1);
     t25 = ((s32)Actor_GetById(25));
     FIELD_AT((t25 + 0x5a), u8, 0) = (1 | FIELD_AT((t25 + 0x5a), u8, 0));
@@ -1105,8 +1105,8 @@ void Func_02001958(s32 a0) {
   if (a0 == 0) {
     Event_Wait(50);
     Actor_SetPosition(25, 0x1080000, 0x2880000);
-    Actor_CommitPositionAndActivate(25, 0, 32);
-    Actor_CommitPositionAndActivate(25, 150, 0);
+    Actor_WalkByAndWaitById(25, 0, 32);
+    Actor_WalkByAndWaitById(25, 150, 0);
   }
   Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
   Event_End();

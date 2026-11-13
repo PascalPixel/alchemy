@@ -82,7 +82,7 @@ s32 FieldSequence_Run(void) {
   Task_ResetAll();
   Djinn_ResolvePending(0);
   if (gMainRoutineWork.map == (s32)&SceneId_Ov64a) {
-    Func_08020110();
+    WorldMap_InitializePerspectiveFar();
     gMainRoutineWork.unk244[0] = 1;
     mode = 3;
     Func_080c9e48(0);
@@ -175,7 +175,7 @@ s32 FieldSequence_Run(void) {
         HeapSlot_Release(92);
       }
       PLTT_BACKDROP = 0;
-      if (!ObjectEffect_RunPendingFlagEvent())
+      if (!Entrance_PlayArrival())
         wait((work->transitionFrames + 1) / 2);
     }
     arrivalState = ARRIVAL.state;
@@ -352,7 +352,7 @@ s32 FieldSequence_Run(void) {
         work->busy = 0;
         work->coordEvent = 0;
       } else if (work->pushCell != 0) {
-        Func_080cd680(work->pushCell);
+        Field_RunPushCell(work->pushCell);
         work->pushCell = 0;
       } else if (work->battle != 0) {
         Leader_StopMoving();
@@ -487,7 +487,8 @@ s32 FieldSequence_Run(void) {
         // leader->unk66 == 0, 39 of 1300 instructions differ in tla-en.
         if (*pending == 0 ||
             (leader->timer == 0 && *(s16 *)&leader->unk66 == 0))
-          Func_080cb2b8(leader->terrainId, leader->x, leader->y, leader->z);
+          Field_UpdateWalking(leader->terrainId, leader->x, leader->y,
+                              leader->z);
       }
     } while (BattleEffect_SumCounters() == 0);
   }
@@ -564,7 +565,7 @@ s32 Actor_GetTriggerTileAheadOfCurrent(void) {
     }
     if (result == 0 && (s8)workBytes[0x18a] == 3) {
       if (gMainRoutineWork.ownerOverride != 0 &&
-          GetWorldMapCollisionFar(probePosition.coordinates) == 3)
+          WorldMap_GetCollisionFar(probePosition.coordinates) == 3)
         result = 99;
     }
   }

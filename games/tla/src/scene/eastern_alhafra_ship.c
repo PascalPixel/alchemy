@@ -64,7 +64,7 @@ void Func_0200008c(void) {
   Actor_WalkTo(*(s32 *)((u8 *)v5 + 0), 136, 488);
   Event_Wait(10);
   Actor_SetDestination(15, 120, 472);
-  Actor_SetPositionAndCommit(14, 136, 475);
+  Actor_MoveToAndWaitById(14, 136, 475);
   object1 = Actor_GetById(15);
   *(s32 *)((u8 *)object1 + 40) = v6;
   Sound_Play(0x237);
@@ -584,8 +584,8 @@ L_0200903c:
   Camera_FollowActor(10, 1);
   Func_02003218();
   Actor_WalkToAndWait(10, 456, 504);
-  Actor_CommitPositionAndActivate(10, 16, 0);
-  Actor_SetPositionAndReset(10, 472, 424);
+  Actor_WalkByAndWaitById(10, 16, 0);
+  Actor_WalkToAndWaitById(10, 472, 424);
   Event_Wait(10);
   FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(408), 1);
   Func_02003218();
@@ -779,11 +779,11 @@ L_0200903c:
   Motion_SetVarCbAndRefresh(25, 2);
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(0x1019, 0, 10);
-  Actor_CommitPositionAndActivate(17, 0, 16);
+  Actor_WalkByAndWaitById(17, 0, 16);
   Event_Wait(10);
   Event_ShowMessageThenWait(17, 0, 10);
   Actor_OffsetPositionAndReset(16, 0, 16);
-  Actor_CommitPositionAndActivate(18, 0, 16);
+  Actor_WalkByAndWaitById(18, 0, 16);
   Actor_SetModeById(16, 1);
   Event_Wait(10);
   FieldEvent_ShowTwoMessagesAndWait(18, 13, 1, 13, 4, 16, 17, 11, 22, 6, 0);
@@ -1083,7 +1083,7 @@ L_0200903c:
   Event_Wait(10);
   object16 = Actor_GetById(17);
   object16->actionFlags &= 254;
-  Actor_SetPositionAndReset(17, 456, 312);
+  Actor_WalkToAndWaitById(17, 456, 312);
   Event_Wait(1);
   object17 = Actor_GetById(17);
   object17->actionFlags |= 1;
@@ -1160,7 +1160,7 @@ L_0200903c:
   Actor_WalkByAndWait(19, -16, 0);
   Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
   Event_Wait(20);
-  Actor_CommitPositionAndActivate(20, 16, 16);
+  Actor_WalkByAndWaitById(20, 16, 16);
   Actor_ArmCallback(20, FACING_EAST, 0);
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(20, 2);
@@ -1180,7 +1180,7 @@ L_0200903c:
   Event_Wait(10);
   Actor_SetMovementTypeById(24, gData_020033c8);
   Event_Wait(75);
-  Actor_CommitPositionAndActivate(20, 16, 0);
+  Actor_WalkByAndWaitById(20, 16, 0);
   Actor_WalkByAndWait(20, 0, -32);
   Actor_WalkByAndWait(20, -32, 0);
   Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
@@ -1196,10 +1196,10 @@ L_0200903c:
   Event_ShowMessageThenWait(16, 0, 10);
   Motion_SetModeAndWaitAnimation(18, 3);
   Event_Wait(10);
-  Actor_CommitPositionAndActivate(16, 16, 0);
+  Actor_WalkByAndWaitById(16, 16, 0);
   Actor_WalkBy(16, 0, -32);
   Actor_WalkByAndWait(18, 0, -16);
-  Actor_CommitPositionAndActivate(18, 16, 0);
+  Actor_WalkByAndWaitById(18, 16, 0);
   Actor_FaceDirection(18, FACING_NORTH, 0);
   Actor_FaceDirection(17, FACING_NORTH, 0);
   Event_Wait(10);
@@ -1215,7 +1215,7 @@ L_0200903c:
   Actor_FaceDirection(17, FACING_SOUTH, 0);
   Actor_FaceDirection(18, FACING_SOUTH, 0);
   Actor_OffsetPositionAndReset(4, 16, 0);
-  Actor_CommitPositionAndActivate(25, 16, 0);
+  Actor_WalkByAndWaitById(25, 16, 0);
   Actor_WalkBy(4, 0, -32);
   Actor_WalkByAndWait(25, 0, -32);
   Actor_FaceDirection(6, FACING_NORTH, 0);
@@ -1277,7 +1277,7 @@ L_0200903c:
   Actor_FaceDirection(25, FACING_NORTH, 0);
   Actor_ArmCallback(6, FACING_NORTH, 0);
   Event_Wait(40);
-  Actor_CommitPositionAndActivate(17, -32, -8);
+  Actor_WalkByAndWaitById(17, -32, -8);
   Event_Wait(20);
   Actor_FaceDirection(17, FACING_NORTHWEST, 0);
   Event_Wait(30);
@@ -1293,7 +1293,7 @@ L_0200903c:
   Event_Wait(30);
   Actor_ArmCallback(17, FACING_NORTHWEST, 0);
   Event_Wait(30);
-  Actor_CommitPositionAndActivate(17, 16, 16);
+  Actor_WalkByAndWaitById(17, 16, 16);
   Actor_FaceDirection(17, FACING_SOUTH, 0);
   Event_Wait(20);
   Event_ShowMessageThenWait(17, 0, 10);

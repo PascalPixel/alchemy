@@ -299,8 +299,8 @@ void Func_02000458(struct YampiDesertCaveRect rect) {
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x4ccc, 0x1999);
   offset = gData_0200198c[i] << 16;
-  Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner,
-                                     offset >> 31, offset >> 17);
+  Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, offset >> 31,
+                                 offset >> 17);
   if (rect.word[5] != 0)
     ((void (*)(void))rect.word[5])();
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);

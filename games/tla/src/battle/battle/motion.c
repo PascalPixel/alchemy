@@ -11,7 +11,7 @@
   ((void (*)(struct MotionObject *, s32, s32, s32))Actor_SetTargetPosition)
 #define Actor_SetMode ((void (*)(struct MotionObject *, s32))Actor_SetMode)
 
-void ObjMotRst(s32 slotId) {
+void BattleMotion_ReturnToSpot(s32 slotId) {
   s32 z;
   s32 zero;
   struct BattleObj *slot;
@@ -265,12 +265,14 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
 }
 
 void BattleMotion_SpawnSlotEffectAndWait(s32 slot) {
-  struct SlotEffectEntry *entry = (struct SlotEffectEntry *)BattleObject_Get(slot);
+  struct SlotEffectEntry *entry =
+      (struct SlotEffectEntry *)BattleObject_Get(slot);
   u8 *effect;
 
   if (entry->object != NULL) {
     if ((entry->object->kind & 0xf) == 1) {
-      effect = (u8 *)ResourceMetadata_RegisterFar(entry->object->resource, 0x29f);
+      effect =
+          (u8 *)ResourceMetadata_RegisterFar(entry->object->resource, 0x29f);
       if (effect != NULL) {
         Animation_SetWorkEntryFar(effect, 1);
         effect[6] = 3;
@@ -292,7 +294,7 @@ s32 BattleMotion_ProjectScaledPosition(s32 slot, s32 *screen) {
   // Unused: gives the stack frame its 12 bytes.
   UNUSED s32 unused[3];
 
-  Camera_ApplyTransformByFlag();
+  BattleCamera_ApplyTransform();
   scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), record->height);
   screen[1] -= Iwram_MulQ16(scale, BattleUnit_GetEffectHeight(slot) >> 16);
   return 0;
@@ -307,7 +309,7 @@ s32 BattleMotion_ProjectConditionalPosition(s32 slot, s32 *screen) {
   struct SlotMotionRecord *record = GetMotionRecord(object, 0);
   s32 scale;
 
-  Camera_ApplyTransformByFlag();
+  BattleCamera_ApplyTransform();
   scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), record->height);
   if (BattleClass_IsSmall(*(u16 *)((u8 *)Unit_Get(slot) + 0x14a)) != 0)
     screen[1] -= Iwram_MulQ16(scale, 24);
@@ -320,7 +322,8 @@ u8 BattleClass_GetEffectHeight(s32 index);
 
 s32 BattleUnit_GetEffectHeight(s32 unitId) {
   s32 value = BattleClass_GetEffectHeight(
-      ((struct SummonOwnerState *)Unit_Get(unitId))->summon) << 16;
+                  ((struct SummonOwnerState *)Unit_Get(unitId))->summon)
+              << 16;
 
   if (value == 0) {
     if (BattleClass_IsSmall(

@@ -139,9 +139,9 @@ s32 Func_081a6154(s32 mode) {
   PaletteFade_SetTarget(0x10000, 0);
   REG_DISPCNT = 0x600;
   if (mode == 0) {
-    PaletteFade_Start(1);
+    TitlePaletteFade_Start(1);
   } else {
-    PaletteFade_Start(10);
+    TitlePaletteFade_Start(10);
   }
 
   if (mode == 0) {
@@ -164,7 +164,7 @@ s32 Func_081a6154(s32 mode) {
     if (!TITLE_STEP(20, -1, 0, 1, 0, 3, 0, 1, 0))
       return 0;
     PaletteFade_SetTarget(2, 0);
-    PaletteFade_Start(60);
+    TitlePaletteFade_Start(60);
     if (!TITLE_STEP(60, -1, 0, 1, 0, 3, 0, 1, 0))
       return 0;
   } else if (mode == 1) {
@@ -183,7 +183,7 @@ s32 Func_081a6154(s32 mode) {
     if (!TITLE_STEP(60, -1, -1, 0, -2, 15, 1, 0, 0))
       return 0;
     PaletteFade_SetTarget(2, 0);
-    PaletteFade_Start(60);
+    TitlePaletteFade_Start(60);
     if (!TITLE_STEP(60, -1, -1, 0, -2, 15, 1, 0, 0))
       return 0;
   } else {
@@ -206,7 +206,7 @@ s32 Func_081a6154(s32 mode) {
         return 0;
     }
     PaletteFade_SetTarget(0x7fff, 0);
-    PaletteFade_Start(1);
+    TitlePaletteFade_Start(1);
     if (Title_WaitOrPress(2)) {
       Fade_Wait();
       return 0;
@@ -251,11 +251,11 @@ s32 Func_081a6638(void) {
   PaletteFade_SetCurrent(0, 0);
   PaletteFade_SetTarget(0x10000, 0);
   REG_DISPCNT = 0x800;
-  PaletteFade_Start(40);
+  TitlePaletteFade_Start(40);
   if (Title_WaitOrPress(150))
     return 0;
   PaletteFade_SetTarget(2, 0);
-  PaletteFade_Start(40);
+  TitlePaletteFade_Start(40);
   if (Title_WaitOrPress(60))
     return 0;
   return 1;
@@ -313,7 +313,7 @@ s32 Func_081a6724(void) {
   PaletteFade_SetCurrent(0, 0);
   PaletteFade_SetTarget(0x10000, 0);
   REG_DISPCNT = 0x900;
-  PaletteFade_Start(40);
+  TitlePaletteFade_Start(40);
   if (Title_WaitOrPress(60))
     return 0;
   for (i = 1; i <= 16; i++) {
@@ -324,7 +324,7 @@ s32 Func_081a6724(void) {
   if (Title_WaitOrPress(150))
     return 0;
   PaletteFade_SetTarget(2, 0);
-  PaletteFade_Start(40);
+  TitlePaletteFade_Start(40);
   if (Title_WaitOrPress(60))
     return 0;
   return 1;
@@ -366,11 +366,11 @@ s32 Func_081a68b4(struct TitleScroll *s) {
       gBgScroll[1].y += s->step;
       if (timers->white != 0 && --timers->white == 1) {
         PaletteFade_SetTarget(0x7fff, 0);
-        PaletteFade_Start(10);
+        TitlePaletteFade_Start(10);
       }
       if (timers->back != 0 && --timers->back == 1) {
         PaletteFade_SetTarget(0x10000, 0);
-        PaletteFade_Start(10);
+        TitlePaletteFade_Start(10);
       }
     }
     goto done;
@@ -618,7 +618,7 @@ s32 Func_081a6ea0(void) {
   wait(1);
   PaletteFade_SetTarget(q16One, 0);
   REG_DISPCNT = 0x1240;
-  PaletteFade_Start(10);
+  TitlePaletteFade_Start(10);
 
   scroll.pos = 0;
   scroll.limit = 176;
@@ -669,7 +669,7 @@ s32 Func_081a6ea0(void) {
   if (i)
     goto stopped;
   PaletteFade_SetTarget(0x7fff, 0);
-  PaletteFade_Start(20);
+  TitlePaletteFade_Start(20);
   scroll.limit = 0;
   scroll.step = -5;
   scroll.frames = 1;
@@ -678,7 +678,7 @@ s32 Func_081a6ea0(void) {
   goto done;
 stopped:
   PaletteFade_SetTarget(0, 0);
-  PaletteFade_Start(10);
+  TitlePaletteFade_Start(10);
   wait(10);
 done:
   Dma_Fill32Cell(fill, 0, (void *)0x07000000, 0x400);
@@ -738,7 +738,7 @@ s32 Func_081a71c8(void) {
       (result = Func_081a6154(1)) == 0 || (result = Func_081a6724()) == 0 ||
       (result = Func_081a6154(2)) == 0) {
     PaletteFade_SetTarget(0, 0);
-    PaletteFade_Start(10);
+    TitlePaletteFade_Start(10);
     wait(10);
   }
   if (result)
@@ -1456,7 +1456,7 @@ void PaletteFade_SetBackdrop(s32 value) {
     target->palette[0] = value;
 }
 
-void PaletteFade_Start(s32 value) {
+void TitlePaletteFade_Start(s32 value) {
   struct PaletteFade *state = Ram_HeapSlots->block32;
 
   if (state != NULL) {

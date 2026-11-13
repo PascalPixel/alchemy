@@ -74,7 +74,7 @@ loop:
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  MapGrid_WaitForShakeToSettle();
+  FieldMapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
@@ -430,7 +430,7 @@ s32 Func_02003adc(s32 layer, s32 x, s32 z);
 u8 Func_02003c24(s32 layer, s32 shape, s32 height);
 
 DEFINE_FUNC_02002D08(Func_02002d08, Func_02003c04, Func_02003adc, Func_02003b3c,
-    Func_02003c24, Func_02003a54)
+                     Func_02003c24, Func_02003a54)
 
 void Func_020035e0(void);
 
@@ -561,7 +561,7 @@ void Actor_MoveToObject(s32 id, s32 owner);
 /// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
 /// it copy actor 9's visual attributes.
 DEFINE_FUNC_020030BC(Func_020030bc, Func_020030a4, Func_02003c04, Func_02003adc,
-    Func_02003b3c, Func_02003c24)
+                     Func_02003b3c, Func_02003c24)
 
 void Func_02003224(struct Actor *object, struct Actor *source) {
   FieldActor_SetPositionAndResetMotion(object, source->x, source->y, source->z);

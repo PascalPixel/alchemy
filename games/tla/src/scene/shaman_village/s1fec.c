@@ -63,7 +63,7 @@ void Func_02002068(void) {
    * differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(15, 256, 20)
   Actor_SetSpeed(15, 0x26666, 0x13333);
-  Actor_SetPositionAndReset(15, 120, 242);
+  Actor_WalkToAndWaitById(15, 120, 242);
   Sound_Play(29);
   Event_SetMessageId((s32)MsgShamanRecognizeShamanRod);
   Event_ShowMessageAndWait(15, 0);
@@ -90,10 +90,10 @@ void Func_02002068(void) {
    * differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(17, 256, 0)
   Actor_SetSpeed(17, 0x13333, 0x9999);
-  Actor_SetPositionAndReset(17, 136, 232);
+  Actor_WalkToAndWaitById(17, 136, 232);
   Event_ShowMessageAndWait(17, 0);
   Actor_SetSpeed(16, 0x13333, 0x9999);
-  Actor_SetPositionAndReset(16, 104, 232);
+  Actor_WalkToAndWaitById(16, 104, 232);
   Event_ShowMessageAndWait(16, 0);
   Motion_SetModeAndWaitAnimation(15, 3);
   Event_ShowMessageAndWait(15, 0);
@@ -106,38 +106,38 @@ void Func_02002068(void) {
   Event_Wait(20);
   Event_ShowMessageAndWait(18, 0);
   Actor_SetSpeed(15, 0xcccc, 0x6666);
-  Actor_SetPositionAndReset(15, 120, 252);
+  Actor_WalkToAndWaitById(15, 120, 252);
   Event_Wait(40);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
    * frames load before the actor; as a plain call, 25 of 711 instructions
    * differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(15, 257, 20)
-  Actor_SetPositionAndReset(15, 136, 252);
+  Actor_WalkToAndWaitById(15, 136, 252);
   Actor_FaceDirection(15, FACING_SOUTH, 20);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
    * frames load before the actor; as a plain call, 22 of 711 instructions
    * differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(15, 257, 40)
-  Actor_SetPositionAndReset(15, 104, 252);
+  Actor_WalkToAndWaitById(15, 104, 252);
   Actor_FaceDirection(15, FACING_SOUTH, 20);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
    * frames load before the actor; as a plain call, 25 of 711 instructions
    * differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(15, 257, 20)
-  Actor_SetPositionAndReset(15, 152, 252);
+  Actor_WalkToAndWaitById(15, 152, 252);
   Actor_FaceDirection(15, FACING_SOUTH, 20);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
    * frames load before the actor; as a plain call, 16 of 711 instructions
    * differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(15, 257, 40)
-  Actor_SetPositionAndReset(15, 88, 252);
+  Actor_WalkToAndWaitById(15, 88, 252);
   Actor_FaceDirection(15, FACING_SOUTH, 40);
   /* FAKEMATCH(pin): the emote, pinned to r1 by SHAMAN_VILLAGE_EMOTE, and the
    * frames load before the actor; as a plain call, 19 of 711 instructions
    * differ in tla-en (see the macro). */
   SHAMAN_VILLAGE_EMOTE(15, 257, 80)
-  Actor_SetPositionAndReset(15, 120, 252);
-  Actor_SetPositionAndReset(15, 120, 242);
+  Actor_WalkToAndWaitById(15, 120, 252);
+  Actor_WalkToAndWaitById(15, 120, 242);
   Actor_FaceDirectionAndWait(15, FACING_SOUTH);
   Actor_SetModeById(15, 4);
   Event_ShowMessageAndWait(15, 0);
@@ -713,7 +713,7 @@ void Func_020030bc(void) {
   FieldCamera_SetSpeed(0x6666, 0xccc);
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(528), 1);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 168, 536);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 168, 536);
   Actor_MoveToObject(18, gMainRoutineWork.currentOwner);
   Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
   Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
@@ -843,7 +843,7 @@ void Func_020030bc(void) {
   Actor_FaceDirection(17, FACING_WEST, 0);
   Actor_ArmCallbackAndRefresh(16, 0);
   Actor_WalkTo(16, 152, 560);
-  Actor_SetPositionAndReset(17, 184, 560);
+  Actor_WalkToAndWaitById(17, 184, 560);
   Actor_SetModeById(16, 1);
   Actor_FaceDirection(17, FACING_SOUTH, 0);
   Actor_FaceDirection(16, FACING_SOUTH, 0);
@@ -852,9 +852,9 @@ void Func_020030bc(void) {
   Actor_SetModeById(15, 2);
   Actor_SetModeById(17, 2);
   Actor_SetModeById(16, 2);
-  Actor_OffsetPositionAndResetMotion(15, 0, 16);
-  Actor_OffsetPositionAndResetMotion(17, 0, 16);
-  Actor_OffsetPositionAndResetMotion(16, 0, 16);
+  Actor_SetDestinationOffsetById(15, 0, 16);
+  Actor_SetDestinationOffsetById(17, 0, 16);
+  Actor_SetDestinationOffsetById(16, 0, 16);
   Actor_WaitForMoveById(15);
   Actor_SetModeById(15, 1);
   Actor_SetModeById(17, 1);
@@ -1102,7 +1102,7 @@ void Func_02003d30(void) {
   Actor_WalkToAndWait(17, 264, 256);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
   Actor_WalkTo(16, 208, 264);
-  Actor_SetPositionAndReset(17, 240, 264);
+  Actor_WalkToAndWaitById(17, 240, 264);
   Actor_SetModeById(16, 1);
   Event_Wait(10);
   Actor_ArmCallback(16, angle, 0);
@@ -1402,7 +1402,7 @@ void Func_02004534(void) {
     Actor_Jump(gMainRoutineWork.currentOwner, 4, 0);
     Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
     Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
-    Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 813, 120);
+    Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, 813, 120);
     Actor_SetSingleChildFlags(((struct ShamanVillageObject *)Actor_GetById(
                                   gMainRoutineWork.currentOwner)),
                               1);

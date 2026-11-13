@@ -196,7 +196,8 @@ update_object:
 
   if (object->animationKind == 1) {
     playerSprite = object->sprite;
-    terrainCollision = GetWorldMapCollision((struct WorldPosition *)&object->x);
+    terrainCollision =
+        WorldMap_GetCollision((struct WorldPosition *)&object->x);
     if (terrainCollision == 9) {
       playerSprite->entry[6] = 1;
       playerSprite->flags = 0;
@@ -554,7 +555,7 @@ counted:
     object->facing += difference;
   }
   if (object->animationKind == 1)
-    GetWorldMapCollision((struct WorldPosition *)&object->x);
+    WorldMap_GetCollision((struct WorldPosition *)&object->x);
   Field_CheckConfiguredKeys();
   object->step++;
   return 1;
@@ -634,7 +635,7 @@ s32 Func_08028534(struct Actor *object) {
   u32 kind;
 
   count = 0;
-  terrain = GetWorldMapCollision((struct WorldPosition *)&object->x);
+  terrain = WorldMap_GetCollision((struct WorldPosition *)&object->x);
   worldWork = Ram_HeapSlots->eventWork;
   if (terrain >= 1 && terrain <= 3)
     worldWork->terrainKind = 0;
@@ -814,7 +815,7 @@ update_object:
 
   kind = object->animationKind;
   if (kind == 1) {
-    GetWorldMapCollision((struct WorldPosition *)&object->x);
+    WorldMap_GetCollision((struct WorldPosition *)&object->x);
     if (object->timer == 0 && collision == 0) {
       ripple = Func_08023220(0x10d, object->x, object->y, object->z);
       if (ripple != 0) {
@@ -907,7 +908,7 @@ s32 Func_08028aac(struct Actor *object) {
   struct WorldEventWork__f028aac *flightWork;
 
   count = 0;
-  terrain = GetWorldMapCollision((struct WorldPosition *)&object->x);
+  terrain = WorldMap_GetCollision((struct WorldPosition *)&object->x);
   worldWork = Ram_HeapSlots->eventWork;
   if (terrain >= 1 && terrain <= 3)
     worldWork->terrainKind = 0;

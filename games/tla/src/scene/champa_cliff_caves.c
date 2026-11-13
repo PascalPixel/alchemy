@@ -30,7 +30,7 @@ extern const struct WarpTarget gData_02003d10;
 
 struct Actor *Actor_GetById(u32 objectId);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
+void Actor_SetDestinationOffsetById(s32 id, s32 dx, s32 dz);
 
 void Func_0200016c(const struct WarpTarget *warp, s32 door, s32 mode);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
@@ -48,7 +48,7 @@ static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column, s32 offset) {
 
 static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
                                                            s32 dz) {
-  Actor_OffsetPositionAndResetMotion(id, dx, dz);
+  Actor_SetDestinationOffsetById(id, dx, dz);
 }
 
 static __inline__ void Func_02003534_(s32 actor, s32 angle) {
@@ -160,7 +160,7 @@ extern const struct WarpTarget gData_02003d18;
 
 static __inline__ void Actor_CommitPositionAndActivate_(s32 actor, s32 dx,
                                                         s32 dz) {
-  Actor_CommitPositionAndActivate(actor, dx, dz);
+  Actor_WalkByAndWaitById(actor, dx, dz);
 }
 
 static __inline__ void Actor_SetSpeedParameters_(s32 actor, s32 speed,
@@ -173,14 +173,14 @@ void Func_02000208(void) {
   s32 msg;
 
   warp = &gData_02003d10;
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 168, 424);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 168, 424);
   Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, FACING_EAST);
   Sound_Play(158);
   Map_PlayMapEdit(warp->scene, warp->x, warp->z);
   Actor_GetById(8)->motionFlags = 0;
   Actor_SetPosition(8, 184 << 16, 204 << 17);
   Actor_SetSpeedParameters_(8, 0x1cccc, 0xe666);
-  Actor_CommitPositionAndActivate(8, 0, 16);
+  Actor_WalkByAndWaitById(8, 0, 16);
   Actor_ArmCallbackAndRefresh(8, FACING_WEST);
   msg = (s32)MsgHasMyGrandson;
   Event_SetMessageId(msg);
@@ -314,7 +314,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 // event_inline.h's are, a layer and not a compiler-steering device.
 
 void Func_020005e8(s32 actor) {
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 648, 200);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 648, 200);
   Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, FACING_EAST);
   Event_Wait(5);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 6);
@@ -322,7 +322,7 @@ void Func_020005e8(s32 actor) {
   Actor_ShowItemIconById(10, actor);
   Actor_SetHorizontalPositionWithTerrain(10, 648 << 16, 196 << 16);
   Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags &= ~1;
-  Actor_CommitPositionAndActivate(gMainRoutineWork.currentOwner, -16, -8);
+  Actor_WalkByAndWaitById(gMainRoutineWork.currentOwner, -16, -8);
   Event_Wait(1);
   Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags |= 1;
   Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, FACING_EAST);
@@ -332,7 +332,7 @@ void Func_020005e8(s32 actor) {
 void Func_0200067c(s32 value) {
   Actor_SetSpeedParameters(8, 0xcccc, 0x6666);
   Actor_GetById(8)->actionFlags &= 0xfe;
-  Actor_CommitPositionAndActivate(8, 0, 6);
+  Actor_WalkByAndWaitById(8, 0, 6);
   Event_Wait(1);
   ((struct ActorSolid *)Actor_GetById(8))->solid |= 1;
   Event_Wait(10);
@@ -526,7 +526,7 @@ void Func_02000a34(s32 value) {
   Value3((s32 (*)())Actor_ShowEmoteById, 8, 0x108, 30);
   Event_ShowMessageThenWait(8, 0, 5);
   Func_0200067c(1);
-  Call3((void (*)())Actor_SetPositionAndReset, 8, 0x298, 200);
+  Call3((void (*)())Actor_WalkToAndWaitById, 8, 0x298, 200);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 8, 0x3000);
   Event_Wait(10);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 8, 0x8000);
@@ -563,7 +563,7 @@ void Func_02000a34(s32 value) {
     Actor_Jump(10, 4, 2);
     Actor_SetSpritePriority(10, 1);
     Call3((void (*)())Actor_SetSpeedParameters, 10, 0x10000, 0x8000);
-    Actor_OffsetPositionAndResetMotion(10, 0, 40);
+    Actor_SetDestinationOffsetById(10, 0, 40);
     Sound_Play(0x136);
     Event_Wait(34);
     landing[0] = thrown->x;
@@ -578,7 +578,7 @@ void Func_02000a34(s32 value) {
   }
   object = Actor_GetById(gMainRoutineWork.currentOwner);
   object->actionFlags &= ~1;
-  Actor_CommitPositionAndActivate(gMainRoutineWork.currentOwner, 12, 12);
+  Actor_WalkByAndWaitById(gMainRoutineWork.currentOwner, 12, 12);
   Event_Wait(1);
   Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags |= 1;
   Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, 0x2000);
@@ -605,7 +605,7 @@ void Func_02000a34(s32 value) {
   Actor_Jump(4, 6, 0);
   Sound_Play(194);
   Actor_GetById(4)->actionFlags &= ~1;
-  Call3((void (*)())Actor_CommitPositionAndActivate, 4, -12, -12);
+  Call3((void (*)())Actor_WalkByAndWaitById, 4, -12, -12);
   Event_Wait(1);
   Actor_GetById(4)->actionFlags |= 1;
   Event_Wait(10);
@@ -719,7 +719,7 @@ chosen:
       Func_0200343c_(164 << 18, 128 << 17, 0, 0);
     }
   } else {
-    Actor_SetAngleToward(actor, gMainRoutineWork.currentOwner, 5);
+    Actor_FaceActorById(actor, gMainRoutineWork.currentOwner, 5);
     if (!GameFlag_Test_(0x975))
       Event_SetMessageId((s32)MsgIMeanIt);
     else if (!GameFlag_Test_(0x976))
@@ -765,7 +765,7 @@ void Func_0200115c(void) {
     return;
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 584, 248);
+  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 584, 248);
   if (Flag_IsSet(0x974)) {
     Func_02003534_(gMainRoutineWork.currentOwner, 0);
     Event_SetMessageId((s32)MsgBackForMore);
@@ -866,7 +866,7 @@ void Func_0200115c(void) {
     Actor_GetById(8)->facing = 0x8000;
     FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
     ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
-    Actor_CommitPositionAndActivate(4, -16, 0);
+    Actor_WalkByAndWaitById(4, -16, 0);
     Event_Wait(5);
   } else {
     Event_Wait(25);
@@ -886,7 +886,7 @@ void Func_0200115c(void) {
     Sound_Play(146);
     Actor_SetSpritePriority(12, 1);
     Actor_SetSpeed(12, 0x30000, 0x18000);
-    Actor_ResetAndSetPositionInMode2(12, 644, 248);
+    Actor_WalkToById(12, 644, 248);
     Event_Wait(21);
     Actor_SetPosition(12, 0, 0);
     Event_Wait(50);
@@ -1020,25 +1020,25 @@ void Func_02001868(void) {
   Event_Wait(5);
   Func_020029f8(13, 1);
   Call3((void (*)())Actor_SetSpeedParameters, 8, 0x10000, 0x8000);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 8, -12, -18);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 8, -10, -14);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 8, -18, -12);
-  Call3((void (*)())Actor_SetPositionAndReset, 8, 664, 200);
+  Call3((void (*)())Actor_WalkByAndWaitById, 8, -12, -18);
+  Call3((void (*)())Actor_WalkByAndWaitById, 8, -10, -14);
+  Call3((void (*)())Actor_WalkByAndWaitById, 8, -18, -12);
+  Call3((void (*)())Actor_WalkToAndWaitById, 8, 664, 200);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 8, 0x5000);
   Event_Wait(10);
   Event_ShowMessageThenWait(8, 0, 5);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 8, -16, 0);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 8, -16, 8);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 8, -16, 16);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 8, -8, 16);
-  Call3((void (*)())Actor_SetPositionAndReset, 8, 608, 248);
+  Call3((void (*)())Actor_WalkByAndWaitById, 8, -16, 0);
+  Call3((void (*)())Actor_WalkByAndWaitById, 8, -16, 8);
+  Call3((void (*)())Actor_WalkByAndWaitById, 8, -16, 16);
+  Call3((void (*)())Actor_WalkByAndWaitById, 8, -8, 16);
+  Call3((void (*)())Actor_WalkToAndWaitById, 8, 608, 248);
   Actor_ArmCallbackAndRefresh(8, FACING_WEST);
   Event_Wait(5);
   Motion_SetModeAndWaitAnimation(8, 4);
   Call3((void (*)())Event_ShowMessageThenWait, 0x2008, 0, 5);
   FieldActor_ShowEmote(11, 0x102, 40);
   Call3((void (*)())Actor_SetSpeedParameters, 11, 0x1b333, 0xd999);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 11, -16, 0);
+  Call3((void (*)())Actor_WalkByAndWaitById, 11, -16, 0);
   Event_Wait(5);
   Event_ShowMessageThenWait(11, 0, 5);
   Actor_ArmCallbackAndRefresh(8, FACING_EAST);
@@ -1131,7 +1131,7 @@ void Func_02001868(void) {
   scriptA = gData_020041e8;
   Actor_SetMovementTypeById(8, scriptA);
   Event_Wait(20);
-  Actor_ResetAndSetPositionInMode2(11, 664, 290);
+  Actor_WalkToById(11, 664, 290);
   Actor_RefreshSelectorById(8);
   scriptB = gData_02004254;
   Actor_SetMovementTypeById(8, scriptB);
@@ -1195,7 +1195,7 @@ void Func_02001868(void) {
   Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 14, PIXELS(520),
         PIXELS(200));
   Call3((void (*)())Actor_SetSpeedParameters, 14, 0x10000, 0x8000);
-  Actor_CommitPositionAndActivate(14, 0, 16);
+  Actor_WalkByAndWaitById(14, 0, 16);
   Actor_ArmCallback(14, 0x3000, 0);
   Event_ShowMessageThenWait(11, 0, 5);
   Actor_WatchAndSetScript(4, 14);
@@ -1204,16 +1204,16 @@ void Func_02001868(void) {
   Actor_WatchAndSetScript(6, 14);
   Actor_WatchAndSetScript(15, 14);
   Actor_WatchAndSetScript(8, 14);
-  Actor_CommitPositionAndActivate(14, 0, 16);
+  Actor_WalkByAndWaitById(14, 0, 16);
   Actor_SetSpritePriority(14, 3);
-  Actor_CommitPositionAndActivate(14, 0, 32);
-  Actor_CommitPositionAndActivate(14, 8, 8);
-  Actor_CommitPositionAndActivate(14, 64, 0);
+  Actor_WalkByAndWaitById(14, 0, 32);
+  Actor_WalkByAndWaitById(14, 8, 8);
+  Actor_WalkByAndWaitById(14, 64, 0);
   Call3((void (*)())Actor_ArmCallback, 8, 0x5000, 0);
   Camera_MoveWithinMapBounds(PIXELS(600), -1, PIXELS(256), 1);
   Call3((void (*)())Actor_SetSpeedParameters, 11, 0x10000, 0x8000);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 11, -32, 0);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 11, -16, -16);
+  Call3((void (*)())Actor_WalkByAndWaitById, 11, -32, 0);
+  Call3((void (*)())Actor_WalkByAndWaitById, 11, -16, -16);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 11, FACING_WEST);
   Motion_SetModeAndWaitAnimation(14, 3);
   Event_Wait(10);
@@ -1226,10 +1226,10 @@ void Func_02001868(void) {
   Motion_SetVarCbAndRefresh(8, 2);
   Event_Wait(10);
   Call3((void (*)())Actor_SetSpeedParameters, 8, 0x10000, 0x8000);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 8, -16, 0);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 8, -16, 8);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 8, -16, 16);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 8, -8, 8);
+  Call3((void (*)())Actor_WalkByAndWaitById, 8, -16, 0);
+  Call3((void (*)())Actor_WalkByAndWaitById, 8, -16, 8);
+  Call3((void (*)())Actor_WalkByAndWaitById, 8, -16, 16);
+  Call3((void (*)())Actor_WalkByAndWaitById, 8, -8, 8);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 8, 0x5000);
   Event_ShowMessageThenWait(8, 0, 5);
   Call3((void (*)())Actor_ArmCallback, 11, 0xb000, 0);
@@ -1361,11 +1361,11 @@ void Func_02001868(void) {
   Event_ShowMessageThenWait(11, 0, 5);
   Motion_SetModeAndWaitAnimation(14, 3);
   Event_ShowMessageThenWait(14, 0, 5);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 14, -8, 0);
+  Call3((void (*)())Actor_WalkByAndWaitById, 14, -8, 0);
   Call3((void (*)())Actor_ArmCallback, 11, FACING_WEST, 0);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 14, -8, 0);
+  Call3((void (*)())Actor_WalkByAndWaitById, 14, -8, 0);
   Actor_ShowEmoteById(11, 0x102, 0);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 14, -56, 0);
+  Call3((void (*)())Actor_WalkByAndWaitById, 14, -56, 0);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 14, 0xb000);
   FieldActor_ShowEmote(14, 0x101, 30);
   Actor_ArmCallbackAndRefresh(14, FACING_EAST);
@@ -1380,13 +1380,13 @@ void Func_02001868(void) {
   Actor_WatchAndSetScript(6, 11);
   Actor_WatchAndSetScript(15, 11);
   Call3((void (*)())Actor_SetSpeedParameters, 11, 0x20000, 0x10000);
-  Actor_CommitPositionAndActivate(11, -80, 0);
+  Actor_WalkByAndWaitById(11, -80, 0);
   Event_Wait(10);
   Actor_SetSpritePriority(14, 3);
   Actor_SetSpritePriority(11, 3);
   Call3((void (*)())Actor_SetSpeedParameters, 11, 0x10000, 0x8000);
   Call3((void (*)())Actor_OffsetPositionAndReset, 14, 0, -64);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 11, -16, 0);
+  Call3((void (*)())Actor_WalkByAndWaitById, 11, -16, 0);
   Actor_OffsetPositionAndReset(11, 0, -64);
   Event_Wait(15);
   Actor_SetSpritePriority(14, 2);
@@ -1398,7 +1398,7 @@ void Func_02001868(void) {
   Actor_ArmCallback(4, FACING_NORTHWEST, 0);
   Event_Wait(10);
   Event_Wait(60);
-  Actor_CommitPositionAndActivate(8, 0, 16);
+  Actor_WalkByAndWaitById(8, 0, 16);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 8, FACING_WEST);
   Event_ShowMessageThenWait(8, 0, 5);
   FieldActor_ShowEmote(4, 0x101, 0);
@@ -1433,7 +1433,7 @@ void Func_02001868(void) {
   Actor_SetMovementTypeById(8, gData_020041e8);
   Event_Wait(30);
   Actor_Stop(8);
-  Call3((void (*)())Actor_SetPositionAndReset, 8, 648, 188);
+  Call3((void (*)())Actor_WalkToAndWaitById, 8, 648, 188);
   Call2((void (*)())Actor_ArmCallbackAndRefresh, 8, 0x5000);
   Event_Wait(10);
   Call3((void (*)())Actor_ArmCallback, 4, FACING_NORTH, 0);

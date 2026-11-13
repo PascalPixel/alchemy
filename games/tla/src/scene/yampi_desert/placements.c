@@ -1,5 +1,6 @@
 /// @file
-/// Scene code of overlay 0x661, in ROM order, from placements' offset up to the next object the overlay links.
+/// Scene code of overlay 0x661, in ROM order, from placements' offset up to the
+/// next object the overlay links.
 
 #include "../shared/routines.h"
 #include "scene.h"
@@ -159,7 +160,7 @@ void Func_02000550(void) {
   Event_ResolvePendingActions(0);
   if (!Scene_FlagTest(0x88f))
     Func_020004e0();
-  Actor_SetAngleToward(12, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(12, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgAsYouCan);
   Event_ShowMessageAndWait(12, 0);
   GameFlag_SetBit(0x88f);
@@ -171,7 +172,7 @@ void Func_020005a8(void) {
   Event_ResolvePendingActions(0);
   if (!Scene_FlagTest(0x88f))
     Func_020004e0();
-  Actor_SetAngleToward(13, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(13, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgThisIsWhere);
   Event_ShowMessageAndWait(13, 0);
   GameFlag_SetBit(0x88f);
@@ -260,8 +261,8 @@ next:
       struct MapCell *cells = map->layers[layer].cells;
       u8 *shapes =
           (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
-      /* FAKEMATCH(pin): the index in r10; as a plain local, 32 of 130 instructions
-       * differ in tla-en. */
+      /* FAKEMATCH(pin): the index in r10; as a plain local, 32 of 130
+       * instructions differ in tla-en. */
       register s32 index asm("r10") = Func_020041e0(object);
       s32 shape = Func_02004020(layer, object->x, object->z);
       s32 height = Map_GetTerrainHeight(layer, object->x, object->z);

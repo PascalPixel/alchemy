@@ -448,7 +448,7 @@ void WorldPicture_UpdateMarkers(void) {
         else if (nearestName == -2)
           nearestName = (s32)MsgBoat;
         else
-          nearestName = Scene_GetAreaNameIndex(nearestName, nearestEntrance) +
+          nearestName = Area_GetNameIndex(nearestName, nearestEntrance) +
                         (s32)MsgDebugAreaName;
         Text_MeasureMessageFar(nearestName, &width, &height);
         if (Data_0202a640 == 0) {

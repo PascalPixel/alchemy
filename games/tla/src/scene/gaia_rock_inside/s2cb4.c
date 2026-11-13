@@ -348,7 +348,7 @@ s32 Scene_Initialize(void) {
         C2(Actor_SetAnimationSpeed, partner, 16);
         mask = 254;
         Actor_GetById(10)->actionFlags &= mask;
-        C3(Actor_ResetAndSetPositionInMode2, 10, 456, 360);
+        C3(Actor_WalkToById, 10, 456, 360);
         fast = 0x40000;
         dragon->velocityY = fast;
         C2(FieldEffect_SetAttached, 10, 258);
@@ -369,7 +369,7 @@ s32 Scene_Initialize(void) {
           mask &= a->actionFlags;
           a->actionFlags = mask;
         }
-        C3(Actor_ResetAndSetPositionInMode2, 10, 456, 360);
+        C3(Actor_WalkToById, 10, 456, 360);
         dragon->velocityY = fast;
         C2(FieldEffect_SetAttached, 10, 258);
         C1(Actor_WaitForMoveById, 10);
@@ -422,7 +422,7 @@ s32 Scene_Initialize(void) {
         }
         dragon->velocityY = 0xa0000;
         Actor_GetById(10)->actionFlags &= 254;
-        C3(Actor_ResetAndSetPositionInMode2, 10, 432, 320);
+        C3(Actor_WalkToById, 10, 432, 320);
         C1(Event_Wait, 10);
         C3(Map_SetScreenShake, -1, -1, 0xe666);
         Actor_SetModeById(10, 5);
@@ -498,15 +498,15 @@ s32 Scene_Initialize(void) {
       Func_02004f54();
       C2(Actor_StartRepeatedMotion, 10, 2);
       C2(Camera_FollowActor, 10, 1);
-      C3(Actor_ResetAndSetPositionInMode2, 10, 488, 376);
+      C3(Actor_WalkToById, 10, 488, 376);
       C1(Actor_WaitForMoveById, 10);
       C2(Actor_StartRepeatedMotion, 10, 2);
       C1(Event_Wait, 20);
-      C3(Actor_ResetAndSetPositionInMode2, 10, 472, 360);
+      C3(Actor_WalkToById, 10, 472, 360);
       C1(Actor_WaitForMoveById, 10);
-      C3(Actor_SetAngleToward, *owner, 10, 0);
-      C3(Actor_SetAngleToward, 11, 10, 0);
-      C3(Actor_SetAngleToward, 10, 8, 0);
+      C3(Actor_FaceActorById, *owner, 10, 0);
+      C3(Actor_FaceActorById, 11, 10, 0);
+      C3(Actor_FaceActorById, 10, 8, 0);
       C4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
       C2(Actor_SetModeById, 10, 8);
       C2(Event_ShowMessageAndWait, 10, 0);
@@ -545,28 +545,28 @@ s32 Scene_Initialize(void) {
       C2(BattleEffect_ApplyColorToTargetBuffer, scale, 0);
       C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 10);
-      C3(Actor_SetAngleToward, 10, *owner, 0);
+      C3(Actor_FaceActorById, 10, *owner, 0);
       C2(Event_ShowMessageAndWait, 10, 0);
       C2(Motion_SetModeAndWaitAnimation, 10, 3);
       C2(Event_ShowMessageAndWait, 10, 0);
       C3(Actor_ArmCallback, 10, 0x4000, 0);
       C2(Actor_SetModeById, 10, 2);
-      C3(Actor_ResetAndSetPositionInMode2, 10, 488, 392);
+      C3(Actor_WalkToById, 10, 488, 392);
       C2(Actor_StartRepeatedMotion, 11, 1);
       C1(Event_Wait, 5);
       C2(Event_ShowMessageAndWait, 11, 0);
       C1(Actor_WaitForMoveById, 10);
       C2(Actor_SetModeById, 10, 0);
-      C3(Actor_SetAngleToward, 10, 11, 0);
+      C3(Actor_FaceActorById, 10, 11, 0);
       C1(Event_Wait, 15);
       C2(Event_ShowMessageAndWait, 10, 0);
       C2(Motion_SetModeAndWaitAnimation, 10, 3);
       C3(Actor_ArmCallback, 10, 0x4000, 0);
       C2(Actor_SetModeById, 10, 2);
-      C3(Actor_ResetAndSetPositionInMode2, 10, 488, 536);
+      C3(Actor_WalkToById, 10, 488, 536);
       C2(Camera_FollowActor, *owner, 1);
-      C3(Actor_SetAngleToward, *owner, 11, 0);
-      C3(Actor_SetAngleToward, 11, *owner, 0);
+      C3(Actor_FaceActorById, *owner, 11, 0);
+      C3(Actor_FaceActorById, 11, *owner, 0);
       C1(Event_Wait, 30);
       C2(Motion_SetModeAndWaitAnimation, 11, 3);
       C2(Actor_SetModeById, 11, 2);
@@ -581,7 +581,7 @@ s32 Scene_Initialize(void) {
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0, 0);
       C1(Actor_WaitForMoveById, 11);
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0, 0);
-      C3(Actor_ResetAndSetPositionInMode2, *owner, 488, 376);
+      C3(Actor_WalkToById, *owner, 488, 376);
       C1(Actor_WaitForMoveById, *owner);
       C3(Map_SetScreenShake, 0x50000, 0x50000, scale);
       C1(Sound_Play, 107);
@@ -646,7 +646,7 @@ s32 Scene_Initialize(void) {
       {
         s32 *lead = &room->currentOwner;
 
-        C3(Actor_SetAngleToward, 10, *lead, 0);
+        C3(Actor_FaceActorById, 10, *lead, 0);
         Value2((s32 (*)())Actor_SetModeById, *lead, 19);
       }
       Event_StartScreenTransition();
@@ -1060,7 +1060,7 @@ s32 Scene_Initialize(void) {
         C2(Actor_SetAnimationSpeed, partner, 16);
         mask = 254;
         Actor_GetById(10)->actionFlags &= mask;
-        C3(Actor_ResetAndSetPositionInMode2, 10, 456, 360);
+        C3(Actor_WalkToById, 10, 456, 360);
         fast = 0x40000;
         dragon->velocityY = fast;
         C2(FieldEffect_SetAttached, 10, 258);
@@ -1081,7 +1081,7 @@ s32 Scene_Initialize(void) {
           mask &= a->actionFlags;
           a->actionFlags = mask;
         }
-        C3(Actor_ResetAndSetPositionInMode2, 10, 456, 360);
+        C3(Actor_WalkToById, 10, 456, 360);
         dragon->velocityY = fast;
         C2(FieldEffect_SetAttached, 10, 258);
         C1(Actor_WaitForMoveById, 10);
@@ -1134,7 +1134,7 @@ s32 Scene_Initialize(void) {
         }
         dragon->velocityY = 0xa0000;
         Actor_GetById(10)->actionFlags &= 254;
-        C3(Actor_ResetAndSetPositionInMode2, 10, 432, 320);
+        C3(Actor_WalkToById, 10, 432, 320);
         C1(Event_Wait, 10);
         C3(Map_SetScreenShake, -1, -1, 0xe666);
         Actor_SetModeById(10, 5);
@@ -1210,15 +1210,15 @@ s32 Scene_Initialize(void) {
       Func_02004f54();
       C2(Actor_StartRepeatedMotion, 10, 2);
       C2(Camera_FollowActor, 10, 1);
-      C3(Actor_ResetAndSetPositionInMode2, 10, 488, 376);
+      C3(Actor_WalkToById, 10, 488, 376);
       C1(Actor_WaitForMoveById, 10);
       C2(Actor_StartRepeatedMotion, 10, 2);
       C1(Event_Wait, 20);
-      C3(Actor_ResetAndSetPositionInMode2, 10, 472, 360);
+      C3(Actor_WalkToById, 10, 472, 360);
       C1(Actor_WaitForMoveById, 10);
-      C3(Actor_SetAngleToward, *owner, 10, 0);
-      C3(Actor_SetAngleToward, 11, 10, 0);
-      C3(Actor_SetAngleToward, 10, 8, 0);
+      C3(Actor_FaceActorById, *owner, 10, 0);
+      C3(Actor_FaceActorById, 11, 10, 0);
+      C3(Actor_FaceActorById, 10, 8, 0);
       C4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
       C2(Actor_SetModeById, 10, 8);
       C2(Event_ShowMessageAndWait, 10, 0);
@@ -1257,28 +1257,28 @@ s32 Scene_Initialize(void) {
       C2(BattleEffect_ApplyColorToTargetBuffer, scale, 0);
       C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 10);
-      C3(Actor_SetAngleToward, 10, *owner, 0);
+      C3(Actor_FaceActorById, 10, *owner, 0);
       C2(Event_ShowMessageAndWait, 10, 0);
       C2(Motion_SetModeAndWaitAnimation, 10, 3);
       C2(Event_ShowMessageAndWait, 10, 0);
       C3(Actor_ArmCallback, 10, 0x4000, 0);
       C2(Actor_SetModeById, 10, 2);
-      C3(Actor_ResetAndSetPositionInMode2, 10, 488, 392);
+      C3(Actor_WalkToById, 10, 488, 392);
       C2(Actor_StartRepeatedMotion, 11, 1);
       C1(Event_Wait, 5);
       C2(Event_ShowMessageAndWait, 11, 0);
       C1(Actor_WaitForMoveById, 10);
       C2(Actor_SetModeById, 10, 0);
-      C3(Actor_SetAngleToward, 10, 11, 0);
+      C3(Actor_FaceActorById, 10, 11, 0);
       C1(Event_Wait, 15);
       C2(Event_ShowMessageAndWait, 10, 0);
       C2(Motion_SetModeAndWaitAnimation, 10, 3);
       C3(Actor_ArmCallback, 10, 0x4000, 0);
       C2(Actor_SetModeById, 10, 2);
-      C3(Actor_ResetAndSetPositionInMode2, 10, 488, 536);
+      C3(Actor_WalkToById, 10, 488, 536);
       C2(Camera_FollowActor, *owner, 1);
-      C3(Actor_SetAngleToward, *owner, 11, 0);
-      C3(Actor_SetAngleToward, 11, *owner, 0);
+      C3(Actor_FaceActorById, *owner, 11, 0);
+      C3(Actor_FaceActorById, 11, *owner, 0);
       C1(Event_Wait, 30);
       C2(Motion_SetModeAndWaitAnimation, 11, 3);
       C2(Actor_SetModeById, 11, 2);
@@ -1293,7 +1293,7 @@ s32 Scene_Initialize(void) {
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0, 0);
       C1(Actor_WaitForMoveById, 11);
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0, 0);
-      C3(Actor_ResetAndSetPositionInMode2, *owner, 488, 376);
+      C3(Actor_WalkToById, *owner, 488, 376);
       C1(Actor_WaitForMoveById, *owner);
       C3(Map_SetScreenShake, 0x50000, 0x50000, scale);
       C1(Sound_Play, 107);
@@ -1358,7 +1358,7 @@ s32 Scene_Initialize(void) {
       {
         s32 *lead = &room->currentOwner;
 
-        C3(Actor_SetAngleToward, 10, *lead, 0);
+        C3(Actor_FaceActorById, 10, *lead, 0);
         Value2((s32 (*)())Actor_SetModeById, *lead, 19);
       }
       Event_StartScreenTransition();

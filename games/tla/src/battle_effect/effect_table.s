@@ -9,8 +9,8 @@ gBattleEffect_MoteCells:
 	.2byte 0, 2, 10, 28, 60, 110, 182, 280
 	.2byte 408, 570
 @ The Broken Seal's gLuckyWheels_SparkCellOffsets; read by 10 functions
-	.global Data_08197424
-Data_08197424:
+	.global gBattleEffect_FlarePictures
+gBattleEffect_FlarePictures:
 	.2byte 0, 4, 20, 56, 120, 220, 364, 560
 	.2byte 816, 1140
 @ read by BattleEffect_RunCruelRuin

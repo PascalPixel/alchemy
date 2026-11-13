@@ -980,9 +980,9 @@ void Func_02002dec(void) {
   Actor_SetSpeed(5, 0x10000, 0x8000);
   Actor_SetSpeed(6, 0x10000, 0x8000);
   Actor_SetSpeed(7, 0x10000, 0x8000);
-  Actor_ResetAndSetPositionInMode2(4, Func_02002d20(28), 272);
+  Actor_WalkToById(4, Func_02002d20(28), 272);
   Actor_WalkTo(7, Func_02002d20(28), 256);
-  Actor_ResetAndSetPositionInMode2(5, Func_02002d20(27), 248);
+  Actor_WalkToById(5, Func_02002d20(27), 248);
   Actor_WalkTo(6, Func_02002d20(27), 280);
   Actor_WaitForMoveById(4);
   Actor_ArmCallback(4, Func_02002d50(0), 0);
@@ -1031,9 +1031,9 @@ void Func_02002dec(void) {
   Actor_SetSpeedParameters(8, 0x10000, 0x8000);
   Actor_SetSpeedParameters(13, 0x10000, 0x8000);
   Actor_SetSpeedParameters(14, 0x10000, 0x8000);
-  Actor_ResetAndSetPositionInMode2(8, Func_02002d20(36), 264);
-  Actor_ResetAndSetPositionInMode2(13, Func_02002d20(37), 248);
-  Actor_ResetAndSetPositionInMode2(14, Func_02002d20(37), 280);
+  Actor_WalkToById(8, Func_02002d20(36), 264);
+  Actor_WalkToById(13, Func_02002d20(37), 248);
+  Actor_WalkToById(14, Func_02002d20(37), 280);
   Actor_WaitForMoveById(8);
   Actor_ArmCallback(8, Func_02002d50(0x8000), 0);
   Actor_WaitForMoveById(13);
@@ -1085,10 +1085,10 @@ void Func_0200322c(void) {
   Actor_SetSpeed(5, 0x10000, 0x8000);
   Actor_SetSpeed(6, 0x10000, 0x8000);
   Actor_SetSpeed(7, 0x10000, 0x8000);
-  Actor_ResetAndSetPositionInMode2(4, Func_02002d20(28), 272);
+  Actor_WalkToById(4, Func_02002d20(28), 272);
   Actor_WalkTo(7, Func_02002d20(28), 256);
-  Actor_ResetAndSetPositionInMode2(5, Func_02002d20(27), 248);
-  Actor_ResetAndSetPositionInMode2(6, Func_02002d20(27), 280);
+  Actor_WalkToById(5, Func_02002d20(27), 248);
+  Actor_WalkToById(6, Func_02002d20(27), 280);
   Actor_WaitForMoveById(4);
   Actor_ArmCallback(4, Func_02002d50(0), 0);
   Actor_WaitForMoveById(7);
@@ -1177,20 +1177,20 @@ void Func_020034b4(void) {
   Motion_SetModeAndWaitAnimation(8, 3);
   Event_ShowMessageAndWait(8, 0);
   Actor_SetSpeedParameters(8, 0x10000, 0x8000);
-  Actor_ResetAndSetPositionInMode2(8, Func_02002d20(32), 264);
+  Actor_WalkToById(8, Func_02002d20(32), 264);
   Actor_TurnToFaceEachOther(9, 7, 0);
   Actor_TurnToFaceEachOther(5, 6, 0);
   Actor_WaitForMoveById(8);
-  Actor_SetAngleToward(9, 4, 0);
-  Actor_SetAngleToward(7, 4, 0);
-  Actor_SetAngleToward(6, 4, 0);
-  Actor_SetAngleToward(5, 4, 0);
+  Actor_FaceActorById(9, 4, 0);
+  Actor_FaceActorById(7, 4, 0);
+  Actor_FaceActorById(6, 4, 0);
+  Actor_FaceActorById(5, 4, 0);
   Event_Wait(20);
   PartyInventory_Discard(65);
   PartyInventory_GiveItem(215, 0);
-  Actor_SetAngleToward(4, 8, 0);
+  Actor_FaceActorById(4, 8, 0);
   OBJECT_BYTE(Actor_GetById(8), 0x5a) &= ~1;
-  Actor_SetPositionAndReset(8, Func_02002d20(35), 264);
+  Actor_WalkToAndWaitById(8, Func_02002d20(35), 264);
   Event_Wait(1);
   /* FAKEMATCH(signature): the byte typed as a whole-byte bit-field, as in
    * overlay 685; as a plain byte, which stores in the order of a store that
@@ -1200,17 +1200,17 @@ void Func_020034b4(void) {
   Actor_ShowEmoteById(8, 261, 10);
   Event_ShowMessageAndWait(8, 0);
   Actor_ArmCallbackAndRefresh(8, Func_02002d50(0));
-  Actor_SetAngleToward(13, 8, 0);
-  Actor_SetAngleToward(14, 8, 0);
+  Actor_FaceActorById(13, 8, 0);
+  Actor_FaceActorById(14, 8, 0);
   Motion_SetModeAndWaitAnimation(8, 3);
   Event_ShowMessageAndWait(8, 0);
   Actor_SetModeById(13, 3);
   wait(3);
   Motion_SetModeAndWaitAnimation(14, 3);
-  Actor_SetAngleToward(4, 9, 0);
-  Actor_SetAngleToward(7, 9, 0);
-  Actor_SetAngleToward(5, 9, 0);
-  Actor_SetAngleToward(6, 9, 0);
+  Actor_FaceActorById(4, 9, 0);
+  Actor_FaceActorById(7, 9, 0);
+  Actor_FaceActorById(5, 9, 0);
+  Actor_FaceActorById(6, 9, 0);
   Event_ShowMessageAndWait(9, 0);
   Actor_SetModeById(4, 3);
   wait(2);
@@ -1271,7 +1271,7 @@ extern const u8 gData_02005dc8__s1fc4[] __asm__("gData_02005dc8");
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 actor, s32 dx,
                                                            s32 dz) {
-  Actor_OffsetPositionAndResetMotion(actor, dx, dz);
+  Actor_SetDestinationOffsetById(actor, dx, dz);
 }
 
 void Func_02003900(void) {
@@ -1313,7 +1313,7 @@ void Func_02003900(void) {
   Event_Wait(10);
   Actor_SetSpeed(13, 0x4000, 0x2000);
   OBJECT_BYTE(Actor_GetById(13), 0x5a) &= ~1;
-  Actor_CommitPositionAndActivate(13, 0, 8);
+  Actor_WalkByAndWaitById(13, 0, 8);
   Event_Wait(1);
   OBJECT_BYTE(Actor_GetById(13), 0x5a) |= 1;
   Event_Wait(20);
@@ -1326,7 +1326,7 @@ void Func_02003900(void) {
   Actor_GetById(13)->velocityY = 0x40000;
   MapGrid_SetShake(-1, -1, 0xe666);
   OBJECT_BYTE(Actor_GetById(13), 0x5a) &= ~1;
-  Actor_CommitPositionAndActivate(13, 0, 16);
+  Actor_WalkByAndWaitById(13, 0, 16);
   Event_Wait(1);
   ((struct ActorSolid *)Actor_GetById(13))->solid |= 1;
   Event_Wait(60);
@@ -1344,7 +1344,7 @@ void Func_02003900(void) {
   Actor_SetModeById(9, 6);
   Event_Wait(30);
   Event_ShowMessageAndWait(8, 0);
-  Actor_SetPositionAndReset(13, 200, 168);
+  Actor_WalkToAndWaitById(13, 200, 168);
   Actor_FaceDirection(13, FACING_NORTH, 0);
   Event_Wait(40);
   Sound_Play(125);

@@ -110,7 +110,7 @@ void Func_080e28d4(s32 sprite, s32 x, s32 z) {
   } while (object->scaleX <= 0xffff);
   object->scaleY = object->scaleX = 0x10000;
   Actor_SetMode(owner, 1);
-  FacingObject_TurnPairToFaceEachOther(object, owner);
+  Actor_TurnPairToFaceEachOther(object, owner);
   owner->timer = owner->facing;
   Event_Wait(10);
   Actor_StartRepeatedMotion(ownerId, 3);

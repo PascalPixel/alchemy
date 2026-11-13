@@ -212,11 +212,11 @@ void Func_02000438(void) {
   Event_Wait(10);
   Actor_GetById(4)->actionFlags &= ~1;
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
-  Actor_OffsetPositionAndResetMotion(4, 0, 4);
+  Actor_SetDestinationOffsetById(4, 0, 4);
   Actor_WaitForMoveById(4);
   Actor_SetSingleChildFlags(Actor_GetById(4), 0);
   Actor_SetModeById(4, 13);
-  Actor_OffsetPositionAndResetMotion(4, 0, drop);
+  Actor_SetDestinationOffsetById(4, 0, drop);
   Actor_WaitForMoveById(4);
   Actor_SetModeById(4, 10);
   Event_Wait(10);
@@ -232,7 +232,7 @@ void Func_020004ec(void) {
   Event_ResolvePendingActions(0);
   Actor_WalkByAndWait(4, 0, -14);
   id = 4;
-  Actor_CommitPositionAndActivate(id, 16, 0);
+  Actor_WalkByAndWaitById(id, 16, 0);
   Func_02000438();
 }
 
@@ -249,7 +249,7 @@ void Func_02000514(void) {
    * distances and their negation; as no asm, 2 of 18 instructions differ in
    * tla-en. */
   __asm__ volatile("" : "+r"(id));
-  Actor_CommitPositionAndActivate(id, -x, -z);
+  Actor_WalkByAndWaitById(id, -x, -z);
   Func_02000438();
 }
 

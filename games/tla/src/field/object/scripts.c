@@ -17,7 +17,7 @@ s32 Actor_ClearChildAndCollisionFlags();
 s32 Actor_ClearChildFlags();
 s32 Actor_SetPriorityBit5();
 s32 Actor_MoveTowardTarget();
-s32 SceneActor_UpdateFacingTowardTarget();
+s32 Actor_TurnTowardWatchedActor();
 s32 Func_080d4ab4();
 
 /// ScreenTransition_ShapesTail
@@ -71,7 +71,8 @@ const s32 gActor_StepAngleScript[] = {
     SC_END,
 };
 
-/// The Broken Seal's gMessageSpeed_VoiceRates: the message voice's rate by message speed option.
+/// The Broken Seal's gMessageSpeed_VoiceRates: the message voice's rate by
+/// message speed option.
 const u8 gData_080f330c[4] = {
     1,
     3,
@@ -109,7 +110,8 @@ const s32 gData_080f3310[] = {
     SC_FREE,
 };
 
-/// The Broken Seal's gActor_WaitScript: waits 40 frames, then releases the actor.
+/// The Broken Seal's gActor_WaitScript: waits 40 frames, then releases the
+/// actor.
 const s32 gData_080f341c[] = {
     SC_WAIT(40),
     SC_FREE,
@@ -238,7 +240,7 @@ const s32 gData_080f373c[] = {
 
 /// Turns the actor toward its target every frame.
 const s32 gData_080f3750[] = {
-    SC_CALL(SceneActor_UpdateFacingTowardTarget),
+    SC_CALL(Actor_TurnTowardWatchedActor),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

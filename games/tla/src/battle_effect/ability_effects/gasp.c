@@ -1035,11 +1035,11 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
 
         Actor_SetMode(user, 0);
         Actor_SetMode(user, 2);
-        Actor_SetAnimationSpeedFar(user, 0);
+        Actor_SelectAnimationFar(user, 0);
         Sound_PlayFar(212);
       }
       if (frame == 14)
-        Actor_SetAnimationSpeedFar(
+        Actor_SelectAnimationFar(
             *GetBattleObjectSlotFar__f173aac(effect->actor), 16);
       if (frame == 22)
         Sound_PlayFar(212);

@@ -588,7 +588,8 @@ update_object:
 
   if (object->animationKind == 1) {
     playerSprite = object->sprite;
-    terrainCollision = GetWorldMapCollision((struct WorldPosition *)&object->x);
+    terrainCollision =
+        WorldMap_GetCollision((struct WorldPosition *)&object->x);
     if (terrainCollision == 9)
       playerSprite->entry[6] = 1;
     else
@@ -643,7 +644,7 @@ void SpriteColor_RemapPixels(u8 *buf, s32 cnt) {
 /// Method 0: copy unchanged.
 /// Method 1: high bytes followed by low bytes; reconstruct by XOR with prior
 /// values. Method 2: reconstruct by XOR with prior values.
-void Tilemap_DecodeStagedBuffer(s32 size) {
+void TileMap_DecodeStagedBuffer(s32 size) {
   u16 *dst;
   u16 *src;
   s32 n;

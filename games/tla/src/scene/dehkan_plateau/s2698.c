@@ -99,7 +99,7 @@ void Func_020027e0(void) {
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(PIXELS(616), -1, PIXELS(280), 1);
   Func_02003cf0();
-  Actor_SetAngleToward(25, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(25, gMainRoutineWork.currentOwner, 0);
   // A direct call: as Call3 the actor id is loaded before the 0x100's shift.
   Actor_ShowEmoteById(25, 0x100, 40);
   Actor_SetSpritePriority(25, 1);
@@ -125,7 +125,7 @@ void Func_020027e0(void) {
   Map_CopyCellPictureIndicesRect(112, 6, 110, 4, 1, 1);
   Actor_SetSpritePriority(25, 1);
   Actor_WalkToAndWait(25, 712, 200);
-  Actor_SetPositionAndReset(25, 712, 168);
+  Actor_WalkToAndWaitById(25, 712, 168);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Actor_ArmCallbackAndRefresh(25, FACING_EAST);
   Actor_SetSpeedParameters(25, 0x20000, 0x10000);
@@ -171,7 +171,7 @@ void Func_02002a5c(void) {
   GameFlag_SetBit(0x245);
   Sound_Play(161);
   Func_020021b4();
-  Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(9, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmoteById(9, 0x100, 20);
   Func_02002bcc();
   Event_Wait(20);
@@ -241,7 +241,7 @@ extern void Func_02003d40__s2698(struct Actor *object,
 s32 PartyInventory_GiveItem(s32 item, s32 unused);
 
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
+void Actor_WalkToAndWaitById(s32 id, s32 x, s32 z);
 void Actor_Jump(s32 id, s32 a, s32 b);
 void Actor_WatchAndSetScript(s32 id, s32 target);
 /* VIEW(events_i): routine Task_Add as void Task_Add(void(*func) (void), s32
@@ -342,7 +342,7 @@ void Func_02002dd4(void) {
   FieldCamera_GetActor()->motionFlags = 0;
   Camera_MoveWithinMapBounds(PIXELS(760), PIXELS(32), PIXELS(204), 1);
   Func_02003cf0();
-  Actor_SetAngleToward(16, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(16, gMainRoutineWork.currentOwner, 0);
   // Called for its value, which is unused: as Call3 the actor id is loaded
   // before the 0x100's shift.
   Actor_ShowEmote(16, 0x100, 40);
@@ -350,19 +350,19 @@ void Func_02002dd4(void) {
   Sound_Play(153);
   actor->velocityY = 0x80000;
   Actor_SetSingleChildFlags(Actor_GetById(16), 0);
-  Actor_SetPositionAndReset(16, 760, 200);
+  Actor_WalkToAndWaitById(16, 760, 200);
   Actor_SetSingleChildFlags(Actor_GetById(16), 1);
   Event_Wait(20);
   Sound_Play(153);
   actor->velocityY = 0x80000;
   Actor_SetSingleChildFlags(Actor_GetById(16), 0);
-  Actor_SetPositionAndReset(16, 792, 200);
+  Actor_WalkToAndWaitById(16, 792, 200);
   Actor_SetSingleChildFlags(Actor_GetById(16), 1);
   Func_02002698(9, 16, 0x210);
   Sound_Play(153);
   actor->velocityY = 0x80000;
   Actor_SetSingleChildFlags(Actor_GetById(16), 0);
-  Actor_SetPositionAndReset(16, 824, 200);
+  Actor_WalkToAndWaitById(16, 824, 200);
   Actor_SetSingleChildFlags(Actor_GetById(16), 1);
   Event_Wait(20);
   Actor_WatchAndSetScript(16, gMainRoutineWork.currentOwner);
@@ -400,7 +400,7 @@ static __inline__ void Actor_SetAngle(s32 id, s32 angle) {
 void Func_02002f08(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetAngleToward(16, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(16, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmoteById(16, 0x100, 40);
   Actor_ArmCallbackAndRefresh(16, FACING_EAST);
   Event_Wait(20);
@@ -783,7 +783,7 @@ loop:
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  Map_WaitForShakeToSettle();
+  MapGrid_WaitForShakeToSettle();
   FieldEffect_SetAttached(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;

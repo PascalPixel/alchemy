@@ -215,7 +215,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
     if (frame == 84) {
       Sound_PlayFar(212);
       Actor_SetMode(caster, 2);
-      Actor_SetAnimationSpeedFar(caster, 48);
+      Actor_SelectAnimationFar(caster, 48);
       BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 7, 80);
     }
 

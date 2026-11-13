@@ -128,7 +128,7 @@ void Func_02000208(void) {
     Actor_SetSpeed(10, 0x20000, 0x10000);
     Actor_Jump(10, 6, 0);
     Actor_MoveToAndWait(10, 90, 288);
-    Actor_SetPositionAndReset(10, 80, 316);
+    Actor_WalkToAndWaitById(10, 80, 316);
     Actor_ArmCallbackAndRefresh(10, FACING_EAST);
     Actor_GetById(9)->velocityY = 0x40000;
     Event_Wait(10);
@@ -208,7 +208,7 @@ void Func_020003e4(void) {
     Event_ShowMessageAndWait(23, 0);
     Actor_SetSpeedParameters(23, 0xcccc, 0x6666);
     Actor_GetById(23)->actionFlags &= ~1;
-    Actor_SetPositionAndReset(23, 504, 360);
+    Actor_WalkToAndWaitById(23, 504, 360);
     Event_Wait(1);
     Actor_GetById(23)->actionFlags |= 1;
     Actor_ArmCallbackAndRefresh(23, 0x3000);
@@ -232,7 +232,7 @@ void Func_02000640(void) {
   wait(1);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
   Actor_SetSpeed(18, 0xcccc, 0x6666);
-  Actor_SetPositionAndReset(18, 532, 248);
+  Actor_WalkToAndWaitById(18, 532, 248);
   Actor_ArmCallbackAndRefresh(18, 0x3000);
   Event_SetMessageId(MsgAreWeSetting);
   FieldMessage_ShowAtActor(18, 0);
@@ -257,7 +257,7 @@ void Func_02000640(void) {
     Actor_WaitForMoveById(18);
     Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
     Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 528, 276);
+    Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 528, 276);
     Event_End();
   }
 }

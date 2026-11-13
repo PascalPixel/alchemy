@@ -6,12 +6,12 @@
 #include "field_effect.h"
 
 extern s32 gImilFuchinFalls_TrackLeader;
-const struct SceneEntrance *ImilFuchinFalls_GetEntrances(void);
-const struct SceneExitRegion *ImilFuchinFalls_GetRegions(void);
-const u32 *ImilFuchinFalls_GetExits(void);
-const struct ActorPlacement *ImilFuchinFalls_GetActorPlacements(void);
-const struct Trigger *ImilFuchinFalls_GetTriggers(void);
-s32 ImilFuchinFalls_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
                                s32 velocityY, s32 velocityZ, u32 flags,
                                const struct EffectOptions *extra);

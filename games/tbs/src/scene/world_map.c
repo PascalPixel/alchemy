@@ -34,7 +34,7 @@
 /// The Turtle Boots are buried in the ground
 /// (CELL_BEHAVIOR_WORLD_MAP_TURTLE_BOOTS).
 ///
-/// And it plays the story's moments on the map, each run by WorldMap_Initialize
+/// And it plays the story's moments on the map, each run by Scene_Initialize
 /// for the entrance another scene sends the party to. In story order:
 /// - Leaving Vale (WORLD_MAP_FROM_VALE_PLAZA) sets FLAG_VALE_PARTY_LEFT the
 ///   first time.
@@ -474,13 +474,13 @@ static s32 WorldMap_SetUpFlint(struct Actor *actor) {
   return 0;
 }
 
-const struct SceneEntrance *WorldMap_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gWorldSceneEntrances;
 }
 
-const struct SceneExitRegion *WorldMap_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *WorldMap_GetExits(void) { return gWorldMapExits; }
+const u32 *Scene_GetExits(void) { return gWorldMapExits; }
 
 /// Kolima Bridge's actor script (gWorldMapKolimaBridgeScript).
 static s32 WorldMap_SetUpKolimaBridge(struct Actor *actor) {
@@ -534,7 +534,7 @@ static s32 WorldMap_BlinkActorSprite(struct Actor *actor) {
 }
 
 /// Chooses the actors for the entrance.
-const struct ActorPlacement *WorldMap_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   switch (gMainRoutineWork.entrance) {
   case WORLD_MAP_FROM_WEST_LUNPA_CAVE:
     if (GameFlag_Get(FLAG_BUNZAS_WAGON_LEFT) == 0 &&
@@ -644,9 +644,9 @@ static void WorldMap_EnterLalivero(void) {
                          WORLD_MAP_TO_LALIVERO_EAST);
 }
 
-const struct Trigger *WorldMap_GetTriggers(void) { return gWorldTriggers; }
+const struct Trigger *Scene_GetTriggers(void) { return gWorldTriggers; }
 
-/// Run each frame on the map, where WorldMap_Initialize adds it.
+/// Run each frame on the map, where Scene_Initialize adds it.
 static void WorldMap_UpdateAreaContacts(void) {
   struct Actor *leader;
   struct FieldWork *work;
@@ -723,7 +723,7 @@ static void WorldMap_ReturnToTolbiShip(void) {
 }
 
 /// The scene's initialization, which runs the moment the entrance selects.
-s32 WorldMap_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct MainRoutineWork *routine = &gMainRoutineWork;
 
   if (routine->entrance == WORLD_MAP_FROM_DEBUG) {

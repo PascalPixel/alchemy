@@ -4,12 +4,12 @@
 #include "types.h"
 #include "scene_tables.h"
 
-const struct SceneEntrance *ValePlaza_GetEntrances(void);
-const struct SceneExitRegion *ValePlaza_GetRegions(void);
-const u32 *ValePlaza_GetExits(void);
-const struct ActorPlacement *ValePlaza_GetActorPlacements(void);
-const struct Trigger *ValePlaza_GetTriggers(void);
-s32 ValePlaza_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern u8 gValePlaza_UnusedPaletteSteps[];
 extern s32 gValePlaza_ChargedUpStrongmanActions[];
 extern s32 gValePlaza_SecondTravelerLeapActions[];

@@ -18,7 +18,7 @@
 ///   reached from Tolbi. During the trials the crowd cannot get in. Its people
 ///   talk of the heats and of the Lucky Guess, a bet on which warrior will win
 ///   the finals, and Mind Read hears what they hope for. On the finals day
-///   ColosseumEntrance_GetActorPlacements places a second crowd, with Isaac's
+///   Scene_GetActorPlacements places a second crowd, with Isaac's
 ///   companions and four of the colosseum's soldiers, and the triggers' flag
 ///   conditions give everyone new lines. The scalpers sell seats. The Lucky
 ///   Guess man recognizes Isaac and will not let a finalist play, and
@@ -261,7 +261,7 @@ enum {
   FLAG_FINALS_LINE_REACHED = FLAG_SCENE_TEMP_35
 };
 
-const struct SceneEntrance *ColosseumEntrance_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_Colosseum) {
@@ -273,13 +273,13 @@ const struct SceneEntrance *ColosseumEntrance_GetEntrances(void) {
   return gColosseumEntranceEntrancesOther;
 }
 
-const struct SceneExitRegion *ColosseumEntrance_GetRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
 /// Returns the shared colosseum exits.
-const u32 *ColosseumEntrance_GetExits(void) { return gColosseumEntranceExits; }
+const u32 *Scene_GetExits(void) { return gColosseumEntranceExits; }
 
 /// Selects the actors for the scene being entered.
-const struct ActorPlacement *ColosseumEntrance_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   const struct ActorPlacement *table;
 
   if (gMainRoutineWork.next == (s32)&SceneId_Colosseum) {
@@ -328,7 +328,7 @@ const struct ActorPlacement *ColosseumEntrance_GetActorPlacements(void) {
   return table;
 }
 
-const struct Trigger *ColosseumEntrance_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_ColosseumTunnel) {
@@ -1224,7 +1224,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
 }
 
 /// Sets up the Colosseum or its entrance as the party arrives.
-s32 ColosseumEntrance_Initialize(void) {
+s32 Scene_Initialize(void) {
   s32 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_Colosseum) {

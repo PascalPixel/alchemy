@@ -4,12 +4,12 @@
 #include "types.h"
 #include "scene_tables.h"
 
-const struct SceneEntrance *TolbiSpring_GetEntrances(void);
-const struct SceneExitRegion *TolbiSpring_GetRegions(void);
-const u32 *TolbiSpring_GetExits(void);
-const struct ActorPlacement *TolbiSpring_GetActorPlacements(void);
-const struct Trigger *TolbiSpring_GetTriggers(void);
-s32 TolbiSpring_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern const struct SceneEntrance gTolbiSpring_Entrances[];
 extern const u32 gTolbiSpring_Exits[];
 extern const struct ActorPlacement gTolbiSpringActorPlacements[];

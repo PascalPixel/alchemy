@@ -4,12 +4,12 @@
 #include "types.h"
 #include "scene_tables.h"
 
-const struct SceneEntrance *Vale_GetEntrances(void);
-const struct SceneExitRegion *Vale_GetRegions(void);
-const u32 *Vale_GetExits(void);
-const struct ActorPlacement *Vale_GetActorPlacements(void);
-const struct Trigger *Vale_GetTriggers(void);
-s32 Vale_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern s32 gVale_AlephGuardPatrol[];
 extern s32 gVale_LeaderHammers[];
 extern s32 gVale_GaretWalksToTheHouse[];

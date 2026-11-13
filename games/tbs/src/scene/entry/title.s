@@ -1,4 +1,7 @@
-	.include "games/tbs/src/system/overlay/imports.inc"
+	.syntax unified
+	.thumb
+	.balign 4
+	.include "games/tbs/src/gamepak/far_call/veneer.s"
 	overlay_veneer Title_Run
 	overlay_veneer Title_GetEntrances
 	overlay_veneer Title_GetExits

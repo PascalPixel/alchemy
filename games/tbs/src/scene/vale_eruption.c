@@ -13,7 +13,7 @@
 /// mayor, Isaac's mother Dora, Garet's sister and brother, and the guard who
 /// saw the two hanging around on his watch.
 ///
-/// The scene has no triggers. ValeEruption_Initialize plays the whole event on
+/// The scene has no triggers. Scene_Initialize plays the whole event on
 /// arrival by VALE_ERUPTION_FROM_SOL_ENTRANCE (ValeEruption_ReturnFromMtAleph).
 ///
 /// - The ground shakes, and the villagers wonder where the two are.
@@ -86,29 +86,29 @@ static void ValeEruption_ReturnFromMtAleph(void);
 
 /// Returns where the party appears. VALE_ERUPTION_FROM_SOL_ENTRANCE is the path
 /// down from the mountain, Mt. Aleph.
-const struct SceneEntrance *ValeEruption_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gValeEruption_Entrances;
 }
 
-const struct SceneExitRegion *ValeEruption_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 /// Returns the one exit, VALE_ERUPTION_TO_SANCTUM into the Vale Sanctum
 /// (SANCTUM_FROM_VALE_ERUPTION), which ValeEruption_ReturnFromMtAleph takes.
-const u32 *ValeEruption_GetExits(void) { return gValeEruption_Exits; }
+const u32 *Scene_GetExits(void) { return gValeEruption_Exits; }
 
 /// Returns Garet and the villagers gathered before the sanctum.
-const struct ActorPlacement *ValeEruption_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gValeEruption_ActorPlacements;
 }
 
 /// The scene has no triggers of its own, since everything happens on arrival.
-const struct Trigger *ValeEruption_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gValeEruption_Triggers;
 }
 
 /// Arriving in Vale during the eruption plays the return from the mountain,
 /// when the party comes by VALE_ERUPTION_FROM_SOL_ENTRANCE.
-s32 ValeEruption_Initialize(void) {
+s32 Scene_Initialize(void) {
   if (gMainRoutineWork.entrance == VALE_ERUPTION_FROM_SOL_ENTRANCE) {
     ValeEruption_ReturnFromMtAleph();
   }

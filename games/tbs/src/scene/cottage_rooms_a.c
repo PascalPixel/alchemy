@@ -28,9 +28,9 @@
 /// The actor placements and triggers follow the story:
 ///
 /// - The stormy night of the prologue (FLAG_VALE_STORM). Everyone is out.
-///   CottageRoomsA_Initialize removes every resident and flashes the
+///   Scene_Initialize removes every resident and flashes the
 ///   lightning outside. The doors out to the village lead into the storm's
-///   scene (SceneId_ValePrologue) instead (CottageRoomsA_GetExits). The jars
+///   scene (SceneId_ValePrologue) instead (Scene_GetExits). The jars
 ///   and the barrel are empty, and six more bookcases than by day can be
 ///   read, a notebook called "Study of Alchemy" among them.
 /// - Three years later, the day the story begins. The villagers talk of
@@ -158,14 +158,14 @@ static s32 CottageRoomsA_AdvanceSleepZ(struct Actor *actor) {
   return 0;
 }
 
-const struct SceneEntrance *CottageRoomsA_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gCottageRoomsA_Entrances;
 }
 
-const struct SceneExitRegion *CottageRoomsA_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 /// On the stormy night, the doors lead out into the storm.
-const u32 *CottageRoomsA_GetExits(void) {
+const u32 *Scene_GetExits(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0)
     return gCottageRoomsA_StormExits;
   return gCottageRoomsA_Exits;
@@ -173,7 +173,7 @@ const u32 *CottageRoomsA_GetExits(void) {
 
 /// Selects the actor placements for the current visit to Vale, and marks
 /// which of their actors are in view.
-const struct ActorPlacement *CottageRoomsA_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *table;
 
   if (GameFlag_Get(FLAG_KALAY_REACHED)) {
@@ -188,7 +188,7 @@ const struct ActorPlacement *CottageRoomsA_GetActorPlacements(void) {
 }
 
 /// Selects the triggers for the current visit to Vale.
-const struct Trigger *CottageRoomsA_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0)
     return gCottageRoomsA_StormTriggers;
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
@@ -338,7 +338,7 @@ static void CottageRoomsA_LeaveToValePlazaNorth(void) {
 }
 
 /// Sets up a house of Vale as the party arrives.
-s32 CottageRoomsA_Initialize(void) {
+s32 Scene_Initialize(void) {
   // The heap slots from the field's on.
   void **slots = (void **)&gFieldWork;
 

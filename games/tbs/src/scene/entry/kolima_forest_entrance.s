@@ -1,7 +1,0 @@
-	.include "games/tbs/src/system/overlay/imports.inc"
-	overlay_veneer KolimaForestEntrance_Initialize
-	overlay_veneer KolimaForestEntrance_GetEntrances
-	overlay_veneer KolimaForestEntrance_GetExits
-	overlay_veneer KolimaForestEntrance_GetActorPlacements
-	overlay_veneer KolimaForestEntrance_GetTriggers
-	overlay_veneer KolimaForestEntrance_GetRegions

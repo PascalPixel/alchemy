@@ -5,12 +5,12 @@
 #include "event.h"
 #include "scene_tables.h"
 
-const struct SceneEntrance *Kalay_GetEntrances(void);
-const struct SceneExitRegion *Kalay_GetRegions(void);
-const u32 *Kalay_GetExits(void);
-const struct ActorPlacement *Kalay_GetActorPlacements(void);
-const struct Trigger *Kalay_GetTriggers(void);
-s32 Kalay_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern s32 gKalay_TileStepByFacing[];
 extern s32 gKalay_TourGroupWalkScript[];
 extern s32 gKalay_TourGroupLeaveScript[];

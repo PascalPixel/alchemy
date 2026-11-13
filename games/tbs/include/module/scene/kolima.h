@@ -5,12 +5,12 @@
 #include "scene_tables.h"
 #include "scene.h"
 
-const struct SceneEntrance *Kolima_GetEntrances(void);
-const struct SceneExitRegion *Kolima_GetRegions(void);
-const u32 *Kolima_GetExits(void);
-const struct ActorPlacement *Kolima_GetActorPlacements(void);
-const struct Trigger *Kolima_GetTriggers(void);
-s32 Kolima_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern s32 gKolima_GaretWalksIn[];
 extern s32 gKolima_IvanWalksIn[];
 extern s32 gKolima_MiaWalksIn[];

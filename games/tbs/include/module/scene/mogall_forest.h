@@ -4,12 +4,12 @@
 #include "types.h"
 #include "scene_tables.h"
 
-const struct SceneEntrance *MogallForest_GetEntrances(void);
-const struct SceneExitRegion *MogallForest_GetRegions(void);
-const u32 *MogallForest_GetExits(void);
-const struct ActorPlacement *MogallForest_GetActorPlacements(void);
-const struct Trigger *MogallForest_GetTriggers(void);
-s32 MogallForest_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern s32 gMogallForest_RockScript[];
 extern s32 gMogallForest_ActorScript[];
 extern s32 gMogallForest_HidingPlaceScript[];

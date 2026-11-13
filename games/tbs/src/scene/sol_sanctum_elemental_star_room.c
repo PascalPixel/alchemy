@@ -28,7 +28,7 @@
 /// until its flag is set.
 ///
 /// A return after a battle finds the room as it was. On every entry
-/// SolSanctumElementalStarRoom_Initialize redraws the crossings each bagged
+/// Scene_Initialize redraws the crossings each bagged
 /// star opened. Once Alex holds the stars, it also lines up the captors again
 /// (SolSanctumElementalStarRoom_LineUpCaptors).
 ///
@@ -174,26 +174,26 @@ static inline void SolSanctumElementalStarRoom_SkipMessages(s32 amount) {
 
 #include "shared/actor_facing.h"
 
-const struct SceneEntrance *SolSanctumElementalStarRoom_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSolSanctumElementalStarRoom_Entrances;
 }
 
-const struct SceneExitRegion *SolSanctumElementalStarRoom_GetRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return NULL;
 }
 
-const u32 *SolSanctumElementalStarRoom_GetExits(void) {
+const u32 *Scene_GetExits(void) {
   return gSolSanctumElementalStarRoom_Exits;
 }
 
 const struct ActorPlacement *
-SolSanctumElementalStarRoom_GetActorPlacements(void) {
+Scene_GetActorPlacements(void) {
   return gSolSanctumElementalStarRoom_ActorPlacements;
 }
 
 /// Returns the pedestals' examine triggers, the talk and Mind Read rows, and
 /// the cells that call the party back or check the way ahead.
-const struct Trigger *SolSanctumElementalStarRoom_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gSolSanctumElementalStarRoom_Triggers;
 }
 
@@ -2024,7 +2024,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
 }
 
 /// Sets up the Elemental Star Room.
-s32 SolSanctumElementalStarRoom_Initialize(void) {
+s32 Scene_Initialize(void) {
   s32 ringActorId;
 
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);

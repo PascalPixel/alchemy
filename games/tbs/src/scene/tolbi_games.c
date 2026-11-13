@@ -151,7 +151,7 @@ enum TolbiSpringActorId {
   /// The tufts of grass at the foot of each sign.
   ///
   /// They are the signs' sprite in its second frame, mirrored and drawn
-  /// underfoot (TolbiSpring_Initialize).
+  /// underfoot (Scene_Initialize).
   ACTOR_TOLBI_SPRING_EAST_SIGN_GRASS,
   ACTOR_TOLBI_SPRING_WEST_SIGN_GRASS,
   /// A visitor, a man carrying a pack (SPRITE_MAN_CARRYING_A_PACK).
@@ -245,17 +245,17 @@ static inline void Io_SetBlendControl(s32 value) { REG_BLDCNT = value; }
 
 static inline void Io_SetBlendAlpha(s32 value) { REG_BLDALPHA = value; }
 
-const struct SceneEntrance *TolbiSpring_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gTolbiSpring_Entrances;
 }
 
-const struct SceneExitRegion *TolbiSpring_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *TolbiSpring_GetExits(void) { return gTolbiSpring_Exits; }
+const u32 *Scene_GetExits(void) { return gTolbiSpring_Exits; }
 
 /// Selects the actors of Tolbi Spring or of the Lucky Dice and Lucky
 /// Wheels rooms.
-const struct ActorPlacement *TolbiSpring_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_TolbiSpring) {
     return gTolbiSpringActorPlacements;
   }
@@ -332,7 +332,7 @@ static void TolbiSpring_TalkToWheelsAttendant(void) {
 
 /// Selects the triggers of Tolbi Spring or of the Lucky Dice and Lucky Wheels
 /// rooms.
-const struct Trigger *TolbiSpring_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_TolbiSpring) {
     return gTolbiSpringTriggers;
   }
@@ -340,7 +340,7 @@ const struct Trigger *TolbiSpring_GetTriggers(void) {
 }
 
 /// The setup of both scenes.
-s32 TolbiSpring_Initialize(void) {
+s32 Scene_Initialize(void) {
   s32 coinChange;
   s8 *wonPrizes;
   s32 prizeIndex;

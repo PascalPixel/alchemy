@@ -9,9 +9,9 @@
 /// Reveal lesson at Lama Temple sets. Every villager's talk and Mind Read has
 /// a row for each side of it.
 ///
-/// After the news, three villagers also stand differently. Xian_Initialize
+/// After the news, three villagers also stand differently. Scene_Initialize
 /// turns ACTOR_BOY_ON_SILK_CLOTHES west and stands the kung fu student where
-/// her strike leaves her. Xian_GetActorPlacements turns
+/// her strike leaves her. Scene_GetActorPlacements turns
 /// ACTOR_MUSCULAR_MAN_ON_DISASTERS to face the party.
 ///
 /// Feizhi stands by the village's south exit from FLAG_FEIZHI_WENT_TO_HSU,
@@ -121,7 +121,7 @@ enum XianActorId {
   ACTOR_FORCE_TARGET,
   /// Mist, a Mercury Djinni.
   ACTOR_MIST,
-  /// The first of three crates placed with SPRITE_CRATE, which Xian_Initialize
+  /// The first of three crates placed with SPRITE_CRATE, which Scene_Initialize
   /// hides (SPRITE_COLOR_HIDDEN): the player never sees them.
   ACTOR_FIRST_CRATE
 };
@@ -262,15 +262,15 @@ static UNREAD_RESULT Xian_WatchWaterCarrierPath(struct Actor *updated) {
 #define XIAN_WATER_CARRIER_UPDATE ((void *)Xian_WatchWaterCarrierPath)
 #endif
 
-const struct SceneEntrance *Xian_GetEntrances(void) { return gXian_Entrances; }
+const struct SceneEntrance *Scene_GetEntrances(void) { return gXian_Entrances; }
 
-const struct SceneExitRegion *Xian_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Xian_GetExits(void) { return gXian_Exits; }
+const u32 *Scene_GetExits(void) { return gXian_Exits; }
 
 /// Once Xian has heard Hsu is trapped, ACTOR_MUSCULAR_MAN_ON_DISASTERS turns
 /// to face the party.
-const struct ActorPlacement *Xian_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) != 0)
     gXian_ActorPlacements[ACTOR_MUSCULAR_MAN_ON_DISASTERS - ACTOR_FIRST_PLACED]
         .talkFacing = TALK_FACING_PARTY;
@@ -722,11 +722,11 @@ static void Xian_MoveAsideForWaterCarrier(void) {
   Event_End();
 }
 
-const struct Trigger *Xian_GetTriggers(void) { return gXian_Triggers; }
+const struct Trigger *Scene_GetTriggers(void) { return gXian_Triggers; }
 
 /// Queues and plays SE_AMBIENT_WIND and sets up the village as the story and
 /// this visit left it.
-s32 Xian_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
   u32 crateIndex;
 

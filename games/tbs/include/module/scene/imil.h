@@ -4,12 +4,12 @@
 #include "types.h"
 #include "scene_tables.h"
 
-const struct SceneEntrance *Imil_GetEntrances(void);
-const struct SceneExitRegion *Imil_GetRegions(void);
-const u32 *Imil_GetExits(void);
-const struct ActorPlacement *Imil_GetActorPlacements(void);
-const struct Trigger *Imil_GetTriggers(void);
-s32 Imil_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern s16 gImil_KeyHeadings[];
 extern s16 gImil_SwayHeadings[];
 extern s32 gImil_FreezingYoungManScript[];

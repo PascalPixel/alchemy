@@ -1,7 +1,0 @@
-	.include "games/tbs/src/system/overlay/imports.inc"
-	overlay_veneer SolSanctumStatue_Initialize
-	overlay_veneer SolSanctumStatue_GetEntrances
-	overlay_veneer SolSanctumStatue_GetExits
-	overlay_veneer SolSanctumStatue_GetActorPlacements
-	overlay_veneer SolSanctumStatue_GetTriggers
-	overlay_veneer SolSanctumStatue_GetRegions

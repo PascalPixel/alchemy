@@ -6,12 +6,12 @@
 #include "field_coordinate.h"
 #include "scene.h"
 
-const struct SceneEntrance *TunnelRuins_GetEntrances(void);
-const struct SceneExitRegion *TunnelRuins_GetRegions(void);
-const u32 *TunnelRuins_GetExits(void);
-const struct ActorPlacement *TunnelRuins_GetActorPlacements(void);
-const struct Trigger *TunnelRuins_GetTriggers(void);
-s32 TunnelRuins_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern u32 gTunnelRuins_BalanceHeights[];
 extern s32 gTunnelRuins_ShrinkScript[];
 extern s32 gTunnelRuins_StretchScript[];

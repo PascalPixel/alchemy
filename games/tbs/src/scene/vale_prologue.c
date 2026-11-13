@@ -4,11 +4,11 @@
 ///
 /// It is a scene of its own that stands in for SceneId_Vale while
 /// FLAG_VALE_STORM is set, so that the doors that lead to Vale by day lead
-/// here. ValePrologue_Initialize sets the flag on every arrival, and
+/// here. Scene_Initialize sets the flag on every arrival, and
 /// vale_plaza.c clears it when the night ends.
 ///
 /// The night is a chain of story flags. Each is set by one event and read by
-/// ValePrologue_Initialize, which rebuilds the scene at that stage on the
+/// Scene_Initialize, which rebuilds the scene at that stage on the
 /// next arrival:
 ///
 /// - FLAG_VALE_STORM_SENT_TO_PLAZA: ValePrologue_DoraSendsIsaacToThePlaza,
@@ -249,19 +249,19 @@ static s32 ValePrologue_RerollHeadingOnCountdown(struct Actor *actor) {
 #define FLAG_VALE_ON_BRIDGE FLAG_SCENE_TEMP_10
 
 /// Returns where the party appears.
-const struct SceneEntrance *ValePrologue_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gValePrologue_Entrances;
 }
 
-const struct SceneExitRegion *ValePrologue_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *ValePrologue_GetExits(void) { return gValePrologue_Exits; }
+const u32 *Scene_GetExits(void) { return gValePrologue_Exits; }
 
-const struct ActorPlacement *ValePrologue_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gValePrologue_ActorPlacements;
 }
 
-const struct Trigger *ValePrologue_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gValePrologue_Triggers;
 }
 
@@ -415,7 +415,7 @@ static void ValePrologue_LeaveToCottageRoomsBEast(void) {
 
 /// Arriving in Vale on the stormy night sets the scene up for its stage of
 /// the night.
-s32 ValePrologue_Initialize(void) {
+s32 Scene_Initialize(void) {
   Scene_QueueMusic(SE_AMBIENT_WATER);
   Actor_SetPosition(ACTOR_FELIX_CHILD, 0, 0);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {

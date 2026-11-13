@@ -1,7 +1,0 @@
-	.include "games/tbs/src/system/overlay/imports.inc"
-	overlay_veneer MercuryLighthouseEntrance_Initialize
-	overlay_veneer MercuryLighthouseEntrance_GetEntrances
-	overlay_veneer MercuryLighthouseEntrance_GetExits
-	overlay_veneer MercuryLighthouseEntrance_GetActorPlacements
-	overlay_veneer MercuryLighthouseEntrance_GetTriggers
-	overlay_veneer MercuryLighthouseEntrance_GetRegions

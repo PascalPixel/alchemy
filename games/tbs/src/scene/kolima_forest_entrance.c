@@ -120,23 +120,23 @@ static s32 KolimaForestEntrance_TwinkleGroundSparkle(struct Actor *actor) {
 
 /// Where the party enters, from the next scene of the forest
 /// (SceneId_KolimaForestGlade) and from the World Map.
-const struct SceneEntrance *KolimaForestEntrance_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gKolimaForestEntrance_Entrances;
 }
 
-const struct SceneExitRegion *KolimaForestEntrance_GetRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return 0;
 }
 
 /// The ways on into the forest (SceneId_KolimaForestGlade) and back to the
 /// World Map.
-const u32 *KolimaForestEntrance_GetExits(void) {
+const u32 *Scene_GetExits(void) {
   return gKolimaForestEntrance_Exits;
 }
 
 /// The party's companions, the logs, Tret, Laurel, the Psynergy fields and the
 /// ground sparkles.
-const struct ActorPlacement *KolimaForestEntrance_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gKolimaForestEntrance_ActorPlacements;
 }
 
@@ -170,13 +170,13 @@ static void KolimaForestEntrance_PushLog(void) {
 #include "shared/kolima_jump.h"
 
 /// The logs, the hop east from the bank and the two ways out.
-const struct Trigger *KolimaForestEntrance_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gKolimaForestEntrance_Triggers;
 }
 
 /// On entry a log already in the river floats there again and the logs mark the
 /// cells they cover.
-s32 KolimaForestEntrance_Initialize(void) {
+s32 Scene_Initialize(void) {
   Scene_RedrawActorFootprint(ACTOR_RIVER_LOG);
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER) != 0) {
     Actor_Get(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;

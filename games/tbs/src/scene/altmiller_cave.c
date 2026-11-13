@@ -18,7 +18,7 @@
 ///   the Mystic Draught behind the wall the puzzle opens.
 ///
 /// The rooms share one entrance table and one exit table, and the other getters
-/// choose by gMainRoutineWork.next. AltmillerCave_Initialize sends an entry
+/// choose by gMainRoutineWork.next. Scene_Initialize sends an entry
 /// from outside the cave (entrance 0) to the room's first entrance, darkens the
 /// dark rooms and puts back what the party has done.
 ///
@@ -256,15 +256,15 @@ static void AltmillerCave_StartDjinnBattle(void) {
 }
 
 /// The six rooms share one entrance table.
-const struct SceneEntrance *AltmillerCave_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gAltmillerCave_Entrances;
 }
 
-const struct SceneExitRegion *AltmillerCave_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *AltmillerCave_GetExits(void) { return gAltmillerCave_Exits; }
+const u32 *Scene_GetExits(void) { return gAltmillerCave_Exits; }
 
-const struct ActorPlacement *AltmillerCave_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_AltmillerCaveBabi) {
@@ -1921,7 +1921,7 @@ static void AltmillerCave_BabiCallsPartyBack(void) {
   Event_End();
 }
 
-const struct Trigger *AltmillerCave_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_AltmillerCaveBabi) {
@@ -1960,7 +1960,7 @@ static inline void AltmillerCave_RedrawObstacleFootprints(void) {
 }
 
 /// Sets up the room being entered. Returns 0.
-s32 AltmillerCave_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 i;
 

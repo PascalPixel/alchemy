@@ -4,12 +4,12 @@
 #include "types.h"
 #include "scene_tables.h"
 
-const struct SceneEntrance *ValePrologue_GetEntrances(void);
-const struct SceneExitRegion *ValePrologue_GetRegions(void);
-const u32 *ValePrologue_GetExits(void);
-const struct ActorPlacement *ValePrologue_GetActorPlacements(void);
-const struct Trigger *ValePrologue_GetTriggers(void);
-s32 ValePrologue_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern u8 gValePrologue_FrameModes[];
 extern s32 gValePrologue_ShovingManScript[];
 extern s32 gValePrologue_UnusedGaretRunsUpScript[];

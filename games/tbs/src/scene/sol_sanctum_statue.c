@@ -14,7 +14,7 @@
 ///
 /// Each move's trigger carries the flag of what it achieves (a seal open, a
 /// beam shining, the centre statue moved), so a statue stops answering once it
-/// has done its part. SolSanctumStatue_Initialize redraws the room from those
+/// has done its part. Scene_Initialize redraws the room from those
 /// story flags on every entry.
 ///
 /// The puzzle is a trap, and the room follows the story flags in order:
@@ -216,23 +216,23 @@ static union {
   s32 words[3 * SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT * 3];
 } sScrollingSprites;
 
-const struct SceneEntrance *SolSanctumStatue_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSolSanctumStatue_Entrances;
 }
 
-const struct SceneExitRegion *SolSanctumStatue_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *SolSanctumStatue_GetExits(void) { return gSolSanctumStatue_Exits; }
+const u32 *Scene_GetExits(void) { return gSolSanctumStatue_Exits; }
 
 /// Returns Kraden, the eight statues, the centre statue and its moved copy
 /// (ACTOR_KRADEN to ACTOR_MOVED_CENTER_STATUE), then Jenna and Garet.
-const struct ActorPlacement *SolSanctumStatue_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gSolSanctumStatue_ActorPlacements;
 }
 
 /// Returns the statues' Move and push events, each row only until its seal or
 /// beam is done.
-const struct Trigger *SolSanctumStatue_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gSolSanctumStatue_Triggers;
 }
 
@@ -761,7 +761,7 @@ UNUSED static void SolSanctumStatue_UnusedMoveNorthwestStatue(void) {
 
 /// Restores the room's statues, beams and seals from their flags and plays
 /// Kraden's two visits.
-s32 SolSanctumStatue_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *centerEffect;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);

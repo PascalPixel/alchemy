@@ -197,21 +197,21 @@ static s32 InnWorker_Sigh(struct Actor *actor) {
   return 0;
 }
 
-const struct SceneEntrance *TimberRoomsBC_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gTimberRoomsBC_Entrances;
 }
 
-const struct SceneExitRegion *TimberRoomsBC_GetRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_TimberRoomsB) {
     return gTimberRoomsB_Regions;
   }
   return gTimberRoomsC_Regions;
 }
 
-const u32 *TimberRoomsBC_GetExits(void) { return gTimberRoomsBC_Exits; }
+const u32 *Scene_GetExits(void) { return gTimberRoomsBC_Exits; }
 
 /// The people of each scene.
-const struct ActorPlacement *TimberRoomsBC_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_TimberRoomsC) {
     // Faran's house and the inn.
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
@@ -394,7 +394,7 @@ static void TimberRoomsBC_TalkToIodem(void) {
 
 /// What the party can talk to, touch and search in each scene, before and
 /// after Venus Lighthouse.
-const struct Trigger *TimberRoomsBC_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_TimberRoomsC) {
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
       return gTimberRoomsC_TriggersAfterLighthouse;

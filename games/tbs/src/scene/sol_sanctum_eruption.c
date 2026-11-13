@@ -4,7 +4,7 @@
 /// it collapses once the Mars Star is taken.
 ///
 /// The scene is one event, with no triggers of its own.
-/// SolSanctumEruption_Initialize plays it on arrival at
+/// Scene_Initialize plays it on arrival at
 /// SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, in two parts:
 /// - SolSanctumEruption_PlayHostageEvent: the chamber quakes, and the Wise One
 ///   appears and stills it. Saturos's group leaves with Jenna and Kraden,
@@ -118,25 +118,25 @@ enum { ACTOR_ELEMENTAL_STAR = 22 };
 #define EMBER_EMISSION_DISABLED 999
 #define ARC_SCAN_STILL_ACTIVE 888
 
-const struct SceneEntrance *SolSanctumEruption_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSolSanctumEruption_Entrances;
 }
 
-const struct SceneExitRegion *SolSanctumEruption_GetRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return NULL;
 }
 
-const u32 *SolSanctumEruption_GetExits(void) {
+const u32 *Scene_GetExits(void) {
   return gSolSanctumEruption_Exits;
 }
 
 /// Returns everyone the event moves, all placed off the map until it does.
-const struct ActorPlacement *SolSanctumEruption_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gSolSanctumEruption_ActorPlacements;
 }
 
 /// Returns the empty trigger table, because the scene is one event.
-const struct Trigger *SolSanctumEruption_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gSolSanctumEruption_Triggers;
 }
 
@@ -581,7 +581,7 @@ UNUSED static void SolSanctumEruption_UnusedNoOpA(void) {}
 UNUSED static void SolSanctumEruption_UnusedNoOpB(void) {}
 
 /// Plays the collapse after the cut from the Elemental Star Room.
-s32 SolSanctumEruption_Initialize(void) {
+s32 Scene_Initialize(void) {
   if (gMainRoutineWork.entrance ==
       SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM) {
     FieldEffect_InitializeSparkles();

@@ -1,7 +1,0 @@
-	.include "games/tbs/src/system/overlay/imports.inc"
-	overlay_veneer CottageRoomsB_Initialize
-	overlay_veneer CottageRoomsB_GetEntrances
-	overlay_veneer CottageRoomsB_GetExits
-	overlay_veneer CottageRoomsB_GetActorPlacements
-	overlay_veneer CottageRoomsB_GetTriggers
-	overlay_veneer CottageRoomsB_GetRegions

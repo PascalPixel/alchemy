@@ -313,7 +313,7 @@ static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
 #include "shared/mercury_lighthouse_sparks.h"
 #include "shared/mercury_lighthouse_palette_cycle.h"
 
-const struct SceneEntrance *MercuryLighthouse_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_MercuryLighthouseExterior) {
@@ -328,15 +328,15 @@ const struct SceneEntrance *MercuryLighthouse_GetEntrances(void) {
   return gMercuryLighthouseEntrancesOther;
 }
 
-const struct SceneExitRegion *MercuryLighthouse_GetRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return NULL;
 }
 
 /// Returns the packed exits shared by the lighthouse scenes.
-const u32 *MercuryLighthouse_GetExits(void) { return gMercuryLighthouse_Exits; }
+const u32 *Scene_GetExits(void) { return gMercuryLighthouse_Exits; }
 
 /// Selects the actors and obstacles for the current lighthouse scene.
-const struct ActorPlacement *MercuryLighthouse_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_MercuryLighthouseLower) {
@@ -392,7 +392,7 @@ static void MercuryLighthouse_InspectBlockedPassage(void) {
 }
 
 /// Selects the puzzle interactions and dialogue for the current scene.
-const struct Trigger *MercuryLighthouse_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_MercuryLighthouseLower) {
@@ -2155,7 +2155,7 @@ static void MercuryLighthouse_SpawnRandomizedBurst(s32 x, s32 y, s32 z,
 
 /// Restores each lighthouse scene's puzzle state and plays its
 /// entrance's event.
-s32 MercuryLighthouse_Initialize(void) {
+s32 Scene_Initialize(void) {
   u32 statueIndex;
   s32 positionFlag;
   s32 statueX;

@@ -74,27 +74,27 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *logs);
 
 /// Where the party enters, from SceneId_KolimaForestCliff and from
 /// SceneId_KolimaForestTree.
-const struct SceneEntrance *KolimaForestFloodgate_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gKolimaForestFloodgateEntrances;
 }
 
-const struct SceneExitRegion *KolimaForestFloodgate_GetRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return 0;
 }
 
 /// The ways back (SceneId_KolimaForestCliff) and on to Tret
 /// (SceneId_KolimaForestTree).
-const u32 *KolimaForestFloodgate_GetExits(void) {
+const u32 *Scene_GetExits(void) {
   return gKolimaForestFloodgateExits;
 }
 
 /// The short log, the switch and the sign.
-const struct ActorPlacement *KolimaForestFloodgate_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gKolimaForestFloodgateActorPlacements;
 }
 
 /// The logs, the switch, the sign, the jump and the chest.
-const struct Trigger *KolimaForestFloodgate_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gKolimaForestFloodgateTriggers;
 }
 
@@ -372,7 +372,7 @@ static void KolimaForestFloodgate_PushShortLogEast(void) {
 }
 
 /// Sets up the logs and the river's level on entry.
-s32 KolimaForestFloodgate_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
 
   gKolimaForestFloodgateReturned = (u16 *)gSceneLocalState;

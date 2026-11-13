@@ -44,14 +44,14 @@
 ///   the three areas' exits lead into and back out of, some of them leading
 ///   back into the scene itself. A Psynergy Stone lies there.
 ///
-/// One overlay serves all four scenes. MogallForest_GetEntrances,
+/// One overlay serves all four scenes. Scene_GetEntrances,
 /// _GetActorPlacements and _GetTriggers choose each scene's tables.
-/// MogallForest_Initialize puts back the apes already out, the rolled logs and
+/// Scene_Initialize puts back the apes already out, the rolled logs and
 /// the settled rocks, scene by scene and entrance by entrance.
 ///
 /// The third area's east ape is also the guide at cell behavior 22 and the
 /// Killer Ape. The editions differ in how it is kept out of sight once it has
-/// come out (the #if blocks below and in MogallForest_Initialize).
+/// come out (the #if blocks below and in Scene_Initialize).
 ///
 /// The apes and rocks are told apart by colour mode (enum SpriteColorMode). An
 /// ape in hiding is SPRITE_COLOR_HIDDEN. A guide that comes out is drawn with
@@ -331,7 +331,7 @@ static inline void MogallForest_ApePointsTheWay(s32 guideId) {
   Event_Wait(60);
 }
 
-const struct SceneEntrance *MogallForest_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_MogallForestSign) {
@@ -346,12 +346,12 @@ const struct SceneEntrance *MogallForest_GetEntrances(void) {
   return gMogallForestSidePaths_Entrances;
 }
 
-const struct SceneExitRegion *MogallForest_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 /// Returns the exits, one table for all four scenes.
-const u32 *MogallForest_GetExits(void) { return gMogallForest_Exits; }
+const u32 *Scene_GetExits(void) { return gMogallForest_Exits; }
 
-const struct ActorPlacement *MogallForest_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_MogallForestSign) {
@@ -1204,7 +1204,7 @@ static void MogallForest_KillerApeAttacks(void) {
   Event_End();
 }
 
-const struct Trigger *MogallForest_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_MogallForestSign) {
@@ -1220,7 +1220,7 @@ const struct Trigger *MogallForest_GetTriggers(void) {
 }
 
 /// Sets up Mogall Forest's area.
-s32 MogallForest_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 sceneId;
   s32 entrance;

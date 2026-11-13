@@ -151,36 +151,36 @@ static void MercuryLighthouseAerie_FlickerBeacon(void);
 
 #include "shared/field_effect_spawn.h"
 
-const struct SceneEntrance *MercuryLighthouseAerie_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gMercuryLighthouseAerieEntrances;
 }
 
-const struct SceneExitRegion *MercuryLighthouseAerie_GetRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return 0;
 }
 
 /// Returns the one exit, the lift down to SceneId_MercuryLighthouseExterior's
 /// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE, by the Fountain
 /// of Healing.
-const u32 *MercuryLighthouseAerie_GetExits(void) {
+const u32 *Scene_GetExits(void) {
   return gMercuryLighthouseAerieExits;
 }
 
 /// Returns the actors, with Jenna, Kraden, Felix and Menardi placed only on the
 /// first arrival (MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT).
-const struct ActorPlacement *MercuryLighthouseAerie_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.entrance != MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
     GameFlag_Set(FLAG_HOSTAGES_GONE);
   }
   return gMercuryLighthouseAerieActorPlacements;
 }
 
-const struct Trigger *MercuryLighthouseAerie_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gMercuryLighthouseAerieTriggers;
 }
 
 /// Sets up the Lighthouse Aerie, then plays the event of the entrance taken.
-s32 MercuryLighthouseAerie_Initialize(void) {
+s32 Scene_Initialize(void) {
   u32 i;
   s32 actorId;
   struct Actor *actor;

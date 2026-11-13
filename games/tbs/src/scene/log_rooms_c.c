@@ -10,7 +10,7 @@
 /// Like the people outside, the fifteen residents (ACTOR_FIRST_VILLAGER to
 /// ACTOR_LAST_VILLAGER) were turned into trees when the curse fell. Until it
 /// is lifted in Kolima Forest (FLAG_KOLIMA_CURSE_LIFTED),
-/// LogRoomsC_GetActorPlacements gives them tree sprites that stand still.
+/// Scene_GetActorPlacements gives them tree sprites that stand still.
 /// They answer only Mind Read, each with the thoughts of someone stuck as a
 /// tree
 /// ("Who caused all this? Someone must have tried to cut down Tret!").
@@ -25,7 +25,7 @@
 /// spirits of the holy trees protecting Kolima forest"), on trees and flowers
 /// and on logging. A jar holds a Lucky Medal and a barrel 7 coins.
 ///
-/// LogRoomsC_Initialize opens with a window transition and draws one of
+/// Scene_Initialize opens with a window transition and draws one of
 /// two rooms into the same place on the map.
 ///
 /// Entered by its door from the village
@@ -131,17 +131,17 @@ static void LogRoomsC_TurnVillagersIntoTrees(struct ActorPlacement *placement) {
   }
 }
 
-const struct SceneEntrance *LogRoomsC_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gLogRoomsC_Entrances;
 }
 
-const struct SceneExitRegion *LogRoomsC_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 /// The exits between the rooms, back to the village and into Kolima Tunnel.
-const u32 *LogRoomsC_GetExits(void) { return gLogRoomsC_Exits; }
+const u32 *Scene_GetExits(void) { return gLogRoomsC_Exits; }
 
 /// Kolima's residents, turned into trees first while the curse lasts.
-const struct ActorPlacement *LogRoomsC_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *placements;
 
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
@@ -220,12 +220,12 @@ static void LogRoomsC_TalkToInnkeeper(void) {
 
 /// The exits, the residents' words and thoughts, the shops, the bookcases, the
 /// jar and the barrel.
-const struct Trigger *LogRoomsC_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gLogRoomsC_Triggers;
 }
 
 /// Sets up the houses for the curse and the way they're entered.
-s32 LogRoomsC_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct FieldWork *work = gFieldWork;
   s32 actorId;
   u32 entrance;

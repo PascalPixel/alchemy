@@ -590,15 +590,15 @@ static s32 TolbiShipDeck_IdleTurn(struct Actor *actor) {
   return 1;
 }
 
-const struct SceneEntrance *TolbiShipDeck_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gTolbiShipDeckEntrances;
 }
 
-const struct SceneExitRegion *TolbiShipDeck_GetRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return gTolbiShipDeckRegions;
 }
 
-const u32 *TolbiShipDeck_GetExits(void) { return gTolbiShipDeckExits; }
+const u32 *Scene_GetExits(void) { return gTolbiShipDeckExits; }
 
 /// The talk facing of a Kalay actor's row in
 /// gTolbiShipDeckActorPlacementsWaiting.
@@ -607,7 +607,7 @@ const u32 *TolbiShipDeck_GetExits(void) { return gTolbiShipDeckExits; }
       gTolbiShipDeckActorPlacementsWaiting[(actorId) - ACTOR_FIRST_PLACED]     \
           .talkFacing)
 
-const struct ActorPlacement *TolbiShipDeck_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI))
     return gTolbiShipDeckActorPlacementsArrived;
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ROWING))
@@ -633,7 +633,7 @@ const struct ActorPlacement *TolbiShipDeck_GetActorPlacements(void) {
 
 #undef KALAY_TALK_FACING
 
-const struct Trigger *TolbiShipDeck_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI))
     return gTolbiShipDeckTriggersArrived;
   if (GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND))
@@ -996,7 +996,7 @@ static void TolbiShipDeck_ConfrontCrewman(void) {
 }
 
 /// Sets up the scene on entry.
-s32 TolbiShipDeck_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct MapGridLayerScroll *sea =
       &((struct MapGridScrollWork *)gMapGridWork[0])
            ->layers[MAPGRID_LAYER_GROUND];

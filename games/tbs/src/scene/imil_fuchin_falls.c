@@ -206,7 +206,7 @@ static void FuchinFallsCave_FightZephyr(void) {
   Field_RequestDjinnBattle(ACTOR_ZEPHYR, DJINNI_ZEPHYR);
 }
 
-const struct SceneEntrance *ImilFuchinFalls_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_ImilFallsCave) {
@@ -233,12 +233,12 @@ const struct SceneEntrance *ImilFuchinFalls_GetEntrances(void) {
   return gImilFuchinFalls_NoEntrances;
 }
 
-const struct SceneExitRegion *ImilFuchinFalls_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 /// Returns the exit table every scene of the overlay shares.
-const u32 *ImilFuchinFalls_GetExits(void) { return gImilFuchinFalls_Exits; }
+const u32 *Scene_GetExits(void) { return gImilFuchinFalls_Exits; }
 
-const struct ActorPlacement *ImilFuchinFalls_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_ImilFallsCave) {
@@ -1005,7 +1005,7 @@ static struct Actor *FuchinFallsCave_CreateForegroundActor(s32 x, s32 y, s32 z,
   return 0;
 }
 
-const struct Trigger *ImilFuchinFalls_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_ImilFallsCave) {
@@ -1275,7 +1275,7 @@ static void FuchinFallsCave_StopLightFollowingLeader(void) {
 }
 
 /// Sets up the scene as the party enters.
-s32 ImilFuchinFalls_Initialize(void) {
+s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0 &&
       gMainRoutineWork.next == (s32)&SceneId_ImilFallsCave) {

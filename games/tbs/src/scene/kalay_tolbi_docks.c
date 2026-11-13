@@ -223,7 +223,7 @@ static void KalayTolbiDocks_GroundJoins(void) {
 
 /// Selects the entrances of Kalay Docks, Tolbi Docks or the rooms
 /// on CottageRoomsE.
-const struct SceneEntrance *KalayTolbiDocks_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_KalayDocks) {
@@ -238,16 +238,16 @@ const struct SceneEntrance *KalayTolbiDocks_GetEntrances(void) {
   return gKalayTolbiDocks_NoEntrances;
 }
 
-const struct SceneExitRegion *KalayTolbiDocks_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 /// The exits of the three scenes, each scene's after its header word (an exit
 /// of kind 0).
-const u32 *KalayTolbiDocks_GetExits(void) { return gKalayTolbiDocks_Exits; }
+const u32 *Scene_GetExits(void) { return gKalayTolbiDocks_Exits; }
 
 /// Each scene's people before the crossing, once the ship has crossed and not
 /// come back (FLAG_TOLBI_SHIP_REACHED_TOLBI), and once the Colosso Tour's
 /// passengers are stranded after Colosso (FLAG_COLOSSO_OVER).
-const struct ActorPlacement *KalayTolbiDocks_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_KalayDocks) {
@@ -291,7 +291,7 @@ static void KalayTolbiDocks_GreetArrivals(void) {
 }
 
 /// Selects each scene's events for the same three times as its people.
-const struct Trigger *KalayTolbiDocks_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_KalayDocks) {
@@ -634,7 +634,7 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
 enum { KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO = 90 };
 
 /// Prepares whichever of the three scenes is entered.
-s32 KalayTolbiDocks_Initialize(void) {
+s32 Scene_Initialize(void) {
   if (gMainRoutineWork.entrance == KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO) {
     GameFlag_Set(FLAG_COLOSSO_OVER);
   }

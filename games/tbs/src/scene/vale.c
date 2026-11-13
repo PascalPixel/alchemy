@@ -334,15 +334,15 @@ enum ValeAnimation {
 /// The stone pillar below the cliff stands in its east column.
 #define FLAG_VALE_PILLAR_IN_EAST_COLUMN FLAG_AREA_TEMP_16
 
-const struct SceneEntrance *Vale_GetEntrances(void) { return gVale_Entrances; }
+const struct SceneEntrance *Scene_GetEntrances(void) { return gVale_Entrances; }
 
-const struct SceneExitRegion *Vale_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Vale_GetExits(void) { return gVale_Exits; }
+const u32 *Scene_GetExits(void) { return gVale_Exits; }
 
 /// Places the villagers for the story so far, or for the roof repair
 /// (VALE_FROM_TITLE).
-const struct ActorPlacement *Vale_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.entrance == VALE_FROM_TITLE)
     return gVale_RepairActorPlacements;
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
@@ -366,7 +366,7 @@ static void Vale_CatchNutAfterKalay(void) {
 
 /// Vale's triggers for the story so far: before leaving, after leaving, or
 /// back from Kalay.
-const struct Trigger *Vale_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
     return gVale_TriggersAfterKalay;
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0)
@@ -1470,7 +1470,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
 
 /// Vale's setup plays the roof mending (VALE_FROM_TITLE) or its end (entrance
 /// 17, once).
-s32 Vale_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 set;
 

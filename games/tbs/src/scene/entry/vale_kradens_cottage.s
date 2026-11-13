@@ -1,7 +1,0 @@
-	.include "games/tbs/src/system/overlay/imports.inc"
-	overlay_veneer ValeKradensCottage_Initialize
-	overlay_veneer ValeKradensCottage_GetEntrances
-	overlay_veneer ValeKradensCottage_GetExits
-	overlay_veneer ValeKradensCottage_GetActorPlacements
-	overlay_veneer ValeKradensCottage_GetTriggers
-	overlay_veneer ValeKradensCottage_GetRegions

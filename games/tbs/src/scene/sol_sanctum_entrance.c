@@ -29,7 +29,7 @@
 ///
 /// SceneId_SolSanctumReliefs is one scene, but each relief room has actor
 /// placement and trigger tables of its own.
-/// SolSanctumEntrance_GetActorPlacements and _GetTriggers choose them by the
+/// Scene_GetActorPlacements and _GetTriggers choose them by the
 /// entrance the party came in at, so a room's statues and their events exist
 /// only while the party is in it.
 ///
@@ -149,7 +149,7 @@ s32 gSolSanctumEntrance_RumbleTimer __attribute__((section(".bss")));
 
 /// Returns Sol Entrance's entrances (SceneId_SolEntrance) or Sol
 /// Sanctum's (SceneId_SolSanctumReliefs).
-const struct SceneEntrance *SolSanctumEntrance_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_SolEntrance) {
@@ -161,14 +161,14 @@ const struct SceneEntrance *SolSanctumEntrance_GetEntrances(void) {
   return gSolSanctumEntrance_FallbackEntrances;
 }
 
-const struct SceneExitRegion *SolSanctumEntrance_GetRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-const u32 *SolSanctumEntrance_GetExits(void) {
+const u32 *Scene_GetExits(void) {
   return gSolSanctumEntrance_Exits;
 }
 
 /// Selects the actors for the scene and, in Sol Sanctum, the room.
-const struct ActorPlacement *SolSanctumEntrance_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *table;
   s32 firstStatueRoomEntrance =
       SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM;
@@ -196,8 +196,8 @@ const struct ActorPlacement *SolSanctumEntrance_GetActorPlacements(void) {
 }
 
 /// Selects the events for the scene and room, by the same entrances as
-/// SolSanctumEntrance_GetActorPlacements.
-const struct Trigger *SolSanctumEntrance_GetTriggers(void) {
+/// Scene_GetActorPlacements.
+const struct Trigger *Scene_GetTriggers(void) {
   s32 firstStatueRoomEntrance =
       SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM;
 
@@ -558,7 +558,7 @@ static void SolSanctumEntrance_PushStatue(void) {
 }
 
 /// Sets up Sol Entrance or Sol Sanctum.
-s32 SolSanctumEntrance_Initialize(void) {
+s32 Scene_Initialize(void) {
   s32 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_SolEntrance) {

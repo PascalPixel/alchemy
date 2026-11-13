@@ -43,7 +43,7 @@
 /// SolSanctumLunaSolRoomsCellBehavior). One of three scene flags remembers
 /// which colours show, so a return after a battle keeps them.
 ///
-/// On entry SolSanctumLunaSolRooms_Initialize copies each lit quarter into its
+/// On entry Scene_Initialize copies each lit quarter into its
 /// FLAG_SOL_SANCTUM_*_LIGHT_SHOWN. It redraws the pictures, the floor and the
 /// open way up from the story flags, unless the entrance's own event draws
 /// them.
@@ -154,27 +154,27 @@ static void SolSanctumLunaSolRooms_ShowMessageAndWait(s32 speaker,
                                                       s32 waitFrames);
 static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void);
 
-const struct SceneEntrance *SolSanctumLunaSolRooms_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSolSanctumLunaSolRoomsEntrances;
 }
 
-const struct SceneExitRegion *SolSanctumLunaSolRooms_GetRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return 0;
 }
 
-const u32 *SolSanctumLunaSolRooms_GetExits(void) {
+const u32 *Scene_GetExits(void) {
   return gSolSanctumLunaSolRoomsExits;
 }
 
 /// Returns the eight statues, four in each room, Kraden, Jenna and Garet, all
 /// always placed.
-const struct ActorPlacement *SolSanctumLunaSolRooms_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gSolSanctumLunaSolRoomsActorPlacements;
 }
 
 /// Returns the floor's cell behaviors that tint the rooms, Kraden's talk
 /// and events, the floor symbol and the Herb's chest.
-const struct Trigger *SolSanctumLunaSolRooms_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gSolSanctumLunaSolRoomsTriggers;
 }
 
@@ -1195,7 +1195,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
 
 /// Sets up Sol Sanctum's rooms of Sol and Luna and plays the event this
 /// entrance calls for.
-s32 SolSanctumLunaSolRooms_Initialize(void) {
+s32 Scene_Initialize(void) {
   s32 playedEntranceEvent;
   s32 anyLightLit;
 

@@ -265,25 +265,25 @@ static s32 TolbiShipMast_ShrinkAndStopActor(struct Actor *actor) {
 
 /// Returns the entrances, which are the one from the deck's ladder and the
 /// voyage's events.
-const struct SceneEntrance *TolbiShipMast_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gTolbiShipMast_Entrances;
 }
 
 /// Returns the ladder's three-dimensional activation region.
-const struct SceneExitRegion *TolbiShipMast_GetRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return gTolbiShipMast_Regions;
 }
 
 /// Returns exits to the deck and the continuing ship scenes.
-const u32 *TolbiShipMast_GetExits(void) { return gTolbiShipMast_Exits; }
+const u32 *Scene_GetExits(void) { return gTolbiShipMast_Exits; }
 
 /// Returns the lookout, the only actor placed.
-const struct ActorPlacement *TolbiShipMast_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gTolbiShipMast_ActorPlacements;
 }
 
 /// Returns the ladder, lookout dialogue and Anchor Charm examine triggers.
-const struct Trigger *TolbiShipMast_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gTolbiShipMast_Triggers;
 }
 
@@ -308,7 +308,7 @@ static void TolbiShipMast_FindAnchorCharm(void) {
 /// The mast's setup sways the view while the ship is under way, puts the
 /// lookout to his spot once the charm is back, and plays what the entrance
 /// calls for.
-s32 TolbiShipMast_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *leader;
 
   GameFlag_Set(FLAG_RETREAT_BLOCKED);

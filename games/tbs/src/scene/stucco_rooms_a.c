@@ -133,7 +133,7 @@ static void StuccoRoomsA_ApplyRoomState(void);
 
 /// Selects the entrance table of Kalay's houses and inn, or of the
 /// Kalay Sanctum.
-const struct SceneEntrance *StuccoRoomsA_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_StuccoRoomsA) {
@@ -145,12 +145,12 @@ const struct SceneEntrance *StuccoRoomsA_GetEntrances(void) {
   return gStuccoRoomsA_NoEntrances;
 }
 
-const struct SceneExitRegion *StuccoRoomsA_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *StuccoRoomsA_GetExits(void) { return gStuccoRoomsA_Exits; }
+const u32 *Scene_GetExits(void) { return gStuccoRoomsA_Exits; }
 
 /// The inn's rooms share one actor placement table and the houses another.
-const struct ActorPlacement *StuccoRoomsA_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_StuccoRoomsA) {
@@ -183,7 +183,7 @@ const struct ActorPlacement *StuccoRoomsA_GetActorPlacements(void) {
 
 /// Selects room dialogue with the same entrance grouping as the
 /// actor placements.
-const struct Trigger *StuccoRoomsA_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s32 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_StuccoRoomsA) {
@@ -337,7 +337,7 @@ static void StuccoRoomsA_OpenDoorAndExit(void) {
 
 /// Sets the opening transition and restores room-specific actors and
 /// tiles.
-s32 StuccoRoomsA_Initialize(void) {
+s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   if (gMainRoutineWork.next == (s32)&SceneId_StuccoRoomsA) {

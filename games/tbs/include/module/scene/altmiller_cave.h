@@ -6,12 +6,12 @@
 
 struct LightWheel;
 
-const struct SceneEntrance *AltmillerCave_GetEntrances(void);
-const struct SceneExitRegion *AltmillerCave_GetRegions(void);
-const u32 *AltmillerCave_GetExits(void);
-const struct ActorPlacement *AltmillerCave_GetActorPlacements(void);
-const struct Trigger *AltmillerCave_GetTriggers(void);
-s32 AltmillerCave_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern struct LightWheel *gAltmillerCave_LightWheel;
 extern struct SceneEntrance gAltmillerCave_Entrances[];
 extern u32 gAltmillerCave_Exits[];

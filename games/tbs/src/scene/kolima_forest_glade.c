@@ -52,18 +52,18 @@ enum KolimaForestGladeActorId {
 
 /// Where the party enters, from SceneId_KolimaForestEntrance and
 /// SceneId_KolimaForestCliff.
-const struct SceneEntrance *KolimaForestGlade_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gKolimaForestGlade_Entrances;
 }
 
-const struct SceneExitRegion *KolimaForestGlade_GetRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
 /// The ways on into the forest (SceneId_KolimaForestCliff) and back
 /// (SceneId_KolimaForestEntrance).
-const u32 *KolimaForestGlade_GetExits(void) { return gKolimaForestGlade_Exits; }
+const u32 *Scene_GetExits(void) { return gKolimaForestGlade_Exits; }
 
 /// The three logs and the Nut.
-const struct ActorPlacement *KolimaForestGlade_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gKolimaForestGlade_ActorPlacements;
 }
 
@@ -86,12 +86,12 @@ static void KolimaForestGlade_CatchNut(void) {
 }
 
 /// The logs, the Nut and the two ways out.
-const struct Trigger *KolimaForestGlade_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gKolimaForestGlade_Triggers;
 }
 
 /// Sets up the floating Nut and the logs on entry.
-s32 KolimaForestGlade_Initialize(void) {
+s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_NUT_CAUGHT) == 0) {

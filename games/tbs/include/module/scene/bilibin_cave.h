@@ -4,12 +4,12 @@
 #include "types.h"
 #include "scene_tables.h"
 
-const struct SceneEntrance *BilibinCave_GetEntrances(void);
-const struct SceneExitRegion *BilibinCave_GetRegions(void);
-const u32 *BilibinCave_GetExits(void);
-const struct ActorPlacement *BilibinCave_GetActorPlacements(void);
-const struct Trigger *BilibinCave_GetTriggers(void);
-s32 BilibinCave_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern s32 gBilibinCave_ClearSpriteScript[];
 extern struct SceneEntrance gBilibinCaveEntrancesOther[];
 extern struct SceneEntrance gBilibinCaveEntranceEntrances[];

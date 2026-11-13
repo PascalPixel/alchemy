@@ -7,7 +7,7 @@
 /// end opens onto the World Map farther north.
 ///
 /// No one speaks here. Each scene is a run of Psynergy puzzles. The getters
-/// pick its tables by gMainRoutineWork.next, and BilibinCave_Initialize
+/// pick its tables by gMainRoutineWork.next, and Scene_Initialize
 /// restores what the party has already solved in the scene being entered.
 ///
 /// At the Bilibin Cave Entrance, entered from the World Map, Growth on a sprout
@@ -164,7 +164,7 @@ static s32 BilibinCave_ClearScriptedActorSpriteFlags(struct Actor *actor) {
   return 0;
 }
 
-const struct SceneEntrance *BilibinCave_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_BilibinCaveEntrance) {
@@ -179,11 +179,11 @@ const struct SceneEntrance *BilibinCave_GetEntrances(void) {
   return gBilibinCaveEntrancesOther;
 }
 
-const struct SceneExitRegion *BilibinCave_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *BilibinCave_GetExits(void) { return gBilibinCaveExits; }
+const u32 *Scene_GetExits(void) { return gBilibinCaveExits; }
 
-const struct ActorPlacement *BilibinCave_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_BilibinCaveEntrance) {
@@ -198,7 +198,7 @@ const struct ActorPlacement *BilibinCave_GetActorPlacements(void) {
   return gBilibinCaveActorPlacementsOther;
 }
 
-const struct Trigger *BilibinCave_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_BilibinCaveEntrance) {
@@ -374,7 +374,7 @@ static void BilibinCave_StopFootprints(void) {
 }
 
 /// Sets up the scene being entered, with its puzzles already solved.
-s32 BilibinCave_Initialize(void) {
+s32 Scene_Initialize(void) {
   s16 variant = gMainRoutineWork.next;
 
   if (variant == (s32)&SceneId_BilibinCaveEntrance) {

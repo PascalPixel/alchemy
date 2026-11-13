@@ -252,19 +252,19 @@ static s32 Imil_UpdateShiver(struct Actor *actor) {
 #include "shared/actor_facing.h"
 
 /// Imil is two scenes: the village, and its houses and Sanctum.
-const struct SceneEntrance *Imil_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_IceRooms) {
     return gImil_RoomEntrances;
   }
   return gImil_TownEntrances;
 }
 
-const struct SceneExitRegion *Imil_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Imil_GetExits(void) { return gImil_Exits; }
+const u32 *Scene_GetExits(void) { return gImil_Exits; }
 
 /// Once Saturos is beaten at Mercury Lighthouse, the villagers are well again.
-const struct ActorPlacement *Imil_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *script;
 
   if (gMainRoutineWork.next == ((s32)&SceneId_IceRooms)) {
@@ -296,7 +296,7 @@ static void Imil_StartIceSlide(void) { Imil_RunIceSlide(); }
 
 /// The village's, or the houses' and the Sanctum's, conversations and
 /// Psynergy targets.
-const struct Trigger *Imil_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_IceRooms) {
     return gImil_RoomTriggers;
   }
@@ -750,7 +750,7 @@ static void Imil_TalkToJustin(void) {
 }
 
 /// Sets up the scene as the party enters.
-s32 Imil_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *leader;
   s32 entrance;
 

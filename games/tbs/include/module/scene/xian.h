@@ -4,12 +4,12 @@
 #include "types.h"
 #include "scene_tables.h"
 
-const struct SceneEntrance *Xian_GetEntrances(void);
-const struct SceneExitRegion *Xian_GetRegions(void);
-const u32 *Xian_GetExits(void);
-const struct ActorPlacement *Xian_GetActorPlacements(void);
-const struct Trigger *Xian_GetTriggers(void);
-s32 Xian_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern s32 gXian_WaterCarrierRoute[];
 extern s32 gXian_TrainingTreeJump[];
 extern s32 gXian_TreeImpactScript[];

@@ -14,10 +14,10 @@
 ///   within Kolima Forest.
 ///
 ///   Until the curse is lifted in Kolima Forest (FLAG_KOLIMA_CURSE_LIFTED),
-///   Kolima_GetActorPlacements gives the nine villagers (ACTOR_FIRST_VILLAGER
+///   Scene_GetActorPlacements gives the nine villagers (ACTOR_FIRST_VILLAGER
 ///   to ACTOR_LAST_VILLAGER) tree sprites that stand still. Sparkles twinkle on
 ///   the ground (ACTOR_FIRST_SPARKLE and the three after it, and five more that
-///   Kolima_Initialize places). The villagers answer only Mind Read, with the
+///   Scene_Initialize places). The villagers answer only Mind Read, with the
 ///   thoughts of people stuck as trees.
 ///
 ///   Afterwards they are people again and talk of the curse, the holy tree and
@@ -229,7 +229,7 @@ static s32 Kolima_UpdateFallingDebris(struct Actor *debris) {
 #include "shared/actor_facing.h"
 
 /// Selects the entrances of Kolima, Kolima Tunnel or Kolima Bridge.
-const struct SceneEntrance *Kolima_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_KolimaBridge) {
@@ -243,7 +243,7 @@ const struct SceneEntrance *Kolima_GetEntrances(void) {
 
 /// Only Kolima Tunnel has regions: its two ways out,
 /// KOLIMA_TUNNEL_TO_LOG_ROOMS_C and KOLIMA_TUNNEL_TO_KOLIMA.
-const struct SceneExitRegion *Kolima_GetRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_KolimaTunnel) {
     return gKolimaTunnelRegions;
   }
@@ -252,11 +252,11 @@ const struct SceneExitRegion *Kolima_GetRegions(void) {
 
 /// The exits of all three scenes, each scene's after its header word (an exit
 /// of kind 0).
-const u32 *Kolima_GetExits(void) { return gKolimaExits; }
+const u32 *Scene_GetExits(void) { return gKolimaExits; }
 
 /// Selects the people of Kolima or Kolima Bridge. Kolima Tunnel has none. In
 /// Kolima the villagers are trees until the curse is lifted.
-const struct ActorPlacement *Kolima_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_Kolima) {
@@ -296,7 +296,7 @@ static void Kolima_GraniteJoins(void) {
 
 /// Selects Kolima Bridge's triggers, or the table Kolima and Kolima Tunnel
 /// share.
-const struct Trigger *Kolima_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_KolimaBridge) {
     return gKolimaBridgeTriggers;
   }
@@ -443,7 +443,7 @@ static void Kolima_LowerBridge(void) {
 /// Sets up whichever scene is entered: Kolima Bridge as the curse and the
 /// bridge leave it (Kolima_RestoreBridgeState), Kolima Tunnel with a window
 /// transition, and Kolima itself.
-s32 Kolima_Initialize(void) {
+s32 Scene_Initialize(void) {
   s16 sceneId;
   u32 actorId;
   const s32 *table;
@@ -1743,7 +1743,7 @@ struct ActorPlacement gKolimaActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-/// Five more sparkles, placed by Kolima_Initialize once the curse has been seen
+/// Five more sparkles, placed by Scene_Initialize once the curse has been seen
 /// and kept while it lasts.
 struct ActorPlacement gKolima_EntryScript[] = {
     ACTOR_PLACEMENT(SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,

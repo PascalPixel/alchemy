@@ -4,12 +4,12 @@
 #include "types.h"
 #include "scene_tables.h"
 
-const struct SceneEntrance *LogRoomsC_GetEntrances(void);
-const struct SceneExitRegion *LogRoomsC_GetRegions(void);
-const u32 *LogRoomsC_GetExits(void);
-const struct ActorPlacement *LogRoomsC_GetActorPlacements(void);
-const struct Trigger *LogRoomsC_GetTriggers(void);
-s32 LogRoomsC_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern struct SceneEntrance gLogRoomsC_Entrances[];
 extern u32 gLogRoomsC_Exits[];
 extern struct ActorPlacement gLogRoomsC_ActorPlacements[];

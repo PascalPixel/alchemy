@@ -5,8 +5,8 @@
 /// Kraden, "a trained Alchemy sage" in his own words, came to Vale to study Mt.
 /// Aleph and Alchemy.
 ///
-/// One actor placement table serves every visit. ValeKradensCottage_Initialize
-/// removes the people a visit does not use, and ValeKradensCottage_GetTriggers
+/// One actor placement table serves every visit. Scene_Initialize
+/// removes the people a visit does not use, and Scene_GetTriggers
 /// picks the events for the time of the story.
 ///
 /// On the stormy night of the prologue (FLAG_VALE_STORM), the storm's scene
@@ -144,26 +144,26 @@ enum ValeKradensCottageActorId {
 /// walking in (cell behavior 3, the exit into the cottage) skips its opening.
 #define FLAG_VALE_KRADENS_DOOR_OPEN FLAG_SCENE_TEMP_42
 
-const struct SceneEntrance *ValeKradensCottage_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gValeKradensCottage_Entrances;
 }
 
-const struct SceneExitRegion *ValeKradensCottage_GetRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return NULL;
 }
 
-const u32 *ValeKradensCottage_GetExits(void) {
+const u32 *Scene_GetExits(void) {
   return gValeKradensCottage_Exits;
 }
 
 /// Returns the one actor placement table for every visit.
-/// ValeKradensCottage_Initialize removes the actors a visit does not use.
-const struct ActorPlacement *ValeKradensCottage_GetActorPlacements(void) {
+/// Scene_Initialize removes the actors a visit does not use.
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gValeKradensCottage_ActorPlacements;
 }
 
 /// Selects the events for the current visit to Vale.
-const struct Trigger *ValeKradensCottage_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     return gValeKradensCottage_TriggersAfterKalay;
   }
@@ -884,7 +884,7 @@ static void ValeKradensCottage_OverhearKraden(void) {
 
 /// Arriving in Kraden's part of Vale places the actors for the storm or for the
 /// day, and plays the arrival from the cottage.
-s32 ValeKradensCottage_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
 
   if (gMainRoutineWork.entrance ==

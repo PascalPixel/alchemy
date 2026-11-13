@@ -3,7 +3,7 @@
 /// and the town gate, Vale's way out to the world.
 ///
 /// The scene sees the prologue end and the journey begin.
-/// ValePlaza_GetActorPlacements and ValePlaza_GetTriggers pick its people and
+/// Scene_GetActorPlacements and Scene_GetTriggers pick its people and
 /// events by the time of the story. In story order:
 ///
 /// - The stormy night of the prologue (FLAG_VALE_STORM), when the villagers
@@ -43,7 +43,7 @@
 /// - After the party has left (FLAG_VALE_PARTY_LEFT), the villagers point the
 ///   way to Vault and talk of the eruption, whose sparkles they take for
 ///   crushed Psynergy Stones. A large Psynergy Stone has fallen on the hut,
-///   whose roof ValePlaza_Initialize redraws. Only now does the town gate lead
+///   whose roof Scene_Initialize redraws. Only now does the town gate lead
 ///   out (ValePlaza_LeaveThroughTownGate).
 /// - Back from Kalay (FLAG_KALAY_REACHED), the villagers welcome Isaac home.
 ///   The hut's owner finds the stone gone, leaving a hole in his roof
@@ -82,7 +82,7 @@
 ///   VALE_PLAZA_TO_BILIBIN (ValePlaza_SetProgressFlagsAndExit).
 ///
 /// The hut's owner (ACTOR_HUT_OWNER) is never seen by day after the prologue.
-/// ValePlaza_Initialize hides the storm's Jenna by number without testing
+/// Scene_Initialize hides the storm's Jenna by number without testing
 /// FLAG_VALE_STORM, and by day that number is his (a BUG, fixed by BUGFIX).
 ///
 /// A villager showing Psynergy flashes white
@@ -187,7 +187,7 @@ enum ValePlazaDayActorId {
   /// hole in my roof". "Since food is stored in this hut, it isn't scary at
   /// all..."
   ///
-  /// Once the prologue is over, ValePlaza_Initialize hides him by day as if he
+  /// Once the prologue is over, Scene_Initialize hides him by day as if he
   /// were the storm's ACTOR_STORM_JENNA (a BUG), so only a debug jump past the
   /// prologue shows him. The renders show him by the hut with no story flags
   /// set and gone once the party has left.
@@ -335,15 +335,15 @@ static void ValePlaza_SetProgressFlagsAndExit(void);
 
 #include "shared/actor_facing.h"
 
-const struct SceneEntrance *ValePlaza_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gValePlaza_Entrances;
 }
 
-const struct SceneExitRegion *ValePlaza_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 /// Returns the stormy night's exits while FLAG_VALE_STORM is set, else the
 /// day's.
-const u32 *ValePlaza_GetExits(void) {
+const u32 *Scene_GetExits(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     return gValePlaza_StormExits;
   }
@@ -352,7 +352,7 @@ const u32 *ValePlaza_GetExits(void) {
 
 /// Selects the actor placements: the stormy night's, the farewell's
 /// (VALE_PLAZA_FROM_SANCTUM), after Kalay, else the day's.
-const struct ActorPlacement *ValePlaza_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     return gValePlaza_StormActorPlacements;
   }
@@ -380,7 +380,7 @@ static void ValePlaza_UsePsynergyStone(void) {
 
 /// Selects the events: after Kalay, after the party has left, the farewell's
 /// (VALE_PLAZA_FROM_SANCTUM), the stormy night's, else the day's.
-const struct Trigger *ValePlaza_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     return gValePlaza_TriggersAfterKalay;
   }
@@ -542,7 +542,7 @@ static void ValePlaza_AskAboutJourney(void) {
 /// An old man shows Isaac the Psynergy Stone that fell on his hut.
 ///
 /// Reached by talking to ACTOR_HUT_OWNER after the party has left Vale. In a
-/// play-through ValePlaza_Initialize has hidden him by then (a BUG). So only
+/// play-through Scene_Initialize has hidden him by then (a BUG). So only
 /// the debug menus, setting FLAG_VALE_PARTY_LEFT without the prologue's flags,
 /// reach it.
 static void ValePlaza_TalkAboutFallenStone(void) {
@@ -774,7 +774,7 @@ static void ValePlaza_BlowAwayThirdIvy(void) {
 }
 
 /// Arriving in this part of Vale sets the scene up for the time of the story.
-s32 ValePlaza_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 flag;
   s32 verticalScale;

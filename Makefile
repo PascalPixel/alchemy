@@ -284,13 +284,12 @@ $(ELF): $(LINKED) $(STREAM) $(LIBGCC) $(LD_SCRIPT) $(BUILD)/objects.mk
 $(BUILD)/symbols.elf: $(LINKED) $(LIBGCC) $(LD_SCRIPT) $(BUILD)/objects.mk
 	$(LD) --unresolved-symbols=ignore-all --no-warn-mismatch $(LDFLAGS) -o $@ $(LINKED) $(LIBGCC)
 
-# An overlay's import table (⚓️): a far-call stub for each main-image routine
+# An overlay's import table: a far-call stub for each main-image routine
 # its code calls and does not define, copied from the game's list of them,
 # imports.inc, in the list's order. The overlay's script places it as
 # "*/imports.o".
-IMPORT_LIST_tla := games/tla/src/system/overlay/imports.inc
-IMPORT_LIST := $(IMPORT_LIST_$(GAME))
-OVERLAY_IMPORTS = $(if $(IMPORT_LIST),$(BUILD)/overlays/$*/imports.o)
+IMPORT_LIST := games/$(GAME)/src/system/overlay/imports.inc
+OVERLAY_IMPORTS = $(BUILD)/overlays/$*/imports.o
 .SECONDEXPANSION:
 $(BUILD)/overlays/%/imports.s: $$(OVERLAY_OBJS_$$*) $(IMPORT_LIST)
 	@mkdir -p $(@D)

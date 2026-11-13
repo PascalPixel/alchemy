@@ -51,16 +51,16 @@ enum {
 /// can cross.
 #define FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER FLAG_SCENE_TEMP_01
 
-const struct SceneEntrance *KolimaForestCliff_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gKolimaForestCliffEntrances;
 }
 
-const struct SceneExitRegion *KolimaForestCliff_GetRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-const u32 *KolimaForestCliff_GetExits(void) { return gKolimaForestCliffExits; }
+const u32 *Scene_GetExits(void) { return gKolimaForestCliffExits; }
 
 /// The three logs.
-const struct ActorPlacement *KolimaForestCliff_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gKolimaForestCliffActorPlacements;
 }
 
@@ -93,12 +93,12 @@ static void KolimaForestCliff_PushLog(void) {
 #include "shared/kolima_jump.h"
 
 /// The logs, the two ways out and the hop east from the bank.
-const struct Trigger *KolimaForestCliff_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gKolimaForestCliffTriggers;
 }
 
 /// Sets up the logs and the forest's colours on entry.
-s32 KolimaForestCliff_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct FieldWork *work = gFieldWork;
 
   work->transition =

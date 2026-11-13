@@ -5,12 +5,12 @@
 #include "field.h"
 #include "scene_tables.h"
 
-const struct SceneEntrance *VenusLighthouse_GetEntrances(void);
-const struct SceneExitRegion *VenusLighthouse_GetRegions(void);
-const u32 *VenusLighthouse_GetExits(void);
-const struct ActorPlacement *VenusLighthouse_GetActorPlacements(void);
-const struct Trigger *VenusLighthouse_GetTriggers(void);
-s32 VenusLighthouse_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern u32 gPushedActor_DirectionSteps[];
 extern struct SwitchCell gVenusThirdFloorSockets[];
 extern u32 gVenusBalancePlatformHeights[];

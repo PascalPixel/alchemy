@@ -5,12 +5,12 @@
 #include "event.h"
 #include "scene_tables.h"
 
-const struct SceneEntrance *StuccoRoomsA_GetEntrances(void);
-const struct SceneExitRegion *StuccoRoomsA_GetRegions(void);
-const u32 *StuccoRoomsA_GetExits(void);
-const struct ActorPlacement *StuccoRoomsA_GetActorPlacements(void);
-const struct Trigger *StuccoRoomsA_GetTriggers(void);
-s32 StuccoRoomsA_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern struct SceneEntrance gStuccoRoomsA_NoEntrances[];
 extern struct SceneEntrance gStuccoRoomsA_HouseEntrances[];
 extern struct SceneEntrance gStuccoRoomsA_SanctumEntrances[];

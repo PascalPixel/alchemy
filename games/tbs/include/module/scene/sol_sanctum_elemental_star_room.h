@@ -4,13 +4,13 @@
 #include "types.h"
 #include "scene_tables.h"
 
-const struct SceneEntrance *SolSanctumElementalStarRoom_GetEntrances(void);
-const struct SceneExitRegion *SolSanctumElementalStarRoom_GetRegions(void);
-const u32 *SolSanctumElementalStarRoom_GetExits(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
 const struct ActorPlacement *
-SolSanctumElementalStarRoom_GetActorPlacements(void);
-const struct Trigger *SolSanctumElementalStarRoom_GetTriggers(void);
-s32 SolSanctumElementalStarRoom_Initialize(void);
+Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern s32 gSolSanctumElementalStarRoom_AngleScript[];
 extern s32 gItemIcon_GrowScript[];
 extern struct SceneEntrance gSolSanctumElementalStarRoom_Entrances[];

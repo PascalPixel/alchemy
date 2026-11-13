@@ -4,12 +4,12 @@
 #include "types.h"
 #include "scene_tables.h"
 
-const struct SceneEntrance *KolimaForestGlade_GetEntrances(void);
-const struct SceneExitRegion *KolimaForestGlade_GetRegions(void);
-const u32 *KolimaForestGlade_GetExits(void);
-const struct ActorPlacement *KolimaForestGlade_GetActorPlacements(void);
-const struct Trigger *KolimaForestGlade_GetTriggers(void);
-s32 KolimaForestGlade_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern struct SceneEntrance gKolimaForestGlade_Entrances[];
 extern u32 gKolimaForestGlade_Exits[];
 extern struct ActorPlacement gKolimaForestGlade_ActorPlacements[];

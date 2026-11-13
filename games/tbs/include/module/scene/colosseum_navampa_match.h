@@ -4,12 +4,12 @@
 #include "types.h"
 #include "scene_tables.h"
 
-const struct SceneEntrance *ColosseumNavampaMatch_GetEntrances(void);
-const struct SceneExitRegion *ColosseumNavampaMatch_GetRegions(void);
-const u32 *ColosseumNavampaMatch_GetExits(void);
-const struct ActorPlacement *ColosseumNavampaMatch_GetActorPlacements(void);
-const struct Trigger *ColosseumNavampaMatch_GetTriggers(void);
-s32 ColosseumNavampaMatch_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern const s32 gColosseumNavampaMatch_SidewalkLogOffBelt[];
 extern const s8 gColosseumNavampaMatch_WallWedgePattern[][6];
 extern const u16 gColosseumNavampaMatch_FacingAngles[];

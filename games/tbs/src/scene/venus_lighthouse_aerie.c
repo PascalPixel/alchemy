@@ -3,7 +3,7 @@
 /// and the only scene of this overlay.
 ///
 /// What happens here is one chain of events cut by two battles and two trips
-/// to the World Map. Each part starts in VenusLighthouseAerie_Initialize from
+/// to the World Map. Each part starts in Scene_Initialize from
 /// the entrance the part before sent the party to. Every arrival blocks
 /// Retreat and sets FLAG_VENUS_LIGHTHOUSE_LIT.
 ///
@@ -251,21 +251,21 @@ static void VenusLighthouseAerie_StepSpriteRotation(struct Actor *actor) {
 
 #include "shared/actor_heading.h"
 
-const struct SceneEntrance *VenusLighthouseAerie_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gVenusLighthouseAerieEntrances;
 }
 
-const struct SceneExitRegion *VenusLighthouseAerie_GetRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return 0;
 }
 
-const u32 *VenusLighthouseAerie_GetExits(void) {
+const u32 *Scene_GetExits(void) {
   return gVenusLighthouseAerieExits;
 }
 
 /// Returns the beacon's statues, the platforms, Saturos and Menardi, Felix and
 /// Sheba, the party and the beacon effects.
-const struct ActorPlacement *VenusLighthouseAerie_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gVenusLighthouseAerieActorPlacements;
 }
 
@@ -374,12 +374,12 @@ static void VenusLighthouseAerie_FloatPlatforms(void) {
 }
 
 /// Returns the platform and confrontation step triggers.
-const struct Trigger *VenusLighthouseAerie_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gVenusLighthouseAerieTriggers;
 }
 
 /// Sets up the beacon's statues and the six platforms.
-s32 VenusLighthouseAerie_Initialize(void) {
+s32 Scene_Initialize(void) {
   s32 mirroredScale;
   u32 platformId;
   s16 entrance;

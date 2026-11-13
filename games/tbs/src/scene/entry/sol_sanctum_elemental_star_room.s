@@ -1,7 +1,0 @@
-	.include "games/tbs/src/system/overlay/imports.inc"
-	overlay_veneer SolSanctumElementalStarRoom_Initialize
-	overlay_veneer SolSanctumElementalStarRoom_GetEntrances
-	overlay_veneer SolSanctumElementalStarRoom_GetExits
-	overlay_veneer SolSanctumElementalStarRoom_GetActorPlacements
-	overlay_veneer SolSanctumElementalStarRoom_GetTriggers
-	overlay_veneer SolSanctumElementalStarRoom_GetRegions

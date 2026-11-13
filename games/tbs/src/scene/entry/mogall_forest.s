@@ -1,7 +1,0 @@
-	.include "games/tbs/src/system/overlay/imports.inc"
-	overlay_veneer MogallForest_Initialize
-	overlay_veneer MogallForest_GetEntrances
-	overlay_veneer MogallForest_GetExits
-	overlay_veneer MogallForest_GetActorPlacements
-	overlay_veneer MogallForest_GetTriggers
-	overlay_veneer MogallForest_GetRegions

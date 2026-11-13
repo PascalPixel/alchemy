@@ -134,22 +134,22 @@ s32 gKolimaForestTreeSparkFrame __attribute__((section(".bss")));
 s32 gKolimaForestTreePlaySparkSound __attribute__((section(".bss")));
 s32 gKolimaForestTreePaletteFrame __attribute__((section(".bss")));
 
-const struct SceneEntrance *KolimaForestTree_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gKolimaForestTreeEntrances;
 }
 
 /// The region at Tret's foot that leads into the Tret Tree.
-const struct SceneExitRegion *KolimaForestTree_GetRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return gKolimaForestTreeRegions;
 }
 
 /// The ways back (SceneId_KolimaForestFloodgate) and into the Tret Tree
 /// (SceneId_TreeRooms).
-const u32 *KolimaForestTree_GetExits(void) { return gKolimaForestTreeExits; }
+const u32 *Scene_GetExits(void) { return gKolimaForestTreeExits; }
 
 /// Tret and Laurel, the blank actors at their spots, the ones the party
 /// talks to, Tret's wrathful side, and Garet, Ivan and Mia for the healing.
-const struct ActorPlacement *KolimaForestTree_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gKolimaForestTreeActorPlacements;
 }
 
@@ -166,7 +166,7 @@ UNUSED static void KolimaForestTree_ExitTouchedRegion(void) {
 }
 
 /// Talking to Tret and Laurel, reading their minds, and Hermes' Water on Tret.
-const struct Trigger *KolimaForestTree_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gKolimaForestTreeTriggers;
 }
 
@@ -743,7 +743,7 @@ static void KolimaForestTree_RestoreTret(void) {
 }
 
 /// Sets up Tret, Laurel and the forest's colours on entry.
-s32 KolimaForestTree_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *tretBlank;
   struct Actor *tretsWrathfulSide;
   struct Actor *laurelBlank;

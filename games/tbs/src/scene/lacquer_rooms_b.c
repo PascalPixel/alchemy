@@ -22,7 +22,7 @@
 /// The room behind Master Feh's school
 /// (LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) is reached only from the
 /// school (LACQUER_ROOMS_A_FEHS_SCHOOL_TO_HOUSE, in fuchin_temple.c) and has
-/// its own tables (LacquerRoomsB_GetTriggers).
+/// its own tables (Scene_GetTriggers).
 ///
 /// Once Xian has heard of Hsu, Master Feh, Feizhi and Hsu are there, Hsu lying
 /// in the bed (ANIM_HSU_IN_BED; the room's render with Hsu placed).
@@ -99,16 +99,16 @@ enum { ANIM_HSU_IN_BED = 6 };
 #include "ability_ids.h"
 #include "item_ids.h"
 
-const struct SceneEntrance *LacquerRoomsB_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gLacquerRoomsB_Entrances;
 }
 
-const struct SceneExitRegion *LacquerRoomsB_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *LacquerRoomsB_GetExits(void) { return gLacquerRoomsB_Exits; }
+const u32 *Scene_GetExits(void) { return gLacquerRoomsB_Exits; }
 
 /// The room behind the school places only Master Feh, Feizhi and Hsu.
-const struct ActorPlacement *LacquerRoomsB_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.entrance ==
       LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
     return gLacquerRoomsB_SchoolRoomActorPlacements;
@@ -243,7 +243,7 @@ static void LacquerRoomsB_FeizhiThanksParty(void) {
 }
 
 /// The room behind the school has its own triggers.
-const struct Trigger *LacquerRoomsB_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.entrance ==
       LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
     return gLacquerRoomsB_SchoolRoomTriggers;
@@ -253,7 +253,7 @@ const struct Trigger *LacquerRoomsB_GetTriggers(void) {
 
 /// Opens the room through a window transition and places hidden still actors of
 /// SPRITE_CHEST's sheet (Actor_CreateConfigured).
-s32 LacquerRoomsB_Initialize(void) {
+s32 Scene_Initialize(void) {
   s16 entrance;
 
   gFieldWork->transition =

@@ -1,7 +1,0 @@
-	.include "games/tbs/src/system/overlay/imports.inc"
-	overlay_veneer ColosseumNavampaMatch_Initialize
-	overlay_veneer ColosseumNavampaMatch_GetEntrances
-	overlay_veneer ColosseumNavampaMatch_GetExits
-	overlay_veneer ColosseumNavampaMatch_GetActorPlacements
-	overlay_veneer ColosseumNavampaMatch_GetTriggers
-	overlay_veneer ColosseumNavampaMatch_GetRegions

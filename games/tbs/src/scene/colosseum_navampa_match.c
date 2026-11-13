@@ -12,7 +12,7 @@
 /// Stepping-Stone Stage, the Wall Wedge, the Free-Climb Area, the Moving
 /// Sidewalk Stage and another log-rolling area.
 ///
-/// ColosseumNavampaMatch_Initialize restores the stages from their temporary
+/// Scene_Initialize restores the stages from their temporary
 /// flags (FLAG_PLANT_GROWN to FLAG_LONG_LOG_IN_PLACE, and the stone's column
 /// from FLAG_STONE_COLUMN). Then it sets up the visit its entrance stands for.
 ///
@@ -178,7 +178,7 @@ enum {
 /// The temporary flags that keep what the friends changed on the stages, for
 /// the race, and the scales' state.
 ///
-/// ColosseumNavampaMatch_Initialize restores the stages from them.
+/// Scene_Initialize restores the stages from them.
 enum {
   FLAG_PLANT_GROWN = FLAG_AREA_TEMP_60, ///< by Growth, into a shortcut
   FLAG_WALL_WEDGE_HALTED =
@@ -205,19 +205,19 @@ enum {
 
 enum { PISTON_COUNT = 5 };
 
-const struct SceneEntrance *ColosseumNavampaMatch_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gColosseumNavampaMatchEntrances;
 }
 
-const struct SceneExitRegion *ColosseumNavampaMatch_GetRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return 0;
 }
 
-const u32 *ColosseumNavampaMatch_GetExits(void) {
+const u32 *Scene_GetExits(void) {
   return gColosseumNavampaMatchExits;
 }
 
-const struct ActorPlacement *ColosseumNavampaMatch_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gColosseumNavampaMatchActorPlacements;
 }
 
@@ -873,12 +873,12 @@ static void ColosseumNavampaMatch_PushWeightOrCheckAhead(void) {
   }
 }
 
-const struct Trigger *ColosseumNavampaMatch_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gColosseumNavampaMatchTriggers;
 }
 
 /// Sets up Colosseum Final 3 for the visit its entrance stands for.
-s32 ColosseumNavampaMatch_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 i;
   s32 height;

@@ -4,12 +4,12 @@
 #include "types.h"
 #include "scene_tables.h"
 
-const struct SceneEntrance *MercuryLighthouse_GetEntrances(void);
-const struct SceneExitRegion *MercuryLighthouse_GetRegions(void);
-const u32 *MercuryLighthouse_GetExits(void);
-const struct ActorPlacement *MercuryLighthouse_GetActorPlacements(void);
-const struct Trigger *MercuryLighthouse_GetTriggers(void);
-s32 MercuryLighthouse_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern s32 gMercuryLighthouse_RippleScript[];
 extern s32 gMercuryLighthouse_SparkScript[];
 extern s32 gMercuryLighthouse_RampScript[];

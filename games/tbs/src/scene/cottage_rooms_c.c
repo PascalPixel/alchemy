@@ -11,7 +11,7 @@
 /// third holds the inn with the restaurant beside it, and its stairs
 /// (COTTAGE_ROOMS_C_INN_TO_INN_UPSTAIRS and
 /// COTTAGE_ROOMS_C_INN_UPSTAIRS_TO_INN) join it to its upstairs rooms. Three
-/// other buildings hold villagers. CottageRoomsC_GetActorPlacements leaves out
+/// other buildings hold villagers. Scene_GetActorPlacements leaves out
 /// the actors of the rooms not in view.
 ///
 /// Everyone has a line for while Kolima's curse holds (FLAG_KOLIMA_CURSE_LIFTED
@@ -38,7 +38,7 @@
 /// Searching finds an Antidote, a Sleep Bomb and a Hard Nut, egg soup and
 /// omelettes in the ovens, and a book called "All About Items".
 ///
-/// CottageRoomsC_Initialize opens the rooms with a window around the leader
+/// Scene_Initialize opens the rooms with a window around the leader
 /// and draws one diner, ACTOR_BILIBIN_DINER, at a fixed sprite priority.
 ///
 /// He stands at the north edge of the restaurant's table, on cell (7, 49).
@@ -129,17 +129,17 @@ enum CottageRoomsCActorId {
   ACTOR_BILIBIN_VILLAGER_ANCIENT_TREES
 };
 
-const struct SceneEntrance *CottageRoomsC_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gCottageRoomsCEntrances;
 }
 
-const struct SceneExitRegion *CottageRoomsC_GetRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-const u32 *CottageRoomsC_GetExits(void) { return gCottageRoomsCExits; }
+const u32 *Scene_GetExits(void) { return gCottageRoomsCExits; }
 
 /// Marks actor placements outside the current room's view before
 /// actors are spawned.
-const struct ActorPlacement *CottageRoomsC_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   Scene_AssignViewFlags(gCottageRoomsCActorPlacements);
   return gCottageRoomsCActorPlacements;
 }
@@ -187,7 +187,7 @@ static void CottageRoomsC_TalkToItemMerchant(void) {
 }
 
 /// Returns both story stages' triggers.
-const struct Trigger *CottageRoomsC_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gCottageRoomsCTriggers;
 }
 
@@ -395,7 +395,7 @@ static void CottageRoomsC_ReadMiaAdmirersMind(void) {
 }
 
 /// Sets up Bilibin's buildings.
-s32 CottageRoomsC_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
 
   gFieldWork->transition =

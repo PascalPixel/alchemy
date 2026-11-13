@@ -11,7 +11,7 @@
 /// Pipeworks, the Broken Bridge and the Lumber Water Crossing Area.
 ///
 /// Isaac comes here three times, each time at its own entrance.
-/// ColosseumAzartMatch_Initialize blocks Retreat and restores the stages from
+/// Scene_Initialize blocks Retreat and restores the stages from
 /// their temporary flags (FLAG_PIPES_MOVED, FLAG_PIPEWORKS_PIPE_PUSHED,
 /// FLAG_PLANT_GROWN and the rock's column in FLAG_SECOND_ROCK_COLUMN), so that
 /// what the friends changed stays changed for the race. Then it sets up the
@@ -166,7 +166,7 @@ enum {
 /// The temporary flags that keep what the friends changed on the stages, for
 /// the race.
 ///
-/// ColosseumAzartMatch_Initialize restores them.
+/// Scene_Initialize restores them.
 enum {
   FLAG_PIPES_MOVED =
       FLAG_AREA_TEMP_01, ///< the Pipeworks' pipes, as water filled them
@@ -178,17 +178,17 @@ enum {
   FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11
 };
 
-const struct SceneEntrance *ColosseumAzartMatch_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gColosseumAzartMatch_Entrances;
 }
 
-const struct SceneExitRegion *ColosseumAzartMatch_GetRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-const u32 *ColosseumAzartMatch_GetExits(void) {
+const u32 *Scene_GetExits(void) {
   return gColosseumAzartMatch_Exits;
 }
 
-const struct ActorPlacement *ColosseumAzartMatch_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gColosseumAzartMatch_ActorPlacements;
 }
 
@@ -566,7 +566,7 @@ static void ColosseumAzartMatch_PushRockOrCheckAhead(void) {
   }
 }
 
-const struct Trigger *ColosseumAzartMatch_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gColosseumAzartMatch_Triggers;
 }
 
@@ -619,7 +619,7 @@ static void ColosseumAzartMatch_MarkFinishTerrain(s32 actorId) {
 }
 
 /// Sets up Colosseum Final 1 for the visit its entrance stands for.
-s32 ColosseumAzartMatch_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 hit;
   s32 x;

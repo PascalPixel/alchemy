@@ -4,12 +4,12 @@
 #include "types.h"
 #include "scene_tables.h"
 
-const struct SceneEntrance *VenusLighthouseAerie_GetEntrances(void);
-const struct SceneExitRegion *VenusLighthouseAerie_GetRegions(void);
-const u32 *VenusLighthouseAerie_GetExits(void);
-const struct ActorPlacement *VenusLighthouseAerie_GetActorPlacements(void);
-const struct Trigger *VenusLighthouseAerie_GetTriggers(void);
-s32 VenusLighthouseAerie_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern s32 gVenusLighthouseAerie_JoinLeaderAction[];
 extern s32 gVenusLighthouseAerie_StepBackWestAction[];
 extern s32 gVenusLighthouseAerie_StepBackEastAction[];

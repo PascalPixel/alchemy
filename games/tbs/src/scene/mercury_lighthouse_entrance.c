@@ -207,21 +207,21 @@ static void MercuryLighthouseEntrance_ChargeLights(void) {
   MercuryLighthouse_ChargeLights();
 }
 
-const struct SceneEntrance *MercuryLighthouseEntrance_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gMercuryLighthouseEntrance_Entrances;
 }
 
-const struct SceneExitRegion *MercuryLighthouseEntrance_GetRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return NULL;
 }
 
-const u32 *MercuryLighthouseEntrance_GetExits(void) {
+const u32 *Scene_GetExits(void) {
   return gMercuryLighthouseEntrance_Exits;
 }
 
 /// Returns Mia, the Lizard Man, the six statues and the Ply target.
 const struct ActorPlacement *
-MercuryLighthouseEntrance_GetActorPlacements(void) {
+Scene_GetActorPlacements(void) {
   return gMercuryLighthouseEntrance_ActorPlacements;
 }
 
@@ -260,7 +260,7 @@ static void MercuryLighthouseEntrance_LeaveDryPoolByPassage(void) {
 }
 
 /// Returns the floor's coord, bg, talk and Psynergy triggers.
-const struct Trigger *MercuryLighthouseEntrance_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gMercuryLighthouseEntrance_Triggers;
 }
 
@@ -376,7 +376,7 @@ static void MercuryLighthouseEntrance_FightLizardMan(void) {
 
 /// Sets up Mercury Lighthouse's ground floor, then plays the event of the
 /// entrance taken.
-s32 MercuryLighthouseEntrance_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct EffectOptions options;
   s32 velocity[3];
   struct Actor *actor;

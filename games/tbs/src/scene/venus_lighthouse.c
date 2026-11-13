@@ -5,7 +5,7 @@
 ///
 /// Each scene has its own entrance, actor placement and trigger tables
 /// (VenusLighthouseGroundFloor's entrances are the fallback table). All share
-/// one exit table. VenusLighthouse_Initialize redraws each scene's puzzles as
+/// one exit table. Scene_Initialize redraws each scene's puzzles as
 /// their flags left them, case by entrance. Inside, only the actors of the
 /// room entered are placed (CONDITION_IN_VIEW).
 ///
@@ -883,7 +883,7 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
 
 /// Selects the scene's entrances. VenusLighthouseGroundFloor takes the
 /// fallback table.
-const struct SceneEntrance *VenusLighthouse_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
@@ -905,13 +905,13 @@ const struct SceneEntrance *VenusLighthouse_GetEntrances(void) {
 }
 
 /// These scenes supply no exit regions.
-const struct SceneExitRegion *VenusLighthouse_GetRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
 /// Returns the packed exits shared by the six scenes.
-const u32 *VenusLighthouse_GetExits(void) { return gVenusLighthouseExits; }
+const u32 *Scene_GetExits(void) { return gVenusLighthouseExits; }
 
 /// Selects the scene's actor placements.
-const struct ActorPlacement *VenusLighthouse_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *placements;
   s16 sceneId;
 
@@ -2320,7 +2320,7 @@ static void VenusLighthouse_EnterRisingPassage(void) {
 
 /// Selects the puzzle interactions and dialogue for the current lighthouse
 /// scene.
-const struct Trigger *VenusLighthouse_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s32 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
@@ -2372,7 +2372,7 @@ static void VenusLighthouse_VisitPillarActors(void) {
 
 /// Restores puzzle progress, actors and entrance effects for all six scenes,
 /// by scene and entrance.
-s32 VenusLighthouse_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 sceneId;
   u32 pillarIndex;

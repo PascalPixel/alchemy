@@ -239,14 +239,14 @@ enum CottageRoomsBAreaFlag {
 // FLAG_VALE_DORA_OUT_OF_BED: Dora got out of her sickbed on this visit.
 
 /// Returns the entrances, among them the events played on arrival.
-const struct SceneEntrance *CottageRoomsB_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gCottageRoomsB_Entrances;
 }
 
-const struct SceneExitRegion *CottageRoomsB_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 /// On the stormy night the exits lead into the storm.
-const u32 *CottageRoomsB_GetExits(void) {
+const u32 *Scene_GetExits(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     return gCottageRoomsB_StormExits;
   }
@@ -254,7 +254,7 @@ const u32 *CottageRoomsB_GetExits(void) {
 }
 
 /// Places Babi's scholars, or Vale's villagers as the story has left them.
-const struct ActorPlacement *CottageRoomsB_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *table;
 
   if (gMainRoutineWork.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE)
@@ -287,7 +287,7 @@ static void CottageRoomsB_ScholarAsksAboutKraden(s32 speakerId) {
 }
 
 /// Chooses the events for the room the party is in.
-const struct Trigger *CottageRoomsB_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gCottageRoomsB_BabiScholarsLaterTriggers;
@@ -441,7 +441,7 @@ static void CottageRoomsB_ExitToValePrologueEast(void) {
 }
 
 /// Sets up these rooms for the stormy night or the story's villagers.
-s32 CottageRoomsB_Initialize(void) {
+s32 Scene_Initialize(void) {
   if (gMainRoutineWork.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     gFieldWork->transition =

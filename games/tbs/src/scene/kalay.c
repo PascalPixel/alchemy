@@ -321,7 +321,7 @@ static s32 Kalay_UpdateTouristFidget(struct Actor *actor) {
 /// free. It changes what Layana says.
 #define FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA FLAG_AREA_TEMP_21
 
-const struct SceneEntrance *Kalay_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_Kalay) {
@@ -345,14 +345,14 @@ const struct SceneEntrance *Kalay_GetEntrances(void) {
   return gKalay_NoEntrances;
 }
 
-const struct SceneExitRegion *Kalay_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 /// The numbered exits of all six scenes.
-const u32 *Kalay_GetExits(void) { return gKalay_Exits; }
+const u32 *Scene_GetExits(void) { return gKalay_Exits; }
 
 /// The people of Kalay, Hammet Palace's front, the Kalay Tunnel Entrance and
 /// the Kalay Tunnel's treasure room.
-const struct ActorPlacement *Kalay_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_Kalay) {
@@ -388,7 +388,7 @@ static void Kalay_CatchTunnelEntranceNut(void) {
 }
 
 /// The conversations, exits and Psynergy targets of each scene.
-const struct Trigger *Kalay_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_Kalay) {
@@ -1126,7 +1126,7 @@ static void Kalay_CatchTownNut(void) {
 
 /// Every scene of the overlay sets FLAG_KALAY_REACHED, then prepares its own
 /// people and cells.
-s32 Kalay_Initialize(void) {
+s32 Scene_Initialize(void) {
   s32 sceneId;
 
   GameFlag_Set(FLAG_KALAY_REACHED);

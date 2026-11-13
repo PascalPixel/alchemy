@@ -4,12 +4,12 @@
 #include "types.h"
 #include "scene_tables.h"
 
-const struct SceneEntrance *ColosseumEntrance_GetEntrances(void);
-const struct SceneExitRegion *ColosseumEntrance_GetRegions(void);
-const u32 *ColosseumEntrance_GetExits(void);
-const struct ActorPlacement *ColosseumEntrance_GetActorPlacements(void);
-const struct Trigger *ColosseumEntrance_GetTriggers(void);
-s32 ColosseumEntrance_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern s32 gColosseumEntrance_GatherIntoIsaacScript[];
 extern s32 gColosseumEntrance_GatherIntoGaretScript[];
 extern s32 gColosseumEntrance_RejoinPartyScript[];

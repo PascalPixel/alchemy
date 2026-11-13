@@ -5,12 +5,12 @@
 #include "scene_tables.h"
 #include "scene.h"
 
-const struct SceneEntrance *TolbiShipMast_GetEntrances(void);
-const struct SceneExitRegion *TolbiShipMast_GetRegions(void);
-const u32 *TolbiShipMast_GetExits(void);
-const struct ActorPlacement *TolbiShipMast_GetActorPlacements(void);
-const struct Trigger *TolbiShipMast_GetTriggers(void);
-s32 TolbiShipMast_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern s32 gTolbiShipMast_DriftY;
 extern s32 gTolbiShipMast_DriftX;
 extern s32 gTolbiShipMast_SwayY;

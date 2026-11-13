@@ -112,11 +112,11 @@ enum {
   WORLD_MAP_AFTER_BLACK_ORB_DEFEAT = 78,
   WORLD_MAP_JENNA_AND_KRADEN_ADRIFT = 80,
   WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT =
-      90, ///< WorldMap_Initialize plays WorldMap_PlayLighthouseTransition
+      90, ///< Scene_Initialize plays WorldMap_PlayLighthouseTransition
           ///< here in Mercury Lighthouse's colours, then sends the party to the
           ///< aerie
   WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT =
-      91, ///< WorldMap_Initialize plays WorldMap_PlayLighthouseTransition
+      91, ///< Scene_Initialize plays WorldMap_PlayLighthouseTransition
           ///< here in Venus Lighthouse's colours, then sends the party back to
           ///< the aerie
   /// The world map's debug entrance, which sets FLAG_NO_ENCOUNTERS,

@@ -4,12 +4,12 @@
 #include "types.h"
 #include "scene_tables.h"
 
-const struct SceneEntrance *ColosseumAzartMatch_GetEntrances(void);
-const struct SceneExitRegion *ColosseumAzartMatch_GetRegions(void);
-const u32 *ColosseumAzartMatch_GetExits(void);
-const struct ActorPlacement *ColosseumAzartMatch_GetActorPlacements(void);
-const struct Trigger *ColosseumAzartMatch_GetTriggers(void);
-s32 ColosseumAzartMatch_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern const u8 gColosso_LetteringPaletteOffsets[];
 extern const s16 gColosso_LetteringDigit[];
 extern const s16 gColosso_LetteringLose[];

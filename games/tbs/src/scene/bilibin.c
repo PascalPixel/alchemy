@@ -2,7 +2,7 @@
 /// Bilibin, the Bilibin Treasury and the Bilibin Barricade, three scenes that
 /// share one overlay: SceneId_Bilibin, SceneId_BilibinTreasury and
 /// SceneId_BilibinBarricade. The getters pick each scene's tables by
-/// gMainRoutineWork.next, and Bilibin_Initialize sets up the scene being
+/// gMainRoutineWork.next, and Scene_Initialize sets up the scene being
 /// entered. Bilibin_PushStatueOrCrates serves all three.
 ///
 /// Bilibin (SceneId_Bilibin) is the town past Goma Cave, whose chief, Lord
@@ -63,7 +63,7 @@
 ///
 /// Arriving by BILIBIN_TREASURY_UPPER_FROM_LOWER or
 /// BILIBIN_TREASURY_FROM_BILIBIN_NORTH the leader starts 16 pixels above the
-/// floor. Two exit regions (Bilibin_GetRegions) lead down its west ladder to
+/// floor. Two exit regions (Scene_GetExitRegions) lead down its west ladder to
 /// the lower room and back to Bilibin by the statue.
 ///
 /// The Bilibin Barricade (SceneId_BilibinBarricade) is the road east to Kolima
@@ -226,7 +226,7 @@ struct BilibinRippleTimer gBilibin_RippleTimer;
 /// before he can.
 #define FLAG_BILIBIN_KEEPING_MCCOY_WAITING FLAG_AREA_TEMP_04
 
-const struct SceneEntrance *Bilibin_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_Bilibin) {
@@ -242,7 +242,7 @@ const struct SceneEntrance *Bilibin_GetEntrances(void) {
 }
 
 /// Only the Bilibin Treasury has exit regions.
-const struct SceneExitRegion *Bilibin_GetRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_BilibinTreasury) {
     return (const struct SceneExitRegion *)gBilibinTreasuryRegions;
   }
@@ -250,7 +250,7 @@ const struct SceneExitRegion *Bilibin_GetRegions(void) {
 }
 
 /// Returns the packed exits shared by the three scenes.
-const u32 *Bilibin_GetExits(void) { return gBilibinExits; }
+const u32 *Scene_GetExits(void) { return gBilibinExits; }
 
 /// Talking to Gust in the Bilibin Treasury makes Gust, a Jupiter Djinni, join
 /// the party.
@@ -260,7 +260,7 @@ static void Bilibin_GustJoins(void) {
 
 /// Selects the actors of Bilibin, the Bilibin Barricade or the Bilibin
 /// Treasury.
-const struct ActorPlacement *Bilibin_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_Bilibin) {
@@ -284,7 +284,7 @@ static void Bilibin_InspectWell(void) {
   Event_End();
 }
 
-const struct Trigger *Bilibin_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_Bilibin) {
@@ -613,7 +613,7 @@ static void Bilibin_JillGivesHardNut(void) {
 
 /// Sets up the scene being entered, Bilibin, the Bilibin Barricade or the
 /// Bilibin Treasury.
-s32 Bilibin_Initialize(void) {
+s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (gMainRoutineWork.next == (s32)&SceneId_Bilibin) {
     Bilibin_RestoreVillageActors();

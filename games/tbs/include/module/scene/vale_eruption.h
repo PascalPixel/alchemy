@@ -4,12 +4,12 @@
 #include "types.h"
 #include "scene_tables.h"
 
-const struct SceneEntrance *ValeEruption_GetEntrances(void);
-const struct SceneExitRegion *ValeEruption_GetRegions(void);
-const u32 *ValeEruption_GetExits(void);
-const struct ActorPlacement *ValeEruption_GetActorPlacements(void);
-const struct Trigger *ValeEruption_GetTriggers(void);
-s32 ValeEruption_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern s32 gValeEruption_LeaderWalksDown[];
 extern s32 gValeEruption_GaretWalksDown[];
 extern s32 gValeEruption_EnterSanctum[];

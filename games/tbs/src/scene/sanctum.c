@@ -3,7 +3,7 @@
 /// places in one scene (SceneId_Sanctum).
 ///
 /// The entrance the party arrives at decides which place it is, and
-/// Sanctum_GetActorPlacements and Sanctum_GetTriggers choose that place's
+/// Scene_GetActorPlacements and Scene_GetTriggers choose that place's
 /// tables by it. Spoken to from the front, each place's healer opens the
 /// Sanctum's services (Sanctum_Run). From any other side the healer talks. Each
 /// place's door leads back out to its own town.
@@ -98,7 +98,7 @@
 // Sanctum.
 
 /// The placed actors, numbering the rows of the table
-/// Sanctum_GetActorPlacements returns for the entrance.
+/// Scene_GetActorPlacements returns for the entrance.
 ///
 /// The party's rows take their own ids. Every place's first row is its healer.
 enum SanctumActorId {
@@ -171,16 +171,16 @@ static UNREAD_RESULT Sanctum_FaceActorNamedByTimer(struct Actor *actor) {
 }
 
 /// Returns the entrances, shared by all six places.
-const struct SceneEntrance *Sanctum_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSanctum_Entrances;
 }
 
-const struct SceneExitRegion *Sanctum_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *Sanctum_GetExits(void) { return gSanctum_Exits; }
+const u32 *Scene_GetExits(void) { return gSanctum_Exits; }
 
 /// Chooses the actors by entrance.
-const struct ActorPlacement *Sanctum_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   switch (gMainRoutineWork.entrance) {
   case SANCTUM_FROM_VALE:
   case SANCTUM_VALE_UNUSED:
@@ -207,7 +207,7 @@ const struct ActorPlacement *Sanctum_GetActorPlacements(void) {
 
 /// Chooses the triggers by entrance, and in Vale Sanctum before and after the
 /// quest by story flag.
-const struct Trigger *Sanctum_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   switch (gMainRoutineWork.entrance) {
   case SANCTUM_FROM_VAULT:
   case SANCTUM_FROM_LOG_ROOMS_A:
@@ -387,7 +387,7 @@ static void Sanctum_AskAboutPsynergyChanges(void) {
 }
 
 /// Sets up the place for its entrance and plays its opening event.
-s32 Sanctum_Initialize(void) {
+s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);

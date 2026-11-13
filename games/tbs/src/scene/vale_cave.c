@@ -15,7 +15,7 @@
 ///   VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST and
 ///   VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST lead here.
 ///   VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE goes on into the cave. Each exit plays
-///   the exit sound first (ValeCave_LeaveRoom). On arrival ValeCave_Initialize
+///   the exit sound first (ValeCave_LeaveRoom). On arrival Scene_Initialize
 ///   fades the room in from the backdrop and clears FLAG_SHOW_AREA_NAME.
 ///   Entering a new area sets that flag, but this is still Vale.
 /// - Vale Cave (SceneId_ValeCaveKite) is one map in three parts, each with its
@@ -208,7 +208,7 @@ static UNREAD_RESULT ValeCave_FaceActorTowardLeader(struct Actor *actor) {
 #endif
 
 /// Selects entrance positions and camera bounds for the current cave room.
-const struct SceneEntrance *ValeCave_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_ValeCaveMouth) {
@@ -223,14 +223,14 @@ const struct SceneEntrance *ValeCave_GetEntrances(void) {
   return gValeCave_EntrancesOther;
 }
 
-const struct SceneExitRegion *ValeCave_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 /// Returns the shared packed exits for all cave rooms.
-const u32 *ValeCave_GetExits(void) { return gValeCave_Exits; }
+const u32 *Scene_GetExits(void) { return gValeCave_Exits; }
 
 /// Selects the current room's actor placements, which are Kite, and the crates
 /// and logs.
-const struct ActorPlacement *ValeCave_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_ValeCaveMouth) {
@@ -597,7 +597,7 @@ static void ValeCave_PushLogNorth(void) {
 }
 
 /// Selects the current room's coord, Psynergy and examine triggers.
-const struct Trigger *ValeCave_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_ValeCaveMouth) {
@@ -614,7 +614,7 @@ const struct Trigger *ValeCave_GetTriggers(void) {
 
 /// Arriving in any of the three rooms chooses the entry transition and restores
 /// the room's puzzle state.
-s32 ValeCave_Initialize(void) {
+s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gMainRoutineWork.next == (s32)&SceneId_ValeCaveMouth) {

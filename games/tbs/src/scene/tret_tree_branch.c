@@ -80,15 +80,15 @@ static void TretTreeBranch_TalkToBreeze(void) {
   Field_RequestDjinnBattle(ACTOR_BREEZE, DJINNI_BREEZE);
 }
 
-const struct SceneEntrance *TretTreeBranch_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gTretTreeBranch_Entrances;
 }
 
-const struct SceneExitRegion *TretTreeBranch_GetRegions(void) { return NULL; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-const u32 *TretTreeBranch_GetExits(void) { return gTretTreeBranch_Exits; }
+const u32 *Scene_GetExits(void) { return gTretTreeBranch_Exits; }
 
-const struct ActorPlacement *TretTreeBranch_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gTretTreeBranch_ActorPlacements;
 }
 
@@ -195,7 +195,7 @@ static void TretTreeBranch_CastReveal(void) {
 }
 
 /// Returns the scene's exit, coord, talk and Reveal events.
-const struct Trigger *TretTreeBranch_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gTretTreeBranch_Triggers;
 }
 
@@ -222,7 +222,7 @@ static void UNUSED TretTreeBranch_ExchangeInputPacket(void) {
 
 /// Initializes the backdrop transition and installs BG3's line scroll
 /// split. Returns 0 for the overlay initialization entry point.
-s32 TretTreeBranch_Initialize(void) {
+s32 Scene_Initialize(void) {
 #ifndef UBFIX
   u8 **eventSlot = (u8 **)&gFieldWork;
 #endif

@@ -4,12 +4,12 @@
 #include "types.h"
 #include "scene_tables.h"
 
-const struct SceneEntrance *WorldMap_GetEntrances(void);
-const struct SceneExitRegion *WorldMap_GetRegions(void);
-const u32 *WorldMap_GetExits(void);
-const struct ActorPlacement *WorldMap_GetActorPlacements(void);
-const struct Trigger *WorldMap_GetTriggers(void);
-s32 WorldMap_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern s32 gWorldMapIodem;
 extern u16 gWorldMapBlend;
 extern s32 gCaravanFirstWagonArrives[];

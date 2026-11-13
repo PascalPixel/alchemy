@@ -4,12 +4,12 @@
 #include "types.h"
 #include "scene_tables.h"
 
-const struct SceneEntrance *SolSanctumStatue_GetEntrances(void);
-const struct SceneExitRegion *SolSanctumStatue_GetRegions(void);
-const u32 *SolSanctumStatue_GetExits(void);
-const struct ActorPlacement *SolSanctumStatue_GetActorPlacements(void);
-const struct Trigger *SolSanctumStatue_GetTriggers(void);
-s32 SolSanctumStatue_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneExitRegion *Scene_GetExitRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern struct SceneEntrance gSolSanctumStatue_Entrances[];
 extern u32 gSolSanctumStatue_Exits[];
 extern struct ActorPlacement gSolSanctumStatue_ActorPlacements[];

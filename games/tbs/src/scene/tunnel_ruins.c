@@ -22,10 +22,10 @@
 ///
 /// The getters choose by gMainRoutineWork.next. The actor placements of
 /// TunnelRuinsLadyStatues answer any other scene number, and
-/// TunnelRuins_GetActorPlacements prepares each table's actors to appear only
+/// Scene_GetActorPlacements prepares each table's actors to appear only
 /// in view.
 ///
-/// TunnelRuins_Initialize works room by room, one case for each room's
+/// Scene_Initialize works room by room, one case for each room's
 /// entrances.
 ///
 /// - It puts each puzzle back as it was left.
@@ -434,7 +434,7 @@ static void TunnelRuins_HopDownStep(void) {
 
 /// The entrances of TunnelRuinsGreatStatue, TunnelRuinsLadyStatues, or
 /// a table for any other scene number.
-const struct SceneEntrance *TunnelRuins_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_TunnelRuinsGreatStatue) {
@@ -446,18 +446,18 @@ const struct SceneEntrance *TunnelRuins_GetEntrances(void) {
   return gTunnelRuinsEntrancesOther;
 }
 
-const struct SceneExitRegion *TunnelRuins_GetRegions(void) {
+const struct SceneExitRegion *Scene_GetExitRegions(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_TunnelRuinsLadyStatues) {
     return gTunnelRuinsLadyStatuesRegions;
   }
   return 0;
 }
 
-const u32 *TunnelRuins_GetExits(void) { return gTunnelRuinsExits; }
+const u32 *Scene_GetExits(void) { return gTunnelRuinsExits; }
 
 /// The actors of TunnelRuinsGreatStatue or of TunnelRuinsLadyStatues
 /// (the enums above), each prepared to appear only when it lies in the view.
-const struct ActorPlacement *TunnelRuins_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *table;
 
   if (gMainRoutineWork.next == (s32)&SceneId_TunnelRuinsGreatStatue) {
@@ -1197,7 +1197,7 @@ static void TunnelRuins_SearchLockedDoor(void) {
 
 /// The triggers of TunnelRuinsGreatStatue, or of TunnelRuinsLadyStatues and
 /// any other scene.
-const struct Trigger *TunnelRuins_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_TunnelRuinsGreatStatue) {
     return gTunnelRuinsGreatStatueTriggers;
   }
@@ -1286,7 +1286,7 @@ static void TunnelRuins_MarkPushPillarCells(void) {
 /// On entering a room, restores the puzzle as it was left, and the path the
 /// statue in Venus Lighthouse opened (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or
 /// _SECOND_PATH).
-s32 TunnelRuins_Initialize(void) {
+s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gMainRoutineWork.next == (s32)&SceneId_TunnelRuinsGreatStatue ||

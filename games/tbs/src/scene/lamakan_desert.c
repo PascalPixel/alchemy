@@ -5,7 +5,7 @@
 /// uncovers.
 ///
 /// The heat is a count of steps on hazard ground
-/// (gMainRoutineWork.hazardSteps). LamakanDesert_Initialize sets a limit of 600
+/// (gMainRoutineWork.hazardSteps). Scene_Initialize sets a limit of 600
 /// on every scene, at which the party loses a quarter of its HP. On all but
 /// LamakanDesertCave it starts the heat gauge, a thermometer down the screen's
 /// left edge (HeatGauge_Draw).
@@ -206,7 +206,7 @@ static UNREAD_RESULT LamakanDesert_LeaderSpraySand(struct Actor *actor) {
 }
 
 /// Where the party can enter each of the four scenes.
-const struct SceneEntrance *LamakanDesert_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
   if (sceneId == (s32)&SceneId_LamakanDesertEast) {
@@ -224,13 +224,13 @@ const struct SceneEntrance *LamakanDesert_GetEntrances(void) {
   return gLamakanDesertEntrancesOther;
 }
 
-const struct SceneExitRegion *LamakanDesert_GetRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
 /// All four desert scenes share the packed exit table.
-const u32 *LamakanDesert_GetExits(void) { return gLamakanDesertExits; }
+const u32 *Scene_GetExits(void) { return gLamakanDesertExits; }
 
 /// The pits, the Manticore and Smog of each scene.
-const struct ActorPlacement *LamakanDesert_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertManticore) {
     if (gMainRoutineWork.entrance ==
         LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE) {
@@ -271,7 +271,7 @@ static void LamakanDesert_LeaveForTheWorldMap(void) {
 }
 
 /// The desert's triggers, the same in every scene.
-const struct Trigger *LamakanDesert_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   return gLamakanDesertTriggers;
 }
 
@@ -895,7 +895,7 @@ static void LamakanDesert_MeetManticore(void) {
 
 /// Entering Lamakan Desert starts the heat gauge (600 steps) on all but
 /// LamakanDesertCave.
-s32 LamakanDesert_Initialize(void) {
+s32 Scene_Initialize(void) {
   gMainRoutineWork.hazardLimit = 600;
   gMainRoutineWork.hazardMode = HAZARD_COUNT_ON_CELLS;
   gMainRoutineWork.hazardDamage = HAZARD_DAMAGE_PERCENT | 25;

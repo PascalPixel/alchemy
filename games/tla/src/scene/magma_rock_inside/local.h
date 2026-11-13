@@ -43,11 +43,4 @@ static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
   return Import_ActorCreate(kind, x, y, z);
 }
 
-static __inline__ void Actor_ResetAndSetPositionInMode2_(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): forwarding through the inline sets x between the two
-   * halves of z, as the native does (a direct call builds z whole first); as a
-   * direct call, 2 of 77 instructions of Func_020023e8 differ in tla-en. */
-  Actor_ResetAndSetPositionInMode2(id, x, z);
-}
-
 #endif

@@ -26,13 +26,6 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
-static __inline__ void Func_02002b3c_(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH(wrapper): the calls forwarded through the inline, which keeps
-   * each call's constants in their own registers; as direct calls, 33 of
-   * 169 instructions differ in tla-en. */
-  Map_SetScreenShake(a, b, c);
-}
-
 void Func_0200273c(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   u32 i;
@@ -84,8 +77,8 @@ loop:
   Event_PlaySound(188);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
-  Func_02002b3c_(0x50000, 0x50000, 0x10000);
-  Func_02002b3c_(-1, -1, 0xe666);
+  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
+  MapGrid_SetShake(-1, -1, 0xe666);
   MapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
   actor->gravity = 0x10000;

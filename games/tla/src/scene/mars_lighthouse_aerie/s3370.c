@@ -25,12 +25,6 @@ void SceneActor_ParkRecord(struct Actor *object);
 void Actor_StartScript(struct Actor *object, const u8 *script);
 void Func_020000e4(void);
 
-static __inline__ void SetScale(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 41 of 207
-   * instructions differ in tla-en. */
-  Map_SetScreenShake(a, b, c);
-}
-
 void Func_02003370(void) {
   struct Actor *anchor = Actor_GetById(8);
   s32 spawn = 0;
@@ -40,7 +34,7 @@ void Func_02003370(void) {
   switch (Data_02006ccc) {
   case 0:
     Event_PlaySound(220);
-    SetScale(0x60000, 0x60000, 0x10000);
+    MapGrid_SetShake(0x60000, 0x60000, 0x10000);
     PaletteFade_ApplyTarget(0x2063ff, 1);
     PaletteFade_Interpolate(8);
     break;
@@ -49,7 +43,7 @@ void Func_02003370(void) {
     PaletteFade_Interpolate(8);
     break;
   case 16:
-    SetScale(0x10000, 0x10000, 0x10000);
+    MapGrid_SetShake(0x10000, 0x10000, 0x10000);
     break;
   case 24:
     anchor->x = 0x2000000;

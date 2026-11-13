@@ -738,36 +738,12 @@ extern u8 MsgTheMayorTried[];
 extern u8 MsgICanTBelieveIt[];
 extern u8 MsgWhoIsThis[];
 
-static __inline__ void ArmCallback(s32 id, s32 angle, s32 flags) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants, as ☀️'s scene layer does; as direct calls, 72 of 475
-   * instructions of Func_02000ac4 differ in tla-en, 36 of 549 of Func_02000f80
-   * and 64 of 490 of Func_020014fc. */
-  Actor_ArmCallback(id, angle, flags);
-}
-
-static __inline__ void OffsetPos(u32 id, s32 dx, s32 dz) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants, as ☀️'s scene layer does; as direct calls, 10 of 475
-   * instructions of Func_02000ac4 differ in tla-en and 12 of 490 of
-   * Func_020014fc. */
-  Actor_OffsetPositionAndReset(id, dx, dz);
-}
-
 static __inline__ void CommitPos(s32 id, s32 x, s32 z) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
    * constants, as ☀️'s scene layer does; as direct calls, 31 of 475
    * instructions of Func_02000ac4 differ in tla-en and 2 of 490 of
    * Func_020014fc. */
   Actor_CommitPositionAndActivate(id, x, z);
-}
-
-static __inline__ void Speed(s32 id, s32 speed, s32 acceleration) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants, as ☀️'s scene layer does; as direct calls, 24 of 475
-   * instructions of Func_02000ac4 differ in tla-en, 30 of 549 of Func_02000f80
-   * and 28 of 490 of Func_020014fc. */
-  Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
 static __inline__ void SetPos(s32 id, s32 x, s32 z) {
@@ -808,20 +784,6 @@ static __inline__ void LaunchFromFocused(s32 id, s32 a, s32 b, s32 c) {
   Actor_LaunchFromLeader(id, a, b, c);
 }
 
-static __inline__ void SetPosInMode2(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants, as ☀️'s scene layer does; as direct calls, 48 of 549
-   * instructions of Func_02000f80 differ in tla-en. */
-  Actor_ResetAndSetPositionInMode2(id, x, z);
-}
-
-static __inline__ void SetHorizontalPos(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants, as ☀️'s scene layer does; as direct calls, 50 of 549
-   * instructions of Func_02000f80 differ in tla-en. */
-  Actor_SetHorizontalPositionWithTerrain(id, x, z);
-}
-
 static __inline__ void Madra_Func_02002c10(s32 id, s32 a) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
    * constants, as ☀️'s scene layer does; as direct calls, 31 of 549
@@ -840,7 +802,7 @@ void Func_02000ac4(void) {
   Event_SetMessageId__s0ac4(MsgYouThereHold__s0ac4);
   Event_ShowMessageThenWait(24, 0, 2);
   CamBounds(238 << 17, -1, 210 << 17, 1);
-  OffsetPos(25, 3, 8);
+  Actor_WalkBy(25, 3, 8);
   CommitPos(24, -3, 8);
   Actor_WaitForMoveById(25);
   SetPos(4, 472, 426);
@@ -849,12 +811,12 @@ void Func_02000ac4(void) {
   LaunchFromFocused(32, 16, 1, FACING_NORTH);
   Func_02002c28();
   Actor_WaitForMoveById(32);
-  ArmCallback(4, FACING_EAST, 0);
-  ArmCallback(32, FACING_WEST, 0);
+  Actor_FaceDirection(4, FACING_EAST, 0);
+  Actor_FaceDirection(32, FACING_WEST, 0);
   Event_Wait(30);
   Event_Wait(10);
-  ArmCallback(4, FACING_NORTH, 0);
-  ArmCallback(32, FACING_NORTH, 0);
+  Actor_FaceDirection(4, FACING_NORTH, 0);
+  Actor_FaceDirection(32, FACING_NORTH, 0);
   Event_Wait(20);
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(32, 2);
@@ -876,7 +838,7 @@ void Func_02000ac4(void) {
   Actor_SetAngleToward(25, 32, 0);
   Motion_SetModeAndWaitAnimation(25, 3);
   Event_Wait(30);
-  ArmCallback(24, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(24, FACING_SOUTH + FACING_STEP, 0);
   Actor_GetById(25)->priorityFlags &= 0xfe;
   Actor_SetSpritePriority(25, 3);
   SetPos(25, 457, 402);
@@ -885,10 +847,10 @@ void Func_02000ac4(void) {
   Event_Wait(30);
   Actor_SetPositionAndReset(25, 484, 420);
   Actor_GetById(25)->priorityFlags |= 1;
-  ArmCallback(25, FACING_SOUTH, 0);
+  Actor_FaceDirection(25, FACING_SOUTH, 0);
   Event_Wait(60);
   Event_Wait(10);
-  ArmCallback(25, FACING_NORTH, 0);
+  Actor_FaceDirection(25, FACING_NORTH, 0);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(25, 4);
   Event_ShowMessageThenWait(25, 0, 2);
@@ -908,7 +870,7 @@ void Func_02000ac4(void) {
   Actor_GetById(25)->priorityFlags |= 1;
   CamBounds(238 << 17, -1, 198 << 17, 1);
   SetPos(25, 459, 416);
-  ArmCallback(25, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(25, FACING_SOUTHEAST, 0);
   Event_Wait(10);
   Emote(32, 0x101, 50);
   Event_ShowMessageThenWait(32, 0, 2);
@@ -921,32 +883,32 @@ void Func_02000ac4(void) {
   Emote(4, 0x100, 50);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(25, 4);
-  ArmCallback(32, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(32, FACING_NORTHWEST + FACING_STEP, 0);
   Event_ShowMessageThenWait(25, 0, 2);
   Event_Wait(10);
   Actor_TurnToFaceEachOther(4, 32, 0);
   Event_Wait(20);
   Event_Wait(10);
-  ArmCallback(4, FACING_NORTH, 0);
-  ArmCallback(32, FACING_NORTH, 0);
+  Actor_FaceDirection(4, FACING_NORTH, 0);
+  Actor_FaceDirection(32, FACING_NORTH, 0);
   Emote(25, 0x109, 50);
   Event_ShowMessageThenWait(24, 0, 2);
   Emote(25, 0x103, 20);
-  ArmCallback(32, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(32, FACING_NORTHWEST + FACING_STEP, 0);
   Event_ShowMessageThenWait(25, 0, 2);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(24, 3);
   Event_Wait(30);
-  ArmCallback(32, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(32, FACING_NORTH + FACING_STEP, 0);
   Event_ShowMessageThenWait(24, 0, 2);
-  Speed(24, 0x4ccc, 0x2666);
-  Speed(25, 0x4ccc, 0x2666);
-  OffsetPos(24, 3, -8);
+  Actor_SetSpeed(24, 0x4ccc, 0x2666);
+  Actor_SetSpeed(25, 0x4ccc, 0x2666);
+  Actor_WalkBy(24, 3, -8);
   Actor_OffsetPositionAndReset(25, -3, -8);
   Actor_WaitForMoveById(24);
   Actor_WaitForMoveById(25);
-  ArmCallback(25, FACING_SOUTHEAST + FACING_STEP, 0);
-  ArmCallback(24, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(25, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(24, FACING_SOUTH + FACING_STEP, 0);
   Event_Wait(20);
   Event_Wait(10);
   Actor_SetModeById(32, 3);
@@ -974,61 +936,61 @@ void Func_02000f80(void) {
   Event_ResolvePendingActions(0);
   Camera_MoveWithinMapBounds(PIXELS(124), -1, PIXELS(420), 1);
   Func_02002c28();
-  Speed(33, 0xcccc, 0x6666);
-  Speed(34, 0xcccc, 0x6666);
+  Actor_SetSpeed(33, 0xcccc, 0x6666);
+  Actor_SetSpeed(34, 0xcccc, 0x6666);
   Event_StartScreenTransition();
-  SetHorizontalPos(33, PIXELS(172), PIXELS(332));
+  Actor_SetPosition(33, PIXELS(172), PIXELS(332));
   Actor_SetHorizontalPositionWithTerrain(34, PIXELS(172), PIXELS(324));
   Event_SetMessageId__s0ac4(MsgHasEscaped2__s0ac4);
   Event_WaitTransitionFrames();
   Event_ShowMessageThenWait(33, 0, 10);
-  SetPosInMode2(33, 156, 372);
+  Actor_WalkTo(33, 156, 372);
   Event_Wait(20);
-  SetPosInMode2(34, 156, 372);
-  SetPosInMode2(4, 76, 388);
+  Actor_WalkTo(34, 156, 372);
+  Actor_WalkTo(4, 76, 388);
   Actor_WaitForMoveById(33);
-  SetPosInMode2(33, 108, 380);
+  Actor_WalkTo(33, 108, 380);
   Actor_WaitForMoveById(34);
-  SetPosInMode2(34, 124, 380);
+  Actor_WalkTo(34, 124, 380);
   Actor_WaitForMoveById(4);
   Actor_ArmCallback(4, FACING_SOUTHEAST, 0);
   Actor_WaitForMoveById(33);
   Actor_WaitForMoveById(34);
-  ArmCallback(33, FACING_NORTH, 0);
-  ArmCallback(34, FACING_NORTH, 0);
+  Actor_FaceDirection(33, FACING_NORTH, 0);
+  Actor_FaceDirection(34, FACING_NORTH, 0);
   Event_Wait(20);
-  ArmCallback(33, FACING_NORTH, 0);
-  ArmCallback(34, FACING_NORTH, 0);
+  Actor_FaceDirection(33, FACING_NORTH, 0);
+  Actor_FaceDirection(34, FACING_NORTH, 0);
   Madra_Func_02002c10(34, 258);
   Madra_Func_02002c10(33, 258);
   Event_Wait(50);
   Motion_SetModeAndWaitAnimation(34, 3);
   Motion_SetModeAndWaitAnimation(33, 3);
   Event_Wait(20);
-  SetPosInMode2(33, 102, 340);
+  Actor_WalkTo(33, 102, 340);
   Event_Wait(20);
-  SetPosInMode2(34, 102, 340);
+  Actor_WalkTo(34, 102, 340);
   Actor_WaitForMoveById(33);
-  SetHorizontalPos(33, PIXELS(4), PIXELS(4));
+  Actor_SetPosition(33, PIXELS(4), PIXELS(4));
   Actor_WaitForMoveById(34);
-  SetHorizontalPos(34, PIXELS(4), PIXELS(4));
+  Actor_SetPosition(34, PIXELS(4), PIXELS(4));
   Actor_ArmCallback(4, FACING_NORTHEAST, 0);
   Event_Wait(40);
   Emote(4, 258, 30);
   Event_Wait(40);
   Event_Wait(120);
-  SetHorizontalPos(33, PIXELS(102), PIXELS(340));
-  SetHorizontalPos(34, PIXELS(102), PIXELS(340));
+  Actor_SetPosition(33, PIXELS(102), PIXELS(340));
+  Actor_SetPosition(34, PIXELS(102), PIXELS(340));
   SetPos(34, 100, 364);
-  SetPosInMode2(34, 124, 380);
+  Actor_WalkTo(34, 124, 380);
   SetPos(33, 100, 380);
   Actor_WaitForMoveById(34);
-  SetPosInMode2(34, 132, 396);
+  Actor_WalkTo(34, 132, 396);
   SetPos(33, 108, 396);
   Actor_WaitForMoveById(34);
   Actor_SetAngleToward(4, 33, 0);
-  ArmCallback(34, FACING_NORTH, 0);
-  ArmCallback(33, FACING_NORTH, 0);
+  Actor_FaceDirection(34, FACING_NORTH, 0);
+  Actor_FaceDirection(33, FACING_NORTH, 0);
   Emote(33, 258, 30);
   Event_ShowMessageThenWait(33, 0, 10);
   Actor_SetAngleToward(34, 33, 0);
@@ -1045,7 +1007,7 @@ void Func_02000f80(void) {
   Event_ShowMessageThenWait(34, 0, 10);
   Func_080d47b4__s0ac4(33, 258, 30);
   Event_ShowMessageThenWait(33, 0, 10);
-  ArmCallback(33, FACING_NORTH, 0);
+  Actor_FaceDirection(33, FACING_NORTH, 0);
   Actor_ArmCallback(34, FACING_NORTH, 0);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(34, 2);
@@ -1157,7 +1119,7 @@ void Func_020014fc(void) {
   ArmCallbackAndRefresh(24, FACING_SOUTH + FACING_STEP);
   Motion_SetModeAndWaitAnimation(24, 4);
   Event_ShowMessageThenWait(24, 0, 10);
-  ArmCallback(32, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(32, FACING_NORTH + FACING_STEP, 0);
   Func_080d47b4__s0ac4(32, 0x103, 0);
   Actor_Jump(32, 6, 15);
   Actor_Jump(32, 6, 23);
@@ -1170,18 +1132,18 @@ void Func_020014fc(void) {
   Event_ShowMessageAndWait(32, 0);
   ArmCallbackAndRefresh(25, FACING_SOUTHEAST);
   Motion_SetModeAndWaitAnimation(25, 3);
-  ArmCallback(32, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(32, FACING_NORTHWEST + FACING_STEP, 0);
   Event_Wait(10);
   FieldMessage_ShowAtActor(25, 0);
   ArmCallbackAndRefresh(4, FACING_NORTHWEST + FACING_STEP);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(25);
-    ArmCallback(32, FACING_NORTHWEST + FACING_STEP, 0);
+    Actor_FaceDirection(32, FACING_NORTHWEST + FACING_STEP, 0);
     Event_ShowMessageThenWait(25, 0, 10);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
   } else {
     Event_Wait(25);
-    ArmCallback(32, FACING_NORTH + FACING_STEP, 0);
+    Actor_FaceDirection(32, FACING_NORTH + FACING_STEP, 0);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     Event_ShowMessageThenWait(25, 0, 10);
   }
@@ -1213,20 +1175,20 @@ void Func_020014fc(void) {
     }
   }
   Event_SetMessageId__s0ac4(MsgWasAnythingStolen__s0ac4);
-  ArmCallback(32, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(32, FACING_NORTH + FACING_STEP, 0);
   Actor_ArmCallback(4, FACING_NORTH + FACING_STEP, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(32, 0);
   Event_Wait(40);
   Emote(24, 0x101, 30);
-  ArmCallback(24, FACING_WEST, 0);
+  Actor_FaceDirection(24, FACING_WEST, 0);
   Event_Wait(20);
-  ArmCallback(32, FACING_NORTHWEST + FACING_STEP, 0);
-  ArmCallback(4, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(32, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(4, FACING_NORTHWEST + FACING_STEP, 0);
   Func_080d47b4__s0ac4(25, 0x102, 30);
   Motion_SetModeAndWaitAnimation(25, 4);
   Event_Wait(10);
-  ArmCallback(25, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(25, FACING_SOUTHEAST, 0);
   Event_ShowMessageThenWait(25, 0, 10);
   Emote(32, 0x101, 0);
   Func_080d47b4__s0ac4(4, 0x101, 30);
@@ -1238,13 +1200,13 @@ void Func_020014fc(void) {
   Motion_SetModeAndWaitAnimation(25, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(25, 0, 10);
-  Speed(24, 0x4ccc, 0x2666);
-  Speed(25, 0x4ccc, 0x2666);
-  OffsetPos(24, 3, -8);
+  Actor_SetSpeed(24, 0x4ccc, 0x2666);
+  Actor_SetSpeed(25, 0x4ccc, 0x2666);
+  Actor_WalkBy(24, 3, -8);
   Actor_OffsetPositionAndReset(25, -3, -8);
   Actor_WaitForMoveById(24);
   Actor_WaitForMoveById(25);
-  ArmCallback(25, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(25, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_ArmCallback(24, FACING_SOUTH + FACING_STEP, 0);
   Event_Wait(20);
   Actor_ArmCallback(4, FACING_EAST, 0);
@@ -1311,7 +1273,7 @@ void Func_020019d8(void) {
   LaunchFromFocused(6, -8, 16, FACING_NORTH);
   LaunchFromFocused(7, -16, 0, FACING_NORTH);
   Actor_WaitForMoveById(4);
-  ArmCallback(4, FACING_NORTH, 0);
+  Actor_FaceDirection(4, FACING_NORTH, 0);
   Event_Wait(20);
   Map_PlayMapEdit__s0ac4(gData_02003308__s0ac4[6].steps, gData_02003308__s0ac4[6].unk04,
                   gData_02003308__s0ac4[6].unk06);
@@ -1332,10 +1294,10 @@ void Func_020019d8(void) {
   Actor_ArmCallback(34, FACING_SOUTH, 0);
   Event_Wait(20);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
-    ArmCallback(32, FACING_NORTH, 0);
-    ArmCallback(5, FACING_NORTH, 0);
-    ArmCallback(7, FACING_NORTH, 0);
-    ArmCallback(6, FACING_NORTH, 0);
+    Actor_FaceDirection(32, FACING_NORTH, 0);
+    Actor_FaceDirection(5, FACING_NORTH, 0);
+    Actor_FaceDirection(7, FACING_NORTH, 0);
+    Actor_FaceDirection(6, FACING_NORTH, 0);
     Actor_ArmCallback(34, FACING_SOUTH, 0);
     Event_Wait(20);
     SET_MODE(34, 4);
@@ -1344,10 +1306,10 @@ void Func_020019d8(void) {
     Event_ShowMessageAndWait(34, 0);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
   } else {
-    ArmCallback(32, FACING_NORTH, 0);
-    ArmCallback(5, FACING_NORTH, 0);
-    ArmCallback(7, FACING_NORTH, 0);
-    ArmCallback(6, FACING_NORTH, 0);
+    Actor_FaceDirection(32, FACING_NORTH, 0);
+    Actor_FaceDirection(5, FACING_NORTH, 0);
+    Actor_FaceDirection(7, FACING_NORTH, 0);
+    Actor_FaceDirection(6, FACING_NORTH, 0);
     Actor_ArmCallback(34, FACING_SOUTH, 0);
     Event_Wait(20);
     SET_MODE(34, 4);
@@ -1376,7 +1338,7 @@ void Func_020019d8(void) {
   Event_Wait(20);
   Event_ShowMessageThenWait(34, 0, 0);
   Actor_CommitPositionAndActivate(34, 16, 8);
-  ArmCallback(34, FACING_SOUTH, 0);
+  Actor_FaceDirection(34, FACING_SOUTH, 0);
   if (PartyInventory_FindRoom(210) >= 0) {
     Func_02002c50(210, 3);
     PartyInventory_GiveItem(210, 0);
@@ -1396,7 +1358,7 @@ void Func_020019d8(void) {
     FieldMessage_Show((*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++, 5);
     CommitPos(34, -16, 0);
     ArmCallbackAndRefresh(34, FACING_SOUTH);
-    SetHorizontalPos(66, PIXELS(192), PIXELS(256));
+    Actor_SetPosition(66, PIXELS(192), PIXELS(256));
     *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4) = count;
   }
   CommitPos(34, -16, -8);
@@ -1406,8 +1368,8 @@ void Func_020019d8(void) {
   SET_MODE(34, 3);
   Event_Wait(20);
   Event_Wait(20);
-  ArmCallback(5, FACING_NORTH, 0);
-  ArmCallback(6, FACING_NORTH, 0);
+  Actor_FaceDirection(5, FACING_NORTH, 0);
+  Actor_FaceDirection(6, FACING_NORTH, 0);
   Event_ShowMessageThenWait(34, 0, 0);
   Actor_SetModeById(32, 3);
   SET_MODE(4, 3);
@@ -1441,7 +1403,7 @@ void Func_020019d8(void) {
   Sound_Play(36);
   Emote(33, 0x107, 30);
   Event_ShowMessageAndWait(33, 0);
-  ArmCallback(33, FACING_WEST, 0);
+  Actor_FaceDirection(33, FACING_WEST, 0);
   Actor_TurnToFaceEachOther(6, 5, 0);
   Actor_TurnToFaceEachOther(7, 32, 0);
   Event_Wait(40);
@@ -1550,7 +1512,7 @@ void Func_020019d8(void) {
   Emote(6, 0x103, 0);
   Emote(5, 0x103, 0);
   Emote(7, 0x103, 30);
-  ArmCallback(33, FACING_WEST, 0);
+  Actor_FaceDirection(33, FACING_WEST, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(33, 0);
   Emote(33, 0x108, 30);
@@ -1647,7 +1609,7 @@ void Func_020019d8(void) {
   SET_MODE(32, 3);
   Event_Wait(20);
   Event_Wait(20);
-  ArmCallback(32, FACING_SOUTH, 0);
+  Actor_FaceDirection(32, FACING_SOUTH, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(32, 0);
   Func_080d47b4__s0ac4(7, 0x101, 20);
@@ -1665,7 +1627,7 @@ void Func_020019d8(void) {
   Event_ShowMessageAndWait(6, 0);
   Actor_SetPartAttribute(Actor_GetById(5), 10);
   Event_ShowMessageAndWait(5, 0);
-  ArmCallback(5, FACING_SOUTH, 0);
+  Actor_FaceDirection(5, FACING_SOUTH, 0);
   Event_Wait(20);
   Event_ShowMessageAndWait(5, 0);
   Actor_TurnToFaceEachOther(4, 7, 0);
@@ -1738,7 +1700,7 @@ void Func_020019d8(void) {
   do {
     Event_Wait(20);
   } while (0);
-  Speed(32, 0x00013333, 0x9999);
+  Actor_SetSpeed(32, 0x00013333, 0x9999);
   SET_MODE(32, 2);
   object = Actor_GetById(4);
   if (object != NULL)
@@ -1746,7 +1708,7 @@ void Func_020019d8(void) {
                               ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(32);
   Actor_SetHorizontalPositionWithTerrain(32, 0, 0);
-  Speed(5, 0x00013333, 0x9999);
+  Actor_SetSpeed(5, 0x00013333, 0x9999);
   SET_MODE(5, 2);
   object = Actor_GetById(4);
   if (object != NULL)
@@ -1754,7 +1716,7 @@ void Func_020019d8(void) {
                               ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(5);
   Actor_SetHorizontalPositionWithTerrain(5, 0, 0);
-  Speed(6, 0x00013333, 0x9999);
+  Actor_SetSpeed(6, 0x00013333, 0x9999);
   SET_MODE(6, 2);
   object = Actor_GetById(4);
   if (object != NULL)
@@ -1762,7 +1724,7 @@ void Func_020019d8(void) {
                               ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(6);
   Actor_SetHorizontalPositionWithTerrain(6, 0, 0);
-  Speed(7, 0x00013333, 0x9999);
+  Actor_SetSpeed(7, 0x00013333, 0x9999);
   SET_MODE(7, 2);
   object = Actor_GetById(4);
   if (object != NULL)

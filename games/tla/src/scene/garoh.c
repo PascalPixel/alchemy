@@ -201,14 +201,6 @@ static __inline__ void Func_0200517c_(const void *data, s32 a, s32 b) {
   Map_PlayMapEdit(data, a, b);
 }
 
-static __inline__ void OffsetPosition_(s32 id, s32 dx, s32 dz) {
-  /* FAKEMATCH(wrapper): the call through this inline, so the second argument is
-   * set before the third's split constant is finished; as a direct call to
-   * Actor_OffsetPositionAndResetMotion, 2 of 72 instructions of Func_020004cc
-   * differ in tla-en. */
-  Actor_OffsetPositionAndResetMotion(id, dx, dz);
-}
-
 static __inline__ void CenterOnColumn_(s32 id, s32 column, s32 dz) {
   /* FAKEMATCH(wrapper): the call through this inline, for the same order as
    * OffsetPosition_; as a direct call to Actor_CenterOnColumn, 2 of 72
@@ -250,7 +242,7 @@ loop:
     s32 owner = gMainRoutineWork.currentOwner;
 
     if (index == 5)
-      OffsetPosition_(owner, 0, -4);
+      Actor_SetDestinationOffset(owner, 0, -4);
     else
       CenterOnColumn_(owner, 2, -4);
   }

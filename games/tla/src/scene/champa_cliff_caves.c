@@ -123,13 +123,6 @@ static __inline__ void Actor_SetSpeedParameters_(s32 actor, s32 speed,
   Actor_SetSpeedParameters(actor, speed, acceleration);
 }
 
-static __inline__ void Func_020034d4_(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
-   * constants, as ☀️'s scene layer does; as a direct call, 4 of 112
-   * instructions differ in tla-en (Scene_Initialize). */
-  Actor_SetHorizontalPositionWithTerrain(actor, x, z);
-}
-
 void Func_02000208(void) {
   const struct WarpTarget *warp;
   s32 msg;
@@ -140,7 +133,7 @@ void Func_02000208(void) {
   Sound_Play(158);
   Map_PlayMapEdit(warp->scene, warp->x, warp->z);
   Actor_GetById(8)->motionFlags = 0;
-  Func_020034d4_(8, 184 << 16, 204 << 17);
+  Actor_SetPosition(8, 184 << 16, 204 << 17);
   Actor_SetSpeedParameters_(8, 0x1cccc, 0xe666);
   Actor_CommitPositionAndActivate(8, 0, 16);
   Actor_ArmCallbackAndRefresh(8, FACING_WEST);
@@ -275,11 +268,11 @@ s32 Scene_Initialize(void) {
     }
     if (GameFlag_Test(0x977) && !GameFlag_Test(0x978)) {
       Func_0200361c_(10, 326);
-      Func_020034d4_(10, 0x2980000, 0xe80000);
+      Actor_SetPosition(10, 0x2980000, 0xe80000);
       Actor_GetById(10)->motionFlags = 4;
     }
     if (GameFlag_Test(0x977))
-      Func_020034d4_(8, 0x2980000, 0xc80000);
+      Actor_SetPosition(8, 0x2980000, 0xc80000);
   } else if (party->scene == (s32)&SceneId_Ov685Room3) {
     if (GameFlag_Test(0x97e)) {
       Actor_SetModeById(8, 11);
@@ -813,19 +806,7 @@ static __inline__ void Func_02003544_(s32 actor, s32 value, s32 frames) {
   Func_080d47b4(actor, value, frames);
 }
 
-/* VIEW(s0a34): static Func_020034d4_ as Func_020034d4___s0a34; champa_cliff_caves has static __inline__ void Func_020034d4_(s32 actor, s32 x, s32 z) { Actor_SetHorizontalPositionWithTerrain(actor, x, z); }; not tried: Func_020034d4_'s definition holds a FAKEMATCH tag. */
-static __inline__ void Func_020034d4___s0a34(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 2 of
-   * 613 instructions differ in tla-en. */
-  Actor_SetHorizontalPositionWithTerrain(actor, x, z);
-}
-
-static __inline__ void Func_02003434_(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 58 of
-   * 613 instructions differ in tla-en. */
-  Map_SetScreenShake(a, b, c);
-}
-
+/* VIEW(s0a34): static Func_020034d4_ as Func_020034d4___s0a34; champa_cliff_caves has static __inline__ void Actor_SetPosition(s32 actor, s32 x, s32 z) { Actor_SetHorizontalPositionWithTerrain(actor, x, z); }; not tried: Func_020034d4_'s definition holds a FAKEMATCH tag. */
 static __inline__ void Actor_SetPositionAndReset_(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 2 of
    * 613 instructions differ in tla-en. */
@@ -833,13 +814,6 @@ static __inline__ void Actor_SetPositionAndReset_(s32 actor, s32 x, s32 z) {
 }
 
 /* VIEW(s0a34): static Actor_SetSpeedParameters_ as Actor_SetSpeedParameters___s0a34; champa_cliff_caves has static __inline__ void Actor_SetSpeedParameters_(s32 actor, s32 speed, s32 acceleration) { Actor_SetSpeedParameters(actor, speed, accelerati...; not tried: Actor_SetSpeedParameters_'s definition holds a FAKEMATCH tag. */
-static __inline__ void Actor_SetSpeedParameters___s0a34(s32 id, s32 speed,
-                                                 s32 acceleration) {
-  /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 6 of
-   * 613 instructions differ in tla-en. */
-  Actor_SetSpeedParameters(id, speed, acceleration);
-}
-
 static __inline__ void FieldMessage_ShowAtActor_(s32 speaker, s32 flags) {
   /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 35 of
    * 613 instructions differ in tla-en. */
@@ -946,7 +920,7 @@ void Func_0200115c(void) {
   Actor_SetModeById(8, 5);
   Event_Wait(30);
   Actor_SetModeById(8, 6);
-  Func_020034d4___s0a34(12, 724 << 16, 252 << 16);
+  Actor_SetPosition(12, 724 << 16, 252 << 16);
   WORD_AT(Actor_GetById(12), 24) = 0x13333;
   WORD_AT(Actor_GetById(12), 28) = 0x13333;
   Actor_SetSingleChildFlags(Actor_GetById(12), 0);
@@ -954,7 +928,7 @@ void Func_0200115c(void) {
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Party_PlaySavedMusic();
     Event_Wait(15);
-    Func_020034d4___s0a34(12, 0, 0);
+    Actor_SetPosition(12, 0, 0);
     Actor_SetModeById(8, 1);
     Actor_GetById(8)->facing = 0x8000;
     Func_0200351c_(0x2008, 0, 5);
@@ -978,12 +952,12 @@ void Func_0200115c(void) {
     Actor_Jump(12, 10, 0);
     Sound_Play(146);
     Actor_SetSpritePriority(12, 1);
-    Actor_SetSpeedParameters___s0a34(12, 0x30000, 0x18000);
+    Actor_SetSpeed(12, 0x30000, 0x18000);
     Actor_ResetAndSetPositionInMode2(12, 644, 248);
     Event_Wait(21);
-    Func_020034d4___s0a34(12, 0, 0);
+    Actor_SetPosition(12, 0, 0);
     Event_Wait(50);
-    Func_02003434_(0x20000, 0x20000, 0x10000);
+    MapGrid_SetShake(0x20000, 0x20000, 0x10000);
     Event_Wait(70);
     Sound_Play(148);
     Event_Wait(25);
@@ -1007,7 +981,7 @@ void Func_0200115c(void) {
     position.z = 0xee0000;
     Func_02002f58__s0a34(&position);
     Sound_Play(147);
-    Func_020034d4___s0a34(13, 664 << 16, 248 << 16);
+    Actor_SetPosition(13, 664 << 16, 248 << 16);
     WORD_AT(object, 72) = 0x10000;
     object->motionFlags = 2;
     object->terrainHeight = 0;
@@ -1017,7 +991,7 @@ void Func_0200115c(void) {
     WORD_AT(object, 28) = 0x4000;
     Actor_Jump(13, 11, 0);
     Sound_Play(147);
-    Actor_SetSpeedParameters___s0a34(13, 0x33333, 0x19999);
+    Actor_SetSpeed(13, 0x33333, 0x19999);
     Actor_SetPositionAndReset_(13, 584, 248);
     Party_SetFields1f2And1f4((s32)&SceneId_Ov685Room4, 98);
     Party_SetFields1eeAnd1f0((s32)&SceneId_Ov685Room4, 99);
@@ -1054,9 +1028,9 @@ void Func_02001774(void) {
   Event_SetMessageId((s32)MsgHaveYouLearned);
   Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
                                          568 << 16, 248 << 16);
-  Func_020034d4___s0a34(8, 584 << 16, 224 << 16);
-  Func_020034d4___s0a34(13, 600 << 16, 240 << 16);
-  Func_020034d4___s0a34(11, 584 << 16, 264 << 16);
+  Actor_SetPosition(8, 584 << 16, 224 << 16);
+  Actor_SetPosition(13, 600 << 16, 240 << 16);
+  Actor_SetPosition(11, 584 << 16, 264 << 16);
   Actor_ArmCallback_(8, 0x5000, 0);
   Actor_ArmCallback_(11, 0xb000, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 41);

@@ -691,13 +691,6 @@ void Func_02000f2c(void) {
   }
 }
 
-static __inline__ void Speed(s32 id, s32 speed, s32 acceleration) {
-  /* FAKEMATCH(wrapper): the call forwarded through the inline, which keeps
-   * each call's own constants; as direct Actor_SetSpeedParameters calls, 38
-   * of 199 instructions differ in tla-en. */
-  Actor_SetSpeedParameters(id, speed, acceleration);
-}
-
 void Func_02000fd0(void) {
   struct Actor *object = Actor_GetById(10);
   s32 column = object->x >> 20;
@@ -719,21 +712,21 @@ void Func_02000fd0(void) {
     Func_0200156c(10);
     FieldEvent_Wait(20);
     FieldCamera_MoveTo(0xc00000, -1, 0xe00000, 1);
-    Speed(10, 0xcccc, 0x6666);
+    Actor_SetSpeed(10, 0xcccc, 0x6666);
     Actor_SetDestinationOffset(10, 0, 8);
     FieldActor_WaitForMoveById(10);
     FieldEvent_Wait(10);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x4000, 0);
-    Speed(10, 0x26666, 0x13333);
+    Actor_SetSpeed(10, 0x26666, 0x13333);
     Actor_SetDestinationOffset(10, 0, 80);
     FieldActor_WaitForMoveById(10);
     Func_0200156c(10);
     if (!Event_GetFlag(0x204)) {
       FieldEvent_Wait(10);
-      Speed(10, 0xcccc, 0x6666);
+      Actor_SetSpeed(10, 0xcccc, 0x6666);
       Actor_SetDestinationOffset(10, 0, 80);
       FieldActor_WaitForMoveById(10);
-      Speed(10, 0x28000, 0x14000);
+      Actor_SetSpeed(10, 0x28000, 0x14000);
       Actor_SetDestinationOffset(10, 0, 80);
       FieldEvent_Wait(5);
       Actor_SetPosition(10, 0, 0);

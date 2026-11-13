@@ -301,12 +301,6 @@ extern char SceneId_Ov6B0Room4;
 
 void Func_020034a0(void);
 
-static __inline__ void MoveObject(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as a direct call, 2
-   * of 243 instructions differ in tla-en. */
-  Actor_SetHorizontalPositionWithTerrain(id, x, z);
-}
-
 static __inline__ void SetCell(s32 a, s32 x, s32 z, s32 b) {
   /* FAKEMATCH(wrapper): forwarded inline (scene_call.h); as direct calls, 36
    * of 243 instructions differ in tla-en. */
@@ -370,7 +364,7 @@ void Func_02001160(void) {
         s32 fromX = (Actor_Get(12)->x >> 16) << 16;
 
         Actor_SetPosition(13, fromX, (Actor_Get(12)->z >> 16) << 16);
-        MoveObject(12, PIXELS(728), PIXELS(472));
+        Actor_SetPosition(12, PIXELS(728), PIXELS(472));
       }
       GameFlag_SetBit(0xa85);
     }

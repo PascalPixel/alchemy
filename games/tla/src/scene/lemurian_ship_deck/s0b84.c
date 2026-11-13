@@ -487,14 +487,6 @@ void Func_02001064(void) { Func_020020cc(gData_020020dc); }
 
 void Actor_MoveToObject(s32 id, s32 target);
 
-static __inline__ void SetSpeed(s32 id, s32 speed, s32 acceleration) {
-  /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
-   * scene layer, so the arguments are set up in their own order and each call
-   * keeps its constants; as a direct call, the costly constant is built first
-   * or shared, 2 of 101 instructions differ in tla-en. */
-  Actor_SetSpeedParameters(id, speed, acceleration);
-}
-
 static __inline__ void SetPosition(s32 id, s32 x, s32 z) {
   /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s
    * scene layer, so the arguments are set up in their own order and each call
@@ -517,7 +509,7 @@ void Func_02001074(void) {
     Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
     System_Wait(1);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-    SetSpeed(9, 0xcccc, 0x6666);
+    Actor_SetSpeed(9, 0xcccc, 0x6666);
     SetPosition(9, 416, 428);
     Actor_FaceDirectionAndWait(9, FACING_WEST);
     FieldEvent_SetMessageId(MsgWellThereS);

@@ -341,23 +341,23 @@ UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
 /// when BattleEnemy_ClaimNameLetter's result has ENEMY_LETTER_FIRST_TOO set.
 /// Writes Unit.name.
 UNREAD_RESULT BattleEnemy_LetterFirstOfKind(s32 classId) {
-  s32 unitId;
+  s32 enemy;
 
-  for (unitId = FIRST_ENEMY_UNIT; unitId < FIRST_ENEMY_UNIT + ENEMY_BATTLE_SIZE;
-       unitId++) {
-    struct Unit *unit = Unit_GetFar(unitId);
+  for (enemy = 0; enemy < ENEMY_BATTLE_SIZE; enemy++) {
+    struct Unit *unit = Unit_GetFar(FIRST_ENEMY_UNIT + enemy);
     s32 length;
 
     if (unit->side != BATTLE_SIDE_ENEMY || unit->id != classId)
       continue;
     // The letter goes after the name, with a new terminator after it; a name
     // that fills all 14 characters takes none.
-    for (length = 0; length <= 13; length++) {
-      if (unit->name[length] == 0)
-        break;
+    length = 0;
+  findEnd:
+    if (unit->name[length] != 0) {
+      if (++length > 13)
+        return;
+      goto findEnd;
     }
-    if (length > 13)
-      return;
     unit->name[length] = LIST_MARKER_CHAR;
     unit->name[length + 1] = 0;
     return;

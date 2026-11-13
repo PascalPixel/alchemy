@@ -1,3 +1,26 @@
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Actor_SelectAnimation
+#define EFFECT_SET_SCRIPT Func_02002f90
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#include "../../../../games/tla/src/field/field_effect/spawn.c"
+
+// ---- scene/tundaria_tower/script0.c ----
+
+#include "types.h"
+#include "event_inline.h"
+
+void Func_02000280(void) {
+  GameFlag_Set(513);
+  Event_RequestDjinnBattle(8, 52);
+}
+
+#include "../field/object/wait_until_idle.c"
+
+#include "../field/map/cell_get.c"
+
+// ---- field/map/cell_set.c ----
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
@@ -27,7 +50,7 @@ s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value) {
   return old;
 }
 
-#include "../../scene/tundaria_tower/tundaria_tower.h"
+#include "tundaria_tower/tundaria_tower.h"
 
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 terrain, s32 height);

@@ -461,3 +461,226 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
 }
 
 #include "../field/field_effect/advance_motion_priority.c"
+
+// ---- scene/dehkan_plateau/s0974.c ----
+
+/// Scene code of overlay 0x655, in ROM order.
+
+#include "types.h"
+#include "system.h"
+#include "iwram_call.h"
+#include "actor.h"
+#include "main_routine_work.h"
+#include "field_sprite.h"
+#include "field_effect.h"
+#include "event_inline.h"
+#include "ram_buffer.h"
+#include "map.h"
+#include "event_work.h"
+#include "module/field/field_effect.h"
+#include "module/scene/dehkan_plateau.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+
+extern const s32 gData_02003e00[];
+
+void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
+void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
+
+/// Eight puffs (type 285) in a row over the leader, flung outwards when spread
+/// is set.
+void Rubble_Spray(s32 spread) {
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct FieldEffect *effect;
+  u32 frame = 0;
+  u32 i = 0;
+
+  do {
+    {
+      /* FAKEMATCH(temporary): y held in a local, so x is computed before it; as
+       * one expression, 14 of 122 instructions differ in tla-en. */
+      s32 y = leader->y - (((Random16() * 14) >> 16) << 16);
+
+      effect = (struct FieldEffect *)Import_ActorCreate(
+          285, (i << 17) + leader->x - 0x80000, y - 0x20000, leader->z);
+    }
+    if (effect != 0) {
+      frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
+      effect->motionFlags = 0;
+      effect->collisionFlags = 0;
+      Actor_SetSpriteFlags(effect, 0);
+      Func_02003ba0(effect, 2);
+      Actor_StartScript(effect, gData_02003e00);
+      effect->scaleY = effect->scaleX = 0xb333;
+      effect->sprite->priority = 1;
+      if (spread != 0) {
+        effect->velocity.x = Iwram_MulQ16(Trig_Cos(i << 13), 0x13333);
+        effect->velocity.z = Trig_Sin(i << 13);
+      } else {
+        effect->velocity.x = spread;
+        effect->velocity.z = spread;
+      }
+      effect->velocity.y = -(((Random16() << 14) >> 16) + 0x6000);
+      effect->spin = ((Random16() << 9) >> 16) - 0x100;
+      effect->scaleRateX = -0x800;
+      effect->scaleRateY = -0x600;
+      effect->update = Effect_AdvanceMotionAtLeaderPriority;
+    }
+    i++;
+  } while (i <= 7);
+}
+
+void Actor_TakePlaceOf(struct Actor *object, struct Actor *other);
+
+void Actor_MoveToObject(s32 id, s32 target);
+
+extern const u8 gData_02003e30[];
+
+void Rubble_Burst(void) {
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  s32 frame;
+  u32 i;
+
+  if (leader == NULL)
+    return;
+  frame = 0;
+  for (i = 0; i <= 16; i++) {
+    {
+      struct Actor *object = ((struct Actor *)Import_ActorCreate(
+          285, leader->x, leader->y, leader->z));
+      struct EffectView *effect = (struct EffectView *)object;
+
+      if (object == NULL)
+        goto skip;
+      frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
+      object->motionFlags = 0;
+      object->collisionFlags = 0;
+      Actor_SetSpriteFlags(object, 0);
+      Func_02003ba0(object, 2);
+      Actor_StartScript(object, gData_02003e30);
+      effect->velocityX = Trig_Cos(i << 12);
+      effect->velocityY = 0;
+      effect->velocityZ = Trig_Sin(i << 12);
+      effect->velocityX += effect->velocityX >> 1;
+      effect->velocityX += (((Random16() * 3) << 14) >> 16) + -0x6000;
+      effect->velocityZ += (((Random16() * 3) << 13) >> 16) + -0x3000;
+      effect->spin = (((u32)Random16() << 12) >> 16) - 0x800;
+      effect->scaleRateX = 0;
+      effect->scaleRateY = 0;
+      effect->update = Effect_AdvanceMotionAtLeaderPriority;
+      effect->sprite->priority =
+          ((struct EffectView *)leader)->sprite->priority;
+    }
+  skip:
+  }
+}
+
+// ---- scene/dehkan_plateau/s0bc0.c ----
+
+/// Scene code of overlay 0x655, in ROM order.
+
+#include "shared/map_cells.h"
+#include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
+#include "map.h"
+#include "types.h"
+#include "ram_buffer.h"
+#include "actor.h"
+#include "main_routine_work.h"
+#include "event_inline.h"
+#include "field_sprite.h"
+#include "iwram_call.h"
+#include "field.h"
+#include "event_work.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/scene/dehkan_plateau.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+
+DEFINE_ACTOR_SET_CELL_SHAPE(Actor_SetCellShape, MapGrid_GetTerrainKind,
+                            MapCollision_FindOrAddTag)
+
+extern const u8 gData_02003f44[];
+extern const u8 gData_02003f52[];
+extern const u8 gData_02003f80[];
+extern const u8 gData_02003f92[];
+extern const u8 gData_02003f98[];
+extern const u8 gData_02003fa0[];
+extern const u8 gData_02003fa8[];
+extern const u8 gData_02003fb0[];
+extern const u8 gData_02003fb8[];
+extern const u8 gData_02003fc0[];
+extern const u8 gData_02003fc4[];
+
+void CrumblingPillars_Step(const void *data);
+
+void Func_02002180(void);
+void Func_02001804(void);
+
+extern const u16 gData_02003fd2[];
+extern const struct CellRecord gData_02004066[];
+
+void Leader_SetCellShapeAt(s32 a, s32 b) {
+  Actor_SetCellShape(a, b, gMainRoutineWork.currentOwner);
+}
+
+void Actor_TakePlaceOf(struct Actor *object, struct Actor *other);
+void Actor_StartScript(struct Actor *object, const void *script);
+void Actor_MoveToObject(s32 id, s32 target);
+
+// Raises each listed actor's cells: the shape grid and the cell flags under it,
+// then lifts the leader if the new terrain is above the leader.
+DEFINE_PILLARS_RAISE(Pillars_Raise, MapGrid_GetTerrainKind, Actor_GetCellIndex,
+                     MapCollision_FindOrAddTag)
+
+#define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
+
+void Func_02000d78(u16 *list) {
+  struct Actor *held = Leader_FindActorAhead();
+  void *work = Ram_HeapSlots->eventWork;
+  u8 *shapeGrid = gMapShapeGrid;
+
+  if (held == NULL) {
+    s32 id = Field_FindNearbyPsynergyTarget(gMainRoutineWork.currentOwner, 1);
+
+    if (id != -1)
+      held = Actor_GetById(id);
+  }
+  HELD_OBJECT(work) = NULL;
+  if (*list != 0xffff) {
+  loop:
+    if (held == Actor_GetById(*list)) {
+      u8 *layer = &held->terrainId;
+      struct MapCell *cells = Ram_HeapSlots->mapWork->layers[*layer].cells;
+      u8 *shapes = shapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
+      s32 shape = MapGrid_GetTerrainKind(*layer, held->x, held->z);
+      s32 level = Map_GetTerrainHeight(*layer, held->x, held->z);
+      s32 index = Actor_GetCellIndex(held);
+      s32 value;
+
+      shapes += index;
+      value = MapCollision_FindOrAddTag(*layer, shape, (level >> 19) - 4);
+      cells += index;
+      /* FAKEMATCH(signature): the shape grid byte stored through a bit-field
+         view (struct ShapeBits), whose alias set lets the cell's attribute be
+         read first; as `*shapes = value;`, 4 of 131 instructions differ in
+         tla-en. */
+      ((struct ShapeBits *)shapes)->shape = value;
+      cells->attributeB &= 63;
+      cells += 128;
+      cells->attributeB &= 191;
+      HELD_OBJECT(work) = held;
+    }
+    list++;
+    if (*list != 0xffff)
+      goto loop;
+  }
+}
+
+// One-field view: the shape store is memory of its own to sched2, which sinks
+// it past the cell read; a plain store keeps its order.
+
+DEFINE_HELD_ACTOR_RAISE_CELL(HeldActor_RaiseCell, MapGrid_GetTerrainKind,
+                             Actor_GetCellIndex, MapCollision_FindOrAddTag)
+
+#include "../field/object/set_sprite_priority.c"

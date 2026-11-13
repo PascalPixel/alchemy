@@ -1449,3 +1449,733 @@ void Func_02001d7c(void) {
   work->value0c = animation->value10;
   animation->flag11 = 1;
 }
+
+// ---- scene/mars_lighthouse_star_room/ride_handle.c ----
+
+/// Scene code of overlay 0x6ab, in ROM order.
+
+#include "shared/mars_lighthouse.h"
+#include "types.h"
+#include "ram_buffer.h"
+#include "frame.h"
+#include "actor.h"
+#include "event_inline.h"
+#include "module/field/field.h"
+#include "module/scene/mars_lighthouse_star_room.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+
+struct RideEntry {
+  s16 a;
+  u8 unk02[2];
+  s16 b;
+  s16 c;
+  u8 unk08[4];
+  s32 d;
+};
+
+struct RideRow {
+  u8 unk00[20];
+  s16 a;
+  u8 unk16[2];
+  s16 b;
+  s16 c;
+  u8 unk1c[4];
+  s32 d;
+};
+
+struct RideSlot {
+  u16 value;
+  u8 unk02[2];
+};
+
+struct RideWork {
+  s32 counter;
+  s16 active;
+  u8 unk06[8];
+  s16 value0e;
+  u8 unk10[4];
+  struct RideEntry entries[4];
+  struct RideSlot slots[4];
+  u8 unk64[12];
+  void *handle;
+};
+
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
+void Actor_Release(struct Actor *object);
+void MarsLighthouseStarRoom_SlideOnIce(void);
+
+DEFINE_RIDE_RELEASE_HANDLE(Func_02001dd0, Actor_Release)
+
+void Func_02001de4(s16 value) {
+  ((struct RideWork *)(gInventorySnapshot + 0x188))->value0e = value;
+}
+
+#include "io_reg.h"
+#include "field.h"
+
+/* VIEW(ride_handle): tag struct MarsLighthouseBeam as struct
+ * MarsLighthouseBeam__ride_handle; module/scene/scene.h has another definition;
+ * tried with the definition the rest of the object has, it does not compile in
+ * tla-ja: games/tla/src/scene/mars_lighthouse_star_room/ride_handle.c:135:
+ * structure has no member named `stopCount'. */
+struct MarsLighthouseBeam__ride_handle {
+  u8 unk00[10];
+  u16 unk0a;
+  u8 unk0c[4];
+  s32 unk10;
+  struct MarsLighthouseBeamTarget targets[4];
+  u16 stopCount;
+  u16 stops[7];
+};
+
+void Func_02001df0(u16 *targets, u16 *stops, s32 a2, s32 a3) {
+  struct MarsLighthouseBeam__ride_handle *beam =
+      (struct MarsLighthouseBeam__ride_handle *)(gInventorySnapshot + 0x188);
+  struct MarsLighthouseBeamTarget *target = beam->targets;
+  s32 id;
+  s32 i;
+
+  if (Event_GetFlag(0x109) == 0) {
+    i = 0;
+    id = *targets++;
+    {
+      /* FAKEMATCH(dead): a test combine folds, keeping the first loop's refs
+       * unweighted; as no test, 90 of 145 instructions differ in tla-en. */
+      s32 never = id & 0x40;
+      if (never < 0) {
+        id = 0;
+        goto afterTarget;
+      }
+    }
+    if (id > 0) {
+    nextTarget:
+      {
+        s32 flags = *targets;
+        s32 height = flags & 15;
+        struct Actor *object;
+        s32 one;
+
+        flags &= 0xf0;
+        object = Actor_Get(id);
+        targets++;
+        if (object != NULL) {
+          Actor_SetSpriteFlags(object, 0);
+          ((u8 *)object)[98] = one = 1;
+          if ((flags & 0x80) == 0)
+            object->collisionFlags = 0;
+          target->active = one;
+          target->flags = flags;
+          target->object = Actor_Get(id);
+          target->height = height << 16;
+          target->index = i;
+          target++;
+        }
+      }
+    afterTarget:
+      i++;
+      if (i <= 3) {
+        if ((id = *targets++) > 0)
+          goto nextTarget;
+      }
+    }
+    if (stops != NULL) {
+      s32 count;
+      s32 stopOffset;
+      u16 *p;
+
+      i = 0;
+      count = *stops++;
+      stopOffset = 84;
+      *(u16 *)((u8 *)beam + stopOffset) = count;
+      {
+        /* FAKEMATCH(dead): a test combine folds, keeping the second loop's refs
+         * unweighted; as no test, 133 of 145 instructions differ in tla-en. */
+        s32 never = count & 0x40;
+        if (never < 0) {
+          p = stops;
+          goto afterStop;
+        }
+      }
+      if (count > 0) {
+        p = &beam->stopCount;
+      nextStop:
+        p[1] = *stops;
+      afterStop:
+        stops++;
+        i++;
+        p += 2;
+        if (i <= 3) {
+          s32 stop = *stops++;
+
+          *p = stop;
+          if (stop > 0)
+            goto nextStop;
+        }
+      }
+    }
+  }
+  beam->unk10 = a2;
+  beam->unk0a = a3;
+  if (REG_BLDCNT == 0) {
+    {
+      s32 alpha = 0xc08;
+      REG_BLDALPHA = alpha;
+    }
+    {
+      s32 control = 0x3f10;
+      REG_BLDCNT = control;
+    }
+  }
+  Task_AddFrame(Func_02001bf8, 0x480);
+}
+
+s32 Func_02001f24(s32 index) {
+  return ((struct RideRow *)(gInventorySnapshot + 0x188 + index * 16))->a;
+}
+
+void Func_02001f34(s32 index, s16 value) {
+  ((struct RideRow *)(gInventorySnapshot + 0x188 + index * 16))->a = value;
+}
+
+s32 Func_02001f44(void) {
+  return ((struct RideWork *)(gInventorySnapshot + 0x188))->counter;
+}
+
+DEFINE_RIDE_ADVANCE_COUNTER(Func_02001f50)
+
+DEFINE_RIDE_SET_ENTRY(Func_02001f78)
+
+void Func_02001f98(s32 index, s16 value) {
+  ((struct RideWork *)(gInventorySnapshot + 0x188))->entries[index].c = value;
+}
+
+s32 Func_02001fa8(s32 index) {
+  return ((struct RideRow *)(gInventorySnapshot + 0x188 + index * 16))->b;
+}
+
+DEFINE_RIDE_SET_SLOT(Func_02001fb8)
+
+#include "main_routine_work.h"
+#include "battle_unit.h"
+
+struct MarsLighthouseEventWork {
+  u8 unk000[0x16a];
+  u16 unk16a;
+  u16 downCount;
+  u16 standingCount;
+  u16 downOwners[8];
+};
+
+struct BattleUnit *Unit_Get(s32 owner);
+
+DEFINE_PARTY_TAKE_FALL_DAMAGE(Func_02001fcc)
+
+#include "../field/field_effect/advance_spin.c"
+
+DEFINE_ACTOR_BLINK(Func_02002120, 10, 4, 0)
+
+// ---- scene/mars_lighthouse_star_room/s2148.c ----
+
+/// Scene code of overlay 0x6ab, in ROM order.
+
+#include "shared/mars_lighthouse.h"
+#include "version.h"
+
+#include "types.h"
+#include "call.h"
+#include "actor.h"
+#include "main_routine_work.h"
+#include "ram_buffer.h"
+#include "vector3.h"
+#include "fixed_math.h"
+#include "event_inline.h"
+#include "display_transition.h"
+#include "event_work.h"
+#include "field.h"
+#include "item_icon.h"
+#include "mars_lighthouse_star_room.h"
+#include "module/field/field.h"
+#include "module/scene/mars_lighthouse_star_room.h"
+#include "module/system/system.h"
+
+struct Work020023c4 {
+  u8 unk00[4];
+  u16 unk04;
+  u8 unk06[0x68 - 6];
+  s16 unk68;
+  s16 unk6a;
+};
+
+s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
+void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
+void Func_02002120(void);
+extern u8 gInventorySnapshot[];
+
+#define SHARED_F02002148_NAME Func_02002148
+#define SHARED_F02002148_ID2 Func_02001fcc
+#define SHARED_F02002148_ID3 Func_02002120
+#define SHARED_F02002148_ID4 Actor_SelectAnimation
+#define SHARED_F02002148_ID5 MapGrid_GetCellAttributeLowNibbleOrBump
+#define SHARED_F02002148_ID6 MapGrid_CheckCollision
+#define SHARED_F02002148_ID7 Field_CheckSpheresOverlap
+#include "shared/func_02002148.c"
+#undef SHARED_F02002148_NAME
+#undef SHARED_F02002148_ID2
+#undef SHARED_F02002148_ID3
+#undef SHARED_F02002148_ID4
+#undef SHARED_F02002148_ID5
+#undef SHARED_F02002148_ID6
+#undef SHARED_F02002148_ID7
+
+#include "frame.h"
+
+struct RideEntry {
+  s16 a;
+  u8 unk02[2];
+  s16 b;
+  s16 c;
+  u8 unk08[4];
+  s32 d;
+};
+
+struct RideRow {
+  u8 unk00[20];
+  s16 a;
+  u8 unk16[2];
+  s16 b;
+  s16 c;
+  u8 unk1c[4];
+  s32 d;
+};
+
+struct RideSlot {
+  u16 value;
+  u8 unk02[2];
+};
+
+struct RideWork {
+  s32 counter;
+  s16 active;
+  u8 unk06[8];
+  s16 value0e;
+  u8 unk10[4];
+  struct RideEntry entries[4];
+  struct RideSlot slots[4];
+  u8 unk64[12];
+  void *handle;
+};
+
+extern u16 gData_02004cf0[];
+
+void Func_02002354(void) {
+  if (((struct RideWork *)(gInventorySnapshot + 0x188))->active)
+    Func_02002148();
+}
+
+#include "mars_lighthouse_star_room.h"
+
+extern u8 gInventorySnapshot[];
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
+
+struct RideEvent {
+  u8 unk000[0x15a];
+  u16 field15a;
+  u16 field15c;
+  u16 field15e;
+  u8 unk160[4];
+  u16 field164;
+  u16 field166;
+  u8 unk168[0x44];
+  s32 field1ac;
+  u8 unk1b0[2];
+  u16 started;
+  s32 field1b4;
+};
+
+// XXX: is the car an actor (its stopped halfword sits where an actor's action
+// is, its steps in unk70)? The code that stores the car's pointer at the ride
+// state's 0x6c would settle it.
+struct RideCar {
+  u8 unk00[0x64];
+  s16 stopped;
+  u8 unk66[0xa];
+  s32 stepX;
+  s32 unk74;
+  s32 stepZ;
+};
+
+struct RideState {
+  s32 counter;
+  s16 active;
+  u8 unk06[0x66];
+  struct RideCar *car;
+};
+
+/// Stepping onto ice (cell behavior 90, as Imil's ice slide is in The Broken
+/// Seal): the leader slides until the ice stops.
+s32 MarsLighthouseStarRoom_SlideOnIce(void) {
+  struct RideEvent *event = Ram_HeapSlots->eventWork;
+  struct RideState *ride;
+  struct Actor *leader;
+  s32 frame[3]; // Unused: gives the stack frame its 12 bytes.
+
+  /* FAKEMATCH(signature): typed returning s32, though it returns nothing; as
+   * void, 2 of 138 instructions differ in tla-en. */
+
+  if (event->started == 0) {
+    ScreenTransition_Start(event->field1ac, event->field1b4);
+    event->started = 1;
+  }
+  Event_ClearFlag(0x106);
+  event->field166 = 0;
+  event->field15a = 0;
+  event->field15e = 0;
+  event->field15c = 0;
+  event->field164 = 0;
+#ifdef UBFIX
+  Func_02001fcc();
+#else
+  /* FAKEMATCH(wrapper): Func_02001fcc called through a cast to
+   * s32 (*)(s32, s32) with -10 and 0; as Func_02001fcc(), 3 of 138
+   * instructions differ in tla-en. */
+  ((s32 (*)(s32, s32))Func_02001fcc)(-10, 0);
+#endif
+  FieldCamera_SetSpeed(0x70000, 0xe000);
+  leader = Actor_Get(gMainRoutineWork.currentOwner);
+  ride = (struct RideState *)(gInventorySnapshot + 0x188);
+  Event_SetFlag(0x106);
+  Event_Start();
+  FieldEvent_ResolvePendingActions(0);
+  Event_ClearFlag(0x106);
+  leader->update = (void (*)(void))Func_02002120;
+  leader->facing = 0x4000;
+  Actor_SelectAnimation(leader, 49);
+  while (ride->car->stopped == 0) {
+    if (MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x, leader->z) != 7) {
+      leader->x += ride->car->stepX;
+      leader->z += ride->car->stepZ;
+    } else {
+      if (ride->car->stepX != 0)
+        leader->x = (leader->x & 0xfff00000) + 0x80000;
+      if (ride->car->stepZ != 0)
+        leader->z = (leader->z & 0xfff00000) + 0x80000;
+    }
+    ride->active = 0;
+    System_Wait(1);
+  }
+  FieldEvent_Wait(30);
+  leader->update = 0;
+  Actor_SetSpriteColorMode(leader, 0);
+  ride->active = 0;
+}
+
+#include "system.h"
+
+extern u16 gData_02004cf0[];
+
+DEFINE_RIDE_IF_ACTIVE(MarsLighthouseStarRoom_ContinueSlide,
+                      MarsLighthouseStarRoom_SlideOnIce)
+
+s32 MarsLighthouseStarRoom_IsSliding(void) {
+  return ((struct RideWork *)(gInventorySnapshot + 0x188))->active;
+}
+
+#include "iwram_call.h"
+#include "field.h"
+
+struct Sprite {
+  u8 unk00[4];
+  u16 y : 8;
+  u16 affine : 2;
+  u16 blendMode : 2;
+  u16 mosaic : 1;
+  u16 fullColor : 1;
+  u16 shape : 2;
+  u16 x : 9;
+  u16 affineIndex : 5;
+  u16 size : 2;
+  u16 tile : 10;
+  u16 attr2Rest : 6;
+  u8 unk0a[2];
+  s32 scale; ///< as field_sprite.h's FieldSprite has it
+  u8 vramBlock;
+  u8 keepEntry : 1;
+  u8 unk11 : 7;
+  u16 rotation;
+  u8 unk14[2];
+  u8 unk16[5];
+  u8 unk1b;
+  u8 unk1c[12];
+  void *record;
+};
+
+struct Work {
+  u8 unk00[12];
+  u16 vramBlock;
+  u8 unk0e[98];
+  struct Actor *owner;
+};
+
+extern u8 gData_02004774[];
+
+#define WORK ((struct Work *)(gInventorySnapshot + 0x188))
+
+void Func_020024d4(struct Actor *actor) {
+  struct Work *work = WORK;
+  s32 i;
+
+  if (work->owner == NULL)
+    return;
+  for (i = 0; i >= 0; i--) {
+    struct Actor *object;
+    s32 a, b, c, d, e;
+    s32 x, y, z;
+
+    a = Random16();
+    b = Random16();
+    x = actor->x + a * 16;
+    x -= b * 16;
+    c = Random16();
+    d = Random16();
+    e = Random16();
+    z = actor->z + d * 16 - e * 16;
+    y = c * 8 + actor->y + 0x40000;
+    object = (struct Actor *)Import_ActorCreate(0x1e9, x, y, z);
+    if (object != NULL) {
+      s32 angle, radius;
+      u32 sum;
+      s32 scale;
+      struct Sprite *sprite;
+      struct Sprite *source;
+      s32 velocity;
+
+      angle = Random16();
+      radius = Random16();
+      sum = Random16();
+      sum += Random16();
+      scale = (sum >> 2) + 0x8000;
+      Actor_StartScript(object, gData_02004774);
+      Actor_SetSpriteFlags(object, 0);
+      object->velocityY = angle * 4 + 0x20000;
+      radius <<= 3;
+      object->velocityZ = Iwram_MulQ16(radius, Trig_Cos(angle));
+      velocity = Iwram_MulQ16(radius, Trig_Sin(angle));
+      object->gravity = 0x547a;
+      object->scaleX = scale;
+      object->scaleY = scale;
+      object->velocityX = velocity;
+      object->acceleration = 0;
+      object->bounce = 0x8000;
+      sprite = object->sprite;
+      source = work->owner->sprite;
+      VramCache_FreeEntry(sprite->vramBlock);
+      sprite->keepEntry = 1;
+      sprite->vramBlock = work->vramBlock;
+      SpriteAnimation_Clear(sprite->record);
+      sprite->record = NULL;
+      sprite->unk1b = 0;
+      sprite->unk14[0] = source->unk14[0];
+      sprite->unk14[1] = source->unk14[1];
+      sprite->shape = source->shape;
+      sprite->size = source->size;
+
+      sprite->tile = source->tile;
+    }
+  }
+}
+
+extern const u8 gData_020047b8[];
+
+/// Throws two sparks (object kind 325) from (x, y, z), each upward at about
+/// speed plus 0x14000 with a random spread, at a random angle and size.
+DEFINE_EMBERS_SPAWN(Func_02002658, gData_020047b8)
+
+void Func_02002738(struct Actor *object) {
+  object->movementState = Event_GetFlag(260);
+}
+
+#include "map.h"
+
+#define ABS(x) ((x) < 0 ? -(x) : (x))
+
+/* VIEW(s236c): tag struct Work020023c4 as struct Work020023c4__s236c; s2148.c
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_star_room/s2148.c:619: structure has no
+ * member named `unk6c'. */
+struct Work020023c4__s236c {
+  u8 unk00[4];
+  u16 unk04;
+  u8 unk06[4];
+  u16 unk0a;
+  u8 unk0c[0x6c - 0x0c];
+  struct Actor *unk6c;
+};
+
+struct WorkEvent {
+  u8 unk000[340];
+  u16 unk154;
+  u8 unk156[358 - 342];
+  s16 unk166;
+};
+
+DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_0200274c, Work020023c4__s236c,
+                              MapGrid_GetCellAttributeLowNibbleOrBump,
+                              Func_02002658, Func_020024d4)
+#undef WORK
+#undef ABS
+
+void Func_02002a58(s32 sourceId, s32 id, s32 kind, s32 value,
+                   const void *script) {
+  struct Actor *source = Actor_Get(sourceId);
+  struct Actor *object = Actor_Get(id);
+
+  FieldActor_SetPositionAndResetMotion(object, source->x, source->y, source->z);
+  Actor_StartScript(object, script);
+  Actor_SetSpriteFlags(object, 0);
+  object->motionFlags = 0;
+  Actor_SelectAnimation(object, 1);
+  *(struct Actor **)((u8 *)object + 0x68) = source;
+  object->timer = 0;
+  *(s16 *)((u8 *)object + 0x66) = value;
+  *(u8 *)((u8 *)object + 0x62) = kind;
+  object->update = Func_02002738;
+}
+
+#include "field_sprite.h"
+#include "scene_tables.h"
+#include "system/vector3.h"
+
+/// Sets up the actor whose id self keeps in byte 0x62: places it 32 pixels out
+/// from self, 12 pixels up, along self's angle (unk66), faces it that way,
+/// gives it Func_0200274c as its update hook and its speed, clears its scale
+/// and action, has it watch what self watches, and calls Event_PlaySound(104).
+/// The twin of overlay 6ac's Func_02002e6c.
+DEFINE_ACTOR_LAUNCH_AHEAD(Func_02002ad0, Func_0200274c)
+
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
+
+DEFINE_ACTOR_POP_UP_SLOW(Func_02002b98, Actor_SelectAnimation)
+
+DEFINE_ACTOR_POP_UP(Func_02002c44, Actor_SelectAnimation)
+
+#include "macros.h"
+
+extern u8 gInventorySnapshot[];
+extern u16 gData_02004cf0[];
+
+DEFINE_ACTOR_PARK(Func_02002ce8, Func_02002ad0)
+
+DEFINE_ACTOR_STEER_BY_PAD(Func_02002d04, gData_020047fc, Actor_SelectAnimation)
+
+void Func_02002d90(void) {
+  struct EventWork *work = Ram_HeapSlots->eventWork;
+
+  if (work->actionCounter != 0) {
+    Event_SetFlag(0x106);
+    Leader_StopMoving();
+    Event_ResolveAllPendingActions();
+    Event_ClearFlag(0x106);
+  }
+}
+
+#include "system/iwram_call.h"
+#include "system/input.h"
+#include "system/main_routine_work.h"
+
+/// A point on the map: 16.16 fixed-point pixels.
+struct Position {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+extern s16 gData_0200483c[];
+
+DEFINE_LEADER_SLIDE_ON_ICE(Func_02002dc4, Func_02002d90, gData_0200483c,
+                           Actor_SelectAnimation, Func_02002d04,
+                           Field_CheckSpheresOverlap)
+
+#include "input.h"
+
+/* VIEW(s3070): variable gData_02004cf0 as extern volatile s16 gData_02004cf0;
+ * s2a58 has extern u16 gData_02004cf0[]; tried as the rest of the object
+ * declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_star_room/s2148.c:1014:
+ * `gData_02004cf0__s3070' undeclared (first use in this function). */
+extern volatile s16 gData_02004cf0__s3070 __asm__("gData_02004cf0");
+extern s16 gData_0200483c[];
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+s32 Actor_HasArrived(struct Actor *object);
+/* VIEW(s3070): routine Field_CheckSpheresOverlap as s32
+ * Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
+ * s2dc4 has s32 Field_CheckSpheresOverlap(s32 *a, s32 radiusA, struct
+ * Position *b, s32 radiusB); tried as the rest of the object declares it, it
+ * does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_star_room/s2148.c:1093:
+ * `Func_0200428c__s3070' undeclared (first use in this function). */
+extern s32
+Func_0200428c__s3070(s32 *a, s32 aRadius, s32 *b,
+                     s32 bRadius) __asm__("Field_CheckSpheresOverlap");
+
+#define SHARED_F02003070_NAME Func_02003070
+#define SHARED_F02003070_ID2 gData_02004cf0__s3070
+#define SHARED_F02003070_ID3 Func_02002d90
+#define SHARED_F02003070_ID4 gData_0200483c
+#define SHARED_F02003070_ID5 Actor_SelectAnimation
+#define SHARED_F02003070_ID6 Actor_HasArrived
+#define SHARED_F02003070_ID7 Func_02002d04
+#define SHARED_F02003070_ID8 Func_0200428c__s3070
+#include "shared/func_02003070.c"
+#undef SHARED_F02003070_NAME
+#undef SHARED_F02003070_ID2
+#undef SHARED_F02003070_ID3
+#undef SHARED_F02003070_ID4
+#undef SHARED_F02003070_ID5
+#undef SHARED_F02003070_ID6
+#undef SHARED_F02003070_ID7
+#undef SHARED_F02003070_ID8
+
+// ---- scene/mars_lighthouse_star_room/set_data.c ----
+
+/// Scene code of overlay 0x6ab, in ROM order.
+
+#include "shared/mars_lighthouse.h"
+#include "types.h"
+#include "ram_buffer.h"
+#include "frame.h"
+#include "actor.h"
+#include "event_inline.h"
+#include "mars_lighthouse_star_room.h"
+#include "module/field/field.h"
+#include "module/scene/mars_lighthouse_star_room.h"
+#include "module/scene/scene.h"
+#include "module/tla.h"
+
+extern u16 gData_02004cf0[];
+
+void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
+void MarsLighthouseStarRoom_SlideOnIce(void);
+
+void Func_02003384(u16 value) { gData_02004cf0[0] = value; }
+
+#include "fixed_math.h"
+#include "scene_tables.h"
+#include "system/main_routine_work.h"
+
+/// A point on the map: 16.16 fixed-point pixels.
+struct Position {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003390, Func_02002d90,
+                                 Actor_SelectAnimation, Func_02002d04,
+                                 Field_CheckSpheresOverlap)
+
+#include "../field/object/set_sprite_priority.c"

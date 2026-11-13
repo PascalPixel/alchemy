@@ -1,4 +1,16 @@
 /// @file
+/// Treasure Isle's copy of the field effect spawner.
+
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Actor_SelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#define EFFECT_SPRITE_PRIORITY
+#include "../../field/field_effect/spawn.c"
+
+// ---- scene/treasure_isle/treasure_isle.c ----
+
 /// Treasure Isle, the dungeon in the north-east of the world: buttons that
 /// raise spiky rocks Grind breaks, pillars Move pushes onto switches, rocks
 /// Lift raises, Gale the Jupiter Djinni, a Venus Djinni, and the guardian of

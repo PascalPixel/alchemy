@@ -4,11 +4,6 @@
 
 #include "../battle_effect_internal.h"
 
-// Ramses' slots: sprites 0 to 6 are the statue, 7 and 8 its fist and 9 to 14
-// the rocks. work->particles 0 to 5 move the rocks (variant counts their
-// bounces), 6 to 29 are the fist's puffs of dust (eight kept per blow, four
-// thrown) and 30 to 41 the rocks' puffs, two per rock. PARTICLES holds the
-// sparks.
 #define RAMSES_FRAMES 320
 #define RAMSES_STRIKE_FRAME 260   ///< the fist strikes the targets
 #define RAMSES_ROCKS 6            ///< rocks that fall and bounce
@@ -16,13 +11,12 @@
 #define RAMSES_FIRST_ROCK_PUFF 30 ///< the first rock puff in work->particles
 #define RAMSES_SPARKS 512         ///< sparks of the strike
 
-/// In a desert, the giant statue of Ramses pounds the ground with its fist
-/// while rocks rain down, then launches the fist at the targets, which strikes
-/// them in a burst of RAMSES_SPARKS sparks from PARTICLES.
+/// In a desert the giant statue of Ramses pounds the ground with its fist while
+/// rocks rain down, then launches the fist at the targets, which strikes them
+/// in a burst of sparks.
 ///
 /// Abilities: Ramses.
 void BattleEffect_RunRamses(struct BattleEffectParams *args) {
-  // Every sprite of the effect takes this scale.
   static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
   struct SpritePlacement position;
   DrawRectangle draw[2];
@@ -42,16 +36,13 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
-  // A wipe to black (colour 1) hides the battle.
   PLTT_BACKDROP = 0;
   BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   BattleEffect_SelectLivingTargets(work->args);
-  // Nine sprites of SPRITE_RAMSES, the statue (0 to 6) and the fist with its
-  // wrist (7 and 8), then the six rocks of SPRITE_BATTLE_ROCKS, each playing
-  // one of its three effects.
+  // The statue, its fist and wrist, then six rocks.
   BattleEffect_SpawnObjects(9, SPRITE_RAMSES, 2);
   for (i = 0; i != RAMSES_ROCKS; i++) {
     struct Sprite *sprite = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
@@ -69,7 +60,6 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
-  // Keep the effect between lines 16 and 136.
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
   REG_WIN0H = WIN_RANGE(0, 240);
@@ -82,8 +72,6 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 1);
   EFFECT_SHOW_WIDE_CANVAS(16);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  // The statue's corner at (188, 92) and the fist at (160, 92); the rocks
-  // wait 16 pixels apart above the field at random columns.
   base.x = px(188);
   base.y = px(92);
   fist.x = px(160);
@@ -97,19 +85,14 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
     rock->velocityY = 0;
     rock->variant = 0;
   }
-  // A puff's variant counts up and from 24 it is no longer drawn; every puff
-  // and spark starts finished.
   for (i = 0; i != 58; i++)
     work->particles[RAMSES_FIRST_PUFF + i].variant = 24;
   EFFECT_FREE_PARTICLES(i, PARTICLES, 1024);
-  // Restart the background palette fade over 24 frames
-  // (Palette_StepFadeTransfer, added by BattleEffect_StartCanvasLayer).
   work->fadeFrames = 24;
   work->fadeStep = 0;
 
   for (frame = 0; frame != RAMSES_FRAMES && !(gKeysRepeat & (KEY_A | KEY_B));
        frame++) {
-    // A sound with each of the fist's blows.
     if (frame == 94)
       Sound_PlayFar(SE_SWITCH_MECHANISM);
     if (frame == 136)
@@ -119,8 +102,6 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
     if (frame == RAMSES_STRIKE_FRAME)
       Sound_PlayFar(SE_CRASH);
     scale = unitScale;
-    // One frame of shake at a time, renewed each frame over frames 96 to 251
-    // and 260 to 263.
     if (frame >= 96 && frame <= 251)
       work->shakeFrames = 1;
     else if (frame >= RAMSES_STRIKE_FRAME && frame <= 263)
@@ -132,14 +113,12 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
       position.y = px(gRamses_StatueRows[i]) + base.y - px(32);
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &position, &scale, 0);
     }
-    // The fist circles until frame 90, 16 pixels around (156, 92), a 128th
-    // of a turn a frame.
+    // The fist circles.
     if (frame <= 90) {
       fist.x = Trig_Sin(frame << 9) * 16 + px(156);
       fist.y = Trig_Cos(frame << 9) * 16 + px(92);
     }
-    // Then it slams down 32 pixels three times, 40 frames apart, throwing four
-    // puffs of dust as it lands and rising back over 16 frames.
+    // Then it slams down three times, throwing up dust.
     if (frame <= 196) {
       s32 start;
 
@@ -162,16 +141,13 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
           fist.y -= px(2);
       }
     }
-    // From frame 244 it flies off to the left at the targets, faster each
-    // frame from 252.
+    // Then it flies off to the left at the targets.
     if (frame >= 244 && frame <= 251)
       fist.x -= px(1);
     if (frame >= 252 && frame <= 275)
       fist.x -= px(frame - 250);
-    // The fist's two sprites, 32 pixels apart, drawn at the fist: a height of
-    // -256 pixels, 100 or more below the ground, puts them in draw slot 1
-    // (Render_ApplyProjectedPlacement), and y moves up as far, so the two
-    // cancel on the screen.
+    // The fist's two sprites stand deep below the ground and as far up, which
+    // cancel on the screen but put them in front.
     if (frame <= 259) {
       position.x = fist.x;
       position.height = -px(256);
@@ -181,8 +157,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
       Actor_ApplyProjectedPlacementFar(work->sprites[8], &position, &scale, 0);
     }
     position.height = 0;
-    // The rocks fall after frame 96, gaining 1/4 pixel a frame of speed each
-    // frame.
+    // The rocks fall.
     for (i = 0; i != RAMSES_ROCKS; i++) {
       struct Particle *rock = &work->particles[i];
 
@@ -217,15 +192,11 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
         }
       }
     }
-    // Puffs show the last four puff pictures, six frames each, as they drift
-    // upward (1/4 pixel a frame faster each frame, keeping 60/64 of their
-    // speed); each starts at a random point of its first 16 frames.
+    // Puffs of dust drift upwards.
     for (i = 0; i != 56; i++) {
       struct Particle *puff = &work->particles[RAMSES_FIRST_PUFF + i];
 
       if (puff->variant >= 0) {
-        // The puff's picture window, frames 0 to 23, tested whole although
-        // the test above already holds its first half.
         if (puff->variant >= 0 && puff->variant <= 23) {
           s32 picture = puff->variant / 6 + 3;
 
@@ -239,8 +210,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
       }
     }
     if (frame == RAMSES_STRIKE_FRAME) {
-      // The strike: every target recoils and flashes white, and the screen
-      // shakes.
+      // The strike: every target recoils and flashes white.
       EFFECT_FOR_EACH_TARGET(i, work->args) {
         BattleMotion_ApplyKnockbackFar(work->args->targets[i], KNOCKBACK_HURL);
         BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
@@ -251,9 +221,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
     // DEAD: the strike frame tested a second time; the ROM keeps the second
     // compare.
     if (frame == RAMSES_STRIKE_FRAME) {
-      // Throw the sparks from (32, 92) at random angles and speeds, twice as
-      // hard up and down as across, each living 32 to 47 frames, at speeds
-      // of 0.25 to 8.2 pixels a frame (speed / 128).
+      // Sparks fly from the strike.
       for (i = 0; i != RAMSES_SPARKS; i++) {
         struct Particle *spark = &PARTICLES[i];
         s32 speed;
@@ -268,8 +236,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
         spark->variant = (Random16() & 15) + 32;
       }
     }
-    // Sparks shrink as their lives run down; alternate sparks are drawn
-    // additively, the others brightest-wins.
+    // Sparks shrink as they die.
     for (i = 0; i != RAMSES_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[i];
 
@@ -286,8 +253,6 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(work);
   }
 
-  // The battle shows the damage once the effect is over, and gets its own
-  // background back.
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   BattleEffect_SetupBlendedDisplay();
   for (i = 0; i != 15; i++)

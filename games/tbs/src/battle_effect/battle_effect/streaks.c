@@ -5,10 +5,6 @@
 
 #include "../battle_effect_internal.h"
 
-// Streak volleys: three streaks of light fly from the user to each target in
-// turn, in one of five colours. The streaks are work->particles, one for each
-// target and streak, and their variant counts the frames since they set off.
-
 /// Column `n` of style `mode`'s row of gStreaks_Styles, four flags a style.
 #define STREAKS_VALUE(mode, n) gStreaks_Styles[(mode)][(n)]
 #define STREAKS_ANIMATE 0 ///< nonzero: the streak cycles through three images
@@ -74,11 +70,8 @@ UNUSED void BattleEffect_RunLimeStreaks(struct BattleEffectParams *args) {
 #define STREAKS_FLIGHT 24       ///< frames from user to target
 #define STREAKS_TARGET_DELAY 32 ///< frames between targets
 
-/// Fires STREAKS_MAX streaks at each target from 20 pixels above the user,
-/// one every 6 frames, each reaching 20 pixels above its target 24 frames
-/// later; each target's volley starts 32 frames after the previous one's.
-/// A streak image is 20x40 and drawn twice, mirrored upwards, as a 20x80
-/// streak that leaves a fading trail.
+/// Fires the streaks at each target in turn from above the user; each leaves a
+/// fading trail.
 void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint position;
   struct BattleEffectWork *work;
@@ -101,8 +94,6 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
 
-  // The upper half of a streak is its image flipped vertically; on the
-  // party's side both halves are mirrored as well.
   if (work->args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
@@ -121,8 +112,6 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
     drawLower = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
   }
 
-  // The streak images, and the style's colour as the first 128 bytes of the
-  // background palette.
   Resource_LoadAndDecompress((s32)&ResourceId_FiveModeImage, work->sheet, 0, 0);
   switch (mode) {
   case STREAKS_STYLE_EMBER:
@@ -143,19 +132,15 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
     break;
   }
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
-  // Halve the canvas each frame, so streaks leave a trail.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   source = GetBattleObjectSlotFar(work->args->user)->actor;
   {
-    // The length counts 6 frames for every streak although targets are 32
-    // frames apart: with four targets the fourth's hit (frame 120) would fall
-    // on the frame the loop stops at, and with three the loop would stop at
-    // 102, before the third target's second flash (104).
+    // The loop counts 6 frames for each streak though targets are 32 frames
+    // apart, so with three or four targets it stops before the last one's
+    // second flash.
     s32 totalFrames = streaks * work->args->targetCount * STREAKS_SPACING + 48;
 
-    // Every streak starts 20 pixels above the user and moves in a straight
-    // line to 20 pixels above its target over 24 frames.
     EFFECT_FOR_EACH_TARGET(k, work->args) {
       target = GetBattleObjectSlotFar(work->args->targets[k])->actor;
       for (streakIndex = 0; streakIndex != streaks; streakIndex++) {
@@ -173,14 +158,10 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
     for (frame = 0; frame != totalFrames; frame++) {
       s32 *row = work->bg2xLines;
 
-      // A sine wave of BG2X offsets, one per scanline, for the wave
-      // HBlank DMA, which nothing arms here: only the effects that add
-      // BattleEffect_ArmBg2AffineHBlankDma feed the table to BG2X, and each
-      // removes it before returning, so this table is never read and the
-      // canvas does not ripple.
+      // A sine wave of BG2X offsets for the wave HBlank DMA, which nothing arms
+      // here, so the canvas does not ripple.
       for (k = 0; k != DISPLAY_HEIGHT; k++)
         *row++ = ((8 << 16) - Trig_Sin((frame + k) << 12) * 2) >> 10;
-      // Fade the canvas out over the last 16 frames.
       if (frame > totalFrames - 16)
         REG_BLDALPHA = BLEND_ALPHA(totalFrames - frame, 16);
       EFFECT_VIEW_FROM_CAMERA(camera);
@@ -193,8 +174,6 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
                   &work->particles[k * streaks + streakIndex];
               s32 step;
 
-              // Project the streak onto the half-width canvas; its image
-              // changes every 8 frames and stays on the sixth.
               Projection_Point(streak, &position);
               position.x >>= 1;
               step = streak->variant / 8;
@@ -213,14 +192,12 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
                           40);
                 drawLower(canvas, picture, position.x - 10, position.y, 20, 40);
               }
-              // No drag and no gravity: a straight line.
               Particle_AdvanceWithGravity3D(streak, 64, 0);
               streak->variant++;
             }
           }
 
-          // From 6 frames after the first streak hits, for 32 frames, the
-          // target trembles from side to side.
+          // The target trembles.
           if (STREAKS_VALUE(mode, STREAKS_SHAKE) &&
               frame >= k * STREAKS_TARGET_DELAY + 30 &&
               frame < k * STREAKS_TARGET_DELAY + 62) {
@@ -237,9 +214,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
                                      POSE_DAMAGE, TINT_KEEP, 0);
           }
 
-          // The hit: the first streak plays the hit sound and flashes the
-          // target white in its damage pose for 8 frames, and it
-          // flashes again 16 frames later.
+          // The hit: the target flashes, and again 16 frames later.
           if (STREAKS_VALUE(mode, STREAKS_HIT)) {
             if (frame == k * STREAKS_TARGET_DELAY + 24) {
               Sound_PlayFar(SE_IMPACT);
@@ -252,7 +227,6 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
               BattleEffect_TintBattler(work->args->targets[k],
                                        SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 8);
           }
-          // The style's recoil motion, with a camera shake.
           if (STREAKS_VALUE(mode, STREAKS_MOTION) != -1 &&
               frame == k * STREAKS_TARGET_DELAY + 24) {
             work->shakeFrames = 4;
@@ -275,7 +249,6 @@ enum MoteFountainMode {
   MOTE_FOUNTAIN_DRIFTING          ///< Sleep Star
 };
 
-/// The fountain launches 256 motes in PARTICLES but draws only the first 128.
 enum { MOTE_FOUNTAIN_INITIALIZED_COUNT = 256, MOTE_VISIBLE_COUNT = 128 };
 
 /// Motes burst out of the user and float up, wobbling, as they drift across the
@@ -294,9 +267,8 @@ void BattleEffect_RunSoothingStar(struct BattleEffectParams *args) {
 }
 #define MOTE_FOUNTAIN_FOUNTAIN_FRAMES 128
 
-/// Motes burst out of the user in every direction and float upwards,
-/// wobbling, for 128 frames; a new group of 32 joins every 8 frames. Each
-/// target in turn reacts from frame 48, 8 frames apart.
+/// Motes burst out of the user and float upwards, wobbling, and each target
+/// reacts in turn.
 void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   s32 worldPoint[3];
   struct ScreenPoint position;
@@ -332,12 +304,8 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   else
     resource = (s32)&ResourceId_EarthWallSheet;
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
-  // Trails keep 3/4 a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  // Every mote starts 5 pixels above the user with a random direction and
-  // speed, mostly upwards, and a life of 48 to 79 frames; the healing mode
-  // halves the spread across the ground.
   source = GetBattleObjectSlotFar(work->args->user)->actor;
   for (i = 0; i != MOTE_FOUNTAIN_INITIALIZED_COUNT; i++) {
     s32 speed;
@@ -361,15 +329,12 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
 
   for (frame = 0; frame != MOTE_FOUNTAIN_FOUNTAIN_FRAMES; frame++) {
     EFFECT_VIEW_FROM_CAMERA(camera);
-    // Mote i joins on frame i / 32 * 8, and goes out when its life is spent.
     for (i = 0; i != MOTE_VISIBLE_COUNT; i++) {
       mote = &PARTICLES[i];
       if (frame >= i / 32 * 8 && mote->variant >= 0) {
         s32 size;
 
-        // Wobble up to 16 pixels sideways, project onto the half-width canvas
-        // and draw a 1x2 to 6x12 mote, larger the nearer it is to the camera:
-        // depths are held to 314 to 634, one size a 64 of depth.
+        // Motes wobble and grow as they near the camera.
         SET_VECTOR(worldPoint,
                    mote->x + Trig_Sin((i * 4 + mote->variant) << 10) * 16,
                    mote->y, mote->z);
@@ -381,11 +346,8 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
           position.depth = 634;
         size = 6 - (position.depth - 314) / 64;
         EFFECT_DRAW_MOTE(draw[0], canvas, sheet, position.x, position.y, size);
-        // Damped by 62/64 a frame, with a slight lift (y grows upwards) of
-        // 1/64 pixel a frame each frame.
         Particle_AdvanceWithGravity3D(mote, 62, px(1) / 64);
-        // The drifting mode pushes every mote towards the other side of the
-        // field, 1/8 pixel a frame faster each frame.
+        // The drifting mode pushes the motes across the field.
         if (mode == MOTE_FOUNTAIN_DRIFTING) {
           if (source->x.fixed < 0)
             mote->velocityX += px(1) / 8;
@@ -395,7 +357,6 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
         mote->variant--;
       }
     }
-    // Each target reacts in turn, and the battle shows its result.
     if (mode == MOTE_FOUNTAIN_DRIFTING) {
       EFFECT_FOR_EACH_TARGET(i, work->args) {
         if (frame == i * 8 + 48) {

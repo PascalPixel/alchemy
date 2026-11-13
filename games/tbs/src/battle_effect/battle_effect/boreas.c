@@ -4,15 +4,11 @@
 
 #include "../battle_effect_internal.h"
 
-/// The sparkles that trail the spray, after the 128 spray particles in
-/// PARTICLES (28 bytes each, 3584 in all).
+/// The sparkles that trail the spray, after the spray in PARTICLES.
 #define BOREAS_SPRAY_SPARKLES (PARTICLES + 128)
 
-/// The pictures in the ice block sheet that this file draws, each starting
-/// where the pictures before it end. The sheet opens with the tallest of the
-/// three ice crystals, the one the falling crystals draw. The tables in
-/// battle_effect_table.c read the rest: the three crystals, the shards and
-/// the spray.
+/// The pictures in the ice block sheet that this file draws; the tables in
+/// battle_effect_table.c read the rest.
 enum IceBlockSheetPicture {
   /// After the three crystals and the four large shards.
   BOREAS_BIG_BLOCK = 24 * 48 + 24 * 38 + 20 * 26 + 12 * 10 + 11 * 16 + 8 * 14 +
@@ -83,12 +79,10 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   wait(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            (s32)&ResourceId_VioletSkyBackdrop, 0);
-  // Boreas: nine sprites of SPRITE_BOREAS, sprite priority 1.
   BattleEffect_SpawnObjects(9, SPRITE_BOREAS, 1);
   EFFECT_SHOW_WIDE_CANVAS(16);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  // Mark the shards unthrown.
   for (i = 0; i != 64; i++) {
     PARTICLES[i].x = (Random16() & 63) + 32;
     PARTICLES[i].y = (Random16() & 31) + 120;
@@ -110,18 +104,14 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
 
   Sound_PlayFar(SE_RUMBLE);
 
-  // ------------------------------------------------------------------
-  // First half: the crystals, the big ice block and the spray (A or B skips
-  // to the second half).
-  // ------------------------------------------------------------------
+  // First half: the crystals, the big ice block and the spray.
   for (frame = 0; frame != 288; frame++) {
     count = 16;
     if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 16) {
       break;
     }
 
-    // Open the window from the left: its right edge speeds up, and each line
-    // lags 0 to 63 pixels behind it.
+    // Open the window from the left with a ragged edge.
     if (frame >= 0 && frame < 16) {
       u16 *edge = (u16 *)Ram_MapGridCellBuffer;
       if (frame == 1) {
@@ -140,7 +130,6 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       }
     }
 
-    // The crystals still standing.
     if (frame > 103) {
       count = 0;
     } else if (frame > 63) {
@@ -149,8 +138,6 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       count = 10;
     }
 
-    // Shake: random until frame 167, from the table on frames 176 to 179, when
-    // the big block lands.
     if (frame <= 167) {
       shakeX = (Random16() & 3) - 1;
       shakeY = (Random16() & 3) - 1;
@@ -177,7 +164,6 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
            gBoreas_CrystalWidths[picture], gBoreas_CrystalHeights[picture]);
     }
 
-    // Lay out Boreas's 3x3 sprites 32 pixels apart, moved against the shake.
     scale = unitScale;
     if (frame == 174) {
       for (i = 0; i != 9; i++) {
@@ -204,8 +190,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       }
     }
 
-    // The big ice block falls from the top right onto Boreas's head on frames
-    // 160 to 175 and sinks slowly from frame 208.
+    // The big ice block falls onto Boreas's head and slowly sinks.
     dropFrame = frame - 160;
     if (dropFrame >= 0 && dropFrame < 158) {
       s32 sinkFrame = frame - 208;
@@ -237,7 +222,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     }
     Transform_Reset();
 
-    // Each time crystals crumble, throw up 32 shards.
+    // Each time crystals crumble, shards fly up.
     if (frame == 32) {
       for (i = 0; i != 32; i++) {
         PARTICLES[i].x = px((Random16() & 31) + 68);
@@ -266,8 +251,6 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       }
     }
 
-    // The shards fly on frames 32 to 207: the four large pictures, then the
-    // seven small ones from frame 192.
     if (frame >= 32 && frame < 208) {
       for (i = 0; i != 64; i++) {
         if (PARTICLES[i].variant >= 0) {
@@ -288,8 +271,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       }
     }
 
-    // Spray: 128 flecks of ice from (72, 56) towards the bottom left, leaving
-    // sparkles behind them from frame 228.
+    // The spray streams out to the bottom left, leaving sparkles.
     if (frame > 223) {
       if (frame == 224) {
         for (i = 0; i != 128; i++) {
@@ -348,16 +330,11 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(work);
   }
 
-  // ------------------------------------------------------------------
   // Second half: ice crystals rain down on the targets, and more rise among
-  // them and burst into bouncing crystals.
-  // ------------------------------------------------------------------
+  // them and burst.
   for (i = 0; i != 9; i++) {
     Sprite_DestroyFar(work->sprites[i]);
   }
-  // Blend the canvas fully over the battle background, set the falling
-  // crystals above the canvas to the right, and stagger the sparkles,
-  // sparkle i waiting i / 2 frames (its negative variant) before it shows.
   BattleEffect_SetupBlendedDisplay();
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
@@ -384,7 +361,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     if (frame == 16) {
       work->shakeFrames = 32;
     }
-    // Raise one crystal every 2 frames from frame 18, up to 16.
+    // Crystals rise among the targets.
     if (frame > 16) {
       count = (frame - 16) / 2;
       if (count > 16) {
@@ -397,8 +374,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     if (frame == 72) {
       Sound_PlayFar(SE_CRASH);
     }
-    // From frame 65 a streak of ice falls diagonally from the top right, 7
-    // pixels left and 14 down a frame.
+    // A streak of ice falls from the top right.
     if (frame > 64) {
       draw(canvas, work->sheet + BOREAS_STREAK, (64 - frame) * 7 + 88,
            frame * 14 - 992, 40, 80);
@@ -426,7 +402,6 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
         work->shakeFrames = 4;
       }
     }
-    // The burst crystals, 32 on the first frame and 64 after.
     if (frame > 71) {
       count = 32;
       if (frame != 72) {
@@ -449,8 +424,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
         }
       }
     }
-    // The falling crystals: until frame 47, one that lands starts again at
-    // the top.
+    // Crystals rain down.
     if (frame <= 71) {
       for (i = 0; i != 64; i++) {
         draw(canvas, work->sheet, Q_16_16_TO_INT(work->particles[i].x) - 12,
@@ -464,7 +438,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       }
     }
 
-    // Target i takes a blue tint and its damage pose on frame 32 + 8i.
+    // Each target turns blue and flinches in turn.
     EFFECT_FOR_EACH_TARGET(i, work->args) {
       if (frame == i * 8 + 32) {
         BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_BLUE_TINT,
@@ -472,7 +446,6 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       }
     }
 
-    // Sparkles (from frame 73).
     if (frame > 72) {
       for (i = 0; i != 64; i++) {
         if (PARTICLES[i].variant >= 0 && PARTICLES[i].variant < 18) {
@@ -490,7 +463,6 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       }
     }
 
-    // The camera shakes hard while the crystals burst, gently otherwise.
     if (frame >= 72 && frame < 80) {
       BattleCamera_Shake(8, 8);
     } else {

@@ -47,7 +47,7 @@ void Weather_UpdateRain(void) {
       Oam_AddSpriteAtDepth(particle, 240);
     }
     if (particle->timer == 0) {
-      s32 *leader = view->origin;
+      s32 *leader = grid->origin;
 
       // A new spot up to 128 pixels either way of the leader. The height
       // call passes pixels where MapGrid_GetTerrainHeight takes 16.16, as in

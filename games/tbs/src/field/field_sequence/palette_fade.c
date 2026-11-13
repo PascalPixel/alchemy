@@ -91,12 +91,6 @@ void PaletteFade_Update(void) {
   }
 }
 
-// Curves mapping a 5-bit channel to the buffer's channel shifted up 10 bits.
-// field_sequence_tables.c defines all three const, in ROM; the first two are
-// declared here without it, as PaletteFade_Build compiles differently with it.
-extern u16 gColorBuffer_ChannelCurve[];
-extern u16 gColorBuffer_ChannelCurveLight[];
-extern const u16 gColorBuffer_ChannelCurveContrast[];
 
 /// Builds colours for the palette fade from the palette src into dst, which
 /// holds each colour as B, G and R channels shifted up 10 bits. mode below

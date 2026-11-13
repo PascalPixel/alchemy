@@ -203,4 +203,12 @@ extern struct TransitionShape gScreenTransition_Shapes[];
 /// Actor_ResetForLeader copies into the field work.
 extern const struct ActorPlacement gField_DefaultActorPlacements[2];
 
+/// Curves mapping a 5-bit colour channel to the colour buffer's channel,
+/// shifted up 10 bits: plain, lightened and with more contrast.
+///@{
+extern const u16 gColorBuffer_ChannelCurve[];
+extern const u16 gColorBuffer_ChannelCurveLight[];
+extern const u16 gColorBuffer_ChannelCurveContrast[];
+///@}
+
 #endif

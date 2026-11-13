@@ -1452,7 +1452,8 @@ void Func_020026f4(void) {
   struct SparkState *state;
   struct SparkSprite__s26f4 *sprite;
 
-  Import_DecompressTaggedLz(Resource_GetTableEntry((s32)&ResourceId_DustPuffA), work);
+  Import_DecompressTaggedLz(Resource_GetTableEntry((s32)&ResourceId_DustPuffA),
+                            work);
   resource = VramCache_FindFreeEntry();
   tileBase = Vram_Load(resource, 0x800, work);
   work->tileBase = tileBase;
@@ -1555,8 +1556,10 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 9, 0x892, EVENT(Func_02000440)},
     {TRIGGER_STEP, 10, 0x890, EVENT(VenusLighthouseEntrance_ThievesAttack)},
-    {TRIGGER_STEP, 11, 0x893, EVENT(VenusLighthouseEntrance_ThiefWaitsForBackup)},
-    {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(VenusLighthouseEntrance_PointToMeetingSpot)},
+    {TRIGGER_STEP, 11, 0x893,
+     EVENT(VenusLighthouseEntrance_ThiefWaitsForBackup)},
+    {TRIGGER_STEP, 12, CONDITION_ALWAYS,
+     EVENT(VenusLighthouseEntrance_PointToMeetingSpot)},
     {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgUggghICan)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS,
      EVENT(VenusLighthouseEntrance_RunActorSparkBurst)},

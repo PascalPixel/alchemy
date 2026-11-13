@@ -5,7 +5,7 @@
 s32 __divsi3(s32 numerator, s32 denominator);
 void Sound_LoadCommandTable(SoundCommand *table);
 void ply_note(u32 command, struct SoundPlayer *player,
-                           struct SoundTrack *track);
+              struct SoundTrack *track);
 void DummyFunc(void);
 void SampleFreqSet(u32 mode);
 void m4aSoundVSyncOff(void);
@@ -194,8 +194,8 @@ void m4aSoundVSyncOn(void) {
   work->lock = lock - 10;
 }
 
-void MPlayOpen(struct SoundPlayer *player,
-                            struct SoundTrack *tracks, u8 count) {
+void MPlayOpen(struct SoundPlayer *player, struct SoundTrack *tracks,
+               u8 count) {
   struct SoundWork *work;
 
   if (count == 0)
@@ -227,8 +227,7 @@ void MPlayOpen(struct SoundPlayer *player,
   player->lock = SOUND_LOCK;
 }
 
-void MPlayStart(struct SoundPlayer *player,
-                           const struct SongHeader *header) {
+void MPlayStart(struct SoundPlayer *player, const struct SongHeader *header) {
   s32 i;
   struct SoundTrack *track;
 
@@ -344,8 +343,7 @@ void FadeOutBody(struct SoundPlayer *player) {
   }
 }
 
-void TrkVolPitSet(struct SoundPlayer *player,
-                           struct SoundTrack *track) {
+void TrkVolPitSet(struct SoundPlayer *player, struct SoundTrack *track) {
   u32 volume;
   s32 pan;
   s32 pitch;
@@ -681,8 +679,7 @@ void CgbSound(void) {
   }
 }
 
-void m4aMPlayTempoControl(struct SoundPlayer *player,
-                                            u16 scale) {
+void m4aMPlayTempoControl(struct SoundPlayer *player, u16 scale) {
   if (player->lock == SOUND_LOCK) {
     player->lock++;
     player->tempoScale = scale;
@@ -777,7 +774,7 @@ void ClearModM(struct SoundTrack *track) {
 }
 
 void m4aMPlayModDepthSet(struct SoundPlayer *player, s32 maskArg,
-                                    s32 valueArg) {
+                         s32 valueArg) {
   u16 mask = maskArg;
   u8 value = valueArg;
   s32 count;
@@ -806,8 +803,7 @@ void m4aMPlayModDepthSet(struct SoundPlayer *player, s32 maskArg,
   player->lock = SOUND_LOCK;
 }
 
-void m4aMPlayLFOSpeedSet(struct SoundPlayer *player, u32 selected,
-                             u32 value) {
+void m4aMPlayLFOSpeedSet(struct SoundPlayer *player, u32 selected, u32 value) {
   u16 mask = selected;
   u8 speed = value;
   s32 count;
@@ -838,8 +834,7 @@ void m4aMPlayLFOSpeedSet(struct SoundPlayer *player, u32 selected,
 
 extern SoundCommand gSound_JumpCommand;
 
-void ply_memacc(struct SoundPlayer *player,
-                                struct SoundTrack *track) {
+void ply_memacc(struct SoundPlayer *player, struct SoundTrack *track) {
   u32 op;
   u8 *byte;
   u8 value;
@@ -929,8 +924,7 @@ skip:
   track->cursor += 4;
 }
 
-void ply_xcmd(struct SoundPlayer *player,
-                                      struct SoundTrack *track) {
+void ply_xcmd(struct SoundPlayer *player, struct SoundTrack *track) {
   s32 command;
 
   command = *track->cursor;
@@ -949,14 +943,13 @@ union PackedWord {
 };
 
 void System_CallWorkEntryWithArgs(struct SoundPlayer *player,
-                                   struct SoundTrack *track) {
+                                  struct SoundTrack *track) {
   SoundCommand func = *(&gSound_CommandTable[0]);
 
   func(player, track);
 }
 
-void ply_xwave(struct SoundPlayer *player,
-                                struct SoundTrack *track) {
+void ply_xwave(struct SoundPlayer *player, struct SoundTrack *track) {
   const u8 *pos = track->cursor;
   union PackedWord word;
 
@@ -968,56 +961,47 @@ void ply_xwave(struct SoundPlayer *player,
   track->cursor = pos + 4;
 }
 
-void ply_xtype(struct SoundPlayer *player,
-                             struct SoundTrack *track) {
+void ply_xtype(struct SoundPlayer *player, struct SoundTrack *track) {
   track->voice.kind = *track->cursor;
   track->cursor++;
 }
 
-void ply_xatta(struct SoundPlayer *player,
-                               struct SoundTrack *track) {
+void ply_xatta(struct SoundPlayer *player, struct SoundTrack *track) {
   track->voice.attack = *track->cursor;
   track->cursor++;
 }
 
-void ply_xdeca(struct SoundPlayer *player,
-                              struct SoundTrack *track) {
+void ply_xdeca(struct SoundPlayer *player, struct SoundTrack *track) {
   track->voice.decay = *track->cursor;
   track->cursor++;
 }
 
-void ply_xsust(struct SoundPlayer *player,
-                                struct SoundTrack *track) {
+void ply_xsust(struct SoundPlayer *player, struct SoundTrack *track) {
   track->voice.sustain = *track->cursor;
   track->cursor++;
 }
 
-void ply_xrele(struct SoundPlayer *player,
-                                struct SoundTrack *track) {
+void ply_xrele(struct SoundPlayer *player, struct SoundTrack *track) {
   track->voice.release = *track->cursor;
   track->cursor++;
 }
 
-void ply_xiecv(struct SoundPlayer *player,
-                             struct SoundTrack *track) {
+void ply_xiecv(struct SoundPlayer *player, struct SoundTrack *track) {
   track->tailLevel = *track->cursor;
   track->cursor++;
 }
 
-void ply_xiecl(struct SoundPlayer *player,
-                              struct SoundTrack *track) {
+void ply_xiecl(struct SoundPlayer *player, struct SoundTrack *track) {
   track->tailLength = *track->cursor;
   track->cursor++;
 }
 
-void ply_xleng(struct SoundPlayer *player,
-                               struct SoundTrack *track) {
+void ply_xleng(struct SoundPlayer *player, struct SoundTrack *track) {
   track->voice.length = *track->cursor;
   track->cursor++;
 }
 
-void ply_xswee(struct SoundPlayer *player,
-                                   struct SoundTrack *track) {
+void ply_xswee(struct SoundPlayer *player, struct SoundTrack *track) {
   track->voice.panOrSweep = *track->cursor;
   track->cursor++;
 }

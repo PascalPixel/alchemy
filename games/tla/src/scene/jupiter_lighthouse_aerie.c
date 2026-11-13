@@ -507,8 +507,8 @@ stop:
 #include "call.h"
 #include "field_effect.h"
 
-DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Import_ActorSelectAnimation, Whirlwind_Update,
-                       Func_02001e78)
+DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Import_ActorSelectAnimation,
+                       Whirlwind_Update, Func_02001e78)
 
 #include "field_coordinate.h"
 

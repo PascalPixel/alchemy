@@ -516,8 +516,8 @@ void Func_02000e04(void) {
   Scroll_StartHBlank();
 }
 
-// The hblank split: above the line Scroll_StartHBlank sets, BG1 scrolls by one value
-// and blending is off; below it, by the other, with BG1 blended.
+// The hblank split: above the line Scroll_StartHBlank sets, BG1 scrolls by one
+// value and blending is off; below it, by the other, with BG1 blended.
 #include "system/io_write.h"
 
 /// The hblank split: above the line Scroll_StartHBlank sets, BG1 scrolls by one
@@ -534,7 +534,7 @@ void Scroll_HBlank(void) {
 }
 
 DEFINE_LAYER_TRACK_SCROLL(Layer_TrackScroll, gData_02002ce0, gData_02002ce4,
-    gData_02002ce6)
+                          gData_02002ce6)
 
 DEFINE_SCROLL_START_HBLANK(Scroll_StartHBlank, Scroll_HBlank, Layer_TrackScroll)
 

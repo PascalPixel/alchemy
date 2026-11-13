@@ -281,7 +281,7 @@ void *Sprite_ShareVramCacheEntry(void *src, void *alt) {
   return ret;
 }
 
-#define Actor_SetAnimationSpeedFar                                               \
+#define Actor_SetAnimationSpeedFar                                             \
   ((void (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
 /* VIEW(depthend): routine Actor_CreateFar as struct Actor *Actor_CreateFar(s32

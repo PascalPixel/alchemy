@@ -370,7 +370,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
 #include "motobj.h"
 #include "field_event.h"
 
-#define Actor_SetAnimationSpeedFar                                               \
+#define Actor_SetAnimationSpeedFar                                             \
   ((s32 (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
 void BattleEffect_RunCanvasModeByCount(struct BattleEffectArgument *effect) {

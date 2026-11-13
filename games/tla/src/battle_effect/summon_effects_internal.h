@@ -2,8 +2,9 @@
 #define ALCHEMY_SUMMON_EFFECTS_INTERNAL_H
 
 /// @file
-/// What every part of the summon_effects object shares: its includes. summon_effects.c
-/// includes it before the parts, and each part includes it too.
+/// What every part of the summon_effects object shares: its includes.
+/// summon_effects.c includes it before the parts, and each part includes it
+/// too.
 
 #include "types.h"
 #include "battle_effect.h"

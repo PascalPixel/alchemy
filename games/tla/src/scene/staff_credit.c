@@ -292,8 +292,7 @@ void Func_0200020c(s32 stage) {
         z = -0x1e0000;
         x0 = -0x320000;
 
-        Actor_SetPosition(8, (top << 16) + x0,
-                                               (left << 16) + z);
+        Actor_SetPosition(8, (top << 16) + x0, (left << 16) + z);
       }
       Actor_SetBlendMode(Actor_GetById(8), 1);
       Actor_SetAnimation(8, 0);
@@ -581,7 +580,7 @@ DEFINE_ACTOR_FLICKER(Func_020011f4, Func_020010b0)
 extern s32 gData_02003db8;
 
 DEFINE_ACTOR_CYCLE_CHILD_VALUES(Func_0200122c, gData_02002eac, gData_02003db8,
-    Func_02001168)
+                                Func_02001168)
 
 DEFINE_ACTOR_SET_FLIGHT_MODE(Func_02001274, Func_020011f4, Func_0200122c)
 
@@ -609,8 +608,8 @@ void Func_0200130c(void) {
 static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH(wrapper): the call forwarded through the inline, which sets the
    * arguments up in their own order: z is shifted before the -1 starts; as
-   * direct FieldCamera_MoveWithinMapBounds calls, 6 of 66 instructions differ in
-   * tla-en. */
+   * direct FieldCamera_MoveWithinMapBounds calls, 6 of 66 instructions differ
+   * in tla-en. */
   FieldCamera_MoveTo(x, y, z, mode);
 }
 
@@ -810,8 +809,8 @@ void Func_02001ad0(struct Actor *parent) {
 extern s16 gData_02003fc4;
 extern u8 gData_02003fd8[][32];
 
-DEFINE_GAUGE_DRAW(Func_02001be0, gData_02003fc4, gData_02003fd8,
-    gData_020040d8, gData_02003fc6)
+DEFINE_GAUGE_DRAW(Func_02001be0, gData_02003fc4, gData_02003fd8, gData_020040d8,
+                  gData_02003fc6)
 
 extern u32 gInput;
 extern s16 gData_02003fc8;
@@ -845,11 +844,11 @@ void Func_02001d90(void) {
   Func_02001f7c(Data_02003fcc, 255);
 }
 
-DEFINE_GAUGE_INIT(Func_02001e58, gData_020040d8, gData_02003fc6,
-    gData_02003fc4, gData_02003fc8, Func_02001d90)
+DEFINE_GAUGE_INIT(Func_02001e58, gData_020040d8, gData_02003fc6, gData_02003fc4,
+                  gData_02003fc8, Func_02001d90)
 
-DEFINE_GAUGE_END(Func_02001eb8, gData_020040d8, gData_02003fc6,
-    gData_02003fc4, Func_02001d90)
+DEFINE_GAUGE_END(Func_02001eb8, gData_020040d8, gData_02003fc6, gData_02003fc4,
+                 Func_02001d90)
 
 s32 gData_02002e74[] = {
     46,

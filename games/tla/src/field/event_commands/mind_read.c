@@ -504,7 +504,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
     pusher->acceleration = 0x3333;
     Vector_AddPolarOffset__f0dcb44(16 << 16, direction, &position);
     Actor_SetMoveTargetFar(pusher, position.x, position.y + (16 << 16),
-                            position.z);
+                           position.z);
     if (moved == 1) {
       Actor_GetById(scene->firstObjectId)->actionFlags &= 0xfe;
       user->speedLimit = 0x3333;

@@ -62,11 +62,13 @@ void JupiterLighthouse_CloseDoor(void) {
 }
 
 DEFINE_JUPITER_LIGHTHOUSE_CHECK_BLOCK_ON_CELL(
-    JupiterLighthouse_CheckBlockOnCell, 10, 0xa01, 17, 33, JupiterLighthouse_OpenDoor)
+    JupiterLighthouse_CheckBlockOnCell, 10, 0xa01, 17, 33,
+    JupiterLighthouse_OpenDoor)
 
 DEFINE_SCENE_RUN_ONCE(Scene_RunOnce, 0x200, JupiterLighthouse_OpenDoor)
 
-DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Scene_RunIfFlagCleared, 0x200, JupiterLighthouse_CloseDoor,
+DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Scene_RunIfFlagCleared, 0x200,
+                                 JupiterLighthouse_CloseDoor,
                                  JupiterLighthouse_CheckBlockOnCell)
 
 void Func_020001f4(void) {

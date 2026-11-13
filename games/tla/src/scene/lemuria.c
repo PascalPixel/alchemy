@@ -45,7 +45,8 @@ s32 Func_020000e8(struct Actor *self) {
   s8 *effect;
   struct Actor *other;
 
-  Actor_SetSpritePriorityDirect(self, BattleEffect_GetObjectPriority(Actor_Get(gMainRoutineWork.currentOwner)));
+  Actor_SetSpritePriorityDirect(self, BattleEffect_GetObjectPriority(Actor_Get(
+                                          gMainRoutineWork.currentOwner)));
   mode = 0x3ff & *(u16 *)(event + 0x166);
   state = &self->movementState;
   if (mode == 141) {
@@ -60,7 +61,8 @@ s32 Func_020000e8(struct Actor *self) {
     goto far;
   if (Actor_IsFacingNear(self, self->watchedObject, 18) != 0)
     goto near;
-  if (Actor_IsFacingNear(self, Actor_Get(gMainRoutineWork.currentOwner), 26) != 0)
+  if (Actor_IsFacingNear(self, Actor_Get(gMainRoutineWork.currentOwner), 26) !=
+      0)
     goto near;
 far:
   *state = 0;
@@ -1185,19 +1187,32 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgMoo2)},
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgBukbukbuk2)},
     {TRIGGER_TALK, 7, CONDITION_ALWAYS, MSGNO(MsgBlank4)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgMoreOfThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgIHavenT)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgIVeAged)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgSometimesIThink)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgLongAgoA)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgKingHydrosIs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT(Lemuria_TalkToSpoiledChild)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, EVENT(Lemuria_TalkToLonelyChild)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgNoOneIn)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgThereSSo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgLemuriansAreSo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgIfItWeren)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 7, CONDITION_ALWAYS, MSGNO(MsgMotherWhyHave)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgMoreOfThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgIHavenT)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     MSGNO(MsgIVeAged)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     MSGNO(MsgSometimesIThink)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+     MSGNO(MsgLongAgoA)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+     MSGNO(MsgKingHydrosIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
+     EVENT(Lemuria_TalkToSpoiledChild)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
+     EVENT(Lemuria_TalkToLonelyChild)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
+     MSGNO(MsgNoOneIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
+     MSGNO(MsgThereSSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriansAreSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS,
+     MSGNO(MsgIfItWeren)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 7, CONDITION_ALWAYS,
+     MSGNO(MsgMotherWhyHave)},
     {TRIGGER_TALK, 24, 0x196a, MSGNO(MsgIVeNever)},
     {TRIGGER_TALK, 25, 0x196a, MSGNO(MsgLordConservatoHas)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, 0x196a, MSGNO(MsgIMSureThe)},
@@ -1220,9 +1235,11 @@ struct Trigger gSceneEvents[] = {
      MSGNO(MsgITrustThe)},
     {0xc400, 11, CONDITION_ALWAYS, MSGNO(MsgHouseOfThe)},
     {TRIGGER_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgDrinkingFromThis)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgTheseTurtlesHave)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS,
+     MSGNO(MsgTheseTurtlesHave)},
     {TRIGGER_TALK, 30, CONDITION_ALWAYS, EVENT(Lemuria_OfferSpringLuck)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgNoOneIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS,
+     MSGNO(MsgNoOneIs)},
     {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Lemuria_DrinkFromSpring)},
     {TRIGGER_EXAMINE, 25, CONDITION_ALWAYS, EVENT(Lemuria_DrinkFromSpring)},
     {TRIGGER_EXAMINE, 40, CONDITION_ALWAYS, EVENT(Lemuria_KnockAtBrokenDoor)},

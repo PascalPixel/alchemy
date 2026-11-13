@@ -1041,13 +1041,14 @@ void Func_02004ee4(void) { Func_02004e80(29, 21); }
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
 DEFINE_PALETTE_SET_COLORS_FADE(Func_02004ef0, gData_02006ce0, Data_02006ce4,
-    Data_02006ce8, Data_02006cd4, Func_020051e0)
+                               Data_02006ce8, Data_02006cd4, Func_020051e0)
 
 #include "task.h"
 
 DEFINE_PALETTE_CYCLE_START(Func_02004fac, gData_02006cf0, gData_02006cec,
-    List_CountEntries, gData_02006ce0, gData_02006cdc, 15, gData_02006cd8, 16,
-    gData_02006cd0, PaletteCycle_Fade)
+                           List_CountEntries, gData_02006ce0, gData_02006cdc,
+                           15, gData_02006cd8, 16, gData_02006cd0,
+                           PaletteCycle_Fade)
 
 void Func_02005010(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 256;
@@ -1055,14 +1056,15 @@ void Func_02005010(void) {
 }
 
 DEFINE_PALETTE_CYCLE_START(Func_02005030, gData_02006cf0, gData_02006cec,
-    List_CountEntries, gData_02006ce0, gData_02006cdc, 2, gData_02006cd8, 2,
-    gData_02006cd0, PaletteCycle_Fade)
+                           List_CountEntries, gData_02006ce0, gData_02006cdc, 2,
+                           gData_02006cd8, 2, gData_02006cd0, PaletteCycle_Fade)
 
 DEFINE_LIST_COUNT_ENTRIES(List_CountEntries)
 
 DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gData_02006cd8, gData_02006cdc,
-    Data_02006ce8, gData_02006cec, Data_02006cd4, gData_02006cf0,
-    gData_02006ce0, gData_02006cd0, Data_02006ce4)
+                          Data_02006ce8, gData_02006cec, Data_02006cd4,
+                          gData_02006cf0, gData_02006ce0, gData_02006cd0,
+                          Data_02006ce4)
 
 void Func_020051e0(void) {
   struct MarsLighthouseAerieEventWork *work = Ram_HeapSlots->eventWork;
@@ -1071,7 +1073,8 @@ void Func_020051e0(void) {
   saved = work->screenEffect;
   PaletteFade_ApplyTarget(0x202108, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
-  ((struct MarsLighthouseAerieEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  ((struct MarsLighthouseAerieEventWork *)Ram_HeapSlots->eventWork)
+      ->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_02005030();
@@ -1189,12 +1192,14 @@ struct SparkleWork__s53e4 {
   struct Actor *object;
 };
 
-/* VIEW(s3370): routine BattleEffect_GetObjectPriority as s32 BattleEffect_GetObjectPriority(struct Actor
- * *object); module/scene/scene.h has void BattleEffect_GetObjectPriority(void); tried as the
- * rest of the object declares it, it does not compile in tla-ja:
+/* VIEW(s3370): routine BattleEffect_GetObjectPriority as s32
+ * BattleEffect_GetObjectPriority(struct Actor *object); module/scene/scene.h
+ * has void BattleEffect_GetObjectPriority(void); tried as the rest of the
+ * object declares it, it does not compile in tla-ja:
  * games/tla/src/scene/mars_lighthouse_aerie/s3370.c:1294: too many arguments to
  * function `BattleEffect_GetObjectPriority'. */
-extern s32 Func_020057b4__s3370(struct Actor *object) __asm__("BattleEffect_GetObjectPriority");
+extern s32 Func_020057b4__s3370(struct Actor *object) __asm__(
+    "BattleEffect_GetObjectPriority");
 
 void Func_020053e4(struct Actor *object, struct SparkleWork__s53e4 *work) {
   struct SparkleSprite__s53e4 *sprite;

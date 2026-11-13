@@ -110,7 +110,7 @@
       if (--k >= 0)                                                            \
         goto fill;                                                             \
     }                                                                          \
-    table->tile = VramCache_FindFreeEntry();                                    \
+    table->tile = VramCache_FindFreeEntry();                                   \
     Vram_Load(table->tile, 0x100, buffer);                                     \
     Heap_Release(buffer);                                                      \
     Task_AddFrame(call1, 0x480);                                               \
@@ -160,8 +160,8 @@
                                                                                \
     x >>= 20;                                                                  \
     z >>= 20;                                                                  \
-    Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, (x << 4) + 8,    \
-                               (z << 4) + 8);                                  \
+    Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, (x << 4) + 8,       \
+                            (z << 4) + 8);                                     \
     System_Wait(1);                                                            \
     FieldActor_SetPositionAndResetMotion(object, (x << 20) + PIXELS(8),        \
                                          object->y, (z << 20) + PIXELS(8));    \
@@ -219,7 +219,7 @@
     actor->motionFlags = 3;                                                    \
     FieldEvent_Wait(24);                                                       \
     options.palette = 7;                                                       \
-    options.update = FieldEffect_AdvanceMotion;                                     \
+    options.update = FieldEffect_AdvanceMotion;                                \
     options.startScaleX = 0xa3d7;                                              \
     options.startScaleY = 0xa3d7;                                              \
     i = 0;                                                                     \
@@ -228,7 +228,7 @@
       s32 velocity[3];                                                         \
                                                                                \
       angle = i << 12;                                                         \
-      velocity[0] = Trig_Cos(angle);                                        \
+      velocity[0] = Trig_Cos(angle);                                           \
       velocity[1] = 0;                                                         \
       velocity[2] = Math_Sin(angle);                                           \
       velocity[0] += velocity[0] >> 1;                                         \
@@ -243,7 +243,7 @@
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);                     \
     MapGrid_SetShake(0x50000, 0x50000, 0x10000);                               \
     MapGrid_SetShake(-1, -1, 0xe666);                                          \
-    FieldMapGrid_WaitForShakeToSettle();                                            \
+    FieldMapGrid_WaitForShakeToSettle();                                       \
     Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);             \
     actor->gravity = 0x10000;                                                  \
     actor->bounce = 0x4000;                                                    \
@@ -266,7 +266,7 @@
     FieldEvent_Wait(12);                                                       \
     leader->facing = 0x4000;                                                   \
     leader->motionFlags = 0;                                                   \
-    Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);    \
+    Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);         \
     Io_Write16(0xf1f, &REG_WINOUT);                                            \
     REG_DISPCNT |= 0x8000;                                                     \
     table->shown = 1;                                                          \
@@ -411,7 +411,7 @@
       if (--count >= 0)                                                        \
         goto fill;                                                             \
     }                                                                          \
-    table->tile = VramCache_FindFreeEntry();                                    \
+    table->tile = VramCache_FindFreeEntry();                                   \
     Vram_Load(table->tile, 0x100, buffer);                                     \
     Heap_Release(buffer);                                                      \
     Task_AddFrame(call1, 0x480);                                               \
@@ -457,7 +457,7 @@
     actor->motionFlags = 3;                                                    \
     FieldEvent_Wait(24);                                                       \
     options.palette = 7;                                                       \
-    options.update = FieldEffect_AdvanceMotion;                                     \
+    options.update = FieldEffect_AdvanceMotion;                                \
     options.startScaleX = 0xa3d7;                                              \
     options.startScaleY = 0xa3d7;                                              \
     i = 0;                                                                     \
@@ -471,7 +471,7 @@
       s32 cosine;                                                              \
                                                                                \
       angle = i << 12;                                                         \
-      cosine = Trig_Cos(angle);                                             \
+      cosine = Trig_Cos(angle);                                                \
       /* FAKEMATCH(dead): spawn is always 1, a constant GCSE only folds after  \
        * its partial redundancy pass, so that pass leaves the velocity array's \
        * address in the loop, built after the cosine call as the native has    \
@@ -495,7 +495,7 @@
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);                     \
     SetWorkTriple(0x50000, 0x50000, 0x10000);                                  \
     SetWorkTriple(-1, -1, 0xe666);                                             \
-    FieldMapGrid_WaitForShakeToSettle();                                            \
+    FieldMapGrid_WaitForShakeToSettle();                                       \
     Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);             \
     actor->gravity = 0x10000;                                                  \
     actor->bounce = 0x4000;                                                    \
@@ -529,7 +529,7 @@
       object->facing = 0x4000;                                                 \
       object->motionFlags = zero;                                              \
     }                                                                          \
-    Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);    \
+    Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);         \
     {                                                                          \
       /* FAKEMATCH(temporary): a word local holding 0xf1f, built with movs,    \
        * lsls, adds as the native does; as a constant stored to the halfword   \

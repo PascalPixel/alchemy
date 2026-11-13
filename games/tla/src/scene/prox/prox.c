@@ -90,11 +90,11 @@ s32 Func_020002d8(struct Actor *object, struct Actor *target, s32 range,
 // that the leader stands within 11 of the actor, is still on its listing.
 #if TLA_PATCH_1
 
-/// Once the leader is within 11 of the actor, stops it (Import_ActorSelectAnimation mode
-/// 2). Otherwise it runs Func_020002d8 toward object 18, 16 or 17 by its
-/// action (0, 1, other) at 24, and if that returns 0, toward the leader at
-/// 32, flagged when action bit 1 is set while the event work's halfword
-/// 0x160 or byte 4 of the window tiles is nonzero.
+/// Once the leader is within 11 of the actor, stops it
+/// (Import_ActorSelectAnimation mode 2). Otherwise it runs Func_020002d8 toward
+/// object 18, 16 or 17 by its action (0, 1, other) at 24, and if that returns
+/// 0, toward the leader at 32, flagged when action bit 1 is set while the event
+/// work's halfword 0x160 or byte 4 of the window tiles is nonzero.
 s32 Func_020003bc(struct Actor *actor) {
   u8 *tiles = Ram_HeapSlots->windowTiles;
   u8 *work = Ram_HeapSlots->eventWork;
@@ -930,8 +930,7 @@ void Prox_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     FieldActor_WaitForMove(object);
     object->facing = 0xc000;
   }
-  Actor_SetScript(gMainRoutineWork.currentOwner,
-                                          gProx_EnterDoorScript);
+  Actor_SetScript(gMainRoutineWork.currentOwner, gProx_EnterDoorScript);
   System_Wait(12);
   Event_PlaySound(123);
   Event_FinishScreenTransition();
@@ -988,8 +987,7 @@ void Func_02001c24(s32 a0) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (a0 != 0) {
-    Actor_SetSpriteFlags(((s32)Actor_Get(gMainRoutineWork.currentOwner)),
-                              0);
+    Actor_SetSpriteFlags(((s32)Actor_Get(gMainRoutineWork.currentOwner)), 0);
     FieldActor_SetPositionAndResetMotion(t0, (FIELD_AT(t0, s32, 8) + -65536),
                                          FIELD_AT(t0, s32, 12),
                                          (FIELD_AT(t0, s32, 16) + -393216));
@@ -1750,8 +1748,8 @@ void Prox_SayFarewell(void) {
     Actor_FaceDirectionAndWait(11, 0xb000);
     Actor_ShowEmote(11, 0x103, 0);
     Event_OpenMessage(0xa00b, 0);
-    if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
-        0) {
+    if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner,
+                                              0) == 0) {
       Actor_SetAnimationAndWait(11, 4);
       Event_ShowMessage(0xa00b, 0);
       EVENT_WORK->messageId++;
@@ -1912,7 +1910,8 @@ void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
  * gData_02004740[], Func_0200385c moves: 7 of 60 instructions in tla-ja. */
 extern const s16 gData_02004740__s1cf0[] __asm__("gData_02004740");
 
-DEFINE_ACTOR_STEER_BY_PAD(Func_0200385c, gData_02004740__s1cf0, Import_ActorSelectAnimation)
+DEFINE_ACTOR_STEER_BY_PAD(Func_0200385c, gData_02004740__s1cf0,
+                          Import_ActorSelectAnimation)
 
 void Func_020038e8(void) {
   void *work = Ram_HeapSlots->eventWork;
@@ -1950,7 +1949,8 @@ struct Position {
  * in this function). */
 extern void Func_0200385c__s391c(void) __asm__("Func_0200385c");
 void Import_ActorSelectAnimation(struct Actor *actor, s32 mode);
-s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
+s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 radiusA, struct Position *b,
+                                    s32 radiusB);
 s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
 /* VIEW(s391c): variable gData_02004780 as extern s16 gData_02004780[]; the
  * definition has s32 gData_02004780[] = { 0xffff, - 0x8000, 0xc000, (s32)
@@ -1961,7 +1961,8 @@ s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
 extern s16 gData_02004780__s391c[] __asm__("gData_02004780");
 
 DEFINE_LEADER_SLIDE_ON_ICE(Func_0200391c, Func_020038e8, gData_02004780__s391c,
-    Import_ActorSelectAnimation, Func_0200385c__s391c, Import_FieldCheckSpheresOverlap)
+                           Import_ActorSelectAnimation, Func_0200385c__s391c,
+                           Import_FieldCheckSpheresOverlap)
 
 extern volatile s16 gData_020062a4;
 
@@ -1994,8 +1995,10 @@ s32 Func_0200444c(struct Actor *object);
 
 void Func_02003edc(s32 a0) { gData_020062a4 = a0; }
 
-DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003ee8, Func_020038e8, Import_ActorSelectAnimation,
-    Func_0200385c__s391c, Import_FieldCheckSpheresOverlap)
+DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003ee8, Func_020038e8,
+                                 Import_ActorSelectAnimation,
+                                 Func_0200385c__s391c,
+                                 Import_FieldCheckSpheresOverlap)
 
 struct ParticleSprite {
   u8 unk0[8];
@@ -2011,10 +2014,12 @@ struct ParticleWork {
   u16 tile;
 };
 
-void EffectSprite_DrawAtWorldPosition(struct ParticleSprite *sprite, struct Particle *particle);
+void EffectSprite_DrawAtWorldPosition(struct ParticleSprite *sprite,
+                                      struct Particle *particle);
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-DEFINE_PARTICLES_UPDATE_FALLING(Particles_UpdateFalling, EffectSprite_DrawAtWorldPosition)
+DEFINE_PARTICLES_UPDATE_FALLING(Particles_UpdateFalling,
+                                EffectSprite_DrawAtWorldPosition)
 
 /// One falling rock: where it is, how it moves and how long it has fallen.
 struct Rock {

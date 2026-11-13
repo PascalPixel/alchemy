@@ -338,7 +338,8 @@ void BattleEffect_StepVector3(struct Particle6a7 *particle, s32 a, s32 b);
 
 /// The Magma Ball's flight and the wall's ice shards
 /// (ResourceId_FieldEffectIceShard); `callback` draws the wall gone.
-void NorthernReaches_ShatterIceWall(s32 unused, s32 *position, void (*callback)(void)) {
+void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
+                                    void (*callback)(void)) {
   struct Work6a7 *work;
   struct Particle6a7 *particle;
   struct Sprite6a7 *sprite;

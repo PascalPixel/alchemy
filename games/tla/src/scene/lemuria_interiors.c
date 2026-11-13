@@ -420,7 +420,7 @@ L_020089e4:
   if (object3 == 0)
     goto L_02008a36;
   Actor_SetDestination(12, *(s16 *)((u8 *)object3 + 10),
-                            *(s16 *)((u8 *)object3 + 18));
+                       *(s16 *)((u8 *)object3 + 18));
 L_02008a36:
   Actor_WaitForMoveById(12);
   Actor_SetPosition(12, 0, 0);
@@ -682,13 +682,14 @@ L_02008a86:
 
 #include "field_event.h"
 
-/* VIEW(lemuria_interiors): routine Actor_SelectAnimation as void Actor_SelectAnimation(struct
- * Actor *object, s32 mode); module/scene/kandorean_temple.h has void
- * Actor_SelectAnimation(void); tried as the definition's void Actor_SelectAnimation(void),
- * which the object already declares, Func_0200128c moves: 1 of 32 instructions
- * in tla-ja. */
-extern void Func_020027f4__lemuria_interiors(struct Actor *object,
-                                             s32 mode) __asm__("Actor_SelectAnimation");
+/* VIEW(lemuria_interiors): routine Actor_SelectAnimation as void
+ * Actor_SelectAnimation(struct Actor *object, s32 mode);
+ * module/scene/kandorean_temple.h has void Actor_SelectAnimation(void); tried
+ * as the definition's void Actor_SelectAnimation(void), which the object
+ * already declares, Func_0200128c moves: 1 of 32 instructions in tla-ja. */
+extern void
+Func_020027f4__lemuria_interiors(struct Actor *object,
+                                 s32 mode) __asm__("Actor_SelectAnimation");
 void Actor_StartScript(struct Actor *object, const void *script);
 
 void Func_0200128c(s32 x, s32 y, s32 z, s16 rotation, s32 timer) {

@@ -70,7 +70,8 @@ void Func_020000a4(u16 *list, s32 mode, s32 count) {
 
 #include "map.h"
 
-DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Func_02005f64, Import_ActorSelectAnimation)
+DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Func_02005f64,
+                           Import_ActorSelectAnimation)
 
 #include "../field/object/set_sprite_priority.c"
 

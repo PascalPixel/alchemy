@@ -2,8 +2,9 @@
 #define ALCHEMY_VISUAL_ATTRIBUTES_INTERNAL_H
 
 /// @file
-/// What every part of the visual_attributes object shares: its includes. visual_attributes.c
-/// includes it before the parts, and each part includes it too.
+/// What every part of the visual_attributes object shares: its includes.
+/// visual_attributes.c includes it before the parts, and each part includes it
+/// too.
 
 #include "battle.h"
 #include "field.h"

@@ -218,15 +218,15 @@
       leader->motionFlags = flag;                                              \
       Actor_SetPosition(*owner, ((s16 *)&leader->x)[1] << 16,                  \
                         (((s16 *)&leader->z)[1] << 16) - 0x100000);            \
-      FieldActor_SetSpriteColor(Actor_Get(*owner), 9);                              \
-      Actor_SetSpriteFlags(Actor_Get(*owner), 0);                         \
+      FieldActor_SetSpriteColor(Actor_Get(*owner), 9);                         \
+      Actor_SetSpriteFlags(Actor_Get(*owner), 0);                              \
       Event_StartScreenTransition();                                           \
       Event_PlaySound(228);                                                    \
       leader->update = (void (*)(void))call1;                                  \
       Actor_SetSpeed(*owner, 0x6666, 0x3333);                                  \
       Actor_WalkByAndWait(*owner, 0, 8);                                       \
-      FieldActor_SetSpriteColor(Actor_Get(*owner), 0);                              \
-      Actor_SetSpriteFlags(Actor_Get(*owner), 1);                         \
+      FieldActor_SetSpriteColor(Actor_Get(*owner), 0);                         \
+      Actor_SetSpriteFlags(Actor_Get(*owner), 1);                              \
       ((struct FieldSprite *)leader->sprite)->priority = 1;                    \
       offset = 10;                                                             \
       Actor_WalkByAndWait(*owner, 0, offset);                                  \
@@ -298,8 +298,8 @@
     Actor_SetAnimation(*owner, 2);                                             \
     Actor_SetDestinationOffset(*owner, 0, -8);                                 \
     FieldActor_WaitForMoveById(*owner);                                        \
-    FieldActor_SetSpriteColor(Actor_Get(*owner), 9);                                \
-    Actor_SetSpriteFlags(Actor_Get(*owner), 0);                           \
+    FieldActor_SetSpriteColor(Actor_Get(*owner), 9);                           \
+    Actor_SetSpriteFlags(Actor_Get(*owner), 0);                                \
     leader->update = 0;                                                        \
     Event_FinishScreenTransition();                                            \
     Event_WaitTransitionFrames();                                              \
@@ -344,7 +344,7 @@
     s32 z;                                                                     \
                                                                                \
     object->angle += object->speed;                                            \
-    object->x = IwramMulQ16(Trig_Cos(object->angle), object->radius);       \
+    object->x = IwramMulQ16(Trig_Cos(object->angle), object->radius);          \
     z = IwramMulQ16(Math_Sin(object->angle), object->radius);                  \
     object->x += object->centreX;                                              \
     object->z = (z >> 1) + object->centreZ;                                    \
@@ -426,7 +426,7 @@
     if (effect != 0) {                                                         \
       sprite = effect->sprite;                                                 \
       Actor_StartScript(effect, data1);                                        \
-      FieldActor_SetSpriteColor(effect, 1);                                         \
+      FieldActor_SetSpriteColor(effect, 1);                                    \
       effect->motionFlags = 0;                                                 \
       angle = Random16Far() & 0xffff000;                                       \
       effect->angle = angle;                                                   \
@@ -447,7 +447,7 @@
     if ((gFrameCount & n1) == 0) {                                             \
       spawned = FieldActor_Create(14, object->x, object->y, object->z);        \
       if (spawned != 0) {                                                      \
-        Actor_SetSpriteFlags(spawned, 0);                                 \
+        Actor_SetSpriteFlags(spawned, 0);                                      \
         call1(spawned, 1);                                                     \
         Actor_StartScript(spawned, data1);                                     \
       }                                                                        \
@@ -525,7 +525,8 @@
   }
 
 /// Palette_SetColors, then applies the palette fade.
-#define DEFINE_PALETTE_SET_COLORS_FADE(name, data1, data2, data3, data4, call1) \
+#define DEFINE_PALETTE_SET_COLORS_FADE(name, data1, data2, data3, data4,       \
+                                       call1)                                  \
   void name(u16 *slots, u16 *colours, u16 *a, u16 *b) {                        \
     u8 *saved = Ram_HeapSlots->block32;                                        \
                                                                                \
@@ -554,8 +555,8 @@
   }
 
 /// Starts a palette cycle's task.
-#define DEFINE_PALETTE_CYCLE_START(name, data1, data2, call1, data3, data4, n1, \
-                             data5, n2, data6, call2)                          \
+#define DEFINE_PALETTE_CYCLE_START(name, data1, data2, call1, data3, data4,    \
+                                   n1, data5, n2, data6, call2)                \
   void name(void) {                                                            \
     data1 = 0;                                                                 \
     data2 = call1(data3);                                                      \
@@ -566,8 +567,8 @@
   }
 
 /// PaletteCycle_Start with a VBlank task.
-#define DEFINE_PALETTE_CYCLE_START_VBLANK(name, data1, data2, call1, data3, data4, n1, \
-                               data5, n2, data6, call2)                        \
+#define DEFINE_PALETTE_CYCLE_START_VBLANK(name, data1, data2, call1, data3,    \
+                                          data4, n1, data5, n2, data6, call2)  \
   void name(void) {                                                            \
     data1 = 0;                                                                 \
     data2 = call1(data3);                                                      \
@@ -688,8 +689,8 @@
   }
 
 /// Steps a palette cycle that fades as it slows.
-#define DEFINE_PALETTE_CYCLE_FADE(name, data1, data2, data3, data4, data5, data6, \
-                             data7, data8, data9)                              \
+#define DEFINE_PALETTE_CYCLE_FADE(name, data1, data2, data3, data4, data5,     \
+                                  data6, data7, data8, data9)                  \
   void name(void) {                                                            \
     s32 step;                                                                  \
     u32 i;                                                                     \

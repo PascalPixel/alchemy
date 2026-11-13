@@ -45,7 +45,7 @@ enum { TRADE_OFFER_PENDING = -1 };
 /// and index, its owner and its status.
 struct TradeOffer {
   u8 element;
-  u8 djinn;  ///< the Djinni within its element
+  u8 djinn; ///< the Djinni within its element
   u8 owner;
   s8 status; ///< TRADE_OFFER_PENDING (-1) on standby; -2 is tested apart
 };

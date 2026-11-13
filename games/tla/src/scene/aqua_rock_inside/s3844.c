@@ -15,7 +15,8 @@
 #define VENT_BOUNCE Func_0200389c
 #include "../../field/object/vent_bounce.c"
 
-DEFINE_ACTOR_START_SCRIPTED(Actor_StartScripted, Actor_SelectAnimation, gData_020044c8)
+DEFINE_ACTOR_START_SCRIPTED(Actor_StartScripted, Actor_SelectAnimation,
+                            gData_020044c8)
 
 void Vent_Puff(s32 *position, s32 base) {
   struct Actor *object = Import_ActorCreate_(0x11d, position[0], position[1],
@@ -23,8 +24,7 @@ void Vent_Puff(s32 *position, s32 base) {
   s32 angle;
 
   if (object != 0) {
-    object->bounce =
-        Trig_Cos(((u32)(Random16Far() * 0x3000) >> 16) + 0x3000);
+    object->bounce = Trig_Cos(((u32)(Random16Far() * 0x3000) >> 16) + 0x3000);
     object->gravity = (u16)Random16Far();
     object->unk4c = (u16)(Random16Far() << 1) + base;
     /* FAKEMATCH(temporary): the s32 local keeps the zero extension and the pool

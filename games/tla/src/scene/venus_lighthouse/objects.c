@@ -11,7 +11,7 @@
 #include "field_event.h"
 #include "event_inline.h"
 
-#define Actor_SetSpriteFlags                                              \
+#define Actor_SetSpriteFlags                                                   \
   ((void (*)(struct Actor *, s32))Actor_SetSpriteFlags)
 
 #define Actor_SetSpriteColor                                                   \

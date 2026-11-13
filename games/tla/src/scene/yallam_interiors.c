@@ -249,7 +249,9 @@ void YallamInteriors_AskLikeChildrensSongs(void) {
 /// Yallam's weapon merchant sells across the counter, and otherwise wishes
 /// Sunshine would work.
 void YallamInteriors_TalkToWeaponMerchant(s32 actor) {
-  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(gMainRoutineWork.currentOwner))->facing;
+  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(
+                    gMainRoutineWork.currentOwner))
+                   ->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Shop_Run(20, actor);
@@ -265,7 +267,9 @@ void YallamInteriors_TalkToWeaponMerchant(s32 actor) {
 /// Yallam's armor merchant sells across the counter, and otherwise sends the
 /// party to Sunshine for something special.
 void YallamInteriors_TalkToArmorMerchant(s32 actor) {
-  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(gMainRoutineWork.currentOwner))->facing;
+  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(
+                    gMainRoutineWork.currentOwner))
+                   ->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Shop_Run(21, actor);
@@ -281,7 +285,9 @@ void YallamInteriors_TalkToArmorMerchant(s32 actor) {
 /// Yallam's item merchant sells across the counter, and otherwise points the
 /// way to Taopo Swamp.
 void YallamInteriors_TalkToItemMerchant(s32 actor) {
-  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(gMainRoutineWork.currentOwner))->facing;
+  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(
+                    gMainRoutineWork.currentOwner))
+                   ->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Shop_Run(22, actor);
@@ -297,7 +303,9 @@ void YallamInteriors_TalkToItemMerchant(s32 actor) {
 /// Yallam's innkeeper takes the party in across the counter, and otherwise
 /// talks of the town that never gets tourists.
 void YallamInteriors_TalkToInnkeeper(s32 actor) {
-  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(gMainRoutineWork.currentOwner))->facing;
+  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(
+                    gMainRoutineWork.currentOwner))
+                   ->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Inn_CheckIn(7, actor);
@@ -312,7 +320,9 @@ void YallamInteriors_TalkToInnkeeper(s32 actor) {
 }
 
 void YallamInteriors_TalkToHealer(s32 actor) {
-  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(gMainRoutineWork.currentOwner))->facing;
+  u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(
+                    gMainRoutineWork.currentOwner))
+                   ->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Sanctum_Run(actor);
@@ -365,10 +375,10 @@ s32 YallamInteriors_PartyHasForgeMaterial(void) {
   return 0;
 }
 
-/// Actor 14's talk. Flag 0x10f follows YallamInteriors_PartyHasForgeMaterial's item check (it stays
-/// set while flag 0x301 or Forge_GetItem holds). Once 0x10f is set and
-/// neither holds, a yes moves actor 14 and the leader, and if Forge_GetItem
-/// then holds, places actor 16 and sets flag 0x301.
+/// Actor 14's talk. Flag 0x10f follows YallamInteriors_PartyHasForgeMaterial's
+/// item check (it stays set while flag 0x301 or Forge_GetItem holds). Once
+/// 0x10f is set and neither holds, a yes moves actor 14 and the leader, and if
+/// Forge_GetItem then holds, places actor 16 and sets flag 0x301.
 void YallamInteriors_TalkToSunshine(void) {
   s32 message;
 
@@ -403,8 +413,8 @@ void YallamInteriors_TalkToSunshine(void) {
       Event_SetMessageId(message + 1);
       Event_ShowMessage(14, 0);
       Func_02000a60(14, 0xc000);
-      Actor_SetSpriteFlags(
-          ((struct YallamInteriorsObject *)Actor_GetById(14)), 1);
+      Actor_SetSpriteFlags(((struct YallamInteriorsObject *)Actor_GetById(14)),
+                           1);
       Actor_SetDestination(gMainRoutineWork.currentOwner, 488, 408);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Actor_FaceDirection(gMainRoutineWork.currentOwner, 0, 0);
@@ -425,7 +435,8 @@ void YallamInteriors_TalkToSunshine(void) {
         Actor_WaitForMoveById(14);
         Actor_SetAnimation(14, 0);
         Actor_FaceDirection(14, FACING_SOUTH, 0);
-        ((struct YallamInteriorsObject *)Actor_GetById(14))->collisionFlags = 129;
+        ((struct YallamInteriorsObject *)Actor_GetById(14))->collisionFlags =
+            129;
         ((struct YallamInteriorsObject *)Actor_GetById(14))->priorityFlags = 1;
         Actor_SetSpritePriority(14, 1);
         ((struct YallamInteriorsObject *)Actor_GetById(14))->priorityFlags |= 1;
@@ -437,7 +448,8 @@ void YallamInteriors_TalkToSunshine(void) {
         Actor_SetDestination(14, 491, 398);
         Actor_WaitForMoveById(14);
         Actor_FaceDirection(14, FACING_SOUTH, 0);
-        Actor_SetSpriteFlags(((struct YallamInteriorsObject *)Actor_GetById(14)), 0);
+        Actor_SetSpriteFlags(
+            ((struct YallamInteriorsObject *)Actor_GetById(14)), 0);
         Func_02000a60(14, 0);
       }
     } else {
@@ -515,8 +527,8 @@ s32 Scene_Initialize(void) {
     } else {
       Func_02000a60(14, 0);
     }
-    Actor_SetSpriteFlags(
-        ((struct YallamInteriorsObject *)Actor_GetById(17)), 0);
+    Actor_SetSpriteFlags(((struct YallamInteriorsObject *)Actor_GetById(17)),
+                         0);
     Actor_SetSpritePriority(11, 2);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov677Room2) {
@@ -627,25 +639,39 @@ struct Trigger gYallamInteriors_Room1Triggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors09)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(YallamInteriors_AskLikeChildrensSongs)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS,
+     EVENT(YallamInteriors_AskLikeChildrensSongs)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors13)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors14)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(YallamInteriors_TalkToInnkeeper)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS,
+     EVENT(YallamInteriors_TalkToInnkeeper)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors28)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(YallamInteriors_TalkToSunshine)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(YallamInteriors_TalkToSunshinesWife)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(YallamInteriors_TalkToSunshinesChild)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS,
+     EVENT(YallamInteriors_TalkToSunshinesWife)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS,
+     EVENT(YallamInteriors_TalkToSunshinesChild)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(YallamInteriors_TalkToSunshine)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors11)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors12)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors15)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors16)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors29)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors30)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT(YallamInteriors_MindReadSunshine)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, EVENT(YallamInteriors_MindReadSunshinesWife)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT(YallamInteriors_MindReadSunshinesChild)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT(YallamInteriors_MindReadSunshine)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgYallamInteriors11)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgYallamInteriors12)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgYallamInteriors15)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgYallamInteriors16)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgYallamInteriors29)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgYallamInteriors30)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     EVENT(YallamInteriors_MindReadSunshine)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     EVENT(YallamInteriors_MindReadSunshinesWife)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+     EVENT(YallamInteriors_MindReadSunshinesChild)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+     EVENT(YallamInteriors_MindReadSunshine)},
     {0x173, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgYallamInteriors40))},
     {TRIGGERS_END},
 };
@@ -656,19 +682,33 @@ struct Trigger gYallamInteriors_Room2Triggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors17)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors18)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(YallamInteriors_TalkToWeaponMerchant)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(YallamInteriors_TalkToArmorMerchant)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(YallamInteriors_TalkToItemMerchant)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(YallamInteriors_TalkToWeaponMerchant)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(YallamInteriors_TalkToArmorMerchant)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(YallamInteriors_TalkToItemMerchant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors19)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors20)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors22)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors24)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgYallamInteriors26)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT(YallamInteriors_MindReadWeaponMerchant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT(YallamInteriors_MindReadArmorMerchant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, EVENT(YallamInteriors_MindReadItemMerchant)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS,
+     EVENT(YallamInteriors_TalkToWeaponMerchant)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS,
+     EVENT(YallamInteriors_TalkToArmorMerchant)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS,
+     EVENT(YallamInteriors_TalkToItemMerchant)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS,
+     EVENT(YallamInteriors_TalkToWeaponMerchant)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS,
+     EVENT(YallamInteriors_TalkToArmorMerchant)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS,
+     EVENT(YallamInteriors_TalkToItemMerchant)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgYallamInteriors19)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgYallamInteriors20)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgYallamInteriors22)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgYallamInteriors24)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgYallamInteriors26)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     EVENT(YallamInteriors_MindReadWeaponMerchant)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     EVENT(YallamInteriors_MindReadArmorMerchant)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     EVENT(YallamInteriors_MindReadItemMerchant)},
     {TRIGGERS_END},
 };

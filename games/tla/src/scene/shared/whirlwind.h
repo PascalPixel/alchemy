@@ -24,7 +24,7 @@
     work->unkd46 = i;                                                          \
                                                                                \
     actor->motionFlags = 4;                                                    \
-    Actor_SetSpriteFlags(actor, 0);                                       \
+    Actor_SetSpriteFlags(actor, 0);                                            \
                                                                                \
     while (*((u8 *)linked + 0x63) != 0) {                                      \
       actor->x = linked->x;                                                    \
@@ -45,7 +45,7 @@
     actor->velocityY = 0x60000;                                                \
     actor->priorityFlags = 1;                                                  \
     actor->motionFlags = 3;                                                    \
-    Actor_SetSpriteFlags(actor, 1);                                       \
+    Actor_SetSpriteFlags(actor, 1);                                            \
     FieldCamera_MoveTo(-1, -1, -1, 0);                                         \
     shadow = EventCamera_GetActor();                                           \
     shadow->speedLimit = 0x80000;                                              \
@@ -73,7 +73,7 @@
           break;                                                               \
       } while (actor->velocityY != 0);                                         \
     }                                                                          \
-    FieldActor_WaitForMove(shadow);                                                 \
+    FieldActor_WaitForMove(shadow);                                            \
     Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;              \
     EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);                 \
     work->unkd46 = 1;                                                          \
@@ -96,7 +96,7 @@
     i = 0;                                                                     \
     work->unkd46 = 0;                                                          \
     actor->motionFlags = 4;                                                    \
-    Actor_SetSpriteFlags(actor, 0);                                       \
+    Actor_SetSpriteFlags(actor, 0);                                            \
     while (*((u8 *)linked + 0x63) != 0) {                                      \
       actor->x = linked->x;                                                    \
       actor->y = linked->y + i;                                                \
@@ -115,7 +115,7 @@
     actor->velocityY = 0x60000;                                                \
     actor->priorityFlags = 1;                                                  \
     actor->motionFlags = 3;                                                    \
-    Actor_SetSpriteFlags(actor, 1);                                       \
+    Actor_SetSpriteFlags(actor, 1);                                            \
     FieldCamera_MoveTo(-1, -1, -1, 0);                                         \
     shadow = EventCamera_GetActor();                                           \
     shadow->speedLimit = 0x80000;                                              \
@@ -135,7 +135,7 @@
       i++;                                                                     \
       System_Wait(1);                                                          \
     }                                                                          \
-    FieldActor_WaitForMove(shadow);                                                 \
+    FieldActor_WaitForMove(shadow);                                            \
     Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;              \
     EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);                 \
     work->unkd46 = 1;                                                          \
@@ -152,13 +152,13 @@
                                                                                \
     Event_PlaySound(222);                                                      \
     position.x = source->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,          \
-                                    Trig_Cos(source->angle));               \
+                                    Trig_Cos(source->angle));                  \
     position.z = source->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,          \
                                     Math_Sin(source->angle));                  \
     object = ((struct GustObject *)FieldActor_Create(280, position.x,          \
                                                      source->y, position.z));  \
     call1(object, 2);                                                          \
-    Actor_SetSpriteFlags(object, 0);                                      \
+    Actor_SetSpriteFlags(object, 0);                                           \
     object->motionFlags = 0;                                                   \
     object->priorityFlags &= ~1;                                               \
     object->angle = source->angle;                                             \
@@ -183,12 +183,12 @@
                                                                                \
     Event_PlaySound(222);                                                      \
     position.x = source->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,          \
-                                    Trig_Cos(source->angle));               \
+                                    Trig_Cos(source->angle));                  \
     position.z = source->z + Iwram_MulQ16(0x80000, Math_Sin(source->angle));   \
     object = ((struct GustObject *)FieldActor_Create(280, position.x,          \
                                                      source->y, position.z));  \
     call1(object, 2);                                                          \
-    Actor_SetSpriteFlags(object, 0);                                      \
+    Actor_SetSpriteFlags(object, 0);                                           \
     object->motionFlags = 0;                                                   \
     object->priorityFlags &= ~1;                                               \
     object->angle = source->angle;                                             \
@@ -261,7 +261,7 @@
         }                                                                      \
         {                                                                      \
           s32 (*multiply)(s32, s32);                                           \
-          s32 cosine = Trig_Cos(self->facing);                              \
+          s32 cosine = Trig_Cos(self->facing);                                 \
           s32 speed = self->speedLimit;                                        \
           /* FAKEMATCH(dead): the routine address taken inside a once-only     \
            * block, so the speed loads first; as a plain call, 2 of 197        \
@@ -339,7 +339,7 @@
          */                                                                    \
         /* reads it after the speed (at Iwram_MulQ16 it is built before). */   \
         self->x += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulQ16Offset))(   \
-            Trig_Cos(self->facing), self->speedLimit);                      \
+            Trig_Cos(self->facing), self->speedLimit);                         \
         self->z += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulQ16Offset))(   \
             Math_Sin(self->facing), self->speedLimit);                         \
         return;                                                                \

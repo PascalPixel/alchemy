@@ -104,13 +104,13 @@ void Func_020000c4(void) {
   Io_Write16(0x400, &REG_BG0CNT);
   buffer = Heap_Alloc(0x800);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
-                        buffer);
+                      buffer);
   Dma_Set(buffer, (void *)(0x06000000), 0x84000200, REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, (void *)0x06002000, 0x800);
   buffer = Heap_Alloc(128);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningMap),
-                        buffer);
+                      buffer);
   p = buffer;
   for (i = 0; i != 64; i++)
     *p++ &= 0xfcff;
@@ -154,7 +154,7 @@ void Func_020000c4(void) {
   Window_LoadGraphics();
   DebugText_Clear();
   FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                    gMainRoutineWork.paletteGlow[1]);
+                         gMainRoutineWork.paletteGlow[1]);
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
   REG_DISPCNT |= 0x100;

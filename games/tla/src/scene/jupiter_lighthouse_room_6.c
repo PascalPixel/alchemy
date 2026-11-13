@@ -42,20 +42,24 @@ void JupiterLighthouse_CloseDoor(void);
 void JupiterLighthouse_LoadPalettes(s32 value);
 
 void Func_02000054(s32 value) {
-  if (Actor_Get(gMainRoutineWork.currentOwner)->y == 0 && Teleporters_Step(value))
+  if (Actor_Get(gMainRoutineWork.currentOwner)->y == 0 &&
+      Teleporters_Step(value))
     FieldEvent_SetExitRequest(13);
 }
 
 void Func_02000084(s32 value) {
-  if (Actor_Get(gMainRoutineWork.currentOwner)->y == 0 && Teleporters_Step(value))
+  if (Actor_Get(gMainRoutineWork.currentOwner)->y == 0 &&
+      Teleporters_Step(value))
     FieldEvent_SetExitRequest(14);
 }
 
 #include "jupiter_lighthouse_room_6.h"
 
-DEFINE_JUPITER_LIGHTHOUSE_OPEN_DOOR(JupiterLighthouse_OpenDoor, 84, 36, 2, 78, 40, 84, 39, 20, 38, 14, 42)
+DEFINE_JUPITER_LIGHTHOUSE_OPEN_DOOR(JupiterLighthouse_OpenDoor, 84, 36, 2, 78,
+                                    40, 84, 39, 20, 38, 14, 42)
 
-DEFINE_JUPITER_LIGHTHOUSE_CLOSE_DOOR(JupiterLighthouse_CloseDoor, 84, 36, 2, 78, 40, 84, 20, 44, 14, 42)
+DEFINE_JUPITER_LIGHTHOUSE_CLOSE_DOOR(JupiterLighthouse_CloseDoor, 84, 36, 2, 78,
+                                     40, 84, 20, 44, 14, 42)
 
 void JupiterLighthouse_CheckBlockOnCell(void) {
   struct JupiterLighthouseRoom6Object *object =
@@ -69,7 +73,9 @@ void JupiterLighthouse_CheckBlockOnCell(void) {
 
 DEFINE_SCENE_RUN_ONCE(Scene_RunOnce, 512, JupiterLighthouse_OpenDoor)
 
-DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Scene_RunIfFlagCleared, 512, JupiterLighthouse_CloseDoor, JupiterLighthouse_CheckBlockOnCell)
+DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Scene_RunIfFlagCleared, 512,
+                                 JupiterLighthouse_CloseDoor,
+                                 JupiterLighthouse_CheckBlockOnCell)
 
 void Func_020001d0(void) {
   System_Wait(10);
@@ -129,10 +135,12 @@ s32 Scene_PrepareMap(void) {
 void Func_020002dc(s32 value) { gData_020023c0 = value; }
 
 DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame, gData_020023c0,
-    gData_020023e8)
+                          gData_020023e8)
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_020023c0, gData_020023e8,
-    gData_02002408, PaletteCycle_Step, gData_0200240c)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
+                                        gData_020023c0, gData_020023e8,
+                                        gData_02002408, PaletteCycle_Step,
+                                        gData_0200240c)
 
 void Func_02000428(s32 id) {
   struct JupiterLighthouseRoom6Object *object;
@@ -162,4 +170,4 @@ extern const s32 gWhirlwindEndScript[];
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_02001bdc, Position_FlatDistance,
-    gWhirlwindEndScript, Data_020023e4)
+                        gWhirlwindEndScript, Data_020023e4)

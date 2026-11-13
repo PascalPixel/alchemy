@@ -144,7 +144,7 @@ void Func_020013b0(s32 id) {
   void name(s32 actor) {                                                       \
     BattleEffect_LoadActionEffectResources(144, 1);                            \
     FieldPsynergy_SetupActorPair(actor, 0);                                    \
-    FieldPsynergy_RunHandler(n1);                                             \
+    FieldPsynergy_RunHandler(n1);                                              \
     BlendBack(n2, 5, 3, 3, 19, 5);                                             \
     BattleEffect_StopMainActor();                                              \
     BattleEffect_CleanupSceneObjects();                                        \

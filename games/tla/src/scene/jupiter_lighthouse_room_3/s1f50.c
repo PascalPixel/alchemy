@@ -32,11 +32,12 @@ void Teleporter_Uncover();
 void Teleporter_SinkEvent();
 
 DEFINE_TELEPORTERS_STEP(Teleporters_Step, gTeleporters, Teleporter_Uncover,
-    Teleporter_SinkEvent)
+                        Teleporter_SinkEvent)
 
 #include "cell_target.h"
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gTeleporters, Teleporter_DropIn)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gTeleporters,
+                                Teleporter_DropIn)
 
 #include "scene_tables.h"
 

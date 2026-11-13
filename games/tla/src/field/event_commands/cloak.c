@@ -421,9 +421,9 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       position.y = target->y + 0x100000;
       position.z = target->z;
       Actor_SetMoveTargetFar(anchors[0], position.x + 0x100000, position.y,
-                              position.z);
+                             position.z);
       Actor_SetMoveTargetFar(anchors[1], position.x - 0x100000, position.y,
-                              position.z);
+                             position.z);
       Actor_SelectAnimationFar(anchors[0], 1);
       Actor_SelectAnimationFar(anchors[1], 1);
       continue;
@@ -433,9 +433,9 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     position.z = target->z;
     Vector_AddPolarOffset(0x20000, angle, &position);
     Actor_SetMoveTargetFar(anchors[0], position.x + 0x100000, position.y,
-                            position.z);
+                           position.z);
     Actor_SetMoveTargetFar(anchors[1], position.x - 0x100000, position.y,
-                            position.z);
+                           position.z);
     Actor_WaitForMoveFar(anchors[0]);
     Actor_WaitForMoveFar(anchors[1]);
     position.x = target->x;

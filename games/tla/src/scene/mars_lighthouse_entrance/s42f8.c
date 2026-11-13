@@ -82,9 +82,11 @@ next:
 void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02004160(struct CellTarget *work, struct CellTargetEntry *entry);
 
-DEFINE_TELEPORTERS_STEP(Teleporters_Step, Data_020068b4, Func_020040f0, Func_02004160)
+DEFINE_TELEPORTERS_STEP(Teleporters_Step, Data_020068b4, Func_020040f0,
+                        Func_02004160)
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, Data_020068b4, Func_020042f8)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, Data_020068b4,
+                                Func_020042f8)
 
 #include "dma.h"
 #include "io_reg.h"
@@ -96,15 +98,15 @@ extern u16 *gData_02006890;
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
 DEFINE_PALETTE_SET_COLORS_FADE(Func_020045f8, gData_0200e88c, gData_02006890,
-    Data_02006894, Data_02006880, Func_020048e8)
+                               Data_02006894, Data_02006880, Func_020048e8)
 
 #include "task.h"
 
 extern u16 gData_02006898;
 
 DEFINE_PALETTE_CYCLE_START(Func_020046b4, gData_0200689c, gData_02006898,
-    Func_02004794, gData_0200e88c, gData_0200e888, 15, gData_02006884, 16,
-    gData_0200687c, Func_020047b8)
+                           Func_02004794, gData_0200e88c, gData_0200e888, 15,
+                           gData_02006884, 16, gData_0200687c, Func_020047b8)
 
 void Func_02004718(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 256;
@@ -112,14 +114,15 @@ void Func_02004718(void) {
 }
 
 DEFINE_PALETTE_CYCLE_START(Func_02004738, gData_0200689c, gData_02006898,
-    Func_02004794, gData_0200e88c, gData_0200e888, 2, gData_02006884, 2,
-    gData_0200687c, Func_020047b8)
+                           Func_02004794, gData_0200e88c, gData_0200e888, 2,
+                           gData_02006884, 2, gData_0200687c, Func_020047b8)
 
 DEFINE_LIST_COUNT_ENTRIES(Func_02004794)
 
 DEFINE_PALETTE_CYCLE_FADE(Func_020047b8, gData_02006884, gData_0200e888,
-    Data_02006894, gData_02006898, Data_02006880, gData_0200689c,
-    gData_0200e88c, gData_0200687c, gData_02006890)
+                          Data_02006894, gData_02006898, Data_02006880,
+                          gData_0200689c, gData_0200e88c, gData_0200687c,
+                          gData_02006890)
 
 void Func_020048e8(void) {
   struct MarsLighthouseEntranceEventWork *work = Ram_HeapSlots->eventWork;
@@ -128,7 +131,8 @@ void Func_020048e8(void) {
   saved = work->value1ac;
   PaletteFade_ApplyTarget(0x202108, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
-  ((struct MarsLighthouseEntranceEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x100;
+  ((struct MarsLighthouseEntranceEventWork *)Ram_HeapSlots->eventWork)
+      ->value1ac = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_02004738();
@@ -747,9 +751,12 @@ struct Trigger gMarsLighthouseEntrance_Room2Triggers[] = {
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {0x8400, 11, CONDITION_ALWAYS, EVENT(Func_02000044)},
     {0xc400, 11, CONDITION_ALWAYS, EVENT(Func_02000044)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8, 0x200, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 9, 0x201, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 10, 0xa3e, EVENT(MarsLighthouseEntrance_GrindIce)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8, 0x200,
+     EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 9, 0x201,
+     EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 10, 0xa3e,
+     EVENT(MarsLighthouseEntrance_GrindIce)},
     {TRIGGER_TALK, 10, 0xa3e, EVENT(MarsLighthouseEntrance_CheckIce)},
     {TRIGGERS_END},
 };
@@ -772,12 +779,16 @@ struct Trigger gMarsLighthouseEntrance_Room3Triggers[] = {
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {0x31, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_STEP, 88, CONDITION_ALWAYS, EVENT(Func_0200263c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 16, 0x202, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 17, 0x203, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 16, 0x202,
+     EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 17, 0x203,
+     EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
     {0x9c05, 17, CONDITION_ALWAYS, EVENT(Func_02000648)},
     {0x9c05, 18, CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_Teleport)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0xa4f, EVENT(MarsLighthouseEntrance_PushStatueIntoFlames)},
-    {9, 0, CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_PushStatueIntoFlames)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0xa4f,
+     EVENT(MarsLighthouseEntrance_PushStatueIntoFlames)},
+    {9, 0, CONDITION_ALWAYS,
+     EVENT(MarsLighthouseEntrance_PushStatueIntoFlames)},
     {0x50009705, 80, 0x1230, EVENT(MarsLighthouseEntrance_BurstIceSheet)},
     {0x50009705, 81, 0x1231, EVENT(Func_0200085c)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 15,
@@ -806,16 +817,22 @@ struct Trigger gMarsLighthouseEntrance_Room4Triggers[] = {
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {0x21, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Func_020032b8)},
-    {TRIGGER_STEP, 90, CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_SlideOnIce)},
+    {TRIGGER_STEP, 90, CONDITION_ALWAYS,
+     EVENT(MarsLighthouseEntrance_SlideOnIce)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_02000050)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_ACTS), 10,
      CONDITION_ALWAYS, EVENT(Func_0200096c)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, 0},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 12, 0x204, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 13, 0x205, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 14, 0x206, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 15, 0x207, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 16, 0x208, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 12, 0x204,
+     EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 13, 0x205,
+     EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 14, 0x206,
+     EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 15, 0x207,
+     EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 16, 0x208,
+     EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
     {0x9c05, 14, CONDITION_ALWAYS, EVENT(Func_0200093c)},
     {TRIGGERS_END},
 };
@@ -871,14 +888,21 @@ struct Trigger gMarsLighthouseEntrance_Room6Triggers[] = {
     {TRIGGER_STEP, 16, CONDITION_ALWAYS, EVENT(Func_02000e3c)},
     {TRIGGER_STEP, 35, 0x234, EVENT(Func_02000fa4)},
     {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Func_02000fd4)},
-    {TRIGGER_STEP, 90, CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_SlideOnIce)},
+    {TRIGGER_STEP, 90, CONDITION_ALWAYS,
+     EVENT(MarsLighthouseEntrance_SlideOnIce)},
     {TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(Func_020029a0)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 13, 0x210, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 14, 0x211, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 15, 0x212, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 16, 0x213, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 17, 0x214, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 18, 0x215, EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 13, 0x210,
+     EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 14, 0x211,
+     EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 15, 0x212,
+     EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 16, 0x213,
+     EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 17, 0x214,
+     EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 18, 0x215,
+     EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
     {0x9c05, 12, CONDITION_ALWAYS, EVENT(Func_02000c84)},
     {0x9c05, 13, CONDITION_ALWAYS, EVENT(Func_02000cb4)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0xa4e, EVENT(Func_02000ce4)},

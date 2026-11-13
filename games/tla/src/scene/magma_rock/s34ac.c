@@ -110,7 +110,8 @@ s32 MapGrid_GetTerrainKind(s32 terrainId, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Func_02003c24(s32 terrainId, s32 value, s32 height);
 
-DEFINE_ACTOR_SET_CELL_SHAPE_AT(Func_020036f8, MapGrid_GetTerrainKind, Func_02003c24)
+DEFINE_ACTOR_SET_CELL_SHAPE_AT(Func_020036f8, MapGrid_GetTerrainKind,
+                               Func_02003c24)
 
 void Func_02002e30(const u8 *data);
 
@@ -134,7 +135,8 @@ struct ParticleWork {
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-DEFINE_PARTICLES_UPDATE_FALLING(Particles_UpdateFalling, EffectSprite_DrawAtWorldPosition)
+DEFINE_PARTICLES_UPDATE_FALLING(Particles_UpdateFalling,
+                                EffectSprite_DrawAtWorldPosition)
 
 void Func_02003820(s32 x, s32 y, s32 z, s32 count) {
   struct EntryWork *work;
@@ -217,7 +219,8 @@ void Func_020038dc(void) {
   struct Rock *rock;
   struct RockSprite *sprite;
 
-  Import_DecompressTaggedLz(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
+  Import_DecompressTaggedLz(
+      Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
   entry = VramCache_FindFreeEntry();
   tile = Vram_Load(entry, 0x500, work);
   work->tileBase = tile;

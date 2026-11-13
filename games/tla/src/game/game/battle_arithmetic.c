@@ -79,10 +79,10 @@ s32 Battle_CalculateAttackDamage(s32 atk, s32 def, s32 add, s32 bonus) {
   return dmg;
 }
 
-/// Returns Psynergy power (the far-call alias Battle_CalculatePsynergyPowerFar): power times
-/// rate and the elemental multiplier (0-512, with 256 unity).
-/// bonus: elemental difference (power - resistance).
-/// rate: multiplier, with 256 unity.
+/// Returns Psynergy power (the far-call alias
+/// Battle_CalculatePsynergyPowerFar): power times rate and the elemental
+/// multiplier (0-512, with 256 unity). bonus: elemental difference (power -
+/// resistance). rate: multiplier, with 256 unity.
 s32 Battle_CalculatePsynergyPower(s32 power, s32 bonus, s32 rate) {
   s32 val;
 
@@ -92,11 +92,11 @@ s32 Battle_CalculatePsynergyPower(s32 power, s32 bonus, s32 rate) {
   return val >> 16;
 }
 
-/// Returns the amount recovered (the far-call alias Battle_CalculateRecoveryFar): power
-/// and rate times the multiplier (256 is unity) for twice the user's elemental
-/// power above 100.
-/// element: user's elemental power (100: unity, >=200: double, <=0: zero).
-/// rate: multiplier, with 256 unity.
+/// Returns the amount recovered (the far-call alias
+/// Battle_CalculateRecoveryFar): power and rate times the multiplier (256 is
+/// unity) for twice the user's elemental power above 100. element: user's
+/// elemental power (100: unity, >=200: double, <=0: zero). rate: multiplier,
+/// with 256 unity.
 s32 Battle_CalculateRecovery(s32 power, s32 element, s32 rate) {
   s32 val;
   u32 prod;

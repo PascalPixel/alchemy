@@ -96,7 +96,7 @@ void Func_02001718(const s32 *from, const s32 *to) {
   work->to[1] = to[1];
   work->to[2] = to[2];
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs),
-                        work);
+                      work);
   entry = VramCache_FindFreeEntry();
   tile = Vram_Load(entry, 0x400, work);
   work->tile = tile;

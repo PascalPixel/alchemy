@@ -39,8 +39,8 @@
       Scene_SetActorSpritePriority(t0, 1);                                     \
       t0->motionFlags = 0;                                                     \
       t0->collisionFlags = 8;                                                  \
-      Actor_SetSpriteFlags(t0, 0);                                        \
-      FieldActor_SetSpriteColor(t0, 0xf);                                           \
+      Actor_SetSpriteFlags(t0, 0);                                             \
+      FieldActor_SetSpriteColor(t0, 0xf);                                      \
       t0->priorityFlags = 0x22 | t0->priorityFlags;                            \
       return t0;                                                               \
     }                                                                          \
@@ -128,7 +128,7 @@
 #define DEFINE_ACTOR_HIDE(name, call1)                                         \
   void name(s32 id) {                                                          \
     call1(id);                                                                 \
-    Actor_SetSpriteColor(Actor_GetById(id), 15);                             \
+    Actor_SetSpriteColor(Actor_GetById(id), 15);                               \
     Actor_SetSpritePriority(id, 1);                                            \
     Actor_GetById(id)->priorityFlags |= 2;                                     \
   }
@@ -141,7 +141,7 @@
                                                                                \
     if (!Event_GetFlag(0x109)) {                                               \
       object->motionFlags = 0;                                                 \
-      Actor_SetSpriteFlags(object, 0);                                    \
+      Actor_SetSpriteFlags(object, 0);                                         \
       object->y += height;                                                     \
       object->speedLimit = 0x10000;                                            \
       object->velocityY = 0;                                                   \
@@ -166,7 +166,7 @@
       object->velocityY = PIXELS(2);                                           \
     if (step == 24)                                                            \
       object->velocityY = PIXELS(3);                                           \
-    sprite->rotation = Trig_Cos(step << 12) / 64;                           \
+    sprite->rotation = Trig_Cos(step << 12) / 64;                              \
     object->riseCounter++;                                                     \
     return -1;                                                                 \
   }
@@ -251,7 +251,7 @@
     struct Actor *object = Actor_Get(id);                                      \
                                                                                \
     if (object != NULL) {                                                      \
-      Actor_SetSpriteFlags(object, 0);                                    \
+      Actor_SetSpriteFlags(object, 0);                                         \
       object->collisionFlags = 0;                                              \
       object->motionFlags = 0;                                                 \
     }                                                                          \
@@ -294,8 +294,8 @@
       Scene_SetActorSpritePriority(object, 1);                                 \
       object->motionFlags = 0;                                                 \
       object->collisionFlags = 8;                                              \
-      Actor_SetSpriteFlags(object, 0);                                    \
-      Actor_SetSpriteColor(object, 15);                                      \
+      Actor_SetSpriteFlags(object, 0);                                         \
+      Actor_SetSpriteColor(object, 15);                                        \
       object->priorityFlags |= n1;                                             \
       return object;                                                           \
     }                                                                          \
@@ -347,18 +347,18 @@
 #define DEFINE_ACTOR_FLICKER_CHILD(name, n1)                                   \
   void name(struct Actor *object) {                                            \
     if (gFrameCount & 2)                                                       \
-      Actor_SetSpriteColorMode(object, n1);                                  \
+      Actor_SetSpriteColorMode(object, n1);                                    \
     else                                                                       \
-      Actor_SetSpriteColorMode(object, 0);                                   \
+      Actor_SetSpriteColorMode(object, 0);                                     \
   }
 
 /// Flashes an actor in colour `n1` on the frames its mask picks.
 #define DEFINE_ACTOR_FLASH_COLOR(name, n1)                                     \
   void name(struct Actor *object) {                                            \
     if (gFrameCount & object->unk5c[7])                                        \
-      FieldActor_SetSpriteColor(object, n1);                                        \
+      FieldActor_SetSpriteColor(object, n1);                                   \
     else                                                                       \
-      FieldActor_SetSpriteColor(object, 0);                                         \
+      FieldActor_SetSpriteColor(object, 0);                                    \
   }
 
 /// Turns actor 4, then runs `call1`.

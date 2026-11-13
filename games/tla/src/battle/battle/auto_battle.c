@@ -326,8 +326,8 @@ s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
   MessageArgument_PushFar(work.actor, 1);
   BattleMessage_ShowAndWaitFar((s32)MsgActorAttacks);
   BattleMotion_ApproachTarget(work.actor, work.actors[0], 13, 0);
-  Actor_SetAnimationSpeedFar((struct Actor *)BattleObject_Get(work.actor)->object,
-                           16);
+  Actor_SetAnimationSpeedFar(
+      (struct Actor *)BattleObject_Get(work.actor)->object, 16);
   BattleObject_Get(work.actors[0]);
 
   work.count = 1;

@@ -11,8 +11,11 @@
 // the field, Left and Right step the value (0 to 324) or the second number
 // (0 to 99) by one, R and L by ten, and the row is redrawn after a step.
 
-/* VIEW(handle_selection_row_input): routine DebugSceneSelect_DrawRow as void DebugSceneSelect_DrawRow(s32 arg, s32 value, s16 *sub); the definition has void DebugSceneSelect_DrawRow(void *window, s16 first, const s16 *second). */
-extern void Menu_DrawSelectionRow__handle_selection_row_input(s32 arg, s32 value, s16 *sub) __asm__("DebugSceneSelect_DrawRow");
+/* VIEW(handle_selection_row_input): routine DebugSceneSelect_DrawRow as void
+ * DebugSceneSelect_DrawRow(s32 arg, s32 value, s16 *sub); the definition has
+ * void DebugSceneSelect_DrawRow(void *window, s16 first, const s16 *second). */
+extern void Menu_DrawSelectionRow__handle_selection_row_input(
+    s32 arg, s32 value, s16 *sub) __asm__("DebugSceneSelect_DrawRow");
 
 /// Edits the debug scene or entrance, returning -1 to exit and -2 to
 /// cancel. Shoulder buttons step by ten; it keeps the original 99-step
@@ -136,10 +139,22 @@ void String_FormatHexDigits(u32 value, u32 count, u8 *out) {
     *out++ = buf[i];
 }
 
-/* VIEW(handle_selection_row_input): routine WindowSprite_PrepareForRedraw as void WindowSprite_PrepareForRedraw(void); resource_work has void WindowSprite_PrepareForRedraw(struct Window *); tried as the definition's void WindowSprite_PrepareForRedraw(struct Window *work), which the object already declares, it does not compile in tla-ja: games/tla/src/window/menus.c:3393: too few arguments to function `WindowSprite_PrepareForRedraw'. */
-extern void WindowSprite_PrepareForRedraw__handle_selection_row_input(void) __asm__("WindowSprite_PrepareForRedraw");
-/* VIEW(menus): routine Text_DrawStringInWindow as void Text_DrawStringInWindow(s32 text, s32 window, s32 x, s32 y); module/window/window.h has void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y). */
-extern void Text_DrawStringInWindow__menus(s32 text, s32 window, s32 x, s32 y) __asm__("Text_DrawStringInWindow");
+/* VIEW(handle_selection_row_input): routine WindowSprite_PrepareForRedraw as
+ * void WindowSprite_PrepareForRedraw(void); resource_work has void
+ * WindowSprite_PrepareForRedraw(struct Window *); tried as the definition's
+ * void WindowSprite_PrepareForRedraw(struct Window *work), which the object
+ * already declares, it does not compile in tla-ja:
+ * games/tla/src/window/menus.c:3393: too few arguments to function
+ * `WindowSprite_PrepareForRedraw'. */
+extern void WindowSprite_PrepareForRedraw__handle_selection_row_input(
+    void) __asm__("WindowSprite_PrepareForRedraw");
+/* VIEW(menus): routine Text_DrawStringInWindow as void
+ * Text_DrawStringInWindow(s32 text, s32 window, s32 x, s32 y);
+ * module/window/window.h has void Text_DrawStringInWindow(u8 *text, s32 arg1,
+ * u32 x, u32 y). */
+extern void
+Text_DrawStringInWindow__menus(s32 text, s32 window, s32 x,
+                               s32 y) __asm__("Text_DrawStringInWindow");
 
 /// Draws one page of 256 flags as sixteen rows of hexadecimal labels and bits.
 /// Each row: its first flag's number in three hex digits, then its 16 flags

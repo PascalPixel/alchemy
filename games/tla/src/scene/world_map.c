@@ -447,8 +447,7 @@ static __inline__ void Actor_JoinLeader(s32 actor) {
   Actor_SetAnimation(actor, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_SetDestination(actor, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestination(actor, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(actor);
   Actor_SetPosition(actor, 0, 0);
 }
@@ -776,7 +775,7 @@ void WorldMap_ExplainGivingDjinn(void) {
     s32 a1 = west;                                                             \
                                                                                \
     asm volatile("" : "+l"(a1));                                               \
-    Actor_FaceDirection(id, a1, 0);                                              \
+    Actor_FaceDirection(id, a1, 0);                                            \
   } while (0)
 
 /// The bandit and the thieves from Vault, after a linked game, want Isaac.

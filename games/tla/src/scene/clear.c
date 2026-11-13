@@ -789,7 +789,7 @@ done:
   Unit_Calculate(3);
   Iwram_CopyWords(RECEIVED_FLAGS, flags, 0xf40);
   FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                    gMainRoutineWork.paletteGlow[1]);
+                         gMainRoutineWork.paletteGlow[1]);
   return 1;
 }
 

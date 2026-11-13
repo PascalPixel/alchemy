@@ -49,10 +49,10 @@ void Import_GameFlagSet(s32 flag);
 void Import_ShopRun(s32 shop, s32 keeper);
 void Import_SoundPlay(s32 cue);
 void Import_FieldMessageShow(s32 message, s32 flags);
-void Import_MapCopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
-                           s32 height);
+void Import_MapCopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
+                                          s32 destY, s32 width, s32 height);
 void Import_MapCopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
-                                  s32 destX, s32 destY);
+                                     s32 destX, s32 destY);
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Import_ActorSetMode(struct Actor *object, s32 mode);
 void Import_ActorStartScript(struct Actor *object, const void *script);

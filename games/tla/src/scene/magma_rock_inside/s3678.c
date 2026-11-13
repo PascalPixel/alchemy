@@ -283,13 +283,14 @@ s32 Func_02004ef0(s32 unused, s32 key, s32 value);
 
 /// On entering, sets each listed pillar from its two flags, then lifts the
 /// leader onto the ground under it.
-DEFINE_PILLARS_RESTORE_RAISED(Func_02003f44, Func_02004ed0, MapGrid_GetTerrainKind, Func_02004df8,
-    Func_02004ef0, Func_02004c98)
+DEFINE_PILLARS_RESTORE_RAISED(Func_02003f44, Func_02004ed0,
+                              MapGrid_GetTerrainKind, Func_02004df8,
+                              Func_02004ef0, Func_02004c98)
 
 #include "../shared/trial_road.h"
 
 DEFINE_TRAPS_CHECK(Func_0200406c, Func_02004e38, Func_02004ef8, Func_02004c98,
-    Func_020046e8, Func_020049c0, Func_0200481c)
+                   Func_020046e8, Func_020049c0, Func_0200481c)
 
 void Func_02004200(const void *data, s32 id) {
   const struct TrapEntry *entry = data;
@@ -341,8 +342,8 @@ void Actor_MoveToObject(s32 id, s32 owner);
 /// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
 /// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
 /// it copy actor 9's visual attributes.
-DEFINE_PILLARS_RESTORE(Func_020042f8, Func_020042e0, Func_02004ed0, MapGrid_GetTerrainKind,
-    Func_02004df8, Func_02004ef0)
+DEFINE_PILLARS_RESTORE(Func_020042f8, Func_020042e0, Func_02004ed0,
+                       MapGrid_GetTerrainKind, Func_02004df8, Func_02004ef0)
 
 void Func_02004460(struct Actor *object, struct Actor *target) {
   FieldActor_SetPositionAndResetMotion(object, target->x, target->y, target->z);

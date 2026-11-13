@@ -48,4 +48,5 @@ DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gPushKinds, gData_020022f4,
 void Func_02001178(void);
 
 DEFINE_PUSH_TARGET_PUSH_FILL(PushTarget_PushFill, gPushFootprints,
-                             Func_02001178, Import_ActorSelectAnimation, gData_020022f4)
+                             Func_02001178, Import_ActorSelectAnimation,
+                             gData_020022f4)

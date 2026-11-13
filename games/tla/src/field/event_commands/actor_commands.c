@@ -157,11 +157,11 @@ void Actor_CenterOnColumn(u32 objectId, s32 action, s32 zOffset) {
     x = object->x;
     eight = 8;
     Actor_SetMoveTargetFar(object, x + ((eight - angleRemainder) << 16),
-                            object->y, object->z);
+                           object->y, object->z);
     Actor_WaitForMoveFar(object);
     Actor_SetSpritePriority(objectId, action);
     Actor_SetMoveTargetFar(object, object->x, object->y,
-                            object->z + (zOffset << 16));
+                           object->z + (zOffset << 16));
   }
 }
 
@@ -172,7 +172,7 @@ void Actor_SetDestinationOffsetById(u32 objectId, s32 xOffset, s32 zOffset) {
     object->movementState = 0;
     Actor_StartIdleFar(object);
     Actor_SetMoveTargetFar(object, object->x + (xOffset << 16), object->y,
-                            object->z + (zOffset << 16));
+                           object->z + (zOffset << 16));
   }
 }
 
@@ -184,7 +184,7 @@ void Actor_WalkByById(u32 objectId, s32 xOffset, s32 zOffset) {
     Actor_StartScriptFar(object, (u32)gActor_OffsetScript);
     Actor_SelectAnimationFar(object, 2);
     Actor_SetMoveTargetFar(object, object->x + (xOffset << 16), object->y,
-                            object->z + (zOffset << 16));
+                           object->z + (zOffset << 16));
   }
 }
 
@@ -293,7 +293,7 @@ void Actor_SetModeById(u32 objectId, s32 action) {
     Actor_SelectAnimationFar(object, action);
 }
 
-#define Actor_SetAnimationSpeedFar                                               \
+#define Actor_SetAnimationSpeedFar                                             \
   ((void (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
 void Actor_SetActionById(u32 objectId, s32 action) {

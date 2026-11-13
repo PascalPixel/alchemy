@@ -365,7 +365,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
   REG_BLDALPHA = 0x1010;
 }
 
-#define Actor_SetAnimationSpeedFar                                               \
+#define Actor_SetAnimationSpeedFar                                             \
   ((s32 (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
 DEFINE_EFFECT_KIND(BattleEffect_RunSlash, BattleEffect_RunProjectileVolley, 0)

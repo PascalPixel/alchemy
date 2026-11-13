@@ -241,8 +241,8 @@ void Func_02000840(struct Actor *object) {
 
   radius >>= 1;
   radius += 0x100000;
-  object->x = WORD_AT(object, 68) +
-              Iwram_MulQ16(Trig_Cos((step & 255) << 11), radius);
+  object->x =
+      WORD_AT(object, 68) + Iwram_MulQ16(Trig_Cos((step & 255) << 11), radius);
   object->z =
       WORD_AT(object, 76) +
       Iwram_MulQ16(Math_Sin((WORD_AT(object, 48) & 255) << 11), radius) / 3;
@@ -529,7 +529,7 @@ void Func_02001010(void) {
   FieldEvent_ResolvePendingActions(0);
   REG_DISPCNT &= ~0x100;
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
-                        buffer);
+                      buffer);
   Dma_Set(buffer, (void *)0x600e800, 0x840000d0, (volatile u32 *)0x040000d4);
   Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, 0x840000d0,
           (volatile u32 *)0x040000d4);
@@ -546,7 +546,7 @@ void Func_02001010(void) {
   Dma_Fill16(0x10, (void *)0x6002000, 0x500);
   buffer = Heap_Alloc(0x240);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap),
-                        buffer);
+                      buffer);
   i = 0;
   cell = buffer;
 offset:
@@ -1101,13 +1101,13 @@ void Func_02001f7c(void) {
     REG_BG0CNT = control;
   } while (0);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
-                        buffer);
+                      buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 0x800);
   buffer = Heap_Alloc(0x80);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningMap),
-                        buffer);
+                      buffer);
   i = 0;
   cell = buffer;
 mask:
@@ -1238,7 +1238,7 @@ fade2:
   Window_LoadGraphics();
   DebugText_Clear();
   FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                    gMainRoutineWork.paletteGlow[1]);
+                         gMainRoutineWork.paletteGlow[1]);
   REG_BLDCNT = 0;
   REG_DISPCNT |= DISPCNT_BG0_ON;
   gBgScroll[0].x = 0;
@@ -1325,7 +1325,7 @@ void Func_020026b8(void) {
   FieldEvent_ResolvePendingActions(0);
   REG_DISPCNT &= ~0x100;
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
-                        buffer);
+                      buffer);
   Dma_Set(buffer, (void *)0x600e800, 0x840000d0, (volatile u32 *)0x040000d4);
   Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, 0x840000d0,
           (volatile u32 *)0x040000d4);
@@ -1342,7 +1342,7 @@ void Func_020026b8(void) {
   } while (0);
   buffer = Heap_Alloc(0x240);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap),
-                        buffer);
+                      buffer);
   cell = buffer;
   for (i = 0; i != 0x120; i++) {
     *cell += 0xff40;
@@ -1446,7 +1446,7 @@ void Func_020026b8(void) {
   Window_LoadGraphics();
   DebugText_Clear();
   FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                    gMainRoutineWork.paletteGlow[1]);
+                         gMainRoutineWork.paletteGlow[1]);
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 1;
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags &= ~32;

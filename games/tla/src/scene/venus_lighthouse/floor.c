@@ -60,8 +60,15 @@ void Import_ActorSelectAnimation(struct VenusActor *object, s32 mode);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Actor_WaitForMove(struct Actor *actor);
 s32 MapGrid_CheckCollision(struct VenusActor *object, s32 *position);
-/* VIEW(floor): routine Actor_ShowEmoteById as void Actor_ShowEmoteById(s32 actor, s32 height, s32 frames); event.h has s32 Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames); tried as the definition's struct BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags, s32 state), it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse/floor.c:38: conflicting types for `Actor_ShowEmoteById'. */
-extern void Func_080d47b4__floor(s32 actor, s32 height, s32 frames) __asm__("Actor_ShowEmoteById");
+/* VIEW(floor): routine Actor_ShowEmoteById as void Actor_ShowEmoteById(s32
+ * actor, s32 height, s32 frames); event.h has s32 Actor_ShowEmoteById(s32
+ * actorId, s32 emote, s32 frames); tried as the definition's struct
+ * BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags, s32
+ * state), it does not compile in tla-ja:
+ * games/tla/src/scene/venus_lighthouse/floor.c:38: conflicting types for
+ * `Actor_ShowEmoteById'. */
+extern void Func_080d47b4__floor(s32 actor, s32 height,
+                                 s32 frames) __asm__("Actor_ShowEmoteById");
 s32 VenusLighthouse_EmitRisingParticles(struct VenusActor *object);
 
 void Func_020006ac(void) {
@@ -1015,7 +1022,8 @@ struct Trigger gSceneEvents[] = {
     {33, 31, CONDITION_ALWAYS, 31},
     {33, 32, CONDITION_ALWAYS, 32},
     {TRIGGER_STEP, 45, 0x200, EVENT(Func_020006ac)},
-    {TRIGGER_STEP, 46, CONDITION_ALWAYS, EVENT(VenusLighthouse_StepOnFloorSwitch)},
+    {TRIGGER_STEP, 46, CONDITION_ALWAYS,
+     EVENT(VenusLighthouse_StepOnFloorSwitch)},
     {TRIGGER_EXAMINE, 35, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
     {TRIGGER_EXAMINE, 36, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
     {TRIGGER_EXAMINE, 37, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},

@@ -28,11 +28,11 @@ void Func_02003cc0(s32 id);
 extern struct Actor *gData_02004420;
 
 void Actor_StartScript(struct Actor *object, const void *script);
-/* VIEW(s2698): routine FieldEffect_AdvanceMotion as void FieldEffect_AdvanceMotion(struct
- * Actor *object); module/field/field_effect.h has void
- * FieldEffect_AdvanceMotion(union FieldObject *object); tried as the definition's
- * void FieldEffect_AdvanceMotion(union FieldObject *object), which the object
- * already declares, it does not compile in tla-ja:
+/* VIEW(s2698): routine FieldEffect_AdvanceMotion as void
+ * FieldEffect_AdvanceMotion(struct Actor *object); module/field/field_effect.h
+ * has void FieldEffect_AdvanceMotion(union FieldObject *object); tried as the
+ * definition's void FieldEffect_AdvanceMotion(union FieldObject *object), which
+ * the object already declares, it does not compile in tla-ja:
  * games/tla/src/scene/dehkan_plateau/s2698.c:75: `FieldEffect_AdvanceMotion'
  * undeclared (first use in this function). */
 extern void Effect_AdvanceMotion__s2698(struct Actor *object) __asm__(
@@ -221,8 +221,8 @@ extern const u8 gData_02003fc4[];
 void Func_020002f8(const void *data);
 void Func_02000708(const void *data);
 void Func_02002180(void);
-void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
-                                    s32 width, s32 height);
+void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
+                                        s32 destY, s32 width, s32 height);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Func_02001804(void);
 
@@ -237,9 +237,8 @@ void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
  * ItemDisplay_ShowPicture(void); tried as the definition's void
  * ItemDisplay_ShowPicture(void), which the object already declares,
  * Func_02002f9c moves: 1 of 34 instructions in tla-ja. */
-extern void
-Func_02003d40__s2698(struct Actor *object,
-                     s32 mode) __asm__("ItemDisplay_ShowPicture");
+extern void Func_02003d40__s2698(struct Actor *object,
+                                 s32 mode) __asm__("ItemDisplay_ShowPicture");
 
 s32 PartyInventory_GiveItem(s32 item, s32 unused);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
@@ -276,7 +275,6 @@ void Func_02002bcc(void) {
 
 void Func_020006ec(struct Actor *object, struct Actor *other);
 void Actor_MoveToObject(s32 id, s32 target);
-
 
 void Func_02002c14(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -488,8 +486,8 @@ void Func_020030e4(void) {
 
 void Func_02000584(const void *data);
 void Func_020018a8(void);
-void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
-                                    s32 width, s32 height);
+void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
+                                        s32 destY, s32 width, s32 height);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);

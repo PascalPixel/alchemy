@@ -138,7 +138,8 @@ s32 LinkLobby_PollPeerReady(void) {
       gData_020022b8 = 0;
     }
     if (gData_020022b8 == 0) {
-      if (LinkLobby_PeerSlotMatches(0) && (LinkLobby_PeerSlotMatches(1) || LinkLobby_PeerSlotMatches(2))) {
+      if (LinkLobby_PeerSlotMatches(0) &&
+          (LinkLobby_PeerSlotMatches(1) || LinkLobby_PeerSlotMatches(2))) {
         Event_SetFlag(0x201);
         if (Event_GetFlag(0x202))
           work->raisedTrigger = 1;
@@ -1596,7 +1597,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgHmItComes)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_0200122c)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_0200122c)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(LinkLobby_ChooseDebugParameterSet)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS,
+     EVENT(LinkLobby_ChooseDebugParameterSet)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(LinkLobby_ExplainPartyOrder)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgInTheLinked)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgSoYouWin)},

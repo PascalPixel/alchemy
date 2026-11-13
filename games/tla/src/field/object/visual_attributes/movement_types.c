@@ -151,7 +151,7 @@ s32 Actor_MoveTowardTarget(struct Actor *object) {
     if (distance >= step) {
       newX = object->x + __divsi3(cellX << 20, step);
       Actor_SetMoveTargetFar(object, newX, object->y,
-                              object->z + __divsi3(cellY << 20, step));
+                             object->z + __divsi3(cellY << 20, step));
       Actor_SelectAnimationFar(object, 2);
     } else {
       Actor_SelectAnimationFar(object, 1);
@@ -582,7 +582,7 @@ s32 Func_080d50f8(void) {
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
     Actor_SelectAnimationFar(leader, 13);
     Actor_SetMoveTargetFar(leader, gridX << 16, leader->y - 0x100000,
-                            (gridZ << 16) + 0x100000);
+                           (gridZ << 16) + 0x100000);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     gMainRoutineWork.renderMode = 2;
     leader->z = (leader->z & 0xfff00000) + 0x80000;
@@ -692,7 +692,7 @@ s32 Func_080d53b8(void) {
     leader->motionFlags = 0;
     Actor_SelectAnimationFar(leader, 11);
     Actor_SetMoveTargetFar(leader, gridX << 16, leader->y + 0x80000,
-                            (gridZ << 16) - 0x100000);
+                           (gridZ << 16) - 0x100000);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     leader->motionFlags = 3;
     leader->terrainHeight = leader->y;

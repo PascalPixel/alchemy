@@ -304,7 +304,7 @@ struct WorkEvent {
 };
 
 DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_02002c40, Work020023c4__s2860, Func_02004c18,
-    Func_02002b4c, Func_020029c8)
+                              Func_02002b4c, Func_020029c8)
 #undef WORK
 #undef ABS
 
@@ -385,7 +385,7 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 extern s16 gData_02005798[];
 
 DEFINE_LEADER_SLIDE_ON_ICE(Func_020032b8, Func_02003284, gData_02005798,
-    Func_02004bc0, Func_020031f8, Func_02004c78)
+                           Func_02004bc0, Func_020031f8, Func_02004c78)
 
 // ---- games/tla/src/scene/mars_lighthouse_entrance/s3564.c ----
 extern volatile s16 gData_020068b0;

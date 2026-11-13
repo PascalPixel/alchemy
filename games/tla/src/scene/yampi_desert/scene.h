@@ -52,7 +52,8 @@ void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
                                         s32 f);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
-void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z, s32 angle);
+void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z,
+                                                    s32 angle);
 s32 Event_AskYesNoAndShowResponse(s32 speaker, s32 flags);
 void Func_020040f8(s32 actor);
 void Import_FieldRequestDjinnBattle(s32 a, s32 b);

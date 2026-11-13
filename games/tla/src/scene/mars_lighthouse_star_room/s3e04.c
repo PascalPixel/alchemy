@@ -31,12 +31,14 @@ DEFINE_TELEPORTER_DROP_IN(Func_02003e04, Func_0200363c)
 #include "cell_target.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Teleporter_SinkEvent(struct CellTarget *work, struct CellTargetEntry *entry);
+void Teleporter_SinkEvent(struct CellTarget *work,
+                          struct CellTargetEntry *entry);
 
 DEFINE_TELEPORTERS_STEP(Teleporters_Step, gData_02004cf4, Func_02003bfc,
-    Teleporter_SinkEvent)
+                        Teleporter_SinkEvent)
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gData_02004cf4, Func_02003e04)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gData_02004cf4,
+                                Func_02003e04)
 
 #include "scene_tables.h"
 #include "text/msg_ids.h"
@@ -335,17 +337,23 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_STEP, 90, 0x1a4b, EVENT(MarsLighthouseStarRoom_SlideOnIce)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(Func_02000060)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8,
+     CONDITION_ALWAYS, EVENT(Func_02000060)},
     {0x60009a15, 9, CONDITION_ALWAYS, EVENT(Func_02000074)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 9,
      CONDITION_ALWAYS, (u32)(Func_0200007c)},
     {TRIGGER_RAISED, 20, CONDITION_ALWAYS, EVENT(Func_020005b0)},
     {0x50009705, 20, 0x1233, EVENT(MarsLighthouseStarRoom_BurstIce)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(MarsLighthouseStarRoom_HoldWarmHand)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgMarsStar05)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(MarsLighthouseStarRoom_TakeMarsStar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgMarsStar04)},
-    {TRIGGER_EXAMINE, 21, CONDITION_ALWAYS, EVENT(MarsLighthouseStarRoom_ExamineStatue)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS,
+     EVENT(MarsLighthouseStarRoom_HoldWarmHand)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     MSGNO(MsgMarsStar05)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS,
+     EVENT(MarsLighthouseStarRoom_TakeMarsStar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgMarsStar04)},
+    {TRIGGER_EXAMINE, 21, CONDITION_ALWAYS,
+     EVENT(MarsLighthouseStarRoom_ExamineStatue)},
     {0xde04, 1045, CONDITION_ALWAYS, EVENT(MarsLighthouseStarRoom_UseMarsStar)},
     {TRIGGERS_END},
 };

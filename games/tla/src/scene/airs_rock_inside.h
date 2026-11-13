@@ -58,17 +58,19 @@ extern s32 gData_020073e0;
 extern s32 gData_020073e4;
 extern s32 gData_020073e8;
 
-void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 src_z, s32 width, s32 height, s32 destX,
-                   s32 destZ);
+void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 src_z, s32 width,
+                                      s32 height, s32 destX, s32 destZ);
 
 static inline void CopyCells(s32 srcX, s32 srcZ, s32 width, s32 height,
                              s32 destX, s32 destZ) {
   /* FAKEMATCH(wrapper): the call forwarded through an inline, which puts every
    * argument in a register before the stack arguments are stored; as direct
-   * calls to MapGrid_CopyCellPictureCellsRect, 24 of 59 instructions of Func_02002980 differ in
-   * tla-en (24 of 59 in Func_02002a14, 12 of 59 in Func_02003d40). */
+   * calls to MapGrid_CopyCellPictureCellsRect, 24 of 59 instructions of
+   * Func_02002980 differ in tla-en (24 of 59 in Func_02002a14, 12 of 59 in
+   * Func_02003d40). */
   /* FAKEMATCH(wrapper): CopyCells forwarded inline; as direct calls to
-   * MapGrid_CopyCellPictureCellsRect, 12 of 70 instructions of Func_020026c0 differ in tla-en. */
+   * MapGrid_CopyCellPictureCellsRect, 12 of 70 instructions of Func_020026c0
+   * differ in tla-en. */
   MapGrid_CopyCellPictureCellsRect(srcX, srcZ, width, height, destX, destZ);
 }
 

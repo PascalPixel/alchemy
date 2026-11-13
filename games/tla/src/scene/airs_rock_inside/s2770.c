@@ -56,10 +56,10 @@ void Func_02002790(void) {
     gData_020073e4 = x + 64;
     gData_020073e8 = z - y;
   }
-  Call6((void (*)())MapGrid_CopyCellPictureCellsRect, gData_020073e4, gData_020073e8,
-        gData_020073dc, gData_020073e0, 73, 72);
-  Call6((void (*)())MapGrid_CopyCellPictureCellsRect, 70, 72, gData_020073dc, gData_020073e0,
-        gData_020073e4, gData_020073e8);
+  Call6((void (*)())MapGrid_CopyCellPictureCellsRect, gData_020073e4,
+        gData_020073e8, gData_020073dc, gData_020073e0, 73, 72);
+  Call6((void (*)())MapGrid_CopyCellPictureCellsRect, 70, 72, gData_020073dc,
+        gData_020073e0, gData_020073e4, gData_020073e8);
 }
 
 void Func_02002898(void) {
@@ -84,10 +84,10 @@ void Func_02002898(void) {
     gData_020073e4 = x + 64;
     gData_020073e8 = z - y;
   }
-  Call6((void (*)())MapGrid_CopyCellPictureCellsRect, gData_020073e4, gData_020073e8,
-        gData_020073dc, gData_020073e0, 73, 72);
-  Call6((void (*)())MapGrid_CopyCellPictureCellsRect, 71, 72, gData_020073dc, gData_020073e0,
-        gData_020073e4, gData_020073e8);
+  Call6((void (*)())MapGrid_CopyCellPictureCellsRect, gData_020073e4,
+        gData_020073e8, gData_020073dc, gData_020073e0, 73, 72);
+  Call6((void (*)())MapGrid_CopyCellPictureCellsRect, 71, 72, gData_020073dc,
+        gData_020073e0, gData_020073e4, gData_020073e8);
 }
 
 /// When the controlled object steps onto a new cell, saves the 1 by 3 cells
@@ -179,9 +179,8 @@ s32 Trig_Sin(s32 angle);
 void Func_02002bd0(struct Actor *object) {
   s32 radius = ((object->y - object->terrainHeight) >> 1) + 0x100000;
 
-  object->x =
-      WORD_AT(object, 68) +
-      Iwram_MulQ16(Trig_Cos((WORD_AT(object, 48) & 255) << 11), radius);
+  object->x = WORD_AT(object, 68) +
+              Iwram_MulQ16(Trig_Cos((WORD_AT(object, 48) & 255) << 11), radius);
   object->z =
       WORD_AT(object, 76) +
       Iwram_MulQ16(Trig_Sin((WORD_AT(object, 48) & 255) << 11), radius) / 3;
@@ -206,9 +205,8 @@ void Func_02002c40(struct Actor *object) {
   radius += y >> 2;
   object->x = WORD_AT(object, 68) +
               Iwram_MulQ16(Trig_Cos((phase & 255) << 11), radius) * 2;
-  object->z =
-      WORD_AT(object, 76) +
-      Iwram_MulQ16(Trig_Sin((WORD_AT(object, 48) & 255) << 11), radius);
+  object->z = WORD_AT(object, 76) +
+              Iwram_MulQ16(Trig_Sin((WORD_AT(object, 48) & 255) << 11), radius);
   object->y += WORD_AT(object, 72);
   WORD_AT(object, 48)++;
   Actor_SetSpriteColor(object, ((gFrameCount & 2) >> 1) * 9);
@@ -234,8 +232,8 @@ s32 PaletteFade_StartInterpolation(s32 frames);
 s32 FieldCamera_FollowActor(s32 id, s32 a);
 void Camera_SetSpeedParameters(s32 a, s32 b);
 void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void MapGrid_CopyCellPictureIndicesRect(s32 x, s32 z, s32 width, s32 height, s32 a,
-                                    s32 b);
+void MapGrid_CopyCellPictureIndicesRect(s32 x, s32 z, s32 width, s32 height,
+                                        s32 a, s32 b);
 void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 void Actor_ConfigureSpriteColor(s32 actor, s32 a);
 void Func_02001084(struct Actor *object, s32 a, s32 b);
@@ -261,13 +259,13 @@ void Func_02002cf0(void) {
     REG_BG0CNT = control;
   } while (0);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
-                        buffer);
+                      buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 0x800);
   buffer = Heap_Alloc(0x80);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningMap),
-                        buffer);
+                      buffer);
   i = 0;
   cell = buffer;
 mask:
@@ -324,8 +322,8 @@ row:
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   Call2((void (*)())Camera_SetSpeedParameters, 0x10000, 0x2000);
-  Call4((void (*)())FieldCamera_MoveWithinMapBounds, PIXELS(312), -1, PIXELS(680),
-        1);
+  Call4((void (*)())FieldCamera_MoveWithinMapBounds, PIXELS(312), -1,
+        PIXELS(680), 1);
   FieldCamera_WaitForArrival();
   Actor_GetById(11)->update = 0;
   Actor_SetSpriteColor(Actor_GetById(11), 6);
@@ -377,7 +375,7 @@ fade:
   Window_LoadGraphics();
   DebugText_Clear();
   WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                gMainRoutineWork.paletteGlow[1]);
+                    gMainRoutineWork.paletteGlow[1]);
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   REG_DISPCNT |= DISPCNT_BG0_ON;
@@ -575,13 +573,13 @@ void Func_02003654(void) {
     REG_BG0CNT = control;
   } while (0);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
-                        buffer);
+                      buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 0x800);
   buffer = Heap_Alloc(0x80);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningMap),
-                        buffer);
+                      buffer);
   i = 0;
   cell = buffer;
 mask:
@@ -638,8 +636,8 @@ row:
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   Call2((void (*)())Camera_SetSpeedParameters, 0x10000, 0x2000);
-  Call4((void (*)())FieldCamera_MoveWithinMapBounds, PIXELS(216), -1, PIXELS(224),
-        1);
+  Call4((void (*)())FieldCamera_MoveWithinMapBounds, PIXELS(216), -1,
+        PIXELS(224), 1);
   FieldCamera_WaitForArrival();
   Actor_GetById(10)->update = 0;
   Actor_SetSpriteColor(Actor_GetById(10), 6);
@@ -689,7 +687,7 @@ fade:
   Window_LoadGraphics();
   DebugText_Clear();
   WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                gMainRoutineWork.paletteGlow[1]);
+                    gMainRoutineWork.paletteGlow[1]);
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   REG_DISPCNT |= DISPCNT_BG0_ON;
@@ -763,8 +761,8 @@ fadeOut:
     goto fadeOut;
   cellX = x >> 4;
   cellY = (y >> 4) - 1;
-  Call6((void (*)())MapGrid_CopyCellPictureIndicesRect, 65, 1, cellX + 64, cellY, 1,
-        2);
+  Call6((void (*)())MapGrid_CopyCellPictureIndicesRect, 65, 1, cellX + 64,
+        cellY, 1, 2);
   Func_0200062c(0, cellX, cellY, 0xff00);
   Import_ActorRelease(marker);
   Event_End();
@@ -827,8 +825,9 @@ extern const u8 gData_02006084[];
   void name(void) {                                                            \
     Map_CopyCellAttributeRect(n1, 17, 1, 1, 8, 19);                            \
     Map_CopyCellAttributeRect(n1, 17, 1, 1, 24, 19);                           \
-    Call6((void (*)())MapGrid_CopyCellPictureIndicesRect, n2, 17, 72, 19, 1, 2);   \
-    MapGrid_CopyCellPictureIndicesRect(n2, 17, 88, 19, 1, 2);                      \
+    Call6((void (*)())MapGrid_CopyCellPictureIndicesRect, n2, 17, 72, 19, 1,   \
+          2);                                                                  \
+    MapGrid_CopyCellPictureIndicesRect(n2, 17, 88, 19, 1, 2);                  \
   }
 
 DEFINE_AIRS_ROCK_INSIDE_SET_DOORS(Func_02003dd4, 26, 90)
@@ -1181,8 +1180,8 @@ void Func_02004740(void) {
       FieldMessage_Show(MsgCheckedTheTablet, 1);                               \
       Event_End();                                                             \
     } else {                                                                   \
-      Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, n1, 136);       \
-      Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 264, 136);      \
+      Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, n1, 136);         \
+      Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 264, 136);        \
       Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);       \
       FieldEvent_Wait(10);                                                     \
       Func_02004534();                                                         \
@@ -1278,8 +1277,10 @@ step:
   second->y = second->terrainHeight;
   GameFlag_SetBit(first->timer);
   GameFlag_ClearBit(second->timer);
-  Import_ActorSelectAnimation(first, ((struct FieldSprite *)first->sprite)->frame + 1);
-  Import_ActorSelectAnimation(second, ((struct FieldSprite *)second->sprite)->frame - 1);
+  Import_ActorSelectAnimation(first,
+                              ((struct FieldSprite *)first->sprite)->frame + 1);
+  Import_ActorSelectAnimation(
+      second, ((struct FieldSprite *)second->sprite)->frame - 1);
   Func_020006cc(first);
   Func_020006cc(second);
   FieldEvent_Wait(10);
@@ -1406,8 +1407,7 @@ void Func_02004cc8(void) {
   lift->motionFlags = 0;
   lift->speedLimit = 0x16666;
   lift->acceleration = 0x16666;
-  Import_ActorSetMoveTarget(leader, leader->x, leader->y + 0x500000,
-                                leader->z);
+  Import_ActorSetMoveTarget(leader, leader->x, leader->y + 0x500000, leader->z);
   Import_ActorSetMoveTarget(lift, lift->x, lift->y + 0x480000, lift->z);
   Sound_Play(137);
   Event_StartScreenTransition();
@@ -1431,8 +1431,7 @@ void Func_02004cc8(void) {
   leader->velocityY = 0x40000;
   leader->motionFlags = 2;
   leader->priorityFlags = 1;
-  Import_ActorSetMoveTarget(leader, leader->x, leader->y,
-                                leader->z - 0x100000);
+  Import_ActorSetMoveTarget(leader, leader->x, leader->y, leader->z - 0x100000);
   OverlayObject_WaitUntilIdle(leader);
   Import_ActorWaitForMove(leader);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);

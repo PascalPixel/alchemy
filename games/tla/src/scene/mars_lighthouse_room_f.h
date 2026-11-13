@@ -71,8 +71,7 @@ void Func_020003b4(void);
 void Func_0200055c(s32 id);
 void Func_02001448(void);
 
-static inline struct Actor *Func_02005498_(s32 kind, s32 x, s32 y,
-                                                   s32 z) {
+static inline struct Actor *Func_02005498_(s32 kind, s32 x, s32 y, s32 z) {
   return Import_ActorCreate(kind, x, y, z);
 }
 

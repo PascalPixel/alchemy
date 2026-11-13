@@ -722,8 +722,7 @@ void Func_02000f60(void) {
     if (GameFlag_Test(0x208)) {
       leader = Actor_GetById(gMainRoutineWork.currentOwner);
       Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
-      Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                1);
+      Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
     }
     goto count;
   }
@@ -743,7 +742,7 @@ count:
 // Bob the statue on a sine.
 #define BOB(statue, phase)                                                     \
   do {                                                                         \
-    (statue)->y += Trig_Sin(*(phase)) >> 1;                                   \
+    (statue)->y += Trig_Sin(*(phase)) >> 1;                                    \
     *(phase) += 0x1000;                                                        \
   } while (0)
 
@@ -856,8 +855,7 @@ void Func_020012c4(void) {
       if (GameFlag_Test(0x209)) {
         leader = Actor_GetById(gMainRoutineWork.currentOwner);
         Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
-        Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                  1);
+        Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
       }
     } else {
       s32 none = Func_02000d3c();

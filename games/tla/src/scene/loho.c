@@ -720,8 +720,7 @@ s32 Scene_Initialize(void) {
   }
   if (Event_GetFlag(0xa5f)) {
     Actor_SetPosition(20, 0, 0);
-    Actor_SetPositionAndFacing(14, PIXELS(248), PIXELS(480),
-                                                   FACING_EAST);
+    Actor_SetPositionAndFacing(14, PIXELS(248), PIXELS(480), FACING_EAST);
     if (!Event_GetFlag(0x90a)) {
       Actor_SetPosition(17, 0, 0);
       Actor_SetPosition(16, 0, 0);
@@ -739,7 +738,8 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room1 && Event_GetFlag(0xa5f))
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room1 &&
+      Event_GetFlag(0xa5f))
     Func_020000ac();
   return 0;
 }

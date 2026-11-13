@@ -25,11 +25,13 @@ void Actor_StopAtPushTarget(struct Actor *object) {
     i++;
     if (i <= 5)
       goto next;
-    FieldActor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
+    FieldActor_SetPositionAndResetMotion(object, object->x, object->y,
+                                         object->z);
   }
   position.x = object->x;
   position.y = object->y;
   position.z = object->z;
   if (MapGrid_CheckCollision(object, &position) > 0)
-    FieldActor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
+    FieldActor_SetPositionAndResetMotion(object, object->x, object->y,
+                                         object->z);
 }

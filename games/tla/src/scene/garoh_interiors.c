@@ -426,8 +426,7 @@ s32 Scene_Initialize(void) {
         Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_STUBBORN_TRAVELER,
                                                        345 << 16, z, angle);
       }
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_DISAPPOINTED_TRAVELERS_BED),
-                                0);
+      Actor_SetSpriteFlags(Actor_GetById(ACTOR_DISAPPOINTED_TRAVELERS_BED), 0);
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_STUBBORN_TRAVELERS_BED), 0);
       Actor_GetById(ACTOR_DISAPPOINTED_TRAVELER)->motionFlags = 0;
       Actor_GetById(ACTOR_DISAPPOINTED_TRAVELER)->y = 0;

@@ -129,17 +129,17 @@ void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
-void Actor_SetSpriteFlags(struct ShrineOfTheSeaGodObject *object,
-                               u32 value);
+void Actor_SetSpriteFlags(struct ShrineOfTheSeaGodObject *object, u32 value);
 
 static inline void ShrineOfTheSeaGod_Jump(s32 actor, s32 height, s32 frames) {
   /* FAKEMATCH(pin): the height pinned to r1, so the actor loads after the
    * height and frames; as a plain local, 18 of 656 instructions differ in
-   * tla-en (ShrineOfTheSeaGod_LashRope), and 24 in all over its four callers. */
+   * tla-en (ShrineOfTheSeaGod_LashRope), and 24 in all over its four callers.
+   */
   register s32 h __asm__("r1") = height;
   /* FAKEMATCH(pin): the frames pinned to r2 with the height above; as a plain
-   * local, 8 of 656 instructions differ in tla-en (ShrineOfTheSeaGod_LashRope), and 12 in
-   * all over three callers. */
+   * local, 8 of 656 instructions differ in tla-en (ShrineOfTheSeaGod_LashRope),
+   * and 12 in all over three callers. */
   register s32 f __asm__("r2") = frames;
 
   Actor_ShowEmoteById(actor, h, f);

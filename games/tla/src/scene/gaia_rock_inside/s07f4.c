@@ -193,9 +193,9 @@ void Func_02000af8(s32 unused, u32 id) {
   System_Wait(20);
 }
 
-/// Unless FieldMapGrid_GetCellBehaviorAt(2, ...) holds, copies map cell (36, 23) to
-/// (38, 25), moves a leader standing on that cell aside, and sets flag 0x30a,
-/// or 0x9bf once FLAG_SERPENT_SLAIN is set.
+/// Unless FieldMapGrid_GetCellBehaviorAt(2, ...) holds, copies map cell (36,
+/// 23) to (38, 25), moves a leader standing on that cell aside, and sets flag
+/// 0x30a, or 0x9bf once FLAG_SERPENT_SLAIN is set.
 void Func_02000b6c(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
 

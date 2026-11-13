@@ -118,7 +118,7 @@
     leader->update = 0;                                                        \
     leader->speedLimit = speed;                                                \
     leader->acceleration = acceleration;                                       \
-    FieldActor_WaitForMove(object);                                                 \
+    FieldActor_WaitForMove(object);                                            \
     Event_PlaySound(298);                                                      \
     Event_PlaySound(213);                                                      \
     FieldActor_SetPositionAndResetMotion(object, target.x, object->y,          \
@@ -205,7 +205,7 @@
     leader->update = 0;                                                        \
     leader->speedLimit = speed;                                                \
     leader->acceleration = acceleration;                                       \
-    FieldActor_WaitForMove(object);                                                 \
+    FieldActor_WaitForMove(object);                                            \
     Event_PlaySound(298);                                                      \
     Event_PlaySound(213);                                                      \
     FieldActor_SetPositionAndResetMotion(object, target.x, object->y,          \
@@ -301,8 +301,8 @@
           position[0] = target->x + (data1[footprint][0] << 16);               \
           for (col = 0; col < width; col++) {                                  \
             /* FAKEMATCH(wrapper): the call through Func_02002338_; as         \
-             * MapGrid_CheckCollision(object, position), 2 of 171 instructions differ   \
-             * in tla-en. */                                                   \
+             * MapGrid_CheckCollision(object, position), 2 of 171 instructions \
+             * differ in tla-en. */                                                                 \
             if (call2(object, position) == 2)                                  \
               goto blocked;                                                    \
             position[0] += 0x100000;                                           \
@@ -385,7 +385,7 @@
     lead->moveRateX = rate;                                                    \
     lead->moveRateZ = rate;                                                    \
     FieldActor_SetMoveTarget(lead, dst.x, dst.y, dst.z);                       \
-    FieldActor_WaitForMove(next);                                                   \
+    FieldActor_WaitForMove(next);                                              \
     Event_NoOp();                                                              \
     next->x.fixed = dst.x;                                                     \
     {                                                                          \

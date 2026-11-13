@@ -156,12 +156,14 @@ extern s32 gPaletteCycleFrame;
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
 DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame, gData_02002a88,
-    gData_02002ab0)
+                          gData_02002ab0)
 
 extern u16 gLighthousePalette13[];
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_02002a88, gData_02002ab0,
-    gLighthousePalette13, PaletteCycle_Step, gData_02002ad4)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
+                                        gData_02002a88, gData_02002ab0,
+                                        gLighthousePalette13, PaletteCycle_Step,
+                                        gData_02002ad4)
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_020021e0, Func_020022c0)
 
@@ -179,4 +181,4 @@ s32 Func_020022b8(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_020022b8, Position_FlatDistance,
-    gWhirlwindEndScript, Data_02002aac)
+                        gWhirlwindEndScript, Data_02002aac)

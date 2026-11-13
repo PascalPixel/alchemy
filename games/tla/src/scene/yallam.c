@@ -129,8 +129,8 @@ s32 Func_0200014c(struct Actor *object) {
   if (SceneActor_CalculateFixedPointDistance(&leader->x, &object->x) <= 11) {
     u8 *state = &object->movementState;
     /* FAKEMATCH(temporary): the call's argument copied before the barrier
-     * below; as object->movementState = force; Actor_SelectAnimation(object, 2), 4 of
-     * 82 instructions differ in tla-en. */
+     * below; as object->movementState = force; Actor_SelectAnimation(object,
+     * 2), 4 of 82 instructions differ in tla-en. */
     struct Actor *arg = object;
 
     /* FAKEMATCH(barrier): the state's address and the argument are both formed

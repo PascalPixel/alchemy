@@ -368,8 +368,8 @@ walkNext:
   flags = &entry->collisionFlags;
 overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
-    if (Value4((s32 (*)())Import_FieldCheckSpheresOverlap, (s32)&entry->x, radius, (s32)position,
-               entry->radius - 2) >= 0)
+    if (Value4((s32 (*)())Import_FieldCheckSpheresOverlap, (s32)&entry->x,
+               radius, (s32)position, entry->radius - 2) >= 0)
       goto blocked;
   }
   j++;

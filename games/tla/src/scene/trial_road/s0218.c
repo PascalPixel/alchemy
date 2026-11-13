@@ -19,12 +19,12 @@
   void name(s32 side, s32 phase) {                                             \
     if (side == 0) {                                                           \
       if (phase == 3)                                                          \
-        MapGrid_CopyCellPictureCellsRect(0, 120, 1, 2, n1, phase);                                \
+        MapGrid_CopyCellPictureCellsRect(0, 120, 1, 2, n1, phase);             \
       MapGrid_CopyCellsLayered(127, 3, 1, 2, n2, 3);                           \
       MapGrid_CopyCellAttributes(n3, 127, 1, 1, n1, 8);                        \
     } else {                                                                   \
       if (phase == 3)                                                          \
-        MapGrid_CopyCellPictureCellsRect(0, 120, 1, 2, n4, phase);                                \
+        MapGrid_CopyCellPictureCellsRect(0, 120, 1, 2, n4, phase);             \
       MapGrid_CopyCellsLayered(127, 3, 1, 2, n5, 3);                           \
       MapGrid_CopyCellAttributes(n6, 127, 1, 1, n4, 8);                        \
     }                                                                          \
@@ -55,8 +55,8 @@ s32 TrialRoad_OfferToGiveUp(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner,
-                            (((FIELD_AT(v_r5, s32, 8) >> 20) << 4) + 8),
-                            (((FIELD_AT(v_r5, s32, 16) >> 20) << 4) + 8));
+                      (((FIELD_AT(v_r5, s32, 8) >> 20) << 4) + 8),
+                      (((FIELD_AT(v_r5, s32, 16) >> 20) << 4) + 8));
   Event_PlaySound(229);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   v_r5 = (s32)&MsgTrialRoadGiveUpPrompt;
@@ -95,8 +95,8 @@ void TrialRoad_OpenChests(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner,
-                                   ((leader->x >> 20) << 4) + 8,
-                                   ((leader->z >> 20) << 4) + 8);
+                      ((leader->x >> 20) << 4) + 8,
+                      ((leader->z >> 20) << 4) + 8);
   TrialRoad_Idle();
   found = Func_020000fc(0);
   if (found != 0)
@@ -123,10 +123,10 @@ void TrialRoad_OpenChests(void) {
 
 /// Puts an item in the chest: "{protagonist} put {actor}'s {item} in the
 /// chest." (MsgTrialRoadStoredItem) with sound 125 while the chest object
-/// Field_FindNearbyTalkTarget picks plays motion 5; chests 9 and 11 clear flag 645, the
-/// others 646, and once both are clear it calls Func_02000218 with the stage
-/// state's mirrored and field16[0], plays sound 138 and sets flag 642. Then the
-/// item leaves the owner's slot.
+/// Field_FindNearbyTalkTarget picks plays motion 5; chests 9 and 11 clear flag
+/// 645, the others 646, and once both are clear it calls Func_02000218 with the
+/// stage state's mirrored and field16[0], plays sound 138 and sets flag 642.
+/// Then the item leaves the owner's slot.
 void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
   s32 kind = Field_FindNearbyTalkTarget(Party_GetLeaderActor());
   struct TrialRoadState *state = gTrialRoadState;
@@ -338,7 +338,8 @@ void Func_0200082c(s32 a, s32 id) {
 }
 
 void Func_020008a4(void) {
-  if (Event_GetFlag(Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner) + 0x203))
+  if (Event_GetFlag(Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner) +
+                    0x203))
     Import_FieldTryJumpForward();
 }
 

@@ -59,8 +59,8 @@ extern struct CaptureObject__f0d8740 *
 Func_080200c0__f0d8740(s32 kind, s32 x, s32 y,
                        s32 z) __asm__("Actor_CreateFar");
 /* VIEW(f0d8740): routine Actor_ReleaseFar as void Actor_ReleaseFar(struct
- * CaptureObject__f0d8740 *object); battle.h has void Actor_ReleaseFar(struct Actor
- * *object). */
+ * CaptureObject__f0d8740 *object); battle.h has void Actor_ReleaseFar(struct
+ * Actor *object). */
 extern void Actor_Destroy__f0d8740(
     struct CaptureObject__f0d8740 *object) __asm__("Actor_ReleaseFar");
 /* VIEW(f0d8740): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32
@@ -168,7 +168,8 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
   wait(10);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x4000, 0);
   wait(20);
-  Actor_SelectAnimationFar(Actor_GetById__f0d8740(gMainRoutineWork.currentOwner), 28);
+  Actor_SelectAnimationFar(
+      Actor_GetById__f0d8740(gMainRoutineWork.currentOwner), 28);
   wait(20);
 
   position.x = djinni->x;

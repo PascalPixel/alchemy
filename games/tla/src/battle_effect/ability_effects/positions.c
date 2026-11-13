@@ -659,7 +659,7 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
       object->velocityY = velocityY;
     Actor_StartIdleFar(object);
     Actor_SetMoveTargetFar(object, slot->anchorX * percent / 100, 0,
-                            slot->anchorZ);
+                           slot->anchorZ);
   }
   object->verticalMotionStrength = 0x9999;
   object->verticalMotionPhase = 0;

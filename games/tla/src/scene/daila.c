@@ -195,7 +195,7 @@ static inline void Actor_JoinLeader(s32 actor) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_SetDestinationById(actor, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+                             ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(actor);
   Actor_SetHorizontalPositionWithTerrain(actor, 0, 0);
 }

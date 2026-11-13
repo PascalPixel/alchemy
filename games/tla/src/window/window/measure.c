@@ -90,15 +90,15 @@ void Text_MeasureMessage(s32 no, s32 *x, s32 *y) {
 /// passing flags to Window_FitOnScreen; returns 0 when the message is empty.
 #define DEFINE_GET_RESOURCE_DIMENSIONS(name, flags)                            \
   s32 name(s32 no, s32 *x, s32 *y, u32 *width, u32 *height) {                  \
-    struct WindowWork *work;                                                 \
+    struct WindowWork *work;                                                   \
     s32 idx;                                                                   \
                                                                                \
-    work = (struct WindowWork *)Ram_HeapSlots->windowTiles;                  \
-    idx = Message_Decode(no, 0);                                    \
+    work = (struct WindowWork *)Ram_HeapSlots->windowTiles;                    \
+    idx = Message_Decode(no, 0);                                               \
     if (work->entries[idx] == 0) {                                             \
       return 0;                                                                \
     }                                                                          \
-    Window_FitOnScreen(idx, x, y, width, height, 0, flags);                  \
+    Window_FitOnScreen(idx, x, y, width, height, 0, flags);                    \
     return 1;                                                                  \
   }
 
@@ -117,7 +117,7 @@ void Text_ResetStyle(void);
 /// next glyphs are drawn in unless the style is reset first (Window_Create
 /// resets it).
 void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
-                       u16 *spacing) {
+                         u16 *spacing) {
   struct WindowWork *work;
   u32 height;
   u32 lines;
@@ -296,7 +296,7 @@ void Text_ResetStyle(void);
 /// Text_GetMessageSizeAlt, which passes no spacing. It changes
 /// WindowWork.outline as Text_MeasureDecoded does.
 void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
-                   u16 *spacing) {
+                          u16 *spacing) {
   u32 pageHeights[16];
   u16 lineSpacingCounts[4];
   u16 lineWidths[4];

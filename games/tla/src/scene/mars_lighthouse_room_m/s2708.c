@@ -148,7 +148,8 @@ void Import_FieldCameraMoveToActorById(s32 a, s32 b);
 void Import_FieldCameraWaitForArrival(void);
 void Func_020032a8(void);
 
-DEFINE_RIDE_IF_ACTIVE(MarsLighthouseRoomM_ContinueSlide, MarsLighthouseRoomM_SlideOnIce)
+DEFINE_RIDE_IF_ACTIVE(MarsLighthouseRoomM_ContinueSlide,
+                      MarsLighthouseRoomM_SlideOnIce)
 
 s32 Func_02002864(void) {
   return ((struct RideWork *)(gInventorySnapshot + 0x188))->active;
@@ -287,7 +288,8 @@ struct WorkEvent {
   s16 unk166;
 };
 
-DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_02002ae8, Work020023c4, Func_02003168, Func_020029f4, Func_02002870)
+DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_02002ae8, Work020023c4, Func_02003168,
+                              Func_020029f4, Func_02002870)
 
 void Func_02002df4(s32 sourceId, s32 id, s32 value, s32 angle,
                    const void *script) {

@@ -131,8 +131,7 @@ void Func_02000244(struct Actor *object) {
   s16 height = object->unk66;
 
   SET_POSITION(object,
-               Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) +
-                   (232 << 16),
+               Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) + (232 << 16),
                (height * 3 << 16) - (120 << 16), 130 << 18);
   if ((s16)object->unk66 == 1)
     Actor_SelectAnimation(object, 7);

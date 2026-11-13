@@ -29,8 +29,8 @@ FieldParticle_Initialize__mars_join(void *slot, s32 kind, s32 x,
  * Animation_ApplyChildValuesToRecordFar(void *object, u32 value). */
 extern void Animation_ApplyChildValuesToRecordFar__mars_join(
     s32 object, s32 value) __asm__("Animation_ApplyChildValuesToRecordFar");
-/* VIEW(mars_join): routine Actor_ReleaseFar as void Actor_ReleaseFar(void *object);
- * battle.h has void Actor_ReleaseFar(struct Actor *object). */
+/* VIEW(mars_join): routine Actor_ReleaseFar as void Actor_ReleaseFar(void
+ * *object); battle.h has void Actor_ReleaseFar(struct Actor *object). */
 extern void Actor_Destroy__mars_join(void *object) __asm__("Actor_ReleaseFar");
 
 /// A Mars Djinni joins the party: it turns to the camera, bounces three times,

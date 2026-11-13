@@ -520,7 +520,7 @@ void FieldPsynergy_Halt(void) {
   FieldPsynergy_FadeFromCastColor();
 }
 
-#define Actor_SetAnimationSpeedFar                                               \
+#define Actor_SetAnimationSpeedFar                                             \
   ((void (*)(void *, s32))Actor_SetAnimationSpeedFar)
 
 void FieldPsynergy_UpdateHaltedActor(struct ActorView *object) {

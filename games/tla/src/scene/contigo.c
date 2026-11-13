@@ -21,11 +21,14 @@ extern u16 *gPaletteCycleSlots;
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
 DEFINE_PALETTE_SET_COLORS(Palette_SetColors, gPaletteSlots, gPaletteColors,
-    gPaletteCycleColors, gPaletteCycleSlots, Func_02000328)
+                          gPaletteCycleColors, gPaletteCycleSlots,
+                          Func_02000328)
 
-DEFINE_PALETTE_CYCLE_START_VBLANK(Contigo_StartSlowPaletteCycle, gPaletteCycleIndex, gPaletteCycleLength,
-    List_CountEntries, gPaletteSlots, gPaletteCycleDelay, 15, gPaletteCycleTimer, 16,
-    gPaletteCycleBright, PaletteCycle_Fade)
+DEFINE_PALETTE_CYCLE_START_VBLANK(Contigo_StartSlowPaletteCycle,
+                                  gPaletteCycleIndex, gPaletteCycleLength,
+                                  List_CountEntries, gPaletteSlots,
+                                  gPaletteCycleDelay, 15, gPaletteCycleTimer,
+                                  16, gPaletteCycleBright, PaletteCycle_Fade)
 
 void Contigo_StopPaletteCycle(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -34,9 +37,11 @@ void Contigo_StopPaletteCycle(void) {
   Task_RemoveFar(PaletteCycle_Fade);
 }
 
-DEFINE_PALETTE_CYCLE_START_VBLANK(Contigo_StartFastPaletteCycle, gPaletteCycleIndex, gPaletteCycleLength,
-    List_CountEntries, gPaletteSlots, gPaletteCycleDelay, 2, gPaletteCycleTimer, 2,
-    gPaletteCycleBright, PaletteCycle_Fade)
+DEFINE_PALETTE_CYCLE_START_VBLANK(Contigo_StartFastPaletteCycle,
+                                  gPaletteCycleIndex, gPaletteCycleLength,
+                                  List_CountEntries, gPaletteSlots,
+                                  gPaletteCycleDelay, 2, gPaletteCycleTimer, 2,
+                                  gPaletteCycleBright, PaletteCycle_Fade)
 
 s32 List_CountEntries(u16 *list) {
   s32 count = 0;
@@ -47,9 +52,11 @@ s32 List_CountEntries(u16 *list) {
   return count;
 }
 
-DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gPaletteCycleTimer, gPaletteCycleDelay,
-    gPaletteCycleColors, gPaletteCycleLength, gPaletteCycleSlots, gPaletteCycleIndex,
-    gPaletteSlots, gPaletteCycleBright, gPaletteColors)
+DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gPaletteCycleTimer,
+                          gPaletteCycleDelay, gPaletteCycleColors,
+                          gPaletteCycleLength, gPaletteCycleSlots,
+                          gPaletteCycleIndex, gPaletteSlots,
+                          gPaletteCycleBright, gPaletteColors)
 
 void Func_02004284(void);
 

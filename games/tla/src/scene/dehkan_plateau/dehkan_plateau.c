@@ -49,8 +49,6 @@ extern const u8 gData_02003fb8[];
 extern const u8 gData_02003fc0[];
 extern const u8 gData_02003fc4[];
 
-
-
 void Func_0200118c(void) {
   GameFlag_SetBit(0x209);
   Field_RequestDjinnBattle(16, 47);
@@ -340,7 +338,7 @@ loop:
            * here, which loads its first halfword before the 1 is built; as    \
            * gData_02003fd2[0], 2 of 56 instructions differ in tla-en. */      \
           dest = data2;                                                        \
-          MapGrid_CopyCellPictureIndicesRect(dest[0], dest[1], x, y, 1, 1);        \
+          MapGrid_CopyCellPictureIndicesRect(dest[0], dest[1], x, y, 1, 1);    \
         }                                                                      \
       } else {                                                                 \
         if (*cell != 0)                                                        \
@@ -694,8 +692,8 @@ void Func_020021b4(void) {
 // Scene code of overlay 0x655, in ROM order, from events_g's offset up to the
 // next object the overlay links.
 
-void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
-                                    s32 width, s32 height);
+void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
+                                        s32 destY, s32 width, s32 height);
 
 void Func_020002f8(const void *data);
 void Func_02000708(const void *data);

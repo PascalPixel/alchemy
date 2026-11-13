@@ -14,10 +14,11 @@
 extern s32 gData_02001d8c[];
 
 void Import_ActorSelectAnimation(struct StagedActor *object, s32 mode);
-s32 MapGrid_CheckCollision(struct StagedActor *object, struct FieldPosition *position);
+s32 MapGrid_CheckCollision(struct StagedActor *object,
+                           struct FieldPosition *position);
 
 DEFINE_BLOCK_PUSH_ONTO(Func_0200038c, gData_02001d8c, MapGrid_CheckCollision,
-    Import_ActorSelectAnimation)
+                       Import_ActorSelectAnimation)
 
 #include "../field/map/cell_fill_byte.c"
 
@@ -73,8 +74,7 @@ done:
   return 0;
 }
 
-#define Actor_SetSpriteFlags                                              \
-  ((void (*)(void *, s32))Actor_SetSpriteFlags)
+#define Actor_SetSpriteFlags ((void (*)(void *, s32))Actor_SetSpriteFlags)
 
 extern const struct ActorPlacement gActorPlacementsEntrance99[];
 

@@ -31,7 +31,8 @@ struct Work020023c4 {
 };
 
 s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
-s32 Import_FieldCheckSpheresOverlap(s32 *from, s32 radius, struct Vector3 *to, s32 radius2);
+s32 Import_FieldCheckSpheresOverlap(s32 *from, s32 radius, struct Vector3 *to,
+                                    s32 radius2);
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
 void Func_02002120(void);
 extern u8 gInventorySnapshot[];
@@ -199,7 +200,8 @@ s32 MarsLighthouseStarRoom_SlideOnIce(void) {
 
 extern u16 gData_02004cf0[];
 
-DEFINE_RIDE_IF_ACTIVE(MarsLighthouseStarRoom_ContinueSlide, MarsLighthouseStarRoom_SlideOnIce)
+DEFINE_RIDE_IF_ACTIVE(MarsLighthouseStarRoom_ContinueSlide,
+                      MarsLighthouseStarRoom_SlideOnIce)
 
 s32 MarsLighthouseStarRoom_IsSliding(void) {
   return ((struct RideWork *)(gInventorySnapshot + 0x188))->active;
@@ -345,7 +347,7 @@ struct WorkEvent {
 };
 
 DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_0200274c, Work020023c4__s236c, Func_0200422c,
-    Func_02002658, Func_020024d4)
+                              Func_02002658, Func_020024d4)
 #undef WORK
 #undef ABS
 
@@ -394,7 +396,8 @@ extern u16 gData_02004cf0[];
 
 DEFINE_ACTOR_PARK(Func_02002ce8, Func_02002ad0)
 
-DEFINE_ACTOR_STEER_BY_PAD(Func_02002d04, gData_020047fc, Import_ActorSelectAnimation)
+DEFINE_ACTOR_STEER_BY_PAD(Func_02002d04, gData_020047fc,
+                          Import_ActorSelectAnimation)
 
 void Func_02002d90(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -423,7 +426,8 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 extern s16 gData_0200483c[];
 
 DEFINE_LEADER_SLIDE_ON_ICE(Func_02002dc4, Func_02002d90, gData_0200483c,
-    Import_ActorSelectAnimation, Func_02002d04, Import_FieldCheckSpheresOverlap)
+                           Import_ActorSelectAnimation, Func_02002d04,
+                           Import_FieldCheckSpheresOverlap)
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s3070.c ----
 #include "input.h"
@@ -437,14 +441,16 @@ extern volatile s16 gData_02004cf0__s3070 __asm__("gData_02004cf0");
 extern s16 gData_0200483c[];
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Func_02004284(struct Actor *object);
-/* VIEW(s3070): routine Import_FieldCheckSpheresOverlap as s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 aRadius,
- * s32 *b, s32 bRadius); s2dc4 has s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 radiusA, struct
+/* VIEW(s3070): routine Import_FieldCheckSpheresOverlap as s32
+ * Import_FieldCheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
+ * s2dc4 has s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 radiusA, struct
  * Position *b, s32 radiusB); tried as the rest of the object declares it, it
  * does not compile in tla-ja:
  * games/tla/src/scene/mars_lighthouse_star_room/s2148.c:1093:
  * `Func_0200428c__s3070' undeclared (first use in this function). */
-extern s32 Func_0200428c__s3070(s32 *a, s32 aRadius, s32 *b,
-                                s32 bRadius) __asm__("Import_FieldCheckSpheresOverlap");
+extern s32
+Func_0200428c__s3070(s32 *a, s32 aRadius, s32 *b,
+                     s32 bRadius) __asm__("Import_FieldCheckSpheresOverlap");
 
 #define SHARED_F02003070_NAME Func_02003070
 #define SHARED_F02003070_ID2 gData_02004cf0__s3070

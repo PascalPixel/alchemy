@@ -108,7 +108,8 @@ void Func_02002b04(void) {
 #include "map.h"
 #include "system/ram_buffer.h"
 
-DEFINE_ACTOR_SET_CELL_SHAPE(Func_02002c1c, MapGrid_GetTerrainKind, Func_02003180)
+DEFINE_ACTOR_SET_CELL_SHAPE(Func_02002c1c, MapGrid_GetTerrainKind,
+                            Func_02003180)
 
 void Func_02002ca8(s32 a, s32 b) {
   Func_02002c1c(a, b, gMainRoutineWork.currentOwner);
@@ -192,7 +193,8 @@ void Func_02002e00(void) {
   struct RockSprite__s29d0 *sprite;
   s32 i;
 
-  Import_DecompressTaggedLz(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
+  Import_DecompressTaggedLz(
+      Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
   resource = VramCache_FindFreeEntry();
   tile = Vram_Load(resource, sizeof(work->tiles), work);
   work->tileBase = tile;

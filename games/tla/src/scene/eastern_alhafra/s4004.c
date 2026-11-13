@@ -34,7 +34,8 @@ void Func_02004004(void) {
   struct Rock *rock;
   struct RockSprite *sprite;
 
-  Import_DecompressTaggedLz(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
+  Import_DecompressTaggedLz(
+      Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
   entry = VramCache_FindFreeEntry();
   tile = Vram_Load(entry, 0x500, work);
   work->tileBase = tile;
@@ -140,12 +141,12 @@ static __inline__ s32 CallFunc_02004a64(struct Actor *actor,
 }
 
 /// Measures a push: finds the pushable actor ahead of the leader
-/// (PushTarget_FindAhead, recording its number and kind in the push state), then
-/// steps the actor's box one cell at a time along the leader's direction
-/// until a cell of it is blocked (MapGrid_CheckCollision returns 2); with at least one
-/// free step it records the end position in the push state and returns 1,
-/// else 0. The actor stays on layer 2 while it is measured. The same code as
-/// overlay 674's Func_020037d8 and overlay 662's Func_020001d4.
+/// (PushTarget_FindAhead, recording its number and kind in the push state),
+/// then steps the actor's box one cell at a time along the leader's direction
+/// until a cell of it is blocked (MapGrid_CheckCollision returns 2); with at
+/// least one free step it records the end position in the push state and
+/// returns 1, else 0. The actor stays on layer 2 while it is measured. The same
+/// code as overlay 674's Func_020037d8 and overlay 662's Func_020001d4.
 s32 Func_02004240(struct PushState *push) {
   struct Actor *actor;
   struct Vector3 cell;
@@ -155,8 +156,10 @@ s32 Func_02004240(struct PushState *push) {
   actor = PushTarget_FindAhead(&direction, &push->number, &push->kind);
   if (actor != 0) {
     kind = push->kind;
-    width = (Abs(gPushFootprints[kind][0]) + Abs(gPushFootprints[kind][2])) >> 4;
-    height = (Abs(gPushFootprints[kind][1]) + Abs(gPushFootprints[kind][3])) >> 4;
+    width =
+        (Abs(gPushFootprints[kind][0]) + Abs(gPushFootprints[kind][2])) >> 4;
+    height =
+        (Abs(gPushFootprints[kind][1]) + Abs(gPushFootprints[kind][3])) >> 4;
     offset = gPushDirectionSteps[direction];
     dx = offset & 0xffff0000;
     dz = offset << 16;
@@ -206,5 +209,5 @@ s32 Func_02004240(struct PushState *push) {
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])
 
-DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gPushKinds, gPushDirectionSteps,
-    gPushFootprints)
+DEFINE_PUSH_TARGET_FIND_AHEAD(PushTarget_FindAhead, gPushKinds,
+                              gPushDirectionSteps, gPushFootprints)

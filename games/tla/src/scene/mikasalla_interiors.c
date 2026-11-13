@@ -72,7 +72,8 @@ void MikasallaInteriors_AskAreYouExplorer(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriors03);
   Event_OpenMessage(10, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
+      0) {
     FieldEvent_Wait(10);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors03 + 1);
   } else {
@@ -366,18 +367,29 @@ struct Trigger gMikasallaInteriors_SanctumTriggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(MikasallaInteriors_AskBeenToGaroh)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(MikasallaInteriors_TalkAboutIslandLife)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS,
+     EVENT(MikasallaInteriors_AskBeenToGaroh)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS,
+     EVENT(MikasallaInteriors_TalkAboutIslandLife)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors30)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors31)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(MikasallaInteriors_TalkAboutFarShores)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(MikasallaInteriors_AskBeenToGaroh)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors18)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors32)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors33)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors34)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriors28)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT(MikasallaInteriors_MindReadWerewolfWonder)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT(MikasallaInteriors_MindReadIslanderComplaints)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS,
+     EVENT(MikasallaInteriors_TalkAboutFarShores)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS,
+     EVENT(MikasallaInteriors_AskBeenToGaroh)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgMikasallaInteriors18)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgMikasallaInteriors32)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgMikasallaInteriors33)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgMikasallaInteriors34)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgMikasallaInteriors28)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     EVENT(MikasallaInteriors_MindReadWerewolfWonder)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     EVENT(MikasallaInteriors_MindReadIslanderComplaints)},
     {TRIGGERS_END},
 };

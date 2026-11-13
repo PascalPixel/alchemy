@@ -29,7 +29,8 @@ s32 Func_020011d4(struct Actor *object);
 
 // Raises each listed actor's cells: the shape grid and the cell flags under it,
 // then lifts the leader if the new terrain is above the leader.
-DEFINE_PILLARS_RAISE(Func_02000038, MapGrid_GetTerrainKind, Func_020011d4, Func_020011f4)
+DEFINE_PILLARS_RAISE(Func_02000038, MapGrid_GetTerrainKind, Func_020011d4,
+                     Func_020011f4)
 
 #define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
 
@@ -89,7 +90,8 @@ void Func_02003c00(s32 a, s32 b, s32 c);
 // One-field view: the shape store is memory of its own to sched2, which sinks
 // it past the cell read; a plain store keeps its order.
 
-DEFINE_HELD_ACTOR_RAISE_CELL(HeldActor_RaiseCell, MapGrid_GetTerrainKind, Func_020011d4, Func_020011f4)
+DEFINE_HELD_ACTOR_RAISE_CELL(HeldActor_RaiseCell, MapGrid_GetTerrainKind,
+                             Func_020011d4, Func_020011f4)
 
 struct SceneWork {
   u8 unk000[0x1ac];
@@ -349,8 +351,9 @@ void Func_020008d0(struct Actor *object) {
     Event_SetFlag(0x9ef);
 }
 
-DEFINE_SCENE_RUN_IF_HELD(Scene_RunIfHeld, Func_020011fc, Field_FindNearbyTalkTarget, Func_0200014c,
-    gData_020013ca, Func_02001204, Func_020008d0)
+DEFINE_SCENE_RUN_IF_HELD(Scene_RunIfHeld, Func_020011fc,
+                         Field_FindNearbyTalkTarget, Func_0200014c,
+                         gData_020013ca, Func_02001204, Func_020008d0)
 
 void Func_0200092c(void) { Func_0200014c(gData_020013ca); }
 
@@ -426,7 +429,7 @@ void Func_02000a88(void) {
   Actor_SetSpeed(party->currentOwner, 0x8000, 0x4000);
   cell = object->x >> 16;
   Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
-                object->z);
+                      object->z);
   FieldActor_WaitForMove(object);
   object->facing = FACING_NORTH;
   Actor_SetScript(party->currentOwner, gData_0200121c);
@@ -480,9 +483,8 @@ void Func_02000c78(void) { Func_02000b38(92, 29, 92, 31, 1, 2); }
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
     FieldCamera_MoveTo(-1, -1, -1, 0);                                         \
-    Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner),    \
-                              0);                                              \
-    Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);  \
+    Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);     \
+    Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);    \
     wait(1);                                                                   \
     Event_StartScreenTransition();                                             \
     Event_WaitTransitionFrames();                                              \

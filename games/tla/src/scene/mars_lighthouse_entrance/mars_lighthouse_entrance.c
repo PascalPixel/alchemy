@@ -110,8 +110,8 @@ void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 /// While index is at most 7, spawns effect type 0x117 index steps below the
 /// object the effect work names and shrinks the object a little; mode 1
-/// restores its size, sets its flag, hands it to MarsLighthouseEntrance_SetIceConeCells and clears its
-/// position.
+/// restores its size, sets its flag, hands it to
+/// MarsLighthouseEntrance_SetIceConeCells and clears its position.
 void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index) {
   struct EffectHolder *holder = Ram_HeapSlots->effectWork;
   struct Actor *object = Actor_Get(holder->objectId);
@@ -138,10 +138,19 @@ void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index) {
 }
 
 // ---- games/tla/src/scene/mars_lighthouse_entrance.c ----
-/* VIEW(mars_lighthouse_entrance): routine MarsLighthouseEntrance_PoundIceCone as void MarsLighthouseEntrance_PoundIceCone(void); the definition has void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index); tried as the definition's void MarsLighthouseEntrance_PoundIceCone(struct Actor *object), it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:123: conflicting types for `MarsLighthouseEntrance_PoundIceCone'. */
-extern void Func_02000338__mars_lighthouse_entrance(void) __asm__("MarsLighthouseEntrance_PoundIceCone");
+/* VIEW(mars_lighthouse_entrance): routine MarsLighthouseEntrance_PoundIceCone
+ * as void MarsLighthouseEntrance_PoundIceCone(void); the definition has void
+ * MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index); tried as the
+ * definition's void MarsLighthouseEntrance_PoundIceCone(struct Actor *object),
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_entrance.c:123: conflicting types for
+ * `MarsLighthouseEntrance_PoundIceCone'. */
+extern void Func_02000338__mars_lighthouse_entrance(void) __asm__(
+    "MarsLighthouseEntrance_PoundIceCone");
 
-void MarsLighthouseEntrance_StartPoundIceCone(void) { Func_02000338__mars_lighthouse_entrance(); }
+void MarsLighthouseEntrance_StartPoundIceCone(void) {
+  Func_02000338__mars_lighthouse_entrance();
+}
 
 #include "iwram_call.h"
 
@@ -266,7 +275,7 @@ void MarsLighthouseEntrance_Teleport(void) {
 }
 
 DEFINE_SCENE_LEAVE_BY_EXIT(Func_02000648, Func_020046b4, Func_02004dd0, 17,
-    Func_02004718)
+                           Func_02004718)
 
 /// Burst on the cracked ice sheet, actor 18: a flash, the sheet gone, chips
 /// flying (flag 0xa3f).
@@ -367,7 +376,7 @@ void MarsLighthouseEntrance_PushStatueIntoFlames(s32 unused, s32 id) {
 void Func_02000930(void) { GameFlag_SetBit(0x144); }
 
 DEFINE_SCENE_LEAVE_BY_EXIT(Func_0200093c, Func_020046b4, Func_02004dd0, 14,
-    Func_02004718)
+                           Func_02004718)
 
 /// Sends object id from column 11 to x 152, then from column 10 to x 200,
 /// both at z 792, through Actor_SetMoveTarget.
@@ -450,7 +459,7 @@ void Func_02000a7c(void) {
 }
 
 DEFINE_SCENE_LEAVE_BY_EXIT(Func_02000af4, Func_020046b4, Func_02004dd0, 14,
-    Func_02004718)
+                           Func_02004718)
 
 void Func_02000b24(void) {
   MapGrid_CopyCells(53, 30, 4, 3, 53, 48);
@@ -474,10 +483,10 @@ void Func_02000c1c(void) {
 void Func_02000c68(void) { MapGrid_CopyCellAttributes(25, 9, 11, 3, 26, 9); }
 
 DEFINE_SCENE_LEAVE_BY_EXIT(Func_02000c84, Func_020046b4, Func_02004dd0, 12,
-    Func_02004718)
+                           Func_02004718)
 
 DEFINE_SCENE_LEAVE_BY_EXIT(Func_02000cb4, Func_020046b4, Func_02004dd0, 13,
-    Func_02004718)
+                           Func_02004718)
 
 void Func_02000ce4(s32 unused, s32 id) {
   if (id == 8) {
@@ -1166,9 +1175,9 @@ void Func_02002c2c(void);
 
 s32 Scene_PrepareMap(void) {
   if (Flag_IsSet(0xa30))
-    TileMap_ConvertBuffer(gMainRoutineWork.map +
-                      ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),
-                  0x5000000);
+    TileMap_ConvertBuffer(gMainRoutineWork.map + ((s32)&SceneId_Ov6ACRoom3 -
+                                                  (s32)&SceneId_Ov6a8Room2),
+                          0x5000000);
   return 0;
 }
 
@@ -1233,7 +1242,7 @@ struct RideWork__s1930 {
 };
 
 DEFINE_RIDE_UPDATE_CARRIED(Func_02001ae0, RideWork__s1930, Func_02001a1c,
-    Func_02001a80)
+                           Func_02001a80)
 
 extern const u8 gData_020056a0[];
 
@@ -1242,7 +1251,7 @@ void Func_02001f90(struct Actor *object);
 DEFINE_ACTOR_RESET_SCRIPTED_FOR(Func_02001c44, gData_020056a0)
 
 DEFINE_RIDE_SPAWN_FRONT(Func_02001c74, Func_02004bd8_, Func_02001c44, 2,
-    Func_02001ae0, Func_02004bc0)
+                        Func_02001ae0, Func_02004bc0)
 
 /* VIEW(s1c44): tag struct RideSlot as struct RideSlot__s1c44; ride.h has
  * another definition; tried with the definition the rest of the object has, it
@@ -1277,7 +1286,7 @@ struct RideWork__s1c44 {
 };
 
 DEFINE_RIDE_UPDATE_LANDING(Func_02001cbc, RideWork__s1c44, Func_02001a1c,
-    Func_02001a80)
+                           Func_02001a80)
 
 extern const u8 gData_020056a0[];
 
@@ -1288,13 +1297,13 @@ void Func_02001f90(struct Actor *object);
 DEFINE_ACTOR_SETUP_SCRIPTED_PART(Func_02001e1c, gData_020056a0)
 
 DEFINE_RIDE_SPAWN_BACK(Func_02001e60, Func_02004bd8_, Func_02001e1c,
-    Func_02001ae0, Func_02004bc0)
+                       Func_02001ae0, Func_02004bc0)
 
 DEFINE_RIDE_SPAWN_FRONT(Func_02001ea8, Func_02004bd8_, Func_02001e1c, 3,
-    Func_02001cbc, Func_02004bc0)
+                        Func_02001cbc, Func_02004bc0)
 
 DEFINE_RIDE_SPAWN_BACK(Func_02001ef0, Func_02004bd8_, Func_02001e1c,
-    Func_02001cbc, Func_02004bc0)
+                       Func_02001cbc, Func_02004bc0)
 
 DEFINE_ACTOR_IS_ABOVE(Func_02001f38)
 
@@ -1303,7 +1312,7 @@ DEFINE_RIDE_UPDATE_DRIFT(Func_02001f90, Func_02001f38)
 DEFINE_ACTOR_SETUP_SCRIPTED_FOR(Func_0200202c, Func_02004bc0, gData_020056a0)
 
 DEFINE_RIDE_SPAWN_SPARK(Func_0200206c, Func_02004bd8_, Func_0200202c,
-    Func_02001f90)
+                        Func_02001f90)
 
 // ---- games/tla/src/scene/mars_lighthouse_entrance/s20ec.c ----
 /* VIEW(s20ec): tag struct Actor as struct Actor__s20ec; actor.h has another
@@ -1368,5 +1377,5 @@ typedef struct IwramGlobals {
 #define IWRAM ((IwramGlobals *)Ram_HeapSlots)
 
 DEFINE_BEAM_DRAW_TARGETS(Func_020020ec, Func_0200206c__s20ec, Func_02001e60,
-    Func_02001ef0, Func_02001ea8, Func_02001c74)
+                         Func_02001ef0, Func_02001ea8, Func_02001c74)
 #undef IWRAM

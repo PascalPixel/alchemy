@@ -53,8 +53,7 @@ void Func_020003f8(s32 unk0, s32 id) {
       System_Wait(1);
       sprite = actor->sprite;
       sprite->rotation -= 256;
-      actor->x -=
-          Trig_Cos(((struct FieldSprite *)actor->sprite)->rotation) / 2;
+      actor->x -= Trig_Cos(((struct FieldSprite *)actor->sprite)->rotation) / 2;
       actor->targetX = 0x80000000;
     }
     actor->update = Func_020003cc;

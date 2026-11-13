@@ -544,12 +544,13 @@ s32 Scene_Initialize(void) {
  * games/tla/src/scene/mars_lighthouse_room_m.c:521: conflicting types for
  * `Func_02000058'. */
 extern s32 Func_02000058__s0b64() __asm__("Func_02000058");
-/* VIEW(mars_lighthouse_room_m): routine Map_ClearLayerEntryFlag as void Map_ClearLayerEntryFlag(s32
- * value); module/scene/scene.h has u32 Map_ClearLayerEntryFlag(struct FieldSprite
- * *sprite, u32 frame); tried as the rest of the object declares it,
- * Scene_PrepareMap moves: 8 of 237 instructions in tla-ja. */
-extern void
-Func_02003150__mars_lighthouse_room_m(s32 value) __asm__("Map_ClearLayerEntryFlag");
+/* VIEW(mars_lighthouse_room_m): routine Map_ClearLayerEntryFlag as void
+ * Map_ClearLayerEntryFlag(s32 value); module/scene/scene.h has u32
+ * Map_ClearLayerEntryFlag(struct FieldSprite *sprite, u32 frame); tried as the
+ * rest of the object declares it, Scene_PrepareMap moves: 8 of 237 instructions
+ * in tla-ja. */
+extern void Func_02003150__mars_lighthouse_room_m(s32 value) __asm__(
+    "Map_ClearLayerEntryFlag");
 void Weather_StartRain(s32 a);
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -634,9 +635,10 @@ s32 Scene_PrepareMap(void) {
     // use, and with one name they share one.
     extern char SceneId_Ov6ACRoom3Second __asm__("SceneId_Ov6ACRoom3");
 
-    TileMap_ConvertBuffer(gMainRoutineWork.map + ((s32)&SceneId_Ov6ACRoom3Second -
-                                          (s32)&SceneId_Ov6a8Room2),
-                  0x5000000);
+    TileMap_ConvertBuffer(
+        gMainRoutineWork.map +
+            ((s32)&SceneId_Ov6ACRoom3Second - (s32)&SceneId_Ov6a8Room2),
+        0x5000000);
   }
   return 0;
 }
@@ -839,16 +841,16 @@ void Func_0200183c(void);
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
 DEFINE_PALETTE_SET_COLORS_FADE(Func_0200154c, gData_02003928, Data_0200392c,
-    Data_02003930, Data_0200391c, Func_0200183c)
+                               Data_02003930, Data_0200391c, Func_0200183c)
 
 #define DEFINE_FUNC_02001608(name, n1, n2)                                     \
   void name(void) {                                                            \
     gData_02003938 = 0;                                                        \
-    gData_02003934 = List_CountEntries(gData_02003928);                            \
+    gData_02003934 = List_CountEntries(gData_02003928);                        \
     gData_02003924 = n1;                                                       \
     gData_02003920 = n2;                                                       \
     gData_02003918 = 1;                                                        \
-    Task_AddFrame(PaletteCycle_Fade, 0x480);                                       \
+    Task_AddFrame(PaletteCycle_Fade, 0x480);                                   \
   }
 
 DEFINE_FUNC_02001608(Func_02001608, 15, 16)
@@ -886,8 +888,9 @@ extern u16 *Data_0200392c;
 extern u16 *Data_02003930;
 
 DEFINE_PALETTE_CYCLE_FADE(PaletteCycle_Fade, gData_02003920, gData_02003924,
-    Data_02003930, gData_02003934, Data_0200391c, gData_02003938,
-    gData_02003928, gData_02003918, Data_0200392c)
+                          Data_02003930, gData_02003934, Data_0200391c,
+                          gData_02003938, gData_02003928, gData_02003918,
+                          Data_0200392c)
 
 struct MarsLighthouseRoomMEventWork1ac {
   u8 unk000[0x1ac];
@@ -903,7 +906,8 @@ void Func_0200183c(void) {
   saved = work->value1ac;
   PaletteFade_ApplyTarget(0x202108, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
-  ((struct MarsLighthouseRoomMEventWork1ac *)Ram_HeapSlots->eventWork)->value1ac = 0x100;
+  ((struct MarsLighthouseRoomMEventWork1ac *)Ram_HeapSlots->eventWork)
+      ->value1ac = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_0200168c();
@@ -978,7 +982,7 @@ s32 Func_020018c4(struct Actor *a, struct Actor *b);
 s32 Func_02001928(struct Actor *a, struct Actor *b);
 
 DEFINE_RIDE_UPDATE_CARRIED(Func_02001988, RideWork__s1988, Func_020018c4,
-    Func_02001928)
+                           Func_02001928)
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 
@@ -1042,7 +1046,7 @@ s32 Func_020018c4(struct Actor *a, struct Actor *b);
 s32 Func_02001928(struct Actor *a, struct Actor *b);
 
 DEFINE_RIDE_UPDATE_LANDING(Func_02001b64, RideWork__s1b64, Func_020018c4,
-    Func_02001928)
+                           Func_02001928)
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 
@@ -1149,8 +1153,7 @@ void Func_02001f14(struct MarsLighthouseRoomMVector *position, s32 value) {
   s32 angle;
 
   if (object != 0) {
-    object->bounce =
-        Trig_Cos(((u32)(Random16Far() * 3 << 12) >> 16) + 0x3000);
+    object->bounce = Trig_Cos(((u32)(Random16Far() * 3 << 12) >> 16) + 0x3000);
     object->gravity = (u16)Random16Far();
     object->unk4c = ((u32)(Random16Far() << 17) >> 16) + value;
     /* FAKEMATCH(temporary): the angle held in an s32 local keeps the zero
@@ -1233,5 +1236,5 @@ typedef struct IwramGlobals {
 #define IWRAM ((IwramGlobals *)Ram_HeapSlots)
 
 DEFINE_BEAM_DRAW_TARGETS(Func_02001f94, Func_02001f14__s1f94, Func_02001d08,
-    Func_02001d98, Func_02001d50, Func_02001b1c)
+                         Func_02001d98, Func_02001d50, Func_02001b1c)
 #undef IWRAM

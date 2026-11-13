@@ -95,7 +95,8 @@ void Func_02000eac(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "iwram_call.h"
 #include "cell_target.h"
 
-DEFINE_TELEPORTERS_FIND_LOWER(Teleporters_FindLower, gTeleporters, Teleporters_Update)
+DEFINE_TELEPORTERS_FIND_LOWER(Teleporters_FindLower, gTeleporters,
+                              Teleporters_Update)
 
 #include "scene_tables.h"
 

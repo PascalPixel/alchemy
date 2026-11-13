@@ -29,7 +29,8 @@ void Whirlwind_Update(struct GustObject *object);
 void Func_02004bd4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper, Actor_SelectAnimation, Whirlwind_Update, Func_02004bd4)
+DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper, Actor_SelectAnimation,
+                             Whirlwind_Update, Func_02004bd4)
 
 DEFINE_ACTOR_EMIT_RISING_SPARKS_B(Actor_EmitRisingSparksB, Func_02004bd4)
 
@@ -93,27 +94,37 @@ extern s16 gData_02006b70__s44cc __asm__("gData_02006b70");
 
 void Import_OamAddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
 
-/// Queues the lit actors' sprites: for each listed actor with a position, projects it
-/// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
-/// 64 one when the big switch is set, at its animation picture and depth.
+/// Queues the lit actors' sprites: for each listed actor with a position,
+/// projects it from the map's view, skips it off screen, and writes a 16 by 16
+/// sprite, or a 32 by 64 one when the big switch is set, at its animation
+/// picture and depth.
 DEFINE_LIGHT_SPRITES_DRAW(LightSprites_Draw, gLightSpriteTile, Data_02006ab0,
-    gLightSpriteCount, gData_02006a70, gData_02006b70__s44cc, gLightSpritePriority,
-    BattleEffect_GetObjectPriority, Import_OamAddSpriteAtDepthClamped)
+                          gLightSpriteCount, gData_02006a70,
+                          gData_02006b70__s44cc, gLightSpritePriority,
+                          BattleEffect_GetObjectPriority,
+                          Import_OamAddSpriteAtDepthClamped)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_02006a70, gLightSpriteTile,
-    LightSprites_Draw, gLightSpriteCount, gData_02006b70__s44cc, gLightSpritePriority)
+DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gData_02006a70,
+                            gLightSpriteTile, LightSprites_Draw,
+                            gLightSpriteCount, gData_02006b70__s44cc,
+                            gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_02006a70, gLightSpriteTile,
-    LightSprites_Draw, gLightSpriteCount, gData_02006b70__s44cc, gLightSpritePriority)
+DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gData_02006a70,
+                            gLightSpriteTile, LightSprites_Draw,
+                            gLightSpriteCount, gData_02006b70__s44cc,
+                            gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_02006a70, gLightSpriteTile,
-    LightSprites_Draw, gLightSpriteCount, gData_02006b70__s44cc, gLightSpritePriority)
+DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gData_02006a70,
+                            gLightSpriteTile, LightSprites_Draw,
+                            gLightSpriteCount, gData_02006b70__s44cc,
+                            gLightSpritePriority)
 
-DEFINE_LIGHT_SPRITES_ADD_COUNTED(LightSprites_AddCounted, gData_02006a70, gLightSpriteCount)
+DEFINE_LIGHT_SPRITES_ADD_COUNTED(LightSprites_AddCounted, gData_02006a70,
+                                 gLightSpriteCount)
 
 void Func_02004b48(s32 value) { gLightSpritePriority = value; }
 

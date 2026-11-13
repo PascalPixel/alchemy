@@ -614,7 +614,7 @@ void Func_02000cb8(s32 id) {
       struct Actor *object = Actor_Get(id);                                    \
                                                                                \
       WORD_AT(object, 108) = 0;                                                \
-      Actor_SetSpriteColorMode(object, 0);                                   \
+      Actor_SetSpriteColorMode(object, 0);                                     \
       Actor_SetAnimation(id, 6);                                               \
       Flag_Clear(n1);                                                          \
       Func_02000cb8(id);                                                       \
@@ -850,9 +850,9 @@ s32 Scene_PrepareMap(void) {
 
   party = &gMainRoutineWork;
   if (Event_GetFlag(flag))
-    TileMap_ConvertBuffer(party->map +
-                      ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),
-                  0x5000000);
+    TileMap_ConvertBuffer(
+        party->map + ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),
+        0x5000000);
   return 0;
 }
 
@@ -879,12 +879,15 @@ extern s32 gData_0200703c;
 extern u16 gData_02007068[];
 
 DEFINE_PALETTE_CYCLE_STEP(Func_020014e8, gData_0200703c, gData_02007040,
-    gData_02007068)
+                          gData_02007068)
 
 #include "ram_buffer.h"
 #include "field_event.h"
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(JupiterLighthouse_LoadPalettesZero, gData_02007040, gData_02007068, gData_02007088, gData_0200703c, Func_020014e8, gData_0200708c)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(JupiterLighthouse_LoadPalettesZero,
+                                             gData_02007040, gData_02007068,
+                                             gData_02007088, gData_0200703c,
+                                             Func_020014e8, gData_0200708c)
 
 #include "event_inline.h"
 
@@ -989,7 +992,7 @@ DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 extern const s32 gData_02007044[];
 
 DEFINE_WHIRLWIND_UPDATE(Func_02001894, Func_020056a0, Position_FlatDistance,
-    gData_02007044, Data_02007064)
+                        gData_02007044, Data_02007064)
 
 // ---- games/tla/src/scene/mars_lighthouse_room_f/s1a54.c ----
 #include "field_effect.h"
@@ -1099,7 +1102,10 @@ DEFINE_ACTOR_IS_BESIDE(Func_02001dc0)
 #define Camera_SetBounds Camera_SetBounds__s1e20
 #include "shared/mars_lighthouse_entrance_room.h"
 #undef Camera_SetBounds
-/* VIEW(s1e20): static Camera_SetBounds as Camera_SetBounds__s1e20; room.h has static inline void FieldCamera_MoveTo(s32 x, s32 y, s32 z, s32 use_setter) { FieldCamera_MoveWithinMapBounds(x, y, z, use_setter); }; not tried: Camera_SetBounds__s1e20 was not found. */
+/* VIEW(s1e20): static Camera_SetBounds as Camera_SetBounds__s1e20; room.h has
+ * static inline void FieldCamera_MoveTo(s32 x, s32 y, s32 z, s32 use_setter) {
+ * FieldCamera_MoveWithinMapBounds(x, y, z, use_setter); }; not tried:
+ * Camera_SetBounds__s1e20 was not found. */
 #undef SceneWork
 /* VIEW(s1e20): tag struct SceneWork as struct SceneWork__s1e20; room.h has
  * another definition; not tried: struct SceneWork__s1e20 was not found. */
@@ -1126,14 +1132,15 @@ struct RideWork {
   u16 direction;
 };
 
-DEFINE_RIDE_UPDATE_CARRIED(Func_02001e20, RideWork, Func_02001d5c, Func_02001dc0)
+DEFINE_RIDE_UPDATE_CARRIED(Func_02001e20, RideWork, Func_02001d5c,
+                           Func_02001dc0)
 
 extern const u8 gData_02005d8c[];
 
 DEFINE_ACTOR_RESET_SCRIPTED_FOR(Func_02001f84, gData_02005d8c)
 
 DEFINE_RIDE_SPAWN_FRONT(Func_02001fb4, Func_02005498_, Func_02001f84, 2,
-    Func_02001e20, Func_02005480)
+                        Func_02001e20, Func_02005480)
 
 // ---- games/tla/src/scene/mars_lighthouse_room_f/s1ffc.c ----
 #include "shared/mars_lighthouse_entrance_room.h"
@@ -1161,7 +1168,7 @@ struct RideWork__s1ffc {
 };
 
 DEFINE_RIDE_UPDATE_LANDING(Func_02001ffc, RideWork__s1ffc, Func_02001d5c,
-    Func_02001dc0)
+                           Func_02001dc0)
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
@@ -1175,13 +1182,13 @@ void Func_020022d0(struct Actor *object);
 DEFINE_ACTOR_SETUP_SCRIPTED_PART(Func_0200215c, gData_02005d8c)
 
 DEFINE_RIDE_SPAWN_BACK(Func_020021a0, Func_02005498_, Func_0200215c,
-    Func_02001e20, Func_02005480)
+                       Func_02001e20, Func_02005480)
 
 DEFINE_RIDE_SPAWN_FRONT(Func_020021e8, Func_02005498_, Func_0200215c, 3,
-    Func_02001ffc, Func_02005480)
+                        Func_02001ffc, Func_02005480)
 
 DEFINE_RIDE_SPAWN_BACK(Func_02002230, Func_02005498_, Func_0200215c,
-    Func_02001ffc, Func_02005480)
+                       Func_02001ffc, Func_02005480)
 
 DEFINE_ACTOR_IS_ABOVE(Func_02002278)
 
@@ -1190,7 +1197,7 @@ DEFINE_RIDE_UPDATE_DRIFT(Func_020022d0, Func_02002278)
 DEFINE_ACTOR_SETUP_SCRIPTED_FOR(Func_0200236c, Func_02005480, gData_02005d8c)
 
 DEFINE_RIDE_SPAWN_SPARK(Func_020023ac, Func_02005498_, Func_0200236c,
-    Func_020022d0)
+                        Func_020022d0)
 
 // ---- games/tla/src/scene/mars_lighthouse_room_f/s242c.c ----
 /* VIEW(s242c): tag struct Actor as struct Actor__s242c; actor.h has another
@@ -1255,7 +1262,7 @@ typedef struct IwramGlobals {
 #define IWRAM ((IwramGlobals *)Ram_HeapSlots)
 
 DEFINE_BEAM_DRAW_TARGETS(Func_0200242c, Func_020023ac__s242c, Func_020021a0,
-    Func_02002230, Func_020021e8, Func_02001fb4)
+                         Func_02002230, Func_020021e8, Func_02001fb4)
 #undef IWRAM
 
 void Func_020025b0(void) {

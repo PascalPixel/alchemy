@@ -7,8 +7,7 @@
 /// as position (x, y and z), or NULL. Callers pass the object asking; the
 /// search does not use it.
 // ☀️'s twin takes the object too.
-struct Actor *Actor_FindInCell(s32 *position,
-                                        struct Actor *self) {
+struct Actor *Actor_FindInCell(s32 *position, struct Actor *self) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   u32 i;
   void **objects;

@@ -267,7 +267,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
   } else {
     if (variant == 4)
       Actor_SetAnimationSpeedFar(BattleObject_GetFar(effect->actor)->object,
-                               16);
+                                 16);
     BattleEffect_EndCanvasLayer();
   }
 }

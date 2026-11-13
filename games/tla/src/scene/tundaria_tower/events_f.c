@@ -87,8 +87,8 @@ walkNext:
   flags = &entry->collisionFlags;
 overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
-    if (Value4((s32 (*)())Import_FieldCheckSpheresOverlap, (s32)&entry->x, radius, (s32)position,
-               entry->radius - 2) >= 0)
+    if (Value4((s32 (*)())Import_FieldCheckSpheresOverlap, (s32)&entry->x,
+               radius, (s32)position, entry->radius - 2) >= 0)
       goto blocked;
   }
   j++;
@@ -191,7 +191,8 @@ top:
 
 #include "map.h"
 
-DEFINE_ACTOR_SET_CELL_OPEN(Func_02002184, Func_02003160, Import_ActorSelectAnimation)
+DEFINE_ACTOR_SET_CELL_OPEN(Func_02002184, Func_02003160,
+                           Import_ActorSelectAnimation)
 
 // On entering, sets each listed pillar from its two flags (pushed: moved to its
 // place; else its cell raised and its shape redrawn), then lifts the leader

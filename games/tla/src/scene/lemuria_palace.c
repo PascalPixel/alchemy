@@ -401,9 +401,19 @@ void Event_Start();
 /* VIEW(s03a0): routine Event_End as s32 Event_End(); lemuria_palace has void
  * Event_End(); not tried: Event_End's bound declaration was not found. */
 extern s32 Func_02001fd4__s03a0() __asm__("Event_End");
-/* VIEW(lemuria_palace): routine FieldCamera_WaitForArrival as void FieldCamera_WaitForArrival(); module/scene/scene.h has void FieldCamera_WaitForArrival(s32 value); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:411: too few arguments to function `FieldCamera_WaitForArrival'. */
-extern void Func_020020ac__lemuria_palace() __asm__("FieldCamera_WaitForArrival");
-/* VIEW(s03a0): routine Func_020001d8 as s32 Func_020001d8(); the definition has void Func_020001d8(void); tried as the definition's void Func_020001d8(struct Actor *object), it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:356: conflicting types for `Func_020001d8'. */
+/* VIEW(lemuria_palace): routine FieldCamera_WaitForArrival as void
+ * FieldCamera_WaitForArrival(); module/scene/scene.h has void
+ * FieldCamera_WaitForArrival(s32 value); tried as the rest of the object
+ * declares it, it does not compile in tla-ja:
+ * games/tla/src/scene/lemuria_palace.c:411: too few arguments to function
+ * `FieldCamera_WaitForArrival'. */
+extern void
+Func_020020ac__lemuria_palace() __asm__("FieldCamera_WaitForArrival");
+/* VIEW(s03a0): routine Func_020001d8 as s32 Func_020001d8(); the definition has
+ * void Func_020001d8(void); tried as the definition's void Func_020001d8(struct
+ * Actor *object), it does not compile in tla-ja:
+ * games/tla/src/scene/lemuria_palace.c:356: conflicting types for
+ * `Func_020001d8'. */
 extern s32 Func_020001d8__s03a0() __asm__("Func_020001d8");
 s32 __modsi3();
 void Field_StartPaletteTransition();
@@ -423,8 +433,7 @@ s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
   Event_SetMessageId((s32)MsgLemuriaPalace11);
   Actor_SetSpeed(16, 0x13333, 0x9999);
   Actor_WalkByAndWait(16, -24, 0);
-  Actor_FaceDirectionAndWait(16,
-        FACING_SOUTH + FACING_STEP);
+  Actor_FaceDirectionAndWait(16, FACING_SOUTH + FACING_STEP);
   {
     s32 party = (s32)&gMainRoutineWork;
 
@@ -441,8 +450,7 @@ s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
   Event_ShowMessageThenWait(16, 0, 5);
   Actor_WalkByAndWait(FIELD_AT(r5_1, s32, 0), 0, 16);
   Actor_WalkByAndWait(16, 24, 0);
-  Actor_FaceDirectionAndWait(16,
-        FACING_SOUTH + FACING_STEP);
+  Actor_FaceDirectionAndWait(16, FACING_SOUTH + FACING_STEP);
   v2 = Func_02001fd4__s03a0();
   r0 = v2;
   goto L_02009f20;
@@ -462,14 +470,12 @@ L_0200863c:
   Actor_SetSpeed(14, 0xb333, 0x5999);
   Actor_SetSpeed(7, 0xb333, 0x5999);
   Actor_WalkToAndWait(4, 872, 528);
-  FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(408),
-        1);
+  FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(408), 1);
   Func_020020ac__lemuria_palace();
   Event_Wait(10);
   Actor_FaceDirection(16, FACING_SOUTH + FACING_STEP, 0);
   Actor_ShowEmote(13, 0x100, 45);
-  Actor_FaceDirectionAndWait(13,
-        FACING_SOUTH + FACING_STEP);
+  Actor_FaceDirectionAndWait(13, FACING_SOUTH + FACING_STEP);
   Event_Wait(10);
   Actor_SetAnimationAndWait(13, 3);
   Event_Wait(10);
@@ -478,8 +484,7 @@ L_0200863c:
   FieldEvent_ShowMessageThenWait(0x200d, 0, 5);
   Actor_FaceDirection(7, FACING_SOUTH, 0);
   Actor_FaceDirection(14, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirectionAndWait(15,
-        FACING_SOUTH + FACING_STEP);
+  Actor_FaceDirectionAndWait(15, FACING_SOUTH + FACING_STEP);
   Event_Wait(30);
   Actor_FaceDirectionAndWait(14, FACING_EAST);
   Event_Wait(10);
@@ -504,8 +509,7 @@ L_0200863c:
   Actor_SetAnimationAndWait(13, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(13, 0, 5);
-  Actor_FaceDirectionAndWait(13,
-        FACING_SOUTH + FACING_STEP);
+  Actor_FaceDirectionAndWait(13, FACING_SOUTH + FACING_STEP);
   Event_Wait(10);
   Actor_SetAnimationAndWait(13, 3);
   Event_Wait(10);
@@ -525,8 +529,7 @@ L_0200863c:
   Actor_WaitForMoveById(7);
   Actor_SetAnimation(7, 1);
   Actor_FaceDirectionAndWait(7, FACING_SOUTH);
-  FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(496),
-        1);
+  FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(496), 1);
   Func_020020ac__lemuria_palace();
   Event_Wait(5);
   FieldActor_LaunchFromLeader(17, 16, 0, FACING_NORTHWEST + FACING_STEP);
@@ -546,8 +549,7 @@ L_0200863c:
   Event_Wait(10);
   Event_ShowMessageThenWait(7, 0, 5);
   Actor_FaceDirection(14, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirectionAndWait(13,
-        FACING_SOUTH + FACING_STEP);
+  Actor_FaceDirectionAndWait(13, FACING_SOUTH + FACING_STEP);
   Actor_WalkByAndWait(6, 0, -8);
   Event_Wait(10);
   Actor_SetAnimationAndWait(6, 3);
@@ -555,8 +557,7 @@ L_0200863c:
   Actor_FaceDirectionAndWait(7, FACING_SOUTH);
   Event_ShowMessageThenWait(7, 0, 5);
   Actor_FaceDirection(14, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirectionAndWait(13,
-        FACING_SOUTH + FACING_STEP);
+  Actor_FaceDirectionAndWait(13, FACING_SOUTH + FACING_STEP);
   Actor_WalkByAndWait(5, 0, -8);
   Event_Wait(10);
   Actor_SetAnimationAndWait(5, 3);
@@ -564,8 +565,7 @@ L_0200863c:
   Actor_FaceDirectionAndWait(7, FACING_SOUTHEAST);
   Event_ShowMessageThenWait(7, 0, 5);
   Actor_FaceDirection(14, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirectionAndWait(13,
-        FACING_SOUTHEAST + FACING_STEP);
+  Actor_FaceDirectionAndWait(13, FACING_SOUTHEAST + FACING_STEP);
   Actor_WalkByAndWait(4, 0, -8);
   Event_Wait(10);
   Actor_SetAnimationAndWait(4, 3);
@@ -573,8 +573,7 @@ L_0200863c:
   Actor_FaceDirectionAndWait(7, FACING_SOUTHEAST);
   Event_ShowMessageThenWait(7, 0, 5);
   Actor_FaceDirection(14, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirectionAndWait(13,
-        FACING_SOUTHEAST + FACING_STEP);
+  Actor_FaceDirectionAndWait(13, FACING_SOUTHEAST + FACING_STEP);
   v6 = Actor_GetById(17);
   v6->actionFlags &= ~1;
   Actor_WalkByAndWait(17, 0, -8);
@@ -592,8 +591,7 @@ L_0200863c:
   Actor_SetAnimationAndWait(13, 3);
   Event_Wait(20);
   Actor_FaceDirection(14, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirectionAndWait(13,
-        FACING_SOUTHEAST + FACING_STEP);
+  Actor_FaceDirectionAndWait(13, FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(10);
   Actor_ShowEmote(13, 0x108, 30);
   FieldEvent_ShowMessageThenWait(0x200d, 0, 5);
@@ -605,12 +603,10 @@ L_0200863c:
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(0x200d, 0, 0);
   Event_ShowMessageThenWait(15, 0, 5);
-  Actor_FaceDirectionAndWait(13,
-        FACING_NORTH + FACING_STEP);
+  Actor_FaceDirectionAndWait(13, FACING_NORTH + FACING_STEP);
   Event_Wait(15);
   Event_ShowMessageThenWait(15, 0, 5);
-  Actor_FaceDirectionAndWait(13,
-        FACING_SOUTHEAST + FACING_STEP);
+  Actor_FaceDirectionAndWait(13, FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(0x200d, 0, 5);
   Actor_ShowEmote(13, 0x105, 30);
@@ -634,8 +630,7 @@ L_0200863c:
   Event_ShowMessageThenWait(17, 0, 5);
   Actor_FaceDirection(7, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(14, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirectionAndWait(13,
-        FACING_SOUTHEAST + FACING_STEP);
+  Actor_FaceDirectionAndWait(13, FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(10);
   Actor_SetAnimationAndWait(13, 3);
   Event_Wait(10);
@@ -937,13 +932,11 @@ L_02008ff2:
   Event_Wait(10);
   Actor_ShowEmote(15, 0x107, 40);
   Event_ShowMessageThenWait(15, 0, 5);
-  Actor_FaceDirectionAndWait(15,
-        FACING_SOUTH + FACING_STEP);
+  Actor_FaceDirectionAndWait(15, FACING_SOUTH + FACING_STEP);
   Event_Wait(10);
   Actor_FaceDirectionAndWait(16, FACING_WEST);
   Event_Wait(15);
-  Actor_FaceDirectionAndWait(16,
-        FACING_SOUTHEAST + FACING_STEP);
+  Actor_FaceDirectionAndWait(16, FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(15);
   Actor_SetAnimation(16, 5);
   FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -966,8 +959,7 @@ L_02008ff2:
   Event_Wait(10);
   Actor_Stop(16);
   Actor_SetAnimation(16, 1);
-  Actor_FaceDirectionAndWait(17,
-        FACING_NORTHWEST + FACING_STEP);
+  Actor_FaceDirectionAndWait(17, FACING_NORTHWEST + FACING_STEP);
   Event_Wait(10);
   Event_ShowMessageThenWait(17, 0, 5);
   Actor_SetAnimationAndWait(13, 4);
@@ -1028,8 +1020,7 @@ L_02009988:
   Actor_ShowEmote(4, 0x101, 60);
   Actor_WalkByAndWait(14, -24, -26);
   Actor_WalkByAndWait(14, 0, -8);
-  Actor_FaceDirectionAndWait(14,
-        FACING_SOUTHEAST + FACING_STEP);
+  Actor_FaceDirectionAndWait(14, FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(10);
   Actor_RunRepeatedMotion(14, 2);
   Event_Wait(10);
@@ -1055,8 +1046,7 @@ L_02009988:
   Actor_SetAnimationAndWait(13, 4);
   FieldEvent_ShowMessageThenWait(0x200d, 0, 5);
   Actor_FaceDirection(7, FACING_SOUTHEAST, 0);
-  Actor_FaceDirectionAndWait(13,
-        FACING_SOUTHEAST + FACING_STEP);
+  Actor_FaceDirectionAndWait(13, FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(5);
   FieldEvent_ShowMessageThenWait(0x200d, 0, 5);
   Actor_SetAnimationAndWait(17, 3);
@@ -1069,8 +1059,7 @@ L_02009988:
   Actor_SetAnimationAndWait(13, 3);
   Event_Wait(20);
   Actor_FaceDirection(14, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirectionAndWait(13,
-        FACING_SOUTHEAST + FACING_STEP);
+  Actor_FaceDirectionAndWait(13, FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(0x200d, 0, 5);
   Actor_SetAnimationAndWait(14, 3);
@@ -1105,8 +1094,7 @@ L_02009988:
   Actor_FaceDirectionAndWait(13, FACING_NORTH + FACING_STEP);
   Event_Wait(5);
   Actor_WalkToAndWait(13, 864, 392);
-  Actor_FaceDirectionAndWait(13,
-        FACING_SOUTHEAST + FACING_STEP);
+  Actor_FaceDirectionAndWait(13, FACING_SOUTHEAST + FACING_STEP);
   Actor_RunRepeatedMotion(14, 2);
   Event_Wait(5);
   Event_ShowMessageThenWait(14, 0, 5);
@@ -1115,8 +1103,7 @@ L_02009988:
   Actor_SetAnimationAndWait(14, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(14, 0, 5);
-  Actor_FaceDirectionAndWait(14,
-        FACING_SOUTHEAST + FACING_STEP);
+  Actor_FaceDirectionAndWait(14, FACING_SOUTHEAST + FACING_STEP);
   Event_Wait(10);
   Actor_RunRepeatedMotion(14, 2);
   Event_Wait(10);
@@ -1183,8 +1170,7 @@ L_02009988:
   Actor_SetAnimationAndWait(14, 3);
   Event_Wait(15);
   Actor_WalkToAndWait(14, 840, 408);
-  Actor_FaceDirectionAndWait(14,
-        FACING_SOUTHEAST + FACING_STEP);
+  Actor_FaceDirectionAndWait(14, FACING_SOUTHEAST + FACING_STEP);
   Actor_FaceDirection(16, FACING_SOUTH + FACING_STEP, 0);
   Event_Wait(10);
   v29 = Func_02001fd4__s03a0();

@@ -13,7 +13,7 @@ extern char ResourceId_ParticleSpritesD;
 extern char ResourceId_JupiterDjinnSheet;
 
 extern char ResourceId_FlashBurstSheet; // directory row 0x13e
-extern char ResourceId_OrangePaletteB; // directory row 0x148
+extern char ResourceId_OrangePaletteB;  // directory row 0x148
 
 extern char ResourceId_CounterRevealSheet;
 extern char ResourceId_RedCrescentSheetA;

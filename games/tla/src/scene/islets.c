@@ -372,14 +372,14 @@ void Func_02000568(void) {
       Event_Wait(20);                                                          \
     }                                                                          \
     STEP(10, 116, 164);                                                        \
-    Import_FieldPsynergyRestoreMindReadPalette();                                                           \
+    Import_FieldPsynergyRestoreMindReadPalette();                              \
     PartyInventory_Remove(453);                                                \
     PartyInventory_GiveItem(454, 0);                                           \
     if (given != 0) {                                                          \
       Import_ActorRelease(given);                                              \
       Actor_SetModeById(gMainRoutineWork.currentOwner, 1);                     \
     }                                                                          \
-    Import_FieldPsynergyGreyMindReadPalette();                                                           \
+    Import_FieldPsynergyGreyMindReadPalette();                                 \
     GameFlag_SetBit(0xaa3);                                                    \
   }
 
@@ -537,7 +537,8 @@ struct Actor *Func_02000da0(struct Actor *object, s32 value) {
   return spawned;
 }
 
-DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 3, Import_ActorSelectAnimation, gSmokeScript)
+DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 3, Import_ActorSelectAnimation,
+                        gSmokeScript)
 
 #include "call.h"
 
@@ -752,12 +753,12 @@ void Func_0200129c(struct Actor *gift) {
     b = FieldActor_Create(14, 0x1280000, 0, 0x1a80000);                        \
     if (a != 0) {                                                              \
       a->motionFlags = answer;                                                 \
-      Actor_SetSpriteFlags(a, 0);                                         \
+      Actor_SetSpriteFlags(a, 0);                                              \
     }                                                                          \
     if (b != 0) {                                                              \
       b->scaleY = 0x20000;                                                     \
-      Actor_SetSpriteFlags(b, 0);                                         \
-      Import_ActorSelectAnimation(b, 1);                                                     \
+      Actor_SetSpriteFlags(b, 0);                                              \
+      Import_ActorSelectAnimation(b, 1);                                       \
       Actor_StartScript(b, gSmokeScript);                                      \
     }                                                                          \
   }
@@ -1518,7 +1519,8 @@ void Func_020029c4(void) {
   System_Wait(1);
   guide->facing = FACING_SOUTH;
   leader->update = Func_02001278;
-  FieldActor_SetSpriteColor(((s32)Actor_Get(gMainRoutineWork.currentOwner)), 15);
+  FieldActor_SetSpriteColor(((s32)Actor_Get(gMainRoutineWork.currentOwner)),
+                            15);
   Actor_SetAnimation(9, 3);
   System_Wait(1);
 #if TLA_PATCH_1 /* The Japanese release leaves the transition word. */

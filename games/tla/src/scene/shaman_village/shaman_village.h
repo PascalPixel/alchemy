@@ -101,7 +101,7 @@ void InventorySnapshot_Save(void);
     /* a once-only block, and barriers that hold r0 (each empty */             \
     /* asm adds four bytes to the pool estimate and moves the */               \
     /* literal pool of a long scene). As an unpinned local, 111 */             \
-    /* of 711 instructions differ in tla-en (ShamanVillage_ShowShamansRod). */                \
+    /* of 711 instructions differ in tla-en (ShamanVillage_ShowShamansRod). */ \
     register s32 emote_ __asm__("r1") = (emote);                               \
     s32 frames_ = (frames);                                                    \
     Actor_ShowEmoteById((actor), emote_, frames_);                             \

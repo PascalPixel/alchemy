@@ -7,7 +7,6 @@
 
 extern struct Actor *gData_02006c08[];
 
-
 /// The event countdown takes before when the party leader's x is less than
 /// that of the object in slot - 100 of the overlay's table, else after.
 void Func_02003600(s32 slot, s32 before, s32 after) {
@@ -18,8 +17,8 @@ void Func_02003600(s32 slot, s32 before, s32 after) {
   struct Actor *owner;
   struct EventWork *work;
 
-  /* FAKEMATCH(barrier): ⚓️ loads gMainRoutineWork's address before it builds the
-   * currentOwner offset; as no barrier, 2 of 33 instructions differ in
+  /* FAKEMATCH(barrier): ⚓️ loads gMainRoutineWork's address before it builds
+   * the currentOwner offset; as no barrier, 2 of 33 instructions differ in
    * tla-en. */
   asm volatile("");
   {
@@ -46,8 +45,8 @@ void Func_02003654(s32 slot, s32 before, s32 after) {
   struct Actor *owner;
   struct EventWork *work;
 
-  /* FAKEMATCH(barrier): ⚓️ loads gMainRoutineWork's address before it builds the
-   * currentOwner offset; as no barrier, 2 of 33 instructions differ in
+  /* FAKEMATCH(barrier): ⚓️ loads gMainRoutineWork's address before it builds
+   * the currentOwner offset; as no barrier, 2 of 33 instructions differ in
    * tla-en. */
   asm volatile("");
   {

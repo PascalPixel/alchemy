@@ -644,8 +644,14 @@ void Func_02001be0(void) {
 #include "call.h"
 
 void Actor_SetActionById(s32 id, s32 action);
-/* VIEW(s1c00): routine FieldCamera_MoveToActor as void FieldCamera_MoveToActor(s32 a, s32 b); event.h has s32 FieldCamera_MoveToActor(s32 actorId, s32 pan); tried as the definition's void FieldCamera_MoveToActor(s32 id, s32 use_setter), it does not compile in tla-ja: games/tla/src/scene/magma_rock/s0ff4.c:672: conflicting types for `FieldCamera_MoveToActor'. */
-extern void Func_080d452c__s1c00(s32 a, s32 b) __asm__("FieldCamera_MoveToActor");
+/* VIEW(s1c00): routine FieldCamera_MoveToActor as void
+ * FieldCamera_MoveToActor(s32 a, s32 b); event.h has s32
+ * FieldCamera_MoveToActor(s32 actorId, s32 pan); tried as the definition's void
+ * FieldCamera_MoveToActor(s32 id, s32 use_setter), it does not compile in
+ * tla-ja: games/tla/src/scene/magma_rock/s0ff4.c:672: conflicting types for
+ * `FieldCamera_MoveToActor'. */
+extern void Func_080d452c__s1c00(s32 a,
+                                 s32 b) __asm__("FieldCamera_MoveToActor");
 void FieldCamera_WaitForArrival(void);
 
 void Func_02001c00(void) {

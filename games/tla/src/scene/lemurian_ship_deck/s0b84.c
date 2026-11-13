@@ -152,8 +152,7 @@ static inline void RunToActor4(s32 id) {
   Actor_SetAnimation(id, 2);
   target = Actor_GetById(4);
   if (target != NULL)
-    Actor_SetDestination(id, ((s16 *)&target->x)[1],
-                              ((s16 *)&target->z)[1]);
+    Actor_SetDestination(id, ((s16 *)&target->x)[1], ((s16 *)&target->z)[1]);
   Actor_WaitForMoveById(id);
   Actor_SetPosition(id, 0, 0);
 }
@@ -502,11 +501,11 @@ void Func_02001188(void) {
   }
 }
 
-
 /// The Black Crystal (item 242's icon) as an actor on the deck.
 /// ★ Named from the game: "Black Crystal" (item 242's name)
 struct Actor *LemurianShipDeck_CreateBlackCrystal(void) {
-  struct Actor *object = (struct Actor *)Import_ActorCreate(0x1e9, 0x1680000, 0x400000, 0x1a80000);
+  struct Actor *object =
+      (struct Actor *)Import_ActorCreate(0x1e9, 0x1680000, 0x400000, 0x1a80000);
   u8 *buffer = 0;
   struct FieldSprite *sprite;
 
@@ -556,7 +555,8 @@ void LemurianShipDeck_ReturnToShip(void) {
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
   Event_ShowMessage(7, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-  Actor_SetScript(gMainRoutineWork.currentOwner, gLemurianShipDeck_ReturnToShipScript);
+  Actor_SetScript(gMainRoutineWork.currentOwner,
+                  gLemurianShipDeck_ReturnToShipScript);
   Actor_SetSpeed(7, 0xcccc, 0x6666);
   Actor_WalkToAndWait(7, 360, 424);
   Actor_FaceDirectionAndWait(7, FACING_NORTH);
@@ -820,7 +820,8 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Event_End();
 }
 
-DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 7, Actor_SelectAnimation, gData_02002498)
+DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 7, Actor_SelectAnimation,
+                        gData_02002498)
 
 /// ★ Named from the game: "Then let's waste no time! We should set out for
 /// Madra at once!" (MsgThenLetS)

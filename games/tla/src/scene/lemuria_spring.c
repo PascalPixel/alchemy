@@ -514,7 +514,8 @@ void Func_0200049c(s32 a0) {
   Event_End();
 }
 
-void LemuriaSpring_SetActorAppearance(s32 id, s32 *pos, s32 dir, s32 palette, s32 value) {
+void LemuriaSpring_SetActorAppearance(s32 id, s32 *pos, s32 dir, s32 palette,
+                                      s32 value) {
   struct Actor *object = Actor_Get(id);
   u8 *sprite;
   u8 **list;
@@ -886,23 +887,23 @@ void LemuriaSpring_UpdateTossSimulation(void) {
     switch (index) {
     case 0:
       LemuriaSpring_SetActorAppearance(18, &obstacle->position.x, 0,
-                    gData_02001746[obstacle->speedMode],
-                    (obstacle->speedMode << 4) + 16);
+                                       gData_02001746[obstacle->speedMode],
+                                       (obstacle->speedMode << 4) + 16);
       break;
     case 1:
       LemuriaSpring_SetActorAppearance(19, &obstacle->position.x, 0,
-                    gData_02001746[obstacle->speedMode],
-                    (obstacle->speedMode << 4) + 16);
+                                       gData_02001746[obstacle->speedMode],
+                                       (obstacle->speedMode << 4) + 16);
       break;
     case 2:
-      LemuriaSpring_SetActorAppearance(20, &obstacle->position.x, 0x8000 - obstacle->heading,
-                    gData_02001749[obstacle->speedMode],
-                    (obstacle->speedMode << 4) + 16);
+      LemuriaSpring_SetActorAppearance(
+          20, &obstacle->position.x, 0x8000 - obstacle->heading,
+          gData_02001749[obstacle->speedMode], (obstacle->speedMode << 4) + 16);
       break;
     case 3:
-      LemuriaSpring_SetActorAppearance(21, &obstacle->position.x, 0xffff - obstacle->heading,
-                    gData_02001749[obstacle->speedMode],
-                    (obstacle->speedMode << 4) + 16);
+      LemuriaSpring_SetActorAppearance(
+          21, &obstacle->position.x, 0xffff - obstacle->heading,
+          gData_02001749[obstacle->speedMode], (obstacle->speedMode << 4) + 16);
       break;
     }
     index++;
@@ -1009,7 +1010,8 @@ void LemuriaSpring_InitializeTossSimulation(void) {
   Import_ActorSelectAnimation(Actor_Get(20), 2);
   Import_ActorSelectAnimation(Actor_Get(21), 2);
 
-  Task_AddFrame((TaskFunc)LemuriaSpring_UpdateTossSimulation, TASK_PASS_VBLANK + 3);
+  Task_AddFrame((TaskFunc)LemuriaSpring_UpdateTossSimulation,
+                TASK_PASS_VBLANK + 3);
 }
 
 /// Runs the spring ride from one side until it ends, and returns its result.
@@ -1025,32 +1027,32 @@ s32 LemuriaSpring_RunToss(s32 side) {
   gData_02001824 = 0;
   ride->hold = 0xffff;
   for (gData_02001820 = 0;; gData_02001820++) {
-  if (gData_02001820 == 50)
-    Event_PlaySound(300);
-  if (gData_02001820 == 16) {
-    Actor_SetAnimation(gMainRoutineWork.currentOwner, 39);
-    ride->hold = 0;
-    ride->velocity.x = 0x14ccc;
-    ride->velocity.y = 0x40000;
-    ride->velocity.z = -0x20000;
-    ride->trail[0].x = 0x780000;
-    ride->trail[0].y = 0x100000;
-    ride->trail[0].z = 0x980000;
-    ride->frames = 300;
-    if (gData_020017b0 == 1) {
-      Import_ActorSelectAnimation(Actor_Get(16), 3);
-      Import_ActorSelectAnimation(Actor_Get(17), 0);
-      LemuriaSpring_SetSpriteStorageKind(15, 1);
-      LemuriaSpring_SetSpriteStorageKind(14, 1);
-      LemuriaSpring_SetSpriteStorageKind(13, 1);
-    } else {
-      Import_ActorSelectAnimation(Actor_Get(11), 3);
-      Import_ActorSelectAnimation(Actor_Get(12), 0);
-      LemuriaSpring_SetSpriteStorageKind(10, 1);
-      LemuriaSpring_SetSpriteStorageKind(9, 1);
-      LemuriaSpring_SetSpriteStorageKind(8, 1);
+    if (gData_02001820 == 50)
+      Event_PlaySound(300);
+    if (gData_02001820 == 16) {
+      Actor_SetAnimation(gMainRoutineWork.currentOwner, 39);
+      ride->hold = 0;
+      ride->velocity.x = 0x14ccc;
+      ride->velocity.y = 0x40000;
+      ride->velocity.z = -0x20000;
+      ride->trail[0].x = 0x780000;
+      ride->trail[0].y = 0x100000;
+      ride->trail[0].z = 0x980000;
+      ride->frames = 300;
+      if (gData_020017b0 == 1) {
+        Import_ActorSelectAnimation(Actor_Get(16), 3);
+        Import_ActorSelectAnimation(Actor_Get(17), 0);
+        LemuriaSpring_SetSpriteStorageKind(15, 1);
+        LemuriaSpring_SetSpriteStorageKind(14, 1);
+        LemuriaSpring_SetSpriteStorageKind(13, 1);
+      } else {
+        Import_ActorSelectAnimation(Actor_Get(11), 3);
+        Import_ActorSelectAnimation(Actor_Get(12), 0);
+        LemuriaSpring_SetSpriteStorageKind(10, 1);
+        LemuriaSpring_SetSpriteStorageKind(9, 1);
+        LemuriaSpring_SetSpriteStorageKind(8, 1);
+      }
     }
-  }
     System_Wait(1);
     if (gData_02001824 == 1)
       break;

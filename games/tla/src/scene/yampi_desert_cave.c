@@ -90,9 +90,9 @@ static inline s32 Func_02001850_Call(struct Actor *object, s32 *position) {
 }
 
 /// Finds how far a pushed object can slide in the leader's direction, probing
-/// its footprint cell by cell until MapGrid_CheckCollision reports a wall. Returns 1
-/// with the end position in position[0] to position[2], or 0 if it cannot
-/// move.
+/// its footprint cell by cell until MapGrid_CheckCollision reports a wall.
+/// Returns 1 with the end position in position[0] to position[2], or 0 if it
+/// cannot move.
 s32 Func_020001d4(s32 *position) {
   s32 probe[3];
   s32 direction;
@@ -130,7 +130,8 @@ s32 Func_020001d4(s32 *position) {
     probe[0] = position[0] + (gData_02001974[offset] << 16);
     for (i = 0; i < w; i++) {
       /* FAKEMATCH(wrapper): the call through Func_02001850_Call; as
-         MapGrid_CheckCollision(object, probe), 2 of 171 instructions differ in tla-en.
+         MapGrid_CheckCollision(object, probe), 2 of 171 instructions differ in
+         tla-en.
        */
       if (Func_02001850_Call(object, probe) == 2)
         goto hit;
@@ -307,8 +308,8 @@ void Func_02000458(struct YampiDesertCaveRect rect) {
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x4ccc, 0x1999);
   offset = gData_0200198c[i] << 16;
-  Actor_SetDestinationOffset(gMainRoutineWork.currentOwner,
-                                     offset >> 31, offset >> 17);
+  Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, offset >> 31,
+                             offset >> 17);
   if (rect.word[5] != 0)
     ((void (*)(void))rect.word[5])();
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
@@ -380,13 +381,14 @@ void Func_02000754(struct Actor *object) {
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
 DEFINE_PALETTE_SET_COLORS(Func_020007dc, gData_02001fd8, gData_02001fdc,
-    gData_02001fe0, gData_02001fcc, Func_02000acc)
+                          gData_02001fe0, gData_02001fcc, Func_02000acc)
 
 #include "task.h"
 
 DEFINE_PALETTE_CYCLE_START_VBLANK(Func_02000898, gData_02001fe8, gData_02001fe4,
-    List_CountEntries, gData_02001fd8, gData_02001fd4, 15, gData_02001fd0, 16,
-    gData_02001fc8, PaletteCycle_Fade)
+                                  List_CountEntries, gData_02001fd8,
+                                  gData_02001fd4, 15, gData_02001fd0, 16,
+                                  gData_02001fc8, PaletteCycle_Fade)
 
 void Func_020008fc(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 256;
@@ -394,8 +396,9 @@ void Func_020008fc(void) {
 }
 
 DEFINE_PALETTE_CYCLE_START_VBLANK(Func_0200091c, gData_02001fe8, gData_02001fe4,
-    List_CountEntries, gData_02001fd8, gData_02001fd4, 2, gData_02001fd0, 2,
-    gData_02001fc8, PaletteCycle_Fade)
+                                  List_CountEntries, gData_02001fd8,
+                                  gData_02001fd4, 2, gData_02001fd0, 2,
+                                  gData_02001fc8, PaletteCycle_Fade)
 
 DEFINE_LIST_COUNT_ENTRIES(List_CountEntries)
 
@@ -498,7 +501,8 @@ DEFINE_STATUE_SINK(Statue_Sink, Func_02000c44)
 
 s32 Func_02001940(struct Actor *object);
 
-DEFINE_ACTOR_SET_CELL_OPEN(Func_02000c44, Func_02001940, Import_ActorSelectAnimation)
+DEFINE_ACTOR_SET_CELL_OPEN(Func_02000c44, Func_02001940,
+                           Import_ActorSelectAnimation)
 
 #include "battle.h"
 #include "game.h"
@@ -778,7 +782,7 @@ void YampiDesertCave_MeetGuardianOfFire(void) {
   leader = ((s32)Actor_GetById(FIELD_AT(&gMainRoutineWork, s32, 0x214)));
   if (leader != 0)
     Actor_SetDestination(9, FIELD_AT(leader, s16, 10),
-                              FIELD_AT(leader, s16, 18));
+                         FIELD_AT(leader, s16, 18));
   Event_Wait(20);
   /* FAKEMATCH(dead): a once-only block around the first two stores keeps the
    * call's first argument ahead of the scene store's address, where without it
@@ -903,7 +907,7 @@ s32 Scene_Initialize(void) {
         step = step / 32 * 2;
         Actor_SetPosition(16, 0, 0);
         Actor_SetPosition(17, gData_020019cc[step] << 19,
-                                               gData_020019cc[step + 1] << 19);
+                          gData_020019cc[step + 1] << 19);
       } else {
         if (Event_GetFlag(0x109))
           GameFlag_SetByte(0x278, 0);

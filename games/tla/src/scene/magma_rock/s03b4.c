@@ -9,7 +9,7 @@
 
 extern s32 gData_02003d10[];
 
-
-DEFINE_BLOCK_PUSH_ONTO(Func_020003b4, gData_02003d10, MapGrid_CheckCollision, Func_02003a54)
+DEFINE_BLOCK_PUSH_ONTO(Func_020003b4, gData_02003d10, MapGrid_CheckCollision,
+                       Func_02003a54)
 
 #include "../../field/map/cell_fill_byte.c"

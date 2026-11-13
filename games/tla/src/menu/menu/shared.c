@@ -125,7 +125,7 @@ void Window_ClearInteriorTilesFar(struct RenderInput *window, s32 x, s32 y,
                                   s32 width, s32 height);
 void WindowSprite_ClearListFar(struct RenderInput *window);
 void *Portrait_CreateFar(s32 owner, s32 x, s32 y, struct RenderInput *window,
-                           s32 a, s32 b);
+                         s32 a, s32 b);
 void Unit_UpdateClassFar(s32 owner);
 
 static inline void RestoreUnit(struct BattleUnit *unit,

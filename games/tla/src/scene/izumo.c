@@ -360,9 +360,10 @@ void Func_0200060c(void) {
 
 void Func_020006a4(void) {
   /* FAKEMATCH(signature): six routines called through call.h's Call3 and Value
-   * with function types they do not have (Value3 calls the void Actor_ShowEmoteById
-   * as returning a value), so each call's arguments are set up in the native's
-   * order; as all six direct calls, 12 of 140 instructions differ in tla-en. */
+   * with function types they do not have (Value3 calls the void
+   * Actor_ShowEmoteById as returning a value), so each call's arguments are set
+   * up in the native's order; as all six direct calls, 12 of 140 instructions
+   * differ in tla-en. */
   GameFlag_SetBit(0x929);
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -371,7 +372,8 @@ void Func_020006a4(void) {
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Event_ShowMessageAndWait(32, 0);
   FieldEvent_Wait(15);
-  Value3((s32 (*)())Actor_ShowEmoteById, gMainRoutineWork.currentOwner, 256, 30);
+  Value3((s32 (*)())Actor_ShowEmoteById, gMainRoutineWork.currentOwner, 256,
+         30);
   Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 32, PIXELS(200),
         PIXELS(216));
   Actor_WalkToById(32, 200, 248);
@@ -383,7 +385,8 @@ void Func_020006a4(void) {
   Actor_SetModeById(32, 4);
   FieldEvent_Wait(30);
   Event_ShowMessageAndWait(32, 0);
-  Value3((s32 (*)())Actor_ShowEmoteById, gMainRoutineWork.currentOwner, 261, 60);
+  Value3((s32 (*)())Actor_ShowEmoteById, gMainRoutineWork.currentOwner, 261,
+         60);
   Actor_ShowEmoteById(32, 262, 30);
   Event_ShowMessageAndWait(32, 0);
   Actor_SetModeById(32, 3);

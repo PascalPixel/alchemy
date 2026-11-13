@@ -358,7 +358,8 @@ s32 Func_08124cc4(s32 side) {
           BattlePlayback_Push(4, (u32)&MsgDjinnIsSet);
           BattlePlayback_Push(11, id);
           if (BattleUnit_IsListed(id)) {
-            Actor_SelectAnimationFar((struct Actor *)BattleObject_Get(id)->object, 3);
+            Actor_SelectAnimationFar(
+                (struct Actor *)BattleObject_Get(id)->object, 3);
             Actor_SetAnimationSpeedFar(
                 (struct Actor *)BattleObject_Get(id)->object, 32);
           }

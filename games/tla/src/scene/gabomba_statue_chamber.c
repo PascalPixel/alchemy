@@ -377,8 +377,8 @@ void Func_02000a98(s32 x, s32 z) {
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_RefreshSelectorById(gMainRoutineWork.currentOwner);
   Actor_SetSpriteFlags(((struct GabombaStatueChamberObject *)Actor_GetById(
-                                gMainRoutineWork.currentOwner)),
-                            0);
+                           gMainRoutineWork.currentOwner)),
+                       0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 13);
   Actor_SetMoveTarget(object, x << 16, PIXELS(-12), z << 16);
   Actor_WaitForMove(object);

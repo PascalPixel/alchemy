@@ -34,7 +34,7 @@ extern s32 Data_020067f8;
 extern s32 gData_02004fec[];
 
 DEFINE_BLOCK_PUSH_ONTO(Func_020003b4, gData_02004fec, MapGrid_CheckCollision,
-    Func_02004c98)
+                       Func_02004c98)
 
 #include "ram_buffer.h"
 #include "map.h"
@@ -1202,7 +1202,7 @@ void Func_02002128(void) {
 #define DEFINE_FUNC_0200217C(name, n1, n2, n3, n4)                             \
   void name(void) {                                                            \
     if (!Event_GetFlag(n1)) {                                                  \
-      FieldActor_SetSpriteColor(Actor_Get(n2), 15);                                 \
+      FieldActor_SetSpriteColor(Actor_Get(n2), 15);                            \
       Actor_SetPosition(n2, PIXELS(n3), PIXELS(n4));                           \
       Actor_Get(n2)->scaleX = Actor_Get(n2)->scaleY = 0x1000;                  \
     }                                                                          \
@@ -1341,7 +1341,8 @@ void Func_020024ac(void) {
   x = last >> 16;
   z = last & 0xffff;
   gData_02006710 = -1;
-  MapGrid_CopyCellsLayered(73, 72, Data_020067ec, Data_020067f0, Data_020067f4, Data_020067f8);
+  MapGrid_CopyCellsLayered(73, 72, Data_020067ec, Data_020067f0, Data_020067f4,
+                           Data_020067f8);
   if (gMainRoutineWork.scene != (s32)&SceneId_Ov692Room8)
     return;
   work = Ram_HeapSlots->eventWork;
@@ -1381,8 +1382,8 @@ void Func_0200257c(void) {
     Data_020067f4 = x + 64;
     Data_020067f8 = z - y;
     MapGrid_CopyCellsLayered(Data_020067f4, Data_020067f8, 1, 2, 73, 72);
-    MapGrid_CopyCellsLayered(70, 72, Data_020067ec, Data_020067f0, Data_020067f4,
-              Data_020067f8);
+    MapGrid_CopyCellsLayered(70, 72, Data_020067ec, Data_020067f0,
+                             Data_020067f4, Data_020067f8);
   }
 }
 
@@ -1401,8 +1402,8 @@ void Func_02002610(void) {
     Data_020067f4 = x + 64;
     Data_020067f8 = z - y;
     MapGrid_CopyCellsLayered(Data_020067f4, Data_020067f8, 1, 2, 73, 72);
-    MapGrid_CopyCellsLayered(71, 72, Data_020067ec, Data_020067f0, Data_020067f4,
-              Data_020067f8);
+    MapGrid_CopyCellsLayered(71, 72, Data_020067ec, Data_020067f0,
+                             Data_020067f4, Data_020067f8);
   }
 }
 
@@ -1672,9 +1673,8 @@ void Func_02002cd0(s32 a, s32 b) {
   Event_PlaySound(78);
   Event_Wait(30);
   FieldCamera_SetSpeed(0x8000, 0x1000);
-  FieldCamera_MoveTo(((s16 *)&first->x)[1] << 16,
-                             ((s16 *)&first->y)[1] << 16,
-                             ((s16 *)&first->z)[1] << 16, 1);
+  FieldCamera_MoveTo(((s16 *)&first->x)[1] << 16, ((s16 *)&first->y)[1] << 16,
+                     ((s16 *)&first->z)[1] << 16, 1);
   Event_PlaySound(141);
   MapGrid_SetShake(0x20000, 0x20000, 0x10000);
   BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);

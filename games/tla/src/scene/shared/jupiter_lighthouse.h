@@ -7,8 +7,8 @@
 #define ALCHEMY_SCENE_SHARED_JUPITER_LIGHTHOUSE_H
 
 /// Draws a glow sprite over each listed actor.
-#define DEFINE_LIGHT_SPRITES_DRAW(name, data1, data2, data3, data4, data5, data6, \
-                             call1, call2)                                     \
+#define DEFINE_LIGHT_SPRITES_DRAW(name, data1, data2, data3, data4, data5,     \
+                                  data6, call1, call2)                         \
   void name(void) {                                                            \
     struct MapWork *map = Ram_HeapSlots->mapWork;                              \
     s32 *view = &map->viewX;                                                   \
@@ -110,9 +110,8 @@
       }                                                                        \
       actor23->x.fixed -= 0x28f40;                                             \
       sprite->rotation += 0x800;                                               \
-      Actor_SetSpriteColorMode(((struct PositionedActor *)Actor_Get(9)), 4); \
-      Actor_SetSpriteColorMode(((struct PositionedActor *)Actor_Get(11)),    \
-                                 4);                                           \
+      Actor_SetSpriteColorMode(((struct PositionedActor *)Actor_Get(9)), 4);   \
+      Actor_SetSpriteColorMode(((struct PositionedActor *)Actor_Get(11)), 4);  \
     }                                                                          \
     if (Event_GetFlag(0xa0b)) {                                                \
       actor10->y.fixed += 0x66640;                                             \
@@ -123,10 +122,8 @@
       }                                                                        \
       actor23->x.fixed += 0x28f40;                                             \
       sprite->rotation -= 0x800;                                               \
-      Actor_SetSpriteColorMode(((struct PositionedActor *)Actor_Get(10)),    \
-                                 4);                                           \
-      Actor_SetSpriteColorMode(((struct PositionedActor *)Actor_Get(12)),    \
-                                 4);                                           \
+      Actor_SetSpriteColorMode(((struct PositionedActor *)Actor_Get(10)), 4);  \
+      Actor_SetSpriteColorMode(((struct PositionedActor *)Actor_Get(12)), 4);  \
     }                                                                          \
     if (Event_GetFlag(0xa0a) && Event_GetFlag(0xa0b)) {                        \
       actor9->y.fixed += 0x199900;                                             \
@@ -143,13 +140,14 @@
   }
 
 /// Sets up the glow sprites from the field's cached tiles A.
-#define DEFINE_LIGHT_SPRITES_INIT_A(name, data1, data2, call1, data3, data4, data5) \
+#define DEFINE_LIGHT_SPRITES_INIT_A(name, data1, data2, call1, data3, data4,   \
+                                    data5)                                     \
   void name(void) {                                                            \
     u8 *buffer = BumpAlloc(0xc00);                                             \
                                                                                \
     Iwram_ClearWordsEntry(data1, 64);                                          \
-    Decompress_TaggedLz(gField_CachedTilesA, buffer);                        \
-    data2 = VramCache_FindFreeEntry();                                          \
+    Decompress_TaggedLz(gField_CachedTilesA, buffer);                          \
+    data2 = VramCache_FindFreeEntry();                                         \
     VramCache_Load(data2, 0xc00, buffer);                                      \
     Heap_Release(buffer);                                                      \
     Task_Add(call1, TASK_PASS_VBLANK);                                         \
@@ -176,13 +174,14 @@
   }
 
 /// Sets up the glow sprites from the field's cached tiles B.
-#define DEFINE_LIGHT_SPRITES_INIT_B(name, data1, data2, call1, data3, data4, data5) \
+#define DEFINE_LIGHT_SPRITES_INIT_B(name, data1, data2, call1, data3, data4,   \
+                                    data5)                                     \
   void name(void) {                                                            \
     u8 *buffer = Heap_Alloc(0xc00);                                            \
                                                                                \
     Iwram_ClearWordsEntry(data1, 64);                                          \
-    Decompress_TaggedLz(gField_CachedTilesB, buffer);                        \
-    data2 = VramCache_FindFreeEntry();                                          \
+    Decompress_TaggedLz(gField_CachedTilesB, buffer);                          \
+    data2 = VramCache_FindFreeEntry();                                         \
     Vram_Load(data2, 0x800, buffer);                                           \
     Heap_Release(buffer);                                                      \
     Task_AddFrame(call1, TASK_PASS_VBLANK);                                    \
@@ -192,13 +191,14 @@
   }
 
 /// Sets up the large glow sprites from the field's cached tiles C.
-#define DEFINE_LIGHT_SPRITES_INIT_C(name, data1, data2, call1, data3, data4, data5) \
+#define DEFINE_LIGHT_SPRITES_INIT_C(name, data1, data2, call1, data3, data4,   \
+                                    data5)                                     \
   void name(void) {                                                            \
     u8 *buffer = BumpAlloc(0x800);                                             \
                                                                                \
     Iwram_ClearWordsEntry(data1, 64);                                          \
-    Decompress_TaggedLz(gField_CachedTilesC, buffer);                        \
-    data2 = VramCache_FindFreeEntry();                                          \
+    Decompress_TaggedLz(gField_CachedTilesC, buffer);                          \
+    data2 = VramCache_FindFreeEntry();                                         \
     Vram_Load(data2, 0x800, buffer);                                           \
     Heap_Release(buffer);                                                      \
     Task_AddFrame(call1, TASK_PASS_VBLANK);                                    \
@@ -209,7 +209,8 @@
 
 /// Loads the room's two palettes and starts their cycle once the lighthouse is
 /// lit (flag 0xa00).
-#define DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(name, data1, data2, data3, call1, data4) \
+#define DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(name, data1, data2, data3,     \
+                                                call1, data4)                  \
   void name(s32 mode) {                                                        \
     data1 = 1;                                                                 \
     if (mode != 2) {                                                           \
@@ -273,7 +274,8 @@
 
 /// Sets flag `n2` and opens the way once actor `n1` stands on cell (`n3`,
 /// `n4`).
-#define DEFINE_JUPITER_LIGHTHOUSE_CHECK_BLOCK_ON_CELL(name, n1, n2, n3, n4, call1) \
+#define DEFINE_JUPITER_LIGHTHOUSE_CHECK_BLOCK_ON_CELL(name, n1, n2, n3, n4,    \
+                                                      call1)                   \
   void name(void) {                                                            \
     struct Actor *object = Actor_Get(n1);                                      \
                                                                                \
@@ -285,7 +287,8 @@
   }
 
 /// JupiterLighthouse_LoadPalettes as the aerie and room 3 compile it.
-#define DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(name, data1, data2, data3, data4, call1, data5) \
+#define DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(                          \
+    name, data1, data2, data3, data4, call1, data5)                            \
   void name(s32 mode) {                                                        \
     data1 = 1;                                                                 \
     if (mode != 2) {                                                           \
@@ -307,8 +310,8 @@
   }
 
 /// Opens a door three cells high, with its sound when `mode` is 1.
-#define DEFINE_JUPITER_LIGHTHOUSE_OPEN_DOOR(name, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, \
-                             n11)                                              \
+#define DEFINE_JUPITER_LIGHTHOUSE_OPEN_DOOR(name, n1, n2, n3, n4, n5, n6, n7,  \
+                                            n8, n9, n10, n11)                  \
   void name(s32 mode) {                                                        \
     if (mode == 1) {                                                           \
       Event_PlaySound(133);                                                    \
@@ -320,7 +323,8 @@
   }
 
 /// Closes a door three cells high.
-#define DEFINE_JUPITER_LIGHTHOUSE_CLOSE_DOOR(name, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10) \
+#define DEFINE_JUPITER_LIGHTHOUSE_CLOSE_DOOR(name, n1, n2, n3, n4, n5, n6, n7, \
+                                             n8, n9, n10)                      \
   void name(void) {                                                            \
     Event_PlaySound(134);                                                      \
     MapGrid_CopyCellsLayered(n1, n2, n3, 3, n4, n5);                           \

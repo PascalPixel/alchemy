@@ -173,7 +173,8 @@ void Actor_WalkToAndWaitById(s32 id, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void MapGrid_PlayMapEdit(const void *data, s32 a, s32 b);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
-void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 y, s32 z);
+void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 y,
+                                                    s32 z);
 
 /// Karst feels the party's Mind Read.
 /// "Using Psynergy on me? Are you so dense that you don't know when to be
@@ -286,10 +287,10 @@ void Madra_AskComingThroughSealedHole(void) {
     /* FAKEMATCH(temporary): the angle held in a block local, as overlay       \
      * 6a3's PLACE has it, so it is built first and shifted before the         \
      * positions; as the angle passed straight to the call, 8 of 60            \
-     * instructions of Madra_WorkerBlocksHole differ in tla-en, and 8 of 51 of          \
-     * Madra_WorkerBlocksSealedHole. */                                                       \
+     * instructions of Madra_WorkerBlocksHole differ in tla-en, and 8 of 51 of \
+     * Madra_WorkerBlocksSealedHole. */                                        \
     s32 angle_ = (angle);                                                      \
-    Actor_SetPositionAndFacing(id, x, z, angle_);          \
+    Actor_SetPositionAndFacing(id, x, z, angle_);                              \
   }
 
 /// The worker pops up out of the hole the first time the party steps on it,
@@ -339,7 +340,9 @@ const struct Trigger *Scene_GetEvents(void) {
   return gMadra_TriggersBeforeRaid;
 }
 
-void Madra_SealHoleCells(void) { MapGrid_CopyCellAttributes(109, 14, 3, 3, 45, 14); }
+void Madra_SealHoleCells(void) {
+  MapGrid_CopyCellAttributes(109, 14, 3, 3, 45, 14);
+}
 
 /// On the return with Piers the hole is sealed: its picture and its cells are
 /// drawn closed.
@@ -350,7 +353,8 @@ void Madra_SealHole(void) {
 
 /// Madra's prepare step: sets up actor 26 (larger, its sprite flags set)
 /// and places actors 26 to 28, 33 and 66 by the story flags, then runs
-/// Madra_GrantPassageToOsenia on entrance 9 and Madra_MeetKarst once on entrance 7.
+/// Madra_GrantPassageToOsenia on entrance 9 and Madra_MeetKarst once on
+/// entrance 7.
 s32 Scene_Initialize(void) {
   struct Actor *object;
 
@@ -660,8 +664,7 @@ void Madra_InspectPartyAtGate(void) {
   Actor_SetAnimation(32, 2);
   object = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object != NULL)
-    Actor_SetDestination(32, ((s16 *)&object->x)[1],
-                              ((s16 *)&object->z)[1]);
+    Actor_SetDestination(32, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(32);
   Actor_SetPosition(32, 0, 0);
   Event_SetFlag(0x910);
@@ -962,20 +965,18 @@ void Madra_StopPartyAfterRaid(void) {
   Actor_SetAnimation(32, 2);
   object = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object != NULL)
-    Actor_SetDestination(32, ((s16 *)&object->x)[1],
-                              ((s16 *)&object->z)[1]);
+    Actor_SetDestination(32, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(32);
   Actor_SetPosition(32, 0, 0);
   Actor_FaceDirectionAndWait(4, FACING_NORTH);
   Event_End();
 }
 
-
 // The macro's do-while starts each mode change's own scheduling region; as
 // plain calls, 88 of 1565 instructions differ in tla-en.
 #define SET_MODE(id, mode)                                                     \
   do {                                                                         \
-    Actor_SetAnimation(id, mode);                                               \
+    Actor_SetAnimation(id, mode);                                              \
   } while (0)
 
 /// Actor 34 questions 4 and the others; the answers are counted in the event
@@ -1004,7 +1005,8 @@ void Madra_MeetKarst(void) {
   Actor_WaitForMoveById(4);
   Actor_FaceDirection(4, FACING_NORTH, 0);
   Event_Wait(20);
-  MapGrid_AnimateCells(gMadra_Doors[6].data, gMadra_Doors[6].x, gMadra_Doors[6].y);
+  MapGrid_AnimateCells(gMadra_Doors[6].data, gMadra_Doors[6].x,
+                       gMadra_Doors[6].y);
   Actor_SetHorizontalPositionAndAngleWithTerrain(34, x, z, FACING_SOUTH);
   Actor_WalkByAndWaitById(34, 0, 4);
   SET_MODE(34, 3);
@@ -1466,7 +1468,6 @@ void Madra_MeetKarst(void) {
 // ---- games/tla/src/scene/madra/events_d.c ----
 #include "text/msg_ids.h"
 
-
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 
@@ -1624,10 +1625,11 @@ s16 gData_020032fc[] = {
 // clang-format on
 
 struct MadraPlacement gMadra_Doors[] = {
-    {gData_020032fc, 20, 3},  {gData_020032f0, 13, 23}, {gData_020032f0, 17, 17},
-    {gData_020032f0, 23, 18}, {gData_020032f0, 28, 10}, {gData_020032f0, 28, 6},
-    {gData_020032f0, 9, 6},   {gData_020032f0, 19, 24}, {gData_020032f0, 0, 0},
-    {gData_020032fc, 17, 3},
+    {gData_020032fc, 20, 3},  {gData_020032f0, 13, 23},
+    {gData_020032f0, 17, 17}, {gData_020032f0, 23, 18},
+    {gData_020032f0, 28, 10}, {gData_020032f0, 28, 6},
+    {gData_020032f0, 9, 6},   {gData_020032f0, 19, 24},
+    {gData_020032f0, 0, 0},   {gData_020032fc, 17, 3},
 };
 
 struct Trigger gMadra_TriggersBeforeRaid[] = {
@@ -1671,32 +1673,58 @@ struct Trigger gMadra_TriggersBeforeRaid[] = {
     {TRIGGER_TALK, 30, CONDITION_ALWAYS, EVENT(Madra_TalkToArmorMerchant)},
     {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Madra_TalkToItemMerchant)},
     {TRIGGER_TALK, 35, CONDITION_ALWAYS, EVENT(Madra_TalkToItemMerchant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgEveryoneThinksBriggs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTheTownElderIs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgIfABig)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgItSABit)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgThatChampaIn)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgIVeAlways)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1038, 0x300, EVENT(Madra_MindReadBriggsFan)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgWhoWasIt)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgNowMadraIs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgWhenISaw)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTheChampaMust)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgItSNot)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgIMNotSure)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgILlNever)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgILookedInto)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgIWonderHowMany)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgIMissMy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgItSSoWeird)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgTheseAreRough)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgTheChampaDug)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgItWasAll)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgMySoreBottom)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgTheItemVendor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgThoseLousyChampa)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS, MSGNO(MsgBriggsAndHis)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 35, CONDITION_ALWAYS, MSGNO(MsgBriggsAndHis)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgEveryoneThinksBriggs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgTheTownElderIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgIfABig)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgItSABit)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgThatChampaIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgIVeAlways)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1038, 0x300,
+     EVENT(Madra_MindReadBriggsFan)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     MSGNO(MsgWhoWasIt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     MSGNO(MsgNowMadraIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+     MSGNO(MsgWhenISaw)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+     MSGNO(MsgTheChampaMust)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
+     MSGNO(MsgItSNot)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
+     MSGNO(MsgIMNotSure)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
+     MSGNO(MsgILlNever)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
+     MSGNO(MsgILookedInto)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
+     MSGNO(MsgIWonderHowMany)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS,
+     MSGNO(MsgIMissMy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
+     MSGNO(MsgItSSoWeird)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS,
+     MSGNO(MsgTheseAreRough)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS,
+     MSGNO(MsgTheChampaDug)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS,
+     MSGNO(MsgItWasAll)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS,
+     MSGNO(MsgMySoreBottom)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS,
+     MSGNO(MsgTheItemVendor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS,
+     MSGNO(MsgThoseLousyChampa)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS,
+     MSGNO(MsgBriggsAndHis)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 35, CONDITION_ALWAYS,
+     MSGNO(MsgBriggsAndHis)},
     {TRIGGERS_END},
 };
 
@@ -1734,32 +1762,55 @@ struct Trigger gMadra_TriggersAfterRaid[] = {
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgYouShouldaSeen)},
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgFirstPiratesRaid)},
     {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgMyGuessIs)},
-    {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(Madra_AskComingThroughSealedHole)},
+    {TRIGGER_TALK, 26, CONDITION_ALWAYS,
+     EVENT(Madra_AskComingThroughSealedHole)},
     {TRIGGER_TALK, 29, CONDITION_ALWAYS, EVENT(Madra_TalkToWeaponMerchant)},
     {TRIGGER_TALK, 30, CONDITION_ALWAYS, EVENT(Madra_TalkToArmorMerchant)},
     {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Madra_TalkToItemMerchant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgIfItWerenT)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgIfGondowanIs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgItSStrangeIt)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgTheMayorIs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgHeToldUs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgInGondowanThey)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgIHeardThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgIfTheyWere)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgItWasSo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgIWonderWhoDug)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgWaitIfBriggs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgIVeNeverSeenAny)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgDidnTSeem)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgWasSoHappy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgIDidnT)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgICanTBelieveNobody)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgTheWayThings)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgIVeBeenStanding)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgWeSealedUp)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgTheChampaWeapons)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgTheGroupThat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS, MSGNO(MsgThatShinIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgIfItWerenT)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgIfGondowanIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgItSStrangeIt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgTheMayorIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgHeToldUs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgInGondowanThey)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     MSGNO(MsgIHeardThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     MSGNO(MsgIfTheyWere)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+     MSGNO(MsgItWasSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+     MSGNO(MsgIWonderWhoDug)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
+     MSGNO(MsgWaitIfBriggs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
+     MSGNO(MsgIVeNeverSeenAny)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
+     MSGNO(MsgDidnTSeem)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
+     MSGNO(MsgWasSoHappy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
+     MSGNO(MsgIDidnT)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS,
+     MSGNO(MsgICanTBelieveNobody)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
+     MSGNO(MsgTheWayThings)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS,
+     MSGNO(MsgIVeBeenStanding)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS,
+     MSGNO(MsgWeSealedUp)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS,
+     MSGNO(MsgTheChampaWeapons)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS,
+     MSGNO(MsgTheGroupThat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS,
+     MSGNO(MsgThatShinIs)},
     {TRIGGERS_END},
 };
 
@@ -1802,28 +1853,51 @@ struct Trigger gMadra_TriggersOnReturn[] = {
     {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Madra_TalkToItemMerchant)},
     {TRIGGER_TALK, 33, CONDITION_ALWAYS, EVENT(Madra_KarstAsksAboutMenardi)},
     {TRIGGER_TALK, 35, CONDITION_ALWAYS, EVENT(Madra_AskAfraidOfKibombo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgWhyWouldAnyoneBe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgTheyVeBeenHaving)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgEveryoneGetsThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgIWonderWhy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgWhatWasThat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgThePeopleOf)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgThatIslandThat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgHowBigWould)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgTheseNewBoats)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgIfABuilding)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgSailorsAreSupposed)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgOurMayorS)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgIsTurningWater)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgMadraIsAlways)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgSoThisFellow)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgIKnewI)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgHeWasGone)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgHowMuchLongerDo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgThePiratesAnd)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgThatNightThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS, MSGNO(MsgShinSeemsTerrified)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 33, CONDITION_ALWAYS, EVENT(Madra_MindReadKarst)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 35, CONDITION_ALWAYS, MSGNO(MsgWeReStill)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgWhyWouldAnyoneBe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgTheyVeBeenHaving)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     MSGNO(MsgEveryoneGetsThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgIWonderWhy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgWhatWasThat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgThePeopleOf)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     MSGNO(MsgThatIslandThat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     MSGNO(MsgHowBigWould)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+     MSGNO(MsgTheseNewBoats)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+     MSGNO(MsgIfABuilding)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
+     MSGNO(MsgSailorsAreSupposed)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
+     MSGNO(MsgOurMayorS)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
+     MSGNO(MsgIsTurningWater)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
+     MSGNO(MsgMadraIsAlways)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
+     MSGNO(MsgSoThisFellow)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS,
+     MSGNO(MsgIKnewI)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
+     MSGNO(MsgHeWasGone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS,
+     MSGNO(MsgHowMuchLongerDo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS,
+     MSGNO(MsgThePiratesAnd)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS,
+     MSGNO(MsgThatNightThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS,
+     MSGNO(MsgShinSeemsTerrified)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 33, CONDITION_ALWAYS,
+     EVENT(Madra_MindReadKarst)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 35, CONDITION_ALWAYS,
+     MSGNO(MsgWeReStill)},
     {TRIGGERS_END},
 };

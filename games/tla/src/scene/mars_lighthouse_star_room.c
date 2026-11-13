@@ -318,9 +318,9 @@ void TileMap_ConvertBuffer(s32 scene, s32 a1);
 
 s32 Scene_PrepareMap(void) {
   if (Event_GetFlag(0xa30))
-    TileMap_ConvertBuffer(gMainRoutineWork.map +
-                      ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),
-                  0x5000000);
+    TileMap_ConvertBuffer(gMainRoutineWork.map + ((s32)&SceneId_Ov6ACRoom3 -
+                                                  (s32)&SceneId_Ov6a8Room2),
+                          0x5000000);
   if (gMainRoutineWork.entrance == 20)
     Event_SetFlag(0xa4b);
   return 0;
@@ -645,7 +645,8 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
     object->motionFlags = 0;
     object->speedLimit = 0x40000;
     object->acceleration = 0x20000;
-    FieldActor_SetMoveTarget(object, leader->x, leader->y + 0x200000, leader->z);
+    FieldActor_SetMoveTarget(object, leader->x, leader->y + 0x200000,
+                             leader->z);
     FieldActor_WaitForMove(gMarsLighthouseStarRoom_MarsStar);
     Event_PlaySound(83);
     PartyInventory_Remove(224);
@@ -661,7 +662,8 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
     }
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
     Event_SetFlag(0xa3a);
-    FieldActor_SetPositionAndResetMotion(gMarsLighthouseStarRoom_MarsStar, 0, 0, 0);
+    FieldActor_SetPositionAndResetMotion(gMarsLighthouseStarRoom_MarsStar, 0, 0,
+                                         0);
     System_Wait(1);
     Actor_Release(gMarsLighthouseStarRoom_MarsStar);
     System_Wait(1);
@@ -812,9 +814,9 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   MapGrid_CopyCellsLayered(65, 65, 9, 21, 38, 24);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 38, 87);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 102, 23);
-  TileMap_ConvertBuffer(gMainRoutineWork.map +
-                    ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),
-                screen);
+  TileMap_ConvertBuffer(gMainRoutineWork.map + ((s32)&SceneId_Ov6ACRoom3 -
+                                                (s32)&SceneId_Ov6a8Room2),
+                        screen);
   // The zero sits in a local: as a plain `*screen = 0` 21 instructions differ.
   zero = 0;
   *screen = zero;
@@ -881,7 +883,8 @@ L_02008ea2:
   System_Wait(1);
   Event_PlaySound(182);
   slot = &gMarsLighthouseStarRoom_MarsStar;
-  object = (struct Actor *)FieldActor_Create(0x1e9, 0x2a80000, 0x80000, 0x930000);
+  object =
+      (struct Actor *)FieldActor_Create(0x1e9, 0x2a80000, 0x80000, 0x930000);
   *slot = object;
   if (object != 0) {
     sprite = object->sprite;
@@ -991,9 +994,9 @@ L_0200905c:
   MapGrid_CopyCellsLayered(65, 65, 9, 21, 38, 24);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 38, 87);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 102, 23);
-  TileMap_ConvertBuffer(gMainRoutineWork.map +
-                    ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),
-                screen);
+  TileMap_ConvertBuffer(gMainRoutineWork.map + ((s32)&SceneId_Ov6ACRoom3 -
+                                                (s32)&SceneId_Ov6a8Room2),
+                        screen);
   *screen = 0;
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(120);
@@ -1183,7 +1186,7 @@ struct RideWork__s1424 {
 extern u8 gInventorySnapshot[];
 
 DEFINE_RIDE_UPDATE_CARRIED(Func_020015ec, RideWork__s1424, Func_02001528,
-    Func_0200158c)
+                           Func_0200158c)
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room/spawn.c ----
 extern const u8 gData_02004744[];
@@ -1248,7 +1251,8 @@ extern u8 gInventorySnapshot[];
 s32 Func_02001528(struct Actor *a, struct Actor *b);
 s32 Func_0200158c(struct Actor *a, struct Actor *b);
 
-DEFINE_RIDE_UPDATE_LANDING(Func_020017c8, RideWork__spawn, Func_02001528, Func_0200158c)
+DEFINE_RIDE_UPDATE_LANDING(Func_020017c8, RideWork__spawn, Func_02001528,
+                           Func_0200158c)
 
 void Func_02001928(struct Actor *object, s32 priority);
 
@@ -1270,7 +1274,7 @@ DEFINE_ACTOR_SETUP_SCRIPTED_PART(Func_02001928, gData_02004744)
       object->update = call1;                                                  \
       if (flag != 0)                                                           \
         object->unk5c[0] = 2;                                                  \
-      Import_ActorSelectAnimation(object, 2);                                                \
+      Import_ActorSelectAnimation(object, 2);                                  \
     }                                                                          \
   }
 
@@ -1312,7 +1316,8 @@ DEFINE_RIDE_UPDATE_DRIFT(Func_02001a9c, Func_02001a44)
 
 extern const u8 gData_02004744[];
 
-DEFINE_ACTOR_SETUP_SCRIPTED(Func_02001b38, Import_ActorSelectAnimation, gData_02004744)
+DEFINE_ACTOR_SETUP_SCRIPTED(Func_02001b38, Import_ActorSelectAnimation,
+                            gData_02004744)
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s1b78.c ----
 void Actor_SetBlendMode(struct Actor *object, u32 value);
@@ -1332,8 +1337,7 @@ void Func_02001b78(s32 *position, s32 base) {
   s32 angle;
 
   if (object != 0) {
-    object->bounce =
-        Trig_Cos(((u32)(Random16Far() * 0x3000) >> 16) + 0x3000);
+    object->bounce = Trig_Cos(((u32)(Random16Far() * 0x3000) >> 16) + 0x3000);
     object->gravity = (u16)Random16Far();
     object->unk4c = (u16)(Random16Far() << 1) + base;
     /* FAKEMATCH(temporary): the angle held in an s32 local keeps the zero
@@ -1416,7 +1420,7 @@ typedef struct IwramGlobals {
 #define IWRAM ((IwramGlobals *)Ram_HeapSlots)
 
 DEFINE_BEAM_DRAW_TARGETS(Func_02001bf8, Func_02001b78__s1bf8, Func_0200196c,
-    Func_020019fc, Func_020019b4, Func_02001780)
+                         Func_020019fc, Func_020019b4, Func_02001780)
 #undef IWRAM
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s1d7c.c ----

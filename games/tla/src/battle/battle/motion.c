@@ -8,9 +8,10 @@
 #include "gamepak/far_call/field.h"
 
 #define Actor_StartIdleFar ((void (*)(struct MotionObject *))Actor_StartIdleFar)
-#define Actor_SetMoveTargetFar                                                \
+#define Actor_SetMoveTargetFar                                                 \
   ((void (*)(struct MotionObject *, s32, s32, s32))Actor_SetMoveTargetFar)
-#define Actor_SelectAnimationFar ((void (*)(struct MotionObject *, s32))Actor_SelectAnimationFar)
+#define Actor_SelectAnimationFar                                               \
+  ((void (*)(struct MotionObject *, s32))Actor_SelectAnimationFar)
 
 void BattleMotion_ReturnToSpot(s32 slotId) {
   s32 z;
@@ -103,7 +104,7 @@ void BattleMotion_HopBack(s32 objectId) {
   Actor_StartIdleFar(object);
   scaledX = slot->anchorX * 3;
   Actor_SetMoveTargetFar(object, (s32)(scaledX + (scaledX >> 31)) >> 1, 0,
-                          slot->anchorZ);
+                         slot->anchorZ);
 }
 
 /// Sends unit id leaping back to 1.3 times its spot's distance from the

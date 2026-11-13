@@ -390,8 +390,8 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     Actor_SetAnimationSpeedFar(
         (struct Actor *)((struct BattleObj *)object)->object, 16);
   }
-  Actor_SetAnimationSpeedFar((struct Actor *)BattleObject_Get(work.actor)->object,
-                           16);
+  Actor_SetAnimationSpeedFar(
+      (struct Actor *)BattleObject_Get(work.actor)->object, 16);
 
   if ((u16)work.actors[0] <= 7)
     work.side = 1;

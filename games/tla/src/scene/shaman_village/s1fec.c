@@ -605,8 +605,8 @@ commands:
 }
 
 /// Starts the mode task: keeps the mode and its parameter, schedules
-/// ShamanVillage_RunLettering and picks the script the mode runs, then rewinds the
-/// task's timer and position.
+/// ShamanVillage_RunLettering and picks the script the mode runs, then rewinds
+/// the task's timer and position.
 void ShamanVillage_StartLettering(s32 modeArg, s32 paramArg) {
   s32 handler;
 
@@ -676,8 +676,8 @@ void ShamanVillage_LoadLettering(s32 graphic) {
   palette = gData_02004bfe[graphic];
   if (graphic == 8)
     graphic = 4;
-  Import_DecompressTaggedLz(Resource_GetTableEntry((s32)&ResourceId_LetteringBanner),
-                sheet);
+  Import_DecompressTaggedLz(
+      Resource_GetTableEntry((s32)&ResourceId_LetteringBanner), sheet);
   Dma_Set(sheet->palettes[0] + palette, (void *)&OBJ_PLTT_COLOR(15, 0),
           (DMA_ENABLE | DMA_32BIT) << 16 | 32 / 4, REG_DMA3);
   Vram_Load(gData_02005158[0], sizeof(sheet->graphics[0]),
@@ -1065,7 +1065,8 @@ void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     FieldActor_WaitForMove(object);
     object->facing = 0xc000;
   }
-  Actor_SetScript(gMainRoutineWork.currentOwner, gShamanVillage_EnterDoorScript);
+  Actor_SetScript(gMainRoutineWork.currentOwner,
+                  gShamanVillage_EnterDoorScript);
   wait(12);
   Event_PlaySound(123);
   Event_FinishScreenTransition();
@@ -1211,14 +1212,13 @@ void ShamanVillage_SetUpVillage(void) {
     MapGrid_CopyCellsTo(47, 19, 38, 19, 9, 11);
     MapGrid_CopyCellAttributes(1, 5, 9, 1, 6, 29);
     FieldActor_SetSpriteColor(((struct ShamanVillageObject *)Actor_GetById(14)),
-                           6);
+                              6);
   } else if (!Event_GetFlag(0x109)) {
     s32 angle = 0x4000;
 
     Actor_SetPositionAndFacing(15, PIXELS(168), PIXELS(568), angle);
     Actor_SetPositionAndFacing(17, PIXELS(216), PIXELS(536), angle);
-    Actor_SetPositionAndFacing(16, PIXELS(120), PIXELS(536),
-                                                   angle);
+    Actor_SetPositionAndFacing(16, PIXELS(120), PIXELS(536), angle);
     wait(1);
   }
   Actor_SetAnimation(8, 2);
@@ -1275,8 +1275,7 @@ void ShamanVillage_SetUpRoom3(void) {
   object->collisionFlags = 8;
   object->scaleX = 0xcccc;
   object->scaleY = 0xcccc;
-  Actor_SetSpriteFlags(((struct ShamanVillageObject *)Actor_GetById(16)),
-                            0);
+  Actor_SetSpriteFlags(((struct ShamanVillageObject *)Actor_GetById(16)), 0);
 }
 
 void Func_020042c8(struct ShamanVillageObject *object) {
@@ -1406,8 +1405,8 @@ void ShamanVillage_SetUpRoom4(void) {
     Event_ResolvePendingActions(0);
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 41);
     Actor_SetSpriteFlags(((struct ShamanVillageObject *)Actor_GetById(
-                                  gMainRoutineWork.currentOwner)),
-                              0);
+                             gMainRoutineWork.currentOwner)),
+                         0);
     wait(1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -1439,8 +1438,8 @@ void ShamanVillage_SetUpRoom4(void) {
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
     Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 813, 120);
     Actor_SetSpriteFlags(((struct ShamanVillageObject *)Actor_GetById(
-                                  gMainRoutineWork.currentOwner)),
-                              1);
+                             gMainRoutineWork.currentOwner)),
+                         1);
     Event_End();
     if (gMainRoutineWork.entrance == 30) {
       Event_SetFlag(0x9fe);
@@ -1865,7 +1864,8 @@ struct Trigger gShamanVillage_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), 526, 0x94c, EVENT(ShamanVillage_ShebaClearsSand)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST),
+     526, 0x94c, EVENT(ShamanVillage_ShebaClearsSand)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 1038, 0x94c, 0},
     {TRIGGER_STEP, 10, 0x9e0, EVENT(ShamanVillage_ExplainTrialRules)},
     {TRIGGER_STEP, 10, 0x201, EVENT(ShamanVillage_ChallengeMoapa)},
@@ -1880,12 +1880,16 @@ struct Trigger gShamanVillage_Room1Triggers[] = {
      MSGNO(MsgShamanMoapaCannotLose)},
     {TRIGGER_TALK, 17, 0x94c, MSGNO(MsgShamanTrialRoadAncientBattle)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(ShamanVillage_TalkToGuard)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x94c, MSGNO(MsgShamanNeedContigoOrShamanPower)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgShamanMoapaGreatestWarrior)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x94c,
+     MSGNO(MsgShamanNeedContigoOrShamanPower)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+     MSGNO(MsgShamanMoapaGreatestWarrior)},
     {TRIGGER_TALK, 16, 0x94c, MSGNO(MsgShamanAncientHeroesVanishedSand)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(ShamanVillage_TalkToOtherGuard)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x94c, MSGNO(MsgShamanSandChallengeWillFail)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgShamanJadeNeedsYegelosHeir)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x94c,
+     MSGNO(MsgShamanSandChallengeWillFail)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+     MSGNO(MsgShamanJadeNeedsYegelosHeir)},
     {TRIGGERS_END},
 };
 
@@ -1897,13 +1901,17 @@ struct Trigger gShamanVillage_Room3Triggers[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_02000280)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, 0x94e, EVENT(ShamanVillage_DropPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, 0x94e,
+     EVENT(ShamanVillage_DropPillar)},
     {0xc403, 22, 0x94d, EVENT(ShamanVillage_StopAtClosedEntrance)},
-    {TRIGGER_EXAMINE, 10, CONDITION_ALWAYS, EVENT(ShamanVillage_ReadTrialRoadSign)},
+    {TRIGGER_EXAMINE, 10, CONDITION_ALWAYS,
+     EVENT(ShamanVillage_ReadTrialRoadSign)},
     {TRIGGER_STEP, 11, 0x203, EVENT(ShamanVillage_GreetFortuneSeeker)},
     {0xc400, 17, CONDITION_ALWAYS, EVENT(ShamanVillage_TellFortune)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0xa21, MSGNO(MsgShamanCloudyFortuneBeforeTrial)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgShamanCloudyFortuneAfterTrial)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0xa21,
+     MSGNO(MsgShamanCloudyFortuneBeforeTrial)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+     MSGNO(MsgShamanCloudyFortuneAfterTrial)},
     {TRIGGER_TALK, 15, 0x9fe, MSGNO(MsgShamanSilentVillager)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgShamanNewLegendaryBattle)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x9fe,
@@ -1930,7 +1938,8 @@ struct Trigger gShamanVillage_Room2Triggers[] = {
     {0xc602, 13, CONDITION_ALWAYS, EVENT(Func_02003ce4)},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 19, 0x204, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 21, 0x205, EVENT(ShamanVillage_GrowVine)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 21, 0x205,
+     EVENT(ShamanVillage_GrowVine)},
     {0xc403, 20, 0x94d, EVENT(ShamanVillage_StopAtLockedEntrance)},
     {0xc403, 22, 0x94d, EVENT(ShamanVillage_StopAtClosedEntrance)},
     {0xc403, 21, 0x94f, EVENT(ShamanVillage_MeetMoapa)},
@@ -1967,25 +1976,36 @@ struct Trigger gShamanVillage_Room2Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
      MSGNO(MsgShamanRemainFriendsWithContigo)},
     {TRIGGER_TALK, 13, 0x9fe, MSGNO(MsgShamanSilentVillager)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(ShamanVillage_AskAboutOtherSide)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x9fe, MSGNO(MsgShamanDistrustFriendlyOutsiders)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgShamanWishToBreakSandWalls)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS,
+     EVENT(ShamanVillage_AskAboutOtherSide)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x9fe,
+     MSGNO(MsgShamanDistrustFriendlyOutsiders)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgShamanWishToBreakSandWalls)},
     {TRIGGER_TALK, 14, 0x9fe, MSGNO(MsgShamanSilentVillager)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgShamanChosenFewHavePower)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x9fe,
      MSGNO(MsgShamanShutDoorsAgainstOutsiders)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
      MSGNO(MsgShamanOutskirtsHaveDifferentPowers)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(ShamanVillage_TellOutsidersToLeave)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgShamanOutsidersAreNotContigo)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS,
+     EVENT(ShamanVillage_TellOutsidersToLeave)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     MSGNO(MsgShamanOutsidersAreNotContigo)},
     {TRIGGER_TALK, 17, 0x9fe, EVENT(ShamanVillage_WarnOfMoapasPower)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgShamanGuardPromisesRematchVictory)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x9fe, MSGNO(MsgShamanContigoTempleTreasure)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgShamanClimbingTrialRoadIsHard)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS,
+     MSGNO(MsgShamanGuardPromisesRematchVictory)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x9fe,
+     MSGNO(MsgShamanContigoTempleTreasure)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+     MSGNO(MsgShamanClimbingTrialRoadIsHard)},
     {TRIGGER_TALK, 16, 0x9fe, EVENT(ShamanVillage_SendToMoapa)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgShamanVillagersBlameGuardDefeat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x9fe, MSGNO(MsgShamanMoapaSparedOutsiders)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgShamanGuardBlamesMountainClimb)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS,
+     MSGNO(MsgShamanVillagersBlameGuardDefeat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x9fe,
+     MSGNO(MsgShamanMoapaSparedOutsiders)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+     MSGNO(MsgShamanGuardBlamesMountainClimb)},
     {0x4114, 15, 0x9e1, EVENT(ShamanVillage_ShowShamansRod)},
     {0x1ff14, 15, CONDITION_ALWAYS, EVENT(ShamanVillage_ShowItemToMoapa)},
     {0x1ff14, 16, CONDITION_ALWAYS, EVENT(ShamanVillage_ShowItemToGuard)},
@@ -2027,11 +2047,15 @@ struct Trigger gShamanVillage_Room4Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
      MSGNO(MsgShamanNamesBeforeBattleOldFashioned)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(ShamanVillage_TalkToMoapa)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x9ed, MSGNO(MsgShamanVictorsDeserveRespect)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgShamanVictorsNamesOnTrialColumns)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x9ed,
+     MSGNO(MsgShamanVictorsDeserveRespect)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+     MSGNO(MsgShamanVictorsNamesOnTrialColumns)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(ShamanVillage_TalkToInnkeeper)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x9fe, MSGNO(MsgShamanPayingStrangersMayStay)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgShamanMoapaMiserableAfterDefeat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x9fe,
+     MSGNO(MsgShamanPayingStrangersMayStay)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgShamanMoapaMiserableAfterDefeat)},
     {TRIGGER_TALK, 14, 0x9fe, MSGNO(MsgShamanSilentVillager)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS,
      MSGNO(MsgShamanForgiveUnkindVillagers)},
@@ -2083,9 +2107,12 @@ struct Trigger gShamanVillage_Room5Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
      MSGNO(MsgShamanGrandparentsTiredOfWarStories)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(ShamanVillage_TalkToShopkeeper)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgShamanHusbandWorriesAboutWeapons)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgShamanWarehouseOwnerFeelsResponsible)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgShamanWeaponsDidNotCauseLoss)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgShamanHusbandWorriesAboutWeapons)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS,
+     MSGNO(MsgShamanWarehouseOwnerFeelsResponsible)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgShamanWeaponsDidNotCauseLoss)},
     {0x173, 200, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgShamanRoastedRiverFish))},
     {0x173, 201, CONDITION_ALWAYS,
@@ -2098,8 +2125,10 @@ struct Trigger gShamanVillage_Room5Triggers[] = {
 struct Trigger gShamanVillage_Room6Triggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(ShamanVillage_TalkToPriest)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x9fe, MSGNO(MsgShamanVisitorsMustFindMoapa)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgShamanFearRenewedContigoWar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x9fe,
+     MSGNO(MsgShamanVisitorsMustFindMoapa)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgShamanFearRenewedContigoWar)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgShamanThreatenContigoRematch)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
      MSGNO(MsgShamanMoapaMustHaveBeenHungry)},

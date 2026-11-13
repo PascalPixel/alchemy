@@ -14,7 +14,9 @@
 
 struct CellTargetEntry;
 
-/* VIEW(s1c8c): tag struct CellTarget as struct CellTarget__s1c8c; cell_target.h has another definition; tried with the definition the rest of the object has, Teleporter_Sink moves: 2 of 131 instructions in tla-ja. */
+/* VIEW(s1c8c): tag struct CellTarget as struct CellTarget__s1c8c; cell_target.h
+ * has another definition; tried with the definition the rest of the object has,
+ * Teleporter_Sink moves: 2 of 131 instructions in tla-ja. */
 struct CellTarget__s1c8c {
   s16 firstFlag;
   s16 flagByte;

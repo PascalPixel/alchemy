@@ -17,8 +17,7 @@ void Func_02001928(struct Actor *object, s32 priority);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ struct Actor *ObjectCreate_(s32 kind, s32 x, s32 y,
-                                                      s32 z) {
+static __inline__ struct Actor *ObjectCreate_(s32 kind, s32 x, s32 y, s32 z) {
   return Import_ActorCreate(kind, x, y, z);
 }
 #include "main_routine_work.h"
@@ -26,8 +25,7 @@ static __inline__ struct Actor *ObjectCreate_(s32 kind, s32 x, s32 y,
 #include "tla_edition.h"
 
 void Actor_StartScript(struct Actor *object, const void *script);
-void Actor_SetAnimationSpeed(struct Actor *object,
-                                         s32 value);
+void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 extern const s16 gData_020047fc[];
 
 #endif

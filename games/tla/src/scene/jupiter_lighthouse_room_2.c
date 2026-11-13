@@ -350,8 +350,7 @@ void Func_02000720(struct Actor *object) {
   s16 height = object->unk66;
 
   SET_POSITION(object,
-               Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) +
-                   (214 << 16),
+               Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) + (214 << 16),
                (height * 3 << 16) + 0x80000, 170 << 18);
   // Read signed, as the phase is above; the field is declared unsigned.
   if ((s16)object->unk66 == 0)

@@ -1,8 +1,8 @@
 /// @file
 /// The bank's third object: the effects of abilities and summons from the
-/// opening every Djinn effect shares to Meteor Blow, each part named for the first
-/// ability it draws. ability_effects_internal.h holds the includes every part
-/// shares; the parts under ability_effects/ follow in ROM order.
+/// opening every Djinn effect shares to Meteor Blow, each part named for the
+/// first ability it draws. ability_effects_internal.h holds the includes every
+/// part shares; the parts under ability_effects/ follow in ROM order.
 
 #include "ability_effects_internal.h"
 

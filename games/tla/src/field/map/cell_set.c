@@ -93,7 +93,8 @@ loop:
   flag = row[2];
 
   Actor_SetSpriteFlags(object, 0);
-  Import_ActorSelectAnimation(object, (u16)animation + GameFlag_Test((u16)flag));
+  Import_ActorSelectAnimation(object,
+                              (u16)animation + GameFlag_Test((u16)flag));
   object->motionFlags = 0;
   object->collisionFlags &= 0xfe;
   object->timer = flag;

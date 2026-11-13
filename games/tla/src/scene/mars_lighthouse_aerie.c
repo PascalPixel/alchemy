@@ -118,7 +118,7 @@ const struct Trigger *Scene_GetPlacements(void) {
 }
 
 DEFINE_SCENE_LEAVE_BY_EXIT(Func_020001a0, Func_02004fac, Func_020057cc, 1,
-    Func_02005010)
+                           Func_02005010)
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
@@ -225,9 +225,9 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.entrance == 1 && Event_GetFlag(0xa3d) == 0)
     Weather_StartRain(1);
-  TileMap_ConvertBuffer(gMainRoutineWork.map +
-                    ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),
-                0x5000000);
+  TileMap_ConvertBuffer(gMainRoutineWork.map + ((s32)&SceneId_Ov6ACRoom3 -
+                                                (s32)&SceneId_Ov6a8Room2),
+                        0x5000000);
   return 0;
 }
 

@@ -32,7 +32,7 @@ DEFINE_ACTOR_FLICKER(Func_02003b38, Func_020039f4)
 extern s32 gData_02006be4;
 
 DEFINE_ACTOR_CYCLE_CHILD_VALUES(Func_02003b70, gData_02004fc8, gData_02006be4,
-    Func_02003aac)
+                                Func_02003aac)
 
 DEFINE_ACTOR_SET_FLIGHT_MODE(Func_02003bb8, Func_02003b38, Func_02003b70)
 
@@ -68,8 +68,8 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH(wrapper): as in the scene layer of The Broken Seal, forwarding
    * through the inline sets the arguments up in their own order: the native
    * shifts z before it starts the -1, where called directly the -1 starts
-   * first; as direct calls, 6 of 66 instructions of WorldMap_JitterTransitionCamera differ in
-   * tla-en. */
+   * first; as direct calls, 6 of 66 instructions of
+   * WorldMap_JitterTransitionCamera differ in tla-en. */
   FieldCamera_MoveTo(x, y, z, mode);
 }
 
@@ -332,7 +332,7 @@ extern s16 gData_02006e0e__s3b38 __asm__("gData_02006e0e");
 extern u8 gData_02006f20__s3b38[][32] __asm__("gData_02006f20");
 
 DEFINE_GAUGE_DRAW(Func_02004744, gData_02006e0c__s3b38, Data_02006e20,
-    gData_02006f20__s3b38, gData_02006e0e__s3b38)
+                  gData_02006f20__s3b38, gData_02006e0e__s3b38)
 
 // The world map cursor: counts down while A or B is held, redraws the gauge and
 // queues its sprite over the leader.
@@ -364,11 +364,11 @@ void Func_020048f4(void) {
   Import_OamAddSpriteAtDepthClamped(Data_02006e14, 255);
 }
 
-DEFINE_GAUGE_INIT(Func_020049bc, gData_02006f20__s3b38,
-    gData_02006e0e__s3b38, gData_02006e0c__s3b38, gData_02006e10, Func_020048f4)
+DEFINE_GAUGE_INIT(Func_020049bc, gData_02006f20__s3b38, gData_02006e0e__s3b38,
+                  gData_02006e0c__s3b38, gData_02006e10, Func_020048f4)
 
-DEFINE_GAUGE_END(Func_02004a1c, gData_02006f20__s3b38,
-    gData_02006e0e__s3b38, gData_02006e0c__s3b38, Func_020048f4)
+DEFINE_GAUGE_END(Func_02004a1c, gData_02006f20__s3b38, gData_02006e0e__s3b38,
+                 gData_02006e0c__s3b38, Func_020048f4)
 
 #include "scene_tables.h"
 

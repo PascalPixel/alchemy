@@ -24,7 +24,7 @@ void BattleEffect_StartActorMotionRandomDistance(s32 id) {
     object->velocityY = 0x18000;
     Actor_StartIdleFar(object);
     Actor_SetMoveTargetFar(object, slot->anchorX * percent / 100, 0,
-                            slot->anchorZ);
+                           slot->anchorZ);
   }
   object->verticalMotionStrength = 0x9999;
   object->verticalMotionPhase = 0;

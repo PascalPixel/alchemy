@@ -59,9 +59,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
  * games/tla/src/scene/lemurian_ship/lemurian_ship.h:72: conflicting types for
  * `Actor_SetSpriteFlags'. */
 struct LemurianShipObject;
-extern void Actor_SetSingleChildFlags__s00b8(
-    struct LemurianShipObject *object,
-    u32 value) __asm__("Actor_SetSpriteFlags");
+extern void
+Actor_SetSingleChildFlags__s00b8(struct LemurianShipObject *object,
+                                 u32 value) __asm__("Actor_SetSpriteFlags");
 #define Actor_SetSpriteFlags Actor_SetSingleChildFlags__s00b8
 /* VIEW(s00b8): routine Actor_SetBlendMode as void
  * Actor_SetBlendMode(struct LemurianShipObject *object, s32 flags);
@@ -271,7 +271,7 @@ next2:
   MapGrid_CopyCellsTo(0, 0, gData_02003904[found].x, gData_02003904[found].z, 1,
                       2);
   MapGrid_AnimateCells(gData_02003904[found].value, gData_02003904[found].x,
-                  gData_02003904[found].z + 60);
+                       gData_02003904[found].z + 60);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   {
@@ -322,7 +322,7 @@ next2:
   MapGrid_CopyCellsTo(0, 0, gData_0200397c[found].x, gData_0200397c[found].z, 1,
                       2);
   MapGrid_AnimateCells(gData_0200397c[found].value, gData_0200397c[found].x,
-                  gData_0200397c[found].z + 60);
+                       gData_0200397c[found].z + 60);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_CenterOnColumn(gMainRoutineWork.currentOwner, 2, -4);
@@ -346,11 +346,11 @@ void Func_02000438(void) {
     Actor_SetSpeed(party->currentOwner, 0x8000, 0x4000);
     x = leader->x;
     cell = x >> 16;
-    Actor_SetMoveTarget(leader, ((8 - cell % 16) << 16) + x, leader->y, leader->z);
+    Actor_SetMoveTarget(leader, ((8 - cell % 16) << 16) + x, leader->y,
+                        leader->z);
     FieldActor_WaitForMove(leader);
     leader->facing = 0xc000;
-    Actor_SetScript(party->currentOwner,
-                                            gData_02002de8);
+    Actor_SetScript(party->currentOwner, gData_02002de8);
     wait(12);
     Event_PlaySound(123);
     Event_FinishScreenTransition();
@@ -498,7 +498,8 @@ void Func_02000870(void) {
   u8 *state;
 
   if (!Event_GetFlag(0x983)) {
-    leader = ((struct LemurianShipObject *)Actor_GetById(gMainRoutineWork.currentOwner));
+    leader = ((struct LemurianShipObject *)Actor_GetById(
+        gMainRoutineWork.currentOwner));
     Event_Start();
     Event_ResolvePendingActions(0);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
@@ -609,7 +610,7 @@ void Func_02000af4(void) {
   void name(s32 id) {                                                          \
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
-    Actor_FaceActorById(id, gMainRoutineWork.currentOwner, 0);                \
+    Actor_FaceActorById(id, gMainRoutineWork.currentOwner, 0);                 \
     Actor_StartRepeatedMotion(id, 2);                                          \
     Actor_SetAttachedEffect(id, 0x102);                                        \
     Event_Wait(20);                                                            \
@@ -782,11 +783,13 @@ DEFINE_FUNC_020010D8(Func_020010d8, 8, 0x204)
 DEFINE_FUNC_020010D8(Func_020010f8, 9, 0x205)
 
 void Func_02001118(void) {
-  FieldActor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(10)), 0);
+  FieldActor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(10)),
+                            0);
 }
 
 void Func_02001128(void) {
-  FieldActor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(11)), 0);
+  FieldActor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(11)),
+                            0);
 }
 
 #define DEFINE_FUNC_02001138(name, n1, n2, n3, n4)                             \
@@ -808,7 +811,7 @@ void Func_02001128(void) {
       wait(1);                                                                 \
     }                                                                          \
     Actor_SetSpritePriority(n1, 2);                                            \
-    MapGrid_CopyCellPictureIndicesRect(4, 123, n4, 69, 1, 1);                      \
+    MapGrid_CopyCellPictureIndicesRect(4, 123, n4, 69, 1, 1);                  \
     MapGrid_CopyCellAttributes(36, 0, 1, 1, n4, 9);                            \
     Sound_Play(188);                                                           \
     MapGrid_CopyCellsTo(7, 124, 31, 64, 3, 2);                                 \
@@ -832,10 +835,12 @@ void Func_020012b4(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Field_SetCameraBounds(0x80000, 0x100000, 0xf80000, 0x1000000);
-  Actor_SetPosition(gMainRoutineWork.currentOwner, leader->x, leader->z + 0xfed00000);
+  Actor_SetPosition(gMainRoutineWork.currentOwner, leader->x,
+                    leader->z + 0xfed00000);
   object = ((struct LemurianShipObject *)Actor_GetById(64));
   Actor_SetPosition(64, object->x, object->z + 0xfed00000);
-  FieldActor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(64)), 0);
+  FieldActor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(64)),
+                            0);
   wait(10);
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
   wait(1);
@@ -1540,7 +1545,8 @@ void Func_02002820(void) {
         PIXELS(-32), PIXELS(392));
     object->height = 0xfff00000;
     Actor_SetSpritePriority(64, 3);
-    FieldActor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(64)), 1);
+    FieldActor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(64)),
+                              1);
     Actor_SetPosition(8, 0, 0);
     Actor_SetPosition(9, 0, 0);
     Actor_SetPosition(10, 0, 0);
@@ -1553,9 +1559,9 @@ void Func_02002820(void) {
     struct LemurianShipObject *marker =
         ((struct LemurianShipObject *)Actor_GetById(64));
 
-    Actor_SetPosition(64, marker->x,
-                                           marker->z + 0xfed00000);
-    FieldActor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(64)), 0);
+    Actor_SetPosition(64, marker->x, marker->z + 0xfed00000);
+    FieldActor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(64)),
+                              0);
     MapGrid_CopyCellAttributes(6, 0, 1, 2, 6, 4);
     MapGrid_SetCameraBounds(0x80000, 0x100000, 0xf80000, 0x1000000);
     FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
@@ -1600,7 +1606,8 @@ void Func_02002970(void) {
     else
       Actor_SetAnimation(8, 2);
   }
-  Actor_SetSingleChildFlags__s00b8(((struct LemurianShipObject *)Actor_GetById(9)), 0);
+  Actor_SetSingleChildFlags__s00b8(
+      ((struct LemurianShipObject *)Actor_GetById(9)), 0);
   if (!Event_GetFlag(0x109))
     Event_SetFlag(0x203);
   if (Event_GetFlag(0x203)) {
@@ -1624,10 +1631,10 @@ void Func_02002970(void) {
   FieldTask_AddFrame(Func_02001464, 0x480);
   if (!Event_GetFlag(0x210))
     FieldActor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(10)),
-                           15);
+                              15);
   if (!Event_GetFlag(0x211))
     FieldActor_SetSpriteColor(((struct LemurianShipObject *)Actor_GetById(11)),
-                           15);
+                              15);
   LEMURIAN_SHIP_TASK_ADD(Func_0200155c, 0x480);
 }
 

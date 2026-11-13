@@ -249,7 +249,7 @@ void Func_020005e8(void) {
   owner = Actor_GetById(gMainRoutineWork.currentOwner);
   if (owner != NULL)
     Actor_SetDestination(8, *(s16 *)((u8 *)owner + 10),
-                                     *(s16 *)((u8 *)owner + 18));
+                         *(s16 *)((u8 *)owner + 18));
   Event_Wait(20);
   Event_SetAfterBattleDestination((s32)&SceneId_SuhallaGate3, 99);
   Party_SetFields1f2And1f4((s32)&SceneId_VenusLighthouseEntrance, 98);
@@ -334,8 +334,7 @@ void SuhallaGate_AfterThievesBattle(void) {
   Actor_SetAnimation(9, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader)
-    Actor_SetDestination(9, ((s16 *)&leader->x)[1],
-                                     ((s16 *)&leader->z)[1]);
+    Actor_SetDestination(9, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(9);
   Actor_SetPosition(9, 0, 0);
   Event_Wait(10);
@@ -355,8 +354,7 @@ void SuhallaGate_PointToMeetingSpot(void) {
   Actor_SetAnimation(16, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader)
-    Actor_SetDestination(16, ((s16 *)&leader->x)[1],
-                                     ((s16 *)&leader->z)[1]);
+    Actor_SetDestination(16, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(16);
   Actor_SetPosition(16, 0, 0);
   Event_Wait(10);

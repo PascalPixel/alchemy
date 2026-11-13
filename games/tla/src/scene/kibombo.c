@@ -96,8 +96,9 @@ Actor_SetSpritePriority__kibombo(u32, s32) __asm__("Actor_SetSpritePriority");
  * games/tla/include/field/field.h:25: conflicting types for
  * `Actor_SetSpriteFlags'. */
 struct Actor;
-extern void Actor_SetSingleChildFlags__kibombo(
-    struct Actor *object, u32 flags) __asm__("Actor_SetSpriteFlags");
+extern void
+Actor_SetSingleChildFlags__kibombo(struct Actor *object,
+                                   u32 flags) __asm__("Actor_SetSpriteFlags");
 #define Actor_SetSpriteFlags Actor_SetSingleChildFlags__kibombo
 /* VIEW(kibombo): routine Actor_SetBlendMode as void
  * Actor_SetBlendMode(struct Actor *object, u32 value); kibombo.h has void
@@ -119,8 +120,9 @@ Animation_SetStateFlags__kibombo(struct Actor *object,
  * games/tla/include/field/field.h:93: conflicting types for
  * `Actor_SetSpriteColor'. */
 struct Actor;
-extern void Actor_SetPartAttribute__kibombo(
-    struct Actor *object, s32 attribute) __asm__("Actor_SetSpriteColor");
+extern void
+Actor_SetPartAttribute__kibombo(struct Actor *object,
+                                s32 attribute) __asm__("Actor_SetSpriteColor");
 #define Actor_SetSpriteColor Actor_SetPartAttribute__kibombo
 #include "field.h"
 #undef Actor_SetSpriteColor
@@ -848,11 +850,12 @@ struct Actor;
 extern void Script_WaitForEventTimeout__s1318(struct Actor *actor) __asm__(
     "Actor_WaitForMove");
 #define Actor_WaitForMove Script_WaitForEventTimeout__s1318
-/* VIEW(s1318): routine FieldCamera_GetActor as struct Actor *FieldCamera_GetActor(void);
- * kibombo.h has struct KibomboObject *FieldCamera_GetActor(void); tried as the
- * definition's struct Actor *FieldCamera_GetActor(void), which the object already
- * declares, it does not compile in tla-ja: games/tla/include/field/event.h:124:
- * conflicting types for `FieldCamera_GetActor'. */
+/* VIEW(s1318): routine FieldCamera_GetActor as struct Actor
+ * *FieldCamera_GetActor(void); kibombo.h has struct KibomboObject
+ * *FieldCamera_GetActor(void); tried as the definition's struct Actor
+ * *FieldCamera_GetActor(void), which the object already declares, it does not
+ * compile in tla-ja: games/tla/include/field/event.h:124: conflicting types for
+ * `FieldCamera_GetActor'. */
 extern struct Actor *Func_080d4568__s1318(void) __asm__("FieldCamera_GetActor");
 #define FieldCamera_GetActor Func_080d4568__s1318
 #include "event_inline.h"

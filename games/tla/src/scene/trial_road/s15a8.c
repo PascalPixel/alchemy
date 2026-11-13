@@ -382,8 +382,8 @@ void Func_02001efc(s32 value) { gData_02007e24 = value; }
 
 extern s32 gData_02007e20;
 
-DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gData_02007e20, gData_02007e24,
-    gData_02007e28, 0x050000a4)
+DEFINE_PALETTE_CYCLE_STEP_AT(PaletteCycle_StepAt, gData_02007e20,
+                             gData_02007e24, gData_02007e28, 0x050000a4)
 
 // ---- games/tla/src/scene/trial_road/s1fc4.c ----
 #include "system.h"
@@ -969,8 +969,8 @@ s32 TrialRoad_MirrorAngle(s32 angle) {
 /// Places an actor at a pixel position and facing, mirrored when the leader
 /// took the right path.
 void TrialRoad_PlaceActor(s32 id, s32 x, s32 z, s32 angle) {
-  Actor_SetPositionAndFacing(
-      id, TrialRoad_MirrorX(x) << 16, z << 16, (u16)TrialRoad_MirrorAngle(angle));
+  Actor_SetPositionAndFacing(id, TrialRoad_MirrorX(x) << 16, z << 16,
+                             (u16)TrialRoad_MirrorAngle(angle));
 }
 
 void Func_02002db0(void) {}
@@ -1042,7 +1042,8 @@ void TrialRoad_ReachPeakFirst(void) {
   object->velocityY = 0x60000;
   object->speedLimit = 0x30000;
   object->acceleration = 0x20000;
-  Actor_SetMoveTarget(object, TrialRoad_MirrorCellX(37) << 16, object->y, 264 << 16);
+  Actor_SetMoveTarget(object, TrialRoad_MirrorCellX(37) << 16, object->y,
+                      264 << 16);
   FieldActor_WaitForMove(object);
   wait(6);
   Actor_MoveToObject(13, 8);
@@ -1770,10 +1771,13 @@ struct RideEntry *Func_02004224(s32 slot, s32 id, s32 timer, s32 low,
 /// other marks its cell, writes a shape for its height into the shape grid, and
 /// takes mode 0 when its first flag is set. Then the leader is lifted onto the
 /// ground if it stands below it.
-DEFINE_PILLARS_RESTORE_RAISED(Func_020042f0, Func_02005a18, MapGrid_GetTerrainKind, Func_02005958, Func_02005a20, Actor_SelectAnimation)
+DEFINE_PILLARS_RESTORE_RAISED(Func_020042f0, Func_02005a18,
+                              MapGrid_GetTerrainKind, Func_02005958,
+                              Func_02005a20, Actor_SelectAnimation)
 
-DEFINE_TRAPS_CHECK(Func_02004418, Import_FieldTryJumpForward, Func_02005a28, Actor_SelectAnimation,
-    Func_02004a94, Func_02004d6c, Func_02004bc8)
+DEFINE_TRAPS_CHECK(Func_02004418, Import_FieldTryJumpForward, Func_02005a28,
+                   Actor_SelectAnimation, Func_02004a94, Func_02004d6c,
+                   Func_02004bc8)
 
 void Func_020045ac(const void *data, s32 id) {
   const struct TrapEntry *entry = data;
@@ -1823,7 +1827,8 @@ void Actor_MoveToObject(s32 id, s32 owner);
 /// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
 /// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
 /// it copy actor 9's visual attributes.
-DEFINE_PILLARS_RESTORE(Func_020046a4, Func_0200468c, Func_02005a18, MapGrid_GetTerrainKind, Func_02005958, Func_02005a20)
+DEFINE_PILLARS_RESTORE(Func_020046a4, Func_0200468c, Func_02005a18,
+                       MapGrid_GetTerrainKind, Func_02005958, Func_02005a20)
 
 void Func_0200480c(struct Actor *object, struct Actor *target) {
   Actor_SetPositionAndResetMotion(object, target->x, target->y, target->z);
@@ -2054,7 +2059,8 @@ void Func_02004bc8(void) {
 
 #include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
 
-DEFINE_ACTOR_SET_CELL_SHAPE(Func_02004ce0, MapGrid_GetTerrainKind, Func_02005a20)
+DEFINE_ACTOR_SET_CELL_SHAPE(Func_02004ce0, MapGrid_GetTerrainKind,
+                            Func_02005a20)
 
 void Func_02004d6c(s32 a, s32 b) {
   Func_02004ce0(a, b, gMainRoutineWork.currentOwner);
@@ -2207,7 +2213,8 @@ void Func_02004ddc(void) {
     Actor_SelectAnimation(rival, ok);
   } else if (state->mode == 1) {
     if (state->resource != work->resource) {
-      Import_DecompressTaggedLz(Resource_GetTableEntry(state->resource), work->path);
+      Import_DecompressTaggedLz(Resource_GetTableEntry(state->resource),
+                                work->path);
       work->resource = state->resource;
     }
     x = work->path[state->point];

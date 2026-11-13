@@ -14,16 +14,16 @@ struct BattlePlan {
   /// actorId's.
   u8 actorId2;
   u8 targetIds[BATTLE_TARGET_CAPACITY];
-  s8 targetOffset0;     ///< not named by TLA code
+  s8 targetOffset0; ///< not named by TLA code
   s8 targetOffset[BATTLE_TARGET_CAPACITY];
   s8 targetAdjustment0; ///< not named by TLA code
   s8 targetMultiplier[BATTLE_TARGET_CAPACITY];
-  s8 targetModifier0;   ///< not named by TLA code
+  s8 targetModifier0; ///< not named by TLA code
   s8 targetCritical[BATTLE_TARGET_CAPACITY];
-  s8 targetResult0;     ///< not named by TLA code
+  s8 targetResult0; ///< not named by TLA code
   s8 targetHit[BATTLE_TARGET_CAPACITY];
-  u8 unk48[2];          ///< not named by TLA code
-  s16 command;          ///< enum BattleCommand
+  u8 unk48[2]; ///< not named by TLA code
+  s16 command; ///< enum BattleCommand
   s32 abilityId;
   s32 element; ///< enum Element
   s32 outcome;

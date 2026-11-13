@@ -356,4 +356,5 @@ void Actor_StopAtPushTarget(void);
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 DEFINE_PUSH_TARGET_PUSH(PushTarget_Push, gPushFootprints, Func_02003790,
-                        Actor_StopAtPushTarget, Import_ActorSelectAnimation, gPushLeaderSteps)
+                        Actor_StopAtPushTarget, Import_ActorSelectAnimation,
+                        gPushLeaderSteps)

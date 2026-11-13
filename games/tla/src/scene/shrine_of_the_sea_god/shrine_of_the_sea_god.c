@@ -62,8 +62,7 @@ extern void Actor_SetSpritePriority__shrine_of_the_sea_god(u32, s32) __asm__(
  * types for `Actor_SetSpriteFlags'. */
 extern void Actor_SetSingleChildFlags__shrine_of_the_sea_god(
     struct Actor *object, u32 flags) __asm__("Actor_SetSpriteFlags");
-#define Actor_SetSpriteFlags                                              \
-  Actor_SetSingleChildFlags__shrine_of_the_sea_god
+#define Actor_SetSpriteFlags Actor_SetSingleChildFlags__shrine_of_the_sea_god
 #include "field.h"
 #undef Actor_SetSpriteFlags
 #undef Actor_SetSpritePriority

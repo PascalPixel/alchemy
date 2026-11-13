@@ -151,7 +151,8 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 void Teleporters_Find(s32 kind, s32 x, s32 z, s32 a, s32 b);
 
 /// The scene's set-up: screen effect 0x204, actor 64's action variant 3 and
-/// actor 8 held still, then Teleporters_Find and Teleporter_PlaceArrival by the entrance.
+/// actor 8 held still, then Teleporters_Find and Teleporter_PlaceArrival by the
+/// entrance.
 s32 Scene_Initialize(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 
@@ -197,10 +198,12 @@ extern s32 gPaletteCycleFrame;
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
 DEFINE_PALETTE_CYCLE_STEP(PaletteCycle_Step, gPaletteCycleFrame, gData_020025f4,
-    gData_0200261c)
+                          gData_0200261c)
 
-DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes, gData_020025f4, gData_0200261c,
-    gData_0200263c, PaletteCycle_Step, gData_02002640)
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(JupiterLighthouse_LoadPalettes,
+                                        gData_020025f4, gData_0200261c,
+                                        gData_0200263c, PaletteCycle_Step,
+                                        gData_02002640)
 
 DEFINE_ACTOR_RAISE_FROM_CELL(Actor_RaiseFromCell, Func_02001bd8, Func_02001c98)
 
@@ -217,4 +220,4 @@ s32 Func_02001c88(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, Func_02001c88, Position_FlatDistance,
-    gWhirlwindEndScript, gData_02002618)
+                        gWhirlwindEndScript, gData_02002618)

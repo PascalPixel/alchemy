@@ -14,11 +14,11 @@ struct ObjectAnimationState {
 /// update hook.
 struct Actor {
   const s32 *script; ///< the object script it runs; null when it is free
-  s16 step;    ///< the script cursor, in words
-  u16 facing;  ///< 1/65536 turns
-  s32 x;       ///< 16.16 fixed-point pixels
-  s32 y;       ///< 16.16 fixed-point pixels
-  s32 z;       ///< 16.16 fixed-point pixels
+  s16 step;          ///< the script cursor, in words
+  u16 facing;        ///< 1/65536 turns
+  s32 x;             ///< 16.16 fixed-point pixels
+  s32 y;             ///< 16.16 fixed-point pixels
+  s32 z;             ///< 16.16 fixed-point pixels
   s32 terrainHeight; ///< 16.16 fixed-point pixels
   s32 scaleX;        ///< 16.16 fixed point, 0x10000 full size
   s32 scaleY;        ///< 16.16 fixed point, 0x10000 full size
@@ -54,7 +54,7 @@ struct Actor {
   /// 1 one sprite, 2 a group of sprites, in the low four bits, which is all
   /// the field and the scenes test.
   u8 animationKind;
-  u8 motionFlags;   ///< bit 1: falls by its gravity and bounces
+  u8 motionFlags; ///< bit 1: falls by its gravity and bounces
   /// The axis watched for arrival at the target; zero once it arrives, and
   /// cleared with the target.
   u8 unk56;
@@ -91,8 +91,7 @@ typedef char Actor_size[sizeof(struct Actor) == 0x80 ? 1 : -1];
 typedef char Actor_collision_flags_offset
     [(u32)&((struct Actor *)0)->collisionFlags == 0x59 ? 1 : -1];
 
-void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x,
-                                      s32 y, s32 z);
+void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
 void Actor_MoveHalfwayTowardTarget(struct Actor *object);
 void Actor_MoveHalfwayTowardTargetCopy(struct Actor *object);
 

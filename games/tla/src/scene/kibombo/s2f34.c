@@ -307,11 +307,12 @@ struct Actor;
 extern void Script_WaitForEventTimeout__s3308(struct Actor *actor) __asm__(
     "Actor_WaitForMove");
 #define Actor_WaitForMove Script_WaitForEventTimeout__s3308
-/* VIEW(s3308): routine FieldCamera_GetActor as struct Actor *FieldCamera_GetActor(void);
- * kibombo.h has struct KibomboObject *FieldCamera_GetActor(void); tried as the
- * definition's struct Actor *FieldCamera_GetActor(void), which the object already
- * declares, it does not compile in tla-ja: games/tla/include/field/event.h:124:
- * conflicting types for `FieldCamera_GetActor'. */
+/* VIEW(s3308): routine FieldCamera_GetActor as struct Actor
+ * *FieldCamera_GetActor(void); kibombo.h has struct KibomboObject
+ * *FieldCamera_GetActor(void); tried as the definition's struct Actor
+ * *FieldCamera_GetActor(void), which the object already declares, it does not
+ * compile in tla-ja: games/tla/include/field/event.h:124: conflicting types for
+ * `FieldCamera_GetActor'. */
 struct Actor;
 extern struct Actor *Func_080d4568__s3308(void) __asm__("FieldCamera_GetActor");
 #define FieldCamera_GetActor Func_080d4568__s3308
@@ -1426,8 +1427,9 @@ void Func_02005114(void) {
  * games/tla/include/field/field.h:25: conflicting types for
  * `Actor_SetSpriteFlags'. */
 struct Actor;
-extern void Actor_SetSingleChildFlags__s516c(
-    struct Actor *object, u32 flags) __asm__("Actor_SetSpriteFlags");
+extern void
+Actor_SetSingleChildFlags__s516c(struct Actor *object,
+                                 u32 flags) __asm__("Actor_SetSpriteFlags");
 #define Actor_SetSpriteFlags Actor_SetSingleChildFlags__s516c
 /* VIEW(s516c): routine Actor_SetBlendMode as void
  * Actor_SetBlendMode(struct Actor *object, u32 value); kibombo.h has void

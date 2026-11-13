@@ -20,8 +20,9 @@ extern const s32 *gData_02004c50[];
  * Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags), it does not
  * compile in tla-ja: games/tla/src/scene/shaman_village/shaman_village.h:73:
  * conflicting types for `Actor_SetSpriteFlags'. */
-extern void Actor_SetSingleChildFlags__s00b8(
-    struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSpriteFlags");
+extern void
+Actor_SetSingleChildFlags__s00b8(struct FieldEffect *effect,
+                                 s32 flags) __asm__("Actor_SetSpriteFlags");
 
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -41,7 +42,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   sprite = effect->sprite;
   Import_ActorSetMode((struct Actor *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Import_ActorStartScript((struct Actor *)effect,
-                        gData_02004c50[flags & EFFECT_SCRIPT_MASK]);
+                          gData_02004c50[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags__s00b8(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
@@ -262,9 +263,8 @@ void Effect_CircleAndBlink(struct Actor *object) {
   radius += 0xc0000;
   object->x = WORD_AT(object, 68) +
               Iwram_MulQ16(Trig_Cos((step & 255) << 11), radius) * 2;
-  object->z =
-      WORD_AT(object, 76) +
-      Iwram_MulQ16(Trig_Sin((WORD_AT(object, 48) & 255) << 11), radius);
+  object->z = WORD_AT(object, 76) +
+              Iwram_MulQ16(Trig_Sin((WORD_AT(object, 48) & 255) << 11), radius);
   object->y += WORD_AT(object, 72);
   WORD_AT(object, 48)++;
   FieldActor_SetSpriteColor(object, ((gFrameCount & 2) >> 1) * 9);
@@ -319,8 +319,8 @@ void ShamanVillage_BlowAwaySand(void) {
 
   buffer = Heap_Alloc(0x680);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
-  Import_DecompressTaggedLz(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
-                buffer);
+  Import_DecompressTaggedLz(
+      Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles), buffer);
   Dma_Set(buffer, (void *)0x0600e800, 0x840000d0, REG_DMA3);
   Dma_Set(buffer + 0x1a0, (void *)0x0600ec00, 0x840000d0, REG_DMA3);
   Heap_Release(buffer);
@@ -335,7 +335,8 @@ void ShamanVillage_BlowAwaySand(void) {
   REG_BG0CNT |= 1;
   Dma_Fill16(16, (void *)0x06002000, 0x500);
   buffer = Heap_Alloc(576);
-  Import_DecompressTaggedLz(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
+  Import_DecompressTaggedLz(
+      Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
   i = 0;
   cell = buffer;
 mask:
@@ -525,7 +526,7 @@ fade:
   Window_LoadGraphics();
   DebugText_Clear();
   FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                gMainRoutineWork.paletteGlow[1]);
+                         gMainRoutineWork.paletteGlow[1]);
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags &= ~32;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   Actor_GetById(14)->priorityFlags |= 1;

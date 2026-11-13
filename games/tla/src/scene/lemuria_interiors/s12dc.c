@@ -545,24 +545,21 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_SetAnimation(12, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_SetDestination(12, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestination(12, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(12);
   Actor_SetPosition(12, 0, 0);
   Actor_SetSpeed(5, 0x13333, 0x9999);
   Actor_SetAnimation(5, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_SetDestination(5, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestination(5, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
   Actor_SetSpeed(6, 0x13333, 0x9999);
   Actor_SetAnimation(6, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_SetDestination(6, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestination(6, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(6);
   Actor_SetPosition(6, 0, 0);
   Event_End();
@@ -646,28 +643,46 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_STEP, 31, 0x969, EVENT(LemuriaInteriors_AskWherePiersIs)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgLemuriaInteriors01)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgLemuriaInteriors02)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgLemuriaInteriors03)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgLemuriaInteriors04)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(LemuriaInteriors_TalkToPiersUncle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, EVENT(LemuriaInteriors_MindReadPiersUncle)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(LemuriaInteriors_AskFromBeyondSeaOfTime)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaInteriors03)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaInteriors04)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS,
+     EVENT(LemuriaInteriors_TalkToPiersUncle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+     EVENT(LemuriaInteriors_MindReadPiersUncle)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS,
+     EVENT(LemuriaInteriors_AskFromBeyondSeaOfTime)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgLemuriaInteriors14)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgLemuriaInteriors15)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgLemuriaInteriors16)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgLemuriaInteriors17)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(LemuriaInteriors_AskAboutDraughts)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1037, 0x967, EVENT(LemuriaInteriors_ScoffAtMindRead)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1038, 0x967, EVENT(LemuriaInteriors_ScoffAtMindRead)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1039, 0x967, EVENT(LemuriaInteriors_ScoffAtMindRead)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1040, 0x967, EVENT(LemuriaInteriors_ScoffAtMindRead)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1041, 0x967, EVENT(LemuriaInteriors_ScoffAtMindRead)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1043, 0x967, EVENT(LemuriaInteriors_ScoffAtMindRead)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgLemuriaInteriors20)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgLemuriaInteriors21)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgLemuriaInteriors22)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgLemuriaInteriors23)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgLemuriaInteriors24)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgLemuriaInteriors25)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS,
+     EVENT(LemuriaInteriors_AskAboutDraughts)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1037, 0x967,
+     EVENT(LemuriaInteriors_ScoffAtMindRead)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1038, 0x967,
+     EVENT(LemuriaInteriors_ScoffAtMindRead)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1039, 0x967,
+     EVENT(LemuriaInteriors_ScoffAtMindRead)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1040, 0x967,
+     EVENT(LemuriaInteriors_ScoffAtMindRead)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1041, 0x967,
+     EVENT(LemuriaInteriors_ScoffAtMindRead)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1043, 0x967,
+     EVENT(LemuriaInteriors_ScoffAtMindRead)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaInteriors20)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaInteriors21)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaInteriors22)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaInteriors23)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaInteriors24)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaInteriors25)},
     {243, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLemuriaInteriors27))},
     {243, 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLemuriaInteriors28))},
     {243, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLemuriaInteriors29))},

@@ -491,7 +491,8 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Call3((void (*)())Actor_SetSpeedParameters, 13, 0x10000, 0x8000);
   Call2((void (*)())Actor_SetMovementTypeById, 14, (s32)gData_0200468c);
   Call2((void (*)())Camera_SetSpeedParameters, 0xcccc, 0x1999);
-  Call4((void (*)())FieldCamera_MoveWithinMapBounds, 0xf00000, -1, 0x1040000, 1);
+  Call4((void (*)())FieldCamera_MoveWithinMapBounds, 0xf00000, -1, 0x1040000,
+        1);
   FieldCamera_WaitForArrival();
   Call1((void (*)())Actor_Stop, 8);
   Call1((void (*)())Actor_Stop, 9);
@@ -732,10 +733,8 @@ void Func_02001cc4(struct Actor *object, s32 dx, s32 dz) {
         do {
         } while (0);
         if (gInput.held != 0) {
-          FIELD32(dust, 68) =
-              Trig_Cos(((Random16Far() << 3) >> 16) << 14) + dx;
-          FIELD32(dust, 76) =
-              Trig_Sin(((Random16Far() << 3) >> 16) << 14) + dz;
+          FIELD32(dust, 68) = Trig_Cos(((Random16Far() << 3) >> 16) << 14) + dx;
+          FIELD32(dust, 76) = Trig_Sin(((Random16Far() << 3) >> 16) << 14) + dz;
           if (gInput.held & 2) {
             FIELD32(dust, 68) += dx;
             FIELD32(dust, 76) += dz;
@@ -810,8 +809,7 @@ void Func_02001e58(void) {
     if (gMainRoutineWork.renderMode == 5)
       speed = 0;
     else
-      Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                1);
+      Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
   }
   if (ahead->collisionCode == 255)
     speed = 0;
@@ -951,7 +949,8 @@ void Func_02002208(struct Actor *object) {
 
   switch (*state) {
   case 0:
-    Call4((void (*)())Actor_SetMoveTarget, (s32)object, 140 << 17, 0, 200 << 16);
+    Call4((void (*)())Actor_SetMoveTarget, (s32)object, 140 << 17, 0,
+          200 << 16);
     *state = 1;
     break;
   case 1:
@@ -959,7 +958,8 @@ void Func_02002208(struct Actor *object) {
       *state = 2;
     break;
   case 2:
-    Call4((void (*)())Actor_SetMoveTarget, (s32)object, 140 << 17, 0, 132 << 17);
+    Call4((void (*)())Actor_SetMoveTarget, (s32)object, 140 << 17, 0,
+          132 << 17);
     *state = 3;
     break;
   case 3:
@@ -967,7 +967,8 @@ void Func_02002208(struct Actor *object) {
       *state = 4;
     break;
   case 4:
-    Call4((void (*)())Actor_SetMoveTarget, (s32)object, 184 << 16, 0, 132 << 17);
+    Call4((void (*)())Actor_SetMoveTarget, (s32)object, 184 << 16, 0,
+          132 << 17);
     *state = 5;
     break;
   case 5:
@@ -975,7 +976,8 @@ void Func_02002208(struct Actor *object) {
       *state = 6;
     break;
   case 6:
-    Call4((void (*)())Actor_SetMoveTarget, (s32)object, 184 << 16, 0, 248 << 16);
+    Call4((void (*)())Actor_SetMoveTarget, (s32)object, 184 << 16, 0,
+          248 << 16);
     *state = 7;
     break;
   case 7:
@@ -989,7 +991,8 @@ void Func_02002208(struct Actor *object) {
     }
     break;
   case 8:
-    Call4((void (*)())Actor_SetMoveTarget, (s32)object, 184 << 16, 0, 200 << 16);
+    Call4((void (*)())Actor_SetMoveTarget, (s32)object, 184 << 16, 0,
+          200 << 16);
     *state = 9;
     break;
   case 9:
@@ -1032,7 +1035,7 @@ void Func_02002318(void) {
 /// Sends the object toward a point and moves to the next state.
 #define WALK(state_, x, z)                                                     \
   case state_:                                                                 \
-    Call4((void (*)())Actor_SetMoveTarget, (s32)object, x, 0, z);                    \
+    Call4((void (*)())Actor_SetMoveTarget, (s32)object, x, 0, z);              \
     *state = state_ + 1;                                                       \
     break;
 
@@ -1085,7 +1088,8 @@ void Func_020023cc(struct Actor *object) {
     ARRIVE(19, 0)
   case 32:
     Func_020021d4();
-    Call4((void (*)())Actor_SetMoveTarget, (s32)object, 148 << 17, 0, 186 << 18);
+    Call4((void (*)())Actor_SetMoveTarget, (s32)object, 148 << 17, 0,
+          186 << 18);
     *state = 33;
     break;
     ARRIVE(33, 34)
@@ -1136,7 +1140,7 @@ void Func_020026a0(void) {
 #define WALK_ON(state_, x, z)                                                  \
   case state_:                                                                 \
     Func_020021d4();                                                           \
-    Call4((void (*)())Actor_SetMoveTarget, (s32)object, x, 0, z);                    \
+    Call4((void (*)())Actor_SetMoveTarget, (s32)object, x, 0, z);              \
     *state = state_ + 1;                                                       \
     break;
 
@@ -1710,7 +1714,8 @@ DEFINE_STATUE_SINK(Statue_Sink, Func_02003910)
 
 #include "iwram_call.h"
 
-DEFINE_ACTOR_SET_CELL_OPEN(Func_02003910, Func_020041e0, Import_ActorSelectAnimation)
+DEFINE_ACTOR_SET_CELL_OPEN(Func_02003910, Func_020041e0,
+                           Import_ActorSelectAnimation)
 
 /// The whole-pixel half of a 16.16 coordinate.
 /* VIEW(s3910): macro PIXELS as PIXELS__s3910; another part or header has

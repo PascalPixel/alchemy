@@ -170,7 +170,9 @@ void LemuriaDock_EnterDoor(const struct WarpTarget *warp, s32 door, s32 mode) {
   Event_End();
 }
 
-void LemuriaDock_EnterHouse(s32 door) { LemuriaDock_EnterDoor(&gLemuriaDock_HouseDoor, door, 0); }
+void LemuriaDock_EnterHouse(s32 door) {
+  LemuriaDock_EnterDoor(&gLemuriaDock_HouseDoor, door, 0);
+}
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
@@ -267,6 +269,7 @@ struct Trigger gSceneEvents[] = {
     {0xc602, 3, CONDITION_ALWAYS, EVENT(LemuriaDock_EnterHouse)},
     {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(LemuriaDock_MovePiers)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(LemuriaDock_AskSettingOff)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1032, CONDITION_ALWAYS, EVENT(LemuriaDock_AskSettingOff)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1032, CONDITION_ALWAYS,
+     EVENT(LemuriaDock_AskSettingOff)},
     {TRIGGERS_END},
 };

@@ -126,8 +126,7 @@ void Func_020001d4(void) { Import_EventSetExitRequest(5); }
     Actor_SetPosition(n5, PIXELS(n6), PIXELS(n7));                             \
     if (leader->x >> 20 == n8 && leader->z >> 20 == n9) {                      \
       LEADER_HOP();                                                            \
-      Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, 16,    \
-                                         0);                                   \
+      Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, 16, 0);    \
       leader->velocityY = PIXELS(6);                                           \
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);                    \
       Event_End();                                                             \

@@ -670,8 +670,8 @@ void Func_020027d4(void) {
 #define DEFINE_FUNC_020027F8(name, n1, n2, n3)                                 \
   void name(void) {                                                            \
     Func_0200279c();                                                           \
-    FieldCamera_MoveWithinMapBounds(n1 << 16, 16 << 16, n2 << 16, 1);               \
-    Actor_WalkToAndWaitById(14, n1, n2);                                     \
+    FieldCamera_MoveWithinMapBounds(n1 << 16, 16 << 16, n2 << 16, 1);          \
+    Actor_WalkToAndWaitById(14, n1, n2);                                       \
     Actor_GetById(14)->state = n3;                                             \
     Func_020027d4();                                                           \
   }
@@ -697,13 +697,13 @@ DEFINE_FUNC_020027F8(Func_020027f8, 392, 216, 1)
       GameFlag_SetBit(0x206);                                                  \
     } else {                                                                   \
       Event_Wait(5);                                                           \
-      FieldCamera_MoveWithinMapBounds(n4 << 16, 16 << 16, 216 << 16, 1);            \
+      FieldCamera_MoveWithinMapBounds(n4 << 16, 16 << 16, 216 << 16, 1);       \
       Sound_Play(153);                                                         \
-      Actor_SetSpriteFlags(Actor_GetById(14), 0);                         \
+      Actor_SetSpriteFlags(Actor_GetById(14), 0);                              \
       ShrineOfTheSeaGod_ObjSpeed(14, 0x4cccc, 0x26666);                        \
       block->speed = 0x80000;                                                  \
-      Actor_MoveToAndWaitById(14, n5, 216);                                 \
-      Actor_SetSpriteFlags(Actor_GetById(14), 1);                         \
+      Actor_MoveToAndWaitById(14, n5, 216);                                    \
+      Actor_SetSpriteFlags(Actor_GetById(14), 1);                              \
       Event_Wait(10);                                                          \
       ShrineOfTheSeaGod_ObjSpeed(14, 0x19999, 0xcccc);                         \
       ShrineOfTheSeaGod_ObjWalk(14, n4, 216);                                  \
@@ -717,10 +717,10 @@ DEFINE_FUNC_02002830(Func_02002830, 360, 0x8000, 4, 296, 328, 2)
 #define DEFINE_FUNC_0200291C(name, n1, n2, n3, n4)                             \
   void name(void) {                                                            \
     Func_0200279c();                                                           \
-    FieldCamera_MoveWithinMapBounds(n1 << 16, 16 << 16, n2 << 16, 1);               \
+    FieldCamera_MoveWithinMapBounds(n1 << 16, 16 << 16, n2 << 16, 1);          \
     ShrineOfTheSeaGod_ObjWalk(14, n3, 248);                                    \
     ShrineOfTheSeaGod_ObjWalk(14, n1, 248);                                    \
-    Actor_WalkToAndWaitById(14, n1, n2);                                     \
+    Actor_WalkToAndWaitById(14, n1, n2);                                       \
     Actor_GetById(14)->state = n4;                                             \
     Func_020027d4();                                                           \
   }
@@ -753,13 +753,13 @@ DEFINE_FUNC_020027F8(Func_02002b18, 392, 296, 0)
       *state = n2;                                                             \
       GameFlag_SetBit(0x206);                                                  \
     } else {                                                                   \
-      FieldCamera_MoveWithinMapBounds(n3 << 16, 16 << 16, 216 << 16, 1);            \
+      FieldCamera_MoveWithinMapBounds(n3 << 16, 16 << 16, 216 << 16, 1);       \
       Sound_Play(153);                                                         \
-      Actor_SetSpriteFlags(Actor_GetById(14), 0);                         \
+      Actor_SetSpriteFlags(Actor_GetById(14), 0);                              \
       ShrineOfTheSeaGod_ObjSpeed(14, 0x4cccc, 0x26666);                        \
       block->speed = 0x80000;                                                  \
-      Actor_MoveToAndWaitById(14, n4, 216);                                 \
-      Actor_SetSpriteFlags(Actor_GetById(14), 1);                         \
+      Actor_MoveToAndWaitById(14, n4, 216);                                    \
+      Actor_SetSpriteFlags(Actor_GetById(14), 1);                              \
       Event_Wait(10);                                                          \
       ShrineOfTheSeaGod_ObjSpeed(14, 0x19999, 0xcccc);                         \
       ShrineOfTheSeaGod_ObjWalk(14, n3, 216);                                  \

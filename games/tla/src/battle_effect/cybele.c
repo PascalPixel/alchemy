@@ -2840,8 +2840,7 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
         s32 vy;
         s32 vz;
 
-        target =
-            BattleObject_GetFar(effect->actors[i % effect->count])->object;
+        target = BattleObject_GetFar(effect->actors[i % effect->count])->object;
         vx = ember->velocityX += (target->x - ember->x) >> 9;
         vy = ember->velocityY += (target->y - ember->y) >> 9;
         vz = ember->velocityZ += (target->z - ember->z) >> 9;
@@ -3548,7 +3547,7 @@ void BattleEffect_ArmBg1HBlankDma(void) {
 
 #include "field_event.h"
 
-#define Actor_SetAnimationSpeedFar                                               \
+#define Actor_SetAnimationSpeedFar                                             \
   ((s32 (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
 DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode0,

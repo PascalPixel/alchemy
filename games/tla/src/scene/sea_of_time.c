@@ -1034,8 +1034,7 @@ void Func_02001650(void) {
 
 void Func_020018a8(s32 x, s32 z, s32 actor) {
   Actor_GetById(actor)->collisionFlags |= 16;
-  Actor_SetPosition(actor, (x << 19) + 0x80000,
-                                         (z << 19) + 0x80000);
+  Actor_SetPosition(actor, (x << 19) + 0x80000, (z << 19) + 0x80000);
   x >>= 1;
   z >>= 1;
   Func_02000388(1, x, z, 0xff00);

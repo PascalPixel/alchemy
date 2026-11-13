@@ -199,7 +199,7 @@ void Func_02000634(s32 a, s32 b) { Statue_Sink(gData_0200478e, a, b); }
 
 #define DEFINE_FUNC_02000648(name, data1)                                      \
   void name(s32 a, s32 b) {                                                    \
-    Statue_Sink(data1, a, b);                                                \
+    Statue_Sink(data1, a, b);                                                  \
     if (a == 1) {                                                              \
       if (gData_02004808 == 0)                                                 \
         gData_02004808 = 210;                                                  \

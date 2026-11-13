@@ -511,12 +511,12 @@ void TaopoSwamp_DouseVentSpot(s32 a, s32 id) {
 }
 
 /// Ice on a spot: the two copies differ only in their cells.
-#define DEFINE_TAOPO_SWAMP_FREEZE_SPOT(name, n1, n2, n3)                                 \
+#define DEFINE_TAOPO_SWAMP_FREEZE_SPOT(name, n1, n2, n3)                       \
   void name(s32 a, s32 id) {                                                   \
     Func_02002840_(n1, n2, 1, 1, n3, n2);                                      \
     FieldActor_SetSpritePriority(id, 2);                                       \
     Actor_Get(id)->priorityFlags &= 0xfd;                                      \
-    Vents_SetId(0, id);                                                      \
+    Vents_SetId(0, id);                                                        \
     Event_SetFlag(0x221);                                                      \
     Event_ClearFlag(0x222);                                                    \
   }
@@ -1158,7 +1158,7 @@ s32 Func_0200166c(struct Actor *object) {
         object->terrainHeight = 0xffc00000;                                    \
         object->gravity = 0x7333;                                              \
         Actor_StartScript(object, gData_02002a6c);                             \
-        Actor_SetSpriteFlags(object, 0);                                  \
+        Actor_SetSpriteFlags(object, 0);                                       \
       }                                                                        \
     }                                                                          \
   }
@@ -1223,7 +1223,8 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(0xa6e))
       Call3(Actor_SetHorizontalPositionWithTerrain, 10, PIXELS(472),
             PIXELS(248));
-    TaopoSwamp_StartVents(gData_02002a78, gData_02002ab6, TaopoSwamp_CycleDjinniVents);
+    TaopoSwamp_StartVents(gData_02002a78, gData_02002ab6,
+                          TaopoSwamp_CycleDjinniVents);
   } else if (scene == (s32)&SceneId_Ov678Room7) {
     Func_02002960(0);
     Task_Add(Func_02001684, 0x480);
@@ -1424,7 +1425,8 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(0xa6e))
       Call3(Actor_SetHorizontalPositionWithTerrain, 10, PIXELS(472),
             PIXELS(248));
-    TaopoSwamp_StartVents(gData_02002a78, gData_02002ab6, TaopoSwamp_CycleDjinniVents);
+    TaopoSwamp_StartVents(gData_02002a78, gData_02002ab6,
+                          TaopoSwamp_CycleDjinniVents);
   } else if (scene == (s32)&SceneId_Ov678Room6) {
     *effect = 516;
   } else if (scene == (s32)&SceneId_Ov678Room7) {
@@ -1676,8 +1678,11 @@ void TaopoSwamp_ResetMud(void) {
     Iwram_ClearWordsEntry(state, 12);
 }
 
-// volatile: the VBlank handler sets the held keys, as gKeysHeld in The Broken Seal.
-/* VIEW(taopo_swamp): variable gInput as volatile u32 gInput; input.h has struct InputState gInput; tried as the 3 declarations' extern u32 gInput, TaopoSwamp_SinkInMud moves: 5 of 159 instructions in tla-ja. */
+// volatile: the VBlank handler sets the held keys, as gKeysHeld in The Broken
+// Seal.
+/* VIEW(taopo_swamp): variable gInput as volatile u32 gInput; input.h has struct
+ * InputState gInput; tried as the 3 declarations' extern u32 gInput,
+ * TaopoSwamp_SinkInMud moves: 5 of 159 instructions in tla-ja. */
 extern volatile u32 gInput__taopo_swamp __asm__("gInput");
 
 /// Each step on the mud sinks the leader deeper; sunk to the top, they are
@@ -1749,8 +1754,8 @@ void TaopoSwamp_RiseOnBubble(void) {
     sprite = object->sprite;
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    FieldActor_SetMoveTarget(object, (object->x & 0xfff00000) + 0x80000, object->y,
-                   (object->z & 0xfff00000) + 0x80000);
+    FieldActor_SetMoveTarget(object, (object->x & 0xfff00000) + 0x80000,
+                             object->y, (object->z & 0xfff00000) + 0x80000);
     FieldActor_WaitForMove(object);
     while (sprite->level != 0) {
       sprite->level--;
@@ -1796,7 +1801,8 @@ void TaopoSwamp_SaveFirmGround(void) {
 #define VENT_BOUNCE Func_02002400
 #include "../field/object/vent_bounce.c"
 
-DEFINE_ACTOR_START_SCRIPTED(Actor_StartScripted, Actor_SelectAnimation, gData_02002af4)
+DEFINE_ACTOR_START_SCRIPTED(Actor_StartScripted, Actor_SelectAnimation,
+                            gData_02002af4)
 
 void Vent_Puff(s32 *position, s32 base) {
   struct Actor *object =
@@ -1804,8 +1810,7 @@ void Vent_Puff(s32 *position, s32 base) {
   s32 angle;
 
   if (object != 0) {
-    object->bounce =
-        Trig_Cos(((u32)(Random16Far() * 0x3000) >> 16) + 0x3000);
+    object->bounce = Trig_Cos(((u32)(Random16Far() * 0x3000) >> 16) + 0x3000);
     object->gravity = (u16)Random16Far();
     object->unk4c = (u16)(Random16Far() << 1) + base;
     /* FAKEMATCH(temporary): an s32 local keeps the zero extension and the

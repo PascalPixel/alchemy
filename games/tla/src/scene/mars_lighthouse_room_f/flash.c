@@ -65,8 +65,15 @@ DEFINE_ACTOR_BLINK(Func_02002954, 10, 4, 0)
 #include "vector3.h"
 #include "fixed_math.h"
 
-/* VIEW(flash): routine MapGrid_CheckCollision as s32 MapGrid_CheckCollision(struct Actor *actor); module/scene/mars_lighthouse_room_f.h has s32 MapGrid_CheckCollision(struct Actor *object, s32 *position); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/flash.c:132: too few arguments to function `MapGrid_CheckCollision'. */
-extern s32 Func_020054f8__flash(struct Actor *actor) __asm__("MapGrid_CheckCollision");
+/* VIEW(flash): routine MapGrid_CheckCollision as s32
+ * MapGrid_CheckCollision(struct Actor *actor);
+ * module/scene/mars_lighthouse_room_f.h has s32 MapGrid_CheckCollision(struct
+ * Actor *object, s32 *position); tried as the rest of the object declares it,
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_room_f/flash.c:132: too few arguments to
+ * function `MapGrid_CheckCollision'. */
+extern s32
+Func_020054f8__flash(struct Actor *actor) __asm__("MapGrid_CheckCollision");
 
 #if TLA_PATCH_1
 void Func_0200297c(void) {
@@ -162,11 +169,12 @@ s32 Func_0200297c(void) {
         other = Ram_HeapSlots->scriptObjects;
         flags = &other->collisionFlags;
         for (i = 0; i <= 63; i++, flags += 128, other++) {
-          /* FAKEMATCH(wrapper): Import_FieldCheckSpheresOverlap forwarded through Value4; as a
-           * direct call, 110 of 236 instructions differ in tla-en. */
+          /* FAKEMATCH(wrapper): Import_FieldCheckSpheresOverlap forwarded
+           * through Value4; as a direct call, 110 of 236 instructions differ in
+           * tla-en. */
           if (other->script != 0 && (*flags & 1) && other != actor &&
-              Value4((s32 (*)())Import_FieldCheckSpheresOverlap, (s32)&other->x, radius,
-                     (s32)&position, other->radius - 2) >= 0) {
+              Value4((s32 (*)())Import_FieldCheckSpheresOverlap, (s32)&other->x,
+                     radius, (s32)&position, other->radius - 2) >= 0) {
             System_Wait(1);
             goto done;
           }
@@ -290,7 +298,8 @@ s32 MarsLighthouseRoomF_SlideOnIce(void) {
   ride->active = 0;
 }
 
-DEFINE_RIDE_IF_ACTIVE(MarsLighthouseRoomF_ContinueSlide, MarsLighthouseRoomF_SlideOnIce)
+DEFINE_RIDE_IF_ACTIVE(MarsLighthouseRoomF_ContinueSlide,
+                      MarsLighthouseRoomF_SlideOnIce)
 
 s32 Func_02002cfc(void) {
   return ((struct RideWork *)(gInventorySnapshot + 0x188))->active;
@@ -449,5 +458,5 @@ void Func_02002e8c(s32 x, s32 y, s32 z, s32 speed);
 extern u8 gInventorySnapshot[];
 
 DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_02002f80, Work020023c4__s2f80, Func_020054d8,
-    Func_02002e8c, Func_02002d08)
+                              Func_02002e8c, Func_02002d08)
 #undef ABS

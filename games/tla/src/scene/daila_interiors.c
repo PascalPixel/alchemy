@@ -46,8 +46,8 @@ static inline void Daila_Jump(s32 actor, s32 height, s32 frames) {
   s32 a = actor;
 
   /* FAKEMATCH(barrier): an empty asm over the three copies finishes height and
-   * frames before the actor; as Actor_ShowEmoteById(actor, height, frames), the actor
-   * is copied two instructions early and, in Func_020000ac, 2 of 62
+   * frames before the actor; as Actor_ShowEmoteById(actor, height, frames), the
+   * actor is copied two instructions early and, in Func_020000ac, 2 of 62
    * instructions differ in tla-en. */
   __asm__("" : "+l"(h), "+l"(f), "+l"(a));
   Actor_ShowEmoteById(a, h, f);
@@ -418,8 +418,7 @@ struct DailaActor__item {
  * no member named `unk48'. */
 extern struct DailaActor__item *
 Actor_GetById__item(s32 id) __asm__("Actor_GetById");
-void ItemDisplay_ShowPicture(struct DailaActor__item *object,
-                                         s32 mode);
+void ItemDisplay_ShowPicture(struct DailaActor__item *object, s32 mode);
 void Sound_Play(s32 cue);
 void Import_ActorStartIdle(struct DailaActor__item *object);
 
@@ -574,9 +573,9 @@ Actor_GetById__arrival(s32 id) __asm__("Actor_GetById");
  * *effect, s32 flags), it does not compile in tla-ja:
  * games/tla/src/scene/daila_interiors.c:506: conflicting types for
  * `Actor_SetSpriteFlags'. */
-extern void Actor_SetSingleChildFlags__arrival(
-    struct DailaStartActor *object,
-    s32 value) __asm__("Actor_SetSpriteFlags");
+extern void
+Actor_SetSingleChildFlags__arrival(struct DailaStartActor *object,
+                                   s32 value) __asm__("Actor_SetSpriteFlags");
 void Actor_SetItemIcon(struct DailaStartActor *object, s32 item);
 /* VIEW(daila_interiors): routine Func_02000dc4 as void Func_02000dc4(const void
  * *script); module/scene/atteka_inlet.h has void Func_02000dc4(void); tried as

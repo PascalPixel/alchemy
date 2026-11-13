@@ -931,7 +931,7 @@ static void AlpineCrossing_HidePath(void) {
 
 // Update routine of the frozen pillar: it draws under the party leader while
 // the leader stands higher than its top, so the leader can climb onto it, and
-// over the leader otherwise. bx r1 to pop {r0};
+// over the leader otherwise.
 static UNREAD_RESULT Pillar_SortAgainstLeader(struct Actor *pillar) {
   if (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed > pillar->y.fixed) {
     pillar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;

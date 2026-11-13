@@ -400,9 +400,6 @@ static void CottageRoomsC_TalkToInnkeeper(void) {
 /// orders once, then sends the party to the waitress.
 static void CottageRoomsC_TalkToBusyChef(void) {
   Event_Start();
-  // The test is event.h's inline and the set below a direct call,
-  // each as it matches: an inline call's argument is a pseudo of its own,
-  // where a direct call keeps the flag number in a callee-saved register.
   if (Event_GetFlag(FLAG_BILIBIN_CHEF_CALLED_ORDERS) == 0) {
     // The first time (FLAG_BILIBIN_CHEF_CALLED_ORDERS, kept until the party
     // leaves Bilibin), the chef shouts orders and the kitchen worker answers.

@@ -1261,12 +1261,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   work->transitionFrames = 12;
   wait(1);
   ScreenTransition_InitializeBattleEffectState(WINDOW_TRANSITION_LEADER);
-  // UB: HEAP_SLOT_SCREEN_TRANSITION lies past scalar gFieldWork.
-#ifdef UBFIX
   state = gScreenTransitionWork;
-#else
-  state = (struct ScreenTransitionState *)((u8 **)&gFieldWork)[4];
-#endif
   state->value = 0;
   state->mask = 0x1f1f;
   state->active = 1;

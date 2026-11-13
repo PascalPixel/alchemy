@@ -478,11 +478,8 @@ s32 FileScreen_Run(void) {
     return 0;
   }
   gSleepDisabled = blendStarted;
-  // Choose a new game, existing save, arena entry, or data transfer. This
-  // menu, the transfer's choices and the save question above are loops
-  // written with goto: with the save question as for (;;) and
-  // continue, 101 of 920 instructions differ in tbs-en, and with this menu as
-  // for (;;), 462.
+  // Choose a new game, existing save, arena entry, or data transfer; every
+  // way back comes here.
 menu_top:;
   result = Save_ScanFileSummaries();
   // No backup memory: in debug mode, say so and turn idle sleep on.
@@ -586,10 +583,7 @@ menu_top:;
       }
       Message_CloseFinishedWindows();
       if (FileScreen_GetSaveRecoveryBlockMask() != 0) {
-        // MsgSaveRecoveryFailed, spelled as MsgSaveDataCorrupted + 2: the ROM
-        // adds 2 to the register holding the earlier message's number, and by
-        // name 108 of 921 instructions differ in tbs-en.
-        FieldMessage_Show(MsgSaveDataCorrupted + 2,
+        FieldMessage_Show(MsgSaveRecoveryFailed,
                           FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
         goto menu_top;
       }
@@ -846,9 +840,7 @@ menu_top:;
           }
           Sound_Play(SE_MENU_CURSOR_MOVE);
         } else {
-          // Left and Right share the wrap: with a copy in each arm, the
-          // copies are not folded back and 210 of 920 instructions differ in
-          // tbs-en.
+          // Left and Right turn the page, wrapping round.
           if ((gKeysPressed & KEY_LEFT) != 0 && pageCount > 1) {
             Sound_Play(SE_MENU_CURSOR_MOVE);
             wrappedPage = pageIndex + pageCount;

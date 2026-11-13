@@ -414,41 +414,16 @@ static void AltmillerCave_InitializeDarkness(void) {
   }
   wait(1);
   ScreenTransition_InitializeBattleEffectState(WINDOW_TRANSITION_LEADER_LOW);
-  // UB: the fourth following pointer cell lies past scalar gFieldWork.
-#ifdef UBFIX
   state = gScreenTransitionWork;
-#else
-  state = (struct ScreenTransitionState *)workCells[4];
-#endif
-  {
-    u16 *slot = &state->value;
-    s32 value = ALTMILLER_CAVE_LIGHT_STEPS;
-    *slot = value;
-  }
+  state->value = ALTMILLER_CAVE_LIGHT_STEPS;
   if (GameFlag_Get(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS) != 0) {
-    {
-      s16 *slot = &state->mask;
-      s32 value = ALTMILLER_CAVE_STEPS_LIGHT_WININ;
-      *slot = value;
-    }
-    {
-      s16 *slot = &state->active;
-      s32 value = ALTMILLER_CAVE_STEPS_LIGHT_WINOUT;
-      *slot = value;
-    }
+    state->mask = ALTMILLER_CAVE_STEPS_LIGHT_WININ;
+    state->active = ALTMILLER_CAVE_STEPS_LIGHT_WINOUT;
     AltmillerCave_ApplyFadeBlend();
     return;
   }
-  {
-    s16 *slot = &state->mask;
-    s32 value = ALTMILLER_CAVE_DARK_LIGHT_WININ;
-    *slot = value;
-  }
-  {
-    s16 *slot = &state->active;
-    s32 value = ALTMILLER_CAVE_DARK_LIGHT_WINOUT;
-    *slot = value;
-  }
+  state->mask = ALTMILLER_CAVE_DARK_LIGHT_WININ;
+  state->active = ALTMILLER_CAVE_DARK_LIGHT_WINOUT;
   {
     s32 blendControl = ALTMILLER_CAVE_DARKNESS_BLEND;
     REG_BLDCNT = blendControl;
@@ -1216,12 +1191,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   // The cave brightens as two men from Tolbi arrive: "Babi!" The light
   // widens to fill the screen and BG1 fades out.
   state = gScreenTransitionWork;
-  {
-    u16 *slot = &state->value;
-    s32 value = ALTMILLER_CAVE_LIGHT_FULL;
-
-    *slot = value;
-  }
+  state->value = ALTMILLER_CAVE_LIGHT_FULL;
   for (eva = 0, evb = 16; eva <= 16; eva++, evb--) {
     REG_BLDCNT = ALTMILLER_CAVE_DARKNESS_BLEND;
     REG_BLDALPHA = BLEND_ALPHA(evb, eva);
@@ -1534,12 +1504,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     REG_BLDALPHA = BLEND_ALPHA(eva, evb);
     wait(7);
   }
-  {
-    u16 *slot = &state->value;
-    s32 value = ALTMILLER_CAVE_LIGHT_STEPS;
-
-    *slot = value;
-  }
+  state->value = ALTMILLER_CAVE_LIGHT_STEPS;
   {
     u16 *slot = (u16 *)&state->active;
     s32 value = ALTMILLER_CAVE_DARK_LIGHT_WINOUT;

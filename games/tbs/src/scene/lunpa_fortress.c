@@ -112,7 +112,9 @@
 #include "system.h"
 #include "heap_slots.h"
 #include "edition.h"
-#include "lunpa_fortress_staging.h"
+#include "lunpa_fortress.h"
+#include "pushed_actor.h"
+#include "actor.h"
 #include "scene_ids.h"
 #include "tbs_edition.h"
 #include "map_grid_scroll.h"
@@ -854,18 +856,6 @@ static s32 LunpaFortress_IsLeaderInPatrolSafeZone(void) {
   return 0;
 }
 
-// UB: these patrols formerly reached gFieldWork through gMapGridWork[19] and
-// treated its request members as a halfword array.
-#ifdef UBFIX
-#define PATROL_PSYNERGY_REQUEST(work) ((work)->psynergy)
-#define PATROL_ITEM_REQUEST(work) ((work)->item)
-#define PATROL_RAISED_TRIGGER(work) ((work)->raisedTrigger)
-#else
-#define PATROL_PSYNERGY_REQUEST(work) ((work)[191])
-#define PATROL_ITEM_REQUEST(work) ((work)[192])
-#define PATROL_RAISED_TRIGGER(work) ((work)[193])
-#endif
-
 /// Every frame in LunpaFortressUpperFloor: the pair patrolling the west
 /// corridor.
 ///
@@ -881,11 +871,7 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
   struct MapGridLayerScroll *patrolLayer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
            ->layers[MAPGRID_LAYER_OVERHEAD];
-#ifdef UBFIX
   struct FieldWork *work = gFieldWork;
-#else
-  s16 *work = *(s16 **)&gMapGridWork[19];
-#endif
 
   if (gFrameCount & 1) {
     patrolLayer->speedX = 1;
@@ -894,8 +880,7 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
     patrolLayer->speedX = -1;
     patrolLayer->speedY = -1;
   }
-  if (GameFlag_Get(FLAG_MENU_OPEN) || PATROL_PSYNERGY_REQUEST(work) != 0 ||
-      PATROL_ITEM_REQUEST(work) != 0) {
+  if (GameFlag_Get(FLAG_MENU_OPEN) || work->psynergy != 0 || work->item != 0) {
     firstGuard->paused = 1;
     secondGuard->paused = 1;
   } else if (!Event_GetFlag(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED)) {
@@ -909,12 +894,12 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
       if (gMainRoutineWork.cloaked != 0) {
         if (LunpaFortress_IsLeaderNearGuard(ACTOR_UPPER_FLOOR_FIRST_PATROL) &&
             gMainRoutineWork.cloaked != 0) {
-          SetFieldWorkValue(&PATROL_PSYNERGY_REQUEST(work), CLOAK_NEAR_GUARD);
+          work->psynergy = CLOAK_NEAR_GUARD;
           return;
         }
         if (LunpaFortress_IsLeaderNearGuard(ACTOR_UPPER_FLOOR_SECOND_PATROL) &&
             gMainRoutineWork.cloaked != 0) {
-          SetFieldWorkValue(&PATROL_PSYNERGY_REQUEST(work), CLOAK_NEAR_GUARD);
+          work->psynergy = CLOAK_NEAR_GUARD;
           return;
         }
       }
@@ -929,8 +914,7 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
         }
       }
       if (GameFlag_Get(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED)) {
-        SetFieldWorkValue(&PATROL_RAISED_TRIGGER(work),
-                          RAISED_PATROL_PAIR_SPOTTED);
+        work->raisedTrigger = RAISED_PATROL_PAIR_SPOTTED;
       }
     }
   }
@@ -994,11 +978,7 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
   struct MapGridLayerScroll *patrolLayer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
            ->layers[MAPGRID_LAYER_OVERHEAD];
-#ifdef UBFIX
   struct FieldWork *work = gFieldWork;
-#else
-  s16 *work = *(s16 **)&gMapGridWork[19];
-#endif
 
   FieldCamera_GetActor();
   if (gFrameCount & 1) {
@@ -1008,8 +988,7 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
     patrolLayer->speedX = -1;
     patrolLayer->speedY = -1;
   }
-  if (GameFlag_Get(FLAG_MENU_OPEN) || PATROL_PSYNERGY_REQUEST(work) != 0 ||
-      PATROL_ITEM_REQUEST(work) != 0) {
+  if (GameFlag_Get(FLAG_MENU_OPEN) || work->psynergy != 0 || work->item != 0) {
     guard->paused = 1;
   } else if (!Event_GetFlag(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED)) {
     guard->paused = 0;
@@ -1022,7 +1001,7 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
       LunpaFortress_IsGuardNearViewCenter(ACTOR_UPPER_FLOOR_HALL_PATROL);
       if (LunpaFortress_IsLeaderNearGuard(ACTOR_UPPER_FLOOR_HALL_PATROL) &&
           gMainRoutineWork.cloaked != 0) {
-        SetFieldWorkValue(&PATROL_PSYNERGY_REQUEST(work), CLOAK_NEAR_GUARD);
+        work->psynergy = CLOAK_NEAR_GUARD;
         return;
       }
       if (gMainRoutineWork.cloaked == 0) {
@@ -1032,8 +1011,7 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
         }
       }
       if (GameFlag_Get(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED)) {
-        SetFieldWorkValue(&PATROL_RAISED_TRIGGER(work),
-                          RAISED_HALL_PATROL_SPOTTED);
+        work->raisedTrigger = RAISED_HALL_PATROL_SPOTTED;
       }
     }
   }
@@ -1074,11 +1052,7 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
   struct MapGridLayerScroll *patrolLayer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
            ->layers[MAPGRID_LAYER_OVERHEAD];
-#ifdef UBFIX
   struct FieldWork *work = gFieldWork;
-#else
-  s16 *work = *(s16 **)&gMapGridWork[19];
-#endif
 
   if (gFrameCount & 1) {
     patrolLayer->speedX = 1;
@@ -1087,8 +1061,7 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
     patrolLayer->speedX = -1;
     patrolLayer->speedY = -1;
   }
-  if (GameFlag_Get(FLAG_MENU_OPEN) || PATROL_PSYNERGY_REQUEST(work) != 0 ||
-      PATROL_ITEM_REQUEST(work) != 0) {
+  if (GameFlag_Get(FLAG_MENU_OPEN) || work->psynergy != 0 || work->item != 0) {
     guard->paused = 1;
   } else if (!Event_GetFlag(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED)) {
     guard->paused = 0;
@@ -1100,7 +1073,7 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
     if (!LunpaFortress_IsLeaderInGroundFloorPatrolSafeZone()) {
       if (LunpaFortress_IsLeaderNearGuard(ACTOR_GROUND_FLOOR_PATROL_GUARD) &&
           gMainRoutineWork.cloaked != 0) {
-        SetFieldWorkValue(&PATROL_PSYNERGY_REQUEST(work), CLOAK_NEAR_GUARD);
+        work->psynergy = CLOAK_NEAR_GUARD;
         return;
       }
       if (gMainRoutineWork.cloaked == 0) {
@@ -1110,8 +1083,7 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
         }
       }
       if (GameFlag_Get(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED)) {
-        SetFieldWorkValue(&PATROL_RAISED_TRIGGER(work),
-                          RAISED_GROUND_FLOOR_PATROL_SPOTTED);
+        work->raisedTrigger = RAISED_GROUND_FLOOR_PATROL_SPOTTED;
       }
     }
   }

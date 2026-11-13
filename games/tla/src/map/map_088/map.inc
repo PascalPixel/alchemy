@@ -1,0 +1,38 @@
+	.global Field_Map088
+Field_Map088:
+	map_header 0, 0, 100, 128, 3, 1, 3, 1, 1, 2, 0, 0
+	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
+	map_block Field_Map088, .LField_Map088_CELL_PICTURES
+	map_block Field_Map088, .LField_Map088_SHAPES
+	map_block Field_Map088, .LField_Map088_GRID
+	map_block Field_Map088, .LField_Map088_SHAPE_GRID
+	map_block Field_Map088, .LField_Map088_ANIMATION
+	map_block Field_Map088, .LField_Map088_BLEND
+	map_block Field_Map088, .LField_Map088_SCENE
+.LField_Map088_CELL_PICTURES:
+	.incbin "games/tla/src/map/map_088/cell_pictures.delta2.lz"
+	.balign 4, 0
+.LField_Map088_SHAPES:
+	.incbin "games/tla/src/map/map_088/shapes.table.lz"
+	.balign 4, 0
+.LField_Map088_GRID:
+	.incbin "games/tla/src/map/map_088/map.grid.lz"
+	.balign 4, 0
+.LField_Map088_SHAPE_GRID:
+	.incbin "games/tla/src/map/map_088/shape_grid.plane.lz"
+	.balign 4, 0
+.LField_Map088_ANIMATION:
+	.incbin "games/tla/src/map/map_039/animation.script.lz"
+	.balign 4, 0
+.LField_Map088_BLEND:
+	.incbin "games/tla/src/map/map_088/blend.script.lz"
+	.balign 4, 0
+.LField_Map088_SCENE:
+	.incbin "games/tla/src/map/map_088/scene.scene.lz"
+	.balign 4, 0
+	.global Tileset_Palette10
+Tileset_Palette10:
+	.incbin "games/tla/src/graphics/tileset/palettes/pal_10.gbapal.lz"
+	.byte 0x10, 0x08	@ PACKER: left in the buffer by Field_Map088+0x11a

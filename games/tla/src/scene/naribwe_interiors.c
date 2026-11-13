@@ -1,5 +1,8 @@
 /// @file
-/// The scene code of overlay 0x66e, in ROM order.
+/// Naribwe's houses, among them the fortune teller's hut, where for 20 coins
+/// he reads an item the party sets on his table: a weapon for the foe ahead,
+/// armor for an unfound Djinni, a prong for the foe it masters, and other items
+/// for the path to follow.
 
 #include "shared/tables.h"
 #include "field/field.h"
@@ -14,11 +17,10 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "event_work.h"
-#include "module/scene/magma_rock_inside.h"
 #include "module/scene/naribwe_interiors.h"
 #include "module/scene/scene.h"
 
-const u8 *Func_020010b8(s32 item);
+const u8 *Import_ItemGet(s32 item);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -209,8 +211,7 @@ void NaribweInteriors_ReadFortune(void) {
 ask:
 #if !TLA_PATCH_1
   Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
-  /* FAKEMATCH(temporary): item also holds this call's result; as a separate
-   * test of the call, 23 of 374 instructions differ in tla-ja. */
+  // Before patch 1 the item variable first holds the choice's result.
   item = Func_020011a0(&unit, &slot);
   if (item == -1) {
 #else
@@ -228,7 +229,7 @@ ask:
     return;
   }
   unitData = Unit_Get(unit);
-  Func_020010b8(unitData->items[slot]);
+  Import_ItemGet(unitData->items[slot]);
   Actor_SetItemIcon(Actor_Get(18), unitData->items[slot]);
   Actor_SetPosition(18, 0x2a00000, 0x680000);
   FieldEvent_Wait(60);
@@ -296,7 +297,7 @@ read:
   Actor_ShowEmote(10, 0x100, 60);
   Event_ShowMessage(10, 0);
   unitData = Unit_Get(unit);
-  info = Func_020010b8(unitData->items[slot]);
+  info = Import_ItemGet(unitData->items[slot]);
 #if !TLA_PATCH_1
   item = unitData->items[slot];
 #else
@@ -331,10 +332,10 @@ read:
 }
 
 s32 Party_FindOwnerWithAction(s32 item);
-s32 Func_0200097c(void);
-s32 Func_020009a4(void);
-s32 Func_020009f8(void);
-s32 Func_02000a7c(void);
+s32 NaribweInteriors_FoeAhead(void);
+s32 NaribweInteriors_NextPowerToGain(void);
+s32 NaribweInteriors_NextPath(void);
+s32 NaribweInteriors_ProngsHeld(void);
 u8 *NaribweInteriors_GetDjinniHint(void);
 
 /// A weapon: the foe that lies beyond it.
@@ -344,7 +345,7 @@ void NaribweInteriors_ReadWeapon(void) {
 
   FieldEvent_SetMessageId((s32)message);
   Event_ShowMessage(10, 0);
-  switch (Func_0200097c()) {
+  switch (NaribweInteriors_FoeAhead()) {
   case 0:
     FieldEvent_SetMessageId((s32)(message + 1));
     Event_ShowMessage(10, 0);
@@ -367,7 +368,7 @@ void NaribweInteriors_ReadShiningItem(void) {
 
   FieldEvent_SetMessageId((s32)message);
   Event_ShowMessage(10, 0);
-  switch (Func_020009a4()) {
+  switch (NaribweInteriors_NextPowerToGain()) {
   case 3:
     FieldEvent_SetMessageId((s32)MsgYouAreLost);
     Event_ShowMessage(10, 0);
@@ -417,7 +418,7 @@ void NaribweInteriors_ReadArmor(void) {
 void NaribweInteriors_ReadOtherItem(void) {
   FieldEvent_SetMessageId((s32)MsgBeyondTheItem);
   Event_ShowMessage(10, 0);
-  switch (Func_020009f8()) {
+  switch (NaribweInteriors_NextPath()) {
   case 0:
     FieldEvent_SetMessageId((s32)MsgISeeYouInside);
     Event_ShowMessage(10, 0);
@@ -453,7 +454,7 @@ void NaribweInteriors_ReadProng(void) {
 
   FieldEvent_SetMessageId((s32)message);
   Event_ShowMessage(10, 0);
-  switch (Func_02000a7c()) {
+  switch (NaribweInteriors_ProngsHeld()) {
   case 14:
     FieldEvent_SetMessageId((s32)(message + 1));
     Event_ShowMessage(10, 0);
@@ -473,13 +474,18 @@ void NaribweInteriors_ReadProng(void) {
   }
 }
 
-s32 Func_0200097c(void) {
+/// Which foe a weapon's reading names: 0 before the return with Piers, then 1,
+/// and 2 once flag 0x940 is set.
+s32 NaribweInteriors_FoeAhead(void) {
   if (Event_GetFlag(0x8ff) == 0)
     return 0;
   return (Event_GetFlag(0x940) != 0) + 1;
 }
 
-s32 Func_020009a4(void) {
+/// The first power the party still lacks, for a shining item's reading: three
+/// Psynergy (abilities 144, 139 and 138) and two items (213, 214); 8 when it
+/// has them all.
+s32 NaribweInteriors_NextPowerToGain(void) {
   if (Party_FindOwnerWithAction(144) == -1)
     return 3;
   if (Party_FindOwnerWithAction(139) == -1)
@@ -493,7 +499,9 @@ s32 Func_020009a4(void) {
   return 8;
 }
 
-s32 Func_020009f8(void) {
+/// The path an ordinary item's reading points along, by the story's flags and
+/// the Trident's prongs (items 439 to 441) and the Trident (item 326).
+s32 NaribweInteriors_NextPath(void) {
   if (Event_GetFlag(0x8ff) == 0)
     return 0;
   if (FieldPartyInventory_FindMember(326) == -1) {
@@ -511,7 +519,9 @@ s32 Func_020009f8(void) {
   return 13;
 }
 
-s32 Func_02000a7c(void) {
+/// Which of the three prongs the party carries, as the prong's reading tells
+/// it.
+s32 NaribweInteriors_ProngsHeld(void) {
   if (FieldPartyInventory_FindMember(439) == -1 &&
       (FieldPartyInventory_FindMember(441) != -1 ||
        FieldPartyInventory_FindMember(440) != -1))
@@ -535,7 +545,9 @@ s32 Func_02000a7c(void) {
   // No remaining combinations: the native falls off the end without a value.
 }
 
-s32 Func_02000b60(s32 group) {
+/// One past the last Djinni of an element group found, skipping the ones never
+/// hinted at, or -1 when none is.
+s32 NaribweInteriors_DjinniHintLimit(s32 group) {
   s32 i = 17;
 
 loop:
@@ -561,10 +573,10 @@ next:
   return -1;
 }
 
-// Lists the flags still unset for a group: from 7 up to the limit, skipping 7
-// in group 0 and 9 and 10 in group 1, each flag group * 20 + i + 48 not yet set
-// goes to the output; returns how many.
-s32 Func_02000ba0(s32 limit, s32 group, s32 *out) {
+/// Lists the flags still unset for a group: from 7 up to the limit, skipping 7
+/// in group 0 and 9 and 10 in group 1, each flag group * 20 + i + 48 not yet
+/// set goes to the output; returns how many.
+s32 NaribweInteriors_ListUnfoundDjinn(s32 limit, s32 group, s32 *out) {
   s32 count = 0;
   s32 i = 7;
 
@@ -609,7 +621,7 @@ u8 *NaribweInteriors_GetDjinniHint(void) {
   u8 *message;
 
   for (group = 0; group <= 3; group++) {
-    s32 limit = Func_02000b60(group);
+    s32 limit = NaribweInteriors_DjinniHintLimit(group);
 
     limits[group] = limit;
     if (lowest > limit) {
@@ -617,16 +629,16 @@ u8 *NaribweInteriors_GetDjinniHint(void) {
       lowestGroup = group;
     }
     if (limit != -1)
-      count += Func_02000ba0(limit, group, hints + count);
+      count += NaribweInteriors_ListUnfoundDjinn(limit, group, hints + count);
   }
   if (count == 0) {
     for (group = 0; group <= 3; group++)
-      count += Func_02000ba0(18, group, hints + count);
+      count += NaribweInteriors_ListUnfoundDjinn(18, group, hints + count);
     if (count == 0) {
       HeapSlot_Release(252);
       return MsgInTheItem;
     }
-    Func_02000ba0(18, lowestGroup, hints);
+    NaribweInteriors_ListUnfoundDjinn(18, lowestGroup, hints);
     index = 0;
   } else {
     index = Random16Far() % count;

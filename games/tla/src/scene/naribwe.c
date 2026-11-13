@@ -1,5 +1,7 @@
 /// @file
-/// The scene code of overlay 0x66d, in ROM order.
+/// Naribwe, the village south of Kibombo where a fortune teller reads the
+/// party's items, Whirlwind clears the ivy over the backyard ladder and Reveal
+/// shows the stone that hides the Unicorn Ring.
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -27,8 +29,8 @@ void Sanctum_Run(s32 a);
 void Naribwe_HideStone(void);
 
 extern const u8 gNaribwe_Placements[];
-extern const u8 gData_020008c4[];
-extern const u8 gData_02000954[];
+extern const u8 gNaribwe_Entrance10Placements[];
+extern const u8 gNaribwe_PlacementsOnReturn[];
 extern const u8 gNaribwe_Triggers[];
 extern const u8 gNaribwe_TriggersOnReturn[];
 extern const struct WarpEntry gNaribwe_Doors[];
@@ -52,15 +54,17 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const u8 *Scene_GetPlacements(void) {
   if (gMainRoutineWork.entrance == 10)
-    return gData_020008c4;
+    return gNaribwe_Entrance10Placements;
   if (Event_GetFlag(0x8ff))
-    return gData_02000954;
+    return gNaribwe_PlacementsOnReturn;
   return gNaribwe_Placements;
 }
 
 #include "event_inline.h"
 
-void Func_02000088(void) {
+/// Before Blaze is cast on the central fire, the event work notes whether the
+/// party came in by entrance 10.
+void Naribwe_PrepareBlaze(void) {
   u8 *work = Ram_HeapSlots->eventWork;
   u8 *flag;
 
@@ -235,7 +239,9 @@ void Naribwe_BlowAwayIvy(void) {
   Event_End();
 }
 
-void Func_0200041c(void) {
+/// Unused: writes the rope's posts (24 and 25) into the event work; nothing
+/// calls it.
+UNUSED void Naribwe_SetRopeWork(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 
   work[0xd31] = 0;

@@ -130,7 +130,7 @@ enum TolbiShipMastActorId {
 /// gTolbiShipMast_FirstAttackActorPlacements.
 enum TolbiShipMastFirstAttackActorId {
   /// A sparkle, placed nowhere else. Its picture is
-  /// graphics/sprite/spr_286.png, a four-pointed sparkle in eight shrinking
+  /// graphics/sprite/glint.png, a four-pointed sparkle in eight shrinking
   /// frames.
   ///
   /// It turns, swells for 10 frames and shrinks for 24

@@ -207,26 +207,26 @@ enum StormNightActorId {
 /// Animations of the night's own sprites beyond enum ActorAnimation, as
 /// each sprite's animation table and frames under graphics/sprite draw them.
 enum StormNightAnimation {
-  /// Garet leaning into his chest to drag it (spr_019.png).
+  /// Garet leaning into his chest to drag it (garet_child.png).
   ANIM_GARET_DRAG = 5,
-  /// Garet's chest, its rope pulled taut as he drags it (spr_210.png).
+  /// Garet's chest, its rope pulled taut as he drags it (chest_of_valuables.png).
   ANIM_CHEST_DRAGGED = 2,
   ANIM_CHEST_ROPE_DROPPED = 3, ///< its rope let fall on the ground
-  /// Kyle crouched at the bank, reaching out to Felix (spr_053.png).
+  /// Kyle crouched at the bank, reaching out to Felix (kyle.png).
   ANIM_KYLE_REACH_OUT = 5,
   /// Jenna's father and mother crouched at the bank, reaching out
-  /// (spr_059.png, spr_060.png).
+  /// (man_in_green_shirt.png, woman_with_pink_hair.png).
   ANIM_PARENT_REACH_OUT = 6,
-  /// Only Felix's hands above the water as he goes under (spr_036.png).
+  /// Only Felix's hands above the water as he goes under (felix_child.png).
   ANIM_FELIX_UNDER_WATER = 6,
-  /// Felix clinging on in the river, one arm reaching out (spr_036.png).
+  /// Felix clinging on in the river, one arm reaching out (felix_child.png).
   ANIM_FELIX_CLING = 7,
   /// A bearded elder seen from behind, both arms raised against the Boulder
-  /// (spr_122.png).
+  /// (bearded_man_in_long_robe.png).
   ANIM_BEARDED_ELDER_HOLD_BACK = 5,
   // The poses frozen in the lightning as the Boulder comes down the river
   // (ValePrologue_ShowBoulderSweepingDownriver).
-  ANIM_JENNA_RUN = 5,        ///< in mid-stride (spr_048.png)
+  ANIM_JENNA_RUN = 5,        ///< in mid-stride (jenna_child.png)
   ANIM_PARENT_RECOIL = 5,    ///< seen from behind, arms flung out
   ANIM_FELIX_CLING_STILL = 8 ///< ANIM_FELIX_CLING's first frame held
 };

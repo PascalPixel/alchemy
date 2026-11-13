@@ -314,7 +314,7 @@ enum WorldMapActorId {
   ACTOR_TOLBI_SHIP = ACTOR_TO_GONDOWAN_PASSAGE + 2,
   /// The storm that lifts the party, as the Suhalla Desert's do.
   /// ★ Named from what the player sees: a white whirlwind spinning on the map,
-  /// drawn as the Suhalla Desert's sandstorms, spr_289.png (its render)
+  /// drawn as the Suhalla Desert's sandstorms, sandstorm.png (its render)
   ACTOR_STORM,
   /// Placed by the coast once he has handed over the Black Orb.
   /// ★ Named from the game: "Iodem, Iodem!" (MsgTolbiIodemIodem)
@@ -355,7 +355,7 @@ enum { ROWING_BALANCE_OFF_COURSE = 11 };
 /// SPRITE_WORLD_MAP_BRIDGE's animation once Kolima Bridge's drawbridge is down.
 enum { WORLD_MAP_BRIDGE_ANIMATION_LOWERED = 2 };
 
-/// The falling rock's animations (spr_216.png). It tumbles as it falls, then
+/// The falling rock's animations (blue_crystal.png). It tumbles as it falls, then
 /// shatters where it lands.
 enum { FALLING_ROCK_ANIMATION_TUMBLE = 2, FALLING_ROCK_ANIMATION_SHATTER = 3 };
 
@@ -415,7 +415,7 @@ enum {
 /// (WorldMap_SpawnIslandWake) until the map leads into their event.
 enum {
   /// ★ Named from what the player sees: an island of green hills around a
-  /// mountain, drifting on the sea, spr_504.png (its render)
+  /// mountain, drifting on the sea, world_map_island.png (its render)
   ACTOR_DRIFTING_ISLAND = ACTOR_FIRST_PLACED
 };
 
@@ -440,10 +440,10 @@ enum WorldMapEndingActorId {
 };
 
 /// Animations the map plays by number beyond enum ActorAnimation, from
-/// each sprite's animation table (graphics/sprite/spr_<number>.tsv).
+/// each sprite's animation table (graphics/sprite/<name>.tsv).
 enum {
-  ANIM_JENNA_LIE = 19, ///< lying on her back (spr_005.tsv's animation list)
-  ANIM_KRADEN_LIE = 5  ///< lying on his back (spr_030.tsv)
+  ANIM_JENNA_LIE = 19, ///< lying on her back (jenna.tsv's animation list)
+  ANIM_KRADEN_LIE = 5  ///< lying on his back (kraden.tsv)
 };
 
 // The World Map's scene flags: FLAG_WORLD_MAP_FALLING_ROCK_LANDED: the falling

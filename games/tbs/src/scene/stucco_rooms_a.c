@@ -81,7 +81,7 @@ enum StuccoRoomsAActorId {
   /// things about the north..." (MsgKalayInteriorsAMerchantFromVaultHadBeen)
   ACTOR_WOMAN_ON_THE_VAULT_MERCHANT,
   /// The worried father's son, drawn with the bald man in red's frames
-  /// (sprite 126, spr_124.png's picture), who may not go to Vault.
+  /// (sprite 126, bald_man_in_red.png's picture), who may not go to Vault.
   /// ★ Named from the game: "I'm an adult, now. I don't want my father
   /// ordering me around..." (MsgKalayInteriorsImAnAdultNowIDont)
   ACTOR_WORRIED_FATHERS_SON,
@@ -89,7 +89,7 @@ enum StuccoRoomsAActorId {
   /// ★ Named from the game: "I do not want my son to face any danger."
   /// (MsgKalayInteriorsIDoNotWantMySon)
   ACTOR_WORRIED_FATHER,
-  /// Drawn with the young man in green's frames (sprite 127, spr_125.png's
+  /// Drawn with the young man in green's frames (sprite 127, young_man_in_green.png's
   /// picture), whose mother's thoughts call him a merchant.
   /// ★ Named from the game: "I feel like I am living with a merchant...
   /// Actually, he is one!" (MsgKalayInteriorsMySonIsVeryTightWith)

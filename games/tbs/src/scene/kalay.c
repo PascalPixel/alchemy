@@ -282,7 +282,7 @@ enum KalayTunnelEntranceActorId {
   /// ★ Named from the game: "Do you want to go to the cave up ahead?"
   /// (MsgKalayDoWantGoCaveUp)
   ACTOR_TUNNEL_GUARD = ACTOR_FIRST_PLACED,
-  /// A covered wagon drawn by a horse (spr_273.png).
+  /// A covered wagon drawn by a horse (large_wagon.png).
   /// ★ Named from the game: "Bunza's wagon" (MsgLunpaGaretAsksIfNotRiding)
   ACTOR_WAGON,
   /// ★ Named from the game: "We've arrived, Hammet."

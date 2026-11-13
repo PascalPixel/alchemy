@@ -183,10 +183,10 @@ enum { CHILD_VALUE_BLINK = 0x100 };
 /// Animations the aerie plays by number beyond enum ActorAnimation.
 ///
 /// They come from each sprite's animation table
-/// (graphics/sprite/spr_<number>.tsv). The party's are reached through their
+/// (graphics/sprite/<name>.tsv). The party's are reached through their
 /// animation lists.
 enum {
-  /// Menardi standing, her hair blown back (spr_033.tsv).
+  /// Menardi standing, her hair blown back (menardi.tsv).
   MENARDI_ANIMATION_STAND_WINDSWEPT = 5,
   MENARDI_ANIMATION_LIE = 7, ///< lying on her side
   /// Menardi falling into the lighthouse, as SATUROS_ANIMATION_TIP to _SINK.
@@ -194,9 +194,9 @@ enum {
   MENARDI_ANIMATION_SLUMP = 9,
   MENARDI_ANIMATION_SINK = 10,
   /// Garet on his knees, Ivan and Mia lying down, as the party lies on the
-  /// broken aerie (spr_001.tsv to spr_003.tsv).
+  /// broken aerie (garet.tsv to mia.tsv).
   ANIM_PARTY_KNOCKED_DOWN = 18,
-  ANIM_LEADER_KNOCKED_DOWN = 19 ///< Isaac lying on his back (spr_000.tsv)
+  ANIM_LEADER_KNOCKED_DOWN = 19 ///< Isaac lying on his back (isaac.tsv)
 };
 
 // The aerie's scene flags: FLAG_VENUS_AERIE_FUSION_SLIDING: Saturos and Menardi

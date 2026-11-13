@@ -3,7 +3,8 @@
 
 /// @file
 /// Sprite numbers, named where the code shows what they are. A sprite's
-/// picture is graphics/sprite/spr_<number>.png, its number in decimal.
+/// picture is graphics/sprite/<name>.png, its id's name in lowercase without
+/// SPRITE_ (isaac.png for SPRITE_ISAAC).
 
 /// Sprite ids, one for each row of the sprite bank (gSprite_AnimationMetadata,
 /// in sprites.tsv's order) in order; a row the code doesn't name yet keeps its
@@ -15,18 +16,18 @@
 /// A row sprites.tsv leaves empty, with no size and no pictures, keeps its
 /// number: it shows nothing to name.
 enum SpriteId {
-  /// ★ Named from what the player sees: Isaac (spr_000.png)
+  /// ★ Named from what the player sees: Isaac (isaac.png)
   SPRITE_ISAAC,
-  /// ★ Named from what the player sees: Garet (spr_001.png)
+  /// ★ Named from what the player sees: Garet (garet.png)
   SPRITE_GARET,
-  /// ★ Named from what the player sees: Ivan (spr_002.png)
+  /// ★ Named from what the player sees: Ivan (ivan.png)
   SPRITE_IVAN,
-  /// ★ Named from what the player sees: Mia (spr_003.png)
+  /// ★ Named from what the player sees: Mia (mia.png)
   SPRITE_MIA,
   SPRITE_004, ///< empty: Felix's character number, whose sprite is SPRITE_FELIX
-  /// ★ Named from what the player sees: Jenna (spr_005.png)
+  /// ★ Named from what the player sees: Jenna (jenna.png)
   SPRITE_JENNA,
-  /// ★ Named from what the player sees: Sheba (spr_006.png)
+  /// ★ Named from what the player sees: Sheba (sheba.png)
   SPRITE_SHEBA,
   SPRITE_007, ///< empty: Piers's character number
   SPRITE_008,
@@ -40,7 +41,7 @@ enum SpriteId {
   /// The leader riding one of Altin's mine carts, added as a layer of the
   /// cart's sprite (AltinPeak_RollCart).
   /// ★ Named from what the player sees: Isaac's head and shoulders over the
-  /// cart's side, turned every way (spr_016.png)
+  /// cart's side, turned every way (cart_rider.png)
   SPRITE_CART_RIDER,
   /// Isaac's grown sprite while FLAG_ISAAC_WEARS_TUNIC is set.
   SPRITE_ISAAC_TUNIC,
@@ -55,14 +56,14 @@ enum SpriteId {
   /// The bubbles an actor shows over its head (Actor_ShowEmote).
   /// ★ Named from what the player sees: speech bubbles holding a face, an
   /// exclamation mark, a question mark, a heart, an angry face and a light bulb
-  /// (spr_021.png)
+  /// (emote.png)
   SPRITE_EMOTE,
   /// A blank 16-pixel square: an actor that shows nothing, such as a
   /// shop
   /// counter, or that a map draws an item's icon on, as for the Nuts that
   /// Catch takes.
   SPRITE_BLANK,
-  /// A blank 32-pixel square (spr_023.png holds no drawn pixel). Its one
+  /// A blank 32-pixel square (blank_32.png holds no drawn pixel). Its one
   /// actor, an unused one in Bilibin, gives it no role, so it keeps
   /// its size as its name; SPRITE_BLANK_LARGE is the same size, used for
   /// actors seen only by their shadows.
@@ -71,18 +72,18 @@ enum SpriteId {
   /// FIELD_SPRITE_RIPPLE), and around the leader at Mercury Lighthouse's pools,
   /// grey in its first animation and blue in its second.
   /// ★ Named from what the player sees: rings spreading on water
-  /// (spr_024.png)
+  /// (ripple.png)
   SPRITE_RIPPLE,
   /// Nothing in the source names this sprite.
   /// ★ Named from what the player sees: small white prints, one and then a pair
-  /// (spr_025.png)
+  /// (footprints.png)
   SPRITE_FOOTPRINTS,
   /// The sparkles of Tret's glamour that rain on Kolima and its forest.
-  /// ★ Named from what the player sees: rings of golden light (spr_026.png)
+  /// ★ Named from what the player sees: rings of golden light (golden_rings.png)
   SPRITE_GOLDEN_RINGS,
   /// The dark doorway added as a second part of the leader's sprite as the
   /// leader leaves through an exit (Exit_PrepareAnimation).
-  /// ★ Named from what the player sees: a black arched doorway (spr_027.png)
+  /// ★ Named from what the player sees: a black arched doorway (doorway.png)
   SPRITE_DOORWAY,
   /// The Psynergy Stones a map's treasure spots place.
   /// ★ Named from the game: "a Psynergy Stone." (MsgGotPsynergyStone)
@@ -90,154 +91,154 @@ enum SpriteId {
   SPRITE_029,
   /// The sprite of Kraden.
   /// ★ Named from what the player sees: an old man with white hair and a
-  /// white beard in a brown robe (spr_030.png)
+  /// white beard in a brown robe (kraden.png)
   SPRITE_KRADEN,
   /// The sprite of Dora, Isaac's mother.
   /// ★ Named from what the player sees: a woman with fair hair tied up, a
-  /// blue top and a pink striped skirt (spr_031.png)
+  /// blue top and a pink striped skirt (dora.png)
   SPRITE_DORA,
   /// The sprite of Saturos.
   /// ★ Named from what the player sees: a blue-skinned man with pale blue
-  /// hair in a long blue cloak (spr_032.png)
+  /// hair in a long blue cloak (saturos.png)
   SPRITE_SATUROS,
   /// The sprite of Menardi.
   /// ★ Named from what the player sees: a woman with long fair hair in a red
-  /// outfit (spr_033.png)
+  /// outfit (menardi.png)
   SPRITE_MENARDI,
   /// The sprite of Felix behind his mask.
   /// ★ Named from what the player sees: a young man with brown hair, his face
-  /// behind a green mask, in a green cloak (spr_034.png)
+  /// behind a green mask, in a green cloak (felix_masked.png)
   SPRITE_FELIX_MASKED,
   /// The sprite of Felix as a young man.
   /// ★ Named from what the player sees: a young man with brown hair in a
-  /// green cloak (spr_035.png)
+  /// green cloak (felix.png)
   SPRITE_FELIX,
   /// Felix as a child.
   SPRITE_FELIX_CHILD,
   /// ★ Named from what the player sees: a small boy with spiky orange hair in
-  /// a green shirt and shorts (spr_037.png)
+  /// a green shirt and shorts (boy_with_orange_hair.png)
   SPRITE_BOY_WITH_ORANGE_HAIR,
   /// ★ Named from what the player sees: a woman with orange hair under a
-  /// green headscarf, in a blue top (spr_038.png)
+  /// green headscarf, in a blue top (woman_in_green_headscarf.png)
   SPRITE_WOMAN_IN_GREEN_HEADSCARF,
   /// The sprite of Feizhi.
   /// ★ Named from what the player sees: a girl with purple hair tied up with
-  /// a bow, in a yellow and blue dress (spr_039.png)
+  /// a bow, in a yellow and blue dress (feizhi.png)
   SPRITE_FEIZHI,
   /// The sprite of Feh.
   /// ★ Named from what the player sees: a young man with black hair in a
-  /// yellow and green shirt (spr_040.png)
+  /// yellow and green shirt (feh.png)
   SPRITE_FEH,
   /// The sprite of Hsu.
   /// ★ Named from what the player sees: a young man with brown hair in an
-  /// orange jacket and green trousers (spr_041.png)
+  /// orange jacket and green trousers (hsu.png)
   SPRITE_HSU,
   /// ★ Named from what the player sees: a young woman with an orange ponytail
-  /// in a green and purple dress (spr_042.png)
+  /// in a green and purple dress (woman_with_orange_ponytail.png)
   SPRITE_WOMAN_WITH_ORANGE_PONYTAIL,
   /// The sprite of Alex.
   /// ★ Named from what the player sees: a young man with long pale blue hair
-  /// in a white and purple outfit (spr_043.png)
+  /// in a white and purple outfit (alex.png)
   SPRITE_ALEX,
   /// The sprite of Donpa.
   /// ★ Named from what the player sees: an old man with long grey hair in a
-  /// yellow robe, with a staff (spr_044.png)
+  /// yellow robe, with a staff (donpa.png)
   SPRITE_DONPA,
   /// The sprite of Layana.
   /// ★ Named from what the player sees: a woman with long curly red hair in a
-  /// green dress (spr_045.png)
+  /// green dress (layana.png)
   SPRITE_LAYANA,
   /// ★ Named from what the player sees: an old man with white hair and a
-  /// white beard in green clothes (spr_046.png)
+  /// white beard in green clothes (man_with_white_beard_in_green.png)
   SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN,
   /// The sprite of Kaja, the Tolbi ship's fighter.
   /// ★ Named from what the player sees: a bald man with a beard in a green
-  /// apron (spr_047.png)
+  /// apron (kaja.png)
   SPRITE_KAJA,
   /// Jenna as a child.
   SPRITE_JENNA_CHILD,
   /// The sprite of Hammet.
   /// ★ Named from what the player sees: a man in a turban and orange and
-  /// yellow robes (spr_049.png)
+  /// yellow robes (hammet.png)
   SPRITE_HAMMET,
   /// The sprite of Dodonpa.
   /// ★ Named from what the player sees: a man with spiky dark blue hair and a
-  /// moustache in a white top and a red cloak (spr_050.png)
+  /// moustache in a white top and a red cloak (dodonpa.png)
   SPRITE_DODONPA,
   /// The sprite of Nyunpa.
   /// ★ Named from what the player sees: an old man with white hair and a
-  /// white beard in an orange robe (spr_051.png)
+  /// white beard in an orange robe (nyunpa.png)
   SPRITE_NYUNPA,
   /// The sprite of Babi.
   /// ★ Named from what the player sees: an old man with long pink hair in a
-  /// red and gold robe, with a cane (spr_052.png)
+  /// red and gold robe, with a cane (babi.png)
   SPRITE_BABI,
   /// The sprite of Kyle.
   /// ★ Named from what the player sees: a man with fair hair in a blue and
-  /// white top and green trousers (spr_053.png)
+  /// white top and green trousers (kyle.png)
   SPRITE_KYLE,
   /// ★ Named from what the player sees: a man with brown hair in a teal shirt
-  /// and brown trousers (spr_054.png)
+  /// and brown trousers (man_in_teal_shirt.png)
   SPRITE_MAN_IN_TEAL_SHIRT,
   /// The sprite of Tret.
   /// ★ Named from what the player sees: a great stone-coloured face with a
-  /// heavy brow (spr_055.png)
+  /// heavy brow (tret.png)
   SPRITE_TRET,
   /// The sprite of Laurel.
   /// ★ Named from what the player sees: an orange face with green eyes
-  /// (spr_056.png)
+  /// (laurel.png)
   SPRITE_LAUREL,
   /// The sprite of Iodem.
   /// ★ Named from what the player sees: a man with grey hair and a grey beard
-  /// in a blue tunic and a yellow cape (spr_057.png)
+  /// in a blue tunic and a yellow cape (iodem.png)
   SPRITE_IODEM,
   /// The sprite of McCoy.
   /// ★ Named from what the player sees: a stout man with red hair in a pink
-  /// tunic (spr_058.png)
+  /// tunic (mccoy.png)
   SPRITE_MCCOY,
   /// ★ Named from what the player sees: a man with brown hair in a green
-  /// shirt and blue trousers (spr_059.png)
+  /// shirt and blue trousers (man_in_green_shirt.png)
   SPRITE_MAN_IN_GREEN_SHIRT,
   /// ★ Named from what the player sees: a woman with pink hair tied up, in a
-  /// white apron and a blue skirt (spr_060.png)
+  /// white apron and a blue skirt (woman_with_pink_hair.png)
   SPRITE_WOMAN_WITH_PINK_HAIR,
   /// The sprite of Hama.
   /// ★ Named from what the player sees: a woman with long purple hair in a
-  /// white and green robe (spr_061.png)
+  /// white and green robe (hama.png)
   SPRITE_HAMA,
   /// ★ Named from what the player sees: a warrior in a golden helmet with a
-  /// red crest (spr_062.png)
+  /// red crest (warrior_in_golden_helmet.png)
   SPRITE_WARRIOR_IN_GOLDEN_HELMET,
   /// ★ Named from what the player sees: a man with long dark hair in a green
-  /// and orange outfit (spr_063.png)
+  /// and orange outfit (man_with_long_dark_hair.png)
   SPRITE_MAN_WITH_LONG_DARK_HAIR,
   /// ★ Named from what the player sees: a person with long dark purple hair
-  /// in purple clothes (spr_064.png)
+  /// in purple clothes (person_in_purple.png)
   SPRITE_PERSON_IN_PURPLE,
   /// Babi's second sheet, which Altmiller Cave places while he is invisible
   /// (ACTOR_INVISIBLE_BABI).
   /// ★ Named from what the player sees: an old man with long pink hair in a
-  /// red and gold robe, with a cane (spr_065.png)
+  /// red and gold robe, with a cane (invisible_babi.png)
   SPRITE_INVISIBLE_BABI,
   /// ★ Named from what the player sees: a young man with spiky blue hair and
-  /// a yellow headband in white (spr_066.png)
+  /// a yellow headband in white (young_man_with_blue_hair.png)
   SPRITE_YOUNG_MAN_WITH_BLUE_HAIR,
   /// ★ Named from what the player sees: a young man with spiky red hair and a
-  /// yellow headband (spr_067.png)
+  /// yellow headband (young_man_with_red_hair.png)
   SPRITE_YOUNG_MAN_WITH_RED_HAIR,
   /// The sprite of Bunza.
   /// ★ Named from what the player sees: a man with dark hair combed back in a
-  /// blue tunic (spr_068.png)
+  /// blue tunic (bunza.png)
   SPRITE_BUNZA,
   /// ★ Named from what the player sees: a woman with curly purple hair in a
-  /// pink and purple dress (spr_069.png)
+  /// pink and purple dress (woman_with_purple_hair.png)
   SPRITE_WOMAN_WITH_PURPLE_HAIR,
   /// The sprite of Faran.
   /// ★ Named from what the player sees: a man with long fair hair in an
-  /// orange and brown robe (spr_070.png)
+  /// orange and brown robe (faran.png)
   SPRITE_FARAN,
   /// Tret's face again: SPRITE_TRET's pictures and animations drawn 12 pixels
-  /// higher (sprites.tsv's SPR_071), as Kolima Forest shows him.
+  /// higher (sprites.tsv's TRET_RAISED), as Kolima Forest shows him.
   SPRITE_TRET_RAISED,
   SPRITE_072,
   SPRITE_073,
@@ -274,119 +275,119 @@ enum SpriteId {
   SPRITE_099,
   SPRITE_100,
   /// ★ Named from what the player sees: a burly grey-haired man with bare
-  /// arms folded, in a dark vest (spr_101.png)
+  /// arms folded, in a dark vest (burly_man_with_grey_hair.png)
   SPRITE_BURLY_MAN_WITH_GREY_HAIR,
   /// ★ Named from what the player sees: a little girl with orange pigtails in
-  /// a green dress (spr_102.png)
+  /// a green dress (girl_with_pigtails.png)
   SPRITE_GIRL_WITH_PIGTAILS,
   /// ★ Named from what the player sees: a bent old man with a bald head and a
-  /// white beard in a green robe, with a cane (spr_103.png)
+  /// white beard in a green robe, with a cane (old_man_with_cane.png)
   SPRITE_OLD_MAN_WITH_CANE,
   /// ★ Named from what the player sees: a small white dog with brown ears
-  /// (spr_104.png)
+  /// (dog.png)
   SPRITE_DOG,
   /// ★ Named from what the player sees: a tree with a full green crown
-  /// (spr_105.png)
+  /// (tree.png)
   SPRITE_TREE,
   /// ★ Named from what the player sees: a woman with long fair hair and a
-  /// blue headband in a white apron (spr_106.png)
+  /// blue headband in a white apron (woman_with_fair_hair.png)
   SPRITE_WOMAN_WITH_FAIR_HAIR,
   /// ★ Named from what the player sees: a small boy with fair hair in a blue
-  /// shirt (spr_107.png)
+  /// shirt (boy_with_fair_hair.png)
   SPRITE_BOY_WITH_FAIR_HAIR,
   /// ★ Named from what the player sees: a young man with brown hair in a purple
-  /// and white shirt (spr_108.png)
+  /// and white shirt (young_man_with_brown_hair.png)
   SPRITE_YOUNG_MAN_WITH_BROWN_HAIR,
   /// ★ Named from what the player sees: a stout man with brown hair in an
-  /// orange and blue tunic (spr_109.png)
+  /// orange and blue tunic (stout_man.png)
   SPRITE_STOUT_MAN,
-  /// ★ Named from what the player sees: a small tree (spr_110.png)
+  /// ★ Named from what the player sees: a small tree (small_tree.png)
   SPRITE_SMALL_TREE,
   /// ★ Named from what the player sees: an old woman with white hair in a
-  /// grey dress (spr_111.png)
+  /// grey dress (old_woman.png)
   SPRITE_OLD_WOMAN,
   /// ★ Named from what the player sees: an old man with a white beard in a
-  /// blue cap and a blue robe (spr_112.png)
+  /// blue cap and a blue robe (old_man_in_blue_cap.png)
   SPRITE_OLD_MAN_IN_BLUE_CAP,
   /// ★ Named from what the player sees: a man with fair hair and glasses in a
-  /// blue cap and a red and blue robe (spr_113.png)
+  /// blue cap and a red and blue robe (man_with_glasses.png)
   SPRITE_MAN_WITH_GLASSES,
   /// ★ Named from what the player sees: a bald, muscular man, bare-chested,
-  /// in green trousers (spr_114.png)
+  /// in green trousers (bald_muscular_man.png)
   SPRITE_BALD_MUSCULAR_MAN,
   /// ★ Named from what the player sees: a woman with brown hair in a green
-  /// dress and a white apron (spr_115.png)
+  /// dress and a white apron (woman_in_green_dress.png)
   SPRITE_WOMAN_IN_GREEN_DRESS,
   /// ★ Named from what the player sees: a stocky, muscular man with black
-  /// hair in a red top, flexing his arms (spr_116.png)
+  /// hair in a red top, flexing his arms (strongman.png)
   SPRITE_STRONGMAN,
   /// ★ Named from what the player sees: an old man with white hair in a pale
-  /// robe, with a cane (spr_117.png)
+  /// robe, with a cane (old_man_with_white_hair.png)
   SPRITE_OLD_MAN_WITH_WHITE_HAIR,
   /// ★ Named from what the player sees: a young woman with a brown ponytail
-  /// in a white top and a long skirt (spr_118.png)
+  /// in a white top and a long skirt (woman_with_ponytail.png)
   SPRITE_WOMAN_WITH_PONYTAIL,
   /// ★ Named from what the player sees: a man with dark hair in a dark blue
-  /// tunic (spr_119.png)
+  /// tunic (man_with_dark_hair.png)
   SPRITE_MAN_WITH_DARK_HAIR,
   /// ★ Named from what the player sees: a woman with brown hair in a long
-  /// blue dress (spr_120.png)
+  /// blue dress (woman_in_blue_dress.png)
   SPRITE_WOMAN_IN_BLUE_DRESS,
   /// ★ Named from what the player sees: a man with a white beard in a tall
-  /// hat and a long purple and blue robe (spr_121.png)
+  /// hat and a long purple and blue robe (man_in_tall_hat.png)
   SPRITE_MAN_IN_TALL_HAT,
   /// ★ Named from what the player sees: a man with long brown hair and a
-  /// beard in a red shawl and a long lavender robe (spr_122.png)
+  /// beard in a red shawl and a long lavender robe (bearded_man_in_long_robe.png)
   SPRITE_BEARDED_MAN_IN_LONG_ROBE,
   /// ★ Named from what the player sees: a man in a white cook's cap and white
-  /// clothes, with a frying pan (spr_123.png)
+  /// clothes, with a frying pan (cook.png)
   SPRITE_COOK,
   /// ★ Named from what the player sees: a bald man in a red tunic with green
-  /// sleeves (spr_124.png)
+  /// sleeves (bald_man_in_red.png)
   SPRITE_BALD_MAN_IN_RED,
   /// ★ Named from what the player sees: a young man with brown hair in a
-  /// green shirt (spr_125.png)
+  /// green shirt (young_man_in_green.png)
   SPRITE_YOUNG_MAN_IN_GREEN,
   /// A second number for SPRITE_BALD_MAN_IN_RED, whose frames and animations
   /// it borrows (sprites.tsv), so the player sees the same man. The first
   /// number keeps most towns' weapon shops; this one stands in Kalay's houses
   /// and in Hammet's palace.
   /// ★ Named from what the player sees: a bald man in a red tunic with green
-  /// sleeves (spr_124.png)
+  /// sleeves (bald_man_in_red.png)
   SPRITE_BALD_MAN_IN_RED_KALAY,
   /// A second number for SPRITE_YOUNG_MAN_IN_GREEN, whose frames and
   /// animations it borrows (sprites.tsv), so the player sees the same man. The
   /// first number keeps most towns' armor shops; this one stands in Kalay's
   /// houses and in Hammet's palace.
   /// ★ Named from what the player sees: a young man with brown hair in a
-  /// green shirt (spr_125.png)
+  /// green shirt (young_man_in_green.png)
   SPRITE_YOUNG_MAN_IN_GREEN_KALAY,
   /// ★ Named from what the player sees: a woman with red-brown hair in a pink
-  /// dress and a white apron (spr_128.png)
+  /// dress and a white apron (woman_in_pink_apron.png)
   SPRITE_WOMAN_IN_PINK_APRON,
   /// ★ Named from what the player sees: a man with fair hair in a blue
-  /// feathered cap, holding a lute (spr_129.png)
+  /// feathered cap, holding a lute (man_with_lute.png)
   SPRITE_MAN_WITH_LUTE,
   /// ★ Named from what the player sees: a young man with brown hair and a
-  /// white headband in a white top and blue trousers (spr_130.png)
+  /// white headband in a white top and blue trousers (youth_with_headband.png)
   SPRITE_YOUTH_WITH_HEADBAND,
   /// ★ Named from what the player sees: a young man with brown hair tied back
-  /// in a white top and blue trousers (spr_131.png)
+  /// in a white top and blue trousers (youth_with_tied_hair.png)
   SPRITE_YOUTH_WITH_TIED_HAIR,
   /// ★ Named from what the player sees: a man in a tall white chef's hat and
-  /// white clothes with a red scarf, with a frying pan (spr_132.png)
+  /// white clothes with a red scarf, with a frying pan (chef.png)
   SPRITE_CHEF,
   /// ★ Named from what the player sees: a man with a mop of orange hair in a
-  /// yellow vest and green trousers (spr_133.png)
+  /// yellow vest and green trousers (man_with_orange_hair.png)
   SPRITE_MAN_WITH_ORANGE_HAIR,
   /// ★ Named from what the player sees: a man with golden-brown hair in
-  /// orange and red clothes (spr_134.png)
+  /// orange and red clothes (man_in_orange.png)
   SPRITE_MAN_IN_ORANGE,
   /// ★ Named from what the player sees: a man with black hair and a white
-  /// headband in an orange top, with a pickaxe (spr_135.png)
+  /// headband in an orange top, with a pickaxe (man_with_pickaxe.png)
   SPRITE_MAN_WITH_PICKAXE,
   /// ★ Named from what the player sees: a small white and grey cat
-  /// (spr_136.png)
+  /// (cat.png)
   SPRITE_CAT,
   SPRITE_137,
   SPRITE_138,
@@ -395,91 +396,91 @@ enum SpriteId {
   SPRITE_141,
   SPRITE_142,
   /// ★ Named from what the player sees: a man with a beard in a white turban
-  /// and long white robes (spr_143.png)
+  /// and long white robes (man_in_white_turban.png)
   SPRITE_MAN_IN_WHITE_TURBAN,
   /// ★ Named from what the player sees: a man with tanned skin in a red
-  /// bandana and white trousers (spr_144.png)
+  /// bandana and white trousers (man_in_red_bandana.png)
   SPRITE_MAN_IN_RED_BANDANA,
   /// ★ Named from what the player sees: a man with tanned skin in a blue
-  /// bandana and white trousers (spr_145.png)
+  /// bandana and white trousers (man_in_blue_bandana.png)
   SPRITE_MAN_IN_BLUE_BANDANA,
   /// ★ Named from what the player sees: a man with tanned skin in a yellow
-  /// bandana and white trousers (spr_146.png)
+  /// bandana and white trousers (man_in_yellow_bandana.png)
   SPRITE_MAN_IN_YELLOW_BANDANA,
   /// ★ Named from what the player sees: a man with tanned skin in a green
-  /// bandana and a red vest (spr_147.png)
+  /// bandana and a red vest (man_in_green_bandana.png)
   SPRITE_MAN_IN_GREEN_BANDANA,
   /// ★ Named from what the player sees: a young woman with long brown hair in
-  /// a green dress (spr_148.png)
+  /// a green dress (young_woman_in_green.png)
   SPRITE_YOUNG_WOMAN_IN_GREEN,
   /// ★ Named from what the player sees: a bald monk in a white and orange
-  /// robe (spr_149.png)
+  /// robe (monk_in_white_and_orange.png)
   SPRITE_MONK_IN_WHITE_AND_ORANGE,
   /// ★ Named from what the player sees: a soldier in a spiked steel helmet,
-  /// with a spear (spr_150.png)
+  /// with a spear (soldier_in_spiked_helmet.png)
   SPRITE_SOLDIER_IN_SPIKED_HELMET,
   /// ★ Named from what the player sees: a small bald boy in an orange robe
-  /// (spr_151.png)
+  /// (bald_boy_in_orange.png)
   SPRITE_BALD_BOY_IN_ORANGE,
   /// The soldiers of Babi's Tolbi and of the Colosseum.
   /// ★ Named from what the player sees: a soldier in a helmet with a spear
   /// (its render)
   SPRITE_SOLDIER,
   /// ★ Named from what the player sees: a soldier in a white turban, with a
-  /// spear (spr_153.png)
+  /// spear (soldier_in_turban.png)
   SPRITE_SOLDIER_IN_TURBAN,
   /// ★ Named from what the player sees: a covered wagon drawn by a horse
-  /// (spr_154.png)
+  /// (wagon.png)
   SPRITE_WAGON,
   /// ★ Named from what the player sees: a white bird with outspread wings
-  /// (spr_155.png)
+  /// (bird.png)
   SPRITE_BIRD,
   /// ★ Named from what the player sees: a young man with brown hair tied back
-  /// in a blue jacket and a white apron (spr_156.png)
+  /// in a blue jacket and a white apron (young_man_in_blue_jacket.png)
   SPRITE_YOUNG_MAN_IN_BLUE_JACKET,
   /// ★ Named from what the player sees: a person with long brown hair and a
-  /// green scarf in a red top, with a sword (spr_157.png)
+  /// green scarf in a red top, with a sword (person_with_sword.png)
   SPRITE_PERSON_WITH_SWORD,
   /// ★ Named from what the player sees: a bald monk in an orange robe
-  /// (spr_158.png)
+  /// (monk_in_orange_robe.png)
   SPRITE_MONK_IN_ORANGE_ROBE,
   /// ★ Named from what the player sees: a young woman with black hair and a
-  /// red hair ornament in a red and yellow dress (spr_159.png)
+  /// red hair ornament in a red and yellow dress (woman_with_black_hair.png)
   SPRITE_WOMAN_WITH_BLACK_HAIR,
   /// ★ Named from what the player sees: a man with black hair in a topknot in
-  /// an orange and green robe (spr_160.png)
+  /// an orange and green robe (man_with_topknot.png)
   SPRITE_MAN_WITH_TOPKNOT,
-  /// ★ Named from what the player sees: a ship with green sails (spr_161.png)
+  /// ★ Named from what the player sees: a ship with green sails (ship.png)
   SPRITE_SHIP,
   /// ★ Named from what the player sees: a woman with red-brown hair in a
-  /// white top and a green apron (spr_162.png)
+  /// white top and a green apron (woman_in_green_apron.png)
   SPRITE_WOMAN_IN_GREEN_APRON,
   /// ★ Named from what the player sees: a soldier in a steel helmet, with a
-  /// torch (spr_163.png)
+  /// torch (soldier_with_torch.png)
   SPRITE_SOLDIER_WITH_TORCH,
   /// ★ Named from what the player sees: an old man with grey hair in a
-  /// topknot in blue and orange clothes (spr_164.png)
+  /// topknot in blue and orange clothes (old_man_in_blue.png)
   SPRITE_OLD_MAN_IN_BLUE,
   /// ★ Named from what the player sees: a young man with fair hair in a white
-  /// and orange tunic (spr_165.png)
+  /// and orange tunic (young_man_with_fair_hair.png)
   SPRITE_YOUNG_MAN_WITH_FAIR_HAIR,
   /// ★ Named from what the player sees: an old woman with white hair in a
-  /// blue and red dress, with a cane (spr_166.png)
+  /// blue and red dress, with a cane (old_woman_with_cane.png)
   SPRITE_OLD_WOMAN_WITH_CANE,
   /// ★ Named from what the player sees: a man with grey hair in a black suit
-  /// (spr_167.png)
+  /// (man_in_black_suit.png)
   SPRITE_MAN_IN_BLACK_SUIT,
   /// ★ Named from what the player sees: a small boy with black hair in a bun
-  /// in green clothes (spr_168.png)
+  /// in green clothes (boy_in_green.png)
   SPRITE_BOY_IN_GREEN,
   /// ★ Named from what the player sees: a little girl with brown hair in a
-  /// pink top (spr_169.png)
+  /// pink top (girl_in_pink.png)
   SPRITE_GIRL_IN_PINK,
   /// ★ Named from what the player sees: a bald, muscular man with a black
-  /// topknot, bare-chested (spr_170.png)
+  /// topknot, bare-chested (muscular_man_with_topknot.png)
   SPRITE_MUSCULAR_MAN_WITH_TOPKNOT,
   /// ★ Named from what the player sees: a man in a green cap and a green and
-  /// yellow robe, carrying a pack on his back (spr_171.png)
+  /// yellow robe, carrying a pack on his back (man_carrying_a_pack.png)
   SPRITE_MAN_CARRYING_A_PACK,
   SPRITE_172, ///< empty; only Vault's unused Vault_SpawnDriftingEffect makes an
               ///< actor of it
@@ -546,18 +547,18 @@ enum SpriteId {
   SPRITE_ROCK,
   /// The statues of Sol Sanctum's statue room and Luna and Sol rooms.
   /// ★ Named from what the player sees: a winged statue holding a blue orb
-  /// (its sprite sheet, spr_201.png)
+  /// (its sprite sheet, winged_statue.png)
   SPRITE_WINGED_STATUE,
   /// The centre statue of Sol Sanctum's statue room.
   /// ★ Named from what the player sees: a winged statue bearing a sun disc on
-  /// its head (its sprite sheet, spr_202.png)
+  /// its head (its sprite sheet, sun_disc_statue.png)
   SPRITE_SUN_DISC_STATUE,
   /// ★ Named from what the player sees: a carved stone statue of a figure,
   /// as Sol Sanctum's statues stand on its seals (its render)
   SPRITE_STONE_STATUE,
   /// The centre statue once it has sunk into the floor, only its disc showing.
   /// ★ Named from what the player sees: a round sun disc lying flat (its
-  /// sprite sheet, spr_204.png)
+  /// sprite sheet, sun_disc.png)
   SPRITE_SUN_DISC,
   /// A log lying north to south, one the leader can hop onto
   /// (Field_TryJumpForward) or roll, as in Kolima Forest.
@@ -565,12 +566,12 @@ enum SpriteId {
   /// render)
   SPRITE_LOG_NORTH_SOUTH,
   /// The boards Isaac moves into place on a Vale roof (Vale_RoofMended).
-  /// ★ Named from what the player sees: two golden planks (spr_206.png)
+  /// ★ Named from what the player sees: two golden planks (roof_boards.png)
   SPRITE_ROOF_BOARDS,
   /// ★ Named from what the player sees: a log lying west to east (its render)
   SPRITE_LOG_WEST_EAST,
   /// ★ Named from what the player sees: a small flame, then wisps of smoke
-  /// (spr_208.png)
+  /// (flame_and_smoke.png)
   SPRITE_FLAME_AND_SMOKE,
   /// The effect FieldEffect_SetAttached attaches to an actor
   /// or shows
@@ -586,32 +587,32 @@ enum SpriteId {
   SPRITE_STUMP,
   /// Nothing in the source names this sprite.
   /// ★ Named from what the player sees: hands grasping, clenched and open, the
-  /// last two blue (spr_213.png)
+  /// last two blue (hands.png)
   SPRITE_HANDS,
   /// Spray thrown up where water is struck: where Goma Cave's stumps land,
   /// at Kolima Forest's floodgate, and over the Tolbi-bound Ship's side.
   /// ★ Named from what the player sees: a splash of white and pale blue
-  /// spray (spr_214.png)
+  /// spray (splash.png)
   SPRITE_SPLASH,
   /// The hand Move reaches out with; Goma Cave's entrance and Vale place it
   /// to push something in an event.
-  /// ★ Named from what the player sees: a large open hand (spr_215.png)
+  /// ★ Named from what the player sees: a large open hand (move_hand.png)
   SPRITE_MOVE_HAND,
   /// The sixteen crystals thrown out in a ring as Sol Sanctum erupts, and one
   /// on the world map.
   /// ★ Named from what the player sees: a blue crystal that bursts into
-  /// sparkles (spr_216.png)
+  /// sparkles (blue_crystal.png)
   SPRITE_BLUE_CRYSTAL,
   /// The vines that appear around Growth's target.
   /// ★ Named from what the player sees: a green vine that grows leaves and
-  /// withers (spr_217.png)
+  /// withers (vine.png)
   SPRITE_VINE,
   /// The whirlwind Whirlwind spins up.
-  /// ★ Named from what the player sees: a small white whirlwind (spr_218.png)
+  /// ★ Named from what the player sees: a small white whirlwind (whirlwind.png)
   SPRITE_WHIRLWIND,
   /// Nothing in the source names this sprite.
   /// ★ Named from what the player sees: a flame that bursts into sparks and
-  /// dies to a wisp (spr_219.png)
+  /// dies to a wisp (flame_burst.png)
   SPRITE_FLAME_BURST,
   /// The fields of Psynergy that rise over the party as Kolima's curse falls.
   /// ★ Named from the game: "You know what those fields were?"
@@ -627,7 +628,7 @@ enum SpriteId {
   /// and its mine spit it as spray, drawn SPRITE_COLOR_BGR or
   /// SPRITE_COLOR_WHITE.
   SPRITE_DUST_PUFF,
-  /// ★ Named from what the player sees: a wooden crate (spr_223.png)
+  /// ★ Named from what the player sees: a wooden crate (crate.png)
   SPRITE_CRATE,
   /// The statues of Mercury Lighthouse.
   /// ★ Named from what the player sees: a blue statue of a woman holding a
@@ -648,31 +649,31 @@ enum SpriteId {
   /// The stone pipe sections Move pushes in Mercury Lighthouse to join its
   /// channels, and the short upright pipes beside them.
   /// ★ Named from what the player sees: a stone pipe section lying west to
-  /// east (spr_228.png)
+  /// east (pipe_west_east.png)
   SPRITE_PIPE_WEST_EAST,
   /// The pipe sections Move pushes in Mercury Lighthouse, also placed in the
   /// Lighthouse Aerie of Venus Lighthouse.
   /// ★ Named from what the player sees: a stone pipe section lying north to
-  /// south (spr_229.png)
+  /// south (pipe_north_south.png)
   SPRITE_PIPE_NORTH_SOUTH,
   /// The rim of an upright pipe's open end, drawn over the end a pushed pipe
   /// section comes to rest against.
   /// ★ Named from what the player sees: the rim at the top of an upright pipe
-  /// (spr_230.png; places/mercury-lighthouse-lower/map-4.png)
+  /// (pipe_end.png; places/mercury-lighthouse-lower/map-4.png)
   SPRITE_PIPE_END,
   /// The carts on the rails of Altin's mine.
   /// ★ Named from what the player sees: a wooden mine cart on iron wheels
-  /// (spr_231.png)
+  /// (mine_cart.png)
   SPRITE_MINE_CART,
   /// Frost's particles.
-  /// ★ Named from what the player sees: a snowflake (spr_232.png)
+  /// ★ Named from what the player sees: a snowflake (snowflake.png)
   SPRITE_SNOWFLAKE,
   /// The figures that spiral in around Ply's target.
   /// ★ Named from what the player sees: a little winged figure with teal hair
-  /// (spr_233.png)
+  /// (winged_figure.png)
   SPRITE_WINGED_FIGURE,
   /// ★ Named from what the player sees: a snowman with a red cap and a green
-  /// scarf (spr_234.png)
+  /// scarf (snowman.png)
   SPRITE_SNOWMAN,
   SPRITE_235,
   /// The logs that float on the water of Fuchin Falls Cave, Crossbone Isle's
@@ -687,10 +688,10 @@ enum SpriteId {
   /// ★ Named from what the player sees: a green sprout (its render)
   SPRITE_SPROUT,
   /// The cloud Douse gathers over its target.
-  /// ★ Named from what the player sees: a grey cloud (spr_239.png)
+  /// ★ Named from what the player sees: a grey cloud (rain_cloud.png)
   SPRITE_RAIN_CLOUD,
   /// The drops of Douse's rain, and those a Mercury Djinni leaves as it goes.
-  /// ★ Named from what the player sees: a drop of water (spr_240.png)
+  /// ★ Named from what the player sees: a drop of water (droplet.png)
   SPRITE_DROPLET,
   /// ★ Named from what the player sees: a stack of two wooden crates (its
   /// render)
@@ -702,22 +703,22 @@ enum SpriteId {
   SPRITE_FLOATING_PLATFORM,
   /// The statues Move or a push slides in Bilibin and its Treasury.
   /// ★ Named from what the player sees: a golden statue of a figure in a long
-  /// robe (spr_243.png)
+  /// robe (golden_statue.png)
   SPRITE_GOLDEN_STATUE,
   /// Mercury Lighthouse's lit beacon, and the orb at the top of Venus
   /// Lighthouse.
   /// ★ Named from what the player sees: a blue orb with white swirls, turning
-  /// (spr_244.png)
+  /// (blue_orb.png)
   SPRITE_BLUE_ORB,
   /// The keys the scenes show: the barricade key McCoy tosses to the party,
   /// and Lunpa Fortress's Cell Key.
-  /// ★ Named from what the player sees: a golden key (spr_245.png)
+  /// ★ Named from what the player sees: a golden key (key.png)
   SPRITE_KEY,
   /// ★ Named from what the player sees: an unlit torch on its stand (its
   /// render)
   SPRITE_TORCH,
   /// A fire burning on the ground, which Douse puts out.
-  /// ★ Named from what the player sees: a flickering flame (spr_247.png)
+  /// ★ Named from what the player sees: a flickering flame (fire.png)
   SPRITE_FIRE,
   /// The ivy Whirlwind blows away, in Goma Cave, Vault, Bilibin, Lunpa
   /// Fortress and Crossbone Isle, and a patch outside McCoy's Palace.
@@ -725,11 +726,11 @@ enum SpriteId {
   /// (MsgGomaNoUsePsynergy)
   SPRITE_IVY,
   /// The leaves Whirlwind scatters.
-  /// ★ Named from what the player sees: a green leaf, turning (spr_249.png)
+  /// ★ Named from what the player sees: a green leaf, turning (leaf.png)
   SPRITE_LEAF,
   /// Halt's stopwatch.
   /// ★ Named from what the player sees: a gold stopwatch, its hand going round
-  /// (spr_250.png)
+  /// (stopwatch.png)
   SPRITE_STOPWATCH,
   /// The mayor's urn, which rises from the first chest in log_rooms_a.c.
   /// ★ Named from the game: "Found the mayor's precious urn."
@@ -743,23 +744,23 @@ enum SpriteId {
   /// Babi Lighthouse Entry and the Tunnel Ruins' east pair show it, the whole
   /// pillar is grey and its cap pale grey in a white rim.
   /// ★ Named from what the player sees: a stone pillar on an orange base, with
-  /// a yellow cap in a white rim (spr_253.png)
+  /// a yellow cap in a white rim (capped_pillar.png)
   SPRITE_CAPPED_PILLAR,
   /// The Tunnel Ruins' small pillars, which the leader pushes or shifts with
   /// Move.
   /// ★ Named from what the player sees: a small stone pillar with a white top
-  /// on a wooden base (spr_254.png)
+  /// on a wooden base (small_pillar.png)
   SPRITE_SMALL_PILLAR,
   /// The Tunnel Ruins' pillars that sink into the water.
   /// ★ Named from what the player sees: a stone pillar with a dark grating
-  /// under a white rim, then with blue water in the rim (spr_255.png)
+  /// under a white rim, then with blue water in the rim (sinking_pillar.png)
   SPRITE_SINKING_PILLAR,
   /// The pillars Move, Carry and pushes shift in Venus Lighthouse and on the
   /// Road to Babi Lighthouse. Animations 1 and 2 show a grey and an orange
   /// spiral on top; 3 to 8 a piece of gold track instead, along which Venus
   /// Lighthouse's lights run.
   /// ★ Named from what the player sees: a grey pillar with a spiral carved on
-  /// top (spr_256.png)
+  /// top (spiral_pillar.png)
   SPRITE_SPIRAL_PILLAR,
   /// The platforms of Venus Lighthouse and the Tunnel Ruins that rise or sink
   /// with the weight set down on them.
@@ -768,84 +769,84 @@ enum SpriteId {
   SPRITE_BALANCE_PLATFORM,
   /// The four statues around Venus Lighthouse's beacon.
   /// ★ Named from what the player sees: a statue of a woman with a green
-  /// wreath, holding a sheaf (spr_258.png)
+  /// wreath, holding a sheaf (statue_with_wreath.png)
   SPRITE_STATUE_WITH_WREATH,
   /// The log Force knocks down onto the Board Walk in Satrage's match.
   /// ★ Named from what the player sees: a log standing on end, then lying on
-  /// its side (spr_259.png)
+  /// its side (falling_log.png)
   SPRITE_FALLING_LOG,
   SPRITE_260,
   /// ★ Named from what the player sees: houses with orange roofs among trees
-  /// (spr_261.png)
+  /// (world_map_village.png)
   SPRITE_WORLD_MAP_VILLAGE,
   SPRITE_262,
   /// ★ Named from what the player sees: white and blue buildings inside a wall
-  /// (spr_263.png)
+  /// (world_map_town.png)
   SPRITE_WORLD_MAP_TOWN,
   /// ★ Named from what the player sees: houses built into great tree stumps
-  /// (spr_264.png)
+  /// (world_map_stump_village.png)
   SPRITE_WORLD_MAP_STUMP_VILLAGE,
   /// ★ Named from what the player sees: houses under snow among snowy trees
-  /// (spr_265.png)
+  /// (world_map_snowy_village.png)
   SPRITE_WORLD_MAP_SNOWY_VILLAGE,
   /// ★ Named from what the player sees: buildings with blue roofs among trees
-  /// (spr_266.png)
+  /// (world_map_blue_roofed_town.png)
   SPRITE_WORLD_MAP_BLUE_ROOFED_TOWN,
   /// ★ Named from what the player sees: a temple with a blue roof by a
-  /// waterfall (spr_267.png)
+  /// waterfall (world_map_temple.png)
   SPRITE_WORLD_MAP_TEMPLE,
   /// ★ Named from what the player sees: a grey rock arch over a cave mouth
-  /// (spr_268.png)
+  /// (world_map_cave.png)
   SPRITE_WORLD_MAP_CAVE,
   /// ★ Named from what the player sees: a tall blue-green tower, where Mercury
-  /// Lighthouse's exit is (spr_269.png)
+  /// Lighthouse's exit is (world_map_mercury_lighthouse.png)
   SPRITE_WORLD_MAP_MERCURY_LIGHTHOUSE,
-  /// ★ Named from what the player sees: a wooden barricade (spr_270.png)
+  /// ★ Named from what the player sees: a wooden barricade (world_map_barricade.png)
   SPRITE_WORLD_MAP_BARRICADE,
-  /// ★ Named from what the player sees: a snow-capped mountain (spr_271.png)
+  /// ★ Named from what the player sees: a snow-capped mountain (world_map_mountain.png)
   SPRITE_WORLD_MAP_MOUNTAIN,
   /// ★ Named from what the player sees: a pink and white tower, where Babi
-  /// Lighthouse's road begins (spr_272.png)
+  /// Lighthouse's road begins (world_map_babi_lighthouse.png)
   SPRITE_WORLD_MAP_BABI_LIGHTHOUSE,
   /// SPRITE_WAGON drawn at 64 pixels, its back loaded with yellow crates:
   /// Bunza's wagon at the Kalay Tunnel Entrance.
   /// ★ Named from what the player sees: a large covered wagon drawn by a
-  /// horse, full of crates (spr_273.png)
+  /// horse, full of crates (large_wagon.png)
   SPRITE_LARGE_WAGON,
   /// The signs of Lalivero, Tolbi Spring, Altin Peak and Kolima Forest's
   /// floodgate, and the signposts on the world map.
   /// ★ Named from what the player sees: a wooden sign on a post (its render)
   SPRITE_SIGNPOST,
   /// ★ Named from what the player sees: a clump of tall green trees
-  /// (spr_275.png)
+  /// (world_map_forest.png)
   SPRITE_WORLD_MAP_FOREST,
   /// ★ Named from what the player sees: a tall purple and white tower, where
-  /// Venus Lighthouse stands (spr_276.png)
+  /// Venus Lighthouse stands (world_map_venus_lighthouse.png)
   SPRITE_WORLD_MAP_VENUS_LIGHTHOUSE,
   /// ★ Named from what the player sees: a pier with a boat moored at it
-  /// (spr_277.png)
+  /// (world_map_dock.png)
   SPRITE_WORLD_MAP_DOCK,
   /// A drawbridge over a river: raised in its first animation, let down
   /// across the river in its second.
   /// ★ Named from what the player sees: a drawbridge raised between its posts,
-  /// then lying across the river (spr_278.png)
+  /// then lying across the river (world_map_bridge.png)
   SPRITE_WORLD_MAP_BRIDGE,
   /// ★ Named from what the player sees: a grey gatehouse between green walls
-  /// (spr_279.png)
+  /// (world_map_gatehouse.png)
   SPRITE_WORLD_MAP_GATEHOUSE,
   /// The letters that rise from a sleeper: Garet's grandfather, and Isaac after
   /// the last Colosso match.
-  /// ★ Named from what the player sees: a white letter Z (spr_280.png)
+  /// ★ Named from what the player sees: a white letter Z (letter_z.png)
   SPRITE_LETTER_Z,
   /// The particles Mind Read sends from its target to the caster, also shot in
   /// Fuchin Temple.
-  /// ★ Named from what the player sees: pale crescents (spr_281.png)
+  /// ★ Named from what the player sees: pale crescents (crescent.png)
   SPRITE_CRESCENT,
   SPRITE_282,
   /// The impact of Lift and of Xian's training tree, and the battle's hit flash
   /// (BattleMotion_PlayHitFlash, which nothing calls).
   /// ★ Named from what the player sees: a star burst that grows and breaks
-  /// apart over ten frames (spr_283.png)
+  /// apart over ten frames (star_burst.png)
   SPRITE_STAR_BURST,
   /// The particles of Growth and of a Djinni's capture, and the gate effects
   /// of Venus Lighthouse.
@@ -856,17 +857,17 @@ enum SpriteId {
   /// (its render)
   SPRITE_SPARKLE,
   /// ★ Named from what the player sees: a four-pointed glint that shrinks
-  /// to a dot (spr_286.png)
+  /// to a dot (glint.png)
   SPRITE_GLINT,
   /// The lights that float about the Elemental Star Room.
   /// ★ Named from what the player sees: a small glowing blue-green light (its
-  /// sprite sheet, spr_287.png)
+  /// sprite sheet, floating_light.png)
   SPRITE_FLOATING_LIGHT,
   /// A blank 32-pixel square: an actor seen only by its shadow, such as
   /// the
   /// shadows under Altin Peak's falling boulder and its Hydros statue.
   /// ★ Named from what the player sees: nothing, every pixel transparent
-  /// (spr_288.png)
+  /// (blank_large.png)
   SPRITE_BLANK_LARGE,
   /// The whirlwinds of the Suhalla Desert, which Douse stops, and the one
   /// drawn on the world map beside it.
@@ -874,7 +875,7 @@ enum SpriteId {
   SPRITE_SANDSTORM,
   /// The Board Walk's platforms, the Scales of Justice's ledges and the pillar
   /// that rises in a Crossbone Isle puddle.
-  /// ★ Named from what the player sees: a white square platform (spr_290.png)
+  /// ★ Named from what the player sees: a white square platform (white_platform.png)
   SPRITE_WHITE_PLATFORM,
   /// The Wall Wedge's pistons.
   /// ★ Named from the game: "The pistons move back and forth."
@@ -890,7 +891,7 @@ enum SpriteId {
   /// colors." (MsgAltmillerDontTrustAnyone)
   SPRITE_TURNING_ROCK,
   /// The log Force knocks off the Moving Sidewalk Stage.
-  /// ★ Named from what the player sees: a log standing on end (spr_294.png)
+  /// ★ Named from what the player sees: a log standing on end (standing_log.png)
   SPRITE_STANDING_LOG,
   /// The boulders of Gondowan Cave that Lift raises.
   /// ★ Named from what the player sees: a round grey boulder (its render)
@@ -908,20 +909,20 @@ enum SpriteId {
   SPRITE_FALLEN_COLUMN_WEST_EAST,
   /// Vault Cave's pillars.
   /// ★ Named from what the player sees: a pink stone pillar with a flame
-  /// burning on top (spr_299.png)
+  /// burning on top (flame_pillar.png)
   SPRITE_FLAME_PILLAR,
   /// Isaac in battle. The party members' battle sprites follow in character
   /// order, Felix's row left empty.
-  /// ★ Named from what the player sees: Isaac in battle (spr_300.png)
+  /// ★ Named from what the player sees: Isaac in battle (battle_isaac.png)
   SPRITE_BATTLE_ISAAC,
-  /// ★ Named from what the player sees: Garet in battle (spr_301.png)
+  /// ★ Named from what the player sees: Garet in battle (battle_garet.png)
   SPRITE_BATTLE_GARET,
-  /// ★ Named from what the player sees: Ivan in battle (spr_302.png)
+  /// ★ Named from what the player sees: Ivan in battle (battle_ivan.png)
   SPRITE_BATTLE_IVAN,
-  /// ★ Named from what the player sees: Mia in battle (spr_303.png)
+  /// ★ Named from what the player sees: Mia in battle (battle_mia.png)
   SPRITE_BATTLE_MIA,
   SPRITE_304,
-  /// ★ Named from what the player sees: Jenna in battle (spr_305.png)
+  /// ★ Named from what the player sees: Jenna in battle (battle_jenna.png)
   SPRITE_BATTLE_JENNA,
   SPRITE_306,
   SPRITE_307,
@@ -942,53 +943,53 @@ enum SpriteId {
   /// table (battle_tables.s) gives one for each enum BattleWeaponKind. Isaac's
   /// for long swords, and for staffs, ankhs and anything the list lacks.
   /// ★ Named from what the player sees: a sword with a green jewel in its hilt
-  /// (spr_320.png)
+  /// (weapon_isaac_sword.png)
   SPRITE_WEAPON_ISAAC_SWORD,
   /// Garet's for maces, staffs, ankhs and anything the list lacks.
-  /// ★ Named from what the player sees: a spiked ball on a handle (spr_321.png)
+  /// ★ Named from what the player sees: a spiked ball on a handle (weapon_garet_mace.png)
   SPRITE_WEAPON_GARET_MACE,
   /// Ivan's for staffs and anything the list lacks.
   /// ★ Named from what the player sees: a staff with a red forked head
-  /// (spr_322.png)
+  /// (weapon_ivan_staff.png)
   SPRITE_WEAPON_IVAN_STAFF,
   /// Mia's for swords, light blades, ankhs and anything the list lacks.
-  /// ★ Named from what the player sees: a silver ankh on a staff (spr_323.png)
+  /// ★ Named from what the player sees: a silver ankh on a staff (weapon_mia_ankh.png)
   SPRITE_WEAPON_MIA_ANKH,
   SPRITE_324,
   /// Jenna's for axes, maces, staffs, ankhs and anything the list lacks.
   /// ★ Named from what the player sees: a golden staff with a crescent head
-  /// (spr_325.png)
+  /// (weapon_jenna_staff.png)
   SPRITE_WEAPON_JENNA_STAFF,
-  /// ★ Named from what the player sees: a double-bladed axe (spr_326.png)
+  /// ★ Named from what the player sees: a double-bladed axe (weapon_isaac_axe.png)
   SPRITE_WEAPON_ISAAC_AXE,
-  /// ★ Named from what the player sees: a mace with a spiked head (spr_327.png)
+  /// ★ Named from what the player sees: a mace with a spiked head (weapon_isaac_mace.png)
   SPRITE_WEAPON_ISAAC_MACE,
-  /// ★ Named from what the player sees: a long-hafted axe (spr_328.png)
+  /// ★ Named from what the player sees: a long-hafted axe (weapon_garet_axe.png)
   SPRITE_WEAPON_GARET_AXE,
   /// Garet's for long swords and light blades.
-  /// ★ Named from what the player sees: a broad sword (spr_329.png)
+  /// ★ Named from what the player sees: a broad sword (weapon_garet_sword.png)
   SPRITE_WEAPON_GARET_SWORD,
-  /// ★ Named from what the player sees: a golden ankh on a staff (spr_330.png)
+  /// ★ Named from what the player sees: a golden ankh on a staff (weapon_ivan_ankh.png)
   SPRITE_WEAPON_IVAN_ANKH,
   /// Ivan's for swords, light blades, axes and maces.
-  /// ★ Named from what the player sees: a slender sword (spr_331.png)
+  /// ★ Named from what the player sees: a slender sword (weapon_ivan_blade.png)
   SPRITE_WEAPON_IVAN_BLADE,
   /// ★ Named from what the player sees: a staff with a blue crystal head
-  /// (spr_332.png)
+  /// (weapon_mia_staff.png)
   SPRITE_WEAPON_MIA_STAFF,
   /// Mia's for axes and maces.
-  /// ★ Named from what the player sees: a mace (spr_333.png)
+  /// ★ Named from what the player sees: a mace (weapon_mia_mace.png)
   SPRITE_WEAPON_MIA_MACE,
   /// ★ Named from what the player sees: a straight sword with a brown hilt
-  /// (spr_334.png)
+  /// (weapon_isaac_light_blade.png)
   SPRITE_WEAPON_ISAAC_LIGHT_BLADE,
   /// Unused: no gBattleUnit_WeaponAnimations table holds it, so no attack shows
   /// it; the player would have seen this sword in a party member's hand.
   /// ★ Named from what the player sees: a sword with a golden hilt
-  /// (spr_335.png)
+  /// (weapon_unused_sword.png)
   SPRITE_WEAPON_UNUSED_SWORD,
   /// Jenna's for swords and light blades.
-  /// ★ Named from what the player sees: a short sword (spr_336.png)
+  /// ★ Named from what the player sees: a short sword (weapon_jenna_blade.png)
   SPRITE_WEAPON_JENNA_BLADE,
   SPRITE_337,
   SPRITE_338,
@@ -997,68 +998,68 @@ enum SpriteId {
   /// ICON_ bits (BattleStatusIcon_Cycle); from SPRITE_STATUS_WIDE_POISON on,
   /// the same over wider units.
   /// ★ Named from what the player sees: a green skull trailing bubbles
-  /// (spr_340.png)
+  /// (status_poison.png)
   SPRITE_STATUS_POISON,
   /// ★ Named from what the player sees: a red skull trailing bubbles
-  /// (spr_341.png)
+  /// (status_venom.png)
   SPRITE_STATUS_VENOM,
   /// ★ Named from what the player sees: yellow zigzags either side
-  /// (spr_342.png)
+  /// (status_stun.png)
   SPRITE_STATUS_STUN,
-  /// ★ Named from what the player sees: a pink seal (spr_343.png)
+  /// ★ Named from what the player sees: a pink seal (status_psy_seal.png)
   SPRITE_STATUS_PSY_SEAL,
-  /// ★ Named from what the player sees: blue letters Z (spr_344.png)
+  /// ★ Named from what the player sees: blue letters Z (status_sleep.png)
   SPRITE_STATUS_SLEEP,
-  /// ★ Named from what the player sees: a purple cloud (spr_345.png)
+  /// ★ Named from what the player sees: a purple cloud (status_delusion.png)
   SPRITE_STATUS_DELUSION,
-  /// ★ Named from what the player sees: a pale wisp (spr_346.png)
+  /// ★ Named from what the player sees: a pale wisp (status_haunt.png)
   SPRITE_STATUS_HAUNT,
   /// The curse's turns left, one to seven, as that many flames.
-  /// ★ Named from what the player sees: one flame (spr_347.png)
+  /// ★ Named from what the player sees: one flame (status_grim_reaper_1.png)
   SPRITE_STATUS_GRIM_REAPER_1,
-  /// ★ Named from what the player sees: two flames (spr_348.png)
+  /// ★ Named from what the player sees: two flames (status_grim_reaper_2.png)
   SPRITE_STATUS_GRIM_REAPER_2,
-  /// ★ Named from what the player sees: three flames (spr_349.png)
+  /// ★ Named from what the player sees: three flames (status_grim_reaper_3.png)
   SPRITE_STATUS_GRIM_REAPER_3,
-  /// ★ Named from what the player sees: four flames (spr_350.png)
+  /// ★ Named from what the player sees: four flames (status_grim_reaper_4.png)
   SPRITE_STATUS_GRIM_REAPER_4,
-  /// ★ Named from what the player sees: five flames (spr_351.png)
+  /// ★ Named from what the player sees: five flames (status_grim_reaper_5.png)
   SPRITE_STATUS_GRIM_REAPER_5,
-  /// ★ Named from what the player sees: six flames (spr_352.png)
+  /// ★ Named from what the player sees: six flames (status_grim_reaper_6.png)
   SPRITE_STATUS_GRIM_REAPER_6,
-  /// ★ Named from what the player sees: seven flames (spr_353.png)
+  /// ★ Named from what the player sees: seven flames (status_grim_reaper_7.png)
   SPRITE_STATUS_GRIM_REAPER_7,
   SPRITE_354,
   /// ★ Named from what the player sees: a green skull trailing bubbles
-  /// (spr_355.png)
+  /// (status_wide_poison.png)
   SPRITE_STATUS_WIDE_POISON,
   /// ★ Named from what the player sees: a red skull trailing bubbles
-  /// (spr_356.png)
+  /// (status_wide_venom.png)
   SPRITE_STATUS_WIDE_VENOM,
   /// ★ Named from what the player sees: yellow zigzags either side
-  /// (spr_357.png)
+  /// (status_wide_stun.png)
   SPRITE_STATUS_WIDE_STUN,
-  /// ★ Named from what the player sees: a pink seal (spr_358.png)
+  /// ★ Named from what the player sees: a pink seal (status_wide_psy_seal.png)
   SPRITE_STATUS_WIDE_PSY_SEAL,
-  /// ★ Named from what the player sees: blue letters Z (spr_359.png)
+  /// ★ Named from what the player sees: blue letters Z (status_wide_sleep.png)
   SPRITE_STATUS_WIDE_SLEEP,
-  /// ★ Named from what the player sees: a purple cloud (spr_360.png)
+  /// ★ Named from what the player sees: a purple cloud (status_wide_delusion.png)
   SPRITE_STATUS_WIDE_DELUSION,
-  /// ★ Named from what the player sees: a pale wisp (spr_361.png)
+  /// ★ Named from what the player sees: a pale wisp (status_wide_haunt.png)
   SPRITE_STATUS_WIDE_HAUNT,
-  /// ★ Named from what the player sees: one flame (spr_362.png)
+  /// ★ Named from what the player sees: one flame (status_wide_grim_reaper_1.png)
   SPRITE_STATUS_WIDE_GRIM_REAPER_1,
-  /// ★ Named from what the player sees: two flames (spr_363.png)
+  /// ★ Named from what the player sees: two flames (status_wide_grim_reaper_2.png)
   SPRITE_STATUS_WIDE_GRIM_REAPER_2,
-  /// ★ Named from what the player sees: three flames (spr_364.png)
+  /// ★ Named from what the player sees: three flames (status_wide_grim_reaper_3.png)
   SPRITE_STATUS_WIDE_GRIM_REAPER_3,
-  /// ★ Named from what the player sees: four flames (spr_365.png)
+  /// ★ Named from what the player sees: four flames (status_wide_grim_reaper_4.png)
   SPRITE_STATUS_WIDE_GRIM_REAPER_4,
-  /// ★ Named from what the player sees: five flames (spr_366.png)
+  /// ★ Named from what the player sees: five flames (status_wide_grim_reaper_5.png)
   SPRITE_STATUS_WIDE_GRIM_REAPER_5,
-  /// ★ Named from what the player sees: six flames (spr_367.png)
+  /// ★ Named from what the player sees: six flames (status_wide_grim_reaper_6.png)
   SPRITE_STATUS_WIDE_GRIM_REAPER_6,
-  /// ★ Named from what the player sees: seven flames (spr_368.png)
+  /// ★ Named from what the player sees: seven flames (status_wide_grim_reaper_7.png)
   SPRITE_STATUS_WIDE_GRIM_REAPER_7,
   SPRITE_369,
   /// ★ Named from the game: "Atalanta" (MsgDjinnName)
@@ -1095,7 +1096,7 @@ enum SpriteId {
   SPRITE_389,
   /// The rocks Gaia throws up, Ramses' rocks and Judgment's debris, in three
   /// animations.
-  /// ★ Named from what the player sees: three orange rocks (spr_390.png)
+  /// ★ Named from what the player sees: three orange rocks (battle_rocks.png)
   SPRITE_BATTLE_ROCKS,
   SPRITE_391,
   SPRITE_392,
@@ -1104,11 +1105,11 @@ enum SpriteId {
   SPRITE_395,
   /// One of the two kinds of obstacle that move in Tolbi Spring while a token
   /// flies over it.
-  /// ★ Named from what the player sees: a red crab (spr_396.png)
+  /// ★ Named from what the player sees: a red crab (crab.png)
   SPRITE_CRAB,
   /// The other kind of Tolbi Spring obstacle.
   /// ★ Named from what the player sees: a green turtle with an orange shell
-  /// (spr_397.png)
+  /// (turtle.png)
   SPRITE_TURTLE,
   /// The coin tossed into Tolbi Spring, spinning, with its shadow and its
   /// sparkle when it settles; the toss draws it when the player tosses a coin.
@@ -1294,16 +1295,16 @@ enum SpriteId {
   /// (its render)
   SPRITE_LADY_STATUE,
   /// ★ Named from what the player sees: the wreck of a ship lying in the water
-  /// (spr_501.png)
+  /// (shipwreck.png)
   SPRITE_SHIPWRECK,
   /// ★ Named from what the player sees: a wooden gangway with rails, laid from
-  /// the wharf over Babi's ship (spr_502.png)
+  /// the wharf over Babi's ship (gangway.png)
   SPRITE_GANGWAY,
   /// ★ Named from what the player sees: a drop of water that swells and bursts
-  /// into a ring of spray (spr_503.png)
+  /// into a ring of spray (water_drop.png)
   SPRITE_WATER_DROP,
   /// ★ Named from what the player sees: an island of green hills around a
-  /// mountain (spr_504.png)
+  /// mountain (world_map_island.png)
   SPRITE_WORLD_MAP_ISLAND,
   SPRITE_505,
   SPRITE_506,
@@ -1325,7 +1326,7 @@ enum SpriteId {
   SPRITE_BATTLE_SHADOW_NARROW
 };
 
-/// SPRITE_STUMP's animations beyond its standing frame (spr_212.tsv).
+/// SPRITE_STUMP's animations beyond its standing frame (stump.tsv).
 enum StumpAnimation {
   /// Sinks until only its cut top shows, level with the ground or the water,
   /// which leaves it afloat in Gondowan Cave's river.
@@ -1333,7 +1334,7 @@ enum StumpAnimation {
   STUMP_ANIMATION_SPLASH = 3 ///< drops into water with a splash
 };
 
-/// SPRITE_PUDDLE's animations (spr_227.tsv): the puddle, the ice pillar Frost
+/// SPRITE_PUDDLE's animations (puddle.tsv): the puddle, the ice pillar Frost
 /// makes of it, and the steps between.
 enum PuddleAnimation {
   PUDDLE_ANIMATION_PUDDLE = 1,
@@ -1343,7 +1344,7 @@ enum PuddleAnimation {
   PUDDLE_ANIMATION_MELT = 6     ///< sinks from the pillar back into a puddle
 };
 
-/// SPRITE_WATER_BEAST's animations beyond its standing frame (spr_190.tsv).
+/// SPRITE_WATER_BEAST's animations beyond its standing frame (water_beast.tsv).
 enum WaterBeastAnimation {
   WATER_BEAST_ANIMATION_LEAP = 2, ///< stretched out, legs down, as in mid-jump
   /// Two low crouches in turn, a quarter of a second each: as one spits
@@ -1352,21 +1353,21 @@ enum WaterBeastAnimation {
 };
 
 /// SPRITE_WARRIOR_IN_GOLDEN_HELMET's animations at the end of a Colosso
-/// finals match (spr_062.tsv).
+/// finals match (warrior_in_golden_helmet.tsv).
 enum GoldenHelmetWarriorAnimation {
   WARRIOR_ANIMATION_DEFEATED = 8,        ///< slumped to the ground
   WARRIOR_ANIMATION_FIGHTING_STANCE = 9, ///< braced to fight
   WARRIOR_ANIMATION_ARMS_RAISED = 10     ///< both arms raised in victory
 };
 
-/// SPRITE_BABI's animations that scenes set by number (spr_052.tsv).
+/// SPRITE_BABI's animations that scenes set by number (babi.tsv).
 enum BabiAnimation {
   /// Lying in bed, only his head on the pillow showing, its two frames
   /// alternating.
   BABI_ANIMATION_IN_BED = 5
 };
 
-/// SPRITE_LOG_NORTH_SOUTH's animations (spr_205.tsv) as a log tips into a
+/// SPRITE_LOG_NORTH_SOUTH's animations (log_north_south.tsv) as a log tips into a
 /// river
 /// (places/kolima-forest-entrance/events/KolimaForestEntrance_PushLog.gif).
 enum LogAnimation {
@@ -1376,7 +1377,7 @@ enum LogAnimation {
   LOG_ANIMATION_DROP_IN = 8
 };
 
-/// SPRITE_SPLASH's animations (spr_214.tsv), as Kolima Forest's floodgate
+/// SPRITE_SPLASH's animations (splash.tsv), as Kolima Forest's floodgate
 /// plays them
 /// (places/kolima-forest-floodgate/events/KolimaForestFloodgate_FlipFloodgateSwitch.gif).
 enum SplashAnimation {
@@ -1385,7 +1386,7 @@ enum SplashAnimation {
   SPLASH_ANIMATION_CHURN = 2
 };
 
-/// The face animations of SPRITE_TRET and SPRITE_TRET_RAISED (spr_055.tsv):
+/// The face animations of SPRITE_TRET and SPRITE_TRET_RAISED (tret.tsv):
 /// his gentle face, then his wrathful one, with knotted brows and red eyes.
 /// Left and right are as the face is drawn on screen.
 enum TretFaceAnimation {
@@ -1402,7 +1403,7 @@ enum TretFaceAnimation {
   TRET_FACE_TURNING_WRATHFUL = 11
 };
 
-/// SPRITE_LAUREL's face animations (spr_056.tsv), as TretFaceAnimation's first
+/// SPRITE_LAUREL's face animations (laurel.tsv), as TretFaceAnimation's first
 /// five.
 enum LaurelFaceAnimation {
   LAUREL_FACE_OPEN = 1,
@@ -1412,7 +1413,7 @@ enum LaurelFaceAnimation {
   LAUREL_FACE_LOOK_LEFT = 5
 };
 
-/// SPRITE_CHEST's animations (spr_020.tsv).
+/// SPRITE_CHEST's animations (chest.tsv).
 enum ChestAnimation {
   CHEST_ANIMATION_OPEN_EMPTY = 2, ///< the lid up over an empty chest, held
   /// The lid lifting on treasure, then open over it as it glints.
@@ -1422,7 +1423,7 @@ enum ChestAnimation {
   CHEST_ANIMATION_PEEK_AND_SHUT = 5
 };
 
-/// SPRITE_SHEBA's animations beyond enum ActorAnimation (spr_006.tsv).
+/// SPRITE_SHEBA's animations beyond enum ActorAnimation (sheba.tsv).
 enum ShebaAnimation {
   /// Hanging from a ledge by one hand, seen from the side.
   SHEBA_ANIMATION_HANG_ONE_HAND = 5,
@@ -1432,7 +1433,7 @@ enum ShebaAnimation {
   SHEBA_ANIMATION_LIE = 8 ///< lying on her back
 };
 
-/// SPRITE_ISAAC_CHILD's animations beyond enum ActorAnimation (spr_018.tsv).
+/// SPRITE_ISAAC_CHILD's animations beyond enum ActorAnimation (isaac_child.tsv).
 enum IsaacChildAnimation {
   ISAAC_CHILD_ANIMATION_RECOIL = 17, ///< arms flung out
   /// Asleep, only his head on the pillow.
@@ -1440,7 +1441,7 @@ enum IsaacChildAnimation {
   ISAAC_CHILD_ANIMATION_GET_UP = 19 ///< sitting up, then jumping out of bed
 };
 
-/// SPRITE_DORA's animations beyond enum ActorAnimation (spr_031.tsv).
+/// SPRITE_DORA's animations beyond enum ActorAnimation (dora.tsv).
 enum DoraAnimation {
   DORA_ANIMATION_CLIMB = 5,          ///< climbing a ladder, seen from behind
   DORA_ANIMATION_CLIMB_OVER_TOP = 6, ///< stepping over the top of it
@@ -1457,7 +1458,7 @@ enum DoraAnimation {
   DORA_ANIMATION_STRAIGHTEN = 14 ///< straightening, still seen from behind
 };
 
-/// SPRITE_SATUROS's animations beyond enum ActorAnimation (spr_032.tsv).
+/// SPRITE_SATUROS's animations beyond enum ActorAnimation (saturos.tsv).
 enum SaturosAnimation {
   /// Standing, two pictures alternating at long intervals.
   SATUROS_ANIMATION_BREATHE = 8,
@@ -1469,14 +1470,14 @@ enum SaturosAnimation {
   SATUROS_ANIMATION_SINK = 12
 };
 
-/// SPRITE_FELIX's animations beyond enum ActorAnimation (spr_035.tsv).
+/// SPRITE_FELIX's animations beyond enum ActorAnimation (felix.tsv).
 enum FelixAnimation {
   FELIX_ANIMATION_KNEEL = 5, ///< crouched on one knee
   FELIX_ANIMATION_LIE = 6    ///< lying face down, one arm out
 };
 
 /// SPRITE_OLD_MAN_WITH_CANE's animations beyond enum ActorAnimation
-/// (spr_103.tsv).
+/// (old_man_with_cane.tsv).
 enum OldManWithCaneAnimation {
   /// Lying in bed, only his head above the covers.
   OLD_MAN_WITH_CANE_ANIMATION_LIE_IN_BED = 5,
@@ -1487,7 +1488,7 @@ enum OldManWithCaneAnimation {
 };
 
 /// SPRITE_YOUNG_MAN_WITH_BROWN_HAIR's animations beyond enum ActorAnimation
-/// (spr_108.tsv).
+/// (young_man_with_brown_hair.tsv).
 enum YoungManWithBrownHairAnimation {
   /// Sitting bound, squirming.
   YOUNG_MAN_WITH_BROWN_HAIR_ANIMATION_TIED_UP = 7,
@@ -1498,7 +1499,7 @@ enum YoungManWithBrownHairAnimation {
   YOUNG_MAN_WITH_BROWN_HAIR_ANIMATION_ROW = 10 ///< pulling an oar from a seat
 };
 
-/// SPRITE_STRONGMAN's animations beyond enum ActorAnimation (spr_116.tsv).
+/// SPRITE_STRONGMAN's animations beyond enum ActorAnimation (strongman.tsv).
 enum StrongmanAnimation {
   STRONGMAN_ANIMATION_RUN = 5,      ///< in mid-stride
   STRONGMAN_ANIMATION_SPRAWLED = 6, ///< fallen back on the ground
@@ -1508,7 +1509,7 @@ enum StrongmanAnimation {
   STRONGMAN_ANIMATION_SQUATS = 9 ///< his knees bending, over and over
 };
 
-/// SPRITE_TORCH's animations (spr_246.tsv).
+/// SPRITE_TORCH's animations (torch.tsv).
 enum TorchAnimation {
   TORCH_ANIMATION_UNLIT = 1, ///< a cold torch, its bowl grey with ash
   TORCH_ANIMATION_LIT = 2,   ///< a flame flickering in the bowl
@@ -1516,7 +1517,7 @@ enum TorchAnimation {
       3 ///< the flame dies in smoke, then TORCH_ANIMATION_UNLIT
 };
 
-/// SPRITE_MOVE_HAND's animations (spr_215.tsv).
+/// SPRITE_MOVE_HAND's animations (move_hand.tsv).
 enum MoveHandAnimation {
   MOVE_HAND_ANIMATION_OPEN = 1, ///< open, its fingers spread
   MOVE_HAND_ANIMATION_GRIP = 3, ///< its fingers bent as if gripping

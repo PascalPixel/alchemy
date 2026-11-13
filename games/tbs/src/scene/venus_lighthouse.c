@@ -440,13 +440,13 @@ enum VenusLighthouseFourthFloorActorId {
 };
 
 /// Animations the lighthouse plays by number beyond enum ActorAnimation,
-/// from each sprite's animation table (graphics/sprite/spr_<number>.tsv).
+/// from each sprite's animation table (graphics/sprite/<name>.tsv).
 enum {
-  /// The hurt scholars and soldiers lying on the ground (spr_112.tsv and
-  /// spr_152.tsv, the same pose).
+  /// The hurt scholars and soldiers lying on the ground (old_man_in_blue_cap.tsv and
+  /// soldier.tsv, the same pose).
   ANIM_HURT_LYING = 5,
   /// A light's sparkle, flickering between its two largest pictures
-  /// (spr_284.tsv).
+  /// (particle.tsv).
   PARTICLE_ANIMATION_FLICKER = 7
 };
 
@@ -457,7 +457,7 @@ enum { ANIM_STEPS_FAST = 24 };
 
 /// The pieces of gold track a SPRITE_SPIRAL_PILLAR can carry, its animations
 /// from 3. Each is named by the two edges of its cell it joins as the
-/// pillar's top shows it, north up (graphics/sprite/spr_256.png).
+/// pillar's top shows it, north up (graphics/sprite/spiral_pillar.png).
 ///
 /// The lights the lady statues send out run along the track
 /// (VenusLighthouse_RouteLight). A pillar sunk in a socket carries the track

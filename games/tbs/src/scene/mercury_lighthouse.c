@@ -188,20 +188,20 @@ enum MercuryLighthouseLowerActorId {
   /// SPRITE_PIPE_NORTH_SOUTH for the third) along until each joins its
   /// channel's pipes.
   /// ★ Named from what the player sees: a stone pipe section lying west to
-  /// east, spr_228.png (its render)
+  /// east, pipe_west_east.png (its render)
   ACTOR_FIRST_PIPE,
   /// ★ Named from what the player sees: a stone pipe section lying west to
-  /// east, spr_228.png (its render)
+  /// east, pipe_west_east.png (its render)
   ACTOR_SECOND_PIPE,
   /// ★ Named from what the player sees: a stone pipe section lying north to
-  /// south, spr_229.png (its render)
+  /// south, pipe_north_south.png (its render)
   ACTOR_THIRD_PIPE,
   /// The rim of the fixed pipe the third section joins.
   /// It is SPRITE_PIPE_END, one still frame, 59 pixels south of where
   /// ACTOR_THIRD_PIPE comes to rest. Pushing it does nothing, and nothing else
   /// moves it.
   /// ★ Named from what the player sees: the rim at the top of an upright pipe
-  /// in spr_230.png (its render)
+  /// in pipe_end.png (its render)
   ACTOR_PIPE_END
 };
 
@@ -209,15 +209,15 @@ enum MercuryLighthouseLowerActorId {
 /// gate's floor switch and Sleet, a Mercury Djinni.
 enum MercuryLighthouseMiddleActorId {
   /// ★ Named from what the player sees: a stone pipe section lying north to
-  /// south, spr_229.png (its render)
+  /// south, pipe_north_south.png (its render)
   ACTOR_STAIR_PIPE = ACTOR_FIRST_PLACED,
   /// It stands 59 pixels south of where ACTOR_STAIR_PIPE rests once the stairs
   /// are raised. Nothing moves it.
   /// ★ Named from what the player sees: the rim at the top of an upright pipe
-  /// in spr_230.png (its render)
+  /// in pipe_end.png (its render)
   ACTOR_STAIR_PIPE_END,
   /// ★ Named from what the player sees: a stone pipe section lying west to
-  /// east, spr_228.png (its render)
+  /// east, pipe_west_east.png (its render)
   ACTOR_FOUNTAIN_PIPE,
   /// ★ Named from what the player sees: a blue statue of a woman holding a jar
   /// (its render)
@@ -243,14 +243,14 @@ enum MercuryLighthouseUpperActorId {
   /// (its render)
   ACTOR_SLIDING_STATUE,
   /// ★ Named from what the player sees: a stone pipe section lying west to
-  /// east, spr_228.png (its render)
+  /// east, pipe_west_east.png (its render)
   ACTOR_DOOR_ROOM_PIPE,
   /// ★ Named from what the player sees: a stone pipe section lying north to
-  /// south, spr_229.png (its render)
+  /// south, pipe_north_south.png (its render)
   ACTOR_DOOR_SWITCH_PIPE,
   /// Three in a row south of the stone doors' pipes. Nothing moves them.
   /// ★ Named from what the player sees: the rim at the top of an upright pipe
-  /// in spr_230.png (its render)
+  /// in pipe_end.png (its render)
   ACTOR_FIRST_DOOR_PIPE_END,
   /// Five in a row along the north wall.
   /// ★ Named from what the player sees: stone statues of a robed figure (its

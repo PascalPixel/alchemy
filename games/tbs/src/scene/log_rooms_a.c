@@ -279,12 +279,12 @@ enum {
 /// Animations of the loft's sprites beyond enum ActorAnimation, as their
 /// animation tables and frames under graphics/sprite draw them.
 enum LogRoomsAAnimation {
-  /// Garet seen from behind, his arms spread wide (spr_001.png).
+  /// Garet seen from behind, his arms spread wide (garet.png).
   ANIM_GARET_ARMS_SPREAD = 12,
-  /// A thief standing bound, a rope wound round his arms (spr_063.png,
-  /// spr_064.png).
+  /// A thief standing bound, a rope wound round his arms (man_with_long_dark_hair.png,
+  /// person_in_purple.png).
   ANIM_THIEF_TIED_UP = 5,
-  ANIM_THIEF_BEATEN = 9 ///< lying on the floor (spr_063.png, spr_064.png)
+  ANIM_THIEF_BEATEN = 9 ///< lying on the floor (man_with_long_dark_hair.png, person_in_purple.png)
 };
 
 static void LogRoomsA_IvanJoinsRodSearch(void);

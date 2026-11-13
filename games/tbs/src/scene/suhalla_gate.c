@@ -129,7 +129,7 @@ enum SuhallaGateDewActorId {
 };
 
 /// SPRITE_SPROUT's animations as the sprouts here stand, half grown or fully
-/// grown (spr_238's frames 3 and 6).
+/// grown (sprout's frames 3 and 6).
 enum { SPROUT_ANIMATION_HALF_GROWN = 3, SPROUT_ANIMATION_GROWN = 4 };
 
 /// In Suhalla Gate's second scene (SceneId_SuhallaGateDew), talking to Dew, a

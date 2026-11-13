@@ -211,7 +211,7 @@ enum TolbiSpringActorId {
 
 /// Animations of the spring's sprites, as their animation tables and frames
 /// under graphics/sprite draw them. The coin's and the Lucky Medal's sheets
-/// (spr_398.png, spr_399.png) are drawn alike.
+/// (spring_coin.png, spring_lucky_medal.png) are drawn alike.
 enum TolbiSpringAnimation {
   ANIM_TOKEN_TUMBLE = 0, ///< turning over once as it is tossed
   ANIM_TOKEN_FLOAT = 1,  ///< turning on the water as it drifts
@@ -219,11 +219,11 @@ enum TolbiSpringAnimation {
   ANIM_TOKEN_SHADOW = 3, ///< a grey spot on the ground below it
   /// A twinkle, as each of the three marks trailing a flying token.
   ANIM_TOKEN_GLINT = 4,
-  ANIM_CRAB_SCUTTLE = 1,     ///< stepping sideways (spr_396.png)
-  ANIM_CRAB_RAISE_CLAWS = 3, ///< snapping its raised claws (spr_396.png)
-  ANIM_TURTLE_SWIM = 2,      ///< paddling (spr_397.png)
-  ANIM_TURTLE_HIDE = 3,      ///< head and flippers drawn in (spr_397.png)
-  /// The signpost sheet's second picture, a tuft of grass (spr_274.png).
+  ANIM_CRAB_SCUTTLE = 1,     ///< stepping sideways (crab.png)
+  ANIM_CRAB_RAISE_CLAWS = 3, ///< snapping its raised claws (crab.png)
+  ANIM_TURTLE_SWIM = 2,      ///< paddling (turtle.png)
+  ANIM_TURTLE_HIDE = 3,      ///< head and flippers drawn in (turtle.png)
+  /// The signpost sheet's second picture, a tuft of grass (signpost.png).
   ANIM_SIGN_GRASS = 2
 };
 

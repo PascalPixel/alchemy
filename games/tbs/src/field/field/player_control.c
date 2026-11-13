@@ -50,7 +50,7 @@ enum PlayerStepBlock {
   PLAYER_STEP_NO_DIRECTION = 4 ///< the direction pad is not held
 };
 
-/// FIELD_SPRITE_FOOTPRINT's animations (spr_025.png), and the leader's
+/// FIELD_SPRITE_FOOTPRINT's animations (footprints.png), and the leader's
 /// userValue that asks for the pair next.
 /// ★ Named from what the player sees: prints in Imil's snow (its render)
 enum FootprintAnimation {

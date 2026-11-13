@@ -189,9 +189,9 @@ enum {
   ANIM_HAMA_PULL = 5,
   ANIM_FEIZHI_PULL = 6,
   /// Drops into a crouch, then holds a half crouch with her head bowed
-  /// (spr_039.png's frames 33 and 36).
+  /// (feizhi.png's frames 33 and 36).
   ANIM_FEIZHI_CROUCH = 5,
-  /// SPRITE_TURNING_ROCK's mossy rock (spr_293.png's frame 1). Its first
+  /// SPRITE_TURNING_ROCK's mossy rock (turning_rock.png's frame 1). Its first
   /// animations show picture 0, a purple glow.
   TURNING_ROCK_ANIMATION_MOSSY = 2,
   ANIM_HSU_STRUGGLE = 5,

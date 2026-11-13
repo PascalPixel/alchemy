@@ -171,7 +171,7 @@ struct Trigger gSceneEvents[] = {
     {0x9815, 9, CONDITION_ALWAYS, EVENT(Test_ReceiveForge)},
     {0x8515, 10, CONDITION_ALWAYS, 0},
     {0x50009705, 50, CONDITION_ALWAYS, EVENT(Func_02000088)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Spark {

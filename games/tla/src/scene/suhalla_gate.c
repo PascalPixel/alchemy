@@ -477,7 +477,7 @@ struct Trigger gSuhallaGate_Triggers[] = {
     {TRIGGER_STEP, 20, 0x894, EVENT(SuhallaGate_ThievesSpotParty)},
     {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(SuhallaGate_PointToMeetingSpot)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgOoooogMaybeI)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gSuhallaGate_Room2Triggers[] = {
@@ -493,7 +493,7 @@ struct Trigger gSuhallaGate_Room2Triggers[] = {
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgOhManThere)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_02000038)},
     {19, 100, 0xfb4, 0x1000c3},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gSuhallaGate_Room3Triggers[] = {
@@ -503,5 +503,5 @@ struct Trigger gSuhallaGate_Room3Triggers[] = {
     {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Func_02000378)},
     {TRIGGER_STEP, 22, 0x896, EVENT(Func_02000650)},
     {TRIGGER_STEP, 23, 0x896, EVENT(Func_0200071c)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

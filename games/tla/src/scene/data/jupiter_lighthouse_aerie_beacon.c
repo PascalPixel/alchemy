@@ -195,7 +195,7 @@ struct Trigger gSceneEvents[] = {
      MSGNO(MsgOnceJupiterIsLit)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS,
      MSGNO(MsgDoEvenThink)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 // clang-format off

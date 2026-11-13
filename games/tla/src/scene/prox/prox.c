@@ -2423,14 +2423,14 @@ u32 gProx_Room6Placements[] = {
 };
 
 struct Trigger gProx_Triggers[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gProx_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 10, 0x9cc, EVENT(Prox_SayFarewell)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gProx_Room2Triggers[] = {
@@ -2485,7 +2485,7 @@ struct Trigger gProx_Room2Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT(Prox_TalkToTrainingChild)},
     {0x50008805, 100, 0x300, EVENT(Func_02000588)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 19, CONDITION_ALWAYS, 0},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gProx_Room3Triggers[] = {
@@ -2534,7 +2534,7 @@ struct Trigger gProx_Room3Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgProx78)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgProx77)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgProx79)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02005a20[] = {
@@ -2612,7 +2612,7 @@ struct Trigger gData_02005a20[] = {
     {0x173, 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProx155))},
     {0x173, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProx156))},
     {0x173, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProx157))},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gProx_Room5Triggers[] = {
@@ -2637,7 +2637,7 @@ struct Trigger gProx_Room5Triggers[] = {
     {0x173, 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProx155))},
     {0x173, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProx156))},
     {0x173, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProx157))},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gProx_Room6Triggers[] = {
@@ -2645,7 +2645,7 @@ struct Trigger gProx_Room6Triggers[] = {
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Prox_FearForWeyard)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0xa3d, MSGNO(MsgProx61)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgProx140)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 u32 gData_02005ee8[] = {

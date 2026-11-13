@@ -1282,7 +1282,9 @@ static inline void Flag_SetByte(s32 flag, s32 value) {
   GameFlag_SetByte(flag, value);
 }
 
-s32 LinkLobby_RunRoundResult(void) {
+/// Sets the lobby up as The Broken Seal's BattleArena_Initialize sets the arena
+/// up.
+s32 LinkLobby_Initialize(void) {
   s32 i;
   s32 wins;
   u32 score;
@@ -1613,5 +1615,5 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(LinkLobby_LeaveArena)},
     {TRIGGER_RAISED, 1, CONDITION_ALWAYS, EVENT(LinkLobby_PromptToParticipate)},
     {TRIGGER_RAISED, 2, CONDITION_ALWAYS, EVENT(LinkLobby_ReportDisconnection)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

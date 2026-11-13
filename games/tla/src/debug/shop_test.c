@@ -417,7 +417,7 @@ struct Trigger gSceneEvents[] = {
     {0, 31, CONDITION_ALWAYS, (u32)(Func_02000664)},
     {0, 32, CONDITION_ALWAYS, (u32)(Func_02000664)},
     {0, 33, CONDITION_ALWAYS, (u32)(Func_02000664)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 #undef INPUT_HELD
 

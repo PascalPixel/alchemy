@@ -227,7 +227,7 @@ struct ActorPlacement gData_02004b98[] = {
 };
 
 struct Trigger gData_02004c70[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02004c7c[] = {
@@ -252,7 +252,7 @@ struct Trigger gData_02004c7c[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0x231, EVENT(Func_02000574)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, (s32)((u8 *)Data_020005f4 + 1)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x250, EVENT(Func_020005f8)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 u32 gData_02004d84[] = {
@@ -275,7 +275,7 @@ struct Trigger gData_02004d88[] = {
     {0x9, 0, CONDITION_ALWAYS, EVENT(Func_02000644)},
     {0x50008a05, 88, 0x240, EVENT(Func_02000690)},
     {TRIGGER_RAISED, 88, 0x240, EVENT(Func_0200071c)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02004e48[] = {
@@ -290,7 +290,7 @@ struct Trigger gData_02004e48[] = {
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02000a24)},
     {0x1c814, 9, 0x95d, EVENT(Func_020007d4)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0xa66, EVENT(Func_02000a98)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02004ed8[] = {
@@ -311,7 +311,7 @@ struct Trigger gData_02004ed8[] = {
     {0x50008a05, 50, 0xa6a, EVENT(Func_02000ad8)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0xa64, EVENT(Func_02000bd4)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0x249, EVENT(Func_02000c28)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02004fb0[] = {
@@ -331,7 +331,7 @@ struct Trigger gData_02004fb0[] = {
     {0x4602, 70, CONDITION_ALWAYS, EVENT(Func_020004b4)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0xa67, EVENT(Func_02000de4)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_0200507c[] = {
@@ -360,7 +360,7 @@ struct Trigger gData_0200507c[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(Func_0200107c)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT(Func_0200107c)},
     {0x9, 0, CONDITION_ALWAYS, EVENT(Func_0200107c)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_020051b4[] = {
@@ -369,7 +369,7 @@ struct Trigger gData_020051b4[] = {
     {0x21, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXAMINE, 30, CONDITION_ALWAYS, EVENT(Func_020010ec)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s16 gData_020051fc[] = {
@@ -394,7 +394,7 @@ struct Trigger gData_02005268[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0xa65, EVENT(Func_02001170)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0x24b, EVENT(Func_020011d4)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_020052f8[] = {
@@ -404,7 +404,7 @@ struct Trigger gData_020052f8[] = {
     {0x8403, 30, CONDITION_ALWAYS, EVENT(Func_02001cd8)},
     {0x403, 30, CONDITION_ALWAYS, EVENT(Func_02001d40)},
     {0x50008a05, 40, IF_FLAG_SET(0x349), EVENT(Func_02001328)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 u32 gData_0200534c[] = {

@@ -547,7 +547,7 @@ struct ActorPlacement gGarohInteriors_SanctumActorPlacements[] = {
 struct Trigger gGarohInteriors_DoorTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 // clang-format on
 
@@ -607,7 +607,7 @@ struct Trigger gGarohInteriors_InnNightTriggers[] = {
     {0x173, 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors69))},
     {0x173, 212, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors71))},
     {0x173, 213, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors72))},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gGarohInteriors_HouseNightTriggers[] = {
@@ -635,7 +635,7 @@ struct Trigger gGarohInteriors_HouseNightTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT,
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriors22)},
     {0x173, 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors70))},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gGarohInteriors_SanctumTriggers[] = {
@@ -651,7 +651,7 @@ struct Trigger gGarohInteriors_SanctumTriggers[] = {
      MSGNO(MsgGarohInteriors32)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
      MSGNO(MsgGarohInteriors67)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gGarohInteriors_InnMorningTriggers[] = {
@@ -712,7 +712,7 @@ struct Trigger gGarohInteriors_InnMorningTriggers[] = {
     {0x173, 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors69))},
     {0x173, 212, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors71))},
     {0x173, 213, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors72))},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gGarohInteriors_HouseMorningTriggers[] = {
@@ -740,5 +740,5 @@ struct Trigger gGarohInteriors_HouseMorningTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT,
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriors57)},
     {0x173, 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors70))},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

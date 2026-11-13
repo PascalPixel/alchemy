@@ -1857,7 +1857,7 @@ struct ActorPlacement gShamanVillage_Room6Placements[] = {
 // clang-format on
 
 struct Trigger gShamanVillage_Triggers[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gShamanVillage_Room1Triggers[] = {
@@ -1890,7 +1890,7 @@ struct Trigger gShamanVillage_Room1Triggers[] = {
      MSGNO(MsgShamanSandChallengeWillFail)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
      MSGNO(MsgShamanJadeNeedsYegelosHeir)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gShamanVillage_Room3Triggers[] = {
@@ -1918,7 +1918,7 @@ struct Trigger gShamanVillage_Room3Triggers[] = {
      MSGNO(MsgShamanAncestorsDistrustOutsiders)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
      MSGNO(MsgShamanContigoHeroVictorySurprise)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gShamanVillage_Room2Triggers[] = {
@@ -2010,7 +2010,7 @@ struct Trigger gShamanVillage_Room2Triggers[] = {
     {0x1ff14, 15, CONDITION_ALWAYS, EVENT(ShamanVillage_ShowItemToMoapa)},
     {0x1ff14, 16, CONDITION_ALWAYS, EVENT(ShamanVillage_ShowItemToGuard)},
     {0x1ff14, 17, CONDITION_ALWAYS, EVENT(ShamanVillage_ShowItemToOtherGuard)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gShamanVillage_Room4Triggers[] = {
@@ -2086,7 +2086,7 @@ struct Trigger gShamanVillage_Room4Triggers[] = {
      FIND_MESSAGE(MSGNO(MsgShamanTraditionalBoneBroth))},
     {0x173, 202, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgShamanStrangeBoiledVegetables))},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gShamanVillage_Room5Triggers[] = {
@@ -2119,7 +2119,7 @@ struct Trigger gShamanVillage_Room5Triggers[] = {
      FIND_MESSAGE(MSGNO(MsgShamanTraditionalBoneBroth))},
     {0x173, 202, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgShamanStrangeBoiledVegetables))},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gShamanVillage_Room6Triggers[] = {
@@ -2135,7 +2135,7 @@ struct Trigger gShamanVillage_Room6Triggers[] = {
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgShamanPrayForShamanWarrior)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
      MSGNO(MsgShamanPrayForContigoConqueror)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 u32 gDriftScene_SpawnScript[] = {

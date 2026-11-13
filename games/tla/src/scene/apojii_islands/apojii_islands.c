@@ -996,7 +996,7 @@ struct ActorPlacement gData_02002458[] = {
 };
 
 struct Trigger gData_020024b8[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s32 gData_020024c4[] = {
@@ -1049,7 +1049,7 @@ struct Trigger gData_020024d0[] = {
     {0x50008905, 21, CONDITION_ALWAYS, EVENT(Func_02000a48)},
     {0x50008905, 22, CONDITION_ALWAYS, EVENT(Func_02000a68)},
     {0x50008905, 23, CONDITION_ALWAYS, EVENT(Func_02000af8)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02002698[] = {
@@ -1083,7 +1083,7 @@ struct Trigger gData_02002698[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgThoseGuysOn)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgTheTemperatureOf)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgLongAgoPoseidon)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_0200280c[] = {
@@ -1097,7 +1097,7 @@ struct Trigger gData_0200280c[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x200, 0},
     {0x50008905, 21, CONDITION_ALWAYS, EVENT(Func_02000b88)},
     {0x50008905, 22, CONDITION_ALWAYS, EVENT(Func_02000ba8)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 #undef COPY_PICTURE
 #undef UNK_02002044_VALUE

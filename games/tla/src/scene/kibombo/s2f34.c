@@ -2240,7 +2240,7 @@ struct ActorPlacement gData_02006cd8[] = {
 // clang-format on
 
 struct Trigger gData_02006ee8[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02006ef4[] = {
@@ -2295,7 +2295,7 @@ struct Trigger gData_02006ef4[] = {
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, EVENT(Func_02000270)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
      MSGNO(MsgIWonderIfI)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_020070d4[] = {
@@ -2390,7 +2390,7 @@ struct Trigger gData_020070d4[] = {
     {TRIGGER_TALK, 36, CONDITION_ALWAYS, EVENT(Func_0200042c)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 36, CONDITION_ALWAYS,
      MSGNO(MsgIWonderIfA)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02007434[] = {
@@ -2407,7 +2407,7 @@ struct Trigger gData_02007434[] = {
     {0x50008805, 12, 0x205, EVENT(Func_020006a0)},
     {0x50008805, 13, 0x206, EVENT(Func_020006e4)},
     {0x50008805, 14, 0x207, EVENT(Func_02000728)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_020074dc[] = {
@@ -2456,7 +2456,7 @@ struct Trigger gData_020074dc[] = {
      MSGNO(MsgSureThisIs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS,
      MSGNO(MsgKoffKoffAll)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02007698[] = {
@@ -2534,6 +2534,6 @@ struct Trigger gData_02007698[] = {
     {TRIGGER_EXAMINE, 24, CONDITION_ALWAYS, EVENT(Func_020003f8)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS,
      MSGNO(MsgICanTBelieve)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 #undef PALETTE_WORD

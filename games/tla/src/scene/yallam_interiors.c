@@ -629,7 +629,7 @@ struct ActorPlacement gYallamInteriors_Room2Placements[] = {
 struct Trigger gYallamInteriors_Triggers[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 // clang-format on
 
@@ -673,7 +673,7 @@ struct Trigger gYallamInteriors_Room1Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
      EVENT(YallamInteriors_MindReadSunshine)},
     {0x173, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgYallamInteriors40))},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gYallamInteriors_Room2Triggers[] = {
@@ -710,5 +710,5 @@ struct Trigger gYallamInteriors_Room2Triggers[] = {
      EVENT(YallamInteriors_MindReadArmorMerchant)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
      EVENT(YallamInteriors_MindReadItemMerchant)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

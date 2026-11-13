@@ -42,9 +42,9 @@ Heap_Release:
 	.thumb_func
 Window_LoadGraphics:
 	overlay_veneer Window_LoadGraphicsFar
-	.global LinkLobby_RunRoundResult
+	.global Import_ActorSelectAnimation
 	.thumb_func
-LinkLobby_RunRoundResult:
+Import_ActorSelectAnimation:
 	overlay_veneer Actor_SelectAnimationFar
 	.global Actor_StartScript
 	.thumb_func

@@ -731,7 +731,7 @@ struct Trigger gData_020018b4[] = {
      CONDITION_ALWAYS, EVENT(Func_02000b08)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
      CONDITION_ALWAYS, EVENT(Func_02000ba4)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02001b00[] = {
@@ -822,7 +822,7 @@ struct Trigger gData_02001b00[] = {
     {0x50008905, 28, CONDITION_ALWAYS, EVENT(Func_020003f8)},
     {0x50008905, 29, CONDITION_ALWAYS, EVENT(Func_02000418)},
 #endif
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 u16 gData_02001e0c[] = {

@@ -351,7 +351,7 @@ struct Trigger gSettlements_Triggers[] = {
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 9},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 // clang-format on
 
@@ -368,7 +368,7 @@ struct Trigger gSettlements_Room1Triggers[] = {
      MSGNO(MsgSettlements06)},
     {0x50008905, 10, CONDITION_ALWAYS, EVENT(Func_02000488)},
     {0x50008905, 11, CONDITION_ALWAYS, EVENT(Func_020004a8)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gSettlements_Room2Triggers[] = {
@@ -376,7 +376,7 @@ struct Trigger gSettlements_Room2Triggers[] = {
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements02)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgSettlements05)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gSettlements_Room4Triggers[] = {
@@ -399,7 +399,7 @@ struct Trigger gSettlements_Room4Triggers[] = {
     {8, 0, CONDITION_ALWAYS, EVENT(Func_02001304)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_0200155c)},
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 9, 0x230, EVENT(Func_02000644)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gSettlements_Room5Triggers[] = {
@@ -412,7 +412,7 @@ struct Trigger gSettlements_Room5Triggers[] = {
      MSGNO(MsgSettlements11)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
      MSGNO(MsgSettlements12)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gSettlements_Room7Triggers[] = {
@@ -424,7 +424,7 @@ struct Trigger gSettlements_Room7Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x203, EVENT(Func_02000cfc)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_02000280)},
     {PSYNERGY_ON_ACTOR(ABILITY_CATCH), 11, 0xf5d, EVENT(Func_02000404)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gSettlements_Room8Triggers[] = {
@@ -436,7 +436,7 @@ struct Trigger gSettlements_Room8Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
      MSGNO(MsgSettlements16)},
     {0x173, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgSettlements21))},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gSettlements_Room9Triggers[] = {
@@ -455,7 +455,7 @@ struct Trigger gSettlements_Room9Triggers[] = {
     {8, 0, CONDITION_ALWAYS, EVENT(Func_02000f00)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_020011d4)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 22, 0x208, EVENT(Func_020016a4)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gSettlements_Room10Triggers[] = {
@@ -463,7 +463,7 @@ struct Trigger gSettlements_Room10Triggers[] = {
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements17)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgSettlements19)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s32 gData_02002c5c[] = {

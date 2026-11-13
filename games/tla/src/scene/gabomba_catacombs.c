@@ -588,7 +588,7 @@ struct ActorPlacement gData_02001510[] = {
 // clang-format on
 
 struct Trigger gData_02001540[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_0200154c[] = {
@@ -597,14 +597,14 @@ struct Trigger gData_0200154c[] = {
     {0x50008905, 43, CONDITION_ALWAYS, EVENT(Func_0200018c)},
     {0x50008905, 44, CONDITION_ALWAYS, EVENT(Func_020001b0)},
     {0x50008905, 45, CONDITION_ALWAYS, EVENT(Func_020001d4)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02001594[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {0xc400, 8, CONDITION_ALWAYS, EVENT(Func_02000038)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_020015c4[] = {
@@ -631,7 +631,7 @@ struct Trigger gData_020015c4[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 12, 0x204, EVENT(Func_020007b8)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x205, EVENT(Func_020007f0)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 14, 0x206, EVENT(Func_0200082c)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_020016cc[] = {
@@ -640,7 +640,7 @@ struct Trigger gData_020016cc[] = {
     {TRIGGER_TALK, 8, 0xf93, EVENT(Func_02000d90)},
     {0x50008905, 30, CONDITION_ALWAYS, EVENT(Func_020005e8)},
     {0x50008905, 31, CONDITION_ALWAYS, EVENT(Func_02000608)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02001714[] = {
@@ -652,5 +652,5 @@ struct Trigger gData_02001714[] = {
     {0x50008905, 42, CONDITION_ALWAYS, EVENT(Func_02000564)},
     {TRIGGER_STEP, 50, CONDITION_ALWAYS, EVENT(Func_0200094c)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, 0x200, EVENT(Func_02000868)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

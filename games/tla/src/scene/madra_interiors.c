@@ -1340,7 +1340,7 @@ struct Trigger gMadraInteriors_TriggersBeforeRaid[] = {
     {0x173, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors171))},
     {0x173, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors172))},
     {0x173, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors173))},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gMadraInteriors_JailTriggers[] = {
@@ -1362,7 +1362,7 @@ struct Trigger gMadraInteriors_JailTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors77)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors78)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 7, CONDITION_ALWAYS, EVENT(MadraInteriors_MindReadPiers)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gMadraInteriors_SecondRoomsTriggers[] = {
@@ -1387,7 +1387,7 @@ struct Trigger gMadraInteriors_SecondRoomsTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x8ff, MSGNO(MsgMadraInteriors80)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriors148)},
     {0x173, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors174))},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gMadraInteriors_TriggersAfterRaid[] = {
@@ -1452,7 +1452,7 @@ struct Trigger gMadraInteriors_TriggersAfterRaid[] = {
     {0x173, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors171))},
     {0x173, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors172))},
     {0x173, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors173))},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gMadraInteriors_TriggersOnReturn[] = {
@@ -1524,7 +1524,7 @@ struct Trigger gMadraInteriors_TriggersOnReturn[] = {
     {0x173, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors171))},
     {0x173, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors172))},
     {0x173, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriors173))},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 DEFINE_G_DATA_020033C8(gData_020033c8, 408, 872, 904, 408, 920)

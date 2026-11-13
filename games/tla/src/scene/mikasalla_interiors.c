@@ -356,7 +356,7 @@ struct Trigger gMikasallaInteriors_InnTriggers[] = {
     {0x173, 207, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMikasallaInteriors36))},
     {0x173, 208, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMikasallaInteriors37))},
     {0x173, 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMikasallaInteriors38))},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 // clang-format on
 
@@ -391,5 +391,5 @@ struct Trigger gMikasallaInteriors_SanctumTriggers[] = {
      EVENT(MikasallaInteriors_MindReadWerewolfWonder)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
      EVENT(MikasallaInteriors_MindReadIslanderComplaints)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

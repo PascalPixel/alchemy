@@ -1404,7 +1404,7 @@ struct Trigger gSeaOfTime_Room1Triggers[] = {
     {TRIGGER_STEP, 57, 0x200, EVENT(Func_02000a80)},
     {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Func_02000c94)},
     {TRIGGER_RAISED, 201, CONDITION_ALWAYS, EVENT(Func_02000da0)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_0200242c[] = {
@@ -1432,7 +1432,7 @@ struct Trigger gData_0200242c[] = {
      EVENT(Func_02001524)},
     {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 13, CONDITION_ALWAYS,
      EVENT(Func_0200155c)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gSeaOfTime_Triggers[] = {
@@ -1444,7 +1444,7 @@ struct Trigger gSeaOfTime_Triggers[] = {
     {TRIGGER_STEP, 48, CONDITION_ALWAYS, EVENT(Func_02000818)},
     {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 9, CONDITION_ALWAYS,
      EVENT(Func_02001594)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s16 gData_0200257c[] = {

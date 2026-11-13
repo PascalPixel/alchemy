@@ -859,7 +859,7 @@ u32 gData_0200378c[] = {
 struct Trigger gData_02003790[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_020037b4[] = {
@@ -921,7 +921,7 @@ struct Trigger gData_020037b4[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 30, CONDITION_ALWAYS, EVENT(Func_02001264)},
     {0x8b85, 0, CONDITION_ALWAYS, EVENT(Func_02000698)},
     {0x40008b85, 0, CONDITION_ALWAYS, EVENT(Func_020006b4)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02003a78[] = {
@@ -948,7 +948,7 @@ struct Trigger gData_02003a78[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, CONDITION_ALWAYS, EVENT(Func_02001264)},
     {0x8b85, 0, CONDITION_ALWAYS, EVENT(Func_02000698)},
     {0x40008b85, 0, CONDITION_ALWAYS, EVENT(Func_020006b4)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02003b98[] = {
@@ -972,7 +972,7 @@ struct Trigger gData_02003b98[] = {
     {0x9, 10, 0x9dd, EVENT(Func_0200104c)},
     {0x8b85, 0, CONDITION_ALWAYS, EVENT(Func_02000698)},
     {0x40008b85, 0, CONDITION_ALWAYS, EVENT(Func_020006b4)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02003c94[] = {
@@ -1010,7 +1010,7 @@ struct Trigger gData_02003c94[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, 0x9ca, EVENT(Func_02000850)},
     {0x8b85, 0, CONDITION_ALWAYS, EVENT(Func_02000698)},
     {0x40008b85, 0, CONDITION_ALWAYS, EVENT(Func_020006b4)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02003e38[] = {
@@ -1036,7 +1036,7 @@ struct Trigger gData_02003e38[] = {
     {0x40009085, 0, CONDITION_ALWAYS, EVENT(Func_020022e0)},
     {0x8b85, 0, CONDITION_ALWAYS, EVENT(Func_02000698)},
     {0x40008b85, 0, CONDITION_ALWAYS, EVENT(Func_020006b4)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02003f4c[] = {
@@ -1056,9 +1056,9 @@ struct Trigger gData_02003f4c[] = {
     {0x40008b85, 0, CONDITION_ALWAYS, EVENT(Func_020006b4)},
     {0x50009085, 0, CONDITION_ALWAYS, EVENT(Func_02002318)},
     {0x40009085, 0, CONDITION_ALWAYS, EVENT(Func_02002328)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02004018[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

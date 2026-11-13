@@ -357,7 +357,7 @@ struct Trigger gData_02003d20[] = {
      MSGNO(MsgBriggsIsThe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
      MSGNO(MsgIfYouLive)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02003e7c[] = {
@@ -408,7 +408,7 @@ struct Trigger gData_02003e7c[] = {
      MSGNO(MsgHasMomForgotten)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
      MSGNO(MsgEoleoIsThe)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02003ffc[] = {
@@ -441,7 +441,7 @@ struct Trigger gData_02003ffc[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
      MSGNO(MsgIVeNeverSeen)},
     {TRIGGER_EXAMINE, 40, 0x97e, EVENT(Func_02000208)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02004104[] = {
@@ -469,7 +469,7 @@ struct Trigger gData_02004104[] = {
      MSGNO(MsgIWonderHow)},
     {0x50009085, 0, CONDITION_ALWAYS, EVENT(Func_020003bc)},
     {0x40009085, 0, CONDITION_ALWAYS, EVENT(Func_020003ec)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 u32 gData_020041e8[] = {

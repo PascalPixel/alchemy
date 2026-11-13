@@ -499,7 +499,7 @@ struct Trigger gIncreaseItemAndLevel_Triggers[] = {
      EVENT(IncreaseItemAndLevel_RunMotionTest)},
     {PSYNERGY_PHASE_BEFORE_CAST | FORCE_ON_ACTOR, ACTOR_PORTRAIT_BROWSER,
      CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_EnableEffectChildMode)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 /// The rooms of names' triggers: each party member says their name, and each
@@ -549,7 +549,7 @@ struct Trigger gIncreaseItemAndLevel_NameTriggers[] = {
      EVENT(IncreaseItemAndLevel_RunMotionTest)},
     {PSYNERGY_PHASE_BEFORE_CAST | FORCE_ON_ACTOR, ACTOR_PORTRAIT_BROWSER,
      CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_EnableEffectChildMode)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 /// Unused: requests an exit through a window transition over 24 frames; no

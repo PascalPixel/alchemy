@@ -378,7 +378,7 @@ struct Trigger gData_020018ec[] = {
      EVENT(Func_02001228)},
     {8, 0, CONDITION_ALWAYS, EVENT(Func_020011d4)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02001228)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_020019ac[] = {
@@ -414,5 +414,5 @@ struct Trigger gData_020019ac[] = {
      CONDITION_ALWAYS, EVENT(Func_020011d4)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS,
      EVENT(Func_02001228)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

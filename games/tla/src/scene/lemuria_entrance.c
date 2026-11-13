@@ -319,5 +319,5 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Func_020000b0)},
     {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 19, CONDITION_ALWAYS,
      EVENT(LemuriaEntrance_GrindRock)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

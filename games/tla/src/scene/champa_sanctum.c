@@ -74,5 +74,5 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgChampaCaptainLastHope)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgChampaNeedsCaptainTreasure)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

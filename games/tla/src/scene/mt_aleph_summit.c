@@ -21,7 +21,7 @@
 #include "frame.h"
 #include "module/scene/mt_aleph_summit.h"
 
-extern void LinkLobby_RunRoundResult(struct FieldEffect *effect, s32 mode);
+extern void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -41,7 +41,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  LinkLobby_RunRoundResult(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Import_ActorSelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect, gData_02001650[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSpriteFlags(effect, 0);
@@ -83,7 +83,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    LinkLobby_RunRoundResult(effect, 1);
+    Import_ActorSelectAnimation(effect, 1);
     Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
@@ -236,5 +236,5 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

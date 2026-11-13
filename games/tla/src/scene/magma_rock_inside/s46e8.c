@@ -530,7 +530,7 @@ struct Trigger gMagmaRockInside_Triggers[] = {
     {0x31, 8, CONDITION_ALWAYS, 8},
     {0x202, 70, CONDITION_ALWAYS, EVENT(Func_020011fc)},
     {0x202, 78, CONDITION_ALWAYS, EVENT(Func_020011fc)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gMagmaRockInside_Room2Triggers[] = {
@@ -552,7 +552,7 @@ struct Trigger gMagmaRockInside_Room2Triggers[] = {
     {0x80009705, 50, CONDITION_ALWAYS, EVENT(Func_02000e14)},
     {0x50009705, 50, CONDITION_ALWAYS, EVENT(Func_02000e20)},
     {0x9705, 50, CONDITION_ALWAYS, EVENT(Func_02001148)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gMagmaRockInside_Room3Triggers[] = {
@@ -578,7 +578,7 @@ struct Trigger gMagmaRockInside_Room3Triggers[] = {
     {0x80009705, 50, CONDITION_ALWAYS, EVENT(Func_02000e14)},
     {0x50009705, 50, CONDITION_ALWAYS, EVENT(Func_02000e20)},
     {0x9705, 50, CONDITION_ALWAYS, EVENT(Func_02001148)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gMagmaRockInside_Room4Triggers[] = {
@@ -624,7 +624,7 @@ struct Trigger gMagmaRockInside_Room4Triggers[] = {
     {0x80009705, 52, CONDITION_ALWAYS, EVENT(Func_02000e14)},
     {0x50009705, 52, CONDITION_ALWAYS, EVENT(Func_02000e20)},
     {0x9705, 52, CONDITION_ALWAYS, EVENT(Func_02001148)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gMagmaRockInside_Room5Triggers[] = {
@@ -642,7 +642,7 @@ struct Trigger gMagmaRockInside_Room5Triggers[] = {
     {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(Func_02001828)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, CONDITION_ALWAYS, 0},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gMagmaRockInside_Room6Triggers[] = {
@@ -674,7 +674,7 @@ struct Trigger gMagmaRockInside_Room6Triggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12,
      0x9f6, EVENT(Func_0200099c)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x9f6, EVENT(Func_02000a30)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gMagmaRockInside_Room7Triggers[] = {
@@ -722,7 +722,7 @@ struct Trigger gMagmaRockInside_Room7Triggers[] = {
      EVENT(Func_02002318)},
     {PSYNERGY_ON_ACTOR(ABILITY_BLAZE), 22, CONDITION_ALWAYS,
      EVENT(Func_02002318)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s32 gData_02006710 = -1;
@@ -750,5 +750,5 @@ struct Trigger gMagmaRockInside_Room8Triggers[] = {
      EVENT(Func_020029dc)},
     {PSYNERGY_ON_ACTOR(ABILITY_BLAZE), 11, CONDITION_ALWAYS,
      EVENT(Func_020029dc)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

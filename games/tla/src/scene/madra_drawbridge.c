@@ -172,5 +172,5 @@ struct Trigger gSceneEvents[] = {
      MSGNO(MsgMadraElderReturn)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_GUARD, CONDITION_ALWAYS,
      MSGNO(MsgMadraRatherStayHome)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

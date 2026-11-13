@@ -2621,7 +2621,7 @@ struct ActorPlacement gData_02005390[] = {
 };
 
 struct Trigger gData_020054e0[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_020054ec[] = {
@@ -2699,7 +2699,7 @@ struct Trigger gData_020054ec[] = {
     {TRIGGER_EXAMINE, 25, CONDITION_ALWAYS, EVENT(Func_0200094c)},
     {TRIGGER_EXAMINE, 26, CONDITION_ALWAYS, EVENT(Func_0200096c)},
     {0xc403, 19, CONDITION_ALWAYS, EVENT(Scene_ShowEntranceLocked)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02005870[] = {
@@ -2741,7 +2741,7 @@ struct Trigger gData_02005870[] = {
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_0200090c)},
     {0x50009085, 0, CONDITION_ALWAYS, EVENT(Func_0200152c)},
     {0x40009085, 0, CONDITION_ALWAYS, EVENT(Func_0200156c)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02005a44[] = {
@@ -2833,7 +2833,7 @@ struct Trigger gData_02005a44[] = {
     {0x173, 200, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgContigo206)},
     {0x173, 201, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgContigo207)},
     {0x173, 202, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgContigo208)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02005e70[] = {
@@ -2844,7 +2844,7 @@ struct Trigger gData_02005e70[] = {
     {0x173, 200, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgContigo206)},
     {0x173, 201, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgContigo207)},
     {0x173, 202, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgContigo208)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02005ed0[] = {
@@ -2872,5 +2872,5 @@ struct Trigger gData_02005ed0[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgContigo22)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_02000fe0)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Func_0200102c)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

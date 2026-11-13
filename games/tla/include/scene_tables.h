@@ -85,7 +85,7 @@ struct ActorPlacement {
 
 /// A row of a scene's trigger table.
 struct Trigger {
-  /// The kind and its detail; TRIGGERS_END ends the table. Item triggers
+  /// The kind and its detail; TRIGGER_TABLE_END ends the table. Item triggers
   /// read it as bits: 15..8 item | 4 on an actor | 3..0 kind (4)
   u32 control;
   /// What the trigger answers: an actor id or a tile code. Item triggers read
@@ -97,7 +97,7 @@ struct Trigger {
 
 #define FIND_MESSAGE(message) (0x00400000 | (message))
 #define EVENT(event) ((u32)(event))
-#define TRIGGERS_END 0xffffffff
+#define TRIGGER_TABLE_END 0xffffffff
 
 /// A trigger as the field reads it while the scene runs: the target is one
 /// byte.

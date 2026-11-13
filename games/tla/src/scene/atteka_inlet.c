@@ -610,7 +610,7 @@ struct ActorPlacement gData_0200165c[] = {
 };
 
 struct Trigger gData_0200171c[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02001728[] = {
@@ -660,7 +660,7 @@ struct Trigger gData_02001728[] = {
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgUseYourPsynergy)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS,
      MSGNO(MsgTravelSafelyThe)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_020018f0[] = {
@@ -697,5 +697,5 @@ struct Trigger gData_020018f0[] = {
     {0x50008905, 27, CONDITION_ALWAYS, EVENT(Func_0200091c)},
     {0x50008905, 28, CONDITION_ALWAYS, EVENT(Func_0200093c)},
     {0x50008905, 29, CONDITION_ALWAYS, EVENT(Func_0200095c)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

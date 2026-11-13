@@ -512,7 +512,7 @@ struct Trigger gMagmaRock_Triggers[] = {
     {0x80009705, 50, CONDITION_ALWAYS, EVENT(Func_02001ba4)},
     {0x50009705, 50, CONDITION_ALWAYS, EVENT(Func_02001110)},
     {0x9705, 50, CONDITION_ALWAYS, EVENT(Func_0200148c)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02004720[] = {
@@ -534,7 +534,7 @@ struct Trigger gData_02004720[] = {
     {0x50009705, 30, 0x2f0, EVENT(Func_02001110)},
     {0x50009705, 30, CONDITION_ALWAYS, EVENT(Func_020014bc)},
     {0x9705, 30, CONDITION_ALWAYS, EVENT(Func_02001444)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_020047e0[] = {
@@ -551,7 +551,7 @@ struct Trigger gData_020047e0[] = {
     {0x50009705, 51, CONDITION_ALWAYS, EVENT(Func_02001110)},
     {0x9705, 51, CONDITION_ALWAYS, EVENT(Func_0200148c)},
     {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Func_02001c00)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_0200487c[] = {
@@ -570,7 +570,7 @@ struct Trigger gData_0200487c[] = {
     {0x80009705, 51, CONDITION_ALWAYS, EVENT(Func_02001ba4)},
     {0x50009705, 51, CONDITION_ALWAYS, EVENT(Func_02001110)},
     {0x9705, 51, CONDITION_ALWAYS, EVENT(Func_0200148c)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02004930[] = {
@@ -600,7 +600,7 @@ struct Trigger gData_02004930[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 16, 0x250, EVENT(Func_02001fb0)},
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 17, 0x251, EVENT(Func_02001fd4)},
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 18, 0x252, EVENT(Func_02001ffc)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gMagmaRock_Room3Triggers[] = {
@@ -609,5 +609,5 @@ struct Trigger gMagmaRock_Room3Triggers[] = {
     {0x50009705, 50, 0x2f0, EVENT(Func_02001110)},
     {0x50009705, 50, CONDITION_ALWAYS, EVENT(Func_020020f8)},
     {0x9705, 50, CONDITION_ALWAYS, EVENT(Func_02001444)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

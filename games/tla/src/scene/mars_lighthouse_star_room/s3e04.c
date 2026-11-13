@@ -355,7 +355,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXAMINE, 21, CONDITION_ALWAYS,
      EVENT(MarsLighthouseStarRoom_ExamineStatue)},
     {0xde04, 1045, CONDITION_ALWAYS, EVENT(MarsLighthouseStarRoom_UseMarsStar)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s32 gData_02004ce0[] = {

@@ -1117,7 +1117,7 @@ struct Trigger gSceneEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgHeHadSuch)},
     {TRIGGER_EXAMINE, 25, 0x200, EVENT(LemuriaSpring_DrinkFromSpring)},
     {TRIGGER_EXAMINE, 80, CONDITION_ALWAYS, EVENT(LemuriaSpring_TossCoin)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 u32 gData_02001700[] = {

@@ -587,7 +587,7 @@ struct Trigger gDaila1Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
      MSGNO(MsgFieldImSureThoseTwoWentTo)},
     {0x1f3, 200, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgDailaWellSeawater)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gDaila2Triggers[] = {
@@ -668,5 +668,5 @@ struct Trigger gDaila2Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 29, 0x21b, EVENT(Scene_RaiseHeldActor)},
     {0x50008805, 100, 0x300, EVENT(Func_02000118)},
     {0x1f3, 200, CONDITION_ALWAYS, 0x00400000 | MSGNO(MsgDailaWellSeawater)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

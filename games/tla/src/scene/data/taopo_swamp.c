@@ -253,14 +253,14 @@ struct ActorPlacement gTaopoSwamp_Room11Placements[] = {
 };
 
 struct Trigger gTaopoSwamp_Triggers[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gTaopoSwamp_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gTaopoSwamp_Room2Triggers[] = {
@@ -279,7 +279,7 @@ struct Trigger gTaopoSwamp_Room2Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 12, CONDITION_ALWAYS, EVENT(TaopoSwamp_BlowAwayBush)},
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 13, CONDITION_ALWAYS, EVENT(TaopoSwamp_GrowVine)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT(TaopoSwamp_SinkPillar)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gTaopoSwamp_Room3Triggers[] = {
@@ -291,7 +291,7 @@ struct Trigger gTaopoSwamp_Room3Triggers[] = {
     {33, 9, CONDITION_ALWAYS, 9},
     {0x50008805, 51, 0x301, EVENT(TaopoSwamp_ScoopHiddenItem)},
     {0x50008805, 50, 0x300, EVENT(TaopoSwamp_ScoopOtherHiddenItem)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gTaopoSwamp_Room4Triggers[] = {
@@ -301,7 +301,7 @@ struct Trigger gTaopoSwamp_Room4Triggers[] = {
     {0x50008905, 30, CONDITION_ALWAYS, EVENT(Func_02000314)},
     {0x50008905, 31, CONDITION_ALWAYS, EVENT(Func_02000334)},
     {0x50008905, 32, CONDITION_ALWAYS, EVENT(TaopoSwamp_StartMadPlantBattle)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gTaopoSwamp_Room5Triggers[] = {
@@ -329,13 +329,13 @@ struct Trigger gTaopoSwamp_Room5Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0xa6e, EVENT(TaopoSwamp_PushPillarOverVent)},
     {9, 0, CONDITION_ALWAYS, EVENT(TaopoSwamp_PushPillarOverVent)},
     {TRIGGER_RAISED, 100, 0x310, EVENT(TaopoSwamp_BlowFlowerOffLedge)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02003314[] = {
     {49, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 // clang-format on
 
@@ -355,7 +355,7 @@ struct Trigger gTaopoSwamp_Room7Triggers[] = {
      EVENT(TaopoSwamp_DouseVentSpot)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, IF_FLAG_SET(0x222),
      EVENT(TaopoSwamp_FreezeVentSpot)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gTaopoSwamp_Room8Triggers[] = {
@@ -370,7 +370,7 @@ struct Trigger gTaopoSwamp_Room8Triggers[] = {
      EVENT(TaopoSwamp_FillDripSpot)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 10, IF_FLAG_SET(0x222),
      EVENT(TaopoSwamp_FreezeDripSpot)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 u32 gTaopoSwamp_SteamPuffs[] = {
@@ -401,7 +401,7 @@ struct Trigger gTaopoSwamp_Room10Triggers[] = {
     {9, 0, 0x335, EVENT(TaopoSwamp_PushPillarRockIn)},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 11, 0x330,
      EVENT(TaopoSwamp_TremorPillar)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s32 gTaopoSwamp_Room9Triggers[] = {
@@ -453,7 +453,7 @@ struct Trigger gTaopoSwamp_Room11Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x341, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x343, 0},
     {0x50008805, 50, 0x348, EVENT(TaopoSwamp_ScoopStarDust)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 u32 gTaopoSwamp_SparkleFrame[] = {

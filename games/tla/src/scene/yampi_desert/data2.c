@@ -290,7 +290,7 @@ struct ActorPlacement gYampiDesert_Room12Placements[] = {
 };
 
 struct Trigger gYampiDesert_Triggers[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gYampiDesert_Room1Triggers[] = {
@@ -304,7 +304,7 @@ struct Trigger gYampiDesert_Room1Triggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 13, 0x205, EVENT(Func_02000620)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_02000a10)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gYampiDesert_Room2Triggers[] = {
@@ -347,7 +347,7 @@ struct Trigger gYampiDesert_Room2Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x8f0, MSGNO(MsgMyFatherS)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgHoooICan)},
     {TRIGGER_STEP, 15, 0x8f0, EVENT(YampiDesert_SeeTravelersAbove)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gYampiDesert_Room3Triggers[] = {
@@ -369,7 +369,7 @@ struct Trigger gYampiDesert_Room3Triggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_02000a10)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_02000280)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gYampiDesert_Room4Triggers[] = {
@@ -387,7 +387,7 @@ struct Trigger gYampiDesert_Room4Triggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_02000a10)},
     {TRIGGER_RAISED, 210, CONDITION_ALWAYS, EVENT(Func_02000a8c)},
     {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(YampiDesert_StirScorpion)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gYampiDesert_Room5Triggers[] = {
@@ -403,7 +403,7 @@ struct Trigger gYampiDesert_Room5Triggers[] = {
     {TRIGGER_RAISED, 201, CONDITION_ALWAYS, EVENT(YampiDesert_StirScorpionAgain)},
     {TRIGGER_RAISED, 202, CONDITION_ALWAYS, EVENT(Func_02000e78)},
     {TRIGGER_STEP, 10, 0x88c, EVENT(YampiDesert_TrapKingScorpion)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gYampiDesert_Room6Triggers[] = {
@@ -412,7 +412,7 @@ struct Trigger gYampiDesert_Room6Triggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_02000a10)},
     {0x50008805, 12, 0x302, EVENT(Func_020003b8)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gYampiDesert_Room7Triggers[] = {
@@ -420,7 +420,7 @@ struct Trigger gYampiDesert_Room7Triggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_02000a10)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gYampiDesert_Room8Triggers[] = {
@@ -436,7 +436,7 @@ struct Trigger gYampiDesert_Room8Triggers[] = {
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(YampiDesert_ReadSignpost)},
     {TRIGGER_STEP, 7, 0x120d, EVENT(Func_0200163c)},
     {TRIGGER_STEP, 8, 0x20d, EVENT(Func_02001628)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gYampiDesert_Room9Triggers[] = {
@@ -444,20 +444,20 @@ struct Trigger gYampiDesert_Room9Triggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_02001518)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_0200157c)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gYampiDesert_Room10Triggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_02000a10)},
     {0x50008805, 10, 0x8ed, EVENT(YampiDesert_ScoopCenterPit)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gYampiDesert_Room11Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_02002e98)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gYampiDesert_Room12Triggers[] = {
@@ -466,7 +466,7 @@ struct Trigger gYampiDesert_Room12Triggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8, 0x200, EVENT(Func_02000670)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_02000a10)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 u32 gData_02005828[] = {

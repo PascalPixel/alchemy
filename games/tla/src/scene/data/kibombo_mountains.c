@@ -181,7 +181,7 @@ struct ActorPlacement gData_020018c8[] = {
 };
 
 struct Trigger gData_02001ad8[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02001ae4[] = {
@@ -215,7 +215,7 @@ struct Trigger gData_02001ae4[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, 0x200, EVENT(Func_020001a0)},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), -14320, 0x202, EVENT(Func_0200036c)},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 2064, 0x202, EVENT(Func_0200036c)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02001c58[] = {
@@ -247,7 +247,7 @@ struct Trigger gData_02001c58[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT(Func_0200051c)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, CONDITION_ALWAYS, EVENT(Func_0200051c)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, EVENT(Func_0200051c)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s16 gData_02001db4[] = {

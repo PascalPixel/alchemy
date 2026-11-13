@@ -370,7 +370,7 @@ struct ActorPlacement gData_02003ce8[] = {
 };
 
 struct Trigger gData_02003dc0[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02003dcc[] = {
@@ -382,7 +382,7 @@ struct Trigger gData_02003dcc[] = {
     {TRIGGER_STEP, 52, 0x200, EVENT(Func_02000ac8)},
     {TRIGGER_STEP, 53, 0x200, EVENT(Func_02000ac8)},
     {0x9c05, 30, CONDITION_ALWAYS, EVENT(Func_02001c60)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02003e38[] = {
@@ -416,7 +416,7 @@ struct Trigger gData_02003e38[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0xa80, EVENT(Func_02001160)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 10, 0xa81, EVENT(Func_0200109c)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0xa81, EVENT(Func_02001160)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02003fac[] = {
@@ -454,7 +454,7 @@ struct Trigger gData_02003fac[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0xa85, EVENT(Func_02001160)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 13, 0xa84, EVENT(Func_0200109c)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0xa84, EVENT(Func_02001160)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02004150[] = {
@@ -488,7 +488,7 @@ struct Trigger gData_02004150[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0xa86, EVENT(Func_02001160)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 10, CONDITION_ALWAYS, EVENT(Func_0200109c)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(Func_02001160)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_020042c4[] = {
@@ -515,7 +515,7 @@ struct Trigger gData_020042c4[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s16 gData_020043e4[] = {

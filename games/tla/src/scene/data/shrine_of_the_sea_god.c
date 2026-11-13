@@ -242,7 +242,7 @@ struct ActorPlacement gShrineOfTheSeaGod_Room7Placements[] = {
 DEFINE_G_DATA_02001330(gShrineOfTheSeaGod_Room8Placements, 297, 160, 202, 176, 298, 1, 320, 218)
 
 struct Trigger gShrineOfTheSeaGod_Triggers[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gShrineOfTheSeaGod_Room1Triggers[] = {
@@ -253,14 +253,14 @@ struct Trigger gShrineOfTheSeaGod_Room1Triggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Func_02002e8c)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_02002ea8)},
     {TRIGGER_STEP, 10, 0x872, EVENT(ShrineOfTheSeaGod_ThrowRopeAgain)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gShrineOfTheSeaGod_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x8400, 11, CONDITION_ALWAYS, EVENT(ShrineOfTheSeaGod_StartleCompanion)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgFieldICantFindAnythingAroundHere)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gShrineOfTheSeaGod_Room3Triggers[] = {
@@ -276,7 +276,7 @@ struct Trigger gShrineOfTheSeaGod_Room3Triggers[] = {
     {TRIGGER_STEP, 15, 0x230, EVENT(Func_02001474)},
     {TRIGGER_STEP, 11, 0x874, EVENT(Func_02002384)},
     {TRIGGER_STEP, 12, 0x875, EVENT(Func_02002430)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gShrineOfTheSeaGod_Room4Triggers[] = {
@@ -284,7 +284,7 @@ struct Trigger gShrineOfTheSeaGod_Room4Triggers[] = {
     {33, 2, CONDITION_ALWAYS, 2},
     {33, 3, CONDITION_ALWAYS, 3},
     {33, 4, CONDITION_ALWAYS, 4},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 // clang-format on
 
@@ -317,7 +317,7 @@ struct Trigger gShrineOfTheSeaGod_Room5Triggers[] = {
     {TRIGGER_STEP, 19, 0x205, EVENT(Func_02002d50)},
     {TRIGGER_STEP, 20, 0x205, EVENT(Func_02002d50)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_02000280)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gShrineOfTheSeaGod_Room6Triggers[] = {
@@ -325,7 +325,7 @@ struct Trigger gShrineOfTheSeaGod_Room6Triggers[] = {
     {49, 2, CONDITION_ALWAYS, 2},
     {9, 0, 0x301, EVENT(Func_02001038)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x301, EVENT(Func_02001038)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gShrineOfTheSeaGod_Room7Triggers[] = {
@@ -338,7 +338,7 @@ struct Trigger gShrineOfTheSeaGod_Room7Triggers[] = {
     {TRIGGER_TALK, 25, CONDITION_ALWAYS, EVENT(Func_02000554)},
     {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(Func_02000554)},
     {TRIGGER_TALK, 27, CONDITION_ALWAYS, EVENT(Func_02000554)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gShrineOfTheSeaGod_Room8Triggers[] = {
@@ -351,12 +351,12 @@ struct Trigger gShrineOfTheSeaGod_Room8Triggers[] = {
      CONDITION_ALWAYS, EVENT(Func_020019dc)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
      CONDITION_ALWAYS, EVENT(Func_02001a0c)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gShrineOfTheSeaGod_Room9Triggers[] = {
     {TRIGGER_EXAMINE, 1, CONDITION_ALWAYS,
      EVENT(ShrineOfTheSeaGod_ExamineStatue)},
     {0x1ca04, 1, CONDITION_ALWAYS, EVENT(Func_02000e38)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

@@ -907,12 +907,12 @@ struct ActorPlacement gIdejimaPlacements[] = {
 // clang-format on
 
 struct Trigger gIdejimaEvents[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gIdejimaEventsEntrance1[] = {
     {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_02000640)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gIdejimaEventsWake[] = {
@@ -926,7 +926,7 @@ struct Trigger gIdejimaEventsWake[] = {
      EVENT(Func_020002b4)},
     {TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(Func_020006a8)},
     {TRIGGER_STEP, 8, 0x867, EVENT(Idejima_RunAlexDeparture)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 u32 gDriftScene_SpawnScript[] = {

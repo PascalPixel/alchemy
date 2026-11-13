@@ -144,7 +144,7 @@ struct Trigger gYampiDesertCave_Triggers[] = {
      CONDITION_ALWAYS, EVENT(Func_02001040)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
      EVENT(Func_02001120)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gYampiDesertCave_Room2Triggers[] = {
@@ -163,7 +163,7 @@ struct Trigger gYampiDesertCave_Room2Triggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
      EVENT(Func_02001120)},
     {0x50008805, 100, 0x302, EVENT(Func_020013c8)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gYampiDesertCave_Room3Triggers[] = {
@@ -199,5 +199,5 @@ struct Trigger gYampiDesertCave_Room3Triggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
      EVENT(Func_02001120)},
     {0x50008805, 33, IF_FLAG_SET(0x270), EVENT(Func_02001238)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

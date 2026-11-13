@@ -382,7 +382,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 85, CONDITION_ALWAYS, 85},
     {TRIGGER_EXIT, 86, CONDITION_ALWAYS, 86},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_02000d1c)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 u32 gData_02006bc8[] = {

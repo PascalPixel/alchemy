@@ -334,7 +334,7 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s16 gTitleVramBlock = -1;

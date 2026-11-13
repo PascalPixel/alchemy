@@ -75,7 +75,7 @@ struct ActorPlacement gData_020019f4[] = {
 };
 
 struct Trigger gData_02001c1c[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02001c28[] = {
@@ -93,5 +93,5 @@ struct Trigger gData_02001c28[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0x200, EVENT(Func_020004e4)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, 0x200, EVENT(Func_020004e4)},
     {0x9985, 77, IF_FLAG_SET(0x200), EVENT(Func_02000588)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

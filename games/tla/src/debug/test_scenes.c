@@ -77,7 +77,7 @@ struct Trigger gSceneEvents[] = {
     {0, 9, CONDITION_ALWAYS, EVENT(Test_ReceiveFizz)},
     {0, 10, CONDITION_ALWAYS, EVENT(Test_ReceiveForge)},
     {0, 11, CONDITION_ALWAYS, EVENT(Test_ReceiveGust)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 // clang-format off

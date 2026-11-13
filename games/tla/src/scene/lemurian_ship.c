@@ -1903,7 +1903,7 @@ struct LemurianShipWarp gData_0200397c[] = {
 };
 
 struct Trigger gLemurianShip_Triggers[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_020039d0[] = {
@@ -1921,7 +1921,7 @@ struct Trigger gData_020039d0[] = {
     {0xc602, 20, CONDITION_ALWAYS, EVENT(Func_0200021c)},
     {0xf3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLemurianShip03))},
     {0x1c3, 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLemurianShip04))},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02003a84[] = {
@@ -1932,7 +1932,7 @@ struct Trigger gData_02003a84[] = {
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02000bf0)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 10, 0x210, EVENT(Func_02000818)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x211, EVENT(Func_02000818)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02003ae4[] = {
@@ -1960,7 +1960,7 @@ struct Trigger gData_02003ae4[] = {
     {TRIGGER_STEP, 41, 0x212, EVENT(Func_02000870)},
     {TRIGGER_STEP, 43, 0x212, EVENT(Func_02000af4)},
     {TRIGGER_STEP, 42, 0x201, EVENT(Func_020019e0)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02003c10[] = {
@@ -1972,7 +1972,7 @@ struct Trigger gData_02003c10[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT(Func_02000798)},
     {8, 0, CONDITION_ALWAYS, EVENT(Func_02000788)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02000798)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02003c7c[] = {
@@ -1999,7 +1999,7 @@ struct Trigger gData_02003c7c[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT(Func_02000780)},
     {8, 0, CONDITION_ALWAYS, EVENT(Func_02000770)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02000780)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02003d9c[] = {
@@ -2010,7 +2010,7 @@ struct Trigger gData_02003d9c[] = {
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000d44)},
     {0x80008a05, 255, CONDITION_ALWAYS, EVENT(Func_02001368)},
     {0x50008a05, 255, CONDITION_ALWAYS, EVENT(Func_020012b4)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02003dfc[] = {
@@ -2029,7 +2029,7 @@ struct Trigger gData_02003dfc[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x211, EVENT(Func_02000818)},
     {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Func_02001138)},
     {TRIGGER_RAISED, 201, CONDITION_ALWAYS, EVENT(Func_020011f4)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02003ebc[] = {
@@ -2037,7 +2037,7 @@ struct Trigger gData_02003ebc[] = {
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {0xc602, 8, CONDITION_ALWAYS, EVENT(Func_02000438)},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 u32 gData_02003ef8[] = {

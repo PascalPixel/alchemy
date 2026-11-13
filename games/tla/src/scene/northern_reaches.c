@@ -489,5 +489,5 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_STEP, 20, 0x190a, EVENT(NorthernReaches_DiscussIceWall)},
     {TRIGGER_STEP, 21, 0x190a, EVENT(NorthernReaches_FireMagmaBall)},
     {TRIGGER_STEP, 22, 0x90a, EVENT(NorthernReaches_SightIceWall)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

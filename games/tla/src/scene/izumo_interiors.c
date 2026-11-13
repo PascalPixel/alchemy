@@ -1335,7 +1335,7 @@ struct Trigger gIzumoInteriors_Triggers[] = {
      MSGNO(MsgIDonTWantThe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
      MSGNO(MsgNobodyWantsTo)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gIzumoInteriors_SusasHouseTriggers[] = {
@@ -1361,7 +1361,7 @@ struct Trigger gIzumoInteriors_SusasHouseTriggers[] = {
      MSGNO(MsgBeforeTheSerpent)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
      MSGNO(MsgLegendHasIt)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gIzumoInteriors_TriggersOnceTheSerpentIsSlain[] = {
@@ -1421,5 +1421,5 @@ struct Trigger gIzumoInteriors_TriggersOnceTheSerpentIsSlain[] = {
      MSGNO(MsgIMNo)},
     {0x1c314, 15, FLAG_UZUME_HAS_THE_DOLL,
      EVENT(IzumoInteriors_GiveUzumeTheDoll)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

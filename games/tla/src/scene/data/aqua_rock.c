@@ -125,7 +125,7 @@ u32 gData_02003210[] = {
 };
 
 struct Trigger gData_02003214[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02003220[] = {
@@ -143,7 +143,7 @@ struct Trigger gData_02003220[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 24, CONDITION_ALWAYS, EVENT(Func_02000cd8)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 25, 0x950, EVENT(Func_02000cd8)},
     {0x9, 0, CONDITION_ALWAYS, EVENT(Func_02000cd8)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_020032d4[] = {
@@ -161,5 +161,5 @@ struct Trigger gData_020032d4[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0x952, EVENT(Func_020011e0)},
     {0x9, 0, 0x952, EVENT(Func_020011e0)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0xa69, EVENT(Func_02001224)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

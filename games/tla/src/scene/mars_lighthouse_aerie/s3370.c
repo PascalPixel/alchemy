@@ -1550,7 +1550,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_HoldBackFromParentsAgain)},
     {TRIGGER_STEP, 22, 0x202, EVENT(MarsLighthouseAerie_OfferToCastMarsStar)},
     {TRIGGER_STEP, 23, 0x1202, EVENT(Func_02004d14)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 u32 gData_02006ad0[] = {

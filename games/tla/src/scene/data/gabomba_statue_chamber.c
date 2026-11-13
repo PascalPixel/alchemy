@@ -135,7 +135,7 @@ struct Trigger gData_02002470[] = {
     {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_02000b60)},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_020024a0[] = {
@@ -143,7 +143,7 @@ struct Trigger gData_020024a0[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 3, 0x206, EVENT(Func_02000d3c)},
     {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Func_02000e50)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_020024dc[] = {
@@ -154,9 +154,9 @@ struct Trigger gData_020024dc[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
      MSGNO(MsgOeiaWhatAm)},
     {0xc403, 11, 0x8ff, EVENT(Func_02000184)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02002530[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

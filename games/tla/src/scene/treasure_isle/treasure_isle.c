@@ -664,7 +664,7 @@ struct Trigger gData_020016e4[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x300, EVENT(Func_02000760)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x301, EVENT(Func_02000760)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x302, EVENT(Func_02000760)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gTreasureIsle_Room2Triggers[] = {
@@ -685,7 +685,7 @@ struct Trigger gTreasureIsle_Room2Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS,
      EVENT(Func_02000760)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02000760)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gTreasureIsle_Room3Triggers[] = {
@@ -702,7 +702,7 @@ struct Trigger gTreasureIsle_Room3Triggers[] = {
     {0x50009805, 52, 0x130c, EVENT(Func_02000880)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x309, EVENT(Func_02000760)},
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02000760)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s32 gTreasureIsle_Room4Triggers[] = {
@@ -804,7 +804,7 @@ struct Trigger gTreasureIsle_Room5Triggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_STEP, 42, 0x9bb, EVENT(TreasureIsle_MeetWaterGuardian)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02000870)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s32 gData_02001aa4[] = {

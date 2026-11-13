@@ -83,12 +83,12 @@ struct Trigger gData_020022e8[] = {
     {0x50008905, 33, CONDITION_ALWAYS, EVENT(Func_02000118)},
     {0x50008905, 34, CONDITION_ALWAYS, EVENT(Func_02000124)},
     {0x50008905, 38, CONDITION_ALWAYS, EVENT(Func_02000094)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_0200236c[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s32 gPaletteCycleFrame[] = {

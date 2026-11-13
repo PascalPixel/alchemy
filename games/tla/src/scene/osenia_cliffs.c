@@ -185,5 +185,5 @@ struct Trigger gSceneEvents[] = {
      CONDITION_ALWAYS, MSGNO(MsgMadraPirateAttackParties)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_THIRD_ROPE_POST, FLAG_ROPE_LASHED,
      EVENT(OseniaCliffs_LashRope)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

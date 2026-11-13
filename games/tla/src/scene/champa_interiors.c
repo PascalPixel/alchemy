@@ -246,7 +246,7 @@ struct Trigger gChampaInteriors_Triggers[] = {
      MSGNO(MsgItSA)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FISH_TRADER, CONDITION_ALWAYS,
      MSGNO(MsgWatchingOurCatches)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gChampaInteriors_TriggersOnceBriggsSailed[] = {
@@ -313,7 +313,7 @@ struct Trigger gChampaInteriors_TriggersOnceBriggsSailed[] = {
      MSGNO(MsgMostPeopleHere)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FISH_TRADER, CONDITION_ALWAYS,
      MSGNO(MsgTheOnlyWay)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gChampaInteriors_IsletHouseTriggers[] = {
@@ -323,5 +323,5 @@ struct Trigger gChampaInteriors_IsletHouseTriggers[] = {
      MSGNO(MsgDidYouKnow)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INDRA_NEIGHBOR,
      CONDITION_ALWAYS, MSGNO(MsgIMSoGrateful)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

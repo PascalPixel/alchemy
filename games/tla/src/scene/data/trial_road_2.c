@@ -253,7 +253,7 @@ s32 gTrialRoad_Room1Placements[] = {
 };
 
 struct Trigger gTrialRoad_Triggers[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02007050[] = {
@@ -292,7 +292,7 @@ struct Trigger gData_02007050[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, CONDITION_ALWAYS, EVENT(Func_02000748)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, CONDITION_ALWAYS, EVENT(Func_02000748)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 20, 0x307, EVENT(Func_02000768)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02007200[] = {
@@ -332,7 +332,7 @@ struct Trigger gData_02007200[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 18, IF_FLAG_SET(0x215), EVENT(Func_020008d0)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 19, IF_FLAG_SET(0x216), EVENT(Func_020008d0)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 20, IF_FLAG_SET(0x217), EVENT(Func_020008d0)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_020073bc[] = {
@@ -371,7 +371,7 @@ struct Trigger gData_020073bc[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, CONDITION_ALWAYS, EVENT(Func_02000748)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 20, 0x327, EVENT(Func_02000904)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 21, 0x328, EVENT(Func_02000904)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_0200756c[] = {
@@ -412,7 +412,7 @@ struct Trigger gData_0200756c[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 19, IF_FLAG_SET(0x335), EVENT(Func_02000b4c)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 20, 0x337, EVENT(Func_02000b5c)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 21, IF_FLAG_SET(0x337), EVENT(Func_02000b6c)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s16 gData_02007734[] = {
@@ -449,7 +449,7 @@ struct Trigger gData_02007740[] = {
     {0x8602, 34, CONDITION_ALWAYS, EVENT(Func_02000cc0)},
     {0x50009705, 50, 0x343, EVENT(Func_02000cd0)},
     {0x50009705, 51, 0x345, EVENT(Func_02000ce4)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_0200789c[] = {
@@ -492,7 +492,7 @@ struct Trigger gData_0200789c[] = {
     {9, 0, CONDITION_ALWAYS, EVENT(Func_02000748)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS,
      EVENT(Func_02000748)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02007a64[] = {
@@ -526,7 +526,7 @@ struct Trigger gData_02007a64[] = {
     {0x50008805, 50, 0x363, EVENT(Func_02001148)},
     {0x50008805, 51, 0x364, EVENT(Func_02001158)},
     {0x50008805, 52, 0x365, EVENT(Func_02001168)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s32 gData_02007bc0[] = {
@@ -562,7 +562,7 @@ struct Trigger gData_02007bcc[] = {
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
      EVENT(Func_020011dc)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 17, 0x374, EVENT(Func_020011f8)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gTrialRoad_Room3Triggers[] = {
@@ -571,7 +571,7 @@ struct Trigger gTrialRoad_Room3Triggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 8, 0x289, EVENT(Func_020015a8)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gTrialRoad_Room4Triggers[] = {
@@ -583,7 +583,7 @@ struct Trigger gTrialRoad_Room4Triggers[] = {
      CONDITION_ALWAYS, EVENT(Func_0200163c)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
      CONDITION_ALWAYS, EVENT(Func_020016c8)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gTrialRoad_Room2Triggers[] = {
@@ -595,7 +595,7 @@ struct Trigger gTrialRoad_Room2Triggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x9fc, EVENT(Func_0200185c)},
     {9, 0, 0x9fc, EVENT(Func_0200185c)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s32 gTrialRoad_Room1Triggers[] = {

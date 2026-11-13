@@ -252,7 +252,7 @@ struct Trigger gAlhafraInteriors_Triggers[] = {
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors49)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraInteriors50)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAlhafraInteriors_TriggersOnceBriggsIsCaught[] = {
@@ -332,7 +332,7 @@ struct Trigger gAlhafraInteriors_TriggersOnceBriggsIsCaught[] = {
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors86)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraInteriors87)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAlhafraInteriors_TriggersOnceTheMastIsCleared[] = {
@@ -405,5 +405,5 @@ struct Trigger gAlhafraInteriors_TriggersOnceTheMastIsCleared[] = {
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors118)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraInteriors119)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

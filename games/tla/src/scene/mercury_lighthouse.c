@@ -284,5 +284,5 @@ struct ActorPlacement gActorPlacements[] = {
 // clang-format on
 
 struct Trigger gSceneEvents[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

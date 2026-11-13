@@ -832,7 +832,7 @@ struct Trigger gData_020016e4[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeYeppToldMe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeGiveUp)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkScamps)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02001924[] = {
@@ -844,7 +844,7 @@ struct Trigger gData_02001924[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkToHealer)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFieldTravelersWithNowhereToGoThis)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02001990[] = {
@@ -901,7 +901,7 @@ struct Trigger gData_02001990[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeYeppToldMe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeGiveUp)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, EVENT(DailaInteriors_TalkMazeTreasure)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02001c18[] = {
@@ -921,5 +921,5 @@ struct Trigger gData_02001c18[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x221, EVENT(Scene_RaiseHeldActor)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 12, 0x222, EVENT(Scene_RaiseHeldActor)},
     {TRIGGER_EXAMINE, 40, 0xa20, EVENT(Func_02000730)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

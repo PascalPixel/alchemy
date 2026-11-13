@@ -1327,7 +1327,7 @@ struct ActorPlacement gData_02005be0[] = {
 };
 
 struct Trigger gData_02005d48[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02005d54[] = {
@@ -1342,7 +1342,7 @@ struct Trigger gData_02005d54[] = {
     {TRIGGER_STEP, 10, 0x211, EVENT(Func_02003584)},
     {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(Func_0200393c)},
     {TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(Func_020039a8)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s16 gData_02005de4[] = {
@@ -1361,7 +1361,7 @@ struct Trigger gData_02005e20[] = {
     {0x8602, 12, 0x304, EVENT(Func_02002248)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_02001d00)},
     {TRIGGER_STEP, 6, 0x92d, EVENT(Func_020026cc)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02005e8c[] = {
@@ -1373,12 +1373,12 @@ struct Trigger gData_02005e8c[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT(Func_02002154)},
     {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Func_02003564)},
     {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Func_02003574)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02005ef8[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 // clang-format on
 
@@ -1386,7 +1386,7 @@ struct Trigger gData_02005f10[] = {
     {0x21, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Func_02000710)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02005f40[] = {
@@ -1401,7 +1401,7 @@ struct Trigger gData_02005f40[] = {
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgFieldItSeemsIMayNotHave)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
      MSGNO(MsgFieldIsItReallyPossibleForAnyone)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02005fc4[] = {
@@ -1449,7 +1449,7 @@ struct Trigger gData_02005fc4[] = {
      MSGNO(MsgFieldEmptyTheMindToLightenThe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
      MSGNO(MsgFieldWheneverTheMasterGoesToTown)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 // clang-format off
@@ -1479,6 +1479,6 @@ struct Trigger gData_0200615c[] = {
     {TRIGGER_TALK, 12, 0x84a, MSGNO(MsgFieldTakeThePowerOfLashIt)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgFieldIfYouWishToPracticeThese)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgFieldHoHoIFeelTheStrength)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 // clang-format on

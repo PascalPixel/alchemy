@@ -1035,6 +1035,6 @@ struct Trigger gSceneEvents[] = {
      CONDITION_ALWAYS, EVENT(SceneState_ApplySixRectsAfterFlag161)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
      CONDITION_ALWAYS, EVENT(SceneState_ApplySixRectsAfter161)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 #undef Actor_SetSpriteColor

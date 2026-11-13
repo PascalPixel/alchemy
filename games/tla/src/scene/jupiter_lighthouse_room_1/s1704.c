@@ -86,7 +86,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_STEP, 21, 0xa01, EVENT(Scene_RunIfFlagCleared)},
     {0x50008905, 30, CONDITION_ALWAYS, EVENT(Func_02000054)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0xa01, EVENT(Func_020001f4)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s32 gPaletteCycleFrame[] = {

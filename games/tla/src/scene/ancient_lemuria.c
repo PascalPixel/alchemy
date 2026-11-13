@@ -850,7 +850,7 @@ struct Trigger gSceneEvents[] = {
      0x196e, EVENT(Func_0200045c)},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 13, IF_FLAG_SET(0x96e),
      EVENT(Func_02000468)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 // clang-format off

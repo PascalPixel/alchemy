@@ -295,13 +295,13 @@ struct Trigger gYallam_Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgYeppAlwaysSang)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x300, (s32)(Func_020022f4)},
     {PSYNERGY_ON_ACTOR(ABILITY_FORCE), 8, 0x300, EVENT(Func_020022f8)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gYallam_RoomTwoTriggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {0xc401, 7, CONDITION_ALWAYS, 7},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 // clang-format on
 
@@ -323,5 +323,5 @@ struct Trigger gYallam_EntranceFifteenTriggers[] = {
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgYeppWroteAll)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
      MSGNO(MsgTheStoryIs)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

@@ -474,7 +474,7 @@ struct ActorPlacement gData_02004e20[] = {
 };
 
 struct Trigger gData_02004f10[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02004f1c[] = {
@@ -506,7 +506,7 @@ struct Trigger gData_02004f1c[] = {
     {TRIGGER_STEP, 22, 0x201, EVENT(Func_02001a30)},
     {TRIGGER_STEP, 23, 0x201, EVENT(Func_02001a30)},
     {TRIGGER_STEP, 24, 0x201, EVENT(Func_02001a30)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02005078[] = {
@@ -536,7 +536,7 @@ struct Trigger gData_02005078[] = {
     {TRIGGER_STEP, 19, 0x201, EVENT(Func_02001a30)},
     {TRIGGER_STEP, 20, 0x201, EVENT(Func_02001a30)},
     {TRIGGER_STEP, 21, 0x201, EVENT(Func_02001a30)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_020051bc[] = {
@@ -581,7 +581,7 @@ struct Trigger gData_020051bc[] = {
     {TRIGGER_STEP, 15, 0x201, EVENT(Func_02001a30)},
     {TRIGGER_STEP, 16, 0x201, EVENT(Func_02001a30)},
     {TRIGGER_STEP, 17, 0x201, EVENT(Func_02001a30)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_020053b4[] = {
@@ -597,7 +597,7 @@ struct Trigger gData_020053b4[] = {
     {TRIGGER_EXIT, 43, CONDITION_ALWAYS, 43},
     {TRIGGER_STEP, 8, 0x200, EVENT(Func_020014ec)},
     {TRIGGER_STEP, 9, IF_FLAG_SET(0x200), EVENT(Func_02001500)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02005450[] = {
@@ -630,7 +630,7 @@ struct Trigger gData_02005450[] = {
     {TRIGGER_STEP, 31, 0x201, EVENT(Func_02001a30)},
     {TRIGGER_STEP, 32, 0x201, EVENT(Func_02001a30)},
     {TRIGGER_STEP, 33, 0x201, EVENT(Func_02001a30)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_020055b8[] = {
@@ -649,5 +649,5 @@ struct Trigger gData_020055b8[] = {
     {TRIGGER_STEP, 6, IF_FLAG_SET(0x200), EVENT(Func_02001500)},
     {TRIGGER_STEP, 11, 0x209, EVENT(Func_02002f74)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_0200118c)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

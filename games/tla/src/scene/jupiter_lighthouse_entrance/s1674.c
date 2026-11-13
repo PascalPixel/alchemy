@@ -74,7 +74,7 @@ struct Trigger gSceneEvents[] = {
     {0x50008905, 34, CONDITION_ALWAYS, EVENT(Func_020000d4)},
     {0x50008905, 35, CONDITION_ALWAYS, EVENT(Func_02000184)},
     {0x50008905, 36, CONDITION_ALWAYS, EVENT(Func_020000f4)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s32 gPaletteCycleFrame[] = {

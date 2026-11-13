@@ -881,7 +881,7 @@ struct Trigger gNaribweInteriors_Triggers[] = {
      MSGNO(MsgOurSpicesAre)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
      EVENT(NaribweInteriors_MindReadFortuneTeller)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gNaribweInteriors_TriggersOnReturn[] = {
@@ -926,5 +926,5 @@ struct Trigger gNaribweInteriors_TriggersOnReturn[] = {
      MSGNO(MsgWhyWouldTravel)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
      EVENT(NaribweInteriors_MindReadFortuneTellerOnReturn)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

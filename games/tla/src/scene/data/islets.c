@@ -276,7 +276,7 @@ struct ActorPlacement gData_02004a84[] = {
 // clang-format on
 
 struct Trigger gData_02004b14[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02004b20[] = {
@@ -295,7 +295,7 @@ struct Trigger gData_02004b20[] = {
      MSGNO(MsgICanTWaitUntilThe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
      EVENT(Func_02000e38)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02004bb0[] = {
@@ -324,7 +324,7 @@ struct Trigger gData_02004bb0[] = {
      CONDITION_ALWAYS, EVENT(Func_020025a4)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
      CONDITION_ALWAYS, EVENT(Func_020025b0)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02004ca0[] = {
@@ -351,7 +351,7 @@ struct Trigger gData_02004ca0[] = {
     {0x50008905, 14, CONDITION_ALWAYS, EVENT(Func_0200263c)},
     {0x50008905, 15, CONDITION_ALWAYS, EVENT(Func_0200265c)},
 #endif
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02004d84[] = {
@@ -377,7 +377,7 @@ struct Trigger gData_02004d84[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
      EVENT(Func_02000568)},
     {TRIGGER_STEP, 20, 0x215, EVENT(Func_02001f74)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gData_02004e5c[] = {
@@ -398,5 +398,5 @@ struct Trigger gData_02004e5c[] = {
      CONDITION_ALWAYS, EVENT(Leader_SetLayer)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
      EVENT(Func_020020d0)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

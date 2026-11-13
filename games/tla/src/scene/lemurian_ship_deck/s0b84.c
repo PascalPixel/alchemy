@@ -945,7 +945,7 @@ struct ActorPlacement gLemurianShipDeck_Room1Placements[] = {
 };
 
 struct Trigger gLemurianShipDeck_Triggers[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gLemurianShipDeck_Room2Triggers[] = {
@@ -959,7 +959,7 @@ struct Trigger gLemurianShipDeck_Room2Triggers[] = {
     {TRIGGER_STEP, 15, 0x985, EVENT(LemurianShipDeck_LeaveToFindCrew)},
     {TRIGGER_STEP, 16, 0x985, EVENT(Func_02001178)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, 0x200, EVENT(Func_02001064)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 u32 gData_0200247c[] = {

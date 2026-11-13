@@ -815,7 +815,7 @@ struct ActorPlacement gMadraCatacombs_Room6Placements[] = {
 };
 
 struct Trigger gMadraCatacombs_Triggers[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gMadraCatacombs_Room1Triggers[] = {
@@ -836,13 +836,13 @@ struct Trigger gMadraCatacombs_Room1Triggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_0200072c)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_02000778)},
     {0xc403, 10, CONDITION_ALWAYS, EVENT(MadraCatacombs_HearEyesOfTruth)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gMadraCatacombs_Room2Triggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 // clang-format on
 
@@ -859,7 +859,7 @@ struct Trigger gMadraCatacombs_Room3Triggers[] = {
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgFieldCaveFoundByChampa)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
      MSGNO(MsgFieldWhoDugCave)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gMadraCatacombs_Room4Triggers[] = {
@@ -876,7 +876,7 @@ struct Trigger gMadraCatacombs_Room4Triggers[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gMadraCatacombs_Room5Triggers[] = {
@@ -890,7 +890,7 @@ struct Trigger gMadraCatacombs_Room5Triggers[] = {
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 8, CONDITION_ALWAYS,
      EVENT(Func_02000874)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gMadraCatacombs_Room6Triggers[] = {
@@ -900,5 +900,5 @@ struct Trigger gMadraCatacombs_Room6Triggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {0x1cb04, 10, CONDITION_ALWAYS, EVENT(MadraCatacombs_UnlockWithRuinKey)},
     {TRIGGER_EXAMINE, 10, 0x8c9, EVENT(MadraCatacombs_TryLockedDoor)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

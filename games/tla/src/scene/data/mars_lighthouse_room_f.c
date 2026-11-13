@@ -155,7 +155,7 @@ struct ActorPlacement gMarsLighthouseRoomF_Room2Placements[] = {
 };
 
 struct Trigger gMarsLighthouseRoomF_Triggers[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gMarsLighthouseRoomF_Room4Triggers[] = {
@@ -198,7 +198,7 @@ struct Trigger gMarsLighthouseRoomF_Room4Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 22, CONDITION_ALWAYS, EVENT(Func_020002b8)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 23, CONDITION_ALWAYS, 0},
     {TRIGGER_STEP, 88, CONDITION_ALWAYS, EVENT(Func_0200297c)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gMarsLighthouseRoomF_Room1Triggers[] = {
@@ -217,7 +217,7 @@ struct Trigger gMarsLighthouseRoomF_Room1Triggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 9, CONDITION_ALWAYS, EVENT(Func_020000bc)},
     {0x60009a15, 11, CONDITION_ALWAYS, EVENT(Func_02000554)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 11, CONDITION_ALWAYS, EVENT(Func_02000670)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gMarsLighthouseRoomF_Room3Triggers[] = {
@@ -245,7 +245,7 @@ struct Trigger gMarsLighthouseRoomF_Room3Triggers[] = {
     {TRIGGER_STEP, 88, CONDITION_ALWAYS, EVENT(Func_0200297c)},
     {TRIGGER_STEP, 90, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_SlideOnIce)},
     {TRIGGER_STEP, 14, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_ContinueSlide)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gMarsLighthouseRoomF_Room2Triggers[] = {
@@ -266,7 +266,7 @@ struct Trigger gMarsLighthouseRoomF_Room2Triggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 16, CONDITION_ALWAYS, EVENT(Func_02000ad8)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x220, EVENT(Func_02000cf4)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 12, 0x221, EVENT(Func_02000d38)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s32 gData_0200703c[] = {

@@ -1564,7 +1564,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TALK, 14, CONDITION_ALWAYS,
      EVENT(VenusLighthouseEntrance_RunActorSparkBurst)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_020000c8)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 // clang-format off

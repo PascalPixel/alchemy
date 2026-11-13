@@ -446,7 +446,7 @@ struct Trigger gMikasalla_VillageTriggers[] = {
     {TRIGGER_TALK, ACTOR_SPARK, CONDITION_ALWAYS, EVENT(Mikasalla_MeetSpark)},
     {0x1f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgFieldItSCompletelyFullOf))},
     {0x50008805, 50, CONDITION_ALWAYS, EVENT(Mikasalla_DigUpLadder)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 // clang-format on
 
@@ -459,5 +459,5 @@ struct Trigger gMikasalla_TunnelTriggers[] = {
     {0xc602, 33, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingNorth)},
     {0xc602, 34, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderAhead)},
     {0x50008a05, 60, 0x200, EVENT(Mikasalla_CastParch)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

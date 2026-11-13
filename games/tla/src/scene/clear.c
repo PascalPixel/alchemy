@@ -1890,7 +1890,7 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 u16 gData_020024f4[] = {

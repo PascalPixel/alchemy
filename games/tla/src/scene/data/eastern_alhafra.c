@@ -193,7 +193,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_STEP, 23, 0x8ac, EVENT(Func_02001574)},
     {TRIGGER_STEP, 24, 0x8bf, EVENT(Func_02000968)},
     {TRIGGER_STEP, 25, 0x8be, EVENT(Func_02000958)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 u32 gData_020054f0[] = {

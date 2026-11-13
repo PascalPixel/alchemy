@@ -918,7 +918,7 @@ struct ActorPlacement gLoho_Room2Placements[] = {
 };
 
 struct Trigger gLoho_Triggers[] = {
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gLoho_Room1Triggers[] = {
@@ -983,7 +983,7 @@ struct Trigger gLoho_Room1Triggers[] = {
     {0x50008805, 102, 0x301, EVENT(Func_02000c64)},
     {0x50008805, 103, 0x302, EVENT(Func_02000c74)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 22, 0x201, EVENT(Loho_LiftRock)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gLoho_Room2Triggers[] = {
@@ -1010,7 +1010,7 @@ struct Trigger gLoho_Room2Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x1a5f, MSGNO(MsgLoho54)},
     {TRIGGER_EXAMINE, 20, CONDITION_ALWAYS, EVENT(Loho_TalkToInnkeeper)},
     {TRIGGER_EXAMINE, 30, CONDITION_ALWAYS, EVENT(Loho_ReadInnSign)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 s16 gData_02001ef4[] = {

@@ -1254,5 +1254,5 @@ struct Trigger gSceneEvents[] = {
     {0x50008805, 105, 0x304, EVENT(Func_020005ec)},
     {0x50008805, 107, 0x306, EVENT(Func_020005fc)},
     {0x50008805, 108, 0x307, EVENT(Func_0200060c)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

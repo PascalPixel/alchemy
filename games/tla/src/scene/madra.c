@@ -1725,7 +1725,7 @@ struct Trigger gMadra_TriggersBeforeRaid[] = {
      MSGNO(MsgBriggsAndHis)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 35, CONDITION_ALWAYS,
      MSGNO(MsgBriggsAndHis)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gMadra_TriggersAfterRaid[] = {
@@ -1811,7 +1811,7 @@ struct Trigger gMadra_TriggersAfterRaid[] = {
      MSGNO(MsgTheGroupThat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS,
      MSGNO(MsgThatShinIs)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gMadra_TriggersOnReturn[] = {
@@ -1899,5 +1899,5 @@ struct Trigger gMadra_TriggersOnReturn[] = {
      EVENT(Madra_MindReadKarst)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 35, CONDITION_ALWAYS,
      MSGNO(MsgWeReStill)},
-    {TRIGGERS_END},
+    {TRIGGER_TABLE_END},
 };

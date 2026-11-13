@@ -9,25 +9,30 @@
 /// WINDOW_PALETTE brightened by up to twelve steps, rising and falling with the
 /// frame count. Nothing in the source calls it. Writes BG palette RAM.
 void Palette_UpdatePulseBrightness(void) {
-  // 3/64 of a turn a frame, a pulse about every 21 frames; 1 - cos runs from
-  // 0 to 2.0 (16.16), and a sixth of 1.0 is one step.
-  s32 brightness =
-      (Q16_ONE - Trig_Cos((gFrameCount * 3U) << 10)) / (Q16_ONE / 6);
+  u16 *palette = &BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
   s32 i;
+  s32 channelMask = 31;
 
   for (i = 0; i < 16; i++) {
-    u32 color = BG_PLTT_COLOR(WINDOW_PALETTE, i);
-    s32 blue = ((color >> 10) & 31) + brightness;
-    s32 green = ((color >> 5) & 31) + brightness;
-    s32 red = (color & 31) + brightness;
+    // 3/64 of a turn a frame, a pulse about every 21 frames; 1 - cos runs
+    // from 0 to 2.0 (16.16), and a sixth of 1.0 is one step.
+    u32 angle = (gFrameCount * 3U) << 10;
+    u32 color = palette[16];
+    s32 brightness = (Q16_ONE - Trig_Cos(angle)) / (Q16_ONE / 6);
+    s32 blue = (color >> 10) & channelMask;
+    s32 green = (color >> 5) & channelMask;
+    s32 red = color & channelMask;
 
+    blue += brightness;
+    green += brightness;
+    red += brightness;
     if (blue < 0 || blue > 31)
       blue = 31;
     if (green < 0 || green > 31)
       green = 31;
     if (red < 0 || red > 31)
       red = 31;
-    BG_PLTT_COLOR(HIGHLIGHT_PALETTE, i) = RGB(red, green, blue);
+    *palette++ = RGB(red, green, blue);
   }
 }
 
@@ -539,23 +544,40 @@ fail:
 /// to 31)
 void Palette_CopyWithBrightnessOffset(s32 offset) {
   s32 bank;
+  s32 source = 15;
   s32 i;
 
+  // Palettes 15 and 5, each into the palette before it, 14 and 4.
   for (bank = 0; bank < 2; bank++) {
-    s32 source = bank == 0 ? 15 : 5;
-
     for (i = 0; i < 16; i++) {
-      u32 color = BG_PLTT_COLOR(source, i);
-      s32 blue = ((color >> 10) & 31) + offset;
-      s32 green = ((color >> 5) & 31) + offset;
-      s32 red = (color & 31) + offset;
+      s32 index = source * 16 + i;
+      u32 color = ((u16 *)BG_PLTT)[index];
+      s32 blue = (color >> 10) & 31;
+      s32 green = (color >> 5) & 31;
+      s32 red = color & 31;
+      s32 adjusted;
 
-      CLAMP(blue, 0, 31);
-      CLAMP(green, 0, 31);
-      CLAMP(red, 0, 31);
-      // Into the palette before the source: 14 and 4.
-      BG_PLTT_COLOR(source - 1, i) = RGB(red, green, blue);
+      blue += offset;
+      green += offset;
+      red += offset;
+      if (blue > 31)
+        blue = 31;
+      if (green > 31)
+        green = 31;
+      if (red > 31)
+        red = 31;
+      if (blue < 0)
+        blue = 0;
+      if (green < 0)
+        green = 0;
+      if (red < 0)
+        red = 0;
+      adjusted = blue << 10;
+      adjusted |= green << 5;
+      adjusted |= red;
+      ((u16 *)BG_PLTT)[index - 16] = adjusted;
     }
+    source = 5;
   }
 }
 

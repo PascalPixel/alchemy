@@ -328,12 +328,22 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
   // Each channel scaled in place: a 16.16 scale of at most 1 keeps it inside
   // its own five bits.
   for (i = 0; i < count; i++) {
-    u32 color = source[i];
-    u32 red = (color & 0x1f) * scale >> 16;
-    u32 green = (color & 0x3e0) * scale >> 16;
-    u32 blue = (color & 0x7c00) * scale >> 16;
+    u32 redMask = 0x1f;
+    u32 greenMask = 0x3e0;
+    u32 blueMask = 0x7c00;
+    u32 color = *source;
+    u32 red = color & redMask;
+    u32 green = color & greenMask;
+    u32 blue = blueMask & color;
 
-    destination[i] = (red & 0x1f) | (green & 0x3e0) | (blue & 0x7c00);
+    red *= scale;
+    green *= scale;
+    blue *= scale;
+    color = ((red >> 16) & redMask) | ((green >> 16) & greenMask);
+    color |= (blue >> 16) & blueMask;
+    *destination = color;
+    source++;
+    destination++;
   }
   return 0;
 }

@@ -62,15 +62,22 @@ s32 BattleTransition_RunMosaicFadeOut(void) {
 /// BattleBackground_SetMode.
 void Graphics_BuildSequentialTileTable(void *tilemap) {
   u32 *words = tilemap;
-  s32 i;
+  u32 tiles;
+  u32 i;
 
   // An affine map takes a byte a tile, written four to a word, as VRAM
   // takes no byte writes.
-  for (i = 0; i < 64; i++)
-    words[i] = 0x03020100 + i * 0x04040404;
-  for (i = 0; i < 56; i++)
-    words[64 + i] = 0x03020100 + i * 0x04040404;
-  Iwram_FillWords(words + 120, 544, -1);
+  tiles = 0x03020100;
+  for (i = 0; i < 64; i++) {
+    *words++ = tiles;
+    tiles += 0x04040404;
+  }
+  tiles = 0x03020100;
+  for (i = 0; i < 56; i++) {
+    *words++ = tiles;
+    tiles += 0x04040404;
+  }
+  Iwram_FillWords(words, 544, -1);
 }
 
 /// Builds BG1's flat map of the same picture: rows 0 to 3 0xffff, rows 4 and
